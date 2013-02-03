@@ -1,0 +1,289 @@
+##########
+# SPLEEF #
+##########
+
+*:/spleef = >>>
+msg(color('green').'[Spleef] You can play spleef at the colosseum just outside Final City on Delta')
+msg(color('green').'[Spleef] '.color(r).'/spleef join '.color('gray').'Join the next match')
+msg(color('green').'[Spleef] '.color(r).'/spleef start '.color('gray').'Start the match')
+msg(color('green').'[Spleef] '.color(r).'/spleef floor '.color('gray').'Select the floor block')
+<<<
+
+*:/spleef join = >>>
+  if(pworld() != 'world3', die())
+  assign(@sign1, array(-55,75,191))
+  assign(@sign2, array(-55,74,191))
+  assign(@sign3, array(-56,75,191))
+  assign(@sign4, array(-56,74,191))
+  import(@nextspleef)
+  if(@nextspleef == false, assign(@nextspleef, array()))
+  if(array_index_exists(@nextspleef, player()), die(concat(color(a), '[Spleef] ', color(f), 'You are already in the next Spleef match.')))
+  array_set(@nextspleef, player(), 1)
+  export(@nextspleef)
+  set_sign_text(@sign1, array_keys(@nextspleef))
+  if( array_size(@nextspleef) > 4 ) {
+    set_sign_text(@sign2, array_keys(@nextspleef)[cslice(4, array_size(@nextspleef) - 1)])
+  }
+  if( array_size(@nextspleef) > 8 ) {
+    set_sign_text(@sign3, array_keys(@nextspleef)[cslice(8, array_size(@nextspleef) - 1)])
+  }
+  if( array_size(@nextspleef) > 12 ) {
+    set_sign_text(@sign4, array_keys(@nextspleef)[cslice(12, array_size(@nextspleef) - 1)])
+  }
+<<<
+
+*:/spleef start = >>>
+if(pworld() != 'world3', die())
+#get necessary variables
+assign(@sign1, array(-55,75,191))
+assign(@sign2, array(-55,74,191))
+assign(@sign3, array(-56,75,191))
+assign(@sign4, array(-56,74,191))
+import(@nextspleef)
+import(@currentspleef)
+if(@nextspleef == false, assign(@nextspleef, array()))
+if(@currentspleef == false, assign(@currentspleef, array()))
+
+#check if there's a match currently in progress
+if(@currentspleef != array(), die(concat(color(a), '[Spleef] ', color(f), 'Match currently in progress.')))
+
+#check for queued players not in arena before starting
+foreach(array_keys(@nextspleef), @player,
+  if(or(not(ponline(@player)), not(array_contains(sk_current_regions(@player), 'colosseum'))),
+    array_remove(@nextspleef, @player)
+  )
+)
+
+#check if there's enough players to start
+if(array_size(@nextspleef) < 2 && player() != 'PseudoKnight', die(concat(color(a), '[Spleef] ', color(f), 'There are not enough players in this match!')))
+
+#now that the match is a go, set the new variables
+assign(@reward, array_size(@nextspleef) - 1)
+assign(@currentspleef, @nextspleef)
+assign(@nextspleef, array())
+assign(@spleefsettings, array('counter': 0))
+export(@reward)
+export(@nextspleef)
+export(@currentspleef)
+export(@spleefsettings)
+set_sign_text(@sign1, array())
+set_sign_text(@sign2, array())
+set_sign_text(@sign3, array())
+set_sign_text(@sign4, array())
+
+#setup arena during countdown
+_regionmsg('colosseum', concat(color(a), '[Spleef] ', color(f), 'Match starting in 3 seconds...'))
+assign(@region, sk_region_info('spleef', 'world3')[0])
+
+set_timeout(1000, closure(
+  #difficult terrain
+  if(get_block_at(array(-63,75,192)) == '124:0' && get_block_at(array(-69,75,192)) ==  '123:0') {
+    proc(_setfloor, @x, @y, @z, assign(@floor, get_block_at(-52,73,191, 'world3')),
+      if(rand(10) < 6) {
+        if(get_block_at(@x, @y, @z) != @floor) {
+          set_block_at(array(@x, @y, @z), @floor)
+        }
+      } else {
+        if(get_block_at(@x, @y, @z) != '88:0') {
+          set_block_at(array(@x, @y, @z), 88)
+        }
+      }
+    )
+  #platforming
+  } else if(get_block_at(array(-69,75,192)) ==  '124:0' && get_block_at(array(-63,75,192)) == '123:0') {
+    proc(_setfloor, @x, @y, @z, assign(@floor, get_block_at(-52,73,191, 'world3')),
+      if(rand(10) < 3) {
+        if(get_block_at(@x, @y, @z) != @floor) {
+          set_block_at(array(@x, @y, @z), @floor)
+        }
+      } else {
+        if(get_block_at(@x, @y, @z) != '0:0') {
+          set_block_at(array(@x, @y, @z), 0)
+        }
+      }
+    )
+  #difficult terrain + platforming
+  } else if(get_block_at(array(-63,75,192)) == '124:0' && get_block_at(array(-69,75,192)) == '124:0') {
+    proc(_setfloor, @x, @y, @z, assign(@floor, get_block_at(-52,73,191, 'world3')),
+      if(assign(@rand, rand(10)) < 2) {
+        if(get_block_at(@x, @y, @z) != @floor) {
+          set_block_at(array(@x, @y, @z), @floor)
+        }
+      } else if(@rand < 9) {
+        if(get_block_at(@x, @y, @z) != '0:0') {
+          set_block_at(array(@x, @y, @z), 0)
+        }
+      } else {
+        if(get_block_at(@x, @y, @z) != '88:0') {
+          set_block_at(array(@x, @y, @z), 88)
+        }
+      }
+    )
+  #regular floor
+  } else {
+    proc(_setfloor, @x, @y, @z, assign(@floor, get_block_at(-52,73,191, 'world3')),
+      if(get_block_at(@x, @y, @z) != @floor) {
+        set_block_at(@x, @y, @z, @floor)
+      }
+    )
+  }
+  _iterate_cuboid(@region[0], @region[1], '_setfloor')
+))
+
+set_timeout(2000, closure(
+  #random obstacles
+  if(get_block_at(array(-65,75,192,'world3')) ==  '124:0') {
+    proc(_setwalls, @x, @y, @z,
+      if(assign(@rand, rand(100)) < 5) {
+        if(get_block_at(@x, @y, @z) != '98:0') {
+          set_block_at(array(@x, @y, @z), '98:0')
+          set_block_at(array(@x, @y + 1, @z), '98:0')
+        }
+      } else if(@rand < 6) {
+        if(get_block_at(@x, @y, @z) != '98:1') {
+          set_block_at(array(@x, @y, @z), '98:1')
+          set_block_at(array(@x, @y + 1, @z), '98:1')
+        }
+      } else if(@rand < 7) {
+        if(get_block_at(@x, @y, @z) != '98:2') {
+          set_block_at(array(@x, @y, @z), '98:2')
+          set_block_at(array(@x, @y + 1, @z), '98:2')
+        }
+      } else {
+        if(get_block_at(@x, @y, @z) != '0:0') {
+          set_block_at(array(@x, @y, @z), 0)
+          set_block_at(array(@x, @y + 1, @z), 0)
+        }
+      }
+    )
+  #clear walls if random obstacles is turned off
+  } else {
+    proc(_setwalls, @x, @y, @z,
+      if(get_block_at(@x, @y, @z) != '0:0') {
+        set_block_at(array(@x, @y, @z), '0:0')
+        set_block_at(array(@x, @y + 1, @z), '0:0')
+      }
+    )
+  }
+  _iterate_cuboid(array(@region[0][0], @region[0][1] + 1, @region[0][2]), array(@region[1][0], @region[1][1] + 1, @region[1][2]), '_setwalls')
+))
+
+set_timeout(3000, closure(
+import(@currentspleef)
+
+#teleport players into arena and let them break blocks
+foreach(array_keys(@currentspleef), @player,
+  if(!ponline(@player) || !array_contains(sk_current_regions(@player), 'colosseum')) {
+    array_remove(@currentspleef, @player)
+    continue()
+  }
+  assign(@location, array(add(-80, rand(38)), 64, add(143, rand(38))))
+  #check if they're spawning into a block
+  if(get_block_at(@location) != '0:0') {
+    set_block_at(@location[0], 64, @location[2], 0)
+    set_block_at(@location[0], 65, @location[2], 0)
+  }
+  #check if they're spawning over air
+  if(get_block_at(@location[0], 63, @location[2]) == '0:0') {
+    set_block_at(@location[0], 63, @location[2], get_block_at(-52, 73, 191))
+  }
+  set_ploc(@player, array(@location[0] + 0.5, @location[1], @location[2] + 0.5, 'world3'))
+  bind(player_interact, array(id: concat('spleef_', @player)), array('button': 'left', 'item': 0, 'player': @player), @event,
+    if(@event['action'] != 'left_click_block', die())
+    assign(@loc, pcursor())
+    if(array_contains(sk_regions_at(@loc), 'spleef')) {
+      set_block_at(@loc, 0)
+    } else if(get_block_at(@loc) == '98:2' && array_contains(sk_regions_at(@loc), 'arena')) {
+      set_block_at(array(@loc[0], 64, @loc[2], 'world3'), 0)
+      set_block_at(array(@loc[0], 65, @loc[2], 'world3'), 0)
+    }
+  )
+)
+
+#check match players every second
+assign(@spleefinterval, set_interval(1000, closure(
+  import(@spleefsettings)
+  import(@currentspleef)
+  import(@reward)
+  if(@spleefsettings['counter'] == 60) {
+    proc(_removeedge, @x, @y, @z,
+      if(get_block_at(@x, @y, @z) != '0:0') {
+        set_block_at(@x, @y, @z, '0:0')
+      }
+    )
+    _iterate_cuboid(array(@region[0][0], @region[0][1], @region[0][2]), array(@region[0][0], @region[0][1], @region[1][2]), '_removeedge')
+    _iterate_cuboid(array(@region[0][0], @region[0][1], @region[0][2]), array(@region[1][0], @region[0][1], @region[0][2]), '_removeedge')
+    _iterate_cuboid(array(@region[0][0], @region[0][1], @region[1][2]), array(@region[1][0], @region[0][1], @region[1][2]), '_removeedge')
+    _iterate_cuboid(array(@region[1][0], @region[0][1], @region[0][2]), array(@region[1][0], @region[0][1], @region[1][2]), '_removeedge')
+  }
+  array_set(@spleefsettings, 'counter', @spleefsettings['counter'] + 1)
+  #detect winner and end match
+  if(array_size(@currentspleef) <= 1 && (!array_index_exists(@currentspleef, 'PseudoKnight') || pinfo('PseudoKnight', 11) == true)) {
+    assign(@winner, array_implode(array_keys(@currentspleef)))
+    if(@winner != '') {
+      _regionmsg('colosseum', concat(color(a), '[Spleef] ', color(a), @winner, color(f), ' is the winner!'))
+      set_ploc(@winner, -58, 73, 188)
+      acc_add(@winner, @reward)
+      tmsg( @winner, color(a), '[Spleef] ', color(f), @reward, ' coins!' )
+      unbind(concat('spleef_', @winner))
+    } else {
+      _regionmsg('colosseum', concat(color(a), '[Spleef] ', color(f), 'No one wins.'))
+    }
+    assign(@currentspleef, array())
+    export(@currentspleef)
+    clear_task()
+  }
+  #detect people that aren't actually in the match
+  foreach(array_keys(@currentspleef), @player,
+    if(!ponline(@player) || pworld(@player) != 'world3' || !array_contains(sk_current_regions(@player), 'arena')) {
+      array_remove(@currentspleef, @player)
+      export(@currentspleef)
+      unbind(concat('spleef_', @player))
+      _regionmsg('colosseum', concat(color(a), '[Spleef] ', color(6), @player, color(f), ' was knocked out.'))
+      if(ponline(@player)) {
+        set_ploc(@player, -58, 73, 188)
+        unbind(concat('spleef_', @player))
+      }
+    }
+  )
+  #detect people who shouldn't be in the arena
+  foreach(all_players(), @player,
+    if(array_index_exists(@currentspleef, @player), continue())
+    if(pworld(@player) == 'world3' && array_contains(sk_current_regions(@player), 'arena')) {
+      scriptas(@player,
+        call_alias('/spawn')
+      )
+      msg(color(a), '[Spleef] ', color(f), 'Please do not interfere with a spleef match in progress.')
+    }
+  )
+  export(@spleefsettings)
+)))
+bind(player_quit, null, array('player': player()), @event, @spleefinterval,
+  import(@currentspleef)
+  unbind()
+  clear_task(@spleefinterval)
+  _regionmsg('colosseum', concat(color(a), '[Spleef] ', color(f), ' Host left the server.'))
+  foreach(array_keys(@currentspleef), @player,
+    set_ploc(@player, -58, 73, 188)
+    unbind(concat('spleef_', @player))
+  )
+  assign(@currentspleef, array())
+  export(@currentspleef)
+)
+
+))
+<<<
+
+*:/spleef floor = >>>
+  if(pworld() != 'world3', die())
+  assign( @materials, sk_region_info( 'materials', 'world3' )[0] )
+  assign( @location, pcursor())
+  if( array_contains(sk_regions_at(@location), 'materials') ) {
+    array_remove( @location, 3 )
+    assign(@blocktype, get_block_at(@location))
+    set_block_at( -52, 73, 191, @blocktype)
+    msg(color(a), '[Spleef] ', color(f), 'You have selected ', color(6), data_name(@blocktype), '.')
+  } else {
+    msg(color(a), '[Spleef] ', color(f), 'You can only select blocks from the Spleef materials room.')
+  }
+<<<

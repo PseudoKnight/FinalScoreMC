@@ -1,0 +1,855 @@
+/safereload [$force]= >>>
+  if(!$force) {
+    import(@currentspleef)
+    if(@currentspleef != false && array_size(@currentspleef) >= 1, die('Spleef in progress.'))
+    @pvp = import('pvpskypiea')
+    if(@pvp && @pvp['running'] == true, die('Skypiea PVP in progress.'))
+    @cluck = import(@cluck)
+    if(@cluck && (@cluck['active'] == 1 || @cluck['round'] > 1), die('Cluck in progress.'))
+  }
+  import(@requests)
+  if(is_array(@requests), store_value('session.requests', @requests))
+  import(@conv)
+  if(is_array(@conv), store_value('session.conv', @conv))
+  import(@stopwatch)
+  if(is_array(@stopwatch), store_value('session.stopwatch', @stopwatch))
+  run('/reloadaliases')
+<<<
+
+/rainbowhat [$player] = >>>
+        @player = player()
+        if($player != '', @player = player($player))
+        if(import('rainbowhat.'.@player) != null){
+                clear_task(import('rainbowhat.'.@player))
+                export('rainbowhat.'.@player, null)
+                die('No more rainbow hat :(')
+        }
+        if(pinv(@player)[103] != null, die('Safety check failed. Remove helmet!'))
+        msg('Rainbow hat!!!')
+        set_pinv(@player, array(103: array(type: 298)))
+        @interval = set_interval(100, closure(
+                if(!ponline(@player) || pinv(@player, 103)['type'] != 298){
+                        clear_task()
+                } else {
+                        @color = get_armor_color(@player, 103)
+                        @r = max(min(@color['r'] + rand(21) - 10, 255), 0)
+                        @g = max(min(@color['g'] + rand(21) - 10, 255), 0)
+                        @b = max(min(@color['b'] + rand(21) - 10, 255), 0)
+                        @color = array('r': @r, 'g': @g, 'b': @b)
+                        set_armor_color(@player, 103, @color)
+                }
+        ))
+        export('rainbowhat.'.@player, @interval)
+<<<
+
+/setrider $horse $rider = >>>
+  set_entity_rider(pinfo($horse, 13), pinfo($rider, 13))
+<<<
+
+*:/rules = /help rules
+
+*:/donor $player $amount = >>>
+  if(!has_permission('group.administrators'), die('You do not have permission to use this command.'))
+  acc_add($player, $amount * 100)
+  msg('Gave '.$player.' '.$amount * 100.' coins.')
+  console('Gave '.$player.' '.$amount * 100.' coins.')
+  if(ponline($player) && array_size(pgroup($player)) > 3) {
+    msg('Player is already in an elevated group. If you still want to assign them to Donors, please do that manually with "/perm player setgroup '.$player.' Donors".')
+    msg('Groups: '.pgroup($player))
+  } else {
+    run('/perm player setgroup' $player 'Donors')
+  }
+  assign(@donors, get_value('donors'))
+  if(@donors == null || @donors == array()) {
+    assign(@donors, array($player))
+  } else {
+    array_push(@donors, $player)
+  }
+  store_value('donors', @donors)
+<<<
+
+*:/say $ = >>>
+  broadcast(color(8).simple_date('h:mm').' '._colorname(player()).player().color(r).': '.$) 
+<<<
+
+*:/spawn [$world] = >>>
+  assign(@blockedworlds, array('outworld', 'outworld_nether', 'outworld_the_end'))
+  ifelse(array_contains(@blockedworlds, $world) || array_contains(@blockedworlds, pworld()),
+    msg('You cannot teleport directly to or from that world.'),
+  $world,
+    assign(@world, _worldid($world))
+    if(!array_contains_ic(get_worlds(), @world), die('Failed to find a world called '.$world.'.'))
+    _warmuptp(2, player(), get_spawn(@world))
+    msg('Teleporting to '.$world.'\'s spawn...'),
+  _warmuptp(2, player(), get_spawn())
+  msg('Teleporting to '._worldname(pworld()).'\'s spawn...')
+  )
+<<<
+
+*:/warp $warp = >>>
+  msg('Attempting to warp...')
+  set_peffect(player(), 9, 1, 5)
+  set_timeout(2 * 1000, closure(
+    make_effect(ploc(), 'GHAST_SHOOT', 20)
+    run('/warp '.$warp)
+    set_peffect(player(), 15, 1, 1)
+    make_effect(ploc(), 'GHAST_SHOOT', 20)
+  ))
+<<<
+
+*:/home [$home=''] = >>>
+  msg('Teleporting...')
+  set_peffect(player(), 9, 1, 5)
+  set_timeout(2 * 1000, closure(
+    make_effect(ploc(), 'GHAST_SHOOT', 20)
+    run('/home '.$home)
+    set_peffect(player(), 15, 1, 1)
+    make_effect(ploc(), 'GHAST_SHOOT', 20)
+  ))
+<<<
+
+/coins [$] = /econ $
+
+#Database control
+/sql delete $namespace = >>>
+  assign(@keys, get_values($namespace))
+  if(array_size(@keys) == 0, die('No keys for that namespace.'))
+  foreach(array_keys(@keys), @key,
+    clear_value(@key)
+  )
+<<<
+
+# MUTING
+*:/ignore $player = >>>
+  try(assign(@player, player($player)), die('No player found.'))
+  import(@ignorelist)
+  if(!array_index_exists(@ignorelist, @player)) {
+    array_set(@ignorelist, @player, array())
+  }
+  if(array_contains_ic(@ignorelist[@player], player()), die('You are already ignoring '.@player.'.'))
+  array_push(@ignorelist[@player], player())
+  msg('You are now ignoring '.@player.'.')
+  export(@ignorelist)
+<<<
+
+*:/unignore $player = >>>
+  try(assign(@player, player($player)), die('No player found.'))
+  import(@ignorelist)
+  if(!array_index_exists(@ignorelist, @player), die('That player wasn\'t ignored by anyone.'))
+  if(!array_contains_ic(@ignorelist[@player], player()), die('You have not ignored that player.'))
+  for(assign(@i, 0), @i < array_size(@ignorelist[@player]), @i++,
+    if(@ignorelist[@player][@i] == player()) {
+      array_remove(@ignorelist[@player], @i)
+      msg('You are no longer ignoring '.@player.'.')
+      break()
+    }
+  )
+  export(@ignorelist)
+<<<
+
+*:/mute $player = >>>
+  if(!has_permission('group.moderators'), die('You do not have permission to use this command.'))
+  try(assign(@player, player($player)), die('No player found.'))
+  import(@ignorelist)
+  if(!array_index_exists(@ignorelist, @player)) {
+    array_set(@ignorelist, @player, array())
+  }
+  if(array_contains(@ignorelist[@player], 'all'), die('Already muted.'))
+  array_push(@ignorelist[@player], 'all')
+  msg(@player.' is now muted.')
+  export(@ignorelist)
+<<<
+
+*:/unmute $player = >>>
+  if(!has_permission('group.moderators'), die('You do not have permission to use this command.'))
+  try(assign(@player, player($player)), die('No player found.'))
+  import(@ignorelist)
+  if(!array_index_exists(@ignorelist, @player) || !array_contains(@ignorelist[@player], 'all'), die('That player isn\'t muted.'))
+  for(assign(@i, 0), @i < array_size(@ignorelist[@player]), @i++,
+    if(@ignorelist[@player][@i] == 'all') {
+      array_remove(@ignorelist[@player], @i)
+      msg(@player.' is no longer muted.')
+      break()
+    }
+  )
+  export(@ignorelist)
+<<<
+
+# APPROVAL SYSTEM #
+*:/approve $player = >>>
+  if(!has_permission('group.regulars'), die('You do not have permission to use this command.'))
+  if(not(ponline($player)), die('That player is not online. Did you misspell their name?'))
+  if(array_contains_ic(pgroup($player), 'Everyone'), die('Player already exists in whitelist.'))
+  sudo('/perm player setgroup' $player 'Everyone')
+  tmsg($player, 'You have been added to the whitelist by ', color(e), player(), color(f), '.')
+  if(!has_permission('group.moderators') || !has_permission('group.engineers')) {
+    assign(@key, concat('approvals.', to_lower($player)))
+    store_value(@key, player())
+  }
+<<<
+
+*:/approvals [$player] = >>>
+  if(!has_permission('group.moderators'), die('You do not have permission to use this command.'))
+  if($player) {
+    assign(@key, concat('approvals.', to_lower($player)))
+    if(not(has_value(@key)), die(concat($player, ' was not approved by a player.')))
+    msg($player, ' was approved by ', color(e), get_value(@key), color(f), '.')
+  } else {
+    msg(get_values('approvals'))
+  }
+<<<
+
+# Put whatever they have in their hand onto their head. This shouldn't dupe.
+*:/hat = >>>
+  if(pinv(player(), null) == null, die(color('gold').'You need to hold something before you can put it on your head.'))
+  if(pinv(player(), 103) != null, die(color('gold').'You already have something on your head.'))
+  assign(@inv, pinv(player(), null))
+  if(@inv['qty'] == 1) {
+    set_pinv(player(), array(null: null))
+    set_pinv(player(), array(103: @inv))
+  } else {
+    array_set(@inv, 'qty', @inv['qty'] - 1)
+    set_pinv(player(), array(null: @inv, 103: array('type': @inv['type'], 'data': @inv['data'], 'qty': 1)))
+  }
+  msg(color('gold').'Fancy!')
+<<<
+
+# PLAYER LISTS #
+*:/who = >>>
+  assign(@list, array(array('Administrators', 'b', ''), array('Moderators', 'b', ''), array('Donors', 'a', ''), array('Engineers', '6', ''), array('Builders', '6', ''), array('Regulars', 'e', ''), array('Everyone', 'e', ''), array('Default', 'f', '')))
+  assign(@allplayers, all_players())
+  foreach(@allplayers, @player,
+    for(assign(@i, 0), lt(@i, array_size(@list)), inc(@i),
+      if(array_contains_ic(pgroup(@player), @list[@i][0]), 
+        array_set(@list[@i], 2, sconcat(@list[@i][2], pinfo(@player, 4)))
+        break()
+      )
+    )
+  )
+  for(assign(@i, 0), lt(@i, array_size(@list)), inc(@i),
+    if(nequals(@list[@i][2], ''),
+      msg(color(@list[@i][1]), @list[@i][0], color(7), ':', @list[@i][2])
+    )
+  )
+<<<
+*:/list = call_alias('/who')
+*:/players = call_alias('/who')
+
+# DICE ROLLING #
+*:/roll $num $max = >>>
+  if(gt($num, 5), die(concat(color(a), '[Dice] ', color(f), 'There\'s a limit of 5 die.')))
+  if(lt($num, 1), die(concat(color(a), '[Dice] ', color(f), 'There\'s a minimum of 1 die.')))
+  if(gt($max, 100), die(concat(color(a), '[Dice] ', color(f), 'There\'s a limit of 100 sides.')))
+  if(lt($max, 3), die(concat(color(a), '[Dice] ', color(f), 'There\'s a minimum of 3 sides.')))
+  assign(@results, '')
+  for( assign(@i, 0), lt(@i, $num), inc(@i), 
+    if( gt(@i, 0),
+      assign(@results, concat(@results, ' and ', color(a), rand(1, $max + 1))),
+      assign(@results, concat(@results, color(a), rand(1, $max + 1)))
+    )
+  )
+  broadcast(concat(color(a), '[Dice] ', color(e), player(), color(f), ' rolled ', color(a), @results, color(f), ' on ', $num, 'x', $max, '-sided die.'))
+<<<
+
+*:/roll [$max=6] = >>>
+  if(gt($max, 100), die(concat(color(a), '[Dice] ', color(f), 'There\'s a limit of 100 sides.')))
+  if(lt($max, 3), die(concat(color(a), '[Dice] ', color(f), 'There\'s a minimum of 3 sides.')))
+  broadcast(concat(color(a), '[Dice] ', color(e), player(), color(f), ' rolled ', color(a), rand(1, $max + 1), color(f), ' on a ', $max, '-sided die.'))
+<<<
+
+# MESSAGING #
+*:/msg $player $ = >>>
+  try(assign(@player, player($player)), @ex, die('Player not found.'))
+  tmsg(@player, color(7).'(From '.player().'): '.color(r).$)
+  msg(color(7).'(To '.@player.'): '.color(r).$)
+  import(@conv)
+  array_set(@conv, @player, player())
+  array_set(@conv, player(), @player)
+  export(@conv)
+<<<
+
+*:/tell $player $ = call_alias('/msg' $player $)
+
+*:/r $ = >>>
+  import(@conv)
+  try(assign(@player, @conv[player()]), die('You have no conversations since this feature was last loaded.'))
+  if(!ponline(@player), die('That player is no longer online.'))
+  tmsg(@player, color(7).'(From '.player().'): '.color(r).$)
+  msg(color(7).'(To '.@player.'): '.color(r).$)
+  array_set(@conv, @player, player())
+  export(@conv)
+<<<
+
+# TELEPORTATION BETWEEN FRIENDS #
+*:/join $player = >>>
+  try(assign(@player, player($player)), @ex, die('Player not found.'))
+  assign(@blockedworlds, array('outworld', 'outworld_nether', 'outworld_the_end'))
+  if(array_contains(@blockedworlds, pworld()), die('You cannot teleport in this galaxy'))
+  if(array_contains(@blockedworlds, pworld($player)), die('That player is out of reach.'))
+  import(@requests)
+  tmsg(@player, color(b), player(), ' has requested to join you. /accept')
+  msg(color(b), 'Request to join sent to ', @player, '.')
+  array_set(@requests, @player, array('join', player()))
+  export(@requests)
+<<<
+
+*:/invite $player = >>>
+  try(assign(@player, player($player)), @ex, die('Player not found.'))
+  assign(@blockedworlds, array('outworld', 'outworld_nether', 'outworld_the_end'))
+  if(array_contains(@blockedworlds, pworld()), die('You cannot teleport in this galaxy'))
+  if(array_contains(@blockedworlds, pworld($player)), die('That player is out of reach.'))
+  import(@requests)
+  tmsg(@player, color(b), player(), ' has requested that you join them. /accept')
+  msg(color(b), 'Invitation sent to ', @player, '.')
+  array_set(@requests, @player, array('invite', player()))
+  export(@requests)
+<<<
+
+*:/accept = >>>
+  assign(@blockedworlds, array('outworld', 'outworld_nether', 'outworld_the_end'))
+  if(array_contains(@blockedworlds, pworld()), die('You cannot teleport in this galaxy'))
+  import(@requests)
+  if(!array_index_exists(@requests, player()), die('There is nothing to accept.'))
+  if(array_contains(@blockedworlds, pworld(@requests[player()][1])), die('That player is out of reach.'))
+  if(!ponline(@requests[player()][1]), die('That player is no longer online.'))
+  if(@requests[player()][0] == 'invite') {
+    msg(color(b), 'Teleporting to '.@requests[player()][1].' in 3 seconds...')
+    tmsg(@requests[player()][1], color(b), 'Teleporting '.player().' in 3 seconds...')
+    _warmuptp(3, player(), ploc(@requests[player()][1]))
+  } else {
+    msg(color(b), 'Teleporting '.@requests[player()][1].' in 3 seconds...')
+    tmsg(@requests[player()][1], color(b), 'Teleporting to '.player().' in 3 seconds...')
+    _warmuptp(3, @requests[player()][1], ploc())
+  }
+  array_remove(@requests, player())
+  export(@requests)
+<<<
+
+#Edit shop signs if you're the owner (your name on the last line)
+*:/shop = >>>
+  msg(color(6).'[Shop] Commands to list and edit shop signs.\n'
+  .color(r).'/shop edit <transaction> '.color(gray).'Edits a line on your shop\n'
+  .'Example: /shop edit buy 1 for 1g\n'
+  .color(r).'/shop list <item> '.color(gray).'Lists stocked shops for that item\n'
+  .'Example: /shop list diamond')
+<<<
+
+*:/shop edit = >>>
+  msg(color(6).'[Shop] Edits a line on your shop that you\'re looking at.\n'
+  .color(r).'Example: '.color(gray).'"/shop edit buy 1 for 1g"')
+<<<
+
+*:/shop edit $transaction $ = >>>
+  if(length($) > 11, die(color(6).'[Shop] There is a 15 character limit per line.'))
+  ifelse(
+    to_lower($transaction) == 'buy', 
+      assign(@shopline, array(1, 'Buy ')),
+    to_lower($transaction) == 'sell',
+      assign(@shopline, array(2, 'Sell ')),
+    die(color(6).'[Shop] There is no Buy or Sell indicated in your command.')
+  )
+  assign(@sign, pcursor())
+  try(assign(@signtext, get_sign_text(@sign)), die(color(6).'[Shop] There is no shop sign there.'))
+  if(@signtext[3] != player(), die(color(6).'[Shop] You do not own this shop.'))
+  if(!((length(@signtext[1]) > 7 && substr(@signtext[1], 0, 3) == 'Buy') || (length(@signtext[2]) > 8 && substr(@signtext[2], 0, 4) == 'Sell')), die(color(6).'[Shop] This doesn\'t look like a shop sign.'))
+  array_set(@signtext, @shopline[0], @shopline[1].$)
+  set_sign_text(@sign, @signtext)
+  msg(color(6).'[Shop] Successfully set to "'.@shopline[1].$.'"')
+  #add this to database for quick reference
+  assign(@itemid, _shop_item(@signtext[0]))
+  assign(@shops, get_value('shops.'.@itemid))
+  if(!@shops, die())
+  @t = @shopline[0] - 1
+  for(assign(@i, 0), @i < length(@shops[@t]), @i++,
+    if(@shops[@t][@i]['location'] == @sign) {
+      array_set(@shops[@t], @i, array('location': @sign, 'price': substr(@signtext[1], 4), 'owner': @signtext[3]))
+      break()
+    }
+  )
+  store_value('shops.'.@itemid, @shops)
+<<<
+
+*:/shop list = >>>
+  msg(color(6).'[Shop] Lists stocked shops for an item.\n'
+  .color(r).'Example: '.color(gray).'"/shop list diamond"\n'
+  .color(r).'The location of each shop is shown as (x,y,z world) coordinates. '
+  .'You can see your current coordinates by pressing F3.')
+<<<
+
+*:/listshops $ = msg('Use /shop list <item>')
+
+*:/listshop $ = msg('Use /shop list <item>')
+
+*:/list shop $ = msg('Use /shop list <item>')
+
+# List available shop items
+*:/shop list $ = >>>
+  assign(@item, reg_split('\\:', $))
+  if(is_numeric(@item[0])) {
+    if(array_index_exists(@item, 1)) {
+      assign(@itemid, @item[0].'.'.@item[1])
+    } else {
+      assign(@itemid, @item[0])
+    }
+  } else {
+    if(array_index_exists(@item, 1)) {
+      assign(@itemid, reg_split('\\:', data_values(@item[0]))[0].'.'.@item[1])
+    } else {
+      assign(@itemid, reg_replace(':', '.', data_values(@item[0])))
+      if(@itemid == null, die())
+    }
+  }
+  assign(@shops, get_value('shops.'.@itemid))
+  if(!@shops) { 
+    die(concat(color(6), '[ListShops] No stocked shops found for '.color(o).'"'.$.'"'))
+  } else {
+    msg(color(6).'[ListShops] All shops for '.color(o).'"'.$.'"')
+  }
+  foreach(@shops[0], @shop,
+    msg('Buy '.@shop['price'].color(7).' ('.@shop['stock'].') '.color('yellow').@shop['owner'].color(7).' '.@shop['location'][0].','.@shop['location'][1].','.@shop['location'][2].' '._worldname(@shop['location'][3]))
+  )
+  foreach(@shops[1], @shop,
+    msg('Sell '.@shop['price'].color(7).' ('.@shop['stock'].') '.color('yellow').@shop['owner'].color(7).' '.@shop['location'][0].','.@shop['location'][1].','.@shop['location'][2].' '._worldname(@shop['location'][3]))
+  )
+<<<
+
+*:/rg flag $region $ = >>>
+  assign(@flag, parse_args($))
+  if(has_permission('group.moderators') || @flag[0] != 'mob-spawning') { 
+    run('/rg flag' $region $)
+    die()
+  }
+  try(assign(@region, sk_region_info($region, pworld())), die('That region doesn\'t exist.'))
+  if(!array_contains_ic(@region[1], player()), die('You do not own this region.'))
+  foreach(@region[3], @flagname,
+    if(@flagname[0] == 'mob-spawning') {
+      sudo('/rg flag' $region 'mob-spawning')
+      break()
+    }
+  )
+  ifelse(!array_index_exists(@flag, 1) || @flag[1] == 'allow',
+    sudo('/rg flag' $region 'deny-spawn')
+  , @flag[1] == 'deny',
+    sudo('/rg flag' $region 'deny-spawn CREEPER,ENDERMAN,SKELETON,SPIDER,ZOMBIE,SLIME')
+  )
+<<<
+
+# Rename your worldguard region
+*:/rg rename $from $to = >>>
+  try(assign(@region, sk_region_info($from, pworld())), die('That region doesn\'t exist.'))
+  if(not(array_contains_ic(@region[1], player())), die('You do not own this region.'))
+  try(assign(@to, reg_match('[a-zA-Z0-9-]{1,32}', $to)[0]), die('You can only use alphanumeric and dash symbols.'))
+  if(array_contains_ic(sk_all_regions(pworld()), @to), die('A region by that name already exists.'))
+  sudo('/rg select' $from)
+  sudo('/rg define' @to array_implode(@region[1]))
+  sudo('/rg pri' @to @region[4])
+  foreach(@region[3], @flag,
+    sudo('/rg flag' @to @flag[0] @flag[1])
+  )
+  if(gt(array_size(@region[2]), 0), sudo('/rg addmember' @to array_implode(@region[2])))
+  sudo('//sel')
+  sudo('/rg remove' $from)
+<<<
+
+#Run commands as other players and show them which command it was
+*:/runas $player $ = >>>
+  if(!has_permission('group.administrators'), die('You do not have permission for this command'))
+  tmsg($player, color(a), player(), ' ran this command for you:')
+  tmsg($player, color(6), $)
+  scriptas($player, 
+    if(not(call_alias($)),
+      sudo($)
+    )
+  )
+<<<
+
+#Set fly mode for people or yourself
+*:/fly $player $bool = >>>
+  if(!has_permission('group.moderators'), die('You do not have permission to use this command.'))
+  try(assign(@player, player($player)), @ex, die('Who is that? Are they online?'))
+  if($bool == '1') {
+    set_pflight(@player, 1)
+    msg('Turned on fly mode for '.@player.'.')
+    tmsg(@player, player().' turned on fly mode on you.')
+  } else {
+    set_pflight(@player, 0)
+    msg('Turned off fly mode for '.@player.'.')
+    tmsg(@player, player().' turned off fly mode on you.')
+  }
+<<<
+
+*:/fly = >>>
+  if((pworld() == 'dev' && array_contains(pgroup(), 'builders')) || array_contains(pgroup(), 'moderators')) {
+    if(phas_flight(),
+      set_pflight(player(), 0)
+      msg('Turned off flying.'),
+      set_pflight(player(), 1)
+      msg('Turned on flying.')
+    )
+  }
+<<<
+
+#Set or reset the MOTD
+*:/setmotd $color $ = >>>
+  if(!has_permission('group.moderators'), die('You do not have permission to use this command.'))
+  store_value('motd', concat(color($color), $))
+  msg('MOTD set to: ', color($color), $)
+<<<
+
+*:/setmotd = >>>
+  if(!has_permission('group.moderators'), die('You do not have permission to use this command.'))
+  store_value('motd', '')
+  msg('MOTD cleared.')
+<<<
+
+/goto $player = >>>
+  run('/tp' $player)
+<<<
+
+#Game mode aliases
+*:/gm $mode $player = >>>
+  if(!has_permission('group.moderators'), die('You do not have permission to use this command.'))
+  try(assign(@player, player($player)), @ex, die('Who is that? Are they online?'))
+  run('/gamemode' $mode @player)
+<<<
+
+*:/gm $mode = >>>
+  if((pworld() == 'dev' && array_contains(pgroup(), 'builders')) || array_contains(pgroup(), 'moderators')) {
+    switch($mode,
+      1,
+        set_pmode('CREATIVE'),
+      0,
+        set_pmode('SURVIVAL'),
+      2,
+        set_pmode('ADVENTURE'),
+      msg('Acceptable values: 0 = survival, 1 = creative, 2, adventure.')
+    )
+  } else {
+    die('You do not have permission to use this command.')
+  }
+<<<
+
+*:/gm = >>>
+  if((array_contains(array('dev', 'custom'), pworld()) && array_contains(pgroup(), 'builders')) || array_contains(pgroup(), 'moderators')) {
+    if(pmode() == 'CREATIVE',
+      set_pmode('SURVIVAL'),
+      set_pmode('CREATIVE')
+    )
+  } else {
+    die('You do not have permission to use this command.')
+  }
+<<<
+
+#Enchant tools
+*:/enchant $type $level = >>>
+  if((!has_permission('group.builders') || pworld() != 'dev') && !has_permission('group.moderators'), die('You do not have permission to use this command.'))
+  enchant_inv_unsafe(null, $type, $level)
+<<<
+
+#Enchant tools
+*:/dye $slot $r $g $b = >>>
+  if((!has_permission('group.builders') || pworld() != 'dev') && !has_permission('group.moderators'), die('You do not have permission to use this command.'))
+  if(is_leather_armor($slot - 1)) {
+    set_armor_color($slot - 1, array($r, $g, $b))
+  } else {
+    msg('That slot isn\'t leather armor.')
+  }
+<<<
+
+#Sign line edit script =D
+*:/sign $line [$=''] = >>>
+  if(!(pworld() == 'dev' && array_contains(pgroup(), 'builders')) && !has_permission('group.moderators'), die('You do not have permission to use this command.'))
+  if( length($) > 15, die('There is a 15 character limit per line.'))
+  assign(@sign, pcursor())
+  if(!is_sign_at(@sign), die('That is not a sign'))
+  assign(@lines, get_sign_text(@sign))
+  array_set(@lines, $line - 1, $)
+  set_sign_text(@sign, @lines),
+<<<
+
+*:/signcolor $line [$color] = >>>
+  if(!has_permission('group.moderators'), die('You do not have permission to use this command.'))
+  assign(@sign, pcursor())
+  if(!is_sign_at(@sign), die('That is not a sign'))
+  assign(@lines, get_sign_text(@sign))
+  if($color) {
+    if(length(strip_colors(@lines[$line - 1])) > 14, die('That line is too long to add a color. (14 char limit)'))
+    array_set(@lines, $line - 1, color($color).strip_colors(@lines[$line - 1]))
+  } else {
+    array_set(@lines, $line - 1, strip_colors(@lines[$line - 1]))
+  }
+  set_sign_text(@sign, @lines)
+<<<
+
+#Alias for setting people to Regulars group
+*:/promote $player = >>>
+  if(!has_permission('group.administrators'), die('You do not have permission to use this command.'))
+  if(array_contains(pgroup($player), 'regulars'), die('Player is already in that group.'))
+  run('/perm player setgroup' $player 'Regulars')
+<<<
+
+*:/effect $player $effect [$strength=1] [$length=30] = >>>
+  try(assign(@player, player($player)), @ex, die('Who is that? Are they online?'))
+  if(!has_permission('group.moderators') || !array_contains(array('custom', 'dev'), pworld(@player)), die('No permission (mods only, custom/dev worlds only).'))
+  assign(@effects, array('speed': '1', 'slowness': '2', 'haste': '3', 'fatique': '4', 'strength': '5', 'health': '6', 'damage': '7', 'jump': '8', 'nausea': '9', 'regen': '10', 'resistance': '11', 'fireresist': '12', 'waterbreathing': '13', 'invis': '14', 'blindness': '15', 'nightvision': '16', 'hunger': '17', 'weakness': '18', 'poison': '19'))
+  if(!array_index_exists(@effects, $effect), die('These are the available effect names: '.array_keys(@effects)))
+  set_peffect(@player, @effects[$effect], $strength, $length)
+<<<
+
+*:/velocity $player $x $y $z = >>>
+  if((array_contains(array('dev', 'custom'), pworld($player)) && array_contains(pgroup(), 'builders')) || array_contains(pgroup(), 'moderators')) {
+    try(assign(@player, player($player)), @ex, die('Who is that? Are they online?'))
+    set_pvelocity(0, 0.1, 0)
+    set_timeout(50, closure(
+      set_pvelocity(@player, $x, $y, $z)
+    ))
+  }
+<<<
+
+*:/display $ = >>>
+  if(length($) > 30, die('The name can only be 30 characters long.'))
+  @inv = pinv(player(), null)
+  @inv['meta']['display'] = colorize($)
+  set_pinv(array(null: @inv))
+<<<
+
+*:/explosion $x $y $z $world $radius = >>>
+  if(!has_permission('group.moderators') || !array_contains(array('custom', 'dev'), pworld(@player)), die('No permission (mods only, custom/dev worlds only).'))
+  explosion(array($x, $y, $z, $world), $radius)
+<<<
+### CAKES ###
+
+*:/cake = >>>
+  msg(color('green').'[CAKE] Commands to create, change and remove cake prizes.\n'
+  .color('r').'/cake set [id] <coins> <cooldown> '.color('gray').'Sets the cake you\'re looking at to give coins when clicked. Cooldown is an integer in days.\n'
+  .color('r').'/cake delete [id] '.color('gray').'Deletes the prize for the cake you\'re looking at.\n'
+  .color('r').'/cake list '.color('gray').'List the names of all cake prizes.\n'
+  .color('r').'/cake info [id] '.color('gray').'Shows cake info and current cooldowns')
+<<<
+
+*:/cake set [$] = >>>
+  if(!array_contains(pgroup(), 'moderators'), die('You do not have permission to use cake commands.'))
+  if(!$, die('/cake set [id] <coins> <cooldown>'))
+  @loc = pcursor()
+  if(get_block_at(@loc) != '92:0', die('That doesn\'t appear to be a cake. Is it obstructed by a sign or other partial block?'))
+
+  @cakes = get_value('cakes')
+  if(!@cakes, @cakes = associative_array())
+  @args = parse_args($)
+  if(array_size(@args) == 3) {
+    if(!is_numeric(@args[1]) || !is_numeric(@args[2]), die('You must use integers after the cake id.'))
+    @id = @args[0]
+    @coins = @args[1]
+    @cooldown = @args[2]
+    if(!array_index_exists(@cakes, @id)) {
+      array_set(@cakes, @id, @loc)
+    }
+  } else if(array_size(@args) == 2) {
+    if(!is_numeric(@args[0]) || !is_numeric(@args[1]), die('You must use integers.'))
+    @id = array_index(@cakes, @loc)
+    if(!@id, die('Can\'t find a cake prize. You need to specify a cake id when creating new cake prizes.'))
+    @coins = @args[0]
+    @cooldown = @args[1]
+  } else {
+    die('/cake set [id] <coins> <cooldown>')
+  }
+
+  if(has_value('cakes.'.@id)) {
+    @cakedata = get_value('cakes.'.@id)
+  } else {
+    @cakedata = associative_array()
+    @cakedata['players'] = associative_array()
+  }
+  @cakedata['coins'] = @coins
+  @cakedata['cooldown'] = @cooldown
+  store_value('cakes', @cakes)
+  store_value('cakes.'.@id, @cakedata)
+  msg('Set '.@id.' to '.@coins.' coins with a '.@cooldown.' day cooldown.')
+<<<
+
+*:/cake delete [$id] = >>>
+  if(!array_contains(pgroup(), 'moderators'), die('You do not have permission to use cake commands.'))
+  @cakes = get_value('cakes')
+  if(!$id) {
+    @loc = pcursor()
+    @id = array_index(@cakes, @loc)
+    if(!@id, die('No cake prize found.'))
+  } else {
+    @id = $id
+  }
+  array_remove(@cakes, @id)
+  store_value('cakes', @cakes)
+  clear_value('cakes.'.@id)
+  msg('Deleted cake '.@id)
+<<<
+
+*:/cake list = >>>
+  if(!array_contains(pgroup(), 'moderators'), die('You do not have permission to use cake commands.'))
+  @cakes = get_value('cakes')
+  msg('Cakes: '.array_keys(@cakes))
+<<<
+
+*:/cake info [$id] = >>>
+  if(!array_contains(pgroup(), 'moderators'), die('You do not have permission to use cake commands.'))
+  @cakes = get_value('cakes')
+  if(!$id) {
+    @loc = pcursor()
+    @id = array_index(@cakes, @loc)
+    if(!@id, die('No cake prize found.'))
+  } else {
+    @id = $id
+  }
+  @cake = get_value('cakes.'.@id)
+  msg('Cake info for "'.@id.'":')
+  msg(color('green').@cake['coins'].color(r).' coins on a '.color('green').@cake['cooldown'].color(r).' day cooldown.')
+  foreach(@cake['players'], @player, @time,
+    msg(@player.': '.color('gray').round(((@time + (@cake['cooldown'] * 86400000)) - time()) / 86400000).' days left')
+  )
+<<<
+
+*:/time $time = >>>
+  if(pworld() == 'outworld', die('You cannot do this in the outworld.'))
+  if(is_numeric($time) && ((pworld() == 'dev' && array_contains(pgroup(), 'builders')) || has_permission('group.moderators'))) {
+    msg('Set time to '.$time)
+    set_world_time(pworld(), $time)
+    die()
+  }
+  if(acc_balance(player()) < 1, die('You do not have any coins.'))
+  switch($time
+  , 'day',
+    if(get_world_time() > 22300 || get_world_time() < 11300, die('It is already day time.'))
+    if(get_world_time() > 13700 && get_world_time() < 22300) {
+      set_world_time(22300)
+    } else {
+      assign(@time, get_world_time() - 11300)
+      assign(@time, 700 - @time)
+      if(@time < 0) {
+        assign(@time, @time + 24000)
+      }
+      set_world_time(@time)
+    }
+    acc_subtract(player(), 1)
+    msg(color('gold').'-1 coin')
+    msg(color('aqua').'You made the sun rise.')
+  , 'night',
+    if(get_world_time() > 11300 && get_world_time() < 22300, die('It is already night time.'))
+    if(get_world_time() > 700 && get_world_time() < 11300) {
+      set_world_time(11300)
+    } else {
+      assign(@time, get_world_time() - 22300)
+      assign(@time, 13700 - @time)
+      if(@time > 24000) {
+        set_world_time(@time - 24000)
+      } else {
+        set_world_time(@time)
+      }
+    }
+    acc_subtract(player(), 1)
+    msg(color('gold').'-1 coin')
+    msg(color('aqua').'You made the sun set.')
+  , #else
+    msg('Accepts only \'time\' or \'day\'')
+  )
+<<<
+
+*:/weather $type = >>>
+  if(acc_balance(player()) < 1, die('You do not have any coins.'))
+  if(pworld() == 'outworld', die('You cannot do this in the outworld.'))
+  switch($type
+  , 'stormy',
+    storm(true)
+    acc_subtract(player(), 1)
+    msg(color('gold').'-1 coin')
+    msg(color('aqua').'You summoned a storm.')
+  , 'sunny',
+    storm(false)
+    acc_subtract(player(), 1)
+    msg(color('gold').'-1 coin')
+    msg(color('aqua').'You calmed the storm.')
+  , #else 
+    msg('Accepts \'stormy\' or \'sunny\'')
+  )
+<<<
+
+
+
+#############
+# PITFRENZY #
+#############
+
+*:/pitfrenzy [$loc] = >>>
+  if(array_contains(array('outworld', 'outworld_nether', 'outworld_the_end'), pworld()), die('You cannot teleport in this galaxy'))
+  switch($loc
+  , '1',
+      set_ploc(array(-276.5, 64.5, -316.5, 'custom'))
+  , '2',
+      set_ploc(array(-276.5, 64.5, -260.5, 'custom'))
+  , 'exit',
+      run('/warp pitfrenzy')
+  , #else
+    die(color(7).'/pitfrenzy <1|2|exit>')
+  )
+  _clear_pinv()
+<<<
+
+*:/watchpitfrenzy [$loc] = >>>
+  if(array_contains(array('outworld', 'outworld_nether', 'outworld_the_end'), pworld()), die('You cannot teleport in this galaxy'))
+  switch($loc
+  , '1',
+      set_ploc(array(-276.5, 83, -338.5, 'custom'))
+  , '2',
+      set_ploc(array(-276.5, 83, -238.5, 'custom'))
+  , 'exit',
+      run('/warp pitfrenzy')
+  , #else
+    die(color(7).'/watchpitfrenzy <1|2|exit>')
+  )
+<<<
+
+############
+# MONOPOLY #
+############
+*:/monopoly draw [$type='community chest'] = >>>
+  if($type == 'chance',
+    assign(@cards, array('Advance to Go (Collect $200)','Advance to Illinois Ave - if you pass Go, collect $200',
+      'Advance token to nearest Utility. If unowned, you may buy it from the Bank. If owned, throw dice and pay owner a total ten times the amount thrown.',
+      'Advance token to the nearest Railroad and pay owner twice the rental to which he/she is otherwise entitled. If Railroad is unowned, you may buy it from the Bank. (There are two of these.)',
+      'Advance to St. Charles Place - if you pass Go, collect $200',
+      'Bank pays you dividend of $50',
+      'Get out of Jail free - this card may be kept until needed, or traded/sold',
+      'Go back 3 spaces','Go directly to Jail - do not pass Go, do not collect $200',
+      'Make general repairs on all your property - for each house pay $25 - for each hotel $100',
+      'Pay poor tax of $15',
+      'Take a trip to Reading Railroad - if you pass Go collect $200',
+      'Take a walk on the Boardwalk - advance token to Boardwalk',
+      'You have been elected chairman of the board - pay each player $50',
+      'Your building loan matures - collect $150',
+      'You have won a crossword competition - collect $100'))
+    assign(@card, @cards[rand(array_size(@cards))])
+    assign(@msgs, concat(color('LIGHT_PURPLE'), '[MONOPOLY] ', color(a), player(), color(f), ' drew a Chance card:\n[ ', color(7),  @card, color(f), ' ]'))
+    _regionmsg('monopoly', @msgs)
+  , #else if community chest
+    assign(@cards, array('Advance to Go (Collect $200)',
+      'Bank error in your favor - collect $75',
+      'Doctor\'s fees - Pay $50',
+      'Get out of jail free - this card may be kept until needed, or sold',
+      'Go to jail - go directly to jail - Do not pass Go, do not collect $200',
+      'It is your birthday Collect $10 from each player',
+      'Grand Opera Night - collect $50 from every player for opening night seats',
+      'Income Tax refund - collect $20',
+      'Life Insurance Matures - collect $100',
+      'Pay Hospital Fees of $100',
+      'Pay School Fees of $50',
+      'Receive $25 Consultancy Fee',
+      'You are assessed for street repairs - $40 per house, $115 per hotel',
+      'You have won second prize in a beauty contest- collect $10',
+      'You inherit $100',
+      'From sale of stock you get $50',
+      'Holiday Fund matures - Receive $100'))
+    assign(@card, @cards[rand(array_size(@cards))])
+    assign(@msgs, concat(color('LIGHT_PURPLE'), '[MONOPOLY] ', color(a), player(), color(f), ' drew a Community Chest card:\n[ ', color(7),  @card, color(f), ' ]'))
+    _regionmsg('monopoly', @msgs)
+  )
+<<<
+
+

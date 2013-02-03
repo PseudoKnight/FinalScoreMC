@@ -1,0 +1,198 @@
+#########
+# CLUCK #
+#########
+
+*:/cluck = >>>
+msg(color('gold').'[Cluck] You can play Cluck in Frog Park just outside of the event house')
+msg(color('gold').'[Cluck] '.color(r).'/cluck top10 '.color('gray').'List the top 10 high scores for Cluck')
+msg(color('gold').'[Cluck] '.color(r).'/cluck start '.color('gray').'Start a round of Cluck')
+msg(color('gold').'[Cluck] '.color(r).'/cluck reset '.color('gray').'(restricted) Resets the high scores')
+<<<
+
+# Reset top scores when difficulty is changed in some way
+/cluck reset = >>>
+  store_value('cluck.top', array())
+<<<
+
+# List the top 10 scores.
+# Scores use a associative array with scores as indexes and player names in an array as values.
+# Easiest way I could think of for sorting.
+*:/cluck top10 = >>>
+  assign(@scores, get_value('cluck.top'))
+  msg(color(l).'TOP 10 CLUCK SCORES')
+  for(assign(@i, 100), @i > 0, @i--,
+    if(array_index_exists(@scores, @i)) {
+      foreach(@scores[@i], @score,
+        msg(@i.' - '.@score)
+      )
+    }
+  )
+<<<
+
+# Round start. Player can run command or use button command sign.
+# I might throw this into a procedure instead. It doesn't need to be a command.
+*:/cluck start [$id=0] = >>>
+  if(pworld() != 'custom', die()) # This saves me the trouble of checking later.
+  assign(@spawnloc, array(array(-575.5, 69, -334), array(-575.5, 69, -323))) 
+   # @spawnloc is the smallest coordinate for available hicken spawn locations
+   # For @spawnloc and @color, 0 = player 1, 1 = player 2
+  assign(@color, array('yellow', 'gold'))
+  assign(@sound, array(
+    'gameover': array(-563, 55, -325), 
+    'winround': array(-563, 58, -325), 
+    'startround': array(-563, 52, -325),
+    'bat': array(-563, 58, -327)
+  ))
+   # These are coordinates for levers for noteblock sequences
+
+  proc(_reset_cluck,
+    return(array(
+    'round': 1, 
+    'count': 10, # countdown for chicken spawns
+    'chickens': array(), # chicken entity ids to check if they're alive at round end
+    'hit': 0, # num chickens hit
+    'player': '',
+    'active': 0, # if round is in progress
+    'score': 0, # cumulative hit chickens 
+    'lastspawn': 0 # timestamp for last chicken spawned
+    ))
+  )
+
+  import(@cluck)
+  if(@cluck == false, @cluck = _reset_cluck())
+
+  if(@cluck['active'] == 1, die('Already in progress.'))
+  if(@cluck['player'] != player() && @cluck['player'] != '' && ponline(@cluck['player']) && array_contains(sk_current_regions(@cluck['player']), 'cluck')) { 
+    die('Someone else in this region is still playing their rounds.')
+  }
+  if(@cluck['player'] != player(), @cluck = _reset_cluck())
+  if(@cluck['player'] == '', assign(@cluck['player'], player()))
+  assign(@cluck['active'], 1)
+  export(@cluck)
+  _regionmsg('cluck', color(l).'Round '.@cluck['round'].': Hit '.floor((@cluck['round'] * 0.5) + 5).' chickens.')
+  _clear_pinv()
+  set_pinv(@player, array(0: array(type: 261), 1: array(type: 262, qty: 10)))
+  set_block_at(@sound['startround'], '69:13')
+  set_timeout(50, closure(set_block_at(@sound['startround'], '69:5')))
+
+  assign(@interval, set_interval(500, closure(
+    import(@cluck)
+    # Let's make sure the player isn't cheating, but we'll just reset the round
+    if(!ponline(@cluck['player']) || !array_contains(sk_current_regions(@cluck['player']), 'cluck'.$id)) {
+      clear_task()
+      if(ponline(@cluck['player']) && pworld(@cluck['player']) == 'custom') {
+        _clear_pinv()
+        set_plevel(@cluck['player'], 0)
+        set_pexp(@cluck['player'], 0)
+      }
+      @cluck = _reset_cluck()
+      export(@cluck)
+      die('You stepped off the shooting pad. Reset Cluck.')
+    }
+    # Let's check if some other player is where they shouldn't be
+    foreach(all_players(), @player,
+      if(pworld(@player) == 'custom' && array_contains(sk_current_regions(@player), 'cluckdeny'.$id)) {
+        scriptas(@player,
+          run('/warp park')
+          msg('Don\'t get in player\'s way.')
+        )
+      }
+    )
+    # spawn ALL the chickens!
+    if(rand(20) < (1 + @cluck['round']) || (time() - @cluck['lastspawn']) > 4000) {
+      if(rand(20) > 0) {
+        assign(@entityid, spawn_mob('chicken', 1, array(@spawnloc[$id][0], @spawnloc[$id][1], @spawnloc[$id][2] + rand(8), 'custom')))
+        if(rand(10) < 1, set_mob_age(@entityid[0], -24000))
+      } else {
+        assign(@entityid, spawn_mob('bat', 1, array(@spawnloc[$id][0], @spawnloc[$id][1] - 4, @spawnloc[$id][2] + rand(8), 'custom')))
+      set_block_at(@sound['bat'], '69:13')
+      set_timeout(50, closure(set_block_at(@sound['bat'], '69:5')))
+      }
+      array_push(@cluck['chickens'], @entityid[0])
+      assign(@cluck['count'], @cluck['count'] - 1)
+      assign(@cluck['lastspawn'], time())
+    }
+    export('cluck'.$id, @cluck)
+
+    # No more chickens to spawn? Let's end the round
+    if(@cluck['count'] < 1) {
+
+      set_timeout(5000, closure(
+        import(@cluck)
+        foreach(@cluck['chickens'], @chicken,
+          # If an exception is made when the entity id can't be found, let's assume it died.
+          try(if(get_entity_health(@chicken), set_entity_health(@chicken, 0)),
+            assign(@cluck['hit'], @cluck['hit'] + 1)
+          )
+        )
+        assign(@cluck['score'], @cluck['score'] + @cluck['hit'])
+        _regionmsg('cluck', color(@color[$id]).color(l).@cluck['player'].' hit '.@cluck['hit'].' chickens.')
+
+        # Did we not meet the required hit chickens? (or round 10)
+        if(@cluck['hit'] < floor((@cluck['round'] * 0.5) + 5) || @cluck['round'] == 10) {
+          _regionmsg('cluck', color(l).'GAMEOVER! Score: '.@cluck['score'])
+
+          # Let's countdown the top scores until we hit 10
+          # If the player's score comes first, it's a high score
+          assign(@scores, get_value('cluck.top'))
+          assign(@top10, 0)
+          assign(@top, false)
+          for(assign(@i, 100), @i > 0, @i--,
+            if(array_index_exists(@scores, @i)) {
+              if(@top10 >= 10 || (@top == true && @top10 == 9)) {
+                array_remove(@scores, @i)
+              } else {
+                assign(@top10, @top10 + array_size(@scores[@i]))
+              }
+            }
+            if(@i <= @cluck['score'] && @top10 < 10, assign(@top, true))
+          )
+          # Let's add their high score to the list
+          if(@top) {
+            if(array_index_exists(@scores, @cluck['score'])) {
+              array_push(@scores[@cluck['score']], @cluck['player'])
+            } else {
+              array_set(@scores, @cluck['score'], array(@cluck['player']))
+            }
+            _regionmsg('cluck', color('green').color(l).'HIGH SCORE! '.color('gold').'+ 10 coins')
+            acc_add(@cluck['player'], 10)
+            store_value('cluck.top', @scores)
+            # _populate_signs(array(
+              # array(-565, 66, -337, 'custom'),
+              # array(-565, 65, -337, 'custom'),
+              # array(-565, 64, -337, 'custom')
+            # ))
+          }
+
+          set_plevel(@cluck['player'], @cluck['score'])
+          set_pexp(@cluck['player'], (@cluck['round']) * 10)
+          assign(@cluck['score'], 0)
+          assign(@cluck['round'], 1)
+          assign(@cluck['player'], '')
+          set_block_at(@sound['gameover'], '69:13')
+          set_timeout(50, closure(set_block_at(@sound['gameover'], '69:5')))
+        } else {
+          if(@cluck['round'] >= 3) {
+            @coins = @cluck['round'] - 2
+            msg(color('gold').'+ '.@coins.if(@coins >=2, ' coins', ' coin'))
+            acc_add(@cluck['player'], @coins)
+          }
+          assign(@cluck['round'], @cluck['round'] + 1)
+          set_block_at(@sound['winround'], '69:13')
+          set_timeout(50, closure(set_block_at(@sound['winround'], '69:5')))
+          
+        }
+        # Reset for the next round.
+        assign(@cluck['chickens'], array())
+        assign(@cluck['hit'], 0)
+        assign(@cluck['count'], 10)
+        assign(@cluck['active'], 0)
+        set_plevel(@cluck['player'], @cluck['score'])
+        set_pexp(@cluck['player'], (@cluck['round'] - 1) * 10)
+        export(@cluck)
+        _clear_pinv()
+      ))
+      clear_task()
+    }
+  )))
+<<<
