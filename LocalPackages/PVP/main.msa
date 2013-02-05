@@ -212,9 +212,10 @@ switch($action
     , 'jumppad',
       @block = split(':', get_block_at(ploc()))
       if(@block[0] != '35', die('You need to stand on the wool block for the jump pad.'))
-      if(!$value3, die('This requires all three vector values. (x y z)'))
+      @jumppad = split(',', $value1)
       if(!array_index_exists(@arena, 'jumppads'), @arena['jumppads'] = associative_array())
-      array_set(@arena['jumppads'], @block[1], array('x': $value1, 'y': $value2, 'z': $value3))
+      array_set(@arena['jumppads'], @block[1], array('x': @jumppad[0], 'y': @jumppad[1], 'z': @jumppad[2]))
+      if($value2 == 'true', @arena['jumppads'][@block[1]]['double'] = 'true')
       msg('Added vector to jumpad for '.data_name(@block[0].':'.@block[1]).'.')
 
     , 'denydrop',
@@ -377,6 +378,7 @@ if(array_index_exists(@arena, 'max')) {
 # WATCH #
 #########
 , 'warp',
+if(array_contains_ic(array('outworld', 'outworld_nether', 'outworld_the_end'), pworld()), die('You cannot run this in the outworld.'))
 if(array_index_exists(@arena, 'lobby')) {
   set_ploc(@arena['lobby'])
 } else {
@@ -437,12 +439,8 @@ if(array_index_exists(@arena, 'time')) {
 @pvp['running'] = true
 
 # DEFINE PROCEDURES
-proc('_remove_player_'.@id, @player, assign(@id, @id), assign(@arena, @arena),
+proc('_check_goals', assign(@id, @id), assign(@arena, @arena),
   @pvp = import('pvp'.@id)
-  
-  array_remove(@pvp['players'], @player)
-  unbind(@player.'death')
-  unbind(@player.'interact')
 
   if(array_index_exists(@arena, 'teams')) {
     @count = array(0, 0)
@@ -463,9 +461,7 @@ proc('_remove_player_'.@id, @player, assign(@id, @id), assign(@arena, @arena),
         acc_add(@p, @pvp['coins'])
         tmsg(@p, color('gold').'+ '.@pvp['coins'].if(@pvp['coins'] >= 2, ' coins', ' coin'))
       }
-      unbind(@p.'death')
-      unbind(@p.'spawn')
-      unbind(@p.'interact')
+
       set_timeout(3000, closure(
         set_ploc(@p, @arena['lobby'])
         _clear_pinv(@p)
@@ -482,18 +478,20 @@ proc('_remove_player_'.@id, @player, assign(@id, @id), assign(@arena, @arena),
     if(array_index_exists(@arena, 'redstone')) {
       set_block_at(@arena['redstone'], '69:6')
     }
-    unbind('ff'.@id)
+    unbind(@id.'ff')
+    unbind(@id.'death')
+    unbind(@id.'spawn')
+    unbind(@id.'interact')
     clear_task(@pvp['slowinterval'])
     if(array_index_exists(@pvp, 'fastinterval')) {
       clear_task(@pvp['fastinterval'])
     }
     @pvp = array('players': associative_array(), 'running': false)
+    export('pvp'.@id, @pvp)
   }
-
-  export('pvp'.@id, @pvp)
 )
 
-proc('_give_kit'.@id, @player, assign(@id, @id), assign(@arena, @arena),
+proc('_give_kit', @player, assign(@id, @id), assign(@arena, @arena),
 if(array_index_exists(@arena, 'kit')) {
   @pvp = import('pvp'.@id)
   if(array_index_exists(@arena, 'teams')) {
@@ -520,11 +518,11 @@ set_timeout(3000, closure(
       set_ploc(@player, @arena['spawns'][0][@c])
       if(@c == array_size(@arena['spawns'][0]) - 1, @c = 0, @c++)
     }
-    set_pbed_location(@player, array(-544, 62, -368, 'custom'))
+    set_pbed_location(@player, @arena['lobby'])
     scriptas(@player, sudo('/remove items 45'))
 
     _clear_pinv(@player)
-    call_proc('_give_kit'.@id, @player)
+    _give_kit(@player)
     set_phunger(@player, 20)
     set_psaturation(@player, 5)
     set_phealth(@player, 20)
@@ -533,92 +531,90 @@ set_timeout(3000, closure(
         set_peffect(@player, @effect, @data['strength'], @data['length'])
       )
     }
-
-    bind(player_death, array('priority': 'high', 'id': @player.'death'), array('player': @player), @event, assign(@arena, @arena), assign(@id, @id),
-      @pvp = import('pvp'.@id)
-      if(array_index_exists(@arena, 'lives')) {
-        @pvp['players'][player()]['lives'] = @pvp['players'][player()]['lives'] - 1
-      }
-      export('pvp'.@id, @pvp)
-      if(array_index_exists(@arena, 'teamcolor')) {
-        @parts = parse_args(@event['death_message'])
-        @parts[0] = color(@arena['teamcolor'][@pvp['players'][player()]['team']]).player().color('r')
-        @deathmessage = array_implode(@parts)
-      } else {
-        @deathmessage = @event['death_message']
-      }
-      if(@pvp['players'][player()]['lives'] <= 0) {
-        _regionmsg(@arena['broadcast'], color('gray').'[PVP] '.color(r).@deathmessage)
-        if(array_index_exists(@arena, 'lives'), 
-          call_proc('_remove_player_'.@id, player()))
-      } else if(@pvp['players'][player()]['lives'] == 1) {
-        _regionmsg(@arena['broadcast'], color('gray').'[PVP] '.color(r).@deathmessage.color('red').' (One life left!)')
-      } else {
-        _regionmsg(@arena['broadcast'], color('gray').'[PVP] '.color(r).@deathmessage.' ('.@pvp['players'][player()]['lives'].' lives left)')
-      }
-      if(array_index_exists(@arena, 'denydrop')) {
-        @drops = array()
-        for(@i = 0, @i < array_size(@event['drops']), @i++,
-          if(array_index(@arena['denydrop'], @event['drops'][@i]['type']) == null) {
-            array_push(@drops, @event['drops'][@i])
-          }
-        )
-        modify_event('drops', @drops)
-      }
-    )
-
-    bind(player_spawn, array('id': @player.'spawn'), array('player': @player), @event, assign(@arena, @arena), assign(@id, @id),
-      @pvp = import('pvp'.@id)
-      if(array_index_exists(@pvp['players'], player())) {
-        if(!array_index_exists(@arena, 'lives') && !array_contains(sk_regions_at(@event['location']), @arena['region'])) {
-          call_proc('_remove_player_'.@id, player())
-          set_timeout(50, closure( set_ploc(@arena['lobby']) ))
-          unbind()
-        } else {
-          call_proc('_give_kit'.@id, player())
-          if(array_index_exists(@arena, 'lives')) {
-          if(array_index_exists(@arena, 'teams')) {
-            @r = rand(0, array_size(@arena['spawns'][@pvp['players'][player()]['team']]))
-            modify_event('location', @arena['spawns'][@pvp['players'][player()]['team']][@r])
-          } else {
-            @r = rand(0, array_size(@arena['spawns'][0]))
-            modify_event('location', array_rand(@arena['spawns'][0], 1, false)[0])
-          }
-          }
-          if(array_index_exists(@arena, 'effects')) {
-            set_timeout(50, closure(
-            foreach(@arena['effects'], @effect, @data,
-              set_peffect(@player, @effect, @data['strength'], @data['length'])
-            )
-            ))
-          }
-        }
-      } else {
-        modify_event('location', @arena['lobby'])
-        unbind()
-      }
-    )
-
-    bind(player_interact, array('id': @player.'interact'), array('player': @player, 'block': '54'), @event, assign(@arena, @arena), assign(@id, @id),
-      if(array_index_exists(@arena, 'chestspawns')) {
-        @pvp = import('pvp'.@id)
-        for(@i = 0, @i < array_size(@arena['chestspawns']), @i++,
-          if(@arena['chestspawns'][@i]['loc'] == @event['location']) {
-            cancel()
-            set_block_at(@event['location'], 0)
-            @pvp['chestspawns'][@i] = time()
-          }
-        )
-        export('pvp'.@id, @pvp)
-      }
-    )
-
   )
 
-  if(array_index_exists(@arena, 'ff') && @arena['ff'] == 'false') {
-    bind(entity_damage_player, array('id': 'ff'.@id), null, @event, assign(@id, @id),
+  bind(player_death, array('priority': 'high', 'id': @id.'death'), null, @event, assign(@arena, @arena), assign(@id, @id),
+    @pvp = import('pvp'.@id)
+    if(!array_index_exists(@pvp['players'], player()), die())
+    if(array_index_exists(@arena, 'lives')) {
+      @pvp['players'][player()]['lives'] = @pvp['players'][player()]['lives'] - 1
+    }
+    export('pvp'.@id, @pvp)
+    if(array_index_exists(@arena, 'teamcolor')) {
+      @parts = parse_args(@event['death_message'])
+      @parts[0] = color(@arena['teamcolor'][@pvp['players'][player()]['team']]).player().color('r')
+      @deathmessage = array_implode(@parts)
+    } else {
+      @deathmessage = @event['death_message']
+    }
+    if(@pvp['players'][player()]['lives'] <= 0) {
+      _regionmsg(@arena['broadcast'], color('gray').'[PVP] '.color(r).@deathmessage)
+      if(array_index_exists(@arena, 'lives'),
+        array_remove(@pvp['players'], @player)
+      )
+    } else if(@pvp['players'][player()]['lives'] == 1) {
+      _regionmsg(@arena['broadcast'], color('gray').'[PVP] '.color(r).@deathmessage.color('red').' (One life left!)')
+    } else {
+      _regionmsg(@arena['broadcast'], color('gray').'[PVP] '.color(r).@deathmessage.' ('.@pvp['players'][player()]['lives'].' lives left)')
+    }
+    if(array_index_exists(@arena, 'denydrop')) {
+      @drops = array()
+      for(@i = 0, @i < array_size(@event['drops']), @i++,
+        if(array_index(@arena['denydrop'], @event['drops'][@i]['type']) == null) {
+          array_push(@drops, @event['drops'][@i])
+        }
+      )
+      modify_event('drops', @drops)
+    }
+  )
+
+  bind(player_spawn, array('id': @id.'spawn'), null, @event, assign(@arena, @arena), assign(@id, @id),
+    @pvp = import('pvp'.@id)
+    if(!array_index_exists(@pvp['players'], player()), die())
+    if(!array_index_exists(@arena, 'lives') && !array_contains(sk_regions_at(@event['location']), @arena['region'])) {
+      array_remove(@pvp['players'], @player)
+      set_timeout(50, closure(set_ploc(@player, @arena['lobby'])))
+    } else {
+      _give_kit(player())
+      if(array_index_exists(@arena, 'lives')) {
+      if(array_index_exists(@arena, 'teams')) {
+        @r = rand(0, array_size(@arena['spawns'][@pvp['players'][player()]['team']]))
+        modify_event('location', @arena['spawns'][@pvp['players'][player()]['team']][@r])
+      } else {
+        @r = rand(0, array_size(@arena['spawns'][0]))
+        modify_event('location', array_rand(@arena['spawns'][0], 1, false)[0])
+      }
+      }
+      if(array_index_exists(@arena, 'effects')) {
+        set_timeout(50, closure(
+        foreach(@arena['effects'], @effect, @data,
+          set_peffect(@player, @effect, @data['strength'], @data['length'])
+        )
+        ))
+      }
+    }
+    export('pvp'.@id, @pvp)
+  )
+
+  if(array_index_exists(@arena, 'chestspawns')) {
+    bind(player_interact, array('id': @id.'interact'), array('block': '54'), @event, assign(@arena, @arena), assign(@id, @id),
       @pvp = import('pvp'.@id)
+      if(!array_index_exists(@pvp['players'], player()), die())
+      for(@i = 0, @i < array_size(@arena['chestspawns']), @i++,
+        if(@arena['chestspawns'][@i]['loc'] == @event['location']) {
+          cancel()
+          set_block_at(@event['location'], 0)
+          @pvp['chestspawns'][@i] = time()
+        }
+      )
+      export('pvp'.@id, @pvp)
+    )
+  }
+
+  if(array_index_exists(@arena, 'ff') && @arena['ff'] == 'false') {
+    bind(entity_damage_player, array('id': @id.'ff'), null, @event, assign(@id, @id),
       if(@event['damager'] == 'PLAYER' || @event['damager'] == 'ARROW') {
+        @pvp = import('pvp'.@id)
         if(array_index_exists(@pvp['players'], player())
         && array_index_exists(@pvp['players'], @event['data'])
         && @pvp['players'][player()]['team'] == @pvp['players'][@event['data']]['team']) {
@@ -628,13 +624,11 @@ set_timeout(3000, closure(
     )
   }
 
-  assign(@pvp['slowinterval'], set_interval(2000, closure(assign(@arena, @arena), assign(@id, @id),
+  assign(@pvp['slowinterval'], set_interval(1000, closure(assign(@arena, @arena), assign(@id, @id),
     @pvp = import('pvp'.@id)
     foreach(array_keys(@pvp['players']), @player,
       if(!ponline(@player)) {
-        call_proc('_remove_player_'.@id, @player)
-        unbind(@player.'spawn')
-        die()
+        array_remove(@pvp['players'], @player)
       } else if(!array_contains(sk_current_regions(@player), @arena['region'])
       && ploc(@player)[1] > 0) {
         if(array_index_exists(@arena, 'teamcolor')) {
@@ -642,12 +636,14 @@ set_timeout(3000, closure(
         } else {
           _regionmsg(@arena['broadcast'], color('gray').'[PVP] '.color(r).@player.' left the arena.')
         }
-        call_proc('_remove_player_'.@id, @player)
-        unbind(@player.'spawn')
+        array_remove(@pvp['players'], @player)
         _remove_peffects(@player)
-        set_ploc(@player, @arena['lobby'])
-        _clear_pinv(@player)
-        die()
+        if(array_contains(sk_current_regions(@player), @arena['broadcast'])) {
+          set_ploc(@player, @arena['lobby'])
+        }
+        if(pworld(@player) == 'custom') {
+          _clear_pinv(@player)
+        }
       }
     )
     if(array_index_exists(@arena, 'itemspawns')) {
@@ -655,8 +651,6 @@ set_timeout(3000, closure(
         if((@pvp['itemspawns'][@i] + (@arena['itemspawns'][@i]['cooldown'] * 1000)) < time()) {
           item_drop(@arena['itemspawns'][@i]['loc'], @arena['itemspawns'][@i]['item']['type'].':'.@arena['itemspawns'][@i]['item']['data'], @arena['itemspawns'][@i]['item']['qty'])
           @pvp['itemspawns'][@i] = time()
-          export('pvp'.@id, @pvp)
-          die()
         }
       )
     }
@@ -669,11 +663,11 @@ set_timeout(3000, closure(
             set_inventory_item(@arena['chestspawns'][@i]['loc'], @y, @arena['chestspawns'][@i]['items'][@y])
           )
           @pvp['chestspawns'][@i] = time()
-          export('pvp'.@id, @pvp)
-          die()
         }
       )
     }
+    export('pvp'.@id, @pvp)
+    _check_goals()
   )))
 
   if(array_index_exists(@arena, 'jumppads')) {
@@ -686,18 +680,12 @@ set_timeout(3000, closure(
         if(array_index_exists(@arena['jumppads'], @color)) {
           if(!array_index_exists(@pvp['players'][@player], 'jumptime')
           || (@pvp['players'][@player]['jumptime'] + 1000) < time()) {
-            set_pvelocity(@player, 0, 0.1, 0)
-            set_timeout(50, closure(
-          # for(@i = 0, @i < array_size(@arena['jumppads'][@color]), @i++,
-            # if(@i > 0) {
-              # set_timeout(@i * 500, closure(
-                # set_pvelocity(@player, @arena['jumppads'][@color][@i])
-              # ))
-            # } else {
-                set_pvelocity(@player, @arena['jumppads'][@color])
-            # }
-          # )
-            ))
+            make_effect(ploc(@player), 'MOBSPAWNER_FLAMES')
+            set_pvelocity(@player, @arena['jumppads'][@color]['x'], @arena['jumppads'][@color]['y'], @arena['jumppads'][@color]['z'])
+            if(array_index_exists(@arena['jumppads'][@color], 'double'), set_timeout(100, closure(
+              set_pvelocity(@player, @arena['jumppads'][@color]['x'], @arena['jumppads'][@color]['y'], @arena['jumppads'][@color]['z'])
+            )))
+            make_effect(ploc(@player), 'BLAZE_SHOOT', 16)
             @pvp['players'][@player]['jumptime'] = time()
             export('pvp'.@id, @pvp)
           }

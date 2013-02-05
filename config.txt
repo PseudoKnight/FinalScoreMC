@@ -24,7 +24,7 @@
                 export('rainbowhat.'.@player, null)
                 die('No more rainbow hat :(')
         }
-        if(pinv(@player)[103] != null, die('Safety check failed. Remove helmet!'))
+        if(pinv(@player)[103] != null, die('Safety check failed. Remove current helmet!'))
         msg('Rainbow hat!!!')
         set_pinv(@player, array(103: array(type: 298)))
         @interval = set_interval(100, closure(
@@ -32,10 +32,11 @@
                         clear_task()
                 } else {
                         @color = get_armor_color(@player, 103)
-                        @r = max(min(@color['r'] + rand(21) - 10, 255), 0)
-                        @g = max(min(@color['g'] + rand(21) - 10, 255), 0)
-                        @b = max(min(@color['b'] + rand(21) - 10, 255), 0)
-                        @color = array('r': @r, 'g': @g, 'b': @b)
+                        @color = array(
+                          'r': max(min(@color['r'] + rand(21) - 10, 255), 0),
+                          'g': max(min(@color['g'] + rand(21) - 10, 255), 0),
+                          'b': max(min(@color['b'] + rand(21) - 10, 255), 0)
+                        )
                         set_armor_color(@player, 103, @color)
                 }
         ))
@@ -454,9 +455,10 @@
 #Run commands as other players and show them which command it was
 *:/runas $player $ = >>>
   if(!has_permission('group.administrators'), die('You do not have permission for this command'))
-  tmsg($player, color(a), player(), ' ran this command for you:')
-  tmsg($player, color(6), $)
-  scriptas($player, 
+  try(assign(@player, player($player)), die('No player found.'))
+  tmsg(@player, color(a), player(), ' ran this command for you:')
+  tmsg(@player, color(6), $)
+  scriptas(@player, 
     if(not(call_alias($)),
       sudo($)
     )
@@ -596,14 +598,40 @@
   set_peffect(@player, @effects[$effect], $strength, $length)
 <<<
 
-*:/velocity $player $x $y $z = >>>
-  if((array_contains(array('dev', 'custom'), pworld($player)) && array_contains(pgroup(), 'builders')) || array_contains(pgroup(), 'moderators')) {
+*:/velocity $player $x $y $z [$double] = >>>
+  if(get_command_block() || (array_contains(array('dev', 'custom'), pworld($player)) && array_contains(pgroup(), 'builders')) || array_contains(pgroup(), 'moderators')) {
     try(assign(@player, player($player)), @ex, die('Who is that? Are they online?'))
-    set_pvelocity(0, 0.1, 0)
     set_timeout(50, closure(
       set_pvelocity(@player, $x, $y, $z)
+      if($double, set_timeout($double, closure( set_pvelocity(@player, $x, $y, $z))))
     ))
   }
+<<<
+
+*:/jumppad $color $x $y $z = >>>
+  if(!array_contains(pgroup(), 'moderators'), die('You do not have permission here.'))
+  @player = player()
+  assign(@task, set_interval(150, closure(
+    if(!ponline(@player), clear_task())
+    @pad = import('jumppad')
+    if(substr(get_block_at(ploc(@player)), 0, 2) == '35') {
+      if(substr(get_block_at(ploc(@player)), 3) == $color) {
+        if(@pad[0] + 1000 < time()) {
+          set_pvelocity(@player, $x, $y, $z)
+          msg('Bam!')
+          @pad[0] = time()
+          export('jumppad', @pad)
+        }
+      }
+    }
+  )))
+  @pad = array(time(), @task)
+  export('jumppad', @pad)
+<<<
+
+*:/stopjumppad = >>>
+  @pad = import('jumppad')
+  clear_task(@pad[1])
 <<<
 
 *:/display $ = >>>

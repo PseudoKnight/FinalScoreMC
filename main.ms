@@ -170,6 +170,7 @@ bind(player_chat, null, null, @event,
     )
    modify_event('recipients', @recipients)
   }
+  modify_event('message', colorize(@event['message']))
   modify_event('format', color('dark_gray').simple_date('h:mm').' '._colorname(player()).player().color('gray').': '.color('r').'%2$s')
 )
 
@@ -474,6 +475,9 @@ length(@signtext[3]) > 8 && substr(@signtext[3], 0, 3) == color('yellow').'-', #
   if(@event['action'] == 'left_click_block') {
     msg(color('yellow').'[Coin Shop] '.color(r).@count.' item(s) left. Your coins: '.if(acc_balance(player()) < @cost[1], color('red'), color('green')).round(acc_balance(player())))
   } else { #right_click_block
+    if(array_contains_ic(array('JewManGroup'), player())) { 
+      die('You are not allowed to use coins due to cheating.')
+    }
     if(@count < 1, die(color('yellow').'[Coin Shop] '.color(r).'There are no items left.'))
     if(acc_balance(player()) < @cost[1], die(color('yellow').'[Coin Shop] '.color(r).'You only have '.color('red').round(acc_balance(player())).color(r).' left.'))
     for(assign(@i, 0), @i < get_inventory_size(@chestloc), @i++,
