@@ -126,8 +126,8 @@ bind(world_changed, null, array('to': 'outworld'), @event,
 
 # Log commands
 bind(player_command, null, null, @event,
-  if(is_alias(@event['command']) && !array_contains_ic(array('/join', '/accept', '/invite'), @event['prefix'])) {
-    console(@event['player'].' ran: '.@event['command'], false)
+  if(is_alias(@event['command'])) {
+    console(@event['player'].': '.@event['command'], false)
   }
 )
 
