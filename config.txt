@@ -16,31 +16,12 @@
   run('/reloadaliases')
 <<<
 
-/rainbowhat [$player] = >>>
-        @player = player()
-        if($player != '', @player = player($player))
-        if(import('rainbowhat.'.@player) != null){
-                clear_task(import('rainbowhat.'.@player))
-                export('rainbowhat.'.@player, null)
-                die('No more rainbow hat :(')
-        }
-        if(pinv(@player)[103] != null, die('Safety check failed. Remove current helmet!'))
-        msg('Rainbow hat!!!')
-        set_pinv(@player, array(103: array(type: 298)))
-        @interval = set_interval(100, closure(
-                if(!ponline(@player) || pinv(@player, 103)['type'] != 298){
-                        clear_task()
-                } else {
-                        @color = get_armor_color(@player, 103)
-                        @color = array(
-                          'r': max(min(@color['r'] + rand(21) - 10, 255), 0),
-                          'g': max(min(@color['g'] + rand(21) - 10, 255), 0),
-                          'b': max(min(@color['b'] + rand(21) - 10, 255), 0)
-                        )
-                        set_armor_color(@player, 103, @color)
-                }
-        ))
-        export('rainbowhat.'.@player, @interval)
+/s $name $ = >>>
+  broadcast(color(8).simple_date('h:mm').color('gray').' [console]'.color('aqua').$name.color('gray').': '.color('r').$) 
+<<<
+
+/say $ = >>>
+  broadcast(color(8).simple_date('h:mm').' '._colorname().player().color('gray').': '.color('r').$) 
 <<<
 
 /setrider $horse $rider = >>>
@@ -67,10 +48,6 @@
     array_push(@donors, $player)
   }
   store_value('donors', @donors)
-<<<
-
-*:/say $ = >>>
-  broadcast(color(8).simple_date('h:mm').' '._colorname(player()).player().color(r).': '.$) 
 <<<
 
 *:/spawn [$world] = >>>
@@ -603,6 +580,8 @@
     try(assign(@player, player($player)), @ex, die('Who is that? Are they online?'))
     set_timeout(50, closure(
       set_pvelocity(@player, $x, $y, $z)
+      make_effect(ploc(@player), 'MOBSPAWNER_FLAMES')
+      make_effect(ploc(@player), 'BLAZE_SHOOT', 16)
       if($double, set_timeout($double, closure( set_pvelocity(@player, $x, $y, $z))))
     ))
   }
