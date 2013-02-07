@@ -28,7 +28,38 @@
   set_entity_rider(pinfo($horse, 13), pinfo($rider, 13))
 <<<
 
-*:/rules = /help rules
+#Runs the help procedure to list or display entries
+*:/help [$selection='help'] = >>>
+  assign(@help, array(
+    'rules':
+     '- Do NOT break anything someone else placed unless otherwise specified.\n'.
+     '- Do NOT take anything from a chest that you did not place there, unless otherwise specified or was generated in the world naturally.\n'.
+     '- Do NOT harass, call others names, use hate speech, spam, or use excessive adult language in chat.\n'.
+     '- Do NOT actively use cheat modifications to do things like fly or look through walls.\n'.
+     '- DO respect other players and apologize if you make a mistake, as we have all made them.',
+    'homes': 'You can have one home per world. Set them by typing "/sethome", then "/home" to teleport to them. You can teleport to homes of other players by typing in their name after "/home".',
+    'messages': 'Send a private message to another player with "/msg <playername> <message>" or "@playername <message>". You can use "/r <message>" for a reply.',
+    'spawn': 'There is one central spawn on each world, including nethers. Type "/spawn" to teleport to the spawn of the world you are in or follow it with a world name to teleport there.',
+    'stargate': 'Stargates are special portals you build to teleport within a network of locations. There is a more detailed guide on the website. But to make one, first build the gate as seen (without sign or button), place a sign on the correct location, then type the gate name on line one and the gate network name on line three.',
+    'private-chests': 'You can put a [private] sign on a chest, furnace, and the block above/below doors. The following lines after [private] should contain the players you want to give access.',
+    'shops': 'Chest shops allow players to buy and sell different items using currency. (g: gold, d: diamond, i: iron, e: emerald) Right click the SIGN with the currency in hand to BUY. There\'s a detailed guide on the website.',
+    'website': 'The website is at >>> http://finalscoremc.com <<< There you can find a command reference, guides, videos, live maps, and more.',
+    'live-map': '>>> http://mc.finalscoremc.com:25966 <<< The website has a handy live map that shows the location of players and their homes, among other things.',
+    'moderators': 'Admins: PseudoKnight, Scottyd_Utah, Nefyoni, asdialed; Moderators:TobyTobey, fredwaffles, TrulyAnnoying.',
+    'plugins': 'Type "/plugins" for a full list of plugins installed, or check the website for more details.',
+    'permissions': 'We currently have 7 groups: Everyone (new players, restricted), Regulars, Donors (green names), Builders (orange names), Engineers (also orange), Moderators (blue names), and Administrators (also blue names). New players get bumped up to the Regulars group after some time, as long as they\'re not causing trouble.',
+    'mumble': 'Everyone is welcome to use our voice chat server using Mumble. The server is at mum.finalscoremc.com with port 64758. You can get Mumble at >>> http://mumble.sourceforge.net <<<',
+    'regions': 'Regions are protected zones where only owners and members can build or access chests. You can create your own region by using a wood axe, left and right clicking to select a cuboid for the region, then use "/rg claim <regionid>". More details are on the website.',
+    'spleef': 'Spleef is a game where you try and dig out the blocks from under other players so that they fall. There is an automated arena for this at the Colosseum at Final City. Type "/warp spleef" to get there quickly.',
+    'whitelist': 'You can get on the whitelist by asking a moderator or requesting it on the http://myextralife.com whitelist forum thread.',
+    'worlds': 'There are three primary worlds: Alpha (Plaza at spawn), Delta (Final City at spawn), and Gamma (Gamma City at spawn). In addition, there are three respective nether dimensions and one End dimension. You can type "/mv who" to see which worlds players are on.',
+    'world-seeds': 'These are the seeds for the three main worlds -- Alpha: -621778714517541268, Delta: -8443156782283251243, Gamma: -754633420005903009.'
+  ))
+  if(equals($selection, 'help'), 
+    msg(color('a'), 'Get help on any of these topics:')
+    msg(color('6'), array_implode(array_keys(@help), ' ')),
+    try(msg(to_upper($selection).': '.color('a'), @help[to_lower($selection)]), @ex, msg(color('c'), 'Unknown entry. Type "/help" to find available entries.')))
+<<<
 
 *:/donor $player $amount = >>>
   if(!has_permission('group.administrators'), die('You do not have permission to use this command.'))
@@ -429,6 +460,19 @@
   sudo('/rg remove' $from)
 <<<
 
+#Set or reset the MOTD
+*:/setmotd $color $ = >>>
+  if(!has_permission('group.moderators'), die('You do not have permission to use this command.'))
+  store_value('motd', concat(color($color), $))
+  msg('MOTD set to: ', color($color), $)
+<<<
+
+*:/setmotd = >>>
+  if(!has_permission('group.moderators'), die('You do not have permission to use this command.'))
+  store_value('motd', '')
+  msg('MOTD cleared.')
+<<<
+
 #Run commands as other players and show them which command it was
 *:/runas $player $ = >>>
   if(!has_permission('group.administrators'), die('You do not have permission for this command'))
@@ -440,6 +484,10 @@
       sudo($)
     )
   )
+<<<
+
+/goto $player = >>>
+  run('/tp' $player)
 <<<
 
 #Set fly mode for people or yourself
@@ -458,31 +506,13 @@
 <<<
 
 *:/fly = >>>
-  if((pworld() == 'dev' && array_contains(pgroup(), 'builders')) || array_contains(pgroup(), 'moderators')) {
-    if(phas_flight(),
-      set_pflight(player(), 0)
-      msg('Turned off flying.'),
-      set_pflight(player(), 1)
-      msg('Turned on flying.')
-    )
-  }
-<<<
-
-#Set or reset the MOTD
-*:/setmotd $color $ = >>>
-  if(!has_permission('group.moderators'), die('You do not have permission to use this command.'))
-  store_value('motd', concat(color($color), $))
-  msg('MOTD set to: ', color($color), $)
-<<<
-
-*:/setmotd = >>>
-  if(!has_permission('group.moderators'), die('You do not have permission to use this command.'))
-  store_value('motd', '')
-  msg('MOTD cleared.')
-<<<
-
-/goto $player = >>>
-  run('/tp' $player)
+  if((!array_contains(pgroup(), 'builders') || !array_contains(array('custom', 'dev'), pworld())) && !array_contains(pgroup(), 'moderators'), die('You do not have permission to use this command.'))
+  if(phas_flight(),
+    set_pflight(player(), 0)
+    msg('Turned off flying.'),
+    set_pflight(player(), 1)
+    msg('Turned on flying.')
+  )
 <<<
 
 #Game mode aliases
@@ -493,51 +523,26 @@
 <<<
 
 *:/gm $mode = >>>
-  if((pworld() == 'dev' && array_contains(pgroup(), 'builders')) || array_contains(pgroup(), 'moderators')) {
-    switch($mode,
-      1,
-        set_pmode('CREATIVE'),
-      0,
-        set_pmode('SURVIVAL'),
-      2,
-        set_pmode('ADVENTURE'),
-      msg('Acceptable values: 0 = survival, 1 = creative, 2, adventure.')
-    )
-  } else {
-    die('You do not have permission to use this command.')
-  }
+  if((!array_contains(pgroup(), 'builders') || !array_contains(array('custom', 'dev'), pworld())) && !array_contains(pgroup(), 'moderators'), die('You do not have permission to use this command.'))
+  switch($mode,
+    1, set_pmode('CREATIVE'),
+    0, set_pmode('SURVIVAL'),
+    2, set_pmode('ADVENTURE'),
+    msg('Acceptable values: 0 = survival, 1 = creative, 2, adventure.')
+  )
 <<<
 
 *:/gm = >>>
-  if((array_contains(array('dev', 'custom'), pworld()) && array_contains(pgroup(), 'builders')) || array_contains(pgroup(), 'moderators')) {
-    if(pmode() == 'CREATIVE',
-      set_pmode('SURVIVAL'),
-      set_pmode('CREATIVE')
-    )
-  } else {
-    die('You do not have permission to use this command.')
-  }
-<<<
-
-#Enchant tools
-*:/enchant $type $level = >>>
-  if((!has_permission('group.builders') || pworld() != 'dev') && !has_permission('group.moderators'), die('You do not have permission to use this command.'))
-  enchant_inv_unsafe(null, $type, $level)
-<<<
-
-#Enchant tools
-*:/dye $slot $r $g $b = >>>
-  if((!has_permission('group.builders') || pworld() != 'dev') && !has_permission('group.moderators'), die('You do not have permission to use this command.'))
-  if(is_leather_armor($slot - 1)) {
-    set_armor_color($slot - 1, array($r, $g, $b))
-  } else {
-    msg('That slot isn\'t leather armor.')
-  }
+  if((!array_contains(pgroup(), 'builders') || !array_contains(array('custom', 'dev'), pworld())) && !array_contains(pgroup(), 'moderators'), die('You do not have permission to use this command.'))
+  if(pmode() == 'CREATIVE',
+    set_pmode('SURVIVAL'),
+    set_pmode('CREATIVE')
+  )
 <<<
 
 #Sign line edit script =D
 *:/sign $line [$=''] = >>>
-  if(!(pworld() == 'dev' && array_contains(pgroup(), 'builders')) && !has_permission('group.moderators'), die('You do not have permission to use this command.'))
+  if((!array_contains(pgroup(), 'builders') || !array_contains(array('custom', 'dev'), pworld())) && !array_contains(pgroup(), 'moderators'), die('You do not have permission to use this command.'))
   if( length($) > 15, die('There is a 15 character limit per line.'))
   assign(@sign, pcursor())
   if(!is_sign_at(@sign), die('That is not a sign'))
@@ -547,7 +552,7 @@
 <<<
 
 *:/signcolor $line [$color] = >>>
-  if(!has_permission('group.moderators'), die('You do not have permission to use this command.'))
+  if((!array_contains(pgroup(), 'builders') || !array_contains(array('custom', 'dev'), pworld())) && !array_contains(pgroup(), 'moderators'), die('You do not have permission to use this command.'))
   assign(@sign, pcursor())
   if(!is_sign_at(@sign), die('That is not a sign'))
   assign(@lines, get_sign_text(@sign))
@@ -567,27 +572,30 @@
   run('/perm player setgroup' $player 'Regulars')
 <<<
 
+# TEST COMMANDS #
+
 *:/effect $player $effect [$strength=1] [$length=30] = >>>
   try(assign(@player, player($player)), @ex, die('Who is that? Are they online?'))
-  if(!has_permission('group.moderators') || !array_contains(array('custom', 'dev'), pworld(@player)), die('No permission (mods only, custom/dev worlds only).'))
+  if((!array_contains(pgroup(), 'builders') || !array_contains(array('custom', 'dev'), pworld())) && !array_contains(pgroup(), 'moderators'), die('You do not have permission to use this command.'))
   assign(@effects, array('speed': '1', 'slowness': '2', 'haste': '3', 'fatique': '4', 'strength': '5', 'health': '6', 'damage': '7', 'jump': '8', 'nausea': '9', 'regen': '10', 'resistance': '11', 'fireresist': '12', 'waterbreathing': '13', 'invis': '14', 'blindness': '15', 'nightvision': '16', 'hunger': '17', 'weakness': '18', 'poison': '19'))
   if(!array_index_exists(@effects, $effect), die('These are the available effect names: '.array_keys(@effects)))
   set_peffect(@player, @effects[$effect], $strength, $length)
 <<<
 
 *:/velocity $player $x $y $z [$double] = >>>
-  if(get_command_block() || (array_contains(array('dev', 'custom'), pworld($player)) && array_contains(pgroup(), 'builders')) || array_contains(pgroup(), 'moderators')) {
+  if(get_command_block() || array_contains(pgroup(), 'moderators') || (array_contains(array('dev', 'custom'), pworld($player)) && array_contains(pgroup(), 'builders'))) {
     try(assign(@player, player($player)), @ex, die('Who is that? Are they online?'))
     set_timeout(50, closure(
       set_pvelocity(@player, $x, $y, $z)
       make_effect(ploc(@player), 'MOBSPAWNER_FLAMES')
-      make_effect(ploc(@player), 'BLAZE_SHOOT', 16)
+      make_effect(ploc(@player), 'BLAZE_SHOOT', 24)
       if($double, set_timeout($double, closure( set_pvelocity(@player, $x, $y, $z))))
     ))
   }
 <<<
 
 *:/display $ = >>>
+  if((!array_contains(pgroup(), 'builders') || !array_contains(array('custom', 'dev'), pworld())) && !array_contains(pgroup(), 'moderators'), die('You do not have permission to use this command.'))
   if(length($) > 30, die('The name can only be 30 characters long.'))
   @inv = pinv(player(), null)
   @inv['meta']['display'] = colorize($)
@@ -595,9 +603,24 @@
 <<<
 
 *:/explosion $x $y $z $world $radius = >>>
-  if(!has_permission('group.moderators') || !array_contains(array('custom', 'dev'), pworld(@player)), die('No permission (mods only, custom/dev worlds only).'))
+  if((!array_contains(pgroup(), 'builders') || !array_contains(array('custom', 'dev'), pworld())) && !array_contains(pgroup(), 'moderators'), die('You do not have permission to use this command.'))
   explosion(array($x, $y, $z, $world), $radius)
 <<<
+
+*:/dye $slot $r $g $b = >>>
+  if((!array_contains(pgroup(), 'builders') || !array_contains(array('custom', 'dev'), pworld())) && !array_contains(pgroup(), 'moderators'), die('You do not have permission to use this command.'))
+  if(is_leather_armor($slot - 1)) {
+    set_armor_color($slot - 1, array($r, $g, $b))
+  } else {
+    msg('That slot isn\'t leather armor.')
+  }
+<<<
+
+*:/enchant $type $level = >>>
+  if((!array_contains(pgroup(), 'builders') || !array_contains(array('custom', 'dev'), pworld())) && !array_contains(pgroup(), 'moderators'), die('You do not have permission to use this command.'))
+  enchant_inv_unsafe(null, $type, $level)
+<<<
+
 ### CAKES ###
 
 *:/cake = >>>
@@ -688,9 +711,11 @@
   )
 <<<
 
+# COIN COMMANDS #
+
 *:/time $time = >>>
   if(pworld() == 'outworld', die('You cannot do this in the outworld.'))
-  if(is_numeric($time) && ((pworld() == 'dev' && array_contains(pgroup(), 'builders')) || has_permission('group.moderators'))) {
+  if(is_numeric($time) && ((array_contains(array('dev', 'custom'), pworld()) && array_contains(pgroup(), 'builders')) || has_permission('group.moderators'))) {
     msg('Set time to '.$time)
     set_world_time(pworld(), $time)
     die()
@@ -751,7 +776,6 @@
     msg('Accepts \'stormy\' or \'sunny\'')
   )
 <<<
-
 
 
 #############

@@ -284,7 +284,7 @@ switch($action
       msg($setting.' '.color('gray').@arena[$setting])
     } else {
       foreach(array_keys(@arena), @key,
-        if(array_contains(array('spawns', 'kits', 'itemspawns', 'chestspawns'), @key)) {
+        if(array_contains(array('spawns', 'kit', 'itemspawns', 'chestspawns'), @key)) {
           msg(@key.' '.color('gray').'[...]')
         } else {
           msg(@key.' '.color('gray').@arena[@key])
