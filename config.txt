@@ -486,6 +486,14 @@
   )
 <<<
 
+/tp $player $x $y $z = >>>
+  if(get_command_block()) {
+     set_ploc($player, $x, $y, $z)
+  } else {
+    run('/tp' $player $x $y $z)
+  }
+<<<
+
 /goto $player = >>>
   run('/tp' $player)
 <<<
