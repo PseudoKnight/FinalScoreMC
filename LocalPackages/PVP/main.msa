@@ -25,7 +25,6 @@ switch($action
     .color(r).'min '.color('gray').'The minimum # of players to start a match. (default: 2)\n'
     .color(r).'max '.color('gray').'Start the match as soon as this number of players join.\n'
     .color(r).'effect '.color('gray').'The starting potion effect for all players.\n'
-    .color(r).'jumppad '.color('gray').'Create wool pads that launch players on a vector.\n'
     .color(r).'denydrop '.color('gray').'Sets block IDs that cannot be dropped when players die.\n'
     .color(r).'debug '.color('gray').'Sets it in debug mode, which disallows normal starts.')
   }
@@ -209,15 +208,6 @@ switch($action
         die('Requires a strength integer and a length integer in seconds.')
       }
 
-    , 'jumppad',
-      @block = split(':', get_block_at(ploc()))
-      if(@block[0] != '35', die('You need to stand on the wool block for the jump pad.'))
-      @jumppad = split(',', $value1)
-      if(!array_index_exists(@arena, 'jumppads'), @arena['jumppads'] = associative_array())
-      array_set(@arena['jumppads'], @block[1], array('x': @jumppad[0], 'y': @jumppad[1], 'z': @jumppad[2]))
-      if($value2 == 'true', @arena['jumppads'][@block[1]]['double'] = 'true')
-      msg('Added vector to jumpad for '.data_name(@block[0].':'.@block[1]).'.')
-
     , 'denydrop',
       if(!$value1 || $value2, die('You need to specify a comma separated list of item IDs. (no spaces)'))
       @arena['denydrop'] = split(',', $value1)
@@ -313,8 +303,6 @@ switch($action
       array_remove(@arena, 'chestspawns')
     , 'effect',
       array_remove(@arena, 'effects')
-    , 'jumppad',
-      array_remove(@arena, 'jumppads')
     , #else
       if(array_index_exists(@arena, $setting)) {
         array_remove(@arena, $setting)
@@ -559,9 +547,9 @@ set_timeout(3000, closure(
     export('pvp'.@id, @pvp)
     if(array_index_exists(@arena, 'denydrop')) {
       @drops = array()
-      for(@i = 0, @i < array_size(@event['drops']), @i++,
-        if(array_index(@arena['denydrop'], @event['drops'][@i]['type']) == null) {
-          array_push(@drops, @event['drops'][@i])
+      foreach(@event['drops'], @drop,
+        if(array_contains(@arena['denydrop'], @drop['type'])) {
+          array_push(@drops, @drop)
         }
       )
       modify_event('drops', @drops)
@@ -669,31 +657,6 @@ set_timeout(3000, closure(
     export('pvp'.@id, @pvp)
     _check_goals()
   )))
-
-  if(array_index_exists(@arena, 'jumppads')) {
-  assign(@pvp['fastinterval'], set_interval(150, closure(assign(@arena, @arena), assign(@id, @id),
-    @pvp = import('pvp'.@id)
-    foreach(array_keys(@pvp['players']), @player,
-      if(!ponline(@player), continue())
-      if(substr(get_block_at(ploc(@player)), 0, 2) == '35') {
-        @color = substr(get_block_at(ploc(@player)), 3)
-        if(array_index_exists(@arena['jumppads'], @color)) {
-          if(!array_index_exists(@pvp['players'][@player], 'jumptime')
-          || (@pvp['players'][@player]['jumptime'] + 1000) < time()) {
-            make_effect(ploc(@player), 'MOBSPAWNER_FLAMES')
-            set_pvelocity(@player, @arena['jumppads'][@color]['x'], @arena['jumppads'][@color]['y'], @arena['jumppads'][@color]['z'])
-            if(array_index_exists(@arena['jumppads'][@color], 'double'), set_timeout(100, closure(
-              set_pvelocity(@player, @arena['jumppads'][@color]['x'], @arena['jumppads'][@color]['y'], @arena['jumppads'][@color]['z'])
-            )))
-            make_effect(ploc(@player), 'BLAZE_SHOOT', 16)
-            @pvp['players'][@player]['jumptime'] = time()
-            export('pvp'.@id, @pvp)
-          }
-        }
-      }
-    )
-  )))
-  }
 
   export('pvp'.@id, @pvp)
 ))

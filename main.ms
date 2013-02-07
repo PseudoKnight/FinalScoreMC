@@ -102,20 +102,6 @@ bind(player_death, null, null, @event,
   if(!array_contains(array('custom', 'dev'), pworld()), msg('You died @ ', round(ploc()[0]), ',', round(ploc()[1]), ',', round(ploc()[2])))
 )
 
-# bind(world_changed, null, null, @event,
-  # if(@event['to'] != @event['from']
-  # && (array_contains(array('dev', 'custom'), @event['to'])
-  # || array_contains(array('dev', 'custom'), @event['from']))) {
-    # @inv = pinv(@player)
-    # foreach(array_keys(@inv), @slot,
-      # if(@inv[@slot] == null) {
-        # array_remove(@inv, @slot)
-      # }
-    # )
-    # console(@player.' teleported to '.@event['to'].': '.@inv)
-  # }
-# )
-
 # Outworld message
 bind(world_changed, null, array('to': 'outworld'), @event,
   if(!array_contains(array('outworld_nether', 'outworld', 'outworld_the_end'), @event['from'])) {
@@ -264,11 +250,6 @@ bind(player_interact, null, array('block': 92), @event,
   make_effect(@event['location'], 'RECORD_PLAY:2263')
   if(get_block_at(@event['location']) != '92:0', set_block_at(@event['location'], '92:0'))
 )
-
-# bind(player_interact, null, array('block': 26, 'button': 'right'), @event,
-  # set_pbed_location(@event['location']) 
-  # msg('Set bed location.')
-# )
 
 # Button commands
 bind(player_interact, null, array('block': 77, 'button': 'right'), @event,
