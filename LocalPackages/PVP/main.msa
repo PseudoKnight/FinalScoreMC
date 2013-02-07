@@ -26,6 +26,7 @@ switch($action
     .color(r).'max '.color('gray').'Start the match as soon as this number of players join.\n'
     .color(r).'effect '.color('gray').'The starting potion effect for all players.\n'
     .color(r).'denydrop '.color('gray').'Sets block IDs that cannot be dropped when players die.\n'
+    .color(r).'modpickup '.color('gray').'If true, removes redundant pickups.\n'
     .color(r).'debug '.color('gray').'Sets it in debug mode, which disallows normal starts.')
   }
   if(reg_count('^[a-z0-9]+$', $id) < 1, die('You can only use lowercase alphanumeric characters for the arena ID'))
@@ -121,7 +122,7 @@ switch($action
 
     , 'ff',
       if($value1 == 'true') {
-        try(array_remove(@arena, 'ff'), die('Already set to false by default.'))
+        try(array_remove(@arena, 'ff'), die('Already set to true by default.'))
         msg('Set friendly-fire on. (default)')
       } else if($value1 == 'false') {
         @arena['ff'] = $value1
@@ -211,7 +212,18 @@ switch($action
     , 'denydrop',
       if(!$value1 || $value2, die('You need to specify a comma separated list of item IDs. (no spaces)'))
       @arena['denydrop'] = split(',', $value1)
-      msg('Set '.$value1.' item IDs as denied drops on death.')      
+      msg('Set '.$value1.' item IDs as denied drops on death.')    
+
+    , 'modpickup',
+      if($value1 == 'true') {
+        @arena['modpickup'] = $value1
+        msg('Set modified pick-up on.')
+      } else if($value1 == 'false') {
+        try(array_remove(@arena, 'modpickup'), die('Already set to false by default.'))
+        msg('Set modified pick-up off.')
+      } else {
+        die('Only accepts values: true or false (defaults to false)')
+      }  
 
     , 'debug',
       if($value1) {
@@ -463,17 +475,13 @@ proc('_check_goals', assign(@id, @id), assign(@arena, @arena),
         runas(~console, '/prs restore '.@arena['restore'])
       ))
     }
-    if(array_index_exists(@arena, 'redstone')) {
-      set_block_at(@arena['redstone'], '69:6')
-    }
-    unbind(@id.'ff')
+    if(array_index_exists(@arena, 'redstone'), set_block_at(@arena['redstone'], '69:6'))
     unbind(@id.'death')
     unbind(@id.'spawn')
     unbind(@id.'interact')
+    if(array_index_exists(@arena, 'ff'), unbind(@id.'ff'))
+    if(array_index_exists(@arena, 'modpickup'), unbind(@id.'pickup'))
     clear_task(@pvp['slowinterval'])
-    if(array_index_exists(@pvp, 'fastinterval')) {
-      clear_task(@pvp['fastinterval'])
-    }
     @pvp = array('players': associative_array(), 'running': false)
     export('pvp'.@id, @pvp)
   }
@@ -608,6 +616,25 @@ set_timeout(3000, closure(
         && @pvp['players'][player()]['team'] == @pvp['players'][@event['data']]['team']) {
           cancel()
         }
+      }
+    )
+  }
+
+  if(array_index_exists(@arena, 'modpickup')) {
+    bind(item_pickup, array('id': @id.'pickup'), null, @event, assign(@id, @id),
+      @pvp = import('pvp'.@id)
+      if(!array_index_exists(@pvp['players'], player()), die())
+      if(max_stack_size(@event['item']) == 1) {
+        @slots = pitem_slot(@event['item']['type'])
+        foreach(@slots, @slot,
+          if(@event['item']['enchants'] == pinv(player(), @slot)['enchants']) {
+            if(pinv(player(), @slot)['data'] > @event['item']['data']) {
+              set_inventory_item(pinfo()[13], @slot, @event['item'])
+            }
+            modify_event('item', null)
+            break()
+          }
+        )
       }
     )
   }
