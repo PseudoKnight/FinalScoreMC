@@ -278,6 +278,7 @@
 <<<
 
 *:/tell $player $ = call_alias('/msg' $player $)
+*:/w $player $ = call_alias('/msg' $player $)
 
 *:/r $ = >>>
   import(@conv)
@@ -624,9 +625,16 @@
   }
 <<<
 
-*:/enchant $type $level = >>>
+*:/enchant $type [$level=1] = >>>
   if((!array_contains(pgroup(), 'builders') || !array_contains(array('custom', 'dev'), pworld())) && !array_contains(pgroup(), 'moderators'), die('You do not have permission to use this command.'))
   enchant_inv_unsafe(null, $type, $level)
+<<<
+
+*:/unenchant = >>>
+  if((!array_contains(pgroup(), 'builders') || !array_contains(array('custom', 'dev'), pworld())) && !array_contains(pgroup(), 'moderators'), die('You do not have permission to use this command.'))
+  @item = pinv(player(), null)
+  array_remove(@item, 'enchants')
+  set_pinv(array(null: @item))
 <<<
 
 ### CAKES ###

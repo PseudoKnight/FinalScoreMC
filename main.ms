@@ -57,7 +57,7 @@ set_timeout(200, closure(assign(@loc, ploc()),
 bind(player_teleport, null, null, @event,
   if(@event['to']['3'] != @event['from']['3']
   || _horizontal_distance(@event['to'], @event['from']) > 100) {
-    set_timeout(300, closure(
+    set_timeout(350, closure(
       if((@event['to'][1] - 1) > ploc()[1])
       {
         set_ploc(array(@event['to'][0], @event['to'][1] - 1, @event['to'][2], @event['to'][3]))
@@ -99,7 +99,7 @@ bind(player_death, null, null, @event,
     modify_event('death_message', null)
   } 
 # Notify player where he died.
-  if(!array_contains(array('custom', 'dev'), pworld()), msg('You died @ ', round(ploc()[0]), ',', round(ploc()[1]), ',', round(ploc()[2])))
+  if(!array_contains(array('custom', 'dev'), pworld()), msg('You died @ ', round(@event['location'][0]), ',', round(@event['location'][1]), ',', round(@event['location'][2])))
 )
 
 # Outworld message
