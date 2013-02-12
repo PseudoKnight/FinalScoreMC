@@ -246,24 +246,28 @@
 
 # DICE ROLLING #
 *:/roll $num $max = >>>
-  if(gt($num, 5), die(concat(color(a), '[Dice] ', color(f), 'There\'s a limit of 5 die.')))
-  if(lt($num, 1), die(concat(color(a), '[Dice] ', color(f), 'There\'s a minimum of 1 die.')))
-  if(gt($max, 100), die(concat(color(a), '[Dice] ', color(f), 'There\'s a limit of 100 sides.')))
-  if(lt($max, 3), die(concat(color(a), '[Dice] ', color(f), 'There\'s a minimum of 3 sides.')))
+  if(gt($num, 5), die(concat(color('a'), '[Dice] ', color('f'), 'There\'s a limit of 5 die.')))
+  if(lt($num, 1), die(concat(color('a'), '[Dice] ', color('f'), 'There\'s a minimum of 1 die.')))
+  if(gt($max, 100), die(concat(color('a'), '[Dice] ', color('f'), 'There\'s a limit of 100 sides.')))
+  if(lt($max, 3), die(concat(color('a'), '[Dice] ', color('f'), 'There\'s a minimum of 3 sides.')))
   assign(@results, '')
   for( assign(@i, 0), lt(@i, $num), inc(@i), 
     if( gt(@i, 0),
-      assign(@results, concat(@results, ' and ', color(a), rand(1, $max + 1))),
-      assign(@results, concat(@results, color(a), rand(1, $max + 1)))
+      assign(@results, concat(@results, ' and ', color('a'), rand(1, $max + 1))),
+      assign(@results, concat(@results, color('a'), rand(1, $max + 1)))
     )
   )
-  broadcast(concat(color(a), '[Dice] ', color(e), player(), color(f), ' rolled ', color(a), @results, color(f), ' on ', $num, 'x', $max, '-sided die.'))
+  broadcast(color('a').'[Dice] '._colorname(player()).player().color('f').' rolled '.color('a').@results.color('f').' on '.$num.'x'.$max.'-sided die.')
 <<<
 
 *:/roll [$max=6] = >>>
-  if(gt($max, 100), die(concat(color(a), '[Dice] ', color(f), 'There\'s a limit of 100 sides.')))
-  if(lt($max, 3), die(concat(color(a), '[Dice] ', color(f), 'There\'s a minimum of 3 sides.')))
-  broadcast(concat(color(a), '[Dice] ', color(e), player(), color(f), ' rolled ', color(a), rand(1, $max + 1), color(f), ' on a ', $max, '-sided die.'))
+  if(gt($max, 100), die(concat(color('a'), '[Dice] ', color('f'), 'There\'s a limit of 100 sides.')))
+  if(lt($max, 2), die(concat(color('a'), '[Dice] ', color('f'), 'There\'s a minimum of 2 sides.')))
+  if($max == 2) {
+    broadcast(color('a').'[Coin] '._colorname(player()).player().color('f').' flipped a coin and got '.if(rand(1) == 0, 'heads', 'tails'))
+  } else {
+    broadcast(color('a').'[Dice] '._colorname(player()).player().color('f').' rolled '.color('a').rand(1, $max + 1).color('f').' on a '.$max.'-sided die.')
+  }
 <<<
 
 # MESSAGING #
