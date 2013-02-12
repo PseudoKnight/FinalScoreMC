@@ -409,6 +409,7 @@ if(array_index_exists(@arena, 'teams')) {
 foreach(array_keys(@pvp['players']), @player,
   if(array_index_exists(@arena, 'lives')) {
     @pvp['players'][@player]['lives'] = @arena['lives']
+    set_plevel(@player, @arena['lives'])
   } else {
     @pvp['players'][@player]['lives'] = 0
   }
@@ -573,6 +574,7 @@ set_timeout(3000, closure(
       )
       modify_event('drops', @drops)
     }
+    modify_event('xp', null)
   )
 
   bind(player_spawn, array('id': @id.'spawn'), null, @event, assign(@arena, @arena), assign(@id, @id),
@@ -584,6 +586,7 @@ set_timeout(3000, closure(
     } else {
       _give_kit(player())
       if(array_index_exists(@arena, 'lives')) {
+      set_plevel(@pvp['players'][player()]['lives'])
       if(array_index_exists(@arena, 'teams')) {
         @r = rand(0, array_size(@arena['spawns'][@pvp['players'][player()]['team']]))
         modify_event('location', @arena['spawns'][@pvp['players'][player()]['team']][@r])
@@ -637,7 +640,7 @@ set_timeout(3000, closure(
       if(!array_index_exists(@pvp['players'], player()), die())
       if(max_stack_size(@event['item']) == 1) {
         foreach(pinv(), @slot, @item,
-          if(@item != null && @event['item']['type'] == @item['type'] && @event['item']['enchants'] == @item['enchants']) {
+          if(@item != null && @event['item']['type'] == @item['type'] && @event['item']['type'] != '373' && @event['item']['enchants'] == @item['enchants']) {
             if(@item['data'] > @event['item']['data']) {
               set_inventory_item(pinfo()[13], @slot, @event['item'])
             }
