@@ -656,7 +656,22 @@ set_timeout(3000, closure(
     @pvp = import('pvp'.@id)
     foreach(array_keys(@pvp['players']), @player,
       if(!ponline(@player)) {
-        array_remove(@pvp['players'], @player)
+        if(array_index_exists(@pvp['players'][@player], 'limbo')) {
+        @pvp['players'][@player]['limbo'] = true
+        bind(player_join, null, array('player': @player), @event, assign(@arena, @arena), assign(@id, @id), assign(@time, time()),
+          @pvp = import('pvp'.@id)
+          array_remove(@pvp['players'][@player], 'limbo')
+          if(@time + 5000 < time()) {
+            array_remove(@pvp['players'], @player)
+            if(pworld() == 'custom') {
+              set_ploc(@arena['lobby'])
+              _clear_pinv()
+            }
+          }
+          export('pvp'.@id, @pvp)
+          unbind()
+        )
+        }
       } else if(!array_contains(sk_current_regions(@player), @arena['region'])
       && ploc(@player)[1] > 0) {
         if(array_index_exists(@arena, 'teamcolor')) {
