@@ -419,6 +419,7 @@ foreach(array_keys(@pvp['players']), @player,
     @teams[@team] .= @player.' '
     if(@team == 0, @team = 1, @team = 0)
   }
+  @pvp['players'][@player]['limbotime'] = 0
 )
 
 if(array_index_exists(@arena, 'teams')) {
@@ -564,6 +565,7 @@ set_timeout(3000, closure(
     } else {
       _regionmsg(@arena['broadcast'], color('gray').'[PVP] '.color(r).@deathmessage.' ('.@pvp['players'][player()]['lives'].' lives left)')
     }
+    @pvp['players'][player()]['limbotime'] = time()
     export('pvp'.@id, @pvp)
     if(array_index_exists(@arena, 'denydrop')) {
       @drops = array()
@@ -580,7 +582,7 @@ set_timeout(3000, closure(
   bind(player_spawn, array('id': @id.'spawn'), null, @event, assign(@arena, @arena), assign(@id, @id),
     @pvp = import('pvp'.@id)
     if(!array_index_exists(@pvp['players'], player()), die())
-    if(!array_index_exists(@arena, 'lives') && !array_contains(sk_regions_at(@event['location']), @arena['region'])) {
+    if((!array_index_exists(@arena, 'lives') && !array_contains(sk_regions_at(@event['location']), @arena['region'])) || @pvp['players'][player()]['limbotime'] + 10000 < time()) {
       array_remove(@pvp['players'], @player)
       set_timeout(50, closure(set_ploc(@player, @arena['lobby'])))
     } else {
@@ -656,22 +658,14 @@ set_timeout(3000, closure(
     @pvp = import('pvp'.@id)
     foreach(array_keys(@pvp['players']), @player,
       if(!ponline(@player)) {
-        if(array_index_exists(@pvp['players'][@player], 'limbo')) {
-        @pvp['players'][@player]['limbo'] = true
-        bind(player_join, null, array('player': @player), @event, assign(@arena, @arena), assign(@id, @id), assign(@time, time()),
-          @pvp = import('pvp'.@id)
-          array_remove(@pvp['players'][@player], 'limbo')
-          if(@time + 5000 < time()) {
-            array_remove(@pvp['players'], @player)
-            if(pworld() == 'custom') {
+        array_remove(@pvp['players'], @player)
+        bind(player_join, null, array('player': @player), @event, assign(@arena, @arena),
+          if(pworld() == 'custom') {
               set_ploc(@arena['lobby'])
               _clear_pinv()
-            }
           }
-          export('pvp'.@id, @pvp)
           unbind()
         )
-        }
       } else if(!array_contains(sk_current_regions(@player), @arena['region'])
       && ploc(@player)[1] > 0) {
         if(array_index_exists(@arena, 'teamcolor')) {
