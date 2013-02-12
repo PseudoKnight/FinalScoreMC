@@ -402,7 +402,10 @@ if(array_size(@pvp['players']) < @arena['min'], die('There aren\'t enough player
 
 #PREPARE DATA
 _worldmsg('custom', color('gray').'[PVP] '.color(r).'STARTING '.to_upper(@id).'...')
-@team = 0
+if(array_index_exists(@arena, 'teams')) {
+  @team = 0
+  @teams = array('', '')
+}
 foreach(array_keys(@pvp['players']), @player,
   if(array_index_exists(@arena, 'lives')) {
     @pvp['players'][@player]['lives'] = @arena['lives']
@@ -412,9 +415,19 @@ foreach(array_keys(@pvp['players']), @player,
   # ASSIGN TEAMS
   if(array_index_exists(@arena, 'teams')) {
     @pvp['players'][@player]['team'] = @team
+    @teams[@team] .= @player.' '
     if(@team == 0, @team = 1, @team = 0)
   }
 )
+
+if(array_index_exists(@arena, 'teams')) {
+  _regionmsg(@arena['broadcast'], 
+    if(array_index_exists(@arena, 'teamcolor'), color(@arena['teamcolor'][0])).@teams[0].color('gray').'vs '.color('r').if(array_index_exists(@arena, 'teamcolor'), color(@arena['teamcolor'][1])).@teams[1])
+} else {
+  _regionmsg(@arena['broadcast'],
+    color('gray').'[PVP] '.color('r').array_implode(array_keys(@pvp['players']), color('gray').' vs '.color('r')))
+}
+
 if(!array_index_exists(@arena, 'broadcast'), @arena['broadcast'] = @arena['region'])
 if(array_index_exists(@arena, 'itemspawns')) {
   @pvp['itemspawns'] = array()
