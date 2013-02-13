@@ -448,7 +448,7 @@ if(array_index_exists(@arena, 'chestspawns')) {
 if(array_index_exists(@arena, 'time')) {
   set_world_time(@arena['lobby'][3], @arena['time'])
 }
-@pvp['coins'] = array_size(@pvp['players']) - 1
+@pvp['coins'] = array_size(@pvp['players']) - 2
 @pvp['running'] = true
 
 # DEFINE PROCEDURES
@@ -548,6 +548,7 @@ set_timeout(3000, closure(
     if(array_index_exists(@arena, 'lives')) {
       @pvp['players'][player()]['lives'] = @pvp['players'][player()]['lives'] - 1
     }
+    @pvp['players'][player()]['limbotime'] = time()
     if(array_index_exists(@arena, 'teamcolor')) {
       @parts = parse_args(@event['death_message'])
       @parts[0] = color(@arena['teamcolor'][@pvp['players'][player()]['team']]).player().color('r')
@@ -565,7 +566,6 @@ set_timeout(3000, closure(
     } else {
       _regionmsg(@arena['broadcast'], color('gray').'[PVP] '.color(r).@deathmessage.' ('.@pvp['players'][player()]['lives'].' lives left)')
     }
-    @pvp['players'][player()]['limbotime'] = time()
     export('pvp'.@id, @pvp)
     if(array_index_exists(@arena, 'denydrop')) {
       @drops = array()
@@ -583,19 +583,19 @@ set_timeout(3000, closure(
     @pvp = import('pvp'.@id)
     if(!array_index_exists(@pvp['players'], player()), die())
     if((!array_index_exists(@arena, 'lives') && !array_contains(sk_regions_at(@event['location']), @arena['region'])) || @pvp['players'][player()]['limbotime'] + 10000 < time()) {
-      array_remove(@pvp['players'], @player)
-      set_timeout(50, closure(set_ploc(@player, @arena['lobby'])))
+      array_remove(@pvp['players'], player())
+      set_timeout(50, closure(set_ploc(player(), @arena['lobby'])))
     } else {
       _give_kit(player())
       if(array_index_exists(@arena, 'lives')) {
-      set_plevel(@pvp['players'][player()]['lives'])
-      if(array_index_exists(@arena, 'teams')) {
-        @r = rand(0, array_size(@arena['spawns'][@pvp['players'][player()]['team']]))
-        modify_event('location', @arena['spawns'][@pvp['players'][player()]['team']][@r])
-      } else {
-        @r = rand(0, array_size(@arena['spawns'][0]))
-        modify_event('location', array_rand(@arena['spawns'][0], 1, false)[0])
-      }
+        set_plevel(@pvp['players'][player()]['lives'])
+        if(array_index_exists(@arena, 'teams')) {
+          @r = rand(0, array_size(@arena['spawns'][@pvp['players'][player()]['team']]))
+          modify_event('location', @arena['spawns'][@pvp['players'][player()]['team']][@r])
+        } else {
+          @r = rand(0, array_size(@arena['spawns'][0]))
+          modify_event('location', array_rand(@arena['spawns'][0], 1, false)[0])
+        }
       }
       if(array_index_exists(@arena, 'effects')) {
         set_timeout(50, closure(
