@@ -27,6 +27,7 @@ switch($action
     .color(r).'effect '.color('gray').'The starting potion effect for all players.\n'
     .color(r).'denydrop '.color('gray').'Sets block IDs that cannot be dropped when players die.\n'
     .color(r).'modpickup '.color('gray').'If true, removes redundant pickups.\n'
+    .color(r).'tools '.color('gray').'Special pre-defined item behavior. (comma separated)\n'
     .color(r).'debug '.color('gray').'Sets it in debug mode, which disallows normal starts.')
   }
   if(reg_count('^[a-z0-9]+$', $id) < 1, die('You can only use lowercase alphanumeric characters for the arena ID'))
@@ -223,6 +224,14 @@ switch($action
         die('Only accepts values: true or false (defaults to false)')
       }  
 
+    , 'tools',
+      if(!$value1 || $value2, die('You need to specify a comma separated list of pre-defined special tools/weapons. (no spaces).'))
+      @arena['tools'] = split(',', $value1)
+      foreach(@arena['tools'], @tool,
+        if(!array_contains(array('endernades'), @tool), die('Unknown tool: '.@tool))
+      )
+      msg('Activated these tools: '.@arena['tools'])
+
     , 'debug',
       if($value1) {
         @arena['debug'] = $value1
@@ -257,10 +266,9 @@ switch($action
           foreach(@chest['items'], @index, @item,
             set_inventory_item(@loc, @index, @item)
           )
-          break()
+          die('After editing, you can save this chestspawn by using "/arena set '.$id.' chestspawn '.@chest['cooldown'].' '.@chest['start'].'"')
         }
       )
-      die('After editing, you can save this chestspawn by using "/arena set '.$id.' chestspawn '.@chest['cooldown'].' '.@chest['start'].'"')
 
     , die('Unsupported setting for editing.')
   )
@@ -492,8 +500,9 @@ proc('_check_goals', assign(@id, @id), assign(@arena, @arena),
     if(array_index_exists(@arena, 'redstone'), set_block_at(@arena['redstone'], '69:6'))
     unbind(@id.'death')
     unbind(@id.'spawn')
-    unbind(@id.'interact')
     unbind(@id.'damage')
+    if(array_index_exists(@arena, 'chestspawns') || array_index_exists(@arena, 'tools'), unbind(@id.'interact'))
+    if(array_index_exists(@arena, 'tools') && array_index_exists(@arena['tools'], 'endernades'), unbind(@id.'teleport'))
     if(array_index_exists(@arena, 'modpickup'), unbind(@id.'pickup'))
     clear_task(@pvp['slowinterval'])
     @pvp = array('players': associative_array(), 'running': false)
@@ -609,18 +618,42 @@ set_timeout(3000, closure(
     export('pvp'.@id, @pvp)
   )
 
-  if(array_index_exists(@arena, 'chestspawns')) {
-    bind(player_interact, array('id': @id.'interact'), array('block': '54'), @event, assign(@arena, @arena), assign(@id, @id),
+  if(array_index_exists(@arena, 'chestspawns') || array_index_exists(@arena, 'tools')) {
+    bind(player_interact, array('id': @id.'interact'), null, @event, assign(@arena, @arena), assign(@id, @id),
+
+      # filter players
       @pvp = import('pvp'.@id)
       if(!array_index_exists(@pvp['players'], player()), die())
-      for(@i = 0, @i < array_size(@arena['chestspawns']), @i++,
-        if(@arena['chestspawns'][@i]['loc'] == @event['location']) {
-          cancel()
-          set_block_at(@event['location'], 0)
-          @pvp['chestspawns'][@i] = time()
-        }
-      )
+
+      # chest spawn breaking
+      if(@event['block'] == '54' && array_index_exists(@arena, 'chestspawns')) {
+        for(@i = 0, @i < array_size(@arena['chestspawns']), @i++,
+          if(@arena['chestspawns'][@i]['loc'] == @event['location']) {
+            cancel()
+            set_block_at(@event['location'], 0)
+            @pvp['chestspawns'][@i] = time()
+          }
+        )
+      }
+
+      # special tools
+      # if(array_index_exists(@arena, 'tools')) {
+        # switch(@event['item']
+      #}
+
       export('pvp'.@id, @pvp)
+    )
+  }
+
+  if(array_index_exists(@arena, 'tools') && array_contains(@arena['tools'], 'endernades')) {
+    bind(player_teleport, array('id': @id.'teleport'), null, @event, assign(@arena, @arena), assign(@id, @id),
+      if(@event['type'] != 'ENDER_PEARL', die())
+      @pvp = import('pvp'.@id)
+      if(!array_index_exists(@pvp['players'], player()), die())
+      if(array_contains(sk_regions_at(@event['to']), @arena['region'])) {
+        explosion(@event['to'], 2)
+      }
+      cancel()
     )
   }
 
