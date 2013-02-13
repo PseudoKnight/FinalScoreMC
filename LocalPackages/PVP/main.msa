@@ -402,6 +402,8 @@ if(array_size(@pvp['players']) < @arena['min'], die('There aren\'t enough player
 
 #PREPARE DATA
 _worldmsg('custom', color('gray').'[PVP] '.color(r).'STARTING '.to_upper(@id).'...')
+
+if(!array_index_exists(@arena, 'broadcast'), @arena['broadcast'] = @arena['region'])
 if(array_index_exists(@arena, 'teams')) {
   @team = 0
   @teams = array('', '')
@@ -430,7 +432,6 @@ if(array_index_exists(@arena, 'teams')) {
     color('gray').'[PVP] '.color('r').array_implode(array_keys(@pvp['players']), color('gray').' vs '.color('r')))
 }
 
-if(!array_index_exists(@arena, 'broadcast'), @arena['broadcast'] = @arena['region'])
 if(array_index_exists(@arena, 'itemspawns')) {
   @pvp['itemspawns'] = array()
   for(@i = 0, @i < array_size(@arena['itemspawns']), @i++,
@@ -492,7 +493,7 @@ proc('_check_goals', assign(@id, @id), assign(@arena, @arena),
     unbind(@id.'death')
     unbind(@id.'spawn')
     unbind(@id.'interact')
-    if(array_index_exists(@arena, 'ff'), unbind(@id.'ff'))
+    unbind(@id.'damage')
     if(array_index_exists(@arena, 'modpickup'), unbind(@id.'pickup'))
     clear_task(@pvp['slowinterval'])
     @pvp = array('players': associative_array(), 'running': false)
@@ -623,18 +624,22 @@ set_timeout(3000, closure(
     )
   }
 
-  if(array_index_exists(@arena, 'ff') && @arena['ff'] == 'false') {
-    bind(entity_damage_player, array('id': @id.'ff'), null, @event, assign(@arena, @arena), assign(@id, @id),
-      if(@event['damager'] == 'PLAYER' || @event['damager'] == 'ARROW') {
-        @pvp = import('pvp'.@id)
-        if(array_index_exists(@pvp['players'], player())
+
+  bind(entity_damage_player, array('id': @id.'damage'), null, @event, assign(@arena, @arena), assign(@id, @id),
+    if(@event['damager'] == 'PLAYER' || @event['damager'] == 'ARROW') {
+      @pvp = import('pvp'.@id)
+      if(array_index_exists(@arena, 'ff')
+        && @arena['ff'] == 'false'
+        && array_index_exists(@pvp['players'], player())
         && array_index_exists(@pvp['players'], @event['data'])
         && (!array_index_exists(@arena, 'teams') || @pvp['players'][player()]['team'] == @pvp['players'][@event['data']]['team'])) {
           cancel()
         }
+      if(array_index_exists(@pvp['players'], player()) && !array_index_exists(@pvp['players'], @event['data'])) {
+        set_ploc(@event['data'], @arena['lobby'])
       }
-    )
-  }
+    }
+  )
 
   if(array_index_exists(@arena, 'modpickup')) {
     bind(item_pickup, array('id': @id.'pickup'), null, @event, assign(@id, @id),
