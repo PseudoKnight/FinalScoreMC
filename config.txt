@@ -798,37 +798,3 @@
 <<<
 
 
-#############
-# PITFRENZY #
-#############
-
-*:/pitfrenzy [$loc] = >>>
-  if(array_contains(array('outworld', 'outworld_nether', 'outworld_the_end'), pworld()), die('You cannot teleport in this galaxy'))
-  switch($loc
-  , '1',
-      set_ploc(array(-276.5, 64.5, -316.5, 'custom'))
-  , '2',
-      set_ploc(array(-276.5, 64.5, -260.5, 'custom'))
-  , 'exit',
-      run('/warp pitfrenzy')
-  , #else
-    die(color(7).'/pitfrenzy <1|2|exit>')
-  )
-  _clear_pinv()
-<<<
-
-*:/watchpitfrenzy [$loc] = >>>
-  if(array_contains(array('outworld', 'outworld_nether', 'outworld_the_end'), pworld()), die('You cannot teleport in this galaxy'))
-  switch($loc
-  , '1',
-      set_ploc(array(-276.5, 83, -338.5, 'custom'))
-  , '2',
-      set_ploc(array(-276.5, 83, -238.5, 'custom'))
-  , 'exit',
-      run('/warp pitfrenzy')
-  , #else
-    die(color(7).'/watchpitfrenzy <1|2|exit>')
-  )
-<<<
-
-

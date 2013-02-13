@@ -290,14 +290,6 @@ bind(player_interact, null, array('block': 77, 'button': 'right'), @event,
               export(@stopwatch)
             die('Unknown StopWatch command.')
           ),
-        '[PITFRENZY]',
-          switch(@signtext[2],
-            'Reset',
-              sudo('/butcher' 45)
-              msg(color(c), '[PITFRENZY] ', color('white'), 'Arena reset. Clearing drops...')
-              set_timeout(2000, closure(sudo('/remove items 45'))),
-            die('Unknown PitFrenzy command.')
-          ),
         '[SKYPIRATES]',
           switch(@signtext[2],
             'Join',
