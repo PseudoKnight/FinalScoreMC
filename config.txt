@@ -2,8 +2,11 @@
   if(!$force) {
     import(@currentspleef)
     if(@currentspleef != false && array_size(@currentspleef) >= 1, die('Spleef in progress.'))
-    @pvp = import('pvpskypiea')
-    if(@pvp && @pvp['running'] == true, die('Skypiea PVP in progress.'))
+    @arenas = get_values('arena')
+    foreach(array_keys(@arenas), @key,
+      @pvp = import('pvp'.split('.', @key)[1])
+      if(@pvp && @pvp['running'] == true, die(@pvp.' in progress.'))
+    )
     @cluck = import(@cluck)
     if(@cluck && (@cluck['active'] == 1 || @cluck['round'] > 1), die('Cluck in progress.'))
   }
@@ -22,6 +25,16 @@
 
 /say $ = >>>
   broadcast(color(8).simple_date('h:mm').' '._colorname().player().color('gray').': '.color('r').$) 
+<<<
+
+/test $bool = >>>
+if($bool == 0) {
+  unbind('test')
+} else {
+bind(player_interact, array('id': 'test'), array('player': 'PseudoKnight'), @event,
+  assign(@arrow, shoot_projectile(player(), 'arrow'))
+)
+}
 <<<
 
 /setrider $horse $rider = >>>
