@@ -228,7 +228,7 @@ switch($action
       if(!$value1 || $value2, die('You need to specify a comma separated list of pre-defined special tools/weapons. (no spaces).'))
       @arena['tools'] = split(',', $value1)
       foreach(@arena['tools'], @tool,
-        if(!array_contains(array('endernades'), @tool), die('Unknown tool: '.@tool))
+        if(!array_contains(array('endernades', 'skullrockets'), @tool), die('Unknown tool: '.@tool))
       )
       msg('Activated these tools: '.@arena['tools'])
 
@@ -437,7 +437,7 @@ if(array_index_exists(@arena, 'teams')) {
     if(array_index_exists(@arena, 'teamcolor'), color(@arena['teamcolor'][0])).@teams[0].color('gray').'vs '.color('r').if(array_index_exists(@arena, 'teamcolor'), color(@arena['teamcolor'][1])).@teams[1])
 } else {
   _regionmsg(@arena['broadcast'],
-    color('gray').'[PVP] '.color('r').array_implode(array_keys(@pvp['players']), color('gray').' vs '.color('r')))
+    array_implode(array_keys(@pvp['players']), ' vs '))
 }
 
 if(array_index_exists(@arena, 'itemspawns')) {
@@ -502,7 +502,7 @@ proc('_check_goals', assign(@id, @id), assign(@arena, @arena),
     unbind(@id.'spawn')
     unbind(@id.'damage')
     if(array_index_exists(@arena, 'chestspawns') || array_index_exists(@arena, 'tools'), unbind(@id.'interact'))
-    if(array_index_exists(@arena, 'tools') && array_index_exists(@arena['tools'], 'endernades'), unbind(@id.'teleport'))
+    if(array_index_exists(@arena, 'tools') && array_contains(@arena['tools'], 'endernades'), unbind(@id.'teleport'))
     if(array_index_exists(@arena, 'modpickup'), unbind(@id.'pickup'))
     clear_task(@pvp['slowinterval'])
     @pvp = array('players': associative_array(), 'running': false)
@@ -637,9 +637,16 @@ set_timeout(3000, closure(
       }
 
       # special tools
-      # if(array_index_exists(@arena, 'tools')) {
-        # switch(@event['item']
-      #}
+      if(array_index_exists(@arena, 'tools')) {
+        switch(@event['item']
+        , '397:1',
+          if(array_contains(@arena['tools'], 'skullrockets')) {
+            shoot_projectile(player(), 'wither_skull')
+            ptake_item('397:1', 1)
+            cancel()
+          }
+        )
+      }
 
       export('pvp'.@id, @pvp)
     )
@@ -659,18 +666,21 @@ set_timeout(3000, closure(
 
 
   bind(entity_damage_player, array('id': @id.'damage'), null, @event, assign(@arena, @arena), assign(@id, @id),
+    @pvp = import('pvp'.@id)
+    if(!array_index_exists(@pvp['players'], player()), die())
     if(@event['damager'] == 'PLAYER' || @event['damager'] == 'ARROW') {
-      @pvp = import('pvp'.@id)
       if(array_index_exists(@arena, 'ff')
         && @arena['ff'] == 'false'
-        && array_index_exists(@pvp['players'], player())
         && array_index_exists(@pvp['players'], @event['data'])
         && (!array_index_exists(@arena, 'teams') || @pvp['players'][player()]['team'] == @pvp['players'][@event['data']]['team'])) {
           cancel()
-        }
-      if(array_index_exists(@pvp['players'], player()) && !array_index_exists(@pvp['players'], @event['data'])) {
+      }
+      if(!array_index_exists(@pvp['players'], @event['data'])) {
         set_ploc(@event['data'], @arena['lobby'])
       }
+    } else if(@event['damager'] == 'WITHER_SKULL') {
+      modify_event('amount', @event['amount'] * 6)
+      set_timeout(50, closure( set_peffect(player(), 20, 1, 0)))
     }
   )
 

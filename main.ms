@@ -162,7 +162,7 @@ bind(player_chat, null, null, @event,
 
 # Block wither
 bind(player_interact, null, array('item': 397), @event,
-  if(!has_permission('group.moderators') && pinv(player(), null)['data'] == '1' && !array_contains(array('outworld_nether', 'outworld', 'outworld_the_end'), pworld())) {
+  if(!has_permission('group.moderators') && pinv(player(), null)['data'] == '1' && !array_contains(array('custom', 'dev', 'outworld_nether', 'outworld', 'outworld_the_end'), pworld())) {
     cancel()
     msg(color('yellow').'Wither heads are currently restricted from being placed in this world.')
   }
