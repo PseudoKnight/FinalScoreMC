@@ -389,7 +389,33 @@ bind(player_interact, array('id': 'test'), array('player': 'PseudoKnight'), @eve
   @t = @shopline[0] - 1
   for(assign(@i, 0), @i < length(@shops[@t]), @i++,
     if(@shops[@t][@i]['location'] == @sign) {
-      array_set(@shops[@t], @i, array('location': @sign, 'price': substr(@signtext[1], 4), 'owner': @signtext[3]))
+      if(@t == 0) {
+        assign(@count, _get_inventory_count(array(@sign[0], @sign[1] - 1, @sign[2], @sign[3]), reg_replace('\\.', ':', @itemid)))
+        if(@count < parse_args($)[0]) {
+          array_remove(@shops[@t], @i)
+        } else {
+          array_set(@shops[@t], @i, array('location': @sign, 'price': $, 'owner': @signtext[3], 'stock': @count))
+        }
+      } else {
+        switch(substr($, length($) - 1)
+        , 'g',
+          @currency = '266'
+        , 'i',
+          @currency = '265'
+        , 'd',
+          @currency = '264'
+        , 'e',
+          @currency = '388'
+        , die()
+        )
+        assign(@count, _get_inventory_count(array(@sign[0], @sign[1] - 1, @sign[2], @sign[3]), @currency.':0'))
+        @cost = parse_args($)[2]
+        if(@count < substr(@cost, 0, length(@cost) - 1)) {
+          array_remove(@shops[@t], @i)
+        } else {
+          array_set(@shops[@t], @i, array('location': @sign, 'price': $, 'owner': @signtext[3], 'stock': @count))
+        }
+      }
       break()
     }
   )
