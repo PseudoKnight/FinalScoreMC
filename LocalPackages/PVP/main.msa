@@ -11,13 +11,14 @@ switch($action
     .color(r).'lobby '.color('gray').'Sets the exit spawn point (required)\n'
     .color(r).'mode '.color('gray').'Set the game mode\n'
     .color(r).'spawn '.color('gray').'Adds a spawn point. (required)\n'
+    .color(r).'flag '.color('gray').'The flag spawn lcoation for CTF (1 is red, 2 is blue)\n'
     .color(r).'region '.color('gray').'The combat region name.\n'
     .color(r).'broadcast '.color('gray').'The region all messages are broadcasted.\n'
     .color(r).'restore '.color('gray').'The optional restoration area name. (/prs)\n'
     .color(r).'time '.color('gray').'The starting time (0-24000)\n'
     .color(r).'kit '.color('gray').'Sets the respawn kits (accepts team # as value)\n'
     .color(r).'lives '.color('gray').'Number of lives until elimination (default: bed respawn)\n'
-    .color(r).'teamcolor '.color('gray').'The 0-15 value representing the chat color\n'
+    .color(r).'team '.color('gray').'Team name and color\n'
     .color(r).'ff '.color('gray').'Sets team friendly-fire (default: true)\n'
     .color(r).'itemspawn '.color('gray').'Set item drop. (default: 30 secs, no spawn at start)\n'
     .color(r).'chestspawn '.color('gray').'Set chest respawn (defaults same as itemspawn)\n'
@@ -35,6 +36,16 @@ switch($action
   if(!@arena, @arena = array())
   switch($setting
 
+    , 'lobby',
+      if(pworld() != 'custom', die('You can only set spawns in the custom world.'))
+      @arena['lobby'] = array(round(ploc()[0], 1), ploc()[1], round(ploc()[2], 1), ploc()[3])
+      msg('Set lobby spawn to current location.')
+
+    , 'mode',
+      if(!$value1 || !array_contains_ic(array('dm', 'tdm', 'ctf'), $value1), die('Available modes: dm (default deathmatch), tdm (team deathmatch), ctf (capture the flag)'))
+      @arena['mode'] = to_lower($value1)
+      msg('Set arena game mode to '.$value1.'.')
+
     , 'spawn',
       if(pworld() != 'custom', die('You can only set spawns in the custom world.'))
       if(!array_index_exists(@arena, 'spawns'), @arena['spawns'] = array(array(), array()))
@@ -46,15 +57,10 @@ switch($action
         msg('Set a spawn point to current location.')
       }
 
-    , 'lobby',
-      if(pworld() != 'custom', die('You can only set spawns in the custom world.'))
-      @arena['lobby'] = array(round(ploc()[0], 1), ploc()[1], round(ploc()[2], 1), ploc()[3])
-      msg('Set lobby spawn to current location.')
-
-    , 'mode',
-      if(!$value1 || !array_contains_ic(array('dm', 'tdm', 'ctf'), $value1), die('Available modes: dm (default deathmatch), tdm (team deathmatch), ctf (capture the flag)'))
-      @arena['mode'] = to_lower($value1)
-      msg('Set arena game mode to '.$value1.'.')
+    , 'flag',
+      if(!$value1, die('This requires a team #.'))
+      @arena['flag'][$value1] = array(round(ploc()[0], 1), round(ploc()[1], 1), round(ploc()[2], 1), ploc()[3])
+      msg('Set flag for team '.$value1.' to this location.')
 
     , 'lives',
       if($value1) {
@@ -107,11 +113,12 @@ switch($action
       @arena['max'] = $value1
       msg('Set maximum players to '.$value1)
       
-    , 'teamcolor',
-      if(!$value2, die('You need to specify two values for this setting.'))
-      if(!array_index_exists(@arena, 'teamcolor'), @arena['teamcolor'] = array(15, 15))
-      @arena['teamcolor'][$value1 - 1] = $value2
-      msg('Set color for team '.$value1.' to '.color($value2).$value2.'.')
+    , 'team',
+      if(!$value2 || !$value3, die('You need to specify three values for this setting.'))
+      if(!array_index_exists(@arena, 'team'), @arena['team'] = array('name': '', 'color': 15), array('name': '', 'color': 15))
+      @arena['team'][$value1 - 1]['name'] = $value2
+      @arena['team'][$value1 - 1]['color'] = $value3
+      msg('Set team name to '.$value2.' with color '.color($value3).$value3)
 
     , 'ff',
       if($value1 == 'true') {
@@ -409,7 +416,7 @@ _worldmsg('custom', color('gray').'[PVP] '.color(r).'STARTING '.to_upper(@id).'.
 if(!array_index_exists(@arena, 'broadcast'), @arena['broadcast'] = @arena['region'])
 if(array_contains(array('tdm', 'ctf'), @arena['mode'])) {
   @team = 0
-  @teams = array('', '')
+  @pvp['stats']['teams'] = array(array(), array())
 }
 foreach(array_keys(@pvp['players']), @player,
   if(array_index_exists(@arena, 'lives')) {
@@ -421,7 +428,7 @@ foreach(array_keys(@pvp['players']), @player,
   # ASSIGN TEAMS
   if(array_contains(array('tdm', 'ctf'), @arena['mode'])) {
     @pvp['players'][@player]['team'] = @team
-    @teams[@team] .= @player.' '
+    array_push(@pvp['stats']['teams'][@team], @player)
     if(@team == 0, @team = 1, @team = 0)
   }
   @pvp['players'][@player]['limbotime'] = 0
@@ -429,7 +436,7 @@ foreach(array_keys(@pvp['players']), @player,
 
 if(array_contains(array('tdm', 'ctf'), @arena['mode'])) {
   _regionmsg(@arena['broadcast'], 
-    if(array_index_exists(@arena, 'teamcolor'), color(@arena['teamcolor'][0])).@teams[0].color('gray').'vs '.color('r').if(array_index_exists(@arena, 'teamcolor'), color(@arena['teamcolor'][1])).@teams[1])
+    if(array_index_exists(@arena, 'team'), color(@arena['team'][0]['color']).'['.@arena['team'][0]['name'].'] ').array_implode(@pvp['stats']['teams'][0], ' ').'\n'.color('r').if(array_index_exists(@arena, 'team'), color(@arena['team'][1]['color']).'['.@arena['team'][1]['name'].'] ').array_implode(@pvp['stats']['teams'][1], ' '))
 } else {
   _regionmsg(@arena['broadcast'],
     array_implode(array_keys(@pvp['players']), ' vs '))
@@ -468,12 +475,7 @@ proc('_check_goals', assign(@id, @id), assign(@arena, @arena),
 
   if(((!array_index_exists(@arena, 'mode') || @arena['mode'] == 'dm') && array_size(@pvp['players']) <= 1)
   || (array_contains(array('tdm', 'ctf'), @arena['mode']) && (@count[0] == 0 || @count[1] == 0))) {
-    foreachelse(array_keys(@pvp['players']), @p,
-      if(array_index_exists(@arena, 'teamcolor')) {
-        _worldmsg('custom', color('gray').'[PVP] '.color(@arena['teamcolor'][@pvp['players'][@p]['team']]).@p.color('r').' wins.')
-      } else {
-        _worldmsg('custom', color('gray').'[PVP] '.color(r).@p.' wins.')
-      }
+    foreach(array_keys(@pvp['players']), @p,
       if(@pvp['coins'] >= 1) {
         acc_add(@p, @pvp['coins'])
         tmsg(@p, color('gold').'+ '.@pvp['coins'].if(@pvp['coins'] >= 2, ' coins', ' coin'))
@@ -484,9 +486,18 @@ proc('_check_goals', assign(@id, @id), assign(@arena, @arena),
         _clear_pinv(@p)
         _remove_peffects(@p)
       ))
-    , #else
-      _worldmsg('custom', color('gray').'[PVP] '.color(r).'Nobody wins. Wait.. how?!')
     )
+
+    if(array_size(@pvp['players']) > 0) {
+      if(array_index_exists(@arena, 'team')) {
+        _worldmsg('custom', color('gray').'[PVP] '.color(@arena['team'][@pvp['players'][@p]['team']]['color']).@arena['team'][@pvp['players'][@p]['team']]['name'].' win!')
+      } else {
+        _worldmsg('custom', color('gray').'[PVP] '.color(r).@p.' wins.')
+      }
+    } else {
+      _worldmsg('custom', color('gray').'[PVP] '.color(r).'Nobody wins. Wait.. what?!')
+    }
+
     if(array_index_exists(@arena, 'restore')) {
       set_timeout(8000, closure(
         runas(~console, '/prs restore '.@arena['restore'])
@@ -555,9 +566,9 @@ set_timeout(3000, closure(
       @pvp['players'][player()]['lives'] = @pvp['players'][player()]['lives'] - 1
     }
     @pvp['players'][player()]['limbotime'] = time()
-    if(array_index_exists(@arena, 'teamcolor')) {
+    if(array_index_exists(@arena, 'team')) {
       @parts = parse_args(@event['death_message'])
-      @parts[0] = color(@arena['teamcolor'][@pvp['players'][player()]['team']]).player().color('r')
+      @parts[0] = color(@arena['team'][@pvp['players'][player()]['team']]['color']).player().color('r')
       @deathmessage = array_implode(@parts)
     } else {
       @deathmessage = @event['death_message']
@@ -712,8 +723,8 @@ set_timeout(3000, closure(
         )
       } else if(!array_contains(sk_current_regions(@player), @arena['region'])
       && ploc(@player)[1] > 0) {
-        if(array_index_exists(@arena, 'teamcolor')) {
-          _regionmsg(@arena['broadcast'], color('gray').'[PVP] '.color(@arena['teamcolor'][@pvp['players'][@player]['team']]).@player.color('r').' left the arena.')
+        if(array_index_exists(@arena, 'team')) {
+          _regionmsg(@arena['broadcast'], color('gray').'[PVP] '.color(@arena['team'][@pvp['players'][@player]['team']]['color']).@player.color('r').' left the arena.')
         } else {
           _regionmsg(@arena['broadcast'], color('gray').'[PVP] '.color(r).@player.' left the arena.')
         }
@@ -747,6 +758,7 @@ set_timeout(3000, closure(
         }
       )
     }
+
     export('pvp'.@id, @pvp)
     _check_goals()
   )))
