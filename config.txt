@@ -27,6 +27,10 @@
   broadcast(color(8).simple_date('h:mm').' '._colorname().player().color('gray').': '.color('r').$) 
 <<<
 
+/sayas $from $to $ = >>>
+  tmsg($to, color('gray').$from.': '.color('r').colorize($))
+<<<
+
 /test $bool = >>>
 if($bool == 0) {
   unbind('test')
@@ -543,96 +547,6 @@ bind(player_interact, array('id': 'test'), array('player': 'PseudoKnight'), @eve
   @item = pinv(player(), null)
   array_remove(@item, 'enchants')
   set_pinv(array(null: @item))
-<<<
-
-### CAKES ###
-
-*:/cake = >>>
-  msg(color('green').'[CAKE] Commands to create, change and remove cake prizes.\n'
-  .color('r').'/cake set [id] <coins> <cooldown> '.color('gray').'Sets the cake you\'re looking at to give coins when clicked. Cooldown is an integer in days.\n'
-  .color('r').'/cake delete [id] '.color('gray').'Deletes the prize for the cake you\'re looking at.\n'
-  .color('r').'/cake list '.color('gray').'List the names of all cake prizes.\n'
-  .color('r').'/cake info [id] '.color('gray').'Shows cake info and current cooldowns')
-<<<
-
-*:/cake set [$] = >>>
-  if(!array_contains(pgroup(), 'moderators'), die('You do not have permission to use cake commands.'))
-  if(!$, die('/cake set [id] <coins> <cooldown>'))
-  @loc = pcursor()
-  if(get_block_at(@loc) != '92:0', die('That doesn\'t appear to be a cake. Is it obstructed by a sign or other partial block?'))
-
-  @cakes = get_value('cakes')
-  if(!@cakes, @cakes = associative_array())
-  @args = parse_args($)
-  if(array_size(@args) == 3) {
-    if(!is_numeric(@args[1]) || !is_numeric(@args[2]), die('You must use integers after the cake id.'))
-    @id = @args[0]
-    @coins = @args[1]
-    @cooldown = @args[2]
-    if(!array_index_exists(@cakes, @id)) {
-      array_set(@cakes, @id, @loc)
-    }
-  } else if(array_size(@args) == 2) {
-    if(!is_numeric(@args[0]) || !is_numeric(@args[1]), die('You must use integers.'))
-    @id = array_index(@cakes, @loc)
-    if(!@id, die('Can\'t find a cake prize. You need to specify a cake id when creating new cake prizes.'))
-    @coins = @args[0]
-    @cooldown = @args[1]
-  } else {
-    die('/cake set [id] <coins> <cooldown>')
-  }
-
-  if(has_value('cakes.'.@id)) {
-    @cakedata = get_value('cakes.'.@id)
-  } else {
-    @cakedata = associative_array()
-    @cakedata['players'] = associative_array()
-  }
-  @cakedata['coins'] = @coins
-  @cakedata['cooldown'] = @cooldown
-  store_value('cakes', @cakes)
-  store_value('cakes.'.@id, @cakedata)
-  msg('Set '.@id.' to '.@coins.' coins with a '.@cooldown.' day cooldown.')
-<<<
-
-*:/cake delete [$id] = >>>
-  if(!array_contains(pgroup(), 'moderators'), die('You do not have permission to use cake commands.'))
-  @cakes = get_value('cakes')
-  if(!$id) {
-    @loc = pcursor()
-    @id = array_index(@cakes, @loc)
-    if(!@id, die('No cake prize found.'))
-  } else {
-    @id = $id
-  }
-  array_remove(@cakes, @id)
-  store_value('cakes', @cakes)
-  clear_value('cakes.'.@id)
-  msg('Deleted cake '.@id)
-<<<
-
-*:/cake list = >>>
-  if(!array_contains(pgroup(), 'moderators'), die('You do not have permission to use cake commands.'))
-  @cakes = get_value('cakes')
-  msg('Cakes: '.array_keys(@cakes))
-<<<
-
-*:/cake info [$id] = >>>
-  if(!array_contains(pgroup(), 'moderators'), die('You do not have permission to use cake commands.'))
-  @cakes = get_value('cakes')
-  if(!$id) {
-    @loc = pcursor()
-    @id = array_index(@cakes, @loc)
-    if(!@id, die('No cake prize found.'))
-  } else {
-    @id = $id
-  }
-  @cake = get_value('cakes.'.@id)
-  msg('Cake info for "'.@id.'":')
-  msg(color('green').@cake['coins'].color(r).' coins on a '.color('green').@cake['cooldown'].color(r).' day cooldown.')
-  foreach(@cake['players'], @player, @time,
-    msg(@player.': '.color('gray').round(((@time + (@cake['cooldown'] * 86400000)) - time()) / 86400000).' days left')
-  )
 <<<
 
 # COIN COMMANDS #
