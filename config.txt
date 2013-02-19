@@ -35,8 +35,10 @@
 if($bool == 0) {
   unbind('test')
 } else {
-bind(player_interact, array('id': 'test'), array('player': 'PseudoKnight'), @event,
+bind(player_interact, array('id': 'test'), array('player': 'froggerooh'), @event,
   assign(@arrow, shoot_projectile(player(), 'arrow'))
+  assign(@velocity, entity_velocity(@arrow))
+  set_entity_velocity(@arrow, array('x': @velocity['x'] * 3, 'y': @velocity['y'] * 3, 'z': @velocity['z'] * 3))
 )
 }
 <<<
@@ -289,12 +291,12 @@ bind(player_interact, array('id': 'test'), array('player': 'PseudoKnight'), @eve
 
 # MESSAGING #
 *:/msg $player $ = >>>
-  try(assign(@player, player($player)), @ex, die('Player not found.'))
+  try(@player = player($player), @ex, die('Player not found.'))
   tmsg(@player, color(7).'(From '.player().'): '.color(r).$)
   msg(color(7).'(To '.@player.'): '.color(r).$)
   import(@conv)
-  array_set(@conv, @player, player())
-  array_set(@conv, player(), @player)
+  @conv[@player] = player()
+  @conv[player()] = @player
   export(@conv)
 <<<
 
@@ -303,11 +305,11 @@ bind(player_interact, array('id': 'test'), array('player': 'PseudoKnight'), @eve
 
 *:/r $ = >>>
   import(@conv)
-  try(assign(@player, @conv[player()]), die('You have no conversations since this feature was last loaded.'))
+  try(@player = @conv[player()], die('You do not have any current conversations.'))
   if(!ponline(@player), die('That player is no longer online.'))
   tmsg(@player, color(7).'(From '.player().'): '.color(r).$)
   msg(color(7).'(To '.@player.'): '.color(r).$)
-  array_set(@conv, @player, player())
+  @conv[@player] = player()
   export(@conv)
 <<<
 
@@ -528,10 +530,10 @@ bind(player_interact, array('id': 'test'), array('player': 'PseudoKnight'), @eve
   explosion(array($x, $y, $z, $world), $radius)
 <<<
 
-*:/dye $slot $r $g $b = >>>
+*:/dye $r $g $b = >>>
   if((!array_contains(pgroup(), 'builders') || !array_contains(array('custom', 'dev'), pworld())) && !array_contains(pgroup(), 'moderators'), die('You do not have permission to use this command.'))
-  if(is_leather_armor($slot - 1)) {
-    set_armor_color($slot - 1, array($r, $g, $b))
+  if(is_leather_armor(pinfo(15))) {
+    set_armor_color(pinfo(15), array($r, $g, $b))
   } else {
     msg('That slot isn\'t leather armor.')
   }

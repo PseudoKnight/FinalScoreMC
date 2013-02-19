@@ -61,7 +61,6 @@ bind(player_teleport, null, null, @event,
       if((@event['to'][1] - 1) > ploc()[1])
       {
         set_ploc(array(@event['to'][0], @event['to'][1] - 1, @event['to'][2], @event['to'][3]))
-        console('Adjusted position for '.player().' after teleport.')
       }
     ))
   }
@@ -123,18 +122,19 @@ bind(player_chat, null, null, @event,
     cancel()
     die()
   }
-  if(substr(@event['message'], 0, 1) == '@') {
-    try(assign(@player, player(substr(parse_args(@event['message'])[0], 1))), @ex,
+  if(@event['message'][0] == '@') {
+    @p = substr(parse_args(@event['message'])[0], 1)
+    try(@player = player(@p),
       cancel()
       die('Player not found.')
     )
-    assign(@message, substr(@event['message'], length(parse_args(@event['message'])[0]) + 1))
+    @message = substr(@event['message'], length(@p) + 1)
     tmsg(@player, color(7).'(From '.player().'): '.color(r).@message)
     msg(color(7).'(To '.@player.'): '.color(r).@message)
     console(player().' @ '.@player.': '.@message, false)
     import(@conv)
-    array_set(@conv, @player, player())
-    array_set(@conv, player(), @player)
+    @conv[@player] = player()
+    @conv[player()] = @player
     export(@conv)
     cancel()
     die()
@@ -161,8 +161,8 @@ bind(player_chat, null, null, @event,
 )
 
 # Block wither
-bind(player_interact, null, array('item': 397), @event,
-  if(!has_permission('group.moderators') && pinv(player(), null)['data'] == '1' && !array_contains(array('custom', 'dev', 'outworld_nether', 'outworld', 'outworld_the_end'), pworld())) {
+bind(player_interact, array('priority': 'high'), array('item': 397), @event,
+  if(pinv(player(), null)['data'] == '1' && !array_contains(array('custom', 'dev', 'outworld_nether', 'outworld', 'outworld_the_end'), pworld())) {
     cancel()
     msg(color('yellow').'Wither heads are currently restricted from being placed in this world.')
   }

@@ -199,9 +199,7 @@ proc(_3d_distance, @arr1, @arr2,
 )
 
 proc(_horizontal_distance, @loc1, @loc2,
-  @a = sqrt((@loc1[0] - @loc2[0]) ** 2)
-  @b = sqrt((@loc1[2] - @loc2[2]) ** 2)
-  return(max(@a, @b))
+  return(max(sqrt((@loc1[0] - @loc2[0]) ** 2), sqrt((@loc1[2] - @loc2[2]) ** 2)))
 )
 
 #Given two blocks, iterates through all the blocks inside the cuboid, and calls the 
