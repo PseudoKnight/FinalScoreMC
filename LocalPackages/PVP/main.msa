@@ -2,7 +2,9 @@
 # ARENA MANAGEMENT #
 ####################
 
-*:/arena [$action] [$id] [$setting] [$value1] [$value2] [$value3] = >>>
+*:/arena [$action] [$id] [$setting] [$] = >>>
+if($, @args = parse_args($), @args = array())
+array_resize(@args, 3)
 switch($action
 , 'set',
   if(!has_permission('group.builders'), die('You do not have permission to use this function.'))
@@ -15,13 +17,14 @@ switch($action
     .color(r).'mode '.color('gray').'Set the game mode (default: dm)\n'
     .color(r).'flag '.color('gray').'The flag spawn lcoation for CTF (1 is red, 2 is blue)\n'
     .color(r).'lives '.color('gray').'Number of lives until elimination (default: bed respawn)\n'
+    .color(r).'score '.color('gray').'The target score to win. (default: 5)\n'
     .color(r).'team '.color('gray').'Team name and color\n'
     .color(r).'kit '.color('gray').'Sets the respawn kits (accepts team # as value)\n'
     .color(r).'restore '.color('gray').'The optional restoration area name. (/prs)\n'
     .color(r).'time '.color('gray').'The starting time (0-24000)\n'
     .color(r).'ff '.color('gray').'Sets team friendly-fire (default: true)\n'
-    .color(r).'itemspawn '.color('gray').'Set item drop. (default: 30 sec, no spawn @ start)\n'
-    .color(r).'chestspawn '.color('gray').'Set chest respawn (default: 30 sec, no spawn @ start)\n'
+    .color(r).'itemspawn '.color('gray').'Set item drop. (default: 60 sec, no spawn @ start)\n'
+    .color(r).'chestspawn '.color('gray').'Set chest respawn (default: 60 sec, no spawn @ start)\n'
     .color(r).'redstone '.color('gray').'The match start/end lever.\n'
     .color(r).'min '.color('gray').'The minimum # of players to start a match. (default: 2)\n'
     .color(r).'max '.color('gray').'Start the match as soon as this number of players join.\n'
@@ -44,46 +47,48 @@ switch($action
     , 'spawn',
       if(pworld() != 'custom', die('You can only set spawns in the custom world.'))
       if(!array_index_exists(@arena, 'spawns'), @arena['spawns'] = array(array(), array()))
-      if($value1 == '1' || $value1 == '2') {
-        array_push(@arena['spawns'][$value1 - 1], array(round(ploc()[0], 1), round(ploc()[1], 1), round(ploc()[2], 1), ploc()[3]))
-        msg('Set a spawn point to current location for team '.$value1.'.')
+      if(@args[0] == '1' || @args[0] == '2') {
+        array_push(@arena['spawns'][@args[0] - 1], array(round(ploc()[0], 1), round(ploc()[1], 1), round(ploc()[2], 1), ploc()[3]))
+        msg('Set a spawn point to current location for team '.@args[0].'.')
       } else {
         array_push(@arena['spawns'][0], array(round(ploc()[0], 1), ploc()[1], round(ploc()[2], 1), ploc()[3]))
         msg('Set a spawn point to current location.')
       }
 
     , 'region',
-      @arena['region'] = $value1
-      msg('Combat region set to '.$value1.'.')
+      @arena['region'] = @args[0]
+      msg('Combat region set to '.@args[0].'.')
 
     , 'broadcast',
-      @arena['broadcast'] = $value1
-      msg('Broadcast region set to '.$value1.'.')
+      @arena['broadcast'] = @args[0]
+      msg('Broadcast region set to '.@args[0].'.')
 
     , 'mode',
-      if(!$value1 || !array_contains_ic(array('dm', 'tdm', 'ctf'), $value1), die('Available modes: dm (default deathmatch), tdm (team deathmatch), ctf (capture the flag)'))
-      @arena['mode'] = to_lower($value1)
-      msg('Set arena game mode to '.$value1.'.')
+      if(!@args[0] || !array_contains_ic(array('dm', 'tdm', 'ctf'), @args[0]), die('Available modes: dm (default deathmatch), tdm (team deathmatch), ctf (capture the flag)'))
+      @arena['mode'] = to_lower(@args[0])
+      msg('Set arena game mode to '.@args[0].'.')
 
     , 'flag',
-      if(!$value1, die('This requires a team #.'))
-      @arena['flag'][$value1 - 1] = array(round(ploc()[0], 1), round(ploc()[1], 1) + 1, round(ploc()[2], 1), ploc()[3])
-      msg('Set flag for team '.$value1.' to this location.')
+      if(!@args[0], die('This requires a team #.'))
+      @arena['flag'][@args[0] - 1] = array(round(ploc()[0], 1), round(ploc()[1], 1) + 1, round(ploc()[2], 1), ploc()[3])
+      msg('Set flag for team '.@args[0].' to this location.')
 
     , 'lives',
-      if($value1) {
-        @arena['lives'] = $value1
-        msg('Set lives to '.$value1.'.')
-      } else {
-        die('This setting requires an integer.')
-      }
+      if(!@args[0], die('This setting requires an integer.'))
+      @arena['lives'] = @args[0]
+      msg('Set lives to '.@args[0].'.')
+
+    , 'score',
+      if(!@args[0], die('This setting requires an integer.'))
+      @arena['score'] = @args[0]
+      msg('Set score target to '.@args[0].'.')
 
     , 'team',
-      if(!$value2 || !$value3, die('You need to specify three values for this setting.'))
+      if(!@args[1] || !@args[2], die('You need to specify three values for this setting.'))
       if(!array_index_exists(@arena, 'team'), @arena['team'] = array('name': '', 'color': 15), array('name': '', 'color': 15))
-      @arena['team'][$value1 - 1]['name'] = $value2
-      @arena['team'][$value1 - 1]['color'] = $value3
-      msg('Set team name to '.$value2.' with color '.color($value3).$value3)
+      @arena['team'][@args[0] - 1]['name'] = @args[1]
+      @arena['team'][@args[0] - 1]['color'] = @args[2]
+      msg('Set team name to '.@args[1].' with color '.color(@args[2]).@args[2])
 
     , 'kit',
       if(!array_index_exists(@arena, 'kit'), @arena['kit'] = array(array(), array()))
@@ -93,10 +98,10 @@ switch($action
           array_remove(@inv, @slot)
         }
       )
-      if(!$value1 || $value1 == 1) {
+      if(!@args[0] || @args[0] == 1) {
         @arena['kit'][0] = @inv
         msg('Set kit to current inventory.')
-      } else if($value1 == 2) {
+      } else if(@args[0] == 2) {
         @arena['kit'][1] = @inv
         msg('Set kit to current inventory.')
       } else {
@@ -105,26 +110,26 @@ switch($action
 
     , 'restore',
       if(!has_permission('group.administrators'), die('Only admins can do this.'))
-      @arena['restore'] = $value1
-      msg('Restore area set to '.$value1.'.')
+      @arena['restore'] = @args[0]
+      msg('Restore area set to '.@args[0].'.')
 
     , 'time',
-      @arena['time'] = $value1
-      msg('Starting time set to '.$value1.'.')
+      @arena['time'] = @args[0]
+      msg('Starting time set to '.@args[0].'.')
 
     , 'min',
-      @arena['min'] = $value1
-      msg('Set minimum players to '.$value1)
+      @arena['min'] = @args[0]
+      msg('Set minimum players to '.@args[0])
 
     , 'max',
-      @arena['max'] = $value1
-      msg('Set maximum players to '.$value1)
+      @arena['max'] = @args[0]
+      msg('Set maximum players to '.@args[0])
 
     , 'ff',
-      if($value1 == 'true') {
+      if(@args[0] == 'true') {
         try(array_remove(@arena, 'ff'), die('Already set to true by default.'))
         msg('Set friendly-fire on. (default)')
-      } else if($value1 == 'false') {
+      } else if(@args[0] == 'false') {
         @arena['ff'] = false
         msg('Set friendly-fire off.')
       } else {
@@ -133,9 +138,9 @@ switch($action
 
     , 'itemspawn',
       if(!array_index_exists(@arena, 'itemspawns'), @arena['itemspawns'] = array())
-      if(!$value1 || is_numeric($value1)) {
-        if(!$value1, @cooldown = 30, @cooldown = $value1)
-        if(!$value2, @start = true, @start = $value2)
+      if(!@args[0] || is_numeric(@args[0])) {
+        if(!@args[0], @cooldown = 60, @cooldown = @args[0])
+        if(!@args[1], @start = true, @start = @args[1])
         array_push(@arena['itemspawns'], array(
           'start': @start,
           'cooldown': @cooldown,
@@ -149,9 +154,9 @@ switch($action
 
     , 'chestspawn',
       if(!array_index_exists(@arena, 'chestspawns'), @arena['chestspawns'] = array())
-      if(!$value1 || is_numeric($value1)) {
-        if(!$value1, @cooldown = 30, @cooldown = $value1)
-        if(!$value2, @start = 'true', @start = $value2)
+      if(!@args[0] || is_numeric(@args[0])) {
+        if(!@args[0], @cooldown = 60, @cooldown = @args[0])
+        if(!@args[1], @start = 'true', @start = @args[1])
         @loc = pcursor()
         if(split(':', get_block_at(@loc))[0] == '54') {
           @items = array()
@@ -191,34 +196,34 @@ switch($action
 
     , 'effect',
       assign(@effects, array('speed': '1', 'slowness': '2', 'haste': '3', 'fatique': '4', 'strength': '5', 'health': '6', 'damage': '7', 'jump': '8', 'nausea': '9', 'regen': '10', 'resistance': '11', 'fireresist': '12', 'waterbreathing': '13', 'invis': '14', 'blindness': '15', 'nightvision': '16', 'hunger': '17', 'weakness': '18', 'poison': '19'))
-      if(!array_contains(array_keys(@effects), $value1), die('Unknown potion effect. (speed, slowness, haste, fatique, strength, health, damage, jump, nausea, regen, resistance, fireresist, waterbreathing, invis, blindness, nightvision, hunger, weakness, poison)'))
-      @effect = @effects[$value1]
+      if(!array_contains(array_keys(@effects), @args[0]), die('Unknown potion effect. (speed, slowness, haste, fatique, strength, health, damage, jump, nausea, regen, resistance, fireresist, waterbreathing, invis, blindness, nightvision, hunger, weakness, poison)'))
+      @effect = @effects[@args[0]]
       if(!array_index_exists(@arena, 'effects'), @arena['effects'] = associative_array())
-      if($value2 && $value3) {
-        if($value2 == 0 || $value3 == 0) {
+      if(@args[1] && @args[2]) {
+        if(@args[1] == 0 || @args[2] == 0) {
           array_remove(@arena['effects'], @effect)
           if(array_size(@arena['effects']) == 0) {
             array_remove(@arena, 'effects')
           }
-          msg('Removed potion effect '.$value1.'.')
+          msg('Removed potion effect '.@args[0].'.')
         } else {
-          @arena['effects'][@effect] = associative_array('strength': $value2 - 1, 'length': $value3)
-          msg('Set starting potion effect to '.$value1.' with a strength of '.$value2.' and a length of '.$value3.'.')
+          @arena['effects'][@effect] = associative_array('strength': @args[1] - 1, 'length': @args[2])
+          msg('Set starting potion effect to '.@args[0].' with a strength of '.@args[1].' and a length of '.@args[2].'.')
         }
       } else {
         die('Requires a strength integer and a length integer in seconds.')
       }
 
     , 'denydrop',
-      if(!$value1 || $value2, die('You need to specify a comma separated list of item IDs. (no spaces)'))
-      @arena['denydrop'] = split(',', $value1)
-      msg('Set '.$value1.' item IDs as denied drops on death.')    
+      if(!@args[0] || @args[1], die('You need to specify a comma separated list of item IDs. (no spaces)'))
+      @arena['denydrop'] = split(',', @args[0])
+      msg('Set '.@args[0].' item IDs as denied drops on death.')    
 
     , 'modpickup',
-      if($value1 == 'true') {
-        @arena['modpickup'] = $value1
+      if(@args[0] == 'true') {
+        @arena['modpickup'] = @args[0]
         msg('Set modified pick-up on.')
-      } else if($value1 == 'false') {
+      } else if(@args[0] == 'false') {
         try(array_remove(@arena, 'modpickup'), die('Already set to false by default.'))
         msg('Set modified pick-up off.')
       } else {
@@ -226,17 +231,17 @@ switch($action
       }  
 
     , 'tools',
-      if(!$value1 || $value2, die('You need to specify a comma separated list of pre-defined special tools/weapons. (no spaces) Current available tools: endernades, skullrockets.'))
-      @arena['tools'] = split(',', $value1)
+      if(!@args[0] || @args[1], die('You need to specify a comma separated list of pre-defined special tools/weapons. (no spaces) Current available tools: endernades, skullrockets.'))
+      @arena['tools'] = split(',', @args[0])
       foreach(@arena['tools'], @tool,
         if(!array_contains(array('endernades', 'skullrockets'), @tool), die('Unknown tool: '.@tool))
       )
       msg('Activated these tools: '.@arena['tools'])
 
     , 'debug',
-      if($value1) {
-        @arena['debug'] = $value1
-        msg('Set debug to '.$value1.'.')
+      if(@args[0]) {
+        @arena['debug'] = @args[0]
+        msg('Set debug to '.@args[0].'.')
       } else {
         die('This setting requires a value.')
       }
@@ -252,12 +257,12 @@ switch($action
   switch($setting
     , 'kit',
       _clear_pinv()
-      if($value1) {
-        set_pinv(player(), @arena['kit'][$value1 - 1])
+      if(@args[0]) {
+        set_pinv(player(), @arena['kit'][@args[0] - 1])
       } else {
         set_pinv(player(), @arena['kit'][0])
       }
-      die('After editing, you can save this kit by using "/arena set '.$id.' kit '.$value1.'"')
+      die('After editing, you can save this kit by using "/arena set '.$id.' kit '.@args[0].'"')
 
     , 'chestspawn',
       @loc = pcursor()
@@ -416,6 +421,7 @@ if(!array_index_exists(@arena, 'broadcast'), @arena['broadcast'] = @arena['regio
 if(!array_index_exists(@arena, 'mode'), @arena['mode'] = 'dm')
 if(!array_index_exists(@arena, 'ff'), @arena['ff'] = true)
 if(!array_index_exists(@arena, 'team'), @arena['team'] = array(array('name': 'Team 1', 'color': 15), array('name': 'Team 2', 'color': 15)))
+if(!array_index_exists(@arena, 'score'), @arena['score'] = 5)
 
 # add data to @pvp
 if(array_contains(array('tdm', 'ctf'), @arena['mode'])) {
@@ -479,7 +485,7 @@ proc('_check_goals', assign(@id, @id), assign(@arena, @arena),
   # check win conditions
   if((@arena['mode'] == 'dm' && array_size(@pvp['players']) <= 1)
   || (array_contains(array('tdm', 'ctf'), @arena['mode']) && (@count[0] == 0 || @count[1] == 0))
-  || (@arena['mode'] == 'ctf' && (@pvp['team'][0]['score'] >= 3 || @pvp['team'][1]['score'] >= 3))) {
+  || (@arena['mode'] == 'ctf' && (@pvp['team'][0]['score'] >= @arena['score'] || @pvp['team'][1]['score'] >= @arena['score']))) {
 
     foreach(array_keys(@pvp['players']), @player,
       if(@pvp['coins'] >= 1) {
