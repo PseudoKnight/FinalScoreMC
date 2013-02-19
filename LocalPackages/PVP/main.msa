@@ -435,6 +435,10 @@ foreach(array_keys(@pvp['players']), @player,
   @pvp['players'][@player]['limbotime'] = 0
 )
 
+if(@arena['mode'] == 'ctf') {
+  @pvp['team'][0]['score'] = 0
+  @pvp['team'][1]['score'] = 0
+}
 if(array_index_exists(@arena, 'itemspawns')) {
   @pvp['itemspawns'] = array()
   for(@i = 0, @i < array_size(@arena['itemspawns']), @i++,
@@ -472,8 +476,10 @@ proc('_check_goals', assign(@id, @id), assign(@arena, @arena),
     )
   }
 
-  if(((@arena['mode'] == 'dm') && array_size(@pvp['players']) <= 1)
-  || (array_contains(array('tdm', 'ctf'), @arena['mode']) && (@count[0] == 0 || @count[1] == 0))) {
+  # check win conditions
+  if((@arena['mode'] == 'dm' && array_size(@pvp['players']) <= 1)
+  || (array_contains(array('tdm', 'ctf'), @arena['mode']) && (@count[0] == 0 || @count[1] == 0))
+  || (@arena['mode'] == 'ctf' && (@pvp['team'][0]['score'] >= 3 || @pvp['team'][1]['score'] >= 3))) {
 
     foreach(array_keys(@pvp['players']), @player,
       if(@pvp['coins'] >= 1) {
@@ -495,7 +501,7 @@ proc('_check_goals', assign(@id, @id), assign(@arena, @arena),
         _worldmsg('custom', color('gray').'[PVP] '.color(r).@player.' wins!')
       }
     } else {
-      _worldmsg('custom', color('gray').'[PVP] '.color(r).'Nobody wins!. Wait.. what?!')
+      _worldmsg('custom', color('gray').'[PVP] '.color(r).'Nobody wins! Wait.. what?!')
     }
 
     if(array_index_exists(@arena, 'restore')) {
@@ -740,6 +746,8 @@ set_timeout(3000, closure(
             if(pinv(player(), 103) != null && pinv(player(), 103)['type'] == 8) {
               set_pinv(player(), array(103: null))
               _regionmsg(@arena['broadcast'], color('gray').'[PVP] '.color(@arena['team'][0]['color']).player().' captured the flag!')
+              @pvp['team'][0]['score']++
+              export('pvp'.@id, @pvp)
               _check_goals()
               item_drop(@arena['flag'][1], '8')
             }
@@ -762,6 +770,8 @@ set_timeout(3000, closure(
             if(pinv(player(), 103) != null && pinv(player(), 103)['type'] == 10) {
               set_pinv(player(), array(103: null))
               _regionmsg(@arena['broadcast'], color('gray').'[PVP] '.color(@arena['team'][1]['color']).player().' captured the flag!')
+              @pvp['team'][1]['score']++
+              export('pvp'.@id, @pvp)
               _check_goals()
               item_drop(@arena['flag'][0], '10')
             }
