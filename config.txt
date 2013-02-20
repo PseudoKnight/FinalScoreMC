@@ -5,7 +5,7 @@
     @arenas = get_values('arena')
     foreach(array_keys(@arenas), @key,
       @pvp = import('pvp'.split('.', @key)[1])
-      if(@pvp && @pvp['running'] == true, die(@pvp.' in progress.'))
+      if(@pvp && @pvp['running'] == true, die(to_upper(split('.', @key)[1]).' in progress.'))
     )
     @cluck = import(@cluck)
     if(@cluck && (@cluck['active'] == 1 || @cluck['round'] > 1), die('Cluck in progress.'))
@@ -64,7 +64,7 @@
     try(msg(to_upper($selection).': '.color('a'), @help[to_lower($selection)]), @ex, msg(color('c'), 'Unknown entry. Type "/help" to find available entries.')))
 <<<
 
-*:/donor $player $amount = >>>
+/donor $player $amount = >>>
   if(!has_permission('group.administrators'), die('You do not have permission to use this command.'))
   acc_add($player, $amount * 100)
   msg('Gave '.$player.' '.$amount * 100.' coins.')
@@ -279,43 +279,43 @@
 
 # TELEPORTATION BETWEEN FRIENDS #
 *:/join $player = >>>
-  try(assign(@player, player($player)), @ex, die('Player not found.'))
-  assign(@blockedworlds, array('outworld', 'outworld_nether', 'outworld_the_end'))
+  try(@player = player($player), die('Player not found.'))
+  @blockedworlds = array('outworld', 'outworld_nether', 'outworld_the_end')
   if(array_contains(@blockedworlds, pworld()), die('You cannot teleport in this galaxy'))
   if(array_contains(@blockedworlds, pworld($player)), die('That player is out of reach.'))
   import(@requests)
-  tmsg(@player, color(b), player(), ' has requested to join you. /accept')
-  msg(color(b), 'Request to join sent to ', @player, '.')
-  array_set(@requests, @player, array('join', player()))
+  tmsg(@player, color(b).player().' has requested to join you. /accept')
+  msg(color(b).'Request to join sent to '.@player.'.')
+  @requests[@player] = array('join', player())
   export(@requests)
 <<<
 
 *:/invite $player = >>>
-  try(assign(@player, player($player)), @ex, die('Player not found.'))
-  assign(@blockedworlds, array('outworld', 'outworld_nether', 'outworld_the_end'))
+  try(@player = player($player), die('Player not found.'))
+  @blockedworlds = array('outworld', 'outworld_nether', 'outworld_the_end')
   if(array_contains(@blockedworlds, pworld()), die('You cannot teleport in this galaxy'))
   if(array_contains(@blockedworlds, pworld($player)), die('That player is out of reach.'))
   import(@requests)
-  tmsg(@player, color(b), player(), ' has requested that you join them. /accept')
-  msg(color(b), 'Invitation sent to ', @player, '.')
-  array_set(@requests, @player, array('invite', player()))
+  tmsg(@player, color(b).player().' has requested that you join them. /accept')
+  msg(color(b).'Invitation sent to '.@player.'.')
+  @requests[@player] = array('invite', player())
   export(@requests)
 <<<
 
 *:/accept = >>>
-  assign(@blockedworlds, array('outworld', 'outworld_nether', 'outworld_the_end'))
+  @blockedworlds = array('outworld', 'outworld_nether', 'outworld_the_end')
   if(array_contains(@blockedworlds, pworld()), die('You cannot teleport in this galaxy'))
   import(@requests)
   if(!array_index_exists(@requests, player()), die('There is nothing to accept.'))
   if(array_contains(@blockedworlds, pworld(@requests[player()][1])), die('That player is out of reach.'))
   if(!ponline(@requests[player()][1]), die('That player is no longer online.'))
   if(@requests[player()][0] == 'invite') {
-    msg(color(b), 'Teleporting to '.@requests[player()][1].' in 3 seconds...')
-    tmsg(@requests[player()][1], color(b), 'Teleporting '.player().' in 3 seconds...')
+    msg(color(b).'Teleporting to '.@requests[player()][1].' in 3 seconds...')
+    tmsg(@requests[player()][1], color(b).'Teleporting '.player().' in 3 seconds...')
     _warmuptp(3, player(), ploc(@requests[player()][1]))
   } else {
-    msg(color(b), 'Teleporting '.@requests[player()][1].' in 3 seconds...')
-    tmsg(@requests[player()][1], color(b), 'Teleporting to '.player().' in 3 seconds...')
+    msg(color(b).'Teleporting '.@requests[player()][1].' in 3 seconds...')
+    tmsg(@requests[player()][1], color(b).'Teleporting to '.player().' in 3 seconds...')
     _warmuptp(3, @requests[player()][1], ploc())
   }
   array_remove(@requests, player())
