@@ -53,8 +53,7 @@ switch($action
     .color(r).'ff '.color('gray').'Sets team friendly-fire (default: true)\n'
     .color(r).'itemspawn '.color('gray').'Set item drop. (default: 60 sec, no spawn @ start)\n'
     .color(r).'chestspawn '.color('gray').'Set chest respawn (default: 60 sec, no spawn @ start)\n'
-    .color(r).'lever '.color('gray').'The match start/end lever.\n'
-    .color(r).'redstonetorch '.color('gray').'(unfinished) The win condition redstone torch.\n'
+    .color(r).'lever '.color('gray').'The lever that turns on at start and off at end.\n'
     .color(r).'min '.color('gray').'The minimum # of players to start a match. (default: 2)\n'
     .color(r).'max '.color('gray').'Start the match as soon as this number of players join.\n'
     .color(r).'effect '.color('gray').'The starting potion effect for all players.\n'
@@ -619,10 +618,12 @@ set_timeout(3000, closure(
   bind(player_death, array('priority': 'high', 'id': @id.'death'), null, @event, assign(@arena, @arena), assign(@id, @id),
     @pvp = import('pvp'.@id)
     if(!array_index_exists(@pvp['players'], player()), die())
+
     if(array_index_exists(@arena, 'lives') && @pvp['players'][player()]['lives'] > 0) {
       @pvp['players'][player()]['lives'] = @pvp['players'][player()]['lives'] - 1
     }
     @pvp['players'][player()]['limbotime'] = time()
+
     if(array_contains(array('tdm', 'ctf'), @arena['mode'])) {
       @parts = parse_args(@event['death_message'])
       @parts[0] = color(@arena['team'][@pvp['players'][player()]['team']]['color']).player().color('r')
@@ -630,6 +631,7 @@ set_timeout(3000, closure(
     } else {
       @deathmessage = @event['death_message']
     }
+
     if(array_index_exists(@arena, 'lives')) {
       if(@pvp['players'][player()]['lives'] <= 0) {
         _regionmsg(@arena['broadcast'], color('gray').'[PVP] '.color(r).@deathmessage)
@@ -642,7 +644,9 @@ set_timeout(3000, closure(
     } else {
       _regionmsg(@arena['broadcast'], color('gray').'[PVP] '.color(r).@deathmessage)
     }
+
     export('pvp'.@id, @pvp)
+
     @drops = array()
     foreach(@event['drops'], @drop,
       if(array_index_exists(@arena, 'denydrop') && !array_contains(@arena['denydrop'], @drop['type'])) {
@@ -659,6 +663,7 @@ set_timeout(3000, closure(
     modify_event('xp', null)
     _check_goals()
   )
+
 
   bind(player_quit, array('id': @id.'quit'), null, @event, assign(@arena, @arena), assign(@id, @id),
     @pvp = import('pvp'.@id)
@@ -682,14 +687,19 @@ set_timeout(3000, closure(
     )
   )
 
+
   bind(player_spawn, array('id': @id.'spawn'), null, @event, assign(@arena, @arena), assign(@id, @id),
     @pvp = import('pvp'.@id)
     if(!array_index_exists(@pvp['players'], player()), die())
 
     _give_kit(player())
-    if(array_index_exists(@arena, 'lives')) {
+
+    if(array_index_exists(@arena, 'score')) {
+      set_plevel(@pvp['team'][@pvp['players'][player()]['team']]['score'])
+    } else if(array_index_exists(@arena, 'lives')) {
       set_plevel(@pvp['players'][player()]['lives'])
     }
+
     if(array_contains(array('tdm', 'ctf'), @arena['mode'])) {
       @r = rand(0, array_size(@arena['spawn'][@pvp['players'][player()]['team']]))
       modify_event('location', @arena['spawn'][@pvp['players'][player()]['team']][@r])
@@ -697,6 +707,7 @@ set_timeout(3000, closure(
       @r = rand(0, array_size(@arena['spawn'][0]))
       modify_event('location', array_rand(@arena['spawn'][0], 1, false)[0])
     }
+
     if(array_index_exists(@arena, 'effect')) {
       set_timeout(50, closure(
       foreach(@arena['effect'], @effect, @data,
@@ -704,8 +715,10 @@ set_timeout(3000, closure(
       )
       ))
     }
+
     export('pvp'.@id, @pvp)
   )
+
 
   if(array_index_exists(@arena, 'chestspawn') || array_index_exists(@arena, 'tools')) {
     bind(player_interact, array('id': @id.'interact'), null, @event, assign(@arena, @arena), assign(@id, @id),
@@ -741,6 +754,7 @@ set_timeout(3000, closure(
     )
   }
 
+
   if(array_index_exists(@arena, 'tools') && array_contains(@arena['tools'], 'endernades')) {
     bind(player_teleport, array('id': @id.'teleport'), null, @event, assign(@arena, @arena), assign(@id, @id),
       if(@event['type'] != 'ENDER_PEARL', die())
@@ -772,6 +786,7 @@ set_timeout(3000, closure(
       set_timeout(50, closure( set_peffect(player(), 20, 0, 0)))
     }
   )
+
 
   if(array_index_exists(@arena, 'modpickup') || @arena['mode'] == 'ctf') {
     bind(item_pickup, array('id': @id.'pickup'), null, @event, assign(@arena, @arena), assign(@id, @id), 
@@ -842,7 +857,8 @@ set_timeout(3000, closure(
     )
   }
 
-  assign(@pvp['slowinterval'], set_interval(1000, closure(assign(@arena, @arena), assign(@id, @id),
+
+  assign(@pvp['slowinterval'], set_interval(1000, closure(
     @pvp = import('pvp'.@id)
     @check = false
 
