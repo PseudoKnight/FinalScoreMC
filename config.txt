@@ -23,28 +23,12 @@
   broadcast(color(8).simple_date('h:mm').color('gray').' [console]'.color('aqua').$name.color('gray').': '.color('r').$) 
 <<<
 
-/say $ = >>>
+*:/say $ = >>>
   broadcast(color(8).simple_date('h:mm').' '._colorname().player().color('gray').': '.color('r').$) 
 <<<
 
 /sayas $from $to $ = >>>
   tmsg($to, color('gray').$from.': '.color('r').colorize($))
-<<<
-
-/test $bool = >>>
-if($bool == 0) {
-  unbind('test')
-} else {
-bind(player_interact, array('id': 'test'), array('player': 'froggerooh'), @event,
-  assign(@arrow, shoot_projectile(player(), 'arrow'))
-  assign(@velocity, entity_velocity(@arrow))
-  set_entity_velocity(@arrow, array('x': @velocity['x'] * 3, 'y': @velocity['y'] * 3, 'z': @velocity['z'] * 3))
-)
-}
-<<<
-
-/setrider $horse $rider = >>>
-  set_entity_rider(pinfo($horse, 13), pinfo($rider, 13))
 <<<
 
 #Runs the help procedure to list or display entries
@@ -204,26 +188,22 @@ bind(player_interact, array('id': 'test'), array('player': 'froggerooh'), @event
 <<<
 
 # APPROVAL SYSTEM #
-*:/approve $player = >>>
+*:/approve [$player] = >>>
   if(!has_permission('group.regulars'), die('You do not have permission to use this command.'))
-  if(not(ponline($player)), die('That player is not online. Did you misspell their name?'))
-  if(array_contains_ic(pgroup($player), 'Everyone'), die('Player already exists in whitelist.'))
-  sudo('/perm player setgroup' $player 'Everyone')
-  tmsg($player, 'You have been added to the whitelist by ', color(e), player(), color(f), '.')
-  if(!has_permission('group.moderators') || !has_permission('group.engineers')) {
-    assign(@key, concat('approvals.', to_lower($player)))
-    store_value(@key, player())
-  }
-<<<
-
-*:/approvals [$player] = >>>
-  if(!has_permission('group.moderators'), die('You do not have permission to use this command.'))
   if($player) {
-    assign(@key, concat('approvals.', to_lower($player)))
-    if(not(has_value(@key)), die(concat($player, ' was not approved by a player.')))
-    msg($player, ' was approved by ', color(e), get_value(@key), color(f), '.')
+    if(not(ponline($player)), die('That player is not online. Did you misspell their name?'))
+    if(array_contains_ic(pgroup($player), 'Everyone'), die('Player already exists in whitelist.'))
+    sudo('/perm player setgroup' $player 'Everyone')
+    tmsg($player, 'You have been added to the whitelist by ', color(e), player(), color(f), '.')
+    if(!has_permission('group.moderators')) {
+      assign(@key, concat('approvals.', to_lower($player)))
+      store_value(@key, player())
+    }
   } else {
-    msg(get_values('approvals'))
+    @approvals = get_values('approvals')
+    foreach(@approvals, @key, @value,
+      msg(split('.', @key)[1].' approved by '.@value)
+    )
   }
 <<<
 
@@ -261,31 +241,15 @@ bind(player_interact, array('id': 'test'), array('player': 'froggerooh'), @event
   )
 <<<
 *:/list = call_alias('/who')
-*:/players = call_alias('/who')
 
 # DICE ROLLING #
-*:/roll $num $max = >>>
-  if(gt($num, 5), die(concat(color('a'), '[Dice] ', color('f'), 'There\'s a limit of 5 die.')))
-  if(lt($num, 1), die(concat(color('a'), '[Dice] ', color('f'), 'There\'s a minimum of 1 die.')))
-  if(gt($max, 100), die(concat(color('a'), '[Dice] ', color('f'), 'There\'s a limit of 100 sides.')))
-  if(lt($max, 3), die(concat(color('a'), '[Dice] ', color('f'), 'There\'s a minimum of 3 sides.')))
-  assign(@results, '')
-  for( assign(@i, 0), lt(@i, $num), inc(@i), 
-    if( gt(@i, 0),
-      assign(@results, concat(@results, ' and ', color('a'), rand(1, $max + 1))),
-      assign(@results, concat(@results, color('a'), rand(1, $max + 1)))
-    )
-  )
-  broadcast(color('a').'[Dice] '._colorname(player()).player().color('f').' rolled '.color('a').@results.color('f').' on '.$num.'x'.$max.'-sided die.')
-<<<
-
-*:/roll [$max=6] = >>>
-  if(gt($max, 100), die(concat(color('a'), '[Dice] ', color('f'), 'There\'s a limit of 100 sides.')))
-  if(lt($max, 2), die(concat(color('a'), '[Dice] ', color('f'), 'There\'s a minimum of 2 sides.')))
-  if($max == 2) {
-    broadcast(color('a').'[Coin] '._colorname(player()).player().color('f').' flipped a coin and got '.if(rand(1) == 0, 'heads', 'tails'))
+*:/roll [$sides=6]= >>>
+  if($sides > 100, die(color('a').'[Dice] '.color('f').'There\'s a limit of 100 sides.'))
+  if($sides < 2, die(color('a').'[Dice] '.color('f').'There\'s a minimum of 2 sides.'))
+  if($sides == 2) {
+    broadcast(color('a').'[Coin] '._colorname(player()).player().color('f').' flipped a coin and got '.if(rand(1) == 0, 'heads.', 'tails.'))
   } else {
-    broadcast(color('a').'[Dice] '._colorname(player()).player().color('f').' rolled '.color('a').rand(1, $max + 1).color('f').' on a '.$max.'-sided die.')
+    broadcast(color('a').'[Dice] '._colorname(player()).player().color('f').' rolled a '.color('a').(rand($sides) + 1).' on a '.$sides.'-sided die.')
   }
 <<<
 
@@ -376,16 +340,10 @@ bind(player_interact, array('id': 'test'), array('player': 'froggerooh'), @event
 <<<
 
 #Set or reset the MOTD
-*:/setmotd $color $ = >>>
+*:/setmotd [$=''] = >>>
   if(!has_permission('group.moderators'), die('You do not have permission to use this command.'))
-  store_value('motd', concat(color($color), $))
-  msg('MOTD set to: ', color($color), $)
-<<<
-
-*:/setmotd = >>>
-  if(!has_permission('group.moderators'), die('You do not have permission to use this command.'))
-  store_value('motd', '')
-  msg('MOTD cleared.')
+  store_value('motd', colorize($))
+  msg('MOTD set to: '.colorize($))
 <<<
 
 #Run commands as other players and show them which command it was
@@ -399,14 +357,6 @@ bind(player_interact, array('id': 'test'), array('player': 'froggerooh'), @event
       sudo($)
     )
   )
-<<<
-
-/tp $player $x $y $z = >>>
-  if(get_command_block()) {
-     set_ploc($player, $x, $y, $z)
-  } else {
-    run('/tp' $player $x $y $z)
-  }
 <<<
 
 /goto $player = >>>
@@ -445,22 +395,21 @@ bind(player_interact, array('id': 'test'), array('player': 'froggerooh'), @event
   run('/gamemode' $mode @player)
 <<<
 
-*:/gm $mode = >>>
+*:/gm [$mode] = >>>
   if((!array_contains(pgroup(), 'builders') || !array_contains(array('custom', 'dev'), pworld())) && !array_contains(pgroup(), 'moderators'), die('You do not have permission to use this command.'))
-  switch($mode,
-    1, set_pmode('CREATIVE'),
-    0, set_pmode('SURVIVAL'),
-    2, set_pmode('ADVENTURE'),
-    msg('Acceptable values: 0 = survival, 1 = creative, 2, adventure.')
-  )
-<<<
-
-*:/gm = >>>
-  if((!array_contains(pgroup(), 'builders') || !array_contains(array('custom', 'dev'), pworld())) && !array_contains(pgroup(), 'moderators'), die('You do not have permission to use this command.'))
-  if(pmode() == 'CREATIVE',
-    set_pmode('SURVIVAL'),
-    set_pmode('CREATIVE')
-  )
+  if($mode) {
+    switch($mode,
+      1, set_pmode('CREATIVE'),
+      0, set_pmode('SURVIVAL'),
+      2, set_pmode('ADVENTURE'),
+      msg('Acceptable values: 0 = survival, 1 = creative, 2, adventure.')
+    )
+  } else {
+    if(pmode() == 'CREATIVE',
+      set_pmode('SURVIVAL'),
+      set_pmode('CREATIVE')
+    )
+  }
 <<<
 
 #Sign line edit script =D
@@ -470,22 +419,8 @@ bind(player_interact, array('id': 'test'), array('player': 'froggerooh'), @event
   assign(@sign, pcursor())
   if(!is_sign_at(@sign), die('That is not a sign'))
   assign(@lines, get_sign_text(@sign))
-  array_set(@lines, $line - 1, $)
+  array_set(@lines, $line - 1, colorize($))
   set_sign_text(@sign, @lines),
-<<<
-
-*:/signcolor $line [$color] = >>>
-  if((!array_contains(pgroup(), 'builders') || !array_contains(array('custom', 'dev'), pworld())) && !array_contains(pgroup(), 'moderators'), die('You do not have permission to use this command.'))
-  assign(@sign, pcursor())
-  if(!is_sign_at(@sign), die('That is not a sign'))
-  assign(@lines, get_sign_text(@sign))
-  if($color) {
-    if(length(strip_colors(@lines[$line - 1])) > 14, die('That line is too long to add a color. (14 char limit)'))
-    array_set(@lines, $line - 1, color($color).strip_colors(@lines[$line - 1]))
-  } else {
-    array_set(@lines, $line - 1, strip_colors(@lines[$line - 1]))
-  }
-  set_sign_text(@sign, @lines)
 <<<
 
 #Alias for setting people to Regulars group
@@ -495,14 +430,15 @@ bind(player_interact, array('id': 'test'), array('player': 'froggerooh'), @event
   run('/perm player setgroup' $player 'Regulars')
 <<<
 
-# TEST COMMANDS #
+# COMMAND BLOCK COMMANDS #
 
-*:/effect $player $effect [$strength=1] [$length=30] = >>>
-  try(assign(@player, player($player)), @ex, die('Who is that? Are they online?'))
-  if((!array_contains(pgroup(), 'builders') || !array_contains(array('custom', 'dev'), pworld())) && !array_contains(pgroup(), 'moderators'), die('You do not have permission to use this command.'))
-  assign(@effects, array('speed': '1', 'slowness': '2', 'haste': '3', 'fatique': '4', 'strength': '5', 'health': '6', 'damage': '7', 'jump': '8', 'nausea': '9', 'regen': '10', 'resistance': '11', 'fireresist': '12', 'waterbreathing': '13', 'invis': '14', 'blindness': '15', 'nightvision': '16', 'hunger': '17', 'weakness': '18', 'poison': '19'))
-  if(!array_index_exists(@effects, $effect), die('These are the available effect names: '.array_keys(@effects)))
-  set_peffect(@player, @effects[$effect], $strength, $length)
+*:/effect $player $effect [$strength=0] [$length=30] = >>>
+  if(get_command_block() || (array_contains(pgroup(), 'builders') && array_contains(array('custom', 'dev'), pworld())) || array_contains(pgroup(), 'moderators')) {
+    try(assign(@player, player($player)), @ex, die('Who is that? Are they online?'))
+    assign(@effects, array('speed': '1', 'slowness': '2', 'haste': '3', 'fatique': '4', 'strength': '5', 'health': '6', 'damage': '7', 'jump': '8', 'nausea': '9', 'regen': '10', 'regeneration': '10', 'resistance': '11', 'fireresist': '12', 'fireresistance': '12', 'waterbreathing': '13', 'invis': '14','invisibility': '14', 'blindness': '15', 'nightvision': '16', 'hunger': '17', 'weakness': '18', 'poison': '19', 'wither': '20'))
+    if(!array_index_exists(@effects, $effect), die('These are the available effect names: '.array_keys(@effects)))
+    set_peffect(@player, @effects[$effect], $strength, $length)
+  }
 <<<
 
 *:/velocity $player $x $y $z [$double] = >>>
@@ -516,6 +452,16 @@ bind(player_interact, array('id': 'test'), array('player': 'froggerooh'), @event
     ))
   }
 <<<
+
+/tp $player $x $y $z = >>>
+  if(get_command_block()) {
+    set_ploc($player, $x, $y, $z)
+  } else {
+    run('/tp' $player $x $y $z)
+  }
+<<<
+
+# TESTING/CONFIGURING COMMANDS
 
 *:/display $ = >>>
   if((!array_contains(pgroup(), 'builders') || !array_contains(array('custom', 'dev'), pworld())) && !array_contains(pgroup(), 'moderators'), die('You do not have permission to use this command.'))
@@ -549,6 +495,10 @@ bind(player_interact, array('id': 'test'), array('player': 'froggerooh'), @event
   @item = pinv(player(), null)
   array_remove(@item, 'enchants')
   set_pinv(array(null: @item))
+<<<
+
+/setrider $horse $rider = >>>
+  set_entity_rider(pinfo($horse, 13), pinfo($rider, 13))
 <<<
 
 # COIN COMMANDS #
