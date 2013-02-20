@@ -795,7 +795,7 @@ set_timeout(3000, closure(
         @pvp = import('pvp'.@id)
         if(!array_index_exists(@pvp['players'], player()), die())
         if(@pvp['players'][player()]['team'] == 0) {
-          if(_horizontal_distance(ploc(), @arena['flag'][0]) > 3) {
+          if(_horizontal_distance(ploc(), @arena['flag'][0]) > 3) { 
             modify_event('item', null)
             item_drop(@arena['flag'][0], '10')
             _regionmsg(@arena['broadcast'], color('gray').'[PVP] '.color(@arena['team'][0]['color']).player().' returned the flag.')
@@ -805,6 +805,11 @@ set_timeout(3000, closure(
               set_pinv(player(), array(103: null))
               _regionmsg(@arena['broadcast'], color('gray').'[PVP] '.color(@arena['team'][0]['color']).player().' captured the flag!')
               @pvp['team'][0]['score']++
+              foreach(array_keys(@pvp['players']), @player,
+                if(@pvp['players'][@player]['team'] == 0) {
+                  set_plevel(@player, @pvp['team'][0]['score'])
+                }
+              )
               export('pvp'.@id, @pvp)
               _check_goals()
               item_drop(@arena['flag'][1], '8')
@@ -829,6 +834,11 @@ set_timeout(3000, closure(
               set_pinv(player(), array(103: null))
               _regionmsg(@arena['broadcast'], color('gray').'[PVP] '.color(@arena['team'][1]['color']).player().' captured the flag!')
               @pvp['team'][1]['score']++
+              foreach(array_keys(@pvp['players']), @player,
+                if(@pvp['players'][@player]['team'] == 1) {
+                  set_plevel(@player, @pvp['team'][1]['score'])
+                }
+              )
               export('pvp'.@id, @pvp)
               _check_goals()
               item_drop(@arena['flag'][0], '10')
