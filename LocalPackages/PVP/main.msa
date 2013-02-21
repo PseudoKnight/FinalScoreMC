@@ -585,6 +585,7 @@ if(array_index_exists(@arena, 'kit')) {
 set_timeout(3000, closure(
   if(array_index_exists(@arena, 'lever'), set_block_at(@arena['lever'], '69:14'))
   if(array_index_exists(@arena, 'time'), set_world_time(@arena['lobby'][3], @arena['time']))
+  _remove_region_items(@arena['region'])
 
   @c = 0
   foreach(array_keys(@pvp['players']), @player,
@@ -598,7 +599,6 @@ set_timeout(3000, closure(
       if(@c == array_size(@arena['spawn'][0]) - 1, @c = 0, @c++)
     }
     set_pbed_location(@player, @arena['lobby'])
-    scriptas(@player, sudo('/remove items 45'))
 
     _clear_pinv(@player)
     _give_kit(@player)

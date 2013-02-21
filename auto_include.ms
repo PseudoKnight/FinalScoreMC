@@ -35,6 +35,32 @@ proc(_fill_inventory, @loc,
   )
 )
 
+# Removes all DROPPED_ITEM entities from region.
+# Since this loads entities by chunks it has a loose entity selection
+proc(_remove_region_items, @region,
+  if(!sk_region_exists(@region)) {
+    console('Can\'t remove dropped items because region doesn\'t exist: '.@region)
+    return(false)
+  }
+  @loc = sk_region_info(@region, pworld())[0]
+  if(array_size(@loc) > 2) {
+    console('Can\'t remove dropped items because region isn\'t a cuboid: '.@region)
+    return(false)
+  }
+  for(@x = @loc[1][0], @x < (@loc[0][0] + 15), inc(@x, 16),
+    if(@x > @loc[0][0], @x = @loc[0][0])
+    for(@z = @loc[1][2], @z < (@loc[0][2] + 15), inc(@z, 16),
+      if(@z > @loc[0][2], @z = @loc[0][2])
+      foreach(all_entities(array(@x, 64, @z, pworld())), @entity,
+        if(entity_type(@entity) == 'DROPPED_ITEM') {
+          entity_remove(@entity)
+        }
+      )
+    )
+  )
+  return(true)
+)
+
 # Returns the total qty of space available
 # @item: accepts item array with 'type' and 'data'
 # proc(_pitem_space, @player, @item,
