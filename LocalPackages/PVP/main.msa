@@ -754,7 +754,9 @@ set_timeout(3000, closure(
         switch(@event['item']
         , '397:1',
           if(array_contains(@arena['tools'], 'skullrockets')) {
-            shoot_projectile(player(), 'wither_skull')
+            @skull = shoot_projectile(player(), 'wither_skull')
+            @velocity = entity_velocity(@skull)
+            set_entity_velocity(@skull, array(@velocity['x'] * 3, @velocity['y'] * 3, @velocity['z'] * 3))
             ptake_item('397:1', 1)
             cancel()
           }
