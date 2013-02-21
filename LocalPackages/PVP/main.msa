@@ -528,6 +528,7 @@ proc('_check_goals', assign(@id, @id), assign(@arena, @arena),
         acc_add(@p, @pvp['coins'])
         tmsg(@player, color('gold').'+ '.@pvp['coins'].if(@pvp['coins'] >= 2, ' coins', ' coin'))
       }
+      if(array_index_exists(@pvp['players'][@player], 'limbo') && @pvp['players'][@player]['limbo'], clear_task(@pvp['players'][@player]['limbo']))
 
       set_timeout(3000, closure(
         set_ploc(@player, @arena['lobby'])
@@ -552,6 +553,7 @@ proc('_check_goals', assign(@id, @id), assign(@arena, @arena),
       ))
     }
     if(array_index_exists(@arena, 'lever'), set_block_at(@arena['lever'], '69:6'))
+
     unbind(@id.'death')
     unbind(@id.'spawn')
     unbind(@id.'damage')
@@ -559,6 +561,8 @@ proc('_check_goals', assign(@id, @id), assign(@arena, @arena),
     if(array_index_exists(@arena, 'chestspawn') || array_index_exists(@arena, 'tools'), unbind(@id.'interact'))
     if(array_index_exists(@arena, 'tools') && array_contains(@arena['tools'], 'endernades'), unbind(@id.'teleport'))
     if(array_index_exists(@arena, 'modpickup') || @arena['mode'] == 'ctf', unbind(@id.'pickup'))
+    if(@arena['mode'] == 'ctf', unbind(@id.'inventory'))
+
     clear_task(@pvp['slowinterval'])
     @pvp = array('players': associative_array(), 'running': false)
     export('pvp'.@id, @pvp)
@@ -698,6 +702,7 @@ set_timeout(3000, closure(
     if(!array_index_exists(@pvp['players'], player()), die())
 
     clear_task(@pvp['players'][player()]['limbo'])
+    @pvp['players'][player()]['limbo'] = null
     _give_kit(player())
 
     if(array_index_exists(@arena, 'score')) {
@@ -793,9 +798,14 @@ set_timeout(3000, closure(
     }
   )
 
-  #
-  # add inventory click event for CTF flags
-  #
+  if(@arena['mode'] == 'ctf') {
+    bind(inventory_click, array('id': @id.'inventory'), array('slottype': 'ARMOR'), @event, assign(@id, @id),
+      @pvp = import('pvp'.@id)
+      if(!array_index_exists(@pvp['players'], player()), die())
+      
+      if(@event['slot'] == 103, cancel())
+    )
+  }
 
   if(array_index_exists(@arena, 'modpickup') || @arena['mode'] == 'ctf') {
     bind(item_pickup, array('id': @id.'pickup'), null, @event, assign(@arena, @arena), assign(@id, @id), 
