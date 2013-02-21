@@ -785,18 +785,18 @@ set_timeout(3000, closure(
     @pvp = import('pvp'.@id)
     if(!array_index_exists(@pvp['players'], player()), die())
 
-    if(@event['damager'] == 'PLAYER' || @event['damager'] == 'ARROW') {
+    if(@event['damager'] == 'PLAYER' || @event['damager'] == 'ARROW' || @event['damager'] == 'WITHER_SKULL') {
       if(!@arena['ff']
         && array_index_exists(@pvp['players'], @event['data'])
         && (@arena['mode'] == 'dm' || @pvp['players'][player()]['team'] == @pvp['players'][@event['data']]['team'])) {
           cancel()
+      } else if(@event['damager'] == 'WITHER_SKULL') {
+        modify_event('amount', @event['amount'] * 6)
+        set_timeout(50, closure( set_peffect(player(), 20, 0, 0)))
       }
       if(!array_index_exists(@pvp['players'], @event['data'])) {
         set_ploc(@event['data'], @arena['lobby'])
       }
-    } else if(@event['damager'] == 'WITHER_SKULL') {
-      modify_event('amount', @event['amount'] * 6)
-      set_timeout(50, closure( set_peffect(player(), 20, 0, 0)))
     }
   )
 
