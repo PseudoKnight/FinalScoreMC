@@ -107,12 +107,36 @@
   } else {
     msg(color(6).'[ListShops] All shops for '.color(o).'"'.$.'"')
   }
-  foreach(@shops[0], @shop,
+  @fixed = false
+  foreach(@shops[0], @key, @shop,
+
+    #fix some old broken shops
+    #remove this later
+    if(!array_index_exists(@shop, 'stock')) {
+      array_remove(@shops[0], @key)
+      @fixed = true
+      continue()
+    }
+
     msg('Buy '.@shop['price'].color(7).' ('.@shop['stock'].') '.color('yellow').@shop['owner'].color(7).' '.@shop['location'][0].','.@shop['location'][1].','.@shop['location'][2].' '._worldname(@shop['location'][3]))
   )
-  foreach(@shops[1], @shop,
+  foreach(@shops[1], @key, @shop,
+
+    #fix some old broken shops
+    #remove this later
+    if(!array_index_exists(@shop, 'stock')) {
+      array_remove(@shops[1], @key)
+      @fixed = true
+      continue()
+    }
+
     msg('Sell '.@shop['price'].color(7).' ('.@shop['stock'].') '.color('yellow').@shop['owner'].color(7).' '.@shop['location'][0].','.@shop['location'][1].','.@shop['location'][2].' '._worldname(@shop['location'][3]))
   )
+
+  #fix some old broken shops
+  #remove this later
+  if(@fixed, store_value('shops.'.@itemid, @shops))
+
 <<<
 
 *:/rg flag $region $ = >>>

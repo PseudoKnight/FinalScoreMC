@@ -8,10 +8,10 @@ assign(@signtext, get_sign_text(@event['location']))
 if(length(@signtext[0]) > 2 && @signtext[0][0] == '['
 && (length(@signtext[1]) > 7 && substr(@signtext[1], 0, 3) == 'Buy'
 || length(@signtext[2]) > 8 && substr(@signtext[2], 0, 4) == 'Sell')) {
-  set_timeout(100, closure(
+  set_timeout(50, closure(
   assign(@itemid, _shop_item(@signtext[0]))
   assign(@shops, get_value('shops.'.@itemid))
-  if(@shops == null, @shops = array(array(), array()))
+  if(!@shops, @shops = array(array(), array()))
   if(length(@signtext[1]) > 7 && substr(@signtext[1], 0, 3) == 'Buy') {
     assign(@count, _get_inventory_count(array(@event['location'][0], @event['location'][1] - 1, @event['location'][2], @event['location'][3]), reg_replace('\\.', ':', @itemid)))
     # debug #
