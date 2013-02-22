@@ -644,6 +644,7 @@ set_timeout(3000, closure(
     if(array_index_exists(@arena, 'lives')) {
       if(@pvp['players'][player()]['lives'] <= 0) {
         _regionmsg(@arena['broadcast'], color('gray').'[PVP] '.color(r).@deathmessage)
+        clear_task(@pvp['players'][player()]['limbo'])
         array_remove(@pvp['players'], @player)
       } else if(@pvp['players'][player()]['lives'] == 1) {
         _regionmsg(@arena['broadcast'], color('gray').'[PVP] '.color(r).@deathmessage.color('red').' (One life left!)')
