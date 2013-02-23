@@ -6,34 +6,6 @@
 if($, @args = parse_args($), @args = array())
 array_resize(@args, 3)
 switch($action
-, 'update',
-  if(!has_permission('group.administrators.'), die('You do not have permission to use this sub-command.'))
-  @arenas = get_values('arena')
-  foreach(@arenas, @key, @arena,
-    if(array_index_exists(@arena, 'spawns')) {
-      @arena['spawn'] = @arena['spawns']
-      array_remove(@arena, 'spawns')
-    }
-    if(array_index_exists(@arena, 'redstone')) {
-      @arena['lever'] = @arena['redstone']
-      array_remove(@arena, 'redstone')
-    }
-    if(array_index_exists(@arena, 'itemspawns')) {
-      @arena['itemspawn'] = @arena['itemspawns']
-      array_remove(@arena, 'itemspawns')
-    }
-    if(array_index_exists(@arena, 'chestspawns')) {
-      @arena['chestspawn'] = @arena['chestspawns']
-      array_remove(@arena, 'chestspawns')
-    }
-    if(array_index_exists(@arena, 'effects')) {
-      @arena['effect'] = @arena['effects']
-      array_remove(@arena, 'effects')
-    }
-    store_value(@key, @arena)
-  )
-  msg('Updated all arenas.')
-
 , 'set',
   if(!has_permission('group.builders'), die('You do not have permission to use this sub-command.'))
   if(!$id) {
@@ -100,7 +72,8 @@ switch($action
 
     , 'flag',
       if(!@args[0], die('This requires a team #.'))
-      @arena['flag'][@args[0] - 1] = array(round(ploc()[0], 1), round(ploc()[1], 1) + 1, round(ploc()[2], 1), ploc()[3])
+      @team = @args[0] - 1
+      @arena['flag'][@team] = array(round(ploc()[0], 1), round(ploc()[1], 1) + 1, round(ploc()[2], 1), ploc()[3])
       msg('Set flag for team '.@args[0].' to this location.')
 
     , 'lives',
@@ -116,8 +89,9 @@ switch($action
     , 'team',
       if(!@args[1] || !@args[2], die('You need to specify three values for this setting.'))
       if(!array_index_exists(@arena, 'team'), @arena['team'] = array('name': '', 'color': 15), array('name': '', 'color': 15))
-      @arena['team'][@args[0] - 1]['name'] = @args[1]
-      @arena['team'][@args[0] - 1]['color'] = @args[2]
+      @team = @args[0] - 1
+      @arena['team'][@team]['name'] = @args[1]
+      @arena['team'][@team]['color'] = @args[2]
       msg('Set team name to '.@args[1].' with color '.color(@args[2]).@args[2])
 
     , 'kit',
