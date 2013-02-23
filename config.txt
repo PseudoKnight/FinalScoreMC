@@ -20,7 +20,7 @@
 <<<
 
 /s $name $ = >>>
-  broadcast(color(8).simple_date('h:mm').color('gray').' [console]'.color('aqua').$name.color('gray').': '.color('r').$) 
+  broadcast(color(8).simple_date('h:mm').color('gray').' [console] '.color('aqua').$name.color('gray').': '.color('r').$) 
 <<<
 
 *:/say $ = >>>
@@ -123,11 +123,27 @@
 /coins [$] = /econ $
 
 #Database control
-/sql delete $namespace = >>>
-  assign(@keys, get_values($namespace))
-  if(array_size(@keys) == 0, die('No keys for that namespace.'))
-  foreach(array_keys(@keys), @key,
-    clear_value(@key)
+/sql $action $namespace [$] = >>>
+  if(!pisop(), die('You do not have permission.'))
+  assign(@data, get_values($namespace))
+  if(array_size(@data) == 0, die('No keys for that namespace.'))
+  switch($action,
+  , 'delete',
+    foreach(@data, @key, @value,
+      clear_value(@key)
+    )
+    msg('Deleted '.$namespace)
+  , 'rename',
+    foreach(@data, @key, @value,
+      store_value(reg_replace($namespace, $, @key), @data[@key])
+      clear_value(@key)
+    )
+  , 'indexchild',
+    foreach(@data, @key, @value,
+      @array[$] = @value
+      store_value(reg_replace('.'.$, '', @key), @array)
+      clear_value(@key)
+    )
   )
 <<<
 
