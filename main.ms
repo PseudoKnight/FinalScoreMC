@@ -20,18 +20,18 @@ bind(player_login, null, null, @event,
   if(get_server_info(10)) {
     if(@event['result'] != 'ALLOWED', die())
     @info = get_value('player.'.@event['player'])
+    if(!@info, @info = array('ips': array()))
     if(!array_contains(@info['ips'], @event['ip'])) {
       array_push(@info['ips'], @event['ip'])
       store_value('player.'.@event['player'], @info)
     }
-    @ips = array(@event['ip'])
   } else {
     @ips = get_value('player.'.@event['player'])['ips']
-  }
-  if(!array_contains(@ips, @event['ip'])) {
-    console(@event['player'].': '.@event['ip'].', '.@ips)
-    modify_event('result', 'KICK_OTHER')
-    modify_event('kickmsg', 'Minecraft auth servers are down and your IP doesn\'t match our records.')
+    if(!array_contains(@ips, @event['ip'])) {
+      console(@event['player'].': '.@event['ip'].', '.@ips)
+      modify_event('result', 'KICK_OTHER')
+      modify_event('kickmsg', 'Minecraft auth servers are down and your IP doesn\'t match our records.')
+    }
   }
 )
 

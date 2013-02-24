@@ -86,22 +86,24 @@
 
 *:/spawn [$world] = >>>
   assign(@blockedworlds, array('outworld', 'outworld_nether', 'outworld_the_end'))
-  ifelse(array_contains(@blockedworlds, $world) || array_contains(@blockedworlds, pworld()),
-    msg('You cannot teleport directly to or from that world.'),
-  $world,
+  if(array_contains(@blockedworlds, $world) || array_contains(@blockedworlds, pworld())) {
+    msg('You cannot teleport directly to or from that world.')
+  } else if($world) {
     assign(@world, _worldid($world))
     if(!array_contains_ic(get_worlds(), @world), die('Failed to find a world called '.$world.'.'))
     _warmuptp(2, player(), get_spawn(@world))
-    msg('Teleporting to '.$world.'\'s spawn...'),
-  _warmuptp(2, player(), get_spawn())
-  msg('Teleporting to '._worldname(pworld()).'\'s spawn...')
-  )
+    msg('Teleporting to '.$world.'\'s spawn...')
+  } else {
+    _warmuptp(2, player(), get_spawn())
+    msg('Teleporting to '._worldname(pworld()).'\'s spawn...')
+  }
 <<<
 
 *:/warp $warp = >>>
   msg('Attempting to warp...')
   set_peffect(player(), 9, 1, 5)
   set_timeout(2 * 1000, closure(
+    if(!ponline(player()), die())
     make_effect(ploc(), 'GHAST_SHOOT', 20)
     run('/warp '.$warp)
     set_peffect(player(), 15, 1, 1)

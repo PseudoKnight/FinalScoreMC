@@ -145,6 +145,7 @@ proc(_worldid, @world,
 proc(_warmuptp, @length, @player, @loc,
   set_peffect(@player, 9, 1, 6)
   set_timeout(@length * 1000, closure(
+    if(!ponline(@player), die())
     make_effect(ploc(@player), 'GHAST_SHOOT', 20)
     set_ploc(@player, @loc)
     set_peffect(@player, 15, 1, 1)
