@@ -1,15 +1,32 @@
 ### CAKES ###
 
-*:/cake = >>>
-  msg(color('green').'[CAKE] Commands to create, change and remove cake prizes.\n'
-  .color('r').'/cake set [id] <coins> <cooldown> '.color('gray').'Sets the cake you\'re looking at to give coins when clicked. Cooldown is an integer in days.\n'
-  .color('r').'/cake delete [id] '.color('gray').'Deletes the prize for the cake you\'re looking at.\n'
-  .color('r').'/cake list '.color('gray').'List the names of all cake prizes.\n'
-  .color('r').'/cake info [id] '.color('gray').'Shows cake info and current cooldowns')
-<<<
+*:/cake [$cmd] [$] = >>>
+if(!array_contains(pgroup(), 'moderators'), die('You do not have permission to use cake commands.'))
+switch($cmd
+, 'list',
+  @cakes = get_value('cakes')
+  msg('Cakes: '.array_keys(@cakes))
 
-*:/cake set [$] = >>>
+
+, 'info',
   if(!array_contains(pgroup(), 'moderators'), die('You do not have permission to use cake commands.'))
+  @cakes = get_value('cakes')
+  if(!$) {
+    @loc = pcursor()
+    @id = array_index(@cakes, @loc)
+    if(!@id, die('No cake prize found.'))
+  } else {
+    @id = $
+  }
+  @cake = get_value('cakes.'.@id)
+  msg('Cake info for "'.@id.'":')
+  msg(color('green').@cake['coins'].color(r).' coins on a '.color('green').@cake['cooldown'].color(r).' day cooldown.')
+  foreach(@cake['players'], @player, @time,
+    msg(@player.': '.color('gray').round(((@time + (@cake['cooldown'] * 86400000)) - time()) / 86400000).' days left')
+  )
+
+
+, 'set',
   if(!$, die('/cake set [id] <coins> <cooldown>'))
   @loc = pcursor()
   if(get_block_at(@loc) != '92:0', die('That doesn\'t appear to be a cake. Is it obstructed by a sign or other partial block?'))
@@ -46,44 +63,39 @@
   store_value('cakes', @cakes)
   store_value('cakes.'.@id, @cakedata)
   msg('Set '.@id.' to '.@coins.' coins with a '.@cooldown.' day cooldown.')
-<<<
 
-*:/cake delete [$id] = >>>
-  if(!array_contains(pgroup(), 'moderators'), die('You do not have permission to use cake commands.'))
+
+, 'move',
+  if(!$, die('This needs an id.'))
+  @loc = pcursor()
+  if(get_block_at(@loc) != '92:0', die('That doesn\'t appear to be a cake. Is it obstructed by a sign or other partial block?'))
+
   @cakes = get_value('cakes')
-  if(!$id) {
+  if(!array_index_exists(@cakes, $), die('There doesn\'t appaar to be a cake by that id.'))
+  array_set(@cakes, $, @loc)
+  store_value('cakes', @cakes)
+  msg('Set '.$.' cake to this new location.')
+
+, 'delete',
+  @cakes = get_value('cakes')
+  if(!$) {
     @loc = pcursor()
     @id = array_index(@cakes, @loc)
     if(!@id, die('No cake prize found.'))
   } else {
-    @id = $id
+    @id = $
   }
   array_remove(@cakes, @id)
   store_value('cakes', @cakes)
   clear_value('cakes.'.@id)
   msg('Deleted cake '.@id)
-<<<
 
-*:/cake list = >>>
-  if(!array_contains(pgroup(), 'moderators'), die('You do not have permission to use cake commands.'))
-  @cakes = get_value('cakes')
-  msg('Cakes: '.array_keys(@cakes))
-<<<
-
-*:/cake info [$id] = >>>
-  if(!array_contains(pgroup(), 'moderators'), die('You do not have permission to use cake commands.'))
-  @cakes = get_value('cakes')
-  if(!$id) {
-    @loc = pcursor()
-    @id = array_index(@cakes, @loc)
-    if(!@id, die('No cake prize found.'))
-  } else {
-    @id = $id
-  }
-  @cake = get_value('cakes.'.@id)
-  msg('Cake info for "'.@id.'":')
-  msg(color('green').@cake['coins'].color(r).' coins on a '.color('green').@cake['cooldown'].color(r).' day cooldown.')
-  foreach(@cake['players'], @player, @time,
-    msg(@player.': '.color('gray').round(((@time + (@cake['cooldown'] * 86400000)) - time()) / 86400000).' days left')
-  )
+,
+    msg(color('green').'[CAKE] Commands to create, change and remove cake prizes.\n'
+    .color('r').'/cake list '.color('gray').'List the names of all cake prizes.\n'
+    .color('r').'/cake info [id] '.color('gray').'Shows cake info and current cooldowns\n'
+    .color('r').'/cake set [id] <coins> <cooldown> '.color('gray').'Sets the cake you\'re looking at to give coins when clicked. Cooldown is an integer in days.\n'
+    .color('r').'/cake move <id> '.color('gray').'Moves the prize cake to a new location.\n'
+    .color('r').'/cake delete [id] '.color('gray').'Deletes the prize for the cake you\'re looking at.')
+)
 <<<
