@@ -85,10 +85,10 @@ bind(player_spawn, null, null, @event,
 bind(player_death, null, null, @event,
 # Log deaths and the drops
   if(!array_contains(array('custom', 'dev'), pworld())) {
-    assign(@log, concat(@event['death_message'], ' at ', round(@event['location'][0]), ',', round(@event['location'][1]), ',', round(@event['location'][2]), ' on ', @event['location'][3], ', and dropped ', @event['xp'], 'xp and the following inventory:'))
+    @log = @event['death_message'].' at '.round(@event['location'][0]).','.round(@event['location'][1]).','.round(@event['location'][2]).' on '.@event['location'][3].', and dropped '.@event['xp'].'xp and the following inventory:'
     foreach(@event['drops'], @drop,
       if(is_array(@drop)) {
-        assign(@log, sconcat(@log, if(@drop['qty'] > 1, @drop['qty']), data_name(@drop['type']), if(@drop['data'] > 0, sconcat('with', @drop['data'], 'damage')), if(gt(array_size(@drop['enchants']), 0), sconcat('with', @drop['enchants'], 'enchants')), '-'))
+        @log .= sconcat(if(@drop['qty'] > 1, @drop['qty']), data_name(@drop['type']), if(@drop['data'] > 0, sconcat('with', @drop['data'], 'damage')), if(gt(array_size(@drop['enchants']), 0), sconcat('with', @drop['enchants'], 'enchants')), '-')
       }
     )
     console(@log, false)
@@ -96,9 +96,9 @@ bind(player_death, null, null, @event,
 #Modify death_message
   if(pworld() == 'custom') {
     if(array_contains(sk_current_regions(), 'innerpitfrenzy1') || array_contains(sk_current_regions(), 'innerpitfrenzy2')) {
-      _worldmsg('custom', concat(color(c), '[PITFRENZY] ', color('white'), @event['death_message']))
+      _worldmsg('custom', color(c).'[PITFRENZY] '.color('white').@event['death_message'])
     } else if(array_contains(sk_current_regions(), 'towercontrol')) {
-      _regionmsg('towercontrol', concat(color(a), '[TOWERCONTROL] ', color('white'), @event['death_message']))
+      _regionmsg('towercontrol', color(a).'[TOWERCONTROL] '.color('white').@event['death_message'])
       modify_event('drops', null)
     }
     modify_event('death_message', null)
@@ -147,14 +147,14 @@ bind(player_chat, null, null, @event,
   }
   import(@ignorelist)
   if(array_index_exists(@ignorelist, player())) {
-    assign(@recipients, @event['recipients'])
-    for(assign(@i, 0), @i < array_size(@ignorelist[player()]), @i++,
+    @recipients = @event['recipients']
+    for(@i = 0, @i < array_size(@ignorelist[player()]), @i++,
       if(@ignorelist[player()][@i] == 'all') {
         msg('You have been muted.')
         cancel()
         die()
       }
-      for(assign(@j, 0), @j < array_size(@recipients), @j++,
+      for(@j = 0, @j < array_size(@recipients), @j++,
         if(@recipients[@j] == @ignorelist[player()][@i]) {
           array_remove(@recipients, @j)
         }
@@ -179,7 +179,7 @@ bind(player_interact, null, array('block': 118, 'button': 'right'), @event,
   if(equals(@event['block'], '118:3'),
     switch(@event['item'],
       '325:0',
-        assign(@bucket, pinv(player(), null))
+        @bucket = pinv(player(), null)
         if(@bucket['qty'] == 1) {
           set_pinv(array(null: array('type': 326, 'qty': 1)))
         } else {
@@ -196,7 +196,7 @@ bind(player_interact, null, array('block': 118, 'button': 'right'), @event,
 # Block lighters
 bind(player_interact, null, array('item': 259, 'button': 'right'), @event,
   if(has_permission('group.regulars'), die())
-  try(assign(@loc, @event['location']), die())
+  try(@loc - @event['location'], die())
   if(get_block_at(@loc) == '46:0') {
     die()
   } else if(get_block_at(@loc) == '49:0' && @event['facing'] == 'up') {
@@ -216,7 +216,7 @@ bind(player_interact, null, array('item': 78, 'button': 'right', 'block': 78), @
   cancel()
   if(get_block_at(@event['location']) == '78:7', die())
   if(_can_build(@event['location']) == false, die())
-  assign(@data, '78:'.(split(':', get_block_at(@event['location']))[1] + 1))
+  @data = '78:'.(split(':', get_block_at(@event['location']))[1] + 1)
   set_block_at(@event['location'], @data)
   @slot = pinv(player(), null)
   array_set(@slot, 'qty', @slot['qty'] - 1)
@@ -231,10 +231,10 @@ bind(player_interact, null, array('block': 77, 'button': 'right'), @event,
     ))
     die()
   }
-  assign(@sign, array(@event['location'][0], add(@event['location'][1], 1), @event['location'][2]))
+  @sign = array(@event['location'][0], add(@event['location'][1], 1), @event['location'][2])
   if(is_sign_at(@sign)) { 
-    assign(@signtext, get_sign_text(@sign))
-    if(length(@signtext[1]) > 6 && substr(@signtext[1], 0, 3) == concat(color(2), '[')) {
+    @signtext = get_sign_text(@sign)
+    if(length(@signtext[1]) > 6 && substr(@signtext[1], 0, 3) == color(2).'[') {
       switch(strip_colors(@signtext[1]),
         '[SPLEEF]',
           switch(@signtext[2], 
@@ -328,11 +328,11 @@ bind(sign_changed, null, null, @event,
 
 # COIN SHOPS!
 bind(player_interact, null, array('block': 68), @event,
-assign(@signtext, get_sign_text(@event['location']))
+@signtext = get_sign_text(@event['location'])
 if(length(@signtext[3]) > 8 && substr(@signtext[3], 0, 3) == color('yellow').'-') { #Coin reward signs
-  assign(@cost, reg_match('.*\\-(\\d{1,3})\\sCoins', @signtext[3]))
-  assign(@chestloc, array(@event['location'][0], @event['location'][1] - 1, @event['location'][2], @event['location'][3]))
-  assign(@count, _get_inventory_count(@chestloc, 'all'))
+  @cost = reg_match('.*\\-(\\d{1,3})\\sCoins', @signtext[3])
+  @chestloc = array(@event['location'][0], @event['location'][1] - 1, @event['location'][2], @event['location'][3])
+  @count = _get_inventory_count(@chestloc, 'all')
   if(@event['action'] == 'left_click_block') {
     msg(color('yellow').'[Coin Shop] '.color(r).@count.' item(s) left. Your coins: '.if(acc_balance(player()) < @cost[1], color('red'), color('green')).round(acc_balance(player())))
   } else { #right_click_block
@@ -341,7 +341,7 @@ if(length(@signtext[3]) > 8 && substr(@signtext[3], 0, 3) == color('yellow').'-'
     }
     if(@count < 1, die(color('yellow').'[Coin Shop] '.color(r).'There are no items left.'))
     if(acc_balance(player()) < @cost[1], die(color('yellow').'[Coin Shop] '.color(r).'You only have '.color('red').round(acc_balance(player())).color(r).' left.'))
-    for(assign(@i, 0), @i < get_inventory_size(@chestloc), @i++,
+    for(@i = 0, @i < get_inventory_size(@chestloc), @i++,
       if(get_inventory_item(@chestloc, @i) != null) {
         if(_pgive_item(player(), get_inventory_item(@chestloc, @i)) == true) {
           set_inventory_item(@chestloc, @i, null)

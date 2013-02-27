@@ -16,7 +16,7 @@ proc(_pgive_item, @player, @item,
   for(@i = 0, @i < 36, @i++,
     if(pinv(@player, @i) == null || (pinv(@player, @i)['type'] == @item['type'] && pinv(@player, @i)['data'] == @item['data'] && (pinv(@player, @i)['qty'] + @item['qty']) <= max_stack_size(@item))) {
       if(pinv(@player, @i) != null, array_set(@item, 'qty', @item['qty'] + pinv(@player, @i)['qty']))
-      assign(@inv, array())
+      @inv = array()
       array_set(@inv, @i, @item)
       set_pinv(@player, @inv)
       return(true)
@@ -81,24 +81,24 @@ proc(_remove_region_items, @region,
 proc(_remove_peffects, @player,
   @effects = get_peffect(@player)
   foreach(@effects, @effect,
-    set_peffect(@player, @effect['potionID'], 0)
+    set_peffect(@player, @effect['potionID'], 0, 0)
   )
 )
 
 proc(_shop_item, @signtext,
-  assign(@item, reg_match('\\[([\\w\\s]+)(?::([0-9]{1,4}))?\\]', @signtext))
+  @item = reg_match('\\[([\\w\\s]+)(?::([0-9]{1,4}))?\\]', @signtext)
   if(array_size(@item) < 2, die())
   if(is_numeric(@item[1])) {
     if(@item[2] != null) {
-      assign(@itemid, @item[1].'.'.@item[2])
+      @itemid = @item[1].'.'.@item[2]
     } else {
-      assign(@itemid, @item[1])
+      @itemid = @item[1]
     }
   } else {
     if(@item[2] != null) {
-      assign(@itemid, reg_split('\\:', data_values(@item[1]))[0].'.'.@item[2])
+      @itemid = reg_split('\\:', data_values(@item[1]))[0].'.'.@item[2]
     } else {
-      assign(@itemid, reg_replace(':', '.', data_values(@item[1])))
+      @itemid = reg_replace(':', '.', data_values(@item[1]))
       if(@itemid == null, die())
     }
   }
@@ -109,21 +109,21 @@ proc(_shop_item, @signtext,
 proc(_colorname, assign(@player, player()),
 #  if(@player == '', assign(@player, player()))
   ifelse(has_permission(@player, 'group.moderators'),
-    assign(@color, 'aqua'),
+    @color = 'aqua',
     has_permission(@player, 'group.builders'),
-    assign(@color, 'gold'),
+    @color = 'gold',
     has_permission(@player, 'group.donors'),
-    assign(@color, 'green'),
+    @color = 'green',
     has_permission(@player, 'group.everyone'),
-    assign(@color, 'yellow'),
-    assign(@color, 'white')
+    @color = 'yellow',
+    @color = 'white'
   )
   return(color(@color))
 )
 
 #returns world alias when given world folder name
 proc(_worldname, @world,
-  assign(@worlds, array('world': 'Alpha', 'world_nether': 'Alpha Nether', 'world3': 'Delta', 'world3_nether': 'Delta Nether', 'world4': 'Gamma', 'world4_nether': 'Gamma Nether', 'world_the_end': 'The End', 'custom': 'Custom', 'dev': 'Dev', 'outworld': 'Outworld'))
+  @worlds = array('world': 'Alpha', 'world_nether': 'Alpha Nether', 'world3': 'Delta', 'world3_nether': 'Delta Nether', 'world4': 'Gamma', 'world4_nether': 'Gamma Nether', 'world_the_end': 'The End', 'custom': 'Custom', 'dev': 'Dev', 'outworld': 'Outworld')
   if(array_index_exists(@worlds, to_lower(@world))) { 
     return(@worlds[to_lower(@world)])
   } else {
@@ -133,7 +133,7 @@ proc(_worldname, @world,
 
 #returns world folder name when given world alias
 proc(_worldid, @world,
-  assign(@worlds, array('alpha': 'world', 'alphanether': 'world_nether', 'delta': 'world3', 'deltanether': 'world3_nether', 'gamma': 'world4', 'gammanether': 'world4_nether', 'theend': 'world_the_end', 'custom': 'custom', 'dev': 'dev', 'outworld': 'outworld'))
+  @worlds = array('alpha': 'world', 'alphanether': 'world_nether', 'delta': 'world3', 'deltanether': 'world3_nether', 'gamma': 'world4', 'gammanether': 'world4_nether', 'theend': 'world_the_end', 'custom': 'custom', 'dev': 'dev', 'outworld': 'outworld')
   if(array_index_exists(@worlds, to_lower(@world))) { 
     return(@worlds[to_lower(@world)])
   } else {
@@ -173,13 +173,13 @@ proc(_worldmsg, @world, @msg,
 
 #get qty of specific item in chest
 proc(_get_inventory_count, @loc, @item,
-  try(assign(@size, get_inventory_size(@loc)), return(null))
-  if(is_numeric(@item), assign(@item, @item.':0'))
-  assign(@count, 0)
-  for(assign(@i, 0), @i < @size, @i++,
+  try(@size = get_inventory_size(@loc), return(null))
+  if(is_numeric(@item), @item = @item.':0')
+  @count = 0
+  for(@i = 0, @i < @size, @i++,
     if(is_null(assign(@slot, get_inventory_item(@loc, @i))), continue())
     if(@slot['type'].':'.@slot['data'] == @item || @item == 'all') {
-      assign(@count, @count + @slot['qty'])
+      @count = @count + @slot['qty']
     }
   )
   return(@count) 
@@ -233,9 +233,9 @@ proc(_horizontal_distance, @loc1, @loc2,
 #user defined function on them. The used defined procedure should accept 3 parameters,
 #the x, y, and z coordinates of the block.
 proc(_iterate_cuboid, @b1, @b2, @proc_name,
-  for(assign(@x, min(@b1[0], @b2[0])), lte(@x, max(@b1[0], @b2[0])), inc(@x),
-    for(assign(@y, min(@b1[1], @b2[1])), lte(@y, max(@b1[1], @b2[1])), inc(@y),
-      for(assign(@z, min(@b1[2], @b2[2])), lte(@z, max(@b1[2], @b2[2])), inc(@z),
+  for(@x = min(@b1[0], @b2[0]), @x <= max(@b1[0], @b2[0]), @x++,
+    for(@y = min(@b1[1], @b2[1]), @y <= max(@b1[1], @b2[1]), @y++,
+      for(@z = min(@b1[2], @b2[2]), @z <= max(@b1[2], @b2[2]), @z++,
         call_proc(@proc_name, @x, @y, @z)
       )
     )

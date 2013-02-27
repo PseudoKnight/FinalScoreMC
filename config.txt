@@ -33,7 +33,7 @@
 
 #Runs the help procedure to list or display entries
 *:/help [$selection='help'] = >>>
-  assign(@help, array(
+  @help = array(
     'rules':
      '- Do NOT break anything someone else placed unless otherwise specified.\n'.
      '- Do NOT take anything from a chest that you did not place there, unless otherwise specified or was generated in the world naturally.\n'.
@@ -57,7 +57,7 @@
     'whitelist': 'You can get on the whitelist by asking a moderator or requesting it on the http://myextralife.com whitelist forum thread.',
     'worlds': 'There are three primary worlds: Alpha (Plaza at spawn), Delta (Final City at spawn), and Gamma (Gamma City at spawn). In addition, there are three respective nether dimensions and one End dimension. You can type "/mv who" to see which worlds players are on.',
     'world-seeds': 'These are the seeds for the three main worlds -- Alpha: -621778714517541268, Delta: -8443156782283251243, Gamma: -754633420005903009.'
-  ))
+  )
   if(equals($selection, 'help'), 
     msg(color('a'), 'Get help on any of these topics:')
     msg(color('6'), array_implode(array_keys(@help), ' ')),
@@ -75,9 +75,9 @@
   } else {
     run('/perm player setgroup' $player 'Donors')
   }
-  assign(@donors, get_value('donors'))
+  @donors = get_value('donors')
   if(@donors == null || @donors == array()) {
-    assign(@donors, array($player))
+    @donors = array($player)
   } else {
     array_push(@donors, $player)
   }
@@ -85,11 +85,11 @@
 <<<
 
 *:/spawn [$world] = >>>
-  assign(@blockedworlds, array('outworld', 'outworld_nether', 'outworld_the_end'))
+  @blockedworlds = array('outworld', 'outworld_nether', 'outworld_the_end')
   if(array_contains(@blockedworlds, $world) || array_contains(@blockedworlds, pworld())) {
     msg('You cannot teleport directly to or from that world.')
   } else if($world) {
-    assign(@world, _worldid($world))
+    @world = _worldid($world)
     if(!array_contains_ic(get_worlds(), @world), die('Failed to find a world called '.$world.'.'))
     _warmuptp(2, player(), get_spawn(@world))
     msg('Teleporting to '.$world.'\'s spawn...')
@@ -115,6 +115,7 @@
   msg('Teleporting...')
   set_peffect(player(), 9, 1, 5)
   set_timeout(2 * 1000, closure(
+    if(!ponline(player()), die())
     make_effect(ploc(), 'GHAST_SHOOT', 20)
     run('/home '.$home)
     set_peffect(player(), 15, 1, 1)
@@ -127,7 +128,7 @@
 #Database control
 /sql $action $namespace [$] = >>>
   if(!pisop(), die('You do not have permission.'))
-  assign(@data, get_values($namespace))
+  @data = get_values($namespace)
   if(array_size(@data) == 0, die('No keys for that namespace.'))
   switch($action,
   , 'delete',
@@ -151,7 +152,7 @@
 
 # MUTING
 *:/ignore $player = >>>
-  try(assign(@player, player($player)), die('No player found.'))
+  try(@player = player($player), die('No player found.'))
   import(@ignorelist)
   if(!array_index_exists(@ignorelist, @player)) {
     array_set(@ignorelist, @player, array())
@@ -163,11 +164,11 @@
 <<<
 
 *:/unignore $player = >>>
-  try(assign(@player, player($player)), die('No player found.'))
+  try(@player = player($player), die('No player found.'))
   import(@ignorelist)
   if(!array_index_exists(@ignorelist, @player), die('That player wasn\'t ignored by anyone.'))
   if(!array_contains_ic(@ignorelist[@player], player()), die('You have not ignored that player.'))
-  for(assign(@i, 0), @i < array_size(@ignorelist[@player]), @i++,
+  for(@i = 0, @i < array_size(@ignorelist[@player]), @i++,
     if(@ignorelist[@player][@i] == player()) {
       array_remove(@ignorelist[@player], @i)
       msg('You are no longer ignoring '.@player.'.')
@@ -179,7 +180,7 @@
 
 *:/mute $player = >>>
   if(!has_permission('group.moderators'), die('You do not have permission to use this command.'))
-  try(assign(@player, player($player)), die('No player found.'))
+  try(@player = player($player), die('No player found.'))
   import(@ignorelist)
   if(!array_index_exists(@ignorelist, @player)) {
     array_set(@ignorelist, @player, array())
@@ -192,10 +193,10 @@
 
 *:/unmute $player = >>>
   if(!has_permission('group.moderators'), die('You do not have permission to use this command.'))
-  try(assign(@player, player($player)), die('No player found.'))
+  try(@player = player($player), die('No player found.'))
   import(@ignorelist)
   if(!array_index_exists(@ignorelist, @player) || !array_contains(@ignorelist[@player], 'all'), die('That player isn\'t muted.'))
-  for(assign(@i, 0), @i < array_size(@ignorelist[@player]), @i++,
+  for(@i = 0, @i < array_size(@ignorelist[@player]), @i++,
     if(@ignorelist[@player][@i] == 'all') {
       array_remove(@ignorelist[@player], @i)
       msg(@player.' is no longer muted.')
@@ -209,12 +210,12 @@
 *:/approve [$player] = >>>
   if(!has_permission('group.regulars'), die('You do not have permission to use this command.'))
   if($player) {
-    if(not(ponline($player)), die('That player is not online. Did you misspell their name?'))
+    if(!ponline($player), die('That player is not online. Did you misspell their name?'))
     if(array_contains_ic(pgroup($player), 'Everyone'), die('Player already exists in whitelist.'))
     sudo('/perm player setgroup' $player 'Everyone')
     tmsg($player, 'You have been added to the whitelist by ', color(e), player(), color(f), '.')
     if(!has_permission('group.moderators')) {
-      assign(@key, concat('approvals.', to_lower($player)))
+      @key = 'approvals.'.to_lower($player)
       store_value(@key, player())
     }
   } else {
@@ -229,7 +230,7 @@
 *:/hat = >>>
   if(pinv(player(), null) == null, die(color('gold').'You need to hold something before you can put it on your head.'))
   if(pinv(player(), 103) != null, die(color('gold').'You already have something on your head.'))
-  assign(@inv, pinv(player(), null))
+  @inv = pinv(player(), null)
   if(@inv['qty'] == 1) {
     set_pinv(player(), array(null: null))
     set_pinv(player(), array(103: @inv))
@@ -242,20 +243,20 @@
 
 # PLAYER LISTS #
 *:/who = >>>
-  assign(@list, array(array('Administrators', 'b', ''), array('Moderators', 'b', ''), array('Donors', 'a', ''), array('Engineers', '6', ''), array('Builders', '6', ''), array('Regulars', 'e', ''), array('Everyone', 'e', ''), array('Default', 'f', '')))
-  assign(@allplayers, all_players())
+  @list = array(array('Administrators', 'b', ''), array('Moderators', 'b', ''), array('Donors', 'a', ''), array('Engineers', '6', ''), array('Builders', '6', ''), array('Regulars', 'e', ''), array('Everyone', 'e', ''), array('Default', 'f', ''))
+  @allplayers = all_players()
   foreach(@allplayers, @player,
-    for(assign(@i, 0), lt(@i, array_size(@list)), inc(@i),
-      if(array_contains_ic(pgroup(@player), @list[@i][0]), 
-        array_set(@list[@i], 2, sconcat(@list[@i][2], pinfo(@player, 4)))
+    for(@i = 0, @i < array_size(@list), @i++,
+      if(array_contains_ic(pgroup(@player), @list[@i][0])) {
+        @list[@i][2] = @list[@i][2].' '.pinfo(@player, 4)
         break()
-      )
+      }
     )
   )
-  for(assign(@i, 0), lt(@i, array_size(@list)), inc(@i),
-    if(nequals(@list[@i][2], ''),
-      msg(color(@list[@i][1]), @list[@i][0], color(7), ':', @list[@i][2])
-    )
+  for(@i = 0, @i < array_size(@list), @i++,
+    if(@list[@i][2] != '') {
+      msg(color(@list[@i][1]).@list[@i][0].color(7).': '.@list[@i][2])
+    }
   )
 <<<
 *:/list = call_alias('/who')
@@ -342,9 +343,9 @@
 
 # Rename your worldguard region
 *:/rg rename $from $to = >>>
-  try(assign(@region, sk_region_info($from, pworld())), die('That region doesn\'t exist.'))
+  try(@region = sk_region_info($from, pworld()), die('That region doesn\'t exist.'))
   if(not(array_contains_ic(@region[1], player())), die('You do not own this region.'))
-  try(assign(@to, reg_match('[a-zA-Z0-9-]{1,32}', $to)[0]), die('You can only use alphanumeric and dash symbols.'))
+  try(@to = reg_match('[a-zA-Z0-9-]{1,32}', $to)[0], die('You can only use alphanumeric and dash symbols.'))
   if(array_contains_ic(sk_all_regions(pworld()), @to), die('A region by that name already exists.'))
   sudo('/rg select' $from)
   sudo('/rg define' @to array_implode(@region[1]))
@@ -367,7 +368,7 @@
 #Run commands as other players and show them which command it was
 *:/runas $player $ = >>>
   if(!has_permission('group.administrators'), die('You do not have permission for this command'))
-  try(assign(@player, player($player)), die('No player found.'))
+  try(@player = player($player), die('No player found.'))
   tmsg(@player, color(a), player(), ' ran this command for you:')
   tmsg(@player, color(6), $)
   scriptas(@player, 
@@ -384,7 +385,7 @@
 #Set fly mode for people or yourself
 *:/fly $player $bool = >>>
   if(!has_permission('group.moderators'), die('You do not have permission to use this command.'))
-  try(assign(@player, player($player)), @ex, die('Who is that? Are they online?'))
+  try(@player = player($player), @ex, die('Who is that? Are they online?'))
   if($bool == '1') {
     set_pflight(@player, 1)
     msg('Turned on fly mode for '.@player.'.')
@@ -409,7 +410,7 @@
 #Game mode aliases
 *:/gm $mode $player = >>>
   if(!has_permission('group.moderators'), die('You do not have permission to use this command.'))
-  try(assign(@player, player($player)), @ex, die('Who is that? Are they online?'))
+  try(@player = player($player), @ex, die('Who is that? Are they online?'))
   run('/gamemode' $mode @player)
 <<<
 
@@ -434,9 +435,9 @@
 *:/sign $line [$=''] = >>>
   if((!array_contains(pgroup(), 'builders') || !array_contains(array('custom', 'dev'), pworld())) && !array_contains(pgroup(), 'moderators'), die('You do not have permission to use this command.'))
   if( length($) > 15, die('There is a 15 character limit per line.'))
-  assign(@sign, pcursor())
+  @sign = pcursor()
   if(!is_sign_at(@sign), die('That is not a sign'))
-  assign(@lines, get_sign_text(@sign))
+  @lines = get_sign_text(@sign)
   array_set(@lines, $line - 1, colorize($))
   set_sign_text(@sign, @lines),
 <<<
@@ -452,8 +453,8 @@
 
 *:/effect $player $effect [$strength=0] [$length=30] = >>>
   if(get_command_block() || (array_contains(pgroup(), 'builders') && array_contains(array('custom', 'dev'), pworld())) || array_contains(pgroup(), 'moderators')) {
-    try(assign(@player, player($player)), @ex, die('Who is that? Are they online?'))
-    assign(@effects, array('speed': '1', 'slowness': '2', 'haste': '3', 'fatique': '4', 'strength': '5', 'health': '6', 'damage': '7', 'jump': '8', 'nausea': '9', 'regen': '10', 'regeneration': '10', 'resistance': '11', 'fireresist': '12', 'fireresistance': '12', 'waterbreathing': '13', 'invis': '14','invisibility': '14', 'blindness': '15', 'nightvision': '16', 'hunger': '17', 'weakness': '18', 'poison': '19', 'wither': '20'))
+    try(@player = player($player), @ex, die('Who is that? Are they online?'))
+    @effects = array('speed': '1', 'slowness': '2', 'haste': '3', 'fatique': '4', 'strength': '5', 'health': '6', 'damage': '7', 'jump': '8', 'nausea': '9', 'regen': '10', 'regeneration': '10', 'resistance': '11', 'fireresist': '12', 'fireresistance': '12', 'waterbreathing': '13', 'invis': '14','invisibility': '14', 'blindness': '15', 'nightvision': '16', 'hunger': '17', 'weakness': '18', 'poison': '19', 'wither': '20')
     if(!array_index_exists(@effects, $effect), die('These are the available effect names: '.array_keys(@effects)))
     set_peffect(@player, @effects[$effect], $strength, $length)
   }
@@ -461,7 +462,7 @@
 
 *:/velocity $player $x $y $z [$double] = >>>
   if(get_command_block() || array_contains(pgroup(), 'moderators') || (array_contains(array('dev', 'custom'), pworld($player)) && array_contains(pgroup(), 'builders'))) {
-    try(assign(@player, player($player)), @ex, die('Who is that? Are they online?'))
+    try(@player = player($player), @ex, die('Who is that? Are they online?'))
     set_timeout(50, closure(
       set_pvelocity(@player, $x, $y, $z)
       make_effect(ploc(@player), 'MOBSPAWNER_FLAMES')
@@ -535,10 +536,10 @@
     if(get_world_time() > 13700 && get_world_time() < 22300) {
       set_world_time(22300)
     } else {
-      assign(@time, get_world_time() - 11300)
-      assign(@time, 700 - @time)
+      @time = get_world_time() - 11300
+      @time = 700 - @time
       if(@time < 0) {
-        assign(@time, @time + 24000)
+        @time = @time + 24000
       }
       set_world_time(@time)
     }
@@ -550,8 +551,8 @@
     if(get_world_time() > 700 && get_world_time() < 11300) {
       set_world_time(11300)
     } else {
-      assign(@time, get_world_time() - 22300)
-      assign(@time, 13700 - @time)
+      @time = get_world_time() - 22300
+      @time = 13700 - @time
       if(@time > 24000) {
         set_world_time(@time - 24000)
       } else {
