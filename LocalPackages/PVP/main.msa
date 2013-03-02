@@ -809,7 +809,10 @@ set_timeout(3000, closure(
 
       if(@event['item']['type'] == '10') {
         @pvp = import('pvp'.@id)
-        if(@pvp['team'][0]['flagrespawn'], clear_task(@pvp['team'][0]['flagrespawn']))
+        if(@pvp['team'][0]['flagrespawn']) {
+          clear_task(@pvp['team'][0]['flagrespawn'])
+          @pvp['team'][0]['flagrespawn'] = null
+        }
         if(@pvp['players'][player()]['team'] == 0) {
           if(_horizontal_distance(ploc(), @arena['flag'][0]) > 2) { 
             modify_event('item', null)
@@ -843,7 +846,10 @@ set_timeout(3000, closure(
         }
       } else if(@event['item']['type'] == '8') {
         @pvp = import('pvp'.@id)
-        if(@pvp['team'][1]['flagrespawn'], clear_task(@pvp['team'][1]['flagrespawn']))
+        if(@pvp['team'][1]['flagrespawn']) {
+          clear_task(@pvp['team'][1]['flagrespawn'])
+          @pvp['team'][1]['flagrespawn'] = null
+        }
         if(@pvp['players'][player()]['team'] == 1) {
           if(_horizontal_distance(ploc(), @arena['flag'][1]) > 3) {
             modify_event('item', null)
