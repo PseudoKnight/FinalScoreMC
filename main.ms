@@ -23,6 +23,9 @@ bind(player_login, null, null, @event,
     if(!@info, @info = array('ips': array()))
     if(!array_contains(@info['ips'], @event['ip'])) {
       array_push(@info['ips'], @event['ip'])
+      if(array_size(@info['ips']) > 3) {
+        array_remove(@info['ips'], 0)
+      }
       store_value('player.'.@event['player'], @info)
     }
   } else {
@@ -85,10 +88,10 @@ bind(player_spawn, null, null, @event,
 bind(player_death, null, null, @event,
 # Log deaths and the drops
   if(!array_contains(array('custom', 'dev'), pworld())) {
-    @log = @event['death_message'].' at '.round(@event['location'][0]).','.round(@event['location'][1]).','.round(@event['location'][2]).' on '.@event['location'][3].', and dropped '.@event['xp'].'xp and the following inventory:'
+    @log = @event['death_message'].' at '.round(@event['location'][0]).','.round(@event['location'][1]).','.round(@event['location'][2]).' on '.@event['location'][3].', and dropped '.@event['xp'].'xp and:'
     foreach(@event['drops'], @drop,
       if(is_array(@drop)) {
-        @log .= sconcat(if(@drop['qty'] > 1, @drop['qty']), data_name(@drop['type']), if(@drop['data'] > 0, sconcat('with', @drop['data'], 'damage')), if(gt(array_size(@drop['enchants']), 0), sconcat('with', @drop['enchants'], 'enchants')), '-')
+        @log .= sconcat(if(@drop['qty'] > 1, @drop['qty']), data_name(@drop['type']), if(@drop['data'] > 0, sconcat('with', @drop['data'], 'damage')), if(gt(array_size(@drop['enchants']), 0), sconcat('with', @drop['enchants'], 'enchants')), '- ')
       }
     )
     console(@log, false)
@@ -134,7 +137,7 @@ bind(player_chat, null, null, @event,
       cancel()
       die('Player not found.')
     )
-    @message = substr(@event['message'], length(@p) + 1)
+    @message = substr(@event['message'], length(@p) + 2)
     tmsg(@player, color(7).'(From '.player().'): '.color(r).@message)
     msg(color(7).'(To '.@player.'): '.color(r).@message)
     console(player().' @ '.@player.': '.@message, false)

@@ -31,6 +31,21 @@
   tmsg($to, color('gray').$from.': '.color('r').colorize($))
 <<<
 
+/test = >>>
+  @creeper = spawn_mob('CREEPER', 1, array(pcursor()[0], pcursor()[1] + 1, pcursor()[2], pcursor()[3]))[0]
+  @slime = spawn_mob('SLIME:1', 1, array(pcursor()[0], pcursor()[1] + 1, pcursor()[2], pcursor()[3]))[0]
+  set_mob_effect(@slime, 14, 1, 999, true) #invis
+  set_mob_effect(@slime, 8, 3, 999, true) #jump
+  set_mob_effect(@slime, 10, 1, 999, true) #regen
+  set_mob_effect(@creeper, 10, 1, 999, true)
+  set_entity_rider(@slime, @creeper)
+  bind(entity_damage, null, array('cause': 'FALL'), @event, @slime, @creeper,
+    if(@event['id'] == @slime || @event['id'] == @creeper) {
+      cancel()
+    }
+  )
+<<<
+
 #Runs the help procedure to list or display entries
 *:/help [$selection='help'] = >>>
   @help = array(
@@ -367,7 +382,7 @@
 
 #Run commands as other players and show them which command it was
 *:/runas $player $ = >>>
-  if(!has_permission('group.administrators'), die('You do not have permission for this command'))
+  if(!get_command_block() && !has_permission('group.administrators'), die('You do not have permission for this command'))
   try(@player = player($player), die('No player found.'))
   tmsg(@player, color(a), player(), ' ran this command for you:')
   tmsg(@player, color(6), $)
