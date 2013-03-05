@@ -26,6 +26,7 @@ switch($action
     .color(r).'itemspawn '.color('gray').'Set item drop. (default: 60 sec, no spawn @ start)\n'
     .color(r).'chestspawn '.color('gray').'Set chest respawn (default: 60 sec, no spawn @ start)\n'
     .color(r).'lever '.color('gray').'The lever that turns on at start and off at end.\n'
+    .color(r).'scoretorch '.color('gray').'The redstone torch that appears when a team scores\n'
     .color(r).'min '.color('gray').'The minimum # of players to start a match. (default: 2)\n'
     .color(r).'max '.color('gray').'Start the match as soon as this number of players join.\n'
     .color(r).'effect '.color('gray').'The starting potion effect for all players.\n'
@@ -201,6 +202,12 @@ switch($action
       } else {
         die('You must be looking at a lever placed on top of a block.')
       }
+
+    , 'scoretorch',
+      if(!@args[0], die('This requires a team #.'))
+      @team = @args[0] - 1
+      @arena['scoretorch'][@team] = pcursor()
+      msg('Set this block to turn into a redstone torch when team '.@args[0].' scores.')
 
     , 'redstonetorch',
       @loc = pcursor()
@@ -388,7 +395,7 @@ if(!@pvp) {
  if(@pvp['running'] == true, die('Match already in progress.'))
  @pvp['players'][player()] = array()
 }
-_worldmsg('custom', color('gray').'[PVP] '.color(r).player().' has joined the next match for '.$id.'.')
+_worldmsg('custom', color('gray').'[PVP] '.color(r).player().' has joined '.$id.'. ('.array_size(@pvp['players']).')')
 export('pvp'.@id, @pvp)
 if(array_index_exists(@arena, 'max')) {
   if(array_size(@pvp['players']) >= @arena['max']) {
@@ -506,9 +513,11 @@ proc('_check_goals', assign(@id, @id), assign(@arena, @arena),
       if(array_index_exists(@pvp['players'][@player], 'limbo') && @pvp['players'][@player]['limbo'], clear_task(@pvp['players'][@player]['limbo']))
 
       set_timeout(3000, closure(
-        set_ploc(@player, @arena['lobby'])
-        _clear_pinv(@player)
-        _remove_peffects(@player)
+        if(ponline(@player)) {
+          set_ploc(@player, @arena['lobby'])
+          _clear_pinv(@player)
+          _remove_peffects(@player)
+        }
       ))
     )
 
@@ -537,7 +546,11 @@ proc('_check_goals', assign(@id, @id), assign(@arena, @arena),
     if(array_index_exists(@arena, 'tools') && array_contains(@arena['tools'], 'endernades'), unbind(@id.'teleport'))
     if(array_index_exists(@arena, 'modpickup') || @arena['mode'] == 'ctf', unbind(@id.'pickup'))
     if(array_contains(array('ctf', 'tdm'), @arena['mode']), unbind(@id.'tagged'))
-    if(@arena['mode'] == 'ctf', unbind(@id.'inventory'))
+    if(@arena['mode'] == 'ctf') {
+      unbind(@id.'inventory')
+      if(@pvp['team'][0]['flagrespawn'], clear_task(@pvp['team'][0]['flagrespawn']))
+      if(@pvp['team'][1]['flagrespawn'], clear_task(@pvp['team'][1]['flagrespawn']))
+    }
 
     clear_task(@pvp['slowinterval'])
     @pvp = array('players': associative_array(), 'running': false)
@@ -556,6 +569,20 @@ if(array_index_exists(@arena, 'kit')) {
 }
 )
 
+if(@arena['mode'] == 'ctf') {
+proc('_flag_respawn', @team, assign(@id, @id), assign(@arena, @arena),
+  @pvp = import('pvp'.@id)
+  @pvp['team'][@team]['flagrespawn'] = set_interval(30000, 50, closure(
+    @pvp = import('pvp'.@id)
+    try(entity_type(@pvp['team'][@team]['flag']),
+      @pvp['team'][@team]['flag'] = item_drop(@arena['flag'][@team], if(@team == 0, '10', '8'))
+      set_entity_velocity(@pvp['team'][@team]['flag'], array())
+      export('pvp'.@id, @pvp)
+    )
+  ))
+  export('pvp'.@id, @pvp)
+)
+}
 
 #START
 set_timeout(3000, closure(
@@ -589,12 +616,8 @@ set_timeout(3000, closure(
   )
 
   if(@arena['mode'] == 'ctf') {
-    @flag = item_drop(@arena['flag'][0], '10')
-    set_entity_velocity(@flag, array())
-    @pvp['team'][0]['flagrespawn'] = null
-    @flag = item_drop(@arena['flag'][1], '8')
-    set_entity_velocity(@flag, array())
-    @pvp['team'][1]['flagrespawn'] = null
+    _flag_respawn(0)
+    _flag_respawn(1)
   }
 
   # The assign() functions in the event binds are required to keep the instances from interfering with each other
@@ -671,15 +694,14 @@ set_timeout(3000, closure(
     @pvp = import('pvp'.@id)
     if(!array_index_exists(@pvp['players'], player()), die())
 
+    if(@arena['mode'] == 'ctf' && (pinv(player(), 103)['type'] == 8 || pinv(player(), 103)['type'] == 10)) {
+      _flag_respawn(if(pinv(player(), 103)['type'] == 10, 0, 1)) 
+    }
+
     modify_event('message', color('gray').'[PVP] '.color(if(array_contains(array('ctf', 'tdm'), @arena['mode']), @arena['team'][@pvp['players'][player()]['team']]['color'], 'white')).@event['message'])
     array_remove(@pvp['players'], @player)
     export('pvp'.@id, @pvp)
     _check_goals()
-
-    if(@arena['mode'] == 'ctf' && (pinv(player(), 103)['type'] == 8 || pinv(player(), 103)['type'] == 10)) {
-      @flag = item_drop(@arena['flag'][if(pinv(player(), 103)['type'] == 10, 0, 1)], pinv(player(), 103)['type'])
-      set_entity_velocity(@flag, array())
-    }
     
     bind(player_join, null, array('player': @player), @event, assign(@arena, @arena),
       if(pworld() == 'custom') {
@@ -750,8 +772,10 @@ set_timeout(3000, closure(
         , '397:1',
           if(array_contains(@arena['tools'], 'skullrockets')) {
             @skull = shoot_projectile(player(), 'wither_skull')
-            @velocity = entity_velocity(@skull)
-            set_entity_velocity(@skull, array(@velocity['x'] * 4, @velocity['y'] * 4, @velocity['z'] * 4))
+            set_timeout(100, closure(
+              @velocity = entity_velocity(@skull)
+              set_entity_velocity(@skull, array(@velocity['x'] * 3, @velocity['y'] * 3, @velocity['z'] * 3))
+            ))
             ptake_item('397:1', 1)
             cancel()
           }
@@ -787,7 +811,7 @@ set_timeout(3000, closure(
           cancel()
       } else if(@event['damager'] == 'WITHER_SKULL') {
         modify_event('amount', @event['amount'] * 6)
-        set_timeout(50, closure( set_peffect(player(), 20, 0, 0)))
+        set_timeout(100, closure(set_peffect(player(), 20, 0, 0)))
       }
       if(!array_index_exists(@pvp['players'], @event['data']) && ponline(@event['data'])) {
         set_ploc(@event['data'], @arena['lobby'])
@@ -809,16 +833,14 @@ set_timeout(3000, closure(
 
       if(@event['item']['type'] == '10') {
         @pvp = import('pvp'.@id)
-        if(@pvp['team'][0]['flagrespawn']) {
-          clear_task(@pvp['team'][0]['flagrespawn'])
-          @pvp['team'][0]['flagrespawn'] = null
-        }
         if(@pvp['players'][player()]['team'] == 0) {
           if(_horizontal_distance(ploc(), @arena['flag'][0]) > 2) { 
+            if(@pvp['team'][0]['flagrespawn']) {
+              clear_task(@pvp['team'][0]['flagrespawn'])
+              @pvp['team'][0]['flagrespawn'] = null
+            }
             modify_event('item', null)
-            make_effect(ploc(), 'STEPSOUND:10')
-            @flag = item_drop(@arena['flag'][0], '10')
-            set_entity_velocity(@flag, array())
+            _flag_respawn(0)
             _regionmsg(@arena['broadcast'], color('gray').'[PVP] '.color(@arena['team'][0]['color']).player().' returned the flag.')
           } else {
             cancel()
@@ -826,36 +848,42 @@ set_timeout(3000, closure(
               make_effect(@arena['flag'][0], 'ZOMBIE_CHEW_IRON_DOOR')
               @pvp['team'][0]['score']++
               set_pinv(player(), array(103: null))
-              _regionmsg(@arena['broadcast'], color('gray').'[PVP] '.color(@arena['team'][0]['color']).player().' captured the flag! '.@pvp['team'][0]['score'].color(r).' : '.color(@arena['team'][1]['color']).@pvp['team'][1]['score'])
+              _regionmsg(@arena['broadcast'], color('gray').'[PVP] '.color(@arena['team'][0]['color']).player().' captured the flag! '.color('dark_gray').'[ '.color(@arena['team'][0]['color']).@pvp['team'][0]['score'].color('dark_gray').' | '.color(@arena['team'][1]['color']).@pvp['team'][1]['score'].color('dark_gray').' ]')
               foreach(array_keys(@pvp['players']), @player,
                 if(@pvp['players'][@player]['team'] == 0) {
                   set_plevel(@player, @pvp['team'][0]['score'])
                 }
               )
+              if(array_index_exists(@arena, 'scoretorch')) {
+                set_block_at(@arena['scoretorch'][0], '76:5')
+                set_timeout(1000, closure(
+                  set_block_at(@arena['scoretorch'][0], '50:5')
+                ))
+              }
               export('pvp'.@id, @pvp)
-              @flag = item_drop(@arena['flag'][1], '8')
-              set_entity_velocity(@flag, array())
+              _flag_respawn(1)
               _check_goals()
             }
           }
         } else {
+          if(@pvp['team'][0]['flagrespawn']) {
+            clear_task(@pvp['team'][0]['flagrespawn'])
+            @pvp['team'][0]['flagrespawn'] = null
+          }
           modify_event('item', null)
-          make_effect(ploc(), 'STEPSOUND:10')
           set_pinv(player(), array(103: array('type': 10, 'qty': 1)))
           _regionmsg(@arena['broadcast'], color('gray').'[PVP] '.color(@arena['team'][1]['color']).player().' picked up the flag.')
         }
       } else if(@event['item']['type'] == '8') {
         @pvp = import('pvp'.@id)
-        if(@pvp['team'][1]['flagrespawn']) {
-          clear_task(@pvp['team'][1]['flagrespawn'])
-          @pvp['team'][1]['flagrespawn'] = null
-        }
         if(@pvp['players'][player()]['team'] == 1) {
           if(_horizontal_distance(ploc(), @arena['flag'][1]) > 3) {
+            if(@pvp['team'][1]['flagrespawn']) {
+              clear_task(@pvp['team'][1]['flagrespawn'])
+              @pvp['team'][1]['flagrespawn'] = null
+            }
             modify_event('item', null)
-            make_effect(ploc(), 'STEPSOUND:8')
-            @flag = item_drop(@arena['flag'][1], '8')
-            set_entity_velocity(@flag, array())
+            _flag_respawn(1)
             _regionmsg(@arena['broadcast'], color('gray').'[PVP] '.color(@arena['team'][1]['color']).player().' returned the flag.')
           } else {
             cancel()
@@ -863,21 +891,29 @@ set_timeout(3000, closure(
               set_pinv(player(), array(103: null))
               make_effect(@arena['flag'][1], 'ZOMBIE_CHEW_IRON_DOOR')
               @pvp['team'][1]['score']++
-              _regionmsg(@arena['broadcast'], color('gray').'[PVP] '.color(@arena['team'][1]['color']).player().' captured the flag! '.color(@arena['team'][0]['color']).@pvp['team'][0]['score'].color(r).' : '.color(@arena['team'][1]['color']).@pvp['team'][1]['score'])
+              _regionmsg(@arena['broadcast'], color('gray').'[PVP] '.color(@arena['team'][1]['color']).player().' captured the flag! '.color('dark_gray').'[ '.color(@arena['team'][0]['color']).@pvp['team'][0]['score'].color('dark_gray').' | '.color(@arena['team'][1]['color']).@pvp['team'][1]['score'].color('dark_gray').' ]')
               foreach(array_keys(@pvp['players']), @player,
                 if(@pvp['players'][@player]['team'] == 1) {
                   set_plevel(@player, @pvp['team'][1]['score'])
                 }
               )
+              if(array_index_exists(@arena, 'scoretorch')) {
+                set_block_at(@arena['scoretorch'][1], '76:5')
+                set_timeout(1000, closure(
+                  set_block_at(@arena['scoretorch'][1], '50:5')
+                ))
+              }
               export('pvp'.@id, @pvp)
-              @flag = item_drop(@arena['flag'][0], '10')
-              set_entity_velocity(@flag, array())
+              _flag_respawn(0)
               _check_goals()
             }
           }
         } else {
+          if(@pvp['team'][1]['flagrespawn']) {
+            clear_task(@pvp['team'][1]['flagrespawn'])
+            @pvp['team'][1]['flagrespawn'] = null
+          }
           modify_event('item', null)
-          make_effect(ploc(), 'STEPSOUND:8')
           set_pinv(player(), array(103: array('type': 8, 'qty': 1)))
           _regionmsg(@arena['broadcast'], color('gray').'[PVP] '.color(@arena['team'][0]['color']).player().' picked up the flag.')
         }
