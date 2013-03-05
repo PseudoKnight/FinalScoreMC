@@ -33,7 +33,7 @@
   msg(color(6).'[Shop] Successfully set to "'.@shopline[1].$.'"')
   #add this to database for quick reference
   assign(@itemid, _shop_item(@signtext[0]))
-  assign(@shops, get_value('shops.'.@itemid))
+  assign(@shops, get_value('shop.'.@itemid))
   if(!@shops, die())
   @t = @shopline[0] - 1
   for(assign(@i, 0), @i < length(@shops[@t]), @i++,
@@ -68,7 +68,7 @@
       break()
     }
   )
-  store_value('shops.'.@itemid, @shops)
+  store_value('shop.'.@itemid, @shops)
 <<<
 
 *:/shop list = >>>
@@ -101,7 +101,7 @@
       if(@itemid == null, die())
     }
   }
-  assign(@shops, get_value('shops.'.@itemid))
+  assign(@shops, get_value('shop.'.@itemid))
   if(!@shops) { 
     die(concat(color(6), '[ListShops] No stocked shops found for '.color(o).'"'.$.'"'))
   } else {
@@ -135,7 +135,7 @@
 
   #fix some old broken shops
   #remove this later
-  if(@fixed, store_value('shops.'.@itemid, @shops))
+  if(@fixed, store_value('shop.'.@itemid, @shops))
 
 <<<
 

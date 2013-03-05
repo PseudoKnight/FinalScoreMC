@@ -10,7 +10,7 @@ if(length(@signtext[0]) > 2 && @signtext[0][0] == '['
 || length(@signtext[2]) > 8 && substr(@signtext[2], 0, 4) == 'Sell')) {
   set_timeout(50, closure(
   assign(@itemid, _shop_item(@signtext[0]))
-  assign(@shops, get_value('shops.'.@itemid))
+  assign(@shops, get_value('shop.'.@itemid))
   if(!@shops, @shops = array(array(), array()))
   if(length(@signtext[1]) > 7 && substr(@signtext[1], 0, 3) == 'Buy') {
     assign(@count, _get_inventory_count(array(@event['location'][0], @event['location'][1] - 1, @event['location'][2], @event['location'][3]), reg_replace('\\.', ':', @itemid)))
@@ -77,9 +77,9 @@ if(length(@signtext[0]) > 2 && @signtext[0][0] == '['
   }
 
   if(@shops == array(array(), array())) {
-    clear_value('shops.'.@itemid)
+    clear_value('shop.'.@itemid)
   } else {
-    store_value('shops.'.@itemid, @shops)
+    store_value('shop.'.@itemid, @shops)
   }
 
   ))
@@ -94,7 +94,7 @@ bind(block_break, null, array('type': 68), @event,
   if(!(length(@signtext[1]) > 7 && substr(@signtext[1], 0, 3) == 'Buy')
   && !(length(@signtext[2]) > 8 && substr(@signtext[2], 0, 4) == 'Sell'), die())
   assign(@itemid, _shop_item(@signtext[0]))
-  assign(@shops, get_value('shops.'.@itemid))
+  assign(@shops, get_value('shop.'.@itemid))
   if(!@shops, die())
   if(length(@signtext[1]) > 7 && substr(@signtext[1], 0, 3) == 'Buy') {
     if(@shops[0] != array()) {
@@ -117,8 +117,8 @@ bind(block_break, null, array('type': 68), @event,
     }
   }
   if(@shops == array(array(), array())) {
-    clear_value('shops.'.@itemid)
+    clear_value('shop.'.@itemid)
   } else {
-    store_value('shops.'.@itemid, @shops)
+    store_value('shop.'.@itemid, @shops)
   }
 )
