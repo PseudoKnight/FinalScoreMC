@@ -13,18 +13,19 @@
 @floorregion = 'spleef-floor'
 @materialregion = 'spleef-materials'
 
-@lobby = array(-482.5, 53, -646)
+@lobby = array(-482.5, 53, -646, @world)
+@materialtp = array(-492, 53, -634, @world)
 
-@sign1 = array(-487, 56, -646)
-@sign2 = array(-487, 55, -646)
-@sign3 = array(-487, 56, -647)
-@sign4 = array(-487, 55, -647)
+@sign1 = array(-487, 56, -646, @world)
+@sign2 = array(-487, 55, -646, @world)
+@sign3 = array(-487, 56, -647, @world)
+@sign4 = array(-487, 55, -647, @world)
 
-@difficultterrain = array(-488, 56, -656)
-@platforming = array(-488, 56, -654)
-@randomobstacles = array(-488, 56, -652)
+@difficultterrain = array(-488, 56, -656, @world)
+@platforming = array(-488, 56, -654, @world)
+@randomobstacles = array(-488, 56, -652, @world)
 
-@floormaterial = array(-488, 54, -642)
+@floormaterial = array(-488, 54, -642, @world)
 # ----------------------------
 
 if(pworld() != @world, die('You can only run this on '.@world.'.'))
@@ -48,16 +49,18 @@ switch($cmd
   }
 
 , 'floor',
-  @materials = sk_region_info(@materialregion, @world)[0]
-  @location = pcursor()
-  if(array_contains(sk_regions_at(@location), 'materials')) {
-    array_remove(@location, 3)
-    @blocktype = get_block_at(@location)
-    set_block_at( -52, 73, 191, @blocktype)
-    msg(color(a).'[Spleef] '.color(r).'You have selected '.color(6).data_name(@blocktype).'.')
-  } else {
-    msg(color(a).'[Spleef] '.color(r).'You can only select blocks from the Spleef materials room.')
-  }
+  set_ploc(@materialtp)
+  msg('Pick a block.')
+  bind(player_interact, null, array('player': player()), @event, @materialregion, @lobby, @floormaterial,
+    if(@event['block'] != 0 && array_contains(sk_regions_at(@event['location']), @materialregion)) {
+      @blocktype = get_block_at(@event['location'])
+      set_block_at(@floormaterial, @blocktype)
+      msg(color(a).'[Spleef] '.color(r).'You have selected '.color(6).data_name(@blocktype).'.')
+      cancel()
+      unbind()
+      set_ploc(@lobby)
+    }
+  )
 
 , 'start',
 import(@nextspleef)
@@ -239,11 +242,11 @@ foreach(array_keys(@currentspleef), @player,
       _clear_pinv(@winner)
       acc_add(@winner, @reward)
       tmsg(@winner, color(a).'[Spleef] '.color(r).@reward.' coins!')
-      unbind('spleef_quit')
     } else {
       _regionmsg(@wrapperregion, color(a).'[Spleef] '.color(r).'No one wins.')
-      unbind('spleef_quit')
     }
+    unbind('spleef_quit')
+    unbind('spleef_break')
     @currentspleef = array()
     export(@currentspleef)
     clear_task()
@@ -274,13 +277,22 @@ foreach(array_keys(@currentspleef), @player,
 bind(player_quit, array('id': 'spleef_quit'), array('player': player()), @event, @spleefinterval, @lobby,
   import(@currentspleef)
   unbind()
+  unbind('spleef_break')
   clear_task(@spleefinterval)
   _regionmsg(@wrapperregion, color(a).'[Spleef] '.color(r).' Host left the server.')
+  console('Spleef host left server.')
   foreach(array_keys(@currentspleef), @player,
     set_ploc(@player, @lobby)
   )
   @currentspleef = array()
   export(@currentspleef)
+)
+
+bind(block_break, array('id': 'spleef_break'), null, @event, @floorregion,
+  import(@currentspleef)
+  if(array_index_exists(@currentspleef, player()) && !array_contains(sk_regions_at(@event['location']), @floorregion)) {
+    cancel()
+  }
 )
 
 ))
