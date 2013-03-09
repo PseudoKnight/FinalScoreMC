@@ -81,7 +81,7 @@ proc(_remove_region_items, @region,
 proc(_remove_peffects, @player,
   @effects = get_peffect(@player)
   foreach(@effects, @effect,
-    set_peffect(@player, @effect['potionID'], 0, 0)
+    set_peffect(@player, @effect['id'], 0, 0)
   )
 )
 

@@ -12,10 +12,10 @@ switch($cmd
 
 , 'top10',
   @scores = get_value('cluck')
-  msg(color(l).'TOP 10 CLUCK SCORES')
+  msg(color(l).'TOP 10 CLUCK PLAYERS')
   msg(color(7).'Since '.@scores['date'])
   for(@i = 0, @i < array_size(@scores['top']), @i++,
-    msg(@scores['top'][@i]['name'].': '.@scores['top'][@I]['score'])
+    msg(if(length(@scores['top'][@i]['score']) < 2, '0').@scores['top'][@i]['score'].' - '.@scores['top'][@i]['name'])
   )
 
 , 'start',
@@ -145,7 +145,7 @@ switch($cmd
           # STATS
           #-------
           @scores = get_value('cluck')
-          if(!array_index_exists(@scores, player()), @best = 0, @best = @scores['player'])
+          if(!array_index_exists(@scores, player()), @best = 0, @best = @scores[player()])
           if(@cluck['score'] > @best) {
             if(@best > 0, _regionmsg('cluck', color(l).'You beat your personal best of '.@best.'!'))
             msg(color(6).'+ '.(@cluck['score'] - @best).' coins')
@@ -155,7 +155,7 @@ switch($cmd
             for(@i = 0, @i < 10, @i++,
               if(@top && array_index_exists(@scores['top'], @i) && @scores['top'][@i]['name'] == player()) {
                 array_remove(@scores['top'], @i)
-              } else if(!array_index_exists(@scores['top'], @i) || @scores['top'][@i]['score'] < @cluck['score']) {
+              } else if(!@top && (!array_index_exists(@scores['top'], @i) || @scores['top'][@i]['score'] < @cluck['score'])) {
                 _regionmsg('cluck', color(l).'Top 10 Score!')
                 array_insert(@scores['top'], array('name': player(), 'score': @cluck['score']), @i)
                 @top = true
