@@ -106,35 +106,61 @@
   } else if($world) {
     @world = _worldid($world)
     if(!array_contains_ic(get_worlds(), @world), die('Failed to find a world called '.$world.'.'))
-    _warmuptp(2, player(), get_spawn(@world))
+    _warmuptp(3.7, player(), get_spawn(@world))
     msg('Teleporting to '.$world.'\'s spawn...')
   } else {
-    _warmuptp(2, player(), get_spawn())
+    _warmuptp(3.7, player(), get_spawn())
     msg('Teleporting to '._worldname(pworld()).'\'s spawn...')
   }
 <<<
 
-*:/warp $warp = >>>
-  msg('Attempting to warp...')
-  set_peffect(player(), 9, 1, 5)
-  set_timeout(2 * 1000, closure(
-    if(!ponline(player()), die())
-    make_effect(ploc(), 'GHAST_SHOOT', 20)
-    run('/warp '.$warp)
-    set_peffect(player(), 15, 1, 1)
-    make_effect(ploc(), 'GHAST_SHOOT', 20)
-  ))
+*:/warp [$warp] = >>>
+  if(!$warp, call_alias('/warps list'))
+  @warp = get_value('warp.'.to_lower($warp))
+  if(!@warp, die('That warp does not exist.'))
+  _warmuptp(3.7, player(), @warp['loc'], @warp['yaw'], @warp['pitch'])
+<<<
+
+*:/setwarp [$warp] = >>>
+  if(!has_permission('group.moderators'), die('You do not have permission to use this command.'))
+  if(!$warp, die('You need to specify a warp name.'))
+  if(reg_count('\\w', $warp) < 0, die('This needs to be in alphanumeric characters.'))
+  store_value('warp.'.$warp, array('loc': array(round(ploc()[0], 1), ploc()[1], round(ploc()[2], 1), ploc()[3]), 'yaw': round(pfacing()[0]), 'pitch': round(pfacing()[1])))
+  msg('Warp created.')
+<<<
+
+*:/warps [$cmd] [$id] = >>>
+switch($cmd
+, array('del', 'delete'),
+  if(!has_permission('group.moderators'), die('You do not have permission to use this command.'))
+  if(!$id, die('This requires a warp name.'))
+  if(!has_value('warp.'.$id), die('There is no warp by that name.'))
+  clear_value('warp.'.$id)
+  msg('Deleted warp.')
+, 'list',
+  @warps = get_values('warp')
+  @list = ''
+  foreach(array_keys(@warps), @warp,
+    @list .= split('.', @warp)[1].' '
+  )
+  msg('Available warps:\n'.@list)
+, #else
+  msg('Available sub-commands: "/warps del <warp>", "/warps list".')
+)
 <<<
 
 *:/home [$home=''] = >>>
   msg('Teleporting...')
-  set_peffect(player(), 9, 1, 5)
-  set_timeout(2 * 1000, closure(
+  set_peffect(player(), 9, 1, 7)
+  play_sound(ploc(@player), array('sound': 'PORTAL_TRIGGER', 'volume': 1, 'pitch': 1))
+  set_timeout(3700, closure(
     if(!ponline(player()), die())
     make_effect(ploc(), 'GHAST_SHOOT', 20)
+    make_effect(ploc(), 'MOBSPAWNER_FLAMES')
     run('/home '.$home)
     set_peffect(player(), 15, 1, 1)
     make_effect(ploc(), 'GHAST_SHOOT', 20)
+    make_effect(ploc(), 'MOBSPAWNER_FLAMES')
   ))
 <<<
 
@@ -346,11 +372,11 @@
   if(@requests[player()][0] == 'invite') {
     msg(color(b).'Teleporting to '.@requests[player()][1].' in 3 seconds...')
     tmsg(@requests[player()][1], color(b).'Teleporting '.player().' in 3 seconds...')
-    _warmuptp(3, player(), ploc(@requests[player()][1]))
+    _warmuptp(3.7, player(), ploc(@requests[player()][1]))
   } else {
     msg(color(b).'Teleporting '.@requests[player()][1].' in 3 seconds...')
     tmsg(@requests[player()][1], color(b).'Teleporting to '.player().' in 3 seconds...')
-    _warmuptp(3, @requests[player()][1], ploc())
+    _warmuptp(3.7, @requests[player()][1], ploc())
   }
   array_remove(@requests, player())
   export(@requests)
@@ -517,6 +543,15 @@
   } else {
     msg('That slot isn\'t leather armor.')
   }
+<<<
+
+*:/potion $id $strength $seconds = >>>
+  if((!array_contains(pgroup(), 'builders') || !array_contains(array('custom', 'dev'), pworld())) && !array_contains(pgroup(), 'moderators'), die('You do not have permission to use this command.'))
+  @effects = array('speed': '1', 'slowness': '2', 'haste': '3', 'fatique': '4', 'strength': '5', 'health': '6', 'damage': '7', 'jump': '8', 'nausea': '9', 'regen': '10', 'regeneration': '10', 'resistance': '11', 'fireresist': '12', 'fireresistance': '12', 'waterbreathing': '13', 'invis': '14','invisibility': '14', 'blindness': '15', 'nightvision': '16', 'hunger': '17', 'weakness': '18', 'poison': '19', 'wither': '20')
+  if(is_numeric($id), @id = $id, @id = @effects[$id])
+  @effectdata = array(1: 2, 2: 10, 5: 9, 6: 5, 7: 12, 10: 1, 12: 3, 14: 14, 16: 6, 18: 8)
+  if(array_index_exists(@effectdata, @id), @data = @effectdata[@id], @data = 16)
+  set_pinv(array(null: array('type': 373, 'data': @data, 'meta': array('potions': array(array('id': @id, 'strength': $strength, 'seconds': $seconds))))))
 <<<
 
 *:/enchant $type [$level=1] = >>>
