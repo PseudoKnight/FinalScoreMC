@@ -122,3 +122,34 @@ bind(block_break, null, array('type': 68), @event,
     store_value('shop.'.@itemid, @shops)
   }
 )
+
+#prevent hoppers under shop chests
+bind(block_place, null, array('type': 154), @event,
+  @loc = _relative(@event['location'], 'up')
+  @type = split(':', get_block_at(@loc))[0]
+  if(@type == '54' || @type == '146') {
+    if(split(':', get_block_at(_relative(@loc, 'up')))[0] == '68') {
+      @signs[0] = _relative(@loc, 'up')
+    }
+    if(get_inventory_size(@loc) == 54) {
+      foreach(array('north', 'south', 'east', 'west'), @dir,
+        @rel = _relative(@loc, @dir)
+        if(split(':', get_block_at(@rel))[0] == @type) {
+          if(split(':', get_block_at(_relative(@rel, 'up')))[0] == '68') {
+            @signs[1] = _relative(@rel, 'up')
+          }
+          break()
+        }
+      )
+    }
+    
+    if(@signs) {
+    foreach(@signs, @sign,
+      if(_is_shop(@sign) && !_is_shop_owner(@sign)) {
+        cancel()
+        die(color('red').'You cannot place a hopper below a shop you don\'t own.')
+      }
+    )
+    }
+  }
+)
