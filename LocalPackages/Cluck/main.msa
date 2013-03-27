@@ -83,6 +83,8 @@ switch($cmd
         _clear_pinv()
         set_plevel(@cluck['player'], 0)
       }
+      if(array_index_exists(@cluck, 'bat'), unbind('cluckbat'))
+      unbind('cluckchicken')
       @cluck = _reset_cluck()
       export(@cluck)
       die('You stepped off the shooting pad. Reset Cluck.')
