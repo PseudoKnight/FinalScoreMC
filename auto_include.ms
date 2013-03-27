@@ -1,3 +1,23 @@
+proc(_relative, @loc, @dir,
+  switch(@dir
+  , 'up',
+    return(array(@loc[0], @loc[1] + 1, @loc[2], @loc[3]))
+  , 'down',
+    return(array(@loc[0], @loc[1] - 1, @loc[2], @loc[3]))
+  , 'north',
+    return(array(@loc[0], @loc[1], @loc[2] - 1, @loc[3]))
+  , 'south',
+    return(array(@loc[0], @loc[1], @loc[2] + 1, @loc[3]))
+  , 'east',
+    return(array(@loc[0] + 1, @loc[1], @loc[2], @loc[3]))
+  , 'west',
+    return(array(@loc[0] - 1, @loc[1], @loc[2], @loc[3]))
+  , 
+    console('Cannot get relative block '.@dir.' from '.@loc.'.')
+    return(@loc)
+  )
+)
+
 proc(_clear_pinv, assign(@player, player()),
   set_pinv(@player, array(0: null, 1: null, 2: null, 3: null, 4: null, 5: null, 6: null, 7: null, 8: null, 9: null, 10: null, 11: null, 12: null, 13: null, 14: null, 15: null, 16: null, 17: null, 18: null, 19: null, 20: null, 21: null, 22: null, 23: null, 24: null, 25: null, 26: null, 27: null, 28: null, 29: null, 30: null, 31: null, 32: null, 33: null, 34: null, 35: null, 100: null, 101: null, 102: null, 103: null))
 )
@@ -149,10 +169,10 @@ proc(_warmuptp, @length, @player, @loc, assign(@yaw, null), assign(@pitch, null)
     if(!ponline(@player), die())
     make_effect(ploc(@player), 'GHAST_SHOOT', 20)
     make_effect(ploc(@player), 'MOBSPAWNER_FLAMES', 20)
-    set_ploc(@player, @loc)
-    if(@yaw && @pitch) {
+    if(@yaw != null && @pitch != null) {
       pfacing(@player, @yaw, @pitch)
     }
+    set_ploc(@player, @loc)
     set_peffect(@player, 15, 1, 1)
     make_effect(@loc, 'GHAST_SHOOT', 20)
     make_effect(@loc, 'MOBSPAWNER_FLAMES', 20)
