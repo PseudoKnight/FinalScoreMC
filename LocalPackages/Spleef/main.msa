@@ -110,43 +110,29 @@ set_timeout(1000, closure(
   if(get_block_at(@cfg['option']['soulsand']) == '124:0' && get_block_at(@cfg['option']['platforming']) ==  '123:0') {
     proc(_setfloor, @x, @y, @z, assign(@floor, @mat),
       if(rand(10) < 6) {
-        if(get_block_at(@x, @y, @z) != @floor) {
-          set_block_at(array(@x, @y, @z), @floor)
-        }
+        set_block_at(@x, @y, @z, @floor)
       } else {
-        if(get_block_at(@x, @y, @z) != '88:0') {
-          set_block_at(array(@x, @y, @z), 88)
-        }
+        set_block_at(@x, @y, @z, 88)
       }
     )
   #platforming
   } else if(get_block_at(@cfg['option']['platforming']) ==  '124:0' && get_block_at(@cfg['option']['soulsand']) == '123:0') {
     proc(_setfloor, @x, @y, @z, assign(@floor, @mat),
       if(rand(10) < 3) {
-        if(get_block_at(@x, @y, @z) != @floor) {
-          set_block_at(array(@x, @y, @z), @floor)
-        }
+        set_block_at(@x, @y, @z, @floor)
       } else {
-        if(get_block_at(@x, @y, @z) != '0:0') {
-          set_block_at(array(@x, @y, @z), 0)
-        }
+        set_block_at(@x, @y, @z, 0)
       }
     )
   #difficult terrain + platforming
   } else if(get_block_at(@cfg['option']['soulsand']) == '124:0' && get_block_at(@cfg['option']['platforming']) == '124:0') {
     proc(_setfloor, @x, @y, @z, assign(@floor, @mat),
       if(assign(@rand, rand(10)) < 2) {
-        if(get_block_at(@x, @y, @z) != @floor) {
-          set_block_at(array(@x, @y, @z), @floor)
-        }
+        set_block_at(@x, @y, @z, @floor)
       } else if(@rand < 9) {
-        if(get_block_at(@x, @y, @z) != '0:0') {
-          set_block_at(array(@x, @y, @z), 0)
-        }
+        set_block_at(@x, @y, @z, 0)
       } else {
-        if(get_block_at(@x, @y, @z) != '88:0') {
-          set_block_at(array(@x, @y, @z), 88)
-        }
+        set_block_at(@x, @y, @z, 88)
       }
     )
   #regular floor
@@ -165,20 +151,14 @@ set_timeout(2000, closure(
   if(get_block_at(@cfg['option']['obstacles']) ==  '124:0') {
     proc(_setwalls, @x, @y, @z,
       if(assign(@rand, rand(100)) < 5) {
-        if(get_block_at(@x, @y, @z) != '98:0') {
-          set_block_at(array(@x, @y, @z), '98:0')
-          set_block_at(array(@x, @y + 1, @z), '98:0')
-        }
+        set_block_at(array(@x, @y, @z), '98:0')
+        set_block_at(array(@x, @y + 1, @z), '98:0')
       } else if(@rand < 6) {
-        if(get_block_at(@x, @y, @z) != '98:1') {
-          set_block_at(array(@x, @y, @z), '98:1')
-          set_block_at(array(@x, @y + 1, @z), '98:1')
-        }
+        set_block_at(array(@x, @y, @z), '98:1')
+        set_block_at(array(@x, @y + 1, @z), '98:1')
       } else if(@rand < 7) {
-        if(get_block_at(@x, @y, @z) != '98:2') {
-          set_block_at(array(@x, @y, @z), '98:2')
-          set_block_at(array(@x, @y + 1, @z), '98:2')
-        }
+        set_block_at(array(@x, @y, @z), '98:2')
+        set_block_at(array(@x, @y + 1, @z), '98:2')
       } else {
         if(get_block_at(@x, @y, @z) != '0:0') {
           set_block_at(array(@x, @y, @z), 0)
@@ -196,6 +176,11 @@ set_timeout(2000, closure(
     )
   }
   _iterate_cuboid(array(@region[0][0], @region[0][1] + 1, @region[0][2]), array(@region[1][0], @region[1][1] + 1, @region[1][2]), '_setwalls')
+
+
+  foreach(array_keys(@currentspleef), @player,
+    if(pmode(@player) == 'CREATIVE', set_pmode(@player, 'SURVIVAL'))
+  )
 ))
 
 set_timeout(3000, closure(
@@ -206,7 +191,6 @@ foreach(array_keys(@currentspleef), @player,
     array_remove(@currentspleef, @player)
     continue()
   }
-  if(pmode(@player) == 'CREATIVE', set_pmode(@player, 'SURVIVAL'))
   @location = array(@region[0][0] - rand(sqrt((@region[0][0] - @region[1][0]) ** 2)), @region[0][1], @region[0][2] - rand(sqrt((@region[0][2] - @region[1][2]) ** 2)))
   #check if they're spawning into a block
   if(get_block_at(array(@location[0], @location[1] + 1, @location[2])) != '0:0') {
