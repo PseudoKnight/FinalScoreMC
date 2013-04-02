@@ -540,21 +540,21 @@ proc('_check_goals', assign(@id, @id), assign(@arena, @arena),
     }
     if(array_index_exists(@arena, 'lever'), set_block_at(@arena['lever'], '69:6'))
 
-    unbind(@id.'death')
-    unbind(@id.'spawn')
-    unbind(@id.'damage')
-    unbind(@id.'quit')
-    if(array_index_exists(@arena, 'chestspawn') || array_index_exists(@arena, 'tools'), unbind(@id.'interact'))
-    if(array_index_exists(@arena, 'tools') && array_contains(@arena['tools'], 'endernades'), unbind(@id.'teleport'))
-    if(array_index_exists(@arena, 'modpickup') || @arena['mode'] == 'ctf', unbind(@id.'pickup'))
-    if(array_contains(array('ctf', 'tdm'), @arena['mode']), unbind(@id.'tagged'))
+    unbind('pvp'.@id.'death')
+    unbind('pvp'.@id.'spawn')
+    unbind('pvp'.@id.'damage')
+    unbind('pvp'.@id.'quit')
+    if(array_index_exists(@arena, 'chestspawn') || array_index_exists(@arena, 'tools'), unbind('pvp'.@id.'interact'))
+    if(array_index_exists(@arena, 'tools') && array_contains(@arena['tools'], 'endernades'), unbind('pvp'.@id.'teleport'))
+    if(array_index_exists(@arena, 'modpickup') || @arena['mode'] == 'ctf', unbind('pvp'.@id.'pickup'))
+    if(array_contains(array('ctf', 'tdm'), @arena['mode']), unbind('pvp'.@id.'tagged'))
     if(@arena['mode'] == 'ctf') {
-      unbind(@id.'inventory')
+      unbind('pvp'.@id.'inventory')
       if(@pvp['team'][0]['flagrespawn'], clear_task(@pvp['team'][0]['flagrespawn']))
       if(@pvp['team'][1]['flagrespawn'], clear_task(@pvp['team'][1]['flagrespawn']))
     }
 
-    clear_task(@pvp['slowinterval'])
+    clear_task(@pvp['interval'])
     @pvp = array('players': associative_array(), 'running': false)
     export('pvp'.@id, @pvp)
   }
@@ -623,7 +623,7 @@ set_timeout(3000, closure(
 
   # The assign() functions in the event binds are required to keep the instances from interfering with each other
   # Just passing the variable (eg. ", @arena, @id,") did not work last I tested
-  bind(player_death, array('priority': 'high', 'id': @id.'death'), null, @event, assign(@arena, @arena), assign(@id, @id),
+  bind(player_death, array('priority': 'high', 'id': 'pvp'.@id.'death'), null, @event, assign(@arena, @arena), assign(@id, @id),
     @pvp = import('pvp'.@id)
     if(!array_index_exists(@pvp['players'], player()), die())
 
@@ -690,10 +690,12 @@ set_timeout(3000, closure(
     _check_goals()
   )
 
-
-  bind(player_quit, array('id': @id.'quit'), null, @event, assign(@arena, @arena), assign(@id, @id),
+  bind(player_quit, array('id': 'pvp'.@id.'quit'), null, @event, assign(@arena, @arena), assign(@id, @id), assign(@host, player()),
     @pvp = import('pvp'.@id)
     if(!array_index_exists(@pvp['players'], player()), die())
+    if(player() == @host) {
+      console('Host ('.@host.') left the match in '.@id.'.')
+    }
 
     if(@arena['mode'] == 'ctf' && (pinv(player(), 103)['type'] == 8 || pinv(player(), 103)['type'] == 10)) {
       _flag_respawn(if(pinv(player(), 103)['type'] == 10, 0, 1)) 
@@ -714,7 +716,7 @@ set_timeout(3000, closure(
   )
 
 
-  bind(player_spawn, array('id': @id.'spawn'), null, @event, assign(@arena, @arena), assign(@id, @id),
+  bind(player_spawn, array('id': 'pvp'.@id.'spawn'), null, @event, assign(@arena, @arena), assign(@id, @id),
     @pvp = import('pvp'.@id)
     if(!array_index_exists(@pvp['players'], player()), die())
 
@@ -749,7 +751,7 @@ set_timeout(3000, closure(
 
 
   if(array_index_exists(@arena, 'chestspawn') || array_index_exists(@arena, 'tools')) {
-    bind(player_interact, array('id': @id.'interact'), null, @event, assign(@arena, @arena), assign(@id, @id),
+    bind(player_interact, array('id': 'pvp'.@id.'interact'), null, @event, assign(@arena, @arena), assign(@id, @id),
 
       # filter players
       @pvp = import('pvp'.@id)
@@ -789,7 +791,7 @@ set_timeout(3000, closure(
 
 
   if(array_index_exists(@arena, 'tools') && array_contains(@arena['tools'], 'endernades')) {
-    bind(player_teleport, array('id': @id.'teleport'), null, @event, assign(@arena, @arena), assign(@id, @id),
+    bind(player_teleport, array('id': 'pvp'.@id.'teleport'), null, @event, assign(@arena, @arena), assign(@id, @id),
       if(@event['type'] != 'ENDER_PEARL', die())
       @pvp = import('pvp'.@id)
       if(!array_index_exists(@pvp['players'], player()), die())
@@ -801,7 +803,7 @@ set_timeout(3000, closure(
   }
 
 
-  bind(entity_damage_player, array('id': @id.'damage'), null, @event, assign(@arena, @arena), assign(@id, @id),
+  bind(entity_damage_player, array('id': 'pvp'.@id.'damage'), null, @event, assign(@arena, @arena), assign(@id, @id),
     @pvp = import('pvp'.@id)
     if(!array_index_exists(@pvp['players'], player()), die())
 
@@ -821,7 +823,7 @@ set_timeout(3000, closure(
   )
 
   if(@arena['mode'] == 'ctf') {
-    bind(inventory_click, array('id': @id.'inventory'), array('slottype': 'ARMOR'), @event, assign(@id, @id),
+    bind(inventory_click, array('id': 'pvp'.@id.'inventory'), array('slottype': 'ARMOR'), @event, assign(@id, @id),
       @pvp = import('pvp'.@id)
       if(!array_index_exists(@pvp['players'], player()), die())
       
@@ -830,7 +832,7 @@ set_timeout(3000, closure(
   }
 
   if(array_index_exists(@arena, 'modpickup') || @arena['mode'] == 'ctf') {
-    bind(item_pickup, array('id': @id.'pickup'), null, @event, assign(@arena, @arena), assign(@id, @id), 
+    bind(item_pickup, array('id': 'pvp'.@id.'pickup'), null, @event, assign(@arena, @arena), assign(@id, @id), 
 
       if(@event['item']['type'] == '10') {
         @pvp = import('pvp'.@id)
@@ -941,7 +943,7 @@ set_timeout(3000, closure(
   }
 
   if(array_contains(array('ctf', 'tdm'), @arena['mode'])) {
-    bind(player_tagged, array('id': @id.'tagged'), null, @event, assign(@arena, @arena), assign(@id, @id), 
+    bind(player_tagged, array('id': 'pvp'.@id.'tagged'), null, @event, assign(@arena, @arena), assign(@id, @id), 
       @pvp = import('pvp'.@id)
       if(!array_index_exists(@pvp['players'], @event['tagged']), die())
       modify_event('tag', color(@arena['team'][@pvp['players'][@event['tagged']]['team']]['color']).@event['tagged'])
@@ -952,7 +954,7 @@ set_timeout(3000, closure(
   }
 
 
-  assign(@pvp['slowinterval'], set_interval(1000, closure(
+  assign(@pvp['interval'], set_interval(1000, closure(
     @pvp = import('pvp'.@id)
     @check = false
 
