@@ -24,7 +24,16 @@
 <<<
 
 *:/say $ = >>>
-  broadcast(color(8).simple_date('h:mm').' '._colorname().player().color('gray').': '.color('r').$) 
+  broadcast(color(8).simple_date('h:mm').' '.if(array_contains(pgroup(), 'donors'), color('green').'\u2666 ')._colorname().player().color('gray').': '.color('r').$) 
+<<<
+
+*:/me $ = >>>
+  import(@ignorelist)
+  if(array_index_exists(@ignorelist, player()) && array_contains(@ignorelist[player()], 'all')) {
+    msg('You have been muted.')
+    die()
+  }
+  broadcast('* '.player().' '.colorize($))
 <<<
 
 /sayas $from $to $ = >>>
@@ -69,12 +78,7 @@
   acc_add($player, $amount * 100)
   msg('Gave '.$player.' '.$amount * 100.' coins.')
   console('Gave '.$player.' '.$amount * 100.' coins.')
-  if(ponline($player) && array_size(pgroup($player)) > 3) {
-    msg('Player is already in an elevated group. If you still want to assign them to Donors, please do that manually with "/perm player setgroup '.$player.' Donors".')
-    msg('Groups: '.pgroup($player))
-  } else {
-    run('/perm player setgroup' $player 'Donors')
-  }
+  run('/perm player addgroup' $player 'Donors')
   @donors = get_value('donors')
   if(@donors == null || @donors == array()) {
     @donors = array($player)
@@ -164,7 +168,9 @@ switch($cmd
   ))
 <<<
 
-/coins [$] = /econ $
+*:/coins = >>>
+  msg(color('gold').round(acc_balance(player())).' coins')
+<<<
 
 #Database control
 /sql $action $namespace [$] = >>>
@@ -245,21 +251,6 @@ switch($cmd
     }
   )
   export(@ignorelist)
-<<<
-
-*:/afk = >>>
-try(
-  bind(player_move, array('id': player().'afkmove'), array('player': player()), @event,
-    broadcast(player().' is not AFK anymore.')
-    unbind(player().'afkquit')
-    unbind()
-  )
-  bind(player_quit, array('id': player().'afkquit'), array('player': player()), @event,
-    unbind(player().'afkmove')
-    unbind()
-  )
-  broadcast(player().' is now AFK.')
-, die('You are already set to AFK.'))
 <<<
 
 # APPROVAL SYSTEM #
@@ -506,6 +497,31 @@ try(
   if(!has_permission('group.administrators'), die('You do not have permission to use this command.'))
   if(array_contains(pgroup($player), 'regulars'), die('Player is already in that group.'))
   run('/perm player setgroup' $player 'Regulars')
+<<<
+
+# Item commands
+*:/i [$item=0] [$amount=1] = >>>
+  if((!array_contains(pgroup(), 'builders') || !array_contains(array('custom', 'dev'), pworld())) && !array_contains(pgroup(), 'moderators'), die('You do not have permission to use this command.'))
+  if($item == 0, die('Usage: /i [id:data] [quantity]'))
+  @item = split(':', $item)
+  if(!is_numeric(@item[0]), @item[0] = data_values(@item[0]))
+  if(@item[0] == null, die('Unknown item name'))
+  if(!array_index_exists(@item, 1), @item[1] = 0)
+  pgive_item(@item[0].':'.@item[1], $amount)
+  msg(color('yellow').'You\'ve been given '.$amount.' '.data_name(@item[0].':'.@item[1]).'.')
+<<<
+
+*:/give [$player=null] [$item=0] [$amount=1] = >>>
+  if(!array_contains(pgroup(), 'moderators'), die('You do not have permission to use this command.'))
+  if($player == null, die('Usage: /give [player] [id:data] [quantity]'))
+  try(@player = player($player), die('Unknown player.'))
+  if($item == 0, die('You need to specify an item id or name.'))
+  @item = split(':', $item)
+  if(!is_numeric(@item[0]), @item[0] = data_values(@item[0]))
+  if(@item[0] == null, die('Unknown item name'))
+  if(!array_index_exists(@item, 1), @item[1] = 0)
+  pgive_item(@player, @item[0].':'.@item[1], $amount)
+  msg(color('yellow').'You gave '.@player.' '.$amount.' '.data_name(@item[0].':'.@item[1]).'.')
 <<<
 
 # COMMAND BLOCK COMMANDS #
