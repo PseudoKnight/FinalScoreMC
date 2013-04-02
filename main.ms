@@ -10,6 +10,7 @@ if(!@stopwatch, @stopwatch = array(), clear_value('session.stopwatch'))
 export(@stopwatch)
 @ignorelist = array()
 export(@ignorelist)
+
 set_world_time('dev', 700)
 set_interval(9 * 60 * 1000, closure(
   runas('~console', '/save-all')
@@ -40,9 +41,9 @@ bind(player_login, null, null, @event,
 
 # Player join messages and tab list colors
 bind(player_join, null, null, @event,
-set_timeout(200, closure(assign(@loc, ploc()),
+set_timeout(250, closure(assign(@loc, ploc()),
   #anti-cheat codes
-  if(player() != 'PseudoKnight', msg('\u00A7f \u00A7f \u00A71 \u00A70 \u00A72 \u00A74 \u00A7f \u00A7f \u00A72 \u00A70 \u00A74 \u00A78 \u00A73 \u00A79 \u00A72 \u00A70 \u00A70 \u00A70 \u00A70\u00A70\u00A71\u00A72\u00A73\u00A74\u00A75\u00A76\u00A77\u00A78\u00A7f\u00A7e'))
+  msg('\u00A7f \u00A7f \u00A71 \u00A70 \u00A72 \u00A74 \u00A7f \u00A7f \u00A72 \u00A70 \u00A74 \u00A78 \u00A73 \u00A79 \u00A72 \u00A70 \u00A70 \u00A70 \u00A70\u00A70\u00A71\u00A72\u00A73\u00A74\u00A75\u00A76\u00A77\u00A78\u00A7f\u00A7e')
   #Welcome messages
   msg(color(1).color(l).'--------------------')
   msg(color('gold'), color(l), '\u2302', color('red'), color('l'), '\u2302', color('aqua'), color(l), '\u2302', color('dark_red'), color('l'), '\u2302', color('gold'), color('l'), ' FINALSCORE ', color('yellow'), color('l'), '\u00AB', color(r), ' \u25AA \u25AA \u25AA')
@@ -54,7 +55,7 @@ set_timeout(200, closure(assign(@loc, ploc()),
   } else {
     set_list_name(_colorname().player())
   }
-  set_timeout(1000, closure(
+  set_timeout(800, closure(
     if(@loc[1] > ploc()[1]) {
       set_ploc(@loc)
     }
@@ -65,21 +66,22 @@ set_timeout(200, closure(assign(@loc, ploc()),
 # Teleport protection from falling through blocks
 bind(player_teleport, null, null, @event,
   if(@event['to']['3'] != @event['from']['3']
-  || _horizontal_distance(@event['to'], @event['from']) > 100) {
-    set_timeout(350, closure(
+    || _horizontal_distance(@event['to'], @event['from']) > 112) {
+    set_timeout(450, closure(
       if((@event['to'][1] - 1) > ploc()[1])
       {
         set_ploc(array(@event['to'][0], @event['to'][1] - 1, @event['to'][2], @event['to'][3]))
+        console('Adjusted '.player().'\'s location after teleport.')
       }
     ))
   }
 )
 
 # Tower Control respawn with gear
-bind(player_spawn, null, null, @event,
-  if(@event['location']['world'] == 'custom' && array_contains(sk_regions_at(@event['location']), 'irontower')) {
+bind(player_spawn, null, array('world': 'custom'), @event,
+  if(array_contains(sk_regions_at(@event['location']), 'irontower')) {
      set_pinv(@player, array(0: array(type: 272), 1: array(type: 261, enchants: array(array(etype: 'ARROW_INFINITE', elevel: 1))), 28: array(type: 262), 100: array(type: 305), 101: array(type: 300), 102: array(type: 303), 103: array(type: 306)))
-  } else if(@event['location']['world'] == 'custom' && array_contains(sk_regions_at(@event['location']), 'goldtower')) {
+  } else if(array_contains(sk_regions_at(@event['location']), 'goldtower')) {
     set_pinv(@player, array(0: array(type: 272), 1: array(type: 261, enchants: array(array(etype: 'ARROW_INFINITE', elevel: 1))), 28: array(type: 262), 100: array(type: 317), 101: array(type: 300), 102: array(type: 315), 103: array(type: 314)))
   }
 )
@@ -88,24 +90,18 @@ bind(player_spawn, null, null, @event,
 bind(player_death, null, null, @event,
 # Log deaths and the drops
   if(!array_contains(array('custom', 'dev'), pworld())) {
-    @log = @event['death_message'].' at '.round(@event['location'][0]).','.round(@event['location'][1]).','.round(@event['location'][2]).' on '.@event['location'][3].', and dropped '.@event['xp'].'xp and:'
+    @log = @event['player'].' died @ '.round(@event['location'][0]).','.round(@event['location'][1]).','.round(@event['location'][2]).' on '.@event['location'][3].', dropping '.@event['xp'].'xp and '
     foreach(@event['drops'], @drop,
       if(is_array(@drop)) {
-        @log .= sconcat(if(@drop['qty'] > 1, @drop['qty']), data_name(@drop['type']), if(@drop['data'] > 0, sconcat('with', @drop['data'], 'damage')), if(gt(array_size(@drop['enchants']), 0), sconcat('with', @drop['enchants'], 'enchants')), '- ')
+        @log .= if(@drop['qty'] > 1, @drop['qty']).' '.data_name(@drop['type']).if(@drop['data'] > 0, ':'.@drop['data']).' '.if(array_size(@drop['enchants']) > 0, 'with '.@drop['enchants']. 'enchants').' - '
       }
     )
     console(@log, false)
   }
 #Modify death_message
-  if(pworld() == 'custom') {
-    if(array_contains(sk_current_regions(), 'innerpitfrenzy1') || array_contains(sk_current_regions(), 'innerpitfrenzy2')) {
-      _worldmsg('custom', color(c).'[PITFRENZY] '.color('white').@event['death_message'])
-    } else if(array_contains(sk_current_regions(), 'towercontrol')) {
-      _regionmsg('towercontrol', color(a).'[TOWERCONTROL] '.color('white').@event['death_message'])
-      modify_event('drops', null)
-    }
+  if(pworld() == 'custom' || pworld() == 'dev') {
     modify_event('death_message', null)
-  } 
+  }
 # Notify player where he died.
   if(!array_contains(array('custom', 'dev'), pworld()), msg('You died @ ', round(@event['location'][0]), ',', round(@event['location'][1]), ',', round(@event['location'][2])))
 )
@@ -113,14 +109,14 @@ bind(player_death, null, null, @event,
 # Outworld message
 bind(world_changed, null, array('to': 'outworld'), @event,
   if(!array_contains(array('outworld_nether', 'outworld', 'outworld_the_end'), @event['from'])) {
-    msg(color('k').'XX'.color('r').color('green').color('bold').' Welcome to the outworld! '.color('r').color('k').'XX')
-    msg(color('gold').'This is a temporary world. Please do not build or store anything here you wish to keep.')
+    msg(color('k').'XX'.color('r').color('gold').color('bold').' Welcome to the outworld! '.color('r').color('k').'XX\n'
+    .color('red').'This is a temporary world. Do not build or store anything permanent.')
   }
 )
 
 # Log commands
 bind(player_command, null, null, @event,
-  if(is_alias(@event['command']) && !array_contains_ic(array('/join', '/accept', '/invite'), @event['prefix'])) {
+  if(is_alias(@event['command'])) {
     console(@event['player'].' ran: '.@event['command'], false)
   }
 )
@@ -137,9 +133,14 @@ bind(player_chat, null, null, @event,
       cancel()
       die('Player not found.')
     )
+    if((length(@p) + 2) >= length(@event['message'])) {
+      cancel()
+      die()
+    }
     @message = substr(@event['message'], length(@p) + 2)
-    tmsg(@player, color(7).'(From '.player().'): '.color(r).@message)
-    msg(color(7).'(To '.@player.'): '.color(r).@message)
+    tmsg(@player, color(7).'(From '.player().'): '.color(r).colorize(@message))
+    play_sound(ploc(@player), array('sound': 'CHICKEN_EGG_POP', 'pitch': 2), @player)
+    msg(color(7).'(To '.@player.'): '.color(r).colorize(@message))
     console(player().' @ '.@player.': '.@message, false)
     import(@conv)
     @conv[@player] = player()
@@ -166,7 +167,7 @@ bind(player_chat, null, null, @event,
    modify_event('recipients', @recipients)
   }
   modify_event('message', colorize(@event['message']))
-  modify_event('format', color('dark_gray').simple_date('h:mm').' '._colorname(player()).player().color('gray').': '.color('r').'%2$s')
+  modify_event('format', color('dark_gray').simple_date('h:mm').' '.if(array_contains(pgroup(), 'donors'), color('green').'\u2666 ')._colorname(player()).player().color('gray').': '.color('r').'%2$s')
 )
 
 # Block wither
@@ -199,7 +200,7 @@ bind(player_interact, null, array('block': 118, 'button': 'right'), @event,
 # Block lighters
 bind(player_interact, null, array('item': 259, 'button': 'right'), @event,
   if(has_permission('group.regulars'), die())
-  try(@loc - @event['location'], die())
+  try(@loc = @event['location'], die())
   if(get_block_at(@loc) == '46:0') {
     die()
   } else if(get_block_at(@loc) == '49:0' && @event['facing'] == 'up') {
@@ -210,20 +211,15 @@ bind(player_interact, null, array('item': 259, 'button': 'right'), @event,
     ))
   } else {
     cancel()
-    msg('Flint and steel is restricted, but you can still use it on TNT.')
+    msg('Flint and steel is restricted, but you can still use it on TNT and nether portals.')
   }
 )
 
-# Snow layers
-bind(player_interact, null, array('item': 78, 'button': 'right', 'block': 78), @event,
+# Block fire charges
+bind(player_interact, null, array('item': 385, 'button': 'right'), @event,
+  if(has_permission('group.regulars'), die())
   cancel()
-  if(get_block_at(@event['location']) == '78:7', die())
-  if(_can_build(@event['location']) == false, die())
-  @data = '78:'.(split(':', get_block_at(@event['location']))[1] + 1)
-  set_block_at(@event['location'], @data)
-  @slot = pinv(player(), null)
-  array_set(@slot, 'qty', @slot['qty'] - 1)
-  set_pinv(array(null: @slot))
+  msg('Flint and steel is restricted, but you can still use it on TNT and nether portals.')
 )
 
 # Button commands
@@ -234,20 +230,22 @@ bind(player_interact, null, array('block': 77, 'button': 'right'), @event,
     ))
     die()
   }
-  @sign = array(@event['location'][0], add(@event['location'][1], 1), @event['location'][2])
+  @sign = _relative(@event['location'], 'up')
   if(is_sign_at(@sign)) { 
     @signtext = get_sign_text(@sign)
-    if(length(@signtext[1]) > 6 && substr(@signtext[1], 0, 3) == color(2).'[') {
-      switch(strip_colors(@signtext[1]),
-        '[SPLEEF]',
+    if(@type = reg_match('\u00A72\\[(.+)\\]', @signtext[1])) {
+      switch(@type[1],
+        'SPLEEF',
           switch(@signtext[2], 
             'Join',
               call_alias('/spleef join'),
             'Start',
               call_alias('/spleef start'),
+            'Floor',
+              call_alias('/spleef floor'),
             die('Unknown Spleef command.')
           ),
-        '[STOPWATCH]',
+        'STOPWATCH',
           switch(@signtext[2],
             'Start',
               import(@stopwatch)
@@ -265,7 +263,7 @@ bind(player_interact, null, array('block': 77, 'button': 'right'), @event,
               export(@stopwatch)
             die('Unknown StopWatch command.')
           ),
-        '[CONNECT4]',
+        'CONNECT4',
           switch(@signtext[2],
             'Reset',
               proc(_set_sand, @x, @y, @z,
@@ -274,22 +272,17 @@ bind(player_interact, null, array('block': 77, 'button': 'right'), @event,
               proc(_set_gravel, @x, @y, @z,
                 if(get_block_at(@x, @y, @z, pworld()) == '0:0', set_block_at(@x, @y, @z, 13, pworld()))
               )
-              proc(_set_air, @x, @y, @z,
-                if(get_block_at(@x, @y, @z, pworld()) != '0:0', set_block_at(@x, @y, @z, 0, pworld()))
-              )
               _iterate_cuboid(array(-499, 73, -348), array(-499, 78, -342), '_set_sand')
-              _iterate_cuboid(array(-499, 81, -348), array(-499, 86, -342), '_set_gravel')
-              _iterate_cuboid(array(-500, 72, -342), array(-500, 66, -348), '_set_air')
-              msg(color(a), '[CONNECT4] ', color('white'), 'Reset.'),
+              _iterate_cuboid(array(-499, 81, -348), array(-499, 86, -342), '_set_gravel'),
             die('Unknown Connect4 command.')
           ),
-        '[CLUCK]',
+        'CLUCK',
           switch(@signtext[2],
             'Start',
               call_alias('/cluck start '.(@signtext[3] - 1)),
             die('Unknown Cluck command.')
           ),
-        '[SNOWSPLEEF]',
+        'SNOWSPLEEF',
           switch(@signtext[2],
             'Reset Floor',
               proc(_set_snowblock, @x, @y, @z,
@@ -299,7 +292,7 @@ bind(player_interact, null, array('block': 77, 'button': 'right'), @event,
               msg('Reset.'),
             die('Unknown SnowSpleef command.')
           ),
-        '[PVP]',
+        'PVP',
           switch(@signtext[2],
             'Join',
               call_alias('/pvp join '.to_lower(@signtext[3])),
@@ -362,6 +355,30 @@ if(length(@signtext[3]) > 8 && substr(@signtext[3], 0, 3) == color('yellow').'-'
 
 # Sponge splitting
 bind(block_break, null, array('type': 19), @event,
-  if(rand(16) < 1, item_drop(array(@event['block']['X'], @event['block']['Y'], @event['block']['Z'], @event['block']['world']), 19, 1))
+  if(rand(16) < 1, drop_item(@event['location'], array('type': 19)))
+)
+
+#disable hopper minecarts
+bind(player_interact, null, array('item': 408), @event,
+if(pworld() != 'custom' && pworld() != 'dev') {
+  msg(color('red').'Hopper minecarts are currently disabled.')
+  cancel()
+}
+)
+
+bind(inventory_click, null, array('slottype': 'RESULT', 'slotitem': 408), @event,
+  msg(color('red').'Hopper minecarts are currently disabled.')
+  cancel()
+)
+
+#disable flint & steel and fire charges in dispensers for non-regulars
+bind(inventory_click, null, array('slottype': 'CONTAINER'), @event,
+  if(@event['inventorytype'] == 'DISPENSER' 
+  && !array_contains(pgroup(), 'regulars')
+  && ((@event['cursoritem'] != null && (@event['cursoritem']['type'] == 259 || @event['cursoritem']['type'] == 385) && @event['rawslot'] < 9)
+  || (@event['slotitem'] != null && (@event['slotitem']['type'] == 259 || @event['slotitem']['type'] == 385) && @event['shiftclick']))) {
+    cancel()
+    die(color('red').'You cannot place flint & steel or firecharges in dispensers.')
+  }
 )
 
