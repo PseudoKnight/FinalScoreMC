@@ -22,7 +22,6 @@ proc(_clear_pinv, assign(@player, player()),
   set_pinv(@player, array(0: null, 1: null, 2: null, 3: null, 4: null, 5: null, 6: null, 7: null, 8: null, 9: null, 10: null, 11: null, 12: null, 13: null, 14: null, 15: null, 16: null, 17: null, 18: null, 19: null, 20: null, 21: null, 22: null, 23: null, 24: null, 25: null, 26: null, 27: null, 28: null, 29: null, 30: null, 31: null, 32: null, 33: null, 34: null, 35: null, 100: null, 101: null, 102: null, 103: null))
 )
 
-#Returns true if it's been @length in seconds since @from timestamp
 proc(_cooldown, @from, @length,
   if((time() - @from) / 1000 > @length) {
     return(true)
@@ -45,15 +44,15 @@ proc(_pgive_item, @player, @item,
   return(false)
 )
 
-proc(_fill_inventory, @loc,
-  for(@i = 0, @i < get_inventory_size(@loc), @i++,
-    @item = get_inventory_item(@loc, @i)
-    if(@item != null) {
-      @item['qty'] = 64
-      set_inventory_item(@loc, @i, @item)
-    }
-  )
-)
+# proc(_fill_inventory, @loc,
+  # for(@i = 0, @i < get_inventory_size(@loc), @i++,
+    # @item = get_inventory_item(@loc, @i)
+    # if(@item != null) {
+      # @item['qty'] = 64
+      # set_inventory_item(@loc, @i, @item)
+    # }
+  # )
+# )
 
 # Removes all DROPPED_ITEM entities from region.
 # Since this loads entities by chunks it has a loose entity selection
@@ -127,7 +126,6 @@ proc(_shop_item, @signtext,
 
 #color display name
 proc(_colorname, assign(@player, player()),
-#  if(@player == '', assign(@player, player()))
   ifelse(has_permission(@player, 'group.moderators'),
     @color = 'aqua',
     has_permission(@player, 'group.builders'),
@@ -214,37 +212,37 @@ proc(_get_inventory_count, @loc, @item,
 # Since CommandHelper doesn't do this for us, I have to manually check to see if you can build.
 # It doesn't respect: PARENTS, GROUPS, FLAGS
 # __global__ regions are hard-coded for 'custom' and 'dev' worlds.
-proc(_can_build, @loc, assign(@player, player()),
-  if(has_permission(@player, 'worldguard.region.bypass.'.pworld(@player)), return(true))
-  @canbuild = true
-  # special handling for dev & custom worlds
-  if((pworld(@player) == 'custom' && !array_contains(pgroup(@player), 'moderators')) || (pworld(@player) == 'dev' && !array_contains(pgroup(@player), 'engineers'))) {
-    @canbuild = false
-  }
-  # default to false if there are any regions
-  if(array_size(sk_regions_at(@loc)) > 0) {
-    @canbuild = false
-  }
-  @highestpriority = -1
-  # iterate through all applicable regions and respect higher priorities
-  foreach(sk_regions_at(@loc), @region,
-    if(sk_region_info(@region, pworld(@player))[4] < @highestpriority, continue())
-    ifelse(!array_contains_ic(sk_region_info(@region, pworld(@player))[1], @player) && !array_contains_ic(sk_region_info(@region, pworld(@player))[2], @player),
-      @canbuild = false,
-    sk_region_info(@region, pworld(@player))[4] > @highestpriority,
-      @canbuild = true
-    )
-    @highestpriority = sk_region_info(@region, pworld(@player))[4]
-  )
-  return(@canbuild)
-)
+# proc(_can_build, @loc, assign(@player, player()),
+  # if(has_permission(@player, 'worldguard.region.bypass.'.pworld(@player)), return(true))
+  # @canbuild = true
+  # # special handling for dev & custom worlds
+  # if((pworld(@player) == 'custom' && !array_contains(pgroup(@player), 'moderators')) || (pworld(@player) == 'dev' && !array_contains(pgroup(@player), 'engineers'))) {
+    # @canbuild = false
+  # }
+  # # default to false if there are any regions
+  # if(array_size(sk_regions_at(@loc)) > 0) {
+    # @canbuild = false
+  # }
+  # @highestpriority = -1
+  # # iterate through all applicable regions and respect higher priorities
+  # foreach(sk_regions_at(@loc), @region,
+    # if(sk_region_info(@region, pworld(@player))[4] < @highestpriority, continue())
+    # ifelse(!array_contains_ic(sk_region_info(@region, pworld(@player))[1], @player) && !array_contains_ic(sk_region_info(@region, pworld(@player))[2], @player),
+      # @canbuild = false,
+    # sk_region_info(@region, pworld(@player))[4] > @highestpriority,
+      # @canbuild = true
+    # )
+    # @highestpriority = sk_region_info(@region, pworld(@player))[4]
+  # )
+  # return(@canbuild)
+# )
 
 # Populate multiple signs with an array_size larger than 4
-proc(_populate_signs, @locarray, @textarray, assign(@offset, 0),
-  for(@i = 0, @i < array_size(@locarray), @i++,
-    set_sign_text(@locarray[@i], @textarray[cslice((@i * 4) + @offset, (@i * 4) + 3 + @offset)])
-  )
-)
+# proc(_populate_signs, @locarray, @textarray, assign(@offset, 0),
+  # for(@i = 0, @i < array_size(@locarray), @i++,
+    # set_sign_text(@locarray[@i], @textarray[cslice((@i * 4) + @offset, (@i * 4) + 3 + @offset)])
+  # )
+# )
 
 #Returns the distance between two blocks, or any other 3d points, for that matter
 proc(_3d_distance, @arr1, @arr2,
