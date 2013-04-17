@@ -55,6 +55,14 @@ set_timeout(250, closure(assign(@loc, ploc()),
   } else {
     set_list_name(_colorname().player())
   }
+  # orphaned players are players left on deleted worlds
+  @orphaned = get_value('orphaned')
+  if(array_contains(@orphaned, player())) {
+    @loc = get_spawn('world')
+    set_ploc(@loc)
+    array_remove_values(@orphaned, player())
+    store_value('orphaned', @orphaned)
+  }
   set_timeout(800, closure(
     if(@loc[1] > ploc()[1]) {
       set_ploc(@loc)
@@ -86,9 +94,7 @@ bind(player_spawn, null, array('world': 'custom'), @event,
   }
 )
 
-# Handle all deaths
 bind(player_death, null, null, @event,
-# Log deaths and the drops
   if(!array_contains(array('custom', 'dev'), pworld())) {
     @log = @event['player'].' died @ '.round(@event['location'][0]).','.round(@event['location'][1]).','.round(@event['location'][2]).' on '.@event['location'][3].', dropping '.@event['xp'].'xp and '
     foreach(@event['drops'], @drop,
@@ -97,13 +103,10 @@ bind(player_death, null, null, @event,
       }
     )
     console(@log, false)
-  }
-#Modify death_message
-  if(pworld() == 'custom' || pworld() == 'dev') {
+    msg('You died @ ', round(@event['location'][0]), ',', round(@event['location'][1]), ',', round(@event['location'][2]))
+  } else {
     modify_event('death_message', null)
   }
-# Notify player where he died.
-  if(!array_contains(array('custom', 'dev'), pworld()), msg('You died @ ', round(@event['location'][0]), ',', round(@event['location'][1]), ',', round(@event['location'][2])))
 )
 
 # Outworld message

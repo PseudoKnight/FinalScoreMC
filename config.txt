@@ -24,7 +24,7 @@
 <<<
 
 *:/say $ = >>>
-  broadcast(color(8).simple_date('h:mm').' '.if(array_contains(pgroup(), 'donors'), color('green').'\u2666 ')._colorname().player().color('gray').': '.color('r').$) 
+  broadcast(color(8).simple_date('h:mm').' '.if(player() != '~console' && array_contains(pgroup(), 'donors'), color('green').'\u2666 ')._colorname().player().color('gray').': '.color('r').$) 
 <<<
 
 *:/me $ = >>>
@@ -290,7 +290,7 @@ switch($cmd
 
 # PLAYER LISTS #
 *:/who = >>>
-  @list = array(array('Administrators', 'b', ''), array('Moderators', 'b', ''), array('Donors', 'a', ''), array('Engineers', '6', ''), array('Builders', '6', ''), array('Regulars', 'e', ''), array('Everyone', 'e', ''), array('Default', 'f', ''))
+  @list = array(array('Administrators', 'b', ''), array('Moderators', 'b', ''), array('Engineers', '6', ''), array('Builders', '6', ''), array('Donors', 'a', ''), array('Regulars', 'e', ''), array('Everyone', 'e', ''), array('Default', 'f', ''))
   @allplayers = all_players()
   foreach(@allplayers, @player,
     for(@i = 0, @i < array_size(@list), @i++,
@@ -420,6 +420,7 @@ switch($cmd
   try(@player = player($player), die('No player found.'))
   tmsg(@player, color(a), player(), ' ran this command for you:')
   tmsg(@player, color(6), $)
+  console('"'.$.'" was run on '.@player)
   scriptas(@player, 
     if(not(call_alias($)),
       sudo($)
@@ -580,8 +581,8 @@ switch($cmd
 
 *:/dye $r $g $b = >>>
   if((!array_contains(pgroup(), 'builders') || !array_contains(array('custom', 'dev'), pworld())) && !array_contains(pgroup(), 'moderators'), die('You do not have permission to use this command.'))
-  if(is_leather_armor(pinfo(15))) {
-    set_armor_color(pinfo(15), array($r, $g, $b))
+  if(is_leather_armor(pinfo(player(), 15))) {
+    set_armor_color(pinfo(player(), 15), array($r, $g, $b))
   } else {
     msg('That slot isn\'t leather armor.')
   }
