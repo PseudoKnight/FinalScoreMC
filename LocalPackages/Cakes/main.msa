@@ -4,65 +4,70 @@
 if(!array_contains(pgroup(), 'moderators'), die('You do not have permission to use cake commands.'))
 switch($cmd
 , 'list',
-  @cakes = get_value('cakes')
-  msg('Cakes: '.array_keys(@cakes))
-
+  @cakes = get_values('cakeinfo')
+  @types['challenge'] = ''
+  @types['secret'] = ''
+  foreach(@cakes, @key, @cake,
+    array_set(@types, @cake['type'], @types[@cake['type']].split('.', @key)[1].' ')
+  )
+  msg(color('gray').'Challenge Cakes: '.color('r').@types['challenge'])
+  msg(color('gray').'Secret Cakes: '.color('r').@types['secret'])
 
 , 'info',
   if(!array_contains(pgroup(), 'moderators'), die('You do not have permission to use cake commands.'))
-  @cakes = get_value('cakes')
   if(!$) {
+    @cakes = get_value('cakes')
     @loc = pcursor()
     @id = array_index(@cakes, @loc)
     if(!@id, die('No cake prize found.'))
   } else {
     @id = $
   }
-  @cake = get_value('cakes.'.@id)
+  @cake = get_value('cakeinfo.'.@id)
   msg('Cake info for "'.@id.'":')
-  msg(color('green').@cake['coins'].color(r).' coins on a '.color('green').@cake['cooldown'].color(r).' day cooldown.')
-  foreach(@cake['players'], @player, @time,
-    msg(@player.': '.color('gray').round(((@time + (@cake['cooldown'] * 86400000)) - time()) / 86400000).' days left')
-  )
-
+  if(@cake['type'] == 'challenge') {
+    msg(color('green').@cake['coins'].color(r).' coins on a 90 day cooldown.')
+    foreach(@cake['players'], @player, @time,
+      msg(@player.': '.color('gray').round(((@time + (90 * 86400000)) - time()) / 86400000).' days left')
+    )
+  } else if(@cake['type'] == 'secret') {
+    msg(color('green').@cake['coins'].color(r).' coins.')
+    @players = ''
+    foreach(@cake['players'], @player, @time,
+      @players .= @player.' '
+    )
+    msg('Players: '.@players)
+  } else {
+    msg('Unknown cake type.')
+  }
 
 , 'set',
-  if(!$, die('/cake set [id] <coins> <cooldown>'))
+  if(!$, die('/cake set <id> <coins> [type]'))
   @loc = pcursor()
   if(get_block_at(@loc) != '92:0', die('That doesn\'t appear to be a cake. Is it obstructed by a sign or other partial block?'))
 
   @cakes = get_value('cakes')
   if(!@cakes, @cakes = associative_array())
   @args = parse_args($)
-  if(array_size(@args) == 3) {
-    if(!is_numeric(@args[1]) || !is_numeric(@args[2]), die('You must use integers after the cake id.'))
-    @id = @args[0]
-    @coins = @args[1]
-    @cooldown = @args[2]
-    if(!array_index_exists(@cakes, @id)) {
-      array_set(@cakes, @id, @loc)
-    }
-  } else if(array_size(@args) == 2) {
-    if(!is_numeric(@args[0]) || !is_numeric(@args[1]), die('You must use integers.'))
-    @id = array_index(@cakes, @loc)
-    if(!@id, die('Can\'t find a cake prize. You need to specify a cake id when creating new cake prizes.'))
-    @coins = @args[0]
-    @cooldown = @args[1]
-  } else {
-    die('/cake set [id] <coins> <cooldown>')
+  if(array_size(@args) < 2, die('Usage: /cake set <id> <coins> [type]'))
+  if(!array_index_exists(@cakes, @id)) {
+    array_set(@cakes, @id, @loc)
   }
+  @id = @args[0]
+  @coins = @args[1]
+  if(array_size(@args) == 3, @type = @args[2], @type = 'challenge')
 
-  if(has_value('cakes.'.@id)) {
-    @cakedata = get_value('cakes.'.@id)
+  if(has_value('cakeinfo.'.@id)) {
+    @cakedata = get_value('cakeinfo.'.@id)
   } else {
     @cakedata = associative_array()
     @cakedata['players'] = associative_array()
   }
   @cakedata['coins'] = @coins
-  @cakedata['cooldown'] = @cooldown
+  @cakedata['type'] = @type
   store_value('cakes', @cakes)
-  store_value('cakes.'.@id, @cakedata)
-  msg('Set '.@id.' to '.@coins.' coins with a '.@cooldown.' day cooldown.')
+  store_value('cakeinfo.'.@id, @cakedata)
+  msg('Set '.@type.' cake "'.@id.'" ('.@coins.' coins)')
 
 
 , 'move',
@@ -85,17 +90,51 @@ switch($cmd
   } else {
     @id = $
   }
+  if(!array_index_exists(@cakes, @id), die('No cake by that ID found.'))
   array_remove(@cakes, @id)
   store_value('cakes', @cakes)
-  clear_value('cakes.'.@id)
+  clear_value('cakeinfo.'.@id)
   msg('Deleted cake '.@id)
+
+, 'rename',
+  @cakes = get_value('cakes')
+  @args = parse_args($)
+  if(array_size(@args) == 1) {
+    @loc = pcursor()
+    @old = array_index(@cakes, @loc)
+    if(!@old, die('No cake prize found.'))
+    @new = @args[0]
+  } else if(array_size(@args) == 2) {
+    @old = @args[0]
+    @new = @args[1]
+    if(!array_index_exists(@cakes, @old), die('No cake by that ID found.'))
+  } else {
+    die('Usage: /cake rename <oldname> <newname>')
+  }
+  @cakes[@new] = @cakes[@old]
+  array_remove(@cakes, @old)
+  @cake = get_value('cakeinfo.'.@old)
+  if(!@cake, die('Cannot find cake data'))
+  store_value('cakeinfo.'.@new, @cake)
+  clear_value('cakeinfo.'.@old)
+  store_value('cakes', @cakes)
+  msg('Changed '.@old.' to '.@new.'.')
+
+, 'tp',
+  if(!$, die('This needs an id.'))
+  @cakes = get_value('cakes')
+  if(!array_index_exists(@cakes, $), die('That cake ID doesn\'t exist'))
+  set_ploc(array(@cakes[$][0] + 0.5, @cakes[$][1], @cakes[$][2] + 0.5, @cakes[$][3]))
+  msg('Teleported.')
 
 ,
     msg(color('green').'[CAKE] Commands to create, change and remove cake prizes.\n'
     .color('r').'/cake list '.color('gray').'List the names of all cake prizes.\n'
     .color('r').'/cake info [id] '.color('gray').'Shows cake info and current cooldowns\n'
-    .color('r').'/cake set [id] <coins> <cooldown> '.color('gray').'Sets the cake you\'re looking at to give coins when clicked. Cooldown is an integer in days.\n'
+    .color('r').'/cake set [id] <coins> [type] '.color('gray').'Sets the cake you\'re looking at to give coins when clicked. Type can be "secret" or "challenge".\n'
     .color('r').'/cake move <id> '.color('gray').'Moves the prize cake to a new location.\n'
+    .color('r').'/cake tp <id> '.color('gray').'Teleports you to a cake.\n'
+    .color('r').'/cake rename <old> <new> '.color('gray').'Renames a cake.\n'
     .color('r').'/cake delete [id] '.color('gray').'Deletes the prize for the cake you\'re looking at.')
 )
 <<<
