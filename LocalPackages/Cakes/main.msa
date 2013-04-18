@@ -44,16 +44,13 @@ switch($cmd
 , 'set',
   if(!$, die('/cake set <id> <coins> [type]'))
   @loc = pcursor()
-  if(get_block_at(@loc) != '92:0', die('That doesn\'t appear to be a cake. Is it obstructed by a sign or other partial block?'))
-
   @cakes = get_value('cakes')
-  if(!@cakes, @cakes = associative_array())
   @args = parse_args($)
-  if(array_size(@args) < 2, die('Usage: /cake set <id> <coins> [type]'))
-  if(!array_index_exists(@cakes, @id)) {
-    array_set(@cakes, @id, @loc)
-  }
   @id = @args[0]
+  if(!array_index_exists(@cakes, @id) && get_block_at(@loc) != '92:0', die('That doesn\'t appear to be a cake. Is it obstructed by a sign or other partial block?'))
+  if(!@cakes, @cakes = associative_array())
+  if(array_size(@args) < 2, die('Usage: /cake set <id> <coins> [type]'))
+  if(!array_index_exists(@cakes, @id), @cakes[@id] = @loc)
   @coins = @args[1]
   if(array_size(@args) == 3, @type = @args[2], @type = 'challenge')
 
