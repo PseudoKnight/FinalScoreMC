@@ -1,0 +1,11 @@
+*:/tag [$player] = >>>
+if(!$player) {
+  @it = get_value('it')
+  msg(@it['player'].' is "IT".')
+} else {
+  if(!has_permission('group.moderators'), die('You do not have permission.'))
+  try(@player = player($player), die('Unknown player.'))
+  store_value('it', array('player': $player, 'time': time()))
+  msg('You have made '.@player.' "IT".')
+}
+<<<
