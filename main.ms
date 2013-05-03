@@ -17,7 +17,7 @@ set_interval(9 * 60 * 1000, closure(
   set_world_time('dev', 700)
 ))
 
-bind(player_login, null, null, @event,
+bind('player_login', null, null, @event,
   if(get_server_info(10)) {
     if(@event['result'] != 'ALLOWED', die())
     @info = get_value('player.'.@event['player'])
@@ -40,7 +40,7 @@ bind(player_login, null, null, @event,
 )
 
 # Player join messages and tab list colors
-bind(player_join, null, null, @event,
+bind('player_join', null, null, @event,
 set_timeout(250, closure(assign(@loc, ploc()),
   #anti-cheat codes
   msg('\u00A7f \u00A7f \u00A71 \u00A70 \u00A72 \u00A74 \u00A7f \u00A7f \u00A72 \u00A70 \u00A74 \u00A78 \u00A73 \u00A79 \u00A72 \u00A70 \u00A70 \u00A70 \u00A70\u00A70\u00A71\u00A72\u00A73\u00A74\u00A75\u00A76\u00A77\u00A78\u00A7f\u00A7e')
@@ -72,7 +72,7 @@ set_timeout(250, closure(assign(@loc, ploc()),
 )
 
 # Teleport protection from falling through blocks
-bind(player_teleport, null, null, @event,
+bind('player_teleport', null, null, @event,
   if(@event['to']['3'] != @event['from']['3']
     || _horizontal_distance(@event['to'], @event['from']) > 112) {
     set_timeout(450, closure(
@@ -85,16 +85,7 @@ bind(player_teleport, null, null, @event,
   }
 )
 
-# Tower Control respawn with gear
-bind(player_spawn, null, array('world': 'custom'), @event,
-  if(array_contains(sk_regions_at(@event['location']), 'irontower')) {
-     set_pinv(@player, array(0: array(type: 272), 1: array(type: 261, enchants: array(array(etype: 'ARROW_INFINITE', elevel: 1))), 28: array(type: 262), 100: array(type: 305), 101: array(type: 300), 102: array(type: 303), 103: array(type: 306)))
-  } else if(array_contains(sk_regions_at(@event['location']), 'goldtower')) {
-    set_pinv(@player, array(0: array(type: 272), 1: array(type: 261, enchants: array(array(etype: 'ARROW_INFINITE', elevel: 1))), 28: array(type: 262), 100: array(type: 317), 101: array(type: 300), 102: array(type: 315), 103: array(type: 314)))
-  }
-)
-
-bind(player_death, null, null, @event,
+bind('player_death', null, null, @event,
   if(!array_contains(array('custom', 'dev'), pworld())) {
     @log = @event['player'].' died @ '.round(@event['location'][0]).','.round(@event['location'][1]).','.round(@event['location'][2]).' on '.@event['location'][3].', dropping '.@event['xp'].'xp and '
     foreach(@event['drops'], @drop,
@@ -110,7 +101,7 @@ bind(player_death, null, null, @event,
 )
 
 # Outworld message
-bind(world_changed, null, array('to': 'outworld'), @event,
+bind('world_changed', null, array('to': 'outworld'), @event,
   if(!array_contains(array('outworld_nether', 'outworld', 'outworld_the_end'), @event['from'])) {
     msg(color('k').'XX'.color('r').color('gold').color('bold').' Welcome to the outworld! '.color('r').color('k').'XX\n'
     .color('red').'This is a temporary world. Do not build or store anything permanent.')
@@ -118,14 +109,14 @@ bind(world_changed, null, array('to': 'outworld'), @event,
 )
 
 # Log commands
-bind(player_command, null, null, @event,
+bind('player_command', null, null, @event,
   if(is_alias(@event['command'])) {
     console(@event['player'].' ran: '.@event['command'], false)
   }
 )
 
 # PMs, ignores, and mutes
-bind(player_chat, null, null, @event,
+bind('player_chat', null, null, @event,
   if(@event['message'] == '-') {
     cancel()
     die()
@@ -174,7 +165,7 @@ bind(player_chat, null, null, @event,
 )
 
 # Block wither
-bind(player_interact, array('priority': 'high'), array('item': 397), @event,
+bind('player_interact', array('priority': 'high'), array('item': 397), @event,
   if(pinv(player(), null)['data'] == '1' && !array_contains(array('custom', 'dev', 'outworld_nether', 'outworld', 'outworld_the_end'), pworld())) {
     cancel()
     msg(color('yellow').'Wither heads are currently restricted from being placed in this world.')
@@ -182,7 +173,7 @@ bind(player_interact, array('priority': 'high'), array('item': 397), @event,
 )
 
 # Infinite Cauldrons
-bind(player_interact, null, array('block': 118, 'button': 'right'), @event,
+bind('player_interact', null, array('block': 118, 'button': 'right'), @event,
   if(equals(@event['block'], '118:3'),
     switch(@event['item'],
       '325:0',
@@ -201,7 +192,7 @@ bind(player_interact, null, array('block': 118, 'button': 'right'), @event,
 )
 
 # Block lighters
-bind(player_interact, null, array('item': 259, 'button': 'right'), @event,
+bind('player_interact', null, array('item': 259, 'button': 'right'), @event,
   if(has_permission('group.regulars'), die())
   try(@loc = @event['location'], die())
   if(get_block_at(@loc) == '46:0') {
@@ -219,14 +210,14 @@ bind(player_interact, null, array('item': 259, 'button': 'right'), @event,
 )
 
 # Block fire charges
-bind(player_interact, null, array('item': 385, 'button': 'right'), @event,
+bind('player_interact', null, array('item': 385, 'button': 'right'), @event,
   if(has_permission('group.regulars'), die())
   cancel()
   msg('Flint and steel is restricted, but you can still use it on TNT and nether portals.')
 )
 
 # Button commands
-bind(player_interact, null, array('block': 77, 'button': 'right'), @event,
+bind('player_interact', null, array('block': 77, 'button': 'right'), @event,
   if(@event['location'][0] == '117' && @event['location'][1] == '64' && @event['location'][2] == '348' && @event['location'][3] == 'world3') {
     set_timeout(2300, closure(
       run('/dial supergate outworld galaxy')
@@ -236,18 +227,8 @@ bind(player_interact, null, array('block': 77, 'button': 'right'), @event,
   @sign = _relative(@event['location'], 'up')
   if(is_sign_at(@sign)) { 
     @signtext = get_sign_text(@sign)
-    if(@type = reg_match('\u00A72\\[(.+)\\]', @signtext[1])) {
+    if(@type = reg_match('\u00A7[0-9a-f]{1}\\[(.+)\\]', @signtext[1])) {
       switch(@type[1],
-        'SPLEEF',
-          switch(@signtext[2], 
-            'Join',
-              call_alias('/spleef join'),
-            'Start',
-              call_alias('/spleef start'),
-            'Floor',
-              call_alias('/spleef floor'),
-            die('Unknown Spleef command.')
-          ),
         'STOPWATCH',
           switch(@signtext[2],
             'Start',
@@ -279,12 +260,6 @@ bind(player_interact, null, array('block': 77, 'button': 'right'), @event,
               _iterate_cuboid(array(-499, 81, -348), array(-499, 86, -342), '_set_gravel'),
             die('Unknown Connect4 command.')
           ),
-        'CLUCK',
-          switch(@signtext[2],
-            'Start',
-              call_alias('/cluck start '.(@signtext[3] - 1)),
-            die('Unknown Cluck command.')
-          ),
         'SNOWSPLEEF',
           switch(@signtext[2],
             'Reset Floor',
@@ -295,15 +270,11 @@ bind(player_interact, null, array('block': 77, 'button': 'right'), @event,
               msg('Reset.'),
             die('Unknown SnowSpleef command.')
           ),
-        'PVP',
-          switch(@signtext[2],
-            'Join',
-              call_alias('/pvp join '.to_lower(@signtext[3])),
-            'Start',
-              call_alias('/pvp start '.to_lower(@signtext[3])),
-            die('Unknown PVP command.')
-          ),
-        die('Unknown button command.')
+        if(is_alias('/'.to_lower(@type[1]).if(@signtext[2] != '', ' '.to_lower(@signtext[2])).if(@signtext[3] != '', ' '.to_lower(@signtext[3])))) {
+          call_alias('/'.to_lower(@type[1]).' '.to_lower(@signtext[2]).' '.to_lower(@signtext[3]))
+        } else {
+          die('Unknown button command.')
+        }
       )
     } else if(length(@signtext[1]) > 1 && @signtext[1][0] == '/' && length(@signtext[0]) > 2 && substr(@signtext[0], 0, 2) == color(1)) {
       msg('Ran command:' @signtext[1] @signtext[2] @signtext[3])
@@ -313,7 +284,7 @@ bind(player_interact, null, array('block': 77, 'button': 'right'), @event,
 )
 
 # automatically color command signs placed above buttons
-bind(sign_changed, null, null, @event,
+bind('sign_changed', null, null, @event,
   if(has_permission('group.moderators') 
     && split(':', get_block_at(@event['location'][0], @event['location'][1] - 1, @event['location'][2], @event['location'][3]))[0] == '77') {
     if(@event['text'][2] != ''
@@ -326,7 +297,7 @@ bind(sign_changed, null, null, @event,
 )
 
 # COIN SHOPS!
-bind(player_interact, null, array('block': 68), @event,
+bind('player_interact', null, array('block': 68), @event,
 @signtext = get_sign_text(@event['location'])
 if(length(@signtext[3]) > 8 && substr(@signtext[3], 0, 3) == color('yellow').'-') { #Coin reward signs
   @cost = reg_match('.*\\-(\\d{1,3})\\sCoins', @signtext[3])
@@ -357,31 +328,50 @@ if(length(@signtext[3]) > 8 && substr(@signtext[3], 0, 3) == color('yellow').'-'
 )
 
 # Sponge splitting
-bind(block_break, null, array('type': 19), @event,
+bind('block_break', null, array('type': 19), @event,
   if(rand(16) < 1, drop_item(@event['location'], array('type': 19)))
 )
 
 #disable hopper minecarts
-bind(player_interact, null, array('item': 408), @event,
+bind('player_interact', null, array('item': 408), @event,
 if(pworld() != 'custom' && pworld() != 'dev') {
   msg(color('red').'Hopper minecarts are currently disabled.')
   cancel()
 }
 )
 
-bind(inventory_click, null, array('slottype': 'RESULT', 'slotitem': 408), @event,
+bind('inventory_click', null, array('slottype': 'RESULT', 'slotitem': 408), @event,
   msg(color('red').'Hopper minecarts are currently disabled.')
   cancel()
 )
 
 #disable flint & steel and fire charges in dispensers for non-regulars
-bind(inventory_click, null, array('slottype': 'CONTAINER'), @event,
+bind('inventory_click', null, array('slottype': 'CONTAINER'), @event,
   if(@event['inventorytype'] == 'DISPENSER' 
-  && !array_contains(pgroup(), 'regulars')
+  && !has_permission('group.regulars')
   && ((@event['cursoritem'] != null && (@event['cursoritem']['type'] == 259 || @event['cursoritem']['type'] == 385) && @event['rawslot'] < 9)
   || (@event['slotitem'] != null && (@event['slotitem']['type'] == 259 || @event['slotitem']['type'] == 385) && @event['shiftclick']))) {
     cancel()
     die(color('red').'You cannot place flint & steel or firecharges in dispensers.')
   }
+)
+
+bind('player_interact', null, array('block': 122), @e,
+  if(pmode() != 'CREATIVE' && (pworld() == 'custom' || pworld() == 'dev'), cancel())
+)
+
+bind('entity_explode', null, null, @e,
+  if(@e['location'][3] == 'custom' && @e['type'] != 'PRIMED_TNT', cancel())
+)
+
+# DISPENER PARKING
+bind('vehicle_collide', null, array('type': 'MINECART', 'collisiontype': 'BLOCK', 'hittype': 23), @e,
+  for(@i = 0, @i < get_inventory_size(@e['block']), @i++,
+    if(is_null(get_inventory_item(@e['block'], @i))) {
+      set_inventory_item(@e['block'], @i, array('type': 328, 'qty': 1))
+      entity_remove(@e['id'])
+      break()
+    }
+  )
 )
 
