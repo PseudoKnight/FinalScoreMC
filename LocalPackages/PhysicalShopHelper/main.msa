@@ -1,0 +1,138 @@
+####################
+# SIGN CHEST SHOPS #
+####################
+# This is a companion script for the PhysicalShop plugin. 
+# It stores a cache of all stocked shops so that people can look them up.
+
+*:/shop = >>>
+  msg(color(6).'[Shop] Commands to list and edit shop signs.\n'
+  .color(r).'/shop edit <transaction> '.color(gray).'Edits a line on your shop\n'
+  .'Example: /shop edit buy 1 for 1g\n'
+  .color(r).'/shop list <item> '.color(gray).'Lists stocked shops for that item\n'
+  .'Example: /shop list diamond')
+<<<
+
+*:/shop edit = >>>
+  msg(color(6).'[Shop] Edits a line on your shop that you\'re looking at.\n'
+  .color(r).'Example: '.color(gray).'"/shop edit buy 1 for 1g"')
+<<<
+
+*:/shop edit $transaction $ = >>>
+  if(length($) > 11, die(color(6).'[Shop] There is a 15 character limit per line.'))
+  ifelse(
+    to_lower($transaction) == 'buy', 
+      assign(@shopline, array(1, 'Buy ')),
+    to_lower($transaction) == 'sell',
+      assign(@shopline, array(2, 'Sell ')),
+    die(color(6).'[Shop] There is no Buy or Sell indicated in your command.')
+  )
+  assign(@sign, pcursor())
+  try(assign(@signtext, get_sign_text(@sign)), die(color(6).'[Shop] There is no shop sign there.'))
+  if(@signtext[3] != player(), die(color(6).'[Shop] You do not own this shop.'))
+  if(!((length(@signtext[1]) > 7 && substr(@signtext[1], 0, 3) == 'Buy') || (length(@signtext[2]) > 8 && substr(@signtext[2], 0, 4) == 'Sell')), die(color(6).'[Shop] This doesn\'t look like a shop sign.'))
+  array_set(@signtext, @shopline[0], @shopline[1].$)
+  set_sign_text(@sign, @signtext)
+  msg(color(6).'[Shop] Successfully set to "'.@shopline[1].$.'"')
+  #add this to database for quick reference
+  assign(@itemid, _shop_item(@signtext[0]))
+  assign(@shops, get_value('shop.'.@itemid))
+  if(!@shops, die())
+  @t = @shopline[0] - 1
+  for(assign(@i, 0), @i < length(@shops[@t]), @i++,
+    if(@shops[@t][@i]['location'] == @sign) {
+      if(@t == 0) {
+        assign(@count, _get_inventory_count(array(@sign[0], @sign[1] - 1, @sign[2], @sign[3]), reg_replace('\\.', ':', @itemid)))
+        if(@count < parse_args($)[0]) {
+          array_remove(@shops[@t], @i)
+        } else {
+          array_set(@shops[@t], @i, array('location': @sign, 'price': $, 'owner': @signtext[3], 'stock': @count))
+        }
+      } else {
+        switch(substr($, length($) - 1)
+        , 'g',
+          @currency = '266'
+        , 'i',
+          @currency = '265'
+        , 'd',
+          @currency = '264'
+        , 'e',
+          @currency = '388'
+        , die()
+        )
+        assign(@count, _get_inventory_count(array(@sign[0], @sign[1] - 1, @sign[2], @sign[3]), @currency.':0'))
+        @cost = parse_args($)[2]
+        if(@count < substr(@cost, 0, length(@cost) - 1)) {
+          array_remove(@shops[@t], @i)
+        } else {
+          array_set(@shops[@t], @i, array('location': @sign, 'price': $, 'owner': @signtext[3], 'stock': @count))
+        }
+      }
+      break()
+    }
+  )
+  store_value('shop.'.@itemid, @shops)
+<<<
+
+*:/shop list = >>>
+  msg(color(6).'[Shop] Lists stocked shops for an item.\n'
+  .color(r).'Example: '.color(gray).'"/shop list diamond"\n'
+  .color(r).'The location of each shop is shown as (x,y,z world) coordinates. '
+  .'You can see your current coordinates by pressing F3.')
+<<<
+
+# List available shop items
+*:/shop list $ = >>>
+  assign(@item, reg_split('\\:', $))
+  if(is_numeric(@item[0])) {
+    if(array_index_exists(@item, 1)) {
+      assign(@itemid, @item[0].'.'.@item[1])
+    } else {
+      assign(@itemid, @item[0])
+    }
+  } else {
+    if(array_index_exists(@item, 1)) {
+      assign(@itemid, reg_split('\\:', data_values(@item[0]))[0].'.'.@item[1])
+    } else {
+      assign(@itemid, reg_replace(':', '.', data_values(@item[0])))
+      if(@itemid == null, die())
+    }
+  }
+  assign(@shops, get_value('shop.'.@itemid))
+  if(!@shops) { 
+    die(concat(color(6), 'No stocked shops found for '.color(o).'"'.$.'"'))
+  } else {
+    msg(color(6).'Shops you can buy or sell '.color(o).'"'.$.'"')
+    msg(color('gray').'-----------------------------------------------------')
+  }
+  @fixed = false
+  foreach(@shops[0], @key, @shop,
+    msg('Buy '.@shop['price'].color(7).' ('.@shop['stock'].') '.color('yellow').@shop['owner'].color(7).' '.@shop['location'][0].','.@shop['location'][1].','.@shop['location'][2].' '._worldname(@shop['location'][3]))
+  )
+  msg(color('gray').'-----------------------------------------------------')
+  foreach(@shops[1], @key, @shop,
+    msg('Sell '.@shop['price'].color(7).' ('.@shop['stock'].') '.color('yellow').@shop['owner'].color(7).' '.@shop['location'][0].','.@shop['location'][1].','.@shop['location'][2].' '._worldname(@shop['location'][3]))
+  )
+  msg(color('gray').'-----------------------------------------------------')
+
+<<<
+
+*:/rg flag $region $ = >>>
+  assign(@flag, parse_args($))
+  if(has_permission('group.moderators') || @flag[0] != 'mob-spawning') { 
+    run('/rg flag' $region $)
+    die()
+  }
+  try(assign(@region, sk_region_info($region, pworld())), die('That region doesn\'t exist.'))
+  if(!array_contains_ic(@region[1], player()), die('You do not own this region.'))
+  foreach(@region[3], @flagname,
+    if(@flagname[0] == 'mob-spawning') {
+      sudo('/rg flag' $region 'mob-spawning')
+      break()
+    }
+  )
+  ifelse(!array_index_exists(@flag, 1) || @flag[1] == 'allow',
+    sudo('/rg flag' $region 'deny-spawn')
+  , @flag[1] == 'deny',
+    sudo('/rg flag' $region 'deny-spawn CREEPER,ENDERMAN,SKELETON,SPIDER,ZOMBIE,SLIME')
+  )
+<<<
