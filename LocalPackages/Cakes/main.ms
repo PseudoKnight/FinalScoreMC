@@ -1,5 +1,5 @@
 # Clicking cakes
-bind(player_interact, null, array('block': 92), @event,
+bind('player_interact', null, array('block': 92), @event,
   if(pworld() != 'custom', die())
   @cakes = get_value('cakes')
   @id = array_index(@cakes, @event['location'])
