@@ -4,10 +4,11 @@
 # this allows me to customize which blocks I want to auto-protect with signs.
 # DEPENDENCIES:
 # _relative() procedure
+# _canbuild() procedure (to be replaced by sk_can_build())
 
 bind('player_interact', null, array('button': 'right', 'item': 323), @e,
-  if(@e['action'] != 'right_click_block', die())
-  if(split(':', @e['block'])[0] == '54') {
+  if(@e['action'] != 'right_click_block' || pinfo(player(), 11), die())
+  if(split(':', @e['block'])[0] == '54' && _can_build(@e['location'])) {
     foreach(array('north', 'south', 'east', 'west'), @dir,
       @checkblock = _relative(@e['location'], @dir)
       switch(split(':', get_block_at(@checkblock))[0]
@@ -30,6 +31,13 @@ bind('player_interact', null, array('button': 'right', 'item': 323), @e,
     @location = _relative(@e['location'], @e['facing'])
     set_block_at(@location, '68:'.@data)
     set_sign_text(@location, array(color('dark_red').'[PRIVATE]', player(), '', ''))
+    @slot = pinv(player(), null)
+    if(@slot['qty'] == 1) {
+      set_pinv(array(null: null))
+    } else {
+      @slot['qty'] = @slot['qty'] - 1
+      set_pinv(array(null: @slot))
+    }
     cancel()
   }
 )
