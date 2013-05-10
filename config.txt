@@ -36,6 +36,32 @@
   broadcast('* '.player().' '.colorize($))
 <<<
 
+*:/stack = >>>
+	if(!has_permission('group.moderators'), die('You do not have permission.'))
+	@inv = pinv()
+	for(@i = 0, @i < 36, @i++,
+		if(@inv[@i] == null || @inv[@i]['qty'] >= 64, continue())
+		for(@y = @i + 1, @y < 36, @y++,
+			if(@inv[@y] == null, continue())
+			if(@inv[@i]['type'] == @inv[@y]['type']
+			  && @inv[@i]['data'] == @inv[@y]['data']
+			  && @inv[@i]['enchants'] == @inv[@y]['enchants']
+			  && @inv[@i]['meta'] == @inv[@y]['meta']) {
+				@extra = @inv[@i]['qty'] + @inv[@y]['qty'] - 64
+				if(@extra < 1) {
+					@inv[@i]['qty'] = @inv[@i]['qty'] + @inv[@y]['qty']
+					@inv[@y] = null
+				} else {
+					@inv[@i]['qty'] = 64
+					@inv[@y]['qty'] = @extra
+				}
+			}
+		)
+	)
+	set_pinv(@inv)
+	msg('Stacked!')
+<<<
+
 /sayas $from $to $ = >>>
   tmsg($to, color('gray').$from.': '.color('r').colorize($))
 <<<
@@ -394,10 +420,31 @@ switch($cmd
   export(@requests)
 <<<
 
+*:/rg flag $region $ = >>> 
+assign(@flag, parse_args($)) 
+if(has_permission('group.moderators') || @flag[0] != 'mob-spawning') {  
+  run('/rg flag' $region $) 
+  die() 
+}
+try(assign(@region, sk_region_info($region, pworld())), die('That region doesn\'t exist.')) 
+if(!array_contains_ic(@region[1], player()), die('You do not own this region.')) 
+foreach(@region[3], @flagname, 
+  if(@flagname[0] == 'mob-spawning') { 
+  sudo('/rg flag' $region 'mob-spawning') 
+  break()
+  } 
+)
+ifelse(!array_index_exists(@flag, 1) || @flag[1] == 'allow', 
+  sudo('/rg flag' $region 'deny-spawn')
+  , @flag[1] == 'deny', 
+  sudo('/rg flag' $region 'deny-spawn CREEPER,ENDERMAN,SKELETON,SPIDER,ZOMBIE,SLIME') 
+)
+<<<
+
 # Rename your worldguard region
 *:/rg rename $from $to = >>>
   try(@region = sk_region_info($from, pworld()), die('That region doesn\'t exist.'))
-  if(not(array_contains_ic(@region[1], player())), die('You do not own this region.'))
+  if(!has_permission('group.moderators') && not(array_contains_ic(@region[1], player())), die('You do not own this region.'))
   try(@to = reg_match('[a-zA-Z0-9-]{1,32}', $to)[0], die('You can only use alphanumeric and dash symbols.'))
   if(array_contains_ic(sk_all_regions(pworld()), @to), die('A region by that name already exists.'))
   sudo('/rg select' $from)
@@ -687,52 +734,23 @@ set_interval(1000, closure(@player = $player,
   set_entity_rider(pinfo($horse, 13), pinfo($rider, 13))
 <<<
 
-# COIN COMMANDS #
-
 *:/time $time = >>>
-  if(pworld() == 'outworld', die('You cannot do this in the outworld.'))
-  if(is_numeric($time) && ((array_contains(array('dev', 'custom'), pworld()) && has_permission('group.builders')) || has_permission('group.moderators'))) {
-    msg('Set time to '.$time)
-    set_world_time(pworld(), $time)
-    die()
-  }
-  if(acc_balance(player()) < 1, die('You do not have any coins.'))
-  switch($time
-  , 'day',
-    if(get_world_time() > 22300 || get_world_time() < 11300, die('It is already day time.'))
-    if(get_world_time() > 13700 && get_world_time() < 22300) {
-      set_world_time(22300)
-    } else {
-      @time = get_world_time() - 11300
-      @time = 700 - @time
-      if(@time < 0) {
-        @time = @time + 24000
-      }
-      set_world_time(@time)
-    }
-    acc_subtract(player(), 1)
-    msg(color('gold').'-1 coin')
-    msg(color('aqua').'You made the sun rise.')
-  , 'night',
-    if(get_world_time() > 11300 && get_world_time() < 22300, die('It is already night time.'))
-    if(get_world_time() > 700 && get_world_time() < 11300) {
-      set_world_time(11300)
-    } else {
-      @time = get_world_time() - 22300
-      @time = 13700 - @time
-      if(@time > 24000) {
-        set_world_time(@time - 24000)
-      } else {
-        set_world_time(@time)
-      }
-    }
-    acc_subtract(player(), 1)
-    msg(color('gold').'-1 coin')
-    msg(color('aqua').'You made the sun set.')
-  , #else
-    msg('Accepts only \'time\' or \'day\'')
-  )
+	if((!array_contains(array('dev', 'custom'), pworld()) || !has_permission('group.builders')) && !has_permission('group.moderators'), die('You do not have permission.'))
+	if(is_numeric($time)) {
+		msg('Set time to '.$time)
+		set_world_time(pworld(), $time)
+	} else if(to_lower($time) == 'day') {
+		set_world_time(700)
+		msg(color('aqua').'You set the time to day.')
+	} else if(to_lower($time) == 'night') {
+		set_world_time(13700)
+		msg(color('aqua').'You set the time to night.')
+	} else {
+	  msg('Usage: /time <day|night|0-24000>')
+	}
 <<<
+
+# COIN COMMANDS #
 
 *:/weather $type = >>>
   if(acc_balance(player()) < 1, die('You do not have any coins.'))

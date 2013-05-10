@@ -375,3 +375,17 @@ bind('vehicle_collide', null, array('type': 'MINECART', 'collisiontype': 'BLOCK'
   )
 )
 
+bind('player_enter_bed', null, null, @e,
+    if(get_world_time() > 13700 && get_world_time() < 22300) {
+      set_world_time(22300)
+    } else {
+      @time = get_world_time() - 11300
+      @time = 700 - @time
+      if(@time < 0) {
+        @time = @time + 24000
+      }
+      set_world_time(@time)
+    }
+    msg(color('aqua').'You made the sun rise.')
+)
+
