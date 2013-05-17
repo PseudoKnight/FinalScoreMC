@@ -75,7 +75,7 @@ set_timeout(250, closure(assign(@loc, ploc()),
 bind('player_teleport', null, null, @event,
   if(@event['to']['3'] != @event['from']['3']
     || _horizontal_distance(@event['to'], @event['from']) > 112) {
-    set_timeout(450, closure(
+    set_timeout(500, closure(
       if((@event['to'][1] - 1) > ploc()[1])
       {
         set_ploc(array(@event['to'][0], @event['to'][1] - 1, @event['to'][2], @event['to'][3]))
@@ -306,7 +306,7 @@ if(length(@signtext[3]) > 8 && substr(@signtext[3], 0, 3) == color('yellow').'-'
   if(@event['action'] == 'left_click_block') {
     msg(color('yellow').'[Coin Shop] '.color(r).@count.' item(s) left. Your coins: '.if(acc_balance(player()) < @cost[1], color('red'), color('green')).round(acc_balance(player())))
   } else { #right_click_block
-    if(array_contains_ic(array('JewManGroup'), player())) { 
+    if(array_contains_ic(array('JewManGroup', 'XxThe_JewishxX'), player())) { 
       die('You are not allowed to use coins due to cheating.')
     }
     if(@count < 1, die(color('yellow').'[Coin Shop] '.color(r).'There are no items left.'))

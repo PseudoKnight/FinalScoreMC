@@ -19,6 +19,16 @@
   run('/reloadaliases')
 <<<
 
+/orphan $player = >>>
+  @orphaned = get_value('orphaned')
+  if(!array_contains(@orphaned, $player)) {
+    array_push(@orphaned, $player)
+  } else {
+    die('Player already orphaned.')
+  }
+  store_value('orphaned', @orphaned)
+<<<
+
 /s $name $ = >>>
   broadcast(color(8).simple_date('h:mm').color('gray').' [console] '.color('aqua').$name.color('gray').': '.color('r').$) 
 <<<
@@ -736,18 +746,11 @@ set_interval(1000, closure(@player = $player,
 
 *:/time $time = >>>
 	if((!array_contains(array('dev', 'custom'), pworld()) || !has_permission('group.builders')) && !has_permission('group.moderators'), die('You do not have permission.'))
-	if(is_numeric($time)) {
-		msg('Set time to '.$time)
-		set_world_time(pworld(), $time)
-	} else if(to_lower($time) == 'day') {
-		set_world_time(700)
-		msg(color('aqua').'You set the time to day.')
-	} else if(to_lower($time) == 'night') {
-		set_world_time(13700)
-		msg(color('aqua').'You set the time to night.')
-	} else {
-	  msg('Usage: /time <day|night|0-24000>')
-	}
+	msg('Set time to '.$time)
+	try(
+		set_world_time(pworld(), $time),
+		msg('Usage: /time <day|night|0-24000>')
+	)
 <<<
 
 # COIN COMMANDS #
