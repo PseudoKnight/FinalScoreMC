@@ -1,0 +1,418 @@
+*:/arena [$action] [$id] [$setting] [$] = >>>
+	if($, @args = parse_args($), @args = array())
+	array_resize(@args, 3)
+	switch($action
+	, 'update', 
+		if(!has_permission('group.administrators'), die('You do not have permission.'))
+		@arenas = get_values('arena')
+		foreach(@arenas, @key, @arena,
+			if(array_index_exists(@arena, 'rsoutputwin')) {
+				@arena['rsoutput'] = @arena['rsoutputwin']
+				array_remove(@arena, 'rsoutputwin')
+			}
+			store_value(@key, @arena)
+		)
+		msg('All arenas updated.')
+
+	, 'set',
+		if(!has_permission('group.builders'), die('You do not have permission.'))
+		if(!$id || !$setting) {
+			die(color('c').'lobby '.color('gray').'Sets the lobby warp point (required)\n'
+			.color('c').'spawn '.color('gray').'Adds a spawn point. (required)\n'
+			.color('c').'region '.color('gray').'The combat region name. (required)\n'
+			.color('r').'broadcast '.color('gray').'The region all messages are broadcasted.\n'
+			.color('r').'mode '.color('gray').'Set the game mode (default: dm)\n'
+			.color('r').'ctfflag '.color('gray').'The flag spawn location for CTF (1 is red, 2 is blue)\n'
+			.color('r').'kothregion '.color('gray').'The king of the hill region (feet position).\n'
+			.color('r').'lives '.color('gray').'Number of lives until elimination\n'
+			.color('r').'score '.color('gray').'The target score to win. (ctf: 5, koth: 60)\n'
+			.color('r').'teamratio '.color('gray').'The ratio of players for team 1 and 2.\n'
+			.color('r').'team '.color('gray').'Team name and color\n'
+			.color('r').'kit '.color('gray').'Sets the respawn kits (accepts team # as value)\n'
+			.color('r').'restore '.color('gray').'The optional restoration area name. (/prs)\n'
+			.color('r').'time '.color('gray').'The starting time (0-24000)\n'
+			.color('r').'ff '.color('gray').'Sets team friendly-fire (default: true)\n'
+			.color('r').'itemspawn '.color('gray').'Set item drop. (default: 60 sec, no spawn @ start)\n'
+			.color('r').'chestspawn '.color('gray').'Set chest spawn (def: 60 sec, no spawn @ start)\n'
+			.color('r').'rsoutput '.color('gray').'The lever that turns on at start and off at end.\n'
+			.color('r').'rsoutputscore '.color('gray').'Redstone torch appears when a team scores\n'
+			.color('r').'rsinputwin '.color('gray').'Redstone torch off triggers win for team\n'
+			.color('r').'min '.color('gray').'The minimum # of players to start a match. (default: 2)\n'
+			.color('r').'max '.color('gray').'Start the match as soon as this number of players join.\n'
+			.color('r').'effect '.color('gray').'The starting potion effect for all players.\n'
+			.color('r').'denydrop '.color('gray').'Comma delimited list of IDs not dropped on death\n'
+			.color('r').'modpickup '.color('gray').'If true, removes redundant pickups.\n'
+			.color('r').'flags '.color('gray').'Special game behavior modifiers.')
+		}
+		if(reg_count('^[a-z0-9]+$', $id) < 1, die('You can only use lowercase alphanumeric characters for the arena ID'))
+		@arena = get_value('arena.'.$id)
+		if(!@arena, @arena = array())
+		switch($setting
+
+			, 'lobby',
+				if(pworld() != 'custom', die('You can only set spawns in the custom world.'))
+				@arena['lobby'] = array(round(ploc()[0], 1), ploc()[1], round(ploc()[2], 1), ploc()[3])
+				msg('Set lobby spawn to current location.')
+
+			, 'spawn',
+				if(pworld() != 'custom', die('You can only set spawns in the custom world.'))
+				if(!array_index_exists(@arena, 'spawn'), @arena['spawn'] = array(array(), array()))
+				if(@args[0] == '1' || @args[0] == '2') {
+					array_push(@arena['spawn'][@args[0] - 1], array(round(ploc()[0], 1), round(ploc()[1], 1), round(ploc()[2], 1), ploc()[3]))
+					msg('Set a spawn point to current location for team '.@args[0].'.')
+				} else {
+					array_push(@arena['spawn'][0], array(round(ploc()[0], 1), ploc()[1], round(ploc()[2], 1), ploc()[3]))
+					msg('Set a spawn point to current location.')
+				}
+
+			, 'region',
+				if(!@args[0], die('This requires a region name for the combat zone.'))
+				@arena['region'] = @args[0]
+				msg('Combat region set to '.@args[0].'.')
+
+			, 'broadcast',
+				if(!@args[0], die('This requires a region name for the chat broadcast zone.'))
+				@arena['broadcast'] = @args[0]
+				msg('Broadcast region set to '.@args[0].'.')
+
+			, 'kothregion',
+				if(!@args[0], die('This requires a region name for the king of the hill zone.'))
+				@arena['kothregion'] = @args[0]
+				msg('King of the Hill region set to '.@args[0].'.')
+
+			, 'mode',
+				if(!@args[0] || !array_contains_ic(array('dm', 'tdm', 'ctf', 'koth'), @args[0]), die('Available modes: dm (default deathmatch), tdm (team deathmatch), ctf (capture the flag), koth (king of the hill)'))
+				@arena['mode'] = to_lower(@args[0])
+				msg('Set arena game mode to '.@args[0].'.')
+
+			, 'ctfflag',
+				if(!@args[0], die('This requires a team #.'))
+				@team = @args[0] - 1
+				@arena['ctfflag'][@team] = array(round(ploc()[0], 1), round(ploc()[1], 1) + 1, round(ploc()[2], 1), ploc()[3])
+				msg('Set flag for team '.@args[0].' to this location.')
+
+			, 'lives',
+				if(!@args[0], die('This setting requires an integer.'))
+				@arena['lives'] = @args[0]
+				msg('Set lives to '.@args[0].'.')
+
+			, 'score',
+				if(!@args[0], die('This setting requires an integer.'))
+				@arena['score'] = @args[0]
+				msg('Set score target to '.@args[0].'.')
+
+			, 'teamratio',
+				if(array_size(@args) < 2, die('Not needs two integers, for team 1 and team 2.'))
+				@arena['teamratio'] = array(@args[0], @args[1])
+				msg('Set team ratio to '.@args[0].':'.@args[1])
+
+			, 'team',
+				if(!@args[0] || !@args[1], die('Usage: /arena set <arena> team Team1,c Team2,3'))
+				if(@args[2], die('Too many arguments. Usage: /arena set <arena> team Team1,c Team2,3'))
+				@args[0] = split(',', @args[0])
+				@args[1] = split(',', @args[1])
+				if(length(@args[0][0]) > 16 || length(@args[1][0]) > 16, die('Name too long. (16 character limit)'))
+				@arena['team'][0]['name'] = @args[0][0]
+				@arena['team'][0]['color'] = @args[0][1]
+				@arena['team'][1]['name'] = @args[1][0]
+				@arena['team'][1]['color'] = @args[1][1]
+				msg('Set team names to '.color(@args[0][1]).@args[0][0].' vs '.color(@args[1][1]).@args[1][0])
+
+			, 'kit',
+				if(!array_index_exists(@arena, 'kit'), @arena['kit'] = array(array(), array()))
+				@inv = pinv()
+				foreach(array_keys(@inv), @slot,
+					if(@inv[@slot] == null) {
+						array_remove(@inv, @slot)
+					}
+				)
+				if(!@args[0] || @args[0] == 1) {
+					@arena['kit'][0] = @inv
+					msg('Set kit to current inventory.')
+				} else if(@args[0] == 2) {
+					@arena['kit'][1] = @inv
+					msg('Set kit to current inventory.')
+				} else {
+					die('Only accepts values 1 or 2 for teams, or blank for when there are no teams.')
+				}
+			
+			, 'classes',
+				if(@args[1]) {
+					@args[0] = split(',', @args[0])
+					@args[1] = split(',', @args[1])
+					@arena['classes'] = array(@args[0], @args[1])
+					msg('Set available classes (Team 1: '.@args[0].', Team 2: '.@args[1].')')
+				} else {
+					@args[0] = split(',', @args[0])
+					@arena['classes'] = @args[0]
+					msg('Set available classes: '.@args[0])
+				}
+
+			, 'restore',
+				if(!has_permission('group.administrators'), die('Only admins can do this.'))
+				@arena['restore'] = @args[0]
+				msg('Restore area set to '.@args[0].'.')
+
+			, 'time',
+				if(!@args[0], die('This a time value of 0 to 24000.'))
+				@arena['time'] = @args[0]
+				msg('Starting time set to '.@args[0].'.')
+
+			, 'min',
+				if(!@args[0], die('This requires an integer for minimum players to start.'))
+				@arena['min'] = @args[0]
+				msg('Set minimum players to '.@args[0])
+
+			, 'max',
+				if(!@args[0], die('This requires an integer for maximum players before it starts automatically.'))
+				@arena['max'] = @args[0]
+				msg('Set maximum players to '.@args[0])
+
+			, 'ff',
+				if(!@args[0], die('This requires true or false.'))
+				if(@args[0] == 'true') {
+					try(array_remove(@arena, 'ff'), die('Already set to true by default.'))
+					msg('Set friendly-fire on. (default)')
+				} else if(@args[0] == 'false') {
+					@arena['ff'] = false
+					msg('Set friendly-fire off.')
+				} else {
+					die('Only accepts values: true or false (defaults to true)')
+				}
+
+			, 'itemspawn',
+				if(!array_index_exists(@arena, 'itemspawn'), @arena['itemspawn'] = array())
+				if(!@args[0] || is_numeric(@args[0])) {
+					if(!@args[0], @cooldown = 60, @cooldown = @args[0])
+					if(!@args[1], @start = true, @start = @args[1])
+					array_push(@arena['itemspawn'], array(
+						'start': @start,
+						'cooldown': @cooldown,
+						'loc': array(round(ploc()[0], 1), ploc()[1] + 1, round(ploc()[2], 1), ploc()[3]),
+						'item': pinv(player(), null)
+					))
+					msg('Set current item to spawn here.')
+				} else {
+					die('The first value can only be an integer for the number of seconds in the cooldown (default: 30). The second can be true or false for if the item spawns at match start (default: true).')
+				}
+
+			, 'chestgroup',
+				if(!array_index_exists(@arena, 'chestgroup'), @arena['chestgroup'] = associative_array())
+				if(!@args[0], die('Arguments: <chestGroupName>'))
+				@loc = pcursor()
+				if(split(':', get_block_at(@loc))[0] != '54', die('You must look at a chest you want to spawn.'))
+				if(!array_index_exists(@arena['chestgroup'], @args[0]), array_set(@arena['chestgroup'], @args[0], array()))
+				foreach(@arena['chestgroup'][@args[0]], @key, @chestloc,
+					if(@chestloc == @loc) {
+						array_remove(@arena['chestgroup'][@args[0]], @key)
+						break()
+					}
+				)
+				array_push(@arena['chestgroup'][@args[0]], @loc)
+				msg('Added chest to '.@args[0].' group. The items in this chest will spawn in chestspawns that specify '.@args[0].' as their chestgroup. Do not remove this chest.')
+				
+			, 'chestspawn',
+				if(!array_index_exists(@arena, 'chestspawn'), @arena['chestspawn'] = array())
+				if(!@args[0], die('Arguments: <chestGroupName> | <cooldownSecs> <spawnStart>'))
+				@loc = pcursor()
+				if(split(':', get_block_at(@loc))[0] != '54', die('You must look at a chest.'))
+				foreach(@arena['chestspawn'], @key, @chest,
+					if(@chest['loc'] == @loc) {
+						array_remove(@arena['chestspawn'], @key)
+						break()
+					}
+				)
+				if(is_numeric(@args[0])) {
+					if(!@args[1], @start = 'true', @start = @args[1])
+					@items = array()
+					for(@i = 0, @i < 27, @i++,
+						if(get_inventory_item(@loc, @i) == null, break())
+						array_push(@items, get_inventory_item(@loc, @i))
+					)
+					array_push(@arena['chestspawn'], array(
+						'start': @start,
+						'cooldown': @args[0],
+						'loc': @loc,
+						'items': @items
+					))
+					msg('Set items in chest to respawn here.')
+					set_block_at(@loc, '54:0')
+				} else {
+					array_push(@arena['chestspawn'], array(
+						'loc': @loc,
+						'group': @args[0]
+					))
+					msg('Set items in that chest group to spawn here at start.')
+				}
+
+			, 'rsoutput',
+				@loc = pcursor()
+				if(get_block_at(@loc) == '69:6' || get_block_at(@loc) == '69:5') {
+					@arena['rsoutput'] = @loc
+					msg('Set arena\'s start/end lever. It is recommended that you not use the block it\'s on to transmit power.')
+				} else {
+					die('You must be looking at a lever placed on top of a block.')
+				}
+
+			, 'rsoutputscore',
+				if(!@args[0], die('This requires a team #.'))
+				@team = @args[0] - 1
+				@arena['rsoutputscore'][@team] = pcursor()
+				msg('Set this block to turn into a redstone torch when team '.@args[0].' scores.')
+
+			, 'rsinputwin',
+				if(!@args[0], die('This requires a team #.'))
+				@team = @args[0] - 1
+				@loc = pcursor()
+				if(get_block_at(@loc) == '76:5' || get_block_at(@loc) == '75:5') {
+					@arena['rsinputwin'][@team] = @loc
+					msg('Set arena\'s win condition redstone torch. Game ends when this torch is turned off.')
+				} else {
+					die('You must be looking at a redstone torch placed on top of a block.')
+				}
+
+			, 'effect',
+				assign(@effects, array('speed': '1', 'slowness': '2', 'haste': '3', 'fatique': '4', 'strength': '5', 'health': '6', 'damage': '7', 'jump': '8', 'nausea': '9', 'regen': '10', 'resistance': '11', 'fireresist': '12', 'waterbreathing': '13', 'invis': '14', 'blindness': '15', 'nightvision': '16', 'hunger': '17', 'weakness': '18', 'poison': '19'))
+				if(!array_contains(array_keys(@effects), @args[0]), die('Unknown potion effect. (speed, slowness, haste, fatique, strength, health, damage, jump, nausea, regen, resistance, fireresist, waterbreathing, invis, blindness, nightvision, hunger, weakness, poison)'))
+				@effect = @effects[@args[0]]
+				if(!array_index_exists(@arena, 'effect'), @arena['effect'] = associative_array())
+				if(@args[1] && @args[2]) {
+					if(@args[1] == 0 || @args[2] == 0) {
+						array_remove(@arena['effect'], @effect)
+						if(array_size(@arena['effect']) == 0) {
+							array_remove(@arena, 'effect')
+						}
+						msg('Removed potion effect '.@args[0].'.')
+					} else {
+						@arena['effect'][@effect] = associative_array('strength': @args[1] - 1, 'length': @args[2])
+						msg('Set starting potion effect to '.@args[0].' with a strength of '.@args[1].' and a length of '.@args[2].' seconds.')
+					}
+				} else {
+					die('Requires a strength integer and a length integer in seconds.')
+				}
+
+			, 'denydrop',
+				if(!@args[0] || @args[1], die('You need to specify a comma separated list of item IDs. (no spaces)'))
+				@arena['denydrop'] = split(',', @args[0])
+				msg('Set '.@args[0].' item IDs as denied drops on death.')		
+
+			, 'modpickup',
+				if(@args[0] == 'true') {
+					@arena['modpickup'] = @args[0]
+					msg('Set modified pick-up on.')
+				} else if(@args[0] == 'false') {
+					try(array_remove(@arena, 'modpickup'), die('Already set to false by default.'))
+					msg('Set modified pick-up off.')
+				} else {
+					die('Only accepts values: true or false (defaults to false)')
+				}	
+
+			, 'flags',
+				@flags = array('endernades', 'skullrockets', 'infection', 'debug')
+				if(!@args[0] || @args[1], die('You need to specify a comma separated list of pre-defined flags. (no spaces) Current available flags: '.@flags))
+				@arena['flags'] = split(',', @args[0])
+				foreach(@arena['flags'], @flag,
+					if(!array_contains(@flags, @flag), die('Unknown flag: '.@flag))
+				)
+				msg('Activated these flags: '.@arena['flags'])
+
+			, #else
+			die('This requires a valid setting. Type "/arena set" to see settings.')
+		)
+		store_value('arena.'.$id, @arena)
+
+	, 'load',
+		if((pworld() != 'custom' && pworld() != 'dev') || !has_permission('group.builders'), die('You do not have permission.'))
+		if(!$id, die('This requires an arena id.'))
+		if(!$setting, die('This requires a setting to load.'))
+		@arena = get_value('arena.'.$id)
+		switch($setting
+			, 'kit',
+				_clear_pinv()
+				if(@args[0]) {
+					set_pinv(player(), @arena['kit'][@args[0] - 1])
+				} else {
+					set_pinv(player(), @arena['kit'][0])
+				}
+				die('After editing, you can save this kit by using "/arena set '.$id.' kit '.if(array_size(@args) > 0, @args[0]).'"')
+
+			, 'chestspawn',
+				@loc = pcursor()
+				if(split(':', get_block_at(@loc))[0] != '54', die('This is not a chest'))
+				foreach(@arena['chestspawn'], @chest,
+					if(@chest['loc'] == @loc) {
+						if(array_index_exists(@chest, 'items')) {
+							foreach(@chest['items'], @index, @item,
+								set_inventory_item(@loc, @index, @item)
+							)
+							die('After editing, you can save this chestspawn by using "/arena set '.$id.' chestspawn '.@chest['cooldown'].' '.@chest['start'].'"')
+						} else {
+							die('This chest spawns with items from the chestgroup '.@chest['chestgroup'])
+						}
+					}
+				)
+				die('No chestspawn found for that location.')
+
+			, die('Unsupported setting for loading.')
+		)
+
+	, 'delete',
+		if(!has_permission('group.builders'), die('You do not have permission.'))
+		if(!$id, die('This command requires an arena ID.'))
+		@arena = get_value('arena.'.$id)
+		if(!@arena, die('There is no defined arena by that name.'))
+		if($setting) {
+			@loc = pcursor()
+			if(split(':', get_block_at(@loc))[0] == '54'
+			&& ($setting == 'chestspawn' || $setting == 'chestgroup')) {
+				foreach(@arena[@setting], @key, @chest,
+					if(@chest['loc'] == @loc) {
+						set_block_at(@loc, 0)
+						array_remove(@arena[$setting], @key)
+						msg('Removed this '.$setting.' location.')
+						break()
+					}
+				)
+			} else {
+				array_remove(@arena, $setting)
+				msg('Deleted "'.$setting.'" setting for '.$id.'.')
+			}
+			store_value('arena.'.$id, @arena)
+		} else {
+			clear_value('arena.'.$id)
+			msg('Deleted '.$id.' arena permanently.')
+		}
+		
+	, 'info',
+		if(!$id, die('This command requires an arena ID.'))
+		@arena = get_value('arena.'.$id)
+		if(!@arena, die('There is no defined arena by that name.'))
+		if($setting) {
+			if(!array_index_exists(@arena, $setting), die('That setting is not defined for this arena.'))
+			msg($setting.' '.color('gray').@arena[$setting])
+		} else {
+			foreach(@arena, @setting, @value,
+				if(array_contains(array('spawn', 'kit', 'itemspawn', 'chestspawn'), @setting)) {
+					msg(@setting.' '.color('gray').'[...]')
+				} else {
+					msg(@setting.' '.color('gray').@value)
+				}
+			)
+		}
+		
+	, 'list',
+		@arenas = get_values('arena')
+		@list = ''
+		foreach(array_keys(@arenas), @arena,
+			@list .= split('.', @arena)[1].' '
+		)
+		msg(color('gray').'PVP ARENAS: '.color('r').@list)
+
+	,
+		msg('/arena set [id] [setting] [value(s)] '.color('gray').'Creates/overwrites settings\n'
+		.color('r').'/arena load <id> <setting> '.color('gray').'Loads kits & chestspawns\n'
+		.color('r').'/arena delete <id> [setting] '.color('gray').'Delete arenas, settings, or chests\n'
+		.color('r').'/arena info [id] [setting] '.color('gray').'View arenas and their settings\n'
+		.color('r').'/arena list '.color('gray').'List all arenas')
+	)
+<<<
