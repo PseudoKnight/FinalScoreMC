@@ -44,16 +44,6 @@ proc(_pgive_item, @player, @item,
   return(false)
 )
 
-# proc(_fill_inventory, @loc,
-  # for(@i = 0, @i < get_inventory_size(@loc), @i++,
-    # @item = get_inventory_item(@loc, @i)
-    # if(@item != null) {
-      # @item['qty'] = 64
-      # set_inventory_item(@loc, @i, @item)
-    # }
-  # )
-# )
-
 # Removes all DROPPED_ITEM entities from region.
 # Since this loads entities by chunks it has a loose entity selection
 proc(_remove_region_items, @region,
@@ -79,21 +69,6 @@ proc(_remove_region_items, @region,
   )
   return(true)
 )
-
-# Returns the total qty of space available
-# @item: accepts item array with 'type' and 'data'
-# proc(_pitem_space, @player, @item,
-  # @stack = max_stack_size(@item)
-  # @space = 0
-  # for(@i = 0, @i < 36, @i++,
-    # if(pinv(@player, @i) == null) {
-      # @space += @stack
-    # } else if(pinv(@player, @i)['type'] == @item['type'] && pinv(@player, @i)['data'] == @item['data']) {
-      # @space += @stack - pinv(@player, @i)['qty']
-    # }
-  # )
-  # return(@space)
-# )
 
 
 # Remove all potion effects from a player
@@ -208,34 +183,6 @@ proc(_get_inventory_count, @loc, @item,
   )
   return(@count) 
 )
-
-# Since CommandHelper doesn't do this for us, I have to manually check to see if you can build.
-# It doesn't respect: PARENTS, GROUPS, FLAGS
-# __global__ regions are hard-coded for 'custom' and 'dev' worlds.
-# proc(_can_build, @loc, assign(@player, player()),
-  # if(has_permission(@player, 'worldguard.region.bypass.'.pworld(@player)), return(true))
-  # @canbuild = true
-  # # special handling for dev & custom worlds
-  # if((pworld(@player) == 'custom' && !array_contains(pgroup(@player), 'moderators')) || (pworld(@player) == 'dev' && !array_contains(pgroup(@player), 'engineers'))) {
-    # @canbuild = false
-  # }
-  # # default to false if there are any regions
-  # if(array_size(sk_regions_at(@loc)) > 0) {
-    # @canbuild = false
-  # }
-  # @highestpriority = -1
-  # # iterate through all applicable regions and respect higher priorities
-  # foreach(sk_regions_at(@loc), @region,
-    # if(sk_region_info(@region, pworld(@player))[4] < @highestpriority, continue())
-    # ifelse(!array_contains_ic(sk_region_info(@region, pworld(@player))[1], @player) && !array_contains_ic(sk_region_info(@region, pworld(@player))[2], @player),
-      # @canbuild = false,
-    # sk_region_info(@region, pworld(@player))[4] > @highestpriority,
-      # @canbuild = true
-    # )
-    # @highestpriority = sk_region_info(@region, pworld(@player))[4]
-  # )
-  # return(@canbuild)
-# )
 
 # Populate multiple signs with an array_size larger than 4
 # proc(_populate_signs, @locarray, @textarray, assign(@offset, 0),
