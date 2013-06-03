@@ -104,7 +104,6 @@
     msg(color(6).'Shops you can buy or sell '.color(o).'"'.$.'"')
     msg(color('gray').'-----------------------------------------------------')
   }
-  @fixed = false
   foreach(@shops[0], @key, @shop,
     msg('Buy '.@shop['price'].color(7).' ('.@shop['stock'].') '.color('yellow').@shop['owner'].color(7).' '.@shop['location'][0].','.@shop['location'][1].','.@shop['location'][2].' '._worldname(@shop['location'][3]))
   )
@@ -116,23 +115,37 @@
 
 <<<
 
-*:/rg flag $region $ = >>>
-  assign(@flag, parse_args($))
-  if(has_permission('group.moderators') || @flag[0] != 'mob-spawning') { 
-    run('/rg flag' $region $)
-    die()
-  }
-  try(assign(@region, sk_region_info($region, pworld())), die('That region doesn\'t exist.'))
-  if(!array_contains_ic(@region[1], player()), die('You do not own this region.'))
-  foreach(@region[3], @flagname,
-    if(@flagname[0] == 'mob-spawning') {
-      sudo('/rg flag' $region 'mob-spawning')
-      break()
+*:/shop delete $ = >>>
+  assign(@item, reg_split('\\:', $))
+  if(is_numeric(@item[0])) {
+    if(array_index_exists(@item, 1)) {
+      assign(@itemid, @item[0].'.'.@item[1])
+    } else {
+      assign(@itemid, @item[0])
     }
+  } else {
+    if(array_index_exists(@item, 1)) {
+      assign(@itemid, reg_split('\\:', data_values(@item[0]))[0].'.'.@item[1])
+    } else {
+      assign(@itemid, reg_replace(':', '.', data_values(@item[0])))
+      if(@itemid == null, die())
+    }
+  }
+  assign(@shops, get_value('shop.'.@itemid))
+  if(!@shops, die('No shops trading that.'))
+  @loc = pcursor()
+  foreach(@shops[0], @key, @shop,
+	if(@loc == @shop['location']) {
+		array_remove(@shops[0], @key)
+		store_value('shop.'.@itemid, @shops)
+		die('Deleted.')
+	}
   )
-  ifelse(!array_index_exists(@flag, 1) || @flag[1] == 'allow',
-    sudo('/rg flag' $region 'deny-spawn')
-  , @flag[1] == 'deny',
-    sudo('/rg flag' $region 'deny-spawn CREEPER,ENDERMAN,SKELETON,SPIDER,ZOMBIE,SLIME')
+  foreach(@shops[1], @key, @shop,
+	if(@loc == @shop['location']) {
+		array_remove(@shops[1], @key)
+		store_value('shop.'.@itemid, @shops)
+		die('Deleted.')
+	}
   )
 <<<
