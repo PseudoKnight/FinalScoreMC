@@ -5,17 +5,27 @@
 		@arena = get_value('arena.'.$id)
 		if(!@arena, die('Can\'t find that arena.'))
 		if(!@pvp) {
-			@pvp = array('players': array(), 'running': false, 'cooldown': 0)
+			@pvp = array('players': array(), 'running': 'false', 'cooldown': 0)
 			@pvp['players'][player()] = array()
 		} else {
 			if(array_index_exists(@pvp['players'], player()), die('You already joined.'))
-			if(@pvp['running'] == true, die('Match already in progress.'))
+			if(@pvp['running'] == 'true', die('Match already in progress.'))
 			@pvp['players'][player()] = array()
 		}
-		_worldmsg('custom', color('gray').'[PVP] '.color(r).player().' has joined '.$id.'. ('.array_size(@pvp['players']).')')
+		if(array_index_exists(@arena, 'mode') && array_contains(array('ctf', 'tdm', 'infection'), @arena['mode'])) {
+			if(!array_index_exists(@pvp, 'team'), @pvp['team'] = array(array('players': array()), array('players': array())))
+			if(array_size(@pvp['team'][0]['players']) * if(@arena['mode'] == 'infection', @arena['teamratio'][1], 1) <= array_size(@pvp['team'][1]['players']) * if(@arena['mode'] == 'infection', @arena['teamratio'][0], 1)) {
+				@pvp['players'][player()]['team'] = 0
+				array_push(@pvp['team'][0]['players'], player())
+			} else {
+				@pvp['players'][player()]['team'] = 1
+				array_push(@pvp['team'][1]['players'], player())
+			}
+		}
+		_worldmsg('custom', color('gray').'[PVP] '.color('r').player().' has joined '.$id.'. ('.array_size(@pvp['players']).')')
 		export('pvp'.$id, @pvp)
 		if((array_index_exists(@arena, 'max') && array_size(@pvp['players']) >= @arena['max'])
-		|| array_keys(@pvp['players']) == all_players()) {
+		|| array_size(@pvp['players']) == array_size(all_players())) {
 			call_alias('/pvp start '.$id)
 		}
 
@@ -37,17 +47,14 @@
 		}
 
 	, 'start',
-		@id = $id
+		@id = to_lower($id)
 		@pvp = import('pvp'.@id)
 		if(!@pvp, die('There is no match to start.'))
-		if(@pvp['running'] == true, die('Match already in progress.'))
+		if(@pvp['running'] == 'true', die('Match already in progress.'))
 		
 		@pvp['arena'] = get_value('arena.'.@id)
 		if(!@pvp['arena'], die('Can\'t find that arena.'))
 		
-		if(array_index_exists(@pvp['arena'], 'flags') && array_contains(@pvp['arena']['flags'], 'debug') && !array_contains(pgroup(), 'builders'), die('This arena can only be started by Builders.'))
-		
-		if((@pvp['cooldown'] + 15000) > time() && array_size(@pvp['players']) < @pvp['arena']['max'], die('Arena on 15 second cooldown.'))
 
 		# CHECK ARENA SETTINGS
 		if(!array_index_exists(@pvp['arena'], 'lobby'), die('No lobby defined for arena.'))
@@ -58,10 +65,11 @@
 		if(!array_index_exists(@pvp['arena'], 'mode'), @pvp['arena']['mode'] = 'dm')
 		if(!array_index_exists(@pvp['arena'], 'ff'), @pvp['arena']['ff'] = true)
 		if(!array_index_exists(@pvp['arena'], 'flags'), @pvp['arena']['flags'] = array())
+		if(!array_index_exists(@pvp['arena'], 'teamratio'), @pvp['arena']['teamratio'] = array(4, 1))
 		if(!array_index_exists(@pvp['arena'], 'team')) {
 			@pvp['arena']['team'] = array(
-				array('name': 'Team 1', 'color': 'c'), 
-				array('name': 'Team 2', 'color': '3')
+				array('name': 'Red', 'color': 'c'), 
+				array('name': 'Blue', 'color': '3')
 			)
 		}
 		if(!array_index_exists(@pvp['arena'], 'score')) {
@@ -71,36 +79,37 @@
 			)
 		}
 		
+		if(array_contains(@pvp['arena']['flags'], 'debug') && !array_contains(pgroup(), 'builders'), die('This arena is still in testing and can only be started by Builders.'))
+		
 		foreach(array_keys(@pvp['players']), @player,
 			if(!ponline(@player) || pworld(@player) != 'custom') {
 				array_remove(@pvp['players'], @player)
 			}
 		)
 		if(array_size(@pvp['players']) < @pvp['arena']['min'], die('There aren\'t enough players. ('.array_size(@pvp['players']).')'))
+		if(array_contains(array('ctf', 'tdm'), @pvp['arena']['mode']) && array_size(@pvp['team'][0]['players']) != array_size(@pvp['team'][1]['players']) && !array_contains(pgroup(), 'builders'), die('Teams are not even. ('.array_size(@pvp['players']).')'))
+		if((@pvp['cooldown'] + 15000) > time() && !array_contains(pgroup(), 'builders')) {
+			@regioncount = 0
+			foreach(all_players(), @player,
+				if(array_contains(sk_current_regions(@player), @pvp['arena']['broadcast'])) {
+					@regioncount++
+				}
+			)
+			if(array_size(@pvp['players']) < @regioncount) {
+				die('Arena still on a 15 second cooldown.')
+			}
+		}
 		
 		if(array_contains(get_scoreboards(), @id), remove_scoreboard(@id))
 		create_scoreboard(@id)
 		
 		# PREPARE TEAMS
-		if(array_contains(array('tdm', 'ctf'), @pvp['arena']['mode'])) {
-			@pvp['team'] = array(array('players': array()), array('players': array()))
-			if(array_index_exists(@pvp['arena'], 'teamratio')) {
-				@upperteam = array_index(@pvp['arena']['teamratio'], max(@pvp['arena']['teamratio'][0], @pvp['arena']['teamratio'][1]))
-				@lowerteam = array_index(@pvp['arena']['teamratio'], min(@pvp['arena']['teamratio'][0], @pvp['arena']['teamratio'][1]))
-				@ratio = @pvp['arena']['teamratio'][@lowerteam] / @pvp['arena']['teamratio'][@upperteam]
-			} else {
-				@upperteam = 1
-				@lowerteam = 0
-				@ratio = 0.5
-			}
+		if(array_contains(array('tdm', 'ctf', 'infection'), @pvp['arena']['mode'])) {
 			if(@pvp['arena']['mode'] == 'ctf') {
 				@pvp['team'][0]['score'] = 0
 				@pvp['team'][0]['flag'] = 0
 				@pvp['team'][1]['score'] = 0
 				@pvp['team'][1]['flag'] = 0
-			}
-			if(array_contains(@pvp['arena']['flags'], 'infection')) {
-				@pvp['infectionteam'] = @lowerteam
 			}
 			create_team(@pvp['arena']['team'][0]['name'], @id)
 			create_team(@pvp['arena']['team'][1]['name'], @id)
@@ -114,7 +123,7 @@
 		, 'koth',
 			create_objective('seconds', 'DUMMY', @id)
 			set_objective_display('seconds', array('displayname': color('a').'Seconds Left', 'slot': 'SIDEBAR'), @id)
-		, 'dm',
+		, array('tdm', 'dm', 'infection'),
 			if(array_index_exists(@pvp['arena'], 'lives')) {
 				create_objective('lives', 'DUMMY', @id)
 				if(@pvp['arena']['lives'] > 1) {
@@ -130,47 +139,32 @@
 			set_pscore('captures', @pvp['arena']['team'][1]['name'], 0, @id)
 		)
 
-		foreach(array_keys(@pvp['players']), @player,
+		foreach(@pvp['players'], @player, @data,
 			set_pscoreboard(@player, @id)
-			
-			if(array_contains(array('ctf', 'tdm'), @pvp['arena']['mode']),
-				if(array_size(@pvp['team'][@upperteam]['players']) >= ceil((1 - @ratio) * array_size(@pvp['players']))) {
-					@team = @lowerteam
-				} else if(array_size(@pvp['team'][@lowerteam]['players']) >= ceil(@ratio * array_size(@pvp['players']))) {
-					@team = @upperteam
-				} else {
-					@team = if(rand(100) < (@ratio * 100), @lowerteam, @upperteam)
-				}
-				@pvp['players'][@player]['team'] = @team
-				array_push(@pvp['team'][@team]['players'], @player)
-			)
-			
+			if(array_contains(array('ctf', 'tdm', 'infection'), @pvp['arena']['mode'])) {
+				team_add_player(@pvp['arena']['team'][@pvp['players'][@player]['team']]['name'], @player, @id)
+			}
 			if(pmode(@player) == 'CREATIVE', set_pmode(@player, 'SURVIVAL'))
 		)
 
-		if(array_contains(array('tdm', 'ctf'), @pvp['arena']['mode']) && array_size(@pvp['team'][@lowerteam]['players']) < 1) {
-			@pvp['players'][@player]['team'] = @lowerteam
-			array_remove_values(@pvp['team'][@team]['players'], @player)
-			array_push(@pvp['team'][@lowerteam]['players'], @player)
-		}
-
 		@pvp['coins'] = array_size(@pvp['players']) - 2
 		@pvp['binds'] = array()
-		@pvp['running'] = true
+		@pvp['running'] = 'true'
 
 		#ANNOUNCE
 		_worldmsg('custom', color('gray').'[PVP] '.color('r').'STARTING '.to_upper(@id).'...')
-		if(array_contains(array('tdm', 'ctf'), @pvp['arena']['mode'])) {
-			_regionmsg(@pvp['arena']['broadcast'], 
+		if(array_contains(array('tdm', 'ctf', 'infection'), @pvp['arena']['mode'])) {
+			_worldmsg('custom', 
 			color(@pvp['arena']['team'][0]['color']).'['.@pvp['arena']['team'][0]['name'].'] '.array_implode(@pvp['team'][0]['players'], ' ').'\n'.color('r').color(@pvp['arena']['team'][1]['color']).'['.@pvp['arena']['team'][1]['name'].'] '.array_implode(@pvp['team'][1]['players'], ' '))
 		} else {
-			_regionmsg(@pvp['arena']['broadcast'], array_implode(array_keys(@pvp['players']), ' vs '))
+			_worldmsg('custom', array_implode(array_keys(@pvp['players']), ' vs '))
 		}
 		export('pvp'.@id, @pvp)
 		
 		#START ROUND
 		set_timeout(3000, closure(
 			include('pvp.ms')
+			if(array_index_exists(@pvp['arena'], 'classes'), include('class.ms'))
 			_start_round($id)
 		))
 
