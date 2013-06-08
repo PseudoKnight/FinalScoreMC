@@ -10,10 +10,9 @@
 		@world = pworld()
 		@player = $
 	}
-	@pdata = get_value('player.'.@player)
+	@pdata = get_value('player.'.to_lower(@player))
 	if(!@pdata, die('Cannot find a home.'))
 	if(!array_index_exists(@pdata, 'homes') || !array_index_exists(@pdata['homes'], @world), die('You can set a home for a world with /sethome'))
-	msg('Teleporting...')
 	set_peffect(player(), 9, 1, 7)
 	play_sound(ploc(), array('sound': 'PORTAL_TRIGGER', 'volume': 1, 'pitch': 1))
 	set_timeout(3700, closure(
@@ -35,7 +34,7 @@
 
 *:/sethome [$] = >>>
 	if(array_contains(array('outworld', 'outworld_nether', 'outworld_the_end', 'custom'), pworld()), die('You cannot set homes here.'))
-	@pdata = get_value('player.'.player())
+	@pdata = get_value('player.'.to_lower(player()))
 	if(!array_index_exists(@pdata, 'homes'), @pdata['homes'] = array())
 	array_set(@pdata['homes'], pworld(), array(
 		round(ploc()[0], 2),
@@ -44,7 +43,7 @@
 		round(pfacing()[0], 2),
 		round(pfacing()[1], 2)
 	))
-	store_value('player.'.player(), @pdata)
+	store_value('player.'.to_lower(player()), @pdata)
 	msg('Set your home to this location.')
 <<<
 
@@ -109,10 +108,8 @@
 		@world = _worldid($world)
 		if(!array_contains_ic(get_worlds(), @world), die('Failed to find a world called '.$world.'.'))
 		_warmuptp(3.7, player(), get_spawn(@world))
-		msg('Teleporting to '.$world.'\'s spawn...')
 	} else {
 		_warmuptp(3.7, player(), get_spawn())
-		msg('Teleporting to '._worldname(pworld()).'\'s spawn...')
 	}
 <<<
 

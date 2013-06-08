@@ -17,45 +17,45 @@ set_interval(9 * 60 * 1000, closure(
 	set_world_time('dev', 700)
 ))
 
-bind('player_login', null, null, @event,
+bind('player_login', null, null, @e,
+	if(@e['result'] != 'ALLOWED', die())
 	@update = false
-	@pdata = get_value('player.'.@event['player'])
-	if(!@pdata, @pdata = array('ips': array()))
-	if(array_index_exists(@pdata, 'ban')) {
-		console(@event['player'].' was banned.')
-		if(!array_index_exists(@ban, 'time') || @ban['time'] > time()) {
+	@pdata = get_value('player.'.to_lower(@e['player']))
+	if(!@pdata) {
+		@pdata = array('ips': array())
+	}
+	if(array_index_exists(@pdata, 'ban'),
+		if(!array_index_exists(@pdata['ban'], 'time') || @pdata['ban']['time'] > time()) {
 			modify_event('result', 'KICK_BANNED')
-			if(array_index_exists(@ban, 'message')) {
-				modify_event('kickmsg', @ban['message'])
+			if(array_index_exists(@pdata['ban'], 'message')) {
+				modify_event('kickmsg', @pdata['ban']['message'])
 			} else {
 				modify_event('kickmsg', 'Banned. Appeal at FinalScoreMC.com')
 			}
 			die()
 		} else {
 			array_remove(@pdata, 'ban')
-			console('Ban expired.')
+			console('Ban on '.@e['player'].' expired.')
 			@update = true
 		}
-	}
+	)
 	if(get_server_info(10)) {
-		if(@event['result'] != 'ALLOWED', die())
-		@pdata = get_value('player.'.@event['player'])
-		if(!@pdata, @pdata = array('ips': array()))
-		if(!array_contains(@pdata['ips'], @event['ip'])) {
-			array_push(@pdata['ips'], @event['ip'])
+		if(!array_contains(@pdata['ips'], @e['ip'])) {
+			array_push(@pdata['ips'], @e['ip'])
 			if(array_size(@pdata['ips']) > 3) {
 				array_remove(@pdata['ips'], 0)
 			}
 			@update = true
 		}
+
 	} else {
-		if(!array_contains(@pdata['ips'], @event['ip'])) {
-			console(@event['player'].': '.@event['ip'].', '.@pdata['ips'])
+		if(!array_contains(@pdata['ips'], @e['ip'])) {
+			console(@e['player'].': '.@e['ip'].', '.@pdata['ips'])
 			modify_event('result', 'KICK_OTHER')
 			modify_event('kickmsg', 'Minecraft auth servers are down and your IP doesn\'t match our records.')
 		}
 	}
-	if(@update, store_value('player.'.@event['player'], @pdata))
+	if(@update, store_value('player.'.to_lower(@e['player']), @pdata))
 )
 
 # Player join messages and tab list colors
@@ -75,12 +75,12 @@ bind('player_join', null, null, @event,
 			set_list_name(_colorname().player())
 		}
 		# homeless players are players left on deleted worlds
-		@pdata = get_value('player.'.player())
+		@pdata = get_value('player.'.to_lower(player()))
 		if(array_index_exists(@pdata, 'homeless')) {
 			@loc = get_spawn('world')
 			set_ploc(@loc)
 			array_remove(@pdata, 'homeless')
-			store_value('player.'.player(), @pdata)
+			store_value('player.'.to_lower(player()), @pdata)
 		}
 		set_timeout(800, closure(
 			if(@loc[1] > ploc()[1]) {
