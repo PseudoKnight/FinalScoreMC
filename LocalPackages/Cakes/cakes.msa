@@ -1,5 +1,9 @@
 ### CAKES ###
 
+*:/coins = >>>
+	msg(color('gold').round(acc_balance(player())).' coins')
+<<<
+
 *:/cake [$cmd] [$] = >>>
 	switch($cmd
 	, 'list',

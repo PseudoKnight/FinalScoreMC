@@ -2,204 +2,43 @@
 # CLUCK #
 #########
 
-*:/cluck [$cmd] [$id] = >>>
+*:/cluck [$cmd] = >>>
 switch($cmd
 , 'reset',
-  store_value('cluck', associative_array(
-    'top': array(),
-    'date': simple_date('MMM d')
-  ))
+	if(!has_permission('group.moderators'), die('You do not have permission.'))
+	store_value('cluck', associative_array(
+		'top': array(),
+		'date': simple_date('MMM d')
+	))
 
 , 'top10',
-  @scores = get_value('cluck')
-  msg(color(l).'TOP 10 CLUCK PLAYERS')
-  msg(color(7).'Since '.@scores['date'])
-  for(@i = 0, @i < array_size(@scores['top']), @i++,
-    msg(if(length(@scores['top'][@i]['score']) < 2, '0').@scores['top'][@i]['score'].' - '.@scores['top'][@i]['name'])
-  )
+	@scores = get_value('cluck')
+	msg(color('l').'TOP 10 CLUCK PLAYERS')
+	msg(color('7').'Since '.@scores['date'])
+	for(@i = 0, @i < array_size(@scores['top']), @i++,
+		msg(if(length(@scores['top'][@i]['score']) < 2, '0').@scores['top'][@i]['score'].' - '.@scores['top'][@i]['name'])
+	)
 
 , 'start',
-  if($id, @id = $id, @id = 0)
-  if(pworld() != 'custom', die()) # This saves me the trouble of checking later.
-  @spawnloc = array(array(-575.5, 63, -334), array(-575.5, 63, -323))
-   # @spawnloc is the smallest coordinate for available hicken spawn locations
-   # For @spawnloc and @color, 0 = player 1, 1 = player 2
-  @color = array('yellow', 'gold')
-  @sound = array(
-    'gameover': array(-563, 55, -325), 
-    'winround': array(-563, 58, -325), 
-    'startround': array(-563, 52, -325),
-    'bat': array(-563, 58, -327)
-  )
-   # These are coordinates for levers for noteblock sequences
+	if(pworld() != 'custom', die())
 
-  proc(_reset_cluck,
-    return(array(
-    'round': 1, 
-    'count': 10, # countdown for chicken spawns
-    'chickens': array(), # chicken entity ids to check if they're alive at round end
-    'hit': 0, # num chickens hit
-    'player': '',
-    'active': 0, # if round is in progress
-    'score': 0, # cumulative hit chickens 
-    'lastspawn': 0 # timestamp for last chicken spawned
-    ))
-  )
+	include('cluck.ms')
+	@cluck = import('cluck')
+	if(!@cluck, @cluck = _cluck_defaults())
 
-  import(@cluck)
-  if(@cluck == false, @cluck = _reset_cluck())
-
-  if(@cluck['active'] == 1, die('Already in progress.'))
-  if(@cluck['player'] != player() && @cluck['player'] != '' && ponline(@cluck['player']) && array_contains(sk_current_regions(@cluck['player']), 'cluck')) { 
-    die('Someone else in this region is still playing their rounds.')
-  }
-  if(@cluck['player'] != player(), @cluck = _reset_cluck())
-  if(@cluck['player'] == '', @cluck['player'] = player())
-  @cluck['active'] = 1
-  export(@cluck)
-  _regionmsg('cluck', color(l).'Round '.@cluck['round'].': Hit '.floor((@cluck['round'] * 0.5) + 5).' chickens.')
-  _clear_pinv()
-  set_pinv(@player, array(0: array(type: 261), 1: array(type: 262, qty: 10)))
-  set_block_at(@sound['startround'], '69:13')
-  bind(entity_damage, array('id': 'cluckchicken'), array('cause': 'PROJECTILE', 'type': 'CHICKEN'), @event,
-    import(@cluck)
-    if(array_contains(@cluck['chickens'], @event['id'])) {
-      @cluck['score'] = @cluck['score'] + 1
-      @cluck['hit']++
-      set_plevel(@cluck['score'])
-      array_remove_values(@cluck['chickens'], @event['id'])
-      export(@cluck)
-    }
-  )
-
-  set_timeout(50, closure(set_block_at(@sound['startround'], '69:5')))
-
-  @interval = set_interval(500, closure(
-    import(@cluck)
-    # Let's make sure the player isn't cheating, but we'll just reset the round
-    if(!ponline(@cluck['player']) || !array_contains(sk_current_regions(@cluck['player']), 'cluck'.@id)) {
-      clear_task()
-      if(ponline(@cluck['player']) && pworld(@cluck['player']) == 'custom') {
-        _clear_pinv()
-        set_plevel(@cluck['player'], 0)
-      }
-      if(array_index_exists(@cluck, 'bat'), unbind('cluckbat'))
-      unbind('cluckchicken')
-      @cluck = _reset_cluck()
-      export(@cluck)
-      die('You stepped off the shooting pad. Reset Cluck.')
-    }
-    # Let's check if some other player is where they shouldn't be
-    foreach(all_players(), @player,
-      if(pworld(@player) == 'custom' && array_contains(sk_current_regions(@player), 'cluckdeny'.@id)) {
-        set_ploc(@player, array(-544,62, -367, 'custom'))
-        tmsg(@player, 'Don\'t get in player\'s way.')
-      }
-    )
-    # spawn ALL the chickens!
-    if(rand(20) < (1 + @cluck['round']) || (time() - @cluck['lastspawn']) > 4000) {
-      @entityid = spawn_mob('chicken', 1, array(@spawnloc[@id][0], @spawnloc[@id][1], @spawnloc[@id][2] + rand(8), 'custom'))[0]
-      if(rand(10) < 1, set_mob_age(@entityid, -24000))
-      set_entity_velocity(@entityid, array(0, 0.96, 0))
-      set_entity_health(@entityid, 25)
-      array_push(@cluck['chickens'], @entityid)
-      @cluck['count'] = @cluck['count'] - 1
-      @cluck['lastspawn'] = time()
-    }
-    if(is_integer(@cluck['round'] / 3) && @cluck['count'] == 5 && !array_index_exists(@cluck, 'bat')) {
-      @entityid = spawn_mob('bat', 1, array(@spawnloc[@id][0], @spawnloc[@id][1] + 3, @spawnloc[@id][2] + rand(8), 'custom'))[0]
-      set_entity_health(@entityid, 17)
-      pgive_item(262, 3)
-      set_block_at(@sound['bat'], '69:13')
-      set_timeout(50, closure(set_block_at(@sound['bat'], '69:5')))
-      @cluck['bat'] = @entityid
-      bind(entity_damage, array('id': 'cluckbat'), array('cause': 'PROJECTILE', 'type': 'BAT'), @event, assign(@id, @id),
-        import(@cluck)
-        if(@event['id'] == @cluck['bat']) {
-          @cluck['score'] = @cluck['score'] + 3
-          set_plevel(@cluck['score'])
-          _regionmsg('cluck', color('green').'3 Bonus Bat Points!')
-          array_remove(@cluck, 'bat')
-          export(@cluck)
-          unbind()
-        }
-      )
-    }
-    export('cluck'.@id, @cluck)
-
-    # No more chickens to spawn? Let's end the round
-    if(@cluck['count'] < 1) {
-
-      set_timeout(5000, closure(
-        import(@cluck)
-        foreach(@cluck['chickens'], @chicken,
-          try(entity_remove(@chicken), continue())
-        )
-        if(array_index_exists(@cluck, 'bat')) {
-          try(entity_remove(@cluck['bat']), )
-        }
-        _regionmsg('cluck', color(@color[@id]).color(l).@cluck['player'].' hit '.@cluck['hit'].' chickens.')
-
-        # Did we not meet the required hit chickens? (or round 10)
-        if(@cluck['hit'] < floor((@cluck['round'] * 0.5) + 5) || @cluck['round'] == 10) {
-          _regionmsg('cluck', color(l).'GAMEOVER! Score: '.@cluck['score'])
-
-          # STATS
-          #-------
-          @scores = get_value('cluck')
-          if(!array_index_exists(@scores, player()), @best = 0, @best = @scores[player()])
-          if(@cluck['score'] > @best) {
-            if(@best > 0, _regionmsg('cluck', color(l).'You beat your personal best of '.@best.'!'))
-            msg(color(6).'+ '.(@cluck['score'] - @best).' coins')
-            acc_add(player(), @cluck['score'] - @best)
-            @scores[player()] = @cluck['score']
-            @top = false
-            for(@i = 0, @i < 10, @i++,
-              if(@top && array_index_exists(@scores['top'], @i) && @scores['top'][@i]['name'] == player()) {
-                array_remove(@scores['top'], @i)
-              } else if(!@top && (!array_index_exists(@scores['top'], @i) || @scores['top'][@i]['score'] < @cluck['score'])) {
-                _regionmsg('cluck', color(l).'Top 10 Score!')
-                array_insert(@scores['top'], array('name': player(), 'score': @cluck['score']), @i)
-                @top = true
-              }
-            )
-            if(array_size(@scores['top']) > 10) {
-              array_remove(@scores['top'], 10)
-            }
-            store_value('cluck', @scores)
-          }
-          #-------
-
-          @cluck['score'] = 0
-          @cluck['round'] = 1
-          @cluck['player'] = ''
-          set_block_at(@sound['gameover'], '69:13')
-          set_timeout(50, closure(set_block_at(@sound['gameover'], '69:5')))
-        } else {
-          @cluck['round'] = @cluck['round'] + 1
-          set_block_at(@sound['winround'], '69:13')
-          set_timeout(50, closure(set_block_at(@sound['winround'], '69:5')))
-        }
-        # Reset for the next round.
-        @cluck['chickens'] = array()
-        @cluck['hit'] = 0
-        @cluck['count'] = 10
-        @cluck['active'] = 0
-        if(array_index_exists(@cluck, 'bat')) {
-          array_remove(@cluck, 'bat')
-          unbind('cluckbat')
-        }
-        unbind('cluckchicken')
-        export(@cluck)
-        _clear_pinv()
-      ))
-      clear_task()
-    }
-  ))
+	if(@cluck['active'] == 1, die('Already in progress.'))
+	if(@cluck['player'] != player() && @cluck['player'] != '' && ponline(@cluck['player']) && array_contains(sk_current_regions(@cluck['player']), 'cluck')) { 
+		die('Someone else in this region is still playing their rounds.')
+	}
+	if(@cluck['player'] != player(), @cluck = _cluck_defaults())
+	if(@cluck['player'] == '', @cluck['player'] = player())
+	@cluck['active'] = 1
+    export('cluck', @cluck)
+    _cluck_startround()
 ,
-msg(color('gold').'[Cluck] You can play Cluck in Frog Park just outside of the event house')
-msg(color('gold').'[Cluck] '.color(r).'/cluck top10 '.color('gray').'List the top 10 high scores for Cluck')
-msg(color('gold').'[Cluck] '.color(r).'/cluck start '.color('gray').'Start a round of Cluck')
-msg(color('gold').'[Cluck] '.color(r).'/cluck reset '.color('gray').'(restricted) Resets the high scores')
+	msg(color('gold').'[Cluck] You can play Cluck in Frog Park just outside of the event house')
+	msg(color('gold').'[Cluck] '.color('r').'/cluck top10 '.color('gray').'List the top 10 high scores for Cluck')
+	msg(color('gold').'[Cluck] '.color('r').'/cluck start '.color('gray').'Start a round of Cluck')
+	msg(color('gold').'[Cluck] '.color('r').'/cluck reset '.color('gray').'(restricted) Resets the high scores')
 )
 <<<

@@ -1,20 +1,20 @@
 /safereload [$force]= >>>
 	if(!$force) {
-		import(@currentspleef)
+		@currentspleef = import('currentspleef')
 		if(@currentspleef != false && array_size(@currentspleef) >= 1, die('Spleef in progress.'))
 		@arenas = get_values('arena')
 		foreach(array_keys(@arenas), @key,
 			@pvp = import('pvp'.split('.', @key)[1])
 			if(@pvp && @pvp['running'] == 'true', die(to_upper(split('.', @key)[1]).' in progress.'))
 		)
-		@cluck = import(@cluck)
+		@cluck = import('cluck')
 		if(@cluck && (@cluck['active'] == 1 || @cluck['round'] > 1), die('Cluck in progress.'))
 	}
-	import(@requests)
+	@requests = import('requests')
 	if(is_array(@requests), store_value('session.requests', @requests))
-	import(@conv)
+	@conv = import('conv')
 	if(is_array(@conv), store_value('session.conv', @conv))
-	import(@stopwatch)
+	@stopwatch = import('stopwatch')
 	if(is_array(@stopwatch), store_value('session.stopwatch', @stopwatch))
 	foreach(all_players(), @player,
 		if(queue_running(@player), queue_clear(@player))
@@ -26,27 +26,61 @@
 	))
 <<<
 
+*:/ban [$player] [$] = >>>
+	if(!has_permission('group.moderators'), die('You do not have permission.'))
+	if(!$player, die('Usage: /ban <player> [-t 1d-8h-10m] [message]'))
+	@pdata = get_value('player.'.$player)
+	if(!@pdata, die('Please use exact names.'))
+	@battime = null
+	@message = null
+	if($) {
+		@args = parse_args($)
+		if(@args[0] == '-t') {
+			@times = split('-', @args[1])
+			@bantime = time()
+			foreach(@times, @t,
+				switch(substr(@t, length(@t) - 1, length(@t))
+				, 'd',
+					@bantime = @bantime + (86400000 * substr(@t, 0, length(@t) - 1))
+				, 'h',
+					@bantime = @bantime + (3600000 * substr(@t, 0, length(@t) - 1))
+				, 'm',
+					@bantime = @bantime + (60000 * substr(@t, 0, length(@t) - 1))
+				)
+			)
+			if(array_size(@args) > 2) {
+				@message = array_implode(@args[cslice(2, array_size(@args) - 1)], ' ')
+			}
+		} else {
+			@message = $
+		}
+	}
+	@pdata['ban'] = array()
+	if(@bantime, @pdata['ban']['time'] = @bantime)
+	if(@message, @pdata['ban']['message'] = @message)
+	@pdata['ban']['by'] = player()
+	store_value('player.'.$player, @pdata)
+	kick($player, if(@message, @message, 'Banned. Appeal at FinalScoreMC.com'))
+	msg($player.' is now banned.')
+	console(player().' banned '.$player)
+<<<
+
+*:/unban [$player] = >>>
+	if(!has_permission('group.moderators'), die('You do not have permission.'))
+	if(!$player, die('Usage: /unban <player>'))
+	@pdata = get_value('player.'.$player)
+	if(!@pdata, die('Please use an exact name.'))
+	if(!array_index_exists(@pdata, 'ban'), die('That player is not banned.'))
+	array_remove(@pdata, 'ban')
+	store_value('player.'.$player, @pdata)
+	msg($player.' is now unbanned.')
+	console(player().' unbanned '.$player)
+<<<
+
 /homeless $player = >>>
 	@pdata = get_value('player.'.$player)
 	@pdata['homeless'] = true
 	store_value('player.'.$player, @pdata)
-<<<
-
-/s $name $ = >>>
-	broadcast(color(8).simple_date('h:mm').color('gray').' [console] '.color('aqua').$name.color('gray').': '.color('r').$) 
-<<<
-
-*:/say $ = >>>
-	broadcast(color(8).simple_date('h:mm').' '.if(player() != '~console' && array_contains(pgroup(), 'donors'), color('green').'\u2666 ')._colorname().player().color('gray').': '.color('r').$) 
-<<<
-
-*:/me $ = >>>
-	import(@ignorelist)
-	if(array_index_exists(@ignorelist, player()) && array_contains(@ignorelist[player()], 'all')) {
-		msg('You have been muted.')
-		die()
-	}
-	broadcast('* '.player().' '.colorize($))
 <<<
 
 *:/stack = >>>
@@ -73,10 +107,6 @@
 	)
 	set_pinv(@inv)
 	msg('Stacked!')
-<<<
-
-/sayas $from $to $ = >>>
-	tmsg($to, color('gray').$from.': '.color('r').colorize($))
 <<<
 
 #Runs the help procedure to list or display entries
@@ -128,94 +158,6 @@
 	store_value('donors', @donors)
 <<<
 
-*:/spawn [$world] = >>>
-	@blockedworlds = array('outworld', 'outworld_nether', 'outworld_the_end')
-	if(array_contains(@blockedworlds, $world) || array_contains(@blockedworlds, pworld())) {
-		msg('You cannot teleport directly to or from that world.')
-	} else if($world) {
-		@world = _worldid($world)
-		if(!array_contains_ic(get_worlds(), @world), die('Failed to find a world called '.$world.'.'))
-		_warmuptp(3.7, player(), get_spawn(@world))
-		msg('Teleporting to '.$world.'\'s spawn...')
-	} else {
-		_warmuptp(3.7, player(), get_spawn())
-		msg('Teleporting to '._worldname(pworld()).'\'s spawn...')
-	}
-<<<
-
-*:/warp [$warp] [$player] = >>>
-	if($player && get_command_block(), @player = $player, @player = player())
-	if(!$warp) {
-		scriptas(@player,
-			call_alias('/warps list')
-			die()
-		)
-	}
-	@warp = get_value('warp.'.to_lower($warp))
-	if(!@warp, die('That warp does not exist.'))
-	if(array_contains(array('outworld', 'outworld_nether', 'outworld_the_end'), pworld(@player)), die('You cannot warp in this world.'))
-	_warmuptp(3.7, @player, @warp['loc'], @warp['yaw'], @warp['pitch'])
-<<<
-
-*:/setwarp [$warp] = >>>
-	if(!has_permission('group.moderators'), die('You do not have permission to use this command.'))
-	if(!$warp, die('You need to specify a warp name.'))
-	if(reg_count('\\w', $warp) < 0, die('This needs to be in alphanumeric characters.'))
-	store_value('warp.'.$warp, array('loc': array(round(ploc()[0], 1), ploc()[1], round(ploc()[2], 1), ploc()[3]), 'yaw': round(pfacing()[0]), 'pitch': round(pfacing()[1])))
-	msg('Warp created.')
-<<<
-
-*:/warps [$cmd] [$id] = >>>
-	switch($cmd
-	, array('del', 'delete'),
-		if(!has_permission('group.moderators'), die('You do not have permission to use this command.'))
-		if(!$id, die('This requires a warp name.'))
-		if(!has_value('warp.'.$id), die('There is no warp by that name.'))
-		clear_value('warp.'.$id)
-		msg('Deleted warp.')
-	, 'list',
-		@warps = get_values('warp')
-		@main = ''
-		@park = ''
-		@dev = ''
-		foreach(array_keys(@warps), @warp,
-			if(@warps[@warp]['loc']['3'] == 'custom') {
-				@park .= split('.', @warp)[1].' '
-			} else if(@warps[@warp]['loc']['3'] == 'dev') {
-				@dev .= split('.', @warp)[1].' '
-			} else {
-				@main .= split('.', @warp)[1].' '
-			}
-		)
-		msg('AVAILABLE WARPS:\n'
-		.color('green').'[MAIN] '.color(r).@main.'\n'
-		.color('aqua').'[FROG PARK] '.color(r).@park.'\n'
-		.color('red').'[DEV] '.color(r).@dev)
-	, #else
-		msg('Available sub-commands: "/warps del <warp>", "/warps list".')
-	)
-<<<
-
-*:/home [$home=''] = >>>
-	if(array_contains(array('outworld', 'outworld_nether', 'outworld_the_end'), pworld()), die('You cannot teleport in this world.'))
-	msg('Teleporting...')
-	set_peffect(player(), 9, 1, 7)
-	play_sound(ploc(@player), array('sound': 'PORTAL_TRIGGER', 'volume': 1, 'pitch': 1))
-	set_timeout(3700, closure(@home = $home,
-		if(!ponline(player()), die())
-		make_effect(ploc(), 'GHAST_SHOOT', 20)
-		make_effect(ploc(), 'MOBSPAWNER_FLAMES')
-		if(array_contains(get_worlds(), _worldid(to_lower(@home))), sudo('/tp '.player().' #home:'.player().':'._worldid(to_lower(@home))), run('/home '.@home))
-		set_peffect(player(), 15, 1, 1)
-		make_effect(ploc(), 'GHAST_SHOOT', 20)
-		make_effect(ploc(), 'MOBSPAWNER_FLAMES')
-	))
-<<<
-
-*:/coins = >>>
-	msg(color('gold').round(acc_balance(player())).' coins')
-<<<
-
 #Database control
 /sql $action $namespace [$] = >>>
 	if(!pisop(), die('You do not have permission.'))
@@ -241,79 +183,18 @@
 	)
 <<<
 
-# MUTING
-*:/ignore $player = >>>
-	try(@player = player($player), die('No player found.'))
-	import(@ignorelist)
-	if(!array_index_exists(@ignorelist, @player)) {
-		array_set(@ignorelist, @player, array())
-	}
-	if(array_contains_ic(@ignorelist[@player], player()), die('You are already ignoring '.@player.'.'))
-	array_push(@ignorelist[@player], player())
-	msg('You are now ignoring '.@player.'.')
-	export(@ignorelist)
-<<<
-
-*:/unignore $player = >>>
-	try(@player = player($player), die('No player found.'))
-	import(@ignorelist)
-	if(!array_index_exists(@ignorelist, @player), die('That player wasn\'t ignored by anyone.'))
-	if(!array_contains_ic(@ignorelist[@player], player()), die('You have not ignored that player.'))
-	for(@i = 0, @i < array_size(@ignorelist[@player]), @i++,
-		if(@ignorelist[@player][@i] == player()) {
-			array_remove(@ignorelist[@player], @i)
-			msg('You are no longer ignoring '.@player.'.')
-			break()
-		}
-	)
-	export(@ignorelist)
-<<<
-
-*:/mute $player = >>>
-	if(!has_permission('group.moderators'), die('You do not have permission to use this command.'))
-	try(@player = player($player), die('No player found.'))
-	import(@ignorelist)
-	if(!array_index_exists(@ignorelist, @player)) {
-		array_set(@ignorelist, @player, array())
-	}
-	if(array_contains(@ignorelist[@player], 'all'), die('Already muted.'))
-	array_push(@ignorelist[@player], 'all')
-	msg(@player.' is now muted.')
-	export(@ignorelist)
-<<<
-
-*:/unmute $player = >>>
-	if(!has_permission('group.moderators'), die('You do not have permission to use this command.'))
-	try(@player = player($player), die('No player found.'))
-	import(@ignorelist)
-	if(!array_index_exists(@ignorelist, @player) || !array_contains(@ignorelist[@player], 'all'), die('That player isn\'t muted.'))
-	for(@i = 0, @i < array_size(@ignorelist[@player]), @i++,
-		if(@ignorelist[@player][@i] == 'all') {
-			array_remove(@ignorelist[@player], @i)
-			msg(@player.' is no longer muted.')
-			break()
-		}
-	)
-	export(@ignorelist)
-<<<
-
 # APPROVAL SYSTEM #
 *:/approve [$player] = >>>
 	if(!has_permission('group.regulars'), die('You do not have permission to use this command.'))
-	if($player) {
-		if(!ponline($player), die('That player is not online. Did you misspell their name?'))
-		if(array_contains_ic(pgroup($player), 'Everyone'), die('Player already exists in whitelist.'))
-		sudo('/perm player setgroup' $player 'Everyone')
-		tmsg($player, 'You have been added to the whitelist by ', color('e'), player(), color('f'), '.')
-		if(!has_permission('group.moderators')) {
-			@key = 'approvals.'.to_lower($player)
-			store_value(@key, player())
-		}
-	} else {
-		@approvals = get_values('approvals')
-		foreach(@approvals, @key, @value,
-			msg(split('.', @key)[1].' approved by '.@value)
-		)
+	try(@player = $player, die('Unknown player.'))
+	if(!ponline($player), die('That player is not online. Did you misspell their name?'))
+	if(array_contains_ic(pgroup($player), 'Everyone'), die('Player already exists in whitelist.'))
+	sudo('/perm player setgroup' $player 'Everyone')
+	tmsg($player, 'You have been added to the whitelist by ', color('e'), player(), color('f'), '.')
+	if(!has_permission('group.moderators')) {
+		@pdata = get_value('player.'.@player)
+		@pdata['approval'] = player()
+		store_value('player.'.@player, @pdata)
 	}
 <<<
 
@@ -361,77 +242,6 @@
 	} else {
 		broadcast(color('a').'[Dice] '._colorname(player()).player().color('f').' rolled a '.color('a').(rand($sides) + 1).' on a '.$sides.'-sided die.')
 	}
-<<<
-
-# MESSAGING #
-*:/msg $player $ = >>>
-	try(@player = player($player), @ex, die('Player not found.'))
-	tmsg(@player, color(7).'(From '.player().'): '.color(r).colorize($))
-	play_sound(ploc(@player), array('sound': 'CHICKEN_EGG_POP', 'pitch': 2), @player)
-	msg(color(7).'(To '.@player.'): '.color(r).colorize($))
-	import(@conv)
-	@conv[@player] = player()
-	@conv[player()] = @player
-	export(@conv)
-<<<
-
-*:/tell $player $ = call_alias('/msg' $player $)
-*:/w $player $ = call_alias('/msg' $player $)
-
-*:/r $ = >>>
-	import(@conv)
-	try(@player = @conv[player()], die('You do not have any current conversations.'))
-	if(!ponline(@player), die('That player is no longer online.'))
-	tmsg(@player, color(7).'(From '.player().'): '.color(r).colorize($))
-	play_sound(ploc(@player), array('sound': 'CHICKEN_EGG_POP', 'pitch': 2), @player)
-	msg(color(7).'(To '.@player.'): '.color(r).colorize($))
-	@conv[@player] = player()
-	export(@conv)
-<<<
-
-# TELEPORTATION BETWEEN FRIENDS #
-*:/join $player = >>>
-	try(@player = player($player), die('Player not found.'))
-	@blockedworlds = array('outworld', 'outworld_nether', 'outworld_the_end')
-	if(array_contains(@blockedworlds, pworld()), die('You cannot teleport in this galaxy'))
-	if(array_contains(@blockedworlds, pworld($player)), die('That player is out of reach.'))
-	import(@requests)
-	tmsg(@player, color(b).player().' has requested to join you. /accept')
-	msg(color(b).'Request to join sent to '.@player.'.')
-	@requests[@player] = array('join', player())
-	export(@requests)
-<<<
-
-*:/invite $player = >>>
-	try(@player = player($player), die('Player not found.'))
-	@blockedworlds = array('outworld', 'outworld_nether', 'outworld_the_end')
-	if(array_contains(@blockedworlds, pworld()), die('You cannot teleport in this galaxy'))
-	if(array_contains(@blockedworlds, pworld($player)), die('That player is out of reach.'))
-	import(@requests)
-	tmsg(@player, color(b).player().' has requested that you join them. /accept')
-	msg(color(b).'Invitation sent to '.@player.'.')
-	@requests[@player] = array('invite', player())
-	export(@requests)
-<<<
-
-*:/accept = >>>
-	@blockedworlds = array('outworld', 'outworld_nether', 'outworld_the_end')
-	if(array_contains(@blockedworlds, pworld()), die('You cannot teleport in this galaxy'))
-	import(@requests)
-	if(!array_index_exists(@requests, player()), die('There is nothing to accept.'))
-	if(array_contains(@blockedworlds, pworld(@requests[player()][1])), die('That player is out of reach.'))
-	if(!ponline(@requests[player()][1]), die('That player is no longer online.'))
-	if(@requests[player()][0] == 'invite') {
-		msg(color(b).'Teleporting to '.@requests[player()][1].' in 3 seconds...')
-		tmsg(@requests[player()][1], color(b).'Teleporting '.player().' in 3 seconds...')
-		_warmuptp(3.7, player(), ploc(@requests[player()][1]))
-	} else {
-		msg(color(b).'Teleporting '.@requests[player()][1].' in 3 seconds...')
-		tmsg(@requests[player()][1], color(b).'Teleporting to '.player().' in 3 seconds...')
-		_warmuptp(3.7, @requests[player()][1], ploc())
-	}
-	array_remove(@requests, player())
-	export(@requests)
 <<<
 
 *:/rg flag $region $ = >>> 
@@ -484,9 +294,7 @@
 		msg(color('green').color('l').'Offline Info for '.$player)
 		msg(color('gray').'---------------------------------------')
 		msg(color('gray').'Last Played: '.color('r').
-		ifelse(@daysplayed > 1825,
-			'???'
-		, @daysplayed >= 3,
+		ifelse(@daysplayed >= 3,
 			'Over '.floor(@daysplayed).' days ago'
 		, @daysplayed < 3 && @hoursplayed > 2, 
 			'Over '.floor(@hoursplayed).' hours ago'
@@ -494,6 +302,7 @@
 			floor(@minutesplayed).' minutes ago'
 		))
 		if(array_index_exists(@pdata, 'homeless'), msg(color('gray').'Homeless: '.color('r').'TRUE'))
+		if(array_index_exists(@pdata, 'approval'), msg(color('gray').'Approved by: '.color('r').@pdata['approval']))
 		if(@pdata, msg(color('gray').'IPs: '.color('r').array_implode(@pdata['ips'], ' ')))
 		msg(color('gray').'---------------------------------------')
 		die()
@@ -533,11 +342,6 @@
 			sudo($)
 		}
 	)
-<<<
-
-*:/goto $player = >>>
-	if(!has_permission('group.moderators'), die('You do not have permission to use this command.'))
-	try(set_ploc(player(), ploc($player)), die('Unknown player.'))
 <<<
 
 #Set fly mode for people or yourself
@@ -637,7 +441,7 @@
 *:/effect $player $effect [$strength=0] [$length=30] = >>>
 	if(get_command_block() || (has_permission('group.builders') && array_contains(array('custom', 'dev'), pworld())) || has_permission('group.moderators')) {
 		try(@player = player($player), @ex, die('Who is that? Are they online?'))
-		@effects = array('speed': '1', 'slowness': '2', 'haste': '3', 'fatique': '4', 'strength': '5', 'health': '6', 'damage': '7', 'jump': '8', 'nausea': '9', 'regen': '10', 'regeneration': '10', 'resistance': '11', 'fireresist': '12', 'fireresistance': '12', 'waterbreathing': '13', 'invis': '14','invisibility': '14', 'blindness': '15', 'nightvision': '16', 'hunger': '17', 'weakness': '18', 'poison': '19', 'wither': '20')
+		@effects = _get_effects()
 		if(!array_index_exists(@effects, $effect), die('These are the available effect names: '.array_keys(@effects)))
 		set_peffect(@player, @effects[$effect], $strength, $length)
 	}
@@ -652,14 +456,6 @@
 			make_effect(ploc(@player), 'BLAZE_SHOOT', 24)
 			if($double, set_timeout($double, closure( set_pvelocity(@player, $x, $y, $z))))
 		))
-	}
-<<<
-
-/tp $player $x $y $z = >>>
-	if(get_command_block()) {
-		set_ploc($player, $x, $y, $z)
-	} else {
-		run('/tp' $player $x $y $z)
 	}
 <<<
 
@@ -702,7 +498,7 @@
 
 *:/potion $id $strength $seconds = >>>
 	if((!has_permission('group.builders') || !array_contains(array('custom', 'dev'), pworld())) && !has_permission('group.moderators'), die('You do not have permission to use this command.'))
-	@effects = array('speed': '1', 'slowness': '2', 'haste': '3', 'fatique': '4', 'strength': '5', 'health': '6', 'damage': '7', 'jump': '8', 'nausea': '9', 'regen': '10', 'regeneration': '10', 'resistance': '11', 'fireresist': '12', 'fireresistance': '12', 'waterbreathing': '13', 'invis': '14','invisibility': '14', 'blindness': '15', 'nightvision': '16', 'hunger': '17', 'weakness': '18', 'poison': '19', 'wither': '20')
+	@effects = _get_effects()
 	if(is_numeric($id), @id = $id, @id = @effects[$id])
 	@effectdata = array(1: 2, 2: 10, 5: 9, 6: 5, 7: 12, 10: 1, 12: 3, 14: 14, 16: 6, 18: 8)
 	if(array_index_exists(@effectdata, @id), @data = @effectdata[@id], @data = 16)
@@ -754,5 +550,3 @@
 		msg('Accepts \'stormy\' or \'sunny\'')
 	)
 <<<
-
-

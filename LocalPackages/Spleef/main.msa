@@ -37,11 +37,11 @@ if(pworld() != @world, die('You can only run this on '.@world.'.'))
 
 switch($cmd
 , 'join',
-  import(@nextspleef)
+  @nextspleef = import('nextspleef')
   if(@nextspleef == false, @nextspleef = array())
   if(array_index_exists(@nextspleef, player()), die(color(a).'[Spleef] '.color(r).'You are already in the next Spleef match.'))
   @nextspleef[player()] = 1
-  export(@nextspleef)
+  export('nextspleef', @nextspleef)
   set_sign_text(@cfg['sign'][0], array_keys(@nextspleef))
   if(array_size(@nextspleef) > 4) {
     set_sign_text(@cfg['sign'][1], array_keys(@nextspleef)[cslice(4, array_size(@nextspleef) - 1)])
@@ -68,8 +68,8 @@ switch($cmd
   )
 
 , 'start',
-import(@nextspleef)
-import(@currentspleef)
+@nextspleef = import('nextspleef')
+@currentspleef = import('currentspleef')
 if(@nextspleef == false, @nextspleef = array())
 if(@currentspleef == false, @currentspleef = array())
 
@@ -91,10 +91,10 @@ if(array_size(@nextspleef) < 2 && player() != 'PseudoKnight', die(color(a).'[Spl
 @currentspleef = @nextspleef
 @nextspleef = array()
 @spleefsettings = array('counter': 0)
-export(@reward)
-export(@nextspleef)
-export(@currentspleef)
-export(@spleefsettings)
+export('reward', @reward)
+export('nextspleef', @nextspleef)
+export('currentspleef', @currentspleef)
+export('spleefsettings', @spleefsettings)
 set_sign_text(@cfg['sign'][0], array())
 set_sign_text(@cfg['sign'][1], array())
 set_sign_text(@cfg['sign'][2], array())
@@ -207,9 +207,9 @@ foreach(array_keys(@currentspleef), @player,
 
 #check match players every second
 @spleefinterval = set_interval(1000, closure(
-  import(@spleefsettings)
-  import(@currentspleef)
-  import(@reward)
+  @spleefsettings = import('spleefsettings')
+  @currentspleef = import('currentspleef')
+  @reward = import('reward')
   if(@spleefsettings['counter'] == 60) {
     proc(_removeedge, @x, @y, @z,
       if(get_block_at(@x, @y, @z) != '0:0') {
@@ -237,14 +237,14 @@ foreach(array_keys(@currentspleef), @player,
     unbind('spleef_quit')
     unbind('spleef_break')
     @currentspleef = array()
-    export(@currentspleef)
+    export('currentspleef', @currentspleef)
     clear_task()
   }
   #detect people that aren't actually in the match
   foreach(array_keys(@currentspleef), @player,
     if(!ponline(@player) || pworld(@player) != @world || !array_contains(sk_current_regions(@player), @cfg['region']['arena'])) {
       array_remove(@currentspleef, @player)
-      export(@currentspleef)
+      export('currentspleef', @currentspleef)
       _regionmsg(@cfg['region']['wrapper'], color(a).'[Spleef] '._colorname(@player).@player.color(r).' was knocked out.')
       if(ponline(@player) && pworld() == @world) {
         set_ploc(@player, @cfg['warp']['lobby'])
@@ -260,11 +260,11 @@ foreach(array_keys(@currentspleef), @player,
       msg(color(a).'[Spleef] '.color(r).'Please do not interfere with a spleef match in progress.')
     }
   )
-  export(@spleefsettings)
+  export('spleefsettings', @spleefsettings)
 ))
 
 bind(player_quit, array('id': 'spleef_quit'), array('player': player()), @event, @spleefinterval, @cfg,
-  import(@currentspleef)
+  @currentspleef = import('currentspleef')
   unbind()
   unbind('spleef_break')
   clear_task(@spleefinterval)
@@ -274,11 +274,11 @@ bind(player_quit, array('id': 'spleef_quit'), array('player': player()), @event,
     set_ploc(@player, @cfg['warp']['lobby'])
   )
   @currentspleef = array()
-  export(@currentspleef)
+  export('currentspleef', @currentspleef)
 )
 
 bind(block_break, array('id': 'spleef_break'), null, @event, @cfg,
-  import(@currentspleef)
+  @currentspleef = import('currentspleef')
   if(array_index_exists(@currentspleef, player()) && !array_contains(sk_regions_at(@event['location']), @cfg['region']['floor'])) {
     cancel()
   }

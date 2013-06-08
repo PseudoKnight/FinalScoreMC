@@ -1,0 +1,176 @@
+*:/home [$] = >>>
+	if(array_contains(array('outworld', 'outworld_nether', 'outworld_the_end'), pworld()), die('You cannot teleport in this world.'))
+	if(!$) {
+		@world = pworld()
+		@player = player()
+	} else if(array_contains(get_worlds(), _worldid(to_lower($)))) {
+		@world = _worldid(to_lower($))
+		@player = player()
+	} else {
+		@world = pworld()
+		@player = $
+	}
+	@pdata = get_value('player.'.@player)
+	if(!@pdata, die('Cannot find a home.'))
+	if(!array_index_exists(@pdata, 'homes') || !array_index_exists(@pdata['homes'], @world), die('You can set a home for a world with /sethome'))
+	msg('Teleporting...')
+	set_peffect(player(), 9, 1, 7)
+	play_sound(ploc(), array('sound': 'PORTAL_TRIGGER', 'volume': 1, 'pitch': 1))
+	set_timeout(3700, closure(
+		if(!ponline(player()), die())
+		make_effect(ploc(), 'GHAST_SHOOT', 20)
+		make_effect(ploc(), 'MOBSPAWNER_FLAMES')
+		set_ploc(player(), array(
+			@pdata['homes'][@world][0], 
+			@pdata['homes'][@world][1],
+			@pdata['homes'][@world][2],
+			@world,
+		))
+		pfacing(@pdata['homes'][@world][3], @pdata['homes'][@world][4])
+		set_peffect(player(), 15, 1, 1)
+		make_effect(ploc(), 'GHAST_SHOOT', 20)
+		make_effect(ploc(), 'MOBSPAWNER_FLAMES')
+	))
+<<<
+
+*:/sethome [$] = >>>
+	if(array_contains(array('outworld', 'outworld_nether', 'outworld_the_end', 'custom'), pworld()), die('You cannot set homes here.'))
+	@pdata = get_value('player.'.player())
+	if(!array_index_exists(@pdata, 'homes'), @pdata['homes'] = array())
+	array_set(@pdata['homes'], pworld(), array(
+		round(ploc()[0], 2),
+		ploc()[1],
+		round(ploc()[2], 2),
+		round(pfacing()[0], 2),
+		round(pfacing()[1], 2)
+	))
+	store_value('player.'.player(), @pdata)
+	msg('Set your home to this location.')
+<<<
+
+*:/warp [$warp] [$player] = >>>
+	if($player && get_command_block(), @player = $player, @player = player())
+	if(!$warp) {
+		scriptas(@player,
+			call_alias('/warps list')
+			die()
+		)
+	}
+	@warp = get_value('warp.'.to_lower($warp))
+	if(!@warp, die('That warp does not exist.'))
+	if(array_contains(array('outworld', 'outworld_nether', 'outworld_the_end'), pworld(@player)), die('You cannot warp in this world.'))
+	_warmuptp(3.7, @player, @warp['loc'], @warp['yaw'], @warp['pitch'])
+<<<
+
+*:/setwarp [$warp] = >>>
+	if(!has_permission('group.moderators'), die('You do not have permission to use this command.'))
+	if(!$warp, die('You need to specify a warp name.'))
+	if(reg_count('\\w', $warp) < 0, die('This needs to be in alphanumeric characters.'))
+	store_value('warp.'.$warp, array('loc': array(round(ploc()[0], 1), ploc()[1], round(ploc()[2], 1), ploc()[3]), 'yaw': round(pfacing()[0]), 'pitch': round(pfacing()[1])))
+	msg('Warp created.')
+<<<
+
+*:/warps [$cmd] [$id] = >>>
+	switch($cmd
+	, array('del', 'delete'),
+		if(!has_permission('group.moderators'), die('You do not have permission to use this command.'))
+		if(!$id, die('This requires a warp name.'))
+		if(!has_value('warp.'.$id), die('There is no warp by that name.'))
+		clear_value('warp.'.$id)
+		msg('Deleted warp.')
+	, 'list',
+		@warps = get_values('warp')
+		@main = ''
+		@park = ''
+		@dev = ''
+		foreach(array_keys(@warps), @warp,
+			if(@warps[@warp]['loc']['3'] == 'custom') {
+				@park .= split('.', @warp)[1].' '
+			} else if(@warps[@warp]['loc']['3'] == 'dev') {
+				@dev .= split('.', @warp)[1].' '
+			} else {
+				@main .= split('.', @warp)[1].' '
+			}
+		)
+		msg('AVAILABLE WARPS:\n'
+		.color('green').'[MAIN] '.color(r).@main.'\n'
+		.color('aqua').'[FROG PARK] '.color(r).@park.'\n'
+		.color('red').'[DEV] '.color(r).@dev)
+	, #else
+		msg('Available sub-commands: "/warps del <warp>", "/warps list".')
+	)
+<<<
+
+*:/spawn [$world] = >>>
+	@blockedworlds = array('outworld', 'outworld_nether', 'outworld_the_end')
+	if(array_contains(@blockedworlds, $world) || array_contains(@blockedworlds, pworld())) {
+		msg('You cannot teleport directly to or from that world.')
+	} else if($world) {
+		@world = _worldid($world)
+		if(!array_contains_ic(get_worlds(), @world), die('Failed to find a world called '.$world.'.'))
+		_warmuptp(3.7, player(), get_spawn(@world))
+		msg('Teleporting to '.$world.'\'s spawn...')
+	} else {
+		_warmuptp(3.7, player(), get_spawn())
+		msg('Teleporting to '._worldname(pworld()).'\'s spawn...')
+	}
+<<<
+
+# TELEPORTATION BETWEEN FRIENDS #
+*:/join $player = >>>
+	try(@player = player($player), die('Player not found.'))
+	@blockedworlds = array('outworld', 'outworld_nether', 'outworld_the_end')
+	if(array_contains(@blockedworlds, pworld()), die('You cannot teleport in this galaxy'))
+	if(array_contains(@blockedworlds, pworld($player)), die('That player is out of reach.'))
+	@requests = import('requests')
+	tmsg(@player, color(b).player().' has requested to join you. /accept')
+	msg(color(b).'Request to join sent to '.@player.'.')
+	@requests[@player] = array('join', player())
+	export('requests', @requests)
+<<<
+
+*:/invite $player = >>>
+	try(@player = player($player), die('Player not found.'))
+	@blockedworlds = array('outworld', 'outworld_nether', 'outworld_the_end')
+	if(array_contains(@blockedworlds, pworld()), die('You cannot teleport in this galaxy'))
+	if(array_contains(@blockedworlds, pworld($player)), die('That player is out of reach.'))
+	@requests = import('requests')
+	tmsg(@player, color(b).player().' has requested that you join them. /accept')
+	msg(color(b).'Invitation sent to '.@player.'.')
+	@requests[@player] = array('invite', player())
+	export('requests', @requests)
+<<<
+
+*:/accept = >>>
+	@blockedworlds = array('outworld', 'outworld_nether', 'outworld_the_end')
+	if(array_contains(@blockedworlds, pworld()), die('You cannot teleport in this galaxy'))
+	@requests = import('requests')
+	if(!array_index_exists(@requests, player()), die('There is nothing to accept.'))
+	if(array_contains(@blockedworlds, pworld(@requests[player()][1])), die('That player is out of reach.'))
+	if(!ponline(@requests[player()][1]), die('That player is no longer online.'))
+	if(@requests[player()][0] == 'invite') {
+		msg(color(b).'Teleporting to '.@requests[player()][1].' in 3 seconds...')
+		tmsg(@requests[player()][1], color(b).'Teleporting '.player().' in 3 seconds...')
+		_warmuptp(3.7, player(), ploc(@requests[player()][1]))
+	} else {
+		msg(color(b).'Teleporting '.@requests[player()][1].' in 3 seconds...')
+		tmsg(@requests[player()][1], color(b).'Teleporting to '.player().' in 3 seconds...')
+		_warmuptp(3.7, @requests[player()][1], ploc())
+	}
+	array_remove(@requests, player())
+	export('requests', @requests)
+<<<
+
+/tp $player $x $y $z = >>>
+	if(get_command_block()) {
+		set_ploc($player, $x, $y, $z)
+	} else {
+		run('/tp' $player $x $y $z)
+	}
+<<<
+
+
+*:/goto $player = >>>
+	if(!has_permission('group.moderators'), die('You do not have permission to use this command.'))
+	try(set_ploc(player(), ploc($player)), die('Unknown player.'))
+<<<

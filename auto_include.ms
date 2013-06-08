@@ -22,6 +22,40 @@ proc(_clear_pinv, assign(@player, player()),
   set_pinv(@player, array(0: null, 1: null, 2: null, 3: null, 4: null, 5: null, 6: null, 7: null, 8: null, 9: null, 10: null, 11: null, 12: null, 13: null, 14: null, 15: null, 16: null, 17: null, 18: null, 19: null, 20: null, 21: null, 22: null, 23: null, 24: null, 25: null, 26: null, 27: null, 28: null, 29: null, 30: null, 31: null, 32: null, 33: null, 34: null, 35: null, 100: null, 101: null, 102: null, 103: null))
 )
 
+proc(_get_effects,
+	return(array(
+		'speed': 1,
+		'slowness': 2,
+		'haste': 3,
+		'fatigue': 4,
+		'strength': 5,
+		'health': 6,
+		'damage': 7,
+		'jump': 8,
+		'nausea': 9,
+		'regen': 10,
+		'resistance': 11,
+		'fireresistance': 12,
+		'waterbreathing': 13,
+		'invis': 14,
+		'blindness': 15,
+		'nightvision': 16,
+		'hunger': 17,
+		'weakness': 18,
+		'poison': 19,
+		'wither': 20
+	))
+)
+
+proc(_is_even, @x,
+	@x = @x / 2
+	if(is_integral(@x)) {
+		return(true)
+	} else {
+		return(false)
+	}
+)
+
 proc(_cooldown, @from, @length,
   if((time() - @from) / 1000 > @length) {
     return(true)

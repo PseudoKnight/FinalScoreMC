@@ -1,0 +1,15 @@
+//hcyl $block $radii [$] = >>>
+	_check_radius($radii)
+<<<
+
+//cyl $block $radii [$] = >>>
+	_check_radius($radii)
+<<<
+
+//hsphere $block $radii [$] = >>>
+	_check_radius($radii)
+<<<
+
+//sphere $block $radii [$] = >>>
+	_check_radius($radii)
+<<<

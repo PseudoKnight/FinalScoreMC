@@ -130,7 +130,7 @@ proc('_start_round', @id,
 		if(!array_index_exists(@pvp['arena'], 'lives') || @pvp['players'][player()]['lives'] > 0) {
 			@pvp['players'][player()]['limbo'] = set_timeout(10000, closure(
 				@pvp = import('pvp'.@id)
-				if(@pvp['running'] == 'false', die())
+				if(@pvp['running'] == 'false' || !array_index_exists(@pvp['players'], player()), die())
 				if(array_index_exists(@pvp['players'][player()], 'class')) {
 					_class('unload', player(), @pvp['players'][player()]['class'])
 				}
@@ -161,7 +161,7 @@ proc('_start_round', @id,
 			}
 			if(@pvp['arena']['mode'] == 'ctf' && (@drop['type'] == 8 || @drop['type'] == 10)) {
 				_regionmsg(@pvp['arena']['broadcast'], color('gray').'[PVP] '.color(@pvp['arena']['team'][@pvp['players'][player()]['team']]['color']).player().color('r').' dropped the '.color(@pvp['arena']['team'][if(@pvp['players'][player()]['team'] == 0, 1, 0)]['color']).'flag')
-				if(@event['cause'] == 'VOID' || @event['cause'] == 'LAVA') {
+				if(@event['cause']['cause'] == 'VOID' || @event['cause']['cause'] == 'LAVA') {
 					_flag_spawn(@id, if(@drop['type'] == 10, 0, 1))
 				} else {
 					_flag_spawn(@id, if(@drop['type'] == 10, 0, 1), array(ploc()[0], ploc()[1] + 1, ploc()[2], ploc()[3]))

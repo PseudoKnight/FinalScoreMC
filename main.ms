@@ -1,15 +1,15 @@
 #prime variables
 @requests = get_value('session.requests')
 if(!@requests, @requests = array(), clear_value('session.requests'))
-export(@requests)
+export('requests', @requests)
 @conv = get_value('session.conv')
 if(!@conv, @conv = array(), clear_value('session.conv'))
-export(@conv)
+export('conv', @conv)
 @stopwatch = get_value('session.stopwatch')
 if(!@stopwatch, @stopwatch = array(), clear_value('session.stopwatch'))
-export(@stopwatch)
+export('stopwatch', @stopwatch)
 @ignorelist = array()
-export(@ignorelist)
+export('ignorelist', @ignorelist)
 
 set_world_time('dev', 700)
 set_interval(9 * 60 * 1000, closure(
@@ -18,25 +18,44 @@ set_interval(9 * 60 * 1000, closure(
 ))
 
 bind('player_login', null, null, @event,
+	@update = false
+	@pdata = get_value('player.'.@event['player'])
+	if(!@pdata, @pdata = array('ips': array()))
+	if(array_index_exists(@pdata, 'ban')) {
+		console(@event['player'].' was banned.')
+		if(!array_index_exists(@ban, 'time') || @ban['time'] > time()) {
+			modify_event('result', 'KICK_BANNED')
+			if(array_index_exists(@ban, 'message')) {
+				modify_event('kickmsg', @ban['message'])
+			} else {
+				modify_event('kickmsg', 'Banned. Appeal at FinalScoreMC.com')
+			}
+			die()
+		} else {
+			array_remove(@pdata, 'ban')
+			console('Ban expired.')
+			@update = true
+		}
+	}
 	if(get_server_info(10)) {
 		if(@event['result'] != 'ALLOWED', die())
-		@info = get_value('player.'.@event['player'])
-		if(!@info, @info = array('ips': array()))
-		if(!array_contains(@info['ips'], @event['ip'])) {
-			array_push(@info['ips'], @event['ip'])
-			if(array_size(@info['ips']) > 3) {
-				array_remove(@info['ips'], 0)
+		@pdata = get_value('player.'.@event['player'])
+		if(!@pdata, @pdata = array('ips': array()))
+		if(!array_contains(@pdata['ips'], @event['ip'])) {
+			array_push(@pdata['ips'], @event['ip'])
+			if(array_size(@pdata['ips']) > 3) {
+				array_remove(@pdata['ips'], 0)
 			}
-			store_value('player.'.@event['player'], @info)
+			@update = true
 		}
 	} else {
-		@ips = get_value('player.'.@event['player'])['ips']
-		if(!array_contains(@ips, @event['ip'])) {
-			console(@event['player'].': '.@event['ip'].', '.@ips)
+		if(!array_contains(@pdata['ips'], @event['ip'])) {
+			console(@event['player'].': '.@event['ip'].', '.@pdata['ips'])
 			modify_event('result', 'KICK_OTHER')
 			modify_event('kickmsg', 'Minecraft auth servers are down and your IP doesn\'t match our records.')
 		}
 	}
+	if(@update, store_value('player.'.@event['player'], @pdata))
 )
 
 # Player join messages and tab list colors
@@ -71,20 +90,6 @@ bind('player_join', null, null, @event,
 	))
 )
 
-# Teleport protection from falling through blocks
-bind('player_teleport', null, null, @event,
-  if(@event['to']['3'] != @event['from']['3']
-    || _horizontal_distance(@event['to'], @event['from']) > 112) {
-    set_timeout(500, closure(
-      if((@event['to'][1] - 1) > ploc()[1])
-      {
-        set_ploc(array(@event['to'][0], @event['to'][1] - 1, @event['to'][2], @event['to'][3]))
-        console('Adjusted '.player().'\'s location after teleport.')
-      }
-    ))
-  }
-)
-
 bind('player_death', null, null, @event,
 	if(!array_contains(array('custom', 'dev'), pworld())) {
 		@log = @event['player'].' died @ '.round(@event['location'][0]).','.round(@event['location'][1]).','.round(@event['location'][2]).' on '.@event['location'][3].', dropping '.@event['xp'].'xp and '
@@ -100,68 +105,11 @@ bind('player_death', null, null, @event,
 	}
 )
 
-# Outworld message
-bind('world_changed', null, array('to': 'outworld'), @event,
-  if(!array_contains(array('outworld_nether', 'outworld', 'outworld_the_end'), @event['from'])) {
-    msg(color('k').'XX'.color('r').color('gold').color('bold').' Welcome to the outworld! '.color('r').color('k').'XX\n'
-    .color('red').'This is a temporary world. Do not build or store anything permanent.')
-  }
-)
-
 # Log commands
 bind('player_command', null, null, @event,
 	if(is_alias(@event['command'])) {
 		console(@event['player'].' ran: '.@event['command'], false)
 	}
-)
-
-# PMs, ignores, and mutes
-bind('player_chat', null, null, @event,
-	if(@event['message'] == '-') {
-		cancel()
-		die()
-	}
-	if(@event['message'][0] == '@') {
-		@p = substr(parse_args(@event['message'])[0], 1)
-		try(@player = player(@p),
-			cancel()
-			die('Player not found.')
-		)
-		if((length(@p) + 2) >= length(@event['message'])) {
-			cancel()
-			die()
-		}
-		@message = substr(@event['message'], length(@p) + 2)
-		tmsg(@player, color(7).'(From '.player().'): '.color(r).colorize(@message))
-		play_sound(ploc(@player), array('sound': 'CHICKEN_EGG_POP', 'pitch': 2), @player)
-		msg(color(7).'(To '.@player.'): '.color(r).colorize(@message))
-		console(player().' @ '.@player.': '.@message, false)
-		import(@conv)
-		@conv[@player] = player()
-		@conv[player()] = @player
-		export(@conv)
-		cancel()
-		die()
-	}
-	import(@ignorelist)
-	if(array_index_exists(@ignorelist, player())) {
-		@recipients = @event['recipients']
-		for(@i = 0, @i < array_size(@ignorelist[player()]), @i++,
-			if(@ignorelist[player()][@i] == 'all') {
-				msg('You have been muted.')
-				cancel()
-				die()
-			}
-			for(@j = 0, @j < array_size(@recipients), @j++,
-				if(@recipients[@j] == @ignorelist[player()][@i]) {
-					array_remove(@recipients, @j)
-				}
-			)
-		)
-		modify_event('recipients', @recipients)
-	}
-	modify_event('message', colorize(@event['message']))
-	modify_event('format', color('dark_gray').simple_date('h:mm').' '.if(array_contains(pgroup(), 'donors'), color('green').'\u2666 ')._colorname(player()).player().color('gray').': '.color('r').'%2$s')
 )
 
 # Block wither
@@ -234,19 +182,19 @@ bind('player_interact', null, array('block': 77, 'button': 'right'), @event,
 			, 'STOPWATCH',
 				switch(@signtext[2],
 				'Start',
-					import(@stopwatch)
+					@stopwatch = import('stopwatch')
 					if(!@stopwatch, @stopwatch = associative_array())
 					@stopwatch[player()] = time()
-					export(@stopwatch)
+					export('stopwatch', @stopwatch)
 					msg(color(a), '[STOPWATCH] ', color('white'), 'GO!'),
 				'Stop',
-					import(@stopwatch)
+					@stopwatch = import('stopwatch')
 					if(!array_index_exists(@stopwatch, player()), die('Did you start the stopwatch?'))
 					@time = round(divide(subtract(time(), @stopwatch[player()]), 1000), 1)
 					msg(color(a), '[STOPWATCH] ', color('white'), 'Time: ', @time, ' seconds.')
 					console(player().' got a time of '.@time.' at '.sk_current_regions())
 					array_remove(@stopwatch, player())
-					export(@stopwatch)
+					export('stopwatch', @stopwatch)
 				),
 			, 'CONNECT4',
 				switch(@signtext[2],
@@ -296,37 +244,6 @@ bind('sign_changed', null, null, @event,
 	}
 )
 
-# COIN SHOPS!
-bind('player_interact', null, array('block': 68), @event,
-	@signtext = get_sign_text(@event['location'])
-	if(length(@signtext[3]) > 8 && substr(@signtext[3], 0, 3) == color('yellow').'-') { #Coin reward signs
-		@cost = reg_match('.*\\-(\\d{1,3})\\sCoins', @signtext[3])
-		@chestloc = array(@event['location'][0], @event['location'][1] - 1, @event['location'][2], @event['location'][3])
-		@count = _get_inventory_count(@chestloc, 'all')
-		if(@event['action'] == 'left_click_block') {
-			msg(color('yellow').'[Coin Shop] '.color(r).@count.' item(s) left. Your coins: '.if(acc_balance(player()) < @cost[1], color('red'), color('green')).round(acc_balance(player())))
-		} else { #right_click_block
-			if(array_contains_ic(array('JewManGroup', 'XxThe_JewishxX'), player())) { 
-				die('You are not allowed to use coins due to cheating.')
-			}
-			if(@count < 1, die(color('yellow').'[Coin Shop] '.color(r).'There are no items left.'))
-			if(acc_balance(player()) < @cost[1], die(color('yellow').'[Coin Shop] '.color(r).'You only have '.color('red').round(acc_balance(player())).color(r).' left.'))
-			for(@i = 0, @i < get_inventory_size(@chestloc), @i++,
-				if(get_inventory_item(@chestloc, @i) != null) {
-					if(_pgive_item(player(), get_inventory_item(@chestloc, @i)) == true) {
-						set_inventory_item(@chestloc, @i, null)
-						acc_subtract(player(), @cost[1])
-						msg(color('yellow').'[Coin Shop] '.color(r).'Transaction successful. Your coins: '.round(acc_balance(player())).' (-'.@cost[1].')')
-						break()
-					} else {
-						msg(color('yellow').'[Coin Shop] '.color(r).'You have no room in your inventory.')
-					}
-				}
-			)
-		}
-	}
-)
-
 # Sponge splitting
 bind('block_break', null, array('type': 19), @event,
 	if(rand(16) < 1, drop_item(@event['location'], array('type': 19)))
@@ -358,10 +275,6 @@ bind('inventory_click', null, array('slottype': 'CONTAINER'), @event,
 
 bind('player_interact', null, array('block': 122), @e,
 	if(pmode() != 'CREATIVE' && (pworld() == 'custom' || pworld() == 'dev'), cancel())
-)
-
-bind('player_interact', null, array('item': 368, 'button': 'right'), @e,
-	if(pworld() == 'custom', cancel())
 )
 
 bind('entity_explode', null, null, @e,
