@@ -81,7 +81,7 @@ proc(_pgive_item, @player, @item,
 # Removes all DROPPED_ITEM entities from region.
 # Since this loads entities by chunks it has a loose entity selection
 proc(_remove_region_items, @region,
-  if(!sk_region_exists(@region)) {
+  if(!sk_region_exists(pworld(), @region)) {
     console('Can\'t remove dropped items because region doesn\'t exist: '.@region)
     return(false)
   }
@@ -104,6 +104,29 @@ proc(_remove_region_items, @region,
   return(true)
 )
 
+proc(_remove_region_mobs, @region, @mobtype = null,
+  if(!sk_region_exists(pworld(), @region)) {
+    console('Can\'t remove mobs because region doesn\'t exist: '.@region)
+    return(false)
+  }
+  @loc = sk_region_info(@region, pworld())[0]
+  if(array_size(@loc) > 2) {
+    console('Can\'t remove mobs because region isn\'t a cuboid: '.@region)
+    return(false)
+  }
+  for(@x = @loc[1][0], @x < (@loc[0][0] + 15), inc(@x, 16),
+    if(@x > @loc[0][0], @x = @loc[0][0])
+    for(@z = @loc[1][2], @z < (@loc[0][2] + 15), inc(@z, 16),
+      if(@z > @loc[0][2], @z = @loc[0][2])
+      foreach(all_entities(array(@x, 64, @z, pworld())), @entity,
+        if((!@mobtype && entity_type(@entity) != 'PLAYER') || entity_type(@entity) == @mobtype) {
+          entity_remove(@entity)
+        }
+      )
+    )
+  )
+  return(true)
+)
 
 # Remove all potion effects from a player
 proc(_remove_peffects, @player,
