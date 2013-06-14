@@ -120,8 +120,8 @@
 	if(array_contains(@blockedworlds, pworld()), die('You cannot teleport in this galaxy'))
 	if(array_contains(@blockedworlds, pworld($player)), die('That player is out of reach.'))
 	@requests = import('requests')
-	tmsg(@player, color(b).player().' has requested to join you. /accept')
-	msg(color(b).'Request to join sent to '.@player.'.')
+	tmsg(@player, color('b').player().' has requested to join you. /accept')
+	msg(color('b').'Request to join sent to '.@player.'.')
 	@requests[@player] = array('join', player())
 	export('requests', @requests)
 <<<
@@ -132,8 +132,8 @@
 	if(array_contains(@blockedworlds, pworld()), die('You cannot teleport in this galaxy'))
 	if(array_contains(@blockedworlds, pworld($player)), die('That player is out of reach.'))
 	@requests = import('requests')
-	tmsg(@player, color(b).player().' has requested that you join them. /accept')
-	msg(color(b).'Invitation sent to '.@player.'.')
+	tmsg(@player, color('b').player().' has requested that you join them. /accept')
+	msg(color('b').'Invitation sent to '.@player.'.')
 	@requests[@player] = array('invite', player())
 	export('requests', @requests)
 <<<
@@ -146,12 +146,12 @@
 	if(array_contains(@blockedworlds, pworld(@requests[player()][1])), die('That player is out of reach.'))
 	if(!ponline(@requests[player()][1]), die('That player is no longer online.'))
 	if(@requests[player()][0] == 'invite') {
-		msg(color(b).'Teleporting to '.@requests[player()][1].' in 3 seconds...')
-		tmsg(@requests[player()][1], color(b).'Teleporting '.player().' in 3 seconds...')
+		msg(color('b').'Teleporting to '.@requests[player()][1].' in 3 seconds...')
+		tmsg(@requests[player()][1], color('b').'Teleporting '.player().' in 3 seconds...')
 		_warmuptp(3.7, player(), ploc(@requests[player()][1]))
 	} else {
-		msg(color(b).'Teleporting '.@requests[player()][1].' in 3 seconds...')
-		tmsg(@requests[player()][1], color(b).'Teleporting to '.player().' in 3 seconds...')
+		msg(color('b').'Teleporting '.@requests[player()][1].' in 3 seconds...')
+		tmsg(@requests[player()][1], color('b').'Teleporting to '.player().' in 3 seconds...')
 		_warmuptp(3.7, @requests[player()][1], ploc())
 	}
 	array_remove(@requests, player())
@@ -168,6 +168,16 @@
 
 
 *:/goto $player = >>>
-	if(!has_permission('group.moderators'), die('You do not have permission to use this command.'))
+	if(!has_permission('group.moderators'), die('You do not have permission.'))
 	try(set_ploc(player(), ploc($player)), die('Unknown player.'))
+<<<
+
+*:/bring $player = >>>
+	if(!has_permission('group.moderators'), die('You do not have permission.'))
+	try(set_ploc($player, ploc()), die('Unknown player.'))
+<<<
+
+*:/put $player = >>>
+	if(!has_permission('group.moderators'), die('You do not have permission.'))
+	try(set_ploc($player, pcursor()), die('Unknown player.'))
 <<<
