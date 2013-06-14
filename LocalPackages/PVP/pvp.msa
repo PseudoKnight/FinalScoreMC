@@ -23,11 +23,18 @@
 			}
 		}
 		_worldmsg('custom', color('gray').'[PVP] '.color('r').player().' has joined '.$id.'. ('.array_size(@pvp['players']).')')
+		console(player().' joined '.$id)
 		export('pvp'.$id, @pvp)
 		if((array_index_exists(@arena, 'max') && array_size(@pvp['players']) >= @arena['max'])
 		|| array_size(@pvp['players']) == array_size(all_players())) {
 			call_alias('/pvp start '.$id)
 		}
+		
+	, 'debug',
+		@id = to_lower($id)
+		@pvp = import('pvp'.@id)
+		foreach(@pvp, @key, @value)
+		msg(@key.': '.color('gray').@value)
 
 	, 'warp',
 		@arena = get_value('arena.'.$id)
@@ -55,6 +62,7 @@
 		@pvp['arena'] = get_value('arena.'.@id)
 		if(!@pvp['arena'], die('Can\'t find that arena.'))
 		
+		if(pworld() != 'custom', die('You can only run this in Frog Park.'))
 
 		# CHECK ARENA SETTINGS
 		if(!array_index_exists(@pvp['arena'], 'lobby'), die('No lobby defined for arena.'))
@@ -65,7 +73,6 @@
 		if(!array_index_exists(@pvp['arena'], 'mode'), @pvp['arena']['mode'] = 'dm')
 		if(!array_index_exists(@pvp['arena'], 'ff'), @pvp['arena']['ff'] = true)
 		if(!array_index_exists(@pvp['arena'], 'flags'), @pvp['arena']['flags'] = array())
-		if(!array_index_exists(@pvp['arena'], 'teamratio'), @pvp['arena']['teamratio'] = array(4, 1))
 		if(!array_index_exists(@pvp['arena'], 'team')) {
 			@pvp['arena']['team'] = array(
 				array('name': 'Red', 'color': 'c'), 
@@ -87,17 +94,8 @@
 			}
 		)
 		if(array_size(@pvp['players']) < @pvp['arena']['min'], die('There aren\'t enough players. ('.array_size(@pvp['players']).')'))
-		if(array_contains(array('ctf', 'tdm'), @pvp['arena']['mode']) && array_size(@pvp['team'][0]['players']) != array_size(@pvp['team'][1]['players']) && !array_contains(pgroup(), 'builders'), die('Teams are not even. ('.array_size(@pvp['players']).')'))
 		if((@pvp['cooldown'] + 15000) > time() && !array_contains(pgroup(), 'builders')) {
-			@regioncount = 0
-			foreach(all_players(), @player,
-				if(array_contains(sk_current_regions(@player), @pvp['arena']['broadcast'])) {
-					@regioncount++
-				}
-			)
-			if(array_size(@pvp['players']) < @regioncount) {
-				die('Arena still on a 15 second cooldown.')
-			}
+			die('Arena still on a 15 second cooldown.')
 		}
 		
 		if(array_contains(get_scoreboards(), @id), remove_scoreboard(@id))
@@ -165,7 +163,7 @@
 		set_timeout(3000, closure(
 			include('pvp.ms')
 			if(array_index_exists(@pvp['arena'], 'classes'), include('class.ms'))
-			_start_round($id)
+			_start_round(@id)
 		))
 
 	,

@@ -36,9 +36,10 @@ proc('_start_round', @id,
 
 	@c = array(0, 0) # for selecting initial spawn locations
 	foreach(array_keys(@pvp['players']), @player,
+		if(!ponline(@player), continue())
 		queue_delay(50, @id)
 		queue_push(closure(
-		if(!ponline(@player), continue())
+		@pvp = import('pvp'.@id)
 		
 		switch(@pvp['arena']['mode']
 		, 'koth',
@@ -83,6 +84,7 @@ proc('_start_round', @id,
 				set_peffect(@player, @effect, @data['strength'], @data['length'])
 			)
 		}
+		export(@pvp, 'pvp'.@id)
 		), @id)
 	)
 
@@ -528,6 +530,7 @@ proc('_start_round', @id,
 			foreach(@pvp['arena']['rsinputwin'], @team, @torch,
 				if(get_block_at(@torch) == '75:5') {
 					_end_match(@id, @pvp['team'][@team]['players'])
+					die()
 				}
 			)
 		}
