@@ -530,6 +530,12 @@
 	)
 <<<
 
+/endercrystal = >>>
+	@loc = _relative(pcursor(), 'up')
+	set_block_at(@loc, '7:0')
+	spawn_entity('ENDER_CRYSTAL', 1, array(@loc[0] + 0.5, @loc[1], @loc[2] + 0.5, @loc[3]))
+<<<
+
 # COIN COMMANDS #
 
 *:/weather $type = >>>
