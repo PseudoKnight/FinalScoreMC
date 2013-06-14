@@ -7,7 +7,6 @@ proc('_cluck_defaults',
 	'player': '',
 	'active': 0, # if round is in progress
 	'score': 0, # cumulative hit chickens 
-	'lastspawn': 0, # timestamp for last chicken spawned
 	'sound': array(
 		'gameover': array(-563, 55, -323), 
 		'winround': array(-563, 58, -323), 
@@ -39,15 +38,14 @@ proc('_cluck_startround',
 			set_plevel(@cluck['score'])
 			array_remove_values(@cluck['chickens'], @event['id'])
 			export('cluck', @cluck)
-			if(@cluck['count'] < 1 && array_size(@cluck['chickens']) < 1) {
-				_cluck_endround()
-			}
 		}
 	)
 
 	set_timeout(100, closure(set_block_at(@cluck['sound']['startround'], '69:5')))
 	export('cluck', @cluck)
-	_cluck_spawn()
+	set_timeout(1000, closure(
+		_cluck_spawn()
+	))
 )
 
 proc('_cluck_spawn', 
@@ -55,11 +53,41 @@ proc('_cluck_spawn',
 	queue_push(closure(
 		@cluck = import('cluck')
 		# Let's make sure the player isn't cheating, but we'll just reset the round
-		if(!ponline(@cluck['player']) || !array_contains(sk_current_regions(@cluck['player']), 'cluck0')) {
-			if(ponline(@cluck['player']) && pworld(@cluck['player']) == 'custom') {
+		if(ponline(@cluck['player']) && array_contains(sk_current_regions(@cluck['player']), 'cluck0')) {
+			# Let's check if some other player is where they shouldn't be
+			foreach(all_players(), @player,
+				if(pworld(@player) == 'custom' && array_contains(sk_current_regions(@player), 'cluckdeny0')) {
+					set_ploc(@player, array(-544,62, -367, 'custom'))
+					tmsg(@player, 'Don\'t get in player\'s way.')
+				}
+			)
+			# spawn ALL the chickens!
+			if(@cluck['count'] > 0) {
+				@loc = array(@cluck['spawnloc'][0][0], @cluck['spawnloc'][0][1], @cluck['spawnloc'][0][2] + rand(9), 'custom')
+				@entityid = spawn_mob('chicken', 1, @loc)[0]
+				if(rand(10) < 1) {
+					set_mob_age(@entityid, -24000)
+					play_sound(@loc, array('sound': 'CHICKEN_EGG_POP', 'pitch': 2))
+				} else {
+					play_sound(@loc, array('sound': 'CHICKEN_EGG_POP'))
+				}
+				set_entity_velocity(@entityid, array(0, 1.1, (rand(100) - (12.5 * abs(@cluck['spawnloc'][0][2] - @loc[2]))) * (@cluck['round'] / 1000)))
+				set_entity_health(@entityid, 25)
+				array_push(@cluck['chickens'], @entityid)
+				@cluck['count'] = @cluck['count'] - 1
+				export('cluck', @cluck)
+				_cluck_spawn()
+			} else {
+				export('cluck', @cluck)
+				set_timeout(5000, closure(
+					_cluck_endround()
+				))
+			}
+		} else {
+			if(ponline(@cluck['player']) && pworld(@cluck['player']) == 'custom',
 				_clear_pinv()
 				set_plevel(@cluck['player'], 0)
-			}
+			)
 			unbind('cluckchicken')
 			foreach(@cluck['chickens'], @chicken,
 				if(entity_type(@chicken), entity_remove(@chicken))
@@ -67,37 +95,7 @@ proc('_cluck_spawn',
 			@cluck = _cluck_defaults()
 			export('cluck', @cluck)
 			queue_clear('cluck')
-			die('You stepped off the shooting pad. Cluck is reset.')
-		}
-		# Let's check if some other player is where they shouldn't be
-		foreach(all_players(), @player,
-			if(pworld(@player) == 'custom' && array_contains(sk_current_regions(@player), 'cluckdeny0')) {
-				set_ploc(@player, array(-544,62, -367, 'custom'))
-				tmsg(@player, 'Don\'t get in player\'s way.')
-			}
-		)
-		# spawn ALL the chickens!
-		if(@cluck['count'] > 0) {
-			@loc = array(@cluck['spawnloc'][0][0], @cluck['spawnloc'][0][1], @cluck['spawnloc'][0][2] + rand(9), 'custom')
-			@entityid = spawn_mob('chicken', 1, @loc)[0]
-			if(rand(10) < 1) {
-				set_mob_age(@entityid, -24000)
-				play_sound(@loc, array('sound': 'CHICKEN_EGG_POP', 'pitch': 2))
-			} else {
-				play_sound(@loc, array('sound': 'CHICKEN_EGG_POP'))
-			}
-			set_entity_velocity(@entityid, array(0, 1.1, (rand(100) - (12.5 * abs(@cluck['spawnloc'][0][2] - @loc[2]))) * (@cluck['round'] / 1000)))
-			set_entity_health(@entityid, 25)
-			array_push(@cluck['chickens'], @entityid)
-			@cluck['count'] = @cluck['count'] - 1
-			@cluck['lastspawn'] = time()
-			export('cluck', @cluck)
-			_cluck_spawn()
-		} else {
-			export('cluck', @cluck)
-			set_timeout(5000, closure(
-				_cluck_endround()
-			))
+			msg('You stepped off the shooting pad. Cluck is reset.')
 		}
 	), 'cluck')
 )
