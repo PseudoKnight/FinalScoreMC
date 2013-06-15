@@ -4,16 +4,16 @@
 
 # CLICKING SIGNS!
 bind('player_interact', null, array('block': 68), @event,
-	assign(@signtext, get_sign_text(@event['location']))
+	@signtext = get_sign_text(@event['location'])
 	if(length(@signtext[0]) > 2 && @signtext[0][0] == '['
 	&& (length(@signtext[1]) > 7 && substr(@signtext[1], 0, 3) == 'Buy'
 	|| length(@signtext[2]) > 8 && substr(@signtext[2], 0, 4) == 'Sell')) {
 		set_timeout(50, closure(
-			assign(@itemid, _shop_item(@signtext[0]))
-			assign(@shops, get_value('shop.'.@itemid))
+			@itemid = _shop_item(@signtext[0])
+			@shops = get_value('shop.'.@itemid)
 			if(!@shops, @shops = array(array(), array()))
 			if(length(@signtext[1]) > 7 && substr(@signtext[1], 0, 3) == 'Buy') {
-				assign(@count, _get_inventory_count(array(@event['location'][0], @event['location'][1] - 1, @event['location'][2], @event['location'][3]), reg_replace('\\.', ':', @itemid)))
+				@count = _get_inventory_count(array(@event['location'][0], @event['location'][1] - 1, @event['location'][2], @event['location'][3]), reg_replace('\\.', ':', @itemid))
     
 				if(!is_array(@shops[0]), console('This shop list is not an array: '.@shops))
 				foreachelse(array_keys(@shops[0]), @i,
@@ -21,7 +21,7 @@ bind('player_interact', null, array('block': 68), @event,
 						if(@count < parse_args(@signtext[1])[1]) {
 							array_remove(@shops[0], @i)
 						} else {
-							array_set(@shops[0], @i, array('location': @event['location'], 'price': substr(@signtext[1], 4), 'owner': @signtext[3], 'stock': @count))
+							@shops[0][@i] = array('location': @event['location'], 'price': substr(@signtext[1], 4), 'owner': @signtext[3], 'stock': @count)
 						}
 						break()
 					)
@@ -48,7 +48,7 @@ bind('player_interact', null, array('block': 68), @event,
 					@currency = '388'
 				, die()
 				)
-				assign(@count, _get_inventory_count(array(@event['location'][0], @event['location'][1] - 1, @event['location'][2], @event['location'][3]), @currency.':0'))
+				@count = _get_inventory_count(array(@event['location'][0], @event['location'][1] - 1, @event['location'][2], @event['location'][3]), @currency.':0')
 				@cost = parse_args(@signtext[2])[3]
 				try(
 				foreachelse(array_keys(@shops[1]), @i,
@@ -56,7 +56,7 @@ bind('player_interact', null, array('block': 68), @event,
 						if(@count < substr(@cost, 0, length(@cost) - 1)) {
 							array_remove(@shops[1], @i)
 						} else {
-							array_set(@shops[1], @i, array('location': @event['location'], 'price': substr(@signtext[2], 5), 'owner': @signtext[3], 'stock': @count))
+							@shops[1][@i] = array('location': @event['location'], 'price': substr(@signtext[2], 5), 'owner': @signtext[3], 'stock': @count)
 						}
 						break()
 					)
@@ -86,13 +86,13 @@ bind('player_interact', null, array('block': 68), @event,
 
 # Breaking signs
 bind('block_break', null, array('type': 68), @event,
-	assign(@location, array(@event['block']['X'], @event['block']['Y'], @event['block']['Z'], @event['block']['world']))
-	assign(@signtext, get_sign_text(@location))
+	@location = array(@event['block']['X'], @event['block']['Y'], @event['block']['Z'], @event['block']['world'])
+	@signtext = get_sign_text(@location)
 	if(length(@signtext[0]) < 3 || @signtext[0][0] != '[', die())
 	if(!(length(@signtext[1]) > 7 && substr(@signtext[1], 0, 3) == 'Buy')
 	&& !(length(@signtext[2]) > 8 && substr(@signtext[2], 0, 4) == 'Sell'), die())
-	assign(@itemid, _shop_item(@signtext[0]))
-	assign(@shops, get_value('shop.'.@itemid))
+	@itemid = _shop_item(@signtext[0])
+	@shops = get_value('shop.'.@itemid)
 	if(!@shops, die())
 	if(length(@signtext[1]) > 7 
 	&& substr(@signtext[1], 0, 3) == 'Buy'
