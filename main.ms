@@ -12,7 +12,7 @@ export('stopwatch', @stopwatch)
 export('ignorelist', @ignorelist)
 
 set_world_time('dev', 700)
-set_interval(9 * 60 * 1000, closure(
+set_interval(8 * 60 * 1000, closure(
 	runas('~console', '/save-all')
 	set_world_time('dev', 700)
 ))
@@ -113,10 +113,13 @@ bind('player_command', null, null, @event,
 )
 
 # Block wither
-bind('player_interact', array('priority': 'high'), array('item': 397), @event,
-	if(pinv(player(), null)['data'] == '1' && !array_contains(array('custom', 'dev', 'outworld_nether', 'outworld', 'outworld_the_end'), pworld())) {
+bind('block_place', null, array('type': 144), @e,
+	if(!array_contains(array('custom', 'dev','outworld_nether', 'outworld', 'outworld_the_end'), pworld())
+	&& get_block_at(_relative(@e['location'], 'down')) == '88:0'
+	&& pinv(player(), null) != null
+	&& pinv(player(), null)['data'] == 1) {
 		cancel()
-		msg(color('yellow').'Wither heads are currently restricted from being placed in this world.')
+		msg(color('yellow').'You can only spawn withers in the outworld.')
 	}
 )
 
@@ -153,15 +156,8 @@ bind('player_interact', null, array('item': 259, 'button': 'right'), @event,
 		))
 	} else {
 		cancel()
-		msg('Flint and steel is restricted, but you can still use it on TNT and nether portals.')
+		msg('Use of flint and steel is restricted here, except on nether portals and TNT.')
 	}
-)
-
-# Block fire charges
-bind('player_interact', null, array('item': 385, 'button': 'right'), @event,
-	if(has_permission('group.regulars'), die())
-	cancel()
-	msg('Flint and steel is restricted, but you can still use it on TNT and nether portals.')
 )
 
 bind('player_interact', null, array('block': 143, 'button': 'right'), @e,
@@ -231,16 +227,15 @@ bind('player_interact', null, array('block': 77, 'button': 'right'), @event,
 	}
 )
 
-# automatically color command signs placed above buttons
-bind('sign_changed', null, null, @event,
-	if(has_permission('group.moderators') 
-    && split(':', get_block_at(@event['location'][0], @event['location'][1] - 1, @event['location'][2], @event['location'][3]))[0] == '77') {
-		if(@event['text'][2] != ''
-		&& reg_count('^\\[\\w+\\]$', @event['text'][1]) == 1) {
-			modify_event('2', color(2).@event['text'][1])
-		} else if(length(@event['text'][1]) > 0 && @event['text'][1][0] == '/' && @event['text'][0] != '') {
-			modify_event('1', color(1).@event['text'][0])
-		}
+# color signs for moderators
+bind('sign_changed', null, null, @e,
+	if(has_permission('group.moderators'))  {
+		modify_event('text', array(
+			0: colorize(@e['text'][0]),
+			1: colorize(@e['text'][1]),
+			2: colorize(@e['text'][2]),
+			3: colorize(@e['text'][3])
+		))
 	}
 )
 
@@ -260,17 +255,6 @@ bind('player_interact', null, array('item': 408), @event,
 bind('inventory_click', null, array('slottype': 'RESULT', 'slotitem': 408), @event,
 	msg(color('red').'Hopper minecarts are currently disabled.')
 	cancel()
-)
-
-#disable flint & steel and fire charges in dispensers for non-regulars
-bind('inventory_click', null, array('slottype': 'CONTAINER'), @event,
-	if(@event['inventorytype'] == 'DISPENSER' 
-	&& !has_permission('group.regulars')
-	&& ((@event['cursoritem'] != null && (@event['cursoritem']['type'] == 259 || @event['cursoritem']['type'] == 385) && @event['rawslot'] < 9)
-	|| (@event['slotitem'] != null && (@event['slotitem']['type'] == 259 || @event['slotitem']['type'] == 385) && @event['shiftclick']))) {
-		cancel()
-		die(color('red').'You cannot place flint & steel or firecharges in dispensers.')
-	}
 )
 
 bind('player_interact', null, array('block': 122), @e,
@@ -295,14 +279,16 @@ bind('vehicle_collide', null, array('type': 'MINECART', 'collisiontype': 'BLOCK'
 bind('player_enter_bed', null, null, @e,
     if(get_world_time() > 13700 && get_world_time() < 22300) {
 		set_world_time(22300)
-    } else {
+		msg(color('aqua').'You made the sun rise.')
+    } else if(get_world_time() < 700 || get_world_time() > 22300) {
 		@time = get_world_time() - 11300
 		@time = 700 - @time
 		if(@time < 0) {
 			@time = @time + 24000
 		}
 		set_world_time(@time)
+		msg(color('aqua').'You made the sun rise.')
     }
-    msg(color('aqua').'You made the sun rise.')
+    
 )
 
