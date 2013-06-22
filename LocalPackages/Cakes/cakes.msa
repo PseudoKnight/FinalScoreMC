@@ -1,7 +1,7 @@
 ### CAKES ###
 
 *:/coins = >>>
-	msg(color('gold').round(acc_balance(player())).' coins')
+	msg(color('gold').round(_acc_balance(player())).' coins')
 <<<
 
 *:/cake [$cmd] [$] = >>>

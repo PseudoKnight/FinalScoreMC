@@ -84,7 +84,7 @@ proc('_start_round', @id,
 				set_peffect(@player, @effect, @data['strength'], @data['length'])
 			)
 		}
-		export(@pvp, 'pvp'.@id)
+		export('pvp'.@id, @pvp)
 		), @id)
 	)
 
@@ -639,7 +639,7 @@ proc('_end_match', @id, @winners,
 
 	foreach(@winners, @player,
 		if(ponline(@player) && @pvp['coins'] >= 1) {
-			acc_add(@player, @pvp['coins'])
+			_acc_add(@player, @pvp['coins'])
 			tmsg(@player, color('gold').'+ '.@pvp['coins'].if(@pvp['coins'] >= 2, ' coins', ' coin'))
 		}
 	)

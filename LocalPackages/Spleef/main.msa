@@ -221,7 +221,7 @@
 						_regionmsg(@cfg['region']['wrapper'], color('a').'[Spleef] '._colorname(@winner).@winner.color(r).' is the winner!')
 						set_ploc(@winner, @cfg['warp']['lobby'])
 						_clear_pinv(@winner)
-						acc_add(@winner, @reward)
+						_acc_add(@winner, @reward)
 						tmsg(@winner, color('a').'[Spleef] '.color('r').@reward.' coins!')
 					} else {
 						_regionmsg(@cfg['region']['wrapper'], color('a').'[Spleef] '.color('r').'No one wins.')

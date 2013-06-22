@@ -119,7 +119,7 @@ proc('_cluck_endround',
 		if(@cluck['score'] > @best) {
 			if(@best > 0, _regionmsg('cluck', color('l').'You beat your personal best of '.@best.'!'))
 			msg(color(6).'+ '.(@cluck['score'] - @best).' coins')
-			acc_add(player(), @cluck['score'] - @best)
+			_acc_add(player(), @cluck['score'] - @best)
 			@scores[player()] = @cluck['score']
 			@top = false
 			for(@i = 0, @i < 10, @i++,
