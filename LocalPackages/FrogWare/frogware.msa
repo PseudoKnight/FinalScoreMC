@@ -7,21 +7,25 @@
 		if(!array_contains(get_scoreboards(), 'fw')) {
 			create_scoreboard('fw')
 			create_objective('score', 'DUMMY', 'fw')
-			create_team('players', 'fw')
+			create_team('losers', 'fw')
+			create_team('winners', 'fw')
 			set_objective_display('score', array('slot': 'SIDEBAR', 'displayname': color('a').color('l').'Get Ready!'), 'fw')
-			set_team_options('players', array('friendlyinvisibles': false), 'fw')
+			set_team_display('winners', array('prefix': color('a')), 'fw')
+			set_team_display('losers', array('prefix': color('f')), 'fw')
 		}
 		set_pscoreboard(player(), 'fw')
-		team_add_player('players', player(), 'fw')
+		team_add_player('losers', player(), 'fw')
 		set_ploc(_fw_loc(-1))
 		if(pmode() == 'CREATIVE', set_pmode('SURVIVAL'))
 		
 	, 'start',
 		if(get_pscoreboard(player()) != 'fw', die('You haven\'t joined first.'))
-		foreach(get_teams('fw')[0]['players'], @p,
-			set_pscore('score', @p, 0, 'fw')
-		)
 		include('frogware.ms')
+		foreach(all_players(), @p,
+			if(_fw_player(@p)) {
+				set_pscore('score', @p, 0, 'fw')
+			}
+		)
 		_fw_startgame()
 	
 	, 'forcestop',
