@@ -24,20 +24,25 @@ proc(_clear_pinv, assign(@player, player()),
 
 proc(_acc_add, @player, @amount,
 	@pdata = get_value('player.'.to_lower(@player))
+	if(!@pdata, return(false))
 	if(!array_index_exists(@pdata, 'coins'), @pdata['coins'] = 100)
 	@pdata['coins'] = @pdata['coins'] + @amount
 	store_value('player.'.to_lower(@player), @pdata)
+	return(true)
 )
 
 proc(_acc_subtract, @player, @amount,
 	@pdata = get_value('player.'.to_lower(@player))
+	if(!@pdata, return(false))
 	if(!array_index_exists(@pdata, 'coins'), @pdata['coins'] = 100)
 	@pdata['coins'] = @pdata['coins'] - @amount
 	store_value('player.'.to_lower(@player), @pdata)
+	return(true)
 )
 
 proc(_acc_balance, @player,
 	@pdata = get_value('player.'.to_lower(@player))
+	if(!@pdata, return(null))
 	if(!array_index_exists(@pdata, 'coins')) {
 		return(100)
 	} else {
@@ -274,6 +279,10 @@ proc(_get_inventory_count, @loc, @item,
 #Returns the distance between two blocks, or any other 3d points, for that matter
 proc(_3d_distance, @arr1, @arr2,
   return(floor(sqrt(((@arr2[0] - @arr1[0]) ** 2) + ((@arr2[1] - @arr1[1]) ** 2) + ((@arr2[2] - @arr1[2]) ** 2))))
+)
+
+proc(_2d_distance, @arr1, @arr2,
+  return(floor(sqrt(((@arr2[0] - @arr1[0]) ** 2) + ((@arr2[2] - @arr1[2]) ** 2))))
 )
 
 proc(_horizontal_distance, @loc1, @loc2,

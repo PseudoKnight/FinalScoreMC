@@ -12,7 +12,7 @@ export('stopwatch', @stopwatch)
 export('ignorelist', @ignorelist)
 
 set_world_time('dev', 700)
-set_interval(8 * 60 * 1000, closure(
+set_interval(6 * 60 * 1000, closure(
 	runas('~console', '/save-all')
 	set_world_time('dev', 700)
 ))
@@ -182,12 +182,12 @@ bind('player_interact', null, array('block': 77, 'button': 'right'), @event,
 					if(!@stopwatch, @stopwatch = associative_array())
 					@stopwatch[player()] = time()
 					export('stopwatch', @stopwatch)
-					msg(color(a), '[STOPWATCH] ', color('white'), 'GO!'),
+					msg(color('a').'[STOPWATCH] '.color('white').'GO!'),
 				'Stop',
 					@stopwatch = import('stopwatch')
 					if(!array_index_exists(@stopwatch, player()), die('Did you start the stopwatch?'))
 					@time = round(divide(subtract(time(), @stopwatch[player()]), 1000), 1)
-					msg(color(a), '[STOPWATCH] ', color('white'), 'Time: ', @time, ' seconds.')
+					msg(color('a').'[STOPWATCH] '.color('white').'Time: '.@time.' seconds.')
 					console(player().' got a time of '.@time.' at '.sk_current_regions())
 					array_remove(@stopwatch, player())
 					export('stopwatch', @stopwatch)
