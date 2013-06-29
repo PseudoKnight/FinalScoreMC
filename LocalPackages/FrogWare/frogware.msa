@@ -24,12 +24,18 @@
 		foreach(all_players(), @p,
 			if(_fw_player(@p)) {
 				set_pscore('score', @p, 0, 'fw')
+				set_phunger(@p, 20)
+				set_psaturation(@p, 5)
+				set_phealth(@p, 20)
+				_clear_pinv(@p)
 			}
 		)
 		_fw_startgame()
 	
 	, 'forcestop',
 		queue_clear('fw')
+		queue_clear('fw2')
+		queue_clear('fw3')
 		remove_scoreboard('fw')
 		unbind('fwdamage')
 	
