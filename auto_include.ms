@@ -123,7 +123,7 @@ proc(_remove_region_items, @region,
     for(@z = @loc[1][2], @z < (@loc[0][2] + 15), inc(@z, 16),
       if(@z > @loc[0][2], @z = @loc[0][2])
       foreach(all_entities(array(@x, 64, @z, pworld())), @entity,
-        if(entity_type(@entity) == 'DROPPED_ITEM') {
+        if(entity_type(@entity) == 'DROPPED_ITEM' || entity_type(@entity) == 'EXPERIENCE_ORB') {
           entity_remove(@entity)
         }
       )
@@ -217,24 +217,6 @@ proc(_worldid, @world,
   } else {
     return(to_lower(@world))
   }
-)
-
-#Warms up a tp with effects and configurable timer
-proc(_warmuptp, @length, @player, @loc, assign(@yaw, null), assign(@pitch, null),
-  set_peffect(@player, 9, 1, 7)
-  play_sound(ploc(@player), array('sound': 'PORTAL_TRIGGER', 'volume': 1, 'pitch': 1))
-  set_timeout(round(@length * 1000), closure(
-    if(!ponline(@player), die())
-    make_effect(ploc(@player), 'GHAST_SHOOT', 20)
-    make_effect(ploc(@player), 'MOBSPAWNER_FLAMES', 20)
-    if(@yaw != null && @pitch != null) {
-      pfacing(@player, @yaw, @pitch)
-    }
-    set_ploc(@player, @loc)
-    set_peffect(@player, 15, 1, 1)
-    make_effect(@loc, 'GHAST_SHOOT', 20)
-    make_effect(@loc, 'MOBSPAWNER_FLAMES', 20)
-  ))
 )
 
 #Messsages every player within the specified region
