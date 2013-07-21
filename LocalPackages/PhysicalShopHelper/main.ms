@@ -49,7 +49,10 @@ bind('player_interact', null, array('block': 68), @event,
 				, die()
 				)
 				@count = _get_inventory_count(array(@event['location'][0], @event['location'][1] - 1, @event['location'][2], @event['location'][3]), @currency.':0')
-				@cost = parse_args(@signtext[2])[3]
+				try(@cost = parse_args(@signtext[2])[3],
+					console('"Sell" line is incorrect at '.@event['location'])
+					die()
+				)
 				try(
 				foreachelse(array_keys(@shops[1]), @i,
 					if(@shops[1][@i]['location'] == @event['location'],
