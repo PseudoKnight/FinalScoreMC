@@ -1,4 +1,5 @@
 /safereload [$force]= >>>
+	die('Recompiling is disabled until a CommandHelper bug is fixed.')
 	if(!$force) {
 		@currentspleef = import('currentspleef')
 		if(@currentspleef != false && array_size(@currentspleef) >= 1, die('Spleef in progress.'))
@@ -24,6 +25,25 @@
 		msg('Recompiling...')
 		run('/reloadaliases')
 	))
+<<<
+
+*:/kill $ = >>>
+	@player = player()
+	if($) {
+		@message = parse_args($)
+		if(ponline(@message[0])) {
+			if(!has_permission('group.moderators'), die('You do not have permission.'))
+			@player = @message[0]
+			@message = array_implode(@message[cslice(1, array_size(@message) - 1)])
+		} else {
+			@message = $
+		}
+		bind('player_death', null, array('player': @player), @e, @message = @message,
+			modify_event('death_message', player().' '.@message)
+			unbind()
+		)
+	}
+	set_phealth(@player, 0)
 <<<
 
 *:/matchip $ip = >>>
@@ -134,9 +154,9 @@
 	if(@message, @pdata['ban']['message'] = @message)
 	if(player() != '~console', @pdata['ban']['by'] = player())
 	store_value('player.'.to_lower($player), @pdata)
-	if(ponline($player), kick($player, if(@message, @message, 'Banned. Appeal at FinalScoreMC.com')))
+	if(ponline($player), pkick($player, if(@message, @message, 'Banned. Appeal at FinalScoreMC.com')))
 	msg($player.' is now banned.')
-	console(player().' banned '.$player)
+	console(player().' banned '.$player.'.'.if(@message, ' (Reason: "'.@message.'")'))
 <<<
 
 *:/unban [$player] = >>>
@@ -149,6 +169,14 @@
 	store_value('player.'.to_lower($player), @pdata)
 	msg($player.' is now unbanned.')
 	console(player().' unbanned '.$player)
+<<<
+
+*:/kick [$player] [$='Kicked.'] = >>>
+	if(!$player, die('Usage: /kick <player> <reason>'))
+	if(!has_permission('group.moderators'), die('You do not have permission.'))
+	try(@player = player($player), die('Unknown player.'))
+	pkick(@player, $)
+	console(player().' kicked '.@player.'. (Reason: "'.$.'")')
 <<<
 
 /homeless $player = >>>
@@ -398,7 +426,7 @@
 			floor(@minutes).' minutes ago'
 		))
 		if(array_index_exists(@pdata, 'homeless'), msg(color('gray').'Homeless: '.color('r').'TRUE'))
-		if(@pdata, msg(color('gray').'IPs: '.color('r').array_implode(@pdata['ips'], ' ')))
+		if(array_index_exists(@pdata, 'ips'), msg(color('gray').'IPs: '.color('r').array_implode(@pdata['ips'], ' ')))
 	)
 	if(array_index_exists(@pdata, 'approval'), msg(color('gray').'Approved by: '.color('r').@pdata['approval']))
 	if(array_index_exists(@pdata, 'homes'), msg(color('gray').'Homes: '.color('r').array_implode(array_keys(@pdata['homes']), ', ')))
@@ -552,6 +580,7 @@
 	if((!has_permission('group.builders') || !array_contains(array('custom', 'dev'), pworld())) && !has_permission('group.moderators'), die('You do not have permission to use this command.'))
 	if(length($) > 30, die('The name can only be 30 characters long.'))
 	@inv = pinv(player(), null)
+	if(is_null(@inv['meta']), @inv['meta'] = array())
 	@inv['meta']['display'] = colorize($)
 	set_pinv(array(null: @inv))
 <<<
@@ -560,6 +589,7 @@
 	if((!has_permission('group.builders') || !array_contains(array('custom', 'dev'), pworld())) && !has_permission('group.moderators'), die('You do not have permission to use this command.'))
 	if(length($) > 30, die('The name can only be 30 characters long.'))
 	@inv = pinv(player(), null)
+	if(is_null(@inv['meta']), @inv['meta'] = array())
 	@inv['meta']['lore'][$line - 1] = colorize($)
 	set_pinv(array(null: @inv))
 <<<	
