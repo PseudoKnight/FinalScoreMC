@@ -1,9 +1,9 @@
 /s $name $ = >>>
-	broadcast(color(8).simple_date('h:mm').color('gray').' [console] '.color('aqua').$name.color('gray').': '.color('r').$) 
+	broadcast(color('8').simple_date('h:mm').color('gray').' [console] '.color('aqua').$name.color('gray').': '.color('r').$) 
 <<<
 
 *:/say $ = >>>
-	broadcast(color(8).simple_date('h:mm').' '.if(player() != '~console' && array_contains(pgroup(), 'donors'), color('green').'\u2666 ')._colorname().player().color('gray').': '.color('r').$) 
+	broadcast(color('8').simple_date('h:mm').' '.if(player() != '~console' && array_contains(pgroup(), 'donors'), color('green').'\u2666 ')._colorname().player().color('gray').': '.color('r').$) 
 <<<
 
 /sayas $from $to $ = >>>
@@ -76,27 +76,13 @@
 <<<
 
 # MESSAGING #
-*:/msg $player $ = >>>
-	try(@player = player($player), @ex, die('Player not found.'))
-	tmsg(@player, color(7).'(From '.player().'): '.color(r).colorize($))
-	play_sound(ploc(@player), array('sound': 'CHICKEN_EGG_POP', 'pitch': 2), @player)
-	msg(color(7).'(To '.@player.'): '.color(r).colorize($))
-	@conv = import('conv')
-	@conv[@player] = player()
-	@conv[player()] = @player
-	export('conv', @conv)
-<<<
-
-*:/tell $player $ = call_alias('/msg' $player $)
-*:/w $player $ = call_alias('/msg' $player $)
+*:/msg $player $ = _pmsg($player, $)
+*:/tell $player $ = _pmsg($player, $)
+*:/w $player $ = _pmsg($player, $)
 
 *:/r $ = >>>
 	@conv = import('conv')
 	try(@player = @conv[player()], die('You do not have any current conversations.'))
-	if(!ponline(@player), die('That player is no longer online.'))
-	tmsg(@player, color(7).'(From '.player().'): '.color(r).colorize($))
-	play_sound(ploc(@player), array('sound': 'CHICKEN_EGG_POP', 'pitch': 2), @player)
-	msg(color(7).'(To '.@player.'): '.color(r).colorize($))
-	@conv[@player] = player()
-	export('conv', @conv)
+	if(@player != '~console' && !ponline(@player), die('That player is no longer online.'))
+	_pmsg(@player, $)
 <<<

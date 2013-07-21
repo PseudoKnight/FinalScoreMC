@@ -5,25 +5,15 @@ bind('player_chat', null, null, @event,
 		die()
 	}
 	if(@event['message'][0] == '@') {
+		cancel()
 		@p = substr(parse_args(@event['message'])[0], 1)
-		try(@player = player(@p),
-			cancel()
-			die('Player not found.')
-		)
 		if((length(@p) + 2) >= length(@event['message'])) {
 			cancel()
 			die()
 		}
 		@message = substr(@event['message'], length(@p) + 2)
-		tmsg(@player, color(7).'(From '.player().'): '.color(r).colorize(@message))
-		play_sound(ploc(@player), array('sound': 'CHICKEN_EGG_POP', 'pitch': 2), @player)
-		msg(color(7).'(To '.@player.'): '.color(r).colorize(@message))
-		console(player().' @ '.@player.': '.@message, false)
-		@conv = import('conv')
-		@conv[@player] = player()
-		@conv[player()] = @player
-		export('conv', @conv)
-		cancel()
+		_pmsg(@p, @message)
+		console(player().' @ '.@p.': '.@message, false)
 		die()
 	}
 	@ignorelist = import('ignorelist')
