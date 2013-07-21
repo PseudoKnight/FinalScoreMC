@@ -12,7 +12,7 @@ export('stopwatch', @stopwatch)
 export('ignorelist', @ignorelist)
 
 set_world_time('dev', 700)
-set_interval(6 * 60 * 1000, closure(
+set_interval(8 * 60 * 1000, closure(
 	runas('~console', '/save-all')
 	set_world_time('dev', 700)
 ))
@@ -40,6 +40,7 @@ bind('player_login', null, null, @e,
 		}
 	)
 	if(get_server_info(10)) {
+		if(!array_index_exists(@pdata, 'ips'), @pdata['ips'] = array())
 		if(!array_contains(@pdata['ips'], @e['ip'])) {
 			array_push(@pdata['ips'], @e['ip'])
 			if(array_size(@pdata['ips']) > 3) {
@@ -276,11 +277,51 @@ bind('vehicle_collide', null, array('type': 'MINECART', 'collisiontype': 'BLOCK'
 	)
 )
 
+bind('player_interact_entity', null, array('clicked': 'HORSE'), @e,
+	if(get_mob_owner(@e['id'])
+	&& get_mob_owner(@e['id']) != player()
+	&& (!pinv(player(), null)
+	|| (pinv(player(), null)['type'] != 322
+	&& pinv(player(), null)['type'] != 396))) {
+		cancel()
+		msg('This horse is owned by '.get_mob_owner(@e['id']).'.')
+	}
+)
+
+bind('entity_damage', null, array('type': 'HORSE'), @e,
+	if(!get_mob_owner(@e['id']), die())
+	switch(@e['cause']
+	, array('VOID', 'SUFFOCATION', 'DROWNING'),
+		die()
+		
+	, 'ENTITY_ATTACK',
+		if((ponline(@e['damager'])
+		&& get_mob_owner(@e['id']) != @e['damager'])
+		|| (!ponline(@e['damager'])
+		&& !get_entity_rider(@e['id']))) {
+			cancel()
+		}
+		
+	, 'PROJECTILE',
+		if((ponline(@e['shooter'])
+		&& get_mob_owner(@e['id']) != @e['shooter'])
+		|| (!ponline(@e['shooter'])
+		&& !get_entity_rider(@e['id']))) {
+			cancel()
+		}
+		
+	, 
+		if(!get_entity_rider(@e['id'])) {
+			cancel()
+		}
+	)
+)
+
 bind('player_enter_bed', null, null, @e,
     if(get_world_time() > 13700 && get_world_time() < 22300) {
 		set_world_time(22300)
 		msg(color('aqua').'You made the sun rise.')
-    } else if(get_world_time() < 700 || get_world_time() > 22300) {
+    } else if(get_world_time() < 13700 && get_world_time() > 11300) {
 		@time = get_world_time() - 11300
 		@time = 700 - @time
 		if(@time < 0) {
