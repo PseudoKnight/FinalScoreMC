@@ -7,6 +7,8 @@ bind('player_interact', null, array('block': 92), @event,
 	cancel()
 	@cakedata = get_value('cakeinfo.'.@id)
 	if(!@cakedata, die('The cake is a lie.'))
+	set_phunger(20.0)
+	set_psaturation(5.0)
 	if(@cakedata['type'] == 'challenge') {
 		foreach(@cakedata['players'], @player, @time,
 			if((@time + (90 * 86400000)) < time()) {

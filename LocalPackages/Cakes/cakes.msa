@@ -61,6 +61,7 @@
 		if(!array_index_exists(@cakes, @id), @cakes[@id] = @loc)
 		@coins = @args[1]
 		if(array_size(@args) == 3, @type = to_lower(@args[2]), @type = 'challenge')
+		if(@type != 'secret' && @type != 'challenge', die(color('red').'You can only have "secret" and "challenge" cake types.'))
 
 		if(has_value('cakeinfo.'.@id)) {
 			@cakedata = get_value('cakeinfo.'.@id)
