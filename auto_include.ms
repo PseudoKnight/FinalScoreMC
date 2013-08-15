@@ -1,17 +1,17 @@
-proc(_relative, @loc, @dir,
+proc(_relative, @loc, @dir, @amount = 1,
   switch(@dir
   , 'up',
-    return(array(@loc[0], @loc[1] + 1, @loc[2], @loc[3]))
+    return(array(@loc[0], @loc[1] + @amount, @loc[2], @loc[3]))
   , 'down',
-    return(array(@loc[0], @loc[1] - 1, @loc[2], @loc[3]))
+    return(array(@loc[0], @loc[1] - @amount, @loc[2], @loc[3]))
   , 'north',
-    return(array(@loc[0], @loc[1], @loc[2] - 1, @loc[3]))
+    return(array(@loc[0], @loc[1], @loc[2] - @amount, @loc[3]))
   , 'south',
-    return(array(@loc[0], @loc[1], @loc[2] + 1, @loc[3]))
+    return(array(@loc[0], @loc[1], @loc[2] + @amount, @loc[3]))
   , 'east',
-    return(array(@loc[0] + 1, @loc[1], @loc[2], @loc[3]))
+    return(array(@loc[0] + @amount, @loc[1], @loc[2], @loc[3]))
   , 'west',
-    return(array(@loc[0] - 1, @loc[1], @loc[2], @loc[3]))
+    return(array(@loc[0] - @amount, @loc[1], @loc[2], @loc[3]))
   , 
     console('Cannot get relative block '.@dir.' from '.@loc.'.')
     return(@loc)
@@ -201,7 +201,7 @@ proc(_colorname, assign(@player, player()),
 
 #returns world alias when given world folder name
 proc(_worldname, @world,
-  @worlds = array('world': 'Alpha', 'world_nether': 'Alpha Nether', 'world3': 'Delta', 'world3_nether': 'Delta Nether', 'world4': 'Gamma', 'world4_nether': 'Gamma Nether', 'world_the_end': 'The End', 'custom': 'Custom', 'dev': 'Dev', 'outworld': 'Outworld')
+  @worlds = array('world': 'Alpha', 'world_nether': 'Alpha Nether', 'world3': 'Delta', 'world3_nether': 'Delta Nether', 'world4': 'Gamma', 'world4_nether': 'Gamma Nether', 'world_the_end': 'The End', 'custom': 'FrogPark', 'dev': 'Dev', 'outworld': 'Outworld')
   if(array_index_exists(@worlds, to_lower(@world))) { 
     return(@worlds[to_lower(@world)])
   } else {
@@ -211,7 +211,7 @@ proc(_worldname, @world,
 
 #returns world folder name when given world alias
 proc(_worldid, @world,
-  @worlds = array('alpha': 'world', 'alphanether': 'world_nether', 'delta': 'world3', 'deltanether': 'world3_nether', 'gamma': 'world4', 'gammanether': 'world4_nether', 'theend': 'world_the_end', 'custom': 'custom', 'dev': 'dev', 'outworld': 'outworld')
+  @worlds = array('alpha': 'world', 'alphanether': 'world_nether', 'delta': 'world3', 'deltanether': 'world3_nether', 'gamma': 'world4', 'gammanether': 'world4_nether', 'theend': 'world_the_end', 'custom': 'custom', 'frogpark': 'custom', 'dev': 'dev', 'outworld': 'outworld')
   if(array_index_exists(@worlds, to_lower(@world))) { 
     return(@worlds[to_lower(@world)])
   } else {
