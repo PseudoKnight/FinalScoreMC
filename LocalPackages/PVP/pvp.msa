@@ -14,7 +14,7 @@
 		}
 		if(array_index_exists(@arena, 'mode') && array_contains(array('ctf', 'tdm', 'infection'), @arena['mode'])) {
 			if(!array_index_exists(@pvp, 'team'), @pvp['team'] = array(array('players': array()), array('players': array())))
-			if(array_size(@pvp['team'][0]['players']) * if(@arena['mode'] == 'infection', @arena['teamratio'][1], 1) <= array_size(@pvp['team'][1]['players']) * if(@arena['mode'] == 'infection', @arena['teamratio'][0], 1)) {
+			if(array_size(@pvp['team'][0]['players']) * if(array_index_exists(@arena, 'teamratio'), @arena['teamratio'][1], 1) <= array_size(@pvp['team'][1]['players']) * if(array_index_exists(@arena, 'teamratio'), @arena['teamratio'][0], 1)) {
 				@pvp['players'][player()]['team'] = 0
 				array_push(@pvp['team'][0]['players'], player())
 			} else {
@@ -22,7 +22,7 @@
 				array_push(@pvp['team'][1]['players'], player())
 			}
 		}
-		_worldmsg('custom', color('gray').'[PVP] '.color('r').player().' has joined '.$id.'. ('.array_size(@pvp['players']).')')
+		_worldmsg('custom', color('gray').'[PVP] '.color('r').player().' has joined '.to_upper($id).'. ('.array_size(@pvp['players']).')')
 		console(player().' joined '.$id)
 		export('pvp'.$id, @pvp)
 		if((array_index_exists(@arena, 'max') && array_size(@pvp['players']) >= @arena['max'])
@@ -167,9 +167,9 @@
 		))
 
 	,
-		msg('/pvp join <id> '.color('gray').'Join the match\n'
-		.color('r').'/pvp start <id> '.color('gray').'Start the match\n'
-		.color('r').'/pvp warp <id> '.color('gray').'Teleports you to the lobby\n'
-		.color('r').'/pvp spectate <id> '.color('gray').'Displays the scoreboard')
+		msg('/pvp join <id> '.color('gray').'Join the match')
+		msg('/pvp start <id> '.color('gray').'Start the match')
+		msg('/pvp warp <id> '.color('gray').'Teleports you to the lobby')
+		msg('/pvp spectate <id> '.color('gray').'Displays the scoreboard')
 	)
 <<<	

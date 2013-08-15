@@ -73,12 +73,12 @@ proc('_start_round', @id,
 				)
 		}
 		_equip(@id, @player)
-		if(array_index_exists(@pvp['players'][@player], 'class')) {
-			_class('load', @player, @pvp['players'][@player]['class'])
-		}
 		set_phunger(@player, 20)
 		set_psaturation(@player, 5)
 		set_phealth(@player, 20)
+		if(array_index_exists(@pvp['players'][@player], 'class')) {
+			_class('load', @player, @pvp['players'][@player]['class'])
+		}
 		if(array_index_exists(@pvp['arena'], 'effect')) {
 			foreach(@pvp['arena']['effect'], @effect, @data,
 				set_peffect(@player, @effect, @data['strength'], @data['length'])

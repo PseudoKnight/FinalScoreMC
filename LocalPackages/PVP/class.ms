@@ -95,7 +95,6 @@ proc('_class', @action, @player, @class,
 				play_sound(ploc(), array('sound': 'ZOMBIE_UNFECT', 'pitch': 1, 'volume': 3))
 			)
 			set_pwalkspeed(@player, 0.16)
-			set_timeout(50, closure(set_peffect(@player, 8, -8, 999, true)))
 			
 		, 'equip',
 			set_pinv(@player, array(
@@ -106,6 +105,10 @@ proc('_class', @action, @player, @class,
 				100: array('type': 309)
 			))
 			set_pexp(@player, 99)
+			set_timeout(50, closure(
+				set_peffect(@player, 8, -1, 999, true)
+				set_phunger(@player, 6)
+			))
 			
 		, 'unload',
 			unbind(@player.'interact')
