@@ -1,0 +1,813 @@
+/safereload [$force]= >>>
+	if(!$force) {
+		@currentspleef = import('currentspleef')
+		if(@currentspleef != false && array_size(@currentspleef) >= 1, die('Spleef in progress.'))
+		@arenas = get_values('arena')
+		foreach(array_keys(@arenas), @key,
+			@pvp = import('pvp'.split('.', @key)[1])
+			if(@pvp && @pvp['running'] == 'true', die(to_upper(split('.', @key)[1]).' in progress.'))
+		)
+		@cluck = import('cluck')
+		if(@cluck && (@cluck['active'] == 1 || @cluck['round'] > 1), die('Cluck in progress.'))
+	}
+	@requests = import('requests')
+	if(is_array(@requests), store_value('session.requests', @requests))
+	@conv = import('conv')
+	if(is_array(@conv), store_value('session.conv', @conv))
+	@conv = import('ignorelist')
+	if(is_array(@ignorelist), store_value('session.ignorelist', @ignorelist))
+	@stopwatch = import('stopwatch')
+	if(is_array(@stopwatch), store_value('session.stopwatch', @stopwatch))
+	foreach(all_players(), @player,
+		if(queue_running(@player), queue_clear(@player))
+	)
+	run('/save-all')
+	set_timeout(2000, closure(
+		msg('Recompiling...')
+		run('/reloadaliases')
+	))
+<<<
+
+*:/transfer horse $player = >>>
+	try(@player = player($player), die(color('red').'Unknown player.'))
+	@owner = player().''
+	bind('player_interact_entity', array('id': 'transferhorse'.@owner.@player), array('clicked': 'HORSE'), @e, @player = @player, @owner = @owner,
+		if(player() != @owner, die())
+		cancel()
+		unbind()
+		if(get_mob_owner(@e['id']) != player(), die(color('red').'This horse belongs to '.get_mob_owner(@e['id']).'.'))
+		tame_mob(@player, @e['id'])
+		msg(color('green').'The horse now belongs to '.@player.'.')
+		if(ponline(@player)) {
+			tmsg(color('green').player().' gave a horse to you.')
+		}
+	)
+	msg(color('yellow').'Right-click the horse you wish to give to '.@player.'.')
+<<<
+
+*:/share $player $ = >>>
+	@shareables = array('horses')
+	@types = parse_args($)
+	foreach(@types, @type,
+		if(!array_contains(@shareables, @type)) {
+			die(color('red').'Unknown type: '.@type.'\nShareable: '.@shareables)
+		}
+	)
+	try(@player = player($player).'', die('Unknown player.'))
+	export('share'.@player, array(
+		'player': player(),
+		'types': @types
+	))
+	msg(color('yellow').'Requested '.@player.' to share '.array_implode(@types, ' and ').'.')
+	tmsg(@player, color('yellow').player().' requested to share '.array_implode(@types, ' and ').'. Type "/share confirm".')
+<<<
+
+*:/share confirm = >>>
+	@share = import('share'.player())
+	if(!@share, die('No shares to confirm.'))
+	
+	@pdata = get_value('player.'.to_lower(@share['player']))
+	if(!array_index_exists(@pdata, 'shared'), @pdata['shared'] = array())
+	if(!array_index_exists(@pdata['shared'], player()), @pdata['shared'][player()] = array())
+	foreach(@share['types'], @type,
+		array_push(@pdata['shared'][player()], @type)
+	)
+	store_value('player.'.to_lower(@share['player']), @pdata)
+	tmsg(@share['player'], color('green').'Now sharing '.array_implode(@share['types'], ' and ').' with '.player().'.')
+	
+	@pdata = get_value('player.'.to_lower(player()))
+	if(!array_index_exists(@pdata, 'shared'), @pdata['shared'] = array())
+	if(!array_index_exists(@pdata['shared'], @share['player']), @pdata['shared'][@share['player']] = array())
+	foreach(@share['types'], @type,
+		array_push(@pdata['shared'][@share['player']], @type)
+	)
+	store_value('player.'.to_lower(player()), @pdata)
+	msg(color('green').'Now sharing '.array_implode(@share['types'], ' and ').' with '.@share['player'].'.')
+	
+	export('share'.player(), null)
+<<<
+
+*:/unshare $player $ = >>>
+	@shareables = array('horses')
+	@types = parse_args($)
+	foreach(@types, @type,
+		if(!array_contains(@shareables, @type)) {
+			die(color('red').'Unknown type: '.@type.'\nShareable: '.@shareables)
+		}
+	)
+	try(@player = player($player), 
+		if(get_value('player.'.to_lower($player))) {
+			@player = $player
+		} else {
+			die('Unknown player.')
+		}
+	)
+	
+	@pdata = get_value('player.'.to_lower(player()))
+	if(!array_index_exists(@pdata, 'shared') || !array_index_exists(@pdata['shared'], @player), die(color('gold').'You are not sharing anything with this player.'))
+	foreach(@types, @type,
+		if(!array_contains(@pdata['shared'][@player], @type)) {
+			die(color('gold').'You are not sharing '.@type.' with '.@player)
+		} else {
+			array_remove_values(@pdata['shared'][@player], @type)
+			if(array_size(@pdata['shared'][@player]) < 1) {
+				array_remove(@pdata['shared'], @player)
+				if(array_size(@pdata['shared']) < 1) {
+					array_remove(@pdata, 'shared')
+				}
+			}
+		}
+	)
+	store_value('player.'.to_lower(player()), @pdata)
+	msg(color('green').'You are no longer sharing '.array_implode(@types, ' and ').' with '.@player.'.')
+	
+	@pdata = get_value('player.'.to_lower(@player))
+	if(!array_index_exists(@pdata, 'shared') || !array_index_exists(@pdata['shared'], player()), die(color('gold').'They are not sharing anything with you.'))
+	foreach(@types, @type,
+		if(!array_contains(@pdata['shared'][player()], @type)) {
+			die(color('gold').'They are not sharing '.@type.' with you.')
+		} else {
+			array_remove_values(@pdata['shared'][player()], @type)
+			if(array_size(@pdata['shared'][player()]) < 1) {
+				array_remove(@pdata['shared'], player())
+				if(array_size(@pdata['shared']) < 1) {
+					array_remove(@pdata, 'shared')
+				}
+			}
+		}
+	)
+	store_value('player.'.to_lower(@player), @pdata)
+	if(ponline(@player)) {
+		tmsg(@player, color('green').player().' is no longer sharing '.array_implode(@types, ' and ').' with you.')
+	}
+<<<
+
+*:/kill $ = >>>
+	@player = player()
+	if($) {
+		@message = parse_args($)
+		if(ponline(@message[0])) {
+			if(!has_permission('group.moderators'), die('You do not have permission.'))
+			@player = @message[0]
+			@message = array_implode(@message[cslice(1, array_size(@message) - 1)])
+		} else {
+			@message = $
+		}
+		bind('player_death', array('priority': 'highest'), array('player': @player), @e, @message = @message,
+			modify_event('death_message', player().' '.@message)
+			unbind()
+		)
+	}
+	set_phealth(@player, 0)
+<<<
+
+*:/matchip $ip = >>>
+	if(!has_permission('group.moderators'), die('You do not have permission.'))
+	@players = get_values('player')
+	foreach(@players, @key, @player,
+		if(array_index_exists(@player, 'ips') && array_contains(@player['ips'], $ip)) {
+			msg('Matched: '.split('.', @key)[1])
+		}
+	)
+<<<
+
+*:/coins [$action] [$player] [$amount] = >>>
+	if(!$action) {
+		msg(color('gold').round(_acc_balance(player())).' coins')
+	} else {
+		if(!has_permission('group.moderators'), die('You do not have permission.'))
+		if(!$player, die('Usage: /coins <add|sub|info> <player> <amount>'))
+		switch($action
+		, array('add', 'give'),
+			if(!$amount, die('Usage: /coins <add|sub|info> <player> <amount>'))
+			if(_acc_add($player, $amount)) {
+				msg('Gave '.$player.' '.$amount.' coins.')
+			} else {
+				msg('Can\'t find player.')
+			}
+		, array('sub', 'subtract', 'remove'),
+			if(!$amount, die('Usage: /coins <add|sub|info> <player> <amount>'))
+			if(_acc_subtract($player, $amount)) {
+				msg('Subtracted '.$amount.' coins from '.$player)
+			} else {
+				msg('Can\'t find player.')
+			}
+		, 'info',
+			if(@coins = _acc_balance($player)) {
+				msg(color('gold').round(_acc_balance($player)).' coins')
+			} else {
+				msg('Can\'t find player.')
+			}
+		)
+	}
+<<<
+
+*:/compass $target [$id] = >>>
+	switch($target
+	, 'spawn',
+		set_compass_target(get_spawn())
+		msg('Compass is now pointing to '._worldname(pworld()).'\'s spawn.')
+		
+	, 'player',
+		if(!$id, die('You must specify a player to point to.'))
+		try(@player = player($id), die('Unknown player.'))
+		if(pworld(@player) != pworld(), die('Player is not in this world.'))
+		set_compass_target(ploc(@player))
+		msg('Compass is now pointing to '.@player.'\'s last location.')
+	
+	, 'home',
+		if($id) {
+			@pdata = get_value('player.'.to_lower($id))
+			if(!@pdata, die('Unknown player.'))
+		} else {
+			@pdata = get_value('player.'.to_lower(player()))
+		}
+		if(!array_index_exists(@pdata, 'homes'), die('No home to target.'))
+		if(!array_index_exists(@pdata['homes'], pworld()), die('No home in this world to target.'))
+		set_compass_target(array(
+			@pdata['homes'][pworld()][0],
+			@pdata['homes'][pworld()][1],
+			@pdata['homes'][pworld()][2],
+			pworld()
+		))
+		msg('Compass is now pointing to '.if($id, $id.'\'s', 'your').' home.')
+
+	)
+<<<
+
+*:/ban [$player] [$] = >>>
+	if(!has_permission('group.moderators'), die('You do not have permission.'))
+	if(!$player, die('Usage: /ban <player> [-t 1d-8h-10m] [message]'))
+	@pdata = get_value('player.'.to_lower($player))
+	if(!@pdata, die('Please use exact names.'))
+	@battime = null
+	@message = null
+	if($) {
+		@args = parse_args($)
+		if(@args[0] == '-t') {
+			@times = split('-', @args[1])
+			@bantime = time()
+			foreach(@times, @t,
+				switch(substr(@t, length(@t) - 1, length(@t))
+				, 'd',
+					@bantime = @bantime + (86400000 * substr(@t, 0, length(@t) - 1))
+				, 'h',
+					@bantime = @bantime + (3600000 * substr(@t, 0, length(@t) - 1))
+				, 'm',
+					@bantime = @bantime + (60000 * substr(@t, 0, length(@t) - 1))
+				)
+			)
+			if(array_size(@args) > 2) {
+				@message = array_implode(@args[cslice(2, array_size(@args) - 1)], ' ')
+			}
+		} else {
+			@message = $
+		}
+	}
+	@pdata['ban'] = array()
+	if(@bantime, @pdata['ban']['time'] = @bantime)
+	if(@message, @pdata['ban']['message'] = @message)
+	if(player() != '~console', @pdata['ban']['by'] = player())
+	store_value('player.'.to_lower($player), @pdata)
+	if(ponline($player), pkick($player, if(@message, @message, 'Banned. Appeal at FinalScoreMC.com')))
+	msg($player.' is now banned.')
+	console(player().' banned '.$player.'.'.if(@message, ' (Reason: "'.@message.'")'))
+<<<
+
+*:/unban [$player] = >>>
+	if(!has_permission('group.moderators'), die('You do not have permission.'))
+	if(!$player, die('Usage: /unban <player>'))
+	@pdata = get_value('player.'.to_lower($player))
+	if(!@pdata, die('Please use an exact name.'))
+	if(!array_index_exists(@pdata, 'ban'), die('That player is not banned.'))
+	array_remove(@pdata, 'ban')
+	store_value('player.'.to_lower($player), @pdata)
+	msg($player.' is now unbanned.')
+	console(player().' unbanned '.$player)
+<<<
+
+*:/kick [$player] [$='Kicked.'] = >>>
+	if(!$player, die('Usage: /kick <player> <reason>'))
+	if(!has_permission('group.moderators'), die('You do not have permission.'))
+	try(@player = player($player), die('Unknown player.'))
+	pkick(@player, $)
+	console(player().' kicked '.@player.'. (Reason: "'.$.'")')
+<<<
+
+/homeless $player = >>>
+	@pdata = get_value('player.'.to_lower($player))
+	@pdata['homeless'] = true
+	store_value('player.'.to_lower($player), @pdata)
+<<<
+
+*:/stack = >>>
+	if(!has_permission('group.moderators'), die('You do not have permission.'))
+	@inv = pinv()
+	for(@i = 0, @i < 36, @i++,
+		if(@inv[@i] == null || @inv[@i]['qty'] >= 64, continue())
+		for(@y = @i + 1, @y < 36, @y++,
+			if(@inv[@y] == null, continue())
+			if(@inv[@i]['type'] == @inv[@y]['type']
+			&& @inv[@i]['data'] == @inv[@y]['data']
+			&& @inv[@i]['enchants'] == @inv[@y]['enchants']
+			&& @inv[@i]['meta'] == @inv[@y]['meta']) {
+				@extra = @inv[@i]['qty'] + @inv[@y]['qty'] - 64
+				if(@extra < 1) {
+					@inv[@i]['qty'] = @inv[@i]['qty'] + @inv[@y]['qty']
+					@inv[@y] = null
+				} else {
+					@inv[@i]['qty'] = 64
+					@inv[@y]['qty'] = @extra
+				}
+			}
+		)
+	)
+	set_pinv(@inv)
+	msg('Stacked!')
+<<<
+
+#Runs the help procedure to list or display entries
+*:/help [$selection='help'] = >>>
+	@help = array(
+		'rules':
+		'- Do NOT break anything someone else placed unless otherwise specified.\n'.
+		'- Do NOT take anything from a chest that you did not place there, unless otherwise specified or was generated in the world naturally.\n'.
+		'- Do NOT harass, call others names, use hate speech, spam, or use excessive adult language in chat.\n'.
+		'- Do NOT actively use cheat modifications to do things like fly or look through walls.\n'.
+		'- DO respect other players and apologize if you make a mistake, as we have all made them.',
+		'homes': 'You can have one home per world. Set them by typing "/sethome", then "/home" to teleport to them. You can teleport to homes of other players by typing in their name after "/home".',
+		'messages': 'Send a private message to another player with "/msg <playername> <message>" or "@playername <message>". You can use "/r <message>" for a reply.',
+		'spawn': 'There is one central spawn on each world, including nethers. Type "/spawn" to teleport to the spawn of the world you are in or follow it with a world name to teleport there.',
+		'stargate': 'Stargates are special portals you build to teleport within a network of locations. There is a more detailed guide on the website. But to make one, first build the gate as seen (without sign or button), place a sign on the correct location, then type the gate name on line one and the gate network name on line three.',
+		'private-chests': 'You can put a [private] sign on a chest, furnace, and the block above/below doors. The following lines after [private] should contain the players you want to give access.',
+		'shops': 'Chest shops allow players to buy and sell different items using currency. (g: gold, d: diamond, i: iron, e: emerald) Right click the SIGN with the currency in hand to BUY. Shop owners can edit shop transaction rates with the "/shop edit <transaction line>" command. Players can search for available items with "/shop list <item>". There\'s a detailed guide on the website.',
+		'website': 'The website is at >>> http://finalscoremc.com <<< There you can find a command reference, guides, videos, live maps, and more.',
+		'live-map': '>>> http://mc.finalscoremc.com:25966 <<< The website has a handy live map that shows the location of players and their homes, among other things.',
+		'moderators': 'Admins: PseudoKnight, Scottyd_Utah, Nefyoni, asdialed; Moderators:TobyTobey, fredwaffles, TrulyAnnoying.',
+		'plugins': 'Type "/plugins" for a full list of plugins installed, or check the website for more details.',
+		'permissions': 'We currently have 7 groups: Everyone (new players/restricted), Regulars, Donors (green names or diamonds), Builders (orange), Engineers (orange), Moderators (blue), and Administrators (blue). New players get bumped up to the Regulars group after some time, as long as they\'re not causing trouble.',
+		'mumble': 'Everyone is welcome to use our voice chat server using Mumble. The server is at mum.finalscoremc.com with port 64758. You can get Mumble at >>> http://mumble.sourceforge.net <<<',
+		'regions': 'Regions are protected zones where only owners and members can build or access chests. You can create your own region by using a wood axe, left and right clicking to select a cuboid for the region, then use "/rg claim <regionid>". More details are on the website.',
+		'spleef': 'Spleef is a game where you try and dig out the blocks from under other players so that they fall. There is an automated arena for this at the Colosseum at Final City. Type "/warp spleef" to get there quickly.',
+		'whitelist': 'You can get on the whitelist by asking a moderator or requesting it on the http://myextralife.com whitelist forum thread.',
+		'worlds': 'There are three primary worlds: Alpha (Plaza at spawn), Delta (Final City at spawn), and Gamma (Gamma City at spawn). In addition, there are three respective nether dimensions and one End dimension. You can type "/mv who" to see which worlds players are on.',
+		'world-seeds': 'These are the seeds for the three main worlds -- Alpha: -621778714517541268, Delta: -8443156782283251243, Gamma: -754633420005903009.'
+	)
+	if(equals($selection, 'help')) {
+		msg(color('a'), 'Get help on any of these topics:')
+		msg(color('6'), array_implode(array_keys(@help), ' ')),
+		try(msg(to_upper($selection).': '.color('a'), @help[to_lower($selection)]), @ex, msg(color('c'), 'Unknown entry. Type "/help" to find available entries.'))
+	}
+<<<
+
+/donor $player $amount = >>>
+	if(!has_permission('group.administrators'), die('You do not have permission to use this command.'))
+	_acc_add($player, $amount * 200)
+	msg('Gave '.$player.' '.$amount * 200.' coins.')
+	console('Gave '.$player.' '.$amount * 200.' coins.')
+	run('/perm player addgroup '.$player.' Donors')
+	@donors = get_value('donors')
+	if(@donors == null || @donors == array()) {
+		@donors = array($player)
+	} else {
+		array_push(@donors, $player)
+	}
+	store_value('donors', @donors)
+<<<
+
+#Database control
+/sql $action $namespace [$] = >>>
+	if(!pisop(), die('You do not have permission.'))
+	@data = get_values($namespace)
+	if(array_size(@data) == 0, die('No keys for that namespace.'))
+	switch($action,
+	, 'delete',
+		foreach(@data, @key, @value,
+			clear_value(@key)
+		)
+		msg('Deleted '.$namespace)
+	, 'rename',
+		foreach(@data, @key, @value,
+			store_value(reg_replace($namespace, $, @key), @data[@key])
+			clear_value(@key)
+		)
+	, 'indexchild',
+		foreach(@data, @key, @value,
+			@array[$] = @value
+			store_value(reg_replace('.'.$, '', @key), @array)
+			clear_value(@key)
+		)
+	)
+<<<
+
+# APPROVAL SYSTEM #
+*:/approve [$player] = >>>
+	if(!has_permission('group.regulars'), die('You do not have permission to use this command.'))
+	try(@player = $player, die('Unknown player.'))
+	if(!ponline($player), die('That player is not online. Did you misspell their name?'))
+	if(array_contains_ic(pgroup($player), 'Everyone'), die('Player already exists in whitelist.'))
+	sudo('/perm player setgroup '.$player.' Everyone')
+	tmsg($player, 'You have been added to the whitelist by ', color('e'), player(), color('f'), '.')
+	if(!has_permission('group.moderators')) {
+		@pdata = get_value('player.'.to_lower(@player))
+		@pdata['approval'] = player()
+		store_value('player.'.to_lower(@player), @pdata)
+	}
+<<<
+
+# Put whatever they have in their hand onto their head. This shouldn't dupe.
+*:/hat = >>>
+	if(pinv(player(), null) == null, die(color('gold').'You need to hold something before you can put it on your head.'))
+	if(pinv(player(), 103) != null, die(color('gold').'You already have something on your head.'))
+	@inv = pinv(player(), null)
+	if(@inv['qty'] == 1) {
+		set_pinv(player(), array(null: null))
+		set_pinv(player(), array(103: @inv))
+	} else {
+		array_set(@inv, 'qty', @inv['qty'] - 1)
+		set_pinv(player(), array(null: @inv, 103: array('type': @inv['type'], 'data': @inv['data'], 'qty': 1)))
+	}
+	msg(color('gold').'Fancy!')
+<<<
+
+# PLAYER LISTS #
+*:/who = >>>
+	@list = array(array('Administrators', 'b', ''), array('Moderators', 'b', ''), array('Engineers', '6', ''), array('Builders', '6', ''), array('Donors', 'a', ''), array('Regulars', 'e', ''), array('Everyone', 'e', ''), array('Default', 'f', ''))
+	@allplayers = all_players()
+	foreach(@allplayers, @player,
+		for(@i = 0, @i < array_size(@list), @i++,
+			if(array_contains_ic(pgroup(@player), @list[@i][0])) {
+				@list[@i][2] = @list[@i][2].' '.pinfo(@player, 4)
+				break()
+			}
+		)
+	)
+	for(@i = 0, @i < array_size(@list), @i++,
+		if(@list[@i][2] != '') {
+			msg(color(@list[@i][1]).@list[@i][0].color(7).': '.@list[@i][2])
+		}
+	)
+<<<
+*:/list = call_alias('/who')
+
+# DICE ROLLING #
+*:/roll [$sides=6] = >>>
+	if($sides > 100, die(color('a').'[Dice] '.color('f').'There\'s a limit of 100 sides.'))
+	if($sides < 2, die(color('a').'[Dice] '.color('f').'There\'s a minimum of 2 sides.'))
+	if($sides == 2) {
+		broadcast(color('a').'[Coin] '._colorname(player()).player().color('f').' flipped a coin and got '.if(rand(1) == 0, 'heads.', 'tails.'))
+	} else {
+		broadcast(color('a').'[Dice] '._colorname(player()).player().color('f').' rolled a '.color('a').(rand($sides) + 1).' on a '.$sides.'-sided die.')
+	}
+<<<
+
+*:/rg flag $region $ = >>> 
+	assign(@flag, parse_args($)) 
+	if(has_permission('group.moderators') || @flag[0] != 'mob-spawning') {  
+		run('/rg flag '.$region.' '.$) 
+		die() 
+	}
+	try(assign(@region, sk_region_info($region, pworld())), die('That region doesn\'t exist.')) 
+	if(!array_contains_ic(@region[1], player()), die('You do not own this region.')) 
+	foreach(@region[3], @flagname, 
+		if(@flagname[0] == 'mob-spawning') { 
+			sudo('/rg flag '.$region.' mob-spawning') 
+			break()
+		} 
+	)
+	ifelse(!array_index_exists(@flag, 1) || @flag[1] == 'allow', 
+		sudo('/rg flag '.$region.' deny-spawn')
+	, @flag[1] == 'deny', 
+		sudo('/rg flag '.$region.' deny-spawn CREEPER,ENDERMAN,SKELETON,SPIDER,ZOMBIE,SLIME') 
+	)
+<<<
+
+*:/region flag $region [$] = >>>
+	call_alias('/rg flag '.$region.' '.$)
+<<<
+
+# Rename your worldguard region
+*:/rg rename $from $to = >>>
+	try(@region = sk_region_info($from, pworld()), die('That region doesn\'t exist.'))
+	if(!has_permission('group.moderators') && not(array_contains_ic(@region[1], player())), die('You do not own this region.'))
+	try(@to = reg_match('[a-zA-Z0-9-]{1,32}', $to)[0], die('You can only use alphanumeric and dash symbols.'))
+	if(array_contains_ic(sk_all_regions(pworld()), @to), die('A region by that name already exists.'))
+	sudo('/rg select '.$from)
+	sudo('/rg define '.@to.' '.array_implode(@region[1]))
+	sudo('/rg pri '.@to.' '.@region[4])
+	foreach(@region[3], @flag,
+		sudo('/rg flag '.@to.' '.@flag[0].' '.@flag[1])
+	)
+	if(gt(array_size(@region[2]), 0), sudo('/rg addmember '.@to.' '.array_implode(@region[2])))
+	sudo('//sel')
+	sudo('/rg remove '.$from)
+<<<
+
+*:/player $player = >>>
+	if(!has_permission('group.moderators'), die('You do not have permission to use this command.'))
+	try(
+		# ONLINE INFO
+		@player = player($player)
+		@pdata = get_value('player.'.to_lower(@player))
+		@onlineinfo = pinfo(@player)
+		msg(color('gray').'--[ '.color('l').@player.color('gray').' ]-------------------------')
+		msg(color('gray').'Location: '.color('r').@onlineinfo[7].' '.round(@onlineinfo[1][0]).','.round(@onlineinfo[1][1]).','.round(@onlineinfo[1][2]))
+		if(pmode(@player) == 'CREATIVE') {
+			msg(color('gray').'Gamemode: '.color('r').'CREATIVE')
+		} else {
+			msg(color('gray').'Health: '.color('r').@onlineinfo[5].' and '.pfood(@player).' + '.round(psaturation(@player), 1).' hunger')
+			msg(color('gray').'Levels: '.color('r').plevel(@player))
+		}
+		msg(color('gray').'IP: '.color('r').@onlineinfo[3])
+		msg(color('gray').'Hostname: '.color('r').@onlineinfo[10])
+	, 
+		# OFFLINE INFO
+		@pdata = get_value('player.'.to_lower($player))
+		if(!@pdata, die('No stored data for that player name.'))
+		@minutes = (time() - plast_played($player)) / 60000
+		@hours = @minutes / 60
+		@days = @hours / 24
+		msg(color('gray').'--[ '.color('l').$player.color('gray').' ]-------------------------')
+		if(array_index_exists(@pdata, 'ban'), msg(color('red').'Banned '.color('r')
+			.if(array_index_exists(@pdata['ban'], 'by'), 'by '.@pdata['ban']['by'].' ')
+			.if(array_index_exists(@pdata['ban'], 'time'), 'temporarily ')
+			.if(array_index_exists(@pdata['ban'], 'message'), '- "'.@pdata['ban']['message'].'"')))
+		msg(color('gray').'Last Played: '.color('r').
+		ifelse(@days >= 3,
+			'Over '.floor(@days).' days ago'
+		, @hours >= 2, 
+			'Over '.floor(@hours).' hours ago'
+		, 
+			floor(@minutes).' minutes ago'
+		))
+		if(array_index_exists(@pdata, 'homeless'), msg(color('gray').'Homeless: '.color('r').'TRUE'))
+		if(array_index_exists(@pdata, 'ips'), msg(color('gray').'IPs: '.color('r').array_implode(@pdata['ips'], ' ')))
+	)
+	if(array_index_exists(@pdata, 'approval'), msg(color('gray').'Approved by: '.color('r').@pdata['approval']))
+	if(array_index_exists(@pdata, 'homes'), msg(color('gray').'Homes: '.color('r').array_implode(array_keys(@pdata['homes']), ', ')))
+	if(array_index_exists(@pdata, 'coins'), msg(color('gray').'Coins: '.color('r').@pdata['coins']))
+<<<
+
+#Set or reset the MOTD
+*:/setmotd [$=''] = >>>
+	if(!has_permission('group.moderators'), die('You do not have permission to use this command.'))
+	store_value('motd', colorize($))
+	msg('MOTD set to: '.colorize($))
+<<<
+
+#Run commands as other players and show them which command it was
+*:/runas $player $ = >>>
+	if(!get_command_block() && !has_permission('group.administrators'), die('You do not have permission for this command'))
+	try(@player = player($player), die('No player found.'))
+	tmsg(@player, color('a'), player(), ' ran this command for you:')
+	tmsg(@player, color('6'), $)
+	console('"'.$.'" was run on '.@player)
+	scriptas(@player, 
+		if(!call_alias($)) {
+			sudo($)
+		}
+	)
+<<<
+
+#Set fly mode for people or yourself
+*:/fly $player $bool = >>>
+	if(!has_permission('group.moderators'), die('You do not have permission to use this command.'))
+	try(@player = player($player), @ex, die('Who is that? Are they online?'))
+	if($bool == '1') {
+		set_pflight(@player, 1)
+		msg('Turned on fly mode for '.@player.'.')
+		tmsg(@player, player().' turned on fly mode on you.')
+	} else {
+		set_pflight(@player, 0)
+		msg('Turned off fly mode for '.@player.'.')
+		tmsg(@player, player().' turned off fly mode on you.')
+	}
+<<<
+
+*:/fly = >>>
+	if((!has_permission('group.builders') || !array_contains(array('custom', 'dev'), pworld())) && !has_permission('group.moderators'), die('You do not have permission to use this command.'))
+	if(phas_flight(),
+		set_pflight(player(), 0)
+		msg('Turned off flying.'),
+		set_pflight(player(), 1)
+		msg('Turned on flying.')
+	)
+<<<
+
+#Game mode aliases
+*:/gm $mode $player = >>>
+	if(!has_permission('group.moderators'), die('You do not have permission to use this command.'))
+	try(@player = player($player), @ex, die('Who is that? Are they online?'))
+	run('/gamemode '.$mode.' '.@player)
+<<<
+
+*:/gm [$mode] = >>>
+	if((!has_permission('group.builders') || !array_contains(array('custom', 'dev'), pworld())) && !has_permission('group.moderators'), die('You do not have permission to use this command.'))
+	if($mode) {
+		switch($mode,
+		, 1, set_pmode('CREATIVE')
+		, 0, set_pmode('SURVIVAL')
+		, 2, set_pmode('ADVENTURE')
+		, msg('Acceptable values: 0 = survival, 1 = creative, 2, adventure.')
+		)
+	} else {
+		if(pmode() == 'CREATIVE',
+			set_pmode('SURVIVAL'),
+			set_pmode('CREATIVE')
+		)
+	}
+<<<
+
+#Sign line edit script =D
+*:/sign $line [$=''] = >>>
+	if((!has_permission('group.builders') || !array_contains(array('custom', 'dev'), pworld())) && !has_permission('group.moderators'), die('You do not have permission to use this command.'))
+	if(length($) > 15, die('There is a 15 character limit per line.'))
+	@sign = pcursor()
+	if(!is_sign_at(@sign), die('That is not a sign'))
+	@lines = get_sign_text(@sign)
+	array_set(@lines, $line - 1, colorize($))
+	set_sign_text(@sign, @lines),
+<<<
+
+#Alias for setting people to Regulars group
+*:/promote $player = >>>
+	if(!has_permission('group.administrators'), die('You do not have permission to use this command.'))
+	if(array_contains(pgroup($player), 'regulars'), die('Player is already in that group.'))
+	run('/perm player setgroup '.$player.' Regulars')
+<<<
+
+# Item commands
+*:/i [$item=0] [$amount=1] = >>>
+	if((!has_permission('group.builders') || !array_contains(array('custom', 'dev'), pworld())) && !has_permission('group.moderators'), die('You do not have permission to use this command.'))
+	if($item == 0, die('Usage: /i [id:data] [quantity]'))
+	@item = split(':', $item)
+	if(!is_numeric(@item[0]), @item[0] = data_values(@item[0]))
+	if(@item[0] == null, die('Unknown item name'))
+	if(!array_index_exists(@item, 1), @item[1] = 0)
+	pgive_item(@item[0].':'.@item[1], $amount)
+	msg(color('yellow').'You\'ve been given '.$amount.' '.data_name(@item[0].':'.@item[1]).'.')
+<<<
+
+*:/give [$player=null] [$item=0] [$amount=1] = >>>
+	if(!has_permission('group.moderators'), die('You do not have permission to use this command.'))
+	if($player == null, die('Usage: /give [player] [id:data] [quantity]'))
+	try(@player = player($player), die('Unknown player.'))
+	if($item == 0, die('You need to specify an item id or name.'))
+	@item = split(':', $item)
+	if(!is_numeric(@item[0]), @item[0] = data_values(@item[0]))
+	if(@item[0] == null, die('Unknown item name'))
+	if(!array_index_exists(@item, 1), @item[1] = 0)
+	pgive_item(@player, @item[0].':'.@item[1], $amount)
+	msg(color('yellow').'You gave '.@player.' '.$amount.' '.data_name(@item[0].':'.@item[1]).'.')
+<<<
+
+# COMMAND BLOCK COMMANDS #
+
+*:/effect $player $effect [$strength=0] [$length=30] = >>>
+	if(get_command_block() || (has_permission('group.builders') && array_contains(array('custom', 'dev'), pworld())) || has_permission('group.moderators')) {
+		try(@player = player($player), @ex, die('Who is that? Are they online?'))
+		@effects = _get_effects()
+		if(!array_index_exists(@effects, $effect), die('These are the available effect names: '.array_keys(@effects)))
+		set_peffect(@player, @effects[$effect], $strength, $length)
+	}
+<<<
+
+*:/velocity $player $x $y $z [$double] = >>>
+	if(get_command_block() || has_permission('group.moderators') || (array_contains(array('dev', 'custom'), pworld($player)) && has_permission('group.builders'))) {
+		try(@player = player($player), @ex, die('Who is that? Are they online?'))
+		set_timeout(50, closure(
+			set_pvelocity(@player, $x, $y, $z)
+			make_effect(ploc(@player), 'MOBSPAWNER_FLAMES')
+			make_effect(ploc(@player), 'BLAZE_SHOOT', 24)
+			if($double, set_timeout($double, closure( set_pvelocity(@player, $x, $y, $z))))
+		))
+	}
+<<<
+
+/playsound $sound [$pitch=1] [$volume=1] = >>>
+	if(get_command_block(), @loc = get_command_block(), @loc = ploc())
+	play_sound(@loc, array('sound': $sound, 'pitch': $pitch, 'volume': $volume))
+<<<
+
+# TESTING/CONFIGURING COMMANDS
+
+*:/display $ = >>>
+	if((!has_permission('group.builders') || !array_contains(array('custom', 'dev'), pworld())) && !has_permission('group.moderators'), die('You do not have permission to use this command.'))
+	if(length($) > 30, die('The name can only be 30 characters long.'))
+	@inv = pinv(player(), null)
+	if(is_null(@inv['meta']), @inv['meta'] = array())
+	@inv['meta']['display'] = colorize($)
+	set_pinv(array(null: @inv))
+<<<
+
+*:/lore $line $ = >>>
+	if((!has_permission('group.builders') || !array_contains(array('custom', 'dev'), pworld())) && !has_permission('group.moderators'), die('You do not have permission to use this command.'))
+	if(length($) > 30, die('The name can only be 30 characters long.'))
+	@inv = pinv(player(), null)
+	if(is_null(@inv['meta']), @inv['meta'] = array())
+	@inv['meta']['lore'][$line - 1] = colorize($)
+	set_pinv(array(null: @inv))
+<<<	
+
+*:/explosion $x $y $z $world $radius = >>>
+	if((!has_permission('group.builders') || !array_contains(array('custom', 'dev'), pworld())) && !has_permission('group.moderators'), die('You do not have permission to use this command.'))
+	explosion(array($x, $y, $z, $world), $radius)
+<<<
+
+*:/dye $r $g $b = >>>
+	if((!has_permission('group.builders') || !array_contains(array('custom', 'dev'), pworld())) && !has_permission('group.moderators'), die('You do not have permission to use this command.'))
+	if(is_leather_armor(pinfo(player(), 15))) {
+		set_armor_color(pinfo(player(), 15), array($r, $g, $b))
+	} else {
+		msg('That slot isn\'t leather armor.')
+	}
+<<<
+
+*:/potion $id $strength $seconds = >>>
+	if((!has_permission('group.builders') || !array_contains(array('custom', 'dev'), pworld())) && !has_permission('group.moderators'), die('You do not have permission to use this command.'))
+	@effects = _get_effects()
+	if(is_numeric($id), @id = $id, @id = @effects[$id])
+	@effectdata = array(1: 2, 2: 10, 5: 9, 6: 5, 7: 12, 10: 1, 12: 3, 14: 14, 16: 6, 18: 8)
+	if(array_index_exists(@effectdata, @id), @data = @effectdata[@id], @data = 16)
+	set_pinv(array(null: array('type': 373, 'data': @data, 'meta': array('potions': array(array('id': @id, 'strength': $strength, 'seconds': $seconds))))))
+<<<
+
+*:/enchant $type [$level=1] = >>>
+	if((!has_permission('group.builders') || !array_contains(array('custom', 'dev'), pworld())) && !has_permission('group.moderators'), die('You do not have permission to use this command.'))
+	enchant_inv_unsafe(null, $type, $level)
+<<<
+
+*:/unenchant = >>>
+	if((!has_permission('group.builders') || !array_contains(array('custom', 'dev'), pworld())) && !has_permission('group.moderators'), die('You do not have permission to use this command.'))
+	@item = pinv(player(), null)
+	array_remove(@item, 'enchants')
+	set_pinv(array(null: @item))
+<<<
+
+/setrider $horse $rider = >>>
+	set_entity_rider(pinfo($horse, 13), pinfo($rider, 13))
+<<<
+
+*:/time $time = >>>
+	if((!array_contains(array('dev', 'custom'), pworld()) || !has_permission('group.builders')) && !has_permission('group.moderators'), die('You do not have permission.'))
+	msg('Set time to '.$time)
+	try(
+		set_world_time(pworld(), $time),
+		msg('Usage: /time <day|night|0-24000>')
+	)
+<<<
+
+/endercrystal = >>>
+	@loc = _relative(pcursor(), 'up')
+	set_block_at(@loc, '7:0')
+	spawn_entity('ENDER_CRYSTAL', 1, array(@loc[0] + 0.5, @loc[1], @loc[2] + 0.5, @loc[3]))
+<<<
+
+/bedspawn $player [$] = >>>
+	if($) {
+		@loc = parse_args($)
+		@loc[1] = @loc[1] - 1
+	} else {
+		@loc = ploc($player)
+	}
+	set_pbed_location($player, @loc)
+<<<
+
+/tempcart $player = >>>
+	if(get_command_block()) {
+		@loc = get_command_block()
+		@loc = array(@loc[0] + 0.5, @loc[1] + 2.5, @loc[2] + 0.5, @loc[3])
+		@player = pinfo($player, 13)
+	} else {
+		die('Command blocks only.')
+	}
+	@cart = spawn_entity('minecart', 1, @loc)[0]
+	set_entity_rider(@cart, @player)
+	bind('vehicle_leave', null, array('vehicletype': 'MINECART', 'passengertype': 'PLAYER'), @e, @cart = @cart,
+		if(@e['vehicle'] == @cart) {
+			unbind()
+			entity_remove(@e['vehicle'])
+		}
+	)
+<<<
+
+# COIN COMMANDS #
+
+*:/weather $type = >>>
+	if(_acc_balance(player()) < 1, die('You do not have any coins.'))
+	if(pworld() == 'outworld', die('You cannot do this in the outworld.'))
+	switch($type
+	, 'stormy',
+		storm(true)
+		_acc_subtract(player(), 1)
+		msg(color('gold').'-1 coin')
+		msg(color('aqua').'You summoned a storm.')
+	, 'sunny',
+		storm(false)
+		_acc_subtract(player(), 1)
+		msg(color('gold').'-1 coin')
+		msg(color('aqua').'You calmed the storm.')
+	, #else 
+		msg('Accepts \'stormy\' or \'sunny\'')
+	)
+<<<
