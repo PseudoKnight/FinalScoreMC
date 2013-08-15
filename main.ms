@@ -5,11 +5,12 @@ export('requests', @requests)
 @conv = get_value('session.conv')
 if(!@conv, @conv = array(), clear_value('session.conv'))
 export('conv', @conv)
+@ignorelist = get_value('session.ignorelist')
+if(!@ignorelist, @ignorelist = array(), clear_value('session.ignorelist'))
+export('ignorelist', @ignorelist)
 @stopwatch = get_value('session.stopwatch')
 if(!@stopwatch, @stopwatch = array(), clear_value('session.stopwatch'))
 export('stopwatch', @stopwatch)
-@ignorelist = array()
-export('ignorelist', @ignorelist)
 
 set_world_time('dev', 700)
 set_interval(8 * 60 * 1000, closure(
@@ -65,9 +66,9 @@ bind('player_join', null, null, @event,
 		#anti-cheat codes
 		msg('\u00A7f \u00A7f \u00A71 \u00A70 \u00A72 \u00A74 \u00A7f \u00A7f \u00A72 \u00A70 \u00A74 \u00A78 \u00A73 \u00A79 \u00A72 \u00A70 \u00A70 \u00A70 \u00A70\u00A70\u00A71\u00A72\u00A73\u00A74\u00A75\u00A76\u00A77\u00A78\u00A7f\u00A7e')
 		#Welcome messages
-		msg(color(1).color('l').'--------------------')
+		msg(color('1').color('l').'--------------------')
 		msg(color('gold'), color('l'), '\u2302', color('red'), color('l'), '\u2302', color('aqua'), color('l'), '\u2302', color('dark_red'), color('l'), '\u2302', color('gold'), color('l'), ' FINALSCORE ', color('yellow'), color('l'), '\u00AB', color('r'), ' \u25AA \u25AA \u25AA')
-		msg(color(1).color('l').'--------------------')
+		msg(color('1').color('l').'--------------------')
 		msg(get_value('motd'))
 		#Tab list colors
 		if(length(player()) > 14) {
@@ -77,11 +78,22 @@ bind('player_join', null, null, @event,
 		}
 		# homeless players are players left on deleted worlds
 		@pdata = get_value('player.'.to_lower(player()))
+		if(array_index_exists(@pdata, 'mail')) {
+			msg(color('green').'You have '.array_size(@pdata['mail']).' unread /mail.')
+			foreach(@pdata['mail'], @id, @mail,
+				msg(color('gray').@id.color('yellow').' - '.@mail[0].' '.@mail[1].' '.color('r').substr(@mail[2], 0, min(length(@mail[2]), 16)).' '.color('gold').'[...]')
+			)
+		}
 		if(array_index_exists(@pdata, 'homeless')) {
 			@loc = get_spawn('world')
 			set_ploc(@loc)
 			array_remove(@pdata, 'homeless')
 			store_value('player.'.to_lower(player()), @pdata)
+		} else if(!has_permission('group.everyone')) {
+			@warp = get_value('warp.intro')
+			@loc = @warp['loc']
+			set_ploc(@warp['loc'])
+			pfacing(@warp['yaw'], @warp['pitch'])
 		}
 		set_timeout(800, closure(
 			if(@loc[1] > ploc()[1]) {
@@ -263,7 +275,12 @@ bind('player_interact', null, array('block': 122), @e,
 )
 
 bind('entity_explode', null, null, @e,
-	if(@e['location'][3] == 'custom' && @e['type'] != 'PRIMED_TNT', cancel())
+	if(@e['location'][3] == 'custom' 
+	&& @e['type'] != 'PRIMED_TNT'
+	&& (@e['type'] != 'CREEPER'
+	|| !array_contains(sk_regions_at(entity_loc(@e['id'])), 'skypirates'))) {
+		cancel()
+	}
 )
 
 # DISPENER PARKING
@@ -278,13 +295,21 @@ bind('vehicle_collide', null, array('type': 'MINECART', 'collisiontype': 'BLOCK'
 )
 
 bind('player_interact_entity', null, array('clicked': 'HORSE'), @e,
+	if(pworld() == 'custom' || pworld() == 'dev', die())
 	if(get_mob_owner(@e['id'])
-	&& get_mob_owner(@e['id']) != player()
-	&& (!pinv(player(), null)
-	|| (pinv(player(), null)['type'] != 322
-	&& pinv(player(), null)['type'] != 396))) {
-		cancel()
+	&& get_mob_owner(@e['id']) != player()) {
 		msg('This horse is owned by '.get_mob_owner(@e['id']).'.')
+		if(!has_permission('group.moderators')
+		&& (!pinv(player(), null)
+		|| (pinv(player(), null)['type'] != 322
+		&& pinv(player(), null)['type'] != 396))) {
+			@pdata = get_value('player.'.to_lower(get_mob_owner(@e['id'])))
+			if(!array_index_exists(@pdata, 'shared')
+			|| !array_index_exists(@pdata['shared'], player())
+			|| !array_contains(@pdata['shared'][player()], 'horses')) {
+				cancel()
+			}
+		}
 	}
 )
 
