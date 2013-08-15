@@ -15,15 +15,26 @@
 		}
 		set_pscoreboard(player(), 'fw')
 		team_add_player('losers', player(), 'fw')
+		@score = 0
+		foreach(all_players(), @p,
+			if(_fw_player(@p)
+			&& get_pscore('score', @p, 'fw') > @score) {
+				@score = get_pscore('score', @p, 'fw') - 1
+			}
+		)
+		set_pscore('score', player(), @score, 'fw')
 		set_ploc(_fw_loc(-1))
 		if(pmode() == 'CREATIVE', set_pmode('SURVIVAL'))
+		set_phunger(20)
+		set_psaturation(5)
+		set_phealth(20)
+		_clear_pinv(player())
 		
 	, 'start',
 		if(get_pscoreboard(player()) != 'fw', die('You haven\'t joined first.'))
 		include('frogware.ms')
 		foreach(all_players(), @p,
 			if(_fw_player(@p)) {
-				set_pscore('score', @p, 0, 'fw')
 				set_phunger(@p, 20)
 				set_psaturation(@p, 5)
 				set_phealth(@p, 20)
@@ -45,6 +56,6 @@
 		.'| Players get a random task every round that\n'
 		.'| they have to complete in several seconds.\n'
 		.'| They get a point for completing a task.\n'
-		.'| First player to reach 20 points wins.')
+		.'| First player to reach 25 points wins.')
 	)
 <<<

@@ -176,7 +176,7 @@ proc('_fw_changeteam', @player, @team,
 	)
 )
 
-proc('_fw_randompotion', @potentials, @secs,
+proc('_fw_randompotion', @potentials, @secs = 20,
 	@potions = array(
 		'speed': array(1, 20),
 		'jump': array(8, 15),
@@ -197,7 +197,7 @@ proc('_fw_task', @task, @state, @secs,
 		, 'start',
 			_regionmsg('frogware', color('green').'[FROGWARE] '.color('r').'Climb.')
 			if(rand(7) < 1) {
-				_fw_randompotion(array('speed', 'jump', 'blind'), @secs)
+				_fw_randompotion(array('speed', 'jump', 'blind'))
 			}
 			if(rand(7) < 1) {
 				_fw_mobs()
@@ -232,10 +232,12 @@ proc('_fw_task', @task, @state, @secs,
 				
 		, 'end',
 			foreach(all_players(), @p,
-				if(_fw_player(@p)
-				&& get_block_at(ploc(@p)) == '133:0'
-				&& _fw_changeteam(@p, 'winners')) {
-					play_sound(ploc(@p), array('sound': 'zombie_metal'), @p)
+				if(_fw_player(@p)) {
+					_remove_peffects(@p)
+					if(get_block_at(ploc(@p)) == '133:0'
+					&& _fw_changeteam(@p, 'winners')) {
+						play_sound(ploc(@p), array('sound': 'zombie_metal'), @p)
+					}
 				}
 			)
 			_remove_region_mobs('frogware')
@@ -296,7 +298,7 @@ proc('_fw_task', @task, @state, @secs,
 		, 'start',
 			_regionmsg('frogware', color('green').'[FROGWARE] '.color('r').'Look out!')
 			if(rand(7) < 1) {
-				_fw_randompotion(array('speed', 'jump', 'blind'), @secs)
+				_fw_randompotion(array('speed', 'jump', 'blind'))
 			}
 			_fw_mobs()
 			bind('entity_damage', array('id': 'fwtaskdamage'), array('type': 'PLAYER'), @e,
@@ -314,9 +316,11 @@ proc('_fw_task', @task, @state, @secs,
 			
 		, 'end',
 			foreach(all_players(), @p,
-				if(_fw_player(@p)
-				&& array_contains(get_teams('fw')[1]['players'], @p)) {
-					play_sound(ploc(@p), array('sound': 'zombie_metal'), @p)
+				if(_fw_player(@p)) {
+					_remove_peffects(@p)
+					if(array_contains(get_teams('fw')[1]['players'], @p)) {
+						play_sound(ploc(@p), array('sound': 'zombie_metal'), @p)
+					}
 				}
 			)
 			_remove_region_mobs('frogware')
@@ -385,7 +389,7 @@ proc('_fw_task', @task, @state, @secs,
 		, 'start',
 			_regionmsg('frogware', color('green').'[FROGWARE] '.color('r').'King of the Hill')
 			if(rand(7) < 1) {
-				_fw_randompotion(array('speed', 'jump'), @secs)
+				_fw_randompotion(array('speed', 'jump'))
 			}
 			if(rand(7) < 1) {
 				_fw_mobs()
@@ -402,10 +406,12 @@ proc('_fw_task', @task, @state, @secs,
 			
 		, 'end',
 			foreach(all_players(), @p,
-				if(_fw_player(@p)
-				&& get_block_at(ploc(@p)) == '35:5'
-				&& _fw_changeteam(@p, 'winners')) {
-					play_sound(ploc(@p), array('sound': 'zombie_metal'), @p)
+				if(_fw_player(@p)) {
+					_remove_peffects(@p)
+					if(get_block_at(ploc(@p)) == '35:5'
+					&& _fw_changeteam(@p, 'winners')) {
+						play_sound(ploc(@p), array('sound': 'zombie_metal'), @p)
+					}
 				}
 			)
 			_remove_region_mobs('frogware')
@@ -431,7 +437,7 @@ proc('_fw_task', @task, @state, @secs,
 		, 'start',
 			_regionmsg('frogware', color('green').'[FROGWARE] '.color('r').'Let there be cake!')
 			if(rand(7) < 1) {
-				_fw_randompotion(array('speed'), @secs)
+				_fw_randompotion(array('speed'))
 			}
 			for(@i = 0, @i < max(1, floor(_fw_totalplayers() / 2)), @i++,
 				set_block_at(_fw_loc(), '92:0')
@@ -444,6 +450,11 @@ proc('_fw_task', @task, @state, @secs,
 			)
 		
 		, 'end',
+			foreach(all_players(), @p,
+				if(_fw_player(@p)) {
+					_remove_peffects(@p)
+				}
+			)
 			unbind('fwcake')
 			_fw_startround(@secs)
 		)
@@ -459,7 +470,7 @@ proc('_fw_task', @task, @state, @secs,
 				}
 			)
 			proc('_set_green', @x, @y, @z,
-				if(rand(100) < 3, set_block_at(array(@x, @y, @z, 'custom'), '35:5'))
+				if(rand(100) < 3, set_block_at(array(@x, @y, @z, 'custom'), '133:0'))
 			)
 			@region = sk_region_info('frogware', 'custom')[0]
 			queue_delay(600, 'fw3')
@@ -546,6 +557,14 @@ proc('_fw_task', @task, @state, @secs,
 			_regionmsg('frogware', color('green').'[FROGWARE] '.color('r').'Click the frog egg!')
 			@loc = _fw_loc()
 			set_block_at(@loc, '122:0')
+			if(rand(7) < 1) {
+				_fw_mobs()
+			}
+			if(rand(7) < 1) {
+				for(@i = 0, @i < 16, @i++,
+					set_block_at(_fw_loc(), '49:0')
+				)
+			}
 			play_sound(@loc, array('sound': 'CHICKEN_EGG_POP', 'volume': 3))
 			bind('player_interact', array('id': 'fwegg', 'priority': 'high'), array('block': 122), @e,
 				if(_fw_player(player())) {
@@ -559,6 +578,7 @@ proc('_fw_task', @task, @state, @secs,
 			
 		, 'end',
 			unbind('fwegg')
+			_remove_region_mobs('frogware')
 			proc('_set_air', @x, @y, @z,
 				if(get_block_at(array(@x, @y, @z, 'custom')) != '0:0') {
 					set_block_at(array(@x, @y, @z, 'custom'), '0:0')
@@ -592,6 +612,11 @@ proc('_fw_task', @task, @state, @secs,
 			)
 			
 		, 'end',
+			foreach(all_players(), @p,
+				if(_fw_player(@p)) {
+					_remove_peffects(@p)
+				}
+			)
 			unbind('fwdamage2')
 			_fw_startround(@secs)
 		
