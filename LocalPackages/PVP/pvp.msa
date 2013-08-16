@@ -33,8 +33,9 @@
 	, 'debug',
 		@id = to_lower($id)
 		@pvp = import('pvp'.@id)
-		foreach(@pvp, @key, @value)
-		msg(@key.': '.color('gray').@value)
+		foreach(@pvp, @key, @value,
+			msg(@key.': '.color('gray').@value)
+		)
 
 	, 'warp',
 		@arena = get_value('arena.'.$id)
@@ -73,7 +74,7 @@
 		if(!array_index_exists(@pvp['arena'], 'mode'), @pvp['arena']['mode'] = 'dm')
 		if(!array_index_exists(@pvp['arena'], 'ff'), @pvp['arena']['ff'] = true)
 		if(!array_index_exists(@pvp['arena'], 'flags'), @pvp['arena']['flags'] = array())
-		if(!array_index_exists(@pvp['arena'], 'team')) {
+		if(!array_index_exists(@pvp['arena'], 'team') && array_contains(array('ctf', 'tdm', 'infection'), @pvp['arena']['mode'])) {
 			@pvp['arena']['team'] = array(
 				array('name': 'Red', 'color': 'c'), 
 				array('name': 'Blue', 'color': '3')

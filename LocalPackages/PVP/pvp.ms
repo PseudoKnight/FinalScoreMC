@@ -287,18 +287,35 @@ proc('_start_round', @id,
 	}
 
 
-	if(array_contains(@pvp['arena']['flags'], 'endernades')) {
-		array_push(@pvp['binds'], @id.'teleport')
-		bind('player_teleport', array('id': @id.'teleport'), null, @event, assign(@id, @id),
-			if(@event['type'] != 'ENDER_PEARL', die())
-			@pvp = import('pvp'.@id)
-			if(!array_index_exists(@pvp['players'], player()), die())
-			if(array_contains(sk_regions_at(@event['to']), @pvp['arena']['region'])) {
+	array_push(@pvp['binds'], @id.'teleport')
+	bind('player_teleport', array('id': @id.'teleport'), null, @event, assign(@id, @id),
+		@pvp = import('pvp'.@id)
+		if(!array_index_exists(@pvp['players'], player()), die())
+		if(@event['type'] == 'ENDER_PEARL') {
+			if(!array_contains(sk_regions_at(@event['to']), @pvp['arena']['region'])) {
+				cancel()
+			} else if(array_contains(@pvp['arena']['flags'], 'endernades')) {
 				explosion(@event['to'], 2)
+				cancel()
 			}
-			cancel()
-		)
-	}
+		} else if(!array_contains(sk_regions_at(@event['to']), @pvp['arena']['region'])) {
+			if(array_contains(array('ctf', 'tdm', 'infection'), @pvp['arena']['mode'])) {
+				_regionmsg(@pvp['arena']['broadcast'], color('gray').'[PVP] '.color(@pvp['arena']['team'][@pvp['players'][player()]['team']]['color']).player().color('r').' left the arena.')
+			} else {
+				_regionmsg(@pvp['arena']['broadcast'], color('gray').'[PVP] '.color('r').player().' left the arena.')
+			}
+			if(@pvp['arena']['mode'] == 'ctf' && pinv(player(), 103) != null && (pinv(player(), 103)['type'] == 8 || pinv(player(), 103)['type'] == 10)) {
+				_flag_spawn(@id, if(pinv(player(), 103)['type'] == 10, 0, 1))
+			}
+			if(array_index_exists(@pvp['players'][player()], 'class')) {
+				_class('unload', player(), @pvp['players'][player()]['class'])
+			}
+			array_remove(@pvp['players'], player())
+			_remove_peffects(player())
+			export('pvp'.@id, @pvp)
+			_check_objectives(@id)
+		}
+	)
 	
 	array_push(@pvp['binds'], @id.'break')
 	bind('block_break', array('id': @id.'break'), null, @event, assign(@id, @id),
@@ -460,7 +477,6 @@ proc('_start_round', @id,
 		# )
 	# }
 
-
 	assign(@pvp['interval'], set_interval(1000, closure(
 		@pvp = import('pvp'.@id)
 		@check = false
@@ -469,26 +485,7 @@ proc('_start_round', @id,
 		foreach(array_keys(@pvp['players']), @player,
 			if(!array_contains(sk_current_regions(@player), @pvp['arena']['region'])
 			&& ploc(@player)[1] > 0) {
-				if(array_contains(array('ctf', 'tdm', 'infection'), @pvp['arena']['mode'])) {
-					_regionmsg(@pvp['arena']['broadcast'], color('gray').'[PVP] '.color(@pvp['arena']['team'][@pvp['players'][@player]['team']]['color']).@player.color('r').' left the arena.')
-				} else {
-					_regionmsg(@pvp['arena']['broadcast'], color('gray').'[PVP] '.color('r').@player.' left the arena.')
-				}
-				if(@pvp['arena']['mode'] == 'ctf' && pinv(player(), 103) != null && (pinv(player(), 103)['type'] == 8 || pinv(player(), 103)['type'] == 10)) {
-					_flag_spawn(@id, if(pinv(player(), 103)['type'] == 10, 0, 1))
-				}
-				if(array_index_exists(@pvp['players'][@player], 'class')) {
-					_class('unload', @player, @pvp['players'][@player]['class'])
-				}
-				array_remove(@pvp['players'], @player)
-				@check = true
-				_remove_peffects(@player)
-				if(array_contains(sk_current_regions(@player), @pvp['arena']['broadcast'])) {
-					set_ploc(@player, @pvp['arena']['lobby'])
-				}
-				if(pworld(@player) == 'custom') {
-					_clear_pinv(@player)
-				}
+				pkill(@player)
 			}
 
 			if(@pvp['arena']['mode'] == 'koth' && array_contains(sk_current_regions(@player), @pvp['arena']['kothregion']) && pinfo(@player, 5) > 0) { 
