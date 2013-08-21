@@ -1,4 +1,0 @@
-*:/class $cmd $class = >>>
-	include('class.ms')
-	_class($cmd, player(), $class)
-<<<

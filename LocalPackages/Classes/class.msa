@@ -1,0 +1,81 @@
+*:/class [$cmd] [$class] [$setting] [$] = >>>
+if(!has_permission('group.builders'), die('You do not have permission.'))
+if($, @args = parse_args($), @args = array())
+array_resize(@args, 3)
+switch($cmd
+, 'set',
+	@class = get_value('class.'.$id)
+	if(!@class, @class = array())
+	switch($setting
+	, 'kit',
+		@inv = pinv()
+		foreach(array_keys(@inv), @slot,
+			if(@inv[@slot] == null) {
+				array_remove(@inv, @slot)
+			}
+		)
+		@class['kit'] = @inv
+		msg('Set kit to current inventory.')
+		
+	, 'effect',
+		@effects = _get_effects()
+		if(!array_contains(array_keys(@effects), @args[0]), die('Unknown potion effect. '.array_keys(@effects)))
+		@effect = @effects[@args[0]]
+		if(!array_index_exists(@class, 'effect'), @class['effect'] = associative_array())
+		if(@args[1] && @args[2]) {
+			if(@args[1] == 0 || @args[2] == 0) {
+				array_remove(@class['effect'], @effect)
+				if(array_size(@class['effect']) == 0) {
+					array_remove(@class, 'effect')
+				}
+				msg('Removed potion effect '.@args[0].'.')
+			} else {
+				@class['effect'][@effect] = associative_array('strength': @args[1] - 1, 'length': @args[2])
+				msg('Set a potion effect for this class: '.@args[0].' with a strength of '.@args[1].' and a length of '.@args[2].' seconds.')
+			}
+		} else {
+			die('Requires a strength integer and a length integer in seconds.')
+		}
+		
+	,
+		die('Available settings: kit, effect')
+	)
+	
+, 'delete',
+	if($setting) {
+		@class = get_value('class.'.$id)
+		array_remove(@class, @setting)
+		store_value('class.'.$id, @class)
+		msg(@setting.' deleted from '.$id)
+	} else {
+		clear_value('class.'.$id)
+		msg('Class deleted.')
+	}
+
+, 'info',
+	@class = get_value('class.'.$id)
+	foreach(@class, @setting, @value,
+		msg(color('gray').@setting.' '.color('r').@value)
+	)
+	
+, 'load',
+	_class('load', player(), $class)
+	
+, 'unload',
+	_class('unload', player(), $class)
+	
+, 'equip',
+	_class('equip', player(), $class)
+	
+, 'list',
+	@classes = get_values('class')
+	@list = ''
+	foreach(array_keys(@classes), @key,
+		@list .= split('.', @key)[1].' '
+	)
+	msg(color('gray').'CLASSES: '.color('r').@list)
+	
+, 
+	die('Usage: /class [set|delete|info|load|unload|equip|list] [classname] [setting] [value[s]]')
+)
+<<<
