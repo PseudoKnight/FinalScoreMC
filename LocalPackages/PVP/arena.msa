@@ -1,6 +1,6 @@
 *:/arena [$action] [$id] [$setting] [$] = >>>
 	if($, @args = parse_args($), @args = array())
-	array_resize(@args, 3)
+	array_resize(@args, 4)
 	switch($action
 	, 'update', 
 		if(!has_permission('group.administrators'), die('You do not have permission.'))
@@ -41,6 +41,7 @@
 			.color('r').'max '.color('gray').'Start the match as soon as this number of players join.\n'
 			.color('r').'effect '.color('gray').'The starting potion effect for all players.\n'
 			.color('r').'denydrop '.color('gray').'Comma delimited list of IDs not dropped on death\n'
+			.color('r').'mobspawn '.color('gray').'Spawn mob (type qty respawnTime onStart)\n'
 			.color('r').'flags '.color('gray').'Special game behavior modifiers.')
 		}
 		if(reg_count('^[a-z0-9]+$', $id) < 1, die('You can only use lowercase alphanumeric characters for the arena ID'))
@@ -271,8 +272,8 @@
 				}
 
 			, 'effect',
-				assign(@effects, array('speed': '1', 'slowness': '2', 'haste': '3', 'fatique': '4', 'strength': '5', 'health': '6', 'damage': '7', 'jump': '8', 'nausea': '9', 'regen': '10', 'resistance': '11', 'fireresist': '12', 'waterbreathing': '13', 'invis': '14', 'blindness': '15', 'nightvision': '16', 'hunger': '17', 'weakness': '18', 'poison': '19'))
-				if(!array_contains(array_keys(@effects), @args[0]), die('Unknown potion effect. (speed, slowness, haste, fatique, strength, health, damage, jump, nausea, regen, resistance, fireresist, waterbreathing, invis, blindness, nightvision, hunger, weakness, poison)'))
+				@effects = _get_effects()
+				if(!array_contains(array_keys(@effects), @args[0]), die('Unknown potion effect. '.array_keys(@effects)))
 				@effect = @effects[@args[0]]
 				if(!array_index_exists(@arena, 'effect'), @arena['effect'] = associative_array())
 				if(@args[1] && @args[2]) {
@@ -293,7 +294,23 @@
 			, 'denydrop',
 				if(!@args[0] || @args[1], die('You need to specify a comma separated list of item IDs. (no spaces)'))
 				@arena['denydrop'] = split(',', @args[0])
-				msg('Set '.@args[0].' item IDs as denied drops on death.')		
+				msg('Set '.@args[0].' item IDs as denied drops on death.')
+
+			, 'mobspawn', 
+				if(array_size(@args) < 4, die('Arguments: <type> <quantity> <respawnSecs> <spawnStart>'))
+				if(!array_index_exists(@arena, 'mobspawn'), @arena['mobspawn'] = array())
+				if(!_get_mob(@args[0]), die('Unknown mob type.'))
+				if(!is_numeric(@args[1]), die('Qty must be a number.'))
+				if(!is_numeric(@args[2]), die('Respawn time must be a number in seconds.'))
+				array_push(@arena['mobspawn'], array(
+					'loc': array(round(ploc()[0], 1), ploc()[1] + 1, round(ploc()[2], 1)),
+					'type': @args[0],
+					'qty': @args[1],
+					'respawn': @args[2],
+					'start': if(@args[3], 1, 0)
+				))
+				msg('Set '.@args[1].' '.@args[0].' to spawn here every '.@args[2].' seconds'.if(@args[3], ' and at start.', '.'))
+				
 
 			, 'flags',
 				@flags = array('endernades', 'skullrockets', 'noinventory', 'stackedpickup', 'debug')

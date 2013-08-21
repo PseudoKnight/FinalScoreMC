@@ -32,6 +32,14 @@ proc('_start_round', @id,
 		)
 	}
 	
+	if(array_index_exists(@pvp['arena'], 'mobspawn')) {
+		@pvp['mobspawn'] = array()
+		for(@i = 0, @i < array_size(@pvp['arena']['mobspawn']), @i++,
+			if(@pvp['arena']['mobspawn'][@i]['start'], @time = 0, @time = time())
+			array_set(@pvp['mobspawn'], @i, @time)
+		)
+	}
+	
 	_remove_region_items(@pvp['arena']['region'])
 
 	@c = array(0, 0) # for selecting initial spawn locations
@@ -285,6 +293,16 @@ proc('_start_round', @id,
 			cancel()
 		)
 	}
+	
+	if(array_index_exists(@pvp['arena'], 'mobspawn')) {
+		array_push(@pvp['binds'], @id.'entitydrops')
+		bind('entity_death', array('id': @id.'entitydrops'), null, @e, assign(@id, @id),
+			@pvp = import('pvp'.@id)
+			if(array_contains(sk_regions_at(@e['location']), @pvp['arena']['region'])) {
+				modify_event('xp', 0)
+			}
+		)
+	}
 
 
 	array_push(@pvp['binds'], @id.'teleport')
@@ -484,7 +502,7 @@ proc('_start_round', @id,
 
 		foreach(array_keys(@pvp['players']), @player,
 			if(!array_contains(sk_current_regions(@player), @pvp['arena']['region'])
-			&& ploc(@player)[1] > 0) {
+			&& pinfo(@player, 5) > 0) {
 				pkill(@player)
 			}
 
@@ -507,6 +525,14 @@ proc('_start_round', @id,
 					@pvp['itemspawn'][@i] = time()
 				}
 			) 
+		}
+		if(array_index_exists(@pvp['arena'], 'mobspawn')) {
+			for(@i = 0, @i < array_size(@pvp['arena']['mobspawn']), @i++,
+				if((@pvp['mobspawn'][@i] + (@pvp['arena']['mobspawn'][@i]['respawn'] * 1000)) < time()) {
+					_spawn_mob(@pvp['arena']['mobspawn'][@i]['type'], @pvp['arena']['mobspawn'][@i]['qty'], @pvp['arena']['mobspawn'][@i]['loc'])
+					@pvp['mobspawn'][@i] = time()
+				}
+			)
 		}
 		if(array_index_exists(@pvp['arena'], 'chestspawn')) {
 			for(@i = 0, @i < array_size(@pvp['arena']['chestspawn']), @i++,
