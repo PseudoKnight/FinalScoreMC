@@ -1,0 +1,96 @@
+*:/mob [$cmd] [$id] [$setting] [$] = >>>
+	switch($cmd
+	, 'set',
+		@mob = get_value('mob.'.$id)
+		if(!@mob, @mob = array())
+		switch($setting
+		, 'type',
+			if(!_get_mob($), die('Unknown mob type.'))
+			@mob['type'] = $
+			msg('Type set.')
+			
+		, 'name',
+			if(length($) > 64, die('Name is too long.'))
+			@mob['name'] = colorize($)
+			msg('Name set.')
+		, 'gear',
+			@mob['gear'] = array(
+				'WEAPON': pinv(player(), 0),
+				'HELMET': pinv(player(), 103),
+				'CHESTPLATE': pinv(player(), 102),
+				'LEGGINGS': pinv(player(), 101),
+				'BOOTS': pinv(player(), 100)			
+			)
+			msg('Gear set.')
+		, 'droprate',
+			@args = parse_args($)
+			if(array_size(@args) == 1) {
+				@mob['droprate'] = array(
+					'WEAPON': @args[0], 
+					'BOOTS': @args[0], 
+					'LEGGINGS': @args[0],  
+					'CHESTPLATE': @args[0], 
+					'HELMET': @args[0]
+				)
+			} else {
+				@mob['droprate'] = array(
+					'WEAPON': @args[0], 
+					'BOOTS': @args[1], 
+					'LEGGINGS': @args[2],  
+					'CHESTPLATE': @args[3], 
+					'HELMET': @args[4]
+				)
+			}
+			msg('Droprate set.')
+		, 'effect',
+			@args = parse_args($)
+			if(!array_index_exists(@mob, 'effects')) {
+				@mob['effects'] = array()
+			}
+			array_push(@mob['effects'], array(
+				'id': @args[0],
+				'strength': @args[1] - 1,
+				'seconds': @args[2]
+			))
+			msg('Effect added')
+		, die('Available settings: type, name, gear, droprate, effect')
+		)
+		store_value('mob.'.$id, @mob)
+		
+	, 'delete',
+		if($setting) {
+			@mob = get_value('mob.'.$id)
+			if($setting == 'effect', @setting = 'effects', @setting = $setting)
+			array_remove(@mob, @setting)
+			store_value('mob.'.$id, @mob)
+			msg(@setting.' deleted from '.$id)
+		} else {
+			clear_value('mob.'.$id)
+			msg('Custom mob deleted.')
+		}
+	
+	, 'info',
+		@mob = get_value('mob.'.$id)
+		foreach(@mob, @setting, @value,
+			msg(color('gray').@setting.' '.color('r').@value)
+		)
+	
+	, 'spawn',
+		_spawn_mob($id, 1, array(
+			pcursor()[0],
+			pcursor()[1] + 1,
+			pcursor()[2],
+			pcursor()[3]
+		))
+	
+	, 'list',
+		@mobs = get_values('mob')
+		@list = ''
+		foreach(array_keys(@mobs), @key,
+			@list .= split('.', @key)[1].' '
+		)
+		msg(color('gray').'CUSTOM MOBS: '.color('r').@list)
+	,
+		die('Usage: /mob <set|delete|info|spawn|list> [mobname] [setting] [value]')
+	)
+<<<
