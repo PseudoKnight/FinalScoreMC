@@ -163,7 +163,6 @@
 		#START ROUND
 		set_timeout(3000, closure(
 			include('pvp.ms')
-			if(array_index_exists(@pvp['arena'], 'classes'), include('class.ms'))
 			_start_round(@id)
 		))
 
