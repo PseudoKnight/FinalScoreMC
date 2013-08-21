@@ -71,7 +71,10 @@ proc(_get_effects,
 		'hunger': 17,
 		'weakness': 18,
 		'poison': 19,
-		'wither': 20
+		'wither': 20,
+		'boost': 21,
+		'absorption': 22,
+		'saturation': 23
 	))
 )
 
