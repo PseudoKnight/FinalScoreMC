@@ -28,7 +28,7 @@
 			.color('r').'teamratio '.color('gray').'The ratio of players for team 1 and 2.\n'
 			.color('r').'team '.color('gray').'Team name and color\n'
 			.color('r').'kit '.color('gray').'Sets the respawn kits (accepts team # as value)\n'
-			.color('r').'classes '.color('gray').'Available classes\n'		
+			.color('r').'classes '.color('gray').'Available classes [[team1 team2] [both]]\n'
 			.color('r').'restore '.color('gray').'The optional restoration area name. (/prs)\n'
 			.color('r').'time '.color('gray').'The starting time (0-24000)\n'
 			.color('r').'ff '.color('gray').'Sets team friendly-fire (default: true)\n'
@@ -41,7 +41,7 @@
 			.color('r').'max '.color('gray').'Start the match as soon as this number of players join.\n'
 			.color('r').'effect '.color('gray').'The starting potion effect for all players.\n'
 			.color('r').'denydrop '.color('gray').'Comma delimited list of IDs not dropped on death\n'
-			.color('r').'mobspawn '.color('gray').'Spawn mob (type qty respawnTime onStart)\n'
+			.color('r').'mobspawn '.color('gray').'Spawn mob @ location (type qty respawnTime onStart)\n'
 			.color('r').'flags '.color('gray').'Special game behavior modifiers.')
 		}
 		if(reg_count('^[a-z0-9]+$', $id) < 1, die('You can only use lowercase alphanumeric characters for the arena ID'))
@@ -137,15 +137,21 @@
 				}
 			
 			, 'classes',
-				if(@args[1]) {
+				if(@args[2]) {
 					@args[0] = split(',', @args[0])
 					@args[1] = split(',', @args[1])
-					@arena['classes'] = array(@args[0], @args[1])
-					msg('Set available classes (Team 1: '.@args[0].', Team 2: '.@args[1].')')
-				} else {
+					@args[2] = split(',', @args[2])
+					@arena['classes'] = array(@args[0], @args[1], @args[2])
+					msg('Set available classes (Both: '.@args[2].', Team 1: '.@args[0].', Team 2: '.@args[1].')')
+				} else if(@args[1]) {
 					@args[0] = split(',', @args[0])
-					@arena['classes'] = @args[0]
-					msg('Set available classes: '.@args[0])
+					@args[1] = split(',', @args[1])
+					@arena['classes'] = array(@args[0], @args[1], array())
+					msg('Set available classes (Team 1: '.@args[0].', Team 2: '.@args[1].')')
+				} else if(@args[0]) {
+					@args[0] = split(',', @args[0])
+					@arena['classes'] = array(array(), array(), @args[0])
+					msg('Set available classes ('.@args[0].')')
 				}
 
 			, 'restore',

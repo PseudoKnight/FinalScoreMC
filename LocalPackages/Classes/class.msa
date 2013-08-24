@@ -1,4 +1,4 @@
-*:/class [$cmd] [$class] [$setting] [$] = >>>
+*:/class [$cmd] [$id] [$setting] [$] = >>>
 if(!has_permission('group.builders'), die('You do not have permission.'))
 if($, @args = parse_args($), @args = array())
 array_resize(@args, 3)
@@ -7,6 +7,11 @@ switch($cmd
 	@class = get_value('class.'.$id)
 	if(!@class, @class = array())
 	switch($setting
+	, 'selector', 
+		if(!pinv(player(), null), die('You must select an item on your hotbar.'))
+		@class['selector'] = pinv(player(), null)
+		msg('Class selector set to this item.')
+	
 	, 'kit',
 		@inv = pinv()
 		foreach(array_keys(@inv), @slot,
@@ -38,15 +43,16 @@ switch($cmd
 		}
 		
 	,
-		die('Available settings: kit, effect')
+		die('Available settings: selector, kit, effect')
 	)
+	store_value('class.'.$id, @class)
 	
 , 'delete',
 	if($setting) {
 		@class = get_value('class.'.$id)
-		array_remove(@class, @setting)
+		array_remove(@class, $setting)
 		store_value('class.'.$id, @class)
-		msg(@setting.' deleted from '.$id)
+		msg($setting.' deleted from '.$id)
 	} else {
 		clear_value('class.'.$id)
 		msg('Class deleted.')
@@ -59,13 +65,13 @@ switch($cmd
 	)
 	
 , 'load',
-	_class('load', player(), $class)
+	_class('load', player(), $id)
 	
 , 'unload',
-	_class('unload', player(), $class)
+	_class('unload', player(), $id)
 	
 , 'equip',
-	_class('equip', player(), $class)
+	_class('equip', player(), $id)
 	
 , 'list',
 	@classes = get_values('class')

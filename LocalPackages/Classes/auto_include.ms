@@ -44,6 +44,7 @@ proc('_class', @action, @player, @class,
 			)
 			_manti_noise(@player)
 			set_pwalkspeed(@player, 0.23)
+			tmsg(@player, 'Right-click to leap.')
 			
 		, 'equip',
 			set_pinv(@player, array(
@@ -97,6 +98,7 @@ proc('_class', @action, @player, @class,
 				play_sound(ploc(), array('sound': 'ZOMBIE_UNFECT', 'pitch': 1, 'volume': 3))
 			)
 			set_pwalkspeed(@player, 0.16)
+			tmsg(@player, 'Right-click to fire.')
 			
 		, 'equip',
 			set_pinv(@player, array(
@@ -119,6 +121,28 @@ proc('_class', @action, @player, @class,
 			unbind(@player.'death')
 			set_pwalkspeed(@player, 0.2)
 			set_peffect(@player, 8, 0, 0)
+		)
+		
+	, 
+		@class = get_value('class.'.@class)
+		if(!@class, return(false))
+		switch(@action
+		, 'load',
+			
+		, 'equip',
+			if(array_index_exists(@class, 'kit')) {
+				set_pinv(@player, @class['kit'])
+			}
+			if(array_index_exists(@class, 'effect')) {
+				set_timeout(50, closure(
+					foreach(@class['effect'], @eid, @e,
+						set_peffect(@player, @eid, @e['strength'], @e['length'])
+					)
+				))
+			}
+			
+		, 'unload',
+			
 		)
 	)
 )

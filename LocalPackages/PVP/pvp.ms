@@ -75,10 +75,12 @@ proc('_start_round', @id,
 
 		_clear_pinv(@player)
 		if(array_index_exists(@pvp['arena'], 'classes') && !array_index_exists(@pvp['players'][@player], 'class')) {
-				@pvp['players'][@player]['class'] = if(is_array(@pvp['arena']['classes'][0]), 
-					@pvp['arena']['classes'][@pvp['players'][@player]['team']][0],
-					@pvp['arena']['classes'][0]
-				)
+			if(!array_index_exists(@pvp['players'][@player], 'team')
+			|| array_size(@pvp['arena']['classes'][@pvp['players'][@player]['team']]) == 0) {
+				@pvp['players'][@player]['class'] = @pvp['arena']['classes'][2][0]
+			} else {
+				@pvp['players'][@player]['class'] = @pvp['arena']['classes'][@pvp['players'][@player]['team']][0],
+			}
 		}
 		_equip(@id, @player)
 		set_phunger(@player, 20)
@@ -564,6 +566,14 @@ proc('_start_round', @id,
 	export('pvp'.@id, @pvp)
 )
 
+# proc('_class_select', @id, @player,
+	# @pvp = import('pvp'.@id)
+	# @classnames = @pvp['arena']['classes'][@pvp['players'][@player]['team']]
+	# foreach(@classnames, @classname,
+		# @class[@classname] = get_value('class.'.@classname)
+	# )
+# )
+
 proc('_equip', @id, @player,
 	@pvp = import('pvp'.@id)
 	if(array_index_exists(@pvp['arena'], 'kit')) {
@@ -691,7 +701,14 @@ proc('_end_match', @id, @winners,
 		queue_clear(@id.'0flag')
 		queue_clear(@id.'1flag')
 	}
-
+	
+	if(array_contains(all_virtualchests(), @id.'0')) {
+		del_virtualchest(@id.'0')
+	}
+	if(array_contains(all_virtualchests(), @id.'1')) {
+		del_virtualchest(@id.'1')
+	}
+	
 	remove_scoreboard(@id)
 	clear_task(@pvp['interval'])
 	@pvp = array('players': array(), 'running': 'false', 'cooldown': time())

@@ -25,8 +25,7 @@
 		_worldmsg('custom', color('gray').'[PVP] '.color('r').player().' has joined '.to_upper($id).'. ('.array_size(@pvp['players']).')')
 		console(player().' joined '.$id)
 		export('pvp'.$id, @pvp)
-		if((array_index_exists(@arena, 'max') && array_size(@pvp['players']) >= @arena['max'])
-		|| array_size(@pvp['players']) == array_size(all_players())) {
+		if((array_index_exists(@arena, 'max') && array_size(@pvp['players']) >= @arena['max'])) {
 			call_alias('/pvp start '.$id)
 		}
 		
@@ -149,6 +148,93 @@
 		@pvp['coins'] = array_size(@pvp['players']) - 2
 		@pvp['binds'] = array()
 		@pvp['running'] = 'true'
+		
+		# CLASSES
+		if(array_index_exists(@pvp['arena'], 'classes')) {
+			@size = array_size(@pvp['arena']['classes'][0]) + array_size(@pvp['arena']['classes'][2])
+			if(@size > 1) {
+				@size = ceil(@size / 9) * 9
+				create_virtualchest(array(
+					'id': @id.'0',
+					'size': @size,
+					'title': 'Choose a Class'
+				))
+				for(@i = 0, @i < array_size(@pvp['arena']['classes'][2]), @i++,
+					@class = get_value('class.'.@pvp['arena']['classes'][2][@i])
+					if(!@class, continue())
+					addto_virtualchest(@id.'0', 
+						@class['selector']['type'].':'.@class['selector']['data'], 
+						@class['selector']['qty'],
+						@class['selector']['meta']
+					)
+				)
+				for(@i = 0, @i < array_size(@pvp['arena']['classes'][0]), @i++,
+					@class = get_value('class.'.@pvp['arena']['classes'][0][@i])
+					if(!@class, continue())
+					addto_virtualchest(@id.'0', 
+						@class['selector']['type'].':'.@class['selector']['data'], 
+						@class['selector']['qty'],
+						@class['selector']['meta']
+					)
+				)
+				foreach(@pvp['players'], @p, @pdata,
+					if(!array_index_exists(@pdata, 'team') || @pdata['team'] == 0) {
+						popen_virtualchest(@p, @id.'0')
+					}
+				)
+			}
+			@size = array_size(@pvp['arena']['classes'][1]) + array_size(@pvp['arena']['classes'][2])
+			if(@size > 1) {
+				@size = ceil(@size / 9) * 9
+				create_virtualchest(array(
+					'id': @id.'1',
+					'size': @size,
+					'title': 'Choose a Class'
+				))
+				for(@i = 0, @i < array_size(@pvp['arena']['classes'][2]), @i++,
+					@class = get_value('class.'.@pvp['arena']['classes'][2][@i])
+					if(!@class, continue())
+					addto_virtualchest(@id.'1', 
+						@class['selector']['type'].':'.@class['selector']['data'], 
+						@class['selector']['qty'],
+						@class['selector']['meta']
+					)
+				)
+				for(@i = 0, @i < array_size(@pvp['arena']['classes'][1]), @i++,
+					@class = get_value('class.'.@pvp['arena']['classes'][1][@i])
+					if(!@class, continue())
+					addto_virtualchest(@id.'1', 
+						@class['selector']['type'].':'.@class['selector']['data'], 
+						@class['selector']['qty'],
+						@class['selector']['meta']
+					)
+				)
+				foreach(@pvp['players'], @p, @pdata,
+					if(!pget_virtualchest(@p) && @pdata['team'] == 1) {
+						popen_virtualchest(@p, @id.'1')
+					}
+				)
+			}
+			array_push(@pvp['binds'], @id.'classselector')
+			bind('inventory_click', array('id': @id.'classselector'), array('slottype': 'CONTAINER', 'clicktype': 'LEFT', 'action': 'PICKUP_ALL'), @e, assign(@id, @id),
+				@pvp = import('pvp'.@id)
+				if(!array_index_exists(@pvp['players'], player())
+				|| !@e['slotitem']['meta']
+				|| !@e['slotitem']['meta']['display']) {
+					die()
+				}
+				@class = substr(@e['slotitem']['meta']['display'], 2)
+				if((!array_index_exists(@pvp['players'][player()], 'team')
+				&& array_contains_ic(@pvp['arena']['classes'][2], @class))
+				|| array_index_exists(@pvp['players'][player()], 'team')
+				&& array_contains_ic(@pvp['arena']['classes'][@pvp['players'][player()]['team']], @class)) {
+					@pvp['players'][player()]['class'] = to_lower(substr(@e['slotitem']['meta']['display'], 2))
+					cancel()
+					close_pinv()
+					export('pvp'.@id, @pvp)
+				}
+			)
+		}
 
 		#ANNOUNCE
 		_worldmsg('custom', color('gray').'[PVP] '.color('r').'STARTING '.to_upper(@id).'...')
@@ -161,9 +247,18 @@
 		export('pvp'.@id, @pvp)
 		
 		#START ROUND
-		set_timeout(3000, closure(
-			include('pvp.ms')
-			_start_round(@id)
+		set_interval(3000, closure(
+			@go = 1
+			foreach(array_keys(@pvp['players']), @p,
+				if(pget_virtualchest(@p)) {
+					@go = 0
+				}
+			)
+			if(@go) {
+				clear_task()
+				include('pvp.ms')
+				_start_round(@id)
+			}
 		))
 
 	,
