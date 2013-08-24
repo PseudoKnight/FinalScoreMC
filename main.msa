@@ -335,7 +335,7 @@
 		'- Do NOT harass, call others names, use hate speech, spam, or use excessive adult language in chat.\n'.
 		'- Do NOT actively use cheat modifications to do things like fly or look through walls.\n'.
 		'- DO respect other players and apologize if you make a mistake, as we have all made them.',
-		'homes': 'You can have one home per world. Set them by typing "/sethome", then "/home" to teleport to them. You can teleport to homes of other players by typing in their name after "/home".',
+		'homes': 'You can have one home per world. Set them by typing "/sethome", then "/home" to teleport to them. You can teleport to your homes on other worlds with "/home worldname", or homes of other players with "/home playername".',
 		'messages': 'Send a private message to another player with "/msg <playername> <message>" or "@playername <message>". You can use "/r <message>" for a reply.',
 		'spawn': 'There is one central spawn on each world, including nethers. Type "/spawn" to teleport to the spawn of the world you are in or follow it with a world name to teleport there.',
 		'stargate': 'Stargates are special portals you build to teleport within a network of locations. There is a more detailed guide on the website. But to make one, first build the gate as seen (without sign or button), place a sign on the correct location, then type the gate name on line one and the gate network name on line three.',
@@ -345,7 +345,7 @@
 		'live-map': '>>> http://mc.finalscoremc.com:25966 <<< The website has a handy live map that shows the location of players and their homes, among other things.',
 		'moderators': 'Admins: PseudoKnight, Scottyd_Utah, Nefyoni, asdialed; Moderators:TobyTobey, fredwaffles, TrulyAnnoying.',
 		'plugins': 'Type "/plugins" for a full list of plugins installed, or check the website for more details.',
-		'permissions': 'We currently have 7 groups: Everyone (new players/restricted), Regulars, Donors (green names or diamonds), Builders (orange), Engineers (orange), Moderators (blue), and Administrators (blue). New players get bumped up to the Regulars group after some time, as long as they\'re not causing trouble.',
+		'permissions': 'We currently have 7 groups: Everyone (new players with minor restrictions), Regulars, Donors (green names or diamonds), Builders (orange), Engineers (orange), Moderators (blue), and Administrators (blue). New players get bumped up to the Regulars group after some time, as long as they\'re not causing trouble.',
 		'mumble': 'Everyone is welcome to use our voice chat server using Mumble. The server is at mum.finalscoremc.com with port 64758. You can get Mumble at >>> http://mumble.sourceforge.net <<<',
 		'regions': 'Regions are protected zones where only owners and members can build or access chests. You can create your own region by using a wood axe, left and right clicking to select a cuboid for the region, then use "/rg claim <regionid>". More details are on the website.',
 		'spleef': 'Spleef is a game where you try and dig out the blocks from under other players so that they fall. There is an automated arena for this at the Colosseum at Final City. Type "/warp spleef" to get there quickly.',
@@ -705,6 +705,7 @@
 	if(length($) > 30, die('The name can only be 30 characters long.'))
 	@inv = pinv(player(), null)
 	if(is_null(@inv['meta']), @inv['meta'] = array())
+	if(is_null(@inv['meta']['lore']), @inv['meta']['lore'] = array())
 	@inv['meta']['lore'][$line - 1] = colorize($)
 	set_pinv(array(null: @inv))
 <<<	
@@ -723,13 +724,26 @@
 	}
 <<<
 
-*:/potion $id $strength $seconds = >>>
+*:/potion [$cmd] [$id] [$strength] [$seconds] = >>>
 	if((!has_permission('group.builders') || !array_contains(array('custom', 'dev'), pworld())) && !has_permission('group.moderators'), die('You do not have permission to use this command.'))
 	@effects = _get_effects()
+	if(!$id, die('Usage: /potion <set|add> <potionEffect> <strength> <seconds>'))
 	if(is_numeric($id), @id = $id, @id = @effects[$id])
 	@effectdata = array(1: 2, 2: 10, 5: 9, 6: 5, 7: 12, 10: 1, 12: 3, 14: 14, 16: 6, 18: 8)
 	if(array_index_exists(@effectdata, @id), @data = @effectdata[@id], @data = 16)
-	set_pinv(array(null: array('type': 373, 'data': @data, 'meta': array('potions': array(array('id': @id, 'strength': $strength, 'seconds': $seconds))))))
+	switch($cmd
+	, 'add',
+		@item = pinv(player(), null)
+		if(@item['type'] != 373, die('You can only add potion effects to potions.'))
+		if(!@item['meta'], @item['meta'] = array())
+		if(!array_index_exists(@item['meta'], 'potions'), @item['meta']['potions'] = array())
+		array_push(@item['meta']['potions'], array('id': @id, 'strength': $strength - 1, 'seconds': $seconds))
+		set_pinv(array(null: @item))
+	, 'set',
+		set_pinv(array(null: array('type': 373, 'data': @data, 'meta': array('potions': array(array('id': @id, 'strength': $strength - 1, 'seconds': $seconds))))))
+	, 
+		die('Usage: /potion <set|add> <potionEffect> <strength> <seconds>')
+	)
 <<<
 
 *:/enchant $type [$level=1] = >>>
