@@ -135,14 +135,14 @@ proc(_remove_region_items, @region,
   return(true)
 )
 
-proc(_remove_region_mobs, @region, @mobtype = null,
-  if(!sk_region_exists(pworld(), @region)) {
-    console('Can\'t remove mobs because region doesn\'t exist: '.@region)
+proc(_remove_region_entities, @region, @entities = array(),
+  if(!sk_region_exists(@region)) {
+    console('Can\'t remove entities because region doesn\'t exist: '.@region)
     return(false)
   }
   @loc = sk_region_info(@region, pworld())[0]
   if(array_size(@loc) > 2) {
-    console('Can\'t remove mobs because region isn\'t a cuboid: '.@region)
+    console('Can\'t remove entities because region isn\'t a cuboid: '.@region)
     return(false)
   }
   for(@x = @loc[1][0], @x < (@loc[0][0] + 15), inc(@x, 16),
@@ -150,7 +150,8 @@ proc(_remove_region_mobs, @region, @mobtype = null,
     for(@z = @loc[1][2], @z < (@loc[0][2] + 15), inc(@z, 16),
       if(@z > @loc[0][2], @z = @loc[0][2])
       foreach(all_entities(array(@x, 64, @z, pworld())), @entity,
-        if((!@mobtype && entity_type(@entity) != 'PLAYER') || entity_type(@entity) == @mobtype) {
+        if((!@entities && !array_contains(array('PLAYER', 'COMPLEX_PART', 'ITEM_FRAME', 'PAINTING', 'WEATHER'), entity_type(@entity)))
+		|| array_contains(@entities, entity_type(@entity))) {
           entity_remove(@entity)
         }
       )

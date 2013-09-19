@@ -1,6 +1,6 @@
 proc('_fw_startgame',
 	_fw_startround()
-	bind('entity_damage', array('id': 'fwdamage'), array('type': 'PLAYER'), @e,
+	bind('entity_damage', array('id': 'fwdamage'), array('type': 'PLAYER', 'world': 'custom'), @e,
 		if(_fw_player(@e['player'])) {
 			modify_event('amount', 0)
 		}
@@ -11,7 +11,7 @@ proc('_fw_startgame',
 proc('_fw_endgame', @winners,
 	unbind('fwdamage')
 	_regionmsg('frogware', color('green').'[FROGWARE] '.color('r').'Best frog'.if(array_size(@winners) > 1, 's').' in the house: '.array_implode(@winners, ' & '))
-	@warp = get_value('warp.park')
+	@warp = get_value('warp.frogpark')
 	foreach(all_players(), @p,
 		if(_fw_player(@p)) {
 			_warmuptp(3.7, @p, @warp['loc'], @warp['yaw'], @warp['pitch'])
@@ -240,7 +240,7 @@ proc('_fw_task', @task, @state, @secs,
 					}
 				}
 			)
-			_remove_region_mobs('frogware')
+			_remove_region_entities('frogware')
 			proc('_set_air', @x, @y, @z,
 				if(get_block_at(array(@x, @y, @z, 'custom')) != '0:0') {
 					set_block_at(array(@x, @y, @z, 'custom'), '0:0')
@@ -301,7 +301,7 @@ proc('_fw_task', @task, @state, @secs,
 				_fw_randompotion(array('speed', 'jump', 'blind'))
 			}
 			_fw_mobs()
-			bind('entity_damage', array('id': 'fwtaskdamage'), array('type': 'PLAYER'), @e,
+			bind('entity_damage', array('id': 'fwtaskdamage'), array('type': 'PLAYER', 'world': 'custom'), @e,
 				if((@e['cause'] == 'ENTITY_ATTACK' || @e['cause'] == 'ENTITY_EXPLOSION')
 				&& _fw_player(@e['player'])
 				&& is_numeric(@e['damager'])) {
@@ -323,7 +323,7 @@ proc('_fw_task', @task, @state, @secs,
 					}
 				}
 			)
-			_remove_region_mobs('frogware')
+			_remove_region_entities('frogware')
 			unbind('fwtaskdamage')
 			_fw_startround(@secs)
 			
@@ -414,7 +414,7 @@ proc('_fw_task', @task, @state, @secs,
 					}
 				}
 			)
-			_remove_region_mobs('frogware')
+			_remove_region_entities('frogware')
 			proc('_set_air', @x, @y, @z,
 				if(get_block_at(array(@x, @y, @z, 'custom')) != '0:0') {
 					set_block_at(array(@x, @y, @z, 'custom'), '0:0')
@@ -578,7 +578,7 @@ proc('_fw_task', @task, @state, @secs,
 			
 		, 'end',
 			unbind('fwegg')
-			_remove_region_mobs('frogware')
+			_remove_region_entities('frogware')
 			proc('_set_air', @x, @y, @z,
 				if(get_block_at(array(@x, @y, @z, 'custom')) != '0:0') {
 					set_block_at(array(@x, @y, @z, 'custom'), '0:0')
@@ -601,7 +601,7 @@ proc('_fw_task', @task, @state, @secs,
 		, 'start',
 			_regionmsg('frogware', color('green').'[FROGWARE] '.color('r').'Hit but don\'t be hit!')
 			_fw_randompotion(array('speed', 'jump', 'blind', 'invis'))
-			bind('entity_damage', array('id': 'fwdamage2'), array('type': 'PLAYER', 'cause': 'ENTITY_ATTACK'), @e,
+			bind('entity_damage', array('id': 'fwdamage2'), array('type': 'PLAYER', 'cause': 'ENTITY_ATTACK', 'world': 'custom'), @e,
 				if(_fw_player(@e['player'])
 				&& _fw_player(@e['damager'])) {
 					if(_fw_changeteam(@e['damager'], 'winners')) {
