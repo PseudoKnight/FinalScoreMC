@@ -94,14 +94,14 @@
 			@itemid = reg_split('\\:', data_values(@item[0]))[0].'.'.@item[1]
 		} else {
 			@itemid = reg_replace(':', '.', data_values(@item[0]))
-			if(@itemid == null, die())
+			if(@itemid == null, die(color('red').'Unknown item name.'))
 		}
 	)
 	@shops = get_value('shop.'.@itemid)
 	if(!@shops) { 
-		die(concat(color('6'), 'No stocked shops found for '.color('o').'"'.$.'"'))
+		die(color('gold').'No stocked shops found for '.color('o').'"'.$.'"')
 	} else {
-		msg(color('6').'Shops you can buy or sell '.color('o').'"'.$.'"')
+		msg(color('gold').'Shops you can buy or sell '.color('o').'"'.$.'"')
 		msg(color('gray').'-----------------------------------------------------')
 	}
 	foreach(@shops[0], @key, @shop,
