@@ -1,14 +1,18 @@
 /safereload [$force]= >>>
 	if(!$force) {
+		@inprogress = array()
 		@currentspleef = import('currentspleef')
-		if(@currentspleef != false && array_size(@currentspleef) >= 1, die('Spleef in progress.'))
+		if(@currentspleef != false && array_size(@currentspleef) >= 1, array_push(@inprogress, 'Spleef'))
 		@arenas = get_values('arena')
 		foreach(array_keys(@arenas), @key,
 			@pvp = import('pvp'.split('.', @key)[1])
-			if(@pvp && @pvp['running'] == 'true', die(to_upper(split('.', @key)[1]).' in progress.'))
+			if(@pvp && @pvp['running'] == 'true', array_push(@inprogress, to_upper(split('.', @key)[1])))
 		)
 		@cluck = import('cluck')
-		if(@cluck && (@cluck['active'] == 1 || @cluck['round'] > 1), die('Cluck in progress.'))
+		if(@cluck && (@cluck['active'] == 1),  array_push(@inprogress, 'Cluck'))
+		if(@inprogress) {
+			die('Currently in progress: '.array_implode(@inprogress, ' '))
+		}
 	}
 	@requests = import('requests')
 	if(is_array(@requests), store_value('session.requests', @requests))
@@ -800,7 +804,7 @@
 	bind('vehicle_leave', null, array('vehicletype': 'MINECART', 'passengertype': 'PLAYER'), @e, @cart = @cart,
 		if(@e['vehicle'] == @cart) {
 			unbind()
-			entity_remove(@e['vehicle'])
+			try(entity_remove(@e['vehicle']))
 		}
 	)
 <<<
