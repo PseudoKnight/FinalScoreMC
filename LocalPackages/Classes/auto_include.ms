@@ -22,11 +22,11 @@ proc('_class', @action, @player, @class,
 					}
 				))
 			)
-			bind('entity_damage', array('id': @player.'falldamage'), array('type': 'PLAYER', 'cause': 'FALL'), @e, assign(@p, @player),
+			bind('entity_damage', array('id': @player.'falldamage'), array('type': 'PLAYER', 'cause': 'FALL', 'world': 'custom'), @e, assign(@p, @player),
 				if(@e['player'] == @p, cancel())
 			)
-			bind('entity_damage', array('id': @player.'damage'), array('type': 'PLAYER', 'cause': 'ENTITY_ATTACK'), @e, assign(@p, @player),
-				if(@e['damager'] == @p, modify_event('amount', 17))
+			bind('entity_damage', array('id': @player.'damage'), array('type': 'PLAYER', 'cause': 'ENTITY_ATTACK', 'world': 'custom'), @e, assign(@p, @player),
+				if(@e['damager'] == @p, modify_event('amount', 16))
 				if(@e['player'] == @p && is_numeric(@e['damager']) && to_lower(entity_type(@e['damager'])) == 'zombie', cancel())
 			)
 			bind('player_death', array('id': @player.'death'), array('player': @player), @e,
@@ -91,8 +91,8 @@ proc('_class', @action, @player, @class,
 			bind('projectile_hit', array('id': @player.'hit'), array('type': 'ARROW'), @e, @shooter = pinfo(@player, 13),
 				if(@e['shooter'] == @shooter && entity_type(@e['id']), try(entity_remove(@e['id'])))
 			)
-			bind('entity_damage', array('id': @player.'damage'), array('cause': 'PROJECTILE'), @e, assign(@p, @player),
-				if(@e['shooter'] == @p, modify_event('amount', 27))
+			bind('entity_damage', array('id': @player.'damage'), array('cause': 'PROJECTILE', 'world': 'custom'), @e, assign(@p, @player),
+				if(@e['shooter'] == @p, modify_event('amount', 28))
 			)
 			bind('player_death', array('id': @player.'death'), array('player': @player), @e,
 				play_sound(ploc(), array('sound': 'ZOMBIE_UNFECT', 'pitch': 1, 'volume': 3))
@@ -111,7 +111,7 @@ proc('_class', @action, @player, @class,
 			set_pexp(@player, 99)
 			set_timeout(50, closure(
 				set_peffect(@player, 8, -1, 999, true)
-				set_phunger(@player, 6)
+				set_phunger(@player, 3)
 			))
 			
 		, 'unload',
