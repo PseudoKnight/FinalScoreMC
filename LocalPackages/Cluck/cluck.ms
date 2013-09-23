@@ -26,7 +26,7 @@ proc('_cluck_startround',
 	_clear_pinv()
 	set_pinv(@cluck['player'], array(0: array('type': 261), 1: array('type': 262, 'qty': 10)))
 	set_block_at(@cluck['sound']['startround'], '69:13')
-	bind('entity_damage', array('id': 'cluckchicken'), array('cause': 'PROJECTILE', 'type': 'CHICKEN'), @event,
+	bind('entity_damage', array('id': 'cluckchicken'), array('cause': 'PROJECTILE', 'type': 'CHICKEN', 'world': 'custom'), @event,
 		@cluck = import('cluck')
 		if(@event['shooter'] != @cluck['player']) {
 			@cluck['count']++
@@ -90,7 +90,7 @@ proc('_cluck_spawn',
 			)
 			unbind('cluckchicken')
 			foreach(@cluck['chickens'], @chicken,
-				if(entity_type(@chicken), entity_remove(@chicken))
+				if(entity_type(@chicken), try(entity_remove(@chicken)))
 			)
 			@cluck = _cluck_defaults()
 			export('cluck', @cluck)
