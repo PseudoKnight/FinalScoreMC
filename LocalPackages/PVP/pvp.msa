@@ -1,4 +1,4 @@
-*:/pvp [$action] [$id] = >>>
+*:/pvp [$action] [$id] [$team] = >>>
 	switch($action
 	, 'join',
 		@pvp = import('pvp'.$id)
@@ -244,10 +244,18 @@
 				_pvp_start_round(@id)
 			}
 		))
-
+		
+	, 'end',
+		if(!get_command_block() && !has_permission('group.builders'), die(color('red').'You do not have permission.'))
+		if(!$id || !$team, die(color('gold').'Usage: /pvp stop arenaName winningTeam#'))
+		@pvp = import('pvp'.$id)
+		if(!@pvp || !@pvp['running'], die(color('red').'Not running.'))
+		_pvp_end_match($id, @pvp['team'][$team - 1]['players'])
+		
 	,
 		msg('/pvp join <id> '.color('gray').'Join the match')
 		msg('/pvp start <id> '.color('gray').'Start the match')
+		msg('/pvp end <id> <team> '.color('gray').'End in favor of team')
 		msg('/pvp warp <id> '.color('gray').'Teleports you to the lobby')
 		msg('/pvp spectate <id> '.color('gray').'Displays the scoreboard')
 	)

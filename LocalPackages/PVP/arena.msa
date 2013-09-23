@@ -37,7 +37,6 @@
 			.color('r').'chestspawn '.color('gray').'Set chest spawn (def: 60 sec, no spawn @ start)\n'
 			.color('r').'rsoutput '.color('gray').'The lever that turns on at start and off at end.\n'
 			.color('r').'rsoutputscore '.color('gray').'Redstone torch appears when a team scores\n'
-			.color('r').'rsinputwin '.color('gray').'Redstone torch off triggers win for team\n'
 			.color('r').'min '.color('gray').'The minimum # of players to start a match. (default: 2)\n'
 			.color('r').'max '.color('gray').'Start the match as soon as this number of players join.\n'
 			.color('r').'effect '.color('gray').'The starting potion effect for all players.\n'
@@ -270,17 +269,6 @@
 				@arena['rsoutputscore'][@team] = pcursor()
 				msg('Set this block to turn into a redstone torch when team '.@args[0].' scores.')
 
-			, 'rsinputwin',
-				if(!@args[0], die('This requires a team #.'))
-				@team = @args[0] - 1
-				@loc = pcursor()
-				if(get_block_at(@loc) == '76:5' || get_block_at(@loc) == '75:5') {
-					@arena['rsinputwin'][@team] = @loc
-					msg('Set arena\'s win condition redstone torch. Game ends when this torch is turned off.')
-				} else {
-					die('You must be looking at a redstone torch placed on top of a block.')
-				}
-
 			, 'effect',
 				@effects = _get_effects()
 				if(!array_contains(array_keys(@effects), @args[0]), die('Unknown potion effect. '.array_keys(@effects)))
@@ -424,7 +412,7 @@
 			if(!array_index_exists(@arena, 'spawn'), msg(color('red').'spawn'))
 			if(!array_index_exists(@arena, 'region'), msg(color('red').'region'))
 			foreach(@arena, @setting, @value,
-				if(array_contains(array('spawn', 'kit', 'itemspawn', 'chestspawn'), @setting)) {
+				if(array_contains(array('spawn', 'kit', 'itemspawn', 'chestspawn', 'mobspawn'), @setting)) {
 					msg(@setting.' '.color('gray').'[...]')
 				} else if(array_contains(array('team'), @setting)) {
 					continue()

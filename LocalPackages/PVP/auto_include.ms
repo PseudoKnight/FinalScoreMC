@@ -289,7 +289,7 @@ proc('_pvp_start_round', @id,
 			} else {
 				_regionmsg(@pvp['arena']['broadcast'], color('gray').'[PVP] '.color('r').player().' left the arena.')
 			}
-			if(@pvp['arena']['mode'] == 'ctf' && pinv(player(), 103) != null && (pinv(player(), 103)['type'] == 8 || pinv(player(), 103)['type'] == 10)) {
+			if(@pvp['arena']['mode'] == 'ctf' && pinv(player(), 103) && (pinv(player(), 103)['type'] == 8 || pinv(player(), 103)['type'] == 10)) {
 				_pvp_flag_spawn(@id, if(pinv(player(), 103)['type'] == 10, 0, 1))
 			}
 			if(array_index_exists(@pvp['players'][player()], 'class')) {
@@ -552,15 +552,6 @@ proc('_pvp_start_round', @id,
 						)
 						@pvp['chestspawn'][@i] = time()
 					}
-				}
-			)
-		}
-
-		if(array_index_exists(@pvp['arena'], 'rsinputwin')) {
-			foreach(@pvp['arena']['rsinputwin'], @team, @torch,
-				if(get_block_at(@torch) == '75:5') {
-					_pvp_end_match(@id, @pvp['team'][@team]['players'])
-					die()
 				}
 			)
 		}
