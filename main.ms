@@ -79,10 +79,11 @@ bind('player_join', null, null, @event,
 		# homeless players are players left on deleted worlds
 		@pdata = get_value('player.'.to_lower(player()))
 		if(array_index_exists(@pdata, 'mail')) {
-			msg(color('green').'You have '.array_size(@pdata['mail']).' unread /mail.')
-			foreach(@pdata['mail'], @id, @mail,
-				msg(color('gray').@id.color('yellow').' - '.@mail[0].' '.@mail[1].' '.color('r').substr(@mail[2], 0, min(length(@mail[2]), 16)).' '.color('gold').'[...]')
+			foreach(@pdata['mail'], @mail,
+				msg(color('gray').@mail[0].' (From '.@mail[1].'): '.color('r').@mail[2])
 			)
+			array_remove(@pdata, 'mail')
+			store_value('player.'.to_lower(player()), @pdata)
 		}
 		if(array_index_exists(@pdata, 'homeless')) {
 			@loc = get_spawn('world')
@@ -278,7 +279,8 @@ bind('entity_explode', null, null, @e,
 	if(@e['location'][3] == 'custom' 
 	&& @e['type'] != 'PRIMED_TNT'
 	&& (@e['type'] != 'CREEPER'
-	|| !array_contains(sk_regions_at(entity_loc(@e['id'])), 'skypirates'))) {
+	|| (!array_contains(sk_regions_at(entity_loc(@e['id'])), 'skypirates')
+	&& !array_contains(sk_regions_at(entity_loc(@e['id'])), 'antfarm')))) {
 		cancel()
 	}
 )
