@@ -809,6 +809,16 @@
 	)
 <<<
 
+*:/setcommand $ = >>>
+	if(!has_permission('group.engineers'), die('You do not have permission.'))
+	@allowedcmds = array('/velocity', '/tp', '/sayas')
+	if(!array_contains_ic(@allowedcmds, parse_args($)[0]), die('Allowed commands: '.array_implode(@allowedcmds)))
+	@block = pcursor()
+	if(get_block_at(@block) != '137:0', die('That is not a commandblock.'))
+	if(is_alias($), @cmd = '/runalias '.$, @cmd = $)
+	sudo('/scb '.@block[0].' '.@block[1].' '.@block[2].' '.@cmd)
+<<<
+
 # COIN COMMANDS #
 
 *:/weather $type = >>>
