@@ -12,10 +12,8 @@ export('ignorelist', @ignorelist)
 if(!@stopwatch, @stopwatch = array(), clear_value('session.stopwatch'))
 export('stopwatch', @stopwatch)
 
-set_world_time('dev', 700)
 set_interval(8 * 60 * 1000, closure(
 	runas('~console', '/save-all')
-	set_world_time('dev', 700)
 ))
 
 bind('player_login', null, null, @e,
@@ -63,8 +61,6 @@ bind('player_login', null, null, @e,
 # Player join messages and tab list colors
 bind('player_join', null, null, @event,
 	set_timeout(250, closure(assign(@loc, ploc()),
-		#anti-cheat codes
-		msg('\u00A7f \u00A7f \u00A71 \u00A70 \u00A72 \u00A74 \u00A7f \u00A7f \u00A72 \u00A70 \u00A74 \u00A78 \u00A73 \u00A79 \u00A72 \u00A70 \u00A70 \u00A70 \u00A70\u00A70\u00A71\u00A72\u00A73\u00A74\u00A75\u00A76\u00A77\u00A78\u00A7f\u00A7e')
 		#Welcome messages
 		msg(color('1').color('l').'--------------------')
 		msg(color('gold'), color('l'), '\u2302', color('red'), color('l'), '\u2302', color('aqua'), color('l'), '\u2302', color('dark_red'), color('l'), '\u2302', color('gold'), color('l'), ' FINALSCORE ', color('yellow'), color('l'), '\u00AB', color('r'), ' \u25AA \u25AA \u25AA')
@@ -277,8 +273,8 @@ bind('player_interact', null, array('block': 122), @e,
 
 bind('entity_explode', null, null, @e,
 	if(@e['location'][3] == 'custom' 
-	&& @e['type'] != 'PRIMED_TNT'
-	&& (@e['type'] != 'CREEPER'
+	&& ((@e['type'] != 'PRIMED_TNT'
+	&& @e['type'] != 'CREEPER')
 	|| (!array_contains(sk_regions_at(entity_loc(@e['id'])), 'skypirates')
 	&& !array_contains(sk_regions_at(entity_loc(@e['id'])), 'antfarm')))) {
 		cancel()
