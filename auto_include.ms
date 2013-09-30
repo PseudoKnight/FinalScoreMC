@@ -14,7 +14,7 @@ proc(_relative, @loc, @dir, @amount = 1,
     return(array(@loc[0] - @amount, @loc[1], @loc[2], @loc[3]))
   , 
     console('Cannot get relative block '.@dir.' from '.@loc.'.')
-    return(@loc)
+    return(false)
   )
 )
 
@@ -75,6 +75,34 @@ proc(_get_effects,
 		'boost': 21,
 		'absorption': 22,
 		'saturation': 23
+	))
+)
+
+proc(_get_enchants,
+	return(array(
+		'power': 'ARROW_DAMAGE',
+		'flame': 'ARROW_FIRE',
+		'infinity': 'ARROW_INFINITE',
+		'infinite': 'ARROW_INFINITE',
+		'punch': 'ARROW_KNOCKBACK',
+		'sharpness': 'DAMAGE_ALL',
+		'baneofarthropods': 'DAMAGE_ARTHROPODS',
+		'smite': 'DAMAGE_UNDEAD',
+		'efficiency': 'DIG_SPEED',
+		'unbreaking': 'DURABILITY',
+		'fireaspect': 'FIRE_ASPECT',
+		'knockback': 'KNOCKBACK',
+		'fortune': 'LOOT_BONUS_BLOCKS',
+		'looting': 'LOOT_BONUS_MOBS',
+		'respiration': 'OXYGEN',
+		'protection': 'PROTECTION_ENVIRONMENTAL',
+		'blastprotection': 'PROTECTION_EXPLOSIONS',
+		'featherfalling': 'PROTECTION_FALL',
+		'fireprotection': 'PROTECTION_FIRE',
+		'projectileprotection': 'PROTECTION_PROJECTILE',
+		'silktouch': 'SILK_TOUCH',
+		'thorns': 'THORNS',
+		'aquaaffinity': 'WATER_WORKER'
 	))
 )
 
