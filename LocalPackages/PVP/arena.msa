@@ -30,6 +30,7 @@
 			.color('r').'team '.color('gray').'Team name and color\n'
 			.color('r').'kit '.color('gray').'Sets the respawn kits (accepts team # as value)\n'
 			.color('r').'classes '.color('gray').'Available classes [team1list team2list]\n'
+			.color('r').'captain '.color('gray').'The captain mode class\n'
 			.color('r').'restore '.color('gray').'The optional schematic name to restore to.\n'
 			.color('r').'time '.color('gray').'The starting time (0-24000)\n'
 			.color('r').'ff '.color('gray').'Sets team friendly-fire (default: true)\n'
@@ -40,7 +41,7 @@
 			.color('r').'min '.color('gray').'The minimum # of players to start a match. (default: 2)\n'
 			.color('r').'max '.color('gray').'Start the match as soon as this number of players join.\n'
 			.color('r').'effect '.color('gray').'The starting potion effect for all players.\n'
-			.color('r').'denydrop '.color('gray').'Comma delimited list of IDs not dropped on death\n'
+			.color('r').'denydrop '.color('gray').'Comma list of IDs not dropped on death or "all"\n'
 			.color('r').'mobspawn '.color('gray').'Spawn mob @ loc (type qty respawnTime onStart)\n'
 			.color('r').'flags '.color('gray').'Special game behavior modifiers.')
 		}
@@ -156,9 +157,14 @@
 					@arena['classes'] = @args[0]
 					msg('Set available classes '.@args[0])
 				}
+			
+			, 'captain',
+				@arena['captain'][0] = @args[0]
+				@arena['captain'][1] = @args[1]
+				msg('Captain classes set to '.@args[0].' and '.@args[1].'.')
 
 			, 'restore',
-				if(!has_permission('group.administrators'), die('Only admins can do this.'))
+				if(!has_permission('group.engineers'), die('Only engineers, moderators and admins can do this.'))
 				@arena['restore'] = @args[0]
 				msg('Restore area set to '.@args[0].'.')
 
@@ -291,8 +297,12 @@
 
 			, 'denydrop',
 				if(!@args[0] || @args[1], die('You need to specify a comma separated list of item IDs. (no spaces)'))
-				@arena['denydrop'] = split(',', @args[0])
-				msg('Set '.@args[0].' item IDs as denied drops on death.')
+				if(to_lower(@args[0]) == 'all') {
+					@arena['denydrop'] = 'all'
+				} else {
+					@arena['denydrop'] = split(',', @args[0])
+				}
+				msg('Set '.@args[0].' item IDs to not drop on player death.')
 
 			, 'mobspawn', 
 				if(array_size(@args) < 4, die('Arguments: <type> <quantity> <respawnSecs> <spawnStart>'))
@@ -311,7 +321,7 @@
 				
 
 			, 'flags',
-				@flags = array('endernades', 'skullrockets', 'noinventory', 'stackedpickup', 'debug', 'shotgunballs')
+				@flags = array('endernades', 'skullrockets', 'noinventory', 'stackedpickup', 'debug', 'shotgunballs', 'primedtnt', 'pistoltears')
 				if(!@args[0] || @args[1], die('You need to specify a comma separated list of pre-defined flags. (no spaces) Current available flags: '.@flags))
 				@arena['flags'] = split(',', @args[0])
 				foreach(@arena['flags'], @flag,
