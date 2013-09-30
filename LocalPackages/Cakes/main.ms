@@ -1,6 +1,9 @@
 # Clicking cakes
 bind('player_interact', null, array('block': 92), @event,
-	if(pworld() != 'custom', die())
+	if(pworld() != 'custom'
+	|| pmode() == 'CREATIVE') {
+		die()
+	}
 	@cakes = get_value('cakes')
 	@id = array_index(@cakes, @event['location'])
 	if(!@id, die())
@@ -9,22 +12,8 @@ bind('player_interact', null, array('block': 92), @event,
 	if(!@cakedata, die('The cake is a lie.'))
 	set_phunger(20)
 	set_psaturation(5.0)
-	if(@cakedata['type'] == 'challenge') {
-		foreach(@cakedata['players'], @player, @time,
-			if((@time + (90 * 86400000)) < time()) {
-				array_remove(@cakedata['players'], @player)
-			}
-		)
-		if(array_index_exists(@cakedata['players'], player())) {
-			@daysleft = round(((@cakedata['players'][player()] + (90 * 86400000)) - time()) / 86400000)
-			if(get_block_at(@event['location']) != '92:0', set_block_at(@event['location'], '92:0'))
-			if(@daysleft == 0, die('Less than a day left on your cooldown for this cake.'))
-			die(@daysleft.' days left on your cooldown for this cake')
-		}
-	} else if(@cakedata['type'] == 'secret') {
-		if(array_index_exists(@cakedata['players'], player())) {
-			die('You\'ve already found this cake.')
-		}
+	if(array_index_exists(@cakedata['players'], player())) {
+		die('You\'ve already got this cake.')
 	}
 	@allcakes = get_values('cakeinfo')
 	@count = 1
@@ -63,17 +52,17 @@ bind('player_interact', null, array('block': 68), @event,
 			if(array_contains_ic(array('JewManGroup', 'XxThe_JewishxX'), player())) { 
 				die('You are not allowed to use coins due to cheating.')
 			}
-			if(@count < 1, die(color('yellow').'[Coin Shop] '.color(r).'There are no items left.'))
-			if(_acc_balance(player()) < @cost[1], die(color('yellow').'[Coin Shop] '.color(r).'You only have '.color('red').round(_acc_balance(player())).color(r).' left.'))
+			if(@count < 1, die(color('yellow').'[Coin Shop] '.color('r').'There are no items left.'))
+			if(_acc_balance(player()) < @cost[1], die(color('yellow').'[Coin Shop] '.color(r).'You only have '.color('red').round(_acc_balance(player())).color('r').' left.'))
 			for(@i = 0, @i < get_inventory_size(@chestloc), @i++,
 				if(get_inventory_item(@chestloc, @i) != null) {
 					if(_pgive_item(player(), get_inventory_item(@chestloc, @i)) == true) {
 						set_inventory_item(@chestloc, @i, null)
 						_acc_subtract(player(), @cost[1])
-						msg(color('yellow').'[Coin Shop] '.color(r).'Transaction successful. Your coins: '.round(_acc_balance(player())).' (-'.@cost[1].')')
+						msg(color('yellow').'[Coin Shop] '.color('r').'Transaction successful. Your coins: '.round(_acc_balance(player())).' (-'.@cost[1].')')
 						break()
 					} else {
-						msg(color('yellow').'[Coin Shop] '.color(r).'You have no room in your inventory.')
+						msg(color('yellow').'[Coin Shop] '.color('r').'You have no room in your inventory.')
 					}
 				}
 			)

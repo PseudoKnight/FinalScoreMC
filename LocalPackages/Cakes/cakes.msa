@@ -12,12 +12,13 @@
 			array_set(@total, @cake['type'], @total[@cake['type']] + 1)
 			if(array_index_exists(@cake['players'], @player)) {
 				array_set(@count, @cake['type'], @count[@cake['type']] + 1)
-				array_set(@names, @cake['type'], @names[@cake['type']].color('gray').split('.', @key)[1].' ')
+				array_set(@names, @cake['type'], @names[@cake['type']].color('gray').split('.', @key)[1].'('.array_size(@cake['players']).') ')
 			} else {
-				array_set(@names, @cake['type'], @names[@cake['type']].color('r').split('.', @key)[1].' ')
+				array_set(@names, @cake['type'], @names[@cake['type']].color('r').split('.', @key)[1].'('.array_size(@cake['players']).') ')
 			}
 		)
-		if($, msg(color('gold').'CAKES ACHIEVED BY '.to_upper(@player).'.'))
+		if($, msg(color('gold').'CAKES ACHIEVED BY '.to_upper(@player).'. (#) of other players'),
+		msg(color('gold').'CAKES YOU\'VE ACHIEVED. (#) of other players'))
 		msg(color('green').color('l').'Challenge Cakes '.color('green').'('.@count['challenge'].'/'.@total['challenge'].') '.color('r').@names['challenge'])
 		msg(color('green').color('l').'Secret Cakes '.color('green').'('.@count['secret'].'/'.@total['secret'].') '.color('r').@names['secret'])
 
@@ -33,12 +34,14 @@
 		@cake = get_value('cakeinfo.'.@id)
 		msg('Cake info for "'.@id.'":')
 		if(@cake['type'] == 'challenge') {
-			msg(color('green').@cake['coins'].color(r).' coins on a 90 day cooldown.')
+			msg(color('green').@cake['coins'].color('r').' coins.')
+			@players = ''
 			foreach(@cake['players'], @player, @time,
-				msg(@player.': '.color('gray').round(((@time + (90 * 86400000)) - time()) / 86400000).' days left')
+				@players .= @player.' '
 			)
+			msg('Players: '.@players)
 		} else if(@cake['type'] == 'secret') {
-			msg(color('green').@cake['coins'].color(r).' coins.')
+			msg(color('green').@cake['coins'].color('r').' coins.')
 			@players = ''
 			foreach(@cake['players'], @player, @time,
 				@players .= @player.' '
