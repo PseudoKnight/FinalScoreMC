@@ -688,9 +688,12 @@
 	}
 <<<
 
-/playsound $sound [$pitch=1] [$volume=1] = >>>
-	if(get_command_block(), @loc = get_command_block(), @loc = ploc())
-	play_sound(@loc, array('sound': $sound, 'pitch': $pitch, 'volume': $volume))
+*:/playsound $sound [$pitch=1] [$volume=1] = >>>
+	if(get_command_block()) {
+		play_sound(get_command_block(), array('sound': $sound, 'pitch': $pitch, 'volume': $volume))
+	} else if(has_permission('group.moderators') || (array_contains(array('dev', 'custom'), pworld()) && has_permission('group.builders'))) {
+		play_sound(ploc(), array('sound': $sound, 'pitch': $pitch, 'volume': $volume))
+	}
 <<<
 
 # TESTING/CONFIGURING COMMANDS
@@ -721,8 +724,8 @@
 
 *:/dye $r $g $b = >>>
 	if((!has_permission('group.builders') || !array_contains(array('custom', 'dev'), pworld())) && !has_permission('group.moderators'), die('You do not have permission to use this command.'))
-	if(is_leather_armor(pinfo(player(), 15))) {
-		set_armor_color(pinfo(player(), 15), array($r, $g, $b))
+	if(pinv(player(), null) && is_leather_armor(pinfo(player(), 15))) {
+		set_armor_color(pinfo(player(), 15), array(min(max($r, 0), 255), min(max($g, 0), 255), min(max($b, 0), 255)))
 	} else {
 		msg('That slot isn\'t leather armor.')
 	}
@@ -752,7 +755,15 @@
 
 *:/enchant $type [$level=1] = >>>
 	if((!has_permission('group.builders') || !array_contains(array('custom', 'dev'), pworld())) && !has_permission('group.moderators'), die('You do not have permission to use this command.'))
-	enchant_inv_unsafe(null, $type, $level)
+	if(!is_numeric($level), die('Usage: /enchant <type> <level>'))
+	@enchants = _get_enchants()
+	if(array_contains_ic(@enchants, $type)) {
+		enchant_inv_unsafe(null, $type, $level)
+	} else if(array_index_exists(@enchants, to_lower($type))) {
+		enchant_inv_unsafe(null, @enchants[to_lower($type)], $level)
+	} else {
+		msg(color('red').'Unknown enchantment name. '.array_keys(@enchants))
+	}
 <<<
 
 *:/unenchant = >>>
