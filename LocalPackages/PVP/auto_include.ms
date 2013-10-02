@@ -66,21 +66,21 @@ proc('_pvp_start_round', @id,
 	# The assign() functions in the event binds are required to keep the instances from interfering with each other
 	# Just passing the variable (eg. ", @pvp['arena'], @id,") did not work last I tested
 	array_push(@pvp['binds'], @id.'death')
-	bind('player_death', array('priority': 'high', 'id': @id.'death'), null, @event, assign(@id, @id),
+	bind('player_death', array('priority': 'high', 'id': @id.'death'), null, @e, assign(@id, @id),
 		@pvp = import('pvp'.@id)
 		if(!array_index_exists(@pvp['players'], player()), die())
 		
 		if(array_contains(array('tdm', 'infection'), @pvp['arena']['mode'])) {
-			@parts = parse_args(@event['death_message'])
+			@parts = parse_args(@e['death_message'])
 			@parts[0] = color(@pvp['arena']['team'][@pvp['players'][player()]['team']]['color']).player().color('r')
 			for(@i = 1, @i < array_size(@parts), @i++,
-				if(@parts[@i] == @event['killer']) {
-					@parts[@i] = color(@pvp['arena']['team'][@pvp['players'][@event['killer']]['team']]['color']).@event['killer'].color('r')
+				if(@parts[@i] == @e['killer']) {
+					@parts[@i] = color(@pvp['arena']['team'][@pvp['players'][@e['killer']]['team']]['color']).@e['killer'].color('r')
 				}
 			)
 			@deathmessage = array_implode(@parts)
 		} else {
-			@deathmessage = @event['death_message']
+			@deathmessage = @e['death_message']
 		}
 
 		if(array_index_exists(@pvp['arena'], 'lives')) {
@@ -129,30 +129,42 @@ proc('_pvp_start_round', @id,
 		}
 
 		@drops = array()
-		foreach(@event['drops'], @drop,
-			if(array_index_exists(@pvp['arena'], 'denydrop') 
-			&& is_array(@pvp['arena']['denydrop'])
-			&& !array_contains(@pvp['arena']['denydrop'], @drop['type']) 
-			&& !array_contains(array(8, 10), @drop['type'])) {
-				array_push(@drops, @drop)
-			}
+		foreach(@e['drops'], @drop,
 			if(@pvp['arena']['mode'] == 'ctf' && (@drop['type'] == 8 || @drop['type'] == 10)) {
 				_regionmsg(@pvp['arena']['broadcast'], color('gray').'[PVP] '.color(@pvp['arena']['team'][@pvp['players'][player()]['team']]['color']).player().color('r').' dropped the '.color(@pvp['arena']['team'][if(@pvp['players'][player()]['team'] == 0, 1, 0)]['color']).'flag')
-				if(@event['cause']['cause'] == 'VOID' || @event['cause']['cause'] == 'LAVA') {
+				if(@e['cause']['cause'] == 'VOID' || @e['cause']['cause'] == 'LAVA') {
 					_pvp_flag_spawn(@id, if(@drop['type'] == 10, 0, 1))
 				} else {
 					_pvp_flag_spawn(@id, if(@drop['type'] == 10, 0, 1), array(ploc()[0], ploc()[1] + 1, ploc()[2], ploc()[3]))
 				}
+			} else if(array_index_exists(@pvp['arena'], 'captain') && @drop['type'] == @pvp['team'][@pvp['players'][player()]['team']]['captainhat']['type']) {
+				@pvp = import('pvp'.@id)
+				@loc = ploc()
+				@hat = drop_item(_relative(@loc, 'up'), @pvp['team'][@pvp['players'][player()]['team']]['captainhat']['type'])
+				@pvp['team'][@pvp['players'][player()]['team']]['captain'] = ''
+				_class('unload', player(), @pvp['players'][player()]['class'])
+				_regionmsg(@pvp['arena']['broadcast'], color('gray').'[PVP] '.color(@pvp['team'][@pvp['players'][player()]['team']]['color']).to_upper(@pvp['team'][@pvp['players'][player()]['team']]['name']).color('r').' - Captain has died and dropped his hat!')
+				set_timeout('30000', closure(
+					if(entity_exists(@hat)) {
+						set_entity_loc(_relative(@pvp['arena']['spawn'][@pvp['players'][player()]['team']][0], 'up'), @pvp['team'][@pvp['players'][player()]['team']]['captainhat']['type'])
+						_regionmsg(@pvp['arena']['broadcast'], color('gray').'[PVP] '.color(@pvp['team'][@pvp['players'][player()]['team']]['color']).to_upper(@pvp['team'][@pvp['players'][player()]['team']]['name']).color('r').' - Captain\'s hat has been moved back to spawn.')
+					}
+				))
+				export('pvp'.@id, @pvp)
+			} else if(array_index_exists(@pvp['arena'], 'denydrop') 
+			&& is_array(@pvp['arena']['denydrop'])
+			&& !array_contains(@pvp['arena']['denydrop'], @drop['type'])) {
+				array_push(@drops, @drop)
 			}
 		)
 		
-		if(array_index_exists(@pvp['arena'], 'denydrop'), modify_event('drops', @drops))
+		modify_event('drops', @drops)
 		modify_event('xp', null)
 		_pvp_check_objectives(@id)
 	)
 
 	array_push(@pvp['binds'], @id.'quit')
-	bind('player_quit', array('id': @id.'quit'), null, @event, assign(@id, @id), assign(@host, player()),
+	bind('player_quit', array('id': @id.'quit'), null, @e, assign(@id, @id), assign(@host, player()),
 		@pvp = import('pvp'.@id)
 		if(!array_index_exists(@pvp['players'], player()), die())
 		if(player() == @host) {
@@ -163,7 +175,7 @@ proc('_pvp_start_round', @id,
 			_pvp_flag_spawn(@id, if(pinv(player(), 103)['type'] == 10, 0, 1)) 
 		}
 
-		modify_event('message', color('gray').'[PVP] '.color(if(array_contains(array('ctf', 'tdm', 'infection'), @pvp['arena']['mode']), @pvp['arena']['team'][@pvp['players'][player()]['team']]['color'], 'white')).@event['message'])
+		modify_event('message', color('gray').'[PVP] '.color(if(array_contains(array('ctf', 'tdm', 'infection'), @pvp['arena']['mode']), @pvp['arena']['team'][@pvp['players'][player()]['team']]['color'], 'white')).@e['message'])
 		if(array_index_exists(@pvp['players'][player()], 'class')) {
 			_class('unload', player(), @pvp['players'][player()]['class'])
 		}
@@ -171,7 +183,7 @@ proc('_pvp_start_round', @id,
 		export('pvp'.@id, @pvp)
 		_pvp_check_objectives(@id)
 		
-		bind('player_join', null, array('player': @player), @event, @id,
+		bind('player_join', null, array('player': @player), @e, @id,
 			@pvp = import('pvp'.@id)
 			if(@pvp && @pvp['running'] == 'true' && pworld() == 'custom') {
 				set_ploc(@pvp['arena']['lobby'])
@@ -182,7 +194,7 @@ proc('_pvp_start_round', @id,
 	)
 
 	array_push(@pvp['binds'], @id.'spawn')
-	bind('player_spawn', array('id': @id.'spawn'), null, @event, assign(@id, @id),
+	bind('player_spawn', array('id': @id.'spawn'), null, @e, assign(@id, @id),
 		@pvp = import('pvp'.@id)
 		if(!array_index_exists(@pvp['players'], player()), die())
 
@@ -198,19 +210,24 @@ proc('_pvp_start_round', @id,
 			set_plevel(@pvp['players'][player()]['lives'])
 		}
 
-		if(array_contains(array('tdm', 'ctf', 'infection'), @pvp['arena']['mode'])) {
+		if(array_index_exists(@pvp['arena'], 'captain')
+		&& @pvp['team'][@pvp['players'][player()]['team']]['captain'] != ''
+		&& pinfo(@pvp['team'][@pvp['players'][player()]['team']]['captain'], 5) > 0) {
+			modify_event('location', ploc(@pvp['team'][@pvp['players'][player()]['team']]['captain']))
+		} else if(array_contains(array('tdm', 'ctf', 'infection'), @pvp['arena']['mode'])) {
 			@r = rand(0, array_size(@pvp['arena']['spawn'][@pvp['players'][player()]['team']]))
 			modify_event('location', @pvp['arena']['spawn'][@pvp['players'][player()]['team']][@r])
-			#set_timeout(50, closure(set_ploc(@pvp['arena']['spawn'][@pvp['players'][player()]['team']][@r])))
 		} else {
 			@r = rand(0, array_size(@pvp['arena']['spawn'][0]))
 			modify_event('location', @pvp['arena']['spawn'][0][@r])
-			#set_timeout(50, closure(set_ploc(@pvp['arena']['spawn'][0][@r]))) 
 		}
 
 		if(array_index_exists(@pvp['arena'], 'effect')) {
 			set_timeout(50, closure(
-			foreach(@pvp['arena']['effect'], @effect, @data,
+			foreach(@pvp['arena']['effect'][0], @effect, @data,
+				set_peffect(@player, @effect, @data['strength'], @data['length'])
+			)
+			foreach(@pvp['arena']['effect'][@pvp['players'][player()]['team'] + 1], @effect, @data,
 				set_peffect(@player, @effect, @data['strength'], @data['length'])
 			)
 			))
@@ -228,7 +245,6 @@ proc('_pvp_start_round', @id,
 	if(array_index_exists(@pvp['arena'], 'chestspawn')) {
 		array_push(@pvp['binds'], @id.'interactchest')
 		bind('player_interact', array('id': @id.'interactchest'), array('block': 54), @e, assign(@id, @id),
-
 			@pvp = import('pvp'.@id)
 			if(!array_index_exists(@pvp['players'], player()), die())
 
@@ -244,7 +260,109 @@ proc('_pvp_start_round', @id,
 			)
 		)
 	}
+	
+	if(array_index_exists(@pvp['arena'], 'mobspawn')) {
+		array_push(@pvp['binds'], @id.'NoMobXP')
+		bind('entity_death', array('id': @id.'NoMobXP'), null, @e, assign(@id, @id),
+			@pvp = import('pvp'.@id)
+			if(array_contains(sk_regions_at(@e['location']), @pvp['arena']['region'])) {
+				modify_event('xp', 0)
+			}
+		)
+	}
+	
+	if(array_index_exists(@pvp['arena'], 'mobprotect')) {
+		array_push(@pvp['binds'], @id.'MobDeath')
+		bind('entity_death', array('id': @id.'MobDeath'), null, @e, assign(@id, @id),
+			@pvp = import('pvp'.@id)
+			if(@e['id'] == @pvp['team'][0]['mobprotect']) {
+				_pvp_end_match(@id, @pvp['team'][1]['players'])
+			} else if(@e['id'] == @pvp['team'][1]['mobprotect']) {
+				_pvp_end_match(@id, @pvp['team'][0]['players'])
+			}
+		)
+	}
 
+	array_push(@pvp['binds'], @id.'enderpearl')
+	bind('player_teleport', array('id': @id.'enderpearl'), array('type': 'ENDER_PEARL'), @e, assign(@id, @id),
+		@pvp = import('pvp'.@id)
+		if(!array_index_exists(@pvp['players'], player()), die())
+		if(!array_contains(sk_regions_at(@e['to']), @pvp['arena']['region'])) {
+			cancel()
+		} else if(array_contains(@pvp['arena']['flags'], 'endernades')) {
+			explosion(@e['to'], 2)
+			cancel()
+		}
+	)
+	
+	array_push(@pvp['binds'], @id.'command')
+	bind('player_command', array('id': @id.'command'), null, @e, assign(@id, @id),
+		@pvp = import('pvp'.@id)
+		if(!array_index_exists(@pvp['players'], player())
+		|| !array_contains(array('/accept', '/warp', '/spawn', '/homes'), @e['prefix']), die())
+		if(array_contains(array('ctf', 'tdm', 'infection'), @pvp['arena']['mode'])) {
+			_regionmsg(@pvp['arena']['broadcast'], color('gray').'[PVP] '.color(@pvp['arena']['team'][@pvp['players'][player()]['team']]['color']).player().color('r').' left the arena.')
+		} else {
+			_regionmsg(@pvp['arena']['broadcast'], color('gray').'[PVP] '.color('r').player().' left the arena.')
+		}
+		if(@pvp['arena']['mode'] == 'ctf' && pinv(player(), 103) && (pinv(player(), 103)['type'] == 8 || pinv(player(), 103)['type'] == 10)) {
+			_pvp_flag_spawn(@id, if(pinv(player(), 103)['type'] == 10, 0, 1))
+		}
+		if(array_index_exists(@pvp['players'][player()], 'class')) {
+			_class('unload', player(), @pvp['players'][player()]['class'])
+		}
+		array_remove(@pvp['players'], player())
+		_clear_pinv()
+		_remove_peffects(player())
+		export('pvp'.@id, @pvp)
+		_pvp_check_objectives(@id)
+	)
+	
+	if(@id != 'skypirates' && @id != 'antfarm') {
+		array_push(@pvp['binds'], @id.'break')
+		bind('block_break', array('id': @id.'break'), null, @e, assign(@id, @id),
+			@pvp = import('pvp'.@id)
+			if(array_index_exists(@pvp['players'], player()), cancel())
+		)
+	}
+
+	array_push(@pvp['binds'], @id.'damage')
+	bind('entity_damage_player', array('id': @id.'damage'), null, @e, assign(@id, @id),
+		@pvp = import('pvp'.@id)
+		if(!array_index_exists(@pvp['players'], player()), die())
+
+		if(@e['damager'] == 'PLAYER' || @e['damager'] == 'ARROW' || @e['damager'] == 'WITHER_SKULL') {
+			if(!@pvp['arena']['ff']
+				&& array_index_exists(@pvp['players'], @e['data'])
+				&& (array_contains(array('dm', 'koth'), @pvp['arena']['mode']) || @pvp['players'][player()]['team'] == @pvp['players'][@e['data']]['team'])) {
+					cancel()
+			} else if(@e['damager'] == 'WITHER_SKULL') {
+				modify_event('amount', @e['amount'] * 6)
+				set_timeout(150, closure(set_peffect(player(), 20, 0, 0)))
+			}
+			if(!array_index_exists(@pvp['players'], @e['data']) && ponline(@e['data'])) {
+				set_ploc(@e['data'], @pvp['arena']['lobby'])
+			}
+		}
+	)
+
+	if(array_contains(@pvp['arena']['flags'], 'noinventory')) {
+		array_push(@pvp['binds'], @id.'noinventory')
+		bind('inventory_click', array('id': @id.'noinventory'), null, @e, assign(@id, @id),
+			@pvp = import('pvp'.@id)
+			if(!array_index_exists(@pvp['players'], player()), die())
+			cancel()
+		)
+	} else if(@pvp['arena']['mode'] == 'ctf') {
+		array_push(@pvp['binds'], @id.'flagclick')
+		bind('inventory_click', array('id': @id.'flagclick'), array('slottype': 'ARMOR'), @e, assign(@id, @id),
+			@pvp = import('pvp'.@id)
+			if(!array_index_exists(@pvp['players'], player()), die())
+			
+			if(@e['slotitem']['type'] == 10 || @e['slotitem']['type'] == 8, cancel())
+		)
+	}
+	
 	if(array_contains(@pvp['arena']['flags'], 'skullrockets')) {
 		array_push(@pvp['binds'], @id.'interactskulls')
 		bind('player_interact', array('id': @id.'interactskulls'), array('item': 397, 'button': 'right'), @e, assign(@id, @id),
@@ -273,102 +391,6 @@ proc('_pvp_start_round', @id,
 				ptake_item(46, 1)
 				spawn_entity('PRIMED_TNT', 1, @loc)
 			}
-		)
-	}
-	
-	if(array_index_exists(@pvp['arena'], 'mobspawn')) {
-		array_push(@pvp['binds'], @id.'NoMobXP')
-		bind('entity_death', array('id': @id.'NoMobXP'), null, @e, assign(@id, @id),
-			@pvp = import('pvp'.@id)
-			if(array_contains(sk_regions_at(@e['location']), @pvp['arena']['region'])) {
-				modify_event('xp', 0)
-			}
-		)
-	}
-	
-	if(array_index_exists(@pvp['arena'], 'mobprotect')) {
-		array_push(@pvp['binds'], @id.'MobDeath')
-		bind('entity_death', array('id': @id.'MobDeath'), null, @e, assign(@id, @id),
-			@pvp = import('pvp'.@id)
-			if(@e['id'] == @pvp['team'][0]['mobprotect']) {
-				_pvp_end_match(@id, @pvp['team'][1]['players'])
-			} else if(@e['id'] == @pvp['team'][1]['mobprotect']) {
-				_pvp_end_match(@id, @pvp['team'][0]['players'])
-			}
-		)
-	}
-
-
-	array_push(@pvp['binds'], @id.'teleport')
-	bind('player_teleport', array('id': @id.'teleport'), null, @event, assign(@id, @id),
-		@pvp = import('pvp'.@id)
-		if(!array_index_exists(@pvp['players'], player()), die())
-		if(@event['type'] == 'ENDER_PEARL') {
-			if(!array_contains(sk_regions_at(@event['to']), @pvp['arena']['region'])) {
-				cancel()
-			} else if(array_contains(@pvp['arena']['flags'], 'endernades')) {
-				explosion(@event['to'], 2)
-				cancel()
-			}
-		} else if(!array_contains(sk_regions_at(@event['to']), @pvp['arena']['region'])) {
-			if(array_contains(array('ctf', 'tdm', 'infection'), @pvp['arena']['mode'])) {
-				_regionmsg(@pvp['arena']['broadcast'], color('gray').'[PVP] '.color(@pvp['arena']['team'][@pvp['players'][player()]['team']]['color']).player().color('r').' left the arena.')
-			} else {
-				_regionmsg(@pvp['arena']['broadcast'], color('gray').'[PVP] '.color('r').player().' left the arena.')
-			}
-			if(@pvp['arena']['mode'] == 'ctf' && pinv(player(), 103) && (pinv(player(), 103)['type'] == 8 || pinv(player(), 103)['type'] == 10)) {
-				_pvp_flag_spawn(@id, if(pinv(player(), 103)['type'] == 10, 0, 1))
-			}
-			if(array_index_exists(@pvp['players'][player()], 'class')) {
-				_class('unload', player(), @pvp['players'][player()]['class'])
-			}
-			array_remove(@pvp['players'], player())
-			_remove_peffects(player())
-			export('pvp'.@id, @pvp)
-			_pvp_check_objectives(@id)
-		}
-	)
-	
-	array_push(@pvp['binds'], @id.'break')
-	bind('block_break', array('id': @id.'break'), null, @event, assign(@id, @id),
-		@pvp = import('pvp'.@id)
-		if(array_index_exists(@pvp['players'], player()) && @id != 'skypirates' && @id != 'antfarm', cancel())
-	)
-
-	array_push(@pvp['binds'], @id.'damage')
-	bind('entity_damage_player', array('id': @id.'damage'), null, @event, assign(@id, @id),
-		@pvp = import('pvp'.@id)
-		if(!array_index_exists(@pvp['players'], player()), die())
-
-		if(@event['damager'] == 'PLAYER' || @event['damager'] == 'ARROW' || @event['damager'] == 'WITHER_SKULL') {
-			if(!@pvp['arena']['ff']
-				&& array_index_exists(@pvp['players'], @event['data'])
-				&& (array_contains(array('dm', 'koth'), @pvp['arena']['mode']) || @pvp['players'][player()]['team'] == @pvp['players'][@event['data']]['team'])) {
-					cancel()
-			} else if(@event['damager'] == 'WITHER_SKULL') {
-				modify_event('amount', @event['amount'] * 6)
-				set_timeout(150, closure(set_peffect(player(), 20, 0, 0)))
-			}
-			if(!array_index_exists(@pvp['players'], @event['data']) && ponline(@event['data'])) {
-				set_ploc(@event['data'], @pvp['arena']['lobby'])
-			}
-		}
-	)
-
-	if(array_contains(@pvp['arena']['flags'], 'noinventory')) {
-		array_push(@pvp['binds'], @id.'noinventory')
-		bind('inventory_click', array('id': @id.'noinventory'), null, @e, assign(@id, @id),
-			@pvp = import('pvp'.@id)
-			if(!array_index_exists(@pvp['players'], player()), die())
-			cancel()
-		)
-	} else if(@pvp['arena']['mode'] == 'ctf') {
-		array_push(@pvp['binds'], @id.'flagclick')
-		bind('inventory_click', array('id': @id.'flagclick'), array('slottype': 'ARMOR'), @event, assign(@id, @id),
-			@pvp = import('pvp'.@id)
-			if(!array_index_exists(@pvp['players'], player()), die())
-			
-			if(@event['slotitem']['type'] == 10 || @event['slotitem']['type'] == 8, cancel())
 		)
 	}
 	
@@ -450,13 +472,45 @@ proc('_pvp_start_round', @id,
 			))
 		)
 	}
+	
+	if(array_contains(@pvp['arena']['flags'], 'rallycall')) {
+		array_push(@pvp['binds'], @id.'rallycall')
+		bind('player_interact', array('id': @id.'rallycall'), array('item': 401, 'button': 'right'), @e, assign(@id, @id),
+			@pvp = import('pvp'.@id)
+			if(!array_index_exists(@pvp['players'], player())
+			|| @e['action'] != 'right_click_block', die())
+			set_timeout(3000, closure(
+				_regionmsg(@pvp['arena']['broadcast'], color('gray').'[PVP] '.color(@pvp['arena']['team'][@pvp['players'][player()]['team']]['color']).player().color('r').' rallied his crew!')
+				foreach(array_keys(@pvp['players']), @p,
+					if(@pvp['players'][player()]['team'] == @pvp['players'][@p]['team']
+					&& pinfo(@p, 5) > 0) {
+						set_ploc(@p, ploc(player()))
+					}
+				)
+			))
+		)
+	}
+	
+	if(array_contains(@pvp['arena']['flags'], 'poisoniron')) {
+		array_push(@pvp['binds'], @id.'poisoniron')
+		bind('entity_damage', array('id': @id.'poisoniron'), array('type': 'PLAYER', 'cause': 'ENTITY_ATTACK', 'world': 'custom'), @e, assign(@id, @id),
+			@pvp = import('pvp'.@id)
+			if(array_index_exists(@pvp['players'], @e['player'])
+			&& array_index_exists(@pvp['players'], @e['damager'])
+			&& @e['amount'] == 7
+			&& pinv(@e['damager'], null)
+			&& pinv(@e['damager'], null)['type'] == 267) {
+				set_peffect(@e['player'], 19, 0, 10)
+			}
+		)
+	}
 
-	if(array_contains(@pvp['arena']['flags'], 'stackedpickup') || @pvp['arena']['mode'] == 'ctf') {
+	if(array_contains(@pvp['arena']['flags'], 'stackedpickup') || @pvp['arena']['mode'] == 'ctf' || array_index_exists(@pvp['arena'], 'captain')) {
 		array_push(@pvp['binds'], @id.'pickup')
-		bind('item_pickup', array('id': @id.'pickup'), null, @event, assign(@id, @id), 
-
-			if(@event['item']['type'] == '10') {
-				@pvp = import('pvp'.@id)
+		bind('item_pickup', array('id': @id.'pickup'), null, @e, assign(@id, @id), 
+			@pvp = import('pvp'.@id)
+			if(!array_index_exists(@pvp['players'], player()), die())
+			if(@e['item']['type'] == '10') {
 				if(@pvp['players'][player()]['team'] == 0) {
 					if(_horizontal_distance(ploc(), @pvp['arena']['ctfflag'][0]) > 3) { 
 						queue_clear(@id.'0flag')
@@ -495,8 +549,7 @@ proc('_pvp_start_round', @id,
 					_regionmsg(@pvp['arena']['broadcast'], color('gray').'[PVP] '.color(@pvp['arena']['team'][1]['color']).player().color('r').' picked up the '.color(@pvp['arena']['team'][0]['color']).'flag')
 					play_sound(ploc(), array('sound': 'ENDERDRAGON_WINGS', 'volume': 3))
 				}
-			} else if(@event['item']['type'] == '8') {
-				@pvp = import('pvp'.@id)
+			} else if(@e['item']['type'] == '8') {
 				if(@pvp['players'][player()]['team'] == 1) {
 					if(_horizontal_distance(ploc(), @pvp['arena']['ctfflag'][1]) > 3) {
 						queue_clear(@id.'1flag')
@@ -535,14 +588,41 @@ proc('_pvp_start_round', @id,
 					_regionmsg(@pvp['arena']['broadcast'], color('gray').'[PVP] '.color(@pvp['arena']['team'][0]['color']).player().color('r').' picked up the '.color(@pvp['arena']['team'][1]['color']).'flag')
 					play_sound(ploc(), array('sound': 'ENDERDRAGON_WINGS', 'volume': 3))
 				}
-
-			} else if(max_stack_size(@event['item']) == 1) {
-				@pvp = import('pvp'.@id)
+			} else if(array_index_exists(@pvp['arena'], 'captain')
+			&& @e['item']['type'] == @pvp['team'][0]['captainhat']['type']) {
+				if(@pvp['players'][player()]['team'] == 0) {
+					_class('unload', player(), @pvp['players'][player()]['class'])
+					_clear_pinv()
+					_remove_peffects()
+					@pvp['players'][player()]['class'] = @pvp['arena']['captain'][0]
+					@pvp['team'][0]['captain'] = player()
+					_class('load', player(), @pvp['arena']['captain'][0])
+					_class('equip', player(), @pvp['arena']['captain'][0])
+					_regionmsg(@pvp['arena']['broadcast'], color('gray').'[PVP] '.color(@pvp['arena']['team'][0]['color']).player().color('r').' became the new captain!')
+				} else {
+					cancel()
+				}
+				
+			} else if(array_index_exists(@pvp['arena'], 'captain')
+			&& @e['item']['type'] == @pvp['team'][1]['captainhat']['type']) {
+				if(@pvp['players'][player()]['team'] == 1) {
+					_class('unload', player(), @pvp['players'][player()]['class'])
+					_clear_pinv()
+					_remove_peffects()
+					@pvp['players'][player()]['class'] = @pvp['arena']['captain'][1]
+					@pvp['team'][1]['captain'] = player()
+					_class('load', player(), @pvp['arena']['captain'][1])
+					_class('equip', player(), @pvp['arena']['captain'][1])
+					_regionmsg(@pvp['arena']['broadcast'], color('gray').'[PVP] '.color(@pvp['arena']['team'][1]['color']).player().color('r').' became the new captain!')
+				} else {
+					cancel()
+				}
+			} else if(max_stack_size(@e['item']) == 1) {
 				if(array_contains(@pvp['arena']['flags'], 'stackedpickup') && array_index_exists(@pvp['players'], player())) {
 					foreach(pinv(), @slot, @item,
-						if(@item != null && @event['item']['type'] == @item['type'] && @event['item']['type'] != '373' && @event['item']['enchants'] == @item['enchants']) {
-							if(@item['data'] > @event['item']['data']) {
-								set_inventory_item(pinfo()[13], @slot, @event['item'])
+						if(@item != null && @e['item']['type'] == @item['type'] && @e['item']['type'] != '373' && @e['item']['enchants'] == @item['enchants']) {
+							if(@item['data'] > @e['item']['data']) {
+								set_inventory_item(pinfo()[13], @slot, @e['item'])
 							}
 							modify_event('item', null)
 							break()
@@ -555,10 +635,10 @@ proc('_pvp_start_round', @id,
 
 	# if(array_contains(array('ctf', 'tdm'), @pvp['arena']['mode'])) {
 		# array_push(@pvp['binds'], @id.'tagged')
-		# bind('player_tagged', array('id': @id.'tagged'), null, @event, assign(@id, @id), 
+		# bind('player_tagged', array('id': @id.'tagged'), null, @e, assign(@id, @id), 
 			# @pvp = import('pvp'.@id)
-			# if(!array_index_exists(@pvp['players'], @event['tagged']), die())
-			# modify_event('tag', color(@pvp['arena']['team'][@pvp['players'][@event['tagged']]['team']]['color']).@event['tagged'])
+			# if(!array_index_exists(@pvp['players'], @e['tagged']), die())
+			# modify_event('tag', color(@pvp['arena']['team'][@pvp['players'][@e['tagged']]['team']]['color']).@e['tagged'])
 		# )
 		# foreach(array_keys(@pvp['players']), @player,
 			# tag_refresh(@player)
@@ -573,7 +653,7 @@ proc('_pvp_start_round', @id,
 		foreach(array_keys(@pvp['players']), @player,
 			if(!array_contains(sk_current_regions(@player), @pvp['arena']['region'])
 			&& pinfo(@player, 5) > 0) {
-				msg(@player, color('gray').'[PVP] '.color('r').'You exited the combat region.')
+				tmsg(@player, color('gray').'[PVP] '.color('r').'You exited the combat region.')
 				set_timeout(50, closure(pkill(@player)))
 			}
 
@@ -690,7 +770,10 @@ proc('_pvp_initialize_players', @id, @players,
 				_class('load', @player, @pvp['players'][@player]['class'])
 			}
 			if(array_index_exists(@pvp['arena'], 'effect')) {
-				foreach(@pvp['arena']['effect'], @effect, @data,
+				foreach(@pvp['arena']['effect'][0], @effect, @data,
+					set_peffect(@player, @effect, @data['strength'], @data['length'])
+				)
+				foreach(@pvp['arena']['effect'][@pvp['players'][@player]['team'] + 1], @effect, @data,
 					set_peffect(@player, @effect, @data['strength'], @data['length'])
 				)
 			}

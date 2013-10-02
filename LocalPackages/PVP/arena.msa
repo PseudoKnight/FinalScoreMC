@@ -6,17 +6,14 @@
 		if(!has_permission('group.administrators'), die('You do not have permission.'))
 		@arenas = get_values('arena')
 		foreach(@arenas, @key, @arena,
-			if(array_index_exists(@arena, 'modpickup'),
-				array_remove(@arena, 'modpickup')
-				store_value(@key, @arena)
-			)
+		
 		)
 		msg('All arenas updated.')
 
 	, 'set',
 		if(!has_permission('group.builders'), die('You do not have permission.'))
 		if(!$id || !$setting) {
-			die(color('c').'lobby '.color('gray').'Sets the lobby warp point (required)\n'
+			die(color('c').' lobby '.color('gray').'Sets the lobby warp point (required)\n'
 			.color('c').'spawn '.color('gray').'Adds a spawn point. (required)\n'
 			.color('c').'region '.color('gray').'The combat region name. (required)\n'
 			.color('r').'broadcast '.color('gray').'The region all messages are broadcasted.\n'
@@ -30,20 +27,22 @@
 			.color('r').'team '.color('gray').'Team name and color\n'
 			.color('r').'kit '.color('gray').'Sets the respawn kits (accepts team # as value)\n'
 			.color('r').'classes '.color('gray').'Available classes [team1list team2list]\n'
-			.color('r').'captain '.color('gray').'The captain mode class\n'
+			.color('r').'captain '.color('gray').'The captain class for each team\n'
 			.color('r').'restore '.color('gray').'The optional schematic name to restore to.\n'
 			.color('r').'time '.color('gray').'The starting time (0-24000)\n'
 			.color('r').'ff '.color('gray').'Sets team friendly-fire (default: true)\n'
 			.color('r').'itemspawn '.color('gray').'Set item drop. (default: 60 sec, no spawn @ start)\n'
 			.color('r').'chestspawn '.color('gray').'Set chest spawn (def: 60 sec, no spawn @ start)\n'
+			.color('r').'mobspawn '.color('gray').'Spawn mob @ loc (type qty respawnTime onStart)\n'
 			.color('r').'rsoutput '.color('gray').'The lever that turns on at start and off at end.\n'
 			.color('r').'rsoutputscore '.color('gray').'Redstone torch appears when a team scores\n'
 			.color('r').'min '.color('gray').'The minimum # of players to start a match. (default: 2)\n'
 			.color('r').'max '.color('gray').'Start the match as soon as this number of players join.\n'
-			.color('r').'effect '.color('gray').'The starting potion effect for all players.\n'
+			.color('r').'effect '.color('gray').'The starting potion effect for all or team.\n'
 			.color('r').'denydrop '.color('gray').'Comma list of IDs not dropped on death or "all"\n'
-			.color('r').'mobspawn '.color('gray').'Spawn mob @ loc (type qty respawnTime onStart)\n'
-			.color('r').'flags '.color('gray').'Special game behavior modifiers.')
+			.color('r').'flags '.color('gray').'Special game behavior modifiers\n'
+			.color('r').' MORE INFORMATION AT:\n'
+			.' http://finalscoremc.com/arena-configuration/')
 		}
 		if(reg_count('^[a-z0-9]+$', $id) < 1, die('You can only use lowercase alphanumeric characters for the arena ID'))
 		@arena = get_value('arena.'.$id)
@@ -277,22 +276,21 @@
 
 			, 'effect',
 				@effects = _get_effects()
-				if(!array_contains(array_keys(@effects), @args[0]), die('Unknown potion effect. '.array_keys(@effects)))
-				@effect = @effects[@args[0]]
-				if(!array_index_exists(@arena, 'effect'), @arena['effect'] = associative_array())
-				if(@args[1] && @args[2]) {
-					if(@args[1] == 0 || @args[2] == 0) {
-						array_remove(@arena['effect'], @effect)
-						if(array_size(@arena['effect']) == 0) {
-							array_remove(@arena, 'effect')
-						}
-						msg('Removed potion effect '.@args[0].'.')
-					} else {
-						@arena['effect'][@effect] = associative_array('strength': @args[1] - 1, 'length': @args[2])
-						msg('Set starting potion effect to '.@args[0].' with a strength of '.@args[1].' and a length of '.@args[2].' seconds.')
+				if(!array_contains(array_keys(@effects), @args[1]), die('Unknown potion effect. '.array_keys(@effects)))
+				@effect = @effects[@args[1]]
+				if(!array_index_exists(@arena, 'effect'), @arena['effect'] = array(associative_array(), associative_array(), associative_array()))
+				if(@args[0] == 'all', @args[0] = 0)
+				if(@args[2] == 0 || @args[3] == 0) {
+					array_remove(@arena['effect'][@args[0]], @effect)
+					if(array_size(@arena['effect'][0]) == 0
+					&& array_size(@arena['effect'][1]) == 0
+					&& array_size(@arena['effect'][2]) == 0) {
+						array_remove(@arena, 'effect')
 					}
+					msg('Removed potion effect '.@args[1].'.')
 				} else {
-					die('Requires a strength integer and a length integer in seconds.')
+					@arena['effect'][@args[0]][@effect] = associative_array('strength': @args[2] - 1, 'length': @args[3])
+					msg('Set '.@args[1].' with a strength of '.@args[2].' and a length of '.@args[3].' seconds for '.if(@args[0] != 0, 'team ').@args[0])
 				}
 
 			, 'denydrop',
@@ -321,7 +319,7 @@
 				
 
 			, 'flags',
-				@flags = array('endernades', 'skullrockets', 'noinventory', 'stackedpickup', 'debug', 'shotgunballs', 'primedtnt', 'pistoltears')
+				@flags = array('endernades', 'skullrockets', 'noinventory', 'stackedpickup', 'debug', 'shotgunballs', 'primedtnt', 'pistoltears', 'rallycall')
 				if(!@args[0] || @args[1], die('You need to specify a comma separated list of pre-defined flags. (no spaces) Current available flags: '.@flags))
 				@arena['flags'] = split(',', @args[0])
 				foreach(@arena['flags'], @flag,
@@ -418,9 +416,19 @@
 		} else {
 			msg(color('l').':: '.to_upper($id).' :: '.if(array_index_exists(@arena, 'team'),
 				color(@arena['team'][0]['color']).@arena['team'][0]['name'].color('gray').' vs '.color(@arena['team'][1]['color']).@arena['team'][1]['name']))
-			if(!array_index_exists(@arena, 'lobby'), msg(color('red').'lobby'))
-			if(!array_index_exists(@arena, 'spawn'), msg(color('red').'spawn'))
-			if(!array_index_exists(@arena, 'region'), msg(color('red').'region'))
+			# always required settings
+			if(!array_index_exists(@arena, 'lobby'), msg(color('red').'lobby '.color(7).'(required)'))
+			if(!array_index_exists(@arena, 'spawn'), msg(color('red').'spawn '.color(7).'(required)'))
+			if(!array_index_exists(@arena, 'region'), msg(color('red').'region '.color(7).'(required)'))
+			# dependent settings
+			if(array_index_exists(@arena, 'captain') && !array_index_exists(@arena, 'classes'), msg(color('gold').'classes '.color(7).'(required for setting "captain")'))
+			if(array_index_exists(@arena, 'ctfflag') && !array_index_exists(@arena, 'mode'), msg(color('gold').'mode '.color(7).'("ctf" required for setting "ctfflag")'))
+			if(array_index_exists(@arena, 'score') && !array_index_exists(@arena, 'mode'), msg(color('gold').'mode '.color(7).'("koth" or "ctf" required for setting "score")'))
+			if(array_index_exists(@arena, 'kothregion') && !array_index_exists(@arena, 'mode'), msg(color('gold').'mode '.color(7).'("koth" required for setting "kothregion")'))
+			if(array_index_exists(@arena, 'rsoutputscore') && !array_index_exists(@arena, 'mode'), msg(color('gold').'mode '.color(7).'("ctf" required for setting "rsoutputscore")'))
+			if(array_index_exists(@arena, 'team') && !array_index_exists(@arena, 'mode'), msg(color('gold').'mode '.color(7).'(team mode required for "team")'))
+			if(array_index_exists(@arena, 'teamratio') && !array_index_exists(@arena, 'mode'), msg(color('gold').'mode '.color(7).'(team mode required for "teamratio")'))
+			# 
 			foreach(@arena, @setting, @value,
 				if(array_contains(array('spawn', 'kit', 'itemspawn', 'chestspawn', 'mobspawn'), @setting)) {
 					msg(@setting.' '.color('gray').'[...]')
@@ -444,7 +452,7 @@
 		msg(color('gray').'PVP ARENAS: '.color('r').@list)
 
 	,
-		msg('/arena set [id] [setting] [value(s)] '.color('gray').'Creates/overwrites settings\n'
+		msg(' /arena set [id] [setting] [value(s)] '.color('gray').'Creates/overwrites settings\n'
 		.color('r').'/arena load <id> <setting> '.color('gray').'Loads kits & chestspawns\n'
 		.color('r').'/arena delete <id> [setting] '.color('gray').'Delete arenas, settings, or chests\n'
 		.color('r').'/arena rename <old-id> <new-id> '.color('gray').'Rename the arena.\n'

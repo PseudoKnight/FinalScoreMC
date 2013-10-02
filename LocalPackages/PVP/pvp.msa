@@ -132,6 +132,13 @@
 			team_add_player(@pvp['arena']['team'][1]['name'], @pvp['arena']['team'][1]['name'], @id)
 			set_pscore('captures', @pvp['arena']['team'][1]['name'], 0, @id)
 		)
+		
+		if(array_index_exists(@pvp['arena'], 'captain')) {
+			@class = get_value('class.'.@pvp['arena'][0]['captain'])
+			@pvp['team'][0]['captainhat'] = @class['kit'][103]
+			@class = get_value('class.'.@pvp['arena'][1]['captain'])
+			@pvp['team'][1]['captainhat'] = @class['kit'][103]
+		}
 
 		foreach(array_keys(@pvp['players']), @player,
 			if(pmode(@player) == 'CREATIVE', set_pmode(@player, 'SURVIVAL'))
