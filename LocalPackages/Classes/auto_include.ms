@@ -142,7 +142,11 @@ proc('_class', @action, @player, @class,
 			}
 			
 		, 'unload',
-			
+			if(array_index_exists(@class, 'effect')) {
+				foreach(@class['effect'], @eid, @e,
+					set_peffect(@player, @eid, 0, 0)
+				)
+			}
 		)
 	)
 )

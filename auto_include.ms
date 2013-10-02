@@ -189,7 +189,7 @@ proc(_remove_region_entities, @region, @entities = array(),
 )
 
 # Remove all potion effects from a player
-proc(_remove_peffects, @player,
+proc(_remove_peffects, @player = player(),
   @effects = get_peffect(@player)
   foreach(@effects, @effect,
     set_peffect(@player, @effect['id'], 0, 0)
