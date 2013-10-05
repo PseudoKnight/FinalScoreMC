@@ -821,8 +821,13 @@
 <<<
 
 *:/setcommand $ = >>>
-	if(!has_permission('group.engineers'), die('You do not have permission.'))
-	@allowedcmds = array('/velocity', '/tp', '/sayas')
+	msg('Please use /scb now (Set Command Block). It\'s shorter.')
+<<<
+
+*:/scb [$] = >>>
+	if(!has_permission('group.builders'), die('You do not have permission.'))
+	if(!$, die('Usage: /scb /cmd'))
+	@allowedcmds = array('/velocity', '/tp', '/sayas', '/testfor', '/playsound')
 	if(!array_contains_ic(@allowedcmds, parse_args($)[0]), die('Allowed commands: '.array_implode(@allowedcmds)))
 	@block = pcursor()
 	if(get_block_at(@block) != '137:0', die('That is not a commandblock.'))
