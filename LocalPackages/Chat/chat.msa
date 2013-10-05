@@ -1,5 +1,6 @@
 /s $name $ = >>>
 	broadcast(color('8').simple_date('h:mm').color('gray').' [console] '.color('aqua').$name.color('gray').': '.color('r').$) 
+	try(dm_broadcast_to_web($, $name))
 <<<
 
 *:/say $ = >>>
@@ -17,6 +18,7 @@
 		die()
 	}
 	broadcast('* '.player().' '.colorize($))
+	try(dm_broadcast_to_web('* '.player().' '.$))
 <<<
 
 # MUTING
