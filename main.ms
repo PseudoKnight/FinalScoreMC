@@ -66,6 +66,7 @@ bind('player_join', null, null, @event,
 		msg(color('gold'), color('l'), '\u2302', color('red'), color('l'), '\u2302', color('aqua'), color('l'), '\u2302', color('dark_red'), color('l'), '\u2302', color('gold'), color('l'), ' FINALSCORE ', color('yellow'), color('l'), '\u00AB', color('r'), ' \u25AA \u25AA \u25AA')
 		msg(color('1').color('l').'--------------------')
 		msg(get_value('motd'))
+		sudo('/voice')
 		#Tab list colors
 		if(length(player()) > 14) {
 			set_list_name(_colorname().substr(player(), 0, 14))
