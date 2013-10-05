@@ -164,11 +164,12 @@ proc(_remove_region_items, @region,
 )
 
 proc(_remove_region_entities, @region, @entities = array(),
-  if(!sk_region_exists(@region)) {
+  if(get_command_block(), @world = get_command_block()[3], @world = pworld())
+  if(!sk_region_exists(@world, @region)) {
     console('Can\'t remove entities because region doesn\'t exist: '.@region)
     return(false)
   }
-  @loc = sk_region_info(@region, pworld())[0]
+  @loc = sk_region_info(@region, @world)[0]
   if(array_size(@loc) > 2) {
     console('Can\'t remove entities because region isn\'t a cuboid: '.@region)
     return(false)
@@ -177,7 +178,7 @@ proc(_remove_region_entities, @region, @entities = array(),
     if(@x > @loc[0][0], @x = @loc[0][0])
     for(@z = @loc[1][2], @z < (@loc[0][2] + 15), inc(@z, 16),
       if(@z > @loc[0][2], @z = @loc[0][2])
-      foreach(all_entities(array(@x, 64, @z, pworld())), @entity,
+      foreach(all_entities(array(@x, 64, @z, @world)), @entity,
         if((!@entities && !array_contains(array('PLAYER', 'COMPLEX_PART', 'ITEM_FRAME', 'PAINTING', 'WEATHER'), entity_type(@entity)))
 		|| array_contains(@entities, entity_type(@entity))) {
           entity_remove(@entity)
