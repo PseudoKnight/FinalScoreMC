@@ -64,6 +64,14 @@ switch($cmd
 		msg(color('gray').@setting.' '.color('r').@value)
 	)
 	
+, 'rename',
+	if(!$id || !$setting, die('Usage: /class rename <classname> <newclassname>'))
+	@class = get_value('class.'.$id)
+	if(!@class, die('No class by that name.'))
+	store_value('class.'.to_lower($setting), @class)
+	clear_value('class.'.$id)
+	msg('Changed '.$id.' class name to '.to_lower($setting))
+	
 , 'load',
 	_class('load', player(), $id)
 	
