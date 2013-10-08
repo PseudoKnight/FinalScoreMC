@@ -30,7 +30,7 @@
 		console(player().' joined '.$id)
 		export('pvp'.$id, @pvp)
 		if(@pvp['running'] == 'true') {
-			_pvp_initialize_players(@id, array(player()))
+			_pvp_initialize_players($id, array(player()))
 		} else if(array_index_exists(@arena, 'max') && array_size(@pvp['players']) >= @arena['max']) {
 			call_alias('/pvp start '.$id)
 		}
@@ -165,6 +165,14 @@
 					'size': @size,
 					'title': 'Choose a Class'
 				))
+				if(array_index_exists(@pvp['arena'], 'captain')) {
+					@class = get_value('class.'.@pvp['arena']['captain'][0])
+					addto_virtualchest(@id.'0', 
+						@class['selector']['type'].':'.@class['selector']['data'], 
+						@class['selector']['qty'],
+						@class['selector']['meta']
+					)
+				}
 				for(@i = 0, @i < array_size(@pvp['arena']['classes'][0]), @i++,
 					@class = get_value('class.'.@pvp['arena']['classes'][0][@i])
 					if(!@class, continue())
@@ -174,14 +182,6 @@
 						@class['selector']['meta']
 					)
 				)
-				if(array_index_exists(@pvp['arena'], 'captain')) {
-					@class = get_value('class.'.@pvp['arena']['captain'][0])
-					addto_virtualchest(@id.'0', 
-						@class['selector']['type'].':'.@class['selector']['data'], 
-						@class['selector']['qty'],
-						@class['selector']['meta']
-					)
-				}
 				foreach(@pvp['players'], @p, @pdata,
 					if(!array_index_exists(@pdata, 'team') || @pdata['team'] == 0) {
 						popen_virtualchest(@p, @id.'0')
@@ -196,6 +196,14 @@
 					'size': @size,
 					'title': 'Choose a Class'
 				))
+				if(array_index_exists(@pvp['arena'], 'captain')) {
+					@class = get_value('class.'.@pvp['arena']['captain'][1])
+					addto_virtualchest(@id.'1', 
+						@class['selector']['type'].':'.@class['selector']['data'], 
+						@class['selector']['qty'],
+						@class['selector']['meta']
+					)
+				}
 				for(@i = 0, @i < array_size(@pvp['arena']['classes'][1]), @i++,
 					@class = get_value('class.'.@pvp['arena']['classes'][1][@i])
 					if(!@class, continue())
@@ -205,14 +213,6 @@
 						@class['selector']['meta']
 					)
 				)
-				if(array_index_exists(@pvp['arena'], 'captain')) {
-					@class = get_value('class.'.@pvp['arena']['captain'][1])
-					addto_virtualchest(@id.'1', 
-						@class['selector']['type'].':'.@class['selector']['data'], 
-						@class['selector']['qty'],
-						@class['selector']['meta']
-					)
-				}
 				foreach(@pvp['players'], @p, @pdata,
 					if(!pget_virtualchest(@p) && @pdata['team'] == 1) {
 						popen_virtualchest(@p, @id.'1')
@@ -239,7 +239,7 @@
 						cancel()
 						@class = to_lower(@class)
 						if(@pvp['arena']['captain'][@pvp['players'][player()]['team']] == @class) {
-							clear_virtualchest(@id.@pvp['players'][player()]['team'], @e['slot'])
+							clear_virtualchest(@id.@pvp['players'][player()]['team'], 0)
 							@pvp['team'][@pvp['players'][player()]['team']]['captain'] = player()
 						}
 						if(array_index_exists(@pvp['players'][player()], 'class')) {
