@@ -53,14 +53,12 @@ proc('_pvp_start_round', @id,
 		queue_push(closure(
 			@pvp = import('pvp'.@id)
 			if(@pvp['team'][0]['captain'] == '') {
-				@hat = drop_item(_relative(@pvp['arena']['spawn'][0][0], 'up'), @pvp['team'][0]['captainhat'])
-				set_entity_velocity(@hat, array())
+				drop_item(_relative(@pvp['arena']['spawn'][0][0], 'up'), @pvp['team'][0]['captainhat'], 0)
 			} else {
 				_regionmsg(@pvp['arena']['broadcast'], color('gray').'[PVP] '.color(@pvp['arena']['team'][0]['color']).@pvp['team'][0]['captain']. ' is the captain of '.@pvp['arena']['team'][0]['name'].'.')
 			}
 			if(@pvp['team'][1]['captain'] == '') {
-				@hat = drop_item(_relative(@pvp['arena']['spawn'][1][0], 'up'), @pvp['team'][1]['captainhat'])
-				set_entity_velocity(@hat, array())
+				@hat = drop_item(_relative(@pvp['arena']['spawn'][1][0], 'up'), @pvp['team'][1]['captainhat'], 0)
 			} else {
 				_regionmsg(@pvp['arena']['broadcast'], color('gray').'[PVP] '.color(@pvp['arena']['team'][1]['color']).@pvp['team'][1]['captain']. ' is the captain of '.@pvp['arena']['team'][1]['name'].'.')
 			}
@@ -216,7 +214,7 @@ proc('_pvp_start_round', @id,
 
 		clear_task(@pvp['players'][player()]['limbo'])
 		@pvp['players'][player()]['limbo'] = null
-		set_timeout(50, closure(
+		set_timeout(50, closure( # workaround for bug where players retain potion effects after death
 			_remove_peffects(player())
 		))
 		if(!array_index_exists(@pvp['arena'], 'respawntime')) {
@@ -418,10 +416,6 @@ proc('_pvp_start_round', @id,
 			if(@e['item'] != '397:1', die())
 
 			@skull = shoot_projectile(player(), 'wither_skull')
-			set_timeout(50, closure(
-				@velocity = entity_velocity(@skull)
-				set_entity_velocity(@skull, array(@velocity['x'] * 4, @velocity['y'] * 4, @velocity['z'] * 4))
-			))
 			ptake_item('397:1', 1)
 			cancel()
 		)
@@ -452,7 +446,7 @@ proc('_pvp_start_round', @id,
 			for(@i = 0, @i < 8, @i++,
 				@entities[@i] = shoot_projectile(player(), 'SNOWBALL')
 				@v = entity_velocity(@entities[@i])
-				set_entity_velocity(@entities[@i], array(@v['x'] * 4 + ((rand(3) - 1)), @v['y'] * 4 + ((rand(3) - 1)), @v['z'] * 4 + ((rand(3) - 1))))
+				set_entity_velocity(@entities[@i], array(@v['x'] * 3.4 + ((rand(3) - 1)), @v['y'] * 3.4 + ((rand(3) - 1)), @v['z'] * 3.4 + ((rand(3) - 1))))
 			)
 			play_sound(ploc(), array('sound': 'ZOMBIE_WOOD', 'pitch': 1.5, 'volume': 2))
 			play_sound(ploc(), array('sound': 'EXPLODE', 'pitch': 2, 'volume': 2))
@@ -500,7 +494,7 @@ proc('_pvp_start_round', @id,
 			if(!array_index_exists(@pvp['players'], player()), die())
 			@entity = shoot_projectile(player(), 'ARROW')
 			@v = entity_velocity(@entity)
-			set_entity_velocity(@entity, array(@v['x'] * 3.5, @v['y'] * 3.5, @v['z'] * 3.5))
+			set_entity_velocity(@entity, array(@v['x'] * 3.4, @v['y'] * 3.4, @v['z'] * 3.4))
 			play_sound(ploc(), array('sound': 'ZOMBIE_WOOD', 'pitch': 2, 'volume': 2))
 			@item = pinv(player(), null)
 			@item['qty'] = @item['qty'] - 1
@@ -753,8 +747,7 @@ proc('_pvp_start_round', @id,
 		if(array_index_exists(@pvp['arena'], 'itemspawn')) {
 			for(@i = 0, @i < array_size(@pvp['arena']['itemspawn']), @i++,
 				if((@pvp['itemspawn'][@i] + (@pvp['arena']['itemspawn'][@i]['cooldown'] * 1000)) < time()) {
-					@item = drop_item(@pvp['arena']['itemspawn'][@i]['loc'], array('type': @pvp['arena']['itemspawn'][@i]['item']['type'], 'data': @pvp['arena']['itemspawn'][@i]['item']['data'], 'qty': @pvp['arena']['itemspawn'][@i]['item']['qty']))
-					set_entity_velocity(@item, array())
+					drop_item(@pvp['arena']['itemspawn'][@i]['loc'], array('type': @pvp['arena']['itemspawn'][@i]['item']['type'], 'data': @pvp['arena']['itemspawn'][@i]['item']['data'], 'qty': @pvp['arena']['itemspawn'][@i]['item']['qty']), 0)
 					@pvp['itemspawn'][@i] = time()
 				}
 			) 
@@ -880,12 +873,10 @@ proc('_pvp_flag_spawn', @id, @team, @loc,
 	@pvp = import('pvp'.@id)
 	if(!@loc, @loc = @pvp['arena']['ctfflag'][@team])
 	if(!entity_exists(@pvp['team'][@team]['flag'])) {
-		@pvp['team'][@team]['flag'] = drop_item(@loc, array('type': if(@team == 0, '10', '8')))
-		set_entity_velocity(@pvp['team'][@team]['flag'], array())
+		@pvp['team'][@team]['flag'] = drop_item(@loc, array('type': if(@team == 0, '10', '8')), 0)
 		export('pvp'.@id, @pvp)
 	} else if(_horizontal_distance(entity_loc(@pvp['team'][@team]['flag']), @pvp['arena']['ctfflag'][@team]) > 3) {
-		@pvp['team'][@team]['flag'] = drop_item(@loc, array('type': if(@team == 0, '10', '8')))
-		set_entity_velocity(@pvp['team'][@team]['flag'], array())
+		@pvp['team'][@team]['flag'] = drop_item(@loc, array('type': if(@team == 0, '10', '8')), 0)
 		export('pvp'.@id, @pvp)
 	}
 	queue_delay('30000', @id.@team.'flag')
@@ -899,8 +890,7 @@ proc('_pvp_hat_spawn', @id, @team, @loc,
 	queue_delay('30000', @id.@team.'hat')
 	queue_push(closure(
 		if(!entity_exists(@hat)) {
-			@hat = drop_item(@loc, @pvp['team'][@team]['captainhat'])
-			set_entity_velocity(@hat, array())
+			drop_item(@loc, @pvp['team'][@team]['captainhat'], 0)
 			_regionmsg(@pvp['arena']['broadcast'], color('gray').'[PVP] '.color(@pvp['arena']['team'][@team]['color']).'Captain\'s hat respawned on ship.')
 		}
 	), @id.@team.'hat')

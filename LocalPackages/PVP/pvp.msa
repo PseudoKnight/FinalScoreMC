@@ -1,8 +1,9 @@
 *:/pvp [$action] [$id] [$team] = >>>
 	switch($action
 	, 'join',
-		@pvp = import('pvp'.$id)
-		@arena = get_value('arena.'.$id)
+		@id = to_lower($id)
+		@pvp = import('pvp'.@id)
+		@arena = get_value('arena.'.@id)
 		if(!@arena, die('Can\'t find that arena.'))
 		if(!@pvp) {
 			@pvp = array('players': array(), 'running': 'false', 'cooldown': 0)
@@ -26,13 +27,13 @@
 				array_push(@pvp['team'][1]['players'], player())
 			}
 		}
-		_worldmsg('custom', color('gray').'[PVP] '.color('r').player().' has joined '.to_upper($id).'. ('.array_size(@pvp['players']).')')
-		console(player().' joined '.$id)
-		export('pvp'.$id, @pvp)
+		_worldmsg('custom', color('gray').'[PVP] '.color('r').player().' has joined '.to_upper(@id).'. ('.array_size(@pvp['players']).')')
+		console(player().' joined '.@id)
+		export('pvp'.@id, @pvp)
 		if(@pvp['running'] == 'true') {
-			_pvp_initialize_players($id, array(player()))
+			_pvp_initialize_players(@id, array(player()))
 		} else if(array_index_exists(@arena, 'max') && array_size(@pvp['players']) >= @arena['max']) {
-			call_alias('/pvp start '.$id)
+			call_alias('/pvp start '.@id)
 		}
 		
 	, 'debug',
@@ -281,10 +282,11 @@
 		
 	, 'end',
 		if(!get_command_block() && !has_permission('group.builders'), die(color('red').'You do not have permission.'))
-		if(!$id || !$team, die(color('gold').'Usage: /pvp stop arenaName winningTeam#'))
-		@pvp = import('pvp'.$id)
+		if(!$id || !$team, die(color('gold').'Usage: /pvp end arenaName winningTeam#'))
+		@id = to_lower($id)
+		@pvp = import('pvp'.@id)
 		if(!@pvp || !@pvp['running'], die(color('red').'Not running.'))
-		_pvp_end_match($id, @pvp['team'][$team - 1]['players'])
+		_pvp_end_match(@id, @pvp['team'][$team - 1]['players'])
 		
 	,
 		msg('/pvp join <id> '.color('gray').'Join the match')
