@@ -55,8 +55,8 @@ proc('_cluck_spawn',
 		# Let's make sure the player isn't cheating, but we'll just reset the round
 		if(ponline(@cluck['player']) && array_contains(sk_current_regions(@cluck['player']), 'cluck0')) {
 			# Let's check if some other player is where they shouldn't be
-			foreach(all_players(), @player,
-				if(pworld(@player) == 'custom' && array_contains(sk_current_regions(@player), 'cluckdeny0')) {
+			foreach(all_players('custom'), @player,
+				if(array_contains(sk_current_regions(@player), 'cluckdeny0')) {
 					set_ploc(@player, array(-544,62, -367, 'custom'))
 					tmsg(@player, 'Don\'t get in player\'s way.')
 				}

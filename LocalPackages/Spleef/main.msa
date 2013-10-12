@@ -247,7 +247,7 @@
 					}
 				)
 	
-				foreach(all_players(), @player,
+				foreach(all_players('custom'), @player,
 					if(array_index_exists(@currentspleef, @player), continue())
 					if(pworld(@player) == @world && array_contains(sk_current_regions(@player), @cfg['region']['arena'])) {
 						set_ploc(@player, @cfg['warp']['lobby'])

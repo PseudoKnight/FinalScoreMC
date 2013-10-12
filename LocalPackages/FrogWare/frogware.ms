@@ -12,7 +12,7 @@ proc('_fw_endgame', @winners,
 	unbind('fwdamage')
 	_regionmsg('frogware', color('green').'[FROGWARE] '.color('r').'Best frog'.if(array_size(@winners) > 1, 's').' in the house: '.array_implode(@winners, ' & '))
 	@warp = get_value('warp.frogpark')
-	foreach(all_players(), @p,
+	foreach(all_players('custom'), @p,
 		if(_fw_player(@p)) {
 			_warmuptp(3.7, @p, @warp['loc'], @warp['yaw'], @warp['pitch'])
 		}
@@ -35,7 +35,7 @@ proc('_fw_startround', @secs = 9,
 		@winners = array()
 		@count = 0
 		@total = 0
-		foreach(all_players(), @p,
+		foreach(all_players('custom'), @p,
 			if(_fw_player(@p)) {
 				@total++
 				if(array_contains(sk_current_regions(@p), 'frogware')) {
@@ -91,13 +91,13 @@ proc('_fw_startround', @secs = 9,
 proc('_fw_countdown', @c,
 	set_objective_display('score', color('a').color('l').@c, 'fw')
 	if(@c < 4 && @c > 0) {
-		foreach(all_players(), @p,
+		foreach(all_players('custom'), @p,
 			if(_fw_player(@p)) {
 				play_sound(ploc(@p), array('sound': 'click', 'pitch': 2), @p)
 			}
 		)
 	} else if(@c == 0) {
-		foreach(all_players(), @p,
+		foreach(all_players('custom'), @p,
 			if(_fw_player(@p)) {
 				play_sound(ploc(@p), array('sound': 'orb_pickup'), @p)
 			}
@@ -114,7 +114,7 @@ proc('_fw_loc', @height = 0, @minrange = false, @region = sk_region_info('frogwa
 		'custom'
 	)
 	if(@minrange) {
-			foreach(all_players(), @p,
+			foreach(all_players('custom'), @p,
 			if(get_pscoreboard(@p) == 'fw'
 			&& _2d_distance(ploc(@p), @loc) < 6) {
 				@return = 0
@@ -149,7 +149,7 @@ proc('_fw_player', @player,
 
 proc('_fw_totalplayers',
 	@count = 0
-	foreach(all_players(), @p,
+	foreach(all_players('custom'), @p,
 		if(get_pscoreboard(@p) == 'fw') {
 			@count++
 		}
@@ -184,7 +184,7 @@ proc('_fw_randompotion', @potentials, @secs = 20,
 		'blind': array(15, 1)
 	)
 	@potion = array_rand(@potentials, 1, false)
-	foreach(all_players(), @p,
+	foreach(all_players('custom'), @p,
 		if(_fw_player(@p),
 			set_peffect(@p, @potions[@potion[0]][0], @potions[@potion[0]][1], @secs))
 	)
@@ -231,7 +231,7 @@ proc('_fw_task', @task, @state, @secs,
 			), 'fw3')
 				
 		, 'end',
-			foreach(all_players(), @p,
+			foreach(all_players('custom'), @p,
 				if(_fw_player(@p)) {
 					_remove_peffects(@p)
 					if(get_block_at(ploc(@p)) == '133:0'
@@ -280,7 +280,7 @@ proc('_fw_task', @task, @state, @secs,
 			bind('player_chat', array('id': 'fwchat'), null, @e, @quote,
 				if(_fw_player(player())) {
 					modify_event('message', color('green').'[FROGWARE] '.color('r').@e['message'])
-					modify_event('recipients', all_players())
+					modify_event('recipients', all_players('custom'))
 					if(@e['message'] == @quote
 					&& _fw_changeteam(@p, 'winners')) {
 						play_sound(ploc(), array('sound': 'zombie_metal'), player())
@@ -308,14 +308,14 @@ proc('_fw_task', @task, @state, @secs,
 					_fw_changeteam(@e['player'], 'losers')
 				}
 			)
-			foreach(all_players(), @p,
+			foreach(all_players('custom'), @p,
 				if(_fw_player(@p)) {
 					_fw_changeteam(@p, 'winners')
 				}
 			)
 			
 		, 'end',
-			foreach(all_players(), @p,
+			foreach(all_players('custom'), @p,
 				if(_fw_player(@p)) {
 					_remove_peffects(@p)
 					if(array_contains(get_teams('fw')[1]['players'], @p)) {
@@ -344,7 +344,7 @@ proc('_fw_task', @task, @state, @secs,
 			_iterate_cuboid(array(@region[0][0], @region[1][1], @region[0][2], 'custom'),
 			array(@region[1][0], @region[1][1], @region[1][2], 'custom'),
 			'_set_dirt')
-			foreach(all_players(), @p,
+			foreach(all_players('custom'), @p,
 				if(_fw_player(@p)) {
 					set_pinv(@p, array(
 						0: array('type': 291),
@@ -361,7 +361,7 @@ proc('_fw_task', @task, @state, @secs,
 			
 		, 'end',
 			unbind('fwpickup')
-			foreach(all_players(), @p,
+			foreach(all_players('custom'), @p,
 				if(_fw_player(@p)) {
 					_clear_pinv(@p)
 				}
@@ -405,7 +405,7 @@ proc('_fw_task', @task, @state, @secs,
 			'_set_hill')
 			
 		, 'end',
-			foreach(all_players(), @p,
+			foreach(all_players('custom'), @p,
 				if(_fw_player(@p)) {
 					_remove_peffects(@p)
 					if(get_block_at(ploc(@p)) == '35:5'
@@ -450,7 +450,7 @@ proc('_fw_task', @task, @state, @secs,
 			)
 		
 		, 'end',
-			foreach(all_players(), @p,
+			foreach(all_players('custom'), @p,
 				if(_fw_player(@p)) {
 					_remove_peffects(@p)
 				}
@@ -463,7 +463,7 @@ proc('_fw_task', @task, @state, @secs,
 		switch(@state
 		, 'start',
 			_regionmsg('frogware', color('green').'[FROGWARE] '.color('r').'Look out below!')
-			foreach(all_players(), @p,
+			foreach(all_players('custom'), @p,
 				if(_fw_player(@p)) {
 					set_pvelocity(@p, 0, 3, 0)
 					play_sound(ploc(@p), array('sound': 'ghast_fireball'), @p)
@@ -481,7 +481,7 @@ proc('_fw_task', @task, @state, @secs,
 			), 'fw3')
 		
 		, 'end',
-			foreach(all_players(), @p,
+			foreach(all_players('custom'), @p,
 				if(_fw_player(@p)
 				&& get_block_at(ploc(@p)) == '35:5'
 				&& _fw_changeteam(@p, 'winners')) {
@@ -510,7 +510,7 @@ proc('_fw_task', @task, @state, @secs,
 		, 'start',
 			if(rand(7) < 1, @mob = 'BAT', @mob = 'CHICKEN')
 			_regionmsg('frogware', color('green').'[FROGWARE] '.color('r').'Shoot '.if(@mob == 'BAT', '1', '3').'!')
-			foreach(all_players(), @p,
+			foreach(all_players('custom'), @p,
 				if(_fw_player(@p)) {
 					set_pinv(@p, array(
 						0: array('type': 261, 'enchants': array(array('elevel': 3, 'etype': 'ARROW_DAMAGE'))),
@@ -542,7 +542,7 @@ proc('_fw_task', @task, @state, @secs,
 		
 		, 'end',
 			unbind('fwcluck')
-			foreach(all_players(), @p,
+			foreach(all_players('custom'), @p,
 				if(_fw_player(@p)) {
 					set_pexp(@p, 0)
 				}
@@ -612,7 +612,7 @@ proc('_fw_task', @task, @state, @secs,
 			)
 			
 		, 'end',
-			foreach(all_players(), @p,
+			foreach(all_players('custom'), @p,
 				if(_fw_player(@p)) {
 					_remove_peffects(@p)
 				}

@@ -16,7 +16,7 @@
 		set_pscoreboard(player(), 'fw')
 		team_add_player('losers', player(), 'fw')
 		@score = 0
-		foreach(all_players(), @p,
+		foreach(all_players('custom'), @p,
 			if(_fw_player(@p)
 			&& get_pscore('score', @p, 'fw') > @score) {
 				@score = get_pscore('score', @p, 'fw') - 1
@@ -33,7 +33,7 @@
 	, 'start',
 		if(get_pscoreboard(player()) != 'fw', die('You haven\'t joined first.'))
 		include('frogware.ms')
-		foreach(all_players(), @p,
+		foreach(all_players('custom'), @p,
 			if(_fw_player(@p)) {
 				set_phunger(@p, 20)
 				set_psaturation(@p, 5)

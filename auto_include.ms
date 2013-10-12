@@ -83,7 +83,6 @@ proc(_get_enchants,
 		'power': 'ARROW_DAMAGE',
 		'flame': 'ARROW_FIRE',
 		'infinity': 'ARROW_INFINITE',
-		'infinite': 'ARROW_INFINITE',
 		'punch': 'ARROW_KNOCKBACK',
 		'sharpness': 'DAMAGE_ALL',
 		'baneofarthropods': 'DAMAGE_ARTHROPODS',
@@ -254,20 +253,18 @@ proc(_worldid, @world,
 
 #Messsages every player within the specified region
 proc(_regionmsg, @region, @msg,
-  foreach(all_players(), @player,
-    if(array_contains(sk_current_regions(@player), @region)) {
-      tmsg(@player, @msg)
-    }
-  )
+	foreach(all_players(), @player,
+		if(array_contains(sk_current_regions(@player), @region)) {
+			tmsg(@player, @msg)
+		}
+	)
 )
 
 #Messsages every player within the specified world
 proc(_worldmsg, @world, @msg,
-  foreach(all_players(), @player,
-    if(pworld(@player) == @world) {
-      tmsg(@player, @msg)
-    }
-  )
+	foreach(all_players(@world), @player,
+		tmsg(@player, @msg)
+	)
 )
 
 #get qty of specific item in chest
