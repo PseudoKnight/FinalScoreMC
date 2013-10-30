@@ -26,7 +26,7 @@
 		@shopline = array(2, 'Sell '),
 	die(color('6').'[Shop] There is no Buy or Sell indicated in your command.')
 	)
-	@sign = pcursor()
+	@sign = array(round(pcursor()[0]), round(pcursor()[1]), round(pcursor()[2]), pcursor()[3])
 	try(@signtext = get_sign_text(@sign), die(color('6').'[Shop] There is no shop sign there.'))
 	if(@signtext[3] != player(), die(color('6').'[Shop] You do not own this shop.'))
 	if(!((length(@signtext[1]) > 7 && substr(@signtext[1], 0, 3) == 'Buy') || (length(@signtext[2]) > 8 && substr(@signtext[2], 0, 4) == 'Sell')), die(color('6').'[Shop] This doesn\'t look like a shop sign.'))
@@ -133,6 +133,7 @@
 	@shops = get_value('shop.'.@itemid)
 	if(!@shops, die('No shops trading that.'))
 	@loc = pcursor()
+	@loc = array(round(@loc[0]), round(@loc[1]), round(@loc[2]), @loc[3])
 	foreach(@shops[0], @key, @shop,
 		if(@loc == @shop['location']) {
 			array_remove(@shops[0], @key)
