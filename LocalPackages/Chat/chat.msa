@@ -4,6 +4,11 @@
 <<<
 
 *:/say $ = >>>
+	@ignorelist = import('ignorelist')
+	if(array_index_exists(@ignorelist, player()) && array_contains(@ignorelist[player()], 'all')) {
+		msg('You have been muted.')
+		die()
+	}
 	broadcast(color('8').simple_date('h:mm').' '.if(player() != '~console' && array_contains(pgroup(), 'donors'), color('green').'\u2666 ')._colorname().player().color('gray').': '.color('r').$) 
 <<<
 
@@ -23,7 +28,11 @@
 
 # MUTING
 *:/ignore $player = >>>
-	try(@player = player($player), die('No player found.'))
+	if($player == 'all') {
+		@player = 'all'
+	} else {
+		try(@player = player($player), die('No player found.'))
+	}
 	@ignorelist = import('ignorelist')
 	if(!array_index_exists(@ignorelist, @player)) {
 		array_set(@ignorelist, @player, array())
@@ -35,9 +44,13 @@
 <<<
 
 *:/unignore $player = >>>
-	try(@player = player($player), die('No player found.'))
+	if($player == 'all') {
+		@player = 'all'
+	} else {
+		try(@player = player($player), die('No player found.'))
+	}
 	@ignorelist = import('ignorelist')
-	if(!array_index_exists(@ignorelist, @player), die('That player wasn\'t ignored by anyone.'))
+	if(!array_index_exists(@ignorelist, @player), die('Wasn\'t ignored.'))
 	if(!array_contains_ic(@ignorelist[@player], player()), die('You have not ignored that player.'))
 	for(@i = 0, @i < array_size(@ignorelist[@player]), @i++,
 		if(@ignorelist[@player][@i] == player()) {

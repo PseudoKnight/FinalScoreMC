@@ -16,22 +16,11 @@ bind('player_chat', null, null, @event,
 		console(player().' @ '.@p.': '.@message, false)
 		die()
 	}
-	@ignorelist = import('ignorelist')
-	if(array_index_exists(@ignorelist, player())) {
-		@recipients = @event['recipients']
-		for(@i = 0, @i < array_size(@ignorelist[player()]), @i++,
-			if(@ignorelist[player()][@i] == 'all') {
-				msg('You have been muted.')
-				cancel()
-				die()
-			}
-			for(@j = 0, @j < array_size(@recipients), @j++,
-				if(@recipients[@j] == @ignorelist[player()][@i]) {
-					array_remove(@recipients, @j)
-				}
-			)
-		)
+	if(@recipients = _remove_ignored(player(), @event['recipients'])) {
 		modify_event('recipients', @recipients)
+	} else if(array_size(all_players()) > 1) {
+		cancel()
+		die('No players can receive your chat.')
 	}
 	modify_event('message', colorize(@event['message']))
 	modify_event('format', color('dark_gray').simple_date('h:mm').' '.if(array_contains(pgroup(), 'donors'), color('green').'\u2666 ')._colorname(player()).player().color('gray').': '.color('r').'%2$s')
