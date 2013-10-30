@@ -5,7 +5,7 @@ bind('player_interact', null, array('block': 92), @event,
 		die()
 	}
 	@cakes = get_value('cakes')
-	@id = array_index(@cakes, @event['location'])
+	@id = array_index(@cakes, array(round(@event['location'][0]), round(@event['location'][1]), round(@event['location'][2]), @event['location'][3]))
 	if(!@id, die())
 	cancel()
 	@cakedata = get_value('cakeinfo.'.@id)
@@ -44,7 +44,7 @@ bind('player_interact', null, array('block': 68), @event,
 	@signtext = get_sign_text(@event['location'])
 	if(length(@signtext[3]) > 8 && substr(@signtext[3], 0, 3) == color('yellow').'-') { #Coin reward signs
 		@cost = reg_match('.*\\-(\\d{1,3})\\sCoins', @signtext[3])
-		@chestloc = array(@event['location'][0], @event['location'][1] - 1, @event['location'][2], @event['location'][3])
+		@chestloc = _relative(@event['location'], 'down')
 		@count = _get_inventory_count(@chestloc, 'all')
 		if(@event['action'] == 'left_click_block') {
 			msg(color('yellow').'[Coin Shop] '.color(r).@count.' item(s) left. Your coins: '.if(_acc_balance(player()) < @cost[1], color('red'), color('green')).round(_acc_balance(player())))

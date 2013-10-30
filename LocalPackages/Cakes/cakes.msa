@@ -26,7 +26,7 @@
 		if(!$) {
 			@cakes = get_value('cakes')
 			@loc = pcursor()
-			@id = array_index(@cakes, @loc)
+			@id = array_index(@cakes,  array(round(@loc[0]), round(@loc[1]), round(@loc[2]), @loc[3]))
 			if(!@id, die('No cake prize found.'))
 		} else {
 			@id = $
@@ -61,7 +61,7 @@
 		if(!array_index_exists(@cakes, @id) && get_block_at(@loc) != '92:0', die('That doesn\'t appear to be a cake. Is it obstructed by a sign or other partial block?'))
 		if(!@cakes, @cakes = associative_array())
 		if(array_size(@args) < 2, die('Usage: /cake set <id> <coins> [type]'))
-		if(!array_index_exists(@cakes, @id), @cakes[@id] = @loc)
+		if(!array_index_exists(@cakes, @id), @cakes[@id] =  array(round(@loc[0]), round(@loc[1]), round(@loc[2]), @loc[3]))
 		@coins = @args[1]
 		if(array_size(@args) == 3, @type = to_lower(@args[2]), @type = 'challenge')
 		if(@type != 'secret' && @type != 'challenge', die(color('red').'You can only have "secret" and "challenge" cake types.'))
@@ -87,7 +87,7 @@
 
 		@cakes = get_value('cakes')
 		if(!array_index_exists(@cakes, $), die('There doesn\'t appaar to be a cake by that id.'))
-		array_set(@cakes, $, @loc)
+		array_set(@cakes, $, array(round(@loc[0]), round(@loc[1]), round(@loc[2]), @loc[3]))
 		store_value('cakes', @cakes)
 		msg('Set '.$.' cake to this new location.')
 
@@ -96,7 +96,7 @@
 		@cakes = get_value('cakes')
 		if(!$) {
 			@loc = pcursor()
-			@id = array_index(@cakes, @loc)
+			@id = array_index(@cakes,  array(round(@loc[0]), round(@loc[1]), round(@loc[2]), @loc[3]))
 			if(!@id, die('No cake prize found.'))
 		} else {
 			@id = $
@@ -113,7 +113,7 @@
 		@args = parse_args($)
 		if(array_size(@args) == 1) {
 			@loc = pcursor()
-			@old = array_index(@cakes, @loc)
+			@old = array_index(@cakes, array(round(@loc[0]), round(@loc[1]), round(@loc[2]), @loc[3]))
 			if(!@old, die('No cake prize found.'))
 			@new = @args[0]
 		} else if(array_size(@args) == 2) {
