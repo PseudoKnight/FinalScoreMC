@@ -268,8 +268,9 @@ proc('_pvp_start_round', @id,
 			@pvp = import('pvp'.@id)
 			if(!array_index_exists(@pvp['players'], player()), die())
 
+			@chestloc = array(round(@e['location'][0]), round(@e['location'][1]), round(@e['location'][2]), @e['location'][3])
 			for(@i = 0, @i < array_size(@pvp['arena']['chestspawn']), @i++,
-				if(@pvp['arena']['chestspawn'][@i]['loc'] == @e['location']
+				if(@pvp['arena']['chestspawn'][@i]['loc'] == @chestloc
 				&& array_index_exists(@pvp['arena']['chestspawn'][@i], 'cooldown')) {
 					cancel()
 					set_block_at(@e['location'], 0)
