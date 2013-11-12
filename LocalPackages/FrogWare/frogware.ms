@@ -483,7 +483,7 @@ proc('_fw_task', @task, @state, @secs,
 		, 'end',
 			foreach(all_players('custom'), @p,
 				if(_fw_player(@p)
-				&& get_block_at(ploc(@p)) == '35:5'
+				&& get_block_at(ploc(@p)) == '133:0'
 				&& _fw_changeteam(@p, 'winners')) {
 					play_sound(ploc(@p), array('sound': 'zombie_metal'), @p)
 				}
