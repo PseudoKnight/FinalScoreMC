@@ -354,7 +354,7 @@
 				die('After editing, you can save this kit by using "/arena set '.$id.' kit '.if(array_size(@args) > 0, @args[0]).'"')
 
 			, 'chestspawn',
-				@loc = pcursor()
+				@loc = array(round(pcursor()[0]), round(pcursor()[1]), round(pcursor()[2]), pcursor()[3])
 				if(split(':', get_block_at(@loc))[0] != '54', die('This is not a chest'))
 				foreach(@arena['chestspawn'], @chest,
 					if(@chest['loc'] == @loc) {
