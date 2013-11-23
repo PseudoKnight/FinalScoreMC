@@ -1,16 +1,17 @@
-proc('_fw_startgame',
+proc('_fw_startgame', @pts,
 	_fw_startround()
 	bind('entity_damage', array('id': 'fwdamage'), array('type': 'PLAYER', 'world': 'custom'), @e,
 		if(_fw_player(@e['player'])) {
 			modify_event('amount', 0)
 		}
 	)
-	_regionmsg('frogware', color('green').'[FROGWARE] '.color('r').'Game started. First to 25 points wins!')
+	_fw_msg('Game started. First to '.@pts.' points wins!')
+	set_pscore('score', 'GOAL', @pts, 'fw')
 )
 
 proc('_fw_endgame', @winners,
 	unbind('fwdamage')
-	_regionmsg('frogware', color('green').'[FROGWARE] '.color('r').'Best frog'.if(array_size(@winners) > 1, 's').' in the house: '.array_implode(@winners, ' & '))
+	_fw_msg('Best frog'.if(array_size(@winners) > 1, 's').' in the house: '.array_implode(@winners, ' & '))
 	@warp = get_value('warp.frogpark')
 	foreach(all_players('custom'), @p,
 		if(_fw_player(@p)) {
@@ -28,7 +29,7 @@ proc('_fw_endgame', @winners,
 proc('_fw_startround', @secs = 9,
 	if(pworld() != 'custom') {
 		_fw_endgame(array())
-		_regionmsg('frogware', color('green').'[FROGWARE] '.color('r').'Host left the game.')
+		_fw_msg('Host left the game.')
 	}
 	queue_delay(1000, 'fw')
 	queue_push(closure(
@@ -47,18 +48,17 @@ proc('_fw_startround', @secs = 9,
 							@count++
 						}
 					)
-					if(get_pscore('score', @p, 'fw') == 25, array_push(@winners, @p))
+					if(get_pscore('score', @p, 'fw') == get_pscore('score', 'GOAL', 'fw'), array_push(@winners, @p))
 				} else {
-					try(set_pscoreboard(@p, 'main'))
+					set_pscoreboard(@p)
 				}
 			}
 		)
 		if(array_size(@winners) > 0 || @total == 0) {
 			_fw_endgame(@winners)
 		} else {
-			if(((@total <= 2 && @count == @total)
-			|| (@total > 2 && @count >= (@total - 1)))
-			&& @secs > 5) {
+			if((@total <= 2 && @count == @total)
+			|| (@total > 2 && @count >= (@total - 1))) {
 				@secs--
 			} else if(@count == 0 || (@total > 2 && @count <= 1)) {
 				@secs++
@@ -130,12 +130,20 @@ proc('_fw_loc', @height = 0, @minrange = false, @region = sk_region_info('frogwa
 )
 
 proc('_fw_mobs',
-	@mobs = array('creeper', 'zombie', 'silverfish', 'slime', 'magmacube')
+	@mobs = array('creeper', 'zombie', 'silverfish', 'slime', 'magmacube', 'pigzombie:400', 'enderman', 'wolf:angry', 'giant')
 	@mob = @mobs[rand(array_size(@mobs))]
 	@num = rand(25, 50)
+	@entities = array()
 	for(@i = 0, @i < @num, @i++,
-		if(@loc = _fw_loc(0, true), spawn_mob(@mob, 1, @loc))
+		if(@loc = _fw_loc(0, true), array_push(@entities, spawn_mob(@mob, 1, @loc)[0]))
 	)
+	if(!rand(4)) {
+		set_timeout(50, closure(
+			foreach(@entities, @entity,
+				set_mob_effect(@entity, 1, rand(2), 15, true)
+			)
+		))
+	}
 )
 
 proc('_fw_player', @player,
@@ -190,16 +198,20 @@ proc('_fw_randompotion', @potentials, @secs = 20,
 	)
 )
 
+proc('_fw_msg', @msg,
+	_regionmsg('frogware', color('green').'[FROGWARE] '.color('r').@msg)
+)
+
 proc('_fw_task', @task, @state, @secs,
 	switch(@task
 	, 'climb',
 		switch(@state
 		, 'start',
-			_regionmsg('frogware', color('green').'[FROGWARE] '.color('r').'Climb.')
-			if(rand(7) < 1) {
+			_fw_msg('Climb.')
+			if(!rand(6)) {
 				_fw_randompotion(array('speed', 'jump', 'blind'))
 			}
-			if(rand(7) < 1) {
+			if(!rand(6)) {
 				_fw_mobs()
 			}
 			proc('_set_emerald', @x, @y, @z,
@@ -272,10 +284,6 @@ proc('_fw_task', @task, @state, @secs,
 	, 'say',
 		switch(@state
 		, 'start',
-			@quotes = array(
-				'You can eat rice!'
-			)
-			@quote = @quotes[rand(array_size(@quotes))]
 			_regionmsg('frogware', color('green').'[FROGWARE] '.color('r').'Say: "'.@quote.'"')
 			bind('player_chat', array('id': 'fwchat'), null, @e, @quote,
 				if(_fw_player(player())) {
@@ -296,8 +304,8 @@ proc('_fw_task', @task, @state, @secs,
 	, 'keepaway',
 		switch(@state
 		, 'start',
-			_regionmsg('frogware', color('green').'[FROGWARE] '.color('r').'Look out!')
-			if(rand(7) < 1) {
+			_fw_msg('Look out!')
+			if(!rand(6)) {
 				_fw_randompotion(array('speed', 'jump', 'blind'))
 			}
 			_fw_mobs()
@@ -332,7 +340,7 @@ proc('_fw_task', @task, @state, @secs,
 	, 'harvest',
 		switch(@state
 		, 'start',
-			_regionmsg('frogware', color('green').'[FROGWARE] '.color('r').'Bring in the harvest!')
+			_fw_msg('Bring in the harvest!')
 			proc('_set_dirt', @x, @y, @z,
 				if(rand(100) < 2) {
 					set_block_at(array(@x, @y, @z, 'custom'), '3:0')
@@ -387,28 +395,45 @@ proc('_fw_task', @task, @state, @secs,
 	, 'koth',
 		switch(@state
 		, 'start',
-			_regionmsg('frogware', color('green').'[FROGWARE] '.color('r').'King of the Hill')
-			if(rand(7) < 1) {
+			_fw_msg('King of the Hill')
+			if(!rand(6)) {
 				_fw_randompotion(array('speed', 'jump'))
 			}
-			if(rand(7) < 1) {
+			if(!rand(6)) {
 				_fw_mobs()
 			}
+			if(!rand(6)) {
+				foreach(all_players('custom'), @p,
+					if(_fw_player(@p)) {
+						set_pinv(@p, array(
+							0: array('type': 40, 'enchants': array(array('etype': 'KNOCKBACK', 'elevel': 10)))
+						))
+					}
+				)
+			}
+			proc('_set_base', @x, @y, @z,
+				if(get_block_at(array(@x, @y, @z, 'custom')) == '0:0') {
+					set_block_at(array(@x, @y, @z, 'custom'), '155:0')
+				}
+			)
 			proc('_set_hill', @x, @y, @z,
-				if(get_block_at(array(@x, @y, @z, 'custom')) != '35:15') {
-					set_block_at(array(@x, @y, @z, 'custom'), '35:5')
+				if(get_block_at(array(@x, @y, @z, 'custom')) == '0:0') {
+					set_block_at(array(@x, @y, @z, 'custom'), '133:0')
 				}
 			)
 			@loc = _fw_loc()
-			_iterate_cuboid(array(@loc[0] + 1, @loc[1], @loc[2] + 1, 'custom'),
-			array(@loc[0] - 1, @loc[1], @loc[2] - 1, 'custom'),
+			_iterate_cuboid(array(@loc[0] + 2, @loc[1], @loc[2] + 2, 'custom'),
+			array(@loc[0] - 2, @loc[1], @loc[2] - 2, 'custom'),
+			'_set_base')
+			_iterate_cuboid(array(@loc[0] + 1, @loc[1] + 1, @loc[2] + 1, 'custom'),
+			array(@loc[0] - 1, @loc[1] + 1, @loc[2] - 1, 'custom'),
 			'_set_hill')
 			
 		, 'end',
 			foreach(all_players('custom'), @p,
 				if(_fw_player(@p)) {
 					_remove_peffects(@p)
-					if(get_block_at(ploc(@p)) == '35:5'
+					if(get_block_at(ploc(@p)) == '133:0'
 					&& _fw_changeteam(@p, 'winners')) {
 						play_sound(ploc(@p), array('sound': 'zombie_metal'), @p)
 					}
@@ -423,7 +448,7 @@ proc('_fw_task', @task, @state, @secs,
 			@region = sk_region_info('frogware', 'custom')[0]
 			queue_push(closure(
 				_iterate_cuboid(array(@region[0][0], @region[1][1], @region[0][2], 'custom'),
-				array(@region[1][0], @region[1][1], @region[1][2], 'custom'),
+				array(@region[1][0], @region[1][1] + 1, @region[1][2], 'custom'),
 				'_set_air')
 			), 'fw3')
 			queue_push(closure(
@@ -435,14 +460,14 @@ proc('_fw_task', @task, @state, @secs,
 	, 'cake',
 		switch(@state
 		, 'start',
-			_regionmsg('frogware', color('green').'[FROGWARE] '.color('r').'Let there be cake!')
-			if(rand(7) < 1) {
+			_fw_msg('Let there be cake!')
+			if(!rand(6)) {
 				_fw_randompotion(array('speed'))
 			}
 			for(@i = 0, @i < max(1, floor(_fw_totalplayers() / 2)), @i++,
 				set_block_at(_fw_loc(), '92:0')
 			)
-			bind('player_interact', array('id': 'fwcake'), array('block': 92, 'button': 'right'), @e,
+			bind('player_interact', array('id': 'fwcake'), array('block': 92), @e,
 				if(_fw_player(player())
 				&& _fw_changeteam(player(), 'winners')) {
 					play_sound(ploc(), array('sound': 'zombie_metal'), player())
@@ -462,7 +487,7 @@ proc('_fw_task', @task, @state, @secs,
 	, 'fall',
 		switch(@state
 		, 'start',
-			_regionmsg('frogware', color('green').'[FROGWARE] '.color('r').'Look out below!')
+			_fw_msg('Alls well that falls well.')
 			foreach(all_players('custom'), @p,
 				if(_fw_player(@p)) {
 					set_pvelocity(@p, 0, 3, 0)
@@ -508,8 +533,8 @@ proc('_fw_task', @task, @state, @secs,
 	, 'cluck',
 		switch(@state
 		, 'start',
-			if(rand(7) < 1, @mob = 'BAT', @mob = 'CHICKEN')
-			_regionmsg('frogware', color('green').'[FROGWARE] '.color('r').'Shoot '.if(@mob == 'BAT', '1', '3').'!')
+			if(!rand(6), @mob = 'BAT', @mob = 'CHICKEN')
+			_fw_msg('Shoot '.if(@mob == 'BAT', '1', '3').'!')
 			foreach(all_players('custom'), @p,
 				if(_fw_player(@p)) {
 					set_pinv(@p, array(
@@ -554,13 +579,13 @@ proc('_fw_task', @task, @state, @secs,
 	, 'frogegg',
 		switch(@state
 		, 'start',
-			_regionmsg('frogware', color('green').'[FROGWARE] '.color('r').'Click the frog egg!')
+			_fw_msg('Click that frog egg!')
 			@loc = _fw_loc()
 			set_block_at(@loc, '122:0')
-			if(rand(7) < 1) {
+			if(!rand(6)) {
 				_fw_mobs()
 			}
-			if(rand(7) < 1) {
+			if(rand(4) < 1) {
 				for(@i = 0, @i < 16, @i++,
 					set_block_at(_fw_loc(), '49:0')
 				)
@@ -599,8 +624,22 @@ proc('_fw_task', @task, @state, @secs,
 	, 'pvp',
 		switch(@state
 		, 'start',
-			_regionmsg('frogware', color('green').'[FROGWARE] '.color('r').'Hit but don\'t be hit!')
+			_fw_msg('Last hit.')
 			_fw_randompotion(array('speed', 'jump', 'blind', 'invis'))
+			if(!rand(4)) {
+				@enchants = array(
+					array('etype': 'KNOCKBACK', 'elevel': 10)
+				)
+			} else {
+				@enchants = array()
+			}
+			foreach(all_players('custom'), @p,
+				if(_fw_player(@p)) {
+					set_pinv(@p, array(
+						0: array('type': 267, 'enchants': @enchants)
+					))
+				}
+			)
 			bind('entity_damage', array('id': 'fwdamage2'), array('type': 'PLAYER', 'cause': 'ENTITY_ATTACK', 'world': 'custom'), @e,
 				if(_fw_player(@e['player'])
 				&& _fw_player(@e['damager'])) {
@@ -608,6 +647,8 @@ proc('_fw_task', @task, @state, @secs,
 						play_sound(ploc(), array('sound': 'zombie_metal'), player())
 					}
 					_fw_changeteam(@e['player'], 'losers')
+					play_sound(ploc(@e['player']), array('sound': 'zombie_unfect'), @e['player'])
+					
 				}
 			)
 			
@@ -615,6 +656,7 @@ proc('_fw_task', @task, @state, @secs,
 			foreach(all_players('custom'), @p,
 				if(_fw_player(@p)) {
 					_remove_peffects(@p)
+					_clear_pinv(@p)
 				}
 			)
 			unbind('fwdamage2')
