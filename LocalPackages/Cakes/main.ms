@@ -5,7 +5,7 @@ bind('player_interact', null, array('block': 92), @event,
 		die()
 	}
 	@cakes = get_value('cakes')
-	@id = array_index(@cakes, array(round(@event['location'][0]), round(@event['location'][1]), round(@event['location'][2]), @event['location'][3]))
+	@id = array_index(@cakes, array(integer(@event['location'][0]), integer(@event['location'][1]), integer(@event['location'][2]), @event['location'][3]))
 	if(!@id, die())
 	cancel()
 	@cakedata = get_value('cakeinfo.'.@id)
