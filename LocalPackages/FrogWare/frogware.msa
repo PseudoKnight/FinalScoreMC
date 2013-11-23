@@ -1,7 +1,6 @@
-*:/frogware [$cmd] = >>>
+*:/frogware [$cmd='usage'] [$pts=25] = >>>
 	switch($cmd
 	, 'join',
-		msg('NOTE: This is an alpha version.')
 		if(!sk_region_exists('custom', 'frogware'), die('Define the frogware region first.'))
 		include('frogware.ms')
 		if(!array_contains(get_scoreboards(), 'fw')) {
@@ -32,6 +31,7 @@
 		
 	, 'start',
 		if(get_pscoreboard(player()) != 'fw', die('You haven\'t joined first.'))
+		if(!is_numeric($pts), die('You must specify the point goal as a number. eg. /frogware start 25'))
 		include('frogware.ms')
 		foreach(all_players('custom'), @p,
 			if(_fw_player(@p)) {
@@ -41,7 +41,7 @@
 				_clear_pinv(@p)
 			}
 		)
-		_fw_startgame()
+		_fw_startgame($pts)
 	
 	, 'forcestop',
 		queue_clear('fw')
@@ -50,7 +50,7 @@
 		remove_scoreboard('fw')
 		unbind('fwdamage')
 	
-	, 
+	,
 		msg('| FrogWare is a game inspired by GarryWare,\n'
 		.'| which is in turn inspired by WarioWare.\n'
 		.'| Players get a random task every round that\n'
