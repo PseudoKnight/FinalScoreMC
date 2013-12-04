@@ -13,8 +13,36 @@ if(!@stopwatch, @stopwatch = array(), clear_value('session.stopwatch'))
 export('stopwatch', @stopwatch)
 
 set_interval(8 * 60 * 1000, closure(
+	if(!rand(20), runas('~console', '/voice reload'))
 	runas('~console', '/save-all')
 ))
+
+if(!get_recipe_for(array('type': 98, 'data': 3))) {
+	add_recipe(array(
+		'type': 'SHAPELESS',
+		'result': array('type': 98, 'data': 3),
+		'ingredients': array('44:5', '44:5')
+	))
+	console('Recipe for circle stone brick loaded.')
+}
+
+if(!get_recipe_for(array('type': 98, 'data': 1))) {
+	add_recipe(array(
+		'type': 'SHAPELESS',
+		'result': array('type': 98, 'data': 1),
+		'ingredients': array('106', '98')
+	))
+	console('Recipe for mossy stone brick loaded.')
+}
+
+if(!get_recipe_for(array('type': 43, 'data': 8))) {
+	add_recipe(array(
+		'type': 'SHAPELESS',
+		'result': array('type': 43, 'data': 8),
+		'ingredients': array('44', '44')
+	))
+	console('Recipe for smooth double step loaded.')
+}
 
 bind('player_login', null, null, @e,
 	if(@e['result'] != 'ALLOWED', die())
@@ -60,13 +88,15 @@ bind('player_login', null, null, @e,
 
 # Player join messages and tab list colors
 bind('player_join', null, null, @event,
-	set_timeout(250, closure(assign(@loc, ploc()),
+	set_timeout(250, closure(@loc = ploc(),
 		#Welcome messages
 		msg(color('1').color('l').'--------------------')
 		msg(color('gold'), color('l'), '\u2302', color('red'), color('l'), '\u2302', color('aqua'), color('l'), '\u2302', color('dark_red'), color('l'), '\u2302', color('gold'), color('l'), ' FINALSCORE ', color('yellow'), color('l'), '\u00AB', color('r'), ' \u25AA \u25AA \u25AA')
 		msg(color('1').color('l').'--------------------')
-		msg(get_value('motd'))
-		sudo('/voice')
+		if(@motd = get_value('motd')) {
+			msg(@motd)
+			msg(color('1').color('l').'--------------------')
+		}
 		#Tab list colors
 		if(length(player()) > 14) {
 			set_list_name(_colorname().substr(player(), 0, 14))
@@ -94,6 +124,7 @@ bind('player_join', null, null, @event,
 			pfacing(@warp['yaw'], @warp['pitch'])
 		}
 		set_timeout(800, closure(
+			run('/voice')
 			if(@loc[1] > ploc()[1]) {
 				set_ploc(@loc)
 			}
@@ -161,8 +192,8 @@ bind('player_interact', null, array('item': 259, 'button': 'right'), @event,
 		die()
 	} else if(get_block_at(@loc) == '49:0' && @event['facing'] == 'up') {
 		set_timeout(50, closure(
-			if(reg_split('\\:', get_block_at(@loc[0], @event['location'][1] + 1, @loc[2]))[0] != '90') {
-				set_block_at(@loc[0], @loc[1] + 1, @loc[2], 0)
+			if(reg_split('\\:', get_block_at(_relative(@loc, 'up')))[0] != '90') {
+				set_block_at(_relative(@loc, 'up'), 0)
 			}
 		))
 	} else {
@@ -252,22 +283,15 @@ bind('sign_changed', null, null, @e,
 
 # Sponge splitting
 bind('block_break', null, array('type': 19), @event,
-	if(rand(16) < 1, drop_item(@event['location'], array('type': 19)))
+	if(rand(16) < 1, drop_item(@event['location'], array('type': 19), 1))
 )
 
-#disable hopper minecarts
-bind('player_interact', null, array('item': 408), @event,
-	if(pworld() != 'custom' && pworld() != 'dev') {
-		msg(color('red').'Hopper minecarts are currently disabled.')
-		cancel()
-	}
-)
-
-bind('inventory_click', null, array('slottype': 'RESULT', 'slotitem': 408), @event,
-	msg(color('red').'Hopper minecarts are currently disabled.')
+# prevent people from pushing minecart hoppers underneath chests
+bind('vehicle_collide', null, array('type': 'MINECART_HOPPER', 'collisiontype': 'ENTITY', 'hittype': 'PLAYER'), @e,
 	cancel()
 )
 
+# prevent enderdragon egg teleportation
 bind('player_interact', null, array('block': 122), @e,
 	if(pmode() != 'CREATIVE' && (pworld() == 'custom' || pworld() == 'dev'), cancel())
 )
@@ -277,7 +301,8 @@ bind('entity_explode', null, null, @e,
 	&& ((@e['type'] != 'PRIMED_TNT'
 	&& @e['type'] != 'CREEPER')
 	|| (!array_contains(sk_regions_at(entity_loc(@e['id'])), 'skypirates')
-	&& !array_contains(sk_regions_at(entity_loc(@e['id'])), 'antfarm')))) {
+	&& !array_contains(sk_regions_at(entity_loc(@e['id'])), 'antfarm')
+	&& !array_contains(sk_regions_at(entity_loc(@e['id'])), 'bomberman')))) {
 		cancel()
 	}
 )
@@ -293,6 +318,7 @@ bind('vehicle_collide', null, array('type': 'MINECART', 'collisiontype': 'BLOCK'
 	)
 )
 
+# prevent non-owners from riding a horse, unless shared
 bind('player_interact_entity', null, array('clicked': 'HORSE'), @e,
 	if(pworld() == 'custom' || pworld() == 'dev', die())
 	if(get_mob_owner(@e['id'])
@@ -312,6 +338,7 @@ bind('player_interact_entity', null, array('clicked': 'HORSE'), @e,
 	}
 )
 
+# don't allow most horse damage unless being rode
 bind('entity_damage', null, array('type': 'HORSE'), @e,
 	if(!get_mob_owner(@e['id']), die())
 	switch(@e['cause']
@@ -341,6 +368,7 @@ bind('entity_damage', null, array('type': 'HORSE'), @e,
 	)
 )
 
+# Let one player in a world make the sun rise
 bind('player_enter_bed', null, null, @e,
     if(get_world_time() > 13700 && get_world_time() < 22300) {
 		set_world_time(22300)
@@ -356,4 +384,45 @@ bind('player_enter_bed', null, null, @e,
     }
     
 )
+
+# bind('block_dispense', null, array('type': 'DISPENSER'), @e,
+	# if(@e['location']['world'] == 'dev') {
+		# try(@inv = get_inventory(@e['location']), die())
+		# for(@i = 0, @i < array_size(@inv), @i++,
+			# if(@inv[@i]) {
+				# @inv[@i]['qty'] = 64
+			# }
+		# )
+		# set_timeout(50, closure(
+		# set_inventory(@e['location'], @inv)
+		# ))
+	# }
+# )
+
+# Limit the number of mobs that can be built up from a mob spawner
+bind('creature_spawn', null, array('reason': 'SPAWNER'), @e,
+	if(array_size(entities_in_radius(@e['location'], 32, @e['type'])) > 50) {
+		cancel()
+	}
+)
+
+# Anti-xray helper
+bind(block_break, null, array('type': 56), @e,
+	if(pworld() == 'dev' || pworld() == 'custom', die())
+	set_timeout(50, closure(
+		for(@x = @e['location']['x'] - 1, @x <= @e['location']['x'] + 1, @x++,
+			for(@y = @e['location']['y'] - 1, @y <= @e['location']['y'] + 1, @y++,
+				for(@z = @e['location']['z'] - 1, @z <= @e['location']['z'] + 1, @z++,
+					if(get_block_at(@x, @y, @z) == '56:0') {
+						die()
+					}
+				)
+			)
+		)
+	
+		broadcast(color('c').'[!] '.color('f').player().' found '.color('b').'diamonds '.color(7).if(get_light_at(@e['location']) < 7, '(light level: '.get_light_at(@e['location']).')'),
+		'group.moderators')
+	))
+)
+
 
