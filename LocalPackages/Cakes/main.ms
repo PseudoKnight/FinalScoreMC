@@ -47,7 +47,7 @@ bind('player_interact', null, array('block': 68), @event,
 		@chestloc = _relative(@event['location'], 'down')
 		@count = _get_inventory_count(@chestloc, 'all')
 		if(@event['action'] == 'left_click_block') {
-			msg(color('yellow').'[Coin Shop] '.color(r).@count.' item(s) left. Your coins: '.if(_acc_balance(player()) < @cost[1], color('red'), color('green')).round(_acc_balance(player())))
+			msg(color('yellow').'[Coin Shop] '.color(r).@count.if(@count == 1, ' item', ' items').' left. Your coins: '.if(_acc_balance(player()) < @cost[1], color('red'), color('green')).round(_acc_balance(player())))
 		} else { #right_click_block
 			if(array_contains_ic(array('JewManGroup', 'XxThe_JewishxX'), player())) { 
 				die('You are not allowed to use coins due to cheating.')

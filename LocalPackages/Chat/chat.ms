@@ -23,5 +23,5 @@ bind('player_chat', null, null, @event,
 		die('No players can receive your chat.')
 	}
 	modify_event('message', colorize(@event['message']))
-	modify_event('format', color('dark_gray').simple_date('h:mm').' '.if(array_contains(pgroup(), 'donors'), color('green').'\u2666 ')._colorname(player()).player().color('gray').': '.color('r').'%2$s')
+	modify_event('format', color('dark_gray').simple_date('h:mm').' '.if(array_contains(pgroup(), 'donors'), color('green').'\u2666 ')._colorname().player().color('gray').': '.color('r').'%2$s')
 )

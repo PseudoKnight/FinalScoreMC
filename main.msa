@@ -304,30 +304,36 @@
 	store_value('player.'.to_lower($player), @pdata)
 <<<
 
-*:/stack = >>>
-	if(!has_permission('group.moderators'), die('You do not have permission.'))
-	@inv = pinv()
-	for(@i = 0, @i < 36, @i++,
-		if(@inv[@i] == null || @inv[@i]['qty'] >= 64, continue())
-		for(@y = @i + 1, @y < 36, @y++,
-			if(@inv[@y] == null, continue())
-			if(@inv[@i]['type'] == @inv[@y]['type']
-			&& @inv[@i]['data'] == @inv[@y]['data']
-			&& @inv[@i]['enchants'] == @inv[@y]['enchants']
-			&& @inv[@i]['meta'] == @inv[@y]['meta']) {
-				@extra = @inv[@i]['qty'] + @inv[@y]['qty'] - 64
-				if(@extra < 1) {
-					@inv[@i]['qty'] = @inv[@i]['qty'] + @inv[@y]['qty']
-					@inv[@y] = null
-				} else {
-					@inv[@i]['qty'] = 64
-					@inv[@y]['qty'] = @extra
-				}
-			}
-		)
+# *:/stack = >>>
+	# if(!has_permission('group.moderators'), die('You do not have permission.'))
+	# @inv = pinv()
+	# for(@i = 0, @i < 36, @i++,
+		# if(@inv[@i] == null || @inv[@i]['qty'] >= 64, continue())
+		# for(@y = @i + 1, @y < 36, @y++,
+			# if(@inv[@y] == null, continue())
+			# if(@inv[@i]['type'] == @inv[@y]['type']
+			# && @inv[@i]['data'] == @inv[@y]['data']
+			# && @inv[@i]['enchants'] == @inv[@y]['enchants']
+			# && @inv[@i]['meta'] == @inv[@y]['meta']) {
+				# @extra = @inv[@i]['qty'] + @inv[@y]['qty'] - 64
+				# if(@extra < 1) {
+					# @inv[@i]['qty'] = @inv[@i]['qty'] + @inv[@y]['qty']
+					# @inv[@y] = null
+				# } else {
+					# @inv[@i]['qty'] = 64
+					# @inv[@y]['qty'] = @extra
+				# }
+			# }
+		# )
+	# )
+	# set_pinv(@inv)
+	# msg('Stacked!')
+# <<<
+
+/clearchat = >>>
+	for(@i = 0, @i < 20, @i++,
+		broadcast('')
 	)
-	set_pinv(@inv)
-	msg('Stacked!')
 <<<
 
 #Runs the help procedure to list or display entries
@@ -347,13 +353,12 @@
 		'shops': 'Chest shops allow players to buy and sell different items using currency. (g: gold, d: diamond, i: iron, e: emerald) Right click the SIGN with the currency in hand to BUY. Shop owners can edit shop transaction rates with the "/shop edit <transaction line>" command. Players can search for available items with "/shop list <item>". There\'s a detailed guide on the website.',
 		'website': 'The website is at >>> http://finalscoremc.com <<< There you can find a command reference, guides, videos, live maps, and more.',
 		'live-map': '>>> http://mc.finalscoremc.com:25966 <<< The website has a handy live map that shows the location of players and their homes, among other things.',
-		'moderators': 'Admins: PseudoKnight, Scottyd_Utah, Nefyoni, asdialed; Moderators:TobyTobey, fredwaffles, TrulyAnnoying.',
+		'staff': 'You can get help from anyone with a blue name. Current staff members are: PseudoKnight, Scottyd_Utah, Nefyoni, asdialed, fredwaffles, Raymond_II, TrulyAnnoying',
 		'plugins': 'Type "/plugins" for a full list of plugins installed, or check the website for more details.',
 		'permissions': 'We currently have 7 groups: Everyone (new players with minor restrictions), Regulars, Donors (green names or diamonds), Builders (orange), Engineers (orange), Moderators (blue), and Administrators (blue). New players get bumped up to the Regulars group after some time, as long as they\'re not causing trouble.',
 		'mumble': 'Everyone is welcome to use our voice chat server using Mumble. The server is at mum.finalscoremc.com with port 64758. You can get Mumble at >>> http://mumble.sourceforge.net <<<',
-		'regions': 'Regions are protected zones where only owners and members can build or access chests. You can create your own region by using a wood axe, left and right clicking to select a cuboid for the region, then use "/rg claim <regionid>". More details are on the website.',
-		'spleef': 'Spleef is a game where you try and dig out the blocks from under other players so that they fall. There is an automated arena for this at the Colosseum at Final City. Type "/warp spleef" to get there quickly.',
-		'whitelist': 'You can get on the whitelist by asking a moderator or requesting it on the http://myextralife.com whitelist forum thread.',
+		'regions': 'Regions are protected zones where only owners and members can build or access chests. You can create your own region by using a golden axe (or commands), left and right clicking to select a cuboid for the region, then use "/rg claim <regionid>". More details are on the website.',
+		'whitelist': 'You can get on the whitelist by asking a staff member, a friend who is already a regular, or requesting it on the http://myextralife.com whitelist forum thread.',
 		'worlds': 'There are three primary worlds: Alpha (Plaza at spawn), Delta (Final City at spawn), and Gamma (Gamma City at spawn). In addition, there are three respective nether dimensions and one End dimension. You can type "/mv who" to see which worlds players are on.',
 		'world-seeds': 'These are the seeds for the three main worlds -- Alpha: -621778714517541268, Delta: -8443156782283251243, Gamma: -754633420005903009.'
 	)
@@ -735,6 +740,7 @@
 	if((!has_permission('group.builders') || !array_contains(array('custom', 'dev'), pworld())) && !has_permission('group.moderators'), die('You do not have permission to use this command.'))
 	@effects = _get_effects()
 	if(!$id, die('Usage: /potion <set|add> <potionEffect> <strength> <seconds>'))
+	if(!array_index_exists(@effects, $id), die('Available potion effects: '.@effects))
 	if(is_numeric($id), @id = $id, @id = @effects[$id])
 	@effectdata = array(1: 2, 2: 10, 5: 9, 6: 5, 7: 12, 10: 1, 12: 3, 14: 14, 16: 6, 18: 8)
 	if(array_index_exists(@effectdata, @id), @data = @effectdata[@id], @data = 16)
@@ -757,9 +763,7 @@
 	if((!has_permission('group.builders') || !array_contains(array('custom', 'dev'), pworld())) && !has_permission('group.moderators'), die('You do not have permission to use this command.'))
 	if(!is_numeric($level), die('Usage: /enchant <type> <level>'))
 	@enchants = _get_enchants()
-	if(array_contains_ic(@enchants, $type)) {
-		enchant_inv_unsafe(null, $type, $level)
-	} else if(array_index_exists(@enchants, to_lower($type))) {
+	if(array_index_exists(@enchants, to_lower($type))) {
 		enchant_inv_unsafe(null, @enchants[to_lower($type)], $level)
 	} else {
 		msg(color('red').'Unknown enchantment name. '.array_keys(@enchants))
@@ -832,7 +836,7 @@
 	@block = pcursor()
 	if(get_block_at(@block) != '137:0', die('That is not a commandblock.'))
 	if(is_alias($), @cmd = '/runalias '.$, @cmd = $)
-	sudo('/scb '.@block[0].' '.@block[1].' '.@block[2].' '.@cmd)
+	sudo('/scb '.integer(@block[0]).' '.integer(@block[1]).' '.integer(@block[2]).' '.@cmd)
 <<<
 
 # COIN COMMANDS #
