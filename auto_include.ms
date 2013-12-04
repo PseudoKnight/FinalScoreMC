@@ -18,8 +18,9 @@ proc(_relative, @loc, @dir, @amount = 1,
   )
 )
 
-proc(_clear_pinv, assign(@player, player()),
-  set_pinv(@player, array(0: null, 1: null, 2: null, 3: null, 4: null, 5: null, 6: null, 7: null, 8: null, 9: null, 10: null, 11: null, 12: null, 13: null, 14: null, 15: null, 16: null, 17: null, 18: null, 19: null, 20: null, 21: null, 22: null, 23: null, 24: null, 25: null, 26: null, 27: null, 28: null, 29: null, 30: null, 31: null, 32: null, 33: null, 34: null, 35: null, 100: null, 101: null, 102: null, 103: null))
+proc(_clear_pinv, @player,
+	if(!@player, @player = player())
+	set_pinv(@player, array(0: null, 1: null, 2: null, 3: null, 4: null, 5: null, 6: null, 7: null, 8: null, 9: null, 10: null, 11: null, 12: null, 13: null, 14: null, 15: null, 16: null, 17: null, 18: null, 19: null, 20: null, 21: null, 22: null, 23: null, 24: null, 25: null, 26: null, 27: null, 28: null, 29: null, 30: null, 31: null, 32: null, 33: null, 34: null, 35: null, 100: null, 101: null, 102: null, 103: null))
 )
 
 proc(_acc_add, @player, @amount,
@@ -189,10 +190,11 @@ proc(_remove_region_entities, @region, @entities = array(),
 )
 
 # Remove all potion effects from a player
-proc(_remove_peffects, @player = player(),
+proc(_clear_peffects, @player,
+  if(!@player, @player = player())
   @effects = get_peffect(@player)
-  foreach(@effects, @effect,
-    set_peffect(@player, @effect['id'], 0, 0)
+  foreach(@effects, @e,
+    set_peffect(@player, @e['id'], 0, 0)
   )
 )
 
@@ -217,18 +219,19 @@ proc(_shop_item, @signtext,
 )
 
 #color display name
-proc(_colorname, assign(@player, player()),
-  ifelse(has_permission(@player, 'group.moderators'),
-    @color = 'aqua',
-    has_permission(@player, 'group.builders'),
-    @color = 'gold',
-    has_permission(@player, 'group.donors'),
-    @color = 'green',
-    has_permission(@player, 'group.everyone'),
-    @color = 'yellow',
-    @color = 'white'
-  )
-  return(color(@color))
+proc(_colorname, @player,
+	if(!@player, @player = player())
+	ifelse(has_permission(@player, 'group.moderators'),
+		@color = 'aqua',
+		has_permission(@player, 'group.builders'),
+		@color = 'gold',
+		has_permission(@player, 'group.donors'),
+		@color = 'green',
+		has_permission(@player, 'group.everyone'),
+		@color = 'yellow',
+		@color = 'white'
+	)
+	return(color(@color))
 )
 
 #returns world alias when given world folder name
