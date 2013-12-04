@@ -126,7 +126,7 @@ proc('_pvp_start_round', @id,
 				if(array_index_exists(@pvp['players'][player()], 'class')) {
 					_class('unload', player(), @pvp['players'][player()]['class'])
 				}
-				array_remove(@pvp['players'], @player)
+				array_remove(@pvp['players'], player())
 			}
 		}
 		
@@ -199,11 +199,11 @@ proc('_pvp_start_round', @id,
 		if(array_index_exists(@pvp['players'][player()], 'class')) {
 			_class('unload', player(), @pvp['players'][player()]['class'])
 		}
-		array_remove(@pvp['players'], @player)
+		array_remove(@pvp['players'], player())
 		export('pvp'.@id, @pvp)
 		_pvp_check_objectives(@id)
 		
-		bind('player_join', null, array('player': @player), @e, @id,
+		bind('player_join', null, array('player': player()), @e, @id,
 			@pvp = import('pvp'.@id)
 			if(@pvp && @pvp['running'] == 'true' && pworld() == 'custom') {
 				set_ploc(@pvp['arena']['lobby'])
@@ -218,10 +218,13 @@ proc('_pvp_start_round', @id,
 		@pvp = import('pvp'.@id)
 		if(!array_index_exists(@pvp['players'], player()), die())
 
-		clear_task(@pvp['players'][player()]['limbo'])
-		@pvp['players'][player()]['limbo'] = null
+		if(array_index_exists(@pvp['players'][player()], 'limbo')
+		&& @pvp['players'][player()]['limbo']) {
+			clear_task(@pvp['players'][player()]['limbo'])
+			@pvp['players'][player()]['limbo'] = null
+		}
 		set_timeout(50, closure( # workaround for bug where players retain potion effects after death
-			_remove_peffects(player())
+			_clear_peffects(player())
 		))
 		if(!array_index_exists(@pvp['arena'], 'respawntime')) {
 			set_timeout(100, closure(
@@ -240,14 +243,6 @@ proc('_pvp_start_round', @id,
 			}
 		}
 
-		if(@pvp['arena']['mode'] == 'ctf' && array_index_exists(@pvp['arena'], 'score')) {
-			set_plevel(@pvp['team'][@pvp['players'][player()]['team']]['score'])
-		} else if(@pvp['arena']['mode'] == 'koth') {
-			set_plevel(get_pscore('seconds', player(), @id))
-		} else if(array_index_exists(@pvp['arena'], 'lives')) {
-			set_plevel(@pvp['players'][player()]['lives'])
-		}
-
 		if(array_index_exists(@pvp['arena'], 'respawntime')) {
 			set_timeout(50, closure(msg(color('gray').'[PVP] '.color('r').'You will respawn in at least '.round((@pvp['players'][player()]['respawn'] - time()) / 1000).' seconds.')))
 		} else if(array_index_exists(@pvp, 'team')) {
@@ -255,7 +250,17 @@ proc('_pvp_start_round', @id,
 			modify_event('location', @pvp['arena']['spawn'][@pvp['players'][player()]['team']][@r])
 		} else {
 			@r = rand(0, array_size(@pvp['arena']['spawn'][0]))
-			modify_event('location', @pvp['arena']['spawn'][0][@r])
+			# if(!array_index_exists(@arena, 'spawnblock') || get_block_at(@pvp['arena']['spawn'][0][@r]) == @arena['spawnblock'][0]) {
+				modify_event('location', @pvp['arena']['spawn'][0][@r])
+			# } else {
+				# @spawned = false
+				# for(@i = 0, @i < array_size(@pvp['arena']['spawn'][0]), @i++,
+					# if(get_block_at(@pvp['arena']['spawn'][0][@i]) == @arena['spawnblock'][0]) {
+						# modify_event('location', @pvp['arena']['spawn'][0][@i])
+						# break()
+					# }
+				# )
+			# }
 		}
 		
 
@@ -364,7 +369,7 @@ proc('_pvp_start_round', @id,
 		}
 		array_remove(@pvp['players'], player())
 		_clear_pinv()
-		_remove_peffects(player())
+		_clear_peffects(player())
 		export('pvp'.@id, @pvp)
 		_pvp_check_objectives(@id)
 	)
@@ -571,11 +576,6 @@ proc('_pvp_start_round', @id,
 							set_pscore('captures', to_lower(@pvp['arena']['team'][0]['name']), @pvp['team'][0]['score'], @id)
 							set_pinv(player(), array(103: null))
 							_regionmsg(@pvp['arena']['broadcast'], color('gray').'[PVP] '.color(@pvp['arena']['team'][0]['color']).player().color('r').' secured the '.color(@pvp['arena']['team'][1]['color']).'flag'.color('r').'!')
-							foreach(array_keys(@pvp['players']), @player,
-								if(@pvp['players'][@player]['team'] == 0) {
-									set_plevel(@player, @pvp['team'][0]['score'])
-								}
-							)
 							if(array_index_exists(@pvp['arena'], 'rsoutputscore')) {
 								set_block_at(@pvp['arena']['rsoutputscore'][0], '76:5')
 								set_timeout(1000, closure(
@@ -610,11 +610,6 @@ proc('_pvp_start_round', @id,
 							@pvp['team'][1]['score']++
 							set_pscore('captures', to_lower(@pvp['arena']['team'][1]['name']), @pvp['team'][1]['score'], @id)
 							_regionmsg(@pvp['arena']['broadcast'], color('gray').'[PVP] '.color(@pvp['arena']['team'][1]['color']).player().color('r').' secured the '.color(@pvp['arena']['team'][0]['color']).'flag'.color('r').'!')
-							foreach(array_keys(@pvp['players']), @player,
-								if(@pvp['players'][@player]['team'] == 1) {
-									set_plevel(@player, @pvp['team'][1]['score'])
-								}
-							)
 							if(array_index_exists(@pvp['arena'], 'rsoutputscore')) {
 								set_block_at(@pvp['arena']['rsoutputscore'][1], '76:5')
 								set_timeout(1000, closure(
@@ -639,7 +634,7 @@ proc('_pvp_start_round', @id,
 					modify_event('item', null)
 					_class('unload', player(), @pvp['players'][player()]['class'])
 					_clear_pinv()
-					_remove_peffects()
+					_clear_peffects()
 					queue_clear(@id.'0hat')
 					@pvp['players'][player()]['class'] = @pvp['arena']['captain'][0]
 					@pvp['team'][0]['captain'] = player()
@@ -657,7 +652,7 @@ proc('_pvp_start_round', @id,
 					modify_event('item', null)
 					_class('unload', player(), @pvp['players'][player()]['class'])
 					_clear_pinv()
-					_remove_peffects()
+					_clear_peffects()
 					queue_clear(@id.'1hat')
 					@pvp['players'][player()]['class'] = @pvp['arena']['captain'][1]
 					@pvp['team'][1]['captain'] = player()
@@ -715,7 +710,7 @@ proc('_pvp_start_round', @id,
 					}
 					array_remove(@pvp['players'], @player)
 					_clear_pinv(@player)
-					_remove_peffects(@player)
+					_clear_peffects(@player)
 					@check = true
 				} else if(@pvp['players'][@player]['respawn'] < time()) {
 					if(array_index_exists(@pvp['arena'], 'captain')) {
@@ -748,7 +743,6 @@ proc('_pvp_start_round', @id,
 		if(@pvp['arena']['mode'] == 'koth' && @hillcount == 1) {
 			@score = get_pscore('seconds', @king, @id)
 			set_pscore('seconds', @king, @score - 1, @id)
-			set_plevel(@king, @score - 1)
 			@check = true
 		}
 		if(array_index_exists(@pvp['arena'], 'itemspawn')) {
@@ -804,7 +798,6 @@ proc('_pvp_initialize_players', @id, @players,
 			switch(@pvp['arena']['mode']
 			, 'koth',
 				set_pscore('seconds', @player, @pvp['arena']['score'], @id)
-				set_plevel(@player, @pvp['arena']['score'])
 			, array('tdm', 'dm'),
 				if(array_index_exists(@pvp['arena'], 'lives')) {
 					set_pscore('lives', @player, @pvp['arena']['lives'], @id)
@@ -813,7 +806,6 @@ proc('_pvp_initialize_players', @id, @players,
 			
 			if(array_index_exists(@pvp['arena'], 'lives')) {
 				@pvp['players'][@player]['lives'] = @pvp['arena']['lives']
-				set_plevel(@player, @pvp['arena']['lives'])
 			}
 			
 			if(array_index_exists(@pvp['arena'], 'respawntime')) {
@@ -830,7 +822,7 @@ proc('_pvp_initialize_players', @id, @players,
 			set_pbed_location(@player, @pvp['arena']['lobby'])
 
 			_clear_pinv(@player)
-			_remove_peffects(@player)
+			_clear_peffects(@player)
 			if(array_index_exists(@pvp['arena'], 'classes') && !array_index_exists(@pvp['players'][@player], 'class')) {
 				if(!array_index_exists(@pvp['players'][@player], 'team')) {
 					@pvp['players'][@player]['class'] = @pvp['arena']['classes'][0][0]
@@ -966,7 +958,7 @@ proc('_pvp_end_match', @id, @winners,
 				close_pinv(@player)
 				set_ploc(@player, @pvp['arena']['lobby'])
 				_clear_pinv(@player)
-				_remove_peffects(@player)
+				_clear_peffects(@player)
 			}
 		))
 		if(array_contains(@winners, @player), @leader = @player)
