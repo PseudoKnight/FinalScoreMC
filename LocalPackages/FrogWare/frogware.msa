@@ -14,11 +14,11 @@
 		}
 		set_pscoreboard(player(), 'fw')
 		team_add_player('losers', player(), 'fw')
-		@score = 0
+		@score = 1000
 		foreach(all_players('custom'), @p,
 			if(_fw_player(@p)
-			&& get_pscore('score', @p, 'fw') > @score) {
-				@score = get_pscore('score', @p, 'fw') - 1
+			&& get_pscore('score', @p, 'fw') < @score) {
+				@score = max(0, get_pscore('score', @p, 'fw') - 1)
 			}
 		)
 		set_pscore('score', player(), @score, 'fw')
