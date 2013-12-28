@@ -77,9 +77,9 @@
 	
 	, 'spawn',
 		_spawn_mob($id, 1, array(
-			pcursor()[0],
+			pcursor()[0] + 0.5,
 			pcursor()[1] + 1,
-			pcursor()[2],
+			pcursor()[2] + 0.5,
 			pcursor()[3]
 		))
 	
@@ -93,4 +93,36 @@
 	,
 		die('Usage: /mob <set|delete|info|spawn|list> [mobname] [setting] [value]')
 	)
+<<<
+
+*:/summon $entity $x $y $z = >>>
+	if(!@cmdblock = get_command_block(), die())
+	if($x[0] == '~') {
+		if($x == '~') {
+			@x = @cmdblock['x']
+		} else {
+			@x = @cmdblock['x'] + substr($x, 1)
+		}
+	} else {
+		@x = $x
+	}
+	if($y[0] == '~') {
+		if($y == '~') {
+			@y = @cmdblock['y']
+		} else {
+			@y = @cmdblock['y'] + substr($y, 1)
+		}
+	} else {
+		@y = $y
+	}
+	if($z[0] == '~') {
+		if($z == '~') {
+			@z = @cmdblock['z']
+		} else {
+			@z = @cmdblock['z'] + substr($z, 1)
+		}
+	} else {
+		@z = $z
+	}
+	spawn_mob($entity, 1, array(@x, @y, @z, @cmdblock['world']))
 <<<
