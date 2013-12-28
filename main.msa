@@ -594,7 +594,7 @@
 <<<
 
 *:/fly = >>>
-	if((!has_permission('group.builders') || !array_contains(array('custom', 'dev'), pworld())) && !has_permission('group.moderators'), die('You do not have permission to use this command.'))
+	if(!has_permission('command.fly'), die('You do not have permission to use this command.'))
 	if(phas_flight(),
 		set_pflight(player(), 0)
 		msg('Turned off flying.'),
@@ -611,7 +611,7 @@
 <<<
 
 *:/gm [$mode] = >>>
-	if((!has_permission('group.builders') || !array_contains(array('custom', 'dev'), pworld())) && !has_permission('group.moderators'), die('You do not have permission to use this command.'))
+	if(!has_permission('command.gm'), die('You do not have permission to use this command.'))
 	if($mode) {
 		switch($mode,
 		, 1, set_pmode('CREATIVE')
@@ -629,7 +629,7 @@
 
 #Sign line edit script =D
 *:/sign $line [$=''] = >>>
-	if((!has_permission('group.builders') || !array_contains(array('custom', 'dev'), pworld())) && !has_permission('group.moderators'), die('You do not have permission to use this command.'))
+	if(!has_permission('command.sign'), die('You do not have permission to use this command.'))
 	if(length($) > 15, die('There is a 15 character limit per line.'))
 	@sign = pcursor()
 	if(!is_sign_at(@sign), die('That is not a sign'))
@@ -647,7 +647,7 @@
 
 # Item commands
 *:/i [$item=0] [$amount=1] = >>>
-	if((!has_permission('group.builders') || !array_contains(array('custom', 'dev'), pworld())) && !has_permission('group.moderators'), die('You do not have permission to use this command.'))
+	if(!has_permission('command.i'), die('You do not have permission to use this command.'))
 	if($item == 0, die('Usage: /i [id:data] [quantity]'))
 	@item = split(':', $item)
 	if(!is_numeric(@item[0]), @item[0] = data_values(@item[0]))
@@ -673,7 +673,7 @@
 # COMMAND BLOCK COMMANDS #
 
 *:/effect $player $effect [$strength=0] [$length=30] = >>>
-	if(get_command_block() || (has_permission('group.builders') && array_contains(array('custom', 'dev'), pworld())) || has_permission('group.moderators')) {
+	if(get_command_block() || has_permission('command.effect')) {
 		try(@player = player($player), @ex, die('Who is that? Are they online?'))
 		@effects = _get_effects()
 		if(!array_index_exists(@effects, $effect), die('These are the available effect names: '.array_keys(@effects)))
@@ -682,7 +682,7 @@
 <<<
 
 *:/velocity $player $x $y $z [$double] = >>>
-	if(get_command_block() || has_permission('group.moderators') || (array_contains(array('dev', 'custom'), pworld($player)) && has_permission('group.builders'))) {
+	if(get_command_block() || has_permission('command.velocity')) {
 		try(@player = player($player), @ex, die('Who is that? Are they online?'))
 		set_timeout(50, closure(
 			set_pvelocity(@player, $x, $y, $z)
@@ -696,15 +696,67 @@
 *:/playsound $sound [$pitch=1] [$volume=1] = >>>
 	if(get_command_block()) {
 		play_sound(get_command_block(), array('sound': $sound, 'pitch': $pitch, 'volume': $volume))
-	} else if(has_permission('group.moderators') || (array_contains(array('dev', 'custom'), pworld()) && has_permission('group.builders'))) {
+	} else if(has_permission('command.playsound')) {
 		play_sound(ploc(), array('sound': $sound, 'pitch': $pitch, 'volume': $volume))
+	}
+<<<
+
+*:/setblock $x $y $z $id [$data=0] [$old='replace'] = >>>
+	if(@cmdblk = get_command_block()) {
+		if($x[0] == '~') {
+			if($x == '~') {
+				@x = @cmdblk['x']
+			} else {
+				@x = @cmdblk['x'] + substr($x, 1)
+			}
+		} else {
+			@x = $x
+		}
+		if($y[0] == '~') {
+			if($y == '~') {
+				@y = @cmdblk['y']
+			} else {
+				@y = @cmdblk['y'] + substr($y, 1)
+			}
+		} else {
+			@y = $y
+		}
+		if($z[0] == '~') {
+			if($z == '~') {
+				@z = @cmdblk['z']
+			} else {
+				@z = @cmdblk['z'] + substr($z, 1)
+			}
+		} else {
+			@z = $z
+		}
+		
+		if(!is_numeric(@id = $id)
+		&& is_null(@id = data_values($id)), die())
+		
+		@id = split(':', @id)[0]
+		
+		switch($old
+		, 'replace',
+			set_block_at(@x, @y, @z, @id.':'.$data, @cmdblk[3])
+		, 'keep',
+			if(get_block_at(@x, @y, @z, @cmdblk[3]) == '0:0') {
+				set_block_at(@x, @y, @z, @id.':'.$data, @cmdblk[3])
+			}
+		, 'destroy',
+			if(get_block_at(@x, @y, @z, @cmdblk[3]) != '0:0') {
+				make_effect(array(@x, @y, @z, @cmdblk[3]), 'STEP_SOUND:'.@id)
+			}
+			set_block_at(@x, @y, @z, @id.':'.$data, @cmdblk[3])
+		, die()
+		)
 	}
 <<<
 
 # TESTING/CONFIGURING COMMANDS
 
 *:/display $ = >>>
-	if((!has_permission('group.builders') || !array_contains(array('custom', 'dev'), pworld())) && !has_permission('group.moderators'), die('You do not have permission to use this command.'))
+	if(!has_permission('command.display'), die('You do not have permission to use this command.'))
 	if(length($) > 30, die('The name can only be 30 characters long.'))
 	@inv = pinv(player(), null)
 	if(is_null(@inv['meta']), @inv['meta'] = array())
@@ -713,7 +765,7 @@
 <<<
 
 *:/lore $line $ = >>>
-	if((!has_permission('group.builders') || !array_contains(array('custom', 'dev'), pworld())) && !has_permission('group.moderators'), die('You do not have permission to use this command.'))
+	if(!has_permission('command.lore'), die('You do not have permission to use this command.'))
 	if(length($) > 30, die('The name can only be 30 characters long.'))
 	@inv = pinv(player(), null)
 	if(is_null(@inv['meta']), @inv['meta'] = array())
@@ -723,12 +775,12 @@
 <<<	
 
 *:/explosion $x $y $z $world $radius = >>>
-	if((!has_permission('group.builders') || !array_contains(array('custom', 'dev'), pworld())) && !has_permission('group.moderators'), die('You do not have permission to use this command.'))
+	if(!has_permission('command.explosion'), die('You do not have permission to use this command.'))
 	explosion(array($x, $y, $z, $world), $radius)
 <<<
 
 *:/dye $r $g $b = >>>
-	if((!has_permission('group.builders') || !array_contains(array('custom', 'dev'), pworld())) && !has_permission('group.moderators'), die('You do not have permission to use this command.'))
+	if(!has_permission('command.dye'), die('You do not have permission to use this command.'))
 	if(pinv(player(), null) && is_leather_armor(pinfo(player(), 15))) {
 		set_armor_color(pinfo(player(), 15), array(min(max($r, 0), 255), min(max($g, 0), 255), min(max($b, 0), 255)))
 	} else {
@@ -737,7 +789,7 @@
 <<<
 
 *:/potion [$cmd] [$id] [$strength] [$seconds] = >>>
-	if((!has_permission('group.builders') || !array_contains(array('custom', 'dev'), pworld())) && !has_permission('group.moderators'), die('You do not have permission to use this command.'))
+	if(!has_permission('command.potion'), die('You do not have permission to use this command.'))
 	@effects = _get_effects()
 	if(!$id, die('Usage: /potion <set|add> <potionEffect> <strength> <seconds>'))
 	if(!array_index_exists(@effects, $id), die('Available potion effects: '.@effects))
@@ -760,7 +812,7 @@
 <<<
 
 *:/enchant $type [$level=1] = >>>
-	if((!has_permission('group.builders') || !array_contains(array('custom', 'dev'), pworld())) && !has_permission('group.moderators'), die('You do not have permission to use this command.'))
+	if(!has_permission('commands.enchant'), die('You do not have permission to use this command.'))
 	if(!is_numeric($level), die('Usage: /enchant <type> <level>'))
 	@enchants = _get_enchants()
 	if(array_index_exists(@enchants, to_lower($type))) {
@@ -771,7 +823,7 @@
 <<<
 
 *:/unenchant = >>>
-	if((!has_permission('group.builders') || !array_contains(array('custom', 'dev'), pworld())) && !has_permission('group.moderators'), die('You do not have permission to use this command.'))
+	if(!has_permission('commands.enchant'), die('You do not have permission to use this command.'))
 	@item = pinv(player(), null)
 	array_remove(@item, 'enchants')
 	set_pinv(array(null: @item))
@@ -782,7 +834,7 @@
 <<<
 
 *:/time $time = >>>
-	if((!array_contains(array('dev', 'custom'), pworld()) || !has_permission('group.builders')) && !has_permission('group.moderators'), die('You do not have permission.'))
+	if(!has_permission('command.time'), die('You do not have permission.'))
 	msg('Set time to '.$time)
 	try(
 		set_world_time(pworld(), $time),
@@ -824,14 +876,10 @@
 	)
 <<<
 
-*:/setcommand $ = >>>
-	msg('Please use /scb now (Set Command Block). It\'s shorter.')
-<<<
-
 *:/scb [$] = >>>
 	if(!has_permission('group.builders'), die('You do not have permission.'))
 	if(!$, die('Usage: /scb /cmd'))
-	@allowedcmds = array('/velocity', '/tp', '/sayas', '/testfor', '/playsound')
+	@allowedcmds = array('/velocity', '/tp', '/sayas', '/testfor', '/playsound', '/setblock')
 	if(!array_contains_ic(@allowedcmds, parse_args($)[0]), die('Allowed commands: '.array_implode(@allowedcmds)))
 	@block = pcursor()
 	if(get_block_at(@block) != '137:0', die('That is not a commandblock.'))
