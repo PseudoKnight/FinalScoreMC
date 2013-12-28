@@ -148,7 +148,7 @@ proc('_cluck_endround',
 		set_block_at(@cluck['sound']['winround'], '69:13')
 		set_timeout(50, closure(set_block_at(@cluck['sound']['winround'], '69:5')))
 	}
-	_remove_region_items('cluck')
+	_remove_region_entities('cluck', array('DROPPED_ITEMS', 'EXPERIENCE_ORB', 'CHICKEN'))
 	# Reset for the next round.
 	@cluck['chickens'] = array()
 	@cluck['hit'] = 0

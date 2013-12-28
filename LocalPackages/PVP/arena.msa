@@ -17,6 +17,7 @@
 			.color('c').' lobby '.color('gray').'Sets the lobby warp point (required)\n'
 			.color('c').'spawn '.color('gray').'Adds a spawn point. (required)\n'
 			.color('c').'region '.color('gray').'The combat region name. (required)\n'
+			.color('c').'parent '.color('gray').'The parent arena configuration.\n'
 			.color('r').'broadcast '.color('gray').'The region all messages are broadcasted.\n'
 			.color('r').'mode '.color('gray').'dm, tdm, ctf, infection, koth\n'
 			.color('r').'ctfflag '.color('gray').'The flag spawn location for CTF (1 is red, 2 is blue)\n'
@@ -25,12 +26,12 @@
 			.color('r').'score '.color('gray').'The target score to win. (ctf: 5, koth: 60)\n'
 			.color('r').'mobprotect '.color('gray').'Team protects mob (team, type).\n'
 			.color('r').'teamratio '.color('gray').'The ratio of players for team 1 and 2.\n'
-			.color('r').'team '.color('gray').'Team info - TeamName1,color TeamName2,color\n'
+			.color('r').'team '.color('gray').'Team info - &4Team1 &cTeam2\n'
 			.color('r').'kit '.color('gray').'Sets the respawn kits (accepts team # as value)\n'
 			.color('r').'classes '.color('gray').'Available classes [team1list team2list]\n'
 			.color('r').'captain '.color('gray').'The captain class for each team\n'
 			.color('r').'respawntime '.color('gray').'The respawn time in seconds\n'
-			.color('r').'restore '.color('gray').'The optional schematic name to restore to.\n'
+			.color('r').'restore '.color('gray').'A list of schematics to restore.\n'
 			.color('r').'time '.color('gray').'The starting time (0-24000)\n'
 			.color('r').'ff '.color('gray').'Sets team friendly-fire (default: true)\n'
 			.color('r').'itemspawn '.color('gray').'Set item drop. (default: 60 sec, no spawn @ start)\n'
@@ -50,10 +51,6 @@
 		@arena = get_value('arena.'.$id)
 		if(!@arena, @arena = array())
 		switch($setting
-		
-			, 'parent',
-				@arena['parent'] = @args[0]
-				msg('Set parent arena to '.color(10).@args[0])
 
 			, 'lobby',
 				if(pworld() != 'custom', die('You can only set spawns in the custom world.'))
@@ -70,12 +67,15 @@
 					array_push(@arena['spawn'][0], array(round(ploc()[0], 1), ploc()[1], round(ploc()[2], 1), ploc()[3]))
 					msg('Set a spawn point to current location.')
 				}
+		
+			, 'parent',
+				@arena['parent'] = @args[0]
+				msg('Set parent arena to '.color(10).@args[0])
 				
 			, 'spawnblock',
 				@block = get_block_at(pcursor())
 				@arena['spawnblock'][if(array_size(@args) == 1, @args[0], 0)] = @block
 				msg('Set spawnblock to '.color(10).@block.if(array_size(@args) == 1, color('r').' for team '.color(10).@args[0]))
-				
 
 			, 'region',
 				if(!@args[0], die('This requires a region name for the combat zone.'))
@@ -123,21 +123,20 @@
 				msg('Set '.color(10).@args[1].color('r').' to spawn at start for team '.color(10).@args[0])
 
 			, 'teamratio',
-				if(array_size(@args) < 2, die('Not needs two integers, for team 1 and team 2.'))
+				if(array_size(@args) < 2, die('Needs two integers, for team 1 and team 2.'))
 				@arena['teamratio'] = array(@args[0], @args[1])
 				msg('Set team ratio to '.color(10).@args[0].':'.@args[1])
 
 			, 'team',
-				if(!@args[0] || !@args[1], die('Usage: /arena set <arena> team Team1,c Team2,3'))
-				if(@args[2], die('Too many arguments. Usage: /arena set <arena> team Team1,c Team2,3'))
-				@args[0] = split(',', @args[0])
-				@args[1] = split(',', @args[1])
-				if(length(@args[0][0]) > 16 || length(@args[1][0]) > 16, die('Name too long. (16 character limit)'))
-				@arena['team'][0]['name'] = @args[0][0]
+				if(!@args[0] || !@args[1], die('Usage: /arena set <arena> team &4Team1 &cTeam2'))
+				if(@args[2], die('Too many arguments. Usage: /arena set <arena> team &4Team1 &cTeam2'))
+				@arena['team'][0]['name'] = substr(@args[0], 2)
 				@arena['team'][0]['color'] = @args[0][1]
-				@arena['team'][1]['name'] = @args[1][0]
+				@arena['team'][1]['name'] = substr(@args[1], 2)
 				@arena['team'][1]['color'] = @args[1][1]
-				msg('Set team names to '.color(@args[0][1]).@args[0][0].' vs '.color(@args[1][1]).@args[1][0])
+				if(length(@arena['team'][0]['name']) > 16 
+				|| length(@arena['team'][1]['name']) > 16, die('Name too long. (16 character limit)'))
+				msg('Set team names to '.colorize(@args[0]).' vs '.colorize(@args[1]))
 
 			, 'kit',
 				if(!array_index_exists(@arena, 'kit'), @arena['kit'] = array(array(), array()))
@@ -181,8 +180,14 @@
 
 			, 'restore',
 				if(!has_permission('group.engineers'), die('Only engineers, moderators and admins can do this.'))
-				@arena['restore'] = @args[0]
-				msg('Restore area set to '.color(10).@args[0])
+				@regions = array()
+				foreach(@args, @region,
+					if(@region != null) {
+						array_push(@regions, @region)
+					}
+				)
+				@arena['restore'] = @regions
+				msg('Restore area set to '.color(10).@regions)
 
 			, 'time',
 				if(!@args[0], die('This a time value of 0 to 24000.'))
@@ -333,7 +338,6 @@
 					'start': if(@args[3], 1, 0)
 				))
 				msg('Set '.color(10).@args[1].' '.@args[0].color('r').' to spawn here every '.color(10).@args[2].color('r').' seconds'.if(@args[3], ' and at '.color(10).'start.', '.'))
-				
 
 			, 'flags',
 				@flags = array('endernades', 'skullrockets', 'noinventory', 'stackedpickup', 'debug', 'shotgunballs', 'primedtnt', 'pistoltears', 'rallycall')

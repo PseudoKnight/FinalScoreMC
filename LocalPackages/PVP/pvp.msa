@@ -27,7 +27,7 @@
 				array_push(@pvp['team'][1]['players'], player())
 			}
 		}
-		_worldmsg('custom', color('gray').'[PVP] '.color('r').player().' has joined '.to_upper(@id).'. ('.array_size(@pvp['players']).')')
+		_worldmsg('custom', color('gray').'[PVP] '.color('r').player().' has joined '.to_upper(if(array_index_exists(@arena, 'parent'), @arena['parent'].': ').@id).'. ('.array_size(@pvp['players']).')')
 		console(player().' joined '.@id)
 		export('pvp'.@id, @pvp)
 		if(@pvp['running'] == 'true') {
@@ -57,8 +57,15 @@
 		if(!@pvp, die('There is no match to start.'))
 		if(@pvp['running'] == 'true', die('Match already in progress.'))
 		
-		@pvp['arena'] = get_value('arena.'.@id)
-		if(!@pvp['arena'], die('Can\'t find that arena.'))
+		@arena = get_value('arena.'.@id)
+		if(!@arena, die('Can\'t find that arena.'))
+		if(array_index_exists(@arena, 'parent')) {
+			@parent = get_value('arena.'.@arena['parent'])
+			if(!@parent, die('Can\'t find parent arena.'))
+			@pvp['arena'] = array_merge(@parent, @arena)
+		} else {
+			@pvp['arena'] = @arena
+		}
 		
 		if(player() == '~console' || pworld() != 'custom', die('You can only run this in Frog Park.'))
 
@@ -256,7 +263,7 @@
 		}
 
 		#ANNOUNCE
-		_worldmsg('custom', color('gray').'[PVP] '.color('r').'STARTING '.to_upper(@id).'...')
+		_worldmsg('custom', color('gray').'[PVP] '.color('r').'STARTING '.to_upper(if(array_index_exists(@pvp['arena'], 'parent'), @pvp['arena']['parent'].': ').@id).'...')
 		if(array_contains(array('tdm', 'ctf', 'infection'), @pvp['arena']['mode'])) {
 			_worldmsg('custom', 
 			color(@pvp['arena']['team'][0]['color']).'['.@pvp['arena']['team'][0]['name'].'] '.array_implode(@pvp['team'][0]['players'], ' ').'\n'.color('r').color(@pvp['arena']['team'][1]['color']).'['.@pvp['arena']['team'][1]['name'].'] '.array_implode(@pvp['team'][1]['players'], ' '))

@@ -1,4 +1,4 @@
-proc(_relative, @loc, @dir, @amount = 1,
+proc('_relative', @loc, @dir, @amount = 1,
   switch(@dir
   , 'up',
     return(array(@loc[0], @loc[1] + @amount, @loc[2], @loc[3]))
@@ -18,12 +18,12 @@ proc(_relative, @loc, @dir, @amount = 1,
   )
 )
 
-proc(_clear_pinv, @player,
+proc('_clear_pinv', @player,
 	if(!@player, @player = player())
 	set_pinv(@player, array(0: null, 1: null, 2: null, 3: null, 4: null, 5: null, 6: null, 7: null, 8: null, 9: null, 10: null, 11: null, 12: null, 13: null, 14: null, 15: null, 16: null, 17: null, 18: null, 19: null, 20: null, 21: null, 22: null, 23: null, 24: null, 25: null, 26: null, 27: null, 28: null, 29: null, 30: null, 31: null, 32: null, 33: null, 34: null, 35: null, 100: null, 101: null, 102: null, 103: null))
 )
 
-proc(_acc_add, @player, @amount,
+proc('_acc_add', @player, @amount,
 	@pdata = get_value('player.'.to_lower(@player))
 	if(!@pdata, return(false))
 	if(!array_index_exists(@pdata, 'coins'), @pdata['coins'] = 100)
@@ -32,7 +32,7 @@ proc(_acc_add, @player, @amount,
 	return(true)
 )
 
-proc(_acc_subtract, @player, @amount,
+proc('_acc_subtract', @player, @amount,
 	@pdata = get_value('player.'.to_lower(@player))
 	if(!@pdata, return(false))
 	if(!array_index_exists(@pdata, 'coins'), @pdata['coins'] = 100)
@@ -41,7 +41,7 @@ proc(_acc_subtract, @player, @amount,
 	return(true)
 )
 
-proc(_acc_balance, @player,
+proc('_acc_balance', @player,
 	@pdata = get_value('player.'.to_lower(@player))
 	if(!@pdata, return(null))
 	if(!array_index_exists(@pdata, 'coins')) {
@@ -51,7 +51,7 @@ proc(_acc_balance, @player,
 	}
 )
 
-proc(_get_effects,
+proc('_get_effects',
 	return(array(
 		'speed': 1,
 		'slowness': 2,
@@ -79,7 +79,7 @@ proc(_get_effects,
 	))
 )
 
-proc(_get_enchants,
+proc('_get_enchants',
 	return(array(
 		'power': 'ARROW_DAMAGE',
 		'flame': 'ARROW_FIRE',
@@ -106,7 +106,7 @@ proc(_get_enchants,
 	))
 )
 
-proc(_is_even, @x,
+proc('_is_even', @x,
 	@x = @x / 2
 	if(is_integral(@x)) {
 		return(true)
@@ -115,7 +115,7 @@ proc(_is_even, @x,
 	}
 )
 
-proc(_cooldown, @from, @length,
+proc('_cooldown', @from, @length,
   if((time() - @from) / 1000 > @length) {
     return(true)
   } else {
@@ -124,7 +124,7 @@ proc(_cooldown, @from, @length,
 )
 
 #pgive_item replacement
-proc(_pgive_item, @player, @item,
+proc('_pgive_item', @player, @item,
   for(@i = 0, @i < 36, @i++,
     if(pinv(@player, @i) == null || (pinv(@player, @i)['type'] == @item['type'] && pinv(@player, @i)['data'] == @item['data'] && (pinv(@player, @i)['qty'] + @item['qty']) <= max_stack_size(@item))) {
       if(pinv(@player, @i) != null, array_set(@item, 'qty', @item['qty'] + pinv(@player, @i)['qty']))
@@ -137,60 +137,42 @@ proc(_pgive_item, @player, @item,
   return(false)
 )
 
-# Removes all DROPPED_ITEM entities from region.
+# Removes all specified entities from region.
 # Since this loads entities by chunks it has a loose entity selection
-proc(_remove_region_items, @region,
-  if(!sk_region_exists(pworld(), @region)) {
-    console('Can\'t remove dropped items because region doesn\'t exist: '.@region)
-    return(false)
-  }
-  @loc = sk_region_info(@region, pworld())[0]
-  if(array_size(@loc) > 2) {
-    console('Can\'t remove dropped items because region isn\'t a cuboid: '.@region)
-    return(false)
-  }
-  for(@x = @loc[1][0], @x < (@loc[0][0] + 15), inc(@x, 16),
-    if(@x > @loc[0][0], @x = @loc[0][0])
-    for(@z = @loc[1][2], @z < (@loc[0][2] + 15), inc(@z, 16),
-      if(@z > @loc[0][2], @z = @loc[0][2])
-      foreach(all_entities(array(@x, 64, @z, pworld())), @entity,
-        if(entity_type(@entity) == 'DROPPED_ITEM' || entity_type(@entity) == 'EXPERIENCE_ORB') {
-          entity_remove(@entity)
-        }
-      )
-    )
-  )
-  return(true)
-)
-
-proc(_remove_region_entities, @region, @entities = array(),
-  if(get_command_block(), @world = get_command_block()[3], @world = pworld())
-  if(!sk_region_exists(@world, @region)) {
-    console('Can\'t remove entities because region doesn\'t exist: '.@region)
-    return(false)
-  }
-  @loc = sk_region_info(@region, @world)[0]
-  if(array_size(@loc) > 2) {
-    console('Can\'t remove entities because region isn\'t a cuboid: '.@region)
-    return(false)
-  }
-  for(@x = @loc[1][0], @x < (@loc[0][0] + 15), inc(@x, 16),
-    if(@x > @loc[0][0], @x = @loc[0][0])
-    for(@z = @loc[1][2], @z < (@loc[0][2] + 15), inc(@z, 16),
-      if(@z > @loc[0][2], @z = @loc[0][2])
-      foreach(all_entities(array(@x, 64, @z, @world)), @entity,
-        if((!@entities && !array_contains(array('PLAYER', 'COMPLEX_PART', 'ITEM_FRAME', 'PAINTING', 'WEATHER'), entity_type(@entity)))
-		|| array_contains(@entities, entity_type(@entity))) {
-          entity_remove(@entity)
-        }
-      )
-    )
-  )
-  return(true)
+proc('_remove_region_entities', @region, @entities = array(),
+	if(get_command_block(), @world = get_command_block()['world'], @world = pworld())
+	if(!sk_region_exists(@world, @region)) {
+		console('Can\'t remove entities because region doesn\'t exist: '.@region)
+		return(false)
+	}
+	@loc = sk_region_info(@region, @world)[0]
+	if(array_size(@loc) > 2) {
+		console('Can\'t remove entities because region isn\'t a cuboid: '.@region)
+		return(false)
+	}
+	for(@x = @loc[1][0], @x < (@loc[0][0] + 15), inc(@x, 16),
+		if(@x > @loc[0][0], @x = @loc[0][0])
+		for(@z = @loc[1][2], @z < (@loc[0][2] + 15), inc(@z, 16),
+			if(@z > @loc[0][2], @z = @loc[0][2])
+			foreach(all_entities(array(@x, 64, @z, @world)), @entity,
+				@type = entity_type(@entity)
+				if((!@entities && !array_contains(array('PLAYER', 'COMPLEX_PART', 'ITEM_FRAME', 'PAINTING', 'UNKNOWN'), @type))
+				|| array_contains(@entities, @type)) {
+					try(
+					entity_remove(@entity)
+					, # if fail
+						console('Entity not found when trying to remove from region.')
+						console('Region: '.@region.', EntityID: '.@entity)
+					)
+				}
+			)
+		)
+	)
+	return(true)
 )
 
 # Remove all potion effects from a player
-proc(_clear_peffects, @player,
+proc('_clear_peffects', @player,
   if(!@player, @player = player())
   @effects = get_peffect(@player)
   foreach(@effects, @e,
@@ -198,7 +180,7 @@ proc(_clear_peffects, @player,
   )
 )
 
-proc(_shop_item, @signtext,
+proc('_shop_item', @signtext,
   @item = reg_match('\\[([\\w\\s]+)(?::([0-9]{1,4}))?\\]', @signtext)
   if(array_size(@item) < 2, die())
   if(is_numeric(@item[1])) {
@@ -219,7 +201,7 @@ proc(_shop_item, @signtext,
 )
 
 #color display name
-proc(_colorname, @player,
+proc('_colorname', @player,
 	if(!@player, @player = player())
 	ifelse(has_permission(@player, 'group.moderators'),
 		@color = 'aqua',
@@ -235,7 +217,7 @@ proc(_colorname, @player,
 )
 
 #returns world alias when given world folder name
-proc(_worldname, @world,
+proc('_worldname', @world,
   @worlds = array('world': 'Alpha', 'world_nether': 'Alpha Nether', 'world3': 'Delta', 'world3_nether': 'Delta Nether', 'world4': 'Gamma', 'world4_nether': 'Gamma Nether', 'world_the_end': 'The End', 'custom': 'FrogPark', 'dev': 'Dev', 'outworld': 'Outworld')
   if(array_index_exists(@worlds, to_lower(@world))) { 
     return(@worlds[to_lower(@world)])
@@ -245,7 +227,7 @@ proc(_worldname, @world,
 )
 
 #returns world folder name when given world alias
-proc(_worldid, @world,
+proc('_worldid', @world,
   @worlds = array('alpha': 'world', 'alphanether': 'world_nether', 'delta': 'world3', 'deltanether': 'world3_nether', 'gamma': 'world4', 'gammanether': 'world4_nether', 'theend': 'world_the_end', 'custom': 'custom', 'frogpark': 'custom', 'dev': 'dev', 'outworld': 'outworld')
   if(array_index_exists(@worlds, to_lower(@world))) { 
     return(@worlds[to_lower(@world)])
@@ -255,7 +237,7 @@ proc(_worldid, @world,
 )
 
 #Messsages every player within the specified region
-proc(_regionmsg, @region, @msg,
+proc('_regionmsg', @region, @msg,
 	foreach(all_players(), @player,
 		if(array_contains(sk_current_regions(@player), @region)) {
 			tmsg(@player, @msg)
@@ -264,14 +246,14 @@ proc(_regionmsg, @region, @msg,
 )
 
 #Messsages every player within the specified world
-proc(_worldmsg, @world, @msg,
+proc('_worldmsg', @world, @msg,
 	foreach(all_players(@world), @player,
 		tmsg(@player, @msg)
 	)
 )
 
 #get qty of specific item in chest
-proc(_get_inventory_count, @loc, @item,
+proc('_get_inventory_count', @loc, @item,
   try(@size = get_inventory_size(@loc), return(null))
   if(is_numeric(@item), @item = @item.':0')
   @count = 0
@@ -292,22 +274,22 @@ proc(_get_inventory_count, @loc, @item,
 # )
 
 #Returns the distance between two blocks, or any other 3d points, for that matter
-proc(_3d_distance, @arr1, @arr2,
+proc('_3d_distance', @arr1, @arr2,
   return(floor(sqrt(((@arr2[0] - @arr1[0]) ** 2) + ((@arr2[1] - @arr1[1]) ** 2) + ((@arr2[2] - @arr1[2]) ** 2))))
 )
 
-proc(_2d_distance, @arr1, @arr2,
+proc('_2d_distance', @arr1, @arr2,
   return(floor(sqrt(((@arr2[0] - @arr1[0]) ** 2) + ((@arr2[2] - @arr1[2]) ** 2))))
 )
 
-proc(_horizontal_distance, @loc1, @loc2,
+proc('_horizontal_distance', @loc1, @loc2,
   return(max(sqrt((@loc1[0] - @loc2[0]) ** 2), sqrt((@loc1[2] - @loc2[2]) ** 2)))
 )
 
 #Given two blocks, iterates through all the blocks inside the cuboid, and calls the 
 #user defined function on them. The used defined procedure should accept 3 parameters,
 #the x, y, and z coordinates of the block.
-proc(_iterate_cuboid, @b1, @b2, @proc_name,
+proc('_iterate_cuboid', @b1, @b2, @proc_name,
   for(@x = min(@b1[0], @b2[0]), @x <= max(@b1[0], @b2[0]), @x++,
     for(@y = min(@b1[1], @b2[1]), @y <= max(@b1[1], @b2[1]), @y++,
       for(@z = min(@b1[2], @b2[2]), @z <= max(@b1[2], @b2[2]), @z++,

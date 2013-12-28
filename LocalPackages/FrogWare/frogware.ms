@@ -186,7 +186,7 @@ proc('_fw_changeteam', @player, @team,
 
 proc('_fw_randompotion', @potentials, @secs = 20,
 	@potions = array(
-		'speed': array(1, 16),
+		'speed': array(1, 17),
 		'jump': array(8, 12),
 		'invis': array(14, 1),
 		'blind': array(15, 1)
@@ -296,10 +296,10 @@ proc('_fw_task', @task, @state, @secs,
 				'Tick tock',
 			), 1, false)[0]
 			_regionmsg('frogware', color('green').'[FROGWARE] '.color('r').'Type: "'.@quote.'"')
-			bind('player_chat', array('id': 'fwchat'), null, @e, @quote,
+			bind('player_chat', array('id': 'fwchat'), null, @e, assign(@quote, @quote),
 				if(_fw_player(player())) {
 					if(@e['message'] == @quote
-					&& _fw_changeteam(@p, 'winners')) {
+					&& _fw_changeteam(@e['player'], 'winners')) {
 						play_sound(ploc(), array('sound': 'zombie_metal'), player())
 					}
 					modify_event('message', color('green').'[FROGWARE] '.color('r').@e['message'])
@@ -385,7 +385,7 @@ proc('_fw_task', @task, @state, @secs,
 					_clear_pinv(@p)
 				}
 			)
-			_remove_region_items('frogware')
+			_remove_region_entities('frogware', array('DROPPED_ITEM'))
 			proc('_set_air', @x, @y, @z,
 				if(get_block_at(array(@x, @y, @z, 'custom')) != '0:0') {
 					set_block_at(array(@x, @y, @z, 'custom'), '0:0')
@@ -683,13 +683,13 @@ proc('_fw_task', @task, @state, @secs,
 				_fw_randompotion(array('speed', 'blind'))
 			}
 			proc('_set_lava', @x, @y, @z,
-				if(rand(100) < 2) {
-					set_block_at(@x, @y, @z, 'custom', '10:0')
+				if(rand(100) < 3) {
+					set_block_at(array(@x, @y, @z, 'custom'), '10:0')
 				}
 			)
 			@region = sk_region_info('frogware', 'custom')[0]
-			_iterate_cuboid(array(@region[0][0], @region[1][1] + 3, @region[0][2], 'custom'),
-				array(@region[1][0], @region[1][1] + 3, @region[1][2], 'custom'),
+			_iterate_cuboid(array(@region[0][0], @region[1][1] + 2, @region[0][2], 'custom'),
+				array(@region[1][0], @region[1][1] + 2, @region[1][2], 'custom'),
 				'_set_lava')
 			bind('entity_damage', array('id': 'fwdamage2'), array('type': 'PLAYER', 'cause': 'LAVA', 'world': 'custom'), @e,
 				if(_fw_player(@e['player'])) {
@@ -719,7 +719,7 @@ proc('_fw_task', @task, @state, @secs,
 			)
 			@region = sk_region_info('frogware', 'custom')[0]
 			_iterate_cuboid(array(@region[0][0], @region[1][1], @region[0][2], 'custom'),
-				array(@region[1][0], @region[1][1] + 3, @region[1][2], 'custom'),
+				array(@region[1][0], @region[1][1] + 2, @region[1][2], 'custom'),
 				'_set_air')
 				
 			unbind('fwdamage2')

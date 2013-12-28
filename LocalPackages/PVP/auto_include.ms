@@ -46,7 +46,7 @@ proc('_pvp_start_round', @id,
 		)
 	}
 	
-	_remove_region_items(@pvp['arena']['region'])
+	_remove_region_entities(@pvp['arena']['region'], array('DROPPED_ITEM', 'EXPERIENCE_ORB'))
 	_pvp_initialize_players(@id, array_keys(@pvp['players']))
 
 	if(array_index_exists(@pvp['arena'], 'captain')) {
@@ -988,8 +988,10 @@ proc('_pvp_end_match', @id, @winners,
 				if(ponline(@player) && pworld(@player) == 'custom') {
 					broadcast(color('gray').'[PVP] '.color('r').'RESTORING '.to_upper(@id).'...')
 					scriptas(@player,
-						sudo('//schematic load mce '.@pvp['arena']['restore'])
-						sudo('//paste -o')
+						foreach(@pvp['arena']['restore'], @region,
+							sudo('//schematic load mce '.@region)
+							sudo('//paste -o')
+						)
 						sudo('/clearclipboard')
 						break()
 					)
