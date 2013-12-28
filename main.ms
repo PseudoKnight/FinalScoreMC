@@ -13,27 +13,14 @@ if(!@stopwatch, @stopwatch = array(), clear_value('session.stopwatch'))
 export('stopwatch', @stopwatch)
 
 set_interval(8 * 60 * 1000, closure(
-	if(!rand(20), runas('~console', '/voice reload'))
-	runas('~console', '/save-all')
+	if(player() == '~console') {
+		if(!rand(20), run('/voice reload'))
+		run('/save-all')
+	} else {
+		if(!rand(20), runas('~console', '/voice reload'))
+		runas('~console', '/save-all')
+	}
 ))
-
-if(!get_recipe_for(array('type': 98, 'data': 3))) {
-	add_recipe(array(
-		'type': 'SHAPELESS',
-		'result': array('type': 98, 'data': 3),
-		'ingredients': array('44:5', '44:5')
-	))
-	console('Recipe for circle stone brick loaded.')
-}
-
-if(!get_recipe_for(array('type': 98, 'data': 1))) {
-	add_recipe(array(
-		'type': 'SHAPELESS',
-		'result': array('type': 98, 'data': 1),
-		'ingredients': array('106', '98')
-	))
-	console('Recipe for mossy stone brick loaded.')
-}
 
 if(!get_recipe_for(array('type': 43, 'data': 8))) {
 	add_recipe(array(
@@ -41,7 +28,15 @@ if(!get_recipe_for(array('type': 43, 'data': 8))) {
 		'result': array('type': 43, 'data': 8),
 		'ingredients': array('44', '44')
 	))
-	console('Recipe for smooth double step loaded.')
+	console('Recipe for smooth stone double step loaded.')
+}
+if(!get_recipe_for(array('type': 43, 'data': 9))) {
+	add_recipe(array(
+		'type': 'SHAPELESS',
+		'result': array('type': 43, 'data': 9, 'qty': 2),
+		'ingredients': array('44:1', '44:1', '44:1', '44:1')
+	))
+	console('Recipe for smooth sandstone double step loaded.')
 }
 
 bind('player_login', null, null, @e,
@@ -91,9 +86,10 @@ bind('player_join', null, null, @event,
 	set_timeout(250, closure(@loc = ploc(),
 		#Welcome messages
 		msg(color('1').color('l').'--------------------')
-		msg(color('gold'), color('l'), '\u2302', color('red'), color('l'), '\u2302', color('aqua'), color('l'), '\u2302', color('dark_red'), color('l'), '\u2302', color('gold'), color('l'), ' FINALSCORE ', color('yellow'), color('l'), '\u00AB', color('r'), ' \u25AA \u25AA \u25AA')
+		msg(color('gold').' \u2302'.color('red').' \u2302'.color('aqua').' \u2302'.color('dark_red').' \u2302'.color('gold').color('l').' FINALSCORE '.color('yellow').color('l').'\u00AB'.color('r').' \u25AA \u25AA \u25AA')
 		msg(color('1').color('l').'--------------------')
 		if(@motd = get_value('motd')) {
+			if(length(@motd) < 20, @motd = ' '.@motd)
 			msg(@motd)
 			msg(color('1').color('l').'--------------------')
 		}
@@ -291,18 +287,30 @@ bind('vehicle_collide', null, array('type': 'MINECART_HOPPER', 'collisiontype': 
 	cancel()
 )
 
+bind('vehicle_leave', null, null, @e,
+	if(@e['player']) {
+		set_timeout(50, closure(
+			@newlocblock = get_block_at(_relative(ploc(), 'down'))
+			if(array_contains(array(10, 11, 0), split(':', @newlocblock)[0])) {
+				set_ploc(@e['player'], entity_loc(@e['vehicle']))
+			}
+		))
+	}
+)
+
 # prevent enderdragon egg teleportation
 bind('player_interact', null, array('block': 122), @e,
 	if(pmode() != 'CREATIVE' && (pworld() == 'custom' || pworld() == 'dev'), cancel())
 )
 
 bind('entity_explode', null, null, @e,
-	if(@e['location'][3] == 'custom' 
+	if(@e['location'][3] == 'dev'
+	|| (@e['location'][3] == 'custom' 
 	&& ((@e['type'] != 'PRIMED_TNT'
 	&& @e['type'] != 'CREEPER')
 	|| (!array_contains(sk_regions_at(entity_loc(@e['id'])), 'skypirates')
 	&& !array_contains(sk_regions_at(entity_loc(@e['id'])), 'antfarm')
-	&& !array_contains(sk_regions_at(entity_loc(@e['id'])), 'bomberman')))) {
+	&& !array_contains(sk_regions_at(entity_loc(@e['id'])), 'bomberman'))))) {
 		cancel()
 	}
 )
@@ -407,7 +415,7 @@ bind('creature_spawn', null, array('reason': 'SPAWNER'), @e,
 )
 
 # Anti-xray helper
-bind(block_break, null, array('type': 56), @e,
+bind('block_break', null, array('type': 56), @e,
 	if(pworld() == 'dev' || pworld() == 'custom', die())
 	set_timeout(50, closure(
 		for(@x = @e['location']['x'] - 1, @x <= @e['location']['x'] + 1, @x++,
@@ -424,5 +432,3 @@ bind(block_break, null, array('type': 56), @e,
 		'group.moderators')
 	))
 )
-
-
