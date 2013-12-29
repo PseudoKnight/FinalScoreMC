@@ -193,8 +193,10 @@ bind('player_interact', null, array('item': 259, 'button': 'right'), @event,
 			}
 		))
 	} else {
-		cancel()
-		msg('Use of flint and steel is restricted here, except on nether portals and TNT.')
+		if(!sk_regions_at(_relative(@loc, 'up')) || !sk_can_build(_relative(@loc, 'up'))) {
+			cancel()
+			msg('Use of flint and steel is restricted here, except on nether portals and TNT.')
+		}
 	}
 )
 
