@@ -22,7 +22,7 @@ switch($cmd
 , 'start',
 	if(pworld() != 'custom', die())
 
-	include('cluck.ms')
+	include('includes.library/cluck.ms')
 	@cluck = import('cluck')
 	if(!@cluck, @cluck = _cluck_defaults())
 
