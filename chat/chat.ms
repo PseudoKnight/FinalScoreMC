@@ -1,9 +1,6 @@
 # PMs, ignores, and mutes
 bind('player_chat', null, null, @event,
-	if(@event['message'] == '-') {
-		cancel()
-		die()
-	}
+	include('includes.library/chat.ms')
 	if(@event['message'][0] == '@') {
 		cancel()
 		@p = substr(parse_args(@event['message'])[0], 1)

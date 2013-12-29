@@ -91,13 +91,23 @@
 <<<
 
 # MESSAGING #
-*:/msg $player $ = _pmsg($player, $)
-*:/tell $player $ = _pmsg($player, $)
-*:/w $player $ = _pmsg($player, $)
+*:/msg $player $ = >>>
+	include('includes.library/chat.ms')
+	_pmsg($player, $)
+<<<
+*:/tell $player $ = >>>
+	include('includes.library/chat.ms')
+	_pmsg($player, $)
+<<<
+*:/w $player $ = >>>
+	include('includes.library/chat.ms')
+	_pmsg($player, $)
+<<<
 
 *:/r $ = >>>
 	@conv = import('conv')
 	try(@player = @conv[player()], die('You do not have any current conversations.'))
 	if(@player != '~console' && !ponline(@player), die('That player is no longer online.'))
+	include('includes.library/chat.ms')
 	_pmsg(@player, $)
 <<<
