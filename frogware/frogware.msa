@@ -2,7 +2,7 @@
 	switch($cmd
 	, 'join',
 		if(!sk_region_exists('custom', 'frogware'), die('Define the frogware region first.'))
-		include('frogware.ms')
+		include('includes.library/frogware.ms')
 		if(!array_contains(get_scoreboards(), 'fw')) {
 			create_scoreboard('fw')
 			create_objective('score', 'DUMMY', 'fw')
@@ -32,7 +32,7 @@
 	, 'start',
 		if(get_pscoreboard(player()) != 'fw', die('You haven\'t joined first.'))
 		if(!is_numeric($pts), die('You must specify the point goal as a number. eg. /frogware start 25'))
-		include('frogware.ms')
+		include('includes.library/frogware.ms')
 		foreach(all_players('custom'), @p,
 			if(_fw_player(@p)) {
 				set_phunger(@p, 20)
