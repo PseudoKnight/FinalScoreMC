@@ -33,7 +33,8 @@
 	@signtext[@shopline[0]] = @shopline[1].$
 	set_sign_text(@sign, @signtext)
 	msg(color('6').'[Shop] Successfully set to "'.@shopline[1].$.'"')
-
+	
+	include('includes.library/shops.ms')
 	@itemid, _shop_item(@signtext[0])
 	@shops, get_value('shop.'.@itemid)
 	if(!@shops, die())

@@ -9,6 +9,7 @@ bind('player_interact', null, array('block': 68), @event,
 	&& (length(@signtext[1]) > 7 && substr(@signtext[1], 0, 3) == 'Buy'
 	|| length(@signtext[2]) > 8 && substr(@signtext[2], 0, 4) == 'Sell')) {
 		set_timeout(50, closure(
+			include('includes.library/shops.ms')
 			@itemid = _shop_item(@signtext[0])
 			@shops = get_value('shop.'.@itemid)
 			if(!@shops, @shops = array(array(), array()))
@@ -94,6 +95,7 @@ bind('block_break', null, array('type': 68), @event,
 	if(length(@signtext[0]) < 3 || @signtext[0][0] != '[', die())
 	if(!(length(@signtext[1]) > 7 && substr(@signtext[1], 0, 3) == 'Buy')
 	&& !(length(@signtext[2]) > 8 && substr(@signtext[2], 0, 4) == 'Sell'), die())
+	include('includes.library/shops.ms')
 	@itemid = _shop_item(@signtext[0])
 	@shops = get_value('shop.'.@itemid)
 	if(!@shops, die())
@@ -145,6 +147,7 @@ bind('block_place', null, array('type': 154), @event,
 		}
     
 		if(@signs) {
+			include('includes.library/shops.ms')
 			foreach(@signs, @sign,
 				if(_is_shop(@sign) && !_is_shop_owner(@sign)) {
 					cancel()
