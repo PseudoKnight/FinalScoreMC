@@ -166,6 +166,7 @@
 		
 		# CLASSES
 		if(array_index_exists(@pvp['arena'], 'classes')) {
+			include('includes.library/class.ms')
 			@size = array_size(@pvp['arena']['classes'][0]) + if(array_index_exists(@pvp['arena'], 'captain'), 1, 0)
 			if(@size > 1) {
 				@size = ceil(@size / 9) * 9

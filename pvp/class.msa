@@ -73,12 +73,15 @@ switch($cmd
 	msg('Changed '.$id.' class name to '.to_lower($setting))
 	
 , 'load',
+	include('includes.library/class.ms')
 	_class('load', player(), $id)
 	
 , 'unload',
+	include('includes.library/class.ms')
 	_class('unload', player(), $id)
 	
 , 'equip',
+	include('includes.library/class.ms')
 	_class('equip', player(), $id)
 	
 , 'list',
