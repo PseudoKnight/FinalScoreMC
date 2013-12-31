@@ -58,6 +58,7 @@
 	@warp = get_value('warp.'.to_lower($warp))
 	if(!@warp, die('That warp does not exist.'))
 	if(array_contains(array('outworld', 'outworld_nether', 'outworld_the_end'), pworld(@player)), die('You cannot warp in this world.'))
+	include('includes.library/teleports.ms')
 	_warmuptp(3.7, @player, @warp['loc'], @warp['yaw'], @warp['pitch'])
 <<<
 
@@ -126,8 +127,10 @@
 	} else if($world) {
 		@world = _worldid($world)
 		if(!array_contains_ic(get_worlds(), @world), die('Failed to find a world called '.$world.'.'))
+		include('includes.library/teleports.ms')
 		_warmuptp(3.7, player(), get_spawn(@world))
 	} else {
+		include('includes.library/teleports.ms')
 		_warmuptp(3.7, player(), get_spawn())
 	}
 <<<
@@ -164,6 +167,7 @@
 	if(!array_index_exists(@requests, player()), die('There is nothing to accept.'))
 	if(!ponline(@requests[player()][1]), die('That player is no longer online.'))
 	if(array_contains(@blockedworlds, pworld(@requests[player()][1])), die('That player is out of reach.'))
+	include('includes.library/teleports.ms')
 	if(@requests[player()][0] == 'invite') {
 		msg(color('b').'Teleporting to '.@requests[player()][1].' in 3 seconds...')
 		tmsg(@requests[player()][1], color('b').'Teleporting '.player().' in 3 seconds...')
