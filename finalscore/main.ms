@@ -22,23 +22,6 @@ set_interval(8 * 60 * 1000, closure(
 	}
 ))
 
-if(!get_recipe_for(array('type': 43, 'data': 8))) {
-	add_recipe(array(
-		'type': 'SHAPELESS',
-		'result': array('type': 43, 'data': 8),
-		'ingredients': array('44', '44')
-	))
-	console('Recipe for smooth stone double step loaded.')
-}
-if(!get_recipe_for(array('type': 43, 'data': 9))) {
-	add_recipe(array(
-		'type': 'SHAPELESS',
-		'result': array('type': 43, 'data': 9, 'qty': 2),
-		'ingredients': array('44:1', '44:1', '44:1', '44:1')
-	))
-	console('Recipe for smooth sandstone double step loaded.')
-}
-
 bind('player_login', null, null, @e,
 	if(@e['result'] != 'ALLOWED', die())
 	@update = false
@@ -289,12 +272,13 @@ bind('vehicle_collide', null, array('type': 'MINECART_HOPPER', 'collisiontype': 
 	cancel()
 )
 
-bind('vehicle_leave', null, null, @e,
+bind('vehicle_leave', array('priority': 'high'), null, @e,
 	if(@e['player']) {
+		@vehicleloc = entity_loc(@e['vehicle'])
 		set_timeout(50, closure(
 			@newlocblock = get_block_at(_relative(ploc(), 'down'))
 			if(array_contains(array(10, 11, 0), split(':', @newlocblock)[0])) {
-				set_ploc(@e['player'], entity_loc(@e['vehicle']))
+				set_ploc(@e['player'], @vehicleloc)
 			}
 		))
 	}
