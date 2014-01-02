@@ -1,0 +1,258 @@
+/safereload [$force]= >>>
+	if(!$force) {
+		@inprogress = array()
+		@currentspleef = import('currentspleef')
+		if(@currentspleef != false && array_size(@currentspleef) >= 1, array_push(@inprogress, 'Spleef'))
+		@arenas = get_values('arena')
+		foreach(array_keys(@arenas), @key,
+			@pvp = import('pvp'.split('.', @key)[1])
+			if(@pvp && @pvp['running'] == 'true', array_push(@inprogress, to_upper(split('.', @key)[1])))
+		)
+		@cluck = import('cluck')
+		if(@cluck && (@cluck['active'] == 1),  array_push(@inprogress, 'Cluck'))
+		if(@inprogress) {
+			die('Currently in progress: '.array_implode(@inprogress, ' '))
+		}
+	}
+	@requests = import('requests')
+	if(is_array(@requests), store_value('session.requests', @requests))
+	@conv = import('conv')
+	if(is_array(@conv), store_value('session.conv', @conv))
+	@conv = import('ignorelist')
+	if(is_array(@ignorelist), store_value('session.ignorelist', @ignorelist))
+	@stopwatch = import('stopwatch')
+	if(is_array(@stopwatch), store_value('session.stopwatch', @stopwatch))
+	foreach(all_players(), @player,
+		if(queue_running(@player), queue_clear(@player))
+	)
+	run('/save-all')
+	set_timeout(2000, closure(
+		msg('Recompiling...')
+		run('/reloadaliases')
+	))
+<<<
+
+*:/ban [$player] [$] = >>>
+	if(!has_permission('group.moderators'), die('You do not have permission.'))
+	if(!$player, die('Usage: /ban <player> [-t 1d-8h-10m] [message]'))
+	@pdata = get_value('player.'.to_lower($player))
+	if(!@pdata, die('Please use exact names.'))
+	@battime = null
+	@message = null
+	if($) {
+		@args = parse_args($)
+		if(@args[0] == '-t') {
+			@times = split('-', @args[1])
+			@bantime = time()
+			foreach(@times, @t,
+				switch(substr(@t, length(@t) - 1, length(@t))
+				, 'd',
+					@bantime = @bantime + (86400000 * substr(@t, 0, length(@t) - 1))
+				, 'h',
+					@bantime = @bantime + (3600000 * substr(@t, 0, length(@t) - 1))
+				, 'm',
+					@bantime = @bantime + (60000 * substr(@t, 0, length(@t) - 1))
+				)
+			)
+			if(array_size(@args) > 2) {
+				@message = array_implode(@args[cslice(2, array_size(@args) - 1)], ' ')
+			}
+		} else {
+			@message = $
+		}
+	}
+	@pdata['ban'] = array()
+	if(@bantime, @pdata['ban']['time'] = @bantime)
+	if(@message, @pdata['ban']['message'] = @message)
+	if(player() != '~console', @pdata['ban']['by'] = player())
+	store_value('player.'.to_lower($player), @pdata)
+	if(ponline($player), pkick($player, if(@message, @message, 'Banned. Appeal at FinalScoreMC.com')))
+	msg($player.' is now banned.')
+	console(player().' banned '.$player.'.'.if(@message, ' (Reason: "'.@message.'")'))
+<<<
+
+*:/unban [$player] = >>>
+	if(!has_permission('group.moderators'), die('You do not have permission.'))
+	if(!$player, die('Usage: /unban <player>'))
+	@pdata = get_value('player.'.to_lower($player))
+	if(!@pdata, die('Please use an exact name.'))
+	if(!array_index_exists(@pdata, 'ban'), die('That player is not banned.'))
+	array_remove(@pdata, 'ban')
+	store_value('player.'.to_lower($player), @pdata)
+	msg($player.' is now unbanned.')
+	console(player().' unbanned '.$player)
+<<<
+
+*:/kick [$player] [$='Kicked.'] = >>>
+	if(!$player, die('Usage: /kick <player> <reason>'))
+	if(!has_permission('group.moderators'), die('You do not have permission.'))
+	try(@player = player($player), die('Unknown player.'))
+	pkick(@player, $)
+	console(player().' kicked '.@player.'. (Reason: "'.$.'")')
+<<<
+
+/homeless $player = >>>
+	@pdata = get_value('player.'.to_lower($player))
+	@pdata['homeless'] = true
+	store_value('player.'.to_lower($player), @pdata)
+<<<
+
+/clearchat = >>>
+	for(@i = 0, @i < 20, @i++,
+		broadcast('')
+	)
+<<<
+
+/donor $player $amount = >>>
+	if(!has_permission('group.administrators'), die('You do not have permission to use this command.'))
+	_acc_add($player, $amount * 200)
+	msg('Gave '.$player.' '.$amount * 200.' coins.')
+	console('Gave '.$player.' '.$amount * 200.' coins.')
+	run('/perm player addgroup '.$player.' Donors')
+	@donors = get_value('donors')
+	if(@donors == null || @donors == array()) {
+		@donors = array($player)
+	} else {
+		array_push(@donors, $player)
+	}
+	store_value('donors', @donors)
+<<<
+
+#Set or reset the MOTD
+*:/setmotd [$=''] = >>>
+	if(!has_permission('group.moderators'), die('You do not have permission to use this command.'))
+	store_value('motd', colorize($))
+	msg('MOTD set to: '.colorize($))
+<<<
+
+#Run commands as other players and show them which command it was
+*:/runas $player $ = >>>
+	if(!get_command_block() && !has_permission('group.administrators'), die('You do not have permission for this command'))
+	try(@player = player($player), die('No player found.'))
+	tmsg(@player, color('a'), player(), ' ran this command for you:')
+	tmsg(@player, color('6'), $)
+	console('"'.$.'" was run on '.@player)
+	scriptas(@player, 
+		if(!call_alias($)) {
+			sudo($)
+		}
+	)
+<<<
+
+#Alias for setting people to Regulars group
+*:/promote $player = >>>
+	if(!has_permission('group.administrators'), die('You do not have permission to use this command.'))
+	if(array_contains(pgroup($player), 'regulars'), die('Player is already in that group.'))
+	run('/perm player setgroup '.$player.' Regulars')
+<<<
+
+*:/player $player = >>>
+	if(!has_permission('group.moderators'), die('You do not have permission to use this command.'))
+	try(
+		# ONLINE INFO
+		@player = player($player)
+		@pdata = get_value('player.'.to_lower(@player))
+		@onlineinfo = pinfo(@player)
+		msg(color('gray').'--[ '.color('l').@player.color('gray').' ]-------------------------')
+		msg(color('gray').'Location: '.color('r').@onlineinfo[7].' '.round(@onlineinfo[1][0]).','.round(@onlineinfo[1][1]).','.round(@onlineinfo[1][2]))
+		if(pmode(@player) == 'CREATIVE') {
+			msg(color('gray').'Gamemode: '.color('r').'CREATIVE')
+		} else {
+			msg(color('gray').'Health: '.color('r').@onlineinfo[5].' and '.pfood(@player).' + '.round(psaturation(@player), 1).' hunger')
+			msg(color('gray').'Levels: '.color('r').plevel(@player))
+		}
+		msg(color('gray').'IP: '.color('r').@onlineinfo[3])
+		msg(color('gray').'Hostname: '.color('r').@onlineinfo[10])
+	, 
+		# OFFLINE INFO
+		@pdata = get_value('player.'.to_lower($player))
+		if(!@pdata, die('No stored data for that player name.'))
+		@minutes = (time() - plast_played($player)) / 60000
+		@hours = @minutes / 60
+		@days = @hours / 24
+		msg(color('gray').'--[ '.color('l').$player.color('gray').' ]-------------------------')
+		if(array_index_exists(@pdata, 'ban'), msg(color('red').'Banned '.color('r')
+			.if(array_index_exists(@pdata['ban'], 'by'), 'by '.@pdata['ban']['by'].' ')
+			.if(array_index_exists(@pdata['ban'], 'time'), 'temporarily ')
+			.if(array_index_exists(@pdata['ban'], 'message'), '- "'.@pdata['ban']['message'].'"')))
+		msg(color('gray').'Last Played: '.color('r').
+		ifelse(@days >= 3,
+			'Over '.floor(@days).' days ago'
+		, @hours >= 2, 
+			'Over '.floor(@hours).' hours ago'
+		, 
+			floor(@minutes).' minutes ago'
+		))
+		if(array_index_exists(@pdata, 'homeless'), msg(color('gray').'Homeless: '.color('r').'TRUE'))
+		if(array_index_exists(@pdata, 'ips'), msg(color('gray').'IPs: '.color('r').array_implode(@pdata['ips'], ' ')))
+	)
+	if(array_index_exists(@pdata, 'approval'), msg(color('gray').'Approved by: '.color('r').@pdata['approval']))
+	if(array_index_exists(@pdata, 'homes'), msg(color('gray').'Homes: '.color('r').array_implode(array_keys(@pdata['homes']), ', ')))
+	if(array_index_exists(@pdata, 'coins'), msg(color('gray').'Coins: '.color('r').@pdata['coins']))
+<<<
+
+#Database control
+/sql $action $namespace [$] = >>>
+	if(!pisop(), die('You do not have permission.'))
+	@data = get_values($namespace)
+	if(array_size(@data) == 0, die('No keys for that namespace.'))
+	switch($action,
+	, 'delete',
+		foreach(@data, @key, @value,
+			clear_value(@key)
+		)
+		msg('Deleted '.$namespace)
+	, 'rename',
+		foreach(@data, @key, @value,
+			store_value(reg_replace($namespace, $, @key), @data[@key])
+			clear_value(@key)
+		)
+	, 'indexchild',
+		foreach(@data, @key, @value,
+			@array[$] = @value
+			store_value(reg_replace('.'.$, '', @key), @array)
+			clear_value(@key)
+		)
+	)
+<<<
+
+*:/matchip $ip = >>>
+	if(!has_permission('group.moderators'), die('You do not have permission.'))
+	@players = get_values('player')
+	foreach(@players, @key, @player,
+		if(array_index_exists(@player, 'ips') && array_contains(@player['ips'], $ip)) {
+			msg('Matched: '.split('.', @key)[1])
+		}
+	)
+<<<
+
+*:/coins [$action] [$player] [$amount] = >>>
+	if(!$action) {
+		msg(color('gold').round(_acc_balance(player())).' coins')
+	} else {
+		if(!has_permission('group.moderators'), die('You do not have permission.'))
+		if(!$player, die('Usage: /coins <add|sub|info> <player> <amount>'))
+		switch($action
+		, array('add', 'give'),
+			if(!$amount, die('Usage: /coins <add|sub|info> <player> <amount>'))
+			if(_acc_add($player, $amount)) {
+				msg('Gave '.$player.' '.$amount.' coins.')
+			} else {
+				msg('Can\'t find player.')
+			}
+		, array('sub', 'subtract', 'remove'),
+			if(!$amount, die('Usage: /coins <add|sub|info> <player> <amount>'))
+			if(_acc_subtract($player, $amount)) {
+				msg('Subtracted '.$amount.' coins from '.$player)
+			} else {
+				msg('Can\'t find player.')
+			}
+		, 'info',
+			if(@coins = _acc_balance($player)) {
+				msg(color('gold').round(_acc_balance($player)).' coins')
+			} else {
+				msg('Can\'t find player.')
+			}
+		)
+	}
+<<<

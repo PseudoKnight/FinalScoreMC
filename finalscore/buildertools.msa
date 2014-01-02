@@ -1,0 +1,317 @@
+*:/display $ = >>>
+	if(!has_permission('command.display'), die('You do not have permission to use this command.'))
+	if(length($) > 30, die('The name can only be 30 characters long.'))
+	@inv = pinv(player(), null)
+	if(is_null(@inv['meta']), @inv['meta'] = array())
+	@inv['meta']['display'] = colorize($)
+	set_pinv(array(null: @inv))
+<<<
+
+*:/lore $line $ = >>>
+	if(!has_permission('command.lore'), die('You do not have permission to use this command.'))
+	if(length($) > 30, die('The name can only be 30 characters long.'))
+	@inv = pinv(player(), null)
+	if(is_null(@inv['meta']), @inv['meta'] = array())
+	if(is_null(@inv['meta']['lore']), @inv['meta']['lore'] = array())
+	@inv['meta']['lore'][$line - 1] = colorize($)
+	set_pinv(array(null: @inv))
+<<<	
+
+/endercrystal = >>>
+	@loc = _relative(pcursor(), 'up')
+	set_block_at(@loc, '7:0')
+	spawn_entity('ENDER_CRYSTAL', 1, array(@loc[0] + 0.5, @loc[1], @loc[2] + 0.5, @loc[3]))
+<<<
+
+/bedspawn $player [$] = >>>
+	if($) {
+		@loc = parse_args($)
+		@loc[1] = @loc[1] - 1
+	} else {
+		@loc = ploc($player)
+	}
+	set_pbed_location($player, @loc)
+<<<
+
+/tempcart $player = >>>
+	if(get_command_block()) {
+		@loc = get_command_block()
+		@loc = array(@loc[0] + 0.5, @loc[1] + 2.5, @loc[2] + 0.5, @loc[3])
+		@player = pinfo($player, 13)
+	} else {
+		die('Command blocks only.')
+	}
+	@cart = spawn_entity('minecart', 1, @loc)[0]
+	set_entity_rider(@cart, @player)
+	bind('vehicle_leave', null, array('vehicletype': 'MINECART', 'passengertype': 'PLAYER'), @e, @cart = @cart,
+		if(@e['vehicle'] == @cart) {
+			unbind()
+			try(entity_remove(@e['vehicle']))
+		}
+	)
+<<<
+
+*:/scb [$] = >>>
+	if(!has_permission('group.builders'), die('You do not have permission.'))
+	if(!$, die('Usage: /scb /cmd'))
+	@allowedcmds = array('/velocity', '/tp', '/sayas', '/testfor', '/playsound', '/setblock')
+	if(!array_contains_ic(@allowedcmds, parse_args($)[0]), die('Allowed commands: '.array_implode(@allowedcmds)))
+	@block = pcursor()
+	if(get_block_at(@block) != '137:0', die('That is not a commandblock.'))
+	if(is_alias($), @cmd = '/runalias '.$, @cmd = $)
+	sudo('/scb '.integer(@block[0]).' '.integer(@block[1]).' '.integer(@block[2]).' '.@cmd)
+<<<
+
+*:/dye $r $g $b = >>>
+	if(!has_permission('command.dye'), die('You do not have permission to use this command.'))
+	if(pinv(player(), null) && is_leather_armor(pinfo(player(), 15))) {
+		set_armor_color(pinfo(player(), 15), array(min(max($r, 0), 255), min(max($g, 0), 255), min(max($b, 0), 255)))
+	} else {
+		msg('That slot isn\'t leather armor.')
+	}
+<<<
+
+*:/potion [$cmd] [$id] [$strength] [$seconds] = >>>
+	if(!has_permission('command.potion'), die('You do not have permission to use this command.'))
+	@effects = _get_effects()
+	if(!$id, die('Usage: /potion <set|add> <potionEffect> <strength> <seconds>'))
+	if(!array_index_exists(@effects, $id), die('Available potion effects: '.@effects))
+	if(is_numeric($id), @id = $id, @id = @effects[$id])
+	@effectdata = array(1: 2, 2: 10, 5: 9, 6: 5, 7: 12, 10: 1, 12: 3, 14: 14, 16: 6, 18: 8)
+	if(array_index_exists(@effectdata, @id), @data = @effectdata[@id], @data = 16)
+	switch($cmd
+	, 'add',
+		@item = pinv(player(), null)
+		if(@item['type'] != 373, die('You can only add potion effects to potions.'))
+		if(!@item['meta'], @item['meta'] = array())
+		if(!array_index_exists(@item['meta'], 'potions'), @item['meta']['potions'] = array())
+		array_push(@item['meta']['potions'], array('id': @id, 'strength': $strength - 1, 'seconds': $seconds))
+		set_pinv(array(null: @item))
+	, 'set',
+		set_pinv(array(null: array('type': 373, 'data': @data, 'meta': array('potions': array(array('id': @id, 'strength': $strength - 1, 'seconds': $seconds))))))
+	, 
+		die('Usage: /potion <set|add> <potionEffect> <strength> <seconds>')
+	)
+<<<
+
+*:/enchant [$type='list'] [$level=1] = >>>
+	if(!has_permission('commands.enchant'), die('You do not have permission to use this command.'))
+	@enchants = array(
+		'power': 'ARROW_DAMAGE',
+		'flame': 'ARROW_FIRE',
+		'infinity': 'ARROW_INFINITE',
+		'punch': 'ARROW_KNOCKBACK',
+		'sharpness': 'DAMAGE_ALL',
+		'baneofarthropods': 'DAMAGE_ARTHROPODS',
+		'smite': 'DAMAGE_UNDEAD',
+		'efficiency': 'DIG_SPEED',
+		'unbreaking': 'DURABILITY',
+		'fireaspect': 'FIRE_ASPECT',
+		'knockback': 'KNOCKBACK',
+		'fortune': 'LOOT_BONUS_BLOCKS',
+		'looting': 'LOOT_BONUS_MOBS',
+		'respiration': 'OXYGEN',
+		'protection': 'PROTECTION_ENVIRONMENTAL',
+		'blastprotection': 'PROTECTION_EXPLOSIONS',
+		'featherfalling': 'PROTECTION_FALL',
+		'fireprotection': 'PROTECTION_FIRE',
+		'projectileprotection': 'PROTECTION_PROJECTILE',
+		'silktouch': 'SILK_TOUCH',
+		'thorns': 'THORNS',
+		'aquaaffinity': 'WATER_WORKER'
+	)
+	if($type == 'list', die(color('red').'Available enchantments: '.array_keys(@enchants)))
+	if(!is_numeric($level), die('Usage: /enchant <type> <level>'))
+	if(array_index_exists(@enchants, to_lower($type))) {
+		enchant_inv_unsafe(null, @enchants[to_lower($type)], $level)
+	} else {
+		msg(color('red').'Unknown enchantment name. Available enchantments: '.array_keys(@enchants))
+	}
+<<<
+
+*:/unenchant = >>>
+	if(!has_permission('commands.enchant'), die('You do not have permission to use this command.'))
+	@item = pinv(player(), null)
+	array_remove(@item, 'enchants')
+	set_pinv(array(null: @item))
+<<<
+
+*:/sign $line [$=''] = >>>
+	if(!has_permission('command.sign'), die('You do not have permission to use this command.'))
+	if(length($) > 15, die('There is a 15 character limit per line.'))
+	@sign = pcursor()
+	if(!is_sign_at(@sign), die('That is not a sign'))
+	@lines = get_sign_text(@sign)
+	array_set(@lines, $line - 1, colorize($))
+	set_sign_text(@sign, @lines),
+<<<
+
+# Item commands
+*:/i [$item=0] [$amount=1] = >>>
+	if(!has_permission('command.i'), die('You do not have permission to use this command.'))
+	if($item == 0, die('Usage: /i [id:data] [quantity]'))
+	@item = split(':', $item)
+	if(!is_numeric(@item[0]), @item[0] = data_values(@item[0]))
+	if(@item[0] == null, die('Unknown item name'))
+	if(!array_index_exists(@item, 1), @item[1] = 0)
+	pgive_item(@item[0].':'.@item[1], $amount)
+	msg(color('yellow').'You\'ve been given '.$amount.' '.data_name(@item[0].':'.@item[1]).'.')
+<<<
+
+*:/give [$player=null] [$item=0] [$amount=1] = >>>
+	if(!has_permission('group.moderators'), die('You do not have permission to use this command.'))
+	if($player == null, die('Usage: /give [player] [id:data] [quantity]'))
+	try(@player = player($player), die('Unknown player.'))
+	if($item == 0, die('You need to specify an item id or name.'))
+	@item = split(':', $item)
+	if(!is_numeric(@item[0]), @item[0] = data_values(@item[0]))
+	if(@item[0] == null, die('Unknown item name'))
+	if(!array_index_exists(@item, 1), @item[1] = 0)
+	pgive_item(@player, @item[0].':'.@item[1], $amount)
+	msg(color('yellow').'You gave '.@player.' '.$amount.' '.data_name(@item[0].':'.@item[1]).'.')
+<<<
+
+#Set fly mode for people or yourself
+*:/fly $player $bool = >>>
+	if(!has_permission('group.moderators'), die('You do not have permission to use this command.'))
+	try(@player = player($player), @ex, die('Who is that? Are they online?'))
+	if($bool == '1') {
+		set_pflight(@player, 1)
+		msg('Turned on fly mode for '.@player.'.')
+		tmsg(@player, player().' turned on fly mode on you.')
+	} else {
+		set_pflight(@player, 0)
+		msg('Turned off fly mode for '.@player.'.')
+		tmsg(@player, player().' turned off fly mode on you.')
+	}
+<<<
+
+*:/fly = >>>
+	if(!has_permission('command.fly'), die('You do not have permission to use this command.'))
+	if(phas_flight(),
+		set_pflight(player(), 0)
+		msg('Turned off flying.'),
+		set_pflight(player(), 1)
+		msg('Turned on flying.')
+	)
+<<<
+
+#Game mode aliases
+*:/gm $mode $player = >>>
+	if(!has_permission('group.moderators'), die('You do not have permission to use this command.'))
+	try(@player = player($player), @ex, die('Who is that? Are they online?'))
+	run('/gamemode '.$mode.' '.@player)
+<<<
+
+*:/gm [$mode] = >>>
+	if(!has_permission('command.gm'), die('You do not have permission to use this command.'))
+	if($mode) {
+		switch($mode,
+		, 1, set_pmode('CREATIVE')
+		, 0, set_pmode('SURVIVAL')
+		, 2, set_pmode('ADVENTURE')
+		, msg('Acceptable values: 0 = survival, 1 = creative, 2, adventure.')
+		)
+	} else {
+		if(pmode() == 'CREATIVE',
+			set_pmode('SURVIVAL'),
+			set_pmode('CREATIVE')
+		)
+	}
+<<<
+
+/setrider $horse $rider = >>>
+	set_entity_rider(pinfo($horse, 13), pinfo($rider, 13))
+<<<
+
+*:/time $time = >>>
+	if(!has_permission('command.time'), die('You do not have permission.'))
+	msg('Set time to '.$time)
+	try(
+		set_world_time(pworld(), $time),
+		msg('Usage: /time <day|night|0-24000>')
+	)
+<<<
+
+# COMMAND BLOCK COMMANDS #
+
+*:/effect $player $effect [$strength=0] [$length=30] = >>>
+	if(get_command_block() || has_permission('command.effect')) {
+		try(@player = player($player), @ex, die('Who is that? Are they online?'))
+		@effects = _get_effects()
+		if(!array_index_exists(@effects, $effect), die('These are the available effect names: '.array_keys(@effects)))
+		set_peffect(@player, @effects[$effect], $strength, $length)
+	}
+<<<
+
+*:/velocity $player $x $y $z [$double] = >>>
+	if(get_command_block() || has_permission('command.velocity')) {
+		try(@player = player($player), @ex, die('Who is that? Are they online?'))
+		set_timeout(50, closure(
+			set_pvelocity(@player, $x, $y, $z)
+			make_effect(ploc(@player), 'MOBSPAWNER_FLAMES')
+			make_effect(ploc(@player), 'BLAZE_SHOOT', 24)
+			if($double, set_timeout($double, closure( set_pvelocity(@player, $x, $y, $z))))
+		))
+	}
+<<<
+
+*:/playsound $sound [$pitch=1] [$volume=1] = >>>
+	if(get_command_block()) {
+		play_sound(get_command_block(), array('sound': $sound, 'pitch': $pitch, 'volume': $volume))
+	} else if(has_permission('command.playsound')) {
+		play_sound(ploc(), array('sound': $sound, 'pitch': $pitch, 'volume': $volume))
+	}
+<<<
+
+/* *:/setblock $x $y $z $id [$data=0] [$old='replace'] = >>>
+	if(@cmdblk = get_command_block()) {
+		if($x[0] == '~') {
+			if($x == '~') {
+				@x = @cmdblk['x']
+			} else {
+				@x = @cmdblk['x'] + substr($x, 1)
+			}
+		} else {
+			@x = $x
+		}
+		if($y[0] == '~') {
+			if($y == '~') {
+				@y = @cmdblk['y']
+			} else {
+				@y = @cmdblk['y'] + substr($y, 1)
+			}
+		} else {
+			@y = $y
+		}
+		if($z[0] == '~') {
+			if($z == '~') {
+				@z = @cmdblk['z']
+			} else {
+				@z = @cmdblk['z'] + substr($z, 1)
+			}
+		} else {
+			@z = $z
+		}
+		
+		if(!is_numeric(@id = $id)
+		&& is_null(@id = data_values($id)), die())
+		
+		@id = split(':', @id)[0]
+		
+		switch($old
+		, 'replace',
+			set_block_at(@x, @y, @z, @id.':'.$data, @cmdblk[3])
+		, 'keep',
+			if(get_block_at(@x, @y, @z, @cmdblk[3]) == '0:0') {
+				set_block_at(@x, @y, @z, @id.':'.$data, @cmdblk[3])
+			}
+		, 'destroy',
+			if(get_block_at(@x, @y, @z, @cmdblk[3]) != '0:0') {
+				make_effect(array(@x, @y, @z, @cmdblk[3]), 'STEP_SOUND:'.@id)
+			}
+			set_block_at(@x, @y, @z, @id.':'.$data, @cmdblk[3])
+		, die()
+		)
+	}
+<<< */
