@@ -222,6 +222,7 @@
 		try(msg(to_upper($selection).': '.color('a').@help[to_lower($selection)]), @ex, msg(color('c').'Unknown entry. Type "/help" to find available entries.'))
 	}
 <<<
+*:/rules = call_alias('/help rules')
 
 # APPROVAL SYSTEM #
 *:/approve [$player] = >>>
