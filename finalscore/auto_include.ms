@@ -153,26 +153,6 @@ proc('_clear_peffects', @player,
   )
 )
 
-proc('_shop_item', @signtext,
-  @item = reg_match('\\[([\\w\\s]+)(?::([0-9]{1,4}))?\\]', @signtext)
-  if(array_size(@item) < 2, die())
-  if(is_numeric(@item[1])) {
-    if(@item[2] != null) {
-      @itemid = @item[1].'.'.@item[2]
-    } else {
-      @itemid = @item[1]
-    }
-  } else {
-    if(@item[2] != null) {
-      @itemid = reg_split('\\:', data_values(@item[1]))[0].'.'.@item[2]
-    } else {
-      @itemid = reg_replace(':', '.', data_values(@item[1]))
-      if(@itemid == null, die())
-    }
-  }
-  return(@itemid)
-)
-
 #color display name
 proc('_colorname', @player,
 	if(!@player, @player = player())
