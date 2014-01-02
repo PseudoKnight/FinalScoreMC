@@ -272,12 +272,12 @@ bind('vehicle_collide', null, array('type': 'MINECART_HOPPER', 'collisiontype': 
 	cancel()
 )
 
-bind('vehicle_leave', array('priority': 'high'), null, @e,
-	if(@e['player']) {
+bind('vehicle_leave', array('priority': 'highest'), null, @e,
+	if(@e['player'] && entity_exists(@e['vehicle'])) {
 		@vehicleloc = entity_loc(@e['vehicle'])
 		set_timeout(50, closure(
-			@newlocblock = get_block_at(_relative(ploc(), 'down'))
-			if(array_contains(array(10, 11, 0), split(':', @newlocblock)[0])) {
+			@block = get_block_at(_relative(ploc(), 'down'))
+			if(array_contains(array(10, 11, 0), split(':', @block)[0])) {
 				set_ploc(@e['player'], @vehicleloc)
 			}
 		))
