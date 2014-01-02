@@ -1,21 +1,21 @@
 proc('_relative', @loc, @dir, @amount = 1,
-  switch(@dir
-  , 'up',
-    return(array(@loc[0], @loc[1] + @amount, @loc[2], @loc[3]))
-  , 'down',
-    return(array(@loc[0], @loc[1] - @amount, @loc[2], @loc[3]))
-  , 'north',
-    return(array(@loc[0], @loc[1], @loc[2] - @amount, @loc[3]))
-  , 'south',
-    return(array(@loc[0], @loc[1], @loc[2] + @amount, @loc[3]))
-  , 'east',
-    return(array(@loc[0] + @amount, @loc[1], @loc[2], @loc[3]))
-  , 'west',
-    return(array(@loc[0] - @amount, @loc[1], @loc[2], @loc[3]))
-  , 
-    console('Cannot get relative block '.@dir.' from '.@loc.'.')
-    return(false)
-  )
+	switch(@dir
+	, 'up',
+		return(array(@loc[0], @loc[1] + @amount, @loc[2], @loc[3]))
+	, 'down',
+		return(array(@loc[0], @loc[1] - @amount, @loc[2], @loc[3]))
+	, 'north',
+		return(array(@loc[0], @loc[1], @loc[2] - @amount, @loc[3]))
+	, 'south',
+		return(array(@loc[0], @loc[1], @loc[2] + @amount, @loc[3]))
+	, 'east',
+		return(array(@loc[0] + @amount, @loc[1], @loc[2], @loc[3]))
+	, 'west',
+		return(array(@loc[0] - @amount, @loc[1], @loc[2], @loc[3]))
+	, 
+		console('Cannot get relative block '.@dir.' from '.@loc.'.')
+		return(false)
+	)
 )
 
 proc('_clear_pinv', @player,
@@ -89,25 +89,25 @@ proc('_is_even', @x,
 )
 
 proc('_cooldown', @from, @length,
-  if((time() - @from) / 1000 > @length) {
-    return(true)
-  } else {
-    return(false)
-  }
+	if((time() - @from) / 1000 > @length) {
+		return(true)
+	} else {
+		return(false)
+	}
 )
 
 #pgive_item replacement
 proc('_pgive_item', @player, @item,
-  for(@i = 0, @i < 36, @i++,
-    if(pinv(@player, @i) == null || (pinv(@player, @i)['type'] == @item['type'] && pinv(@player, @i)['data'] == @item['data'] && (pinv(@player, @i)['qty'] + @item['qty']) <= max_stack_size(@item))) {
-      if(pinv(@player, @i) != null, array_set(@item, 'qty', @item['qty'] + pinv(@player, @i)['qty']))
-      @inv = array()
-      array_set(@inv, @i, @item)
-      set_pinv(@player, @inv)
-      return(true)
-    }
-  )
-  return(false)
+	for(@i = 0, @i < 36, @i++,
+		if(pinv(@player, @i) == null || (pinv(@player, @i)['type'] == @item['type'] && pinv(@player, @i)['data'] == @item['data'] && (pinv(@player, @i)['qty'] + @item['qty']) <= max_stack_size(@item))) {
+			if(pinv(@player, @i) != null, array_set(@item, 'qty', @item['qty'] + pinv(@player, @i)['qty']))
+			@inv = array()
+			array_set(@inv, @i, @item)
+			set_pinv(@player, @inv)
+			return(true)
+		}
+	)
+	return(false)
 )
 
 # Removes all specified entities from region.
@@ -146,11 +146,11 @@ proc('_remove_region_entities', @region, @entities = array(),
 
 # Remove all potion effects from a player
 proc('_clear_peffects', @player,
-  if(!@player, @player = player())
-  @effects = get_peffect(@player)
-  foreach(@effects, @e,
-    set_peffect(@player, @e['id'], 0, 0)
-  )
+	if(!@player, @player = player())
+	@effects = get_peffect(@player)
+	foreach(@effects, @e,
+		set_peffect(@player, @e['id'], 0, 0)
+	)
 )
 
 #color display name
@@ -171,22 +171,22 @@ proc('_colorname', @player,
 
 #returns world alias when given world folder name
 proc('_worldname', @world,
-  @worlds = array('world': 'Alpha', 'world_nether': 'Alpha Nether', 'world3': 'Delta', 'world3_nether': 'Delta Nether', 'world4': 'Gamma', 'world4_nether': 'Gamma Nether', 'world_the_end': 'The End', 'custom': 'FrogPark', 'dev': 'Dev', 'outworld': 'Outworld')
-  if(array_index_exists(@worlds, to_lower(@world))) { 
-    return(@worlds[to_lower(@world)])
-  } else {
-    return(to_lower(@world))
-  }
+	@worlds = array('world': 'Alpha', 'world_nether': 'Alpha Nether', 'world3': 'Delta', 'world3_nether': 'Delta Nether', 'world4': 'Gamma', 'world4_nether': 'Gamma Nether', 'world_the_end': 'The End', 'custom': 'FrogPark', 'dev': 'Dev', 'outworld': 'Outworld')
+	if(array_index_exists(@worlds, to_lower(@world))) { 
+		return(@worlds[to_lower(@world)])
+	} else {
+		return(to_lower(@world))
+	}
 )
 
 #returns world folder name when given world alias
 proc('_worldid', @world,
-  @worlds = array('alpha': 'world', 'alphanether': 'world_nether', 'delta': 'world3', 'deltanether': 'world3_nether', 'gamma': 'world4', 'gammanether': 'world4_nether', 'theend': 'world_the_end', 'custom': 'custom', 'frogpark': 'custom', 'dev': 'dev', 'outworld': 'outworld')
-  if(array_index_exists(@worlds, to_lower(@world))) { 
-    return(@worlds[to_lower(@world)])
-  } else {
-    return(to_lower(@world))
-  }
+	@worlds = array('alpha': 'world', 'alphanether': 'world_nether', 'delta': 'world3', 'deltanether': 'world3_nether', 'gamma': 'world4', 'gammanether': 'world4_nether', 'theend': 'world_the_end', 'custom': 'custom', 'frogpark': 'custom', 'dev': 'dev', 'outworld': 'outworld')
+	if(array_index_exists(@worlds, to_lower(@world))) { 
+		return(@worlds[to_lower(@world)])
+	} else {
+		return(to_lower(@world))
+	}
 )
 
 #Messsages every player within the specified region
@@ -207,16 +207,16 @@ proc('_worldmsg', @world, @msg,
 
 #get qty of specific item in chest
 proc('_get_inventory_count', @loc, @item,
-  try(@size = get_inventory_size(@loc), return(null))
-  if(is_numeric(@item), @item = @item.':0')
-  @count = 0
-  for(@i = 0, @i < @size, @i++,
-    if(is_null(assign(@slot, get_inventory_item(@loc, @i))), continue())
-    if(@slot['type'].':'.@slot['data'] == @item || @item == 'all') {
-      @count = @count + @slot['qty']
-    }
-  )
-  return(@count) 
+	try(@size = get_inventory_size(@loc), return(null))
+	if(is_numeric(@item), @item = @item.':0')
+	@count = 0
+	for(@i = 0, @i < @size, @i++,
+		if(is_null(assign(@slot, get_inventory_item(@loc, @i))), continue())
+		if(@slot['type'].':'.@slot['data'] == @item || @item == 'all') {
+			@count = @count + @slot['qty']
+		}
+	)
+	return(@count) 
 )
 
 # Populate multiple signs with an array_size larger than 4
@@ -228,26 +228,26 @@ proc('_get_inventory_count', @loc, @item,
 
 #Returns the distance between two blocks, or any other 3d points, for that matter
 proc('_3d_distance', @arr1, @arr2,
-  return(floor(sqrt(((@arr2[0] - @arr1[0]) ** 2) + ((@arr2[1] - @arr1[1]) ** 2) + ((@arr2[2] - @arr1[2]) ** 2))))
+	return(floor(sqrt(((@arr2[0] - @arr1[0]) ** 2) + ((@arr2[1] - @arr1[1]) ** 2) + ((@arr2[2] - @arr1[2]) ** 2))))
 )
 
 proc('_2d_distance', @arr1, @arr2,
-  return(floor(sqrt(((@arr2[0] - @arr1[0]) ** 2) + ((@arr2[2] - @arr1[2]) ** 2))))
+	return(floor(sqrt(((@arr2[0] - @arr1[0]) ** 2) + ((@arr2[2] - @arr1[2]) ** 2))))
 )
 
 proc('_horizontal_distance', @loc1, @loc2,
-  return(max(sqrt((@loc1[0] - @loc2[0]) ** 2), sqrt((@loc1[2] - @loc2[2]) ** 2)))
+	return(max(sqrt((@loc1[0] - @loc2[0]) ** 2), sqrt((@loc1[2] - @loc2[2]) ** 2)))
 )
 
 #Given two blocks, iterates through all the blocks inside the cuboid, and calls the 
 #user defined function on them. The used defined procedure should accept 3 parameters,
 #the x, y, and z coordinates of the block.
 proc('_iterate_cuboid', @b1, @b2, @proc_name,
-  for(@x = min(@b1[0], @b2[0]), @x <= max(@b1[0], @b2[0]), @x++,
-    for(@y = min(@b1[1], @b2[1]), @y <= max(@b1[1], @b2[1]), @y++,
-      for(@z = min(@b1[2], @b2[2]), @z <= max(@b1[2], @b2[2]), @z++,
-        call_proc(@proc_name, @x, @y, @z)
-      )
-    )
-  )
+	for(@x = min(@b1[0], @b2[0]), @x <= max(@b1[0], @b2[0]), @x++,
+		for(@y = min(@b1[1], @b2[1]), @y <= max(@b1[1], @b2[1]), @y++,
+			for(@z = min(@b1[2], @b2[2]), @z <= max(@b1[2], @b2[2]), @z++,
+				call_proc(@proc_name, @x, @y, @z)
+			)
+		)
+	)
 )
