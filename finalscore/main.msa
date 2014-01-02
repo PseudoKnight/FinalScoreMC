@@ -701,7 +701,7 @@
 	}
 <<<
 
-*:/setblock $x $y $z $id [$data=0] [$old='replace'] = >>>
+/* *:/setblock $x $y $z $id [$data=0] [$old='replace'] = >>>
 	if(@cmdblk = get_command_block()) {
 		if($x[0] == '~') {
 			if($x == '~') {
@@ -751,7 +751,7 @@
 		, die()
 		)
 	}
-<<<
+<<< */
 
 # TESTING/CONFIGURING COMMANDS
 
@@ -811,14 +811,38 @@
 	)
 <<<
 
-*:/enchant $type [$level=1] = >>>
+*:/enchant [$type='list'] [$level=1] = >>>
 	if(!has_permission('commands.enchant'), die('You do not have permission to use this command.'))
+	@enchants = array(
+		'power': 'ARROW_DAMAGE',
+		'flame': 'ARROW_FIRE',
+		'infinity': 'ARROW_INFINITE',
+		'punch': 'ARROW_KNOCKBACK',
+		'sharpness': 'DAMAGE_ALL',
+		'baneofarthropods': 'DAMAGE_ARTHROPODS',
+		'smite': 'DAMAGE_UNDEAD',
+		'efficiency': 'DIG_SPEED',
+		'unbreaking': 'DURABILITY',
+		'fireaspect': 'FIRE_ASPECT',
+		'knockback': 'KNOCKBACK',
+		'fortune': 'LOOT_BONUS_BLOCKS',
+		'looting': 'LOOT_BONUS_MOBS',
+		'respiration': 'OXYGEN',
+		'protection': 'PROTECTION_ENVIRONMENTAL',
+		'blastprotection': 'PROTECTION_EXPLOSIONS',
+		'featherfalling': 'PROTECTION_FALL',
+		'fireprotection': 'PROTECTION_FIRE',
+		'projectileprotection': 'PROTECTION_PROJECTILE',
+		'silktouch': 'SILK_TOUCH',
+		'thorns': 'THORNS',
+		'aquaaffinity': 'WATER_WORKER'
+	)
+	if($type == 'list', die(color('red').'Available enchantments: '.array_keys(@enchants)))
 	if(!is_numeric($level), die('Usage: /enchant <type> <level>'))
-	@enchants = _get_enchants()
 	if(array_index_exists(@enchants, to_lower($type))) {
 		enchant_inv_unsafe(null, @enchants[to_lower($type)], $level)
 	} else {
-		msg(color('red').'Unknown enchantment name. '.array_keys(@enchants))
+		msg(color('red').'Unknown enchantment name. Available enchantments: '.array_keys(@enchants))
 	}
 <<<
 

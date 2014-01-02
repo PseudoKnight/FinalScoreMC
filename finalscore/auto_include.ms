@@ -79,33 +79,6 @@ proc('_get_effects',
 	))
 )
 
-proc('_get_enchants',
-	return(array(
-		'power': 'ARROW_DAMAGE',
-		'flame': 'ARROW_FIRE',
-		'infinity': 'ARROW_INFINITE',
-		'punch': 'ARROW_KNOCKBACK',
-		'sharpness': 'DAMAGE_ALL',
-		'baneofarthropods': 'DAMAGE_ARTHROPODS',
-		'smite': 'DAMAGE_UNDEAD',
-		'efficiency': 'DIG_SPEED',
-		'unbreaking': 'DURABILITY',
-		'fireaspect': 'FIRE_ASPECT',
-		'knockback': 'KNOCKBACK',
-		'fortune': 'LOOT_BONUS_BLOCKS',
-		'looting': 'LOOT_BONUS_MOBS',
-		'respiration': 'OXYGEN',
-		'protection': 'PROTECTION_ENVIRONMENTAL',
-		'blastprotection': 'PROTECTION_EXPLOSIONS',
-		'featherfalling': 'PROTECTION_FALL',
-		'fireprotection': 'PROTECTION_FIRE',
-		'projectileprotection': 'PROTECTION_PROJECTILE',
-		'silktouch': 'SILK_TOUCH',
-		'thorns': 'THORNS',
-		'aquaaffinity': 'WATER_WORKER'
-	))
-)
-
 proc('_is_even', @x,
 	@x = @x / 2
 	if(is_integral(@x)) {
