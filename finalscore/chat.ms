@@ -5,7 +5,6 @@ bind('player_chat', null, null, @event,
 		cancel()
 		@p = substr(parse_args(@event['message'])[0], 1)
 		if((length(@p) + 2) >= length(@event['message'])) {
-			cancel()
 			die()
 		}
 		@message = substr(@event['message'], length(@p) + 2)
