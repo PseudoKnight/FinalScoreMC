@@ -15,7 +15,7 @@ proc('_fw_endgame', @winners,
 	@warp = get_value('warp.frogpark')
 	foreach(all_players('custom'), @p,
 		if(_fw_player(@p)) {
-			_warmuptp(3.7, @p, @warp['loc'], @warp['yaw'], @warp['pitch'])
+			set_ploc(@p, @warp['loc'])
 		}
 	)
 	foreach(@winners, @p,
@@ -51,6 +51,7 @@ proc('_fw_startround', @secs = 9,
 					if(get_pscore('score', @p, 'fw') == get_pscore('score', 'GOAL', 'fw'), array_push(@winners, @p))
 				} else {
 					set_pscoreboard(@p)
+					reset_all_pscores(@p, 'fw')
 				}
 			}
 		)

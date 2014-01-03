@@ -2,7 +2,6 @@
 	switch($cmd
 	, 'join',
 		if(!sk_region_exists('custom', 'frogware'), die('Define the frogware region first.'))
-		include('includes.library/frogware.ms')
 		if(!array_contains(get_scoreboards(), 'fw')) {
 			create_scoreboard('fw')
 			create_objective('score', 'DUMMY', 'fw')
@@ -14,14 +13,16 @@
 		}
 		set_pscoreboard(player(), 'fw')
 		team_add_player('losers', player(), 'fw')
-		@score = 1000
+		include('includes.library/frogware.ms')
+		
+		@scores = array()
 		foreach(all_players('custom'), @p,
-			if(_fw_player(@p)
-			&& get_pscore('score', @p, 'fw') < @score) {
-				@score = max(0, get_pscore('score', @p, 'fw') - 1)
+			if(_fw_player(@p)) {
+				array_push(get_pscore('score', @p, 'fw'))
 			}
 		)
-		set_pscore('score', player(), @score, 'fw')
+		set_pscore('score', player(), if(@scores, min(@scores), 0), 'fw')
+		
 		set_ploc(_fw_loc(-1))
 		if(pmode() == 'CREATIVE', set_pmode('SURVIVAL'))
 		set_phunger(20)
