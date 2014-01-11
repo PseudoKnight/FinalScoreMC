@@ -18,7 +18,7 @@
 		@scores = array()
 		foreach(all_players('custom'), @p,
 			if(_fw_player(@p)) {
-				array_push(get_pscore('score', @p, 'fw'))
+				array_push(@scores, get_pscore('score', @p, 'fw'))
 			}
 		)
 		set_pscore('score', player(), if(@scores, min(@scores), 0), 'fw')
