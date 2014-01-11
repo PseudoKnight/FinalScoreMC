@@ -1,4 +1,20 @@
 # RECIPES
+if(!get_recipe_for(array('type': 98, 'data': 1))) {
+	add_recipe(array(
+		'type': 'SHAPELESS',
+		'result': array('type': 98, 'data': 1),
+		'ingredients': array('98:0', '106')
+	))
+	console('Recipe for mossy stone bricks loaded.')
+}
+if(!get_recipe_for(array('type': 98, 'data': 3))) {
+	add_recipe(array(
+		'type': 'SHAPELESS',
+		'result': array('type': 98, 'data': 3),
+		'ingredients': array('44:5', '44:5')
+	))
+	console('Recipe for circle stone bricks loaded.')
+}
 if(!get_recipe_for(array('type': 43, 'data': 8))) {
 	add_recipe(array(
 		'type': 'SHAPELESS',
