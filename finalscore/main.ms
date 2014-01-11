@@ -14,10 +14,8 @@ export('stopwatch', @stopwatch)
 
 set_interval(8 * 60 * 1000, closure(
 	if(player() == '~console') {
-		if(!rand(20), run('/voice reload'))
 		run('/save-all')
 	} else {
-		if(!rand(20), runas('~console', '/voice reload'))
 		runas('~console', '/save-all')
 	}
 ))
@@ -103,7 +101,6 @@ bind('player_join', null, null, @event,
 			pfacing(@warp['yaw'], @warp['pitch'])
 		}
 		set_timeout(800, closure(
-			run('/voice')
 			if(@loc[1] > ploc()[1]) {
 				set_ploc(@loc)
 			}
@@ -273,7 +270,7 @@ bind('vehicle_collide', null, array('type': 'MINECART_HOPPER', 'collisiontype': 
 )
 
 bind('vehicle_leave', array('priority': 'highest'), null, @e,
-	if(@e['player'] && entity_exists(@e['vehicle'])) {
+	if(@e['player'] && entity_exists(@e['vehicle']) && pworld() != 'custom') {
 		@vehicleloc = entity_loc(@e['vehicle'])
 		set_timeout(50, closure(
 			@block = get_block_at(_relative(ploc(), 'down'))
