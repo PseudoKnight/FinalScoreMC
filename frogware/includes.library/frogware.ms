@@ -23,7 +23,7 @@ proc('_fw_endgame', @winners,
 		_acc_add(@p, @coins)
 		tmsg(@p, color('6').'+'.@coins.' coins')
 	)
-	remove_scoreboard('fw')
+	if(array_contains(get_scoreboards(), 'fw')) { remove_scoreboard('fw') }
 )
 
 proc('_fw_startround', @secs = 9,
@@ -64,7 +64,7 @@ proc('_fw_startround', @secs = 9,
 			} else if(@count == 0 || (@total > 2 && @count <= 1)) {
 				@secs++
 			}
-			@tasks = array('climb', 'keepaway', 'harvest', 'koth', 'cake', 'fall', 'cluck', 'frogegg', 'pvp', 'lavafall', 'type')
+			@tasks = array('climb', 'keepaway', 'harvest', 'koth', 'cake', 'fall', 'cluck', 'frogegg', 'pvp', 'lavafall')
 			@task = @tasks[rand(array_size(@tasks))]
 			if(@total == 1 && @task == 'pvp', @task = @tasks[rand(array_size(@tasks))])
 			queue_delay(1000, 'fw2')
@@ -280,37 +280,6 @@ proc('_fw_task', @task, @state, @secs,
 			queue_push(closure(
 				_fw_startround(@secs)
 			), 'fw3')
-		)
-		
-	, 'type',
-		switch(@state
-		, 'start',
-			@quote = array_rand(array(
-				'You can eat rice!',
-				'PK said',
-				'This is a long sentence.',
-				'Do not let froggerooh win.',
-				'I like pie.',
-				'Do not type this.',
-				'FrogWare teaches typing.',
-				'Behind you!',
-				'Tick tock',
-			), 1, false)[0]
-			_regionmsg('frogware', color('green').'[FROGWARE] '.color('r').'Type: "'.@quote.'"')
-			bind('player_chat', array('id': 'fwchat'), null, @e, assign(@quote, @quote),
-				if(_fw_player(player())) {
-					if(@e['message'] == @quote
-					&& _fw_changeteam(@e['player'], 'winners')) {
-						play_sound(ploc(), array('sound': 'zombie_metal'), player())
-					}
-					modify_event('message', color('green').'[FROGWARE] '.color('r').@e['message'])
-					modify_event('recipients', all_players('custom'))
-				}
-			)
-			
-		, 'end',
-			unbind('fwchat')
-			_fw_startround(@secs)
 		)
 		
 	, 'keepaway',
