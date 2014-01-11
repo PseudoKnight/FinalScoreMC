@@ -5,9 +5,9 @@
 	, 'update', 
 		if(!has_permission('group.administrators'), die('You do not have permission.'))
 		@arenas = get_values('arena')
-		foreach(@arenas, @key, @arena,
-		
-		)
+		foreach(@arenas, @key, @arena) {
+			null
+		}
 		msg('All arenas updated.')
 
 	, 'set',
@@ -141,11 +141,11 @@
 			, 'kit',
 				if(!array_index_exists(@arena, 'kit'), @arena['kit'] = array(array(), array()))
 				@inv = pinv()
-				foreach(array_keys(@inv), @slot,
+				foreach(array_keys(@inv), @slot) {
 					if(@inv[@slot] == null) {
 						array_remove(@inv, @slot)
 					}
-				)
+				}
 				if(!@args[0] || @args[0] == 1) {
 					@arena['kit'][0] = @inv
 					msg('Set kit to current inventory.')
@@ -181,11 +181,11 @@
 			, 'restore',
 				if(!has_permission('group.engineers'), die('Only engineers, moderators and admins can do this.'))
 				@regions = array()
-				foreach(@args, @region,
+				foreach(@args, @region) {
 					if(@region != null) {
 						array_push(@regions, @region)
 					}
-				)
+				}
 				@arena['restore'] = @regions
 				msg('Restore area set to '.color(10).@regions)
 
@@ -238,12 +238,12 @@
 				@loc = pcursor()
 				if(split(':', get_block_at(@loc))[0] != '54', die('You must look at a chest you want to spawn.'))
 				if(!array_index_exists(@arena['chestgroup'], @args[0]), array_set(@arena['chestgroup'], @args[0], array()))
-				foreach(@arena['chestgroup'][@args[0]], @key, @chestloc,
+				foreach(@arena['chestgroup'][@args[0]], @key, @chestloc) {
 					if(@chestloc == @loc) {
 						array_remove(@arena['chestgroup'][@args[0]], @key)
 						break()
 					}
-				)
+				}
 				array_push(@arena['chestgroup'][@args[0]], @loc)
 				msg('Added chest to '.color(10).@args[0].color('r').' group. The items in this chest will spawn in chestspawns that specify '.color(10).@args[0].color('r').' as their chestgroup. Do not remove this chest.')
 				
@@ -252,12 +252,12 @@
 				if(!@args[0], die('Arguments: <chestGroupName> | <cooldownSecs> <spawnStart>'))
 				@loc = pcursor()
 				if(split(':', get_block_at(@loc))[0] != '54', die('You must look at a chest.'))
-				foreach(@arena['chestspawn'], @key, @chest,
+				foreach(@arena['chestspawn'], @key, @chest) {
 					if(@chest['loc'] == @loc) {
 						array_remove(@arena['chestspawn'], @key)
 						break()
 					}
-				)
+				}
 				if(is_numeric(@args[0])) {
 					if(!@args[1], @start = 'true', @start = @args[1])
 					@items = array()
@@ -340,12 +340,12 @@
 				msg('Set '.color(10).@args[1].' '.@args[0].color('r').' to spawn here every '.color(10).@args[2].color('r').' seconds'.if(@args[3], ' and at '.color(10).'start.', '.'))
 
 			, 'flags',
-				@flags = array('endernades', 'skullrockets', 'noinventory', 'stackedpickup', 'debug', 'shotgunballs', 'primedtnt', 'pistoltears', 'rallycall')
+				@flags = array('endernades', 'skullrockets', 'noinventory', 'stackedpickup', 'debug', 'shotgunballs', 'primedtnt', 'pistoltears', 'rallycall', 'keepinventory')
 				if(!@args[0] || @args[1], die('You need to specify a comma separated list of pre-defined flags. (no spaces) Current available flags: '.@flags))
 				@arena['flags'] = split(',', @args[0])
-				foreach(@arena['flags'], @flag,
+				foreach(@arena['flags'], @flag) {
 					if(!array_contains(@flags, @flag), die('Unknown flag: '.@flag))
-				)
+				}
 				msg('Activated these flags: '.color(10).@arena['flags'])
 
 			, #else
@@ -372,18 +372,18 @@
 			, 'chestspawn',
 				@loc = array(round(pcursor()[0]), round(pcursor()[1]), round(pcursor()[2]), pcursor()[3])
 				if(split(':', get_block_at(@loc))[0] != '54', die('This is not a chest'))
-				foreach(@arena['chestspawn'], @chest,
+				foreach(@arena['chestspawn'], @chest) {
 					if(@chest['loc'] == @loc) {
 						if(array_index_exists(@chest, 'items')) {
-							foreach(@chest['items'], @index, @item,
+							foreach(@chest['items'], @index, @item) {
 								set_inventory_item(@loc, @index, @item)
-							)
+							}
 							die('After editing, you can save this chestspawn by using "/arena set '.$id.' chestspawn '.@chest['cooldown'].' '.@chest['start'].'"')
 						} else {
 							die('This chest spawns with items from the chestgroup '.@chest['chestgroup'])
 						}
 					}
-				)
+				}
 				die('No chestspawn found for that location.')
 
 			, die('Unsupported setting for loading.')
@@ -409,14 +409,14 @@
 			@loc = pcursor()
 			if(split(':', get_block_at(@loc))[0] == '54'
 			&& ($setting == 'chestspawn' || $setting == 'chestgroup')) {
-				foreach(@arena[@setting], @key, @chest,
+				foreach(@arena[@setting], @key, @chest) {
 					if(@chest['loc'] == @loc) {
 						set_block_at(@loc, 0)
 						array_remove(@arena[$setting], @key)
 						msg('Removed this '.$setting.' location.')
 						break()
 					}
-				)
+				}
 			} else {
 				array_remove(@arena, $setting)
 				msg('Deleted "'.$setting.'" setting for '.$id.'.')
@@ -452,7 +452,7 @@
 			if(array_index_exists(@arena, 'team') && !array_index_exists(@arena, 'mode'), msg(color('gold').'mode '.color(7).'(team mode required for "team")'))
 			if(array_index_exists(@arena, 'teamratio') && !array_index_exists(@arena, 'mode'), msg(color('gold').'mode '.color(7).'(team mode required for "teamratio")'))
 			# 
-			foreach(@arena, @setting, @value,
+			foreach(@arena, @setting, @value) {
 				if(array_contains(array('spawn', 'kit', 'itemspawn', 'chestspawn', 'mobspawn'), @setting)) {
 					msg(@setting.' '.color('gray').'[...]')
 				} else if(array_contains(array('team'), @setting)) {
@@ -462,16 +462,16 @@
                 } else {
 					msg(@setting.' '.color('gray').@value)
 				}
-			)
+			}
 		}
 		msg(color('gray').'-------------------------------------')
 		
 	, 'list',
 		@arenas = get_values('arena')
 		@list = ''
-		foreach(array_keys(@arenas), @arena,
+		foreach(array_keys(@arenas), @arena) {
 			@list .= split('.', @arena)[1].' '
-		)
+		}
 		msg(color('gray').'PVP ARENAS: '.color('r').@list)
 
 	,

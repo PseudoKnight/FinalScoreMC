@@ -14,11 +14,11 @@ switch($cmd
 	
 	, 'kit',
 		@inv = pinv()
-		foreach(array_keys(@inv), @slot,
+		foreach(array_keys(@inv), @slot) {
 			if(@inv[@slot] == null) {
 				array_remove(@inv, @slot)
 			}
-		)
+		}
 		@class['kit'] = @inv
 		msg('Set kit to current inventory.')
 		
@@ -60,9 +60,9 @@ switch($cmd
 
 , 'info',
 	@class = get_value('class.'.$id)
-	foreach(@class, @setting, @value,
+	foreach(@class, @setting, @value) {
 		msg(color('gray').@setting.' '.color('r').@value)
-	)
+	}
 	
 , 'rename',
 	if(!$id || !$setting, die('Usage: /class rename <classname> <newclassname>'))
@@ -87,9 +87,9 @@ switch($cmd
 , 'list',
 	@classes = get_values('class')
 	@list = ''
-	foreach(array_keys(@classes), @key,
+	foreach(array_keys(@classes), @key) {
 		@list .= split('.', @key)[1].' '
-	)
+	}
 	msg(color('gray').'CLASSES: '.color('r').@list)
 	
 , 
