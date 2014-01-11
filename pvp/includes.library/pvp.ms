@@ -81,11 +81,13 @@ proc('_pvp_start_round', @id,
 		if(array_contains(array('tdm', 'infection'), @pvp['arena']['mode'])) {
 			@parts = parse_args(@e['death_message'])
 			@parts[0] = color(@pvp['arena']['team'][@pvp['players'][player()]['team']]['color']).player().color('r')
-			for(@i = 1, @i < array_size(@parts), @i++,
-				if(@parts[@i] == @e['killer']) {
-					@parts[@i] = color(@pvp['arena']['team'][@pvp['players'][@e['killer']]['team']]['color']).@e['killer'].color('r')
-				}
-			)
+			if(array_index_exists(@pvp['players'], @e['killer'])) {
+				for(@i = 1, @i < array_size(@parts), @i++,
+					if(@parts[@i] == @e['killer']) {
+						@parts[@i] = color(@pvp['arena']['team'][@pvp['players'][@e['killer']]['team']]['color']).@e['killer'].color('r')
+					}
+				)
+			}
 			@deathmessage = array_implode(@parts)
 		} else {
 			@deathmessage = @e['death_message']
@@ -171,7 +173,8 @@ proc('_pvp_start_round', @id,
 				} else {
 					_pvp_hat_spawn(@id, @pvp['players'][player()]['team'], _relative(ploc(), 'up'))
 				}
-			} else if(array_index_exists(@pvp['arena'], 'denydrop') 
+			} else if(!array_index_exists(@pvp['arena'], 'denydrop') 
+			|| array_index_exists(@pvp['arena'], 'denydrop')
 			&& is_array(@pvp['arena']['denydrop'])
 			&& !array_contains(@pvp['arena']['denydrop'], @drop['type'])) {
 				array_push(@drops, @drop)
@@ -948,9 +951,21 @@ proc('_pvp_check_objectives', @id,
 proc('_pvp_end_match', @id, @winners, 
 	@pvp = import('pvp'.@id)
 
-	foreach(array_keys(@pvp['players']), @player,
-		if(array_index_exists(@pvp['players'][@player], 'limbo') && @pvp['players'][@player]['limbo'], clear_task(@pvp['players'][@player]['limbo']))
-		set_timeout(3000, closure(
+	foreach(array_keys(@pvp['players']), @player) {
+		if(array_index_exists(@pvp['players'][@player], 'limbo') && @pvp['players'][@player]['limbo']) {
+			clear_task(@pvp['players'][@player]['limbo'])
+		}
+		if(array_contains(@winners, @player)) {
+			@leader = @player
+			if(ponline(@player) && @pvp['coins'] >= 1) {
+				_acc_add(@player, @pvp['coins'])
+				tmsg(@player, color('gold').'+ '.@pvp['coins'].if(@pvp['coins'] >= 2, ' coins', ' coin'))
+			}
+		}
+	}
+
+	set_timeout(3000, closure(
+		foreach(array_keys(@pvp['players']), @player) {
 			if(array_index_exists(@pvp['players'][@player], 'class')) {
 				_class('unload', @player, @pvp['players'][@player]['class'])
 			}
@@ -960,16 +975,25 @@ proc('_pvp_end_match', @id, @winners,
 				_clear_pinv(@player)
 				_clear_peffects(@player)
 			}
-		))
-		if(array_contains(@winners, @player), @leader = @player)
-	)
-
-	foreach(@winners, @player,
-		if(ponline(@player) && @pvp['coins'] >= 1) {
-			_acc_add(@player, @pvp['coins'])
-			tmsg(@player, color('gold').'+ '.@pvp['coins'].if(@pvp['coins'] >= 2, ' coins', ' coin'))
 		}
-	)
+		if(array_index_exists(@pvp['arena'], 'restore')) {
+			set_timeout(7000, closure(
+				foreach(array_keys(@pvp['players']), @player,
+					if(ponline(@player) && pworld(@player) == 'custom') {
+						broadcast(color('gray').'[PVP] '.color('r').'RESTORING '.to_upper(@id).'...')
+						scriptas(@player,
+							foreach(@pvp['arena']['restore'], @region,
+								sudo('//schematic load mce '.@region)
+								sudo('//paste -o')
+							)
+							sudo('/clearclipboard')
+							break()
+						)
+					}
+				)
+			))
+		}
+	))
 
 	if(array_contains(array('ctf', 'tdm', 'infection'), @pvp['arena']['mode']) && array_size(@winners) > 0) {
 		_worldmsg('custom', color('gray').'[PVP] '.color(@pvp['arena']['team'][@pvp['players'][@leader]['team']]['color']).@pvp['arena']['team'][@pvp['players'][@leader]['team']]['name'].' win!\n'
@@ -979,26 +1003,9 @@ proc('_pvp_end_match', @id, @winners,
 	} else {
 		_worldmsg('custom', color('gray').'[PVP] '.color('r').'Nobody wins! Wait.. what?!')
 	}
-	
+
 	_remove_region_entities(@pvp['arena']['region'])
-	
-	if(array_index_exists(@pvp['arena'], 'restore')) {
-		set_timeout(10000, closure(
-			foreach(array_keys(@pvp['players']), @player,
-				if(ponline(@player) && pworld(@player) == 'custom') {
-					broadcast(color('gray').'[PVP] '.color('r').'RESTORING '.to_upper(@id).'...')
-					scriptas(@player,
-						foreach(@pvp['arena']['restore'], @region,
-							sudo('//schematic load mce '.@region)
-							sudo('//paste -o')
-						)
-						sudo('/clearclipboard')
-						break()
-					)
-				}
-			)
-		))
-	}
+
 	if(array_index_exists(@pvp['arena'], 'rsoutput'), set_block_at(@pvp['arena']['rsoutput'], '69:6'))
 
 	foreach(@pvp['binds'], @bind,
@@ -1009,19 +1016,19 @@ proc('_pvp_end_match', @id, @winners,
 		queue_clear(@id.'0flag')
 		queue_clear(@id.'1flag')
 	}
-	
+
 	if(array_index_exists(@pvp['arena'], 'captain')) {
 		queue_clear(@id.'0hat')
 		queue_clear(@id.'1hat')
 	}
-	
+
 	if(array_contains(all_virtualchests(), @id.'0')) {
 		del_virtualchest(@id.'0')
 	}
 	if(array_contains(all_virtualchests(), @id.'1')) {
 		del_virtualchest(@id.'1')
 	}
-	
+
 	remove_scoreboard(@id)
 	clear_task(@pvp['interval'])
 	@pvp = array('players': array(), 'running': 'false', 'cooldown': time())
