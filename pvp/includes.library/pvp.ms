@@ -742,7 +742,7 @@ proc('_pvp_start_round', @id,
 				@hillcount++
 			}
 			
-		)
+		}
 		if(@pvp['arena']['mode'] == 'koth' && @hillcount == 1) {
 			@score = get_pscore('seconds', @king, @id)
 			set_pscore('seconds', @king, @score - 1, @id)
