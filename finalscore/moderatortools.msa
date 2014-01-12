@@ -1,30 +1,35 @@
 /safereload [$force]= >>>
 	if(!$force) {
+	
 		@inprogress = array()
+		
+		array_merge(@inprogress, get_scoreboards())
+		array_remove(@inprogress, 'main')
+		
 		@currentspleef = import('currentspleef')
 		if(@currentspleef != false && array_size(@currentspleef) >= 1, array_push(@inprogress, 'Spleef'))
-		@arenas = get_values('arena')
-		foreach(array_keys(@arenas), @key,
-			@pvp = import('pvp'.split('.', @key)[1])
-			if(@pvp && @pvp['running'] == 'true', array_push(@inprogress, to_upper(split('.', @key)[1])))
-		)
+
 		@cluck = import('cluck')
 		if(@cluck && (@cluck['active'] == 1),  array_push(@inprogress, 'Cluck'))
+		
 		if(@inprogress) {
 			die('Currently in progress: '.array_implode(@inprogress, ' '))
 		}
+		
 	}
+	
 	@requests = import('requests')
 	if(is_array(@requests), store_value('session.requests', @requests))
+	
 	@conv = import('conv')
 	if(is_array(@conv), store_value('session.conv', @conv))
+	
 	@conv = import('ignorelist')
 	if(is_array(@ignorelist), store_value('session.ignorelist', @ignorelist))
+	
 	@stopwatch = import('stopwatch')
 	if(is_array(@stopwatch), store_value('session.stopwatch', @stopwatch))
-	foreach(all_players(), @player,
-		if(queue_running(@player), queue_clear(@player))
-	)
+	
 	run('/save-all')
 	set_timeout(2000, closure(
 		msg('Recompiling...')
@@ -189,6 +194,18 @@
 	if(array_index_exists(@pdata, 'approval'), msg(color('gray').'Approved by: '.color('r').@pdata['approval']))
 	if(array_index_exists(@pdata, 'homes'), msg(color('gray').'Homes: '.color('r').array_implode(array_keys(@pdata['homes']), ', ')))
 	if(array_index_exists(@pdata, 'coins'), msg(color('gray').'Coins: '.color('r').@pdata['coins']))
+<<<
+
+/heal [$player] = >>>
+	if(!$player) {
+		@player = player()
+	} else {
+		if(!@player = player($player), die('Unknown player.'))
+	}
+	set_phunger(@player, 20)
+	set_psaturation(@player, 5.0)
+	set_phealth(@player, 20)
+	tmsg(@player, color('green').'Healed!')
 <<<
 
 #Database control
