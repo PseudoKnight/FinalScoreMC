@@ -20,14 +20,12 @@ proc('_spawn_mob', @mob, @qty, @loc,
 )
 
 proc('_get_mob', @mob = null,
-	@mobs = array(
-		'chicken', 'cow', 'creeper', 'ghast', 'pig', 'pigzombie', 'sheep', 'skeleton', 'slime', 'spider', 'squid', 'wolf', 'zombie', 'cavespider', 'enderman', 'silverfish', 'villager', 'blaze', 'enderdragon', 'magmacube', 'mooshroom', 'spiderjockey', 'giant', 'snowgolem', 'ocelot', 'cat', 'irongolem', 'wither', 'bat', 'witch', 'horse'
-	)
+	@mobtypes = reflect_pull('enum', 'Mobs')
 	if(!@mob) {
-		@mob = @mobs[rand(array_size(@mobs))]
+		@mob = @mobtypes[rand(array_size(@mobtypes))]
 	} else {
 		@mobtype = split(':', @mob)
-		if(array_contains(@mobs, @mobtype[0])) {
+		if(array_contains(@mobtypes, @mobtype[0])) {
 			@mob = array('type': @mob)
 		} else {
 			@mob = get_value('mob.'.@mob)

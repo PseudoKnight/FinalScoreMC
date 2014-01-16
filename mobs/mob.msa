@@ -76,7 +76,9 @@
 		)
 	
 	, 'spawn',
-		_spawn_mob($id, $setting, array(
+		@mobtype = $id
+		@mobcount = $setting
+		_spawn_mob(@mobtype, @mobcount, array(
 			pcursor()[0] + 0.5,
 			pcursor()[1] + 1,
 			pcursor()[2] + 0.5,
@@ -95,7 +97,7 @@
 	)
 <<<
 
-/* *:/summon $entity $x $y $z = >>>
+*:/summon $entity $x $y $z = >>>
 	if(!@cmdblock = get_command_block(), die())
 	if($x[0] == '~') {
 		if($x == '~') {
@@ -125,4 +127,4 @@
 		@z = $z
 	}
 	spawn_mob($entity, 1, array(@x, @y, @z, @cmdblock['world']))
-<<< */
+<<<
