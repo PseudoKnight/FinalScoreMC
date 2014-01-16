@@ -270,11 +270,10 @@ bind('vehicle_collide', null, array('type': 'MINECART_HOPPER', 'collisiontype': 
 )
 
 bind('vehicle_leave', array('priority': 'highest'), null, @e,
-	if(@e['player'] && entity_exists(@e['vehicle']) && pworld() != 'custom') {
+	if(@e['player'] && entity_exists(@e['vehicle'])) {
 		@vehicleloc = entity_loc(@e['vehicle'])
 		set_timeout(50, closure(
-			@block = get_block_at(_relative(ploc(), 'down'))
-			if(array_contains(array(10, 11, 0), split(':', @block)[0])) {
+			if(!get_entity_vehicle(pinfo(@e['player'], 13))) {
 				set_ploc(@e['player'], @vehicleloc)
 			}
 		))
