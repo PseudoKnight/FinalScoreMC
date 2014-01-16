@@ -230,27 +230,53 @@
 <<<
 
 #Game mode aliases
-*:/gm $mode $player = >>>
-	if(!has_permission('group.moderators'), die('You do not have permission to use this command.'))
-	try(@player = player($player), @ex, die('Who is that? Are they online?'))
-	run('/gamemode '.$mode.' '.@player)
-<<<
-
-*:/gm [$mode] = >>>
-	if(!has_permission('command.gm'), die('You do not have permission to use this command.'))
-	if($mode) {
-		switch($mode,
-		, 1, set_pmode('CREATIVE')
-		, 0, set_pmode('SURVIVAL')
-		, 2, set_pmode('ADVENTURE')
-		, msg('Acceptable values: 0 = survival, 1 = creative, 2, adventure.')
+*:/gamemode [$] = call_alias('/gm '.$)
+*:/gm [$] = >>>
+	if(!has_permission('command.gm'), die('You do not have permission to set game mode here.'))
+	
+	if($) {
+		@args = parse_args($)
+		try(@player = player(@args[0])
+			if(@player != player() && !has_permission('command.gm.others')) {
+				die('You do not have permission to set another\'s game mode.')
+			} else if(pworld(@player) != pworld()) {
+				die('You do not have permission to set another\'s game mode in another world.')
+			}
+			if(array_size(@args) >= 2) {
+				@mode = @args[1]
+			} else {
+				@mode = 'toggle'
+			}
+		
+		,
+			if(is_numeric(@args[0])) {
+				@player = player()
+				@mode = @args[0]
+			} else {
+				die('Who is that? Are they online?')
+			}
 		)
 	} else {
-		if(pmode() == 'CREATIVE',
-			set_pmode('SURVIVAL'),
-			set_pmode('CREATIVE')
-		)
+		@player = player()
+		@mode = 'toggle'
 	}
+	
+
+	
+	switch(@mode
+	, 0, @mode = 'SURVIVAL'
+	, 1, @mode = 'CREATIVE'
+	, 2, @mode = 'ADVENTURE'
+	, 'toggle',
+		if(pmode(@player) == 'SURVIVAL') {
+			@mode = 'CREATIVE'
+		} else {
+			@mode = 'SURVIVAL'
+		}
+	)
+	
+	set_pmode(@player, @mode)
+	if(@player != player(), msg('Set '.@player.'\'s game mode to '.@mode))
 <<<
 
 /setrider $horse $rider = >>>
@@ -297,7 +323,7 @@
 	}
 <<<
 
-/* *:/setblock $x $y $z $id [$data=0] [$old='replace'] = >>>
+*:/setblock $x $y $z $id [$data=0] [$old='replace'] = >>>
 	if(@cmdblk = get_command_block()) {
 		if($x[0] == '~') {
 			if($x == '~') {
@@ -334,17 +360,17 @@
 		
 		switch($old
 		, 'replace',
-			set_block_at(@x, @y, @z, @id.':'.$data, @cmdblk[3])
+			set_block_at(@x, @y, @z, @id.':'.$data, @cmdblk[3], false)
 		, 'keep',
 			if(get_block_at(@x, @y, @z, @cmdblk[3]) == '0:0') {
-				set_block_at(@x, @y, @z, @id.':'.$data, @cmdblk[3])
+				set_block_at(@x, @y, @z, @id.':'.$data, @cmdblk[3], false)
 			}
 		, 'destroy',
 			if(get_block_at(@x, @y, @z, @cmdblk[3]) != '0:0') {
 				make_effect(array(@x, @y, @z, @cmdblk[3]), 'STEP_SOUND:'.@id)
 			}
-			set_block_at(@x, @y, @z, @id.':'.$data, @cmdblk[3])
+			set_block_at(@x, @y, @z, @id.':'.$data, @cmdblk[3], false)
 		, die()
 		)
 	}
-<<< */
+<<<
