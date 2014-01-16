@@ -790,31 +790,30 @@ proc('_pvp_initialize_players', @id, @players,
 	@c = array(0, 0) # for selecting initial spawn locations
 	foreach(@players, @player) {
 		if(!ponline(@player), continue())
-		queue_delay(50, @id) # this is to help prevent invisible players
-		queue_push(closure(
-			@pvp = import('pvp'.@id)
-			if(pmode(@player) == 'CREATIVE', set_pmode(@player, 'SURVIVAL'))
-			set_pscoreboard(@player, @id)
-			if(array_contains(array('ctf', 'tdm', 'infection'), @pvp['arena']['mode'])) {
-				team_add_player(@pvp['arena']['team'][@pvp['players'][@player]['team']]['name'], @player, @id)
-			}
-			switch(@pvp['arena']['mode']
-			, 'koth',
-				set_pscore('seconds', @player, @pvp['arena']['score'], @id)
-			, array('tdm', 'dm'),
-				if(array_index_exists(@pvp['arena'], 'lives')) {
-					set_pscore('lives', @player, @pvp['arena']['lives'], @id)
-				}
-			)
-			
+		@pvp = import('pvp'.@id)
+		if(pmode(@player) == 'CREATIVE', set_pmode(@player, 'SURVIVAL'))
+		set_pscoreboard(@player, @id)
+		if(array_contains(array('ctf', 'tdm', 'infection'), @pvp['arena']['mode'])) {
+			team_add_player(@pvp['arena']['team'][@pvp['players'][@player]['team']]['name'], @player, @id)
+		}
+		switch(@pvp['arena']['mode']
+		, 'koth',
+			set_pscore('seconds', @player, @pvp['arena']['score'], @id)
+		, array('tdm', 'dm'),
 			if(array_index_exists(@pvp['arena'], 'lives')) {
-				@pvp['players'][@player]['lives'] = @pvp['arena']['lives']
+				set_pscore('lives', @player, @pvp['arena']['lives'], @id)
 			}
-			
-			if(array_index_exists(@pvp['arena'], 'respawntime')) {
-				@pvp['players'][@player]['respawn'] = 0
-			}
-			
+		)
+		
+		if(array_index_exists(@pvp['arena'], 'lives')) {
+			@pvp['players'][@player]['lives'] = @pvp['arena']['lives']
+		}
+		
+		if(array_index_exists(@pvp['arena'], 'respawntime')) {
+			@pvp['players'][@player]['respawn'] = 0
+		}
+		
+		queue_push(closure(
 			if(array_index_exists(@pvp, 'team')) {
 				set_ploc(@player, @pvp['arena']['spawn'][@pvp['players'][@player]['team']][@c[@pvp['players'][@player]['team']]])
 				if(@c[@pvp['players'][@player]['team']] == array_size(@pvp['arena']['spawn'][@pvp['players'][@player]['team']]) - 1, @c[@pvp['players'][@player]['team']] = 0, @c[@pvp['players'][@player]['team']]++)
@@ -822,26 +821,29 @@ proc('_pvp_initialize_players', @id, @players,
 				set_ploc(@player, @pvp['arena']['spawn'][0][@c[0]])
 				if(@c[0] == array_size(@pvp['arena']['spawn'][0]) - 1, @c[0] = 0, @c[0]++)
 			}
-			set_pbed_location(@player, @pvp['arena']['lobby'])
-
-			_clear_pinv(@player)
-			_clear_peffects(@player)
-			if(array_index_exists(@pvp['arena'], 'classes') && !array_index_exists(@pvp['players'][@player], 'class')) {
-				if(!array_index_exists(@pvp['players'][@player], 'team')) {
-					@pvp['players'][@player]['class'] = @pvp['arena']['classes'][0][0]
-				} else {
-					@pvp['players'][@player]['class'] = @pvp['arena']['classes'][@pvp['players'][@player]['team']][0]
-				}
-				_class('load', @player, @pvp['players'][@player]['class'])
-			}
-
-			_pvp_equip(@id, @player)
-			set_phunger(@player, 20)
-			set_psaturation(@player, 5)
-			set_phealth(@player, 20)
-
-			export('pvp'.@id, @pvp)
 		), @id)
+		queue_delay(50, @id) # this is to help prevent invisible players
+		
+		set_pbed_location(@player, @pvp['arena']['lobby'])
+
+		_clear_pinv(@player)
+		_clear_peffects(@player)
+		if(array_index_exists(@pvp['arena'], 'classes') && !array_index_exists(@pvp['players'][@player], 'class')) {
+			if(!array_index_exists(@pvp['players'][@player], 'team')) {
+				@pvp['players'][@player]['class'] = @pvp['arena']['classes'][0][0]
+			} else {
+				@pvp['players'][@player]['class'] = @pvp['arena']['classes'][@pvp['players'][@player]['team']][0]
+			}
+			_class('load', @player, @pvp['players'][@player]['class'])
+		}
+
+		_pvp_equip(@id, @player)
+		set_phunger(@player, 20)
+		set_psaturation(@player, 5)
+		set_phealth(@player, 20)
+
+		export('pvp'.@id, @pvp)
+
 	}
 
 )

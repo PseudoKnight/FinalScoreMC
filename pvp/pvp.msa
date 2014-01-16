@@ -32,6 +32,9 @@
 		export('pvp'.@id, @pvp)
 		if(@pvp['running'] == 'true') {
 			include('includes.library/pvp.ms')
+			if(array_index_exists(@pvp['arena'], 'classes')) {
+				include('includes.library/class.ms')			
+			}
 			_pvp_initialize_players(@id, array(player()))
 		} else if(array_index_exists(@arena, 'max') && array_size(@pvp['players']) >= @arena['max']) {
 			call_alias('/pvp start '.@id)
@@ -297,6 +300,9 @@
 		@pvp = import('pvp'.@id)
 		if(!@pvp || !@pvp['running'], die(color('red').'Not running.'))
 		include('includes.library/pvp.ms')
+		if(array_index_exists(@pvp['arena'], 'classes')) {
+			include('includes.library/class.ms')			
+		}
 		_pvp_end_match(@id, @pvp['team'][$team - 1]['players'])
 		
 	,
