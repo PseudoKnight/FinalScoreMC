@@ -3,8 +3,8 @@
 	
 		@inprogress = array()
 		
-		array_merge(@inprogress, get_scoreboards())
-		array_remove(@inprogress, 'main')
+		@inprogress = array_merge(@inprogress, get_scoreboards())
+		array_remove_values(@inprogress, 'main')
 		
 		@currentspleef = import('currentspleef')
 		if(@currentspleef != false && array_size(@currentspleef) >= 1, array_push(@inprogress, 'Spleef'))
