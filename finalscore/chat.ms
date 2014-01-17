@@ -1,3 +1,11 @@
+@ignorelist = get_value('session.ignorelist')
+if(!@ignorelist, @ignorelist = array(), clear_value('session.ignorelist'))
+export('ignorelist', @ignorelist)
+
+@conv = get_value('session.conv')
+if(!@conv, @conv = array(), clear_value('session.conv'))
+export('conv', @conv)
+
 # PMs, ignores, and mutes
 bind('player_chat', null, null, @event,
 	include('includes.library/chat.ms')

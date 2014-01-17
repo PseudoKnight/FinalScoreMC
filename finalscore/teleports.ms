@@ -1,3 +1,7 @@
+@requests = get_value('session.requests')
+if(!@requests, @requests = array(), clear_value('session.requests'))
+export('requests', @requests)
+
 # Teleport protection from falling through blocks
 bind('player_teleport', null, null, @event,
 	if(@event['to']['3'] != @event['from']['3']

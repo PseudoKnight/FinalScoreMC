@@ -1,17 +1,3 @@
-#prime variables
-@requests = get_value('session.requests')
-if(!@requests, @requests = array(), clear_value('session.requests'))
-export('requests', @requests)
-@conv = get_value('session.conv')
-if(!@conv, @conv = array(), clear_value('session.conv'))
-export('conv', @conv)
-@ignorelist = get_value('session.ignorelist')
-if(!@ignorelist, @ignorelist = array(), clear_value('session.ignorelist'))
-export('ignorelist', @ignorelist)
-@stopwatch = get_value('session.stopwatch')
-if(!@stopwatch, @stopwatch = array(), clear_value('session.stopwatch'))
-export('stopwatch', @stopwatch)
-
 set_interval(8 * 60 * 1000, closure(
 	if(player() == '~console') {
 		run('/save-all')
@@ -187,6 +173,10 @@ bind('player_interact', null, array('block': 143, 'button': 'right'), @e,
 		))
 	}
 )
+
+@stopwatch = get_value('session.stopwatch')
+if(!@stopwatch, @stopwatch = array(), clear_value('session.stopwatch'))
+export('stopwatch', @stopwatch)
 
 # Button commands
 bind('player_interact', null, array('block': 77, 'button': 'right'), @event,
