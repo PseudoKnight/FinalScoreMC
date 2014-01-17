@@ -273,6 +273,8 @@
 		} else {
 			@mode = 'SURVIVAL'
 		}
+	, 
+		die('Unknown game mode.')
 	)
 	
 	set_pmode(@player, @mode)
