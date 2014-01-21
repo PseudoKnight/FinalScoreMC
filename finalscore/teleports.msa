@@ -68,8 +68,8 @@
 	if(reg_count('\\w', $warp) < 0, die('This needs to be in alphanumeric characters.'))
 	@loc = array(round(ploc()[0], 1), ploc()[1], round(ploc()[2], 1), ploc()[3])
 	store_value('warp.'.$warp, array('loc': @loc, 'yaw': round(pfacing()[0]), 'pitch': round(pfacing()[1])))
-	if(has_value('warp.'.$id)) {
-		dm_delete_marker('warps', 'warp.'.$id)
+	if(has_value('warp.'.$warp)) {
+		dm_delete_marker('warps', 'warp.'.$warp)
 	}
 	dm_create_marker('warps', array('id': 'warp.'.$warp, 'label': 'WARP.'.to_upper($warp), 'location': @loc, 'world': @loc[3], 'icon': 'star', 'persistent': true)) # radius is workaround for a bug
 	msg('Warp created.')
