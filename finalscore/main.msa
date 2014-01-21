@@ -15,6 +15,21 @@
 	msg(color('yellow').'Right-click the horse you wish to give to '.@player.'.')
 <<<
 
+*:/top = >>>
+  if(!pisop(), die())
+  @loc = ploc()
+  @loc = get_highest_block_at(@loc)
+  @loc = array(@loc[0], @loc[1], @loc[2], @loc[3]) # let's ignore x y z for safety
+  while(@loc[1] > 0,
+    if(get_block_info(@loc)['solid']) {
+      set_ploc(array(@loc[0] + 0.5, @loc[1], @loc[2] + 0.5, @loc[3]))
+      break()
+    } else {
+      @loc[1] = @loc[1] - 1
+    }
+  )
+<<<
+
 *:/share $player $ = >>>
 	@shareables = array('horses')
 	@types = parse_args($)
@@ -163,32 +178,6 @@
 
 	)
 <<<
-
-# *:/stack = >>>
-	# if(!has_permission('group.moderators'), die('You do not have permission.'))
-	# @inv = pinv()
-	# for(@i = 0, @i < 36, @i++,
-		# if(@inv[@i] == null || @inv[@i]['qty'] >= 64, continue())
-		# for(@y = @i + 1, @y < 36, @y++,
-			# if(@inv[@y] == null, continue())
-			# if(@inv[@i]['type'] == @inv[@y]['type']
-			# && @inv[@i]['data'] == @inv[@y]['data']
-			# && @inv[@i]['enchants'] == @inv[@y]['enchants']
-			# && @inv[@i]['meta'] == @inv[@y]['meta']) {
-				# @extra = @inv[@i]['qty'] + @inv[@y]['qty'] - 64
-				# if(@extra < 1) {
-					# @inv[@i]['qty'] = @inv[@i]['qty'] + @inv[@y]['qty']
-					# @inv[@y] = null
-				# } else {
-					# @inv[@i]['qty'] = 64
-					# @inv[@y]['qty'] = @extra
-				# }
-			# }
-		# )
-	# )
-	# set_pinv(@inv)
-	# msg('Stacked!')
-# <<<
 
 #Runs the help procedure to list or display entries
 *:/help [$selection='help'] = >>>
