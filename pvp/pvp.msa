@@ -71,6 +71,15 @@
 			@pvp['arena'] = @arena
 		}
 		
+		if(array_index_exists(@pvp['arena'], 'sharedarenas')) {
+			foreach(@pvp['arena']['sharedarenas'], @arenaid) {
+				@otherpvp = import('pvp'.@arenaid)
+				if(@otherpvp && @otherpvp['running'] == 'true') {
+					die('Another PVP match is running in that region.')
+				}
+			}
+		}
+		
 		if(player() == '~console' || pworld() != 'custom', die('You can only run this in Frog Park.'))
 
 		# CHECK ARENA SETTINGS

@@ -12,41 +12,47 @@
 
 	, 'set',
 		if(!has_permission('group.builders'), die('You do not have permission.'))
+		
 		if(!$id || !$setting) {
-			die('Available settings:\n'
-			.color('c').' lobby '.color('gray').'Sets the lobby warp point (required)\n'
-			.color('c').'spawn '.color('gray').'Adds a spawn point. (required)\n'
-			.color('c').'region '.color('gray').'The combat region name. (required)\n'
-			.color('c').'parent '.color('gray').'The parent arena configuration.\n'
-			.color('r').'broadcast '.color('gray').'The region all messages are broadcasted.\n'
-			.color('r').'mode '.color('gray').'dm, tdm, ctf, infection, koth\n'
-			.color('r').'ctfflag '.color('gray').'The flag spawn location for CTF (1 is red, 2 is blue)\n'
-			.color('r').'kothregion '.color('gray').'The king of the hill region (feet position).\n'
-			.color('r').'lives '.color('gray').'Number of lives until elimination\n'
-			.color('r').'score '.color('gray').'The target score to win. (ctf: 5, koth: 60)\n'
-			.color('r').'mobprotect '.color('gray').'Team protects mob (team, type).\n'
-			.color('r').'teamratio '.color('gray').'The ratio of players for team 1 and 2.\n'
-			.color('r').'team '.color('gray').'Team info - &4Team1 &cTeam2\n'
-			.color('r').'kit '.color('gray').'Sets the respawn kits (accepts team # as value)\n'
-			.color('r').'classes '.color('gray').'Available classes [team1list team2list]\n'
-			.color('r').'captain '.color('gray').'The captain class for each team\n'
-			.color('r').'respawntime '.color('gray').'The respawn time in seconds\n'
-			.color('r').'restore '.color('gray').'A list of schematics to restore.\n'
-			.color('r').'time '.color('gray').'The starting time (0-24000)\n'
-			.color('r').'ff '.color('gray').'Sets team friendly-fire (default: true)\n'
-			.color('r').'itemspawn '.color('gray').'Set item drop. (default: 60 sec, no spawn @ start)\n'
-			.color('r').'chestspawn '.color('gray').'Set chest spawn (def: 60 sec, no spawn @ start)\n'
-			.color('r').'mobspawn '.color('gray').'Spawn mob @ loc (type qty respawnTime onStart)\n'
-			.color('r').'rsoutput '.color('gray').'The lever that turns on at start and off at end.\n'
-			.color('r').'rsoutputscore '.color('gray').'Redstone torch appears when a team scores\n'
-			.color('r').'min '.color('gray').'The minimum # of players to start a match. (default: 2)\n'
-			.color('r').'max '.color('gray').'Start the match as soon as this number of players join.\n'
-			.color('r').'effect '.color('gray').'The starting potion effect for all or team.\n'
-			.color('r').'denydrop '.color('gray').'Comma list of IDs not dropped on death or "all"\n'
-			.color('r').'flags '.color('gray').'Special game behavior modifiers\n'
-			.color('r').' MORE INFORMATION AT:\n'
+		
+			msg('Available settings:')
+			msg('lobby '.color('gray').'Sets the lobby warp point (required)')
+			msg('spawn '.color('gray').'Adds a spawn point. (required)')
+			msg('region '.color('gray').'The combat region name. (required)')
+			msg('parent '.color('gray').'The parent arena configuration.')
+			msg('sharedarenas '.color('gray').'A comma separated list of arena ids.')
+			msg('broadcast '.color('gray').'The region all messages are broadcasted.')
+			msg('mode '.color('gray').'dm, tdm, ctf, infection, koth.')
+			msg('ctfflag '.color('gray').'The flag spawn location for CTF (1 is red, 2 is blue)')
+			msg('kothregion '.color('gray').'The king of the hill region (feet position).')
+			msg('lives '.color('gray').'Number of lives until elimination')
+			msg('score '.color('gray').'The target score to win. (ctf: 5, koth: 60)')
+			msg('mobprotect '.color('gray').'Team protects mob (team, type).')
+			msg('teamratio '.color('gray').'The ratio of players for team 1 and 2.')
+			msg('team '.color('gray').'Team info - &4Team1 &cTeam2')
+			msg('kit '.color('gray').'Sets the respawn kits (accepts team # as value)')
+			msg('classes '.color('gray').'Available classes [team1list team2list]')
+			msg('captain '.color('gray').'The captain class for each team')
+			msg('respawntime '.color('gray').'The respawn time in seconds')
+			msg('restore '.color('gray').'A list of schematics to restore.')
+			msg('time '.color('gray').'The starting time')
+			msg('ff '.color('gray').'Sets team friendly-fire (default: true)')
+			msg('itemspawn '.color('gray').'Set item drop. (default: 60 sec, no spawn @ start)')
+			msg('chestspawn '.color('gray').'Set chest spawn (def: 60 sec, no spawn @ start)')
+			msg('mobspawn '.color('gray').'Spawn mob @ loc (type qty respawnTime onStart)')
+			msg('rsoutput '.color('gray').'The lever that turns on at start and off at end.')
+			msg('rsoutputscore '.color('gray').'Redstone torch appears when a team scores')
+			msg('min '.color('gray').'The minimum # of players to start a match. (default: 2)')
+			msg('max '.color('gray').'Start the match as soon as this number of players join.')
+			msg('effect '.color('gray').'The starting potion effect for all or team.')
+			msg('denydrop '.color('gray').'Comma list of IDs not dropped on death or "all"')
+			msg('flags '.color('gray').'Special game behavior modifiers')
+			
+			die('MORE INFORMATION AT:\n'
 			.' http://finalscoremc.com/arena-configuration/')
+			
 		}
+		
 		if(reg_count('^[a-z0-9]+$', $id) < 1, die('You can only use lowercase alphanumeric characters for the arena ID'))
 		@arena = get_value('arena.'.$id)
 		if(!@arena, @arena = array())
@@ -71,6 +77,10 @@
 			, 'parent',
 				@arena['parent'] = @args[0]
 				msg('Set parent arena to '.color(10).@args[0])
+				
+			, 'sharedarenas',
+				@arena['sharedarenas'] = split(',', @args[0])
+				msg('Set shared arenas to '.@arena['sharedarenas'])
 				
 			, 'spawnblock',
 				@block = get_block_at(pcursor())
@@ -160,7 +170,7 @@
 				if(@args[1]) {
 					@args[0] = split(',', @args[0])
 					@args[1] = split(',', @args[1])
-					@arena['classes'] = array(@args[0], @args[1])
+					@arena['classes'] = array(if(@args[0] == array('null'), array(), @args[0]), if(@args[1] == array('null'), array(), @args[1]))
 					msg('Set available classes (Team 1: '.color(10).@args[0].color('r').', Team 2: '.color(10).@args[1].color('r').')')
 				} else if(@args[0]) {
 					@args[0] = split(',', @args[0])
@@ -475,11 +485,11 @@
 		msg(color('gray').'PVP ARENAS: '.color('r').@list)
 
 	,
-		msg(' /arena set [id] [setting] [value(s)] '.color('gray').'Creates/overwrites settings\n'
-		.color('r').'/arena load <id> <setting> '.color('gray').'Loads kits & chestspawns\n'
-		.color('r').'/arena delete <id> [setting] '.color('gray').'Delete arenas, settings, or chests\n'
-		.color('r').'/arena rename <old-id> <new-id> '.color('gray').'Rename the arena.\n'
-		.color('r').'/arena info [id] [setting] '.color('gray').'View arenas and their settings\n'
-		.color('r').'/arena list '.color('gray').'List all arenas')
+		msg('/arena set [id] [setting] [value(s)] '.color('gray').'Creates/overwrites settings')
+		msg('/arena load <id> <setting> '.color('gray').'Loads kits & chestspawns')
+		msg('/arena delete <id> [setting] '.color('gray').'Delete arenas, settings, or chests')
+		msg('/arena rename <old-id> <new-id> '.color('gray').'Rename the arena.')
+		msg('/arena info [id] [setting] '.color('gray').'View arenas and their settings')
+		msg('/arena list '.color('gray').'List all arenas')
 	)
 <<<

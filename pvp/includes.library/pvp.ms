@@ -831,10 +831,12 @@ proc('_pvp_initialize_players', @id, @players,
 		if(array_index_exists(@pvp['arena'], 'classes') && !array_index_exists(@pvp['players'][@player], 'class')) {
 			if(!array_index_exists(@pvp['players'][@player], 'team')) {
 				@pvp['players'][@player]['class'] = @pvp['arena']['classes'][0][0]
-			} else {
+			} else if(array_size(@pvp['arena']['classes'][@pvp['players'][@player]['team']]) > 0) {
 				@pvp['players'][@player]['class'] = @pvp['arena']['classes'][@pvp['players'][@player]['team']][0]
 			}
-			_class('load', @player, @pvp['players'][@player]['class'])
+			if(array_index_exists(@pvp['players'][@player], 'class')) {
+				_class('load', @player, @pvp['players'][@player]['class'])
+			}
 		}
 
 		_pvp_equip(@id, @player)
@@ -1004,6 +1006,12 @@ proc('_pvp_end_match', @id, @winners,
 		_worldmsg('custom', color('gray').'[PVP] '.color('r').array_implode(@winners, ' and ').' wins!')
 	} else {
 		_worldmsg('custom', color('gray').'[PVP] '.color('r').'Nobody wins! Wait.. what?!')
+	}
+	
+	if(array_index_exists(@pvp['arena'], 'chestspawn')) {
+		for(@i = 0, @i < array_size(@pvp['arena']['chestspawn']), @i++,
+			if(get_block_at(@pvp['arena']['chestspawn'][@i]['loc']) == '54:0', set_block_at(@pvp['arena']['chestspawn'][@i]['loc'], '0:0'))
+		)
 	}
 
 	_remove_region_entities(@pvp['arena']['region'])
