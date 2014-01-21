@@ -50,7 +50,8 @@ bind('player_login', null, null, @e,
 
 # Player join messages and tab list colors
 bind('player_join', null, null, @event,
-	set_timeout(250, closure(@loc = ploc(),
+	set_timeout(250, closure(@loc = ploc(), @player = player(),
+		if(!ponline(@player), die())
 		#Welcome messages
 		msg(color('1').color('l').'--------------------')
 		msg(color('gold').' \u2302'.color('red').' \u2302'.color('aqua').' \u2302'.color('dark_red').' \u2302'.color('gold').color('l').' FINALSCORE '.color('yellow').color('l').'\u00AB'.color('r').' \u25AA \u25AA \u25AA')
