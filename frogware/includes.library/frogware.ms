@@ -106,6 +106,10 @@ proc('_fw_countdown', @c,
 	}
 )
 
+proc('_2d_distance', @arr1, @arr2,
+	return(floor(sqrt(((@arr2[0] - @arr1[0]) ** 2) + ((@arr2[2] - @arr1[2]) ** 2))))
+)
+
 proc('_fw_loc', @height = 0, @minrange = false, @region = sk_region_info('frogware', 'custom')[0],
 	@return = 1
 	@loc = array(
@@ -115,13 +119,13 @@ proc('_fw_loc', @height = 0, @minrange = false, @region = sk_region_info('frogwa
 		'custom'
 	)
 	if(@minrange) {
-			foreach(all_players('custom'), @p,
+		foreach(all_players('custom'), @p) {
 			if(get_pscoreboard(@p) == 'fw'
 			&& _2d_distance(ploc(@p), @loc) < 6) {
 				@return = 0
 				break()
 			}
-		)
+		}
 	}
 	if(@return == 1) {
 		return(@loc)

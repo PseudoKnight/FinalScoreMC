@@ -79,23 +79,6 @@ proc('_get_effects',
 	))
 )
 
-proc('_is_even', @x,
-	@x = @x / 2
-	if(is_integral(@x)) {
-		return(true)
-	} else {
-		return(false)
-	}
-)
-
-proc('_cooldown', @from, @length,
-	if((time() - @from) / 1000 > @length) {
-		return(true)
-	} else {
-		return(false)
-	}
-)
-
 #pgive_item replacement
 proc('_pgive_item', @player, @item,
 	for(@i = 0, @i < 36, @i++,
@@ -217,22 +200,6 @@ proc('_get_inventory_count', @loc, @item,
 		}
 	)
 	return(@count) 
-)
-
-# Populate multiple signs with an array_size larger than 4
-# proc(_populate_signs, @locarray, @textarray, assign(@offset, 0),
-  # for(@i = 0, @i < array_size(@locarray), @i++,
-    # set_sign_text(@locarray[@i], @textarray[cslice((@i * 4) + @offset, (@i * 4) + 3 + @offset)])
-  # )
-# )
-
-#Returns the distance between two blocks, or any other 3d points, for that matter
-proc('_3d_distance', @arr1, @arr2,
-	return(floor(sqrt(((@arr2[0] - @arr1[0]) ** 2) + ((@arr2[1] - @arr1[1]) ** 2) + ((@arr2[2] - @arr1[2]) ** 2))))
-)
-
-proc('_2d_distance', @arr1, @arr2,
-	return(floor(sqrt(((@arr2[0] - @arr1[0]) ** 2) + ((@arr2[2] - @arr1[2]) ** 2))))
 )
 
 proc('_horizontal_distance', @loc1, @loc2,
