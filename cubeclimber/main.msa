@@ -63,6 +63,10 @@
 			}
 			remove_scoreboard('cc')
 		}
+		if(has_bind('cube-interact')) {
+			unbind('cube-interact')
+			unbind('cube-teleport')
+		}
 		export('cubeclimber', null)
 		msg('CubeClimber reset.')
 		
