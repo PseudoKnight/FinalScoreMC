@@ -51,6 +51,10 @@
 		
 	, 'reset',
 		if(!has_permission('cubeclimber.reset'), die('You do not have permission.'))
+		@cc = import('cubeclimber')
+		if(@cc) {
+			clear_task(@cc['interval'])
+		}
 		if(array_contains(get_scoreboards(), 'cc')) {
 			foreach(all_players(), @p) {
 				if(get_pscoreboard(@p) == 'cc') {

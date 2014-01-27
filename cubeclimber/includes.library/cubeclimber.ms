@@ -226,13 +226,15 @@ proc('_cc_end', @winners, @world = @startworld,
 	foreach(array_keys(@cc['players']), @p1) {
 	
 		foreach(array_keys(@cc['players']), @p2) {
-			if(ponline(@p2)) {
+			if(ponline(@p1) && ponline(@p2)) {
 				tmsg(@p2, color('yellow').if(array_contains(@winners, @p1), color('red').color('bold')).'['.@p1.'] '
 				.color('r').get_pscore('height', @p1, 'cc'))
 			}
 		}
 		
-		set_pscoreboard(@p1)
+		if(ponline(@p1)) {
+			set_pscoreboard(@p1)
+		}
 		
 	}
 	
