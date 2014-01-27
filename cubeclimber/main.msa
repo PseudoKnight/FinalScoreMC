@@ -1,5 +1,6 @@
 # CubeClimber by PseudoKnight (inspired by the DeathCube plugin)
 # Requires by default a WorldGuard region named 'cubeclimber' and 'cubeclimber_blocks'
+# If you want to use this on your server, please edit the _cc_reward() procedure to reward players how you want.
 *:/cc [$] = call_alias('/cubeclimber' $)
 *:/cubeclimber [$action] = >>>
 	switch($action
