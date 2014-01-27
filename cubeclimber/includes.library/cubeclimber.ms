@@ -172,6 +172,9 @@ proc('_cc_start', @world = @startworld,
 					}
 					
 					if(!entity_grounded(pinfo(@p, 13))) {
+						if(phas_flight(@p)) {
+							set_pflight(@p, false)
+						}
 						continue()
 					}
 
