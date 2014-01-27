@@ -186,11 +186,6 @@ proc('_cc_start', @world = @startworld,
 						@oldheight = get_pscore('height', @p, 'cc')
 						if(@oldheight < @newheight) {
 						
-							if(@oldheight + 8 < @newheight) {
-								_cc_spawn(@p)
-								continue()
-							}
-						
 							@newheight = round(@newheight)
 							set_pscore('height', @p, @newheight, 'cc')
 							
