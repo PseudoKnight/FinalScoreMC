@@ -17,8 +17,9 @@
 	play_sound(ploc(), array('sound': 'PORTAL_TRIGGER', 'volume': 1, 'pitch': 1))
 	set_timeout(3700, closure(
 		if(!ponline(player()), die())
-		make_effect(ploc(), 'GHAST_SHOOT', 20)
+		play_sound(ploc(), array('sound': 'GHAST_FIREBALL', 'volume': 2, 'pitch': 1))
 		make_effect(ploc(), 'MOBSPAWNER_FLAMES')
+		make_effect(_relative(ploc(), 'up'), 'MOBSPAWNER_FLAMES')
 		set_ploc(player(), array(
 			@pdata['homes'][@world][0], 
 			@pdata['homes'][@world][1],
@@ -27,8 +28,9 @@
 		))
 		pfacing(@pdata['homes'][@world][3], @pdata['homes'][@world][4])
 		set_peffect(player(), 15, 1, 1)
-		make_effect(ploc(), 'GHAST_SHOOT', 20)
+		play_sound(ploc(), array('sound': 'GHAST_FIREBALL', 'volume': 2, 'pitch': 1))
 		make_effect(ploc(), 'MOBSPAWNER_FLAMES')
+		make_effect(_relative(ploc(), 'up'), 'MOBSPAWNER_FLAMES')
 	))
 <<<
 
@@ -37,9 +39,9 @@
 	@pdata = get_value('player.'.to_lower(player()))
 	if(!array_index_exists(@pdata, 'homes'), @pdata['homes'] = array())
 	array_set(@pdata['homes'], pworld(), array(
-		round(ploc()[0], 2),
+		floor(ploc()[0]) + 0.5,
 		ploc()[1],
-		round(ploc()[2], 2),
+		floor(ploc()[2]) + 0.5,
 		round(pfacing()[0], 2),
 		round(pfacing()[1], 2)
 	))
@@ -67,10 +69,10 @@
 	if(!$warp, die('You need to specify a warp name.'))
 	if(reg_count('\\w', $warp) < 0, die('This needs to be in alphanumeric characters.'))
 	@loc = array(round(ploc()[0], 1), ploc()[1], round(ploc()[2], 1), ploc()[3])
-	store_value('warp.'.$warp, array('loc': @loc, 'yaw': round(pfacing()[0]), 'pitch': round(pfacing()[1])))
 	if(has_value('warp.'.$warp)) {
 		dm_delete_marker('warps', 'warp.'.$warp)
 	}
+	store_value('warp.'.$warp, array('loc': @loc, 'yaw': round(pfacing()[0]), 'pitch': round(pfacing()[1])))
 	dm_create_marker('warps', array('id': 'warp.'.$warp, 'label': 'WARP.'.to_upper($warp), 'location': @loc, 'world': @loc[3], 'icon': 'star', 'persistent': true)) # radius is workaround for a bug
 	msg('Warp created.')
 <<<
