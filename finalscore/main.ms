@@ -405,3 +405,15 @@ bind('block_break', null, array('type': 56), @e,
 		'group.moderators')
 	))
 )
+
+# leash villagers
+bind('player_interact_entity', null, array('clicked': 'VILLAGER'), @e,
+	@slot = pinv(player(), null)
+	if(@slot && @slot['type'] == 420
+	&& get_player_from_entity_id(get_leashholder(@e['id'])) != player()) {
+		cancel()
+		set_leashholder(@e['id'], pinfo(player(), 13))
+		@slot['qty'] = @slot['qty'] - 1
+		set_pinv(array(null: @slot))
+	}
+)
