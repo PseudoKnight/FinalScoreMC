@@ -1,4 +1,12 @@
 # RECIPES
+if(!get_recipe_for(array('type': 48, 'data': 0))) {
+	add_recipe(array(
+		'type': 'SHAPELESS',
+		'result': array('type': 48, 'data': 0),
+		'ingredients': array('4', '106')
+	))
+	console('Recipe for moss stone loaded.')
+}
 if(!get_recipe_for(array('type': 98, 'data': 1))) {
 	add_recipe(array(
 		'type': 'SHAPELESS',
