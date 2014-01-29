@@ -37,6 +37,11 @@
 	))
 <<<
 
+/scoreboard remove $scoreboard = >>>
+	if(!has_permission('group.moderators'), die('You do not have permission.'))
+	remove_scoreboard($scoreboard)
+<<<
+
 *:/ban [$player] [$] = >>>
 	if(!has_permission('group.moderators'), die('You do not have permission.'))
 	if(!$player, die('Usage: /ban <player> [-t 1d-8h-10m] [message]'))
@@ -194,18 +199,6 @@
 	if(array_index_exists(@pdata, 'approval'), msg(color('gray').'Approved by: '.color('r').@pdata['approval']))
 	if(array_index_exists(@pdata, 'homes'), msg(color('gray').'Homes: '.color('r').array_implode(array_keys(@pdata['homes']), ', ')))
 	if(array_index_exists(@pdata, 'coins'), msg(color('gray').'Coins: '.color('r').@pdata['coins']))
-<<<
-
-/heal [$player] = >>>
-	if(!$player) {
-		@player = player()
-	} else {
-		if(!@player = player($player), die('Unknown player.'))
-	}
-	set_phunger(@player, 20)
-	set_psaturation(@player, 5.0)
-	set_phealth(@player, 20)
-	tmsg(@player, color('green').'Healed!')
 <<<
 
 #Database control

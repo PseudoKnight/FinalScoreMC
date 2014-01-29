@@ -376,3 +376,110 @@
 		)
 	}
 <<<
+
+*:/fill $x1 $y1 $z1 $x2 $y2 $z2 $id [$data=0] [$old='replace'] [$id2=''] = >>>
+	if(@cmdblk = get_command_block()) {
+		@cbworld = @cmdblk[3]
+		if($x1[0] == '~') {
+			if($x1 == '~') {
+				@x1 = @cmdblk['x']
+			} else {
+				@x1 = @cmdblk['x'] + substr($x1, 1)
+			}
+		} else {
+			@x1 = $x1
+		}
+		if($y1[0] == '~') {
+			if($y1 == '~') {
+				@y1 = @cmdblk['y']
+			} else {
+				@y1 = @cmdblk['y'] + substr($y1, 1)
+			}
+		} else {
+			@y1 = $y1
+		}
+		if($z1[0] == '~') {
+			if($z1 == '~') {
+				@z1 = @cmdblk['z']
+			} else {
+				@z1 = @cmdblk['z'] + substr($z1, 1)
+			}
+		} else {
+			@z1 = $z1
+		}
+		
+		if($x2[0] == '~') {
+			if($x2 == '~') {
+				@x2 = @cmdblk['x']
+			} else {
+				@x2 = @cmdblk['x'] + substr($x2, 1)
+			}
+		} else {
+			@x2 = $x2
+		}
+		if($y2[0] == '~') {
+			if($y2 == '~') {
+				@y2 = @cmdblk['y']
+			} else {
+				@y2 = @cmdblk['y'] + substr($y2, 1)
+			}
+		} else {
+			@y2 = $y2
+		}
+		if($z2[0] == '~') {
+			if($z2 == '~') {
+				@z2 = @cmdblk['z']
+			} else {
+				@z2 = @cmdblk['z'] + substr($z2, 1)
+			}
+		} else {
+			@z2 = $z2
+		}
+		
+		if(!is_numeric(@id = $id)
+		&& is_null(@id = data_values($id)), die())
+		
+		@id = split(':', @id)[0]
+		
+		switch($old
+		, 'replace',
+			proc('_set', @x, @y, @z, @blockid = @id, @world = @cbworld, @data = $data, @replace = $id2,
+				if(@replace == '' || get_block_at(@x, @y, @z, @world) == @replace) {
+					set_block_at(@x, @y, @z, @blockid.':'.@data, @world, false)
+				}
+			)
+			_iterate_cuboid(array(@x1, @y1, @z1), array(@x2, @y2, @z2), '_set')
+		, 'keep',
+			proc('_set', @x, @y, @z, @blockid = @id, @world = @cbworld, @data = $data,
+				if(get_block_at(@x, @y, @z, @world) == '0:0') {
+					set_block_at(@x, @y, @z, @blockid.':'.@data, @world, false)
+				}
+			)
+			_iterate_cuboid(array(@x1, @y1, @z1), array(@x2, @y2, @z2), '_set')
+		, 'destroy',
+			proc('_set', @x, @y, @z, @blockid = @id, @world = @cbworld, @data = $data,
+				if(get_block_at(@x, @y, @z, @world) != '0:0') {
+					make_effect(array(@x, @y, @z, @world), 'STEP_SOUND:'.@blockid)
+				}
+				set_block_at(@x, @y, @z, @blockid.':'.@data, @world, false)
+			)
+			_iterate_cuboid(array(@x1, @y1, @z1), array(@x2, @y2, @z2), '_set')
+		, die()
+		)
+	}
+<<<
+
+
+*:/heal [$player] = >>>
+	if(!has_permission('command.heal'), die('You do not have permission to do that here.'))
+	if($player && !has_permission('command.heal.others'), die('You do not have permission to heal others.'))
+	if(!$player) {
+		@player = player()
+	} else {
+		if(!@player = player($player), die('Unknown player.'))
+	}
+	set_phunger(@player, 20)
+	set_psaturation(@player, 5.0)
+	set_phealth(@player, 20)
+	tmsg(@player, color('green').'Healed!')
+<<<
