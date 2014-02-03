@@ -146,7 +146,10 @@
 	set_phealth(@player, 0)
 <<<
 
-*:/compass $target [$id] = >>>
+*:/compass [$target] [$id] = >>>
+	if(!$target) {
+		die('Usage: /compass [here|spawn|home|player [playerName]]')
+	}
 	switch($target
 	, 'spawn',
 		set_compass_target(get_spawn())
@@ -175,6 +178,10 @@
 			pworld()
 		))
 		msg('Compass is now pointing to '.if($id, $id.'\'s', 'your').' home.')
+		
+	, 'here',
+		set_compass_target(ploc())
+		msg('Compass is now pointing to this location.')
 
 	)
 <<<
