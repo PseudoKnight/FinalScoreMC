@@ -103,10 +103,15 @@ proc('_pvp_start_round', @id,
 			array_remove_values(@pvp['team'][0]['players'], player())
 			@pvp['players'][player()]['team'] = 1
 			team_add_player(@pvp['arena']['team'][1]['name'], player(), @id)
-			if(array_index_exists(@pvp['players'][player()], 'class')) {
-				_class('unload', player(), @pvp['players'][player()]['class'])
-				@pvp['players'][player()]['class'] = @pvp['arena']['classes'][1][0]
-				_class('load', player(), @pvp['players'][player()]['class'])
+			if(array_index_exists(@pvp['arena'], 'classes')) {
+				if(array_index_exists(@pvp['players'][player()], 'class')) {
+					_class('unload', player(), @pvp['players'][player()]['class'])
+					array_remove(@pvp['players'][player()], 'class')
+				}
+				if(array_size(@pvp['arena']['classes'][@pvp['players'][player()]['team']]) > 0) {
+					@pvp['players'][player()]['class'] = @pvp['arena']['classes'][1][0]
+					_class('load', player(), @pvp['players'][player()]['class'])
+				}
 			}
 		}
 		if(!array_index_exists(@pvp['arena'], 'lives') || @pvp['players'][player()]['lives'] > 0) {
@@ -792,6 +797,7 @@ proc('_pvp_initialize_players', @id, @players,
 		if(!ponline(@player), continue())
 		@pvp = import('pvp'.@id)
 		if(pmode(@player) == 'CREATIVE', set_pmode(@player, 'SURVIVAL'))
+		if(has_permission(@player, 'vanish.standard'), runas(@player, '/v off'))
 		set_pscoreboard(@player, @id)
 		if(array_contains(array('ctf', 'tdm', 'infection'), @pvp['arena']['mode'])) {
 			team_add_player(@pvp['arena']['team'][@pvp['players'][@player]['team']]['name'], @player, @id)
