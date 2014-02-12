@@ -167,14 +167,6 @@ bind('player_interact', null, array('item': 259, 'button': 'right'), @event,
 	}
 )
 
-bind('player_interact', null, array('block': 143, 'button': 'right'), @e,
-	if(@e['location'][0] == '118' && @e['location'][1] == '63' && @e['location'][2] == '345' && @e['location'][3] == 'world3') {
-		set_timeout(1500, closure(
-			run('/dial supergate outworld galaxy')
-		))
-	}
-)
-
 @stopwatch = get_value('session.stopwatch')
 if(!@stopwatch, @stopwatch = array(), clear_value('session.stopwatch'))
 export('stopwatch', @stopwatch)
