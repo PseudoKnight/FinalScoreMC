@@ -130,10 +130,14 @@
 		@world = _worldid($world)
 		if(!array_contains_ic(get_worlds(), @world), die('Failed to find a world called '.$world.'.'))
 		include('includes.library/teleports.ms')
-		_warmuptp(3.7, player(), get_spawn(@world))
+		@loc = get_spawn(@world)
+		@loc = array(@loc[0] + 0.5, @loc[1] - 1, @loc[2] + 0.5, @loc[3])
+		_warmuptp(3.7, player(), @loc)
 	} else {
 		include('includes.library/teleports.ms')
-		_warmuptp(3.7, player(), get_spawn())
+		@loc = get_spawn()
+		@loc = array(@loc[0] + 0.5, @loc[1] - 1, @loc[2] + 0.5, @loc[3])
+		_warmuptp(3.7, player(), @loc)
 	}
 <<<
 
