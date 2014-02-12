@@ -306,15 +306,13 @@
 <<<
 
 *:/velocity $player $x $y $z [$double] = >>>
-	if(get_command_block() || has_permission('command.velocity')) {
-		try(@player = player($player), @ex, die('Who is that? Are they online?'))
-		set_timeout(50, closure(
-			set_pvelocity(@player, $x, $y, $z)
-			make_effect(ploc(@player), 'MOBSPAWNER_FLAMES')
-			make_effect(ploc(@player), 'BLAZE_SHOOT', 24)
-			if($double, set_timeout($double, closure( set_pvelocity(@player, $x, $y, $z))))
-		))
-	}
+	if(!get_command_block() && has_permission('command.velocity')) { die() }
+	queue_push(closure(
+		set_pvelocity($player, $x, $y, $z)
+		make_effect(ploc($player), 'MOBSPAWNER_FLAMES')
+		play_sound(ploc($player), array('sound': 'GHAST_FIREBALL', 'volume': 2))
+		if($double, set_timeout($double, closure( set_pvelocity($player, $x, $y, $z))))
+	))
 <<<
 
 *:/playsound $sound [$pitch=1] [$volume=1] = >>>
