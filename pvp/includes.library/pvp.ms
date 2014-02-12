@@ -797,7 +797,7 @@ proc('_pvp_initialize_players', @id, @players,
 		if(!ponline(@player), continue())
 		@pvp = import('pvp'.@id)
 		if(pmode(@player) == 'CREATIVE', set_pmode(@player, 'SURVIVAL'))
-		if(has_permission(@player, 'vanish.standard'), runas(@player, '/v off'))
+		if(has_permission(@player, 'vanish.standard'), scriptas(@player, run('/v off')))
 		set_pscoreboard(@player, @id)
 		if(array_contains(array('ctf', 'tdm', 'infection'), @pvp['arena']['mode'])) {
 			team_add_player(@pvp['arena']['team'][@pvp['players'][@player]['team']]['name'], @player, @id)
