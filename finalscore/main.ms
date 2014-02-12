@@ -150,7 +150,8 @@ bind('player_interact', null, array('block': 118, 'button': 'right'), @event,
 # Block lighters
 bind('player_interact', null, array('item': 259, 'button': 'right'), @event,
 	if(has_permission('group.regulars'), die())
-	try(@loc = @event['location'], die())
+	if(!array_index_exists(@event, 'location'), die())
+	@loc = @event['location']
 	if(get_block_at(@loc) == '46:0') {
 		die()
 	} else if(get_block_at(@loc) == '49:0' && @event['facing'] == 'up') {
