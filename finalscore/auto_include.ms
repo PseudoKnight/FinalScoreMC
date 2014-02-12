@@ -174,18 +174,21 @@ proc('_worldid', @world,
 
 #Messsages every player within the specified region
 proc('_regionmsg', @region, @msg,
-	foreach(all_players(), @player,
-		if(array_contains(sk_current_regions(@player), @region)) {
+	foreach(all_players(), @player) {
+		if(ponline(@player)
+		&& array_contains(sk_current_regions(@player), @region)) {
 			tmsg(@player, @msg)
 		}
-	)
+	}
 )
 
 #Messsages every player within the specified world
 proc('_worldmsg', @world, @msg,
-	foreach(all_players(@world), @player,
-		tmsg(@player, @msg)
-	)
+	foreach(all_players(@world), @player) {
+		if(ponline(@player)) {
+			tmsg(@player, @msg)
+		}
+	}
 )
 
 #get qty of specific item in chest
