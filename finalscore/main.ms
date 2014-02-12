@@ -417,3 +417,10 @@ bind('player_interact_entity', null, array('clicked': 'VILLAGER'), @e,
 		set_pinv(array(null: @slot))
 	}
 )
+
+bind('entity_enter_portal', null, null, @e,
+	if(@e['type'] != 'PLAYER'
+	&& (@e['location']['world'] == 'custom'	|| @e['location']['world'] == 'dev')) {
+		entity_remove(@e['id'])
+	}
+)
