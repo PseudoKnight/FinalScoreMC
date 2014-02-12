@@ -303,7 +303,8 @@ bind('player_interact_entity', null, array('clicked': 'HORSE'), @e,
 		|| (pinv(player(), null)['type'] != 322
 		&& pinv(player(), null)['type'] != 396))) {
 			@pdata = get_value('player.'.to_lower(get_mob_owner(@e['id'])))
-			if(!array_index_exists(@pdata, 'shared')
+			if(!@pdata
+			|| !array_index_exists(@pdata, 'shared')
 			|| !array_index_exists(@pdata['shared'], player())
 			|| !array_contains(@pdata['shared'][player()], 'horses')) {
 				cancel()
