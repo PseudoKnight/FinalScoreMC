@@ -27,8 +27,8 @@
 	@conv = import('ignorelist')
 	if(is_array(@ignorelist), store_value('session.ignorelist', @ignorelist))
 	
-	@trials = import('timetrials')
-	if(is_array(@trials), store_value('session.timetrials', @trials))
+	@timers = import('timers')
+	if(is_array(@timers), store_value('session.timers', @timers))
 	
 	run('/save-all')
 	set_timeout(2000, closure(
