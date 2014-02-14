@@ -139,12 +139,17 @@
 *:/runas $player $ = >>>
 	if(!get_command_block() && !has_permission('group.administrators'), die('You do not have permission for this command'))
 	try(@player = player($player), die('No player found.'))
-	tmsg(@player, color('a'), player(), ' ran this command for you:')
-	tmsg(@player, color('6'), $)
-	console('"'.$.'" was run on '.@player)
+	if(substr($, 0, 2) == '-s') {
+		@cmd = substr($, 3)
+	} else {
+		@cmd = $
+		tmsg(@player, color('a'), player(), ' ran this command for you:')
+		tmsg(@player, color('6'), @cmd)
+	}
+	console('"'.@cmd.'" was run on '.@player)
 	scriptas(@player, 
-		if(!call_alias($)) {
-			sudo($)
+		if(!call_alias(@cmd)) {
+			sudo(@cmd)
 		}
 	)
 <<<
