@@ -168,10 +168,6 @@ bind('player_interact', null, array('item': 259, 'button': 'right'), @event,
 	}
 )
 
-@stopwatch = get_value('session.stopwatch')
-if(!@stopwatch, @stopwatch = array(), clear_value('session.stopwatch'))
-export('stopwatch', @stopwatch)
-
 # Button commands
 bind('player_interact', null, array('block': 77, 'button': 'right'), @event,
 	@sign = _relative(@event['location'], 'up')
@@ -179,23 +175,6 @@ bind('player_interact', null, array('block': 77, 'button': 'right'), @event,
 		@signtext = get_sign_text(@sign)
 		if(@type = reg_match('\u00A7[0-9a-f]{1}\\[(.+)\\]', @signtext[1])) {
 			switch(@type[1]
-			, 'STOPWATCH',
-				switch(@signtext[2],
-				'Start',
-					@stopwatch = import('stopwatch')
-					if(!@stopwatch, @stopwatch = associative_array())
-					@stopwatch[player()] = time()
-					export('stopwatch', @stopwatch)
-					msg(color('a').'[STOPWATCH] '.color('white').'GO!'),
-				'Stop',
-					@stopwatch = import('stopwatch')
-					if(!array_index_exists(@stopwatch, player()), die('Did you start the stopwatch?'))
-					@time = round(divide(subtract(time(), @stopwatch[player()]), 1000), 1)
-					msg(color('a').'[STOPWATCH] '.color('white').'Time: '.@time.' seconds.')
-					console(player().' got a time of '.@time.' at '.sk_current_regions())
-					array_remove(@stopwatch, player())
-					export('stopwatch', @stopwatch)
-				),
 			, 'CONNECT4',
 				switch(@signtext[2],
 				'Reset',

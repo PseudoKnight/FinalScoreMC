@@ -1,0 +1,53 @@
+*:/times [$arg='usage'] [$id] = >>>
+	if(!(@id = $id)) {
+		@id = sk_current_regions()[-1]
+	}
+	
+	switch($arg
+	, 'usage',
+	
+		msg('Usage: /times <top|me> [id]')
+		
+	, array('top', 'top10', 'best', 'all'),
+		
+		@toptimes = get_value('times', @id)
+		if(!@toptimes) { 
+			die('No top times for '.to_upper(@id).'.')
+		}
+		msg(color('yellow').color('bold').'=== TOP TIMES - '.to_upper(@id).' ===')
+		foreach(@time in @toptimes) {
+			msg(color('green').'[ '.@time[1].' ] '.color('r').@time[0])
+		}
+		
+	, 'me',
+	
+		@time = get_value('times.'.@id, player())
+		if(!@time) {
+			die('You do not have a time for '.to_upper(@id).'.')
+		}
+		msg('Your best time for '.color('gold').to_upper(@id).color('r').' is '.color('green').@time.' seconds.')
+		
+	, 'reset',
+		if(!has_permission('command.resettimes')) {
+			die('You do not have permission to reset stats for this course.')
+		}
+		if(has_value('times', @id)) {
+			@times = get_values('times', @id)
+			foreach(@key: @time in @times) {
+				clear_value(@key)
+			}
+			msg('Reset stats for '.to_upper(@id).'.')
+		} else {
+			msg('There are no stats to reset for '.to_upper(@id).'.')
+		}
+	
+	, 
+	
+		@time = get_value('times.'.@id, $arg)
+		if(!@time) {
+			die('No time for '.$arg.' on '.@id.'.')
+		}
+		msg(color('yellow').$arg.'\'s best time for '.color('gold').to_upper(@id).color('r').' is '.color('green').@time.' seconds.')
+		
+	)
+<<<
