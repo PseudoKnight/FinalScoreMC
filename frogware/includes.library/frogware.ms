@@ -13,15 +13,16 @@ proc('_fw_endgame', @winners,
 	unbind('fwdamage')
 	_fw_msg('Best frog'.if(array_size(@winners) > 1, 's').' in the house: '.array_implode(@winners, ' & '))
 	@warp = get_value('warp.frogpark')
-	foreach(all_players('custom'), @p,
-		if(_fw_player(@p)) {
-			set_ploc(@p, @warp['loc'])
-		}
-	)
 	foreach(@winners, @p,
 		@coins = _fw_totalplayers()
 		_acc_add(@p, @coins)
 		tmsg(@p, color('6').'+'.@coins.' coins')
+	)
+	foreach(all_players('custom'), @p,
+		if(_fw_player(@p)) {
+			set_pscoreboard(@p)
+			set_ploc(@p, @warp['loc'])
+		}
 	)
 	if(array_contains(get_scoreboards(), 'fw')) { remove_scoreboard('fw') }
 )
