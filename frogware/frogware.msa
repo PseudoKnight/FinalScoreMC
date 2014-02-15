@@ -34,20 +34,25 @@
 		if(get_pscoreboard(player()) != 'fw', die('You haven\'t joined first.'))
 		if(!is_numeric($pts), die('You must specify the point goal as a number. eg. /frogware start 25'))
 		include('includes.library/frogware.ms')
-		foreach(all_players('custom'), @p,
+		foreach(all_players('custom'), @p) {
 			if(_fw_player(@p)) {
 				set_phunger(@p, 20)
 				set_psaturation(@p, 5)
 				set_phealth(@p, 20)
 				_clear_pinv(@p)
 			}
-		)
+		}
 		_fw_startgame($pts)
 	
 	, 'forcestop',
 		queue_clear('fw')
 		queue_clear('fw2')
 		queue_clear('fw3')
+		foreach(all_players('custom'), @p) {
+			if(get_pscoreboard(@p) == 'fw') {
+				set_pscoreboard(@p)
+			}
+		}
 		remove_scoreboard('fw')
 		unbind('fwdamage')
 	
