@@ -20,14 +20,18 @@ proc('_relative', @loc, @dir, @amount = 1,
 
 proc('_clear_pinv', @player,
 	if(is_null(@player)) {
-		@eid = pinfo(player(), 13)
-	} else {
-		@eid = pinfo(@player, 13)
+		@player = player()
 	}
-	
-	for(@i = 0, @i < 40, @i++) {
-		set_inventory_item(@eid, @i, null)
+	if(pworld(@player) != 'custom') {
+		console(@player.'\'s inventory: '.pinv(@player))
 	}
+	set_pinv(@player, array(
+		null, null, null, null, null, null, null, null, null,
+		null, null, null, null, null, null, null, null, null,
+		null, null, null, null, null, null, null, null, null,
+		null, null, null, null, null, null, null, null, null,
+		100: null, 101: null, 102: null, 103: null
+	))
 )
 
 proc('_acc_add', @player, @amount,
