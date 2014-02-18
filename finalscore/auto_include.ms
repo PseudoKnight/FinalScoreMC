@@ -19,11 +19,11 @@ proc('_relative', @loc, @dir, @amount = 1,
 )
 
 proc('_clear_pinv', @player,
-	if(is_null(@player)) {
+	if(!@player) {
 		@player = player()
 	}
 	if(pworld(@player) != 'custom') {
-		console(@player.'\'s inventory: '.pinv(@player))
+		return()
 	}
 	set_pinv(@player, array(
 		null, null, null, null, null, null, null, null, null,
