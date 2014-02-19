@@ -13,7 +13,7 @@ bind('player_login', null, null, @e,
 	if(!@pdata) {
 		@pdata = array('ips': array())
 	}
-	if(array_index_exists(@pdata, 'ban'),
+	if(array_index_exists(@pdata, 'ban')) {
 		if(!array_index_exists(@pdata['ban'], 'time') || @pdata['ban']['time'] > time()) {
 			modify_event('result', 'KICK_BANNED')
 			if(array_index_exists(@pdata['ban'], 'message')) {
@@ -27,7 +27,7 @@ bind('player_login', null, null, @e,
 			console('Ban on '.@e['player'].' expired.')
 			@update = true
 		}
-	)
+	}
 	if(get_server_info(10)) {
 		if(!array_index_exists(@pdata, 'ips'), @pdata['ips'] = array())
 		if(!array_contains(@pdata['ips'], @e['ip'])) {
@@ -45,7 +45,9 @@ bind('player_login', null, null, @e,
 			modify_event('kickmsg', 'Minecraft auth servers are down and your IP doesn\'t match our records.')
 		}
 	}
-	if(@update, store_value('player.'.to_lower(@e['player']), @pdata))
+	if(@update) {
+		store_value('player.'.to_lower(@e['player']), @pdata)
+	}
 )
 
 # Player join messages and tab list colors
@@ -70,9 +72,9 @@ bind('player_join', null, null, @event,
 		# homeless players are players left on deleted worlds
 		@pdata = get_value('player.'.to_lower(player()))
 		if(array_index_exists(@pdata, 'mail')) {
-			foreach(@pdata['mail'], @mail,
+			foreach(@mail in @pdata['mail']) {
 				msg(color('gray').@mail[0].' (From '.@mail[1].'): '.color('r').@mail[2])
-			)
+			}
 			array_remove(@pdata, 'mail')
 			store_value('player.'.to_lower(player()), @pdata)
 		}
@@ -98,11 +100,11 @@ bind('player_join', null, null, @event,
 bind('player_death', null, null, @event,
 	if(!array_contains(array('custom', 'dev'), pworld())) {
 		@log = @event['player'].' died @ '.round(@event['location'][0]).','.round(@event['location'][1]).','.round(@event['location'][2]).' on '.@event['location'][3].', dropping '.@event['xp'].'xp and '
-		foreach(@event['drops'], @drop,
+		foreach(@drop in @event['drops']) {
 			if(is_array(@drop)) {
 				@log .= if(@drop['qty'] > 1, @drop['qty']).' '.data_name(@drop['type']).if(@drop['data'] > 0, ':'.@drop['data']).' '.if(array_size(@drop['enchants']) > 0, 'with '.@drop['enchants']. 'enchants').' - '
 			}
-		)
+		}
 		console(@log, false)
 		msg('You died @ ', round(@event['location'][0]), ',', round(@event['location'][1]), ',', round(@event['location'][2]))
 	} else {
@@ -130,7 +132,7 @@ bind('block_place', null, array('type': 144), @e,
 
 # Infinite Cauldrons
 bind('player_interact', null, array('block': 118, 'button': 'right'), @event,
-	if(equals(@event['block'], '118:3'),
+	if(equals(@event['block'], '118:3')) {
 		switch(@event['item'],
 		'325:0',
 			@bucket = pinv(player(), null)
@@ -144,7 +146,7 @@ bind('player_interact', null, array('block': 118, 'button': 'right'), @event,
 		'374:0',
 			set_timeout(100, closure(assign(@location, @event['location']), set_block_at(@location, '118:3')))
 		)
-	)
+	}
 )
 
 # Block lighters
@@ -262,13 +264,13 @@ bind('entity_explode', null, null, @e,
 
 # DISPENER PARKING
 bind('vehicle_collide', null, array('type': 'MINECART', 'collisiontype': 'BLOCK', 'hittype': 23), @e,
-	for(@i = 0, @i < get_inventory_size(@e['block']), @i++,
+	for(@i = 0, @i < get_inventory_size(@e['block']), @i++) {
 		if(is_null(get_inventory_item(@e['block'], @i))) {
 			set_inventory_item(@e['block'], @i, array('type': 328, 'qty': 1))
 			entity_remove(@e['id'])
 			break()
 		}
-	)
+	}
 )
 
 # prevent non-owners from riding a horse, unless shared
