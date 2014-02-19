@@ -278,7 +278,17 @@ bind('player_interact_entity', null, array('clicked': 'HORSE'), @e,
 	if(pworld() == 'custom' || pworld() == 'dev', die())
 	if(get_mob_owner(@e['id'])
 	&& get_mob_owner(@e['id']) != player()) {
-		msg('This horse is owned by '.get_mob_owner(@e['id']).'.')
+		@yVelocity = round(entity_spec(@e['id'])['jump'], 2)
+		@jump = 0
+		while(@yVelocity > 0) {
+			@jump += @yVelocity
+			@yVelocity -= 0.08
+			@yVelocity *= 0.98
+		}
+		@jump = round(@jump, 1)
+		@health = round(get_max_health(@e['id']) / 2, 1)
+		msg('This horse is owned by '.get_mob_owner(@e['id']).' '
+		.color('red').@health.' \u2764'.color('r').' '.color('yellow').@jump.' \u279A')
 		if(!has_permission('group.moderators')
 		&& (!pinv(player(), null)
 		|| (pinv(player(), null)['type'] != 322
