@@ -536,7 +536,7 @@ proc('_fw_task', @task, @state, @secs,
 			)
 			bind('entity_death', array('id': 'fwcluck'), array('type': @mob), @e, @mob = @mob,
 				if(array_index_exists(@e['cause'], 'shooter')
-				&& !is_numeric(@e['cause']['shooter']) 
+				&& ponline(@e['cause']['shooter'])
 				&& _fw_player(@e['cause']['shooter'])) {
 					modify_event('xp', 0)
 					if(@e['type'] == 'BAT') {
