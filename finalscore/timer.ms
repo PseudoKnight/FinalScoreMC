@@ -26,14 +26,17 @@ register_command('timer', array(
 				
 				@timers[@player] = array(@id, time())
 				@ptime = get_value('times.'.@id, @player)
-				if(!@ptime) { 
+				if(is_null(@ptime)) { 
 					@ptime = 0
 				} else {
 					@ptime = ceil(@ptime)
 				}
 				
 				set_plevel(@player, 0)
+				set_pexp(@player, 0)
 				play_sound(ploc(@player), array('sound': 'FIREWORK_BLAST'), @player)
+				
+				@level = array(0)
 				
 				@timers[@player][2] = set_interval(1000, closure(
 					if(!ponline(@player) 
@@ -44,14 +47,20 @@ register_command('timer', array(
 						clear_task()
 						if(ponline(@player) && pworld(@player) == 'custom') {
 							set_plevel(@player, 0)
+							set_pexp(@player, 0)
 						}
 					} else {
-						@level = plevel(@player)
-						@level++
-						set_plevel(@player, @level)
-						if(@level + 5 > @ptime && @level < @ptime) {
+						@level[0] += 1
+						set_plevel(@player, @level[0])
+						
+						if(@level[0] <= @ptime) {
+							@percent = round((@level[0] / @ptime) * 100)
+							set_pexp(@player, @percent)
+						}
+
+						if(@level[0] + 5 > @ptime && @level[0] < @ptime) {
 							play_sound(ploc(@player), array('sound': 'CLICK', 'pitch': 2), @player)
-						} else if(@level == @ptime) {
+						} else if(@level[0] == @ptime) {
 							play_sound(ploc(@player), array('sound': 'VILLAGER_NO'), @player)
 						}
 					}
