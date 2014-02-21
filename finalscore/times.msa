@@ -3,23 +3,24 @@
 		@id = sk_current_regions()[-1]
 	}
 	
-	switch($arg
-	, 'usage',
+	switch($arg) {
+	case 'usage':
 	
-		msg('Usage: /times <top|me> [id]')
+		msg('Usage: /times <top|me> [courseID]')
 		
-	, array('top', 'top10', 'best', 'all'),
+	case 'top':
+	case 'top10':
 		
-		@toptimes = get_value('times', @id)
-		if(!@toptimes) { 
+		@times = get_value('times', @id)
+		if(!@times || !array_index_exists(@times, 'top')) { 
 			die('No top times for '.to_upper(@id).'.')
 		}
 		msg(color('yellow').color('bold').'=== TOP TIMES - '.to_upper(@id).' ===')
-		foreach(@time in @toptimes) {
+		foreach(@time in @times['top']) {
 			msg(color('green').'[ '.@time[1].' ] '.color('r').@time[0])
 		}
 		
-	, 'me',
+	case 'me':
 	
 		@time = get_value('times.'.@id, player())
 		if(!@time) {
@@ -27,7 +28,8 @@
 		}
 		msg('Your best time for '.color('gold').to_upper(@id).color('r').' is '.color('green').@time.' seconds.')
 		
-	, 'reset',
+	case 'reset':
+	
 		if(!has_permission('command.resettimes')) {
 			die('You do not have permission to reset stats for this course.')
 		}
@@ -41,7 +43,7 @@
 			msg('There are no stats to reset for '.to_upper(@id).'.')
 		}
 	
-	, 
+	default: 
 	
 		@time = get_value('times.'.@id, $arg)
 		if(!@time) {
@@ -49,5 +51,5 @@
 		}
 		msg(color('yellow').$arg.'\'s best time for '.color('gold').to_upper(@id).color('r').' is '.color('green').@time.' seconds.')
 		
-	)
+	}
 <<<

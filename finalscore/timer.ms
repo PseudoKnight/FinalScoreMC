@@ -93,21 +93,21 @@ register_command('timer', array(
 						store_value('times.'.@id, @player, @time)
 						
 						# TOP TIMES
-						@toptimes = get_value('times', @id)
-						if(!@toptimes) {
-							@toptimes = array(array(@player, @time))
-							store_value('times', @id, @toptimes)					
+						@times = get_value('times', @id)
+						if(!@times) {
+							@times = array('top': array(array(@player, @time)))
+							store_value('times', @id, @times)					
 						} else {
 							@top = false
 							for(@i = 0, @i < 10, @i++) {
 								if(!@top) {
-									if(!array_index_exists(@toptimes, @i) || @time < @toptimes[@i][1]) {
-										array_insert(@toptimes, array(@player, @time), @i)
+									if(!array_index_exists(@times['top'], @i) || @time < @times['top'][@i][1]) {
+										array_insert(@times['top'], array(@player, @time), @i)
 										@top = true
 									}
 								} else {
-									if(array_index_exists(@toptimes, @i) && @toptimes[@i][0] == @player) {
-										array_remove(@toptimes, @i)
+									if(array_index_exists(@times['top'], @i) && @times['top'][@i][0] == @player) {
+										array_remove(@times['top'], @i)
 									}
 								}
 							}
@@ -121,10 +121,10 @@ register_command('timer', array(
 									'fade': array(array(rand(256), rand(256), rand(256))),
 									'type': 'BALL_LARGE',
 								))
-								if(array_size(@toptimes) > 10) {
-									array_remove(@toptimes, 10)
+								if(array_size(@times['top']) > 10) {
+									array_remove(@times['top'], 10)
 								}
-								store_value('times', @id, @toptimes)
+								store_value('times', @id, @times)
 							} else {
 								launch_firework(@loc, array(
 									'strength': 0,
