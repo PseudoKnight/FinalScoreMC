@@ -287,7 +287,7 @@
 	if(!array_index_exists(@flag, 1) || @flag[1] == 'allow') { 
 		sudo('/rg flag '.$region.' deny-spawn')
 	} else if(@flag[1] == 'deny') {
-		sudo('/rg flag '.$region.' deny-spawn CREEPER,ENDERMAN,SKELETON,SPIDER,ZOMBIE,SLIME') 
+		sudo('/rg flag '.$region.' deny-spawn CREEPER,ENDERMAN,SKELETON,SPIDER,ZOMBIE,SLIME,WITCH') 
 	}
 <<<
 
