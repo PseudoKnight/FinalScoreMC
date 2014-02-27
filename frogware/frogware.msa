@@ -33,6 +33,9 @@
 	, 'start',
 		if(get_pscoreboard(player()) != 'fw', die('You haven\'t joined first.'))
 		if(!is_numeric($pts), die('You must specify the point goal as a number. eg. /frogware start 25'))
+		if(queue_running('fw') || queue_running('fw2')) {
+			die('Already running.')
+		}
 		include('includes.library/frogware.ms')
 		foreach(all_players('custom'), @p) {
 			if(_fw_player(@p)) {
