@@ -306,6 +306,11 @@ bind('player_interact_entity', null, array('clicked': 'HORSE'), @e,
 
 # don't allow most horse damage unless being rode
 bind('entity_damage', null, array('type': 'HORSE'), @e,
+	if(get_mob_age(@e['id']) < -24000) {
+		cancel()
+		die()
+	}
+	
 	if(!get_mob_owner(@e['id']), die())
 	switch(@e['cause']
 	, array('VOID', 'SUFFOCATION', 'DROWNING'),
