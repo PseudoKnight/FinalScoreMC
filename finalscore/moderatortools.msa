@@ -37,9 +37,63 @@
 	))
 <<<
 
+/butcher [$] = >>>
+	msg('Use /remove [radius] [entityType]')
+	msg('This will preserve named mobs, except when given the -n flag.')
+	msg('entityType groups: living, hostile')
+<<<
+
+/remove [$] = >>>
+	if(!$) {
+		msg('Usage: /remove [radius] [entityType] [-n]')
+		msg('This will preserve named mobs, except when given the -n flag.')
+		msg('entityType groups: living, hostile')
+	}
+	@removenamed = false
+	@type = array(WITHER, BAT, WITCH, CREEPER, SKELETON, SPIDER, GIANT, ZOMBIE, SLIME, GHAST, PIG_ZOMBIE, ENDERMAN, CAVE_SPIDER, SILVERFISH, BLAZE, MAGMA_CUBE, ENDER_DRAGON, PIG, SHEEP, COW, CHICKEN, SQUID, WOLF, MUSHROOM_COW, SNOWMAN, OCELOT, IRON_GOLEM, VILLAGER, HORSE)
+	@radius = 64
+	
+	foreach(@arg in parse_args($)) {
+		if(is_numeric(@arg)) {
+			@radius = min(@arg, 128)
+		} else if(@arg == '-n') {
+			@removenamed = true
+		} else {
+			switch(@arg) {
+				case 'living':
+					continue()
+				case 'hostile':
+					@type = array(WITHER, WITCH, CREEPER, SKELETON, SPIDER, GIANT, ZOMBIE, SLIME, GHAST, PIG_ZOMBIE, ENDERMAN, CAVE_SPIDER, SILVERFISH, BLAZE, MAGMA_CUBE, ENDER_DRAGON)
+				default:
+					@type = @arg
+			}
+		}
+	}
+	@entities = entities_in_radius(ploc(), @radius, @type)
+	@count = 0
+	foreach(@e in @entities) {
+		if(@removenamed || !is_entity_living(@e) || !get_mob_name(@e)) {
+			entity_remove(@e)
+			@count++
+		}
+	}
+	msg('Removed '.@count.' of '.array_size(@entities).' in a '.@radius.' radius.')
+<<<
+
 /scoreboard remove $scoreboard = >>>
-	if(!has_permission('group.moderators'), die('You do not have permission.'))
 	remove_scoreboard($scoreboard)
+<<<
+
+/cleandb = >>>
+	@players = get_values('player')
+	@count = 0
+	foreach(@key: @pdata in @players) {
+		if(array_size(@pdata) == 1 && array_index_exists(@pdata, 'ips')) {
+			clear_value(@key)
+			@count++
+		}
+	}
+	msg('Removed '.@count.' keys.')
 <<<
 
 *:/ban [$player] [$] = >>>
