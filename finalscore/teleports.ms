@@ -5,16 +5,16 @@ export('requests', @requests)
 # Teleport protection from falling through blocks
 bind('player_teleport', null, null, @event,
 	if(_horizontal_distance(@event['to'], @event['from']) > 96) { # 7+ chunk view distance
-		set_timeout(50, closure(
-			refresh_chunk(@event['to'][3], @event['to'])
-			set_ploc(array(@event['to'][0], @event['to'][1] - 1, @event['to'][2], @event['to'][3]))
-			set_timeout(950, closure(
-				if((@event['to'][1] - 1) > ploc()[1]) {
-					set_ploc(array(@event['to'][0], @event['to'][1] - 1, @event['to'][2], @event['to'][3]))
+		@loc = _relative(@event['to'], 'down')
+		@block = get_block_at(@loc)
+		if(@block != '0:0') {
+			set_timeout(1000, closure(
+				if(ploc()[1] < @loc[1]) {
+					set_ploc(@loc)
 					console('Adjusted '.player().'\'s location after teleport.')
 				}
 			))
-		))
+		}
 	}
 )
 
