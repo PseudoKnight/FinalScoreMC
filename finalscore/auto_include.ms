@@ -1,22 +1,59 @@
-proc('_relative', @loc, @dir, @amount = 1,
-	switch(@dir
-	, 'up',
-		return(array(@loc[0], @loc[1] + @amount, @loc[2], @loc[3]))
-	, 'down',
-		return(array(@loc[0], @loc[1] - @amount, @loc[2], @loc[3]))
-	, 'north',
-		return(array(@loc[0], @loc[1], @loc[2] - @amount, @loc[3]))
-	, 'south',
-		return(array(@loc[0], @loc[1], @loc[2] + @amount, @loc[3]))
-	, 'east',
-		return(array(@loc[0] + @amount, @loc[1], @loc[2], @loc[3]))
-	, 'west',
-		return(array(@loc[0] - @amount, @loc[1], @loc[2], @loc[3]))
-	, 
-		console('Cannot get relative block '.@dir.' from '.@loc.'.')
-		return(false)
-	)
-)
+proc('_relative', @loc, @dir, @amount = 1) {
+	switch(@dir) {
+	case 'up':
+		if(array_index_exists(@loc, 'y')) {
+			@loc['y'] += @amount
+		}
+		@loc[1] += @amount
+		
+	case 'down':
+		if(array_index_exists(@loc, 'y')) {
+			@loc['y'] -= @amount
+		}
+		@loc[1] -= @amount
+		
+	case 'north':
+		if(array_index_exists(@loc, 'z')) {
+			@loc['z'] -= @amount
+		}
+		@loc[2] -= @amount
+		
+	case 'south':
+		if(array_index_exists(@loc, 'z')) {
+			@loc['z'] += @amount
+		}
+		@loc[2] += @amount
+		
+	case 'east':
+		if(array_index_exists(@loc, 'x')) {
+			@loc['x'] += @amount
+		}
+		@loc[0] += @amount
+		
+	case 'west':
+		if(array_index_exists(@loc, 'x')) {
+			@loc['x'] -= @amount
+		}
+		@loc[0] -= @amount
+		
+	}
+	return(@loc)
+}
+
+proc('_hologram', @loc, @lines) {
+	@loc['y'] += 55
+	
+	for(@i = array_size(@lines) - 1, @i >= 0, @i--) {
+		@skull = spawn_entity('WITHER_SKULL', 1, @loc)[0]
+		@horse = spawn_mob('HORSE', 1, @loc)[0]
+		set_entity_rider(@skull, @horse)
+		set_entity_spec(@skull, array('direction': array(0, 0, 0)))
+		set_mob_age(@horse, -1700000, true)
+		set_name_visible(@horse, true)
+		set_mob_name(@horse, @lines[@i])
+		@loc['y'] += 0.28
+	}
+}
 
 proc('_clear_pinv', @player,
 	if(!@player) {
