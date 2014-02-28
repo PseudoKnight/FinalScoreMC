@@ -45,6 +45,7 @@ register_command('timer', array(
 						array_remove(@timers, @player)
 						export('timer', @timers)
 						clear_task()
+						unbind(@player.'timerbreak')
 						if(ponline(@player) && pworld(@player) == 'custom') {
 							set_plevel(@player, 0)
 							set_pexp(@player, 0)
@@ -65,6 +66,17 @@ register_command('timer', array(
 						}
 					}
 				))
+				
+				if(!has_bind(@player.'timerbreak')) {
+					bind('block_break', array('id': @player.'timerbreak'), array('player': @player), @e, @player = @player) {
+						play_sound(ploc(@player), array('sound': 'VILLAGER_NO'), @player)
+						@timers = import('timer')
+						clear_task(@timers[@player][2])
+						array_remove(@timers, @player)
+						export('timer', @timers)
+						unbind()
+					}
+				}
 				
 				export('timer', @timers)
 			
