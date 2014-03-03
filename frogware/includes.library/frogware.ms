@@ -153,7 +153,8 @@ proc('_fw_mobs',
 )
 
 proc('_fw_player', @player,
-	if(pworld(@player) == 'custom'
+	if(ponline(@player)
+	&& pworld(@player) == 'custom'
 	&& get_pscoreboard(@player) == 'fw') {
 		return(true)
 	} else {
