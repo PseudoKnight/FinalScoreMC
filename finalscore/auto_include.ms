@@ -1,4 +1,5 @@
-proc('_relative', @loc, @dir, @amount = 1) {
+proc('_relative', @originloc, @dir, @amount = 1) {
+	@loc = @originloc[]
 	switch(@dir) {
 	case 'up':
 		if(array_index_exists(@loc, 'y')) {
@@ -37,7 +38,7 @@ proc('_relative', @loc, @dir, @amount = 1) {
 		@loc[0] -= @amount
 		
 	}
-	return(@loc = @loc[])
+	return(@loc)
 }
 
 proc('_hologram', @loc, @lines) {
