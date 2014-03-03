@@ -176,35 +176,11 @@ bind('player_interact', null, array('block': 77, 'button': 'right'), @event,
 	if(is_sign_at(@sign)) { 
 		@signtext = get_sign_text(@sign)
 		if(@type = reg_match('\u00A7[0-9a-f]{1}\\[(.+)\\]', @signtext[1])) {
-			switch(@type[1]
-			, 'CONNECT4',
-				switch(@signtext[2],
-				'Reset',
-					proc(_set_sand, @x, @y, @z,
-						if(get_block_at(@x, @y, @z, pworld()) == '0:0', set_block_at(@x, @y, @z, 12, pworld()))
-					)
-					proc(_set_gravel, @x, @y, @z,
-						if(get_block_at(@x, @y, @z, pworld()) == '0:0', set_block_at(@x, @y, @z, 13, pworld()))
-					)
-					_iterate_cuboid(array(-499, 73, -348), array(-499, 78, -342), '_set_sand')
-					_iterate_cuboid(array(-499, 81, -348), array(-499, 86, -342), '_set_gravel')
-				)
-			, 'SNOWSPLEEF',
-				switch(@signtext[2],
-				'Reset Floor',
-					proc(_set_snowblock, @x, @y, @z,
-						if(get_block_at(@x, @y, @z, pworld()) == '0:0', set_block_at(@x, @y, @z, 80, pworld()))
-					)
-					_iterate_cuboid(array(-667, 63, -260), array(-644, 63, -283), '_set_snowblock')
-					msg('Reset.')
-				)
-			, # else
-				if(is_alias('/'.to_lower(@type[1]).if(@signtext[2] != '', ' '.to_lower(@signtext[2])).if(@signtext[3] != '', ' '.to_lower(@signtext[3])))) {
-					call_alias('/'.to_lower(trim(@type[1])).' '.to_lower(trim(@signtext[2])).' '.to_lower(trim(@signtext[3])))
-				} else {
-					die('Unknown button command.')
-				}
-			)
+			if(is_alias('/'.to_lower(@type[1]).if(@signtext[2] != '', ' '.to_lower(@signtext[2])).if(@signtext[3] != '', ' '.to_lower(@signtext[3])))) {
+				call_alias('/'.to_lower(trim(@type[1])).' '.to_lower(trim(@signtext[2])).' '.to_lower(trim(@signtext[3])))
+			} else {
+				die('Unknown button command.')
+			}
 		} else if(length(@signtext[1]) > 1 && @signtext[1][0] == '/' && length(@signtext[0]) > 2 && substr(@signtext[0], 0, 2) == color(1)) {
 			msg('Ran command:' @signtext[1] @signtext[2] @signtext[3])
 			if(!call_alias(@signtext[1] @signtext[2] @signtext[3]), run(@signtext[1] @signtext[2] @signtext[3]))
