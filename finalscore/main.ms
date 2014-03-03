@@ -347,11 +347,18 @@ bind('player_enter_bed', null, null, @e,
 # )
 
 # Limit the number of mobs that can be built up from a mob spawner
-bind('creature_spawn', null, array('reason': 'SPAWNER'), @e,
-	if(array_size(entities_in_radius(@e['location'], 32, @e['type'])) > 50) {
+bind('creature_spawn', null, array('reason': 'SPAWNER'), @e) {
+	@entities = array()
+	# check a 3x3 chunk area (48x256x48 area)
+	for(@x = -16, @x <= 16, @x += 16) {
+		for(@z = -16, @z <= 16, @z += 16) {
+			@entities = array_merge(@entities, all_entities(@e['location']['world'], @e['location']['x'] + @x, @e['location']['z'] + @z))
+		}
+	}
+	if(array_size(@entities) > 100) {
 		cancel()
 	}
-)
+}
 
 # Anti-xray helper
 bind('block_break', null, array('type': 56), @e,
