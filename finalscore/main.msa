@@ -296,22 +296,22 @@
 <<<
 
 # Rename your worldguard region
-*:/rg rename $from $to = >>>
-	try(@region = sk_region_info($from, pworld()), die('That region doesn\'t exist.'))
-	if(!has_permission('group.moderators') && not(array_contains_ic(@region[1], player())), die('You do not own this region.'))
-	try(@to = reg_match('[a-zA-Z0-9-]{1,32}', $to)[0], die('You can only use alphanumeric and dash symbols.'))
-	if(array_contains_ic(sk_all_regions(pworld()), @to), die('A region by that name already exists.'))
-	sudo('/rg select '.$from)
-	sudo('/rg define '.@to.' '.array_implode(@region[1]))
-	sudo('/rg pri '.@to.' '.@region[4])
-	foreach(@flag in @region[3]) {
-		sudo('/rg flag '.@to.' '.@flag[0].' '.@flag[1])
+*:/rg rename [$] = call_alias('/region rename '.$)
+*:/region rename $from $to = >>>
+	if(!sk_region_exists(pworld(), $from)) {
+		die('That region doesn\'t exist.')
 	}
-	if(array_size(@region[2]) > 0) {
-		sudo('/rg addmember '.@to.' '.array_implode(@region[2]))
+	if(!has_permission('group.moderators') && !array_contains_ic(sk_region_owners($from, pworld()), player())) {
+		die('You do not own this region.')
 	}
-	sudo('//sel')
-	sudo('/rg remove '.$from)
+	if(!reg_match('^[a-zA-Z0-9-_]{1,32}$', $to)[0]) {
+		die('You can only use alphanumeric characters and underscores/dashes.')
+	}
+	if(sk_region_exists(pworld(), $to)) {
+		 die('A region by that name already exists.')
+	}
+	sk_region_rename(pworld(), $from, $to)
+	msg('Renamed '.$from.' to '.$to.'.')
 <<<
 
 # Colour codes
