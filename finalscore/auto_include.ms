@@ -37,7 +37,7 @@ proc('_relative', @loc, @dir, @amount = 1) {
 		@loc[0] -= @amount
 		
 	}
-	return(@loc)
+	return(@loc = @loc[])
 }
 
 proc('_hologram', @loc, @lines) {
