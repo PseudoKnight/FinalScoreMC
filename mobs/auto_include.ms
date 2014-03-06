@@ -25,7 +25,7 @@ proc('_get_mob', @mob = null,
 		@mob = @mobtypes[rand(array_size(@mobtypes))]
 	} else {
 		@mobtype = split(':', @mob)
-		if(array_contains(@mobtypes, @mobtype[0])) {
+		if(array_contains_ic(@mobtypes, @mobtype[0])) {
 			@mob = array('type': @mob)
 		} else {
 			@mob = get_value('mob.'.@mob)
