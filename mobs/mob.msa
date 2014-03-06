@@ -77,7 +77,11 @@
 	
 	, 'spawn',
 		@mobtype = $id
-		@mobcount = $setting
+		if($setting) {
+			@mobcount = $setting
+		} else {
+			@mobcount = 1
+		}
 		_spawn_mob(@mobtype, @mobcount, array(
 			pcursor()[0] + 0.5,
 			pcursor()[1] + 1,
