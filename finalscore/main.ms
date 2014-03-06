@@ -226,17 +226,24 @@ bind('player_interact', null, array('block': 122), @e,
 	if(pmode() != 'CREATIVE' && (pworld() == 'custom' || pworld() == 'dev'), cancel())
 )
 
-bind('entity_explode', null, null, @e,
-	if(@e['location'][3] == 'dev'
-	|| (@e['location'][3] == 'custom' 
-	&& ((@e['type'] != 'PRIMED_TNT'
-	&& @e['type'] != 'CREEPER')
-	|| (!array_contains(sk_regions_at(entity_loc(@e['id'])), 'skypirates')
-	&& !array_contains(sk_regions_at(entity_loc(@e['id'])), 'antfarm')
-	&& !array_contains(sk_regions_at(entity_loc(@e['id'])), 'bomberman'))))) {
+bind('entity_explode', null, null, @e) {
+	if(@e['location'][3] == 'dev') {
 		cancel()
+	} else if(@e['location'][3] == 'custom') {
+		if(@e['type'] != 'PRIMED_TNT'
+		&& @e['type'] != 'CREEPER') {
+			cancel()
+		} else {
+			@regions = sk_regions_at(entity_loc(@e['id']))
+			if(!array_contains(@regions, 'skypirates')
+			&& !array_contains(@regions, 'antfarm')
+			&& !array_contains(@regions, 'bomberman')
+			&& !array_contains(@regions, 'siege-wall2')) {
+				cancel()
+			}
+		}
 	}
-)
+}
 
 # DISPENER PARKING
 bind('vehicle_collide', null, array('type': 'MINECART', 'collisiontype': 'BLOCK', 'hittype': 23), @e,
