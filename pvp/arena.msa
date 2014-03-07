@@ -140,8 +140,10 @@
 			, 'mobprotect',
 				if(!@args[1], die('Requires a team # and mob type.'))
 				if(!array_index_exists(@arena, 'mobprotect'), @arena['mobprotect'] = array())
+				@loc = ploc()
+				@Loc = array(floor(@loc[0]) + 0.5, @loc[1], floor(@loc[2]) + 0.5, @loc[3])
 				@arena['mobprotect'][@args[0] - 1] = array(
-					'loc': ploc(),
+					'loc': @loc,
 					'type': @args[1]
 				)
 				msg('Set '.color(10).@args[1].color('r').' to spawn at start for team '.color(10).@args[0])
@@ -373,7 +375,7 @@
 				msg('Activated these weapons: '.color(10).@arena['weapons'])
 			
 			, 'flags',
-				@flags = array('noinventory', 'stackedpickup', 'debug', 'keepinventory', 'rallycall')
+				@flags = array('noinventory', 'stackedpickup', 'debug', 'keepinventory', 'rallycall', 'build')
 				if(!@args[0] || @args[1], die('You need to specify a comma separated list of pre-defined flags. (no spaces) Current available flags: '.@flags))
 				@arena['flags'] = split(',', @args[0])
 				foreach(@arena['flags'], @flag) {

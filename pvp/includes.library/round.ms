@@ -356,7 +356,7 @@ proc('_pvp_start_round', @id,
 		_pvp_check_objectives(@id)
 	)
 	
-	if(@id != 'skypirates' && @id != 'antfarm') {
+	if(!array_contains(@pvp['arena']['flags'], 'build')) {
 		array_push(@pvp['binds'], @id.'break')
 		bind('block_break', array('id': @id.'break'), null, @e, assign(@id, @id),
 			@pvp = import('pvp'.@id)
