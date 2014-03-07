@@ -6,7 +6,20 @@
 		if(!has_permission('group.administrators'), die('You do not have permission.'))
 		@arenas = get_values('arena')
 		foreach(@arenas, @key, @arena) {
-			null
+			if(array_index_exists(@arena, 'flags')) {
+				@weapons = array()
+				foreach(@i: @flag in @arena['flags']) {
+					if(array_contains(array('endernades', 'skullrockets',  'shotgunballs', 'primedtnt', 'pistoltears'), @flag)) {
+						array_push(@weapons, @flag)
+						array_remove(@arena['flags'], @i)
+						continue(0)
+					}
+				}
+				if(@weapons) {
+					@arena['weapons'] = @weapons
+					store_value(@key, @arena)
+				}
+			}
 		}
 		msg('All arenas updated.')
 
@@ -46,6 +59,7 @@
 			msg('max '.color('gray').'Start the match as soon as this number of players join.')
 			msg('effect '.color('gray').'The starting potion effect for all or team.')
 			msg('denydrop '.color('gray').'Comma list of IDs not dropped on death or "all"')
+			msg('weapons '.color('gray').'Comma list of special weapons to enable')
 			msg('flags '.color('gray').'Special game behavior modifiers')
 			
 			die('MORE INFORMATION AT:\n'
@@ -349,8 +363,17 @@
 				))
 				msg('Set '.color(10).@args[1].' '.@args[0].color('r').' to spawn here every '.color(10).@args[2].color('r').' seconds'.if(@args[3], ' and at '.color(10).'start.', '.'))
 
+			, 'weapons',
+				@weapons = array('endernades', 'skullrockets',  'shotgunballs', 'primedtnt', 'pistoltears')
+				if(!@args[0] || @args[1], die('You need to specify a comma separated list of pre-defined weapons. (no spaces) Current available weapons: '.@weapons))
+				@arena['weapons'] = split(',', @args[0])
+				foreach(@arena['weapons'], @weapon) {
+					if(!array_contains(@weapons, @weapon), die('Unknown flag: '.@weapon))
+				}
+				msg('Activated these weapons: '.color(10).@arena['weapons'])
+			
 			, 'flags',
-				@flags = array('endernades', 'skullrockets', 'noinventory', 'stackedpickup', 'debug', 'shotgunballs', 'primedtnt', 'pistoltears', 'rallycall', 'keepinventory')
+				@flags = array('noinventory', 'stackedpickup', 'debug', 'keepinventory', 'rallycall')
 				if(!@args[0] || @args[1], die('You need to specify a comma separated list of pre-defined flags. (no spaces) Current available flags: '.@flags))
 				@arena['flags'] = split(',', @args[0])
 				foreach(@arena['flags'], @flag) {
