@@ -550,19 +550,16 @@ proc('_pvp_start_round', @id,
 			}
 		)
 	}
-
-	# if(array_contains(array('ctf', 'tdm'), @pvp['arena']['mode'])) {
-		# array_push(@pvp['binds'], @id.'tagged')
-		# bind('player_tagged', array('id': @id.'tagged'), null, @e, assign(@id, @id), 
-			# @pvp = import('pvp'.@id)
-			# if(!array_index_exists(@pvp['players'], @e['tagged']), die())
-			# modify_event('tag', color(@pvp['arena']['team'][@pvp['players'][@e['tagged']]['team']]['color']).@e['tagged'])
-		# )
-		# foreach(array_keys(@pvp['players']), @player,
-			# tag_refresh(@player)
-		# )
-	# }
 	
+	if(@pvp['arena']['mode'] == 'ctf' || array_index_exists(@pvp['arena'], 'captain')) {
+		array_push(@pvp['binds'], @id.'itemprotection')
+		bind('entity_damage', array('id': @id.'itemprotection'), array('type': 'DROPPED_ITEM', 'cause': 'BLOCK_EXPLOSION'), @e, @region = @pvp['arena']['region']) {
+			if(array_contains(sk_regions_at(entity_loc(@e['id'])), @region)) {
+				cancel()
+			}
+		}
+	}
+
 	if(array_index_exists(@pvp['arena'], 'weapons')) {
 		include('weapons.ms')
 	}
@@ -763,18 +760,11 @@ proc('_pvp_flag_spawn', @id, @team, @loc,
 	queue_push(closure(_pvp_flag_spawn(@id, @team)), @id.@team.'flag')
 )
 
-proc('_pvp_hat_spawn', @id, @team, @loc,
+proc('_pvp_hat_spawn', @id, @team, @loc) {
 	@pvp = import('pvp'.@id)
 	@hat = drop_item(@loc, @pvp['team'][@team]['captainhat'])
 	set_entity_velocity(@hat, array())
-	queue_delay('30000', @id.@team.'hat')
-	queue_push(closure(
-		if(!entity_exists(@hat)) {
-			drop_item(@loc, @pvp['team'][@team]['captainhat'], 0)
-			_regionmsg(@pvp['arena']['broadcast'], color('gray').'[PVP] '.color(@pvp['arena']['team'][@team]['color']).'Captain\'s hat respawned at dropped location.')
-		}
-	), @id.@team.'hat')
-)
+}
 
 proc('_pvp_check_objectives', @id,
 	@pvp = import('pvp'.@id)
