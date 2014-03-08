@@ -325,9 +325,9 @@ proc('_pvp_start_round', @id,
 		array_push(@pvp['binds'], @id.'MobDeath')
 		bind('entity_death', array('id': @id.'MobDeath'), null, @e, assign(@id, @id),
 			@pvp = import('pvp'.@id)
-			if(@e['id'] == @pvp['team'][0]['mobprotect']) {
+			if(array_index_exists(@pvp['team'][0], 'mobprotect') && @e['id'] == @pvp['team'][0]['mobprotect']) {
 				_pvp_end_match(@id, @pvp['team'][1]['players'])
-			} else if(@e['id'] == @pvp['team'][1]['mobprotect']) {
+			} else if(array_index_exists(@pvp['team'][1], 'mobprotect') && @e['id'] == @pvp['team'][1]['mobprotect']) {
 				_pvp_end_match(@id, @pvp['team'][0]['players'])
 			}
 		)
