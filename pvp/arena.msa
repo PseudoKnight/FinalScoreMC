@@ -59,6 +59,7 @@
 			msg('max '.color('gray').'Start the match as soon as this number of players join.')
 			msg('effect '.color('gray').'The starting potion effect for all or team.')
 			msg('denydrop '.color('gray').'Comma list of IDs not dropped on death or "all"')
+			msg('timer '.color('gray').'Time in minutes till team # wins.')
 			msg('weapons '.color('gray').'Comma list of special weapons to enable')
 			msg('flags '.color('gray').'Special game behavior modifiers')
 			
@@ -365,8 +366,13 @@
 				))
 				msg('Set '.color(10).@args[1].' '.@args[0].color('r').' to spawn here every '.color(10).@args[2].color('r').' seconds'.if(@args[3], ' and at '.color(10).'start.', '.'))
 
+			, 'timer',
+				if(!@args[0] || !@args[1] || !is_numeric(@args[0]) || !is_numeric(@args[1]), die('Requires a winning team # and time in minutes.'))
+				@arena['timer'] = array(@args[0] - 1, @args[1])
+				msg('Set timer for team '.@args[0].' to '.color(10).@args[1].color('r').' minutes.')
+			
 			, 'weapons',
-				@weapons = array('endernades', 'skullrockets',  'shotgunballs', 'primedtnt', 'pistoltears')
+				@weapons = array('endernades', 'skullrockets',  'shotgunballs', 'primedtnt', 'pistoltears', 'firefire')
 				if(!@args[0] || @args[1], die('You need to specify a comma separated list of pre-defined weapons. (no spaces) Current available weapons: '.@weapons))
 				@arena['weapons'] = split(',', @args[0])
 				foreach(@arena['weapons'], @weapon) {

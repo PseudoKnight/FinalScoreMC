@@ -46,6 +46,10 @@ proc('_pvp_start_round', @id,
 		}
 	}
 	
+	if(array_index_exists(@pvp['arena'], 'timer')) {
+		@pvp['starttime'] = time() / 1000
+	}
+	
 	_remove_region_entities(@pvp['arena']['region'], array('DROPPED_ITEM', 'EXPERIENCE_ORB'))
 	_pvp_initialize_players(@id, array_keys(@pvp['players']))
 
@@ -121,6 +125,9 @@ proc('_pvp_start_round', @id,
 				if(array_index_exists(@pvp['players'][player()], 'class')) {
 					_class('unload', player(), @pvp['players'][player()]['class'])
 				}
+				if(array_index_exists(@pvp['arena'], 'timer') && phas_bar()) {
+					premove_bar()
+				}
 				array_remove(@pvp['players'], player())
 				export('pvp'.@id, @pvp)
 				_regionmsg(@pvp['arena']['broadcast'], color('gray').'[PVP] '.color('r').player().' did not respawn in time.')
@@ -132,6 +139,9 @@ proc('_pvp_start_round', @id,
 			if(@pvp['players'][player()]['lives'] == 0) {
 				if(array_index_exists(@pvp['players'][player()], 'class')) {
 					_class('unload', player(), @pvp['players'][player()]['class'])
+				}
+				if(array_index_exists(@pvp['arena'], 'timer') && phas_bar()) {
+					premove_bar()
 				}
 				array_remove(@pvp['players'], player())
 			}
@@ -348,6 +358,9 @@ proc('_pvp_start_round', @id,
 		}
 		if(array_index_exists(@pvp['players'][player()], 'class')) {
 			_class('unload', player(), @pvp['players'][player()]['class'])
+		}
+		if(array_index_exists(@pvp['arena'], 'timer') && phas_bar()) {
+			premove_bar()
 		}
 		array_remove(@pvp['players'], player())
 		_clear_pinv()
@@ -568,8 +581,26 @@ proc('_pvp_start_round', @id,
 		@pvp = import('pvp'.@id)
 		@check = false
 		if(@pvp['arena']['mode'] == 'koth', @hillcount = 0)
+		
+		if(array_index_exists(@pvp['arena'], 'timer')) {
+			@totalsecsleft = ceil((@pvp['arena']['timer'][1] * 60) - ((time() / 1000) - @pvp['starttime']))
+			if(@totalsecsleft < 0) {
+				_pvp_end_match(@id, @pvp['team'][@pvp['arena']['timer'][0]]['players'])
+				die()
+			}
+			@minleft = floor(@totalsecsleft / 60)
+			@secsleft = mod(@totalsecsleft, 60)
+			@timeleft = @minleft.':'.if(@secsleft < 10, '0').@secsleft
+			@percentage = round((@totalsecsleft / (@pvp['arena']['timer'][1] * 60)) * 100)
+		}
 
 		foreach(array_keys(@pvp['players']), @player) {
+			if(array_index_exists(@pvp['arena'], 'timer')) {
+				if(phas_bar(@player)) {
+					premove_bar(@player)
+				}
+				set_bar_message(@player, @timeleft, @percentage)
+			}
 			if(array_index_exists(@pvp['arena'], 'respawntime')
 			&& @pvp['players'][@player]['respawn'] != 0) {
 				if(!array_contains(sk_current_regions(@player), @pvp['arena']['broadcast'])) {
@@ -580,6 +611,9 @@ proc('_pvp_start_round', @id,
 					}
 					if(array_index_exists(@pvp['players'][@player], 'class')) {
 						_class('unload', player(), @pvp['players'][@player]['class'])
+					}
+					if(array_index_exists(@pvp['arena'], 'timer') && phas_bar(@player)) {
+						premove_bar(@player)
 					}
 					array_remove(@pvp['players'], @player)
 					_clear_pinv(@player)
@@ -822,6 +856,9 @@ proc('_pvp_end_match', @id, @winners,
 	foreach(array_keys(@pvp['players']), @player) {
 		if(array_index_exists(@pvp['players'][@player], 'limbo') && @pvp['players'][@player]['limbo']) {
 			clear_task(@pvp['players'][@player]['limbo'])
+		}
+		if(array_index_exists(@pvp['arena'], 'timer') && phas_bar(@player)) {
+			premove_bar(@player)
 		}
 		if(array_contains(@winners, @player)) {
 			@leader = @player
