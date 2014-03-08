@@ -6,6 +6,7 @@ proc('_spawn_mob', @mob, @qty, @loc,
 		if(array_index_exists(@mob, 'name'), set_mob_name(@m, @mob['name']))
 		if(array_index_exists(@mob, 'gear'), set_mob_equipment(@m, @mob['gear']))
 		if(array_index_exists(@mob, 'droprate'), set_equipment_droprates(@m, @mob['droprate']))
+		set_entity_persistence(@m, true)
 	)
 	if(array_index_exists(@mob, 'effects')) {
 		set_timeout(50, closure(
