@@ -4,7 +4,6 @@
 		@inprogress = array()
 		
 		@inprogress = array_merge(@inprogress, get_scoreboards())
-		array_remove_values(@inprogress, 'main')
 		
 		@currentspleef = import('currentspleef')
 		if(@currentspleef != false && array_size(@currentspleef) >= 1, array_push(@inprogress, 'Spleef'))
@@ -12,7 +11,7 @@
 		@cluck = import('cluck')
 		if(@cluck && (@cluck['active'] == 1),  array_push(@inprogress, 'Cluck'))
 		
-		if(@inprogress) {
+		if(@inprogress != array('main')) {
 			die('Currently in progress: '.array_implode(@inprogress, ' '))
 		}
 		

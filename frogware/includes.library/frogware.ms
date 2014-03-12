@@ -65,7 +65,7 @@ proc('_fw_startround', @secs = 9,
 			} else if(@count == 0 || (@total > 2 && @count <= 1)) {
 				@secs++
 			}
-			@tasks = array('climb', 'keepaway', 'harvest', 'koth', 'cake', 'fall', 'cluck', 'frogegg', 'pvp', 'lavafall')
+			@tasks = array('climb', 'keepaway', 'harvest', 'koth', 'cake', 'fall', 'cluck', 'frogegg', 'lavafall')
 			@task = @tasks[rand(array_size(@tasks))]
 			if(@total == 1 && @task == 'pvp', @task = @tasks[rand(array_size(@tasks))])
 			queue_delay(1000, 'fw2')

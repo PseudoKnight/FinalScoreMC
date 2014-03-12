@@ -10,8 +10,8 @@ bind('player_teleport', null, null, @event,
 		if(@block != '0:0') {
 			set_timeout(1000, closure(
 				if(ploc()[1] < @loc[1]) {
-					set_ploc(@loc)
 					console('Adjusted '.player().'\'s location after teleport.')
+					set_ploc(@loc)
 				}
 			))
 		}

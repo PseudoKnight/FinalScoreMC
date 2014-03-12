@@ -12,7 +12,6 @@
 					if(array_contains(array('endernades', 'skullrockets',  'shotgunballs', 'primedtnt', 'pistoltears'), @flag)) {
 						array_push(@weapons, @flag)
 						array_remove(@arena['flags'], @i)
-						continue(0)
 					}
 				}
 				if(@weapons) {
