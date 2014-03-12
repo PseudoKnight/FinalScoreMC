@@ -1,0 +1,208 @@
+/tempcart $player = >>>
+	if(get_command_block()) {
+		@loc = get_command_block()
+		@loc = array(@loc[0] + 0.5, @loc[1] + 2.5, @loc[2] + 0.5, @loc[3])
+		@player = pinfo($player, 13)
+	}
+	@cart = spawn_entity('minecart', 1, @loc)[0]
+	set_entity_rider(@cart, @player)
+	bind('vehicle_leave', null, array('vehicletype': 'MINECART', 'passengertype': 'PLAYER'), @e, @cart = @cart,
+		if(@e['vehicle'] == @cart) {
+			unbind()
+			try(entity_remove(@e['vehicle']))
+		}
+	)
+<<<
+
+/bedspawn $player [$] = >>>
+	if($) {
+		@loc = parse_args($)
+		@loc[1] = @loc[1] - 1
+	} else {
+		@loc = ploc($player)
+	}
+	set_pbed_location($player, @loc)
+<<<
+
+*:/give [$player=null] [$item=0] [$amount=1] = >>>
+	if(!get_command_block() && !has_permission('group.moderators'), die('You do not have permission to use this command.'))
+	if($player == null, die('Usage: /give [player] [id:data] [quantity]'))
+	try(@player = player($player), die('Unknown player.'))
+	if($item == 0, die('You need to specify an item id or name.'))
+	@item = split(':', $item)
+	if(!is_numeric(@item[0]), @item[0] = data_values(@item[0]))
+	if(@item[0] == null, die('Unknown item name'))
+	if(!array_index_exists(@item, 1), @item[1] = 0)
+	pgive_item(@player, @item[0].':'.@item[1], $amount)
+	msg(color('yellow').'You gave '.@player.' '.$amount.' '.data_name(@item[0].':'.@item[1]).'.')
+<<<
+
+*:/effect $player $effect [$strength=0] [$length=30] = >>>
+	if(get_command_block() || has_permission('command.effect')) {
+		try(@player = player($player), @ex, die('Who is that? Are they online?'))
+		@effects = _get_effects()
+		if(!array_index_exists(@effects, $effect), die('These are the available effect names: '.array_keys(@effects)))
+		set_peffect(@player, @effects[$effect], $strength, $length)
+	}
+<<<
+
+/velocity $player $x $y $z [$double] = >>>
+	queue_push(closure(
+		set_pvelocity($player, $x, $y, $z)
+		make_effect(ploc($player), 'MOBSPAWNER_FLAMES')
+		play_sound(ploc($player), array('sound': 'GHAST_FIREBALL', 'volume': 2))
+		if($double, set_timeout($double, closure( set_pvelocity($player, $x, $y, $z))))
+	))
+<<<
+
+/playsound $sound [$pitch=1] [$volume=1] = >>>
+	if(get_command_block()) {
+		play_sound(get_command_block(), array('sound': $sound, 'pitch': $pitch, 'volume': $volume))
+	} else {
+		play_sound(ploc(), array('sound': $sound, 'pitch': $pitch, 'volume': $volume))
+	}
+<<<
+
+/setblock $x $y $z $id [$data=0] [$old='replace'] = >>>
+	if(@cmdblk = get_command_block()) {
+		if($x[0] == '~') {
+			if($x == '~') {
+				@x = @cmdblk['x']
+			} else {
+				@x = @cmdblk['x'] + substr($x, 1)
+			}
+		} else {
+			@x = $x
+		}
+		if($y[0] == '~') {
+			if($y == '~') {
+				@y = @cmdblk['y']
+			} else {
+				@y = @cmdblk['y'] + substr($y, 1)
+			}
+		} else {
+			@y = $y
+		}
+		if($z[0] == '~') {
+			if($z == '~') {
+				@z = @cmdblk['z']
+			} else {
+				@z = @cmdblk['z'] + substr($z, 1)
+			}
+		} else {
+			@z = $z
+		}
+		
+		if(!is_numeric(@id = $id)
+		&& is_null(@id = data_values($id)), die())
+		
+		@id = split(':', @id)[0]
+		
+		switch($old
+		, 'replace',
+			set_block_at(@x, @y, @z, @id.':'.$data, @cmdblk[3], false)
+		, 'keep',
+			if(get_block_at(@x, @y, @z, @cmdblk[3]) == '0:0') {
+				set_block_at(@x, @y, @z, @id.':'.$data, @cmdblk[3], false)
+			}
+		, 'destroy',
+			if(get_block_at(@x, @y, @z, @cmdblk[3]) != '0:0') {
+				make_effect(array(@x, @y, @z, @cmdblk[3]), 'STEP_SOUND:'.@id)
+			}
+			set_block_at(@x, @y, @z, @id.':'.$data, @cmdblk[3], false)
+		, die()
+		)
+	}
+<<<
+
+/fill $x1 $y1 $z1 $x2 $y2 $z2 $id [$data=0] [$old='replace'] [$id2=''] = >>>
+	if(@cmdblk = get_command_block()) {
+		@cbworld = @cmdblk[3]
+		if($x1[0] == '~') {
+			if($x1 == '~') {
+				@x1 = @cmdblk['x']
+			} else {
+				@x1 = @cmdblk['x'] + substr($x1, 1)
+			}
+		} else {
+			@x1 = $x1
+		}
+		if($y1[0] == '~') {
+			if($y1 == '~') {
+				@y1 = @cmdblk['y']
+			} else {
+				@y1 = @cmdblk['y'] + substr($y1, 1)
+			}
+		} else {
+			@y1 = $y1
+		}
+		if($z1[0] == '~') {
+			if($z1 == '~') {
+				@z1 = @cmdblk['z']
+			} else {
+				@z1 = @cmdblk['z'] + substr($z1, 1)
+			}
+		} else {
+			@z1 = $z1
+		}
+		
+		if($x2[0] == '~') {
+			if($x2 == '~') {
+				@x2 = @cmdblk['x']
+			} else {
+				@x2 = @cmdblk['x'] + substr($x2, 1)
+			}
+		} else {
+			@x2 = $x2
+		}
+		if($y2[0] == '~') {
+			if($y2 == '~') {
+				@y2 = @cmdblk['y']
+			} else {
+				@y2 = @cmdblk['y'] + substr($y2, 1)
+			}
+		} else {
+			@y2 = $y2
+		}
+		if($z2[0] == '~') {
+			if($z2 == '~') {
+				@z2 = @cmdblk['z']
+			} else {
+				@z2 = @cmdblk['z'] + substr($z2, 1)
+			}
+		} else {
+			@z2 = $z2
+		}
+		
+		if(!is_numeric(@id = $id)
+		&& is_null(@id = data_values($id)), die())
+		
+		@id = split(':', @id)[0]
+		
+		switch($old
+		, 'replace',
+			proc('_set', @x, @y, @z, @blockid = @id, @world = @cbworld, @data = $data, @replace = $id2,
+				if(@replace == '' || get_block_at(@x, @y, @z, @world) == @replace) {
+					set_block_at(@x, @y, @z, @blockid.':'.@data, @world, false)
+				}
+			)
+			_iterate_cuboid(array(@x1, @y1, @z1), array(@x2, @y2, @z2), '_set')
+		, 'keep',
+			proc('_set', @x, @y, @z, @blockid = @id, @world = @cbworld, @data = $data,
+				if(get_block_at(@x, @y, @z, @world) == '0:0') {
+					set_block_at(@x, @y, @z, @blockid.':'.@data, @world, false)
+				}
+			)
+			_iterate_cuboid(array(@x1, @y1, @z1), array(@x2, @y2, @z2), '_set')
+		, 'destroy',
+			proc('_set', @x, @y, @z, @blockid = @id, @world = @cbworld, @data = $data,
+				if(get_block_at(@x, @y, @z, @world) != '0:0') {
+					make_effect(array(@x, @y, @z, @world), 'STEP_SOUND:'.@blockid)
+				}
+				set_block_at(@x, @y, @z, @blockid.':'.@data, @world, false)
+			)
+			_iterate_cuboid(array(@x1, @y1, @z1), array(@x2, @y2, @z2), '_set')
+		, die()
+		)
+	}
+<<<
