@@ -44,12 +44,12 @@ register_command('timer', array(
 						@timers = import('timer')
 						array_remove(@timers, @player)
 						export('timer', @timers)
-						clear_task()
 						unbind(@player.'timerbreak')
 						if(ponline(@player) && pworld(@player) == 'custom') {
 							set_plevel(@player, 0)
 							set_pexp(@player, 0)
 						}
+						clear_task()
 					} else {
 						@level[0] += 1
 						set_plevel(@player, @level[0])
@@ -68,13 +68,13 @@ register_command('timer', array(
 				))
 				
 				if(!has_bind(@player.'timerbreak')) {
-					bind('block_break', array('id': @player.'timerbreak'), array('player': @player), @e, @player = @player) {
-						play_sound(ploc(@player), array('sound': 'VILLAGER_NO'), @player)
+					bind('block_break', array('id': @player.'timerbreak'), array('player': @player), @e, @p = @player) {
+						play_sound(ploc(@player), array('sound': 'VILLAGER_NO'), @p)
 						@timers = import('timer')
-						clear_task(@timers[@player][2])
-						array_remove(@timers, @player)
-						export('timer', @timers)
 						unbind()
+						clear_task(@timers[@p][2])
+						array_remove(@timers, @p)
+						export('timer', @timers)
 					}
 				}
 				
