@@ -198,8 +198,8 @@
 		'mumble': 'Everyone is welcome to use our voice chat server using Mumble. The server is at mum.finalscoremc.com with port 64758. You can get Mumble at >>> http://mumble.sourceforge.net <<<',
 		'regions': 'Regions are protected zones where only owners and members can build or access chests. You can create your own region by using a golden axe (or commands), left and right clicking to select a cuboid for the region, then use "/rg claim <regionid>". More details are on the website.',
 		'whitelist': 'You can get on the whitelist by asking a staff member, a friend who is already a regular, or requesting it on the http://myextralife.com whitelist forum thread.',
-		'worlds': 'There are three primary worlds: Alpha (Plaza at spawn), Delta (Final City at spawn), and Gamma (Gamma City at spawn). In addition, there are three respective nether dimensions and one End dimension. You can type "/mv who" to see which worlds players are on.',
-		'world-seeds': 'These are the seeds for the three main worlds -- Alpha: -621778714517541268, Delta: -8443156782283251243, Gamma: -754633420005903009.'
+		'worlds': 'There are four primary worlds: Alpha (Plaza at spawn), Delta (Final City at spawn), Gamma (Gamma City at spawn), and Omega. In addition, there are four respective nether dimensions and one End dimension. You can type "/mv who" to see which worlds players are on.',
+		'world-seeds': 'These are the seeds for the four main worlds -- Alpha: -621778714517541268, Delta: -8443156782283251243, Gamma: -754633420005903009, Omega: 950483747.'
 	)
 	if($selection == 'help') {
 		msg(color('a').'Get help on any of these topics:')
