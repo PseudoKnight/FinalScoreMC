@@ -53,6 +53,7 @@ proc('_fw_startround', @secs = 9,
 				} else {
 					set_pscoreboard(@p)
 					reset_all_pscores(@p, 'fw')
+					_clear_pinv(@p)
 				}
 			}
 		)
@@ -65,7 +66,7 @@ proc('_fw_startround', @secs = 9,
 			} else if(@count == 0 || (@total > 2 && @count <= 1)) {
 				@secs++
 			}
-			@tasks = array('climb', 'keepaway', 'harvest', 'koth', 'cake', 'fall', 'cluck', 'frogegg', 'lavafall')
+			@tasks = array('climb', 'keepaway', 'harvest', 'koth', 'cake', 'fall', 'cluck', 'frogegg', 'lavafall', 'shepherd')
 			@task = @tasks[rand(array_size(@tasks))]
 			if(@total == 1 && @task == 'pvp', @task = @tasks[rand(array_size(@tasks))])
 			queue_delay(1000, 'fw2')
@@ -566,7 +567,7 @@ proc('_fw_task', @task, @state, @secs,
 	, 'frogegg',
 		switch(@state
 		, 'start',
-			_fw_msg('Click that frog egg!')
+			_fw_msg('Pop the frog egg!')
 			@loc = _fw_loc()
 			set_block_at(@loc, '122:0')
 			if(!rand(6)) {
@@ -654,9 +655,12 @@ proc('_fw_task', @task, @state, @secs,
 	, 'lavafall',
 		switch(@state
 		, 'start',
-			_fw_msg('Lava fall')
+			_fw_msg('The lava is lava')
 			if(!rand(5)) {
 				_fw_randompotion(array('speed', 'blind'))
+			}
+			if(!rand(5)) {
+				_fw_mobs()
 			}
 			proc('_set_lava', @x, @y, @z,
 				if(rand(100) < 3) {
@@ -680,6 +684,7 @@ proc('_fw_task', @task, @state, @secs,
 			)
 			
 		, 'end',
+			_remove_region_entities('frogware')
 			foreach(all_players('custom'), @p,
 				if(_fw_player(@p)) {
 					_clear_peffects(@p)
@@ -699,6 +704,51 @@ proc('_fw_task', @task, @state, @secs,
 				'_set_air')
 				
 			unbind('fwdamage2')
+			_fw_startround(@secs)
+		)
+		
+	, 'shepherd',
+		switch(@state
+		, 'start',
+			@colors = array('WHITE', 'ORANGE', 'MAGENTA', 'LIGHT_BLUE', 'YELLOW', 'LIME', 'PINK', 'GRAY', 'SILVER', 'CYAN', 'PURPLE', 'BLUE', 'BROWN', 'GREEN', 'RED', 'BLACK')
+			@colorindex = rand(array_size(@colors))
+			_fw_msg(@colors[@colorindex].color('r').' is the new black')
+			@count = _fw_totalplayers() * 30
+			@region = sk_region_info('frogware', 'custom')[0]
+			for(@i = 0, @i < @count, @i++) {
+				spawn_mob('SHEEP:'.@colors[rand(16)], 1, _fw_loc())
+			}
+			bind('item_pickup', array('id': 'fwpickup'), array('item': 35), @e, @data = @colors[@colorindex]) {
+				if(_fw_player(@e['player'])) {
+					@xp = pexp(@e['player'])
+					if(@xp < 99) {
+						@xp = min(@xp + (33 * @e['item']['qty']), 99)
+						set_pexp(@e['player'], @xp)
+						if(@xp >= 99) {
+							if(_fw_changeteam(player(), 'winners')) {
+								play_sound(ploc(), array('sound': 'zombie_metal'), player())
+							}
+						}
+					}
+				}
+			}
+			foreach(all_players('custom'), @p) {
+				if(_fw_player(@p)) {
+					set_pinv(@p, array(
+						0: array('type': 359)
+					))
+				}
+			}
+			
+		
+		, 'end',
+			foreach(all_players('custom'), @p) {
+				if(_fw_player(@p)) {
+					_clear_pinv(@p)
+				}
+			}
+			_remove_region_entities('frogware')
+			unbind('fwpickup')
 			_fw_startround(@secs)
 		)
 	
