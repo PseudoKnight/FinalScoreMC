@@ -86,6 +86,7 @@ register_command('timer', array(
 				if(array_index_exists(@timers, @player)
 				&& @timers[@player][0] == @id) {
 					@time = round((time() - @timers[@player][1]) / 1000, 1)
+					unbind(@player.'timerbreak')
 					clear_task(@timers[@player][2])
 					array_remove(@timers, @player)
 					export('timer', @timers)
