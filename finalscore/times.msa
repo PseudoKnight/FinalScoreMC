@@ -16,8 +16,8 @@
 			die('No top times for '.to_upper(@id).'.')
 		}
 		msg(color('yellow').color('bold').'=== TOP TIMES - '.to_upper(@id).' ===')
-		foreach(@time in @times['top']) {
-			msg(color('green').'[ '.@time[1].' ] '.color('r').@time[0])
+		for(@i = 0, @i < array_size(@times['top']), @i++) {
+			msg(color(7).if(@i < 9, ' ').(@i + 1).color('green').' [ '.@times['top'][@i][1].' ] '.color('r').@times['top'][@i][0])
 		}
 		
 	case 'me':
