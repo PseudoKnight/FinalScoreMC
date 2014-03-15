@@ -294,6 +294,11 @@ bind('entity_damage', null, array('type': 'HORSE'), @e,
 		die()
 	}
 	
+	@world = entity_loc(@e['id'])['world']
+	if(@world == 'custom' || @world == 'dev') {
+		die()
+	}
+	
 	if(!get_mob_owner(@e['id']), die())
 	switch(@e['cause']
 	, array('VOID', 'SUFFOCATION', 'DROWNING'),
