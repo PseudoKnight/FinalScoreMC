@@ -6,6 +6,8 @@ proc('_spawn_mob', @mob, @qty, @loc,
 		if(array_index_exists(@mob, 'name'), set_mob_name(@m, @mob['name']))
 		if(array_index_exists(@mob, 'gear'), set_mob_equipment(@m, @mob['gear']))
 		if(array_index_exists(@mob, 'droprate'), set_equipment_droprates(@m, @mob['droprate']))
+		if(array_index_exists(@mob, 'tags'), set_entity_spec(@m, @mob['tags']))
+		if(array_index_exists(@mob, 'tame'), tame_mob('Notch', @m))
 		set_entity_persistence(@m, true)
 	)
 	if(array_index_exists(@mob, 'effects')) {

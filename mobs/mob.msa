@@ -53,6 +53,16 @@
 				'seconds': @args[2]
 			))
 			msg('Effect added')
+		, 'tags',
+			@mob['tags'] = json_decode($)
+			msg('Set the tags to '.$)
+		, 'tame',
+			if($) {
+				@mob['tame'] = true
+			} else if(array_index_exists(@mob, 'tame')) {
+				array_remove(@mob, 'tame')
+			}
+			msg('Made mob tamed state to '.$)
 		, die('Available settings: type, name, gear, droprate, effect')
 		)
 		store_value('mob.'.$id, @mob)
