@@ -31,7 +31,28 @@
 	@block = pcursor()
 	if(get_block_at(@block) != '137:0', die('That is not a commandblock.'))
 	if(is_alias($), @cmd = '/runalias '.$, @cmd = $)
-	sudo('/scb '.integer(@block[0]).' '.integer(@block[1]).' '.integer(@block[2]).' '.@cmd)
+	set_block_command(@block, @cmd)
+	msg('Command set: '.color('green').@cmd)
+<<<
+
+*:/acb [$] = >>>
+	if(!has_permission('group.builders'), die('You do not have permission.'))
+	if(!$, die('Usage: /acb /cmd'))
+	@block = pcursor()
+	if(get_block_at(@block) != '137:0', die('That is not a commandblock.'))
+	@cmd = get_block_command(@block)
+	if(!@cmd) {
+		die('This command block is empty.')
+	}
+	@parts = parse_args(@cmd)
+	@allowedcmds = array('/velocity', '/tp', '/sayas', '/testfor', '/playsound', '/setblock')
+	if((@parts[0] == '/runalias' && array_contains_ic(@allowedcmds, @parts[1]))
+	|| (array_size(@parts) > 1 && array_contains_ic(@allowedcmds, @parts[1]))) {
+		set_block_command(@block, @cmd.' '.$)
+		msg('Command set: '.color('green').@cmd.' '.$)
+	} else {
+		die('You are not allowed to add to this command.')
+	}
 <<<
 
 *:/dye $r $g $b = >>>
