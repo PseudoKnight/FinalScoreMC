@@ -41,21 +41,6 @@ proc('_relative', @originloc, @dir, @amount = 1) {
 	return(@loc)
 }
 
-proc('_hologram', @loc, @lines) {
-	@loc['y'] += 55
-	
-	for(@i = array_size(@lines) - 1, @i >= 0, @i--) {
-		@skull = spawn_entity('WITHER_SKULL', 1, @loc)[0]
-		@horse = spawn_mob('HORSE', 1, @loc)[0]
-		set_entity_rider(@skull, @horse)
-		set_entity_spec(@skull, array('direction': array(0, 0, 0)))
-		set_mob_age(@horse, -1700000, true)
-		set_name_visible(@horse, true)
-		set_mob_name(@horse, @lines[@i])
-		@loc['y'] += 0.28
-	}
-}
-
 proc('_clear_pinv', @player,
 	if(!@player) {
 		@player = player()

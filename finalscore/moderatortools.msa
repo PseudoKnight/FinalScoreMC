@@ -42,6 +42,21 @@
 	msg('entityType groups: living, hostile')
 <<<
 
+/hologram $ = >>>
+	@loc = _relative(ploc(), 'up', 57)	
+	@lines = split(',', $)
+	for(@i = array_size(@lines) - 1, @i >= 0, @i--) {
+		@skull = spawn_entity('WITHER_SKULL', 1, @loc)[0]
+		@horse = spawn_mob('HORSE', 1, @loc)[0]
+		set_entity_rider(@skull, @horse)
+		set_entity_spec(@skull, array('direction': array(0, 0, 0)))
+		set_mob_age(@horse, -1700000, true)
+		set_name_visible(@horse, true)
+		set_mob_name(@horse, @lines[@i])
+		@loc['y'] += 0.28
+	}
+<<<
+
 /remove [$] = >>>
 	if(!$) {
 		msg('Usage: /remove [radius] [entityType] [-n]')
@@ -51,6 +66,7 @@
 	@removenamed = false
 	@type = array(WITHER, BAT, WITCH, CREEPER, SKELETON, SPIDER, GIANT, ZOMBIE, SLIME, GHAST, PIG_ZOMBIE, ENDERMAN, CAVE_SPIDER, SILVERFISH, BLAZE, MAGMA_CUBE, ENDER_DRAGON, PIG, SHEEP, COW, CHICKEN, SQUID, WOLF, MUSHROOM_COW, SNOWMAN, OCELOT, IRON_GOLEM, VILLAGER, HORSE)
 	@radius = 64
+	@loc = ploc()
 	
 	foreach(@arg in parse_args($)) {
 		if(is_numeric(@arg)) {
@@ -63,12 +79,16 @@
 					continue()
 				case 'hostile':
 					@type = array(WITHER, WITCH, CREEPER, SKELETON, SPIDER, GIANT, ZOMBIE, SLIME, GHAST, PIG_ZOMBIE, ENDERMAN, CAVE_SPIDER, SILVERFISH, BLAZE, MAGMA_CUBE, ENDER_DRAGON)
+				case 'hologram':
+					@type = array(WITHER_SKULL, HORSE)
+					@removenamed = true
+					@loc = _relative(@loc, 'up', 57)
 				default:
 					@type = @arg
 			}
 		}
 	}
-	@entities = entities_in_radius(ploc(), @radius, @type)
+	@entities = entities_in_radius(@loc, @radius, @type)
 	@count = 0
 	foreach(@e in @entities) {
 		if(@removenamed || !is_entity_living(@e) || !get_mob_name(@e)) {
