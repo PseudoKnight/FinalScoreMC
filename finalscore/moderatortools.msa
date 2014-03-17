@@ -36,12 +36,6 @@
 	))
 <<<
 
-/butcher [$] = >>>
-	msg('Use /remove [radius] [entityType]')
-	msg('This will preserve named mobs, except when given the -n flag.')
-	msg('entityType groups: living, hostile')
-<<<
-
 /hologram $ = >>>
 	@loc = _relative(ploc(), 'up', 57)	
 	@lines = split(',', $)
@@ -57,6 +51,8 @@
 	}
 <<<
 
+
+/butcher [$] = call_alias('/remove '.$)
 /remove [$] = >>>
 	if(!$) {
 		msg('Usage: /remove [radius] [entityType] [-n]')
