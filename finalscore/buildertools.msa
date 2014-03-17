@@ -33,6 +33,7 @@
 	if(is_alias($), @cmd = '/runalias '.$, @cmd = $)
 	set_block_command(@block, @cmd)
 	msg('Command set: '.color('green').@cmd)
+	msg(color('gold').'You can add to this command with /acb')
 <<<
 
 *:/acb [$] = >>>
