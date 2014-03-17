@@ -45,8 +45,8 @@
 		set_entity_rider(@skull, @horse)
 		set_entity_spec(@skull, array('direction': array(0, 0, 0)))
 		set_mob_age(@horse, -1700000, true)
+		set_mob_name(@horse, colorize(@lines[@i]))
 		set_name_visible(@horse, true)
-		set_mob_name(@horse, @lines[@i])
 		@loc['y'] += 0.28
 	}
 <<<
