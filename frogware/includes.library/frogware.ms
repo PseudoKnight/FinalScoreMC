@@ -713,7 +713,7 @@ proc('_fw_task', @task, @state, @secs,
 			@colors = array('WHITE', 'ORANGE', 'MAGENTA', 'LIGHT_BLUE', 'YELLOW', 'LIME', 'PINK', 'GRAY', 'SILVER', 'CYAN', 'PURPLE', 'BLUE', 'BROWN', 'GREEN', 'RED', 'BLACK')
 			@colorindex = rand(array_size(@colors))
 			_fw_msg(@colors[@colorindex].color('r').' is the new black')
-			@count = _fw_totalplayers() * 30
+			@count = min(_fw_totalplayers() * 30, 200)
 			@region = sk_region_info('frogware', 'custom')[0]
 			for(@i = 0, @i < @count, @i++) {
 				spawn_mob('SHEEP:'.@colors[rand(16)], 1, _fw_loc())
