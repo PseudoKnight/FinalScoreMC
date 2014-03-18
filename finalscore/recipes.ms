@@ -34,7 +34,7 @@ if(!get_recipe_for(array('type': 43, 'data': 8))) {
 		'type': 'SHAPED',
 		'result': array('type': 43, 'data': 8),
 		'shape': array('A', 'A'),
-		'ingredients': array('A': '44')
+		'ingredients': array('A': '44:0')
 	))
 }
 
@@ -101,7 +101,7 @@ if(!get_recipe_for(array('type': 162, 'data': 12))) {
 # Dark Oak Log Cube (6-sided bark)
 if(!get_recipe_for(array('type': 162, 'data': 13))) {
 	add_recipe(array(
-		'type': 'SHAPELESS',
+		'type': 'SHAPED',
 		'result': array('type': 162, 'data': 13, 'qty': 4),
 		'shape': array('AA', 'AA'),
 		'ingredients': array('A': '162:1')
