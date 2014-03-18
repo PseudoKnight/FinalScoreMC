@@ -2,17 +2,17 @@
 if(!has_permission('group.builders'), die('You do not have permission.'))
 if($, @args = parse_args($), @args = array())
 array_resize(@args, 3)
-switch($cmd
-, 'set',
+switch($cmd) {
+case 'set':
 	@class = get_value('class.'.$id)
 	if(!@class, @class = array())
-	switch($setting
-	, 'selector', 
+	switch($setting) {
+	case 'selector':
 		if(!pinv(player(), null), die('You must select an item on your hotbar.'))
 		@class['selector'] = pinv(player(), null)
 		msg('Class selector set to this item.')
 	
-	, 'kit',
+	case 'kit':
 		@inv = pinv()
 		foreach(array_keys(@inv), @slot) {
 			if(@inv[@slot] == null) {
@@ -22,7 +22,7 @@ switch($cmd
 		@class['kit'] = @inv
 		msg('Set kit to current inventory.')
 		
-	, 'effect',
+	case 'effect':
 		@effects = _get_effects()
 		if(!array_contains(array_keys(@effects), @args[0]), die('Unknown potion effect. '.array_keys(@effects)))
 		@effect = @effects[@args[0]]
@@ -42,12 +42,12 @@ switch($cmd
 			die('Requires a strength integer and a length integer in seconds.')
 		}
 		
-	,
+	default:
 		die('Available settings: selector, kit, effect')
-	)
+	}
 	store_value('class.'.$id, @class)
 	
-, 'delete',
+case 'delete':
 	if($setting) {
 		@class = get_value('class.'.$id)
 		array_remove(@class, $setting)
@@ -58,13 +58,13 @@ switch($cmd
 		msg('Class deleted.')
 	}
 
-, 'info',
+case 'info':
 	@class = get_value('class.'.$id)
 	foreach(@class, @setting, @value) {
 		msg(color('gray').@setting.' '.color('r').@value)
 	}
 	
-, 'rename',
+case 'rename':
 	if(!$id || !$setting, die('Usage: /class rename <classname> <newclassname>'))
 	@class = get_value('class.'.$id)
 	if(!@class, die('No class by that name.'))
@@ -72,19 +72,19 @@ switch($cmd
 	clear_value('class.'.$id)
 	msg('Changed '.$id.' class name to '.to_lower($setting))
 	
-, 'load',
+case 'load':
 	include('includes.library/class.ms')
 	_class('load', player(), $id)
 	
-, 'unload',
+case 'unload':
 	include('includes.library/class.ms')
 	_class('unload', player(), $id)
 	
-, 'equip',
+case 'equip':
 	include('includes.library/class.ms')
 	_class('equip', player(), $id)
 	
-, 'list',
+case 'list':
 	@classes = get_values('class')
 	@list = ''
 	foreach(array_keys(@classes), @key) {
@@ -92,7 +92,7 @@ switch($cmd
 	}
 	msg(color('gray').'CLASSES: '.color('r').@list)
 	
-, 
+default:
 	die('Usage: /class [set|delete|info|load|unload|equip|list] [classname] [setting] [value[s]]')
-)
+}
 <<<

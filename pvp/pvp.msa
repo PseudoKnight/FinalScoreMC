@@ -1,6 +1,6 @@
 *:/pvp [$action] [$id] [$team] = >>>
-	switch($action
-	, 'join',
+	switch($action) {
+	case 'join':
 		@id = to_lower($id)
 		@pvp = import('pvp'.@id)
 		@arena = get_value('arena.'.@id)
@@ -40,21 +40,21 @@
 			call_alias('/pvp start '.@id)
 		}
 		
-	, 'debug',
+	case 'debug':
 		@id = to_lower($id)
 		@pvp = import('pvp'.@id)
-		foreach(@pvp, @key, @value,
+		foreach(@pvp, @key, @value) {
 			msg(@key.': '.color('gray').@value)
-		)
+		}
 
-	, 'spectate',
+	case 'spectate':
 		if(array_contains(get_scoreboards(), $id)) {
 			set_pscoreboard(player(), $id)
 		} else {
 			msg('The arena isn\'t running.')
 		}
 		
-	, 'addtime',
+	case 'addtime':
 		if(!get_command_block() && !has_permission('group.moderators'), die())
 		if(!$id, die())
 		@id = to_lower($id)
@@ -63,7 +63,7 @@
 		export('pvp'.@id, @pvp)
 		_regionmsg(@pvp['arena']['broadcast'], 'Added '.$team.' more minutes.')
 		
-	, 'removetime',
+	case 'removetime':
 		if(!has_permission('group.moderators'), die())
 		if(!$id, die())
 		@id = to_lower($id)
@@ -76,7 +76,7 @@
 		}
 		export('pvp'.@id, @pvp)
 		
-	, 'start',
+	case 'start':
 		if(!$id, die('You must specify an arena to start. Usage: /pvp start arenaname'))
 		@id = to_lower($id)
 		@pvp = import('pvp'.@id)
@@ -120,19 +120,21 @@
 			)
 		}
 		if(!array_index_exists(@pvp['arena'], 'score')) {
-			switch(@pvp['arena']['mode']
-			, 'ctf', @pvp['arena']['score'] = 5
-			, 'koth', @pvp['arena']['score'] = 60
-			)
+			switch(@pvp['arena']['mode']) {
+				case 'ctf':
+					@pvp['arena']['score'] = 5
+				case 'koth':
+					@pvp['arena']['score'] = 60
+			}
 		}
 		
 		if(array_contains(@pvp['arena']['flags'], 'debug') && !array_contains(pgroup(), 'builders'), die('This arena is still in testing and can only be started by Builders.'))
 		
-		foreach(array_keys(@pvp['players']), @player,
+		foreach(array_keys(@pvp['players']), @player) {
 			if(!ponline(@player) || pworld(@player) != 'custom') {
 				array_remove(@pvp['players'], @player)
 			}
-		)
+		}
 		if(array_size(@pvp['players']) < @pvp['arena']['min'], die('There aren\'t enough players. ('.array_size(@pvp['players']).')'))
 		if((@pvp['cooldown'] + 15000) > time() && !array_contains(pgroup(), 'builders')) {
 			die('Arena still on a 15 second cooldown.')
@@ -163,25 +165,27 @@
 			set_team_options(@pvp['arena']['team'][1]['name'], array('friendlyinvisibles': true), @id)
 		}
 
-		switch(@pvp['arena']['mode']
-		, 'koth',
+		switch(@pvp['arena']['mode']) {
+		case 'koth':
 			create_objective('seconds', 'DUMMY', @id)
 			set_objective_display('seconds', array('displayname': color('a').'Seconds Left', 'slot': 'SIDEBAR'), @id)
-		, array('tdm', 'dm', 'infection'),
+		case 'tdm':
+		case 'dm':
+		case 'infection':
 			if(array_index_exists(@pvp['arena'], 'lives')) {
 				create_objective('lives', 'DUMMY', @id)
 				if(@pvp['arena']['lives'] > 1) {
 					set_objective_display('lives', array('displayname': color('a').'Lives Left', 'slot': 'SIDEBAR'), @id)
 				}
 			}
-		, 'ctf',
+		case 'ctf':
 			create_objective('captures', 'DUMMY', @id)
 			set_objective_display('captures', array('displayname': color('a').'Captures ('.@pvp['arena']['score'].')', 'slot': 'SIDEBAR'), @id)
 			team_add_player(@pvp['arena']['team'][0]['name'], @pvp['arena']['team'][0]['name'], @id)
 			set_pscore('captures', @pvp['arena']['team'][0]['name'], 0, @id)
 			team_add_player(@pvp['arena']['team'][1]['name'], @pvp['arena']['team'][1]['name'], @id)
 			set_pscore('captures', @pvp['arena']['team'][1]['name'], 0, @id)
-		)
+		}
 		
 		if(array_index_exists(@pvp['arena'], 'captain')) {
 			@class = get_value('class.'.@pvp['arena']['captain'][0])
@@ -190,9 +194,9 @@
 			@pvp['team'][1]['captainhat'] = @class['kit'][103]
 		}
 
-		foreach(array_keys(@pvp['players']), @player,
+		foreach(array_keys(@pvp['players']), @player) {
 			if(pmode(@player) == 'CREATIVE', set_pmode(@player, 'SURVIVAL'))
-		)
+		}
 
 		@pvp['coins'] = array_size(@pvp['players']) - 2
 		@pvp['binds'] = array()
@@ -217,7 +221,7 @@
 						@class['selector']['meta']
 					)
 				}
-				for(@i = 0, @i < array_size(@pvp['arena']['classes'][0]), @i++,
+				for(@i = 0, @i < array_size(@pvp['arena']['classes'][0]), @i++) {
 					@class = get_value('class.'.@pvp['arena']['classes'][0][@i])
 					if(!@class, continue())
 					addto_virtualchest(@id.'0', 
@@ -225,12 +229,12 @@
 						@class['selector']['qty'],
 						@class['selector']['meta']
 					)
-				)
-				foreach(@pvp['players'], @p, @pdata,
+				}
+				foreach(@pvp['players'], @p, @pdata) {
 					if(!array_index_exists(@pdata, 'team') || @pdata['team'] == 0) {
 						popen_virtualchest(@p, @id.'0')
 					}
-				)
+				}
 			}
 			@size = array_size(@pvp['arena']['classes'][1]) + if(array_index_exists(@pvp['arena'], 'captain'), 1, 0)
 			if(@size > 1) {
@@ -248,7 +252,7 @@
 						@class['selector']['meta']
 					)
 				}
-				for(@i = 0, @i < array_size(@pvp['arena']['classes'][1]), @i++,
+				for(@i = 0, @i < array_size(@pvp['arena']['classes'][1]), @i++) {
 					@class = get_value('class.'.@pvp['arena']['classes'][1][@i])
 					if(!@class, continue())
 					addto_virtualchest(@id.'1', 
@@ -256,16 +260,16 @@
 						@class['selector']['qty'],
 						@class['selector']['meta']
 					)
-				)
-				foreach(@pvp['players'], @p, @pdata,
+				}
+				foreach(@pvp['players'], @p, @pdata) {
 					if(!pget_virtualchest(@p) && @pdata['team'] == 1) {
 						popen_virtualchest(@p, @id.'1')
 					}
-				)
+				}
 			}
 			if(array_size(@pvp['arena']['classes'][0]) > 1 || array_size(@pvp['arena']['classes'][1]) > 1) {
 				array_push(@pvp['binds'], @id.'classselector')
-				bind('inventory_click', array('id': @id.'classselector'), array('slottype': 'CONTAINER'), @e, assign(@id, @id),
+				bind('inventory_click', array('id': @id.'classselector'), array('slottype': 'CONTAINER'), @e, @id = @id) {
 					@pvp = import('pvp'.@id)
 					if(!array_index_exists(@pvp['players'], player())
 					|| is_null(@e['slotitem'])
@@ -294,7 +298,7 @@
 						close_pinv()
 						export('pvp'.@id, @pvp)
 					}
-				)
+				}
 			}
 		}
 
@@ -310,21 +314,21 @@
 		play_sound(@pvp['arena']['lobby'], array('sound': 'WITHER_SPAWN', 'pitch': 1.5, 'volume': 3))
 		
 		#START ROUND
-		set_interval(3000, closure(
+		set_interval(3000, closure(){
 			@go = 1
-			foreach(array_keys(@pvp['players']), @p,
+			foreach(array_keys(@pvp['players']), @p) {
 				if(ponline(@p) && pget_virtualchest(@p)) {
 					@go = 0
 				}
-			)
+			}
 			if(@go) {
 				clear_task()
 				include('includes.library/round.ms')
 				_pvp_start_round(@id)
 			}
-		))
+		})
 		
-	, 'end',
+	case 'end':
 		if(!get_command_block() && !has_permission('group.builders'), die(color('red').'You do not have permission.'))
 		if(!$id || !$team, die(color('gold').'Usage: /pvp end arenaName winningTeam#'))
 		@id = to_lower($id)
@@ -336,10 +340,10 @@
 		}
 		_pvp_end_match(@id, @pvp['team'][$team - 1]['players'])
 		
-	,
+	default:
 		msg('/pvp join <id> '.color('gray').'Join the match')
 		msg('/pvp start <id> '.color('gray').'Start the match')
 		msg('/pvp end <id> <team> '.color('gray').'End in favor of team')
 		msg('/pvp spectate <id> '.color('gray').'Displays the scoreboard')
-	)
+	}
 <<<	
