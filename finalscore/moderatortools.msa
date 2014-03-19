@@ -30,10 +30,10 @@
 	if(is_array(@timers), store_value('session.timers', @timers))
 	
 	run('/save-all')
-	set_timeout(2000, closure(
+	set_timeout(2000, closure(){
 		msg('Recompiling...')
 		run('/reloadaliases')
-	))
+	})
 <<<
 
 /hologram $ = >>>
@@ -177,9 +177,9 @@
 <<<
 
 /clearchat = >>>
-	for(@i = 0, @i < 20, @i++,
+	for(@i = 0, @i < 20, @i++) {
 		broadcast('')
-	)
+	}
 <<<
 
 /donor $player $amount = >>>
@@ -280,34 +280,34 @@
 	if(!pisop(), die('You do not have permission.'))
 	@data = get_values($namespace)
 	if(array_size(@data) == 0, die('No keys for that namespace.'))
-	switch($action,
-	, 'delete',
-		foreach(@data, @key, @value,
+	switch($action) {
+	case 'delete':
+		foreach(@data, @key, @value) {
 			clear_value(@key)
-		)
+		}
 		msg('Deleted '.$namespace)
-	, 'rename',
-		foreach(@data, @key, @value,
+	case 'rename':
+		foreach(@data, @key, @value) {
 			store_value(reg_replace($namespace, $, @key), @data[@key])
 			clear_value(@key)
-		)
-	, 'indexchild',
-		foreach(@data, @key, @value,
+		}
+	case 'indexchild':
+		foreach(@data, @key, @value) {
 			@array[$] = @value
 			store_value(reg_replace('.'.$, '', @key), @array)
 			clear_value(@key)
-		)
-	)
+		}
+	}
 <<<
 
 *:/matchip $ip = >>>
 	if(!has_permission('group.moderators'), die('You do not have permission.'))
 	@players = get_values('player')
-	foreach(@players, @key, @player,
+	foreach(@players, @key, @player) {
 		if(array_index_exists(@player, 'ips') && array_contains(@player['ips'], $ip)) {
 			msg('Matched: '.split('.', @key)[1])
 		}
-	)
+	}
 <<<
 
 *:/coins [$action] [$player] [$amount] = >>>
@@ -316,27 +316,30 @@
 	} else {
 		if(!has_permission('group.moderators'), die('You do not have permission.'))
 		if(!$player, die('Usage: /coins <add|sub|info> <player> <amount>'))
-		switch($action
-		, array('add', 'give'),
+		switch($action) {
+		case 'add':
+		case 'give':
 			if(!$amount, die('Usage: /coins <add|sub|info> <player> <amount>'))
 			if(_acc_add($player, $amount)) {
 				msg('Gave '.$player.' '.$amount.' coins.')
 			} else {
 				msg('Can\'t find player.')
 			}
-		, array('sub', 'subtract', 'remove'),
+		case 'sub':
+		case 'subtract':
+		case 'remove':
 			if(!$amount, die('Usage: /coins <add|sub|info> <player> <amount>'))
 			if(_acc_subtract($player, $amount)) {
 				msg('Subtracted '.$amount.' coins from '.$player)
 			} else {
 				msg('Can\'t find player.')
 			}
-		, 'info',
+		case 'info':
 			if(@coins = _acc_balance($player)) {
 				msg(color('gold').round(_acc_balance($player)).' coins')
 			} else {
 				msg('Can\'t find player.')
 			}
-		)
+		}
 	}
 <<<

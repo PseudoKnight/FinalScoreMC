@@ -73,19 +73,19 @@
 	if(is_numeric($id), @id = $id, @id = @effects[$id])
 	@effectdata = array(1: 2, 2: 10, 5: 9, 6: 5, 7: 12, 10: 1, 12: 3, 14: 14, 16: 6, 18: 8)
 	if(array_index_exists(@effectdata, @id), @data = @effectdata[@id], @data = 16)
-	switch($cmd
-	, 'add',
+	switch($cmd) {
+	case 'add':
 		@item = pinv(player(), null)
 		if(@item['type'] != 373, die('You can only add potion effects to potions.'))
 		if(!@item['meta'], @item['meta'] = array())
 		if(!array_index_exists(@item['meta'], 'potions'), @item['meta']['potions'] = array())
 		array_push(@item['meta']['potions'], array('id': @id, 'strength': $strength - 1, 'seconds': $seconds))
 		set_pinv(array(null: @item))
-	, 'set',
+	case 'set':
 		set_pinv(array(null: array('type': 373, 'data': @data, 'meta': array('potions': array(array('id': @id, 'strength': $strength - 1, 'seconds': $seconds))))))
-	, 
+	default: 
 		die('Usage: /potion <set|add> <potionEffect> <strength> <seconds>')
-	)
+	}
 <<<
 
 *:/enchant [$type='list'] [$level=1] = >>>
@@ -169,12 +169,13 @@
 
 *:/fly = >>>
 	if(!has_permission('command.fly'), die('You do not have permission to use this command.'))
-	if(phas_flight(),
+	if(phas_flight()) {
 		set_pflight(player(), 0)
-		msg('Turned off flying.'),
+		msg('Turned off flying.')
+	} else {
 		set_pflight(player(), 1)
 		msg('Turned on flying.')
-	)
+	}
 <<<
 
 #Game mode aliases
@@ -211,19 +212,22 @@
 	
 
 	
-	switch(@mode
-	, 0, @mode = 'SURVIVAL'
-	, 1, @mode = 'CREATIVE'
-	, 2, @mode = 'ADVENTURE'
-	, 'toggle',
+	switch(@mode) {
+	case 0:
+		@mode = 'SURVIVAL'
+	case 1:
+		@mode = 'CREATIVE'
+	case 2:
+		@mode = 'ADVENTURE'
+	case 'toggle':
 		if(pmode(@player) == 'SURVIVAL') {
 			@mode = 'CREATIVE'
 		} else {
 			@mode = 'SURVIVAL'
 		}
-	, 
+	default: 
 		die('Unknown game mode.')
-	)
+	}
 	
 	set_pmode(@player, @mode)
 	if(@player != player(), msg('Set '.@player.'\'s game mode to '.@mode))

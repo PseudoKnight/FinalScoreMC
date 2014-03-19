@@ -6,12 +6,12 @@
 	}
 	@cart = spawn_entity('minecart', 1, @loc)[0]
 	set_entity_rider(@cart, @player)
-	bind('vehicle_leave', null, array('vehicletype': 'MINECART', 'passengertype': 'PLAYER'), @e, @cart = @cart,
+	bind('vehicle_leave', null, array('vehicletype': 'MINECART', 'passengertype': 'PLAYER'), @e, @cart = @cart) {
 		if(@e['vehicle'] == @cart) {
 			unbind()
 			try(entity_remove(@e['vehicle']))
 		}
-	)
+	}
 <<<
 
 /bedspawn $player [$] = >>>
@@ -47,12 +47,12 @@
 <<<
 
 /velocity $player $x $y $z [$double] = >>>
-	queue_push(closure(
+	queue_push(closure(){
 		set_pvelocity($player, $x, $y, $z)
 		make_effect(ploc($player), 'MOBSPAWNER_FLAMES')
 		play_sound(ploc($player), array('sound': 'GHAST_FIREBALL', 'volume': 2))
 		if($double, set_timeout($double, closure( set_pvelocity($player, $x, $y, $z))))
-	))
+	})
 <<<
 
 /playsound $sound [$pitch=1] [$volume=1] = >>>
@@ -63,7 +63,7 @@
 	}
 <<<
 
-/setblock $x $y $z $id [$data=0] [$old='replace'] = >>>
+/setblock $x $y $z $id [$data=0] [$mode='replace'] = >>>
 	if(@cmdblk = get_command_block()) {
 		if($x[0] == '~') {
 			if($x == '~') {
@@ -98,24 +98,23 @@
 		
 		@id = split(':', @id)[0]
 		
-		switch($old
-		, 'replace',
+		switch($mode) {
+		case 'replace':
 			set_block_at(@x, @y, @z, @id.':'.$data, @cmdblk[3], false)
-		, 'keep',
+		case 'keep':
 			if(get_block_at(@x, @y, @z, @cmdblk[3]) == '0:0') {
 				set_block_at(@x, @y, @z, @id.':'.$data, @cmdblk[3], false)
 			}
-		, 'destroy',
+		case 'destroy':
 			if(get_block_at(@x, @y, @z, @cmdblk[3]) != '0:0') {
 				make_effect(array(@x, @y, @z, @cmdblk[3]), 'STEP_SOUND:'.@id)
 			}
 			set_block_at(@x, @y, @z, @id.':'.$data, @cmdblk[3], false)
-		, die()
-		)
+		}
 	}
 <<<
 
-/fill $x1 $y1 $z1 $x2 $y2 $z2 $id [$data=0] [$old='replace'] [$id2=''] = >>>
+/fill $x1 $y1 $z1 $x2 $y2 $z2 $id [$data=0] [$mode='replace'] [$id2=''] = >>>
 	if(@cmdblk = get_command_block()) {
 		@cbworld = @cmdblk[3]
 		if($x1[0] == '~') {
@@ -179,22 +178,22 @@
 		
 		@id = split(':', @id)[0]
 		
-		switch($old
-		, 'replace',
+		switch($mode) {
+		case 'replace':
 			proc('_set', @x, @y, @z, @blockid = @id, @world = @cbworld, @data = $data, @replace = $id2,
 				if(@replace == '' || get_block_at(@x, @y, @z, @world) == @replace) {
 					set_block_at(@x, @y, @z, @blockid.':'.@data, @world, false)
 				}
 			)
 			_iterate_cuboid(array(@x1, @y1, @z1), array(@x2, @y2, @z2), '_set')
-		, 'keep',
+		case 'keep':
 			proc('_set', @x, @y, @z, @blockid = @id, @world = @cbworld, @data = $data,
 				if(get_block_at(@x, @y, @z, @world) == '0:0') {
 					set_block_at(@x, @y, @z, @blockid.':'.@data, @world, false)
 				}
 			)
 			_iterate_cuboid(array(@x1, @y1, @z1), array(@x2, @y2, @z2), '_set')
-		, 'destroy',
+		case 'destroy':
 			proc('_set', @x, @y, @z, @blockid = @id, @world = @cbworld, @data = $data,
 				if(get_block_at(@x, @y, @z, @world) != '0:0') {
 					make_effect(array(@x, @y, @z, @world), 'STEP_SOUND:'.@blockid)
@@ -202,7 +201,6 @@
 				set_block_at(@x, @y, @z, @blockid.':'.@data, @world, false)
 			)
 			_iterate_cuboid(array(@x1, @y1, @z1), array(@x2, @y2, @z2), '_set')
-		, die()
-		)
+		}
 	}
 <<<

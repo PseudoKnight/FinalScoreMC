@@ -139,19 +139,19 @@
 	if(!$target) {
 		die('Usage: /compass [here|spawn|home|player [playerName]]')
 	}
-	switch($target
-	, 'spawn',
+	switch($target) {
+	case 'spawn':
 		set_compass_target(get_spawn())
 		msg('Compass is now pointing to '._worldname(pworld()).'\'s spawn.')
 		
-	, 'player',
+	case 'player':
 		if(!$id, die('You must specify a player to point to.'))
 		try(@player = player($id), die('Unknown player.'))
 		if(pworld(@player) != pworld(), die('Player is not in this world.'))
 		set_compass_target(ploc(@player))
 		msg('Compass is now pointing to '.@player.'\'s last location.')
 	
-	, 'home',
+	case 'home':
 		if($id) {
 			@pdata = get_value('player.'.to_lower($id))
 			if(!@pdata, die('Unknown player.'))
@@ -168,11 +168,11 @@
 		))
 		msg('Compass is now pointing to '.if($id, $id.'\'s', 'your').' home.')
 		
-	, 'here',
+	case 'here':
 		set_compass_target(ploc())
 		msg('Compass is now pointing to this location.')
 
-	)
+	}
 <<<
 
 #Runs the help procedure to list or display entries
@@ -323,18 +323,18 @@
 *:/weather $type = >>>
 	if(_acc_balance(player()) < 1, die('You do not have any coins.'))
 	if(pworld() == 'outworld', die('You cannot do this in the outworld.'))
-	switch($type
-	, 'stormy',
+	switch($type) {
+	case 'stormy':
 		storm(true)
 		_acc_subtract(player(), 1)
 		msg(color('gold').'-1 coin')
 		msg(color('aqua').'You summoned a storm.')
-	, 'sunny',
+	case 'sunny':
 		storm(false)
 		_acc_subtract(player(), 1)
 		msg(color('gold').'-1 coin')
 		msg(color('aqua').'You calmed the storm.')
-	, #else 
+	default: 
 		msg('Accepts \'stormy\' or \'sunny\'')
-	)
+	}
 <<<
