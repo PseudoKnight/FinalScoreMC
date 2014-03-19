@@ -1,4 +1,4 @@
-proc('_cluck_defaults',
+proc('_cluck_defaults') {
 	return(array(
 	'round': 1, 
 	'count': 10, # countdown for chicken spawns
@@ -18,15 +18,15 @@ proc('_cluck_defaults',
 		array(-575.5, 63, -323)
 	)
 	))
-)
+}
 
-proc('_cluck_startround',
+proc('_cluck_startround') {
     @cluck = import('cluck')
 	_regionmsg('cluck', 'Round '.@cluck['round'])
 	_clear_pinv()
 	set_pinv(@cluck['player'], array(0: array('type': 261), 1: array('type': 262, 'qty': 10)))
 	set_block_at(@cluck['sound']['startround'], '69:13')
-	bind('entity_damage', array('id': 'cluckchicken'), array('cause': 'PROJECTILE', 'type': 'CHICKEN', 'world': 'custom'), @event,
+	bind('entity_damage', array('id': 'cluckchicken'), array('cause': 'PROJECTILE', 'type': 'CHICKEN', 'world': 'custom'), @event) {
 		@cluck = import('cluck')
 		if(@event['shooter'] != @cluck['player']) {
 			@cluck['count']++
@@ -39,28 +39,28 @@ proc('_cluck_startround',
 			array_remove_values(@cluck['chickens'], @event['id'])
 			export('cluck', @cluck)
 		}
-	)
+	}
 
 	set_timeout(100, closure(set_block_at(@cluck['sound']['startround'], '69:5')))
 	export('cluck', @cluck)
-	set_timeout(1000, closure(
+	set_timeout(1000, closure(){
 		_cluck_spawn()
-	))
-)
+	})
+}
 
-proc('_cluck_spawn', 
+proc('_cluck_spawn') {
 	queue_delay(400 * rand(1, 9), 'cluck')
-	queue_push(closure(
+	queue_push(closure(){
 		@cluck = import('cluck')
 		# Let's make sure the player isn't cheating, but we'll just reset the round
 		if(ponline(@cluck['player']) && array_contains(sk_current_regions(@cluck['player']), 'cluck0')) {
 			# Let's check if some other player is where they shouldn't be
-			foreach(all_players('custom'), @player,
+			foreach(@player in all_players('custom')) {
 				if(array_contains(sk_current_regions(@player), 'cluckdeny0')) {
 					set_ploc(@player, array(-544,62, -367, 'custom'))
 					tmsg(@player, 'Don\'t get in player\'s way.')
 				}
-			)
+			}
 			# spawn ALL the chickens!
 			if(@cluck['count'] > 0) {
 				@loc = array(@cluck['spawnloc'][0][0], @cluck['spawnloc'][0][1], @cluck['spawnloc'][0][2] + rand(9), 'custom')
@@ -79,33 +79,33 @@ proc('_cluck_spawn',
 				_cluck_spawn()
 			} else {
 				export('cluck', @cluck)
-				set_timeout(5000, closure(
+				set_timeout(5000, closure(){
 					_cluck_endround()
-				))
+				})
 			}
 		} else {
-			if(ponline(@cluck['player']) && pworld(@cluck['player']) == 'custom',
+			if(ponline(@cluck['player']) && pworld(@cluck['player']) == 'custom') {
 				_clear_pinv()
 				set_plevel(@cluck['player'], 0)
-			)
+			}
 			unbind('cluckchicken')
-			foreach(@cluck['chickens'], @chicken,
+			foreach(@chicken in @cluck['chickens']) {
 				if(entity_type(@chicken), try(entity_remove(@chicken)))
-			)
+			}
 			@cluck = _cluck_defaults()
 			export('cluck', @cluck)
 			queue_clear('cluck')
 			msg('You stepped off the shooting pad. Cluck is reset.')
 		}
-	), 'cluck')
-)
+	}, 'cluck')
+}
 
-proc('_cluck_endround',
+proc('_cluck_endround') {
 	@cluck = import('cluck')
 	if(@cluck['count'] > 0, return())
-	foreach(@cluck['chickens'], @chicken,
+	foreach(@chicken in @cluck['chickens']) {
 		if(entity_type(@chicken), entity_remove(@chicken))
-	)
+	}
 	_regionmsg('cluck', color(@cluck['color'][0]).@cluck['player'].' hit '.@cluck['hit'].' chickens.')
 
 	# Did we not meet the required hit chickens? (or round 10)
@@ -122,7 +122,7 @@ proc('_cluck_endround',
 			_acc_add(player(), @cluck['score'] - @best)
 			@scores[player()] = @cluck['score']
 			@top = false
-			for(@i = 0, @i < 10, @i++,
+			for(@i = 0, @i < 10, @i++) {
 				if(@top && array_index_exists(@scores['top'], @i) && @scores['top'][@i]['name'] == player()) {
 					array_remove(@scores['top'], @i)
 				} else if(!@top && (!array_index_exists(@scores['top'], @i) || @scores['top'][@i]['score'] < @cluck['score'])) {
@@ -130,7 +130,7 @@ proc('_cluck_endround',
 					array_insert(@scores['top'], array('name': player(), 'score': @cluck['score']), @i)
 					@top = true
 				}
-			)
+			}
 			if(array_size(@scores['top']) > 10) {
 				array_remove(@scores['top'], 10)
 			}
@@ -157,4 +157,4 @@ proc('_cluck_endround',
 	unbind('cluckchicken')
 	export('cluck', @cluck)
 	_clear_pinv()
-)
+}

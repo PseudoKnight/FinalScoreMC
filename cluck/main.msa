@@ -3,23 +3,23 @@
 #########
 
 *:/cluck [$cmd] = >>>
-switch($cmd
-, 'reset',
+switch($cmd) {
+case 'reset':
 	if(!has_permission('group.moderators'), die('You do not have permission.'))
 	store_value('cluck', associative_array(
 		'top': array(),
 		'date': simple_date('MMM d')
 	))
 
-, 'top10',
+case 'top10':
 	@scores = get_value('cluck')
 	msg(color('l').'TOP 10 CLUCK PLAYERS')
 	msg(color('7').'Since '.@scores['date'])
-	for(@i = 0, @i < array_size(@scores['top']), @i++,
+	for(@i = 0, @i < array_size(@scores['top']), @i++) {
 		msg(if(length(@scores['top'][@i]['score']) < 2, '0').@scores['top'][@i]['score'].' - '.@scores['top'][@i]['name'])
-	)
+	}
 
-, 'start',
+case 'start':
 	if(pworld() != 'custom', die())
 
 	include('includes.library/cluck.ms')
@@ -35,10 +35,10 @@ switch($cmd
 	@cluck['active'] = 1
     export('cluck', @cluck)
     _cluck_startround()
-,
+default:
 	msg(color('gold').'[Cluck] You can play Cluck in Frog Park just outside of the event house')
 	msg(color('gold').'[Cluck] '.color('r').'/cluck top10 '.color('gray').'List the top 10 high scores for Cluck')
 	msg(color('gold').'[Cluck] '.color('r').'/cluck start '.color('gray').'Start a round of Cluck')
 	msg(color('gold').'[Cluck] '.color('r').'/cluck reset '.color('gray').'(restricted) Resets the high scores')
-)
+}
 <<<
