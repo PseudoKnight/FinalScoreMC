@@ -69,6 +69,7 @@ proc('_cluck_spawn') {
 	for(@i = @cluck['count'], @i > 0, @i--) {
 		queue_delay(400 * rand(1, 9), 'cluck')
 		queue_push(closure(){
+			@offset =  rand(10)
 			foreach(@i in array(0, 1)) {
 				if(!@cluck['player'][@i] || @cluck['gameover'][@i]) {
 					continue()
@@ -93,7 +94,7 @@ proc('_cluck_spawn') {
 						}
 					}
 					# spawn ALL the chickens!
-					@loc = array(@cluck['spawnloc'][@i][0], @cluck['spawnloc'][@i][1], @cluck['spawnloc'][@i][2] + rand(10), 'custom')
+					@loc = array(@cluck['spawnloc'][@i][0], @cluck['spawnloc'][@i][1], @cluck['spawnloc'][@i][2] + @offset, 'custom')
 					@entityid = spawn_mob('chicken', 1, @loc)[0]
 					if(rand(10) < 1) {
 						set_mob_age(@entityid, -24000)
@@ -101,7 +102,7 @@ proc('_cluck_spawn') {
 					} else {
 						play_sound(@loc, array('sound': 'CHICKEN_EGG_POP'))
 					}
-					set_entity_velocity(@entityid, array(0, 1.1, (rand(100) - (12.5 * abs(@cluck['spawnloc'][@i][2] - @loc[2]))) * (@cluck['round'] / 1000)))
+					set_entity_velocity(@entityid, array(0, 1.1, (rand(100) - (12.5 * @offset)) * (@cluck['round'] / 1000)))
 					set_entity_health(@entityid, 25)
 					array_push(@cluck['chickens'][@i], @entityid)
 				} else {
