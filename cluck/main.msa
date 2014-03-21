@@ -40,18 +40,15 @@ case 'startround':
 		die('Only players can start a new round.')
 	}
 
-	if(@cluck['player'][0] == '') {
+	if(!@cluck['player'][0] && !@cluck['player'][1]) {
 		foreach(@p in all_players('custom')) {
-			if(@p == player() && array_contains(sk_current_regions(@p), 'cluck0')) {
+			if(array_contains(sk_current_regions(@p), 'cluck0')) {
 				@cluck['player'][0] = @p
 				break()
-			} else if(@p != player() && array_contains(sk_current_regions(@p), 'cluck1')) {
+			} else if(array_contains(sk_current_regions(@p), 'cluck1')) {
 				@cluck['player'][1] = @p
 				break()
 			}
-		}
-		if(@cluck['player'][0] == '') {
-			die('You must stand on the right shooting pad to play singleplayer.')
 		}
 	}
 	
