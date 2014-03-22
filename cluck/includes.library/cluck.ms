@@ -70,37 +70,39 @@ proc('_cluck_spawn') {
 		queue_delay(400 * rand(1, 9), 'cluck')
 		queue_push(closure(){
 			@offset =  rand(10)
+			@adult = rand(10)
+			foreach(@player in all_players('custom')) {
+				if(array_contains(sk_current_regions(@player), 'cluckdeny')
+				&& !array_contains(@cluck['player'], @player)) {
+					@loc = get_spawn()
+					@loc = array(@loc[0] + 0.5, @loc[1] - 1, @loc[2] + 0.5, @loc[3])
+					set_ploc(@player, @loc)
+					tmsg(@player, 'Don\'t get in player\'s way.')
+					tmsg(@player, color('gold').'-1 Coin')
+					_acc_subtract(@player, 1)
+					if(@cluck['player'][0]) {
+						_acc_add(@cluck['player'][0], 1)
+					}
+					if(@cluck['player'][1]) {
+						_acc_add(@cluck['player'][1], 1)
+					}
+				}
+			}
 			foreach(@i in array(0, 1)) {
 				if(!@cluck['player'][@i] || @cluck['gameover'][@i]) {
 					continue()
 				}
 				if(ponline(@cluck['player'][@i]) && array_contains(sk_current_regions(@cluck['player'][@i]), 'cluck'.@i)) {
 					# Let's check if some other player is where they shouldn't be
-					foreach(@player in all_players('custom')) {
-						if(array_contains(sk_current_regions(@player), 'cluckdeny')
-						&& !array_contains(@cluck['player'], @player)) {
-							@loc = get_spawn()
-							@loc = array(@loc[0] + 0.5, @loc[1] - 1, @loc[2] + 0.5, @loc[3])
-							set_ploc(@player, @loc)
-							tmsg(@player, 'Don\'t get in player\'s way.')
-							tmsg(@player, color('gold').'-1 Coin')
-							_acc_subtract(@player, 1)
-							if(@cluck['player'][0]) {
-								_acc_add(@cluck['player'][0], 1)
-							}
-							if(@cluck['player'][1]) {
-								_acc_add(@cluck['player'][1], 1)
-							}
-						}
-					}
+
 					# spawn ALL the chickens!
 					@loc = array(@cluck['spawnloc'][@i][0], @cluck['spawnloc'][@i][1], @cluck['spawnloc'][@i][2] + @offset, 'custom')
 					@entityid = spawn_mob('chicken', 1, @loc)[0]
-					if(rand(10) < 1) {
+					if(@adult) {
+						play_sound(@loc, array('sound': 'CHICKEN_EGG_POP'))
+					} else {
 						set_mob_age(@entityid, -24000)
 						play_sound(@loc, array('sound': 'CHICKEN_EGG_POP', 'pitch': 2))
-					} else {
-						play_sound(@loc, array('sound': 'CHICKEN_EGG_POP'))
 					}
 					set_entity_velocity(@entityid, array(0, 1.1, (rand(100) - (12.5 * @offset)) * (@cluck['round'] / 1000)))
 					set_entity_health(@entityid, 25)

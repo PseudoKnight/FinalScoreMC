@@ -42,12 +42,13 @@ case 'startround':
 
 	if(!@cluck['player'][0] && !@cluck['player'][1]) {
 		foreach(@p in all_players('custom')) {
-			if(array_contains(sk_current_regions(@p), 'cluck0')) {
+			@regions = sk_current_regions(@p)
+			if(array_contains(@regions, 'cluck0')) {
 				@cluck['player'][0] = @p
-				break()
-			} else if(array_contains(sk_current_regions(@p), 'cluck1')) {
+				continue()
+			} else if(array_contains(@regions, 'cluck1')) {
 				@cluck['player'][1] = @p
-				break()
+				continue()
 			}
 		}
 	}
