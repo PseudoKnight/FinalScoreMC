@@ -41,15 +41,19 @@ register_command('timer', array(
 				@timers[@player][2] = set_interval(1000, closure(
 					if(!ponline(@player) 
 					|| !array_contains(sk_current_regions(@player), @id)) {
-						@timers = import('timer')
-						array_remove(@timers, @player)
-						export('timer', @timers)
-						unbind(@player.'timerbreak')
-						if(ponline(@player) && pworld(@player) == 'custom') {
-							set_plevel(@player, 0)
-							set_pexp(@player, 0)
+						if(ponline(@player) && ploc(@player)['y'] < 0) {
+							pkill(@player)
+						} else {
+							@timers = import('timer')
+							array_remove(@timers, @player)
+							export('timer', @timers)
+							unbind(@player.'timerbreak')
+							if(ponline(@player) && pworld(@player) == 'custom') {
+								set_plevel(@player, 0)
+								set_pexp(@player, 0)
+							}
+							clear_task()
 						}
-						clear_task()
 					} else {
 						@level[0] += 1
 						set_plevel(@player, @level[0])
