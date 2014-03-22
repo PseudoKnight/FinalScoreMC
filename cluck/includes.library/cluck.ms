@@ -78,25 +78,17 @@ proc('_cluck_spawn') {
 					@loc = array(@loc[0] + 0.5, @loc[1] - 1, @loc[2] + 0.5, @loc[3])
 					set_ploc(@player, @loc)
 					tmsg(@player, 'Don\'t get in player\'s way.')
-					tmsg(@player, color('gold').'-1 Coin')
-					_acc_subtract(@player, 1)
-					if(@cluck['player'][0]) {
-						_acc_add(@cluck['player'][0], 1)
-					}
-					if(@cluck['player'][1]) {
-						_acc_add(@cluck['player'][1], 1)
-					}
 				}
 			}
-			foreach(@i in array(0, 1)) {
-				if(!@cluck['player'][@i] || @cluck['gameover'][@i]) {
+			foreach(@p in array(0, 1)) {
+				if(!@cluck['player'][@p] || @cluck['gameover'][@p]) {
 					continue()
 				}
-				if(ponline(@cluck['player'][@i]) && array_contains(sk_current_regions(@cluck['player'][@i]), 'cluck'.@i)) {
+				if(ponline(@cluck['player'][@p]) && array_contains(sk_current_regions(@cluck['player'][@p]), 'cluck'.@p)) {
 					# Let's check if some other player is where they shouldn't be
 
 					# spawn ALL the chickens!
-					@loc = array(@cluck['spawnloc'][@i][0], @cluck['spawnloc'][@i][1], @cluck['spawnloc'][@i][2] + @offset, 'custom')
+					@loc = array(@cluck['spawnloc'][@p][0], @cluck['spawnloc'][@p][1], @cluck['spawnloc'][@p][2] + @offset, 'custom')
 					@entityid = spawn_mob('chicken', 1, @loc)[0]
 					if(@adult) {
 						play_sound(@loc, array('sound': 'CHICKEN_EGG_POP'))
@@ -106,14 +98,14 @@ proc('_cluck_spawn') {
 					}
 					set_entity_velocity(@entityid, array(0, 1.1, (rand(100) - (12.5 * @offset)) * (@cluck['round'] / 1000)))
 					set_entity_health(@entityid, 25)
-					array_push(@cluck['chickens'][@i], @entityid)
+					array_push(@cluck['chickens'][@p], @entityid)
 				} else {
-					if(ponline(@cluck['player'][@i]) && pworld(@cluck['player'][@i]) == 'custom') {
-						_clear_pinv(@cluck['player'][@i])
-						set_plevel(@cluck['player'][@i], 0)
-						tmsg(@cluck['player'][@i], 'You must stand on the shooting pad.')
+					if(ponline(@cluck['player'][@p]) && pworld(@cluck['player'][@p]) == 'custom') {
+						_clear_pinv(@cluck['player'][@p])
+						set_plevel(@cluck['player'][@p], 0)
+						tmsg(@cluck['player'][@p], 'You must stand on the shooting pad.')
 					}
-					@cluck['gameover'][@i] = @cluck['round']
+					@cluck['gameover'][@p] = @cluck['round']
 					if((!@cluck['player'][0] || @cluck['gameover'][0])
 					&& (!@cluck['player'][1] || @cluck['gameover'][1])) {
 						queue_clear('cluck')
@@ -136,34 +128,35 @@ proc('_cluck_endround') {
 			entity_remove(@chicken)
 		}
 	}
-	foreach(@i in array(0, 1)) {
-		if(!@cluck['player'][@i] || (@cluck['gameover'][@i] && @cluck['gameover'][@i] < @cluck['round'])) {
+	foreach(@p in array(0, 1)) {
+		if(!@cluck['player'][@p] || (@cluck['gameover'][@p] && @cluck['gameover'][@p] < @cluck['round'])) {
 			continue()
 		}
 		
-		_regionmsg('cluck', color(@cluck['color'][@i]).@cluck['player'][@i].' hit '.@cluck['hit'][@i].' chickens.')
-		_clear_pinv(@cluck['player'][@i])
+		_regionmsg('cluck', color(@cluck['color'][@p]).@cluck['player'][@p].' hit '.@cluck['hit'][@p].' chickens.')
+		_clear_pinv(@cluck['player'][@p])
 
 		# Did we not meet the required hit chickens? (or round 10)
-		if(@cluck['hit'][@i] < floor((@cluck['round'] * 0.5) + 5) || @cluck['round'] == 10) {
-			_regionmsg('cluck', color(@cluck['color'][@i]).color('l').to_upper(@cluck['player'][@i]).' GAMEOVER! Score: '.@cluck['score'][@i])
+		if(@cluck['hit'][@p] < floor((@cluck['round'] * 0.5) + 5) || @cluck['round'] == 10) {
+			_regionmsg('cluck', color(@cluck['color'][@p]).color('l').to_upper(@cluck['player'][@p]).' GAMEOVER! Score: '.@cluck['score'][@p])
+			@cluck['gameover'][@p] = @cluck['round']
 
 			# STATS
 			#-------
 			@scores = get_value('cluck')
-			if(!array_index_exists(@scores, @cluck['player'][@i]), @best = 0, @best = @scores[@cluck['player'][@i]])
-			if(@cluck['score'][@i] > @best) {
+			if(!array_index_exists(@scores, @cluck['player'][@p]), @best = 0, @best = @scores[@cluck['player'][@p]])
+			if(@cluck['score'][@p] > @best) {
 				if(@best > 0, _regionmsg('cluck', color('l').'You beat your personal best of '.@best.'!'))
-				msg(color(6).'+ '.(@cluck['score'][@i] - @best).' coins')
-				_acc_add(@cluck['player'][@i], @cluck['score'][@i] - @best)
-				@scores[@cluck['player'][@i]] = @cluck['score'][@i]
+				msg(color(6).'+ '.(@cluck['score'][@p] - @best).' coins')
+				_acc_add(@cluck['player'][@p], @cluck['score'][@p] - @best)
+				@scores[@cluck['player'][@p]] = @cluck['score'][@p]
 				@top = false
 				for(@i = 0, @i < 10, @i++) {
-					if(@top && array_index_exists(@scores['top'], @i) && @scores['top'][@i]['name'] == @cluck['player'][@i]) {
+					if(@top && array_index_exists(@scores['top'], @i) && @scores['top'][@i]['name'] == @cluck['player'][@p]) {
 						array_remove(@scores['top'], @i)
-					} else if(!@top && (!array_index_exists(@scores['top'], @i) || @scores['top'][@i]['score'][0] < @cluck['score'][@i])) {
+					} else if(!@top && (!array_index_exists(@scores['top'], @i) || @scores['top'][@i]['score'] < @cluck['score'][@p])) {
 						_regionmsg('cluck', color('l').'Top 10 Score!')
-						array_insert(@scores['top'], array('name': @cluck['player'][@i], 'score': @cluck['score'][@i]), @i)
+						array_insert(@scores['top'], array('name': @cluck['player'][@p], 'score': @cluck['score'][@p]), @i)
 						@top = true
 					}
 				}
