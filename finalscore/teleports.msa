@@ -49,15 +49,26 @@
 	msg('Set your home to this location.')
 <<<
 
-*:/warp [$warp] [$player] = >>>
-	if($player && get_command_block(), @player = $player, @player = player())
-	if(!$warp) {
-		scriptas(@player,
-			call_alias('/warps list')
-			die()
-		)
+*:/warp [$] = >>>
+	if(!$) {
+		call_alias('/warps list')
+		die()
 	}
-	@warp = get_value('warp.'.to_lower($warp))
+	
+	@args = parse_args($)
+	if(array_size(@args) == 2) {
+		if(get_command_block()) {
+			@player = @args[0]
+			@warpid = @args[1]
+		} else {
+			die('You cannot teleport others.')
+		}
+	} else {
+		 @player = player()
+		 @warpid = @args[0]
+	}
+
+	@warp = get_value('warp.'.to_lower(@warpid))
 	if(!@warp, die('That warp does not exist.'))
 	if(array_contains(array('outworld', 'outworld_nether', 'outworld_the_end'), pworld(@player)), die('You cannot warp in this world.'))
 	include('includes.library/teleports.ms')
