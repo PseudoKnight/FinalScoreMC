@@ -123,16 +123,16 @@
 		if(@args[0] == '-t') {
 			@times = split('-', @args[1])
 			@bantime = time()
-			foreach(@times, @t,
-				switch(substr(@t, length(@t) - 1, length(@t))
-				, 'd',
+			foreach(@t in @times) {
+				switch(substr(@t, length(@t) - 1, length(@t))) {
+				case 'd':
 					@bantime = @bantime + (86400000 * substr(@t, 0, length(@t) - 1))
-				, 'h',
+				case 'h':
 					@bantime = @bantime + (3600000 * substr(@t, 0, length(@t) - 1))
-				, 'm',
+				case 'm':
 					@bantime = @bantime + (60000 * substr(@t, 0, length(@t) - 1))
-				)
-			)
+				}
+			}
 			if(array_size(@args) > 2) {
 				@message = array_implode(@args[cslice(2, array_size(@args) - 1)], ' ')
 			}
@@ -212,11 +212,11 @@
 		@cmd = substr($, 3)
 	} else {
 		@cmd = $
-		tmsg(@player, color('a'), player(), ' ran this command for you:')
-		tmsg(@player, color('6'), @cmd)
+		tmsg(@player, color('a').player().' ran this command for you:')
+		tmsg(@player, color('6').@cmd)
 	}
-	console('"'.@cmd.'" was run on '.@player)
-	scriptas(@player, 
+	console('\''.@cmd.'\' was run on '.@player)
+	scriptas(@player,
 		if(!call_alias(@cmd)) {
 			sudo(@cmd)
 		}
@@ -241,9 +241,6 @@
 		msg(color('gray').'Location: '.color('r').@onlineinfo[7].' '.round(@onlineinfo[1][0]).','.round(@onlineinfo[1][1]).','.round(@onlineinfo[1][2]))
 		if(pmode(@player) == 'CREATIVE') {
 			msg(color('gray').'Gamemode: '.color('r').'CREATIVE')
-		} else {
-			msg(color('gray').'Health: '.color('r').@onlineinfo[5].' and '.pfood(@player).' + '.round(psaturation(@player), 1).' hunger')
-			msg(color('gray').'Levels: '.color('r').plevel(@player))
 		}
 		msg(color('gray').'IP: '.color('r').@onlineinfo[3])
 		msg(color('gray').'Hostname: '.color('r').@onlineinfo[10])
@@ -260,18 +257,17 @@
 			.if(array_index_exists(@pdata['ban'], 'time'), 'temporarily ')
 			.if(array_index_exists(@pdata['ban'], 'message'), '- "'.@pdata['ban']['message'].'"')))
 		msg(color('gray').'Last Played: '.color('r').
-		ifelse(@days >= 3,
+		if(@days >= 3) {
 			'Over '.floor(@days).' days ago'
-		, @hours >= 2, 
+		} else if(@hours >= 2) {
 			'Over '.floor(@hours).' hours ago'
-		, 
+		} else {
 			floor(@minutes).' minutes ago'
-		))
+		})
 		if(array_index_exists(@pdata, 'homeless'), msg(color('gray').'Homeless: '.color('r').'TRUE'))
 		if(array_index_exists(@pdata, 'ips'), msg(color('gray').'IPs: '.color('r').array_implode(@pdata['ips'], ' ')))
 	)
 	if(array_index_exists(@pdata, 'approval'), msg(color('gray').'Approved by: '.color('r').@pdata['approval']))
-	if(array_index_exists(@pdata, 'homes'), msg(color('gray').'Homes: '.color('r').array_implode(array_keys(@pdata['homes']), ', ')))
 	if(array_index_exists(@pdata, 'coins'), msg(color('gray').'Coins: '.color('r').@pdata['coins']))
 <<<
 
@@ -303,6 +299,7 @@
 *:/matchip $ip = >>>
 	if(!has_permission('group.moderators'), die('You do not have permission.'))
 	@players = get_values('player')
+	msg(color('bold').'Matched Players for IP: '.$ip)
 	foreach(@players, @key, @player) {
 		if(array_index_exists(@player, 'ips') && array_contains(@player['ips'], $ip)) {
 			msg('Matched: '.split('.', @key)[1])
