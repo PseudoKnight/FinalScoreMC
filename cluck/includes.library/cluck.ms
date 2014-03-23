@@ -67,10 +67,9 @@ proc('_cluck_spawn') {
 	@cluck = import('cluck')
 	queue_delay(1000, 'cluck')
 	for(@i = @cluck['count'], @i > 0, @i--) {
-		queue_delay(400 * rand(1, 9), 'cluck')
+		queue_delay(400 * rand(1, 12 - @cluck['round']), 'cluck')
 		queue_push(closure(){
-			@offset =  rand(10)
-			@adult = rand(10)
+			# Let's check if some player is in the way
 			foreach(@player in all_players('custom')) {
 				if(array_contains(sk_current_regions(@player), 'cluckdeny')
 				&& !array_contains(@cluck['player'], @player)) {
@@ -80,14 +79,17 @@ proc('_cluck_spawn') {
 					tmsg(@player, 'Don\'t get in player\'s way.')
 				}
 			}
+			
+			# Mirror chicken spawns for duel mode
+			@offset =  rand(10)
+			@adult = rand(10)
+			@angle = rand(100)
 			foreach(@p in array(0, 1)) {
 				if(!@cluck['player'][@p] || @cluck['gameover'][@p]) {
 					continue()
 				}
+				
 				if(ponline(@cluck['player'][@p]) && array_contains(sk_current_regions(@cluck['player'][@p]), 'cluck'.@p)) {
-					# Let's check if some other player is where they shouldn't be
-
-					# spawn ALL the chickens!
 					@loc = array(@cluck['spawnloc'][@p][0], @cluck['spawnloc'][@p][1], @cluck['spawnloc'][@p][2] + @offset, 'custom')
 					@entityid = spawn_mob('chicken', 1, @loc)[0]
 					if(@adult) {
@@ -96,10 +98,11 @@ proc('_cluck_spawn') {
 						set_mob_age(@entityid, -24000)
 						play_sound(@loc, array('sound': 'CHICKEN_EGG_POP', 'pitch': 2))
 					}
-					set_entity_velocity(@entityid, array(0, 1.1, (rand(100) - (12.5 * @offset)) * (@cluck['round'] / 1000)))
+					set_entity_velocity(@entityid, array(0, 1.1, (@angle - (12.5 * @offset)) * (@cluck['round'] / 1000)))
 					set_entity_health(@entityid, 25)
-					array_push(@cluck['chickens'][@p], @entityid)
-				} else {
+					@cluck['chickens'][@p][] = @entityid
+					
+				} else { # they stepped off the shooting range
 					if(ponline(@cluck['player'][@p]) && pworld(@cluck['player'][@p]) == 'custom') {
 						_clear_pinv(@cluck['player'][@p])
 						set_plevel(@cluck['player'][@p], 0)
@@ -137,7 +140,7 @@ proc('_cluck_endround') {
 		_clear_pinv(@cluck['player'][@p])
 
 		# Did we not meet the required hit chickens? (or round 10)
-		if(@cluck['hit'][@p] < floor((@cluck['round'] * 0.5) + 5) || @cluck['round'] == 10) {
+		if(@cluck['hit'][@p] < @cluck['count'] / 2 || @cluck['round'] == 10) {
 			_regionmsg('cluck', color(@cluck['color'][@p]).color('l').to_upper(@cluck['player'][@p]).' GAMEOVER! Score: '.@cluck['score'][@p])
 			@cluck['gameover'][@p] = @cluck['round']
 
