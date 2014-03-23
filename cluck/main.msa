@@ -24,23 +24,20 @@ case 'startround':
 
 	include('includes.library/cluck.ms')
 	@cluck = import('cluck')
-	if(!@cluck, @cluck = _cluck_defaults())
+	if(!@cluck, @cluck = array('player': array('', ''), 'active': 0))
 
 	if(@cluck['active'] == 1, die('Already in progress.'))
 	
-	if(@cluck['player'][0] != player() 
-	&& @cluck['player'][1] != player()
-	&& ((@cluck['player'][0]
-	&& ponline(@cluck['player'][0])
-	&& array_contains(sk_current_regions(@cluck['player'][0]), 'cluck'))
-	|| 
-	(@cluck['player'][1]
-	&& ponline(@cluck['player'][1])
-	&& array_contains(sk_current_regions(@cluck['player'][1]), 'cluck')))) {
-		die('Only players can start a new round.')
+	foreach(@p in array(0, 1)) {
+		if(@cluck['player'][@p]
+		&& (!ponline(@cluck['player'][@p]) 
+		|| !array_contains(sk_current_regions(@cluck['player'][@p]), 'cluck'))) {
+			@cluck['player'][@p] = ''
+		}
 	}
-
+	
 	if(!@cluck['player'][0] && !@cluck['player'][1]) {
+		@cluck = _cluck_defaults()
 		foreach(@p in all_players('custom')) {
 			@regions = sk_current_regions(@p)
 			if(array_contains(@regions, 'cluck0')) {
@@ -51,6 +48,9 @@ case 'startround':
 				continue()
 			}
 		}
+	} else if(@cluck['player'][0] != player()
+	&& @cluck['player'][1] != player()) {
+		die('Only players can start a new round.')
 	}
 	
 	@cluck['active'] = 1
