@@ -49,8 +49,9 @@
 /velocity $player $x $y $z [$double] = >>>
 	queue_push(closure(){
 		set_pvelocity($player, $x, $y, $z)
-		make_effect(ploc($player), 'MOBSPAWNER_FLAMES')
-		play_sound(ploc($player), array('sound': 'GHAST_FIREBALL', 'volume': 2))
+		@loc = ploc($player)
+		make_effect(@loc, 'MOBSPAWNER_FLAMES')
+		play_sound(@loc, array('sound': 'GHAST_FIREBALL', 'volume': 2))
 		if($double, set_timeout($double, closure( set_pvelocity($player, $x, $y, $z))))
 	})
 <<<
