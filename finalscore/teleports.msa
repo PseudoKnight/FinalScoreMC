@@ -5,12 +5,19 @@
 	if(!$) {
 		@world = pworld()
 		@player = player()
-	} else if(array_contains(get_worlds(), _worldid(to_lower($)))) {
-		@world = _worldid(to_lower($))
-		@player = player()
 	} else {
-		@world = pworld()
-		@player = $
+		@args = parse_args($)
+		if(array_contains(get_worlds(), _worldid(to_lower(@args[0])))) {
+			@world = _worldid(to_lower(@args[0]))
+			if(array_size(@args) == 2) {
+				@player = @args[1]
+			} else {
+				@player = player()
+			}
+		} else {
+			@world = pworld()
+			@player = $
+		}
 	}
 	@pdata = get_value('player.'.to_lower(@player))
 	if(!@pdata, die('Cannot find a home.'))
