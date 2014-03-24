@@ -419,4 +419,3 @@ bind('entity_enter_portal', null, null, @event) {
 		entity_remove(@event['id'])
 	}
 }
-}
