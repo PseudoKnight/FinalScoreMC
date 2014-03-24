@@ -113,6 +113,7 @@
 		if(!array_index_exists(@pvp['arena'], 'mode'), @pvp['arena']['mode'] = 'dm')
 		if(!array_index_exists(@pvp['arena'], 'ff'), @pvp['arena']['ff'] = true)
 		if(!array_index_exists(@pvp['arena'], 'flags'), @pvp['arena']['flags'] = array())
+		if(array_contains(@pvp['arena']['flags'], 'keepinventory'), @pvp['arena']['denydrop'] = 'all')
 		if(!array_index_exists(@pvp['arena'], 'team') && array_contains(array('ctf', 'tdm', 'infection'), @pvp['arena']['mode'])) {
 			@pvp['arena']['team'] = array(
 				array('name': 'Red', 'color': 'c'), 

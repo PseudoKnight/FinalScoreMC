@@ -156,6 +156,10 @@ proc('_pvp_start_round', @id) {
 		if(@pvp['arena']['mode'] != 'ctf' && !array_index_exists(@pvp['arena'], 'captain')) {
 			_regionmsg(@pvp['arena']['broadcast'], color('gray').'[PVP] '.color('r').@deathmessage)
 		}
+		
+		if(array_contains(@pvp['arena']['flags'], 'keepinventory')) {
+			@pvp['players'][player()]['inv'] = pinv()
+		}
 
 		@drops = array()
 		foreach(@e['drops'], @drop) {
@@ -758,11 +762,18 @@ proc('_pvp_initialize_players', @id, @players) {
 
 proc('_pvp_equip', @id, @player) {
 	@pvp = import('pvp'.@id)
-	if(array_index_exists(@pvp['arena'], 'kit')) {
-		if(array_index_exists(@pvp, 'team')) {
-			set_pinv(@player, @pvp['arena']['kit'][@pvp['players'][@player]['team']])
-		} else {
-			set_pinv(@player, @pvp['arena']['kit'][0])
+	if(array_index_exists(@pvp['players'][@player], 'inv')) {
+		set_pinv(@player, @pvp['players'][@player]['inv'])
+	} else {
+		if(array_index_exists(@pvp['arena'], 'kit')) {
+			if(array_index_exists(@pvp, 'team')) {
+				set_pinv(@player, @pvp['arena']['kit'][@pvp['players'][@player]['team']])
+			} else {
+				set_pinv(@player, @pvp['arena']['kit'][0])
+			}
+		}
+		if(array_index_exists(@pvp['players'][@player], 'class')) {
+			_class('equip', @player, @pvp['players'][@player]['class'])
 		}
 	}
 	if(array_index_exists(@pvp['arena'], 'effect')) {
@@ -775,10 +786,6 @@ proc('_pvp_equip', @id, @player) {
 			}
 		}
 	}
-	if(array_index_exists(@pvp['players'][@player], 'class')) {
-		_class('equip', @player, @pvp['players'][@player]['class'])
-	}
-	
 }
 
 proc('_pvp_flag_spawn', @id, @team, @loc) {
