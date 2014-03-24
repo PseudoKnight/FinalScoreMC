@@ -1,13 +1,21 @@
 @ignorelist = get_value('session.ignorelist')
-if(!@ignorelist, @ignorelist = array(), clear_value('session.ignorelist'))
+if(!@ignorelist) {
+	@ignorelist = array()
+} else {
+	clear_value('session.ignorelist')
+}
 export('ignorelist', @ignorelist)
 
 @conv = get_value('session.conv')
-if(!@conv, @conv = array(), clear_value('session.conv'))
+if(!@conv) {
+	@conv = array()
+} else {
+	clear_value('session.conv')
+}
 export('conv', @conv)
 
 # PMs, ignores, and mutes
-bind('player_chat', null, null, @event,
+bind('player_chat', null, null, @event) {
 	include('includes.library/chat.ms')
 	if(@event['message'][0] == '@') {
 		cancel()
@@ -28,4 +36,4 @@ bind('player_chat', null, null, @event,
 	}
 	modify_event('message', colorize(@event['message']))
 	modify_event('format', color('dark_gray').simple_date('h:mm').' '.if(array_contains(pgroup(), 'donors'), color('green').'\u2666 ')._colorname().player().color('gray').': '.color('r').'%2$s')
-)
+}

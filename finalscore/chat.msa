@@ -39,10 +39,10 @@
 	}
 	@ignorelist = import('ignorelist')
 	if(!array_index_exists(@ignorelist, @player)) {
-		array_set(@ignorelist, @player, array())
+		@ignorelist[@player] = array()
 	}
 	if(array_contains_ic(@ignorelist[@player], player()), die('You are already ignoring '.@player.'.'))
-	array_push(@ignorelist[@player], player())
+	@ignorelist[@player][] = player()
 	msg('You are now ignoring '.@player.'.')
 	export('ignorelist', @ignorelist)
 <<<
@@ -54,15 +54,18 @@
 		try(@player = player($player), die('No player found.'))
 	}
 	@ignorelist = import('ignorelist')
-	if(!array_index_exists(@ignorelist, @player), die('Wasn\'t ignored.'))
-	if(!array_contains_ic(@ignorelist[@player], player()), die('You have not ignored that player.'))
-	for(@i = 0, @i < array_size(@ignorelist[@player]), @i++,
+	if(!array_index_exists(@ignorelist, @player)) {
+		die('Wasn\'t ignored.')
+	} else if(!array_contains_ic(@ignorelist[@player], player())) {
+		die('You have not ignored that player.')
+	}
+	for(@i = 0, @i < array_size(@ignorelist[@player]), @i++) {
 		if(@ignorelist[@player][@i] == player()) {
 			array_remove(@ignorelist[@player], @i)
 			msg('You are no longer ignoring '.@player.'.')
 			break()
 		}
-	)
+	}
 	export('ignorelist', @ignorelist)
 <<<
 
@@ -71,10 +74,12 @@
 	try(@player = player($player), die('No player found.'))
 	@ignorelist = import('ignorelist')
 	if(!array_index_exists(@ignorelist, @player)) {
-		array_set(@ignorelist, @player, array())
+		@ignorelist[@player] = array()
 	}
-	if(array_contains(@ignorelist[@player], 'all'), die('Already muted.'))
-	array_push(@ignorelist[@player], 'all')
+	if(array_contains(@ignorelist[@player], 'all')) {
+		die('Already muted.')
+	}
+	@ignorelist[@player][] = 'all'
 	msg(@player.' is now muted.')
 	export('ignorelist', @ignorelist)
 <<<
@@ -83,14 +88,16 @@
 	if(!has_permission('group.moderators'), die('You do not have permission to use this command.'))
 	try(@player = player($player), die('No player found.'))
 	@ignorelist = import('ignorelist')
-	if(!array_index_exists(@ignorelist, @player) || !array_contains(@ignorelist[@player], 'all'), die('That player isn\'t muted.'))
-	for(@i = 0, @i < array_size(@ignorelist[@player]), @i++,
+	if(!array_index_exists(@ignorelist, @player) || !array_contains(@ignorelist[@player], 'all')) {
+		die('That player isn\'t muted.')
+	}
+	for(@i = 0, @i < array_size(@ignorelist[@player]), @i++) {
 		if(@ignorelist[@player][@i] == 'all') {
 			array_remove(@ignorelist[@player], @i)
 			msg(@player.' is no longer muted.')
 			break()
 		}
-	)
+	}
 	export('ignorelist', @ignorelist)
 <<<
 
