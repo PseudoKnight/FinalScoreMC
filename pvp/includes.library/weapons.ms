@@ -18,8 +18,10 @@ if(array_contains(@pvp['arena']['weapons'], 'endernades')) {
 		shoot_projectile(player(), 'ENDER_PEARL')
 		play_sound(ploc(), array('sound': 'SHOOT_ARROW', 'pitch': 0.5))
 		@item = pinv(player(), null)
-		@item['qty'] = @item['qty'] - 1
-		if(@item['qty'] > 0) {
+		@item['qty'] -= 1
+		if(@item['qty'] == 0) {
+			set_pinv(array(null: null))
+		} else {
 			@item['type'] = 378
 			set_pinv(array(null: @item))
 			@slot = pinfo(player(), 15)
