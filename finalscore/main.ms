@@ -1,15 +1,15 @@
-set_interval(8 * 60 * 1000, closure(
+set_interval(8 * 60 * 1000, closure(){
 	if(player() == '~console') {
 		run('/save-all')
 	} else {
 		runas('~console', '/save-all')
 	}
-))
+})
 
-bind('player_login', null, null, @e,
-	if(@e['result'] != 'ALLOWED', die())
+bind('player_login', null, null, @event) {
+	if(@event['result'] != 'ALLOWED', die())
 	@update = false
-	@pdata = get_value('player.'.to_lower(@e['player']))
+	@pdata = get_value('player.'.to_lower(@event['player']))
 	if(!@pdata) {
 		@pdata = array('ips': array())
 	}
@@ -24,35 +24,35 @@ bind('player_login', null, null, @e,
 			die()
 		} else {
 			array_remove(@pdata, 'ban')
-			console('Ban on '.@e['player'].' expired.')
+			console('Ban on '.@event['player'].' expired.')
 			@update = true
 		}
 	}
 	if(get_server_info(10)) {
 		if(!array_index_exists(@pdata, 'ips'), @pdata['ips'] = array())
-		if(!array_contains(@pdata['ips'], @e['ip'])) {
-			array_push(@pdata['ips'], @e['ip'])
-			if(array_size(@pdata['ips']) > 3) {
+		if(!array_contains(@pdata['ips'], @event['ip'])) {
+			@pdata['ips'][] = @event['ip']
+			if(array_size(@pdata['ips']) > 2) {
 				array_remove(@pdata['ips'], 0)
 			}
 			@update = true
 		}
 
 	} else {
-		if(!array_contains(@pdata['ips'], @e['ip'])) {
-			console(@e['player'].': '.@e['ip'].', '.@pdata['ips'])
+		if(!array_contains(@pdata['ips'], @event['ip'])) {
+			console(@event['player'].': '.@event['ip'].', '.@pdata['ips'])
 			modify_event('result', 'KICK_OTHER')
 			modify_event('kickmsg', 'Minecraft auth servers are down and your IP doesn\'t match our records.')
 		}
 	}
 	if(@update) {
-		store_value('player.'.to_lower(@e['player']), @pdata)
+		store_value('player.'.to_lower(@event['player']), @pdata)
 	}
-)
+}
 
 # Player join messages and tab list colors
-bind('player_join', null, null, @event,
-	set_timeout(250, closure(@loc = ploc(), @player = player(),
+bind('player_join', null, null, @event) {
+	set_timeout(250, closure(@loc = ploc(), @player = player()){
 		if(!ponline(@player), die())
 		#Welcome messages
 		msg(color('1').color('l').'--------------------')
@@ -89,15 +89,15 @@ bind('player_join', null, null, @event,
 			set_ploc(@warp['loc'])
 			pfacing(@warp['yaw'], @warp['pitch'])
 		}
-		set_timeout(800, closure(
+		set_timeout(800, closure(){
 			if(@loc[1] > ploc()[1]) {
 				set_ploc(@loc)
 			}
-		))
-	))
-)
+		})
+	})
+}
 
-bind('player_death', null, null, @event,
+bind('player_death', null, null, @event) {
 	if(!array_contains(array('custom', 'dev'), pworld())) {
 		@log = @event['player'].' died @ '.round(@event['location'][0]).','.round(@event['location'][1]).','.round(@event['location'][2]).' on '.@event['location'][3].', dropping '.@event['xp'].'xp and '
 		foreach(@drop in @event['drops']) {
@@ -110,68 +110,70 @@ bind('player_death', null, null, @event,
 	} else {
 		modify_event('death_message', null)
 	}
-)
+}
 
 # Log commands
-bind('player_command', null, null, @event,
+bind('player_command', null, null, @event) {
 	if(is_alias(@event['command'])) {
 		console(@event['player'].' ran: '.@event['command'], false)
 	}
-)
+}
 
 # Block wither
-bind('block_place', null, array('type': 144), @e,
+bind('block_place', null, array('type': 144), @event) {
 	if(!array_contains(array('custom', 'dev','outworld_nether', 'outworld', 'outworld_the_end'), pworld())
-	&& get_block_at(_relative(@e['location'], 'down')) == '88:0'
+	&& get_block_at(_relative(@event['location'], 'down')) == '88:0'
 	&& pinv(player(), null) != null
 	&& pinv(player(), null)['data'] == 1) {
 		cancel()
 		msg(color('yellow').'You can only spawn withers in the outworld.')
 	}
-)
+}
 
 # Infinite Cauldrons
-bind('player_interact', null, array('block': 118, 'button': 'right'), @event,
-	if(equals(@event['block'], '118:3')) {
-		switch(@event['item'],
-		'325:0',
+bind('player_interact', null, array('block': 118, 'button': 'right'), @event) {
+	if(@event['block'] == '118:3') {
+		switch(@event['item']) {
+		case '325:0':
 			@bucket = pinv(player(), null)
 			if(@bucket['qty'] == 1) {
 				set_pinv(array(null: array('type': 326, 'qty': 1)))
 			} else {
-				array_set(@bucket, 'qty', @bucket['qty'] - 1)
+				@bucket['qty'] -= 1
 				set_pinv(array(null: @bucket))
 				pgive_item(326, 1)
-			},
-		'374:0',
-			set_timeout(100, closure(assign(@location, @event['location']), set_block_at(@location, '118:3')))
-		)
+			}
+		case '374:0':
+			set_timeout(50, closure(){
+				set_block_at(@event['location'], '118:3')
+			})
+		}
 	}
-)
+}
 
 # Block lighters
-bind('player_interact', null, array('item': 259, 'button': 'right'), @event,
+bind('player_interact', null, array('item': 259, 'button': 'right'), @event) {
 	if(has_permission('group.regulars'), die())
 	if(!array_index_exists(@event, 'location'), die())
 	@loc = @event['location']
 	if(get_block_at(@loc) == '46:0') {
 		die()
 	} else if(get_block_at(@loc) == '49:0' && @event['facing'] == 'up') {
-		set_timeout(50, closure(
+		set_timeout(50, closure(){
 			if(reg_split('\\:', get_block_at(_relative(@loc, 'up')))[0] != '90') {
 				set_block_at(_relative(@loc, 'up'), 0)
 			}
-		))
+		})
 	} else {
 		if(!sk_regions_at(_relative(@loc, 'up')) || !sk_can_build(_relative(@loc, 'up'))) {
 			cancel()
 			msg('Use of flint and steel is restricted here, except on nether portals and TNT.')
 		}
 	}
-)
+}
 
 # Button commands
-bind('player_interact', null, array('block': 77, 'button': 'right'), @event,
+bind('player_interact', null, array('block': 77, 'button': 'right'), @event) {
 	@sign = _relative(@event['location'], 'up')
 	if(is_sign_at(@sign)) { 
 		@signtext = get_sign_text(@sign)
@@ -186,55 +188,59 @@ bind('player_interact', null, array('block': 77, 'button': 'right'), @event,
 			if(!call_alias(@signtext[1] @signtext[2] @signtext[3]), run(@signtext[1] @signtext[2] @signtext[3]))
 		}
 	}
-)
+}
 
 # color signs for moderators
-bind('sign_changed', null, null, @e,
+bind('sign_changed', null, null, @event) {
 	if(has_permission('group.moderators'))  {
 		modify_event('text', array(
-			0: colorize(@e['text'][0]),
-			1: colorize(@e['text'][1]),
-			2: colorize(@e['text'][2]),
-			3: colorize(@e['text'][3])
+			0: colorize(@event['text'][0]),
+			1: colorize(@event['text'][1]),
+			2: colorize(@event['text'][2]),
+			3: colorize(@event['text'][3]),
 		))
 	}
-)
+}
 
 # Sponge splitting
-bind('block_break', null, array('type': 19), @event,
-	if(rand(16) < 1, drop_item(@event['location'], array('type': 19), 1))
-)
+# bind('block_break', null, array('type': 19), @event) {
+	# if(rand(16) < 1) {
+		# drop_item(@event['location'], array('type': 19), 1)
+	# }
+# }
 
 # prevent people from pushing minecart hoppers underneath chests
-bind('vehicle_collide', null, array('type': 'MINECART_HOPPER', 'collisiontype': 'ENTITY', 'hittype': 'PLAYER'), @e,
+bind('vehicle_collide', null, array('type': 'MINECART_HOPPER', 'collisiontype': 'ENTITY', 'hittype': 'PLAYER'), @event) {
 	cancel()
-)
+}
 
-bind('vehicle_leave', array('priority': 'highest'), null, @e,
-	if(@e['player'] && entity_exists(@e['vehicle'])) {
-		@vehicleloc = entity_loc(@e['vehicle'])
-		set_timeout(50, closure(
-			if(!get_entity_vehicle(pinfo(@e['player'], 13))) {
-				set_ploc(@e['player'], @vehicleloc)
+bind('vehicle_leave', array('priority': 'highest'), null, @event) {
+	if(@event['player'] && entity_exists(@event['vehicle'])) {
+		@vehicleloc = entity_loc(@event['vehicle'])
+		set_timeout(50, closure(){
+			if(!get_entity_vehicle(pinfo(@event['player'], 13))) {
+				set_ploc(@event['player'], @vehicleloc)
 			}
-		))
+		})
 	}
-)
+}
 
 # prevent enderdragon egg teleportation
-bind('player_interact', null, array('block': 122), @e,
-	if(pmode() != 'CREATIVE' && (pworld() == 'custom' || pworld() == 'dev'), cancel())
-)
-
-bind('entity_explode', null, null, @e) {
-	if(@e['location'][3] == 'dev') {
+bind('player_interact', null, array('block': 122), @event) {
+	if(pmode() != 'CREATIVE' && (pworld() == 'custom' || pworld() == 'dev')) {
 		cancel()
-	} else if(@e['location'][3] == 'custom') {
-		if(@e['type'] != 'PRIMED_TNT'
-		&& @e['type'] != 'CREEPER') {
+	}
+}
+
+bind('entity_explode', null, null, @event) {
+	if(@event['location'][3] == 'dev') {
+		cancel()
+	} else if(@event['location'][3] == 'custom') {
+		if(@event['type'] != 'PRIMED_TNT'
+		&& @event['type'] != 'CREEPER') {
 			cancel()
 		} else {
-			@regions = sk_regions_at(entity_loc(@e['id']))
+			@regions = sk_regions_at(entity_loc(@event['id']))
 			if(!array_contains(@regions, 'skypirates')
 			&& !array_contains(@regions, 'antfarm')
 			&& !array_contains(@regions, 'bomberman')
@@ -246,22 +252,22 @@ bind('entity_explode', null, null, @e) {
 }
 
 # DISPENER PARKING
-bind('vehicle_collide', null, array('type': 'MINECART', 'collisiontype': 'BLOCK', 'hittype': 23), @e,
-	for(@i = 0, @i < get_inventory_size(@e['block']), @i++) {
-		if(is_null(get_inventory_item(@e['block'], @i))) {
-			set_inventory_item(@e['block'], @i, array('type': 328, 'qty': 1))
-			entity_remove(@e['id'])
+bind('vehicle_collide', null, array('type': 'MINECART', 'collisiontype': 'BLOCK', 'hittype': 23), @event) {
+	for(@i = 0, @i < get_inventory_size(@event['block']), @i++) {
+		if(is_null(get_inventory_item(@event['block'], @i))) {
+			set_inventory_item(@event['block'], @i, array('type': 328, 'qty': 1))
+			entity_remove(@event['id'])
 			break()
 		}
 	}
-)
+}
 
 # prevent non-owners from riding a horse, unless shared
-bind('player_interact_entity', null, array('clicked': 'HORSE'), @e,
+bind('player_interact_entity', null, array('clicked': 'HORSE'), @event) {
 	if(pworld() == 'custom' || pworld() == 'dev', die())
-	if(get_mob_owner(@e['id'])
-	&& get_mob_owner(@e['id']) != player()) {
-		@yVelocity = round(entity_spec(@e['id'])['jump'], 2)
+	if(get_mob_owner(@event['id'])
+	&& get_mob_owner(@event['id']) != player()) {
+		@yVelocity = round(entity_spec(@event['id'])['jump'], 2)
 		@jump = 0
 		while(@yVelocity > 0) {
 			@jump += @yVelocity
@@ -269,14 +275,17 @@ bind('player_interact_entity', null, array('clicked': 'HORSE'), @e,
 			@yVelocity *= 0.98
 		}
 		@jump = round(@jump, 1)
-		@health = round(get_max_health(@e['id']) / 2, 1)
-		msg('This horse is owned by '.get_mob_owner(@e['id']).' '
+		@health = round(get_max_health(@event['id']) / 2, 1)
+		
+		msg('This horse is owned by '.get_mob_owner(@event['id']).' '
 		.color('red').@health.' \u2764'.color('r').' '.color('yellow').@jump.' \u279A')
+		
+		@item = pinv(player(), null)
 		if(!has_permission('group.moderators')
-		&& (!pinv(player(), null)
-		|| (pinv(player(), null)['type'] != 322
-		&& pinv(player(), null)['type'] != 396))) {
-			@pdata = get_value('player.'.to_lower(get_mob_owner(@e['id'])))
+		&& (!@item
+		|| (@item['type'] != 322
+		&& @item['type'] != 396))) {
+			@pdata = get_value('player.'.to_lower(get_mob_owner(@event['id'])))
 			if(!@pdata
 			|| !array_index_exists(@pdata, 'shared')
 			|| !array_index_exists(@pdata['shared'], player())
@@ -285,50 +294,52 @@ bind('player_interact_entity', null, array('clicked': 'HORSE'), @e,
 			}
 		}
 	}
-)
+}
 
 # don't allow most horse damage unless being rode
-bind('entity_damage', null, array('type': 'HORSE'), @e,
-	if(get_mob_age(@e['id']) < -24000) {
+bind('entity_damage', null, array('type': 'HORSE'), @event) {
+	if(get_mob_age(@event['id']) < -24000) {
 		cancel()
 		die()
 	}
 	
-	@world = entity_loc(@e['id'])['world']
+	@world = entity_loc(@event['id'])['world']
 	if(@world == 'custom' || @world == 'dev') {
 		die()
 	}
 	
-	if(!get_mob_owner(@e['id']), die())
-	switch(@e['cause']
-	, array('VOID', 'SUFFOCATION', 'DROWNING'),
+	if(!get_mob_owner(@event['id']), die())
+	switch(@event['cause']) {
+	case 'VOID':
+	case 'SUFFOCATION':
+	case 'DROWNING':
 		die()
 		
-	, 'ENTITY_ATTACK',
-		if((ponline(@e['damager'])
-		&& get_mob_owner(@e['id']) != @e['damager'])
-		|| (!ponline(@e['damager'])
-		&& !get_entity_rider(@e['id']))) {
+	case 'ENTITY_ATTACK':
+		if((ponline(@event['damager'])
+		&& get_mob_owner(@event['id']) != @event['damager'])
+		|| (!ponline(@event['damager'])
+		&& !get_entity_rider(@event['id']))) {
 			cancel()
 		}
 		
-	, 'PROJECTILE',
-		if((ponline(@e['shooter'])
-		&& get_mob_owner(@e['id']) != @e['shooter'])
-		|| (!ponline(@e['shooter'])
-		&& !get_entity_rider(@e['id']))) {
+	case 'PROJECTILE':
+		if((ponline(@event['shooter'])
+		&& get_mob_owner(@event['id']) != @event['shooter'])
+		|| (!ponline(@event['shooter'])
+		&& !get_entity_rider(@event['id']))) {
 			cancel()
 		}
 		
-	, 
-		if(!get_entity_rider(@e['id'])) {
+	default: 
+		if(!get_entity_rider(@event['id'])) {
 			cancel()
 		}
-	)
-)
+	}
+}
 
 # Let one player in a world make the sun rise
-bind('player_enter_bed', null, null, @e,
+bind('player_enter_bed', null, null, @event) {
     if(get_world_time() > 13700 && get_world_time() < 22300) {
 		set_world_time(22300)
 		msg(color('aqua').'You made the sun rise.')
@@ -341,8 +352,7 @@ bind('player_enter_bed', null, null, @e,
 		set_world_time(@time)
 		msg(color('aqua').'You made the sun rise.')
     }
-    
-)
+}
 
 # bind('block_dispense', null, array('type': 'DISPENSER'), @e,
 	# if(@e['location']['world'] == 'dev') {
@@ -359,53 +369,54 @@ bind('player_enter_bed', null, null, @e,
 # )
 
 # Limit the number of mobs that can be built up from a mob spawner
-bind('creature_spawn', null, array('reason': 'SPAWNER'), @e) {
-	@entities = array()
+bind('creature_spawn', null, array('reason': 'SPAWNER'), @event) {
+	@entities = 0
 	# check a 3x3 chunk area (48x256x48 area)
 	for(@x = -16, @x <= 16, @x += 16) {
 		for(@z = -16, @z <= 16, @z += 16) {
-			@entities = array_merge(@entities, all_entities(@e['location']['world'], @e['location']['x'] + @x, @e['location']['z'] + @z))
+			@entities += array_size(all_entities(@event['location']['world'], @event['location']['x'] + @x, @event['location']['z'] + @z))
 		}
 	}
-	if(array_size(@entities) > 100) {
+	if(@entities > 100) {
 		cancel()
 	}
 }
 
 # Anti-xray helper
-bind('block_break', null, array('type': 56), @e,
+bind('block_break', null, array('type': 56), @event) {
 	if(pworld() == 'dev' || pworld() == 'custom', die())
-	set_timeout(50, closure(
-		for(@x = @e['location']['x'] - 1, @x <= @e['location']['x'] + 1, @x++,
-			for(@y = @e['location']['y'] - 1, @y <= @e['location']['y'] + 1, @y++,
-				for(@z = @e['location']['z'] - 1, @z <= @e['location']['z'] + 1, @z++,
+	set_timeout(50, closure(){
+		for(@x = @event['location']['x'] - 1, @x <= @event['location']['x'] + 1, @x++) {
+			for(@y = @event['location']['y'] - 1, @y <= @event['location']['y'] + 1, @y++) {
+				for(@z = @event['location']['z'] - 1, @z <= @event['location']['z'] + 1, @z++) {
 					if(get_block_at(@x, @y, @z) == '56:0') {
 						die()
 					}
-				)
-			)
-		)
+				}
+			}
+		}
 	
-		broadcast(color('c').'[!] '.color('f').player().' found '.color('b').'diamonds '.color(7).if(get_light_at(@e['location']) < 7, '(light level: '.get_light_at(@e['location']).')'),
+		broadcast(color('c').'[!] '.color('f').player().' found '.color('b').'diamonds '.color(7).if(get_light_at(@event['location']) < 7, '(light level: '.get_light_at(@event['location']).')'),
 		'group.moderators')
-	))
-)
+	})
+}
 
 # leash villagers
-bind('player_interact_entity', null, array('clicked': 'VILLAGER'), @e,
-	@slot = pinv(player(), null)
-	if(@slot && @slot['type'] == 420
-	&& get_player_from_entity_id(get_leashholder(@e['id'])) != player()) {
+bind('player_interact_entity', null, array('clicked': 'VILLAGER'), @event) {
+	@item = pinv(player(), null)
+	if(@item && @item['type'] == 420
+	&& get_player_from_entity_id(get_leashholder(@event['id'])) != player()) {
 		cancel()
-		set_leashholder(@e['id'], pinfo(player(), 13))
-		@slot['qty'] = @slot['qty'] - 1
-		set_pinv(array(null: @slot))
+		set_leashholder(@event['id'], pinfo(player(), 13))
+		@item['qty'] = @item['qty'] - 1
+		set_pinv(array(null: @item))
 	}
-)
+}
 
-bind('entity_enter_portal', null, null, @e,
-	if(@e['type'] != 'PLAYER'
-	&& (@e['location']['world'] == 'custom'	|| @e['location']['world'] == 'dev')) {
-		entity_remove(@e['id'])
+bind('entity_enter_portal', null, null, @event) {
+	if(@event['type'] != 'PLAYER'
+	&& (@event['location']['world'] == 'custom'	|| @event['location']['world'] == 'dev')) {
+		entity_remove(@event['id'])
 	}
-)
+}
+}
