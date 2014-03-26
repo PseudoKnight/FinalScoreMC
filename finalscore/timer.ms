@@ -117,12 +117,12 @@ register_command('timer', array(
 								@times = array('top': array(array(@player, @time)))
 								store_value('times', @id, @times)					
 							} else {
-								@top = false
+								@place = 0
 								for(@i = 0, @i < 10, @i++) {
-									if(!@top) {
+									if(!@place) {
 										if(!array_index_exists(@times['top'], @i) || @time < @times['top'][@i][1]) {
 											array_insert(@times['top'], array(@player, @time), @i)
-											@top = true
+											@place = @i + 1
 										}
 									} else {
 										if(array_index_exists(@times['top'], @i) && @times['top'][@i][0] == @player) {
@@ -130,8 +130,20 @@ register_command('timer', array(
 										}
 									}
 								}
-								if(@top) {
-									tmsg(@player, 'You got a top ten time for this course!')
+								if(@place) {
+									switch(@place) {
+										case 1:
+											@place = '1st'
+											_acc_add(@player, 250)
+											tmsg(@player, color('gold').'+ 250 coins')
+										case 2:
+											@place = '2nd'
+										case 3:
+											@place = '3rd'
+										default:
+											@place = @place.'th'
+									}
+									tmsg(@player, 'You got a '.color('bold').@place.color('r').' place time for this course!')
 									launch_firework(@loc, array(
 										'strength': 1,
 										'flicker': true,
