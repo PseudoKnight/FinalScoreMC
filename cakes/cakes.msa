@@ -13,7 +13,7 @@
 			@player = player()
 		}
 		foreach(@key: @cake in @cakes) {
-			array_set(@total, @cake['type'], @total[@cake['type']] + 1)
+			@total[@cake['type']] += 1
 			if(array_index_exists(@cake['players'], @player)) {
 				@count[@cake['type']] += 1
 				@names[@cake['type']] .= color('gray').split('.', @key)[1].'('.array_size(@cake['players']).') '
@@ -32,8 +32,15 @@
 	case 'info':
 		if(!$) {
 			@cakes = get_value('cakes')
-			@loc = pcursor()
-			@id = array_index(@cakes,  array(round(@loc[0]), round(@loc[1]), round(@loc[2]), @loc[3]))
+			@cursorloc = pcursor()
+			foreach(@key: @loc in @cakes) {
+				if(@loc[0] == @cursorloc[0]
+				&& @loc[1] == @cursorloc[1]
+				&& @loc[2] == @cursorloc[2]) {
+					@id = @key
+					break()
+				}
+			}
 			if(!@id) {
 				die('No cake prize found.')
 			}
@@ -122,7 +129,7 @@
 		if(!array_index_exists(@cakes, $)) {
 			die('There doesn\'t appaar to be a cake by that id.')
 		}
-		array_set(@cakes, $, array(round(@loc[0]), round(@loc[1]), round(@loc[2]), @loc[3]))
+		array_set(@cakes, $, array(integer(@loc[0]), integer(@loc[1]), integer(@loc[2]), @loc[3]))
 		store_value('cakes', @cakes)
 		msg('Set '.$.' cake to this new location.')
 
@@ -130,8 +137,15 @@
 		if(!array_contains(pgroup(), 'moderators'), die('You do not have permission to use cake commands.'))
 		@cakes = get_value('cakes')
 		if(!$) {
-			@loc = pcursor()
-			@id = array_index(@cakes,  array(round(@loc[0]), round(@loc[1]), round(@loc[2]), @loc[3]))
+			@cursorloc = pcursor()
+			foreach(@key: @loc in @cakes) {
+				if(@loc[0] == @cursorloc[0]
+				&& @loc[1] == @cursorloc[1]
+				&& @loc[2] == @cursorloc[2]) {
+					@id = @key
+					break()
+				}
+			}
 			if(!@id) {
 				die('No cake prize found.')
 			}
@@ -151,8 +165,15 @@
 		@cakes = get_value('cakes')
 		@args = parse_args($)
 		if(array_size(@args) == 1) {
-			@loc = pcursor()
-			@old = array_index(@cakes, array(round(@loc[0]), round(@loc[1]), round(@loc[2]), @loc[3]))
+			@cursorloc = pcursor()
+			foreach(@key: @loc in @cakes) {
+				if(@loc[0] == @cursorloc[0]
+				&& @loc[1] == @cursorloc[1]
+				&& @loc[2] == @cursorloc[2]) {
+					@old = @key
+					break()
+				}
+			}
 			if(!@old) {
 				die('No cake prize found.')
 			}
