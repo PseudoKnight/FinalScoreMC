@@ -3,7 +3,10 @@ if(array_contains(@pvp['arena']['weapons'], 'endernades')) {
 	bind('player_teleport', array('id': @id.'endernades'), array('type': 'ENDER_PEARL'), @e, assign(@id, @id)) {
 		@pvp = import('pvp'.@id)
 		if(!array_index_exists(@pvp['players'], player()), die())
-		explosion(@e['to'], 2)
+		@fireball = shoot_projectile(player(), 'FIREBALL')
+		set_entity_loc(@fireball, @e['to'])
+		set_entity_spec(@fireball, array('direction': array(0, -1, 0)))
+		#explosion(@e['to'], 2)
 		if(function_exists('play_effect')) {
 			play_effect(@e['to'], 'EXPLOSION_LARGE')
 		}
@@ -25,7 +28,7 @@ if(array_contains(@pvp['arena']['weapons'], 'endernades')) {
 			@item['type'] = 378
 			set_pinv(array(null: @item))
 			@slot = pinfo(player(), 15)
-			set_timeout(1000, closure(){
+			set_timeout(500, closure(){
 				if(pinv(player(), @slot) && pinv(player(), @slot)['type'] == 378) {
 					play_sound(ploc(), array('sound': 'IRONGOLEM_THROW'))
 					@inv = array()
@@ -61,7 +64,8 @@ if(array_contains(@pvp['arena']['weapons'], 'primedtnt')) {
 		if(@loc = _relative(@e['location'], @e['facing'])) {
 			@loc = array(@loc[0] + 0.5, @loc[1] + 0.5, @loc[2] + 0.5, @loc[3])
 			ptake_item(46, 1)
-			spawn_entity('PRIMED_TNT', 1, @loc)
+			@tnt = spawn_entity('PRIMED_TNT', 1, @loc)[0]
+			set_entity_spec(@tnt, array('fuseticks': 4))
 		}
 	}
 }
