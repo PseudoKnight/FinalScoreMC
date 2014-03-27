@@ -1,5 +1,9 @@
 @timers = get_value('session.timers')
-if(!@timers, @timers = array(), clear_value('session.timers'))
+if(!@timers) {
+	@timers = array()
+} else {
+	clear_value('session.timers')
+}
 export('timer', @timers)
 
 register_command('timer', array(
@@ -14,13 +18,10 @@ register_command('timer', array(
 			@player = @args[2]
 			
 			if(pmode(@player) != 'CREATIVE') {
-			
-				if(@args[0] == 'start') {
+
+				@timers = import('timer')
 				
-					@timers = import('timer')
-					if(!@timers) {
-						@timers = array()
-					}
+				if(@args[0] == 'start') {
 					
 					if(array_index_exists(@timers, @player)) {
 						clear_task(@timers[@player][2])
@@ -86,7 +87,6 @@ register_command('timer', array(
 				
 				} else if(@args[0] == 'stop') {
 					
-					@timers = import('timer')
 					if(array_index_exists(@timers, @player)
 					&& @timers[@player][0] == @id) {
 						@time = round((time() - @timers[@player][1]) / 1000, 1)
