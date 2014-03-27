@@ -62,11 +62,10 @@ proc('_pvp_start_round', @id) {
 				_regionmsg(@pvp['arena']['broadcast'], color('gray').'[PVP] '.color(@pvp['arena']['team'][0]['color']).@pvp['team'][0]['captain']. ' is the captain of '.@pvp['arena']['team'][0]['name'].'.')
 			}
 			if(@pvp['team'][1]['captain'] == '') {
-				@hat = drop_item(_relative(@pvp['arena']['spawn'][1][0], 'up'), @pvp['team'][1]['captainhat'], 0)
+				drop_item(_relative(@pvp['arena']['spawn'][1][0], 'up'), @pvp['team'][1]['captainhat'], 0)
 			} else {
 				_regionmsg(@pvp['arena']['broadcast'], color('gray').'[PVP] '.color(@pvp['arena']['team'][1]['color']).@pvp['team'][1]['captain']. ' is the captain of '.@pvp['arena']['team'][1]['name'].'.')
 			}
-			export('pvp'.@id, @pvp)
 		}, @id)
 	}
 
@@ -129,7 +128,6 @@ proc('_pvp_start_round', @id) {
 					premove_bar()
 				}
 				array_remove(@pvp['players'], player())
-				export('pvp'.@id, @pvp)
 				_regionmsg(@pvp['arena']['broadcast'], color('gray').'[PVP] '.color('r').player().' did not respawn in time.')
 				_pvp_check_objectives(@id)
 			})
@@ -222,7 +220,6 @@ proc('_pvp_start_round', @id) {
 			_class('unload', player(), @pvp['players'][player()]['class'])
 		}
 		array_remove(@pvp['players'], player())
-		export('pvp'.@id, @pvp)
 		_pvp_check_objectives(@id)
 		
 		bind('player_join', null, array('player': player()), @e, @id = @id) {
@@ -286,7 +283,6 @@ proc('_pvp_start_round', @id) {
 		}
 		
 
-		export('pvp'.@id, @pvp)
 	}
 	
 	# allow use of enderpearls in PVP arenas (overrides main.ms cancel)
@@ -369,7 +365,6 @@ proc('_pvp_start_round', @id) {
 		array_remove(@pvp['players'], player())
 		_clear_pinv()
 		_clear_peffects(player())
-		export('pvp'.@id, @pvp)
 		_pvp_check_objectives(@id)
 	}
 	
