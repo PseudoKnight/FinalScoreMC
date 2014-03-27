@@ -48,7 +48,6 @@ register_command('timer', array(
 							} else {
 								@timers = import('timer')
 								array_remove(@timers, @player)
-								export('timer', @timers)
 								unbind(@player.'timerbreak')
 								if(ponline(@player) && pworld(@player) == 'custom') {
 									set_plevel(@player, 0)
@@ -80,7 +79,6 @@ register_command('timer', array(
 							unbind()
 							clear_task(@timers[@p][2])
 							array_remove(@timers, @p)
-							export('timer', @timers)
 						}
 					}
 					
@@ -95,7 +93,6 @@ register_command('timer', array(
 						unbind(@player.'timerbreak')
 						clear_task(@timers[@player][2])
 						array_remove(@timers, @player)
-						export('timer', @timers)
 						play_sound(ploc(@player), array('sound': 'ORB_PICKUP'), @player)
 						
 						tmsg(@player, 'You achieved a time of '.color('bold').@time.color('r').' seconds.')
