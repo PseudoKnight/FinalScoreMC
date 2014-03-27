@@ -27,7 +27,7 @@ register_command('timer', array(
 						clear_task(@timers[@player][2])
 					}
 					
-					@timers[@player] = array(@id, time())
+					@timers[@player] = array(@id, time(), 0)
 					@ptime = get_value('times.'.@id, @player)
 					if(is_null(@ptime)) { 
 						@ptime = 0
@@ -41,11 +41,11 @@ register_command('timer', array(
 					
 					@level = array(0)
 					
-					@timers[@player][2] = set_interval(1000, closure(
+					@timers[@player][2] = set_interval(1000, closure(){
 						if(!ponline(@player) 
 						|| !array_contains(sk_current_regions(@player), @id)) {
 							if(ponline(@player) && ploc(@player)['y'] < 0) {
-								pkill(@player)
+								set_phealth(@player, 0)
 							} else {
 								@timers = import('timer')
 								array_remove(@timers, @player)
@@ -71,7 +71,7 @@ register_command('timer', array(
 								play_sound(ploc(@player), array('sound': 'VILLAGER_NO'), @player)
 							}
 						}
-					))
+					})
 					
 					if(!has_bind(@player.'timerbreak')) {
 						bind('block_break', array('id': @player.'timerbreak'), array('player': @player), @e, @p = @player) {
@@ -83,7 +83,6 @@ register_command('timer', array(
 						}
 					}
 					
-					export('timer', @timers)
 				
 				} else if(@args[0] == 'stop') {
 					
