@@ -26,7 +26,8 @@
 *:/scb [$] = >>>
 	if(!has_permission('group.builders'), die('You do not have permission.'))
 	if(!$, die('Usage: /scb /cmd'))
-	@allowedcmds = array('/velocity', '/tp', '/sayas', '/testfor', '/playsound', '/setblock')
+	@allowedcmds = array('/velocity', '/tp', '/sayas', '/testfor', '/playsound', '/setblock', 
+	'/tempcart', '/bedspawn', '/give', '/effect', '/warp', '/tellraw', '/testforblock', '/time')
 	if(!array_contains_ic(@allowedcmds, parse_args($)[0]), die('Allowed commands: '.array_implode(@allowedcmds)))
 	@block = pcursor()
 	if(get_block_at(@block) != '137:0', die('That is not a commandblock.'))
@@ -46,7 +47,8 @@
 		die('This command block is empty.')
 	}
 	@parts = parse_args(@cmd)
-	@allowedcmds = array('/velocity', '/tp', '/sayas', '/testfor', '/playsound', '/setblock')
+	@allowedcmds = array('/velocity', '/tp', '/sayas', '/testfor', '/playsound', '/setblock', 
+	'/tempcart', '/bedspawn', '/give', '/effect', '/warp', '/tellraw', '/testforblock', '/time')
 	if((@parts[0] == '/runalias' && array_contains_ic(@allowedcmds, @parts[1]))
 	|| (array_size(@parts) > 1 && array_contains_ic(@allowedcmds, @parts[1]))) {
 		set_block_command(@block, @cmd.' '.$)
