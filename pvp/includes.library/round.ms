@@ -14,7 +14,7 @@ proc('_pvp_start_round', @id) {
 					set_block_at(@pvp['arena']['chestspawn'][@i]['loc'], '0:0')
 				}
 			} else if(array_index_exists(@pvp['arena'], 'chestgroup')) {
-				if(get_block_at(@pvp['arena']['chestspawn'][@i]['loc']) == '0:0', set_block_at(@pvp['arena']['chestspawn'][@i]['loc'], '54:0'))
+				if(get_block_at(@pvp['arena']['chestspawn'][@i]['loc'])[0] == '0', set_block_at(@pvp['arena']['chestspawn'][@i]['loc'], '54:0'))
 				@r = rand(array_size(@pvp['arena']['chestgroup'][@pvp['arena']['chestspawn'][@i]['group']]))
 				for(@y = 0, @y < 27, @y++) {
 					@item = get_inventory_item(@pvp['arena']['chestgroup'][@pvp['arena']['chestspawn'][@i]['group']][@r], @y)
@@ -671,7 +671,7 @@ proc('_pvp_start_round', @id) {
 			for(@i = 0, @i < array_size(@pvp['arena']['chestspawn']), @i++) {
 				if(array_index_exists(@pvp['chestspawn'], @i) 
 				&& (@pvp['chestspawn'][@i] + (@pvp['arena']['chestspawn'][@i]['cooldown'] * 1000)) < time()) {
-					if(get_block_at(@pvp['arena']['chestspawn'][@i]['loc']) == '0:0') {
+					if(get_block_at(@pvp['arena']['chestspawn'][@i]['loc'])[0] == '0') {
 						set_block_at(@pvp['arena']['chestspawn'][@i]['loc'], '54:0')
 						for(@y = 0, @y < array_size(@pvp['arena']['chestspawn'][@i]['items']), @y++,
 							set_inventory_item(@pvp['arena']['chestspawn'][@i]['loc'], @y, @pvp['arena']['chestspawn'][@i]['items'][@y])

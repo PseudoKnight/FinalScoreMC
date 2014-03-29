@@ -271,7 +271,7 @@ proc('_fw_task', @task, @state, @secs) {
 			}
 			_remove_region_entities('frogware')
 			proc('_set_air', @x, @y, @z) {
-				if(get_block_at(array(@x, @y, @z, 'custom')) != '0:0') {
+				if(get_block_at(array(@x, @y, @z, 'custom'))[0] != '0') {
 					set_block_at(array(@x, @y, @z, 'custom'), '0:0')
 				}
 			}
@@ -373,7 +373,7 @@ proc('_fw_task', @task, @state, @secs) {
 			}
 			_remove_region_entities('frogware', array('DROPPED_ITEM'))
 			proc('_set_air', @x, @y, @z) {
-				if(get_block_at(array(@x, @y, @z, 'custom')) != '0:0') {
+				if(get_block_at(array(@x, @y, @z, 'custom'))[0] != '0') {
 					set_block_at(array(@x, @y, @z, 'custom'), '0:0')
 				}
 			}
@@ -409,12 +409,12 @@ proc('_fw_task', @task, @state, @secs) {
 				}
 			}
 			proc('_set_base', @x, @y, @z) {
-				if(get_block_at(array(@x, @y, @z, 'custom')) == '0:0') {
+				if(get_block_at(array(@x, @y, @z, 'custom'))[0] == '0') {
 					set_block_at(array(@x, @y, @z, 'custom'), '155:0')
 				}
 			}
 			proc('_set_hill', @x, @y, @z) {
-				if(get_block_at(array(@x, @y, @z, 'custom')) == '0:0') {
+				if(get_block_at(array(@x, @y, @z, 'custom'))[0] == '0') {
 					set_block_at(array(@x, @y, @z, 'custom'), '133:0')
 				}
 			}
@@ -438,7 +438,7 @@ proc('_fw_task', @task, @state, @secs) {
 			}
 			_remove_region_entities('frogware')
 			proc('_set_air', @x, @y, @z) {
-				if(get_block_at(array(@x, @y, @z, 'custom')) != '0:0') {
+				if(get_block_at(array(@x, @y, @z, 'custom'))[0] != '0') {
 					set_block_at(array(@x, @y, @z, 'custom'), '0:0')
 				}
 			}
@@ -513,7 +513,7 @@ proc('_fw_task', @task, @state, @secs) {
 				}
 			}
 			proc('_set_air', @x, @y, @z) {
-				if(get_block_at(array(@x, @y, @z, 'custom')) != '0:0') {
+				if(get_block_at(array(@x, @y, @z, 'custom'))[0] != '0') {
 					set_block_at(array(@x, @y, @z, 'custom'), '0:0')
 				}
 			}
@@ -604,7 +604,7 @@ proc('_fw_task', @task, @state, @secs) {
 			unbind('fwegg')
 			_remove_region_entities('frogware')
 			proc('_set_air', @x, @y, @z) {
-				if(get_block_at(array(@x, @y, @z, 'custom')) != '0:0') {
+				if(get_block_at(array(@x, @y, @z, 'custom'))[0] != '0') {
 					set_block_at(array(@x, @y, @z, 'custom'), '0:0')
 				}
 			}
@@ -705,7 +705,7 @@ proc('_fw_task', @task, @state, @secs) {
 				}
 			}
 			proc('_set_air', @x, @y, @z) {
-				if(get_block_at(array(@x, @y, @z, 'custom')) != '0:0') {
+				if(get_block_at(array(@x, @y, @z, 'custom'))[0] != '0') {
 					set_block_at(array(@x, @y, @z, 'custom'), '0:0')
 				}
 			}

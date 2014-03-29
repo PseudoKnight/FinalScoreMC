@@ -103,11 +103,11 @@
 		case 'replace':
 			set_block_at(@x, @y, @z, @id.':'.$data, @cmdblk[3], false)
 		case 'keep':
-			if(get_block_at(@x, @y, @z, @cmdblk[3]) == '0:0') {
+			if(get_block_at(@x, @y, @z, @cmdblk[3])[0] == '0') {
 				set_block_at(@x, @y, @z, @id.':'.$data, @cmdblk[3], false)
 			}
 		case 'destroy':
-			if(get_block_at(@x, @y, @z, @cmdblk[3]) != '0:0') {
+			if(get_block_at(@x, @y, @z, @cmdblk[3])[0] != '0') {
 				make_effect(array(@x, @y, @z, @cmdblk[3]), 'STEP_SOUND:'.@id)
 			}
 			set_block_at(@x, @y, @z, @id.':'.$data, @cmdblk[3], false)
@@ -189,14 +189,14 @@
 			_iterate_cuboid(array(@x1, @y1, @z1), array(@x2, @y2, @z2), '_set')
 		case 'keep':
 			proc('_set', @x, @y, @z, @blockid = @id, @world = @cbworld, @data = $data,
-				if(get_block_at(@x, @y, @z, @world) == '0:0') {
+				if(get_block_at(@x, @y, @z, @world)[0] == '0') {
 					set_block_at(@x, @y, @z, @blockid.':'.@data, @world, false)
 				}
 			)
 			_iterate_cuboid(array(@x1, @y1, @z1), array(@x2, @y2, @z2), '_set')
 		case 'destroy':
 			proc('_set', @x, @y, @z, @blockid = @id, @world = @cbworld, @data = $data,
-				if(get_block_at(@x, @y, @z, @world) != '0:0') {
+				if(get_block_at(@x, @y, @z, @world)[0] != '0') {
 					make_effect(array(@x, @y, @z, @world), 'STEP_SOUND:'.@blockid)
 				}
 				set_block_at(@x, @y, @z, @blockid.':'.@data, @world, false)

@@ -154,7 +154,7 @@
 					} else if(@rand < 7) {
 						set_block_at(array(@x, @y, @z), '98:2')
 						set_block_at(array(@x, @y + 1, @z), '98:2')
-					} else if(get_block_at(@x, @y, @z) != '0:0') {
+					} else if(get_block_at(@x, @y, @z)[0] != '0') {
 						set_block_at(array(@x, @y, @z), 0)
 						set_block_at(array(@x, @y + 1, @z), 0)
 					}
@@ -162,7 +162,7 @@
 				#clear walls if random obstacles is turned off
 			} else {
 				proc(_setwalls, @x, @y, @z,
-					if(get_block_at(@x, @y, @z) != '0:0') {
+					if(get_block_at(@x, @y, @z)[0] != '0') {
 						set_block_at(array(@x, @y, @z), '0:0')
 						set_block_at(array(@x, @y + 1, @z), '0:0')
 					}
@@ -185,12 +185,12 @@
 				}
 				@location = array(@region[0][0] - rand(sqrt((@region[0][0] - @region[1][0]) ** 2)), @region[0][1], @region[0][2] - rand(sqrt((@region[0][2] - @region[1][2]) ** 2)))
 				#check if they're spawning into a block
-				if(get_block_at(array(@location[0], @location[1] + 1, @location[2])) != '0:0') {
+				if(get_block_at(array(@location[0], @location[1] + 1, @location[2]))[0] != '0') {
 					set_block_at(@location[0], @location[1] + 1, @location[2], 0)
 					set_block_at(@location[0], @location[1] + 2, @location[2], 0)
 				}
 				#check if they're spawning over air
-				if(get_block_at(@location[0], @location[1], @location[2]) == '0:0') {
+				if(get_block_at(@location[0], @location[1], @location[2])[0] == '0') {
 					set_block_at(@location[0], @location[1], @location[2], @mat)
 				}
 				set_ploc(@player, array(@location[0] + 0.5, @location[1], @location[2] + 0.5, @world))
@@ -206,7 +206,7 @@
 				@reward = import('reward')
 				if(@spleefsettings['counter'] == 60) {
 					proc(_removeedge, @x, @y, @z,
-						if(get_block_at(@x, @y, @z) != '0:0') {
+						if(get_block_at(@x, @y, @z)[0] != '0') {
 							set_block_at(@x, @y, @z, '0:0')
 						}
 					)

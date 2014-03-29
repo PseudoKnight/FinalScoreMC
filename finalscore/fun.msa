@@ -17,7 +17,7 @@
 			store_value('acme', @num)
 		}
 		@loc = _relative(ploc(@player), 'up', 24)
-		if(get_block_at(@loc) != '0:0', die('Anvil blocked.'))
+		if(get_block_at(@loc)[0] != '0', die('Anvil blocked.'))
 		set_pmode(@player, 'SURVIVAL')
 		set_pinv(@player, array( # guts
 			0: array('type': 331, 'data': 0, 'qty': 1),

@@ -11,7 +11,7 @@ bind('player_teleport', null, null, @event) {
 	if(_horizontal_distance(@event['to'], @event['from']) > 96) { # 7+ chunk view distance
 		@loc = _relative(@event['to'], 'down')
 		@block = get_block_at(@loc)
-		if(@block != '0:0') {
+		if(@block[0] != '0') {
 			set_timeout(1000, closure(){
 				if(ploc()[1] < @loc[1]) {
 					console('Adjusted '.player().'\'s location after teleport.')
