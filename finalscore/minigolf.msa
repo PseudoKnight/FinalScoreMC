@@ -10,6 +10,9 @@
 				0: array('type': 341),
 				1: array('type': 292),
 			))
+			if(function_exists('set_collides_with_entities')) {
+				set_collides_with_entities(@player, false)
+			}
 		}
 	}
 	
@@ -127,7 +130,7 @@
 						}
 					}
 				} else if(@block == '35:15') {
-					play_sound(@loc, array('sound': 'WOOD_CLICK', 'pitch': 0.9))
+					play_sound(@loc, array('sound': 'WOOD_CLICK', 'pitch': 0.5 + @loc['y'] - floor(@loc['y'])))
 				}
 
 				if(@v['z'] == 0) {
@@ -156,8 +159,13 @@
 					unbind('minigolf_swing_'.@player)
 					unbind('minigolf_hit_'.@player)
 				}
-				if(ponline(@player) && pworld(@player) == @world) {
-					_clear_pinv(@player)
+				if(ponline(@player)) {
+					if(function_exists('set_collides_with_entities')) {
+						set_collides_with_entities(@player, true)
+					}
+					if(pworld(@player) == @world) {
+						_clear_pinv(@player)
+					}
 				}
 			}
 		} else {
