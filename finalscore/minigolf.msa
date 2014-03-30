@@ -112,7 +112,7 @@
 				@loc[0] -= 1
 				if(@v['x'] == 0) {
 					@v['x'] = 0 - @minigolf[@player]['velocity']['x'] * @bounciness
-				} else if(abs(@minigolf[@player]['velocity']['x'] - @v['x']) < 0.1) {
+				} else if(@minigolf[@player]['velocity']['x'] > 0 && abs(@minigolf[@player]['velocity']['x'] - @v['x']) < 0.1) {
 					@v['x'] = @minigolf[@player]['velocity']['x'] * @friction
 				}
 				@block = get_block_at(@loc)
@@ -135,7 +135,7 @@
 
 				if(@v['z'] == 0) {
 					@v['z'] = 0 - @minigolf[@player]['velocity']['z'] * @bounciness
-				} else if(abs(@minigolf[@player]['velocity']['z'] - @v['z']) < 0.1) {
+				} else if(@minigolf[@player]['velocity']['z'] > 0 && abs(@minigolf[@player]['velocity']['z'] - @v['z']) < 0.1) {
 					@v['z'] = @minigolf[@player]['velocity']['z'] * @friction
 				}
 				set_entity_velocity(@minigolf[@player]['id'], array(@v['x'], @v['y'], @v['z']))
