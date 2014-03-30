@@ -45,7 +45,8 @@ proc('_clear_pinv', @player,
 	if(!@player) {
 		@player = player()
 	}
-	if(pworld(@player) != 'custom') {
+	@world = pworld(@player)
+	if(@world != 'custom' && @world != 'dev') {
 		return()
 	}
 	set_pinv(@player, array(
