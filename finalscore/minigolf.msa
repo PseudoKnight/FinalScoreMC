@@ -5,9 +5,10 @@
 	create_scoreboard('minigolf')
 	create_objective('strokes', 'DUMMY', 'minigolf')
 	set_objective_display('strokes', array('displayname': color('a').'STROKES', 'slot': 'SIDEBAR'), 'minigolf')
+	@count = 0
 	foreach(@player in all_players(@world)) {
 		if(array_contains(sk_current_regions(@player), 'minigolf')) {
-			@minigolf[@player] = array('hole': 1, 'id': 0, 'velocity': array('x': 0, 'y': 0, 'z': 0))
+			@minigolf[@player] = array('type': @count, 'hole': 1, 'id': 0, 'velocity': array('x': 0, 'y': 0, 'z': 0))
 			_clear_pinv(@player)
 			set_pinv(@player, array(
 				0: array('type': 341),
@@ -19,6 +20,10 @@
 			set_pscoreboard(@player, 'minigolf')
 			set_pscore('strokes', @player, 1, 'minigolf')
 			set_pscore('strokes', @player, 0, 'minigolf')
+			@count += 1
+			if(@count >= 4) {
+				break()
+			}
 		}
 	}
 	
@@ -45,7 +50,11 @@
 			set_pexp(player(), 0)
 		
 			@loc = _relative(@event['location'], 'up')
-			@minigolf[player()]['id'] = spawn_mob('SLIME:1', 1, array(@loc[0] + 0.5, @loc[1], @loc[2] + 0.5, pworld()))[0]
+			if(@minigolf[player()]['type'] == 0 || @minigolf[player()]['type'] == 2) {
+				@minigolf[player()]['id'] = spawn_mob('SLIME:1', 1, array(@loc[0] + 0.5, @loc[1], @loc[2] + 0.5, pworld()))[0]
+			} else {
+				@minigolf[player()]['id'] = spawn_mob('MAGMA_CUBE:1', 1, array(@loc[0] + 0.5, @loc[1], @loc[2] + 0.5, pworld()))[0]
+			}
 			@minigolf[player()]['velocity'] = array('x': 0, 'y': 0, 'z': 0)
 			
 			export('minigolf', @minigolf)
@@ -53,7 +62,8 @@
 			set_entity_velocity(@minigolf[player()]['id'], array(0, 0, 0))
 			set_timeout(50, closure(){
 				set_mob_effect(@minigolf[player()]['id'], 11, 4, 99999, true)
-				set_mob_effect(@minigolf[player()]['id'], 8, -3, 99999, true)
+				set_mob_effect(@minigolf[player()]['id'], 8, -2, 99999, true)
+				set_mob_effect(@minigolf[player()]['id'], 2, 2, 99999, true)
 			})
 			
 			bind('player_interact', array('id': 'minigolf_swing_'.player()), array('item': 292, 'button': 'right', 'player': player()), @event) {
@@ -155,6 +165,9 @@
 				@minigolf[@player]['velocity']['x'] = @v['x']
 				@minigolf[@player]['velocity']['y'] = @v['y']
 				@minigolf[@player]['velocity']['z'] = @v['z']
+				if(@minigolf[@player]['type'] >= 2) {
+					play_entity_effect(@minigolf[@player]['id'], 'HURT')
+				}
 			}
 		} else {
 			clear_task()
