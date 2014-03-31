@@ -2,6 +2,9 @@
 	if(!has_permission('group.builders') || pworld() != 'dev', die('Nope')) # while debugging
 	@world = pworld()
 	@minigolf = array()
+	create_scoreboard('minigolf')
+	create_objective('strokes', 'DUMMY', 'minigolf')
+	set_objective_display('strokes', array('displayname': color('a').'STROKES', 'slot': 'SIDEBAR'), 'minigolf')
 	foreach(@player in all_players(@world)) {
 		if(array_contains(sk_current_regions(@player), 'minigolf')) {
 			@minigolf[@player] = array('hole': 1, 'id': 0, 'velocity': array('x': 0, 'y': 0, 'z': 0))
@@ -13,10 +16,19 @@
 			if(function_exists('set_collides_with_entities')) {
 				set_collides_with_entities(@player, false)
 			}
+			set_pscoreboard(@player, 'minigolf')
+			set_pscore('strokes', @player, 1, 'minigolf')
+			set_pscore('strokes', @player, 0, 'minigolf')
 		}
 	}
 	
-	export('minigolf', @minigolf)
+	if(array_size(@minigolf) == 0) {
+		remove_scoreboard('minigolf')
+		die('No players in "minigolf" region.')
+	}
+	
+	export('minigolf', @minigolf)	
+	
 	
 	@friction = 0.96
 	@bounciness = 0.75
@@ -81,6 +93,7 @@
 					set_pinv(@event['damager'], array(null: array('type': 292, 'data': 0)))
 					@xp -= 10
 					set_plevel(@event['damager'], plevel(@event['damager']) + 1)
+					set_pscore('strokes', @event['damager'], get_pscore('strokes', @event['damager'], 'minigolf') + 1, 'minigolf')
 					set_timeout(50, closure(){
 						@v = entity_velocity(@event['id'])
 						@v['x'] = @v['x'] * (2.5 * (@xp / 100))
@@ -171,6 +184,7 @@
 		} else {
 			_worldmsg(@world, 'Minigolf reset')
 			unbind('minigolf_ball')
+			remove_scoreboard('minigolf')
 			clear_task()
 		}
 		export('minigolf', @minigolf)
