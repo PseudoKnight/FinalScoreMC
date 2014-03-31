@@ -32,8 +32,7 @@
 		die('No players in "minigolf" region.')
 	}
 	
-	export('minigolf', @minigolf)	
-	
+	export('minigolf', @minigolf)
 	
 	@friction = 0.96
 	@bounciness = 0.75
@@ -106,9 +105,10 @@
 					set_pscore('strokes', @event['damager'], get_pscore('strokes', @event['damager'], 'minigolf') + 1, 'minigolf')
 					set_timeout(50, closure(){
 						@v = entity_velocity(@event['id'])
-						@v['x'] = @v['x'] * (2.5 * (@xp / 100))
-						@v['z'] = @v['z'] * (2.5 * (@xp / 100))
-						set_entity_velocity(@event['id'], array(@v['x'], @v['y'], @v['z']))
+						@v['x'] = @v['x'] * (3 * (@xp / 100))
+						@v['z'] = @v['z'] * (3 * (@xp / 100))
+						@minigolf[@event['damager']]['velocity'] = array('x': @v['x'], 'y': 0, 'z': @v['z'])
+						set_entity_velocity(@event['id'], @minigolf[@event['damager']]['velocity'])
 					})
 				} else {
 					cancel()
@@ -125,7 +125,6 @@
 	}
 	
 	set_interval(50, closure(){
-		@minigolf = import('minigolf')
 		foreachelse(@player: @ball in @minigolf) {
 			if(@minigolf[@player]['id']
 			&& entity_exists(@minigolf[@player]['id'])) {
@@ -135,13 +134,12 @@
 				@loc[0] -= 1
 				if(@v['x'] == 0) {
 					@v['x'] = 0 - @minigolf[@player]['velocity']['x'] * @bounciness
-				} else if(@minigolf[@player]['velocity']['x'] > 0 && abs(@minigolf[@player]['velocity']['x'] - @v['x']) < 0.1) {
+				} else if(abs(@minigolf[@player]['velocity']['x'] - @v['x']) < 0.1) {
 					@v['x'] = @minigolf[@player]['velocity']['x'] * @friction
 				}
 				@block = get_block_at(@loc)
 				if(@block[0] != '0' && @v['y'] >= -0.0784000015258789) {
 					if(@loc['y'] - floor(@loc['y']) == 0) {
-						@v['y'] = 0
 						if(@block == '35:15') {
 							set_pinv(@player, array(0: array('type': 341)))
 							entity_remove(@minigolf[@player]['id'])
@@ -151,6 +149,7 @@
 							@minigolf[@player]['hole'] += 1
 							continue()
 						}
+						@v['y'] = 0
 					}
 				} else if(@block == '35:15') {
 					play_sound(@loc, array('sound': 'WOOD_CLICK', 'pitch': 0.5 + @loc['y'] - floor(@loc['y'])))
@@ -158,13 +157,11 @@
 
 				if(@v['z'] == 0) {
 					@v['z'] = 0 - @minigolf[@player]['velocity']['z'] * @bounciness
-				} else if(@minigolf[@player]['velocity']['z'] > 0 && abs(@minigolf[@player]['velocity']['z'] - @v['z']) < 0.1) {
+				} else if(abs(@minigolf[@player]['velocity']['z'] - @v['z']) < 0.1) {
 					@v['z'] = @minigolf[@player]['velocity']['z'] * @friction
 				}
-				set_entity_velocity(@minigolf[@player]['id'], array(@v['x'], @v['y'], @v['z']))
-				@minigolf[@player]['velocity']['x'] = @v['x']
-				@minigolf[@player]['velocity']['y'] = @v['y']
-				@minigolf[@player]['velocity']['z'] = @v['z']
+				@minigolf[@player]['velocity'] = array('x': @v['x'], 'y': @v['y'], 'z': @v['z'])
+				set_entity_velocity(@minigolf[@player]['id'], @minigolf[@player]['velocity'])
 				if(@minigolf[@player]['type'] >= 2) {
 					play_entity_effect(@minigolf[@player]['id'], 'HURT')
 				}
@@ -172,11 +169,9 @@
 		} else {
 			clear_task()
 		}
-		export('minigolf', @minigolf)
 	})
 	
-	set_interval(10000, closure(){
-		@minigolf = import('minigolf')
+	set_interval(5000, closure(){
 		foreachelse(@player: @ball in @minigolf) {
 			if(!ponline(@player)
 			|| !array_contains(sk_current_regions(@player), 'minigolf')) {
@@ -200,6 +195,5 @@
 			remove_scoreboard('minigolf')
 			clear_task()
 		}
-		export('minigolf', @minigolf)
 	})
 <<<
