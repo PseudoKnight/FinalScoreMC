@@ -41,7 +41,7 @@ proc('_cluck_startround') {
 			} else {
 				@cluck['score'][0] += 1
 				@cluck['hit'][0] += 1
-				set_plevel(@cluck['score'][0])
+				set_plevel(@event['shooter'], @cluck['score'][0])
 				array_remove_values(@cluck['chickens'][0], @event['id'])
 			}
 		} else if(array_contains(@cluck['chickens'][1], @event['id'])) {
@@ -50,7 +50,7 @@ proc('_cluck_startround') {
 			} else {
 				@cluck['score'][1] += 1
 				@cluck['hit'][1] += 1
-				set_plevel(@cluck['score'][1])
+				set_plevel(@event['shooter'], @cluck['score'][1])
 				array_remove_values(@cluck['chickens'][1], @event['id'])
 			}
 		}
