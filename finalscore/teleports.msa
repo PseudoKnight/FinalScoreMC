@@ -196,7 +196,7 @@
 
 	# Check it the player is being ignored
 	@ignorelist = import('ignorelist')
-	if (array_index_exists(@ignorelist, player()) {
+	if (array_index_exists(@ignorelist, player())) {
 		if (array_contains(@ignorelist[player()], @player) || array_contains(@ignorelist[player()], 'all'), die())
 	}
 	if (array_index_exists(@ignorelist, 'all') && array_contains(@ignorelist['all'], @player), die())
@@ -216,7 +216,7 @@
 
 	# Check it the player is being ignored
 	@ignorelist = import('ignorelist')
-	if (array_index_exists(@ignorelist, player()) {
+	if (array_index_exists(@ignorelist, player())) {
 		if (array_contains(@ignorelist[player()], @player) || array_contains(@ignorelist[player()], 'all'), die())
 	}
 	if (array_index_exists(@ignorelist, 'all') && array_contains(@ignorelist['all'], @player), die())
