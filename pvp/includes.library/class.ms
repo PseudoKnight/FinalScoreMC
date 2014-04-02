@@ -124,11 +124,11 @@ proc('_class', @action, @player, @class) {
 		}
 		
 	default: 
-		@class = get_value('class.'.@class)
+		@class = get_value('class', @class)
 		if(!@class, return(false))
 		switch(@action) {
 		case 'load':
-			return()
+			break()
 			
 		case 'equip':
 			if(array_index_exists(@class, 'kit')) {
@@ -143,7 +143,7 @@ proc('_class', @action, @player, @class) {
 			}
 			
 		case 'unload':
-			return()
+			break()
 		
 		}
 	}
