@@ -1,4 +1,6 @@
-*:/minigolf = >>>
+*:/minigolf [$action='start']= >>>
+switch($action) {
+case 'start':
 	if(!has_permission('group.builders') || pworld() != 'dev', die('Nope')) # while debugging
 	@world = pworld()
 	@minigolf = array()
@@ -198,8 +200,8 @@
 		}
 	})
 	
-	set_interval(5000, closure(){
-		foreachelse(@player: @ball in @minigolf) {
+	set_interval(10000, closure(){
+		foreach(@player: @ball in @minigolf) {
 			if(!ponline(@player)
 			|| !array_contains(sk_current_regions(@player), 'minigolf')) {
 				if(has_bind('minigolf_swing_'.@player)) {
@@ -220,11 +222,45 @@
 				}
 				array_remove(@minigolf, @player)
 			}
-		} else {
-			_worldmsg(@world, 'Minigolf reset')
-			unbind('minigolf_ball')
-			remove_scoreboard('minigolf')
+		}
+		if(array_size(@minigolf) == 0) {
+			if(has_bind('minigolf_ball')) {
+				unbind('minigolf_ball')
+			}
+			if(array_contains(get_scoreboards(), 'minigolf')) {
+				remove_scoreboard('minigolf')
+			}
 			clear_task()
 		}
 	})
+case 'stop':
+	@minigolf = import('minigolf')
+	foreach(@player: @ball in @minigolf) {
+		if(has_bind('minigolf_swing_'.@player)) {
+			unbind('minigolf_swing_'.@player)
+			unbind('minigolf_hit_'.@player)
+			unbind('minigolf_target_'.@player)
+		}
+		if(entity_exists(@ball['id'])) {
+			entity_remove(@ball['id'])
+		}
+		if(ponline(@player)) {
+			if(function_exists('set_collides_with_entities')) {
+				set_collides_with_entities(@player, true)
+			}
+			@world = pworld(@player)
+			if(@world == 'dev' || @world == 'custom') {
+				_clear_pinv(@player)
+			}
+		}
+		array_remove(@minigolf, @player)
+	}
+	if(has_bind('minigolf_ball')) {
+		unbind('minigolf_ball')
+	}
+	if(array_contains(get_scoreboards(), 'minigolf')) {
+		remove_scoreboard('minigolf')
+	}
+	msg('Stopped Minigolf')
+}
 <<<
