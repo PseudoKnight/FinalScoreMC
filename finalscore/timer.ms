@@ -40,36 +40,50 @@ register_command('timer', array(
 					play_sound(ploc(@player), array('sound': 'FIREWORK_BLAST'), @player)
 					
 					@level = array(0)
+					@stop = false
 					
 					@timers[@player][2] = set_interval(1000, closure(){
-						if(!ponline(@player) 
-						|| !array_contains(sk_current_regions(@player), @id)) {
-							if(ponline(@player) && ploc(@player)['y'] < 0) {
-								set_phealth(@player, 0)
-							} else {
-								@timers = import('timer')
-								array_remove(@timers, @player)
-								unbind(@player.'timerbreak')
-								if(ponline(@player) && pworld(@player) == 'custom') {
-									set_plevel(@player, 0)
-									set_pexp(@player, 0)
+						if(ponline(@player)) {
+							@yloc = ploc(@player)['y']
+							if(array_contains(sk_current_regions(@player), @id)
+							|| @yloc < 0) {
+								@level[0] += 1
+								set_plevel(@player, @level[0])
+								
+								if(@level[0] <= @ptime) {
+									@percent = round((@level[0] / @ptime) * 100)
+									set_pexp(@player, @percent)
 								}
-								clear_task()
+
+								if(@level[0] + 5 > @ptime && @level[0] < @ptime) {
+									play_sound(ploc(@player), array('sound': 'CLICK', 'pitch': 2), @player)
+								} else if(@level[0] == @ptime) {
+									play_sound(ploc(@player), array('sound': 'VILLAGER_NO'), @player)
+								}
+								
+								if(pinfo(@player, 5) <= 0) {
+									if(function_exists('respawn')) {
+										respawn(@player)
+									}
+								} else if(@yloc < 0) {
+									pkill(@player)
+								}
+								
+							} else {
+								@stop = true
 							}
 						} else {
-							@level[0] += 1
-							set_plevel(@player, @level[0])
-							
-							if(@level[0] <= @ptime) {
-								@percent = round((@level[0] / @ptime) * 100)
-								set_pexp(@player, @percent)
+							@stop = true
+						}
+						
+						if(@stop) {
+							array_remove(@timers, @player)
+							unbind(@player.'timerbreak')
+							if(ponline(@player) && pworld(@player) == 'custom') {
+								set_plevel(@player, 0)
+								set_pexp(@player, 0)
 							}
-
-							if(@level[0] + 5 > @ptime && @level[0] < @ptime) {
-								play_sound(ploc(@player), array('sound': 'CLICK', 'pitch': 2), @player)
-							} else if(@level[0] == @ptime) {
-								play_sound(ploc(@player), array('sound': 'VILLAGER_NO'), @player)
-							}
+							clear_task()
 						}
 					})
 					
