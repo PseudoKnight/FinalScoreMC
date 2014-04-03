@@ -193,6 +193,14 @@
 	@blockedworlds = array('outworld', 'outworld_nether', 'outworld_the_end')
 	if(array_contains(@blockedworlds, pworld()), die('You cannot teleport in this galaxy'))
 	if(array_contains(@blockedworlds, pworld($player)), die('That player is out of reach.'))
+
+	# Check it the player is being ignored
+	@ignorelist = import('ignorelist')
+	if (array_index_exists(@ignorelist, player())) {
+		if (array_contains(@ignorelist[player()], @player) || array_contains(@ignorelist[player()], 'all'), die())
+	}
+	if (array_index_exists(@ignorelist, 'all') && array_contains(@ignorelist['all'], @player), die())
+
 	@requests = import('requests')
 	@requests[@player] = array('join', player())
 	export('requests', @requests)
@@ -205,6 +213,14 @@
 	@blockedworlds = array('outworld', 'outworld_nether', 'outworld_the_end')
 	if(array_contains(@blockedworlds, pworld()), die('You cannot teleport in this galaxy'))
 	if(array_contains(@blockedworlds, pworld($player)), die('That player is out of reach.'))
+
+	# Check it the player is being ignored
+	@ignorelist = import('ignorelist')
+	if (array_index_exists(@ignorelist, player())) {
+		if (array_contains(@ignorelist[player()], @player) || array_contains(@ignorelist[player()], 'all'), die())
+	}
+	if (array_index_exists(@ignorelist, 'all') && array_contains(@ignorelist['all'], @player), die())
+
 	@requests = import('requests')
 	@requests[@player] = array('invite', player())
 	export('requests', @requests)
