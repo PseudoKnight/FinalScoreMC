@@ -123,9 +123,8 @@
 	@ignorelist = import('ignorelist')
 	if (array_index_exists(@ignorelist, @ignoree) && array_contains(@ignorelist[@ignoree], @ignorer)) {
 		msg(@ignorer.' is ignoring '.@ignoree)
-	}
-	if (array_index_exists(@ignorelist, 'all') && array_contains(@ignorelist['all'], @ignorer)) {
-		msg(@ignorer.' is ignoring all')
+	} else {
+		msg(@ignorer.' is NOT ignoring '.@ignoree')
 	}
 <<<
 
