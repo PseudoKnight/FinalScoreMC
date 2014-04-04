@@ -124,7 +124,7 @@
 	if (array_index_exists(@ignorelist, @ignoree) && array_contains(@ignorelist[@ignoree], @ignorer)) {
 		msg(@ignorer.' is ignoring '.@ignoree)
 	} else {
-		msg(@ignorer.' is NOT ignoring '.@ignoree')
+		msg(@ignorer.' is NOT ignoring '.@ignoree)
 	}
 <<<
 
