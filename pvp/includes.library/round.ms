@@ -117,21 +117,13 @@ proc('_pvp_start_round', @id) {
 				}
 			}
 		}
-		if(!array_index_exists(@pvp['arena'], 'lives') || @pvp['players'][player()]['lives'] > 0) {
-			@pvp['players'][player()]['limbo'] = set_timeout(10000, closure(){
-				@pvp = import('pvp'.@id)
-				if(@pvp['running'] == 'false' || !array_index_exists(@pvp['players'], player()), die())
-				if(array_index_exists(@pvp['players'][player()], 'class')) {
-					_class('unload', player(), @pvp['players'][player()]['class'])
+		set_timeout(5000, closure(){
+			if(pinfo(player(), 5) <= 0) {
+				if(function_exists('respawn')) {
+					respawn(player())
 				}
-				if(array_index_exists(@pvp['arena'], 'timer') && phas_bar()) {
-					premove_bar()
-				}
-				array_remove(@pvp['players'], player())
-				_regionmsg(@pvp['arena']['broadcast'], color('gray').'[PVP] '.color('r').player().' did not respawn in time.')
-				_pvp_check_objectives(@id)
-			})
-		}
+			}
+		})
 
 		if(array_index_exists(@pvp['arena'], 'lives')) {
 			if(@pvp['players'][player()]['lives'] == 0) {
@@ -237,11 +229,6 @@ proc('_pvp_start_round', @id) {
 		@pvp = import('pvp'.@id)
 		if(!array_index_exists(@pvp['players'], player()), die())
 
-		if(array_index_exists(@pvp['players'][player()], 'limbo')
-		&& @pvp['players'][player()]['limbo']) {
-			clear_task(@pvp['players'][player()]['limbo'])
-			@pvp['players'][player()]['limbo'] = null
-		}
 		set_timeout(50, closure(){ # workaround for bug where players retain potion effects after death
 			_clear_peffects(player())
 		})
@@ -857,9 +844,6 @@ proc('_pvp_end_match', @id, @winners) {
 	@pvp = import('pvp'.@id)
 
 	foreach(array_keys(@pvp['players']), @player) {
-		if(array_index_exists(@pvp['players'][@player], 'limbo') && @pvp['players'][@player]['limbo']) {
-			clear_task(@pvp['players'][@player]['limbo'])
-		}
 		if(array_index_exists(@pvp['arena'], 'timer') && phas_bar(@player)) {
 			premove_bar(@player)
 		}
