@@ -23,26 +23,12 @@
 	@pdata = get_value('player.'.to_lower(@player))
 	if(!@pdata, die('Cannot find a home.'))
 	if(!array_index_exists(@pdata, 'homes') || !array_index_exists(@pdata['homes'], @world), die('You can set a home for a world with /sethome'))
-	set_peffect(player(), 9, 1, 7)
-	@loc = ploc()
-	play_sound(@loc, array('sound': 'PORTAL_TRIGGER', 'volume': 1, 'pitch': 1))
-	set_timeout(3700, closure(){
-		if(!ponline(player()), die())
-		play_sound(@loc, array('sound': 'GHAST_FIREBALL', 'volume': 2, 'pitch': 1))
-		make_effect(@loc, 'MOBSPAWNER_FLAMES')
-		make_effect(_relative(@loc, 'up'), 'MOBSPAWNER_FLAMES')
-		set_ploc(player(), array(
+	_warmuptp(3.7, @player, array(
 			@pdata['homes'][@world][0], 
 			@pdata['homes'][@world][1],
 			@pdata['homes'][@world][2],
 			@world,
-		))
-		pfacing(@pdata['homes'][@world][3], @pdata['homes'][@world][4])
-		set_peffect(player(), 15, 1, 1)
-		play_sound(@loc, array('sound': 'GHAST_FIREBALL', 'volume': 2, 'pitch': 1))
-		make_effect(@loc, 'MOBSPAWNER_FLAMES')
-		make_effect(_relative(@loc, 'up'), 'MOBSPAWNER_FLAMES')
-	})
+		), @pdata['homes'][@world][3], @pdata['homes'][@world][4])
 <<<
 
 *:/sethome [$] = >>>
@@ -85,8 +71,8 @@
 
 	@warp = get_value('warp.'.to_lower(@warpid))
 	if(!@warp, die('That warp does not exist.'))
-	if(array_contains(array('outworld', 'outworld_nether', 'outworld_the_end'), pworld(@player)), die('You cannot warp in this world.'))
 	include('includes.library/teleports.ms')
+	if(array_contains(@blockedworlds, pworld(@player)), die('You cannot warp in this world.'))
 	_warmuptp(3.7, @player, @warp['loc'], @warp['yaw'], @warp['pitch'])
 <<<
 
