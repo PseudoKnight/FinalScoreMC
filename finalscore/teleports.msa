@@ -1,5 +1,6 @@
 *:/home [$] = >>>
-	if(array_contains(array('outworld', 'outworld_nether', 'outworld_the_end'), pworld())) {
+	include('/includes.library/teleports.ms')
+	if(array_contains(@blockedworlds, pworld())) {
 		die('You cannot teleport in this world.')
 	}
 	if(!$) {
@@ -45,7 +46,7 @@
 <<<
 
 *:/sethome [$] = >>>
-	if(array_contains(array('outworld', 'outworld_nether', 'outworld_the_end', 'custom'), pworld())) {
+	if(!has_permission('command.sethome')) {
 		die('You cannot set homes here.')
 	}
 	@pdata = get_value('player.'.to_lower(player()))
@@ -121,22 +122,20 @@
 		msg('Deleted warp.')
 	case 'list':
 		@warps = get_values('warp')
-		@main = ''
-		@park = ''
-		@dev = ''
-		foreach(@warp in array_keys(@warps)) {
-			if(@warps[@warp]['loc']['3'] == 'custom') {
-				@park .= split('.', @warp)[1].' '
-			} else if(@warps[@warp]['loc']['3'] == 'dev') {
-				@dev .= split('.', @warp)[1].' '
-			} else {
-				@main .= split('.', @warp)[1].' '
+		@worlds = get_worlds()
+		@warplist = array()
+		foreach(@world in @worlds) {
+			@warplist[@world] = ''
+		}
+		foreach(@warpkey: @warpdata in @warps) {
+			@warplist[@warpdata['loc'][3]] .= split('.', @warpkey)[1].' '
+		}
+		msg(color('bold').'AVAILABLE WARPS:')
+		foreach(@worldname: @worldwarps in @warplist) {
+			if(@worldwarps) {
+				msg(color(7).'['.to_upper(_worldname(@worldname)).'] '.color(15).@worldwarps)
 			}
 		}
-		msg('AVAILABLE WARPS:\n'
-		.color('green').'[MAIN] '.color('r').@main.'\n'
-		.color('aqua').'[FROG PARK] '.color('r').@park.'\n'
-		.color('red').'[DEV] '.color('r').@dev)
 	case 'resetmarkers':
 		if(!has_permission('group.administrators'), die('You do not have permission to use this command.'))
 		if(!function_exists('dm_all_markersets')) { die('Uneditable at this time.') }
@@ -169,7 +168,7 @@
 <<<
 
 *:/spawn [$world] = >>>
-	@blockedworlds = array('outworld', 'outworld_nether', 'outworld_the_end')
+	include('/includes.library/teleports.ms')
 	if(array_contains(@blockedworlds, $world) || array_contains(@blockedworlds, pworld())) {
 		msg('You cannot teleport directly to or from that world.')
 	} else if($world) {
@@ -189,8 +188,8 @@
 
 # TELEPORTATION BETWEEN FRIENDS #
 *:/join $player = >>>
+	include('/includes.library/teleports.ms')
 	try(@player = player($player), die('Player not found.'))
-	@blockedworlds = array('outworld', 'outworld_nether', 'outworld_the_end')
 	if(array_contains(@blockedworlds, pworld()), die('You cannot teleport in this galaxy'))
 	if(array_contains(@blockedworlds, pworld($player)), die('That player is out of reach.'))
 
@@ -209,8 +208,8 @@
 <<<
 
 *:/invite $player = >>>
+	include('/includes.library/teleports.ms')
 	try(@player = player($player), die('Player not found.'))
-	@blockedworlds = array('outworld', 'outworld_nether', 'outworld_the_end')
 	if(array_contains(@blockedworlds, pworld()), die('You cannot teleport in this galaxy'))
 	if(array_contains(@blockedworlds, pworld($player)), die('That player is out of reach.'))
 
@@ -229,13 +228,12 @@
 <<<
 
 *:/accept = >>>
-	@blockedworlds = array('outworld', 'outworld_nether', 'outworld_the_end')
+	include('/includes.library/teleports.ms')
 	if(array_contains(@blockedworlds, pworld()), die('You cannot teleport in this galaxy'))
 	@requests = import('requests')
 	if(!array_index_exists(@requests, player()), die('There is nothing to accept.'))
 	if(!ponline(@requests[player()][1]), die('That player is no longer online.'))
 	if(array_contains(@blockedworlds, pworld(@requests[player()][1])), die('That player is out of reach.'))
-	include('includes.library/teleports.ms')
 	if(@requests[player()][0] == 'invite') {
 		msg(color('b').'Teleporting to '.@requests[player()][1].' in 3 seconds...')
 		tmsg(@requests[player()][1], color('b').'Teleporting '.player().' in 3 seconds...')

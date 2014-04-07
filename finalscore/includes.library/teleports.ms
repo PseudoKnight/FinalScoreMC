@@ -1,3 +1,5 @@
+@blockedworlds = array('outworld', 'outworld_nether', 'outworld_the_end')
+
 #Warms up a tp with effects and configurable timer
 proc(_warmuptp, @length, @player, @loc, @yaw = null, @pitch = null,
   set_peffect(@player, 9, 1, 7)

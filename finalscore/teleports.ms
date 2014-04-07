@@ -22,19 +22,6 @@ bind('player_teleport', null, null, @event) {
 	}
 }
 
-# Outworld message
-bind('world_changed', null, null, @event) {
-	if(@event['to'] == 'outworld'
-	&& !array_contains(array('outworld_nether', 'outworld', 'outworld_the_end'), @event['from'])) {
-		msg(color('k').'XX'.color('r').color('gold').color('bold').' Welcome to the outworld! '.color('r').color('k').'XX\n'
-		.color('red').'This is a temporary world. Do not build or store anything permanent.')
-	}
-	if(phas_flight()) {
-		set_pflight(false)
-	}
-}
-
-
 bind('player_interact', null, array('item': 368, 'button': 'right'), @event) {
 	if(pworld() == 'custom', cancel())
 }
