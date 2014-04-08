@@ -23,7 +23,7 @@
 	@pdata = get_value('player.'.to_lower(@player))
 	if(!@pdata, die('Cannot find a home.'))
 	if(!array_index_exists(@pdata, 'homes') || !array_index_exists(@pdata['homes'], @world), die('You can set a home for a world with /sethome'))
-	_warmuptp(3.7, @player, array(
+	_warmuptp(3.7, player(), array(
 			@pdata['homes'][@world][0], 
 			@pdata['homes'][@world][1],
 			@pdata['homes'][@world][2],
