@@ -15,6 +15,15 @@
 			die('Currently in progress: '.array_implode(@inprogress, ' '))
 		}
 		
+	} else {
+	
+		@scoreboards = get_scoreboards()
+		foreach(@scoreboard in @scoreboards) {
+			if(@scoreboard != 'main') {
+				remove_scoreboard(@scoreboard)
+			}
+		}
+	
 	}
 	
 	@requests = import('requests')
