@@ -101,33 +101,6 @@
 	export('ignorelist', @ignorelist)
 <<<
 
-*:/ismuted $player = >>>
-	if(!has_permission('group.moderators'), die('You do not have permission to use this command.'))
-	try(@player = player($player), die('No player found.'))
-	@ignorelist = import('ignorelist')
-	if(array_index_exists(@ignorelist, @player) && array_contains(@ignorelist[@player], 'all')) {
-		msg(@player.' is muted.')
-	} else {
-		msg(@player.' is NOT muted.')
-	}
-<<<
-
-*:/isignoring $ignoree $ignorer = >>>
-	if(!has_permission('group.moderators'), die('You do not have permission to use this command.'))
-	if ($ignoree == 'all') {
-		@ignoree = 'all'
-	} else {
-		try(@ignoree = player($ignoree), die('Ignoree not found.'))
-	}
-	try(@ignorer = player($ignorer), die('Ignorer not found.'))
-	@ignorelist = import('ignorelist')
-	if (array_index_exists(@ignorelist, @ignoree) && array_contains(@ignorelist[@ignoree], @ignorer)) {
-		msg(@ignorer.' is ignoring '.@ignoree)
-	} else {
-		msg(@ignorer.' is NOT ignoring '.@ignoree)
-	}
-<<<
-
 # MESSAGING #
 *:/msg $player $ = >>>
 	include('includes.library/chat.ms')
