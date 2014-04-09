@@ -1,5 +1,5 @@
 *:/home [$] = >>>
-	include('/includes.library/teleports.ms')
+	include('includes.library/teleports.ms')
 	if(array_contains(@blockedworlds, pworld())) {
 		die('You cannot teleport in this world.')
 	}
@@ -154,7 +154,7 @@
 <<<
 
 *:/spawn [$world] = >>>
-	include('/includes.library/teleports.ms')
+	include('includes.library/teleports.ms')
 	if(array_contains(@blockedworlds, $world) || array_contains(@blockedworlds, pworld())) {
 		msg('You cannot teleport directly to or from that world.')
 	} else if($world) {
@@ -174,7 +174,7 @@
 
 # TELEPORTATION BETWEEN FRIENDS #
 *:/join $player = >>>
-	include('/includes.library/teleports.ms')
+	include('includes.library/teleports.ms')
 	try(@player = player($player), die('Player not found.'))
 	if(array_contains(@blockedworlds, pworld()), die('You cannot teleport in this galaxy'))
 	if(array_contains(@blockedworlds, pworld($player)), die('That player is out of reach.'))
@@ -194,7 +194,7 @@
 <<<
 
 *:/invite $player = >>>
-	include('/includes.library/teleports.ms')
+	include('includes.library/teleports.ms')
 	try(@player = player($player), die('Player not found.'))
 	if(array_contains(@blockedworlds, pworld()), die('You cannot teleport in this galaxy'))
 	if(array_contains(@blockedworlds, pworld($player)), die('That player is out of reach.'))
@@ -214,7 +214,7 @@
 <<<
 
 *:/accept = >>>
-	include('/includes.library/teleports.ms')
+	include('includes.library/teleports.ms')
 	if(array_contains(@blockedworlds, pworld()), die('You cannot teleport in this galaxy'))
 	@requests = import('requests')
 	if(!array_index_exists(@requests, player()), die('There is nothing to accept.'))
