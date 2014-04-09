@@ -65,15 +65,28 @@ bind('player_interact', null, array('block': 68), @event) {
 			}
 			if(@coins < @cost[1], die(color('yellow').'[Coin Shop] '.color(r).'You only have '.color('red').round(@coins).color('r').' left.'))
 			for(@i = 0, @i < get_inventory_size(@chestloc), @i++) {
-				if(get_inventory_item(@chestloc, @i) != null) {
-					if(_pgive_item(player(), get_inventory_item(@chestloc, @i)) == true) {
-						set_inventory_item(@chestloc, @i, null)
-						_acc_subtract(player(), @cost[1])
-						msg(color('yellow').'[Coin Shop] '.color('r').'Transaction successful. Your coins: '.round(@coins).' (-'.@cost[1].')')
-						break()
-					} else {
-						msg(color('yellow').'[Coin Shop] '.color('r').'You have no room in your inventory.')
+				@item = get_inventory_item(@chestloc, @i)
+				if(!is_null(@item)) {
+					@inv = pinv()
+					for(@j = 0, @j < 36, @j++) {
+						if(is_null(@inv[@j])
+						|| (@inv[@j]['type'] == @item['type'] 
+						&& @inv[@j]['data'] == @item['data'] 
+						&& @inv[@j]['qty'] + @item['qty'] <= max_stack_size(@item))) {
+							if(!is_null(@inv[@j])) {
+								@item['qty'] += @inv[@j]['qty']
+							}
+							@inv = array()
+							@inv[@j] = @item
+							set_pinv(player(), @inv)
+							set_inventory_item(@chestloc, @i, null)
+							_acc_subtract(player(), @cost[1])
+							msg(color('yellow').'[Coin Shop] '.color('r').'Transaction successful. Your coins: '.round(@coins).' (-'.@cost[1].')')
+							break(2)
+						}
 					}
+					msg(color('yellow').'[Coin Shop] '.color('r').'You have no room in your inventory.')
+					break()
 				}
 			}
 		}

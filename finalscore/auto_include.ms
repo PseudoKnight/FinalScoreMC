@@ -114,20 +114,6 @@ proc('_get_effects',
 	))
 )
 
-#pgive_item replacement
-proc('_pgive_item', @player, @item,
-	for(@i = 0, @i < 36, @i++,
-		if(pinv(@player, @i) == null || (pinv(@player, @i)['type'] == @item['type'] && pinv(@player, @i)['data'] == @item['data'] && (pinv(@player, @i)['qty'] + @item['qty']) <= max_stack_size(@item))) {
-			if(pinv(@player, @i) != null, array_set(@item, 'qty', @item['qty'] + pinv(@player, @i)['qty']))
-			@inv = array()
-			array_set(@inv, @i, @item)
-			set_pinv(@player, @inv)
-			return(true)
-		}
-	)
-	return(false)
-)
-
 # Removes all specified entities from region.
 # Since this loads entities by chunks it has a loose entity selection
 proc('_remove_region_entities', @region, @entities = array(),
