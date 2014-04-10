@@ -370,6 +370,13 @@
 				if(!@args[0] || !@args[1] || !is_numeric(@args[0]) || !is_numeric(@args[1]), die('Requires a winning team # and time in minutes.'))
 				@arena['timer'] = array(@args[0] - 1, @args[1])
 				msg('Set timer for team '.@args[0].' to '.color(10).@args[1].color('r').' minutes.')
+				
+			case 'delay':
+				if(!is_numeric(@args[0])) {
+					die('Requires a number in seconds.')
+				}
+				@arena['delay'] = @args[0]
+				msg('Set start delay to '.color(10).@args[0].color('r').' seconds.')
 			
 			case 'weapons':
 				@weapons = array('endernades', 'skullrockets',  'shotgunballs', 'primedtnt', 'pistoltears', 'firefire')

@@ -148,3 +148,99 @@ proc('_class', @action, @player, @class) {
 		}
 	}
 }
+
+@size = array_size(@pvp['arena']['classes'][0]) + if(array_index_exists(@pvp['arena'], 'captain'), 1, 0)
+if(@size > 1) {
+	@size = ceil(@size / 9) * 9
+	create_virtualchest(array(
+		'id': @id.'0',
+		'size': @size,
+		'title': 'Choose a Class'
+	))
+	if(array_index_exists(@pvp['arena'], 'captain')) {
+		@class = get_value('class.'.@pvp['arena']['captain'][0])
+		addto_virtualchest(@id.'0', 
+			@class['selector']['type'].':'.@class['selector']['data'], 
+			@class['selector']['qty'],
+			@class['selector']['meta']
+		)
+	}
+	for(@i = 0, @i < array_size(@pvp['arena']['classes'][0]), @i++) {
+		@class = get_value('class.'.@pvp['arena']['classes'][0][@i])
+		if(!@class, continue())
+		addto_virtualchest(@id.'0', 
+			@class['selector']['type'].':'.@class['selector']['data'], 
+			@class['selector']['qty'],
+			@class['selector']['meta']
+		)
+	}
+	foreach(@pvp['players'], @p, @pdata) {
+		if(!array_index_exists(@pdata, 'team') || @pdata['team'] == 0) {
+			popen_virtualchest(@p, @id.'0')
+		}
+	}
+}
+@size = array_size(@pvp['arena']['classes'][1]) + if(array_index_exists(@pvp['arena'], 'captain'), 1, 0)
+if(@size > 1) {
+	@size = ceil(@size / 9) * 9
+	create_virtualchest(array(
+		'id': @id.'1',
+		'size': @size,
+		'title': 'Choose a Class'
+	))
+	if(array_index_exists(@pvp['arena'], 'captain')) {
+		@class = get_value('class.'.@pvp['arena']['captain'][1])
+		addto_virtualchest(@id.'1', 
+			@class['selector']['type'].':'.@class['selector']['data'], 
+			@class['selector']['qty'],
+			@class['selector']['meta']
+		)
+	}
+	for(@i = 0, @i < array_size(@pvp['arena']['classes'][1]), @i++) {
+		@class = get_value('class.'.@pvp['arena']['classes'][1][@i])
+		if(!@class, continue())
+		addto_virtualchest(@id.'1', 
+			@class['selector']['type'].':'.@class['selector']['data'], 
+			@class['selector']['qty'],
+			@class['selector']['meta']
+		)
+	}
+	foreach(@pvp['players'], @p, @pdata) {
+		if(!pget_virtualchest(@p) && @pdata['team'] == 1) {
+			popen_virtualchest(@p, @id.'1')
+		}
+	}
+}
+if(array_size(@pvp['arena']['classes'][0]) > 1 || array_size(@pvp['arena']['classes'][1]) > 1) {
+	array_push(@pvp['binds'], @id.'classselector')
+	bind('inventory_click', array('id': @id.'classselector'), array('slottype': 'CONTAINER'), @e, @id = @id) {
+		@pvp = import('pvp'.@id)
+		if(!array_index_exists(@pvp['players'], player())
+		|| is_null(@e['slotitem'])
+		|| is_null(@e['slotitem']['meta'])
+		|| is_null(@e['slotitem']['meta']['display'])) {
+			die()
+		}
+		@class = strip_colors(@e['slotitem']['meta']['display'])
+		if((!array_index_exists(@pvp, 'team')
+		&& array_contains_ic(@pvp['arena']['classes'][0], @class))
+		|| (array_index_exists(@pvp, 'team')
+		&& (array_contains_ic(@pvp['arena']['classes'][@pvp['players'][player()]['team']], @class)
+		|| equals_ic(@class, @pvp['arena']['captain'][@pvp['players'][player()]['team']])))) {
+			play_sound(ploc(), array('sound': 'CLICK'))
+			cancel()
+			@class = to_lower(@class)
+			if(@pvp['arena']['captain'][@pvp['players'][player()]['team']] == @class) {
+				clear_virtualchest(@id.@pvp['players'][player()]['team'], 0)
+				@pvp['team'][@pvp['players'][player()]['team']]['captain'] = player()
+			}
+			if(array_index_exists(@pvp['players'][player()], 'class')) {
+				_class('unload', player(), @pvp['players'][player()]['class'])
+			}
+			@pvp['players'][player()]['class'] = @class
+			_class('load', player(), @class)
+			close_pinv()
+			export('pvp'.@id, @pvp)
+		}
+	}
+}
