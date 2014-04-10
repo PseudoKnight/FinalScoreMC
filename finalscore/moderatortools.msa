@@ -253,6 +253,14 @@
 		}
 		msg(color('gray').'IP: '.color('r').@onlineinfo[3])
 		msg(color('gray').'Hostname: '.color('r').@onlineinfo[10])
+		@ignorelist = import('ignorelist')
+		if(array_index_exists(@ignorelist, @player)) {
+			if(array_contains(@ignorelist[@player], 'all')) {
+				msg(color('r').'MUTED')
+			} else {
+				msg(color('gray').'Ignored by: '.color('r').array_implode(@ignorelist[@player], ', '))
+			}
+		}
 	, 
 		# OFFLINE INFO
 		@pdata = get_value('player.'.to_lower($player))
