@@ -213,6 +213,7 @@
 		# CLASSES
 		if(array_index_exists(@pvp['arena'], 'classes')) {
 			include('includes.library/class.ms')
+			_class_select(@id, @pvp)
 		}
 
 		#ANNOUNCE
