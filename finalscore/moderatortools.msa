@@ -247,7 +247,7 @@
 		@pdata = get_value('player.'.to_lower(@player))
 		@onlineinfo = pinfo(@player)
 		msg(color('gray').'--[ '.color('l').@player.color('gray').' ]-------------------------')
-		msg(color('gray').'Location: '.color('r').@onlineinfo[7].' '.round(@onlineinfo[1][0]).','.round(@onlineinfo[1][1]).','.round(@onlineinfo[1][2]))
+		msg(color('gray').'Location: '.color('r')._worldname(@onlineinfo[7]).'('.@onlineinfo[7].') '.round(@onlineinfo[1][0]).','.round(@onlineinfo[1][1]).','.round(@onlineinfo[1][2]))
 		if(pmode(@player) == 'CREATIVE') {
 			msg(color('gray').'Gamemode: '.color('r').'CREATIVE')
 		}
