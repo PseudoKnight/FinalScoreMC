@@ -53,7 +53,8 @@ proc('_pvp_start_round', @id) {
 	
 	if(array_index_exists(@pvp['arena'], 'mobprotect')) {
 		foreach(@pvp['arena']['mobprotect'], @team, @mob) {
-			@pvp['team'][@team]['mobprotect'] = _spawn_mob(@mob['type'], 1, @mob['loc'])[0]
+			 @entityid = _spawn_mob(@mob['type'], 1, @mob['loc'])[0]
+			 @pvp['team'][@team]['mobprotect'] = entity_uuid(@entitid)
 		}
 	}
 	
@@ -348,9 +349,10 @@ proc('_pvp_start_round', @id) {
 		array_push(@pvp['binds'], @id.'MobDeath')
 		bind('entity_death', array('id': @id.'MobDeath'), null, @e, @id = @id) {
 			@pvp = import('pvp'.@id)
-			if(array_index_exists(@pvp['team'][0], 'mobprotect') && @e['id'] == @pvp['team'][0]['mobprotect']) {
+			@uuid = entity_uuid(@e['id'])
+			if(array_index_exists(@pvp['team'][0], 'mobprotect') && @uuid == @pvp['team'][0]['mobprotect']) {
 				_pvp_end_match(@id, @pvp['team'][1]['players'])
-			} else if(array_index_exists(@pvp['team'][1], 'mobprotect') && @e['id'] == @pvp['team'][1]['mobprotect']) {
+			} else if(array_index_exists(@pvp['team'][1], 'mobprotect') && @uuid == @pvp['team'][1]['mobprotect']) {
 				_pvp_end_match(@id, @pvp['team'][0]['players'])
 			}
 		}
