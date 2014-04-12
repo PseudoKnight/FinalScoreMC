@@ -640,6 +640,15 @@ proc('_pvp_start_round', @id) {
 			}
 		}
 	}
+	
+	if(array_contains(@pvp['arena']['flags'], 'infinitedispensers')) {
+		array_push(@pvp['binds'], @id.'infinitedispensers')
+		bind('projectile_hit', array('id': @id.'infinitedispensers'), array('type': 'ARROW'), @e) {
+			if(@e['location']['world'] == 'custom' && !@e['shooter']) {
+				entity_remove(@e['id'])
+			}
+		}
+	}
 
 	if(array_index_exists(@pvp['arena'], 'weapons')) {
 		include('weapons.ms')
