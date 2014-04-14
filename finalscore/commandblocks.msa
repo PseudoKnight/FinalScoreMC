@@ -14,13 +14,9 @@
 	}
 <<<
 
-/bedspawn $player [$] = >>>
-	if($) {
-		@loc = parse_args($)
-		@loc[1] = @loc[1] - 1
-	} else {
-		@loc = ploc($player)
-	}
+/bedspawn $player $x $y $z = >>>
+	@cmdblk = get_command_block()
+	@loc = _relative_coords(@cmdblk, $x, $y, $z)
 	set_pbed_location($player, @loc)
 <<<
 
@@ -66,33 +62,7 @@
 
 /setblock $x $y $z $id [$data=0] [$mode='replace'] = >>>
 	if(@cmdblk = get_command_block()) {
-		if($x[0] == '~') {
-			if($x == '~') {
-				@x = @cmdblk['x']
-			} else {
-				@x = @cmdblk['x'] + substr($x, 1)
-			}
-		} else {
-			@x = $x
-		}
-		if($y[0] == '~') {
-			if($y == '~') {
-				@y = @cmdblk['y']
-			} else {
-				@y = @cmdblk['y'] + substr($y, 1)
-			}
-		} else {
-			@y = $y
-		}
-		if($z[0] == '~') {
-			if($z == '~') {
-				@z = @cmdblk['z']
-			} else {
-				@z = @cmdblk['z'] + substr($z, 1)
-			}
-		} else {
-			@z = $z
-		}
+		@loc = _relative_coords(@cmdblk, $x, $y, $z)
 		
 		if(!is_numeric(@id = $id)
 		&& is_null(@id = data_values($id)), die())
@@ -101,107 +71,77 @@
 		
 		switch($mode) {
 		case 'replace':
-			set_block_at(@x, @y, @z, @id.':'.$data, @cmdblk[3], false)
+			set_block_at(@loc, @id.':'.$data, false)
 		case 'keep':
-			if(get_block_at(@x, @y, @z, @cmdblk[3])[0] == '0') {
-				set_block_at(@x, @y, @z, @id.':'.$data, @cmdblk[3], false)
+			if(get_block_at(@loc)[0] == '0') {
+				set_block_at(@loc, @id.':'.$data, false)
 			}
 		case 'destroy':
-			if(get_block_at(@x, @y, @z, @cmdblk[3])[0] != '0') {
-				make_effect(array(@x, @y, @z, @cmdblk[3]), 'STEP_SOUND:'.@id)
+			if(get_block_at(@loc, @cmdblk[3])[0] != '0') {
+				make_effect(@loc, 'STEP_SOUND:'.@id)
 			}
-			set_block_at(@x, @y, @z, @id.':'.$data, @cmdblk[3], false)
+			set_block_at(@loc, @id.':'.$data, false)
 		}
 	}
 <<<
 
-/fill $x1 $y1 $z1 $x2 $y2 $z2 $id [$data=0] [$mode='replace'] [$id2=''] = >>>
+/fill $x1 $y1 $z1 $x2 $y2 $z2 $id [$data=0] [$mode='keep'] [$replaceid=''] [$replacedata='0'] = >>>
 	if(@cmdblk = get_command_block()) {
-		@cbworld = @cmdblk[3]
-		if($x1[0] == '~') {
-			if($x1 == '~') {
-				@x1 = @cmdblk['x']
-			} else {
-				@x1 = @cmdblk['x'] + substr($x1, 1)
-			}
-		} else {
-			@x1 = $x1
-		}
-		if($y1[0] == '~') {
-			if($y1 == '~') {
-				@y1 = @cmdblk['y']
-			} else {
-				@y1 = @cmdblk['y'] + substr($y1, 1)
-			}
-		} else {
-			@y1 = $y1
-		}
-		if($z1[0] == '~') {
-			if($z1 == '~') {
-				@z1 = @cmdblk['z']
-			} else {
-				@z1 = @cmdblk['z'] + substr($z1, 1)
-			}
-		} else {
-			@z1 = $z1
-		}
-		
-		if($x2[0] == '~') {
-			if($x2 == '~') {
-				@x2 = @cmdblk['x']
-			} else {
-				@x2 = @cmdblk['x'] + substr($x2, 1)
-			}
-		} else {
-			@x2 = $x2
-		}
-		if($y2[0] == '~') {
-			if($y2 == '~') {
-				@y2 = @cmdblk['y']
-			} else {
-				@y2 = @cmdblk['y'] + substr($y2, 1)
-			}
-		} else {
-			@y2 = $y2
-		}
-		if($z2[0] == '~') {
-			if($z2 == '~') {
-				@z2 = @cmdblk['z']
-			} else {
-				@z2 = @cmdblk['z'] + substr($z2, 1)
-			}
-		} else {
-			@z2 = $z2
-		}
+		@loc1 = _relative_coords(@cmdblk, $x1, $y1, $z1)
+		@loc2 = _relative_coords(@cmdblk, $x2, $y2, $z2)
 		
 		if(!is_numeric(@id = $id)
-		&& is_null(@id = data_values($id)), die())
-		
+		&& is_null(@id = data_values($id))) {
+			die()
+		}	
 		@id = split(':', @id)[0]
+		
+		if($replaceid != '') {
+			if(!is_numeric(@replaceid = $replaceid)
+			&& is_null(@replaceid = data_values($replaceid))) {
+				die()
+			}
+			@replaceid = split(':', @replaceid)[0]
+		}
 		
 		switch($mode) {
 		case 'replace':
-			proc('_set', @x, @y, @z, @blockid = @id, @world = @cbworld, @data = $data, @replace = $id2,
-				if(@replace == '' || get_block_at(@x, @y, @z, @world) == @replace) {
-					set_block_at(@x, @y, @z, @blockid.':'.@data, @world, false)
+			for(@x = min(@loc1['x'], @loc2['x']), @x <= max(@loc1['x'], @loc2['x']), @x++) {
+				for(@y = min(@loc1['y'], @loc2['y']), @y <= max(@loc1['y'], @loc2['y']), @y++) {
+					for(@z = min(@loc1['z'], @loc2['z']), @z <= max(@loc1['z'], @loc2['z']), @z++) {
+						if($replaceid == '' || get_block_at(@x, @y, @z, @cmdblk['world']) == @replaceid.':'.$replacedata) {
+							set_block_at(@x, @y, @z, @id.':'.$data, @cmdblk['world'], false)
+						}
+					}
 				}
-			)
-			_iterate_cuboid(array(@x1, @y1, @z1), array(@x2, @y2, @z2), '_set')
+			}
+			
 		case 'keep':
-			proc('_set', @x, @y, @z, @blockid = @id, @world = @cbworld, @data = $data,
-				if(get_block_at(@x, @y, @z, @world)[0] == '0') {
-					set_block_at(@x, @y, @z, @blockid.':'.@data, @world, false)
+			for(@x = min(@loc1['x'], @loc2['x']), @x <= max(@loc1['x'], @loc2['x']), @x++) {
+				for(@y = min(@loc1['y'], @loc2['y']), @y <= max(@loc1['y'], @loc2['y']), @y++) {
+					for(@z = min(@loc1['z'], @loc2['z']), @z <= max(@loc1['z'], @loc2['z']), @z++) {
+						if(get_block_at(@x, @y, @z, @cmdblk['world'])[0] == '0') {
+							set_block_at(@x, @y, @z, @id.':'.$data, @cmdblk['world'], false)
+						}
+					}
 				}
-			)
-			_iterate_cuboid(array(@x1, @y1, @z1), array(@x2, @y2, @z2), '_set')
+			}
+			
 		case 'destroy':
-			proc('_set', @x, @y, @z, @blockid = @id, @world = @cbworld, @data = $data,
-				if(get_block_at(@x, @y, @z, @world)[0] != '0') {
-					make_effect(array(@x, @y, @z, @world), 'STEP_SOUND:'.@blockid)
+			for(@x = min(@loc1['x'], @loc2['x']), @x <= max(@loc1['x'], @loc2['x']), @x++) {
+				for(@y = min(@loc1['y'], @loc2['y']), @y <= max(@loc1['y'], @loc2['y']), @y++) {
+					for(@z = min(@loc1['z'], @loc2['z']), @z <= max(@loc1['z'], @loc2['z']), @z++) {
+						if(get_block_at(@x, @y, @z, @cmdblk['world'])[0] != '0') {
+							make_effect(array(@x, @y, @z, @cmdblk['world']), 'STEP_SOUND:'.@id)
+						}
+						set_block_at(@x, @y, @z, @id.':'.$data, @cmdblk['world'], false)
+					}
 				}
-				set_block_at(@x, @y, @z, @blockid.':'.@data, @world, false)
-			)
-			_iterate_cuboid(array(@x1, @y1, @z1), array(@x2, @y2, @z2), '_set')
+			}
+			
+		case 'hollow':
+		case 'outline':
+			console('Hollow and outline modes for /fill are not yet supported.')
 		}
 	}
 <<<
