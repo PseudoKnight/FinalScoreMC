@@ -234,8 +234,8 @@
 <<<
 
 /tp $player $x $y $z = >>>
-	if(@cmdblk = get_command_block()) {
-		@loc = _relative_coords(@cmdblk, $x, $y, $z)
+	if(get_command_block()) {
+		@loc = _relative_coords(ploc($player), $x, $y, $z)
 		set_ploc($player, @loc)
 	} else {
 		run('/tp' $player $x $y $z)
