@@ -32,6 +32,7 @@
 			msg('spawn ** '.color('gray').'Adds a spawn point')
 			msg('region ** '.color('gray').'The combat region name')
 			msg('parent '.color('gray').'The parent arena configuration.')
+			msg('arenaselect '.color('gray').'Type of select and then a comma list of arenas.')
 			msg('sharedarenas '.color('gray').'A comma separated list of arena ids.')
 			msg('broadcast '.color('gray').'The region all messages are broadcasted.')
 			msg('mode '.color('gray').'dm, tdm, ctf, infection, koth.')
@@ -93,6 +94,13 @@
 				@arena['parent'] = @args[0]
 				msg('Set parent arena to '.color(10).@args[0])
 				
+			case 'arenaselect':
+				if(array_size(@args) < 2) {
+					die('Requires an arena select type (eg. random) and then a comma separated list of child arenas.')
+				}
+				@arena['arenaselect'] = array('type': @args[0], 'arenas': split(',', @args[1]))
+				msg('Set parent arena to select by '.@args[0].' from the following child arenas: '.@arena['arenaselect']['arenas'])
+			
 			case 'sharedarenas':
 				@arena['sharedarenas'] = split(',', @args[0])
 				msg('Set shared arenas to '.@arena['sharedarenas'])
