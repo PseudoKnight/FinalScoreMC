@@ -82,8 +82,8 @@
 	if(reg_count('\\w', $warp) < 0, die('This needs to be in alphanumeric characters.'))
 	@loc = ploc()
 	@loc = array(round(@loc[0], 1), @loc[1], round(@loc[2], 1), @loc[3])
-	if(function_exists('dm_delete_marker')) {
-		if(has_value('warp.'.$warp)) {
+	if(has_value('warp.'.$warp)) {
+		if(function_exists('dm_delete_marker')) {
 			dm_delete_marker('warps', 'warp.'.$warp)
 		}
 	}
