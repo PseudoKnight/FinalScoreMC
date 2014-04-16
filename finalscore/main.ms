@@ -419,3 +419,49 @@ bind('entity_enter_portal', null, null, @event) {
 		entity_remove(@event['id'])
 	}
 }
+
+bind('creature_spawn', null, array('type': 'SKELETON', 'reason': 'SPAWNER_EGG'), @event) {
+	if(@event['location']['world'] == 'dev') {
+		set_timeout(50, closure(){
+			if(entity_exists(@event['id'])) {
+				@dinnerbone = spawn_mob('SKELETON', 1, @event['location'])[0]
+				set_mob_name(@dinnerbone, 'Dinnerbone')
+				set_mob_equipment(@dinnerbone, array(
+					'HELMET': array('type': 397, 'data': 3, 'meta': array('owner': 'Hunter_Comm')),
+				))
+				set_equipment_droprates(@dinnerbone, null)
+				set_entity_rider(@event['id'], @dinnerbone)
+				set_mob_equipment(@event['id'], array(
+					'WEAPON': array('type': 344),
+					'HELMET': array('type': 397, 'data': 3, 'meta': array('owner': 'rabbit2077')),
+					'CHESTPLATE': array('type': 280),
+					'LEGGINGS': array('type': 280),
+					'BOOTS': array('type': 309),
+				))
+				set_equipment_droprates(@event['id'], null)
+				set_timeout(50, closure(){
+					set_mob_effect(@event['id'], 8, 1, 9999, true)
+				})
+			}
+		})
+	}
+}
+
+bind('entity_damage', null, array('type': 'SKELETON', 'world': 'dev', 'cause': 'ENTITY_ATTACK'), @event) {
+	if(get_entity_rider(@event['id'])) {
+		@loc = _relative(@event['location'], 'up')
+		if(function_exists('play_effect')) {
+			play_effect(@loc, 'COLOURED_DUST', array('particleCount': 15, 'offsetX': 1, 'offsetY': 1, 'offsetZ': 1))
+		}
+	}
+}
+
+bind('entity_death', null, array('type': 'SKELETON'), @event) {
+	if(@event['location']['world'] == 'dev') {
+		if(get_entity_rider(@event['id'])) {
+			entity_remove(get_entity_rider(@event['id']))
+			@eggs = array(51, 52, 54, 55, 57, 58, 59, 61, 62, 65, 66, 90, 91, 92, 93, 94, 95, 96, 98, 100, 120)
+			modify_event('drops', array(array('type': 383, 'data': array_rand(@eggs, 1, false)[0])))
+		}
+	}
+}
