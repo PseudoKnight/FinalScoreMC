@@ -54,7 +54,7 @@ proc('_pvp_start_round', @id) {
 	if(array_index_exists(@pvp['arena'], 'mobprotect')) {
 		foreach(@pvp['arena']['mobprotect'], @team, @mob) {
 			 @entityid = _spawn_mob(@mob['type'], 1, @mob['loc'])[0]
-			 @pvp['team'][@team]['mobprotect'] = entity_uuid(@entitid)
+			 @pvp['team'][@team]['mobprotect'] = entity_uuid(@entityid)
 		}
 	}
 	
