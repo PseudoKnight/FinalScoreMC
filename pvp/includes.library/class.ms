@@ -137,7 +137,7 @@ proc('_class', @action, @player, @class) {
 			if(array_index_exists(@class, 'effect')) {
 				set_timeout(50, closure(){
 					foreach(@class['effect'], @eid, @e) {
-						set_peffect(@player, @eid, @e['strength'], @e['length'])
+						set_peffect(@player, @eid, @e['strength'], @e['length'], true)
 					}
 				})
 			}

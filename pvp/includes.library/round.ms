@@ -875,11 +875,11 @@ proc('_pvp_equip', @id, @player) {
 	}
 	if(array_index_exists(@pvp['arena'], 'effect')) {
 		foreach(@pvp['arena']['effect'][0], @effect, @data) {
-			set_peffect(@player, @effect, @data['strength'], @data['length'])
+			set_peffect(@player, @effect, @data['strength'], @data['length'], true)
 		}
 		if(array_index_exists(@pvp, 'team')) {
 			foreach(@pvp['arena']['effect'][@pvp['players'][@player]['team'] + 1], @effect, @data) {
-				set_peffect(@player, @effect, @data['strength'], @data['length'])
+				set_peffect(@player, @effect, @data['strength'], @data['length'], true)
 			}
 		}
 	}
