@@ -420,17 +420,42 @@ bind('entity_enter_portal', null, null, @event) {
 	}
 }
 
-bind('creature_spawn', null, array('type': 'SKELETON', 'reason': 'SPAWNER_EGG'), @event) {
-	if(@event['location']['world'] == 'dev') {
+bind('creature_spawn', null, array('type': 'SKELETON', 'reason': 'NATURAL'), @event) {
+	if(@event['location']['world'] == 'outworld') {
+		@mobs = array(
+			51: 'SKELETON', 
+			52: 'SPIDER', 
+			54: 'ZOMBIE', 
+			55: 'SLIME', 
+			57: 'PIGZOMBIE', 
+			58: 'ENDERMAN', 
+			59: 'CAVESPIDER', 
+			62: 'MAGMACUBE', 
+			65: 'BAT', 
+			66: 'WITCH', 
+			90: 'PIG', 
+			91: 'SHEEP', 
+			92: 'COW', 
+			93: 'CHICKEN', 
+			94: 'SQUID', 
+			95: 'WOLF', 
+			96: 'MOOSHROOM', 
+			98: 'OCELOT', 
+			100: 'HORSE',
+			120: 'VILLAGER',
+		)
+		drop_item(@event['location'], array('type': 383, 'data': array_rand(@mobs)[0]), true)
 		set_timeout(50, closure(){
 			if(entity_exists(@event['id'])) {
 				@dinnerbone = spawn_mob('SKELETON', 1, @event['location'])[0]
+				set_entity_persistence(@dinnerbone, true)
 				set_mob_name(@dinnerbone, 'Dinnerbone')
 				set_mob_equipment(@dinnerbone, array(
 					'HELMET': array('type': 397, 'data': 3, 'meta': array('owner': 'Hunter_Comm')),
 				))
 				set_equipment_droprates(@dinnerbone, null)
 				set_entity_rider(@event['id'], @dinnerbone)
+				set_entity_persistence(@event['id'], true)
 				set_mob_equipment(@event['id'], array(
 					'WEAPON': array('type': 344),
 					'HELMET': array('type': 397, 'data': 3, 'meta': array('owner': 'rabbit2077')),
@@ -440,6 +465,7 @@ bind('creature_spawn', null, array('type': 'SKELETON', 'reason': 'SPAWNER_EGG'),
 				))
 				set_equipment_droprates(@event['id'], null)
 				set_timeout(50, closure(){
+					set_mob_effect(@event['id'], 1, 0, 9999, true)
 					set_mob_effect(@event['id'], 8, 1, 9999, true)
 				})
 			}
@@ -447,21 +473,78 @@ bind('creature_spawn', null, array('type': 'SKELETON', 'reason': 'SPAWNER_EGG'),
 	}
 }
 
-bind('entity_damage', null, array('type': 'SKELETON', 'world': 'dev', 'cause': 'ENTITY_ATTACK'), @event) {
-	if(get_entity_rider(@event['id'])) {
+bind('entity_damage', null, array('type': 'SKELETON', 'world': 'outworld'), @event) {
+	if(get_entity_rider(@event['id'])
+	&& (@event['cause'] == 'ENTITY_ATTACK' || @event['cause'] == 'PROJECTILE')) {
 		@loc = _relative(@event['location'], 'up')
+		if(function_exists('play_effect')) {
+			play_effect(@loc, 'COLOURED_DUST', array('particleCount': 15, 'offsetX': 1, 'offsetY': 1, 'offsetZ': 1))
+		}
+		if(rand(2)) {
+			@mobs = array(
+				51: 'SKELETON', 
+				52: 'SPIDER', 
+				54: 'ZOMBIE', 
+				55: 'SLIME', 
+				57: 'PIGZOMBIE', 
+				58: 'ENDERMAN', 
+				59: 'CAVESPIDER', 
+				62: 'MAGMACUBE', 
+				65: 'BAT', 
+				66: 'WITCH', 
+				90: 'PIG', 
+				91: 'SHEEP', 
+				92: 'COW', 
+				93: 'CHICKEN', 
+				94: 'SQUID', 
+				95: 'WOLF', 
+				96: 'MOOSHROOM', 
+				98: 'OCELOT', 
+				100: 'HORSE',
+				120: 'VILLAGER',
+			)
+			drop_item(@loc, array('type': 383, 'data': array_rand(@mobs)[0]), true)
+		}
+	}
+}
+
+bind('entity_death', null, array('type': 'SKELETON'), @event) {
+	if(@event['location']['world'] == 'outworld') {
+		if(get_entity_rider(@event['id'])) {
+			entity_remove(get_entity_rider(@event['id']))
+		}
+	}
+}
+
+bind('target_player', null, array('mobtype': 'SKELETON'), @event) {
+	if(entity_loc(@event['id'])['world'] == 'outworld'
+	&& !rand(4)) {
+		shoot_projectile(@event['id'], 'EGG', @event['player'])
+	}
+}
+
+bind('projectile_hit', null, array('type': 'EGG'), @event) {
+	if(entity_loc(@event['id'])['world'] == 'outworld') {
+		@mobs = array(
+			51: 'SKELETON', 
+			52: 'SPIDER', 
+			54: 'ZOMBIE', 
+			55: 'SLIME', 
+			57: 'PIGZOMBIE', 
+			58: 'ENDERMAN', 
+			62: 'MAGMACUBE', 
+			65: 'BAT', 
+		)
+		@loc = _relative(@event['location'], 'up')
+		spawn_mob(array_rand(@mobs, 1, false)[0], 1, @loc)
 		if(function_exists('play_effect')) {
 			play_effect(@loc, 'COLOURED_DUST', array('particleCount': 15, 'offsetX': 1, 'offsetY': 1, 'offsetZ': 1))
 		}
 	}
 }
 
-bind('entity_death', null, array('type': 'SKELETON'), @event) {
-	if(@event['location']['world'] == 'dev') {
-		if(get_entity_rider(@event['id'])) {
-			entity_remove(get_entity_rider(@event['id']))
-			@eggs = array(51, 52, 54, 55, 57, 58, 59, 61, 62, 65, 66, 90, 91, 92, 93, 94, 95, 96, 98, 100, 120)
-			modify_event('drops', array(array('type': 383, 'data': array_rand(@eggs, 1, false)[0])))
-		}
+bind('creature_spawn', null, array('type': 'CHICKEN', 'reason': 'EGG'), @event) {
+	if(@event['location']['world'] == 'outworld') {
+		cancel()
 	}
 }
