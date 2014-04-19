@@ -308,7 +308,11 @@ bind('entity_damage', null, array('type': 'HORSE'), @event) {
 		die()
 	}
 	
-	if(!get_mob_owner(@event['id']), die())
+	@owner = get_mob_owner(@event['id'])
+	if(is_null(@owner)) {
+		 die()
+	}
+	
 	switch(@event['cause']) {
 	case 'VOID':
 	case 'SUFFOCATION':
@@ -316,18 +320,18 @@ bind('entity_damage', null, array('type': 'HORSE'), @event) {
 		die()
 		
 	case 'ENTITY_ATTACK':
-		if((ponline(@event['damager'])
-		&& get_mob_owner(@event['id']) != @event['damager'])
-		|| (!ponline(@event['damager'])
-		&& !get_entity_rider(@event['id']))) {
+		@isplayer = ponline(@event['damager'])
+		
+		if((@isplayer && @owner != @event['damager'])
+		|| (!@isplayer && !get_entity_rider(@event['id']))) {
 			cancel()
 		}
 		
 	case 'PROJECTILE':
-		if((ponline(@event['shooter'])
-		&& get_mob_owner(@event['id']) != @event['shooter'])
-		|| (!ponline(@event['shooter'])
-		&& !get_entity_rider(@event['id']))) {
+		@isplayer = ponline(@event['shooter'])
+		
+		if((@isplayer && @owner != @event['shooter'])
+		|| (!@isplayer && !get_entity_rider(@event['id']))) {
 			cancel()
 		}
 		
