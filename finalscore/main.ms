@@ -244,7 +244,8 @@ bind('entity_explode', null, null, @event) {
 			if(!array_contains(@regions, 'skypirates')
 			&& !array_contains(@regions, 'antfarm')
 			&& !array_contains(@regions, 'bomberman')
-			&& !array_contains(@regions, 'siege-wall2')) {
+			&& !array_contains(@regions, 'siege-wall2')
+			&& !array_contains(@regions, 'tnt')) {
 				cancel()
 			}
 		}
