@@ -1,18 +1,48 @@
-*:/transfer horse $player = >>>
-	try(@player = player($player), die(color('red').'Unknown player.'))
-	@owner = player().''
-	bind('player_interact_entity', array('id': 'transferhorse'.@owner.@player), array('clicked': 'HORSE'), @e, @player = @player, @owner = @owner) {
-		if(player() != @owner, die())
-		cancel()
-		unbind()
-		if(get_mob_owner(@e['id']) != player(), die(color('red').'This horse belongs to '.get_mob_owner(@e['id']).'.'))
-		tame_mob(@player, @e['id'])
-		msg(color('green').'The horse now belongs to '.@player.'.')
-		if(ponline(@player)) {
-			tmsg(@player, color('green').player().' gave a horse to you.')
+*:/transfer [$] = >>>
+	@args = parse_args($)
+	if(array_size(@args) != 2) {
+		die('Transfers ownership of a mob to another online player.\n'
+			.'Usage: /transfer <mob> <player>')
+	}
+	foreach(@arg in @args) {
+		if(ponline(@arg)) {
+			@player = @arg
+		} else{
+			switch(@arg) {
+			case 'horse':
+			case 'donkey':
+			case 'mule':
+				@thing = 'HORSE'
+			case 'wolf':
+			case 'dog':
+				@thing = 'WOLF'
+			case 'cat':
+			case 'kitten':
+			case 'ocelot':
+				@thing = 'OCELOT'
+			}
 		}
 	}
-	msg(color('yellow').'Right-click the horse you wish to give to '.@player.'.')
+	if(!@player) {
+		die('Unknown player.')
+	}
+	if(!@thing) {
+		die('Please specify "horse", "wolf", or "cat".')
+	}
+	bind('player_interact_entity', array('id': 'transfer'.@owner.@player), array('clicked': @thing), @e, @player = @player, @owner = player().'') {
+		if(player() != @owner,
+			die())
+		cancel()
+		unbind()
+		if(get_mob_owner(@e['id']) != player(),
+			die(color('red').'This '.entity_type(@e['id']).' belongs to '.get_mob_owner(@e['id']).'.'))
+		tame_mob(@player, @e['id'])
+		msg(color('green').'The '.entity_type(@e['id']).' now belongs to '.@player.'.')
+		if(ponline(@player)) {
+			tmsg(@player, color('green').player().' gave a '.entity_type(@e['id']).' to you.')
+		}
+	}
+	msg(color('yellow').'Right-click the '.@thing.' you wish to give to '.@player.'.')
 <<<
 
 *:/share $player $ = >>>
