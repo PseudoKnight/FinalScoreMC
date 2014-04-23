@@ -232,26 +232,6 @@ bind('player_interact', null, array('block': 122), @event) {
 	}
 }
 
-bind('entity_explode', null, null, @event) {
-	if(@event['location'][3] == 'dev') {
-		cancel()
-	} else if(@event['location'][3] == 'custom') {
-		if(@event['type'] != 'PRIMED_TNT'
-		&& @event['type'] != 'CREEPER') {
-			cancel()
-		} else {
-			@regions = sk_regions_at(entity_loc(@event['id']))
-			if(!array_contains(@regions, 'skypirates')
-			&& !array_contains(@regions, 'antfarm')
-			&& !array_contains(@regions, 'bomberman')
-			&& !array_contains(@regions, 'siege-wall2')
-			&& !array_contains(@regions, 'tnt')) {
-				cancel()
-			}
-		}
-	}
-}
-
 # DISPENER PARKING
 bind('vehicle_collide', null, array('type': 'MINECART', 'collisiontype': 'BLOCK', 'hittype': 23), @event) {
 	for(@i = 0, @i < get_inventory_size(@event['block']), @i++) {
