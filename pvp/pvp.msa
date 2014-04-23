@@ -17,6 +17,11 @@
 			}
 			@pvp['players'][player()] = array()
 		}
+		foreach(@player in @pvp['players']) {
+			if(!ponline(@player)) {
+				array_remove(@pvp['players'], @player)
+			}
+		}
 		if(array_index_exists(@arena, 'mode') && array_contains(array('ctf', 'tdm', 'infection'), @arena['mode'])) {
 			if(!array_index_exists(@pvp, 'team'), @pvp['team'] = array(array('players': array()), array('players': array())))
 			if(array_size(@pvp['team'][0]['players']) * if(array_index_exists(@arena, 'teamratio'), @arena['teamratio'][1], 1) <= array_size(@pvp['team'][1]['players']) * if(array_index_exists(@arena, 'teamratio'), @arena['teamratio'][0], 1)) {
