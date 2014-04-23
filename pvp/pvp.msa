@@ -24,12 +24,21 @@
 		}
 		if(array_index_exists(@arena, 'mode') && array_contains(array('ctf', 'tdm', 'infection'), @arena['mode'])) {
 			if(!array_index_exists(@pvp, 'team'), @pvp['team'] = array(array('players': array()), array('players': array())))
-			if(array_size(@pvp['team'][0]['players']) * if(array_index_exists(@arena, 'teamratio'), @arena['teamratio'][1], 1) <= array_size(@pvp['team'][1]['players']) * if(array_index_exists(@arena, 'teamratio'), @arena['teamratio'][0], 1)) {
+			if(!array_index_exists(@arena, 'teamratio')) {
+				@arena['teamratio'] = array(1, 1)
+			}
+			if(array_size(@pvp['team'][0]['players']) * @arena['teamratio'][1] <= array_size(@pvp['team'][1]['players']) * @arena['teamratio'][0]) {
 				@pvp['players'][player()]['team'] = 0
-				array_push(@pvp['team'][0]['players'], player())
+				if(!array_contains(@pvp['team'][0]['players'], player())) {
+					array_push(@pvp['team'][0]['players'], player())
+				}
+				array_remove_values(@pvp['team'][1]['players'], player())
 			} else {
 				@pvp['players'][player()]['team'] = 1
-				array_push(@pvp['team'][1]['players'], player())
+				if(!array_contains(@pvp['team'][1]['players'], player())) {
+					array_push(@pvp['team'][1]['players'], player())
+				}
+				array_remove_values(@pvp['team'][0]['players'], player())
 			}
 		}
 		_worldmsg('custom', color('gray').'[PVP] '.color('r').player().' has joined '.to_upper(if(array_index_exists(@arena, 'parent'), @arena['parent'].': ').@id).'. ('.array_size(@pvp['players']).')')
