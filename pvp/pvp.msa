@@ -17,7 +17,7 @@
 			}
 			@pvp['players'][player()] = array()
 		}
-		foreach(@player in @pvp['players']) {
+		foreach(@player in array_keys(@pvp['players'])) {
 			if(!ponline(@player)) {
 				array_remove(@pvp['players'], @player)
 			}
