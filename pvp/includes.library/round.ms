@@ -127,6 +127,11 @@ proc('_pvp_start_round', @id) {
 			
 			_regionmsg(@pvp['arena']['broadcast'], color('gray').'[PVP] '.color('r').@deathmessage)
 		}
+		
+		@pvp['stats'][player()]['deaths'] += 1
+		if(array_index_exists(@pvp['players'], @e['killer'])) {
+			@pvp['stats'][@e['killer']]['kills'] += 1
+		}
 
 		if(array_index_exists(@pvp['arena'], 'lives')) {
 			@pvp['players'][player()]['lives'] = @pvp['players'][player()]['lives'] - 1
@@ -173,8 +178,6 @@ proc('_pvp_start_round', @id) {
 			@pvp['players'][player()]['respawn'] = time() + (@pvp['arena']['respawntime'] * 1000)
 		}
 		
-		export('pvp'.@id, @pvp)
-		
 		if(array_contains(@pvp['arena']['flags'], 'keepinventory')) {
 			@pvp['players'][player()]['inv'] = pinv()
 		}
@@ -193,7 +196,6 @@ proc('_pvp_start_round', @id) {
 			&& @drop['type'] == @pvp['team'][@pvp['players'][player()]['team']]['captainhat']['type']
 			&& (max_stack_size(@pvp['team'][@pvp['players'][player()]['team']]['captainhat']['type']) == 1
 			|| @drop['data'] == @pvp['team'][@pvp['players'][player()]['team']]['captainhat']['data'])) {
-				@pvp = import('pvp'.@id)
 				@pvp['team'][@pvp['players'][player()]['team']]['captain'] = ''
 				_class('unload', player(), @pvp['players'][player()]['class'])
 				@pvp['players'][player()]['class'] = @pvp['arena']['classes'][@pvp['players'][player()]['team']][0]
@@ -206,7 +208,6 @@ proc('_pvp_start_round', @id) {
 					}
 				}
 				
-				export('pvp'.@id, @pvp)
 				if(@e['cause']['cause'] == 'VOID' || @e['cause']['cause'] == 'LAVA') {
 					_pvp_hat_spawn(@id, @pvp['players'][player()]['team'])
 				} else {
@@ -825,6 +826,10 @@ proc('_pvp_initialize_players', @id, @players) {
 			@pvp['players'][@player]['respawn'] = 0
 		}
 		
+		if(!array_index_exists(@pvp['stats'], @player)) {
+			@pvp['stats'][@player] = array('kills': 0, 'deaths': 0)
+		}
+		
 		queue_push(closure(){
 			if(array_index_exists(@pvp, 'team')) {
 				set_ploc(@player, @pvp['arena']['spawn'][@pvp['players'][@player]['team']][@c[@pvp['players'][@player]['team']]])
@@ -1022,14 +1027,24 @@ proc('_pvp_end_match', @id, @winners) {
 
 	if(array_contains(array('ctf', 'tdm', 'infection'), @pvp['arena']['mode']) && array_size(@winners) > 0) {
 		_worldmsg('custom', color('gray').'[PVP] '
-			.color(@pvp['arena']['team'][@pvp['players'][@leader]['team']]['color'])
+			.color(@pvp['arena']['team'][@pvp['players'][@leader]['team']]['color']).color('bold')
 			.@pvp['arena']['team'][@pvp['players'][@leader]['team']]['name'].' win!\n'
-			.color('gray').'[PVP] '.array_implode(@winners, ' '))
+			.color(@pvp['arena']['team'][@pvp['players'][@leader]['team']]['color']).array_implode(@winners, ' '))
 	} else if(array_size(@winners) > 0) {
 		_worldmsg('custom', color('gray').'[PVP] '.color('r').array_implode(@winners, ' and ').' wins!')
+
 	} else {
 		_worldmsg('custom', color('gray').'[PVP] '.color('r').'Nobody wins! Wait.. what?!')
 	}
+	
+	_regionmsg(@pvp['arena']['region'], 
+		color('gray').'|--'.color('bold').'[ STATS ]'.color('gray').'--------|\n'
+		.color('gray').' Kills : Deaths - Player\n'
+		.'|-------------------|')
+	foreach(@player: @stats in @pvp['stats']) {
+		_regionmsg(@pvp['arena']['region'], ' '.@stats['kills'].' : '.@stats['deaths'].' - '.@player)
+	}
+	_regionmsg(@pvp['arena']['region'], color('gray').'|-------------------|')
 	
 	if(array_index_exists(@pvp['arena'], 'chestspawn')) {
 		for(@i = 0, @i < array_size(@pvp['arena']['chestspawn']), @i++) {
