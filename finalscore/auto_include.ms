@@ -274,3 +274,43 @@ proc('_iterate_cuboid', @b1, @b2, @proc_name,
 		)
 	)
 )
+
+# Makes a call to the ban manager. Requires the CHCrypto extension.
+# This takes 5 parameters:
+# @endpoint - String - The action to take in the ban manager.
+# @player - String - The player name making the call to the ban manager, or the UUID of the player. This player must be an admin or moderator.
+# @params - Associative Array - The parameters to post to the ban manager.
+# @success - Closure (Optional) - Closure to execute when the request returns successfully. The closure is passed the response as an associative array. Defaults to printing success to the user.
+# @error - Closure (Optional) - Closure to execute when the request returns an error. The closure is passed the error message. Defaults to printing the error message to the user.
+proc('_bm_request', @endpoint, @player, @params, assign(@success, closure(@result, msg('Success'))), assign(@error, closure(@error_msg, msg(color('red').'Error: '.color('white').@error_msg)))
+	# Add the authentication parameters
+	@params['accessor_token'] = 'final-score-minecraft-server'
+	@params['timestamp'] = simple_date('yyyy-MM-dd HH:mm:ss Z')
+	@params['nonce'] = rand()
+	# Try to get the player's UUID
+	try(@uuid = entity_uuid(pinfo(@player, 13)), @uuid = @player)
+	@params['uuid'] = @uuid
+	
+	# Generate the HMAC
+	@hmac_key = read('key.txt')
+	@msg = ''
+	foreach(array_keys(@params), @key,
+		@msg .= @key . @params[@key]
+	)
+	@params['hmac'] = hmac_sha1(@hmac_key, @msg)
+	
+	http_request('http://ban-manager.lan/ban-manager.php?action='.@endpoint, array(
+		method:'POST',
+		params:@params,
+		success:closure(@response){
+			@result = json_decode(@response['body'])
+			if (array_index_exists(@result, 'error')) {
+				# Error
+				execute(@result['error'], @error)
+			} else {
+				# Successful
+				execute(@result, @success)
+			}
+		}
+	))
+)
