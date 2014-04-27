@@ -1,4 +1,4 @@
-*:/minigolf [$action='start']= >>>
+*:/minigolf [$action='start'] [$hole=1] = >>>
 switch($action) {
 case 'start':
 	if(!has_permission('group.builders') || pworld() != 'dev', die('Nope')) # while debugging
@@ -10,7 +10,10 @@ case 'start':
 	@count = 0
 	foreach(@player in all_players(@world)) {
 		if(array_contains(sk_current_regions(@player), 'minigolf')) {
-			@minigolf[@player] = array('type': @count, 'hole': 1, 'id': 0, 'velocity': array('x': 0, 'y': 0, 'z': 0))
+			if(pmode(@player) == 'CREATIVE') {
+				set_pmode(@player, 'SURVIVAL')
+			}
+			@minigolf[@player] = array('type': @count, 'hole': $hole, 'id': 0, 'velocity': array('x': 0, 'y': 0, 'z': 0))
 			_clear_pinv(@player)
 			set_pinv(@player, array(
 				0: array('type': 292),
