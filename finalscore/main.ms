@@ -55,7 +55,11 @@ bind('player_join', null, null, @event) {
 	set_timeout(250, closure(@loc = ploc(), @player = player()){
 		if(!ponline(@player), die())
 		#Store the player's UUID
-		_bm_request('set_user_uuid', 'a1634f37480a4bb9a0b2200266597ac0', array(username:@player, user_uuid:entity_uuid(pinfo(@player, 13))), closure(@result, console('User UUID stored in the ban manager.')), closure(@error_msg, console('Error while storing the UUID in the ban manager. Error: '.@error_msg)))
+		_bm_request('set_user_uuid', 'a1634f37480a4bb9a0b2200266597ac0', 
+			array('username': @player, 'user_uuid': entity_uuid(pinfo(@player, 13))),
+			closure(@result, console('User UUID stored in the ban manager.')), 
+			closure(@error_msg, console('Error while storing the UUID in the ban manager. Error: '.@error_msg))
+		)
 		#Welcome messages
 		msg(color('1').color('l').'--------------------')
 		msg(color('gold').' \u2302'.color('red').' \u2302'.color('aqua').' \u2302'.color('dark_red').' \u2302'.color('gold').color('l').' FINALSCORE '.color('yellow').color('l').'\u00AB'.color('r').' \u25AA \u25AA \u25AA')
