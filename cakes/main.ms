@@ -15,32 +15,31 @@ bind('player_interact', null, array('block': 92), @event) {
 	}
 	if(!@id, die())
 	cancel()
-	@cakedata = get_value('cakeinfo.'.@id)
-	if(!@cakedata, die('The cake is a lie.'))
+	@cakeinfo = get_value('cakeinfo')
+	if(!array_index_exists(@cakeinfo, @id), die('The cake is a lie.'))
 	set_phunger(20)
 	set_psaturation(5.0)
-	if(array_index_exists(@cakedata['players'], player())) {
+	if(array_index_exists(@cakeinfo[@id]['players'], player())) {
 		die('You\'ve already got this cake.')
 	}
-	@allcakes = get_values('cakeinfo')
 	@count = 1
 	@total = 0
-	foreach(@cake in @allcakes) {
-		if(@cake['type'] == @cakedata['type']) {
+	foreach(@cake in @cakeinfo) {
+		if(@cake['type'] == @cakeinfo[@id]['type']) {
 			@total += 1
 			if(array_index_exists(@cake['players'], player())) {
 				@count += 1
 			}
 		}
 	}
-	@cakedata['players'][player()] = time()
-	msg(color('green').'You got the '.to_upper(@id).' '.@cakedata['type'].' cake! ('.@count.'/'.@total.')')
+	@cakeinfo[@id]['players'][player()] = time()
+	msg(color('green').'You got the '.to_upper(@id).' '.@cakeinfo[@id]['type'].' cake! ('.@count.'/'.@total.')')
 	if(!array_contains_ic(pgroup(), 'builders')) {
-		_acc_add(player(), @cakedata['coins'])
-		msg(color('gold').'+ '.@cakedata['coins'].' coins')
-		console(player().' got '.@cakedata['coins'].' coins at '.@id)
+		_acc_add(player(), @cakeinfo[@id]['coins'])
+		msg(color('gold').'+ '.@cakeinfo[@id]['coins'].' coins')
+		console(player().' got '.@cakeinfo[@id]['coins'].' coins at '.@id)
 	}
-	store_value('cakeinfo.'.@id, @cakedata)
+	store_value('cakeinfo', @cakeinfo)
 	make_effect(@event['location'], 'ENDER_SIGNAL')
 	make_effect(@event['location'], 'RECORD_PLAY:2263')
 	if(get_block_at(@event['location']) != '92:0') {

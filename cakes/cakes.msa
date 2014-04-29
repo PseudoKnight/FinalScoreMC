@@ -2,8 +2,19 @@
 
 *:/cake [$cmd] [$] = >>>
 	switch($cmd) {
-	case 'list':
+	case 'refactor':
+		if(!array_contains(pgroup(), 'administrators'), die('You do not have permission to use this command.'))
 		@cakes = get_values('cakeinfo')
+		@cakeinfo = array()
+		foreach(@key: @value in @cakes) {
+			@id = split('.', @key)[1]
+			@cakeinfo[@id] = @value
+			clear_value(@key)
+		}
+		store_value('cakeinfo', @cakeinfo)
+		
+	case 'list':
+		@cakes = get_value('cakeinfo')
 		@names = array('challenge': '', 'secret': '')
 		@count = array('challenge': 0, 'secret': 0)
 		@total = array('challenge': 0, 'secret': 0)
@@ -12,13 +23,13 @@
 		} else {
 			@player = player()
 		}
-		foreach(@key: @cake in @cakes) {
+		foreach(@id: @cake in @cakes) {
 			@total[@cake['type']] += 1
 			if(array_index_exists(@cake['players'], @player)) {
 				@count[@cake['type']] += 1
-				@names[@cake['type']] .= color('gray').split('.', @key)[1].'('.array_size(@cake['players']).') '
+				@names[@cake['type']] .= color('gray').@id.'('.array_size(@cake['players']).') '
 			} else {
-				@names[@cake['type']] .= color('r').split('.', @key)[1].'('.array_size(@cake['players']).') '
+				@names[@cake['type']] .= color('r').@id.'('.array_size(@cake['players']).') '
 			}
 		}
 		if($) {
@@ -47,7 +58,7 @@
 		} else {
 			@id = $
 		}
-		@cake = get_value('cakeinfo.'.@id)
+		@cake = get_value('cakeinfo')[@id]
 		msg('Cake info for "'.@id.'":')
 		if(@cake['type'] == 'challenge') {
 			msg(color('green').@cake['coins'].color('r').' coins.')
@@ -105,17 +116,19 @@
 			die(color('red').'You can only have "secret" and "challenge" cake types.')
 		}
 
-		if(has_value('cakeinfo.'.@id)) {
-			@cakedata = get_value('cakeinfo.'.@id)
+		@cakeinfo = get_value('cakeinfo')
+		if(array_index_exists(@cakeinfo, @id)) {
+			@cake = @cakeinfo[@id]
 		} else {
-			@cakedata = associative_array()
-			@cakedata['players'] = associative_array()
+			@cake = associative_array()
+			@cake['players'] = associative_array()
 		}
 		
-		@cakedata['coins'] = @coins
-		@cakedata['type'] = @type
+		@cake['coins'] = @coins
+		@cake['type'] = @type
+		@cakeinfo[@id] = @cake
 		store_value('cakes', @cakes)
-		store_value('cakeinfo.'.@id, @cakedata)
+		store_value('cakeinfo', @cakeinfo)
 		msg('Set '.@type.' cake "'.@id.'" ('.@coins.' coins)')
 
 
@@ -156,8 +169,10 @@
 			die('No cake by that ID found.')
 		}
 		array_remove(@cakes, @id)
+		@cakeinfo = get_value('cakeinfo')
+		array_remove(@cakeinfo, @id)
 		store_value('cakes', @cakes)
-		clear_value('cakeinfo.'.@id)
+		store_value('cakeinfo', @cakeinfo)
 		msg('Deleted cake '.@id)
 
 	case 'rename':
@@ -189,10 +204,10 @@
 		}
 		@cakes[@new] = @cakes[@old]
 		array_remove(@cakes, @old)
-		@cake = get_value('cakeinfo.'.@old)
-		if(!@cake, die('Cannot find cake data'))
-		store_value('cakeinfo.'.@new, @cake)
-		clear_value('cakeinfo.'.@old)
+		@cakeinfo = get_value('cakeinfo')
+		@cakeinfo[@new] = @cakeinfo[@old]
+		array_remove(@cakeinfo, @old)
+		store_value('cakeinfo', @cakeinfo)
 		store_value('cakes', @cakes)
 		msg('Changed '.@old.' to '.@new.'.')
 
