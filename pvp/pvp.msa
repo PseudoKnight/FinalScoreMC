@@ -260,7 +260,7 @@
 				}
 			}
 			include('includes.library/round.ms')
-			_pvp_start_round(@id)
+			_pvp_start_match(@id)
 		})
 		
 	case 'end':
