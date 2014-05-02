@@ -132,6 +132,17 @@ proc('_pvp_start_round', @id) {
 		if(array_index_exists(@pvp['players'], @e['killer'])) {
 			@pvp['stats'][@e['killer']]['kills'] += 1
 		}
+		@totaldamage = 20
+		@damagers = array()
+		for(@i = array_size(@pvp['stats'][player()]['damagetaken']) - 1, @i >= 0 && @totaldamage > 0, @i--) {
+			@totaldamage -= @pvp['stats'][player()]['damagetaken'][@i][1]
+			if(@pvp['stats'][player()]['damagetaken'][@i][0] != @e['killer']
+			&& !array_contains(@damagers, @pvp['stats'][player()]['damagetaken'][@i][0])) {
+				@pvp['stats'][@pvp['stats'][player()]['damagetaken'][@i][0]]['assists'] += 1
+				array_push(@damagers, @pvp['stats'][player()]['damagetaken'][@i][0])
+			}
+		}
+		@pvp['stats'][player()]['damagetaken'] = array()
 
 		if(array_index_exists(@pvp['arena'], 'lives')) {
 			@pvp['players'][player()]['lives'] = @pvp['players'][player()]['lives'] - 1
@@ -427,6 +438,10 @@ proc('_pvp_start_round', @id) {
 		@pvp = import('pvp'.@id)
 		if(!array_index_exists(@pvp['players'], player()), die())
 
+		if(array_index_exists(@pvp['players'], @e['data'])) {
+			array_push(@pvp['stats'][player()]['damagetaken'], array(@e['data'], @e['amount']))
+		}
+		
 		if(@e['damager'] == 'PLAYER' || @e['damager'] == 'ARROW' || @e['damager'] == 'WITHER_SKULL' || @e['damager'] == 'SNOWBALL') {
 			if(!@pvp['arena']['ff']
 			&& array_index_exists(@pvp['players'], @e['data'])
@@ -827,7 +842,7 @@ proc('_pvp_initialize_players', @id, @players) {
 		}
 		
 		if(!array_index_exists(@pvp['stats'], @player)) {
-			@pvp['stats'][@player] = array('kills': 0, 'deaths': 0)
+			@pvp['stats'][@player] = array('kills': 0, 'damagetaken': array(), 'deaths': 0, 'assists': 0)
 		}
 		
 		queue_push(closure(){
@@ -1038,13 +1053,13 @@ proc('_pvp_end_match', @id, @winners) {
 	}
 	
 	_regionmsg(@pvp['arena']['region'], 
-		color('gray').'|--'.color('bold').'[ STATS ]'.color('gray').'--------|\n'
-		.color('gray').' Kills : Deaths - Player\n'
-		.'|-------------------|')
+		color('gray').'|--'.color('bold').'[ STATS ]'.color('gray').'----------|\n'
+		.color('gray').' Kills : Assists : Deaths\n'
+		.'|---------------------|')
 	foreach(@player: @stats in @pvp['stats']) {
-		_regionmsg(@pvp['arena']['region'], ' '.@stats['kills'].' : '.@stats['deaths'].' - '.@player)
+		_regionmsg(@pvp['arena']['region'], ' '.@stats['kills'].' : '.@stats['assists'].' : '.@stats['deaths'].' - '.@player)
 	}
-	_regionmsg(@pvp['arena']['region'], color('gray').'|-------------------|')
+	_regionmsg(@pvp['arena']['region'], color('gray').'|---------------------|')
 	
 	if(array_index_exists(@pvp['arena'], 'chestspawn')) {
 		for(@i = 0, @i < array_size(@pvp['arena']['chestspawn']), @i++) {
