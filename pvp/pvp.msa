@@ -45,7 +45,7 @@
 		console(player().' joined '.@id)
 		export('pvp'.@id, @pvp)
 		if(@pvp['running'] == 'true') {
-			include('includes.library/round.ms')
+			include('includes.library/match.ms')
 			if(array_index_exists(@pvp['arena'], 'classes')) {
 				include('includes.library/class.ms')			
 			}
@@ -269,7 +269,7 @@
 		@id = to_lower($id)
 		@pvp = import('pvp'.@id)
 		if(!@pvp || !@pvp['running'], die(color('red').'Not running.'))
-		include('includes.library/round.ms')
+		include('includes.library/match.ms')
 		if(array_index_exists(@pvp['arena'], 'classes')) {
 			include('includes.library/class.ms')			
 		}
