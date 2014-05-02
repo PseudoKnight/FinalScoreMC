@@ -259,7 +259,7 @@
 					close_pinv(@p)
 				}
 			}
-			include('includes.library/round.ms')
+			include('includes.library/match.ms')
 			_pvp_start_match(@id)
 		})
 		
