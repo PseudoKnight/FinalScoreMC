@@ -541,6 +541,7 @@ proc('_fw_task', @task, @state, @secs) {
 						1: array('type': 262, 'qty': 6)
 					))
 					play_sound(ploc(@p), array('sound': if(@mob == 'BAT', 'BAT_LOOP', 'chicken_idle')), @p)
+					set_pexp(@p, 0)
 				}
 			}
 
@@ -748,6 +749,7 @@ proc('_fw_task', @task, @state, @secs) {
 					set_pinv(@p, array(
 						0: array('type': 359)
 					))
+					set_pexp(@p, 0)
 				}
 			}
 			
