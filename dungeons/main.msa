@@ -1,4 +1,0 @@
-/createdungeon $region = >>>
-	include('includes.library/dungeon.ms')
-	_create_dungeon($region, pworld())
-<<<
