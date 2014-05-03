@@ -106,7 +106,8 @@
 		}
 		
 		if(array_index_exists(@pvp['arena'], 'arenaselect')) {
-			@child = get_value('arena', array_rand(@pvp['arena']['arenaselect']['arenas'], 1, false)[0])
+			@childid = array_rand(@pvp['arena']['arenaselect']['arenas'], 1, false)[0]
+			@child = get_value('arena', @childid)
 			if(!@child, die('Can\'t find child arena.'))
 			@pvp['arena'] = array_merge(@pvp['arena'], @child)	
 		}
@@ -237,9 +238,11 @@
 
 		#ANNOUNCE
 		if(array_index_exists(@pvp['arena'], 'arenaselect')) {
-			@name = to_upper(@id)
+			@name = to_upper(@id).': '.@childid
 		} else if(array_index_exists(@pvp['arena'], 'parent')) {
 			@name = to_upper(@pvp['arena']['parent'].': '.@id)
+		} else {
+			@name = to_upper(@id)
 		}
 		_worldmsg('custom', color('gray').'[PVP] '.color('r')
 			.'Starting '.@name.' in '.@pvp['arena']['delay'].' seconds...')
