@@ -725,21 +725,16 @@ proc('_fw_task', @task, @state, @secs) {
 			@colors = array('WHITE', 'ORANGE', 'MAGENTA', 'LIGHT_BLUE', 'YELLOW', 'LIME', 'PINK', 'GRAY', 'SILVER', 'CYAN', 'PURPLE', 'BLUE', 'BROWN', 'GREEN', 'RED', 'BLACK')
 			@colorindex = rand(array_size(@colors))
 			_fw_msg(@colors[@colorindex].color('r').' is the new black')
-			@count = min(_fw_totalplayers() * 30, 200)
+			@count = min(_fw_totalplayers() * 24, 200)
 			@region = sk_region_info('frogware', 'custom')[0]
 			for(@i = 0, @i < @count, @i++) {
 				spawn_mob('SHEEP:'.@colors[rand(16)], 1, _fw_loc())
 			}
-			bind('item_pickup', array('id': 'fwpickup'), array('item': 35), @e, @data = @colors[@colorindex]) {
+			bind('item_pickup', array('id': 'fwpickup'), array('item': 35), @e, @data = @colorindex) {
 				if(_fw_player(@e['player'])) {
-					@xp = pexp(@e['player'])
-					if(@xp < 99) {
-						@xp = min(@xp + (33 * @e['item']['qty']), 99)
-						set_pexp(@e['player'], @xp)
-						if(@xp >= 99) {
-							if(_fw_changeteam(player(), 'winners')) {
-								play_sound(ploc(), array('sound': 'zombie_metal'), player())
-							}
+					if(@e['item']['data'] == @data) {
+						if(_fw_changeteam(player(), 'winners')) {
+							play_sound(ploc(), array('sound': 'zombie_metal'), player())
 						}
 					}
 				}
@@ -749,7 +744,6 @@ proc('_fw_task', @task, @state, @secs) {
 					set_pinv(@p, array(
 						0: array('type': 359)
 					))
-					set_pexp(@p, 0)
 				}
 			}
 			
