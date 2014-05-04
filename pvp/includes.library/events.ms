@@ -47,7 +47,7 @@ bind('player_death', array('priority': 'high', 'id': @id.'death'), null, @e, @id
 		@totaldamage += @amount
 	}
 	foreach(@damager: @amount in @pvp['stats'][player()]['damagetaken']) {
-		if(@damager != @e['killer']
+		if(@damager != @e['killer'] && @damager != 'other'
 		&& @amount > @totaldamage / 2) {
 			@pvp['stats'][@damager]['assists'] += 1
 			if(@e['killer']) {
