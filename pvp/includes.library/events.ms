@@ -361,7 +361,7 @@ bind('entity_damage', array('id': @id.'EntityDamage'), array('type': 'PLAYER', '
 		} else {
 			@damager = 'other'
 		}
-	} else if(array_index_exists(@pvp['players'], @e['damager'])) {
+	} else if(array_index_exists(@e, 'damager') && array_index_exists(@pvp['players'], @e['damager'])) {
 		@damager = @e['damager']
 	} else {
 		@damager = 'other'
@@ -378,7 +378,7 @@ bind('entity_damage', array('id': @id.'EntityDamage'), array('type': 'PLAYER', '
 	if(array_index_exists(@pvp['stats'][@e['player']]['damagetaken'], @damager)) {
 		@pvp['stats'][@e['player']]['damagetaken'][@damager] += @e['amount']
 	} else {
-		array_push(@pvp['stats'][@e['player']]['damagetaken'][@damager], @e['amount'])
+		@pvp['stats'][@e['player']]['damagetaken'][@damager] = @e['amount']
 	}
 }
 
