@@ -466,8 +466,10 @@
 			@loc = pcursor()
 			if(split(':', get_block_at(@loc))[0] == '54'
 			&& ($setting == 'chestspawn' || $setting == 'chestgroup')) {
-				foreach(@arena[@setting], @key, @chest) {
-					if(@chest['loc'] == @loc) {
+				foreach(@arena[$setting], @key, @chest) {
+					if(@chest['loc'][0] == @loc[0]
+					&& @chest['loc'][1] == @loc[1]
+					&& @chest['loc'][2] == @loc[2]) {
 						set_block_at(@loc, 0)
 						array_remove(@arena[$setting], @key)
 						msg('Removed this '.$setting.' location.')
