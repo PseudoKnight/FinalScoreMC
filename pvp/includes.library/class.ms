@@ -128,7 +128,19 @@ proc('_class', @action, @player, @class) {
 		if(!@class, return(false))
 		switch(@action) {
 		case 'load':
-			break()
+			if(array_index_exists(@class, 'doublejump')) {
+				set_pflight(@player, true)
+				bind('player_toggle_flight', array('id': @player.'doublejump'), array('flying': true), @e) {
+					cancel()
+					@vel = entity_velocity(pinfo(player(), 13))
+					if(@vel['y'] < 0) {
+						@y = abs(@vel['y']) * 3
+					} else {
+						@y = @vel['y'] * 2
+					}
+					set_pvelocity(@vel['x'] * 2, @y, @vel['z'] * 2)
+				}
+			}
 			
 		case 'equip':
 			if(array_index_exists(@class, 'kit')) {
@@ -143,7 +155,8 @@ proc('_class', @action, @player, @class) {
 			}
 			
 		case 'unload':
-			break()
+			unbind(@player.'doublejump')
+			set_pflight(@player, false)
 		
 		}
 	}

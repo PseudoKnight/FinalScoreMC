@@ -42,6 +42,15 @@ case 'set':
 			die('Requires a strength integer and a length integer in seconds.')
 		}
 		
+	case 'doublejump':
+		if($ == 'true') {
+			@class['doublejump'] = 'normal' # string instead of boolean leaves room for alternative doublejump modes
+			msg('Turned on doublejump for class.')
+		} else if($ == 'false' && array_index_exists(@class, 'doublejump')) {
+			array_remove(@class, 'doublejump')
+			msg('Turned off doublejump for class.')
+		}
+		
 	default:
 		die('Available settings: selector, kit, effect')
 	}
