@@ -52,10 +52,15 @@
 	})
 <<<
 
-/playsound $sound [$pitch=1] [$volume=1] = >>>
-	if(get_command_block()) {
-		play_sound(get_command_block(), array('sound': $sound, 'pitch': $pitch, 'volume': $volume))
-	} else {
+*:/playsound $sound [$pitch=1] [$volume=1] [$x] [$y] [$z] = >>>
+	if(@cmdblk = get_command_block()) {
+		if($z) {
+			@loc = _relative_coords(@cmdblk, $x, $y, $z)
+		} else {
+			@loc = @cmdblk
+		}
+		play_sound(@loc, array('sound': $sound, 'pitch': $pitch, 'volume': $volume))
+	} else if(has_permission('group.builders')) {
 		play_sound(ploc(), array('sound': $sound, 'pitch': $pitch, 'volume': $volume))
 	}
 <<<
