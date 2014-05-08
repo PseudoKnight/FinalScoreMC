@@ -1,3 +1,21 @@
+*:/relativecoords [$one] = >>>
+	if(!has_permission('group.builders'), die('No permission.'))
+	@cmdblk = pcursor()
+	@loc1 = sk_pos1()
+	@loc2 = sk_pos2()
+	@x1 = integer(@loc1[0] - @cmdblk['x'])
+	@y1 = integer(@loc1[1] - @cmdblk['y'])
+	@z1 = integer(@loc1[2] - @cmdblk['z'])
+	if($one) {
+		set_block_command(@cmdblk, '~'.@x1.' ~'.@y1.' ~'.@z1)
+	} else {
+		@x2 = integer(@loc2[0] - @cmdblk['x'])
+		@y2 = integer(@loc2[1] - @cmdblk['y'])
+		@z2 = integer(@loc2[2] - @cmdblk['z'])
+		set_block_command(@cmdblk, '~'.@x1.' ~'.@y1.' ~'.@z1.' ~'.@x2.' ~'.@y2.' ~'.@z2)
+	}
+<<<
+
 *:/display $ = >>>
 	if(!has_permission('command.display'), die('You do not have permission to use this command.'))
 	if(length($) > 30, die('The name can only be 30 characters long.'))
