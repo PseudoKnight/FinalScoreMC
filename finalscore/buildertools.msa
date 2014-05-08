@@ -1,18 +1,20 @@
-*:/relativecoords [$one] = >>>
+*:/relativecoords = >>>
 	if(!has_permission('group.builders'), die('No permission.'))
 	@cmdblk = pcursor()
+	try(@cmd = get_block_command(@cmdblk), die('Not a commandblock'))
 	@loc1 = sk_pos1()
-	@loc2 = sk_pos2()
 	@x1 = integer(@loc1[0] - @cmdblk['x'])
 	@y1 = integer(@loc1[1] - @cmdblk['y'])
 	@z1 = integer(@loc1[2] - @cmdblk['z'])
-	if($one) {
-		set_block_command(@cmdblk, '~'.@x1.' ~'.@y1.' ~'.@z1)
-	} else {
+	@parts = parse_args(@cmd)
+	if((array_size(@parts) > 0 && (@parts[0] == '/fill' || @parts[0] == 'fill')) || (array_size(@parts) > 1 && @parts[1] == '/fill')) {
+		@loc2 = sk_pos2()
 		@x2 = integer(@loc2[0] - @cmdblk['x'])
 		@y2 = integer(@loc2[1] - @cmdblk['y'])
 		@z2 = integer(@loc2[2] - @cmdblk['z'])
-		set_block_command(@cmdblk, '~'.@x1.' ~'.@y1.' ~'.@z1.' ~'.@x2.' ~'.@y2.' ~'.@z2)
+		set_block_command(@cmdblk, @cmd.' ~'.@x1.' ~'.@y1.' ~'.@z1.' ~'.@x2.' ~'.@y2.' ~'.@z2.' ')
+	} else {
+		set_block_command(@cmdblk, @cmd.' ~'.@x1.' ~'.@y1.' ~'.@z1.' ')
 	}
 <<<
 
