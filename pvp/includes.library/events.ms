@@ -50,7 +50,7 @@ bind('player_death', array('priority': 'high', 'id': @id.'death'), null, @e, @id
 		if(@damager != @e['killer'] && @damager != 'other'
 		&& @amount > @totaldamage / 2) {
 			@pvp['stats'][@damager]['assists'] += 1
-			if(@e['killer']) {
+			if(@e['killer'] && array_index_exists(@pvp['players'], @damager)) {
 				if(array_index_exists(@pvp['arena'], 'team')) {
 					@deathmessage .= ', assisted by '.color(@pvp['arena']['team'][@pvp['players'][@damager]['team']]['color']).@damager
 				} else {
