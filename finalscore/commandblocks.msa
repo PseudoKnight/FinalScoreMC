@@ -85,7 +85,7 @@
 			if(get_block_at(@loc, @cmdblk[3])[0] != '0') {
 				make_effect(@loc, 'STEP_SOUND:'.@id)
 			}
-			set_block_at(@loc, @id.':'.$data, false)
+			set_block_at(@loc, @id.':'.$data, true)
 		}
 	}
 <<<
@@ -139,7 +139,7 @@
 						if(get_block_at(@x, @y, @z, @cmdblk['world'])[0] != '0') {
 							make_effect(array(@x, @y, @z, @cmdblk['world']), 'STEP_SOUND:'.@id)
 						}
-						set_block_at(@x, @y, @z, @id.':'.$data, @cmdblk['world'], false)
+						set_block_at(@x, @y, @z, @id.':'.$data, @cmdblk['world'], true)
 					}
 				}
 			}
