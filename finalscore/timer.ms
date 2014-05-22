@@ -8,7 +8,7 @@ export('timer', @timers)
 
 register_command('timer', array(
 	'description': 'Handles time trials for speed runs.',
-	'usage': '/timer <start|stop> <id>',
+	'usage': '/timer <start|stop> <id> <player>',
 	'permission': 'command.timer',
 	'executor': closure(@alias, @sender, @args, @info,
 	
