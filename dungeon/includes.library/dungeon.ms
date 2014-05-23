@@ -7,12 +7,14 @@ proc('_create_dungeon', @region, @world, @scale) {
 		' ': '7:0', 
 		'wall': '98:0', 
 		'room': '0:0',
-		'door': '98:3',
+		'door': '0:0',
 		'column': '47:0',
+		'stairs': '109:0',
+		'chest': '54:0',
+		'stairs': '109:2',
+		'ceiling': '98:0',
+		'floor': '98:1',
 	)
-	
-	@ceiling = '98:0'
-	@floor = '98:1'
 
 	# get size, scaled
 	if(!sk_region_exists(@world, @region), die('Region doesn\'t exist.'))
@@ -41,10 +43,35 @@ proc('_create_dungeon', @region, @world, @scale) {
 			@dungeon[@c][@r] = @type
 		} 
 	}
-	
+	 
 	#define rooms
 	@rooms = array()
-	@nroom = 0
+	
+	# place entrance stairway
+	@c = (rand(2, (@width - 1) / 2) * 2) + 1
+	@r = (rand(0, (@length - 5) / 2) * 2) + 1
+	for(@r2 = @r - 1, @r2 <= 5 + @r, @r2++) {
+		for(@c2 = @c - 1, @c2 <= 1 + @c, @c2++) {
+			if(@c2 == @c && @r2 >= @r - 1 && @r2 < @r + 5) {
+				if(@r2 == @r - 1) {
+					@dungeon[@c2][@r2] = 'door'
+				} else {
+					@dungeon[@c2][@r2] = 'stairs'
+				}
+			} else {
+				@dungeon[@c2][@r2] = 'wall'
+			}
+		}
+	}
+	
+	@rooms[] = array(
+		'r1': @r,
+		'c1': @c,
+		'r2': @r + 5,
+		'c2': @c,
+	)
+
+	@nroom = 1
 	
 	# place rooms
 	queue_push(closure(){
@@ -53,14 +80,20 @@ proc('_create_dungeon', @region, @world, @scale) {
 			if(@dungeon[@c][@r] == ' ') {
 				@roomwidth = rand(((@maxroomsize - @minroomsize) / 2) + 1) * 2 + @minroomsize
 				@roomlength = rand(((@maxroomsize - @minroomsize) / 2) + 1) * 2 + @minroomsize
-				while(@roomwidth > 1 && _c_collides(@dungeon, @c, @r, @roomwidth)) {
-					@roomwidth -= 2
-				}
-				while(@roomlength > -1 && _r_collides(@dungeon, @c, @r, @roomlength)) {
-					@roomlength -= 2
-				}
-				if(@roomwidth == -1 || @roomlength == -1) { 
-					continue() 
+				
+				# check placement
+				for(@r2 = @r, @r2 < @roomlength + @r, @r2 += 2) {
+					@c2 = @c
+					if(@r2 >= @length || @dungeon[@c2][@r2] != ' ') {
+						@roomlength = @r2 - @r - 1
+						break()
+					}
+					for(@c2 = @c, @c2 < @roomwidth + @c, @c2 += 2) {
+						if(@c2 >= @width || @dungeon[@c2][@r2] != ' ') {
+							@roomwidth = @c2 - @c - 1
+							break()
+						}
+					}
 				}
 				
 				# save room
@@ -79,6 +112,8 @@ proc('_create_dungeon', @region, @world, @scale) {
 							switch(rand(100)) {
 							case 0..3:
 								@dungeon[@c2][@r2] = 'column'
+							case 4:
+								@dungeon[@c2][@r2] = 'chest'
 							default:
 								@dungeon[@c2][@r2] = 'room'
 							}
@@ -88,8 +123,7 @@ proc('_create_dungeon', @region, @world, @scale) {
 					}
 				}
 				
-				@doors = 2
-				while(@doors > 0) {
+				while(true) {
 					if(rand(2)) {
 						if(rand(2)) {
 							@r2 = @r - 1
@@ -112,11 +146,13 @@ proc('_create_dungeon', @region, @world, @scale) {
 					}
 					
 					@dungeon[@c2][@r2] = 'door'
-					@doors -= 1
+					break()
 				}
 				
 				@nroom += 1
 				@c = @c + @roomwidth - 1
+			} else if(@dungeon[@c][@r] == 'stairs') {
+			
 			}
 		}
 	}
@@ -135,38 +171,51 @@ proc('_create_dungeon', @region, @world, @scale) {
 				set_block_at(array(@coords[1][0] + @x, @coords[1][1], @coords[1][2] + @z, @world), '52:0')
 				set_spawner_type(array(@coords[1][0] + @x, @coords[1][1], @coords[1][2] + @z, @world), 'ZOMBIE')
 			} else {
-				set_block_at(array(@coords[1][0] + @x, @coords[1][1], @coords[1][2] + @z, @world), @floor)
+				set_block_at(array(@coords[1][0] + @x, @coords[1][1], @coords[1][2] + @z, @world), @mat['floor'])
 			}
 			#walls
 			for(@y = 1, @y <= @height, @y++) {
-				if(@y != @height && @dungeon[@c][@r] != 'wall') {
-					set_block_at(array(@coords[1][0] + @x, @coords[1][1] + @y, @coords[1][2] + @z, @world), @mat[@dungeon[@c][@r]])
-				} else if(@dungeon[@c][@r] == 'door' || @dungeon[@c][@r] == 'wall') {
+				switch(@dungeon[@c][@r]) {
+				case 'wall':
 					set_block_at(array(@coords[1][0] + @x, @coords[1][1] + @y, @coords[1][2] + @z, @world), @mat['wall'])
-				} else {
+				case 'room':
 					set_block_at(array(@coords[1][0] + @x, @coords[1][1] + @y, @coords[1][2] + @z, @world), @mat['room'])
+				case 'door': 
+					if(@y != @height) { 
+						set_block_at(array(@coords[1][0] + @x, @coords[1][1] + @y, @coords[1][2] + @z, @world), @mat['room'])
+					} else {
+						set_block_at(array(@coords[1][0] + @x, @coords[1][1] + @y, @coords[1][2] + @z, @world), @mat['wall'])
+					}
+				case 'chest':
+					set_block_at(array(@coords[1][0] + @x, @coords[1][1] + @y, @coords[1][2] + @z, @world), @mat['chest'])
+					@dungeon[@c][@r] = 'room'
+				case 'column':
+					if(@y != @height) { 
+						set_block_at(array(@coords[1][0] + @x, @coords[1][1] + @y, @coords[1][2] + @z, @world), @mat['column'])
+					} else {
+						set_block_at(array(@coords[1][0] + @x, @coords[1][1] + @y, @coords[1][2] + @z, @world), @mat['room'])
+					}
+				case 'stairs':
+					if(@z - (@rooms[0]['r1'] * @scale) - 1 == @y) {
+						set_block_at(array(@coords[1][0] + @x, @coords[1][1] + @y, @coords[1][2] + @z, @world), @mat['stairs'])
+					} else {
+						set_block_at(array(@coords[1][0] + @x, @coords[1][1] + @y, @coords[1][2] + @z, @world), @mat['room'])
+					}
+				default:
+					set_block_at(array(@coords[1][0] + @x, @coords[1][1] + @y, @coords[1][2] + @z, @world), @mat[' '])
 				}
 			}
 			#ceiling
+			if(@dungeon[@c][@r] == 'stairs') {
+				if(@z - (@rooms[0]['r1'] * @scale) - 1 == @height + 1) {
+					set_block_at(array(@coords[1][0] + @x, @coords[1][1] + @height + 1, @coords[1][2] + @z, @world), @mat['stairs'])
+				} else if(@z - (@rooms[0]['r1'] * @scale) - 1 < @height + 1) {
+					set_block_at(array(@coords[1][0] + @x, @coords[1][1] + @height + 1, @coords[1][2] + @z, @world), @mat['room'])
+				}
+			} else {
+				set_block_at(array(@coords[1][0] + @x, @coords[1][1] + @height + 1, @coords[1][2] + @z, @world), @mat['ceiling'])
+			}
 		}
 		}, 'd1')
-	}
-}
-
-proc('_r_collides', @dungeon, @c, @r, @roomlength) {
-	for(@r2 = @r, @r2 < @roomlength + @r, @r2 += 2) {
-		if(!array_index_exists(@dungeon[@c], @r2)
-		|| @dungeon[@c][@r2] != ' ') { 
-			return(true)
-		}
-	}
-}
-
-proc('_c_collides', @dungeon, @c, @r, @roomwidth) {
-	for(@c2 = @c + 2, @c2 < @roomwidth + @c, @c2 += 2) {
-		if(!array_index_exists(@dungeon, @c2)
-		|| @dungeon[@c2][@r] != ' ') { 
-			return(true)
-		}
 	}
 }
