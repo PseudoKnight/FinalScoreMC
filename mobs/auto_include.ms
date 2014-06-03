@@ -8,6 +8,10 @@ proc('_spawn_mob', @mob, @qty, @loc,
 		if(array_index_exists(@mob, 'droprate'), set_equipment_droprates(@m, @mob['droprate']))
 		if(array_index_exists(@mob, 'tags'), set_entity_spec(@m, @mob['tags']))
 		if(array_index_exists(@mob, 'tame'), tame_mob('Notch', @m))
+		if(array_index_exists(@mob, 'health')) {
+			set_max_health(@m, @mob['health'])
+			set_entity_health(@m, 100)
+		}
 		set_entity_persistence(@m, true)
 	)
 	if(array_index_exists(@mob, 'effects')) {
