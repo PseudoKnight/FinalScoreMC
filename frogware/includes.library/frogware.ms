@@ -487,7 +487,7 @@ proc('_fw_task', @task, @state, @secs) {
 			_fw_msg('Alls well that falls well.')
 			foreach(@p in all_players('custom')) {
 				if(_fw_player(@p)) {
-					set_pvelocity(@p, 0, 3, 0)
+					set_pvelocity(@p, 0, 2.9, 0)
 					play_sound(ploc(@p), array('sound': 'ghast_fireball'), @p)
 				}
 			}
