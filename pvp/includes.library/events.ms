@@ -73,12 +73,14 @@ bind('player_death', array('priority': 'high', 'id': @id.'death'), null, @e, @id
 		team_add_player(@pvp['arena']['team'][1]['name'], player(), @id)
 		if(array_index_exists(@pvp['arena'], 'classes')) {
 			if(array_index_exists(@pvp['players'][player()], 'class')) {
-				_class('unload', player(), @pvp['players'][player()]['class'])
+				_class('unload', player(), @pvp['players'][player()]['class'], @pvp)
 				array_remove(@pvp['players'][player()], 'class')
 			}
-			if(array_size(@pvp['arena']['classes'][@pvp['players'][player()]['team']]) > 0) {
-				@pvp['players'][player()]['class'] = @pvp['arena']['classes'][1][0]
-				_class('load', player(), @pvp['players'][player()]['class'])
+			foreach(@classname: @class in @pvp['arena']['classes']) {
+				if(!array_index_exists(@class, 'team') || @class['team'] == @pvp['players'][player()]['team']) {
+					@pvp['players'][player()]['class'] = @classname
+					_class('load', player(), @pvp['players'][player()]['class'], @pvp)
+				}
 			}
 		}
 	}
@@ -93,7 +95,7 @@ bind('player_death', array('priority': 'high', 'id': @id.'death'), null, @e, @id
 	if(array_index_exists(@pvp['arena'], 'lives')) {
 		if(@pvp['players'][player()]['lives'] == 0) {
 			if(array_index_exists(@pvp['players'][player()], 'class')) {
-				_class('unload', player(), @pvp['players'][player()]['class'])
+				_class('unload', player(), @pvp['players'][player()]['class'], @pvp)
 			}
 			if(array_index_exists(@pvp['arena'], 'timer') && phas_bar()) {
 				premove_bar()
@@ -125,9 +127,13 @@ bind('player_death', array('priority': 'high', 'id': @id.'death'), null, @e, @id
 		&& (max_stack_size(@pvp['team'][@pvp['players'][player()]['team']]['captainhat']['type']) == 1
 		|| @drop['data'] == @pvp['team'][@pvp['players'][player()]['team']]['captainhat']['data'])) {
 			@pvp['team'][@pvp['players'][player()]['team']]['captain'] = ''
-			_class('unload', player(), @pvp['players'][player()]['class'])
-			@pvp['players'][player()]['class'] = @pvp['arena']['classes'][@pvp['players'][player()]['team']][0]
-			_class('load', player(), @pvp['players'][player()]['class'])
+			_class('unload', player(), @pvp['players'][player()]['class'], @pvp)
+			foreach(@classname: @class in @pvp['arena']['classes']) {
+				if(!array_index_exists(@class, 'team') || @class['team'] == @pvp['players'][player()]['team']) {
+					@pvp['players'][player()]['class'] = @classname
+				}
+			}
+			_class('load', player(), @pvp['players'][player()]['class'], @pvp)
 			_regionmsg(@pvp['arena']['broadcast'], color('gray').'[PVP] '.color(@pvp['arena']['team'][@pvp['players'][player()]['team']]['color'])
 				.to_upper(@pvp['arena']['team'][@pvp['players'][player()]['team']]['name']).color('r').' - Captain has died and dropped his hat!')
 			foreach(@pvp['players'], @p, @player) {
@@ -178,7 +184,7 @@ bind('player_quit', array('id': @id.'quit'), null, @e, @id = @id, @host = player
 	}
 	modify_event('message', color('gray').'[PVP] '.color(@messagecolor).@e['message'])
 	if(array_index_exists(@pvp['players'][player()], 'class')) {
-		_class('unload', player(), @pvp['players'][player()]['class'])
+		_class('unload', player(), @pvp['players'][player()]['class'], @pvp)
 	}
 	array_remove(@pvp['players'], player())
 	_pvp_check_objectives(@id)
@@ -199,22 +205,14 @@ bind('player_spawn', array('id': @id.'spawn'), null, @e, @id = @id) {
 	if(!array_index_exists(@pvp['players'], player()), 
 		die())
 
-	set_timeout(50, closure(){ # workaround for bug where players retain potion effects after death
-		_clear_peffects(player())
-	})
 	if(!array_index_exists(@pvp['arena'], 'respawntime')) {
-		set_timeout(100, closure(){
+		set_timeout(50, closure(){
 			_pvp_equip(@id, player())
 		})
 	} else if(array_index_exists(@pvp['arena'], 'classes')) {
-		if(array_index_exists(@pvp, 'team')
-		&& array_size(@pvp['arena']['classes'][@pvp['players'][player()]['team']]) > 1) {
+		if(array_size(@pvp['arena']['classes']) > 2) {
 			set_timeout(50, closure(){
 				popen_virtualchest(@id.@pvp['players'][player()]['team'])
-			})
-		} else if(array_size(@pvp['arena']['classes'][0]) > 1) {
-			set_timeout(50, closure(){
-				popen_virtualchest(@id.'0')
 			})
 		}
 	}
@@ -330,7 +328,7 @@ bind('player_command', array('id': @id.'command'), null, @e, @id = @id) {
 		_pvp_flag_spawn(@id, if(pinv(player(), 103)['type'] == 10, 0, 1))
 	}
 	if(array_index_exists(@pvp['players'][player()], 'class')) {
-		_class('unload', player(), @pvp['players'][player()]['class'])
+		_class('unload', player(), @pvp['players'][player()]['class'], @pvp)
 	}
 	if(array_index_exists(@pvp['arena'], 'timer') && phas_bar()) {
 		premove_bar()
@@ -532,14 +530,14 @@ if(array_contains(@pvp['arena']['flags'], 'stackedpickup')
 		&& @e['item']['type'] == @pvp['team'][0]['captainhat']['type']) {
 			if(@pvp['players'][player()]['team'] == 0) {
 				modify_event('item', null)
-				_class('unload', player(), @pvp['players'][player()]['class'])
+				_class('unload', player(), @pvp['players'][player()]['class'], @pvp)
 				_clear_pinv()
 				_clear_peffects()
 				queue_clear(@id.'0hat')
 				@pvp['players'][player()]['class'] = @pvp['arena']['captain'][0]
 				@pvp['team'][0]['captain'] = player()
-				_class('load', player(), @pvp['arena']['captain'][0])
-				_class('equip', player(), @pvp['arena']['captain'][0])
+				_class('load', player(), @pvp['players'][player()]['class'], @pvp)
+				_class('equip', player(), @pvp['players'][player()]['class'], @pvp)
 				_regionmsg(@pvp['arena']['broadcast'], color('gray').'[PVP] '
 					.color(@pvp['arena']['team'][0]['color']).player().color('r').' became the new captain!')
 				clear_virtualchest(@id.'0', 0)
@@ -551,14 +549,14 @@ if(array_contains(@pvp['arena']['flags'], 'stackedpickup')
 		&& @e['item']['type'] == @pvp['team'][1]['captainhat']['type']) {
 			if(@pvp['players'][player()]['team'] == 1) {
 				modify_event('item', null)
-				_class('unload', player(), @pvp['players'][player()]['class'])
+				_class('unload', player(), @pvp['players'][player()]['class'], @pvp)
 				_clear_pinv()
 				_clear_peffects()
 				queue_clear(@id.'1hat')
 				@pvp['players'][player()]['class'] = @pvp['arena']['captain'][1]
 				@pvp['team'][1]['captain'] = player()
-				_class('load', player(), @pvp['arena']['captain'][1])
-				_class('equip', player(), @pvp['arena']['captain'][1])
+				_class('load', player(), @pvp['players'][player()]['class'], @pvp)
+				_class('equip', player(), @pvp['players'][player()]['class'], @pvp)
 				_regionmsg(@pvp['arena']['broadcast'], color('gray').'[PVP] '
 					.color(@pvp['arena']['team'][1]['color']).player().color('r').' became the new captain!')
 				clear_virtualchest(@id.'1', 0)

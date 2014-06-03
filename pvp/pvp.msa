@@ -215,10 +215,8 @@
 		}
 		
 		if(array_index_exists(@pvp['arena'], 'captain')) {
-			@class = get_value('class.'.@pvp['arena']['captain'][0])
-			@pvp['team'][0]['captainhat'] = @class['kit'][103]
-			@class = get_value('class.'.@pvp['arena']['captain'][1])
-			@pvp['team'][1]['captainhat'] = @class['kit'][103]
+			@pvp['team'][0]['captainhat'] = @pvp['arena']['classes'][@pvp['arena']['captain'][0]]['kit'][103]
+			@pvp['team'][1]['captainhat'] = @pvp['arena']['classes'][@pvp['arena']['captain'][1]]['kit'][103]
 		}
 
 		foreach(array_keys(@pvp['players']), @player) {

@@ -5,19 +5,14 @@
 	case 'update': 
 		if(!has_permission('group.administrators'), die('You do not have permission.'))
 		@arenas = get_values('arena')
-		foreach(@arenas, @key, @arena) {
-			if(array_index_exists(@arena, 'flags')) {
-				@weapons = array()
-				foreach(@i: @flag in @arena['flags']) {
-					if(array_contains(array('endernades', 'skullrockets',  'shotgunballs', 'primedtnt', 'pistoltears'), @flag)) {
-						array_push(@weapons, @flag)
-						array_remove(@arena['flags'], @i)
+		foreach(@key: @arena in @arenas) {
+			if(array_index_exists(@arena, 'classes')) {
+				foreach(@classname: @class in @arena['classes']) {
+					if(array_index_exists(@class, 'team') && @class['team'] == 2) {
+						array_remove(@arena['classes'][@classname], 'team')
 					}
 				}
-				if(@weapons) {
-					@arena['weapons'] = @weapons
-					store_value(@key, @arena)
-				}
+				store_value(@key, @arena)
 			}
 		}
 		msg('All arenas updated.')
@@ -189,18 +184,6 @@
 					msg('Set kit to current inventory.')
 				} else {
 					die('Only accepts values 1 or 2 for teams, or blank for when there are no teams.')
-				}
-			
-			case 'classes':
-				if(@args[1]) {
-					@args[0] = split(',', @args[0])
-					@args[1] = split(',', @args[1])
-					@arena['classes'] = array(if(@args[0] == array('null'), array(), @args[0]), if(@args[1] == array('null'), array(), @args[1]))
-					msg('Set available classes (Team 1: '.color(10).@args[0].color('r').', Team 2: '.color(10).@args[1].color('r').')')
-				} else if(@args[0]) {
-					@args[0] = split(',', @args[0])
-					@arena['classes'] = @args[0]
-					msg('Set available classes '.color(10).@args[0])
 				}
 			
 			case 'captain':
@@ -512,7 +495,7 @@
 			if(array_index_exists(@arena, 'teamratio') && !array_index_exists(@arena, 'mode'), msg(color('gold').'mode '.color(7).'(team mode required for "teamratio")'))
 			# 
 			foreach(@arena, @setting, @value) {
-				if(array_contains(array('spawn', 'kit', 'itemspawn', 'chestspawn', 'mobspawn'), @setting)) {
+				if(array_contains(array('spawn', 'kit', 'itemspawn', 'chestspawn', 'mobspawn', 'classes'), @setting)) {
 					msg(@setting.' '.color('gray').'[...]')
 				} else if(array_contains(array('team'), @setting)) {
 					continue()

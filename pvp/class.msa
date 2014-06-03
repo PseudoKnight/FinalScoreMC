@@ -4,12 +4,17 @@ if($, @args = parse_args($), @args = array())
 array_resize(@args, 3)
 switch($cmd) {
 case 'set':
-	@class = get_value('class.'.$id)
-	if(!@class, @class = array())
+	@arenaid = split(':', $id)[0]
+	@classid = split(':', $id)[1]
+	@arena = get_value('arena', @arenaid)
+	if(!@arena, die('No arena by that name: '.@arenaid))
+	if(!array_index_exists(@arena['classes'], @classid)) {
+		@arena['classes'][@classid] = array()
+	}
 	switch($setting) {
 	case 'selector':
 		if(!pinv(player(), null), die('You must select an item on your hotbar.'))
-		@class['selector'] = pinv(player(), null)
+		@arena['classes'][@classid]['selector'] = pinv(player(), null)
 		msg('Class selector set to this item.')
 	
 	case 'kit':
@@ -19,87 +24,144 @@ case 'set':
 				array_remove(@inv, @slot)
 			}
 		}
-		@class['kit'] = @inv
+		@arena['classes'][@classid]['kit'] = @inv
 		msg('Set kit to current inventory.')
 		
+	case 'speed':
+		if(@args[0] < 0 || @args[0] > 1) {
+			die('Must be betwee 0 and 1')
+		}
+		@arena['classes'][@classid]['speed'] = @args[0]
+		msg('Set class speed to '.@args[0].' (default 0.2)')
+		
+	case 'hunger':
+		if(@args[0] < 0 || @args[0] > 20) {
+			die('Hunger must be within 0 and 20')
+		}
+		if(!@args[1]) {
+			@args[1] = 5
+		} else if(@args[1] && (@args[1] < 0 || @args[1] > 20)) {
+			die('Saturation must be within 0 and 20')
+		}
+		@arena['classes'][@classid]['hunger'] = array(@args[0], @args[1])
+		msg('Set hunger to '.@args[0].' hunger and '.@args[1].' saturation.')
+		
+	case 'feed':
+		if(@args[0] < 0 || @args[0] > 20) {
+			die('Hunger must be within 0 and 20')
+		}
+		if(@args[1] < 0 || @args[1] > 20) {
+			die('Saturation must be within 0 and 20')
+		}
+		@arena['classes'][@classid]['feed'] = array(@args[0], @args[1])
+		msg('Set feed amount for kills to be '.@args[0].' with '.@args[1].' saturation.')
+	
 	case 'effect':
 		@effects = _get_effects()
 		if(!array_contains(array_keys(@effects), @args[0]), die('Unknown potion effect. '.array_keys(@effects)))
 		@effect = @effects[@args[0]]
-		if(!array_index_exists(@class, 'effect'), @class['effect'] = associative_array())
+		if(!array_index_exists(@arena['classes'][@classid], 'effect'), @arena['classes'][@classid]['effect'] = associative_array())
 		if(@args[1] && @args[2]) {
 			if(@args[1] == 0 || @args[2] == 0) {
-				array_remove(@class['effect'], @effect)
-				if(array_size(@class['effect']) == 0) {
-					array_remove(@class, 'effect')
+				array_remove(@arena['classes'][@classid]['effect'], @effect)
+				if(array_size(@arena['classes'][@classid]['effect']) == 0) {
+					array_remove(@arena['classes'][@classid], 'effect')
 				}
 				msg('Removed potion effect '.@args[0].'.')
 			} else {
-				@class['effect'][@effect] = associative_array('strength': @args[1] - 1, 'length': @args[2])
+				@arena['classes'][@classid]['effect'][@effect] = associative_array('strength': @args[1] - 1, 'length': @args[2])
 				msg('Set a potion effect for this class: '.@args[0].' with a strength of '.@args[1].' and a length of '.@args[2].' seconds.')
 			}
 		} else {
 			die('Requires a strength integer and a length integer in seconds.')
 		}
+	
+	case 'spawner':
+		if($ == 'true') {
+			@arena['classes'][@classid]['spawner'] = true
+			msg('Turned on spawning for class.')
+		} else if($ == 'false' && array_index_exists(@arena['classes'][@classid], 'spawner')) {
+			array_remove(@arena['classes'][@classid], 'spawner')
+			msg('Turned off spawning for class.')
+		}
+	
+	#case 'transfer':
+		
 		
 	case 'doublejump':
 		if($ == 'true') {
-			@class['doublejump'] = 'normal' # string instead of boolean leaves room for alternative doublejump modes
+			@arena['classes'][@classid]['doublejump'] = 'normal' # string instead of boolean leaves room for alternative doublejump modes
 			msg('Turned on doublejump for class.')
-		} else if($ == 'false' && array_index_exists(@class, 'doublejump')) {
-			array_remove(@class, 'doublejump')
+		} else if($ == 'false' && array_index_exists(@arena['classes'][@classid], 'doublejump')) {
+			array_remove(@arena['classes'][@classid], 'doublejump')
 			msg('Turned off doublejump for class.')
 		}
 		
 	default:
 		die('Available settings: selector, kit, effect')
 	}
-	store_value('class.'.$id, @class)
+	store_value('arena', @arenaid, @arena)
 	
 case 'delete':
+	@arenaid = split(':', $id)[0]
+	@classid = split(':', $id)[1]
+	@arena = get_value('arena', @arenaid)
+	if(!@arena, die('No arena by that name: '.@arenaid))
+	if(!array_index_exists(@arena['classes'], @classid), die('No class by that name.'))
 	if($setting) {
-		@class = get_value('class.'.$id)
-		array_remove(@class, $setting)
-		store_value('class.'.$id, @class)
-		msg($setting.' deleted from '.$id)
+		array_remove(@arena['classes'][@classid], $setting)
+		msg($setting.' deleted from '.@classid)
 	} else {
-		clear_value('class.'.$id)
+		array_remove(@arena['classes'], @classid)
 		msg('Class deleted.')
 	}
+	store_value('arena', @arenaid, @arena)
 
 case 'info':
-	@class = get_value('class.'.$id)
-	foreach(@class, @setting, @value) {
+	@arenaid = split(':', $id)[0]
+	@classid = split(':', $id)[1]
+	@arena = get_value('arena', @arenaid)
+	if(!@arena, die('No arena by that name: '.@arenaid))
+	if(!array_index_exists(@arena['classes'], @classid), die('No class by that name.'))
+	foreach(@arena['classes'][@classid], @setting, @value) {
 		msg(color('gray').@setting.' '.color('r').@value)
 	}
 	
 case 'rename':
-	if(!$id || !$setting, die('Usage: /class rename <classname> <newclassname>'))
-	@class = get_value('class.'.$id)
-	if(!@class, die('No class by that name.'))
-	store_value('class.'.to_lower($setting), @class)
-	clear_value('class.'.$id)
-	msg('Changed '.$id.' class name to '.to_lower($setting))
+	@arenaid = split(':', $id)[0]
+	@classid = split(':', $id)[1]
+	@arena = get_value('arena', @arenaid)
+	if(!@arena, die('No arena by that name: '.@arenaid))
+	if(!array_index_exists(@arena['classes'], @classid), die('No class by that name.'))
+	@arena['classes'][$setting] = @arena['classes'][@classid]
+	array_remove(@arena['classes'], @classid)
+	msg('Changed '.@classid.' class name to '.to_lower($setting))
 	
-case 'load':
-	include('includes.library/class.ms')
-	_class('load', player(), $id)
+# case 'load':
+	# include('includes.library/class.ms')
+	# _class('load', player(), $id)
 	
-case 'unload':
-	include('includes.library/class.ms')
-	_class('unload', player(), $id)
+# case 'unload':
+	# include('includes.library/class.ms')
+	# _class('unload', player(), $id)
 	
 case 'equip':
+	@arenaid = split(':', $id)[0]
+	@classid = split(':', $id)[1]
+	@arena = get_value('arena', @arenaid)
+	if(!@arena, die('No arena by that name: '.@arenaid))
+	@pvp = array()
+	@pvp['arena'] = @arena
 	include('includes.library/class.ms')
-	_class('equip', player(), $id)
+	_class('equip', player(), @classid, @pvp)
 	
-case 'list':
-	@classes = get_values('class')
-	@list = ''
-	foreach(array_keys(@classes), @key) {
-		@list .= split('.', @key)[1].' '
-	}
-	msg(color('gray').'CLASSES: '.color('r').@list)
+# case 'list':
+	# @classes = get_values('class')
+	# @list = ''
+	# foreach(array_keys(@classes), @key) {
+		# @list .= split('.', @key)[1].' '
+	# }
+	# msg(color('gray').'CLASSES: '.color('r').@list)
 	
 default:
 	die('Usage: /class [set|delete|info|load|unload|equip|list] [classname] [setting] [value[s]]')

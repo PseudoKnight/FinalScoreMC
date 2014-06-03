@@ -130,7 +130,7 @@ proc('_pvp_start_match', @id) {
 							.color('r').@player.' left the arena.')
 					}
 					if(array_index_exists(@pvp['players'][@player], 'class')) {
-						_class('unload', player(), @pvp['players'][@player]['class'])
+						_class('unload', player(), @pvp['players'][@player]['class'], @pvp)
 					}
 					if(array_index_exists(@pvp['arena'], 'timer') && phas_bar(@player)) {
 						premove_bar(@player)
@@ -279,20 +279,22 @@ proc('_pvp_initialize_players', @id, @players) {
 		_clear_pinv(@player)
 		_clear_peffects(@player)
 		if(array_index_exists(@pvp['arena'], 'classes') && !array_index_exists(@pvp['players'][@player], 'class')) {
-			if(!array_index_exists(@pvp['players'][@player], 'team')) {
-				@pvp['players'][@player]['class'] = @pvp['arena']['classes'][0][0]
-			} else if(array_size(@pvp['arena']['classes'][@pvp['players'][@player]['team']]) > 0) {
-				@pvp['players'][@player]['class'] = @pvp['arena']['classes'][@pvp['players'][@player]['team']][0]
+			foreach(@classname: @class in @pvp['arena']['classes']) {
+				if(!array_index_exists(@class, 'team')
+				|| @pvp['players'][@player]['team'] == @class['team']) {
+					@pvp['players'][@player]['class'] = @classname
+				}
 			}
 			if(array_index_exists(@pvp['players'][@player], 'class')) {
-				_class('load', @player, @pvp['players'][@player]['class'])
+				_class('load', @player, @pvp['players'][@player]['class'], @pvp)
 			}
 		}
-
-		_pvp_equip(@id, @player)
+		
 		set_phunger(@player, 20)
 		set_psaturation(@player, 5)
 		set_phealth(@player, 20)
+		_pvp_equip(@id, @player)
+
 
 		export('pvp'.@id, @pvp)
 
@@ -313,7 +315,7 @@ proc('_pvp_equip', @id, @player) {
 			}
 		}
 		if(array_index_exists(@pvp['players'][@player], 'class')) {
-			_class('equip', @player, @pvp['players'][@player]['class'])
+			_class('equip', @player, @pvp['players'][@player]['class'], @pvp)
 		}
 	}
 	if(array_index_exists(@pvp['arena'], 'effect')) {
@@ -422,7 +424,7 @@ proc('_pvp_end_match', @id, @winners) {
 	set_timeout(3000, closure(){
 		foreach(array_keys(@pvp['players']), @player) {
 			if(array_index_exists(@pvp['players'][@player], 'class')) {
-				_class('unload', @player, @pvp['players'][@player]['class'])
+				_class('unload', @player, @pvp['players'][@player]['class'], @pvp)
 			}
 			if(ponline(@player) && pinfo(@player, 5) > 0) {
 				close_pinv(@player)

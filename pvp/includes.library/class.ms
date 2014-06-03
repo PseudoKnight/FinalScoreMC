@@ -1,4 +1,4 @@
-proc('_class', @action, @player, @class) {
+proc('_class', @action, @player, @class, @pvp) {
 	switch(@class) {
 	case 'vector':
 		switch(@action) {
@@ -124,108 +124,172 @@ proc('_class', @action, @player, @class) {
 		}
 		
 	default: 
-		@class = get_value('class', @class)
-		if(!@class, return(false))
 		switch(@action) {
 		case 'load':
-			if(array_index_exists(@class, 'doublejump')) {
+			if(array_index_exists(@pvp['arena']['classes'][@class], 'doublejump')) {
 				set_pflight(@player, true)
-				bind('player_toggle_flight', array('id': @player.'doublejump'), array('flying': true), @e) {
+				set_pexp(@player, 100)
+				bind('player_toggle_flight', array('id': @player.'doublejump'), array('flying': true, 'player': @player), @e) {
 					cancel()
 					@vel = entity_velocity(pinfo(player(), 13))
-					if(@vel['y'] < 0) {
-						@y = abs(@vel['y']) * 3
-					} else {
-						@y = @vel['y'] * 2
+					set_pvelocity(@vel['x'] * 1.9, 0.9, @vel['z'] * 1.9)
+					set_pflight(false)
+					set_pexp(0)
+					set_timeout(1000, closure(){
+						set_pexp(100)
+						set_pflight(true)
+					})
+				}
+			}
+			
+			if(array_index_exists(@pvp['arena']['classes'][@class], 'speed')) {
+				set_pwalkspeed(@player, @pvp['arena']['classes'][@class]['speed'])
+			}
+			
+			if(array_index_exists(@pvp['arena']['classes'][@class], 'feed')) {
+				bind('player_death', array('id': @player.'feed'), null, @e, @player = @player.'', @feedamount = @pvp['arena']['classes'][@class]['feed']) {
+					if(@player == @e['killer']) {
+						set_phunger(@e['killer'], min(20, phunger(@e['killer']) + @feedamount[0]))
+						set_psaturation(@e['killer'], min(20, psaturation(@e['killer']) + @feedamount[1]))
+						play_sound(ploc(@e['killer']), array('sound': 'EAT', 'pitch': 0.7))
+						set_timeout(500, closure(){
+							play_sound(ploc(@e['killer']), array('sound': 'EAT', 'pitch': 0.7))
+						})
 					}
-					set_pvelocity(@vel['x'] * 2, @y, @vel['z'] * 2)
+				}
+			}
+			
+			if(array_index_exists(@pvp['arena']['classes'][@class], 'spawner')) {
+				bind('player_interact', array('id': @player.'spawner'), array('button': 'right', 'item': 383, 'player': @player), @e) {
+					if(@e['action'] == 'right_click_block') {
+						cancel()
+						@item = pinv(player(), null)
+						switch(@item['data']) {
+						case 54:
+							@mob = 'ZOMBIE'
+						case 51:
+							@mob = 'SKELETON'
+						default:
+							die()
+						}
+						@loc = _relative(@e['location'], 'up')
+						@entity = spawn_mob(@mob, 1, @loc)[0]
+						play_sound(@loc, array('sound': 'ZOMBIE_INFECT', 'pitch': 1.5))
+						
+						if(@mob == 'SKELETON') {
+							queue_push(closure(){
+								set_mob_equipment(@entity, array('WEAPON': array('type': 261)))
+							}, player().'spawner')
+						}
+						
+						@item['qty'] -= 1
+						if(@item['qty'] > 0) {
+							@slot = pinfo(player(), 15)
+							@item['type'] = 361
+							set_pinv(array(null: @item))
+							queue_delay(100, player().'spawner')
+							queue_push(closure(){
+								@item['type'] = 383
+								@inv = array()
+								@inv[@slot] = @item
+								set_pinv(@inv)
+							}, player().'spawner')
+						} else {
+							set_pinv(array(null: null))
+						}
+					}
+				}
+				
+				bind('target_player', array('id': @player.'target'), array('player': @player), @e) {
+					cancel()
 				}
 			}
 			
 		case 'equip':
-			if(array_index_exists(@class, 'kit')) {
-				set_pinv(@player, @class['kit'])
+			if(array_index_exists(@pvp['arena']['classes'][@class], 'hunger')) {
+				set_phunger(@player, @pvp['arena']['classes'][@class]['hunger'][0])
+				set_psaturation(@player, @pvp['arena']['classes'][@class]['hunger'][1])
 			}
-			if(array_index_exists(@class, 'effect')) {
+			if(array_index_exists(@pvp['arena']['classes'][@class], 'kit')) {
+				set_pinv(@player, @pvp['arena']['classes'][@class]['kit'])
+			}
+			if(array_index_exists(@pvp['arena']['classes'][@class], 'effect')) {
 				set_timeout(50, closure(){
-					foreach(@class['effect'], @eid, @e) {
+					foreach(@pvp['arena']['classes'][@class]['effect'], @eid, @e) {
 						set_peffect(@player, @eid, @e['strength'], @e['length'], true)
 					}
 				})
 			}
 			
 		case 'unload':
+			unbind(@player.'feed')
 			unbind(@player.'doublejump')
+			unbind(@player.'spawner')
+			unbind(@player.'target')
 			set_pflight(@player, false)
-		
+			set_pwalkspeed(@player, 0.2)
 		}
 	}
 }
 
 proc('_class_select', @id, @pvp) {
-	@size = array_size(@pvp['arena']['classes'][0]) + if(array_index_exists(@pvp['arena'], 'captain'), 1, 0)
-	if(@size > 1) {
-		@size = ceil(@size / 9) * 9
+	@size1 = 0
+	@size2 = 0
+	foreach(@class in @pvp['arena']['classes']) {
+		if(!array_index_exists(@class, 'team') || @class['team'] == 0) {
+			@size1 += 1
+		}
+		if(array_index_exists(@class, 'team') && @class['team'] == 1) {
+			@size2 += 1
+		}
+	}
+	if(@size1 > 1) {
+		@chestsize1 = ceil(@size1 / 9) * 9
 		create_virtualchest(array(
 			'id': @id.'0',
-			'size': @size,
+			'size': @chestsize1,
 			'title': 'Choose a Class'
 		))
-		if(array_index_exists(@pvp['arena'], 'captain')) {
-			@class = get_value('class.'.@pvp['arena']['captain'][0])
-			addto_virtualchest(@id.'0', 
-				@class['selector']['type'].':'.@class['selector']['data'], 
-				@class['selector']['qty'],
-				@class['selector']['meta']
-			)
-		}
-		for(@i = 0, @i < array_size(@pvp['arena']['classes'][0]), @i++) {
-			@class = get_value('class.'.@pvp['arena']['classes'][0][@i])
-			if(!@class, continue())
-			addto_virtualchest(@id.'0', 
-				@class['selector']['type'].':'.@class['selector']['data'], 
-				@class['selector']['qty'],
-				@class['selector']['meta']
-			)
-		}
-		foreach(@pvp['players'], @p, @pdata) {
-			if(!array_index_exists(@pdata, 'team') || @pdata['team'] == 0) {
-				popen_virtualchest(@p, @id.'0')
-			}
-		}
 	}
-	@size = array_size(@pvp['arena']['classes'][1]) + if(array_index_exists(@pvp['arena'], 'captain'), 1, 0)
-	if(@size > 1) {
-		@size = ceil(@size / 9) * 9
+	if(@size2 > 1) {
+		@chestsize2 = ceil(@size2 / 9) * 9
 		create_virtualchest(array(
 			'id': @id.'1',
-			'size': @size,
+			'size': @chestsize2,
 			'title': 'Choose a Class'
 		))
-		if(array_index_exists(@pvp['arena'], 'captain')) {
-			@class = get_value('class.'.@pvp['arena']['captain'][1])
-			addto_virtualchest(@id.'1', 
+	}
+	foreach(@class in @pvp['arena']['classes']) {
+		if((!array_index_exists(@class, 'team') || @class['team'] == 0)
+		&& @size1 > 1
+		&& array_index_exists(@class, 'selector')) {
+			addto_virtualchest(@id.'0', 
 				@class['selector']['type'].':'.@class['selector']['data'], 
 				@class['selector']['qty'],
 				@class['selector']['meta']
 			)
 		}
-		for(@i = 0, @i < array_size(@pvp['arena']['classes'][1]), @i++) {
-			@class = get_value('class.'.@pvp['arena']['classes'][1][@i])
-			if(!@class, continue())
+		if((array_index_exists(@class, 'team') && @class['team'] == 1)
+		&& @size2 > 1
+		&& array_index_exists(@class, 'selector')) {
 			addto_virtualchest(@id.'1', 
 				@class['selector']['type'].':'.@class['selector']['data'], 
 				@class['selector']['qty'],
 				@class['selector']['meta']
 			)
-		}
-		foreach(@pvp['players'], @p, @pdata) {
-			if(!pget_virtualchest(@p) && @pdata['team'] == 1) {
-				popen_virtualchest(@p, @id.'1')
-			}
 		}
 	}
-	if(array_size(@pvp['arena']['classes'][0]) > 1 || array_size(@pvp['arena']['classes'][1]) > 1) {
+	foreach(@pvp['players'], @p, @pdata) {
+		if(@size1 > 1
+		&& !array_index_exists(@pdata, 'team') || @pdata['team'] == 0) {
+			popen_virtualchest(@p, @id.'0')
+		} else if(@size2 > 1
+		&& @pdata['team'] == 1) {
+			popen_virtualchest(@p, @id.'1')
+		}
+	}
+
+	if(@size1 > 1 || @size2 > 1) {
 		array_push(@pvp['binds'], @id.'classselector')
 		bind('inventory_click', array('id': @id.'classselector'), array('slottype': 'CONTAINER'), @e, @id = @id) {
 			@pvp = import('pvp'.@id)
@@ -235,27 +299,24 @@ proc('_class_select', @id, @pvp) {
 			|| is_null(@e['slotitem']['meta']['display'])) {
 				die()
 			}
-			@class = strip_colors(@e['slotitem']['meta']['display'])
-			if((!array_index_exists(@pvp, 'team')
-			&& array_contains_ic(@pvp['arena']['classes'][0], @class))
-			|| (array_index_exists(@pvp, 'team')
-			&& (array_contains_ic(@pvp['arena']['classes'][@pvp['players'][player()]['team']], @class)
-			|| equals_ic(@class, @pvp['arena']['captain'][@pvp['players'][player()]['team']])))) {
-				play_sound(ploc(), array('sound': 'CLICK'))
-				cancel()
-				@class = to_lower(@class)
-				if(@pvp['arena']['captain'][@pvp['players'][player()]['team']] == @class) {
-					clear_virtualchest(@id.@pvp['players'][player()]['team'], 0)
-					@pvp['team'][@pvp['players'][player()]['team']]['captain'] = player()
-				}
-				if(array_index_exists(@pvp['players'][player()], 'class')) {
-					_class('unload', player(), @pvp['players'][player()]['class'])
-				}
-				@pvp['players'][player()]['class'] = @class
-				_class('load', player(), @class)
-				close_pinv()
-				export('pvp'.@id, @pvp)
+			@class = to_lower(strip_colors(@e['slotitem']['meta']['display']))
+			if(!array_index_exists(@pvp['arena']['classes'], @class)) {
+				die()
 			}
+			if(array_index_exists(@pvp['arena'], 'captain')
+			&& array_contains(@pvp['arena']['captain'], @class)) {
+				clear_virtualchest(@id.@pvp['players'][player()]['team'], 0)
+				@pvp['team'][@pvp['players'][player()]['team']]['captain'] = player()
+			}
+			play_sound(ploc(), array('sound': 'CLICK'))
+			cancel()
+			if(array_index_exists(@pvp['players'][player()], 'class')) {
+				_class('unload', player(), @pvp['players'][player()]['class'], @pvp)
+			}
+			@pvp['players'][player()]['class'] = @class
+			_class('load', player(), @class, @pvp)
+			close_pinv()
+			export('pvp'.@id, @pvp)
 		}
 	}
 }
