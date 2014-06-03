@@ -372,6 +372,10 @@ bind('entity_damage', array('id': @id.'EntityDamage'), array('type': 'PLAYER', '
 		cancel()
 		die()
 	}
+	
+	if(array_contains(@pvp['arena']['flags'], 'effects')) {
+		play_effect(_relative(ploc(@e['player']), 'up', 2), 'tile_break', array('id': 115, 'particleCount': 20, 'offsetY': 0.3))
+	}
 
 	if(array_index_exists(@pvp['stats'][@e['player']]['damagetaken'], @damager)) {
 		@pvp['stats'][@e['player']]['damagetaken'][@damager] += @e['amount']
