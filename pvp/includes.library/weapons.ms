@@ -125,7 +125,7 @@ if(array_contains(@pvp['arena']['weapons'], 'pistoltears')) {
 		if(!array_index_exists(@pvp['players'], player()), die())
 		@entity = shoot_projectile(player(), 'ARROW')
 		@v = entity_velocity(@entity)
-		set_entity_velocity(@entity, array(@v['x'] * 3.4, @v['y'] * 3.4, @v['z'] * 3.4))
+		set_entity_velocity(@entity, array(@v['x'] * 3, @v['y'] * 3, @v['z'] * 3))
 		play_sound(ploc(), array('sound': 'ZOMBIE_WOOD', 'pitch': 2, 'volume': 2))
 		@item = pinv(player(), null)
 		@item['qty'] = @item['qty'] - 1
