@@ -6,36 +6,32 @@ bind('player_death', array('priority': 'high', 'id': @id.'death'), null, @e, @id
 	if(!array_index_exists(@pvp['players'], player()), 
 		die())
 
-	if(@pvp['arena']['mode'] != 'ctf' && !array_index_exists(@pvp['arena'], 'captain')) {
-		@deathmessage = @e['death_message']
+	@deathmessage = @e['death_message']
 		
-		@pcolor = ''
-		if(array_index_exists(@pvp['arena'], 'team')) {
-			@pcolor = color(@pvp['arena']['team'][@pvp['players'][player()]['team']]['color'])
-		}
-		
-		if(@e['cause']['cause'] == 'BLOCK_EXPLOSION'
-		&& !array_index_exists(@e['cause'], 'damager')) {
-			@deathmessage = @pcolor.player().color('r').' got blown up'
-		
-		} else if(@e['cause']['cause'] == 'CUSTOM') {
-			@deathmessage = @pcolor.player().color('r').' died'
-		
-		} else if(array_index_exists(@pvp['arena'], 'team')) {
-			@parts = parse_args(@e['death_message'])
-			@parts[0] = @pcolor.player().color('r')
-			if(array_index_exists(@pvp['players'], @e['killer'])) {
-				@kcolor = color(@pvp['arena']['team'][@pvp['players'][@e['killer']]['team']]['color'])
-				for(@i = 1, @i < array_size(@parts), @i++) {
-					if(@parts[@i] == @e['killer']) {
-						@parts[@i] = @kcolor.@e['killer'].color('r')
-					}
+	@pcolor = ''
+	if(array_index_exists(@pvp['arena'], 'team')) {
+		@pcolor = color(@pvp['arena']['team'][@pvp['players'][player()]['team']]['color'])
+	}
+	
+	if(@e['cause']['cause'] == 'BLOCK_EXPLOSION'
+	&& !array_index_exists(@e['cause'], 'damager')) {
+		@deathmessage = @pcolor.player().color('r').' got blown up'
+	
+	} else if(@e['cause']['cause'] == 'CUSTOM') {
+		@deathmessage = @pcolor.player().color('r').' died'
+	
+	} else if(array_index_exists(@pvp['arena'], 'team')) {
+		@parts = parse_args(@e['death_message'])
+		@parts[0] = @pcolor.player().color('r')
+		if(array_index_exists(@pvp['players'], @e['killer'])) {
+			@kcolor = color(@pvp['arena']['team'][@pvp['players'][@e['killer']]['team']]['color'])
+			for(@i = 1, @i < array_size(@parts), @i++) {
+				if(@parts[@i] == @e['killer']) {
+					@parts[@i] = @kcolor.@e['killer'].color('r')
 				}
 			}
-			@deathmessage = array_implode(@parts)
 		}
-		
-		_regionmsg(@pvp['arena']['broadcast'], color('gray').'[PVP] '.color('r').@deathmessage)
+		@deathmessage = array_implode(@parts)
 	}
 	
 	@pvp['stats'][player()]['deaths'] += 1
@@ -60,6 +56,8 @@ bind('player_death', array('priority': 'high', 'id': @id.'death'), null, @e, @id
 		}
 	}
 	@pvp['stats'][player()]['damagetaken'] = array()
+	
+	_regionmsg(@pvp['arena']['broadcast'], color('gray').'[PVP] '.color('r').@deathmessage)
 
 	if(array_index_exists(@pvp['arena'], 'lives')) {
 		@pvp['players'][player()]['lives'] = @pvp['players'][player()]['lives'] - 1
