@@ -32,7 +32,10 @@
 	if(length($) > 30, die('The name can only be 30 characters long.'))
 	@inv = pinv(player(), null)
 	if(is_null(@inv['meta']), @inv['meta'] = array())
-	if(!array_index_exists(@inv['meta'], 'lore'), @inv['meta']['lore'] = array())
+	if(!array_index_exists(@inv['meta'], 'lore') 
+	|| is_null(@inv['meta']['lore'])) {
+		@inv['meta']['lore'] = array()
+	}
 	@inv['meta']['lore'][$line - 1] = colorize($)
 	set_pinv(array(null: @inv))
 <<<	
