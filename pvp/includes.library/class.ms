@@ -9,13 +9,13 @@ proc('_class', @action, @player, @class, @pvp) {
 				@facing = pfacing(player())
 				@facing[0] = @facing[0] + 90
 				@facing[1] = 0 - @facing[1]
-				@x = 1.45 * cos(to_radians(@facing[0])) * cos(to_radians(@facing[1]))
-				@y = max((1.45 * sin(to_radians(@facing[1]))) + 0.2, 0.2)
-				@z = 1.45 * sin(to_radians(@facing[0])) * cos(to_radians(@facing[1]))
+				@x = 1.40 * cos(to_radians(@facing[0])) * cos(to_radians(@facing[1]))
+				@y = max((1.40 * sin(to_radians(@facing[1]))) + 0.2, 0.2)
+				@z = 1.40 * sin(to_radians(@facing[0])) * cos(to_radians(@facing[1]))
 				set_timeout(50, closure(){
 					set_pvelocity(player(), @x, @y, @z)
 					play_sound(ploc(), array('sound': 'GHAST_CHARGE', 'pitch': 2, 'volume': 2))
-					if(psaturation() > 1) {
+					if(psaturation() >= 1) {
 						set_psaturation(psaturation() - 1)
 					} else if(phunger() >= 1) {
 						set_phunger(phunger() - 1)
@@ -26,8 +26,19 @@ proc('_class', @action, @player, @class, @pvp) {
 				if(@e['player'] == @p, cancel())
 			}
 			bind('entity_damage', array('id': @player.'damage'), array('type': 'PLAYER', 'cause': 'ENTITY_ATTACK', 'world': 'custom'), @e, @p = @player) {
-				if(@e['damager'] == @p, modify_event('amount', 16))
-				if(@e['player'] == @p && is_numeric(@e['damager']) && to_lower(entity_type(@e['damager'])) == 'zombie', cancel())
+				if(@e['damager'] == @p) {
+					@armor = pinv(@e['player'], 102)
+					if(@armor && @armor['type'] == 307) {
+						modify_event('amount', 16)
+						play_sound(ploc(@e['player']), array('sound': 'ZOMBIE_WOODBREAK', 'pitch': 2))
+					} else {
+						modify_event('amount', 9)
+					}
+				} else if(@e['player'] == @p 
+				&& is_numeric(@e['damager'])
+				&& entity_type(@e['damager']) == 'ZOMBIE') {
+					cancel()
+				}
 			}
 			bind('player_death', array('id': @player.'death'), array('player': @player), @e) {
 				play_sound(ploc(), array('sound': 'GHAST_DEATH', 'pitch': 0))
