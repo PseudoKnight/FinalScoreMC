@@ -99,17 +99,20 @@
 		
 		@pvp['arena'] = get_value('arena.'.@id)
 		if(!@pvp['arena'], die('Can\'t find that arena.'))
+
 		if(array_index_exists(@pvp['arena'], 'parent')) {
 			@parent = get_value('arena.'.@pvp['arena']['parent'])
 			if(!@parent, die('Can\'t find parent arena.'))
+			@name = to_upper(@pvp['arena']['parent'].': '.@id)
 			@pvp['arena'] = array_merge(@parent, @pvp['arena'])
-		}
-		
-		if(array_index_exists(@pvp['arena'], 'arenaselect')) {
+		} else if(array_index_exists(@pvp['arena'], 'arenaselect')) {
 			@childid = array_rand(@pvp['arena']['arenaselect']['arenas'], 1, false)[0]
 			@child = get_value('arena', @childid)
 			if(!@child, die('Can\'t find child arena.'))
+			@name = to_upper(@id.': '.@childid)
 			@pvp['arena'] = array_merge(@pvp['arena'], @child)	
+		} else {
+			@name = to_upper(@id)
 		}
 		
 		if(array_index_exists(@pvp['arena'], 'sharedarenas')) {
@@ -235,13 +238,6 @@
 		}
 
 		#ANNOUNCE
-		if(array_index_exists(@pvp['arena'], 'arenaselect')) {
-			@name = to_upper(@id).': '.@childid
-		} else if(array_index_exists(@pvp['arena'], 'parent')) {
-			@name = to_upper(@pvp['arena']['parent'].': '.@id)
-		} else {
-			@name = to_upper(@id)
-		}
 		_worldmsg('custom', color('gray').'[PVP] '.color('r')
 			.'Starting '.@name.' in '.@pvp['arena']['delay'].' seconds...')
 		if(array_contains(array('tdm', 'ctf', 'infection'), @pvp['arena']['mode'])) {
