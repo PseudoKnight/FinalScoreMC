@@ -92,7 +92,7 @@ proc('_class', @action, @player, @class, @pvp) {
 					set_entity_onfire(@arrow, 1)
 					play_sound(ploc(), array('sound': 'ENDERDRAGON_HIT', 'pitch': 2))
 					set_pexp(0)
-					set_timeout(500, closure(){
+					set_timeout(450, closure(){
 						if(ponline(player()) && pinfo(player(), 5) > 0) {
 							set_pexp(99)
 						}
