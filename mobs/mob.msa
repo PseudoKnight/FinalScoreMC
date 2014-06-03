@@ -13,6 +13,7 @@
 			if(length($) > 64, die('Name is too long.'))
 			@mob['name'] = colorize($)
 			msg('Name set.')
+			
 		, 'gear',
 			@mob['gear'] = array(
 				'WEAPON': pinv(player(), 0),
@@ -22,6 +23,7 @@
 				'BOOTS': pinv(player(), 100)			
 			)
 			msg('Gear set.')
+			
 		, 'droprate',
 			@args = parse_args($)
 			if(array_size(@args) == 1) {
@@ -42,6 +44,7 @@
 				)
 			}
 			msg('Droprate set.')
+			
 		, 'effect',
 			@args = parse_args($)
 			if(!array_index_exists(@mob, 'effects')) {
@@ -53,9 +56,11 @@
 				'seconds': @args[2]
 			))
 			msg('Effect added')
+			
 		, 'tags',
 			@mob['tags'] = json_decode($)
 			msg('Set the tags to '.$)
+			
 		, 'tame',
 			if($) {
 				@mob['tame'] = true
@@ -63,6 +68,11 @@
 				array_remove(@mob, 'tame')
 			}
 			msg('Made mob tamed state to '.$)
+			
+		, 'health',
+			@mob['health'] = $
+			msg('Set health to '.$)
+			
 		, die('Available settings: type, name, gear, droprate, effect')
 		)
 		store_value('mob.'.$id, @mob)
