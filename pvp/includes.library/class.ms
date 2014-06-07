@@ -27,12 +27,11 @@ proc('_class', @action, @player, @class, @pvp) {
 			}
 			bind('entity_damage', array('id': @player.'damage'), array('type': 'PLAYER', 'cause': 'ENTITY_ATTACK', 'world': 'custom'), @e, @p = @player) {
 				if(@e['damager'] == @p) {
-					@armor = pinv(@e['player'], 102)
-					if(@armor && @armor['type'] == 307) {
+					@helm = pinv(@e['player'], 102)
+					if(@armor && @armor['type'] == 20) {
 						modify_event('amount', 16)
-						play_sound(ploc(@e['player']), array('sound': 'ZOMBIE_WOODBREAK', 'pitch': 2))
 					} else {
-						modify_event('amount', 9)
+						modify_event('amount', 8)
 					}
 				} else if(@e['player'] == @p 
 				&& is_numeric(@e['damager'])
@@ -55,16 +54,8 @@ proc('_class', @action, @player, @class, @pvp) {
 			}
 			_manti_noise(@player)
 			set_pwalkspeed(@player, 0.23)
-			tmsg(@player, 'Right-click to leap.')
 			
 		case 'equip':
-			set_pinv(@player, array(
-				0: array('type': 292, 'meta': array('display': 'Claw', 'lore': array('Right-click to leap'))),
-				103: array('type': 120),
-				102: array('type': 299, 'meta': array('color': array('r': 255, 'g': 255, 'b': 170))),
-				101: array('type': 300, 'meta': array('color': array('r': 255, 'g': 255, 'b': 170))),
-				100: array('type': 301, 'meta': array('color': array('r': 255, 'g': 255, 'b': 170)))
-			))
 			set_timeout(50, closure(){
 				set_peffect(@player, 14, 0, 999, true)
 				set_peffect(@player, 16, 0, 999, true)
@@ -76,7 +67,6 @@ proc('_class', @action, @player, @class, @pvp) {
 			unbind(@player.'damage')
 			unbind(@player.'death')
 			queue_clear(@player)
-			set_pwalkspeed(@player, 0.2)
 			set_peffect(@player, 14, 0, 0)
 		}
 		
@@ -109,16 +99,8 @@ proc('_class', @action, @player, @class, @pvp) {
 				play_sound(ploc(), array('sound': 'ZOMBIE_UNFECT', 'pitch': 1, 'volume': 3))
 			}
 			set_pwalkspeed(@player, 0.16)
-			tmsg(@player, 'Right-click to fire.')
 			
 		case 'equip':
-			set_pinv(@player, array(
-				0: array('type': 359, 'meta': array('display': 'Plasma Gun', 'lore': array('Right-click to fire.', 'Quickly re-charges.', 'Developed by Frog Co.'))),
-				103: array('type': 20),
-				102: array('type': 307),
-				101: array('type': 308),
-				100: array('type': 309)
-			))
 			set_pexp(@player, 99)
 			set_timeout(50, closure(){
 				set_peffect(@player, 8, -1, 999, true)
@@ -130,116 +112,204 @@ proc('_class', @action, @player, @class, @pvp) {
 			unbind(@player.'hit')
 			unbind(@player.'damage')
 			unbind(@player.'death')
-			set_pwalkspeed(@player, 0.2)
 			set_peffect(@player, 8, 0, 0)
 		}
-		
-	default: 
+	
+	case 'werewolf':
 		switch(@action) {
 		case 'load':
-			if(array_index_exists(@pvp['arena']['classes'][@class], 'doublejump')) {
-				set_pflight(@player, true)
-				set_pexp(@player, 100)
-				bind('player_toggle_flight', array('id': @player.'doublejump'), array('flying': true, 'player': @player), @e) {
-					cancel()
-					@vel = entity_velocity(pinfo(player(), 13))
-					set_pvelocity(@vel['x'] * 1.9, 0.9, @vel['z'] * 1.9)
-					set_pflight(false)
-					set_pexp(0)
-					set_timeout(1000, closure(){
-						set_pexp(100)
-						set_pflight(true)
-					})
-				}
-			}
-			
-			if(array_index_exists(@pvp['arena']['classes'][@class], 'speed')) {
-				set_pwalkspeed(@player, @pvp['arena']['classes'][@class]['speed'])
-			}
-			
-			if(array_index_exists(@pvp['arena']['classes'][@class], 'feed')) {
-				bind('player_death', array('id': @player.'feed'), null, @e, @player = @player.'', @feedamount = @pvp['arena']['classes'][@class]['feed']) {
-					if(@player == @e['killer']) {
-						set_phunger(@e['killer'], min(20, phunger(@e['killer']) + @feedamount[0]))
-						set_psaturation(@e['killer'], min(20, psaturation(@e['killer']) + @feedamount[1]))
-						play_sound(ploc(@e['killer']), array('sound': 'EAT', 'pitch': 0.7))
-						set_timeout(500, closure(){
-							play_sound(ploc(@e['killer']), array('sound': 'EAT', 'pitch': 0.7))
-						})
+			bind('entity_damage_player', array('id': @player.'werewolf'), null, @e, @p = @player) {
+				if(@e['player'] == @p) {
+					if(is_null(pinv(@p, 103))) {
+						set_peffect(@p, 1, 2, 20)
+						set_peffect(@p, 16, 0, 25)
+						set_peffect(@p, 5, 3, 20)
+						play_sound(ploc(@p), array('sound': 'WOLF_HOWL', 'pitch': 0.9, 'volume': 2))
+						set_pinv(@p, array(
+							100: array('type': 301, 'meta': array('color': array('r': 50, 'g': 50, 'b': 50))),
+							101: array('type': 300, 'meta': array('color': array('r': 50, 'g': 50, 'b': 50))),
+							102: array('type': 299, 'meta': array('color': array('r': 50, 'g': 50, 'b': 50))),
+							103: array('type': 35, 'data': 7),
+						))
+						queue_delay(20000, @p.'evolve')
+						queue_push(closure(){
+							@r = rand(0, 256)
+							@g = rand(0, 256)
+							@b = rand(0, 256)
+							set_pinv(@p, array(
+								100: array('type': 301, 'meta': array('color': array('r': @r, 'g': @g, 'b': @b))),
+								101: array('type': 300, 'meta': array('color': array('r': @r, 'g': @g, 'b': @b))),
+								102: array('type': 299, 'meta': array('color': array('r': @r, 'g': @g, 'b': @b))),
+								103: null,
+							))
+							_clear_peffects(@p)
+						}, @p.'evolve')
+					} else {
+						play_sound(ploc(@p), array('sound': 'WOLF_HURT', 'pitch': 0.75))
 					}
-				}
-			}
-			
-			if(array_index_exists(@pvp['arena']['classes'][@class], 'spawner')) {
-				bind('player_interact', array('id': @player.'spawner'), array('button': 'right', 'item': 383, 'player': @player), @e) {
-					if(@e['action'] == 'right_click_block') {
-						cancel()
-						@item = pinv(player(), null)
-						switch(@item['data']) {
-						case 54:
-							@mob = 'ZOMBIE'
-						case 51:
-							@mob = 'SKELETON'
-						default:
-							die()
-						}
-						@loc = _relative(@e['location'], 'up')
-						@entity = spawn_mob(@mob, 1, @loc)[0]
-						play_sound(@loc, array('sound': 'ZOMBIE_INFECT', 'pitch': 1.5))
-						
-						if(@mob == 'SKELETON') {
-							queue_push(closure(){
-								set_mob_equipment(@entity, array('WEAPON': array('type': 261)))
-							}, player().'spawner')
-						}
-						
-						@item['qty'] -= 1
-						if(@item['qty'] > 0) {
-							@slot = pinfo(player(), 15)
-							@item['type'] = 361
-							set_pinv(array(null: @item))
-							queue_delay(100, player().'spawner')
-							queue_push(closure(){
-								@item['type'] = 383
-								@inv = array()
-								@inv[@slot] = @item
-								set_pinv(@inv)
-							}, player().'spawner')
-						} else {
-							set_pinv(array(null: null))
-						}
-					}
-				}
-				
-				bind('target_player', array('id': @player.'target'), array('player': @player), @e) {
-					cancel()
+				} else if(@e['data'] == @p && !is_null(pinv(@p, 103)) && !rand(4)) {
+					play_sound(ploc(@p), array('sound': 'WOLF_GROWL', 'pitch': 0.9))
 				}
 			}
 			
 		case 'equip':
-			if(array_index_exists(@pvp['arena']['classes'][@class], 'hunger')) {
-				set_phunger(@player, @pvp['arena']['classes'][@class]['hunger'][0])
-				set_psaturation(@player, @pvp['arena']['classes'][@class]['hunger'][1])
+			@r = rand(0, 256)
+			@g = rand(0, 256)
+			@b = rand(0, 256)
+			set_pinv(@player, array(
+				100: array('type': 301, 'meta': array('color': array('r': @r, 'g': @g, 'b': @b))),
+				101: array('type': 300, 'meta': array('color': array('r': @r, 'g': @g, 'b': @b))),
+				102: array('type': 299, 'meta': array('color': array('r': @r, 'g': @g, 'b': @b))),
+			))
+		
+		case 'unload':
+			unbind(@player.'werewolf')
+			queue_clear(@player.'evolve')
+		
+		}
+		
+	case 'ninja':
+		switch(@action) {
+		case 'load':
+			@armor = array(
+				100: @pvp['arena']['classes'][@class]['kit'][100],
+				101: @pvp['arena']['classes'][@class]['kit'][101],
+				102: @pvp['arena']['classes'][@class]['kit'][102],
+				103: @pvp['arena']['classes'][@class]['kit'][103],
+			)
+			bind('player_toggle_sneak', array('id': @player.'ninja'), array('player': @player), @e, @armor) {
+				if(@e['sneaking']) {
+					set_pinv(array(
+						100: null,
+						101: null,
+						102: null,
+						103: null,
+					))
+					set_peffect(player(), 16, 0, 30)
+					set_peffect(player(), 14, 0, 30)
+					play_effect(_relative(ploc(), 'up', 2), 'spell', array('speed': 0, 'particleCount': 10, 'offsetY': 0.4, 'offsetX': 0.2, 'offsetZ': 0.2))
+				} else {
+					set_pinv(@armor)
+					set_peffect(player(), 14, 0, 0)
+					set_peffect(player(), 16, 0, 0)
+					play_effect(_relative(ploc(), 'up', 2), 'spell', array('speed': 0, 'particleCount': 10, 'offsetY': 0.4, 'offsetX': 0.2, 'offsetZ': 0.2))
+				}
 			}
-			if(array_index_exists(@pvp['arena']['classes'][@class], 'kit')) {
-				set_pinv(@player, @pvp['arena']['classes'][@class]['kit'])
+		
+		case 'unload':
+			unbind(@player.'ninja')
+		
+		}
+	
+	case 'necromancer':
+		switch(@action) {
+		case 'load':		
+			bind('target_player', array('id': @player.'necrotarget'), array('player': @player), @e) {
+				cancel()
 			}
-			if(array_index_exists(@pvp['arena']['classes'][@class], 'effect')) {
-				set_timeout(50, closure(){
-					foreach(@pvp['arena']['classes'][@class]['effect'], @eid, @e) {
-						set_peffect(@player, @eid, @e['strength'], @e['length'], true)
-					}
-				})
+			bind('entity_damage', array('id': @player.'necrodamage', 'priority': 'HIGH'), array('type': 'PLAYER', 'world': 'custom'), @e, @p = @player) {
+				if(@e['player'] == @p 
+				&& ((array_index_exists(@e, 'damager')
+				&& is_numeric(@e['damager'])
+				&& entity_type(@e['damager']) == 'ZOMBIE')
+				|| (array_index_exists(@e, 'shooter')
+				&& is_numeric(@e['shooter'])
+				&& entity_type(@e['shooter']) == 'SKELETON'))) {
+					cancel()
+					consume()
+				}
 			}
 			
 		case 'unload':
-			unbind(@player.'feed')
-			unbind(@player.'doublejump')
-			unbind(@player.'spawner')
-			unbind(@player.'target')
-			set_pflight(@player, false)
-			set_pwalkspeed(@player, 0.2)
+			unbind(@player.'necrotarget')
+			unbind(@player.'necrodamage')
 		}
+	}
+		
+	switch(@action) {
+	case 'load':
+		if(array_index_exists(@pvp['arena']['classes'][@class], 'doublejump')) {
+			set_pflight(@player, true)
+			set_pexp(@player, 100)
+			bind('player_toggle_flight', array('id': @player.'doublejump'), array('flying': true, 'player': @player), @e) {
+				cancel()
+				@vel = entity_velocity(pinfo(player(), 13))
+				set_pvelocity(@vel['x'] * 1.9, 0.9, @vel['z'] * 1.9)
+				play_effect(_relative(ploc(), 'up'), 'cloud', array('speed': 0, 'particleCount': 5, 'offsetX': 0.4, 'offsetZ': 0.4, 'offsetY': 0))
+				set_pflight(false)
+				set_pexp(0)
+				queue_delay(1000, player().'doublejump')
+				queue_push(closure(){
+					set_pexp(100)
+					set_pflight(true)
+				}, player().'doublejump')
+			}
+		}
+		
+		if(array_index_exists(@pvp['arena']['classes'][@class], 'spawner')) {
+			bind('player_interact', array('id': @player.'spawner'), array('button': 'right', 'item': 383, 'player': @player), @e) {
+				if(@e['action'] == 'right_click_block') {
+					cancel()
+					@item = pinv(player(), null)
+					if(is_null(@item['meta'])
+					|| is_null(@item['meta']['display'])) {
+						die()
+					}
+					@mob = to_lower(@item['meta']['display'])
+					@loc = ptarget_space()
+					_spawn_mob(@mob, 1, @loc, player())
+					play_sound(@loc, array('sound': 'ZOMBIE_INFECT', 'pitch': 1.5))
+					play_effect(@loc, 'cloud', array('speed': 0, 'particleCount': 10, 'offsetX': 0.4, 'offsetZ': 0.4, 'offsetY': 0.4))
+
+					@item['qty'] -= 1
+					if(@item['qty'] > 0) {
+						@slot = pinfo(player(), 15)
+						@item['type'] = 361
+						set_pinv(array(null: @item))
+						queue_delay(2000, player().'spawner')
+						queue_push(closure(){
+							if(!is_null(pinv(player(), @slot))) {
+								@item['type'] = 383
+								@inv = array()
+								@inv[@slot] = @item
+								set_pinv(@inv)
+							}
+						}, player().'spawner')
+					} else {
+						set_pinv(array(null: null))
+					}
+				}
+			}
+		}
+		
+	case 'equip':
+		if(array_index_exists(@pvp['arena']['classes'][@class], 'hunger')) {
+			set_phunger(@player, @pvp['arena']['classes'][@class]['hunger'][0])
+			set_psaturation(@player, @pvp['arena']['classes'][@class]['hunger'][1])
+		}
+		if(array_index_exists(@pvp['arena']['classes'][@class], 'kit')) {
+			set_pinv(@player, @pvp['arena']['classes'][@class]['kit'])
+		}
+		if(array_index_exists(@pvp['arena']['classes'][@class], 'speed')) {
+			set_pwalkspeed(@player, 0.2) # this workaround is required for after respawns
+			set_pwalkspeed(@player, @pvp['arena']['classes'][@class]['speed'])
+		}
+		if(array_index_exists(@pvp['arena']['classes'][@class], 'effect')) {
+			set_timeout(50, closure(){
+				foreach(@pvp['arena']['classes'][@class]['effect'], @eid, @e) {
+					set_peffect(@player, @eid, @e['strength'], @e['length'], true)
+				}
+			})
+		}
+		
+	case 'unload':
+		unbind(@player.'feed')
+		unbind(@player.'doublejump')
+		unbind(@player.'spawner')
+		unbind(@player.'target')
+		queue_clear(@player.'doublejump')
+		set_pflight(@player, false)
+		set_pwalkspeed(@player, 0.2)
 	}
 }
 
