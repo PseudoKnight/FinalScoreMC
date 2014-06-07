@@ -236,27 +236,42 @@
 		if(array_index_exists(@pvp['arena'], 'classes')) {
 			include('includes.library/class.ms')
 			_class_select(@id, @pvp)
+		
+			#ANNOUNCE
+			_worldmsg('custom', color('gray').'[PVP] '.color('r')
+				.'Starting '.@name.' when ready or '.@pvp['arena']['delay'].' seconds...')
+		
+		} else {
+			_worldmsg('custom', color('gray').'[PVP] '.color('r')
+				.'Starting '.@name.' in '.@pvp['arena']['delay'].' seconds...')
+		
 		}
 
-		#ANNOUNCE
-		_worldmsg('custom', color('gray').'[PVP] '.color('r')
-			.'Starting '.@name.' in '.@pvp['arena']['delay'].' seconds...')
 		if(array_contains(array('tdm', 'ctf', 'infection'), @pvp['arena']['mode'])) {
 			_worldmsg('custom', 
 			color(@pvp['arena']['team'][0]['color']).'['.@pvp['arena']['team'][0]['name'].'] '.array_implode(@pvp['team'][0]['players'], ' ').'\n'.color('r').color(@pvp['arena']['team'][1]['color']).'['.@pvp['arena']['team'][1]['name'].'] '.array_implode(@pvp['team'][1]['players'], ' '))
 		} else {
 			_worldmsg('custom', array_implode(array_keys(@pvp['players']), ' vs '))
 		}
+		
 		export('pvp'.@id, @pvp)
 		play_sound(@pvp['arena']['lobby'], array('sound': 'WITHER_SPAWN', 'pitch': 1.5, 'volume': 3))
 		
 		#START ROUND
-		set_timeout(@pvp['arena']['delay'] * 1000, closure(){
-			foreach(@p in array_keys(@pvp['players'])) {
-				if(ponline(@p) && pget_virtualchest(@p)) {
-					close_pinv(@p)
+		@starttime = time()
+		set_interval(1000, closure(){
+			if(time() < @starttime + (@pvp['arena']['delay'] * 1000)) {
+				if(array_index_exists(@pvp['arena'], 'classes')) {
+					foreach(@p in array_keys(@pvp['players'])) {
+						if(ponline(@p) && !is_null(pget_virtualchest(@p))) {
+							die()
+						}
+					}
+				} else {
+					die()
 				}
 			}
+			clear_task()
 			include('includes.library/match.ms')
 			_pvp_start_match(@id)
 		})
