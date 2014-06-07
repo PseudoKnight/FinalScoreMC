@@ -255,5 +255,9 @@
 
 *:/put $player = >>>
 	if(!has_permission('group.moderators'), die('You do not have permission.'))
-	try(set_ploc($player, pcursor()), die('Unknown player.'))
+	@loc = pcursor()
+	@loc[0] += 0.5
+	@loc[2] += 0.5
+	try(set_ploc($player, @loc), 
+	die('Unknown player.'))
 <<<
