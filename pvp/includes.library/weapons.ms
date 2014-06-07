@@ -131,7 +131,7 @@ if(array_contains(@pvp['arena']['weapons'], 'primedtnt')) {
 			@loc = array(@loc[0] + 0.5, @loc[1] + 0.5, @loc[2] + 0.5, @loc[3])
 			ptake_item(46, 1)
 			@tnt = spawn_entity('PRIMED_TNT', 1, @loc)[0]
-			set_entity_spec(@tnt, array('fuseticks': 40))
+			set_entity_spec(@tnt, array('fuseticks': 60))
 		}
 	}
 }
