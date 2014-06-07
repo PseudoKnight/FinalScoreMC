@@ -368,9 +368,18 @@
 				}
 				@arena['delay'] = @args[0]
 				msg('Set start delay to '.color(10).@args[0].color('r').' seconds.')
+				
+			case 'stats':
+				if(@args[0] == 'true') {
+					@arena['stats'] = true
+					msg('Set arena to display stats at the end of the match.')
+				} else {
+					@arena['stats'] = false
+					msg('Set arena to NOT display stats at the end of the match.')
+				}
 			
 			case 'weapons':
-				@weapons = array('endernades', 'skullrockets',  'shotgunballs', 'primedtnt', 'pistoltears', 'firefire')
+				@weapons = array('endernades', 'skullrockets',  'shotgunballs', 'primedtnt', 'pistoltears', 'firefire', 'railgun')
 				if(!@args[0] || @args[1], die('You need to specify a comma separated list of pre-defined weapons. (no spaces) Current available weapons: '.@weapons))
 				@arena['weapons'] = split(',', @args[0])
 				foreach(@arena['weapons'], @weapon) {

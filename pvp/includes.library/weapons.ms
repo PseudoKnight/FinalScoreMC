@@ -1,3 +1,72 @@
+if(array_contains(@pvp['arena']['weapons'], 'railgun')) {
+	array_push(@pvp['binds'], @id.'railgun')
+	bind('player_interact', array('id': @id.'railgun'), array('item': 175, 'button': 'right'), @e, assign(@id, @id)) {
+		@pvp = import('pvp'.@id)
+		if(!array_index_exists(@pvp['players'], player()), die())
+		@origin = _relative(ploc(), 'up', 2.3)
+		@facing = pfacing(player())
+		@facing[0] = @facing[0] + 90
+		@facing[1] = 0 - @facing[1]
+		@x = cos(to_radians(@facing[0])) * cos(to_radians(@facing[1]))
+		@y = sin(to_radians(@facing[1]))
+		@z = sin(to_radians(@facing[0])) * cos(to_radians(@facing[1]))
+		@n = 0
+		@loc = @origin[]
+		while(@n < 100) {
+			@loc['x'] += @x
+			@loc['y'] += @y
+			@loc['z'] += @z
+			if(get_block_info(@loc)['solid']) {
+				play_effect(@loc, 'lava_pop', array('particleCount': 8))
+				break()
+			} else {
+				if(rand(2)) {
+					play_effect(@loc, 'cloud', array('speed': 0))
+				} else {
+					play_effect(@loc, 'crit', array('speed': 0, 'radius': 64))
+				}
+				@n++
+			}
+		}
+		
+		foreach(@player in array_keys(@pvp['players'])) {
+			if(@player == player(), continue())
+			@ploc = ploc(@player)
+			@ploc['y'] += 1.5
+			@dist = _squared_distance_to_segment(@ploc, @origin, @loc)
+			@hit = false
+			if(@dist < 0.5625) { # 0.75 ^ 2
+				@hit = true
+			} else if(@dist < 2.25) { # (0.75 * 2) ^ 2
+				@ploc['y'] += 1
+				@dist = _squared_distance_to_segment(@ploc, @origin, @loc)
+				if(@dist < 0.5625) { # 0.75 ^ 2
+					@hit = true
+				}
+			}
+			if(@hit) {
+				damage_entity(pinfo(@player, 13), 19)
+				play_effect(@loc, 'lava_pop', array('particleCount': 8))
+			}
+		}
+		
+		play_sound(ploc(), array('sound': 'ZOMBIE_REMEDY', 'pitch': 1.8, 'volume': 3))
+		@item = pinv(player(), null)
+		@item['type'] = 402
+		set_pinv(array(null: @item))
+		@slot = pinfo(player(), 15)
+		set_timeout(10000, closure(){
+			if(!is_null(pinv(player(), @slot))) {
+				play_sound(ploc(), array('sound': 'ORB_PICKUP'))
+				@inv = array()
+				@item['type'] = 175
+				@inv[@slot] = @item
+				set_pinv(@inv)
+			}
+		})
+	}
+}
+
 if(array_contains(@pvp['arena']['weapons'], 'endernades')) {
 	array_push(@pvp['binds'], @id.'endernades')
 	bind('player_teleport', array('id': @id.'endernades'), array('type': 'ENDER_PEARL'), @e, assign(@id, @id)) {

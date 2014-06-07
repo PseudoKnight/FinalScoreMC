@@ -464,14 +464,16 @@ proc('_pvp_end_match', @id, @winners) {
 		_worldmsg('custom', color('gray').'[PVP] '.color('r').'Nobody wins! Wait.. what?!')
 	}
 	
-	_regionmsg(@pvp['arena']['broadcast'], 
-		color('gray').'|--'.color('bold').'[ STATS ]'.color('gray').'----------|\n'
-		.color('gray').' Kills : Assists : Deaths\n'
-		.'|---------------------|')
-	foreach(@player: @stats in @pvp['stats']) {
-		_regionmsg(@pvp['arena']['broadcast'], ' '.@stats['kills'].' : '.@stats['assists'].' : '.@stats['deaths'].' - '.@player)
+	if(@pvp['arena']['stats'] == true) {
+		_regionmsg(@pvp['arena']['broadcast'], 
+			color('gray').'|--'.color('bold').'[ STATS ]'.color('gray').'----------|\n'
+			.color('gray').' Kills : Assists : Deaths\n'
+			.'|---------------------|')
+		foreach(@player: @stats in @pvp['stats']) {
+			_regionmsg(@pvp['arena']['broadcast'], ' '.@stats['kills'].' : '.@stats['assists'].' : '.@stats['deaths'].' - '.@player)
+		}
+		_regionmsg(@pvp['arena']['broadcast'], color('gray').'|---------------------|')
 	}
-	_regionmsg(@pvp['arena']['broadcast'], color('gray').'|---------------------|')
 	
 	if(array_index_exists(@pvp['arena'], 'chestspawn')) {
 		for(@i = 0, @i < array_size(@pvp['arena']['chestspawn']), @i++) {
