@@ -4,8 +4,8 @@ if($, @args = parse_args($), @args = array())
 array_resize(@args, 3)
 switch($cmd) {
 case 'set':
-	@arenaid = split(':', $id)[0]
-	@classid = split(':', $id)[1]
+	try(@arenaid = split(':', $id)[0]
+	@classid = split(':', $id)[1], die('You need to specify an arena.'))
 	@arena = get_value('arena', @arenaid)
 	if(!@arena, die('No arena by that name: '.@arenaid))
 	if(!array_index_exists(@arena['classes'], @classid)) {
@@ -45,17 +45,7 @@ case 'set':
 		}
 		@arena['classes'][@classid]['hunger'] = array(@args[0], @args[1])
 		msg('Set hunger to '.@args[0].' hunger and '.@args[1].' saturation.')
-		
-	case 'feed':
-		if(@args[0] < 0 || @args[0] > 20) {
-			die('Hunger must be within 0 and 20')
-		}
-		if(@args[1] < 0 || @args[1] > 20) {
-			die('Saturation must be within 0 and 20')
-		}
-		@arena['classes'][@classid]['feed'] = array(@args[0], @args[1])
-		msg('Set feed amount for kills to be '.@args[0].' with '.@args[1].' saturation.')
-	
+
 	case 'effect':
 		@effects = _get_effects()
 		if(!array_contains(array_keys(@effects), @args[0]), die('Unknown potion effect. '.array_keys(@effects)))
@@ -84,9 +74,6 @@ case 'set':
 			array_remove(@arena['classes'][@classid], 'spawner')
 			msg('Turned off spawning for class.')
 		}
-	
-	#case 'transfer':
-		
 		
 	case 'doublejump':
 		if($ == 'true') {
@@ -103,8 +90,8 @@ case 'set':
 	store_value('arena', @arenaid, @arena)
 	
 case 'delete':
-	@arenaid = split(':', $id)[0]
-	@classid = split(':', $id)[1]
+	try(@arenaid = split(':', $id)[0]
+	@classid = split(':', $id)[1], die('You need to specify an arena.'))
 	@arena = get_value('arena', @arenaid)
 	if(!@arena, die('No arena by that name: '.@arenaid))
 	if(!array_index_exists(@arena['classes'], @classid), die('No class by that name.'))
@@ -118,8 +105,8 @@ case 'delete':
 	store_value('arena', @arenaid, @arena)
 
 case 'info':
-	@arenaid = split(':', $id)[0]
-	@classid = split(':', $id)[1]
+	try(@arenaid = split(':', $id)[0]
+	@classid = split(':', $id)[1], die('You need to specify an arena.'))
 	@arena = get_value('arena', @arenaid)
 	if(!@arena, die('No arena by that name: '.@arenaid))
 	if(!array_index_exists(@arena['classes'], @classid), die('No class by that name.'))
@@ -128,13 +115,14 @@ case 'info':
 	}
 	
 case 'rename':
-	@arenaid = split(':', $id)[0]
-	@classid = split(':', $id)[1]
+	try(@arenaid = split(':', $id)[0]
+	@classid = split(':', $id)[1], die('You need to specify an arena.'))
 	@arena = get_value('arena', @arenaid)
 	if(!@arena, die('No arena by that name: '.@arenaid))
 	if(!array_index_exists(@arena['classes'], @classid), die('No class by that name.'))
 	@arena['classes'][$setting] = @arena['classes'][@classid]
 	array_remove(@arena['classes'], @classid)
+	store_value('arena', @arenaid, @arena)
 	msg('Changed '.@classid.' class name to '.to_lower($setting))
 	
 # case 'load':
@@ -146,8 +134,8 @@ case 'rename':
 	# _class('unload', player(), $id)
 	
 case 'equip':
-	@arenaid = split(':', $id)[0]
-	@classid = split(':', $id)[1]
+	try(@arenaid = split(':', $id)[0]
+	@classid = split(':', $id)[1], die('You need to specify an arena.'))
 	@arena = get_value('arena', @arenaid)
 	if(!@arena, die('No arena by that name: '.@arenaid))
 	@pvp = array()
@@ -155,13 +143,21 @@ case 'equip':
 	include('includes.library/class.ms')
 	_class('equip', player(), @classid, @pvp)
 	
-# case 'list':
-	# @classes = get_values('class')
-	# @list = ''
-	# foreach(array_keys(@classes), @key) {
-		# @list .= split('.', @key)[1].' '
-	# }
-	# msg(color('gray').'CLASSES: '.color('r').@list)
+case 'selector':
+	try(@arenaid = split(':', $id)[0]
+	@classid = split(':', $id)[1], die('You need to specify an arena.'))
+	@arena = get_value('arena', @arenaid)
+	if(!@arena, die('No arena by that name: '.@arenaid))
+	set_pinv(player(), array(null: @arena['classes'][@classid]['selector']))
+	
+case 'list':
+	@arena = get_value('arena', $id)
+	if(!@arena, die('No arena by that name: '.$id))
+	@list = ''
+	foreach(@class in array_keys(@arena['classes'])) {
+		@list .= @class.' '
+	}
+	msg(color('gray').'CLASSES IN '.to_upper($id).': '.color('r').@list)
 	
 default:
 	die('Usage: /class [set|delete|info|load|unload|equip|list] [classname] [setting] [value[s]]')
