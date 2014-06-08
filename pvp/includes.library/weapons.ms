@@ -20,11 +20,7 @@ if(array_contains(@pvp['arena']['weapons'], 'railgun')) {
 				play_effect(@loc, 'lava_pop', array('particleCount': 8))
 				break()
 			} else {
-				if(rand(2)) {
-					play_effect(@loc, 'cloud', array('speed': 0))
-				} else {
-					play_effect(@loc, 'crit', array('speed': 0, 'radius': 64))
-				}
+				play_effect(@loc, array('flame', 'crit', 'cloud')[rand(3)], array('speed': 0, 'radius': 64))
 				@n++
 			}
 		}
@@ -47,6 +43,7 @@ if(array_contains(@pvp['arena']['weapons'], 'railgun')) {
 			if(@hit) {
 				damage_entity(pinfo(@player, 13), 19)
 				play_effect(@loc, 'lava_pop', array('particleCount': 8))
+				play_sound(@origin, array('sound': 'SUCCESSFUL_HIT'), player())
 			}
 		}
 		
@@ -57,7 +54,7 @@ if(array_contains(@pvp['arena']['weapons'], 'railgun')) {
 		@slot = pinfo(player(), 15)
 		set_timeout(10000, closure(){
 			if(!is_null(pinv(player(), @slot))) {
-				play_sound(ploc(), array('sound': 'ORB_PICKUP'))
+				play_sound(ploc(), array('sound': 'FIZZ', 'pitch': 0))
 				@inv = array()
 				@item['type'] = 175
 				@inv[@slot] = @item
