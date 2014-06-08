@@ -62,8 +62,11 @@
 		}
 
 	case 'spectate':
-		if(array_contains(get_scoreboards(), $id)) {
-			set_pscoreboard(player(), $id)
+		@id = to_lower($id)
+		if(array_contains(get_scoreboards(), @id)) {
+			set_pscoreboard(player(), @id)
+			include('includes.library/spectator.ms')
+			_set_spectator(@id, player())
 		} else {
 			msg('The arena isn\'t running.')
 		}
@@ -230,6 +233,7 @@
 		@pvp['coins'] = array_size(@pvp['players']) - 2
 		@pvp['stats'] = associative_array()
 		@pvp['binds'] = array()
+		@pvp['spectators'] = array()
 		@pvp['running'] = 'true'
 		
 		# CLASSES

@@ -88,7 +88,9 @@ proc('_pvp_start_match', @id) {
 		_pvp_flag_spawn(@id, 1)
 	}
 
+	include('spectator.ms')
 	include('events.ms')
+
 	if(array_index_exists(@pvp['arena'], 'weapons')) {
 		include('weapons.ms')
 	}
@@ -170,6 +172,13 @@ proc('_pvp_start_match', @id) {
 			}
 			
 		}
+		
+		foreach(@p in @pvp['spectators']) {
+			if(!array_contains(sk_current_regions(@p), @pvp['arena']['region'])) {
+				_remove_spectator(@id, @p)
+			}
+		}
+		
 		if(@pvp['arena']['mode'] == 'koth' && @hillcount == 1) {
 			@score = get_pscore('seconds', @king, @id)
 			set_pscore('seconds', @king, @score - 1, @id)
@@ -292,14 +301,16 @@ proc('_pvp_initialize_players', @id, @players) {
 			}
 		}
 		
+		foreach(@p in @pvp['spectators']) {
+			raw_set_pvanish(@p, true, @player)
+		}
+		
 		set_phunger(@player, 20)
 		set_psaturation(@player, 5)
 		set_phealth(@player, 20)
 		_pvp_equip(@id, @player)
 
-
 		export('pvp'.@id, @pvp)
-
 	}
 
 }
