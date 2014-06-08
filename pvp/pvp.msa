@@ -234,7 +234,7 @@
 		@pvp['stats'] = associative_array()
 		@pvp['binds'] = array()
 		@pvp['spectators'] = array()
-		@pvp['running'] = 'true'
+		@pvp['running'] = true
 		
 		# CLASSES
 		if(array_index_exists(@pvp['arena'], 'classes')) {

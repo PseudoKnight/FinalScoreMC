@@ -175,7 +175,7 @@ proc('_pvp_start_match', @id) {
 		
 		foreach(@p in @pvp['spectators']) {
 			if(!array_contains(sk_current_regions(@p), @pvp['arena']['region'])) {
-				_remove_spectator(@id, @p)
+				_remove_spectator(@id, @p, @pvp)
 			}
 		}
 		
@@ -433,38 +433,7 @@ proc('_pvp_end_match', @id, @winners) {
 			}
 		}
 	}
-
-	set_timeout(3000, closure(){
-		foreach(array_keys(@pvp['players']), @player) {
-			if(array_index_exists(@pvp['players'][@player], 'class')) {
-				_class('unload', @player, @pvp['players'][@player]['class'], @pvp)
-			}
-			if(ponline(@player) && pinfo(@player, 5) > 0) {
-				close_pinv(@player)
-				set_ploc(@player, @pvp['arena']['lobby'])
-				_clear_pinv(@player)
-				_clear_peffects(@player)
-			}
-		}
-		if(array_index_exists(@pvp['arena'], 'restore')) {
-			set_timeout(7000, closure(){
-				foreach(array_keys(@pvp['players']), @player) {
-					if(ponline(@player) && pworld(@player) == 'custom') {
-						broadcast(color('gray').'[PVP] '.color('r').'RESTORING '.to_upper(@id).'...')
-						scriptas(@player,
-							foreach(@pvp['arena']['restore'], @region) {
-								sudo('//schematic load mce '.@region)
-								sudo('//paste -o')
-							}
-							sudo('/clearclipboard')
-							break()
-						)
-					}
-				}
-			})
-		}
-	})
-
+	
 	if(array_contains(array('ctf', 'tdm', 'infection'), @pvp['arena']['mode']) && array_size(@winners) > 0) {
 		_worldmsg('custom', color('gray').'[PVP] '
 			.color(@pvp['arena']['team'][@pvp['players'][@leader]['team']]['color']).color('bold')
@@ -495,14 +464,8 @@ proc('_pvp_end_match', @id, @winners) {
 		}
 	}
 
-	_remove_region_entities(@pvp['arena']['region'])
-
 	if(array_index_exists(@pvp['arena'], 'rsoutput'), 
 		set_block_at(@pvp['arena']['rsoutput'], '69:6'))
-
-	foreach(@pvp['binds'], @bind) {
-		unbind(@bind)
-	}
 
 	if(@pvp['arena']['mode'] == 'ctf') {
 		queue_clear(@id.'0flag')
@@ -521,8 +484,47 @@ proc('_pvp_end_match', @id, @winners) {
 		del_virtualchest(@id.'1')
 	}
 
-	remove_scoreboard(@id)
 	clear_task(@pvp['interval'])
-	@pvp = array('players': array(), 'running': 'false', 'cooldown': time())
-	export('pvp'.@id, @pvp)
+	@pvp['running'] = false
+
+	set_timeout(3000, closure(){
+		_remove_region_entities(@pvp['arena']['region'])
+		foreach(array_keys(@pvp['players']), @player) {
+			if(array_index_exists(@pvp['players'][@player], 'class')) {
+				_class('unload', @player, @pvp['players'][@player]['class'], @pvp)
+			}
+			if(ponline(@player) && pinfo(@player, 5) > 0) {
+				close_pinv(@player)
+				set_ploc(@player, @pvp['arena']['lobby'])
+				_clear_pinv(@player)
+				_clear_peffects(@player)
+			}
+		}
+		foreach(@pvp['binds'], @bind) {
+			unbind(@bind)
+		}
+		foreach(@p in @pvp['spectators']) {
+			_remove_spectator(@id, @p, @pvp)
+		}
+		if(array_index_exists(@pvp['arena'], 'restore')) {
+			set_timeout(7000, closure(){
+				foreach(array_keys(@pvp['players']), @player) {
+					if(ponline(@player) && pworld(@player) == 'custom') {
+						broadcast(color('gray').'[PVP] '.color('r').'RESTORING '.to_upper(@id).'...')
+						scriptas(@player,
+							foreach(@pvp['arena']['restore'], @region) {
+								sudo('//schematic load mce '.@region)
+								sudo('//paste -o')
+							}
+							sudo('/clearclipboard')
+							break()
+						)
+					}
+				}
+			})
+		}
+		remove_scoreboard(@id)
+		@pvp = array('players': array(), 'running': false, 'cooldown': time())
+		export('pvp'.@id, @pvp)
+	})
 }
