@@ -228,10 +228,86 @@ proc('_class', @action, @player, @class, @pvp) {
 					consume()
 				}
 			}
+			bind('player_death', array('id': @player.'necrodeath'), null, @e, @id = @id, @player = @player) {
+				@pvp = import('pvp'.@id)
+				if(!array_index_exists(@pvp['players'], player())
+				|| @e['player'] == @player, die())
+				@a = ploc(@e['player'])
+				@b = ploc(@player)
+				if((((@a['x'] - @b['x']) ** 2) + ((@a['y'] - @b['y']) ** 2) + ((@a['z'] - @b['z']) ** 2)) < 1024) {
+					foreach(@e in get_peffect(@player)) {
+						if(@e['id'] == 21) {
+							set_peffect(@player, 21, @e['strength'] + 1, 999)
+							die()
+						}
+					}
+					set_peffect(@player, 21, 0, 999)
+				}
+			}
 			
 		case 'unload':
 			unbind(@player.'necrotarget')
 			unbind(@player.'necrodamage')
+			unbind(@player.'necrodeath')
+		}
+		
+	case 'dragon':
+		switch(@action) {
+		case 'load':
+			set_pflight(@player, true)
+			bind('player_toggle_flight', array('id': @player.'dragon'), array('player': @player), @e) {
+				cancel()
+				play_sound(ploc(), array('sound': 'ENDERDRAGON_WINGS', 'pitch': 1.2))
+				proc('_flap', @player) {
+					queue_push(closure(){
+						if(pexp(@player) > 0) {
+							@facing = pfacing(@player)
+							@facing[0] = @facing[0] + 90
+							@facing[1] = 0 - @facing[1]
+							@x = cos(to_radians(@facing[0])) * cos(to_radians(@facing[1]))
+							@z = sin(to_radians(@facing[0])) * cos(to_radians(@facing[1]))
+							set_pexp(@player, pexp(@player) - 5)
+							set_pvelocity(@player, @x * 0.6, 0.46, @z * 0.6)
+							play_sound(ploc(@player), array('sound': 'ENDERDRAGON_WINGS', 'pitch': 1.2))
+							_flap(@player)
+						} else {
+							set_pflight(@player, true)
+							set_interval(100, closure(){
+								try(
+									if(entity_grounded(pinfo(@player, 13))) {
+										@xp = pexp(@player)
+										if(@xp >= 100) {
+											clear_task()
+										}
+										set_pexp(@player, @xp + 2)
+									}
+
+								, clear_task())
+							})
+						}
+					}, @player.'flap')
+					queue_delay(500, @player.'flap')
+				}
+				if(pexp() >= 100) {
+					set_pflight(false)
+					_flap(player())
+				}
+			}
+			
+			bind('player_toggle_sneak', array('id': @player.'dragon2'), array('player': @player, 'sneaking': true), @e) {
+				if(!phas_flight()) {
+					set_pexp(0)
+				}
+			}
+			
+		case 'equip':
+			set_pexp(@player, 100)
+			
+		case 'unload':
+			unbind(@player.'dragon')
+			unbind(@player.'dragon2')
+			set_pflight(@player, false)
+			queue_clear(@player.'flap')
 		}
 	}
 		
