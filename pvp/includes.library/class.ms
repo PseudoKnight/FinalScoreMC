@@ -153,6 +153,13 @@ proc('_class', @action, @player, @class, @pvp) {
 				}
 			}
 			
+			bind('player_death', array('id': @player.'kill'), null, @e, @player = @player) {
+				if(@e['killer'] == @player) {
+					set_phealth(@player, min(20, pinfo(@player, 5) + 4))
+					play_sound(ploc(@player), array('sound': 'EAT', 'pitch': 0.5))
+				}
+			}
+			
 		case 'equip':
 			@r = rand(0, 256)
 			@g = rand(0, 256)
@@ -165,6 +172,7 @@ proc('_class', @action, @player, @class, @pvp) {
 		
 		case 'unload':
 			unbind(@player.'werewolf')
+			unbind(@player.'kill')
 			queue_clear(@player.'evolve')
 		
 		}
