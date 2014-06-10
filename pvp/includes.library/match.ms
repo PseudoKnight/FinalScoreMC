@@ -91,10 +91,6 @@ proc('_pvp_start_match', @id) {
 	include('spectator.ms')
 	include('events.ms')
 
-	if(array_index_exists(@pvp['arena'], 'weapons')) {
-		include('weapons.ms')
-	}
-
 	@pvp['interval'] = set_interval(1000, closure(){
 		@pvp = import('pvp'.@id)
 		@check = false

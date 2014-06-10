@@ -243,6 +243,14 @@
 		@pvp['spectators'] = array()
 		@pvp['running'] = true
 		
+		# WEAPONS
+		
+		if(array_index_exists(@pvp['arena'], 'weapons')) {
+			foreach(@weapon in @pvp['arena']['weapons']) {
+				include('weapons.library/'.@weapon.'.ms')
+			}
+		}
+		
 		# CLASSES
 		if(array_index_exists(@pvp['arena'], 'classes')) {
 			include('includes.library/class.ms')
