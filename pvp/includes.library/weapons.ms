@@ -12,7 +12,14 @@ if(array_contains(@pvp['arena']['weapons'], 'railgun')) {
 		@z = sin(to_radians(@facing[0])) * cos(to_radians(@facing[1]))
 		@n = 0
 		@loc = @origin[]
-		while(@n < 100) {
+
+		#msg(((nano_time() - @start) / 1000000).'ms'.' - START GET BLOCKS')
+		
+		@entities = array()
+		@previouschunk = array(0, 0)
+		@currentchunk = array(0, 0)
+		
+		while(@n < 80) {
 			@loc['x'] += @x
 			@loc['y'] += @y
 			@loc['z'] += @z
@@ -20,47 +27,66 @@ if(array_contains(@pvp['arena']['weapons'], 'railgun')) {
 				play_effect(@loc, 'lava_pop', array('particleCount': 8))
 				break()
 			} else {
+				@currentchunk[0] = floor(@loc['x'] / 16)
+				@currentchunk[1] = floor(@loc['z'] / 16)
+				if(@currentchunk[0] != @previouschunk[0]
+				|| @currentchunk[1] != @previouschunk[1]) {
+					foreach(@e in all_entities('custom', @currentchunk[0], @currentchunk[1])) {
+						if(is_entity_living(@e)
+						&& (entity_type(@e) != 'PLAYER'
+						|| get_player_from_entity_id(@e) != player())) {
+							@entities[] = @e
+						}
+					}
+					@previouschunk[0] = @currentchunk[0]
+					@previouschunk[1] = @currentchunk[1]
+				}
 				play_effect(@loc, array('flame', 'crit', 'cloud')[rand(3)], array('speed': 0, 'radius': 64))
 				@n++
 			}
 		}
 		
-		foreach(@player in array_keys(@pvp['players'])) {
-			if(@player == player(), continue())
-			@ploc = ploc(@player)
-			@ploc['y'] += 1.5
-			@dist = _squared_distance_to_segment(@ploc, @origin, @loc)
+		#msg(((nano_time() - @start) / 1000000).'ms'.' - CALCULATE HITS')
+		
+		foreach(@e in @entities) {
+			@eloc = entity_loc(@e)
+			@eloc['y'] += 1.5
+			@dist = _squared_distance_to_segment(@eloc, @origin, @loc)
 			@hit = false
 			if(@dist < 0.5625) { # 0.75 ^ 2
 				@hit = true
 			} else if(@dist < 2.25) { # (0.75 * 2) ^ 2
-				@ploc['y'] += 1
-				@dist = _squared_distance_to_segment(@ploc, @origin, @loc)
+				@eloc['y'] -= 1
+				@dist = _squared_distance_to_segment(@eloc, @origin, @loc)
 				if(@dist < 0.5625) { # 0.75 ^ 2
 					@hit = true
 				}
 			}
 			if(@hit) {
-				damage_entity(pinfo(@player, 13), 19)
-				play_effect(@loc, 'lava_pop', array('particleCount': 8))
+				damage_entity(@e, 19)
+				play_effect(@eloc, 'lava_pop', array('particleCount': 4))
 				play_sound(@origin, array('sound': 'SUCCESSFUL_HIT'), player())
 			}
 		}
+		
+		#msg(((nano_time() - @start) / 1000000).'ms'.' - END RAILGUN')
 		
 		play_sound(ploc(), array('sound': 'ZOMBIE_REMEDY', 'pitch': 1.8, 'volume': 3))
 		@item = pinv(player(), null)
 		@item['type'] = 402
 		set_pinv(array(null: @item))
 		@slot = pinfo(player(), 15)
-		set_timeout(10000, closure(){
-			if(!is_null(pinv(player(), @slot))) {
+		queue_clear(player().'railgun')
+		queue_delay(9000, player().'railgun')
+		queue_push(closure(){
+			if(ponline(player()) && !is_null(pinv(player(), @slot))) {
 				play_sound(ploc(), array('sound': 'FIZZ', 'pitch': 0))
 				@inv = array()
 				@item['type'] = 175
 				@inv[@slot] = @item
 				set_pinv(@inv)
 			}
-		})
+		}, player().'railgun')
 	}
 }
 
