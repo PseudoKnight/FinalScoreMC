@@ -83,11 +83,13 @@ bind('player_death', array('priority': 'high', 'id': @id.'death'), null, @e, @id
 		}
 	}
 	set_timeout(5000, closure(){
-		if(pinfo(player(), 5) <= 0) {
-			if(function_exists('respawn')) {
-				respawn(player())
+		try(
+			if(pinfo(player(), 5) <= 0) {
+				if(function_exists('respawn')) {
+					respawn(player())
+				}
 			}
-		}
+		)
 	})
 
 	if(array_index_exists(@pvp['arena'], 'respawntime')) {
