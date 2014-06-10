@@ -131,6 +131,7 @@ proc('_class', @action, @player, @class, @pvp) {
 							102: array('type': 299, 'meta': array('color': array('r': 50, 'g': 50, 'b': 50))),
 							103: array('type': 35, 'data': 7),
 						))
+						queue_clear(@p.'evolve')
 						queue_delay(20000, @p.'evolve')
 						queue_push(closure(){
 							@r = rand(0, 256)
