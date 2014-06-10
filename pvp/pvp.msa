@@ -6,17 +6,19 @@
 		@arena = get_value('arena.'.@id)
 		if(!@arena, die('Can\'t find that arena.'))
 		if(!@pvp) {
-			@pvp = array('players': array(), 'running': 'false', 'cooldown': 0)
+			@pvp = array('players': array(), 'running': false, 'cooldown': 0)
 			@pvp['players'][player()] = array()
 		} else {
 			if(array_index_exists(@pvp['players'], player()), die('You already joined.'))
-			if(@pvp['running'] == 'true' && 
+			if(@pvp['running'] && 
 			(array_index_exists(@pvp['arena'], 'lives')
 			|| (array_index_exists(@arena, 'max') && array_size(@pvp['players']) >= @arena['max']))) {
 				die('Match already in progress.')
 			}
 			@pvp['players'][player()] = array()
 		}
+		if(phas_flight(),
+			set_pflight(false))
 		foreach(@player in array_keys(@pvp['players'])) {
 			if(!ponline(@player)) {
 				array_remove(@pvp['players'], @player)
@@ -44,10 +46,14 @@
 		_worldmsg('custom', color('gray').'[PVP] '.color('r').player().' has joined '.to_upper(if(array_index_exists(@arena, 'parent'), @arena['parent'].': ').@id).'. ('.array_size(@pvp['players']).')')
 		console(player().' joined '.@id)
 		export('pvp'.@id, @pvp)
-		if(@pvp['running'] == 'true') {
+		if(@pvp['running']) {
 			include('includes.library/match.ms')
+			include('includes.library/spectator.ms')
 			if(array_index_exists(@pvp['arena'], 'classes')) {
 				include('includes.library/class.ms')			
+			}
+			if(array_contains(@pvp['spectators'], player())) {
+				_remove_spectator(@id, player(), @pvp)
 			}
 			_pvp_initialize_players(@id, array(player()))
 		} else if(array_index_exists(@arena, 'max') && array_size(@pvp['players']) >= @arena['max']) {
@@ -66,7 +72,8 @@
 		if(array_contains(get_scoreboards(), @id)) {
 			set_pscoreboard(player(), @id)
 			include('includes.library/spectator.ms')
-			_set_spectator(@id, player())
+			@pvp = import('pvp'.@id)
+			_set_spectator(@id, player(), @pvp)
 		} else {
 			msg('The arena isn\'t running.')
 		}
@@ -98,7 +105,7 @@
 		@id = to_lower($id)
 		@pvp = import('pvp'.@id)
 		if(!@pvp, die('There is no match to start.'))
-		if(@pvp['running'] == 'true', die('Match already in progress.'))
+		if(@pvp['running'], die('Match already in progress.'))
 		
 		@pvp['arena'] = get_value('arena.'.@id)
 		if(!@pvp['arena'], die('Can\'t find that arena.'))
@@ -121,7 +128,7 @@
 		if(array_index_exists(@pvp['arena'], 'sharedarenas')) {
 			foreach(@pvp['arena']['sharedarenas'], @arenaid) {
 				@otherpvp = import('pvp'.@arenaid)
-				if(@otherpvp && @otherpvp['running'] == 'true') {
+				if(@otherpvp && @otherpvp['running']) {
 					die('Another PVP match is running in that region.')
 				}
 			}

@@ -420,6 +420,9 @@ proc('_pvp_check_objectives', @id) {
 
 proc('_pvp_end_match', @id, @winners) {
 	@pvp = import('pvp'.@id)
+	
+	if(!@pvp['running'], 
+		die())
 
 	foreach(array_keys(@pvp['players']), @player) {
 		if(array_index_exists(@pvp['arena'], 'timer') && phas_bar(@player)) {
