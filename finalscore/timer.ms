@@ -17,7 +17,7 @@ register_command('timer', array(
 			@id = @args[1]
 			@player = @args[2]
 			
-			if(pmode(@player) != 'CREATIVE') {
+			if(!phas_flight(@player)) {
 
 				@timers = import('timer')
 				
