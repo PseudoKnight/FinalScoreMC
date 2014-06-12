@@ -96,7 +96,7 @@ bind('player_join', null, null, @event) {
 			pfacing(@warp['yaw'], @warp['pitch'])
 		}
 		if(pworld() == 'custom') {
-			_clear_pinv()
+			_equip_park()
 		}
 		set_timeout(800, closure(){
 			if(@loc[1] > ploc()[1]) {

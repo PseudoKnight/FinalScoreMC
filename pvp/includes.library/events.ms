@@ -417,12 +417,13 @@ if(array_contains(@pvp['arena']['flags'], 'noinventory')) {
 
 if(array_contains(@pvp['arena']['flags'], 'rallycall')) {
 	array_push(@pvp['binds'], @id.'rallycall')
-	bind('player_interact', array('id': @id.'rallycall'), array('item': 401, 'button': 'right'), @e, @id = @id) {
+	bind('player_interact', array('id': @id.'rallycall', 'priority': 'HIGH'), array('item': 401, 'button': 'right'), @e, @id = @id) {
 		@pvp = import('pvp'.@id)
 		if(!array_index_exists(@pvp['players'], player())
 		|| @e['action'] != 'right_click_block', 
 			die())
 			
+		consume()
 		cancel()
 		if(!@loc = _relative(@e['location'], @e['facing']), die())
 		@loc = array(@loc[0] + 0.5, @loc[1], @loc[2] + 0.5, @loc[3])

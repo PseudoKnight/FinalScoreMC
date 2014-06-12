@@ -21,7 +21,7 @@ bind('player_teleport', null, null, @event) {
 			}
 			if(@event['from']['world'] != 'custom'
 			&& pworld() == 'custom') {
-				_clear_pinv()
+				_equip_park()
 			}
 		})
 	}
