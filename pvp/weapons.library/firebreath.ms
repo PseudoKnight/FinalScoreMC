@@ -6,22 +6,23 @@ bind('player_interact', array('id': @id.'firebreath'), array('item': 377, 'butto
 	@facing = pfacing(player())
 	@facing[0] = @facing[0] + 90
 	@facing[1] = 0 - @facing[1]
-	@xc = cos(to_radians(@facing[0])) * cos(to_radians(@facing[1]))
-	@y = sin(to_radians(@facing[1]))
-	@zc = sin(to_radians(@facing[0])) * cos(to_radians(@facing[1]))
-	@xl = cos(to_radians(@facing[0] - 45)) * cos(to_radians(@facing[1]))
-	@zl = sin(to_radians(@facing[0] - 45)) * cos(to_radians(@facing[1]))
-	@xr = cos(to_radians(@facing[0] + 45)) * cos(to_radians(@facing[1]))
-	@zr = sin(to_radians(@facing[0] + 45)) * cos(to_radians(@facing[1]))
+	@xc = 1.25 * cos(to_radians(@facing[0])) * cos(to_radians(@facing[1]))
+	@y = 1.25 * sin(to_radians(@facing[1]))
+	@zc = 1.25 * sin(to_radians(@facing[0])) * cos(to_radians(@facing[1]))
+	@xl = 1.25 * cos(to_radians(@facing[0] - 40)) * cos(to_radians(@facing[1]))
+	@zl = 1.25 * sin(to_radians(@facing[0] - 40)) * cos(to_radians(@facing[1]))
+	@xr = 1.25 * cos(to_radians(@facing[0] + 40)) * cos(to_radians(@facing[1]))
+	@zr = 1.25 * sin(to_radians(@facing[0] + 40)) * cos(to_radians(@facing[1]))
+	
 	@loc = ploc()
-	@loc['y'] += 1.5
+	@loc['y'] += 1.9
 	@entities = array()
 	@time = nano_time()
 	#msg((nano_time() - @time) / 1000000)
 	@targetl = array('world': 'custom')
 	@targetc = array('world': 'custom')
 	@targetr = array('world': 'custom')
-	for(@range = 1, @range <= 5, @range++) {
+	for(@range = 1, @range <= 4, @range++) {
 		if(@range == 1) {
 			@chunkc = array(floor(@loc['x'] / 16), floor(@loc['z'] / 16))
 			@es = all_entities('custom', @chunkc[0], @chunkc[1])
@@ -32,7 +33,7 @@ bind('player_interact', array('id': @id.'firebreath'), array('item': 377, 'butto
 					@entities[] = @e
 				}
 			}
-		} else if(@range == 5) {
+		} else if(@range == 4) {
 			@chunkl = array(floor((@loc['x'] + (@xl * @range)) / 16), floor((@loc['z'] + (@zl * @range)) / 16))
 			if(@chunkl != @chunk) {
 				@es = all_entities('custom', @chunkl[0], @chunkl[1])
@@ -73,23 +74,23 @@ bind('player_interact', array('id': @id.'firebreath'), array('item': 377, 'butto
 	
 	foreach(@e in @entities) {
 		@eloc = entity_loc(@e)
-		@eloc['y'] += 0.5
+		@eloc['y'] += 0.9
 		@dist = _squared_distance_to_segment(@eloc, @loc, @targetc)
-		if(@dist < 1) { # 1 ^ 2
-			damage_entity(@e, 4)
-			set_entity_onfire(@e, 1)
+		if(@dist < 2.25) { # 1.5 ^ 2
+			damage_entity(@e, 5)
+			set_entity_onfire(@e, 2)
 			continue()
 		}
 		@dist = _squared_distance_to_segment(@eloc, @loc, @targetl)
-		if(@dist < 1) { # 1 ^ 2
-			damage_entity(@e, 3)
-			set_entity_onfire(@e, 1)
+		if(@dist < 2.25) { # 1.5 ^ 2
+			damage_entity(@e, 4)
+			set_entity_onfire(@e, 2)
 			continue()
 		}
 		@dist = _squared_distance_to_segment(@eloc, @loc, @targetr)
-		if(@dist < 1) { # 1 ^ 2
-			damage_entity(@e, 3)
-			set_entity_onfire(@e, 1)
+		if(@dist < 2.25) { # 1.5 ^ 2
+			damage_entity(@e, 4)
+			set_entity_onfire(@e, 2)
 			continue()
 		}
 	}
