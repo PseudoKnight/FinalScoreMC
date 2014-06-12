@@ -17,8 +17,27 @@ bind('player_interact', array('id': @id.'railgun'), array('item': 175, 'button':
 	#msg(((nano_time() - @start) / 1000000).'ms'.' - START GET BLOCKS')
 	
 	@entities = array()
-	@previouschunk = array(0, 0)
-	@currentchunk = array(0, 0)
+	@previouschunkx = 0
+	@previouschunkz = 0
+	
+	# SOMETHING LIKE THIS WOULD GET CORNER BLOCKS
+	# @newblocklocx = floor(@newloc[x])
+	# @newblocklocz = floor(@newloc[z])
+
+	# if(@newblocklocx != @oldblocklocx
+	# && @newblocklocz != @oldblocklocz) {
+	  # @distx = @newblocklocx - @oldloc[x]
+	  # @distz = @newblocklocz - @oldloc[z]
+	  # if(@distx < @distz) {
+		# if( _is_solid(@newloc[x], @oldloc[z])){
+		  # break()
+		# } 
+	  # } else {
+		# if(_is_solid(@oldloc[x], @newloc[z])) {
+		  # break()
+		# }
+	  # }
+	# }
 	
 	while(@n < 80) {
 		@loc['x'] += @x
@@ -28,19 +47,19 @@ bind('player_interact', array('id': @id.'railgun'), array('item': 175, 'button':
 			play_effect(@loc, 'lava_pop', array('particleCount': 8))
 			break()
 		} else {
-			@currentchunk[0] = floor(@loc['x'] / 16)
-			@currentchunk[1] = floor(@loc['z'] / 16)
-			if(@currentchunk[0] != @previouschunk[0]
-			|| @currentchunk[1] != @previouschunk[1]) {
-				foreach(@e in all_entities('custom', @currentchunk[0], @currentchunk[1])) {
+			@currentchunkx = floor(@loc['x'] / 16)
+			@currentchunkz = floor(@loc['z'] / 16)
+			if(@currentchunkx != @previouschunkx
+			|| @currentchunkz != @previouschunkz) {
+				foreach(@e in all_entities('custom', @currentchunkx, @currentchunkz)) {
 					if(is_entity_living(@e)
 					&& (entity_type(@e) != 'PLAYER'
 					|| get_player_from_entity_id(@e) != player())) {
 						@entities[] = @e
 					}
 				}
-				@previouschunk[0] = @currentchunk[0]
-				@previouschunk[1] = @currentchunk[1]
+				@previouschunkx = @currentchunkx
+				@previouschunkz = @currentchunkz
 			}
 			play_effect(@loc, array('flame', 'crit', 'cloud')[rand(3)], array('speed': 0, 'radius': 64))
 			@n++

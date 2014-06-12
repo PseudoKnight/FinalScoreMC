@@ -41,33 +41,30 @@ proc('_line_distance', @p1, @p2, @p3, @p4) {
 	return(sqrt(((@pa['x'] - @pb['x']) ** 2) + ((@pa['y'] - @pb['y']) ** 2) + ((@pa['z'] - @pb['z']) ** 2)))
 }
 
-proc('_squared_distance_to_segment', @p1, @p2, @p3) {
-	@v = array()
-	@w = array()
-	@v['x'] = @p3['x'] - @p2['x'];
-	@v['y'] = @p3['y'] - @p2['y'];
-	@v['z'] = @p3['z'] - @p2['z'];
+proc('_squared_distance_to_segment', @p1, @p2a, @p2b) {
+	@vx = @p2b['x'] - @p2a['x'];
+	@vy = @p2b['y'] - @p2a['y'];
+	@vz = @p2b['z'] - @p2a['z'];
 
-	@w['x'] = @p1['x'] - @p2['x'];
-	@w['y'] = @p1['y'] - @p2['y'];
-	@w['z'] = @p1['z'] - @p2['z'];
+	@wx = @p1['x'] - @p2a['x'];
+	@wy = @p1['y'] - @p2a['y'];
+	@wz = @p1['z'] - @p2a['z'];
 
-	@c1 = @w['x'] * @v['x'] + @w['y'] * @v['y'] + @w['z'] * @v['z'];
+	@c1 = @wx * @vx + @wy * @vy + @wz * @vz;
 	if(@c1 <= 0) {
-		return(((@p1['x'] - @p2['x']) ** 2) + ((@p1['y'] - @p2['y']) ** 2) + ((@p1['z'] - @p2['z']) ** 2));
+		return(((@p1['x'] - @p2a['x']) ** 2) + ((@p1['y'] - @p2a['y']) ** 2) + ((@p1['z'] - @p2a['z']) ** 2));
 	}
 
-	@c2 = @v['x'] * @v['x'] + @v['y'] * @v['y'] + @v['z'] * @v['z'];
+	@c2 = @vx * @vx + @vy * @vy + @vz * @vz;
 	if(@c2 <= @c1) {
-		return(((@p1['x'] - @p3['x']) ** 2) + ((@p1['y'] - @p3['y']) ** 2) + ((@p1['z'] - @p3['z']) ** 2));
+		return(((@p1['x'] - @p2b['x']) ** 2) + ((@p1['y'] - @p2b['y']) ** 2) + ((@p1['z'] - @p2b['z']) ** 2));
 	}
 
 	@b = @c1 / @c2;
-	@Pb = array()
-	@Pb['x'] = @p2['x'] + @b * @v['x'];
-	@Pb['y'] = @p2['y'] + @b * @v['y'];
-	@Pb['z'] = @p2['z'] + @b * @v['z'];
-	return(((@p1['x'] - @Pb['x']) ** 2) + ((@p1['y'] - @Pb['y']) ** 2) + ((@p1['z'] - @Pb['z']) ** 2));
+	@bx = @p2a['x'] + @b * @vx;
+	@by = @p2a['y'] + @b * @vy;
+	@bz = @p2a['z'] + @b * @vz;
+	return(((@p1['x'] - @bx) ** 2) + ((@p1['y'] - @by) ** 2) + ((@p1['z'] - @bz) ** 2));
 }
 
 proc('_relative', @originloc, @dir, @amount = 1) {

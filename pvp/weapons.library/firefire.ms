@@ -3,7 +3,7 @@ bind('player_interact', array('id': @id.'firefire'), array('item': 259), @e, ass
 	@pvp = import('pvp'.@id)
 	if(!array_index_exists(@pvp['players'], player())
 	|| !array_index_exists(@e, 'location'), die())
-	@loc = ptarget_space()
+	@loc = _relative(@e['location'], @e['facing'])
 	if(sk_region_check_flag(@loc, 'lighter')) {
 		set_block_at(@loc, '51:0')
 	}

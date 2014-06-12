@@ -586,7 +586,7 @@ if(array_contains(@pvp['arena']['flags'], 'stackedpickup')
 					&& @e['item']['type'] != '373' 
 					&& @e['item']['enchants'] == @item['enchants']) {
 						if(@item['data'] > @e['item']['data']) {
-							set_inventory_item(pinfo()[13], @slot, @e['item'])
+							set_inventory_item(pinfo(player(), 13), @slot, @e['item'])
 						}
 						modify_event('item', null)
 						break()
