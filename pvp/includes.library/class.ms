@@ -228,10 +228,8 @@ proc('_class', @action, @player, @class, @pvp) {
 					consume()
 				}
 			}
-			bind('player_death', array('id': @player.'necrodeath'), null, @e, @id = @id, @player = @player) {
-				@pvp = import('pvp'.@id)
-				if(!array_index_exists(@pvp['players'], player())
-				|| @e['player'] == @player, die())
+			bind('player_death', array('id': @player.'necrodeath'), null, @e, @player = @player) {
+				if(@e['player'] == @player, die())
 				@a = ploc(@e['player'])
 				@b = ploc(@player)
 				if((((@a['x'] - @b['x']) ** 2) + ((@a['y'] - @b['y']) ** 2) + ((@a['z'] - @b['z']) ** 2)) < 1024) {
