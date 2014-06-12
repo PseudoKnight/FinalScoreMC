@@ -148,7 +148,7 @@
 		if(!array_index_exists(@pvp['arena'], 'stats'), @pvp['arena']['stats'] = true)
 		if(!array_index_exists(@pvp['arena'], 'delay')) {
 			if(array_index_exists(@pvp['arena'], 'classes')) {
-				@pvp['arena']['delay'] = 15
+				@pvp['arena']['delay'] = 45
 			} else {
 				@pvp['arena']['delay'] = 3
 			}
