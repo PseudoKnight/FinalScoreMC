@@ -47,15 +47,26 @@
 			
 		, 'effect',
 			@args = parse_args($)
+			if(!is_numeric(@args[0]), die('Must be numeric'))
 			if(!array_index_exists(@mob, 'effects')) {
 				@mob['effects'] = array()
 			}
-			array_push(@mob['effects'], array(
-				'id': @args[0],
-				'strength': @args[1] - 1,
-				'seconds': @args[2]
-			))
-			msg('Effect added')
+			if(@args[2] == 0) {
+				foreach(@index: @effect in @mob['effects']) {
+					if(@effect['id'] == @args[0]) {
+						array_remove(@mob['effects'], @index)
+						msg('Effect removed')
+						break()
+					}
+				}
+			} else {
+				array_push(@mob['effects'], array(
+					'id': @args[0],
+					'strength': @args[1] - 1,
+					'seconds': @args[2]
+				))
+				msg('Effect added')
+			}
 			
 		, 'tags',
 			@mob['tags'] = json_decode($)
@@ -69,11 +80,35 @@
 			}
 			msg('Made mob tamed state to '.$)
 			
+		, 'rider',
+			@mob['rider'] = $
+			msg('Set mob rider to '.$)
+
+		, 'explode',
+			@args = parse_args($)
+			if(array_size(@args) < 2, die('Must give two numbers: seconds till explode, explosion strength'))
+			if(!is_numeric(@args[0]), die('Must give a number in seconds for the mob to explode.'))
+			if(!is_numeric(@args[1]), die('Must give a number for the strength of explosion.'))
+			if(@args[1] > 8, die('That explosion is too big.'))
+			@mob['explode'] = @args
+			msg('Set mob to explode after '.@args[0].' seconds with strength of '.@args[1])
+			
+		, 'onfire',
+			if(!is_numeric($), die('Must be a number.'))
+			if($ == 0 && array_index_exists(@mob, 'onfire')) {
+				array_remove(@mob, 'onfire')
+				msg('Mob will not spawn on fire.')
+			} else {
+				@mob['onfire'] = $
+				msg('Mob will spawn on fire for '.$.' seconds.')
+			}
+
+		
 		, 'health',
 			@mob['health'] = $
 			msg('Set health to '.$)
 			
-		, die('Available settings: type, name, gear, droprate, effect')
+		, die('Available settings: type, name, gear, droprate, effect, health, tame, tags, rider, explode, onfire')
 		)
 		store_value('mob.'.$id, @mob)
 		
