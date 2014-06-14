@@ -275,11 +275,12 @@ if(array_index_exists(@pvp['arena'], 'chestspawn')) {
 	}
 }
 
-if(array_index_exists(@pvp['arena'], 'mobspawn')) {
-	array_push(@pvp['binds'], @id.'NoMobXP')
-	bind('entity_death', array('id': @id.'NoMobXP'), null, @e, @id = @id) {
+if(array_contains(@pvp['arena']['flags'], 'noxp')) {
+	array_push(@pvp['binds'], @id.'noxp')
+	bind('entity_death', array('id': @id.'noxp'), null, @e, @id = @id) {
 		@pvp = import('pvp'.@id)
-		if(array_contains(sk_regions_at(@e['location']), @pvp['arena']['region'])) {
+		if(@e['location']['world'] == 'custom'
+		&& array_contains(sk_regions_at(@e['location']), @pvp['arena']['region'])) {
 			modify_event('xp', 0)
 		}
 	}
