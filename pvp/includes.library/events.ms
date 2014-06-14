@@ -620,16 +620,24 @@ if(array_contains(@pvp['arena']['flags'], 'infinitedispensers')) {
 
 ### SPECATORS ###
 
-array_push(@pvp['binds'], @id.'interactspectators')
-bind('player_interact', array('id': @id.'interactspectators'), null, @e, @id = @id) {
+array_push(@pvp['binds'], @id.'interactspec')
+bind('player_interact', array('id': @id.'interactspec'), null, @e, @id = @id) {
 	@pvp = import('pvp'.@id)
 	if(array_contains(@pvp['spectators'], @e['player'])) {
 		cancel()
 	}
 }
 
-array_push(@pvp['binds'], @id.'targetspectators')
-bind('target_player', array('id': @id.'targetspectators'), null, @e, @id = @id) {
+array_push(@pvp['binds'], @id.'interactentityspec')
+bind('player_interact_entity', array('id': @id.'interactentityspec'), array('clicked': 'HORSE'), @e, @id = @id) {
+	@pvp = import('pvp'.@id)
+	if(array_contains(@pvp['spectators'], @e['player'])) {
+		cancel()
+	}
+}
+
+array_push(@pvp['binds'], @id.'targetspec')
+bind('target_player', array('id': @id.'targetspec'), null, @e, @id = @id) {
 	@pvp = import('pvp'.@id)
 	if(array_contains(@pvp['spectators'], @e['player'])) {
 		cancel()
