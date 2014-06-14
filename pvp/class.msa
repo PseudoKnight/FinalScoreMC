@@ -83,9 +83,18 @@ case 'set':
 			array_remove(@arena['classes'][@classid], 'doublejump')
 			msg('Turned off doublejump for class.')
 		}
+	
+	case 'script':
+		if($ == 'true') {
+			@arena['classes'][@classid]['script'] = true
+			msg('Turned ON special script loading for this class.')
+		} else if($ == 'false' && array_index_exists(@arena['classes'][@classid], 'script')) {
+			array_remove(@arena['classes'][@classid], 'script')
+			msg('Turned OFF special script loading for this class.')
+		}
 		
 	default:
-		die('Available settings: selector, kit, effect')
+		die('Available settings: selector, kit, effect, hunger, speed, spawner, doublejump, script')
 	}
 	store_value('arena', @arenaid, @arena)
 	

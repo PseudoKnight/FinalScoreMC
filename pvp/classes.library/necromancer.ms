@@ -1,0 +1,38 @@
+switch(@action) {
+case 'load':
+	bind('target_player', array('id': @player.'necrotarget'), array('player': @player), @e) {
+		cancel()
+	}
+	bind('entity_damage', array('id': @player.'necrodamage', 'priority': 'HIGH'), array('type': 'PLAYER', 'world': 'custom'), @e, @p = @player) {
+		if(@e['player'] == @p 
+		&& ((array_index_exists(@e, 'damager')
+		&& is_numeric(@e['damager'])
+		&& entity_type(@e['damager']) == 'ZOMBIE')
+		|| (array_index_exists(@e, 'shooter')
+		&& is_numeric(@e['shooter'])
+		&& entity_type(@e['shooter']) == 'SKELETON'))) {
+			cancel()
+			consume()
+		}
+	}
+	bind('player_death', array('id': @player.'necrodeath'), null, @e, @player = @player) {
+		if(@e['player'] == @player, die())
+		@a = ploc(@e['player'])
+		@b = ploc(@player)
+		if((((@a['x'] - @b['x']) ** 2) + ((@a['y'] - @b['y']) ** 2) + ((@a['z'] - @b['z']) ** 2)) < 1024) {
+			foreach(@e in get_peffect(@player)) {
+				if(@e['id'] == 21) {
+					set_peffect(@player, 21, @e['strength'] + 1, 999)
+					die()
+				}
+			}
+			set_peffect(@player, 21, 0, 999)
+		}
+	}
+
+case 'unload':
+	unbind(@player.'necrotarget')
+	unbind(@player.'necrodamage')
+	unbind(@player.'necrodeath')
+	
+}
