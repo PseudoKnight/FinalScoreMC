@@ -27,9 +27,6 @@ case 'load':
 		if(@e['shooter'] == @shooter && entity_type(@e['id']), try(entity_remove(@e['id'])))
 	}
 
-case 'equip':
-	set_pexp(@player, 100)
-
 case 'unload':
 	unbind(@player.'plasmagun')
 	unbind(@player.'hit')

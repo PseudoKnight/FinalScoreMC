@@ -46,9 +46,6 @@ case 'load':
 		}
 	}
 
-case 'equip':
-	set_pexp(@player, 100)
-
 case 'unload':
 	unbind(@player.'dragon')
 	unbind(@player.'dragon2')

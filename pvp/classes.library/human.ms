@@ -1,7 +1,7 @@
 switch(@action) {
 case 'load':
 	bind('player_interact', array('id': @player.'interact'), array('player': @player, 'button': 'right', 'item': 359), @e) {
-		if(split(':', @e['block'])[0] != '77' && pexp() >= 99) {
+		if(split(':', @e['block'])[0] != '77' && pexp() >= 100) {
 			cancel()
 			@arrow = shoot_projectile(player(), 'ARROW')
 			@velocity = entity_velocity(@arrow)
@@ -11,7 +11,7 @@ case 'load':
 			set_pexp(0)
 			set_timeout(450, closure(){
 				if(ponline(player()) && pinfo(player(), 5) > 0) {
-					set_pexp(99)
+					set_pexp(100)
 				}
 			})
 		}
@@ -25,20 +25,11 @@ case 'load':
 	bind('player_death', array('id': @player.'death'), array('player': @player), @e) {
 		play_sound(ploc(), array('sound': 'ZOMBIE_UNFECT', 'pitch': 1, 'volume': 3))
 	}
-	set_pwalkspeed(@player, 0.16)
-
-case 'equip':
-	set_pexp(@player, 99)
-	set_timeout(50, closure(){
-		set_peffect(@player, 8, -1, 999, true)
-		set_phunger(@player, 3)
-	})
 
 case 'unload':
 	unbind(@player.'interact')
 	unbind(@player.'hit')
 	unbind(@player.'damage')
 	unbind(@player.'death')
-	set_peffect(@player, 8, 0, 0)
 	
 }

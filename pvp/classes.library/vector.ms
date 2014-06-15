@@ -50,13 +50,6 @@ case 'load':
 		}
 	}
 	_manti_noise(@player)
-	set_pwalkspeed(@player, 0.23)
-
-case 'equip':
-	set_timeout(50, closure(){
-		set_peffect(@player, 14, 0, 999, true)
-		set_peffect(@player, 16, 0, 999, true)
-	})
 
 case 'unload':
 	unbind(@player.'interact')
@@ -64,6 +57,5 @@ case 'unload':
 	unbind(@player.'damage')
 	unbind(@player.'death')
 	queue_clear(@player)
-	set_peffect(@player, 14, 0, 0)
 	
 }

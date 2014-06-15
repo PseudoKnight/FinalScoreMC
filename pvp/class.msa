@@ -92,6 +92,14 @@ case 'set':
 			array_remove(@arena['classes'][@classid], 'script')
 			msg('Turned OFF special script loading for this class.')
 		}
+	
+	case 'xp':
+		if(is_numeric($) && $ <= 100 && $ >= 0) {
+			@arena['classes'][@classid]['xp'] = $
+			msg('Set class to start with '.$.'% of their experience bar.')
+		} else {
+			die('It needs to be a number from 0 to 100')
+		}
 		
 	default:
 		die('Available settings: selector, kit, effect, hunger, speed, spawner, doublejump, script')

@@ -78,6 +78,9 @@ proc('_class', @action, @player, @class, @pvp) {
 				}
 			})
 		}
+		if(array_index_exists(@pvp['arena']['classes'][@class], 'xp')) {
+			set_pexp(@player, @pvp['arena']['classes'][@class]['xp'])
+		}
 		
 	case 'unload':
 		unbind(@player.'feed')
