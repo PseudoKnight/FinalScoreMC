@@ -101,7 +101,7 @@ proc('_class_select', @id, @pvp) {
 		if(!array_index_exists(@class, 'team') || @class['team'] == 0) {
 			@size1 += 1
 		}
-		if(array_index_exists(@class, 'team') && @class['team'] == 1) {
+		if(!array_index_exists(@class, 'team') || @class['team'] == 1) {
 			@size2 += 1
 		}
 	}
@@ -131,7 +131,7 @@ proc('_class_select', @id, @pvp) {
 				@class['selector']['meta']
 			)
 		}
-		if((array_index_exists(@class, 'team') && @class['team'] == 1)
+		if((!array_index_exists(@class, 'team') || @class['team'] == 1)
 		&& @size2 > 1
 		&& array_index_exists(@class, 'selector')) {
 			addto_virtualchest(@id.'1', 
@@ -143,7 +143,7 @@ proc('_class_select', @id, @pvp) {
 	}
 	foreach(@pvp['players'], @p, @pdata) {
 		if(@size1 > 1
-		&& !array_index_exists(@pdata, 'team') || @pdata['team'] == 0) {
+		&& (!array_index_exists(@pdata, 'team') || @pdata['team'] == 0)) {
 			popen_virtualchest(@p, @id.'0')
 		} else if(@size2 > 1
 		&& @pdata['team'] == 1) {
