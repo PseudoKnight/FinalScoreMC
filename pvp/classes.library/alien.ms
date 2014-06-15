@@ -9,7 +9,7 @@ case 'load':
 			set_entity_onfire(@arrow, 1)
 			play_sound(ploc(), array('sound': 'ENDERDRAGON_HIT', 'pitch': 2))
 			set_pexp(0)
-			set_interval(150, closure(){
+			set_interval(250, closure(){
 				try(
 					@xp = pexp()
 					@xp += 10
