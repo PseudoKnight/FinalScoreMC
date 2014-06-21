@@ -114,7 +114,7 @@
 <<<
 
 *:/enchant [$type='list'] [$level=1] = >>>
-	if(!has_permission('commands.enchant'), die('You do not have permission to use this command.'))
+	if(!has_permission('command.enchant'), die('You do not have permission to use this command.'))
 	@enchants = array(
 		'power': 'ARROW_DAMAGE',
 		'flame': 'ARROW_FIRE',
@@ -149,7 +149,7 @@
 <<<
 
 *:/unenchant = >>>
-	if(!has_permission('commands.enchant'), die('You do not have permission to use this command.'))
+	if(!has_permission('command.enchant'), die('You do not have permission to use this command.'))
 	@item = pinv(player(), null)
 	array_remove(@item, 'enchants')
 	set_pinv(array(null: @item))
