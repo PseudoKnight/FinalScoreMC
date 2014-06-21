@@ -69,6 +69,10 @@
 
 	case 'spectate':
 		@id = to_lower($id)
+		@pvp = import('pvp'.@id)
+		if(array_index_exists(@pvp['players'], player())) {
+			die('You\'re already in the game.')
+		}
 		if(array_contains(get_scoreboards(), @id)) {
 			set_pscoreboard(player(), @id)
 			include('includes.library/spectator.ms')
