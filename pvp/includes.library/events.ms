@@ -453,16 +453,37 @@ if(array_contains(@pvp['arena']['flags'], 'rallycall')) {
 	}
 }
 
-if(array_contains(@pvp['arena']['flags'], 'stackedpickup') 
-|| @pvp['arena']['mode'] == 'ctf' 
-|| array_index_exists(@pvp['arena'], 'captain')) {
-	array_push(@pvp['binds'], @id.'pickup')
-	bind('item_pickup', array('id': @id.'pickup'), null, @e, @id = @id) { 
+if(array_contains(@pvp['arena']['flags'], 'stackedpickup')) {
+	array_push(@pvp['binds'], @id.'stackedpickup')
+	bind('item_pickup', array('id': @id.'stackedpickup', 'priority': 'LOW'), null, @e, @id = @id) { 
 		@pvp = import('pvp'.@id)
 		if(!array_index_exists(@pvp['players'], player()), 
 			die())
 			
+		foreach(@slot: @item in pinv()) {
+			if(@item != null 
+			&& @e['item']['type'] == @item['type'] 
+			&& @e['item']['type'] != '373' 
+			&& @e['item']['enchants'] == @item['enchants']) {
+				if(@item['data'] > @e['item']['data']) {
+					set_inventory_item(pinfo(player(), 13), @slot, @e['item'])
+				}
+				modify_event('item', null)
+				break()
+			}
+		}
+	}
+}
+
+if(@pvp['arena']['mode'] == 'ctf') {
+	array_push(@pvp['binds'], @id.'flagpickup')
+	bind('item_pickup', array('id': @id.'flagpickup'), null, @e, @id = @id) { 
+		@pvp = import('pvp'.@id)
+		if(!array_index_exists(@pvp['players'], player()), 
+			die())
+		
 		if(@e['item']['type'] == '10') {
+			consume()
 			if(@pvp['players'][player()]['team'] == 0) {
 				if(_horizontal_distance(ploc(), @pvp['arena']['ctfflag'][0]) > 3) { 
 					queue_clear(@id.'0flag')
@@ -503,6 +524,7 @@ if(array_contains(@pvp['arena']['flags'], 'stackedpickup')
 				play_sound(ploc(), array('sound': 'ENDERDRAGON_WINGS', 'volume': 3))
 			}
 		} else if(@e['item']['type'] == '8') {
+			consume()
 			if(@pvp['players'][player()]['team'] == 1) {
 				if(_horizontal_distance(ploc(), @pvp['arena']['ctfflag'][1]) > 3) {
 					queue_clear(@id.'1flag')
@@ -542,8 +564,20 @@ if(array_contains(@pvp['arena']['flags'], 'stackedpickup')
 					.color(@pvp['arena']['team'][1]['color']).'flag')
 				play_sound(ploc(), array('sound': 'ENDERDRAGON_WINGS', 'volume': 3))
 			}
-		} else if(array_index_exists(@pvp['arena'], 'captain')
-		&& @e['item']['type'] == @pvp['team'][0]['captainhat']['type']) {
+		}
+	}
+}
+
+
+if(array_index_exists(@pvp['arena'], 'captain')) {
+	array_push(@pvp['binds'], @id.'hatpickup')
+	bind('item_pickup', array('id': @id.'hatpickup'), null, @e, @id = @id) { 
+		@pvp = import('pvp'.@id)
+		if(!array_index_exists(@pvp['players'], player()), 
+			die())
+			
+		if(@e['item']['type'] == @pvp['team'][0]['captainhat']['type']) {
+			consume()
 			if(@pvp['players'][player()]['team'] == 0) {
 				modify_event('item', null)
 				_class('unload', player(), @pvp['players'][player()]['class'], @pvp)
@@ -561,8 +595,8 @@ if(array_contains(@pvp['arena']['flags'], 'stackedpickup')
 				cancel()
 			}
 			
-		} else if(array_index_exists(@pvp['arena'], 'captain')
-		&& @e['item']['type'] == @pvp['team'][1]['captainhat']['type']) {
+		} else if(@e['item']['type'] == @pvp['team'][1]['captainhat']['type']) {
+			consume()
 			if(@pvp['players'][player()]['team'] == 1) {
 				modify_event('item', null)
 				_class('unload', player(), @pvp['players'][player()]['class'], @pvp)
@@ -578,22 +612,6 @@ if(array_contains(@pvp['arena']['flags'], 'stackedpickup')
 				clear_virtualchest(@id.'1', 0)
 			} else {
 				cancel()
-			}
-		} else if(max_stack_size(@e['item']) == 1) {
-			if(array_contains(@pvp['arena']['flags'], 'stackedpickup') 
-			&& array_index_exists(@pvp['players'], player())) {
-				foreach(pinv(), @slot, @item) {
-					if(@item != null 
-					&& @e['item']['type'] == @item['type'] 
-					&& @e['item']['type'] != '373' 
-					&& @e['item']['enchants'] == @item['enchants']) {
-						if(@item['data'] > @e['item']['data']) {
-							set_inventory_item(pinfo(player(), 13), @slot, @e['item'])
-						}
-						modify_event('item', null)
-						break()
-					}
-				}
 			}
 		}
 	}
