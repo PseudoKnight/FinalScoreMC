@@ -28,6 +28,15 @@ if(!get_recipe_for(array('type': 98, 'data': 3))) {
 	))
 }
 
+# Cracked Stone Brick
+if(!get_recipe_for(array('type': 98, 'data': 2))) {
+	add_recipe(array(
+		'type': 'FURNACE',
+		'result': array('type': 98, 'data': 2),
+		'input': array('type': '98:0')
+	))
+}
+
 # Smooth Stone Slab (Double)
 if(!get_recipe_for(array('type': 43, 'data': 8))) {
 	add_recipe(array(
@@ -109,16 +118,31 @@ if(!get_recipe_for(array('type': 162, 'data': 13))) {
 }
 
 # MAKE LOG CUBES PLACEABLE
-bind('block_place', null, array('type': 17), @e,
+bind('block_place', null, array('type': 17), @e) {
 	@item = pinv(player(), null)
 	if(@item['data'] >= 12 && sk_can_build(@e['location'])) {
 		set_block_at(@e['location'], '17:'.@item['data'])
 	}
-)
+}
 
-bind('block_place', null, array('type': 162), @e,
+bind('block_place', null, array('type': 162), @e) {
 	@item = pinv(player(), null)
 	if(@item['data'] >= 12 && sk_can_build(@e['location'])) {
 		set_block_at(@e['location'], '162:'.@item['data'])
 	}
-)
+}
+
+# Coarse dirt
+if(!get_recipe_for(array('type': 3, 'data': 1))) {
+	add_recipe(array(
+		'type': 'SHAPED',
+		'result': array('type': 3, 'data': 1, 'qty': 4),
+		'shape': array('AB', 'BA'),
+		'ingredients': array('A': '3:0', 'B': '13:0')
+	))
+}
+
+# MAKE COARSE DIRT DROP ITSELF
+bind('block_break', null, array('type': 3, 'data': 1), @e) {
+	modify_event('drops', array(array('type': 3, 'data': 1)))
+}
