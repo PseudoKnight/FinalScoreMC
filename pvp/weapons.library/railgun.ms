@@ -93,18 +93,26 @@ bind('player_interact', array('id': @id.'railgun'), array('item': 175, 'button':
 	
 	play_sound(ploc(), array('sound': 'ZOMBIE_REMEDY', 'pitch': 1.8, 'volume': 3))
 	@item = pinv(player(), null)
-	@item['type'] = 402
-	set_pinv(array(null: @item))
-	@slot = pinfo(player(), 15)
+	@item['qty'] -= 1
 	queue_clear(player().'railgun')
-	queue_delay(9000, player().'railgun')
-	queue_push(closure(){
-		if(ponline(player()) && !is_null(pinv(player(), @slot))) {
-			play_sound(ploc(), array('sound': 'FIZZ', 'pitch': 0))
-			@inv = array()
-			@item['type'] = 175
-			@inv[@slot] = @item
-			set_pinv(@inv)
-		}
-	}, player().'railgun')
+	if(@item['qty'] == 0) {
+		set_pinv(array(null: null))
+	} else { 
+		@item['type'] = 402
+		set_pinv(array(null: @item))
+		@slot = pinfo(player(), 15)
+		queue_delay(9000, player().'railgun')
+		queue_push(closure(){
+			if(ponline(player())) {
+				@item = pinv(player(), @slot)
+				if(!is_null(@item) && @item['type'] == 402) {
+					play_sound(ploc(), array('sound': 'FIZZ', 'pitch': 0))
+					@inv = array()
+					@item['type'] = 175
+					@inv[@slot] = @item
+					set_pinv(@inv)
+				}
+			}
+		}, player().'railgun')
+	}
 }

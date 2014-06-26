@@ -15,7 +15,8 @@ bind('player_interact', array('id': @id.'pistoltears'), array('item': 370, 'butt
 		set_pinv(array(null: @item))
 		@slot = pinfo(player(), 15)
 		set_timeout(2000, closure(){
-			if(pinv(player(), @slot) && pinv(player(), @slot)['type'] == 371) {
+				@item = pinv(player(), @slot)
+				if(!is_null(@item) && @item['type'] == 371) {
 				play_sound(ploc(), array('sound': 'DOOR_OPEN', 'pitch': 2))
 				@inv = array()
 				@item['type'] = 370

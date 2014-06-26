@@ -14,7 +14,8 @@ bind('player_interact', array('id': @id.'fireball'), array('item': 385, 'button'
 		set_pinv(array(null: @item))
 		@slot = pinfo(player(), 15)
 		set_timeout(2000, closure(){
-			if(pinv(player(), @slot) && pinv(player(), @slot)['type'] == 402) {
+				@item = pinv(player(), @slot)
+				if(!is_null(@item) && @item['type'] == 402) {
 				play_sound(ploc(), array('sound': 'FIZZ', 'pitch': 1.5))
 				@inv = array()
 				@item['type'] = 385

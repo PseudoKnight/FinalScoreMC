@@ -475,6 +475,19 @@ if(array_contains(@pvp['arena']['flags'], 'stackedpickup')) {
 	}
 }
 
+if(array_index_exists(@pvp['arena'], 'powerup')) {
+	array_push(@pvp['binds'], @id.'powerup')
+	bind('item_pickup', array('id': @id.'powerup', 'priority': 'HIGH'), array('item': @pvp['arena']['powerup']), @e, @id = @id) { 
+		@pvp = import('pvp'.@id)
+		if(!array_index_exists(@pvp['players'], player()), 
+			die())
+	
+		modify_event('item', null)
+		consume()
+		_class('powerup', player(), @pvp['players'][player()]['class'], @pvp)
+	}
+}
+
 if(@pvp['arena']['mode'] == 'ctf') {
 	array_push(@pvp['binds'], @id.'flagpickup')
 	bind('item_pickup', array('id': @id.'flagpickup'), null, @e, @id = @id) { 

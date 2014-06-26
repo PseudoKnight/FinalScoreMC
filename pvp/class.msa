@@ -22,10 +22,46 @@ case 'set':
 		foreach(array_keys(@inv), @slot) {
 			if(@inv[@slot] == null) {
 				array_remove(@inv, @slot)
+			} else {
+				foreach(@i:@v in @inv[@slot]) {
+					if(@i == 'meta' && @v) {
+						foreach(@mi:@mv in @inv[@slot]['meta']) {
+							if(!@mv || @mi == 'enchants') {
+								array_remove(@inv[@slot]['meta'], @mi)
+							}
+						}
+					}
+					if(!@v) {
+						array_remove(@inv[@slot], @i)
+					}
+				}
 			}
 		}
 		@arena['classes'][@classid]['kit'] = @inv
 		msg('Set kit to current inventory.')
+	
+	case 'ammo':
+		@inv = pinv()
+		foreach(array_keys(@inv), @slot) {
+			if(@inv[@slot] == null) {
+				array_remove(@inv, @slot)
+			} else {
+				foreach(@i:@v in @inv[@slot]) {
+					if(@i == 'meta' && @v) {
+						foreach(@mi:@mv in @inv[@slot]['meta']) {
+							if(!@mv || @mi == 'enchants') {
+								array_remove(@inv[@slot]['meta'], @mi)
+							}
+						}
+					}
+					if(!@v) {
+						array_remove(@inv[@slot], @i)
+					}
+				}
+			}
+		}
+		@arena['classes'][@classid]['ammo'] = @inv
+		msg('Set ammo to current inventory.')
 		
 	case 'speed':
 		if(@args[0] < 0 || @args[0] > 1) {

@@ -45,7 +45,8 @@ proc('_class', @action, @player, @class, @pvp) {
 						set_pinv(array(null: @item))
 						queue_delay(2000, player().'spawner')
 						queue_push(closure(){
-							if(!is_null(pinv(player(), @slot))) {
+							@item = pinv(player(), @slot)
+							if(!is_null(@item) && @item['type'] == 361) {
 								@item['type'] = 383
 								@inv = array()
 								@inv[@slot] = @item
@@ -80,6 +81,31 @@ proc('_class', @action, @player, @class, @pvp) {
 		}
 		if(array_index_exists(@pvp['arena']['classes'][@class], 'xp')) {
 			set_pexp(@player, @pvp['arena']['classes'][@class]['xp'])
+		}
+		
+	case 'powerup':
+		set_phealth(@player, min(20, pinfo(@player, 5) + 2))
+		set_phunger(@player, min(20, phunger(@player) + 2))
+		@flash = true
+		foreach(@effect in get_peffect(@player)) {
+			if(@effect['id'] == 16) {
+				@flash = false
+			}
+		}
+		if(@flash) {
+			set_peffect(@player, 16, 0, 1, true)
+		}
+		play_sound(ploc(@player), array('sound': 'enderman_teleport', 'pitch': 2), @player)
+		if(array_index_exists(@pvp['arena']['classes'][@class], 'ammo')) {
+			@inv = pinv(@player)
+			foreach(@slot: @item in @pvp['arena']['classes'][@class]['ammo']) {
+				@item = @item[]
+				if(!is_null(@inv[@slot])) {
+					@item['qty'] = min(64, @item['qty'] + @inv[@slot]['qty'])
+				}
+				@inv[@slot] = @item
+			}
+			set_pinv(@player, @inv)
 		}
 		
 	case 'unload':

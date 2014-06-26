@@ -6,11 +6,9 @@
 		if(!has_permission('group.administrators'), die('You do not have permission.'))
 		@arenas = get_values('arena')
 		foreach(@key: @arena in @arenas) {
-			if(array_index_exists(@arena, 'classes')) {
-				foreach(@classname: @class in @arena['classes']) {
-					if(array_index_exists(@class, 'team') && @class['team'] == 2) {
-						array_remove(@arena['classes'][@classname], 'team')
-					}
+			if(array_index_exists(@arena, 'itemspawn')) {
+				for(@i = 0, @i < array_size(@arena['itemspawn']), @i++) {
+					@arena['itemspawn'][@i]['loc'][1] += 1
 				}
 				store_value(@key, @arena)
 			}
@@ -239,13 +237,27 @@
 				if(!@args[0] || is_numeric(@args[0])) {
 					if(!@args[0], @cooldown = 60, @cooldown = @args[0])
 					if(!@args[1], @start = true, @start = @args[1])
+					@item = pinv(player(), null)
+					foreach(@i:@v in @item) {
+						if(@i == 'meta' && !is_null(@v)) {
+							foreach(@mi:@mv in @item['meta']) {
+								if(!@mv || @mi == 'enchants') {
+									array_remove(@item['meta'], @mi)
+								}
+							}
+						}
+						if(!@v) {
+							array_remove(@item, @i)
+						}
+					}
 					array_push(@arena['itemspawn'], array(
 						'start': @start,
 						'cooldown': @cooldown,
-						'loc': array(round(ploc()[0], 1), ploc()[1] + 1, round(ploc()[2], 1), ploc()[3]),
-						'item': pinv(player(), null)
+						'loc': array(round(ploc()[0], 1), ploc()[1] + 3, round(ploc()[2], 1), ploc()[3]),
+						'item': @item
 					))
 					msg('Set current item to spawn here.')
+					psend_block_change(player(), ploc(), data_values('gold_block'))
 				} else {
 					die('The first value can only be an integer for the number of seconds in the cooldown (default: 30). The second can be true or false for if the item spawns at match start (default: true).')
 				}
@@ -377,6 +389,10 @@
 					@arena['stats'] = false
 					msg('Set arena to NOT display stats at the end of the match.')
 				}
+			
+			case 'powerup':
+				@arena['powerup'] = @args[0]
+				msg('Set powerup item to '.@args[0])
 			
 			case 'weapons':
 				@weapons = array('endernades', 'skullrockets',  'shotgunballs', 'primedtnt', 'pistoltears', 'firefire', 'railgun', 'fireball', 'firebreath')

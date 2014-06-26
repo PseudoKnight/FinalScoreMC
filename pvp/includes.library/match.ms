@@ -188,6 +188,8 @@ proc('_pvp_start_match', @id) {
 						'data': @pvp['arena']['itemspawn'][@i]['item']['data'], 
 						'qty': @pvp['arena']['itemspawn'][@i]['item']['qty']
 						), false)
+					play_sound(@pvp['arena']['itemspawn'][@i]['loc'], array('sound': 'ENDERMAN_TELEPORT', 'pitch': 1.5))
+					make_effect(@pvp['arena']['itemspawn'][@i]['loc'], 'ENDER_SIGNAL')
 					@pvp['itemspawn'][@i] = time()
 				}
 			}

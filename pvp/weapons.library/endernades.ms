@@ -25,7 +25,8 @@ bind('player_interact', array('id': @id.'endernadesreload', 'priority': 'highest
 		set_pinv(array(null: @item))
 		@slot = pinfo(player(), 15)
 		set_timeout(800, closure(){
-			if(pinv(player(), @slot) && pinv(player(), @slot)['type'] == 378) {
+				@item = pinv(player(), @slot)
+				if(!is_null(@item) && @item['type'] == 378) {
 				play_sound(ploc(), array('sound': 'IRONGOLEM_THROW'))
 				@inv = array()
 				@item['type'] = 368
