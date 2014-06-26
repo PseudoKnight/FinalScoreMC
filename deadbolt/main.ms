@@ -5,9 +5,11 @@
 # DEPENDENCIES:
 # _relative() procedure
 
-bind('player_interact', null, array('button': 'right', 'item': 323, 'block': 54), @e) {
+bind('player_interact', null, array('button': 'right', 'item': 323), @e) {
 	if(@e['action'] != 'right_click_block' || pinfo(player(), 11)) { die() }
-	if(sk_can_build(@e['location'])) {
+	@blockid = split(':', @e['block'])[0]
+	if((@blockid == 54 || @blockid == 146)
+	&& sk_can_build(@e['location'])) {
 		foreach(@dir in array('north', 'south', 'east', 'west')) {
 			@checkblock = _relative(@e['location'], @dir)
 			switch(split(':', get_block_at(@checkblock))[0]) {
