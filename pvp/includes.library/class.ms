@@ -32,9 +32,17 @@ proc('_class', @action, @player, @class, @pvp) {
 					|| is_null(@item['meta']['display'])) {
 						die()
 					}
-					@mob = to_lower(@item['meta']['display'])
 					@loc = _relative(@e['location'], @e['facing'])
-					_spawn_mob(@mob, 1, @loc, player())
+					@mob = to_lower(@item['meta']['display'])
+					if(!is_null(@item['meta']['lore'])
+					&& @item['meta']['lore'][0] == 'Target Near') {
+						foreach(@player in players_in_radius(@loc, 20)) {
+							if(@player == player(), continue())
+							_spawn_mob(@mob, 1, @loc, @player)
+						}
+					} else {
+						_spawn_mob(@mob, 1, @loc, player())
+					}
 					play_sound(@loc, array('sound': 'ZOMBIE_INFECT', 'pitch': 1.5))
 					play_effect(@loc, 'cloud', array('speed': 0, 'particleCount': 10, 'offsetX': 0.4, 'offsetZ': 0.4, 'offsetY': 0.4))
 
