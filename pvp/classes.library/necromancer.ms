@@ -21,12 +21,12 @@ case 'load':
 		@b = ploc(@player)
 		if((((@a['x'] - @b['x']) ** 2) + ((@a['y'] - @b['y']) ** 2) + ((@a['z'] - @b['z']) ** 2)) < 1024) {
 			foreach(@e in get_peffect(@player)) {
-				if(@e['id'] == 21) {
-					set_peffect(@player, 21, @e['strength'] + 1, 999)
+				if(@e['id'] == 22) {
+					set_peffect(@player, 22, @e['strength'] + 1, 999)
 					die()
 				}
 			}
-			set_peffect(@player, 21, 0, 999)
+			set_peffect(@player, 22, 0, 999)
 		}
 	}
 
