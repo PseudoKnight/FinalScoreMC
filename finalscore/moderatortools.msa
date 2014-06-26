@@ -193,6 +193,12 @@
 
 /donor $player $amount = >>>
 	if(!has_permission('group.administrators'), die('You do not have permission to use this command.'))
+	@pdata = get_value('player.'.to_lower($player))
+	if(!@pdata) {
+		die('No player by that name.')
+	}
+	@pdata['support'] = $amount
+	store_value('player.'.to_lower($player), @pdata)
 	_acc_add($player, $amount * 200)
 	msg('Gave '.$player.' '.$amount * 200.' coins.')
 	console('Gave '.$player.' '.$amount * 200.' coins.')
@@ -204,6 +210,17 @@
 		array_push(@donors, $player)
 	}
 	store_value('donors', @donors)
+<<<
+
+/setsupport $player $amount [$force=0] = >>>
+	@pdata = get_value('player.'.to_lower($player))
+	if(!@pdata) {
+		if($force == 0, die('No player by that name.'))
+		@pdata = array()
+	}
+	@pdata['support'] = $amount
+	store_value('player.'.to_lower($player), @pdata)
+	msg('Set '.$player.'\'s support amount to $'.$amount)
 <<<
 
 #Set or reset the MOTD
@@ -261,6 +278,8 @@
 				msg(color('gray').'Ignored by: '.color('r').array_implode(@ignorelist[@player], ', '))
 			}
 		}
+		if(array_index_exists(@pdata, 'support'),
+			msg(color('gray').'Support: '.color('r').'$'.@pdata['support']))
 	, 
 		# OFFLINE INFO
 		@pdata = get_value('player.'.to_lower($player))
@@ -286,6 +305,8 @@
 	)
 	if(array_index_exists(@pdata, 'approval'), msg(color('gray').'Approved by: '.color('r').@pdata['approval']))
 	if(array_index_exists(@pdata, 'coins'), msg(color('gray').'Coins: '.color('r').@pdata['coins']))
+	if(array_index_exists(@pdata, 'support'),
+		msg(color('gray').'Support: '.color('r').'$'.@pdata['support']))
 <<<
 
 #Database control

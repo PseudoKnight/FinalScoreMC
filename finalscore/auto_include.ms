@@ -1,20 +1,25 @@
 proc('_equip_park') {
 	_clear_pinv()
-	if(array_contains(pgroup(), 'donors')) {
+	
+	@pdata = get_value('player', to_lower(player()))
+	if(!is_null(@pdata) 
+	&& array_index_exists(@pdata, 'support')
+	&& @pdata['support'] >= 15) {
 		set_pinv(player(), array(
 			0: array(
 				'type': 401, 
 				'meta': array(
 					'display': color('green').'Random Firework',
 					'lore': array(
-						color('f').'A special thank you',
-						color('f').'to all donors who keep',
-						color('f').'the server running.',
+						color('f').'Available to ',
+						color('f').'server supporters',
+						color('f').'for $15+',
 					)
 				)
 			),
 		))
 	}
+
 }
 
 proc('_line_distance', @p1, @p2, @p3, @p4) {
