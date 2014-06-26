@@ -26,9 +26,45 @@ case 'load':
 	bind('projectile_hit', array('id': @player.'hit'), array('type': 'ARROW'), @e, @shooter = pinfo(@player, 13)) {
 		if(@e['shooter'] == @shooter && entity_type(@e['id']), try(entity_remove(@e['id'])))
 	}
+	
+	bind('player_interact', array('id': @player.'teleport'), array('item': 381, 'player': @player, 'button': 'right'), @e, @pvp = @pvp) {
+		cancel()
+		@loc = pinfo(player(), 2)
+		foreach(@p in players_in_radius(@loc, 4)) {
+			if(array_index_exists(@pvp['players'], @p)) {
+				@player = @p
+				break()
+			}
+		}
+		
+		if(@player) {
+			@loc1 = ploc(@player)
+			@loc2 = ploc()
+			set_ploc(@loc1)
+			set_ploc(@player, @loc2)
+			play_sound(@loc1, array('sound': 'ENDERMAN_TELEPORT', 'pitch': 0.5))
+			make_effect(_relative(@loc1, 'up', 2), 'ENDER_SIGNAL')
+			play_sound(@loc2, array('sound': 'ENDERMAN_TELEPORT', 'pitch': 0.5))
+			make_effect(_relative(@loc2, 'up', 2), 'ENDER_SIGNAL')
+		} else {
+			play_sound(ploc(), array('sound': 'ENDERMAN_IDLE', 'pitch': 2))
+		}
+		
+		@item = pinv(player(), null)
+		@item['qty'] -= 1
+		if(@item['qty'] == 0) {
+			set_pinv(player(), array(null: null))
+		} else {
+			set_pinv(player(), array(null: @item))
+		}
+	}
+	
+case 'powerup':
+	set_pexp(@player, 100)
 
 case 'unload':
 	unbind(@player.'plasmagun')
 	unbind(@player.'hit')
+	unbind(@player.'teleport')
 	
 }
