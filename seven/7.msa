@@ -1,0 +1,179 @@
+*:/7 [$action] [$schematic] = >>>
+	if(!$action) {
+		@arenas = get_value('seven')
+		if(!@arenas || array_size(@arenas) < 1) {
+			die('No schematics/arenas defined.')
+		}
+		
+		if(array_contains(get_scoreboards(), '7')) {
+			die(colorize('&67 Seconds to Live&r is in a running state already.'))
+		}
+	
+		@7 = import('7')
+		if(!@7) {
+			@7 = array('players': array(), 'state': 0)
+			export('7', @7)
+		}
+		
+		_worldmsg('custom', colorize('&67 Seconds to Live&r has been queued up by '.player()))
+		
+		@timer = array(25)
+		@7['state'] = 1
+		@7['lobby'] = get_value('warp.7')['loc']
+		create_scoreboard('7')
+		create_objective('time', 'DUMMY', '7')
+		set_objective_display('time', array('displayname': color(6).'SECONDS TO LIVE', 'slot': 'SIDEBAR'), '7')
+		set_interval(1000, closure(){
+			@num = 0
+			foreach(@player in all_players('custom')) {
+				if(pmode(@player) == 'SURVIVAL' && array_contains(sk_current_regions(@player), '7')) {
+					@num++
+					if(!array_index_exists(@7['players'], @player)) {
+						@7['players'][@player] = 7.0
+						set_pscoreboard(@player, '7')
+						set_pscore('time', @player, 7, '7')
+					}
+				}
+			}
+			if(@7['state'] == 1 && array_size(@7['players']) >= 2) {
+				@7['state'] = 2
+				_worldmsg('custom', colorize('&67 Seconds to Live&r will start in 25 seconds. /warp 7'))
+
+				
+			} else if(@7['state'] == 2) {
+				if(@timer[0] == 5) {
+					broadcast(colorize('&6GENERATING ARENA...'))
+					@7['arena'] = array_rand(@arenas)[0]
+					@7['spawns'] = @arenas[@7['arena']]['spawns']
+					skcb_load(@7['arena'])
+					skcb_paste(@arenas[@7['arena']]['location'])
+				}
+				
+				if(@num != array_size(@7['players'])) { 
+					if(@num < 2) {
+						_worldmsg('custom', colorize('&67 Seconds to Live&r game canceled.'))
+						clear_task()
+						@7['state'] = 0
+						@7['players'] = array()
+						remove_scoreboard('7')
+						die()
+					}
+				
+					foreach(@player in array_keys(@7['players'])) {
+						if(!ponline(@player) || !array_contains(sk_current_regions(@player), '7')) {
+							array_remove(@7['players'], @player)
+						}
+					}
+					
+				}
+				
+				if(@timer[0] == 1) {
+					clear_task()
+					include('includes.library/main.ms')
+					_7_start(@7)
+				} else {
+					@timer[0] -= 1
+				}
+			}
+		})
+		
+	} else {
+		if(!has_permission('group.builders'), die('No permission.'))
+		switch($action) {
+		case 'create':
+		case 'define':
+			if(!$schematic) {
+				die('Please specify a schematic filename.')
+			}
+			@arenas = get_value('seven')
+			if(!@arenas) {
+				@arenas = array()
+			} else if(array_index_exists(@arenas, $schematic)) {
+				die('Arena already exists by that name.')
+			}
+			@loc = ploc()
+			@loc = array(@loc[0], @loc[1] + 1, @loc[2], 'custom')
+			@arenas[$schematic] = array('location': @loc, 'spawns': array())
+			sudo('/rg select 7_schematic')
+			sudo('//copy')
+			sudo('//schematic save '.$schematic)
+			sudo('//sel')
+			store_value('seven', @arenas)
+			msg('Created arena '.$schematic)
+			
+		case 'edit':
+		case 'load':
+			if(!$schematic) {
+				die('Please specify a schematic filename.')
+			}
+			@arenas = get_value('seven')
+			if(!array_index_exists(@arenas, $schematic)) {
+				die('No arena by that name.')
+			}
+
+			skcb_load($schematic)
+			skcb_paste(@arenas[$schematic]['location'])
+			msg('If done editing, you may use /7 save '.$schematic)
+			msg('Then set the spawn points with /7 spawn '.$schematic)
+			
+		case 'save':
+			if(!$schematic) {
+				die('Please specify a schematic filename.')
+			}
+			@arenas = get_value('seven')
+			@loc = ploc()
+			@loc = array(@loc[0], @loc[1] + 1, @loc[2], 'custom')
+			@arenas[$schematic] = array('location': @loc, 'spawns': array())
+			sudo('/rg select 7_schematic')
+			sudo('//copy')
+			sudo('//schematic save '.$schematic)
+			sudo('//sel')
+			store_value('seven', @arenas)
+			msg('Saved arena '.$schematic)
+			
+		case 'setspawn':
+		case 'spawn':
+		case 'set':
+			if(!$schematic) {
+				die('Please specify an arena.')
+			}
+			@arenas = get_value('seven')
+			if(!array_index_exists(@arenas, $schematic)) {
+				die('Arena doesn\'t exist by that name.')
+			}
+			@loc = ploc()
+			@loc = array(round(@loc[0], 1), @loc[1], round(@loc[2], 1), 'custom')
+			@arenas[$schematic]['spawns'][] = @loc
+			msg('Set spawn '.array_size(@arenas[$schematic]['spawns']).' here.')
+			store_value('seven', @arenas)
+			
+		case 'delete':
+		case 'remove':
+			if(!$schematic) {
+				die('Please specify an arena.')
+			}
+			@arenas = get_value('seven')
+			if(array_index_exists(@arenas, $schematic)) {
+				array_remove(@arenas, $schematic)
+				msg('Deleted the arena '.$schematic.'.')
+			} else {
+				die('No arena by that name.')
+			}
+			store_value('seven', @arenas)
+			
+		case 'list':
+			@arenas = get_value('seven')
+			msg(array_implode(array_keys(@arenas)))
+		
+		case 'reset':
+			clear_task(@7['task'])
+			@7 = array('players': array(), 'state': 0)
+			export('7', @7)
+			remove_scoreboard('7')
+			msg('Reset 7 Seconds to Live.')
+			
+		default:
+			die('Usage: /7 [create|setspawn] [schematic/arena]')
+		}
+	}
+<<<
