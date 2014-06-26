@@ -453,6 +453,19 @@
 			default:
 				die('Unsupported setting for loading.')
 		}
+		
+	case 'showspawns':
+		if(!has_permission('group.builders'), die('You do not have permission.'))
+		if(!$id, die('You need to specify an arena.'))
+		@arena = get_value('arena.'.$id)
+		@block = '35:14'
+		foreach(@spawn in @arena['spawn'][0]) {
+			psend_block_change(@spawn, @block)
+		}
+		@block = '35:11'
+		foreach(@spawn in @arena['spawn'][1]) {
+			psend_block_change(@spawn, @block)
+		}
 	
 	case 'rename':
 		if(!has_permission('group.builders'), die('You do not have permission.'))
