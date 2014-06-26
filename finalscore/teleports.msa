@@ -83,9 +83,11 @@
 	@loc = ploc()
 	@loc = array(round(@loc[0], 1), @loc[1], round(@loc[2], 1), @loc[3])
 	if(has_value('warp.'.$warp)) {
+		try(
 		if(function_exists('dm_delete_marker')) {
 			dm_delete_marker('warps', 'warp.'.$warp)
 		}
+		)
 	}
 	store_value('warp.'.$warp, array('loc': @loc, 'yaw': round(pfacing()[0]), 'pitch': round(pfacing()[1])))
 	if(function_exists('dm_create_marker')) {
@@ -102,9 +104,11 @@
 		if(!$id, die('This requires a warp name.'))
 		if(!has_value('warp.'.$id), die('There is no warp by that name.'))
 		clear_value('warp.'.$id)
+		try(
 		if(function_exists('dm_delete_marker')) {
 			dm_delete_marker('warps', 'warp.'.$id)
 		}
+		)
 		msg('Deleted warp.')
 	case 'list':
 		@warps = get_values('warp')
