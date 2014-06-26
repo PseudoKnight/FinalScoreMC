@@ -182,6 +182,9 @@ bind('player_quit', array('id': @id.'quit'), null, @e, @id = @id) {
 			_class('unload', player(), @pvp['players'][player()]['class'], @pvp)
 		}
 		array_remove(@pvp['players'], player())
+		if(array_index_exists(@pvp['arena'], 'lives')) {
+			set_pscore('lives', player(), 0, @id)
+		}
 		_pvp_check_objectives(@id)
 	} else if(array_contains(@pvp['spectators'], player())) {
 		_remove_spectator(@id, player(), @pvp)
@@ -335,6 +338,9 @@ bind('player_command', array('id': @id.'command'), null, @e, @id = @id) {
 		premove_bar()
 	}
 	array_remove(@pvp['players'], player())
+	if(array_index_exists(@pvp['arena'], 'lives')) {
+		set_pscore('lives', player(), 0, @id)
+	}
 	_clear_pinv()
 	_clear_peffects(player())
 	_pvp_check_objectives(@id)

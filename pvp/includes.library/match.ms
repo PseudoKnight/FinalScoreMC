@@ -230,8 +230,11 @@ proc('_pvp_start_match', @id) {
 proc('_pvp_initialize_players', @id, @players) {
 	@c = array(0, 0) # for selecting initial spawn locations
 	foreach(@players, @player) {
-		if(!ponline(@player), continue())
 		@pvp = import('pvp'.@id)
+		if(!ponline(@player)) {
+			array_remove(@pvp['players'], @player)
+			continue()
+		}
 		if(pmode(@player) == 'CREATIVE', 
 			set_pmode(@player, 'SURVIVAL'))
 		if(has_permission(@player, 'vanish.standard'), 
@@ -258,9 +261,7 @@ proc('_pvp_initialize_players', @id, @players) {
 			@pvp['players'][@player]['respawn'] = 0
 		}
 		
-		if(!array_index_exists(@pvp['stats'], @player)) {
-			@pvp['stats'][@player] = array('kills': 0, 'damagetaken': array(), 'deaths': 0, 'assists': 0)
-		}
+		@pvp['stats'][@player] = array('kills': 0, 'damagetaken': array(), 'deaths': 0, 'assists': 0)
 		
 		queue_push(closure(){
 			if(array_index_exists(@pvp, 'team')) {
@@ -418,9 +419,6 @@ proc('_pvp_check_objectives', @id) {
 
 proc('_pvp_end_match', @id, @winners) {
 	@pvp = import('pvp'.@id)
-	
-	if(!@pvp['running'], 
-		die())
 
 	foreach(array_keys(@pvp['players']), @player) {
 		if(array_index_exists(@pvp['arena'], 'timer') && phas_bar(@player)) {
@@ -486,7 +484,6 @@ proc('_pvp_end_match', @id, @winners) {
 	}
 
 	clear_task(@pvp['interval'])
-	@pvp['running'] = false
 
 	set_timeout(3000, closure(){
 		_remove_region_entities(@pvp['arena']['region'])
@@ -511,7 +508,7 @@ proc('_pvp_end_match', @id, @winners) {
 			set_timeout(7000, closure(){
 				foreach(array_keys(@pvp['players']), @player) {
 					if(ponline(@player) && pworld(@player) == 'custom') {
-						broadcast(color('gray').'[PVP] '.color('r').'RESTORING '.to_upper(@id).'...')
+						broadcast(color('gray').'[PVP] '.color(6).'RESTORING '.to_upper(@id).'...')
 						scriptas(@player,
 							foreach(@pvp['arena']['restore'], @region) {
 								sudo('//schematic load mce '.@region)
