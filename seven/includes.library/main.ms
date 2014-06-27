@@ -116,7 +116,9 @@ proc('_7_remove_player', @player, @7) {
 			@winner = array_implode(array_keys(@7['players']))
 			_worldmsg('custom', @winner.' wins with '.color('gold').round(@7['players'][@winner], 1).' Seconds to Live')
 			set_timeout(3000, closure(){
-				set_ploc(@winner, @7['lobby'])
+				if(ponline(@winner)) {
+					set_ploc(@winner, @7['lobby'])
+				}
 			})
 		} else {
 			_worldmsg('custom', colorize('&6Spoiler alert:&r Everybody dies.'))
