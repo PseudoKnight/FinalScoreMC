@@ -14,6 +14,11 @@
 			@mob['name'] = colorize($)
 			msg('Name set.')
 			
+		, 'age',
+			if(!is_integral($), die('Must be a number.'))
+			@mob['age'] = $
+			msg('Age set.')
+			
 		, 'gear',
 			@mob['gear'] = array(
 				'WEAPON': pinv(player(), 0),
@@ -142,7 +147,7 @@
 			pcursor()[1] + 1,
 			pcursor()[2] + 0.5,
 			pcursor()[3]
-		))
+		), player())
 	
 	, 'list',
 		@mobs = get_values('mob')
