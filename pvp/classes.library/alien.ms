@@ -31,7 +31,7 @@ case 'load':
 		cancel()
 		@loc = pinfo(player(), 2)
 		foreach(@p in players_in_radius(@loc, 4)) {
-			if(array_index_exists(@pvp['players'], @p)) {
+			if(@p != player() && array_index_exists(@pvp['players'], @p)) {
 				@player = @p
 				break()
 			}
