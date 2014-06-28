@@ -4,9 +4,9 @@ case 'load':
 		if(@event['player'] == @player
 		&& pinv(@event['player'], 103)['type'] == 158) {
 			set_pinv(@event['player'], array(103: array('type': 23)))
-			set_timeout(500, closure(){
+			set_timeout(1000, closure(){
 				if(pinv(@event['player'], 103)['type'] == 23) {
-					set_pinv(@event['player'], array(103: array('type': 103)))
+					set_pinv(@event['player'], array(103: array('type': 158)))
 				}
 			})
 		}
