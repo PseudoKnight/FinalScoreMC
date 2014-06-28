@@ -2,7 +2,8 @@ switch(@action) {
 case 'load':
 	bind('player_interact', array('id': @player.'interact'), array('player': @player, 'button': 'right', 'item': '292'), @e) {
 		cancel()
-		if(get_block_at(ploc())[0] == '0', die())
+		if(get_block_at(ploc())[0] == '0'
+		|| phunger() == 0, die())
 		@facing = pfacing(player())
 		@facing[0] = @facing[0] + 90
 		@facing[1] = 0 - @facing[1]
