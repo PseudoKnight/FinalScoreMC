@@ -14,8 +14,8 @@ case 'load':
 				102: null,
 				103: null,
 			))
-			set_peffect(player(), 16, 0, 30)
-			set_peffect(player(), 14, 0, 30)
+			set_peffect(player(), 16, 0, 20)
+			set_peffect(player(), 14, 0, 20)
 			play_effect(_relative(ploc(), 'up', 2), 'spell', array('speed': 0, 'particleCount': 10, 'offsetY': 0.4, 'offsetX': 0.2, 'offsetZ': 0.2))
 		} else {
 			set_pinv(@armor)
