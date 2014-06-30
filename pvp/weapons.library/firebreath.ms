@@ -103,7 +103,7 @@ bind('player_interact', array('id': @id.'firebreath'), array('item': 377, 'butto
 		@item['type'] = 402
 		set_pinv(array(null: @item))
 		@slot = pinfo(player(), 15)
-		set_timeout(1000, closure(){
+		set_timeout(1100, closure(){
 			@item = pinv(player(), @slot)
 			if(!is_null(@item) && @item['type'] == 402) {
 				play_sound(ploc(), array('sound': 'FIZZ', 'pitch': 2))
