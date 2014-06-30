@@ -20,7 +20,7 @@
 			@player = $
 		}
 	}
-	@pdata = get_value('player.'.to_lower(@player))
+	@pdata = get_value('players', to_lower(@player))
 	if(!@pdata, die('Cannot find a home.'))
 	if(!array_index_exists(@pdata, 'homes') || !array_index_exists(@pdata['homes'], @world), die('You can set a home for a world with /sethome'))
 	_warmuptp(3.7, player(), array(
@@ -35,7 +35,7 @@
 	if(!has_permission('command.sethome')) {
 		die('You cannot set homes here.')
 	}
-	@pdata = get_value('player.'.to_lower(player()))
+	@pdata = get_value('players', to_lower(player()))
 	if(!array_index_exists(@pdata, 'homes'), @pdata['homes'] = array())
 	@loc = ploc()
 	@facing = pfacing()

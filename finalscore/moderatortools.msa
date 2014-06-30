@@ -123,7 +123,7 @@
 *:/ban [$player] [$] = >>>
 	if(!has_permission('group.moderators'), die('You do not have permission.'))
 	if(!$player, die('Usage: /ban <player> [-t 1d-8h-10m] [message]'))
-	@pdata = get_value('player.'.to_lower($player))
+	@pdata = get_value('players', to_lower($player))
 	if(!@pdata, die('Please use exact names.'))
 	@battime = null
 	@message = null
@@ -162,7 +162,7 @@
 *:/unban [$player] = >>>
 	if(!has_permission('group.moderators'), die('You do not have permission.'))
 	if(!$player, die('Usage: /unban <player>'))
-	@pdata = get_value('player.'.to_lower($player))
+	@pdata = get_value('players', to_lower($player))
 	if(!@pdata, die('Please use an exact name.'))
 	if(!array_index_exists(@pdata, 'ban'), die('That player is not banned.'))
 	array_remove(@pdata, 'ban')
@@ -180,7 +180,7 @@
 <<<
 
 /homeless $player = >>>
-	@pdata = get_value('player.'.to_lower($player))
+	@pdata = get_value('players', to_lower($player))
 	@pdata['homeless'] = true
 	store_value('player.'.to_lower($player), @pdata)
 <<<
@@ -261,7 +261,7 @@
 	try(
 		# ONLINE INFO
 		@player = player($player)
-		@pdata = get_value('player.'.to_lower(@player))
+		@pdata = get_value('players', to_lower(@player))
 		@onlineinfo = pinfo(@player)
 		msg(color('gray').'--[ '.color('l').@player.color('gray').' ]-------------------------')
 		msg(color('gray').'Location: '.color('r')._worldname(@onlineinfo[7]).'('.@onlineinfo[7].') '.round(@onlineinfo[1][0]).','.round(@onlineinfo[1][1]).','.round(@onlineinfo[1][2]))
@@ -282,7 +282,7 @@
 			msg(color('gray').'Support: '.color('r').'$'.@pdata['support']))
 	, 
 		# OFFLINE INFO
-		@pdata = get_value('player.'.to_lower($player))
+		@pdata = get_value('players', to_lower($player))
 		if(!@pdata, die('No stored data for that player name.'))
 		@minutes = (time() - plast_played($player)) / 60000
 		@hours = @minutes / 60

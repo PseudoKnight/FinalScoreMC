@@ -1,7 +1,7 @@
 proc('_equip_park') {
 	_clear_pinv()
 	
-	@pdata = get_value('player', to_lower(player()))
+	@pdata = get_value('players', to_lower(player()))
 	if(!is_null(@pdata) 
 	&& array_index_exists(@pdata, 'support')
 	&& @pdata['support'] >= 15) {
@@ -184,7 +184,7 @@ proc('_clear_pinv', @player,
 )
 
 proc('_acc_add', @player, @amount,
-	@pdata = get_value('player.'.to_lower(@player))
+	@pdata = get_value('players', to_lower(@player))
 	if(!@pdata, return(false))
 	if(!array_index_exists(@pdata, 'coins'), @pdata['coins'] = 100)
 	@pdata['coins'] = @pdata['coins'] + @amount
@@ -193,7 +193,7 @@ proc('_acc_add', @player, @amount,
 )
 
 proc('_acc_subtract', @player, @amount,
-	@pdata = get_value('player.'.to_lower(@player))
+	@pdata = get_value('players', to_lower(@player))
 	if(!@pdata, return(false))
 	if(!array_index_exists(@pdata, 'coins'), @pdata['coins'] = 100)
 	@pdata['coins'] = @pdata['coins'] - @amount
@@ -202,7 +202,7 @@ proc('_acc_subtract', @player, @amount,
 )
 
 proc('_acc_balance', @player,
-	@pdata = get_value('player.'.to_lower(@player))
+	@pdata = get_value('players', to_lower(@player))
 	if(!@pdata, return(null))
 	if(!array_index_exists(@pdata, 'coins')) {
 		return(100)

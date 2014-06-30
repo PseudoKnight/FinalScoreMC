@@ -14,7 +14,7 @@ proc('_pmsg', @player, @message,
 			msg('You cannot message that player.')
 		}
 	, # else
-		@pdata = get_value('player.'.to_lower(@player))
+		@pdata = get_value('players', to_lower(@player))
 		if(!@pdata, die(color('red').'Unknown player. If you wish to send an offline message, use their full name.'))
 		if(!array_index_exists(@pdata, 'mail'), @pdata['mail'] = array())
 		array_push(@pdata['mail'], array(

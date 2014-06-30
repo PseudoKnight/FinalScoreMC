@@ -9,7 +9,7 @@ set_interval(8 * 60 * 1000, closure(){
 bind('player_login', null, null, @event) {
 	if(@event['result'] != 'ALLOWED', die())
 	@update = false
-	@pdata = get_value('player.'.to_lower(@event['player']))
+	@pdata = get_value('players', to_lower(@event['player']))
 	if(!@pdata) {
 		@pdata = array('ips': array())
 	}
@@ -78,7 +78,7 @@ bind('player_join', null, null, @event) {
 			set_list_name(_colorname().player())
 		}
 		# homeless players are players left on deleted worlds
-		@pdata = get_value('player.'.to_lower(player()))
+		@pdata = get_value('players', to_lower(player()))
 		if(array_index_exists(@pdata, 'mail')) {
 			foreach(@mail in @pdata['mail']) {
 				msg(color('gray').@mail[0].' (From '.@mail[1].'): '.color('r').@mail[2])
@@ -277,7 +277,7 @@ bind('player_interact_entity', null, array('clicked': 'HORSE'), @event) {
 		&& (!@item
 		|| (@item['type'] != 322
 		&& @item['type'] != 396))) {
-			@pdata = get_value('player.'.to_lower(get_mob_owner(@event['id'])))
+			@pdata = get_value('players', to_lower(get_mob_owner(@event['id'])))
 			if(!@pdata
 			|| !array_index_exists(@pdata, 'shared')
 			|| !array_index_exists(@pdata['shared'], player())
