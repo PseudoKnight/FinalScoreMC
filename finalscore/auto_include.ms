@@ -188,7 +188,7 @@ proc('_acc_add', @player, @amount,
 	if(!@pdata, return(false))
 	if(!array_index_exists(@pdata, 'coins'), @pdata['coins'] = 100)
 	@pdata['coins'] = @pdata['coins'] + @amount
-	store_value('player.'.to_lower(@player), @pdata)
+	store_value('players', to_lower(@player), @pdata)
 	return(true)
 )
 
@@ -197,7 +197,7 @@ proc('_acc_subtract', @player, @amount,
 	if(!@pdata, return(false))
 	if(!array_index_exists(@pdata, 'coins'), @pdata['coins'] = 100)
 	@pdata['coins'] = @pdata['coins'] - @amount
-	store_value('player.'.to_lower(@player), @pdata)
+	store_value('players', to_lower(@player), @pdata)
 	return(true)
 )
 

@@ -72,7 +72,7 @@
 	foreach(@type in @share['types']) {
 		array_push(@pdata['shared'][player()], @type)
 	}
-	store_value('player.'.to_lower(@share['player']), @pdata)
+	store_value('players', to_lower(@share['player']), @pdata)
 	tmsg(@share['player'], color('green').'Now sharing '.array_implode(@share['types'], ' and ').' with '.player().'.')
 	
 	@pdata = get_value('players', to_lower(player()))
@@ -81,7 +81,7 @@
 	foreach(@type in @share['types']) {
 		array_push(@pdata['shared'][@share['player']], @type)
 	}
-	store_value('player.'.to_lower(player()), @pdata)
+	store_value('players', to_lower(player()), @pdata)
 	msg(color('green').'Now sharing '.array_implode(@share['types'], ' and ').' with '.@share['player'].'.')
 	
 	export('share'.player(), null)
@@ -120,7 +120,7 @@
 			}
 		}
 	}
-	store_value('player.'.to_lower(player()), @pdata)
+	store_value('players', to_lower(player()), @pdata)
 	msg(color('green').'You are no longer sharing '.array_implode(@types, ' and ').' with '.@player.'.')
 	
 	@pdata = get_value('players', to_lower(@player))
@@ -140,7 +140,7 @@
 			}
 		}
 	}
-	store_value('player.'.to_lower(@player), @pdata)
+	store_value('players', to_lower(@player), @pdata)
 	if(ponline(@player)) {
 		tmsg(@player, color('green').player().' is no longer sharing '.array_implode(@types, ' and ').' with you.')
 	}
@@ -250,7 +250,7 @@
 	if(!has_permission('group.moderators')) {
 		@pdata = get_value('players', to_lower(@player))
 		@pdata['approval'] = player()
-		store_value('player.'.to_lower(@player), @pdata)
+		store_value('players', to_lower(@player), @pdata)
 	}
 <<<
 

@@ -1,4 +1,4 @@
-/safereload [$force]= >>>
+/safereload [$force] = >>>
 	if(!$force) {
 	
 		@inprogress = array()
@@ -153,7 +153,7 @@
 	if(@bantime, @pdata['ban']['time'] = @bantime)
 	if(@message, @pdata['ban']['message'] = @message)
 	if(player() != '~console', @pdata['ban']['by'] = player())
-	store_value('player.'.to_lower($player), @pdata)
+	store_value('players', to_lower($player), @pdata)
 	if(ponline($player), pkick($player, if(@message, @message, 'Banned. Appeal at FinalScoreMC.com')))
 	msg($player.' is now banned.')
 	console(player().' banned '.$player.'.'.if(@message, ' (Reason: "'.@message.'")'))
@@ -166,7 +166,7 @@
 	if(!@pdata, die('Please use an exact name.'))
 	if(!array_index_exists(@pdata, 'ban'), die('That player is not banned.'))
 	array_remove(@pdata, 'ban')
-	store_value('player.'.to_lower($player), @pdata)
+	store_value('players', to_lower($player), @pdata)
 	msg($player.' is now unbanned.')
 	console(player().' unbanned '.$player)
 <<<
@@ -182,7 +182,7 @@
 /homeless $player = >>>
 	@pdata = get_value('players', to_lower($player))
 	@pdata['homeless'] = true
-	store_value('player.'.to_lower($player), @pdata)
+	store_value('players', to_lower($player), @pdata)
 <<<
 
 /clearchat = >>>
@@ -191,36 +191,23 @@
 	}
 <<<
 
-/donor $player $amount = >>>
+/contribution $player $amount = >>>
 	if(!has_permission('group.administrators'), die('You do not have permission to use this command.'))
-	@pdata = get_value('player.'.to_lower($player))
+	@pdata = get_value('players', to_lower($player))
 	if(!@pdata) {
 		die('No player by that name.')
 	}
-	@pdata['support'] = $amount
-	store_value('player.'.to_lower($player), @pdata)
-	_acc_add($player, $amount * 200)
-	msg('Gave '.$player.' '.$amount * 200.' coins.')
-	console('Gave '.$player.' '.$amount * 200.' coins.')
-	run('/perm player addgroup '.$player.' Donors')
-	@donors = get_value('donors')
-	if(@donors == null || @donors == array()) {
-		@donors = array($player)
+	if(array_index_exists(@pdata, 'support')) {
+		@pdata['support'] += $amount
+		msg('Added $'.$amount.' to '.$player.'\'s contributions; Total: $'.@pdata['support'].'.')
 	} else {
-		array_push(@donors, $player)
+		@pdata['support'] = $amount
+		msg('Set '.$player.'\'s contribution amount to $'.$amount.'.')
 	}
-	store_value('donors', @donors)
-<<<
-
-/setsupport $player $amount [$force=0] = >>>
-	@pdata = get_value('player.'.to_lower($player))
-	if(!@pdata) {
-		if($force == 0, die('No player by that name.'))
-		@pdata = array()
+	store_value('players', to_lower($player), @pdata)
+	if(!array_contains(pgroup($player), 'donors')) {
+		run('/perm player addgroup '.$player.' Donors')
 	}
-	@pdata['support'] = $amount
-	store_value('player.'.to_lower($player), @pdata)
-	msg('Set '.$player.'\'s support amount to $'.$amount)
 <<<
 
 #Set or reset the MOTD

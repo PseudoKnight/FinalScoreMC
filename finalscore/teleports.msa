@@ -46,7 +46,7 @@
 		round(@facing[0], 2),
 		round(@facing[1], 2)
 	))
-	store_value('player.'.to_lower(player()), @pdata)
+	store_value('players', to_lower(player()), @pdata)
 	msg('Set your home to this location.')
 <<<
 

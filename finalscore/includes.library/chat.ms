@@ -22,7 +22,7 @@ proc('_pmsg', @player, @message,
 			player(),
 			@message
 		))
-		store_value('player.'.to_lower(@player), @pdata)
+		store_value('players', to_lower(@player), @pdata)
 		msg(color('green').'Offline message sent to '.@player)
 		msg(color(7).'(To '.@player.'): '.color('r').@message)
 	)

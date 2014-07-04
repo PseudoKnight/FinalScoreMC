@@ -46,7 +46,7 @@ bind('player_login', null, null, @event) {
 		}
 	}
 	if(@update) {
-		store_value('player.'.to_lower(@event['player']), @pdata)
+		store_value('players', to_lower(@event['player']), @pdata)
 	}
 }
 
@@ -71,35 +71,52 @@ bind('player_join', null, null, @event) {
 			msg(@motd)
 			msg(color('1').color('l').'--------------------')
 		}
+		
 		#Tab list colors
 		if(length(player()) > 14) {
 			set_list_name(_colorname().substr(player(), 0, 14))
 		} else {
 			set_list_name(_colorname().player())
 		}
-		# homeless players are players left on deleted worlds
+
 		@pdata = get_value('players', to_lower(player()))
+		@update = false
+		
+		if(!array_index_exists(@pdata, 'uuid')) {
+			@pdata['uuid'] = entity_uuid(pinfo(player(), 13))
+			@update = true
+		}
+		
 		if(array_index_exists(@pdata, 'mail')) {
 			foreach(@mail in @pdata['mail']) {
 				msg(color('gray').@mail[0].' (From '.@mail[1].'): '.color('r').@mail[2])
 			}
 			array_remove(@pdata, 'mail')
-			store_value('player.'.to_lower(player()), @pdata)
+			@update = true
 		}
+		
+		# SET NEW LOCATION
 		if(array_index_exists(@pdata, 'homeless')) {
+		# homeless players are players left on deleted worlds
 			@loc = get_spawn('world')
 			set_ploc(@loc)
 			array_remove(@pdata, 'homeless')
-			store_value('player.'.to_lower(player()), @pdata)
+			@update = true
 		} else if(!has_permission('group.everyone')) {
 			@warp = get_value('warp.intro')
 			@loc = @warp['loc']
 			set_ploc(@warp['loc'])
 			pfacing(@warp['yaw'], @warp['pitch'])
 		}
+		
+		if(@update) {
+			store_value('players', to_lower(player()), @pdata)
+		}
+		
 		if(pworld() == 'custom') {
 			_equip_park()
 		}
+		
 		set_timeout(800, closure(){
 			if(@loc[1] > ploc()[1]) {
 				set_ploc(@loc)
