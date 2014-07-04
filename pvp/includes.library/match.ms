@@ -111,10 +111,12 @@ proc('_pvp_start_match', @id) {
 
 		foreach(array_keys(@pvp['players']), @player) {
 			if(array_index_exists(@pvp['arena'], 'timer')) {
-				if(phas_bar(@player)) {
+				if(function_exists('premove_bar')) {
 					premove_bar(@player)
 				}
-				set_bar_message(@player, @timeleft, @percentage)
+				if(function_exists('set_bar_message')) {
+					set_bar_message(@player, @timeleft, @percentage)
+				}
 			}
 			if(array_index_exists(@pvp['arena'], 'respawntime')
 			&& @pvp['players'][@player]['respawn'] != 0) {
@@ -130,8 +132,10 @@ proc('_pvp_start_match', @id) {
 					if(array_index_exists(@pvp['players'][@player], 'class')) {
 						_class('unload', player(), @pvp['players'][@player]['class'], @pvp)
 					}
-					if(array_index_exists(@pvp['arena'], 'timer') && phas_bar(@player)) {
-						premove_bar(@player)
+					if(array_index_exists(@pvp['arena'], 'timer')) {
+						if(function_exists('premove_bar')) {
+							premove_bar(@player)
+						}
 					}
 					array_remove(@pvp['players'], @player)
 					_clear_pinv(@player)
@@ -421,8 +425,10 @@ proc('_pvp_end_match', @id, @winners) {
 	@pvp = import('pvp'.@id)
 
 	foreach(array_keys(@pvp['players']), @player) {
-		if(array_index_exists(@pvp['arena'], 'timer') && phas_bar(@player)) {
-			premove_bar(@player)
+		if(array_index_exists(@pvp['arena'], 'timer')) {
+			if(function_exists('premove_bar')) {
+				premove_bar(@player)
+			}
 		}
 		if(array_contains(@winners, @player)) {
 			@leader = @player

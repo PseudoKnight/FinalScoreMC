@@ -98,7 +98,7 @@
 		@pvp = import('pvp'.@id)
 		array_remove(@pvp['arena'], 'timer')
 		foreach(@p in @pvp['players']) {
-			if(phas_bar(@p)) {
+			if(function_exists('premove_bar')) {
 				premove_bar(@p)
 			}
 		}

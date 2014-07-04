@@ -152,8 +152,10 @@ bind('player_death', array('priority': 'high', 'id': @id.'death'), null, @e, @id
 			if(array_index_exists(@pvp['players'][player()], 'class')) {
 				_class('unload', player(), @pvp['players'][player()]['class'], @pvp)
 			}
-			if(array_index_exists(@pvp['arena'], 'timer') && phas_bar()) {
-				premove_bar()
+			if(array_index_exists(@pvp['arena'], 'timer')) {
+				if(function_exists('premove_bar')) {
+					premove_bar()
+				}
 			}
 			array_remove(@pvp['players'], player())
 			_set_spectator(@id, player(), @pvp)
@@ -338,8 +340,10 @@ bind('player_command', array('id': @id.'command'), null, @e, @id = @id) {
 	if(array_index_exists(@pvp['players'][player()], 'class')) {
 		_class('unload', player(), @pvp['players'][player()]['class'], @pvp)
 	}
-	if(array_index_exists(@pvp['arena'], 'timer') && phas_bar()) {
-		premove_bar()
+	if(array_index_exists(@pvp['arena'], 'timer')) {
+		if(function_exists('premove_bar')) {
+			premove_bar()
+		}
 	}
 	array_remove(@pvp['players'], player())
 	if(array_index_exists(@pvp['arena'], 'lives')) {
