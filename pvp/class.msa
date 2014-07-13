@@ -178,14 +178,6 @@ case 'rename':
 	store_value('arena', @arenaid, @arena)
 	msg('Changed '.@classid.' class name to '.to_lower($setting))
 	
-# case 'load':
-	# include('includes.library/class.ms')
-	# _class('load', player(), $id)
-	
-# case 'unload':
-	# include('includes.library/class.ms')
-	# _class('unload', player(), $id)
-	
 case 'equip':
 	try(@arenaid = split(':', $id)[0]
 	@classid = split(':', $id)[1], die('You need to specify an arena.'))
