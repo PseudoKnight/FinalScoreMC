@@ -14,14 +14,7 @@ bind('player_death', array('priority': 'high', 'id': @id.'death'), null, @e, @id
 	}
 	
 	try(
-	if(@e['cause']['cause'] == 'BLOCK_EXPLOSION'
-	&& !array_index_exists(@e['cause'], 'damager')) {
-		@deathmessage = @pcolor.player().color('r').' got blown up'
-	
-	} else if(@e['cause']['cause'] == 'CUSTOM') {
-		@deathmessage = @pcolor.player().color('r').' died'
-	
-	} else if(array_index_exists(@pvp['arena'], 'team')) {
+	if(array_index_exists(@pvp['arena'], 'team')) {
 		@parts = parse_args(@e['death_message'])
 		@parts[0] = @pcolor.player().color('r')
 		if(array_index_exists(@pvp['players'], @e['killer'])) {
