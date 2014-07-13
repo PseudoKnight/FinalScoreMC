@@ -502,6 +502,19 @@ if(array_index_exists(@pvp['arena'], 'powerup')) {
 	}
 }
 
+if(array_contains(@pvp['arena']['flags'], 'nobottles')) {
+	array_push(@pvp['binds'], @id.'nobottles')
+	bind('player_consume', array('id': @id.'nobottles'), array('item': 373), @event, @id = @id) {
+		@pvp = import('pvp'.@id)
+		if(!array_index_exists(@pvp['players'], player()), 
+			die())
+			
+		queue_push(closure(){
+			ptake_item(374, 1)
+		})
+	}
+}
+
 if(@pvp['arena']['mode'] == 'ctf') {
 	array_push(@pvp['binds'], @id.'flagpickup')
 	bind('item_pickup', array('id': @id.'flagpickup'), null, @e, @id = @id) { 
