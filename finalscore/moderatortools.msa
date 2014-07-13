@@ -45,6 +45,12 @@
 	})
 <<<
 
+/whitelist $player = >>>
+	_player_uuid(array($player), closure(@array){ 
+		run('/perm player setgroup '.@array[0]['id'].' Everyone')
+	})
+<<<
+
 /hologram $ = >>>
 	@loc = _relative(ploc(), 'up', 57)	
 	@lines = split(',', $)
