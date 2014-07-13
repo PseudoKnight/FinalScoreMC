@@ -140,13 +140,6 @@ bind('player_death', null, null, @event) {
 	}
 }
 
-# Log commands
-bind('player_command', null, null, @event) {
-	if(is_alias(@event['command'])) {
-		console(@event['player'].' ran: '.@event['command'], false)
-	}
-}
-
 # Block wither
 bind('block_place', null, array('type': 144), @event) {
 	if(!array_contains(array('custom', 'dev','outworld_nether', 'outworld', 'outworld_the_end'), pworld())
