@@ -35,7 +35,7 @@ proc('_pvp_start_match', @id) {
 			} else {
 				@time = time()
 			}
-			array_set(@pvp['itemspawn'], @i, @time)
+			array_set(@pvp['itemspawn'], @i, array(0, @time))
 		}
 	}
 	
@@ -184,20 +184,22 @@ proc('_pvp_start_match', @id) {
 			set_pscore('seconds', @king, @score - 1, @id)
 			@check = true
 		}
+		
 		if(array_index_exists(@pvp['arena'], 'itemspawn')) {
 			for(@i = 0, @i < array_size(@pvp['arena']['itemspawn']), @i++) {
-				if((@pvp['itemspawn'][@i] + (@pvp['arena']['itemspawn'][@i]['cooldown'] * 1000)) < time()) {
-					drop_item(@pvp['arena']['itemspawn'][@i]['loc'], array(
-						'type': @pvp['arena']['itemspawn'][@i]['item']['type'], 
-						'data': @pvp['arena']['itemspawn'][@i]['item']['data'], 
-						'qty': @pvp['arena']['itemspawn'][@i]['item']['qty']
-						), false)
+				if(entity_exists(@pvp['itemspawn'][@i][0])) {
+					@pvp['itemspawn'][@i][1] = time()
+				} else if(@pvp['itemspawn'][@i][1] + (@pvp['arena']['itemspawn'][@i]['cooldown'] * 1000) < time()) {
+					@id = drop_item(@pvp['arena']['itemspawn'][@i]['loc'], @pvp['arena']['itemspawn'][@i]['item'], false)
+					set_entity_velocity(@id, array())
 					play_sound(@pvp['arena']['itemspawn'][@i]['loc'], array('sound': 'ENDERMAN_TELEPORT', 'pitch': 1.5))
 					make_effect(@pvp['arena']['itemspawn'][@i]['loc'], 'ENDER_SIGNAL')
-					@pvp['itemspawn'][@i] = time()
+					@pvp['itemspawn'][@i][0] = @id
+					@pvp['itemspawn'][@i][1] = time()
 				}
 			}
 		}
+		
 		if(array_index_exists(@pvp['arena'], 'mobspawn')) {
 			for(@i = 0, @i < array_size(@pvp['arena']['mobspawn']), @i++) {
 				if((@pvp['mobspawn'][@i] + (@pvp['arena']['mobspawn'][@i]['respawn'] * 1000)) < time()) {
@@ -208,6 +210,7 @@ proc('_pvp_start_match', @id) {
 				}
 			}
 		}
+		
 		if(array_index_exists(@pvp['arena'], 'chestspawn')) {
 			for(@i = 0, @i < array_size(@pvp['arena']['chestspawn']), @i++) {
 				if(array_index_exists(@pvp['chestspawn'], @i) 
