@@ -257,6 +257,7 @@
 		@pdata = get_value('players', to_lower(@player))
 		@onlineinfo = pinfo(@player)
 		msg(color('gray').'--[ '.color('l').@player.color('gray').' ]-------------------------')
+		msg(color('gray').'UUID: '.color('r').@pdata['uuid'])
 		msg(color('gray').'Location: '.color('r')._worldname(@onlineinfo[7]).'('.@onlineinfo[7].') '.round(@onlineinfo[1][0]).','.round(@onlineinfo[1][1]).','.round(@onlineinfo[1][2]))
 		if(pmode(@player) == 'CREATIVE') {
 			msg(color('gray').'Gamemode: '.color('r').'CREATIVE')
@@ -271,8 +272,7 @@
 				msg(color('gray').'Ignored by: '.color('r').array_implode(@ignorelist[@player], ', '))
 			}
 		}
-		if(array_index_exists(@pdata, 'support'),
-			msg(color('gray').'Support: '.color('r').'$'.@pdata['support']))
+
 	, 
 		# OFFLINE INFO
 		@pdata = get_value('players', to_lower($player))
@@ -281,6 +281,7 @@
 		@hours = @minutes / 60
 		@days = @hours / 24
 		msg(color('gray').'--[ '.color('l').$player.color('gray').' ]-------------------------')
+		msg(color('gray').'UUID: '.color('r').@pdata['uuid'])
 		if(array_index_exists(@pdata, 'ban'), msg(color('red').'Banned '.color('r')
 			.if(array_index_exists(@pdata['ban'], 'by'), 'by '.@pdata['ban']['by'].' ')
 			.if(array_index_exists(@pdata['ban'], 'time'), 'temporarily ')
