@@ -94,6 +94,7 @@ proc('_class', @action, @player, @class, @pvp) {
 	case 'powerup':
 		set_phealth(@player, min(20, pinfo(@player, 5) + 2))
 		set_phunger(@player, min(20, phunger(@player) + 2))
+		set_psaturation(@player, min(20, psaturation(@player) + 2))
 		@flash = true
 		foreach(@effect in get_peffect(@player)) {
 			if(@effect['id'] == 16) {
