@@ -13,14 +13,14 @@ proc('_set_spectator', @id, @player, @pvp) {
 			@pvp = import('pvp'.@id)
 			if(@pvp['running']) {
 				@pvp['spectators'][] = player()
-				set_collides_with_entities(player(), false)
-				foreach(@p in all_players('custom')) {
-					raw_set_pvanish(player(), true, @p)
-				}
-				set_pflight(player(), true)
 				modify_event('location', @pvp['arena']['spawn'][0][0])
 				set_timeout(50, closure(){
+					foreach(@p in all_players('custom')) {
+						raw_set_pvanish(player(), true, @p)
+					}
+					set_pflight(player(), true)
 					set_peffect(player(), 14, 0, 999, true)
+					set_collides_with_entities(false)
 				})
 			}
 			unbind()
