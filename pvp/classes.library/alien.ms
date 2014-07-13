@@ -5,7 +5,7 @@ case 'load':
 		if(pexp() >= 100) {
 			@arrow = shoot_projectile(player(), 'ARROW')
 			@velocity = entity_velocity(@arrow)
-			set_entity_velocity(@arrow, array(@velocity['x'] * 3, @velocity['y'] * 3, @velocity['z'] * 3))
+			set_entity_velocity(@arrow, array(@velocity['x'] * 2.9, @velocity['y'] * 2.9, @velocity['z'] * 2.9))
 			set_entity_onfire(@arrow, 1)
 			play_sound(ploc(), array('sound': 'ENDERDRAGON_HIT', 'pitch': 2))
 			set_pexp(0)
@@ -30,7 +30,7 @@ case 'load':
 	bind('player_interact', array('id': @player.'teleport'), array('item': 381, 'player': @player, 'button': 'right'), @e, @pvp = @pvp) {
 		cancel()
 		@loc = pinfo(player(), 2)
-		foreach(@p in players_in_radius(@loc, 4)) {
+		foreach(@p in players_in_radius(@loc, 3)) {
 			if(@p != player() && array_index_exists(@pvp['players'], @p)) {
 				@player = @p
 				break()
@@ -41,7 +41,9 @@ case 'load':
 			@loc1 = ploc(@player)
 			@loc2 = ploc()
 			set_ploc(@loc1)
+			damage_entity(pinfo(player(), 13), 1, pinfo(player(), 13))
 			set_ploc(@player, @loc2)
+			damage_entity(pinfo(@player, 13), 1, pinfo(player(), 13))
 			play_sound(@loc1, array('sound': 'ENDERMAN_TELEPORT', 'pitch': 0.5))
 			make_effect(_relative(@loc1, 'up', 2), 'ENDER_SIGNAL')
 			play_sound(@loc2, array('sound': 'ENDERMAN_TELEPORT', 'pitch': 0.5))

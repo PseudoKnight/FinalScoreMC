@@ -29,7 +29,7 @@ case 'load':
 			if(@armor && @armor['type'] == 20) {
 				modify_event('amount', 16)
 			} else {
-				modify_event('amount', 8)
+				modify_event('amount', 6)
 			}
 		} else if(@e['player'] == @p 
 		&& is_numeric(@e['damager'])

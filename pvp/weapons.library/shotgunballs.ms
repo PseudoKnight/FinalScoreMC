@@ -23,7 +23,7 @@ bind('player_interact', array('id': @id.'shotgunshoot'), array('item': 332, 'but
 		for(@i = 0, @i < 8, @i++) {
 			if(entity_exists(@entities[@i]), entity_remove(@entities[@i]))
 		}
-		set_timeout(650, closure(){
+		set_timeout(700, closure(){
 				@item = pinv(player(), @slot)
 				if(!is_null(@item) && @item['type'] == 341) {
 				play_sound(ploc(), array('sound': 'PISTON_RETRACT', 'pitch': 1.5))

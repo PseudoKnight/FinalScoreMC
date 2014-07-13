@@ -83,7 +83,7 @@ bind('player_interact', array('id': @id.'railgun'), array('item': 175, 'button':
 			}
 		}
 		if(@hit) {
-			damage_entity(@e, 17)
+			damage_entity(@e, 20, pinfo(player(), 13))
 			play_effect(@eloc, 'lava_pop', array('particleCount': 4))
 			play_sound(@origin, array('sound': 'SUCCESSFUL_HIT'), player())
 		}
@@ -101,7 +101,7 @@ bind('player_interact', array('id': @id.'railgun'), array('item': 175, 'button':
 		@item['type'] = 402
 		set_pinv(array(null: @item))
 		@slot = pinfo(player(), 15)
-		queue_delay(9000, player().'railgun')
+		queue_delay(8000, player().'railgun')
 		queue_push(closure(){
 			if(ponline(player())) {
 				@item = pinv(player(), @slot)
