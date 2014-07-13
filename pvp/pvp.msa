@@ -70,6 +70,9 @@
 	case 'spectate':
 		@id = to_lower($id)
 		@pvp = import('pvp'.@id)
+		if(!@pvp || !@pvp['running']) {
+			die('Game is not running.')
+		}
 		if(array_index_exists(@pvp['players'], player())) {
 			die('You\'re already in the game.')
 		}
