@@ -58,7 +58,7 @@ bind('player_join', null, null, @event) {
 		if(get_server_info(10)) {
 			_bm_request('set_user_uuid', 'a1634f37480a4bb9a0b2200266597ac0', 
 				array('username': @player, 'user_uuid': entity_uuid(pinfo(@player, 13))),
-				closure(@result, console('User UUID stored in the ban manager.')), 
+				closure(@result, null), 
 				closure(@error_msg, console('Error while storing the UUID in the ban manager. Error: '.@error_msg))
 			)
 		}
