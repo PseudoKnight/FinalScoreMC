@@ -126,11 +126,11 @@ proc('_cluck_spawn') {
 
 proc('_cluck_endround') {
 	@cluck = import('cluck')
-	foreach(@chicken in array_merge(@cluck['chickens'][0], @cluck['chickens'][1])) {
+	try(foreach(@chicken in array_merge(@cluck['chickens'][0], @cluck['chickens'][1])) {
 		if(entity_exists(@chicken)) {
 			entity_remove(@chicken)
 		}
-	}
+	}, return())
 	foreach(@p in array(0, 1)) {
 		if(!@cluck['player'][@p] || (@cluck['gameover'][@p] && @cluck['gameover'][@p] < @cluck['round'])) {
 			continue()
