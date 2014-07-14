@@ -112,7 +112,8 @@ proc('_2d_distance', @arr1, @arr2) {
 	return(floor(sqrt(((@arr2[0] - @arr1[0]) ** 2) + ((@arr2[2] - @arr1[2]) ** 2))))
 }
 
-proc('_fw_loc', @height = 0, @minrange = false, @region = sk_region_info('frogware', 'custom')[0]) {
+proc('_fw_loc', @height = 0, @minrange = false) {
+	@region = sk_region_info('frogware', 'custom')[0]
 	@return = 1
 	@loc = array(
 		@region[0][0] - rand(sqrt((@region[0][0] - @region[1][0]) ** 2)) + 0.5, 
