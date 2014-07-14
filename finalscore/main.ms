@@ -402,8 +402,9 @@ bind('block_break', null, array('type': 56), @event) {
 			}
 		}
 	
-		broadcast(color('c').'[!] '.color('f').player().' found '.color('b').'diamonds '.color(7).if(get_light_at(@event['location']) < 7, '(light level: '.get_light_at(@event['location']).')'),
-		'group.moderators')
+		broadcast(color('c').'[!] '.color('f').player().' found '.color('b').'diamonds '.color(7)
+			.if(get_light_at(@event['location']) < 7, '(light level: '.get_light_at(@event['location']).')'),
+			'group.moderators')
 	})
 }
 
