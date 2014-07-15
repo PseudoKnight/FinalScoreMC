@@ -178,17 +178,16 @@
 
 # TELEPORTATION BETWEEN FRIENDS #
 *:/join $player = >>>
-	include('includes.library/teleports.ms')
 	try(@player = player($player), die('Player not found.'))
-	if(array_contains(@blockedworlds, pworld()), die('You cannot teleport in this galaxy'))
-	if(array_contains(@blockedworlds, pworld($player)), die('That player is out of reach.'))
+	if(!has_permission('command.join.from'), die('You cannot do that from here.'))
+	if(!has_permission(@player, 'command.join.to'), die('That player is out of reach.'))
 
 	# Check it the player is being ignored
 	@ignorelist = import('ignorelist')
-	if (array_index_exists(@ignorelist, player())) {
-		if (array_contains(@ignorelist[player()], @player) || array_contains(@ignorelist[player()], 'all'), die())
+	if(array_index_exists(@ignorelist, player())) {
+		if(array_contains(@ignorelist[player()], @player) || array_contains(@ignorelist[player()], 'all'), die())
 	}
-	if (array_index_exists(@ignorelist, 'all') && array_contains(@ignorelist['all'], @player), die())
+	if(array_index_exists(@ignorelist, 'all') && array_contains(@ignorelist['all'], @player), die())
 
 	@requests = import('requests')
 	@requests[@player] = array('join', player())
@@ -198,17 +197,16 @@
 <<<
 
 *:/invite $player = >>>
-	include('includes.library/teleports.ms')
 	try(@player = player($player), die('Player not found.'))
-	if(array_contains(@blockedworlds, pworld()), die('You cannot teleport in this galaxy'))
-	if(array_contains(@blockedworlds, pworld($player)), die('That player is out of reach.'))
+	if(!has_permission('command.join.to'), die('You cannot do that from here.'))
+	if(!has_permission(@player, 'command.join.from'), die('That player is out of reach.'))
 
 	# Check it the player is being ignored
 	@ignorelist = import('ignorelist')
-	if (array_index_exists(@ignorelist, player())) {
-		if (array_contains(@ignorelist[player()], @player) || array_contains(@ignorelist[player()], 'all'), die())
+	if(array_index_exists(@ignorelist, player())) {
+		if(array_contains(@ignorelist[player()], @player) || array_contains(@ignorelist[player()], 'all'), die())
 	}
-	if (array_index_exists(@ignorelist, 'all') && array_contains(@ignorelist['all'], @player), die())
+	if(array_index_exists(@ignorelist, 'all') && array_contains(@ignorelist['all'], @player), die())
 
 	@requests = import('requests')
 	@requests[@player] = array('invite', player())
@@ -219,16 +217,18 @@
 
 *:/accept = >>>
 	include('includes.library/teleports.ms')
-	if(array_contains(@blockedworlds, pworld()), die('You cannot teleport in this galaxy'))
 	@requests = import('requests')
 	if(!array_index_exists(@requests, player()), die('There is nothing to accept.'))
 	if(!ponline(@requests[player()][1]), die('That player is no longer online.'))
-	if(array_contains(@blockedworlds, pworld(@requests[player()][1])), die('That player is out of reach.'))
 	if(@requests[player()][0] == 'invite') {
+		if(!has_permission('command.join.from'), die('You cannot do that from here.'))
+		if(!has_permission(@requests[player()][1], 'command.join.to'), die('That player is out of reach.'))
 		msg(color('b').'Teleporting to '.@requests[player()][1].' in 3 seconds...')
 		tmsg(@requests[player()][1], color('b').'Teleporting '.player().' in 3 seconds...')
 		_warmuptp(3.7, player(), ploc(@requests[player()][1]))
 	} else {
+		if(!has_permission('command.join.to'), die('You cannot do that from here.'))
+		if(!has_permission(@requests[player()][1], 'command.join.from'), die('That player is out of reach.'))
 		msg(color('b').'Teleporting '.@requests[player()][1].' in 3 seconds...')
 		tmsg(@requests[player()][1], color('b').'Teleporting to '.player().' in 3 seconds...')
 		_warmuptp(3.7, @requests[player()][1], ploc())
