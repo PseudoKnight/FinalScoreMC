@@ -163,7 +163,9 @@ proc('_pvp_start_match', @id) {
 			} else if(!array_contains(sk_current_regions(@player), @pvp['arena']['region'])
 			&& pinfo(@player, 5) > 0) {
 				tmsg(@player, color('gray').'[PVP] '.color('r').'You exited the combat region.')
-				set_timeout(50, closure(pkill(@player)))
+				set_timeout(50, closure(){
+					pkill(@player)
+				})
 			} else if(@pvp['arena']['mode'] == 'koth' 
 			&& array_contains(sk_current_regions(@player), @pvp['arena']['kothregion']) 
 			&& pinfo(@player, 5) > 0) { 
@@ -238,7 +240,7 @@ proc('_pvp_initialize_players', @id, @players) {
 	@c = array(0, 0) # for selecting initial spawn locations
 	foreach(@players, @player) {
 		@pvp = import('pvp'.@id)
-		if(!ponline(@player)) {
+		if(!ponline(@player) || !get_collides_with_entities(@player)) {
 			array_remove(@pvp['players'], @player)
 			continue()
 		}
@@ -458,13 +460,13 @@ proc('_pvp_end_match', @id, @winners) {
 	
 	if(@pvp['arena']['stats'] == true) {
 		_regionmsg(@pvp['arena']['broadcast'], 
-			color('gray').'|--'.color('bold').'[ STATS ]'.color('gray').'----------|\n'
+			color('gray').'|--'.color('bold').'[ STATS ]'.color('gray').'-------------|\n'
 			.color('gray').' Kills : Assists : Deaths\n'
-			.'|---------------------|')
+			.'|------------------------|')
 		foreach(@player: @stats in @pvp['stats']) {
 			_regionmsg(@pvp['arena']['broadcast'], ' '.@stats['kills'].' : '.@stats['assists'].' : '.@stats['deaths'].' - '.@player)
 		}
-		_regionmsg(@pvp['arena']['broadcast'], color('gray').'|---------------------|')
+		_regionmsg(@pvp['arena']['broadcast'], color('gray').'|------------------------|')
 	}
 	
 	if(array_index_exists(@pvp['arena'], 'chestspawn')) {
