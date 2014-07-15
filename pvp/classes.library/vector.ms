@@ -47,7 +47,7 @@ case 'load':
 				play_sound(ploc(@player), array('sound': 'CAT_PURREOW', 'pitch': 0, 'volume': 2))
 			}
 			queue_delay(1000 * rand(5, 15), @player)
-			queue_push(closure(_manti_noise()), @player)
+			queue_push(closure(_manti_noise(@player)), @player)
 		}
 	}
 	_manti_noise(@player)

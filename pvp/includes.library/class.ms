@@ -51,7 +51,8 @@ proc('_class', @action, @player, @class, @pvp) {
 						@slot = pinfo(player(), 15)
 						@item['type'] = 361
 						set_pinv(array(null: @item))
-						queue_delay(2000, player().'spawner')
+						queue_clear(player().'spawner')
+						queue_delay(3000, player().'spawner')
 						queue_push(closure(){
 							@item = pinv(player(), @slot)
 							if(!is_null(@item) && @item['type'] == 361) {

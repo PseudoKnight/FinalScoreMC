@@ -5,15 +5,15 @@ case 'load':
 		@slot = pinfo(player(), 15)
 		@item = pinv(player(), null)
 		set_pinv(player(), array(null: array('type': 280, 'meta': array('display': 'Recharging...'))))
-		queue_clear(@player.'lightning')
-		queue_delay(6000, @player.'lightning')
+		queue_clear(player().'lightning')
+		queue_delay(6000, player().'lightning')
 		queue_push(closure(){
 			@newitem = pinv(player(), @slot)
 			if(@newitem && @newitem['type'] == 280) {
 				set_inventory_item(pinfo(player(), 13), @slot, @item)
 				play_sound(ploc(), array('sound': 'FIZZ'))
 			}
-		}, @player.'lightning')
+		}, player().'lightning')
 	}
 	
 	bind('player_interact', array('id': @player.'woosh'), array('item': 288, 'button': 'right', 'player': @player), @e) {
@@ -48,14 +48,14 @@ case 'load':
 		@slot = pinfo(player(), 15)
 		@item = pinv(player(), null)
 		set_pinv(player(), array(null: array('type': 351, 'meta': array('display': 'Recharging...'))))
-		queue_clear(@player.'woosh')
-		queue_delay(6000, @player.'woosh')
+		queue_clear(player().'woosh')
+		queue_delay(6000, player().'woosh')
 		queue_push(closure(){
 			@newitem = pinv(player(), @slot)
 			if(@newitem && @newitem['type'] == 351) {
 				set_inventory_item(pinfo(player(), 13), @slot, @item)w
 			}
-		}, @player.'woosh')
+		}, player().'woosh')
 	}
 		
 case 'unload':

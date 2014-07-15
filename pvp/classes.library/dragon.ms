@@ -39,7 +39,7 @@ case 'load':
 	}
 
 	bind('player_toggle_sneak', array('id': @player.'dragon2'), array('player': @player, 'sneaking': true), @e) {
-		if(!phas_flight()) {
+		if(!entity_grounded(pinfo(player(), 13))) {
 			set_pexp(0)
 		}
 	}
