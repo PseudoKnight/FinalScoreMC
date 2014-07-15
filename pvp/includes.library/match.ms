@@ -426,6 +426,8 @@ proc('_pvp_check_objectives', @id) {
 
 proc('_pvp_end_match', @id, @winners) {
 	@pvp = import('pvp'.@id)
+	
+	if(@pvp['running'] != 2, return())
 
 	foreach(array_keys(@pvp['players']), @player) {
 		if(array_index_exists(@pvp['arena'], 'timer')) {
@@ -493,6 +495,8 @@ proc('_pvp_end_match', @id, @winners) {
 	}
 
 	clear_task(@pvp['interval'])
+	
+	@pvp['running'] = 3
 
 	set_timeout(3000, closure(){
 		_remove_region_entities(@pvp['arena']['region'])
@@ -531,7 +535,7 @@ proc('_pvp_end_match', @id, @winners) {
 			})
 		}
 		remove_scoreboard(@id)
-		@pvp = array('players': array(), 'running': false, 'cooldown': time())
+		@pvp = array('players': array(), 'running': 0, 'cooldown': time())
 		export('pvp'.@id, @pvp)
 	})
 }
