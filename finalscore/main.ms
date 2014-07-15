@@ -6,6 +6,10 @@ set_interval(8 * 60 * 1000, closure(){
 	}
 })
 
+bind('server_ping', null, null, @event) {
+	modify_event('motd', colorize('&6FinalScore&eMC'))
+}
+
 bind('player_login', null, null, @event) {
 	if(@event['result'] != 'ALLOWED', die())
 	@update = false
