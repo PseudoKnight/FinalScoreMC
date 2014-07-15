@@ -10,6 +10,7 @@ proc('_set_spectator', @id, @player, @pvp) {
 		set_peffect(@player, 14, 0, 999, true)
 	} else {
 		bind('player_spawn', null, array('player': @player), @e, @id = @id) {
+			unbind()
 			@pvp = import('pvp'.@id)
 			if(@pvp['running']) {
 				@pvp['spectators'][] = player()
@@ -23,7 +24,6 @@ proc('_set_spectator', @id, @player, @pvp) {
 					set_collides_with_entities(false)
 				})
 			}
-			unbind()
 		}
 	}
 }
