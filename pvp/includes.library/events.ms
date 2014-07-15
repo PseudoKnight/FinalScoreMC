@@ -193,11 +193,11 @@ bind('player_quit', array('id': @id.'quit'), null, @e, @id = @id) {
 
 	bind('player_join', null, array('player': player()), @e, @id = @id) {
 		@pvp = import('pvp'.@id)
-		if(@pvp && @pvp['running'] && pworld() == 'custom') {
-			set_ploc(@pvp['arena']['lobby'])
-			_clear_pinv()
-		}
 		unbind()
+		if(@pvp && pworld() == 'custom') {
+			_clear_pinv()
+			try(set_ploc(@pvp['arena']['lobby']))
+		}
 	}
 }
 
