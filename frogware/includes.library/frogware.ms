@@ -27,7 +27,7 @@ proc('_fw_endgame', @winners) {
 	if(array_contains(get_scoreboards(), 'fw')) { remove_scoreboard('fw') }
 }
 
-proc('_fw_startround', @secs = 9) {
+proc('_fw_startround', @secs = 12) {
 	if(pworld() != 'custom') {
 		_fw_endgame(array())
 		_fw_msg('Host left the game.')
@@ -37,6 +37,8 @@ proc('_fw_startround', @secs = 9) {
 		@winners = array()
 		@count = 0
 		@total = 0
+		@highscore = 0
+		@goal = get_pscore('score', 'GOAL', 'fw')
 		foreach(@p in all_players('custom')) {
 			if(_fw_player(@p)) {
 				@total++
@@ -49,7 +51,12 @@ proc('_fw_startround', @secs = 9) {
 							@count++
 						}
 					}
-					if(get_pscore('score', @p, 'fw') == get_pscore('score', 'GOAL', 'fw'), array_push(@winners, @p))
+					@score = get_pscore('score', @p, 'fw')
+					if(@score == @goal) {
+						array_push(@winners, @p)
+					} else if(@score > @highscore) {
+						@highscore = @score
+					}
 				} else {
 					set_pscoreboard(@p)
 					reset_all_pscores(@p, 'fw')
@@ -60,12 +67,7 @@ proc('_fw_startround', @secs = 9) {
 		if(array_size(@winners) > 0 || @total == 0) {
 			_fw_endgame(@winners)
 		} else {
-			if((@total <= 2 && @count == @total)
-			|| (@total > 2 && @count >= (@total - 1))) {
-				@secs--
-			} else if(@count == 0 || (@total > 2 && @count <= 1)) {
-				@secs++
-			}
+			@secs = 12 - round(8 * (@highscore / @goal))
 			@tasks = array('climb', 'keepaway', 'harvest', 'koth', 'cake', 'fall', 'cluck', 'frogegg', 'lavafall', 'shepherd')
 			@task = @tasks[rand(array_size(@tasks))]
 			if(@total == 1 && @task == 'pvp', @task = @tasks[rand(array_size(@tasks))])
