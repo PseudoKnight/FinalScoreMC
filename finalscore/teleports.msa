@@ -190,11 +190,17 @@
 	if(array_index_exists(@ignorelist, 'all') && array_contains(@ignorelist['all'], @player), die())
 
 	@requests = import('requests')
+	if(array_index_exists(@requests, @player) 
+	&& @requests[@player][0] == 'join'
+	&& @requests[@player][1] == player()) {
+		die('You\'ve already send a join request to this player.')
+	}
 	@requests[@player] = array('join', player())
 	export('requests', @requests)
 	tmsg(@player, color('b').player().' has requested to join you. /accept')
 	msg(color('b').'Request to join sent to '.@player.'.')
 <<<
+*:/tpa $player = call_alias('/join '.$player)
 
 *:/invite $player = >>>
 	try(@player = player($player), die('Player not found.'))
@@ -209,6 +215,11 @@
 	if(array_index_exists(@ignorelist, 'all') && array_contains(@ignorelist['all'], @player), die())
 
 	@requests = import('requests')
+	if(array_index_exists(@requests, @player) 
+	&& @requests[@player][0] == 'invite'
+	&& @requests[@player][1] == player()) {
+		die('You\'ve already send an invite request to this player.')
+	}
 	@requests[@player] = array('invite', player())
 	export('requests', @requests)
 	tmsg(@player, color('b').player().' has requested that you join them. /accept')
