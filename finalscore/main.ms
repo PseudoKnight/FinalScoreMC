@@ -364,19 +364,40 @@ bind('player_enter_bed', null, null, @event) {
     }
 }
 
-# bind('block_dispense', null, array('type': 'DISPENSER'), @e,
-	# if(@e['location']['world'] == 'dev') {
-		# try(@inv = get_inventory(@e['location']), die())
-		# for(@i = 0, @i < array_size(@inv), @i++,
-			# if(@inv[@i]) {
-				# @inv[@i]['qty'] = 64
-			# }
-		# )
-		# set_timeout(50, closure(
-		# set_inventory(@e['location'], @inv)
-		# ))
-	# }
-# )
+# Infinite Dispensers
+bind('block_dispense', null, array('type': 'DISPENSER'), @e) {
+	if(@e['location']['world'] == 'dev' || @e['location']['world'] == 'custom') {
+		if(!array_contains(sk_region_check_flag(@e['location'], 'blocked-cmds'), '/finitedispensers')) {
+			if(@e['item']['type'] == 401) {
+				cancel()
+				@dirs = array(8: 'down', 9: 'up', 10: 'north', 11: 'south', 12: 'west', 13: 'east')
+				@dir = @dirs[split(':', get_block_at(@e['location']))[1]]
+				@loc = _relative(@e['location'], @dir)
+				@loc['x'] += 0.5
+				@loc['y'] += 0.5
+				@loc['z'] += 0.5
+				@firework = @e['item']['meta']['firework']
+				for(@i = 0, @i < array_size(@firework['colors']), @i++) {
+					@firework['colors'][@i] = array_normalize(@firework['colors'][@i])
+				}
+				for(@i = 0, @i < array_size(@firework['fade']), @i++) {
+					@firework['fade'][@i] = array_normalize(@firework['fade'][@i])
+				}
+				launch_firework(@loc, @firework)
+			} else {
+				try(@inv = get_inventory(@e['location']), die())
+				for(@i = 0, @i < array_size(@inv), @i++) {
+					if(@inv[@i]) {
+						@inv[@i]['qty'] = 64
+					}
+				}
+				set_timeout(50, closure(){
+					set_inventory(@e['location'], @inv)
+				})
+			}
+		}
+	}
+}
 
 # Limit the number of mobs that can be built up from a mob spawner
 bind('creature_spawn', null, array('reason': 'SPAWNER'), @event) {
