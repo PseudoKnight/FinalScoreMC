@@ -19,7 +19,7 @@ case 'load':
 	bind('player_interact', array('id': @player.'woosh'), array('item': 288, 'button': 'right', 'player': @player), @e) {
 		@loc1 = ploc()
 		foreach(@player in players_in_radius(ploc(), 8)) {
-			if(@player == player(), continue())
+			if(@player == player() || pinfo(@player, 5) <= 0, continue())
 			@loc2 = ploc(@player)
 			@loc2['y'] += 2
 			@dist = sqrt(((@loc2['x'] - @loc1['x']) ** 2) + ((@loc2['y'] - @loc1['y']) ** 2) + ((@loc2['z'] - @loc1['z']) ** 2))
