@@ -663,7 +663,7 @@ if(@pvp['arena']['mode'] == 'ctf' || array_index_exists(@pvp['arena'], 'captain'
 if(array_contains(@pvp['arena']['flags'], 'infinitedispensers')) {
 	array_push(@pvp['binds'], @id.'infinitedispensers')
 	bind('projectile_hit', array('id': @id.'infinitedispensers'), array('type': 'ARROW'), @e) {
-		if(@e['location']['world'] == 'custom' && is_null(@e['shooter'])) {
+		if(@e['location']['world'] == 'custom' && is_array(@e['shooter'])) {
 			entity_remove(@e['id'])
 		}
 	}
