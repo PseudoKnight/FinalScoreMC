@@ -7,7 +7,7 @@ set_interval(8 * 60 * 1000, closure(){
 })
 
 bind('server_ping', null, null, @event) {
-	modify_event('motd', colorize('&6FinalScore&eMC'))
+	modify_event('motd', colorize('&6&l\u1260&d&l\u1260&b&l\u1260&4&l\u1260 &6&lFINALSCORE&e&lMC \u00AB &f\u25AA \u25AA \u25AA'))
 }
 
 bind('player_login', null, null, @event) {
@@ -67,13 +67,13 @@ bind('player_join', null, null, @event) {
 			)
 		}
 		#Welcome messages
-		msg(color('1').color('l').'--------------------')
-		msg(color('gold').' \u2302'.color('red').' \u2302'.color('aqua').' \u2302'.color('dark_red').' \u2302'.color('gold').color('l').' FINALSCORE '.color('yellow').color('l').'\u00AB'.color('r').' \u25AA \u25AA \u25AA')
-		msg(color('1').color('l').'--------------------')
+		msg(color('1').color('l').'----------------------')
+		msg(colorize(' &6&l\u1260&d&l\u1260&b&l\u1260&4&l\u1260 &6&lFINALSCORE&e&lMC \u00AB &r\u25AA \u25AA \u25AA'))
+		msg(color('1').color('l').'----------------------')
 		if(@motd = get_value('motd')) {
 			if(length(@motd) < 20, @motd = ' '.@motd)
 			msg(@motd)
-			msg(color('1').color('l').'--------------------')
+			msg(color('1').color('l').'----------------------')
 		}
 		
 		#Tab list colors
