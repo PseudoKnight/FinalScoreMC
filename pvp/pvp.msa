@@ -90,6 +90,7 @@
 		if(!$id, die())
 		@id = to_lower($id)
 		@pvp = import('pvp'.@id)
+		if(!@pvp, die())
 		@pvp['arena']['timer'][1] += $team
 		export('pvp'.@id, @pvp)
 		_regionmsg(@pvp['arena']['broadcast'], 'Added '.$team.' more minutes.')
