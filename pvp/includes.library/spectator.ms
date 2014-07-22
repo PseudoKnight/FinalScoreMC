@@ -7,7 +7,7 @@ proc('_set_spectator', @id, @player, @pvp) {
 		}
 		set_pflight(@player, true)
 		set_ploc(@player, @pvp['arena']['spawn'][0][0])
-		set_peffect(@player, 14, 0, 999, true)
+		set_peffect(@player, 14, 0, 9999, true)
 	} else {
 		bind('player_spawn', null, array('player': @player), @e, @id = @id) {
 			unbind()
@@ -20,7 +20,7 @@ proc('_set_spectator', @id, @player, @pvp) {
 						raw_set_pvanish(player(), true, @p)
 					}
 					set_pflight(player(), true)
-					set_peffect(player(), 14, 0, 999, true)
+					set_peffect(player(), 14, 0, 9999, true)
 					set_collides_with_entities(false)
 				})
 			}
