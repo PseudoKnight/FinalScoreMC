@@ -531,7 +531,7 @@ if(@pvp['arena']['mode'] == 'ctf') {
 					if(pinv(player(), 103) != null && pinv(player(), 103)['type'] == 8) {
 						play_sound(@pvp['arena']['ctfflag'][0], array('sound': 'ZOMBIE_METAL', 'volume': 3))
 						@pvp['team'][0]['score']++
-						set_pscore('captures', to_lower(@pvp['arena']['team'][0]['name']), @pvp['team'][0]['score'], @id)
+						set_pscore('captures', @pvp['arena']['team'][0]['name'], @pvp['team'][0]['score'], @id)
 						set_pinv(player(), array(103: null))
 						_regionmsg(@pvp['arena']['broadcast'], color('gray').'[PVP] '
 							.color(@pvp['arena']['team'][0]['color']).player().color('r').' secured the '
@@ -573,7 +573,7 @@ if(@pvp['arena']['mode'] == 'ctf') {
 						set_pinv(player(), array(103: null))
 						play_sound(@pvp['arena']['ctfflag'][1], array('sound': 'ZOMBIE_METAL', 'volume': 3))
 						@pvp['team'][1]['score']++
-						set_pscore('captures', to_lower(@pvp['arena']['team'][1]['name']), @pvp['team'][1]['score'], @id)
+						set_pscore('captures', @pvp['arena']['team'][1]['name'], @pvp['team'][1]['score'], @id)
 						_regionmsg(@pvp['arena']['broadcast'], color('gray').'[PVP] '
 							.color(@pvp['arena']['team'][1]['color']).player().color('r').' secured the '
 							.color(@pvp['arena']['team'][0]['color']).'flag'.color('r').'!')
