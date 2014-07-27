@@ -46,7 +46,7 @@ case 'load':
 			if(pinfo(@player, 5) > 0) {
 				play_sound(ploc(@player), array('sound': 'CAT_PURREOW', 'pitch': 0, 'volume': 2))
 			}
-			queue_delay(1000 * rand(5, 15), @player)
+			queue_delay(1000 * rand(6, 18), @player)
 			queue_push(closure(_manti_noise(@player)), @player)
 		}
 	}
