@@ -1,23 +1,3 @@
-*:/relativecoords = >>>
-	if(!has_permission('group.builders'), die('No permission.'))
-	@cmdblk = pcursor()
-	try(@cmd = get_block_command(@cmdblk), die('Not a commandblock'))
-	@loc1 = sk_pos1()
-	@x1 = integer(@loc1[0] - @cmdblk['x'])
-	@y1 = integer(@loc1[1] - @cmdblk['y'])
-	@z1 = integer(@loc1[2] - @cmdblk['z'])
-	@parts = parse_args(@cmd)
-	if((array_size(@parts) > 0 && (@parts[0] == '/fill' || @parts[0] == 'fill')) || (array_size(@parts) > 1 && @parts[1] == '/fill')) {
-		@loc2 = sk_pos2()
-		@x2 = integer(@loc2[0] - @cmdblk['x'])
-		@y2 = integer(@loc2[1] - @cmdblk['y'])
-		@z2 = integer(@loc2[2] - @cmdblk['z'])
-		set_block_command(@cmdblk, @cmd.' ~'.@x1.' ~'.@y1.' ~'.@z1.' ~'.@x2.' ~'.@y2.' ~'.@z2.' ')
-	} else {
-		set_block_command(@cmdblk, @cmd.' ~'.@x1.' ~'.@y1.' ~'.@z1.' ')
-	}
-<<<
-
 *:/display $ = >>>
 	if(!has_permission('command.display'), die('You do not have permission to use this command.'))
 	if(length($) > 30, die('The name can only be 30 characters long.'))
@@ -40,7 +20,8 @@
 	set_pinv(array(null: @inv))
 <<<	
 
-/endercrystal = >>>
+*:/endercrystal = >>>
+	if(!has_permission('group.moderators'), die('You do not have permission.'))
 	@loc = _relative(pcursor(), 'up')
 	set_block_at(@loc, '7:0')
 	spawn_entity('ENDER_CRYSTAL', 1, array(@loc[0] + 0.5, @loc[1], @loc[2] + 0.5, @loc[3]))
@@ -81,6 +62,26 @@
 	}
 <<<
 
+*:/relativecoords = >>>
+	if(!has_permission('group.builders'), die('No permission.'))
+	@cmdblk = pcursor()
+	try(@cmd = get_block_command(@cmdblk), die('Not a commandblock'))
+	@loc1 = sk_pos1()
+	@x1 = integer(@loc1[0] - @cmdblk['x'])
+	@y1 = integer(@loc1[1] - @cmdblk['y'])
+	@z1 = integer(@loc1[2] - @cmdblk['z'])
+	@parts = parse_args(@cmd)
+	if((array_size(@parts) > 0 && (@parts[0] == '/fill' || @parts[0] == 'fill')) || (array_size(@parts) > 1 && @parts[1] == '/fill')) {
+		@loc2 = sk_pos2()
+		@x2 = integer(@loc2[0] - @cmdblk['x'])
+		@y2 = integer(@loc2[1] - @cmdblk['y'])
+		@z2 = integer(@loc2[2] - @cmdblk['z'])
+		set_block_command(@cmdblk, @cmd.' ~'.@x1.' ~'.@y1.' ~'.@z1.' ~'.@x2.' ~'.@y2.' ~'.@z2.' ')
+	} else {
+		set_block_command(@cmdblk, @cmd.' ~'.@x1.' ~'.@y1.' ~'.@z1.' ')
+	}
+<<<
+
 *:/dye $r $g $b = >>>
 	if(!has_permission('command.dye'), die('You do not have permission to use this command.'))
 	if(pinv(player(), null) && is_leather_armor(pinfo(player(), 15))) {
@@ -92,12 +93,17 @@
 
 *:/potion [$cmd] [$id] [$strength] [$seconds] = >>>
 	if(!has_permission('command.potion'), die('You do not have permission to use this command.'))
+	if(!$id, die('Usage: /potion <create|add> <potionEffect> <strength> <seconds>'))
 	@effects = _get_effects()
-	if(!$id, die('Usage: /potion <set|add> <potionEffect> <strength> <seconds>'))
 	if(!array_index_exists(@effects, $id), die('Available potion effects: '.@effects))
 	if(is_numeric($id), @id = $id, @id = @effects[$id])
 	@effectdata = array(1: 2, 2: 10, 5: 9, 6: 5, 7: 12, 10: 1, 12: 3, 14: 14, 16: 6, 18: 8)
-	if(array_index_exists(@effectdata, @id), @data = @effectdata[@id], @data = 16)
+	if(array_index_exists(@effectdata, @id)) {
+		@data = @effectdata[@id]
+	} else {
+		@data = 16
+	}
+	
 	switch($cmd) {
 	case 'add':
 		@item = pinv(player(), null)
@@ -106,7 +112,7 @@
 		if(!array_index_exists(@item['meta'], 'potions'), @item['meta']['potions'] = array())
 		array_push(@item['meta']['potions'], array('id': @id, 'strength': $strength - 1, 'seconds': $seconds))
 		set_pinv(array(null: @item))
-	case 'set':
+	case 'create':
 		set_pinv(array(null: array('type': 373, 'data': @data, 'meta': array('potions': array(array('id': @id, 'strength': $strength - 1, 'seconds': $seconds))))))
 	default: 
 		die('Usage: /potion <set|add> <potionEffect> <strength> <seconds>')
@@ -258,7 +264,8 @@
 	if(@player != player(), msg('Set '.@player.'\'s game mode to '.@mode))
 <<<
 
-/setrider $horse $rider = >>>
+*:/setrider $horse $rider = >>>
+	if(!has_permission('group.moderators'), die('You do not have permission to use this command.'))
 	set_entity_rider(pinfo($horse, 13), pinfo($rider, 13))
 <<<
 
