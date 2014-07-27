@@ -25,6 +25,11 @@ bind('player_teleport', null, null, @event) {
 			}
 		})
 	}
+	
+	# if((@event['to']['world'] == 'custom' || @event['to']['world'] == 'dev') 
+	# && @event['from']['world'] != 'custom' && @event['from']['world'] != 'dev') {
+		# console(player().'\'s inventory: '.pinv())
+	# }
 }
 
 bind('player_interact', null, array('item': 368, 'button': 'right'), @event) {

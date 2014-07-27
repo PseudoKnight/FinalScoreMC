@@ -2,17 +2,6 @@
 
 *:/cake [$cmd] [$] = >>>
 	switch($cmd) {
-	case 'refactor':
-		if(!array_contains(pgroup(), 'administrators'), die('You do not have permission to use this command.'))
-		@cakes = get_values('cakeinfo')
-		@cakeinfo = array()
-		foreach(@key: @value in @cakes) {
-			@id = split('.', @key)[1]
-			@cakeinfo[@id] = @value
-			clear_value(@key)
-		}
-		store_value('cakeinfo', @cakeinfo)
-		
 	case 'list':
 		@cakes = get_value('cakeinfo')
 		@names = array('challenge': '', 'secret': '')

@@ -96,7 +96,7 @@ bind('player_interact', array('id': @id.'firebreath'), array('item': 377, 'butto
 	}
 	#msg((nano_time() - @time) / 1000000)
 	@item = pinv(player(), null)
-	@item['qty'] = @item['qty'] - 1
+	@item['qty'] -= 1
 	if(@item['qty'] == 0) {
 		set_pinv(array(null: null))
 	} else {

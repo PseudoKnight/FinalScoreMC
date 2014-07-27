@@ -206,15 +206,15 @@ proc('_create_dungeon', @region, @world, @scale) {
 				}
 			}
 			#ceiling
-			if(@dungeon[@c][@r] == 'stairs') {
-				if(@z - (@rooms[0]['r1'] * @scale) - 1 == @height + 1) {
-					set_block_at(array(@coords[1][0] + @x, @coords[1][1] + @height + 1, @coords[1][2] + @z, @world), @mat['stairs'])
-				} else if(@z - (@rooms[0]['r1'] * @scale) - 1 < @height + 1) {
-					set_block_at(array(@coords[1][0] + @x, @coords[1][1] + @height + 1, @coords[1][2] + @z, @world), @mat['room'])
-				}
-			} else {
-				set_block_at(array(@coords[1][0] + @x, @coords[1][1] + @height + 1, @coords[1][2] + @z, @world), @mat['ceiling'])
-			}
+			# if(@dungeon[@c][@r] == 'stairs') {
+				# if(@z - (@rooms[0]['r1'] * @scale) - 1 == @height + 1) {
+					# set_block_at(array(@coords[1][0] + @x, @coords[1][1] + @height + 1, @coords[1][2] + @z, @world), @mat['stairs'])
+				# } else if(@z - (@rooms[0]['r1'] * @scale) - 1 < @height + 1) {
+					# set_block_at(array(@coords[1][0] + @x, @coords[1][1] + @height + 1, @coords[1][2] + @z, @world), @mat['room'])
+				# }
+			# } else {
+				# set_block_at(array(@coords[1][0] + @x, @coords[1][1] + @height + 1, @coords[1][2] + @z, @world), @mat['ceiling'])
+			# }
 		}
 		}, 'd1')
 	}
