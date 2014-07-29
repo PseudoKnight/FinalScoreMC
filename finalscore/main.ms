@@ -227,13 +227,6 @@ bind('sign_changed', null, null, @event) {
 	}
 }
 
-# Sponge splitting
-# bind('block_break', null, array('type': 19), @event) {
-	# if(rand(16) < 1) {
-		# drop_item(@event['location'], array('type': 19), 1)
-	# }
-# }
-
 # prevent people from pushing minecart hoppers underneath chests
 bind('vehicle_collide', null, array('type': 'MINECART_HOPPER', 'collisiontype': 'ENTITY', 'hittype': 'PLAYER'), @event) {
 	cancel()
@@ -257,7 +250,7 @@ bind('player_interact', null, array('block': 122), @event) {
 	}
 }
 
-# DISPENER PARKING
+# DISPENSER PARKING
 bind('vehicle_collide', null, array('type': 'MINECART', 'collisiontype': 'BLOCK', 'hittype': 23), @event) {
 	for(@i = 0, @i < get_inventory_size(@event['block']), @i++) {
 		if(is_null(get_inventory_item(@event['block'], @i))) {
