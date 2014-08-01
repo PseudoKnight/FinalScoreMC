@@ -1,12 +1,11 @@
 switch(@action) {
 case 'load':
-	bind('player_interact', array('id': @player.'blind'), array('player': @player, 'item': 290, 'button': 'right'), @e, @pvp) {
-		@pvp = import('pvp'.@id)
+	bind('player_interact', array('id': @player.'blind'), array('player': @player, 'item': 290, 'button': 'right'), @e) {
 		@item = pinv(player(), null)
 		if(@item['data'] > 0, die())
 		foreach(@player in players_in_radius(ploc(), 18)) {
 			if(@player != player()
-			&& array_index_exists(@pvp['players'], @player)) {
+			&& get_collides_with_entities(@player)) {
 				set_peffect(@player, 15, 0, 7)
 			}
 		}
