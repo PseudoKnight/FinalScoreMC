@@ -48,8 +48,15 @@
 		export('pvp'.@id, @pvp)
 		if(@pvp['running'] == 1) {
 			if(array_index_exists(@pvp['arena'], 'classes')) {
-				include('includes.library/class.ms')
-				_class_select(@id, @pvp)
+				if(!array_index_exists(@pvp['players'][player()], 'team') || @pvp['players'][player()]['team'] == 0) {
+					if(array_contains(all_virtualchests(), @id.'0')) {
+						popen_virtualchest(player(), @id.'0')
+					}
+				} else {
+					if(array_contains(all_virtualchests(), @id.'1')) {
+						popen_virtualchest(player(), @id.'1')
+					}
+				}
 			}
 			
 		} else if(@pvp['running'] > 1) {
