@@ -32,7 +32,8 @@ bind('player_death', array('priority': 'high', 'id': @id.'death'), null, @e, @id
 	)
 	
 	@pvp['stats'][player()]['deaths'] += 1
-	if(array_index_exists(@pvp['players'], @e['killer'])) {
+	if(array_index_exists(@pvp['players'], @e['killer'])
+	&& @e['killer'] != @e['player']) {
 		@pvp['stats'][@e['killer']]['kills'] += 1
 	}
 	@totaldamage = 0
