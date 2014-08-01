@@ -431,93 +431,105 @@ proc('_pvp_end_match', @id, @winners) {
 	
 	if(@pvp['running'] != 2, return())
 
-	foreach(array_keys(@pvp['players']), @player) {
-		if(array_index_exists(@pvp['arena'], 'timer')) {
-			if(function_exists('premove_bar')) {
-				premove_bar(@player)
+	try(
+	
+		foreach(array_keys(@pvp['players']), @player) {
+			if(array_index_exists(@pvp['arena'], 'timer')) {
+				if(function_exists('premove_bar')) {
+					premove_bar(@player)
+				}
+			}
+			if(array_contains(@winners, @player)) {
+				@leader = @player
+				if(ponline(@player) && @pvp['coins'] >= 1) {
+					_acc_add(@player, @pvp['coins'])
+					tmsg(@player, color('gold').'+ '.@pvp['coins'].if(@pvp['coins'] >= 2, ' coins', ' coin'))
+				}
 			}
 		}
-		if(array_contains(@winners, @player)) {
-			@leader = @player
-			if(ponline(@player) && @pvp['coins'] >= 1) {
-				_acc_add(@player, @pvp['coins'])
-				tmsg(@player, color('gold').'+ '.@pvp['coins'].if(@pvp['coins'] >= 2, ' coins', ' coin'))
+		
+		if(array_contains(array('ctf', 'tdm', 'infection'), @pvp['arena']['mode']) && array_size(@winners) > 0) {
+			_worldmsg('custom', color('gray').'[PVP] '
+				.color(@pvp['arena']['team'][@pvp['players'][@leader]['team']]['color']).color('bold')
+				.@pvp['arena']['team'][@pvp['players'][@leader]['team']]['name'].' win!\n'
+				.color(@pvp['arena']['team'][@pvp['players'][@leader]['team']]['color']).array_implode(@winners, ' '))
+		} else if(array_size(@winners) > 0) {
+			_worldmsg('custom', color('gray').'[PVP] '.color('r').array_implode(@winners, ' and ').' wins!')
+
+		} else {
+			_worldmsg('custom', color('gray').'[PVP] '.color('r').'Nobody wins! Wait.. what?!')
+		}
+		
+		if(@pvp['arena']['stats'] == true) {
+			_regionmsg(@pvp['arena']['broadcast'], 
+				color('gray').'|--'.color('bold').'[ STATS ]'.color('gray').'-------------|\n'
+				.color('gray').' Kills : Assists : Deaths\n'
+				.'|------------------------|')
+			foreach(@player: @stats in @pvp['stats']) {
+				_regionmsg(@pvp['arena']['broadcast'], ' '.@stats['kills'].' : '.@stats['assists'].' : '.@stats['deaths'].' - '.@player)
+			}
+			_regionmsg(@pvp['arena']['broadcast'], color('gray').'|------------------------|')
+		}
+		
+		if(array_index_exists(@pvp['arena'], 'chestspawn')) {
+			for(@i = 0, @i < array_size(@pvp['arena']['chestspawn']), @i++) {
+				if(get_block_at(@pvp['arena']['chestspawn'][@i]['loc']) == '54:0', 
+					set_block_at(@pvp['arena']['chestspawn'][@i]['loc'], '0:0'))
 			}
 		}
-	}
 	
-	if(array_contains(array('ctf', 'tdm', 'infection'), @pvp['arena']['mode']) && array_size(@winners) > 0) {
-		_worldmsg('custom', color('gray').'[PVP] '
-			.color(@pvp['arena']['team'][@pvp['players'][@leader]['team']]['color']).color('bold')
-			.@pvp['arena']['team'][@pvp['players'][@leader]['team']]['name'].' win!\n'
-			.color(@pvp['arena']['team'][@pvp['players'][@leader]['team']]['color']).array_implode(@winners, ' '))
-	} else if(array_size(@winners) > 0) {
-		_worldmsg('custom', color('gray').'[PVP] '.color('r').array_implode(@winners, ' and ').' wins!')
+	)
 
-	} else {
-		_worldmsg('custom', color('gray').'[PVP] '.color('r').'Nobody wins! Wait.. what?!')
-	}
+	try(
 	
-	if(@pvp['arena']['stats'] == true) {
-		_regionmsg(@pvp['arena']['broadcast'], 
-			color('gray').'|--'.color('bold').'[ STATS ]'.color('gray').'-------------|\n'
-			.color('gray').' Kills : Assists : Deaths\n'
-			.'|------------------------|')
-		foreach(@player: @stats in @pvp['stats']) {
-			_regionmsg(@pvp['arena']['broadcast'], ' '.@stats['kills'].' : '.@stats['assists'].' : '.@stats['deaths'].' - '.@player)
+		if(array_index_exists(@pvp['arena'], 'rsoutput'), 
+			set_block_at(@pvp['arena']['rsoutput'], '69:6'))
+
+		if(@pvp['arena']['mode'] == 'ctf') {
+			queue_clear(@id.'0flag')
+			queue_clear(@id.'1flag')
 		}
-		_regionmsg(@pvp['arena']['broadcast'], color('gray').'|------------------------|')
-	}
-	
-	if(array_index_exists(@pvp['arena'], 'chestspawn')) {
-		for(@i = 0, @i < array_size(@pvp['arena']['chestspawn']), @i++) {
-			if(get_block_at(@pvp['arena']['chestspawn'][@i]['loc']) == '54:0', 
-				set_block_at(@pvp['arena']['chestspawn'][@i]['loc'], '0:0'))
+
+		if(array_index_exists(@pvp['arena'], 'captain')) {
+			queue_clear(@id.'0hat')
+			queue_clear(@id.'1hat')
 		}
-	}
 
-	if(array_index_exists(@pvp['arena'], 'rsoutput'), 
-		set_block_at(@pvp['arena']['rsoutput'], '69:6'))
+		if(array_contains(all_virtualchests(), @id.'0')) {
+			del_virtualchest(@id.'0')
+		}
+		if(array_contains(all_virtualchests(), @id.'1')) {
+			del_virtualchest(@id.'1')
+		}
 
-	if(@pvp['arena']['mode'] == 'ctf') {
-		queue_clear(@id.'0flag')
-		queue_clear(@id.'1flag')
-	}
-
-	if(array_index_exists(@pvp['arena'], 'captain')) {
-		queue_clear(@id.'0hat')
-		queue_clear(@id.'1hat')
-	}
-
-	if(array_contains(all_virtualchests(), @id.'0')) {
-		del_virtualchest(@id.'0')
-	}
-	if(array_contains(all_virtualchests(), @id.'1')) {
-		del_virtualchest(@id.'1')
-	}
-
-	clear_task(@pvp['interval'])
+		clear_task(@pvp['interval'])
+	
+	, return())
 	
 	@pvp['running'] = 3
 
 	set_timeout(3000, closure(){
 		_remove_region_entities(@pvp['arena']['region'])
 		foreach(array_keys(@pvp['players']), @player) {
-			if(array_index_exists(@pvp['players'][@player], 'class')) {
-				_class('unload', @player, @pvp['players'][@player]['class'], @pvp)
-			}
-			if(ponline(@player) && pinfo(@player, 5) > 0) {
-				close_pinv(@player)
-				set_ploc(@player, @pvp['arena']['lobby'])
-				_clear_pinv(@player)
-				_clear_peffects(@player)
-			}
+			try(
+				if(array_index_exists(@pvp['players'][@player], 'class')) {
+					_class('unload', @player, @pvp['players'][@player]['class'], @pvp)
+				}
+				if(ponline(@player) && pinfo(@player, 5) > 0) {
+					close_pinv(@player)
+					set_ploc(@player, @pvp['arena']['lobby'])
+					_clear_pinv(@player)
+					_clear_peffects(@player)
+				}
+			)
 		}
 		foreach(@pvp['binds'], @bind) {
 			unbind(@bind)
 		}
 		foreach(@p in @pvp['spectators']) {
-			_remove_spectator(@id, @p, @pvp)
+			try(
+				_remove_spectator(@id, @p, @pvp)
+			)
 		}
 		if(array_index_exists(@pvp['arena'], 'restore')) {
 			set_timeout(7000, closure(){
