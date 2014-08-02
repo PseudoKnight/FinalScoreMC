@@ -8,20 +8,14 @@ bind('player_death', array('priority': 'high', 'id': @id.'death'), null, @e, @id
 
 	@deathmessage = @e['death_message']
 		
-	@pcolor = ''
-	if(array_index_exists(@pvp['arena'], 'team')) {
-		@pcolor = color(@pvp['arena']['team'][@pvp['players'][player()]['team']]['color'])
-	}
-	
 	try(
 	if(array_index_exists(@pvp['arena'], 'team')) {
 		@parts = parse_args(@e['death_message'])
-		@parts[0] = @pcolor.player().color('r')
+		@parts[0] = @pvp['players'][player()]['color'].player().color('r')
 		if(array_index_exists(@pvp['players'], @e['killer'])) {
-			@kcolor = color(@pvp['arena']['team'][@pvp['players'][@e['killer']]['team']]['color'])
 			for(@i = 1, @i < array_size(@parts), @i++) {
 				if(@parts[@i] == @e['killer']) {
-					@parts[@i] = @kcolor.@e['killer'].color('r')
+					@parts[@i] = @pvp['players'][@e['killer']]['color'].@e['killer'].color('r')
 				}
 			}
 		}
@@ -45,11 +39,7 @@ bind('player_death', array('priority': 'high', 'id': @id.'death'), null, @e, @id
 		&& @amount > @totaldamage / 2) {
 			@pvp['stats'][@damager]['assists'] += 1
 			if(@e['killer'] && array_index_exists(@pvp['players'], @damager)) {
-				if(array_index_exists(@pvp['arena'], 'team')) {
-					@deathmessage .= ', assisted by '.color(@pvp['arena']['team'][@pvp['players'][@damager]['team']]['color']).@damager
-				} else {
-					@deathmessage .= ', assisted by '.@damager
-				}
+				@deathmessage .= ', assisted by '.@pvp['players'][@damager]['color'].@damager
 			}
 		}
 	}
@@ -66,6 +56,7 @@ bind('player_death', array('priority': 'high', 'id': @id.'death'), null, @e, @id
 		team_remove_player(@pvp['arena']['team'][@pvp['players'][player()]['team']]['name'], player(), @id)
 		array_remove_values(@pvp['team'][0]['players'], player())
 		@pvp['players'][player()]['team'] = 1
+		@pvp['players'][player()]['color'] = @pvp['arena']['teams'][1]['color']
 		team_add_player(@pvp['arena']['team'][1]['name'], player(), @id)
 		if(array_index_exists(@pvp['arena'], 'classes')) {
 			if(array_index_exists(@pvp['players'][player()], 'class')) {
@@ -101,8 +92,8 @@ bind('player_death', array('priority': 'high', 'id': @id.'death'), null, @e, @id
 	@drops = array()
 	foreach(@e['drops'], @drop) {
 		if(@pvp['arena']['mode'] == 'ctf' && (@drop['type'] == 8 || @drop['type'] == 10)) {
-			_regionmsg(@pvp['arena']['broadcast'], color('gray').'[PVP] '.color(@pvp['arena']['team'][@pvp['players'][player()]['team']]['color'])
-				.player().color('r').' dropped the '.color(@pvp['arena']['team'][if(@pvp['players'][player()]['team'] == 0, 1, 0)]['color']).'flag')
+			_regionmsg(@pvp['arena']['broadcast'], color('gray').'[PVP] '.@pvp['players'][player()]['color']
+				.player().color('r').' dropped the '.@pvp['arena']['team'][if(@pvp['players'][player()]['team'] == 0, 1, 0)]['color'].'flag')
 			if(@e['cause']['cause'] == 'VOID' || @e['cause']['cause'] == 'LAVA') {
 				_pvp_flag_spawn(@id, if(@drop['type'] == 10, 0, 1))
 			} else {
@@ -120,7 +111,7 @@ bind('player_death', array('priority': 'high', 'id': @id.'death'), null, @e, @id
 				}
 			}
 			_class('load', player(), @pvp['players'][player()]['class'], @pvp)
-			_regionmsg(@pvp['arena']['broadcast'], color('gray').'[PVP] '.color(@pvp['arena']['team'][@pvp['players'][player()]['team']]['color'])
+			_regionmsg(@pvp['arena']['broadcast'], color('gray').'[PVP] '.@pvp['players'][player()]['color']
 				.to_upper(@pvp['arena']['team'][@pvp['players'][player()]['team']]['name']).color('r').' - Captain has died and dropped his hat!')
 			foreach(@pvp['players'], @p, @player) {
 				if(@player['team'] == @pvp['players'][player()]['team']) {
@@ -172,12 +163,8 @@ bind('player_quit', array('id': @id.'quit'), null, @e, @id = @id) {
 			_pvp_flag_spawn(@id, if(pinv(player(), 103)['type'] == 10, 0, 1)) 
 		}
 
-		if(array_contains(array('ctf', 'tdm', 'infection'), @pvp['arena']['mode'])) {
-			@messagecolor = @pvp['arena']['team'][@pvp['players'][player()]['team']]['color']
-		} else {
-			@messagecolor = 'white'
-		}
-		modify_event('message', color('gray').'[PVP] '.color(@messagecolor).@e['message'])
+		modify_event('message', color('gray').'[PVP] '
+			.@pvp['players'][player()]['color'].@e['message'])
 		if(array_index_exists(@pvp['players'][player()], 'class')) {
 			_class('unload', player(), @pvp['players'][player()]['class'], @pvp)
 		}
@@ -317,12 +304,8 @@ bind('player_command', array('id': @id.'command'), null, @e, @id = @id) {
 	@pvp = import('pvp'.@id)
 	if(!array_index_exists(@pvp['players'], player())
 	|| !array_contains(array('/accept', '/warp', '/spawn', '/home'), @e['prefix']), die())
-	if(array_contains(array('ctf', 'tdm', 'infection'), @pvp['arena']['mode'])) {
-		_regionmsg(@pvp['arena']['broadcast'], color('gray').'[PVP] '
-			.color(@pvp['arena']['team'][@pvp['players'][player()]['team']]['color']).player().color('r').' left the arena.')
-	} else {
-		_regionmsg(@pvp['arena']['broadcast'], color('gray').'[PVP] '.color('r').player().' left the arena.')
-	}
+	_regionmsg(@pvp['arena']['broadcast'], color('gray').'[PVP] '
+		.@pvp['players'][player()]['color'].player().color('r').' left the arena.')
 	if(@pvp['arena']['mode'] == 'ctf' 
 	&& pinv(player(), 103) 
 	&& (pinv(player(), 103)['type'] == 8 
@@ -444,8 +427,7 @@ if(array_contains(@pvp['arena']['flags'], 'rallycall')) {
 		set_timeout(3000, closure(){
 			if(@pvp['players'][player()]['respawn'] == 0) {
 				_regionmsg(@pvp['arena']['broadcast'], color('gray').'[PVP] '
-					.color(@pvp['arena']['team'][@pvp['players'][player()]['team']]['color'])
-					.player().color('r').' rallied his crew!')
+					.@pvp['players'][player()]['color'].player().color('r').' rallied his crew!')
 				foreach(array_keys(@pvp['players']), @p) {
 					if(@p != player()
 					&& @pvp['players'][player()]['team'] == @pvp['players'][@p]['team']
@@ -522,8 +504,8 @@ if(@pvp['arena']['mode'] == 'ctf') {
 					modify_event('item', null)
 					_pvp_flag_spawn(@id, 0)
 					_regionmsg(@pvp['arena']['broadcast'], color('gray').'[PVP] '
-						.color(@pvp['arena']['team'][0]['color']).player().color('r').' returned the '
-						.color(@pvp['arena']['team'][0]['color']).'flag')
+						.@pvp['arena']['team'][0]['color'].player().color('r').' returned the '
+						.@pvp['arena']['team'][0]['color'].'flag')
 					play_sound(ploc(), array('sound': 'ENDERDRAGON_WINGS', 'pitch': 0))
 				} else {
 					cancel()
@@ -533,8 +515,8 @@ if(@pvp['arena']['mode'] == 'ctf') {
 						set_pscore('captures', @pvp['arena']['team'][0]['name'], @pvp['team'][0]['score'], @id)
 						set_pinv(player(), array(103: null))
 						_regionmsg(@pvp['arena']['broadcast'], color('gray').'[PVP] '
-							.color(@pvp['arena']['team'][0]['color']).player().color('r').' secured the '
-							.color(@pvp['arena']['team'][1]['color']).'flag'.color('r').'!')
+							.@pvp['arena']['team'][0]['color'].player().color('r').' secured the '
+							.@pvp['arena']['team'][1]['color'].'flag'.color('r').'!')
 						if(array_index_exists(@pvp['arena'], 'rsoutputscore')) {
 							set_block_at(@pvp['arena']['rsoutputscore'][0], '76:5')
 							set_timeout(1000, closure(){
@@ -551,8 +533,8 @@ if(@pvp['arena']['mode'] == 'ctf') {
 				modify_event('item', null)
 				set_pinv(player(), array(103: array('type': 10, 'qty': 1)))
 				_regionmsg(@pvp['arena']['broadcast'], color('gray').'[PVP] '
-					.color(@pvp['arena']['team'][1]['color']).player().color('r').' picked up the '
-					.color(@pvp['arena']['team'][0]['color']).'flag')
+					.@pvp['arena']['team'][1]['color'].player().color('r').' picked up the '
+					.@pvp['arena']['team'][0]['color'].'flag')
 				play_sound(ploc(), array('sound': 'ENDERDRAGON_WINGS', 'volume': 3))
 			}
 		} else if(@e['item']['type'] == '8') {
@@ -563,8 +545,8 @@ if(@pvp['arena']['mode'] == 'ctf') {
 					modify_event('item', null)
 					_pvp_flag_spawn(@id, 1)
 					_regionmsg(@pvp['arena']['broadcast'], color('gray').'[PVP] '
-						.color(@pvp['arena']['team'][1]['color']).player().color('r').' returned the '
-						.color(@pvp['arena']['team'][1]['color']).'flag')
+						.@pvp['arena']['team'][1]['color'].player().color('r').' returned the '
+						.@pvp['arena']['team'][1]['color'].'flag')
 					play_sound(ploc(), array('sound': 'ENDERDRAGON_WINGS', 'pitch': 0))
 				} else {
 					cancel()
@@ -574,8 +556,8 @@ if(@pvp['arena']['mode'] == 'ctf') {
 						@pvp['team'][1]['score']++
 						set_pscore('captures', @pvp['arena']['team'][1]['name'], @pvp['team'][1]['score'], @id)
 						_regionmsg(@pvp['arena']['broadcast'], color('gray').'[PVP] '
-							.color(@pvp['arena']['team'][1]['color']).player().color('r').' secured the '
-							.color(@pvp['arena']['team'][0]['color']).'flag'.color('r').'!')
+							.@pvp['arena']['team'][1]['color'].player().color('r').' secured the '
+							.@pvp['arena']['team'][0]['color'].'flag'.color('r').'!')
 						if(array_index_exists(@pvp['arena'], 'rsoutputscore')) {
 							set_block_at(@pvp['arena']['rsoutputscore'][1], '76:5')
 							set_timeout(1000, closure(){
@@ -592,8 +574,8 @@ if(@pvp['arena']['mode'] == 'ctf') {
 				modify_event('item', null)
 				set_pinv(player(), array(103: array('type': 8, 'qty': 1)))
 				_regionmsg(@pvp['arena']['broadcast'], color('gray').'[PVP] '
-					.color(@pvp['arena']['team'][0]['color']).player().color('r').' picked up the '
-					.color(@pvp['arena']['team'][1]['color']).'flag')
+					.@pvp['arena']['team'][0]['color'].player().color('r').' picked up the '
+					.@pvp['arena']['team'][1]['color'].'flag')
 				play_sound(ploc(), array('sound': 'ENDERDRAGON_WINGS', 'volume': 3))
 			}
 		}
@@ -621,7 +603,7 @@ if(array_index_exists(@pvp['arena'], 'captain')) {
 				_class('load', player(), @pvp['players'][player()]['class'], @pvp)
 				_class('equip', player(), @pvp['players'][player()]['class'], @pvp)
 				_regionmsg(@pvp['arena']['broadcast'], color('gray').'[PVP] '
-					.color(@pvp['arena']['team'][0]['color']).player().color('r').' became the new captain!')
+					.@pvp['arena']['team'][0]['color'].player().color('r').' became the new captain!')
 				clear_virtualchest(@id.'0', 0)
 			} else {
 				cancel()
@@ -640,7 +622,7 @@ if(array_index_exists(@pvp['arena'], 'captain')) {
 				_class('load', player(), @pvp['players'][player()]['class'], @pvp)
 				_class('equip', player(), @pvp['players'][player()]['class'], @pvp)
 				_regionmsg(@pvp['arena']['broadcast'], color('gray').'[PVP] '
-					.color(@pvp['arena']['team'][1]['color']).player().color('r').' became the new captain!')
+					.@pvp['arena']['team'][1]['color'].player().color('r').' became the new captain!')
 				clear_virtualchest(@id.'1', 0)
 			} else {
 				cancel()

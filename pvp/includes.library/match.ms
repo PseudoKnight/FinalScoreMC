@@ -71,13 +71,13 @@ proc('_pvp_start_match', @id) {
 			if(@pvp['team'][0]['captain'] == '') {
 				drop_item(_relative(@pvp['arena']['spawn'][0][0], 'up', 2), @pvp['team'][0]['captainhat'], false)
 			} else {
-				_regionmsg(@pvp['arena']['broadcast'], color('gray').'[PVP] '.color(@pvp['arena']['team'][0]['color'])
+				_regionmsg(@pvp['arena']['broadcast'], color('gray').'[PVP] '.@pvp['arena']['team'][0]['color']
 					.@pvp['team'][0]['captain']. ' is the captain of '.@pvp['arena']['team'][0]['name'].'.')
 			}
 			if(@pvp['team'][1]['captain'] == '') {
 				drop_item(_relative(@pvp['arena']['spawn'][1][0], 'up', 2), @pvp['team'][1]['captainhat'], false)
 			} else {
-				_regionmsg(@pvp['arena']['broadcast'], color('gray').'[PVP] '.color(@pvp['arena']['team'][1]['color'])
+				_regionmsg(@pvp['arena']['broadcast'], color('gray').'[PVP] '.@pvp['arena']['team'][1]['color']
 					.@pvp['team'][1]['captain']. ' is the captain of '.@pvp['arena']['team'][1]['name'].'.')
 			}
 		}, @id)
@@ -121,14 +121,9 @@ proc('_pvp_start_match', @id) {
 			if(array_index_exists(@pvp['arena'], 'respawntime')
 			&& @pvp['players'][@player]['respawn'] != 0) {
 				if(!array_contains(sk_current_regions(@player), @pvp['arena']['broadcast'])) {
-					if(array_contains(array('ctf', 'tdm', 'infection'), @pvp['arena']['mode'])) {
-						_regionmsg(@pvp['arena']['broadcast'], color('gray').'[PVP] '
-							.color(@pvp['arena']['team'][@pvp['players'][@player]['team']]['color']).@player
-							.color('r').' left the arena.')
-					} else {
-						_regionmsg(@pvp['arena']['broadcast'], color('gray').'[PVP] '
-							.color('r').@player.' left the arena.')
-					}
+					_regionmsg(@pvp['arena']['broadcast'], color('gray').'[PVP] '
+						.@pvp['players'][@player]['color'].@player
+						.color('r').' left the arena.')
 					if(array_index_exists(@pvp['players'][@player], 'class')) {
 						_class('unload', player(), @pvp['players'][@player]['class'], @pvp)
 					}
@@ -249,8 +244,11 @@ proc('_pvp_initialize_players', @id, @players) {
 		if(has_permission(@player, 'vanish.standard'), 
 			scriptas(@player, run('/v off')))
 		set_pscoreboard(@player, @id)
-		if(array_contains(array('ctf', 'tdm', 'infection'), @pvp['arena']['mode'])) {
+		if(array_index_exists(@pvp['players'][@player], 'team')) {
 			team_add_player(@pvp['arena']['team'][@pvp['players'][@player]['team']]['name'], @player, @id)
+			@pvp['players'][@player]['color'] = @pvp['arena']['team'][@pvp['players'][@player]['team']]['color']
+		} else {
+			@pvp['players'][@player]['color'] = color('f')
 		}
 		switch(@pvp['arena']['mode']) {
 			case 'koth':
@@ -450,9 +448,9 @@ proc('_pvp_end_match', @id, @winners) {
 		
 		if(array_contains(array('ctf', 'tdm', 'infection'), @pvp['arena']['mode']) && array_size(@winners) > 0) {
 			_worldmsg('custom', color('gray').'[PVP] '
-				.color(@pvp['arena']['team'][@pvp['players'][@leader]['team']]['color']).color('bold')
+				.@pvp['players'][@leader]['color'].color('bold')
 				.@pvp['arena']['team'][@pvp['players'][@leader]['team']]['name'].' win!\n'
-				.color(@pvp['arena']['team'][@pvp['players'][@leader]['team']]['color']).array_implode(@winners, ' '))
+				.@pvp['players'][@leader]['color'].array_implode(@winners, ' '))
 		} else if(array_size(@winners) > 0) {
 			_worldmsg('custom', color('gray').'[PVP] '.color('r').array_implode(@winners, ' and ').' wins!')
 

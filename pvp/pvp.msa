@@ -179,9 +179,12 @@
 		if(array_contains(@pvp['arena']['flags'], 'keepinventory'), @pvp['arena']['denydrop'] = 'all')
 		if(!array_index_exists(@pvp['arena'], 'team') && array_contains(array('ctf', 'tdm', 'infection'), @pvp['arena']['mode'])) {
 			@pvp['arena']['team'] = array(
-				array('name': 'Red', 'color': 'c'), 
-				array('name': 'Blue', 'color': '3')
+				array('name': 'Red', 'color': color('c')), 
+				array('name': 'Blue', 'color': color('3'))
 			)
+		} else if(array_index_exists(@pvp['arena'], 'team')) {
+			@pvp['arena']['team'][0]['color'] = color(@pvp['arena']['team'][0]['color'])
+			@pvp['arena']['team'][1]['color'] = color(@pvp['arena']['team'][1]['color'])
 		}
 		if(!array_index_exists(@pvp['arena'], 'score')) {
 			switch(@pvp['arena']['mode']) {
@@ -223,8 +226,8 @@
 			}
 			create_team(@pvp['arena']['team'][0]['name'], @id)
 			create_team(@pvp['arena']['team'][1]['name'], @id)
-			set_team_display(@pvp['arena']['team'][0]['name'], array('prefix': color(@pvp['arena']['team'][0]['color'])), @id)
-			set_team_display(@pvp['arena']['team'][1]['name'], array('prefix': color(@pvp['arena']['team'][1]['color'])), @id)
+			set_team_display(@pvp['arena']['team'][0]['name'], array('prefix': @pvp['arena']['team'][0]['color']), @id)
+			set_team_display(@pvp['arena']['team'][1]['name'], array('prefix': @pvp['arena']['team'][1]['color']), @id)
 			set_team_options(@pvp['arena']['team'][0]['name'], array('friendlyinvisibles': true), @id)
 			set_team_options(@pvp['arena']['team'][1]['name'], array('friendlyinvisibles': true), @id)
 		}
@@ -290,8 +293,10 @@
 		}
 
 		if(array_contains(array('tdm', 'ctf', 'infection'), @pvp['arena']['mode'])) {
-			_worldmsg('custom', 
-			color(@pvp['arena']['team'][0]['color']).'['.@pvp['arena']['team'][0]['name'].'] '.array_implode(@pvp['team'][0]['players'], ' ').'\n'.color('r').color(@pvp['arena']['team'][1]['color']).'['.@pvp['arena']['team'][1]['name'].'] '.array_implode(@pvp['team'][1]['players'], ' '))
+			_worldmsg('custom', @pvp['arena']['team'][0]['color'].'['.@pvp['arena']['team'][0]['name'].'] '
+				.array_implode(@pvp['team'][0]['players'], ' ').'\n'.color('r')
+				.@pvp['arena']['team'][1]['color'].'['.@pvp['arena']['team'][1]['name'].'] '
+				.array_implode(@pvp['team'][1]['players'], ' '))
 		} else {
 			_worldmsg('custom', array_implode(array_keys(@pvp['players']), ' vs '))
 		}
