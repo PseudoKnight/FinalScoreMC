@@ -326,7 +326,7 @@
 		
 	case 'end':
 		if(!get_command_block() && !has_permission('group.builders'), die(color('red').'You do not have permission.'))
-		if(!$id || !$team, die(color('gold').'Usage: /pvp end arenaName winningTeam#'))
+		if(!$id, die(color('gold').'Usage: /pvp end arenaName winningTeam#'))
 		@id = to_lower($id)
 		@pvp = import('pvp'.@id)
 		if(!@pvp || @pvp['running'] < 2, die(color('red').'Not running.'))
@@ -334,7 +334,11 @@
 		if(array_index_exists(@pvp['arena'], 'classes')) {
 			include('includes.library/class.ms')			
 		}
-		_pvp_end_match(@id, @pvp['team'][$team - 1]['players'])
+		if(is_numeric($team)) {
+			_pvp_end_match(@id, @pvp['team'][$team - 1]['players'])
+		} else {
+			_pvp_end_match(@id, array())
+		}
 		
 	default:
 		msg('/pvp join <id> '.color('gray').'Join the match')
