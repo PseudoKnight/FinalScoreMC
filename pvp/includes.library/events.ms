@@ -213,10 +213,18 @@ bind('player_spawn', array('id': @id.'spawn'), null, @e, @id = @id) {
 			_pvp_equip(@id, player())
 		})
 	} else if(array_index_exists(@pvp['arena'], 'classes')) {
-		if(array_size(@pvp['arena']['classes']) > 2) {
-			set_timeout(50, closure(){
-				popen_virtualchest(@id.@pvp['players'][player()]['team'])
-			})
+		if(!array_index_exists(@pvp['players'][player()], 'team') || @pvp['players'][player()]['team'] == 0) {
+			if(array_contains(all_virtualchests(), @id.'0')) {
+				set_timeout(50, closure(){
+					popen_virtualchest(player(), @id.'0')
+				})
+			}
+		} else {
+			if(array_contains(all_virtualchests(), @id.'1')) {
+				set_timeout(50, closure(){
+					popen_virtualchest(player(), @id.'1')
+				})
+			}
 		}
 	}
 
@@ -230,17 +238,7 @@ bind('player_spawn', array('id': @id.'spawn'), null, @e, @id = @id) {
 		modify_event('location', @pvp['arena']['spawn'][@pvp['players'][player()]['team']][@r])
 	} else {
 		@r = rand(0, array_size(@pvp['arena']['spawn'][0]))
-		# if(!array_index_exists(@arena, 'spawnblock') || get_block_at(@pvp['arena']['spawn'][0][@r]) == @arena['spawnblock'][0]) {
-			modify_event('location', @pvp['arena']['spawn'][0][@r])
-		# } else {
-			# @spawned = false
-			# for(@i = 0, @i < array_size(@pvp['arena']['spawn'][0]), @i++,
-				# if(get_block_at(@pvp['arena']['spawn'][0][@i]) == @arena['spawnblock'][0]) {
-					# modify_event('location', @pvp['arena']['spawn'][0][@i])
-					# break()
-				# }
-			# )
-		# }
+		modify_event('location', @pvp['arena']['spawn'][0][@r])
 	}
 	
 
