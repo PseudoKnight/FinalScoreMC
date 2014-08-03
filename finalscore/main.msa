@@ -348,7 +348,7 @@
 <<<
 
 # Colour codes
-*:/colors = msg(colorize('&00&11&22&33&44&55&66&77&88&99&aa&bb&cc&dd&ee&ff'))
+*:/colors = msg(colorize('&00&11&22&33&44&55&66&77&88&99&aa&bb&cc&dd&ee&ff &kk&r&ll&r&mm&r&nn&r&oo &rr'))
 *:/colours = call_alias('/colors')
 
 # COIN COMMANDS #
