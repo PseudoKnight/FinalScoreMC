@@ -252,6 +252,7 @@ bind('player_interact', null, array('block': 122), @event) {
 
 # DISPENSER PARKING
 bind('vehicle_collide', null, array('type': 'MINECART', 'collisiontype': 'BLOCK', 'hittype': 23), @event) {
+	if(is_block_powered(@event['block']), die())
 	for(@i = 0, @i < get_inventory_size(@event['block']), @i++) {
 		if(is_null(get_inventory_item(@event['block'], @i))) {
 			set_inventory_item(@event['block'], @i, array('type': 328, 'qty': 1))
