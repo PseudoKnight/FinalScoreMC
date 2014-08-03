@@ -26,7 +26,7 @@ case 'startround':
 	@cluck = import('cluck')
 	if(!@cluck, @cluck = array('player': array('', ''), 'active': 0))
 
-	if(@cluck['active'] + 60000 > time(), die('Already in progress.'))
+	if(@cluck['active'] + 45000 > time(), die('Already in progress.'))
 	
 	foreach(@p in array(0, 1)) {
 		if(@cluck['player'][@p]
