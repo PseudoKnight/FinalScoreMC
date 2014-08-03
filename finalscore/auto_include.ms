@@ -22,6 +22,14 @@ proc('_equip_park') {
 
 }
 
+proc('_item_meta', @item, @index) {
+	if(is_null(@item)
+	|| is_null(@item['meta'])) {
+		return(null)
+	}
+	return(@item['meta'][@index])
+}
+
 proc('_line_distance', @p1, @p2, @p3, @p4) {
 	@p13 = array()
 	@p43 = array()
