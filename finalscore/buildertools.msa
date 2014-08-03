@@ -62,7 +62,7 @@
 	}
 <<<
 
-*:/relativecoords = >>>
+*:/relcoords = >>>
 	if(!has_permission('group.builders'), die('No permission.'))
 	@cmdblk = pcursor()
 	try(@cmd = get_block_command(@cmdblk), die('Not a commandblock'))
