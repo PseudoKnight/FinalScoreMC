@@ -423,7 +423,9 @@ bind('player_interact_entity', null, array('clicked': 'VILLAGER'), @event) {
 
 bind('entity_enter_portal', null, null, @event) {
 	if(@event['type'] != 'PLAYER'
-	&& (@event['location']['world'] == 'custom'	|| @event['location']['world'] == 'dev')) {
+	&& ((@event['location']['world'] == 'custom' || @event['location']['world'] == 'dev')
+	|| (@event['type'] == 'ENDER_DRAGON' 
+	&& (@event['location']['world'] == 'outworld' || @event['location']['world'] == 'outworld_nether')))) {
 		entity_remove(@event['id'])
 	}
 }
