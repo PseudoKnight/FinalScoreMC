@@ -110,6 +110,7 @@ proc('_pvp_start_match', @id) {
 		}
 
 		foreach(array_keys(@pvp['players']), @player) {
+			if(pinfo(@player, 5) <= 0, continue())
 			if(array_index_exists(@pvp['arena'], 'timer')) {
 				if(function_exists('premove_bar')) {
 					premove_bar(@player)
@@ -125,7 +126,7 @@ proc('_pvp_start_match', @id) {
 						.@pvp['players'][@player]['color'].@player
 						.color('r').' left the arena.')
 					if(array_index_exists(@pvp['players'][@player], 'class')) {
-						_class('unload', player(), @pvp['players'][@player]['class'], @pvp)
+						_class('unload', @player, @pvp['players'][@player]['class'], @pvp)
 					}
 					if(array_index_exists(@pvp['arena'], 'timer')) {
 						if(function_exists('premove_bar')) {
@@ -142,28 +143,27 @@ proc('_pvp_start_match', @id) {
 							set_ploc(@player, ploc(@pvp['team'][@pvp['players'][@player]['team']]['captain']))
 							play_sound(ploc(@player), array('sound': 'GHAST_FIREBALL'))
 							make_effect(_relative(ploc(@player), 'up'), 'MOBSPAWNER_FLAMES')
-							@pvp['players'][@player]['respawn'] = 0
 							_pvp_equip(@id, @player)
 						}
-					} else {
+					} else if(array_index_exists(@pvp['players'], 'team')) {
 						@r = rand(0, array_size(@pvp['arena']['spawn'][@pvp['players'][player()]['team']]))
 						set_ploc(@player, @pvp['arena']['spawn'][@pvp['players'][@player]['team']][@r])
 						_pvp_equip(@id, @player)
+					} else {
+						@r = rand(0, array_size(@pvp['arena']['spawn'][0]))
+						set_ploc(@player, @pvp['arena']['spawn'][0][@r])
+						_pvp_equip(@id, @player)
 					}
-					if(array_contains(all_virtualchests(), @id.@pvp['players'][@player]['team'])) {
-						if(pget_virtualchest(@player), 
-							close_pinv(@player))
-					}
+					@pvp['players'][@player]['respawn'] = 0
+					close_pinv(@player)
 				}
-			} else if(!array_contains(sk_current_regions(@player), @pvp['arena']['region'])
-			&& pinfo(@player, 5) > 0) {
+			} else if(!array_contains(sk_current_regions(@player), @pvp['arena']['region'])) {
 				tmsg(@player, color('gray').'[PVP] '.color('r').'You exited the combat region.')
 				set_timeout(50, closure(){
 					pkill(@player)
 				})
 			} else if(@pvp['arena']['mode'] == 'koth' 
-			&& array_contains(sk_current_regions(@player), @pvp['arena']['kothregion']) 
-			&& pinfo(@player, 5) > 0) { 
+			&& array_contains(sk_current_regions(@player), @pvp['arena']['kothregion'])) { 
 				@king = @player
 				@hillcount++
 			}
