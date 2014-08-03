@@ -347,6 +347,8 @@
 	}
 <<<
 
+*:/money [$] = call_alias('/coins '.$)
+*:/bal [$] = call_alias('/coins '.$)
 *:/coins [$action] [$player] [$amount] = >>>
 	if(!$action) {
 		msg(color('gold').round(_acc_balance(player())).' coins')
