@@ -52,7 +52,7 @@
 	})
 <<<
 
-*:/playsound $sound [$pitch=1] [$volume=1] [$x] [$y] [$z] = >>>
+*:/playsound [$sound='random'] [$pitch=1] [$volume=1] [$x] [$y] [$z] = >>>
 	if(string_position($sound, '.') >= 0) {
 		if(@cmdblk = get_command_block()) {
 			if($z) {
@@ -65,15 +65,24 @@
 			play_named_sound(ploc(), array('sound': $sound, 'pitch': $pitch, 'volume': $volume))
 		}
 	} else {
+		if($sound == 'random') {
+			@sounds = reflect_pull('enum', 'Sound')
+			@sound = @sounds[rand(array_size(@sounds))]
+			@range = rand(101) / 100
+			@pitch = 2 - (1.5 * @range)
+		} else {
+			@sound = $sound
+			@pitch = $pitch
+		}
 		if(@cmdblk = get_command_block()) {
 			if($z) {
 				@loc = _relative_coords(@cmdblk, $x, $y, $z)
 			} else {
 				@loc = @cmdblk
 			}
-			play_sound(@loc, array('sound': $sound, 'pitch': $pitch, 'volume': $volume))
+			play_sound(@loc, array('sound': @sound, 'pitch': @pitch, 'volume': $volume))
 		} else if(has_permission('group.builders')) {
-			play_sound(ploc(), array('sound': $sound, 'pitch': $pitch, 'volume': $volume))
+			play_sound(ploc(), array('sound': @sound, 'pitch': @pitch, 'volume': $volume))
 		}
 	}
 <<<
