@@ -15,7 +15,9 @@ bind('player_login', null, null, @event) {
 	@update = false
 	@pdata = get_value('players', to_lower(@event['player']))
 	if(!@pdata) {
-		@pdata = array('ips': array())
+		@pdata = array(
+			'joined': simple_date('YYYY-MM-dd'),
+		)
 	}
 	if(array_index_exists(@pdata, 'ban')) {
 		if(!array_index_exists(@pdata['ban'], 'time') || @pdata['ban']['time'] > time()) {
