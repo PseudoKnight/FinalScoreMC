@@ -143,7 +143,7 @@
 				if(!@args[1], die('Requires a team # and mob type.'))
 				if(!array_index_exists(@arena, 'mobprotect'), @arena['mobprotect'] = array())
 				@loc = ploc()
-				@Loc = array(floor(@loc[0]) + 0.5, @loc[1], floor(@loc[2]) + 0.5, @loc[3])
+				@loc = array(floor(@loc[0]) + 0.5, @loc[1], floor(@loc[2]) + 0.5, @loc[3])
 				@arena['mobprotect'][@args[0] - 1] = array(
 					'loc': @loc,
 					'type': @args[1]
