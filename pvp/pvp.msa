@@ -203,9 +203,6 @@
 			}
 		}
 		if(array_size(@pvp['players']) < @pvp['arena']['min'], die('There aren\'t enough players. ('.array_size(@pvp['players']).')'))
-		if((@pvp['cooldown'] + 15000) > time() && !array_contains(pgroup(), 'builders')) {
-			die('Arena still on a 15 second cooldown.')
-		}
 		
 		if(array_contains(get_scoreboards(), @id), remove_scoreboard(@id))
 		create_scoreboard(@id)

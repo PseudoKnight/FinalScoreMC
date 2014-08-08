@@ -506,8 +506,7 @@ proc('_pvp_end_match', @id, @winners) {
 	
 	@pvp['running'] = 3
 
-	set_timeout(3000, closure(){
-		_remove_region_entities(@pvp['arena']['region'])
+	set_timeout(4000, closure(){
 		foreach(array_keys(@pvp['players']), @player) {
 			try(
 				if(array_index_exists(@pvp['players'][@player], 'class')) {
@@ -529,8 +528,9 @@ proc('_pvp_end_match', @id, @winners) {
 				_remove_spectator(@id, @p, @pvp)
 			)
 		}
+		_remove_region_entities(@pvp['arena']['region'])
 		if(array_index_exists(@pvp['arena'], 'restore')) {
-			set_timeout(7000, closure(){
+			set_timeout(3000, closure(){
 				foreach(array_keys(@pvp['players']), @player) {
 					if(ponline(@player) && pworld(@player) == 'custom') {
 						broadcast(color('gray').'[PVP] '.color(6).'RESTORING '.to_upper(@id).'...')
