@@ -1,4 +1,5 @@
 *:/mob [$cmd] [$id] [$setting] [$] = >>>
+	if(!has_permission('command.mob'), die('You do not have permission.'))
 	switch($cmd
 	, 'set',
 		@mob = get_value('mob.'.$id)
