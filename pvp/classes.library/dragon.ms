@@ -17,7 +17,7 @@ case 'load':
 					play_sound(ploc(@player), array('sound': 'ENDERDRAGON_WINGS', 'pitch': 1.2))
 					_flap(@player)
 				} else {
-					set_interval(100, closure(){
+					set_interval(150, closure(){
 						try(
 							if(entity_grounded(pinfo(@player, 13))) {
 								@xp = pexp(@player)
@@ -43,6 +43,9 @@ case 'load':
 			set_pexp(0)
 		}
 	}
+	
+case 'powerup':
+	set_pexp(@player, 100)
 
 case 'unload':
 	unbind(@player.'dragon')
