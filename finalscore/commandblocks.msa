@@ -83,6 +83,7 @@
 			play_sound(@loc, array('sound': @sound, 'pitch': @pitch, 'volume': $volume))
 		} else if(has_permission('group.builders')) {
 			play_sound(ploc(), array('sound': @sound, 'pitch': @pitch, 'volume': $volume))
+			msg(@sound.' @ '.@pitch)
 		}
 	}
 <<<
