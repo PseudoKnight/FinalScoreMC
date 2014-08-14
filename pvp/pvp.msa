@@ -82,6 +82,8 @@
 		}
 
 	case 'spectate':
+		if(pworld() != 'custom', 
+			die('You are not in Frog Park.'))
 		@id = to_lower($id)
 		@pvp = import('pvp'.@id)
 		if(!@pvp || !@pvp['running']) {
