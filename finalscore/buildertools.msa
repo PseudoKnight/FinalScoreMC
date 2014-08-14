@@ -179,8 +179,10 @@
 	if(!is_numeric(@item[0]), @item[0] = data_values(@item[0]))
 	if(@item[0] == null, die('Unknown item name'))
 	if(!array_index_exists(@item, 1), @item[1] = 0)
-	pgive_item(@item[0].':'.@item[1], $amount)
-	msg(color('yellow').'You\'ve been given '.$amount.' '.data_name(@item[0].':'.@item[1]).'.')
+	try(
+		pgive_item(@item[0].':'.@item[1], $amount)
+		msg(color('yellow').'You\'ve been given '.$amount.' '.data_name(@item[0].':'.@item[1]).'.')
+	, msg(color('red').'That item doesn\'t appear to exist.')
 <<<
 
 #Set fly mode for people or yourself
