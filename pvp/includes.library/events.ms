@@ -56,7 +56,7 @@ bind('player_death', array('priority': 'high', 'id': @id.'death'), null, @e, @id
 		team_remove_player(@pvp['arena']['team'][@pvp['players'][player()]['team']]['name'], player(), @id)
 		array_remove_values(@pvp['team'][0]['players'], player())
 		@pvp['players'][player()]['team'] = 1
-		@pvp['players'][player()]['color'] = @pvp['arena']['teams'][1]['color']
+		@pvp['players'][player()]['color'] = @pvp['arena']['team'][1]['color']
 		team_add_player(@pvp['arena']['team'][1]['name'], player(), @id)
 		if(array_index_exists(@pvp['arena'], 'classes')) {
 			if(array_index_exists(@pvp['players'][player()], 'class')) {
