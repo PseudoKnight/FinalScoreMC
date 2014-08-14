@@ -371,7 +371,8 @@ bind('block_dispense', null, array('type': 'DISPENSER'), @e) {
 				}
 			}
 			set_timeout(50, closure(){
-				set_inventory(@e['location'], @inv)
+				try(set_inventory(@e['location'], @inv),
+					console('Could not refill dispenser at '.@e['location']))
 			})
 		}
 	}
