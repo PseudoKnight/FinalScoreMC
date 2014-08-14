@@ -247,7 +247,7 @@ bind('vehicle_leave', array('priority': 'highest'), null, @event) {
 
 # prevent enderdragon egg teleportation
 bind('player_interact', null, array('block': 122), @event) {
-	if(pmode() != 'CREATIVE' && (pworld() == 'custom' || pworld() == 'dev')) {
+	if(pworld() == 'custom' || pworld() == 'dev') {
 		cancel()
 	}
 }
