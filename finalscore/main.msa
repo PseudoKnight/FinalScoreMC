@@ -158,7 +158,7 @@
 			@message = $
 		}
 		bind('player_death', array('priority': 'highest'), array('player': @player), @e, @message = @message) {
-			modify_event('death_message', player().' '.@message)
+			modify_event('death_message', player().' apparently '.@message)
 			unbind()
 		}
 	}
