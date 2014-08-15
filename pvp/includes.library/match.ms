@@ -51,13 +51,6 @@ proc('_pvp_start_match', @id) {
 		}
 	}
 	
-	if(array_index_exists(@pvp['arena'], 'mobprotect')) {
-		foreach(@pvp['arena']['mobprotect'], @team, @mob) {
-			 @entityid = _spawn_mob(@mob['type'], 1, @mob['loc'])[0]
-			 @pvp['team'][@team]['mobprotect'] = entity_uuid(@entityid)
-		}
-	}
-	
 	if(array_index_exists(@pvp['arena'], 'timer')) {
 		@pvp['starttime'] = time() / 1000
 	}
@@ -86,6 +79,16 @@ proc('_pvp_start_match', @id) {
 	if(@pvp['arena']['mode'] == 'ctf') {
 		_pvp_flag_spawn(@id, 0)
 		_pvp_flag_spawn(@id, 1)
+	}
+	
+	if(array_index_exists(@pvp['arena'], 'mobprotect')) {
+		queue_push(closure(){
+			foreach(@pvp['arena']['mobprotect'], @team, @mob) {
+				 @entityid = _spawn_mob(@mob['type'], 1, @mob['loc'])[0]
+				 set_mob_name(@entityid, @pvp['arena']['team'][@team]['color'].@pvp['arena']['team'][@team]['name'])
+				 @pvp['team'][@team]['mobprotect'] = entity_uuid(@entityid)
+			}
+		}, @id)
 	}
 
 	include('spectator.ms')
@@ -180,6 +183,21 @@ proc('_pvp_start_match', @id) {
 			@score = get_pscore('seconds', @king, @id)
 			set_pscore('seconds', @king, @score - 1, @id)
 			@check = true
+		}
+		
+		if(array_index_exists(@pvp['arena'], 'mobprotect')) {
+			foreach(@team: @data in @pvp['arena']['mobprotect']) {
+				try(@health = ceil(get_entity_health(entity_id(@pvp['team'][@team]['mobprotect'])))
+				, @health = 0)
+				set_pscore('mobhealth', @pvp['arena']['team'][@team]['name'], @health, @id)
+				if(@health <= 0) {
+					if(@team == 0) {
+						_pvp_end_match(@id, @pvp['team'][1]['players'])
+					} else {
+						_pvp_end_match(@id, @pvp['team'][0]['players'])
+					}
+				}
+			}
 		}
 		
 		if(array_index_exists(@pvp['arena'], 'itemspawn')) {

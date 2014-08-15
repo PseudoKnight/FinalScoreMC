@@ -267,6 +267,12 @@
 					set_objective_display('lives', array('displayname': color('a').'Lives Left', 'slot': 'SIDEBAR'), @id)
 				}
 			}
+			if(array_index_exists(@pvp['arena'], 'mobprotect')) {
+				create_objective('mobhealth', 'DUMMY', @id)
+				set_objective_display('mobhealth', array('displayname': color('a').'Mob Health', 'slot': 'SIDEBAR'), @id)
+				team_add_player(@pvp['arena']['team'][0]['name'], @pvp['arena']['team'][0]['name'], @id)
+				team_add_player(@pvp['arena']['team'][1]['name'], @pvp['arena']['team'][1]['name'], @id)
+			}
 		case 'ctf':
 			create_objective('captures', 'DUMMY', @id)
 			set_objective_display('captures', array('displayname': color('a').'Captures ('.@pvp['arena']['score'].')', 'slot': 'SIDEBAR'), @id)

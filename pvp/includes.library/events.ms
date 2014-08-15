@@ -274,19 +274,6 @@ if(array_contains(@pvp['arena']['flags'], 'noxp')) {
 	}
 }
 
-if(array_index_exists(@pvp['arena'], 'mobprotect')) {
-	array_push(@pvp['binds'], @id.'MobDeath')
-	bind('entity_death', array('id': @id.'MobDeath'), null, @e, @id = @id) {
-		@pvp = import('pvp'.@id)
-		@uuid = entity_uuid(@e['id'])
-		if(array_index_exists(@pvp['team'][0], 'mobprotect') && @uuid == @pvp['team'][0]['mobprotect']) {
-			_pvp_end_match(@id, @pvp['team'][1]['players'])
-		} else if(array_index_exists(@pvp['team'][1], 'mobprotect') && @uuid == @pvp['team'][1]['mobprotect']) {
-			_pvp_end_match(@id, @pvp['team'][0]['players'])
-		}
-	}
-}
-
 array_push(@pvp['binds'], @id.'enderpearl')
 bind('player_teleport', array('id': @id.'enderpearl', 'priority': 'highest'), array('type': 'ENDER_PEARL'), @e, @id = @id) {
 	@pvp = import('pvp'.@id)
