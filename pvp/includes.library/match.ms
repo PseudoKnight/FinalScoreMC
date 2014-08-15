@@ -549,8 +549,8 @@ proc('_pvp_end_match', @id, @winners) {
 		_remove_region_entities(@pvp['arena']['region'])
 		if(array_index_exists(@pvp['arena'], 'restore')) {
 			set_timeout(3000, closure(){
-				foreach(array_keys(@pvp['players']), @player) {
-					if(ponline(@player) && pworld(@player) == 'custom') {
+				foreach(@player in all_players('custom')) {
+					if(ponline(@player)) {
 						broadcast(color('gray').'[PVP] '.color(6).'RESTORING '.to_upper(@id).'...')
 						scriptas(@player,
 							foreach(@pvp['arena']['restore'], @region) {
