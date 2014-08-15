@@ -182,7 +182,7 @@
 	try(
 		pgive_item(@item[0].':'.@item[1], $amount)
 		msg(color('yellow').'You\'ve been given '.$amount.' '.data_name(@item[0].':'.@item[1]).'.')
-	, msg(color('red').'That item doesn\'t appear to exist.')
+	, msg(color('red').'That item doesn\'t appear to exist.'))
 <<<
 
 #Set fly mode for people or yourself
