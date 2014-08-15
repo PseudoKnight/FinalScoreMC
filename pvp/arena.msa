@@ -119,7 +119,7 @@
 				msg('King of the Hill region set to '.color(10).@args[0])
 
 			case 'mode':
-				if(!@args[0] || !array_contains_ic(array('dm', 'tdm', 'ctf', 'koth', 'infection'), @args[0]), die('Available modes: dm (default deathmatch), tdm (team deathmatch), ctf (capture the flag), koth (king of the hill), infection.'))
+				if(!@args[0] || !array_contains_ic(array('dm', 'ddm', 'tdm', 'ctf', 'koth', 'infection'), @args[0]), die('Available modes: dm (default deathmatch), tdm (team deathmatch), ctf (capture the flag), koth (king of the hill), infection.'))
 				@arena['mode'] = to_lower(@args[0])
 				msg('Set arena game mode to '.color(10).@args[0])
 

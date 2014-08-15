@@ -179,6 +179,29 @@
 			}
 		}
 		if(array_contains(@pvp['arena']['flags'], 'keepinventory'), @pvp['arena']['denydrop'] = 'all')
+		
+		# dynamically determine if it should be a team game
+		if(@pvp['arena']['mode'] == 'ddm') {
+			@size = array_size(@pvp['players'])
+			if(@size > 5 && @size % 2 == 0) {
+				@pvp['arena']['mode'] = 'tdm'
+				@pvp['arena']['ff'] = false
+				if(array_index_exists(@pvp['arena'], 'kit')) {
+					@pvp['arena']['kit'][1] = @pvp['arena']['kit'][0]
+				}
+				
+				@spawns[] = @pvp['arena']['spawn'][0]
+				@pvp['arena']['spawn'] = array()
+				@team = 0
+				foreach(@spawn in @spawns) {
+					@pvp['arena']['spawn'][@team] = @spawn
+				}
+				
+			} else {
+				@pvp['arena']['mode'] = 'dm'
+			}
+		}
+		
 		if(!array_index_exists(@pvp['arena'], 'team') && array_contains(array('ctf', 'tdm', 'infection'), @pvp['arena']['mode'])) {
 			@pvp['arena']['team'] = array(
 				array('name': 'Red', 'color': color('c')), 
