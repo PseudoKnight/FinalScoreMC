@@ -1,4 +1,4 @@
-set_interval(8 * 60 * 1000, closure(){
+set_interval(10 * 60 * 1000, closure(){
 	if(player() == '~console') {
 		run('/save-all')
 	} else {

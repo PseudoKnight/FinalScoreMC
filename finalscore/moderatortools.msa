@@ -317,22 +317,22 @@
 	@data = get_values($namespace)
 	if(array_size(@data) == 0, die('No keys for that namespace.'))
 	switch($action) {
-	case 'delete':
-		foreach(@data, @key, @value) {
-			clear_value(@key)
-		}
-		msg('Deleted '.$namespace)
-	case 'rename':
-		foreach(@data, @key, @value) {
-			store_value(reg_replace($namespace, $, @key), @data[@key])
-			clear_value(@key)
-		}
-	case 'indexchild':
-		foreach(@data, @key, @value) {
-			@array[$] = @value
-			store_value(reg_replace('.'.$, '', @key), @array)
-			clear_value(@key)
-		}
+		case 'delete':
+			foreach(@key: @value in @data) {
+				clear_value(@key)
+			}
+			msg('Deleted '.$namespace)
+		case 'rename':
+			foreach(@key: @value in @data) {
+				store_value(reg_replace($namespace, $, @key), @data[@key])
+				clear_value(@key)
+			}
+		case 'indexchild':
+			foreach(@key: @value in @data) {
+				@array[$] = @value
+				store_value(reg_replace('.'.$, '', @key), @array)
+				clear_value(@key)
+			}
 	}
 <<<
 
@@ -340,7 +340,7 @@
 	if(!has_permission('group.moderators'), die('You do not have permission.'))
 	@players = get_values('player')
 	msg(color('bold').'Matched Players for IP: '.$ip)
-	foreach(@players, @key, @player) {
+	foreach(@key: @player in @players) {
 		if(array_index_exists(@player, 'ips') && array_contains(@player['ips'], $ip)) {
 			msg('Matched: '.split('.', @key)[1])
 		}

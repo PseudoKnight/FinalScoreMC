@@ -82,8 +82,8 @@ proc('_class', @action, @player, @class, @pvp) {
 			set_pwalkspeed(@player, @pvp['arena']['classes'][@class]['speed'])
 		}
 		if(array_index_exists(@pvp['arena']['classes'][@class], 'effect')) {
-			set_timeout(50, closure(){
-				foreach(@pvp['arena']['classes'][@class]['effect'], @eid, @e) {
+			queue_push(closure(){
+				foreach(@eid: @e in @pvp['arena']['classes'][@class]['effect']) {
 					set_peffect(@player, @eid, @e['strength'], @e['length'], true)
 				}
 			})
@@ -177,7 +177,7 @@ proc('_class_select', @id, @pvp) {
 			)
 		}
 	}
-	foreach(@pvp['players'], @p, @pdata) {
+	foreach(@p: @pdata in @pvp['players']) {
 		if(@size1 > 1
 		&& (!array_index_exists(@pdata, 'team') || @pdata['team'] == 0)) {
 			popen_virtualchest(@p, @id.'0')

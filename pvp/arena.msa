@@ -197,7 +197,7 @@
 			case 'restore':
 				if(!has_permission('group.engineers'), die('Only engineers, moderators and admins can do this.'))
 				@regions = array()
-				foreach(@args, @region) {
+				foreach(@region in @args) {
 					if(@region != null) {
 						array_push(@regions, @region)
 					}
@@ -268,7 +268,7 @@
 				@loc = pcursor()
 				if(split(':', get_block_at(@loc))[0] != '54', die('You must look at a chest you want to spawn.'))
 				if(!array_index_exists(@arena['chestgroup'], @args[0]), array_set(@arena['chestgroup'], @args[0], array()))
-				foreach(@arena['chestgroup'][@args[0]], @key, @chestloc) {
+				foreach(@key: @chestloc in @arena['chestgroup'][@args[0]]) {
 					if(@chestloc == @loc) {
 						array_remove(@arena['chestgroup'][@args[0]], @key)
 						break()
@@ -282,7 +282,7 @@
 				if(!@args[0], die('Arguments: <chestGroupName> | <cooldownSecs> <spawnStart>'))
 				@loc = pcursor()
 				if(split(':', get_block_at(@loc))[0] != '54', die('You must look at a chest.'))
-				foreach(@arena['chestspawn'], @key, @chest) {
+				foreach(@key: @chest in @arena['chestspawn']) {
 					if(@chest['loc'] == @loc) {
 						array_remove(@arena['chestspawn'], @key)
 						break()
@@ -398,7 +398,7 @@
 				@weapons = array('endernades', 'skullrockets',  'shotgunballs', 'primedtnt', 'pistoltears', 'firefire', 'railgun', 'fireball', 'firebreath')
 				if(!@args[0] || @args[1], die('You need to specify a comma separated list of pre-defined weapons. (no spaces) Current available weapons: '.@weapons))
 				@arena['weapons'] = split(',', @args[0])
-				foreach(@arena['weapons'], @weapon) {
+				foreach(@weapon in @arena['weapons']) {
 					if(!array_contains(@weapons, @weapon), die('Unknown flag: '.@weapon))
 				}
 				msg('Activated these weapons: '.color(10).@arena['weapons'])
@@ -407,7 +407,7 @@
 				@flags = array('noinventory', 'stackedpickup', 'debug', 'keepinventory', 'rallycall', 'build', 'infinitedispensers', 'effects', 'noxp', 'nobottles')
 				if(!@args[0] || @args[1], die('You need to specify a comma separated list of pre-defined flags. (no spaces) Current available flags: '.@flags))
 				@arena['flags'] = split(',', @args[0])
-				foreach(@arena['flags'], @flag) {
+				foreach(@flag in @arena['flags']) {
 					if(!array_contains(@flags, @flag), die('Unknown flag: '.@flag))
 				}
 				msg('Activated these flags: '.color(10).@arena['flags'])
@@ -436,10 +436,10 @@
 			case 'chestspawn':
 				@loc = array(round(pcursor()[0]), round(pcursor()[1]), round(pcursor()[2]), pcursor()[3])
 				if(split(':', get_block_at(@loc))[0] != '54', die('This is not a chest'))
-				foreach(@arena['chestspawn'], @chest) {
+				foreach(@chest in @arena['chestspawn']) {
 					if(@chest['loc'] == @loc) {
 						if(array_index_exists(@chest, 'items')) {
-							foreach(@chest['items'], @index, @item) {
+							foreach(@index: @item in @chest['items']) {
 								set_inventory_item(@loc, @index, @item)
 							}
 							die('After editing, you can save this chestspawn by using "/arena set '.$id.' chestspawn '.@chest['cooldown'].' '.@chest['start'].'"')
@@ -580,7 +580,7 @@
 			@loc = pcursor()
 			if(split(':', get_block_at(@loc))[0] == '54'
 			&& ($setting == 'chestspawn' || $setting == 'chestgroup')) {
-				foreach(@arena[$setting], @key, @chest) {
+				foreach(@key: @chest in @arena[$setting]) {
 					if(@chest['loc'][0] == @loc[0]
 					&& @chest['loc'][1] == @loc[1]
 					&& @chest['loc'][2] == @loc[2]) {
@@ -625,7 +625,7 @@
 			if(array_index_exists(@arena, 'team') && !array_index_exists(@arena, 'mode'), msg(color('gold').'mode '.color(7).'(team mode required for "team")'))
 			if(array_index_exists(@arena, 'teamratio') && !array_index_exists(@arena, 'mode'), msg(color('gold').'mode '.color(7).'(team mode required for "teamratio")'))
 			# 
-			foreach(@arena, @setting, @value) {
+			foreach(@setting: @value in @arena) {
 				if(array_contains(array('spawn', 'kit', 'itemspawn', 'chestspawn', 'mobspawn', 'classes'), @setting)) {
 					msg(@setting.' '.color('gray').'[...]')
 				} else if(array_contains(array('team'), @setting)) {

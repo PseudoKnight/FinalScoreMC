@@ -90,7 +90,7 @@ bind('player_death', array('priority': 'high', 'id': @id.'death'), null, @e, @id
 	}
 	
 	@drops = array()
-	foreach(@e['drops'], @drop) {
+	foreach(@drop in @e['drops']) {
 		if(@pvp['arena']['mode'] == 'ctf' && (@drop['type'] == 8 || @drop['type'] == 10)) {
 			_regionmsg(@pvp['arena']['broadcast'], color('gray').'[PVP] '.@pvp['players'][player()]['color']
 				.player().color('r').' dropped the '.@pvp['arena']['team'][if(@pvp['players'][player()]['team'] == 0, 1, 0)]['color'].'flag')
@@ -113,7 +113,7 @@ bind('player_death', array('priority': 'high', 'id': @id.'death'), null, @e, @id
 			_class('load', player(), @pvp['players'][player()]['class'], @pvp)
 			_regionmsg(@pvp['arena']['broadcast'], color('gray').'[PVP] '.@pvp['players'][player()]['color']
 				.to_upper(@pvp['arena']['team'][@pvp['players'][player()]['team']]['name']).color('r').' - Captain has died and dropped his hat!')
-			foreach(@pvp['players'], @p, @player) {
+			foreach(@p: @player in @pvp['players']) {
 				if(@player['team'] == @pvp['players'][player()]['team']) {
 					set_compass_target(@p, ploc())
 				}

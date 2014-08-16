@@ -83,7 +83,7 @@ proc('_pvp_start_match', @id) {
 	
 	if(array_index_exists(@pvp['arena'], 'mobprotect')) {
 		queue_push(closure(){
-			foreach(@pvp['arena']['mobprotect'], @team, @mob) {
+			foreach(@team: @mob in @pvp['arena']['mobprotect']) {
 				 @entityid = _spawn_mob(@mob['type'], 1, @mob['loc'])[0]
 				 set_mob_name(@entityid, @pvp['arena']['team'][@team]['color'].@pvp['arena']['team'][@team]['name'])
 				 @pvp['team'][@team]['mobprotect'] = entity_uuid(@entityid)
@@ -251,7 +251,7 @@ proc('_pvp_start_match', @id) {
 
 proc('_pvp_initialize_players', @id, @players) {
 	@c = array(0, 0) # for selecting initial spawn locations
-	foreach(@players, @player) {
+	foreach(@player in @players) {
 		@pvp = import('pvp'.@id)
 		if(!ponline(@player) || !get_collides_with_entities(@player)) {
 			array_remove(@pvp['players'], @player)
@@ -356,11 +356,11 @@ proc('_pvp_equip', @id, @player) {
 		}
 	}
 	if(array_index_exists(@pvp['arena'], 'effect')) {
-		foreach(@pvp['arena']['effect'][0], @effect, @data) {
+		foreach(@effect: @data in @pvp['arena']['effect'][0]) {
 			set_peffect(@player, @effect, @data['strength'], @data['length'], true)
 		}
 		if(array_index_exists(@pvp, 'team')) {
-			foreach(@pvp['arena']['effect'][@pvp['players'][@player]['team'] + 1], @effect, @data) {
+			foreach(@effect: @data in @pvp['arena']['effect'][@pvp['players'][@player]['team'] + 1]) {
 				set_peffect(@player, @effect, @data['strength'], @data['length'], true)
 			}
 		}
@@ -406,7 +406,7 @@ proc('_pvp_check_objectives', @id) {
 	#check team player counts
 	if(array_index_exists(@pvp, 'team')) {
 		@teamcount = array(0, 0)
-		foreach(@pvp['players'], @player) {
+		foreach(@player in @pvp['players']) {
 			if(!array_index_exists(@pvp['arena'], 'respawntime') || @player['respawn'] == 0) {
 				@teamcount[@player['team']]++
 				@winner = @player['team']
@@ -420,7 +420,7 @@ proc('_pvp_check_objectives', @id) {
 
 	#check ffa player scores
 	if(@pvp['arena']['mode'] == 'koth') {
-		foreach(@pvp['players'], @player, @data) {
+		foreach(@player: @data in @pvp['players']) {
 			if(get_pscore('seconds', @player, @id)  <= 0) {
 				_pvp_end_match(@id, array(@player))
 				die()
@@ -538,7 +538,7 @@ proc('_pvp_end_match', @id, @winners) {
 				}
 			)
 		}
-		foreach(@pvp['binds'], @bind) {
+		foreach(@bind in @pvp['binds']) {
 			unbind(@bind)
 		}
 		foreach(@p in @pvp['spectators']) {
@@ -553,7 +553,7 @@ proc('_pvp_end_match', @id, @winners) {
 					if(ponline(@player)) {
 						broadcast(color('gray').'[PVP] '.color(6).'RESTORING '.to_upper(@id).'...')
 						scriptas(@player,
-							foreach(@pvp['arena']['restore'], @region) {
+							foreach(@region in @pvp['arena']['restore']) {
 								sudo('//schematic load mce '.@region)
 								sudo('//paste -o')
 							}

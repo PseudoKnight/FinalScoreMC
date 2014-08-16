@@ -77,7 +77,7 @@
 	case 'debug':
 		@id = to_lower($id)
 		@pvp = import('pvp'.@id)
-		foreach(@pvp, @key, @value) {
+		foreach(@key: @value in @pvp) {
 			msg(@key.': '.color('gray').@value)
 		}
 
@@ -151,7 +151,7 @@
 		}
 		
 		if(array_index_exists(@pvp['arena'], 'sharedarenas')) {
-			foreach(@pvp['arena']['sharedarenas'], @arenaid) {
+			foreach(@arenaid in @pvp['arena']['sharedarenas']) {
 				@otherpvp = import('pvp'.@arenaid)
 				if(@otherpvp && @otherpvp['running']) {
 					die('Another PVP match is running in that region.')

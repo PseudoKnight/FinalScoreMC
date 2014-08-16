@@ -2,7 +2,7 @@ proc('_spawn_mob', @mob, @qty, @loc, @owner = 'Notch') {
 	@mob = _get_mob(@mob)
 	if(!@mob, return(array()))
 	@mobs = spawn_mob(@mob['type'], @qty, @loc)
-	foreach(@mobs, @m,
+	foreach(@m in @mobs) {
 		if(array_index_exists(@mob, 'name'), set_mob_name(@m, @mob['name']))
 		if(array_index_exists(@mob, 'gear'), set_mob_equipment(@m, @mob['gear']))
 		if(array_index_exists(@mob, 'droprate'), set_equipment_droprates(@m, @mob['droprate']))
@@ -48,15 +48,15 @@ proc('_spawn_mob', @mob, @qty, @loc, @owner = 'Notch') {
 			set_entity_onfire(@m, @mob['onfire'])
 		}
 		set_entity_persistence(@m, true)
-	)
+	}
 	if(array_index_exists(@mob, 'effects')) {
-		set_timeout(50, closure(
-			foreach(@mobs, @m,
-				foreach(@mob['effects'], @e,
+		queue_push(closure(){
+			foreach(@m in @mobs) {
+				foreach(@e in @mob['effects']) {
 					try(set_mob_effect(@m, @e['id'], @e['strength'], @e['seconds'], true))
-				)
-			)
-		))
+				}
+			}
+		})
 	}
 	return(@mobs)
 }

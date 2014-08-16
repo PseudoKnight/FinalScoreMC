@@ -1,26 +1,26 @@
 *:/mob [$cmd] [$id] [$setting] [$] = >>>
 	if(!has_permission('command.mob'), die('You do not have permission.'))
-	switch($cmd
-	, 'set',
+	switch($cmd) {
+	case 'set':
 		@mob = get_value('mob.'.$id)
 		if(!@mob, @mob = array())
-		switch($setting
-		, 'type',
+		switch($setting) {
+		case 'type':
 			if(!_get_mob($), die('Unknown mob type.'))
 			@mob['type'] = $
 			msg('Type set.')
 			
-		, 'name',
+		case 'name':
 			if(length($) > 64, die('Name is too long.'))
 			@mob['name'] = colorize($)
 			msg('Name set.')
 			
-		, 'age',
+		case 'age':
 			if(!is_integral($), die('Must be a number.'))
 			@mob['age'] = $
 			msg('Age set.')
 			
-		, 'gear',
+		case 'gear':
 			@mob['gear'] = array(
 				'WEAPON': pinv(player(), 0),
 				'HELMET': pinv(player(), 103),
@@ -30,7 +30,7 @@
 			)
 			msg('Gear set.')
 			
-		, 'droprate',
+		case 'droprate':
 			@args = parse_args($)
 			if(array_size(@args) == 1) {
 				@mob['droprate'] = array(
@@ -51,7 +51,7 @@
 			}
 			msg('Droprate set.')
 			
-		, 'effect',
+		case 'effect':
 			@args = parse_args($)
 			if(!is_numeric(@args[0]), die('Must be numeric'))
 			if(!array_index_exists(@mob, 'effects')) {
@@ -74,11 +74,11 @@
 				msg('Effect added')
 			}
 			
-		, 'tags',
+		case 'tags':
 			@mob['tags'] = json_decode($)
 			msg('Set the tags to '.$)
 			
-		, 'tame',
+		case 'tame':
 			if($) {
 				@mob['tame'] = true
 			} else if(array_index_exists(@mob, 'tame')) {
@@ -86,11 +86,11 @@
 			}
 			msg('Made mob tamed state to '.$)
 			
-		, 'rider',
+		case 'rider':
 			@mob['rider'] = $
 			msg('Set mob rider to '.$)
 
-		, 'explode',
+		case 'explode':
 			@args = parse_args($)
 			if(array_size(@args) < 2, die('Must give two numbers: seconds till explode, explosion strength'))
 			if(!is_numeric(@args[0]), die('Must give a number in seconds for the mob to explode.'))
@@ -99,7 +99,7 @@
 			@mob['explode'] = @args
 			msg('Set mob to explode after '.@args[0].' seconds with strength of '.@args[1])
 			
-		, 'onfire',
+		case 'onfire':
 			if(!is_numeric($), die('Must be a number.'))
 			if($ == 0 && array_index_exists(@mob, 'onfire')) {
 				array_remove(@mob, 'onfire')
@@ -110,12 +110,13 @@
 			}
 
 		
-		, 'health',
+		case 'health':
 			@mob['health'] = $
 			msg('Set health to '.$)
 			
-		, die('Available settings: type, name, gear, droprate, effect, health, tame, tags, rider, explode, onfire')
-		)
+		default:
+			die('Available settings: type, name, gear, droprate, effect, health, tame, tags, rider, explode, onfire')
+		}
 		store_value('mob.'.$id, @mob)
 		
 	, 'delete',
@@ -130,13 +131,13 @@
 			msg('Custom mob deleted.')
 		}
 	
-	, 'info',
+	case 'info':
 		@mob = get_value('mob.'.$id)
-		foreach(@mob, @setting, @value,
+		foreach(@setting: @value in @mob) {
 			msg(color('gray').@setting.' '.color('r').@value)
-		)
+		}
 	
-	, 'spawn',
+	case 'spawn':
 		@mobtype = $id
 		if($setting) {
 			@mobcount = $setting
@@ -151,16 +152,16 @@
 			@loc[3]
 		), player())
 	
-	, 'list',
+	case 'list':
 		@mobs = get_values('mob')
 		@list = ''
-		foreach(array_keys(@mobs), @key,
+		foreach(@key in array_keys(@mobs)) {
 			@list .= split('.', @key)[1].' '
-		)
+		}
 		msg(color('gray').'CUSTOM MOBS: '.color('r').@list)
-	,
+	default:
 		die('Usage: /mob <set|delete|info|spawn|list> [mobname] [setting] [value]')
-	)
+	}
 <<<
 
 *:/summon $entity $x $y $z = >>>
