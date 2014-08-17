@@ -15,7 +15,7 @@ if(!@conv) {
 export('conv', @conv)
 
 # PMs, ignores, and mutes
-bind('player_chat', null, null, @event) {
+bind(player_chat, null, null, @event) {
 	include('includes.library/chat.ms')
 	if(@event['message'][0] == '@') {
 		cancel()

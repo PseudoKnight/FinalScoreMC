@@ -3,7 +3,7 @@
 ####################
 
 # CLICKING SIGNS!
-bind('player_interact', null, array('block': 68), @event) {
+bind(player_interact, null, array('block': 68), @event) {
 	@signtext = get_sign_text(@event['location'])
 	if(length(@signtext[0]) > 2 && @signtext[0][0] == '['
 	&& (length(@signtext[1]) > 7 && substr(@signtext[1], 0, 3) == 'Buy'
@@ -96,7 +96,7 @@ bind('player_interact', null, array('block': 68), @event) {
 }
 
 # Breaking signs
-bind('block_break', null, array('type': 68), @event) {
+bind(block_break, null, array('type': 68), @event) {
 	@location = array(round(@event['location'][0]), round(@event['location'][1]), round(@event['location'][2]), @event['location'][3])
 	@signtext = get_sign_text(@location)
 	if(length(@signtext[0]) < 3 || @signtext[0][0] != '[', die())
@@ -142,7 +142,7 @@ bind('block_break', null, array('type': 68), @event) {
 }
 
 #prevent hoppers under shop chests
-bind('block_place', null, array('type': 154), @event) {
+bind(block_place, null, array('type': 154), @event) {
 	@loc = _relative(@event['location'], 'up')
 	@type = split(':', get_block_at(@loc))[0]
 	if(@type == '54' || @type == '146') {

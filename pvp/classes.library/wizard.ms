@@ -1,6 +1,6 @@
 switch(@action) {
 case 'load':
-	bind('player_interact', array('id': @player.'lightning'), array('item': 369, 'button': 'right', 'player': @player), @e) {
+	bind(player_interact, array('id': @player.'lightning'), array('item': 369, 'button': 'right', 'player': @player), @e) {
 		lightning(pcursor())
 		@slot = pinfo(player(), 15)
 		@item = pinv(player(), null)
@@ -16,7 +16,7 @@ case 'load':
 		}, player().'lightning')
 	}
 	
-	bind('player_interact', array('id': @player.'woosh'), array('item': 288, 'button': 'right', 'player': @player), @e) {
+	bind(player_interact, array('id': @player.'woosh'), array('item': 288, 'button': 'right', 'player': @player), @e) {
 		@loc1 = ploc()
 		foreach(@player in players_in_radius(ploc(), 8)) {
 			if(@player == player() || pinfo(@player, 5) <= 0, continue())

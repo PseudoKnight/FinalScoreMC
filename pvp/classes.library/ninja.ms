@@ -6,7 +6,7 @@ case 'load':
 		102: @pvp['arena']['classes'][@class]['kit'][102],
 		103: @pvp['arena']['classes'][@class]['kit'][103],
 	)
-	bind('player_toggle_sneak', array('id': @player.'ninja'), array('player': @player), @e, @gear = @armor) {
+	bind(player_toggle_sneak, array('id': @player.'ninja'), array('player': @player), @e, @gear = @armor) {
 		if(@e['sneaking']) {
 			set_pinv(array(
 				100: null,

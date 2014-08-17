@@ -8,7 +8,7 @@ proc('_class', @action, @player, @class, @pvp) {
 		if(array_index_exists(@pvp['arena']['classes'][@class], 'doublejump')) {
 			set_pflight(@player, true)
 			set_pexp(@player, 100)
-			bind('player_toggle_flight', array('id': @player.'doublejump'), array('flying': true, 'player': @player), @e) {
+			bind(player_toggle_flight, array('id': @player.'doublejump'), array('flying': true, 'player': @player), @e) {
 				cancel()
 				@vel = entity_velocity(pinfo(player(), 13))
 				set_pvelocity(@vel['x'] * 1.9, 0.9, @vel['z'] * 1.9)
@@ -24,7 +24,7 @@ proc('_class', @action, @player, @class, @pvp) {
 		}
 		
 		if(array_index_exists(@pvp['arena']['classes'][@class], 'spawner')) {
-			bind('player_interact', array('id': @player.'spawner'), array('button': 'right', 'item': 383, 'player': @player), @e) {
+			bind(player_interact, array('id': @player.'spawner'), array('button': 'right', 'item': 383, 'player': @player), @e) {
 				if(@e['action'] == 'right_click_block') {
 					cancel()
 					@item = pinv(player(), null)
@@ -189,7 +189,7 @@ proc('_class_select', @id, @pvp) {
 
 	if(@size1 > 1 || @size2 > 1) {
 		array_push(@pvp['binds'], @id.'classselector')
-		bind('inventory_click', array('id': @id.'classselector'), array('slottype': 'CONTAINER'), @e, @id = @id) {
+		bind(inventory_click, array('id': @id.'classselector'), array('slottype': 'CONTAINER'), @e, @id = @id) {
 			@pvp = import('pvp'.@id)
 			if(!array_index_exists(@pvp['players'], player())
 			|| is_null(@e['slotitem'])

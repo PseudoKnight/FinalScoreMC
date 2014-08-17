@@ -9,7 +9,7 @@ proc('_set_spectator', @id, @player, @pvp) {
 		set_ploc(@player, @pvp['arena']['spawn'][0][0])
 		set_peffect(@player, 14, 0, 9999, true)
 	} else {
-		bind('player_spawn', null, array('player': @player), @e, @id = @id) {
+		bind(player_spawn, null, array('player': @player), @e, @id = @id) {
 			unbind()
 			@pvp = import('pvp'.@id)
 			if(@pvp['running']) {

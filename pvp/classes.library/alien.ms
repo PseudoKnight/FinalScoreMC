@@ -1,6 +1,6 @@
 switch(@action) {
 case 'load':
-	bind('player_interact', array('id': @player.'plasmagun'), array('item': 382, 'button': 'right', 'player': @player), @e) {
+	bind(player_interact, array('id': @player.'plasmagun'), array('item': 382, 'button': 'right', 'player': @player), @e) {
 		cancel()
 		if(pexp() >= 100) {
 			@arrow = shoot_projectile(player(), 'ARROW')
@@ -23,11 +23,11 @@ case 'load':
 		}
 	}
 
-	bind('projectile_hit', array('id': @player.'hit'), array('type': 'ARROW'), @e, @shooter = pinfo(@player, 13)) {
+	bind(projectile_hit, array('id': @player.'hit'), array('type': 'ARROW'), @e, @shooter = pinfo(@player, 13)) {
 		if(@e['shooter'] == @shooter && entity_type(@e['id']), try(entity_remove(@e['id'])))
 	}
 	
-	bind('player_interact', array('id': @player.'teleport'), array('item': 381, 'player': @player, 'button': 'right'), @e, @pvp = @pvp) {
+	bind(player_interact, array('id': @player.'teleport'), array('item': 381, 'player': @player, 'button': 'right'), @e, @pvp = @pvp) {
 		cancel()
 		@loc = pinfo(player(), 2)
 		foreach(@p in players_in_radius(@loc, 3)) {

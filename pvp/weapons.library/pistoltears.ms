@@ -1,5 +1,5 @@
 array_push(@pvp['binds'], @id.'pistoltears')
-bind('player_interact', array('id': @id.'pistoltears'), array('item': 370, 'button': 'right'), @e, assign(@id, @id)) {
+bind(player_interact, array('id': @id.'pistoltears'), array('item': 370, 'button': 'right'), @e, assign(@id, @id)) {
 	@pvp = import('pvp'.@id)
 	if(!array_index_exists(@pvp['players'], player()), die())
 	@entity = shoot_projectile(player(), 'ARROW')

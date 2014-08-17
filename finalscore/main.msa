@@ -29,7 +29,7 @@
 	if(!@thing) {
 		die('Please specify "horse", "wolf", or "cat".')
 	}
-	bind('player_interact_entity', array('id': 'transfer'.@owner.@player), array('clicked': @thing), @e, @player = @player, @owner = player().'') {
+	bind(player_interact_entity, array('id': 'transfer'.@owner.@player), array('clicked': @thing), @e, @player = @player, @owner = player().'') {
 		if(player() != @owner,
 			die())
 		cancel()
@@ -157,7 +157,7 @@
 		} else {
 			@message = $
 		}
-		bind('player_death', array('priority': 'highest'), array('player': @player), @e, @message = @message) {
+		bind(player_death, array('priority': 'highest'), array('player': @player), @e, @message = @message) {
 			modify_event('death_message', player().' apparently '.@message)
 			unbind()
 		}

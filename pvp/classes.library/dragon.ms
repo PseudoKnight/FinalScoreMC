@@ -1,7 +1,7 @@
 switch(@action) {
 case 'load':
 	set_pflight(@player, true)
-	bind('player_toggle_flight', array('id': @player.'dragon'), array('player': @player), @e) {
+	bind(player_toggle_flight, array('id': @player.'dragon'), array('player': @player), @e) {
 		cancel()
 		play_sound(ploc(), array('sound': 'ENDERDRAGON_WINGS', 'pitch': 1.2))
 		proc('_flap', @player) {
@@ -38,7 +38,7 @@ case 'load':
 		}
 	}
 
-	bind('player_toggle_sneak', array('id': @player.'dragon2'), array('player': @player, 'sneaking': true), @e) {
+	bind(player_toggle_sneak, array('id': @player.'dragon2'), array('player': @player, 'sneaking': true), @e) {
 		if(!entity_grounded(pinfo(player(), 13))) {
 			set_pexp(0)
 		}

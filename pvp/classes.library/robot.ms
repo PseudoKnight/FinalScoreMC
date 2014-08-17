@@ -1,6 +1,6 @@
 switch(@action) {
 case 'load':
-	bind('entity_damage_player', array('id': @player.'robotdmg'), array('damager': 'PLAYER'), @event, @player = @player) {
+	bind(entity_damage_player, array('id': @player.'robotdmg'), array('damager': 'PLAYER'), @event, @player = @player) {
 		if(@event['player'] == @player) {
 			@item = pinv(@event['player'], 103)
 			if(!is_null(@item) && @item['type'] == 158) {
@@ -15,7 +15,7 @@ case 'load':
 		}
 	}
 	
-	bind('player_consume', array('id': @player.'robotconsume'), null, @event, @player = @player) {
+	bind(player_consume, array('id': @player.'robotconsume'), null, @event, @player = @player) {
 		if(@event['player'] == @player) {
 			cancel()
 		}

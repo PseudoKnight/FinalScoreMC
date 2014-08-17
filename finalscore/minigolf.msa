@@ -42,7 +42,7 @@ case 'start':
 	@friction = 0.96
 	@bounciness = 0.75
 	
-	bind('player_interact', array('id': 'minigolf_ball'), array('item': 341, 'button': 'right', 'block': 159), @event) {
+	bind(player_interact, array('id': 'minigolf_ball'), array('item': 341, 'button': 'right', 'block': 159), @event) {
 		@minigolf = import('minigolf')
 		if(array_index_exists(@minigolf, player())
 		&& @event['action'] == 'right_click_block'
@@ -85,7 +85,7 @@ case 'start':
 				}
 			})
 			
-			bind('player_interact', array('id': 'minigolf_swing_'.player()), array('item': 292, 'button': 'right', 'player': player()), @event) {
+			bind(player_interact, array('id': 'minigolf_swing_'.player()), array('item': 292, 'button': 'right', 'player': player()), @event) {
 				@item = pinv(player(), null)
 				if(@item['data'] == 0) {
 					@item['data'] = 1
@@ -114,7 +114,7 @@ case 'start':
 				}
 			}
 			
-			bind('entity_damage', array('id': 'minigolf_hit_'.player()), array('id': @minigolf[player()]['id'], 'type': @mobcheck, 'cause': 'ENTITY_ATTACK'), @event) {
+			bind(entity_damage, array('id': 'minigolf_hit_'.player()), array('id': @minigolf[player()]['id'], 'type': @mobcheck, 'cause': 'ENTITY_ATTACK'), @event) {
 				@xp = pexp(@event['damager'])
 				@minigolf = import('minigolf')
 				if(@xp > 0
@@ -142,7 +142,7 @@ case 'start':
 				# set_entity_velocity(@event['id'], array(@x, 0, @z))
 			}
 			
-			bind('target_player', array('id': 'minigolf_target_'.player()), array('mobtype': @mobcheck), @event) {
+			bind(target_player, array('id': 'minigolf_target_'.player()), array('mobtype': @mobcheck), @event) {
 				@minigolf = import('minigolf')
 				if(@minigolf[@event['player']]['id'] != @event['id']) {
 					foreach(@player: @ball in @minigolf) {

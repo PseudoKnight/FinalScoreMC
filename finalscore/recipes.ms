@@ -118,14 +118,14 @@ if(!get_recipe_for(array('type': 162, 'data': 13))) {
 }
 
 # MAKE LOG CUBES PLACEABLE
-bind('block_place', null, array('type': 17), @e) {
+bind(block_place, null, array('type': 17), @e) {
 	@item = pinv(player(), null)
 	if(@item['data'] >= 12 && sk_can_build(@e['location'])) {
 		set_block_at(@e['location'], '17:'.@item['data'])
 	}
 }
 
-bind('block_place', null, array('type': 162), @e) {
+bind(block_place, null, array('type': 162), @e) {
 	@item = pinv(player(), null)
 	if(@item['data'] >= 12 && sk_can_build(@e['location'])) {
 		set_block_at(@e['location'], '162:'.@item['data'])
@@ -143,6 +143,6 @@ if(!get_recipe_for(array('type': 3, 'data': 1))) {
 }
 
 # MAKE COARSE DIRT DROP ITSELF
-bind('block_break', null, array('type': 3, 'data': 1), @e) {
+bind(block_break, null, array('type': 3, 'data': 1), @e) {
 	modify_event('drops', array(array('type': 3, 'data': 1)))
 }

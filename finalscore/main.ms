@@ -6,11 +6,11 @@ set_interval(10 * 60 * 1000, closure(){
 	}
 })
 
-bind('server_ping', null, null, @event) {
+bind(server_ping, null, null, @event) {
 	modify_event('motd', colorize('&6&l\u1260&d&l\u1260&b&l\u1260&4&l\u1260 &6&lFINALSCORE&e&lMC \u00AB &f\u25AA \u25AA \u25AA'))
 }
 
-bind('player_login', null, null, @event) {
+bind(player_login, null, null, @event) {
 	if(@event['result'] != 'ALLOWED', die())
 	@update = false
 	@pdata = get_value('players', to_lower(@event['player']))
@@ -57,7 +57,7 @@ bind('player_login', null, null, @event) {
 }
 
 # Player join messages and tab list colors
-bind('player_join', null, null, @event) {
+bind(player_join, null, null, @event) {
 	set_timeout(250, closure(@loc = ploc(), @player = player()){
 		if(!ponline(@player), die())
 		#Store the player's UUID
@@ -177,7 +177,7 @@ bind('player_join', null, null, @event) {
 	})
 }
 
-bind('player_death', null, null, @event) {
+bind(player_death, null, null, @event) {
 	if(!array_contains(array('custom', 'dev'), pworld())) {
 		@log = @event['player'].' died @ '.round(@event['location'][0]).','.round(@event['location'][1]).','.round(@event['location'][2]).' on '.@event['location'][3].', dropping '.@event['xp'].'xp and '
 		foreach(@drop in @event['drops']) {
@@ -193,7 +193,7 @@ bind('player_death', null, null, @event) {
 }
 
 # Block wither
-bind('block_place', null, array('type': 144), @event) {
+bind(block_place, null, array('type': 144), @event) {
 	if(!array_contains(array('custom', 'dev','outworld_nether', 'outworld', 'outworld_the_end'), pworld())
 	&& get_block_at(_relative(@event['location'], 'down')) == '88:0'
 	&& pinv(player(), null) != null
@@ -204,7 +204,7 @@ bind('block_place', null, array('type': 144), @event) {
 }
 
 # Infinite Cauldrons
-bind('player_interact', null, array('block': 118, 'button': 'right'), @event) {
+bind(player_interact, null, array('block': 118, 'button': 'right'), @event) {
 	if(@event['block'] == '118:3') {
 		switch(@event['item']) {
 		case '325:0':
@@ -225,7 +225,7 @@ bind('player_interact', null, array('block': 118, 'button': 'right'), @event) {
 }
 
 # Block lighters
-bind('player_interact', null, array('item': 259, 'button': 'right'), @event) {
+bind(player_interact, null, array('item': 259, 'button': 'right'), @event) {
 	if(has_permission('group.regulars'), die())
 	if(!array_index_exists(@event, 'location'), die())
 	@loc = @event['location']
@@ -246,7 +246,7 @@ bind('player_interact', null, array('item': 259, 'button': 'right'), @event) {
 }
 
 # Button commands
-bind('player_interact', null, array('block': 77, 'button': 'right'), @event) {
+bind(player_interact, null, array('block': 77, 'button': 'right'), @event) {
 	@sign = _relative(@event['location'], 'up')
 	if(is_sign_at(@sign)) { 
 		@signtext = get_sign_text(@sign)
@@ -264,7 +264,7 @@ bind('player_interact', null, array('block': 77, 'button': 'right'), @event) {
 }
 
 # color signs for moderators
-bind('sign_changed', null, null, @event) {
+bind(sign_changed, null, null, @event) {
 	if(has_permission('group.moderators'))  {
 		modify_event('text', array(
 			0: colorize(@event['text'][0]),
@@ -276,11 +276,11 @@ bind('sign_changed', null, null, @event) {
 }
 
 # prevent people from pushing minecart hoppers underneath chests
-bind('vehicle_collide', null, array('type': 'MINECART_HOPPER', 'collisiontype': 'ENTITY', 'hittype': 'PLAYER'), @event) {
+bind(vehicle_collide, null, array('type': 'MINECART_HOPPER', 'collisiontype': 'ENTITY', 'hittype': 'PLAYER'), @event) {
 	cancel()
 }
 
-bind('vehicle_leave', array('priority': 'highest'), null, @event) {
+bind(vehicle_leave, array('priority': 'highest'), null, @event) {
 	if(@event['player'] && entity_exists(@event['vehicle'])) {
 		@vehicleloc = entity_loc(@event['vehicle'])
 		set_timeout(50, closure(){
@@ -292,14 +292,14 @@ bind('vehicle_leave', array('priority': 'highest'), null, @event) {
 }
 
 # prevent enderdragon egg teleportation
-bind('player_interact', null, array('block': 122), @event) {
+bind(player_interact, null, array('block': 122), @event) {
 	if(pworld() == 'custom' || pworld() == 'dev') {
 		cancel()
 	}
 }
 
 # DISPENSER PARKING
-bind('vehicle_collide', null, array('type': 'MINECART', 'collisiontype': 'BLOCK', 'hittype': 23), @event) {
+bind(vehicle_collide, null, array('type': 'MINECART', 'collisiontype': 'BLOCK', 'hittype': 23), @event) {
 	if(is_block_powered(@event['block']), die())
 	for(@i = 0, @i < get_inventory_size(@event['block']), @i++) {
 		if(is_null(get_inventory_item(@event['block'], @i))) {
@@ -311,7 +311,7 @@ bind('vehicle_collide', null, array('type': 'MINECART', 'collisiontype': 'BLOCK'
 }
 
 # prevent non-owners from riding a horse, unless shared
-bind('player_interact_entity', null, array('clicked': 'HORSE'), @event) {
+bind(player_interact_entity, null, array('clicked': 'HORSE'), @event) {
 	if(pworld() == 'custom' || pworld() == 'dev', die())
 	if(get_mob_owner(@event['id'])
 	&& get_mob_owner(@event['id']) != player()) {
@@ -345,7 +345,7 @@ bind('player_interact_entity', null, array('clicked': 'HORSE'), @event) {
 }
 
 # don't allow most horse damage unless being rode
-bind('entity_damage', null, array('type': 'HORSE'), @event) {
+bind(entity_damage, null, array('type': 'HORSE'), @event) {
 	if(get_mob_age(@event['id']) < -24000) {
 		cancel()
 		die()
@@ -391,7 +391,7 @@ bind('entity_damage', null, array('type': 'HORSE'), @event) {
 }
 
 # Let one player in a world make the sun rise
-bind('player_enter_bed', null, null, @event) {
+bind(player_enter_bed, null, null, @event) {
     if(get_world_time() > 13700 && get_world_time() < 22300) {
 		set_world_time(22300)
 		msg(color('aqua').'You made the sun rise.')
@@ -407,7 +407,7 @@ bind('player_enter_bed', null, null, @event) {
 }
 
 # Infinite Dispensers
-bind('block_dispense', null, array('type': 'DISPENSER'), @e) {
+bind(block_dispense, null, array('type': 'DISPENSER'), @e) {
 	if(@e['location']['world'] == 'dev' || @e['location']['world'] == 'custom') {
 		if(!array_contains(sk_region_check_flag(@e['location'], 'blocked-cmds'), '/finitedispensers')) {
 			try(@inv = get_inventory(@e['location']), die())
@@ -425,7 +425,7 @@ bind('block_dispense', null, array('type': 'DISPENSER'), @e) {
 }
 
 # Limit the number of mobs that can be built up from a mob spawner
-bind('creature_spawn', null, array('reason': 'SPAWNER'), @event) {
+bind(creature_spawn, null, array('reason': 'SPAWNER'), @event) {
 	@entities = 0
 	# check a 3x3 chunk area (48x256x48 area)
 	for(@x = -16, @x <= 16, @x += 16) {
@@ -439,7 +439,7 @@ bind('creature_spawn', null, array('reason': 'SPAWNER'), @event) {
 }
 
 # Anti-xray helper
-bind('block_break', null, array('type': 56), @event) {
+bind(block_break, null, array('type': 56), @event) {
 	if(pworld() == 'dev' || pworld() == 'custom', die())
 	set_timeout(50, closure(){
 		for(@x = @event['location']['x'] - 1, @x <= @event['location']['x'] + 1, @x++) {
@@ -459,7 +459,7 @@ bind('block_break', null, array('type': 56), @event) {
 }
 
 # leash villagers
-bind('player_interact_entity', null, array('clicked': 'VILLAGER'), @event) {
+bind(player_interact_entity, null, array('clicked': 'VILLAGER'), @event) {
 	@item = pinv(player(), null)
 	if(@item && @item['type'] == 420
 	&& get_player_from_entity_id(get_leashholder(@event['id'])) != player()) {
@@ -470,7 +470,7 @@ bind('player_interact_entity', null, array('clicked': 'VILLAGER'), @event) {
 	}
 }
 
-bind('entity_enter_portal', null, null, @event) {
+bind(entity_enter_portal, null, null, @event) {
 	if(@event['type'] != 'PLAYER'
 	&& ((@event['location']['world'] == 'custom' || @event['location']['world'] == 'dev')
 	|| (@event['type'] == 'ENDER_DRAGON' 

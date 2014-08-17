@@ -88,7 +88,7 @@ register_command('timer', array(
 					})
 					
 					if(!has_bind(@player.'timerbreak')) {
-						bind('block_break', array('id': @player.'timerbreak'), array('player': @player), @e, @p = @player) {
+						bind(block_break, array('id': @player.'timerbreak'), array('player': @player), @e, @p = @player) {
 							play_sound(ploc(@player), array('sound': 'VILLAGER_NO'), @p)
 							@timers = import('timer')
 							unbind()

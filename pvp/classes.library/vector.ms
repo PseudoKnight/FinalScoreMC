@@ -1,6 +1,6 @@
 switch(@action) {
 case 'load':
-	bind('player_interact', array('id': @player.'interact'), array('player': @player, 'button': 'right', 'item': '292'), @e) {
+	bind(player_interact, array('id': @player.'interact'), array('player': @player, 'button': 'right', 'item': '292'), @e) {
 		cancel()
 		if(get_block_at(ploc())[0] == '0'
 		|| phunger() == 0, die())
@@ -20,10 +20,10 @@ case 'load':
 			}
 		})
 	}
-	bind('entity_damage', array('id': @player.'falldamage'), array('type': 'PLAYER', 'cause': 'FALL', 'world': 'custom'), @e, @p = @player) {
+	bind(entity_damage, array('id': @player.'falldamage'), array('type': 'PLAYER', 'cause': 'FALL', 'world': 'custom'), @e, @p = @player) {
 		if(@e['player'] == @p, cancel())
 	}
-	bind('entity_damage', array('id': @player.'damage'), array('type': 'PLAYER', 'cause': 'ENTITY_ATTACK', 'world': 'custom'), @e, @p = @player) {
+	bind(entity_damage, array('id': @player.'damage'), array('type': 'PLAYER', 'cause': 'ENTITY_ATTACK', 'world': 'custom'), @e, @p = @player) {
 		if(@e['damager'] == @p) {
 			@helm = pinv(@e['player'], 102)
 			if(@armor && @armor['type'] == 20) {
@@ -37,7 +37,7 @@ case 'load':
 			cancel()
 		}
 	}
-	bind('player_death', array('id': @player.'death'), array('player': @player), @e) {
+	bind(player_death, array('id': @player.'death'), array('player': @player), @e) {
 		play_sound(ploc(), array('sound': 'GHAST_DEATH', 'pitch': 0))
 	}
 

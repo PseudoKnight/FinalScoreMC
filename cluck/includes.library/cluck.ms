@@ -33,7 +33,7 @@ proc('_cluck_startround') {
 		set_pinv(@cluck['player'][1], array(0: array('type': 261), 1: array('type': 262, 'qty': 10)))
 	}
 	
-	bind('entity_damage', array('id': 'cluckchicken'), array('cause': 'PROJECTILE', 'type': 'CHICKEN', 'world': 'custom'), @event) {
+	bind(entity_damage, array('id': 'cluckchicken'), array('cause': 'PROJECTILE', 'type': 'CHICKEN', 'world': 'custom'), @event) {
 		@cluck = import('cluck')
 		if(array_contains(@cluck['chickens'][0], @event['id'])) {
 			if(@event['shooter'] != @cluck['player'][0]) {

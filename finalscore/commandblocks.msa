@@ -6,7 +6,7 @@
 	}
 	@cart = spawn_entity('minecart', 1, @loc)[0]
 	set_entity_rider(@cart, @player)
-	bind('vehicle_leave', null, array('vehicletype': 'MINECART', 'passengertype': 'PLAYER'), @e, @cart = @cart) {
+	bind(vehicle_leave, null, array('vehicletype': 'MINECART', 'passengertype': 'PLAYER'), @e, @cart = @cart) {
 		if(@e['vehicle'] == @cart) {
 			unbind()
 			try(entity_remove(@e['vehicle']))

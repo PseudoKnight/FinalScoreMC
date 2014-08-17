@@ -5,7 +5,7 @@
 # DEPENDENCIES:
 # _relative() procedure
 
-bind('player_interact', null, array('button': 'right', 'item': 323), @e) {
+bind(player_interact, null, array('button': 'right', 'item': 323), @e) {
 	if(@e['action'] != 'right_click_block' || pinfo(player(), 11)) { die() }
 	@blockid = split(':', @e['block'])[0]
 	if((@blockid == 54 || @blockid == 146)

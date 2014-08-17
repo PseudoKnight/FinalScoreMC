@@ -1,6 +1,6 @@
 switch(@action) {
 case 'load':
-	bind('player_interact', array('id': @player.'blind'), array('player': @player, 'item': 290, 'button': 'right'), @e) {
+	bind(player_interact, array('id': @player.'blind'), array('player': @player, 'item': 290, 'button': 'right'), @e) {
 		@item = pinv(player(), null)
 		if(@item['data'] > 0, die())
 		foreach(@player in players_in_radius(ploc(), 18)) {

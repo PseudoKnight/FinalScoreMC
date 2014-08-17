@@ -1,6 +1,6 @@
 switch(@action) {
 case 'load':
-	bind('entity_damage_player', array('id': @player.'werewolf'), null, @e, @p = @player) {
+	bind(entity_damage_player, array('id': @player.'werewolf'), null, @e, @p = @player) {
 		if(@e['player'] == @p && !is_null(pinv(@p, 103))) {
 			play_sound(ploc(@p), array('sound': 'WOLF_HURT', 'pitch': 0.75))
 		} else if(@e['data'] == @p && !is_null(pinv(@p, 103)) && !rand(4)) {
@@ -8,7 +8,7 @@ case 'load':
 		}
 	}
 
-	bind('player_death', array('id': @player.'kill'), null, @e, @player = @player) {
+	bind(player_death, array('id': @player.'kill'), null, @e, @player = @player) {
 		if(@e['killer'] == @player && !is_null(pinv(@player, 103))) {
 			set_phealth(@player, min(20, pinfo(@player, 5) + 4))
 			play_sound(ploc(@player), array('sound': 'EAT', 'pitch': 0.5))
