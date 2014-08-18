@@ -228,7 +228,7 @@
 	}
 <<<
 
-/contribution $player $amount = >>>
+*:/contribution $player $amount = >>>
 	if(!has_permission('group.administrators'), die('You do not have permission to use this command.'))
 	@pdata = get_value('players', to_lower($player))
 	if(!@pdata) {
