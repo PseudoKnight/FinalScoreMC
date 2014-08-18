@@ -57,7 +57,9 @@ proc('_cluck_startround') {
 	}
 
 	set_block_at(@cluck['sound']['startround'], '69:13')
-	set_timeout(50, closure(set_block_at(@cluck['sound']['startround'], '69:5')))
+	queue_push(closure(){
+		set_block_at(@cluck['sound']['startround'], '69:5')
+	})
 	
 	export('cluck', @cluck)
 	_cluck_spawn()
@@ -171,10 +173,15 @@ proc('_cluck_endround') {
 			#-------
 
 			set_block_at(@cluck['sound']['gameover'], '69:13')
-			set_timeout(50, closure(set_block_at(@cluck['sound']['gameover'], '69:5')))
+			queue_push(closure(){
+				set_block_at(@cluck['sound']['gameover'], '69:5')
+			})
+			
 		} else {
 			set_block_at(@cluck['sound']['winround'], '69:13')
-			set_timeout(50, closure(set_block_at(@cluck['sound']['winround'], '69:5')))
+			queue_push(closure(){
+				set_block_at(@cluck['sound']['winround'], '69:5')
+			})
 		}
 	}
 

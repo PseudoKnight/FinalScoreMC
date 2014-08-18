@@ -217,7 +217,7 @@ bind(player_interact, null, array('block': 118, 'button': 'right'), @event) {
 				pgive_item(326, 1)
 			}
 		case '374:0':
-			set_timeout(50, closure(){
+			queue_push(closure(){
 				set_block_at(@event['location'], '118:3')
 			})
 		}
@@ -232,7 +232,7 @@ bind(player_interact, null, array('item': 259, 'button': 'right'), @event) {
 	if(get_block_at(@loc) == '46:0') {
 		die()
 	} else if(get_block_at(@loc) == '49:0' && @event['facing'] == 'up') {
-		set_timeout(50, closure(){
+		queue_push(closure(){
 			if(reg_split('\\:', get_block_at(_relative(@loc, 'up')))[0] != '90') {
 				set_block_at(_relative(@loc, 'up'), 0)
 			}
@@ -283,7 +283,7 @@ bind(vehicle_collide, null, array('type': 'MINECART_HOPPER', 'collisiontype': 'E
 bind(vehicle_leave, array('priority': 'highest'), null, @event) {
 	if(@event['player'] && entity_exists(@event['vehicle'])) {
 		@vehicleloc = entity_loc(@event['vehicle'])
-		set_timeout(50, closure(){
+		queue_push(closure(){
 			if(!get_entity_vehicle(pinfo(@event['player'], 13))) {
 				set_ploc(@event['player'], @vehicleloc)
 			}
@@ -416,7 +416,7 @@ bind(block_dispense, null, array('type': 'DISPENSER'), @e) {
 					@inv[@i]['qty'] = 64
 				}
 			}
-			set_timeout(50, closure(){
+			queue_push(closure(){
 				try(set_inventory(@e['location'], @inv),
 					console('Could not refill dispenser at '.@e['location']))
 			})
@@ -441,7 +441,7 @@ bind(creature_spawn, null, array('reason': 'SPAWNER'), @event) {
 # Anti-xray helper
 bind(block_break, null, array('type': 56), @event) {
 	if(pworld() == 'dev' || pworld() == 'custom', die())
-	set_timeout(50, closure(){
+	queue_push(closure(){
 		for(@x = @event['location']['x'] - 1, @x <= @event['location']['x'] + 1, @x++) {
 			for(@y = @event['location']['y'] - 1, @y <= @event['location']['y'] + 1, @y++) {
 				for(@z = @event['location']['z'] - 1, @z <= @event['location']['z'] + 1, @z++) {

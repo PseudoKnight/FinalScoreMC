@@ -15,7 +15,7 @@ proc('_class', @action, @player, @class, @pvp) {
 				play_effect(_relative(ploc(), 'up'), 'cloud', array('speed': 0, 'particleCount': 5, 'offsetX': 0.4, 'offsetZ': 0.4, 'offsetY': 0))
 				set_pflight(false)
 				set_pexp(0)
-				queue_delay(1000, player().'doublejump')
+				queue_delay(900, player().'doublejump')
 				queue_push(closure(){
 					set_pexp(100)
 					set_pflight(true)

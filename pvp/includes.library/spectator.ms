@@ -15,7 +15,7 @@ proc('_set_spectator', @id, @player, @pvp) {
 			if(@pvp['running']) {
 				@pvp['spectators'][] = player()
 				modify_event('location', @pvp['arena']['spawn'][0][0])
-				set_timeout(50, closure(){
+				queue_push(closure(){
 					foreach(@p in all_players('custom')) {
 						raw_set_pvanish(player(), true, @p)
 					}

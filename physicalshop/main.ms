@@ -8,7 +8,7 @@ bind(player_interact, null, array('block': 68), @event) {
 	if(length(@signtext[0]) > 2 && @signtext[0][0] == '['
 	&& (length(@signtext[1]) > 7 && substr(@signtext[1], 0, 3) == 'Buy'
 	|| length(@signtext[2]) > 8 && substr(@signtext[2], 0, 4) == 'Sell')) {
-		set_timeout(50, closure(){
+		queue_push(closure(){
 			include('includes.library/shops.ms')
 			@itemid = _shop_item(@signtext[0])
 			@shops = get_value('shop', @itemid)

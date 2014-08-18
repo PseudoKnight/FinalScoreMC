@@ -150,7 +150,7 @@ proc('_fw_mobs') {
 		}
 	}
 	if(!rand(4)) {
-		set_timeout(50, closure(){
+		queue_push(closure(){
 			foreach(@entity in @entities) {
 				set_mob_effect(@entity, 1, rand(2), 15, true)
 			}

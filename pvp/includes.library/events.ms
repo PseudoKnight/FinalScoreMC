@@ -196,19 +196,19 @@ bind(player_spawn, array('id': @id.'spawn'), null, @e, @id = @id) {
 		die())
 
 	if(!array_index_exists(@pvp['arena'], 'respawntime')) {
-		set_timeout(50, closure(){
+		queue_push(closure(){
 			_pvp_equip(@id, player())
 		})
 	} else if(array_index_exists(@pvp['arena'], 'classes')) {
 		if(!array_index_exists(@pvp['players'][player()], 'team') || @pvp['players'][player()]['team'] == 0) {
 			if(array_contains(all_virtualchests(), @id.'0')) {
-				set_timeout(50, closure(){
+				queue_push(closure(){
 					popen_virtualchest(player(), @id.'0')
 				})
 			}
 		} else {
 			if(array_contains(all_virtualchests(), @id.'1')) {
-				set_timeout(50, closure(){
+				queue_push(closure(){
 					popen_virtualchest(player(), @id.'1')
 				})
 			}
@@ -216,7 +216,7 @@ bind(player_spawn, array('id': @id.'spawn'), null, @e, @id = @id) {
 	}
 
 	if(array_index_exists(@pvp['arena'], 'respawntime')) {
-		set_timeout(50, closure(){
+		queue_push(closure(){
 			msg(color('gray').'[PVP] '.color('r').'You will respawn in at least '
 				.round((@pvp['players'][player()]['respawn'] - time()) / 1000).' seconds.')
 		})
