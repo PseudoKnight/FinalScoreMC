@@ -1,7 +1,11 @@
 # Clicking cakes
-bind('player_interact', null, array('block': 92), @event) {
-	if(pworld() != 'custom'
-	|| pmode() == 'CREATIVE') {
+bind(player_interact, null, array('block': 92), @event) {
+	if(phas_flight()) {
+		die()
+	}
+	@data = split(':', get_block_at(@event['location']))[1]
+	if(@data == '7') {
+		set_block_at(array(-394, 61, 1250, 'dev'), '152:0')
 		die()
 	}
 	@cakes = get_value('cakes')
@@ -42,13 +46,13 @@ bind('player_interact', null, array('block': 92), @event) {
 	store_value('cakeinfo', @cakeinfo)
 	make_effect(@event['location'], 'ENDER_SIGNAL')
 	make_effect(@event['location'], 'RECORD_PLAY:2263')
-	if(get_block_at(@event['location']) != '92:0') {
+	if(@data) {
 		set_block_at(@event['location'], '92:0')
 	}
 }
 
 # COIN SHOPS!
-bind('player_interact', null, array('block': 68), @event) {
+bind(player_interact, null, array('block': 68), @event) {
 	@signtext = get_sign_text(@event['location'])
 	if(length(@signtext[3]) > 8 && substr(@signtext[3], 0, 3) == color('yellow').'-') { #Coin reward signs
 		@cost = reg_match('.*\\-(\\d{1,3})\\sCoins', @signtext[3])
