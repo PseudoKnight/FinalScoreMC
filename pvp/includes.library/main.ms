@@ -1,3 +1,6 @@
+include('class.ms')
+include('spectator.ms')
+
 proc('_pvp_start_match', @id) {
 	@pvp = import('pvp'.@id)
 	if(array_index_exists(@pvp['arena'], 'rsoutput'), 

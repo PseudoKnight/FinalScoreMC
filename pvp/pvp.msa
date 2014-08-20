@@ -1,4 +1,5 @@
 *:/pvp [$action] [$id] [$team] = >>>
+	include('includes.library/main.ms')
 	switch($action) {
 	case 'join':
 		@id = to_lower($id)
@@ -60,11 +61,6 @@
 			}
 			
 		} else if(@pvp['running'] > 1) {
-			include('includes.library/match.ms')
-			include('includes.library/spectator.ms')
-			if(array_index_exists(@pvp['arena'], 'classes')) {
-				include('includes.library/class.ms')			
-			}
 			if(array_contains(@pvp['spectators'], player())) {
 				_remove_spectator(@id, player(), @pvp)
 			}
@@ -94,7 +90,6 @@
 		}
 		if(array_contains(get_scoreboards(), @id)) {
 			set_pscoreboard(player(), @id)
-			include('includes.library/spectator.ms')
 			@pvp = import('pvp'.@id)
 			_set_spectator(@id, player(), @pvp)
 		} else {
@@ -307,7 +302,6 @@
 		
 		# CLASSES
 		if(array_index_exists(@pvp['arena'], 'classes')) {
-			include('includes.library/class.ms')
 			_class_select(@id, @pvp)
 		
 			#ANNOUNCE
@@ -348,7 +342,6 @@
 			}
 			clear_task()
 			@pvp['running'] = 2
-			include('includes.library/match.ms')
 			_pvp_start_match(@id)
 		})
 		
@@ -358,10 +351,6 @@
 		@id = to_lower($id)
 		@pvp = import('pvp'.@id)
 		if(!@pvp || @pvp['running'] < 2, die(color('red').'Not running.'))
-		include('includes.library/match.ms')
-		if(array_index_exists(@pvp['arena'], 'classes')) {
-			include('includes.library/class.ms')			
-		}
 		if(is_numeric($team)) {
 			_pvp_end_match(@id, @pvp['team'][$team - 1]['players'])
 		} else {
@@ -371,7 +360,10 @@
 	default:
 		msg('/pvp join <id> '.color('gray').'Join the match')
 		msg('/pvp start <id> '.color('gray').'Start the match')
-		msg('/pvp end <id> <team> '.color('gray').'End in favor of team')
 		msg('/pvp spectate <id> '.color('gray').'Displays the scoreboard')
+		msg('/pvp end <id> <team> '.color('gray').'End in favor of team')
+		msg('/pvp addtime <id> <minutes> '.color('gray').'Add time to the timer')
+		msg('/pvp removetime <id> <minutes> '.color('gray').'Remove time from the timer')
+		msg('/pvp debug <id> '.color('gray').'Output debug information')
 	}
 <<<	
