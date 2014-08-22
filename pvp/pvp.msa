@@ -211,7 +211,7 @@
 		create_scoreboard(@id)
 		
 		# PREPARE TEAMS
-		if(array_contains(array('tdm', 'ctf', 'infection'), @pvp['arena']['mode'])) {
+		if(array_index_exists(@pvp['arena'], 'team')) {
 			if(@pvp['arena']['mode'] == 'ctf') {
 				@pvp['team'][0]['score'] = 0
 				@pvp['team'][0]['flag'] = 0
@@ -260,12 +260,18 @@
 			set_pscore('captures', @pvp['arena']['team'][1]['name'], 0, @id)
 		}
 		
-		@players[] = array_keys(@pvp['players'])
-		for(@i = 0, @i < array_size(@pvp['players']), @i++) {
-			@index = rand(0, array_size(@players))
-			@player = @players[@index]
-			_assign_team(@player, @pvp)
-			array_remove(@players, @index)
+		if(array_index_exists(@pvp[arena], 'team')) {
+			if(!array_index_exists(@pvp, 'team'), @pvp[team] = array(array(players: array()), array(players: array())))
+			if(!array_index_exists(@pvp[arena], 'teamratio')) {
+				@pvp[arena][teamratio] = array(1, 1)
+			}
+			@players[] = array_keys(@pvp[players])
+			for(@i = 0, @i < array_size(@pvp[players]), @i++) {
+				@index = rand(0, array_size(@players))
+				@player = @players[@index]
+				_assign_team(@player, @pvp)
+				array_remove(@players, @index)
+			}
 		}
 		
 		if(array_index_exists(@pvp['arena'], 'captain')) {

@@ -418,10 +418,6 @@ proc(_squared_distance_to_segment, @p1, @p2a, @p2b) {
 }
 
 proc(_assign_team, @player, @pvp) {
-	if(!array_index_exists(@pvp, 'team'), @pvp[team] = array(array(players: array()), array(players: array())))
-	if(!array_index_exists(@pvp[arena], 'teamratio')) {
-		@pvp[arena][teamratio] = array(1, 1)
-	}
 	if(array_size(@pvp[team][0][players]) * @pvp[arena][teamratio][1] <= array_size(@pvp[team][1][players]) * @pvp[arena][teamratio][0]) {
 		@pvp[players][@player][team] = 0
 		if(!array_contains(@pvp[team][0][players], @player)) {
