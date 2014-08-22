@@ -13,7 +13,7 @@
 			if(array_index_exists(@pvp['players'], player()), die('You already joined.'))
 			if(@pvp['running'] > 1 && 
 			(array_index_exists(@pvp['arena'], 'lives')
-			|| (array_index_exists(@arena, 'max') && array_size(@pvp['players']) >= @arena['max']))) {
+			|| (array_index_exists(@pvp['arena'], 'max') && array_size(@pvp['players']) >= @pvp['arena']['max']))) {
 				die('Match already in progress.')
 			}
 			@pvp['players'][player()] = array()
