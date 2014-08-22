@@ -611,20 +611,22 @@
 		} else {
 			msg(color('l').':: '.to_upper($id).' :: '.if(array_index_exists(@arena, 'team'),
 				color(@arena['team'][0]['color']).@arena['team'][0]['name'].color('gray').' vs '.color(@arena['team'][1]['color']).@arena['team'][1]['name']))
-			# always required settings
-			if(!array_index_exists(@arena, 'lobby'), msg(color('red').'lobby '.color(7).'(required)'))
-			if(!array_index_exists(@arena, 'spawn'), msg(color('red').'spawn '.color(7).'(required)'))
-			if(!array_index_exists(@arena, 'region'), msg(color('red').'region '.color(7).'(required)'))
-			# dependent settings
-			if(array_index_exists(@arena, 'captain') && !array_index_exists(@arena, 'classes'), msg(color('gold').'classes '.color(7).'(required for setting "captain")'))
-			if(array_index_exists(@arena, 'captain') && !array_index_exists(@arena, 'respawntime'), msg(color('gold').'respawntime '.color(7).'(required for setting "captain")'))
-			if(array_index_exists(@arena, 'ctfflag') && !array_index_exists(@arena, 'mode'), msg(color('gold').'mode '.color(7).'("ctf" required for setting "ctfflag")'))
-			if(array_index_exists(@arena, 'score') && !array_index_exists(@arena, 'mode'), msg(color('gold').'mode '.color(7).'("koth" or "ctf" required for setting "score")'))
-			if(array_index_exists(@arena, 'kothregion') && !array_index_exists(@arena, 'mode'), msg(color('gold').'mode '.color(7).'("koth" required for setting "kothregion")'))
-			if(array_index_exists(@arena, 'rsoutputscore') && !array_index_exists(@arena, 'mode'), msg(color('gold').'mode '.color(7).'("ctf" required for setting "rsoutputscore")'))
-			if(array_index_exists(@arena, 'team') && !array_index_exists(@arena, 'mode'), msg(color('gold').'mode '.color(7).'(team mode required for "team")'))
-			if(array_index_exists(@arena, 'teamratio') && !array_index_exists(@arena, 'mode'), msg(color('gold').'mode '.color(7).'(team mode required for "teamratio")'))
-			# 
+			if(!array_index_exists(@arena, 'parent')) {
+				# always required settings
+				if(!array_index_exists(@arena, 'lobby'), msg(color('red').'lobby '.color(7).'(required)'))
+				if(!array_index_exists(@arena, 'spawn'), msg(color('red').'spawn '.color(7).'(required)'))
+				if(!array_index_exists(@arena, 'region'), msg(color('red').'region '.color(7).'(required)'))
+				# dependent settings
+				if(array_index_exists(@arena, 'captain') && !array_index_exists(@arena, 'classes'), msg(color('gold').'classes '.color(7).'(required for setting "captain")'))
+				if(array_index_exists(@arena, 'captain') && !array_index_exists(@arena, 'respawntime'), msg(color('gold').'respawntime '.color(7).'(required for setting "captain")'))
+				if(array_index_exists(@arena, 'ctfflag') && !array_index_exists(@arena, 'mode'), msg(color('gold').'mode '.color(7).'("ctf" required for setting "ctfflag")'))
+				if(array_index_exists(@arena, 'score') && !array_index_exists(@arena, 'mode'), msg(color('gold').'mode '.color(7).'("koth" or "ctf" required for setting "score")'))
+				if(array_index_exists(@arena, 'kothregion') && !array_index_exists(@arena, 'mode'), msg(color('gold').'mode '.color(7).'("koth" required for setting "kothregion")'))
+				if(array_index_exists(@arena, 'rsoutputscore') && !array_index_exists(@arena, 'mode'), msg(color('gold').'mode '.color(7).'("ctf" required for setting "rsoutputscore")'))
+				if(array_index_exists(@arena, 'team') && !array_index_exists(@arena, 'mode'), msg(color('gold').'mode '.color(7).'(team mode required for "team")'))
+				if(array_index_exists(@arena, 'teamratio') && !array_index_exists(@arena, 'mode'), msg(color('gold').'mode '.color(7).'(team mode required for "teamratio")'))
+				# 
+			}
 			foreach(@setting: @value in @arena) {
 				if(array_contains(array('spawn', 'kit', 'itemspawn', 'chestspawn', 'mobspawn', 'classes'), @setting)) {
 					msg(@setting.' '.color('gray').'[...]')
