@@ -168,7 +168,7 @@
 					@pvp['arena']['kit'][1] = @pvp['arena']['kit'][0]
 				}
 				
-				@spawns[] = @pvp['arena']['spawn'][0]
+				@spawns = @pvp['arena']['spawn'][0][]
 				@pvp['arena']['spawn'] = array()
 				@team = 0
 				foreach(@spawn in @spawns) {
@@ -265,7 +265,7 @@
 			if(!array_index_exists(@pvp[arena], 'teamratio')) {
 				@pvp[arena][teamratio] = array(1, 1)
 			}
-			@players[] = array_keys(@pvp[players])
+			@players = array_keys(@pvp[players])
 			for(@i = 0, @i < array_size(@pvp[players]), @i++) {
 				@index = rand(0, array_size(@players))
 				@player = @players[@index]
