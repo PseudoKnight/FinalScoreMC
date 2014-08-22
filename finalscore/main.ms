@@ -442,19 +442,22 @@ bind(creature_spawn, null, array('reason': 'SPAWNER'), @event) {
 bind(block_break, null, array('type': 56), @event) {
 	if(pworld() == 'dev' || pworld() == 'custom', die())
 	queue_push(closure(){
+		@report = true
 		for(@x = @event['location']['x'] - 1, @x <= @event['location']['x'] + 1, @x++) {
 			for(@y = @event['location']['y'] - 1, @y <= @event['location']['y'] + 1, @y++) {
 				for(@z = @event['location']['z'] - 1, @z <= @event['location']['z'] + 1, @z++) {
 					if(get_block_at(@x, @y, @z) == '56:0') {
-						die()
+						@report = false
 					}
 				}
 			}
 		}
 	
-		broadcast(color('c').'[!] '.color('f').player().' found '.color('b').'diamonds '.color(7)
-			.if(get_light_at(@event['location']) < 7, '(light level: '.get_light_at(@event['location']).')'),
-			'group.moderators')
+		if(@report) {
+			broadcast(color('c').'[!] '.color('f').player().' found '.color('b').'diamonds '.color(7)
+				.if(get_light_at(@event['location']) < 7, '(light level: '.get_light_at(@event['location']).')'),
+				'group.moderators')
+		}
 	})
 }
 
