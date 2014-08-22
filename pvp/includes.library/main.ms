@@ -417,6 +417,26 @@ proc(_squared_distance_to_segment, @p1, @p2a, @p2b) {
 	return(((@p1['x'] - @bx) ** 2) + ((@p1['y'] - @by) ** 2) + ((@p1['z'] - @bz) ** 2));
 }
 
+proc(_assign_team, @player, @pvp) {
+	if(!array_index_exists(@pvp, 'team'), @pvp[team] = array(array(players: array()), array(players: array())))
+	if(!array_index_exists(@pvp[arena], 'teamratio')) {
+		@pvp[arena][teamratio] = array(1, 1)
+	}
+	if(array_size(@pvp[team][0][players]) * @pvp[arena][teamratio][1] <= array_size(@pvp[team][1][players]) * @pvp[arena][teamratio][0]) {
+		@pvp[players][@player][team] = 0
+		if(!array_contains(@pvp[team][0][players], @player)) {
+			array_push(@pvp[team][0][players], @player)
+		}
+		array_remove_values(@pvp[team][1][players], @player)
+	} else {
+		@pvp[players][@player][team] = 1
+		if(!array_contains(@pvp[team][1][players], @player)) {
+			array_push(@pvp[team][1][players], @player)
+		}
+		array_remove_values(@pvp[team][0][players], @player)
+	}
+}
+
 proc('_pvp_check_objectives', @id) {
 	@pvp = import('pvp'.@id)
 

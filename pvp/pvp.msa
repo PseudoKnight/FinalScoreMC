@@ -25,29 +25,11 @@
 				array_remove(@pvp['players'], @player)
 			}
 		}
-		if(array_index_exists(@arena, 'mode') && array_contains(array('ctf', 'tdm', 'infection'), @arena['mode'])) {
-			if(!array_index_exists(@pvp, 'team'), @pvp['team'] = array(array('players': array()), array('players': array())))
-			if(!array_index_exists(@arena, 'teamratio')) {
-				@arena['teamratio'] = array(1, 1)
-			}
-			if(array_size(@pvp['team'][0]['players']) * @arena['teamratio'][1] <= array_size(@pvp['team'][1]['players']) * @arena['teamratio'][0]) {
-				@pvp['players'][player()]['team'] = 0
-				if(!array_contains(@pvp['team'][0]['players'], player())) {
-					array_push(@pvp['team'][0]['players'], player())
-				}
-				array_remove_values(@pvp['team'][1]['players'], player())
-			} else {
-				@pvp['players'][player()]['team'] = 1
-				if(!array_contains(@pvp['team'][1]['players'], player())) {
-					array_push(@pvp['team'][1]['players'], player())
-				}
-				array_remove_values(@pvp['team'][0]['players'], player())
-			}
-		}
 		_worldmsg('custom', color('gray').'[PVP] '.color('r').player().' has joined '.to_upper(if(array_index_exists(@arena, 'parent'), @arena['parent'].': ').@id).'. ('.array_size(@pvp['players']).')')
 		console(player().' joined '.@id)
 		export('pvp'.@id, @pvp)
 		if(@pvp['running'] == 1) {
+			_assign_team(player(), @pvp)
 			if(array_index_exists(@pvp['arena'], 'classes')) {
 				if(!array_index_exists(@pvp['players'][player()], 'team') || @pvp['players'][player()]['team'] == 0) {
 					if(array_contains(all_virtualchests(), @id.'0')) {
@@ -61,6 +43,7 @@
 			}
 			
 		} else if(@pvp['running'] > 1) {
+			_assign_team(player(), @pvp)
 			if(array_contains(@pvp['spectators'], player())) {
 				_remove_spectator(@id, player(), @pvp)
 			}
@@ -275,6 +258,14 @@
 			set_pscore('captures', @pvp['arena']['team'][0]['name'], 0, @id)
 			team_add_player(@pvp['arena']['team'][1]['name'], @pvp['arena']['team'][1]['name'], @id)
 			set_pscore('captures', @pvp['arena']['team'][1]['name'], 0, @id)
+		}
+		
+		@players[] = array_keys(@pvp['players'])
+		for(@i = 0, @i < array_size(@pvp['players']), @i++) {
+			@index = rand(0, array_size(@players))
+			@player = @players[@index]
+			_assign_team(@player, @pvp)
+			array_remove(@players, @index)
 		}
 		
 		if(array_index_exists(@pvp['arena'], 'captain')) {
