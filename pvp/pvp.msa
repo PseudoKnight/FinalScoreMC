@@ -326,7 +326,11 @@
 		#START ROUND
 		@starttime = time()
 		set_interval(1000, closure(){
-			if(time() < @starttime + (@pvp['arena']['delay'] * 1000)) {
+			@timeleft = @starttime + (@pvp['arena']['delay'] * 1000) - time()
+			if(@timeleft > 500) {
+				if(@timeleft < 3500) {
+					play_sound(@pvp['arena']['lobby'], array('sound': 'NOTE_PIANO', 'pitch': 1, 'volume': 3))
+				}
 				if(array_index_exists(@pvp['arena'], 'classes')) {
 					foreach(@p in array_keys(@pvp['players'])) {
 						if(ponline(@p) && !is_null(pget_virtualchest(@p))) {
@@ -337,6 +341,7 @@
 					die()
 				}
 			}
+			play_sound(@pvp['arena']['lobby'], array('sound': 'NOTE_PIANO', 'pitch': 2, 'volume': 3))
 			clear_task()
 			@pvp['running'] = 2
 			_pvp_start_match(@id)
