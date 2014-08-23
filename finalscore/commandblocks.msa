@@ -20,9 +20,9 @@
 	set_pbed_location($player, @loc)
 <<<
 
-*:/give [$player=null] [$item=0] [$amount=1] = >>>
+*:/give [$player=''] [$item=0] [$amount=1] = >>>
 	if(!get_command_block() && !has_permission('group.moderators'), die('You do not have permission to use this command.'))
-	if($player == null, die('Usage: /give [player] [id:data] [quantity]'))
+	if($player == '', die('Usage: /give [player] [id:data] [quantity]'))
 	try(@player = player($player), die('Unknown player.'))
 	if($item == 0, die('You need to specify an item id or name.'))
 	@item = split(':', $item)

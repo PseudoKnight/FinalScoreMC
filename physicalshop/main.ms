@@ -17,7 +17,7 @@ bind(player_interact, null, array('block': 68), @event) {
 			if(length(@signtext[1]) > 7 && substr(@signtext[1], 0, 3) == 'Buy') {
 				@count = _get_inventory_count(_relative(@event['location'], 'down'), reg_replace('\\.', ':', @itemid))
 				if(!is_array(@shops[0]), console('This shop list is not an array: '.@shops))
-				foreachelse(@i in array_keys(@shops[0])) {
+				foreach(@i in array_keys(@shops[0])) {
 					if(@shops[0][@i]['location'][0] == @signloc[0]
 					&& @shops[0][@i]['location'][1] == @signloc[1]
 					&& @shops[0][@i]['location'][2] == @signloc[2]

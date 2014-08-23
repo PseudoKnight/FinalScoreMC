@@ -233,7 +233,8 @@
 	)
 	if($selection == 'help') {
 		msg(color('a').'Get help on any of these topics:')
-		msg(color('6').array_implode(array_keys(@help), ' ')),
+		msg(color('6').array_implode(array_keys(@help), ' '))
+	} else {
 		try(msg(to_upper($selection).': '.color('a').@help[to_lower($selection)]), @ex, msg(color('c').'Unknown entry. Type "/help" to find available entries.'))
 	}
 <<<

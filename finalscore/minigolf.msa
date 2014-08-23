@@ -157,7 +157,7 @@ case 'start':
 	}
 	
 	set_interval(50, closure(){
-		foreachelse(@player: @ball in @minigolf) {
+		foreach(@player: @ball in @minigolf) {
 			if(@ball['id']
 			&& entity_exists(@ball['id'])) {
 				@v = entity_velocity(@ball['id'])
