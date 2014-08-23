@@ -29,7 +29,9 @@
 		console(player().' joined '.@id)
 		export('pvp'.@id, @pvp)
 		if(@pvp['running'] == 1) {
-			_assign_team(player(), @pvp)
+			if(array_index_exists(@pvp['arena'], 'team')) {
+				_assign_team(player(), @pvp)
+			}
 			if(array_index_exists(@pvp['arena'], 'classes')) {
 				if(!array_index_exists(@pvp['players'][player()], 'team') || @pvp['players'][player()]['team'] == 0) {
 					if(array_contains(all_virtualchests(), @id.'0')) {
@@ -43,7 +45,9 @@
 			}
 			
 		} else if(@pvp['running'] > 1) {
-			_assign_team(player(), @pvp)
+			if(array_index_exists(@pvp['arena'], 'team')) {
+				_assign_team(player(), @pvp)
+			}
 			if(array_contains(@pvp['spectators'], player())) {
 				_remove_spectator(@id, player(), @pvp)
 			}
