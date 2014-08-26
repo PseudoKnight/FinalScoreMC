@@ -35,7 +35,8 @@
 	if(!array_contains_ic(@allowedcmds, parse_args($)[0]), die('Allowed commands: '.array_implode(@allowedcmds)))
 	@block = pcursor()
 	if(get_block_at(@block) != '137:0', die('That is not a commandblock.'))
-	if(is_alias($), @cmd = '/runalias '.$, @cmd = $)
+	@cmd = $
+	if(is_alias(@cmd), @cmd = '/runalias '.@cmd)
 	set_block_command(@block, @cmd)
 	msg('Command set: '.color('green').@cmd)
 	msg(color('gold').'You can add to this command with /acb')
@@ -95,13 +96,13 @@
 	if(!has_permission('command.potion'), die('You do not have permission to use this command.'))
 	if(!$id, die('Usage: /potion <create|add> <potionEffect> <strength> <seconds>'))
 	@effects = _get_effects()
-	if(!array_index_exists(@effects, $id), die('Available potion effects: '.@effects))
-	if(is_numeric($id), @id = $id, @id = @effects[$id])
+	@id = $id
+	@data = 16
+	if(!array_index_exists(@effects, @id), die('Available potion effects: '.@effects))
+	if(!is_numeric(@id), @id = @effects[@id])
 	@effectdata = array(1: 2, 2: 10, 5: 9, 6: 5, 7: 12, 10: 1, 12: 3, 14: 14, 16: 6, 18: 8)
 	if(array_index_exists(@effectdata, @id)) {
 		@data = @effectdata[@id]
-	} else {
-		@data = 16
 	}
 	
 	switch($cmd) {
@@ -216,6 +217,8 @@
 *:/gm [$] = >>>
 	if(!has_permission('command.gm'), die('You do not have permission to set game mode here.'))
 	
+	@player = player()
+	@mode = 'toggle'
 	if($) {
 		@args = parse_args($)
 		try(@player = player(@args[0])
@@ -226,24 +229,16 @@
 			}
 			if(array_size(@args) >= 2) {
 				@mode = @args[1]
-			} else {
-				@mode = 'toggle'
 			}
 		
 		,
 			if(is_numeric(@args[0])) {
-				@player = player()
 				@mode = @args[0]
 			} else {
 				die('Who is that? Are they online?')
 			}
 		)
-	} else {
-		@player = player()
-		@mode = 'toggle'
 	}
-	
-
 	
 	switch(@mode) {
 	case 0:
@@ -282,10 +277,9 @@
 
 *:/heal [$player] = >>>
 	if(!has_permission('command.heal'), die('You do not have permission to do that here.'))
-	if($player && !has_permission('command.heal.others'), die('You do not have permission to heal others.'))
-	if(!$player) {
-		@player = player()
-	} else {
+	@player = player()
+	if($player) {
+		if(!has_permission('command.heal.others'), die('You do not have permission to heal others.'))
 		if(!@player = player($player), die('Unknown player.'))
 	}
 	set_phunger(@player, 20)
