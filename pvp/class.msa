@@ -76,11 +76,11 @@ case 'set':
 		}
 		if(!@args[1]) {
 			@args[1] = 5
-		} else if(@args[1] && (@args[1] < 0 || @args[1] > 20)) {
+		} else if(@args[1] && @args[1] != '~' && (@args[1] < 0 || @args[1] > 20)) {
 			die('Saturation must be within 0 and 20')
 		}
-		@arena['classes'][@classid]['hunger'] = array(@args[0], @args[1])
-		msg('Set hunger to '.@args[0].' hunger and '.@args[1].' saturation.')
+		@arena['classes'][@classid]['hunger'] =	array(@args[0], @args[1])
+		msg('Set hunger to '.@args[0].' hunger '.if(@args[1] == '~', 'statically.', 'and '.@args[1].' saturation.'))
 
 	case 'effect':
 		@effects = _get_effects()

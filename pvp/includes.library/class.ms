@@ -69,10 +69,19 @@ proc _class(@action, @player, @class, @pvp) {
 			}
 		}
 		
+		if(array_index_exists(@pvp['arena']['classes'][@class], 'hunger')
+		&& !is_numeric(@pvp['arena']['classes'][@class]['hunger'][1])) {
+			bind(food_level_changed, array('id': @player.'food'), array(player: @player), @event) {
+				cancel()
+			}
+		}
+		
 	case 'equip':
 		if(array_index_exists(@pvp['arena']['classes'][@class], 'hunger')) {
 			set_phunger(@player, @pvp['arena']['classes'][@class]['hunger'][0])
-			set_psaturation(@player, @pvp['arena']['classes'][@class]['hunger'][1])
+			if(is_numeric(@pvp['arena']['classes'][@class]['hunger'][1])) {
+				set_psaturation(@player, @pvp['arena']['classes'][@class]['hunger'][1])
+			}
 		}
 		if(array_index_exists(@pvp['arena']['classes'][@class], 'kit')) {
 			set_pinv(@player, @pvp['arena']['classes'][@class]['kit'])
@@ -123,6 +132,7 @@ proc _class(@action, @player, @class, @pvp) {
 		unbind(@player.'doublejump')
 		unbind(@player.'spawner')
 		unbind(@player.'target')
+		unbind(@player.'food')
 		queue_clear(@player.'doublejump')
 		set_pflight(@player, false)
 		set_pwalkspeed(@player, 0.2)
