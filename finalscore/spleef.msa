@@ -36,7 +36,7 @@
 	switch($cmd
 	, 'join',
 		@nextspleef = import('nextspleef')
-		if(@nextspleef == false, @nextspleef = array())
+		if(!@nextspleef, @nextspleef = array())
 		if(array_index_exists(@nextspleef, player()), die(color('a').'[Spleef] '.color('r').'You are already in the next Spleef match.'))
 		@nextspleef[player()] = 1
 		export('nextspleef', @nextspleef)
@@ -68,10 +68,12 @@
 	, 'start',
 		@nextspleef = import('nextspleef')
 		@currentspleef = import('currentspleef')
-		if(@nextspleef == false, @nextspleef = array())
-		if(@currentspleef == false, @currentspleef = array())
-
-		if(@currentspleef != array(), die(color('a').'[Spleef] '.color('r').'Match currently in progress.'))
+		if(!@nextspleef, @nextspleef = array())
+		if(!@currentspleef) {
+			@currentspleef = array()
+		} else {
+			die(color('a').'[Spleef] '.color('r').'Match currently in progress.')
+		}
 
 		foreach(array_keys(@nextspleef), @player,
 			if(!ponline(@player) || !array_contains(sk_current_regions(@player), @cfg['region']['wrapper'])) {

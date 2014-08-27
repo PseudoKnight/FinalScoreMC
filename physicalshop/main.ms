@@ -59,7 +59,7 @@ bind(player_interact, null, array('block': 68), @event) {
 					die()
 				)
 				try(
-				foreachelse(@i in array_keys(@shops[1])) {
+				foreach(@i in array_keys(@shops[1])) {
 					if(@shops[1][@i]['location'][0] == @signloc[0]
 					&& @shops[1][@i]['location'][1] == @signloc[1]
 					&& @shops[1][@i]['location'][2] == @signloc[2]
