@@ -1,4 +1,4 @@
-proc('_create_dungeon', @region, @world, @scale) {
+proc _create_dungeon(@region, @world, @scale) {
 	@minroomsize = 3
 	@maxroomsize = 11
 	@height = 4

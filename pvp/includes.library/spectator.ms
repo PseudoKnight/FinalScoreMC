@@ -1,4 +1,4 @@
-proc('_set_spectator', @id, @player, @pvp) {
+proc _set_spectator(@id, @player, @pvp) {
 	if(pinfo(@player, 5) > 0) {
 		@pvp['spectators'][] = @player
 		set_collides_with_entities(@player, false)
@@ -28,7 +28,7 @@ proc('_set_spectator', @id, @player, @pvp) {
 	}
 }
 
-proc('_remove_spectator', @id, @player, @pvp) {
+proc _remove_spectator(@id, @player, @pvp) {
 	array_remove_values(@pvp['spectators'], @player)
 	if(ponline(@player)) {
 		set_collides_with_entities(@player, true)

@@ -1,7 +1,7 @@
 include('class.ms')
 include('spectator.ms')
 
-proc('_pvp_start_match', @id) {
+proc _pvp_start_match(@id) {
 	@pvp = import('pvp'.@id)
 	if(array_index_exists(@pvp['arena'], 'rsoutput'), 
 		set_block_at(@pvp['arena']['rsoutput'], '69:14'))
@@ -252,7 +252,7 @@ proc('_pvp_start_match', @id) {
 	
 }
 
-proc('_pvp_initialize_players', @id, @players) {
+proc _pvp_initialize_players(@id, @players) {
 	@c = array(0, 0) # for selecting initial spawn locations
 	foreach(@player in @players) {
 		@pvp = import('pvp'.@id)
@@ -342,7 +342,7 @@ proc('_pvp_initialize_players', @id, @players) {
 
 }
 
-proc('_pvp_equip', @id, @player) {
+proc _pvp_equip(@id, @player) {
 	@pvp = import('pvp'.@id)
 	if(array_index_exists(@pvp['players'][@player], 'inv')) {
 		set_pinv(@player, @pvp['players'][@player]['inv'])
@@ -370,7 +370,7 @@ proc('_pvp_equip', @id, @player) {
 	}
 }
 
-proc('_pvp_flag_spawn', @id, @team, @loc) {
+proc _pvp_flag_spawn(@id, @team, @loc) {
 	@pvp = import('pvp'.@id)
 	if(!@loc, 
 		@loc = @pvp['arena']['ctfflag'][@team])
@@ -385,13 +385,13 @@ proc('_pvp_flag_spawn', @id, @team, @loc) {
 	queue_push(closure(_pvp_flag_spawn(@id, @team)), @id.@team.'flag')
 }
 
-proc('_pvp_hat_spawn', @id, @team, @loc) {
+proc _pvp_hat_spawn(@id, @team, @loc) {
 	@pvp = import('pvp'.@id)
 	@hat = drop_item(@loc, @pvp['team'][@team]['captainhat'])
 	set_entity_velocity(@hat, array())
 }
 
-proc(_squared_distance_to_segment, @p1, @p2a, @p2b) {
+proc _squared_distance_to_segment(@p1, @p2a, @p2b) {
 	@vx = @p2b['x'] - @p2a['x'];
 	@vy = @p2b['y'] - @p2a['y'];
 	@vz = @p2b['z'] - @p2a['z'];
@@ -417,7 +417,7 @@ proc(_squared_distance_to_segment, @p1, @p2a, @p2b) {
 	return(((@p1['x'] - @bx) ** 2) + ((@p1['y'] - @by) ** 2) + ((@p1['z'] - @bz) ** 2));
 }
 
-proc(_assign_team, @player, @pvp) {
+proc _assign_team(@player, @pvp) {
 	if(array_size(@pvp[team][0][players]) * @pvp[arena][teamratio][1] <= array_size(@pvp[team][1][players]) * @pvp[arena][teamratio][0]) {
 		@pvp[players][@player][team] = 0
 		if(!array_contains(@pvp[team][0][players], @player)) {
@@ -433,7 +433,7 @@ proc(_assign_team, @player, @pvp) {
 	}
 }
 
-proc('_pvp_check_objectives', @id) {
+proc _pvp_check_objectives(@id) {
 	@pvp = import('pvp'.@id)
 
 	#check total player count
@@ -487,7 +487,7 @@ proc('_pvp_check_objectives', @id) {
 
 }
 
-proc('_pvp_end_match', @id, @winners) {
+proc _pvp_end_match(@id, @winners) {
 	@pvp = import('pvp'.@id)
 	
 	if(@pvp['running'] != 2, return())

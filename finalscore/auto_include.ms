@@ -1,4 +1,4 @@
-proc(_equip_park) {
+proc _equip_park() {
 	_clear_pinv()
 	
 	if(has_permission('group.moderators')) {
@@ -30,7 +30,7 @@ proc(_equip_park) {
 
 }
 
-proc(_item_meta, @item, @index) {
+proc _item_meta(@item, @index) {
 	if(is_null(@item)
 	|| is_null(@item['meta'])) {
 		return(null)
@@ -38,7 +38,7 @@ proc(_item_meta, @item, @index) {
 	return(@item['meta'][@index])
 }
 
-proc(_relative, @originloc, @dir, @amount = 1) {
+proc _relative(@originloc, @dir, @amount = 1) {
 	@loc = @originloc[]
 	switch(@dir) {
 	case 'up':
@@ -81,7 +81,7 @@ proc(_relative, @originloc, @dir, @amount = 1) {
 	return(@loc)
 }
 
-proc(_relative_coords, @originloc, @x, @y, @z) {
+proc _relative_coords(@originloc, @x, @y, @z) {
 	@loc = @originloc[]
 	if(@x[0] == '~') {
 		if(@x == '~') {
@@ -113,7 +113,7 @@ proc(_relative_coords, @originloc, @x, @y, @z) {
 	return(@loc)
 }
 
-proc(_clear_pinv, @player) {
+proc _clear_pinv(@player) {
 	if(!@player) {
 		@player = player()
 	}
@@ -130,7 +130,7 @@ proc(_clear_pinv, @player) {
 	))
 }
 
-proc(_acc_add, @player, @amount) {
+proc _acc_add(@player, @amount) {
 	@pdata = get_value('players', to_lower(@player))
 	if(!@pdata, return(false))
 	if(!array_index_exists(@pdata, 'coins'), @pdata['coins'] = 100)
@@ -139,7 +139,7 @@ proc(_acc_add, @player, @amount) {
 	return(true)
 }
 
-proc(_acc_subtract, @player, @amount) {
+proc _acc_subtract(@player, @amount) {
 	@pdata = get_value('players', to_lower(@player))
 	if(!@pdata, return(false))
 	if(!array_index_exists(@pdata, 'coins'), @pdata['coins'] = 100)
@@ -148,7 +148,7 @@ proc(_acc_subtract, @player, @amount) {
 	return(true)
 }
 
-proc(_acc_balance, @player) {
+proc _acc_balance(@player) {
 	@pdata = get_value('players', to_lower(@player))
 	if(!@pdata, return(null))
 	if(!array_index_exists(@pdata, 'coins')) {
@@ -158,7 +158,7 @@ proc(_acc_balance, @player) {
 	}
 }
 
-proc(_get_effects) {
+proc _get_effects() {
 	return(array(
 		'speed': 1,
 		'slowness': 2,
@@ -188,7 +188,7 @@ proc(_get_effects) {
 
 # Removes all specified entities from region.
 # Since this loads entities by chunks it has a loose entity selection
-proc(_remove_region_entities, @region, @entities = array()) {
+proc _remove_region_entities(@region, @entities = array()) {
 	if(get_command_block(), @world = get_command_block()['world'], @world = pworld())
 	if(!sk_region_exists(@world, @region)) {
 		console('Can\'t remove entities because region doesn\'t exist: '.@region)
@@ -220,7 +220,7 @@ proc(_remove_region_entities, @region, @entities = array()) {
 }
 
 # Remove all potion effects from a player
-proc(_clear_peffects, @player) {
+proc _clear_peffects(@player) {
 	if(!@player, @player = player())
 	@effects = get_peffect(@player)
 	foreach(@e in @effects) {
@@ -229,7 +229,7 @@ proc(_clear_peffects, @player) {
 }
 
 #color display name
-proc(_colorname, @player) {
+proc _colorname(@player) {
 	if(!@player, @player = player())
 	ifelse(has_permission(@player, 'group.moderators'),
 		@color = 'aqua',
@@ -245,7 +245,7 @@ proc(_colorname, @player) {
 }
 
 #returns world alias when given world folder name
-proc(_worldname, @world) {
+proc _worldname(@world) {
 	@worlds = array('world': 'Alpha', 'world_nether': 'Alpha Nether', 'world3': 'Delta', 'world3_nether': 'Delta Nether', 'world4': 'Gamma', 'world4_nether': 'Gamma Nether', 'world_the_end': 'The End', 'custom': 'FrogPark', 'dev': 'Dev', 'outworld': 'Outworld', 'omega': 'Omega', 'omega_nether', 'Omega Nether')
 	if(array_index_exists(@worlds, to_lower(@world))) { 
 		return(@worlds[to_lower(@world)])
@@ -255,7 +255,7 @@ proc(_worldname, @world) {
 }
 
 #returns world folder name when given world alias
-proc(_worldid, @world) {
+proc _worldid(@world) {
 	@worlds = array('alpha': 'world', 'alphanether': 'world_nether', 'delta': 'world3', 'deltanether': 'world3_nether', 'gamma': 'world4', 'gammanether': 'world4_nether', 'theend': 'world_the_end', 'custom': 'custom', 'frogpark': 'custom', 'dev': 'dev', 'outworld': 'outworld', 'omega': 'omega', 'omeganether': 'omega_nether')
 	if(array_index_exists(@worlds, to_lower(@world))) { 
 		return(@worlds[to_lower(@world)])
@@ -265,7 +265,7 @@ proc(_worldid, @world) {
 }
 
 #Messsages every player within the specified region
-proc(_regionmsg, @region, @msg) {
+proc _regionmsg(@region, @msg) {
 	foreach(@player in all_players()) {
 		if(ponline(@player)
 		&& array_contains(sk_current_regions(@player), @region)) {
@@ -275,7 +275,7 @@ proc(_regionmsg, @region, @msg) {
 }
 
 #Messsages every player within the specified world
-proc(_worldmsg, @world, @msg) {
+proc _worldmsg(@world, @msg) {
 	foreach(@player in all_players(@world)) {
 		if(ponline(@player)) {
 			tmsg(@player, @msg)
@@ -284,7 +284,7 @@ proc(_worldmsg, @world, @msg) {
 }
 
 #get qty of specific item in chest
-proc(_get_inventory_count, @loc, @item) {
+proc _get_inventory_count(@loc, @item) {
 	try(@size = get_inventory_size(@loc), return(null))
 	if(is_numeric(@item), @item = @item.':0')
 	@count = 0
@@ -297,6 +297,6 @@ proc(_get_inventory_count, @loc, @item) {
 	return(@count) 
 }
 
-proc(_horizontal_distance, @loc1, @loc2) {
+proc _horizontal_distance(@loc1, @loc2) {
 	return(max(sqrt((@loc1[0] - @loc2[0]) ** 2), sqrt((@loc1[2] - @loc2[2]) ** 2)))
 }

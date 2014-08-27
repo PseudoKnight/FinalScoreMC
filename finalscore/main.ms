@@ -72,7 +72,7 @@ bind(player_join, null, null, @event) {
 			# associative array. Defaults to printing success to the user.
 			# @error - Closure (Optional) - Closure to execute when the request returns an error. The closure is passed the error message. Defaults to 
 			# printing the error message to the user.
-			proc(_bm_request, @endpoint, @player, @params, @success = closure(@result, msg('Success')),
+			proc _bm_request(@endpoint, @player, @params, @success = closure(@result, msg('Success')),
 				@error = closure(@error_msg, msg(color('red').'Error: '.color('white').@error_msg))) {
 				
 					# Add the authentication parameters

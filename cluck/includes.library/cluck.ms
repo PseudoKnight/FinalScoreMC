@@ -1,4 +1,4 @@
-proc('_cluck_defaults') {
+proc _cluck_defaults() {
 	return(array(
 	'round': 1, 
 	'count': 10, # of chicken spawns
@@ -21,7 +21,7 @@ proc('_cluck_defaults') {
 	))
 }
 
-proc('_cluck_startround') {
+proc _cluck_startround() {
     @cluck = import('cluck')
 	_regionmsg('cluck', 'Round '.@cluck['round'])
 	if(@cluck['player'][0] && !@cluck['gameover'][0]) {
@@ -65,7 +65,7 @@ proc('_cluck_startround') {
 	_cluck_spawn()
 }
 
-proc('_cluck_spawn') {
+proc _cluck_spawn() {
 	@cluck = import('cluck')
 	queue_delay(1000, 'cluck')
 	for(@i = @cluck['count'], @i > 0, @i--) {
@@ -126,7 +126,7 @@ proc('_cluck_spawn') {
 	}, 'cluck')
 }
 
-proc('_cluck_endround') {
+proc _cluck_endround() {
 	@cluck = import('cluck')
 	try(foreach(@chicken in array_merge(@cluck['chickens'][0], @cluck['chickens'][1])) {
 		if(entity_exists(@chicken)) {

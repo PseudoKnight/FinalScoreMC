@@ -105,7 +105,7 @@
 		#Given two blocks, iterates through all the blocks inside the cuboid, and calls the 
 		#user defined function on them. The used defined procedure should accept 3 parameters,
 		#the x, y, and z coordinates of the block.
-		proc(_iterate_cuboid, @b1, @b2, @proc_name) {
+		proc _iterate_cuboid(@b1, @b2, @proc_name) {
 			for(@x = min(@b1[0], @b2[0]), @x <= max(@b1[0], @b2[0]), @x++) {
 				for(@y = min(@b1[1], @b2[1]), @y <= max(@b1[1], @b2[1]), @y++) {
 					for(@z = min(@b1[2], @b2[2]), @z <= max(@b1[2], @b2[2]), @z++) {
@@ -118,25 +118,25 @@
 		set_timeout(1000, closure(
 			#difficult terrain
 			if(get_block_at(@cfg['option']['soulsand']) == '124:0' && get_block_at(@cfg['option']['platforming']) ==  '123:0') {
-			proc(_setfloor, @x, @y, @z, assign(@floor, @mat),
+			proc _setfloor(@x, @y, @z, assign(@floor, @mat)) {
 				if(rand(10) < 6) {
 					set_block_at(@x, @y, @z, @floor)
 				} else {
 					set_block_at(@x, @y, @z, 88)
 				}
-			)
+			}
 			#platforming
 			} else if(get_block_at(@cfg['option']['platforming']) ==  '124:0' && get_block_at(@cfg['option']['soulsand']) == '123:0') {
-				proc(_setfloor, @x, @y, @z, assign(@floor, @mat),
+				proc _setfloor(@x, @y, @z, assign(@floor, @mat)) {
 					if(rand(10) < 3) {
 						set_block_at(@x, @y, @z, @floor)
 					} else {
 						set_block_at(@x, @y, @z, 0)
 					}
-				)
+				}
 			#difficult terrain + platforming
 			} else if(get_block_at(@cfg['option']['soulsand']) == '124:0' && get_block_at(@cfg['option']['platforming']) == '124:0') {
-				proc(_setfloor, @x, @y, @z, assign(@floor, @mat),
+				proc _setfloor(@x, @y, @z, assign(@floor, @mat)) {
 					if(assign(@rand, rand(10)) < 2) {
 						set_block_at(@x, @y, @z, @floor)
 					} else if(@rand < 9) {
@@ -144,14 +144,14 @@
 					} else {
 						set_block_at(@x, @y, @z, 88)
 					}
-				)
+				}
 			#regular floor
 			} else {
-				proc(_setfloor, @x, @y, @z, assign(@floor, @mat),
+				proc _setfloor(@x, @y, @z, assign(@floor, @mat)) {
 					if(get_block_at(@x, @y, @z) != @floor) {
 						set_block_at(@x, @y, @z, @floor)
 					}
-				)
+				}
 			}
 			_iterate_cuboid(@region[0], @region[1], '_setfloor')
 		))
@@ -159,7 +159,7 @@
 		set_timeout(2000, closure(
 			#random obstacles
 			if(get_block_at(@cfg['option']['obstacles']) ==  '124:0') {
-				proc(_setwalls, @x, @y, @z,
+				proc _setwalls(@x, @y, @z) {
 					if(assign(@rand, rand(100)) < 5) {
 						set_block_at(array(@x, @y, @z), '98:0')
 						set_block_at(array(@x, @y + 1, @z), '98:0')
@@ -173,15 +173,15 @@
 						set_block_at(array(@x, @y, @z), 0)
 						set_block_at(array(@x, @y + 1, @z), 0)
 					}
-				)
+				}
 				#clear walls if random obstacles is turned off
 			} else {
-				proc(_setwalls, @x, @y, @z,
+				proc _setwalls(@x, @y, @z) {
 					if(get_block_at(@x, @y, @z)[0] != '0') {
 						set_block_at(array(@x, @y, @z), '0:0')
 						set_block_at(array(@x, @y + 1, @z), '0:0')
 					}
-				)
+				}
 			}
 			_iterate_cuboid(array(@region[0][0], @region[0][1] + 1, @region[0][2]), array(@region[1][0], @region[1][1] + 1, @region[1][2]), '_setwalls')
 
@@ -220,11 +220,11 @@
 				@currentspleef = import('currentspleef')
 				@reward = import('reward')
 				if(@spleefsettings['counter'] == 60) {
-					proc(_removeedge, @x, @y, @z,
+					proc _removeedge(@x, @y, @z) {
 						if(get_block_at(@x, @y, @z)[0] != '0') {
 							set_block_at(@x, @y, @z, '0:0')
 						}
-					)
+					}
 					_iterate_cuboid(array(@region[0][0], @region[0][1], @region[0][2]), array(@region[0][0], @region[0][1], @region[1][2]), '_removeedge')
 					_iterate_cuboid(array(@region[0][0], @region[0][1], @region[0][2]), array(@region[1][0], @region[0][1], @region[0][2]), '_removeedge')
 					_iterate_cuboid(array(@region[0][0], @region[0][1], @region[1][2]), array(@region[1][0], @region[0][1], @region[1][2]), '_removeedge')

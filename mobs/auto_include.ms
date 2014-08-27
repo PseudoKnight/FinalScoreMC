@@ -1,4 +1,4 @@
-proc('_spawn_mob', @mob, @qty, @loc, @owner = 'Notch') {
+proc _spawn_mob(@mob, @qty, @loc, @owner = 'Notch') {
 	@mob = _get_mob(@mob)
 	if(!@mob, return(array()))
 	@mobs = spawn_mob(@mob['type'], @qty, @loc)
@@ -61,7 +61,7 @@ proc('_spawn_mob', @mob, @qty, @loc, @owner = 'Notch') {
 	return(@mobs)
 }
 
-proc('_get_mob', @mob = null,
+proc _get_mob(@mob = null) {
 	@mobtypes = reflect_pull('enum', 'Mobs')
 	if(!@mob) {
 		@mob = @mobtypes[rand(array_size(@mobtypes))]
@@ -74,4 +74,4 @@ proc('_get_mob', @mob = null,
 		}
 	}
 	return(@mob)
-)
+}

@@ -4,7 +4,7 @@ case 'load':
 	bind(player_toggle_flight, array('id': @player.'dragon'), array('player': @player), @e) {
 		cancel()
 		play_sound(ploc(), array('sound': 'ENDERDRAGON_WINGS', 'pitch': 1.2))
-		proc('_flap', @player) {
+		proc _flap(@player) {
 			queue_push(closure(){
 				if(pexp(@player) > 0) {
 					@facing = pfacing(@player)

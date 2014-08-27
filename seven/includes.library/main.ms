@@ -1,4 +1,4 @@
-proc('_7_start', @7) {
+proc _7_start(@7) {
 	@i = 0
 	foreach(@player in array_keys(@7['players'])) {
 		if(@i == array_size(@7['spawns'])) {
@@ -96,7 +96,7 @@ proc('_7_start', @7) {
 	})
 }
 
-proc('_7_remove_player', @player, @7) {
+proc _7_remove_player(@player, @7) {
 	if(ponline(@player)) {
 		if(pworld(@player) == 'custom' && pinfo(@player, 5) > 0) {
 			pkill(@player)

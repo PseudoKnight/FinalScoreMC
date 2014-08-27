@@ -1,4 +1,4 @@
-proc('_pmsg', @player, @message,
+proc _pmsg(@player, @message) {
 	try(if(@player != '~console', @player = player(@player))
 		if(@recipients = _remove_ignored(player(), array(@player))) {
 			@player = @recipients[0]
@@ -26,9 +26,9 @@ proc('_pmsg', @player, @message,
 		msg(color('green').'Offline message sent to '.@player)
 		msg(color(7).'(To '.@player.'): '.color('r').@message)
 	)
-)
+}
 
-proc('_remove_ignored', @sender, @recipients,
+proc _remove_ignored(@sender, @recipients) {
 	@ignorelist = import('ignorelist')
 	for(@i = 0, @i < array_size(@recipients), @i++,
 		if(array_index_exists(@ignorelist, @sender)) {
@@ -45,4 +45,4 @@ proc('_remove_ignored', @sender, @recipients,
 		}
 	)
 	return(@recipients)
-)
+}

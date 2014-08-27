@@ -33,7 +33,7 @@ case 'equip':
 		103: @pvp['arena']['classes'][@class]['kit'][103],
 	)
 	
-	proc('_cloak', @player, @gear) {
+	proc _cloak(@player, @gear) {
 		queue_delay(800, @player.'cloaked')
 		queue_push(closure(){
 			if(ponline(@player) && pinfo(@player, 5) > 0) {

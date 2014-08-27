@@ -41,7 +41,7 @@ case 'load':
 		play_sound(ploc(), array('sound': 'GHAST_DEATH', 'pitch': 0))
 	}
 
-	proc('_manti_noise', @player) {
+	proc _manti_noise(@player) {
 		if(ponline(@player)) {
 			if(pinfo(@player, 5) > 0) {
 				play_sound(ploc(@player), array('sound': 'CAT_PURREOW', 'pitch': 0, 'volume': 2))

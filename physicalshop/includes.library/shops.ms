@@ -1,4 +1,4 @@
-proc('_is_shop', @loc) {
+proc _is_shop(@loc) {
 	@text = get_sign_text(@loc)
 	if(reg_match('^\\[(.+)\\]$', @text[0])
 	&& (length(@text[1]) > 7 && substr(@text[1], 0, 3) == 'Buy'
@@ -9,7 +9,7 @@ proc('_is_shop', @loc) {
 	}
 }
 
-proc('_is_shop_owner', @loc) {
+proc _is_shop_owner(@loc) {
 	@owner = get_sign_text(@loc)[3]
 	if(length(player()) > 15) {
 		if(substr(@owner, 0, 13) == substr(player(), 0, 13)) {
@@ -25,7 +25,7 @@ proc('_is_shop_owner', @loc) {
 }
 
 
-proc('_shop_item', @signtext) {
+proc _shop_item(@signtext) {
 	@item = reg_match('\\[([\\w\\s]+)(?::([0-9]{1,4}))?\\]', @signtext)
 	if(array_size(@item) < 2, die())
 	if(is_numeric(@item[1])) {

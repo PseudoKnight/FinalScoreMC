@@ -1,4 +1,4 @@
-proc('_fw_startgame', @pts) {
+proc _fw_startgame(@pts) {
 	_fw_startround()
 	bind(entity_damage, array('id': 'fwdamage'), array('type': 'PLAYER', 'world': 'custom'), @e) {
 		if(_fw_player(@e['player'])) {
@@ -9,7 +9,7 @@ proc('_fw_startgame', @pts) {
 	set_pscore('score', 'GOAL', @pts, 'fw')
 }
 
-proc('_fw_endgame', @winners) {
+proc _fw_endgame(@winners) {
 	unbind('fwdamage')
 	_fw_msg('Best frog'.if(array_size(@winners) > 1, 's').' in the house: '.array_implode(@winners, ' & '))
 	@warp = get_value('warp.frogpark')
@@ -27,7 +27,7 @@ proc('_fw_endgame', @winners) {
 	if(array_contains(get_scoreboards(), 'fw')) { remove_scoreboard('fw') }
 }
 
-proc('_fw_startround', @secs = 12) {
+proc _fw_startround(@secs = 12) {
 	if(pworld() != 'custom') {
 		_fw_endgame(array())
 		_fw_msg('Host left the game.')
@@ -93,7 +93,7 @@ proc('_fw_startround', @secs = 12) {
 
 }
 
-proc('_fw_countdown', @c) {
+proc _fw_countdown(@c) {
 	set_objective_display('score', color(10).color('l').@c, 'fw')
 	if(@c < 4 && @c > 0) {
 		foreach(@p in all_players('custom')) {
@@ -110,11 +110,11 @@ proc('_fw_countdown', @c) {
 	}
 }
 
-proc('_2d_distance', @arr1, @arr2) {
+proc _2d_distance(@arr1, @arr2) {
 	return(floor(sqrt(((@arr2[0] - @arr1[0]) ** 2) + ((@arr2[2] - @arr1[2]) ** 2))))
 }
 
-proc('_fw_loc', @height = 0, @minrange = false) {
+proc _fw_loc(@height = 0, @minrange = false) {
 	@region = sk_region_info('frogware', 'custom')[0]
 	@return = 1
 	@loc = array(
@@ -139,7 +139,7 @@ proc('_fw_loc', @height = 0, @minrange = false) {
 	}
 }
 
-proc('_fw_mobs') {
+proc _fw_mobs() {
 	@mobs = array('creeper', 'zombie', 'silverfish', 'slime', 'magmacube', 'pigzombie:400', 'enderman', 'wolf:angry', 'giant')
 	@mob = @mobs[rand(array_size(@mobs))]
 	@num = rand(25, 50)
@@ -158,7 +158,7 @@ proc('_fw_mobs') {
 	}
 }
 
-proc('_fw_player', @player) {
+proc _fw_player(@player) {
 	if(ponline(@player)
 	&& pworld(@player) == 'custom'
 	&& get_pscoreboard(@player) == 'fw') {
@@ -168,7 +168,7 @@ proc('_fw_player', @player) {
 	}
 }
 
-proc('_fw_totalplayers') {
+proc _fw_totalplayers() {
 	@count = 0
 	foreach(@p in all_players('custom')) {
 		if(get_pscoreboard(@p) == 'fw') {
@@ -178,7 +178,7 @@ proc('_fw_totalplayers') {
 	return(@count)
 }
 
-proc('_fw_changeteam', @player, @team) {
+proc _fw_changeteam(@player, @team) {
 	switch(@team) {
 	case 'losers':
 		if(team_remove_player('winners', @player, 'fw')) {
@@ -197,7 +197,7 @@ proc('_fw_changeteam', @player, @team) {
 	}
 }
 
-proc('_fw_randompotion', @potentials, @secs = 20) {
+proc _fw_randompotion(@potentials, @secs = 20) {
 	@potions = array(
 		'speed': array(1, 17),
 		'jump': array(8, 12),
@@ -212,14 +212,14 @@ proc('_fw_randompotion', @potentials, @secs = 20) {
 	}
 }
 
-proc('_fw_msg', @msg) {
+proc _fw_msg(@msg) {
 	_regionmsg('frogware', color('green').'[FROGWARE] '.color('r').@msg)
 }
 
 #Given two blocks, iterates through all the blocks inside the cuboid, and calls the 
 #user defined function on them. The used defined procedure should accept 3 parameters,
 #the x, y, and z coordinates of the block.
-proc(_iterate_cuboid, @b1, @b2, @proc_name) {
+proc _iterate_cuboid(@b1, @b2, @proc_name) {
 	for(@x = min(@b1[0], @b2[0]), @x <= max(@b1[0], @b2[0]), @x++) {
 		for(@y = min(@b1[1], @b2[1]), @y <= max(@b1[1], @b2[1]), @y++) {
 			for(@z = min(@b1[2], @b2[2]), @z <= max(@b1[2], @b2[2]), @z++) {
@@ -229,7 +229,7 @@ proc(_iterate_cuboid, @b1, @b2, @proc_name) {
 	}
 }
 
-proc('_fw_task', @task, @state, @secs) {
+proc _fw_task(@task, @state, @secs) {
 	switch(@task) {
 	case 'climb':
 		switch(@state) {
@@ -241,17 +241,17 @@ proc('_fw_task', @task, @state, @secs) {
 			if(!rand(6)) {
 				_fw_mobs()
 			}
-			proc('_set_emerald', @x, @y, @z) {
+			proc _set_emerald(@x, @y, @z) {
 				if(rand(100) < 3) {
 					set_block_at(array(@x, @y, @z, 'custom'), '133:0')
 				}
 			}
-			proc('_set_diamond', @x, @y, @z) {
+			proc _set_diamond(@x, @y, @z) {
 				if(rand(100) < 4) {
 					set_block_at(array(@x, @y, @z, 'custom'), '57:0')
 				}
 			}
-			proc('_set_gold', @x, @y, @z) {
+			proc _set_gold(@x, @y, @z) {
 				if(rand(100) < 5) {
 					set_block_at(array(@x, @y, @z, 'custom'), '41:0')
 				}
@@ -286,7 +286,7 @@ proc('_fw_task', @task, @state, @secs) {
 				}
 			}
 			_remove_region_entities('frogware')
-			proc('_set_air', @x, @y, @z) {
+			proc _set_air(@x, @y, @z) {
 				if(get_block_at(array(@x, @y, @z, 'custom'))[0] != '0') {
 					set_block_at(array(@x, @y, @z, 'custom'), '0:0')
 				}
@@ -354,7 +354,7 @@ proc('_fw_task', @task, @state, @secs) {
 		switch(@state) {
 		case 'start':
 			_fw_msg('Bring in the harvest!')
-			proc('_set_dirt', @x, @y, @z) {
+			proc _set_dirt(@x, @y, @z) {
 				if(rand(100) < 2) {
 					set_block_at(array(@x, @y, @z, 'custom'), '3:0')
 				} else if(rand(100) < 5) {
@@ -388,7 +388,7 @@ proc('_fw_task', @task, @state, @secs) {
 				}
 			}
 			_remove_region_entities('frogware', array('DROPPED_ITEM'))
-			proc('_set_air', @x, @y, @z) {
+			proc _set_air(@x, @y, @z) {
 				if(get_block_at(array(@x, @y, @z, 'custom'))[0] != '0') {
 					set_block_at(array(@x, @y, @z, 'custom'), '0:0')
 				}
@@ -424,12 +424,12 @@ proc('_fw_task', @task, @state, @secs) {
 					}
 				}
 			}
-			proc('_set_base', @x, @y, @z) {
+			proc _set_base(@x, @y, @z) {
 				if(get_block_at(array(@x, @y, @z, 'custom'))[0] == '0') {
 					set_block_at(array(@x, @y, @z, 'custom'), '155:0')
 				}
 			}
-			proc('_set_hill', @x, @y, @z) {
+			proc _set_hill(@x, @y, @z) {
 				if(get_block_at(array(@x, @y, @z, 'custom'))[0] == '0') {
 					set_block_at(array(@x, @y, @z, 'custom'), '133:0')
 				}
@@ -453,7 +453,7 @@ proc('_fw_task', @task, @state, @secs) {
 				}
 			}
 			_remove_region_entities('frogware')
-			proc('_set_air', @x, @y, @z) {
+			proc _set_air(@x, @y, @z) {
 				if(get_block_at(array(@x, @y, @z, 'custom'))[0] != '0') {
 					set_block_at(array(@x, @y, @z, 'custom'), '0:0')
 				}
@@ -507,7 +507,7 @@ proc('_fw_task', @task, @state, @secs) {
 					play_sound(ploc(@p), array('sound': 'ghast_fireball'), @p)
 				}
 			}
-			proc('_set_green', @x, @y, @z) {
+			proc _set_green(@x, @y, @z) {
 				if(rand(100) < 3) {
 					set_block_at(array(@x, @y, @z, 'custom'), '133:0')
 				}
@@ -528,7 +528,7 @@ proc('_fw_task', @task, @state, @secs) {
 					play_sound(ploc(@p), array('sound': 'zombie_metal'), @p)
 				}
 			}
-			proc('_set_air', @x, @y, @z) {
+			proc _set_air(@x, @y, @z) {
 				if(get_block_at(array(@x, @y, @z, 'custom'))[0] != '0') {
 					set_block_at(array(@x, @y, @z, 'custom'), '0:0')
 				}
@@ -620,7 +620,7 @@ proc('_fw_task', @task, @state, @secs) {
 		case 'end':
 			unbind('fwegg')
 			_remove_region_entities('frogware')
-			proc('_set_air', @x, @y, @z) {
+			proc _set_air(@x, @y, @z) {
 				if(get_block_at(array(@x, @y, @z, 'custom'))[0] != '0') {
 					set_block_at(array(@x, @y, @z, 'custom'), '0:0')
 				}
@@ -690,7 +690,7 @@ proc('_fw_task', @task, @state, @secs) {
 			if(!rand(5)) {
 				_fw_mobs()
 			}
-			proc('_set_lava', @x, @y, @z) {
+			proc _set_lava(@x, @y, @z) {
 				if(rand(100) < 3) {
 					set_block_at(array(@x, @y, @z, 'custom'), '10:0')
 				}
@@ -721,7 +721,7 @@ proc('_fw_task', @task, @state, @secs) {
 					}
 				}
 			}
-			proc('_set_air', @x, @y, @z) {
+			proc _set_air(@x, @y, @z) {
 				if(get_block_at(array(@x, @y, @z, 'custom'))[0] != '0') {
 					set_block_at(array(@x, @y, @z, 'custom'), '0:0')
 				}

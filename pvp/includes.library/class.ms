@@ -1,4 +1,4 @@
-proc('_class', @action, @player, @class, @pvp) {
+proc _class(@action, @player, @class, @pvp) {
 	if(array_index_exists(@pvp['arena']['classes'][@class], 'script')) {
 		include('../classes.library/'.@class.'.ms')
 	}
@@ -130,7 +130,7 @@ proc('_class', @action, @player, @class, @pvp) {
 	}
 }
 
-proc('_class_select', @id, @pvp) {
+proc _class_select(@id, @pvp) {
 	@size1 = 0
 	@size2 = 0
 	foreach(@class in @pvp['arena']['classes']) {

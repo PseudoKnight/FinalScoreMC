@@ -6,7 +6,7 @@
 # /doc <extensionname> - List all functions in a given extension.
 # /doc <func>[,func] [func] - List specific functions.
 *:/doc [$] = >>>
-    proc(_get_closest, @name, @list,
+    proc _get_closest(@name, @list) {
         # Search an array for a matching entry, regardless of case, and return it.
         foreach(@ext in @list) {
             if (to_lower(@ext) == to_lower(@name)) {
@@ -15,9 +15,9 @@
         }
        
         return(null)
-    )
+    }
    
-    proc(_desc_func, @func,
+    proc _desc_func(@func) {
         # Colorfully describe a function.
         try(
             @desc = reflect_docs(@func, 'description')
@@ -29,7 +29,7 @@
         ,
             msg(color(RED) . 'Could not show information for' @func)
         )
-    )
+    }
  
     if (!$) {
         # List known extensions.
