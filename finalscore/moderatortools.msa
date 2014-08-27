@@ -361,7 +361,7 @@
 
 *:/matchip $ip = >>>
 	if(!has_permission('group.moderators'), die('You do not have permission.'))
-	@players = get_values('player')
+	@players = get_values('players')
 	msg(color('bold').'Matched Players for IP: '.$ip)
 	foreach(@key: @player in @players) {
 		if(array_index_exists(@player, 'ips') && array_contains(@player['ips'], $ip)) {
