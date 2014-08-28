@@ -4,7 +4,7 @@ case 'load':
 		lightning(pcursor())
 		@slot = pinfo(player(), 15)
 		@item = pinv(player(), null)
-		set_pinv(player(), array(null: array('type': 280, 'meta': array('display': 'Recharging...'))))
+		set_pinv(player(), array(null: array('type': 280)))
 		queue_clear(player().'lightning')
 		queue_delay(6000, player().'lightning')
 		queue_push(closure(){
@@ -47,13 +47,13 @@ case 'load':
 		
 		@slot = pinfo(player(), 15)
 		@item = pinv(player(), null)
-		set_pinv(player(), array(null: array('type': 351, 'meta': array('display': 'Recharging...'))))
+		set_pinv(player(), array(null: array('type': 351)))
 		queue_clear(player().'woosh')
 		queue_delay(6000, player().'woosh')
 		queue_push(closure(){
 			@newitem = pinv(player(), @slot)
 			if(@newitem && @newitem['type'] == 351) {
-				set_inventory_item(pinfo(player(), 13), @slot, @item)w
+				set_inventory_item(pinfo(player(), 13), @slot, @item)
 			}
 		}, player().'woosh')
 	}
