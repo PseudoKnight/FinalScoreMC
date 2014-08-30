@@ -473,11 +473,28 @@ bind(player_interact_entity, null, array('clicked': 'VILLAGER'), @event) {
 	}
 }
 
+# Prevent undesireable interdimensional travel
 bind(entity_enter_portal, null, null, @event) {
 	if(@event['type'] != 'PLAYER'
-	&& ((@event['location']['world'] == 'custom' || @event['location']['world'] == 'dev')
-	|| (@event['type'] == 'ENDER_DRAGON' 
-	&& (@event['location']['world'] == 'outworld' || @event['location']['world'] == 'outworld_nether')))) {
+	&& (@event['location']['world'] == 'custom' || @event['location']['world'] == 'dev')) {
 		entity_remove(@event['id'])
+	} else if(@event['type'] == 'ENDER_DRAGON' 
+	&& (@event['location']['world'] == 'outworld' || @event['location']['world'] == 'outworld_nether')) {
+		cancel()
+	}
+}
+
+# Basic sponge soaking behavior
+bind(block_place, null, array(type: data_values('sponge')), @event) {
+	@type = 0
+	for(@x = @event[location][x] - 2, @x <= @event[location][x] + 2, @x++) {
+		for(@y = @event[location][y] - 2, @y <= @event[location][y] + 2, @y++) {
+			for(@z = @event[location][z] - 2, @z <= @event[location][z] + 2, @z++) {
+				@type = split(':', get_block_at(@x, @y, @z))[0]
+				if(@type == 8 || @type == 9) {
+					set_block_at(@x, @y, @z, 0)
+				}
+			}
+		}
 	}
 }
