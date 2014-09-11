@@ -119,7 +119,7 @@
 		}
 		store_value('mob.'.$id, @mob)
 		
-	, 'delete',
+	case 'delete':
 		if($setting) {
 			@mob = get_value('mob.'.$id)
 			if($setting == 'effect', @setting = 'effects', @setting = $setting)
