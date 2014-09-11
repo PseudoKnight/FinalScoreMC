@@ -5,7 +5,7 @@ bind(player_interact, null, array('block': 92), @event) {
 	}
 	@data = split(':', get_block_at(@event['location']))[1]
 	if(@data == '7') {
-		set_block_at(array(-394, 61, 1250, 'dev'), '152:0')
+		set_block_at(array(-485, 62, 162, 'custom'), '152:0')
 		die()
 	}
 	@cakes = get_value('cakes')
