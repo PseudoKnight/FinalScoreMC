@@ -1,40 +1,49 @@
-*:/display $ = >>>
-	if(!has_permission('command.display'), die('You do not have permission to use this command.'))
-	if(length($) > 30, die('The name can only be 30 characters long.'))
-	@inv = pinv(player(), null)
-	if(is_null(@inv['meta']), @inv['meta'] = array())
-	@inv['meta']['display'] = colorize($)
-	set_pinv(array(null: @inv))
+# Set the display name for the item in-hand
+*:/display [$] = >>>
+	if(!has_permission('command.display'), die('You do not have permission.'))
+	if(!$, die(color(gold).'Usage: /display <item display name> '.color(gray).'(supports &0 color codes)'))
+	@meta = get_itemmeta(null)
+	if(is_null(@meta), @meta = array())
+	@meta[display] = colorize($)
+	set_itemmeta(null, @meta)
 <<<
 
-*:/lore $line $ = >>>
-	if(!has_permission('command.lore'), die('You do not have permission to use this command.'))
-	if(length($) > 30, die('The name can only be 30 characters long.'))
-	@inv = pinv(player(), null)
-	if(is_null(@inv['meta']), @inv['meta'] = array())
-	if(!array_index_exists(@inv['meta'], 'lore') 
-	|| is_null(@inv['meta']['lore'])) {
-		@inv['meta']['lore'] = array()
+# Set individual lines of lore for the item in-hand
+*:/lore [$line] [$] = >>>
+	if(!has_permission('command.lore'), die('You do not have permission.'))
+	if(!$ || !is_numeric($line) || $line < 1) {
+		die(color(gold).'Usage: /lore <line#> <lore string> '.color(gray).'(supports &0 color codes)')
 	}
-	@inv['meta']['lore'][$line - 1] = colorize($)
-	set_pinv(array(null: @inv))
+	@meta = get_itemmeta(null)
+	if(is_null(@meta), @meta = array())
+	if(is_null(@meta[lore])) {
+		@meta[lore] = array()
+	}
+	@meta[lore][$line - 1] = colorize($)
+	set_itemmeta(null, @meta)
 <<<	
 
+# Spawn an endercrystal at the targeted location.
 *:/endercrystal = >>>
-	if(!has_permission('group.moderators'), die('You do not have permission.'))
+	if(!has_permission('command.endercrystal'), die('You do not have permission.'))
 	@loc = _relative(pcursor(), 'up')
 	set_block_at(@loc, '7:0')
-	spawn_entity('ENDER_CRYSTAL', 1, array(@loc[0] + 0.5, @loc[1], @loc[2] + 0.5, @loc[3]))
+	spawn_entity(ENDER_CRYSTAL, 1, array(@loc[0] + 0.5, @loc[1], @loc[2] + 0.5, @loc[3]))
 <<<
 
+# Set the command in the targeted command block (overwrites)
 *:/scb [$] = >>>
-	if(!has_permission('group.builders'), die('You do not have permission.'))
-	if(!$, die('Usage: /scb /cmd'))
+	# Configure a set of allowed commands and aliases for non-ops
 	@allowedcmds = array('/velocity', '/tp', '/sayas', '/testfor', '/playsound', '/setblock', 
 	'/tempcart', '/bedspawn', '/give', '/effect', '/warp', '/tellraw', '/testforblock', '/time')
+	
+	if(!has_permission('command.cb'), die('You do not have permission.'))
+	if(!$, die(color(gold).'Usage: /scb </command>'))
 	if(!array_contains_ic(@allowedcmds, parse_args($)[0]), die('Allowed commands: '.array_implode(@allowedcmds)))
-	@block = pcursor()
-	if(get_block_at(@block) != '137:0', die('That is not a commandblock.'))
+	@block = pcursor(array(0, 8, 9, 27, 28, 50, 55, 63, 64, 65, 66, 68, 69, 
+		70, 71, 72, 75, 76, 77, 96, 131, 132, 143, 147, 148, 149, 150, 157))
+	@blocktype = data_name(get_block_at(@block))
+	if(@blocktype != 'Command Block', die("You are looking at @blocktype. That is not a command block."))
 	@cmd = $
 	if(is_alias(@cmd), @cmd = '/runalias '.@cmd)
 	set_block_command(@block, @cmd)
@@ -42,18 +51,22 @@
 	msg(color('gold').'You can add to this command with /acb')
 <<<
 
+# Add to the command in the targeted command block
 *:/acb [$] = >>>
-	if(!has_permission('group.builders'), die('You do not have permission.'))
-	if(!$, die('Usage: /acb /cmd'))
-	@block = pcursor()
-	if(get_block_at(@block) != '137:0', die('That is not a commandblock.'))
-	@cmd = get_block_command(@block)
-	if(!@cmd) {
-		die('This command block is empty.')
-	}
-	@parts = parse_args(@cmd)
+	# Configure a set of allowed commands and aliases for non-ops
 	@allowedcmds = array('/velocity', '/tp', '/sayas', '/testfor', '/playsound', '/setblock', 
 	'/tempcart', '/bedspawn', '/give', '/effect', '/warp', '/tellraw', '/testforblock', '/time')
+	
+	if(!has_permission('command.cb'), die('You do not have permission.'))
+	if(!$, die(color(gold).'Usage: /acb <additional parameters>'))
+	@block = pcursor(array(0, 8, 9, 27, 28, 50, 55, 63, 64, 65, 66, 68, 69, 
+		70, 71, 72, 75, 76, 77, 96, 131, 132, 143, 147, 148, 149, 150, 157))
+	try(
+		@cmd = get_block_command(@block)
+	, # catch
+		die('You are looking at '.data_name(get_block_at(@block)).'. That is not a command block.')
+	)
+	@parts = parse_args(@cmd)
 	if((@parts[0] == '/runalias' && array_contains_ic(@allowedcmds, @parts[1]))
 	|| (array_size(@parts) > 1 && array_contains_ic(@allowedcmds, @parts[1]))) {
 		set_block_command(@block, @cmd.' '.$)
@@ -63,65 +76,84 @@
 	}
 <<<
 
+# Add relative coordinates to the targeted command block.
+# Uses WorldEdit selection position 1 (and 2 for when it's a /fill command)
 *:/relcoords = >>>
-	if(!has_permission('group.builders'), die('No permission.'))
-	@cmdblk = pcursor()
-	try(@cmd = get_block_command(@cmdblk), die('Not a commandblock'))
+	if(!has_permission('command.cb'), die('You do not have permission.'))
+	@block = pcursor(array(0, 8, 9, 27, 28, 50, 55, 63, 64, 65, 66, 68, 69, 
+		70, 71, 72, 75, 76, 77, 96, 131, 132, 143, 147, 148, 149, 150, 157))
+	try(
+		@cmd = get_block_command(@block)
+	, # catch
+		die('You are looking at '.data_name(get_block_at(@block)).'. That is not a command block.')
+	)
 	@loc1 = sk_pos1()
-	@x1 = integer(@loc1[0] - @cmdblk['x'])
-	@y1 = integer(@loc1[1] - @cmdblk['y'])
-	@z1 = integer(@loc1[2] - @cmdblk['z'])
+	@x1 = integer(@loc1[0] - @block['x'])
+	@y1 = integer(@loc1[1] - @block['y'])
+	@z1 = integer(@loc1[2] - @block['z'])
 	@parts = parse_args(@cmd)
-	if((array_size(@parts) > 0 && (@parts[0] == '/fill' || @parts[0] == 'fill')) || (array_size(@parts) > 1 && @parts[1] == '/fill')) {
+	if(array_contains_ic(@parts, '/fill')) {
 		@loc2 = sk_pos2()
-		@x2 = integer(@loc2[0] - @cmdblk['x'])
-		@y2 = integer(@loc2[1] - @cmdblk['y'])
-		@z2 = integer(@loc2[2] - @cmdblk['z'])
-		set_block_command(@cmdblk, @cmd.' ~'.@x1.' ~'.@y1.' ~'.@z1.' ~'.@x2.' ~'.@y2.' ~'.@z2.' ')
+		@x2 = integer(@loc2[0] - @block['x'])
+		@y2 = integer(@loc2[1] - @block['y'])
+		@z2 = integer(@loc2[2] - @block['z'])
+		set_block_command(@block, @cmd.' ~'.@x1.' ~'.@y1.' ~'.@z1.' ~'.@x2.' ~'.@y2.' ~'.@z2.' ')
 	} else {
-		set_block_command(@cmdblk, @cmd.' ~'.@x1.' ~'.@y1.' ~'.@z1.' ')
+		set_block_command(@block, @cmd.' ~'.@x1.' ~'.@y1.' ~'.@z1.' ')
 	}
 <<<
 
-*:/dye $r $g $b = >>>
-	if(!has_permission('command.dye'), die('You do not have permission to use this command.'))
-	if(pinv(player(), null) && is_leather_armor(pinfo(player(), 15))) {
+# Dye leather armor in-hand with the specified R G B values (0 - 255)
+*:/dye [$r] [$g] [$b] = >>>
+	if(!has_permission('command.dye'), die('You do not have permission.'))
+	if(!$b, die(color(gold).'Usage: /dye <red#> <green#> <blue#> '.color(gray).'(0 - 255)'))
+	try(
 		set_armor_color(pinfo(player(), 15), array(min(max($r, 0), 255), min(max($g, 0), 255), min(max($b, 0), 255)))
-	} else {
-		msg('That slot isn\'t leather armor.')
-	}
+	, # catch
+		die(color(gold).'Hold leather armor in your hand and type the command. eg. /dye 255 255 255')
+	)
 <<<
 
+# Create potions or add potion effects to existing potions
 *:/potion [$cmd] [$id] [$strength] [$seconds] = >>>
-	if(!has_permission('command.potion'), die('You do not have permission to use this command.'))
+	if(!has_permission('command.potion'), die('You do not have permission.'))
 	if(!$id, die('Usage: /potion <create|add> <potionEffect> <strength> <seconds>'))
+	
 	@effects = _get_effects()
 	@id = $id
-	@data = 16
 	if(!array_index_exists(@effects, @id), die('Available potion effects: '.@effects))
 	if(!is_numeric(@id), @id = @effects[@id])
+	
+	# data affects the color of the potion
+	@data = 16
 	@effectdata = array(1: 2, 2: 10, 5: 9, 6: 5, 7: 12, 10: 1, 12: 3, 14: 14, 16: 6, 18: 8)
 	if(array_index_exists(@effectdata, @id)) {
 		@data = @effectdata[@id]
 	}
 	
 	switch($cmd) {
-	case 'add':
-		@item = pinv(player(), null)
-		if(@item['type'] != 373, die('You can only add potion effects to potions.'))
-		if(!@item['meta'], @item['meta'] = array())
-		if(!array_index_exists(@item['meta'], 'potions'), @item['meta']['potions'] = array())
-		array_push(@item['meta']['potions'], array('id': @id, 'strength': $strength - 1, 'seconds': $seconds))
-		set_pinv(array(null: @item))
-	case 'create':
-		set_pinv(array(null: array('type': 373, 'data': @data, 'meta': array('potions': array(array('id': @id, 'strength': $strength - 1, 'seconds': $seconds))))))
-	default: 
-		die('Usage: /potion <set|add> <potionEffect> <strength> <seconds>')
+		case 'add':
+			@item = pinv(player(), null)
+			if(@item[type] != 373, die('You can only add potion effects to potions.'))
+			if(is_null(@item[meta]), @item[meta] = array())
+			if(!array_index_exists(@item[meta], 'potions'), @item[meta][potions] = array())
+			array_push(@item[meta][potions], array(id: @id, strength: $strength - 1, seconds: $seconds))
+			set_pinv(array(null: @item))
+			
+		case 'create':
+			set_pinv(array(null: array(type: 373, data: @data, meta: array(
+				potions: array(array(id: @id, strength: $strength - 1, seconds: $seconds))
+			))))
+			
+		default: 
+			die('Usage: /potion <set|add> <potionEffect> <strength> <seconds>')
 	}
 <<<
 
+# Enchant tool in hand with specified enchantment
 *:/enchant [$type='list'] [$level=1] = >>>
-	if(!has_permission('command.enchant'), die('You do not have permission to use this command.'))
+	if(!has_permission('command.enchant'), die('You do not have permission.'))
+	# enchantment aliases
 	@enchants = array(
 		'power': 'ARROW_DAMAGE',
 		'flame': 'ARROW_FIRE',
@@ -146,63 +178,79 @@
 		'thorns': 'THORNS',
 		'aquaaffinity': 'WATER_WORKER'
 	)
-	if($type == 'list', die(color('red').'Available enchantments: '.array_keys(@enchants)))
-	if(!is_numeric($level), die('Usage: /enchant <type> <level>'))
+	if(!is_integral($level), die('Enchantment level must be an integer.'))
 	if(array_index_exists(@enchants, to_lower($type))) {
 		enchant_inv_unsafe(null, @enchants[to_lower($type)], $level)
 	} else {
-		msg(color('red').'Unknown enchantment name. Available enchantments: '.array_keys(@enchants))
+		msg(color('red').'Available enchantments: '.array_keys(@enchants))
 	}
 <<<
 
+# Remove all enchantments from item in hand
 *:/unenchant = >>>
-	if(!has_permission('command.enchant'), die('You do not have permission to use this command.'))
+	if(!has_permission('command.enchant'), die('You do not have permission.'))
 	@item = pinv(player(), null)
 	array_remove(@item, 'enchants')
+	array_remove(@item[meta], 'enchants')
 	set_pinv(array(null: @item))
 <<<
 
+# Overwrite a line on the sign you're looking at.
 *:/sign $line [$=''] = >>>
-	if(!has_permission('command.sign'), die('You do not have permission to use this command.'))
-	if(length($) > 15, die('There is a 15 character limit per line.'))
+	if(!has_permission('command.sign'), die('You do not have permission.'))
 	@sign = pcursor()
 	if(!is_sign_at(@sign), die('That is not a sign'))
 	@lines = get_sign_text(@sign)
 	array_set(@lines, $line - 1, colorize($))
-	set_sign_text(@sign, @lines),
+	set_sign_text(@sign, @lines)
 <<<
 
-# Item commands
+# Add an item into your inventory in the next available slot.
 *:/i [$item=0] [$amount=1] = >>>
-	if(!has_permission('command.i'), die('You do not have permission to use this command.'))
-	if($item == 0, die('Usage: /i [id:data] [quantity]'))
+	if(!has_permission('command.i'), die('You do not have permission.'))
+	if($item == 0, die('Usage: /i [id:data] [quantity] '.color(gray).'(supports item names)'))
 	@item = split(':', $item)
 	if(!is_numeric(@item[0]), @item[0] = data_values(@item[0]))
 	if(@item[0] == null, die('Unknown item name'))
-	if(!array_index_exists(@item, 1), @item[1] = 0)
+	if(array_size(@item) == 1, @item[1] = 0)
+	if(!is_integral($amount) || $amount < 1, die('Amount must be a positive integer.'))
 	try(
 		pgive_item(@item[0].':'.@item[1], $amount)
 		msg(color('yellow').'You\'ve been given '.$amount.' '.data_name(@item[0].':'.@item[1]).'.')
-	, msg(color('red').'That item doesn\'t appear to exist.'))
+	, # catch
+		msg(color('red').'That item doesn\'t appear to exist.')
+	)
 <<<
 
-#Set fly mode for people or yourself
-*:/fly $player $bool = >>>
-	if(!has_permission('group.moderators'), die('You do not have permission to use this command.'))
-	try(@player = player($player), @ex, die('Who is that? Are they online?'))
-	if($bool == '1') {
-		set_pflight(@player, 1)
-		msg('Turned on fly mode for '.@player.'.')
-		tmsg(@player, player().' turned on fly mode on you.')
-	} else {
-		set_pflight(@player, 0)
-		msg('Turned off fly mode for '.@player.'.')
-		tmsg(@player, player().' turned off fly mode on you.')
+# Set fly mode for players
+*:/fly $player $mode = >>>
+	if(!has_permission('command.fly'), die('You do not have permission.'))
+	try(@player = player($player), die('Who is that? Are they online?'))
+	if(@player != player() && !has_permission('command.fly.others'), die('You do not have permission.'))
+	if(pworld(@player) != pworld()) {
+		die('You do not have permission to set a fly mode in another world.')
+	}
+	switch(to_lower($mode)) {
+		case '1':
+		case 'on':
+			set_pflight(@player, 1)
+			msg('Turned on fly mode for '.@player.'.')
+			tmsg(@player, player().' turned on fly mode on you.')
+			
+		case '0':
+		case 'off':
+			set_pflight(@player, 0)
+			msg('Turned off fly mode for '.@player.'.')
+			tmsg(@player, player().' turned off fly mode on you.')
+			
+		default:
+			msg('Usage: /fly <player> <1|0>')
 	}
 <<<
 
+# Toggle fly mode for yourself
 *:/fly = >>>
-	if(!has_permission('command.fly'), die('You do not have permission to use this command.'))
+	if(!has_permission('command.fly'), die('You do not have permission.'))
 	if(phas_flight()) {
 		set_pflight(player(), 0)
 		msg('Turned off flying.')
@@ -212,10 +260,10 @@
 	}
 <<<
 
-#Game mode aliases
+# Set game mode for players
 *:/gamemode [$] = call_alias('/gm '.$)
 *:/gm [$] = >>>
-	if(!has_permission('command.gm'), die('You do not have permission to set game mode here.'))
+	if(!has_permission('command.gm'), die('You do not have permission.'))
 	
 	@player = player()
 	@mode = 'toggle'
@@ -231,7 +279,7 @@
 				@mode = @args[1]
 			}
 		
-		,
+		, # catch
 			if(is_numeric(@args[0])) {
 				@mode = @args[0]
 			} else {
@@ -240,50 +288,59 @@
 		)
 	}
 	
-	switch(@mode) {
-	case 0:
-		@mode = 'SURVIVAL'
-	case 1:
-		@mode = 'CREATIVE'
-	case 2:
-		@mode = 'ADVENTURE'
-	case 'toggle':
-		if(pmode(@player) == 'SURVIVAL') {
-			@mode = 'CREATIVE'
-		} else {
+	switch(to_lower(@mode)) {
+		case '0':
+		case 's':
 			@mode = 'SURVIVAL'
-		}
-	default: 
-		die('Unknown game mode.')
+			
+		case '1':
+		case 'c':
+			@mode = 'CREATIVE'
+			
+		case '2':
+		case 'a':
+			@mode = 'ADVENTURE'
+			
+		case 'toggle':
+			if(pmode(@player) == 'SURVIVAL') {
+				@mode = 'CREATIVE'
+			} else {
+				@mode = 'SURVIVAL'
+			}
+			
+		default: 
+			die('Usage: /gm <player> [mode] OR /gm [mode]')
 	}
 	
 	set_pmode(@player, @mode)
 	if(@player != player(), msg('Set '.@player.'\'s game mode to '.@mode))
 <<<
 
-*:/setrider $horse $rider = >>>
-	if(!has_permission('group.moderators'), die('You do not have permission to use this command.'))
-	set_entity_rider(pinfo($horse, 13), pinfo($rider, 13))
-<<<
-
+# Set the time of day for this world
 *:/time $time = >>>
 	if(!has_permission('command.time'), die('You do not have permission.'))
-	msg('Set time to '.$time)
 	try(
-		set_world_time(pworld(), $time),
-		msg('Usage: /time <day|night|0-24000>')
+		set_world_time(pworld(), $time)
+	, # catch
+		msg('Usage: /time <day|night|sunrise|sunset|0-24000>')
 	)
+	msg('Set time to '.$time)
 <<<
 
+# Heal yourself or others
 *:/heal [$player] = >>>
-	if(!has_permission('command.heal'), die('You do not have permission to do that here.'))
+	if(!has_permission('command.heal'), die('You do not have permission.'))
 	@player = player()
 	if($player) {
 		if(!has_permission('command.heal.others'), die('You do not have permission to heal others.'))
-		if(!@player = player($player), die('Unknown player.'))
+		try(@player = player($player), die('Unknown player.'))
+		if(pworld(@player) != pworld()) {
+			die('You do not have permission to heal a player in another world.')
+		}
 	}
 	set_phunger(@player, 20)
 	set_psaturation(@player, 5.0)
 	set_phealth(@player, 20)
 	tmsg(@player, color('green').'Healed!')
+	if(@player != player(), msg(color('green').'Healed!'))
 <<<
