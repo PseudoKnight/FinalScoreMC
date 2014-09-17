@@ -1,46 +1,57 @@
-proc _is_shop(@loc) {
-	@text = get_sign_text(@loc)
-	if(reg_match('^\\[(.+)\\]$', @text[0])
-	&& (length(@text[1]) > 7 && substr(@text[1], 0, 3) == 'Buy'
-	|| length(@text[2]) > 8 && substr(@text[2], 0, 4) == 'Sell')) {
-		return(true)
+proc _get_shop(@loc) {
+	@sign = get_sign_text(@loc)
+	@itemMatch = reg_match('^\\[(.+)\\]$', @sign[0])
+	@item = ''
+	if(!@itemMatch) {
+		return()
 	} else {
-		return(false)
+		@item = _data_values(@itemMatch[1])
+		if(!@item) {
+			return()
+		}
+	}
+	@owner = @sign[3]
+	if(!@owner) {
+		return()
+	}
+	@buy = _get_price(@sign[1])
+	@sell = _get_price(@sign[2])
+	if(@buy || @sell) {
+		return(array(
+			item: @item,
+			key: replace(@item, ':', '.'),
+			buy: @buy,
+			sell: @sell,
+			owner: @owner,
+		))
 	}
 }
 
-proc _is_shop_owner(@loc) {
-	@owner = get_sign_text(@loc)[3]
-	if(length(player()) > 15) {
-		if(substr(@owner, 0, 13) == substr(player(), 0, 13)) {
+proc _get_price(@line) {
+	return(reg_match('^(?:Buy|Sell) ((\\d{1,4}) for (\\d{1,4})([degi]))$', @line))
+}
+
+proc _is_shop_owner(@player, @shopOwner) {
+	if(length(@player) > 15) {
+		if(substr(@shopOwner, 0, 13) == substr(@player, 0, 13)) {
 			return(true)
-		} else {
-			return(false)
 		}
-	} else if(@owner == player()) {
+	} else if(@shopOwner == @player) {
 		return(true)
-	} else {
-		return(false)
 	}
 }
 
-
-proc _shop_item(@signtext) {
-	@item = reg_match('\\[([\\w\\s]+)(?::([0-9]{1,4}))?\\]', @signtext)
-	if(array_size(@item) < 2, die())
-	if(is_numeric(@item[1])) {
-		if(@item[2] != null) {
-			@itemid = @item[1].'.'.@item[2]
+proc _data_values(@item) {
+	@itemMatch = reg_match('^([\\w\\s]+)(?::(\\d{1,5}))?$', @item)
+	if(!@itemMatch, return())
+	if(!is_numeric(@itemMatch[1])) {
+		@itemMatch[1] = data_values(@itemMatch[1])
+		if(!@itemMatch[1], return())
+		if(@itemMatch[2] && string_position(@itemMatch[1], ':') == -1) {
+			@item = @itemMatch[1].':'.@itemMatch[2]
 		} else {
-			@itemid = @item[1]
-		}
-	} else {
-		if(@item[2] != null) {
-			@itemid = reg_split('\\:', data_values(@item[1]))[0].'.'.@item[2]
-		} else {
-			@itemid = reg_replace(':', '.', data_values(@item[1]))
-			if(@itemid == null, die())
+			@item = @itemMatch[1]
 		}
 	}
-	return(@itemid)
+	return(@item)
 }
