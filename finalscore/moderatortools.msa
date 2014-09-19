@@ -78,7 +78,9 @@
 	}
 	
 	_player_uuid(array($player), closure(@array){ 
-		run('/perm player setgroup '.@array[0]['id'].' Everyone')
+		try(
+			run('/perm player setgroup '.@array[0]['id'].' Everyone')
+		, msg('Unknown player.'))
 	})
 <<<
 
