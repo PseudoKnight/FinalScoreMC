@@ -9,6 +9,7 @@ bind(player_interact, null, array(block: 68), @event) {
 			@location = array(round(@event[location][0]), round(@event[location][1]), round(@event[location][2]), @event[location][3])
 			if(@shop[buy]) {
 				@count = _get_inventory_count(_relative(@event[location], 'down'), @shop[item])
+				if(is_null(@count), return())
 				foreach(@i in array_keys(@shops[0])) {
 					if(@shops[0][@i][location][0] == @location[0]
 					&& @shops[0][@i][location][1] == @location[1]
@@ -46,6 +47,7 @@ bind(player_interact, null, array(block: 68), @event) {
 					die()
 				}
 				@count = _get_inventory_count(_relative(@event[location], 'down'), @currency.':0')
+				if(is_null(@count), return())
 				foreach(@i in array_keys(@shops[1])) {
 					if(@shops[1][@i][location][0] == @location[0]
 					&& @shops[1][@i][location][1] == @location[1]
@@ -112,37 +114,6 @@ bind(block_break, null, array(type: 68), @event) {
 			clear_value('shop', @shop[key])
 		} else {
 			store_value('shop', @shop[key], @shops)
-		}
-	}
-}
-
-#prevent hoppers under shop chests
-bind(block_place, null, array(type: 154), @event) {
-	@loc = _relative(@event[location], 'up')
-	@type = split(':', get_block_at(@loc))[0]
-	if(@type == '54' || @type == '146') {
-		if(split(':', get_block_at(_relative(@loc, 'up')))[0] == '68') {
-			@signs[0] = _relative(@loc, 'up')
-		}
-		if(get_inventory_size(@loc) == 54) {
-			foreach(@dir in array('north', 'south', 'east', 'west')) {
-				@rel = _relative(@loc, @dir)
-				if(split(':', get_block_at(@rel))[0] == @type) {
-					if(split(':', get_block_at(_relative(@rel, 'up')))[0] == '68') {
-						@signs[1] = _relative(@rel, 'up')
-					}
-					break()
-				}
-			}
-		}
-    
-		if(@signs) {
-			foreach(@sign in @signs) {
-				if((@shop = _get_shop(@sign)) && !_is_shop_owner(player(), @shop[owner])) {
-					cancel()
-					die(color('red').'You cannot place a hopper below a shop you don\'t own.')
-				}
-			}
 		}
 	}
 }
