@@ -40,7 +40,7 @@
 	@conv = import('conv')
 	if(is_array(@conv), store_value('session.conv', @conv))
 	
-	@conv = import('ignorelist')
+	@ignorelist = import('ignorelist')
 	if(is_array(@ignorelist), store_value('session.ignorelist', @ignorelist))
 	
 	@timers = import('timers')
