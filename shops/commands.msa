@@ -53,6 +53,7 @@
 		if(@shops[@t][@i][location] == @loc) {
 			if(@t == 0) {
 				@count = _get_inventory_count(_relative(@loc, 'down'), @shop[item])
+				if(is_null(@count), die(color(6).'[Shop] No container below this shop sign.'))
 				if(@count < @shop[buy][2]) {
 					array_remove(@shops[@t], @i)
 				} else {
@@ -72,6 +73,7 @@
 						die(color(6).'[Shop] Unknown currency.')
 				}
 				@count = _get_inventory_count(_relative(@loc, 'down'), @currency.':0')
+				if(is_null(@count), die(color(6).'[Shop] No container below this shop sign.'))
 				if(@count < @shop[sell][3]) {
 					array_remove(@shops[@t], @i)
 				} else {
