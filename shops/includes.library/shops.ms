@@ -1,5 +1,5 @@
 proc _get_shop(@loc) {
-	@sign = get_sign_text(@loc)
+	try(@sign = get_sign_text(@loc), return())
 	@itemMatch = reg_match('^\\[(.+)\\]$', @sign[0])
 	@item = ''
 	if(!@itemMatch) {
@@ -27,15 +27,26 @@ proc _get_shop(@loc) {
 	}
 }
 
-proc _get_price(@line) {
-	return(reg_match('^(?:Buy|Sell) ((\\d{1,4}) for (\\d{1,4})([degi]))$', @line))
+proc _is_shop_sign(@sign) {
+	if(reg_match('^\\[(.+)\\]$', @sign[0])
+	&& (_get_price(@sign[1]) || _get_price(@sign[2]))
+	&& @sign[3]) {
+		return(true)
+	}
+	return(false)
+}
+
+proc _get_price(@string) {
+	return(reg_match('^(?:Buy|Sell) ((\\d{1,4}) for (\\d{1,4})([degi]))$', @string))
 }
 
 proc _is_shop_owner(@player, @shopOwner) {
 	if(length(@player) > 15) {
-		if(substr(@shopOwner, 0, 13) == substr(@player, 0, 13)) {
-			return(true)
-		}
+		try(
+			if(substr(@shopOwner, 0, 13) == substr(@player, 0, 13)) {
+				return(true)
+			}
+		)
 	} else if(@shopOwner == @player) {
 		return(true)
 	}
