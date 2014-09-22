@@ -498,3 +498,11 @@ bind(block_place, null, array(type: data_values('sponge')), @event) {
 		}
 	}
 }
+
+# Block creeper damage on the surface.
+bind(entity_explode, null, array(type: 'CREEPER'), @event) {
+	if(@event[location][y] > 62
+	&& array_contains(array('world', 'world3', 'world4', 'omega'), @event[location][world])) {
+		cancel()
+	}
+}
