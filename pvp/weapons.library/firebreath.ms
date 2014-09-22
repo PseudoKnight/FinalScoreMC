@@ -78,19 +78,19 @@ bind(player_interact, array('id': @id.'firebreath'), array('item': 377, 'button'
 		@dist = _squared_distance_to_segment(@eloc, @loc, @targetc)
 		if(@dist < 2.25) { # 1.5 ^ 2
 			damage_entity(@e, 7, pinfo(player(), 13))
-			set_entity_onfire(@e, 2)
+			set_entity_onfire(@e, 1)
 			continue()
 		}
 		@dist = _squared_distance_to_segment(@eloc, @loc, @targetl)
 		if(@dist < 2.25) { # 1.5 ^ 2
 			damage_entity(@e, 6, pinfo(player(), 13))
-			set_entity_onfire(@e, 2)
+			set_entity_onfire(@e, 1)
 			continue()
 		}
 		@dist = _squared_distance_to_segment(@eloc, @loc, @targetr)
 		if(@dist < 2.25) { # 1.5 ^ 2
 			damage_entity(@e, 6, pinfo(player(), 13))
-			set_entity_onfire(@e, 2)
+			set_entity_onfire(@e, 1)
 			continue()
 		}
 	}
