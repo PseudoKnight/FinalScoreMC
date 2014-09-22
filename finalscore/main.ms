@@ -345,48 +345,48 @@ bind(player_interact_entity, null, array('clicked': 'HORSE'), @event) {
 }
 
 # don't allow most horse damage unless being rode
-bind(entity_damage, null, array('type': 'HORSE'), @event) {
-	if(get_mob_age(@event['id']) < -24000) {
-		cancel()
-		die()
+bind(entity_damage, null, array(type: 'HORSE'), @event) {
+	if(get_mob_age(@event[id]) < -24000) {
+		cancel();
+		die();
 	}
 	
-	@world = entity_loc(@event['id'])['world']
+	@world = entity_loc(@event[id])[world];
 	if(@world == 'custom' || @world == 'dev') {
-		die()
+		die();
 	}
 	
-	@owner = get_mob_owner(@event['id'])
+	@owner = get_mob_owner(@event['id']);
 	if(is_null(@owner)) {
-		 die()
+		 die();
 	}
 	
-	switch(@event['cause']) {
-	case 'VOID':
-	case 'SUFFOCATION':
-	case 'DROWNING':
-		die()
-		
-	case 'ENTITY_ATTACK':
-		@isplayer = ponline(@event['damager'])
-		
-		if((@isplayer && @owner != @event['damager'])
-		|| (!@isplayer && !get_entity_rider(@event['id']))) {
-			cancel()
-		}
-		
-	case 'PROJECTILE':
-		@isplayer = ponline(@event['shooter'])
-		
-		if((@isplayer && @owner != @event['shooter'])
-		|| (!@isplayer && !get_entity_rider(@event['id']))) {
-			cancel()
-		}
-		
-	default: 
-		if(!get_entity_rider(@event['id'])) {
-			cancel()
-		}
+	switch(@event[cause]) {
+		case 'VOID':
+		case 'SUFFOCATION':
+		case 'DROWNING':
+			break();
+			
+		case 'ENTITY_ATTACK':
+			@isplayer = ponline(@event[damager]);
+
+			if((@isplayer && @owner != @event[damager])
+			|| (!@isplayer && !get_entity_rider(@event[id]))) {
+				cancel();
+			}
+			
+		case 'PROJECTILE':
+			@isplayer = ponline(@event[shooter]);
+			
+			if((@isplayer && @owner != @event[shooter])
+			|| (!@isplayer && !get_entity_rider(@event[id]))) {
+				cancel();
+			}
+			
+		default: 
+			if(!get_entity_rider(@event[id])) {
+				cancel();
+			}
 	}
 }
 
