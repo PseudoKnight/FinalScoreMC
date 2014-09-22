@@ -12,12 +12,12 @@ case 'load':
 					@facing[1] = 0 - @facing[1]
 					@x = cos(to_radians(@facing[0])) * cos(to_radians(@facing[1]))
 					@z = sin(to_radians(@facing[0])) * cos(to_radians(@facing[1]))
-					set_pexp(@player, max(0, pexp(@player) - 7))
+					set_pexp(@player, max(0, pexp(@player) - 8))
 					set_pvelocity(@player, @x * 0.6, 0.46, @z * 0.6)
 					play_sound(ploc(@player), array('sound': 'ENDERDRAGON_WINGS', 'pitch': 1.2))
 					_flap(@player)
 				} else {
-					set_interval(150, closure(){
+					set_interval(200, closure(){
 						try(
 							if(entity_grounded(pinfo(@player, 13))) {
 								@xp = pexp(@player)
