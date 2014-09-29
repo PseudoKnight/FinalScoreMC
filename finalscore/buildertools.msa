@@ -211,7 +211,7 @@
 	if($item == 0, die('Usage: /i [id:data] [quantity] '.color(gray).'(supports item names)'))
 	@item = split(':', $item)
 	if(!is_numeric(@item[0]), @item[0] = data_values(@item[0]))
-	if(@item[0] == null, die('Unknown item name'))
+	if(is_null(@item[0]), die('Unknown item name'))
 	if(array_size(@item) == 1, @item[1] = 0)
 	if(!is_integral($amount) || $amount < 1, die('Amount must be a positive integer.'))
 	try(

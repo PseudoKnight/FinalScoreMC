@@ -170,7 +170,7 @@
 				if(!array_index_exists(@arena, 'kit'), @arena['kit'] = array(array(), array()))
 				@inv = pinv()
 				foreach(array_keys(@inv), @slot) {
-					if(@inv[@slot] == null) {
+					if(is_null(@inv[@slot])) {
 						array_remove(@inv, @slot)
 					}
 				}
@@ -198,7 +198,7 @@
 				if(!has_permission('group.engineers'), die('Only engineers, moderators and admins can do this.'))
 				@regions = array()
 				foreach(@region in @args) {
-					if(@region != null) {
+					if(!is_null(@region)) {
 						array_push(@regions, @region)
 					}
 				}
@@ -292,7 +292,7 @@
 					if(!@args[1], @start = 'true', @start = @args[1])
 					@items = array()
 					for(@i = 0, @i < 27, @i++) {
-						if(get_inventory_item(@loc, @i) == null, break())
+						if(is_null(get_inventory_item(@loc, @i)), break())
 						array_push(@items, get_inventory_item(@loc, @i))
 					}
 					array_push(@arena['chestspawn'], array(

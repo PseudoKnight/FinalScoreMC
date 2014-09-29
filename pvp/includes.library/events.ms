@@ -157,7 +157,7 @@ bind(player_quit, array('id': @id.'quit'), null, @e, @id = @id) {
 	@pvp = import('pvp'.@id)
 	if(array_index_exists(@pvp['players'], player())) {
 		if(@pvp['arena']['mode'] == 'ctf' 
-		&& pinv(player(), 103) != null 
+		&& !is_null(pinv(player(), 103))
 		&& (pinv(player(), 103)['type'] == 8 
 		|| pinv(player(), 103)['type'] == 10)) {
 			_pvp_flag_spawn(@id, if(pinv(player(), 103)['type'] == 10, 0, 1)) 
@@ -436,7 +436,7 @@ if(array_contains(@pvp['arena']['flags'], 'stackedpickup')) {
 			die())
 			
 		foreach(@slot: @item in pinv()) {
-			if(@item != null 
+			if(!is_null(@item)
 			&& @e['item']['type'] == @item['type'] 
 			&& @e['item']['type'] != '373' 
 			&& @e['item']['enchants'] == @item['enchants']) {
@@ -496,7 +496,7 @@ if(@pvp['arena']['mode'] == 'ctf') {
 					play_sound(ploc(), array('sound': 'ENDERDRAGON_WINGS', 'pitch': 0))
 				} else {
 					cancel()
-					if(pinv(player(), 103) != null && pinv(player(), 103)['type'] == 8) {
+					if(!is_null(pinv(player(), 103)) && pinv(player(), 103)['type'] == 8) {
 						play_sound(@pvp['arena']['ctfflag'][0], array('sound': 'ZOMBIE_METAL', 'volume': 3))
 						@pvp['team'][0]['score']++
 						set_pscore('captures', @pvp['arena']['team'][0]['name'], @pvp['team'][0]['score'], @id)
@@ -537,7 +537,7 @@ if(@pvp['arena']['mode'] == 'ctf') {
 					play_sound(ploc(), array('sound': 'ENDERDRAGON_WINGS', 'pitch': 0))
 				} else {
 					cancel()
-					if(pinv(player(), 103) != null && pinv(player(), 103)['type'] == 10) {
+					if(!is_null(pinv(player(), 103)) && pinv(player(), 103)['type'] == 10) {
 						set_pinv(player(), array(103: null))
 						play_sound(@pvp['arena']['ctfflag'][1], array('sound': 'ZOMBIE_METAL', 'volume': 3))
 						@pvp['team'][1]['score']++

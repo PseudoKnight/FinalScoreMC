@@ -134,8 +134,6 @@ proc _fw_loc(@height = 0, @minrange = false) {
 	}
 	if(@return == 1) {
 		return(@loc)
-	} else {
-		return(null)
 	}
 }
 

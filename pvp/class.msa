@@ -20,7 +20,7 @@ case 'set':
 	case 'kit':
 		@inv = pinv()
 		foreach(array_keys(@inv), @slot) {
-			if(@inv[@slot] == null) {
+			if(is_null(@inv[@slot])) {
 				array_remove(@inv, @slot)
 			} else {
 				foreach(@i:@v in @inv[@slot]) {
@@ -43,7 +43,7 @@ case 'set':
 	case 'ammo':
 		@inv = pinv()
 		foreach(array_keys(@inv), @slot) {
-			if(@inv[@slot] == null) {
+			if(is_null(@inv[@slot])) {
 				array_remove(@inv, @slot)
 			} else {
 				foreach(@i:@v in @inv[@slot]) {

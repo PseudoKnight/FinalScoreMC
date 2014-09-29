@@ -196,7 +196,7 @@ bind(player_death, null, null, @event) {
 bind(block_place, null, array('type': 144), @event) {
 	if(!array_contains(array('custom', 'dev','outworld_nether', 'outworld', 'outworld_the_end'), pworld())
 	&& get_block_at(_relative(@event['location'], 'down')) == '88:0'
-	&& pinv(player(), null) != null
+	&& !is_null(pinv(player(), null))
 	&& pinv(player(), null)['data'] == 1) {
 		cancel()
 		msg(color('yellow').'You can only spawn withers in the outworld.')

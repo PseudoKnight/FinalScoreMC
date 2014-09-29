@@ -27,7 +27,7 @@
 	if($item == 0, die('You need to specify an item id or name.'))
 	@item = split(':', $item)
 	if(!is_numeric(@item[0]), @item[0] = data_values(@item[0]))
-	if(@item[0] == null, die('Unknown item name'))
+	if(is_null(@item[0]), die('Unknown item name'))
 	if(!array_index_exists(@item, 1), @item[1] = 0)
 	pgive_item(@player, @item[0].':'.@item[1], $amount)
 	msg(color('yellow').'You gave '.@player.' '.$amount.' '.data_name(@item[0].':'.@item[1]).'.')

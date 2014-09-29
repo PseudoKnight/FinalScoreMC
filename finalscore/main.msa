@@ -257,8 +257,8 @@
 
 # Put whatever they have in their hand onto their head. This shouldn't dupe.
 *:/hat = >>>
-	if(pinv(player(), null) == null, die(color('gold').'You need to hold something before you can put it on your head.'))
-	if(pinv(player(), 103) != null, die(color('gold').'You already have something on your head.'))
+	if(is_null(pinv(player(), null)), die(color('gold').'You need to hold something before you can put it on your head.'))
+	if(!is_null(pinv(player(), 103)), die(color('gold').'You already have something on your head.'))
 	@inv = pinv(player(), null)
 	if(@inv['qty'] == 1) {
 		set_pinv(player(), array(null: null))
