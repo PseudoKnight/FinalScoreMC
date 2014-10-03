@@ -61,6 +61,7 @@ bind(block_place, null, array(type: 154), @event) {
 	@loc = _relative(@event[location], 'up')
 	@type = split(':', get_block_at(@loc))[0]
 	if(@type == '54' || @type == '146') {
+		@signs = array()
 		if(split(':', get_block_at(_relative(@loc, 'up')))[0] == '68') {
 			@signs[0] = _relative(@loc, 'up')
 		}
