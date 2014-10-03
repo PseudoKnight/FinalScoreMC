@@ -179,7 +179,7 @@ bind(player_death, null, null, @event) {
 		@log = @event['player'].' died @ '.round(@event['location'][0]).','.round(@event['location'][1]).','.round(@event['location'][2]).' on '.@event['location'][3].', dropping '.@event['xp'].'xp and '
 		foreach(@drop in @event['drops']) {
 			if(is_array(@drop)) {
-				@log .= if(@drop['qty'] > 1, @drop['qty']).' '.data_name(@drop['type']).if(@drop['data'] > 0, ':'.@drop['data']).' '.if(array_size(@drop['enchants']) > 0, 'with '.@drop['enchants']. 'enchants').' - '
+				@log .= if(@drop['qty'] > 1, @drop['qty']).' '.data_name(@drop['type'].':'.@drop['data']).if(@drop['data'] > 0, ':'.@drop['data']).' '.if(array_size(@drop['enchants']) > 0, 'with '.@drop['enchants']. 'enchants').' - '
 			}
 		}
 		console(@log, false)
