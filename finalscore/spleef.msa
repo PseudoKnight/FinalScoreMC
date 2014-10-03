@@ -92,6 +92,7 @@
 		export('nextspleef', @nextspleef)
 		export('currentspleef', @currentspleef)
 		export('spleefsettings', @spleefsettings)
+		export('currently', 'Spleef')
 		set_sign_text(@cfg['sign'][0], array())
 		set_sign_text(@cfg['sign'][1], array())
 		set_sign_text(@cfg['sign'][2], array())
@@ -247,6 +248,7 @@
 					unbind('spleef_break')
 					@currentspleef = array()
 					export('currentspleef', @currentspleef)
+					export('currently', null)
 					clear_task()
 				}
 	

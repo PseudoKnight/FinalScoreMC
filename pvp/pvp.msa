@@ -292,6 +292,7 @@
 		@pvp['binds'] = array()
 		@pvp['spectators'] = array()
 		@pvp['running'] = 1
+		export('currently', @name)
 		
 		# WEAPONS
 		

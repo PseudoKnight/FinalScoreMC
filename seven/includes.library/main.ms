@@ -128,6 +128,7 @@ proc _7_remove_player(@player, @7) {
 		})
 		@7['players'] = array()
 		@7['state'] = 0
+		export('currently', null)
 		return(true)
 	}
 	return(false)

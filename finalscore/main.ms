@@ -7,7 +7,9 @@ set_interval(10 * 60 * 1000, closure(){
 })
 
 bind(server_ping, null, null, @event) {
-	modify_event('motd', colorize('&6&l\u1260&d&l\u1260&b&l\u1260&4&l\u1260 &6&lFINALSCORE&e&lMC \u00AB &f\u25AA \u25AA \u25AA'))
+	@currently = import('currently')
+	modify_event('motd', colorize('&6&l\u1260&d&l\u1260&b&l\u1260&4&l\u1260 &6&lFINALSCORE&e&lMC \u00AB &f\u25AA \u25AA \u25AA'
+		.if(!is_null(@currently), '\n&aCurrently&f: '.@currently)))
 }
 
 bind(player_login, null, null, @event) {

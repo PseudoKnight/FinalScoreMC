@@ -69,6 +69,7 @@
 				
 				if(@timer[0] == 1) {
 					clear_task()
+					export('currently', 'Seven Seconds to Live')
 					include('includes.library/main.ms')
 					_7_start(@7)
 				} else {
