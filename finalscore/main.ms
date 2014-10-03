@@ -74,8 +74,8 @@ bind(player_join, null, null, @event) {
 			# associative array. Defaults to printing success to the user.
 			# @error - Closure (Optional) - Closure to execute when the request returns an error. The closure is passed the error message. Defaults to 
 			# printing the error message to the user.
-			proc _bm_request(@endpoint, @player, @params, @success = closure(@result, msg('Success')),
-				@error = closure(@error_msg, msg(color('red').'Error: '.color('white').@error_msg))) {
+			proc _bm_request(@endpoint, @player, @params,
+				@error = closure(@error_msg, console('Error saving UUID: '.@error_msg))) {
 				
 					# Add the authentication parameters
 					@params['accessor_token'] = 'final-score-minecraft-server'
@@ -99,21 +99,16 @@ bind(player_join, null, null, @event) {
 						'params': @params,
 						'success': closure(@response){
 							@result = json_decode(@response['body'])
-							if(array_index_exists(@result, 'error')) {
+							if(!@result || array_index_exists(@result, 'error')) {
 								# Error
-								execute(@result['error'], @error)
-							} else {
-								# Successful
-								execute(@result, @success)
+								execute(@result, @error)
 							}
 						}
 					))
 			}
 		
 			_bm_request('set_user_uuid', 'a1634f37480a4bb9a0b2200266597ac0', 
-				array('username': @player, 'user_uuid': entity_uuid(pinfo(@player, 13))),
-				closure(@result, null), 
-				closure(@error_msg, console('Error while storing the UUID in the ban manager. Error: '.@error_msg))
+				array('username': @player, 'user_uuid': entity_uuid(pinfo(@player, 13)))
 			)
 		}
 		#Welcome messages
