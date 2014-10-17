@@ -109,6 +109,12 @@
 				make_effect(@loc, 'STEP_SOUND:'.@id)
 			}
 			set_block_at(@loc, @id.':'.$data, true)
+		case 'fall':
+			@block = get_block_at(@loc)
+			if(@block[0] != '0') {
+				set_block_at(@loc, '0:0')
+				spawn_falling_block(@loc, @block)
+			}
 		}
 	}
 <<<
