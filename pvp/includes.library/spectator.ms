@@ -12,9 +12,9 @@ proc _set_spectator(@id, @player, @pvp) {
 		bind(player_spawn, null, array('player': @player), @e, @id = @id) {
 			unbind()
 			@pvp = import('pvp'.@id)
-			if(@pvp['running']) {
+			if(@pvp['running'] && array_size(@pvp['players']) > 1) {
 				@pvp['spectators'][] = player()
-				modify_event('location', @pvp['arena']['spawn'][0][0])
+				modify_event('location', ploc(array_keys(@pvp['players'])[0]))
 				queue_push(closure(){
 					foreach(@p in all_players('custom')) {
 						raw_set_pvanish(player(), true, @p)
