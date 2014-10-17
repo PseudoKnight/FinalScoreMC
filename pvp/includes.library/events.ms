@@ -49,7 +49,7 @@ bind(player_death, array('priority': 'high', 'id': @id.'death'), null, @e, @id =
 
 	if(array_index_exists(@pvp['arena'], 'lives')) {
 		@pvp['players'][player()]['lives'] = @pvp['players'][player()]['lives'] - 1
-		if(array_contains(array('tdm', 'dm'), @pvp['arena']['mode'])) {
+		if(@pvp['arena']['lives'] > 1) {
 			set_pscore('lives', player(), @pvp['players'][player()]['lives'], @id)
 		}
 	} else if(@pvp['arena']['mode'] == 'infection' && @pvp['players'][player()]['team'] == 0) {
@@ -169,7 +169,7 @@ bind(player_quit, array('id': @id.'quit'), null, @e, @id = @id) {
 			_class('unload', player(), @pvp['players'][player()]['class'], @pvp)
 		}
 		array_remove(@pvp['players'], player())
-		if(array_index_exists(@pvp['arena'], 'lives')) {
+		if(array_index_exists(@pvp['arena'], 'lives') && @pvp['arena']['lives'] > 1) {
 			set_pscore('lives', player(), 0, @id)
 		}
 		_pvp_check_objectives(@id)
@@ -308,7 +308,7 @@ bind(player_command, array('id': @id.'command'), null, @e, @id = @id) {
 		}
 	}
 	array_remove(@pvp['players'], player())
-	if(array_index_exists(@pvp['arena'], 'lives')) {
+	if(array_index_exists(@pvp['arena'], 'lives') && @pvp['arena']['lives'] > 1) {
 		set_pscore('lives', player(), 0, @id)
 	}
 	_clear_pinv()
@@ -633,6 +633,22 @@ if(array_contains(@pvp['arena']['flags'], 'infinitedispensers')) {
 	bind(projectile_hit, array('id': @id.'infinitedispensers'), array('type': 'ARROW'), @e) {
 		if(@e['location']['world'] == 'custom' && is_array(@e['shooter'])) {
 			entity_remove(@e['id'])
+		}
+	}
+}
+
+if(@pvp[arena][mode] == 'tntrun') {
+	array_push(@pvp[binds], @id.'nodrops')
+	bind(item_spawn, array(id: @id.'nodrops'), array(item: 70), @e, @region = @pvp[arena][region]) {
+		if(array_contains(sk_regions_at(@e[location]), @region)) {
+			cancel()
+		}
+	}
+	
+	array_push(@pvp[binds], @id.'limitentities')
+	bind(entity_change_block, array(id: @id.'limitentities'), array(from: 12, to: 0), @e, @region = @pvp[arena][region]) {
+		if(array_contains(sk_regions_at(@e[location]), @region)) {
+			entity_remove(@e[entity])
 		}
 	}
 }

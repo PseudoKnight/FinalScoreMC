@@ -242,12 +242,9 @@
 			set_objective_display('seconds', array('displayname': color('a').'Seconds Left', 'slot': 'SIDEBAR'), @id)
 		case 'tdm':
 		case 'dm':
-		case 'infection':
-			if(array_index_exists(@pvp['arena'], 'lives')) {
+			if(array_index_exists(@pvp['arena'], 'lives') && @pvp['arena']['lives'] > 1) {
 				create_objective('lives', 'DUMMY', @id)
-				if(@pvp['arena']['lives'] > 1) {
-					set_objective_display('lives', array('displayname': color('a').'Lives Left', 'slot': 'SIDEBAR'), @id)
-				}
+				set_objective_display('lives', array('displayname': color('a').'Lives Left', 'slot': 'SIDEBAR'), @id)
 			}
 			if(array_index_exists(@pvp['arena'], 'mobprotect')) {
 				create_objective('mobhealth', 'DUMMY', @id)
@@ -265,7 +262,13 @@
 		}
 		
 		if(array_index_exists(@pvp[arena], 'team')) {
-			if(!array_index_exists(@pvp, 'team'), @pvp[team] = array(array(players: array()), array(players: array())))
+			if(!array_index_exists(@pvp, 'team')) {
+				@pvp[team] = array(array(), array())
+			}
+			if(!array_index_exists(@pvp[team][0], 'players')) {
+				@pvp[team][0][players] = array()
+				@pvp[team][1][players] = array()
+			}
 			if(!array_index_exists(@pvp[arena], 'teamratio')) {
 				@pvp[arena][teamratio] = array(1, 1)
 			}
@@ -316,7 +319,7 @@
 		
 		}
 
-		if(array_contains(array('tdm', 'ctf', 'infection'), @pvp['arena']['mode'])) {
+		if(array_index_exists(@pvp, 'team')) {
 			_worldmsg('custom', @pvp['arena']['team'][0]['color'].'['.@pvp['arena']['team'][0]['name'].'] '
 				.array_implode(@pvp['team'][0]['players'], ' ').'\n'.color('r')
 				.@pvp['arena']['team'][1]['color'].'['.@pvp['arena']['team'][1]['name'].'] '

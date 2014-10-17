@@ -209,11 +209,16 @@ proc _pvp_start_match(@id) {
 					@pvp['itemspawn'][@i][1] = time()
 				} else if(@pvp['itemspawn'][@i][1] + (@pvp['arena']['itemspawn'][@i]['cooldown'] * 1000) < time()) {
 					@id = drop_item(@pvp['arena']['itemspawn'][@i]['loc'], @pvp['arena']['itemspawn'][@i]['item'], false)
-					set_entity_velocity(@id, array())
-					play_sound(@pvp['arena']['itemspawn'][@i]['loc'], array('sound': 'ENDERMAN_TELEPORT', 'pitch': 1.5))
-					make_effect(@pvp['arena']['itemspawn'][@i]['loc'], 'ENDER_SIGNAL')
-					@pvp['itemspawn'][@i][0] = @id
-					@pvp['itemspawn'][@i][1] = time()
+					try(
+						set_entity_velocity(@id, array())
+						play_sound(@pvp['arena']['itemspawn'][@i]['loc'], array('sound': 'ENDERMAN_TELEPORT', 'pitch': 1.5))
+						make_effect(@pvp['arena']['itemspawn'][@i]['loc'], 'ENDER_SIGNAL')
+						@pvp['itemspawn'][@i][0] = @id
+						@pvp['itemspawn'][@i][1] = time()
+					, @exception,
+						console('Entity not found after being spawned. ('.@exception.')')
+					, array('BadEntityException')
+					)
 				}
 			}
 		}
@@ -276,7 +281,7 @@ proc _pvp_initialize_players(@id, @players) {
 				set_pscore('seconds', @player, @pvp['arena']['score'], @id)
 			case 'tdm':
 			case 'dm':
-				if(array_index_exists(@pvp['arena'], 'lives')) {
+				if(array_index_exists(@pvp['arena'], 'lives') && @pvp['arena']['lives'] > 1) {
 					set_pscore('lives', @player, @pvp['arena']['lives'], @id)
 				}
 		}
@@ -442,7 +447,7 @@ proc _pvp_check_objectives(@id) {
 		die()
 	}
 
-	if(array_contains(array('dm', 'koth'), @pvp['arena']['mode']) 
+	if(array_contains(array('dm', 'koth', 'tntrun'), @pvp['arena']['mode']) 
 	&& array_size(@pvp['players']) <= 1) {
 		_pvp_end_match(@id, array_keys(@pvp['players']))
 		die()
@@ -509,7 +514,7 @@ proc _pvp_end_match(@id, @winners) {
 			}
 		}
 		
-		if(array_contains(array('ctf', 'tdm', 'infection'), @pvp['arena']['mode']) && array_size(@winners) > 0) {
+		if(array_index_exists(@pvp, 'team') && array_size(@winners) > 0) {
 			_worldmsg('custom', color('gray').'[PVP] '
 				.@pvp['players'][@leader]['color'].color('bold')
 				.@pvp['arena']['team'][@pvp['players'][@leader]['team']]['name'].' win!\n'
