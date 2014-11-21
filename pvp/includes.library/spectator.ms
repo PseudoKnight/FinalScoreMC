@@ -6,7 +6,16 @@ proc _set_spectator(@id, @player, @pvp) {
 			raw_set_pvanish(@player, true, @p)
 		}
 		set_pflight(@player, true)
-		set_ploc(@player, @pvp['arena']['spawn'][0][0])
+		@spawn = false
+		foreach(@p in array_keys(@pvp['players'])) {
+			if(array_contains(sk_current_regions(@p), @pvp['arena']['region'])) {
+				set_ploc(@player, ploc(@p))
+				@spawn = true
+			}
+		}
+		if(!@spawn) {
+			set_ploc(@player, @pvp['arena']['spawn'][0][0])
+		}
 		set_peffect(@player, 14, 0, 9999, true)
 	} else {
 		bind(player_spawn, null, array('player': @player), @e, @id = @id) {
@@ -14,7 +23,16 @@ proc _set_spectator(@id, @player, @pvp) {
 			@pvp = import('pvp'.@id)
 			if(@pvp['running'] && array_size(@pvp['players']) > 1) {
 				@pvp['spectators'][] = player()
-				modify_event('location', ploc(array_keys(@pvp['players'])[0]))
+				@spawn = false
+				foreach(@p in array_keys(@pvp['players'])) {
+					if(array_contains(sk_current_regions(@p), @pvp['arena']['region'])) {
+						modify_event('location', ploc(@p))
+						@spawn = true
+					}
+				}
+				if(!@spawn) {
+					modify_event('location', @pvp['arena']['spawn'][0][0])
+				}
 				queue_push(closure(){
 					foreach(@p in all_players('custom')) {
 						raw_set_pvanish(player(), true, @p)
