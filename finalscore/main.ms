@@ -310,6 +310,7 @@ bind(vehicle_collide, null, array('type': 'MINECART', 'collisiontype': 'BLOCK', 
 # prevent non-owners from riding a horse, unless shared
 bind(player_interact_entity, null, array('clicked': 'HORSE'), @event) {
 	if(pworld() == 'custom' || pworld() == 'dev', die())
+	
 	if(get_mob_owner(@event['id'])
 	&& get_mob_owner(@event['id']) != player()) {
 		@yVelocity = round(entity_spec(@event['id'])['jump'], 2)
@@ -338,6 +339,14 @@ bind(player_interact_entity, null, array('clicked': 'HORSE'), @event) {
 				cancel()
 			}
 		}
+	}
+	
+	# skeleton/zombie horses
+	@variant = entity_spec(@event[id])[variant]
+	if(!is_cancelled() && !pinfo(player(), 11) 
+	&& (@variant == 'ZOMBIE' || @variant == 'SKELETON') 
+	&& get_mob_age(@event[id]) >= 0) {
+		set_entity_rider(@event[id], pinfo(player(), 13))
 	}
 }
 
