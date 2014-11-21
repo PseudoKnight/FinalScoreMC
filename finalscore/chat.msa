@@ -14,10 +14,6 @@
 	broadcast(color('8').simple_date('h:mm').' '.if(player() != '~console' && array_contains(pgroup(), 'donors'), color('green').'\u2666 ')._colorname().player().color('gray').': '.color('r').$) 
 <<<
 
-/sayas $from $to $ = >>>
-	tmsg($to, color('gray').$from.': '.color('r').colorize($))
-<<<
-
 *:/me $ = >>>
 	@ignorelist = import('ignorelist')
 	if(array_index_exists(@ignorelist, player()) && array_contains(@ignorelist[player()], 'all')) {

@@ -1,16 +1,25 @@
+/sayas $from $to $ = >>>
+	tmsg($to, color('gray').$from.': '.color('r').colorize($))
+<<<
+
 /tempcart $player = >>>
-	if(get_command_block()) {
-		@loc = get_command_block()
-		@loc = array(@loc[0] + 0.5, @loc[1] + 2.5, @loc[2] + 0.5, @loc[3])
-		@player = pinfo($player, 13)
-	}
+	if(!get_command_block(), die())
+	@loc = get_command_block()
+	@loc = array(@loc[0] + 0.5, @loc[1] + 2.5, @loc[2] + 0.5, @loc[3])
+	@rider = pinfo($player, 13)
 	@cart = spawn_entity('minecart', 1, @loc)[0]
-	set_entity_rider(@cart, @player)
-	bind(vehicle_leave, null, array('vehicletype': 'MINECART', 'passengertype': 'PLAYER'), @e, @cart = @cart) {
-		if(@e['vehicle'] == @cart) {
+	set_entity_rider(@cart, @rider)
+	bind(vehicle_leave, array(id: $player.'vehicle_leave'), array(vehicletype: 'MINECART', passengertype: 'PLAYER'), @e, @player = $player) {
+		if(@e['player'] == @player) {
 			unbind()
+			unbind(@player.'quit')
 			try(entity_remove(@e['vehicle']))
 		}
+	}
+	bind(player_quit, array(id: $player.'quit'), array(player: $player), @e, @cart = @cart) {
+		unbind()
+		unbind(player().'vehicle_leave')
+		try(entity_remove(@cart))
 	}
 <<<
 
