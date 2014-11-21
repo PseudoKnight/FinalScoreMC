@@ -33,7 +33,7 @@ proc _equip_park() {
 proc _item_meta(@item, @index) {
 	if(is_null(@item)
 	|| is_null(@item['meta'])) {
-		return()
+		return(null)
 	}
 	return(@item['meta'][@index])
 }
@@ -150,7 +150,7 @@ proc _acc_subtract(@player, @amount) {
 
 proc _acc_balance(@player) {
 	@pdata = get_value('players', to_lower(@player))
-	if(!@pdata, return())
+	if(!@pdata, return(0))
 	if(!array_index_exists(@pdata, 'coins')) {
 		return(100)
 	} else {
@@ -285,7 +285,7 @@ proc _worldmsg(@world, @msg) {
 
 #get qty of specific item in chest
 proc _get_inventory_count(@loc, @item) {
-	try(@size = get_inventory_size(@loc), return())
+	try(@size = get_inventory_size(@loc), return(null))
 	if(is_numeric(@item), @item = @item.':0')
 	@count = 0
 	for(@i = 0, @i < @size, @i++) {

@@ -1,18 +1,18 @@
 proc _get_shop(@loc) {
-	try(@sign = get_sign_text(@loc), return())
+	try(@sign = get_sign_text(@loc), return(null))
 	@itemMatch = reg_match('^\\[(.+)\\]$', @sign[0])
 	@item = ''
 	if(!@itemMatch) {
-		return()
+		return(null)
 	} else {
 		@item = _data_values(@itemMatch[1])
 		if(!@item) {
-			return()
+			return(null)
 		}
 	}
 	@owner = @sign[3]
 	if(!@owner) {
-		return()
+		return(null)
 	}
 	@buy = _get_price(@sign[1])
 	@sell = _get_price(@sign[2])
@@ -54,10 +54,10 @@ proc _is_shop_owner(@player, @shopOwner) {
 
 proc _data_values(@item) {
 	@itemMatch = reg_match('^([\\w\\s]+)(?::(\\d{1,5}))?$', @item)
-	if(!@itemMatch, return())
+	if(!@itemMatch, return(null))
 	if(!is_numeric(@itemMatch[1])) {
 		@itemMatch[1] = data_values(@itemMatch[1])
-		if(!@itemMatch[1], return())
+		if(!@itemMatch[1], return(null))
 		if(@itemMatch[2] && string_position(@itemMatch[1], ':') == -1) {
 			@item = @itemMatch[1].':'.@itemMatch[2]
 		} else {
