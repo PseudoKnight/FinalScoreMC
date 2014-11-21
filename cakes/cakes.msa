@@ -211,6 +211,40 @@
 		}
 		set_ploc(array(@cakes[$][0] + 0.5, @cakes[$][1], @cakes[$][2] + 0.5, @cakes[$][3]))
 		msg('Teleported.')
+		
+	case 'removeplayer':
+		if(!array_contains(pgroup(), 'moderators'), die('You do not have permission to use cake commands.'))
+		@args = parse_args($)
+		if(!@args[0]) {
+			@cakes = get_value('cakes')
+			@cursorloc = pcursor()
+			foreach(@key: @loc in @cakes) {
+				if(@loc[0] == @cursorloc[0]
+				&& @loc[1] == @cursorloc[1]
+				&& @loc[2] == @cursorloc[2]) {
+					@id = @key
+					break()
+				}
+			}
+			if(!@id) {
+				die('No cake prize found.')
+			}
+		} else {
+			@id = @args[0]
+		}
+		@cakeinfo = get_value('cakeinfo')
+		if(!array_index_exists(@cakeinfo, @id)) {
+			die('No cake by that ID found.')
+		}
+		@cakeinfo = get_value('cakeinfo')
+		if(array_index_exists(@cakeinfo[@id]['players'], @args[1])) {
+			array_remove(@cakeinfo[@id]['players'], @args[1])
+			store_value('cakeinfo', @cakeinfo)
+			msg('Deleted player from '.@id.' cake.')
+		} else {
+			msg('No player by that name for that cake.')
+		}
+
 
 	default:
 		msg(color('green').'[CAKE] Commands to create, change and remove cake prizes.')
