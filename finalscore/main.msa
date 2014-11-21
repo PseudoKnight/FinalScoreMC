@@ -288,7 +288,11 @@
 		}
 	}
 <<<
-*:/list = call_alias('/who')
+*:/list = >>>
+	if(player() != '~console') {
+		call_alias('/who')
+	}
+<<<
 
 # DICE ROLLING #
 *:/roll [$sides=6] = >>>
