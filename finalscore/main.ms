@@ -501,5 +501,6 @@ bind(entity_explode, null, array(type: 'CREEPER'), @event) {
 	if(@event[location][y] > 62
 	&& array_contains(array('world', 'world3', 'world4', 'omega'), @event[location][world])) {
 		cancel()
+		play_effect(@event[location], 'EXPLOSION_HUGE')
 	}
 }
