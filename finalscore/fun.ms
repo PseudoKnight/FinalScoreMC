@@ -1,6 +1,6 @@
 bind(player_interact, null, array('item': 401, 'button': 'right'), @event) {
 	if(pworld() != 'custom'
-	|| !array_contains(pgroup(), 'donors'), die())
+	|| !array_contains(pgroup(), 'supporters'), die())
 	cancel()
 	if(@event['action'] == 'right_click_block') {
 		@loc = _relative(@event['location'], @event['facing'])

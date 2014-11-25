@@ -224,7 +224,7 @@
 		'live-map': '>>> http://mc.finalscoremc.com:25966 <<< The website has a handy live map that shows the location of players and their homes, among other things.',
 		'staff': 'You can get help from anyone with a blue name. Current staff members are: PseudoKnight, Scottyd_Utah, Nefyoni, asdialed, fredwaffles, Raymond_II, TrulyAnnoying',
 		'plugins': 'Type "/plugins" for a full list of plugins installed, or check the website for more details.',
-		'permissions': 'We currently have 7 groups: Everyone (new players with minor restrictions), Regulars, Donors (green names or diamonds), Builders (orange), Engineers (orange), Moderators (blue), and Administrators (blue). New players get bumped up to the Regulars group after some time, as long as they\'re not causing trouble.',
+		'permissions': 'We currently have 7 groups: Everyone (new players with minor restrictions), Regulars, Supporters (green names or diamonds), Builders (orange), Engineers (orange), Moderators (blue), and Administrators (blue). New players get bumped up to the Regulars group after some time, as long as they\'re not causing trouble.',
 		'mumble': 'Everyone is welcome to use our voice chat server using Mumble. The server is at mum.finalscoremc.com with port 64758. You can get Mumble at >>> http://mumble.sourceforge.net <<<',
 		'regions': 'Regions are protected zones where only owners and members can build or access chests. You can create your own region by using a golden axe (or commands), left and right clicking to select a cuboid for the region, then use "/rg claim <regionid>". More details are on the website.',
 		'whitelist': 'You can get on the whitelist by asking a staff member, a friend who is already a regular, or requesting it on the http://myextralife.com whitelist forum thread.',
@@ -272,7 +272,7 @@
 
 # PLAYER LISTS #
 *:/who = >>>
-	@list = array(array('Administrators', 'b', ''), array('Moderators', 'b', ''), array('Engineers', '6', ''), array('Builders', '6', ''), array('Donors', 'a', ''), array('Regulars', 'e', ''), array('Everyone', 'e', ''), array('Default', 'f', ''))
+	@list = array(array('Administrators', 'b', ''), array('Moderators', 'b', ''), array('Engineers', '6', ''), array('Builders', '6', ''), array('Supporters', 'a', ''), array('Regulars', 'e', ''), array('Everyone', 'e', ''), array('Default', 'f', ''))
 	@allplayers = all_players()
 	foreach(@player in @allplayers) {
 		for(@i = 0, @i < array_size(@list), @i++) {

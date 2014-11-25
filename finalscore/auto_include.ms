@@ -21,7 +21,6 @@ proc _equip_park() {
 					'lore': array(
 						color('f').'Available to ',
 						color('f').'server supporters',
-						color('f').'for $15+',
 					)
 				)
 			),
@@ -235,7 +234,7 @@ proc _colorname(@player) {
 		@color = 'aqua',
 		has_permission(@player, 'group.builders'),
 		@color = 'gold',
-		has_permission(@player, 'group.donors'),
+		has_permission(@player, 'group.supporters'),
 		@color = 'green',
 		has_permission(@player, 'group.everyone'),
 		@color = 'yellow',

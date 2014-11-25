@@ -231,8 +231,8 @@
 		msg('Set '.$player.'\'s contribution amount to $'.$amount.'.')
 	}
 	store_value('players', to_lower($player), @pdata)
-	if(!array_contains(pgroup($player), 'donors')) {
-		run('/perm player addgroup '.$player.' Donors')
+	if(!array_contains(pgroup($player), 'supporters')) {
+		run('/perm player addgroup '.$player.' Suppporters')
 	}
 <<<
 
