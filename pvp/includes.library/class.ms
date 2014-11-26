@@ -50,7 +50,7 @@ proc _class(@action, @player, @class, @pvp) {
 					if(@item['qty'] > 0) {
 						@slot = pinfo(player(), 15)
 						@item['type'] = 361
-						set_pinv(array(null: @item))
+						set_pinv(array('null': @item))
 						queue_clear(player().'spawner')
 						queue_delay(3000, player().'spawner')
 						queue_push(closure(){
@@ -63,7 +63,7 @@ proc _class(@action, @player, @class, @pvp) {
 							}
 						}, player().'spawner')
 					} else {
-						set_pinv(array(null: null))
+						set_pinv(array('null': null))
 					}
 				}
 			}

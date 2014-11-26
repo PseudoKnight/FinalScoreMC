@@ -41,10 +41,10 @@ bind(player_interact, array('id': @id.'endernadesreload', 'priority': 'highest')
 	@item = pinv(player(), null)
 	@item['qty'] -= 1
 	if(@item['qty'] == 0) {
-		set_pinv(array(null: null))
+		set_pinv(array('null': null))
 	} else {
 		@item['type'] = 378
-		set_pinv(array(null: @item))
+		set_pinv(array('null': @item))
 		@slot = pinfo(player(), 15)
 		set_timeout(800, closure(){
 				@item = pinv(player(), @slot)

@@ -98,10 +98,10 @@ bind(player_interact, array('id': @id.'firebreath'), array('item': 377, 'button'
 	@item = pinv(player(), null)
 	@item['qty'] -= 1
 	if(@item['qty'] == 0) {
-		set_pinv(array(null: null))
+		set_pinv(array('null': null))
 	} else {
 		@item['type'] = 402
-		set_pinv(array(null: @item))
+		set_pinv(array('null': @item))
 		@slot = pinfo(player(), 15)
 		set_timeout(1100, closure(){
 			@item = pinv(player(), @slot)

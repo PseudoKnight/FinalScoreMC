@@ -14,10 +14,10 @@ bind(player_interact, array('id': @id.'shotgunshoot'), array('item': 332, 'butto
 	@item = pinv(player(), null)
 	@item['qty'] = @item['qty'] - 1
 	if(@item['qty'] == 0) {
-		set_pinv(array(null: null))
+		set_pinv(array('null': null))
 	} else {
 		@item['type'] = 341
-		set_pinv(array(null: @item))
+		set_pinv(array('null': @item))
 		@slot = pinfo(player(), 15)
 		set_timeout(300, closure(){
 		for(@i = 0, @i < 8, @i++) {

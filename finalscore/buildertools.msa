@@ -138,10 +138,10 @@
 			if(is_null(@item[meta]), @item[meta] = array())
 			if(!array_index_exists(@item[meta], 'potions'), @item[meta][potions] = array())
 			array_push(@item[meta][potions], array(id: @id, strength: $strength - 1, seconds: $seconds))
-			set_pinv(array(null: @item))
+			set_pinv(array('null': @item))
 			
 		case 'create':
-			set_pinv(array(null: array(type: 373, data: @data, meta: array(
+			set_pinv(array('null': array(type: 373, data: @data, meta: array(
 				potions: array(array(id: @id, strength: $strength - 1, seconds: $seconds))
 			))))
 			
@@ -192,7 +192,7 @@
 	@item = pinv(player(), null)
 	array_remove(@item, 'enchants')
 	array_remove(@item[meta], 'enchants')
-	set_pinv(array(null: @item))
+	set_pinv(array('null': @item))
 <<<
 
 # Overwrite a line on the sign you're looking at.

@@ -4,7 +4,7 @@ case 'load':
 		lightning(pcursor())
 		@slot = pinfo(player(), 15)
 		@item = pinv(player(), null)
-		set_pinv(player(), array(null: array('type': 280)))
+		set_pinv(player(), array('null': array('type': 280)))
 		queue_clear(player().'lightning')
 		queue_delay(6000, player().'lightning')
 		queue_push(closure(){
@@ -47,7 +47,7 @@ case 'load':
 		
 		@slot = pinfo(player(), 15)
 		@item = pinv(player(), null)
-		set_pinv(player(), array(null: array('type': 351)))
+		set_pinv(player(), array('null': array('type': 351)))
 		queue_clear(player().'woosh')
 		queue_delay(6000, player().'woosh')
 		queue_push(closure(){

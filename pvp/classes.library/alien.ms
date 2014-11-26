@@ -55,9 +55,9 @@ case 'load':
 		@item = pinv(player(), null)
 		@item['qty'] -= 1
 		if(@item['qty'] == 0) {
-			set_pinv(player(), array(null: null))
+			set_pinv(player(), array('null': null))
 		} else {
-			set_pinv(player(), array(null: @item))
+			set_pinv(player(), array('null': @item))
 		}
 	}
 	

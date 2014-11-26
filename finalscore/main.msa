@@ -261,11 +261,11 @@
 	if(!is_null(pinv(player(), 103)), die(color('gold').'You already have something on your head.'))
 	@inv = pinv(player(), null)
 	if(@inv['qty'] == 1) {
-		set_pinv(player(), array(null: null))
+		set_pinv(player(), array('null': null))
 		set_pinv(player(), array(103: @inv))
 	} else {
 		array_set(@inv, 'qty', @inv['qty'] - 1)
-		set_pinv(player(), array(null: @inv, 103: array('type': @inv['type'], 'data': @inv['data'], 'qty': 1)))
+		set_pinv(player(), array('null': @inv, 103: array('type': @inv['type'], 'data': @inv['data'], 'qty': 1)))
 	}
 	msg(color('gold').'Fancy!')
 <<<

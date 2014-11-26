@@ -49,7 +49,7 @@ case 'start':
 		&& @event['facing'] == 'up'
 		&& split(':', get_block_at(@event['location']))[1] == @minigolf[player()]['hole'] + 5) {
 		
-			set_pinv(player(), array(null: null))
+			set_pinv(player(), array('null': null))
 			set_plevel(player(), 0)
 			set_pexp(player(), 0)
 			
@@ -89,7 +89,7 @@ case 'start':
 				@item = pinv(player(), null)
 				if(@item['data'] == 0) {
 					@item['data'] = 1
-					set_pinv(player(), array(null: @item))
+					set_pinv(player(), array('null': @item))
 					@slot = pinfo(player(), 15)
 					set_pexp(0)
 					set_interval(50, closure(){
@@ -119,7 +119,7 @@ case 'start':
 				@minigolf = import('minigolf')
 				if(@xp > 0
 				&& @minigolf[@event['damager']]['id'] == @event['id']) {
-					set_pinv(@event['damager'], array(null: array('type': 292, 'data': 0)))
+					set_pinv(@event['damager'], array('null': array('type': 292, 'data': 0)))
 					@xp -= 10
 					set_plevel(@event['damager'], plevel(@event['damager']) + 1)
 					set_pscore('strokes', @event['damager'], get_pscore('strokes', @event['damager'], 'minigolf') + 1, 'minigolf')

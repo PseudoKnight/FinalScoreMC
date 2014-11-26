@@ -32,7 +32,7 @@ bind(player_interact, null, array('item': 401, 'button': 'right'), @event) {
 	@slot = pinfo(player(), 15)
 	@item = pinv(player(), @slot)
 	@item['type'] = 402
-	set_pinv(player(), array(null: @item))
+	set_pinv(player(), array('null': @item))
 	set_timeout(2000, closure(){
 		try(
 			@item = pinv(player(), @slot)
