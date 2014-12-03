@@ -35,7 +35,7 @@ bind(player_interact, array('id': @id.'firebreath'), array('item': 377, 'button'
 			}
 		} else if(@range == 4) {
 			@chunkl = array(floor((@loc['x'] + (@xl * @range)) / 16), floor((@loc['z'] + (@zl * @range)) / 16))
-			if(@chunkl != @chunk) {
+			if(@chunkl != @chunkc) {
 				@es = all_entities('custom', @chunkl[0], @chunkl[1])
 				foreach(@e in @es) {
 					if(is_entity_living(@e)
