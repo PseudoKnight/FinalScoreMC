@@ -176,7 +176,8 @@
 		'projectileprotection': 'PROTECTION_PROJECTILE',
 		'silktouch': 'SILK_TOUCH',
 		'thorns': 'THORNS',
-		'aquaaffinity': 'WATER_WORKER'
+		'aquaaffinity': 'WATER_WORKER',
+		'depthstrider': 'DEPTH_STRIDER',
 	)
 	if(!is_integral($level), die('Enchantment level must be an integer.'))
 	if(array_index_exists(@enchants, to_lower($type))) {

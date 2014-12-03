@@ -167,6 +167,7 @@ proc _get_effects() {
 		'health': 6,
 		'damage': 7,
 		'jump': 8,
+		'leaping': 8,
 		'nausea': 9,
 		'regen': 10,
 		'resistance': 11,
