@@ -299,6 +299,13 @@ bind(player_interact, null, array('block': 122), @event) {
 	}
 }
 
+# prevent mobspawner changes with spawner eggs
+bind(player_interact, null, array('block': 52, 'item': 383), @event) {
+	if(pworld() != 'custom' && pworld() != 'dev') {
+		cancel()
+	}
+}
+
 # DISPENSER PARKING
 bind(vehicle_collide, null, array('type': 'MINECART', 'collisiontype': 'BLOCK', 'hittype': 23), @event) {
 	if(is_block_powered(@event['block']), die())
