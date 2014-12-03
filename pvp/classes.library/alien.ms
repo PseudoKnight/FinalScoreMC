@@ -30,6 +30,7 @@ case 'load':
 	bind(player_interact, array('id': @player.'teleport'), array('item': 381, 'player': @player, 'button': 'right'), @e, @pvp = @pvp) {
 		cancel()
 		@loc = pinfo(player(), 2)
+		@player = ''
 		foreach(@p in players_in_radius(@loc, 3)) {
 			if(@p != player() && array_index_exists(@pvp['players'], @p)) {
 				@player = @p
