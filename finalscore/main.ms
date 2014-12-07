@@ -501,23 +501,13 @@ bind(entity_enter_portal, null, null, @event) {
 	}
 }
 
-# Basic sponge soaking behavior
-bind(block_place, null, array(type: data_values('sponge')), @event) {
-	@type = 0
-	for(@x = @event[location][x] - 2, @x <= @event[location][x] + 2, @x++) {
-		for(@y = @event[location][y] - 2, @y <= @event[location][y] + 2, @y++) {
-			for(@z = @event[location][z] - 2, @z <= @event[location][z] + 2, @z++) {
-				@type = split(':', get_block_at(@x, @y, @z))[0]
-				if(@type == 8 || @type == 9) {
-					set_block_at(@x, @y, @z, 0)
-				}
-			}
-		}
-	}
+# Armor stand warning
+bind(player_interact, null, array('item': 416), @event) {
+	msg(color('gold').'WARNING: Armor stands and items on them are not currently protected.')
 }
 
 # Block creeper damage on the surface.
-bind(entity_explode, null, array(type: 'CREEPER'), @event) {
+bind(entity_explode, null, array('type': 'CREEPER'), @event) {
 	if(@event[location][y] > 62
 	&& array_contains(array('world', 'world3', 'world4', 'omega'), @event[location][world])) {
 		cancel()
