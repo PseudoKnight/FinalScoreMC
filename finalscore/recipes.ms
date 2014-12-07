@@ -1,42 +1,5 @@
 # RECIPES
 
-# Moss Stone
-if(!get_recipe_for(array('type': 48, 'data': 0))) {
-	add_recipe(array(
-		'type': 'SHAPELESS',
-		'result': array('type': 48, 'data': 0),
-		'ingredients': array('4', '106')
-	))
-}
-
-# Mossy Stone Bricks
-if(!get_recipe_for(array('type': 98, 'data': 1))) {
-	add_recipe(array(
-		'type': 'SHAPELESS',
-		'result': array('type': 98, 'data': 1),
-		'ingredients': array('98:0', '106')
-	))
-}
-
-# Chiseled Stone Brick
-if(!get_recipe_for(array('type': 98, 'data': 3))) {
-	add_recipe(array(
-		'type': 'SHAPED',
-		'result': array('type': 98, 'data': 3),
-		'shape': array('A', 'A'),
-		'ingredients': array('A': '44:5')
-	))
-}
-
-# Cracked Stone Brick
-if(!get_recipe_for(array('type': 98, 'data': 2))) {
-	add_recipe(array(
-		'type': 'FURNACE',
-		'result': array('type': 98, 'data': 2),
-		'input': array('type': '98:0')
-	))
-}
-
 # Smooth Stone Slab (Double)
 if(!get_recipe_for(array('type': 43, 'data': 8))) {
 	add_recipe(array(
@@ -130,19 +93,4 @@ bind(block_place, null, array('type': 162), @e) {
 	if(@item['data'] >= 12 && sk_can_build(@e['location'])) {
 		set_block_at(@e['location'], '162:'.@item['data'])
 	}
-}
-
-# Coarse dirt
-if(!get_recipe_for(array('type': 3, 'data': 1))) {
-	add_recipe(array(
-		'type': 'SHAPED',
-		'result': array('type': 3, 'data': 1, 'qty': 4),
-		'shape': array('AB', 'BA'),
-		'ingredients': array('A': '3:0', 'B': '13:0')
-	))
-}
-
-# MAKE COARSE DIRT DROP ITSELF
-bind(block_break, null, array('type': 3, 'data': 1), @e) {
-	modify_event('drops', array(array('type': 3, 'data': 1)))
 }
