@@ -1,3 +1,7 @@
+proc _is_survival_world(@world) {
+	return(!(@world == 'dev' || @world == 'custom'))
+}
+
 proc _equip_park() {
 	_clear_pinv()
 	

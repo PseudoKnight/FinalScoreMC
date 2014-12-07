@@ -9,6 +9,25 @@ export('requests', @requests)
 # Teleport protection from falling through blocks
 # Clear 'custom' world's player inventory
 bind(player_teleport, null, null, @event) {
+	if(_is_survival_world(@event['from']['world'])
+	&& !_is_survival_world(@event['to']['world'])) {
+		foreach(@item in pinv()) {
+			if(!is_null(@item) && (@item['type'] == 401 || @item['type'] == 425)) {
+				cancel()
+				die(color('red').'Banner and firework metadata is not saved when leaving survival.'
+					.' Please store them in a chest.')
+				return()
+			}
+		}
+		foreach(@item in penderchest()) {
+			if(!is_null(@item) && (@item['type'] == 401 || @item['type'] == 425)) {
+				cancel()
+				die(color('red').'Banner and firework metadata is not saved when leaving survival.'
+					.' Please more them from your enderchest to another chest.')
+			}
+		}
+	}
+
 	@loc = _relative(@event['to'], 'down')
 	@block = get_block_at(@loc)
 	if(@block[0] != '0' 
@@ -25,11 +44,6 @@ bind(player_teleport, null, null, @event) {
 			}
 		})
 	}
-	
-	# if((@event['to']['world'] == 'custom' || @event['to']['world'] == 'dev') 
-	# && @event['from']['world'] != 'custom' && @event['from']['world'] != 'dev') {
-		# console(player().'\'s inventory: '.pinv())
-	# }
 }
 
 bind(player_interact, null, array('item': 368, 'button': 'right'), @event) {
