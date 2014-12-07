@@ -1,10 +1,9 @@
 # Clicking cakes
 bind(player_interact, null, array('block': 92), @event) {
-	if(phas_flight()) {
+	if(phas_flight() || pworld() != 'custom') {
 		die()
 	}
-	@data = split(':', get_block_at(@event['location']))[1]
-	if(@data == '7') {
+	if(@event['location']['x'] == -510 && @event['location']['z'] == 162) {
 		set_block_at(array(-485, 62, 162, 'custom'), '152:0')
 		die()
 	}
@@ -46,7 +45,7 @@ bind(player_interact, null, array('block': 92), @event) {
 	store_value('cakeinfo', @cakeinfo)
 	make_effect(@event['location'], 'ENDER_SIGNAL')
 	make_effect(@event['location'], 'RECORD_PLAY:2263')
-	if(@data) {
+	if(split(':', get_block_at(@event['location']))[1] > 0) {
 		set_block_at(@event['location'], '92:0')
 	}
 }
