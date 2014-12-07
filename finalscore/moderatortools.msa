@@ -151,7 +151,7 @@
 	if(!$player, die('Usage: /ban <player> [-t 1d-8h-10m] [message]'))
 	@pdata = get_value('players', to_lower($player))
 	if(!@pdata, die('Please use exact names.'))
-	@battime = null
+	@bantime = null
 	@message = null
 	if($) {
 		@args = parse_args($)
