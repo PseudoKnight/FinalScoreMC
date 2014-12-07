@@ -38,7 +38,12 @@ bind(player_interact, null, array('button': 'right', 'item': 323), @e) {
 		}
 		@location = _relative(@e['location'], @e['facing'])
 		set_block_at(@location, '68:'.@data)
-		set_sign_text(@location, array(color('dark_red').'[PRIVATE]', player(), '', ''))
+		set_sign_text(@location, array(
+			color('dark_red').'[PRIVATE]', 
+			if(length(player()) > 15, substr(player(), 0, 15), player()), 
+			'', 
+			'',
+		))
 		@slot = pinv(player(), null)
 		if(@slot['qty'] == 1) {
 			set_pinv(array('null': null))
