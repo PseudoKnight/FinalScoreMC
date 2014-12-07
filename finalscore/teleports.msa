@@ -34,8 +34,14 @@
 *:/sethome [$] = >>>
 	if(!has_permission('command.sethome')) {
 		die('You cannot set homes here.')
+	} else if($ && !has_permission('command.sethome.others')) {
+		die('You cannot set other player\'s homes.')
 	}
-	@pdata = get_value('players', to_lower(player()))
+	@player = player()
+	if($) {
+		@player = $
+	}
+	@pdata = get_value('players', to_lower(@player))
 	if(!array_index_exists(@pdata, 'homes'), @pdata['homes'] = array())
 	@loc = ploc()
 	@facing = pfacing()
@@ -46,8 +52,8 @@
 		round(@facing[0], 2),
 		round(@facing[1], 2)
 	))
-	store_value('players', to_lower(player()), @pdata)
-	msg('Set your home to this location.')
+	store_value('players', to_lower(@player), @pdata)
+	msg('Set home to this location.')
 <<<
 
 *:/warp [$] = >>>
