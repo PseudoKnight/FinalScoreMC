@@ -49,14 +49,13 @@ proc _class(@action, @player, @class, @pvp) {
 					@item['qty'] -= 1
 					if(@item['qty'] > 0) {
 						@slot = pinfo(player(), 15)
-						@item['type'] = 361
-						set_pinv(array('null': @item))
+						@newitem = array('type': 361, 'qty': @item['qty'])
+						set_pinv(array('null': @newitem))
 						queue_clear(player().'spawner')
 						queue_delay(3000, player().'spawner')
 						queue_push(closure(){
-							@item = pinv(player(), @slot)
-							if(!is_null(@item) && @item['type'] == 361) {
-								@item['type'] = 383
+							@newitem = pinv(player(), @slot)
+							if(!is_null(@newitem) && @newitem['type'] == 361) {
 								@inv = array()
 								@inv[@slot] = @item
 								set_pinv(@inv)
