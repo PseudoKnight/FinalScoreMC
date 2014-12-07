@@ -9,7 +9,7 @@ bind(player_interact, null, array(block: 68), @event) {
 			@location = array(round(@event[location][0]), round(@event[location][1]), round(@event[location][2]), @event[location][3])
 			if(@shop[buy]) {
 				@count = _get_inventory_count(_relative(@event[location], 'down'), @shop[item])
-				if(is_null(@count), return())
+				if(!is_numeric(@count), return())
 				foreach(@i in array_keys(@shops[0])) {
 					if(@shops[0][@i][location][0] == @location[0]
 					&& @shops[0][@i][location][1] == @location[1]
@@ -47,7 +47,7 @@ bind(player_interact, null, array(block: 68), @event) {
 					die()
 				}
 				@count = _get_inventory_count(_relative(@event[location], 'down'), @currency.':0')
-				if(is_null(@count), return())
+				if(!is_numeric(@count), return())
 				foreach(@i in array_keys(@shops[1])) {
 					if(@shops[1][@i][location][0] == @location[0]
 					&& @shops[1][@i][location][1] == @location[1]
