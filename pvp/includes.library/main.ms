@@ -118,14 +118,14 @@ proc _pvp_start_match(@id) {
 
 		foreach(array_keys(@pvp['players']), @player) {
 			if(pinfo(@player, 5) <= 0, continue())
-			if(array_index_exists(@pvp['arena'], 'timer')) {
-				if(function_exists('premove_bar')) {
-					premove_bar(@player)
-				}
-				if(function_exists('set_bar_message')) {
-					set_bar_message(@player, @timeleft, @percentage)
-				}
-			}
+			# if(array_index_exists(@pvp['arena'], 'timer')) {
+				# if(function_exists('premove_bar')) {
+					# premove_bar(@player)
+				# }
+				# if(function_exists('set_bar_message')) {
+					# set_bar_message(@player, @timeleft, @percentage)
+				# }
+			# }
 			if(array_index_exists(@pvp['arena'], 'respawntime')
 			&& @pvp['players'][@player]['respawn'] != 0) {
 				if(!array_contains(sk_current_regions(@player), @pvp['arena']['broadcast'])) {
@@ -135,11 +135,11 @@ proc _pvp_start_match(@id) {
 					if(array_index_exists(@pvp['players'][@player], 'class')) {
 						_class('unload', @player, @pvp['players'][@player]['class'], @pvp)
 					}
-					if(array_index_exists(@pvp['arena'], 'timer')) {
-						if(function_exists('premove_bar')) {
-							premove_bar(@player)
-						}
-					}
+					# if(array_index_exists(@pvp['arena'], 'timer')) {
+						# if(function_exists('premove_bar')) {
+							# premove_bar(@player)
+						# }
+					# }
 					array_remove(@pvp['players'], @player)
 					_clear_pinv(@player)
 					_clear_peffects(@player)
@@ -367,11 +367,11 @@ proc _pvp_end_match(@id, @winners) {
 	try(
 	
 		foreach(array_keys(@pvp['players']), @player) {
-			if(array_index_exists(@pvp['arena'], 'timer')) {
-				if(function_exists('premove_bar')) {
-					premove_bar(@player)
-				}
-			}
+			# if(array_index_exists(@pvp['arena'], 'timer')) {
+				# if(function_exists('premove_bar')) {
+					# premove_bar(@player)
+				# }
+			# }
 			if(array_contains(@winners, @player)) {
 				@leader = @player
 				if(ponline(@player) && @pvp['coins'] >= 1) {

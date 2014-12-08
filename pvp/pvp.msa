@@ -99,11 +99,11 @@
 		@id = to_lower($id)
 		@pvp = import('pvp'.@id)
 		array_remove(@pvp['arena'], 'timer')
-		foreach(@p in @pvp['players']) {
-			if(function_exists('premove_bar')) {
-				premove_bar(@p)
-			}
-		}
+		# foreach(@p in @pvp['players']) {
+			# if(function_exists('premove_bar')) {
+				# premove_bar(@p)
+			# }
+		# }
 		export('pvp'.@id, @pvp)
 		
 	case 'start':
