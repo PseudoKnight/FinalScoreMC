@@ -23,7 +23,7 @@ bind(player_teleport, null, null, @event) {
 			if(!is_null(@item) && (@item['type'] == 401 || @item['type'] == 425)) {
 				cancel()
 				die(color('red').'Banner and firework metadata is not saved when leaving survival.'
-					.' Please more them from your enderchest to another chest.')
+					.' Please move them from your enderchest to another chest.')
 			}
 		}
 	}
