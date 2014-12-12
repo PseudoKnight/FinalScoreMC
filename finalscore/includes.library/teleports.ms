@@ -1,7 +1,7 @@
 @blockedworlds = array('outworld', 'outworld_nether', 'outworld_the_end')
 
 #Warms up a tp with effects and configurable timer
-proc _warmuptp(@length, @player, @loc, @yaw = null, @pitch = null) {
+proc _warmuptp(@length, @player, @loc, @yaw = null, @pitch = null, @cleareffects = false) {
 	set_peffect(@player, 9, 1, 7)
 	@ploc = ploc(@player)
 	play_sound(@ploc, array('sound': 'PORTAL_TRIGGER', 'volume': 1, 'pitch': 1))
@@ -16,5 +16,8 @@ proc _warmuptp(@length, @player, @loc, @yaw = null, @pitch = null) {
 		set_peffect(@player, 15, 1, 1)
 		play_sound(ploc(@player), array('sound': 'GHAST_FIREBALL', 'volume': 2))
 		make_effect(@loc, 'MOBSPAWNER_FLAMES', 20)
+		if(@cleareffects) {
+			_clear_peffects(@player)
+		}
 	})
 }

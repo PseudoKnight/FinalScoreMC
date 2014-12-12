@@ -79,7 +79,7 @@
 	if(!@warp, die('That warp does not exist.'))
 	include('includes.library/teleports.ms')
 	if(array_contains(@blockedworlds, pworld(@player)), die('You cannot warp in this world.'))
-	_warmuptp(3.7, @player, @warp['loc'], @warp['yaw'], @warp['pitch'])
+	_warmuptp(3.7, @player, @warp['loc'], @warp['yaw'], @warp['pitch'], if(@warp['loc'][3] == 'custom', true, false))
 <<<
 
 *:/setwarp [$warp] = >>>
