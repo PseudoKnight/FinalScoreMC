@@ -8,6 +8,7 @@ bind(player_interact, null, array('block': 92), @event) {
 		die()
 	}
 	@cakes = get_value('cakes')
+	@id = ''
 	foreach(@key: @loc in @cakes) {
 		if(@loc[0] == @event['location'][0]
 		&& @loc[1] == @event['location'][1]
