@@ -237,8 +237,6 @@ proc _colorname(@player) {
 	if(!@player, @player = player())
 	ifelse(has_permission(@player, 'group.moderators'),
 		@color = 'aqua',
-		has_permission(@player, 'group.builders'),
-		@color = 'gold',
 		has_permission(@player, 'group.supporters'),
 		@color = 'green',
 		has_permission(@player, 'group.everyone'),
