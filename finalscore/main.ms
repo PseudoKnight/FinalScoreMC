@@ -60,7 +60,9 @@ bind(player_login, null, null, @event) {
 
 # Player join messages and tab list colors
 bind(player_join, null, null, @event) {
+	modify_event('join_message', null) 
 	set_timeout(250, closure(@loc = ploc(), @player = player()){
+		broadcast(colorize('&8'.simple_date('h:mm').' '.'&e&o* '._colorname().'&o'.player().' &e&ojoined the game *'))
 		if(!ponline(@player), die())
 		#Store the player's UUID
 		if(get_server_info(10)) {
@@ -172,6 +174,11 @@ bind(player_join, null, null, @event) {
 			}
 		})
 	})
+}
+
+bind(player_quit, null, null, @event) {
+	modify_event('message', null)
+	broadcast(colorize('&8'.simple_date('h:mm').' '.'&e&o* '._colorname().'&o'.player().' &e&oleft the game *'))
 }
 
 bind(player_death, null, null, @event) {
