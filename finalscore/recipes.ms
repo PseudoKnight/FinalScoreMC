@@ -1,25 +1,5 @@
 # RECIPES
 
-# Smooth Stone Slab (Double)
-if(!get_recipe_for(array('type': 43, 'data': 8))) {
-	add_recipe(array(
-		'type': 'SHAPED',
-		'result': array('type': 43, 'data': 8),
-		'shape': array('A', 'A'),
-		'ingredients': array('A': '44:0')
-	))
-}
-
-# Smooth Sandstone Slab (Double)
-if(!get_recipe_for(array('type': 43, 'data': 9))) {
-	add_recipe(array(
-		'type': 'SHAPED',
-		'result': array('type': 43, 'data': 9, 'qty': 2),
-		'shape': array('AA', 'AA'),
-		'ingredients': array('A': '44:1')
-	))
-}
-
 # Oak Log Cube (6-sided bark)
 if(!get_recipe_for(array('type': 17, 'data': 12))) {
 	add_recipe(array(
