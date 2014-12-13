@@ -509,8 +509,26 @@ bind(entity_enter_portal, null, null, @event) {
 }
 
 # Armor stand warning
-bind(player_interact, null, array('item': 416), @event) {
-	msg(color('gold').'WARNING: Armor stands and items on them are not currently protected.')
+bind(player_interact, null, array('item': 416, 'button': 'right'), @event) {
+	msg(color('gold').'WARNING: Items on armor stands are not currently protected.')
+}
+
+# Partial armor stand protection
+bind(entity_damage, null, array('type': 'ARMOR_STAND'), @event) {
+	if(!_is_survival_world(@event['world']), die())
+	
+	@damager = ''
+	if(array_index_exists(@event, 'damager')) {
+		@damager = @event['damager']
+	} else if(array_index_exists(@event, 'shooter')) {
+		@damager = @event['shooter']
+	}
+	
+	if(!@damager || is_numeric(@damager), die())
+	
+	if(!sk_can_build(@damager, @event['location'])) {
+		cancel()
+	}
 }
 
 # Block creeper damage on the surface.
