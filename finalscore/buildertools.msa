@@ -1,3 +1,10 @@
+# Spawn player head
+*:/skull $player = >>>
+	if(pworld() == 'dev') {
+		pgive_item(player(), '397:3', 1, array('owner': $player))
+	}
+<<<
+
 # Set the display name for the item in-hand
 *:/display [$] = >>>
 	if(!has_permission('command.display'), die('You do not have permission.'))
