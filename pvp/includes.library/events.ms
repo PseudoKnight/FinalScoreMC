@@ -355,7 +355,7 @@ bind(entity_damage, array('id': @id.'EntityDamage'), array('world': 'custom'), @
 			} else {
 			
 				if(array_contains(@pvp['arena']['flags'], 'effects')) {
-					play_effect(_relative(ploc(@e['player']), 'up', 2), 'tile_break', array('id': 115, 'particleCount': min(100, 5 * @e['amount']), 'offsetY': 0.3))
+					play_effect(_relative(ploc(@e['player']), 'up', 2), 'tile_break', array('id': 115, 'particleCount': min(100, round(5 * @e['amount'])), 'offsetY': 0.3))
 				}
 
 				if(array_index_exists(@pvp['stats'][@e['player']]['damagetaken'], @damager)) {
