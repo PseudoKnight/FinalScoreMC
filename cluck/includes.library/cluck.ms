@@ -9,14 +9,14 @@ proc _cluck_defaults() {
 	'active': 0, # if round is in progress
 	'score': array(0, 0), # cumulative hit chickens 
 	'sound': array(
-		'gameover': array(-563, 55, -323), 
-		'winround': array(-563, 58, -323), 
-		'startround': array(-563, 52, -323)
+		'gameover': array(-563, 55, -323, 'custom'), 
+		'winround': array(-563, 58, -323, 'custom'), 
+		'startround': array(-563, 52, -323, 'custom')
 	),
 	'color': array('yellow', 'gold'),
 	'spawnloc': array(
-		array(-575.5, 63, -336), 
-		array(-575.5, 63, -323)
+		array(-575.5, 63, -336, 'custom'), 
+		array(-575.5, 63, -323, 'custom')
 	)
 	))
 }
