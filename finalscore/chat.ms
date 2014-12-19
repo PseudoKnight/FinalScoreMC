@@ -14,9 +14,18 @@ if(!@conv) {
 }
 export('conv', @conv)
 
+@staffchat = get_value('session.staffchat')
+if(!@staffchat) {
+	@staffchat = array()
+} else {
+	clear_value('session.staffchat')
+}
+export('staffchat', @staffchat)
+
 # PMs, ignores, and mutes
 bind(player_chat, null, null, @event) {
 	include('includes.library/chat.ms')
+	
 	if(@event['message'][0] == '@') {
 		cancel()
 		@p = substr(parse_args(@event['message'])[0], 1)
@@ -28,12 +37,25 @@ bind(player_chat, null, null, @event) {
 		console(player().' @ '.@p.': '.@message, false)
 		die()
 	}
+	
+	@staffchat = import('staffchat')
+	if(array_contains(@staffchat, player())) {
+		if(@event['message'][0] == '!') {
+			@event['message'] = substr(@event['message'], 1)
+		} else {
+			broadcast(color('dark_gray').simple_date('h:mm').' '.color('aqua').'[STAFF] '.if(array_contains(pgroup(), 'supporters'), color('green').'\u2666 ')
+				._colorname().player().color('gray').': '.color('r').colorize(@event['message']), 'chat.staff')
+			cancel()
+			die()
+		}
+	}
+	
 	if(@recipients = _remove_ignored(player(), @event['recipients'])) {
+		modify_event('message', colorize(@event['message']))
 		modify_event('recipients', @recipients)
+		modify_event('format', color('dark_gray').simple_date('h:mm').' '.if(array_contains(pgroup(), 'supporters'), color('green').'\u2666 ')._colorname().player().color('gray').': '.color('r').'%2$s')
 	} else if(array_size(all_players()) > 1) {
 		cancel()
 		die('No players can receive your chat.')
 	}
-	modify_event('message', colorize(@event['message']))
-	modify_event('format', color('dark_gray').simple_date('h:mm').' '.if(array_contains(pgroup(), 'supporters'), color('green').'\u2666 ')._colorname().player().color('gray').': '.color('r').'%2$s')
 }

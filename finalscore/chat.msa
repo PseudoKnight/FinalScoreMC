@@ -119,3 +119,22 @@
 	include('includes.library/chat.ms')
 	_pmsg(@player, $)
 <<<
+
+# Staff Chat Channel Toggle
+*:/staffchat = >>>
+	if(!has_permission('chat.staff'), die('You do not have permission.'))
+	@staffchat = import('staffchat')
+	if(is_null(@staffchat)) {
+		@staffchat = array()
+	}
+	
+	if(array_contains(@staffchat, player())) {
+		array_remove_values(@staffchat, player())
+		export('staffchat', @staffchat)
+		msg('You are no longer in staff chat.')
+	} else {
+		@staffchat[] = player()
+		export('staffchat', @staffchat)
+		msg('You are now in staff chat.')
+	}
+<<<
