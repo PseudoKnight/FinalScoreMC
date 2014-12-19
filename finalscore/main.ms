@@ -519,8 +519,3 @@ bind(entity_explode, null, array('type': 'CREEPER'), @event) {
 		play_effect(@event[location], 'EXPLOSION_HUGE')
 	}
 }
-
-# Protect command blocks
-bind(player_interact, null, array('block': 137, 'button': 'right'), @event) {
-	if(!has_permission('group.engineers'), cancel())
-}
