@@ -49,3 +49,16 @@ bind(player_teleport, null, null, @event) {
 bind(player_interact, null, array('item': 368, 'button': 'right'), @event) {
 	if(pworld() == 'custom', cancel())
 }
+
+# Set player's bed spawn to their home in that world
+bind(world_changed, null, null, @event) {
+	set_timeout(150, closure(){
+		@pdata = get_value('players', to_lower(@event['player']))
+		if(array_index_exists(@pdata, 'homes')
+		&& array_index_exists(@pdata['homes'], @event['to'])) {
+			set_pbed_location(@pdata['homes'][@event['to']])
+		} else {
+			set_pbed_location(get_spawn(@event['to']))
+		}
+	})
+}
