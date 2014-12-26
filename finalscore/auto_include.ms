@@ -1,7 +1,13 @@
+/*
+	Returns if the world is a survival world
+*/
 proc _is_survival_world(@world) {
 	return(!(@world == 'dev' || @world == 'custom'))
 }
 
+/*
+	Sets a player's inventory for Frog Park
+*/
 proc _equip_park() {
 	_clear_pinv()
 	
@@ -33,6 +39,9 @@ proc _equip_park() {
 
 }
 
+/*
+	Returns specific item meta or null if it doesn't exist
+*/
 proc _item_meta(@item, @index) {
 	if(is_null(@item)
 	|| is_null(@item['meta'])) {
@@ -41,6 +50,9 @@ proc _item_meta(@item, @index) {
 	return(@item['meta'][@index])
 }
 
+/*
+	Returns a new shifted location from origin based on a single direction and distance
+*/
 proc _relative(@originloc, @dir, @amount = 1) {
 	@loc = @originloc[]
 	switch(@dir) {
@@ -84,6 +96,9 @@ proc _relative(@originloc, @dir, @amount = 1) {
 	return(@loc)
 }
 
+/*
+	Returns a new shifted location from the origin based on relative Minecraft coordinate inputs
+*/
 proc _relative_coords(@originloc, @x, @y, @z) {
 	@loc = @originloc[]
 	if(@x[0] == '~') {
@@ -116,6 +131,9 @@ proc _relative_coords(@originloc, @x, @y, @z) {
 	return(@loc)
 }
 
+/*
+	Removes all items from a player's inventory and armor slots
+*/
 proc _clear_pinv(@player) {
 	if(!@player) {
 		@player = player()
@@ -133,6 +151,9 @@ proc _clear_pinv(@player) {
 	))
 }
 
+/*
+	Add an amount to a player's coin balance
+*/
 proc _acc_add(@player, @amount) {
 	@pdata = get_value('players', to_lower(@player))
 	if(!@pdata, return(false))
@@ -142,6 +163,9 @@ proc _acc_add(@player, @amount) {
 	return(true)
 }
 
+/*
+	Subtracts an amount from a player's coin balance
+*/
 proc _acc_subtract(@player, @amount) {
 	@pdata = get_value('players', to_lower(@player))
 	if(!@pdata, return(false))
@@ -151,6 +175,9 @@ proc _acc_subtract(@player, @amount) {
 	return(true)
 }
 
+/*
+	Returns the amount of coins a player has
+*/
 proc _acc_balance(@player) {
 	@pdata = get_value('players', to_lower(@player))
 	if(!@pdata, return(0))
@@ -161,6 +188,9 @@ proc _acc_balance(@player) {
 	}
 }
 
+/*
+	Returns an array of potion effect name:id pairs
+*/
 proc _get_effects() {
 	return(array(
 		'speed': 1,
@@ -190,8 +220,12 @@ proc _get_effects() {
 	))
 }
 
-# Removes all specified entities from region.
-# Since this loads entities by chunks it has a loose entity selection
+/*
+	Removes certain entities from inside (and near) region.
+	Since it select entities by chunk, it may remove some entities that are just outside the region.
+	@region: The WorldGuard region name. It will use the player or commandblock world.
+	@entities: An array of entity types to remove. (some entity types are automatically protected)
+*/
 proc _remove_region_entities(@region, @entities = array()) {
 	if(get_command_block(), @world = get_command_block()['world'], @world = pworld())
 	if(!sk_region_exists(@world, @region)) {
@@ -223,7 +257,9 @@ proc _remove_region_entities(@region, @entities = array()) {
 	return(true)
 }
 
-# Remove all potion effects from a player
+/*
+	Remove all potion effects from a player
+*/
 proc _clear_peffects(@player) {
 	if(!@player, @player = player())
 	@effects = get_peffect(@player)
@@ -232,7 +268,9 @@ proc _clear_peffects(@player) {
 	}
 }
 
-#color display name
+/*
+	Returns a Minecraft color code for the specified player's group
+*/
 proc _colorname(@player) {
 	if(!@player, @player = player())
 	ifelse(has_permission(@player, 'group.moderators'),
@@ -246,7 +284,9 @@ proc _colorname(@player) {
 	return(color(@color))
 }
 
-#returns world alias when given world folder name
+/*
+	Returns world alias when given world folder name
+*/
 proc _worldname(@world) {
 	@worlds = array('world': 'Alpha', 'world_nether': 'Alpha Nether', 'world3': 'Delta', 'world3_nether': 'Delta Nether', 'world4': 'Gamma', 'world4_nether': 'Gamma Nether', 'world_the_end': 'The End', 'custom': 'FrogPark', 'dev': 'Dev', 'outworld': 'Outworld', 'omega': 'Omega', 'omega_nether', 'Omega Nether')
 	if(array_index_exists(@worlds, to_lower(@world))) { 
@@ -256,7 +296,9 @@ proc _worldname(@world) {
 	}
 }
 
-#returns world folder name when given world alias
+/*
+	Returns a world folder name when given a world alias
+*/
 proc _worldid(@world) {
 	@worlds = array('alpha': 'world', 'alphanether': 'world_nether', 'delta': 'world3', 'deltanether': 'world3_nether', 'gamma': 'world4', 'gammanether': 'world4_nether', 'theend': 'world_the_end', 'custom': 'custom', 'frogpark': 'custom', 'dev': 'dev', 'outworld': 'outworld', 'omega': 'omega', 'omeganether': 'omega_nether')
 	if(array_index_exists(@worlds, to_lower(@world))) { 
@@ -266,7 +308,9 @@ proc _worldid(@world) {
 	}
 }
 
-#Messsages every player within the specified region
+/*
+	Messsages every player within a WorldGuard region
+*/
 proc _regionmsg(@region, @msg) {
 	foreach(@player in all_players()) {
 		if(ponline(@player)
@@ -276,7 +320,9 @@ proc _regionmsg(@region, @msg) {
 	}
 }
 
-#Messsages every player within the specified world
+/*
+	Messsages every player within a world
+*/
 proc _worldmsg(@world, @msg) {
 	foreach(@player in all_players(@world)) {
 		if(ponline(@player)) {
@@ -285,7 +331,10 @@ proc _worldmsg(@world, @msg) {
 	}
 }
 
-#get qty of specific item in chest
+/*
+	Returns how many of an item an inventory contains at a location.
+	@item: 0:0 format
+*/
 proc _get_inventory_count(@loc, @item) {
 	try(@size = get_inventory_size(@loc), return(null))
 	if(is_numeric(@item), @item = @item.':0')
@@ -299,6 +348,23 @@ proc _get_inventory_count(@loc, @item) {
 	return(@count) 
 }
 
+/*
+	Returns the max distance on the x or z axis between two locations
+*/
 proc _horizontal_distance(@loc1, @loc2) {
 	return(max(sqrt((@loc1[0] - @loc2[0]) ** 2), sqrt((@loc1[2] - @loc2[2]) ** 2)))
+}
+
+/*
+	Returns true if the location is (mostly) safe for a player
+*/
+proc _is_safe_location(@loc) {
+	if(!get_block_info(@loc)['occluding']) {
+		return(false);
+	}
+	@loc['y'] += 2;
+	if(get_block_info(@loc)['occluding']) {
+		return(false);
+	}
+	return(true);
 }
