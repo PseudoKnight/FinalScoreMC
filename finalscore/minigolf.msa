@@ -76,6 +76,7 @@ case 'start':
 			set_entity_velocity(@minigolf[player()]['id'], array(0, 0, 0))
 			set_timeout(50, closure(){
 				set_mob_effect(@minigolf[player()]['id'], 11, 4, 99999, true)
+				set_mob_effect(@minigolf[player()]['id'], 1, -6, 99999, true)
 				if(@mobspawn == 'SLIME') {
 					set_mob_effect(@minigolf[player()]['id'], 8, -2, 99999, true)
 					set_mob_effect(@minigolf[player()]['id'], 2, 2, 99999, true)
@@ -86,6 +87,7 @@ case 'start':
 			})
 			
 			bind(player_interact, array('id': 'minigolf_swing_'.player()), array('item': 292, 'button': 'right', 'player': player()), @event) {
+				cancel()
 				@item = pinv(player(), null)
 				if(@item['data'] == 0) {
 					@item['data'] = 1
@@ -93,21 +95,20 @@ case 'start':
 					@slot = pinfo(player(), 15)
 					set_pexp(0)
 					set_interval(50, closure(){
-						if(pinv(player(), null)['data'] == 1) {
+						@item = pinv(player(), @slot)
+						if(!is_null(@item) && @item['type'] == 292 && @item['data'] == 1) {
 							if(pexp() < 100) {
 								set_pexp(pexp() + 5)
 							} else {
 								set_pexp(0)
 								clear_task()
-								@item = pinv(player(), @slot)
-								if(@item && @item['type'] == 292) {
-									@inv = array()
-									@item['data'] = 0
-									@inv[@slot] = @item
-									set_pinv(player(), @inv)
-								}
+								@inv = array()
+								@item['data'] = 0
+								@inv[@slot] = @item
+								set_pinv(player(), @inv)
 							}
 						} else {
+							set_pexp(0)
 							clear_task()
 						}
 					})
@@ -163,7 +164,7 @@ case 'start':
 				@v = entity_velocity(@ball['id'])
 				@loc = entity_loc(@ball['id'])
 				@loc['y'] -= 1
-				@loc[0] -= 1
+				@loc[1] -= 1
 				if(@v['x'] == 0) {
 					@v['x'] = 0 - @ball['velocity']['x'] * @bounciness
 				} else if(abs(@ball['velocity']['x'] - @v['x']) < 0.1) {
@@ -236,6 +237,7 @@ case 'start':
 			clear_task()
 		}
 	})
+
 case 'stop':
 	@minigolf = import('minigolf')
 	foreach(@player: @ball in @minigolf) {
