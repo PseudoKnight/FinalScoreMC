@@ -3,20 +3,16 @@
 	if(array_contains(@blockedworlds, pworld())) {
 		die('You cannot teleport in this world.')
 	}
-	if(!$) {
-		@world = pworld()
-		@player = player()
-	} else {
+	@world = pworld()
+	@player = player()
+	if($) {
 		@args = parse_args($)
 		if(array_contains(get_worlds(), _worldid(to_lower(@args[0])))) {
 			@world = _worldid(to_lower(@args[0]))
 			if(array_size(@args) == 2) {
 				@player = @args[1]
-			} else {
-				@player = player()
 			}
 		} else {
-			@world = pworld()
 			@player = $
 		}
 	}
