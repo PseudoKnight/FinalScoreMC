@@ -88,17 +88,14 @@
 <<<
 
 /hologram $ = >>>
-	@loc = _relative(ploc(), 'up', 57)	
-	@lines = split(',', $)
+	@loc = ploc();
+	@lines = split(',', $);
 	for(@i = array_size(@lines) - 1, @i >= 0, @i--) {
-		@skull = spawn_entity('WITHER_SKULL', 1, @loc)[0]
-		@horse = spawn_mob('HORSE', 1, @loc)[0]
-		set_entity_rider(@skull, @horse)
-		set_entity_spec(@skull, array('direction': array(0, 0, 0)))
-		set_mob_age(@horse, -1700000, true)
-		set_mob_name(@horse, colorize(@lines[@i]))
-		set_name_visible(@horse, true)
-		@loc['y'] += 0.28
+		@armorstand = spawn_entity('ARMOR_STAND', 1, @loc)[0];
+		set_entity_spec(@armorstand, array('gravity': false, 'visible': false));
+		set_mob_name(@armorstand, colorize(@lines[@i]));
+		set_name_visible(@armorstand, true);
+		@loc['y'] += 0.28;
 	}
 <<<
 
@@ -130,9 +127,8 @@
 				case 'hostile':
 					@type = array(WITHER, WITCH, CREEPER, SKELETON, SPIDER, GIANT, ZOMBIE, SLIME, GHAST, PIG_ZOMBIE, ENDERMAN, CAVE_SPIDER, SILVERFISH, BLAZE, MAGMA_CUBE, ENDER_DRAGON)
 				case 'hologram':
-					@type = array(WITHER_SKULL, HORSE)
+					@type = array(ARMOR_STAND)
 					@removenamed = true
-					@loc = _relative(@loc, 'up', 57)
 				default:
 					@type = @arg
 			}
