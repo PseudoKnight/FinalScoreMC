@@ -283,7 +283,9 @@
 				@loc = pcursor()
 				if(split(':', get_block_at(@loc))[0] != '54', die('You must look at a chest.'))
 				foreach(@key: @chest in @arena['chestspawn']) {
-					if(@chest['loc'] == @loc) {
+					if(@chest['loc'][0] == @loc[0]
+					&& @chest['loc'][1] == @loc[1]
+					&& @chest['loc'][2] == @loc[2]) {
 						array_remove(@arena['chestspawn'], @key)
 						break()
 					}
@@ -437,7 +439,9 @@
 				@loc = array(round(pcursor()[0]), round(pcursor()[1]), round(pcursor()[2]), pcursor()[3])
 				if(split(':', get_block_at(@loc))[0] != '54', die('This is not a chest'))
 				foreach(@chest in @arena['chestspawn']) {
-					if(@chest['loc'] == @loc) {
+					if(@chest['loc'][0] == @loc[0]
+					&& @chest['loc'][1] == @loc[1]
+					&& @chest['loc'][2] == @loc[2]) {
 						if(array_index_exists(@chest, 'items')) {
 							foreach(@index: @item in @chest['items']) {
 								set_inventory_item(@loc, @index, @item)
