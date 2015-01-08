@@ -1,9 +1,9 @@
-set_interval(10 * 60 * 1000, closure(){
-	if(player() == '~console') {
-		run('/save-all')
-	} else {
-		runas('~console', '/save-all')
+set_cron('*/10 * * * *', closure(){
+	foreach(@world in get_worlds()) {
+		save_world(@world);
 	}
+	save_players();
+	console('-----------------------[ SAVED ]-----------------------', false);
 })
 
 bind(server_ping, null, null, @event) {
