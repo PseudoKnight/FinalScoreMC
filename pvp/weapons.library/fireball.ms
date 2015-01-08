@@ -13,6 +13,7 @@ bind(player_interact, array('id': @id.'fireball'), array('item': 385, 'button': 
 		set_pinv(array('null': null))
 	} else {
 		@item['type'] = 402
+		@item['name'] = 'FIREWORK_CHARGE'
 		set_pinv(array('null': @item))
 		@slot = pinfo(player(), 15)
 		set_timeout(2000, closure(){
@@ -21,6 +22,7 @@ bind(player_interact, array('id': @id.'fireball'), array('item': 385, 'button': 
 				play_sound(ploc(), array('sound': 'FIZZ', 'pitch': 1.5))
 				@inv = array()
 				@item['type'] = 385
+				@item['name'] = 'FIREBALL'
 				@inv[@slot] = @item
 				set_pinv(@inv)
 			}

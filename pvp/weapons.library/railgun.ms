@@ -99,6 +99,7 @@ bind(player_interact, array('id': @id.'railgun'), array('item': 175, 'button': '
 		set_pinv(array('null': null))
 	} else { 
 		@item['type'] = 402
+		@item['name'] = 'FIREWORK_CHARGE'
 		set_pinv(array('null': @item))
 		@slot = pinfo(player(), 15)
 		queue_delay(8000, player().'railgun')
@@ -109,6 +110,7 @@ bind(player_interact, array('id': @id.'railgun'), array('item': 175, 'button': '
 					play_sound(ploc(), array('sound': 'FIZZ', 'pitch': 0))
 					@inv = array()
 					@item['type'] = 175
+					@item['name'] = 'DOUBLE_PLANT'
 					@inv[@slot] = @item
 					set_pinv(@inv)
 				}

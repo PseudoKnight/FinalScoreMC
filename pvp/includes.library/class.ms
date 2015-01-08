@@ -166,25 +166,24 @@ proc _class_select(@id, @pvp) {
 			'title': 'Choose a Class'
 		))
 	}
+	@chest = array(array(), array())
 	foreach(@class in @pvp['arena']['classes']) {
 		if((!array_index_exists(@class, 'team') || @class['team'] == 0)
 		&& @size1 > 1
 		&& array_index_exists(@class, 'selector')) {
-			addto_virtualchest(@id.'0', 
-				@class['selector']['type'].':'.@class['selector']['data'], 
-				@class['selector']['qty'],
-				@class['selector']['meta']
-			)
+			@chest[0][] = @class['selector']
 		}
 		if((!array_index_exists(@class, 'team') || @class['team'] == 1)
 		&& @size2 > 1
 		&& array_index_exists(@class, 'selector')) {
-			addto_virtualchest(@id.'1', 
-				@class['selector']['type'].':'.@class['selector']['data'], 
-				@class['selector']['qty'],
-				@class['selector']['meta']
-			)
+			@chest[1][] = @class['selector']
 		}
+	}
+	if(@chest[0]) {
+		update_virtualchest(@id.'0', @chest[0])
+	}
+	if(@chest[1]) {
+		update_virtualchest(@id.'1', @chest[1])
 	}
 	foreach(@p: @pdata in @pvp['players']) {
 		if(@size1 > 1

@@ -17,6 +17,7 @@ bind(player_interact, array('id': @id.'shotgunshoot'), array('item': 332, 'butto
 		set_pinv(array('null': null))
 	} else {
 		@item['type'] = 341
+		@item['name'] = 'SLIME_BALL'
 		set_pinv(array('null': @item))
 		@slot = pinfo(player(), 15)
 		set_timeout(300, closure(){
@@ -29,6 +30,7 @@ bind(player_interact, array('id': @id.'shotgunshoot'), array('item': 332, 'butto
 				play_sound(ploc(), array('sound': 'PISTON_RETRACT', 'pitch': 1.5))
 				@inv = array()
 				@item['type'] = 332
+				@item['name'] = 'SNOW_BALL'
 				@inv[@slot] = @item
 				set_pinv(@inv)
 			}

@@ -44,6 +44,7 @@ bind(player_interact, array('id': @id.'endernadesreload', 'priority': 'highest')
 		set_pinv(array('null': null))
 	} else {
 		@item['type'] = 378
+		@item['name'] = 'MAGMA_CREAM'
 		set_pinv(array('null': @item))
 		@slot = pinfo(player(), 15)
 		set_timeout(800, closure(){
@@ -52,6 +53,7 @@ bind(player_interact, array('id': @id.'endernadesreload', 'priority': 'highest')
 				play_sound(ploc(), array('sound': 'IRONGOLEM_THROW'))
 				@inv = array()
 				@item['type'] = 368
+				@item['name'] = 'ENDER_PEARL'
 				@inv[@slot] = @item
 				set_pinv(@inv)
 			}

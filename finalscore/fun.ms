@@ -1,6 +1,8 @@
 bind(player_interact, null, array('item': 401, 'button': 'right'), @event) {
 	if(pworld() != 'custom'
-	|| !array_contains(pgroup(), 'supporters'), die())
+	|| !array_contains(pgroup(), 'supporters')) {
+		die()
+	}
 	cancel()
 	if(@event['action'] == 'right_click_block') {
 		@loc = _relative(@event['location'], @event['facing'])
@@ -32,12 +34,14 @@ bind(player_interact, null, array('item': 401, 'button': 'right'), @event) {
 	@slot = pinfo(player(), 15)
 	@item = pinv(player(), @slot)
 	@item['type'] = 402
+	@item['name'] = 'FIREWORK_CHARGE'
 	set_pinv(player(), array('null': @item))
 	set_timeout(2000, closure(){
 		try(
 			@item = pinv(player(), @slot)
 			if(@item && @item['type'] == 402) {
 				@item['type'] = 401
+				@item['name'] = 'FIREWORK'
 				@inv = array()
 				@inv[@slot] = @item
 				set_pinv(player(), @inv)

@@ -12,6 +12,7 @@ bind(player_interact, array('id': @id.'pistoltears'), array('item': 370, 'button
 		set_pinv(array('null': null))
 	} else {
 		@item['type'] = 371
+		@item['name'] = 'GOLD_NUGGET'
 		set_pinv(array('null': @item))
 		@slot = pinfo(player(), 15)
 		set_timeout(2000, closure(){
@@ -20,6 +21,7 @@ bind(player_interact, array('id': @id.'pistoltears'), array('item': 370, 'button
 				play_sound(ploc(), array('sound': 'DOOR_OPEN', 'pitch': 2))
 				@inv = array()
 				@item['type'] = 370
+				@item['name'] = 'GHAST_TEAR'
 				@inv[@slot] = @item
 				set_pinv(@inv)
 			}
