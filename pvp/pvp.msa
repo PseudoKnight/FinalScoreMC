@@ -60,6 +60,9 @@
 	case 'debug':
 		@id = to_lower($id)
 		@pvp = import('pvp'.@id)
+		if(is_null(@pvp)) {
+			die('That arena doesn\'t seem to be running.')
+		}
 		foreach(@key: @value in @pvp) {
 			msg(@key.': '.color('gray').@value)
 		}
