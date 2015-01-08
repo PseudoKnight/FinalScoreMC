@@ -243,8 +243,7 @@
 # APPROVAL SYSTEM #
 *:/approve [$player] = >>>
 	if(!has_permission('group.regulars'), die('You do not have permission to use this command.'))
-	try(@player = $player, die('Unknown player.'))
-	if(!ponline($player), die('That player is not online. Did you misspell their name?'))
+	try(@player = player($player), die('Unknown player.'))
 	if(array_contains_ic(pgroup($player), 'Everyone'), die('Player already exists in whitelist.'))
 	sudo('/perm player setgroup '.$player.' Everyone')
 	tmsg($player, 'You have been added to the whitelist by ', color('e'), player(), color('f'), '.')
