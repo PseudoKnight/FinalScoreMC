@@ -50,7 +50,12 @@ bind(player_chat, null, null, @event) {
 		}
 	}
 	
+
 	if(@recipients = _remove_ignored(player(), @event['recipients'])) {
+	
+		# Basic swear filter.
+		@event['message'] = reg_replace('(?i)(fuck|shit|damn|nigg|cunt|fag)', '****', @event['message']);
+		
 		modify_event('message', colorize(@event['message']))
 		modify_event('recipients', @recipients)
 		modify_event('format', color('dark_gray').simple_date('h:mm').' '.if(array_contains(pgroup(), 'supporters'), color('green').'\u2666 ')._colorname().player().color('gray').': '.color('r').'%2$s')
