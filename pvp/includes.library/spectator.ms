@@ -47,18 +47,27 @@ proc _set_spectator(@id, @player, @pvp) {
 }
 
 proc _remove_spectator(@id, @player, @pvp) {
-	array_remove_values(@pvp['spectators'], @player)
-	if(ponline(@player)) {
-		set_collides_with_entities(@player, true)
-		foreach(@p in all_players('custom')) {
-			raw_set_pvanish(@player, false, @p)
-		}
-		set_pflight(@player, false)
-		if(pworld(@player) == 'custom' && pinfo(@player, 5) > 0) {
-			set_peffect(@player, 14, 0, 0)
-			if(!array_index_exists(@pvp['players'], @player)) {
-				set_ploc(@player, @pvp['arena']['lobby'])
+	try(
+		array_remove_values(@pvp['spectators'], @player)
+		if(ponline(@player)) {
+			set_collides_with_entities(@player, true)
+			if(array_index_exists(@pvp['arena'], 'resourcepack')) {
+				send_resourcepack(@p, 'http://mc.finalscoremc.com:25966/resourcepacks/default.zip')
+			}
+			foreach(@p in all_players('custom')) {
+				if(ponline(@p)) {
+					raw_set_pvanish(@player, false, @p)
+				}
+			}
+			set_pflight(@player, false)
+			if(pworld(@player) == 'custom' && pinfo(@player, 5) > 0) {
+				set_peffect(@player, 14, 0, 0)
+				if(!array_index_exists(@pvp['players'], @player)) {
+					set_ploc(@player, @pvp['arena']['lobby'])
+				}
 			}
 		}
-	}
+	, @ex, #catch
+		console(@ex)
+	)
 }

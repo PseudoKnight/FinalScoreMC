@@ -459,9 +459,7 @@ proc _pvp_end_match(@id, @winners) {
 			unbind(@bind)
 		}
 		foreach(@p in @pvp['spectators']) {
-			try(
-				_remove_spectator(@id, @p, @pvp)
-			)
+			_remove_spectator(@id, @p, @pvp)
 		}
 		_remove_region_entities(@pvp['arena']['region'])
 		if(array_index_exists(@pvp['arena'], 'restore')) {
@@ -481,9 +479,21 @@ proc _pvp_end_match(@id, @winners) {
 				}
 			})
 		}
+		
+
+		# if(!array_index_exists(@pvp['arena'], 'flags') || !array_contains(@pvp['arena']['flags'], 'debug')) {
+			# @arena = get_value('arena', @id)
+			# if(array_index_exists(@arena, 'played')) {
+				# @arena['played'] += 1
+			# } else {
+				# @arena['played'] = 1
+			# }
+		# }
+		
 		remove_scoreboard(@id)
 		@pvp = array('players': array(), 'running': 0, 'cooldown': time())
 		export('pvp'.@id, @pvp)
 		export('currently', null)
+
 	})
 }

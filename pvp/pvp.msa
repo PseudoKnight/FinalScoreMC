@@ -45,6 +45,9 @@
 			}
 			
 		} else if(@pvp['running'] > 1) {
+			if(array_index_exists(@pvp['arena'], 'resourcepack')) {
+				send_resourcepack(@p, 'http://mc.finalscoremc.com:25966/resourcepacks/'.@pvp['arena']['resourcepack'].'.zip')
+			}
 			if(array_index_exists(@pvp['arena'], 'team')) {
 				_assign_team(player(), @pvp)
 			}
@@ -289,11 +292,14 @@
 			@pvp['team'][1]['captainhat'] = @pvp['arena']['classes'][@pvp['arena']['captain'][1]]['kit'][103]
 		}
 
-		foreach(array_keys(@pvp['players']), @player) {
-			if(pmode(@player) == 'CREATIVE', set_pmode(@player, 'SURVIVAL'))
+		foreach(@p in array_keys(@pvp['players'])) {
+			if(pmode(@p) == 'CREATIVE', set_pmode(@p, 'SURVIVAL'))
+			if(array_index_exists(@pvp['arena'], 'resourcepack')) {
+				send_resourcepack(@p, 'http://mc.finalscoremc.com:25966/resourcepacks/'.@pvp['arena']['resourcepack'].'.zip')
+			}
 		}
 
-		@pvp['coins'] = array_size(@pvp['players']) - 2
+		@pvp['coins'] = if(array_size(@pvp['players']) > 2, 1, 0)
 		@pvp['stats'] = associative_array()
 		@pvp['binds'] = array()
 		@pvp['spectators'] = array()
