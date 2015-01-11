@@ -2,7 +2,7 @@
 	if(!has_permission('group.builders'), die('You do not have permission.'))
 	if(!@player = player($player), die('Unknown player.'))
 	@message = color('b').'Lovely weather we\'re having today.'
-	if(pworld(@player) == 'custom' || pworld(@player) == 'dev') {
+	if(!_is_survival_world(pworld(@player))) {
 		@loc = _relative(ploc(@player), 'up', 24)
 		if(get_block_at(@loc)[0] != '0', die('Anvil blocked.'))
 		set_pmode(@player, 'SURVIVAL')

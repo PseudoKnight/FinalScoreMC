@@ -182,7 +182,7 @@ bind(player_quit, null, null, @event) {
 }
 
 bind(player_death, null, null, @event) {
-	if(!array_contains(array('custom', 'dev'), pworld())) {
+	if(_is_survival_world(@event['location']['world'])) {
 		@loc = round(@event['location'][0]).','.round(@event['location'][1]).','.round(@event['location'][2]);
 		@log = @event['player'].' died @ '.@loc.' on '.@event['location'][3].', dropping '.@event['xp'].'xp and ';
 		foreach(@drop in @event['drops']) {
@@ -301,14 +301,14 @@ bind(vehicle_leave, array('priority': 'highest'), null, @event) {
 
 # prevent enderdragon egg teleportation
 bind(player_interact, null, array('block': 122), @event) {
-	if(pworld() == 'custom' || pworld() == 'dev') {
+	if(!_is_survival_world(pworld())) {
 		cancel()
 	}
 }
 
 # prevent mobspawner changes with spawner eggs
 bind(player_interact, null, array('block': 52, 'item': 383), @event) {
-	if(pworld() != 'custom' && pworld() != 'dev') {
+	if(_is_survival_world(pworld())) {
 		cancel()
 	}
 }
@@ -327,7 +327,7 @@ bind(vehicle_collide, null, array('type': 'MINECART', 'collisiontype': 'BLOCK', 
 
 # prevent non-owners from riding a horse, unless shared
 bind(player_interact_entity, null, array('clicked': 'HORSE'), @event) {
-	if(pworld() == 'custom' || pworld() == 'dev', die())
+	if(!_is_survival_world(pworld()), die())
 	
 	if(get_mob_owner(@event['id'])
 	&& get_mob_owner(@event['id']) != player()) {
@@ -379,7 +379,7 @@ bind(entity_damage, null, array(type: 'HORSE'), @event) {
 	}
 	
 	@world = entity_loc(@event[id])[world];
-	if(@world == 'custom' || @world == 'dev') {
+	if(!_is_survival_world(@world)) {
 		die();
 	}
 	
@@ -435,7 +435,7 @@ bind(player_enter_bed, null, null, @event) {
 
 # Infinite Dispensers
 bind(block_dispense, null, array('type': 'DISPENSER'), @e) {
-	if(@e['location']['world'] == 'dev' || @e['location']['world'] == 'custom') {
+	if(!_is_survial_world(@e['location']['world'])) {
 		if(!array_contains(sk_region_check_flag(@e['location'], 'blocked-cmds'), '/finitedispensers')) {
 			try(@inv = get_inventory(@e['location']), die())
 			for(@i = 0, @i < array_size(@inv), @i++) {
@@ -467,7 +467,7 @@ bind(creature_spawn, null, array('reason': 'SPAWNER'), @event) {
 
 # Anti-xray helper
 bind(block_break, null, array('type': 56), @event) {
-	if(pworld() == 'dev' || pworld() == 'custom', die())
+	if(!_is_survival_world(pworld()), die())
 	queue_push(closure(){
 		@report = true
 		for(@x = @event['location']['x'] - 1, @x <= @event['location']['x'] + 1, @x++) {
@@ -503,7 +503,7 @@ bind(player_interact_entity, null, array('clicked': 'VILLAGER'), @event) {
 # Prevent undesireable interdimensional travel
 bind(entity_enter_portal, null, null, @event) {
 	if(@event['type'] != 'PLAYER'
-	&& (@event['location']['world'] == 'custom' || @event['location']['world'] == 'dev')) {
+	&& !_is_survival_world(@event['location']['world'])) {
 		entity_remove(@event['id'])
 	} else if(@event['type'] == 'ENDER_DRAGON' 
 	&& (@event['location']['world'] == 'outworld' || @event['location']['world'] == 'outworld_nether')) {

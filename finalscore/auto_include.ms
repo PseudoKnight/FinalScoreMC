@@ -152,7 +152,7 @@ proc _clear_pinv(@player) {
 		@player = player()
 	}
 	@world = pworld(@player)
-	if(@world != 'custom' && @world != 'dev') {
+	if(_is_survival_world(@world)) {
 		return()
 	}
 	set_pinv(@player, array(
