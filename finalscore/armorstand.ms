@@ -7,19 +7,132 @@ bind(player_interact, null, array('item': 416, 'button': 'right'), @event) {
 	}
 }
 
+proc _position_degrees(@position, @rotation) {
+	@yaw = get_yaw(array(0, 0, 0), @position);
+	@yaw -= @rotation;
+	if(@yaw < -180) {
+		@yaw += 360;
+	} else if(@yaw > 180) {
+		@yaw -= 360;
+	}
+	return(@yaw)
+}
+
 bind(player_interact_at_entity, null, array('clicked': 'ARMOR_STAND'), @event) {
 	if(_is_survival_world(entity_loc(@event['id'])['world']) 
 	&& !sk_can_build(entity_loc(@event['id']))) {
 		cancel();
 	}
 	
+	# If right-click with sticks, add arms
 	@item = pinv(player(), null);
+	@armorstand = entity_spec(@event['id']);
 	if(!is_null(@item) && @item['type'] == 280 && @item['qty'] >= 2 
-	&& !entity_spec(@event['id'])['arms']) {
+	&& !@armorstand['arms']) {
 		set_entity_spec(@event['id'], array('arms': true));
 		@item['qty'] -= 2;
 		set_pinv(player(), array('null': if(@item['qty'] > 0, @item, null)));
 		cancel();
+		
+	} else if(!is_null(@item) && @item['type'] == 288 && pworld() == 'dev') {
+		msg('Toggled gravity for armor stand.');
+		set_entity_spec(@event['id'], array('gravity': if(@armorstand['gravity'], false, true)));
+		cancel();
+	
+	} else if(!is_null(@item) && @item['type'] == 44 && pworld() == 'dev') {
+		msg('Toggled baseplate for armor stand.');
+		set_entity_spec(@event['id'], array('baseplate': if(@armorstand['baseplate'], false, true)));
+		cancel();
+	
+	} else if(is_null(@item) && @armorstand['visible']) {
+		# Check if armor stand is empty
+		@equipment = get_mob_equipment(@event['id']);
+		foreach(@piece in @equipment) {
+			if(!is_null(@piece)) {
+				die();
+			}
+		}
+
+		# If sneaking, go into pose mode
+		if(pinfo(player(), 11)) {
+			# Get poseable section of armor stand
+			@poseable = '';
+			if(@event['position']['y'] >= 1.6) {
+				@poseable = 'Head';
+			} else if(@event['position']['y'] >= 0.9) {
+				@poseable = 'Torso';
+				if(@armorstand['arms']) {
+					@deg = _position_degrees(@event['position'], entity_loc(@event['id'])['yaw']);
+					if(@deg > 35 && @deg < 145) {
+						@poseable = 'ArmRight';
+					} else if(@deg < -35 && @deg > -145) {
+						@poseable = 'ArmLeft';
+					}
+				}
+			} else if(@event['position']['y'] >= 0.55) {
+				@deg = _position_degrees(@event['position'], entity_loc(@event['id'])['yaw']);
+				if(@deg > 0) {
+					@poseable = 'LegRight';
+				} else {
+					@poseable = 'LegLeft';
+				}
+			} else {
+				@poseable = 'armorstand';
+			}
+			
+			# Start posing
+			if(@poseable == 'armorstand') {
+				msg('Rotating Armor Stand.');
+				
+				@dir = pfacing();
+				@eloc = entity_loc(@event['id']);
+				@newloc = @eloc[];
+				
+				@taskid = set_interval(100, closure(){
+					if(!pinfo(player(), 11) || !entity_exists(@event['id'])) {
+						clear_task();
+						return();
+					}
+					
+					@newdir = pfacing();
+					@dyaw = (@dir[0] - @newdir[0]) * 2.5;
+					@newloc['yaw'] = @eloc['yaw'] + @dyaw;
+					set_entity_loc(@event['id'], @newloc);
+				});
+				
+			} else {
+				msg('Posing '.@poseable.'.');
+				
+				@dir = pfacing();
+				@poseable = 'pose'.@poseable;
+				@newspec = array('poses': array());
+				@newspec['poses'][@poseable] = @armorstand['poses'][@poseable][];
+				
+				@taskid = set_interval(100, closure(){
+					if(!ponline(player()) || !pinfo(player(), 11) || !entity_exists(@event['id'])) {
+						clear_task();
+						return();
+					}
+					
+					@newdir = pfacing();
+					@dyaw = to_radians(@newdir[0] - @dir[0]) * 2.5;
+					@dpitch = to_radians(@newdir[1] - @dir[1]) * 2.5;
+					@newspec['poses'][@poseable]['x'] = @armorstand['poses'][@poseable]['x'] + @dpitch;
+					@newspec['poses'][@poseable]['z'] = @armorstand['poses'][@poseable]['z'] + @dyaw;
+					set_entity_spec(@event['id'], @newspec);
+				});
+			}
+		
+		# If not sneaking, move armor stand.
+		} else {
+			msg('Moving Armor Stand. Sneak to drop.');
+			set_entity_rider(pinfo(player(), 13), @event['id']);
+			
+			bind(player_toggle_sneak, null, array('player': player()), @event) {
+				set_entity_rider(pinfo(player(), 13), null);
+				unbind();
+			}
+		}
 	}
 }
 
