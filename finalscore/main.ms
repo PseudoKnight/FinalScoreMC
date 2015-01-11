@@ -435,7 +435,7 @@ bind(player_enter_bed, null, null, @event) {
 
 # Infinite Dispensers
 bind(block_dispense, null, array('type': 'DISPENSER'), @e) {
-	if(!_is_survial_world(@e['location']['world'])) {
+	if(!_is_survival_world(@e['location']['world'])) {
 		if(!array_contains(sk_region_check_flag(@e['location'], 'blocked-cmds'), '/finitedispensers')) {
 			try(@inv = get_inventory(@e['location']), die())
 			for(@i = 0, @i < array_size(@inv), @i++) {
