@@ -132,6 +132,19 @@ proc _relative_coords(@originloc, @x, @y, @z) {
 }
 
 /*
+	Gets a normalized vector when given a yaw and pitch
+*/
+proc _get_vector(@yaw, @pitch) {
+	@yaw = @yaw + 90;
+	@pitch = 0 - @pitch;
+	@vector = array('x': 0, 'y': 0, 'z': 0);
+	@vector['x'] = cos(to_radians(@yaw)) * cos(to_radians(@pitch));
+	@vector['y'] = sin(to_radians(@pitch));
+	@vector['z'] = sin(to_radians(@yaw)) * cos(to_radians(@pitch));
+	return(@vector);
+}
+
+/*
 	Removes all items from a player's inventory and armor slots
 */
 proc _clear_pinv(@player) {
