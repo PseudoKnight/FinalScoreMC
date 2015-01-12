@@ -1,18 +1,16 @@
-*:/slimeygolf [$action='start'] [$hole=1] = >>>
+*:/slimeygolf [$action='start'] [$course='basic'] = >>>
 	switch($action) {
 		case 'start':
-			if(!has_permission('group.builders') || pworld() != 'dev', die('Nope')) # while debugging
 			@world = pworld()
+			if(!has_permission('group.builders') || !_is_survival_world(@world), die('Nope')) # while debugging
 			@golf = array()
-			create_scoreboard('golf')
-			create_objective('strokes', 'DUMMY', 'golf')
-			set_objective_display('strokes', array(displayname: color('a').'STROKES', slot: 'SIDEBAR'), 'golf')
+			create_scoreboard('golf'.$course)
+			create_objective('strokes', 'DUMMY', 'golf'.$course)
+			set_objective_display('strokes', array(displayname: color('a').'STROKES', slot: 'SIDEBAR'), 'golf'.$course)
 			@count = 0
 			foreach(@player in all_players(@world)) {
-				if(array_contains(sk_current_regions(@player), 'slimeygolf')) {
-					if(pmode(@player) == 'CREATIVE') {
-						set_pmode(@player, 'SURVIVAL')
-					}
+				if(array_contains(sk_current_regions(@player), 'slimeygolf_'.$course)) {
+					if(pmode(@player) == 'CREATIVE', continue())
 					@golf[@player] = array(
 						type: @count, 
 						hole: $hole, 
@@ -27,9 +25,9 @@
 					if(function_exists('set_collides_with_entities')) {
 						set_collides_with_entities(@player, false)
 					}
-					set_pscoreboard(@player, 'golf')
-					set_pscore('strokes', @player, 1, 'golf')
-					set_pscore('strokes', @player, 0, 'golf')
+					set_pscoreboard(@player, 'golf'.$course)
+					set_pscore('strokes', @player, 1, 'golf'.$course)
+					set_pscore('strokes', @player, 0, 'golf'.$course)
 					@count += 1
 					if(@count >= 4) {
 						break()
@@ -38,17 +36,17 @@
 			}
 			
 			if(array_size(@golf) == 0) {
-				remove_scoreboard('golf')
+				remove_scoreboard('golf'.$course)
 				die('No players in "slimeygolf" region.')
 			}
 			
-			export('golf', @golf)
+			export('golf'.$course, @golf)
 			
 			@friction = 0.96
 			@bounciness = 0.75
 			
-			bind(player_interact, array(id: 'golf_ball'), array(item: 341, button: 'right', block: 159), @event) {
-				@golf = import('golf')
+			bind(player_interact, array(id: 'golf_ball_'.$course), array(item: 341, button: 'right', block: 159), @event, @course = $course) {
+				@golf = import('golf'.@course)
 				if(array_index_exists(@golf, player())
 				&& @event['action'] == 'right_click_block'
 				&& @event['facing'] == 'up'
@@ -78,7 +76,7 @@
 					@golf[player()]['id'] = spawn_mob(@mobspawn.':1', 1, @loc)[0]
 					@golf[player()]['velocity'] = array(x: 0, y: 0, z: 0)
 					
-					export('golf', @golf)
+					export('golf'.@course, @golf)
 					
 					set_entity_velocity(@golf[player()]['id'], array(0, 0, 0))
 					set_timeout(50, closure(){
@@ -93,7 +91,7 @@
 						}
 					})
 					
-					bind(player_interact, array('id': 'golf_swing_'.player()), array('item': 292, 'button': 'right', 'player': player()), @event) {
+					bind(player_interact, array(id: 'golf_swing_'.player()), array(item: 292, button: 'right', player: player()), @event, @course = @course) {
 						cancel()
 						@item = pinv(player(), null)
 						if(@item['data'] == 0) {
@@ -122,15 +120,15 @@
 						}
 					}
 					
-					bind(entity_damage, array('id': 'golf_hit_'.player()), array('id': @golf[player()]['id'], 'type': @mobcheck, 'cause': 'ENTITY_ATTACK'), @event) {
+					bind(entity_damage, array(id: 'golf_hit_'.player()), array(id: @golf[player()]['id'], type: @mobcheck, cause: 'ENTITY_ATTACK'), @event, @course = @course) {
 						@xp = pexp(@event['damager'])
-						@golf = import('golf')
+						@golf = import('golf'.@course)
 						if(@xp > 0
 						&& @golf[@event['damager']]['id'] == @event['id']) {
 							set_pinv(@event['damager'], array('null': array('type': 292, 'data': 0)))
 							@xp -= 10
 							set_plevel(@event['damager'], plevel(@event['damager']) + 1)
-							set_pscore('strokes', @event['damager'], get_pscore('strokes', @event['damager'], 'golf') + 1, 'golf')
+							set_pscore('strokes', @event['damager'], get_pscore('strokes', @event['damager'], 'golf'.@course) + 1, 'golf'.@course)
 							set_timeout(50, closure(){
 								@v = entity_velocity(@event['id'])
 								@v['x'] = @v['x'] * (3 * (@xp / 100))
@@ -150,8 +148,8 @@
 						# set_entity_velocity(@event['id'], array(@x, 0, @z))
 					}
 					
-					bind(target_player, array('id': 'golf_target_'.player()), array('mobtype': @mobcheck), @event) {
-						@golf = import('golf')
+					bind(target_player, array('id': 'golf_target_'.player()), array('mobtype': @mobcheck), @event, @course = @course) {
+						@golf = import('golf'.@course)
 						if(@golf[@event['player']]['id'] != @event['id']) {
 							foreach(@player: @ball in @golf) {
 								if(@ball['id'] == @event['id']) {
@@ -214,7 +212,7 @@
 			set_interval(10000, closure(){
 				foreach(@player: @ball in @golf) {
 					if(!ponline(@player)
-					|| !array_contains(sk_current_regions(@player), 'slimeygolf')) {
+					|| !array_contains(sk_current_regions(@player), 'slimeygolf_'.$course)) {
 						if(has_bind('golf_swing_'.@player)) {
 							unbind('golf_swing_'.@player)
 							unbind('golf_hit_'.@player)
@@ -235,18 +233,18 @@
 					}
 				}
 				if(array_size(@golf) == 0) {
-					if(has_bind('golf_ball')) {
-						unbind('golf_ball')
+					if(has_bind('golf_ball_'.$course)) {
+						unbind('golf_ball_'.$course)
 					}
-					if(array_contains(get_scoreboards(), 'golf')) {
-						remove_scoreboard('golf')
+					if(array_contains(get_scoreboards(), 'golf'.$course)) {
+						remove_scoreboard('golf'.$course)
 					}
 					clear_task()
 				}
 			})
 
 		case 'stop':
-			@golf = import('golf')
+			@golf = import('golf'.$course)
 			foreach(@player: @ball in @golf) {
 				if(has_bind('golf_swing_'.@player)) {
 					unbind('golf_swing_'.@player)
@@ -267,11 +265,11 @@
 				}
 				array_remove(@golf, @player)
 			}
-			if(has_bind('golf_ball')) {
-				unbind('golf_ball')
+			if(has_bind('golf_ball_'.$course)) {
+				unbind('golf_ball_'.$course)
 			}
-			if(array_contains(get_scoreboards(), 'golf')) {
-				remove_scoreboard('golf')
+			if(array_contains(get_scoreboards(), 'golf'.$course)) {
+				remove_scoreboard('golf'.$course)
 			}
 			msg('Stopped SlimeyGolf')
 	}
