@@ -2,7 +2,7 @@
 	switch($action) {
 		case 'start':
 			@world = pworld()
-			if(!has_permission('group.builders') || !_is_survival_world(@world), die('Nope')) # while debugging
+			if(!has_permission('group.builders') || _is_survival_world(@world), die('Nope')) # while debugging
 			@golf = array()
 			create_scoreboard('golf'.$course)
 			create_objective('strokes', 'DUMMY', 'golf'.$course)
@@ -13,7 +13,7 @@
 					if(pmode(@player) == 'CREATIVE', continue())
 					@golf[@player] = array(
 						type: @count, 
-						hole: $hole, 
+						hole: 1, 
 						id: 0, 
 						velocity: array('x': 0, 'y': 0, 'z': 0)
 					)
@@ -44,8 +44,10 @@
 			
 			@friction = 0.96
 			@bounciness = 0.75
+			@redstoneloc = array(0, 0, 0, @world)
 			
-			bind(player_interact, array(id: 'golf_ball_'.$course), array(item: 341, button: 'right', block: 159), @event, @course = $course) {
+			bind(player_interact, array(id: 'golf_ball_'.$course), array(item: 341, button: 'right', block: 159), @event, 
+			@course = $course, @redstoneloc = @redstoneloc) {
 				@golf = import('golf'.@course)
 				if(array_index_exists(@golf, player())
 				&& @event['action'] == 'right_click_block'
@@ -90,6 +92,21 @@
 							set_mob_effect(@golf[player()]['id'], 2, 3, 99999, true)
 						}
 					})
+					
+					@lowesthole = 10
+					foreach(@player in @golf) {
+						if(@player['hole'] < @lowesthole) {
+							@lowesthole = @player['hole']
+						}
+					}
+					if(@lowesthole == @golf[player()]['hole']) {
+						@redstoneloc[0] = @event['location']['x']
+						@redstoneloc[1] = @event['location']['y'] - 1
+						@redstoneloc[2] = @event['location']['z']
+						set_block_at(@redstoneloc, 152)
+					} else {
+						set_block_at(_relative(@event['location'], 'down'), 152)
+					}
 					
 					bind(player_interact, array(id: 'golf_swing_'.player()), array(item: 292, button: 'right', player: player()), @event, @course = @course) {
 						cancel()
@@ -179,6 +196,17 @@
 						if(@block[0] != '0' && @v['y'] >= -0.0784000015258789) {
 							if(@loc['y'] - floor(@loc['y']) == 0) {
 								if(@block == '35:15') {
+									@lastplayer = true
+									foreach(@p: @b in @golf) {
+										if(@p == @player, continue())
+										if(@b['hole'] <= @ball['hole']) {
+											@lastplayer = false
+											break()
+										}
+									}
+									if(@lastplayer) {
+										set_block_at(@redstoneloc, 0)
+									}
 									entity_remove(@ball['id'])
 									unbind('golf_swing_'.@player)
 									unbind('golf_hit_'.@player)
