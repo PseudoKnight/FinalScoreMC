@@ -15,12 +15,12 @@
 						type: @count, 
 						hole: 1, 
 						id: 0, 
-						velocity: array('x': 0, 'y': 0, 'z': 0)
+						velocity: array('x': 0, 'y': 0, 'z': 0),
+						swing: false,
 					)
 					_clear_pinv(@player)
 					set_pinv(@player, array(
-						0: array(type: 292),
-						1: array(type: 341),
+						0: array(type: 341),
 					))
 					if(function_exists('set_collides_with_entities')) {
 						set_collides_with_entities(@player, false)
@@ -85,10 +85,10 @@
 						set_mob_effect(@golf[player()]['id'], 11, 4, 99999, true)
 						set_mob_effect(@golf[player()]['id'], 1, -6, 99999, true)
 						if(@mobspawn == 'SLIME') {
-							set_mob_effect(@golf[player()]['id'], 8, -2, 99999, true)
+							set_mob_effect(@golf[player()]['id'], 8, -4, 99999, true)
 							set_mob_effect(@golf[player()]['id'], 2, 2, 99999, true)
 						} else {
-							set_mob_effect(@golf[player()]['id'], 8, -3, 99999, true)
+							set_mob_effect(@golf[player()]['id'], 8, -5, 99999, true)
 							set_mob_effect(@golf[player()]['id'], 2, 3, 99999, true)
 						}
 					})
@@ -108,42 +108,35 @@
 						set_block_at(_relative(@event['location'], 'down'), 152)
 					}
 					
-					bind(player_interact, array(id: 'golf_swing_'.player()), array(item: 292, button: 'right', player: player()), @event, @course = @course) {
+					bind(player_interact_entity, array(id: 'golf_swing_'.player()), array(clicked: @mobcheck), @event, 
+					@player = player(), @course = @course) {
+						if(@player != player(), die())
+						@golf = import('golf'.@course)
+						if(@event['id'] != @golf[player()]['id'], die())
 						cancel()
-						@item = pinv(player(), null)
-						if(@item['data'] == 0) {
-							@item['data'] = 1
-							set_pinv(player(), array('null': @item))
-							@slot = pinfo(player(), 15)
+						if(!@golf[player()]['swing']) {
 							set_pexp(0)
+							@golf[player()]['swing'] = true
 							set_interval(50, closure(){
-								@item = pinv(player(), @slot)
-								if(!is_null(@item) && @item['type'] == 292 && @item['data'] == 1) {
-									if(pexp() < 100) {
-										set_pexp(pexp() + 5)
-									} else {
-										set_pexp(0)
-										clear_task()
-										@inv = array()
-										@item['data'] = 0
-										@inv[@slot] = @item
-										set_pinv(player(), @inv)
-									}
+								if(pexp() < 115 && @golf[player()]['swing']) {
+									set_pexp(pexp() + 5)
 								} else {
-									set_pexp(0)
 									clear_task()
+									@golf[player()]['swing'] = false
 								}
 							})
 						}
 					}
 					
-					bind(entity_damage, array(id: 'golf_hit_'.player()), array(id: @golf[player()]['id'], type: @mobcheck, cause: 'ENTITY_ATTACK'), @event, @course = @course) {
+					bind(entity_damage, array(id: 'golf_hit_'.player()), array(id: @golf[player()]['id'], type: @mobcheck, cause: 'ENTITY_ATTACK'), @event, 
+					@course = @course) {
 						@xp = pexp(@event['damager'])
 						@golf = import('golf'.@course)
-						if(@xp > 0
+						if(@xp > 0 && @golf[player()]['swing']
 						&& @golf[@event['damager']]['id'] == @event['id']) {
-							set_pinv(@event['damager'], array('null': array('type': 292, 'data': 0)))
+							@golf[player()]['swing'] = false
 							@xp -= 10
+							set_pexp(@event['damager'], @xp)
 							set_plevel(@event['damager'], plevel(@event['damager']) + 1)
 							set_pscore('strokes', @event['damager'], get_pscore('strokes', @event['damager'], 'golf'.@course) + 1, 'golf'.@course)
 							set_timeout(50, closure(){
@@ -153,7 +146,7 @@
 								@golf[@event['damager']]['velocity'] = array('x': @v['x'], 'y': 0, 'z': @v['z'])
 								set_entity_velocity(@event['id'], @golf[@event['damager']]['velocity'])
 							})
-							set_pinv(@event['damager'], array(1: array('type': 341)))
+							set_pinv(@event['damager'], array(0: array('type': 341)))
 						} else {
 							cancel()
 						}
@@ -215,6 +208,11 @@
 									@ball['hole'] += 1
 									continue()
 								}
+								@v['y'] = 0
+							} else if(@v['y'] > 0) {
+								@loc['y'] = ceil(@loc['y'])
+								@loc[1] = ceil(@loc[1])
+								set_entity_loc(@ball['id'], @loc)
 								@v['y'] = 0
 							}
 						} else if(@block == '35:15') {
