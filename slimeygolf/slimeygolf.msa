@@ -1,217 +1,257 @@
-*:/minigolf [$action='start'] [$hole=1] = >>>
-switch($action) {
-case 'start':
-	if(!has_permission('group.builders') || pworld() != 'dev', die('Nope')) # while debugging
-	@world = pworld()
-	@minigolf = array()
-	create_scoreboard('minigolf')
-	create_objective('strokes', 'DUMMY', 'minigolf')
-	set_objective_display('strokes', array('displayname': color('a').'STROKES', 'slot': 'SIDEBAR'), 'minigolf')
-	@count = 0
-	foreach(@player in all_players(@world)) {
-		if(array_contains(sk_current_regions(@player), 'minigolf')) {
-			if(pmode(@player) == 'CREATIVE') {
-				set_pmode(@player, 'SURVIVAL')
+*:/slimeygolf [$action='start'] [$hole=1] = >>>
+	switch($action) {
+		case 'start':
+			if(!has_permission('group.builders') || pworld() != 'dev', die('Nope')) # while debugging
+			@world = pworld()
+			@golf = array()
+			create_scoreboard('golf')
+			create_objective('strokes', 'DUMMY', 'golf')
+			set_objective_display('strokes', array(displayname: color('a').'STROKES', slot: 'SIDEBAR'), 'golf')
+			@count = 0
+			foreach(@player in all_players(@world)) {
+				if(array_contains(sk_current_regions(@player), 'slimeygolf')) {
+					if(pmode(@player) == 'CREATIVE') {
+						set_pmode(@player, 'SURVIVAL')
+					}
+					@golf[@player] = array(
+						type: @count, 
+						hole: $hole, 
+						id: 0, 
+						velocity: array('x': 0, 'y': 0, 'z': 0)
+					)
+					_clear_pinv(@player)
+					set_pinv(@player, array(
+						0: array(type: 292),
+						1: array(type: 341),
+					))
+					if(function_exists('set_collides_with_entities')) {
+						set_collides_with_entities(@player, false)
+					}
+					set_pscoreboard(@player, 'golf')
+					set_pscore('strokes', @player, 1, 'golf')
+					set_pscore('strokes', @player, 0, 'golf')
+					@count += 1
+					if(@count >= 4) {
+						break()
+					}
+				}
 			}
-			@minigolf[@player] = array('type': @count, 'hole': $hole, 'id': 0, 'velocity': array('x': 0, 'y': 0, 'z': 0))
-			_clear_pinv(@player)
-			set_pinv(@player, array(
-				0: array('type': 292),
-				1: array('type': 341),
-			))
-			if(function_exists('set_collides_with_entities')) {
-				set_collides_with_entities(@player, false)
-			}
-			set_pscoreboard(@player, 'minigolf')
-			set_pscore('strokes', @player, 1, 'minigolf')
-			set_pscore('strokes', @player, 0, 'minigolf')
-			@count += 1
-			if(@count >= 4) {
-				break()
-			}
-		}
-	}
-	
-	if(array_size(@minigolf) == 0) {
-		remove_scoreboard('minigolf')
-		die('No players in "minigolf" region.')
-	}
-	
-	export('minigolf', @minigolf)
-	
-	@friction = 0.96
-	@bounciness = 0.75
-	
-	bind(player_interact, array('id': 'minigolf_ball'), array('item': 341, 'button': 'right', 'block': 159), @event) {
-		@minigolf = import('minigolf')
-		if(array_index_exists(@minigolf, player())
-		&& @event['action'] == 'right_click_block'
-		&& @event['facing'] == 'up'
-		&& split(':', get_block_at(@event['location']))[1] == @minigolf[player()]['hole'] + 5) {
-		
-			set_pinv(player(), array('null': null))
-			set_plevel(player(), 0)
-			set_pexp(player(), 0)
 			
-			if(entity_exists(@minigolf[player()]['id'])) {
-				entity_remove(@minigolf[player()]['id'])
-				unbind('minigolf_swing_'.player())
-				unbind('minigolf_hit_'.player())
-				unbind('minigolf_target_'.player())
+			if(array_size(@golf) == 0) {
+				remove_scoreboard('golf')
+				die('No players in "slimeygolf" region.')
 			}
-		
-			@loc = _relative(@event['location'], 'up')
-			if(@minigolf[player()]['type'] == 0 || @minigolf[player()]['type'] == 2) {
-				@mobspawn = 'SLIME'
-				@mobcheck = 'SLIME'
-			} else {
-				@mobspawn = 'MAGMACUBE'
-				@mobcheck = 'MAGMA_CUBE'
+			
+			export('golf', @golf)
+			
+			@friction = 0.96
+			@bounciness = 0.75
+			
+			bind(player_interact, array(id: 'golf_ball'), array(item: 341, button: 'right', block: 159), @event) {
+				@golf = import('golf')
+				if(array_index_exists(@golf, player())
+				&& @event['action'] == 'right_click_block'
+				&& @event['facing'] == 'up'
+				&& split(':', get_block_at(@event['location']))[1] == @golf[player()]['hole'] + 5) {
+				
+					set_pinv(player(), array('null': null))
+					set_plevel(player(), 0)
+					set_pexp(player(), 0)
+					
+					if(entity_exists(@golf[player()]['id'])) {
+						entity_remove(@golf[player()]['id'])
+						unbind('golf_swing_'.player())
+						unbind('golf_hit_'.player())
+						unbind('golf_target_'.player())
+					}
+				
+					@loc = _relative(@event['location'], 'up')
+					if(@golf[player()]['type'] == 0 || @golf[player()]['type'] == 2) {
+						@mobspawn = 'SLIME'
+						@mobcheck = 'SLIME'
+					} else {
+						@mobspawn = 'MAGMACUBE'
+						@mobcheck = 'MAGMA_CUBE'
+					}
+					@loc['x'] += 0.5
+					@loc['z'] += 0.5
+					@golf[player()]['id'] = spawn_mob(@mobspawn.':1', 1, @loc)[0]
+					@golf[player()]['velocity'] = array(x: 0, y: 0, z: 0)
+					
+					export('golf', @golf)
+					
+					set_entity_velocity(@golf[player()]['id'], array(0, 0, 0))
+					set_timeout(50, closure(){
+						set_mob_effect(@golf[player()]['id'], 11, 4, 99999, true)
+						set_mob_effect(@golf[player()]['id'], 1, -6, 99999, true)
+						if(@mobspawn == 'SLIME') {
+							set_mob_effect(@golf[player()]['id'], 8, -2, 99999, true)
+							set_mob_effect(@golf[player()]['id'], 2, 2, 99999, true)
+						} else {
+							set_mob_effect(@golf[player()]['id'], 8, -3, 99999, true)
+							set_mob_effect(@golf[player()]['id'], 2, 3, 99999, true)
+						}
+					})
+					
+					bind(player_interact, array('id': 'golf_swing_'.player()), array('item': 292, 'button': 'right', 'player': player()), @event) {
+						cancel()
+						@item = pinv(player(), null)
+						if(@item['data'] == 0) {
+							@item['data'] = 1
+							set_pinv(player(), array('null': @item))
+							@slot = pinfo(player(), 15)
+							set_pexp(0)
+							set_interval(50, closure(){
+								@item = pinv(player(), @slot)
+								if(!is_null(@item) && @item['type'] == 292 && @item['data'] == 1) {
+									if(pexp() < 100) {
+										set_pexp(pexp() + 5)
+									} else {
+										set_pexp(0)
+										clear_task()
+										@inv = array()
+										@item['data'] = 0
+										@inv[@slot] = @item
+										set_pinv(player(), @inv)
+									}
+								} else {
+									set_pexp(0)
+									clear_task()
+								}
+							})
+						}
+					}
+					
+					bind(entity_damage, array('id': 'golf_hit_'.player()), array('id': @golf[player()]['id'], 'type': @mobcheck, 'cause': 'ENTITY_ATTACK'), @event) {
+						@xp = pexp(@event['damager'])
+						@golf = import('golf')
+						if(@xp > 0
+						&& @golf[@event['damager']]['id'] == @event['id']) {
+							set_pinv(@event['damager'], array('null': array('type': 292, 'data': 0)))
+							@xp -= 10
+							set_plevel(@event['damager'], plevel(@event['damager']) + 1)
+							set_pscore('strokes', @event['damager'], get_pscore('strokes', @event['damager'], 'golf') + 1, 'golf')
+							set_timeout(50, closure(){
+								@v = entity_velocity(@event['id'])
+								@v['x'] = @v['x'] * (3 * (@xp / 100))
+								@v['z'] = @v['z'] * (3 * (@xp / 100))
+								@golf[@event['damager']]['velocity'] = array('x': @v['x'], 'y': 0, 'z': @v['z'])
+								set_entity_velocity(@event['id'], @golf[@event['damager']]['velocity'])
+							})
+							set_pinv(@event['damager'], array(1: array('type': 341)))
+						} else {
+							cancel()
+						}
+						# cancel()
+						# @ploc = ploc(@event['damager'])
+						# @eloc = entity_loc(@event['id'])
+						# @x = (@eloc['x'] - @ploc['x']) * (@xp / 200)
+						# @z = (@eloc['z'] - @ploc['z']) * (@xp / 200)
+						# set_entity_velocity(@event['id'], array(@x, 0, @z))
+					}
+					
+					bind(target_player, array('id': 'golf_target_'.player()), array('mobtype': @mobcheck), @event) {
+						@golf = import('golf')
+						if(@golf[@event['player']]['id'] != @event['id']) {
+							foreach(@player: @ball in @golf) {
+								if(@ball['id'] == @event['id']) {
+									modify_event('player', @player)
+									break()
+								}
+							}
+						}
+					}
+				}
 			}
-			@minigolf[player()]['id'] = spawn_mob(@mobspawn.':1', 1, array(@loc[0] + 0.5, @loc[1], @loc[2] + 0.5, pworld()))[0]
-			@minigolf[player()]['velocity'] = array('x': 0, 'y': 0, 'z': 0)
 			
-			export('minigolf', @minigolf)
-			
-			set_entity_velocity(@minigolf[player()]['id'], array(0, 0, 0))
-			set_timeout(50, closure(){
-				set_mob_effect(@minigolf[player()]['id'], 11, 4, 99999, true)
-				set_mob_effect(@minigolf[player()]['id'], 1, -6, 99999, true)
-				if(@mobspawn == 'SLIME') {
-					set_mob_effect(@minigolf[player()]['id'], 8, -2, 99999, true)
-					set_mob_effect(@minigolf[player()]['id'], 2, 2, 99999, true)
+			set_interval(50, closure(){
+				foreach(@player: @ball in @golf) {
+					if(@ball['id']
+					&& entity_exists(@ball['id'])) {
+						@v = entity_velocity(@ball['id'])
+						@loc = entity_loc(@ball['id'])
+						@loc['y'] -= 1
+						@loc[1] -= 1
+						if(@v['x'] == 0) {
+							@v['x'] = 0 - @ball['velocity']['x'] * @bounciness
+						} else if(abs(@ball['velocity']['x'] - @v['x']) < 0.1) {
+							@v['x'] = @ball['velocity']['x'] * @friction
+						}
+						@block = get_block_at(@loc)
+						if(@block[0] != '0' && @v['y'] >= -0.0784000015258789) {
+							if(@loc['y'] - floor(@loc['y']) == 0) {
+								if(@block == '35:15') {
+									entity_remove(@ball['id'])
+									unbind('golf_swing_'.@player)
+									unbind('golf_hit_'.@player)
+									unbind('golf_target_'.@player)
+									@ball['id'] = 0
+									@ball['hole'] += 1
+									continue()
+								}
+								@v['y'] = 0
+							}
+						} else if(@block == '35:15') {
+							play_sound(@loc, array('sound': 'WOOD_CLICK', 'pitch': 0.5 + @loc['y'] - floor(@loc['y'])))
+						}
+
+						if(@v['z'] == 0) {
+							@v['z'] = 0 - @ball['velocity']['z'] * @bounciness
+						} else if(abs(@ball['velocity']['z'] - @v['z']) < 0.1) {
+							@v['z'] = @ball['velocity']['z'] * @friction
+						}
+						@ball['velocity'] = array('x': @v['x'], 'y': @v['y'], 'z': @v['z'])
+						set_entity_velocity(@ball['id'], @ball['velocity'])
+						if(@ball['type'] >= 2) {
+							play_entity_effect(@ball['id'], 'HURT')
+						}
+					}
 				} else {
-					set_mob_effect(@minigolf[player()]['id'], 8, -3, 99999, true)
-					set_mob_effect(@minigolf[player()]['id'], 2, 3, 99999, true)
+					clear_task()
 				}
 			})
 			
-			bind(player_interact, array('id': 'minigolf_swing_'.player()), array('item': 292, 'button': 'right', 'player': player()), @event) {
-				cancel()
-				@item = pinv(player(), null)
-				if(@item['data'] == 0) {
-					@item['data'] = 1
-					set_pinv(player(), array('null': @item))
-					@slot = pinfo(player(), 15)
-					set_pexp(0)
-					set_interval(50, closure(){
-						@item = pinv(player(), @slot)
-						if(!is_null(@item) && @item['type'] == 292 && @item['data'] == 1) {
-							if(pexp() < 100) {
-								set_pexp(pexp() + 5)
-							} else {
-								set_pexp(0)
-								clear_task()
-								@inv = array()
-								@item['data'] = 0
-								@inv[@slot] = @item
-								set_pinv(player(), @inv)
-							}
-						} else {
-							set_pexp(0)
-							clear_task()
+			set_interval(10000, closure(){
+				foreach(@player: @ball in @golf) {
+					if(!ponline(@player)
+					|| !array_contains(sk_current_regions(@player), 'slimeygolf')) {
+						if(has_bind('golf_swing_'.@player)) {
+							unbind('golf_swing_'.@player)
+							unbind('golf_hit_'.@player)
+							unbind('golf_target_'.@player)
 						}
-					})
-				}
-			}
-			
-			bind(entity_damage, array('id': 'minigolf_hit_'.player()), array('id': @minigolf[player()]['id'], 'type': @mobcheck, 'cause': 'ENTITY_ATTACK'), @event) {
-				@xp = pexp(@event['damager'])
-				@minigolf = import('minigolf')
-				if(@xp > 0
-				&& @minigolf[@event['damager']]['id'] == @event['id']) {
-					set_pinv(@event['damager'], array('null': array('type': 292, 'data': 0)))
-					@xp -= 10
-					set_plevel(@event['damager'], plevel(@event['damager']) + 1)
-					set_pscore('strokes', @event['damager'], get_pscore('strokes', @event['damager'], 'minigolf') + 1, 'minigolf')
-					set_timeout(50, closure(){
-						@v = entity_velocity(@event['id'])
-						@v['x'] = @v['x'] * (3 * (@xp / 100))
-						@v['z'] = @v['z'] * (3 * (@xp / 100))
-						@minigolf[@event['damager']]['velocity'] = array('x': @v['x'], 'y': 0, 'z': @v['z'])
-						set_entity_velocity(@event['id'], @minigolf[@event['damager']]['velocity'])
-					})
-					set_pinv(@event['damager'], array(1: array('type': 341)))
-				} else {
-					cancel()
-				}
-				# cancel()
-				# @ploc = ploc(@event['damager'])
-				# @eloc = entity_loc(@event['id'])
-				# @x = (@eloc['x'] - @ploc['x']) * (@xp / 200)
-				# @z = (@eloc['z'] - @ploc['z']) * (@xp / 200)
-				# set_entity_velocity(@event['id'], array(@x, 0, @z))
-			}
-			
-			bind(target_player, array('id': 'minigolf_target_'.player()), array('mobtype': @mobcheck), @event) {
-				@minigolf = import('minigolf')
-				if(@minigolf[@event['player']]['id'] != @event['id']) {
-					foreach(@player: @ball in @minigolf) {
-						if(@ball['id'] == @event['id']) {
-							modify_event('player', @player)
-							break()
-						}
-					}
-				}
-			}
-		}
-	}
-	
-	set_interval(50, closure(){
-		foreach(@player: @ball in @minigolf) {
-			if(@ball['id']
-			&& entity_exists(@ball['id'])) {
-				@v = entity_velocity(@ball['id'])
-				@loc = entity_loc(@ball['id'])
-				@loc['y'] -= 1
-				@loc[1] -= 1
-				if(@v['x'] == 0) {
-					@v['x'] = 0 - @ball['velocity']['x'] * @bounciness
-				} else if(abs(@ball['velocity']['x'] - @v['x']) < 0.1) {
-					@v['x'] = @ball['velocity']['x'] * @friction
-				}
-				@block = get_block_at(@loc)
-				if(@block[0] != '0' && @v['y'] >= -0.0784000015258789) {
-					if(@loc['y'] - floor(@loc['y']) == 0) {
-						if(@block == '35:15') {
+						if(entity_exists(@ball['id'])) {
 							entity_remove(@ball['id'])
-							unbind('minigolf_swing_'.@player)
-							unbind('minigolf_hit_'.@player)
-							unbind('minigolf_target_'.@player)
-							@ball['id'] = 0
-							@ball['hole'] += 1
-							continue()
 						}
-						@v['y'] = 0
+						if(ponline(@player)) {
+							if(function_exists('set_collides_with_entities')) {
+								set_collides_with_entities(@player, true)
+							}
+							if(pworld(@player) == @world) {
+								_clear_pinv(@player)
+							}
+						}
+						array_remove(@golf, @player)
 					}
-				} else if(@block == '35:15') {
-					play_sound(@loc, array('sound': 'WOOD_CLICK', 'pitch': 0.5 + @loc['y'] - floor(@loc['y'])))
 				}
+				if(array_size(@golf) == 0) {
+					if(has_bind('golf_ball')) {
+						unbind('golf_ball')
+					}
+					if(array_contains(get_scoreboards(), 'golf')) {
+						remove_scoreboard('golf')
+					}
+					clear_task()
+				}
+			})
 
-				if(@v['z'] == 0) {
-					@v['z'] = 0 - @ball['velocity']['z'] * @bounciness
-				} else if(abs(@ball['velocity']['z'] - @v['z']) < 0.1) {
-					@v['z'] = @ball['velocity']['z'] * @friction
-				}
-				@ball['velocity'] = array('x': @v['x'], 'y': @v['y'], 'z': @v['z'])
-				set_entity_velocity(@ball['id'], @ball['velocity'])
-				if(@ball['type'] >= 2) {
-					play_entity_effect(@ball['id'], 'HURT')
-				}
-			}
-		} else {
-			clear_task()
-		}
-	})
-	
-	set_interval(10000, closure(){
-		foreach(@player: @ball in @minigolf) {
-			if(!ponline(@player)
-			|| !array_contains(sk_current_regions(@player), 'minigolf')) {
-				if(has_bind('minigolf_swing_'.@player)) {
-					unbind('minigolf_swing_'.@player)
-					unbind('minigolf_hit_'.@player)
-					unbind('minigolf_target_'.@player)
+		case 'stop':
+			@golf = import('golf')
+			foreach(@player: @ball in @golf) {
+				if(has_bind('golf_swing_'.@player)) {
+					unbind('golf_swing_'.@player)
+					unbind('golf_hit_'.@player)
+					unbind('golf_target_'.@player)
 				}
 				if(entity_exists(@ball['id'])) {
 					entity_remove(@ball['id'])
@@ -220,52 +260,19 @@ case 'start':
 					if(function_exists('set_collides_with_entities')) {
 						set_collides_with_entities(@player, true)
 					}
-					if(pworld(@player) == @world) {
+					@world = pworld(@player)
+					if(@world == 'dev' || @world == 'custom') {
 						_clear_pinv(@player)
 					}
 				}
-				array_remove(@minigolf, @player)
+				array_remove(@golf, @player)
 			}
-		}
-		if(array_size(@minigolf) == 0) {
-			if(has_bind('minigolf_ball')) {
-				unbind('minigolf_ball')
+			if(has_bind('golf_ball')) {
+				unbind('golf_ball')
 			}
-			if(array_contains(get_scoreboards(), 'minigolf')) {
-				remove_scoreboard('minigolf')
+			if(array_contains(get_scoreboards(), 'golf')) {
+				remove_scoreboard('golf')
 			}
-			clear_task()
-		}
-	})
-
-case 'stop':
-	@minigolf = import('minigolf')
-	foreach(@player: @ball in @minigolf) {
-		if(has_bind('minigolf_swing_'.@player)) {
-			unbind('minigolf_swing_'.@player)
-			unbind('minigolf_hit_'.@player)
-			unbind('minigolf_target_'.@player)
-		}
-		if(entity_exists(@ball['id'])) {
-			entity_remove(@ball['id'])
-		}
-		if(ponline(@player)) {
-			if(function_exists('set_collides_with_entities')) {
-				set_collides_with_entities(@player, true)
-			}
-			@world = pworld(@player)
-			if(@world == 'dev' || @world == 'custom') {
-				_clear_pinv(@player)
-			}
-		}
-		array_remove(@minigolf, @player)
+			msg('Stopped SlimeyGolf')
 	}
-	if(has_bind('minigolf_ball')) {
-		unbind('minigolf_ball')
-	}
-	if(array_contains(get_scoreboards(), 'minigolf')) {
-		remove_scoreboard('minigolf')
-	}
-	msg('Stopped Minigolf')
-}
 <<<
