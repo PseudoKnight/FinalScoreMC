@@ -222,7 +222,7 @@
 		'shops': 'Chest shops allow players to buy and sell different items using currency. (g: gold, d: diamond, i: iron, e: emerald) Right click the SIGN with the currency in hand to BUY. Shop owners can edit shop transaction rates with the "/shop edit <transaction line>" command. Players can search for available items with "/shop list <item>". There\'s a detailed guide on the website.',
 		'website': 'The website is at >>> http://finalscoremc.com <<< There you can find a command reference, guides, videos, live maps, and more.',
 		'live-map': '>>> http://mc.finalscoremc.com:25966 <<< The website has a handy live map that shows the location of players and their homes, among other things.',
-		'staff': 'You can get help from anyone with a blue name. Current staff members are: PseudoKnight, Scottyd_Utah, Nefyoni, asdialed, fredwaffles, Raymond_II, TrulyAnnoying',
+		'staff': 'You can get help from anyone with a blue name. Current staff members are: PseudoKnight, Scottyd_Utah, Nefyoni, fredwaffles, Raymond_II, TrulyAnnoying',
 		'plugins': 'Type "/plugins" for a full list of plugins installed, or check the website for more details.',
 		'permissions': 'We currently have 7 groups: Everyone (new players with minor restrictions), Regulars, Supporters (green names or diamonds), Builders (orange), Engineers (orange), Moderators (blue), and Administrators (blue). New players get bumped up to the Regulars group after some time, as long as they\'re not causing trouble.',
 		'mumble': 'Everyone is welcome to use our voice chat server using Mumble. The server is at mum.finalscoremc.com with port 64758. You can get Mumble at >>> http://mumble.sourceforge.net <<<',
