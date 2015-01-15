@@ -32,7 +32,7 @@ proc _remove_player(@player, @golf) {
 		if(function_exists('set_collides_with_entities')) {
 			set_collides_with_entities(@player, true);
 		}
-		if(pworld(@player) == @golf['course']['world']) {
+		if(pworld(@player) == @golf['course']['loc'][3]) {
 			_clear_pinv(@player);
 		}
 	}
