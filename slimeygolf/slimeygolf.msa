@@ -205,6 +205,31 @@
 									}
 									if(@lastplayer) {
 										set_block_at(@redstoneloc, 0)
+										if(@ball['hole'] == 9) {
+											@loweststrokes = 999
+											@winner = ''
+											foreach(@p in array_keys(@golf)) {
+												if(ponline(@p)) {
+													if(function_exists('set_collides_with_entities')) {
+														set_collides_with_entities(@player, true)
+													}
+													@world = pworld(@player)
+													if(@world == 'dev' || @world == 'custom') {
+														_clear_pinv(@player)
+													}
+													@strokes = get_pscore('strokes', @p, 'golf'.$course)
+													if(@strokes < @loweststrokes) {
+														@winner = @p
+														@loweststrokes = @strokes
+													}
+												}
+											}
+											_regionmsg('slimeygolf_'.$course, @winner' is the winner!')
+											unbind('golf_ball_'.$course)
+											set_timeout(10000, closure(){
+												remove_scoreboard('golf'.$course)
+											})
+										}
 									}
 									entity_remove(@ball['id'])
 									unbind('golf_swing_'.@player)
