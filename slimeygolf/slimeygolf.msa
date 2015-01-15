@@ -1,8 +1,14 @@
 *:/slimeygolf [$action='start'] [$course='basic'] = >>>
 	switch($action) {
 		case 'start':
-			@world = pworld()
-			if(!has_permission('group.builders') || _is_survival_world(@world), die('Nope')) # while debugging
+			if(@cb = get_command_block()) {
+				@world = @cb['world']
+			} else {
+				@world = pworld()
+			}
+			if(_is_survival_world(@world)
+			|| array_contains_ic(get_scoreboards(), 'golf'.$course), die())
+			
 			@golf = array()
 			create_scoreboard('golf'.$course)
 			create_objective('strokes', 'DUMMY', 'golf'.$course)
