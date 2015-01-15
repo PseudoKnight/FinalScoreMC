@@ -16,6 +16,7 @@
 	@rider = pinfo($player, 13)
 	@cart = spawn_entity('minecart', 1, @loc)[0]
 	set_entity_rider(@cart, @rider)
+	if(has_bind($player.'vehicle_leave'), die())
 	bind(vehicle_leave, array(id: $player.'vehicle_leave'), array('vehicletype': 'MINECART', 'passengertype': 'PLAYER'), @e, @player = $player) {
 		if(@e['player'] == @player) {
 			unbind()
