@@ -1,6 +1,7 @@
 *:/slimeygolf = >>>
 	include('basic.library/course.ms');
 	include('basic.library/player.ms');
+	include('basic.library/ball.ms');
 	
 	if(!(@loc = get_command_block())) {
 		@loc = ploc();
@@ -18,13 +19,13 @@
 	}
 	
 	@golf = array(
-		course: array(name: @course, loc: array(0, 0, 0, @loc['world'])), 
+		course: array(name: @course, loc: array(0, 0, 0, @loc['world']), par: 0), 
 		players: array(),
 	);
 	
 	create_scoreboard(@course);
 	create_objective('strokes', 'DUMMY', @course);
-	set_objective_display('strokes', array(displayname: color('a').'STROKES', slot: 'SIDEBAR'), @course);
+	set_objective_display('strokes', array(displayname: color('a').'STROKES (PAR: 0)', slot: 'SIDEBAR'), @course);
 	
 	foreach(@player in all_players(@loc['world'])) {
 		if(array_contains(sk_current_regions(@player), @course)
@@ -55,39 +56,26 @@
 			set_pinv(player(), array('null': null));
 			set_pexp(player(), 0);
 			
-			if(entity_exists(@ball['id'])) {
-				entity_remove(@ball['id']);
+			if(_ball_exists(@ball['id'])) {
+				_remove_ball(@ball['id']);
 				unbind('golf_swing_'.player());
 				unbind('golf_hit_'.player());
 			} else {
 				set_plevel(player(), 0);
 			}
-		
+			
 			@loc = _relative(@event['location'], 'up');
 			if(@ball['type'] == 0 || @ball['type'] == 2) {
-				@mobspawn = 'SLIME';
+				@mobtype = 'SLIME';
 				@mobcheck = 'SLIME';
 			} else {
-				@mobspawn = 'MAGMACUBE';
+				@mobtype = 'MAGMACUBE';
 				@mobcheck = 'MAGMA_CUBE';
 			}
 			@loc['x'] += 0.5;
 			@loc['z'] += 0.5;
-			@ball['id'] = spawn_mob(@mobspawn.':1', 1, @loc)[0];
-			@ball['velocity'] = array(x: 0, y: 0, z: 0);
 			
-			set_entity_velocity(@ball['id'], array(0, 0, 0))
-			set_timeout(50, closure(){
-				set_mob_effect(@ball['id'], 11, 4, 99999, true)
-				set_mob_effect(@ball['id'], 1, -6, 99999, true)
-				if(@mobspawn == 'SLIME') {
-					set_mob_effect(@ball['id'], 8, -4, 99999, true)
-					set_mob_effect(@ball['id'], 2, 2, 99999, true)
-				} else {
-					set_mob_effect(@ball['id'], 8, -5, 99999, true)
-					set_mob_effect(@ball['id'], 2, 3, 99999, true)
-				}
-			})
+			_place_ball(@mobtype, @loc, @ball);
 			
 			@lowesthole = 10;
 			foreach(@player in @golf['players']) {
@@ -105,7 +93,13 @@
 			}
 			
 			# par for this hole
-			@golf['course'][@player['hole']] = split(':', get_block_at(_relative(@event['location'], 'down', 1)))[1];
+			if(!array_index_exists(@golf['course'], @ball['hole'])) {
+				@par = split(':', get_block_at(_relative(@event['location'], 'down', 1)))[1];
+				@golf['course'][@ball['hole']] = @par;
+				@golf['course']['par'] += @par;
+				set_objective_display('strokes', array(displayname: color(10).'STROKES (PAR: '.@golf['course']['par'].')',
+					slot: 'SIDEBAR'), @golf['course']['name']);
+			}
 			
 			bind(player_interact_entity, array(id: 'golf_swing_'.player()), array(clicked: @mobcheck), @event, 
 			@player = player(), @golf = @golf) {
@@ -128,7 +122,7 @@
 				}
 			}
 			
-			bind(entity_damage, array(id: 'golf_hit_'.player()), array(id: @golf['players'][player()]['id'], type: @mobcheck, cause: 'ENTITY_ATTACK'), @event, 
+			bind(entity_damage, array(id: 'golf_hit_'.player()), array(id: @ball['id'], cause: 'ENTITY_ATTACK'), @event, 
 			@golf = @golf) {
 				@xp = pexp(@event['damager']);
 				@player = @event['damager'];
@@ -137,9 +131,10 @@
 				&& @ball['id'] == @event['id']) {
 					@ball['swing'] = false;
 					@xp -= 10;
-					set_pexp(@event['damager'], @xp);
-					set_plevel(@event['damager'], plevel(@event['damager']) + 1);
-					set_pscore('strokes', @player, get_pscore('strokes', @player, @golf['course']['name']) + 1, @golf['course']['name']);
+					set_pexp(@player, @xp);
+					set_plevel(@player, plevel(@player) + 1);
+					set_pscore('strokes', @player, get_pscore('strokes', @player, @golf['course']['name']) + 1, 
+						@golf['course']['name']);
 					set_timeout(50, closure(){
 						@v = entity_velocity(@event['id']);
 						@v['x'] = @v['x'] * (3 * (@xp / 100));
@@ -176,8 +171,8 @@
 	
 	set_interval(50, closure(){
 		foreach(@player: @ball in @golf['players']) {
-			if(@ball['id']
-			&& entity_exists(@ball['id'])) {
+			if(_ball_exists(@ball['id'])) {
+				@setvelocity = true;
 				@v = entity_velocity(@ball['id']);
 				@loc = entity_loc(@ball['id']);
 				@loc['y'] -= 1;
@@ -197,12 +192,12 @@
 							@par = @golf['course'][@ball['hole']];
 							if(@hits == @par - 1) {
 								# BIRDIE
-								launch_firework(entity_loc(@ball['id']), 
+								launch_firework(@loc, 
 									array(strength: 0, trail: true, type: 'BURST'));
 								play_sound(ploc(@player), array(sound: 'VILLAGER_YES'));
 							} else if(@hits <= @par - 2) {
 								# EAGLE
-								launch_firework(entity_loc(@ball['id']), 
+								launch_firework(@loc, 
 									array(strength: 0, trail: true, type: 'BALL_LARGE'));
 								play_sound(ploc(@player), array(sound: 'VILLAGER_YES'));
 							} else if(@hits > @par) {
@@ -210,15 +205,15 @@
 							}
 						
 							# clean up the hole for this player
-							entity_remove(@ball['id']);
+							_remove_ball(@ball['id']);
 							unbind('golf_swing_'.@player);
 							unbind('golf_hit_'.@player);
 							
 							# check if last player to leave hole
 							@lastplayer = true;
 							foreach(@p: @b in @golf['players']) {
-								if(@p == @player, continue());
-								if(@b['hole'] <= @ball['hole']) {
+								if(@p != @player
+								&& @b['hole'] <= @ball['hole']) {
 									@lastplayer = false;
 									break();
 								}
@@ -227,37 +222,47 @@
 								set_block_at(@golf['course']['loc'], 0);
 								# check if last hole
 								if(@ball['hole'] == 9) {
-									@loweststrokes = 999;
-									@winner = '';
-									foreach(@p in array_keys(@golf['players'])) {
-										if(ponline(@p)) {
-											if(function_exists('set_collides_with_entities')) {
-												set_collides_with_entities(@player, true);
-											}
-											@world = pworld(@player);
-											if(@world == 'dev' || @world == 'custom') {
-												_clear_pinv(@player);
-											}
-											@strokes = get_pscore('strokes', @p, @course);
-											if(@strokes < @loweststrokes) {
-												@winner = @p;
-												@loweststrokes = @strokes;
-											}
+									@end = true;
+									foreach(@p: @b in @golf['players']) {
+										if(@b['hole'] <= 9 && @p != @player) {
+											@end = false;
+											break();
 										}
 									}
-									_regionmsg(@course, _colorname(@winner).@winner.color('r').' is the winner!');
-									unbind(@course);
-									unbind(@course.'_target')
-									set_timeout(10000, closure(){
-										remove_scoreboard(@course);
-									})
+									if(@end) {
+										@loweststrokes = 999;
+										@winner = '';
+										foreach(@p: @b in @golf['players']) {
+											if(ponline(@p)) {
+												if(function_exists('set_collides_with_entities')) {
+													set_collides_with_entities(@p, true);
+												}
+												@world = pworld(@p);
+												if(@world == 'dev' || @world == 'custom') {
+													_clear_pinv(@p);
+												}
+												@strokes = get_pscore('strokes', @p, @course);
+												if(@strokes < @loweststrokes) {
+													@winner = @p;
+													@loweststrokes = @strokes;
+												}
+											}
+										}
+										
+										_regionmsg(@course, _colorname(@winner).@winner.color('r').' is the winner!');
+										unbind(@course);
+										unbind(@course.'_target')
+										set_timeout(10000, closure(){
+											remove_scoreboard(@course);
+										})
+									}
 								}
 							}
 							
 							# prepare player for next hole
-							@ball['id'] = 0;
 							@ball['hole'] += 1;
-							continue();
+							@ball['id'] = 0;
+							@setvelocity = false;
 						}
 						@v['y'] = 0;
 					} else if(@v['y'] > 0) {
@@ -269,16 +274,18 @@
 				} else if(@block == '35:15') {
 					play_sound(@loc, array('sound': 'WOOD_CLICK', 'pitch': 0.5 + @loc['y'] - floor(@loc['y'])));
 				}
-
-				if(@v['z'] == 0) {
-					@v['z'] = 0 - @ball['velocity']['z'] * @bounciness;
-				} else if(abs(@ball['velocity']['z'] - @v['z']) < 0.1) {
-					@v['z'] = @ball['velocity']['z'] * @friction;
-				}
-				@ball['velocity'] = array('x': @v['x'], 'y': @v['y'], 'z': @v['z']);
-				set_entity_velocity(@ball['id'], @ball['velocity']);
-				if(@ball['type'] >= 2) {
-					play_entity_effect(@ball['id'], 'HURT');
+				
+				if(@setvelocity) {
+					if(@v['z'] == 0) {
+						@v['z'] = 0 - @ball['velocity']['z'] * @bounciness;
+					} else if(abs(@ball['velocity']['z'] - @v['z']) < 0.1) {
+						@v['z'] = @ball['velocity']['z'] * @friction;
+					}
+					@ball['velocity'] = array('x': @v['x'], 'y': @v['y'], 'z': @v['z']);
+					set_entity_velocity(@ball['id'], @ball['velocity']);
+					if(@ball['type'] >= 2) {
+						play_entity_effect(@ball['id'], 'HURT');
+					}
 				}
 			}
 		} else {
@@ -291,6 +298,7 @@
 			if(!ponline(@player)
 			|| !array_contains(sk_current_regions(@player), @course)) {
 				_remove_player(@player, @golf);
+				_remove_ball(@ball['id']);
 			}
 		}
 		if(array_size(@golf['players']) == 0) {
