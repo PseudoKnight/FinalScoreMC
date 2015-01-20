@@ -22,29 +22,17 @@ bind(player_interact_at_entity, null, array('clicked': 'ARMOR_STAND'), @event) {
 	if(_is_survival_world(entity_loc(@event['id'])['world']) 
 	&& !sk_can_build(entity_loc(@event['id']))) {
 		cancel();
+		die();
 	}
 	
 	# If right-click with sticks, add arms
 	@item = pinv(player(), null);
 	@armorstand = entity_spec(@event['id']);
-	if(!is_null(@item) && @item['type'] == 280 && @item['qty'] >= 2 
-	&& !@armorstand['arms']) {
-		set_entity_spec(@event['id'], array('arms': true));
-		@item['qty'] -= 2;
-		set_pinv(player(), array('null': if(@item['qty'] > 0, @item, null)));
-		cancel();
+	if(is_null(@item)) {
+		if(!@armorstand['visible']) {
+			die();
+		}
 		
-	} else if(!is_null(@item) && @item['type'] == 288 && pworld() == 'dev') {
-		msg('Toggled gravity for armor stand.');
-		set_entity_spec(@event['id'], array('gravity': if(@armorstand['gravity'], false, true)));
-		cancel();
-	
-	} else if(!is_null(@item) && @item['type'] == 44 && pworld() == 'dev') {
-		msg('Toggled baseplate for armor stand.');
-		set_entity_spec(@event['id'], array('baseplate': if(@armorstand['baseplate'], false, true)));
-		cancel();
-	
-	} else if(is_null(@item) && @armorstand['visible']) {
 		# Check if armor stand is empty
 		@equipment = get_mob_equipment(@event['id']);
 		foreach(@piece in @equipment) {
@@ -82,7 +70,7 @@ bind(player_interact_at_entity, null, array('clicked': 'ARMOR_STAND'), @event) {
 			
 			# Start posing
 			if(@poseable == 'armorstand') {
-				msg('Rotating Armor Stand.');
+				msg(color(6).'Rotating Armor Stand.');
 				
 				@dir = pfacing();
 				@eloc = entity_loc(@event['id']);
@@ -101,7 +89,7 @@ bind(player_interact_at_entity, null, array('clicked': 'ARMOR_STAND'), @event) {
 				});
 				
 			} else {
-				msg('Posing '.@poseable.'.');
+				msg(color(6).'Posing '.@poseable.'.');
 				
 				@dir = pfacing();
 				@poseable = 'pose'.@poseable;
@@ -125,13 +113,53 @@ bind(player_interact_at_entity, null, array('clicked': 'ARMOR_STAND'), @event) {
 		
 		# If not sneaking, move armor stand.
 		} else {
-			msg('Moving Armor Stand. Sneak to drop.');
+			msg(color(6).'Moving Armor Stand. Sneak to drop.');
 			set_entity_rider(pinfo(player(), 13), @event['id']);
 			
 			bind(player_toggle_sneak, null, array('player': player()), @event) {
 				set_entity_rider(pinfo(player(), 13), null);
 				unbind();
 			}
+		}
+		
+	} else {
+		switch(@item['type']) {
+			case 44:
+				if(pworld() == 'dev') {
+					msg(color(6).'Toggled baseplate for armor stand.');
+					set_entity_spec(@event['id'], array('baseplate': if(@armorstand['baseplate'], false, true)));
+					cancel();
+				}
+				
+			case 280:
+				if(@item['qty'] >= 2 && !@armorstand['arms']) {
+					set_entity_spec(@event['id'], array('arms': true));
+					@item['qty'] -= 2;
+					set_pinv(player(), array('null': if(@item['qty'] > 0, @item, null)));
+					cancel();
+				}
+			
+			case 288:
+				if(pworld() == 'dev') {
+					msg(color(6).'Toggled gravity for armor stand.');
+					set_entity_spec(@event['id'], array('gravity': if(@armorstand['gravity'], false, true)));
+					cancel();
+				}
+				
+			case 375:
+				if(pworld() == 'dev') {
+					msg(color(6).'Toggled visibility for armor stand.');
+					set_entity_spec(@event['id'], array('visible': if(@armorstand['visible'], false, true)));
+					cancel();
+				}
+			
+			case 416:
+				if(pworld() == 'dev') {
+					msg(color(6).'Toggled size for armor stand.');
+					set_entity_spec(@event['id'], array('small': if(@armorstand['small'], false, true)));
+					cancel();
+				}
+			
 		}
 	}
 }
