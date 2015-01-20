@@ -73,6 +73,7 @@ proc _cluck_spawn() {
 		queue_push(closure(){
 			# Let's check if some player is in the way
 			foreach(@player in all_players('custom')) {
+				if(!ponline(@player), continue())
 				if(array_contains(sk_current_regions(@player), 'cluckdeny')
 				&& !array_contains(@cluck['player'], @player)) {
 					@loc = get_spawn()

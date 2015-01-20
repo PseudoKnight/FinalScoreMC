@@ -52,6 +52,7 @@
 		queue_clear('fw2')
 		queue_clear('fw3')
 		foreach(@p in all_players('custom')) {
+			if(!ponline(@p), continue())
 			if(get_pscoreboard(@p) == 'fw') {
 				set_pscoreboard(@p)
 			}

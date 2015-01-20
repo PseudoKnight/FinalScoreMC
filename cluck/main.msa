@@ -39,6 +39,7 @@ case 'startround':
 	if(!@cluck['player'][0] && !@cluck['player'][1]) {
 		@cluck = _cluck_defaults()
 		foreach(@p in all_players('custom')) {
+			if(!ponline(@p), continue())
 			@regions = sk_current_regions(@p)
 			if(array_contains(@regions, 'cluck0')) {
 				@cluck['player'][0] = @p

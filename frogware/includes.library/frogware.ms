@@ -127,6 +127,7 @@ proc _fw_loc(@height = 0, @minrange = false) {
 	)
 	if(@minrange) {
 		foreach(@p in all_players('custom')) {
+			if(!ponline(@p), continue())
 			if(get_pscoreboard(@p) == 'fw'
 			&& _2d_distance(ploc(@p), @loc) < 6) {
 				@return = 0
@@ -171,6 +172,7 @@ proc _fw_player(@player) {
 proc _fw_totalplayers() {
 	@count = 0
 	foreach(@p in all_players('custom')) {
+		if(!ponline(@p), continue())
 		if(get_pscoreboard(@p) == 'fw') {
 			@count++
 		}

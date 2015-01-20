@@ -3,7 +3,9 @@ proc _set_spectator(@id, @player, @pvp) {
 		@pvp['spectators'][] = @player
 		set_collides_with_entities(@player, false)
 		foreach(@p in all_players('custom')) {
-			raw_set_pvanish(@player, true, @p)
+			if(ponline(@p)) {
+				raw_set_pvanish(@player, true, @p)
+			}
 		}
 		set_pflight(@player, true)
 		@spawn = false
@@ -35,7 +37,9 @@ proc _set_spectator(@id, @player, @pvp) {
 				}
 				queue_push(closure(){
 					foreach(@p in all_players('custom')) {
-						raw_set_pvanish(player(), true, @p)
+						if(ponline(@p)) {
+							raw_set_pvanish(player(), true, @p)
+						}
 					}
 					set_pflight(player(), true)
 					set_peffect(player(), 14, 0, 9999, true)

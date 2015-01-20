@@ -28,7 +28,7 @@
 	set_objective_display('strokes', array(displayname: color('a').'STROKES (PAR: 0)', slot: 'SIDEBAR'), @course);
 	
 	foreach(@player in all_players(@loc['world'])) {
-		if(array_contains(sk_current_regions(@player), @course)
+		if(ponline(@player) && array_contains(sk_current_regions(@player), @course)
 		&& _add_player(@player, @golf)
 		&& array_size(@golf['players']) >= 4) {
 			break();

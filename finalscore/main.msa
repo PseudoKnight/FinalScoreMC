@@ -303,6 +303,7 @@
 		@message = color('a').'[Dice] '._colorname(player()).player().color('f').' rolled a '.color('a').(rand($sides) + 1).' on a '.$sides.'-sided die.'
 	}
 	foreach(@p in all_players(pworld())) {
+		if(!ponline(@p), continue())
 		tmsg(@p, @message)
 	}
 <<<

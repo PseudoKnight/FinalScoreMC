@@ -266,7 +266,7 @@
 	
 				foreach(all_players('custom'), @player,
 					if(array_index_exists(@currentspleef, @player), continue())
-					if(pworld(@player) == @world && array_contains(sk_current_regions(@player), @cfg['region']['arena'])) {
+					if(ponline(@player) && array_contains(sk_current_regions(@player), @cfg['region']['arena'])) {
 						set_ploc(@player, @cfg['warp']['lobby'])
 						msg(color('a').'[Spleef] '.color('r').'Please do not interfere with a spleef match in progress.')
 					}
