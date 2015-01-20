@@ -103,46 +103,49 @@
 /butcher [$] = call_alias('/remove '.$)
 /remove [$] = >>>
 	if(!$) {
-		msg('Usage: /remove [radius] [entityType] [-n]')
-		msg('This will preserve named mobs, except when given the -n flag.')
-		msg('entityType groups: living, hostile')
+		msg('Usage: /remove [radius] [entityType] [-n]');
+		msg('This will preserve named mobs, except when given the -n flag.');
+		msg('entityType groups: living, hostile');
 	}
-	@removenamed = false
-	@type = array(WITHER, BAT, WITCH, CREEPER, SKELETON, SPIDER, GIANT, ZOMBIE, SLIME, GHAST, PIG_ZOMBIE, ENDERMAN, CAVE_SPIDER, SILVERFISH, BLAZE, MAGMA_CUBE, ENDER_DRAGON, PIG, SHEEP, COW, CHICKEN, SQUID, WOLF, MUSHROOM_COW, SNOWMAN, OCELOT, IRON_GOLEM, VILLAGER, HORSE)
-	@radius = 64
-	@loc = get_command_block()
+	@removenamed = false;
+	@type = array(WITHER, WITCH, CREEPER, SKELETON, SPIDER, GIANT, ZOMBIE, SLIME, GHAST, PIG_ZOMBIE, ENDERMAN, 
+		CAVE_SPIDER, SILVERFISH, BLAZE, MAGMA_CUBE, ENDER_DRAGON, GUARDIAN, ENDERMITE);
+	@radius = 64;
+	@loc = get_command_block();
 	if(is_null(@loc)) {
-		@loc = ploc()
+		@loc = ploc();
 	}
 	
 	foreach(@arg in parse_args($)) {
 		if(is_numeric(@arg)) {
-			@radius = min(@arg, 128)
+			@radius = min(@arg, 128);
 		} else if(@arg == '-n') {
-			@removenamed = true
+			@removenamed = true;
 		} else {
 			switch(@arg) {
 				case 'living':
-					continue()
+					@type = array(WITHER, BAT, WITCH, CREEPER, SKELETON, SPIDER, GIANT, ZOMBIE, SLIME, GHAST, PIG_ZOMBIE, 
+					ENDERMAN, CAVE_SPIDER, SILVERFISH, BLAZE, MAGMA_CUBE, ENDER_DRAGON, PIG, SHEEP, COW, CHICKEN, SQUID, 
+					WOLF, MUSHROOM_COW, SNOWMAN, OCELOT, IRON_GOLEM, VILLAGER, HORSE, RABBIT, GUARDIAN, ENDERMITE);
 				case 'hostile':
-					@type = array(WITHER, WITCH, CREEPER, SKELETON, SPIDER, GIANT, ZOMBIE, SLIME, GHAST, PIG_ZOMBIE, ENDERMAN, CAVE_SPIDER, SILVERFISH, BLAZE, MAGMA_CUBE, ENDER_DRAGON)
+					continue();
 				case 'hologram':
-					@type = array(ARMOR_STAND)
-					@removenamed = true
+					@type = ARMOR_STAND;
+					@removenamed = true;
 				default:
-					@type = @arg
+					@type = @arg;
 			}
 		}
 	}
-	@entities = entities_in_radius(@loc, @radius, @type)
-	@count = 0
+	@entities = entities_in_radius(@loc, @radius, @type);
+	@count = 0;
 	foreach(@e in @entities) {
 		if(@removenamed || !is_entity_living(@e) || !get_mob_name(@e)) {
-			entity_remove(@e)
-			@count++
+			entity_remove(@e);
+			@count++;
 		}
 	}
-	msg('Removed '.@count.' of '.array_size(@entities).' in a '.@radius.' radius.')
+	msg('Removed '.@count.' of '.array_size(@entities).' in a '.@radius.' radius.');
 <<<
 
 *:/ban [$player] [$] = >>>
