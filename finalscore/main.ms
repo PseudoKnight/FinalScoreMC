@@ -373,11 +373,6 @@ bind(player_interact_entity, null, array('clicked': 'HORSE'), @event) {
 
 # don't allow most horse damage unless being rode
 bind(entity_damage, null, array(type: 'HORSE'), @event) {
-	if(get_mob_age(@event[id]) < -24000) {
-		cancel();
-		die();
-	}
-	
 	@world = entity_loc(@event[id])[world];
 	if(!_is_survival_world(@world)) {
 		die();
