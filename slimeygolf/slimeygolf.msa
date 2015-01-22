@@ -265,8 +265,10 @@
 										unbind(@course);
 										unbind(@course.'_target')
 										set_timeout(10000, closure(){
-											remove_scoreboard(@course);
-										})
+											if(array_contains(get_scoreboards(), @course)) {
+												remove_scoreboard(@course);
+											}
+										});
 									}
 								}
 							}
@@ -334,11 +336,13 @@
 					if(array_contains(get_scoreboards(), @course)) {
 						remove_scoreboard(@course);
 					}
+					clear_task();
+					break();
 				}
 			}
 			
 		} else {
 			clear_task();
 		}
-	})
+	});
 <<<
