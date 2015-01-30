@@ -21,6 +21,8 @@ bind(player_login, null, null, @event) {
 			'joined': simple_date('YYYY-MM-dd'),
 		)
 	}
+	
+	# Check if player is banned.
 	if(array_index_exists(@pdata, 'ban')) {
 		if(!array_index_exists(@pdata['ban'], 'time') || @pdata['ban']['time'] > time()) {
 			modify_event('result', 'KICK_BANNED')
@@ -36,7 +38,15 @@ bind(player_login, null, null, @event) {
 			@update = true
 		}
 	}
+	
+	# Online mode
 	if(get_server_info(10)) {
+		if(@event['uuid'] != @pdata['uuid']) {
+			modify_event('result', 'KICK_OTHER')
+			modify_event('kickmsg', 'Another player already claimed this name on this server.')
+			die()
+		}
+		
 		if(!array_index_exists(@pdata, 'ips'), @pdata['ips'] = array())
 		if(!array_contains(@pdata['ips'], @event['ip'])) {
 			@pdata['ips'][] = @event['ip']
@@ -46,6 +56,7 @@ bind(player_login, null, null, @event) {
 			@update = true
 		}
 
+	# Offline mode
 	} else {
 		if(!array_contains(@pdata['ips'], @event['ip'])) {
 			console(@event['player'].': '.@event['ip'].', '.@pdata['ips'])
@@ -53,6 +64,7 @@ bind(player_login, null, null, @event) {
 			modify_event('kickmsg', 'Minecraft auth servers are down and your IP doesn\'t match our records.')
 		}
 	}
+	
 	if(@update) {
 		store_value('players', to_lower(@event['player']), @pdata)
 	}
