@@ -339,8 +339,8 @@
 	if(!sk_region_exists(pworld(), $from)) {
 		die('That region doesn\'t exist.')
 	}
-	if(!has_permission('group.moderators') && !array_contains_ic(sk_region_owners($from, pworld()), player())) {
-		die('You do not own this region.')
+	if(!has_permission('group.moderators')) {# && !array_contains_ic(sk_region_owners($from, pworld()), player())) {
+		die('No permission.')
 	}
 	if(!reg_match('^[a-zA-Z0-9-_]{1,32}$', $to)[0]) {
 		die('You can only use alphanumeric characters and underscores/dashes.')
