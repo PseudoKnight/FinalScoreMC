@@ -372,7 +372,7 @@ bind(player_interact_entity, null, array('clicked': 'HORSE'), @event) {
 }
 
 # don't allow most horse damage unless being rode
-bind(entity_damage, null, array(type: 'HORSE'), @event) {
+bind(entity_damage, null, array(type: 'HORSE', cause: '/^(?!VOID|SUFFOCATION|DROWNING)/'), @event) {
 	@world = entity_loc(@event[id])[world];
 	if(!_is_survival_world(@world)) {
 		die();
@@ -384,11 +384,6 @@ bind(entity_damage, null, array(type: 'HORSE'), @event) {
 	}
 	
 	switch(@event[cause]) {
-		case 'VOID':
-		case 'SUFFOCATION':
-		case 'DROWNING':
-			break();
-			
 		case 'ENTITY_ATTACK':
 			@isplayer = ponline(@event[damager]);
 
@@ -496,13 +491,15 @@ bind(player_interact_entity, null, array('clicked': 'VILLAGER'), @event) {
 }
 
 # Prevent undesireable interdimensional travel
-bind(entity_enter_portal, null, null, @event) {
-	if(@event['type'] != 'PLAYER'
-	&& !_is_survival_world(@event['location']['world'])) {
-		entity_remove(@event['id'])
-	} else if(@event['type'] == 'ENDER_DRAGON' 
-	&& (@event['location']['world'] == 'outworld' || @event['location']['world'] == 'outworld_nether')) {
-		cancel()
+bind(entity_enter_portal, null, array(type: 'ENDER_DRAGON'), @event) {
+	if(@event['location']['world'] == 'outworld') {
+		cancel();
+	}
+}
+
+bind(entity_enter_portal, null, array(type: '/^(?!PLAYER)/'), @event) {
+	if(!_is_survival_world(@event['location']['world'])) {
+		entity_remove(@event['id']);
 	}
 }
 
