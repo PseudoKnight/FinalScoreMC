@@ -428,7 +428,8 @@ if(array_contains(@pvp['arena']['flags'], 'stackedpickup')) {
 	array_push(@pvp['binds'], @id.'stackedpickup')
 	bind(item_pickup, array('id': @id.'stackedpickup', 'priority': 'LOW'), null, @e, @id = @id) { 
 		@pvp = import('pvp'.@id)
-		if(!array_index_exists(@pvp['players'], player()), 
+		if(!array_index_exists(@pvp['players'], player())
+		|| max_stack_size(@e['item']) != 1, 
 			die())
 			
 		foreach(@slot: @item in pinv()) {
