@@ -244,14 +244,10 @@ if(array_index_exists(@pvp['arena'], 'chestspawn')) {
 		if(!array_index_exists(@pvp['players'], player()), 
 			die())
 
-		@chestloc = array(
-			integer(@e['location'][0]), 
-			integer(@e['location'][1]), 
-			integer(@e['location'][2]), 
-			@e['location'][3]
-		)
 		for(@i = 0, @i < array_size(@pvp['arena']['chestspawn']), @i++) {
-			if(@pvp['arena']['chestspawn'][@i]['loc'] == @chestloc
+			if(@pvp['arena']['chestspawn'][@i]['loc'][0] == @e['location'][0]
+			&& @pvp['arena']['chestspawn'][@i]['loc'][1] == @e['location'][1]
+			&& @pvp['arena']['chestspawn'][@i]['loc'][2] == @e['location'][2]
 			&& array_index_exists(@pvp['arena']['chestspawn'][@i], 'cooldown')) {
 				cancel()
 				set_block_at(@e['location'], 0)
