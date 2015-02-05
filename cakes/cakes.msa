@@ -30,6 +30,7 @@
 		msg(color('green').color('l').'Secret Cakes '.color('green').'('.@count['secret'].'/'.@total['secret'].') '.color('r').@names['secret'])
 
 	case 'info':
+		@id = '';
 		if(!$) {
 			@cakes = get_value('cakes')
 			@cursorloc = pcursor()
