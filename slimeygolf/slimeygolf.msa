@@ -131,6 +131,10 @@
 			
 			bind(entity_damage, array(id: 'golf_hit_'.player()), array(id: @ball['id'], cause: 'ENTITY_ATTACK'), @event, 
 			@golf = @golf) {
+				if(!array_index_exists(@golf['players'], @player)) {
+					cancel()
+					die()
+				}
 				@xp = pexp(@event['damager']);
 				@player = @event['damager'];
 				@ball = @golf['players'][@player];
