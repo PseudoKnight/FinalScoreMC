@@ -381,3 +381,25 @@ proc _is_safe_location(@loc) {
 	}
 	return(true);
 }
+
+
+/**
+ * Retrieves a player's mojang UUID from the mojang api, and returns the results
+ * as an array that corresponds to the input array of player names.
+ * @param players An array of players that will be checked.
+ * @param closure The callback closure, which will be called once the
+ * request finishes. It will be sent the array of returned values.
+ */
+proc('_player_uuid', @players, @closure) {
+    @success = closure(@response){
+        @array = json_decode(@response['body']);
+        execute(@array, @closure);
+    };
+    @options = array(
+        'method': 'POST',
+        'headers': array('Content-Type': 'application/json'),
+        'params': json_encode(@players),
+        'success': @success,
+    );
+    http_request('https://api.mojang.com/profiles/minecraft', @options);
+}
