@@ -491,7 +491,7 @@ proc _pvp_end_match(@id, @winners) {
 		# }
 		
 		remove_scoreboard(@id)
-		@pvp = array('players': array(), 'running': 0, 'cooldown': time())
+		@pvp = array('players': array(), 'running': 0)
 		export('pvp'.@id, @pvp)
 		export('currently', null)
 
