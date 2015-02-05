@@ -116,7 +116,7 @@ proc _pvp_start_match(@id) {
 			@percentage = round((@totalsecsleft / (@pvp['arena']['timer'][1] * 60)) * 100)
 		}
 
-		foreach(array_keys(@pvp['players']), @player) {
+		foreach(@player in array_keys(@pvp['players'])) {
 			if(pinfo(@player, 5) <= 0, continue())
 			# if(array_index_exists(@pvp['arena'], 'timer')) {
 				# if(function_exists('premove_bar')) {
@@ -151,18 +151,21 @@ proc _pvp_start_match(@id) {
 							play_sound(ploc(@player), array('sound': 'GHAST_FIREBALL'))
 							make_effect(_relative(ploc(@player), 'up'), 'MOBSPAWNER_FLAMES')
 							_pvp_equip(@id, @player)
+							@pvp['players'][@player]['respawn'] = 0
+							close_pinv(@player)
 						}
-					} else if(array_index_exists(@pvp['players'], 'team')) {
-						@r = rand(0, array_size(@pvp['arena']['spawn'][@pvp['players'][player()]['team']]))
-						set_ploc(@player, @pvp['arena']['spawn'][@pvp['players'][@player]['team']][@r])
-						_pvp_equip(@id, @player)
 					} else {
-						@r = rand(0, array_size(@pvp['arena']['spawn'][0]))
-						set_ploc(@player, @pvp['arena']['spawn'][0][@r])
+						if(array_index_exists(@pvp['players'], 'team')) {
+							@r = rand(0, array_size(@pvp['arena']['spawn'][@pvp['players'][player()]['team']]))
+							set_ploc(@player, @pvp['arena']['spawn'][@pvp['players'][@player]['team']][@r])
+						} else {
+							@r = rand(0, array_size(@pvp['arena']['spawn'][0]))
+							set_ploc(@player, @pvp['arena']['spawn'][0][@r])
+						}
 						_pvp_equip(@id, @player)
+						@pvp['players'][@player]['respawn'] = 0
+						close_pinv(@player)
 					}
-					@pvp['players'][@player]['respawn'] = 0
-					close_pinv(@player)
 				}
 			} else if(!array_contains(sk_current_regions(@player), @pvp['arena']['region'])) {
 				tmsg(@player, color('gray').'[PVP] '.color('r').'You exited the combat region.')

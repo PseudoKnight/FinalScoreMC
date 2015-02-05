@@ -106,8 +106,10 @@ bind(player_death, array('priority': 'high', 'id': @id.'death'), null, @e, @id =
 			@pvp['team'][@pvp['players'][player()]['team']]['captain'] = ''
 			_class('unload', player(), @pvp['players'][player()]['class'], @pvp)
 			foreach(@classname: @class in @pvp['arena']['classes']) {
-				if(!array_index_exists(@class, 'team') || @class['team'] == @pvp['players'][player()]['team']) {
+				if(@classname != @pvp['players'][player()]['class']
+				&& (!array_index_exists(@class, 'team') || @class['team'] == @pvp['players'][player()]['team'])) {
 					@pvp['players'][player()]['class'] = @classname
+					break()
 				}
 			}
 			_class('load', player(), @pvp['players'][player()]['class'], @pvp)
@@ -217,7 +219,7 @@ bind(player_spawn, array('id': @id.'spawn'), null, @e, @id = @id) {
 
 	if(array_index_exists(@pvp['arena'], 'respawntime')) {
 		queue_push(closure(){
-			msg(color('gray').'[PVP] '.color('r').'You will respawn in at least '
+			msg(color('gray').'[PVP] '.color('r').'You will respawn in '
 				.round((@pvp['players'][player()]['respawn'] - time()) / 1000).' seconds.')
 		})
 	} else if(array_index_exists(@pvp, 'team')) {
