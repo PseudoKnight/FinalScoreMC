@@ -46,7 +46,7 @@
 			
 		} else if(@pvp['running'] > 1) {
 			if(array_index_exists(@pvp['arena'], 'resourcepack')) {
-				send_resourcepack(@p, 'http://mc.finalscoremc.com:25966/resourcepacks/'.@pvp['arena']['resourcepack'].'.zip')
+				send_resourcepack(player(), 'http://mc.finalscoremc.com:25966/resourcepacks/'.@pvp['arena']['resourcepack'].'.zip')
 			}
 			if(array_index_exists(@pvp['arena'], 'team')) {
 				_assign_team(player(), @pvp)
@@ -84,6 +84,9 @@
 		if(array_contains(get_scoreboards(), @id)) {
 			set_pscoreboard(player(), @id)
 			@pvp = import('pvp'.@id)
+			if(array_index_exists(@pvp['arena'], 'resourcepack')) {
+				send_resourcepack(player(), 'http://mc.finalscoremc.com:25966/resourcepacks/'.@pvp['arena']['resourcepack'].'.zip')
+			}
 			_set_spectator(@id, player(), @pvp)
 		} else {
 			msg('The arena isn\'t running.')

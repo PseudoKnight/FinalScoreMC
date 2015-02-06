@@ -305,6 +305,9 @@ bind(player_command, array('id': @id.'command'), null, @e, @id = @id) {
 			# premove_bar()
 		# }
 	# }
+	if(array_index_exists(@pvp['arena'], 'resourcepack')) {
+		send_resourcepack(player(), 'http://mc.finalscoremc.com:25966/resourcepacks/default.zip')
+	}
 	array_remove(@pvp['players'], player())
 	if(array_index_exists(@pvp['arena'], 'lives') && @pvp['arena']['lives'] > 1) {
 		set_pscore('lives', player(), 0, @id)

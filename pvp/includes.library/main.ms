@@ -140,6 +140,9 @@ proc _pvp_start_match(@id) {
 							# premove_bar(@player)
 						# }
 					# }
+					if(array_index_exists(@pvp['arena'], 'resourcepack')) {
+						send_resourcepack(@player, 'http://mc.finalscoremc.com:25966/resourcepacks/default.zip')
+					}
 					array_remove(@pvp['players'], @player)
 					_clear_pinv(@player)
 					_clear_peffects(@player)
@@ -452,6 +455,9 @@ proc _pvp_end_match(@id, @winners) {
 				}
 				if(ponline(@player) && pinfo(@player, 5) > 0) {
 					close_pinv(@player)
+					if(array_index_exists(@pvp['arena'], 'resourcepack')) {
+						send_resourcepack(@player, 'http://mc.finalscoremc.com:25966/resourcepacks/default.zip')
+					}
 					set_ploc(@player, @pvp['arena']['lobby'])
 					_clear_pinv(@player)
 					_clear_peffects(@player)

@@ -56,7 +56,7 @@ proc _remove_spectator(@id, @player, @pvp) {
 		if(ponline(@player)) {
 			set_collides_with_entities(@player, true)
 			if(array_index_exists(@pvp['arena'], 'resourcepack')) {
-				send_resourcepack(@p, 'http://mc.finalscoremc.com:25966/resourcepacks/default.zip')
+				send_resourcepack(@player, 'http://mc.finalscoremc.com:25966/resourcepacks/default.zip')
 			}
 			foreach(@p in all_players('custom')) {
 				if(ponline(@p)) {
