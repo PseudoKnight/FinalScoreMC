@@ -131,7 +131,7 @@
 			
 			bind(entity_damage, array(id: 'golf_hit_'.player()), array(id: @ball['id'], cause: 'ENTITY_ATTACK'), @event, 
 			@golf = @golf) {
-				if(!array_index_exists(@golf['players'], @player)) {
+				if(!array_index_exists(@golf['players'], player())) {
 					cancel()
 					die()
 				}
