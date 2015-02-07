@@ -46,3 +46,22 @@ proc _remove_ignored(@sender, @recipients) {
 	)
 	return(@recipients)
 }
+
+/*
+	Constructs and sends a tellraw command with a hover event
+*/
+proc _hover_tell(@recipients, @components) {
+	@message = ' [""';
+	foreach(@c in @components) {
+		@message .= ',{text:"';
+		if(!is_array(@c)) {
+			@message .= colorize(@c).'"}';
+		} else {
+			@message .= colorize(@c[0]).'",hoverEvent:{action:"show_text",value:{text:"'.colorize(@c[1]).'"}}}';
+		}
+	}
+	@message .= ']';
+	foreach(@player in @recipients) {
+		runas('~console', '/tellraw '.@player.@message);
+	}
+}
