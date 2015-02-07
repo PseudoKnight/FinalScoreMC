@@ -140,7 +140,9 @@ proc _cluck_endround() {
 		}
 		
 		_regionmsg('cluck', color(@cluck['color'][@p]).@cluck['player'][@p].' hit '.@cluck['hit'][@p].' chickens.')
-		_clear_pinv(@cluck['player'][@p])
+		if(ponline(@p) && pworld(@p) == 'custom') {
+			_clear_pinv(@cluck['player'][@p])
+		}
 
 		# Did we not meet the required hit chickens? (or round 10)
 		if(@cluck['hit'][@p] < @cluck['count'] / 2 || @cluck['round'] == 10) {
