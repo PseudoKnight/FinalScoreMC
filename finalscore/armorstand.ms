@@ -125,7 +125,7 @@ bind(player_interact_at_entity, null, array('clicked': 'ARMOR_STAND'), @event) {
 	} else {
 		switch(@item['type']) {
 			case 44:
-				if(pworld() == 'dev') {
+				if(!_is_survival_world(pworld())) {
 					msg(color(6).'Toggled baseplate for armor stand.');
 					set_entity_spec(@event['id'], array('baseplate': if(@armorstand['baseplate'], false, true)));
 					cancel();
@@ -140,21 +140,21 @@ bind(player_interact_at_entity, null, array('clicked': 'ARMOR_STAND'), @event) {
 				}
 			
 			case 288:
-				if(pworld() == 'dev') {
+				if(!_is_survival_world(pworld())) {
 					msg(color(6).'Toggled gravity for armor stand.');
 					set_entity_spec(@event['id'], array('gravity': if(@armorstand['gravity'], false, true)));
 					cancel();
 				}
 				
 			case 375:
-				if(pworld() == 'dev') {
+				if(!_is_survival_world(pworld())) {
 					msg(color(6).'Toggled visibility for armor stand.');
 					set_entity_spec(@event['id'], array('visible': if(@armorstand['visible'], false, true)));
 					cancel();
 				}
 			
 			case 416:
-				if(pworld() == 'dev') {
+				if(!_is_survival_world(pworld())) {
 					msg(color(6).'Toggled size for armor stand.');
 					set_entity_spec(@event['id'], array('small': if(@armorstand['small'], false, true)));
 					cancel();
