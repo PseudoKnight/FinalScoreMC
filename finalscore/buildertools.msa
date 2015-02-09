@@ -35,7 +35,7 @@
 	if(!has_permission('command.endercrystal'), die('You do not have permission.'))
 	@loc = _relative(pcursor(), 'up')
 	set_block_at(@loc, '7:0')
-	spawn_entity(ENDER_CRYSTAL, 1, array(@loc[0] + 0.5, @loc[1], @loc[2] + 0.5, @loc[3]))
+	spawn_entity(ENDER_CRYSTAL, 1, array(@loc[0] + 0.5, @loc[1] + 1, @loc[2] + 0.5, @loc[3]))
 <<<
 
 # Set the command in the targeted command block (overwrites)
