@@ -1,6 +1,6 @@
 switch(@action) {
 case 'load':
-	bind(player_interact, array('id': @player.'interact'), array('player': @player, 'button': 'right', 'item': 359), @e) {
+	bind(player_interact, array('id': @player.'interact'), array('player': @player, 'button': 'right', 'item': 399), @e) {
 		if(split(':', @e['block'])[0] != '77' && pexp() >= 100) {
 			cancel()
 			@arrow = shoot_projectile(player(), 'ARROW')
