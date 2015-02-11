@@ -1,4 +1,4 @@
-*:/frogware [$cmd='usage'] [$pts=25] = >>>
+*:/frogware [$cmd='usage'] [$pts=20] = >>>
 	switch($cmd) {
 	case 'join':
 		if(!sk_region_exists('custom', 'frogware'), die('Define the frogware region first.'))

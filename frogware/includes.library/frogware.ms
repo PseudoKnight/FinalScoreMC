@@ -20,12 +20,16 @@ proc _fw_endgame(@winners) {
 		tmsg(@p, color('6').'+'.@coins.' coins')
 	}
 	foreach(@p in all_players('custom')) {
-		if(_fw_player(@p)) {
+		if(get_pscoreboard(@p) == 'fw') {
 			set_pscoreboard(@p)
-			set_ploc(@p, @warp['loc'])
+			if(pworld(@p) == 'custom') {
+				set_ploc(@p, @warp['loc'])
+			}
 		}
 	}
-	if(array_contains(get_scoreboards(), 'fw')) { remove_scoreboard('fw') }
+	if(array_contains(get_scoreboards(), 'fw')) { 
+		remove_scoreboard('fw') 
+	}
 	export('currently', null)
 }
 
