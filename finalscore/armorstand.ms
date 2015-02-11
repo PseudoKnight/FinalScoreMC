@@ -19,8 +19,7 @@ proc _position_degrees(@position, @rotation) {
 }
 
 bind(player_interact_at_entity, null, array('clicked': 'ARMOR_STAND'), @event) {
-	if(_is_survival_world(entity_loc(@event['id'])['world']) 
-	&& !sk_can_build(entity_loc(@event['id']))) {
+	if(!sk_can_build(entity_loc(@event['id']))) {
 		cancel();
 		die();
 	}
