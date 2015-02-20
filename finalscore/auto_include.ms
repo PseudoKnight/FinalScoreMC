@@ -11,13 +11,9 @@ proc _is_survival_world(@world) {
 proc _equip_park() {
 	_clear_pinv()
 	
-	if(has_permission('group.moderators')) {
-		@guide = get_value('book', 'guide')
-		set_pinv(player(), array(
-			1: array('type': 340, 'meta': array('display': 'Park Directory')),
-			2: @guide,
-		))
-	}
+	set_pinv(player(), array(
+		1: array('type': 340, 'meta': array('display': 'Park Directory')),
+	))
 	
 	@pdata = get_value('players', to_lower(player()))
 	if(!is_null(@pdata) 
