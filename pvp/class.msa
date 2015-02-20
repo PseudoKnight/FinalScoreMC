@@ -128,6 +128,10 @@ case 'set':
 			array_remove(@arena['classes'][@classid], 'script')
 			msg('Turned OFF special script loading for this class.')
 		}
+		
+	case 'team':
+		@arena['classes'][@classid]['team'] = $
+		msg('Set team to '.$)
 	
 	case 'xp':
 		if(is_numeric($) && $ <= 100 && $ >= 0) {
