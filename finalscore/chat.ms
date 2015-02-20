@@ -71,7 +71,11 @@ bind(player_chat, null, null, @event) {
 	
 	@components[] = array(_colorname().player().color('gray').': ', 
 		if(has_permission('group.moderators'), color('AQUA').'STAFF\n').color('DARK_GRAY').'[world] '.color('r')._worldname(pworld()))
-	@components[] = colorize(replace(@event['message'], '"', '\\u0022'));
+	@message = colorize(replace(@event['message'], '"', '\\u0022'));
+	if(@message[length(@message) - 1] == '\\') {
+		@message = substr(@message, 0, length(@message)).'/';
+	}
+	@components[] = @message;
 	
 	# Send chat message 
 	_hover_tell(@recipients, @components);
