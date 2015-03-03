@@ -209,33 +209,75 @@
 *:/help [$selection='help'] = >>>
 	@help = array(
 		'rules':
-		'- Do NOT break anything someone else placed unless otherwise specified.\n'.
-		'- Do NOT take anything from a chest that you did not place there, unless otherwise specified or was generated in the world naturally.\n'.
-		'- Do NOT harass, call others names, use hate speech, spam, or use excessive adult language in chat.\n'.
-		'- Do NOT actively use cheat modifications to do things like fly or look through walls.\n'.
-		'- DO respect other players and apologize if you make a mistake, as we have all made them.',
-		'homes': 'You can have one home per world. Set them by typing "/sethome", then "/home" to teleport to them. You can teleport to your homes on other worlds with "/home worldname", or homes of other players with "/home playername".',
-		'messages': 'Send a private message to another player with "/msg <playername> <message>" or "@playername <message>". You can use "/r <message>" for a reply.',
-		'spawn': 'There is one central spawn on each world, including nethers. Type "/spawn" to teleport to the spawn of the world you are in or follow it with a world name to teleport there.',
-		'stargate': 'Stargates are special portals you build to teleport within a network of locations. There is a more detailed guide on the website. But to make one, first build the gate as seen (without sign or button), place a sign on the correct location, then type the gate name on line one and the gate network name on line three.',
-		'private-chests': 'You can put a [private] sign on a chest, furnace, and the block above/below doors. The following lines after [private] should contain the players you want to give access.',
-		'shops': 'Chest shops allow players to buy and sell different items using currency. (g: gold, d: diamond, i: iron, e: emerald) Right click the SIGN with the currency in hand to BUY. Shop owners can edit shop transaction rates with the "/shop edit <transaction line>" command. Players can search for available items with "/shop list <item>". There\'s a detailed guide on the website.',
-		'website': 'The website is at >>> http://finalscoremc.com <<< There you can find a command reference, guides, videos, live maps, and more.',
-		'live-map': '>>> http://mc.finalscoremc.com:25966 <<< The website has a handy live map that shows the location of players and their homes, among other things.',
-		'staff': 'You can get help from anyone with a blue name. Current staff members are: PseudoKnight, Scottyd_Utah, Nefyoni, fredwaffles, Raymond_II, TrulyAnnoying',
-		'plugins': 'Type "/plugins" for a full list of plugins installed, or check the website for more details.',
-		'permissions': 'We currently have 7 groups: Everyone (new players with minor restrictions), Regulars, Supporters (green names or diamonds), Builders (orange), Engineers (orange), Moderators (blue), and Administrators (blue). New players get bumped up to the Regulars group after some time, as long as they\'re not causing trouble.',
-		'mumble': 'Everyone is welcome to use our voice chat server using Mumble. The server is at mum.finalscoremc.com with port 64758. You can get Mumble at >>> http://mumble.sourceforge.net <<<',
-		'regions': 'Regions are protected zones where only owners and members can build or access chests. You can create your own region by using a golden axe (or commands), left and right clicking to select a cuboid for the region, then use "/rg claim <regionid>". More details are on the website.',
-		'whitelist': 'You can get on the whitelist by asking a staff member, a friend who is already a regular, or requesting it on the http://myextralife.com whitelist forum thread.',
-		'worlds': 'There are four primary worlds: Alpha (Plaza at spawn), Delta (Final City at spawn), Gamma (Gamma City at spawn), and Omega. In addition, there are four respective nether dimensions and one End dimension. You can type "/mv who" to see which worlds players are on.',
-		'world-seeds': 'These are the seeds for the four main worlds -- Alpha: -621778714517541268, Delta: -8443156782283251243, Gamma: -754633420005903009, Omega: 950483747.'
-	)
+			'- Do NOT break or take anything belonging to another player, unless otherwise specified.\n'.
+			'- Do NOT harass, spam, or swear in chat.\n'.
+			'- Do NOT actively use mods for the purpose of cheating.\n',
+		'homes': 
+			'You can have one home per world. Set them by typing "/sethome", then "/home" to teleport to them.'.
+			' You can teleport to your homes on other worlds with "/home worldname", or homes of other players'.
+			' with "/home playername".',
+		'messages': 
+			'Send a private message to another player with "/msg <playername> <message>" or "@playername <message>". '.
+			'You can use "/r <message>" for a reply.',
+		'spawn': 
+			'There is one central spawn on each world, including nethers. Type "/spawn" to teleport to the spawn of '.
+			'the world you are in or follow it with a world name to teleport there.',
+		'stargate': 
+			'Stargates are special portals you build to teleport within a network of locations. There is a more '.
+			'detailed guide on the website. But to make one, first build the gate as seen (without sign or button), '.
+			'place a sign on the correct location, then type the gate name on line one and the gate network name on '.
+			'line three.',
+		'private-chests': 
+			'You can put a [private] sign on a chest, furnace, and the block above/below doors. The following lines '.
+			'after [private] should contain the players you want to give access.',
+		'shops': 
+			'Chest shops allow players to buy and sell different items using currency. (g: gold, d: diamond, i: iron, '.
+			'e: emerald) Right click the SIGN with the currency in hand to BUY. Shop owners can edit shop '.
+			'rates with the "/shop edit <transaction line>" command. Players can search for available items with '.
+			'"/shop list <item>". There\'s a detailed guide on the website.',
+		'website': 
+			'The website is at >>> http://finalscoremc.com <<< There you can find a command reference, guides, '.
+			'videos, live maps, and more.',
+		'live-map': 
+			'>>> http://mc.finalscoremc.com:25966 <<< The website has a handy live map that shows the '.
+			'location of players and their homes, among other things.',
+		'staff': 
+			'You can get help from anyone with a blue name. Current staff members are: PseudoKnight, '.
+			'Scottyd_Utah, Nefyoni, fredwaffles, Raymond_II, TrulyAnnoying',
+		'plugins': 
+			'Type "/plugins" for a full list of plugins installed, or check the website for more details.',
+		'permissions': 
+			'We currently have 7 groups: Everyone (new players with minor restrictions), Regulars, Supporters '.
+			'(green names or diamonds), Builders (orange), Engineers (orange), Moderators (blue), and '.
+			'Administrators (blue). New players get bumped up to the Regulars group after some time, as long as '.
+			'they\'re not causing trouble.',
+		'mumble': 
+			'Everyone is welcome to use our voice chat server using Mumble. The server is at mum.finalscoremc.com '.
+			'with port 64758. You can get Mumble at >>> http://mumble.sourceforge.net <<<',
+		'regions': 
+			'Regions are protected zones where only owners and members can build or access chests. You can create '.
+			'your own region by using a golden axe (or commands), left and right clicking to select a cuboid for '.
+			'the region, then use "/rg claim <regionid>". More details are on the website.',
+		'whitelist': 
+			'You can get on the whitelist by asking a staff member, a friend who is already a regular, or requesting '.
+			'it on the http://myextralife.com whitelist forum thread.',
+		'worlds': 
+			'There are four primary worlds: Alpha (Plaza at spawn), Delta (Final City at spawn), Gamma (Gamma City '.
+			'at spawn), and Omega. In addition, there are four respective nether dimensions and one End dimension. '.
+			'You can type "/mv who" to see which worlds players are on.',
+		'world-seeds': 
+			'These are the seeds for the four main worlds -- Alpha: -621778714517541268, Delta: '.
+			'-8443156782283251243, Gamma: -754633420005903009, Omega: 950483747.'
+	);
 	if($selection == 'help') {
-		msg(color('a').'Get help on any of these topics:')
-		msg(color('6').array_implode(array_keys(@help), ' '))
+		msg(color('a').'Get help on any of these topics:');
+		msg(color('6').array_implode(array_keys(@help), ' '));
 	} else {
-		try(msg(to_upper($selection).': '.color('a').@help[to_lower($selection)]), @ex, msg(color('c').'Unknown entry. Type "/help" to find available entries.'))
+		try(
+			msg(to_upper($selection).': '.color('a').@help[to_lower($selection)]);
+		, # catch
+			msg(color('c').'Unknown entry. Type "/help" to find available entries.');
+		);
 	}
 <<<
 *:/rules = call_alias('/help rules')
