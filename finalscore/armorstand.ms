@@ -175,8 +175,7 @@ bind(entity_damage, null, array('type': 'ARMOR_STAND'), @event) {
 		die();
 	}
 	
-	if(_is_survival_world(@event['world']) 
-	&& !sk_can_build(@damager, @event['location'])) {
+	if(!sk_can_build(@damager, @event['location'])) {
 		cancel();
 		
 	} else if(entity_spec(@event['id'])['arms']) {
