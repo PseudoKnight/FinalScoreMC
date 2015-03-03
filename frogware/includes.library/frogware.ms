@@ -21,7 +21,6 @@ proc _fw_endgame(@winners) {
 	}
 	foreach(@p in all_players('custom')) {
 		if(get_pscoreboard(@p) == 'fw') {
-			set_pscoreboard(@p)
 			if(pworld(@p) == 'custom') {
 				set_ploc(@p, @warp['loc'])
 			}
