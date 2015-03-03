@@ -116,7 +116,6 @@
 		export('pvp'.@id, @pvp)
 		
 	case 'start':
-		if(!has_permission('group.everyone'), die('Visitors cannot start pvp matches.'))
 		if(!$id, die('You must specify an arena to start. Usage: /pvp start arenaname'))
 		@id = to_lower($id)
 		@pvp = import('pvp'.@id)
