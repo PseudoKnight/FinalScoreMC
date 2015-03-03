@@ -1,6 +1,6 @@
 # Spawn player head
 *:/skull $player = >>>
-	if(pworld() == 'dev') {
+	if(pworld() == 'dev' || (pworld() == 'custom' && has_permission('group.builders'))) {
 		pgive_item(player(), '397:3', 1, array('owner': $player))
 	}
 <<<
