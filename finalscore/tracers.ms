@@ -7,10 +7,15 @@ if(!array_contains(dm_all_markersets(), 'tracers')) {
 	dm_set_markerset_hide_by_default('tracers', false);
 }
 
-bind(player_move, null, array('threshold': 12), @event) {
-	if(!has_permission('group.supporters'), die());
+bind(player_move, null, array('threshold': 10), @event) {
+	if(!has_permission('group.supporters') || pmode() == 'CREATIVE') {
+		die();
+	}
 	try(
 		@lines = dm_marker_corners('tracers', player());
+		if(array_size(@lines) > 120) {
+			array_remove(@lines, 0);
+		}
 		@lines[] = ploc();
 		dm_set_marker_corners('tracers', player(), @lines);
 	, # catch
@@ -25,14 +30,13 @@ bind(player_move, null, array('threshold': 12), @event) {
 		runas('~console', '/dmarker updateline set:tracers id:'.player()
 			.' opacity:0.4 weight:2');
 	)
-
 }
 
 bind(player_teleport, null, null, @event) {
 	if(!has_permission('group.supporters'), die());
 	if(@event['from']['world'] != @event['to']['world']) {
 		try(dm_delete_marker('tracers', player()));
-	} else {
+	} else if(@event['type'] != 'ENDER_PEARL') {
 		@dist = sqrt((@event['to']['x'] - @event['from']['x'])**2 
 			+ (@event['to']['z'] - @event['from']['z'])**2);
 		if(@dist > 64) {
@@ -42,9 +46,8 @@ bind(player_teleport, null, null, @event) {
 }
 
 bind(player_death, null, null, @event) {
-	if(has_permission('group.supporters')) {
-		try(dm_delete_marker('tracers', player()));
-	}
+	if(!has_permission('group.supporters'), die());
+	try(dm_delete_marker('tracers', player()));
 	try(dm_delete_marker('tracers', player().'lastdeath'));
 	dm_create_marker('tracers', array(
 		'world': pworld(),
