@@ -14,15 +14,18 @@ proc _pmsg(@player, @message) {
 			msg('You cannot message that player.')
 		}
 	, # else
-		@pdata = get_value('players', to_lower(@player))
-		if(!@pdata, die(color('red').'Unknown player. If you wish to send an offline message, use their full name.'))
+		try(
+			@pdata = _pdata(@player)
+		, #catch
+			die(color('red').'Unknown player. If you wish to send an offline message, use their full name.')
+		)
 		if(!array_index_exists(@pdata, 'mail'), @pdata['mail'] = array())
 		array_push(@pdata['mail'], array(
 			simple_date('MMM d h:mm a', time(), 'CST'),
 			player(),
 			@message
 		))
-		store_value('players', to_lower(@player), @pdata)
+		_store_pdata(@player, @pdata)
 		msg(color('green').'Offline message sent to '.@player)
 		msg(color(7).'(To '.@player.'): '.color('r').@message)
 	)

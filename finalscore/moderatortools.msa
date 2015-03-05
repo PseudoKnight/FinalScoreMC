@@ -184,8 +184,7 @@
 *:/ban [$player] [$] = >>>
 	if(!has_permission('group.moderators'), die('You do not have permission.'))
 	if(!$player, die('Usage: /ban <player> [-t 1d-8h-10m] [message]'))
-	@pdata = get_value('players', to_lower($player))
-	if(!@pdata, die('Please use exact names.'))
+	@pdata = _pdata($player)
 	@bantime = null
 	@message = null
 	if($) {
@@ -214,7 +213,7 @@
 	if(@bantime, @pdata['ban']['time'] = @bantime)
 	if(@message, @pdata['ban']['message'] = @message)
 	if(player() != '~console', @pdata['ban']['by'] = player())
-	store_value('players', to_lower($player), @pdata)
+	_store_pdata($player, @pdata)
 	if(ponline($player), pkick($player, if(@message, @message, 'Banned. Appeal at FinalScoreMC.com')))
 	msg($player.' is now banned.')
 	console(player().' banned '.$player.'.'.if(@message, ' (Reason: "'.@message.'")'))
@@ -223,11 +222,10 @@
 *:/unban [$player] = >>>
 	if(!has_permission('group.moderators'), die('You do not have permission.'))
 	if(!$player, die('Usage: /unban <player>'))
-	@pdata = get_value('players', to_lower($player))
-	if(!@pdata, die('Please use an exact name.'))
+	@pdata = _pdata($player)
 	if(!array_index_exists(@pdata, 'ban'), die('That player is not banned.'))
 	array_remove(@pdata, 'ban')
-	store_value('players', to_lower($player), @pdata)
+	_store_pdata($player, @pdata)
 	msg($player.' is now unbanned.')
 	console(player().' unbanned '.$player)
 <<<
@@ -241,9 +239,9 @@
 <<<
 
 /homeless $player = >>>
-	@pdata = get_value('players', to_lower($player))
+	@pdata = _pdata($player)
 	@pdata['homeless'] = true
-	store_value('players', to_lower($player), @pdata)
+	_store_pdata($player, @pdata)
 <<<
 
 /clearchat = >>>
@@ -254,10 +252,7 @@
 
 *:/contribution $player $amount = >>>
 	if(!has_permission('group.administrators'), die('You do not have permission to use this command.'))
-	@pdata = get_value('players', to_lower($player))
-	if(!@pdata) {
-		die('No player by that name.')
-	}
+	@pdata = _pdata($player)
 	if(array_index_exists(@pdata, 'support')) {
 		@pdata['support'] += $amount
 		msg('Added $'.$amount.' to '.$player.'\'s contributions; Total: $'.@pdata['support'].'.')
@@ -265,7 +260,7 @@
 		@pdata['support'] = $amount
 		msg('Set '.$player.'\'s contribution amount to $'.$amount.'.')
 	}
-	store_value('players', to_lower($player), @pdata)
+	_store_pdata($player, @pdata)
 	if(!array_contains(pgroup($player), 'supporters')) {
 		run('/perm player addgroup '.$player.' Suppporters')
 	}
@@ -309,10 +304,10 @@
 	try(
 		# ONLINE INFO
 		@player = player($player)
-		@pdata = get_value('players', to_lower(@player))
+		@pdata = _pdata(@player)
 		@onlineinfo = pinfo(@player)
 		msg(color('gray').'--[ '.color('l').@player.color('gray').' ]-------------------------')
-		msg(color('gray').'UUID: '.color('r').@pdata['uuid'])
+		msg(color('gray').'UUID: '.color('r').puuid(@player));
 		msg(color('gray').'Location: '.color('r')._worldname(@onlineinfo[7]).'('.@onlineinfo[7].') '.round(@onlineinfo[1][0]).','.round(@onlineinfo[1][1]).','.round(@onlineinfo[1][2]))
 		if(pmode(@player) == 'CREATIVE') {
 			msg(color('gray').'Gamemode: '.color('r').'CREATIVE')
@@ -330,13 +325,12 @@
 
 	, 
 		# OFFLINE INFO
-		@pdata = get_value('players', to_lower($player))
-		if(!@pdata, die('No stored data for that player name.'))
+		@pdata = _pdata($player)
 		@minutes = (time() - plast_played($player)) / 60000
 		@hours = @minutes / 60
 		@days = @hours / 24
 		msg(color('gray').'--[ '.color('l').$player.color('gray').' ]-------------------------')
-		msg(color('gray').'UUID: '.color('r').@pdata['uuid'])
+		msg(color('gray').'UUID: '.color('r').get_value('players', to_lower(@player)));
 		if(array_index_exists(@pdata, 'ban'), msg(color('red').'Banned '.color('r')
 			.if(array_index_exists(@pdata['ban'], 'by'), 'by '.@pdata['ban']['by'].' ')
 			.if(array_index_exists(@pdata['ban'], 'time'), 'temporarily ')

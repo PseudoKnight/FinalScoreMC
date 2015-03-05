@@ -58,20 +58,20 @@ bind(player_chat, null, null, @event) {
 	}
 
 	# Basic swear filter.
-	@event['message'] = reg_replace('(?i)(fuck|shit|damn|nigg|cunt|fag)', '****', @event['message']);
+	@message = reg_replace('(?i)(fuck|shit|damn|nigg|cunt|fag)', '****', @event['message']);
 	
 	# Construct message
 	@components = array();
 	@components[] = color('DARK_GRAY').simple_date('h:mm').' ';
 	
-	@pdata = get_value('players', to_lower(player()));
+	@pdata = _pdata(player());
 	if(array_index_exists(@pdata, 'support')) {
 		@components[] = array(color('green').'\u2666 ', 'Server Supporter');
 	}
 	
 	@components[] = array(_colorname().player().color('gray').': ', 
 		if(has_permission('group.moderators'), color('AQUA').'STAFF\n').color('DARK_GRAY').'[world] '.color('r')._worldname(pworld()))
-	@message = colorize(replace(@event['message'], '"', '\\u0022'));
+	@message = colorize(replace(@message, '"', '\\u0022'));
 	if(@message[length(@message) - 1] == '\\') {
 		@message = substr(@message, 0, length(@message)).'/';
 	}
@@ -79,8 +79,10 @@ bind(player_chat, null, null, @event) {
 	
 	# Send chat message 
 	_hover_tell(@recipients, @components);
-	console(player().': '.@event['message'], false);
-	if(function_exists('dm_broadcast_to_web')) {
-		dm_broadcast_to_web(@event['message'], player());
+	console(if(!@recipients, '[MUTED] ').player().': '.@event['message'], false);
+	if(@recipients) {
+		if(function_exists('dm_broadcast_to_web')) {
+			dm_broadcast_to_web(@message, player());
+		}
 	}
 }

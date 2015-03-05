@@ -66,22 +66,22 @@
 	@share = import('share'.player())
 	if(!@share, die('No shares to confirm.'))
 	
-	@pdata = get_value('players', to_lower(@share['player']))
+	@pdata = _pdata(@share['player'])
 	if(!array_index_exists(@pdata, 'shared'), @pdata['shared'] = array())
 	if(!array_index_exists(@pdata['shared'], player()), @pdata['shared'][player()] = array())
 	foreach(@type in @share['types']) {
 		array_push(@pdata['shared'][player()], @type)
 	}
-	store_value('players', to_lower(@share['player']), @pdata)
+	_store_pdata(@share['player'], @pdata)
 	tmsg(@share['player'], color('green').'Now sharing '.array_implode(@share['types'], ' and ').' with '.player().'.')
 	
-	@pdata = get_value('players', to_lower(player()))
+	@pdata = _pdata(player())
 	if(!array_index_exists(@pdata, 'shared'), @pdata['shared'] = array())
 	if(!array_index_exists(@pdata['shared'], @share['player']), @pdata['shared'][@share['player']] = array())
 	foreach(@type in @share['types']) {
 		array_push(@pdata['shared'][@share['player']], @type)
 	}
-	store_value('players', to_lower(player()), @pdata)
+	_store_pdata(player(), @pdata)
 	msg(color('green').'Now sharing '.array_implode(@share['types'], ' and ').' with '.@share['player'].'.')
 	
 	export('share'.player(), null)
@@ -103,7 +103,7 @@
 		}
 	)
 	
-	@pdata = get_value('players', to_lower(player()))
+	@pdata = _pdata(player())
 	if(!array_index_exists(@pdata, 'shared') || !array_index_exists(@pdata['shared'], @player)) {
 		die(color('gold').'You are not sharing anything with this player.')
 	}
@@ -120,10 +120,10 @@
 			}
 		}
 	}
-	store_value('players', to_lower(player()), @pdata)
+	_store_pdata(player(), @pdata)
 	msg(color('green').'You are no longer sharing '.array_implode(@types, ' and ').' with '.@player.'.')
 	
-	@pdata = get_value('players', to_lower(@player))
+	@pdata = _pdata(@player)
 	if(!array_index_exists(@pdata, 'shared') || !array_index_exists(@pdata['shared'], player())) {
 		die(color('gold').'They are not sharing anything with you.')
 	}
@@ -140,7 +140,7 @@
 			}
 		}
 	}
-	store_value('players', to_lower(@player), @pdata)
+	_store_pdata(@player, @pdata)
 	if(ponline(@player)) {
 		tmsg(@player, color('green').player().' is no longer sharing '.array_implode(@types, ' and ').' with you.')
 	}
@@ -183,10 +183,9 @@
 	
 	case 'home':
 		if($id) {
-			@pdata = get_value('players', to_lower($id))
-			if(!@pdata, die('Unknown player.'))
+			@pdata = _pdata($id)
 		} else {
-			@pdata = get_value('players', to_lower(player()))
+			@pdata = _pdata(player())
 		}
 		if(!array_index_exists(@pdata, 'homes'), die('No home to target.'))
 		if(!array_index_exists(@pdata['homes'], pworld()), die('No home in this world to target.'))
@@ -290,9 +289,9 @@
 	sudo('/perm player setgroup '.$player.' Everyone')
 	tmsg($player, 'You have been added to the whitelist by ', color('e'), player(), color('f'), '.')
 	if(!has_permission('group.moderators')) {
-		@pdata = get_value('players', to_lower(@player))
+		@pdata = _pdata(@player)
 		@pdata['approval'] = player()
-		store_value('players', to_lower(@player), @pdata)
+		_store_pdata(@player, @pdata)
 	}
 <<<
 

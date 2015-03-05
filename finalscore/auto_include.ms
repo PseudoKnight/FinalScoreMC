@@ -15,10 +15,10 @@ proc _equip_park() {
 		1: array('type': 340, 'meta': array('display': 'Park Directory')),
 	))
 	
-	@pdata = get_value('players', to_lower(player()))
-	if(!is_null(@pdata) 
-	&& array_index_exists(@pdata, 'support')
-	&& @pdata['support'] >= 15) {
+	try(
+	@pdata = _pdata(player())
+	if(array_index_exists(@pdata, 'support')
+	&& @pdata['support'] >= 10) {
 		set_pinv(player(), array(
 			4: array(
 				'type': 401, 
@@ -32,6 +32,7 @@ proc _equip_park() {
 			),
 		))
 	}
+	)
 
 }
 
@@ -164,11 +165,14 @@ proc _clear_pinv(@player) {
 	Add an amount to a player's coin balance
 */
 proc _acc_add(@player, @amount) {
-	@pdata = get_value('players', to_lower(@player))
-	if(!@pdata, return(false))
+	try(
+		@pdata = _pdata(@player)
+	, #catch 
+		return(false)
+	)
 	if(!array_index_exists(@pdata, 'coins'), @pdata['coins'] = 100)
 	@pdata['coins'] = @pdata['coins'] + @amount
-	store_value('players', to_lower(@player), @pdata)
+	_store_pdata(@player, @pdata)
 	return(true)
 }
 
@@ -176,11 +180,14 @@ proc _acc_add(@player, @amount) {
 	Subtracts an amount from a player's coin balance
 */
 proc _acc_subtract(@player, @amount) {
-	@pdata = get_value('players', to_lower(@player))
-	if(!@pdata, return(false))
+	try(
+		@pdata = _pdata(@player)
+	, #catch 
+		return(false)
+	)
 	if(!array_index_exists(@pdata, 'coins'), @pdata['coins'] = 100)
 	@pdata['coins'] = @pdata['coins'] - @amount
-	store_value('players', to_lower(@player), @pdata)
+	_store_pdata(@player, @pdata)
 	return(true)
 }
 
@@ -188,8 +195,11 @@ proc _acc_subtract(@player, @amount) {
 	Returns the amount of coins a player has
 */
 proc _acc_balance(@player) {
-	@pdata = get_value('players', to_lower(@player))
-	if(!@pdata, return(0))
+	try(
+		@pdata = _pdata(@player)
+	, #catch 
+		return(0)
+	)
 	if(!array_index_exists(@pdata, 'coins')) {
 		return(100)
 	} else {
@@ -409,14 +419,14 @@ proc _is_safe_location(@loc) {
 }
 
 
-/**
- * Retrieves a player's mojang UUID from the mojang api, and returns the results
- * as an array that corresponds to the input array of player names.
- * @param players An array of players that will be checked.
- * @param closure The callback closure, which will be called once the
- * request finishes. It will be sent the array of returned values.
- */
-proc('_player_uuid', @players, @closure) {
+/*
+	Retrieves a player's mojang UUID from the mojang api, and returns the results
+	as an array that corresponds to the input array of player names.
+	@param players An array of players that will be checked.
+	@param closure The callback closure, which will be called once the
+	request finishes. It will be sent the array of returned values.
+*/
+proc _player_uuid(@players, @closure) {
     @success = closure(@response){
         @array = json_decode(@response['body']);
         execute(@array, @closure);
@@ -428,4 +438,39 @@ proc('_player_uuid', @players, @closure) {
         'success': @success,
     );
     http_request('https://api.mojang.com/profiles/minecraft', @options);
+}
+/*
+	Gets an offline player's UUID for db access
+*/
+proc _get_uuid(@player) {
+	@uuidDashed = '';
+	if(ponline(@player)) {
+		@uuidDashed = puuid(@player);
+	} else {
+		@uuidDashed = get_value('players', to_lower(@player));
+		if(is_null(@uuidDashed)) {
+			throw('NotFoundException', 'Player name not stored in database: '.@player);
+		}
+	}
+	return(replace(@uuidDashed, '-', ''));
+}
+
+/*
+	Gets stored data for account under given player name.
+*/
+proc _pdata(@player) {
+	@uuid = _get_uuid(@player);
+	@pdata = get_value('uuids', @uuid);
+	if(is_null(@pdata)) {
+		throw('NotFoundException', 'User data not stored in database: '.@uuid);
+	}
+	return(@pdata);
+}
+
+/*
+	Sets player data
+*/
+proc _store_pdata(@player, @data) {
+	@uuid = _get_uuid(@player);	
+	store_value('uuids', @uuid, @data);
 }

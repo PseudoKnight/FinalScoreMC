@@ -13,60 +13,90 @@ bind(server_ping, null, null, @event) {
 }
 
 bind(player_login, null, null, @event) {
-	if(@event['result'] != 'ALLOWED', die())
-	@update = false
-	@pdata = get_value('players', to_lower(@event['player']))
-	if(!@pdata) {
-		@pdata = array(
-			'joined': simple_date('YYYY-MM-dd'),
-		)
+	if(@event['result'] != 'ALLOWED') {
+		die();
 	}
+	@update = false;
+	@pdata = null;
+	@uuidDashed = get_value('players', @event['player']);
+	if(is_null(@uuidDashed)) { # new player or changed name
+		@uuid = replace(@event['uuid'], '-', '');
+		@pdata = get_value('uuids', @uuid);
+		store_value('players', to_lower(@event['player']), @event['uuid']);
+		@update = true;
+		if(@pdata) { # someone changed their name
+			if(!array_index_exists(@pdata, 'names')) {
+				@pdata['names'] = array();
+			}
+			@pdata['names'][] = @pdata['name'];
+			@pdata['name'] = to_lower(@event['player']);
+			
+			# just in case, they're not in a survival world, we may need to fetch their inventory for them later
+			# TODO: handle inventory for name changes automatically
+			set_timeout(2000, closure(){
+				try(@world = pworld(@event['player']), die());
+				if(!_is_survival_world(@world)) {
+					console('PK NOTE: Restore '.@event['player'].'\'s inventory! (Previously '.@pdata['names'].')');
+				}
+			});
+			
+		} else { # new player!
+			@pdata = array(
+				'joined': simple_date('YYYY-MM-dd'),
+				'name': to_lower(@event['player']),
+			);
+		}
+		
+	} else { # existing player
+		if(@uuidDashed != @event['uuid']) {
+			modify_event('result', 'KICK_OTHER');
+			modify_event('kickmsg', 'You seem to be using a reserved player name.'
+				.' Please contact an administrator if this is in error.');
+			die();
+		}
+	
+		@uuid = replace(@uuidDashed, '-', '');
+		@pdata = get_value('uuids', @uuid);
+	
+		if(is_null(@pdata)) {
+			modify_event('result', 'KICK_OTHER');
+			modify_event('kickmsg', 'ERROR: User data is missing for known player.');
+			die();
+		}
+	}
+	
+
 	
 	# Check if player is banned.
 	if(array_index_exists(@pdata, 'ban')) {
 		if(!array_index_exists(@pdata['ban'], 'time') || @pdata['ban']['time'] > time()) {
-			modify_event('result', 'KICK_BANNED')
+			modify_event('result', 'KICK_BANNED');
 			if(array_index_exists(@pdata['ban'], 'message')) {
-				modify_event('kickmsg', @pdata['ban']['message'])
+				modify_event('kickmsg', @pdata['ban']['message']);
 			} else {
-				modify_event('kickmsg', 'Banned. Appeal at FinalScoreMC.com')
+				modify_event('kickmsg', 'Banned. Appeal at FinalScoreMC.com');
 			}
-			die()
+			die();
 		} else {
-			array_remove(@pdata, 'ban')
-			console('Ban on '.@event['player'].' expired.')
-			@update = true
+			array_remove(@pdata, 'ban');
+			console('Ban on '.@event['player'].' expired.');
+			@update = true;
 		}
 	}
 	
-	# Online mode
-	if(get_server_info(10)) {
-		if(@event['uuid'] != @pdata['uuid']) {
-			modify_event('result', 'KICK_OTHER')
-			modify_event('kickmsg', 'Another player already claimed this name on this server.')
-			die()
+	if(!array_index_exists(@pdata, 'ips')) {
+		@pdata['ips'] = array();
+	}
+	if(!array_contains(@pdata['ips'], @event['ip'])) {
+		@pdata['ips'][] = @event['ip'];
+		if(array_size(@pdata['ips']) > 2) {
+			array_remove(@pdata['ips'], 0);
 		}
-		
-		if(!array_index_exists(@pdata, 'ips'), @pdata['ips'] = array())
-		if(!array_contains(@pdata['ips'], @event['ip'])) {
-			@pdata['ips'][] = @event['ip']
-			if(array_size(@pdata['ips']) > 2) {
-				array_remove(@pdata['ips'], 0)
-			}
-			@update = true
-		}
-
-	# Offline mode
-	} else {
-		if(!array_contains(@pdata['ips'], @event['ip'])) {
-			console(@event['player'].': '.@event['ip'].', '.@pdata['ips'])
-			modify_event('result', 'KICK_OTHER')
-			modify_event('kickmsg', 'Minecraft auth servers are down and your IP doesn\'t match our records.')
-		}
+		@update = true;
 	}
 	
 	if(@update) {
-		store_value('players', to_lower(@event['player']), @pdata)
+		store_value('uuids', @uuid, @pdata);
 	}
 }
 
@@ -74,64 +104,62 @@ bind(player_login, null, null, @event) {
 bind(player_join, null, null, @event) {
 	modify_event('join_message', null) 
 	set_timeout(250, closure(@loc = ploc(), @player = player()){
-		broadcast(colorize('&8'.simple_date('h:mm').' '.'&e&o* '._colorname().'&o'.player().' &e&ojoined the game *'))
-		if(!ponline(@player), die())
-		#Store the player's UUID
-		if(get_server_info(10)) {
-		
-			# Makes a call to the ban manager. Requires the CHCrypto extension.
-			# This takes 5 parameters:
-			# @endpoint - String - The action to take in the ban manager.
-			# @player - String - The player name making the call to the ban manager, or the UUID of the player. This player must be an admin or moderator.
-			# @params - Associative Array - The parameters to post to the ban manager.
-			# @success - Closure (Optional) - Closure to execute when the request returns successfully. The closure is passed the response as an 
-			# associative array. Defaults to printing success to the user.
-			# @error - Closure (Optional) - Closure to execute when the request returns an error. The closure is passed the error message. Defaults to 
-			# printing the error message to the user.
-			proc _bm_request(@endpoint, @player, @params,
-				@error = closure(@error_msg, console('Error saving UUID: '.@error_msg))) {
-				
-					# Add the authentication parameters
-					@params['accessor_token'] = 'final-score-minecraft-server'
-					@params['timestamp'] = simple_date('yyyy-MM-dd HH:mm:ss Z')
-					@params['nonce'] = rand()
-					# Try to get the player's UUID
-					try(@uuid = entity_uuid(pinfo(@player, 13)), 
-						@uuid = @player)
-					@params['uuid'] = @uuid
-					
-					# Generate the HMAC
-					@hmac_key = read('key.txt')
-					@msg = ''
-					foreach(@key in array_keys(@params)) {
-						@msg .= @key . @params[@key]
-					}
-					@params['hmac'] = hmac_sha1(@hmac_key, @msg)
-					
-					http_request('http://finalscoremc.com/fsmcbm/ban-manager.php?action='.@endpoint, array(
-						'method': 'POST',
-						'params': @params,
-						'success': closure(@response){
-							@result = json_decode(@response['body'])
-							if(!@result || array_index_exists(@result, 'error')) {
-								# Error
-								execute(@result, @error)
-							}
-						}
-					))
-			}
-		
-			_bm_request('set_user_uuid', 'a1634f37480a4bb9a0b2200266597ac0', 
-				array('username': @player, 'user_uuid': entity_uuid(pinfo(@player, 13)))
-			)
+		if(!ponline(@player)) {
+			console('ERROR: Player was not online 250ms after joining.');
+			die();
 		}
+		
+		broadcast(colorize('&8'.simple_date('h:mm').' '.'&e&o* '._colorname().'&o'.player().' &e&ojoined the game *'))
+		
+		# Makes a call to the ban manager to store the player's UUID
+		# This takes 5 parameters:
+		# @endpoint - String - The action to take in the ban manager.
+		# @player - String - The player name making the call to the ban manager, or the UUID of the player. This player must be an admin or moderator.
+		# @params - Associative Array - The parameters to post to the ban manager.
+		# @success - Closure (Optional) - Closure to execute when the request returns successfully. The closure is passed the response as an 
+		# associative array. Defaults to printing success to the user.
+		# @error - Closure (Optional) - Closure to execute when the request returns an error. The closure is passed the error message. Defaults to 
+		# printing the error message to the user.
+		proc _bm_request(@endpoint, @player, @params,
+			@error = closure(@error_msg, console('Error saving UUID: '.@error_msg))) {
+			
+				# Add the authentication parameters
+				@params['accessor_token'] = 'final-score-minecraft-server'
+				@params['timestamp'] = simple_date('yyyy-MM-dd HH:mm:ss Z')
+				@params['nonce'] = rand()
+				@params['uuid'] = @player
+				
+				# Generate the HMAC
+				@hmac_key = comp_read('key.txt')
+				@msg = ''
+				foreach(@key in array_keys(@params)) {
+					@msg .= @key . @params[@key]
+				}
+				@params['hmac'] = hmac_sha1(@hmac_key, @msg)
+				
+				http_request('http://finalscoremc.com/fsmcbm/ban-manager.php?action='.@endpoint, array(
+					'method': 'POST',
+					'params': @params,
+					'success': closure(@response){
+						@result = json_decode(@response['body'])
+						if(!@result || array_index_exists(@result, 'error')) {
+							# Error
+							execute(@result, @error)
+						}
+					}
+				))
+		}
+	
+		_bm_request('set_user_uuid', 'a1634f37480a4bb9a0b2200266597ac0', 
+			array('username': player(), 'user_uuid': puuid())
+		)
+		
 		#Welcome messages
 		msg(color('1').color('l').'----------------------')
 		msg(colorize(' &6&l\u1260&d&l\u1260&b&l\u1260&4&l\u1260 &6&lFINALSCORE&e&lMC \u00AB &r\u25AA \u25AA \u25AA'))
 		msg(color('1').color('l').'----------------------')
 		if(@motd = get_value('motd')) {
-			if(length(@motd) < 20, @motd = ' '.@motd)
-			msg(@motd)
+			msg(' '.@motd)
 			msg(color('1').color('l').'----------------------')
 		}
 		
@@ -142,13 +170,8 @@ bind(player_join, null, null, @event) {
 			set_list_name(_colorname().player())
 		}
 
-		@pdata = get_value('players', to_lower(player()))
+		@pdata = _pdata(player())
 		@update = false
-		
-		if(!array_index_exists(@pdata, 'uuid')) {
-			@pdata['uuid'] = entity_uuid(pinfo(player(), 13))
-			@update = true
-		}
 		
 		if(array_index_exists(@pdata, 'mail')) {
 			foreach(@mail in @pdata['mail']) {
@@ -173,7 +196,7 @@ bind(player_join, null, null, @event) {
 		}
 		
 		if(@update) {
-			store_value('players', to_lower(player()), @pdata)
+			_store_pdata(player(), @pdata)
 		}
 		
 		if(pworld() == 'custom') {
@@ -361,9 +384,15 @@ bind(player_interact_entity, null, array('clicked': 'HORSE'), @event) {
 		&& (!@item
 		|| (@item['type'] != 322
 		&& @item['type'] != 396))) {
-			@pdata = get_value('players', to_lower(get_mob_owner(@event['id'])))
-			if(!@pdata
-			|| !array_index_exists(@pdata, 'shared')
+			@pdata = null;
+			try(
+				@pdata = _pdata(get_mob_owner(@event['id']))
+			, #catch
+				cancel();
+				die('We have no records for the owner of this horse.'
+					.' If this is in error, contact an administrator.');
+			)
+			if(!array_index_exists(@pdata, 'shared')
 			|| !array_index_exists(@pdata['shared'], player())
 			|| !array_contains(@pdata['shared'][player()], 'horses')) {
 				cancel()
