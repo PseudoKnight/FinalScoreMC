@@ -18,7 +18,7 @@ bind(player_login, null, null, @event) {
 	}
 	@update = false;
 	@pdata = null;
-	@uuidDashed = get_value('players', @event['player']);
+	@uuidDashed = get_value('players', to_lower(@event['player']));
 	if(is_null(@uuidDashed)) { # new player or changed name
 		@uuid = replace(@event['uuid'], '-', '');
 		@pdata = get_value('uuids', @uuid);
