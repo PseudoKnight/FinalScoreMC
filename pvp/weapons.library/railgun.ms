@@ -43,7 +43,7 @@ bind(player_interact, array('id': @id.'railgun'), array('item': 175, 'button': '
 		@loc['x'] += @x
 		@loc['y'] += @y
 		@loc['z'] += @z
-		if(get_block_info(@loc)['solid']) {
+		if(get_block_info(@loc, 'solid')) {
 			play_effect(@loc, 'lava_pop', array('particleCount': 8))
 			break()
 		} else {
