@@ -169,6 +169,11 @@ bind(player_join, null, null, @event) {
 		} else {
 			set_list_name(_colorname().player())
 		}
+		# Refresh list names for joining player.
+		# This works around a 1.8.0 bug
+		foreach(@p in all_players()) {
+			set_list_name(@p, get_list_name(@p));
+		}
 
 		@pdata = _pdata(player())
 		@update = false
