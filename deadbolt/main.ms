@@ -5,21 +5,35 @@
 # DEPENDENCIES:
 # _relative() procedure
 
+proc _get_deadbolt(@loc) {
+	try(
+		@signtext = get_sign_text(@loc);
+	, 
+		return(null);
+	);
+	if(!reg_match('(?i)^(\\u00A7[0-9a-f])?\\[private\\]$', @signtext[0])) {
+		return(null);
+	}
+	return(@signtext);
+}
+
 bind(player_interact, null, array('button': 'right', 'item': 323), @e) {
-	if(@e['action'] != 'right_click_block' || pinfo(player(), 11)) { die() }
+	if(@e['action'] != 'right_click_block' || pinfo(player(), 11)) { 
+		die();
+	}
+	
 	@blockid = split(':', @e['block'])[0]
 	if((@blockid == 54 || @blockid == 146)
 	&& sk_can_build(@e['location'])) {
+		cancel();
 		foreach(@dir in array('north', 'south', 'east', 'west')) {
 			@checkblock = _relative(@e['location'], @dir)
-			switch(split(':', get_block_at(@checkblock))[0]) {
-			case 68:
-				if(strip_colors(to_lower(get_sign_text(@checkblock)[0])) == '[private]', die('Already protected.'))
-			case 54:
+			if(_get_deadbolt(@checkblock)) {
+				die(color('red').'Chest already protected.');
+			} else if(@blockid == split(':', get_block_at(@checkblock))[0]) {
 				foreach(@recdir in array('north', 'south', 'east', 'west')) {
-					if(split(':', get_block_at(_relative(@checkblock, @recdir)))[0] == '68' 
-					&& strip_colors(to_lower(get_sign_text(_relative(@checkblock, @recdir))[0])) == '[private]') {
-						die('Already protected.')
+					if(_get_deadbolt(_relative(@checkblock, @recdir))) {
+						die(color('red').'Chest already protected.');
 					}
 				}
 			}
@@ -52,5 +66,24 @@ bind(player_interact, null, array('button': 'right', 'item': 323), @e) {
 			set_pinv(array('null': @slot))
 		}
 		cancel()
+	}
+}
+
+bind(player_interact, null, array('block': data_values('wallsign')), @e) {
+	if(@db = _get_deadbolt(@e['location'])) {
+		@changed = false;
+		for(@i = 1, @i < 4, @i++) {
+			if(@db[@i] == '' || @db[@i][0] == '[' || @db[@i] == player()) {
+				continue();
+			}
+			try(@pdata = _pdata(@db[@i]), continue());
+			if(@pdata['name'] != @db[@i]) {
+				@db[@i] = substr(@pdata['name'], 0, if(length(@pdata['name']) > 15, 15, length(@pdata['name'])));
+				@changed = true;
+			}
+		}
+		if(@changed) {
+			set_sign_text(@e['location'], @db);
+		}
 	}
 }
