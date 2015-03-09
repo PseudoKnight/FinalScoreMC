@@ -512,7 +512,6 @@ if(@pvp['arena']['mode'] == 'ctf') {
 								set_block_at(@pvp['arena']['rsoutputscore'][0], '50:5')
 							})
 						}
-						export('pvp'.@id, @pvp)
 						_pvp_flag_spawn(@id, 1)
 						_pvp_check_objectives(@id)
 					}
@@ -553,7 +552,6 @@ if(@pvp['arena']['mode'] == 'ctf') {
 								set_block_at(@pvp['arena']['rsoutputscore'][1], '50:5')
 							})
 						}
-						export('pvp'.@id, @pvp)
 						_pvp_flag_spawn(@id, 0)
 						_pvp_check_objectives(@id)
 					}

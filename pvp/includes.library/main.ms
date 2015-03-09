@@ -256,11 +256,9 @@ proc _pvp_start_match(@id) {
 			}
 		}
 
-		export('pvp'.@id, @pvp)
 		if(@check, 
 			_pvp_check_objectives(@id))
 	})
-	export('pvp'.@id, @pvp)
 	
 }
 
@@ -270,10 +268,8 @@ proc _pvp_flag_spawn(@id, @team, @loc) {
 		@loc = @pvp['arena']['ctfflag'][@team])
 	if(!entity_exists(@pvp['team'][@team]['flag'])) {
 		@pvp['team'][@team]['flag'] = drop_item(@loc, array('type': if(@team == 0, '10', '8')), 0)
-		export('pvp'.@id, @pvp)
 	} else if(_horizontal_distance(entity_loc(@pvp['team'][@team]['flag']), @pvp['arena']['ctfflag'][@team]) > 3) {
 		@pvp['team'][@team]['flag'] = drop_item(@loc, array('type': if(@team == 0, '10', '8')), 0)
-		export('pvp'.@id, @pvp)
 	}
 	queue_delay('30000', @id.@team.'flag')
 	queue_push(closure(_pvp_flag_spawn(@id, @team)), @id.@team.'flag')

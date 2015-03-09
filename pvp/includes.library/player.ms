@@ -91,7 +91,6 @@ proc _pvp_initialize_players(@id, @players) {
 		set_phealth(@player, 20)
 		_pvp_equip(@id, @player)
 
-		export('pvp'.@id, @pvp)
 	}
 
 }

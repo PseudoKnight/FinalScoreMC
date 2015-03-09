@@ -222,7 +222,6 @@ proc _class_select(@id, @pvp) {
 			@pvp['players'][player()]['class'] = @class
 			_class('load', player(), @class, @pvp)
 			close_pinv()
-			export('pvp'.@id, @pvp)
 		}
 	}
 }
