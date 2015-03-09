@@ -1,0 +1,142 @@
+*:/spl [$action] [$id] [$flag] [$value] = >>>
+	switch($action) {
+	case 'flag':
+	
+		if(!has_permission('spleef.manage')) {
+			die('You do not have permission to manage spleef arenas.')
+		}
+		
+		if(!$id || !$flag) {
+			msg(color('bold').'Flags: (defaults)')
+			msg('floorblocks '.color('gray').'A csv of blocks types for floor')
+			msg('countdown '.color('gray').'Seconds before it starts (30)')
+			msg('pillars '.color('gray').'Percentage of pillars (0)')
+			msg('lobby '.color('gray').'Sets the lobby spawn (\'here\' or \'there\')')
+			msg('drops '.color('gray').'Whether blocks drop items (true)')
+			die('------------------------')
+		}
+		
+		@id = to_lower($id)
+		
+		if(!sk_region_exists('spl_'.@id)) {
+			die('You must create a region encompassing the whole spleef arena named: spl_'.@id)
+		} else if(!sk_region_exists('spl_'.@id.'_arena')) {
+			die('You must create a region covering the competitive space named: spl_'.@id.'_arena')
+		} else if(!sk_region_exists('spl_'.@id.'_floor')) {
+			die('You must create a breakable region for the spleef floor named: spl_'.@id.'_floor')
+		}
+		
+		@arena = get_value('spleef', @id)
+		if(!@arena) {
+			@arena = array()
+		}
+		
+		if(!$value) {
+		
+			if(!array_index_exists(@arena, $flag)) {
+				die('That flag is not set.')
+			}
+			array_remove(@arena, $flag)
+			msg('Flag cleared.')
+			
+		} else {
+	
+			switch($flag) {
+			case 'lobby':
+				if($value == 'here') {
+					@loc = ploc()
+				} else if($value == 'there') {
+					@loc = pcursor()
+				} else {
+					die('Flag takes "here" or "there".')
+				}
+				@loc = array(floor(@loc['x']) + 0.5, @loc['y'], floor(@loc['z']) + 0.5, @loc['world'])
+				@arena[$flag] = @loc
+				msg(colorize("Set spleef lobby to &a@loc"))
+				
+			case 'countdown':
+				if(!is_numeric($value)) {
+					die('Seconds before the next match starts (Example: 30)')
+				} else if($value < 5) {
+					die('This should be at least 5 seconds.')
+				}
+				@arena[$flag] = $value
+				msg(colorize("Set countdown to &a$value&r seconds."))
+				
+			case 'pillars':
+				if(!is_numeric($value)) {
+					die('Percantage of floor space that has pillars (Example: 7)')
+				}
+				@arena[$flag] = $value
+				msg(colorize("Set pillar percentage to &a$value%"))
+				
+			case 'floorblocks':
+				@blocks = split(',', $value)
+				foreach(@key: @block in @blocks) {
+					if(!data_values(@block)) {
+						@split = split(':', @block)
+						foreach(@n in @split) {
+							if(!is_numeric(@n)) {
+								die('Must give a block name or id:data for the spleef floor.')
+							}
+						}
+						if(@split[0] == 0) {
+							die('Air blocks not allowed.')
+						}
+					} else {
+						@blocks[@key] = data_values(@block)
+					}
+				}
+				@arena[$flag] = @blocks
+				msg(colorize("Set available floor block types to: &a@blocks"))
+				
+			case 'drops': 
+				if($value == 'false') {
+					@arena[$flag] = false
+				} else if(array_index_exists(@arena, 'drops')) {
+					array_remove(@arena, 'drops')
+				}
+				msg(colorize("Set drops to $value"))
+
+			default:
+				die('Use "/spleef flag" to see a list of available flags.')
+			}
+		
+		}
+		
+		store_value('spleef', @id, @arena)
+		
+	case 'delete':
+	case 'remove':
+	
+		if(!has_permission('spleef.manage')) {
+			die('You do not have permission to manage spleef arenas.')
+		}
+	
+		if(!$id) {
+			die('This requires a spleef arena id.')
+		}
+		
+		@id = to_lower($id)
+		
+		if(!has_value('spleef', @id)) {
+			die('No spleef arena exists by this id.')
+		}
+		clear_value('spleef', @id)
+		msg('Deleted spleef arena '.to_upper(@id).'.')
+		
+	case 'list':
+	
+		@arenas = get_values('spleef')
+		@list = ''
+		foreach(@key: @arena in @arenas) {
+			@list .= ' '.split('.', @key)[1]
+		}
+		msg(color('green').color('bold').'SPLEEF ARENAS:'.color('r').@list)
+		
+	default:
+	
+		msg('Usage: /spl [flag|delete|list] [id] [flag] [value]')
+		
+	}
+<<<
