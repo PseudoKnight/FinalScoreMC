@@ -41,12 +41,17 @@
 # Set the command in the targeted command block (overwrites)
 *:/scb [$] = >>>
 	# Configure a set of allowed commands and aliases for non-ops
-	@allowedcmds = array('/velocity', '/tp', '/sayas', '/testfor', '/playsound', '/setblock', 
-	'/tempcart', '/bedspawn', '/give', '/effect', '/warp', '/tellraw', '/testforblock', '/time')
+	@allowedcmds = array('/velocity', '/tp', '/sayas', '/testfor', '/playsound', '/setblock', '/tempcart', 
+		'/bedspawn', '/give', '/effect', '/warp', '/tellraw', '/testforblock', '/time', '/entitydata');
 	
 	if(!has_permission('command.cb'), die('You do not have permission.'))
 	if(!$, die(color(gold).'Usage: /scb </command>'))
 	if(!array_contains_ic(@allowedcmds, parse_args($)[0]), die('Allowed commands: '.array_implode(@allowedcmds)))
+	foreach(@arg in parse_args($)) {
+		if(@arg == '@a' || @arg == '@e') {
+			die(color(red).'Cannot use unlimited @a or @e selectors. Please use ranges. eg. @a[r=8]');
+		}
+	}
 	@block = pcursor(array(0, 8, 9, 27, 28, 50, 55, 63, 64, 65, 66, 68, 69, 
 		70, 71, 72, 75, 76, 77, 96, 131, 132, 143, 147, 148, 149, 150, 157))
 	@blocktype = data_name(get_block_at(@block))
@@ -61,11 +66,16 @@
 # Add to the command in the targeted command block
 *:/acb [$] = >>>
 	# Configure a set of allowed commands and aliases for non-ops
-	@allowedcmds = array('/velocity', '/tp', '/sayas', '/testfor', '/playsound', '/setblock', 
-	'/tempcart', '/bedspawn', '/give', '/effect', '/warp', '/tellraw', '/testforblock', '/time')
+	@allowedcmds = array('/velocity', '/tp', '/sayas', '/testfor', '/playsound', '/setblock', '/tempcart', 
+		'/bedspawn', '/give', '/effect', '/warp', '/tellraw', '/testforblock', '/time', '/entitydata')
 	
 	if(!has_permission('command.cb'), die('You do not have permission.'))
 	if(!$, die(color(gold).'Usage: /acb <additional parameters>'))
+	foreach(@arg in parse_args($)) {
+		if(@arg == '@a' || @arg == '@e') {
+			die(color(red).'Cannot use unlimited @a or @e selectors. Please use ranges. eg. @a[r=8]');
+		}
+	}
 	@block = pcursor(array(0, 8, 9, 27, 28, 50, 55, 63, 64, 65, 66, 68, 69, 
 		70, 71, 72, 75, 76, 77, 96, 131, 132, 143, 147, 148, 149, 150, 157))
 	try(
