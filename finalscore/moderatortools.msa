@@ -421,3 +421,19 @@
 		}
 	}
 <<<
+
+*:/weather $type = >>>
+	if(!has_permission('command.weather')) {
+		die('You do not have permission. You can now use beds to make the rain stop.');
+	}
+	switch($type) {
+		case 'stormy':
+			storm(true);
+			msg(color('aqua').'You summoned a storm.');
+		case 'sunny':
+			storm(false);
+			msg(color('aqua').'You calmed the storm.');
+		default: 
+			msg('Accepts \'stormy\' or \'sunny\'');
+	}
+<<<

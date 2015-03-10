@@ -457,7 +457,7 @@ bind(entity_damage, null, array(type: 'HORSE', cause: '/^(?!VOID|SUFFOCATION|DRO
 bind(player_enter_bed, null, null, @event) {
     if(get_world_time() > 13700 && get_world_time() < 22300) {
 		set_world_time(22300)
-		msg(color('aqua').'You made the sun rise.')
+		msg(color('aqua').'You summoned the sun.');
     } else if(get_world_time() < 13700 && get_world_time() > 11300) {
 		@time = get_world_time() - 11300
 		@time = 700 - @time
@@ -465,8 +465,12 @@ bind(player_enter_bed, null, null, @event) {
 			@time = @time + 24000
 		}
 		set_world_time(@time)
-		msg(color('aqua').'You made the sun rise.')
+		msg(color('aqua').'You summoned the sun.');
     }
+	if(has_storm()) {
+		storm(false);
+		msg(color('aqua').'You calmed the storm.');
+	}
 }
 
 # Infinite Dispensers

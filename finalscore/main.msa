@@ -396,24 +396,3 @@
 # Colour codes
 *:/colors = msg(colorize('&00&11&22&33&44&55&66&77&88&99&aa&bb&cc&dd&ee&ff &kk&r&ll&r&mm&r&nn&r&oo &rr'))
 *:/colours = call_alias('/colors')
-
-# COIN COMMANDS #
-
-*:/weather $type = >>>
-	if(_acc_balance(player()) < 1, die('You do not have any coins.'))
-	if(pworld() == 'outworld', die('You cannot do this in the outworld.'))
-	switch($type) {
-	case 'stormy':
-		storm(true)
-		_acc_subtract(player(), 1)
-		msg(color('gold').'-1 coin')
-		msg(color('aqua').'You summoned a storm.')
-	case 'sunny':
-		storm(false)
-		_acc_subtract(player(), 1)
-		msg(color('gold').'-1 coin')
-		msg(color('aqua').'You calmed the storm.')
-	default: 
-		msg('Accepts \'stormy\' or \'sunny\'')
-	}
-<<<
