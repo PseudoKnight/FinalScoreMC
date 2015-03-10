@@ -13,7 +13,19 @@
 				@player = @args[1]
 			}
 		} else {
-			@player = $
+			@player = @args[0];
+			if(array_size(@args) == 2) {
+				if(array_contains(get_worlds(), _worldid(to_lower(@args[1])))) {
+					@world = _worldid(to_lower(@args[1]));
+				} else {
+					@worlds = '';
+					foreach(@world in get_worlds()) {
+						@worlds .= replace(_worldname(@world), ' ', '').', ';
+					}
+					die(color('yellow').'Usage: /home [world] [player]\n'
+						.'Available worlds: '.@worlds);
+				}
+			}
 		}
 	}
 	@pdata = _pdata(@player)

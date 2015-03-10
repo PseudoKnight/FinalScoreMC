@@ -319,8 +319,9 @@ proc _worldname(@world) {
 		'dev': 'Dev', 
 		'outworld': 'Outworld', 
 		'omega': 'Omega', 
-		'omega_nether', 
-		'Omega Nether',
+		'omega_nether':	'Omega Nether',
+		'outworld': 'Outworld',
+		'outworld_nether': 'Outworld Nether',
 	)
 	if(array_index_exists(@worlds, to_lower(@world))) { 
 		return(@worlds[to_lower(@world)])
@@ -337,8 +338,7 @@ proc _worldid(@world) {
 		'alpha': 'world', 
 		'alphanether': 'world_nether', 
 		'delta': 'world3', 
-		'deltanether': 
-		'world3_nether', 
+		'deltanether': 'world3_nether', 
 		'gamma': 'world4', 
 		'gammanether': 'world4_nether', 
 		'theend': 'world_the_end', 
@@ -347,7 +347,9 @@ proc _worldid(@world) {
 		'dev': 'dev', 
 		'outworld': 'outworld', 
 		'omega': 'omega', 
-		'omeganether': 'omega_nether'
+		'omeganether': 'omega_nether',
+		'outworld': 'outworld',
+		'outworldnether': 'outworld_nether',
 	)
 	@alias = to_lower(reg_replace('[_-]', '', @world))
 	if(array_index_exists(@worlds, @alias)) { 
