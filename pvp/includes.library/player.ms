@@ -47,20 +47,22 @@ proc _pvp_initialize_players(@id, @players) {
 		
 		queue_push(closure(){
 			if(array_index_exists(@pvp, 'team')) {
-				set_ploc(@player, @pvp['arena']['spawn'][@pvp['players'][@player]['team']][@c[@pvp['players'][@player]['team']]])
+				@loc = @pvp['arena']['spawn'][@pvp['players'][@player]['team']][@c[@pvp['players'][@player]['team']]];
 				if(@c[@pvp['players'][@player]['team']] == array_size(@pvp['arena']['spawn'][@pvp['players'][@player]['team']]) - 1) {
 					@c[@pvp['players'][@player]['team']] = 0
 				} else {
 					@c[@pvp['players'][@player]['team']]++
 				}
 			} else {
-				set_ploc(@player, @pvp['arena']['spawn'][0][@c[0]])
+				@loc = @pvp['arena']['spawn'][0][@c[0]];
 				if(@c[0] == array_size(@pvp['arena']['spawn'][0]) - 1) {
 					@c[0] = 0
 				} else {
 					@c[0]++
 				}
 			}
+			set_ploc(@player, @loc);
+			play_sound(@loc, array('sound': 'FIREWORK_BLAST'), @player);
 		}, @id)
 		queue_delay(50, @id) # this is to help prevent invisible players
 		

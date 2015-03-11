@@ -126,16 +126,19 @@
 		if(array_index_exists(@pvp['arena'], 'parent')) {
 			@parent = get_value('arena.'.@pvp['arena']['parent'])
 			if(!@parent, die('Can\'t find parent arena.'))
-			@name = to_upper(@pvp['arena']['parent'].': '.@id)
+			@primaryName = to_upper(@pvp['arena']['parent']);
+			@secondaryName = to_upper(@id)
 			@pvp['arena'] = array_merge(@parent, @pvp['arena'])
 		} else if(array_index_exists(@pvp['arena'], 'arenaselect')) {
 			@childid = array_rand(@pvp['arena']['arenaselect']['arenas'], 1, false)[0]
 			@child = get_value('arena', @childid)
 			if(!@child, die('Can\'t find child arena.'))
-			@name = to_upper(@id.': '.@childid)
+			@primaryName = to_upper(@id);
+			@secondaryName = to_upper(@childid)
 			@pvp['arena'] = array_merge(@pvp['arena'], @child)	
 		} else {
-			@name = to_upper(@id)
+			@primaryName = to_upper(@id);
+			@secondaryName = '';
 		}
 		
 		if(array_index_exists(@pvp['arena'], 'sharedarenas')) {
@@ -304,7 +307,7 @@
 		@pvp['binds'] = array()
 		@pvp['spectators'] = array()
 		@pvp['running'] = 1
-		export('currently', @name)
+		export('currently', @primaryName)
 		
 		# WEAPONS
 		
@@ -320,11 +323,13 @@
 		
 			#ANNOUNCE
 			_worldmsg('custom', color('gray').'[PVP] '.color('r')
-				.'Starting '.@name.' when ready or '.@pvp['arena']['delay'].' seconds...')
+				.'Starting '.@primaryName.if(@secondaryName, ': '.@secondaryName)
+				.' when ready or '.@pvp['arena']['delay'].' seconds...');
 		
 		} else {
 			_worldmsg('custom', color('gray').'[PVP] '.color('r')
-				.'Starting '.@name.' in '.@pvp['arena']['delay'].' seconds...')
+				.'Starting '.@primaryName.if(@secondaryName, ': '.@secondaryName)
+				.' in '.@pvp['arena']['delay'].' seconds...');
 		
 		}
 
@@ -346,6 +351,8 @@
 			if(@timeleft > 500) {
 				if(@timeleft < 3500) {
 					play_sound(@pvp['arena']['lobby'], array('sound': 'NOTE_PIANO', 'pitch': 1, 'volume': 3))
+				} else if(@timeleft < 5500 && @timeleft > 4500) {
+					_title(array_keys(@pvp['players']), @primaryName, @secondaryName);
 				}
 				if(array_index_exists(@pvp['arena'], 'classes')) {
 					foreach(@p in array_keys(@pvp['players'])) {
@@ -357,7 +364,6 @@
 					die()
 				}
 			}
-			play_sound(@pvp['arena']['lobby'], array('sound': 'NOTE_PIANO', 'pitch': 2, 'volume': 3))
 			clear_task()
 			@pvp['running'] = 2
 			_pvp_start_match(@id)

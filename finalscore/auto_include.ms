@@ -420,6 +420,23 @@ proc _is_safe_location(@loc) {
 	return(true);
 }
 
+/*
+	Sends a title message to specified players
+*/
+proc _title(@players, @title, @subtitle = null, @times = null) {
+	foreach(@player in @players) {
+		if(is_null(@subtitle) || is_null(@times)) {
+			runas('~console', '/title '.@player.' reset');
+		}
+		if(!is_null(@times)) {
+			runas('~console', '/title '.@player.' times '.@times[0].' '.@times[1].' '.@times[3]);
+		}
+		if(!is_null(@subtitle)) {
+			runas('~console', '/title '.@player.' subtitle {text:"'.colorize(@subtitle).'"}');
+		}
+		runas('~console', '/title '.@player.' title {text:"'.@title.'"}');
+	}
+}
 
 /*
 	Retrieves a player's mojang UUID from the mojang api, and returns the results
