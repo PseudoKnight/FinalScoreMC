@@ -355,8 +355,8 @@
 		run('/rg flag '.$region.' '.$) 
 		die() 
 	}
-	try(assign(@region, sk_region_info($region, pworld())), die('That region doesn\'t exist.')) 
-	if(!array_contains_ic(@region[1], player()), die('You do not own this region.')) 
+	try(@region = sk_region_info($region, pworld()), die('That region doesn\'t exist.')) 
+	if(!array_contains_ic(@region[1], puuid()), die('You do not own this region.')) 
 	foreach(@flagname in @region[3]) {
 		if(@flagname[0] == 'mob-spawning') { 
 			sudo('/rg flag '.$region.' mob-spawning') 
