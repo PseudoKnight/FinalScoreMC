@@ -140,8 +140,8 @@ proc _class(@action, @player, @class, @pvp) {
 }
 
 proc _class_select(@id, @pvp) {
-	@size1 = 0
-	@size2 = 0
+	@size1 = 1
+	@size2 = 1
 	foreach(@class in @pvp['arena']['classes']) {
 		if(!array_index_exists(@class, 'team') || @class['team'] == 0) {
 			@size1 += 1
@@ -150,7 +150,7 @@ proc _class_select(@id, @pvp) {
 			@size2 += 1
 		}
 	}
-	if(@size1 > 1) {
+	if(@size1 > 2) {
 		@chestsize1 = ceil(@size1 / 9) * 9
 		create_virtualchest(array(
 			'id': @id.'0',
@@ -158,7 +158,7 @@ proc _class_select(@id, @pvp) {
 			'title': 'Choose a Class'
 		))
 	}
-	if(@size2 > 1) {
+	if(@size2 > 2) {
 		@chestsize2 = ceil(@size2 / 9) * 9
 		create_virtualchest(array(
 			'id': @id.'1',
@@ -169,33 +169,41 @@ proc _class_select(@id, @pvp) {
 	@chest = array(array(), array())
 	foreach(@class in @pvp['arena']['classes']) {
 		if((!array_index_exists(@class, 'team') || @class['team'] == 0)
-		&& @size1 > 1
+		&& @size1 > 2
 		&& array_index_exists(@class, 'selector')) {
 			@chest[0][] = @class['selector']
 		}
 		if((!array_index_exists(@class, 'team') || @class['team'] == 1)
-		&& @size2 > 1
+		&& @size2 > 2
 		&& array_index_exists(@class, 'selector')) {
 			@chest[1][] = @class['selector']
 		}
 	}
 	if(@chest[0]) {
+		@chest[0][@chestsize1 - 1] = array('type': 1, 'data': 7, 'meta': array(
+			'display': 'RANDOM',
+			'lore': array('Randomly assign a class'),
+		));
 		update_virtualchest(@id.'0', @chest[0])
 	}
 	if(@chest[1]) {
+		@chest[1][@chestsize2 - 1] = array('type': 1, 'data': 7, 'meta': array(
+			'display': 'RANDOM',
+			'lore': array('Randomly assign a class'),
+		));
 		update_virtualchest(@id.'1', @chest[1])
 	}
 	foreach(@p: @pdata in @pvp['players']) {
-		if(@size1 > 1
+		if(@size1 > 2
 		&& (!array_index_exists(@pdata, 'team') || @pdata['team'] == 0)) {
 			popen_virtualchest(@p, @id.'0')
-		} else if(@size2 > 1
+		} else if(@size2 > 2
 		&& @pdata['team'] == 1) {
 			popen_virtualchest(@p, @id.'1')
 		}
 	}
 
-	if(@size1 > 1 || @size2 > 1) {
+	if(@size1 > 2 || @size2 > 2) {
 		array_push(@pvp['binds'], @id.'classselector')
 		bind(inventory_click, array('id': @id.'classselector'), array('slottype': 'CONTAINER'), @e, @id = @id) {
 			@pvp = import('pvp'.@id)
@@ -206,7 +214,7 @@ proc _class_select(@id, @pvp) {
 				die()
 			}
 			@class = to_lower(strip_colors(@e['slotitem']['meta']['display']))
-			if(!array_index_exists(@pvp['arena']['classes'], @class)) {
+			if(!array_index_exists(@pvp['arena']['classes'], @class) && @class != 'random') {
 				die()
 			}
 			if(array_index_exists(@pvp['arena'], 'captain')
@@ -219,6 +227,16 @@ proc _class_select(@id, @pvp) {
 			if(array_index_exists(@pvp['players'][player()], 'class')) {
 				_class('unload', player(), @pvp['players'][player()]['class'], @pvp)
 			}
+			if(@class == 'random') {
+				@classes = @pvp['arena']['classes'];
+				if(array_index_exists(@pvp['players'][player()], 'team')) {
+					@classes = array_filter(@pvp['arena']['classes'], closure(@key, @value){
+						return(@value['team'] == @pvp['players'][player()]['team']);
+					});
+				}
+				@class = array_rand(@classes, 1, true)[0];
+			}
+			msg('You chose '.color('green').to_upper(@class));
 			@pvp['players'][player()]['class'] = @class
 			_class('load', player(), @class, @pvp)
 			close_pinv()
