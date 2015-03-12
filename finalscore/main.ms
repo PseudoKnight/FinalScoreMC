@@ -95,6 +95,8 @@ bind(player_login, null, null, @event) {
 		@update = true;
 	}
 	
+	export('pdata.'.@event['player'], @pdata);
+	
 	if(@update) {
 		store_value('uuids', @uuid, @pdata);
 	}

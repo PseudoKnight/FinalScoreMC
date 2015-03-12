@@ -478,10 +478,13 @@ proc _get_uuid(@player) {
 	Gets stored data for account under given player name.
 */
 proc _pdata(@player) {
-	@uuid = _get_uuid(@player);
-	@pdata = get_value('uuids', @uuid);
-	if(is_null(@pdata)) {
-		throw('NotFoundException', 'User data not stored in database: '.@uuid);
+	@pdata = import('pdata.'.@player);
+	if(!@pdata) {
+		@uuid = _get_uuid(@player);
+		@pdata = get_value('uuids', @uuid);
+		if(is_null(@pdata)) {
+			throw('NotFoundException', 'User data not stored in database: '.@uuid);
+		}
 	}
 	return(@pdata);
 }
@@ -491,5 +494,7 @@ proc _pdata(@player) {
 */
 proc _store_pdata(@player, @data) {
 	@uuid = _get_uuid(@player);	
-	store_value('uuids', @uuid, @data);
+	x_new_thread('storePlayerData', closure(){
+		store_value('uuids', @uuid, @data);
+	});
 }
