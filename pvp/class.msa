@@ -189,7 +189,7 @@ case 'equip':
 	if(!@arena, die('No arena by that name: '.@arenaid))
 	@pvp = array()
 	@pvp['arena'] = @arena
-	include('includes.library/class.ms')
+	include('core.library/class.ms')
 	_class('equip', player(), @classid, @pvp)
 	
 case 'selector':

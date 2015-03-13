@@ -1,5 +1,5 @@
 *:/pvp [$action] [$id] [$team] = >>>
-	include('includes.library/main.ms')
+	include('core.library/main.ms')
 	switch($action) {
 	case 'join':
 		@id = to_lower($id)
