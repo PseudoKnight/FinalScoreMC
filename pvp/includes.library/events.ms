@@ -217,7 +217,7 @@ bind(player_spawn, array('id': @id.'spawn'), null, @e, @id = @id) {
 		}
 	}
 
-	if(array_index_exists(@pvp['arena'], 'respawntime')) {
+	if(array_index_exists(@pvp['arena'], 'respawntime') && @pvp['running'] == 2) {
 		queue_push(closure(){
 			msg(color('gray').'[PVP] '.color('r').'You will respawn in '
 				.round((@pvp['players'][player()]['respawn'] - time()) / 1000).' seconds.')
