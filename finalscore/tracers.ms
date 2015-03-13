@@ -8,7 +8,11 @@ if(!array_contains(dm_all_markersets(), 'tracers')) {
 }
 
 bind(player_move, null, array('threshold': 10), @event) {
-	if(!has_permission('group.supporters') || pmode() == 'CREATIVE') {
+	if(!has_permission('livemap.tracers') || pmode() == 'CREATIVE') {
+		die();
+	}
+	@pdata = _pdata(@event['player']);
+	if(!array_index_exists(@pdata, 'support') || @pdata['support'] < 15) {
 		die();
 	}
 	try(
@@ -33,7 +37,13 @@ bind(player_move, null, array('threshold': 10), @event) {
 }
 
 bind(player_teleport, null, null, @event) {
-	if(!has_permission('group.supporters'), die());
+	if(!has_permission('livemap.tracers') || pmode() == 'CREATIVE') {
+		die();
+	}
+	@pdata = _pdata(@event['player']);
+	if(!array_index_exists(@pdata, 'support') || @pdata['support'] < 15) {
+		die();
+	}
 	if(@event['from']['world'] != @event['to']['world']) {
 		try(dm_delete_marker('tracers', player()));
 	} else if(@event['type'] != 'ENDER_PEARL') {
@@ -46,7 +56,13 @@ bind(player_teleport, null, null, @event) {
 }
 
 bind(player_death, null, null, @event) {
-	if(!has_permission('group.supporters'), die());
+	if(!has_permission('livemap.deathmarkers')) {
+		die();
+	}
+	@pdata = _pdata(@event['player']);
+	if(!array_index_exists(@pdata, 'support') || @pdata['support'] < 15) {
+		die();
+	}
 	try(dm_delete_marker('tracers', player()));
 	try(dm_delete_marker('tracers', player().'lastdeath'));
 	dm_create_marker('tracers', array(
@@ -59,7 +75,13 @@ bind(player_death, null, null, @event) {
 }
 
 bind(player_quit, null, null, @event) {
-	if(!has_permission('group.supporters'), die());
+	if(!has_permission('livemap.tracers')) {
+		die();
+	}
+	@pdata = _pdata(@event['player']);
+	if(!array_index_exists(@pdata, 'support') || @pdata['support'] < 15) {
+		die();
+	}
 	try(dm_delete_marker('tracers', player()));
 }
 
