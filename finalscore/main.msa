@@ -334,6 +334,8 @@
 	}
 <<<
 
+*:/where = run('/mv who');
+
 # DICE ROLLING #
 *:/roll [$sides=6] = >>>
 	if($sides > 100, die(color('a').'[Dice] '.color('f').'There\'s a limit of 100 sides.'))
