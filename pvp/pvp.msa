@@ -350,7 +350,7 @@
 			@timeleft = @starttime + (@pvp['arena']['delay'] * 1000) - time()
 			if(@timeleft > 500) {
 				if(@timeleft < 3500) {
-					play_sound(@pvp['arena']['lobby'], array('sound': 'NOTE_PIANO', 'pitch': 1, 'volume': 3))
+					play_sound(@pvp['arena']['lobby'], array('sound': 'NOTE_PLING', 'pitch': 1, 'volume': 3))
 				} else if(@timeleft < 5500 && @timeleft > 4500) {
 					_title(array_keys(@pvp['players']), @primaryName, @secondaryName);
 				}
