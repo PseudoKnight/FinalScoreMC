@@ -70,7 +70,10 @@ bind(player_chat, null, null, @event) {
 	}
 	
 	@components[] = array(_colorname().player().color('gray').': ', 
-		if(has_permission('group.moderators'), color('AQUA').'STAFF\n').color('DARK_GRAY').'[world] '.color('r')._worldname(pworld()))
+		if(has_permission('group.moderators'), color('AQUA').'STAFF\n')
+		.if(array_index_exists(@pdata, 'names'), color('DARK_GRAY').'[aliases] '.color('r').array_implode(@pdata, 'names'))
+		.color('DARK_GRAY').'[world] '.color('r')._worldname(pworld()));
+
 	@message = colorize(replace(@message, '"', '\\u0022'));
 	if(@message[length(@message) - 1] == '\\') {
 		@message = substr(@message, 0, length(@message)).'/';
