@@ -123,7 +123,7 @@ bind(player_join, null, null, @event) {
 		# @error - Closure (Optional) - Closure to execute when the request returns an error. The closure is passed the error message. Defaults to 
 		# printing the error message to the user.
 		proc _bm_request(@endpoint, @player, @params,
-			@error = closure(@error_msg, console('Error saving UUID: '.@error_msg))) {
+			@error = closure(@error_msg, console('Error saving UUID to ban manager: '.@error_msg, false))) {
 			
 				# Add the authentication parameters
 				@params['accessor_token'] = 'final-score-minecraft-server'
