@@ -323,8 +323,7 @@
 		
 			#ANNOUNCE
 			_worldmsg('custom', color('gray').'[PVP] '.color('r')
-				.'Starting '.@primaryName.if(@secondaryName, ': '.@secondaryName)
-				.' when ready or '.@pvp['arena']['delay'].' seconds...');
+				.'Starting '.@primaryName.if(@secondaryName, ': '.@secondaryName).' soon...');
 		
 		} else {
 			_worldmsg('custom', color('gray').'[PVP] '.color('r')
@@ -345,33 +344,32 @@
 		play_sound(@pvp['arena']['lobby'], array('sound': 'WITHER_SPAWN', 'pitch': 1.5, 'volume': 3))
 		
 		#START ROUND
-		@starttime = time()
+		@timeleft = array(@pvp['arena']['delay']);
 		set_interval(1000, closure(){
-			@timeleft = @starttime + (@pvp['arena']['delay'] * 1000) - time()
-			if(@timeleft > 500) {
-				if(@timeleft < 3500) {
-					play_sound(@pvp['arena']['lobby'], array('sound': 'NOTE_PLING', 'pitch': 1, 'volume': 3))
-				} else if(@timeleft < 5500 && @timeleft > 4500) {
+			@timeleft[0] -= 1;
+			if(@timeleft[0] > 0) {
+				if(@timeleft[0] <= 3) {
+					play_sound(@pvp['arena']['lobby'], array('sound': 'NOTE_PLING', 'pitch': 1, 'volume': 3));
+				} else if(@timeleft[0] > 4 && array_index_exists(@pvp['arena'], 'classes')) {
+					foreach(@p in array_keys(@pvp['players'])) {
+						if(ponline(@p) && !is_null(pget_virtualchest(@p))) {
+							@timeleft[0] = 4;
+						}
+					}
+				}
+				if(@timeleft[0] == 4) {
 					if(extension_exists('CHNaughty')) {
 						foreach(@p in array_keys(@pvp['players'])) {
 							title_msg(@p, @primaryName, @secondaryName);
 						}
 					}
 				}
-				if(array_index_exists(@pvp['arena'], 'classes')) {
-					foreach(@p in array_keys(@pvp['players'])) {
-						if(ponline(@p) && !is_null(pget_virtualchest(@p))) {
-							die()
-						}
-					}
-				} else {
-					die()
-				}
+			} else {
+				clear_task();
+				@pvp['running'] = 2;
+				_pvp_start_match(@id);
 			}
-			clear_task()
-			@pvp['running'] = 2
-			_pvp_start_match(@id)
-		})
+		});
 		
 	case 'end':
 		if(!get_command_block() && !has_permission('group.builders'), die(color('red').'You do not have permission.'))
