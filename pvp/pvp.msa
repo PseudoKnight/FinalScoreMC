@@ -138,7 +138,7 @@
 			@pvp['arena'] = array_merge(@pvp['arena'], @child)	
 		} else {
 			@primaryName = to_upper(@id);
-			@secondaryName = '';
+			@secondaryName = null;
 		}
 		
 		if(array_index_exists(@pvp['arena'], 'sharedarenas')) {
@@ -352,7 +352,11 @@
 				if(@timeleft < 3500) {
 					play_sound(@pvp['arena']['lobby'], array('sound': 'NOTE_PLING', 'pitch': 1, 'volume': 3))
 				} else if(@timeleft < 5500 && @timeleft > 4500) {
-					_title(array_keys(@pvp['players']), @primaryName, @secondaryName);
+					if(extension_exists('CHNaughty')) {
+						foreach(@p in array_keys(@pvp['players'])) {
+							title_msg(@p, @primaryName, @secondaryName);
+						}
+					}
 				}
 				if(array_index_exists(@pvp['arena'], 'classes')) {
 					foreach(@p in array_keys(@pvp['players'])) {
