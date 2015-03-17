@@ -16,7 +16,6 @@ bind(player_teleport, null, null, @event) {
 				cancel()
 				die(color('red').'Banner and firework metadata is not saved when leaving survival.'
 					.' Please store them in a chest.')
-				return()
 			}
 		}
 		foreach(@item in penderchest()) {
