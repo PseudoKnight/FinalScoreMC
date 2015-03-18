@@ -36,6 +36,7 @@
 	}
 	
 	if(array_size(@golf['players']) == 0) {
+		console('No players in SlimeyGolf, removing scoreboard...');
 		remove_scoreboard(@course);
 		die('No players in "slimeygolf" region.');
 	}
@@ -273,6 +274,7 @@
 												remove_scoreboard(@course);
 											}
 										});
+										clear_task();
 									}
 								}
 							}
@@ -335,6 +337,7 @@
 				_remove_player(@player, @golf);
 				_remove_ball(@ball['id']);
 				if(array_size(@golf['players']) == 0) {
+					console('Last player left SlimeyGolf, stopping.');
 					unbind(@course);
 					unbind(@course.'_target');
 					if(array_contains(get_scoreboards(), @course)) {
