@@ -48,6 +48,55 @@ proc _item_meta(@item, @index) {
 }
 
 /*
+	Removes unnecessary indexes in item arrays for compact storage
+*/
+proc _minify_item(@item) {
+	try(array_remove(@item, 'name'));
+	array_remove(@item, 'enchants');
+	if(@item['data'] == 0) {
+		array_remove(@item, 'data');
+	}
+	if(@item['qty'] == 1) {
+		array_remove(@item, 'qty');
+	}
+	if(is_null(@item['meta'])) {
+		array_remove(@item, 'meta');
+	} else {
+		if(array_size(@item['meta']['enchants']) == 0) {
+			array_remove(@item['meta'], 'enchants');
+		}
+		if(is_null(@item['meta']['display'])) {
+			array_remove(@item['meta'], 'display');
+		}
+		if(is_null(@item['meta']['lore'])) {
+			array_remove(@item['meta'], 'lore');
+		}
+		if(array_index_exists(@item['meta'], 'firework')
+		&& is_null(@item['meta']['firework'])) {
+			array_remove(@item['meta'], 'firework');
+		}
+		if(@item['meta']['repair'] == 0) {
+			array_remove(@item['meta'], 'repair');
+		}
+	}
+}
+
+/*
+	Compacts all item arrays in an inventory array
+*/
+proc _minify_inv(@inv, @keepnulls = false) {
+	foreach(@slot: @item in @inv) {
+		if(@item == null) {
+			if(!@keepnulls) {
+				array_remove(@inv, @slot);
+			}
+		} else {
+			_minify_item(@item);
+		}
+	}
+}
+
+/*
 	Returns a new shifted location from origin based on a single direction and distance
 */
 proc _relative(@originloc, @dir, @amount = 1) {
