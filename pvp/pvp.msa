@@ -351,10 +351,15 @@
 				if(@timeleft[0] <= 3) {
 					play_sound(@pvp['arena']['lobby'], array('sound': 'NOTE_PLING', 'pitch': 1, 'volume': 3));
 				} else if(@timeleft[0] > 4 && array_index_exists(@pvp['arena'], 'classes')) {
+					@choosing = false;
 					foreach(@p in array_keys(@pvp['players'])) {
 						if(ponline(@p) && !is_null(pget_virtualchest(@p))) {
-							@timeleft[0] = 4;
+							@choosing = true;
+							break();
 						}
+					}
+					if(!@choosing) {
+						@timeleft[0] = 4;
 					}
 				}
 				if(@timeleft[0] == 4) {
