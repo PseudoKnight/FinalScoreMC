@@ -364,6 +364,11 @@ bind(entity_damage, array('id': @id.'EntityDamage'), array('world': 'custom'), @
 				} else {
 					@pvp['stats'][@e['player']]['damagetaken'][@damager] = @e['amount']
 				}
+				
+				if(array_index_exists(@pvp['stats'], @damager)) {
+					@pvp['stats'][@damager]['damage'] += @e['amount'];
+				}
+				
 			}
 			
 		} else if(array_contains(@pvp['spectators'], @e['player'])) {

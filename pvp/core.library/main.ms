@@ -398,10 +398,10 @@ proc _pvp_end_match(@id, @winners) {
 		if(@pvp['arena']['stats'] == true) {
 			_regionmsg(@pvp['arena']['broadcast'], 
 				color('gray').'|--'.color('bold').'[ STATS ]'.color('gray').'-------------|\n'
-				.color('gray').' Kills : Assists : Deaths\n'
+				.color('gray').' Kills : Damage : Deaths\n'
 				.'|------------------------|')
 			foreach(@player: @stats in @pvp['stats']) {
-				_regionmsg(@pvp['arena']['broadcast'], ' '.@stats['kills'].' : '.@stats['assists'].' : '.@stats['deaths'].' - '.@player)
+				_regionmsg(@pvp['arena']['broadcast'], ' '.@stats['kills'].' : '.@stats['damage'].' : '.@stats['deaths'].' - '.@player)
 			}
 			_regionmsg(@pvp['arena']['broadcast'], color('gray').'|------------------------|')
 		}
