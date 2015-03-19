@@ -21,6 +21,7 @@
 	@golf = array(
 		course: array(name: @course, loc: array(0, 0, 0, @loc['world']), par: 0), 
 		players: array(),
+		spectators: array(),
 	);
 	
 	create_scoreboard(@course);
@@ -184,7 +185,26 @@
 	}
 	
 	set_interval(50, closure(){
-		foreach(@player: @ball in @golf['players']) {
+		foreach(@player in all_players(@golf['course']['loc']['world'])) {
+			if(!array_index_exists(@golf['players'], @player)) {
+				if(array_contains(sk_current_regions(@player), @course)) {
+					if(array_size(@golf['players']) < 4) {
+						_add_player(@player, @golf);
+					} else if(!array_contains(@golf['spectators'], @player)) {
+						if(function_exists('set_collides_with_entities')) {
+							set_collides_with_entities(@player, false);
+						}
+						@golf['spectators'][] = @player;
+					}
+				} else if(array_contains(@golf['spectators'], @player)) {
+					if(function_exists('set_collides_with_entities')) {
+						set_collides_with_entities(@player, true);
+					}
+					array_remove_values(@golf['spectators'], @player);
+				}
+				continue();
+			}
+			@ball = @golf['players'][@player];
 			if(_ball_exists(@ball['id'])) {
 				@setvelocity = true;
 				@v = entity_velocity(@ball['id']);
@@ -257,6 +277,11 @@
 												}
 											}
 										}
+										foreach(@p in @golf['spectators']) {
+											if(function_exists('set_collides_with_entities')) {
+												set_collides_with_entities(@p, true);
+											}
+										}
 										
 										_regionmsg(@course, colorize(
 											'&a&lSLIMEY&6&lGOLF &a\u2308\u2328 \uFE52\u2328\u2309&r\n'
@@ -275,6 +300,7 @@
 											}
 										});
 										clear_task();
+										break();
 									}
 								}
 							}

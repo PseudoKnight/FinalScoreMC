@@ -35,6 +35,8 @@ proc _remove_player(@player, @golf) {
 		if(pworld(@player) == @golf['course']['loc'][3]) {
 			_clear_pinv(@player);
 		}
+		reset_all_pscores(@player, @golf['course']['name']);
+		set_pscoreboard(@player);
 	}
 	array_remove(@golf['players'], @player);
 }
