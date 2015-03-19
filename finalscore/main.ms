@@ -533,16 +533,12 @@ bind(player_interact_entity, null, array('clicked': 'VILLAGER'), @event) {
 }
 
 # Prevent undesireable interdimensional travel
-bind(entity_enter_portal, null, array(type: 'ENDER_DRAGON'), @event) {
-	if(@event['location']['world'] == 'outworld') {
-		cancel();
-	}
+bind(entity_enter_portal, null, array(type: 'ENDER_DRAGON', world: 'outworld'), @e) {
+	cancel();
 }
 
-bind(entity_enter_portal, null, array(type: '/^(?!PLAYER)/'), @event) {
-	if(!_is_survival_world(@event['location']['world'])) {
-		entity_remove(@event['id']);
-	}
+bind(entity_enter_portal, null, array(type: '/^(?!PLAYER)\\w*/', world: '/(dev|custom)/'), @e) {
+	entity_remove(@e['id']);
 }
 
 # Block creeper damage on the surface.
