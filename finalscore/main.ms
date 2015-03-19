@@ -114,12 +114,9 @@ bind(player_join, null, null, @event) {
 		broadcast(colorize('&8'.simple_date('h:mm').' '.'&e&o* '._colorname().'&o'.player().' &e&ojoined the game *'))
 		
 		# Makes a call to the ban manager to store the player's UUID
-		# This takes 5 parameters:
 		# @endpoint - String - The action to take in the ban manager.
 		# @player - String - The player name making the call to the ban manager, or the UUID of the player. This player must be an admin or moderator.
 		# @params - Associative Array - The parameters to post to the ban manager.
-		# @success - Closure (Optional) - Closure to execute when the request returns successfully. The closure is passed the response as an 
-		# associative array. Defaults to printing success to the user.
 		# @error - Closure (Optional) - Closure to execute when the request returns an error. The closure is passed the error message. Defaults to 
 		# printing the error message to the user.
 		proc _bm_request(@endpoint, @player, @params,
@@ -143,10 +140,9 @@ bind(player_join, null, null, @event) {
 					'method': 'POST',
 					'params': @params,
 					'success': closure(@response){
-						@result = json_decode(@response['body'])
-						if(!@result || array_index_exists(@result, 'error')) {
-							# Error
-							execute(@result, @error)
+						@result = json_decode(@response['body']);
+						if(array_index_exists(@result, 'error') && @result['error'] != 'Nothing found.') {
+							execute(@result['error'], @error);
 						}
 					}
 				))
