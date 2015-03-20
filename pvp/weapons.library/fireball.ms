@@ -3,9 +3,13 @@ bind(player_interact, array('id': @id.'fireball'), array('item': 385, 'button': 
 	@pvp = import('pvp'.@id)
 	if(!array_index_exists(@pvp['players'], player()), die())
 	cancel()
-	@entity = shoot_projectile(player(), 'FIREBALL')
-	#@dir = entity_spec(@entity)['direction']
-	#set_entity_spec(@entity, array(direction: array(@dir['x'] * 0.2, @dir['y'] * 0.2, @dir['z'] * 0.2)))
+	@entity = shoot_projectile(player(), 'FIREBALL');
+	
+	# This makes the fireballs super fast. It might be a CH bug.
+	# I have yet to find a way to properly control fireball speed.
+	@dir = entity_spec(@entity)['direction'];
+	set_entity_spec(@entity, array(direction: array(@dir['x'], @dir['y'], @dir['z'])));
+	
 	play_sound(ploc(), array('sound': 'GHAST_FIREBALL', 'volume': 2))
 	@item = pinv(player(), null)
 	@item['qty'] = @item['qty'] - 1
