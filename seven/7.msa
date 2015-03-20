@@ -175,11 +175,10 @@
 			msg(array_implode(array_keys(@arenas)))
 		
 		case 'reset':
-			clear_task(@7['task'])
-			@7 = array('players': array(), 'state': 0)
-			export('7', @7)
-			remove_scoreboard('7')
-			msg('Reset 7 Seconds to Live.')
+			clear_task(@7['task']);
+			export('7', null);
+			remove_scoreboard('7');
+			msg('Reset 7 Seconds to Live.');
 			
 		default:
 			die('Usage: /7 [create|setspawn] [schematic/arena]')
