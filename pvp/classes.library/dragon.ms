@@ -54,7 +54,7 @@ case 'powerup':
 
 case 'unload':
 	unbind(@player.'dragonfly');
-	unbind(@palyer.'dragonfall');
+	unbind(@player.'dragonfall');
 	set_pflight(@player, false);
 	queue_clear(@player.'flap');
 	
