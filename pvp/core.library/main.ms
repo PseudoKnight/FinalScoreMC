@@ -496,7 +496,8 @@ proc _pvp_end_match(@id, @winners) {
 		# }
 		
 		remove_scoreboard(@id);
-		export('pvp'.@id, null);
+		@pvp = array('players': array(), 'running': 0);
+		export('pvp'.@id, @pvp);
 		export('currently', null);
 
 	})
