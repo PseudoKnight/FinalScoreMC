@@ -1,5 +1,58 @@
 *:/ar [$] = call_alias('/arena '.$)
 *:/arena [$action] [$id] [$setting] [$] = >>>
+	if(!$action) {
+		msg(color('bold').'SUBCOMMANDS ---------------');
+		msg('/arena set <id> <setting> [value(s)] '.color('gray').'Creates/overwrites settings');
+		msg('/arena add <id> <setting> <value> '.color('greay').'Adds a value to a list setting');
+		msg('/arena remove <id> <setting> <value> '.color('greay').'Removes a value to a list setting');
+		msg('/arena show <id> <setting> '.color('greay').'Displays hidden locations for settings');
+		msg('/arena move <id> <direction> <distance> '.color('greay').'Shifts all locations in arena');
+		msg('/arena load <id> <setting> '.color('gray').'Loads kits & chestspawns');
+		msg('/arena delete <id> [setting] '.color('gray').'Delete arenas, settings, or chests');
+		msg('/arena rename <old-id> <new-id> '.color('gray').'Rename the arena.');
+		msg('/arena info [id] [setting] '.color('gray').'View arenas and their settings');
+		msg('/arena list '.color('gray').'List all arenas');
+		msg(color('bold').'SETTINGS **required ------------');
+		msg('lobby ** '.color('gray').'Sets the lobby warp point');
+		msg('spawn ** '.color('gray').'Adds a spawn point');
+		msg('region ** '.color('gray').'The combat region name');
+		msg('parent '.color('gray').'The parent arena configuration.');
+		msg('arenaselect '.color('gray').'Type of select and then a comma list of arenas.');
+		msg('sharedarenas '.color('gray').'A comma separated list of arena ids.');
+		msg('broadcast '.color('gray').'The region all messages are broadcasted.');
+		msg('mode '.color('gray').'dm, tdm, ctf, infection, koth.');
+		msg('ctfflag '.color('gray').'The flag spawn location for CTF (1 is red, 2 is blue)');
+		msg('kothregion '.color('gray').'The king of the hill region - feet position');
+		msg('lives '.color('gray').'Number of lives until elimination');
+		msg('score '.color('gray').'The target score to win. (ctf: 5, koth: 60)');
+		msg('mobprotect '.color('gray').'Team protects mob [team type].');
+		msg('teamratio '.color('gray').'The ratio of players for team 1 and 2.');
+		msg('team '.color('gray').'Team info - [&4Team1 &cTeam2]');
+		msg('kit '.color('gray').'Sets the respawn kits - accepts team num as value');
+		msg('classes '.color('gray').'Available classes [team1list team2list]');
+		msg('captain '.color('gray').'The captain class for each team');
+		msg('respawntime '.color('gray').'The respawn time in seconds');
+		msg('restore '.color('gray').'A list of schematics to restore.');
+		msg('time '.color('gray').'The starting time');
+		msg('ff '.color('gray').'Sets team friendly-fire (true)');
+		msg('itemspawn '.color('gray').'Set item drop. (60 sec, no spawn @ start)');
+		msg('chestspawn '.color('gray').'Set chest spawn (60 sec, no spawn @ start)');
+		msg('mobspawn '.color('gray').'Spawn mob @ loc [type qty respawnTime onStart]');
+		msg('rsoutput '.color('gray').'The lever that turns on at start and off at end.');
+		msg('rsoutputscore '.color('gray').'Redstone torch appears when a team scores');
+		msg('min '.color('gray').'The minimum num of players to start a match. (2)');
+		msg('max '.color('gray').'Start the match as soon as this number of players join.');
+		msg('effect '.color('gray').'The starting potion effect for all or team.');
+		msg('denydrop '.color('gray').'Comma list of IDs not dropped on death or "all"');
+		msg('delay '.color('gray').'Delay before game starts after command (3)');
+		msg('timer '.color('gray').'Time in minutes till team num wins.');
+		msg('resourcepack '.color('gray').'Custom resource pack to load.');
+		msg('weapons '.color('gray').'Comma list of special weapons to enable');
+		msg('flags '.color('gray').'Special game behavior modifiers');
+		
+		die('DETAILED INFORMATION AT:\n'
+		.' http://finalscoremc.com/arena-configuration/');
+	}
 	if($, @args = parse_args($), @args = array())
 	array_resize(@args, 4)
 	switch($action) {
@@ -18,53 +71,8 @@
 
 	case 'set':
 	case 's':
+	case 'add':
 		if(!has_permission('group.builders'), die('You do not have permission.'))
-		
-		if(!$id || !$setting) {
-		
-			msg('SETTING **required '.color('gray').'Description [usage] (defaults)')
-			msg('lobby ** '.color('gray').'Sets the lobby warp point')
-			msg('spawn ** '.color('gray').'Adds a spawn point')
-			msg('region ** '.color('gray').'The combat region name')
-			msg('parent '.color('gray').'The parent arena configuration.')
-			msg('arenaselect '.color('gray').'Type of select and then a comma list of arenas.')
-			msg('sharedarenas '.color('gray').'A comma separated list of arena ids.')
-			msg('broadcast '.color('gray').'The region all messages are broadcasted.')
-			msg('mode '.color('gray').'dm, tdm, ctf, infection, koth.')
-			msg('ctfflag '.color('gray').'The flag spawn location for CTF (1 is red, 2 is blue)')
-			msg('kothregion '.color('gray').'The king of the hill region - feet position')
-			msg('lives '.color('gray').'Number of lives until elimination')
-			msg('score '.color('gray').'The target score to win. (ctf: 5, koth: 60)')
-			msg('mobprotect '.color('gray').'Team protects mob [team type].')
-			msg('teamratio '.color('gray').'The ratio of players for team 1 and 2.')
-			msg('team '.color('gray').'Team info - [&4Team1 &cTeam2]')
-			msg('kit '.color('gray').'Sets the respawn kits - accepts team # as value')
-			msg('classes '.color('gray').'Available classes [team1list team2list]')
-			msg('captain '.color('gray').'The captain class for each team')
-			msg('respawntime '.color('gray').'The respawn time in seconds')
-			msg('restore '.color('gray').'A list of schematics to restore.')
-			msg('time '.color('gray').'The starting time')
-			msg('ff '.color('gray').'Sets team friendly-fire (true)')
-			msg('itemspawn '.color('gray').'Set item drop. (60 sec, no spawn @ start)')
-			msg('chestspawn '.color('gray').'Set chest spawn (60 sec, no spawn @ start)')
-			msg('mobspawn '.color('gray').'Spawn mob @ loc [type qty respawnTime onStart]')
-			msg('rsoutput '.color('gray').'The lever that turns on at start and off at end.')
-			msg('rsoutputscore '.color('gray').'Redstone torch appears when a team scores')
-			msg('min '.color('gray').'The minimum # of players to start a match. (2)')
-			msg('max '.color('gray').'Start the match as soon as this number of players join.')
-			msg('effect '.color('gray').'The starting potion effect for all or team.')
-			msg('denydrop '.color('gray').'Comma list of IDs not dropped on death or "all"')
-			msg('delay '.color('gray').'Delay before game starts after command (3)')
-			msg('timer '.color('gray').'Time in minutes till team # wins.')
-			msg('resourcepack '.color('gray').'Custom resource pack to load.')
-			msg('weapons '.color('gray').'Comma list of special weapons to enable')
-			msg('flags '.color('gray').'Special game behavior modifiers')
-			
-			die('MORE INFORMATION AT:\n'
-			.' http://finalscoremc.com/arena-configuration/')
-			
-		}
-		
 		if(reg_count('^[a-z0-9]+$', $id) < 1, die('You can only use lowercase alphanumeric characters for the ID'))
 		@arena = get_value('arena.'.$id)
 		if(!@arena, @arena = array())
@@ -179,12 +187,8 @@
 
 			case 'kit':
 				if(!array_index_exists(@arena, 'kit'), @arena['kit'] = array(array(), array()))
-				@inv = pinv()
-				foreach(array_keys(@inv), @slot) {
-					if(is_null(@inv[@slot])) {
-						array_remove(@inv, @slot)
-					}
-				}
+				@inv = pinv();
+				_minify_inv(@inv, true);
 				if(!@args[0] || @args[0] == 1) {
 					@arena['kit'][0] = @inv
 					msg('Set kit to current inventory.')
@@ -248,19 +252,8 @@
 				if(!@args[0] || is_numeric(@args[0])) {
 					if(!@args[0], @cooldown = 60, @cooldown = @args[0])
 					if(!@args[1], @start = true, @start = @args[1])
-					@item = pinv(player(), null)
-					foreach(@i:@v in @item) {
-						if(@i == 'meta' && !is_null(@v)) {
-							foreach(@mi:@mv in @item['meta']) {
-								if(!@mv || @mi == 'enchants') {
-									array_remove(@item['meta'], @mi)
-								}
-							}
-						}
-						if(!@v) {
-							array_remove(@item, @i)
-						}
-					}
+					@item = pinv(player(), null);
+					_minify_item(@item);
 					array_push(@arena['itemspawn'], array(
 						'start': @start,
 						'cooldown': @cooldown,
@@ -427,16 +420,20 @@
 			
 			case 'weapons':
 				@weapons = array('endernades', 'skullrockets',  'shotgunballs', 'primedtnt', 'pistoltears', 'firefire',
-					'railgun', 'fireball', 'firebreath')
+					'railgun', 'fireball', 'firebreath', 'spawner');
 				if(!@args[0] || @args[1]) {
 					die('You need to specify a comma separated list of pre-defined weapons.'
 						.'(no spaces) Current available weapons: '.@weapons)
 				}
-				@arena['weapons'] = split(',', @args[0])
+				if($action == 'add' && array_index_exists(@arena, 'weapons')) {
+					@arena['weapons'] = array_merge(@arena['weapons'], split(',', @args[0]));
+				} else {
+					@arena['weapons'] = split(',', @args[0]);
+				}
 				foreach(@weapon in @arena['weapons']) {
 					if(!array_contains(@weapons, @weapon), die('Unknown flag: '.@weapon))
 				}
-				msg('Activated these weapons: '.color(10).@arena['weapons'])
+				msg('Weapons activated: '.color(10).@arena['weapons']);
 			
 			case 'flags':
 				@flags = array('noinventory', 'stackedpickup', 'debug', 'keepinventory', 'rallycall', 'build', 
@@ -445,7 +442,11 @@
 					die('You need to specify a comma separated list of pre-defined flags.'
 						.'(no spaces) Current available flags: '.@flags)
 				}
-				@arena['flags'] = split(',', @args[0])
+				if($action == 'add' && array_index_exists(@arena, 'flags')) {
+					@arena['flags'] = array_merge(@arena['flags'], split(',', @args[0]));
+				} else {
+					@arena['flags'] = split(',', @args[0]);
+				}
 				foreach(@flag in @arena['flags']) {
 					if(!array_contains(@flags, @flag), die('Unknown flag: '.@flag))
 				}
@@ -455,7 +456,7 @@
 				die('This requires a valid setting. Type "/arena set" to see settings.')
 		}
 		store_value('arena.'.$id, @arena)
-
+		
 	case 'load':
 		if(_is_survival_world(pworld()) || !has_permission('group.builders')) {
 			die('You do not have permission.')
@@ -499,17 +500,27 @@
 				die('Unsupported setting for loading.')
 		}
 		
-	case 'showspawns':
-		if(!has_permission('group.builders'), die('You do not have permission.'))
-		if(!$id, die('You need to specify an arena.'))
-		@arena = get_value('arena.'.$id)
-		@block = '35:14'
-		foreach(@spawn in @arena['spawn'][0]) {
-			psend_block_change(@spawn, @block)
+	case 'show':
+		if(!has_permission('group.builders')) {
+			die('You do not have permission.')
+		};
+		if(!$id) {
+			die('You need to specify an arena.');
 		}
-		@block = '35:11'
-		foreach(@spawn in @arena['spawn'][1]) {
-			psend_block_change(@spawn, @block)
+		@arena = get_value('arena.'.$id);
+		switch($setting) {
+			case 'spawn':
+				@block = '35:14';
+				foreach(@spawn in @arena['spawn'][0]) {
+					psend_block_change(@spawn, @block);
+				}
+				@block = '35:11';
+				foreach(@spawn in @arena['spawn'][1]) {
+					psend_block_change(@spawn, @block);
+				}
+			
+			default:
+				die('Nothing to show for this setting.');
 		}
 	
 	case 'move':
@@ -523,11 +534,10 @@
 		@dir = $setting
 		@distance = $
 		
-		# lobby
 		if(array_index_exists(@arena, 'lobby')) {
 			@arena['lobby'] = _relative(@arena['lobby'], @dir, @distance)
 		}
-		# spawn
+
 		if(array_index_exists(@arena, 'spawn')) {
 			for(@i = 0, @i < array_size(@arena['spawn'][0]), @i++) {
 				@arena['spawn'][0][@i] = _relative(@arena['spawn'][0][@i], @dir, @distance)
@@ -536,7 +546,7 @@
 				@arena['spawn'][1][@i] = _relative(@arena['spawn'][1][@i], @dir, @distance)
 			}
 		}
-		# region
+
 		if(array_index_exists(@arena, 'region')) {
 			@region = sk_region_info(@arena['region'], 'custom')[0]
 			for(@i = 0, @i < array_size(@region), @i++) {
@@ -544,7 +554,7 @@
 			}
 			sk_region_update('custom', @arena['region'], @region)
 		}
-		# broadcast
+
 		if(array_index_exists(@arena, 'broadcast')
 		&& (!array_index_exists(@arena, 'region') || @arena['broadcast'] != @arena['region'])) {
 			@region = sk_region_info(@arena['broadcast'], 'custom')[0]
@@ -553,7 +563,7 @@
 			}
 			sk_region_update('custom', @arena['broadcast'], @region)
 		}
-		# kothregion
+
 		if(array_index_exists(@arena, 'kothregion')) {
 			@region = sk_region_info(@arena['kothregion'], 'custom')[0]
 			for(@i = 0, @i < array_size(@region), @i++) {
@@ -561,40 +571,40 @@
 			}
 			sk_region_update('custom', @arena['kothregion'], @region)
 		}
-		# mobprotect
+
 		if(array_index_exists(@arena, 'mobprotect')) {
 			for(@i = 0, @i < array_size(@arena['mobprotect']), @i++) {
 				@arena['mobprotect'][@i]['loc'] = _relative(@arena['mobprotect'][@i]['loc'], @dir, @distance)
 			}
 		}
-		# restore
+
 		if(array_index_exists(@arena, 'restore')) {
 			msg(color('red').'WARNING: This has a restore schematic: '.@arena['restore'].'. '
 				.'Please copy it in the new location and overwrite the schematic.')
 		}
-		# itemspawn
+
 		if(array_index_exists(@arena, 'itemspawn')) {
 			for(@i = 0, @i < array_size(@arena['itemspawn']), @i++) {
 				@arena['itemspawn'][@i]['loc'] = _relative(@arena['itemspawn'][@i]['loc'], @dir, @distance)
 			}
 		}
-		# chestspawn
+
 		if(array_index_exists(@arena, 'chestspawn')) {
 			for(@i = 0, @i < array_size(@arena['chestspawn']), @i++) {
 				@arena['chestspawn'][@i]['loc'] = _relative(@arena['chestspawn'][@i]['loc'], @dir, @distance)
 			}
 		}
-		# mobspawn
+
 		if(array_index_exists(@arena, 'mobspawn')) {
 			for(@i = 0, @i < array_size(@arena['mobspawn']), @i++) {
 				@arena['mobspawn'][@i]['loc'] = _relative(@arena['mobspawn'][@i]['loc'], @dir, @distance)
 			}
 		}
-		# rsoutput
+
 		if(array_index_exists(@arena, 'rsoutput')) {
 			@arena['rsoutput'] = _relative(@arena['rsoutput'], @dir, @distance)
 		}
-		# rsoutputscore
+
 		if(array_index_exists(@arena, 'rsoutputscore')) {
 			@arena['rsoutputscore'][0] = _relative(@arena['rsoutputscore'][0], @dir, @distance)
 			@arena['rsoutputscore'][1] = _relative(@arena['rsoutputscore'][1], @dir, @distance)
@@ -618,6 +628,7 @@
 		clear_value('arena', $id)
 		msg('Renamed '.$id.' to '.$setting.'.')
 
+	case 'remove':
 	case 'delete':
 		if(!has_permission('group.builders'), die('You do not have permission.'))
 		if(!$id) {
@@ -626,10 +637,55 @@
 		}
 		@arena = get_value('arena.'.$id)
 		if(!@arena, die('There is no defined arena by that name.'))
-		if($setting) {
-			@loc = pcursor()
-			if(split(':', get_block_at(@loc))[0] == '54'
-			&& ($setting == 'chestspawn' || $setting == 'chestgroup')) {
+		if($setting && !array_index_exists(@arena, $setting)) {
+			die('No data stored for setting: '.$setting);
+		}
+		switch($setting) {
+			case 'spawn':
+				@loc = ploc();
+				@loc = array(round(@loc[0], 1), round(@loc[1], 1), round(@loc[2], 1), @loc[3]);
+				@found = false;
+				foreach(@index: @spawn in @arena['spawn'][0]) {
+					if(@spawn[0] < @loc[0] + 2 && @spawn[0] > @loc[0] + 2
+					&& @spawn[1] < @loc[1] + 2 && @spawn[1] > @loc[1] + 2
+					&& @spawn[2] < @loc[2] + 2 && @spawn[2] > @loc[2] + 2) {
+						@found = true;
+						array_remove(@arena['spawn'][0], @index);
+						msg('Removed this spawn location'.if(array_index_exists(@arena, 'team'), ' for team 1.', '.'));
+						break();
+					}
+				}
+				if(!@found) {
+					foreach(@spawn in @arena['spawn'][1]) {
+						if(@spawn[0] < @loc[0] + 2 && @spawn[0] > @loc[0] + 2
+						&& @spawn[1] < @loc[1] + 2 && @spawn[1] > @loc[1] + 2
+						&& @spawn[2] < @loc[2] + 2 && @spawn[2] > @loc[2] + 2) {
+							array_remove(@arena['spawn'][1], @index);
+							msg('Removed this spawn location'.if(array_index_exists(@arena, 'team'), ' for team 2.', '.'));
+							break();
+						}
+					}
+				}
+			
+			case 'itemspawn':
+				@loc = ploc();
+				@loc = array(round(@loc[0], 1), round(@loc[1], 1) + 3, round(@loc[2], 1), @loc[3]);
+				foreach(@index: @spawn in @arena['itemspawn']) {
+					if(@spawn['loc'][0] < @loc[0] + 2 && @spawn['loc'][0] > @loc[0] + 2
+					&& @spawn['loc'][1] < @loc[1] + 2 && @spawn['loc'][1] > @loc[1] + 2
+					&& @spawn['loc'][2] < @loc[2] + 2 && @spawn['loc'][2] > @loc[2] + 2) {
+						array_remove(@arena['itemspawn'], @index);
+						msg('Removed this item spawn.');
+						break();
+					}
+				}
+			
+			case 'chestspawn':
+			case 'chestgroup':
+				@loc = pcursor();
+				if(split(':', get_block_at(@loc))[0] != '54') {
+					die('Please look at a chest to remove it.');
+				}
 				foreach(@key: @chest in @arena[$setting]) {
 					if(@chest['loc'][0] == @loc[0]
 					&& @chest['loc'][1] == @loc[1]
@@ -640,15 +696,24 @@
 						break()
 					}
 				}
-			} else {
-				array_remove(@arena, $setting)
-				msg('Deleted "'.$setting.'" setting for '.$id.'.')
-			}
-			store_value('arena.'.$id, @arena)
-		} else {
-			clear_value('arena.'.$id)
-			msg('Deleted '.$id.' arena permanently.')
+			
+			case 'weapons':
+			case 'flags':
+				foreach(@value in split(',', @args[0])) {
+					array_remove_values(@arena[$setting], @value);
+				}
+				msg('Activated '.$setting.': '.@arena[$setting]);
+			
+			default:
+				if(!$setting) {
+					clear_value('arena.'.$id)
+					die('Deleted '.$id.' arena permanently.')
+				} else {
+					array_remove(@arena, $setting)
+					msg('Deleted "'.$setting.'" setting for '.$id.'.')
+				}
 		}
+		store_value('arena.'.$id, @arena)
 		
 	case 'info':
 	case 'i':
@@ -711,12 +776,5 @@
 		}
 		msg(color('gray').'PVP ARENAS: '.color('r').@list)
 
-	default:
-		msg('/arena set [id] [setting] [value(s)] '.color('gray').'Creates/overwrites settings')
-		msg('/arena load <id> <setting> '.color('gray').'Loads kits & chestspawns')
-		msg('/arena delete <id> [setting] '.color('gray').'Delete arenas, settings, or chests')
-		msg('/arena rename <old-id> <new-id> '.color('gray').'Rename the arena.')
-		msg('/arena info [id] [setting] '.color('gray').'View arenas and their settings')
-		msg('/arena list '.color('gray').'List all arenas')
 	}
 <<<
