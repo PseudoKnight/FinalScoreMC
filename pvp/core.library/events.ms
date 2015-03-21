@@ -327,7 +327,7 @@ if(!array_contains(@pvp['arena']['flags'], 'build')) {
 }
 
 array_push(@pvp['binds'], @id.'EntityDamage')
-bind(entity_damage, array('id': @id.'EntityDamage'), array('world': 'custom'), @e, @id = @id) {
+bind(entity_damage, array('id': @id.'EntityDamage', 'priority': 'LOWEST'), array('world': 'custom'), @e, @id = @id) {
 	@pvp = import('pvp'.@id)
 	if(array_index_exists(@e, 'damager')
 	&& array_contains(@pvp['spectators'], @e['damager'])) {
@@ -339,12 +339,24 @@ bind(entity_damage, array('id': @id.'EntityDamage'), array('world': 'custom'), @
 				if(array_index_exists(@pvp['players'], @e['shooter'])) {
 					@damager = @e['shooter']
 				} else {
-					@damager = 'other'
+					try(
+						@damager = get_mob_owner(@e['shooter']);
+					,
+						@damager = 'other';
+					);
 				}
-			} else if(array_index_exists(@e, 'damager') && array_index_exists(@pvp['players'], @e['damager'])) {
-				@damager = @e['damager']
+			} else if(array_index_exists(@e, 'damager')) {
+				if(array_index_exists(@pvp['players'], @e['damager'])) {
+					@damager = @e['damager']
+				} else {
+					try(
+						@damager = get_mob_owner(@e['shooter']);
+					,
+						@damager = 'other';
+					);
+				}
 			} else {
-				@damager = 'other'
+				@damager = 'other';
 			}
 				
 			if(!@pvp['arena']['ff']
@@ -365,7 +377,8 @@ bind(entity_damage, array('id': @id.'EntityDamage'), array('world': 'custom'), @
 					@pvp['stats'][@e['player']]['damagetaken'][@damager] = @e['amount']
 				}
 				
-				if(array_index_exists(@pvp['stats'], @damager)) {
+				if(@damager != get_player_from_entity_id(@e['id'])
+				&& array_index_exists(@pvp['stats'], @damager)) {
 					@pvp['stats'][@damager]['damage'] += @e['amount'];
 				}
 				

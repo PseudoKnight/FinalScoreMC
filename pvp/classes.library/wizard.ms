@@ -1,12 +1,27 @@
 switch(@action) {
 case 'load':
 	bind(player_interact, array('id': @player.'lightning'), array('item': 369, 'button': 'right', 'player': @player), @e) {
-		lightning(pcursor())
+		@loc = pcursor();
+		bind(entity_damage, array('id': player().'lightningdmg'), array('cause': 'LIGHTNING'), @e, 
+				@damager = pinfo(player(), 13), @loc = @loc) {
+			
+			@eloc = entity_loc(@e['id']);
+			if(@eloc['x'] < @loc['x'] + 4 && @eloc['x'] > @loc['x'] - 4
+			&& @eloc['z'] < @loc['z'] + 4 && @eloc['z'] > @loc['z'] - 4) {
+				damage_entity(@e['id'], @e['amount'], @damager);
+				modify_event('amount', 0);
+			}
+		}
+		lightning(@loc);
 		@slot = pinfo(player(), 15)
 		@item = pinv(player(), null)
 		set_pinv(player(), array('null': array('type': 280)))
-		queue_clear(player().'lightning')
-		queue_delay(6000, player().'lightning')
+		queue_clear(player().'lightning');
+		queue_delay(1000, player().'lightning');
+		queue_push(closure(){
+			unbind(player().'lightningdmg');
+		}, player().'lightning');
+		queue_delay(5000, player().'lightning');
 		queue_push(closure(){
 			@newitem = pinv(player(), @slot)
 			if(@newitem && @newitem['type'] == 280) {
