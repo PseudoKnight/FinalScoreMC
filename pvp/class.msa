@@ -101,15 +101,6 @@ case 'set':
 		} else {
 			die('Requires a strength integer and a length integer in seconds.')
 		}
-	
-	case 'spawner':
-		if($ == 'true') {
-			@arena['classes'][@classid]['spawner'] = true
-			msg('Turned on spawning for class.')
-		} else if($ == 'false' && array_index_exists(@arena['classes'][@classid], 'spawner')) {
-			array_remove(@arena['classes'][@classid], 'spawner')
-			msg('Turned off spawning for class.')
-		}
 		
 	case 'doublejump':
 		if($ == 'true') {
