@@ -8,18 +8,21 @@ proc _is_survival_world(@world) {
 /*
 	Sets a player's inventory for Frog Park
 */
-proc _equip_park() {
-	_clear_pinv()
+proc _equip_park(@player) {
+	if(!@player) {
+		@player = player();
+	}
+	_clear_pinv(@player)
 	
-	set_pinv(player(), array(
+	set_pinv(@player, array(
 		1: array('type': 340, 'meta': array('display': 'Park Directory')),
 	))
 	
 	try(
-	@pdata = _pdata(player())
+	@pdata = _pdata(@player)
 	if(array_index_exists(@pdata, 'support')
 	&& @pdata['support'] >= 10) {
-		set_pinv(player(), array(
+		set_pinv(@player, array(
 			4: array(
 				'type': 401, 
 				'meta': array(
