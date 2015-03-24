@@ -454,9 +454,9 @@ proc _pvp_end_match(@id, @winners) {
 					if(array_index_exists(@pvp['arena'], 'resourcepack')) {
 						send_resourcepack(@player, 'http://mc.finalscoremc.com:25966/resourcepacks/default.zip')
 					}
-					set_ploc(@player, @pvp['arena']['lobby'])
-					_clear_pinv(@player)
-					_clear_peffects(@player)
+					set_ploc(@player, @pvp['arena']['lobby']);
+					_equip_park(@player);
+					_clear_peffects(@player);
 				}
 			)
 		}

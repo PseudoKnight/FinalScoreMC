@@ -65,7 +65,8 @@ proc _remove_spectator(@id, @player, @pvp) {
 			}
 			set_pflight(@player, false)
 			if(pworld(@player) == 'custom' && pinfo(@player, 5) > 0) {
-				set_peffect(@player, 14, 0, 0)
+				_equip_park(@player);
+				set_peffect(@player, 14, 0, 0);
 				if(!array_index_exists(@pvp['players'], @player)) {
 					set_ploc(@player, @pvp['arena']['lobby'])
 				}
