@@ -151,11 +151,14 @@ proc _cluck_endround() {
 
 			# STATS
 			#-------
-			@scores = get_value('cluck')
-			if(!array_index_exists(@scores, @cluck['player'][@p]), @best = 0, @best = @scores[@cluck['player'][@p]])
+			@scores = get_value('cluck');
+			@best = 0;
+			if(array_index_exists(@scores, @cluck['player'][@p])) {
+				@best = @scores[@cluck['player'][@p]];
+			}
 			if(@cluck['score'][@p] > @best) {
 				if(@best > 0, _regionmsg('cluck', color('l').'You beat your personal best of '.@best.'!'))
-				msg(color(6).'+ '.(@cluck['score'][@p] - @best).' coins')
+				tmsg(@cluck['player'][@p], color(6).'+ '.(@cluck['score'][@p] - @best).' coins')
 				_acc_add(@cluck['player'][@p], @cluck['score'][@p] - @best)
 				@scores[@cluck['player'][@p]] = @cluck['score'][@p]
 				@top = false
