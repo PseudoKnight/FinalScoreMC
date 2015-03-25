@@ -141,7 +141,7 @@ bind(player_join, null, null, @event) {
 					'params': @params,
 					'success': closure(@response){
 						@result = json_decode(@response['body']);
-						if(array_index_exists(@result, 'error') && @result['error'] != 'Nothing found.') {
+						if(@result && array_index_exists(@result, 'error') && @result['error'] != 'Nothing found.') {
 							execute(@result['error'], @error);
 						}
 					}
