@@ -370,7 +370,7 @@
 				if(@timeleft[0] == 4) {
 					if(extension_exists('CHNaughty')) {
 						foreach(@p in array_keys(@pvp['players'])) {
-							title_msg(@p, null, @primaryName.': '.@secondaryName, 20, 60, 20);
+							title_msg(@p, null, @primaryName.if(@secondaryName, ': '.@secondaryName), 20, 60, 20);
 						}
 					}
 				}
