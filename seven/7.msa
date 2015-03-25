@@ -17,19 +17,19 @@
 		
 		_worldmsg('custom', colorize('&67 Seconds to Live&r has been queued up by '.player()))
 		
-		@timer = array(25)
-		@7['state'] = 1
-		@7['lobby'] = get_value('warp.7')['loc']
-		create_scoreboard('7')
-		create_objective('time', 'DUMMY', '7')
-		set_objective_display('time', array('displayname': color(6).'SECONDS TO LIVE', 'slot': 'SIDEBAR'), '7')
+		@timer = array(20);
+		@7['state'] = 1;
+		@7['lobby'] = get_value('warp.7')['loc'];
+		create_scoreboard('7');
+		create_objective('time', 'DUMMY', '7');
+		set_objective_display('time', array('displayname': color(6).'SECONDS TO LIVE', 'slot': 'SIDEBAR'), '7');
 		set_interval(1000, closure(){
 			@num = 0
 			foreach(@player in all_players('custom')) {
 				if(ponline(@player) && pmode(@player) == 'SURVIVAL' && array_contains(sk_current_regions(@player), '7')) {
 					@num++
 					if(!array_index_exists(@7['players'], @player)) {
-						@7['players'][@player] = 7.0
+						@7['players'][@player] = array('time': 7.0, 'queue': null);
 						set_pscoreboard(@player, '7')
 						set_pscore('time', @player, 7, '7')
 					}
@@ -37,8 +37,8 @@
 			}
 			if(@7['state'] == 1) {
 				if(@num >= 2) {
-					@7['state'] = 2
-					_worldmsg('custom', colorize('&67 Seconds to Live&r will start in 25 seconds. /warp 7'))
+					@7['state'] = 2;
+					_worldmsg('custom', colorize('&67 Seconds to Live&r will start in '.@timer[0].' seconds. /warp 7'));
 				} else if(@num == 0) {
 					clear_task()
 					@7['state'] = 0
@@ -48,6 +48,7 @@
 				}
 				
 			} else if(@7['state'] == 2) {
+				@timer[0] -= 1;
 
 				if(@num != array_size(@7['players'])) { 
 					if(@num < 2) {
@@ -61,7 +62,10 @@
 				
 					foreach(@player in array_keys(@7['players'])) {
 						if(!ponline(@player) || !array_contains(sk_current_regions(@player), '7')) {
-							array_remove(@7['players'], @player)
+							array_remove(@7['players'], @player);
+							if(ponline(@player)) {
+								set_pwalkspeed(@player, 0.2);
+							}
 						}
 					}
 				}
@@ -77,14 +81,17 @@
 					sudo('/clearhistory')
 					#skcb_load(@7['arena'].'.schematic')
 					#skcb_paste(array(0, 0, 0, 'custom'), array('origin': true))
-					@timer[0] -= 1
 				} else if(@timer[0] == 1) {
+					foreach(@player in array_keys(@7['players'])) {
+						set_pvelocity(@player, array(0, 0, 0));
+						set_pwalkspeed(@player, 0);
+						set_peffect(@player, 8, -10, 10);
+					}
+				} else if(@timer[0] == 0) {
 					clear_task()
 					export('currently', 'Seven Seconds to Live')
 					include('includes.library/main.ms')
 					_7_start(@7)
-				} else {
-					@timer[0] -= 1
 				}
 			}
 		})
