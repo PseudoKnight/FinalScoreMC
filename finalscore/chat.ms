@@ -71,7 +71,7 @@ bind(player_chat, null, null, @event) {
 	
 	@components[] = array(_colorname().player().color('gray').': ', 
 		if(has_permission('group.moderators'), color('AQUA').'STAFF\n')
-		.if(array_index_exists(@pdata, 'names'), color('DARK_GRAY').'[aliases] '.color('r').array_implode(@pdata, 'names').'\n')
+		.if(array_index_exists(@pdata, 'names'), color('DARK_GRAY').'[aliases] '.color('r').array_implode(@pdata['names']).'\n')
 		.color('DARK_GRAY').'[world] '.color('r')._worldname(pworld()));
 
 	@message = colorize(replace(@message, '"', '\\u0022'));
