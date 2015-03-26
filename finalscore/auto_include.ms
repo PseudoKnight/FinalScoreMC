@@ -500,7 +500,7 @@ proc _get_uuid(@player) {
 	if(ponline(@player)) {
 		@uuidDashed = puuid(@player);
 	} else {
-		@uuidDashed = get_value('players', to_lower(@player));
+		@uuidDashed = get_value('players', @player);
 		if(is_null(@uuidDashed)) {
 			throw('NotFoundException', 'Player name not stored in database: '.@player);
 		}
@@ -512,6 +512,7 @@ proc _get_uuid(@player) {
 	Gets stored data for account under given player name.
 */
 proc _pdata(@player) {
+	@player = to_lower(@player);
 	@pdata = import('pdata.'.@player);
 	if(!@pdata) {
 		@uuid = _get_uuid(@player);
@@ -527,6 +528,8 @@ proc _pdata(@player) {
 	Sets player data
 */
 proc _store_pdata(@player, @data) {
+	if(!@data, return());
+	@player = to_lower(@player);
 	@uuid = _get_uuid(@player);	
 	x_new_thread('storePlayerData', closure(){
 		store_value('uuids', @uuid, @data);

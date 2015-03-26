@@ -63,6 +63,13 @@ bind(player_login, null, null, @event) {
 			modify_event('kickmsg', 'ERROR: User data is missing for known player.');
 			die();
 		}
+		
+		# player changed their name back
+		if(@pdata['name'] != to_lower(@event['player'])) {
+			array_remove_values(@pdata['names'], to_lower(@event['player']));
+			@pdata['name'] = to_lower(@event['player']);
+			@update = true;
+		}
 	}
 	
 
@@ -95,7 +102,7 @@ bind(player_login, null, null, @event) {
 		@update = true;
 	}
 	
-	export('pdata.'.@event['player'], @pdata);
+	export('pdata.'.to_lower(@event['player']), @pdata);
 	
 	if(@update) {
 		store_value('uuids', @uuid, @pdata);
