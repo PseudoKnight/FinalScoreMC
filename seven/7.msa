@@ -1,8 +1,12 @@
 *:/7 [$action] [$schematic] = >>>
-	if(!$action) {
+	if(!$action || $action == 'start') {
 		@arenas = get_value('seven')
 		if(!@arenas || array_size(@arenas) < 1) {
 			die('No schematics/arenas defined.')
+		}
+		
+		if($schematic && !array_contains(array_keys(@arenas), $schematic)) {
+			die('Unknown arena. Use /7 list.');
 		}
 		
 		if(array_contains(get_scoreboards(), '7')) {
@@ -72,7 +76,11 @@
 				
 				if(@timer[0] == 5) {
 					broadcast(colorize('&6GENERATING ARENA...'))
-					@7['arena'] = array_rand(@arenas)[0]
+					if(!$schematic) {
+						@7['arena'] = array_rand(@arenas)[0]
+					} else {
+						@7['arena'] = $schematic;
+					}
 					@7['spawns'] = @arenas[@7['arena']]['spawns']
 					@skplayer = array_keys(@7['players'])[0]
 					sudo('//schematic load '.@7['arena'])
