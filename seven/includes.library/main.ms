@@ -32,7 +32,7 @@ proc _7_start(@7) {
 			}
 			clear_task()
 			
-			@7['task'] = set_interval(100, closure(){
+			@7['task'] = set_interval(150, closure(){
 				foreach(@player: @p in @7['players']) {
 					if(!ponline(@player) 
 					|| !array_contains(sk_current_regions(@player), '7_schematic')
@@ -48,33 +48,33 @@ proc _7_start(@7) {
 							@p['queue'] = null;
 						}
 					
-						@p['time'] -= 0.1;
+						@p['time'] -= 0.15;
 						@loc = ploc(@player);
 						
 						if(entity_grounded(pinfo(@player, 13))) {
 							@block = get_block_at(@loc)
 							switch(@block) {
 							case '16:0':
-								@p['time'] += 0.15;
+								@p['time'] += 0.05;
 								play_sound(@loc, array('sound': 'ORB_PICKUP', 'pitch': 0.62), @player)
 							case '15:0':
-								@p['time'] += 0.18;
+								@p['time'] += 0.10;
 								play_sound(@loc, array('sound': 'ORB_PICKUP', 'pitch': 0.7), @player)
 							case '73:0':
 							case '74:0':
-								@p['time'] += 0.23;
+								@p['time'] += 0.15;
 								play_sound(@loc, array('sound': 'ORB_PICKUP', 'pitch': 0.8), @player)
 							case '21:0':
-								@p['time'] += 0.28;
+								@p['time'] += 0.20;
 								play_sound(@loc, array('sound': 'ORB_PICKUP', 'pitch': 0.95), @player)
 							case '14:0':
-								@p['time'] += 0.33;
+								@p['time'] += 0.40;
 								play_sound(@loc, array('sound': 'ORB_PICKUP', 'pitch': 1.05), @player)
 							case '56:0':
-								@p['time'] += 0.38;
+								@p['time'] += 0.80;
 								play_sound(@loc, array('sound': 'ORB_PICKUP', 'pitch': 1.25), @player)
 							case '129:0':
-								@p['time'] += 0.43;
+								@p['time'] += 1.00;
 								play_sound(@loc, array('sound': 'ORB_PICKUP', 'pitch': 1.4), @player)
 							}
 
