@@ -91,13 +91,13 @@ bind(player_death, array('priority': 'high', 'id': @id.'death'), null, @e, @id =
 	
 	@drops = array()
 	foreach(@drop in @e['drops']) {
-		if(@pvp['arena']['mode'] == 'ctf' && (@drop['type'] == 8 || @drop['type'] == 10)) {
+		if(@pvp['arena']['mode'] == 'ctf' && !is_null(@flag = _flag(@drop))) {
 			_regionmsg(@pvp['arena']['broadcast'], color('gray').'[PVP] '.@pvp['players'][player()]['color']
-				.player().color('r').' dropped the '.@pvp['arena']['team'][if(@pvp['players'][player()]['team'] == 0, 1, 0)]['color'].'flag')
+				.player().color('r').' dropped the '.@pvp['arena']['team'][@flag)]['color'].'flag')
 			if(@e['cause']['cause'] == 'VOID' || @e['cause']['cause'] == 'LAVA') {
-				_pvp_flag_spawn(@id, if(@drop['type'] == 10, 0, 1))
+				_pvp_flag_spawn(@id, @flag)
 			} else {
-				_pvp_flag_spawn(@id, if(@drop['type'] == 10, 0, 1), _relative(ploc(), 'up'))
+				_pvp_flag_spawn(@id, @flag, _relative(ploc(), 'up'))
 			}
 		} else if(array_index_exists(@pvp['arena'], 'captain') 
 		&& @drop['type'] == @pvp['team'][@pvp['players'][player()]['team']]['captainhat']['type']
@@ -159,10 +159,8 @@ bind(player_quit, array('id': @id.'quit'), null, @e, @id = @id) {
 	@pvp = import('pvp'.@id)
 	if(array_index_exists(@pvp['players'], player())) {
 		if(@pvp['arena']['mode'] == 'ctf' 
-		&& !is_null(pinv(player(), 103))
-		&& (pinv(player(), 103)['type'] == 8 
-		|| pinv(player(), 103)['type'] == 10)) {
-			_pvp_flag_spawn(@id, if(pinv(player(), 103)['type'] == 10, 0, 1)) 
+		&& !is_null(@flag = _flag(pinv(player(), 103)))) {
+			_pvp_flag_spawn(@id, @flag) 
 		}
 
 		modify_event('message', color('gray').'[PVP] '
@@ -292,10 +290,8 @@ bind(player_command, array('id': @id.'command'), null, @e, @id = @id) {
 	_regionmsg(@pvp['arena']['broadcast'], color('gray').'[PVP] '
 		.@pvp['players'][player()]['color'].player().color('r').' left the arena.')
 	if(@pvp['arena']['mode'] == 'ctf' 
-	&& pinv(player(), 103) 
-	&& (pinv(player(), 103)['type'] == 8 
-	|| pinv(player(), 103)['type'] == 10)) {
-		_pvp_flag_spawn(@id, if(pinv(player(), 103)['type'] == 10, 0, 1))
+	&& !is_null(@flag = _flag(pinv(player(), 103)))) {
+		_pvp_flag_spawn(@id, @flag)
 	}
 	if(array_index_exists(@pvp['players'][player()], 'class')) {
 		_class('unload', player(), @pvp['players'][player()]['class'], @pvp)
@@ -406,8 +402,9 @@ if(array_contains(@pvp['arena']['flags'], 'noinventory')) {
 		@pvp = import('pvp'.@id)
 		if(!array_index_exists(@pvp['players'], player()), die())
 		
-		if(@e['slotitem']['type'] == 10 || @e['slotitem']['type'] == 8, 
-			cancel())
+		if(!is_null(_flag(@e['slotitem']))) { 
+			cancel();
+		}
 	}
 }
 
@@ -500,89 +497,53 @@ if(@pvp['arena']['mode'] == 'ctf') {
 	array_push(@pvp['binds'], @id.'flagpickup')
 	bind(item_pickup, array('id': @id.'flagpickup'), null, @e, @id = @id) { 
 		@pvp = import('pvp'.@id)
-		if(!array_index_exists(@pvp['players'], player()), 
-			die())
+		if(!array_index_exists(@pvp['players'], player())) {
+			die();
+		}
+			
+		@flag = _flag(@e['item']);
+		if(is_null(@flag)) {
+			die();
+		}
 		
-		if(@e['item']['type'] == '10') {
-			consume()
-			if(@pvp['players'][player()]['team'] == 0) {
-				if(_horizontal_distance(ploc(), @pvp['arena']['ctfflag'][0]) > 3) { 
-					queue_clear(@id.'0flag')
-					modify_event('item', null)
-					_pvp_flag_spawn(@id, 0)
-					_regionmsg(@pvp['arena']['broadcast'], color('gray').'[PVP] '
-						.@pvp['arena']['team'][0]['color'].player().color('r').' returned the '
-						.@pvp['arena']['team'][0]['color'].'flag')
-					play_sound(ploc(), array('sound': 'ENDERDRAGON_WINGS', 'pitch': 0))
-				} else {
-					cancel()
-					if(!is_null(pinv(player(), 103)) && pinv(player(), 103)['type'] == 8) {
-						play_sound(@pvp['arena']['ctfflag'][0], array('sound': 'ZOMBIE_METAL', 'volume': 3))
-						@pvp['team'][0]['score']++
-						set_pscore('captures', @pvp['arena']['team'][0]['name'], @pvp['team'][0]['score'], @id)
-						set_pinv(player(), array(103: null))
-						_regionmsg(@pvp['arena']['broadcast'], color('gray').'[PVP] '
-							.@pvp['arena']['team'][0]['color'].player().color('r').' secured the '
-							.@pvp['arena']['team'][1]['color'].'flag'.color('r').'!')
-						if(array_index_exists(@pvp['arena'], 'rsoutputscore')) {
-							set_block_at(@pvp['arena']['rsoutputscore'][0], '76:5')
-							set_timeout(1000, closure(){
-								set_block_at(@pvp['arena']['rsoutputscore'][0], '50:5')
-							})
-						}
-						_pvp_flag_spawn(@id, 1)
-						_pvp_check_objectives(@id)
-					}
-				}
-			} else {
-				queue_clear(@id.'0flag')
-				modify_event('item', null)
-				set_pinv(player(), array(103: array('type': 10, 'qty': 1)))
+		if(@flag == @pvp['players'][player()]['team']) {
+			if(_horizontal_distance(ploc(), @pvp['arena']['ctfflag'][@flag]) > 3) { 
+				queue_clear(@id.@flag.'flag');
+				modify_event('item', null);
+				_pvp_flag_spawn(@id, @flag);
 				_regionmsg(@pvp['arena']['broadcast'], color('gray').'[PVP] '
-					.@pvp['arena']['team'][1]['color'].player().color('r').' picked up the '
-					.@pvp['arena']['team'][0]['color'].'flag')
-				play_sound(ploc(), array('sound': 'ENDERDRAGON_WINGS', 'volume': 3))
-			}
-		} else if(@e['item']['type'] == '8') {
-			consume()
-			if(@pvp['players'][player()]['team'] == 1) {
-				if(_horizontal_distance(ploc(), @pvp['arena']['ctfflag'][1]) > 3) {
-					queue_clear(@id.'1flag')
-					modify_event('item', null)
-					_pvp_flag_spawn(@id, 1)
-					_regionmsg(@pvp['arena']['broadcast'], color('gray').'[PVP] '
-						.@pvp['arena']['team'][1]['color'].player().color('r').' returned the '
-						.@pvp['arena']['team'][1]['color'].'flag')
-					play_sound(ploc(), array('sound': 'ENDERDRAGON_WINGS', 'pitch': 0))
-				} else {
-					cancel()
-					if(!is_null(pinv(player(), 103)) && pinv(player(), 103)['type'] == 10) {
-						set_pinv(player(), array(103: null))
-						play_sound(@pvp['arena']['ctfflag'][1], array('sound': 'ZOMBIE_METAL', 'volume': 3))
-						@pvp['team'][1]['score']++
-						set_pscore('captures', @pvp['arena']['team'][1]['name'], @pvp['team'][1]['score'], @id)
-						_regionmsg(@pvp['arena']['broadcast'], color('gray').'[PVP] '
-							.@pvp['arena']['team'][1]['color'].player().color('r').' secured the '
-							.@pvp['arena']['team'][0]['color'].'flag'.color('r').'!')
-						if(array_index_exists(@pvp['arena'], 'rsoutputscore')) {
-							set_block_at(@pvp['arena']['rsoutputscore'][1], '76:5')
-							set_timeout(1000, closure(){
-								set_block_at(@pvp['arena']['rsoutputscore'][1], '50:5')
-							})
-						}
-						_pvp_flag_spawn(@id, 0)
-						_pvp_check_objectives(@id)
-					}
-				}
+					.@pvp['arena']['team'][@flag]['color'].player().color('r').' returned the '
+					.@pvp['arena']['team'][@flag]['color'].'flag');
+				play_sound(ploc(), array('sound': 'ENDERDRAGON_WINGS', 'pitch': 0));
 			} else {
-				queue_clear(@id.'1flag')
-				modify_event('item', null)
-				set_pinv(player(), array(103: array('type': 8, 'qty': 1)))
-				_regionmsg(@pvp['arena']['broadcast'], color('gray').'[PVP] '
-					.@pvp['arena']['team'][0]['color'].player().color('r').' picked up the '
-					.@pvp['arena']['team'][1]['color'].'flag')
-				play_sound(ploc(), array('sound': 'ENDERDRAGON_WINGS', 'volume': 3))
+				cancel();
+				@heldflag = _flag(pinv(player(), 103));
+				if(!is_null(@heldflag)) {
+					play_sound(@pvp['arena']['ctfflag'][@flag], array('sound': 'ZOMBIE_METAL', 'volume': 3));
+					@pvp['team'][@flag]['score']++;
+					set_pscore('captures', @pvp['arena']['team'][@flag]['name'], @pvp['team'][@flag]['score'], @id)
+					set_pinv(player(), array(103: null));
+					_regionmsg(@pvp['arena']['broadcast'], color('gray').'[PVP] '
+						.@pvp['arena']['team'][@flag]['color'].player().color('r').' secured the '
+						.@pvp['arena']['team'][@heldflag]['color'].'flag'.color('r').'!');
+					if(array_index_exists(@pvp['arena'], 'rsoutputscore')) {
+						set_block_at(@pvp['arena']['rsoutputscore'][@flag], '76:5');
+						set_timeout(1000, closure(){
+							set_block_at(@pvp['arena']['rsoutputscore'][@flag], '50:5');
+						})
+					}
+					_pvp_flag_spawn(@id, @heldflag);
+					_pvp_check_objectives(@id);
+				}
 			}
+		} else {
+			queue_clear(@id.@flag.'flag');
+			modify_event('item', null);
+			set_pinv(player(), array(103: array('type': 425, 'data': if(@flag, 4, 1))));
+			_regionmsg(@pvp['arena']['broadcast'], color('gray').'[PVP] '
+				.@pvp['arena']['team'][if(@flag, 0, 1)]['color'].player().color('r').' picked up the '
+				.@pvp['arena']['team'][@flag]['color'].'flag');
+			play_sound(ploc(), array('sound': 'ENDERDRAGON_WINGS', 'volume': 3));
 		}
 	}
 }

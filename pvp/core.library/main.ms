@@ -263,16 +263,28 @@ proc _pvp_start_match(@id) {
 }
 
 proc _pvp_flag_spawn(@id, @team, @loc) {
-	@pvp = import('pvp'.@id)
-	if(!@loc, 
-		@loc = @pvp['arena']['ctfflag'][@team])
-	if(!entity_exists(@pvp['team'][@team]['flag'])) {
-		@pvp['team'][@team]['flag'] = drop_item(@loc, array('type': if(@team == 0, '10', '8')), 0)
-	} else if(_horizontal_distance(entity_loc(@pvp['team'][@team]['flag']), @pvp['arena']['ctfflag'][@team]) > 3) {
-		@pvp['team'][@team]['flag'] = drop_item(@loc, array('type': if(@team == 0, '10', '8')), 0)
+	@pvp = import('pvp'.@id);
+	if(!is_array(@loc)) {
+		@loc = @pvp['arena']['ctfflag'][@team];
 	}
-	queue_delay('30000', @id.@team.'flag')
-	queue_push(closure(_pvp_flag_spawn(@id, @team)), @id.@team.'flag')
+	if(!entity_exists(@pvp['team'][@team]['flag'])) {
+		@pvp['team'][@team]['flag'] = drop_item(@loc, array('type': 425, 'data': if(@team == 0, '1', '4')), 0)
+	} else if(_horizontal_distance(entity_loc(@pvp['team'][@team]['flag']), @pvp['arena']['ctfflag'][@team]) > 3) {
+		@pvp['team'][@team]['flag'] = drop_item(@loc, array('type': 425, 'data': if(@team == 0, '1', '4')), 0)
+	}
+	queue_delay('30000', @id.@team.'flag');
+	queue_push(closure(_pvp_flag_spawn(@id, @team)), @id.@team.'flag');
+}
+
+proc _flag(@item) {
+	if(!is_null(@item) && @item['type'] == 425) {
+		if(@item['data'] == 4) {
+			return(1);
+		} else if(@item['data'] == 1) {
+			return(0);
+		}
+	}
+	return(null);
 }
 
 proc _pvp_hat_spawn(@id, @team, @loc) {
