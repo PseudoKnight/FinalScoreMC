@@ -185,7 +185,7 @@
 	}
 	
 	set_interval(50, closure(){
-		foreach(@player in all_players(@golf['course']['loc']['world'])) {
+		foreach(@player in all_players(@golf['course']['loc'][3])) {
 			if(!array_index_exists(@golf['players'], @player)) {
 				if(array_contains(sk_current_regions(@player), @course)) {
 					if(array_size(@golf['players']) < 4) {
