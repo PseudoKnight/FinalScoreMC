@@ -64,8 +64,12 @@ bind(player_login, null, null, @event) {
 			die();
 		}
 		
-		# player changed their name back
-		if(@pdata['name'] != to_lower(@event['player'])) {
+		if(!array_index_exists(@pdata, 'name')) {
+			@pdata['name'] = to_lower(@event['player']);
+			@update = true;
+			
+		} else if(@pdata['name'] != to_lower(@event['player'])) {
+			# player changed their name back
 			array_remove_values(@pdata['names'], to_lower(@event['player']));
 			@pdata['name'] = to_lower(@event['player']);
 			@update = true;
@@ -392,6 +396,8 @@ bind(vehicle_collide, null, array('type': 'MINECART', 'collisiontype': 'BLOCK', 
 bind(player_interact_entity, null, array('clicked': 'HORSE'), @event) {
 	if(!_is_survival_world(pworld()), die())
 	
+	@item = pinv(player(), null)
+	
 	if(get_mob_owner(@event['id'])
 	&& get_mob_owner(@event['id']) != player()) {
 		@yVelocity = round(entity_spec(@event['id'])['jump'], 2)
@@ -407,7 +413,6 @@ bind(player_interact_entity, null, array('clicked': 'HORSE'), @event) {
 		msg('This horse is owned by '.get_mob_owner(@event['id']).' '
 		.color('red').@health.' \u2764'.color('r').' '.color('yellow').@jump.' \u279A')
 		
-		@item = pinv(player(), null)
 		if(!has_permission('group.moderators')
 		&& (!@item
 		|| (@item['type'] != 322
@@ -433,8 +438,9 @@ bind(player_interact_entity, null, array('clicked': 'HORSE'), @event) {
 	
 	# skeleton/zombie horses
 	@variant = entity_spec(@event[id])[variant]
-	if(!is_cancelled() && !pinfo(player(), 11) 
-	&& (@variant == 'ZOMBIE' || @variant == 'SKELETON') 
+	if(!is_cancelled() && !pinfo(player(), 11)
+	&& (@variant == 'ZOMBIE' || @variant == 'SKELETON')
+	&& (!@item || @item['type'] != 420)
 	&& get_mob_age(@event[id]) >= 0) {
 		set_entity_rider(@event[id], pinfo(player(), 13))
 	}
