@@ -352,7 +352,7 @@
 					play_sound(@pvp['arena']['lobby'], array('sound': 'NOTE_PLING', 'pitch': 1, 'volume': 3));
 					if(extension_exists('CHNaughty')) {
 						foreach(@p in array_keys(@pvp['players'])) {
-							title_msg(@p, color('yellow').@timeleft[0], null, 0, @timeleft[0] * 20, 20);
+							try(title_msg(@p, color('yellow').@timeleft[0], null, 0, @timeleft[0] * 20, 20));
 						}
 					}
 				} else if(@timeleft[0] > 4 && array_index_exists(@pvp['arena'], 'classes')) {
@@ -370,14 +370,14 @@
 				if(@timeleft[0] == 4) {
 					if(extension_exists('CHNaughty')) {
 						foreach(@p in array_keys(@pvp['players'])) {
-							title_msg(@p, null, @primaryName.if(@secondaryName, ': '.@secondaryName), 20, 60, 20);
+							try(title_msg(@p, null, @primaryName.if(@secondaryName, ': '.@secondaryName), 20, 60, 20));
 						}
 					}
 				}
 			} else {
 				if(extension_exists('CHNaughty')) {
 					foreach(@p in array_keys(@pvp['players'])) {
-						title_msg(@p, color('green').'GO!', null, 0, 0, 20);
+						try(title_msg(@p, color('green').'GO!', null, 0, 0, 20));
 					}
 				}
 				clear_task();
