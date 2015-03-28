@@ -63,7 +63,8 @@ proc _remove_spectator(@id, @player, @pvp) {
 					raw_set_pvanish(@player, false, @p)
 				}
 			}
-			set_pflight(@player, false)
+			set_entity_fall_distance(player(@player, 13), 0);
+			set_pflight(@player, false);
 			if(pworld(@player) == 'custom' && pinfo(@player, 5) > 0) {
 				_equip_park(@player);
 				set_peffect(@player, 14, 0, 0);

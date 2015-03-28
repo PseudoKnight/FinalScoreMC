@@ -67,6 +67,7 @@ proc _pvp_initialize_players(@id, @players) {
 					@c[0]++
 				}
 			}
+			set_entity_fall_distance(player(@player, 13), 0);
 			set_ploc(@player, @loc);
 			play_sound(@loc, array('sound': 'FIREWORK_BLAST'), @player);
 		}, @id)
