@@ -93,7 +93,7 @@ bind(player_death, array('priority': 'high', 'id': @id.'death'), null, @e, @id =
 	foreach(@drop in @e['drops']) {
 		if(@pvp['arena']['mode'] == 'ctf' && !is_null(@flag = _flag(@drop))) {
 			_regionmsg(@pvp['arena']['broadcast'], color('gray').'[PVP] '.@pvp['players'][player()]['color']
-				.player().color('r').' dropped the '.@pvp['arena']['team'][@flag)]['color'].'flag')
+				.player().color('r').' dropped the '.@pvp['arena']['team'][@flag]['color'].'flag')
 			if(@e['cause']['cause'] == 'VOID' || @e['cause']['cause'] == 'LAVA') {
 				_pvp_flag_spawn(@id, @flag)
 			} else {
