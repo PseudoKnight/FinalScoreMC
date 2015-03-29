@@ -502,7 +502,12 @@ proc _get_uuid(@player) {
 	} else {
 		@uuidDashed = get_value('players', @player);
 		if(is_null(@uuidDashed)) {
-			throw('NotFoundException', 'Player name not stored in database: '.@player);
+			@uuids = get_values('players.'.@player);
+			if(array_size(@uuids) > 0) {
+				@uuidDashed = array_normalize(@uuids)[0];
+			} else {
+				throw('NotFoundException', 'Player name not stored in database: '.@player);
+			}
 		}
 	}
 	return(replace(@uuidDashed, '-', ''));
