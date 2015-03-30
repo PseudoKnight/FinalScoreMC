@@ -521,7 +521,7 @@ proc _get_uuid(@player, @autocomplete = true) {
 proc _pdata(@player, @autocomplete = true) {
 	@player = to_lower(@player);
 	@pdata = import('pdata.'.@player);
-	if(!@pdata) {
+	if(is_null(@pdata)) {
 		@uuid = _get_uuid(@player, @autocomplete);
 		@pdata = get_value('uuids', @uuid);
 		if(is_null(@pdata)) {
@@ -535,7 +535,7 @@ proc _pdata(@player, @autocomplete = true) {
 	Sets player data
 */
 proc _store_pdata(@player, @data) {
-	if(!@data, return());
+	if(!is_array(@data), return());
 	@player = to_lower(@player);
 	@uuid = _get_uuid(@player);	
 	x_new_thread('storePlayerData', closure(){
