@@ -495,19 +495,21 @@ proc _player_uuid(@players, @closure) {
 /*
 	Gets an offline player's UUID for db access
 */
-proc _get_uuid(@player) {
+proc _get_uuid(@player, @autcomplete = true) {
 	@uuidDashed = '';
 	if(ponline(@player)) {
 		@uuidDashed = puuid(@player);
 	} else {
 		@uuidDashed = get_value('players', @player);
-		if(is_null(@uuidDashed)) {
+		if(is_null(@uuidDashed) && @autocomplete) {
 			@uuids = get_values('players.'.@player);
 			if(array_size(@uuids) > 0) {
 				@uuidDashed = array_normalize(@uuids)[0];
 			} else {
-				throw('NotFoundException', 'Player name not stored in database: '.@player);
+				throw('NotFoundException', 'Could not find player in database matching: '.@player);
 			}
+		} else {
+			throw('NotFoundException', 'Player name not stored in database: '.@player);
 		}
 	}
 	return(replace(@uuidDashed, '-', ''));
@@ -516,11 +518,11 @@ proc _get_uuid(@player) {
 /*
 	Gets stored data for account under given player name.
 */
-proc _pdata(@player) {
+proc _pdata(@player, @autocomplete = true) {
 	@player = to_lower(@player);
 	@pdata = import('pdata.'.@player);
 	if(!@pdata) {
-		@uuid = _get_uuid(@player);
+		@uuid = _get_uuid(@player, @autocomplete);
 		@pdata = get_value('uuids', @uuid);
 		if(is_null(@pdata)) {
 			throw('NotFoundException', 'User data not stored in database: '.@uuid);
