@@ -76,7 +76,7 @@ bind(player_interact, null, array('block': data_values('wallsign')), @e) {
 			if(@db[@i] == '' || @db[@i][0] == '[' || @db[@i] == player()) {
 				continue();
 			}
-			try(@pdata = _pdata(@db[@i], false), continue());
+			try(@pdata = _pdata(@db[@i], (length(@db[@i]) == 15)), continue());
 			if(@pdata['name'] != @db[@i]) {
 				@db[@i] = substr(@pdata['name'], 0, if(length(@pdata['name']) > 15, 15, length(@pdata['name'])));
 				@changed = true;

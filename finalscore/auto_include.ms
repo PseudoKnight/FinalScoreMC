@@ -495,7 +495,7 @@ proc _player_uuid(@players, @closure) {
 /*
 	Gets an offline player's UUID for db access
 */
-proc _get_uuid(@player, @autcomplete = true) {
+proc _get_uuid(@player, @autocomplete = true) {
 	@uuidDashed = '';
 	if(ponline(@player)) {
 		@uuidDashed = puuid(@player);
