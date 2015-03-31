@@ -351,7 +351,7 @@
 	}
 <<<
 
-*:/rg flag $region $ = >>> 
+*:/region flag $region $ = >>> 
 	assign(@flag, parse_args($)) 
 	if(has_permission('group.moderators') || @flag[0] != 'mob-spawning') {  
 		run('/rg flag '.$region.' '.$) 
@@ -371,10 +371,9 @@
 		sudo('/rg flag '.$region.' deny-spawn CREEPER,ENDERMAN,SKELETON,SPIDER,ZOMBIE,SLIME,WITCH') 
 	}
 <<<
-
-*:/region flag $region [$] = >>>
-	call_alias('/rg flag '.$region.' '.$)
-<<<
+*:/rg flag $region [$] = call_alias('/region flag '.$region.' '.$);
+*:/region f $region [$] = call_alias('/region flag '.$region.' '.$);
+*:/rg f $region [$] = call_alias('/region flag '.$region.' '.$);
 
 # Rename your worldguard region
 *:/rg rename [$] = call_alias('/region rename '.$)
