@@ -55,27 +55,27 @@ proc _7_start(@7) {
 							@block = get_block_at(@loc)
 							switch(@block) {
 							case '16:0':
-								@p['time'] += 0.05;
-								play_sound(@loc, array('sound': 'ORB_PICKUP', 'pitch': 0.62), @player)
-							case '15:0':
 								@p['time'] += 0.10;
-								play_sound(@loc, array('sound': 'ORB_PICKUP', 'pitch': 0.7), @player)
+								play_sound(@loc, array('sound': 'ORB_PICKUP', 'pitch': 0.62), @player);
+							case '15:0':
+								@p['time'] += 0.15;
+								play_sound(@loc, array('sound': 'ORB_PICKUP', 'pitch': 0.7), @player);
 							case '73:0':
 							case '74:0':
-								@p['time'] += 0.15;
-								play_sound(@loc, array('sound': 'ORB_PICKUP', 'pitch': 0.8), @player)
-							case '21:0':
 								@p['time'] += 0.20;
-								play_sound(@loc, array('sound': 'ORB_PICKUP', 'pitch': 0.95), @player)
+								play_sound(@loc, array('sound': 'ORB_PICKUP', 'pitch': 0.8), @player);
+							case '21:0':
+								@p['time'] += 0.25;
+								play_sound(@loc, array('sound': 'ORB_PICKUP', 'pitch': 0.95), @player);
 							case '14:0':
-								@p['time'] += 0.40;
-								play_sound(@loc, array('sound': 'ORB_PICKUP', 'pitch': 1.05), @player)
+								@p['time'] += 0.35;
+								play_sound(@loc, array('sound': 'ORB_PICKUP', 'pitch': 1.05), @player);
 							case '56:0':
-								@p['time'] += 0.80;
-								play_sound(@loc, array('sound': 'ORB_PICKUP', 'pitch': 1.25), @player)
+								@p['time'] += 0.50;
+								play_sound(@loc, array('sound': 'ORB_PICKUP', 'pitch': 1.25), @player);
 							case '129:0':
-								@p['time'] += 1.00;
-								play_sound(@loc, array('sound': 'ORB_PICKUP', 'pitch': 1.4), @player)
+								@p['time'] += 0.65;
+								play_sound(@loc, array('sound': 'ORB_PICKUP', 'pitch': 1.4), @player);
 							}
 
 							if(@block != '0:0') {
