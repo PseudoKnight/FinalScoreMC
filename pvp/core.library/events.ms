@@ -144,8 +144,13 @@ bind(player_death, array('priority': 'high', 'id': @id.'death'), null, @e, @id =
 					# premove_bar()
 				# }
 			# }
-			array_remove(@pvp['players'], player())
-			_set_spectator(@id, player(), @pvp)
+			array_remove(@pvp['players'], player());
+			
+			# Delay spectator mode so that health amount is updated.
+			# Health can be above zero when pkill() or set_phealth() are used.
+			queue_push(closure(){
+				_set_spectator(@id, player(), @pvp);
+			});
 		}
 	}
 	
