@@ -501,15 +501,17 @@ proc _get_uuid(@player, @autocomplete = true) {
 		@uuidDashed = puuid(@player);
 	} else {
 		@uuidDashed = get_value('players', @player);
-		if(is_null(@uuidDashed) && @autocomplete) {
-			@uuids = get_values('players.'.@player);
-			if(array_size(@uuids) > 0) {
-				@uuidDashed = array_normalize(@uuids)[0];
+		if(is_null(@uuidDashed)) {
+			if(@autocomplete) {
+				@uuids = get_values('players.'.@player);
+				if(array_size(@uuids) > 0) {
+					@uuidDashed = array_normalize(@uuids)[0];
+				} else {
+					throw('NotFoundException', 'Could not find player in database matching: '.@player);
+				}
 			} else {
-				throw('NotFoundException', 'Could not find player in database matching: '.@player);
+				throw('NotFoundException', 'Player name not stored in database: '.@player);
 			}
-		} else {
-			throw('NotFoundException', 'Player name not stored in database: '.@player);
 		}
 	}
 	return(replace(@uuidDashed, '-', ''));
