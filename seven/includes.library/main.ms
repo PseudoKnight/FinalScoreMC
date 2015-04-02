@@ -107,8 +107,8 @@ proc _7_start(@7) {
 proc _7_remove_player(@player, @7) {
 	if(ponline(@player)) {
 		if(pworld(@player) == 'custom' && pinfo(@player, 5) > 0) {
-			pkill(@player)
-			explosion(ploc(@player), 3)
+			pkill(@player);
+			explosion(ploc(@player), 4);
 			@timeleft = round(@7['players'][@player]['time'], 1);
 			if(@timeleft <= 0) {
 				_regionmsg('7', @player.' ran out of time.')
