@@ -21,7 +21,7 @@
 		
 		_worldmsg('custom', colorize('&67 Seconds to Live&r has been queued up by '.player()))
 		
-		@timer = array(20);
+		@timer = array(15);
 		@7['state'] = 1;
 		@7['lobby'] = get_value('warp.7')['loc'];
 		create_scoreboard('7');
