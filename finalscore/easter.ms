@@ -1,5 +1,5 @@
-bind('creature_spawn', null, array('type': 'ZOMBIE', 'reason': 'SPAWNER_EGG'), @event) {
-	if(@event['location']['world'] == 'dev') {
+bind('creature_spawn', null, array('type': 'ZOMBIE', 'reason': 'NATURAL'), @event) {
+	if(@event['location']['world'] == 'outworld') {
 		@mobs = array(
 			51: 'SKELETON', 
 			52: 'SPIDER', 
@@ -29,38 +29,23 @@ bind('creature_spawn', null, array('type': 'ZOMBIE', 'reason': 'SPAWNER_EGG'), @
 		drop_item(@loc, array('type': 383, 'data': array_rand(@mobs)[0]), true);
 		set_timeout(50, closure(){
 			if(entity_exists(@event['id'])) {
-				@loc = _relative(@event['location'], 'up');
-				# @dinnerbone = spawn_mob('SKELETON', 1, @loc)[0];
-				set_timeout(50, closure(){
-					# set_mob_name(@dinnerbone, 'Dinnerbone');
-					# set_mob_equipment(@dinnerbone, array(
-						# 'WEAPON': null,
-						# 'HELMET': array('type': 397, 'data': 3, 'meta': array('owner': 'robbydeezle')),
-						# 'CHESTPLATE': null,
-						# 'LEGGINGS': null,
-						# 'BOOTS': null,
-					# ));
-					# set_equipment_droprates(@dinnerbone, null);
-					# set_entity_persistence(@dinnerbone, true);
-					# set_entity_rider(@event['id'], @dinnerbone);
-					set_entity_persistence(@event['id'], true);
-					set_mob_equipment(@event['id'], array(
-						'WEAPON': array('type': 383),
-						'HELMET': array('type': 397, 'data': 3, 'meta': array('owner': 'rabbit2077')),
-						'CHESTPLATE': array('type': 299, 'meta': array('color': array('r': 180, 'g': 180, 'b': 180))),
-						'LEGGINGS': array('type': 300, 'meta': array('color': array('r': 180, 'g': 180, 'b': 180))),
-						'BOOTS': array('type': 309),
-					));
-					set_equipment_droprates(@event['id'], null);
-					set_mob_effect(@event['id'], 1, 0, 9999, true);
-					set_mob_effect(@event['id'], 8, 1, 9999, true);
-				})
+				set_entity_persistence(@event['id'], true);
+				set_mob_equipment(@event['id'], array(
+					'WEAPON': array('type': 383),
+					'HELMET': array('type': 397, 'data': 3, 'meta': array('owner': 'rabbit2077')),
+					'CHESTPLATE': array('type': 299, 'meta': array('color': array('r': 180, 'g': 180, 'b': 180))),
+					'LEGGINGS': array('type': 300, 'meta': array('color': array('r': 180, 'g': 180, 'b': 180))),
+					'BOOTS': array('type': 309),
+				));
+				set_equipment_droprates(@event['id'], null);
+				set_mob_effect(@event['id'], 1, 0, 9999, true);
+				set_mob_effect(@event['id'], 8, 1, 9999, true);
 			}
 		})
 	}
 }
 
-bind('entity_damage', null, array('type': 'ZOMBIE', 'world': 'dev'), @event) {
+bind('entity_damage', null, array('type': 'ZOMBIE', 'world': 'outworld'), @event) {
 	if((@event['cause'] == 'ENTITY_ATTACK' || @event['cause'] == 'PROJECTILE')) {
 		@inv = get_mob_equipment(@event['id']);
 		if(!is_null(@inv['helmet'])
@@ -102,14 +87,14 @@ bind('entity_damage', null, array('type': 'ZOMBIE', 'world': 'dev'), @event) {
 }
 
 bind('target_player', null, array('mobtype': 'ZOMBIE'), @event) {
-	if(entity_loc(@event['id'])['world'] == 'dev') {
+	if(entity_loc(@event['id'])['world'] == 'outworld') {
 		@inv = get_mob_equipment(@event['id']);
 		if(!is_null(@inv['helmet'])
 		&& @inv['helmet']['type'] == 397) {
-			shoot_projectile(@event['id'], 'EGG', @event['player'], 2);
+			shoot_projectile(@event['id'], 'EGG', @event['player'], rand() + 1);
 			set_timeout(2000, closure(){
 				if(entity_exists(@event['id'])) {
-					shoot_projectile(@event['id'], 'EGG', @event['player']);
+					shoot_projectile(@event['id'], 'EGG', @event['player'], rand() + 1);
 				}
 			});
 		}
@@ -117,7 +102,7 @@ bind('target_player', null, array('mobtype': 'ZOMBIE'), @event) {
 }
 
 bind('projectile_hit', null, array('type': 'EGG'), @event) {
-	if(entity_loc(@event['id'])['world'] == 'dev') {
+	if(entity_loc(@event['id'])['world'] == 'outworld') {
 		@mobs = array(
 			51: 'SKELETON', 
 			52: 'SPIDER', 
@@ -145,7 +130,10 @@ bind('projectile_hit', null, array('type': 'EGG'), @event) {
 		);
 		@mob = array_rand(@mobs, 1, false)[0];
 		@loc = _relative(@event['location'], 'up');
+		@loc['x'] = floor(@loc['x']) + 0.5;
+		@loc['z'] = floor(@loc['z']) + 0.5;
 		@entity = spawn_mob(@mob, 1, @loc)[0];
+		play_sound(@loc, array('sound': 'CHICKEN_EGG_POP', 'pitch': 0.5));
 		if(function_exists('play_effect')) {
 			play_effect(@loc, 'COLOURED_DUST', array('particleCount': 15, 'offsetX': 1, 'offsetY': 1, 'offsetZ': 1));
 		}
@@ -153,7 +141,7 @@ bind('projectile_hit', null, array('type': 'EGG'), @event) {
 }
 
 bind('creature_spawn', null, array('type': 'CHICKEN', 'reason': 'EGG'), @event) {
-	if(@event['location']['world'] == 'dev') {
+	if(@event['location']['world'] == 'outworld') {
 		cancel();
 	}
 }
