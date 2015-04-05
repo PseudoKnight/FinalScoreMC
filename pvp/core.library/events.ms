@@ -160,7 +160,7 @@ bind(player_death, array('priority': 'high', 'id': @id.'death'), null, @e, @id =
 }
 
 array_push(@pvp['binds'], @id.'quit')
-bind(player_quit, array('id': @id.'quit'), null, @e, @id = @id) {
+bind(player_quit, array('id': @id.'quit', 'priority': 'HIGH'), null, @e, @id = @id) {
 	@pvp = import('pvp'.@id)
 	if(array_index_exists(@pvp['players'], player())) {
 		if(@pvp['arena']['mode'] == 'ctf' 
