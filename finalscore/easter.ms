@@ -46,7 +46,9 @@ bind('creature_spawn', null, array('type': 'ZOMBIE', 'reason': 'NATURAL'), @even
 }
 
 bind('entity_damage', null, array('type': 'ZOMBIE', 'world': 'outworld'), @event) {
-	if((@event['cause'] == 'ENTITY_ATTACK' || @event['cause'] == 'PROJECTILE')) {
+	if(@event['cause'] == 'ENTITY_ATTACK' 
+	|| @event['cause'] == 'PROJECTILE'
+	|| @event['cause'] == 'MAGIC') {
 		@inv = get_mob_equipment(@event['id']);
 		if(!is_null(@inv['helmet'])
 		&& @inv['helmet']['type'] == 397) {
@@ -92,8 +94,10 @@ bind('target_player', null, array('mobtype': 'ZOMBIE'), @event) {
 		if(!is_null(@inv['helmet'])
 		&& @inv['helmet']['type'] == 397) {
 			shoot_projectile(@event['id'], 'EGG', @event['player'], rand() + 1);
-			set_timeout(2000, closure(){
-				if(entity_exists(@event['id'])) {
+			set_timeout(1000, closure(){
+				if(entity_exists(@event['id']) 
+				&& ponline(@event['player']) 
+				&& pinfo(@event['player'], 5) > 10) {
 					shoot_projectile(@event['id'], 'EGG', @event['player'], rand() + 1);
 				}
 			});
@@ -137,6 +141,13 @@ bind('projectile_hit', null, array('type': 'EGG'), @event) {
 		if(function_exists('play_effect')) {
 			play_effect(@loc, 'COLOURED_DUST', array('particleCount': 15, 'offsetX': 1, 'offsetY': 1, 'offsetZ': 1));
 		}
+		set_entity_persistence(@entity, false);
+	}
+}
+
+bind('player_interact_entity', null, array('clicked': '/(HORSE|WOLF)/'), @event) {
+	if(entity_loc(@event['id'])['world'] == 'outworld') {
+		set_entity_persistence(@event['id'], true);
 	}
 }
 
