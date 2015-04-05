@@ -196,7 +196,17 @@
 			msg('Reset 7 Seconds to Live.');
 			
 		default:
-			die('Usage: /7 [create|setspawn] [schematic/arena]')
+			msg(color('bold').'GENERAL COMMANDS -------');
+			msg('/7 [start] '.color('gray').'Queues up a game');
+			msg(color('bold').'BUILDER COMMANDS -------');
+			msg('/7 create <arena> '.color('gray').'Creates a new arena');
+			msg('/7 edit <arena> '.color('gray').'Loads up arena for editing');
+			msg('/7 save <arena> '.color('gray').'Saves edited arena');
+			msg('/7 setspawn <arena> '.color('gray').'Creates a spawnpoint on arena');
+			msg('/7 delete <arena> '.color('gray').'Deletes arena');
+			msg('/7 list '.color('gray').'Lists all arenas');
+			msg('/7 reset '.color('gray').'Resets game if it\'s stuck');
+
 		}
 	}
 <<<

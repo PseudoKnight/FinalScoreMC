@@ -1,58 +1,5 @@
 *:/ar [$] = call_alias('/arena '.$)
 *:/arena [$action] [$id] [$setting] [$] = >>>
-	if(!$action) {
-		msg(color('bold').'SUBCOMMANDS ---------------');
-		msg('/arena set <id> <setting> [value(s)] '.color('gray').'Creates/overwrites settings');
-		msg('/arena add <id> <setting> <value> '.color('greay').'Adds a value to a list setting');
-		msg('/arena remove <id> <setting> <value> '.color('greay').'Removes a value to a list setting');
-		msg('/arena show <id> <setting> '.color('greay').'Displays hidden locations for settings');
-		msg('/arena move <id> <direction> <distance> '.color('greay').'Shifts all locations in arena');
-		msg('/arena load <id> <setting> '.color('gray').'Loads kits & chestspawns');
-		msg('/arena delete <id> [setting] '.color('gray').'Delete arenas, settings, or chests');
-		msg('/arena rename <old-id> <new-id> '.color('gray').'Rename the arena.');
-		msg('/arena info [id] [setting] '.color('gray').'View arenas and their settings');
-		msg('/arena list '.color('gray').'List all arenas');
-		msg(color('bold').'SETTINGS **required ------------');
-		msg('lobby ** '.color('gray').'Sets the lobby warp point');
-		msg('spawn ** '.color('gray').'Adds a spawn point');
-		msg('region ** '.color('gray').'The combat region name');
-		msg('parent '.color('gray').'The parent arena configuration.');
-		msg('arenaselect '.color('gray').'Type of select and then a comma list of arenas.');
-		msg('sharedarenas '.color('gray').'A comma separated list of arena ids.');
-		msg('broadcast '.color('gray').'The region all messages are broadcasted.');
-		msg('mode '.color('gray').'dm, tdm, ctf, infection, koth.');
-		msg('ctfflag '.color('gray').'The flag spawn location for CTF (1 is red, 2 is blue)');
-		msg('kothregion '.color('gray').'The king of the hill region - feet position');
-		msg('lives '.color('gray').'Number of lives until elimination');
-		msg('score '.color('gray').'The target score to win. (ctf: 5, koth: 60)');
-		msg('mobprotect '.color('gray').'Team protects mob [team type].');
-		msg('teamratio '.color('gray').'The ratio of players for team 1 and 2.');
-		msg('team '.color('gray').'Team info - [&4Team1 &cTeam2]');
-		msg('kit '.color('gray').'Sets the respawn kits - accepts team num as value');
-		msg('classes '.color('gray').'Available classes [team1list team2list]');
-		msg('captain '.color('gray').'The captain class for each team');
-		msg('respawntime '.color('gray').'The respawn time in seconds');
-		msg('restore '.color('gray').'A list of schematics to restore.');
-		msg('time '.color('gray').'The starting time');
-		msg('ff '.color('gray').'Sets team friendly-fire (true)');
-		msg('itemspawn '.color('gray').'Set item drop. (60 sec, no spawn @ start)');
-		msg('chestspawn '.color('gray').'Set chest spawn (60 sec, no spawn @ start)');
-		msg('mobspawn '.color('gray').'Spawn mob @ loc [type qty respawnTime onStart]');
-		msg('rsoutput '.color('gray').'The lever that turns on at start and off at end.');
-		msg('rsoutputscore '.color('gray').'Redstone torch appears when a team scores');
-		msg('min '.color('gray').'The minimum num of players to start a match. (2)');
-		msg('max '.color('gray').'Start the match as soon as this number of players join.');
-		msg('effect '.color('gray').'The starting potion effect for all or team.');
-		msg('denydrop '.color('gray').'Comma list of IDs not dropped on death or "all"');
-		msg('delay '.color('gray').'Delay before game starts after command (3)');
-		msg('timer '.color('gray').'Time in minutes till team num wins.');
-		msg('resourcepack '.color('gray').'Custom resource pack to load.');
-		msg('weapons '.color('gray').'Comma list of special weapons to enable');
-		msg('flags '.color('gray').'Special game behavior modifiers');
-		
-		die('DETAILED INFORMATION AT:\n'
-		.' http://finalscoremc.com/arena-configuration/');
-	}
 	if($, @args = parse_args($), @args = array())
 	array_resize(@args, 4)
 	switch($action) {
@@ -776,5 +723,58 @@
 		}
 		msg(color('gray').'PVP ARENAS: '.color('r').@list)
 
+	default:
+		msg(color('bold').'SUBCOMMANDS ---------------');
+		msg('/arena set <id> <setting> [value(s)] '.color('gray').'Creates/overwrites settings');
+		msg('/arena add <id> <setting> <value> '.color('gray').'Adds a value to a list setting');
+		msg('/arena remove <id> <setting> <value> '.color('gray').'Removes a value to a list setting');
+		msg('/arena show <id> <setting> '.color('gray').'Displays hidden locations for settings');
+		msg('/arena move <id> <direction> <distance> '.color('greay').'Shifts all locations in arena');
+		msg('/arena load <id> <setting> '.color('gray').'Loads kits & chestspawns');
+		msg('/arena delete <id> [setting] '.color('gray').'Delete arenas, settings, or chests');
+		msg('/arena rename <old-id> <new-id> '.color('gray').'Rename the arena.');
+		msg('/arena info [id] [setting] '.color('gray').'View arenas and their settings');
+		msg('/arena list '.color('gray').'List all arenas');
+		msg(color('bold').'SETTINGS **required ------------');
+		msg('lobby ** '.color('gray').'Sets the lobby warp point');
+		msg('spawn ** '.color('gray').'Adds a spawn point');
+		msg('region ** '.color('gray').'The combat region name');
+		msg('parent '.color('gray').'The parent arena configuration.');
+		msg('arenaselect '.color('gray').'Type of select and then a comma list of arenas.');
+		msg('sharedarenas '.color('gray').'A comma separated list of arena ids.');
+		msg('broadcast '.color('gray').'The region all messages are broadcasted.');
+		msg('mode '.color('gray').'dm, tdm, ctf, infection, koth.');
+		msg('ctfflag '.color('gray').'The flag spawn location for CTF (1 is red, 2 is blue)');
+		msg('kothregion '.color('gray').'The king of the hill region - feet position');
+		msg('lives '.color('gray').'Number of lives until elimination');
+		msg('score '.color('gray').'The target score to win. (ctf: 5, koth: 60)');
+		msg('mobprotect '.color('gray').'Team protects mob [team type].');
+		msg('teamratio '.color('gray').'The ratio of players for team 1 and 2.');
+		msg('team '.color('gray').'Team info - [&4Team1 &cTeam2]');
+		msg('kit '.color('gray').'Sets the respawn kits - accepts team num as value');
+		msg('classes '.color('gray').'Available classes [team1list team2list]');
+		msg('captain '.color('gray').'The captain class for each team');
+		msg('respawntime '.color('gray').'The respawn time in seconds');
+		msg('restore '.color('gray').'A list of schematics to restore.');
+		msg('time '.color('gray').'The starting time');
+		msg('ff '.color('gray').'Sets team friendly-fire (true)');
+		msg('itemspawn '.color('gray').'Set item drop. (60 sec, no spawn @ start)');
+		msg('chestspawn '.color('gray').'Set chest spawn (60 sec, no spawn @ start)');
+		msg('mobspawn '.color('gray').'Spawn mob @ loc [type qty respawnTime onStart]');
+		msg('rsoutput '.color('gray').'The lever that turns on at start and off at end.');
+		msg('rsoutputscore '.color('gray').'Redstone torch appears when a team scores');
+		msg('min '.color('gray').'The minimum num of players to start a match. (2)');
+		msg('max '.color('gray').'Start the match as soon as this number of players join.');
+		msg('effect '.color('gray').'The starting potion effect for all or team.');
+		msg('denydrop '.color('gray').'Comma list of IDs not dropped on death or "all"');
+		msg('delay '.color('gray').'Delay before game starts after command (3)');
+		msg('timer '.color('gray').'Time in minutes till team num wins.');
+		msg('resourcepack '.color('gray').'Custom resource pack to load.');
+		msg('weapons '.color('gray').'Comma list of special weapons to enable');
+		msg('flags '.color('gray').'Special game behavior modifiers');
+		
+		die('DETAILED INFORMATION AT:\n'
+		.' http://finalscoremc.com/arena-configuration/');
+		
 	}
 <<<

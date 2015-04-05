@@ -200,6 +200,13 @@ case 'list':
 	msg(color('gray').'CLASSES IN '.to_upper($id).': '.color('r').@list)
 	
 default:
-	die('Usage: /class [set|delete|info|load|unload|equip|list] [classname] [setting] [value[s]]')
+	msg(color('bold').'SUBCOMMANDS ---------------');
+	msg('/class set <arena:class> <setting> [value[s]] '.color('gray').'Creates/overwrites settings');
+	msg('/class delete <arena:class> [setting] '.color('gray').'Deletes a setting or class');
+	msg('/class info <arena:class> '.color('gray').'Displays information about the class');
+	msg('/class equip <arena:class> '.color('gray').'Sets your inventory to the class');
+	msg('/class rename <arena:class> <newname> '.color('gray').'Renames the class');
+	msg('/class list <arena> '.color('gray').'List classes in that arena');
+	
 }
 <<<

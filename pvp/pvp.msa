@@ -399,12 +399,14 @@
 		}
 		
 	default:
-		msg('/pvp join <id> '.color('gray').'Join the match')
-		msg('/pvp start <id> '.color('gray').'Start the match')
-		msg('/pvp spectate <id> '.color('gray').'Displays the scoreboard')
-		msg('/pvp end <id> <team> '.color('gray').'End in favor of team')
-		msg('/pvp addtime <id> <minutes> '.color('gray').'Add time to the timer')
-		msg('/pvp removetime <id> <minutes> '.color('gray').'Remove time from the timer')
-		msg('/pvp debug <id> '.color('gray').'Output debug information')
+		msg(color('bold').'PVP COMMANDS ----------------');
+		msg('/pvp join <id> '.color('gray').'Join the match');
+		msg('/pvp start <id> '.color('gray').'Start the match');
+		msg('/pvp spectate <id> '.color('gray').'Displays the scoreboard');
+		msg(color('bold').'RESTRICTED COMMANDS ---------');
+		msg('/pvp end <id> <team> '.color('gray').'End in favor of team');
+		msg('/pvp addtime <id> <minutes> '.color('gray').'Add time to the timer');
+		msg('/pvp removetime <id> <minutes> '.color('gray').'Remove time from the timer');
+		msg('/pvp debug <id> '.color('gray').'Output debug information');
 	}
 <<<	

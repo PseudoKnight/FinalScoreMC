@@ -160,7 +160,12 @@
 		}
 		msg(color('gray').'CUSTOM MOBS: '.color('r').@list)
 	default:
-		die('Usage: /mob <set|delete|info|spawn|list> [mobname] [setting] [value]')
+		msg('/mob set <mob> <setting> <value> '.color('gray').'Sets a value to the custom mob');
+		msg('/mob delete <mob> [setting] '.color('gray').'Deletes mob or setting');
+		msg('/mob info <mob> '.color('gray').'Displays information about custom mob');
+		msg('/mob spawn <mob> '.color('gray').'Spawns mob where you\'re looking');
+		msg('/mob list '.color('gray').'Lists all custom mobs');
+		
 	}
 <<<
 

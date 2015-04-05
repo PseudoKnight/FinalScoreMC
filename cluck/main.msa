@@ -12,6 +12,7 @@ case 'reset':
 	))
 
 case 'top10':
+case 'top':
 	@scores = get_value('cluck')
 	msg(color('l').'TOP 10 CLUCK PLAYERS')
 	msg(color('7').'Since '.@scores['date'])
@@ -20,6 +21,7 @@ case 'top10':
 	}
 
 case 'startround':
+case 'start':
 	if(pworld() != 'custom', die())
 
 	include('includes.library/cluck.ms')
@@ -59,9 +61,9 @@ case 'startround':
     _cluck_startround()
 	
 default:
-	msg(color('gold').'[Cluck] You can play Cluck in Frog Park just outside of the event house')
-	msg(color('gold').'[Cluck] '.color('r').'/cluck top10 '.color('gray').'List the top 10 high scores for Cluck')
-	msg(color('gold').'[Cluck] '.color('r').'/cluck start '.color('gray').'Start a round of Cluck')
-	msg(color('gold').'[Cluck] '.color('r').'/cluck reset '.color('gray').'(restricted) Resets the high scores')
+	msg(color('gold').'[Cluck] You can play Cluck in Frog Park just outside of the event house');
+	msg(color('gold').'[Cluck] '.color('r').'/cluck top '.color('gray').'List the top 10 high scores for Cluck');
+	msg(color('gold').'[Cluck] '.color('r').'/cluck start '.color('gray').'Start a round of Cluck');
+	msg(color('gold').'[Cluck] '.color('r').'/cluck reset '.color('gray').'(restricted) Resets the high scores');
 }
 <<<
