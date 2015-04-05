@@ -302,7 +302,10 @@ bind(player_interact, null, array('block': 118, 'button': 'right'), @event) {
 
 # Block lighters
 bind(player_interact, null, array('item': 259, 'button': 'right'), @event) {
-	if(has_permission('group.regulars') || !array_index_exists(@event, 'location')) {
+	if(has_permission('group.regulars') 
+	|| !array_index_exists(@event, 'location')
+	|| pworld() == 'outworld' 
+	|| pworld() == 'outworld_nether') {
 		die();
 	}
 	@loc = @event['location'];
