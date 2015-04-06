@@ -99,7 +99,7 @@ bind('target_player', null, array('mobtype': 'ZOMBIE'), @event) {
 				if(entity_exists(@event['id']) 
 				&& ponline(@event['player']) 
 				&& pinfo(@event['player'], 5) > 10
-				&& entity_can_see(@event['id'], @event['player'])) {
+				&& entity_can_see(@event['id'], pinfo(@event['player'], 13))) {
 					shoot_projectile(@event['id'], 'EGG', @event['player'], rand() + 1);
 				}
 			});
