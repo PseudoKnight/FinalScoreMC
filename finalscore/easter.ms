@@ -26,7 +26,6 @@ bind('creature_spawn', null, array('type': 'ZOMBIE', 'reason': 'NATURAL'), @even
 			120: 'VILLAGER',
 		);
 		@loc = _relative(@event['location'], 'up');
-		drop_item(@loc, array('type': 383, 'data': array_rand(@mobs)[0]), true);
 		set_timeout(50, closure(){
 			if(entity_exists(@event['id'])) {
 				set_mob_equipment(@event['id'], array(
@@ -94,16 +93,6 @@ bind('target_player', null, array('mobtype': 'ZOMBIE'), @event) {
 		&& @inv['helmet']['type'] == 397
 		&& entity_can_see(@event['id'], pinfo(@event['player'], 13))) {
 			shoot_projectile(@event['id'], 'EGG', @event['player'], rand() + 1);
-			if(rand(2)) {
-				set_timeout((1 + rand(3)) * 1000, closure(){
-					if(entity_exists(@event['id']) 
-					&& ponline(@event['player']) 
-					&& pinfo(@event['player'], 5) > 10
-					&& entity_can_see(@event['id'], pinfo(@event['player'], 13))) {
-						shoot_projectile(@event['id'], 'EGG', @event['player'], rand() + 1);
-					}
-				});
-			}
 		}
 	}
 }
@@ -115,7 +104,6 @@ bind('projectile_hit', null, array('type': 'EGG'), @event) {
 			52: 'SPIDER', 
 			54: 'ZOMBIE', 
 			55: 'SLIME', 
-			57: 'PIGZOMBIE', 
 			58: 'ENDERMAN', 
 			59: 'CAVESPIDER', 
 			62: 'MAGMACUBE', 
