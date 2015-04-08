@@ -29,7 +29,6 @@ bind('creature_spawn', null, array('type': 'ZOMBIE', 'reason': 'NATURAL'), @even
 		drop_item(@loc, array('type': 383, 'data': array_rand(@mobs)[0]), true);
 		set_timeout(50, closure(){
 			if(entity_exists(@event['id'])) {
-				set_entity_persistence(@event['id'], true);
 				set_mob_equipment(@event['id'], array(
 					'WEAPON': array('type': 383),
 					'HELMET': array('type': 397, 'data': 3, 'meta': array('owner': 'rabbit2077')),
