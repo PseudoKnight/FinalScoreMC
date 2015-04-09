@@ -25,25 +25,28 @@ bind(player_death, array('priority': 'high', 'id': @id.'death'), null, @e, @id =
 		console(@type.' in '.@e)
 	)
 	
-	@pvp['stats'][player()]['deaths'] += 1
-	if(array_index_exists(@pvp['players'], @e['killer'])
-	&& @e['killer'] != @e['player']) {
-		@pvp['stats'][@e['killer']]['kills'] += 1
-	}
-	@totaldamage = 0
-	foreach(@amount in @pvp['stats'][player()]['damagetaken']) {
-		@totaldamage += @amount
-	}
-	foreach(@damager: @amount in @pvp['stats'][player()]['damagetaken']) {
-		if(@damager != @e['killer'] && @damager != 'other'
-		&& @amount > @totaldamage / 2) {
-			@pvp['stats'][@damager]['assists'] += 1
-			if(@e['killer'] && array_index_exists(@pvp['players'], @damager)) {
-				@deathmessage .= ', assisted by '.@pvp['players'][@damager]['color'].@damager
+	if(array_index_exists(@pvp, 'stats')) {
+		@pvp['stats'][player()]['deaths'] += 1
+		if(array_index_exists(@pvp['players'], @e['killer'])
+		&& @e['killer'] != @e['player']) {
+			@pvp['stats'][@e['killer']]['kills'] += 1
+		}
+
+		@totaldamage = 0
+		foreach(@amount in @pvp['stats'][player()]['damagetaken']) {
+			@totaldamage += @amount
+		}
+		foreach(@damager: @amount in @pvp['stats'][player()]['damagetaken']) {
+			if(@damager != @e['killer'] && @damager != 'other'
+			&& @amount > @totaldamage / 2) {
+				@pvp['stats'][@damager]['assists'] += 1
+				if(@e['killer'] && array_index_exists(@pvp['players'], @damager)) {
+					@deathmessage .= ', assisted by '.@pvp['players'][@damager]['color'].@damager
+				}
 			}
 		}
+		@pvp['stats'][player()]['damagetaken'] = array()
 	}
-	@pvp['stats'][player()]['damagetaken'] = array()
 	
 	_regionmsg(@pvp['arena']['broadcast'], color('gray').'[PVP] '.color('r').@deathmessage)
 
@@ -371,16 +374,18 @@ bind(entity_damage, array('id': @id.'EntityDamage', 'priority': 'LOWEST'), array
 				if(array_contains(@pvp['arena']['flags'], 'effects')) {
 					play_effect(_relative(ploc(@e['player']), 'up', 2), 'tile_break', array('id': 115, 'particleCount': min(100, round(5 * @e['amount'])), 'offsetY': 0.3))
 				}
-
-				if(array_index_exists(@pvp['stats'][@e['player']]['damagetaken'], @damager)) {
-					@pvp['stats'][@e['player']]['damagetaken'][@damager] += @e['amount']
-				} else {
-					@pvp['stats'][@e['player']]['damagetaken'][@damager] = @e['amount']
-				}
 				
-				if(@damager != get_player_from_entity_id(@e['id'])
-				&& array_index_exists(@pvp['stats'], @damager)) {
-					@pvp['stats'][@damager]['damage'] += @e['amount'];
+				if(array_index_exists(@pvp, 'stats')) {
+					if(array_index_exists(@pvp['stats'][@e['player']]['damagetaken'], @damager)) {
+						@pvp['stats'][@e['player']]['damagetaken'][@damager] += @e['amount']
+					} else {
+						@pvp['stats'][@e['player']]['damagetaken'][@damager] = @e['amount']
+					}
+					
+					if(@damager != get_player_from_entity_id(@e['id'])
+					&& array_index_exists(@pvp['stats'], @damager)) {
+						@pvp['stats'][@damager]['damage'] += @e['amount'];
+					}
 				}
 				
 			}

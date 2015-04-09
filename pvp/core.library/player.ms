@@ -43,13 +43,15 @@ proc _pvp_initialize_players(@id, @players) {
 			@pvp['players'][@player]['respawn'] = 0
 		}
 		
-		@pvp['stats'][@player] = array(
-			'kills': 0, 
-			'damagetaken': array(), 
-			'damage': 0, 
-			'deaths': 0, 
-			'assists': 0,
-		);
+		if(array_index_exists(@pvp, 'stats')) {
+			@pvp['stats'][@player] = array(
+				'kills': 0, 
+				'damagetaken': array(), 
+				'damage': 0, 
+				'deaths': 0, 
+				'assists': 0,
+			);
+		}
 		
 		queue_push(closure(){
 			if(array_index_exists(@pvp, 'team')) {

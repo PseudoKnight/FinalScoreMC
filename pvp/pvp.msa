@@ -161,7 +161,6 @@
 		if(!array_index_exists(@pvp['arena'], 'mode'), @pvp['arena']['mode'] = 'dm')
 		if(!array_index_exists(@pvp['arena'], 'ff'), @pvp['arena']['ff'] = true)
 		if(!array_index_exists(@pvp['arena'], 'flags'), @pvp['arena']['flags'] = array())
-		if(!array_index_exists(@pvp['arena'], 'stats'), @pvp['arena']['stats'] = true)
 		if(!array_index_exists(@pvp['arena'], 'delay')) {
 			if(array_index_exists(@pvp['arena'], 'classes')) {
 				@pvp['arena']['delay'] = 45
@@ -303,7 +302,9 @@
 		}
 
 		@pvp['coins'] = if(array_size(@pvp['players']) > 2, 1, 0)
-		@pvp['stats'] = associative_array()
+		if(!array_index_exists(@pvp['arena']['stats']) || @pvp['arena']['stats']) {
+			@pvp['stats'] = associative_array();
+		}
 		@pvp['binds'] = array()
 		@pvp['spectators'] = array()
 		@pvp['running'] = 1

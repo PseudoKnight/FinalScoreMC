@@ -95,8 +95,7 @@ proc _pvp_start_match(@id) {
 		}, @id)
 	}
 
-	include('spectator.ms')
-	include('events.ms')
+	include('events.ms');
 
 	@pvp['interval'] = set_interval(1000, closure(){
 		@pvp = import('pvp'.@id)
@@ -407,7 +406,7 @@ proc _pvp_end_match(@id, @winners) {
 			_worldmsg('custom', color('gray').'[PVP] '.color('r').'Nobody wins! Wait.. what?!')
 		}
 		
-		if(@pvp['arena']['stats'] == true) {
+		if(array_index_exists(@pvp, 'stats')) {
 			_regionmsg(@pvp['arena']['broadcast'], 
 				color('gray').'|--'.color('bold').'[ STATS ]'.color('gray').'-------------|\n'
 				.color('gray').' Kills : Damage : Deaths\n'
