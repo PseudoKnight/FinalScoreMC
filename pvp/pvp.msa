@@ -302,7 +302,7 @@
 		}
 
 		@pvp['coins'] = if(array_size(@pvp['players']) > 2, 1, 0)
-		if(!array_index_exists(@pvp['arena']['stats']) || @pvp['arena']['stats']) {
+		if(!array_index_exists(@pvp, 'stats') || @pvp['arena']['stats']) {
 			@pvp['stats'] = associative_array();
 		}
 		@pvp['binds'] = array()
