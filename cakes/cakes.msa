@@ -214,10 +214,10 @@
 		set_ploc(array(@cakes[$][0] + 0.5, @cakes[$][1], @cakes[$][2] + 0.5, @cakes[$][3]))
 		msg('Teleported.')
 		
-	case 'removeplayer':
-	case 'reset':
+	case 'resetplayer':
 		if(!array_contains(pgroup(), 'moderators'), die('You do not have permission to use cake commands.'))
 		@args = parse_args($)
+		@id = '';
 		if(!@args[0]) {
 			@cakes = get_value('cakes')
 			@cursorloc = pcursor()
@@ -237,15 +237,30 @@
 		}
 		@cakeinfo = get_value('cakeinfo')
 		if(!array_index_exists(@cakeinfo, @id)) {
-			die('No cake by that ID found.')
-		}
-		@cakeinfo = get_value('cakeinfo')
-		if(array_index_exists(@cakeinfo[@id]['players'], @args[1])) {
+			if(array_size(@args) > 1) {
+				die('No cake by that ID found.');
+			}
+			
+			@count = 0;
+			@amount = 0;
+			foreach(@id: @cake in @cakeinfo) {
+				if(array_index_exists(@cake['players'], @args[0])) {
+					@count += 1;
+					array_remove(@cake['players'], @args[0]);
+					@amount += @cake['coins'];
+					_acc_subtract(@args[0], @cake['coins']);
+				}
+			}
+			store_value('cakeinfo', @cakeinfo);
+			msg('Delete player from '.@count.' cakes and removed '.@amount.' coins.');
+			
+		} else if(array_index_exists(@cakeinfo[@id]['players'], @args[1])) {
 			array_remove(@cakeinfo[@id]['players'], @args[1])
 			store_value('cakeinfo', @cakeinfo)
 			msg('Deleted player from '.@id.' cake.')
+			
 		} else {
-			msg('No player by that name for that cake.')
+			msg('Usage: /cake resetplayer [cakeid] <player>');
 		}
 
 
