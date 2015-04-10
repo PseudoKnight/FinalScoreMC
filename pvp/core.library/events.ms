@@ -12,7 +12,7 @@ bind(player_death, array('priority': 'high', 'id': @id.'death'), null, @e, @id =
 	
 	if(array_index_exists(@pvp, 'stats')) {
 		if(@e['cause']['cause'] == 'CUSTOM'
-		&& @pvp['stats'][player()['damaged'] + 5000 > time()) {
+		&& @pvp['stats'][player()]['damaged'] + 5000 > time()) {
 			@killer = @pvp['stats'][player()]['damager'];
 			@deathmessage = player().' was doomed by '.@killer;
 		}
