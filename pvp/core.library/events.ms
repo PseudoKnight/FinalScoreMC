@@ -3,49 +3,50 @@
 array_push(@pvp['binds'], @id.'death')
 bind(player_death, array('priority': 'high', 'id': @id.'death'), null, @e, @id = @id) {
 	@pvp = import('pvp'.@id)
-	if(!array_index_exists(@pvp['players'], player()), 
-		die())
-
-	@deathmessage = @e['death_message']
-		
-	try(
-	if(array_index_exists(@pvp['arena'], 'team')) {
-		@parts = parse_args(@e['death_message'])
-		@parts[0] = @pvp['players'][player()]['color'].player().color('r')
-		if(array_index_exists(@pvp['players'], @e['killer'])) {
-			for(@i = 1, @i < array_size(@parts), @i++) {
-				if(@parts[@i] == @e['killer']) {
-					@parts[@i] = @pvp['players'][@e['killer']]['color'].@e['killer'].color('r')
-				}
-			}
-		}
-		@deathmessage = array_implode(@parts)
+	if(!array_index_exists(@pvp['players'], player())) { 
+		die();
 	}
-	, @type,
-		console(@type.' in '.@e)
-	)
+
+	@deathmessage = @e['death_message'];
+	@killer = @e['killer'];
 	
 	if(array_index_exists(@pvp, 'stats')) {
-		@pvp['stats'][player()]['deaths'] += 1
-		if(array_index_exists(@pvp['players'], @e['killer'])
-		&& @e['killer'] != @e['player']) {
-			@pvp['stats'][@e['killer']]['kills'] += 1
+		if(@e['cause']['cause'] == 'CUSTOM'
+		&& @pvp['stats'][player()['damaged'] + 5000 > time()) {
+			@killer = @pvp['stats'][player()]['damager'];
+			@deathmessage = player().' was doomed by '.@killer;
+		}
+		
+		if(@pvp['stats'][player()]['lastdamager'] != ''
+		&& @pvp['stats'][player()]['lastdamaged'] + 5000 > time()) {
+			@lastdamager = @pvp['stats'][player()]['lastdamager'];
+			@deathmessage .= ', assisted by '.@pvp['players'][@lastdamager]['color'].@lastdamager.color('r');
+		}
+	
+		@pvp['stats'][player()]['deaths'] += 1;
+		if(array_index_exists(@pvp['players'], @killer)
+		&& @killer != player()) {
+			@pvp['stats'][@killer]['kills'] += 1;
 		}
 
-		@totaldamage = 0
-		foreach(@amount in @pvp['stats'][player()]['damagetaken']) {
-			@totaldamage += @amount
-		}
-		foreach(@damager: @amount in @pvp['stats'][player()]['damagetaken']) {
-			if(@damager != @e['killer'] && @damager != 'other'
-			&& @amount > @totaldamage / 2) {
-				@pvp['stats'][@damager]['assists'] += 1
-				if(@e['killer'] && array_index_exists(@pvp['players'], @damager)) {
-					@deathmessage .= ', assisted by '.@pvp['players'][@damager]['color'].@damager
+		@pvp['stats'][player()]['lastdamaged'] = 0;
+		@pvp['stats'][player()]['lastdamager'] = '';
+		@pvp['stats'][player()]['damaged'] = 0;
+		@pvp['stats'][player()]['damager'] = '';
+	}
+	
+	if(array_index_exists(@pvp['arena'], 'team')) {
+		@parts = parse_args(@deathmessage);
+		@parts[0] = @pvp['players'][player()]['color'].player().color('r');
+		if(array_index_exists(@pvp['players'], @killer)) {
+			for(@i = 1, @i < array_size(@parts), @i++) {
+				if(@parts[@i] == @killer) {
+					@parts[@i] = @pvp['players'][@killer]['color'].@killer.color('r');
+					break();
 				}
 			}
 		}
-		@pvp['stats'][player()]['damagetaken'] = array()
+		@deathmessage = array_implode(@parts);
 	}
 	
 	_regionmsg(@pvp['arena']['broadcast'], color('gray').'[PVP] '.color('r').@deathmessage)
@@ -339,28 +340,19 @@ bind(entity_damage, array('id': @id.'EntityDamage', 'priority': 'LOWEST'), array
 	
 	} else if(@e['type'] == 'PLAYER') {
 		if(array_index_exists(@pvp['players'], @e['player'])) {
-			if(@e['cause'] == 'PROJECTILE') {
+			@damager = '';
+			if(array_index_exists(@e, 'shooter')) {
 				if(array_index_exists(@pvp['players'], @e['shooter'])) {
-					@damager = @e['shooter']
+					@damager = @e['shooter'];
 				} else {
-					try(
-						@damager = get_mob_owner(@e['shooter']);
-					,
-						@damager = 'other';
-					);
+					try(@damager = get_mob_owner(@e['shooter']));
 				}
 			} else if(array_index_exists(@e, 'damager')) {
 				if(array_index_exists(@pvp['players'], @e['damager'])) {
-					@damager = @e['damager']
+					@damager = @e['damager'];
 				} else {
-					try(
-						@damager = get_mob_owner(@e['shooter']);
-					,
-						@damager = 'other';
-					);
+					try(@damager = get_mob_owner(@e['shooter']));
 				}
-			} else {
-				@damager = 'other';
 			}
 				
 			if(!@pvp['arena']['ff']
@@ -375,19 +367,7 @@ bind(entity_damage, array('id': @id.'EntityDamage', 'priority': 'LOWEST'), array
 					play_effect(_relative(ploc(@e['player']), 'up', 2), 'tile_break', array('id': 115, 'particleCount': min(100, round(5 * @e['amount'])), 'offsetY': 0.3))
 				}
 				
-				if(array_index_exists(@pvp, 'stats')) {
-					if(array_index_exists(@pvp['stats'][@e['player']]['damagetaken'], @damager)) {
-						@pvp['stats'][@e['player']]['damagetaken'][@damager] += @e['amount']
-					} else {
-						@pvp['stats'][@e['player']]['damagetaken'][@damager] = @e['amount']
-					}
-					
-					if(@damager != get_player_from_entity_id(@e['id'])
-					&& array_index_exists(@pvp['stats'], @damager)) {
-						@pvp['stats'][@damager]['damage'] += @e['amount'];
-					}
-				}
-				
+				_stats_damage(@damager, @e['player'], @e['amount'], @pvp);
 			}
 			
 		} else if(array_contains(@pvp['spectators'], @e['player'])) {

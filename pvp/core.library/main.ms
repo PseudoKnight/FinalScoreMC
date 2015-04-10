@@ -1,6 +1,7 @@
-include('class.ms')
-include('spectator.ms')
-include('player.ms')
+include('class.ms');
+include('spectator.ms');
+include('player.ms');
+include('stats.ms');
 
 proc _pvp_start_match(@id) {
 	@pvp = import('pvp'.@id)

@@ -46,10 +46,12 @@ proc _pvp_initialize_players(@id, @players) {
 		if(array_index_exists(@pvp, 'stats')) {
 			@pvp['stats'][@player] = array(
 				'kills': 0, 
-				'damagetaken': array(), 
+				'lastdamaged': 0,
+				'lastdamager': '',
+				'damager': '', 
+				'damaged': 0,
 				'damage': 0, 
 				'deaths': 0, 
-				'assists': 0,
 			);
 		}
 		
