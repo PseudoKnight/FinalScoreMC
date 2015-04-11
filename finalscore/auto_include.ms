@@ -435,6 +435,78 @@ proc _worldmsg(@world, @msg) {
 }
 
 /*
+	Returns the width of the character
+*/
+proc _char_width(@char, @bold = false) {
+	@extra = 0;
+	if(@bold) {
+		@extra = 1;
+	}
+	# Thanks to Octopod for this list
+	switch(@char) {
+		case ',':
+		case '!':
+		case ':':
+		case 'i':
+		case '|':
+		case '.':
+			return(2 + @extra);
+		case '`':
+		case '\'':
+		case 'l':
+			return(3 + @extra);
+		case '[':
+		case ']':
+		case ' ':
+		case 'I':
+		case 't':
+			return(4 + @extra);
+		case '*':
+		case '>':
+		case '<':
+		case '{':
+		case '}':
+		case 'f':
+		case 'k':
+			return(5 + @extra);
+		default:
+			return(6 + @extra);
+	}
+}
+
+/*
+	Returns the pixel width of the string
+*/
+proc _string_width(@string) {
+	@width = 0;
+	@bold = false;
+	foreach(@i: @c in @string) {
+		if(@c == '\u00a7') {
+			if(@string[@i + 1] == 'l') {
+				@bold = true;
+			} else if(reg_match('[0-9a-fr]', @string[@i + 1])) {
+				@bold = false;
+			}
+			continue(2);
+		}
+		@width += _char_width(@c, @bold);
+	}
+	return(@width);
+}
+
+/*
+	Fills a string evenly with a character so that it extends to a full line
+*/
+proc _fill_string(@replaceChar, @fillChar, @string) {
+	@width = _string_width(replace(@string, @replaceChar, ''));
+	@parts = split(@replaceChar, @string);
+	@fillArray = array();
+	array_resize(@fillArray, floor(((320 - @width) / _char_width(@fillChar)) / (array_size(@parts) - 1)), @fillChar);
+	@fillString = array_implode(@fillArray, '');
+	return(replace(@string, @replaceChar, @fillString));
+}
+
+/*
 	Returns how many of an item an inventory contains at a location.
 	@item: 0:0 format
 */

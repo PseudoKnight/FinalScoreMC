@@ -408,14 +408,15 @@ proc _pvp_end_match(@id, @winners) {
 		}
 		
 		if(array_index_exists(@pvp, 'stats')) {
-			_regionmsg(@pvp['arena']['broadcast'], 
-				color('gray').'|--'.color('bold').'[ STATS ]'.color('gray').'-------------|\n'
-				.color('gray').' Kills : Damage : Deaths\n'
-				.'|------------------------|')
+			_regionmsg(@pvp['arena']['broadcast'], colorize(
+				'&7|--&l[ STATS ]&7--------------|\n'.
+				' Kills : Damage : Deaths\n'.
+				'|-------------------------|'
+			));
 			foreach(@player: @stats in @pvp['stats']) {
 				_regionmsg(@pvp['arena']['broadcast'], ' '.@stats['kills'].' : '.round(@stats['damage']).' : '.@stats['deaths'].' - '.@player)
 			}
-			_regionmsg(@pvp['arena']['broadcast'], color('gray').'|------------------------|')
+			_regionmsg(@pvp['arena']['broadcast'], color('gray').'|-------------------------|')
 		}
 		
 		if(array_index_exists(@pvp['arena'], 'chestspawn')) {

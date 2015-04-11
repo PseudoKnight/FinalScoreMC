@@ -321,30 +321,28 @@
 		# CLASSES
 		if(array_index_exists(@pvp['arena'], 'classes')) {
 			_class_select(@id, @pvp)
-		
-			#ANNOUNCE
-			_worldmsg('custom', color('gray').'[PVP] '.color('r')
-				.'Starting '.@primaryName.if(@secondaryName, ': '.@secondaryName).' soon...');
-		
-		} else {
-			_worldmsg('custom', color('gray').'[PVP] '.color('r')
-				.'Starting '.@primaryName.if(@secondaryName, ': '.@secondaryName)
-				.' in '.@pvp['arena']['delay'].' seconds...');
-		
 		}
+		
+		# ANNOUNCE
+		@title = @primaryName.if(@secondaryName, ': '.@secondaryName);
+		_worldmsg('custom', _fill_string('*', '-', colorize('&7|--&l[ &r&l'.@title.' &7&l]&7*|')));
 
 		if(array_index_exists(@pvp, 'team')) {
-			_worldmsg('custom', @pvp['arena']['team'][0]['color'].'['.@pvp['arena']['team'][0]['name'].'] '
-				.array_implode(@pvp['team'][0]['players'], ' ').'\n'.color('r')
-				.@pvp['arena']['team'][1]['color'].'['.@pvp['arena']['team'][1]['name'].'] '
-				.array_implode(@pvp['team'][1]['players'], ' '))
+			_worldmsg('custom', 
+				@pvp['arena']['team'][0]['color'].'['.@pvp['arena']['team'][0]['name'].'] '.
+				array_implode(@pvp['team'][0]['players'], ' ').'\n'.color('r').
+				@pvp['arena']['team'][1]['color'].'['.@pvp['arena']['team'][1]['name'].'] '.
+				array_implode(@pvp['team'][1]['players'], ' ')
+			);
 		} else {
-			_worldmsg('custom', array_implode(array_keys(@pvp['players']), ' vs '))
+			_worldmsg('custom', color('gold').' '.array_implode(array_keys(@pvp['players']), colorize('&r vs &6')));
 		}
+		
+		_worldmsg('custom', colorize('&7|----------------------------------------------------|'));
 		
 		play_sound(@pvp['arena']['lobby'], array('sound': 'WITHER_SPAWN', 'pitch': 1.5, 'volume': 3))
 		
-		#START ROUND
+		# COUNTDOWN TO START
 		@timeleft = array(@pvp['arena']['delay']);
 		set_interval(1000, closure(){
 			@timeleft[0] -= 1;
@@ -367,11 +365,17 @@
 					if(!@choosing) {
 						@timeleft[0] = 4;
 					}
+				} else if(@timeleft[0] > 4) {
+					if(extension_exists('CHNaughty')) {
+						foreach(@p in array_keys(@pvp['players'])) {
+							try(action_msg(@p, 'Starting in '.@timeleft[0]).'...');
+						}
+					}
 				}
 				if(@timeleft[0] == 4) {
 					if(extension_exists('CHNaughty')) {
 						foreach(@p in array_keys(@pvp['players'])) {
-							try(title_msg(@p, null, @primaryName.if(@secondaryName, ': '.@secondaryName), 20, 60, 20));
+							try(title_msg(@p, null, @title, 20, 60, 20));
 						}
 					}
 				}
