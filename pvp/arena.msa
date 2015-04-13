@@ -384,7 +384,7 @@
 			
 			case 'flags':
 				@flags = array('noinventory', 'stackedpickup', 'debug', 'keepinventory', 'rallycall', 'build', 
-					'infinitedispensers', 'effects', 'noxp', 'nobottles')
+					'infinitedispensers', 'noxp', 'nobottles')
 				if(!@args[0] || @args[1]) {
 					die('You need to specify a comma separated list of pre-defined flags.'
 						.'(no spaces) Current available flags: '.@flags)

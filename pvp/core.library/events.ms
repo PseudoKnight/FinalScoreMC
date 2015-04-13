@@ -362,11 +362,6 @@ bind(entity_damage, array('id': @id.'EntityDamage', 'priority': 'LOWEST'), array
 				cancel()
 				
 			} else {
-			
-				if(array_contains(@pvp['arena']['flags'], 'effects')) {
-					play_effect(_relative(ploc(@e['player']), 'up', 2), 'tile_break', array('id': 115, 'particleCount': min(100, round(5 * @e['amount'])), 'offsetY': 0.3))
-				}
-				
 				_stats_damage(@damager, @e['player'], @e['amount'], @pvp);
 			}
 			
