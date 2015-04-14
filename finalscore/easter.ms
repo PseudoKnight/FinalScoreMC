@@ -1,32 +1,30 @@
 bind('creature_spawn', null, array('type': 'ZOMBIE', 'reason': 'NATURAL'), @event) {
 	if(@event['location']['world'] == 'outworld') {
-		@mobs = array(
-			51: 'SKELETON', 
-			52: 'SPIDER', 
-			54: 'ZOMBIE', 
-			55: 'SLIME', 
-			57: 'PIGZOMBIE', 
-			58: 'ENDERMAN', 
-			59: 'CAVESPIDER', 
-			62: 'MAGMACUBE', 
-			65: 'BAT', 
-			66: 'WITCH', 
-			67: 'ENDERMITE',
-			68: 'GUARDIAN',
-			90: 'PIG', 
-			91: 'SHEEP', 
-			92: 'COW', 
-			93: 'CHICKEN', 
-			94: 'SQUID', 
-			95: 'WOLF', 
-			96: 'MOOSHROOM', 
-			98: 'OCELOT', 
-			100: 'HORSE',
-			101: 'RABBIT',
-			120: 'VILLAGER',
-		);
-		@loc = _relative(@event['location'], 'up');
-		drop_item(@loc, array('type': 383, 'data': array_rand(@mobs)[0]), true);
+		# @mobs = array(
+			# 51: 'SKELETON', 
+			# 52: 'SPIDER', 
+			# 54: 'ZOMBIE', 
+			# 55: 'SLIME', 
+			# 57: 'PIGZOMBIE', 
+			# 58: 'ENDERMAN', 
+			# 59: 'CAVESPIDER', 
+			# 62: 'MAGMACUBE', 
+			# 65: 'BAT', 
+			# 66: 'WITCH', 
+			# 67: 'ENDERMITE',
+			# 68: 'GUARDIAN',
+			# 90: 'PIG', 
+			# 91: 'SHEEP', 
+			# 92: 'COW', 
+			# 93: 'CHICKEN', 
+			# 94: 'SQUID', 
+			# 95: 'WOLF', 
+			# 96: 'MOOSHROOM', 
+			# 98: 'OCELOT', 
+			# 100: 'HORSE',
+			# 101: 'RABBIT',
+			# 120: 'VILLAGER',
+		# );
 		set_timeout(50, closure(){
 			if(entity_exists(@event['id'])) {
 				set_mob_equipment(@event['id'], array(
@@ -44,18 +42,34 @@ bind('creature_spawn', null, array('type': 'ZOMBIE', 'reason': 'NATURAL'), @even
 	}
 }
 
-bind('entity_damage', null, array('type': 'ZOMBIE', 'world': 'outworld'), @event) {
-	if(@event['cause'] == 'ENTITY_ATTACK' 
-	|| @event['cause'] == 'PROJECTILE'
-	|| @event['cause'] == 'MAGIC') {
+bind('entity_death', null, array('type': 'ZOMBIE'), @event) {
+	if(@event['location']['world'] == 'outworld') {
 		@inv = get_mob_equipment(@event['id']);
 		if(!is_null(@inv['helmet'])
 		&& @inv['helmet']['type'] == 397) {
-			@loc = _relative(@event['location'], 'up');
-			if(function_exists('play_effect')) {
-				play_effect(@loc, 'COLOURED_DUST', array('particleCount': 15, 'offsetX': 1, 'offsetY': 1, 'offsetZ': 1));
+			@player = '';
+			if(array_index_exists(@event['cause'], 'damager')) {
+				if(ponline(@event['cause']['damager'])) {
+					@player = @event['cause']['damager'];
+				} else if(array_index_exists(@event['cause'], 'shooter')
+				&& ponline(@event['cause']['shooter'])) {
+					@player = @event['cause']['shooter'];
+				}
 			}
-			if(rand(2)) {
+
+			if(@player != '') {
+				@looting = 0;
+				@weapon = pinv(@player, null);
+				foreach(@enchant in @weapon['enchants']) {
+					if(@enchant['etype'] == 'LOOT_BONUS_MOBS') {
+						@looting = @enchant['elevel'];
+						break();
+					}
+				}
+				@loc = _relative(@event['location'], 'up');
+				if(function_exists('play_effect')) {
+					play_effect(@loc, 'COLOURED_DUST', array('particleCount': 15, 'offsetX': 1, 'offsetY': 1, 'offsetZ': 1));
+				}
 				@mobs = array(
 					51: 'SKELETON', 
 					52: 'SPIDER', 
@@ -81,7 +95,7 @@ bind('entity_damage', null, array('type': 'ZOMBIE', 'world': 'outworld'), @event
 					101: 'RABBIT',
 					120: 'VILLAGER',
 				);
-				drop_item(@loc, array('type': 383, 'data': array_rand(@mobs)[0]), true);
+				modify_event('drops', array(array('type': 383, 'qty': rand(1, 4 + @looting), 'data': array_rand(@mobs)[0])));
 			}
 		}
 	}
