@@ -60,10 +60,12 @@ bind('entity_death', null, array('type': 'ZOMBIE'), @event) {
 			if(@player != '') {
 				@looting = 0;
 				@weapon = pinv(@player, null);
-				foreach(@enchant in @weapon['enchants']) {
-					if(@enchant['etype'] == 'LOOT_BONUS_MOBS') {
-						@looting = @enchant['elevel'];
-						break();
+				if(!is_null(@weapon)) {
+					foreach(@enchant in @weapon['enchants']) {
+						if(@enchant['etype'] == 'LOOT_BONUS_MOBS') {
+							@looting = @enchant['elevel'];
+							break();
+						}
 					}
 				}
 				@loc = _relative(@event['location'], 'up');
