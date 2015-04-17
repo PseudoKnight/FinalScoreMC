@@ -60,14 +60,11 @@ bind(player_death, null, null, @event) {
 		die();
 	}
 	@pdata = _pdata(@event['player']);
-	if(!array_index_exists(@pdata, 'support') || @pdata['support'] < 15) {
-		die();
-	}
 	try(dm_delete_marker('tracers', player()));
 	try(dm_delete_marker('tracers', player().'lastdeath'));
 	dm_create_marker('tracers', array(
 		'world': pworld(),
-		'label': player().' died here',
+		'label': @event['death_message'],
 		'id': player().'lastdeath',
 		'icon': 'skull',
 		'location': ploc()
