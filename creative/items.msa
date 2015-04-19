@@ -1,0 +1,141 @@
+# Add an item into your inventory in the next available slot.
+*:/i [$item=0] [$amount=1] = >>>
+	if(!has_permission('command.i'), die('You do not have permission.'))
+	if($item == 0, die('Usage: /i [id:data] [quantity] '.color(gray).'(supports item names)'))
+	@item = split(':', $item)
+	if(!is_numeric(@item[0]), @item[0] = data_values(@item[0]))
+	if(is_null(@item[0]), die('Unknown item name'))
+	if(array_size(@item) == 1, @item[1] = 0)
+	if(!is_integral($amount) || $amount < 1, die('Amount must be a positive integer.'))
+	try(
+		pgive_item(@item[0].':'.@item[1], $amount)
+		msg(color('yellow').'You\'ve been given '.$amount.' '.data_name(@item[0].':'.@item[1]).'.')
+	, # catch
+		msg(color('red').'That item doesn\'t appear to exist.')
+	)
+<<<
+
+# Set the display name for the item in-hand
+*:/display [$] = >>>
+	if(!has_permission('command.display'), die('You do not have permission.'))
+	if(!$, die(color(gold).'Usage: /display <item display name> '.color(gray).'(supports &0 color codes)'))
+	@meta = get_itemmeta(null)
+	if(is_null(@meta), @meta = array())
+	@meta[display] = colorize($)
+	set_itemmeta(null, @meta)
+<<<
+
+# Enchant tool in hand with specified enchantment
+*:/enchant [$type='list'] [$level=1] = >>>
+	if(!has_permission('command.enchant'), die('You do not have permission.'))
+	# enchantment aliases
+	@enchants = array(
+		'power': 'ARROW_DAMAGE',
+		'flame': 'ARROW_FIRE',
+		'infinity': 'ARROW_INFINITE',
+		'punch': 'ARROW_KNOCKBACK',
+		'sharpness': 'DAMAGE_ALL',
+		'baneofarthropods': 'DAMAGE_ARTHROPODS',
+		'smite': 'DAMAGE_UNDEAD',
+		'efficiency': 'DIG_SPEED',
+		'unbreaking': 'DURABILITY',
+		'fireaspect': 'FIRE_ASPECT',
+		'knockback': 'KNOCKBACK',
+		'fortune': 'LOOT_BONUS_BLOCKS',
+		'looting': 'LOOT_BONUS_MOBS',
+		'respiration': 'OXYGEN',
+		'protection': 'PROTECTION_ENVIRONMENTAL',
+		'blastprotection': 'PROTECTION_EXPLOSIONS',
+		'featherfalling': 'PROTECTION_FALL',
+		'fireprotection': 'PROTECTION_FIRE',
+		'projectileprotection': 'PROTECTION_PROJECTILE',
+		'silktouch': 'SILK_TOUCH',
+		'thorns': 'THORNS',
+		'aquaaffinity': 'WATER_WORKER',
+		'depthstrider': 'DEPTH_STRIDER',
+	)
+	if(!is_integral($level), die('Enchantment level must be an integer.'))
+	if(array_index_exists(@enchants, to_lower($type))) {
+		enchant_inv_unsafe(null, @enchants[to_lower($type)], $level)
+	} else {
+		msg(color('red').'Available enchantments: '.array_keys(@enchants))
+	}
+<<<
+
+# Remove all enchantments from item in hand
+*:/unenchant = >>>
+	if(!has_permission('command.enchant'), die('You do not have permission.'))
+	@item = pinv(player(), null)
+	array_remove(@item, 'enchants')
+	array_remove(@item[meta], 'enchants')
+	set_pinv(array('null': @item))
+<<<
+
+# Set individual lines of lore for the item in-hand
+*:/lore [$line] [$] = >>>
+	if(!has_permission('command.lore'), die('You do not have permission.'))
+	if(!$ || !is_numeric($line) || $line < 1) {
+		die(color(gold).'Usage: /lore <line#> <lore string> '.color(gray).'(supports &0 color codes)')
+	}
+	@meta = get_itemmeta(null)
+	if(is_null(@meta), @meta = array())
+	if(is_null(@meta[lore])) {
+		@meta[lore] = array()
+	}
+	@meta[lore][$line - 1] = colorize($)
+	set_itemmeta(null, @meta)
+<<<	
+
+# Spawn player head
+*:/skull $player = >>>
+	if(pworld() == 'dev' || (pworld() == 'custom' && has_permission('group.builders'))) {
+		pgive_item(player(), '397:3', 1, array('owner': $player))
+	}
+<<<
+
+# Dye leather armor in-hand with the specified R G B values (0 - 255)
+*:/dye [$r] [$g] [$b] = >>>
+	if(!has_permission('command.dye'), die('You do not have permission.'))
+	if(!$b, die(color(gold).'Usage: /dye <red#> <green#> <blue#> '.color(gray).'(0 - 255)'))
+	try(
+		set_armor_color(pinfo(player(), 15), array(min(max($r, 0), 255), min(max($g, 0), 255), min(max($b, 0), 255)))
+	, # catch
+		die(color(gold).'Hold leather armor in your hand and type the command. eg. /dye 255 255 255')
+	)
+<<<
+
+# Create potions or add potion effects to existing potions
+*:/potion [$cmd] [$id] [$strength] [$seconds] = >>>
+	if(!has_permission('command.potion'), die('You do not have permission.'))
+	if(!$id, die('Usage: /potion <create|add> <potionEffect> <strength> <seconds>'))
+	
+	@effects = _get_effects()
+	@id = $id
+	if(!array_index_exists(@effects, @id), die('Available potion effects: '.@effects))
+	if(!is_numeric(@id), @id = @effects[@id])
+	
+	# data affects the color of the potion
+	@data = 16
+	@effectdata = array(1: 2, 2: 10, 5: 9, 6: 5, 7: 12, 10: 1, 12: 3, 14: 14, 16: 6, 18: 8)
+	if(array_index_exists(@effectdata, @id)) {
+		@data = @effectdata[@id]
+	}
+	
+	switch($cmd) {
+		case 'add':
+			@item = pinv(player(), null)
+			if(@item[type] != 373, die('You can only add potion effects to potions.'))
+			if(is_null(@item[meta]), @item[meta] = array())
+			if(!array_index_exists(@item[meta], 'potions'), @item[meta][potions] = array())
+			array_push(@item[meta][potions], array(id: @id, strength: $strength - 1, seconds: $seconds))
+			set_pinv(array('null': @item))
+			
+		case 'create':
+			set_pinv(array('null': array(type: 373, data: @data, meta: array(
+				potions: array(array(id: @id, strength: $strength - 1, seconds: $seconds))
+			))))
+			
+		default: 
+			die('Usage: /potion <set|add> <potionEffect> <strength> <seconds>')
+	}
+<<<

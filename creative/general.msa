@@ -1,0 +1,140 @@
+# Set fly mode for players
+*:/fly $player $mode = >>>
+	if(!has_permission('command.fly'), die('You do not have permission.'))
+	try(@player = player($player), die('Who is that? Are they online?'))
+	if(@player != player() && !has_permission('command.fly.others'), die('You do not have permission.'))
+	if(pworld(@player) != pworld()) {
+		die('You do not have permission to set a fly mode in another world.')
+	}
+	switch(to_lower($mode)) {
+		case '1':
+		case 'on':
+			set_pflight(@player, 1)
+			msg('Turned on fly mode for '.@player.'.')
+			tmsg(@player, player().' turned on fly mode on you.')
+			
+		case '0':
+		case 'off':
+			set_pflight(@player, 0)
+			msg('Turned off fly mode for '.@player.'.')
+			tmsg(@player, player().' turned off fly mode on you.')
+			
+		default:
+			msg('Usage: /fly <player> <1|0>')
+	}
+<<<
+
+# Toggle fly mode for yourself
+*:/fly = >>>
+	if(!has_permission('command.fly'), die('You do not have permission.'))
+	if(phas_flight()) {
+		set_pflight(player(), 0)
+		msg('Turned off flying.')
+	} else {
+		set_pflight(player(), 1)
+		msg('Turned on flying.')
+	}
+<<<
+
+# Set game mode for players
+*:/gamemode [$] = call_alias('/gm '.$)
+*:/gm [$] = >>>
+	if(!has_permission('command.gm'), die('You do not have permission.'))
+	
+	@player = player()
+	@mode = 'toggle'
+	if($) {
+		@args = parse_args($)
+		try(@player = player(@args[0])
+			if(@player != player() && !has_permission('command.gm.others')) {
+				die('You do not have permission to set another\'s game mode.')
+			} else if(pworld(@player) != pworld()) {
+				die('You do not have permission to set another\'s game mode in another world.')
+			}
+			if(array_size(@args) >= 2) {
+				@mode = @args[1]
+			}
+		
+		, # catch
+			if(is_numeric(@args[0])) {
+				@mode = @args[0]
+			} else {
+				die('Who is that? Are they online?')
+			}
+		)
+	}
+	
+	switch(to_lower(@mode)) {
+		case '0':
+		case 's':
+			@mode = 'SURVIVAL'
+			
+		case '1':
+		case 'c':
+			@mode = 'CREATIVE'
+			
+		case '2':
+		case 'a':
+			@mode = 'ADVENTURE'
+			
+		case 'toggle':
+			if(pmode(@player) == 'SURVIVAL') {
+				@mode = 'CREATIVE'
+			} else {
+				@mode = 'SURVIVAL'
+			}
+			
+		default: 
+			die('Usage: /gm <player> [mode] OR /gm [mode]')
+	}
+	
+	set_pmode(@player, @mode)
+	if(@player != player(), msg('Set '.@player.'\'s game mode to '.@mode))
+<<<
+
+# Set the time of day for this world
+*:/time $time = >>>
+	if(!has_permission('command.time'), die('You do not have permission.'))
+	try(
+		set_world_time(pworld(), $time)
+	, # catch
+		msg('Usage: /time <day|night|sunrise|sunset|0-24000>')
+	)
+	msg('Set time to '.$time)
+<<<
+
+# Heal yourself or others
+*:/heal [$player] = >>>
+	if(!has_permission('command.heal'), die('You do not have permission.'))
+	@player = player()
+	if($player) {
+		if(!has_permission('command.heal.others'), die('You do not have permission to heal others.'))
+		try(@player = player($player), die('Unknown player.'))
+		if(pworld(@player) != pworld()) {
+			die('You do not have permission to heal a player in another world.')
+		}
+	}
+	set_phunger(@player, 20)
+	set_psaturation(@player, 5.0)
+	set_phealth(@player, 20)
+	tmsg(@player, color('green').'Healed!')
+	if(@player != player(), msg(color('green').'Healed!'))
+<<<
+
+# Spawn an endercrystal at the targeted location.
+*:/endercrystal = >>>
+	if(!has_permission('command.endercrystal'), die('You do not have permission.'))
+	@loc = _relative(pcursor(), 'up')
+	set_block_at(@loc, '7:0')
+	spawn_entity(ENDER_CRYSTAL, 1, array(@loc[0] + 0.5, @loc[1] + 1, @loc[2] + 0.5, @loc[3]))
+<<<
+
+# Overwrite a line on the sign you're looking at.
+*:/sign $line [$=''] = >>>
+	if(!has_permission('command.sign'), die('You do not have permission.'))
+	@sign = pcursor()
+	if(!is_sign_at(@sign), die('That is not a sign'))
+	@lines = get_sign_text(@sign)
+	array_set(@lines, $line - 1, colorize($))
+	set_sign_text(@sign, @lines)
+<<<
