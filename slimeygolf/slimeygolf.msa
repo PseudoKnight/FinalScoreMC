@@ -375,7 +375,7 @@
 			}
 			
 		} else {
-			console('Last player left SlimeyGolf, stopping.');
+			console('No players left in world, stopping SlimeyGolf.');
 			unbind(@course);
 			unbind(@course.'_target');
 			if(array_contains(get_scoreboards(), @course)) {
