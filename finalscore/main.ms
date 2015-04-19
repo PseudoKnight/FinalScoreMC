@@ -348,18 +348,6 @@ bind(player_interact, null, array('block': 77, 'button': 'right'), @event) {
 	}
 }
 
-# color signs for moderators
-bind(sign_changed, null, null, @event) {
-	if(has_permission('group.moderators'))  {
-		modify_event('text', array(
-			0: colorize(@event['text'][0]),
-			1: colorize(@event['text'][1]),
-			2: colorize(@event['text'][2]),
-			3: colorize(@event['text'][3]),
-		));
-	}
-}
-
 # prevent people from pushing minecart hoppers underneath chests
 bind(vehicle_collide, null, array('type': 'MINECART_HOPPER', 'collisiontype': 'ENTITY', 'hittype': 'PLAYER'), @event) {
 	cancel();
