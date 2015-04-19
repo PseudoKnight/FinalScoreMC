@@ -1,6 +1,6 @@
 # Add an item into your inventory in the next available slot.
 *:/i [$item=0] [$amount=1] = >>>
-	if(!has_permission('command.i'), die('You do not have permission.'))
+	if(pmode() != 'CREATIVE', die('You\'re not in creative mode.'));
 	if($item == 0, die('Usage: /i [id:data] [quantity] '.color(gray).'(supports item names)'))
 	@item = split(':', $item)
 	if(!is_numeric(@item[0]), @item[0] = data_values(@item[0]))
@@ -17,7 +17,7 @@
 
 # Set the display name for the item in-hand
 *:/display [$] = >>>
-	if(!has_permission('command.display'), die('You do not have permission.'))
+	if(pmode() != 'CREATIVE', die('You\'re not in creative mode.'));
 	if(!$, die(color(gold).'Usage: /display <item display name> '.color(gray).'(supports &0 color codes)'))
 	@meta = get_itemmeta(null)
 	if(is_null(@meta), @meta = array())
@@ -27,7 +27,7 @@
 
 # Enchant tool in hand with specified enchantment
 *:/enchant [$type='list'] [$level=1] = >>>
-	if(!has_permission('command.enchant'), die('You do not have permission.'))
+	if(pmode() != 'CREATIVE', die('You\'re not in creative mode.'));
 	# enchantment aliases
 	@enchants = array(
 		'power': 'ARROW_DAMAGE',
@@ -64,7 +64,7 @@
 
 # Remove all enchantments from item in hand
 *:/unenchant = >>>
-	if(!has_permission('command.enchant'), die('You do not have permission.'))
+	if(pmode() != 'CREATIVE', die('You\'re not in creative mode.'));
 	@item = pinv(player(), null)
 	array_remove(@item, 'enchants')
 	array_remove(@item[meta], 'enchants')
@@ -73,7 +73,7 @@
 
 # Set individual lines of lore for the item in-hand
 *:/lore [$line] [$] = >>>
-	if(!has_permission('command.lore'), die('You do not have permission.'))
+	if(pmode() != 'CREATIVE', die('You\'re not in creative mode.'));
 	if(!$ || !is_numeric($line) || $line < 1) {
 		die(color(gold).'Usage: /lore <line#> <lore string> '.color(gray).'(supports &0 color codes)')
 	}
@@ -88,14 +88,13 @@
 
 # Spawn player head
 *:/skull $player = >>>
-	if(pworld() == 'dev' || (pworld() == 'custom' && has_permission('group.builders'))) {
-		pgive_item(player(), '397:3', 1, array('owner': $player))
-	}
+	if(pmode() != 'CREATIVE', die('You\'re not in creative mode.'));
+	pgive_item(player(), '397:3', 1, array('owner': $player))
 <<<
 
 # Dye leather armor in-hand with the specified R G B values (0 - 255)
 *:/dye [$r] [$g] [$b] = >>>
-	if(!has_permission('command.dye'), die('You do not have permission.'))
+	if(pmode() != 'CREATIVE', die('You\'re not in creative mode.'));
 	if(!$b, die(color(gold).'Usage: /dye <red#> <green#> <blue#> '.color(gray).'(0 - 255)'))
 	try(
 		set_armor_color(pinfo(player(), 15), array(min(max($r, 0), 255), min(max($g, 0), 255), min(max($b, 0), 255)))
@@ -106,7 +105,7 @@
 
 # Create potions or add potion effects to existing potions
 *:/potion [$cmd] [$id] [$strength] [$seconds] = >>>
-	if(!has_permission('command.potion'), die('You do not have permission.'))
+	if(pmode() != 'CREATIVE', die('You\'re not in creative mode.'));
 	if(!$id, die('Usage: /potion <create|add> <potionEffect> <strength> <seconds>'))
 	
 	@effects = _get_effects()
