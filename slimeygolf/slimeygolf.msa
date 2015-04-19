@@ -375,6 +375,12 @@
 			}
 			
 		} else {
+			console('Last player left SlimeyGolf, stopping.');
+			unbind(@course);
+			unbind(@course.'_target');
+			if(array_contains(get_scoreboards(), @course)) {
+				remove_scoreboard(@course);
+			}
 			clear_task();
 		}
 	});
