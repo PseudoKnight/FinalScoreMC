@@ -8,7 +8,7 @@ bind(player_teleport, array('id': @id.'endernades'), array('type': 'ENDER_PEARL'
 		damage_entity(@e['id'], @e['amount'], @damager);
 		modify_event('amount', 0);
 	}
-	explosion(@e['to'], 2);
+	explosion(@e['to'], 2, true);
 	unbind('endernade');
 }
 

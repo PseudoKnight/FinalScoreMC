@@ -33,9 +33,9 @@ proc _spawn_mob(@mob, @qty, @loc, @owner = 'Notch') {
 						set_mob_name(@m, @mob['explode'][0])
 					}
 					if(@mob['explode'][0] == 0) {
-						set_name_visible(@m, false)
-						explosion(entity_loc(@m), @mob['explode'][1])
-						clear_task()
+						set_name_visible(@m, false);
+						explosion(entity_loc(@m), @mob['explode'][1], true);
+						clear_task();
 					} else {
 						play_sound(entity_loc(@m), array('sound': 'NOTE_STICKS', 'pitch': 2, 'volume': 1))
 					}
