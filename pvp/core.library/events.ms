@@ -20,11 +20,13 @@ bind(player_death, array('priority': 'high', 'id': @id.'death'), null, @e, @id =
 		if(@pvp['stats'][player()]['lastdamager'] != ''
 		&& @pvp['stats'][player()]['lastdamaged'] + 5000 > time()) {
 			@lastdamager = @pvp['stats'][player()]['lastdamager'];
-			@deathmessage .= ', assisted by '.@pvp['players'][@lastdamager]['color'].@lastdamager.color('r');
+			@deathmessage .= ', assisted by '
+				.if(array_index_exists(@pvp['players'], @lastdamager), @pvp['players'][@lastdamager]['color'])
+				.@lastdamager.color('r');
 		}
 	
 		@pvp['stats'][player()]['deaths'] += 1;
-		if(array_index_exists(@pvp['players'], @killer)
+		if(array_index_exists(@pvp['stats'], @killer)
 		&& @killer != player()) {
 			@pvp['stats'][@killer]['kills'] += 1;
 		}
@@ -41,7 +43,8 @@ bind(player_death, array('priority': 'high', 'id': @id.'death'), null, @e, @id =
 		if(array_index_exists(@pvp['players'], @killer)) {
 			for(@i = 1, @i < array_size(@parts), @i++) {
 				if(@parts[@i] == @killer) {
-					@parts[@i] = @pvp['players'][@killer]['color'].@killer.color('r');
+					@parts[@i] = if(array_index_exists(@pvp['players'], @killer), @pvp['players'][@killer]['color'])
+						.@killer.color('r');
 					break();
 				}
 			}
