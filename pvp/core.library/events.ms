@@ -612,12 +612,12 @@ if(@pvp[arena][mode] == 'tntrun') {
 		}
 	}
 	
-	# array_push(@pvp[binds], @id.'limitentities')
-	# bind(entity_change_block, array(id: @id.'limitentities'), array(from: 12, to: 0), @e, @region = @pvp[arena][region]) {
-		# if(array_contains(sk_regions_at(@e[location]), @region)) {
-			# entity_remove(@e[entity])
-		# }
-	# }
+	array_push(@pvp[binds], @id.'limitentities')
+	bind(entity_change_block, array(id: @id.'limitentities'), array(from: 12, to: 0), @e, @region = @pvp[arena][region]) {
+		if(array_contains(sk_regions_at(@e[location]), @region)) {
+			entity_remove(@e[entity])
+		}
+	}
 }
 
 ### SPECATORS ###

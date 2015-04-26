@@ -73,7 +73,7 @@ proc _fw_startround(@secs = 12) {
 			_fw_endgame(@winners)
 		} else {
 			@secs = 12 - round(8 * (@highscore / @goal))
-			@tasks = array('climb', 'keepaway', 'harvest', 'koth', 'cake', 'fall', 'cluck', 'lavafall', 'shepherd')
+			@tasks = array('climb', 'keepaway', 'harvest', 'koth', 'cake', 'fall', 'cluck', 'frogegg', 'lavafall', 'shepherd')
 			@task = @tasks[rand(array_size(@tasks))]
 			if(@total == 1 && @task == 'pvp', @task = @tasks[rand(array_size(@tasks))])
 			queue_delay(1000, 'fw2')
@@ -597,50 +597,50 @@ proc _fw_task(@task, @state, @secs) {
 		
 		}
 		
-	# case 'frogegg':
-		# switch(@state) {
-		# case 'start':
-			# _fw_msg('Pop the frog egg!')
-			# @loc = _fw_loc()
-			# set_block_at(@loc, '122:0')
-			# if(!rand(6)) {
-				# _fw_mobs()
-			# }
-			# if(!rand(4)) {
-				# for(@i = 0, @i < 16, @i++) {
-					# set_block_at(_fw_loc(), '49:0')
-				# }
-			# }
-			# play_sound(@loc, array('sound': 'CHICKEN_EGG_POP', 'volume': 3))
-			# bind(player_interact, array('id': 'fwegg', 'priority': 'high'), array('block': 122), @e) {
-				# if(_fw_player(player())) {
-					# play_sound(@e['location'], array('sound': 'CHICKEN_EGG_POP', 'volume': 3))
-					# consume()
-					# if(_fw_changeteam(player(), 'winners')) {
-						# play_sound(ploc(), array('sound': 'zombie_metal'), player())
-					# }
-				# }
-			# }
+	case 'frogegg':
+		switch(@state) {
+		case 'start':
+			_fw_msg('Pop the frog egg!')
+			@loc = _fw_loc()
+			set_block_at(@loc, '122:0')
+			if(!rand(6)) {
+				_fw_mobs()
+			}
+			if(!rand(4)) {
+				for(@i = 0, @i < 16, @i++) {
+					set_block_at(_fw_loc(), '49:0')
+				}
+			}
+			play_sound(@loc, array('sound': 'CHICKEN_EGG_POP', 'volume': 3))
+			bind(player_interact, array('id': 'fwegg', 'priority': 'high'), array('block': 122), @e) {
+				if(_fw_player(player())) {
+					play_sound(@e['location'], array('sound': 'CHICKEN_EGG_POP', 'volume': 3))
+					consume()
+					if(_fw_changeteam(player(), 'winners')) {
+						play_sound(ploc(), array('sound': 'zombie_metal'), player())
+					}
+				}
+			}
 			
-		# case 'end':
-			# unbind('fwegg')
-			# _remove_region_entities('frogware')
-			# proc _set_air(@x, @y, @z) {
-				# if(get_block_at(array(@x, @y, @z, 'custom'))[0] != '0') {
-					# set_block_at(array(@x, @y, @z, 'custom'), '0:0')
-				# }
-			# }
-			# @region = sk_region_info('frogware', 'custom')[0]
-			# queue_push(closure(){
-				# _iterate_cuboid(array(@region[0][0], @region[1][1], @region[0][2], 'custom'),
-				# array(@region[1][0], @region[1][1], @region[1][2], 'custom'),
-				# '_set_air')
-			# }, 'fw3')
-			# queue_push(closure(){
-				# _fw_startround(@secs)
-			# }, 'fw3')
+		case 'end':
+			unbind('fwegg')
+			_remove_region_entities('frogware')
+			proc _set_air(@x, @y, @z) {
+				if(get_block_at(array(@x, @y, @z, 'custom'))[0] != '0') {
+					set_block_at(array(@x, @y, @z, 'custom'), '0:0')
+				}
+			}
+			@region = sk_region_info('frogware', 'custom')[0]
+			queue_push(closure(){
+				_iterate_cuboid(array(@region[0][0], @region[1][1], @region[0][2], 'custom'),
+				array(@region[1][0], @region[1][1], @region[1][2], 'custom'),
+				'_set_air')
+			}, 'fw3')
+			queue_push(closure(){
+				_fw_startround(@secs)
+			}, 'fw3')
 		
-		# }
+		}
 		
 	case 'pvp':
 		switch(@state) {

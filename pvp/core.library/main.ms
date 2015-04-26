@@ -480,6 +480,7 @@ proc _pvp_end_match(@id, @winners) {
 		foreach(@p in @pvp['spectators']) {
 			_remove_spectator(@id, @p, @pvp)
 		}
+		_remove_region_entities(@pvp['arena']['region']);
 
 		if(array_index_exists(@pvp['arena'], 'restore')) {
 			set_timeout(3000, closure(){
@@ -514,6 +515,5 @@ proc _pvp_end_match(@id, @winners) {
 		export('pvp'.@id, @pvp);
 		export('currently', null);
 
-		_remove_region_entities(@pvp['arena']['region']);
 	})
 }
