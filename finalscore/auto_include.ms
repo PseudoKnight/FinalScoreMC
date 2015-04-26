@@ -507,6 +507,35 @@ proc _fill_string(@replaceChar, @fillChar, @string) {
 }
 
 /*
+	Takes a string and returns an array of strings of the specified width.
+	This will not split words.
+*/
+proc _wrap_string(@string, @width = 320) {
+	@words = split(' ', @string);
+	@lines = array();
+	@linewidth = 0;
+	@line = '';
+	foreach(@word in @words) {
+		@wordwidth = _string_width(@word);
+		@linewidth += @wordwidth;
+		if(@linewidth + 3 < @width) {
+			if(length(@line) > 0) {
+				@linewidth += 3;
+				@line .= ' '.@word;
+			} else {
+				@line .= @word;
+			}
+		} else {
+			@lines[] = @line;
+			@linewidth = @wordwidth;
+			@line = @word;
+		}
+	}
+	@lines[] = @line;
+	return(@lines);
+}
+
+/*
 	Returns how many of an item an inventory contains at a location.
 	@item: 0:0 format
 */
