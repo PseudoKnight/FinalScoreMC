@@ -92,7 +92,7 @@
 		export('nextspleef', @nextspleef)
 		export('currentspleef', @currentspleef)
 		export('spleefsettings', @spleefsettings)
-		export('currently', 'Spleef')
+		_add_activity('currentspleef', 'Classic Spleef');
 		set_sign_text(@cfg['sign'][0], array())
 		set_sign_text(@cfg['sign'][1], array())
 		set_sign_text(@cfg['sign'][2], array())
@@ -244,12 +244,12 @@
 					} else {
 						_regionmsg(@cfg['region']['wrapper'], color('a').'[Spleef] '.color('r').'No one wins.')
 					}
-					unbind('spleef_quit')
-					unbind('spleef_break')
-					@currentspleef = array()
-					export('currentspleef', @currentspleef)
-					export('currently', null)
-					clear_task()
+					unbind('spleef_quit');
+					unbind('spleef_break');
+					@currentspleef = array();
+					export('currentspleef', @currentspleef);
+					_remove_activity('currentspleef');
+					clear_task();
 				}
 	
 				foreach(array_keys(@currentspleef), @player,
@@ -284,8 +284,9 @@
 				foreach(array_keys(@currentspleef), @player,
 					set_ploc(@player, @cfg['warp']['lobby'])
 				)
-				@currentspleef = array()
-				export('currentspleef', @currentspleef)
+				@currentspleef = array();
+				export('currentspleef', @currentspleef);
+				_remove_activity('currentspleef');
 			)
 
 			bind(block_break, array('id': 'spleef_break'), null, @event, @cfg,

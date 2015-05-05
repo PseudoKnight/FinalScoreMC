@@ -24,6 +24,7 @@
 		@timer = array(15);
 		@7['state'] = 1;
 		@7['lobby'] = get_value('warp.7')['loc'];
+		_add_activity('7', '7 Seconds to Live');
 		create_scoreboard('7');
 		create_objective('time', 'DUMMY', '7');
 		set_objective_display('time', array('displayname': color(6).'SECONDS TO LIVE', 'slot': 'SIDEBAR'), '7');
@@ -48,6 +49,7 @@
 					@7['state'] = 0
 					@7['players'] = array()
 					remove_scoreboard('7')
+					_remove_activity('7');
 					die()
 				}
 				
@@ -61,6 +63,7 @@
 						@7['state'] = 0
 						@7['players'] = array()
 						remove_scoreboard('7')
+						_remove_activity('7');
 						die()
 					}
 				

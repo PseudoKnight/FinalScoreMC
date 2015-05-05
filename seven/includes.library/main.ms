@@ -133,10 +133,10 @@ proc _7_remove_player(@player, @7) {
 		}
 		set_timeout(7000, closure(){
 			remove_scoreboard('7')
+			_remove_activity('7');
 		})
 		@7['players'] = array()
 		@7['state'] = 0
-		export('currently', null)
 		return(true)
 	}
 	return(false)

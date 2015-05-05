@@ -25,6 +25,8 @@ register_command('timer', array(
 					
 					if(array_index_exists(@timers, @player)) {
 						clear_task(@timers[@player][2])
+					} else {
+						_add_activity(@player.'timer', @player.' on '.to_upper(@id));
 					}
 					
 					@timers[@player] = array(@id, time(), 0)
@@ -84,6 +86,7 @@ register_command('timer', array(
 								set_pexp(@player, 0)
 							}
 							clear_task()
+							_remove_activity(@player.'timer');
 						}
 					})
 					
@@ -94,6 +97,7 @@ register_command('timer', array(
 							unbind()
 							clear_task(@timers[@p][2])
 							array_remove(@timers, @p)
+							_remove_activity(@p.'timer');
 						}
 					}
 					
@@ -106,6 +110,7 @@ register_command('timer', array(
 						unbind(@player.'timerbreak')
 						clear_task(@timers[@player][2])
 						array_remove(@timers, @player)
+						_remove_activity(@player.'timer');
 						play_sound(ploc(@player), array('sound': 'ORB_PICKUP'), @player)
 						
 						tmsg(@player, 'You achieved a time of '.color('bold').@time.color('r').' seconds.')

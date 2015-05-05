@@ -24,6 +24,7 @@
 		spectators: array(),
 	);
 	
+	_add_activity('golf'.@course, 'SlimeyGolf: '.to_upper(@course));
 	create_scoreboard(@course);
 	create_objective('strokes', 'DUMMY', @course);
 	set_objective_display('strokes', array(displayname: color('a').'STROKES (PAR: 0)', slot: 'SIDEBAR'), @course);
@@ -39,6 +40,7 @@
 	if(array_size(@golf['players']) == 0) {
 		console('No players in SlimeyGolf, removing scoreboard...');
 		remove_scoreboard(@course);
+		_remove_activity('golf'.@course);
 		die('No players in "slimeygolf" region.');
 	}
 	
@@ -297,6 +299,7 @@
 										set_timeout(10000, closure(){
 											if(array_contains(get_scoreboards(), @course)) {
 												remove_scoreboard(@course);
+												_remove_activity('golf'.@course);
 											}
 										});
 										clear_task();
@@ -368,6 +371,7 @@
 					unbind(@course.'_target');
 					if(array_contains(get_scoreboards(), @course)) {
 						remove_scoreboard(@course);
+						_remove_activity('golf'.@course);
 					}
 					clear_task();
 					break();
@@ -379,6 +383,7 @@
 			unbind(@course);
 			unbind(@course.'_target');
 			if(array_contains(get_scoreboards(), @course)) {
+				_remove_activity('golf'.@course);
 				remove_scoreboard(@course);
 			}
 			clear_task();

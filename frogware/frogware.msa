@@ -3,6 +3,7 @@
 	case 'join':
 		if(!sk_region_exists('custom', 'frogware'), die('Define the frogware region first.'))
 		if(!array_contains(get_scoreboards(), 'fw')) {
+			_add_activity('frogware', 'FrogWare');
 			create_scoreboard('fw')
 			create_objective('score', 'DUMMY', 'fw')
 			create_team('losers', 'fw')
@@ -48,11 +49,12 @@
 		_fw_startgame($pts)
 	
 	case 'forcestop':
-		queue_clear('fw')
-		queue_clear('fw2')
-		queue_clear('fw3')
-		remove_scoreboard('fw')
-		unbind('fwdamage')
+		queue_clear('fw');
+		queue_clear('fw2');
+		queue_clear('fw3');
+		remove_scoreboard('fw');
+		unbind('fwdamage');
+		_remove_activity('frogware');
 	
 	default:
 		msg(color('bold').'FROGWARE --------------');

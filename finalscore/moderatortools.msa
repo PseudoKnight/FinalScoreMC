@@ -1,4 +1,4 @@
-/safereload [$] = >>>
+/recompile [$] = >>>
 	@clearGlobal = false; # -g clear all but protected exported global vars
 	@clearProtected = false; # -p clear protected global vars
 	@force = false; # -f force recompile even if games are running
@@ -16,40 +16,22 @@
 		}
 	}
 	
-	
-	if(!@force) {
-		# check if a game is running before recompiling
-		@inprogress = array();
-		@inprogress = array_merge(@inprogress, get_scoreboards());
-		array_remove_values(@inprogress, 'main');
-		
-		@currentspleef = import('currentspleef');
-		if(@currentspleef && array_size(@currentspleef) >= 1) {
-			@inprogress[] = 'Spleef';
-		}
-
-		@cluck = import('cluck');
-		if(@cluck && (@cluck['active'] == 1)) {
-			@inprogress[] = 'Cluck';
-		}
-		
-		@timers = import('timer');
-		if(@timers) {
-			foreach(@player: @timer in @timers) {
-				@inprogress[] = @player.' in '.@timer[0];
+	# check if a game is running before recompiling
+	@activities = import('activities');
+	if(@activities) {
+		msg(color('gold').'Currently in progress: '.array_implode(@activities, ', '));
+		if(!@force) {
+			die(color('red').'Halted recompile due to games in progress.');
+		} else {
+			foreach(@activity in array_keys(@activities)) {
+				export(string(@activity), null);
 			}
-		}
-		
-		if(@inprogress) {
-			die('Currently in progress: '.array_implode(@inprogress, ', '));
-		}
-		
-	} else { 
-		# if forcing a reload despite games running, we have to clear scoreboards
-		@scoreboards = get_scoreboards();
-		foreach(@scoreboard in @scoreboards) {
-			if(@scoreboard != 'main') {
-				remove_scoreboard(@scoreboard);
+			# if forcing a recompiles despite games running, we have to clear scoreboards
+			@scoreboards = get_scoreboards();
+			foreach(@scoreboard in @scoreboards) {
+				if(@scoreboard != 'main') {
+					remove_scoreboard(@scoreboard);
+				}
 			}
 		}
 	}
@@ -84,7 +66,7 @@
 	
 	run('/save-all');
 	set_timeout(2000, closure(){
-		msg('Recompiling...');
+		msg(color('green').'Recompiling...');
 		run('/recompile '.if(!@clearGlobal, '-g'));
 	});
 <<<

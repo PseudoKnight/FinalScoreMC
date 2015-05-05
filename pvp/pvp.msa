@@ -305,10 +305,9 @@
 		if(!array_index_exists(@pvp, 'stats') || @pvp['arena']['stats']) {
 			@pvp['stats'] = associative_array();
 		}
-		@pvp['binds'] = array()
-		@pvp['spectators'] = array()
-		@pvp['running'] = 1
-		export('currently', @primaryName)
+		@pvp['binds'] = array();
+		@pvp['spectators'] = array();
+		@pvp['running'] = 1;
 		
 		# WEAPONS
 		
@@ -341,6 +340,8 @@
 		_worldmsg('custom', colorize('&7|----------------------------------------------------|'));
 		
 		play_sound(@pvp['arena']['lobby'], array('sound': 'WITHER_SPAWN', 'pitch': 1.5, 'volume': 3))
+		
+		_add_activity('pvp'.@id, @title);
 		
 		# COUNTDOWN TO START
 		@timeleft = array(@pvp['arena']['delay']);

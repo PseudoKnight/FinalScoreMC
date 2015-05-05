@@ -7,7 +7,6 @@ proc _fw_startgame(@pts) {
 	}
 	_fw_msg('Game started. First to '.@pts.' points wins!')
 	set_pscore('score', 'GOAL', @pts, 'fw')
-	export('currently', 'FrogWare')
 }
 
 proc _fw_endgame(@winners) {
@@ -28,8 +27,8 @@ proc _fw_endgame(@winners) {
 	}
 	if(array_contains(get_scoreboards(), 'fw')) { 
 		remove_scoreboard('fw') 
+		_remove_activity('frogware');
 	}
-	export('currently', null)
 }
 
 proc _fw_startround(@secs = 12) {

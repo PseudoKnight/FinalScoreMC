@@ -12,6 +12,7 @@ proc _spl_queue_start(@id, @world = @pworld) {
 		die('Spleef lobby teleport point does not exist.')
 	}
 
+	_add_activity('spleef.'.@id, 'Spleef Redux: '.to_upper(@id));
 	@spl = import('spleef.'.@id)
 	@spl['state'] = 1
 	export('spleef.'.@id, @spl)
@@ -64,6 +65,7 @@ proc _spl_queue_start(@id, @world = @pworld) {
 		
 		if(array_size(@spl['nextplayers']) < 2) {
 			play_sound(@arena['lobby'], array('sound': 'VILLAGER_NO', 'volume': 3))
+			_remove_activity('spleef.'.@id);
 			die()
 		}
 		
@@ -140,6 +142,7 @@ proc _spl_end(@id, @world = @pworld) {
 			if(!ponline(@player), continue())
 			tmsg(@player, color('gray').'[Spleef] '.color('r').'Nobody wins! ... ?')
 		}
+		_remove_activity('spleef.'.@id);
 	} else {
 		@winner = @spl['players'][0]
 		foreach(@player in all_players(@world)) {
@@ -154,6 +157,10 @@ proc _spl_end(@id, @world = @pworld) {
 				set_ploc(@winner, @arena['lobby'])
 				_spl_clear_pinv(@winner)
 			}
+			@spl['players'] = array()
+			@spl['state'] = 0
+			export('spleef.'.@id, @spl)
+			_remove_activity('spleef.'.@id);
 		))
 	}
 	
@@ -161,7 +168,4 @@ proc _spl_end(@id, @world = @pworld) {
 		unbind('block_break_spl_'.@id)
 	}
 	
-	@spl['players'] = array()
-	@spl['state'] = 0
-	export('spleef.'.@id, @spl)
 }

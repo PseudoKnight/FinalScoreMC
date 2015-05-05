@@ -644,3 +644,29 @@ proc _store_pdata(@player, @data) {
 		store_value('uuids', @uuid, @data);
 	});
 }
+
+/*
+	Adds an activity to the activities list.
+	This is used for checking which games are running.
+*/
+proc _add_activity(@id, @title) {
+	@activities = import('activities');
+	if(is_null(@activities)) {
+		@activities = array();
+	}
+	@activities[@id] = @title;
+	export('activities', @activities);
+	export('currently', @title);
+}
+
+/*
+	Removes an activity from the activities list.
+*/
+proc _remove_activity(@id) {
+	@activities = import('activities');
+	if(!is_null(@activities) && array_index_exists(@activities, @id)) {
+		array_remove(@activities, @id);
+		export('activities', @activities);
+		export('currently', null);
+	}
+}
