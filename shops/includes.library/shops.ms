@@ -10,10 +10,38 @@ proc _get_shop(@loc) {
 			return(null)
 		}
 	}
-	@owner = @sign[3]
-	if(!@owner) {
-		return(null)
+	
+	# Get owner
+	@owner = @sign[3];
+	if(length(@owner) < 2) {
+		return(null);
 	}
+	
+	# Update owner player name, if changed
+	try(
+		@autocomplete = (length(@owner) == 15 && @owner[13] == '~');
+		if(@autocomplete) {
+			@owner = substr(@owner, 0, 13);
+		}
+		@pdata = _pdata(@owner, @autocomplete);
+	, # catch
+		return(null);
+	);
+	@currentName = @pdata['name'];
+	if(@autocomplete) {
+		@currentName = substr(@pdata['name'], 0, 13);
+	}
+	if(nequals_ic(@currentName, @owner)) {
+		@owner = @pdata['name'];
+		@sign[3] = @pdata['name'];
+		if(length(@owner) > 15) {
+			console('Cannot convert shop owner from '.@sign[3].' to '.@owner.' due to length.');
+			console('Location: '.@loc);
+			return(null);
+		}
+		set_sign_text(@loc, @sign);
+	}
+	
 	@buy = _get_price(@sign[1])
 	@sell = _get_price(@sign[2])
 	if(@buy || @sell) {
