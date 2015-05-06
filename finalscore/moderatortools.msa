@@ -71,6 +71,26 @@
 	});
 <<<
 
+/* 
+	Lists the type and amount of events bound
+*/
+/bindcount = >>>
+	@binds = dump_events();
+	@list = array();
+	foreach(@bind in @binds) {
+		@type = reg_match('\\((\\w+)\\).*', @bind)[1];
+		if(array_index_exists(@list, @type)) {
+			@list[@type] += 1;
+		} else {
+			@list[@type] = 1;
+		}
+	}
+	
+	foreach(@key: @value in @list) {
+		msg(@key.': '.@value);
+	}
+<<<
+
 /whitelist $player = >>>
 
 	/**
