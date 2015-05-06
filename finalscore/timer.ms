@@ -22,6 +22,9 @@ register_command('timer', array(
 				@timers = import('timer')
 				
 				if(@args[0] == 'start') {
+				
+					set_phunger(@player, 20);
+					set_psaturation(@player, 5);
 					
 					if(array_index_exists(@timers, @player)) {
 						clear_task(@timers[@player][2])
