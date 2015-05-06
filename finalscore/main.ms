@@ -353,17 +353,6 @@ bind(vehicle_collide, null, array('type': 'MINECART_HOPPER', 'collisiontype': 'E
 	cancel();
 }
 
-bind(vehicle_leave, array('priority': 'highest'), null, @event) {
-	if(@event['player'] && entity_exists(@event['vehicle'])) {
-		@vehicleloc = entity_loc(@event['vehicle']);
-		queue_push(closure(){
-			if(!get_entity_vehicle(pinfo(@event['player'], 13))) {
-				set_ploc(@event['player'], @vehicleloc);
-			}
-		});
-	}
-}
-
 # prevent enderdragon egg teleportation
 bind(player_interact, null, array('block': 122), @event) {
 	if(!_is_survival_world(pworld())) {
