@@ -9,39 +9,55 @@ export('requests', @requests)
 # Teleport protection from falling through blocks
 # Clear 'custom' world's player inventory
 bind(player_teleport, null, null, @event) {
-	if(_is_survival_world(@event['from']['world'])
-	&& !_is_survival_world(@event['to']['world'])) {
-		foreach(@item in pinv()) {
-			if(!is_null(@item) && (@item['type'] == 401 || @item['type'] == 425)) {
-				cancel()
-				die(color('red').'Banner and firework metadata is not saved when leaving survival.'
-					.' Please store them in a chest.')
+	@teleportHorse = false;
+	if(_is_survival_world(@event['from']['world'])) {
+		if(!_is_survival_world(@event['to']['world'])) {
+			foreach(@item in pinv()) {
+				if(!is_null(@item) && (@item['type'] == 401 || @item['type'] == 425)) {
+					cancel()
+					die(color('red').'Banner and firework metadata is not saved when leaving survival.'
+						.' Please store them in a chest.')
+				}
 			}
-		}
-		foreach(@item in penderchest()) {
-			if(!is_null(@item) && (@item['type'] == 401 || @item['type'] == 425)) {
-				cancel()
-				die(color('red').'Banner and firework metadata is not saved when leaving survival.'
-					.' Please move them from your enderchest to another chest.')
+			foreach(@item in penderchest()) {
+				if(!is_null(@item) && (@item['type'] == 401 || @item['type'] == 425)) {
+					cancel()
+					die(color('red').'Banner and firework metadata is not saved when leaving survival.'
+						.' Please move them from your enderchest to another chest.')
+				}
 			}
+		} else {
+			@teleportHorse = true;
 		}
 	}
-
-	@loc = _relative(@event['to'], 'down')
-	@block = get_block_at(@loc)
-	if(@block[0] != '0' 
-	&& (@event['to']['world'] != @event['from']['world']
-	|| _horizontal_distance(@event['to'], @event['from']) > 96)) { # 6+ chunk view distance
-		set_timeout(1000, closure(){
-			if(ploc()[1] < @loc[1]) {
-				console('Adjusted '.player().'\'s location after teleport.')
-				set_ploc(@loc)
+	
+	if(@event['to']['world'] != @event['from']['world']
+	|| _horizontal_distance(@event['to'], @event['from']) > 96) { # 6+ chunk view distance
+		@loc = _relative(@event['to'], 'down');
+		@block = get_block_at(@loc);
+		if(@teleportHorse) {
+			if(!is_null(@vehicle = get_entity_vehicle(pinfo(player(), 13)))
+			&& entity_type(@vehicle) == 'HORSE') {
+				@euuid = entity_uuid(@vehicle);
+				set_timeout(50, closure(){
+					set_entity_loc(@vehicle, @event['to']);
+					set_timeout(50, closure(){
+						set_entity_rider(entity_id(@euuid), pinfo(player(), 13));
+					});
+				});
 			}
-			if(@event['from']['world'] != 'custom'
-			&& pworld() == 'custom') {
-				_equip_park()
-			}
-		})
+		} else if(@block[0] != '0') {
+			set_timeout(1000, closure(){
+				if(ploc()[1] < @loc[1]) {
+					console('Adjusted '.player().'\'s location after teleport.')
+					set_ploc(@loc)
+				}
+				if(@event['from']['world'] != 'custom'
+				&& pworld() == 'custom') {
+					_equip_park()
+				}
+			})
+		}
 	}
 }
 
