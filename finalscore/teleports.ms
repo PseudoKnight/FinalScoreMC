@@ -26,38 +26,35 @@ bind(player_teleport, null, null, @event) {
 						.' Please move them from your enderchest to another chest.')
 				}
 			}
-		} else {
-			@teleportHorse = true;
+		} else if(@event['to']['world'] != @event['from']['world']
+		&&!is_null(@vehicle = get_entity_vehicle(pinfo(player(), 13)))
+		&& entity_type(@vehicle) == 'HORSE') {
+			@euuid = entity_uuid(@vehicle);
+			set_timeout(50, closure(){
+				set_entity_loc(@vehicle, @event['to']);
+				set_timeout(50, closure(){
+					set_entity_rider(entity_id(@euuid), pinfo(player(), 13));
+				});
+			});
+			die();
 		}
 	}
 	
-	if(@event['to']['world'] != @event['from']['world']
-	|| _horizontal_distance(@event['to'], @event['from']) > 96) { # 6+ chunk view distance
-		@loc = _relative(@event['to'], 'down');
-		@block = get_block_at(@loc);
-		if(@teleportHorse) {
-			if(!is_null(@vehicle = get_entity_vehicle(pinfo(player(), 13)))
-			&& entity_type(@vehicle) == 'HORSE') {
-				@euuid = entity_uuid(@vehicle);
-				set_timeout(50, closure(){
-					set_entity_loc(@vehicle, @event['to']);
-					set_timeout(50, closure(){
-						set_entity_rider(entity_id(@euuid), pinfo(player(), 13));
-					});
-				});
+	@loc = _relative(@event['to'], 'down');
+	@block = get_block_at(@loc);
+	if(@block[0] != '0' &&
+	(@event['to']['world'] != @event['from']['world']
+	|| _horizontal_distance(@event['to'], @event['from']) > 96)) { # 6+ chunk view distance
+		set_timeout(1000, closure(){
+			if(ploc()[1] < @loc[1]) {
+				console('Adjusted '.player().'\'s location after teleport.')
+				set_ploc(@loc)
 			}
-		} else if(@block[0] != '0') {
-			set_timeout(1000, closure(){
-				if(ploc()[1] < @loc[1]) {
-					console('Adjusted '.player().'\'s location after teleport.')
-					set_ploc(@loc)
-				}
-				if(@event['from']['world'] != 'custom'
-				&& pworld() == 'custom') {
-					_equip_park()
-				}
-			})
-		}
+			if(@event['from']['world'] != 'custom'
+			&& pworld() == 'custom') {
+				_equip_park()
+			}
+		})
 	}
 }
 
