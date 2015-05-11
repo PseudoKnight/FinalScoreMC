@@ -438,7 +438,7 @@ bind(player_interact_entity, null, array('clicked': 'HORSE'), @event) {
 }
 
 # don't allow most horse damage unless being rode
-bind(entity_damage, null, array(type: 'HORSE', cause: '/^(?!VOID|SUFFOCATION|DROWNING)/'), @event) {
+bind(entity_damage, null, array(type: 'HORSE'), @event) {
 	@world = entity_loc(@event[id])[world];
 	if(!_is_survival_world(@world)) {
 		die();
@@ -468,7 +468,7 @@ bind(entity_damage, null, array(type: 'HORSE', cause: '/^(?!VOID|SUFFOCATION|DRO
 			
 		default: 
 			if(!get_entity_rider(@event[id])) {
-				cancel();
+				modify_event('amount', 0);
 			}
 	}
 }
