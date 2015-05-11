@@ -5,7 +5,7 @@ case 'load':
 			@weapon = pinv(@p, null);
 			if(@weapon && @weapon['type'] == 291) {
 				modify_event('amount', 2);
-				set_mob_effect(@e['id'], 20, 0, 7);
+				set_mob_effect(@e['id'], 20, 1, 7);
 			}
 		}
 	}
