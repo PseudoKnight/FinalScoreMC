@@ -1,33 +1,32 @@
-@requests = get_value('session.requests')
+@requests = get_value('session.requests');
 if(!@requests) {
-	@requests = array()
+	@requests = array();
 } else {
-	clear_value('session.requests')
+	clear_value('session.requests');
 }
-export('requests', @requests)
+export('requests', @requests);
 
-# Teleport protection from falling through blocks
-# Clear 'custom' world's player inventory
+# Main teleport handler
 bind(player_teleport, null, null, @event) {
 	@teleportHorse = false;
 	if(_is_survival_world(@event['from']['world'])) {
 		if(!_is_survival_world(@event['to']['world'])) {
-			foreach(@item in pinv()) {
-				if(!is_null(@item) && (@item['type'] == 401 || @item['type'] == 425)) {
-					cancel()
-					die(color('red').'Banner and firework metadata is not saved when leaving survival.'
-						.' Please store them in a chest.')
-				}
+			if(phas_item(425)) {
+				cancel();
+				die(color('red').'Banner metadata is not saved when leaving survival.'
+					.' Please store them in a chest.');
 			}
 			foreach(@item in penderchest()) {
-				if(!is_null(@item) && (@item['type'] == 401 || @item['type'] == 425)) {
-					cancel()
-					die(color('red').'Banner and firework metadata is not saved when leaving survival.'
-						.' Please move them from your enderchest to another chest.')
+				if(!is_null(@item) && @item['type'] == 425) {
+					cancel();
+					die(color('red').'Banner metadata is not saved when leaving survival.'
+						.' Please move them from your enderchest to another chest.');
 				}
 			}
+			
+		# Teleport horses along with rider if its crossworld
 		} else if(@event['to']['world'] != @event['from']['world']
-		&&!is_null(@vehicle = get_entity_vehicle(pinfo(player(), 13)))
+		&& !is_null(@vehicle = get_entity_vehicle(pinfo(player(), 13)))
 		&& entity_type(@vehicle) == 'HORSE') {
 			@euuid = entity_uuid(@vehicle);
 			set_timeout(50, closure(){
@@ -41,36 +40,43 @@ bind(player_teleport, null, null, @event) {
 	}
 	
 	@loc = _relative(@event['to'], 'down');
-	@block = get_block_at(@loc);
-	if(@block[0] != '0' &&
+	@block = get_block_at(@loc); # loads chunk to help prevent players falling through floor
+	
+	if(@block[0] != '0' && # don't run this if the [to] location is in the air
 	(@event['to']['world'] != @event['from']['world']
-	|| _horizontal_distance(@event['to'], @event['from']) > 96)) { # 6+ chunk view distance
+	|| _horizontal_distance(@event['to'], @event['from']) > 112)) { # 7+ chunk view distance
 		set_timeout(1000, closure(){
+		
+			# workaround for player's falling through floors on teleport
 			if(ploc()[1] < @loc[1]) {
-				console('Adjusted '.player().'\'s location after teleport.')
-				set_ploc(@loc)
+				console('Adjusted '.player().'\'s location after teleport.');
+				set_ploc(@loc);
 			}
-			if(@event['from']['world'] != 'custom'
-			&& pworld() == 'custom') {
-				_equip_park()
-			}
-		})
+			
+		});
 	}
 }
 
+# Block enderpearls
 bind(player_interact, null, array('item': 368, 'button': 'right'), @event) {
 	if(pworld() == 'custom', cancel())
 }
 
-# Set player's bed spawn to their home in that world
+# Main world_changed handler
 bind(world_changed, null, null, @event) {
 	set_timeout(200, closure(){
-		@pdata = _pdata(@event['player'])
+		@pdata = _pdata(@event['player']);
 		if(array_index_exists(@pdata, 'homes')
 		&& array_index_exists(@pdata['homes'], @event['to'])) {
-			set_pbed_location(@pdata['homes'][@event['to']])
+			set_pbed_location(@pdata['homes'][@event['to']]);
 		} else {
-			set_pbed_location(get_spawn(@event['to']))
+			set_pbed_location(get_spawn(@event['to']));
 		}
-	})
+		
+		# if teleporting to Frog Park
+		if(@event['from'] != 'custom'
+		&& @event['to'] == 'custom') {
+			_equip_park();
+		}
+	});
 }
