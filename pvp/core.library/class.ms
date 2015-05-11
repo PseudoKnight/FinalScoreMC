@@ -70,15 +70,20 @@ proc _class(@action, @player, @class, @pvp) {
 		}
 		play_sound(ploc(@player), array('sound': 'enderman_teleport', 'pitch': 2), @player)
 		if(array_index_exists(@pvp['arena']['classes'][@class], 'ammo')) {
-			@inv = pinv(@player)
+			@inv = pinv(@player);
 			foreach(@slot: @item in @pvp['arena']['classes'][@class]['ammo']) {
-				@item = @item[]
-				if(!is_null(@inv[@slot])) {
-					@item['qty'] = min(64, @item['qty'] + @inv[@slot]['qty'])
+				@max = 64;
+				if(array_index_exists(@pvp['arena']['classes'][@class], 'stacklimit')
+				&& array_index_exists(@pvp['arena']['classes'][@class]['stacklimit'], @item['type'])) {
+					@max = @pvp['arena']['classes'][@class]['stacklimit'][@item['type']];
 				}
-				@inv[@slot] = @item
+				@item = @item[];
+				if(!is_null(@inv[@slot])) {
+					@item['qty'] = min(@max, @item['qty'] + @inv[@slot]['qty']);
+				}
+				@inv[@slot] = @item;
 			}
-			set_pinv(@player, @inv)
+			set_pinv(@player, @inv);
 		}
 		
 	case 'unload':

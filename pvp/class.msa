@@ -41,27 +41,21 @@ case 'set':
 		msg('Set kit to current inventory.')
 	
 	case 'ammo':
-		@inv = pinv()
-		foreach(array_keys(@inv), @slot) {
-			if(is_null(@inv[@slot])) {
-				array_remove(@inv, @slot)
-			} else {
-				foreach(@i:@v in @inv[@slot]) {
-					if(@i == 'meta' && @v) {
-						foreach(@mi:@mv in @inv[@slot]['meta']) {
-							if(!@mv || @mi == 'enchants') {
-								array_remove(@inv[@slot]['meta'], @mi)
-							}
-						}
-					}
-					if(!@v) {
-						array_remove(@inv[@slot], @i)
-					}
-				}
-			}
+		@inv = pinv();
+		_minify_inv(@inv);
+		@arena['classes'][@classid]['ammo'] = @inv;
+		msg('Set ammo to current inventory.');
+
+	case 'stacklimit':
+		if(array_size(@args) < 2) {
+			die('Stacklimit needs two integers: item id and stack size limit.');
 		}
-		@arena['classes'][@classid]['ammo'] = @inv
-		msg('Set ammo to current inventory.')
+		if(@args[1] < 1) {
+			array_remove(@arena['classes'][@classid]['stacklimit'], @args[0]);
+		} else {
+			@arena['classes'][@classid]['stacklimit'][@args[0]] = integer(@args[1]);
+		}
+		msg('Set stack size limit to '.@args[1].' for item id '.@args[0].'.');
 		
 	case 'speed':
 		if(@args[0] < 0 || @args[0] > 1) {
