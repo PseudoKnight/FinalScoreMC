@@ -22,29 +22,42 @@ bind(player_interact_entity, array('id': @id.'hotpotato'), array('clicked': 'PLA
 	if(!is_null(@item['meta']['lore'])) {
 		clear_task(@item['meta']['lore'][0]);
 	}
+	
+	# get the slot this potato will be in so we can track multiple potatos
+	foreach(@slot in pinv(@event['data'])) {
+		if(is_null(@slot)) {
+			break();
+		}
+	}
+	
 	if(@item['meta']['display'] == 'HOT POTATO') {
 		@item['meta']['display'] = 10;
 	}
+	
 	@task = set_interval(1000, closure() {
-		if(array_size(@slots = pitem_slot(@event['data'], 393)) > 0) {
-			@inv = pinv(@event['data']);
-			foreach(@slot in @slots) {
-				if(is_numeric(@inv[@slot]['meta']['display'])) {
-					break();
-				}
-			}
-			if(integer(@inv[@slot]['meta']['display']) == 1) {
-				explosion(_relative(ploc(@event['data']), 'up'), 3, true);
-				clear_task();
-			} else {
-				@inv[@slot]['meta']['display'] = integer(@inv[@slot]['meta']['display']) - 1;
-				play_sound(ploc(@event['data']), array('sound': 'NOTE_STICKS'));
-				set_pinv(@event['data'], @inv);
-			}
-		} else {
+		@potato = pinv(@event['data'], @slot);
+		if(is_null(@potato)) {
 			clear_task();
+			die();
+		}
+		
+		try(
+			@timeleft = integer(@inv[@slot]['meta']['display']);
+		, # catch item without a countdown
+			clear_task();
+			die();
+		);
+		
+		if(@timeleft == 1) {
+			explosion(_relative(ploc(@event['data']), 'up', 1.5), 3, true);
+			clear_task();
+		} else {
+			@inv[@slot]['meta']['display'] = @timeleft - 1;
+			play_sound(ploc(@event['data']), array('sound': 'NOTE_STICKS'));
+			set_pinv(@event['data'], @inv);
 		}
 	});
+	
 	@item['meta']['lore'] = array(@task);
 	
 	pgive_item(@event['data'], 393, 1, @item['meta']);
