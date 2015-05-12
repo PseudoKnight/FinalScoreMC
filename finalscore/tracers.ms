@@ -8,7 +8,7 @@ if(!array_contains(dm_all_markersets(), 'tracers')) {
 }
 
 bind(player_move, null, array('threshold': 10), @event) {
-	if(!has_permission('livemap.tracers') || pmode() == 'CREATIVE') {
+	if(!ponline(@event['player']) || !has_permission('livemap.tracers') || pmode() == 'CREATIVE') {
 		die();
 	}
 	@pdata = _pdata(@event['player']);
