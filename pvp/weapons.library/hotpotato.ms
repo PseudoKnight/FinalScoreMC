@@ -42,7 +42,7 @@ bind(player_interact_entity, array('id': @id.'hotpotato'), array('clicked': 'PLA
 		}
 		
 		try(
-			@timeleft = integer(@inv[@slot]['meta']['display']);
+			@timeleft = integer(@potato['meta']['display']);
 		, # catch item without a countdown
 			clear_task();
 			die();
@@ -52,8 +52,10 @@ bind(player_interact_entity, array('id': @id.'hotpotato'), array('clicked': 'PLA
 			explosion(_relative(ploc(@event['data']), 'up', 1.5), 3, true);
 			clear_task();
 		} else {
-			@inv[@slot]['meta']['display'] = @timeleft - 1;
+			@potato['meta']['display'] = @timeleft - 1;
 			play_sound(ploc(@event['data']), array('sound': 'NOTE_STICKS'));
+			@inv = array();
+			@inv[@slot] = @potato;
 			set_pinv(@event['data'], @inv);
 		}
 	});
