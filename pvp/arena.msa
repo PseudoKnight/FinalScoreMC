@@ -204,7 +204,7 @@
 					array_push(@arena['itemspawn'], array(
 						'start': @start,
 						'cooldown': @cooldown,
-						'loc': array(round(ploc()[0], 1), ploc()[1] + 3, round(ploc()[2], 1), ploc()[3]),
+						'loc': array(round(ploc()[0], 1), ploc()[1] + 1.5, round(ploc()[2], 1), ploc()[3]),
 						'item': @item
 					))
 					msg('Set current item to spawn here.')
