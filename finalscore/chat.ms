@@ -74,11 +74,9 @@ bind(player_chat, null, null, @event) {
 		.if(array_index_exists(@pdata, 'names'), color('DARK_GRAY').'[aliases] '.color('r').array_implode(@pdata['names']).'\n')
 		.color('DARK_GRAY').'[world] '.color('r')._worldname(pworld()));
 
-	@message = colorize(replace(@message, '"', '\\u0022'));
-	if(@message[length(@message) - 1] == '\\') {
-		@message = substr(@message, 0, length(@message)).'/';
-	}
-	@components[] = @message;
+	@message = replace(@message, '"', '\\u0022');
+	@message = replace(@message, '\\', '\\\\');
+	@components[] = colorize(@message.'&r');
 	
 	# Send chat message 
 	_hover_tell(@recipients, @components);
