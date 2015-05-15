@@ -64,21 +64,23 @@ bind(player_chat, null, null, @event) {
 	@escapedMessage = replace(@filteredMessage, '"', '\\u0022');
 	@escapedMessage = replace(@escapedMessage, '\\', '\\\\');
 	
-	# Construct message
+	# Construct chat components
 	@components = array();
-	@components[] = color('DARK_GRAY').simple_date('h:mm').' ';
+	@components[] = '&8'.simple_date('h:mm').' ';
 	
 	@pdata = _pdata(player());
 	if(array_index_exists(@pdata, 'support')) {
-		@components[] = array(color('green').'\u2666 ', 'Server Supporter');
+		@components[] = array('&a\u2666 ', 'Server Supporter');
 	}
 	
-	@components[] = array(_colorname().player().color('gray').': ', 
-		if(has_permission('group.moderators'), color('AQUA').'STAFF\n')
-		.if(array_index_exists(@pdata, 'names'), color('DARK_GRAY').'[aliases] '.color('r').array_implode(@pdata['names']).'\n')
-		.color('DARK_GRAY').'[world] '.color('r')._worldname(pworld()));
+	@components[] = array(_colorname().player().'&8: ', 
+		if(has_permission('group.moderators'), '&bSTAFF\n')
+		.if(array_index_exists(@pdata, 'names'), '&8[aliases] &r'.array_implode(@pdata['names']).'\n')
+		.'&8[world] &r'._worldname(pworld()));
 
-	@components[] = colorize(@escapedMessage.'&r');
+	@clickableMessage = _clickable_links(@escapedMessage);
+	
+	@components[] = @clickableMessage.'&r';
 	
 	# Send chat message 
 	_hover_tell(@recipients, @components);

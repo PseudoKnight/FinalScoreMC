@@ -68,3 +68,13 @@ proc _hover_tell(@recipients, @components) {
 		runas('~console', '/tellraw '.@player.@message);
 	}
 }
+
+/*
+	Create clickable links for a JSON message
+*/
+proc _clickable_links(@string) {
+	return(reg_replace('(https?:\\/\\/)?([\\da-z\\.-]+\\.[a-z\\.]{2,6}[\\/\\w\\.\\?=&-]*)', 
+		'&b&n$2",clickEvent:{action:"open_url",value:"$1$2"}},{text:"&r',
+		@string
+	));
+}
