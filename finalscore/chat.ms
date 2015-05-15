@@ -58,7 +58,11 @@ bind(player_chat, null, null, @event) {
 	}
 
 	# Basic swear filter.
-	@message = reg_replace('(?i)(fuck|shit|damn|nigg|cunt|fag)', '****', @event['message']);
+	@filteredMessage = reg_replace('(?i)(fuck|shit|damn|nigg|cunt|fag)', '****', @event['message']);
+	
+	# Chat escaping
+	@escapedMessage = replace(@filteredMessage, '"', '\\u0022');
+	@escapedMessage = replace(@escapedMessage, '\\', '\\\\');
 	
 	# Construct message
 	@components = array();
@@ -74,16 +78,14 @@ bind(player_chat, null, null, @event) {
 		.if(array_index_exists(@pdata, 'names'), color('DARK_GRAY').'[aliases] '.color('r').array_implode(@pdata['names']).'\n')
 		.color('DARK_GRAY').'[world] '.color('r')._worldname(pworld()));
 
-	@message = replace(@message, '"', '\\u0022');
-	@message = replace(@message, '\\', '\\\\');
-	@components[] = colorize(@message.'&r');
+	@components[] = colorize(@escapedMessage.'&r');
 	
 	# Send chat message 
 	_hover_tell(@recipients, @components);
 	console(if(!@recipients, '[MUTED] ').player().': '.@event['message'], false);
 	if(@recipients) {
 		if(function_exists('dm_broadcast_to_web')) {
-			dm_broadcast_to_web(@message, player());
+			dm_broadcast_to_web(@filteredMessage, player());
 		}
 	}
 }
