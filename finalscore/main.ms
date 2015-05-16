@@ -69,7 +69,10 @@ bind(player_login, null, null, @event) {
 			@update = true;
 			
 		} else if(@pdata['name'] != to_lower(@event['player'])) {
-			# player changed their name back
+			# player changed their name back or data was inaccurate
+			if(!array_index_exists(@pdata, 'names')) {
+				@pdata['names'] = array(@pdata['name']);
+			}
 			array_remove_values(@pdata['names'], to_lower(@event['player']));
 			@pdata['name'] = to_lower(@event['player']);
 			@update = true;
@@ -87,7 +90,6 @@ bind(player_login, null, null, @event) {
 			} else {
 				modify_event('kickmsg', 'Banned. Appeal at FinalScoreMC.com');
 			}
-			die();
 		} else {
 			array_remove(@pdata, 'ban');
 			console('Ban on '.@event['player'].' expired.');

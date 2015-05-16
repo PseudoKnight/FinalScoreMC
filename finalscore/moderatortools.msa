@@ -331,7 +331,7 @@
 		@minutes = (time() - plast_played($player)) / 60000
 		@hours = @minutes / 60
 		@days = @hours / 24
-		msg(color('gray').'--[ '.color('l').$player.color('gray').' ]-------------------------')
+		msg(color('gray').'--[ '.color('l').@pdata['name'].color('gray').' ]-------------------------')
 		msg(color('gray').'UUID: '.color('r').get_value('players', to_lower($player)));
 
 		if(array_index_exists(@pdata, 'ban'), msg(color('red').'Banned '.color('r')
