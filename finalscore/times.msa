@@ -49,14 +49,12 @@
 		if(!$player) {
 			die('This requires a player.');
 		}
-		@times = array();
-		if(@id == 'all') {
-			@times = get_values('times');
-		} else {
-			@times['times.'.@id] = get_value('times.'.@id);
+		@courses = get_values('times'.if(@id != 'all', '.'.@id))
+		if(is_null(@courses)) {
+			die('Unknown arena.');
 		}
 		@count = 0;
-		foreach(@key: @time in @times) {
+		foreach(@key: @time in @courses) {
 			if(is_array(@time)) {
 				foreach(@i: @t in @time['top']) {
 					if(@t[0] == $player) {

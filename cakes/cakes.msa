@@ -257,6 +257,7 @@
 		} else if(array_index_exists(@cakeinfo[@id]['players'], @args[1])) {
 			array_remove(@cakeinfo[@id]['players'], @args[1])
 			store_value('cakeinfo', @cakeinfo)
+			_acc_subtract(@args[1], @cakeinfo[@id]['coins']);
 			msg('Deleted player from '.@id.' cake.')
 			
 		} else {
