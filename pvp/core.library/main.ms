@@ -64,21 +64,10 @@ proc _pvp_start_match(@id) {
 	_pvp_initialize_players(@id, array_keys(@pvp['players']))
 
 	if(array_index_exists(@pvp['arena'], 'captain')) {
-		queue_push(closure(){
-			@pvp = import('pvp'.@id)
-			if(@pvp['team'][0]['captain'] == '') {
-				drop_item(_relative(@pvp['arena']['spawn'][0][0], 'up', 2), @pvp['team'][0]['captainhat'], false)
-			} else {
-				_regionmsg(@pvp['arena']['broadcast'], color('gray').'[PVP] '.@pvp['arena']['team'][0]['color']
-					.@pvp['team'][0]['captain']. ' is the captain of '.@pvp['arena']['team'][0]['name'].'.')
-			}
-			if(@pvp['team'][1]['captain'] == '') {
-				drop_item(_relative(@pvp['arena']['spawn'][1][0], 'up', 2), @pvp['team'][1]['captainhat'], false)
-			} else {
-				_regionmsg(@pvp['arena']['broadcast'], color('gray').'[PVP] '.@pvp['arena']['team'][1]['color']
-					.@pvp['team'][1]['captain']. ' is the captain of '.@pvp['arena']['team'][1]['name'].'.')
-			}
-		}, @id)
+		_regionmsg(@pvp['arena']['broadcast'], color('gray').'[PVP] '.@pvp['arena']['team'][0]['color']
+			.@pvp['team'][0]['captain']. ' is the captain of '.@pvp['arena']['team'][0]['name'].'.')
+		_regionmsg(@pvp['arena']['broadcast'], color('gray').'[PVP] '.@pvp['arena']['team'][1]['color']
+			.@pvp['team'][1]['captain']. ' is the captain of '.@pvp['arena']['team'][1]['name'].'.')
 	}
 
 	if(@pvp['arena']['mode'] == 'ctf') {
