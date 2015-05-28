@@ -61,8 +61,8 @@ bind(player_chat, null, null, @event) {
 	@filteredMessage = reg_replace('(?i)(fuck|shit|damn|nigg|cunt|fag)', '****', @event['message']);
 	
 	# Chat escaping
-	@escapedMessage = replace(@filteredMessage, '"', '\\u0022');
-	@escapedMessage = replace(@escapedMessage, '\\', '\\\\');
+	@escapedMessage = replace(@filteredMessage, '\\', '\\\\');
+	@escapedMessage = replace(@escapedMessage, '"', '\\u0022');
 	
 	# Construct chat components
 	@components = array();
