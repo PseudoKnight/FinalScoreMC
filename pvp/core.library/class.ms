@@ -193,6 +193,8 @@ proc _class_select(@id, @pvp) {
 					}
 					if(@count == 0) {
 						# No players choosing or chose captain
+						clear_virtualchest(@id.@pvp['players'][player()]['team'], 0);
+						@pvp['team'][@pvp['players'][player()]['team']]['captain'] = player();
 						@class = @pvp['arena']['captain'][@pvp['players'][player()]['team']];
 					}
 				}
