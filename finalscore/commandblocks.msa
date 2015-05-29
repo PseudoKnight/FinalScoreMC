@@ -67,13 +67,23 @@
 <<<
 
 /velocity $player $x $y $z [$double] = >>>
-	@loc = ploc($player)
-	make_effect(@loc, 'MOBSPAWNER_FLAMES')
-	play_sound(@loc, array('sound': 'GHAST_FIREBALL', 'volume': 2))
 	set_timeout(50, closure(@player = $player){
-		set_pvelocity(@player, $x, $y, $z)
-		if($double, set_timeout($double, closure( set_pvelocity(@player, $x, $y, $z))))
-	})
+		@loc = ploc($player);
+		make_effect(@loc, 'MOBSPAWNER_FLAMES');
+		play_sound(@loc, array('sound': 'GHAST_FIREBALL', 'volume': 2));
+		set_pvelocity(@player, $x, $y, $z);
+		for(@i = 0, @i < 3, @i++) {
+			queue_delay(100, @player.'velocity');
+			queue_push(closure(){
+				make_effect(ploc(@player), 'MOBSPAWNER_FLAMES');
+			}, @player.'velocity');
+		}
+		if($double) {
+			set_timeout($double, closure() {
+				set_pvelocity(@player, $x, $y, $z)
+			});
+		}
+	});
 <<<
 
 *:/playsound [$sound='random'] [$pitch=1] [$volume=1] [$x] [$y] [$z] = >>>
