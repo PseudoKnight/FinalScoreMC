@@ -15,7 +15,8 @@ proc _equip_park(@player) {
 	_clear_pinv(@player)
 	
 	set_pinv(@player, array(
-		1: array('type': 340, 'meta': array('display': 'Park Directory')),
+		1: array('name': 'BOOK', 'meta': array('display': 'Park Directory')),
+		2: array('name': 'COOKED_MUTTON', 'qty': 64, 'meta': array('display': 'Frog Legs')),
 	))
 	
 	try(
