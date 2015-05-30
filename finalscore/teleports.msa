@@ -192,8 +192,12 @@
 # TELEPORTATION BETWEEN FRIENDS #
 *:/join $player = >>>
 	try(@player = player($player), die('Player not found.'))
-	if(!has_permission('command.join.from'), die('You cannot do that from here.'))
-	if(!has_permission(@player, 'command.join.to'), die('That player is out of reach.'))
+	if(!has_permission('command.join.from')) {
+		die('You cannot use teleport commands in '._worldname(pworld()));
+	}
+	if(!has_permission(@player, 'command.join.to')) {
+		die('You cannot directly join a player who is in '._worldname(pworld(@player)));
+	}
 
 	# Check it the player is being ignored
 	@ignorelist = import('ignorelist')
@@ -206,7 +210,7 @@
 	if(array_index_exists(@requests, @player) 
 	&& @requests[@player][0] == 'join'
 	&& @requests[@player][1] == player()) {
-		die('You\'ve already send a join request to this player.')
+		die('You\'ve already sent a join request to this player.');
 	}
 	@requests[@player] = array('join', player())
 	export('requests', @requests)
