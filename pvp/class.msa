@@ -8,6 +8,9 @@ case 'set':
 	@classid = split(':', $id)[1], die('You need to specify an arena.'))
 	@arena = get_value('arena', @arenaid)
 	if(!@arena, die('No arena by that name: '.@arenaid))
+	if(!array_index_exists(@arena, 'classes')) {
+		@arena['classes'] = array();
+	}
 	if(!array_index_exists(@arena['classes'], @classid)) {
 		@arena['classes'][@classid] = array()
 	}
