@@ -65,7 +65,7 @@ if(extension_exists('chvirtualchests')) {
 		if(pworld() == 'custom') {
 			@item = pinv(player(), null)
 			if(!is_null(@item['meta'])
-			&& @item['meta']['display'] == 'Park Directory') {
+			&& @item['meta']['display'] == color('b').color('bold').'Park Directory') {
 				cancel()
 				popen_virtualchest('main')
 				play_sound(ploc(), array(sound: 'STEP_WOOL', pitch: 1.2), player())

@@ -15,8 +15,9 @@ proc _equip_park(@player) {
 	_clear_pinv(@player)
 	
 	set_pinv(@player, array(
-		1: array('name': 'BOOK', 'meta': array('display': 'Park Directory')),
-		2: array('name': 'COOKED_MUTTON', 'qty': 64, 'meta': array('display': 'Frog Legs')),
+		1: array('name': 'BOOK', 'meta': array('display': color('b').color('bold').'Park Directory')),
+		2: array('name': 'COOKED_MUTTON', 'qty': 64, 'meta': 
+			array('display': color('bold').'Frog Legs', 'lore': array('Good eatin\''))),
 	))
 	
 	try(
@@ -27,7 +28,7 @@ proc _equip_park(@player) {
 			4: array(
 				'type': 401, 
 				'meta': array(
-					'display': color('green').'Random Firework',
+					'display': color('green').color('bold').'Random Firework',
 					'lore': array(
 						color('f').'Available to ',
 						color('f').'server supporters',
