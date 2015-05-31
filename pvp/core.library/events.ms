@@ -261,11 +261,14 @@ if(array_index_exists(@pvp['arena'], 'chestspawn')) {
 			&& @pvp['arena']['chestspawn'][@i]['loc'][1] == @e['location'][1]
 			&& @pvp['arena']['chestspawn'][@i]['loc'][2] == @e['location'][2]
 			&& array_index_exists(@pvp['arena']['chestspawn'][@i], 'cooldown')) {
-				cancel()
-				set_block_at(@e['location'], 0)
-				make_effect(@e['location'], 'STEP_SOUND:54')
-				@pvp['chestspawn'][@i] = time()
-				break()
+				cancel();
+				set_block_at(@e['location'], 0);
+				make_effect(@e['location'], 'STEP_SOUND:54');
+				@pvp['chestspawn'][@i] = time();
+				if(array_index_exists(@pvp, 'stats')) {
+					@pvp['stats'][player()]['pickups']++;
+				}
+				break();
 			}
 		}
 	}
@@ -462,9 +465,12 @@ if(array_index_exists(@pvp['arena'], 'powerup')) {
 		if(!array_index_exists(@pvp['players'], player()), 
 			die())
 	
-		modify_event('item', null)
-		consume()
-		_class('powerup', player(), @pvp['players'][player()]['class'], @pvp)
+		modify_event('item', null);
+		consume();
+		_class('powerup', player(), @pvp['players'][player()]['class'], @pvp);
+		if(array_index_exists(@pvp, 'stats')) {
+			@pvp['stats'][player()]['pickups']++;
+		}
 	}
 }
 

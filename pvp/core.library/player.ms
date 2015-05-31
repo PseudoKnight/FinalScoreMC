@@ -51,7 +51,8 @@ proc _pvp_initialize_players(@id, @players) {
 				'damager': '', 
 				'damaged': 0,
 				'damage': 0, 
-				'deaths': 0, 
+				'deaths': 0,
+				'pickups': 0,
 			);
 		}
 		

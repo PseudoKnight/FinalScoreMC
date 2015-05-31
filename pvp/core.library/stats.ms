@@ -13,3 +13,14 @@ proc _stats_damage(@damager, @player, @amount, @pvp) {
 		@pvp['stats'][@player]['damaged'] = time();
 	}
 }
+
+proc _pad_stat(@amount, @length) {
+	@length -= length(@amount);
+	if(@length <= 0, return(@amount));
+	@pad = '';
+	while(@length > 0) {
+		@pad .= '0';
+		@length--;
+	}
+	return(color(8).@pad.color('r').@amount);
+}
