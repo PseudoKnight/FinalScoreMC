@@ -308,6 +308,10 @@ proc _squared_distance_to_segment(@p1, @p2a, @p2b) {
 	return(((@p1['x'] - @bx) ** 2) + ((@p1['y'] - @by) ** 2) + ((@p1['z'] - @bz) ** 2));
 }
 
+proc _distance(@p1, @p2) {
+	return(sqrt(((@p1[0] - @p2[0]) ** 2) + ((@p1[1] - @p2[1]) ** 2) + ((@p1[2] - @p2[2]) ** 2)));
+}
+
 proc _pvp_check_objectives(@id) {
 	@pvp = import('pvp'.@id)
 
