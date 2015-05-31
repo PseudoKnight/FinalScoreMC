@@ -71,26 +71,6 @@
 	});
 <<<
 
-/* 
-	Lists the type and amount of events bound
-*/
-/bindcount = >>>
-	@binds = dump_events();
-	@list = array();
-	foreach(@bind in @binds) {
-		@type = reg_match('\\((\\w+)\\).*', @bind)[1];
-		if(array_index_exists(@list, @type)) {
-			@list[@type] += 1;
-		} else {
-			@list[@type] = 1;
-		}
-	}
-	
-	foreach(@key: @value in @list) {
-		msg(@key.': '.@value);
-	}
-<<<
-
 /whitelist $player = >>>
 
 	/**
@@ -355,26 +335,6 @@
 	if(array_index_exists(@pdata, 'coins'), msg(color('gray').'Coins: '.color('r').@pdata['coins']))
 	if(array_index_exists(@pdata, 'support'),
 		msg(color('gray').'Support: '.color('r').'$'.@pdata['support']))
-<<<
-
-# Database namespace tools
-/namespace $action $namespace [$] = >>>
-	if(!pisop(), die('You do not have permission.'))
-	@data = get_values($namespace)
-	if(array_size(@data) == 0, die('No keys for that namespace.'))
-	switch($action) {
-		case 'delete':
-			foreach(@key: @value in @data) {
-				clear_value(@key)
-			}
-			msg('Deleted '.$namespace)
-			
-		case 'rename':
-			foreach(@key: @value in @data) {
-				store_value(replace($namespace, $, @key), @data[@key])
-				clear_value(@key)
-			}
-	}
 <<<
 
 *:/matchip $ip = >>>
