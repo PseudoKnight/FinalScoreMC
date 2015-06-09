@@ -206,7 +206,7 @@ proc _pvp_start_match(@id) {
 				} else if(@pvp['itemspawn'][@i][1] + (@pvp['arena']['itemspawn'][@i]['cooldown'] * 1000) < time()) {
 					@id = drop_item(@pvp['arena']['itemspawn'][@i]['loc'], @pvp['arena']['itemspawn'][@i]['item'], false)
 					try(
-						set_entity_velocity(@id, array())
+						set_entity_velocity(@id, array(0, 0, 0))
 						play_sound(@pvp['arena']['itemspawn'][@i]['loc'], array('sound': 'ENDERMAN_TELEPORT', 'pitch': 1.5))
 						make_effect(@pvp['arena']['itemspawn'][@i]['loc'], 'ENDER_SIGNAL')
 						@pvp['itemspawn'][@i][0] = @id
@@ -279,7 +279,7 @@ proc _flag(@item) {
 proc _pvp_hat_spawn(@id, @team, @loc) {
 	@pvp = import('pvp'.@id)
 	@hat = drop_item(@loc, @pvp['team'][@team]['captainhat'])
-	set_entity_velocity(@hat, array())
+	set_entity_velocity(@hat, array(0, 0, 0))
 }
 
 proc _squared_distance_to_segment(@p1, @p2a, @p2b) {
