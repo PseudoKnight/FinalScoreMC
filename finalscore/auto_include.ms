@@ -439,11 +439,7 @@ proc _worldmsg(@world, @msg) {
 /*
 	Returns the width of the character
 */
-proc _char_width(@char, @bold = false) {
-	@extra = 0;
-	if(@bold) {
-		@extra = 1;
-	}
+proc _char_width(@char, @bold = 0) {
 	# Thanks to Octopod for this list
 	switch(@char) {
 		case ',':
@@ -452,17 +448,17 @@ proc _char_width(@char, @bold = false) {
 		case 'i':
 		case '|':
 		case '.':
-			return(2 + @extra);
+			return(2 + @bold);
 		case '`':
 		case '\'':
 		case 'l':
-			return(3 + @extra);
+			return(3 + @bold);
 		case '[':
 		case ']':
 		case ' ':
 		case 'I':
 		case 't':
-			return(4 + @extra);
+			return(4 + @bold);
 		case '*':
 		case '>':
 		case '<':
@@ -470,9 +466,9 @@ proc _char_width(@char, @bold = false) {
 		case '}':
 		case 'f':
 		case 'k':
-			return(5 + @extra);
+			return(5 + @bold);
 		default:
-			return(6 + @extra);
+			return(6 + @bold);
 	}
 }
 
@@ -481,13 +477,13 @@ proc _char_width(@char, @bold = false) {
 */
 proc _string_width(@string) {
 	@width = 0;
-	@bold = false;
+	@bold = 0;
 	foreach(@i: @c in @string) {
 		if(@c == '\u00a7') {
 			if(@string[@i + 1] == 'l') {
-				@bold = true;
+				@bold = 1;
 			} else if(reg_match('[0-9a-fr]', @string[@i + 1])) {
-				@bold = false;
+				@bold = 0;
 			}
 			continue(2);
 		}
@@ -499,11 +495,17 @@ proc _string_width(@string) {
 /*
 	Fills a string evenly with a character so that it extends to a full line
 */
-proc _fill_string(@replaceChar, @fillChar, @string) {
+proc _fill_string(@replaceChar, @fillChar, @string, @lineWidth = 320) {
 	@width = _string_width(replace(@string, @replaceChar, ''));
-	@parts = split(@replaceChar, @string);
+	@fillCount = reg_count('\\'.@replaceChar, @string);
+	
+	@remainingWidth = @lineWidth - @width;
+	@charWidth = _char_width(@fillChar);
+
+	@fillWidth = (@remainingWidth / @charWidth) / @fillCount;
+	
 	@fillArray = array();
-	array_resize(@fillArray, floor(((320 - @width) / _char_width(@fillChar)) / (array_size(@parts) - 1)), @fillChar);
+	array_resize(@fillArray, floor(@fillWidth), @fillChar);
 	@fillString = array_implode(@fillArray, '');
 	return(replace(@string, @replaceChar, @fillString));
 }
