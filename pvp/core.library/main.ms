@@ -486,18 +486,10 @@ proc _pvp_end_match(@id, @winners) {
 		if(array_index_exists(@pvp['arena'], 'restore')) {
 			queue_delay(3000, @id);
 			queue_push(closure(){
-				foreach(@player in all_players('custom')) {
-					if(ponline(@player)) {
-						broadcast(color('gray').'[PVP] '.color(6).'RESTORING '.to_upper(@id).'...')
-						scriptas(@player,
-							foreach(@region in @pvp['arena']['restore']) {
-								sudo('//schematic load mce '.@region)
-								sudo('//paste -o')
-							}
-							sudo('/clearclipboard')
-							break()
-						)
-					}
+				broadcast(color('gray').'[PVP] '.color(6).'RESTORING '.to_upper(@id).'...');
+				foreach(@region in @pvp['arena']['restore']) {
+					skcb_load(@region);
+					skcb_paste(array(0, 0, 0, 'custom'), array('origin': true));
 				}
 			}, @id);
 		}
