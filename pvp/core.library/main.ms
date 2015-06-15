@@ -278,6 +278,9 @@ proc _flag(@item) {
 
 proc _pvp_hat_spawn(@id, @team, @loc) {
 	@pvp = import('pvp'.@id)
+	if(is_null(@loc)) {
+		@loc = @pvp['spawn'][@team][0];
+	}
 	@hat = drop_item(@loc, @pvp['team'][@team]['captainhat'])
 	set_entity_velocity(@hat, array(0, 0, 0))
 }
