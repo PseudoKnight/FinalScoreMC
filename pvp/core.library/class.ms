@@ -181,7 +181,7 @@ proc _class_select(@id, @pvp) {
 				if(array_contains(@pvp['arena']['captain'], @class)) {
 					clear_virtualchest(@id.@pvp['players'][player()]['team'], 0);
 					@pvp['team'][@pvp['players'][player()]['team']]['captain'] = player();
-				} else {
+				} else if(!is_null(@e['inventory'][0])) {
 					@count = 0;
 					foreach(@name: @player in @pvp['players']) {
 						if(@name != player()
