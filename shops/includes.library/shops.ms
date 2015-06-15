@@ -39,6 +39,9 @@ proc _get_shop(@loc) {
 			console('Location: '.@loc);
 			return(null);
 		}
+		if(equals_ic(@owner, player())) {
+			@sign[3] = player();
+		}
 		set_sign_text(@loc, @sign);
 	}
 	
