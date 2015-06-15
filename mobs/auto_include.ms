@@ -21,33 +21,44 @@ proc _spawn_mob(@mob, @qty, @loc, @owner = 'Notch') {
 				set_entity_rider(@m, @rider)
 			}
 		}
-		if(array_index_exists(@mob, 'explode')) {
-			set_mob_name(@m, @mob['explode'][0])
-			set_name_visible(@m, true)
-			set_interval(1000, closure(){
-				if(entity_exists(@m)) {
-					@mob['explode'][0] -= 1
-					if(@mob['explode'][0] <= 3) {
-						set_mob_name(@m, color('yellow').@mob['explode'][0])
-					} else {
-						set_mob_name(@m, @mob['explode'][0])
-					}
-					if(@mob['explode'][0] == 0) {
-						set_name_visible(@m, false);
-						explosion(entity_loc(@m), @mob['explode'][1], true);
-						clear_task();
-					} else {
-						play_sound(entity_loc(@m), array('sound': 'NOTE_STICKS', 'pitch': 2, 'volume': 1))
-					}
-				} else {
-					clear_task()
-				}
-			})
-		}
 		if(array_index_exists(@mob, 'onfire')) {
 			set_entity_onfire(@m, @mob['onfire'])
 		}
 		set_entity_persistence(@m, true)
+	}
+	if(array_index_exists(@mob, 'explode')) {
+		foreach(@m in @mobs) {
+			@display = spawn_entity('ARMOR_STAND', 1, @loc)[0];
+			set_mob_name(@display, @mob['explode'][0]);
+			set_name_visible(@display, true);
+			set_entity_rider(@m, @display);
+		}
+		set_interval(1000, closure(){
+			@mob['explode'][0] -= 1;
+			foreach(@m in @mobs) {
+				if(entity_exists(@m) && get_entity_health(@m) > 0) {
+					@display = get_entity_rider(@m);
+					if(!entity_exists(@display)) {
+						damage_entity(@m, 20);
+					} else {
+						if(@mob['explode'][0] <= 3) {
+							set_mob_name(@display, color('yellow').@mob['explode'][0])
+						} else {
+							set_mob_name(@display, @mob['explode'][0])
+						}
+						if(@mob['explode'][0] == 0) {
+							set_name_visible(@display, false);
+							explosion(entity_loc(@m), @mob['explode'][1], true);
+						} else {
+							play_sound(entity_loc(@m), array('sound': 'NOTE_STICKS', 'pitch': 2, 'volume': 1))
+						}
+					}
+				}
+			}
+			if(@mob['explode'][0] == 0) {
+				clear_task();
+			}
+		})
 	}
 	if(array_index_exists(@mob, 'effects')) {
 		queue_push(closure(){
