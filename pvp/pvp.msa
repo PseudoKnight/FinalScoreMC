@@ -93,25 +93,20 @@
 		}
 		
 	case 'addtime':
-		if(!get_command_block() && !has_permission('group.moderators'), die())
-		if(!$id, die())
-		@id = to_lower($id)
-		@pvp = import('pvp'.@id)
-		if(!@pvp, die())
-		@pvp['arena']['timer'][1] += $team
-		_regionmsg(@pvp['arena']['broadcast'], 'Added '.$team.' more minutes.')
+		if(!get_command_block() && !has_permission('group.moderators'), die());
+		if(!$id, die());
+		@id = to_lower($id);
+		@pvp = import('pvp'.@id);
+		if(!@pvp, die());
 		
-	case 'removetime':
-		if(!has_permission('group.moderators'), die())
-		if(!$id, die())
-		@id = to_lower($id)
-		@pvp = import('pvp'.@id)
-		array_remove(@pvp['arena'], 'timer')
-		# foreach(@p in @pvp['players']) {
-			# if(function_exists('premove_bar')) {
-				# premove_bar(@p)
-			# }
-		# }
+		@time = $team;
+
+		@pvp['arena']['timer'][1] += @time;
+		if(extension_exists('CHNaughty')) {
+			foreach(@p in array_merge(array_keys(@pvp['players']), @pvp['spectators'])) {
+				try(title_msg(@p, 'Added '.@time.' minutes', null, 20, 20, 20));
+			}
+		}
 		
 	case 'start':
 		if(!$id, die('You must specify an arena to start. Usage: /pvp start arenaname'))
@@ -412,7 +407,6 @@
 		msg(color('bold').'RESTRICTED COMMANDS ---------');
 		msg('/pvp end <id> <team> '.color('gray').'End in favor of team');
 		msg('/pvp addtime <id> <minutes> '.color('gray').'Add time to the timer');
-		msg('/pvp removetime <id> <minutes> '.color('gray').'Remove time from the timer');
 		msg('/pvp debug <id> '.color('gray').'Output debug information');
 	}
 <<<	
