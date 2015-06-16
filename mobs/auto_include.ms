@@ -29,6 +29,7 @@ proc _spawn_mob(@mob, @qty, @loc, @owner = 'Notch') {
 	if(array_index_exists(@mob, 'explode')) {
 		foreach(@m in @mobs) {
 			@display = spawn_entity('ARMOR_STAND', 1, @loc)[0];
+			set_entity_spec(@display, array('small': true, 'visible': false));
 			set_mob_name(@display, @mob['explode'][0]);
 			set_name_visible(@display, true);
 			set_entity_rider(@m, @display);
@@ -47,7 +48,7 @@ proc _spawn_mob(@mob, @qty, @loc, @owner = 'Notch') {
 							set_mob_name(@display, @mob['explode'][0])
 						}
 						if(@mob['explode'][0] == 0) {
-							set_name_visible(@display, false);
+							try(entity_remove(@display));
 							explosion(entity_loc(@m), @mob['explode'][1], true);
 						} else {
 							play_sound(entity_loc(@m), array('sound': 'NOTE_STICKS', 'pitch': 2, 'volume': 1))
