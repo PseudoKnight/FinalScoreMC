@@ -346,12 +346,13 @@ bind(player_interact, null, array('block': 77, 'button': 'right'), @event) {
 			if(!call_alias(@line[1] @line[2] @line[3])) {
 				run(@line[1] @line[2] @line[3]);
 			}
+			console('Deprecated sign command @ '.@event['location']);
 		}
 	}
 }
 
 # prevent people from pushing minecart hoppers underneath chests
-bind(vehicle_collide, null, array('type': 'MINECART_HOPPER', 'collisiontype': 'ENTITY', 'hittype': 'PLAYER'), @event) {
+bind(vehicle_collide, null, array('type': 'MINECART_HOPPER', 'hittype': 'PLAYER'), @event) {
 	cancel();
 }
 

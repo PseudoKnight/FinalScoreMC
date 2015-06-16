@@ -593,7 +593,7 @@ if(array_index_exists(@pvp['arena'], 'captain')) {
 
 if(@pvp['arena']['mode'] == 'ctf' || array_index_exists(@pvp['arena'], 'captain')) {
 	array_push(@pvp['binds'], @id.'protectdrops')
-	bind(entity_damage, array('id': @id.'protectdrops'), array('type': 'DROPPED_ITEM', 'cause': 'BLOCK_EXPLOSION', 'world': 'custom'), 
+	bind(entity_damage, array('id': @id.'protectdrops'), array('type': 'DROPPED_ITEM', 'world': 'custom'), 
 	@e, @region = @pvp['arena']['region']) {
 		if(array_contains(sk_regions_at(entity_loc(@e['id'])), @region)) {
 			cancel()
@@ -619,7 +619,7 @@ if(@pvp[arena][mode] == 'tntrun') {
 	}
 	
 	array_push(@pvp[binds], @id.'limitentities')
-	bind(entity_change_block, array(id: @id.'limitentities'), array(from: 12, to: 0), @e, @region = @pvp[arena][region]) {
+	bind(entity_change_block, array(id: @id.'limitentities'), array(from: 12), @e, @region = @pvp[arena][region]) {
 		if(array_contains(sk_regions_at(@e[location]), @region)) {
 			entity_remove(@e[entity])
 		}
