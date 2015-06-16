@@ -1,12 +1,3 @@
-# Armor stand protection
-bind(player_interact, null, array('item': 416, 'button': 'right'), @event) {
-	if(@event['action'] == 'right_click_block' 
-	&& _is_survival_world(@event['world'])
-	&& (!sk_can_build(@event['location']) || !sk_region_check_flag(@event['location'], 'mob-spawning'))) {
-		cancel();
-	}
-}
-
 proc _position_degrees(@position, @rotation) {
 	@yaw = get_yaw(array(0, 0, 0), @position);
 	@yaw -= @rotation;
@@ -164,6 +155,10 @@ bind(player_interact_at_entity, null, array('clicked': 'ARMOR_STAND'), @event) {
 }
 
 bind(entity_damage, null, array('type': 'ARMOR_STAND'), @event) {
+	if(!entity_spec(@event['id'])['arms']) {
+		die();
+	}
+
 	@damager = '';
 	if(array_index_exists(@event, 'damager')) {
 		@damager = @event['damager'];
@@ -175,10 +170,7 @@ bind(entity_damage, null, array('type': 'ARMOR_STAND'), @event) {
 		die();
 	}
 	
-	if(!sk_can_build(@damager, @event['location'])) {
-		cancel();
-		
-	} else if(entity_spec(@event['id'])['arms']) {
+	if(sk_can_build(@damager, @event['location'])) {
 		cancel();
 		@weapon = get_mob_equipment(@event['id'])['weapon'];
 		@loc = entity_loc(@event['id']);
