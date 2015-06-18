@@ -66,29 +66,29 @@ bind(player_interact, null, array('block': 68), @event) {
 				die(color('yellow').'[Coin Shop] '.color('r').'There are no items left.')
 			}
 			if(@coins < @cost[1], die(color('yellow').'[Coin Shop] '.color(r).'You only have '.color('red').round(@coins).color('r').' left.'))
-			for(@i = 0, @i < get_inventory_size(@chestloc), @i++) {
-				@item = get_inventory_item(@chestloc, @i)
-				if(!is_null(@item)) {
-					@inv = pinv()
-					for(@j = 0, @j < 36, @j++) {
-						if(is_null(@inv[@j])
-						|| (@inv[@j]['type'] == @item['type'] 
-						&& @inv[@j]['data'] == @item['data'] 
-						&& @inv[@j]['qty'] + @item['qty'] <= max_stack_size(@item))) {
-							if(!is_null(@inv[@j])) {
-								@item['qty'] += @inv[@j]['qty']
+			@cinv = get_inventory(@chestloc);
+			foreach(@cslot: @citem in @cinv) {
+				if(!is_null(@citem)) {
+					@pinv = pinv();
+					foreach(@pslot: @pitem in @pinv) {
+						if(is_null(@pitem)
+						|| (@pitem['type'] == @citem['type'] 
+						&& @pitem['data'] == @citem['data'] 
+						&& @pitem['qty'] + @citem['qty'] <= max_stack_size(@item))) {
+							if(!is_null(@pitem)) {
+								@citem['qty'] += @pitem['qty'];
 							}
-							@inv = array()
-							@inv[@j] = @item
-							set_pinv(player(), @inv)
-							set_inventory_item(@chestloc, @i, null)
-							_acc_subtract(player(), @cost[1])
-							msg(color('yellow').'[Coin Shop] '.color('r').'Transaction successful. Your coins: '.round(@coins).' (-'.@cost[1].')')
-							break(2)
+							@newinv = array();
+							@newinv[@pslot] = @citem;
+							set_pinv(player(), @newinv);
+							set_inventory_item(@chestloc, @cslot, null);
+							_acc_subtract(player(), @cost[1]);
+							msg(color('yellow').'[Coin Shop] '.color('r').'Transaction successful. Your coins: '.round(@coins).' (-'.@cost[1].')');
+							break(2);
 						}
 					}
-					msg(color('yellow').'[Coin Shop] '.color('r').'You have no room in your inventory.')
-					break()
+					msg(color('yellow').'[Coin Shop] '.color('r').'You have no room in your inventory.');
+					break();
 				}
 			}
 		}

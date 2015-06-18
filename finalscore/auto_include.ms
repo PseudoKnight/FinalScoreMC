@@ -544,13 +544,14 @@ proc _wrap_string(@string, @width = 320) {
 	@item: 0:0 format
 */
 proc _get_inventory_count(@loc, @item) {
-	try(@size = get_inventory_size(@loc), return(null))
+	try(@inv = get_inventory(@loc), return(null))
 	if(is_numeric(@item), @item = @item.':0')
 	@count = 0
-	for(@i = 0, @i < @size, @i++) {
-		if(is_null(assign(@slot, get_inventory_item(@loc, @i))), continue())
-		if(@slot['type'].':'.@slot['data'] == @item || @item == 'all') {
-			@count = @count + @slot['qty']
+	foreach(@item in @inv) {
+		if(!is_null(@item)
+		&& @item['type'].':'.@item['data'] == @item 
+		|| @item == 'all') {
+			@count = @count + @item['qty']
 		}
 	}
 	return(@count) 

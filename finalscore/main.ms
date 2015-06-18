@@ -505,8 +505,8 @@ bind(block_dispense, null, array('type': 'DISPENSER'), @e) {
 			, #catch
 				die();
 			);
-			for(@i = 0, @i < array_size(@inv), @i++) {
-				if(@inv[@i]) {
+			foreach(@i in 0..8) {
+				if(!is_null(@inv[@i])) {
 					@inv[@i]['qty'] = 64;
 				}
 			}
@@ -525,8 +525,9 @@ bind(block_dispense, null, array('type': 'DISPENSER'), @e) {
 bind(creature_spawn, null, array('reason': 'SPAWNER'), @event) {
 	@entities = 0;
 	# check a 3x3 chunk area (48x256x48 area)
-	for(@x = -16, @x <= 16, @x += 16) {
-		for(@z = -16, @z <= 16, @z += 16) {
+	@range = array(-16, 0, 16);
+	foreach(@x in @range) {
+		foreach(@z in @range) {
 			@entities += array_size(
 				all_entities(@event['location']['world'], @event['location']['x'] + @x, @event['location']['z'] + @z)
 			);

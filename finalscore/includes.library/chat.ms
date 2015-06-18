@@ -32,22 +32,22 @@ proc _pmsg(@player, @message) {
 }
 
 proc _remove_ignored(@sender, @recipients) {
-	@ignorelist = import('ignorelist')
-	for(@i = 0, @i < array_size(@recipients), @i++,
+	@ignorelist = import('ignorelist');
+	foreach(@index: @player in @recipients) {
 		if(array_index_exists(@ignorelist, @sender)) {
-			if(array_contains(@ignorelist[@sender], @recipients[@i])) {
-				array_remove(@recipients, @i)
+			if(array_contains(@ignorelist[@sender], @player)) {
+				array_remove(@recipients, @index);
 			} else if(array_contains(@ignorelist[@sender], 'all')) {
-				return(array())
+				return(array());
 			}
 		}
 		if(array_index_exists(@ignorelist, 'all')) {
-			if(array_contains(@ignorelist['all'], @recipients[@i])) {
-				array_remove(@recipients, @i)
+			if(array_contains(@ignorelist['all'], @player)) {
+				array_remove(@recipients, @index);
 			}
 		}
-	)
-	return(@recipients)
+	}
+	return(@recipients);
 }
 
 /*
