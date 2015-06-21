@@ -166,6 +166,9 @@ case 'rename':
 	if(!@arena, die('No arena by that name: '.@arenaid))
 	if(!array_index_exists(@arena['classes'], @classid), die('No class by that name.'))
 	@arena['classes'][$setting] = @arena['classes'][@classid]
+	if(array_index_exists(@arena['classes'][$setting], 'selector')) {
+		@arena['classes'][$setting]['selector']['meta']['display'] = to_upper($setting);
+	}
 	array_remove(@arena['classes'], @classid)
 	store_value('arena', @arenaid, @arena)
 	msg('Changed '.@classid.' class name to '.to_lower($setting))
