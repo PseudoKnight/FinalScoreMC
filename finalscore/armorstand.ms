@@ -1,14 +1,3 @@
-proc _position_degrees(@position, @rotation) {
-	@yaw = get_yaw(array(0, 0, 0), @position);
-	@yaw -= @rotation;
-	if(@yaw < -180) {
-		@yaw += 360;
-	} else if(@yaw > 180) {
-		@yaw -= 360;
-	}
-	return(@yaw)
-}
-
 bind(player_interact_at_entity, null, array('clicked': 'ARMOR_STAND'), @event) {
 	if(!sk_can_build(entity_loc(@event['id']))) {
 		cancel();
@@ -29,6 +18,17 @@ bind(player_interact_at_entity, null, array('clicked': 'ARMOR_STAND'), @event) {
 			if(!is_null(@piece)) {
 				die();
 			}
+		}
+		
+		proc _position_degrees(@position, @rotation) {
+			@yaw = get_yaw(array(0, 0, 0), @position);
+			@yaw -= @rotation;
+			if(@yaw < -180) {
+				@yaw += 360;
+			} else if(@yaw > 180) {
+				@yaw -= 360;
+			}
+			return(@yaw)
 		}
 
 		# If sneaking, go into pose mode
