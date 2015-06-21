@@ -24,10 +24,12 @@ if(extension_exists('chvirtualchests')) {
 	@pvp['id'] = 'pvp'
 	@pvp['title'] = 'PVP Arenas'
 	@arenas = get_values('arena')
-	foreach(@key: @name in array_keys(@arenas)) {
-		if(@key > 44, break())
+	@slot = 0;
+	foreach(@name in array_keys(@arenas)) {
+		if(@slot > 44, break())
+		if(array_index_exists(@arenas[@name], 'parent'), continue())
 		@name = split('.', @name)[1]
-		@pvp[@key] = array(
+		@pvp[@slot] = array(
 			type: 351,
 			data: 8,
 			meta: array(
@@ -35,6 +37,7 @@ if(extension_exists('chvirtualchests')) {
 				lore: array(color('dark_gray').'Run: /warp '.@name),
 			),
 		)
+		@slot++;
 	}
 	@pvp[45][type] = 276
 	create_virtualchest(@pvp)
