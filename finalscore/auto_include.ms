@@ -345,16 +345,16 @@ proc _clear_peffects(@player) {
 	Returns a Minecraft color code for the specified player's group
 */
 proc _colorname(@player) {
-	if(!@player, @player = player())
-	ifelse(has_permission(@player, 'group.moderators'),
-		@color = 'aqua',
-		has_permission(@player, 'group.supporters'),
-		@color = 'green',
-		has_permission(@player, 'group.everyone'),
-		@color = 'yellow',
-		@color = 'white'
-	)
-	return(color(@color))
+	if(!@player, @player = player());
+	@color = 'white';
+	if(has_permission(@player, 'group.moderators')) {
+		@color = 'aqua';
+	} else if(has_permission(@player, 'group.supporters')) {
+		@color = 'green';
+	} else if(has_permission(@player, 'group.everyone')) {
+		@color = 'yellow';
+	}
+	return(color(@color));
 }
 
 /*
