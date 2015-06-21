@@ -1,6 +1,6 @@
 # Sending chat from the console
 /s $name $ = >>>
-	broadcast(color('8').simple_date('h:mm').color('gray').' [console] '.color('aqua').$name.color('gray').': '.color('r').$) 
+	broadcast(color('8').simple_date('h:mm').color('gray').' [console] '.color('aqua').$name.color('dark_gray').': '.color('r').$) 
 	if(function_exists('dm_broadcast_to_web')) {
 		dm_broadcast_to_web($, $name)
 	}
