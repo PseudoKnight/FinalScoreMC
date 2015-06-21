@@ -1,5 +1,5 @@
 *:/pvp [$action] [$id] [$team] = >>>
-	include('core.library/main.ms')
+	include('core.library/game.ms')
 	switch($action) {
 	case 'join':
 		@id = to_lower($id)
@@ -115,9 +115,11 @@
 		if(!@pvp, die('There is no match to start.'))
 		if(@pvp['running'], die('Match already in progress.'))
 		
-		@pvp['arena'] = get_value('arena.'.@id)
-		if(!@pvp['arena'], die('Can\'t find that arena.'))
-
+		# Get arena settings
+		@pvp['arena'] = get_value('arena.'.@id);
+		if(is_null(@pvp['arena']), die('Can\'t find that arena.'));
+		
+		# Get child or parent arena settings
 		if(array_index_exists(@pvp['arena'], 'parent')) {
 			@parent = get_value('arena.'.@pvp['arena']['parent'])
 			if(!@parent, die('Can\'t find parent arena.'))
@@ -135,7 +137,14 @@
 			@primaryName = to_upper(@id);
 			@secondaryName = null;
 		}
-		
+
+		# Check if arena is in testing
+		if(array_index_exists(@pvp['arena'], 'flags')
+		&& array_contains(@pvp['arena']['flags'], 'debug') 
+		&& !array_contains(pgroup(), 'builders')) {
+			die('This arena is still in testing and can only be started by Builders.');
+		}
+
 		if(array_index_exists(@pvp['arena'], 'sharedarenas')) {
 			foreach(@arenaid in @pvp['arena']['sharedarenas']) {
 				@otherpvp = import('pvp'.@arenaid)
@@ -145,13 +154,25 @@
 			}
 		}
 		
-		if(player() == '~console' || pworld() != 'custom', die('You can only run this in Frog Park.'))
+		# Check if enough players
+		foreach(array_keys(@pvp['players']), @player) {
+			if(!ponline(@player) || pworld(@player) != 'custom') {
+				array_remove(@pvp['players'], @player);
+			}
+		}
+		if(array_size(@pvp['players']) < if(array_index_exists(@pvp['arena'], 'min'), @pvp['arena']['min'], 2)) {
+			die('There aren\'t enough players. ('.array_size(@pvp['players']).')');
+		}
+		
+		# GOOD TO GO
+		include('core.library/pregame.ms');
 
-		# CHECK ARENA SETTINGS
+		# Check arena settings
 		if(!array_index_exists(@pvp['arena'], 'lobby'), die('No lobby defined for arena.'))
 		if(!array_index_exists(@pvp['arena'], 'region'), die('No region defined for arena.'))
 		if(!array_index_exists(@pvp['arena'], 'spawn'), die('No spawns defined for arena.'))
-		if(!array_index_exists(@pvp['arena'], 'min'), @pvp['arena']['min'] = 2)
+		
+		# Set arena defaults
 		if(!array_index_exists(@pvp['arena'], 'broadcast'), @pvp['arena']['broadcast'] = @pvp['arena']['region'])
 		if(!array_index_exists(@pvp['arena'], 'mode'), @pvp['arena']['mode'] = 'dm')
 		if(!array_index_exists(@pvp['arena'], 'ff'), @pvp['arena']['ff'] = true)
@@ -165,7 +186,7 @@
 		}
 		if(array_contains(@pvp['arena']['flags'], 'keepinventory'), @pvp['arena']['denydrop'] = 'all')
 		
-		# dynamically determine if it should be a team game
+		# Dynamically determine if it should be a team game
 		if(@pvp['arena']['mode'] == 'ddm') {
 			@size = array_size(@pvp['players'])
 			if(@size > 5 && @size % 2 == 0) {
@@ -204,16 +225,7 @@
 					@pvp['arena']['score'] = 60
 			}
 		}
-		
-		if(array_contains(@pvp['arena']['flags'], 'debug') && !array_contains(pgroup(), 'builders'), die('This arena is still in testing and can only be started by Builders.'))
-		
-		foreach(array_keys(@pvp['players']), @player) {
-			if(!ponline(@player) || pworld(@player) != 'custom') {
-				array_remove(@pvp['players'], @player)
-			}
-		}
-		if(array_size(@pvp['players']) < @pvp['arena']['min'], die('There aren\'t enough players. ('.array_size(@pvp['players']).')'))
-		
+
 		if(array_contains(get_scoreboards(), @id), remove_scoreboard(@id))
 		create_scoreboard(@id)
 		
@@ -264,23 +276,23 @@
 			set_pscore('captures', @pvp['arena']['team'][1]['name'], 0, @id)
 		}
 		
-		if(array_index_exists(@pvp[arena], 'team')) {
+		if(array_index_exists(@pvp['arena'], 'team')) {
 			if(!array_index_exists(@pvp, 'team')) {
-				@pvp[team] = array(array(), array())
+				@pvp['team'] = array(array(), array());
 			}
-			if(!array_index_exists(@pvp[team][0], 'players')) {
-				@pvp[team][0][players] = array()
-				@pvp[team][1][players] = array()
+			if(!array_index_exists(@pvp['team'][0], 'players')) {
+				@pvp['team'][0]['players'] = array();
+				@pvp['team'][1]['players'] = array();
 			}
-			if(!array_index_exists(@pvp[arena], 'teamratio')) {
-				@pvp[arena][teamratio] = array(1, 1)
+			if(!array_index_exists(@pvp['arena'], 'teamratio')) {
+				@pvp['arena']['teamratio'] = array(1, 1);
 			}
-			@players = array_keys(@pvp[players])
-			for(@i = 0, @i < array_size(@pvp[players]), @i++) {
-				@index = rand(0, array_size(@players))
-				@player = @players[@index]
-				_assign_team(@player, @pvp)
-				array_remove(@players, @index)
+			@players = array_keys(@pvp['players'])
+			for(@i = 0, @i < array_size(@pvp['players']), @i++) {
+				@index = rand(0, array_size(@players));
+				@player = @players[@index];
+				_assign_team(@player, @pvp);
+				array_remove(@players, @index);
 			}
 		}
 		
