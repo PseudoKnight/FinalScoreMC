@@ -1,4 +1,5 @@
 if(extension_exists('chvirtualchests')) {
+queue_push(closure(){
 	@main = array(
 		id: 'main',
 		title: 'Frog Park Directory',
@@ -92,4 +93,5 @@ if(extension_exists('chvirtualchests')) {
 			}
 		}
 	}
+}
 }
