@@ -1,5 +1,3 @@
-include('includes.library/shops.ms')
-
 # Shop chest protection
 # bind(player_interact, null, array(block: 54, button: 'right'), @event) {
 	# if((@shop = _get_shop(_relative(@event[location], 'up')))
@@ -58,6 +56,7 @@ include('includes.library/shops.ms')
 
 # Prevent hoppers under shop chests
 bind(block_place, null, array(type: 154), @event) {
+	include('includes.library/shops.ms');
 	@loc = _relative(@event[location], 'up')
 	@type = split(':', get_block_at(@loc))[0]
 	if(@type == '54' || @type == '146') {

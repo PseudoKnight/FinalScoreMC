@@ -1,7 +1,6 @@
-include('includes.library/shops.ms')
-
 # CLICKING SIGNS!
 bind(player_interact, null, array(block: 68), @event) {
+	include('includes.library/shops.ms');
 	if(@shop = _get_shop(@event[location])) {
 		queue_push(closure(){
 			@shops = get_value('shop', @shop[key])
@@ -82,6 +81,7 @@ bind(player_interact, null, array(block: 68), @event) {
 
 # Breaking signs
 bind(block_break, null, array(type: 68), @event) {
+	include('includes.library/shops.ms');
 	if(@shop = _get_shop(@event[location])) {
 		@shops = get_value('shop', @shop[key])
 		if(!@shops, die())
