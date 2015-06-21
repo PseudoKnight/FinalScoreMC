@@ -93,5 +93,5 @@ queue_push(closure(){
 			}
 		}
 	}
-}
+});
 }
