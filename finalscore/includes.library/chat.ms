@@ -73,7 +73,7 @@ proc _hover_tell(@recipients, @components) {
 	Create clickable links for a JSON message
 */
 proc _clickable_links(@string) {
-	return(reg_replace('(?:https?:\\/\\/|www\\.)([\\da-z\\.-]+\\.[a-z\\.]{2,6}[\\/\\w\\:\\.\\?=&-]*)', 
+	return(reg_replace('(?:https?://|www\\.)([\\da-z.-]+\\.[a-z.]{2,6}[/\\w:.?=&-]*)', 
 		'&b[$1]",clickEvent:{action:"open_url",value:"http://$1"}},{text:"&r',
 		@string
 	));
