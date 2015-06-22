@@ -547,11 +547,11 @@ proc _get_inventory_count(@loc, @item) {
 	try(@inv = get_inventory(@loc), return(null))
 	if(is_numeric(@item), @item = @item.':0')
 	@count = 0
-	foreach(@item in @inv) {
-		if(!is_null(@item)
-		&& @item['type'].':'.@item['data'] == @item 
+	foreach(@i in @inv) {
+		if(!is_null(@i)
+		&& @i['type'].':'.@i['data'] == @item 
 		|| @item == 'all') {
-			@count = @count + @item['qty']
+			@count = @count + @i['qty']
 		}
 	}
 	return(@count) 
