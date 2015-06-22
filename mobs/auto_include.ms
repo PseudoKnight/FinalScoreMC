@@ -27,33 +27,35 @@ proc _spawn_mob(@mob, @qty, @loc, @owner = 'Notch') {
 		set_entity_persistence(@m, true)
 	}
 	if(array_index_exists(@mob, 'explode')) {
-		foreach(@m in @mobs) {
-			@display = spawn_entity('ARMOR_STAND', 1, @loc)[0];
-			set_entity_spec(@display, array('small': true, 'visible': false));
-			set_mob_name(@display, @mob['explode'][0]);
-			set_name_visible(@display, true);
-			set_entity_rider(@m, @display);
+		@display = array();
+		foreach(@i: @m in @mobs) {
+			@display[@i] = spawn_entity('ARMOR_STAND', 1, @loc)[0];
+			set_entity_spec(@display[@i], array('small': true, 'visible': false));
+			set_mob_name(@display[@i], @mob['explode'][0]);
+			set_name_visible(@display[@i], true);
+			set_entity_rider(@m, @display[@i]);
 		}
 		set_interval(1000, closure(){
 			@mob['explode'][0] -= 1;
-			foreach(@m in @mobs) {
+			foreach(@i: @m in @mobs) {
 				if(entity_exists(@m) && get_entity_health(@m) > 0) {
-					@display = get_entity_rider(@m);
-					if(!entity_exists(@display)) {
+					if(!entity_exists(@display[@i])) {
 						damage_entity(@m, 20);
 					} else {
 						if(@mob['explode'][0] <= 3) {
-							set_mob_name(@display, color('yellow').@mob['explode'][0])
+							set_mob_name(@display[@i], color('yellow').@mob['explode'][0])
 						} else {
-							set_mob_name(@display, @mob['explode'][0])
+							set_mob_name(@display[@i], @mob['explode'][0])
 						}
 						if(@mob['explode'][0] == 0) {
-							try(entity_remove(@display));
+							try(entity_remove(@display[@i]));
 							explosion(entity_loc(@m), @mob['explode'][1], true);
 						} else {
 							play_sound(entity_loc(@m), array('sound': 'NOTE_STICKS', 'pitch': 2, 'volume': 1))
 						}
 					}
+				} else {
+					try(entity_remove(@display[@i]));
 				}
 			}
 			if(@mob['explode'][0] == 0) {
