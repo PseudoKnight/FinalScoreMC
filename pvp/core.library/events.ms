@@ -207,6 +207,8 @@ bind(player_spawn, array('id': @id.'spawn'), null, @e, @id = @id) {
 	if(!array_index_exists(@pvp['players'], player()), 
 		die())
 
+	consume();
+
 	if(!array_index_exists(@pvp['arena'], 'respawntime')) {
 		queue_push(closure(){
 			_pvp_equip(@id, player())

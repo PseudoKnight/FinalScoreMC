@@ -270,6 +270,12 @@ bind(player_death, null, null, @event) {
 	}
 }
 
+bind(player_spawn, array('priority': 'LOWEST'), array('world': 'custom'), @event) {
+	set_timeout(50, closure(){
+		_equip_park();
+	});
+}
+
 # Block wither
 bind(block_place, null, array('type': 144), @event) {
 	if(!array_contains(array('custom', 'dev','outworld_nether', 'outworld', 'outworld_the_end'), pworld())
