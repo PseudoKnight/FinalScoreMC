@@ -568,11 +568,11 @@ proc _horizontal_distance(@loc1, @loc2) {
 	Returns true if the location is (mostly) safe for a player
 */
 proc _is_safe_location(@loc) {
-	if(!get_block_info(@loc)['occluding']) {
+	if(!get_block_info(@loc, 'solid')) {
 		return(false);
 	}
 	@loc['y'] += 2;
-	if(get_block_info(@loc)['occluding']) {
+	if(get_block_info(@loc, 'occluding')) {
 		return(false);
 	}
 	return(true);
