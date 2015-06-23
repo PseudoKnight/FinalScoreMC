@@ -1,24 +1,24 @@
 *:/mob [$cmd] [$id] [$setting] [$] = >>>
-	if(!has_permission('command.mob'), die('You do not have permission.'))
+	if(!has_permission('command.mob'), die('You do not have permission.'));
 	switch($cmd) {
 	case 'set':
-		@mob = get_value('mob.'.$id)
-		if(!@mob, @mob = array())
+		@mob = get_value('mob.'.$id);
+		if(!@mob, @mob = array());
 		switch($setting) {
 		case 'type':
-			if(!_get_mob($), die('Unknown mob type.'))
-			@mob['type'] = $
-			msg('Type set.')
+			if(!_get_mob($), die('Unknown mob type.'));
+			@mob['type'] = $;
+			msg('Type set.');
 			
 		case 'name':
-			if(length($) > 64, die('Name is too long.'))
-			@mob['name'] = colorize($)
-			msg('Name set.')
+			if(length($) > 64, die('Name is too long.'));
+			@mob['name'] = colorize($);
+			msg('Name set.');
 			
 		case 'age':
-			if(!is_integral($), die('Must be a number.'))
-			@mob['age'] = $
-			msg('Age set.')
+			if(!is_integral($), die('Must be a number.'));
+			@mob['age'] = $;
+			msg('Age set.');
 			
 		case 'gear':
 			@mob['gear'] = array(
@@ -27,11 +27,11 @@
 				'CHESTPLATE': pinv(player(), 102),
 				'LEGGINGS': pinv(player(), 101),
 				'BOOTS': pinv(player(), 100)			
-			)
-			msg('Gear set.')
+			);
+			msg('Gear set.');
 			
 		case 'droprate':
-			@args = parse_args($)
+			@args = parse_args($);
 			if(array_size(@args) == 1) {
 				@mob['droprate'] = array(
 					'WEAPON': @args[0], 
@@ -39,7 +39,7 @@
 					'LEGGINGS': @args[0],  
 					'CHESTPLATE': @args[0], 
 					'HELMET': @args[0]
-				)
+				);
 			} else {
 				@mob['droprate'] = array(
 					'WEAPON': @args[0], 
@@ -47,22 +47,22 @@
 					'LEGGINGS': @args[2],  
 					'CHESTPLATE': @args[3], 
 					'HELMET': @args[4]
-				)
+				);
 			}
-			msg('Droprate set.')
+			msg('Droprate set.');
 			
 		case 'effect':
-			@args = parse_args($)
-			if(!is_numeric(@args[0]), die('Must be numeric'))
+			@args = parse_args($);
+			if(!is_numeric(@args[0]), die('Must be numeric'));
 			if(!array_index_exists(@mob, 'effects')) {
-				@mob['effects'] = array()
+				@mob['effects'] = array();
 			}
 			if(@args[2] == 0) {
 				foreach(@index: @effect in @mob['effects']) {
 					if(@effect['id'] == @args[0]) {
-						array_remove(@mob['effects'], @index)
-						msg('Effect removed')
-						break()
+						array_remove(@mob['effects'], @index);
+						msg('Effect removed');
+						break();
 					}
 				}
 			} else {
@@ -70,95 +70,94 @@
 					'id': @args[0],
 					'strength': @args[1] - 1,
 					'seconds': @args[2]
-				))
-				msg('Effect added')
+				));
+				msg('Effect added');
 			}
 			
 		case 'tags':
-			@mob['tags'] = json_decode($)
-			msg('Set the tags to '.$)
+			@mob['tags'] = json_decode($);
+			msg('Set the tags to '.$);
 			
 		case 'tame':
 			if($) {
-				@mob['tame'] = true
+				@mob['tame'] = true;
 			} else if(array_index_exists(@mob, 'tame')) {
-				array_remove(@mob, 'tame')
+				array_remove(@mob, 'tame');
 			}
-			msg('Made mob tamed state to '.$)
+			msg('Made mob tamed state to '.$);
 			
 		case 'rider':
-			@mob['rider'] = $
-			msg('Set mob rider to '.$)
+			@mob['rider'] = $;
+			msg('Set mob rider to '.$);
 
 		case 'explode':
-			@args = parse_args($)
-			if(array_size(@args) < 2, die('Must give two numbers: seconds till explode, explosion strength'))
-			if(!is_numeric(@args[0]), die('Must give a number in seconds for the mob to explode.'))
-			if(!is_numeric(@args[1]), die('Must give a number for the strength of explosion.'))
-			if(@args[1] > 8, die('That explosion is too big.'))
-			@mob['explode'] = @args
-			msg('Set mob to explode after '.@args[0].' seconds with strength of '.@args[1])
+			@args = parse_args($);
+			if(array_size(@args) < 2, die('Must give two numbers: seconds till explode, explosion strength'));
+			if(!is_numeric(@args[0]), die('Must give a number in seconds for the mob to explode.'));
+			if(!is_numeric(@args[1]), die('Must give a number for the strength of explosion.'));
+			if(@args[1] > 8, die('That explosion is too big.'));
+			@mob['explode'] = @args;
+			msg('Set mob to explode after '.@args[0].' seconds with strength of '.@args[1]);
 			
 		case 'onfire':
-			if(!is_numeric($), die('Must be a number.'))
+			if(!is_numeric($), die('Must be a number.'));
 			if($ == 0 && array_index_exists(@mob, 'onfire')) {
-				array_remove(@mob, 'onfire')
-				msg('Mob will not spawn on fire.')
+				array_remove(@mob, 'onfire');
+				msg('Mob will not spawn on fire.');
 			} else {
-				@mob['onfire'] = $
-				msg('Mob will spawn on fire for '.$.' seconds.')
+				@mob['onfire'] = $;
+				msg('Mob will spawn on fire for '.$.' seconds.');
 			}
 
 		
 		case 'health':
-			@mob['health'] = $
-			msg('Set health to '.$)
+			@mob['health'] = $;
+			msg('Set health to '.$);
 			
 		default:
-			die('Available settings: type, name, gear, droprate, effect, health, tame, tags, rider, explode, onfire')
+			die('Available settings: type, name, gear, droprate, effect, health, tame, tags, rider, explode, onfire');
 		}
-		store_value('mob.'.$id, @mob)
+		store_value('mob.'.$id, @mob);
 		
 	case 'delete':
 		if($setting) {
-			@mob = get_value('mob.'.$id)
-			if($setting == 'effect', @setting = 'effects', @setting = $setting)
-			array_remove(@mob, @setting)
-			store_value('mob.'.$id, @mob)
-			msg(@setting.' deleted from '.$id)
+			@mob = get_value('mob.'.$id);
+			if($setting == 'effect', @setting = 'effects', @setting = $setting);
+			array_remove(@mob, @setting);
+			store_value('mob.'.$id, @mob);
+			msg(@setting.' deleted from '.$id);
 		} else {
-			clear_value('mob.'.$id)
-			msg('Custom mob deleted.')
+			clear_value('mob.'.$id);
+			msg('Custom mob deleted.');
 		}
 	
 	case 'info':
-		@mob = get_value('mob.'.$id)
+		@mob = get_value('mob.'.$id);
 		foreach(@setting: @value in @mob) {
-			msg(color('gray').@setting.' '.color('r').@value)
+			msg(color('gray').@setting.' '.color('r').@value);
 		}
 	
 	case 'spawn':
-		@mobtype = $id
+		@mobType = $id;
+		@mobCount = 1;
 		if($setting) {
-			@mobcount = $setting
-		} else {
-			@mobcount = 1
+			@mobCount = $setting;
 		}
-		@loc = pcursor()
-		_spawn_mob(@mobtype, @mobcount, array(
+		@loc = pcursor();
+		_spawn_mob(@mobType, @mobCount, array(
 			@loc[0] + 0.5,
 			@loc[1] + 1,
 			@loc[2] + 0.5,
 			@loc[3]
-		), player())
+		), player());
 	
 	case 'list':
-		@mobs = get_values('mob')
-		@list = ''
+		@mobs = get_values('mob');
+		@list = '';
 		foreach(@key in array_keys(@mobs)) {
-			@list .= split('.', @key)[1].' '
+			@list .= split('.', @key)[1].' ';
 		}
-		msg(color('gray').'CUSTOM MOBS: '.color('r').@list)
+		msg(color('gray').'CUSTOM MOBS: '.color('r').@list);
 	default:
 		msg('/mob set <mob> <setting> <value> '.color('gray').'Sets a value to the custom mob');
 		msg('/mob delete <mob> [setting] '.color('gray').'Deletes mob or setting');
@@ -170,33 +169,33 @@
 <<<
 
 *:/summon $entity $x $y $z = >>>
-	if(!@cmdblock = get_command_block(), die())
+	if(!@cmdBlock = get_command_block(), die());
 	if($x[0] == '~') {
 		if($x == '~') {
-			@x = @cmdblock['x']
+			@x = @cmdBlock['x'];
 		} else {
-			@x = @cmdblock['x'] + substr($x, 1)
+			@x = @cmdBlock['x'] + substr($x, 1);
 		}
 	} else {
-		@x = $x
+		@x = $x;
 	}
 	if($y[0] == '~') {
 		if($y == '~') {
-			@y = @cmdblock['y']
+			@y = @cmdBlock['y'];
 		} else {
-			@y = @cmdblock['y'] + substr($y, 1)
+			@y = @cmdBlock['y'] + substr($y, 1);
 		}
 	} else {
-		@y = $y
+		@y = $y;
 	}
 	if($z[0] == '~') {
 		if($z == '~') {
-			@z = @cmdblock['z']
+			@z = @cmdBlock['z'];
 		} else {
-			@z = @cmdblock['z'] + substr($z, 1)
+			@z = @cmdBlock['z'] + substr($z, 1);
 		}
 	} else {
-		@z = $z
+		@z = $z;
 	}
-	spawn_mob($entity, 1, array(@x, @y, @z, @cmdblock['world']))
+	spawn_mob($entity, 1, array(@x, @y, @z, @cmdBlock['world']));
 <<<
