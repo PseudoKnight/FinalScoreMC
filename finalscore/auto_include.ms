@@ -56,7 +56,7 @@ proc _item_meta(@item, @index) {
 	Removes unnecessary indexes in item arrays for compact storage
 */
 proc _minify_item(@item) {
-	try(array_remove(@item, 'name'));
+	array_remove(@item, 'type');
 	array_remove(@item, 'enchants');
 	if(@item['data'] == 0) {
 		array_remove(@item, 'data');
