@@ -331,7 +331,7 @@
 		
 		# ANNOUNCE
 		@title = @primaryName.if(@secondaryName, ': '.@secondaryName);
-		_worldmsg('custom', _fill_string('*', '-', colorize('&7|--&l[ &r&l'.@title.' &7&l]&7*|')));
+		_worldmsg('custom', _fill_string('*', '-', colorize('&7&m|--&7&l[ &r&l'.@title.' &7&l]&7&m*|')));
 
 		if(array_index_exists(@pvp, 'team')) {
 			_worldmsg('custom', 
@@ -344,7 +344,7 @@
 			_worldmsg('custom', color('gold').' '.array_implode(array_keys(@pvp['players']), colorize('&r vs &6')));
 		}
 		
-		_worldmsg('custom', colorize('&7|----------------------------------------------------|'));
+		_worldmsg('custom', colorize('&7&m|----------------------------------------------------|'));
 		
 		play_sound(@pvp['arena']['lobby'], array('sound': 'WITHER_SPAWN', 'pitch': 1.5, 'volume': 3))
 		

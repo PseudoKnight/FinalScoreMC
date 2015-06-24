@@ -407,9 +407,9 @@ proc _pvp_end_match(@id, @winners) {
 		
 		if(array_index_exists(@pvp, 'stats')) {
 			queue_push(closure(){
-				_regionmsg(@pvp['arena']['broadcast'], colorize('&7|------------------------------&l[ &f&lTHE FINAL SCORE&7&l ]&7--|'));
+				_regionmsg(@pvp['arena']['broadcast'], colorize('&7&m|------------------------------&7&l[ &f&lTHE FINAL SCORE&7&l ]&7&m--|'));
 				_regionmsg(@pvp['arena']['broadcast'], colorize(replace('--&7KILLS &8:&7 DEATHS &8:&7 PICKUPS &8:&7 DAMAGE', '-', ' ')));
-				_regionmsg(@pvp['arena']['broadcast'], colorize('&7|----------------------------------------------------|'));
+				_regionmsg(@pvp['arena']['broadcast'], colorize('&7&m|----------------------------------------------------|'));
 				foreach(@player: @stats in @pvp['stats']) {
 					_regionmsg(@pvp['arena']['broadcast'], replace('----'
 						._pad_stat(@stats['kills'], 2).'-------'
@@ -418,7 +418,7 @@ proc _pvp_end_match(@id, @winners) {
 						._pad_stat(round(@stats['damage']), 3).'---------'
 						.if(array_contains(@winners, @player), color('gold').color('bold')).@player.'-', '-', ' '));
 				}
-				_regionmsg(@pvp['arena']['broadcast'], colorize('&7|----------------------------------------------------|'));
+				_regionmsg(@pvp['arena']['broadcast'], colorize('&7&m|----------------------------------------------------|'));
 			}, @id)
 		}
 		
