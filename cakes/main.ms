@@ -83,7 +83,7 @@ bind(player_interact, null, array('block': 68), @event) {
 							set_pinv(player(), @newinv);
 							set_inventory_item(@chestloc, @cslot, null);
 							_acc_subtract(player(), @cost[1]);
-							msg(color('yellow').'[Coin Shop] '.color('r').'Transaction successful. Your coins: '.round(@coins).' (-'.@cost[1].')');
+							msg(color('yellow').'[Coin Shop] '.color('r').'Transaction successful. Your coins: '.round(@coins - @cost[1]).' (-'.@cost[1].')');
 							break(2);
 						}
 					}
