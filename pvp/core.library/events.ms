@@ -661,3 +661,11 @@ bind(pressure_plate_activated, array('id': @id.'platespec'), null, @e, @id = @id
 		cancel()
 	}
 }
+
+array_push(@pvp['binds'], @id.'dropspec');
+bind(item_drop, array('id': @id.'dropspec'), null, @e, @id = @id) {
+	@pvp = import('pvp'.@id);
+	if(array_contains(@pvp['spectators'], @e['player'])) {
+		cancel();
+	}
+}
