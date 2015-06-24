@@ -18,29 +18,8 @@ bind(player_interact, array('id': @id.'grapple'), array(item: 417, button: 'righ
 	play_sound(ploc(), array(sound: 'SHOOT_ARROW'));
 	@ref = array();
 	@shooter = pinfo(player(), 13);
-	@squid = spawn_mob('SQUID', 1, ploc())[0];
-	set_mob_effect(@squid, 14, 0, 12, true);
-	set_mob_effect(@squid, 11, 5, 12, true);
-	set_leashholder(@squid, @shooter);
-
-	@loc = entity_loc(@arrow);
-	@loc[y] -= 1;
-	set_interval(50, closure(){
-		if(!entity_exists(@arrow)) {
-			clear_task();
-			try(entity_remove(@squid));
-		} else if(entity_exists(@squid) && !get_entity_vehicle(@squid)) {
-			set_entity_loc(@squid, @loc);
-			@newloc = entity_loc(@arrow);
-			@loc[x] = @newloc[x];
-			@loc[y] = @newloc[y] - 1;
-			@loc[z] = @newloc[z];
-		} else {
-			clear_task();
-		}
-	});
 	
-	bind(projectile_hit, array(id: 'grapple'.player()), array(id: @arrow), @event, @shooter = @shooter, @squid = @squid) {
+	bind(projectile_hit, array(id: 'grapple'.player()), array(id: @arrow), @event, @shooter = @shooter) {
 		unbind();
 		
 		set_timeout(50, closure(){
@@ -56,6 +35,11 @@ bind(player_interact, array('id': @id.'grapple'), array(item: 417, button: 'righ
 			play_sound(@loc1, array(sound: 'IRONGOLEM_HIT', pitch: 2));
 			play_sound(@loc2, array(sound: 'IRONGOLEM_HIT', pitch: 2));
 			play_sound(@loc1, array(sound: 'HORSE_BREATHE', pitch: 1.7));
+			
+			@squid = spawn_mob('SQUID', 1, @event['location'])[0];
+			set_mob_effect(@squid, 14, 0, 12, true);
+			set_mob_effect(@squid, 11, 5, 12, true);
+			set_leashholder(@squid, @shooter);
 			
 			@armorstand = spawn_entity('ARMOR_STAND', 1, _relative(@loc2, 'down', 2.3))[0];
 			set_entity_spec(@armorstand, array('gravity': false, 'small': true, 'visible': false));
@@ -96,13 +80,10 @@ bind(player_interact, array('id': @id.'grapple'), array(item: 417, button: 'righ
 		})
 	}
 	
-	set_timeout(1000, closure(){
+	set_timeout(1100, closure(){
 		if(has_bind('grapple'.player())) {
 			unbind('grapple'.player());
-			try(
-				entity_remove(@squid);
-				entity_remove(@arrow);
-			)
+			try(entity_remove(@arrow));
 		}
 	})
 } 
