@@ -300,7 +300,7 @@ proc _get_effects() {
 	@entities: An array of entity types to remove. (some entity types are automatically protected)
 */
 proc _remove_region_entities(@region, @entities = array()) {
-	if(get_command_block(), @world = get_command_block()['world'], @world = pworld())
+	@world = 'custom'; # we don't need this for other worlds
 	if(!sk_region_exists(@world, @region)) {
 		console('Can\'t remove entities because region doesn\'t exist: '.@region)
 		return(false)
