@@ -549,8 +549,7 @@ proc _get_inventory_count(@loc, @item) {
 	@count = 0
 	foreach(@i in @inv) {
 		if(!is_null(@i)
-		&& @i['type'].':'.@i['data'] == @item 
-		|| @item == 'all') {
+		&& (@i['type'].':'.@i['data'] == @item || @item == 'all')) {
 			@count = @count + @i['qty']
 		}
 	}
