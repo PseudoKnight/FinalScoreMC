@@ -7,9 +7,9 @@ proc _remove_player(@player, @pvp) {
 }
 
 proc _pvp_initialize_players(@id, @players) {
-	@c = array(0, 0) # for selecting initial spawn locations
+	@pvp = import('pvp'.@id);
+	@c = array(0, 0); # for selecting initial spawn locations
 	foreach(@player in @players) {
-		@pvp = import('pvp'.@id)
 		if(!ponline(@player) || !get_collides_with_entities(@player)) {
 			array_remove(@pvp['players'], @player)
 			continue()
@@ -56,28 +56,6 @@ proc _pvp_initialize_players(@id, @players) {
 			);
 		}
 		
-		queue_push(closure(){
-			if(array_index_exists(@pvp, 'team')) {
-				@loc = @pvp['arena']['spawn'][@pvp['players'][@player]['team']][@c[@pvp['players'][@player]['team']]];
-				if(@c[@pvp['players'][@player]['team']] == array_size(@pvp['arena']['spawn'][@pvp['players'][@player]['team']]) - 1) {
-					@c[@pvp['players'][@player]['team']] = 0
-				} else {
-					@c[@pvp['players'][@player]['team']]++
-				}
-			} else {
-				@loc = @pvp['arena']['spawn'][0][@c[0]];
-				if(@c[0] == array_size(@pvp['arena']['spawn'][0]) - 1) {
-					@c[0] = 0
-				} else {
-					@c[0]++
-				}
-			}
-			set_entity_fall_distance(pinfo(@player, 13), 0);
-			set_ploc(@player, @loc);
-			play_sound(@loc, array('sound': 'FIREWORK_BLAST'), @player);
-		}, @id)
-		queue_delay(50, @id) # this is to help prevent invisible players
-		
 		set_pbed_location(@player, @pvp['arena']['lobby'])
 
 		_clear_pinv(@player)
@@ -104,9 +82,34 @@ proc _pvp_initialize_players(@id, @players) {
 		set_psaturation(@player, 5)
 		set_phealth(@player, 20)
 		_pvp_equip(@id, @player)
-
+		
+		# Select spawn location
+		if(array_index_exists(@pvp, 'team')) {
+			@loc = @pvp['arena']['spawn'][@pvp['players'][@player]['team']][@c[@pvp['players'][@player]['team']]];
+			if(@c[@pvp['players'][@player]['team']] == array_size(@pvp['arena']['spawn'][@pvp['players'][@player]['team']]) - 1) {
+				@c[@pvp['players'][@player]['team']] = 0;
+			} else {
+				@c[@pvp['players'][@player]['team']]++;
+			}
+		} else {
+			@loc = @pvp['arena']['spawn'][0][@c[0]];
+			if(@c[0] == array_size(@pvp['arena']['spawn'][0]) - 1) {
+				@c[0] = 0;
+			} else {
+				@c[0]++;
+			}
+		}
+		
+		# Teleport to spawn location
+		# Teleporting players one at a time helps prevent client-side invisible players
+		queue_push(closure(){ 
+			try( # sometimes they're dead
+				set_entity_fall_distance(pinfo(@player, 13), 0);
+				set_ploc(@player, @loc);
+				play_sound(@loc, array('sound': 'FIREWORK_BLAST'), @player);
+			);
+		}, @id);
 	}
-
 }
 
 proc _pvp_equip(@id, @player) {
