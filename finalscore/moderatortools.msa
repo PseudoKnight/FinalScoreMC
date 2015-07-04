@@ -232,6 +232,8 @@
 	}
 <<<
 
+*:/donation [$] = call_alias('/contribution '. $);
+*:/support [$] = call_alias('/contribution ' . $);
 *:/contribution $player $amount = >>>
 	if(!has_permission('group.administrators'), die('You do not have permission to use this command.'))
 	@pdata = _pdata($player)
