@@ -74,7 +74,7 @@ bind(player_interact, null, array('block': 68), @event) {
 						if(is_null(@pitem)
 						|| (@pitem['type'] == @citem['type'] 
 						&& @pitem['data'] == @citem['data'] 
-						&& @pitem['qty'] + @citem['qty'] <= max_stack_size(@item))) {
+						&& @pitem['qty'] + @citem['qty'] <= max_stack_size(@pitem))) {
 							if(!is_null(@pitem)) {
 								@citem['qty'] += @pitem['qty'];
 							}
