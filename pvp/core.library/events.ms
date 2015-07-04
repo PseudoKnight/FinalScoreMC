@@ -52,7 +52,7 @@ bind(player_death, array('priority': 'high', 'id': @id.'death'), null, @e, @id =
 		@deathmessage = array_implode(@parts);
 	}
 	
-	_regionmsg(@pvp['arena']['broadcast'], color('gray').'[PVP] '.color('r').@deathmessage)
+	_regionmsg(@pvp['arena']['broadcast'], @deathmessage);
 
 	if(array_index_exists(@pvp['arena'], 'lives')) {
 		@pvp['players'][player()]['lives'] = @pvp['players'][player()]['lives'] - 1
