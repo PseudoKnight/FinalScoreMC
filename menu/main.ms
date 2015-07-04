@@ -65,14 +65,15 @@ queue_push(closure(){
 	@courses[46][type] = 57
 	create_virtualchest(@courses)
 
-	bind(player_interact, null, array(item: 340, button: 'right'), @e) {
+	bind(player_interact, null, array('item': 340, 'button': 'right'), @event) {
 		if(pworld() == 'custom') {
-			@item = pinv(player(), null)
-			if(!is_null(@item['meta'])
+			@item = pinv(player(), null);
+			if(!is_null(@item) # sometimes an earlier event handler will remove the item
+			&& is_null(@item['meta'])
 			&& @item['meta']['display'] == color('b').color('bold').'Park Directory') {
-				cancel()
-				popen_virtualchest('main')
-				play_sound(ploc(), array(sound: 'STEP_WOOL', pitch: 1.2), player())
+				cancel();
+				popen_virtualchest('main');
+				play_sound(ploc(), array('sound': 'STEP_WOOL', 'pitch': 1.2), player());
 			}
 		}
 	}
