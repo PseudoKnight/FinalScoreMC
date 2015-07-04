@@ -22,13 +22,16 @@
 					foreach(@world in get_worlds()) {
 						@worlds .= replace(_worldname(@world), ' ', '').', ';
 					}
-					die(color('yellow').'Usage: /home [world] [player]\n'
-						.'Available worlds: '.@worlds);
+					die(color('yellow') . 'Available worlds: ' . @worlds);
 				}
 			}
 		}
 	}
-	@pdata = _pdata(@player)
+	try(
+		@pdata = _pdata(@player);
+	, # catch
+		die(color('yellow') . '"' . @player . '" is not a known world or player name.');
+	);
 	if(!array_index_exists(@pdata, 'homes') || !array_index_exists(@pdata['homes'], @world), die('You can set a home for a world with /sethome'))
 	_warmuptp(3.7, player(), array(
 			@pdata['homes'][@world][0], 
