@@ -66,22 +66,22 @@ bind(player_interact, null, array('block': 68), @event) {
 				die(color('yellow').'[Coin Shop] '.color('r').'There are no items left.')
 			}
 			if(@coins < @cost[1], die(color('yellow').'[Coin Shop] '.color(r).'You only have '.color('red').round(@coins).color('r').' left.'))
-			@cinv = get_inventory(@chestloc);
-			foreach(@cslot: @citem in @cinv) {
-				if(!is_null(@citem)) {
+			@chest = get_inventory(@chestloc);
+			foreach(@c in 0..27) {
+				if(!is_null(@chest[@c])) {
 					@pinv = pinv();
-					foreach(@pslot: @pitem in @pinv) {
-						if(is_null(@pitem)
-						|| (@pitem['type'] == @citem['type'] 
-						&& @pitem['data'] == @citem['data'] 
-						&& @pitem['qty'] + @citem['qty'] <= max_stack_size(@pitem))) {
-							if(!is_null(@pitem)) {
-								@citem['qty'] += @pitem['qty'];
+					foreach(@p in 0..36) {
+						if(is_null(@pinv[@p])
+						|| (@pinv[@p]['type'] == @chest[@c]['type'] 
+						&& @pinv[@p]['data'] == @chest[@c]['data'] 
+						&& @pinv[@p]['qty'] + @chest[@c]['qty'] <= max_stack_size(@pinv[@p]))) {
+							if(!is_null(@pinv[@p])) {
+								@chest[@c]['qty'] += @pinv[@p]['qty'];
 							}
 							@newinv = array();
-							@newinv[@pslot] = @citem;
+							@newinv[@p] = @chest[@c];
 							set_pinv(player(), @newinv);
-							set_inventory_item(@chestloc, @cslot, null);
+							set_inventory_item(@chestloc, @c, null);
 							_acc_subtract(player(), @cost[1]);
 							msg(color('yellow').'[Coin Shop] '.color('r').'Transaction successful. Your coins: '.round(@coins - @cost[1]).' (-'.@cost[1].')');
 							break(2);
