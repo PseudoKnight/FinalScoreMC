@@ -53,7 +53,11 @@ register_command('timer', array(
 							if(array_contains(sk_current_regions(@player), @id)
 							|| @yloc < 0) {
 								@level[0] += 1
-								set_plevel(@player, @level[0])
+								if(extension_exists('CHNaughty')) {
+									action_msg(@player, @level[0]);
+								} else {
+									set_plevel(@player, @level[0]);
+								}
 								
 								if(@level[0] <= @ptime) {
 									@percent = round((@level[0] / @ptime) * 100)
@@ -118,6 +122,7 @@ register_command('timer', array(
 						
 						tmsg(@player, 'You achieved a time of '.color('bold').@time.color('r').' seconds.')
 						console(@player.' achieved a time of '.@time.' at '.@id)
+						set_plevel(@player, integer(@time));
 
 						# PERSONAL TIME
 						@ptime = get_value('times.'.@id, @player)
