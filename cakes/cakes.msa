@@ -22,12 +22,12 @@
 			}
 		}
 		if($) {
-			msg(color('gold').'CAKES ACHIEVED BY '.to_upper(@player).'. (#) of other players')
+			msg(color('gold').'CAKES ACHIEVED BY '.to_upper(@player).'. (#) players who achieved the cake')
 		} else {
-			msg(color('gold').'CAKES YOU\'VE ACHIEVED. (#) of other players')
+			msg(color('gold').'CAKES YOU\'VE ACHIEVED. (#) players who achieved the cake')
 		}
-		msg(color('green').color('l').'Challenge Cakes '.color('green').'('.@count['challenge'].'/'.@total['challenge'].') '.color('r').@names['challenge'])
-		msg(color('green').color('l').'Secret Cakes '.color('green').'('.@count['secret'].'/'.@total['secret'].') '.color('r').@names['secret'])
+		msg(color('green').color('l').'Challenge'.color('green').'('.@count['challenge'].'/'.@total['challenge'].') '.color('r').@names['challenge'])
+		msg(color('green').color('l').'Secret'.color('green').'('.@count['secret'].'/'.@total['secret'].') '.color('r').@names['secret'])
 
 	case 'info':
 		@id = '';
