@@ -43,23 +43,21 @@ bind(player_interact_entity, array('id': @id.'hotpotato'), array('clicked': 'PLA
 	
 	@task = set_interval(1000, closure() {
 		@potato = pinv(@toPlayer, @slot);
-		if(is_null(@potato) 
-		|| is_null(@potato['meta']['display'])
-		|| is_null(@potato['meta']['lore'])) {
+		try(
+			if(@potato['meta']['display'] == '1') {
+				explosion(_relative(ploc(@toPlayer), 'up', 1.5), 3, true);
+				clear_task();
+			} else {
+				@potato['meta']['display'] = string(integer(@potato['meta']['display']) - 1);
+				play_sound(ploc(@toPlayer), array('sound': 'NOTE_STICKS'));
+				@inv = array();
+				@inv[@slot] = @potato;
+				set_pinv(@toPlayer, @inv);
+			}
+		, #catch
 			clear_task();
 			die();
-		}
-		
-		if(@potato['meta']['display'] == '1') {
-			explosion(_relative(ploc(@toPlayer), 'up', 1.5), 3, true);
-			clear_task();
-		} else {
-			@potato['meta']['display'] = string(integer(@potato['meta']['display']) - 1);
-			play_sound(ploc(@toPlayer), array('sound': 'NOTE_STICKS'));
-			@inv = array();
-			@inv[@slot] = @potato;
-			set_pinv(@toPlayer, @inv);
-		}
+		);
 	});
 	
 	@item['meta']['lore'] = array(@task);
