@@ -581,6 +581,25 @@ bind(player_interact_entity, null, array('clicked': 'VILLAGER'), @event) {
 	}
 }
 
+# painting cycler
+bind(player_interact_entity, null, array('clicked': 'PAINTING'), @event) {
+	if(sk_can_build(entity_loc(@event['id']))) {
+		@paintings = reflect_pull('enum', 'Art');
+		@current = entity_spec(@event['id'])['type'];
+		@index = array_index(@paintings, @current);
+		@tries = 0;
+		do {
+			@next = @paintings[(@index = (@index + 1) % array_size(@paintings))];
+			set_entity_spec(@event['id'], array('type': @next));
+			# if successful, the entity id/uuid will change
+			# but just in case, only try 20 times
+		} while(entity_exists(@event['id']) && @tries++ < 20);
+		if(extension_exists('CHNaughty')) {
+			action_msg(@next);
+		}
+	}
+}
+
 # Prevent undesireable interdimensional travel
 bind(entity_enter_portal, null, array(type: 'ENDER_DRAGON', world: 'outworld'), @e) {
 	cancel();
