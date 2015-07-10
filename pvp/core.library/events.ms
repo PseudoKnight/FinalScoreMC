@@ -301,33 +301,35 @@ bind(player_teleport, array('id': @id.'enderpearl', 'priority': 'highest'), arra
 
 array_push(@pvp['binds'], @id.'command')
 bind(player_command, array('id': @id.'command'), null, @e, @id = @id) {
-	@pvp = import('pvp'.@id)
-	if(!array_index_exists(@pvp['players'], player())
-	|| !array_contains(array('/accept', '/warp', '/spawn', '/home'), @e['prefix']), die())
-	_regionmsg(@pvp['arena']['broadcast'], color('gray').'[PVP] '
-		.@pvp['players'][player()]['color'].player().color('r').' left the arena.')
-	if(@pvp['arena']['mode'] == 'ctf' 
-	&& !is_null(@flag = _flag(pinv(player(), 103)))) {
-		_pvp_flag_spawn(@id, @flag)
+	@pvp = import('pvp'.@id);
+	if(!array_contains(array('/accept', '/warp', '/spawn', '/home'), @e['prefix'])) {
+		die();
 	}
-	if(array_index_exists(@pvp['players'][player()], 'class')) {
-		_class('unload', player(), @pvp['players'][player()]['class'], @pvp)
+	
+	if(array_index_exists(@pvp['players'], player())) {
+		_regionmsg(@pvp['arena']['broadcast'], color('gray').'[PVP] '
+			.@pvp['players'][player()]['color'].player().color('r').' left the arena.');
+		if(@pvp['arena']['mode'] == 'ctf' 
+		&& !is_null(@flag = _flag(pinv(player(), 103)))) {
+			_pvp_flag_spawn(@id, @flag);
+		}
+		if(array_index_exists(@pvp['players'][player()], 'class')) {
+			_class('unload', player(), @pvp['players'][player()]['class'], @pvp);
+		}
+		if(array_index_exists(@pvp['arena'], 'resourcepack')) {
+			send_resourcepack(player(), 'http://mc.finalscoremc.com:25966/resourcepacks/default.zip');
+		}
+		array_remove(@pvp['players'], player());
+		if(array_index_exists(@pvp['arena'], 'lives') && @pvp['arena']['lives'] > 1) {
+			set_pscore('lives', player(), 0, @id);
+		}
+		_clear_pinv();
+		_clear_peffects(player());
+		_pvp_check_objectives(@id);
+		
+	} else if(array_contains(@pvp['spectators'], player())) {
+		_remove_spectator(@id, player(), @pvp);
 	}
-	# if(array_index_exists(@pvp['arena'], 'timer')) {
-		# if(function_exists('premove_bar')) {
-			# premove_bar()
-		# }
-	# }
-	if(array_index_exists(@pvp['arena'], 'resourcepack')) {
-		send_resourcepack(player(), 'http://mc.finalscoremc.com:25966/resourcepacks/default.zip')
-	}
-	array_remove(@pvp['players'], player())
-	if(array_index_exists(@pvp['arena'], 'lives') && @pvp['arena']['lives'] > 1) {
-		set_pscore('lives', player(), 0, @id)
-	}
-	_clear_pinv()
-	_clear_peffects(player())
-	_pvp_check_objectives(@id)
 }
 
 if(!array_contains(@pvp['arena']['flags'], 'build')) {
