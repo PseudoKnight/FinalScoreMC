@@ -14,8 +14,9 @@ register_command('timer', array(
 	
 		if(array_size(@args) == 3) {
 		
-			@id = @args[1]
-			@player = @args[2]
+			@id = @args[1];
+			@player = @args[2];
+			@startLoc = ploc(@player);
 			
 			if(!phas_flight(@player)) {
 
@@ -25,6 +26,9 @@ register_command('timer', array(
 				
 					set_phunger(@player, 20);
 					set_psaturation(@player, 5);
+					set_pinv(@player, array(0: array('type': 39, 'meta': array(
+						'display': color('green').color('bold').'Restart Button'
+					))));
 					
 					if(array_index_exists(@timers, @player)) {
 						clear_task(@timers[@player][2])
@@ -87,10 +91,12 @@ register_command('timer', array(
 						
 						if(@stop) {
 							array_remove(@timers, @player)
-							unbind(@player.'timerbreak')
+							unbind(@player.'timerbreak');
+							unbind(@player.'timerrestart');
 							if(ponline(@player) && pworld(@player) == 'custom') {
 								set_plevel(@player, 0)
 								set_pexp(@player, 0)
+								ptake_item(@player, 39, 1);
 							}
 							clear_task()
 							_remove_activity(@player.'timer');
@@ -98,13 +104,22 @@ register_command('timer', array(
 					})
 					
 					if(!has_bind(@player.'timerbreak')) {
-						bind(block_break, array('id': @player.'timerbreak'), array('player': @player), @e, @p = @player) {
-							play_sound(ploc(@p), array('sound': 'VILLAGER_NO'), @p)
-							@timers = import('timer')
-							unbind()
-							clear_task(@timers[@p][2])
-							array_remove(@timers, @p)
-							_remove_activity(@p.'timer');
+						bind(block_break, array('id': @player.'timerbreak'), array('player': @player), @e) {
+							play_sound(ploc(), array('sound': 'VILLAGER_NO'), player());
+							@timers = import('timer');
+							unbind();
+							unbind(player().'timerrestart');
+							ptake_item(@player, 39, 1);
+							clear_task(@timers[player()][2]);
+							array_remove(@timers, player());
+							_remove_activity(player().'timer');
+						}
+					}
+					if(!has_bind(@player.'timerrestart')) {
+						bind(player_interact, array('id': @player.'timerrestart'), array('player': @player, 'item': 39), @e, @loc = @startLoc) {
+							cancel();
+							set_ploc(@loc);
+							pfacing(@loc['yaw'], @loc['pitch']);
 						}
 					}
 					
@@ -113,12 +128,14 @@ register_command('timer', array(
 					
 					if(array_index_exists(@timers, @player)
 					&& @timers[@player][0] == @id) {
-						@time = round((time() - @timers[@player][1]) / 1000, 1)
-						unbind(@player.'timerbreak')
-						clear_task(@timers[@player][2])
-						array_remove(@timers, @player)
+						@time = round((time() - @timers[@player][1]) / 1000, 1);
+						unbind(@player.'timerbreak');
+						unbind(@player.'timerrestart');
+						ptake_item(@player, 39, 1);
+						clear_task(@timers[@player][2]);
+						array_remove(@timers, @player);
 						_remove_activity(@player.'timer');
-						play_sound(ploc(@player), array('sound': 'ORB_PICKUP'), @player)
+						play_sound(ploc(@player), array('sound': 'ORB_PICKUP'), @player);
 						
 						tmsg(@player, 'You achieved a time of '.color('bold').@time.color('r').' seconds.')
 						console(@player.' achieved a time of '.@time.' at '.@id)
