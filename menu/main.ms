@@ -69,7 +69,7 @@ queue_push(closure(){
 		if(pworld() == 'custom') {
 			@item = pinv(player(), null);
 			if(!is_null(@item) # sometimes an earlier event handler will remove the item
-			&& is_null(@item['meta'])
+			&& !is_null(@item['meta'])
 			&& @item['meta']['display'] == color('b').color('bold').'Park Directory') {
 				cancel();
 				popen_virtualchest('main');
