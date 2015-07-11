@@ -540,6 +540,25 @@ proc _wrap_string(@string, @width = 320) {
 }
 
 /*
+	Create clickable commands for a JSON message
+*/
+proc _click_tell(@recipients, @components) {
+	@message = ' [""';
+	foreach(@c in @components) {
+		@message .= ',{text:"';
+		if(!is_array(@c)) {
+			@message .= colorize(@c).'"}';
+		} else {
+			@message .= colorize(@c[0]).'",clickEvent:{action:"run_command",value:"'.@c[1].'"}}';
+		}
+	}
+	@message .= ']';
+	foreach(@player in @recipients) {
+		runas('~console', '/tellraw '.@player.@message);
+	}
+}
+
+/*
 	Returns how many of an item an inventory contains at a location.
 	@item: 0:0 format
 */

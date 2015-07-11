@@ -26,7 +26,12 @@
 				array_remove(@pvp['players'], @player)
 			}
 		}
-		_worldmsg('custom', color('gray').'[PVP] '.color('r').player().' has joined '.to_upper(if(array_index_exists(@arena, 'parent'), @arena['parent'].': ').@id).'. ('.array_size(@pvp['players']).')')
+		_click_tell(all_players('custom'), array(
+			'&7[PVP] &r'.player().' has joined '
+			. to_upper(if(array_index_exists(@arena, 'parent'), @arena['parent'].': ').@id)
+			. '. ('.array_size(@pvp['players']).') ',
+			array('&b[JOIN]', '/pvp join '.@id)
+		));
 		console(player().' joined '.@id)
 		if(@pvp['running'] == 1) {
 			if(array_index_exists(@pvp['arena'], 'team')) {
