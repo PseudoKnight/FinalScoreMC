@@ -20,7 +20,7 @@ case 'load':
 				} else {
 					set_interval(200, closure(){
 						try(
-							if(pinfo(@player, 5) <= 0) {
+							if(pinv(player(), 103)['type'] != 314) {
 								clear_task();
 							} else if(entity_grounded(pinfo(@player, 13))) {
 								@xp = pexp(@player);
