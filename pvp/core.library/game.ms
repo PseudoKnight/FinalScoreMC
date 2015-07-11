@@ -103,18 +103,15 @@ proc _pvp_start_match(@id) {
 			@secsleft = mod(@totalsecsleft, 60)
 			@timeleft = @minleft.':'.if(@secsleft < 10, '0').@secsleft
 			@percentage = round((@totalsecsleft / (@pvp['arena']['timer'][1] * 60)) * 100)
+			if(extension_exists('CHNaughty')) {
+				foreach(@p in array_keys(@pvp['players'])) {
+					action_msg(@p, @timeleft);
+				}
+			}
 		}
 
 		foreach(@player in array_keys(@pvp['players'])) {
 			if(pinfo(@player, 5) <= 0, continue())
-			# if(array_index_exists(@pvp['arena'], 'timer')) {
-				# if(function_exists('premove_bar')) {
-					# premove_bar(@player)
-				# }
-				# if(function_exists('set_bar_message')) {
-					# set_bar_message(@player, @timeleft, @percentage)
-				# }
-			# }
 			if(array_index_exists(@pvp['arena'], 'respawntime')
 			&& @pvp['players'][@player]['respawn'] != 0) {
 				if(!array_contains(sk_current_regions(@player), @pvp['arena']['broadcast'])) {
@@ -124,11 +121,6 @@ proc _pvp_start_match(@id) {
 					if(array_index_exists(@pvp['players'][@player], 'class')) {
 						_class('unload', @player, @pvp['players'][@player]['class'], @pvp)
 					}
-					# if(array_index_exists(@pvp['arena'], 'timer')) {
-						# if(function_exists('premove_bar')) {
-							# premove_bar(@player)
-						# }
-					# }
 					if(array_index_exists(@pvp['arena'], 'resourcepack')) {
 						send_resourcepack(@player, 'http://mc.finalscoremc.com:25966/resourcepacks/default.zip')
 					}
@@ -184,36 +176,25 @@ proc _pvp_start_match(@id) {
 			@check = true
 		}
 		
-		if(array_index_exists(@pvp['arena'], 'mobprotect')) {
-			foreach(@team: @data in @pvp['arena']['mobprotect']) {
-				try(@health = ceil(get_entity_health(entity_id(@pvp['team'][@team]['mobprotect'])))
-				, @health = 0)
-				set_pscore('mobhealth', @pvp['arena']['team'][@team]['name'], @health, @id)
-				if(@health <= 0) {
-					if(@team == 0) {
-						_pvp_end_match(@id, @pvp['team'][1]['players'])
-					} else {
-						_pvp_end_match(@id, @pvp['team'][0]['players'])
-					}
-				}
-			}
-		}
-		
 		if(array_index_exists(@pvp['arena'], 'itemspawn')) {
 			for(@i = 0, @i < array_size(@pvp['arena']['itemspawn']), @i++) {
 				if(entity_exists(@pvp['itemspawn'][@i][0])) {
-					@pvp['itemspawn'][@i][1] = time()
+					@pvp['itemspawn'][@i][1] = time();
+					if(extension_exists('CHSpigot')) {
+						play_effect(
+							_relative(entity_loc(@pvp['itemspawn'][@i][0]), 'up', 0.4),
+							'FIREWORKS_SPARK',
+							array('radius': 64, 'speed': 0)
+						);
+					}
 				} else if(@pvp['itemspawn'][@i][1] + (@pvp['arena']['itemspawn'][@i]['cooldown'] * 1000) < time()) {
 					@id = drop_item(@pvp['arena']['itemspawn'][@i]['loc'], @pvp['arena']['itemspawn'][@i]['item'], false)
-					try(
+					try( # maybe chunk isn't loaded? 
 						set_entity_velocity(@id, array(0, 0, 0))
 						play_sound(@pvp['arena']['itemspawn'][@i]['loc'], array('sound': 'ENDERMAN_TELEPORT', 'pitch': 1.5))
 						make_effect(@pvp['arena']['itemspawn'][@i]['loc'], 'ENDER_SIGNAL')
 						@pvp['itemspawn'][@i][0] = @id
 						@pvp['itemspawn'][@i][1] = time()
-					, @exception,
-						console('Entity not found after being spawned. ('.@exception.')')
-					, array('BadEntityException')
 					)
 				}
 			}

@@ -287,6 +287,37 @@ if(array_contains(@pvp['arena']['flags'], 'noxp')) {
 	}
 }
 
+if(array_index_exists(@pvp['arena'], 'mobprotect')) {
+	array_push(@pvp['binds'], @id.'mobprotectdeath');
+	bind(entity_death, array('id': @id.'mobprotectdeath'), null, @e, @id = @id) {
+		@pvp = import('pvp'.@id)
+		foreach(@team: @data in @pvp['arena']['mobprotect']) {
+			try(
+				if(entity_id(@pvp['team'][@team]['mobprotect']) == @e['id']) {
+					
+					if(@team == 0) {
+						_pvp_end_match(@id, @pvp['team'][1]['players'])
+					} else {
+						_pvp_end_match(@id, @pvp['team'][0]['players'])
+					}
+				}
+			);
+		}
+	}
+	
+	array_push(@pvp['binds'], @id.'mobprotectdamage');
+	bind(entity_damage, array('id': @id.'mobprotectdamage'), null, @e, @id = @id) {
+		@pvp = import('pvp'.@id)
+		foreach(@team: @data in @pvp['arena']['mobprotect']) {
+			try(
+				if(entity_id(@pvp['team'][@team]['mobprotect']) == @e['id']) {
+					set_pscore('mobhealth', @pvp['arena']['team'][@team]['name'], ceil(get_entity_health(@e['id'])), @id);
+				}
+			);
+		}
+	}
+}
+
 array_push(@pvp['binds'], @id.'enderpearl')
 bind(player_teleport, array('id': @id.'enderpearl', 'priority': 'highest'), array('type': 'ENDER_PEARL'), @e, @id = @id) {
 	@pvp = import('pvp'.@id)
