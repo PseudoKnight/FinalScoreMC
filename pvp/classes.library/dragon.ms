@@ -20,8 +20,10 @@ case 'load':
 				} else {
 					set_interval(200, closure(){
 						try(
-							if(entity_grounded(pinfo(@player, 13))) {
-								@xp = pexp(@player)
+							if(pinfo(@player, 5) <= 0) {
+								clear_task();
+							} else if(entity_grounded(pinfo(@player, 13))) {
+								@xp = pexp(@player);
 								if(@xp >= 100) {
 									clear_task();
 									set_pflight(@player, true);
@@ -55,6 +57,7 @@ case 'powerup':
 case 'unload':
 	unbind(@player.'dragonfly');
 	unbind(@player.'dragonfall');
+	set_pexp(@player, 0);
 	set_pflight(@player, false);
 	queue_clear(@player.'flap');
 	
