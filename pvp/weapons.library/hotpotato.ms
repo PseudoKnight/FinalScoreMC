@@ -42,8 +42,8 @@ bind(player_interact_entity, array('id': @id.'hotpotato'), array('clicked': 'PLA
 	}
 	
 	@task = set_interval(1000, closure() {
-		@potato = pinv(@toPlayer, @slot);
 		try(
+			@potato = pinv(@toPlayer, @slot);
 			if(@potato['meta']['display'] == '1') {
 				explosion(_relative(ploc(@toPlayer), 'up', 1.5), 3, true);
 				clear_task();
