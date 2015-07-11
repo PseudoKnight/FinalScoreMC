@@ -4,6 +4,31 @@ case 'load':
 		cancel();
 	}
 	
+	set_interval(250, closure() {
+		try(
+			if(pinv(@player, 103)['type'] != 7) {
+				clear_task();
+			}
+		, clear_task());
+		
+		@hunter = pinfo(@player, 13);
+		foreach(@p in array_keys(@pvp['players'])) {
+			if(@p == @player, continue());
+			@helm = pinv(@p, 103);
+			if(!is_null(@helm) && @helm['type'] == 86) {
+				set_ptexp(@player, ptexp(@player) + 1);
+				set_pinv(@p, array(103: null));
+			} else if(entity_can_see(@hunter, pinfo(@p, 13))) {
+				set_ptexp(@player, ptexp(@player) + 1);
+				set_pinv(@p, array(103: array('type': 86)));
+				set_peffect(@p, 9, 0, 4);
+				if(!rand(8)) {
+					play_sound(ploc(@player), array('sound': 'GHAST_MOAN', 'pitch': 0.5));
+				}
+			}
+		}
+	});
+	
 case 'unload':
 	unbind(@player.'invclick');
 }
