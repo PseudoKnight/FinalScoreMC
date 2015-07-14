@@ -109,7 +109,7 @@ register_command('timer', array(
 							@timers = import('timer');
 							unbind();
 							unbind(player().'timerrestart');
-							ptake_item(@player, 39, 1);
+							ptake_item(player(), 39, 1);
 							clear_task(@timers[player()][2]);
 							array_remove(@timers, player());
 							_remove_activity(player().'timer');
