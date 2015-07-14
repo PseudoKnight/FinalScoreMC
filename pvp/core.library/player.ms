@@ -9,6 +9,7 @@ proc _remove_player(@player, @pvp) {
 proc _pvp_initialize_players(@id, @players) {
 	@pvp = import('pvp'.@id);
 	@c = array(0, 0); # for selecting initial spawn locations
+	@loc = array();
 	foreach(@player in @players) {
 		if(!ponline(@player) || !get_collides_with_entities(@player)) {
 			array_remove(@pvp['players'], @player)
