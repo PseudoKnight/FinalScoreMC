@@ -15,9 +15,15 @@ proc _equip_park(@player) {
 	_clear_pinv(@player)
 	
 	set_pinv(@player, array(
-		1: array('name': 'BOOK', 'meta': array('display': color('b').color('bold').'Park Directory')),
-		2: array('name': 'COOKED_MUTTON', 'qty': 64, 'meta': 
-			array('display': color('bold').'Frog Legs', 'lore': array('Good eatin\''))),
+		1: array('name': 'BOOK', 'meta': array(
+			'display': color('b').color('bold').'Park Directory',
+			'enchants': array(array('elevel': 1, 'etype': 'DURABILITY')),
+			'flags': array('HIDE_ENCHANTS'),
+		)),
+		2: array('name': 'COOKED_MUTTON', 'qty': 64, 'meta': array(
+			'display': color('bold').'Frog Legs', 
+			'lore': array('Good eatin\''),
+		)),
 	))
 	
 	try(
