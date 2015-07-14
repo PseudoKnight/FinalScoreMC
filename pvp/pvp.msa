@@ -252,8 +252,14 @@
 			create_team(@pvp['arena']['team'][1]['name'], @id)
 			set_team_display(@pvp['arena']['team'][0]['name'], array('prefix': @pvp['arena']['team'][0]['color']), @id)
 			set_team_display(@pvp['arena']['team'][1]['name'], array('prefix': @pvp['arena']['team'][1]['color']), @id)
-			set_team_options(@pvp['arena']['team'][0]['name'], array('friendlyinvisibles': true), @id)
-			set_team_options(@pvp['arena']['team'][1]['name'], array('friendlyinvisibles': true), @id)
+			set_team_options(@pvp['arena']['team'][0]['name'], array(
+				'friendlyinvisibles': true,
+				'nametagvisibility': if(array_index_exists(@pvp['arena'], 'nametags'), @pvp['arena']['nametags'][0], 'ALWAYS')
+			), @id);
+			set_team_options(@pvp['arena']['team'][1]['name'], array(
+				'friendlyinvisibles': true,
+				'nametagvisibility': if(array_index_exists(@pvp['arena'], 'nametags'), @pvp['arena']['nametags'][1], 'ALWAYS')
+			), @id);
 		}
 
 		switch(@pvp['arena']['mode']) {

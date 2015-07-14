@@ -131,6 +131,11 @@
 				if(length(@arena['team'][0]['name']) > 16 
 				|| length(@arena['team'][1]['name']) > 16, die('Name too long. (16 character limit)'))
 				msg('Set team names to '.colorize(@args[0]).' vs '.colorize(@args[1]))
+				
+			case 'nametags':
+				@arena['nametags'][0] = @args[0]
+				@arena['nametags'][1] = @args[1]
+				msg('Set nametag visibility to '.@args[0].' and '.@args[1].'.');
 
 			case 'kit':
 				if(!array_index_exists(@arena, 'kit'), @arena['kit'] = array(array(), array()))
@@ -400,7 +405,7 @@
 				msg('Activated these flags: '.color(10).@arena['flags'])
 
 			default:
-				die('This requires a valid setting. Type "/arena set" to see settings.')
+				die('This requires a valid setting. Type "/arena help" to see settings.')
 		}
 		store_value('arena.'.$id, @arena)
 		
@@ -751,6 +756,7 @@
 		msg('mobprotect '.color('gray').'Team protects mob [team type].');
 		msg('teamratio '.color('gray').'The ratio of players for team 1 and 2.');
 		msg('team '.color('gray').'Team info - [&4Team1 &cTeam2]');
+		msg('nametags '.color('gray').'Name tag visiblity per team');
 		msg('kit '.color('gray').'Sets the respawn kits - accepts team num as value');
 		msg('classes '.color('gray').'Available classes [team1list team2list]');
 		msg('captain '.color('gray').'The captain class for each team');
