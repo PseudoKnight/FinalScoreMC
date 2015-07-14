@@ -37,7 +37,7 @@ bind(player_move, null, array('threshold': 10), @event) {
 }
 
 bind(player_teleport, null, null, @event) {
-	if(!has_permission('livemap.tracers') || pmode() == 'CREATIVE') {
+	if(player() == '~console' || !has_permission('livemap.tracers') || pmode() == 'CREATIVE') {
 		die();
 	}
 	@pdata = _pdata(@event['player']);
