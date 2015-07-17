@@ -1,26 +1,27 @@
 switch(@action) {
 case 'load':
-	bind(player_interact, array('id': @player.'lightning'), array('item': 369, 'button': 'right', 'player': @player), @e) {
+	bind(player_interact, array('id': @player.'lightning'), array('item': 369, 'button': 'right', 'player': @player), @e, @pvp = @pvp) {
 		@loc = pcursor();
-		# bind(entity_damage, array('id': player().'lightningdmg'), array('cause': 'LIGHTNING', 'world': 'custom'), @e, 
-				# @damager = player(), @loc = @loc) {
-			
-			# @eloc = entity_loc(@e['id']);
-			# if(@eloc['x'] < @loc['x'] + 4 && @eloc['x'] > @loc['x'] - 4
-			# && @eloc['z'] < @loc['z'] + 4 && @eloc['z'] > @loc['z'] - 4) {
-				# _stats_damage(@damager, @e['player'], @e['amount'], @pvp);
-			# }
-		# }
+		bind(entity_damage, array('id': player().'lightningdmg'), array('type': 'PLAYER', 'cause': 'LIGHTNING', 'world': 'custom'), @e,
+				@damager = player(), @loc = @loc, @pvp = @pvp) {
+				
+			if(!array_index_exists(@pvp['players'], @e['player']), die());
+			@eloc = entity_loc(@e['id']);
+			if(@eloc['x'] < @loc['x'] + 4 && @eloc['x'] > @loc['x'] - 4
+			&& @eloc['z'] < @loc['z'] + 4 && @eloc['z'] > @loc['z'] - 4) {
+				_stats_damage(@damager, @e['player'], @e['amount'], @pvp);
+			}
+		}
 		lightning(@loc);
 		@slot = pinfo(player(), 15)
 		@item = pinv(player(), null)
 		set_pinv(player(), array('null': array('type': 280)))
 		queue_clear(player().'lightning');
-		# queue_delay(1000, player().'lightning');
-		# queue_push(closure(){
-			# unbind(player().'lightningdmg');
-		# }, player().'lightning');
-		queue_delay(6000, player().'lightning');
+		queue_delay(1000, player().'lightning');
+		queue_push(closure(){
+			unbind(player().'lightningdmg');
+		}, player().'lightning');
+		queue_delay(5000, player().'lightning');
 		queue_push(closure(){
 			@newitem = pinv(player(), @slot)
 			if(@newitem && @newitem['type'] == 280) {

@@ -31,8 +31,12 @@ case 'equip':
 	queue_clear(@player.'evolve')
 	
 case 'powerup':
-	set_peffect(@player, 1, 3, 15)
-	set_peffect(@player, 5, 3, 15)
+	set_peffect(@player, 1, 3, 16);
+	set_peffect(@player, 5, 3, 16);
+	set_peffect(@player, 8, 1, 16);
+	set_timeout(50, closure(){ # powerups flash night vision, so we have to delay here
+		try(set_peffect(@player, 16, 0, 22));
+	});
 	play_sound(ploc(@player), array('sound': 'WOLF_HOWL', 'pitch': 0.9, 'volume': 2))
 	set_pinv(@player, array(
 		100: array('type': 301, 'meta': array('color': array('r': 50, 'g': 50, 'b': 50))),
@@ -40,30 +44,28 @@ case 'powerup':
 		102: array('type': 299, 'meta': array('color': array('r': 50, 'g': 50, 'b': 50))),
 		103: array('type': 35, 'data': 7),
 	))
-	queue_clear(@player.'evolve')
-	queue_delay(50, @player.'evolve')
-	queue_push(closure(){
-		set_peffect(@player, 16, 0, 22)
-	}, @player.'evolve')
-	queue_delay(15000, @player.'evolve')
-	queue_push(closure(){
+	set_timeout(16000, closure(){
 		if(pinfo(@player, 5) > 0) {
-			@r = rand(0, 256)
-			@g = rand(0, 256)
-			@b = rand(0, 256)
-			set_pinv(@player, array(
-				100: array('type': 301, 'meta': array('color': array('r': @r, 'g': @g, 'b': @b))),
-				101: array('type': 300, 'meta': array('color': array('r': @r, 'g': @g, 'b': @b))),
-				102: array('type': 299, 'meta': array('color': array('r': @r, 'g': @g, 'b': @b))),
-				103: null,
-			))
-			_clear_peffects(@player)
+			foreach(@effect in get_peffect(@player)) {
+				# if there's 6 seconds of night vision left, he hasn't gotten another powerup
+				if(@effect['id'] == 16 && @effect['seconds'] < 7) {
+					@r = rand(0, 256);
+					@g = rand(0, 256);
+					@b = rand(0, 256);
+					set_pinv(@player, array(
+						100: array('type': 301, 'meta': array('color': array('r': @r, 'g': @g, 'b': @b))),
+						101: array('type': 300, 'meta': array('color': array('r': @r, 'g': @g, 'b': @b))),
+						102: array('type': 299, 'meta': array('color': array('r': @r, 'g': @g, 'b': @b))),
+						103: null,
+					));
+					set_peffect(@player, 16, 0, 0);
+				}
+			}
 		}
-	}, @player.'evolve')
+	});
 
 case 'unload':
 	unbind(@player.'werewolf')
 	unbind(@player.'kill')
-	queue_clear(@player.'evolve')
 	
 }

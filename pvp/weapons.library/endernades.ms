@@ -4,9 +4,10 @@ bind(player_teleport, array('id': @id.'endernades'), array('type': 'ENDER_PEARL'
 	if(!array_index_exists(@pvp['players'], player()), die());
 	
 	cancel();
-	bind(entity_damage, array('id': 'endernade'), array('cause': 'ENTITY_EXPLOSION'), @e, @damager = pinfo(@e['player'], 13)) {
-		damage_entity(@e['id'], @e['amount'], @damager);
-		modify_event('amount', 0);
+	bind(entity_damage, array('id': 'endernade'), array('cause': 'ENTITY_EXPLOSION'), @e, @damage = @e['player'], @pvp = @pvp) {
+		if(!is_null(@player = get_player_from_entity_id(@e['id']))) {
+			_stats_damage(@damager, @player, @e['amount'], @pvp);
+		}
 	}
 	explosion(@e['to'], 2, true);
 	unbind('endernade');
@@ -28,7 +29,7 @@ bind(player_interact, array('id': @id.'endernadesreload', 'priority': 'highest')
 		@item['name'] = 'MAGMA_CREAM'
 		set_pinv(array('null': @item))
 		@slot = pinfo(player(), 15)
-		set_timeout(800, closure(){
+		set_timeout(1200, closure(){
 				@item = pinv(player(), @slot)
 				if(!is_null(@item) && @item['type'] == 378) {
 				play_sound(ploc(), array('sound': 'IRONGOLEM_THROW'))
