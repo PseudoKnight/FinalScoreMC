@@ -52,6 +52,7 @@ proc _spawn_mob(@mob, @qty, @loc, @owner = 'Notch') {
 						if(@mob['explode'][0] == 0) {
 							try(entity_remove(@display[@i]));
 							explosion(entity_loc(@m), @mob['explode'][1], true);
+							damage_entity(@m, 20);
 						} else {
 							play_sound(entity_loc(@m), array('sound': 'NOTE_STICKS', 'pitch': 2, 'volume': 1));
 						}
