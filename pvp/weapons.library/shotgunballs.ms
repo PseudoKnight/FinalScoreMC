@@ -21,25 +21,27 @@ bind(player_interact, array('id': @id.'shotgunshoot'), array('item': 332, 'butto
 		set_pinv(array('null': @item))
 		@slot = pinfo(player(), 15)
 		set_timeout(300, closure(){
-		for(@i = 0, @i < 8, @i++) {
-			if(entity_exists(@entities[@i]), entity_remove(@entities[@i]))
-		}
-		set_timeout(700, closure(){
-				@item = pinv(player(), @slot)
-				if(!is_null(@item) && @item['type'] == 341) {
-				play_sound(ploc(), array('sound': 'PISTON_RETRACT', 'pitch': 1.5))
-				@inv = array()
-				@item['type'] = 332
-				@item['name'] = 'SNOW_BALL'
-				@inv[@slot] = @item
-				set_pinv(@inv)
+			foreach(@snowball in @entities) {
+				if(entity_exists(@snowball)) {
+					entity_remove(@snowball);
+				}
 			}
-		})
-		})
+			set_timeout(700, closure(){
+				@item = pinv(player(), @slot);
+				if(!is_null(@item) && @item['type'] == 341) {
+					play_sound(ploc(), array('sound': 'PISTON_RETRACT', 'pitch': 1.5));
+					@inv = array();
+					@item['type'] = 332;
+					@item['name'] = 'SNOW_BALL';
+					@inv[@slot] = @item;
+					set_pinv(@inv);
+				}
+			});
+		});
 	}
 }
-array_push(@pvp['binds'], @id.'shotgunreload')
-bind(entity_damage, array('id': @id.'shotgunreload'), array('type': 'PLAYER', 'cause': 'PROJECTILE', 'world': 'custom'), @e, assign(@id, @id)) {
+array_push(@pvp['binds'], @id.'shotgundamage')
+bind(entity_damage, array('id': @id.'shotgundamage'), array('type': 'PLAYER', 'cause': 'PROJECTILE', 'world': 'custom'), @e, assign(@id, @id)) {
 	if(ponline(@e['shooter'])) {
 		@pvp = import('pvp'.@id)
 		if(array_index_exists(@pvp['players'], @e['shooter'])
