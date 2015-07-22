@@ -45,7 +45,14 @@ bind(player_interact_entity, array('id': @id.'hotpotato'), array('clicked': 'PLA
 		try(
 			@potato = pinv(@toPlayer, @slot);
 			if(@potato['meta']['display'] == '1') {
+				bind(entity_damage, array('id': player().'hotpotatodmg'), array('type': 'PLAYER', 'world': 'custom'), @e,
+						@damager = player(), @pvp = @pvp) {
+						
+					if(!array_index_exists(@pvp['players'], @e['player']), die());
+					_stats_damage(@damager, @e['player'], @e['amount'], @pvp);
+				}
 				explosion(_relative(ploc(@toPlayer), 'up', 1.5), 3, true);
+				unbind(player().'hotpotatodmg');
 				clear_task();
 			} else {
 				@potato['meta']['display'] = string(integer(@potato['meta']['display']) - 1);
