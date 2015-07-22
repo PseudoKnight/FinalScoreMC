@@ -8,7 +8,7 @@ case 'load':
 			set_entity_velocity(@arrow, array(@velocity['x'] * 2.9, @velocity['y'] * 2.9, @velocity['z'] * 2.9));
 			if(extension_exists('CHSpigot')) {
 				@dmg = get_arrow_damage(@arrow);
-				set_arrow_damage(@arrow, @dmg * 0.75);
+				set_arrow_damage(@arrow, @dmg * 0.70);
 			}
 			set_entity_onfire(@arrow, 1)
 			play_sound(ploc(), array('sound': 'ENDERDRAGON_HIT', 'pitch': 2))
@@ -33,7 +33,13 @@ case 'load':
 	
 	bind(player_interact, array('id': @player.'teleport'), array('item': 381, 'player': @player, 'button': 'right'), @e, @pvp = @pvp) {
 		cancel()
-		@loc = pinfo(player(), 2)
+		@loc = pcursor(array(0, 65, 66, 68, 70, 72, 77, 85, 143, 147, 148, 157, 171, 188, 189, 190, 191, 192));
+		@block = get_block_at(@loc);
+		psend_block_change(@loc, '35:10');
+		@loc['x'] += 0.5;
+		@loc['z'] += 0.5;
+		@loc['y'] += 0.5;
+		play_effect(@loc, 'TILE_DUST', array('id': 90, 'particleCount': 54, 'offsetX': 1.5, 'offsetY': 1.5, 'offsetZ': 1.5, 'speed': 0.1, 'radius': 64));
 		@player = ''
 		foreach(@p in players_in_radius(@loc, 3)) {
 			if(@p != player() && array_index_exists(@pvp['players'], @p)) {
@@ -64,6 +70,9 @@ case 'load':
 		} else {
 			set_pinv(player(), array('null': @item))
 		}
+		set_timeout(400, closure(){
+			psend_block_change(@loc, @block);
+		});
 	}
 	
 case 'powerup':
