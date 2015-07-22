@@ -469,17 +469,24 @@ proc _pvp_end_match(@id, @winners) {
 				}
 			}, @id);
 		}
-
-		# if(!array_index_exists(@pvp['arena'], 'flags') || !array_contains(@pvp['arena']['flags'], 'debug')) {
-			# @arena = get_value('arena', @id)
-			# if(array_index_exists(@arena, 'played')) {
-				# @arena['played'] += 1
-			# } else {
-				# @arena['played'] = 1
-			# }
-		# }
 		
 		remove_scoreboard(@id);
+		
+		# Store stats
+		if(!array_index_exists(@pvp['arena'], 'flags') || !array_contains(@pvp['arena']['flags'], 'debug')) {
+			@arena = get_value('arena.'.@id);
+			if(!array_index_exists(@arena, 'played')) {
+				@arena['played'] = 1;
+			} else {
+				@arena['played'] += 1;
+			}
+			if(array_index_exists(@pvp['arena'], 'classes')) {
+				@arena['classes'] = @pvp['arena']['classes'];
+			}
+			store_value('arena.'.@id, @arena);
+		}
+		
+		# Reset
 		@pvp = array('players': array(), 'running': 0);
 		export('pvp'.@id, @pvp);
 		_remove_activity('pvp'.@id);

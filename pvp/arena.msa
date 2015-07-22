@@ -720,6 +720,46 @@
 		}
 		msg(color('gray').'-------------------------------------')
 		
+	case 'stats':
+		if(!$id) {
+			die('Requires an arena id to get stats.');
+		}
+		@arena = get_value('arena.'.$id);
+		if(!@arena) {
+			die('There is no defined arena by that name.');
+		}
+		if(array_index_exists(@arena, 'played')) {
+			msg(color('gold').'Played: '.color(7).@arena['played'].' times');
+		}
+		if(array_index_exists(@arena, 'classes')) {
+			foreach(@class: @c in @arena['classes']) {
+				if(array_index_exists(@c, 'picked')) {
+					msg(color('gold').to_upper(@class).': '.color(7).@c['picked']);
+				}
+			}
+		}
+		
+	case 'resetstats':
+		if(!$id) {
+			die('Requires an arena id to get stats.');
+		}
+		@arena = get_value('arena.'.$id);
+		if(!@arena) {
+			die('There is no defined arena by that name.');
+		}
+		if(array_index_exists(@arena, 'played')) {
+			array_remove(@arena, 'stats');
+		}
+		if(array_index_exists(@arena, 'classes')) {
+			foreach(@class: @c in @arena['classes']) {
+				if(array_index_exists(@c, 'picked')) {
+					array_remove(@arena['classes'][@class], 'picked');
+				}
+			}
+		}
+		store_value('arena.'.$id, @arena);
+		msg('Reset stats for '.$id);
+		
 	case 'list':
 		@arenas = get_values('arena')
 		@list = ''
@@ -739,6 +779,8 @@
 		msg('/arena delete <id> [setting] '.color('gray').'Delete arenas, settings, or chests');
 		msg('/arena rename <old-id> <new-id> '.color('gray').'Rename the arena.');
 		msg('/arena info [id] [setting] '.color('gray').'View arenas and their settings');
+		msg('/arena stats id '.color('gray').'View stats for arena.');
+		msg('/arena resetstats id '.color('gray').'Reset stats for arena.');
 		msg('/arena list '.color('gray').'List all arenas');
 		msg(color('bold').'SETTINGS **required ------------');
 		msg('lobby ** '.color('gray').'Sets the lobby warp point');
