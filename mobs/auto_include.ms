@@ -17,7 +17,7 @@ proc _spawn_mob(@mob, @qty, @loc, @owner = 'Notch') {
 		}
 		if(array_index_exists(@mob, 'rider')) {
 			if(@mob['rider'] == 'owner') {
-				set_entity_rider(@m, pinfo(player(), 13));
+				set_entity_rider(@m, puuid());
 			} else {
 				@rider = _spawn_mob(@mob['rider'], 1, @loc)[0];
 				set_entity_rider(@m, @rider);

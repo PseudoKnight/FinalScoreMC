@@ -10,7 +10,7 @@ proc _class(@action, @player, @class, @pvp) {
 			set_pexp(@player, 100)
 			bind(player_toggle_flight, array('id': @player.'doublejump'), array('flying': true, 'player': @player), @e) {
 				cancel()
-				@vel = entity_velocity(pinfo(player(), 13))
+				@vel = entity_velocity(puuid())
 				set_pvelocity(@vel['x'] * 1.9, 0.9, @vel['z'] * 1.9)
 				play_effect(_relative(ploc(), 'up'), 'cloud', array('speed': 0, 'particleCount': 5, 'offsetX': 0.4, 'offsetZ': 0.4, 'offsetY': 0))
 				set_pflight(false)

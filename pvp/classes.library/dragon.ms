@@ -22,7 +22,7 @@ case 'load':
 						try(
 							if(pinv(player(), 103)['type'] != 314) {
 								clear_task();
-							} else if(entity_grounded(pinfo(@player, 13))) {
+							} else if(entity_grounded(puuid(@player))) {
 								@xp = pexp(@player);
 								if(@xp >= 100) {
 									clear_task();

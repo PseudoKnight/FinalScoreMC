@@ -6,10 +6,10 @@ case 'load':
 	bind(entity_damage, array('id': @player.'necrodamage', 'priority': 'HIGH'), array('type': 'PLAYER', 'world': 'custom'), @e, @p = @player) {
 		if(@e['player'] == @p 
 		&& ((array_index_exists(@e, 'damager')
-		&& is_numeric(@e['damager'])
+		&& !ponline(@e['damager'])
 		&& entity_type(@e['damager']) == 'ZOMBIE')
 		|| (array_index_exists(@e, 'shooter')
-		&& is_numeric(@e['shooter'])
+		&& !ponline(@e['shooter'])
 		&& entity_type(@e['shooter']) == 'SKELETON'))) {
 			cancel()
 			consume()

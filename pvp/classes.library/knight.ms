@@ -1,7 +1,7 @@
 switch(@action) {
 case 'load':
 	bind(player_death, array('id': @player.'death'), array('player': @player), @event) {
-		@horse = get_entity_vehicle(pinfo(player(), 13))
+		@horse = get_entity_vehicle(puuid())
 		if(@horse) {
 			damage_entity(@horse, 20)
 		}

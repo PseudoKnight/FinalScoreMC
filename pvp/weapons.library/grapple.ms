@@ -17,7 +17,7 @@ bind(player_interact, array('id': @id.'grapple'), array(item: 417, button: 'righ
 	set_entity_spec(@arrow, array(critical: true));
 	play_sound(ploc(), array(sound: 'SHOOT_ARROW'));
 	@ref = array();
-	@shooter = pinfo(player(), 13);
+	@shooter = puuid();
 	
 	bind(projectile_hit, array(id: 'grapple'.player()), array(id: @arrow), @event, @shooter = @shooter) {
 		unbind();

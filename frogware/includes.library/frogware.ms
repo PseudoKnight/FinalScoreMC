@@ -329,7 +329,7 @@ proc _fw_task(@task, @state, @secs) {
 			bind(entity_damage, array('id': 'fwtaskdamage'), array('type': 'PLAYER', 'world': 'custom'), @e) {
 				if((@e['cause'] == 'ENTITY_ATTACK' || @e['cause'] == 'ENTITY_EXPLOSION')
 				&& _fw_player(@e['player'])
-				&& is_numeric(@e['damager'])) {
+				&& !ponline(@e['damager'])) {
 					_fw_changeteam(@e['player'], 'losers')
 				}
 			}

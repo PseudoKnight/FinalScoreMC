@@ -32,7 +32,7 @@ case 'load':
 				modify_event('amount', 5)
 			}
 		} else if(@e['player'] == @p 
-		&& is_numeric(@e['damager'])
+		&& !ponline(@e['damager'])
 		&& entity_type(@e['damager']) == 'ZOMBIE') {
 			cancel()
 		}

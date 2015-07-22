@@ -51,7 +51,7 @@ proc _7_start(@7) {
 						@p['time'] -= 0.15;
 						@loc = ploc(@player);
 						
-						if(entity_grounded(pinfo(@player, 13))) {
+						if(entity_grounded(puuid(@player))) {
 							@block = get_block_at(@loc)
 							switch(@block) {
 							case '16:0':

@@ -108,13 +108,13 @@ bind('target_player', null, array('mobtype': 'ZOMBIE'), @event) {
 		@inv = get_mob_equipment(@event['id']);
 		if(!is_null(@inv['helmet'])
 		&& @inv['helmet']['type'] == 397
-		&& entity_can_see(@event['id'], pinfo(@event['player'], 13))) {
+		&& entity_can_see(@event['id'], puuid(@event['player']))) {
 			shoot_projectile(@event['id'], 'EGG', @event['player'], rand() + 1);
 			set_timeout((1 + rand(3)) * 1000, closure() {
 				if(entity_exists(@event['id'])
 				&& ponline(@event['player'])
 				&& pinfo(@event['player'], 5) > 10
-				&& entity_can_see(@event['id'], pinfo(@event['player'], 13))) {
+				&& entity_can_see(@event['id'], puuid(@event['player']))) {
 					shoot_projectile(@event['id'], 'EGG', @event['player'], rand() + 1);
 				}
 			});

@@ -105,7 +105,7 @@ proc _pvp_initialize_players(@id, @players) {
 		# Teleporting players one at a time helps prevent client-side invisible players
 		queue_push(closure(){ 
 			try( # sometimes they're dead
-				set_entity_fall_distance(pinfo(@player, 13), 0);
+				set_entity_fall_distance(puuid(@player), 0);
 				set_ploc(@player, @loc);
 				play_sound(@loc, array('sound': 'FIREWORK_BLAST'), @player);
 			);

@@ -31,7 +31,7 @@ case 'load':
 		queue_push(closure(){
 			@newitem = pinv(player(), @slot)
 			if(@newitem && @newitem['type'] == 280) {
-				set_inventory_item(pinfo(player(), 13), @slot, @item)
+				set_inventory_item(puuid(), @slot, @item)
 				play_sound(ploc(), array('sound': 'FIZZ'))
 			}
 		}, player().'lightning')
@@ -45,7 +45,7 @@ case 'load':
 			@loc2['y'] += 2
 			@dist = sqrt(((@loc2['x'] - @loc1['x']) ** 2) + ((@loc2['y'] - @loc1['y']) ** 2) + ((@loc2['z'] - @loc1['z']) ** 2))
 			
-			damage_entity(pinfo(@player, 13), 1, pinfo(player(), 13))
+			damage_entity(puuid(@player), 1, puuid())
 			
 			try(
 				# if we use a queue, velocity works more consistently with grounded entities
@@ -74,7 +74,7 @@ case 'load':
 		queue_push(closure(){
 			@newitem = pinv(player(), @slot)
 			if(@newitem && @newitem['type'] == 351) {
-				set_inventory_item(pinfo(player(), 13), @slot, @item)
+				set_inventory_item(puuid(), @slot, @item)
 			}
 		}, player().'woosh')
 	}

@@ -6,10 +6,10 @@ case 'load':
 			@arrow = shoot_projectile(player(), 'ARROW')
 			@velocity = entity_velocity(@arrow)
 			set_entity_velocity(@arrow, array(@velocity['x'] * 2.9, @velocity['y'] * 2.9, @velocity['z'] * 2.9));
-			if(extension_exists('CHSpigot')) {
-				@dmg = get_arrow_damage(@arrow);
-				set_arrow_damage(@arrow, @dmg * 0.70);
-			}
+			#if(extension_exists('CHSpigot')) {
+			#	@dmg = get_arrow_damage(@arrow);
+			#	set_arrow_damage(@arrow, @dmg * 0.70);
+			#}
 			set_entity_onfire(@arrow, 1)
 			play_sound(ploc(), array('sound': 'ENDERDRAGON_HIT', 'pitch': 2))
 			set_pexp(0)
@@ -27,7 +27,7 @@ case 'load':
 		}
 	}
 
-	bind(projectile_hit, array('id': @player.'hit'), array('type': 'ARROW'), @e, @shooter = pinfo(@player, 13)) {
+	bind(projectile_hit, array('id': @player.'hit'), array('type': 'ARROW'), @e, @shooter = puuid(@player)) {
 		if(@e['shooter'] == @shooter && entity_type(@e['id']), try(entity_remove(@e['id'])))
 	}
 	
@@ -52,9 +52,9 @@ case 'load':
 			@loc1 = ploc(@player)
 			@loc2 = ploc()
 			set_ploc(@loc1)
-			damage_entity(pinfo(player(), 13), 1, pinfo(player(), 13))
+			damage_entity(puuid(), 1, puuid())
 			set_ploc(@player, @loc2)
-			damage_entity(pinfo(@player, 13), 1, pinfo(player(), 13))
+			damage_entity(puuid(@player), 1, puuid())
 			play_sound(@loc1, array('sound': 'ENDERMAN_TELEPORT', 'pitch': 0.5))
 			make_effect(_relative(@loc1, 'up', 2), 'ENDER_SIGNAL')
 			play_sound(@loc2, array('sound': 'ENDERMAN_TELEPORT', 'pitch': 0.5))

@@ -22,7 +22,7 @@ bind(item_pickup, array('id': @id.'minepickup'), array('item': 148), @event, @id
 				play_sound(ploc(), array('sound': 'IRONGOLEM_DEATH'));
 				play_sound(ploc(), array('sound': 'EXPLODE', 'pitch': 2));
 				play_effect(ploc(), 'EXPLOSION_LARGE', array('particleCount': 2, 'radius': 64));
-				damage_entity(pinfo(player(), 13), 7, pinfo(@event['item']['meta']['display'], 13));
+				damage_entity(puuid(), 7, puuid(@event['item']['meta']['display']));
 			});
 		});
 	}

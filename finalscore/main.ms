@@ -442,7 +442,7 @@ bind(player_interact_entity, null, array('clicked': 'HORSE'), @event) {
 	&& (@variant == 'ZOMBIE' || @variant == 'SKELETON')
 	&& (!@item || @item['type'] != 420)
 	&& get_mob_age(@event[id]) >= 0) {
-		set_entity_rider(@event[id], pinfo(player(), 13));
+		set_entity_rider(@event[id], puuid());
 	}
 }
 
@@ -575,7 +575,7 @@ bind(player_interact_entity, null, array('clicked': 'VILLAGER'), @event) {
 	if(@item && @item['type'] == 420
 	&& get_player_from_entity_id(get_leashholder(@event['id'])) != player()) {
 		cancel();
-		set_leashholder(@event['id'], pinfo(player(), 13));
+		set_leashholder(@event['id'], puuid());
 		@item['qty'] = @item['qty'] - 1;
 		set_pinv(array('null': @item));
 	}

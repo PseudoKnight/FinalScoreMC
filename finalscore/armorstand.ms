@@ -104,10 +104,10 @@ bind(player_interact_at_entity, null, array('clicked': 'ARMOR_STAND'), @event) {
 		# If not sneaking, move armor stand.
 		} else {
 			msg(color(6).'Moving Armor Stand. Sneak to drop.');
-			set_entity_rider(pinfo(player(), 13), @event['id']);
+			set_entity_rider(puuid(), @event['id']);
 			
 			bind(player_toggle_sneak, null, array('player': player()), @event) {
-				set_entity_rider(pinfo(player(), 13), null);
+				set_entity_rider(puuid(), null);
 				unbind();
 			}
 		}
@@ -166,7 +166,7 @@ bind(entity_damage, null, array('type': 'ARMOR_STAND'), @event) {
 		@damager = @event['shooter'];
 	}
 	
-	if(@damager == '' || is_numeric(@damager)) {
+	if(@damager == '' || !ponline(@damager)) {
 		die();
 	}
 	

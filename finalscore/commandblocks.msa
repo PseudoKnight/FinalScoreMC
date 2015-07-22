@@ -13,7 +13,7 @@
 /tempcart $player = >>>
 	if(is_null(@loc = get_command_block()), die())
 	@loc = array(@loc[0] + 0.5, @loc[1] + 2, @loc[2] + 0.5, @loc[3])
-	@rider = pinfo($player, 13)
+	@rider = puuid($player)
 	@cart = spawn_entity('minecart', 1, @loc)[0]
 	set_entity_rider(@cart, @rider)
 	if(has_bind($player.'vehicle_leave'), die())

@@ -27,13 +27,13 @@ bind(player_teleport, null, null, @event) {
 		# Teleport horses along with rider if its crossworld
 		} else if(@event['to']['world'] != @event['from']['world']) {
 			try( # sometimes entity does not exist and causes an exception in get_entity_vehicle()
-				@vehicle = get_entity_vehicle(pinfo(player(), 13));
+				@vehicle = get_entity_vehicle(puuid());
 				if(entity_type(@vehicle) == 'HORSE') {
 					@euuid = entity_uuid(@vehicle);
 					set_timeout(50, closure(){
 						set_entity_loc(@vehicle, @event['to']);
 						set_timeout(50, closure(){
-							set_entity_rider(entity_id(@euuid), pinfo(player(), 13));
+							set_entity_rider(entity_id(@euuid), puuid());
 						});
 					});
 					die();
