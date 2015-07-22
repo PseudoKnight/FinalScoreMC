@@ -358,36 +358,16 @@ proc _pvp_end_match(@id, @winners) {
 	try(
 	
 		foreach(array_keys(@pvp['players']), @player) {
-			# if(array_index_exists(@pvp['arena'], 'timer')) {
-				# if(function_exists('premove_bar')) {
-					# premove_bar(@player)
-				# }
-			# }
 			if(array_contains(@winners, @player)) {
-				@leader = @player
+				@leader = @player;
 				if(ponline(@player) && @pvp['coins'] >= 1) {
-					_acc_add(@player, @pvp['coins'])
-					tmsg(@player, color('gold').'+ '.@pvp['coins'].if(@pvp['coins'] >= 2, ' coins', ' coin'))
+					_acc_add(@player, @pvp['coins']);
 				}
 			}
 		}
 		
 		queue_push(closure(){
-			if(array_index_exists(@pvp, 'team') && array_size(@winners) > 0) {
-				_worldmsg('custom', color('gray').'[PVP] '
-					.@pvp['players'][@leader]['color'].color('bold')
-					.@pvp['arena']['team'][@pvp['players'][@leader]['team']]['name'].' win!\n'
-					.@pvp['players'][@leader]['color'].array_implode(@winners, ' '))
-			} else if(array_size(@winners) > 0) {
-				_worldmsg('custom', color('gray').'[PVP] '.color('r').array_implode(@winners, ' and ').' wins!')
-
-			} else {
-				_worldmsg('custom', color('gray').'[PVP] '.color('r').'Nobody wins! Wait.. what?!')
-			}
-		}, @id);
-		
-		if(array_index_exists(@pvp, 'stats')) {
-			queue_push(closure(){
+			if(array_index_exists(@pvp, 'stats')) {
 				_regionmsg(@pvp['arena']['broadcast'], colorize('&7&m|------------------------------&7&l[ &f&lTHE FINAL SCORE&7&l ]&7&m--|'));
 				_regionmsg(@pvp['arena']['broadcast'], colorize(replace('--&7KILLS &8:&7 DEATHS &8:&7 PICKUPS &8:&7 DAMAGE', '-', ' ')));
 				_regionmsg(@pvp['arena']['broadcast'], colorize('&7&m|----------------------------------------------------|'));
@@ -397,11 +377,23 @@ proc _pvp_end_match(@id, @winners) {
 						._pad_stat(@stats['deaths'], 2).'---------'
 						._pad_stat(@stats['pickups'], 2).'--------'
 						._pad_stat(round(@stats['damage']), 3).'---------'
-						.if(array_contains(@winners, @player), color('gold').color('bold')).@player.'-', '-', ' '));
+						.if(array_contains(@winners, @player), color('gold').color('bold').@player.' +'.@pvp['coins'], @player).'-', '-', ' '));
 				}
 				_regionmsg(@pvp['arena']['broadcast'], colorize('&7&m|----------------------------------------------------|'));
-			}, @id)
-		}
+			} else if(array_index_exists(@pvp, 'team') && array_size(@winners) > 0) {
+				_worldmsg('custom', color('gray').'[PVP] '
+					.@pvp['players'][@leader]['color'].color('bold')
+					.@pvp['arena']['team'][@pvp['players'][@leader]['team']]['name'].' win!\n'
+					.@pvp['players'][@leader]['color'].array_implode(@winners, ' '));
+			} else if(array_size(@winners) > 0) {
+				_worldmsg('custom', color('gray').'[PVP] '.color('r').array_implode(@winners, ' and ').' wins!');
+
+			} else {
+				_worldmsg('custom', color('gray').'[PVP] '.color('r').'Nobody wins! Wait.. what?!');
+			}
+		}, @id);
+		
+
 		
 		if(array_index_exists(@pvp['arena'], 'chestspawn')) {
 			for(@i = 0, @i < array_size(@pvp['arena']['chestspawn']), @i++) {
