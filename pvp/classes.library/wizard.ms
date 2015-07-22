@@ -1,18 +1,22 @@
 switch(@action) {
 case 'load':
 	bind(player_interact, array('id': @player.'lightning'), array('item': 369, 'button': 'right', 'player': @player), @e, @pvp = @pvp) {
-		@loc = pcursor();
+		@loc = pcursor(array(0, 65, 66, 68, 70, 72, 77, 85, 143, 147, 148, 157, 171, 188, 189, 190, 191, 192));
 		bind(entity_damage, array('id': player().'lightningdmg'), array('type': 'PLAYER', 'cause': 'LIGHTNING', 'world': 'custom'), @e,
-				@damager = player(), @loc = @loc, @pvp = @pvp) {
+				@damager = player(), @pvp = @pvp) {
 				
 			if(!array_index_exists(@pvp['players'], @e['player']), die());
-			@eloc = entity_loc(@e['id']);
-			if(@eloc['x'] < @loc['x'] + 4 && @eloc['x'] > @loc['x'] - 4
-			&& @eloc['z'] < @loc['z'] + 4 && @eloc['z'] > @loc['z'] - 4) {
-				_stats_damage(@damager, @e['player'], @e['amount'], @pvp);
-			}
+			set_timeout(50, closure(){
+				@entity = import(@damager.'lightning');
+				if(@e['damager'] == import(@damager.'lightning')) {
+					_stats_damage(@damager, @e['player'], @e['amount'], @pvp);
+				}
+			});
 		}
-		lightning(@loc);
+		@lightning = lightning(@loc);
+		export(player().'lightning', @lightning);
+		@block = get_block_at(@loc);
+		psend_block_change(@loc, 41);
 		@slot = pinfo(player(), 15)
 		@item = pinv(player(), null)
 		set_pinv(player(), array('null': array('type': 280)))
@@ -20,6 +24,8 @@ case 'load':
 		queue_delay(1000, player().'lightning');
 		queue_push(closure(){
 			unbind(player().'lightningdmg');
+			psend_block_change(@loc, @block);
+			export(player().'lightning', null);
 		}, player().'lightning');
 		queue_delay(5000, player().'lightning');
 		queue_push(closure(){
