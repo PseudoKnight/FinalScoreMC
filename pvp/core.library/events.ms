@@ -293,7 +293,7 @@ if(array_index_exists(@pvp['arena'], 'mobprotect')) {
 		@pvp = import('pvp'.@id)
 		foreach(@team: @data in @pvp['arena']['mobprotect']) {
 			try(
-				if(entity_id(@pvp['team'][@team]['mobprotect']) == @e['id']) {
+				if(@pvp['team'][@team]['mobprotect'] == @e['id']) {
 					
 					if(@team == 0) {
 						_pvp_end_match(@id, @pvp['team'][1]['players'])
@@ -310,7 +310,7 @@ if(array_index_exists(@pvp['arena'], 'mobprotect')) {
 		@pvp = import('pvp'.@id)
 		foreach(@team: @data in @pvp['arena']['mobprotect']) {
 			try(
-				if(entity_id(@pvp['team'][@team]['mobprotect']) == @e['id']) {
+				if(@pvp['team'][@team]['mobprotect'] == @e['id']) {
 					set_pscore('mobhealth', @pvp['arena']['team'][@team]['name'], ceil(get_entity_health(@e['id'])), @id);
 				}
 			);

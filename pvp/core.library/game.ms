@@ -80,7 +80,7 @@ proc _pvp_start_match(@id) {
 			foreach(@team: @mob in @pvp['arena']['mobprotect']) {
 				 @entityid = _spawn_mob(@mob['type'], 1, @mob['loc'])[0]
 				 set_mob_name(@entityid, @pvp['arena']['team'][@team]['color'].@pvp['arena']['team'][@team]['name'])
-				 @pvp['team'][@team]['mobprotect'] = entity_uuid(@entityid)
+				 @pvp['team'][@team]['mobprotect'] = @entityid;
 			}
 		}, @id)
 	}
