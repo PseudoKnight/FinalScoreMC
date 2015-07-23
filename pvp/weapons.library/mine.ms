@@ -3,7 +3,9 @@ bind(item_drop, array('id': @id.'minedrop'), array('item': 148), @event, @id = @
 	@pvp = import('pvp'.@id);
 	if(!array_index_exists(@pvp['players'], player()), die());
 	
-	modify_event('item', array('type': 148, 'qty': 1, 'meta': array('display': player())));
+	@item = @event['item'];
+	@item['meta']['display'] = player();
+	modify_event('item', @item);
 }
 
 array_push(@pvp['binds'], @id.'minepickup');
@@ -12,17 +14,27 @@ bind(item_pickup, array('id': @id.'minepickup'), array('item': 148), @event, @id
 	if(!array_index_exists(@pvp['players'], player()), die());
 	
 	if(@event['item']['meta']['display'] == player()) {
-		modify_event('item', array('type': 148, 'qty': 1, 'meta': array('display': 'MINE')));
+		@item = @event['item'];
+		@item['meta']['display'] = 'MINE';
+		modify_event('item', @item);
 	} else {
+		@power = @event['qty'] * 8;
 		modify_event('item', null);
-		play_sound(ploc(), array('sound': 'NOTE_PIANO', 'pitch': 2));
+		@loc = _relative(ploc(), 'up');
+		play_sound(@loc, array('sound': 'NOTE_PIANO', 'pitch': 2));
 		set_timeout(50, closure(){
-			play_sound(ploc(), array('sound': 'NOTE_PIANO', 'pitch': 2));
+			play_sound(@loc, array('sound': 'NOTE_PIANO', 'pitch': 2));
 			set_timeout(50, closure(){
-				play_sound(ploc(), array('sound': 'IRONGOLEM_DEATH'));
-				play_sound(ploc(), array('sound': 'EXPLODE', 'pitch': 2));
-				play_effect(ploc(), 'EXPLOSION_LARGE', array('particleCount': 2, 'radius': 64));
-				damage_entity(puuid(), 7, puuid(@event['item']['meta']['display']));
+				play_sound(@loc, array('sound': 'EXPLODE', 'pitch': 1.6));
+				play_effect(@loc, 'EXPLOSION_LARGE', array('particleCount': 2, 'radius': 64));
+				@damager = @event['item']['meta']['display'];
+				if(array_index_exists(@pvp['players'], @damager)
+				&& sk_region_check_flag(ploc(@damager), 'PVP', @damager)) {
+					damage_entity(puuid(), @power, puuid(@damager));
+				} else {
+					damage_entity(puuid(), @power);
+					_stats_damage(@damager, player(), @power, @pvp);
+				}
 			});
 		});
 	}
