@@ -30,8 +30,10 @@ case 'load':
 		queue_delay(5000, player().'lightning');
 		queue_push(closure(){
 			@newitem = pinv(player(), @slot)
-			if(@newitem && @newitem['type'] == 280) {
-				set_inventory_item(puuid(), @slot, @item)
+			if(!is_null(@newitem) && @newitem['type'] == 280) {
+				@inv = array();
+				@inv[@slot] = @item;
+				set_pinv(@inv);
 				play_sound(ploc(), array('sound': 'FIZZ'))
 			}
 		}, player().'lightning')
@@ -73,8 +75,10 @@ case 'load':
 		queue_delay(6000, player().'woosh')
 		queue_push(closure(){
 			@newitem = pinv(player(), @slot)
-			if(@newitem && @newitem['type'] == 351) {
-				set_inventory_item(puuid(), @slot, @item)
+			if(!is_null(@newitem) && @newitem['type'] == 351) {
+				@inv = array();
+				@inv[@slot] = @item;
+				set_pinv(@inv);
 			}
 		}, player().'woosh')
 	}
