@@ -366,9 +366,18 @@ bind(player_command, array('id': @id.'command'), null, @e, @id = @id) {
 if(!array_contains(@pvp['arena']['flags'], 'build')) {
 	array_push(@pvp['binds'], @id.'break')
 	bind(block_break, array('id': @id.'break'), null, @e, @id = @id) {
-		@pvp = import('pvp'.@id)
-		if(array_index_exists(@pvp['players'], player()), 
-			cancel())
+		@pvp = import('pvp'.@id);
+		if(array_index_exists(@pvp['players'], player())) {
+			cancel();
+		}
+	}
+
+	array_push(@pvp['binds'], @id.'place')
+	bind(block_place, array('id': @id.'place'), null, @e, @id = @id) {
+		@pvp = import('pvp'.@id);
+		if(array_index_exists(@pvp['players'], player())) {
+			cancel();
+		}
 	}
 }
 
