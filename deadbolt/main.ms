@@ -77,11 +77,8 @@ bind(player_interact, null, array('block': data_values('wallsign')), @e) {
 				continue();
 			}
 			try(@pdata = _pdata(@db[@i], (length(@db[@i]) == 15)), continue());
-			if(nequals_ic(@pdata['name'], @db[@i])) {
+			if(@pdata['name'] != @db[@i]) {
 				@newplayer = @pdata['name'];
-				if(equals_ic(@newplayer, player())) {
-					@newplayer = player();
-				}
 				@db[@i] = substr(@newplayer, 0, if(length(@newplayer) > 15, 15, length(@newplayer)));
 				@changed = true;
 			}

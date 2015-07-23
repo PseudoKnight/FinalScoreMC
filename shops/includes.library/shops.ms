@@ -31,16 +31,13 @@ proc _get_shop(@loc) {
 	if(@autocomplete) {
 		@currentName = substr(@pdata['name'], 0, 13);
 	}
-	if(nequals_ic(@currentName, @owner)) {
+	if(@currentName != @owner) {
 		@owner = @pdata['name'];
 		@sign[3] = @pdata['name'];
 		if(length(@owner) > 15) {
 			console('Cannot convert shop owner from '.@sign[3].' to '.@owner.' due to length.');
 			console('Location: '.@loc);
 			return(null);
-		}
-		if(equals_ic(@owner, player())) {
-			@sign[3] = player();
 		}
 		set_sign_text(@loc, @sign);
 	}

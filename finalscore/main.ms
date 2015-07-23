@@ -29,7 +29,7 @@ bind(player_login, null, null, @event) {
 				@pdata['names'] = array();
 			}
 			@pdata['names'][] = @pdata['name'];
-			@pdata['name'] = to_lower(@event['player']);
+			@pdata['name'] = @event['player'];
 			
 			# just in case, they're not in a survival world, we may need to fetch their inventory for them later
 			# TODO: handle inventory for name changes automatically
@@ -43,7 +43,7 @@ bind(player_login, null, null, @event) {
 		} else { # new player!
 			@pdata = array(
 				'joined': simple_date('YYYY-MM-dd'),
-				'name': to_lower(@event['player']),
+				'name': @event['player'],
 			);
 		}
 		
@@ -65,16 +65,16 @@ bind(player_login, null, null, @event) {
 		}
 		
 		if(!array_index_exists(@pdata, 'name')) {
-			@pdata['name'] = to_lower(@event['player']);
+			@pdata['name'] = @event['player'];
 			@update = true;
 			
-		} else if(@pdata['name'] != to_lower(@event['player'])) {
+		} else if(@pdata['name'] != @event['player']) {
 			# player changed their name back or data was inaccurate
 			if(!array_index_exists(@pdata, 'names')) {
 				@pdata['names'] = array(@pdata['name']);
 			}
-			array_remove_values(@pdata['names'], to_lower(@event['player']));
-			@pdata['name'] = to_lower(@event['player']);
+			array_remove_values(@pdata['names'], @event['player']);
+			@pdata['name'] = @event['player'];
 			@update = true;
 		}
 	}
