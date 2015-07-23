@@ -376,7 +376,7 @@ proc _pvp_end_match(@id, @winners) {
 						._pad_stat(@stats['kills'], 2).'-------'
 						._pad_stat(@stats['deaths'], 2).'---------'
 						._pad_stat(@stats['pickups'], 2).'--------'
-						._pad_stat(round(@stats['damage']), 3).'---------'
+						._pad_stat(round(@stats['damage']), 3).'--------'
 						.if(array_contains(@winners, @player), color('gold').color('bold').@player.' +'.@pvp['coins'], @player).'-', '-', ' '));
 				}
 				_regionmsg(@pvp['arena']['broadcast'], colorize('&7&m|----------------------------------------------------|'));

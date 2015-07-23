@@ -44,10 +44,11 @@ array_push(@pvp['binds'], @id.'shotgundamage')
 bind(entity_damage, array('id': @id.'shotgundamage'), array('type': 'PLAYER', 'cause': 'PROJECTILE', 'world': 'custom'), @e, assign(@id, @id)) {
 	if(ponline(@e['shooter'])) {
 		@pvp = import('pvp'.@id)
-		if(array_index_exists(@pvp['players'], @e['shooter'])
-		&& pinv(@e['shooter'], null)
-		&& pinv(@e['shooter'], null)['type'] == 341) {
-			modify_event('amount', 8)
+		if(array_index_exists(@pvp['players'], @e['shooter'])) {
+			@weapon = pinv(@e['shooter'], null);
+			if(@weapon['type'] == 341) {
+				modify_event('amount', 8);
+			}
 		}
 	}
 }
