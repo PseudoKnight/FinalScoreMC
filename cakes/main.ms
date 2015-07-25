@@ -70,7 +70,7 @@ bind(player_interact, null, array('block': 68), @event) {
 			foreach(@c in 0..27) {
 				if(!is_null(@chest[@c])) {
 					@pinv = pinv();
-					foreach(@p in 0..36) {
+					foreach(@p in 0..35) {
 						if(is_null(@pinv[@p])
 						|| (@pinv[@p]['type'] == @chest[@c]['type'] 
 						&& @pinv[@p]['data'] == @chest[@c]['data'] 
