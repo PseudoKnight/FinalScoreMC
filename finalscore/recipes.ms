@@ -52,7 +52,11 @@ bind('inventory_click', null, array('slottype': 'RESULT'), @event) {
 	&& @event['inventory'][1]['meta']['lore']) {
 	
 		@slotitem = @event['slotitem'];
-		@slotitem['meta']['display'] = @event['inventory'][1]['meta']['display'];
+		if(!is_null(@slotitem['meta']['display'])) {
+			@slotitem['meta']['display'] = colorize(@slotitem['meta']['display']);
+		} else {
+			@slotitem['meta']['display'] = @event['inventory'][1]['meta']['display'];
+		}
 		@slotitem['meta']['lore'] = @event['inventory'][1]['meta']['lore'];
 		
 		if(array_size(@slotitem['meta']['enchants']) == 0) {
