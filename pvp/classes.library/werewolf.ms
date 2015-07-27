@@ -45,7 +45,7 @@ case 'powerup':
 		103: array('type': 35, 'data': 7),
 	))
 	set_timeout(16000, closure(){
-		if(pinfo(@player, 5) > 0) {
+		if(ponline(@player) && pinfo(@player, 5) > 0) {
 			foreach(@effect in get_peffect(@player)) {
 				# if there's 6 seconds of night vision left, he hasn't gotten another powerup
 				if(@effect['id'] == 16 && @effect['seconds'] < 7) {
