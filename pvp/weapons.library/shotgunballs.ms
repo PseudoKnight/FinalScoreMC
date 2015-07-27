@@ -9,36 +9,18 @@ bind(player_interact, array('id': @id.'shotgunshoot'), array('item': 332, 'butto
 		@v = entity_velocity(@entities[@i])
 		set_entity_velocity(@entities[@i], array(@v['x'] * 3.4 + ((rand(3) - 1)), @v['y'] * 3.4 + ((rand(3) - 1)), @v['z'] * 3.4 + ((rand(3) - 1))))
 	}
-	play_sound(ploc(), array('sound': 'ZOMBIE_WOOD', 'pitch': 1.5, 'volume': 2))
-	play_sound(ploc(), array('sound': 'EXPLODE', 'pitch': 2, 'volume': 2))
-	@item = pinv(player(), null)
-	@item['qty'] = @item['qty'] - 1
-	if(@item['qty'] == 0) {
-		set_pinv(array('null': null))
-	} else {
-		@item['type'] = 341
-		@item['name'] = 'SLIME_BALL'
-		set_pinv(array('null': @item))
-		@slot = pinfo(player(), 15)
-		set_timeout(300, closure(){
-			foreach(@snowball in @entities) {
-				if(entity_exists(@snowball)) {
-					entity_remove(@snowball);
-				}
+	set_timeout(300, closure(){
+		foreach(@snowball in @entities) {
+			if(entity_exists(@snowball)) {
+				entity_remove(@snowball);
 			}
-			set_timeout(700, closure(){
-				@item = pinv(player(), @slot);
-				if(!is_null(@item) && @item['type'] == 341) {
-					play_sound(ploc(), array('sound': 'PISTON_RETRACT', 'pitch': 1.5));
-					@inv = array();
-					@item['type'] = 332;
-					@item['name'] = 'SNOW_BALL';
-					@inv[@slot] = @item;
-					set_pinv(@inv);
-				}
-			});
-		});
-	}
+		}
+	});
+	play_sound(ploc(), array('sound': 'ZOMBIE_WOOD', 'pitch': 1.5, 'volume': 2));
+	play_sound(ploc(), array('sound': 'EXPLODE', 'pitch': 2, 'volume': 2));
+	_weapon_cooldown(player(), 1000, 'SLIME_BALL', closure(){
+		play_sound(ploc(), array('sound': 'PISTON_RETRACT', 'pitch': 1.5));
+	});
 }
 array_push(@pvp['binds'], @id.'shotgundamage')
 bind(entity_damage, array('id': @id.'shotgundamage'), array('type': 'PLAYER', 'cause': 'PROJECTILE', 'world': 'custom'), @e, assign(@id, @id)) {

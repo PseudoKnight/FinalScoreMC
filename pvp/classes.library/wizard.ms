@@ -61,26 +61,13 @@ case 'load':
 			)
 		}
 		
-		play_sound(@loc1, array('sound': 'ENDERDRAGON_WINGS', 'pitch': 0.5))
-		play_sound(@loc1, array('sound': 'GHAST_FIREBALL', 'pitch': 0.9))
+		play_sound(@loc1, array('sound': 'ENDERDRAGON_WINGS', 'pitch': 0.5));
+		play_sound(@loc1, array('sound': 'GHAST_FIREBALL', 'pitch': 0.9));
 		play_effect(_relative(@loc1, 'up', 2), 'CLOUD', array(
 			'particleCount': 60, 
 			'speed': 0.5,
-		))
-		
-		@slot = pinfo(player(), 15)
-		@item = pinv(player(), null)
-		set_pinv(player(), array('null': array('type': 351)))
-		queue_clear(player().'woosh')
-		queue_delay(6000, player().'woosh')
-		queue_push(closure(){
-			@newitem = pinv(player(), @slot)
-			if(!is_null(@newitem) && @newitem['type'] == 351) {
-				@inv = array();
-				@inv[@slot] = @item;
-				set_pinv(@inv);
-			}
-		}, player().'woosh')
+		));
+		_weapon_cooldown(player(), 6000, 'INK_SACK', false);
 	}
 		
 case 'unload':

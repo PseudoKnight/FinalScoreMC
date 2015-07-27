@@ -5,26 +5,8 @@ bind(player_interact, array('id': @id.'pistoltears'), array('item': 370, 'button
 	@entity = shoot_projectile(player(), 'ARROW')
 	@v = entity_velocity(@entity)
 	set_entity_velocity(@entity, array(@v['x'] * 3, @v['y'] * 3, @v['z'] * 3))
-	play_sound(ploc(), array('sound': 'ZOMBIE_WOOD', 'pitch': 2, 'volume': 2))
-	@item = pinv(player(), null)
-	@item['qty'] = @item['qty'] - 1
-	if(@item['qty'] == 0) {
-		set_pinv(array('null': null))
-	} else {
-		@item['type'] = 371
-		@item['name'] = 'GOLD_NUGGET'
-		set_pinv(array('null': @item))
-		@slot = pinfo(player(), 15)
-		set_timeout(2000, closure(){
-				@item = pinv(player(), @slot)
-				if(!is_null(@item) && @item['type'] == 371) {
-				play_sound(ploc(), array('sound': 'DOOR_OPEN', 'pitch': 2))
-				@inv = array()
-				@item['type'] = 370
-				@item['name'] = 'GHAST_TEAR'
-				@inv[@slot] = @item
-				set_pinv(@inv)
-			}
-		})
-	}
+	play_sound(ploc(), array('sound': 'ZOMBIE_WOOD', 'pitch': 2, 'volume': 2));
+	_weapon_cooldown(player(), 2000, 'GOLD_NUGGET', closure(){
+		play_sound(ploc(), array('sound': 'DOOR_OPEN', 'pitch': 2));
+	});
 }

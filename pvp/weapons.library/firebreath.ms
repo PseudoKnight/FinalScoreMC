@@ -95,25 +95,7 @@ bind(player_interact, array('id': @id.'firebreath'), array('item': 377, 'button'
 		}
 	}
 	#msg((nano_time() - @time) / 1000000)
-	@item = pinv(player(), null)
-	@item['qty'] -= 1
-	if(@item['qty'] == 0) {
-		set_pinv(array('null': null))
-	} else {
-		@item['type'] = 402
-		@item['name'] = 'FIREWORK_CHARGE'
-		set_pinv(array('null': @item))
-		@slot = pinfo(player(), 15)
-		set_timeout(1100, closure(){
-			@item = pinv(player(), @slot)
-			if(!is_null(@item) && @item['type'] == 402) {
-				play_sound(ploc(), array('sound': 'FIZZ', 'pitch': 2))
-				@inv = array()
-				@item['type'] = 377
-				@item['name'] = 'BLAZE_POWDER'
-				@inv[@slot] = @item
-				set_pinv(@inv)
-			}
-		})
-	}
+	_weapon_cooldown(player(), 1100, 'FIREWORK_CHARGE', closure(){
+		play_sound(ploc(), array('sound': 'FIZZ', 'pitch': 2))
+	});
 }

@@ -328,7 +328,7 @@
 		@pvp['running'] = 1;
 		
 		# WEAPONS
-		
+		include('core.library/weapons.ms');
 		if(array_index_exists(@pvp['arena'], 'weapons')) {
 			foreach(@weapon in @pvp['arena']['weapons']) {
 				include('weapons.library/'.@weapon.'.ms')

@@ -25,26 +25,8 @@ bind(player_interact, array('id': @id.'spawner'), array('button': 'right', 'item
 		} else {
 			_spawn_mob(@mob, 1, @loc, player())
 		}
-		play_sound(@loc, array('sound': 'ZOMBIE_INFECT', 'pitch': 1.5))
-		play_effect(@loc, 'cloud', array('speed': 0, 'particleCount': 10, 'offsetX': 0.4, 'offsetZ': 0.4, 'offsetY': 0.4))
-
-		@item['qty'] -= 1
-		if(@item['qty'] > 0) {
-			@slot = pinfo(player(), 15)
-			@newitem = array('type': 361, 'qty': @item['qty'])
-			set_pinv(array('null': @newitem))
-			queue_clear(player().'spawner');
-			queue_delay(2000, player().'spawner');
-			queue_push(closure(){
-				@newitem = pinv(player(), @slot)
-				if(!is_null(@newitem) && @newitem['type'] == 361) {
-					@inv = array()
-					@inv[@slot] = @item
-					set_pinv(@inv)
-				}
-			}, player().'spawner')
-		} else {
-			set_pinv(array('null': null))
-		}
+		play_sound(@loc, array('sound': 'ZOMBIE_INFECT', 'pitch': 1.5));
+		play_effect(@loc, 'cloud', array('speed': 0, 'particleCount': 10, 'offsetX': 0.4, 'offsetZ': 0.4, 'offsetY': 0.4));
+		_weapon_cooldown(player(), 2000, 'PUMPKIN_SEEDS', false);
 	}
 }
