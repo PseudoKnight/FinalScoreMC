@@ -1,13 +1,13 @@
 switch(@action) {
 case 'load':
-	bind(entity_damage, array('id': player().'soldierdmg'), array('type': 'PLAYER'), @e, @shooter = @player) {
+	bind(entity_damage, array('id': @player.'soldierdmg'), array('type': 'PLAYER'), @e, @shooter = @player) {
 		if(@e['cause'] == 'PROJECTILE'
 		&& @e['shooter'] == @shooter) {
 			modify_event('amount', 2);
 		}
 	}
 	
-	bind(player_interact, array('id': player().'soldiershoot'), array('player': @player, 'item': 291), @e) {
+	bind(player_interact, array('id': @player.'soldiershoot'), array('player': @player, 'item': 291), @e) {
 		@item = pinv(player(), null);
 		if(@item['data'] >= 128, die());
 		@bullet = shoot_projectile(@e['player'], 'EGG');
@@ -27,29 +27,31 @@ case 'load':
 		});
 	}
 	
-	bind(player_interact, array('id': player().'soldierreload'), array('player': @player, 'item': 265), @e) {
+	bind(player_interact, array('id': @player.'soldierreload'), array('player': @player, 'item': 265), @e) {
 		@item = pinv(player(), null);
 		set_pinv(player(), array('null': null));
 		@slot = pinfo(player(), 15);
 		play_sound(ploc(), array('sound': 'DOOR_OPEN', 'pitch': 2));
 		set_timeout(1000, closure(){
-			@newitem = pinv(player(), @slot);
-			if(!is_null(@newitem) && @newitem['type'] == 265) {
-				@item['qty'] = @newitem['qty'] + @item['qty'] - 1;
-			} else {
-				@item['qty'] -= 1;
+			if(ponline(@e['player'] && pinfo(player(), 5) > 0)) {
+				@newitem = pinv(player(), @slot);
+				if(!is_null(@newitem) && @newitem['type'] == 265) {
+					@item['qty'] = @newitem['qty'] + @item['qty'] - 1;
+				} else {
+					@item['qty'] -= 1;
+				}
+				@inv = array();
+				if(@item['qty'] > 0) {
+					@inv[@slot] = @item;
+				}
+				@inv[0] = array('type': 291, 'data': 0, 'meta': array('display': 'Machine Gun'));
+				set_pinv(player(), @inv);
+				play_sound(ploc(), array('sound': 'DOOR_CLOSE', 'pitch': 2))
 			}
-			@inv = array();
-			if(@item['qty'] > 0) {
-				@inv[@slot] = @item;
-			}
-			@inv[0] = array('type': 291, 'data': 0, 'meta': array('display': 'Machine Gun'));
-			set_pinv(player(), @inv);
-			play_sound(ploc(), array('sound': 'DOOR_CLOSE', 'pitch': 2))
 		});
 	}
 	
-	bind(player_interact, array('id': player().'grenade'), array('player': @player, 'item': 273), @e) {
+	bind(player_interact, array('id': @player.'grenade'), array('player': @player, 'item': 273), @e) {
 		ptake_item(player(), 273, 1);
 		@loc = _relative(ploc(), 'up', 2);
 		@armorStand = spawn_entity('ARMOR_STAND', 1, @loc)[0];
@@ -72,9 +74,10 @@ case 'load':
 			}
 		});
 	}
+	
 case 'unload':
-	unbind(player().'soldierdmg');
-	unbind(player().'soldiershoot'); 
-	unbind(player().'soldierreload'); 
-	unbind(player().'grenade');
+	unbind(@player.'soldierdmg');
+	unbind(@player.'soldiershoot'); 
+	unbind(@player.'soldierreload'); 
+	unbind(@player.'grenade');
 }
