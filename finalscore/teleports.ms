@@ -67,14 +67,6 @@ bind(player_interact, null, array('item': 368, 'button': 'right'), @event) {
 # Main world_changed handler
 bind(world_changed, null, null, @event) {
 	set_timeout(200, closure(){
-		@pdata = _pdata(@event['player']);
-		if(array_index_exists(@pdata, 'homes')
-		&& array_index_exists(@pdata['homes'], @event['to'])) {
-			set_pbed_location(@pdata['homes'][@event['to']]);
-		} else {
-			set_pbed_location(get_spawn(@event['to']));
-		}
-		
 		# if teleporting to Frog Park
 		if(@event['from'] != 'custom'
 		&& @event['to'] == 'custom') {
