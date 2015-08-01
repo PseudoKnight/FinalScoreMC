@@ -396,22 +396,26 @@ bind(player_interact_entity, null, array('clicked': 'HORSE'), @event) {
 		die();
 	}
 	
+	@yVelocity = round(entity_spec(@event['id'])['jump'], 2);
+	@jump = 0;
+	while(@yVelocity > 0) {
+		@jump += @yVelocity;
+		@yVelocity -= 0.08;
+		@yVelocity *= 0.98;
+	}
+	@jump = round(@jump, 1);
+	@health = round(get_max_health(@event['id']) / 2, 1);
+	if(function_exists('action_msg')) {
+		set_timeout(50, closure(){
+			action_msg(colorize('&c'.@health.' \u2764 &e'.@jump.' \u279A'));
+		});
+	}
+	
 	@item = pinv(player(), null);
 	
 	if(get_mob_owner(@event['id'])
 	&& get_mob_owner(@event['id']) != player()) {
-		@yVelocity = round(entity_spec(@event['id'])['jump'], 2);
-		@jump = 0;
-		while(@yVelocity > 0) {
-			@jump += @yVelocity;
-			@yVelocity -= 0.08;
-			@yVelocity *= 0.98;
-		}
-		@jump = round(@jump, 1);
-		@health = round(get_max_health(@event['id']) / 2, 1);
-		
-		msg('This horse is owned by '.get_mob_owner(@event['id']).' '
-		.color('red').@health.' \u2764'.color('r').' '.color('yellow').@jump.' \u279A');
+		msg('This horse is owned by '.get_mob_owner(@event['id']));
 		
 		if(!has_permission('group.moderators')
 		&& (!@item
