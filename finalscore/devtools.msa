@@ -87,31 +87,6 @@
 <<<
 
 /* 
-	Resyncs aliases with player data
-*/
-/findaliases $player = >>>
-	@pdata = _pdata($player);
-	@puuid = puuid($player);
-	@names = get_values('players');
-	@found = array();
-	foreach(@key: @uuid in @names) {
-		if(@uuid == @puuid) {
-			@name = split('.', @key)[1]
-			if(array_contains(@pdata['names'], @name)) {
-				if(@name == to_lower($player)) {
-					array_remove_values(@pdata['names'], @name);
-				}
-			} else {
-				@found[] = @name;
-				@pdata['names'][] = @name;
-			}
-		}
-	}
-	_store_pdata($player, @pdata);
-	msg('Found: '.@found);
-<<<
-
-/* 
 	Lists the type and amount of events bound
 */
 /bindcount = >>>
