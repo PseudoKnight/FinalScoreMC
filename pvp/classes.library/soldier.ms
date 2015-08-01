@@ -33,7 +33,7 @@ case 'load':
 		@slot = pinfo(player(), 15);
 		play_sound(ploc(), array('sound': 'DOOR_OPEN', 'pitch': 2));
 		set_timeout(1000, closure(){
-			if(ponline(@e['player'] && pinfo(player(), 5) > 0)) {
+			if(ponline(@e['player']) && pinfo(player(), 5) > 0) {
 				@newitem = pinv(player(), @slot);
 				if(!is_null(@newitem) && @newitem['type'] == 265) {
 					@item['qty'] = @newitem['qty'] + @item['qty'] - 1;
