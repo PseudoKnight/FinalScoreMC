@@ -333,11 +333,12 @@ bind(player_teleport, array('id': @id.'enderpearl', 'priority': 'highest'), arra
 array_push(@pvp['binds'], @id.'command')
 bind(player_command, array('id': @id.'command'), null, @e, @id = @id) {
 	@pvp = import('pvp'.@id);
-	if(!array_contains(array('/accept', '/warp', '/spawn', '/home'), @e['prefix'])) {
+	if(!array_contains(array('/accept', '/warp', '/spawn', '/home', '/join'), @e['prefix'])) {
 		die();
 	}
 	
 	if(array_index_exists(@pvp['players'], player())) {
+		set_ploc(@pvp['arena']['lobby']);
 		_regionmsg(@pvp['arena']['broadcast'], color('gray').'[PVP] '
 			.@pvp['players'][player()]['color'].player().color('r').' left the arena.');
 		if(@pvp['arena']['mode'] == 'ctf' 
