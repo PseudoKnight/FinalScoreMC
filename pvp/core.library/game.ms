@@ -114,7 +114,7 @@ proc _pvp_start_match(@id) {
 			if(pinfo(@player, 5) <= 0, continue())
 			if(array_index_exists(@pvp['arena'], 'respawntime')
 			&& @pvp['players'][@player]['respawn'] != 0) {
-				if(!array_contains(sk_current_regions(@player), @pvp['arena']['broadcast'])) {
+				if(!array_contains(sk_current_regions(@player), @pvp['arena']['broadcast']) && ploc(@player)['y'] < 256) {
 					_regionmsg(@pvp['arena']['broadcast'], color('gray').'[PVP] '
 						.@pvp['players'][@player]['color'].@player
 						.color('r').' left the arena.')
@@ -125,31 +125,46 @@ proc _pvp_start_match(@id) {
 						send_resourcepack(@player, 'http://mc.finalscoremc.com:25966/resourcepacks/default.zip')
 					}
 					array_remove(@pvp['players'], @player)
+					set_pflight(@player, false);
+					preset_time(@player);
+					set_pstorm(@player, null);
 					_clear_pinv(@player)
 					_clear_peffects(@player)
 					@check = true
 				} else if(@pvp['players'][@player]['respawn'] < time()) {
+					@loc = array();
 					if(array_index_exists(@pvp['arena'], 'captain')) {
-						if(@pvp['team'][@pvp['players'][@player]['team']]['captain'] != '') {
-							set_ploc(@player, ploc(@pvp['team'][@pvp['players'][@player]['team']]['captain']))
-							play_sound(ploc(@player), array('sound': 'GHAST_FIREBALL'))
-							make_effect(_relative(ploc(@player), 'up'), 'MOBSPAWNER_FLAMES')
-							_pvp_equip(@id, @player)
-							@pvp['players'][@player]['respawn'] = 0
-							close_pinv(@player)
+						if(@pvp['team'][@pvp['players'][@player]['team']]['captain'] == '') {
+							continue();
 						}
+						@loc = ploc(@pvp['team'][@pvp['players'][@player]['team']]['captain']);
+						play_sound(ploc(@player), array('sound': 'GHAST_FIREBALL'));
+						make_effect(_relative(ploc(@player), 'up'), 'MOBSPAWNER_FLAMES');
 					} else {
 						if(array_index_exists(@pvp['players'], 'team')) {
-							@r = rand(0, array_size(@pvp['arena']['spawn'][@pvp['players'][player()]['team']]))
-							set_ploc(@player, @pvp['arena']['spawn'][@pvp['players'][@player]['team']][@r])
+							@r = rand(0, array_size(@pvp['arena']['spawn'][@pvp['players'][player()]['team']]));
+							@loc = @pvp['arena']['spawn'][@pvp['players'][@player]['team']][@r];
 						} else {
-							@r = rand(0, array_size(@pvp['arena']['spawn'][0]))
-							set_ploc(@player, @pvp['arena']['spawn'][0][@r])
+							@r = rand(0, array_size(@pvp['arena']['spawn'][0]));
+							@loc = @pvp['arena']['spawn'][0][@r];
 						}
-						_pvp_equip(@id, @player)
-						@pvp['players'][@player]['respawn'] = 0
-						close_pinv(@player)
 					}
+					set_entity_fall_distance(puuid(@player), 0);
+					set_ploc(@player, @loc);
+					pfacing(@player, 0, 0);
+					
+					set_pflight(@player, false);
+					preset_time(@player);
+					set_pstorm(@player, null);
+					_pvp_equip(@id, @player);
+					@pvp['players'][@player]['respawn'] = 0;
+					close_pinv(@player);
+				} else {
+					set_pflight(@player, true);
+					set_pflying(@player, true);
+					@timeleft = ceil((@pvp['players'][@player]['respawn'] - time()) / 1000);
+					set_ptime(player(), 23000 - @timeleft * 100);
+					title_msg(@player, @timeleft, null, 0, 20, 0);
 				}
 			} else if(!array_contains(sk_current_regions(@player), @pvp['arena']['region'])) {
 				tmsg(@player, color('gray').'[PVP] '.color('r').'You exited the combat region.')
@@ -446,6 +461,7 @@ proc _pvp_end_match(@id, @winners) {
 					}
 					set_entity_fall_distance(puuid(@player), 0);
 					set_ploc(@player, @pvp['arena']['lobby']);
+					set_pflight(@player, false);
 					_equip_park(@player);
 					_clear_peffects(@player);
 				}

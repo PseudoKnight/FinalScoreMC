@@ -146,11 +146,6 @@ bind(player_death, array('priority': 'high', 'id': @id.'death'), null, @e, @id =
 			if(array_index_exists(@pvp['players'][player()], 'class')) {
 				_class('unload', player(), @pvp['players'][player()]['class'], @pvp)
 			}
-			# if(array_index_exists(@pvp['arena'], 'timer')) {
-				# if(function_exists('premove_bar')) {
-					# premove_bar()
-				# }
-			# }
 			array_remove(@pvp['players'], player());
 			
 			# Delay spectator mode so that health amount is updated.
@@ -230,10 +225,18 @@ bind(player_spawn, array('id': @id.'spawn'), null, @e, @id = @id) {
 	}
 
 	if(array_index_exists(@pvp['arena'], 'respawntime') && @pvp['running'] == 2) {
+		@newLoc = _relative(@e['location'], 'up', 10000000);
+		@newLoc['pitch'] = 90;
+		modify_event('location', @newLoc);
+		
+		@timeleft = ceil((@pvp['players'][player()]['respawn'] - time()) / 1000);
+		set_ptime(player(), 23000 - @timeleft * 100);
 		queue_push(closure(){
-			msg(color('gray').'[PVP] '.color('r').'You will respawn in '
-				.round((@pvp['players'][player()]['respawn'] - time()) / 1000).' seconds.')
-		})
+			set_pstorm(player(), true);
+			set_pflight(player(), true);
+			set_pflying(player(), true);
+		}, player());
+		
 	} else if(array_index_exists(@pvp, 'team')) {
 		@r = rand(0, array_size(@pvp['arena']['spawn'][@pvp['players'][player()]['team']]))
 		modify_event('location', @pvp['arena']['spawn'][@pvp['players'][player()]['team']][@r])
@@ -355,6 +358,9 @@ bind(player_command, array('id': @id.'command'), null, @e, @id = @id) {
 		if(array_index_exists(@pvp['arena'], 'lives') && @pvp['arena']['lives'] > 1) {
 			set_pscore('lives', player(), 0, @id);
 		}
+		set_pflight(player(), false);
+		preset_time(player());
+		set_pstorm(player(), null);
 		_clear_pinv();
 		_clear_peffects(player());
 		_pvp_check_objectives(@id);
