@@ -4,6 +4,7 @@
 		die('Transfers ownership of a mob to another online player.\n'
 			.'Usage: /transfer <mob> <player>')
 	}
+	@player = '';
 	foreach(@arg in @args) {
 		if(ponline(@arg)) {
 			@player = @arg
