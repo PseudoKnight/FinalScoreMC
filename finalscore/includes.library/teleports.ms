@@ -14,7 +14,7 @@ proc _warmuptp(@length, @player, @loc, @yaw = null, @pitch = null, @cleareffects
 		}
 		set_ploc(@player, @loc)
 		set_peffect(@player, 15, 1, 1)
-		play_sound(ploc(@player), array('sound': 'GHAST_FIREBALL', 'volume': 2))
+		play_sound(@loc, array('sound': 'GHAST_FIREBALL', 'volume': 2))
 		make_effect(@loc, 'MOBSPAWNER_FLAMES', 20)
 		if(@cleareffects) {
 			_clear_peffects(@player)
