@@ -199,7 +199,25 @@
 		die('You cannot use teleport commands in '._worldname(pworld()));
 	}
 	if(!has_permission(@player, 'command.join.to')) {
-		die('You cannot directly join a player who is in '._worldname(pworld(@player)));
+		@warps = get_values('warp');
+		@closest = null;
+		@closestDistance = 10000;
+		@loc = ploc(@player);
+		foreach(@warp in @warps) {
+			if(@warp['loc'][3] == @loc['world']) {
+				@dist = sqrt(((@warp['loc'][0] - @loc[0]) ** 2) + ((@warp['loc'][2] - @loc[2]) ** 2));
+				if(@dist < @closestDistance) {
+					@closest = @warp;
+					@closestDistance = @dist;
+				}
+			}
+		}
+		if(is_null(@closest)) {
+			die('You cannot directly join a player who is in '._worldname(pworld(@player)));
+		}
+		include('includes.library/teleports.ms');
+		_warmuptp(3.7, player(), @closest['loc'], @closest['yaw'], @closest['pitch'], if(@closest['loc'][3] == 'custom', true, false));
+		die('Teleporting you near '.@player);
 	}
 
 	# Check it the player is being ignored
@@ -224,7 +242,6 @@
 
 *:/invite $player = >>>
 	try(@player = player($player), die('Player not found.'))
-	if(!has_permission('command.join.to'), die('You cannot do that from here.'))
 	if(!has_permission(@player, 'command.join.from'), die('That player is out of reach.'))
 
 	# Check it the player is being ignored
@@ -253,7 +270,26 @@
 	if(!ponline(@requests[player()][1]), die('That player is no longer online.'))
 	if(@requests[player()][0] == 'invite') {
 		if(!has_permission('command.join.from'), die('You cannot do that from here.'))
-		if(!has_permission(@requests[player()][1], 'command.join.to'), die('That player is out of reach.'))
+		if(!has_permission(@requests[player()][1], 'command.join.to')) {
+			@warps = get_values('warp');
+			@closest = null;
+			@closestDistance = 10000;
+			@loc = ploc(@requests[player()][1]);
+			foreach(@warp in @warps) {
+				if(@warp['loc'][3] == @loc['world']) {
+					@dist = sqrt(((@warp['loc'][0] - @loc[0]) ** 2) + ((@warp['loc'][2] - @loc[2]) ** 2));
+					if(@dist < @closestDistance) {
+						@closest = @warp;
+						@closestDistance = @dist;
+					}
+				}
+			}
+			if(is_null(@closest)) {
+				die('You cannot join a player in '._worldname(pworld(@requests[player()][1])));
+			}
+			_warmuptp(3.7, player(), @closest['loc'], @closest['yaw'], @closest['pitch'], if(@closest['loc'][3] == 'custom', true, false));
+			die('Teleporting you near '.@requests[player()][1]);
+		}
 		msg(color('b').'Teleporting to '.@requests[player()][1].' in 3 seconds...')
 		tmsg(@requests[player()][1], color('b').'Teleporting '.player().' in 3 seconds...')
 		_warmuptp(3.7, player(), ploc(@requests[player()][1]))
