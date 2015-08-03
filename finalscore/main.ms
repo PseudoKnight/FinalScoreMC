@@ -613,6 +613,13 @@ bind(entity_enter_portal, null, array(type: '/^(?!PLAYER)\\w*/', world: '/(dev|c
 	entity_remove(@e['id']);
 }
 
+# Works around major bug in MV-NetherPortals
+bind(player_portal_travel, null, null, @e) {
+	if(@e['from']['world'] == 'dev' || @e['from']['world'] == 'custom') {
+		cancel();
+	}
+}
+
 # Block creeper damage on the surface.
 bind(entity_explode, null, array('type': 'CREEPER'), @event) {
 	if(@event[location][y] > 62
