@@ -33,10 +33,20 @@
 			array('&b[JOIN]', '/pvp join '.@id)
 		));
 		console(player().' joined '.@id)
-		if(@pvp['running'] == 1) {
+		
+		if(@pvp['running'] == 1 || @pvp['running'] == 2) {
+			if(array_index_exists(@pvp['arena'], 'resourcepack')) {
+				send_resourcepack(player(), 'http://mc.finalscoremc.com:25966/resourcepacks/'.@pvp['arena']['resourcepack'].'.zip')
+			}
+			if(array_contains(@pvp['spectators'], player())) {
+				_remove_spectator(@id, player(), @pvp)
+			}
 			if(array_index_exists(@pvp['arena'], 'team')) {
 				_assign_team(player(), @pvp)
 			}
+		}
+		
+		if(@pvp['running'] == 1) {
 			if(array_index_exists(@pvp['arena'], 'classes')) {
 				if(!array_index_exists(@pvp['players'][player()], 'team') || @pvp['players'][player()]['team'] == 0) {
 					if(array_contains(all_virtualchests(), @id.'0')) {
@@ -49,16 +59,7 @@
 				}
 			}
 			
-		} else if(@pvp['running'] > 1) {
-			if(array_index_exists(@pvp['arena'], 'resourcepack')) {
-				send_resourcepack(player(), 'http://mc.finalscoremc.com:25966/resourcepacks/'.@pvp['arena']['resourcepack'].'.zip')
-			}
-			if(array_index_exists(@pvp['arena'], 'team')) {
-				_assign_team(player(), @pvp)
-			}
-			if(array_contains(@pvp['spectators'], player())) {
-				_remove_spectator(@id, player(), @pvp)
-			}
+		} else if(@pvp['running'] == 2) {
 			_pvp_initialize_players(@id, array(player()))
 			
 		} else if(array_index_exists(@arena, 'max') && array_size(@pvp['players']) >= @arena['max']) {

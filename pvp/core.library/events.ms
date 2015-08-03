@@ -185,14 +185,16 @@ bind(player_quit, array('id': @id.'quit', 'priority': 'HIGH'), null, @e, @id = @
 	} else {
 		die()
 	}
-
-	bind(player_join, null, array('player': player()), @e, @id = @id) {
-		@pvp = import('pvp'.@id)
+	
+	array_push(@pvp['binds'], player().'join');
+	bind(player_join, array('id': player().'join'), array('player': player()), @e, @id = @id) {
 		unbind()
-		if(@pvp && pworld() == 'custom') {
-			_clear_pinv()
-			try(set_ploc(@pvp['arena']['lobby']))
-		}
+		set_timeout(500, closure(){
+			@pvp = import('pvp'.@id)
+			if(!is_null(@pvp) && @pvp['running'] && pworld() == 'custom') {
+				set_ploc(@pvp['arena']['lobby']);
+			}
+		});
 	}
 }
 

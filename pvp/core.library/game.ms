@@ -169,7 +169,9 @@ proc _pvp_start_match(@id) {
 			} else if(!array_contains(sk_current_regions(@player), @pvp['arena']['region'])) {
 				tmsg(@player, color('gray').'[PVP] '.color('r').'You exited the combat region.')
 				queue_push(closure(){
-					pkill(@player)
+					if(pworld(@player) == 'custom') {
+						pkill(@player);
+					}
 				})
 			} else if(@pvp['arena']['mode'] == 'koth' 
 			&& array_contains(sk_current_regions(@player), @pvp['arena']['kothregion'])) { 
