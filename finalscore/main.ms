@@ -244,7 +244,7 @@ bind(player_join, null, null, @event) {
 		}
 		
 		set_timeout(800, closure(){
-			if(@loc[1] > ploc()[1]) {
+			if(@loc[3] = pworld() && @loc[1] > ploc()[1]) {
 				set_ploc(@loc);
 			}
 		});
