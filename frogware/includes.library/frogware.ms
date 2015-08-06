@@ -35,6 +35,7 @@ proc _fw_startround(@secs = 12) {
 	if(pworld() != 'custom') {
 		_fw_endgame(array())
 		_fw_msg('Host left the game.')
+		return();
 	}
 	queue_delay(1000, 'fw')
 	queue_push(closure(){
