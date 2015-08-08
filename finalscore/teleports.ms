@@ -29,11 +29,16 @@ bind(player_teleport, null, null, @event) {
 			try( # sometimes entity does not exist and causes an exception in get_entity_vehicle()
 				@vehicle = get_entity_vehicle(puuid());
 				if(entity_type(@vehicle) == 'HORSE') {
-					set_timeout(50, closure(){
-						set_entity_loc(@vehicle, @event['to']);
-						set_timeout(50, closure(){
-							set_entity_rider(@vehicle, puuid());
-						});
+					set_timeout(1, closure(){
+						try(
+							set_entity_loc(@vehicle, @event['to']);
+							set_timeout(50, closure(){
+								set_entity_rider(@vehicle, puuid());
+							});
+						, # catch
+							msg('Failed to teleport your horse with you. The chunk may have unloaded too quickly.');
+							console('Failed to teleport horse.');
+						);
 					});
 					die();
 				}
@@ -66,11 +71,11 @@ bind(player_interact, null, array('item': 368, 'button': 'right'), @event) {
 
 # Main world_changed handler
 bind(world_changed, null, null, @event) {
-	set_timeout(200, closure(){
+	if(@event['from'] != 'custom'
+	&& @event['to'] == 'custom') {
 		# if teleporting to Frog Park
-		if(@event['from'] != 'custom'
-		&& @event['to'] == 'custom') {
+		set_timeout(200, closure(){
 			_equip_park();
-		}
-	});
+		});
+	}
 }
