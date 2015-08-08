@@ -248,17 +248,26 @@
 					@count += 1;
 					array_remove(@cake['players'], @args[0]);
 					@amount += @cake['coins'];
-					_acc_subtract(@args[0], @cake['coins']);
+					
 				}
 			}
 			store_value('cakeinfo', @cakeinfo);
-			msg('Delete player from '.@count.' cakes and removed '.@amount.' coins.');
+			msg('Delete player from '.@count.' cakes.');
+			if(_acc_subtract(@args[0], @amount)) {
+				msg('Removed '.@amount.' coins.');
+			} else {
+				msg('Failed to remove '.@amount.' coins.');
+			}
 			
 		} else if(array_index_exists(@cakeinfo[@id]['players'], @args[1])) {
 			array_remove(@cakeinfo[@id]['players'], @args[1])
 			store_value('cakeinfo', @cakeinfo)
-			_acc_subtract(@args[1], @cakeinfo[@id]['coins']);
 			msg('Deleted player from '.@id.' cake.')
+			if(_acc_subtract(@args[1], @cakeinfo[@id]['coins'])) {
+				msg('Remove '.@cakeinfo[@id]['coins'].' coins.');
+			} else {
+				msg('Failed to remove '.@cakeinfo[@id]['coins'].' coins.');
+			}
 			
 		} else {
 			msg('Usage: /cake resetplayer [cakeid] <player>');
