@@ -20,7 +20,7 @@ bind(player_interact, array('id': @id.'endernadesreload', 'priority': 'highest')
 	cancel()
 	shoot_projectile(player(), 'ENDER_PEARL')
 	play_sound(ploc(), array('sound': 'SHOOT_ARROW', 'pitch': 0.5))
-	_weapon_cooldown(player(), 1200, 'MAGMA_CREAM', closure(){
+	_weapon_cooldown(player(), 2000, 'MAGMA_CREAM', closure(){
 		play_sound(ploc(), array('sound': 'IRONGOLEM_THROW'));
 	});
 }
