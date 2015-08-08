@@ -11,7 +11,7 @@ bind(player_interact, null, array('button': 'right', 'block': 43), @event) {
 	}
 	
 	@item = pinv(player(), null);
-	if(!array_contains(array(
+	if(is_null(@item) || !array_contains(array(
 		'DIAMOND_PICKAXE', 
 		'IRON_PICKAXE',
 		'STONE_PICKAXE',
