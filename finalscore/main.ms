@@ -3,13 +3,14 @@ set_cron('*/10 * * * *', closure(){
 		save_world(@world);
 	}
 	save_players();
-	console('-----------------------[ SAVED ]-----------------------', false);
+	run('/tps');
+	#console('-----------------------[ SAVED ]-----------------------', false);
 })
 
 bind(server_ping, null, null, @event) {
 	@currently = import('currently')
 	modify_event('motd', colorize('&6&l\u1260&d&l\u1260&b&l\u1260&4&l\u1260 &6&lFINALSCORE&e&lMC \u00AB &f\u25AA \u25AA \u25AA'
-		.if(!is_null(@currently), '\n&aCurrently&f: '.@currently)));
+		.if(!is_null(@currently), '\n&aPlaying&f: '.@currently)));
 }
 
 bind(player_login, null, null, @event) {
@@ -349,9 +350,7 @@ bind(player_interact, null, array('block': 77, 'button': 'right'), @event) {
 		&& length(@line[0]) > 2 
 		&& substr(@line[0], 0, 2) == color(1)) {
 			msg('Ran command:' @line[1] @line[2] @line[3]);
-			if(!call_alias(@line[1] @line[2] @line[3])) {
-				run(@line[1] @line[2] @line[3]);
-			}
+			run_cmd(@line[1] @line[2] @line[3]);
 			console('Deprecated sign command @ '.@event['location']);
 		}
 	}
@@ -385,8 +384,11 @@ bind(vehicle_collide, null, array('type': 'MINECART', 'collisiontype': 'BLOCK', 
 		if(is_null(get_inventory_item(@event['block'], @i))) {
 			set_inventory_item(@event['block'], @i, array('type': 328, 'qty': 1));
 			entity_remove(@event['id']);
-			break();
+			die();
 		}
+	}
+	if(!_is_survival_world(@event['block']['world'])) {
+		entity_remove(@event['id']);
 	}
 }
 
@@ -567,7 +569,7 @@ bind(block_break, null, array('type': 56), @event) {
 	
 		if(@report) {
 			broadcast(color('c').'[!] '.color('f').player().' found '.color('b').'diamonds '.color(7)
-				.if(get_light_at(@event['location']) < 7, '(light level: '.get_light_at(@event['location']).')'),
+				.'(light level: '.get_light_at(@event['location']).')',
 				'group.moderators');
 		}
 	})
@@ -605,26 +607,26 @@ bind(player_interact_entity, null, array('clicked': 'PAINTING'), @event) {
 }
 
 # Prevent undesireable interdimensional travel
-bind(entity_enter_portal, null, array(type: 'ENDER_DRAGON', world: 'outworld'), @e) {
+bind(entity_enter_portal, null, array('type': 'ENDER_DRAGON', 'world': 'outworld'), @e) {
 	cancel();
 }
 
-bind(entity_enter_portal, null, array(type: '/^(?!PLAYER)\\w*/', world: '/(dev|custom)/'), @e) {
+bind(entity_enter_portal, null, array('type': '/^(?!PLAYER)\\w*/', 'world': '/(dev|custom)/'), @e) {
 	entity_remove(@e['id']);
 }
 
 # Works around major bug in MV-NetherPortals
 bind(player_portal_travel, null, null, @e) {
-	if(@e['from']['world'] == 'dev' || @e['from']['world'] == 'custom') {
+	if(!_is_survival_world(@e['from']['world'])) {
 		cancel();
 	}
 }
 
 # Block creeper damage on the surface.
 bind(entity_explode, null, array('type': 'CREEPER'), @event) {
-	if(@event[location][y] > 62
-	&& array_contains(array('world', 'world3', 'world4', 'omega'), @event[location][world])) {
+	if(@event['location']['y'] > 62
+	&& array_contains(array('world', 'world3', 'world4', 'omega'), @event['location']['world'])) {
 		cancel();
-		play_effect(@event[location], 'EXPLOSION_HUGE');
+		play_effect(@event['location'], 'EXPLOSION_HUGE');
 	}
 }
