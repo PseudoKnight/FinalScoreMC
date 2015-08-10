@@ -12,6 +12,7 @@ proc _weapon_cooldown(@player, @time, @type, @onCooldown) {
 			} else {
 				@newItem = @item[];
 				@newItem['name'] = @type;
+				@newItem['data'] = 0;
 				set_pinv(@player, array('null': @newItem));
 				@slot = pinfo(@player, 15);
 				set_timeout(@time, closure(){
