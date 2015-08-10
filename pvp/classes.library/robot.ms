@@ -1,5 +1,5 @@
 switch(@action) {
 case 'powerup':
-	set_phunger(@player, 4)
+	set_phunger(@player, 2)
 	
 }
