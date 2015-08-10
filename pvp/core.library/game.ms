@@ -142,7 +142,7 @@ proc _pvp_start_match(@id) {
 						make_effect(_relative(ploc(@player), 'up'), 'MOBSPAWNER_FLAMES');
 					} else {
 						if(array_index_exists(@pvp['players'], 'team')) {
-							@r = rand(0, array_size(@pvp['arena']['spawn'][@pvp['players'][player()]['team']]));
+							@r = rand(0, array_size(@pvp['arena']['spawn'][@pvp['players'][@player]['team']]));
 							@loc = @pvp['arena']['spawn'][@pvp['players'][@player]['team']][@r];
 						} else {
 							@r = rand(0, array_size(@pvp['arena']['spawn'][0]));
@@ -163,7 +163,7 @@ proc _pvp_start_match(@id) {
 					set_pflight(@player, true);
 					set_pflying(@player, true);
 					@timeleft = ceil((@pvp['players'][@player]['respawn'] - time()) / 1000);
-					set_ptime(player(), 23000 - @timeleft * 100);
+					set_ptime(@player, 23000 - @timeleft * 100);
 					title_msg(@player, @timeleft, null, 0, 20, 0);
 				}
 			} else if(!array_contains(sk_current_regions(@player), @pvp['arena']['region'])) {
