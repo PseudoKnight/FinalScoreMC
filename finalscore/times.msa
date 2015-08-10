@@ -59,10 +59,6 @@
 				foreach(@i: @t in @time['top']) {
 					if(@t[0] == $player) {
 						msg('Removing '.$player.' from top ten in '.split('.', @key)[1]);
-						if(@i == 0) {
-							msg('Subtracting 250 coins.');
-							_acc_subtract($player, 250);
-						}
 						array_remove(@time['top'], @i);
 						store_value(@key, @time);
 						break();

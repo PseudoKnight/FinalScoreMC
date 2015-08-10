@@ -174,8 +174,6 @@ register_command('timer', array(
 									switch(@place) {
 										case 1:
 											@place = '1st'
-											_acc_add(@player, 250)
-											tmsg(@player, color('gold').'+ 250 coins')
 										case 2:
 											@place = '2nd'
 										case 3:
