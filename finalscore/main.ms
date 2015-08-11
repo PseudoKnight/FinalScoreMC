@@ -571,7 +571,7 @@ bind(block_break, null, array('type': 56), @event) {
 			@msg = color('c').'[!] '.color('f').player().' found '.color('b').'diamonds '.color(7)
 				.'(light level: '.get_light_at(@event['location']).')';
 			broadcast(@msg, 'group.moderators');
-			console(@msg, false);
+			console(@msg);
 		}
 	})
 }
