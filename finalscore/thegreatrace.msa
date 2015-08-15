@@ -18,14 +18,6 @@
 		die('Not enough players within 32 blocks.');
 	}
 	
-	# Setup scoreboard
-	create_scoreboard('race');
-	create_objective('distance', 'DUMMY', 'race');
-	set_objective_display('distance', array('slot': 'SIDEBAR', 'displayname': color('b').'Distance'), 'race');
-	foreach(@p in @players) {
-		set_pscoreboard(@p, 'race');
-	}
-	
 	# Get target location
 	if(!$) {
 		@border = yml_decode(read('../../../WorldBorder/config.yml'))['worlds'][@world];
@@ -37,6 +29,7 @@
 		@target = get_highest_block_at(@args[0], @args[1], @world);
 	}
 	
+	# Create an array of points in a circle around the target location
 	@radius = 8;
     @circle = array();
     for(@angle = 0, @angle < 6.28, @angle += 0.4) { 
@@ -48,6 +41,15 @@
 		);
     }
 	
+	# Setup scoreboard
+	create_scoreboard('race');
+	create_objective('distance', 'DUMMY', 'race');
+	set_objective_display('distance', array('slot': 'SIDEBAR', 'displayname': color('b').'Distance'), 'race');
+	foreach(@p in @players) {
+		set_pscoreboard(@p, 'race');
+	}
+	
+	# Main loop
 	@timer = array(3);
 	set_interval(1000, closure(){
 		foreach(@index: @p in @players) {
@@ -56,12 +58,12 @@
 			}
 		}
 		
-		if(array_size(@players) < 1) {
+		if(array_size(@players) <= 1) {
 			tmsg(array_get(@players, 0, '~console'), 'All players left the race.');
 			unbind('thegreatrace');
 			remove_scoreboard('race');
 			clear_task();
-
+			
 		} else if(@timer[0] > -1) {
 			# COUNTDOWN
 			foreach(@index: @p in @players) {
