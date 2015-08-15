@@ -62,26 +62,35 @@
 		@targetLoc[3] = @loc[3];
 		ctz_set_npc_face_loc(@npc, @targetLoc);
 		set_timeout(1000, closure(){
+			try(
 			ctz_set_npc_target(@npc, @targetLoc);
 			array_remove(@path, 0);
+			);
 		});
 	});
 	if(has_bind($player.'nav')) {
 		unbind($player.'nav');
 		unbind($player.'quit');
-		unbind($player.'vehicle_leave');
 	}
 	bind(ctz_npc_navigation_complete, array('id': $player.'nav'), array('world': pworld($player)), @e, 
 			@npc = @npc, @path = @path, @player = $player) {
 			
 		if(@e['npc'] == @npc) {
+			if(get_entity_rider(ctz_npc_entity_id(@npc)) == null) {
+				unbind();
+				unbind(@player.'quit');
+				set_timeout(50, closure(){
+					ctz_remove_npc(@npc);
+				});
+				die();
+			}
+		
 			if(array_size(@path) > 0) {
 				ctz_set_npc_target(@npc, split(',', @path[0]));
 				array_remove(@path, 0);
 			} else {
 				unbind();
 				unbind(@player.'quit');
-				unbind(@player.'vehicle_leave');
 				# delay so citizens doesn't give an error updating NPC
 				set_timeout(50, closure(){
 					ctz_remove_npc(@npc);
@@ -89,17 +98,8 @@
 			}
 		}
 	}
-	bind(vehicle_leave, array('id': $player.'vehicle_leave'), array('passengertype': 'PLAYER'), @e, @npc = @npc, @player = $player) {
-		if(@e['player'] == @player) {
-			unbind();
-			unbind(@player.'quit');
-			unbind(@player.'nav');
-			ctz_remove_npc(@npc);
-		}
-	}
 	bind(player_quit, array('id': $player.'quit'), array('player': $player), @e, @npc = @npc) {
 		unbind();
-		unbind(player().'vehicle_leave');
 		unbind(player().'nav');
 		ctz_remove_npc(@npc);
 	}
