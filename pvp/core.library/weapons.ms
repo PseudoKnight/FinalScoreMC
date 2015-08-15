@@ -1,4 +1,4 @@
-proc _weapon_cooldown(@player, @time, @type, @onCooldown) {
+proc _weapon_cooldown(@player, @time, @type, @onCooldown, @remove = 1) {
 	switch(@type) {
 		case 'damage':
 			#TODO: weapon damage
@@ -6,7 +6,7 @@ proc _weapon_cooldown(@player, @time, @type, @onCooldown) {
 			
 		default:
 			@item = pinv(@player, null);
-			@item['qty'] -= 1;
+			@item['qty'] -= @remove;
 			if(@item['qty'] == 0) {
 				set_pinv(@player, array('null': null));
 			} else {

@@ -67,7 +67,7 @@ case 'load':
 			'particleCount': 60, 
 			'speed': 0.5,
 		));
-		_weapon_cooldown(player(), 6000, 'INK_SACK', false);
+		_weapon_cooldown(player(), 6000, 'INK_SACK', false, 0);
 	}
 		
 case 'unload':
