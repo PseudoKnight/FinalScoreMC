@@ -23,7 +23,8 @@ bind(player_interact, null, array('block': 92), @event) {
 	if(!array_index_exists(@cakeinfo, @id), die('The cake is a lie.'))
 	set_phunger(20)
 	set_psaturation(5.0)
-	if(array_index_exists(@cakeinfo[@id]['players'], player())) {
+	@uuid = puuid(player(), true);
+	if(array_index_exists(@cakeinfo[@id]['players'], @uuid)) {
 		die('You\'ve already got this cake.')
 	}
 	@count = 1
@@ -31,12 +32,12 @@ bind(player_interact, null, array('block': 92), @event) {
 	foreach(@cake in @cakeinfo) {
 		if(@cake['type'] == @cakeinfo[@id]['type']) {
 			@total += 1
-			if(array_index_exists(@cake['players'], player())) {
+			if(array_index_exists(@cake['players'], @uuid)) {
 				@count += 1
 			}
 		}
 	}
-	@cakeinfo[@id]['players'][player()] = time()
+	@cakeinfo[@id]['players'][@uuid] = time()
 	msg(color('green').'You got the '.to_upper(@id).' '.@cakeinfo[@id]['type'].' cake! ('.@count.'/'.@total.')')
 	if(!array_contains_ic(pgroup(), 'builders')) {
 		_acc_add(player(), @cakeinfo[@id]['coins'])

@@ -1,16 +1,16 @@
 ### CAKES ###
 
 *:/cake [$cmd] [$] = >>>
-	switch($cmd) {
+	switch($cmd) {	
 	case 'list':
 		@cakes = get_value('cakeinfo')
 		@names = array('challenge': '', 'secret': '')
 		@count = array('challenge': 0, 'secret': 0)
 		@total = array('challenge': 0, 'secret': 0)
 		if($) {
-			@player = $
+			@player = puuid($, true);
 		} else {
-			@player = player()
+			@player = puuid(player(), true);
 		}
 		foreach(@id: @cake in @cakes) {
 			@total[@cake['type']] += 1
@@ -22,7 +22,7 @@
 			}
 		}
 		if($) {
-			msg(color('gold').'CAKES ACHIEVED BY '.to_upper(@player).'. (#) players who achieved the cake')
+			msg(color('gold').'CAKES ACHIEVED BY '.to_upper($).'. (#) players who achieved the cake')
 		} else {
 			msg(color('gold').'CAKES YOU\'VE ACHIEVED. (#) players who achieved the cake')
 		}
@@ -48,25 +48,10 @@
 		} else {
 			@id = $
 		}
-		@cake = get_value('cakeinfo')[@id]
-		msg('Cake info for "'.@id.'":')
-		if(@cake['type'] == 'challenge') {
-			msg(color('green').@cake['coins'].color('r').' coins.')
-			@players = ''
-			foreach(@player: @time in @cake['players']) {
-				@players .= @player.' '
-			}
-			msg('Players: '.@players)
-		} else if(@cake['type'] == 'secret') {
-			msg(color('green').@cake['coins'].color('r').' coins.')
-			@players = ''
-			foreach(@player: @time in @cake['players']) {
-				@players .= @player.' '
-			}
-			msg('Players: '.@players)
-		} else {
-			msg('Unknown cake type.')
-		}
+		@cake = get_value('cakeinfo')[@id];
+		msg('Cake info for "'.@id.'":');
+		msg(color('green').@cake['coins'].color('r').' coins.');
+		msg(color('green').array_size(@cake['players']).color('r').' players.');
 
 	case 'set':
 		if(!array_contains(pgroup(), 'moderators'), die('You do not have permission to use cake commands.'))
@@ -215,6 +200,7 @@
 		msg('Teleported.')
 		
 	case 'resetplayer':
+		die('Not updated for UUIDs.');
 		if(!array_contains(pgroup(), 'moderators'), die('You do not have permission to use cake commands.'))
 		@args = parse_args($)
 		@id = '';
