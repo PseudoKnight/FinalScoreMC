@@ -231,12 +231,8 @@ bind(player_spawn, array('id': @id.'spawn'), null, @e, @id = @id) {
 		@newLoc['pitch'] = 90;
 		modify_event('location', @newLoc);
 		
-		@timeleft = ceil((@pvp['players'][player()]['respawn'] - time()) / 1000);
-		set_ptime(player(), 23000 - @timeleft * 100);
 		queue_push(closure(){
 			set_pstorm(player(), true);
-			set_pflight(player(), true);
-			set_pflying(player(), true);
 		}, player());
 		
 	} else if(array_index_exists(@pvp, 'team')) {

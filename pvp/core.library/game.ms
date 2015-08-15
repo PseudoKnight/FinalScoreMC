@@ -153,17 +153,13 @@ proc _pvp_start_match(@id) {
 					set_ploc(@player, @loc);
 					pfacing(@player, 0, 0);
 					
-					set_pflight(@player, false);
 					preset_time(@player);
 					set_pstorm(@player, null);
 					_pvp_equip(@id, @player);
 					@pvp['players'][@player]['respawn'] = 0;
 					close_pinv(@player);
 				} else {
-					set_pflight(@player, true);
-					set_pflying(@player, true);
 					@timeleft = ceil((@pvp['players'][@player]['respawn'] - time()) / 1000);
-					set_ptime(@player, 23000 - @timeleft * 100);
 					title_msg(@player, @timeleft, null, 0, 20, 0);
 				}
 			} else if(!array_contains(sk_current_regions(@player), @pvp['arena']['region'])) {
