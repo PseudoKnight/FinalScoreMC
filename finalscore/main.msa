@@ -166,42 +166,42 @@
 	set_phealth(@player, 0)
 <<<
 
-*:/compass [$target] [$id] = >>>
+*:/compass [$target] [$arg] = >>>
 	if(!$target) {
-		die('Usage: /compass [here|spawn|home|player [playerName]]')
+		die('Usage: /compass [here|spawn|home [player]|player|x z]');
 	}
 	switch($target) {
-	case 'spawn':
-		set_compass_target(get_spawn())
-		msg('Compass is now pointing to '._worldname(pworld()).'\'s spawn.')
+		case 'spawn':
+			set_compass_target(get_spawn());
+			msg('Compass is now pointing to '._worldname(pworld()).'\'s spawn.');
 		
-	case 'player':
-		if(!$id, die('You must specify a player to point to.'))
-		try(@player = player($id), die('Unknown player.'))
-		if(pworld(@player) != pworld(), die('Player is not in this world.'))
-		set_compass_target(ploc(@player))
-		msg('Compass is now pointing to '.@player.'\'s last location.')
-	
-	case 'home':
-		if($id) {
-			@pdata = _pdata($id)
-		} else {
-			@pdata = _pdata(player())
-		}
-		if(!array_index_exists(@pdata, 'homes'), die('No home to target.'))
-		if(!array_index_exists(@pdata['homes'], pworld()), die('No home in this world to target.'))
-		set_compass_target(array(
-			@pdata['homes'][pworld()][0],
-			@pdata['homes'][pworld()][1],
-			@pdata['homes'][pworld()][2],
-			pworld()
-		))
-		msg('Compass is now pointing to '.if($id, $id.'\'s', 'your').' home.')
-		
-	case 'here':
-		set_compass_target(ploc())
-		msg('Compass is now pointing to this location.')
-
+		case 'home':
+			if($arg) {
+				@pdata = _pdata($arg);
+			} else {
+				@pdata = _pdata(player());
+			}
+			if(!array_index_exists(@pdata, 'homes'), die('No home to target.'));
+			if(!array_index_exists(@pdata['homes'], pworld()), die('No home in this world to target.'));
+			set_compass_target(@pdata['homes'][pworld()]);
+			msg('Compass is now pointing to '.if($arg, $arg.'\'s', 'your').' home.');
+			
+		case 'here':
+			set_compass_target(ploc());
+			msg('Compass is now pointing to this location.');
+			
+		default:
+			try(
+				@player = player($target);
+				if(pworld(@player) != pworld(), die('Player is not in this world.'));
+				set_compass_target(ploc(@player));
+				msg('Compass is now pointing to '.@player.'\'s last location.');
+			, # catch
+				if(is_numeric($target) && is_numeric($arg)) {
+					set_compass_target(array($target, 0, $arg, pworld()));
+					msg('Compass is now pointing to x:'.$target.' z:'.$arg);
+				}
+			);
 	}
 <<<
 
