@@ -40,59 +40,53 @@ register_command('timer', array(
 					@ptime = get_value('times.'.@id, @player)
 					if(is_null(@ptime)) { 
 						@ptime = 0
-					} else {
-						@ptime = ceil(@ptime)
 					}
 					
 					set_plevel(@player, 0)
 					set_pexp(@player, 0)
 					play_sound(ploc(@player), array('sound': 'FIREWORK_BLAST'), @player)
 					
-					@level = array(0)
-					@stop = false
+					@stop = false;
 					
 					@timers[@player][2] = set_interval(1000, closure(){
 						if(ponline(@player)) {
-							@yloc = ploc(@player)['y']
-							if(array_contains(sk_current_regions(@player), @id)
-							|| @yloc < 0) {
-								@level[0] += 1
+							@ploc = ploc(@player);
+							if(array_contains(sk_current_regions(@player), @id)) {
+								@time = round((time() - @timers[@player][1]) / 1000);
 								if(extension_exists('CHNaughty')) {
-									action_msg(@player, @level[0]);
+									action_msg(@player, @time);
 								} else {
-									set_plevel(@player, @level[0]);
+									set_plevel(@player, @time);
 								}
 								
-								if(@level[0] <= @ptime) {
-									@percent = round((@level[0] / @ptime) * 100)
-									set_pexp(@player, @percent)
+								if(@time < @ptime) {
+									@percent = round((@time / @ptime) * 100);
+									set_pexp(@player, @percent);
 								}
 
-								if(@level[0] + 5 > @ptime && @level[0] < @ptime) {
-									play_sound(ploc(@player), array('sound': 'CLICK', 'pitch': 2), @player)
-								} else if(@level[0] == @ptime) {
-									play_sound(ploc(@player), array('sound': 'VILLAGER_NO'), @player)
+								if(@time + 5 > @ptime && @time < @ptime + 1) {
+									if(@time == round(@ptime)) {
+										play_sound(@ploc, array('sound': 'VILLAGER_NO'), @player);
+									} else {
+										play_sound(@ploc, array('sound': 'CLICK', 'pitch': 2), @player);
+									}
 								}
 								
-								if(pinfo(@player, 5) <= 0) {
-									if(function_exists('respawn')) {
-										respawn(@player)
-									}
-								} else if(@yloc < 0) {
-									pkill(@player)
-								}
+							} else if(@ploc['y'] < 0) {
+								pkill(@player);
 								
 							} else {
-								@stop = true
+								@stop = true;
 							}
 						} else {
-							@stop = true
+							@stop = true;
 						}
 						
 						if(@stop) {
 							array_remove(@timers, @player)
 							unbind(@player.'timerbreak');
 							unbind(@player.'timerrestart');
+							unbind(@player.'timerdeath');
 							if(ponline(@player) && pworld(@player) == 'custom') {
 								set_plevel(@player, 0)
 								set_pexp(@player, 0)
@@ -109,6 +103,7 @@ register_command('timer', array(
 							@timers = import('timer');
 							unbind();
 							unbind(player().'timerrestart');
+							unbind(player().'timerdeath');
 							ptake_item(player(), 39, 1);
 							clear_task(@timers[player()][2]);
 							array_remove(@timers, player());
@@ -122,6 +117,16 @@ register_command('timer', array(
 							pfacing(@loc['yaw'], @loc['pitch']);
 						}
 					}
+					if(!has_bind(@player.'timerdeath')) {
+						bind(player_death, array('id': @player.'timerdeath'), array('player': @player), @e) {
+							if(!_is_survival_world(pworld())) {
+								modify_event('drops', array());
+								set_timeout(500, closure(){
+									respawn();
+								});
+							}
+						}
+					}
 					
 				
 				} else if(@args[0] == 'stop') {
@@ -131,6 +136,7 @@ register_command('timer', array(
 						@time = round((time() - @timers[@player][1]) / 1000, 1);
 						unbind(@player.'timerbreak');
 						unbind(@player.'timerrestart');
+						unbind(@player.'timerdeath');
 						ptake_item(@player, 39, 1);
 						clear_task(@timers[@player][2]);
 						array_remove(@timers, @player);
