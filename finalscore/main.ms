@@ -3,8 +3,9 @@ set_cron('*/10 * * * *', closure(){
 		save_world(@world);
 	}
 	save_players();
-	run('/tps');
-	#console('-----------------------[ SAVED ]-----------------------', false);
+	@currently = import('currently');
+	console('---[ SAVED ]---[ TPS: '.tps()[1].' ]---[ PLAYERS: '.array_size(all_players()).' ]---'
+		.if(!is_null(@currently), '[ CURRENTLY: '.@currently.' ]---'), false);
 })
 
 bind(server_ping, null, null, @event) {
@@ -631,6 +632,7 @@ bind(entity_explode, null, array('type': 'CREEPER'), @event) {
 		play_effect(@event['location'], 'EXPLOSION_HUGE');
 	}
 }
+
 # Allow command block placement for builders
 bind(player_interact, null, array('button': 'right', 'item': 137), @event) {
 	if(has_permission('group.builders') 
