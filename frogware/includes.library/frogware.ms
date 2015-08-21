@@ -32,6 +32,14 @@ proc _fw_endgame(@winners) {
 }
 
 proc _fw_startround(@secs = 12) {
+	@blocks = import('frogware.blocks');
+	if(!is_null(@blocks)) {
+		foreach(@index: @block in @blocks) {
+			set_block_at(@block, 0);
+			array_remove(@blocks, @index);
+		}
+	}
+	
 	if(pworld() != 'custom') {
 		_fw_endgame(array())
 		_fw_msg('Host left the game.')
@@ -73,7 +81,7 @@ proc _fw_startround(@secs = 12) {
 			_fw_endgame(@winners)
 		} else {
 			@secs = 12 - round(8 * (@highscore / @goal))
-			@tasks = array('climb', 'keepaway', 'harvest', 'koth', 'cake', 'fall', 'cluck', 'frogegg', 'lavafall', 'shepherd')
+			@tasks = array('climb', 'keepaway', 'harvest', 'koth', 'cake', 'fall', 'cluck', 'frogegg', 'lavafall', 'shepherd', 'anvil', 'pvp')
 			@task = @tasks[rand(array_size(@tasks))]
 			if(@total == 1 && @task == 'pvp', @task = @tasks[rand(array_size(@tasks))])
 			queue_delay(1000, 'fw2')
@@ -162,6 +170,14 @@ proc _fw_mobs() {
 	}
 }
 
+proc _fw_items(@item, @num) {
+	for(@i = 0, @i < @num, @i++) {
+		if(@loc = _fw_loc(0, false)) {
+			drop_item(@loc, @item);
+		}
+	}
+}
+
 proc _fw_player(@player) {
 	if(ponline(@player)
 	&& pworld(@player) == 'custom'
@@ -202,6 +218,14 @@ proc _fw_changeteam(@player, @team) {
 	}
 }
 
+proc _fw_set_winners() {
+	foreach(@p in all_players('custom')) {
+		if(_fw_player(@p)) {
+			_fw_changeteam(@p, 'winners')
+		}
+	}
+}
+
 proc _fw_randompotion(@potentials, @secs = 20) {
 	@potions = array(
 		'speed': array(1, 17),
@@ -224,14 +248,29 @@ proc _fw_msg(@msg) {
 #Given two blocks, iterates through all the blocks inside the cuboid, and calls the 
 #user defined function on them. The used defined procedure should accept 3 parameters,
 #the x, y, and z coordinates of the block.
-proc _iterate_cuboid(@b1, @b2, @proc_name) {
+proc _iterate_cuboid(@b1, @b2, @block, @percent) {
+	@blocks = import('frogware.blocks');
+	if(is_null(@blocks)) {
+		@blocks = array();
+	}
 	for(@x = min(@b1[0], @b2[0]), @x <= max(@b1[0], @b2[0]), @x++) {
 		for(@y = min(@b1[1], @b2[1]), @y <= max(@b1[1], @b2[1]), @y++) {
 			for(@z = min(@b1[2], @b2[2]), @z <= max(@b1[2], @b2[2]), @z++) {
-				call_proc(@proc_name, @x, @y, @z)
+				if(rand(100) < @percent) {
+					set_block_at(@x, @y, @z, @block, 'custom');
+					@blocks[] = array(@x, @y, @z, 'custom');
+				}
 			}
 		}
 	}
+	export('frogware.blocks', @blocks);
+}
+
+proc _fw_clear_blocks(@height = 1) {
+	@region = sk_region_info('frogware', 'custom')[0];
+	_iterate_cuboid(array(@region[0][0], @region[1][1], @region[0][2], 'custom'),
+		array(@region[1][0], @region[1][1] + @height - 1, @region[1][2], 'custom'),
+		0, 100);
 }
 
 proc _fw_task(@task, @state, @secs) {
@@ -240,45 +279,30 @@ proc _fw_task(@task, @state, @secs) {
 		switch(@state) {
 		case 'start':
 			_fw_msg('Climb.')
-			if(!rand(6)) {
+			if(!rand(4)) {
 				_fw_randompotion(array('speed', 'jump', 'blind'))
 			}
-			if(!rand(6)) {
+			if(!rand(4)) {
 				_fw_mobs()
-			}
-			proc _set_emerald(@x, @y, @z) {
-				if(rand(100) < 3) {
-					set_block_at(array(@x, @y, @z, 'custom'), '133:0')
-				}
-			}
-			proc _set_diamond(@x, @y, @z) {
-				if(rand(100) < 4) {
-					set_block_at(array(@x, @y, @z, 'custom'), '57:0')
-				}
-			}
-			proc _set_gold(@x, @y, @z) {
-				if(rand(100) < 5) {
-					set_block_at(array(@x, @y, @z, 'custom'), '41:0')
-				}
 			}
 			@region = sk_region_info('frogware', 'custom')[0]
 			queue_push(closure(){
 				_iterate_cuboid(array(@region[0][0], @region[1][1], @region[0][2], 'custom'),
 				array(@region[1][0], @region[1][1], @region[1][2], 'custom'),
-				'_set_gold')
-			}, 'fw3')
+				'41:0', 5);
+			}, 'fw3');
 			queue_delay(500, 'fw3')
 			queue_push(closure(){
 				_iterate_cuboid(array(@region[0][0], @region[1][1] + 1, @region[0][2], 'custom'),
 				array(@region[1][0], @region[1][1] + 1, @region[1][2], 'custom'),
-				'_set_diamond')
-			}, 'fw3')
+				'57:0', 4);
+			}, 'fw3');
 			queue_delay(500, 'fw3')
 			queue_push(closure(){
 				_iterate_cuboid(array(@region[0][0], @region[1][1] + 2, @region[0][2], 'custom'),
 				array(@region[1][0], @region[1][1] + 2, @region[1][2], 'custom'),
-				'_set_emerald')
-			}, 'fw3')
+				'133:0', 3);
+			}, 'fw3');
 				
 		case 'end':
 			foreach(@p in all_players('custom')) {
@@ -290,40 +314,15 @@ proc _fw_task(@task, @state, @secs) {
 					}
 				}
 			}
-			_remove_region_entities('frogware')
-			proc _set_air(@x, @y, @z) {
-				if(get_block_at(array(@x, @y, @z, 'custom'))[0] != '0') {
-					set_block_at(array(@x, @y, @z, 'custom'), '0:0')
-				}
-			}
-			@region = sk_region_info('frogware', 'custom')[0]
-			queue_push(closure(){
-				_iterate_cuboid(array(@region[0][0], @region[1][1] + 2, @region[0][2], 'custom'),
-				array(@region[1][0], @region[1][1] + 2, @region[1][2], 'custom'),
-				'_set_air')
-			}, 'fw3')
-			queue_delay(100, 'fw3')
-			queue_push(closure(){
-				_iterate_cuboid(array(@region[0][0], @region[1][1] + 1, @region[0][2], 'custom'),
-				array(@region[1][0], @region[1][1] + 1, @region[1][2], 'custom'),
-				'_set_air')
-			}, 'fw3')
-			queue_delay(100, 'fw3')
-			queue_push(closure(){
-				_iterate_cuboid(array(@region[0][0], @region[1][1], @region[0][2], 'custom'),
-				array(@region[1][0], @region[1][1], @region[1][2], 'custom'),
-				'_set_air')
-			}, 'fw3')
-			queue_push(closure(){
-				_fw_startround(@secs)
-			}, 'fw3')
+			_remove_region_entities('frogware');
+			_fw_startround(@secs);
 		}
 		
 	case 'keepaway':
 		switch(@state) {
 		case 'start':
 			_fw_msg('Look out!')
-			if(!rand(6)) {
+			if(!rand(4)) {
 				_fw_randompotion(array('speed', 'jump', 'blind'))
 			}
 			_fw_mobs()
@@ -334,11 +333,7 @@ proc _fw_task(@task, @state, @secs) {
 					_fw_changeteam(@e['player'], 'losers')
 				}
 			}
-			foreach(@p in all_players('custom')) {
-				if(_fw_player(@p)) {
-					_fw_changeteam(@p, 'winners')
-				}
-			}
+			_fw_set_winners();
 			
 		case 'end':
 			foreach(@p in all_players('custom')) {
@@ -359,17 +354,11 @@ proc _fw_task(@task, @state, @secs) {
 		switch(@state) {
 		case 'start':
 			_fw_msg('Bring in the harvest!')
-			proc _set_dirt(@x, @y, @z) {
-				if(rand(100) < 2) {
-					set_block_at(array(@x, @y, @z, 'custom'), '3:0')
-				} else if(rand(100) < 5) {
-					drop_item(array(@x, @y, @z, 'custom'), array('type': 351, 'data': 15, 'qty': 1))
-				}
-			}
+			_fw_items(array('type': 351, 'data': 15, 'qty': 1), 100);
 			@region = sk_region_info('frogware', 'custom')[0]
 			_iterate_cuboid(array(@region[0][0], @region[1][1], @region[0][2], 'custom'),
 			array(@region[1][0], @region[1][1], @region[1][2], 'custom'),
-			'_set_dirt')
+			'3:0', 2);
 			foreach(@p in all_players('custom')) {
 				if(_fw_player(@p)) {
 					set_pinv(@p, array(
@@ -392,21 +381,8 @@ proc _fw_task(@task, @state, @secs) {
 					_clear_pinv(@p)
 				}
 			}
-			_remove_region_entities('frogware', array('DROPPED_ITEM'))
-			proc _set_air(@x, @y, @z) {
-				if(get_block_at(array(@x, @y, @z, 'custom'))[0] != '0') {
-					set_block_at(array(@x, @y, @z, 'custom'), '0:0')
-				}
-			}
-			@region = sk_region_info('frogware', 'custom')[0]
-			queue_push(closure(){
-				_iterate_cuboid(array(@region[0][0], @region[1][1], @region[0][2], 'custom'),
-				array(@region[1][0], @region[1][1], @region[1][2], 'custom'),
-				'_set_air')
-			}, 'fw3')
-			queue_push(closure(){
-				_fw_startround(@secs)
-			}, 'fw3')
+			_remove_region_entities('frogware', array('DROPPED_ITEM'));
+			_fw_startround(@secs);
 			
 		}
 		
@@ -414,13 +390,13 @@ proc _fw_task(@task, @state, @secs) {
 		switch(@state) {
 		case 'start':
 			_fw_msg('King of the Hill')
-			if(!rand(6)) {
+			if(!rand(4)) {
 				_fw_randompotion(array('speed', 'jump'))
 			}
-			if(!rand(6)) {
+			if(!rand(4)) {
 				_fw_mobs()
 			}
-			if(!rand(6)) {
+			if(!rand(4)) {
 				foreach(@p in all_players('custom')) {
 					if(_fw_player(@p)) {
 						set_pinv(@p, array(
@@ -429,23 +405,13 @@ proc _fw_task(@task, @state, @secs) {
 					}
 				}
 			}
-			proc _set_base(@x, @y, @z) {
-				if(get_block_at(array(@x, @y, @z, 'custom'))[0] == '0') {
-					set_block_at(array(@x, @y, @z, 'custom'), '155:0')
-				}
-			}
-			proc _set_hill(@x, @y, @z) {
-				if(get_block_at(array(@x, @y, @z, 'custom'))[0] == '0') {
-					set_block_at(array(@x, @y, @z, 'custom'), '133:0')
-				}
-			}
 			@loc = _fw_loc()
 			_iterate_cuboid(array(@loc[0] + 2, @loc[1], @loc[2] + 2, 'custom'),
 			array(@loc[0] - 2, @loc[1], @loc[2] - 2, 'custom'),
-			'_set_base')
+			'155:0', 100)
 			_iterate_cuboid(array(@loc[0] + 1, @loc[1] + 1, @loc[2] + 1, 'custom'),
 			array(@loc[0] - 1, @loc[1] + 1, @loc[2] - 1, 'custom'),
-			'_set_hill')
+			'133:0', 100)
 			
 		case 'end':
 			foreach(@p in all_players('custom')) {
@@ -457,21 +423,8 @@ proc _fw_task(@task, @state, @secs) {
 					}
 				}
 			}
-			_remove_region_entities('frogware')
-			proc _set_air(@x, @y, @z) {
-				if(get_block_at(array(@x, @y, @z, 'custom'))[0] != '0') {
-					set_block_at(array(@x, @y, @z, 'custom'), '0:0')
-				}
-			}
-			@region = sk_region_info('frogware', 'custom')[0]
-			queue_push(closure(){
-				_iterate_cuboid(array(@region[0][0], @region[1][1], @region[0][2], 'custom'),
-				array(@region[1][0], @region[1][1] + 1, @region[1][2], 'custom'),
-				'_set_air')
-			}, 'fw3')
-			queue_push(closure(){
-				_fw_startround(@secs)
-			}, 'fw3')
+			_remove_region_entities('frogware');
+			_fw_startround(@secs);
 		
 		}
 	
@@ -479,7 +432,7 @@ proc _fw_task(@task, @state, @secs) {
 		switch(@state) {
 		case 'start':
 			_fw_msg('Let there be cake!')
-			if(!rand(6)) {
+			if(!rand(4)) {
 				_fw_randompotion(array('speed'))
 			}
 			for(@i = 0, @i < max(1, floor(_fw_totalplayers() / 2)), @i++) {
@@ -512,17 +465,12 @@ proc _fw_task(@task, @state, @secs) {
 					play_sound(ploc(@p), array('sound': 'ghast_fireball'), @p)
 				}
 			}
-			proc _set_green(@x, @y, @z) {
-				if(rand(100) < 3) {
-					set_block_at(array(@x, @y, @z, 'custom'), '133:0')
-				}
-			}
 			@region = sk_region_info('frogware', 'custom')[0]
 			queue_delay(600, 'fw3')
 			queue_push(closure(){
 				_iterate_cuboid(array(@region[0][0], @region[1][1] + 3, @region[0][2], 'custom'),
 				array(@region[1][0], @region[1][1] + 3, @region[1][2], 'custom'),
-				'_set_green')
+				'133:0', 3);
 			}, 'fw3')
 		
 		case 'end':
@@ -533,27 +481,14 @@ proc _fw_task(@task, @state, @secs) {
 					play_sound(ploc(@p), array('sound': 'zombie_metal'), @p)
 				}
 			}
-			proc _set_air(@x, @y, @z) {
-				if(get_block_at(array(@x, @y, @z, 'custom'))[0] != '0') {
-					set_block_at(array(@x, @y, @z, 'custom'), '0:0')
-				}
-			}
-			@region = sk_region_info('frogware', 'custom')[0]
-			queue_push(closure(){
-				_iterate_cuboid(array(@region[0][0], @region[1][1] + 3, @region[0][2], 'custom'),
-				array(@region[1][0], @region[1][1] + 3, @region[1][2], 'custom'),
-				'_set_air')
-			}, 'fw3')
-			queue_push(closure(){
-				_fw_startround(@secs)
-			}, 'fw3')
+			_fw_startround(@secs);
 		
 		}
 		
 	case 'cluck':
 		switch(@state) {
 		case 'start':
-			if(!rand(6), @mob = 'BAT', @mob = 'CHICKEN')
+			if(!rand(4), @mob = 'BAT', @mob = 'CHICKEN')
 			_fw_msg('Shoot '.if(@mob == 'BAT', '1', '3').'!')
 			foreach(@p in all_players('custom')) {
 				if(_fw_player(@p)) {
@@ -603,13 +538,18 @@ proc _fw_task(@task, @state, @secs) {
 			_fw_msg('Pop the frog egg!')
 			@loc = _fw_loc()
 			set_block_at(@loc, '122:0')
-			if(!rand(6)) {
+			if(!rand(4)) {
 				_fw_mobs()
 			}
 			if(!rand(4)) {
+				@blocks = import('frogware.blocks');
+				if(is_null(@blocks)) {
+					@blocks = array();
+				}
 				for(@i = 0, @i < 16, @i++) {
 					set_block_at(_fw_loc(), '49:0')
 				}
+				export('frogware.blocks', @blocks);
 			}
 			play_sound(@loc, array('sound': 'CHICKEN_EGG_POP', 'volume': 3))
 			bind(player_interact, array('id': 'fwegg', 'priority': 'high'), array('block': 122), @e) {
@@ -625,20 +565,8 @@ proc _fw_task(@task, @state, @secs) {
 		case 'end':
 			unbind('fwegg')
 			_remove_region_entities('frogware')
-			proc _set_air(@x, @y, @z) {
-				if(get_block_at(array(@x, @y, @z, 'custom'))[0] != '0') {
-					set_block_at(array(@x, @y, @z, 'custom'), '0:0')
-				}
-			}
-			@region = sk_region_info('frogware', 'custom')[0]
-			queue_push(closure(){
-				_iterate_cuboid(array(@region[0][0], @region[1][1], @region[0][2], 'custom'),
-				array(@region[1][0], @region[1][1], @region[1][2], 'custom'),
-				'_set_air')
-			}, 'fw3')
-			queue_push(closure(){
-				_fw_startround(@secs)
-			}, 'fw3')
+			_fw_clear_blocks(1);
+			_fw_startround(@secs)
 		
 		}
 		
@@ -689,32 +617,23 @@ proc _fw_task(@task, @state, @secs) {
 		switch(@state) {
 		case 'start':
 			_fw_msg('The lava is lava')
-			if(!rand(5)) {
+			if(!rand(4)) {
 				_fw_randompotion(array('speed', 'blind'))
 			}
-			if(!rand(5)) {
+			if(!rand(4)) {
 				_fw_mobs()
-			}
-			proc _set_lava(@x, @y, @z) {
-				if(rand(100) < 3) {
-					set_block_at(array(@x, @y, @z, 'custom'), '10:0')
-				}
 			}
 			@region = sk_region_info('frogware', 'custom')[0]
 			_iterate_cuboid(array(@region[0][0], @region[1][1] + 2, @region[0][2], 'custom'),
 				array(@region[1][0], @region[1][1] + 2, @region[1][2], 'custom'),
-				'_set_lava')
+				'10:0', 3)
 			bind(entity_damage, array('id': 'fwdamage2'), array('type': 'PLAYER', 'cause': 'LAVA', 'world': 'custom'), @e) {
 				if(_fw_player(@e['player'])) {
 					_fw_changeteam(@e['player'], 'losers')
 					play_sound(ploc(@e['player']), array('sound': 'zombie_unfect'), @e['player'])
 				}
 			}
-			foreach(@p in all_players('custom')) {
-				if(_fw_player(@p)) {
-					_fw_changeteam(@p, 'winners')
-				}
-			}
+			_fw_set_winners();
 			
 		case 'end':
 			_remove_region_entities('frogware')
@@ -726,18 +645,8 @@ proc _fw_task(@task, @state, @secs) {
 					}
 				}
 			}
-			proc _set_air(@x, @y, @z) {
-				if(get_block_at(array(@x, @y, @z, 'custom'))[0] != '0') {
-					set_block_at(array(@x, @y, @z, 'custom'), '0:0')
-				}
-			}
-			@region = sk_region_info('frogware', 'custom')[0]
-			_iterate_cuboid(array(@region[0][0], @region[1][1], @region[0][2], 'custom'),
-				array(@region[1][0], @region[1][1] + 2, @region[1][2], 'custom'),
-				'_set_air')
-				
-			unbind('fwdamage2')
-			_fw_startround(@secs)
+			unbind('fwdamage2');
+			_fw_startround(@secs);
 		}
 		
 	case 'shepherd':
@@ -779,6 +688,46 @@ proc _fw_task(@task, @state, @secs) {
 			unbind('fwpickup')
 			_fw_startround(@secs)
 		}
+		
+	case 'anvil':
+		switch(@state) {
+		case 'start':
+			_fw_msg('Alls not well... ALLS NOT WELL!')
+			if(!rand(4)) {
+				_fw_randompotion(array('speed', 'blind'))
+			}
+			if(!rand(4)) {
+				_fw_mobs()
+			}
+			bind(entity_damage, array('id': 'fwdamage2'), array('type': 'PLAYER', 'cause': 'FALLING_BLOCK', 'world': 'custom'), @e) {
+				if(_fw_player(@e['player'])) {
+					_fw_changeteam(@e['player'], 'losers')
+					play_sound(ploc(@e['player']), array('sound': 'zombie_unfect'), @e['player'])
+				}
+			}
+			_fw_set_winners();
+			@region = sk_region_info('frogware', 'custom')[0]
+			for(@i = 0, @i < @secs - 2, @i++) {
+				queue_push(closure(){
+					_iterate_cuboid(array(@region[0][0], @region[1][1] + 30, @region[0][2], 'custom'),
+						array(@region[1][0], @region[1][1] + 30, @region[1][2], 'custom'),
+						145, 3);
+				}, 'fw3');
+				queue_delay(1000, 'fw3');
+			}
+			
+		case 'end':
+			unbind('fwdamage2');
+			_remove_region_entities('frogware');
+			_fw_clear_blocks(1);
+			foreach(@p in all_players('custom')) {
+				if(_fw_player(@p)) {
+					_clear_peffects(@p);
+				}
+			}
+			_fw_startround(@secs);
+		}
 	
 	}
+	
 }
