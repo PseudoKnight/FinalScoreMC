@@ -592,17 +592,23 @@ proc _horizontal_distance(@loc1, @loc2) {
 }
 
 /*
-	Returns true if the location is (mostly) safe for a player
+	Returns the distance between two points
+	If @3d is false, returns the 2d distance with x,z
 */
-proc _is_safe_location(@loc) {
-	if(!get_block_info(@loc, 'solid')) {
-		return(false);
+proc _distance(@loc1, @loc2, @3d = true) {
+	if(@3d) {
+		if(is_associative(@loc1)) {
+			return(sqrt(((@loc1['x'] - @loc2['x']) ** 2) + ((@loc1['y'] - @loc2['y']) ** 2) + ((@loc1['z'] - @loc2['z']) ** 2)));
+		} else {
+			return(sqrt(((@loc1[0] - @loc2[0]) ** 2) + ((@loc1[1] - @loc2[1]) ** 2) + ((@loc1[2] - @loc2[2]) ** 2)));
+		}
+	} else {
+		if(is_associative(@loc1)) {
+			return(sqrt(((@loc1['x'] - @loc2['x']) ** 2) + ((@loc1['z'] - @loc2['z']) ** 2)));
+		} else {
+			return(sqrt(((@loc1[0] - @loc2[0]) ** 2) + ((@loc1[2] - @loc2[2]) ** 2)));
 	}
-	@loc['y'] += 2;
-	if(get_block_info(@loc, 'occluding')) {
-		return(false);
 	}
-	return(true);
 }
 
 /*
