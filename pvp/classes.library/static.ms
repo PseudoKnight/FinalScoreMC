@@ -9,7 +9,10 @@ case 'load':
 			if(pinv(@player, 103)['type'] != 7) {
 				clear_task();
 			}
-		, clear_task());
+		, 
+			clear_task();
+			die();
+		);
 		
 		@hunter = puuid(@player);
 		foreach(@p in array_keys(@pvp['players'])) {
