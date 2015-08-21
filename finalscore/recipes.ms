@@ -12,6 +12,7 @@ if(!get_recipe_for(array('type': 403))) {
 	));
 }
 
+# Special recipe handling (enchanted lore books and player heads)
 bind('inventory_click', null, array('slottype': 'RESULT'), @event) {
 	if(is_null(@event['slotitem']), die())
 	
@@ -46,100 +47,54 @@ bind('inventory_click', null, array('slottype': 'RESULT'), @event) {
 			
 		}
 		
-	} else if(@event['inventorytype'] == 'ANVIL' 
-	&& !is_null(@event['inventory'][1])
-	&& @event['inventory'][1]['type'] == 403
-	&& @event['inventory'][1]['meta']['lore']) {
-	
-		@slotitem = @event['slotitem'];
-		if(!is_null(@slotitem['meta']['display'])) {
-			@slotitem['meta']['display'] = colorize(@slotitem['meta']['display']);
-		} else {
-			@slotitem['meta']['display'] = @event['inventory'][1]['meta']['display'];
+	} else if(@event['inventorytype'] == 'ANVIL') {
+		if(!is_null(@event['inventory'][1])
+		&& @event['inventory'][1]['type'] == 403
+		&& @event['inventory'][1]['meta']['lore']) {
+			# enchanted lore book
+			
+			@slotitem = @event['slotitem'];
+			if(!is_null(@slotitem['meta']['display'])) {
+				@slotitem['meta']['display'] = colorize(@slotitem['meta']['display']);
+			} else {
+				@slotitem['meta']['display'] = @event['inventory'][1]['meta']['display'];
+			}
+			@slotitem['meta']['lore'] = @event['inventory'][1]['meta']['lore'];
+			
+			if(array_size(@slotitem['meta']['enchants']) == 0) {
+				@slotitem['meta']['enchants'][] = array('elevel': 1, 'etype': 'DURABILITY');
+				@slotitem['meta']['flags'][] = 'HIDE_ENCHANTS';
+			}
+			
+			modify_event('slotitem', @slotitem);
+			
+		} else if(@event['slotitem']['type'] == 397
+		&& @event['slotitem']['data'] == 3
+		&& !is_null(@event['slotitem']['meta'])
+		&& !is_null(@event['slotitem']['meta']['display'])) {
+			# named player head
+		
+			@event['slotitem']['meta']['owner'] = @event['slotitem']['meta']['display'];
+			modify_event('slotitem', @event['slotitem']);
 		}
-		@slotitem['meta']['lore'] = @event['inventory'][1]['meta']['lore'];
-		
-		if(array_size(@slotitem['meta']['enchants']) == 0) {
-			@slotitem['meta']['enchants'][] = array('elevel': 1, 'etype': 'DURABILITY');
-			@slotitem['meta']['flags'][] = 'HIDE_ENCHANTS';
-		}
-		
-		modify_event('slotitem', @slotitem);
-		
 	}
 }
 
-# Oak Log Cube (6-sided bark)
-if(!get_recipe_for(array('type': 17, 'data': 12))) {
+# Player head recipe
+if(!get_recipe_for(array('name': 'SKULL_ITEM', 'data': 3))) {
 	add_recipe(array(
 		'type': 'SHAPED',
-		'result': array('type': 17, 'data': 12, 'qty': 4),
-		'shape': array('AA', 'AA'),
-		'ingredients': array('A': '17:0')
-	))
+		'result': array('name': 'SKULL_ITEM', 'data': 3),
+		'ingredients': array('S': '397:0', 'C': '337:0'),
+		'shape': array('CCC', 'CSC', 'CCC'),
+	));
 }
 
-# Spruce Log Cube (6-sided bark)
-if(!get_recipe_for(array('type': 17, 'data': 13))) {
+# Skeleton skull recipe
+if(!get_recipe_for(array('name': 'SKULL_ITEM', 'data': 0))) {
 	add_recipe(array(
-		'type': 'SHAPED',
-		'result': array('type': 17, 'data': 13, 'qty': 4),
-		'shape': array('AA', 'AA'),
-		'ingredients': array('A': '17:1')
-	))
-}
-
-# Birch Log Cube (6-sided bark)
-if(!get_recipe_for(array('type': 17, 'data': 14))) {
-	add_recipe(array(
-		'type': 'SHAPED',
-		'result': array('type': 17, 'data': 14, 'qty': 4),
-		'shape': array('AA', 'AA'),
-		'ingredients': array('A': '17:2')
-	))
-}
-
-# Jungle Log Cube (6-sided bark)
-if(!get_recipe_for(array('type': 17, 'data': 15))) {
-	add_recipe(array(
-		'type': 'SHAPED',
-		'result': array('type': 17, 'data': 15, 'qty': 4),
-		'shape': array('AA', 'AA'),
-		'ingredients': array('A': '17:3')
-	))
-}
-
-# Acacia Log Cube (6-sided bark)
-if(!get_recipe_for(array('type': 162, 'data': 12))) {
-	add_recipe(array(
-		'type': 'SHAPED',
-		'result': array('type': 162, 'data': 12, 'qty': 4),
-		'shape': array('AA', 'AA'),
-		'ingredients': array('A': '162:0')
-	))
-}
-
-# Dark Oak Log Cube (6-sided bark)
-if(!get_recipe_for(array('type': 162, 'data': 13))) {
-	add_recipe(array(
-		'type': 'SHAPED',
-		'result': array('type': 162, 'data': 13, 'qty': 4),
-		'shape': array('AA', 'AA'),
-		'ingredients': array('A': '162:1')
-	))
-}
-
-# MAKE LOG CUBES PLACEABLE
-bind(block_place, null, array('type': 17), @e) {
-	@item = pinv(player(), null)
-	if(@item['data'] >= 12 && sk_can_build(@e['location'])) {
-		set_block_at(@e['location'], '17:'.@item['data'])
-	}
-}
-
-bind(block_place, null, array('type': 162), @e) {
-	@item = pinv(player(), null)
-	if(@item['data'] >= 12 && sk_can_build(@e['location'])) {
-		set_block_at(@e['location'], '162:'.@item['data'])
-	}
+		'type': 'SHAPELESS',
+		'result': array('name': 'SKULL_ITEM', 'data': 0),
+		'ingredients': array('397:2'),
+	));
 }
