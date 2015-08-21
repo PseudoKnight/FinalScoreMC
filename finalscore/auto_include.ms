@@ -152,6 +152,9 @@ proc _relative(@originloc, @dir, @amount = 1) {
 		}
 		@loc[0] -= @amount
 		
+	default:
+		console('Error: unhandled relative direction: '.@dir);
+		
 	}
 	return(@loc)
 }
