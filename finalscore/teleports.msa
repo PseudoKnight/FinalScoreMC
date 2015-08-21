@@ -32,13 +32,18 @@
 	, # catch
 		die(color('yellow') . '"' . @player . '" is not a known world or player name.');
 	);
-	if(!array_index_exists(@pdata, 'homes') || !array_index_exists(@pdata['homes'], @world), die('You can set a home for a world with /sethome'))
-	_warmuptp(3.7, player(), array(
-			@pdata['homes'][@world][0], 
-			@pdata['homes'][@world][1],
-			@pdata['homes'][@world][2],
-			@world,
-		), @pdata['homes'][@world][3], @pdata['homes'][@world][4])
+	if(!array_index_exists(@pdata, 'homes') || !array_index_exists(@pdata['homes'], @world)) {
+		if(@player == player()) {
+			die('You can set a home for a world with /sethome');
+		} else {
+			die("@player has not set a home for @world");
+		}
+	}
+	@loc = array(@pdata['homes'][@world][0], @pdata['homes'][@world][1], @pdata['homes'][@world][2], @world);
+	if(!_is_safe_location(@loc)) {
+		die('That teleport location does not appear to be safe.');
+	}
+	_warmuptp(3.7, player(), @loc, @pdata['homes'][@world][3], @pdata['homes'][@world][4])
 <<<
 
 *:/sethome [$] = >>>

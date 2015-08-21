@@ -21,3 +21,16 @@ proc _warmuptp(@length, @player, @loc, @yaw = null, @pitch = null, @cleareffects
 		}
 	})
 }
+
+/*
+	Returns true if the location is (mostly) safe for a player
+*/
+proc _is_safe_location(@loc) {
+	if(!get_block_info(@loc, 'solid')) {
+		return(false);
+	}
+	if(get_block_info(_relative(@loc, 'up', 2), 'occluding')) {
+		return(false);
+	}
+	return(true);
+}
