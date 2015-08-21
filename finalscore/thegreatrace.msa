@@ -112,6 +112,7 @@
 					unbind('thegreatrace');
 					remove_scoreboard('race');
 					clear_task();
+					break();
 				}
 			}
 		}
