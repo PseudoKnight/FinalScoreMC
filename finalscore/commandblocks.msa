@@ -24,7 +24,7 @@
 			try(entity_remove(@e['vehicle']))
 		}
 	}
-	bind(player_quit, array(id: $player.'quit'), array('player': $player), @e, @cart = @cart) {
+	bind(player_quit, array(id: $player.'quit'), array('player': $player), @e, @cart) {
 		unbind()
 		unbind(player().'vehicle_leave')
 		try(entity_remove(@cart))
@@ -73,7 +73,7 @@
 		unbind($player.'quit');
 	}
 	bind(ctz_npc_navigation_complete, array('id': $player.'nav'), array('world': pworld($player)), @e, 
-			@npc = @npc, @path = @path, @player = $player) {
+			@npc, @path, @player = $player) {
 			
 		if(@e['npc'] == @npc) {
 			if(get_entity_rider(ctz_npc_entity_id(@npc)) == null) {
@@ -98,7 +98,7 @@
 			}
 		}
 	}
-	bind(player_quit, array('id': $player.'quit'), array('player': $player), @e, @npc = @npc) {
+	bind(player_quit, array('id': $player.'quit'), array('player': $player), @e, @npc) {
 		unbind();
 		unbind(player().'nav');
 		ctz_remove_npc(@npc);

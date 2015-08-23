@@ -1,5 +1,5 @@
 array_push(@pvp['binds'], @id.'primedtnt')
-bind(player_interact, array('id': @id.'primedtnt'), array('item': 46, 'button': 'right'), @e, assign(@id, @id)) {
+bind(player_interact, array('id': @id.'primedtnt'), array('item': 46, 'button': 'right'), @e, @id) {
 	@pvp = import('pvp'.@id)
 	if(!array_index_exists(@pvp['players'], player())
 	|| @e['action'] != 'right_click_block', die())

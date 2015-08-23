@@ -1,5 +1,5 @@
 array_push(@pvp['binds'], @id.'spawner')
-bind(player_interact, array('id': @id.'spawner'), array('button': 'right', 'item': 383), @e, @id = @id) {
+bind(player_interact, array('id': @id.'spawner'), array('button': 'right', 'item': 383), @e, @id) {
 	@pvp = import('pvp'.@id);
 	if(!array_index_exists(@pvp['players'], player()), die());
 	

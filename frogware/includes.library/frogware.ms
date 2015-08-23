@@ -504,7 +504,7 @@ proc _fw_task(@task, @state, @secs) {
 			for(@i = 0, @i < (_fw_totalplayers() * 4), @i++) {
 				spawn_mob(@mob, 1, if(@mob == 'BAT', _fw_loc(8), _fw_loc(18)))
 			}
-			bind(entity_death, array('id': 'fwcluck'), array('type': @mob), @e, @mob = @mob) {
+			bind(entity_death, array('id': 'fwcluck'), array('type': @mob), @e, @mob) {
 				if(array_index_exists(@e['cause'], 'shooter')
 				&& ponline(@e['cause']['shooter'])
 				&& _fw_player(@e['cause']['shooter'])) {

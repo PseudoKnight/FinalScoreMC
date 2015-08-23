@@ -1,5 +1,5 @@
 array_push(@pvp['binds'], @id.'grapple')
-bind(player_interact, array('id': @id.'grapple'), array(item: 417, button: 'right'), @event, assign(@id, @id)) {
+bind(player_interact, array('id': @id.'grapple'), array(item: 417, button: 'right'), @event, @id) {
 	@pvp = import('pvp'.@id);
 	if(!array_index_exists(@pvp['players'], player()), die());
 	
@@ -19,7 +19,7 @@ bind(player_interact, array('id': @id.'grapple'), array(item: 417, button: 'righ
 	@ref = array();
 	@shooter = puuid();
 	
-	bind(projectile_hit, array(id: 'grapple'.player()), array(id: @arrow), @event, @shooter = @shooter) {
+	bind(projectile_hit, array(id: 'grapple'.player()), array(id: @arrow), @event, @shooter) {
 		unbind();
 		
 		set_timeout(50, closure(){

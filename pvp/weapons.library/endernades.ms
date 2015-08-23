@@ -1,10 +1,10 @@
 array_push(@pvp['binds'], @id.'endernades')
-bind(player_teleport, array('id': @id.'endernades'), array('type': 'ENDER_PEARL'), @e, assign(@id, @id)) {
+bind(player_teleport, array('id': @id.'endernades'), array('type': 'ENDER_PEARL'), @e, @id) {
 	@pvp = import('pvp'.@id);
 	if(!array_index_exists(@pvp['players'], player()), die());
 	
 	cancel();
-	bind(entity_damage, array('id': 'endernade'), array('cause': 'ENTITY_EXPLOSION'), @e, @damage = @e['player'], @pvp = @pvp) {
+	bind(entity_damage, array('id': 'endernade'), array('cause': 'ENTITY_EXPLOSION'), @e, @damager = @e['player'], @pvp) {
 		if(!is_null(@player = get_player_from_entity_id(@e['id']))) {
 			_stats_damage(@damager, @player, @e['amount'], @pvp);
 		}
@@ -14,7 +14,7 @@ bind(player_teleport, array('id': @id.'endernades'), array('type': 'ENDER_PEARL'
 }
 
 array_push(@pvp['binds'], @id.'endernadesreload')
-bind(player_interact, array('id': @id.'endernadesreload', 'priority': 'highest'), array('item': 368, 'button': 'right'), @e, assign(@id, @id)) {
+bind(player_interact, array('id': @id.'endernadesreload', 'priority': 'highest'), array('item': 368, 'button': 'right'), @e, @id) {
 	@pvp = import('pvp'.@id)
 	if(!array_index_exists(@pvp['players'], player()), die())
 	cancel()

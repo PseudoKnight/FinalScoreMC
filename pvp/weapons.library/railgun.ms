@@ -1,5 +1,5 @@
 array_push(@pvp['binds'], @id.'railgun')
-bind(player_interact, array('id': @id.'railgun'), array('item': 175, 'button': 'right'), @e, assign(@id, @id)) {
+bind(player_interact, array('id': @id.'railgun'), array('item': 175, 'button': 'right'), @e, @id) {
 	#@start = nano_time()
 
 	@pvp = import('pvp'.@id)

@@ -1,5 +1,5 @@
 array_push(@pvp['binds'], @id.'hotpotato');
-bind(player_interact_entity, array('id': @id.'hotpotato'), array('clicked': 'PLAYER'), @event, @id = @id) {
+bind(player_interact_entity, array('id': @id.'hotpotato'), array('clicked': 'PLAYER'), @event, @id) {
 	@toPlayer = @event['data'];
 
 	@pvp = import('pvp'.@id);
@@ -46,7 +46,7 @@ bind(player_interact_entity, array('id': @id.'hotpotato'), array('clicked': 'PLA
 			@potato = pinv(@toPlayer, @slot);
 			if(@potato['meta']['display'] == '1') {
 				bind(entity_damage, array('id': player().'hotpotatodmg'), array('type': 'PLAYER', 'world': 'custom'), @e,
-						@damager = player(), @pvp = @pvp) {
+						@damager = player(), @pvp) {
 						
 					if(!array_index_exists(@pvp['players'], @e['player']), die());
 					_stats_damage(@damager, @e['player'], @e['amount'], @pvp);
@@ -75,7 +75,7 @@ bind(player_interact_entity, array('id': @id.'hotpotato'), array('clicked': 'PLA
 }
 
 array_push(@pvp['binds'], @id.'hotdrop');
-bind(item_drop, array('id': @id.'hotdrop'), array('item': 393), @event, @id = @id) {
+bind(item_drop, array('id': @id.'hotdrop'), array('item': 393), @event, @id) {
 	@pvp = import('pvp'.@id);
 	if(array_index_exists(@pvp['players'], player())) {
 		cancel();

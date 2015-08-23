@@ -8,7 +8,7 @@ case 'load':
 		}
 	}
 
-	bind(player_death, array('id': @player.'kill'), null, @e, @player = @player) {
+	bind(player_death, array('id': @player.'kill'), null, @e, @player) {
 		if(@e['killer'] == @player && !is_null(pinv(@player, 103))) {
 			set_phealth(@player, min(20, pinfo(@player, 5) + 4))
 			play_sound(ploc(@player), array('sound': 'EAT', 'pitch': 0.5))

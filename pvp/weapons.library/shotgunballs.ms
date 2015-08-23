@@ -1,5 +1,5 @@
 array_push(@pvp['binds'], @id.'shotgunshoot')
-bind(player_interact, array('id': @id.'shotgunshoot'), array('item': 332, 'button': 'right'), @e, assign(@id, @id)) {
+bind(player_interact, array('id': @id.'shotgunshoot'), array('item': 332, 'button': 'right'), @e, @id) {
 	@pvp = import('pvp'.@id)
 	if(!array_index_exists(@pvp['players'], player()), die())
 	cancel()
@@ -23,7 +23,7 @@ bind(player_interact, array('id': @id.'shotgunshoot'), array('item': 332, 'butto
 	});
 }
 array_push(@pvp['binds'], @id.'shotgundamage')
-bind(entity_damage, array('id': @id.'shotgundamage'), array('type': 'PLAYER', 'cause': 'PROJECTILE', 'world': 'custom'), @e, assign(@id, @id)) {
+bind(entity_damage, array('id': @id.'shotgundamage'), array('type': 'PLAYER', 'cause': 'PROJECTILE', 'world': 'custom'), @e, @id) {
 	if(ponline(@e['shooter'])) {
 		@pvp = import('pvp'.@id)
 		if(array_index_exists(@pvp['players'], @e['shooter'])) {

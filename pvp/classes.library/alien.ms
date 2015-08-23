@@ -31,7 +31,7 @@ case 'load':
 		if(@e['shooter'] == @shooter && entity_type(@e['id']), try(entity_remove(@e['id'])))
 	}
 	
-	bind(player_interact, array('id': @player.'teleport'), array('item': 381, 'player': @player, 'button': 'right'), @e, @pvp = @pvp) {
+	bind(player_interact, array('id': @player.'teleport'), array('item': 381, 'player': @player, 'button': 'right'), @e, @pvp) {
 		cancel()
 		@loc = pcursor(array(0, 65, 66, 68, 70, 72, 77, 85, 143, 147, 148, 157, 171, 188, 189, 190, 191, 192));
 		@block = get_block_at(@loc);

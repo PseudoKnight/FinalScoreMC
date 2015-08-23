@@ -15,7 +15,7 @@ case 'load':
 			consume()
 		}
 	}
-	bind(player_death, array('id': @player.'necrodeath'), null, @e, @player = @player) {
+	bind(player_death, array('id': @player.'necrodeath'), null, @e, @player) {
 		if(@e['player'] == @player, die())
 		@a = ploc(@e['player'])
 		@b = ploc(@player)

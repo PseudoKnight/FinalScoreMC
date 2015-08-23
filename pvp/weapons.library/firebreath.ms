@@ -1,5 +1,5 @@
 array_push(@pvp['binds'], @id.'firebreath')
-bind(player_interact, array('id': @id.'firebreath'), array('item': 377, 'button': 'right'), @e, assign(@id, @id)) {
+bind(player_interact, array('id': @id.'firebreath'), array('item': 377, 'button': 'right'), @e, @id) {
 	@pvp = import('pvp'.@id)
 	if(!array_index_exists(@pvp['players'], player()), die())
 	play_sound(ploc(), array('sound': 'GHAST_FIREBALL', 'pitch': 0.5))

@@ -58,8 +58,7 @@
 	@bounciness = 0.75;
 	
 	# Place ball
-	bind(player_interact, array(id: @course), array(item: 341, button: 'right', block: 159), @event, 
-	@golf = @golf) {
+	bind(player_interact, array(id: @course), array(item: 341, button: 'right', block: 159), @event, @golf) {
 		if(array_index_exists(@golf['players'], player())
 		&& @event['action'] == 'right_click_block'
 		&& @event['facing'] == 'up'
@@ -113,7 +112,7 @@
 			}
 			
 			bind(player_interact_entity, array(id: 'golf_swing_'.player()), array(clicked: @mobcheck), @event, 
-			@player = player(), @golf = @golf) {
+			@player = player(), @golf) {
 				if(@player != player(), die());
 				@ball = @golf['players'][player()];
 				if(@event['id'] != @ball['id'], die());
@@ -133,8 +132,7 @@
 				}
 			}
 			
-			bind(entity_damage, array(id: 'golf_hit_'.player()), array(id: @ball['id'], cause: 'ENTITY_ATTACK'), @event, 
-			@golf = @golf) {
+			bind(entity_damage, array(id: 'golf_hit_'.player()), array(id: @ball['id'], cause: 'ENTITY_ATTACK'), @event, @golf) {
 				if(!array_index_exists(@golf['players'], @event['damager'])) {
 					cancel()
 					die()
@@ -173,7 +171,7 @@
 	}
 	
 	# Re-target slimes to owner
-	bind(target_player, array('id': @course.'_target'), null, @event, @golf = @golf) {
+	bind(target_player, array('id': @course.'_target'), null, @event, @golf) {
 		if((@event['mobtype'] == 'SLIME' || @event['mobtype'] == 'MAGMA_CUBE')
 		&& (!array_index_exists(@golf['players'], @event['player'])
 		|| @golf['players'][@event['player']]['id'] != @event['id'])) {
