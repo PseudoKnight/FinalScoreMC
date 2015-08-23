@@ -296,10 +296,10 @@ bind(player_interact, null, array('block': 118, 'button': 'right'), @event) {
 		case '325:0':
 			@bucket = pinv(player(), null);
 			if(@bucket['qty'] == 1) {
-				set_pinv(array('null': array('type': 326, 'qty': 1)));
+				set_pinv(array(null: array('type': 326, 'qty': 1)));
 			} else {
 				@bucket['qty'] -= 1;
-				set_pinv(array('null': @bucket));
+				set_pinv(array(null: @bucket));
 				pgive_item(326, 1);
 			}
 		case '374:0':
@@ -585,7 +585,7 @@ bind(player_interact_entity, null, array('clicked': 'VILLAGER'), @event) {
 		cancel();
 		set_leashholder(@event['id'], puuid());
 		@item['qty'] = @item['qty'] - 1;
-		set_pinv(array('null': @item));
+		set_pinv(array(null: @item));
 	}
 }
 

@@ -29,7 +29,7 @@ case 'load':
 	
 	bind(player_interact, array('id': @player.'soldierreload'), array('player': @player, 'item': 265), @e) {
 		@item = pinv(player(), null);
-		set_pinv(player(), array('null': null));
+		set_pinv(player(), array(null: null));
 		@slot = pinfo(player(), 15);
 		play_sound(ploc(), array('sound': 'DOOR_OPEN', 'pitch': 2));
 		set_timeout(1000, closure(){

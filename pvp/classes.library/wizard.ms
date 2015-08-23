@@ -19,7 +19,7 @@ case 'load':
 		psend_block_change(@loc, 41);
 		@slot = pinfo(player(), 15)
 		@item = pinv(player(), null)
-		set_pinv(player(), array('null': array('type': 280)))
+		set_pinv(player(), array(null: array('type': 280)))
 		queue_clear(player().'lightning');
 		queue_delay(1000, player().'lightning');
 		queue_push(closure(){

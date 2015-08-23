@@ -188,7 +188,7 @@ case 'selector':
 	@classid = split(':', $id)[1], die('You need to specify an arena.'))
 	@arena = get_value('arena', @arenaid)
 	if(!@arena, die('No arena by that name: '.@arenaid))
-	set_pinv(player(), array('null': @arena['classes'][@classid]['selector']))
+	set_pinv(player(), array(null: @arena['classes'][@classid]['selector']))
 	
 case 'list':
 	@arena = get_value('arena', $id)

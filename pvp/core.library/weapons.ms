@@ -8,12 +8,12 @@ proc _weapon_cooldown(@player, @time, @type, @onCooldown, @remove = 1) {
 			@item = pinv(@player, null);
 			@item['qty'] -= @remove;
 			if(@item['qty'] == 0) {
-				set_pinv(@player, array('null': null));
+				set_pinv(@player, array(null: null));
 			} else {
 				@newItem = @item[];
 				@newItem['name'] = @type;
 				@newItem['data'] = 0;
-				set_pinv(@player, array('null': @newItem));
+				set_pinv(@player, array(null: @newItem));
 				@slot = pinfo(@player, 15);
 				set_timeout(@time, closure(){
 					@newItem = pinv(@player, @slot);

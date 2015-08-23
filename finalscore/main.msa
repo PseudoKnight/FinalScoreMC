@@ -306,11 +306,11 @@
 		die(color('gold').'You need to hold something before you can put it on your head.');
 	}
 	if(@item['qty'] == 1) {
-		set_pinv(player(), array('null': null));
+		set_pinv(player(), array(null: null));
 		set_pinv(player(), array(103: @item));
 	} else {
 		array_set(@item, 'qty', @item['qty'] - 1);
-		set_pinv(player(), array('null': @item, 103: array('type': @item['type'], 'data': @item['data'], 'qty': 1)));
+		set_pinv(player(), array(null: @item, 103: array('type': @item['type'], 'data': @item['data'], 'qty': 1)));
 	}
 	msg(color('gold').'Fancy!');
 <<<

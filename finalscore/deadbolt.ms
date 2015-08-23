@@ -60,10 +60,10 @@ bind(player_interact, null, array('button': 'right', 'item': 323), @e) {
 		))
 		@slot = pinv(player(), null)
 		if(@slot['qty'] == 1) {
-			set_pinv(array('null': null))
+			set_pinv(array(null: null))
 		} else {
 			@slot['qty'] = @slot['qty'] - 1
-			set_pinv(array('null': @slot))
+			set_pinv(array(null: @slot))
 		}
 		cancel()
 	}

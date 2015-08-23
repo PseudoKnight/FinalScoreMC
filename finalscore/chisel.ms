@@ -58,10 +58,10 @@ bind(player_interact, null, array('button': 'right', 'block': 43), @event) {
 				@maxDamage = 59;
 		}
 		if(@item['data'] > @maxDamage) {
-			set_pinv(player(), array('null': null));
+			set_pinv(player(), array(null: null));
 			play_sound(ploc(), array('sound': 'ITEM_BREAK'));
 		} else {
-			set_pinv(player(), array('null': @item));
+			set_pinv(player(), array(null: @item));
 		}
 	}
 }

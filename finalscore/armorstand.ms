@@ -108,7 +108,7 @@ bind(player_interact_at_entity, null, array('clicked': 'ARMOR_STAND'), @event) {
 				if(@item['qty'] >= 2 && !@armorstand['arms']) {
 					set_entity_spec(@event['id'], array('arms': true));
 					@item['qty'] -= 2;
-					set_pinv(player(), array('null': if(@item['qty'] > 0, @item, null)));
+					set_pinv(player(), array(null: if(@item['qty'] > 0, @item, null)));
 					cancel();
 				}
 			

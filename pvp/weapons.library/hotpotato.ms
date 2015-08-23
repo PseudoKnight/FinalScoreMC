@@ -15,10 +15,10 @@ bind(player_interact_entity, array('id': @id.'hotpotato'), array('clicked': 'PLA
 	}
 	
 	if(@item['qty'] == 1) {
-		set_pinv(player(), array('null': null));
+		set_pinv(player(), array(null: null));
 	} else {
 		@item['qty']--;
-		set_pinv(player(), array('null': @item));
+		set_pinv(player(), array(null: @item));
 	}
 	
 	if(!is_null(@item['meta']['lore'])) {

@@ -66,7 +66,7 @@
 		
 			@ball = @golf['players'][player()];
 		
-			set_pinv(player(), array('null': null));
+			set_pinv(player(), array(null: null));
 			set_pexp(player(), 0);
 			
 			if(_ball_exists(@ball['id'])) {
