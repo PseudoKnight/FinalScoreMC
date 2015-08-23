@@ -298,17 +298,21 @@
 
 # Put whatever they have in their hand onto their head. This shouldn't dupe.
 *:/hat = >>>
-	if(is_null(pinv(player(), null)), die(color('gold').'You need to hold something before you can put it on your head.'))
-	if(!is_null(pinv(player(), 103)), die(color('gold').'You already have something on your head.'))
-	@inv = pinv(player(), null)
-	if(@inv['qty'] == 1) {
-		set_pinv(player(), array('null': null))
-		set_pinv(player(), array(103: @inv))
-	} else {
-		array_set(@inv, 'qty', @inv['qty'] - 1)
-		set_pinv(player(), array('null': @inv, 103: array('type': @inv['type'], 'data': @inv['data'], 'qty': 1)))
+	if(!is_null(pinv(player(), 103))) {
+		die(color('gold').'You already have something on your head.');
 	}
-	msg(color('gold').'Fancy!')
+	@item = pinv(player(), null);
+	if(is_null(@item)) {
+		die(color('gold').'You need to hold something before you can put it on your head.');
+	}
+	if(@item['qty'] == 1) {
+		set_pinv(player(), array('null': null));
+		set_pinv(player(), array(103: @item));
+	} else {
+		array_set(@item, 'qty', @item['qty'] - 1);
+		set_pinv(player(), array('null': @item, 103: array('type': @item['type'], 'data': @item['data'], 'qty': 1)));
+	}
+	msg(color('gold').'Fancy!');
 <<<
 
 # PLAYER LISTS #
