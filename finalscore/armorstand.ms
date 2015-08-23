@@ -12,14 +12,6 @@ bind(player_interact_at_entity, null, array('clicked': 'ARMOR_STAND'), @event) {
 			die();
 		}
 		
-		# Check if armor stand is empty
-		@equipment = get_mob_equipment(@event['id']);
-		foreach(@piece in @equipment) {
-			if(!is_null(@piece)) {
-				die();
-			}
-		}
-		
 		proc _position_degrees(@position, @rotation) {
 			@yaw = get_yaw(array(0, 0, 0), @position);
 			@yaw -= @rotation;
@@ -33,6 +25,7 @@ bind(player_interact_at_entity, null, array('clicked': 'ARMOR_STAND'), @event) {
 
 		# If sneaking, go into pose mode
 		if(pinfo(player(), 11)) {
+			cancel();
 			# Get poseable section of armor stand
 			@poseable = '';
 			if(@event['position']['y'] >= 1.6) {
@@ -100,16 +93,6 @@ bind(player_interact_at_entity, null, array('clicked': 'ARMOR_STAND'), @event) {
 					set_entity_spec(@event['id'], @newspec);
 				});
 			}
-		
-		# If not sneaking, move armor stand.
-		} else {
-			msg(color(6).'Moving Armor Stand. Sneak to drop.');
-			set_entity_rider(puuid(), @event['id']);
-			
-			bind(player_toggle_sneak, null, array('player': player()), @event) {
-				set_entity_rider(puuid(), null);
-				unbind();
-			}
 		}
 		
 	} else {
@@ -148,6 +131,18 @@ bind(player_interact_at_entity, null, array('clicked': 'ARMOR_STAND'), @event) {
 					msg(color(6).'Toggled size for armor stand.');
 					set_entity_spec(@event['id'], array('small': if(@armorstand['small'], false, true)));
 					cancel();
+				}
+				
+			case 420:
+				if(!pinfo(player(), 11)) {
+					cancel();
+					msg(color(6).'Moving Armor Stand. Sneak to drop.');
+					set_entity_rider(puuid(), @event['id']);
+					
+					bind(player_toggle_sneak, null, array('player': player()), @event) {
+						set_entity_rider(puuid(), null);
+						unbind();
+					}
 				}
 			
 		}
