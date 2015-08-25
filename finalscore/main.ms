@@ -636,8 +636,8 @@ bind(entity_explode, null, array('type': 'CREEPER'), @event) {
 # Allow command block placement for builders
 bind(player_interact, null, array('button': 'right', 'item': 137), @event) {
 	if(has_permission('group.builders') 
-	&& !_is_survival_world(@event['location']['world'])
-	&& @event['action'] == 'right_click_block') {
+	&& @event['action'] == 'right_click_block'
+	&& !_is_survival_world(@event['location']['world'])) {
 		set_block_at(_relative(@event['location'], @event['facing']), 137);
 	}
 }
