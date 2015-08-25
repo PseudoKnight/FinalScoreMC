@@ -139,9 +139,19 @@
 	}
 <<<
 
-/velocity $player $x $y $z [$double] = >>>
-	set_timeout(50, closure(@player = $player){
-		@loc = ploc($player);
+*:/velocity $entity $x $y $z [$double] = >>>
+	@loc = get_command_block();
+	if(is_null(@loc) && (!has_permission('group.builders') || _is_survival_world(pworld()))) {
+		die('You cannot run this command.');
+	}
+	if(ponline($entity)) {
+		@player = $entity;
+		@loc = ploc(@player);
+		#if(!get_collides_with_entities($player) || (!is_null(@l) && _distance(@l, @loc) > 8)) {
+			# get next nearest, if any
+		#	die();
+		#}
+		set_timeout(50, closure(){
 		make_effect(@loc, 'MOBSPAWNER_FLAMES');
 		play_sound(@loc, array('sound': 'GHAST_FIREBALL', 'volume': 2));
 		set_pvelocity(@player, $x, $y, $z);
@@ -157,6 +167,44 @@
 			});
 		}
 	});
+		
+	} else {
+		# entity is not a player
+		
+		@entities = entities_in_radius(@loc, 3, $entity);
+		@entity = '';
+		if(array_size(@entities) > 1) {
+			@closest = 3;
+			foreach(@e in @entities) {
+				@dist = _distance(entity_loc(@e), @loc);
+				if(@dist < @closest) {
+					@closest = @dist;
+					@entity = @e;
+				}
+			}
+		} else if(array_size(@entities) == 1) {
+			@entity = @entities[0];
+		} else {
+			die();
+		}
+		@loc = entity_loc(@entity);
+		set_timeout(50, closure(){
+			make_effect(@loc, 'MOBSPAWNER_FLAMES');
+			play_sound(@loc, array('sound': 'GHAST_FIREBALL', 'volume': 2));
+			set_entity_velocity(@entity, array($x, $y, $z));
+			for(@i = 0, @i < 3, @i++) {
+				queue_delay(100, @entity.'velocity');
+				queue_push(closure(){
+					make_effect(entity_loc(@entity), 'MOBSPAWNER_FLAMES');
+				}, @entity.'velocity');
+			}
+			if($double) {
+				set_timeout($double, closure() {
+					set_entity_velocity(@entity, array($x, $y, $z));
+				});
+			}
+		});
+	}
 <<<
 
 *:/playsound [$sound='random'] [$pitch=1] [$volume=1] [$x] [$y] [$z] = >>>
