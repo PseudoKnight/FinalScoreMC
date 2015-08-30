@@ -509,6 +509,11 @@ bind(player_enter_bed, null, null, @event) {
 	}
 }
 
+bind(player_interact, null, array('block': 26, 'button': 'right'), @event) {
+	set_pbed_location(_relative(@event['location'], 'down'), false);
+	msg(color('aqua').'Your spawn location has been set to this bed.');
+}
+
 # Infinite Dispensers
 bind(block_dispense, null, array('type': 'DISPENSER'), @e) {
 	if(!_is_survival_world(@e['location']['world'])) {
