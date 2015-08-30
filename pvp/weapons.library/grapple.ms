@@ -58,7 +58,8 @@ bind(player_interact, array('id': @id.'grapple'), array(item: 417, button: 'righ
 						entity_remove(@armorstand);
 						entity_remove(@squid);
 					)
-					if(entity_exists(@shooter)) {
+					
+					if(entity_exists(@shooter) && !entity_grounded(@shooter)) {
 						set_entity_velocity(@shooter, array(0, 0.4, 0));
 					}
 				} else {
