@@ -40,7 +40,7 @@
 		}
 	}
 	@loc = array(@pdata['homes'][@world][0], @pdata['homes'][@world][1], @pdata['homes'][@world][2], @world);
-	if(!_is_safe_location(@loc)) {
+	if(_is_survival_world(@world) && !_is_safe_location(@loc)) {
 		die('That teleport location does not appear to be safe.');
 	}
 	_warmuptp(3.7, player(), @loc, @pdata['homes'][@world][3], @pdata['homes'][@world][4])
