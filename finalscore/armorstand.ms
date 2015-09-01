@@ -66,8 +66,16 @@ bind(player_interact_at_entity, null, array('clicked': 'ARMOR_STAND'), @event) {
 					}
 					
 					@newdir = pfacing();
-					@dyaw = (@dir[0] - @newdir[0]) * 2.5;
-					@newloc['yaw'] = @eloc['yaw'] + @dyaw;
+					
+					@yawdiff = @newdir[0] - @dir[0];
+					if(@yawdiff > 180) {
+						@yawdiff -= 360;
+					} else if(@yawdiff < -180) {
+						@yawdiff += 360;
+					}
+					
+					@dyaw = @yawdiff * 2.5;
+					@newloc['yaw'] = @eloc['yaw'] - @dyaw;
 					set_entity_loc(@event['id'], @newloc);
 				});
 				
@@ -75,6 +83,8 @@ bind(player_interact_at_entity, null, array('clicked': 'ARMOR_STAND'), @event) {
 				msg(color(6).'Posing '.@poseable.'.');
 				
 				@dir = pfacing();
+				@eloc = entity_loc(@event['id']);
+				@dist = _distance(@eloc, ploc());
 				@poseable = 'pose'.@poseable;
 				@newspec = array('poses': array());
 				@newspec['poses'][@poseable] = @armorstand['poses'][@poseable][];
@@ -86,10 +96,27 @@ bind(player_interact_at_entity, null, array('clicked': 'ARMOR_STAND'), @event) {
 					}
 					
 					@newdir = pfacing();
-					@dyaw = to_radians(@newdir[0] - @dir[0]) * 2.5;
+					@newdist = _distance(@eloc, ploc());
+					
+					@yawdiff = @newdir[0] - @dir[0];
+					if(@yawdiff > 180) {
+						@yawdiff -= 360;
+					} else if(@yawdiff < -180) {
+						@yawdiff += 360;
+					}
+					
+					@dyaw = to_radians(@yawdiff) * 2.5;
+					@ddist = to_radians(@newdist - @dist) * 100;
 					@dpitch = to_radians(@newdir[1] - @dir[1]) * 2.5;
-					@newspec['poses'][@poseable]['x'] = @armorstand['poses'][@poseable]['x'] + @dpitch;
-					@newspec['poses'][@poseable]['z'] = @armorstand['poses'][@poseable]['z'] + @dyaw;
+					if(@poseable == 'poseHead') {
+						@newspec['poses'][@poseable]['x'] = @armorstand['poses'][@poseable]['x'] + @dpitch;
+						@newspec['poses'][@poseable]['y'] = @armorstand['poses'][@poseable]['y'] + @ddist;
+						@newspec['poses'][@poseable]['z'] = @armorstand['poses'][@poseable]['z'] + @dyaw;
+					} else {
+						@newspec['poses'][@poseable]['x'] = @armorstand['poses'][@poseable]['x'] - @dpitch;
+						@newspec['poses'][@poseable]['y'] = @armorstand['poses'][@poseable]['y'] + @ddist;
+						@newspec['poses'][@poseable]['z'] = @armorstand['poses'][@poseable]['z'] - @dyaw;
+					}
 					set_entity_spec(@event['id'], @newspec);
 				});
 			}
