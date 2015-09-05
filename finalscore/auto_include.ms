@@ -329,6 +329,9 @@ proc _remove_region_entities(@region, @entities = array()) {
 				@type = entity_type(@entity)
 				if((!@entities && !array_contains(array('PLAYER', 'COMPLEX_PART', 'ITEM_FRAME', 'PAINTING', 'UNKNOWN'), @type))
 				|| array_contains(@entities, @type)) {
+					if(@type == 'ARMOR_STAND' && entity_spec(@entity)['visible']) {
+						continue();
+					}
 					try(
 					entity_remove(@entity)
 					, # if fail
