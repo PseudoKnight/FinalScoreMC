@@ -9,3 +9,15 @@ bind(sign_changed, null, null, @event) {
 		));
 	}
 }
+# Allow command block placement for builders
+bind(player_interact, null, array('button': 'right', 'item': 137), @event) {
+	if(has_permission('group.builders') 
+	&& @event['action'] == 'right_click_block'
+	&& @event['block'] != '137'
+	&& !_is_survival_world(@event['location']['world'])) {
+		@loc = _relative(@event['location'], @event['facing']);
+		if(sk_can_build(@loc)) {
+			set_block_at(@loc, 137);
+		}
+	}
+}
