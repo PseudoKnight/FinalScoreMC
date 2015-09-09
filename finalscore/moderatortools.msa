@@ -76,7 +76,7 @@
 	if(!@state) {
 		@state = if(get_value('silentjoin'), 0, 1);
 	}
-	switch($state) {
+	switch(@state) {
 		case 'on':
 		case 'true':
 		case 1:

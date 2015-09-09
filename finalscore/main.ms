@@ -150,7 +150,7 @@ bind(player_join, null, null, @event) {
 		}
 		
 		if(!(has_permission('group.administrators') && get_value('silentjoin'))) {
-		broadcast(colorize('&8'.simple_date('h:mm').' '.'&e&o* '._colorname().'&o'.player().' &e&ojoined the game *'));
+			broadcast(colorize('&8'.simple_date('h:mm').' '.'&e&o* '._colorname().'&o'.player().' &e&ojoined the game *'));
 		}
 		
 		# Makes a call to the ban manager to store the player's UUID
