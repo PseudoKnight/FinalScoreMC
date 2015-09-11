@@ -21,10 +21,10 @@ proc _equip_park(@player) {
 	
 	set_pinv(@player, array(
 		1: array('name': 'BOOK', 'meta': array(
-			'display': color('b').color('bold').'Park Directory',
+			'display': 'Park Directory',
 		)),
 		2: array('name': 'COOKED_MUTTON', 'qty': 64, 'meta': array(
-			'display': color('bold').'Frog Legs', 
+			'display': 'Frog Legs', 
 			'lore': array('Good eatin\''),
 		)),
 	))
