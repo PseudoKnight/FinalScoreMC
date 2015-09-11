@@ -16,9 +16,9 @@
 			@total[@cake['type']] += 1
 			if(array_index_exists(@cake['players'], @player)) {
 				@count[@cake['type']] += 1
-				@names[@cake['type']] .= color('gray').@id.'('.array_size(@cake['players']).') '
+				@names[@cake['type']] .= color('gray').@id.':'.array_size(@cake['players']).' '
 			} else {
-				@names[@cake['type']] .= color('r').@id.'('.array_size(@cake['players']).') '
+				@names[@cake['type']] .= color('r').@id.':'.array_size(@cake['players']).' '
 			}
 		}
 		if($) {
