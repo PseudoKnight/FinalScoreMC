@@ -331,11 +331,11 @@
 	, 
 		# OFFLINE INFO
 		@pdata = _pdata($player)
-		@minutes = (time() - plast_played($player)) / 60000
+		@minutes = (time() - plast_played(@pdata['name'])) / 60000;
 		@hours = @minutes / 60
 		@days = @hours / 24
 		msg(color('gray').'--[ '.color('l').@pdata['name'].color('gray').' ]-------------------------')
-		msg(color('gray').'UUID: '.color('r').get_value('players', to_lower($player)));
+		msg(color('gray').'UUID: '.color('r').array_normalize(get_values('players.'.to_lower($player)))[0]);
 
 		if(array_index_exists(@pdata, 'ban'), msg(color('red').'Banned '.color('r')
 			.if(array_index_exists(@pdata['ban'], 'by'), 'by '.@pdata['ban']['by'].' ')
