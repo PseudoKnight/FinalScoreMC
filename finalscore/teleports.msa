@@ -41,9 +41,26 @@
 	}
 	@loc = array(@pdata['homes'][@world][0], @pdata['homes'][@world][1], @pdata['homes'][@world][2], @world);
 	if(_is_survival_world(@world) && !_is_safe_location(@loc)) {
-		die('That teleport location does not appear to be safe.');
+		@overrides = import('tp.overrides');
+		if(!@overrides) {
+			@overrides = array();
+		}
+		@overrides[player()] = @loc;
+		export('tp.overrides', @overrides);
+		die('That teleport location does not appear to be safe. /override');
 	}
 	_warmuptp(3.7, player(), @loc, @pdata['homes'][@world][3], @pdata['homes'][@world][4])
+<<<
+
+*:/override = >>>
+	include('includes.library/teleports.ms');
+	@overrides = import('tp.overrides');
+	if(@overrides || !array_index_exists(@overrides, player())) {
+		die('You do not have an unsafe teleport to override.');
+	}
+	_warmuptp(3.7, player(), @overrides[player()]);
+	array_remove(@overrides, player());
+	export('tp.overrides', @overrides);
 <<<
 
 *:/sethome [$] = >>>
