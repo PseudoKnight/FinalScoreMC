@@ -54,7 +54,7 @@
 		msg(color('green').array_size(@cake['players']).color('r').' players.');
 
 	case 'set':
-		if(!array_contains(pgroup(), 'moderators'), die('You do not have permission to use cake commands.'))
+		if(!has_permission('group.moderators'), die('You do not have permission to use cake commands.'));
 		if(!$) {
 			die('/cake set <id> <coins> [type]')
 		}
@@ -108,7 +108,7 @@
 
 
 	case 'move':
-		if(!array_contains(pgroup(), 'moderators'), die('You do not have permission to use cake commands.'))
+		if(!has_permission('group.moderators'), die('You do not have permission to use cake commands.'));
 		if(!$, die('This needs an id.'))
 		@loc = pcursor()
 		if(get_block_at(@loc) != '92:0', die('That doesn\'t appear to be a cake. Is it obstructed by a sign or other partial block?'))
@@ -123,7 +123,7 @@
 
 	case 'delete':
 	case 'remove':
-		if(!array_contains(pgroup(), 'moderators'), die('You do not have permission to use cake commands.'))
+		if(!has_permission('group.moderators'), die('You do not have permission to use cake commands.'));
 		@cakes = get_value('cakes')
 		if(!$) {
 			@cursorloc = pcursor()
@@ -152,7 +152,7 @@
 		msg('Deleted cake '.@id)
 
 	case 'rename':
-		if(!array_contains(pgroup(), 'moderators'), die('You do not have permission to use cake commands.'))
+		if(!has_permission('group.moderators'), die('You do not have permission to use cake commands.'));
 		@cakes = get_value('cakes')
 		@args = parse_args($)
 		if(array_size(@args) == 1) {
@@ -188,7 +188,7 @@
 		msg('Changed '.@old.' to '.@new.'.')
 
 	case 'tp':
-		if(!array_contains(pgroup(), 'moderators'), die('You do not have permission to use cake commands.'))
+		if(!has_permission('group.moderators'), die('You do not have permission to use cake commands.'));
 		if(!$) {
 			die('This needs an id.')
 		}
@@ -200,56 +200,49 @@
 		msg('Teleported.')
 		
 	case 'resetplayer':
-		die('Not updated for UUIDs.');
-		if(!array_contains(pgroup(), 'moderators'), die('You do not have permission to use cake commands.'))
+		if(!has_permission('group.moderators'), die('You do not have permission to use cake commands.'));
 		@args = parse_args($)
-		@id = '';
-		if(!@args[0]) {
-			@cakes = get_value('cakes')
-			@cursorloc = pcursor()
-			foreach(@key: @loc in @cakes) {
-				if(@loc[0] == @cursorloc[0]
-				&& @loc[1] == @cursorloc[1]
-				&& @loc[2] == @cursorloc[2]) {
-					@id = @key
-					break()
-				}
-			}
-			if(!@id) {
-				die('No cake prize found.')
-			}
-		} else {
-			@id = @args[0]
-		}
 		@cakeinfo = get_value('cakeinfo')
-		if(!array_index_exists(@cakeinfo, @id)) {
-			if(array_size(@args) > 1) {
-				die('No cake by that ID found.');
-			}
-			
+		if(array_size(@args) == 1) {
+			@player = @args[0];
+			@uuid = _get_uuid(@player);
 			@count = 0;
 			@amount = 0;
 			foreach(@id: @cake in @cakeinfo) {
-				if(array_index_exists(@cake['players'], @args[0])) {
+				if(array_index_exists(@cake['players'], @uuid)) {
 					@count += 1;
-					array_remove(@cake['players'], @args[0]);
+					array_remove(@cake['players'], @uuid);
 					@amount += @cake['coins'];
-					
 				}
 			}
 			store_value('cakeinfo', @cakeinfo);
 			msg('Delete player from '.@count.' cakes.');
-			if(_acc_subtract(@args[0], @amount)) {
+			if(_acc_subtract(@player, @amount)) {
 				msg('Removed '.@amount.' coins.');
 			} else {
 				msg('Failed to remove '.@amount.' coins.');
 			}
 			
-		} else if(array_index_exists(@cakeinfo[@id]['players'], @args[1])) {
-			array_remove(@cakeinfo[@id]['players'], @args[1])
+		} else if(array_size(@args) == 2) {
+			@id = '';
+			@player = '';
+			if(array_index_exists(@cakeinfo, @args[0])) {
+				@id = @args[0];
+				@player = @args[1];
+			} else if(array_index_exists(@cakeinfo, @args[1])) {
+				@id = @args[1];
+				@player = @args[0];
+			} else {
+				die('No cake found by that name.');
+			}
+			@uuid = _get_uuid(@player);
+			if(!array_index_exists(@cakeinfo[@id]['players'], @uuid)) {
+				die('That player does not exist for this cake.');
+			}
+			array_remove(@cakeinfo[@id]['players'], @uuid)
 			store_value('cakeinfo', @cakeinfo)
 			msg('Deleted player from '.@id.' cake.')
-			if(_acc_subtract(@args[1], @cakeinfo[@id]['coins'])) {
+			if(_acc_subtract(@player, @cakeinfo[@id]['coins'])) {
 				msg('Remove '.@cakeinfo[@id]['coins'].' coins.');
 			} else {
 				msg('Failed to remove '.@cakeinfo[@id]['coins'].' coins.');
