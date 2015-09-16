@@ -55,7 +55,7 @@
 *:/override = >>>
 	include('includes.library/teleports.ms');
 	@overrides = import('tp.overrides');
-	if(@overrides || !array_index_exists(@overrides, player())) {
+	if(!@overrides || !array_index_exists(@overrides, player())) {
 		die('You do not have an unsafe teleport to override.');
 	}
 	_warmuptp(3.7, player(), @overrides[player()]);
