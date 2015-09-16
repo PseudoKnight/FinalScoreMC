@@ -2,20 +2,22 @@
 
 #Warms up a tp with effects and configurable timer
 proc _warmuptp(@length, @player, @loc, @yaw = null, @pitch = null, @cleareffects = false) {
-	set_peffect(@player, 9, 1, 7)
-	@ploc = ploc(@player)
-	play_sound(@ploc, array('sound': 'PORTAL_TRIGGER', 'volume': 1, 'pitch': 1))
+	set_peffect(@player, 9, 1, 7, true, false);
+	play_sound(ploc(@player), array('sound': 'PORTAL_TRIGGER', 'volume': 1, 'pitch': 1));
 	set_timeout(round(@length * 1000), closure(){
 		if(!ponline(@player), die())
-		play_sound(@ploc, array('sound': 'GHAST_FIREBALL', 'volume': 2))
-		make_effect(@ploc, 'MOBSPAWNER_FLAMES', 20)
+		@ploc = ploc(@player);
 		if(!is_null(@yaw) && !is_null(@pitch)) {
 			pfacing(@player, @yaw, @pitch)
 		}
-		set_ploc(@player, @loc)
-		set_peffect(@player, 15, 1, 1)
-		play_sound(@loc, array('sound': 'GHAST_FIREBALL', 'volume': 2))
-		make_effect(@loc, 'MOBSPAWNER_FLAMES', 20)
+		set_peffect(@player, 15, 1, 2, true, false);
+		set_ploc(@player, @loc);
+		set_peffect(@player, 15, 1, 2, true, false);
+		play_effect(_relative(@ploc, 'up', 2), 'CLOUD', array('particleCount': 30, 'speed': 0.01, 'offsetX': 0.3, 'offsetY': 0.6, 'offsetZ': 0.3));
+		play_effect(_relative(@loc, 'up', 2), 'CLOUD', array('particleCount': 30, 'speed': 0.01, 'offsetX': 0.3, 'offsetY': 0.6, 'offsetZ': 0.3));
+		play_sound(@ploc, array('sound': 'GHAST_FIREBALL', 'volume': 2));
+		play_sound(@loc, array('sound': 'GHAST_FIREBALL', 'volume': 2));
+		play_sound(@loc, array('sound': 'PORTAL_TRAVEL', 'volume': 0.2), @player);
 		if(@cleareffects) {
 			_clear_peffects(@player)
 		}
