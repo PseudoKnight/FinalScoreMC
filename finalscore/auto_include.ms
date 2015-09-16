@@ -640,7 +640,7 @@ proc _player_uuid(@players, @closure) {
 /*
 	Gets an offline player's UUID for db access
 */
-proc _get_uuid(@player, @autocomplete = true) {
+proc _get_uuid(@player, @autocomplete = true, @dashless = true) {
 	if(ponline(@player)) {
 		return(puuid(@player, true));
 	} else {
@@ -657,7 +657,7 @@ proc _get_uuid(@player, @autocomplete = true) {
 				throw('NotFoundException', 'Player name not stored in database: '.@player);
 			}
 		}
-		return(replace(@uuidDashed, '-', ''));
+		return(if(@dashless, replace(@uuidDashed, '-', ''), @uuidDashed));
 	}
 }
 
