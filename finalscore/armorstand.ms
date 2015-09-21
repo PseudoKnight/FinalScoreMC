@@ -4,7 +4,6 @@ bind(player_interact_at_entity, null, array('clicked': 'ARMOR_STAND'), @event) {
 		die();
 	}
 	
-	# If right-click with sticks, add arms
 	@item = pinv(player(), null);
 	@armorstand = entity_spec(@event['id']);
 	if(is_null(@item)) {
@@ -59,7 +58,7 @@ bind(player_interact_at_entity, null, array('clicked': 'ARMOR_STAND'), @event) {
 				@eloc = entity_loc(@event['id']);
 				@newloc = @eloc[];
 				
-				@taskid = set_interval(100, closure(){
+				@taskid = set_interval(50, closure(){
 					if(!pinfo(player(), 11) || !entity_exists(@event['id'])) {
 						clear_task();
 						return();
@@ -79,6 +78,31 @@ bind(player_interact_at_entity, null, array('clicked': 'ARMOR_STAND'), @event) {
 					set_entity_loc(@event['id'], @newloc);
 				});
 				
+			} else if(@poseable == 'Torso') {
+				msg(color(6).'Adjusting Armor Stand position.');
+			
+				@dist = _distance(entity_loc(@event['id']), _relative(ploc(), 'up'));
+				set_entity_spec(@event['id'], array('gravity': false));
+				
+				set_interval(50, closure(){
+					if(!ponline(player()) || !pinfo(player(), 11) || !entity_exists(@event['id'])) {
+						if(entity_exists(@event['id'])) {
+							set_entity_spec(@event['id'], array('gravity': @armorstand['gravity']));
+						}
+						clear_task();
+						return();
+					}
+					
+					@eloc = _relative(ploc(), 'up', 1.3);
+					@yaw = to_radians(@eloc['yaw'] + 90);
+					@pitch = to_radians(0 - @eloc['pitch']);
+					@eloc['x'] += @dist * cos(@yaw) * cos(@pitch);
+					@eloc['y'] += @dist * sin(@pitch);
+					@eloc['z'] += @dist * sin(@yaw) * cos(@pitch);
+					@eloc['yaw'] = mod(round(@eloc['yaw'] - 180), 360);
+					set_entity_loc(@event['id'], @eloc);
+				});
+				
 			} else {
 				msg(color(6).'Posing '.@poseable.'.');
 				
@@ -89,7 +113,7 @@ bind(player_interact_at_entity, null, array('clicked': 'ARMOR_STAND'), @event) {
 				@newspec = array('poses': array());
 				@newspec['poses'][@poseable] = @armorstand['poses'][@poseable][];
 				
-				@taskid = set_interval(100, closure(){
+				set_interval(50, closure(){
 					if(!ponline(player()) || !pinfo(player(), 11) || !entity_exists(@event['id'])) {
 						clear_task();
 						return();
@@ -124,14 +148,14 @@ bind(player_interact_at_entity, null, array('clicked': 'ARMOR_STAND'), @event) {
 		
 	} else {
 		switch(@item['type']) {
-			case 44:
+			case 44: # smooth slab toggles baseplate
 				if(!_is_survival_world(pworld())) {
 					msg(color(6).'Toggled baseplate for armor stand.');
 					set_entity_spec(@event['id'], array('baseplate': if(@armorstand['baseplate'], false, true)));
 					cancel();
 				}
 				
-			case 280:
+			case 280: # 2 sticks attaches arms
 				if(@item['qty'] >= 2 && !@armorstand['arms']) {
 					set_entity_spec(@event['id'], array('arms': true));
 					@item['qty'] -= 2;
@@ -139,28 +163,28 @@ bind(player_interact_at_entity, null, array('clicked': 'ARMOR_STAND'), @event) {
 					cancel();
 				}
 			
-			case 288:
+			case 288: # feather toggles gravity
 				if(!_is_survival_world(pworld())) {
 					msg(color(6).'Toggled gravity for armor stand.');
 					set_entity_spec(@event['id'], array('gravity': if(@armorstand['gravity'], false, true)));
 					cancel();
 				}
 				
-			case 375:
+			case 375: # spider eye toggles visibility
 				if(!_is_survival_world(pworld())) {
 					msg(color(6).'Toggled visibility for armor stand.');
 					set_entity_spec(@event['id'], array('visible': if(@armorstand['visible'], false, true)));
 					cancel();
 				}
 			
-			case 416:
+			case 416: # armor stand toggles size
 				if(!_is_survival_world(pworld())) {
 					msg(color(6).'Toggled size for armor stand.');
 					set_entity_spec(@event['id'], array('small': if(@armorstand['small'], false, true)));
 					cancel();
 				}
 				
-			case 420:
+			case 420: # lead carries armor stand
 				if(!pinfo(player(), 11)) {
 					cancel();
 					msg(color(6).'Moving Armor Stand. Sneak to drop.');
