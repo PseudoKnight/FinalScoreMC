@@ -11,20 +11,28 @@ bind(player_interact_at_entity, null, array('clicked': 'ARMOR_STAND'), @event) {
 			die();
 		}
 		
-		proc _position_degrees(@position, @rotation) {
-			@yaw = get_yaw(array(0, 0, 0), @position);
-			@yaw -= @rotation;
-			if(@yaw < -180) {
-				@yaw += 360;
-			} else if(@yaw > 180) {
-				@yaw -= 360;
-			}
-			return(@yaw)
+		@posing = import(player().'posing');
+		if(@posing) {
+			die();
 		}
 
 		# If sneaking, go into pose mode
 		if(pinfo(player(), 11)) {
+		
+			proc _position_degrees(@position, @rotation) {
+				@yaw = get_yaw(array(0, 0, 0), @position);
+				@yaw -= @rotation;
+				if(@yaw < -180) {
+					@yaw += 360;
+				} else if(@yaw > 180) {
+					@yaw -= 360;
+				}
+				return(@yaw)
+			}
+		
+			export(player().'posing', true);
 			cancel();
+			
 			# Get poseable section of armor stand
 			@poseable = '';
 			if(@event['position']['y'] >= 1.6) {
@@ -61,6 +69,7 @@ bind(player_interact_at_entity, null, array('clicked': 'ARMOR_STAND'), @event) {
 				@taskid = set_interval(50, closure(){
 					if(!pinfo(player(), 11) || !entity_exists(@event['id'])) {
 						clear_task();
+						export(player().'posing', null);
 						return();
 					}
 					
@@ -81,7 +90,9 @@ bind(player_interact_at_entity, null, array('clicked': 'ARMOR_STAND'), @event) {
 			} else if(@poseable == 'Torso') {
 				msg(color(6).'Adjusting Armor Stand position.');
 			
-				@dist = _distance(entity_loc(@event['id']), _relative(ploc(), 'up'));
+				@eloc = entity_loc(@event['id']);
+				@originalYaw = @eloc['yaw'];
+				@dist = _distance(@eloc, _relative(ploc(), 'up'));
 				set_entity_spec(@event['id'], array('gravity': false));
 				
 				set_interval(50, closure(){
@@ -90,6 +101,7 @@ bind(player_interact_at_entity, null, array('clicked': 'ARMOR_STAND'), @event) {
 							set_entity_spec(@event['id'], array('gravity': @armorstand['gravity']));
 						}
 						clear_task();
+						export(player().'posing', null);
 						return();
 					}
 					
@@ -99,7 +111,7 @@ bind(player_interact_at_entity, null, array('clicked': 'ARMOR_STAND'), @event) {
 					@eloc['x'] += @dist * cos(@yaw) * cos(@pitch);
 					@eloc['y'] += @dist * sin(@pitch);
 					@eloc['z'] += @dist * sin(@yaw) * cos(@pitch);
-					@eloc['yaw'] = mod(round(@eloc['yaw'] - 180), 360);
+					@eloc['yaw'] = @originalYaw;
 					set_entity_loc(@event['id'], @eloc);
 				});
 				
@@ -116,6 +128,7 @@ bind(player_interact_at_entity, null, array('clicked': 'ARMOR_STAND'), @event) {
 				set_interval(50, closure(){
 					if(!ponline(player()) || !pinfo(player(), 11) || !entity_exists(@event['id'])) {
 						clear_task();
+						export(player().'posing', null);
 						return();
 					}
 					
