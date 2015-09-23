@@ -266,8 +266,15 @@
 		msg('Set '.$player.'\'s contribution amount to $'.$amount.'.')
 	}
 	_store_pdata($player, @pdata)
-	if(!array_contains(pgroup($player), 'supporters')) {
-		run('/perm player addgroup '.$player.' Suppporters')
+	@uuid = _get_uuid($player, true, false);
+	run('/perm player addgroup '.@uuid.' Supporters');
+	if(ponline($player)) {
+		@groups = pgroup($player);
+		if(array_contains(@groups, 'everyone')) {
+			run('/perm player removegroup '.@uuid.' Everyone');
+		} else if(array_contains(@groups, 'regulars')) {
+			run('/perm player removegroup '.@uuid.' Regulars');
+		}
 	}
 <<<
 
