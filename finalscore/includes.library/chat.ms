@@ -60,7 +60,7 @@ proc _hover_tell(@recipients, @components) {
 		if(!is_array(@c)) {
 			@message .= colorize(@c).'"}';
 		} else {
-			@message .= colorize(@c[0]).'",hoverEvent:{action:"show_text",value:{text:"'.colorize(@c[1]).'"}}}';
+			@message .= colorize(@c[0]).'",hoverEvent:{action:"show_text",value:"'.colorize(@c[1]).'"}}';
 		}
 	}
 	@message .= ']';
