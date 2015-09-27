@@ -20,10 +20,10 @@ proc _equip_park(@player) {
 	_clear_pinv(@player)
 	
 	set_pinv(@player, array(
-		1: array('name': 'BOOK', 'meta': array(
+		2: array('name': 'BOOK', 'meta': array(
 			'display': 'Park Directory',
 		)),
-		2: array('name': 'COOKED_MUTTON', 'qty': 64, 'meta': array(
+		3: array('name': 'COOKED_MUTTON', 'qty': 64, 'meta': array(
 			'display': 'Frog Legs', 
 			'lore': array('Good eatin\''),
 		)),
@@ -151,7 +151,7 @@ proc _relative(@originloc, @dir, @amount = 1) {
 			@loc['x'] -= @amount
 		}
 		@loc[0] -= @amount
-		
+	
 	default:
 		console('Error: unhandled relative direction: '.@dir);
 		
@@ -613,7 +613,7 @@ proc _distance(@loc1, @loc2, @3d = true) {
 			return(sqrt(((@loc1['x'] - @loc2['x']) ** 2) + ((@loc1['z'] - @loc2['z']) ** 2)));
 		} else {
 			return(sqrt(((@loc1[0] - @loc2[0]) ** 2) + ((@loc1[2] - @loc2[2]) ** 2)));
-	}
+		}
 	}
 }
 
