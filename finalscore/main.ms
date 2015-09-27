@@ -639,3 +639,14 @@ bind(entity_explode, null, array('type': 'CREEPER'), @event) {
 		play_effect(@event['location'], 'EXPLOSION_HUGE');
 	}
 }
+
+# prevent egg-spawned named mobs from despawning
+bind(creature_spawn, null, array('reason': 'SPAWNER_EGG'), @event) {
+	set_timeout(50, closure(){
+		try(
+			if(get_mob_name(@event['id'])) {
+				set_entity_persistence(@event['id'], true);
+			}
+		);
+	});
+}
