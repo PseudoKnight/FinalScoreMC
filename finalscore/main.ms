@@ -149,7 +149,7 @@ bind(player_join, null, null, @event) {
 			die();
 		}
 		
-		if(!(has_permission('group.administrators') && get_value('silentjoin'))) {
+		if(!(has_permission('group.admin') && get_value('silentjoin'))) {
 			broadcast(colorize('&8'.simple_date('h:mm').' '.'&e&o* '._colorname().'&o'.player().' &e&ojoined the game *'));
 		}
 		
@@ -232,7 +232,7 @@ bind(player_join, null, null, @event) {
 			set_ploc(@loc);
 			array_remove(@pdata, 'homeless');
 			@update = true;
-		} else if(!has_permission('group.everyone')) {
+		} else if(!has_permission('group.member')) {
 			@warp = get_value('warp.intro');
 			@loc = @warp['loc'];
 			set_ploc(@warp['loc']);
@@ -314,7 +314,7 @@ bind(player_interact, null, array('block': 118, 'button': 'right'), @event) {
 
 # Block lighters
 bind(player_interact, null, array('item': 259, 'button': 'right'), @event) {
-	if(has_permission('group.regulars') 
+	if(has_permission('group.regular') 
 	|| !array_index_exists(@event, 'location')
 	|| pworld() == 'outworld' 
 	|| pworld() == 'outworld_nether') {
@@ -422,7 +422,7 @@ bind(player_interact_entity, null, array('clicked': 'HORSE'), @event) {
 	&& get_mob_owner(@event['id']) != player()) {
 		msg('This horse is owned by '.get_mob_owner(@event['id']));
 		
-		if(!has_permission('group.moderators')
+		if(!has_permission('group.moderator')
 		&& (!@item
 		|| (@item['type'] != 322
 		&& @item['type'] != 396))) {
@@ -578,7 +578,7 @@ bind(block_break, null, array('type': 56), @event) {
 		if(@report) {
 			@msg = color('c').'[!] '.color('f').player().' found '.color('b').'diamonds '.color(7)
 				.'(light level: '.get_light_at(@event['location']).')';
-			broadcast(@msg, 'group.moderators');
+			broadcast(@msg, 'group.moderator');
 			console(@msg);
 		}
 	})

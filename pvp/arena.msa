@@ -4,7 +4,7 @@
 	array_resize(@args, 4)
 	switch($action) {
 	case 'update':
-		if(!has_permission('group.administrators'), die('You do not have permission.'))
+		if(!has_permission('group.admin'), die('You do not have permission.'))
 		# @arenas = get_values('arena')
 		# foreach(@key: @arena in @arenas) {
 			# if(array_index_exists(@arena, 'itemspawn')) {
@@ -19,7 +19,7 @@
 	case 'set':
 	case 's':
 	case 'add':
-		if(!has_permission('group.builders'), die('You do not have permission.'))
+		if(!has_permission('group.builder'), die('You do not have permission.'))
 		if(reg_count('^[a-z0-9]+$', $id) < 1, die('You can only use lowercase alphanumeric characters for the ID'))
 		@arena = get_value('arena.'.$id)
 		if(!@arena, @arena = array())
@@ -162,7 +162,7 @@
 				msg('Set respawn time to '.color(10).@args[0].color('r').' seconds.')
 
 			case 'restore':
-				if(!has_permission('group.engineers'), die('Only engineers, moderators and admins can do this.'))
+				if(!has_permission('group.engineer'), die('Only engineers, moderators and admins can do this.'))
 				@regions = array()
 				foreach(@region in @args) {
 					if(!is_null(@region)) {
@@ -410,7 +410,7 @@
 		store_value('arena.'.$id, @arena)
 		
 	case 'load':
-		if(_is_survival_world(pworld()) || !has_permission('group.builders')) {
+		if(_is_survival_world(pworld()) || !has_permission('group.builder')) {
 			die('You do not have permission.')
 		}
 		if(!$id || !$setting) {
@@ -453,7 +453,7 @@
 		}
 		
 	case 'show':
-		if(!has_permission('group.builders')) {
+		if(!has_permission('group.builder')) {
 			die('You do not have permission.')
 		};
 		if(!$id) {
@@ -476,7 +476,7 @@
 		}
 	
 	case 'move':
-		if(!has_permission('group.engineers'), die('You do not have permission.'))
+		if(!has_permission('group.engineer'), die('You do not have permission.'))
 		if(!$id, die('This requires an arena id.'))
 		if(!$setting, die('Requires a direction after the arena id. (north, south, east, west, up, down)'))
 		if(!is_integral($), die('Should be a integer after direction.'))
@@ -568,7 +568,7 @@
 		msg('Reset any setting locations that were not moved.')
 	
 	case 'rename':
-		if(!has_permission('group.builders'), die('You do not have permission.'))
+		if(!has_permission('group.builder'), die('You do not have permission.'))
 		if(!$id, die('This command renames one arena ID to another ID. Usage: /arena rename oldName newName'))
 		if(!$setting, die('This command requires a new arena ID.'))
 		if(reg_count('^[a-z0-9]+$', $id) < 1) {
@@ -582,7 +582,7 @@
 
 	case 'remove':
 	case 'delete':
-		if(!has_permission('group.builders'), die('You do not have permission.'))
+		if(!has_permission('group.builder'), die('You do not have permission.'))
 		if(!$id) {
 			die('Permanently deletes a setting\'s contents, or if no setting is provided,'
 				.' it will delete the whole arena.')

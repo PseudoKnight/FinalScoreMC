@@ -1,6 +1,6 @@
 bind(player_interact, null, array('item': 401, 'button': 'right'), @event) {
 	if(pworld() != 'custom'
-	|| !array_contains(pgroup(), 'supporters')) {
+	|| !array_contains(pgroup(), 'donor')) {
 		die()
 	}
 	cancel()

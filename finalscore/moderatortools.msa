@@ -92,37 +92,6 @@
 	}
 <<<
 
-/whitelist $player = >>>
-
-	/**
-	 * Retrieves a player's mojang UUID from the mojang api, and returns the results
-	 * as an array that corresponds to the input array of player names.
-	 * @param players An array of players that will be checked.
-	 * @param closure The callback closure, which will be called once the
-	 * request finishes. It will be sent the array of returned values.
-	 * Author: kookster
-	 */
-	proc _player_uuid(@players, @closure) {
-		@success = closure(@response){
-			@array = json_decode(@response['body'])
-			execute(@array, @closure)
-		}
-		@options = array(
-			'method': 'POST',
-			'headers': array('Content-Type': 'application/json'),
-			'params': json_encode(@players),
-			'success': @success
-		)
-		http_request('https://api.mojang.com/profiles/minecraft', @options)
-	}
-	
-	_player_uuid(array($player), closure(@array){ 
-		try(
-			run('/perm player setgroup '.@array[0]['id'].' Everyone')
-		, msg('Unknown player.'))
-	})
-<<<
-
 /hologram $ = >>>
 	@loc = ploc();
 	@lines = split(',', $);
@@ -185,7 +154,7 @@
 <<<
 
 *:/ban [$player] [$] = >>>
-	if(!has_permission('group.moderators'), die('You do not have permission.'))
+	if(!has_permission('group.moderator'), die('You do not have permission.'))
 	if(!$player, die('Usage: /ban <player> [-t 1d-8h-10m] [message]'))
 	@pdata = _pdata($player)
 	@bantime = null
@@ -223,7 +192,7 @@
 <<<
 
 *:/unban [$player] = >>>
-	if(!has_permission('group.moderators'), die('You do not have permission.'))
+	if(!has_permission('group.moderator'), die('You do not have permission.'))
 	if(!$player, die('Usage: /unban <player>'))
 	@pdata = _pdata($player)
 	if(!array_index_exists(@pdata, 'ban'), die('That player is not banned.'))
@@ -235,7 +204,7 @@
 
 *:/kick [$player] [$='Kicked.'] = >>>
 	if(!$player, die('Usage: /kick <player> <reason>'))
-	if(!has_permission('group.moderators'), die('You do not have permission.'))
+	if(!has_permission('group.moderator'), die('You do not have permission.'))
 	try(@player = player($player), die('Unknown player.'))
 	pkick(@player, $)
 	console(player().' kicked '.@player.'. (Reason: "'.$.'")')
@@ -256,38 +225,31 @@
 *:/donation [$] = call_alias('/contribution '. $);
 *:/support [$] = call_alias('/contribution ' . $);
 *:/contribution $player $amount = >>>
-	if(!has_permission('group.administrators'), die('You do not have permission to use this command.'))
+	if(!has_permission('group.admin'), die('You do not have permission to use this command.'))
 	@pdata = _pdata($player)
 	if(array_index_exists(@pdata, 'support')) {
 		@pdata['support'] += $amount
 		msg('Added $'.$amount.' to '.$player.'\'s contributions; Total: $'.@pdata['support'].'.')
 	} else {
 		@pdata['support'] = $amount
-		msg('Set '.$player.'\'s contribution amount to $'.$amount.'.')
+		msg('Set '.@pdata['name'].'\'s contribution amount to $'.$amount.'.')
 	}
-	_store_pdata($player, @pdata)
-	@uuid = _get_uuid($player, true, false);
-	run('/perm player addgroup '.@uuid.' Supporters');
-	if(ponline($player)) {
-		@groups = pgroup($player);
-		if(array_contains(@groups, 'everyone')) {
-			run('/perm player removegroup '.@uuid.' Everyone');
-		} else if(array_contains(@groups, 'regulars')) {
-			run('/perm player removegroup '.@uuid.' Regulars');
-		}
+	if(@pdata['group'] == 'member' || @pdata['group'] == 'regular') {
+		@pdata['group'] = 'donor';
 	}
+	_store_pdata($player, @pdata);
 <<<
 
 #Set or reset the MOTD
 *:/setmotd [$=''] = >>>
-	if(!has_permission('group.moderators'), die('You do not have permission to use this command.'))
+	if(!has_permission('group.moderator'), die('You do not have permission to use this command.'))
 	store_value('motd', colorize($))
 	msg('MOTD set to: '.colorize($))
 <<<
 
 #Run commands as other players and show them which command it was
 *:/runas $player $ = >>>
-	if(!get_command_block() && !has_permission('group.administrators'), die('You do not have permission for this command'))
+	if(!get_command_block() && !has_permission('group.admin'), die('You do not have permission for this command'))
 	try(@player = player($player), die('No player found.'))
 	if(substr($, 0, 2) == '-s') {
 		@cmd = substr($, 3)
@@ -304,15 +266,8 @@
 	)
 <<<
 
-#Alias for setting people to Regulars group
-*:/promote $player = >>>
-	if(!has_permission('group.administrators'), die('You do not have permission to use this command.'))
-	if(array_contains(pgroup($player), 'regulars'), die('Player is already in that group.'))
-	run('/perm player setgroup '.$player.' Regulars')
-<<<
-
 *:/player $player = >>>
-	if(!has_permission('group.moderators'), die('You do not have permission to use this command.'))
+	if(!has_permission('group.moderator'), die('You do not have permission to use this command.'))
 	try(
 		# ONLINE INFO
 		@player = player($player)
@@ -368,7 +323,7 @@
 <<<
 
 *:/matchip $ip = >>>
-	if(!has_permission('group.moderators'), die('You do not have permission.'))
+	if(!has_permission('group.moderator'), die('You do not have permission.'))
 	@players = get_values('uuids')
 	msg(color('bold').'Matched Players for IP: '.$ip)
 	foreach(@key: @player in @players) {
@@ -384,7 +339,7 @@
 	if(!$action) {
 		msg(color('gold').round(_acc_balance(player())).' coins')
 	} else {
-		if(!has_permission('group.moderators'), die('You do not have permission.'))
+		if(!has_permission('group.moderator'), die('You do not have permission.'))
 		if(!$player, die('Usage: /coins <add|sub|info> <player> <amount>'))
 		switch($action) {
 		case 'add':

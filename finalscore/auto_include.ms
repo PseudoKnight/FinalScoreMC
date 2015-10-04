@@ -362,11 +362,11 @@ proc _clear_peffects(@player) {
 proc _colorname(@player) {
 	if(!@player, @player = player());
 	@color = 'white';
-	if(has_permission(@player, 'group.moderators')) {
+	if(has_permission(@player, 'group.moderator')) {
 		@color = 'aqua';
-	} else if(has_permission(@player, 'group.supporters')) {
+	} else if(has_permission(@player, 'group.donor')) {
 		@color = 'green';
-	} else if(has_permission(@player, 'group.everyone')) {
+	} else if(has_permission(@player, 'group.member')) {
 		@color = 'yellow';
 	}
 	return(color(@color));

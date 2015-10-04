@@ -1,5 +1,5 @@
 *:/class [$cmd] [$id] [$setting] [$] = >>>
-if(!has_permission('group.builders'), die('You do not have permission.'))
+if(!has_permission('group.builder'), die('You do not have permission.'))
 if($, @args = parse_args($), @args = array())
 array_resize(@args, 3)
 switch($cmd) {

@@ -1,5 +1,5 @@
 *:/acme $player = >>>
-	if(!has_permission('group.builders'), die('You do not have permission.'))
+	if(!has_permission('group.builder'), die('You do not have permission.'))
 	if(!@player = player($player), die('Unknown player.'))
 	@message = color('b').'Lovely weather we\'re having today.'
 	if(!_is_survival_world(pworld(@player))) {

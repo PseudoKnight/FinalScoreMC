@@ -99,7 +99,7 @@
 		}
 		
 	case 'addtime':
-		if(!get_command_block() && !has_permission('group.moderators'), die());
+		if(!get_command_block() && !has_permission('group.moderator'), die());
 		if(!$id, die());
 		@id = to_lower($id);
 		@pvp = import('pvp'.@id);
@@ -147,7 +147,7 @@
 		# Check if arena is in testing
 		if(array_index_exists(@pvp['arena'], 'flags')
 		&& array_contains(@pvp['arena']['flags'], 'debug') 
-		&& !array_contains(pgroup(), 'builders')) {
+		&& !array_contains(pgroup(), 'builder')) {
 			die('This arena is still in testing and can only be started by Builders.');
 		}
 
@@ -412,7 +412,7 @@
 		});
 		
 	case 'end':
-		if(!get_command_block() && !has_permission('group.builders'), die(color('red').'You do not have permission.'))
+		if(!get_command_block() && !has_permission('group.builder'), die(color('red').'You do not have permission.'))
 		if(!$id, die(color('gold').'Usage: /pvp end arenaName winningTeam#'))
 		@id = to_lower($id)
 		@pvp = import('pvp'.@id)

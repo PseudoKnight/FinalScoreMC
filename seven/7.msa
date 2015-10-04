@@ -108,7 +108,7 @@
 		})
 		
 	} else {
-		if(!has_permission('group.builders'), die('No permission.'))
+		if(!has_permission('group.builder'), die('No permission.'))
 		switch($action) {
 		case 'create':
 		case 'define':

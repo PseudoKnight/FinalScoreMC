@@ -26,7 +26,7 @@
 	if(!@region) {
 		die('Unknown region.');
 	} else if((!array_contains(sk_region_owners(@region, pworld())['players'], puuid())
-	&& !has_permission('group.moderators'))) {
+	&& !has_permission('group.moderator'))) {
 		die('You do not own this region.');
 	}
 	
@@ -216,7 +216,7 @@
 	if($) {
 		@message = parse_args($)
 		if(ponline(@message[0])) {
-			if(!has_permission('group.moderators'), die('You do not have permission.'))
+			if(!has_permission('group.moderator'), die('You do not have permission.'))
 			@player = @message[0]
 			@message = array_implode(@message[cslice(1, array_size(@message) - 1)])
 		} else {
@@ -311,9 +311,9 @@
 		'plugins': 
 			'Type "/plugins" for a full list of plugins installed, or check the website for more details.',
 		'permissions': 
-			'We currently have 7 groups: Everyone (new players with minor restrictions), Regulars, Supporters '.
-			'(green names or diamonds), Builders (orange), Engineers (orange), Moderators (blue), and '.
-			'Administrators (blue). New players get bumped up to the Regulars group after some time, as long as '.
+			'We currently have 7 groups: member (new players with minor restrictions), regular, donor '.
+			'(green names or diamonds), builder, engineer, moderator (blue), and '.
+			'admin (blue). New players get bumped up to the regular group after some time, as long as '.
 			'they\'re not causing trouble.',
 		'mumble': 
 			'Everyone is welcome to use our voice chat server using Mumble. The server is at mum.finalscoremc.com '.
@@ -346,20 +346,6 @@
 <<<
 *:/rules = call_alias('/help rules')
 
-# APPROVAL SYSTEM #
-*:/approve [$player] = >>>
-	if(!has_permission('group.regulars'), die('You do not have permission to use this command.'))
-	try(@player = player($player), die('Unknown player.'))
-	if(array_contains_ic(pgroup($player), 'Everyone'), die('Player already exists in whitelist.'))
-	sudo('/perm player setgroup '.$player.' Everyone')
-	tmsg($player, 'You have been added to the whitelist by ', color('e'), player(), color('f'), '.')
-	if(!has_permission('group.moderators')) {
-		@pdata = _pdata(@player)
-		@pdata['approval'] = player()
-		_store_pdata(@player, @pdata)
-	}
-<<<
-
 # Put whatever they have in their hand onto their head. This shouldn't dupe.
 *:/hat = >>>
 	if(!is_null(pinv(player(), 103))) {
@@ -381,7 +367,7 @@
 
 # PLAYER LISTS #
 *:/who = >>>
-	@list = array(array('Administrators', 'b', ''), array('Moderators', 'b', ''), array('Engineers', '6', ''), array('Builders', '6', ''), array('Supporters', 'a', ''), array('Regulars', 'e', ''), array('Everyone', 'e', ''), array('Default', 'f', ''))
+	@list = array(array('admin', 'b', ''), array('moderator', 'b', ''), array('engineer', '6', ''), array('builder', '6', ''), array('donor', 'a', ''), array('regular', 'e', ''), array('member', 'e', ''), array('default', 'f', ''))
 	@allplayers = all_players()
 	foreach(@player in @allplayers) {
 		for(@i = 0, @i < array_size(@list), @i++) {
@@ -422,7 +408,7 @@
 
 *:/region flag $region $ = >>> 
 	assign(@flag, parse_args($)) 
-	if(has_permission('group.moderators') || @flag[0] != 'mob-spawning') {  
+	if(has_permission('group.moderator') || @flag[0] != 'mob-spawning') {  
 		run('/rg flag '.$region.' '.$) 
 		die() 
 	}
@@ -450,7 +436,7 @@
 	if(!sk_region_exists(pworld(), $from)) {
 		die('That region doesn\'t exist.')
 	}
-	if(!has_permission('group.moderators') && !array_contains_ic(sk_region_owners($from, pworld())['players'], puuid())) {
+	if(!has_permission('group.moderator') && !array_contains_ic(sk_region_owners($from, pworld())['players'], puuid())) {
 		die('No permission.')
 	}
 	if(!reg_match('^[a-zA-Z0-9-_]{1,32}$', $to)[0]) {

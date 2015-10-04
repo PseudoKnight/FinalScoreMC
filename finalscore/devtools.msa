@@ -69,23 +69,6 @@
     }
 <<<
 
-/*
-	Toggles permissions for testing
-*/
-*:/permtest = >>>
-	if(has_permission('group.administrators')) {
-		run('/perm player addgroup '.player().' Everyone');
-		run('/perm player removegroup '.player().' Administrators');
-		export('perm'.player(), 'Administrators');
-	} else {
-		@perm = import('perm'.player());
-		if(!is_null(@perm)) {
-			sudo('/perm player addgroup '.player().' Administrators');
-			sudo('/perm player removegroup '.player().' Everyone');
-		}
-	}
-<<<
-
 /* 
 	Lists the type and amount of events bound
 */

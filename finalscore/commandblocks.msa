@@ -118,7 +118,7 @@
 <<<
 
 *:/give [$player=''] [$item=0] [$amount=1] = >>>
-	if(!get_command_block() && !has_permission('group.moderators'), die('You do not have permission to use this command.'))
+	if(!get_command_block() && !has_permission('group.moderator'), die('You do not have permission to use this command.'))
 	if($player == '', die('Usage: /give [player] [id:data] [quantity]'))
 	try(@player = player($player), die('Unknown player.'))
 	if($item == 0, die('You need to specify an item id or name.'))
@@ -141,7 +141,7 @@
 
 *:/velocity $entity $x $y $z [$double] = >>>
 	@loc = get_command_block();
-	if(is_null(@loc) && (!has_permission('group.builders') || _is_survival_world(pworld()))) {
+	if(is_null(@loc) && (!has_permission('group.builder') || _is_survival_world(pworld()))) {
 		die('You cannot run this command.');
 	}
 	if(ponline($entity)) {
@@ -216,7 +216,7 @@
 				@loc = @cmdblk
 			}
 			play_named_sound(@loc, array('sound': $sound, 'pitch': $pitch, 'volume': $volume))
-		} else if(has_permission('group.builders') || pworld() == 'dev') {
+		} else if(has_permission('group.builder') || pworld() == 'dev') {
 			play_named_sound(ploc(), array('sound': $sound, 'pitch': $pitch, 'volume': $volume))
 		}
 	} else {
@@ -236,7 +236,7 @@
 				@loc = @cmdblk
 			}
 			play_sound(@loc, array('sound': @sound, 'pitch': @pitch, 'volume': $volume))
-		} else if(has_permission('group.builders') || pworld() == 'dev') {
+		} else if(has_permission('group.builder') || pworld() == 'dev') {
 			play_sound(ploc(), array('sound': @sound, 'pitch': @pitch, 'volume': $volume))
 			msg(@sound.' @ '.@pitch)
 		}

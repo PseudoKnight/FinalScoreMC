@@ -1,0 +1,47 @@
+*:/perm $action [$player] [$group] = >>>
+if(!has_permission('group.admin')) {
+	die('You do not have permission.');
+}
+switch($action) {
+	case 'reload':
+		msg(color('e').'Reloading permissions...');
+		include('includes.library/procedures.ms');
+		@perms = yml_decode(read('config.yml'));
+		export('perms', @perms);
+		foreach(@p in all_players()) {
+			_perm_player(@p);
+		}
+		msg(color('a').'Config reloaded and new permissions applied to players.');	
+
+	case 'setgroup':
+		include('includes.library/procedures.ms');
+		if(@oldgroup = _set_group($player, $group)) {
+			msg('Changed group from '.@oldgroup.' to '.$group);
+		} else {
+			msg('Could not set player\'s group to '.$group);
+		}
+	
+	}
+<<<
+
+# APPROVAL SYSTEM #
+*:/approve [$player] = >>>
+	if(!has_permission('group.regular')) {
+		die('You do not have permission to use this command.');
+	}
+	try(
+		@player = player($player);
+	, 
+		die('Unknown player.');
+	);
+	include('includes.library/procedures.ms');
+	if(_set_group(@player, 'member')) {
+		msg('Added player.');
+		tmsg(@player, 'You have been added to the whitelist by ', color('e'), player(), color('f'), '.');
+		if(!has_permission('group.moderator')) {
+			@pdata = _pdata(@player);
+			@pdata['approval'] = player();
+			_store_pdata(@player, @pdata);
+		}
+	}
+<<<

@@ -54,7 +54,7 @@
 		msg(color('green').array_size(@cake['players']).color('r').' players.');
 
 	case 'set':
-		if(!has_permission('group.moderators'), die('You do not have permission to use cake commands.'));
+		if(!has_permission('group.moderator'), die('You do not have permission to use cake commands.'));
 		if(!$) {
 			die('/cake set <id> <coins> [type]')
 		}
@@ -108,7 +108,7 @@
 
 
 	case 'move':
-		if(!has_permission('group.moderators'), die('You do not have permission to use cake commands.'));
+		if(!has_permission('group.moderator'), die('You do not have permission to use cake commands.'));
 		if(!$, die('This needs an id.'))
 		@loc = pcursor()
 		if(get_block_at(@loc) != '92:0', die('That doesn\'t appear to be a cake. Is it obstructed by a sign or other partial block?'))
@@ -123,7 +123,7 @@
 
 	case 'delete':
 	case 'remove':
-		if(!has_permission('group.moderators'), die('You do not have permission to use cake commands.'));
+		if(!has_permission('group.moderator'), die('You do not have permission to use cake commands.'));
 		@cakes = get_value('cakes')
 		if(!$) {
 			@cursorloc = pcursor()
@@ -152,7 +152,7 @@
 		msg('Deleted cake '.@id)
 
 	case 'rename':
-		if(!has_permission('group.moderators'), die('You do not have permission to use cake commands.'));
+		if(!has_permission('group.moderator'), die('You do not have permission to use cake commands.'));
 		@cakes = get_value('cakes')
 		@args = parse_args($)
 		if(array_size(@args) == 1) {
@@ -188,7 +188,7 @@
 		msg('Changed '.@old.' to '.@new.'.')
 
 	case 'tp':
-		if(!has_permission('group.moderators'), die('You do not have permission to use cake commands.'));
+		if(!has_permission('group.moderator'), die('You do not have permission to use cake commands.'));
 		if(!$) {
 			die('This needs an id.')
 		}
@@ -200,7 +200,7 @@
 		msg('Teleported.')
 		
 	case 'resetplayer':
-		if(!has_permission('group.moderators'), die('You do not have permission to use cake commands.'));
+		if(!has_permission('group.moderator'), die('You do not have permission to use cake commands.'));
 		@args = parse_args($)
 		@cakeinfo = get_value('cakeinfo')
 		if(array_size(@args) == 1) {

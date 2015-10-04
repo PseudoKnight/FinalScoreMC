@@ -39,7 +39,7 @@ bind(player_interact, null, array('block': 92), @event) {
 	}
 	@cakeinfo[@id]['players'][@uuid] = time()
 	msg(color('green').'You got the '.to_upper(@id).' '.@cakeinfo[@id]['type'].' cake! ('.@count.'/'.@total.')')
-	if(!array_contains_ic(pgroup(), 'builders')) {
+	if(!array_contains_ic(pgroup(), 'builder')) {
 		_acc_add(player(), @cakeinfo[@id]['coins'])
 		msg(color('gold').'+ '.@cakeinfo[@id]['coins'].' coins')
 		console(player().' got '.@cakeinfo[@id]['coins'].' coins at '.@id)

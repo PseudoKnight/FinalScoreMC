@@ -45,7 +45,7 @@ bind(player_chat, null, null, @event) {
 		if(@event['message'][0] == '!') {
 			@event['message'] = substr(@event['message'], 1)
 		} else {
-			broadcast(color('dark_gray').simple_date('h:mm').' '.color('aqua').'[STAFF] '.if(array_contains(pgroup(), 'supporters'), color('green').'\u2666 ')
+			broadcast(color('dark_gray').simple_date('h:mm').' '.color('aqua').'[STAFF] '.if(array_contains(pgroup(), 'donor'), color('green').'\u2666 ')
 				._colorname().player().color('gray').': '.color('r').colorize(@event['message']), 'chat.staff')
 			die()
 		}
@@ -74,7 +74,7 @@ bind(player_chat, null, null, @event) {
 	}
 	
 	@components[] = array(_colorname().player().'&8: ', 
-		if(has_permission('group.moderators'), '&bSTAFF\n')
+		if(has_permission('group.moderator'), '&bSTAFF\n')
 		.if(array_index_exists(@pdata, 'names'), '&8[aliases] &r'.array_implode(@pdata['names']).'\n')
 		.'&8[world] &r'._worldname(pworld()));
 
