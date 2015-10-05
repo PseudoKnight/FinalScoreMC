@@ -48,6 +48,17 @@ case 'load':
 			}
 		}
 		
+		@item = pinv(player(), null)
+		@item['qty'] -= 1
+		if(@item['qty'] == 0) {
+			set_pinv(player(), array(null: null))
+		} else {
+			set_pinv(player(), array(null: @item))
+		}
+		set_timeout(400, closure(){
+			psend_block_change(@loc, @block);
+		});
+		
 		if(@player) {
 			@loc1 = ploc(@player)
 			@loc2 = ploc()
@@ -63,16 +74,6 @@ case 'load':
 			play_sound(ploc(), array('sound': 'ENDERMAN_IDLE', 'pitch': 2))
 		}
 		
-		@item = pinv(player(), null)
-		@item['qty'] -= 1
-		if(@item['qty'] == 0) {
-			set_pinv(player(), array(null: null))
-		} else {
-			set_pinv(player(), array(null: @item))
-		}
-		set_timeout(400, closure(){
-			psend_block_change(@loc, @block);
-		});
 	}
 	
 case 'powerup':
