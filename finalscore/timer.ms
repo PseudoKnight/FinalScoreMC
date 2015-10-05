@@ -13,7 +13,7 @@ register_command('timer', array(
 	'executor': closure(@alias, @sender, @args, @info) {
 	
 		if(array_size(@args) != 3
-		|| phas_flight(@player)) {
+		|| phas_flight(@args[2])) {
 			die();
 		}
 		
@@ -84,7 +84,7 @@ register_command('timer', array(
 				}
 				
 				if(@stop) {
-					array_remove(@timers, @player)
+					array_remove(@timers, @player);
 					unbind(@player.'timerbreak');
 					unbind(@player.'reset');
 					unbind(@player.'timerdeath');
