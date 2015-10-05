@@ -123,6 +123,7 @@ bind(player_join, null, null, @event) {
 	
 	# BLOCK CODES
 	# Disables cheat features in mods that play nice.
+	/*
 	msg(colorize('&f &f &2 &0 &4 &8 ')); # Zombe zcheat
 	msg(colorize('&f &f &4 &0 &9 &6 ')); # Zombe noclip
 	msg(colorize('&f &f &1 &0 &2 &4 ')); # Zombe fly
@@ -131,9 +132,6 @@ bind(player_join, null, null, @event) {
 	msg(colorize('&3 &9 &2 &0 &0 &3 ')); # CJB radar
 	msg(colorize('&0&0&1&e&f')); # Rei's Minimap cave
 	msg(colorize('&0&0&2&3&4&5&6&7&e&f')); # Rei's Minimap radar
-	#msg(colorize('&0&0&1&f&e')); # Automap ore
-	#msg(colorize('&0&0&2&f&e')); # Automap cave
-	#msg(colorize('&0&0&3&4&5&6&7&8&f&e')); # Automap radar
 	msg(colorize('&0&1&0&1&2&f&f')); # Smart-moving climb
 	msg(colorize('&0&1&3&4&f&f')); # Smart-moving swim
 	msg(colorize('&0&1&5&f&f')); # Smart-moving crawl
@@ -142,6 +140,7 @@ bind(player_join, null, null, @event) {
 	msg(colorize('&0&1&8&9&a&b&f&f')); # Smart-moving jump
 	msg(colorize('&3 &6 &3 &6 &3 &6 &e ')); # Voxelmap radar
 	msg(colorize('&3 &6 &3 &6 &3 &6 &d ')); # Voxelmap cave
+	*/
 	
 	set_timeout(250, closure(@loc = ploc(), @player = player()){
 		if(!ponline(@player)) {
