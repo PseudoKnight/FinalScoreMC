@@ -543,17 +543,15 @@ bind(block_dispense, null, array('type': 'DISPENSER'), @e) {
 
 # Limit the number of mobs that can be built up from a mob spawner
 bind(creature_spawn, null, array('reason': 'SPAWNER'), @event) {
-	@entities = 0;
-	# check a 3x3 chunk area (48x256x48 area)
-	@range = array(-16, 0, 16);
-	foreach(@x in @range) {
-		foreach(@z in @range) {
-			@entities += array_size(
-				all_entities(@event['location']['world'], @event['location']['x'] + @x, @event['location']['z'] + @z)
-			);
+	if(array_size(entities_in_radius(@event['location'], 48, @event['type'])) > 100) {
+		cancel();
 		}
 	}
-	if(@entities > 100) {
+
+# Limit breeding in high entity areas
+bind(creature_spawn, null, array('reason': 'BREEDING'), @event) {
+	if(@event['type'] != 'HORSE' 
+	&& array_size(entities_in_radius(@event['location'], 48)) > 200) {
 		cancel();
 	}
 }
