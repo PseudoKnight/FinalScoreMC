@@ -11,10 +11,6 @@ bind(world_changed, null, null, @event) {
 	_perm_player(@event['player']);
 }
 
-bind(player_quit, null, null, @event) {
-	unperm_player(@event['player']);
-}
-
 bind(player_interact, null, null, @event) {
 	if(!has_permission('permissions.build')) {
 		cancel();

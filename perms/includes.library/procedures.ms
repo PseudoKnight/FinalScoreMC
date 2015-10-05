@@ -1,24 +1,27 @@
-proc _perm_player(@player) {
-	unperm_player(@player);
+proc _perm_player(@player, @clear = true) {
+	@start = time();
 	@pdata = _pdata(@player);
-	_add_group_perms(@player, array_get(@pdata, 'group', 'default'));
+	_add_group_perms(@player, array_get(@pdata, 'group', 'default'), false);
+	@stop = time();
+	console('Applied permissions in '.(@stop - @start).'ms');
 }
 
-proc _add_group_perms(@player, @group) {
+proc _add_group_perms(@player, @group, @return = true) {
 	@perms = import('perms');
+	@toAdd = array();
 	# Add inherited perms first
 	if(array_index_exists(@perms[@group], 'inheritance')) {
-		_add_group_perms(@player, @perms[@group]['inheritance']);
+		@toAdd = _add_group_perms(@player, @perms[@group]['inheritance']);
 	}
-	foreach(@perm: @value in @perms[@group]['permissions']) {
-		set_permission(@player, @perm, @value);
-	}
+	@toAdd = array_merge(@toAdd, @perms[@group]['permissions']);
 	if(array_index_exists(@perms[@group], 'worlds')
 	&& array_index_exists(@perms[@group]['worlds'], pworld(@player))) {
-		foreach(@perm: @value in @perms[@group]['worlds'][pworld(@player)]) {
-			set_permission(@player, @perm, @value);
-		}
+		@toAdd = array_merge(@toAdd, @perms[@group]['worlds'][pworld(@player)]);
 	}
+	if(@return) {
+		return(@toAdd);
+	}
+	set_permissions(@player, @toAdd);
 }
 
 proc _set_group(@player, @group) {
