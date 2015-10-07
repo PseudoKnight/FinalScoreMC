@@ -254,6 +254,12 @@ bind(player_join, null, null, @event) {
 	});
 }
 
+bind(player_command, null, null, @event) {
+	if(array_get(@event['prefix'], 1, '') != '/') {
+		console(@event['player'].' ran: '.@event['command'], false);
+	}
+}
+
 bind(player_quit, null, null, @event) {
 	modify_event('message', null);
 	broadcast(colorize('&8'.simple_date('h:mm').' '.'&e&o* '._colorname().'&o'.player().' &e&oleft the game *'));
