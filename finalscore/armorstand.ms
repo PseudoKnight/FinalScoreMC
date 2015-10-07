@@ -160,14 +160,7 @@ bind(player_interact_at_entity, null, array('clicked': 'ARMOR_STAND'), @event) {
 		}
 		
 	} else {
-		switch(@item['type']) {
-			case 44: # smooth slab toggles baseplate
-				if(!_is_survival_world(pworld())) {
-					msg(color(6).'Toggled baseplate for armor stand.');
-					set_entity_spec(@event['id'], array('baseplate': if(@armorstand['baseplate'], false, true)));
-					cancel();
-				}
-				
+		switch(@item['type']) {				
 			case 280: # 2 sticks attaches arms
 				if(@item['qty'] >= 2 && !@armorstand['arms']) {
 					set_entity_spec(@event['id'], array('arms': true));
@@ -214,10 +207,6 @@ bind(player_interact_at_entity, null, array('clicked': 'ARMOR_STAND'), @event) {
 }
 
 bind(entity_damage, null, array('type': 'ARMOR_STAND'), @event) {
-	if(!entity_spec(@event['id'])['arms']) {
-		die();
-	}
-
 	@damager = '';
 	if(array_index_exists(@event, 'damager')) {
 		@damager = @event['damager'];
@@ -230,14 +219,25 @@ bind(entity_damage, null, array('type': 'ARMOR_STAND'), @event) {
 	}
 	
 	if(sk_can_build(@damager, @event['location'])) {
-		cancel();
-		@weapon = get_mob_equipment(@event['id'])['weapon'];
-		@loc = entity_loc(@event['id']);
-		if(!is_null(@weapon)) {
-			drop_item(@loc, @weapon);
-			set_mob_equipment(@event['id'], array('weapon': null));
+		@armorstand = entity_spec(@event['id']);
+		if(@armorstand['arms']) {
+			cancel();
+			@weapon = get_mob_equipment(@event['id'])['weapon'];
+			@loc = entity_loc(@event['id']);
+			if(!is_null(@weapon)) {
+				drop_item(@loc, @weapon);
+				set_mob_equipment(@event['id'], array('weapon': null));
+			}
+			drop_item(@loc, array('type': 280, 'qty': 2));
+			set_entity_spec(@event['id'], array('arms': false));
+		} else if(@armorstand['baseplate']) {
+			cancel();
+			@item = drop_item(entity_loc(@event['id']), array('type': 44));
+			set_entity_spec(@item, array('pickupdelay': 60));
+			set_entity_spec(@event['id'], array('baseplate': false));
+			set_timeout(2000, closure(){
+				try(entity_remove(@item));
+			});
 		}
-		drop_item(@loc, array('type': 280, 'qty': 2));
-		set_entity_spec(@event['id'], array('arms': false));
 	}
 }
