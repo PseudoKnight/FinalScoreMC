@@ -193,25 +193,19 @@ bind(player_join, null, null, @event) {
 		);
 		
 		#Welcome messages
-		msg(color('1').color('l').'----------------------');
+		@line = color('1').color('l').'----------------------';
+		msg(@line);
 		msg(colorize(' &6&l\u1260&d&l\u1260&b&l\u1260&4&l\u1260 &6&lFINALSCORE&e&lMC \u00AB &r\u25AA \u25AA \u25AA'));
-		msg(color('1').color('l').'----------------------');
+		msg(@line);
 		if(@motd = get_value('motd')) {
-			msg(' '.@motd);
-			msg(color('1').color('l').'----------------------');
-		}
-		
-		#Tab list colors
-		if(length(player()) > 14) {
-			set_list_name(_colorname().substr(player(), 0, 14));
+			msg(@motd);
+			msg(@line);
 		} else {
-			set_list_name(_colorname().player());
+			run('/mumble');
 		}
-		# Refresh list names for joining player.
-		# This works around a 1.8.0 bug
-		foreach(@p in all_players()) {
-			set_list_name(@p, get_list_name(@p));
-		}
+
+		
+		_refresh_tablist(all_players());
 
 		@pdata = _pdata(player());
 		@update = false;

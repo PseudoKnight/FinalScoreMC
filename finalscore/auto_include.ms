@@ -373,6 +373,23 @@ proc _colorname(@player) {
 }
 
 /*
+	Refreshes the player colors on the tab list.
+	This needs to be done for all players when new players join
+	and for players that change scoreboards. (for 1.8.0)
+*/
+proc _refresh_tablist(@players) {
+	foreach(@p in @players) {
+		if(length(@p) > 14) {
+			# max tab list length is 16 chars including colors
+			set_list_name(_colorname(@p).substr(@p, 0, 14));
+		} else {
+			set_list_name(_colorname(@p).@p);
+		}
+	}
+}
+
+
+/*
 	Returns world alias when given world folder name
 */
 proc _worldname(@world) {
