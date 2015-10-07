@@ -1,19 +1,26 @@
-/recompile [$] = >>>
+/recompile [$args] [$] = >>>
 	@clearGlobal = false; # -g clear all but protected exported global vars
 	@clearProtected = false; # -p clear protected global vars
 	@force = false; # -f force recompile even if games are running
-	if($) {
-		@args = parse_args($);
-		foreach(@arg in @args) {
-			switch(@arg) {
-				case '-g':
-					@clearGlobal = true;
-				case '-p':
-					@clearProtected = true;
-				case '-f':
-					@force = true;
+	@message = '';
+	if($args) {
+		if($args[0] == '-') {
+			foreach(@i in range(1, length($args))) {
+				switch($args[@i]) {
+					case 'g':
+						@clearGlobal = true;
+					case 'p':
+						@clearProtected = true;
+					case 'f':
+						@force = true;
+				}
 			}
+		} else {
+			@message = $args.' ';
 		}
+	}
+	if($) {
+		@message .= $;
 	}
 	
 	# check if a game is running before recompiling
@@ -64,10 +71,21 @@
 		}
 	}
 	
-	run('/save-all');
-	set_timeout(2000, closure(){
-		msg(color('green').'Recompiling...');
-		run('/recompile '.if(!@clearGlobal, '-g'));
+	foreach(@world in get_worlds()) {
+		queue_push(closure(){
+			save_world(@world);
+		});
+	}
+	queue_push(closure(){
+		save_players();
+		set_timeout(50, closure(){
+			broadcast(color('yellow').'Recompiling scripts...');
+			@start = time();
+			run('/recompile -rf'.if(!@clearGlobal, 'g'));
+			@stop = time();
+			msg(color('yellow').'Completed in '.(@stop - @start).'ms');
+			broadcast(color('green').'Done!'.if(@message, ' "'.@message.'"'));
+		});
 	});
 <<<
 
