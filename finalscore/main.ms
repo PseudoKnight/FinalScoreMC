@@ -1,11 +1,15 @@
 set_cron('*/10 * * * *', closure(){
 	foreach(@world in get_worlds()) {
+		queue_push(closure(){
 		save_world(@world);
+		});
 	}
+	queue_push(closure(){
 	save_players();
 	@currently = import('currently');
 	console('---[ SAVED ]---[ TPS: '.tps()[1].' ]---[ PLAYERS: '.array_size(all_players()).' ]---'
 		.if(!is_null(@currently), '[ CURRENTLY: '.@currently.' ]---'), false);
+	});
 })
 
 bind(server_ping, null, null, @event) {
