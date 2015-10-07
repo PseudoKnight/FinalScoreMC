@@ -59,6 +59,7 @@ proc _class(@action, @player, @class, @pvp) {
 		set_phealth(@player, min(20, pinfo(@player, 5) + 2));
 		set_phunger(@player, min(20, phunger(@player) + 4));
 		set_psaturation(@player, psaturation(@player) + 2.4);
+		set_ponfire(@player, false);
 		@flash = true;
 		foreach(@effect in get_peffect(@player)) {
 			if(@effect['id'] == 16) {
