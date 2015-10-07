@@ -1,9 +1,6 @@
 proc _perm_player(@player, @clear = true) {
-	@start = time();
 	@pdata = _pdata(@player);
 	_add_group_perms(@player, array_get(@pdata, 'group', 'default'), false);
-	@stop = time();
-	console('Applied permissions in '.(@stop - @start).'ms');
 }
 
 proc _add_group_perms(@player, @group, @return = true) {
