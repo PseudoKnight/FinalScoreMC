@@ -541,8 +541,8 @@ bind(block_dispense, null, array('type': 'DISPENSER'), @e) {
 }
 
 # Limit the number of mobs that can be built up from a mob spawner
-bind(creature_spawn, null, array('reason': 'SPAWNER'), @event) {
-	if(array_size(entities_in_radius(@event['location'], 48, @event['type'])) > 100) {
+bind(creature_spawn, null, array('reason': '/(NETHER_PORTAL|SPAWNER)/'), @event) {
+	if(array_size(entities_in_radius(@event['location'], 48, @event['type'])) > 150) {
 		cancel();
 		}
 	}
@@ -550,7 +550,7 @@ bind(creature_spawn, null, array('reason': 'SPAWNER'), @event) {
 # Limit breeding in high entity areas
 bind(creature_spawn, null, array('reason': 'BREEDING'), @event) {
 	if(@event['type'] != 'HORSE' 
-	&& array_size(entities_in_radius(@event['location'], 48)) > 200) {
+	&& array_size(entities_in_radius(@event['location'], 48)) > 250) {
 		cancel();
 	}
 }
