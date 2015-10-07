@@ -474,14 +474,10 @@ proc _pvp_end_match(@id, @winners) {
 		_remove_region_entities(@pvp['arena']['region']);
 
 		if(array_index_exists(@pvp['arena'], 'restore')) {
-			queue_delay(3000, @id);
-			queue_push(closure(){
-				broadcast(color('gray').'[PVP] '.color(6).'RESTORING '.to_upper(@id).'...');
-				foreach(@region in @pvp['arena']['restore']) {
-					skcb_load(@region);
-					skcb_paste(array(0, 0, 0, 'custom'), array('origin': true));
-				}
-			}, @id);
+			foreach(@region in @pvp['arena']['restore']) {
+				skcb_load(@region);
+				skcb_paste(array(0, 0, 0, 'custom'), array('origin': true));
+			}
 		}
 		
 		remove_scoreboard(@id);
