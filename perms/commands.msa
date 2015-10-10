@@ -34,6 +34,9 @@ switch($action) {
 	, 
 		die('Unknown player.');
 	);
+	if(@player == player()) {
+		die('Are you that desperate for approval?');
+	}
 	include('includes.library/procedures.ms');
 	if(_set_group(@player, 'member')) {
 		msg('Added player.');

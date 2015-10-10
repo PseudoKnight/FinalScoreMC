@@ -29,7 +29,7 @@ proc _set_group(@player, @group) {
 		return(false);
 	}
 	@pdata = _pdata(@player);
-	@oldgroup = @pdata['group'];
+	@oldgroup = array_get(@pdata, 'group', 'default');
 	@pdata['group'] = @group;
 	_store_pdata(@player, @pdata);
 	if(ponline(@player)) {
