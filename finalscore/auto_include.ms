@@ -1,4 +1,19 @@
 /*
+	Gets the player count for the whole server or world if specified.
+*/
+proc _player_count(@world) {
+	@players = all_players();
+	if(@world) {
+		foreach(@index: @player in @players) {
+			if(pworld(@player) != @world) {
+				array_remove(@players, @index);
+			}
+		}
+	}
+	return(array_size(@players));
+}
+
+/*
 	Returns if the world is a survival world
 */
 proc _is_survival_world(@world) {
