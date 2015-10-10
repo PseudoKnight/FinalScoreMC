@@ -372,7 +372,7 @@
 			
 			case 'weapons':
 				@weapons = array('endernades', 'skullrockets',  'shotgunballs', 'primedtnt', 'pistoltears', 'firefire',
-					'railgun', 'fireball', 'firebreath', 'spawner', 'grapple', 'hotpotato', 'tracker', 'mine');
+					'railgun', 'fireball', 'firebreath', 'spawner', 'grapple', 'tracker', 'mine');
 				if(!@args[0] || @args[1]) {
 					die('You need to specify a comma separated list of pre-defined weapons.'
 						.'(no spaces) Current available weapons: '.@weapons)
