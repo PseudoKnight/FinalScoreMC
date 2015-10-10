@@ -73,9 +73,11 @@ bind(player_chat, null, null, @event) {
 		@components[] = array('&a\u2666 ', 'Server Supporter');
 	}
 	
-	@components[] = array(_colorname().player().'&8: ', 
+	@color = _colorname();
+	
+	@components[] = array(@color.player().'&8: ', 
 		if(has_permission('group.moderator'), '&bSTAFF\n')
-		.if(array_index_exists(@pdata, 'names'), '&8[aliases] &r'.array_implode(@pdata['names']).'\n')
+		.if(array_index_exists(@pdata, 'names'), @color.array_implode(@pdata['names']).'\n')
 		.'&8[world] &r'._worldname(pworld()));
 
 	@clickableMessage = _clickable_links(@escapedMessage);
