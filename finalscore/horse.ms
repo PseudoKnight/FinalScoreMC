@@ -1,0 +1,93 @@
+# prevent non-owners from riding a horse, unless shared
+bind(player_interact_entity, null, array('clicked': 'HORSE'), @event) {
+	if(!_is_survival_world(pworld())) {
+		die();
+	}
+	
+	@yVelocity = round(entity_spec(@event['id'])['jump'], 2);
+	@jump = 0;
+	# calculate jump height in meters
+	while(@yVelocity > 0) {
+		@jump += @yVelocity;
+		@yVelocity -= 0.08;
+		@yVelocity *= 0.98;
+	}
+	@jump = round(@jump, 1);
+	@health = round(get_max_health(@event['id']) / 2, 1);
+	if(function_exists('action_msg')) {
+		set_timeout(50, closure(){
+			action_msg(colorize('&c'.@health.' \u2764 &e'.@jump.' \u279A'));
+		});
+	}
+	
+	@item = pinv(player(), null);
+	@owner = get_mob_owner(@event['id']);
+	if(@owner != player()) {
+		msg('This horse is owned by '.@owner);
+		
+		if(!has_permission('group.moderator')
+		&& (!@item || (@item['type'] != 322	&& @item['type'] != 396))) {
+			@pdata = null;
+			try(
+				@pdata = _pdata(@owner);
+			, #catch
+				cancel();
+				die('We have no records for the owner of this horse.'
+					.' If this is in error, contact an administrator.');
+			);
+			if(!array_index_exists(@pdata, 'shared')
+			|| !array_index_exists(@pdata['shared'], player())
+			|| !array_contains(@pdata['shared'][player()], 'horses')) {
+				cancel();
+				# reset their view; mostly fixes client side glitch when canceling this event
+				@facing = pfacing();
+				pfacing(@facing[0], @facing[1]);
+			}
+		}
+	}
+	
+	# skeleton/zombie horses
+	@variant = entity_spec(@event['id'])['variant'];
+	if(!is_cancelled() && !pinfo(player(), 11)
+	&& (@variant == 'ZOMBIE' || @variant == 'SKELETON')
+	&& (!@item || @item['type'] != 420)
+	&& get_mob_age(@event['id']) >= 0) {
+		set_entity_rider(@event['id'], puuid());
+	}
+}
+
+# don't allow most horse damage unless being rode
+bind(entity_damage, null, array('type': 'HORSE'), @event) {
+	@world = entity_loc(@event['id'])['world'];
+	if(!_is_survival_world(@world)) {
+		die();
+	}
+	
+	@owner = get_mob_owner(@event['id']);
+	if(is_null(@owner)) {
+		 die();
+	}
+	
+	switch(@event['cause']) {
+		case 'ENTITY_ATTACK':
+			@isplayer = ponline(@event['damager']);
+
+			if((@isplayer && @owner != @event['damager'])
+			|| (!@isplayer && !get_entity_rider(@event['id']))) {
+				cancel();
+			}
+			
+		case 'PROJECTILE':
+			@isplayer = ponline(@event['shooter']);
+			
+			if((@isplayer && @owner != @event['shooter'])
+			|| (!@isplayer && !get_entity_rider(@event['id']))) {
+				cancel();
+			}
+			
+		default: 
+			if(!get_entity_rider(@event['id'])) {
+				modify_event('amount', 0);
+			}
+	}
+}

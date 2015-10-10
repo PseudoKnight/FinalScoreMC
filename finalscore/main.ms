@@ -1,14 +1,14 @@
 set_cron('*/10 * * * *', closure(){
 	foreach(@world in get_worlds()) {
 		queue_push(closure(){
-		save_world(@world);
+			save_world(@world);
 		});
 	}
 	queue_push(closure(){
-	save_players();
-	@currently = import('currently');
-	console('---[ SAVED ]---[ TPS: '.tps()[1].' ]---[ PLAYERS: '.array_size(all_players()).' ]---'
-		.if(!is_null(@currently), '[ CURRENTLY: '.@currently.' ]---'), false);
+		save_players();
+		@currently = import('currently');
+		console('---[ SAVED ]---[ TPS: '.tps()[1].' ]---[ PLAYERS: '.array_size(all_players()).' ]---'
+			.if(!is_null(@currently), '[ CURRENTLY: '.@currently.' ]---'), false);
 	});
 })
 
@@ -283,34 +283,43 @@ bind(player_spawn, array('priority': 'LOWEST'), array('world': 'custom'), @event
 	});
 }
 
-# Block wither
+/*
+	Blocks spawning of the wither
+	TODO: Needs to be updated for 1.9 maybe
+*/
 bind(block_place, null, array('type': 144), @event) {
-	if(!array_contains(array('custom', 'dev','outworld_nether', 'outworld', 'outworld_the_end'), pworld())
-	&& get_block_at(_relative(@event['location'], 'down')) == '88:0'
-	&& !is_null(pinv(player(), null))
-	&& pinv(player(), null)['data'] == 1) {
-		cancel();
-		msg(color('yellow').'You can only spawn withers in the outworld.');
+	if(pworld() != 'outworld' && pworld() != 'outworld_nether'
+	&& get_block_at(_relative(@event['location'], 'down')) == '88:0') {
+		@item = pinv(player(), null);
+		if(@item && @item['data'] == 1) {
+			cancel();
+			msg(color('yellow').'You can only spawn withers in the outworld.');
+		}
 	}
 }
 
-# Infinite Cauldrons
+/*
+	Infinite Cauldrons
+	Refills buckets and water bottles without reducing water levels
+*/
 bind(player_interact, null, array('block': 118, 'button': 'right'), @event) {
 	if(@event['block'] == '118:3') {
+		@result = null;
 		switch(@event['item']) {
-		case '325:0':
-			@bucket = pinv(player(), null);
-			if(@bucket['qty'] == 1) {
-				set_pinv(array(null: array('type': 326, 'qty': 1)));
-			} else {
-				@bucket['qty'] -= 1;
-				set_pinv(array(null: @bucket));
-				pgive_item(326, 1);
-			}
-		case '374:0':
-			queue_push(closure(){
-				set_block_at(@event['location'], '118:3');
-			});
+			case '325:0':
+				@result = 326;
+			case '374:0':
+				@result = 373;
+			default:
+				die();
+		}
+		cancel();
+		if(@event['item']['qty'] == 1) {
+			set_pinv(array(null: array('type': @result, 'qty': 1)));
+		} else {
+			@event['item']['qty'] -= 1;
+			set_pinv(array(null: @event['item']));
+			pgive_item(@result, 1);
 		}
 	}
 }
@@ -398,102 +407,6 @@ bind(vehicle_collide, null, array('type': 'MINECART', 'collisiontype': 'BLOCK', 
 	}
 }
 
-# prevent non-owners from riding a horse, unless shared
-bind(player_interact_entity, null, array('clicked': 'HORSE'), @event) {
-	if(!_is_survival_world(pworld())) {
-		die();
-	}
-	
-	@yVelocity = round(entity_spec(@event['id'])['jump'], 2);
-	@jump = 0;
-	while(@yVelocity > 0) {
-		@jump += @yVelocity;
-		@yVelocity -= 0.08;
-		@yVelocity *= 0.98;
-	}
-	@jump = round(@jump, 1);
-	@health = round(get_max_health(@event['id']) / 2, 1);
-	if(function_exists('action_msg')) {
-		set_timeout(50, closure(){
-			action_msg(colorize('&c'.@health.' \u2764 &e'.@jump.' \u279A'));
-		});
-	}
-	
-	@item = pinv(player(), null);
-	
-	if(get_mob_owner(@event['id'])
-	&& get_mob_owner(@event['id']) != player()) {
-		msg('This horse is owned by '.get_mob_owner(@event['id']));
-		
-		if(!has_permission('group.moderator')
-		&& (!@item
-		|| (@item['type'] != 322
-		&& @item['type'] != 396))) {
-			@pdata = null;
-			try(
-				@pdata = _pdata(get_mob_owner(@event['id']));
-			, #catch
-				cancel();
-				die('We have no records for the owner of this horse.'
-					.' If this is in error, contact an administrator.');
-			)
-			if(!array_index_exists(@pdata, 'shared')
-			|| !array_index_exists(@pdata['shared'], player())
-			|| !array_contains(@pdata['shared'][player()], 'horses')) {
-				cancel();
-				# reset their view; mostly fixes client side glitch when canceling this event
-				@facing = pfacing();
-				pfacing(@facing[0], @facing[1]);
-			}
-		}
-	}
-	
-	# skeleton/zombie horses
-	@variant = entity_spec(@event[id])[variant];
-	if(!is_cancelled() && !pinfo(player(), 11)
-	&& (@variant == 'ZOMBIE' || @variant == 'SKELETON')
-	&& (!@item || @item['type'] != 420)
-	&& get_mob_age(@event[id]) >= 0) {
-		set_entity_rider(@event[id], puuid());
-	}
-}
-
-# don't allow most horse damage unless being rode
-bind(entity_damage, null, array(type: 'HORSE'), @event) {
-	@world = entity_loc(@event[id])[world];
-	if(!_is_survival_world(@world)) {
-		die();
-	}
-	
-	@owner = get_mob_owner(@event['id']);
-	if(is_null(@owner)) {
-		 die();
-	}
-	
-	switch(@event[cause]) {
-		case 'ENTITY_ATTACK':
-			@isplayer = ponline(@event[damager]);
-
-			if((@isplayer && @owner != @event[damager])
-			|| (!@isplayer && !get_entity_rider(@event[id]))) {
-				cancel();
-			}
-			
-		case 'PROJECTILE':
-			@isplayer = ponline(@event[shooter]);
-			
-			if((@isplayer && @owner != @event[shooter])
-			|| (!@isplayer && !get_entity_rider(@event[id]))) {
-				cancel();
-			}
-			
-		default: 
-			if(!get_entity_rider(@event[id])) {
-				modify_event('amount', 0);
-			}
-	}
-}
-
 # Let one player in a world make the sun rise
 bind(player_enter_bed, null, null, @event) {
     if(get_world_time() > 13700 && get_world_time() < 22300) {
@@ -548,8 +461,8 @@ bind(block_dispense, null, array('type': 'DISPENSER'), @e) {
 bind(creature_spawn, null, array('reason': '/(NETHER_PORTAL|SPAWNER)/'), @event) {
 	if(array_size(entities_in_radius(@event['location'], 48, @event['type'])) > 150) {
 		cancel();
-		}
 	}
+}
 
 # Limit breeding in high entity areas
 bind(creature_spawn, null, array('reason': 'BREEDING'), @event) {
