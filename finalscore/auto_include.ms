@@ -212,13 +212,18 @@ proc _relative_coords(@originloc, @x, @y, @z) {
 /*
 	Gets a normalized vector when given a yaw and pitch
 */
-proc _get_vector(@yaw, @pitch) {
+proc _get_vector(@yaw, @pitch = 0, @magnitude = 1) {
+	if(is_array(@yaw)) {
+		@pitch = @yaw[1];
+		@yaw = @yaw[0];
+		@magnitude = @pitch;
+	}
 	@yaw = @yaw + 90;
 	@pitch = 0 - @pitch;
 	@vector = array('x': 0, 'y': 0, 'z': 0);
-	@vector['x'] = cos(to_radians(@yaw)) * cos(to_radians(@pitch));
-	@vector['y'] = sin(to_radians(@pitch));
-	@vector['z'] = sin(to_radians(@yaw)) * cos(to_radians(@pitch));
+	@vector['x'] = @magnitude * (cos(to_radians(@yaw)) * cos(to_radians(@pitch)));
+	@vector['y'] = @magnitude * sin(to_radians(@pitch));
+	@vector['z'] = @magnitude * (sin(to_radians(@yaw)) * cos(to_radians(@pitch)));
 	return(@vector);
 }
 
