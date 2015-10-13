@@ -22,7 +22,7 @@ bind(player_interact_entity, null, array('clicked': 'HORSE'), @event) {
 	
 	@item = pinv(player(), null);
 	@owner = get_mob_owner(@event['id']);
-	if(@owner != player()) {
+	if(@owner && @owner != player()) {
 		msg('This horse is owned by '.@owner);
 		
 		if(!has_permission('group.moderator')
