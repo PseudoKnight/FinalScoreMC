@@ -253,7 +253,7 @@ bind(player_join, null, null, @event) {
 }
 
 bind(player_command, null, null, @event) {
-	if(array_get(@event['prefix'], 1, '') != '/') {
+	if(length(@event['prefix']) > 1 && @event['prefix'][1] != '/') {
 		console(@event['player'].' ran: '.@event['command'], false);
 	}
 }
