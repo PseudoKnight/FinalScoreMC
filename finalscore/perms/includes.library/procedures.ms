@@ -1,6 +1,10 @@
 proc _perm_player(@player, @clear = true) {
 	@pdata = _pdata(@player);
-	_add_group_perms(@player, array_get(@pdata, 'group', 'default'), false);
+	@group = 'default';
+	if(array_index_exists(@pdata, 'group')) {
+		@group = @pdata['group'];
+	}
+	_add_group_perms(@player, @group, false);
 }
 
 proc _add_group_perms(@player, @group, @return = true) {
@@ -29,7 +33,10 @@ proc _set_group(@player, @group) {
 		return(false);
 	}
 	@pdata = _pdata(@player);
-	@oldgroup = array_get(@pdata, 'group', 'default');
+	@oldgroup = 'default';
+	if(array_index_exists(@pdata, 'group')) {
+		@oldgroup = @pdata['group'];
+	}
 	@pdata['group'] = @group;
 	_store_pdata(@player, @pdata);
 	if(ponline(@player)) {
