@@ -110,3 +110,62 @@
 			}
 	}
 <<<
+/*
+	Convert multiverse-inventories inventory to inventory array
+	and then sets it to your inventory.
+*/
+/invconvert $player [$world = 'default'] = >>>
+	if(pmode() != 'CREATIVE') {
+		die('Only do this in creative mode. This replaces your inventory.');
+	}
+	proc _parse_inv(@oinv, @armor = false) {
+		@inv = array();
+		if(@armor) {
+			@inv[99] = null;
+		}
+		foreach(@item in @oinv) {
+			@i = array();
+			@i['name'] = @item['is']['type'];
+			if(array_index_exists(@item['is'], 'amount')) {
+				@i['qty'] = @item['is']['amount'];
+			}
+			if(array_index_exists(@item['is'], 'damage')) {
+				@i['data'] = @item['is']['damage'];
+			}
+			if(array_index_exists(@item['is'], 'meta')) {
+				@i['meta'] = array();
+				if(array_index_exists(@item['is']['meta'], 'enchants')) {
+					@i['meta']['enchants'] = array();
+					foreach(@enchant: @level in @item['is']['meta']['enchants']) {
+						@i['meta']['enchants'][] = array('etype': @enchant, 'elevel': @level);
+					}
+				}
+				if(array_index_exists(@item['is']['meta'], 'repair-cost')) {
+					@i['meta']['repair'] = @item['is']['meta']['repair-cost'];
+				}
+				if(array_index_exists(@item['is']['meta'], 'title')) {
+					@i['meta']['title'] = @item['is']['meta']['title'];
+				}
+				if(array_index_exists(@item['is']['meta'], 'author')) {
+					@i['meta']['author'] = @item['is']['meta']['author'];
+				}
+				if(array_index_exists(@item['is']['meta'], 'pages')) {
+					@i['meta']['pages'] = @item['is']['meta']['pages'];
+				}
+				# TODO: more meta
+			}
+			@inv[] = @i;
+		}
+		return(@inv);
+	}
+	@endpoint = '';
+	if($world == 'default') {
+		@endpoint = 'groups/default/'.$player.'.yml';
+	} else {
+		@endpoint = 'worlds/'.$world.'/'.$player.'.yml';
+	}
+	@original = yml_decode(read('../../../Multiverse-Inventories/'.@endpoint))['SURVIVAL'];
+	set_pinv(_parse_inv(json_decode(@original['armorContents']), true));
+	set_pinv(_parse_inv(json_decode(@original['inventoryContents'])));
+	set_penderchest(_parse_inv(json_decode(@original['enderChestContents'])));
+<<<
