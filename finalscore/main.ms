@@ -314,11 +314,12 @@ bind(player_interact, null, array('block': 118, 'button': 'right'), @event) {
 				die();
 		}
 		cancel();
-		if(@event['item']['qty'] == 1) {
+		@item = pinv(player(), null);
+		if(@item['qty'] == 1) {
 			set_pinv(array(null: array('type': @result, 'qty': 1)));
 		} else {
-			@event['item']['qty'] -= 1;
-			set_pinv(array(null: @event['item']));
+			@item['qty'] -= 1;
+			set_pinv(array(null: @item));
 			pgive_item(@result, 1);
 		}
 	}
