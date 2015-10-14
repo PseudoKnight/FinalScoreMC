@@ -51,6 +51,15 @@ proc _remove_ignored(@sender, @recipients) {
 }
 
 /*
+	Adds a timestamp with a player's timezone
+*/
+proc _time_stamp(@player) {
+	@pdata = _pdata(@player);
+	return(simple_date('h:mm', time(), array_get(@pdata, 'tz', 'Etc/GMT-6')));
+}
+
+
+/*
 	Constructs and sends a tellraw command with a hover event
 */
 proc _hover_tell(@recipients, @components) {
