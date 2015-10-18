@@ -199,7 +199,7 @@ bind(player_quit, array('id': @id.'quit', 'priority': 'HIGH'), null, @e, @id) {
 }
 
 array_push(@pvp['binds'], @id.'spawn')
-bind(player_spawn, array('id': @id.'spawn'), null, @e, @id) {
+bind(player_spawn, array('id': @id.'spawn'), array('world': 'custom'), @e, @id) {
 	@pvp = import('pvp'.@id)
 	if(!array_index_exists(@pvp['players'], player()), 
 		die())
