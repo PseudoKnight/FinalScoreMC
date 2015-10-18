@@ -227,7 +227,7 @@ bind(player_spawn, array('id': @id.'spawn'), null, @e, @id) {
 	}
 
 	if(array_index_exists(@pvp['arena'], 'respawntime') && @pvp['running'] == 2) {
-		@newLoc = _relative(@e['location'], 'up', 10000000);
+		@newLoc = _relative(@pvp['arena']['spawn'][0][0], 'up', 10000000);
 		@newLoc['pitch'] = 90;
 		modify_event('location', @newLoc);
 		
