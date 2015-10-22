@@ -514,7 +514,12 @@ bind(player_interact_entity, null, array('clicked': 'VILLAGER'), @event) {
 # painting cycler
 bind(player_interact_entity, null, array('clicked': 'PAINTING'), @event) {
 	if(sk_can_build(entity_loc(@event['id']))) {
+		@paintings = get_value('paintings');
+		if(is_null(@paintings)) {
 		@paintings = reflect_pull('enum', 'Art');
+			# this can take over 20ms, so let's save this for later
+			store_value('paintings', @paintings);
+		}
 		@current = entity_spec(@event['id'])['type'];
 		@index = array_index(@paintings, @current);
 		@tries = 0;
@@ -522,7 +527,7 @@ bind(player_interact_entity, null, array('clicked': 'PAINTING'), @event) {
 			@next = @paintings[(@index = (@index + 1) % array_size(@paintings))];
 			set_entity_spec(@event['id'], array('type': @next));
 			# if successful, the entity id/uuid will change
-			# but just in case, only try 20 times
+			# but just in case, only try 20 times (enough to cycle from the last 1x1 back to the first 1x1)
 		} while(entity_exists(@event['id']) && @tries++ < 20);
 		if(extension_exists('CHNaughty')) {
 			action_msg(@next);
