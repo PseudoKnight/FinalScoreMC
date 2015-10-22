@@ -403,6 +403,17 @@
 					if(!array_contains(@flags, @flag), die('Unknown flag: '.@flag))
 				}
 				msg('Activated these flags: '.color(10).@arena['flags'])
+				
+			case 'options':
+				@options = array('lives', 'score');
+				if(!array_contains(@options, @args[0])) {
+					die('Not an option. '.@options);
+				}
+				if($action != 'add' || !array_index_exists(@arena, 'options')) {
+					@arena['options'] = array();
+				}
+				@arena['options'][@args[0]] = split(',', @args[1]);
+				msg('Added '.@args[0].' option with values: '.@args[1]);
 
 			default:
 				die('This requires a valid setting. Type "/arena help" to see settings.')

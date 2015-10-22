@@ -46,7 +46,14 @@
 			}
 		}
 		
-		if(@pvp['running'] == 1) {
+		if(@pvp['running'] == 0 && array_size(@pvp['players']) == 1 && array_index_exists(@arena, 'options')) {
+			if(!array_contains(all_virtualchests(), @id.'options')) {
+				include('core.library/options.ms');
+				_create_options_menu(@id, @arena);
+			}
+			popen_virtualchest(@id.'options');
+			
+		} else if(@pvp['running'] == 1) {
 			if(array_index_exists(@pvp['arena'], 'classes')) {
 				if(!array_index_exists(@pvp['players'][player()], 'team') || @pvp['players'][player()]['team'] == 0) {
 					if(array_contains(all_virtualchests(), @id.'0')) {
@@ -126,6 +133,11 @@
 		# Get arena settings
 		@pvp['arena'] = get_value('arena.'.@id);
 		if(is_null(@pvp['arena']), die('Can\'t find that arena.'));
+		
+		if(array_index_exists(@pvp['arena'], 'options')) {
+			del_virtualchest(@id.'options');
+			unbind(@id.'options');
+		}
 		
 		# Get child or parent arena settings
 		if(array_index_exists(@pvp['arena'], 'parent')) {
