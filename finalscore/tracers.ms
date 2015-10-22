@@ -7,10 +7,10 @@ if(!array_contains(dm_all_markersets(), 'tracers')) {
 	dm_set_markerset_hide_by_default('tracers', false);
 }
 
-bind(player_move, null, array('threshold': 8), @event) {
+bind(player_move, null, array('threshold': 10), @event) {
 	@playerCount = _player_count();
 	if(@playerCount > 20) {
-		foreach(@tracer in dm_all_markers('tracers', 'POLYLINE')) {
+		foreach(@tracer in dm_all_markers('tracers')) {
 			dm_delete_marker('tracers', @tracer);
 		}
 		die();
@@ -28,7 +28,7 @@ bind(player_move, null, array('threshold': 8), @event) {
 	
 	try(
 		@lines = dm_marker_corners('tracers', player());
-		if(array_size(@lines) > 140 - @playerCount * 7) {
+		if(array_size(@lines) > 128 - @playerCount * 7) {
 			array_remove(@lines, 0);
 		}
 		@lines[] = ploc();
@@ -48,25 +48,27 @@ bind(player_move, null, array('threshold': 8), @event) {
 }
 
 bind(player_teleport, null, null, @event) {
-	if(_player_count() > 20
-	|| player() == '~console' 
-	|| pmode() == 'CREATIVE' 
-	|| !has_permission('livemap.tracers')
-	|| array_get(_pdata(player()), 'support', 5) < 10) {
+	if(_player_count() > 20) {
 		die();
 	}
-
-	if(@event['from']['world'] != @event['to']['world']) {
-		if(array_contains(dm_all_markers('tracers', 'POLYLINE'), player())) {
-			dm_delete_marker('tracers', player());
-		}
-	} else if(@event['type'] != 'ENDER_PEARL') {
-		@dist = sqrt((@event['to']['x'] - @event['from']['x'])**2 
-			+ (@event['to']['z'] - @event['from']['z'])**2);
-		if(@dist > 64) {
-			try(dm_set_marker_corners('tracers', player(), array(@event['to'])));
-		}
+	@pdata = _pdata(player());
+	if(array_get(@pdata, 'group', 'default') != 'donor'
+	|| array_get(@pdata, 'support', 5) < 10) {
+		die();
 	}
+	set_timeout(50, closure(){
+		if(@event['from']['world'] != @event['to']['world']) {
+			if(array_contains(dm_all_markers('tracers'), player())) {
+				dm_delete_marker('tracers', player());
+			}
+		} else if(@event['type'] != 'ENDER_PEARL' && has_permission('livemap.tracers')) {
+			@dist = sqrt((@event['to']['x'] - @event['from']['x'])**2 
+				+ (@event['to']['z'] - @event['from']['z'])**2);
+			if(@dist > 64) {
+				try(dm_set_marker_corners('tracers', player(), array(@event['to'])));
+			}
+		}
+	});
 }
 
 bind(player_death, null, null, @event) {
@@ -90,11 +92,7 @@ bind(player_death, null, null, @event) {
 }
 
 bind(player_quit, null, null, @event) {
-	if(!has_permission('livemap.tracers')
-	|| array_get(_pdata(player()), 'support', 5) < 10) {
-		die();
-	}
-	if(array_contains(dm_all_markers('tracers', 'POLYLINE'), player())) {
+	if(array_contains(dm_all_markers('tracers'), player())) {
 		dm_delete_marker('tracers', player());
 	}
 }

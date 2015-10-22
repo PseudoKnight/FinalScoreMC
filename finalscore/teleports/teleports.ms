@@ -8,7 +8,6 @@ export('requests', @requests);
 
 # Main teleport handler
 bind(player_teleport, null, null, @event) {
-	@teleportHorse = false;
 	if(_is_survival_world(@event['from']['world'])) {
 		if(!_is_survival_world(@event['to']['world'])) {
 			if(phas_item(425)) {
@@ -49,19 +48,21 @@ bind(player_teleport, null, null, @event) {
 	@loc = _relative(@event['to'], 'down');
 	@block = get_block_at(@loc); # loads chunk to help prevent players falling through floor
 	
-	if(@block[0] != '0' && # don't run this if the [to] location is in the air
-	(@event['to']['world'] != @event['from']['world']
-	|| _horizontal_distance(@event['to'], @event['from']) > 112)) { # 7+ chunk view distance
-		set_timeout(1000, closure(){
-		
-			# workaround for player's falling through floors on teleport
-			if(ploc()[1] < @loc[1]) {
-				console('Adjusted '.player().'\'s location after teleport.');
-				set_ploc(@loc);
-			}
-			
-		});
-	}
+	# take the rest off the overloaded teleportation event
+	set_timeout(50, closure(){
+		if(@block[0] != '0' && # don't run this if the [to] location is in the air
+		(@event['to']['world'] != @event['from']['world']
+		|| _horizontal_distance(@event['to'], @event['from']) > 112)) { # 7+ chunk view distance
+			# delay enough to compensate for a lag spike
+			set_timeout(900, closure(){
+				# workaround for player's falling through floors on teleport
+				if(ploc()[1] < @loc[1]) {
+					console('Adjusted '.player().'\'s location after teleport.');
+					set_ploc(@loc);
+				}
+			});
+		}
+	});
 }
 
 # Block enderpearls
