@@ -332,12 +332,12 @@
 		if(array_index_exists(@pdata, 'homeless'), msg(color('gray').'Homeless: '.color('r').'TRUE'))
 		if(array_index_exists(@pdata, 'ips'), msg(color('gray').'IPs: '.color('r').array_implode(@pdata['ips'], ' ')))
 	)
+	msg(color('gray').'Group: '.color('r').array_get(@pdata, 'group', 'default'));
 	if(array_index_exists(@pdata, 'names'), msg(color('gray').'Aliases: '.color('r').array_implode(@pdata['names'], ', ')))
 	if(array_index_exists(@pdata, 'joined'), msg(color('gray').'Joined: '.color('r').@pdata['joined']))
 	if(array_index_exists(@pdata, 'approval'), msg(color('gray').'Approved by: '.color('r').@pdata['approval']))
 	if(array_index_exists(@pdata, 'coins'), msg(color('gray').'Coins: '.color('r').@pdata['coins']))
-	if(array_index_exists(@pdata, 'support'),
-		msg(color('gray').'Support: '.color('r').'$'.@pdata['support']))
+	if(array_index_exists(@pdata, 'support'), msg(color('gray').'Support: '.color('r').'$'.@pdata['support']))
 <<<
 
 *:/matchip $ip = >>>
