@@ -104,37 +104,44 @@
 <<<
 
 # Create potions or add potion effects to existing potions
-*:/potion [$cmd] [$id] [$strength] [$seconds] = >>>
-	if(pmode() != 'CREATIVE', die('You\'re not in creative mode.'));
-	if(!$id, die('Usage: /potion <create|add> <potionEffect> <strength> <seconds>'))
-	
-	@effects = _get_effects()
-	@id = $id
-	if(!array_index_exists(@effects, @id), die('Available potion effects: '.@effects))
-	if(!is_numeric(@id), @id = @effects[@id])
-	
-	# data affects the color of the potion
-	@data = 16
-	@effectdata = array(1: 2, 2: 10, 5: 9, 6: 5, 7: 12, 10: 1, 12: 3, 14: 14, 16: 6, 18: 8)
-	if(array_index_exists(@effectdata, @id)) {
-		@data = @effectdata[@id]
+*:/potion [$id] [$seconds = 30] [$strength = 1] = >>>
+	if(pmode() != 'CREATIVE') {
+		die('You\'re not in creative mode.');
+	}
+	if(!$id) {
+		die('Usage: /potion <potionEffect> <seconds> <strength>');
 	}
 	
-	switch($cmd) {
-		case 'add':
-			@item = pinv(player(), null)
-			if(@item[type] != 373, die('You can only add potion effects to potions.'))
-			if(is_null(@item[meta]), @item[meta] = array())
-			if(!array_index_exists(@item[meta], 'potions'), @item[meta][potions] = array())
-			array_push(@item[meta][potions], array(id: @id, strength: $strength - 1, seconds: $seconds))
-			set_pinv(array(null: @item))
+	@effects = _get_effects();
+	@id = $id;
+	if(!is_numeric(@id)) {
+		if(!array_index_exists(@effects, @id)) {
+			die('Available potion effects: '.@effects);
+		}
+		@id = @effects[@id];
+	}
+	
+	@item = pinv(player(), null);
+	if(@item && @item['type'] == 373) { # add potion effecs to potion
+		if(is_null(@item['meta'])) {
+			@item['meta'] = array();
+		}
+		if(!array_index_exists(@item['meta'], 'potions')) {
+			@item['meta']['potions'] = array();
+	}
+		@item['meta']['potions'][] = array('id': @id, 'strength': $strength - 1, 'seconds': $seconds);
+		set_pinv(array(null: @item));
+	
+	} else { # create new potion
 			
-		case 'create':
-			set_pinv(array(null: array(type: 373, data: @data, meta: array(
-				potions: array(array(id: @id, strength: $strength - 1, seconds: $seconds))
-			))))
+		@data = 16 # data effects the color of the potion
+		@effectdata = array(1: 2, 2: 10, 5: 9, 6: 5, 7: 12, 10: 1, 12: 3, 14: 14, 16: 6, 18: 8);
+		if(array_index_exists(@effectdata, @id)) {
+			@data = @effectdata[@id]
+		}
 			
-		default: 
-			die('Usage: /potion <set|add> <potionEffect> <strength> <seconds>')
+		set_pinv(array(null: array('type': 373, 'data': @data, 'meta': array(
+			'potions': array(array('id': @id, 'strength': $strength - 1, 'seconds': $seconds))
+		))));
 	}
 <<<
