@@ -110,6 +110,7 @@
 			}
 	}
 <<<
+
 /*
 	Convert multiverse-inventories inventory to inventory array
 	and then sets it to your inventory.

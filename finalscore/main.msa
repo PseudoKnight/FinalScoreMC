@@ -211,25 +211,6 @@
 	}
 <<<
 
-*:/kill $ = >>>
-	@player = player()
-	if($) {
-		@message = parse_args($)
-		if(ponline(@message[0])) {
-			if(!has_permission('group.moderator'), die('You do not have permission.'))
-			@player = @message[0]
-			@message = array_implode(@message[cslice(1, array_size(@message) - 1)])
-		} else {
-			@message = $
-		}
-		bind(player_death, array('priority': 'highest'), array('player': @player), @e, @message) {
-			modify_event('death_message', player().' apparently '.@message)
-			unbind()
-		}
-	}
-	set_phealth(@player, 0)
-<<<
-
 *:/compass [$target] [$arg] = >>>
 	if(!$target) {
 		die('Usage: /compass [here|spawn|home [player]|player|x z]');
@@ -451,4 +432,3 @@
 
 # Colour codes
 *:/colors = msg(colorize('&00&11&22&33&44&55&66&77&88&99&aa&bb&cc&dd&ee&ff &kk&r&ll&r&mm&r&nn&r&oo &rr'))
-*:/colours = call_alias('/colors')
