@@ -33,13 +33,13 @@
 		));
 		console(player().' joined '.@id)
 		
-		include('player.ms');
+		include('core.library/player.ms');
 		if(@pvp['running'] == 1 || @pvp['running'] == 2) {
 			if(array_index_exists(@pvp['arena'], 'resourcepack')) {
 				send_resourcepack(player(), 'http://mc.finalscoremc.com:25966/resourcepacks/'.@pvp['arena']['resourcepack'].'.zip')
 			}
 			if(array_contains(@pvp['spectators'], player())) {
-				include('spectator.ms');
+				include('core.library/spectator.ms');
 				_remove_spectator(@id, player(), @pvp)
 			}
 			if(array_index_exists(@pvp['arena'], 'team')) {
@@ -98,7 +98,7 @@
 			die('You\'re already in the game.')
 		}
 		if(array_contains(get_scoreboards(), @id)) {
-			include('spectator.ms');
+			include('core.library/spectator.ms');
 			set_pscoreboard(player(), @id)
 			@pvp = import('pvp'.@id)
 			if(array_index_exists(@pvp['arena'], 'resourcepack')) {

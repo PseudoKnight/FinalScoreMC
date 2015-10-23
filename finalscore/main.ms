@@ -516,7 +516,7 @@ bind(player_interact_entity, null, array('clicked': 'PAINTING'), @event) {
 	if(sk_can_build(entity_loc(@event['id']))) {
 		@paintings = get_value('paintings');
 		if(is_null(@paintings)) {
-		@paintings = reflect_pull('enum', 'Art');
+			@paintings = reflect_pull('enum', 'Art');
 			# this can take over 20ms, so let's save this for later
 			store_value('paintings', @paintings);
 		}

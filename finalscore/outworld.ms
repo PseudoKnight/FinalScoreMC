@@ -18,9 +18,6 @@ bind(player_move, null, null, @event) {
 			set_block_at(@loc, '1:5');
 		case '1:5':
 			set_block_at(@loc, '1:0');
-		case '12:0': # sand
-			set_block_at(@loc, '24:0');
-			
 	}
 	
 }

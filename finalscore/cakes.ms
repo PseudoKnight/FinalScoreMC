@@ -1,55 +1,62 @@
 # Clicking cakes
 bind(player_interact, null, array('block': 92), @event) {
 	if(phas_flight() || pworld() != 'custom') {
-		die()
+		die();
 	}
-	if(@event['location']['x'] == -510 && @event['location']['z'] == 162) {
-		set_block_at(array(-485, 62, 162, 'custom'), '152:0')
-		die()
+	@location = @event['location'];
+	if(@location['x'] == -510 && @location['z'] == 162) {
+		set_block_at(array(-485, 62, 162, 'custom'), '152:0');
+		die();
 	}
-	@cakes = get_value('cakes')
-	@id = ''
-	foreach(@key: @loc in @cakes) {
-		if(@loc[0] == @event['location'][0]
-		&& @loc[1] == @event['location'][1]
-		&& @loc[2] == @event['location'][2]) {
-			@id = @key
-			break()
+	@cakes = get_value('cakes');
+	@id = null;
+	foreach(@key: @l in @cakes) {
+		if(@l[0] == @location[0]
+		&& @l[1] == @location[1]
+		&& @l[2] == @location[2]) {
+			@id = @key;
+			break();
 		}
 	}
-	if(!@id, die())
-	cancel()
-	@cakeinfo = get_value('cakeinfo')
-	if(!array_index_exists(@cakeinfo, @id), die('The cake is a lie.'))
-	set_phunger(20)
-	set_psaturation(5.0)
+	if(is_null(@id)) {
+		die();
+	}
+	cancel();
+	@cakeinfo = get_value('cakeinfo');
+	if(!array_index_exists(@cakeinfo, @id), die('The cake is a lie.'));
+
 	@uuid = puuid(player(), true);
 	if(array_index_exists(@cakeinfo[@id]['players'], @uuid)) {
-		die('You\'ve already got this cake.')
+		die('You\'ve already got this cake.');
 	}
-	@count = 1
-	@total = 0
-	foreach(@cake in @cakeinfo) {
-		if(@cake['type'] == @cakeinfo[@id]['type']) {
-			@total += 1
-			if(array_index_exists(@cake['players'], @uuid)) {
-				@count += 1
+	@cakeinfo[@id]['players'][@uuid] = time();
+	store_value('cakeinfo', @cakeinfo);
+	
+	set_timeout(50, closure(){
+		@count = 0;
+		@total = 0;
+		foreach(@cake in @cakeinfo) {
+			if(@cake['type'] == @cakeinfo[@id]['type']) {
+				@total += 1
+				if(array_index_exists(@cake['players'], @uuid)) {
+					@count += 1
+				}
 			}
 		}
-	}
-	@cakeinfo[@id]['players'][@uuid] = time()
-	msg(color('green').'You got the '.to_upper(@id).' '.@cakeinfo[@id]['type'].' cake! ('.@count.'/'.@total.')')
-	if(!array_contains_ic(pgroup(), 'builder')) {
-		_acc_add(player(), @cakeinfo[@id]['coins'])
-		msg(color('gold').'+ '.@cakeinfo[@id]['coins'].' coins')
-		console(player().' got '.@cakeinfo[@id]['coins'].' coins at '.@id)
-	}
-	store_value('cakeinfo', @cakeinfo)
-	make_effect(@event['location'], 'ENDER_SIGNAL')
-	make_effect(@event['location'], 'RECORD_PLAY:2263')
-	if(split(':', get_block_at(@event['location']))[1] > 0) {
-		set_block_at(@event['location'], '92:0')
-	}
+		set_phunger(20)
+		set_psaturation(5.0)
+		msg(color('green').'You got the '.to_upper(@id).' '.@cakeinfo[@id]['type'].' cake! ('.@count.'/'.@total.')')
+		if(!has_permission('group.builder')) {
+			_acc_add(player(), @cakeinfo[@id]['coins'])
+			msg(color('gold').'+ '.@cakeinfo[@id]['coins'].' coins')
+			console(player().' got '.@cakeinfo[@id]['coins'].' coins at '.@id)
+		}
+		make_effect(@event['location'], 'ENDER_SIGNAL')
+		make_effect(@event['location'], 'RECORD_PLAY:2263')
+		if(split(':', get_block_at(@event['location']))[1] > 0) {
+			set_block_at(@event['location'], '92:0')
+		}
+	});
 }
 
 # COIN SHOPS!

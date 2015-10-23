@@ -83,8 +83,9 @@
 			@start = time();
 			run('/recompile -rf'.if(!@clearGlobal, 'g'));
 			@stop = time();
-			msg(color('yellow').'Completed in '.(@stop - @start).'ms');
 			broadcast(color('green').'Done!'.if(@message, ' "'.@message.'"'));
+			msg(color('yellow').'Completed in '.(@stop - @start).'ms');
+			run('/timings reset');
 		});
 	});
 <<<

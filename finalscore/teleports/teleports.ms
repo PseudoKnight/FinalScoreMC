@@ -8,41 +8,26 @@ export('requests', @requests);
 
 # Main teleport handler
 bind(player_teleport, null, null, @event) {
-	if(_is_survival_world(@event['from']['world'])) {
-		if(!_is_survival_world(@event['to']['world'])) {
-			if(phas_item(425)) {
-				cancel();
-				die(color('red').'Banner metadata is not saved when leaving survival.'
-					.' Please store them in a chest.');
+	if(@event['to']['world'] != @event['from']['world']
+	&& _is_survival_world(@event['from']['world'])
+	&& _is_survival_world(@event['to']['world'])) {
+		try( # sometimes entity does not exist and causes an exception in get_entity_vehicle()
+			@vehicle = get_entity_vehicle(puuid());
+			if(entity_type(@vehicle) == 'HORSE') {
+				set_timeout(1, closure(){
+					try(
+						set_entity_loc(@vehicle, @event['to']);
+						set_timeout(50, closure(){
+							set_entity_rider(@vehicle, puuid());
+						});
+					, # catch
+						msg('Failed to teleport your horse with you. The chunk may have unloaded too quickly.');
+						console('Failed to teleport horse.');
+					);
+				});
+				die();
 			}
-			foreach(@item in penderchest()) {
-				if(!is_null(@item) && @item['type'] == 425) {
-					cancel();
-					die(color('red').'Banner metadata is not saved when leaving survival.'
-						.' Please move them from your enderchest to another chest.');
-				}
-			}
-			
-		# Teleport horses along with rider if its crossworld
-		} else if(@event['to']['world'] != @event['from']['world']) {
-			try( # sometimes entity does not exist and causes an exception in get_entity_vehicle()
-				@vehicle = get_entity_vehicle(puuid());
-				if(entity_type(@vehicle) == 'HORSE') {
-					set_timeout(1, closure(){
-						try(
-							set_entity_loc(@vehicle, @event['to']);
-							set_timeout(50, closure(){
-								set_entity_rider(@vehicle, puuid());
-							});
-						, # catch
-							msg('Failed to teleport your horse with you. The chunk may have unloaded too quickly.');
-							console('Failed to teleport horse.');
-						);
-					});
-					die();
-				}
-			);
-		}
+		);
 	}
 	
 	@loc = _relative(@event['to'], 'down');

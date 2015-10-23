@@ -8,14 +8,6 @@ if(!array_contains(dm_all_markersets(), 'tracers')) {
 }
 
 bind(player_move, null, array('threshold': 10), @event) {
-	@playerCount = _player_count();
-	if(@playerCount > 20) {
-		foreach(@tracer in dm_all_markers('tracers')) {
-			dm_delete_marker('tracers', @tracer);
-		}
-		die();
-	}
-	
 	try(
 		if(pmode() == 'CREATIVE' 
 		|| !has_permission('livemap.tracers')
@@ -27,6 +19,9 @@ bind(player_move, null, array('threshold': 10), @event) {
 	);
 	
 	try(
+		if((@playerCount = _player_count()) > 20) {
+			die();
+		}
 		@lines = dm_marker_corners('tracers', player());
 		if(array_size(@lines) > 128 - @playerCount * 7) {
 			array_remove(@lines, 0);
@@ -48,9 +43,6 @@ bind(player_move, null, array('threshold': 10), @event) {
 }
 
 bind(player_teleport, null, null, @event) {
-	if(_player_count() > 20) {
-		die();
-	}
 	@pdata = _pdata(player());
 	if(array_get(@pdata, 'group', 'default') != 'donor'
 	|| array_get(@pdata, 'support', 5) < 10) {

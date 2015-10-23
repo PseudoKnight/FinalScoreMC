@@ -221,7 +221,11 @@
 		}
 	} else {
 		if($sound == 'random') {
-			@sounds = reflect_pull('enum', 'Sound')
+			@sounds = get_value('sounds');
+			if(is_null(@sounds)) {
+				@sounds = reflect_pull('enum', 'Sound')
+				store_value('sounds', @sounds);
+			}
 			@sound = @sounds[rand(array_size(@sounds))]
 			@range = rand();
 			@pitch = 2 - (1.5 * @range)
