@@ -44,15 +44,37 @@ bind(player_interact_entity, null, array('clicked': 'HORSE'), @event) {
 				pfacing(@facing[0], @facing[1]);
 			}
 		}
+	} else if(is_null(@owner) && !is_null(entity_spec(@event['id'])['saddle'])) {
+		tame_mob(@event['id']);
+		msg('You now own this horse.');
 	}
 	
 	# skeleton/zombie horses
-	@variant = entity_spec(@event['id'])['variant'];
-	if(!is_cancelled() && !pinfo(player(), 11)
-	&& (@variant == 'ZOMBIE' || @variant == 'SKELETON')
-	&& (!@item || @item['type'] != 420)
-	&& get_mob_age(@event['id']) >= 0) {
-		set_entity_rider(@event['id'], puuid());
+	if(!is_cancelled() && !pinfo(player(), 11)) {
+		@horse = entity_spec(@event['id']);
+		if(@horse['variant'] == 'ZOMBIE' || @horse['variant'] == 'SKELETON') {
+			if(@item) {
+				switch(@item['type']) {
+					case 322:
+					case 396:
+						die();
+					case 367:
+						@heatlh = get_entity_health(@event['id']);
+						if(@health != 100) {
+							cancel();
+							@facing = pfacing();
+							set_entity_health(@event['id'], min(100, @health + (100 / get_max_health(@event['id']))));
+							set_mob_age(@event['id'], min(0, get_mob_age(@event['id']) + 1200));
+							@item['qty'] -= 1;
+							set_pinv(player(), array(null: if(!@item['qty'], null, @item)));
+							die();
+						}
+				}
+			}
+			if(is_null(entity_spec(@event['id'])['saddle'])) {
+				set_entity_rider(@event['id'], puuid());
+			}
+		}
 	}
 }
 
