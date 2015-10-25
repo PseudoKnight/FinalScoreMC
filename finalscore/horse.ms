@@ -63,6 +63,7 @@ bind(player_interact_entity, null, array('clicked': 'HORSE'), @event) {
 						if(@health != 100) {
 							cancel();
 							@facing = pfacing();
+							pfacing(@facing[0], @facing[1]);
 							set_entity_health(@event['id'], min(100, @health + (100 / get_max_health(@event['id']))));
 							set_mob_age(@event['id'], min(0, get_mob_age(@event['id']) + 1200));
 							@item['qty'] -= 1;
