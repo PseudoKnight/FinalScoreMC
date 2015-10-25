@@ -79,7 +79,14 @@ proc _spawn_mob(@mob, @qty, @loc, @owner = 'Notch') {
 }
 
 proc _get_mob(@mob = null) {
-	@mobTypes = reflect_pull('enum', 'Mobs');
+	@mobTypes = import('mobs');
+	if(is_null(@mobTypes)) {
+		@mobTypes = get_value('mobs');
+		if(is_null(@mobTypes)) {
+			@mobTypes = reflect_pull('enum', 'Mobs');
+			store_value('mobs', @mobTypes);
+		}
+	}
 	if(is_null(@mob)) {
 		@mob = @mobTypes[rand(array_size(@mobTypes))];
 	} else {
@@ -87,7 +94,7 @@ proc _get_mob(@mob = null) {
 		if(array_contains_ic(@mobTypes, @mobType)) {
 			@mob = array('type': @mob);
 		} else {
-			@mob = get_value('mob.'.@mob);
+			@mob = get_value('mob', @mob);
 		}
 	}
 	return(@mob);

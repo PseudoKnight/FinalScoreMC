@@ -240,11 +240,10 @@ bind(player_join, null, null, @event) {
 			_store_pdata(player(), @pdata);
 		}
 		
-		if(pworld() == 'custom') {
-			_equip_park();
-		}
-		
 		set_timeout(800, closure(){
+			if(pworld() == 'custom') {
+				_equip_park();
+			}
 			if(ponline(@event['player']) && @loc[3] == pworld() && @loc[1] > ploc()[1]) {
 				set_ploc(@loc);
 			}

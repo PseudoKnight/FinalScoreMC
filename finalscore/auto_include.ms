@@ -334,29 +334,30 @@ proc _get_effects() {
 proc _remove_region_entities(@region, @entities = array()) {
 	@world = 'custom'; # we don't need this for other worlds
 	if(!sk_region_exists(@world, @region)) {
-		console('Can\'t remove entities because region doesn\'t exist: '.@region)
-		return(false)
+		console('Can\'t remove entities because region doesn\'t exist: '.@region);
+		return(false);
 	}
-	@loc = sk_region_info(@region, @world)[0]
+	@loc = sk_region_info(@region, @world)[0];
 	if(array_size(@loc) > 2) {
-		return(false)
+		return(false);
 	}
-	for(@x = @loc[1][0], @x < (@loc[0][0] + 15), inc(@x, 16)) {
-		if(@x > @loc[0][0], @x = @loc[0][0])
-		for(@z = @loc[1][2], @z < (@loc[0][2] + 15), inc(@z, 16)) {
-			if(@z > @loc[0][2], @z = @loc[0][2])
-			foreach(@entity in all_entities(array(@x, 64, @z, @world))) {
-				@type = entity_type(@entity)
-				if((!@entities && !array_contains(array('PLAYER', 'COMPLEX_PART', 'ITEM_FRAME', 'PAINTING', 'UNKNOWN'), @type))
+	@xMax = floor(@loc[0][0] / 16);
+	@zMax = floor(@loc[0][2] / 16);
+	@excludeEntities = array('PLAYER', 'COMPLEX_PART', 'ITEM_FRAME', 'PAINTING', 'UNKNOWN');
+	for(@x = floor(@loc[1][0] / 16), @x <= @xMax, @x++) {
+		for(@z = floor(@loc[1][2] / 16), @z <= @zMax, @z++) {
+			foreach(@entity in all_entities(@world, @x, @z)) {
+				@type = entity_type(@entity);
+				if((!@entities && !array_contains(@excludeEntities, @type))
 				|| array_contains(@entities, @type)) {
 					if(@type == 'ARMOR_STAND' && entity_spec(@entity)['visible']) {
 						continue();
 					}
 					try(
-					entity_remove(@entity)
+						entity_remove(@entity);
 					, # if fail
-						console('Entity not found when trying to remove from region.')
-						console('Region: '.@region.', EntityID: '.@entity)
+						console('Entity not found when trying to remove from region.');
+						console('Region: '.@region.', EntityID: '.@entity);
 					)
 				}
 			}

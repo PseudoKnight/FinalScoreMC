@@ -190,7 +190,7 @@ proc _pvp_start_match(@id) {
 		}
 		
 		if(array_index_exists(@pvp['arena'], 'itemspawn')) {
-			for(@i = 0, @i < array_size(@pvp['arena']['itemspawn']), @i++) {
+			foreach(@i: @item in @pvp['arena']['itemspawn']) {
 				if(entity_exists(@pvp['itemspawn'][@i][0])) {
 					@pvp['itemspawn'][@i][1] = time();
 					if(extension_exists('CHSpigot')) {
@@ -200,40 +200,38 @@ proc _pvp_start_match(@id) {
 							array('radius': 64, 'speed': 0)
 						);
 					}
-				} else if(@pvp['itemspawn'][@i][1] + (@pvp['arena']['itemspawn'][@i]['cooldown'] * 1000) < time()) {
-					@id = drop_item(@pvp['arena']['itemspawn'][@i]['loc'], @pvp['arena']['itemspawn'][@i]['item'], false)
+				} else if(@pvp['itemspawn'][@i][1] + (@item['cooldown'] * 1000) < time()) {
+					@id = drop_item(@item['loc'], @item['item'], false);
 					try( # maybe chunk isn't loaded? 
-						set_entity_velocity(@id, array(0, 0, 0))
-						play_sound(@pvp['arena']['itemspawn'][@i]['loc'], array('sound': 'ENDERMAN_TELEPORT', 'pitch': 1.5))
-						make_effect(@pvp['arena']['itemspawn'][@i]['loc'], 'ENDER_SIGNAL')
-						@pvp['itemspawn'][@i][0] = @id
-						@pvp['itemspawn'][@i][1] = time()
+						set_entity_velocity(@id, array(0, 0, 0));
+						play_sound(@item['loc'], array('sound': 'ENDERMAN_TELEPORT', 'pitch': 1.5));
+						make_effect(@item['loc'], 'ENDER_SIGNAL');
+						@pvp['itemspawn'][@i][0] = @id;
+						@pvp['itemspawn'][@i][1] = time();
 					)
 				}
 			}
 		}
 		
 		if(array_index_exists(@pvp['arena'], 'mobspawn')) {
-			for(@i = 0, @i < array_size(@pvp['arena']['mobspawn']), @i++) {
-				if((@pvp['mobspawn'][@i] + (@pvp['arena']['mobspawn'][@i]['respawn'] * 1000)) < time()) {
-					_spawn_mob(@pvp['arena']['mobspawn'][@i]['type'], 
-						@pvp['arena']['mobspawn'][@i]['qty'], 
-						@pvp['arena']['mobspawn'][@i]['loc'])
-					@pvp['mobspawn'][@i] = time()
+			foreach(@i: @mob in @pvp['arena']['mobspawn']) {
+				if((@pvp['mobspawn'][@i] + (@mob['respawn'] * 1000)) < time()) {
+					_spawn_mob(@mob['type'], @mob['qty'], @mob['loc']);
+					@pvp['mobspawn'][@i] = time();
 				}
 			}
 		}
 		
 		if(array_index_exists(@pvp['arena'], 'chestspawn')) {
-			for(@i = 0, @i < array_size(@pvp['arena']['chestspawn']), @i++) {
+			foreach(@i: @chest in @pvp['arena']['chestspawn']) {
 				if(array_index_exists(@pvp['chestspawn'], @i) 
-				&& (@pvp['chestspawn'][@i] + (@pvp['arena']['chestspawn'][@i]['cooldown'] * 1000)) < time()) {
-					if(get_block_at(@pvp['arena']['chestspawn'][@i]['loc'])[0] == '0') {
-						set_block_at(@pvp['arena']['chestspawn'][@i]['loc'], '54:0')
-						for(@y = 0, @y < array_size(@pvp['arena']['chestspawn'][@i]['items']), @y++,
-							set_inventory_item(@pvp['arena']['chestspawn'][@i]['loc'], @y, @pvp['arena']['chestspawn'][@i]['items'][@y])
+				&& (@pvp['chestspawn'][@i] + (@chest['cooldown'] * 1000)) < time()) {
+					if(get_block_at(@chest['loc'])[0] == '0') {
+						set_block_at(@chest['loc'], '54:0');
+						for(@y = 0, @y < array_size(@chest['items']), @y++,
+							set_inventory_item(@chest['loc'], @y, @chest['items'][@y]);
 						)
-						@pvp['chestspawn'][@i] = time()
+						@pvp['chestspawn'][@i] = time();
 					}
 				}
 			}
