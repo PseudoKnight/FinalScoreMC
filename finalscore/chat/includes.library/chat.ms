@@ -14,6 +14,9 @@ proc _pmsg(@player, @message) {
 			msg('You cannot message that player.')
 		}
 	, # else
+		if(length(@player) < 4) {
+			die(color('gold').'You must provide at least the first 4 characters of a player\'s name for offline messages.');
+		}
 		try(
 			@pdata = _pdata(@player)
 		, #catch
@@ -26,8 +29,9 @@ proc _pmsg(@player, @message) {
 			@message
 		))
 		_store_pdata(@player, @pdata)
-		msg(color('green').'Offline message sent to '.@player)
 		msg(color(7).'(To '.@player.'): '.color('r').@message)
+		msg(color('yellow').'Type /unsend immediately if you wish to remove this offline message.');
+		export(player().'_mail', @pdata['name']);
 	)
 }
 

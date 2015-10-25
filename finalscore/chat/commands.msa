@@ -112,6 +112,34 @@
 	_pmsg($player, $)
 <<<
 
+*:/unsend = >>>
+	@player = import(player().'_mail');
+	if(is_null(@player)) {
+		die('There are no offline messages for you to unsend. Perhaps you waited too long.');
+	}
+	@pdata = _pdata(@player);
+	if(!array_index_exists(@pdata, 'mail')) {
+		die('Cannot find last sent mail to '.@player.'. Perhaps they read it already.');
+	}
+	@letter = null;
+	@id = -1;
+	foreach(@i: @l in @pdata['mail']) {
+		if(@l[1] == player()) {
+			@letter = @l;
+			@id = @i;
+		}
+	}
+	if(is_null(@letter)) {
+		die('Cannot find last sent mail to '.@player.'.');
+	}
+	array_remove(@pdata['mail'], @i);
+	if(array_size(@pdata['mail']) == 0) {
+		array_remove(@pdata, 'mail');
+	}
+	_store_pdata(@player, @pdata);
+	msg('Removed last sent offline message to '.@player.'.');
+<<<
+
 *:/r $ = >>>
 	@conv = import('conv')
 	try(@player = @conv[player()], die('You do not have any current conversations.'))
