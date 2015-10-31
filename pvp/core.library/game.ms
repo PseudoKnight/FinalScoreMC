@@ -1,8 +1,28 @@
-include('class.ms');
+# BASE
+include('utils.ms');
 include('spectator.ms');
 include('player.ms');
 include('stats.ms');
 
+# MODES
+if(@pvp['arena']['mode'] != 'dm') {
+	include('../modes.library/'.@pvp['arena']['mode'].'.ms');
+}
+
+# WEAPONS
+include('weapons.ms');
+if(array_index_exists(@pvp['arena'], 'weapons')) {
+	foreach(@weapon in @pvp['arena']['weapons']) {
+		include('../weapons.library/'.@weapon.'.ms')
+	}
+}
+
+# CLASSES
+if(array_index_exists(@pvp['arena'], 'classes')) {
+	include('class.ms');
+}
+
+# CORE
 proc _pvp_start_match(@id) {
 	@pvp = import('pvp'.@id)
 	if(array_index_exists(@pvp['arena'], 'rsoutput'), 
@@ -241,70 +261,6 @@ proc _pvp_start_match(@id) {
 			_pvp_check_objectives(@id))
 	})
 	
-}
-
-proc _pvp_flag_spawn(@id, @team, @loc) {
-	@pvp = import('pvp'.@id);
-	if(!is_array(@loc)) {
-		@loc = @pvp['arena']['ctfflag'][@team];
-	}
-	if(!entity_exists(@pvp['team'][@team]['flag'])) {
-		@pvp['team'][@team]['flag'] = drop_item(@loc, array('type': 425, 'data': if(@team == 0, '1', '4')), 0)
-	} else if(_horizontal_distance(entity_loc(@pvp['team'][@team]['flag']), @pvp['arena']['ctfflag'][@team]) > 3) {
-		@pvp['team'][@team]['flag'] = drop_item(@loc, array('type': 425, 'data': if(@team == 0, '1', '4')), 0)
-	}
-	queue_delay('30000', @id.@team.'flag');
-	queue_push(closure(_pvp_flag_spawn(@id, @team)), @id.@team.'flag');
-}
-
-proc _flag(@item) {
-	if(!is_null(@item) && @item['type'] == 425) {
-		if(@item['data'] == 4) {
-			return(1);
-		} else if(@item['data'] == 1) {
-			return(0);
-		}
-	}
-	return(null);
-}
-
-proc _pvp_hat_spawn(@id, @team, @loc) {
-	@pvp = import('pvp'.@id)
-	if(is_null(@loc)) {
-		@loc = @pvp['spawn'][@team][0];
-	}
-	@hat = drop_item(@loc, @pvp['team'][@team]['captainhat'])
-	set_entity_velocity(@hat, array(0, 0, 0))
-}
-
-proc _squared_distance_to_segment(@p1, @p2a, @p2b) {
-	@vx = @p2b['x'] - @p2a['x'];
-	@vy = @p2b['y'] - @p2a['y'];
-	@vz = @p2b['z'] - @p2a['z'];
-
-	@wx = @p1['x'] - @p2a['x'];
-	@wy = @p1['y'] - @p2a['y'];
-	@wz = @p1['z'] - @p2a['z'];
-
-	@c1 = @wx * @vx + @wy * @vy + @wz * @vz;
-	if(@c1 <= 0) {
-		return(((@p1['x'] - @p2a['x']) ** 2) + ((@p1['y'] - @p2a['y']) ** 2) + ((@p1['z'] - @p2a['z']) ** 2));
-	}
-
-	@c2 = @vx * @vx + @vy * @vy + @vz * @vz;
-	if(@c2 <= @c1) {
-		return(((@p1['x'] - @p2b['x']) ** 2) + ((@p1['y'] - @p2b['y']) ** 2) + ((@p1['z'] - @p2b['z']) ** 2));
-	}
-
-	@b = @c1 / @c2;
-	@bx = @p2a['x'] + @b * @vx;
-	@by = @p2a['y'] + @b * @vy;
-	@bz = @p2a['z'] + @b * @vz;
-	return(((@p1['x'] - @bx) ** 2) + ((@p1['y'] - @by) ** 2) + ((@p1['z'] - @bz) ** 2));
-}
-
-proc _distance(@p1, @p2) {
-	return(sqrt(((@p1[0] - @p2[0]) ** 2) + ((@p1[1] - @p2[1]) ** 2) + ((@p1[2] - @p2[2]) ** 2)));
 }
 
 proc _pvp_check_objectives(@id) {

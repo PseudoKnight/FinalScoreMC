@@ -301,6 +301,7 @@
 			set_pscore('captures', @pvp['arena']['team'][1]['name'], 0, @id)
 		}
 		
+		@pvp['binds'] = array();
 		include('core.library/game.ms');
 		
 		if(array_index_exists(@pvp['arena'], 'team')) {
@@ -339,17 +340,9 @@
 		if(!array_index_exists(@pvp, 'stats') || @pvp['arena']['stats']) {
 			@pvp['stats'] = associative_array();
 		}
-		@pvp['binds'] = array();
+
 		@pvp['spectators'] = array();
 		@pvp['running'] = 1;
-		
-		# WEAPONS
-		include('core.library/weapons.ms');
-		if(array_index_exists(@pvp['arena'], 'weapons')) {
-			foreach(@weapon in @pvp['arena']['weapons']) {
-				include('weapons.library/'.@weapon.'.ms')
-			}
-		}
 		
 		# CLASSES
 		if(array_index_exists(@pvp['arena'], 'classes')) {

@@ -88,10 +88,7 @@ proc _class(@action, @player, @class, @pvp) {
 		}
 		
 	case 'unload':
-		unbind(@player.'feed')
 		unbind(@player.'doublejump')
-		unbind(@player.'spawner')
-		unbind(@player.'target')
 		unbind(@player.'food')
 		queue_clear(@player.'doublejump')
 		set_pflight(@player, false)
@@ -147,13 +144,13 @@ proc _class_select(@id, @pvp) {
 		));
 		update_virtualchest(@id.'0', @chest[0])
 	}
-	# if(@chest[1]) {
-		# @chest[1][@chestsize2 - 1] = array('type': 1, 'data': 7, 'meta': array(
-			# 'display': 'RANDOM',
-			# 'lore': array('Randomly assign a class'),
-		# ));
-		# update_virtualchest(@id.'1', @chest[1])
-	# }
+	if(@chest[1]) {
+		@chest[1][@chestsize2 - 1] = array('type': 1, 'data': 7, 'meta': array(
+			'display': 'RANDOM',
+			'lore': array('Randomly assign a class'),
+		));
+		update_virtualchest(@id.'1', @chest[1])
+	}
 	foreach(@p: @pdata in @pvp['players']) {
 		if(@size1 > 2
 		&& (!array_index_exists(@pdata, 'team') || @pdata['team'] == 0)) {
