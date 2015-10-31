@@ -9,7 +9,8 @@ if(!array_contains(dm_all_markersets(), 'tracers')) {
 
 bind(player_move, null, array('threshold': 10), @event) {
 	try(
-		if(pmode() == 'CREATIVE' 
+		if(player() == '~console'
+		|| pmode() == 'CREATIVE' 
 		|| !has_permission('livemap.tracers')
 		|| array_get(_pdata(player()), 'support', 5) < 10) {
 			die();
