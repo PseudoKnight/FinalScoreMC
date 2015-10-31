@@ -7,8 +7,12 @@ set_cron('*/10 * * * *', closure(){
 	queue_push(closure(){
 		save_players();
 		@currently = import('currently');
-		console('---[ SAVED ]---[ TPS: '.tps()[1].' ]---[ PLAYERS: '.array_size(all_players()).' ]---'
-			.if(!is_null(@currently), '[ CURRENTLY: '.@currently.' ]---'), false);
+		@allocMem = get_server_info(15);
+		@freeMem = get_server_info(16);
+		console('---[ SAVED ]---[ TPS: '.tps()[1].' ]'
+			.'---[ MEM: '.floor((@allocMem - @freeMem) / 1000000).' / '.floor(@allocMem / 1000000).' / 2863 MB ]'
+			.'---[ PLAYERS: '._player_count().' ]'
+			.'---'.if(!is_null(@currently), '[ CURRENTLY: '.@currently.' ]---'), false);
 	});
 })
 

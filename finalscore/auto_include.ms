@@ -675,6 +675,7 @@ proc _player_uuid(@players, @closure) {
     );
     http_request('https://api.mojang.com/profiles/minecraft', @options);
 }
+
 /*
 	Gets an offline player's UUID for db access
 */
@@ -701,16 +702,26 @@ proc _get_uuid(@player, @autocomplete = true, @dashless = true) {
 
 /*
 	Gets stored data for account under given player name.
+	Will return cached data if available.
 */
 proc _pdata(@player, @autocomplete = true) {
 	@player = to_lower(@player);
 	@pdata = import('pdata.'.@player);
 	if(is_null(@pdata)) {
 		@uuid = _get_uuid(@player, @autocomplete);
-		@pdata = get_value('uuids', @uuid);
-		if(is_null(@pdata)) {
-			throw('NotFoundException', 'User data not stored in database: '.@uuid);
-		}
+		@pdata = _pdata_by_uuid(@uuid);
+	}
+	return(@pdata);
+}
+
+/*
+	Gets stored data for account under given dashless UUID.
+	Always returns stored data, not cached.
+*/
+proc _pdata_by_uuid(@uuid) {
+	@pdata = get_value('uuids', @uuid);
+	if(is_null(@pdata)) {
+		throw('NotFoundException', 'User data not stored in database: '.@uuid);
 	}
 	return(@pdata);
 }

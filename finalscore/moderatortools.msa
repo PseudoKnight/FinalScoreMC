@@ -311,12 +311,13 @@
 
 	, 
 		# OFFLINE INFO
-		@pdata = _pdata($player)
+		@uuid = _get_uuid(to_lower($player), true, false);
+		@pdata = _pdata_by_uuid(replace(@uuid, '-', ''));
 		@minutes = (time() - plast_played(@pdata['name'])) / 60000;
 		@hours = @minutes / 60
 		@days = @hours / 24
 		msg(color('gray').'--[ '.color('l').@pdata['name'].color('gray').' ]-------------------------')
-		msg(color('gray').'UUID: '.color('r').array_normalize(get_values('players.'.to_lower($player)))[0]);
+		msg(color('gray').'UUID: '.color('r').@uuid);
 
 		if(array_index_exists(@pdata, 'ban'), msg(color('red').'Banned '.color('r')
 			.if(array_index_exists(@pdata['ban'], 'by'), 'by '.@pdata['ban']['by'].' ')
@@ -384,4 +385,21 @@
 			}
 		}
 	}
+<<<
+
+*:/mem = >>>
+	@maxMem = get_server_info(14);;
+	@barMem = round(@maxMem / 70);
+	@allocMem = get_server_info(15);
+	@freeMem = get_server_info(16);
+	@bar = array();
+	array_resize(@bar, round((@allocMem - @freeMem) / @barMem), '\u258D');
+	@bar[] = color(7);
+	array_resize(@bar, array_size(@bar) + round(@freeMem / @barMem), '\u258D');
+	@bar[] = color(8);
+	array_resize(@bar, array_size(@bar) + round((@maxMem - @allocMem) / @barMem), '\u258D');
+	msg(round(@maxMem / 1000000).' Max '
+	.round(@allocMem / 1000000).' Allocated '
+	.round(@freeMem / 1000000).' Free');
+	msg(array_implode(@bar, ''));
 <<<
