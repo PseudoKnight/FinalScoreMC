@@ -132,7 +132,7 @@
 	if(!@share, die('No shares to confirm.'))
 	
 	@pdata = _pdata(@share['player'])
-	if(!array_index_exists(@pdata, 'shared'), @pdata['shared'] = array())
+	if(!array_index_exists(@pdata, 'shared'), @pdata['shared'] = associative_array())
 	if(!array_index_exists(@pdata['shared'], player()), @pdata['shared'][player()] = array())
 	foreach(@type in @share['types']) {
 		array_push(@pdata['shared'][player()], @type)
@@ -141,7 +141,7 @@
 	tmsg(@share['player'], color('green').'Now sharing '.array_implode(@share['types'], ' and ').' with '.player().'.')
 	
 	@pdata = _pdata(player())
-	if(!array_index_exists(@pdata, 'shared'), @pdata['shared'] = array())
+	if(!array_index_exists(@pdata, 'shared'), @pdata['shared'] = associative_array())
 	if(!array_index_exists(@pdata['shared'], @share['player']), @pdata['shared'][@share['player']] = array())
 	foreach(@type in @share['types']) {
 		array_push(@pdata['shared'][@share['player']], @type)

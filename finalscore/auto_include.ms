@@ -745,7 +745,7 @@ proc _store_pdata(@player, @data) {
 proc _add_activity(@id, @title) {
 	@activities = import('activities');
 	if(is_null(@activities)) {
-		@activities = array();
+		@activities = associative_array();
 	}
 	@activities[@id] = @title;
 	export('activities', @activities);

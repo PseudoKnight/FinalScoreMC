@@ -97,9 +97,7 @@ bind(player_interact_at_entity, null, array('clicked': 'ARMOR_STAND'), @event) {
 				
 				set_interval(50, closure(){
 					if(!ponline(player()) || !pinfo(player(), 11) || !entity_exists(@event['id'])) {
-						if(entity_exists(@event['id'])) {
-							set_entity_spec(@event['id'], array('gravity': @armorstand['gravity']));
-						}
+						try(set_entity_spec(@event['id'], array('gravity': @armorstand['gravity'])));
 						clear_task();
 						export(player().'posing', null);
 						return();
@@ -122,7 +120,7 @@ bind(player_interact_at_entity, null, array('clicked': 'ARMOR_STAND'), @event) {
 				@eloc = entity_loc(@event['id']);
 				@dist = _distance(@eloc, ploc());
 				@poseable = 'pose'.@poseable;
-				@newspec = array('poses': array());
+				@newspec = associative_array('poses': array());
 				@newspec['poses'][@poseable] = @armorstand['poses'][@poseable][];
 				
 				set_interval(50, closure(){

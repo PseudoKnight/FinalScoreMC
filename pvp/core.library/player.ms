@@ -1,5 +1,5 @@
 proc _add_player(@player, @pvp) {
-	@pvp['players'][player()] = array()
+	@pvp['players'][player()] = associative_array()
 }
 
 proc _remove_player(@player, @pvp) {

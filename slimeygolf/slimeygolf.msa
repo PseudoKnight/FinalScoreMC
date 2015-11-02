@@ -20,7 +20,7 @@
 	
 	@golf = array(
 		course: array(name: @course, loc: array(0, 0, 0, @loc['world']), par: 0), 
-		players: array(),
+		players: associative_array(),
 		spectators: array(),
 	);
 	

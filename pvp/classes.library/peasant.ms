@@ -69,7 +69,7 @@ case 'load':
 						} else {
 							@potato['meta']['display'] = string(integer(@potato['meta']['display']) - 1);
 							play_sound(ploc(@damaged), array('sound': 'NOTE_STICKS'));
-							@inv = array();
+							@inv = associative_array();
 							@inv[@slot] = @potato;
 							set_pinv(@damaged, @inv);
 						}
@@ -81,7 +81,7 @@ case 'load':
 				
 				@item['meta']['lore'] = array(@task);
 				
-				@inv = array();
+				@inv = associative_array();
 				@inv[@slot] = @item;
 				set_pinv(@damaged, @inv);
 

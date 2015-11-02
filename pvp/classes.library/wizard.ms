@@ -31,7 +31,7 @@ case 'load':
 		queue_push(closure(){
 			@newitem = pinv(player(), @slot)
 			if(!is_null(@newitem) && @newitem['type'] == 280) {
-				@inv = array();
+				@inv = associative_array();
 				@inv[@slot] = @item;
 				set_pinv(@inv);
 				play_sound(ploc(), array('sound': 'FIZZ'))

@@ -3,7 +3,7 @@
 	Prevent damage by default, but still indicate damage
 	TODO: track damage so that people can play-fight better
 */
-export('battle', array());
+export('battle', associative_array());
 bind(entity_damage_player, null, null, @event) {
 	if(is_string(@event['data'])
 	&& ponline(@event['data'])

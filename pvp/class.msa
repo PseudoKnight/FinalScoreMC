@@ -9,10 +9,10 @@ case 'set':
 	@arena = get_value('arena', @arenaid)
 	if(!@arena, die('No arena by that name: '.@arenaid))
 	if(!array_index_exists(@arena, 'classes')) {
-		@arena['classes'] = array();
+		@arena['classes'] = associative_array();
 	}
 	if(!array_index_exists(@arena['classes'], @classid)) {
-		@arena['classes'][@classid] = array()
+		@arena['classes'][@classid] = associative_array()
 	}
 	switch($setting) {
 	case 'selector':
@@ -178,7 +178,7 @@ case 'equip':
 	@classid = split(':', $id)[1], die('You need to specify an arena.'))
 	@arena = get_value('arena', @arenaid)
 	if(!@arena, die('No arena by that name: '.@arenaid))
-	@pvp = array()
+	@pvp = associative_array()
 	@pvp['arena'] = @arena
 	include('core.library/class.ms')
 	_class('equip', player(), @classid, @pvp)

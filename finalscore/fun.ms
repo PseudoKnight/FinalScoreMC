@@ -42,7 +42,7 @@ bind(player_interact, null, array('item': 401, 'button': 'right'), @event) {
 			if(@item && @item['type'] == 402) {
 				@item['type'] = 401
 				@item['name'] = 'FIREWORK'
-				@inv = array()
+				@inv = associative_array()
 				@inv[@slot] = @item
 				set_pinv(player(), @inv)
 			}

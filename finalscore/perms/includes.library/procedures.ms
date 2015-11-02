@@ -9,7 +9,7 @@ proc _perm_player(@player, @clear = true) {
 
 proc _add_group_perms(@player, @group, @return = true) {
 	@perms = import('perms');
-	@toAdd = array();
+	@toAdd = associative_array();
 	# Add inherited perms first
 	if(array_index_exists(@perms[@group], 'inheritance')) {
 		@toAdd = _add_group_perms(@player, @perms[@group]['inheritance']);

@@ -86,7 +86,7 @@ bind(player_interact, null, array('block': 68), @event) {
 							if(!is_null(@pinv[@p])) {
 								@chest[@c]['qty'] += @pinv[@p]['qty'];
 							}
-							@newinv = array();
+							@newinv = associative_array();
 							@newinv[@p] = @chest[@c];
 							set_pinv(player(), @newinv);
 							set_inventory_item(@chestloc, @c, null);

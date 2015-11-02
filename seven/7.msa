@@ -15,13 +15,13 @@
 	
 		@7 = import('7')
 		if(!@7) {
-			@7 = array('players': array(), 'state': 0)
+			@7 = array('players': associative_array(), 'state': 0)
 			export('7', @7)
 		}
 		
-		_worldmsg('custom', colorize('&67 Seconds to Live&r has been queued up by '.player()))
+		_worldmsg('custom', colorize('&6&l7 Seconds to Live&r has been queued up by '.player().' /warp 7'))
 		
-		@timer = array(10);
+		@timer = array(7);
 		@7['state'] = 1;
 		@7['lobby'] = get_value('warp.7')['loc'];
 		_add_activity('7', '7 Seconds to Live');
@@ -35,7 +35,7 @@
 				if(ponline(@player) && pmode(@player) == 'SURVIVAL' && array_contains(sk_current_regions(@player), '7')) {
 					@num++
 					if(!array_index_exists(@7['players'], @player)) {
-						@7['players'][@player] = array('time': 7.0, 'block': null);
+						@7['players'][@player] = associative_array('time': 7.0, 'block': null);
 						set_pscoreboard(@player, '7')
 						set_pscore('time', @player, 7, '7')
 					}
@@ -47,7 +47,7 @@
 				} else if(@num == 0) {
 					clear_task()
 					@7['state'] = 0
-					@7['players'] = array()
+					@7['players'] = associative_array()
 					remove_scoreboard('7')
 					_remove_activity('7');
 					die()
@@ -70,7 +70,7 @@
 				if(get_block_at(@startblock) != '0:0') {
 					@7['state'] = 4;
 					set_block_at(@startblock, 0);
-					_worldmsg('custom', colorize('&67 Seconds to Live&r will start in '.@timer[0].' seconds. /warp 7'));
+					_worldmsg('custom', colorize('&6&l7 Seconds to Live&r... /warp 7'));
 				}
 			
 			} else if(@7['state'] == 4) {
@@ -81,7 +81,7 @@
 						_worldmsg('custom', colorize('&67 Seconds to Live&r game canceled.'))
 						clear_task()
 						@7['state'] = 0
-						@7['players'] = array()
+						@7['players'] = associative_array()
 						remove_scoreboard('7')
 						_remove_activity('7');
 						die()
@@ -122,7 +122,7 @@
 			}
 			@arenas = get_value('seven')
 			if(!@arenas) {
-				@arenas = array()
+				@arenas = associative_array()
 			} else if(array_index_exists(@arenas, $schematic)) {
 				die('Arena already exists by that name.')
 			}

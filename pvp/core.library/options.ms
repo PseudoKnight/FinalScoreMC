@@ -1,5 +1,5 @@
 proc _create_options_menu(@id, @arena) {
-	@inv = array();
+	@inv = associative_array();
 	@i = 0;
 	foreach(@option: @values in @arena['options']) {
 		foreach(@data: @value in @values) {

@@ -200,7 +200,7 @@
 			@message = $
 		}
 	}
-	@pdata['ban'] = array()
+	@pdata['ban'] = associative_array()
 	if(@bantime, @pdata['ban']['time'] = @bantime)
 	if(@message, @pdata['ban']['message'] = @message)
 	if(player() != '~console', @pdata['ban']['by'] = player())

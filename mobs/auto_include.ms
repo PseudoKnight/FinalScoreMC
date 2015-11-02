@@ -40,26 +40,28 @@ proc _spawn_mob(@mob, @qty, @loc, @owner = 'Notch') {
 		set_interval(1000, closure(){
 			@mob['explode'][0] -= 1;
 			foreach(@i: @m in @mobs) {
-				if(entity_exists(@m) && get_entity_health(@m) > 0) {
-					if(!entity_exists(@display[@i])) {
-						damage_entity(@m, 20);
-					} else {
-						if(@mob['explode'][0] <= 3) {
-							set_mob_name(@display[@i], color('yellow').@mob['explode'][0]);
-						} else {
-							set_mob_name(@display[@i], @mob['explode'][0]);
-						}
-						if(@mob['explode'][0] == 0) {
-							try(entity_remove(@display[@i]));
-							explosion(entity_loc(@m), @mob['explode'][1], true);
+				try(
+					if(get_entity_health(@m) > 0) {
+						try(
+							if(@mob['explode'][0] <= 3) {
+								set_mob_name(@display[@i], color('yellow').@mob['explode'][0]);
+							} else {
+								set_mob_name(@display[@i], @mob['explode'][0]);
+							}
+							if(@mob['explode'][0] == 0) {
+								try(entity_remove(@display[@i]));
+								explosion(entity_loc(@m), @mob['explode'][1], true);
+								damage_entity(@m, 20);
+							} else {
+								play_sound(entity_loc(@m), array('sound': 'NOTE_STICKS', 'pitch': 2, 'volume': 1));
+							}
+						, # display entity doesn't exist
 							damage_entity(@m, 20);
-						} else {
-							play_sound(entity_loc(@m), array('sound': 'NOTE_STICKS', 'pitch': 2, 'volume': 1));
-						}
+						);
+					} else {
+						try(entity_remove(@display[@i]));
 					}
-				} else {
-					try(entity_remove(@display[@i]));
-				}
+				);
 			}
 			if(@mob['explode'][0] == 0) {
 				clear_task();

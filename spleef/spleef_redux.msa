@@ -28,7 +28,7 @@
 		
 		@arena = get_value('spleef', @id)
 		if(!@arena) {
-			@arena = array()
+			@arena = associative_array()
 		}
 		
 		if(!$value) {

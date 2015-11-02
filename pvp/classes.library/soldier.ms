@@ -17,7 +17,7 @@ case 'load':
 		@slot = pinfo(player(), 15);
 		set_timeout(50, closure(){
 			@item['data'] += 8;
-			@inv = array();
+			@inv = associative_array();
 			@inv[@slot] = @item;
 			set_pinv(player(), @inv);
 			@bullet = shoot_projectile(@e['player'], 'EGG');
@@ -40,7 +40,7 @@ case 'load':
 				} else {
 					@item['qty'] -= 1;
 				}
-				@inv = array();
+				@inv = associative_array();
 				if(@item['qty'] > 0) {
 					@inv[@slot] = @item;
 				}
@@ -65,13 +65,10 @@ case 'load':
 		set_entity_velocity(@armorStand, array(@x, @y, @z));
 		play_sound(@loc, array('sound': 'IRONGOLEM_THROW'));
 		set_timeout(5000, closure(){
-			if(entity_exists(@armorStand)) {
-				@weapon = get_mob_equipment(@armorStand)['weapon'];
-				if(!is_null(@weapon) && @weapon['type'] == 273) {
-					explosion(entity_loc(@armorStand), 3, true);
-				}
-				try(entity_remove(@armorStand));
-			}
+			try(
+				explosion(entity_loc(@armorStand), 3, true);
+				entity_remove(@armorStand);
+			);
 		});
 	}
 	

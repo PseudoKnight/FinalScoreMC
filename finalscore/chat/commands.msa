@@ -142,7 +142,10 @@
 
 *:/r $ = >>>
 	@conv = import('conv')
-	try(@player = @conv[player()], die('You do not have any current conversations.'))
+	if(!array_index_exists(@conv, player())) {
+		die('You do not have any current conversations.');
+	}
+	@player = @conv[player()];
 	if(@player != '~console' && !ponline(@player), die('That player is no longer online.'))
 	include('includes.library/chat.ms')
 	_pmsg(@player, $)

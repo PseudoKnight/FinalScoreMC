@@ -22,7 +22,7 @@
 		if(!has_permission('group.builder'), die('You do not have permission.'))
 		if(reg_count('^[a-z0-9]+$', $id) < 1, die('You can only use lowercase alphanumeric characters for the ID'))
 		@arena = get_value('arena.'.$id)
-		if(!@arena, @arena = array())
+		if(!@arena, @arena = associative_array())
 		switch($setting) {
 
 			case 'lobby':

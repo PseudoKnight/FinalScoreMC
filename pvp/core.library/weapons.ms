@@ -19,7 +19,7 @@ proc _weapon_cooldown(@player, @time, @type, @onCooldown, @remove = 1) {
 					@newItem = pinv(@player, @slot);
 					if(!is_null(@newItem) 
 					&& @newItem['name'] == @type) {
-						@inv = array();
+						@inv = associative_array();
 						@inv[@slot] = @item;
 						set_pinv(@player, @inv);
 						if(@onCooldown) {

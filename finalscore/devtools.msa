@@ -74,7 +74,7 @@
 */
 /bindcount = >>>
 	@binds = dump_events();
-	@list = array();
+	@list = associative_array();
 	foreach(@bind in @binds) {
 		@type = reg_match('\\((\\w+)\\).*', @bind)[1];
 		if(array_index_exists(@list, @type)) {
@@ -125,7 +125,7 @@
 			@inv[99] = null;
 		}
 		foreach(@item in @oinv) {
-			@i = array();
+			@i = associative_array();
 			@i['name'] = @item['is']['type'];
 			if(array_index_exists(@item['is'], 'amount')) {
 				@i['qty'] = @item['is']['amount'];
@@ -134,7 +134,7 @@
 				@i['data'] = @item['is']['damage'];
 			}
 			if(array_index_exists(@item['is'], 'meta')) {
-				@i['meta'] = array();
+				@i['meta'] = associative_array();
 				if(array_index_exists(@item['is']['meta'], 'enchants')) {
 					@i['meta']['enchants'] = array();
 					foreach(@enchant: @level in @item['is']['meta']['enchants']) {

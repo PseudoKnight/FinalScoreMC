@@ -1,6 +1,6 @@
 @ignorelist = get_value('session.ignorelist')
 if(!@ignorelist) {
-	@ignorelist = array()
+	@ignorelist = associative_array()
 } else {
 	clear_value('session.ignorelist')
 }
@@ -8,7 +8,7 @@ export('ignorelist', @ignorelist)
 
 @conv = get_value('session.conv')
 if(!@conv) {
-	@conv = array()
+	@conv = associative_array()
 } else {
 	clear_value('session.conv')
 }

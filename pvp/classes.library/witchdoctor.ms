@@ -15,7 +15,7 @@ case 'load':
 		set_interval(1000, closure(){
 			@item = pinv(player(), @slot)
 			if(!is_null(@item) && @item['type'] == 290 && @item['data'] > 0) {
-				@inv = array()
+				@inv = associative_array()
 				@item['data'] -= 3
 				@inv[@slot] = @item
 				set_pinv(player(), @inv)

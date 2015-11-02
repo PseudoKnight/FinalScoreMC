@@ -3,11 +3,13 @@ proc _pvp_flag_spawn(@id, @team, @loc) {
 	if(!is_array(@loc)) {
 		@loc = @pvp['arena']['ctfflag'][@team];
 	}
-	if(!entity_exists(@pvp['team'][@team]['flag'])) {
-		@pvp['team'][@team]['flag'] = drop_item(@loc, array('type': 425, 'data': if(@team == 0, '1', '4')), 0)
-	} else if(_horizontal_distance(entity_loc(@pvp['team'][@team]['flag']), @pvp['arena']['ctfflag'][@team]) > 3) {
-		@pvp['team'][@team]['flag'] = drop_item(@loc, array('type': 425, 'data': if(@team == 0, '1', '4')), 0)
-	}
+	try(
+		if(_horizontal_distance(entity_loc(@pvp['team'][@team]['flag']), @pvp['arena']['ctfflag'][@team]) > 3) {
+			@pvp['team'][@team]['flag'] = drop_item(@loc, array('type': 425, 'data': if(@team == 0, '1', '4')), 0)
+		}
+	, # doesn't exist
+		@pvp['team'][@team]['flag'] = drop_item(@loc, array('type': 425, 'data': if(@team == 0, '1', '4')), 0);
+	);
 	queue_delay('30000', @id.@team.'flag');
 	queue_push(closure(_pvp_flag_spawn(@id, @team)), @id.@team.'flag');
 }

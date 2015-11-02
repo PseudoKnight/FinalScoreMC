@@ -34,7 +34,7 @@
 /*
 	Spawns an npc and carries the player along the course specified
 	/ride @p npcType 0,64,0 0,64,100
-*/
+
 /ride $player $npcType $speed $ = >>>
 	if(extension_exists('CHCitizens')) {
 	

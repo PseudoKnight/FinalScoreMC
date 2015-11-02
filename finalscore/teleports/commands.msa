@@ -43,7 +43,7 @@
 	if(_is_survival_world(@world) && !_is_safe_location(@loc)) {
 		@overrides = import('tp.overrides');
 		if(!@overrides) {
-			@overrides = array();
+			@overrides = associative_array();
 		}
 		@overrides[player()] = @loc;
 		export('tp.overrides', @overrides);
@@ -74,7 +74,7 @@
 		@player = $
 	}
 	@pdata = _pdata(@player)
-	if(!array_index_exists(@pdata, 'homes'), @pdata['homes'] = array())
+	if(!array_index_exists(@pdata, 'homes'), @pdata['homes'] = associative_array())
 	@loc = ploc()
 	@facing = pfacing()
 	array_set(@pdata['homes'], pworld(), array(
@@ -151,7 +151,7 @@
 	case 'list':
 		@warps = get_values('warp')
 		@worlds = get_worlds()
-		@warplist = array()
+		@warplist = associative_array()
 		foreach(@world in @worlds) {
 			@warplist[@world] = ''
 		}

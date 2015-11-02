@@ -20,8 +20,8 @@
 	if(pmode() != 'CREATIVE', die('You\'re not in creative mode.'));
 	if(!$, die(color(gold).'Usage: /display <item display name> '.color(gray).'(supports &0 color codes)'))
 	@meta = get_itemmeta(null)
-	if(is_null(@meta), @meta = array())
-	@meta[display] = colorize($)
+	if(is_null(@meta), @meta = associative_array())
+	@meta['display'] = colorize($)
 	set_itemmeta(null, @meta)
 <<<
 
@@ -75,15 +75,15 @@
 *:/lore [$line] [$] = >>>
 	if(pmode() != 'CREATIVE', die('You\'re not in creative mode.'));
 	if(!$ || !is_numeric($line) || $line < 1) {
-		die(color(gold).'Usage: /lore <line#> <lore string> '.color(gray).'(supports &0 color codes)')
+		die(color('gold').'Usage: /lore <line#> <lore string> '.color('gray').'(supports &0 color codes)');
 	}
-	@meta = get_itemmeta(null)
-	if(is_null(@meta), @meta = array())
-	if(is_null(@meta[lore])) {
-		@meta[lore] = array()
+	@meta = get_itemmeta(null);
+	if(is_null(@meta), @meta = associative_array())
+	if(is_null(@meta['lore'])) {
+		@meta['lore'] = array();
 	}
-	@meta[lore][$line - 1] = colorize($)
-	set_itemmeta(null, @meta)
+	@meta['lore'][$line - 1] = colorize($);
+	set_itemmeta(null, @meta);
 <<<	
 
 # Spawn player head

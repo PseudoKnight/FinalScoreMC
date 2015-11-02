@@ -25,9 +25,7 @@ proc _add_player(@player, @golf) {
 proc _remove_player(@player, @golf) {
 	unbind('golf_swing_'.@player);
 	unbind('golf_hit_'.@player);
-	if(entity_exists(@golf['players'][@player]['id'])) {
-		entity_remove(@golf['players'][@player]['id']);
-	}
+	try(entity_remove(@golf['players'][@player]['id']));
 	if(ponline(@player)) {
 		if(function_exists('set_collides_with_entities')) {
 			set_collides_with_entities(@player, true);

@@ -108,7 +108,7 @@ bind(player_interact, array('id': @id.'railgun'), array('item': 175, 'button': '
 				@item = pinv(player(), @slot)
 				if(!is_null(@item) && @item['type'] == 402) {
 					play_sound(ploc(), array('sound': 'FIZZ', 'pitch': 0))
-					@inv = array()
+					@inv = associative_array()
 					@item['type'] = 175
 					@item['name'] = 'DOUBLE_PLANT'
 					@inv[@slot] = @item

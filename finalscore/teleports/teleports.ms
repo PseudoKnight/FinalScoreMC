@@ -1,6 +1,6 @@
 @requests = get_value('session.requests');
 if(!@requests) {
-	@requests = array();
+	@requests = associative_array();
 } else {
 	clear_value('session.requests');
 }

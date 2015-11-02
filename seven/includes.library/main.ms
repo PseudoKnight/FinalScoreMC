@@ -120,7 +120,7 @@ proc _7_start(@7) {
 						remove_scoreboard('7');
 						_remove_activity('7');
 					});
-					@7['players'] = array();
+					@7['players'] = associative_array();
 					@7['state'] = 0;
 					clear_task();
 				}

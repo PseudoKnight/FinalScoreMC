@@ -211,25 +211,24 @@ proc _pvp_start_match(@id) {
 		
 		if(array_index_exists(@pvp['arena'], 'itemspawn')) {
 			foreach(@i: @item in @pvp['arena']['itemspawn']) {
-				if(entity_exists(@pvp['itemspawn'][@i][0])) {
+				try(
 					@pvp['itemspawn'][@i][1] = time();
+					@loc = _relative(entity_loc(@pvp['itemspawn'][@i][0]), 'up', 0.4);
 					if(extension_exists('CHSpigot')) {
-						play_effect(
-							_relative(entity_loc(@pvp['itemspawn'][@i][0]), 'up', 0.4),
-							'FIREWORKS_SPARK',
-							array('radius': 64, 'speed': 0)
-						);
+						play_effect(@loc, 'FIREWORKS_SPARK', array('radius': 64, 'speed': 0));
 					}
-				} else if(@pvp['itemspawn'][@i][1] + (@item['cooldown'] * 1000) < time()) {
-					@id = drop_item(@item['loc'], @item['item'], false);
-					try( # maybe chunk isn't loaded? 
-						set_entity_velocity(@id, array(0, 0, 0));
-						play_sound(@item['loc'], array('sound': 'ENDERMAN_TELEPORT', 'pitch': 1.5));
-						make_effect(@item['loc'], 'ENDER_SIGNAL');
-						@pvp['itemspawn'][@i][0] = @id;
-						@pvp['itemspawn'][@i][1] = time();
-					)
-				}
+				, # doesn't exist
+					if(@pvp['itemspawn'][@i][1] + (@item['cooldown'] * 1000) < time()) {
+						@id = drop_item(@item['loc'], @item['item'], false);
+						try( # maybe chunk isn't loaded? 
+							set_entity_velocity(@id, array(0, 0, 0));
+							play_sound(@item['loc'], array('sound': 'ENDERMAN_TELEPORT', 'pitch': 1.5));
+							make_effect(@item['loc'], 'ENDER_SIGNAL');
+							@pvp['itemspawn'][@i][0] = @id;
+							@pvp['itemspawn'][@i][1] = time();
+						)
+					}
+				);
 			}
 		}
 		
@@ -451,7 +450,7 @@ proc _pvp_end_match(@id, @winners) {
 		}
 		
 		# Reset
-		@pvp = array('players': array(), 'running': 0);
+		@pvp = array('players': associative_array(), 'running': 0);
 		export('pvp'.@id, @pvp);
 		_remove_activity('pvp'.@id);
 

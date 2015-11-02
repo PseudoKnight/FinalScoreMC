@@ -1,6 +1,6 @@
 @timers = get_value('session.timers');
 if(!@timers) {
-	@timers = array();
+	@timers = associative_array();
 } else {
 	clear_value('session.timers');
 }
