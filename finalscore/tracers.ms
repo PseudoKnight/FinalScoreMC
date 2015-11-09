@@ -10,8 +10,8 @@ if(!array_contains(dm_all_markersets(), 'tracers')) {
 bind(player_move, null, array('threshold': 10), @event) {
 	try(
 		if(player() == '~console'
-		|| pmode() == 'CREATIVE' 
 		|| !has_permission('livemap.tracers')
+		|| pmode() == 'CREATIVE' 
 		|| array_get(_pdata(player()), 'support', 5) < 10) {
 			die();
 		}
@@ -37,9 +37,7 @@ bind(player_move, null, array('threshold': 10), @event) {
 			'id': player(),
 			'corners': array(@event['to'])
 		));
-		# dm_set_marker_line_style() does not seem to update the line.
-		runas('~console', '/dmarker updateline set:tracers id:'.player()
-			.' opacity:0.4 weight:2');
+		dm_set_marker_line_style('tracers', player(), array('color': array('r': 255, 'g': 0, 'b': 0), 'opacity': 0.4, 'weight': 2));
 	)
 }
 
