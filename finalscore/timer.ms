@@ -43,8 +43,8 @@ register_command('timer', array(
 				@ptime = 0;
 			}
 			
-			set_plevel(@player, 0);;
-			set_pexp(@player, 0)
+			set_plevel(@player, 0);
+			set_pexp(@player, 0);
 			play_sound(ploc(@player), array('sound': 'FIREWORK_BLAST'), @player);
 			
 			@stop = false;
@@ -53,6 +53,11 @@ register_command('timer', array(
 				if(ponline(@player)) {
 					@ploc = ploc(@player);
 					if(array_contains(sk_current_regions(@player), @id)) {
+						if(!array_index_exists(@timers, @player)) {
+							console('[Timer] ERROR: Failed to find player in array:', false);
+							console('[Timer] '.@timers);
+							die();
+						}
 						@time = round((time() - @timers[@player][1]) / 1000);
 						if(extension_exists('CHNaughty')) {
 							action_msg(@player, @time);
