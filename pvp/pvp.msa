@@ -5,6 +5,9 @@
 		@pvp = import('pvp'.@id)
 		@arena = get_value('arena.'.@id)
 		if(!@arena, die('Can\'t find that arena.'))
+		if(pworld() != 'custom') {
+			set_ploc(@arena['lobby']);
+		}
 		if(!@pvp) {
 			@pvp = array('players': associative_array(), 'running': 0);
 			@pvp['players'][player()] = associative_array();
