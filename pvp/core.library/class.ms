@@ -166,6 +166,7 @@ proc _class_select(@id, @pvp) {
 		bind(inventory_click, array('id': @id.'classselector'), array('slottype': 'CONTAINER'), @e, @id) {
 			@pvp = import('pvp'.@id)
 			if(!array_index_exists(@pvp['players'], player())
+			|| pworld() != 'custom'
 			|| is_null(@e['slotitem'])
 			|| is_null(@e['slotitem']['meta'])
 			|| is_null(@e['slotitem']['meta']['display'])) {
@@ -173,7 +174,7 @@ proc _class_select(@id, @pvp) {
 			}
 			@class = to_lower(strip_colors(@e['slotitem']['meta']['display']))
 			if(!array_index_exists(@pvp['arena']['classes'], @class) && @class != 'random') {
-				die()
+				die();
 			}
 			if(@class != 'random') {
 				if(!array_index_exists(@pvp['arena']['classes'][@class], 'picked')) {
