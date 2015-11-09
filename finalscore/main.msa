@@ -69,6 +69,7 @@
 			.'Usage: /transfer <mob> <player>')
 	}
 	@player = '';
+	@thing = '';
 	foreach(@arg in @args) {
 		if(ponline(@arg)) {
 			@player = @arg
