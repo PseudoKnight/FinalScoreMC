@@ -205,26 +205,23 @@ bind(player_join, null, null, @event) {
 		msg(@line);
 		msg(colorize(' &6&l\u1260&d&l\u1260&b&l\u1260&4&l\u1260 &6&lFINALSCORE&e&lMC \u00AB &r\u25AA \u25AA \u25AA'));
 		msg(@line);
-		if(@motd = get_value('motd')) {
-			msg(@motd);
-			msg(@line);
-		} else {
-			run('/mumble');
-		}
-
 		
-		_refresh_tablist(all_players());
-
 		@pdata = _pdata(player());
-		@update = false;
-		
+		@updatePdata = false;
 		if(array_index_exists(@pdata, 'mail')) {
 			foreach(@mail in @pdata['mail']) {
 				msg(color('gray').@mail[0].' (From '.@mail[1].'): '.color('r').@mail[2]);
 			}
 			array_remove(@pdata, 'mail');
-			@update = true;
+			@updatePdata = true;
+		} else if(@motd = get_value('motd')) {
+			msg(@motd);
+			msg(@line);
+		} else {
+			run('/mumble');
 		}
+		
+		_refresh_tablist(all_players());
 		
 		# SET NEW LOCATION
 		if(array_index_exists(@pdata, 'homeless')) {
@@ -232,7 +229,7 @@ bind(player_join, null, null, @event) {
 			@loc = get_spawn('world');
 			set_ploc(@loc);
 			array_remove(@pdata, 'homeless');
-			@update = true;
+			@updatePdata = true;
 		} else if(!has_permission('group.member')) {
 			@warp = get_value('warp.intro');
 			@loc = @warp['loc'];
@@ -240,7 +237,7 @@ bind(player_join, null, null, @event) {
 			pfacing(@warp['yaw'], @warp['pitch']);
 		}
 		
-		if(@update) {
+		if(@updatePdata) {
 			_store_pdata(player(), @pdata);
 		}
 		
