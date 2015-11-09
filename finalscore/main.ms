@@ -473,6 +473,10 @@ bind(creature_spawn, null, array('reason': 'BREEDING'), @event) {
 	if(@event['type'] != 'HORSE' 
 	&& array_size(entities_in_radius(@event['location'], 48)) > 250) {
 		cancel();
+		play_effect(@event['location'], 'SMOKE', array('id': 4));
+		foreach(@p in players_in_radius(@event['location'], 16)) {
+			tmsg(@p, color('gold').'Breeding failed due to overcrowding.');
+		}
 	}
 }
 
