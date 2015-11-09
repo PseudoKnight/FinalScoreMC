@@ -436,7 +436,9 @@ bind(player_interact, null, array('block': 26, 'button': 'right'), @event) {
 	msg(color('aqua').'Your spawn location has been set to this bed.');
 }
 
-# Infinite Dispensers
+# Dispenser handling
+# Infinite dispensers on creative/game worlds
+# Special behavior for other items (eg. place armor stands)
 bind(block_dispense, null, array('type': 'DISPENSER'), @e) {
 	if(!_is_survival_world(@e['location']['world'])) {
 		if(!array_contains(sk_region_check_flag(@e['location'], 'blocked-cmds'), '/finitedispensers')) {
@@ -458,6 +460,37 @@ bind(block_dispense, null, array('type': 'DISPENSER'), @e) {
 				);
 			});
 		}
+	} else if(@e['item']['type'] == 416) { # armor stand
+		try(
+			@inv = get_inventory(@e['location']);
+		, #catch
+			die();
+		);
+		cancel();
+		@loc = @e['location'][];
+		switch(split(':', get_block_at(@loc))[1]) {
+			case '8':
+				@loc['y'] -= 1;
+			case '9':
+				@loc['y'] += 1;
+			case '10':
+				@loc['z'] -= 1;
+				@loc['yaw'] = 180;
+			case '11':
+				@loc['z'] += 1;
+			case '12':
+				@loc['x'] -= 1;
+				@loc['yaw'] = 90;
+			case '13':
+				@loc['x'] += 1;
+				@loc['yaw'] = 270;
+		}
+		@loc['x'] += 0.5;
+		@loc['z'] += 0.5;
+		spawn_entity('ARMOR_STAND', 1, @loc);
+		set_timeout(50, closure(){
+			set_inventory(@e['location'], @inv);
+		});
 	}
 }
 
