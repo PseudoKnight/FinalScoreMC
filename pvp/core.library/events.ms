@@ -318,7 +318,13 @@ if(array_index_exists(@pvp['arena'], 'mobprotect')) {
 		foreach(@team: @data in @pvp['arena']['mobprotect']) {
 			try(
 				if(@pvp['team'][@team]['mobprotect'] == @e['id']) {
-					set_pscore('mobhealth', @pvp['arena']['team'][@team]['name'], ceil(get_entity_health(@e['id'])), @id);
+					@health = get_entity_health(@e['id'])
+					set_pscore('mobhealth', @pvp['arena']['team'][@team]['name'], ceil(@health), @id);
+					foreach(@p: @player in @pvp['players']) {
+						if(@player['team'] == @team) {
+							play_sound(ploc(@p), array('sound': 'NOTE_PLING', 'pitch': 0.5 + (1.5 * (@health / 100))), @p);
+						}
+					}
 				}
 			);
 		}
