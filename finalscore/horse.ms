@@ -72,7 +72,8 @@ bind(player_interact_entity, null, array('clicked': 'HORSE'), @event) {
 						}
 				}
 			}
-			if(is_null(entity_spec(@event['id'])['saddle'])) {
+			if(is_null(entity_spec(@event['id'])['saddle'])
+			&& is_null(get_entity_rider(@event['id']))) {
 				set_entity_rider(@event['id'], puuid());
 			}
 		}
