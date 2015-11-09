@@ -212,8 +212,8 @@ proc _pvp_start_match(@id) {
 		if(array_index_exists(@pvp['arena'], 'itemspawn')) {
 			foreach(@i: @item in @pvp['arena']['itemspawn']) {
 				try(
-					@pvp['itemspawn'][@i][1] = time();
 					@loc = _relative(entity_loc(@pvp['itemspawn'][@i][0]), 'up', 0.4);
+					@pvp['itemspawn'][@i][1] = time();
 					if(extension_exists('CHSpigot')) {
 						play_effect(@loc, 'FIREWORKS_SPARK', array('radius': 64, 'speed': 0));
 					}
