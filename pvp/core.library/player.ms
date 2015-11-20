@@ -4,6 +4,7 @@ proc _add_player(@player, @pvp) {
 
 proc _remove_player(@player, @pvp) {
 	array_remove(@pvp['players'], @player)
+	dm_set_pvisible(@player, true);
 }
 
 proc _pvp_initialize_players(@id, @players) {
@@ -34,6 +35,10 @@ proc _pvp_initialize_players(@id, @players) {
 				if(array_index_exists(@pvp['arena'], 'lives') && @pvp['arena']['lives'] > 1) {
 					set_pscore('lives', @player, @pvp['arena']['lives'], @id);
 				}
+		}
+		
+		if(array_contains(@pvp['arena']['flags'], 'hideplayers')) {
+			dm_set_pvisible(@player, false);
 		}
 		
 		if(array_index_exists(@pvp['arena'], 'lives')) {

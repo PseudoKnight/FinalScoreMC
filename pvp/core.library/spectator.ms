@@ -63,6 +63,7 @@ proc _remove_spectator(@id, @player, @pvp) {
 					raw_set_pvanish(@player, false, @p)
 				}
 			}
+			dm_set_pvisible(@player, true);
 			set_entity_fall_distance(puuid(@player), 0);
 			set_pflight(@player, false);
 			if(pinfo(@player, 5) > 0) {

@@ -144,7 +144,8 @@ proc _pvp_start_match(@id) {
 					if(array_index_exists(@pvp['arena'], 'resourcepack')) {
 						send_resourcepack(@player, 'http://mc.finalscoremc.com:25966/resourcepacks/default.zip')
 					}
-					array_remove(@pvp['players'], @player)
+					array_remove(@pvp['players'], @player);
+					dm_set_pvisible(@player, true);
 					set_pflight(@player, false);
 					preset_time(@player);
 					set_pstorm(@player, null);
@@ -169,7 +170,7 @@ proc _pvp_start_match(@id) {
 							@loc = @pvp['arena']['spawn'][0][@r];
 						}
 					}
-					set_entity_fall_distance(puuid(@player), 0);
+					try(set_entity_fall_distance(puuid(@player), 0));
 					set_ploc(@player, @loc);
 					pfacing(@player, 0, 0);
 					

@@ -369,6 +369,7 @@ bind(player_command, array('id': @id.'command'), null, @e, @id) {
 			set_pscore('lives', player(), 0, @id);
 		}
 		set_pflight(player(), false);
+		dm_set_pvisible(player(), true);
 		preset_time(player());
 		set_pstorm(player(), null);
 		_clear_pinv();
