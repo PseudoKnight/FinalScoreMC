@@ -1,0 +1,159 @@
+*:/build [$] = >>>
+	@args = parse_args($);
+	@region = '';
+	@state = 'toggle';
+	if(array_size(@args) == 2) {
+		if(sk_region_exists(pworld(), @args[0])) {
+			@region = @args[0];
+			@state = @args[1];
+		} else if(sk_region_exists(pworld(), @args[1])) {
+			@region = @args[1];
+			@state = @args[0];
+		} else {
+			die('Unknown region.');
+		}
+	} else if(array_size(@args) == 1) {
+		if(sk_region_exists(pworld(), @args[0])) {
+			@region = @args[0];
+		} else {
+			@region = array_get(sk_current_regions(), -1, '');
+			@state = @args[0];
+		}
+	} else {
+		@region = array_get(sk_current_regions(), -1, '');
+	}
+	
+	if(!@region) {
+		die('Unknown region.');
+	} else if((!array_contains(sk_region_owners(@region, pworld())['players'], puuid())
+	&& !has_permission('group.moderator'))) {
+		die('You do not own this region.');
+	}
+	
+	if(@state === 'toggle') {
+		foreach(@flag in sk_region_info(@region, pworld(), 3)) {
+			if(@flag[0] === 'block-break') {
+				@state = if(@flag[1] === 'DENY', 'allow', 'deny');
+				break();
+			}
+		}
+		if(@state === 'toggle') {
+			@state = 'deny';
+		}
+	}
+	
+	switch(@state) {
+		case 'on':
+		case 'allow':
+		case 'true':
+			sk_region_flag(pworld(), @region, 'block-break', 'ALLOW', 'members');
+			sk_region_flag(pworld(), @region, 'block-place', 'ALLOW', 'members');
+			msg('Members are now allowed to build in '.@region);
+		
+		case 'off':
+		case 'deny':
+		case 'false':
+			sk_region_flag(pworld(), @region, 'block-break', 'DENY', 'nonowners');
+			sk_region_flag(pworld(), @region, 'block-place', 'DENY', 'nonowners');
+			msg('Members are now prohibited from building in '.@region);
+
+		default:
+			die('Unknown state.');
+	}
+<<<
+
+*:/rg $ = run_cmd('/region '.$);
+
+*:/region $ = >>>
+	@args = parse_args($);
+	switch(@args[0]) {
+		case 'flag':
+		case 'f':
+			try(
+				@region = @args[1];
+				if(has_permission('group.moderator') || @args[2] !== 'mob-spawning') {  
+					run('/region '.$);
+					die();
+				}
+				try(
+					@rg = sk_region_info(@region, pworld());
+				, 
+					die('That region doesn\'t exist.');
+				)
+				if(!array_contains(@rg[1]['players'], puuid())) {
+					die('You do not own this region.');
+				}
+				foreach(@flagname in @rg[3]) {
+					if(@flagname[0] === 'mob-spawning') { 
+						sudo('/region flag '.@region.' mob-spawning');
+						break();
+					}
+				}
+				@args[3] = @state;
+				if(@state === 'allow') { 
+					sudo('/region flag '.@region.' deny-spawn');
+				} else if(@state === 'deny') {
+					sudo('/region flag '.@region.' deny-spawn CREEPER,ENDERMAN,SKELETON,SPIDER,ZOMBIE,SLIME,WITCH');
+				}
+			, # all else fails, run the original command
+				run('/region '.$);
+			);
+		
+		case 'rename':
+			@from = @args[1];
+			@to = @args[2];
+			if(!sk_region_exists(pworld(), @from)) {
+				die('That region doesn\'t exist.');
+			}
+			if(!has_permission('group.moderator') 
+			&& !array_contains(sk_region_owners(@from, pworld())['players'], puuid())) {
+				die('No permission.');
+			}
+			if(!reg_match('^[a-zA-Z0-9-_]{1,32}$', @to)[0]) {
+				die('You can only use alphanumeric characters and underscores/dashes.');
+			}
+			if(sk_region_exists(pworld(), @to)) {
+				 die('A region by that name already exists.');
+			}
+			sk_region_rename(pworld(), @from, @to);
+			msg('Renamed '.@from.' to '.@to.'.');
+			
+		case 'redefine':
+		case 'update':
+		case 'move':
+			if(has_permission('group.moderator') || array_size(@args) < 2) {
+				run('/region '.$);
+				die();
+			}
+			@region = @args[1];
+			try(
+				@owners = sk_region_owners(@region, pworld());
+			, 
+				die(color('RED').'That region doesn\'t exist.');
+			);
+			if(!array_contains(@owners['players'], puuid())) {
+				die(color('RED').'You do not own this region.');
+			}
+			@p1 = sk_pos1();
+			@p2 = sk_pos2();
+			if(is_null(@p1) || is_null(@p2)) {
+				die(color('RED').'Please make a selection.');
+			}
+			if(abs(@p1['x'] - @p2['x']) * abs(@p1['z'] - @p2['z']) > 10000) {
+				die(color('RED').'Selection too large. (100m^2 limit)');
+			}
+			sk_region_create(pworld(), @region.'-temp', array(@p1, @p2));
+			@regions = sk_region_intersect(pworld(), @region.'-temp');
+			sk_region_remove(pworld(), @region.'-temp');
+			foreach(@rg in @regions) {
+				@owners = sk_region_owners(@rg, pworld());
+				if(!array_contains(@owners['players'], puuid())) {
+					die(color('RED').'This selection overlaps a region you do not own.');
+				}
+			}
+			sudo('/rg redefine '.@region);
+		
+		default:
+			run('/region '.$);
+	}
+<<<
