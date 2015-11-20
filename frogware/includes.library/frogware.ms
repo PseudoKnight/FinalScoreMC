@@ -12,26 +12,25 @@ proc _fw_startgame(@pts) {
 proc _fw_endgame(@winners) {
 	unbind('fwdamage')
 	_fw_msg('Best frog'.if(array_size(@winners) > 1, 's').' in the house: '.array_implode(@winners, ' & '))
-	@warp = get_value('warp.frogpark')
 	foreach(@p in @winners) {
 		@coins = _fw_totalplayers()
 		_acc_add(@p, @coins)
 		tmsg(@p, color('6').'+'.@coins.' coins')
 	}
-	foreach(@p in all_players('custom')) {
-		if(get_pscoreboard(@p) == 'fw') {
-			if(pworld(@p) == 'custom') {
-				set_ploc(@p, @warp['loc'])
-			}
-		}
-	}
-	if(array_contains(get_scoreboards(), 'fw')) { 
-		remove_scoreboard('fw') 
-		_remove_activity('frogware');
+	if(array_contains(get_scoreboards(), 'fw')) {
+		set_timeout(5000, closure(){
+			remove_scoreboard('fw') 
+			_remove_activity('frogware');
+		});
 	}
 }
 
 proc _fw_startround(@secs = 12) {
+	@loc = sk_region_info('frogware', 'custom')[0][1];
+	@loc[0] += 18;
+	@loc[2] += 18;
+	play_effect(@loc, 'RECORD_PLAY', array('id': 0, 'radius': 32));
+
 	@blocks = import('frogware.blocks');
 	if(!is_null(@blocks)) {
 		foreach(@index: @block in @blocks) {
@@ -86,6 +85,7 @@ proc _fw_startround(@secs = 12) {
 			if(@total == 1 && @task === 'pvp', @task = @tasks[rand(array_size(@tasks))])
 			queue_delay(1000, 'fw2')
 			queue_push(closure(){
+				play_effect(@loc, 'RECORD_PLAY', array('id': rand(2256, 2268), 'radius': 32));
 				_fw_task(@task, 'start', @secs)
 			}, 'fw2')
 			for(@i = @secs, @i >= 0, @i--) {
