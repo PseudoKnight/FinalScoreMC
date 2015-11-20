@@ -49,7 +49,7 @@
 		if(!$player) {
 			die('This requires a player.');
 		}
-		@courses = get_values('times'.if(@id != 'all', '.'.@id))
+		@courses = get_values('times'.if(@id !== 'all', '.'.@id))
 		if(is_null(@courses)) {
 			die('Unknown arena.');
 		}

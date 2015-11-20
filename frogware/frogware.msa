@@ -25,14 +25,14 @@
 		set_pscore('score', player(), if(@scores, min(@scores), 0), 'fw')
 		
 		set_ploc(_fw_loc(-1))
-		if(pmode() == 'CREATIVE', set_pmode('SURVIVAL'))
+		if(pmode() === 'CREATIVE', set_pmode('SURVIVAL'))
 		set_phunger(20)
 		set_psaturation(5)
 		set_phealth(20)
 		_clear_pinv(player())
 		
 	case 'start':
-		if(get_pscoreboard(player()) != 'fw', die('You haven\'t joined first.'))
+		if(get_pscoreboard(player()) !== 'fw', die('You haven\'t joined first.'))
 		if(!is_numeric($pts), die('You must specify the point goal as a number. eg. /frogware start 25'))
 		if(queue_running('fw') || queue_running('fw2')) {
 			die('Already running.')

@@ -59,16 +59,16 @@ bind(block_place, null, array(type: 154), @event) {
 	include('includes.library/shops.ms');
 	@loc = _relative(@event[location], 'up')
 	@type = split(':', get_block_at(@loc))[0]
-	if(@type == '54' || @type == '146') {
+	if(@type === '54' || @type === '146') {
 		@signs = array()
-		if(split(':', get_block_at(_relative(@loc, 'up')))[0] == '68') {
+		if(split(':', get_block_at(_relative(@loc, 'up')))[0] === '68') {
 			@signs[0] = _relative(@loc, 'up')
 		}
 		if(get_inventory_size(@loc) == 54) {
 			foreach(@dir in array('north', 'south', 'east', 'west')) {
 				@rel = _relative(@loc, @dir)
 				if(split(':', get_block_at(@rel))[0] == @type) {
-					if(split(':', get_block_at(_relative(@rel, 'up')))[0] == '68') {
+					if(split(':', get_block_at(_relative(@rel, 'up')))[0] === '68') {
 						@signs[1] = _relative(@rel, 'up')
 					}
 					break()

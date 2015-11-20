@@ -166,14 +166,14 @@ proc _class_select(@id, @pvp) {
 		bind(inventory_click, array('id': @id.'classselector'), array('slottype': 'CONTAINER'), @e, @id) {
 			@pvp = import('pvp'.@id)
 			if(!array_index_exists(@pvp['players'], player())
-			|| pworld() != 'custom'
+			|| pworld() !== 'custom'
 			|| is_null(@e['slotitem'])
 			|| is_null(@e['slotitem']['meta'])
 			|| is_null(@e['slotitem']['meta']['display'])) {
 				die()
 			}
 			@class = to_lower(strip_colors(@e['slotitem']['meta']['display']))
-			if(!array_index_exists(@pvp['arena']['classes'], @class) && @class != 'random') {
+			if(!array_index_exists(@pvp['arena']['classes'], @class) && @class !== 'random') {
 				die();
 			}
 			if(@class != 'random') {
@@ -210,7 +210,7 @@ proc _class_select(@id, @pvp) {
 			if(array_index_exists(@pvp['players'][player()], 'class')) {
 				_class('unload', player(), @pvp['players'][player()]['class'], @pvp)
 			}
-			if(@class == 'random') {
+			if(@class === 'random') {
 				@classes = @pvp['arena']['classes'];
 				# if(array_index_exists(@pvp['players'][player()], 'team')) {
 					# @classes = array_filter(@pvp['arena']['classes'], closure(@key, @value){

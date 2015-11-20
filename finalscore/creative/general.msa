@@ -78,7 +78,7 @@
 			@mode = 'ADVENTURE'
 			
 		case 'toggle':
-			if(pmode(@player) == 'SURVIVAL') {
+			if(pmode(@player) === 'SURVIVAL') {
 				@mode = 'CREATIVE'
 			} else {
 				@mode = 'SURVIVAL'
@@ -141,7 +141,7 @@
 
 # spawn a temporary horse
 *:/horse = >>>
-	if(pmode() != 'CREATIVE' || get_entity_vehicle(puuid())) {
+	if(pmode() !== 'CREATIVE' || get_entity_vehicle(puuid())) {
 		die('You are not in creative mode.');
 	}
 	@horse = spawn_entity('horse', 1, _relative(ploc(), 'up'))[0];

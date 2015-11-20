@@ -60,8 +60,8 @@
 	# Place ball
 	bind(player_interact, array(id: @course), array(item: 341, button: 'right', block: 159), @event, @golf) {
 		if(array_index_exists(@golf['players'], player())
-		&& @event['action'] == 'right_click_block'
-		&& @event['facing'] == 'up'
+		&& @event['action'] === 'right_click_block'
+		&& @event['facing'] === 'up'
 		&& split(':', get_block_at(@event['location']))[1] == @golf['players'][player()]['hole'] + 5) {
 		
 			@ball = @golf['players'][player()];
@@ -172,7 +172,7 @@
 	
 	# Re-target slimes to owner
 	bind(target_player, array('id': @course.'_target'), null, @event, @golf) {
-		if((@event['mobtype'] == 'SLIME' || @event['mobtype'] == 'MAGMA_CUBE')
+		if((@event['mobtype'] === 'SLIME' || @event['mobtype'] === 'MAGMA_CUBE')
 		&& (!array_index_exists(@golf['players'], @event['player'])
 		|| @golf['players'][@event['player']]['id'] != @event['id'])) {
 			foreach(@player: @ball in @golf['players']) {
@@ -212,10 +212,10 @@
 				@loc['y'] -= 1;
 							
 				@block = get_block_at(@loc);
-				if(@block[0] != '0' && @v['y'] >= -0.0784000015258789) {
+				if(@block[0] !== '0' && @v['y'] >= -0.0784000015258789) {
 					if(@loc['y'] - floor(@loc['y']) == 0) {
 						# if ball dropped into the hole
-						if(@block == '35:15') {
+						if(@block === '35:15') {
 							# check for birdie/eagle
 							@hits = plevel(@player);
 							@par = @golf['course'][@ball['hole']];
@@ -267,7 +267,7 @@
 													set_collides_with_entities(@p, true);
 												}
 												@world = pworld(@p);
-												if(@world == 'dev' || @world == 'custom') {
+												if(@world === 'dev' || @world === 'custom') {
 													_clear_pinv(@p);
 												}
 												@strokes = get_pscore('strokes', @p, @course);
@@ -316,7 +316,7 @@
 						set_entity_loc(@ball['id'], @loc);
 					}
 					@v['y'] = 0;
-				} else if(@block == '35:15') {
+				} else if(@block === '35:15') {
 					play_sound(@loc, array('sound': 'WOOD_CLICK', 'pitch': 0.5 + @loc['y'] - floor(@loc['y'])));
 				}
 				

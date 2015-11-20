@@ -28,7 +28,7 @@ bind(player_chat, null, null, @event) {
 	include('includes.library/chat.ms')
 
 	# PRIVATE MESSAGING
-	if(@event['message'][0] == '@') {
+	if(@event['message'][0] === '@') {
 		@p = substr(parse_args(@event['message'])[0], 1)
 		if((length(@p) + 2) >= length(@event['message'])) {
 			die()
@@ -42,7 +42,7 @@ bind(player_chat, null, null, @event) {
 	# STAFF CHAT CHANNEL
 	@staffchat = import('staffchat')
 	if(array_contains(@staffchat, player())) {
-		if(@event['message'][0] == '!') {
+		if(@event['message'][0] === '!') {
 			@event['message'] = substr(@event['message'], 1)
 		} else {
 			broadcast(color('dark_gray').simple_date('h:mm').' '.color('aqua').'[STAFF] '.if(array_contains(pgroup(), 'donor'), color('green').'\u2666 ')

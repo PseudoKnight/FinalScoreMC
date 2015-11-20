@@ -53,7 +53,7 @@ bind(player_interact, array('id': @id.'railgun'), array('item': 175, 'button': '
 			|| @currentchunkz != @previouschunkz) {
 				foreach(@e in all_entities('custom', @currentchunkx, @currentchunkz)) {
 					if(is_entity_living(@e)
-					&& (entity_type(@e) != 'PLAYER'
+					&& (entity_type(@e) !== 'PLAYER'
 					|| get_player_from_entity_id(@e) != player())) {
 						@entities[] = @e
 					}

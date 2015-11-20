@@ -28,7 +28,7 @@ bind(player_interact, array('id': @id.'firebreath'), array('item': 377, 'button'
 			@es = all_entities('custom', @chunkc[0], @chunkc[1])
 			foreach(@e in @es) {
 				if(is_entity_living(@e)
-				&& (entity_type(@e) != 'PLAYER'
+				&& (entity_type(@e) !== 'PLAYER'
 				|| get_player_from_entity_id(@e) != player())) {
 					@entities[] = @e
 				}
@@ -39,7 +39,7 @@ bind(player_interact, array('id': @id.'firebreath'), array('item': 377, 'button'
 				@es = all_entities('custom', @chunkl[0], @chunkl[1])
 				foreach(@e in @es) {
 					if(is_entity_living(@e)
-					&& (entity_type(@e) != 'PLAYER'
+					&& (entity_type(@e) !== 'PLAYER'
 					|| get_player_from_entity_id(@e) != player())) {
 						@entities[] = @e
 					}
@@ -50,7 +50,7 @@ bind(player_interact, array('id': @id.'firebreath'), array('item': 377, 'button'
 				@es = all_entities('custom', @chunkr[0], @chunkr[1])
 				foreach(@e in @es) {
 					if(is_entity_living(@e)
-					&& (entity_type(@e) != 'PLAYER'
+					&& (entity_type(@e) !== 'PLAYER'
 					|| get_player_from_entity_id(@e) != player())) {
 						@entities[] = @e
 					}

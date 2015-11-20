@@ -23,7 +23,7 @@ bind(server_ping, null, null, @event) {
 }
 
 bind(player_login, null, null, @event) {
-	if(@event['result'] != 'ALLOWED') {
+	if(@event['result'] !== 'ALLOWED') {
 		die();
 	}
 	@update = false; 
@@ -189,7 +189,7 @@ bind(player_join, null, null, @event) {
 					'params': @params,
 					'success': closure(@response){
 						@result = json_decode(@response['body']);
-						if(@result && array_index_exists(@result, 'error') && @result['error'] != 'Nothing found.') {
+						if(@result && array_index_exists(@result, 'error') && @result['error'] !== 'Nothing found.') {
 							execute(@result['error'], @error);
 						}
 					}
@@ -242,7 +242,7 @@ bind(player_join, null, null, @event) {
 		}
 		
 		set_timeout(800, closure(){
-			if(pworld() == 'custom') {
+			if(pworld() === 'custom') {
 				_equip_park();
 			}
 			if(ponline(@event['player']) && @loc[3] == pworld() && @loc[1] > ploc()[1]) {
@@ -253,7 +253,7 @@ bind(player_join, null, null, @event) {
 }
 
 bind(player_command, null, null, @event) {
-	if(length(@event['prefix']) > 1 && @event['prefix'][1] != '/') {
+	if(length(@event['prefix']) > 1 && @event['prefix'][1] !== '/') {
 		console(@event['player'].' ran: '.@event['command'], false);
 	}
 }
@@ -288,8 +288,8 @@ bind(player_spawn, array('priority': 'LOWEST'), array('world': 'custom'), @event
 	TODO: Needs to be updated for 1.9 maybe
 */
 bind(block_place, null, array('type': 144), @event) {
-	if(pworld() != 'outworld' && pworld() != 'outworld_nether'
-	&& get_block_at(_relative(@event['location'], 'down')) == '88:0') {
+	if(pworld() !== 'outworld' && pworld() !== 'outworld_nether'
+	&& get_block_at(_relative(@event['location'], 'down')) === '88:0') {
 		@item = pinv(player(), null);
 		if(@item && @item['data'] == 1) {
 			cancel();
@@ -303,7 +303,7 @@ bind(block_place, null, array('type': 144), @event) {
 	Refills buckets and water bottles without reducing water levels
 */
 bind(player_interact, null, array('block': 118, 'button': 'right'), @event) {
-	if(@event['block'] == '118:3') {
+	if(@event['block'] === '118:3') {
 		@result = null;
 		switch(@event['item']) {
 			case '325:0':
@@ -329,16 +329,16 @@ bind(player_interact, null, array('block': 118, 'button': 'right'), @event) {
 bind(player_interact, null, array('item': 259, 'button': 'right'), @event) {
 	if(has_permission('group.regular') 
 	|| !array_index_exists(@event, 'location')
-	|| pworld() == 'outworld' 
-	|| pworld() == 'outworld_nether') {
+	|| pworld() === 'outworld' 
+	|| pworld() === 'outworld_nether') {
 		die();
 	}
 	@loc = @event['location'];
-	if(get_block_at(@loc) == '46:0') {
+	if(get_block_at(@loc) === '46:0') {
 		die();
-	} else if(get_block_at(@loc) == '49:0' && @event['facing'] == 'up') {
+	} else if(get_block_at(@loc) === '49:0' && @event['facing'] === 'up') {
 		queue_push(closure(){
-			if(reg_split('\\:', get_block_at(_relative(@loc, 'up')))[0] != '90') {
+			if(reg_split('\\:', get_block_at(_relative(@loc, 'up')))[0] !== '90') {
 				set_block_at(_relative(@loc, 'up'), 0);
 			}
 		});
@@ -362,7 +362,7 @@ bind(player_interact, null, array('block': 77, 'button': 'right'), @event) {
 				die('Unknown button command.');
 			}
 		} else if(length(@line[1]) > 1 
-		&& @line[1][0] == '/' 
+		&& @line[1][0] === '/' 
 		&& length(@line[0]) > 2 
 		&& substr(@line[0], 0, 2) == color(1)) {
 			msg('Ran command:' @line[1] @line[2] @line[3]);
@@ -500,8 +500,8 @@ bind(creature_spawn, null, array('reason': '/(NETHER_PORTAL|SPAWNER)/'), @event)
 
 # Limit breeding in high entity areas
 bind(creature_spawn, null, array('reason': 'BREEDING'), @event) {
-	if(@event['type'] != 'HORSE' 
-	&& array_size(entities_in_radius(@event['location'], 48)) > 250) {
+	if(@event['type'] !== 'HORSE' 
+	&& array_size(entities_in_radius(@event['location'], 64)) > 300) {
 		cancel();
 		play_effect(@event['location'], 'SMOKE', array('id': 4));
 		foreach(@p in players_in_radius(@event['location'], 16)) {
@@ -520,7 +520,7 @@ bind(block_break, null, array('type': 56), @event) {
 		for(@x = @event['location']['x'] - 1, @x <= @event['location']['x'] + 1, @x++) {
 			for(@y = @event['location']['y'] - 1, @y <= @event['location']['y'] + 1, @y++) {
 				for(@z = @event['location']['z'] - 1, @z <= @event['location']['z'] + 1, @z++) {
-					if(get_block_at(@x, @y, @z) == '56:0') {
+					if(get_block_at(@x, @y, @z) === '56:0') {
 						@report = false;
 					}
 				}
@@ -610,7 +610,7 @@ bind(creature_spawn, null, array('reason': 'SPAWNER_EGG'), @event) {
 
 # prevent enderpearls from damaging item frames and paintings
 bind(entity_damage, null, array('type': 'ITEM_FRAME', 'cause': 'PROJECTILE'), @event) {
-	if(entity_type(@event['damager']) == 'ENDER_PEARL') {
+	if(entity_type(@event['damager']) === 'ENDER_PEARL') {
 		cancel();
 	}
 }

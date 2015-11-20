@@ -59,7 +59,7 @@ bind(player_interact_at_entity, null, array('clicked': 'ARMOR_STAND'), @event) {
 			}
 			
 			# Start posing
-			if(@poseable == 'armorstand') {
+			if(@poseable === 'armorstand') {
 				msg(color(6).'Rotating Armor Stand.');
 				
 				@dir = pfacing();
@@ -87,7 +87,7 @@ bind(player_interact_at_entity, null, array('clicked': 'ARMOR_STAND'), @event) {
 					set_entity_loc(@event['id'], @newloc);
 				});
 				
-			} else if(@poseable == 'Torso') {
+			} else if(@poseable === 'Torso') {
 				msg(color(6).'Adjusting Armor Stand position.');
 			
 				@eloc = entity_loc(@event['id']);
@@ -143,7 +143,7 @@ bind(player_interact_at_entity, null, array('clicked': 'ARMOR_STAND'), @event) {
 					@dyaw = to_radians(@yawdiff) * 2.5;
 					@ddist = to_radians(@newdist - @dist) * 100;
 					@dpitch = to_radians(@newdir[1] - @dir[1]) * 2.5;
-					if(@poseable == 'poseHead') {
+					if(@poseable === 'poseHead') {
 						@newspec['poses'][@poseable]['x'] = @armorstand['poses'][@poseable]['x'] + @dpitch;
 						@newspec['poses'][@poseable]['y'] = @armorstand['poses'][@poseable]['y'] + @ddist;
 						@newspec['poses'][@poseable]['z'] = @armorstand['poses'][@poseable]['z'] + @dyaw;
@@ -212,7 +212,7 @@ bind(entity_damage, null, array('type': 'ARMOR_STAND'), @event) {
 		@damager = @event['shooter'];
 	}
 	
-	if(@damager == '' || !ponline(@damager)) {
+	if(@damager === '' || !ponline(@damager)) {
 		die();
 	}
 	

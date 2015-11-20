@@ -3,7 +3,7 @@ bind(player_interact, array('id': @id.'spawner'), array('button': 'right', 'item
 	@pvp = import('pvp'.@id);
 	if(!array_index_exists(@pvp['players'], player()), die());
 	
-	if(@e['action'] == 'right_click_block') {
+	if(@e['action'] === 'right_click_block') {
 		cancel()
 		@item = pinv(player(), null)
 		if(is_null(@item['meta'])
@@ -17,7 +17,7 @@ bind(player_interact, array('id': @id.'spawner'), array('button': 'right', 'item
 		
 		@mob = to_lower(@item['meta']['display'])
 		if(!is_null(@item['meta']['lore'])
-		&& @item['meta']['lore'][0] == 'Target Near') {
+		&& @item['meta']['lore'][0] === 'Target Near') {
 			foreach(@player in players_in_radius(@loc, 20)) {
 				if(@player == player(), continue())
 				_spawn_mob(@mob, 1, @loc, @player)

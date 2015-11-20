@@ -111,7 +111,7 @@
 	if(!@warp, die('That warp does not exist.'))
 	include('includes.library/teleports.ms')
 	if(array_contains(@blockedworlds, pworld(@player)), die('You cannot warp in this world.'))
-	_warmuptp(3.7, @player, @warp['loc'], @warp['yaw'], @warp['pitch'], if(@warp['loc'][3] == 'custom', true, false))
+	_warmuptp(3.7, @player, @warp['loc'], @warp['yaw'], @warp['pitch'], if(@warp['loc'][3] === 'custom', true, false))
 <<<
 
 *:/setwarp [$warp] = >>>
@@ -238,7 +238,7 @@
 			die('You cannot directly join a player who is in '._worldname(pworld(@player)));
 		}
 		include('includes.library/teleports.ms');
-		_warmuptp(3.7, player(), @closest['loc'], @closest['yaw'], @closest['pitch'], if(@closest['loc'][3] == 'custom', true, false));
+		_warmuptp(3.7, player(), @closest['loc'], @closest['yaw'], @closest['pitch'], if(@closest['loc'][3] === 'custom', true, false));
 		die('Teleporting you near '.@player);
 	}
 
@@ -251,7 +251,7 @@
 
 	@requests = import('requests')
 	if(array_index_exists(@requests, @player) 
-	&& @requests[@player][0] == 'join'
+	&& @requests[@player][0] === 'join'
 	&& @requests[@player][1] == player()) {
 		die('You\'ve already sent a join request to this player.');
 	}
@@ -275,7 +275,7 @@
 
 	@requests = import('requests')
 	if(array_index_exists(@requests, @player) 
-	&& @requests[@player][0] == 'invite'
+	&& @requests[@player][0] === 'invite'
 	&& @requests[@player][1] == player()) {
 		die('You\'ve already send an invite request to this player.')
 	}
@@ -290,7 +290,7 @@
 	@requests = import('requests')
 	if(!array_index_exists(@requests, player()), die('There is nothing to accept.'))
 	if(!ponline(@requests[player()][1]), die('That player is no longer online.'))
-	if(@requests[player()][0] == 'invite') {
+	if(@requests[player()][0] === 'invite') {
 		if(!has_permission('command.join.from'), die('You cannot do that from here.'))
 		if(!has_permission(@requests[player()][1], 'command.join.to')) {
 			@warps = get_values('warp');
@@ -309,7 +309,7 @@
 			if(is_null(@closest)) {
 				die('You cannot join a player in '._worldname(pworld(@requests[player()][1])));
 			}
-			_warmuptp(3.7, player(), @closest['loc'], @closest['yaw'], @closest['pitch'], if(@closest['loc'][3] == 'custom', true, false));
+			_warmuptp(3.7, player(), @closest['loc'], @closest['yaw'], @closest['pitch'], if(@closest['loc'][3] === 'custom', true, false));
 			die('Teleporting you near '.@requests[player()][1]);
 		}
 		msg(color('b').'Teleporting to '.@requests[player()][1].' in 3 seconds...')

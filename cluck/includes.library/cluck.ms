@@ -106,7 +106,7 @@ proc _cluck_spawn() {
 					@cluck['chickens'][@p][] = @entityid
 					
 				} else { # they stepped off the shooting range
-					if(ponline(@cluck['player'][@p]) && pworld(@cluck['player'][@p]) == 'custom') {
+					if(ponline(@cluck['player'][@p]) && pworld(@cluck['player'][@p]) === 'custom') {
 						_clear_pinv(@cluck['player'][@p])
 						set_plevel(@cluck['player'][@p], 0)
 						tmsg(@cluck['player'][@p], 'You must stand on the shooting pad.')
@@ -140,7 +140,7 @@ proc _cluck_endround() {
 		}
 		
 		_regionmsg('cluck', color(@cluck['color'][@p]).@cluck['player'][@p].' hit '.@cluck['hit'][@p].' chickens.')
-		if(ponline(@p) && pworld(@p) == 'custom') {
+		if(ponline(@p) && pworld(@p) === 'custom') {
 			_clear_pinv(@cluck['player'][@p])
 		}
 

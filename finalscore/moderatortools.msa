@@ -4,7 +4,7 @@
 	@force = false; # -f force recompile even if games are running
 	@message = '';
 	if($args) {
-		if($args[0] == '-') {
+		if($args[0] === '-') {
 			foreach(@i in range(1, length($args))) {
 				switch($args[@i]) {
 					case 'g':
@@ -36,7 +36,7 @@
 			# if forcing a recompiles despite games running, we have to clear scoreboards
 			@scoreboards = get_scoreboards();
 			foreach(@scoreboard in @scoreboards) {
-				if(@scoreboard != 'main') {
+				if(@scoreboard !== 'main') {
 					remove_scoreboard(@scoreboard);
 				}
 			}
@@ -143,7 +143,7 @@
 	foreach(@arg in parse_args($)) {
 		if(is_numeric(@arg)) {
 			@radius = min(@arg, 128);
-		} else if(@arg == '-n') {
+		} else if(@arg === '-n') {
 			@removenamed = true;
 		} else {
 			switch(@arg) {
@@ -180,7 +180,7 @@
 	@message = null
 	if($) {
 		@args = parse_args($)
-		if(@args[0] == '-t') {
+		if(@args[0] === '-t') {
 			@times = split('-', @args[1])
 			@bantime = time()
 			foreach(@t in @times) {
@@ -203,7 +203,7 @@
 	@pdata['ban'] = associative_array()
 	if(@bantime, @pdata['ban']['time'] = @bantime)
 	if(@message, @pdata['ban']['message'] = @message)
-	if(player() != '~console', @pdata['ban']['by'] = player())
+	if(player() !== '~console', @pdata['ban']['by'] = player())
 	_store_pdata($player, @pdata)
 	if(ponline($player), pkick($player, if(@message, @message, 'Banned. Appeal at FinalScoreMC.com')))
 	msg($player.' is now banned.')
@@ -253,7 +253,7 @@
 		@pdata['support'] = $amount
 		msg('Set '.@pdata['name'].'\'s contribution amount to $'.$amount.'.')
 	}
-	if(@pdata['group'] == 'member' || @pdata['group'] == 'regular') {
+	if(@pdata['group'] === 'member' || @pdata['group'] === 'regular') {
 		@pdata['group'] = 'donor';
 	}
 	_store_pdata($player, @pdata);
@@ -270,7 +270,7 @@
 *:/runas $player $ = >>>
 	if(!get_command_block() && !has_permission('group.admin'), die('You do not have permission for this command'))
 	try(@player = player($player), die('No player found.'))
-	if(substr($, 0, 2) == '-s') {
+	if(substr($, 0, 2) === '-s') {
 		@cmd = substr($, 3)
 	} else {
 		@cmd = $
@@ -295,7 +295,7 @@
 		msg(color('gray').'--[ '.color('l').@player.color('gray').' ]-------------------------')
 		msg(color('gray').'UUID: '.color('r').puuid(@player));
 		msg(color('gray').'Location: '.color('r')._worldname(@onlineinfo[7]).'('.@onlineinfo[7].') '.round(@onlineinfo[1][0]).','.round(@onlineinfo[1][1]).','.round(@onlineinfo[1][2]))
-		if(pmode(@player) == 'CREATIVE') {
+		if(pmode(@player) === 'CREATIVE') {
 			msg(color('gray').'Gamemode: '.color('r').'CREATIVE')
 		}
 		msg(color('gray').'IP: '.color('r').@onlineinfo[3])

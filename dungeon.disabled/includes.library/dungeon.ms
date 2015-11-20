@@ -77,19 +77,19 @@ proc _create_dungeon(@region, @world, @scale) {
 	queue_push(closure(){
 	for(@r = 1, @r < @length, @r += 2) {
 		for(@c = 1, @c < @width, @c += 2) {
-			if(@dungeon[@c][@r] == ' ') {
+			if(@dungeon[@c][@r] === ' ') {
 				@roomwidth = rand(((@maxroomsize - @minroomsize) / 2) + 1) * 2 + @minroomsize
 				@roomlength = rand(((@maxroomsize - @minroomsize) / 2) + 1) * 2 + @minroomsize
 				
 				# check placement
 				for(@r2 = @r, @r2 < @roomlength + @r, @r2 += 2) {
 					@c2 = @c
-					if(@r2 >= @length || @dungeon[@c2][@r2] != ' ') {
+					if(@r2 >= @length || @dungeon[@c2][@r2] !== ' ') {
 						@roomlength = @r2 - @r - 1
 						break()
 					}
 					for(@c2 = @c, @c2 < @roomwidth + @c, @c2 += 2) {
-						if(@c2 >= @width || @dungeon[@c2][@r2] != ' ') {
+						if(@c2 >= @width || @dungeon[@c2][@r2] !== ' ') {
 							@roomwidth = @c2 - @c - 1
 							break()
 						}
@@ -117,7 +117,7 @@ proc _create_dungeon(@region, @world, @scale) {
 							default:
 								@dungeon[@c2][@r2] = 'room'
 							}
-						} else if(@dungeon[@c2][@r2] != 'door') {
+						} else if(@dungeon[@c2][@r2] !== 'door') {
 							@dungeon[@c2][@r2] = 'wall'
 						}
 					}
@@ -151,7 +151,7 @@ proc _create_dungeon(@region, @world, @scale) {
 				
 				@nroom += 1
 				@c = @c + @roomwidth - 1
-			} else if(@dungeon[@c][@r] == 'stairs') {
+			} else if(@dungeon[@c][@r] === 'stairs') {
 			
 			}
 		}
@@ -167,7 +167,7 @@ proc _create_dungeon(@region, @world, @scale) {
 			@r = floor(@z / @scale)
 			@c = floor(@x / @scale)
 			#floor
-			if(@dungeon[@c][@r] == 'column' && !rand(4)) {
+			if(@dungeon[@c][@r] === 'column' && !rand(4)) {
 				set_block_at(array(@coords[1][0] + @x, @coords[1][1], @coords[1][2] + @z, @world), '52:0')
 				set_spawner_type(array(@coords[1][0] + @x, @coords[1][1], @coords[1][2] + @z, @world), 'ZOMBIE')
 			} else {
@@ -206,7 +206,7 @@ proc _create_dungeon(@region, @world, @scale) {
 				}
 			}
 			#ceiling
-			# if(@dungeon[@c][@r] == 'stairs') {
+			# if(@dungeon[@c][@r] === 'stairs') {
 				# if(@z - (@rooms[0]['r1'] * @scale) - 1 == @height + 1) {
 					# set_block_at(array(@coords[1][0] + @x, @coords[1][1] + @height + 1, @coords[1][2] + @z, @world), @mat['stairs'])
 				# } else if(@z - (@rooms[0]['r1'] * @scale) - 1 < @height + 1) {

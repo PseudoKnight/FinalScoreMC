@@ -49,14 +49,14 @@ case 'load':
 					}
 				}
 				
-				if(@item['meta']['display'] == 'HOT POTATO') {
+				if(@item['meta']['display'] === 'HOT POTATO') {
 					@item['meta']['display'] = '10';
 				}
 				
 				@task = set_interval(1000, closure() {
 					try(
 						@potato = pinv(@damaged, @slot);
-						if(@potato['meta']['display'] == '1') {
+						if(@potato['meta']['display'] === '1') {
 							bind(entity_damage, array('id': @damaged.'hotpotatodmg'), array('type': 'PLAYER', 'world': 'custom'), @e,
 									@damager, @pvp) {
 									

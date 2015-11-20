@@ -9,9 +9,9 @@ if(!array_contains(dm_all_markersets(), 'tracers')) {
 
 bind(player_move, null, array('threshold': 10), @event) {
 	try(
-		if(player() == '~console'
+		if(player() === '~console'
 		|| !has_permission('livemap.tracers')
-		|| pmode() == 'CREATIVE' 
+		|| pmode() === 'CREATIVE'
 		|| array_get(_pdata(player()), 'support', 5) < 10) {
 			die();
 		}
@@ -43,7 +43,7 @@ bind(player_move, null, array('threshold': 10), @event) {
 
 bind(player_teleport, null, null, @event) {
 	@pdata = _pdata(player());
-	if(array_get(@pdata, 'group', 'default') != 'donor'
+	if(array_get(@pdata, 'group', 'default') !== 'donor'
 	|| array_get(@pdata, 'support', 5) < 10) {
 		die();
 	}
@@ -52,7 +52,7 @@ bind(player_teleport, null, null, @event) {
 			if(array_contains(dm_all_markers('tracers'), player())) {
 				dm_delete_marker('tracers', player());
 			}
-		} else if(@event['type'] != 'ENDER_PEARL' && has_permission('livemap.tracers')) {
+		} else if(@event['type'] !== 'ENDER_PEARL' && has_permission('livemap.tracers')) {
 			@dist = sqrt((@event['to']['x'] - @event['from']['x'])**2 
 				+ (@event['to']['z'] - @event['from']['z'])**2);
 			if(@dist > 64) {

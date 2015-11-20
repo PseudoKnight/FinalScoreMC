@@ -1,5 +1,5 @@
 bind('creature_spawn', null, array('type': 'ZOMBIE', 'reason': 'NATURAL'), @event) {
-	if(@event['location']['world'] == 'outworld') {
+	if(@event['location']['world'] === 'outworld') {
 		# @mobs = array(
 			# 51: 'SKELETON', 
 			# 52: 'SPIDER', 
@@ -43,7 +43,7 @@ bind('creature_spawn', null, array('type': 'ZOMBIE', 'reason': 'NATURAL'), @even
 }
 
 bind('entity_death', null, array('type': 'ZOMBIE'), @event) {
-	if(@event['location']['world'] == 'outworld') {
+	if(@event['location']['world'] === 'outworld') {
 		@inv = get_mob_equipment(@event['id']);
 		if(!is_null(@inv['helmet'])
 		&& @inv['helmet']['type'] == 397) {
@@ -57,12 +57,12 @@ bind('entity_death', null, array('type': 'ZOMBIE'), @event) {
 				}
 			}
 
-			if(@player != '') {
+			if(@player !== '') {
 				@looting = 0;
 				@weapon = pinv(@player, null);
 				if(!is_null(@weapon)) {
 					foreach(@enchant in @weapon['enchants']) {
-						if(@enchant['etype'] == 'LOOT_BONUS_MOBS') {
+						if(@enchant['etype'] === 'LOOT_BONUS_MOBS') {
 							@looting = @enchant['elevel'];
 							break();
 						}
@@ -104,7 +104,7 @@ bind('entity_death', null, array('type': 'ZOMBIE'), @event) {
 }
 
 bind('target_player', null, array('mobtype': 'ZOMBIE'), @event) {
-	if(entity_loc(@event['id'])['world'] == 'outworld') {
+	if(entity_loc(@event['id'])['world'] === 'outworld') {
 		@inv = get_mob_equipment(@event['id']);
 		if(!is_null(@inv['helmet'])
 		&& @inv['helmet']['type'] == 397
@@ -123,7 +123,7 @@ bind('target_player', null, array('mobtype': 'ZOMBIE'), @event) {
 }
 
 bind('projectile_hit', null, array('type': 'EGG'), @event) {
-	if(entity_loc(@event['id'])['world'] == 'outworld') {
+	if(entity_loc(@event['id'])['world'] === 'outworld') {
 		@mobs = array(
 			51: 'SKELETON', 
 			52: 'SPIDER', 
@@ -162,13 +162,13 @@ bind('projectile_hit', null, array('type': 'EGG'), @event) {
 }
 
 bind('player_interact_entity', null, array('clicked': '/(HORSE|WOLF)/'), @event) {
-	if(entity_loc(@event['id'])['world'] == 'outworld') {
+	if(entity_loc(@event['id'])['world'] === 'outworld') {
 		set_entity_persistence(@event['id'], true);
 	}
 }
 
 bind('creature_spawn', null, array('type': 'CHICKEN', 'reason': 'EGG'), @event) {
-	if(@event['location']['world'] == 'outworld') {
+	if(@event['location']['world'] === 'outworld') {
 		cancel();
 	}
 }

@@ -1,6 +1,6 @@
 # Clicking cakes
 bind(player_interact, null, array('block': 92), @event) {
-	if(phas_flight() || pworld() != 'custom') {
+	if(phas_flight() || pworld() !== 'custom') {
 		die();
 	}
 	@location = @event['location'];
@@ -66,7 +66,7 @@ bind(player_interact, null, array('block': 68), @event) {
 		@chestloc = _relative(@event['location'], 'down')
 		@count = _get_inventory_count(@chestloc, 'all')
 		@coins = _acc_balance(player())
-		if(@event['action'] == 'left_click_block') {
+		if(@event['action'] === 'left_click_block') {
 			msg(color('yellow').'[Coin Shop] '.color(r).@count.if(@count == 1, ' item', ' items').' left. '
 			.'Your coins: '.if(@coins < @cost[1], color('red'), color('green')).round(@coins))
 		} else { #right_click_block

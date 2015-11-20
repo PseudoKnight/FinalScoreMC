@@ -4,7 +4,7 @@ proc _stats_damage(@damager, @player, @amount, @pvp) {
 	&& @damager != @player) {
 		@pvp['stats'][@damager]['damage'] += @amount;
 		
-		if(@pvp['stats'][@player]['damager'] != ''
+		if(@pvp['stats'][@player]['damager'] !== ''
 		&& @pvp['stats'][@player]['damager'] != @damager) {
 			@pvp['stats'][@player]['lastdamager'] = @pvp['stats'][@player]['damager'];
 			@pvp['stats'][@player]['lastdamaged'] = @pvp['stats'][@player]['damaged'];

@@ -1,5 +1,5 @@
 *:/7 [$action] [$schematic] = >>>
-	if(!$action || $action == 'start') {
+	if(!$action || $action === 'start') {
 		@arenas = get_value('seven')
 		if(!@arenas || array_size(@arenas) < 1) {
 			die('No schematics/arenas defined.')
@@ -32,7 +32,7 @@
 		set_interval(1000, closure(){
 			@num = 0
 			foreach(@player in all_players()) {
-				if(ponline(@player) && pmode(@player) == 'SURVIVAL' && array_contains(sk_current_regions(@player), '7')) {
+				if(ponline(@player) && pmode(@player) === 'SURVIVAL' && array_contains(sk_current_regions(@player), '7')) {
 					@num++
 					if(!array_index_exists(@7['players'], @player)) {
 						@7['players'][@player] = associative_array('time': 7.0, 'block': null);
@@ -67,7 +67,7 @@
 				@7['state'] = 3;
 					
 			} else if(@7['state'] == 3) {
-				if(get_block_at(@startblock) != '0:0') {
+				if(get_block_at(@startblock) !== '0:0') {
 					@7['state'] = 4;
 					set_block_at(@startblock, 0);
 					_worldmsg('custom', colorize('&6&l7 Seconds to Live&r... /warp 7'));

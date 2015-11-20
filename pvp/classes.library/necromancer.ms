@@ -7,10 +7,10 @@ case 'load':
 		if(@e['player'] == @p 
 		&& ((array_index_exists(@e, 'damager')
 		&& !ponline(@e['damager'])
-		&& entity_type(@e['damager']) == 'ZOMBIE')
+		&& entity_type(@e['damager']) === 'ZOMBIE')
 		|| (array_index_exists(@e, 'shooter')
 		&& !ponline(@e['shooter'])
-		&& entity_type(@e['shooter']) == 'SKELETON'))) {
+		&& entity_type(@e['shooter']) === 'SKELETON'))) {
 			cancel()
 			consume()
 		}

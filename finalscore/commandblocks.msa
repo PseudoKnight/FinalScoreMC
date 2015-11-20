@@ -110,7 +110,7 @@
 */
 /bedspawn $player [$x] [$y] [$z] = >>>
 	@cmdblk = get_command_block()
-	if($x == '') {
+	if($x === '') {
 		set_pbed_location($player, ploc($player))
 	} else {
 		set_pbed_location($player, _relative_coords(@cmdblk, $x, $y, $z))
@@ -119,7 +119,7 @@
 
 *:/give [$player=''] [$item=0] [$amount=1] = >>>
 	if(!get_command_block() && !has_permission('group.moderator'), die('You do not have permission to use this command.'))
-	if($player == '', die('Usage: /give [player] [id:data] [quantity]'))
+	if($player === '', die('Usage: /give [player] [id:data] [quantity]'))
 	try(@player = player($player), die('Unknown player.'))
 	if($item == 0, die('You need to specify an item id or name.'))
 	@item = split(':', $item)
@@ -216,11 +216,11 @@
 				@loc = @cmdblk
 			}
 			play_named_sound(@loc, array('sound': $sound, 'pitch': $pitch, 'volume': $volume))
-		} else if(has_permission('group.builder') || pworld() == 'dev') {
+		} else if(has_permission('group.builder') || pworld() === 'dev') {
 			play_named_sound(ploc(), array('sound': $sound, 'pitch': $pitch, 'volume': $volume))
 		}
 	} else {
-		if($sound == 'random') {
+		if($sound === 'random') {
 			@sounds = get_value('sounds');
 			if(is_null(@sounds)) {
 				@sounds = reflect_pull('enum', 'Sound')
@@ -240,7 +240,7 @@
 				@loc = @cmdblk
 			}
 			play_sound(@loc, array('sound': @sound, 'pitch': @pitch, 'volume': $volume))
-		} else if(has_permission('group.builder') || pworld() == 'dev') {
+		} else if(has_permission('group.builder') || pworld() === 'dev') {
 			play_sound(ploc(), array('sound': @sound, 'pitch': @pitch, 'volume': $volume))
 			msg(@sound.' @ '.@pitch)
 		}
@@ -260,17 +260,17 @@
 		case 'replace':
 			set_block_at(@loc, @id.':'.$data, false)
 		case 'keep':
-			if(get_block_at(@loc)[0] == '0') {
+			if(get_block_at(@loc)[0] === '0') {
 				set_block_at(@loc, @id.':'.$data, false)
 			}
 		case 'destroy':
-			if(get_block_at(@loc, @cmdblk[3])[0] != '0') {
+			if(get_block_at(@loc, @cmdblk[3])[0] !== '0') {
 				make_effect(@loc, 'STEP_SOUND:'.@id)
 			}
 			set_block_at(@loc, @id.':'.$data, true)
 		case 'fall':
 			@block = get_block_at(@loc)
-			if(@block[0] != '0') {
+			if(@block[0] !== '0') {
 				set_block_at(@loc, '0:0')
 				spawn_falling_block(@loc, @block)
 			}
@@ -289,7 +289,7 @@
 		}	
 		@id = split(':', @id)[0]
 		
-		if($replaceid != '') {
+		if($replaceid !== '') {
 			if(!is_numeric(@replaceid = $replaceid)
 			&& is_null(@replaceid = data_values($replaceid))) {
 				die()
@@ -302,7 +302,7 @@
 			for(@x = min(@loc1['x'], @loc2['x']), @x <= max(@loc1['x'], @loc2['x']), @x++) {
 				for(@y = min(@loc1['y'], @loc2['y']), @y <= max(@loc1['y'], @loc2['y']), @y++) {
 					for(@z = min(@loc1['z'], @loc2['z']), @z <= max(@loc1['z'], @loc2['z']), @z++) {
-						if($replaceid == '' || get_block_at(@x, @y, @z, @cmdblk['world']) == @replaceid.':'.$replacedata) {
+						if($replaceid === '' || get_block_at(@x, @y, @z, @cmdblk['world']) == @replaceid.':'.$replacedata) {
 							set_block_at(@x, @y, @z, @id.':'.$data, @cmdblk['world'], false)
 						}
 					}
@@ -327,7 +327,7 @@
 			for(@x = min(@loc1['x'], @loc2['x']), @x <= max(@loc1['x'], @loc2['x']), @x++) {
 				for(@y = min(@loc1['y'], @loc2['y']), @y <= max(@loc1['y'], @loc2['y']), @y++) {
 					for(@z = min(@loc1['z'], @loc2['z']), @z <= max(@loc1['z'], @loc2['z']), @z++) {
-						if(get_block_at(@x, @y, @z, @cmdblk['world'])[0] == '0') {
+						if(get_block_at(@x, @y, @z, @cmdblk['world'])[0] === '0') {
 							set_block_at(@x, @y, @z, @id.':'.$data, @cmdblk['world'], false)
 						}
 					}
@@ -338,7 +338,7 @@
 			for(@x = min(@loc1['x'], @loc2['x']), @x <= max(@loc1['x'], @loc2['x']), @x++) {
 				for(@y = min(@loc1['y'], @loc2['y']), @y <= max(@loc1['y'], @loc2['y']), @y++) {
 					for(@z = min(@loc1['z'], @loc2['z']), @z <= max(@loc1['z'], @loc2['z']), @z++) {
-						if(get_block_at(@x, @y, @z, @cmdblk['world'])[0] != '0') {
+						if(get_block_at(@x, @y, @z, @cmdblk['world'])[0] !== '0') {
 							make_effect(array(@x, @y, @z, @cmdblk['world']), 'STEP_SOUND:'.@id)
 						}
 						set_block_at(@x, @y, @z, @id.':'.$data, @cmdblk['world'], true)
@@ -351,7 +351,7 @@
 				for(@y = min(@loc1['y'], @loc2['y']), @y <= max(@loc1['y'], @loc2['y']), @y++) {
 					for(@z = min(@loc1['z'], @loc2['z']), @z <= max(@loc1['z'], @loc2['z']), @z++) {
 						@block = get_block_at(@x, @y, @z, @cmdblk['world'])
-						if(@block[0] != '0') {
+						if(@block[0] !== '0') {
 							set_block_at(@x, @y, @z, '0:0', @cmdblk['world'], false)
 							spawn_falling_block(array(@x, @y, @z, @cmdblk['world']), @block)
 						}

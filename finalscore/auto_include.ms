@@ -17,7 +17,7 @@ proc _player_count(@world) {
 	Returns if the world is a survival world
 */
 proc _is_survival_world(@world) {
-	return(!(@world == 'dev' || @world == 'custom'))
+	return(!(@world === 'dev' || @world === 'custom'));
 }
 
 /*
@@ -28,7 +28,7 @@ proc _equip_park(@player) {
 		@player = player();
 	}
 	
-	if(pworld(@player) != 'custom') {
+	if(pworld(@player) !== 'custom') {
 		return();
 	}
 
@@ -131,18 +131,18 @@ proc _minify_inv(@inv, @keepnulls = false) {
 proc _relative(@originloc, @dir, @amount = 1) {
 	@loc = @originloc[]
 	switch(@dir) {
-	case 'up':
-		if(array_index_exists(@loc, 'y')) {
-			@loc['y'] += @amount
-		}
-		@loc[1] += @amount
-		
 	case 'down':
 		if(array_index_exists(@loc, 'y')) {
 			@loc['y'] -= @amount
 		}
 		@loc[1] -= @amount
 		
+	case 'up':
+		if(array_index_exists(@loc, 'y')) {
+			@loc['y'] += @amount
+		}
+		@loc[1] += @amount
+
 	case 'north':
 		if(array_index_exists(@loc, 'z')) {
 			@loc['z'] -= @amount
@@ -155,17 +155,17 @@ proc _relative(@originloc, @dir, @amount = 1) {
 		}
 		@loc[2] += @amount
 		
-	case 'east':
-		if(array_index_exists(@loc, 'x')) {
-			@loc['x'] += @amount
-		}
-		@loc[0] += @amount
-		
 	case 'west':
 		if(array_index_exists(@loc, 'x')) {
 			@loc['x'] -= @amount
 		}
 		@loc[0] -= @amount
+		
+	case 'east':
+		if(array_index_exists(@loc, 'x')) {
+			@loc['x'] += @amount
+		}
+		@loc[0] += @amount
 	
 	default:
 		console('Error: unhandled relative direction: '.@dir);
@@ -179,8 +179,8 @@ proc _relative(@originloc, @dir, @amount = 1) {
 */
 proc _relative_coords(@originloc, @x, @y, @z) {
 	@loc = @originloc[]
-	if(@x[0] == '~') {
-		if(@x == '~') {
+	if(@x[0] === '~') {
+		if(@x === '~') {
 			@loc['x'] = @originloc['x']
 		} else {
 			@loc['x'] = @originloc['x'] + substr(@x, 1)
@@ -188,8 +188,8 @@ proc _relative_coords(@originloc, @x, @y, @z) {
 	} else {
 		@loc['x'] = @x
 	}
-	if(@y[0] == '~') {
-		if(@y == '~') {
+	if(@y[0] === '~') {
+		if(@y === '~') {
 			@loc['y'] = @originloc['y']
 		} else {
 			@loc['y'] = @originloc['y'] + substr(@y, 1)
@@ -197,8 +197,8 @@ proc _relative_coords(@originloc, @x, @y, @z) {
 	} else {
 		@loc['y'] = @y
 	}
-	if(@z[0] == '~') {
-		if(@z == '~') {
+	if(@z[0] === '~') {
+		if(@z === '~') {
 			@loc['z'] = @originloc['z']
 		} else {
 			@loc['z'] = @originloc['z'] + substr(@z, 1)
@@ -331,7 +331,7 @@ proc _get_effects() {
 	@region: The WorldGuard region name. It will use the player or commandblock world.
 	@entities: An array of entity types to remove. (some entity types are automatically protected)
 */
-proc _remove_region_entities(@region, @entities = array()) {
+proc _remove_region_entities(@region, @entities) {
 	@world = 'custom'; # we don't need this for other worlds
 	if(!sk_region_exists(@world, @region)) {
 		console('Can\'t remove entities because region doesn\'t exist: '.@region);
@@ -344,13 +344,16 @@ proc _remove_region_entities(@region, @entities = array()) {
 	@xMax = floor(@loc[0][0] / 16);
 	@zMax = floor(@loc[0][2] / 16);
 	@excludeEntities = array('PLAYER', 'COMPLEX_PART', 'ITEM_FRAME', 'PAINTING', 'UNKNOWN');
+	if(!@entities) {
+		@entities = array();
+	}
 	for(@x = floor(@loc[1][0] / 16), @x <= @xMax, @x++) {
 		for(@z = floor(@loc[1][2] / 16), @z <= @zMax, @z++) {
 			foreach(@entity in all_entities(@world, @x, @z)) {
 				@type = entity_type(@entity);
 				if((!@entities && !array_contains(@excludeEntities, @type))
 				|| array_contains(@entities, @type)) {
-					if(@type == 'ARMOR_STAND' && entity_spec(@entity)['visible']) {
+					if(@type === 'ARMOR_STAND' && entity_spec(@entity)['visible']) {
 						continue();
 					}
 					try(
@@ -532,8 +535,8 @@ proc _string_width(@string) {
 	@width = 0;
 	@bold = 0;
 	foreach(@i: @c in @string) {
-		if(@c == '\u00a7') {
-			if(@string[@i + 1] == 'l') {
+		if(@c === '\u00a7') {
+			if(@string[@i + 1] === 'l') {
 				@bold = 1;
 			} else if(reg_match('[0-9a-fr]', @string[@i + 1])) {
 				@bold = 0;
@@ -621,7 +624,7 @@ proc _get_inventory_count(@loc, @item) {
 	@count = 0
 	foreach(@i in @inv) {
 		if(!is_null(@i)
-		&& (@i['type'].':'.@i['data'] == @item || @item == 'all')) {
+		&& (@i['type'].':'.@i['data'] === @item || @item === 'all')) {
 			@count = @count + @i['qty']
 		}
 	}

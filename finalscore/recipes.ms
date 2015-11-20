@@ -16,9 +16,9 @@ if(!get_recipe_for(array('type': 403))) {
 bind('inventory_click', null, array('slottype': 'RESULT'), @event) {
 	if(is_null(@event['slotitem']), die())
 	
-	if(@event['inventorytype'] == 'WORKBENCH') {
+	if(@event['inventorytype'] === 'WORKBENCH') {
 		if(@event['slotitem']['type'] == 403 
-		&& strip_colors(@event['slotitem']['meta']['display']) == 'Enchanted Lore Book') {
+		&& strip_colors(@event['slotitem']['meta']['display']) === 'Enchanted Lore Book') {
 		
 			@slotitem = @event['slotitem'];
 			
@@ -47,7 +47,7 @@ bind('inventory_click', null, array('slottype': 'RESULT'), @event) {
 			
 		}
 		
-	} else if(@event['inventorytype'] == 'ANVIL') {
+	} else if(@event['inventorytype'] === 'ANVIL') {
 		if(!is_null(@event['inventory'][1])
 		&& @event['inventory'][1]['type'] == 403
 		&& @event['inventory'][1]['meta']['lore']) {

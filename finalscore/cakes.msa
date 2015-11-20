@@ -63,7 +63,7 @@
 		@args = parse_args($)
 		@id = @args[0]
 		
-		if(!array_index_exists(@cakes, @id) && get_block_at(@loc) != '92:0') {
+		if(!array_index_exists(@cakes, @id) && get_block_at(@loc) !== '92:0') {
 			die('That doesn\'t appear to be a cake. Is it obstructed by a sign or other partial block?')
 		}
 		
@@ -87,7 +87,7 @@
 			@type = 'challenge'
 		}
 		
-		if(@type != 'secret' && @type != 'challenge') {
+		if(@type !== 'secret' && @type !== 'challenge') {
 			die(color('red').'You can only have "secret" and "challenge" cake types.')
 		}
 
@@ -111,7 +111,7 @@
 		if(!has_permission('group.moderator'), die('You do not have permission to use cake commands.'));
 		if(!$, die('This needs an id.'))
 		@loc = pcursor()
-		if(get_block_at(@loc) != '92:0', die('That doesn\'t appear to be a cake. Is it obstructed by a sign or other partial block?'))
+		if(get_block_at(@loc) !== '92:0', die('That doesn\'t appear to be a cake. Is it obstructed by a sign or other partial block?'))
 
 		@cakes = get_value('cakes')
 		if(!array_index_exists(@cakes, $)) {

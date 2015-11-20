@@ -122,7 +122,7 @@
 	case 'delete':
 		if($setting) {
 			@mob = get_value('mob.'.$id);
-			if($setting == 'effect', @setting = 'effects', @setting = $setting);
+			if($setting === 'effect', @setting = 'effects', @setting = $setting);
 			array_remove(@mob, @setting);
 			store_value('mob.'.$id, @mob);
 			msg(@setting.' deleted from '.$id);
@@ -170,8 +170,8 @@
 
 *:/summon $entity $x $y $z = >>>
 	if(!@cmdBlock = get_command_block(), die());
-	if($x[0] == '~') {
-		if($x == '~') {
+	if($x[0] === '~') {
+		if($x === '~') {
 			@x = @cmdBlock['x'];
 		} else {
 			@x = @cmdBlock['x'] + substr($x, 1);
@@ -179,8 +179,8 @@
 	} else {
 		@x = $x;
 	}
-	if($y[0] == '~') {
-		if($y == '~') {
+	if($y[0] === '~') {
+		if($y === '~') {
 			@y = @cmdBlock['y'];
 		} else {
 			@y = @cmdBlock['y'] + substr($y, 1);
@@ -188,8 +188,8 @@
 	} else {
 		@y = $y;
 	}
-	if($z[0] == '~') {
-		if($z == '~') {
+	if($z[0] === '~') {
+		if($z === '~') {
 			@z = @cmdBlock['z'];
 		} else {
 			@z = @cmdBlock['z'] + substr($z, 1);

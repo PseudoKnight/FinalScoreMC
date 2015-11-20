@@ -5,7 +5,7 @@
 		@pvp = import('pvp'.@id)
 		@arena = get_value('arena.'.@id)
 		if(!@arena, die('Can\'t find that arena.'))
-		if(pworld() != 'custom') {
+		if(pworld() !== 'custom') {
 			set_ploc(@arena['lobby']);
 		}
 		if(!@pvp) {
@@ -90,7 +90,7 @@
 		}
 
 	case 'spectate':
-		if(pworld() != 'custom', 
+		if(pworld() !== 'custom', 
 			die('You are not in Frog Park.'))
 		@id = to_lower($id)
 		@pvp = import('pvp'.@id)
@@ -181,7 +181,7 @@
 		
 		# Check if enough players
 		foreach(array_keys(@pvp['players']), @player) {
-			if(!ponline(@player) || pworld(@player) != 'custom') {
+			if(!ponline(@player) || pworld(@player) !== 'custom') {
 				array_remove(@pvp['players'], @player);
 			}
 		}
@@ -209,7 +209,7 @@
 		if(array_contains(@pvp['arena']['flags'], 'keepinventory'), @pvp['arena']['denydrop'] = 'all')
 		
 		# Dynamically determine if it should be a team game
-		if(@pvp['arena']['mode'] == 'ddm') {
+		if(@pvp['arena']['mode'] === 'ddm') {
 			@size = array_size(@pvp['players'])
 			if(@size > 5 && @size % 2 == 0) {
 				@pvp['arena']['mode'] = 'tdm'
@@ -253,7 +253,7 @@
 		
 		# PREPARE TEAMS
 		if(array_index_exists(@pvp['arena'], 'team')) {
-			if(@pvp['arena']['mode'] == 'ctf') {
+			if(@pvp['arena']['mode'] === 'ctf') {
 				@pvp['team'][0]['score'] = 0
 				@pvp['team'][0]['flag'] = 0
 				@pvp['team'][1]['score'] = 0
@@ -333,7 +333,7 @@
 		}
 
 		foreach(@p in array_keys(@pvp['players'])) {
-			if(pmode(@p) == 'CREATIVE', set_pmode(@p, 'SURVIVAL'))
+			if(pmode(@p) === 'CREATIVE', set_pmode(@p, 'SURVIVAL'))
 			if(array_index_exists(@pvp['arena'], 'resourcepack')) {
 				send_resourcepack(@p, 'http://mc.finalscoremc.com:25966/resourcepacks/'.@pvp['arena']['resourcepack'].'.zip')
 			}

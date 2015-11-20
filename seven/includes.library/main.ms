@@ -131,7 +131,7 @@ proc _7_start(@7) {
 
 proc _7_remove_player(@player, @7) {
 	if(ponline(@player)) {
-		if(pworld(@player) == 'custom') {
+		if(pworld(@player) === 'custom') {
 			if(array_contains(sk_current_regions(@player), '7')) {
 				if(pinfo(@player, 5) > 0) {
 					pkill(@player);

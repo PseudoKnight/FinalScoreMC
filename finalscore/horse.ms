@@ -52,7 +52,7 @@ bind(player_interact_entity, null, array('clicked': 'HORSE'), @event) {
 	# skeleton/zombie horses
 	if(!is_cancelled() && !pinfo(player(), 11)) {
 		@horse = entity_spec(@event['id']);
-		if(@horse['variant'] == 'ZOMBIE' || @horse['variant'] == 'SKELETON') {
+		if(@horse['variant'] === 'ZOMBIE' || @horse['variant'] === 'SKELETON') {
 			if(@item) {
 				switch(@item['type']) {
 					case 322:

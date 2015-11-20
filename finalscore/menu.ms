@@ -21,8 +21,6 @@ queue_push(closure(){
 	);
 	create_virtualchest(@main);
 	
-	queue_delay(300);
-	
 	queue_push(closure(){
 		@courses = @main[];
 		@courses['id'] = 'courses';
@@ -31,7 +29,7 @@ queue_push(closure(){
 		@slot = 0;
 		foreach(@name: @cake in @cakes) {
 			if(@slot > 44, break());
-			if(@cake['type'] == 'challenge') {
+			if(@cake['type'] === 'challenge') {
 				@courses[@slot] = array(
 					'type': 351,
 					'data': 8,
@@ -45,9 +43,9 @@ queue_push(closure(){
 		}
 		@courses[46]['type'] = 57;
 		create_virtualchest(@courses);
+		@cakes = null;
+		@courses = null;
 	});
-	
-	queue_delay(300);
 	
 	queue_push(closure(){
 		@pvp = @main[];
@@ -71,14 +69,16 @@ queue_push(closure(){
 		}
 		@pvp[45]['type'] = 276;
 		create_virtualchest(@pvp);
+		@arenas = null;
+		@pvp = null;
 	});
 
 	bind(player_interact, null, array('item': 340, 'button': 'right'), @event) {
-		if(pworld() == 'custom') {
+		if(pworld() === 'custom') {
 			@item = pinv(player(), null);
 			if(!is_null(@item) # sometimes an earlier event handler will remove the item
 			&& !is_null(@item['meta'])
-			&& @item['meta']['display'] == 'Park Directory') {
+			&& @item['meta']['display'] === 'Park Directory') {
 				cancel();
 				popen_virtualchest('main');
 				play_sound(ploc(), array('sound': 'STEP_WOOL', 'pitch': 1.2), player());

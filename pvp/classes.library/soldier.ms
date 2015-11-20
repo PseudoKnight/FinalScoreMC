@@ -1,7 +1,7 @@
 switch(@action) {
 case 'load':
 	bind(entity_damage, array('id': @player.'soldierdmg'), array('type': 'PLAYER'), @e, @shooter = @player) {
-		if(@e['cause'] == 'PROJECTILE'
+		if(@e['cause'] === 'PROJECTILE'
 		&& @e['shooter'] == @shooter) {
 			modify_event('amount', 2);
 		}

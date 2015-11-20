@@ -40,7 +40,7 @@ proc _fw_startround(@secs = 12) {
 		}
 	}
 	
-	if(pworld() != 'custom') {
+	if(pworld() !== 'custom') {
 		_fw_endgame(array())
 		_fw_msg('Host left the game.')
 		return();
@@ -57,7 +57,7 @@ proc _fw_startround(@secs = 12) {
 				@total++
 				if(array_contains(sk_current_regions(@p), 'frogware')) {
 					foreach(@team in get_teams('fw')) {
-						if(@team['name'] == 'winners' 
+						if(@team['name'] === 'winners' 
 						&& array_contains(@team['players'], @p)) {
 							set_pscore('score', @p, get_pscore('score', @p, 'fw') + 1, 'fw')
 							_fw_changeteam(@p, 'losers')
@@ -83,7 +83,7 @@ proc _fw_startround(@secs = 12) {
 			@secs = 12 - round(8 * (@highscore / @goal))
 			@tasks = array('climb', 'keepaway', 'harvest', 'koth', 'cake', 'fall', 'cluck', 'frogegg', 'lavafall', 'shepherd', 'anvil', 'pvp')
 			@task = @tasks[rand(array_size(@tasks))]
-			if(@total == 1 && @task == 'pvp', @task = @tasks[rand(array_size(@tasks))])
+			if(@total == 1 && @task === 'pvp', @task = @tasks[rand(array_size(@tasks))])
 			queue_delay(1000, 'fw2')
 			queue_push(closure(){
 				_fw_task(@task, 'start', @secs)
@@ -139,7 +139,7 @@ proc _fw_loc(@height = 0, @minrange = false) {
 	if(@minrange) {
 		foreach(@p in all_players('custom')) {
 			if(!ponline(@p), continue())
-			if(get_pscoreboard(@p) == 'fw'
+			if(get_pscoreboard(@p) === 'fw'
 			&& _2d_distance(ploc(@p), @loc) < 6) {
 				@return = 0
 				break()
@@ -180,8 +180,8 @@ proc _fw_items(@item, @num) {
 
 proc _fw_player(@player) {
 	if(ponline(@player)
-	&& pworld(@player) == 'custom'
-	&& get_pscoreboard(@player) == 'fw') {
+	&& pworld(@player) === 'custom'
+	&& get_pscoreboard(@player) === 'fw') {
 		return(true)
 	} else {
 		return(false)
@@ -192,7 +192,7 @@ proc _fw_totalplayers() {
 	@count = 0
 	foreach(@p in all_players('custom')) {
 		if(!ponline(@p), continue())
-		if(get_pscoreboard(@p) == 'fw') {
+		if(get_pscoreboard(@p) === 'fw') {
 			@count++
 		}
 	}
@@ -308,7 +308,7 @@ proc _fw_task(@task, @state, @secs) {
 			foreach(@p in all_players('custom')) {
 				if(_fw_player(@p)) {
 					_clear_peffects(@p)
-					if(get_block_at(ploc(@p)) == '133:0'
+					if(get_block_at(ploc(@p)) === '133:0'
 					&& _fw_changeteam(@p, 'winners')) {
 						play_sound(ploc(@p), array('sound': 'zombie_metal'), @p)
 					}
@@ -327,7 +327,7 @@ proc _fw_task(@task, @state, @secs) {
 			}
 			_fw_mobs()
 			bind(entity_damage, array('id': 'fwtaskdamage'), array('type': 'PLAYER', 'world': 'custom'), @e) {
-				if((@e['cause'] == 'ENTITY_ATTACK' || @e['cause'] == 'ENTITY_EXPLOSION')
+				if((@e['cause'] === 'ENTITY_ATTACK' || @e['cause'] === 'ENTITY_EXPLOSION')
 				&& _fw_player(@e['player'])
 				&& !ponline(@e['damager'])) {
 					_fw_changeteam(@e['player'], 'losers')
@@ -417,7 +417,7 @@ proc _fw_task(@task, @state, @secs) {
 			foreach(@p in all_players('custom')) {
 				if(_fw_player(@p)) {
 					_clear_peffects(@p)
-					if(get_block_at(ploc(@p)) == '133:0'
+					if(get_block_at(ploc(@p)) === '133:0'
 					&& _fw_changeteam(@p, 'winners')) {
 						play_sound(ploc(@p), array('sound': 'zombie_metal'), @p)
 					}
@@ -476,7 +476,7 @@ proc _fw_task(@task, @state, @secs) {
 		case 'end':
 			foreach(@p in all_players('custom')) {
 				if(_fw_player(@p)
-				&& get_block_at(ploc(@p)) == '133:0'
+				&& get_block_at(ploc(@p)) === '133:0'
 				&& _fw_changeteam(@p, 'winners')) {
 					play_sound(ploc(@p), array('sound': 'zombie_metal'), @p)
 				}
@@ -489,27 +489,27 @@ proc _fw_task(@task, @state, @secs) {
 		switch(@state) {
 		case 'start':
 			if(!rand(4), @mob = 'BAT', @mob = 'CHICKEN')
-			_fw_msg('Shoot '.if(@mob == 'BAT', '1', '3').'!')
+			_fw_msg('Shoot '.if(@mob === 'BAT', '1', '3').'!')
 			foreach(@p in all_players('custom')) {
 				if(_fw_player(@p)) {
 					set_pinv(@p, array(
 						0: array('type': 261, 'enchants': array(array('elevel': 3, 'etype': 'ARROW_DAMAGE'))),
 						1: array('type': 262, 'qty': 6)
 					))
-					play_sound(ploc(@p), array('sound': if(@mob == 'BAT', 'BAT_LOOP', 'chicken_idle')), @p)
+					play_sound(ploc(@p), array('sound': if(@mob === 'BAT', 'BAT_LOOP', 'chicken_idle')), @p)
 					set_pexp(@p, 0)
 				}
 			}
 
 			for(@i = 0, @i < (_fw_totalplayers() * 4), @i++) {
-				spawn_mob(@mob, 1, if(@mob == 'BAT', _fw_loc(8), _fw_loc(18)))
+				spawn_mob(@mob, 1, if(@mob === 'BAT', _fw_loc(8), _fw_loc(18)))
 			}
 			bind(entity_death, array('id': 'fwcluck'), array('type': @mob), @e, @mob) {
 				if(array_index_exists(@e['cause'], 'shooter')
 				&& ponline(@e['cause']['shooter'])
 				&& _fw_player(@e['cause']['shooter'])) {
 					modify_event('xp', 0)
-					if(@e['type'] == 'BAT') {
+					if(@e['type'] === 'BAT') {
 						set_pexp(@e['cause']['shooter'], 99)
 					} else {
 						set_pexp(@e['cause']['shooter'], pexp(@e['cause']['shooter']) + 33)

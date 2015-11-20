@@ -18,7 +18,7 @@ proc _get_deadbolt(@loc) {
 }
 
 bind(player_interact, null, array('button': 'right', 'item': 323), @e) {
-	if(@e['action'] != 'right_click_block' || pinfo(player(), 11)) { 
+	if(@e['action'] !== 'right_click_block' || pinfo(player(), 11)) { 
 		die();
 	}
 	
@@ -73,7 +73,7 @@ bind(player_interact, null, array('block': data_values('wallsign')), @e) {
 	if(@db = _get_deadbolt(@e['location'])) {
 		@changed = false;
 		for(@i = 1, @i < 4, @i++) {
-			if(@db[@i] == '' || @db[@i][0] == '[' || @db[@i] == player()) {
+			if(@db[@i] === '' || @db[@i][0] === '[' || @db[@i] == player()) {
 				continue();
 			}
 			try(@pdata = _pdata(@db[@i], (length(@db[@i]) == 15)), continue());

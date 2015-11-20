@@ -41,7 +41,7 @@ bind(player_interact, null, array('button': 'right', 'block': 43), @event) {
 	@unbreaking = 0;
 	@enchants = @item['enchants'];
 	foreach(@enchant in @enchants) {
-		if(@enchant['etype'] == 'DURABILITY') {
+		if(@enchant['etype'] === 'DURABILITY') {
 			@unbreaking = @enchant['elevel'];
 		}
 	}

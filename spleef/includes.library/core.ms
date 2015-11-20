@@ -87,8 +87,8 @@ proc _spl_queue_start(@id, @world = @pworld) {
 				@limit--
 			}
 			@loc = array(rand(@rg[1][0], @rg[0][0]) + 0.5, @y, rand(@rg[1][2], @rg[0][2]) + 0.5, @world)
-			if(get_block_at(@loc)[0] == '0'
-			|| get_block_at(@loc[0], @loc[1] + 1, @loc[2], @loc[3])[0] != '0') {
+			if(get_block_at(@loc)[0] === '0'
+			|| get_block_at(@loc[0], @loc[1] + 1, @loc[2], @loc[3])[0] !== '0') {
 				continue(0)
 			}
 			set_ploc(@player, @loc)

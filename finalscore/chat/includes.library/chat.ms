@@ -1,10 +1,10 @@
 proc _pmsg(@player, @message) {
-	try(if(@player != '~console', @player = player(@player))
+	try(if(@player !== '~console', @player = player(@player))
 		if(@recipients = _remove_ignored(player(), array(@player))) {
 			@player = @recipients[0]
 			@message = colorize(@message)
 			tmsg(@player, color(7).'(From '.player().'): '.color('r').@message)
-			if(@player != '~console', play_sound(ploc(@player), array('sound': 'CHICKEN_EGG_POP', 'pitch': 2), @player))
+			if(@player !== '~console', play_sound(ploc(@player), array('sound': 'CHICKEN_EGG_POP', 'pitch': 2), @player))
 			msg(color(7).'(To '.@player.'): '.color('r').@message)
 			@conv = import('conv')
 			@conv[@player] = player()

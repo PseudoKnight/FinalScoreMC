@@ -13,7 +13,7 @@ bind(player_teleport, null, null, @event) {
 	&& _is_survival_world(@event['to']['world'])) {
 		try( # sometimes entity does not exist and causes an exception in get_entity_vehicle()
 			@vehicle = get_entity_vehicle(puuid());
-			if(entity_type(@vehicle) == 'HORSE') {
+			if(entity_type(@vehicle) === 'HORSE') {
 				set_timeout(1, closure(){
 					try(
 						set_entity_loc(@vehicle, @event['to']);
@@ -35,7 +35,7 @@ bind(player_teleport, null, null, @event) {
 	
 	# take the rest off the overloaded teleportation event
 	set_timeout(50, closure(){
-		if(@block[0] != '0' && # don't run this if the [to] location is in the air
+		if(@block[0] !== '0' && # don't run this if the [to] location is in the air
 		(@event['to']['world'] != @event['from']['world']
 		|| _horizontal_distance(@event['to'], @event['from']) > 112)) { # 7+ chunk view distance
 			# delay enough to compensate for a lag spike
@@ -52,13 +52,13 @@ bind(player_teleport, null, null, @event) {
 
 # Block enderpearls
 bind(player_interact, null, array('item': 368, 'button': 'right'), @event) {
-	if(pworld() == 'custom', cancel())
+	if(pworld() === 'custom', cancel())
 }
 
 # Main world_changed handler
 bind(world_changed, null, null, @event) {
-	if(@event['from'] != 'custom'
-	&& @event['to'] == 'custom') {
+	if(@event['from'] !== 'custom'
+	&& @event['to'] === 'custom') {
 		# if teleporting to Frog Park
 		set_timeout(200, closure(){
 			_equip_park();

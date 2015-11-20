@@ -23,7 +23,7 @@ register_command('timer', array(
 
 		@timers = import('timer');
 		
-		if(@args[0] == 'start') {
+		if(@args[0] === 'start') {
 		
 			set_phunger(@player, 20);
 			set_psaturation(@player, 5);
@@ -93,7 +93,7 @@ register_command('timer', array(
 					unbind(@player.'timerbreak');
 					unbind(@player.'reset');
 					unbind(@player.'timerdeath');
-					if(ponline(@player) && pworld(@player) == 'custom') {
+					if(ponline(@player) && pworld(@player) === 'custom') {
 						set_plevel(@player, 0);
 						set_pexp(@player, 0);
 						ptake_item(@player, 39, 1);
@@ -135,7 +135,7 @@ register_command('timer', array(
 			}
 			
 		
-		} else if(@args[0] == 'stop'
+		} else if(@args[0] === 'stop'
 		&& array_index_exists(@timers, @player)
 		&& @timers[@player][0] == @id) {
 			

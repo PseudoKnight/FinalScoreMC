@@ -116,7 +116,7 @@
 	and then sets it to your inventory.
 */
 /invconvert $player [$world = 'default'] = >>>
-	if(pmode() != 'CREATIVE') {
+	if(pmode() !== 'CREATIVE') {
 		die('Only do this in creative mode. This replaces your inventory.');
 	}
 	proc _parse_inv(@oinv, @armor = false) {
@@ -160,7 +160,7 @@
 		return(@inv);
 	}
 	@endpoint = '';
-	if($world == 'default') {
+	if($world === 'default') {
 		@endpoint = 'groups/default/'.$player.'.yml';
 	} else {
 		@endpoint = 'worlds/'.$world.'/'.$player.'.yml';

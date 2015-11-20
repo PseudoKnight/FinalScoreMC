@@ -12,7 +12,7 @@
 		msg('You have been muted.')
 		die()
 	}
-	broadcast(color('8').simple_date('h:mm').' '.if(player() != '~console' && array_contains(pgroup(), 'donor'), color('green').'\u2666 ')._colorname().player().color('gray').': '.color('r').$) 
+	broadcast(color('8').simple_date('h:mm').' '.if(player() !== '~console' && array_contains(pgroup(), 'donor'), color('green').'\u2666 ')._colorname().player().color('gray').': '.color('r').$) 
 <<<
 
 *:/me $ = >>>
@@ -29,7 +29,7 @@
 
 # MUTING
 *:/ignore $player = >>>
-	if($player == 'all') {
+	if($player === 'all') {
 		@player = 'all'
 	} else {
 		try(@player = player($player), die('No player found.'))
@@ -45,7 +45,7 @@
 <<<
 
 *:/unignore $player = >>>
-	if($player == 'all') {
+	if($player === 'all') {
 		@player = 'all'
 	} else {
 		try(@player = player($player), die('No player found.'))
@@ -89,7 +89,7 @@
 		die('That player isn\'t muted.')
 	}
 	for(@i = 0, @i < array_size(@ignorelist[@player]), @i++) {
-		if(@ignorelist[@player][@i] == 'all') {
+		if(@ignorelist[@player][@i] === 'all') {
 			array_remove(@ignorelist[@player], @i)
 			msg(@player.' is no longer muted.')
 			break()
@@ -146,7 +146,7 @@
 		die('You do not have any current conversations.');
 	}
 	@player = @conv[player()];
-	if(@player != '~console' && !ponline(@player), die('That player is no longer online.'))
+	if(@player !== '~console' && !ponline(@player), die('That player is no longer online.'))
 	include('includes.library/chat.ms')
 	_pmsg(@player, $)
 <<<

@@ -251,7 +251,7 @@
 			'These are the seeds for the four main worlds -- Alpha: -621778714517541268, Delta: '.
 			'-8443156782283251243, Gamma: -754633420005903009, Omega: 950483747.'
 	);
-	if($selection == 'help') {
+	if($selection === 'help') {
 		msg(color('a').'Get help on any of these topics:');
 		msg(color('6').array_implode(array_keys(@help), ' '));
 	} else {
@@ -296,13 +296,13 @@
 		}
 	}
 	for(@i = 0, @i < array_size(@list), @i++) {
-		if(@list[@i][2] != '') {
+		if(@list[@i][2] !== '') {
 			msg(color(@list[@i][1]).@list[@i][0].color(7).': '.@list[@i][2])
 		}
 	}
 <<<
 *:/list = >>>
-	if(player() != '~console') {
+	if(player() !== '~console') {
 		call_alias('/who')
 	}
 <<<

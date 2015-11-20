@@ -16,9 +16,9 @@
 	if(length($) > 11, die(color(6).'[Shop] There is a 15 character limit per line.'))
 	
 	@line = 0
-	if($transaction == 'buy') {
+	if($transaction === 'buy') {
 		@line = 1
-	} else if($transaction == 'sell') {
+	} else if($transaction === 'sell') {
 		@line = 2
 	} else {
 		die(color(6).'[Shop] You need to specify "buy" or "sell".')

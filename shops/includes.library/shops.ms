@@ -19,7 +19,7 @@ proc _get_shop(@loc) {
 	
 	# Update owner player name, if changed
 	try(
-		@autocomplete = (length(@owner) == 15 && @owner[13] == '~');
+		@autocomplete = (length(@owner) == 15 && @owner[13] === '~');
 		if(@autocomplete) {
 			@owner = substr(@owner, 0, 13);
 		}

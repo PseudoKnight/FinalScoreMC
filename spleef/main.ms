@@ -1,8 +1,8 @@
 bind(player_interact, null, array('block': 68), @e) {
 	@sign = get_sign_text(@e['location'])
 	
-	if(@sign[0] == '[Spleef]'
-	&& @sign[2] == 'Join') {
+	if(@sign[0] === '[Spleef]'
+	&& @sign[2] === 'Join') {
 	
 		@id = to_lower(@sign[1])
 		if(!has_value('spleef', @id)) {

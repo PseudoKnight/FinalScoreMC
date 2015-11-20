@@ -1,5 +1,5 @@
 proc _add_player(@player, @golf) {
-	if(pmode(@player) == 'CREATIVE') {
+	if(pmode(@player) === 'CREATIVE') {
 		return(false);
 	}
 	@golf['players'][@player] = array(

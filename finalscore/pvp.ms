@@ -10,6 +10,8 @@ bind(entity_damage_player, null, null, @event) {
 	&& @event['data'] != @event['player']
 	&& _is_survival_world(@event['location']['world'])) {
 		cancel();
+	}
+	/*
 		@damaged = @event['player'];
 		@damager = @event['data'];
 		@battle = import('battle');
@@ -28,11 +30,12 @@ bind(entity_damage_player, null, null, @event) {
 			die();
 		}
 		action_msg(@damager, color('green').'+'.@event['amount'].'  ('.@battle[@damager]['totaldamage'].')');
-		if(@event['damager'] == 'ARROW') {
+		if(@event['damager'] === 'ARROW') {
 			play_sound(ploc(@damager), array('sound': 'SUCCESSFUL_HIT', 'pitch': 0.5), @damager);
 		}
 		action_msg(@damaged, color('red').'+'.@event['amount'].'  ('.@battle[@damager]['totaldamage'].')');
 		play_sound(ploc(@damaged), array('sound': 'HURT_FLESH'));
 		play_entity_effect(puuid(@damaged), 'HURT');
 	}
+	*/
 }

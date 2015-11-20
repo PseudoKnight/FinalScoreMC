@@ -27,9 +27,9 @@ case 'set':
 				array_remove(@inv, @slot)
 			} else {
 				foreach(@i:@v in @inv[@slot]) {
-					if(@i == 'meta' && @v) {
+					if(@i === 'meta' && @v) {
 						foreach(@mi:@mv in @inv[@slot]['meta']) {
-							if(!@mv || @mi == 'enchants') {
+							if(!@mv || @mi === 'enchants') {
 								array_remove(@inv[@slot]['meta'], @mi)
 							}
 						}
@@ -73,11 +73,11 @@ case 'set':
 		}
 		if(!@args[1]) {
 			@args[1] = 5
-		} else if(@args[1] && @args[1] != '~' && (@args[1] < 0 || @args[1] > 20)) {
+		} else if(@args[1] && @args[1] !== '~' && (@args[1] < 0 || @args[1] > 20)) {
 			die('Saturation must be within 0 and 20')
 		}
 		@arena['classes'][@classid]['hunger'] =	array(@args[0], @args[1])
-		msg('Set hunger to '.@args[0].' hunger '.if(@args[1] == '~', 'statically.', 'and '.@args[1].' saturation.'))
+		msg('Set hunger to '.@args[0].' hunger '.if(@args[1] === '~', 'statically.', 'and '.@args[1].' saturation.'))
 
 	case 'effect':
 		@effects = _get_effects()
@@ -100,19 +100,19 @@ case 'set':
 		}
 		
 	case 'doublejump':
-		if($ == 'true') {
+		if($ === 'true') {
 			@arena['classes'][@classid]['doublejump'] = 'normal' # string instead of boolean leaves room for alternative doublejump modes
 			msg('Turned on doublejump for class.')
-		} else if($ == 'false' && array_index_exists(@arena['classes'][@classid], 'doublejump')) {
+		} else if($ === 'false' && array_index_exists(@arena['classes'][@classid], 'doublejump')) {
 			array_remove(@arena['classes'][@classid], 'doublejump')
 			msg('Turned off doublejump for class.')
 		}
 	
 	case 'script':
-		if($ == 'true') {
+		if($ === 'true') {
 			@arena['classes'][@classid]['script'] = true
 			msg('Turned ON special script loading for this class.')
-		} else if($ == 'false' && array_index_exists(@arena['classes'][@classid], 'script')) {
+		} else if($ === 'false' && array_index_exists(@arena['classes'][@classid], 'script')) {
 			array_remove(@arena['classes'][@classid], 'script')
 			msg('Turned OFF special script loading for this class.')
 		}

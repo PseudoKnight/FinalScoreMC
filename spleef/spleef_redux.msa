@@ -43,9 +43,9 @@
 	
 			switch($flag) {
 			case 'lobby':
-				if($value == 'here') {
+				if($value === 'here') {
 					@loc = ploc()
-				} else if($value == 'there') {
+				} else if($value === 'there') {
 					@loc = pcursor()
 				} else {
 					die('Flag takes "here" or "there".')
@@ -91,7 +91,7 @@
 				msg(colorize("Set available floor block types to: &a@blocks"))
 				
 			case 'drops': 
-				if($value == 'false') {
+				if($value === 'false') {
 					@arena[$flag] = false
 				} else if(array_index_exists(@arena, 'drops')) {
 					array_remove(@arena, 'drops')

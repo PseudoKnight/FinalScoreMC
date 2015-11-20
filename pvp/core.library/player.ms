@@ -11,11 +11,11 @@ proc _pvp_initialize_players(@id, @players) {
 	@c = array(0, 0); # for selecting initial spawn locations
 	@loc = array();
 	foreach(@player in @players) {
-		if(!ponline(@player) || !get_collides_with_entities(@player) || pworld(@player) != 'custom') {
+		if(!ponline(@player) || !get_collides_with_entities(@player) || pworld(@player) !== 'custom') {
 			array_remove(@pvp['players'], @player);
 			continue();
 		}
-		if(pmode(@player) == 'CREATIVE', 
+		if(pmode(@player) === 'CREATIVE', 
 			set_pmode(@player, 'SURVIVAL'))
 		if(has_permission(@player, 'vanish.standard'), 
 			scriptas(@player, run('/v off')))
@@ -114,7 +114,7 @@ proc _pvp_initialize_players(@id, @players) {
 }
 
 proc _pvp_equip(@id, @player) {
-	if(pworld(@player) != 'custom') {
+	if(pworld(@player) !== 'custom') {
 		return();
 	}
 	@pvp = import('pvp'.@id)

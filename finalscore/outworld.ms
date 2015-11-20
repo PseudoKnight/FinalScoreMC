@@ -1,5 +1,5 @@
 bind(player_move, null, null, @event) {
-	if(@event['to']['world'] != 'outworld' || !ponline(@event['player'])) {
+	if(@event['to']['world'] !== 'outworld' || !ponline(@event['player'])) {
 		die();
 	}
 	
@@ -23,12 +23,12 @@ bind(player_move, null, null, @event) {
 }
 
 bind(item_despawn, null, array('item': 6), @event) {
-	if(@event['location']['world'] != 'outworld') {
+	if(@event['location']['world'] !== 'outworld') {
 		die();
 	}
 	
 	@block = get_block_at(_relative(@event['location'], 'down'));
-	if((@block[0] == 2 || @block[0] == 3) && @block[1] == ':') {
+	if((@block[0] == 2 || @block[0] == 3) && @block[1] === ':') {
 		set_block_at(@event['location'], @event['item']['type'].':'.@event['item']['data']);
 	}
 }

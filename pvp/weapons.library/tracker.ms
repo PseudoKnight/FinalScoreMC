@@ -5,9 +5,9 @@ bind(item_held, array('id': @id.'tracker'), null, @event, @id) {
 		die();
 	}
 	
-	if(pinfo(player(), 6) == '345:0') {
+	if(pinfo(player(), 6) === '345:0') {
 		set_interval(1500, 500, closure(){
-			if(pinfo(player(), 6) == '345:0') {
+			if(pinfo(player(), 6) === '345:0') {
 				foreach(@p: @player in @pvp['players']) {
 					if(@player['team'] != @pvp['players'][player()]['team']) {
 						@loc1 = ploc();

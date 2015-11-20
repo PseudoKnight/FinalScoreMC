@@ -81,7 +81,7 @@
 			}
 		)
 
-		if(array_size(@nextspleef) < 2 && player() != 'PseudoKnight', die(color('a').'[Spleef] '.color('r').'There are not enough players in this match!'))
+		if(array_size(@nextspleef) < 2 && player() !== 'PseudoKnight', die(color('a').'[Spleef] '.color('r').'There are not enough players in this match!'))
 
 
 		@reward = array_size(@nextspleef) - 1
@@ -118,7 +118,7 @@
 
 		set_timeout(1000, closure(
 			#difficult terrain
-			if(get_block_at(@cfg['option']['soulsand']) == '124:0' && get_block_at(@cfg['option']['platforming']) ==  '123:0') {
+			if(get_block_at(@cfg['option']['soulsand']) === '124:0' && get_block_at(@cfg['option']['platforming']) ==  '123:0') {
 			proc _setfloor(@x, @y, @z, @mat) {
 				if(rand(10) < 6) {
 					set_block_at(@x, @y, @z, @mat)
@@ -127,7 +127,7 @@
 				}
 			}
 			#platforming
-			} else if(get_block_at(@cfg['option']['platforming']) ==  '124:0' && get_block_at(@cfg['option']['soulsand']) == '123:0') {
+			} else if(get_block_at(@cfg['option']['platforming']) === '124:0' && get_block_at(@cfg['option']['soulsand']) === '123:0') {
 				proc _setfloor(@x, @y, @z, @mat) {
 					if(rand(10) < 3) {
 						set_block_at(@x, @y, @z, @mat)
@@ -136,7 +136,7 @@
 					}
 				}
 			#difficult terrain + platforming
-			} else if(get_block_at(@cfg['option']['soulsand']) == '124:0' && get_block_at(@cfg['option']['platforming']) == '124:0') {
+			} else if(get_block_at(@cfg['option']['soulsand']) === '124:0' && get_block_at(@cfg['option']['platforming']) === '124:0') {
 				proc _setfloor(@x, @y, @z, @mat) {
 					if(assign(@rand, rand(10)) < 2) {
 						set_block_at(@x, @y, @z, @mat)
@@ -170,7 +170,7 @@
 					} else if(@rand < 7) {
 						set_block_at(array(@x, @y, @z), '98:2')
 						set_block_at(array(@x, @y + 1, @z), '98:2')
-					} else if(get_block_at(@x, @y, @z)[0] != '0') {
+					} else if(get_block_at(@x, @y, @z)[0] !== '0') {
 						set_block_at(array(@x, @y, @z), 0)
 						set_block_at(array(@x, @y + 1, @z), 0)
 					}
@@ -178,7 +178,7 @@
 				#clear walls if random obstacles is turned off
 			} else {
 				proc _setwalls(@x, @y, @z) {
-					if(get_block_at(@x, @y, @z)[0] != '0') {
+					if(get_block_at(@x, @y, @z)[0] !== '0') {
 						set_block_at(array(@x, @y, @z), '0:0')
 						set_block_at(array(@x, @y + 1, @z), '0:0')
 					}
@@ -188,12 +188,11 @@
 
 
 			foreach(array_keys(@currentspleef), @player,
-				if(pmode(@player) == 'CREATIVE', set_pmode(@player, 'SURVIVAL'))
+				if(pmode(@player) === 'CREATIVE', set_pmode(@player, 'SURVIVAL'))
 			)
 		))
 
 		set_timeout(3000, closure(
-
 			foreach(array_keys(@currentspleef), @player,
 				if(!ponline(@player) || !array_contains(sk_current_regions(@player), @cfg['region']['wrapper'])) {
 					array_remove(@currentspleef, @player)
@@ -201,12 +200,12 @@
 				}
 				@location = array(@region[0][0] - rand(sqrt((@region[0][0] - @region[1][0]) ** 2)), @region[0][1], @region[0][2] - rand(sqrt((@region[0][2] - @region[1][2]) ** 2)))
 				#check if they're spawning into a block
-				if(get_block_at(array(@location[0], @location[1] + 1, @location[2]))[0] != '0') {
+				if(get_block_at(array(@location[0], @location[1] + 1, @location[2]))[0] !== '0') {
 					set_block_at(@location[0], @location[1] + 1, @location[2], 0)
 					set_block_at(@location[0], @location[1] + 2, @location[2], 0)
 				}
 				#check if they're spawning over air
-				if(get_block_at(@location[0], @location[1], @location[2])[0] == '0') {
+				if(get_block_at(@location[0], @location[1], @location[2])[0] === '0') {
 					set_block_at(@location[0], @location[1], @location[2], @mat)
 				}
 				set_ploc(@player, array(@location[0] + 0.5, @location[1], @location[2] + 0.5, @world))
@@ -222,7 +221,7 @@
 				@reward = import('reward')
 				if(@spleefsettings['counter'] == 60) {
 					proc _removeedge(@x, @y, @z) {
-						if(get_block_at(@x, @y, @z)[0] != '0') {
+						if(get_block_at(@x, @y, @z)[0] !== '0') {
 							set_block_at(@x, @y, @z, '0:0')
 						}
 					}
@@ -235,7 +234,7 @@
   
 				if(array_size(@currentspleef) <= 1 && (!array_index_exists(@currentspleef, 'PseudoKnight') || pinfo('PseudoKnight', 11) == true)) {
 					@winner = array_implode(array_keys(@currentspleef))
-					if(@winner != '') {
+					if(@winner !== '') {
 						_regionmsg(@cfg['region']['wrapper'], color('a').'[Spleef] '._colorname(@winner).@winner.color(r).' is the winner!')
 						set_ploc(@winner, @cfg['warp']['lobby'])
 						_clear_pinv(@winner)
