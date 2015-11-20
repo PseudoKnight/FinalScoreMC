@@ -63,20 +63,12 @@ bind(player_teleport, null, null, @event) {
 }
 
 bind(player_death, null, null, @event) {
-	if(!has_permission('livemap.deathmarkers')) {
+	if(!_is_survival_world(pworld()) || !has_permission('livemap.deathmarkers')) {
 		die();
-	}
-	@markers = dm_all_markers('tracers');
-	foreach(@marker in @markers) {
-		if(@marker == player()
-		|| @marker == player().'lastdeath') {
-			dm_delete_marker('tracers', @marker);
-		}
 	}
 	dm_create_marker('tracers', array(
 		'world': pworld(),
 		'label': @event['death_message'],
-		'id': player().'lastdeath',
 		'icon': 'skull',
 		'location': ploc()
 	));
