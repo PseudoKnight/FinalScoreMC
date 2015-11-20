@@ -3,8 +3,11 @@ export('perms', @perms);
 
 bind(player_join, null, null, @event) {
 	include('includes.library/procedures.ms');
-	unperm_player(@event['player']);
 	_perm_player(@event['player']);
+}
+
+bind(player_quit, null, null, @event) {
+	unperm_player(@event['player']);
 }
 
 bind(world_changed, null, null, @event) {
