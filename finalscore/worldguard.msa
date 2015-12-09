@@ -89,7 +89,7 @@
 						break();
 					}
 				}
-				@args[3] = @state;
+				@state = @args[3];
 				if(@state === 'allow') { 
 					sudo('/region flag '.@region.' deny-spawn');
 				} else if(@state === 'deny') {
