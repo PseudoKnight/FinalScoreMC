@@ -121,36 +121,36 @@
 			if(get_block_at(@cfg['option']['soulsand']) === '124:0' && get_block_at(@cfg['option']['platforming']) ==  '123:0') {
 			proc _setfloor(@x, @y, @z, @mat) {
 				if(rand(10) < 6) {
-					set_block_at(@x, @y, @z, @mat)
+					set_block_at(@x, @y, @z, @mat, 'custom', false)
 				} else {
-					set_block_at(@x, @y, @z, 88)
+					set_block_at(@x, @y, @z, 88, 'custom', false)
 				}
 			}
 			#platforming
 			} else if(get_block_at(@cfg['option']['platforming']) === '124:0' && get_block_at(@cfg['option']['soulsand']) === '123:0') {
 				proc _setfloor(@x, @y, @z, @mat) {
 					if(rand(10) < 3) {
-						set_block_at(@x, @y, @z, @mat)
+						set_block_at(@x, @y, @z, @mat, 'custom', false)
 					} else {
-						set_block_at(@x, @y, @z, 0)
+						set_block_at(@x, @y, @z, 0, 'custom', false)
 					}
 				}
 			#difficult terrain + platforming
 			} else if(get_block_at(@cfg['option']['soulsand']) === '124:0' && get_block_at(@cfg['option']['platforming']) === '124:0') {
 				proc _setfloor(@x, @y, @z, @mat) {
 					if(assign(@rand, rand(10)) < 2) {
-						set_block_at(@x, @y, @z, @mat)
+						set_block_at(@x, @y, @z, @mat, 'custom', false)
 					} else if(@rand < 9) {
-						set_block_at(@x, @y, @z, 0)
+						set_block_at(@x, @y, @z, 0, 'custom', false)
 					} else {
-						set_block_at(@x, @y, @z, 88)
+						set_block_at(@x, @y, @z, 88, 'custom', false)
 					}
 				}
 			#regular floor
 			} else {
 				proc _setfloor(@x, @y, @z, @mat) {
 					if(get_block_at(@x, @y, @z) != @mat) {
-						set_block_at(@x, @y, @z, @mat)
+						set_block_at(@x, @y, @z, @mat, 'custom', false)
 					}
 				}
 			}
@@ -162,25 +162,25 @@
 			if(get_block_at(@cfg['option']['obstacles']) ==  '124:0') {
 				proc _setwalls(@x, @y, @z) {
 					if(assign(@rand, rand(100)) < 5) {
-						set_block_at(array(@x, @y, @z), '98:0')
-						set_block_at(array(@x, @y + 1, @z), '98:0')
+						set_block_at(array(@x, @y, @z, 'custom'), '98:0', false)
+						set_block_at(array(@x, @y + 1, @z, 'custom'), '98:0', false)
 					} else if(@rand < 6) {
-						set_block_at(array(@x, @y, @z), '98:1')
-						set_block_at(array(@x, @y + 1, @z), '98:1')
+						set_block_at(array(@x, @y, @z, 'custom'), '98:1', false)
+						set_block_at(array(@x, @y + 1, @z, 'custom'), '98:1', false)
 					} else if(@rand < 7) {
-						set_block_at(array(@x, @y, @z), '98:2')
-						set_block_at(array(@x, @y + 1, @z), '98:2')
+						set_block_at(array(@x, @y, @z, 'custom'), '98:2', false)
+						set_block_at(array(@x, @y + 1, @z, 'custom'), '98:2', false)
 					} else if(get_block_at(@x, @y, @z)[0] !== '0') {
-						set_block_at(array(@x, @y, @z), 0)
-						set_block_at(array(@x, @y + 1, @z), 0)
+						set_block_at(array(@x, @y, @z, 'custom'), 0, false)
+						set_block_at(array(@x, @y + 1, @z, 'custom'), 0, false)
 					}
 				}
 				#clear walls if random obstacles is turned off
 			} else {
 				proc _setwalls(@x, @y, @z) {
 					if(get_block_at(@x, @y, @z)[0] !== '0') {
-						set_block_at(array(@x, @y, @z), '0:0')
-						set_block_at(array(@x, @y + 1, @z), '0:0')
+						set_block_at(array(@x, @y, @z, 'custom'), '0:0', false)
+						set_block_at(array(@x, @y + 1, @z, 'custom'), '0:0', false)
 					}
 				}
 			}
@@ -201,12 +201,12 @@
 				@location = array(@region[0][0] - rand(sqrt((@region[0][0] - @region[1][0]) ** 2)), @region[0][1], @region[0][2] - rand(sqrt((@region[0][2] - @region[1][2]) ** 2)))
 				#check if they're spawning into a block
 				if(get_block_at(array(@location[0], @location[1] + 1, @location[2]))[0] !== '0') {
-					set_block_at(@location[0], @location[1] + 1, @location[2], 0)
-					set_block_at(@location[0], @location[1] + 2, @location[2], 0)
+					set_block_at(@location[0], @location[1] + 1, @location[2], 0, 'custom', false)
+					set_block_at(@location[0], @location[1] + 2, @location[2], 0, 'custom', false)
 				}
 				#check if they're spawning over air
 				if(get_block_at(@location[0], @location[1], @location[2])[0] === '0') {
-					set_block_at(@location[0], @location[1], @location[2], @mat)
+					set_block_at(@location[0], @location[1], @location[2], @mat, 'custom', false)
 				}
 				set_ploc(@player, array(@location[0] + 0.5, @location[1], @location[2] + 0.5, @world))
 				set_pinv(@player, array(
@@ -222,7 +222,7 @@
 				if(@spleefsettings['counter'] == 60) {
 					proc _removeedge(@x, @y, @z) {
 						if(get_block_at(@x, @y, @z)[0] !== '0') {
-							set_block_at(@x, @y, @z, '0:0')
+							set_block_at(@x, @y, @z, '0:0', 'custom', false)
 						}
 					}
 					_iterate_cuboid(array(@region[0][0], @region[0][1], @region[0][2]), array(@region[0][0], @region[0][1], @region[1][2]), '_removeedge')

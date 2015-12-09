@@ -75,7 +75,7 @@ proc _7_start(@7) {
 									@p['time'] += 0.65;
 									@pitch = 1.4;
 							}
-							set_block_at(@p['block'], '0:0');
+							set_block_at(@p['block'], '0:0', false);
 							if(@pitch) {
 								play_sound(@p['block'], array('sound': 'ORB_PICKUP', 'pitch': @pitch), @player);
 								@note = @p['block'][];
