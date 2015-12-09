@@ -411,6 +411,7 @@ proc _pvp_end_match(@id, @winners) {
 					if(array_index_exists(@pvp['arena'], 'resourcepack')) {
 						send_resourcepack(@player, 'http://mc.finalscoremc.com:25966/resourcepacks/default.zip')
 					}
+					dm_set_pvisible(@player, true);
 					set_entity_fall_distance(puuid(@player), 0);
 					set_ploc(@player, @pvp['arena']['lobby']);
 					set_pflight(@player, false);
