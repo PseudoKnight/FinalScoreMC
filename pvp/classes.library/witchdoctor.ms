@@ -13,16 +13,20 @@ case 'load':
 		set_pinv(player(), array(null: array('type': 290, 'data': 59)))
 		@slot = pinfo(player(), 15)
 		set_interval(1000, closure(){
-			@item = pinv(player(), @slot)
-			if(!is_null(@item) && @item['type'] == 290 && @item['data'] > 0) {
-				@inv = associative_array()
-				@item['data'] -= 3
-				@inv[@slot] = @item
-				set_pinv(player(), @inv)
-			} else {
-				clear_task()
-			}
-		})
+			try(
+				@item = pinv(player(), @slot);
+				if(@item['type'] == 290 && @item['data'] > 0) {
+					@inv = associative_array();
+					@item['data'] -= 3;
+					@inv[@slot] = @item;
+					set_pinv(player(), @inv);
+				} else {
+					clear_task();
+				}
+			, # catch
+				clear_task();
+			);
+		});
 	}
 
 case 'unload':
