@@ -107,6 +107,9 @@ proc _minify_item(@item) {
 		if(@item['meta']['repair'] == 0) {
 			array_remove(@item['meta'], 'repair');
 		}
+		if(array_size(@item['meta']['flags']) == 0) {
+			array_remove(@item['meta'], 'flags');
+		}
 	}
 }
 
