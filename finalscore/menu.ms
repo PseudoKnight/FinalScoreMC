@@ -86,7 +86,7 @@ queue_push(closure(){
 		}
 	}
 
-	bind(inventory_click, null, array('slottype': 'CONTAINER'), @e) {
+	bind(inventory_click, null, null, @e) {
 		if(is_null(pget_virtualchest())) {
 			die();
 		}
@@ -102,6 +102,12 @@ queue_push(closure(){
 				run_cmd(@action[1]);
 				close_pinv();
 			}
+		}
+	}
+	
+	bind(inventory_drag, null, null, @e) {
+		if(!is_null(pget_virtualchest())) {
+			cancel();
 		}
 	}
 });
