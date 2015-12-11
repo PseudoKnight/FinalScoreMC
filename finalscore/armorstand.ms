@@ -230,12 +230,7 @@ bind(entity_damage, null, array('type': 'ARMOR_STAND'), @event) {
 			set_entity_spec(@event['id'], array('arms': false));
 		} else if(@armorstand['baseplate']) {
 			cancel();
-			@item = drop_item(entity_loc(@event['id']), array('type': 44));
-			set_entity_spec(@item, array('pickupdelay': 60));
 			set_entity_spec(@event['id'], array('baseplate': false));
-			set_timeout(2000, closure(){
-				try(entity_remove(@item));
-			});
 		}
 	}
 }
