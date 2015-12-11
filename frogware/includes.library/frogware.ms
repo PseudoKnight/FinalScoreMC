@@ -80,7 +80,14 @@ proc _fw_startround(@secs = 12) {
 			_fw_endgame(@winners)
 		} else {
 			@secs = 12 - round(8 * (@highscore / @goal))
-			@tasks = array('climb', 'keepaway', 'harvest', 'koth', 'cake', 'fall', 'cluck', 'frogegg', 'lavafall', 'shepherd', 'anvil', 'pvp')
+			@tasks = array();
+			if((@highscore / @goal) < 0.33) {
+				@tasks = array('climb', 'keepaway', 'harvest', 'koth', 'cake', 'fall', 'cluck', 'frogegg', 'lavafall', 'shepherd', 'anvil', 'pvp');
+			} else if((@highscore / @goal) < 0.67) {
+				@tasks = array('climb', 'keepaway', 'harvest', 'koth', 'cake', 'fall', 'cluck', 'frogegg', 'lavafall', 'shepherd', 'anvil', 'pvp');
+			} else {
+				@tasks = array('climb', 'fall', 'shepherd', 'pvp');
+			}
 			@task = @tasks[rand(array_size(@tasks))]
 			if(@total == 1 && @task === 'pvp', @task = @tasks[rand(array_size(@tasks))])
 			queue_delay(1000, 'fw2')
@@ -158,7 +165,11 @@ proc _fw_mobs() {
 	@entities = array()
 	for(@i = 0, @i < @num, @i++) {
 		if(@loc = _fw_loc(0, true)) {
-			array_push(@entities, spawn_mob(@mob, 1, @loc)[0])
+			@m = spawn_mob(@mob, 1, @loc)[0];
+			array_push(@entities, @m);
+			if(@mob == 'wolf:angry') {
+				set_mob_target(@m, puuid(_fw_leader()));
+			}
 		}
 	}
 	if(!rand(4)) {
@@ -168,6 +179,21 @@ proc _fw_mobs() {
 			}
 		})
 	}
+}
+
+proc _fw_leader() {
+	@top = 0;
+	@leader = '';
+	foreach(@p in all_players('custom')) {
+		if(get_pscoreboard(@p) == 'fw') {
+			@score = get_pscore('score', @p, 'fw')
+			if(@score > @top) {
+				@leader = @p;
+				@top = @score;
+			}
+		}
+	}
+	return(@leader);
 }
 
 proc _fw_items(@item, @num) {
@@ -493,7 +519,7 @@ proc _fw_task(@task, @state, @secs) {
 			foreach(@p in all_players('custom')) {
 				if(_fw_player(@p)) {
 					set_pinv(@p, array(
-						0: array('type': 261, 'enchants': array(array('elevel': 3, 'etype': 'ARROW_DAMAGE'))),
+						0: array('type': 261, 'enchants': array(array('elevel': 1, 'etype': 'ARROW_FIRE'))),
 						1: array('type': 262, 'qty': 6)
 					))
 					play_sound(ploc(@p), array('sound': if(@mob === 'BAT', 'BAT_LOOP', 'chicken_idle')), @p)
@@ -709,9 +735,16 @@ proc _fw_task(@task, @state, @secs) {
 			@region = sk_region_info('frogware', 'custom')[0]
 			for(@i = 0, @i < @secs - 2, @i++) {
 				queue_push(closure(){
-					_iterate_cuboid(array(@region[0][0], @region[1][1] + 30, @region[0][2], 'custom'),
-						array(@region[1][0], @region[1][1] + 30, @region[1][2], 'custom'),
+					_iterate_cuboid(array(@region[0][0], @region[1][1] + 24, @region[0][2], 'custom'),
+						array(@region[1][0], @region[1][1] + 24, @region[1][2], 'custom'),
 						145, 3);
+					foreach(@p in all_players('custom')) {
+						if(get_pscoreboard(@p) == 'fw') {
+							@loc = ploc(@p);
+							@loc['y'] += 25;
+							set_block_at(@loc, '145');
+						}
+					}
 				}, 'fw3');
 				queue_delay(1000, 'fw3');
 			}
