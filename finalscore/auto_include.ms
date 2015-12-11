@@ -390,6 +390,8 @@ proc _colorname(@player) {
 		@color = 'aqua';
 	} else if(has_permission(@player, 'group.donor')) {
 		@color = 'green';
+	} else if(has_permission(@player, 'group.builder')) {
+		@color = 'gold';
 	} else if(has_permission(@player, 'group.member')) {
 		@color = 'yellow';
 	}
