@@ -206,10 +206,10 @@ bind(player_interact_at_entity, null, array('clicked': 'ARMOR_STAND'), @event) {
 
 bind(entity_damage, null, array('type': 'ARMOR_STAND'), @event) {
 	@damager = '';
-	if(array_index_exists(@event, 'damager')) {
-		@damager = @event['damager'];
-	} else if(array_index_exists(@event, 'shooter')) {
+	if(array_index_exists(@event, 'shooter')) {
 		@damager = @event['shooter'];
+	} else if(array_index_exists(@event, 'damager')) {
+		@damager = @event['damager'];
 	}
 	
 	if(@damager === '' || !ponline(@damager)) {
