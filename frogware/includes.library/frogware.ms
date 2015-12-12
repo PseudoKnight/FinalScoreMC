@@ -12,10 +12,16 @@ proc _fw_startgame(@pts) {
 proc _fw_endgame(@winners) {
 	unbind('fwdamage')
 	_fw_msg('Best frog'.if(array_size(@winners) > 1, 's').' in the house: '.array_implode(@winners, ' & '))
-	foreach(@p in @winners) {
-		@coins = _fw_totalplayers()
-		_acc_add(@p, @coins)
-		tmsg(@p, color('6').'+'.@coins.' coins')
+	foreach(@p in all_players('custom')) {
+		if(array_contains(@winners, @p)) {
+			@coins = _fw_totalplayers();
+			_acc_add(@p, @coins);
+			tmsg(@p, color('6').'+'.@coins.' coins');
+			_fw_changeteam(@p, 'winners');
+		} else {
+			_fw_changeteam(@p, 'losers');
+		}
+		_clear_pinv(@p);
 	}
 	if(array_contains(get_scoreboards(), 'fw')) {
 		set_timeout(5000, closure(){
@@ -79,14 +85,14 @@ proc _fw_startround(@secs = 12) {
 		if(array_size(@winners) > 0 || @total == 0) {
 			_fw_endgame(@winners)
 		} else {
-			@secs = 12 - round(8 * (@highscore / @goal))
+			@secs = 13 - round(8 * (@highscore / @goal))
 			@tasks = array();
 			if((@highscore / @goal) < 0.33) {
-				@tasks = array('climb', 'keepaway', 'harvest', 'koth', 'cake', 'fall', 'cluck', 'frogegg', 'lavafall', 'shepherd', 'anvil', 'pvp');
-			} else if((@highscore / @goal) < 0.67) {
-				@tasks = array('climb', 'keepaway', 'harvest', 'koth', 'cake', 'fall', 'cluck', 'frogegg', 'lavafall', 'shepherd', 'anvil', 'pvp');
+				@tasks = array('climb', 'keepaway', 'harvest', 'koth', 'cake', 'fall', 'cluck', 'frogegg', 'lavafall', 'shepherd', 'anvil');
+			} else if((@highscore / @goal) < 0.90 || @total == 1) {
+				@tasks = array('climb', 'keepaway', 'harvest', 'koth', 'cake', 'fall', 'cluck', 'frogegg', 'lavafall', 'shepherd', 'anvil');
 			} else {
-				@tasks = array('climb', 'fall', 'shepherd', 'pvp');
+				@tasks = array('pvp');
 			}
 			@task = @tasks[rand(array_size(@tasks))]
 			if(@total == 1 && @task === 'pvp', @task = @tasks[rand(array_size(@tasks))])
@@ -158,10 +164,14 @@ proc _fw_loc(@height = 0, @minrange = false) {
 	}
 }
 
-proc _fw_mobs() {
-	@mobs = array('creeper', 'zombie', 'silverfish', 'slime', 'magmacube', 'pigzombie:400', 'enderman', 'wolf:angry', 'giant')
-	@mob = @mobs[rand(array_size(@mobs))]
-	@num = rand(25, 50)
+proc _fw_mobs(@mob = 'random', @num = 'random') {
+	if(@mob == 'random') {
+		@mobs = array('creeper', 'zombie', 'silverfish', 'slime', 'magmacube', 'pigzombie:400', 'enderman', 'wolf:angry', 'giant')
+		@mob = @mobs[rand(array_size(@mobs))]
+	}
+	if(@num == 'random') {
+		@num = rand(25, 50)
+	}
 	@entities = array()
 	for(@i = 0, @i < @num, @i++) {
 		if(@loc = _fw_loc(0, true)) {
@@ -268,7 +278,11 @@ proc _fw_randompotion(@potentials, @secs = 20) {
 }
 
 proc _fw_msg(@msg) {
-	_regionmsg('frogware', color('green').'[FROGWARE] '.color('r').@msg)
+	foreach(@p in all_players('custom')) {
+		if(_fw_player(@p)) {
+			title_msg(@p, null, @msg, 0, 40, 20);
+		}
+	}
 }
 
 #Given two blocks, iterates through all the blocks inside the cuboid, and calls the 
@@ -387,10 +401,8 @@ proc _fw_task(@task, @state, @secs) {
 			'3:0', 2);
 			foreach(@p in all_players('custom')) {
 				if(_fw_player(@p)) {
-					set_pinv(@p, array(
-						0: array('type': 291),
-						1: array('type': 295)
-					))
+					pgive_item(@p, '291:130', 1); # stone hoe
+					pgive_item(@p, 295, 1); # seeds
 				}
 			}
 			bind(item_pickup, array('id': 'fwpickup'), array('item': 296), @e) {
@@ -402,11 +414,6 @@ proc _fw_task(@task, @state, @secs) {
 			
 		case 'end':
 			unbind('fwpickup')
-			foreach(@p in all_players('custom')) {
-				if(_fw_player(@p)) {
-					_clear_pinv(@p)
-				}
-			}
 			_remove_region_entities('frogware', array('DROPPED_ITEM'));
 			_fw_startround(@secs);
 			
@@ -417,19 +424,29 @@ proc _fw_task(@task, @state, @secs) {
 		case 'start':
 			_fw_msg('King of the Hill')
 			if(!rand(4)) {
-				_fw_randompotion(array('speed', 'jump'))
-			}
-			if(!rand(4)) {
 				_fw_mobs()
 			}
 			if(!rand(4)) {
 				foreach(@p in all_players('custom')) {
 					if(_fw_player(@p)) {
-						set_pinv(@p, array(
-							0: array('type': 40, 'enchants': array(array('etype': 'KNOCKBACK', 'elevel': 10)))
-						))
+						# knockback mushroom
+						pgive_item(@p, 40, 1, array(array('etype': 'KNOCKBACK', 'elevel': 10)))
 					}
 				}
+			}
+			if(!rand(4)) {
+				@region = sk_region_info('frogware', 'custom')[0];
+				_iterate_cuboid(array(@region[0][0], @region[1][1], @region[0][2], 'custom'),
+				array(@region[1][0], @region[1][1], @region[1][2], 'custom'),
+				'9:0', 100);
+				@count = _fw_totalplayers() * 2;
+				for(@i = 0, @i < @count, @i++) {
+					drop_item(_fw_loc(), array('name': 'IRON_BOOTS', 'enchants': array(
+						array('elevel': 3, 'etype': 'DEPTH_STRIDER'),
+					)));
+				}
+			} else if(!rand(4)) {
+				_fw_randompotion(array('speed', 'jump'));
 			}
 			@loc = _fw_loc()
 			_iterate_cuboid(array(@loc[0] + 2, @loc[1], @loc[2] + 2, 'custom'),
@@ -487,7 +504,7 @@ proc _fw_task(@task, @state, @secs) {
 			_fw_msg('Alls well that falls well.')
 			foreach(@p in all_players('custom')) {
 				if(_fw_player(@p)) {
-					set_pvelocity(@p, 0, 2.9, 0)
+					set_pvelocity(@p, rand(), 3, rand())
 					play_sound(ploc(@p), array('sound': 'ghast_fireball'), @p)
 				}
 			}
@@ -518,10 +535,8 @@ proc _fw_task(@task, @state, @secs) {
 			_fw_msg('Shoot '.if(@mob === 'BAT', '1', '3').'!')
 			foreach(@p in all_players('custom')) {
 				if(_fw_player(@p)) {
-					set_pinv(@p, array(
-						0: array('type': 261, 'enchants': array(array('elevel': 1, 'etype': 'ARROW_FIRE'))),
-						1: array('type': 262, 'qty': 6)
-					))
+					pgive_item(@p, '261:379', 1, array(array('elevel': 1, 'etype': 'ARROW_FIRE')));
+					pgive_item(@p, 262, 6);
 					play_sound(ploc(@p), array('sound': if(@mob === 'BAT', 'BAT_LOOP', 'chicken_idle')), @p)
 					set_pexp(@p, 0)
 				}
@@ -601,18 +616,23 @@ proc _fw_task(@task, @state, @secs) {
 		case 'start':
 			_fw_msg('Last hit.')
 			_fw_randompotion(array('speed', 'jump', 'blind', 'invis'))
+			@weapon = '267:226'; # iron sword
+			if(!rand(3)) {
+				@weapon = '261:379'; # bow
+			}
+			@meta = null;
 			if(!rand(4)) {
-				@enchants = array(
-					array('etype': 'KNOCKBACK', 'elevel': 10)
-				)
-			} else {
-				@enchants = array()
+				@meta = array(array(
+					array('etype': 'KNOCKBACK', 'elevel': 10),
+					array('etype': 'PUNCH', 'elevel': 10)
+				))
 			}
 			foreach(@p in all_players('custom')) {
 				if(_fw_player(@p)) {
-					set_pinv(@p, array(
-						0: array('type': 267, 'enchants': @enchants)
-					))
+					pgive_item(@p, @weapon, 1, @meta);
+					if(@weapon == 261) {
+						pgive_item(@p, 262, 10);
+					}
 				}
 			}
 			bind(entity_damage, array('id': 'fwdamage2'), array('type': 'PLAYER', 'cause': 'ENTITY_ATTACK', 'world': 'custom'), @e) {
@@ -631,7 +651,6 @@ proc _fw_task(@task, @state, @secs) {
 			foreach(@p in all_players('custom')) {
 				if(_fw_player(@p)) {
 					_clear_peffects(@p)
-					_clear_pinv(@p)
 				}
 			}
 			unbind('fwdamage2')
@@ -648,6 +667,13 @@ proc _fw_task(@task, @state, @secs) {
 			}
 			if(!rand(4)) {
 				_fw_mobs()
+			}
+			if(!rand(4)) {
+				foreach(@p in all_players('custom')) {
+					if(_fw_player(@p)) {
+						pgive_item(@p, 325, 1); # bucket
+					}
+				}
 			}
 			@region = sk_region_info('frogware', 'custom')[0]
 			_iterate_cuboid(array(@region[0][0], @region[1][1] + 2, @region[0][2], 'custom'),
@@ -686,6 +712,7 @@ proc _fw_task(@task, @state, @secs) {
 			for(@i = 0, @i < @count, @i++) {
 				spawn_mob('SHEEP:'.@colors[rand(16)], 1, _fw_loc())
 			}
+			_fw_mobs('wolf:angry', 8);
 			bind(item_pickup, array('id': 'fwpickup'), array('item': 35), @e, @data = @colorindex) {
 				if(_fw_player(@e['player'])) {
 					if(@e['item']['data'] == @data) {
@@ -697,19 +724,12 @@ proc _fw_task(@task, @state, @secs) {
 			}
 			foreach(@p in all_players('custom')) {
 				if(_fw_player(@p)) {
-					set_pinv(@p, array(
-						0: array('type': 359)
-					))
+					pgive_item(@p, '359:235', 1) # shears
 				}
 			}
 			
 		
 		case 'end':
-			foreach(@p in all_players('custom')) {
-				if(_fw_player(@p)) {
-					_clear_pinv(@p)
-				}
-			}
 			_remove_region_entities('frogware')
 			unbind('fwpickup')
 			_fw_startround(@secs)
