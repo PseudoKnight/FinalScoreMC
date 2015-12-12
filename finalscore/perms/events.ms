@@ -6,7 +6,7 @@ bind(player_join, null, null, @event) {
 	_perm_player(@event['player']);
 }
 
-bind(player_quit, null, null, @event) {
+bind(player_quit, array('priority': 'LOWEST'), null, @event) {
 	unperm_player(@event['player']);
 }
 
