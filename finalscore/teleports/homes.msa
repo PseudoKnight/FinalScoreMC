@@ -1,0 +1,89 @@
+*:/home [$] = >>>
+	include('includes.library/teleports.ms')
+	if(array_contains(@blockedworlds, pworld())) {
+		die('You cannot teleport in this world.')
+	}
+	@world = pworld()
+	@player = player()
+	if($) {
+		@args = parse_args($)
+		if(array_contains(get_worlds(), _worldid(to_lower(@args[0])))) {
+			@world = _worldid(to_lower(@args[0]))
+			if(array_size(@args) == 2) {
+				@player = @args[1]
+			}
+		} else {
+			@player = @args[0];
+			if(array_size(@args) == 2) {
+				if(array_contains(get_worlds(), _worldid(to_lower(@args[1])))) {
+					@world = _worldid(to_lower(@args[1]));
+				} else {
+					@worlds = '';
+					foreach(@world in get_worlds()) {
+						@worlds .= replace(_worldname(@world), ' ', '').', ';
+					}
+					die(color('yellow') . 'Available worlds: ' . @worlds);
+				}
+			}
+		}
+	}
+	try(
+		@pdata = _pdata(@player);
+	, # catch
+		die(color('yellow') . '"' . @player . '" is not a known world or player name.');
+	);
+	if(!array_index_exists(@pdata, 'homes') || !array_index_exists(@pdata['homes'], @world)) {
+		if(@player == player()) {
+			die('You can set a home for a world with /sethome');
+		} else {
+			die("@player has not set a home for @world");
+		}
+	}
+	@loc = array(@pdata['homes'][@world][0], @pdata['homes'][@world][1], @pdata['homes'][@world][2], @world);
+	if(_is_survival_world(@world) && !_is_safe_location(@loc)) {
+		@overrides = import('tp.overrides');
+		if(!@overrides) {
+			@overrides = associative_array();
+		}
+		@overrides[player()] = @loc;
+		export('tp.overrides', @overrides);
+		die('That teleport location does not appear to be safe. /override');
+	}
+	_warmuptp(3.7, player(), @loc, @pdata['homes'][@world][3], @pdata['homes'][@world][4])
+<<<
+
+*:/override = >>>
+	include('includes.library/teleports.ms');
+	@overrides = import('tp.overrides');
+	if(!@overrides || !array_index_exists(@overrides, player())) {
+		die('You do not have an unsafe teleport to override.');
+	}
+	_warmuptp(3.7, player(), @overrides[player()]);
+	array_remove(@overrides, player());
+	export('tp.overrides', @overrides);
+<<<
+
+*:/sethome [$] = >>>
+	if(!has_permission('command.sethome')) {
+		die('You cannot set homes here.')
+	} else if($ && !has_permission('command.sethome.others')) {
+		die('You cannot set other player\'s homes.')
+	}
+	@player = player()
+	if($) {
+		@player = $
+	}
+	@pdata = _pdata(@player)
+	if(!array_index_exists(@pdata, 'homes'), @pdata['homes'] = associative_array())
+	@loc = ploc()
+	@facing = pfacing()
+	array_set(@pdata['homes'], pworld(), array(
+		floor(@loc[0]) + 0.5,
+		@loc[1],
+		floor(@loc[2]) + 0.5,
+		round(@facing[0], 2),
+		round(@facing[1], 2)
+	))
+	_store_pdata(@player, @pdata)
+	msg('Set home to this location.')
+<<<

@@ -8,26 +8,40 @@ export('requests', @requests);
 
 # Main teleport handler
 bind(player_teleport, null, null, @event) {
-	if(@event['to']['world'] != @event['from']['world']
-	&& _is_survival_world(@event['from']['world'])
-	&& _is_survival_world(@event['to']['world'])) {
-		try( # sometimes entity does not exist and causes an exception in get_entity_vehicle()
-			@vehicle = get_entity_vehicle(puuid());
-			if(entity_type(@vehicle) === 'HORSE') {
-				set_timeout(1, closure(){
-					try(
-						set_entity_loc(@vehicle, @event['to']);
-						set_timeout(50, closure(){
-							set_entity_rider(@vehicle, puuid());
-						});
-					, # catch
-						msg('Failed to teleport your horse with you. The chunk may have unloaded too quickly.');
-						console('Failed to teleport horse.');
-					);
-				});
-				die();
-			}
-		);
+	if(@event['to']['world'] != @event['from']['world']) {
+		if(_is_survival_world(@event['from']['world'])
+		&& _is_survival_world(@event['to']['world'])) {
+			try( # sometimes entity does not exist and causes an exception in get_entity_vehicle()
+				@vehicle = get_entity_vehicle(puuid());
+				if(entity_type(@vehicle) === 'HORSE') {
+					set_timeout(1, closure(){
+						try(
+							set_entity_loc(@vehicle, @event['to']);
+							set_timeout(50, closure(){
+								set_entity_rider(@vehicle, puuid());
+							});
+						, # catch
+							msg('Failed to teleport your horse with you. The chunk may have unloaded too quickly.');
+							console('Failed to teleport horse.');
+						);
+					});
+					die();
+				}
+			);
+		} else {
+			set_timeout(50, closure(){
+				@world = @event['from']['world'];
+				if(_is_survival_world(@world)) {
+					@world = 'survival';
+				}
+				@pdata = _pdata(player());
+				if(!array_index_exists(@pdata, 'lastloc')) {
+					@pdata['lastloc'] = associative_array();
+				}
+				@pdata['lastloc'][@world] = array_normalize(@event['from'])[0..5];
+				_store_pdata(player(), @pdata);
+			});
+		}
 	}
 	
 	@loc = _relative(@event['to'], 'down');

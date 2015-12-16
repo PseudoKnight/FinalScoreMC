@@ -1,197 +1,48 @@
-*:/home [$] = >>>
-	include('includes.library/teleports.ms')
-	if(array_contains(@blockedworlds, pworld())) {
-		die('You cannot teleport in this world.')
+*:/survival = >>>
+	if(_is_survival_world(pworld())) {
+		die('You are already in survival.');
 	}
-	@world = pworld()
-	@player = player()
-	if($) {
-		@args = parse_args($)
-		if(array_contains(get_worlds(), _worldid(to_lower(@args[0])))) {
-			@world = _worldid(to_lower(@args[0]))
-			if(array_size(@args) == 2) {
-				@player = @args[1]
-			}
-		} else {
-			@player = @args[0];
-			if(array_size(@args) == 2) {
-				if(array_contains(get_worlds(), _worldid(to_lower(@args[1])))) {
-					@world = _worldid(to_lower(@args[1]));
-				} else {
-					@worlds = '';
-					foreach(@world in get_worlds()) {
-						@worlds .= replace(_worldname(@world), ' ', '').', ';
-					}
-					die(color('yellow') . 'Available worlds: ' . @worlds);
-				}
-			}
-		}
-	}
-	try(
-		@pdata = _pdata(@player);
-	, # catch
-		die(color('yellow') . '"' . @player . '" is not a known world or player name.');
-	);
-	if(!array_index_exists(@pdata, 'homes') || !array_index_exists(@pdata['homes'], @world)) {
-		if(@player == player()) {
-			die('You can set a home for a world with /sethome');
-		} else {
-			die("@player has not set a home for @world");
-		}
-	}
-	@loc = array(@pdata['homes'][@world][0], @pdata['homes'][@world][1], @pdata['homes'][@world][2], @world);
-	if(_is_survival_world(@world) && !_is_safe_location(@loc)) {
-		@overrides = import('tp.overrides');
-		if(!@overrides) {
-			@overrides = associative_array();
-		}
-		@overrides[player()] = @loc;
-		export('tp.overrides', @overrides);
-		die('That teleport location does not appear to be safe. /override');
-	}
-	_warmuptp(3.7, player(), @loc, @pdata['homes'][@world][3], @pdata['homes'][@world][4])
-<<<
-
-*:/override = >>>
 	include('includes.library/teleports.ms');
-	@overrides = import('tp.overrides');
-	if(!@overrides || !array_index_exists(@overrides, player())) {
-		die('You do not have an unsafe teleport to override.');
-	}
-	_warmuptp(3.7, player(), @overrides[player()]);
-	array_remove(@overrides, player());
-	export('tp.overrides', @overrides);
-<<<
-
-*:/sethome [$] = >>>
-	if(!has_permission('command.sethome')) {
-		die('You cannot set homes here.')
-	} else if($ && !has_permission('command.sethome.others')) {
-		die('You cannot set other player\'s homes.')
-	}
-	@player = player()
-	if($) {
-		@player = $
-	}
-	@pdata = _pdata(@player)
-	if(!array_index_exists(@pdata, 'homes'), @pdata['homes'] = associative_array())
-	@loc = ploc()
-	@facing = pfacing()
-	array_set(@pdata['homes'], pworld(), array(
-		floor(@loc[0]) + 0.5,
-		@loc[1],
-		floor(@loc[2]) + 0.5,
-		round(@facing[0], 2),
-		round(@facing[1], 2)
-	))
-	_store_pdata(@player, @pdata)
-	msg('Set home to this location.')
-<<<
-
-*:/warp [$] = >>>
-	if(!$) {
-		call_alias('/warps list')
-		die()
-	}
-	
-	@args = parse_args($)
-	if(array_size(@args) == 2) {
-		if(get_command_block()) {
-			@player = @args[0]
-			@warpid = @args[1]
-		} else {
-			die('You cannot teleport others.')
-		}
+	@pdata = _pdata(player());
+	if(array_index_exists(@pdata, 'lastloc')
+	&& array_index_exists(@pdata['lastloc'], 'survival')) {
+		_warmuptp(3.7, player(), @pdata['lastloc']['survival']);
 	} else {
-		 @player = player()
-		 @warpid = @args[0]
+		@loc = get_spawn('omega');
+		@loc = array(@loc[0] + 0.5, @loc[1] - 1, @loc[2] + 0.5, @loc[3])
+		_warmuptp(3.7, player(), @loc);
 	}
-
-	@warp = get_value('warp.'.to_lower(@warpid))
-	if(!@warp, die('That warp does not exist.'))
-	include('includes.library/teleports.ms')
-	if(array_contains(@blockedworlds, pworld(@player)), die('You cannot warp in this world.'))
-	_warmuptp(3.7, @player, @warp['loc'], @warp['yaw'], @warp['pitch'], if(@warp['loc'][3] === 'custom', true, false))
 <<<
 
-*:/setwarp [$warp] = >>>
-	if(!has_permission('group.moderator'), die('You do not have permission to use this command.'))
-	if(!$warp, die('You need to specify a warp name.'))
-	if(reg_count('\\w', $warp) < 0, die('This needs to be in alphanumeric characters.'))
-	@loc = ploc()
-	@loc = array(round(@loc[0], 1), @loc[1], round(@loc[2], 1), @loc[3])
-	if(has_value('warp.'.$warp)) {
-		try(
-		if(function_exists('dm_delete_marker')) {
-			dm_delete_marker('warps', 'warp.'.$warp)
-		}
-		)
+*:/park = >>>
+	if(pworld() == 'custom') {
+		die('You are already in Frog Park.');
 	}
-	store_value('warp.'.$warp, array('loc': @loc, 'yaw': round(pfacing()[0]), 'pitch': round(pfacing()[1])))
-	if(function_exists('dm_create_marker')) {
-		dm_create_marker('warps', array('id': 'warp.'.$warp, 'label': 'WARP.'.to_upper($warp), 'location': @loc, 'world': @loc[3], 'icon': 'star', 'persistent': true)) # radius is workaround for a bug
+	include('includes.library/teleports.ms');
+	@pdata = _pdata(player());
+	if(array_index_exists(@pdata, 'lastloc')
+	&& array_index_exists(@pdata['lastloc'], 'custom')) {
+		_warmuptp(3.7, player(), @pdata['lastloc']['custom']);
+	} else {
+		@loc = get_spawn('custom');
+		@loc = array(@loc[0] + 0.5, @loc[1] - 1, @loc[2] + 0.5, @loc[3])
+		_warmuptp(3.7, player(), @loc);
 	}
-	msg('Warp created.')
 <<<
 
-*:/warps [$cmd] [$id] = >>>
-	switch($cmd) {
-	case 'del':
-	case 'delete':
-		if(!has_permission('group.moderator'), die('You do not have permission to use this command.'))
-		if(!$id, die('This requires a warp name.'))
-		if(!has_value('warp.'.$id), die('There is no warp by that name.'))
-		clear_value('warp.'.$id)
-		try(
-		if(function_exists('dm_delete_marker')) {
-			dm_delete_marker('warps', 'warp.'.$id)
-		}
-		)
-		msg('Deleted warp.')
-	case 'list':
-		@warps = get_values('warp')
-		@worlds = get_worlds()
-		@warplist = associative_array()
-		foreach(@world in @worlds) {
-			@warplist[@world] = ''
-		}
-		foreach(@warpkey: @warpdata in @warps) {
-			@warplist[@warpdata['loc'][3]] .= split('.', @warpkey)[1].' '
-		}
-		msg(color('bold').'AVAILABLE WARPS:')
-		foreach(@worldname: @worldwarps in @warplist) {
-			if(@worldwarps) {
-				msg(color(7).'['.to_upper(_worldname(@worldname)).'] '.color(15).@worldwarps)
-			}
-		}
-	case 'resetmarkers':
-		if(!has_permission('group.admin'), die('You do not have permission to use this command.'))
-		if(!function_exists('dm_all_markersets')) { die('Uneditable at this time.') }
-		if(array_contains(if(function_exists('dm_all_markersets')) { dm_all_markersets() }, 'warps')) {
-			if(function_exists('dm_delete_markerset')) {
-				dm_delete_markerset('warps')
-			}
-		}
-		
-		if(function_exists('dm_create_markerset')) {
-			dm_create_markerset('warps', array('label': 'Warps', 'persistent': true))
-		}
-		if(function_exists('dm_set_markerset_hide_by_default')) {
-			dm_set_markerset_hide_by_default('warps', true)
-		}
-		
-		@warps = get_values('warp')
-		
-		foreach(@name: @warp in @warps) {
-			if(function_exists('dm_create_marker')) {
-				dm_create_marker('warps', array('id': @name, 'label': to_upper(@name), 'location': @warp['loc'], 'world': @warp['loc'][3], 'icon': 'star', 'persistent': true))
-			}
-		}
-
-		msg(color('green').'Done.')
-		
-	default:
-		msg('Available sub-commands: "/warps del <warp>", "/warps list".')
+*:/dev = >>>
+	if(pworld() == 'dev') {
+		die('You are already in dev.');
+	}
+	include('includes.library/teleports.ms');
+	@pdata = _pdata(player());
+	if(array_index_exists(@pdata, 'lastloc')
+	&& array_index_exists(@pdata['lastloc'], 'dev')) {
+		_warmuptp(3.7, player(), @pdata['lastloc']['dev']);
+	} else {
+		@loc = get_spawn('dev');
+		@loc = array(@loc[0] + 0.5, @loc[1] - 1, @loc[2] + 0.5, @loc[3])
+		_warmuptp(3.7, player(), @loc);
 	}
 <<<
 
