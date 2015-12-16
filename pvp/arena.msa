@@ -404,8 +404,22 @@
 				}
 				msg('Activated these flags: '.color(10).@arena['flags'])
 				
+			case 'class_picks':
+				if(!is_integral(@args[0])) {
+					die('Must be an integer');
+				}
+				@arena['class_picks'] = @args[0];
+				msg('Set class picks to '.@args[0]);
+				
+			case 'class_picking':
+				if(@args[0] !== 'random' && @args[0] !== 'player') {
+					die('Must be "random" or "player"');
+				}
+				@arena['class_picking'] = @args[0];
+				msg('Set class picking to '.@args[0].'.');
+				
 			case 'options':
-				@options = array('lives', 'score');
+				@options = array('lives', 'score', 'class_picks', 'class_picking');
 				if(!array_contains(@options, @args[0])) {
 					die('Not an option. '.@options);
 				}

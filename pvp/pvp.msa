@@ -71,7 +71,8 @@
 			}
 			
 		} else if(@pvp['running'] == 2) {
-			_pvp_initialize_players(@id, array(player()))
+			include('core.library/class.ms');
+			_pvp_initialize_players(@id, array(player()));
 			
 		} else if(array_index_exists(@arena, 'max') && array_size(@pvp['players']) >= @arena['max']) {
 			call_alias('/pvp start '.@id)
@@ -207,6 +208,9 @@
 			}
 		}
 		if(array_contains(@pvp['arena']['flags'], 'keepinventory'), @pvp['arena']['denydrop'] = 'all')
+		if(array_index_exists(@pvp['arena'], 'classes')) {
+			if(!array_index_exists(@pvp['arena'], 'class_picking'), @pvp['arena']['class_picking'] = 'player')
+		}
 		
 		# Dynamically determine if it should be a team game
 		if(@pvp['arena']['mode'] === 'ddm') {
@@ -366,7 +370,16 @@
 		} else {
 			_worldmsg('custom', color('gold').' '.array_implode(array_keys(@pvp['players']), colorize('&r vs &6')));
 		}
-		
+		if(array_index_exists(@pvp['arena'], 'lives')) {
+			_regionmsg(@pvp['arena']['broadcast'], colorize('- &e&l'.@pvp['arena']['lives'].' LIVES'));
+		}
+		if(array_index_exists(@pvp['arena'], 'class_picking') && @pvp['arena']['class_picking'] === 'random') {
+			_regionmsg(@pvp['arena']['broadcast'], colorize('- &e&lALL RANDOM CLASSES'));
+		}
+		if(array_index_exists(@pvp['arena'], 'class_picks') && 
+		(!array_index_exists(@pvp['arena'], 'lives') || @pvp['arena']['class_picks'] < @pvp['arena']['lives'])) {
+			_regionmsg(@pvp['arena']['broadcast'], colorize('- &e&l'.@pvp['arena']['class_picks'].' CLASS PICKS'));
+		}
 		_worldmsg('custom', colorize('&7&m|----------------------------------------------------|'));
 		
 		play_sound(@pvp['arena']['lobby'], array('sound': 'WITHER_SPAWN', 'pitch': 1.5, 'volume': 3))
@@ -423,16 +436,16 @@
 		});
 		
 	case 'end':
-		if(!get_command_block() && !has_permission('group.builder'), die(color('red').'You do not have permission.'))
-		if(!$id, die(color('gold').'Usage: /pvp end arenaName winningTeam#'))
-		@id = to_lower($id)
-		@pvp = import('pvp'.@id)
-		if(!@pvp || @pvp['running'] < 2, die(color('red').'Not running.'))
-		include('core.library/game.ms')
+		if(!get_command_block() && !has_permission('group.builder'), die(color('red').'You do not have permission.'));
+		if(!$id, die(color('gold').'Usage: /pvp end arenaName winningTeam#'));
+		@id = to_lower($id);
+		@pvp = import('pvp'.@id);
+		if(!@pvp || @pvp['running'] < 2, die(color('red').'Not running.'));
+		include('core.library/game.ms');
 		if(is_numeric($team)) {
-			_pvp_end_match(@id, @pvp['team'][$team - 1]['players'])
+			_pvp_end_match(@id, @pvp['team'][$team - 1]['players']);
 		} else {
-			_pvp_end_match(@id, array())
+			_pvp_end_match(@id, array());
 		}
 		
 	default:

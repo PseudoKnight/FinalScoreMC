@@ -67,17 +67,7 @@ proc _pvp_initialize_players(@id, @players) {
 		_clear_pinv(@player);
 		_clear_peffects(@player);
 		if(array_index_exists(@pvp['arena'], 'classes') && !array_index_exists(@pvp['players'][@player], 'class')) {
-			@rand = array_rand(@pvp['arena']['classes'], array_size(@pvp['arena']['classes']));
-			foreach(@r in @rand) {
-				if(!array_index_exists(@pvp['arena']['classes'][@r], 'team')
-				|| @pvp['players'][@player]['team'] == @pvp['arena']['classes'][@r]['team']) {
-					@pvp['players'][@player]['class'] = @r;
-					break();
-				}
-			}
-			if(array_index_exists(@pvp['players'][@player], 'class')) {
-				_class('load', @player, @pvp['players'][@player]['class'], @pvp);
-			}
+			_class_select_random(@player, @pvp);
 		}
 		
 		foreach(@p in @pvp['spectators']) {

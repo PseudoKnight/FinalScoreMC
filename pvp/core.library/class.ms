@@ -97,7 +97,29 @@ proc _class(@action, @player, @class, @pvp) {
 	}
 }
 
+proc _class_select_random(@player, @pvp) {
+	if(array_index_exists(@pvp['players'][@player], 'class')) {
+		_class('unload', @player, @pvp['players'][@player]['class'], @pvp);
+	}
+	@rand = array_rand(@pvp['arena']['classes'], array_size(@pvp['arena']['classes']));
+	foreach(@r in @rand) {
+		if(!array_index_exists(@pvp['arena']['classes'][@r], 'team')
+		|| @pvp['players'][@player]['team'] == @pvp['arena']['classes'][@r]['team']) {
+			@pvp['players'][@player]['class'] = @r;
+			break();
+		}
+	}
+	if(array_index_exists(@pvp['players'][@player], 'class')) {
+		_class('load', @player, @pvp['players'][@player]['class'], @pvp);
+	}
+}
+
 proc _class_select(@id, @pvp) {
+	if(@pvp['arena']['class_picking'] === 'random'
+	|| (array_index_exists(@pvp['arena'], 'class_picks')
+	&& @pvp['arena']['class_picks'] == 0)) {
+		return();
+	}
 	@size1 = 1
 	@size2 = 1
 	foreach(@class in @pvp['arena']['classes']) {
@@ -137,7 +159,7 @@ proc _class_select(@id, @pvp) {
 			@chest[1][] = @class['selector']
 		}
 	}
-	if(@chest[0] && !array_index_exists(@pvp, 'team')) {
+	if(@chest[0]) {
 		@chest[0][@chestsize1 - 1] = array('type': 1, 'data': 7, 'meta': array(
 			'display': 'RANDOM',
 			'lore': array('Randomly assign a class'),
@@ -154,10 +176,16 @@ proc _class_select(@id, @pvp) {
 	foreach(@p: @pdata in @pvp['players']) {
 		if(@size1 > 2
 		&& (!array_index_exists(@pdata, 'team') || @pdata['team'] == 0)) {
-			popen_virtualchest(@p, @id.'0')
+			if(array_index_exists(@pvp['arena'], 'class_picks')) {
+				@pvp['players'][@p]['picks'] = @pvp['arena']['class_picks'];
+			}
+			popen_virtualchest(@p, @id.'0');
 		} else if(@size2 > 2
 		&& @pdata['team'] == 1) {
-			popen_virtualchest(@p, @id.'1')
+			if(array_index_exists(@pvp['arena'], 'class_picks')) {
+				@pvp['players'][@p]['picks'] = @pvp['arena']['class_picks'];
+			}
+			popen_virtualchest(@p, @id.'1');
 		}
 	}
 
@@ -176,7 +204,11 @@ proc _class_select(@id, @pvp) {
 			if(!array_index_exists(@pvp['arena']['classes'], @class) && @class !== 'random') {
 				die();
 			}
-			if(@class != 'random') {
+			if(array_index_exists(@pvp['players'][player()], 'picks')) {
+				@pvp['players'][player()]['picks'] -= 1;
+			}
+			@pvp['players'][player()]
+			if(@class !== 'random') {
 				if(!array_index_exists(@pvp['arena']['classes'][@class], 'picked')) {
 					@pvp['arena']['classes'][@class]['picked'] = 1;
 				} else {

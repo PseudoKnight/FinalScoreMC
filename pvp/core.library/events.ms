@@ -181,6 +181,7 @@ bind(player_quit, array('id': @id.'quit', 'priority': 'HIGH'), null, @e, @id) {
 		if(array_index_exists(@pvp['arena'], 'lives') && @pvp['arena']['lives'] > 1) {
 			set_pscore('lives', player(), 0, @id)
 		}
+		dm_set_pvisible(true);
 		_pvp_check_objectives(@id)
 	} else if(array_contains(@pvp['spectators'], player())) {
 		_remove_spectator(@id, player(), @pvp)
@@ -213,19 +214,29 @@ bind(player_spawn, array('id': @id.'spawn'), array('world': 'custom'), @e, @id) 
 			_pvp_equip(@id, player())
 		})
 	} else if(array_index_exists(@pvp['arena'], 'classes')) {
-		if(!array_index_exists(@pvp['players'][player()], 'team') || @pvp['players'][player()]['team'] == 0) {
-			if(array_contains(all_virtualchests(), @id.'0')) {
-				queue_push(closure(){
-					popen_virtualchest(player(), @id.'0')
-				})
+		if(@pvp['arena']['class_picking'] === 'random') {
+			_class_select_random(player(), @pvp);
+		} else if(!array_index_exists(@pvp['arena'], 'class_picks') 
+		|| (array_index_exists(@pvp['players'][player()], 'picks') && @pvp['players'][player()]['picks'] > 0)) {
+			if(array_index_exists(@pvp['players'][player()], 'picks') 
+			&& @pvp['players'][player()]['picks'] < @pvp['players'][player()]['lives']) {
+				msg(color('gold').@pvp['players'][player()]['picks'].' class picks left.');
 			}
-		} else {
-			if(array_contains(all_virtualchests(), @id.'1')) {
-				queue_push(closure(){
-					popen_virtualchest(player(), @id.'1')
-				})
+			if(!array_index_exists(@pvp['players'][player()], 'team') || @pvp['players'][player()]['team'] == 0) {
+				if(array_contains(all_virtualchests(), @id.'0')) {
+					queue_push(closure(){
+						popen_virtualchest(player(), @id.'0')
+					})
+				}
+			} else {
+				if(array_contains(all_virtualchests(), @id.'1')) {
+					queue_push(closure(){
+						popen_virtualchest(player(), @id.'1')
+					})
+				}
 			}
 		}
+
 	}
 
 	if(array_index_exists(@pvp['arena'], 'respawntime') && @pvp['running'] == 2) {

@@ -1,15 +1,17 @@
 proc _create_options_menu(@id, @arena) {
 	@inv = associative_array();
 	@i = 0;
+	@o = 0;
 	foreach(@option: @values in @arena['options']) {
 		foreach(@data: @value in @values) {
-			@inv[@i] = array('name': 'INK_SACK', 'data': if(@arena[@option] == @value, 10, 8), 'meta': array(
+			@inv[(@o * 9) + @i] = array('name': 'INK_SACK', 'data': if(@arena[@option] == @value, 10, 8), 'meta': array(
 					'display': color('bold').to_upper(@option), 
 					'lore': array(color('green').color('bold').@value),
 			));
 			@i++;
 		}
-		@i = ceil((@i + 1) / 9) * 9 - 1;
+		@o++;
+		@i = 0;
 	}
 	
 	create_virtualchest(array(

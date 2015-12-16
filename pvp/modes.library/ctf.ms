@@ -25,6 +25,9 @@ proc _flag(@item) {
 	return(null);
 }
 
+_pvp_flag_spawn(@id, 0);
+_pvp_flag_spawn(@id, 1);
+
 array_push(@pvp['binds'], @id.'flagpickup')
 bind(item_pickup, array('id': @id.'flagpickup'), null, @e, @id) { 
 	@pvp = import('pvp'.@id)

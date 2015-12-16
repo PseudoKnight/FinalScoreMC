@@ -4,19 +4,6 @@ include('spectator.ms');
 include('player.ms');
 include('stats.ms');
 
-# MODES
-if(@pvp['arena']['mode'] !== 'dm') {
-	include('../modes.library/'.@pvp['arena']['mode'].'.ms');
-}
-
-# WEAPONS
-include('weapons.ms');
-if(array_index_exists(@pvp['arena'], 'weapons')) {
-	foreach(@weapon in @pvp['arena']['weapons']) {
-		include('../weapons.library/'.@weapon.'.ms')
-	}
-}
-
 # CLASSES
 if(array_index_exists(@pvp['arena'], 'classes')) {
 	include('class.ms');
@@ -89,11 +76,6 @@ proc _pvp_start_match(@id) {
 		_regionmsg(@pvp['arena']['broadcast'], color('gray').'[PVP] '.@pvp['arena']['team'][1]['color']
 			.@pvp['team'][1]['captain']. ' is the captain of '.@pvp['arena']['team'][1]['name'].'.')
 	}
-
-	if(@pvp['arena']['mode'] === 'ctf') {
-		_pvp_flag_spawn(@id, 0)
-		_pvp_flag_spawn(@id, 1)
-	}
 	
 	if(array_index_exists(@pvp['arena'], 'mobprotect')) {
 		queue_push(closure(){
@@ -104,7 +86,20 @@ proc _pvp_start_match(@id) {
 			}
 		}, @id)
 	}
+	
+	# MODES
+	if(@pvp['arena']['mode'] !== 'dm') {
+		include('../modes.library/'.@pvp['arena']['mode'].'.ms');
+	}
 
+	# WEAPONS
+	include('weapons.ms');
+	if(array_index_exists(@pvp['arena'], 'weapons')) {
+		foreach(@weapon in @pvp['arena']['weapons']) {
+			include('../weapons.library/'.@weapon.'.ms');
+		}
+	}
+	
 	include('events.ms');
 
 	@pvp['interval'] = set_interval(1000, closure(){
@@ -343,7 +338,7 @@ proc _pvp_end_match(@id, @winners) {
 						._pad_stat(@stats['kills'], 2).'-------'
 						._pad_stat(@stats['deaths'], 2).'---------'
 						._pad_stat(@stats['pickups'], 2).'--------'
-						._pad_stat(round(@stats['damage']), 3).'-------'
+						._pad_stat(round(@stats['damage']), 3).'------'
 						.if(array_contains(@winners, @player), color('gold').color('bold').@player.' +'.@pvp['coins'], @player).'-', '-', ' '));
 				}
 				_regionmsg(@pvp['arena']['broadcast'], colorize('&7&m|----------------------------------------------------|'));
@@ -385,12 +380,16 @@ proc _pvp_end_match(@id, @winners) {
 			queue_clear(@id.'0hat')
 			queue_clear(@id.'1hat')
 		}
-
-		if(array_contains(all_virtualchests(), @id.'0')) {
-			del_virtualchest(@id.'0')
-		}
-		if(array_contains(all_virtualchests(), @id.'1')) {
-			del_virtualchest(@id.'1')
+	
+		@chests = all_virtualchests();
+		foreach(@chest in @chests) {
+			if(@chest === @id.'0'
+			|| @chest === @id.'1') {
+				del_virtualchest(@chest);
+			} else if(@chest === @id.'options') {
+				del_virtualchest(@chest);
+				unbind(@chest);
+			}
 		}
 
 		clear_task(@pvp['interval'])
