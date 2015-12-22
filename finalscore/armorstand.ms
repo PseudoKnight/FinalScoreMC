@@ -219,7 +219,9 @@ bind(entity_damage, null, array('type': 'ARMOR_STAND'), @event) {
 	if(sk_can_build(@damager, @event['location'])) {
 		@armorstand = entity_spec(@event['id']);
 		if(@armorstand['arms']) {
-			cancel();
+			if(!array_index_exists(@event, 'shooter')) {
+				cancel();
+			}
 			@weapon = get_mob_equipment(@event['id'])['weapon'];
 			@loc = entity_loc(@event['id']);
 			if(!is_null(@weapon)) {
@@ -228,7 +230,7 @@ bind(entity_damage, null, array('type': 'ARMOR_STAND'), @event) {
 			}
 			drop_item(@loc, array('type': 280, 'qty': 2));
 			set_entity_spec(@event['id'], array('arms': false));
-		} else if(@armorstand['baseplate']) {
+		} else if(@armorstand['baseplate'] && !array_index_exists(@event, 'shooter')) {
 			cancel();
 			set_entity_spec(@event['id'], array('baseplate': false));
 		}
