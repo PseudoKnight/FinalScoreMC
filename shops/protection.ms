@@ -55,32 +55,32 @@
 # }
 
 # Prevent hoppers under shop chests
-bind(block_place, null, array(type: 154), @event) {
+bind(block_place, null, array('type': 154), @event) {
 	include('includes.library/shops.ms');
-	@loc = _relative(@event[location], 'up')
-	@type = split(':', get_block_at(@loc))[0]
+	@loc = _relative(@event['location'], 'up');
+	@type = split(':', get_block_at(@loc))[0];
 	if(@type === '54' || @type === '146') {
-		@signs = array()
+		@signs = array();
 		if(split(':', get_block_at(_relative(@loc, 'up')))[0] === '68') {
-			@signs[0] = _relative(@loc, 'up')
+			@signs[0] = _relative(@loc, 'up');
 		}
 		if(get_inventory_size(@loc) == 54) {
 			foreach(@dir in array('north', 'south', 'east', 'west')) {
-				@rel = _relative(@loc, @dir)
+				@rel = _relative(@loc, @dir);
 				if(split(':', get_block_at(@rel))[0] == @type) {
 					if(split(':', get_block_at(_relative(@rel, 'up')))[0] === '68') {
-						@signs[1] = _relative(@rel, 'up')
+						@signs[1] = _relative(@rel, 'up');
 					}
-					break()
+					break();
 				}
 			}
 		}
     
 		if(@signs) {
 			foreach(@sign in @signs) {
-				if((@shop = _get_shop(@sign)) && !_is_shop_owner(player(), @shop[owner])) {
-					cancel()
-					die(color('red').'You cannot place a hopper below a shop you don\'t own.')
+				if((@shop = _get_shop(@sign)) && !_is_shop_owner(player(), @shop['owner'])) {
+					cancel();
+					die(color('red').'You cannot place a hopper below a shop you don\'t own.');
 				}
 			}
 		}
