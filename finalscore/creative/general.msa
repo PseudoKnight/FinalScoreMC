@@ -149,16 +149,60 @@
 	tame_mob(@horse); 
 	set_entity_spec(@horse, array('jump': 0.8, 'saddle': array('name': 'saddle')));
 	set_entity_rider(@horse, puuid());
-	bind(vehicle_leave, array('id': player().'horse_leave'), array('vehicletype': 'HORSE', 'passengertype': 'PLAYER'), @e, @player = player()) {
+	
+	bind(vehicle_leave, array('id': player().'horse_leave'), array('vehicletype': 'HORSE', 'passengertype': 'PLAYER'),
+			@e, @player = player()) {
+			
 		if(@e['player'] == @player) {
 			unbind();
 			unbind(@player.'horse_quit');
 			try(entity_remove(@e['vehicle']));
 		}
 	}
+	
 	bind(player_quit, array('id': player().'horse_quit'), array('player': player()), @e, @horse) {
 		unbind();
 		unbind(player().'horse_leave');
 		try(entity_remove(@horse));
 	}
+<<<
+
+# set a note to a noteblock
+*:/note $note [$octave = 0] = >>>
+	@l = pcursor();
+	if(!sk_can_build(@l) || get_block_at(@l) != '25:0') {
+		die();
+	}
+	
+	@instrument = 'NOTE_PIANO';
+	switch(split(':', get_block_at(_relative(@l, 'down')))[0]) {
+		case '1':
+			@instrument = 'NOTE_BASS_DRUM';
+		case '5':
+		case '17':
+			@instrument = 'NOTE_BASS_GUITAR';
+		case '12':
+		case '13':
+			@instrument = 'NOTE_SNARE_DRUM';
+		case '20':
+			@instrument = 'NOTE_STICKS';
+		case '79':
+		case '174':
+			@instrument = 'ORB_PICKUP';
+		case '159':
+		case '172':
+			@instrument = 'NOTE_PLING';
+	}
+
+	@clicks = $note;
+	@pitch = 0.5;
+	@notes = array('F#', 'G', 'G#', 'A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F');
+	if(!is_numeric(@clicks)) {
+		@pitch = _get_pitch($note, $octave);
+		@clicks = array_index(@notes, to_upper($note)) + ($octave * 12);
+	} else {
+		@pitch = _get_pitch(@notes[@clicks % 12], floor(@clicks / 12));
+	}
+	play_sound(@l, array('sound': @instrument, 'pitch': @pitch));
+	sudo('/setblock '.@l[0].' '.@l[1].' '.@l[2].' minecraft:noteblock 0 replace {note:'.@clicks.'b}');
 <<<

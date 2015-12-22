@@ -90,8 +90,6 @@ bind(player_login, null, null, @event) {
 		}
 	}
 	
-
-	
 	# Check if player is banned.
 	if(array_index_exists(@pdata, 'ban')) {
 		if(!array_index_exists(@pdata['ban'], 'time') || @pdata['ban']['time'] > time()) {
@@ -132,7 +130,6 @@ bind(player_join, null, null, @event) {
 	
 	# BLOCK CODES
 	# Disables cheat features in mods that play nice.
-	/*
 	msg(colorize('&f &f &2 &0 &4 &8 ')); # Zombe zcheat
 	msg(colorize('&f &f &4 &0 &9 &6 ')); # Zombe noclip
 	msg(colorize('&f &f &1 &0 &2 &4 ')); # Zombe fly
@@ -149,7 +146,6 @@ bind(player_join, null, null, @event) {
 	msg(colorize('&0&1&8&9&a&b&f&f')); # Smart-moving jump
 	msg(colorize('&3 &6 &3 &6 &3 &6 &e ')); # Voxelmap radar
 	msg(colorize('&3 &6 &3 &6 &3 &6 &d ')); # Voxelmap cave
-	*/
 	
 	set_timeout(250, closure(@loc = ploc(), @player = player()){
 		if(!ponline(@player)) {
@@ -614,4 +610,27 @@ bind(entity_damage, null, array('type': 'ITEM_FRAME', 'cause': 'PROJECTILE'), @e
 	if(entity_type(@event['damager']) === 'ENDER_PEARL') {
 		cancel();
 	}
+}
+
+bind(note_play, null, null, @event) {
+	cancel();
+	@sound = 'NOTE_'.@event['instrument'];
+	switch(split(':', get_block_at(_relative(@event['location'], 'down')))[0]) {
+		case '79':
+		case '174':
+			@sound = 'orb_pickup';
+		case '145':
+			@sound = 'anvil_land';
+		case '159':
+		case '172':
+			@sound = 'note_pling';
+	}
+	play_sound(@event['location'], array(
+		'sound': @sound,		
+		'pitch': _get_pitch(@event['tone'], @event['octave']),
+		'volume': if(is_block_powered(@event['location']), 9, 1)
+	));
+	@event['location']['x'] += 0.5;
+	@event['location']['z'] += 0.5;
+	play_effect(_relative(@event['location'], 'up'), 'note');
 }
