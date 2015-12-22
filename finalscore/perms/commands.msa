@@ -38,8 +38,8 @@ switch($action) {
 		die('Are you that desperate for approval?');
 	}
 	include('includes.library/procedures.ms');
-	if(_set_group(@player, 'member')) {
-		msg('Added player.');
+	if(_set_group(@player, 'member', true)) {
+		msg(color('green').'Added player.');
 		tmsg(@player, 'You have been added to the whitelist by ', color('e'), player(), color('f'), '.');
 		if(!has_permission('group.moderator')) {
 			@pdata = _pdata(@player);

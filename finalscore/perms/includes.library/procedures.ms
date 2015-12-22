@@ -25,22 +25,36 @@ proc _add_group_perms(@player, @group, @return = true) {
 	set_permissions(@player, @toAdd);
 }
 
-proc _set_group(@player, @group) {
+proc _set_group(@player, @group, @checkInheritance = false) {
 	@group = to_lower(@group);
 	@perms = import('perms');
 	if(!array_index_exists(@perms, @group)) {
-		msg('No group by that name.');
+		msg(color('gold').'No group by that name.');
 		return(false);
 	}
 	@pdata = _pdata(@player);
-	@oldgroup = 'default';
+	@oldGroup = 'default';
 	if(array_index_exists(@pdata, 'group')) {
-		@oldgroup = @pdata['group'];
+		@oldGroup = @pdata['group'];
+	}
+	if(@oldGroup == @group) {
+		msg(color('gold').'Already in group "'.@group.'"');
+		return(false);
+	}
+	if(@checkInheritance) {
+		@checkGroup = @oldGroup;
+		while(array_index_exists(@perms[@checkGroup], 'inheritance')) {
+			@checkGroup = @perms[@checkGroup]['inheritance'];
+			if(@checkGroup == @group) {
+				msg(color('gold').'Already in group that inherits "'.@group.'"');
+				return(false);
+			}
+		}
 	}
 	@pdata['group'] = @group;
 	_store_pdata(@player, @pdata);
 	if(ponline(@player)) {
 		_perm_player(@player);
 	}
-	return(@oldgroup);
+	return(@oldGroup);
 }
