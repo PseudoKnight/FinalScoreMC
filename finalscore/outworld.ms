@@ -1,8 +1,4 @@
-bind(player_move, null, null, @event) {
-	if(@event['to']['world'] !== 'outworld' || !ponline(@event['player'])) {
-		die();
-	}
-	
+bind(player_move, null, array('world': 'outworld'), @event) {
 	@loc = ploc();
 	@block = get_block_at(@loc);
 	switch(@block) {

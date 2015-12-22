@@ -1,30 +1,23 @@
 if(extension_exists('CHDynmap')) {
 
-@closure = closure() {
-
 if(!array_contains(dm_all_markersets(), 'tracers')) {
 	dm_create_markerset('tracers', array('label': 'Tracers', 'persistent': false));
 	dm_set_markerset_hide_by_default('tracers', false);
 }
 
 bind(player_move, null, array('threshold': 10), @event) {
-	try(
-		if(player() === '~console'
-		|| !has_permission('livemap.tracers')
-		|| pmode() === 'CREATIVE'
-		|| array_get(_pdata(player()), 'support', 5) < 10) {
-			die();
-		}
-	, # sometimes the player is offline in player_move
+	if(pmode() === 'CREATIVE') {
 		die();
-	);
+	}
+	
+	@pdata = _pdata(player());
+	if(!array_index_exists(@pdata, 'support')) {
+		die();
+	}
 	
 	try(
-		if((@playerCount = _player_count()) > 20) {
-			die();
-		}
 		@lines = dm_marker_corners('tracers', player());
-		if(array_size(@lines) > 128 - @playerCount * 7) {
+		if(array_size(@lines) > @pdata['support'] * 2) {
 			array_remove(@lines, 0);
 		}
 		@lines[] = ploc();
@@ -37,14 +30,16 @@ bind(player_move, null, array('threshold': 10), @event) {
 			'id': player(),
 			'corners': array(@event['to'])
 		));
-		dm_set_marker_line_style('tracers', player(), array('color': array('r': 255, 'g': 0, 'b': 0), 'opacity': 0.4, 'weight': 2));
+		dm_set_marker_line_style('tracers', player(), array(
+			'color': array('r': 200, 'g': 0, 'b': 0), 
+			'opacity': 0.5, 
+			'weight': 2,
+		));
 	)
 }
 
 bind(player_teleport, null, null, @event) {
-	@pdata = _pdata(player());
-	if(array_get(@pdata, 'group', 'default') !== 'donor'
-	|| array_get(@pdata, 'support', 5) < 10) {
+	if(!has_permission('group.donor')) {
 		die();
 	}
 	set_timeout(50, closure(){
@@ -79,9 +74,5 @@ bind(player_quit, null, null, @event) {
 		dm_delete_marker('tracers', player());
 	}
 }
-
-}
-
-set_timeout(4000, @closure);
 
 }
