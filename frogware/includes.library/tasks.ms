@@ -299,27 +299,31 @@ proc _fw_task(@task, @state, @secs) {
 			@meta = null;
 			if(!rand(4)) {
 				@meta = array(array(
-					array('etype': 'KNOCKBACK', 'elevel': 10),
-					array('etype': 'PUNCH', 'elevel': 10)
+					array('etype': 'KNOCKBACK', 'elevel': 8),
+					array('etype': 'PUNCH', 'elevel': 8)
 				))
 			}
 			foreach(@p in all_players('custom')) {
 				if(_fw_player(@p)) {
 					pgive_item(@p, @weapon, 1, @meta);
-					if(@weapon == 261) {
+					if(@weapon == '261:379') {
 						pgive_item(@p, 262, 10);
 					}
 				}
 			}
-			bind(entity_damage, array('id': 'fwdamage2'), array('type': 'PLAYER', 'cause': 'ENTITY_ATTACK', 'world': 'custom'), @e) {
-				if(_fw_player(@e['player'])
-				&& _fw_player(@e['damager'])) {
-					if(_fw_changeteam(@e['damager'], 'winners')) {
-						play_sound(ploc(), array('sound': 'zombie_metal'), player())
+			bind(entity_damage, array('id': 'fwdamage2'), array('type': 'PLAYER', 'world': 'custom'), @e) {
+				if(_fw_player(@e['player'])) {
+					@damager = @e['damager'];
+					if(array_index_exists(@e, 'shooter')) {
+						@damager = @e['shooter'];
 					}
-					_fw_changeteam(@e['player'], 'losers')
-					play_sound(ploc(@e['player']), array('sound': 'zombie_unfect'), @e['player'])
-					
+					if(_fw_player(@damager)) {
+						if(_fw_changeteam(@damager, 'winners')) {
+							play_sound(ploc(), array('sound': 'zombie_metal'), player())
+						}
+						_fw_changeteam(@e['player'], 'losers')
+						play_sound(ploc(@e['player']), array('sound': 'zombie_unfect'), @e['player'])
+					}
 				}
 			}
 			
@@ -489,9 +493,6 @@ proc _fw_task(@task, @state, @secs) {
 				}
 			}
 			@region = sk_region_info('frogware', 'custom')[0];
-			_iterate_cuboid(array(@region[0][0], @region[1][1], @region[0][2], 'custom'),
-			array(@region[1][0], @region[1][1], @region[1][2], 'custom'),
-			'9:0', 100);
 			bind(player_fish, array('id': 'fwfish'), array('state': '/(CAUGHT_ENTITY|CAUGHT_FISH)/'), @e) {
 				if(_fw_player(@e['player'])) {
 					if(_fw_changeteam(player(), 'winners')) {
