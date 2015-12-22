@@ -3,6 +3,7 @@ include('utils.ms');
 include('spectator.ms');
 include('player.ms');
 include('stats.ms');
+include('weapons.ms');
 
 # CLASSES
 if(array_index_exists(@pvp['arena'], 'classes')) {
@@ -93,7 +94,6 @@ proc _pvp_start_match(@id) {
 	}
 
 	# WEAPONS
-	include('weapons.ms');
 	if(array_index_exists(@pvp['arena'], 'weapons')) {
 		foreach(@weapon in @pvp['arena']['weapons']) {
 			include('../weapons.library/'.@weapon.'.ms');
