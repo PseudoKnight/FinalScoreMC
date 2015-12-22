@@ -26,7 +26,7 @@ case 'load':
 				set_pinv(@p, array(103: array('type': 86)));
 				set_peffect(@p, 9, 0, 4);
 				if(!rand(8)) {
-					play_sound(ploc(@player), array('sound': 'GHAST_MOAN', 'pitch': 0.5));
+					play_named_sound(ploc(@player), array('sound': 'mob.guardian.attack', 'pitch': 2));
 				}
 			}
 		}
