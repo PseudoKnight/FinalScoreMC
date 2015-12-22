@@ -53,7 +53,7 @@
 	@loc = array(round(@loc['x']), round(@loc['y']), round(@loc['z']), @loc['world']);
 
 	@t = @line - 1;
-	for(@i: @s in @shops[@t]) {
+	foreach(@i: @s in @shops[@t]) {
 		if(@s['location'] == @loc) {
 			if(@t == 0) {
 				@count = _get_inventory_count(_relative(@loc, 'down'), @shop['item']);
