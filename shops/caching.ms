@@ -7,20 +7,20 @@ bind(player_interact, null, array('block': 68), @e) {
 			if(!@shops) {
 				@shops = array(array(), array());
 			}
-			
+
 			@location = array(
-				round(@e['location']['x']), 
-				round(@e['location']['y']), 
-				round(@e['location']['z']), 
+				round(@e['location']['x']),
+				round(@e['location']['y']),
+				round(@e['location']['z']),
 				@e['location']['world'],
 			);
-			
+
 			if(@shop['buy']) {
 				@count = _get_inventory_count(_relative(@e['location'], 'down'), @shop['item']);
 				if(is_null(@count)) {
 					return();
 				}
-				
+
 				@found = false;
 				foreach(@i: @s in @shops[0]) {
 					if(@s['location'][0] == @location[0]
@@ -31,9 +31,9 @@ bind(player_interact, null, array('block': 68), @e) {
 							array_remove(@shops[0], @i);
 						} else {
 							@shops[0][@i] = array(
-								'location': @location, 
-								'price': @shop['buy'][1], 
-								'owner': @shop['owner'], 
+								'location': @location,
+								'price': @shop['buy'][1],
+								'owner': @shop['owner'],
 								'stock': @count,
 							);
 						}
@@ -43,7 +43,7 @@ bind(player_interact, null, array('block': 68), @e) {
 				}
 				if(!@found && @count >= @shop['buy'][2]) {
 					@shops[0][] = array(
-						'location': @location, 
+						'location': @location,
 						'price': @shop['buy'][1],
 						'owner': @shop['owner'],
 						'stock': @count,
@@ -64,12 +64,12 @@ bind(player_interact, null, array('block': 68), @e) {
 				default:
 					die();
 				}
-				
+
 				@count = _get_inventory_count(_relative(@e['location'], 'down'), @currency.':0');
 				if(is_null(@count)) {
 					return();
 				}
-				
+
 				@found = false;
 				foreach(@i: @s in @shops[1]) {
 					if(@s['location'][0] == @location[0]
@@ -80,9 +80,9 @@ bind(player_interact, null, array('block': 68), @e) {
 							array_remove(@shops[1], @i);
 						} else {
 							@shops[1][@i] = array(
-								'location': @location, 
-								'price': @shop['sell'][1], 
-								'owner': @shop['owner'], 
+								'location': @location,
+								'price': @shop['sell'][1],
+								'owner': @shop['owner'],
 								'stock': @count,
 							);
 						}
@@ -91,10 +91,10 @@ bind(player_interact, null, array('block': 68), @e) {
 					}
 				}
 				if(!@found && @count >= @shop['sell'][3]) {
-					@shops[1][] = (
-						'location': @location, 
-						'price': @shop['sell'][1], 
-						'owner': @shop['owner'], 
+					@shops[1][] = array(
+						'location': @location,
+						'price': @shop['sell'][1],
+						'owner': @shop['owner'],
 						'stock': @count,
 					);
 				}
@@ -117,40 +117,40 @@ bind(block_break, null, array('type': 68), @e) {
 		if(!@shops) {
 			die();
 		}
-		
+
 		@location = array(
-			round(@e['location']['x']), 
-			round(@e['location']['y']), 
-			round(@e['location']['z']), 
+			round(@e['location']['x']),
+			round(@e['location']['y']),
+			round(@e['location']['z']),
 			@e['location']['world'],
 		);
-		
+
 		if(@shop['buy'] && @shops[0]) {
 			foreach(@i: @s in @shops[0]) {
 				if(@s['location'][0] == @location[0]
 				&& @s['location'][1] == @location[1]
 				&& @s['location'][2] == @location[2]
-				&& @s['location'][3] == @location[3] 
+				&& @s['location'][3] == @location[3]
 				&& (_is_shop_owner(player(), @shop['owner']) || has_permission('shop.admin'))) {
 					array_remove(@shops[0], @i);
 					break();
 				}
 			}
 		}
-		
+
 		if(@shop['sell'] && @shops[1]) {
 			foreach(@i: @s in @shops[1]) {
 				if(@s['location'][0] == @location[0]
 				&& @s['location'][1] == @location[1]
 				&& @s['location'][2] == @location[2]
-				&& @s['location'][3] == @location[3] 
+				&& @s['location'][3] == @location[3]
 				&& (_is_shop_owner(player(), @shop['owner']) || has_permission('shop.admin'))) {
 					array_remove(@shops[1], @i);
 					break();
 				}
 			}
 		}
-		
+
 		if(!@shops[0] && !@shops[1]) {
 			clear_value('shop', @shop['key']);
 		} else {
