@@ -55,15 +55,6 @@ proc _remove_ignored(@sender, @recipients) {
 }
 
 /*
-	Adds a timestamp with a player's timezone
-*/
-proc _time_stamp(@player) {
-	@pdata = _pdata(@player);
-	return(simple_date('h:mm', time(), array_get(@pdata, 'tz', 'Etc/GMT-6')));
-}
-
-
-/*
 	Constructs and sends a tellraw command with a hover event
 */
 proc _hover_tell(@recipients, @components) {
@@ -87,7 +78,7 @@ proc _hover_tell(@recipients, @components) {
 */
 proc _clickable_links(@string) {
 	return(reg_replace('(?:https?://|www\\.)([\\da-z.-]+\\.[a-z.]{2,6}[/\\w:.?=&-]*)', 
-		'&b[$1]",clickEvent:{action:"open_url",value:"http://$1"}},{text:"&r',
+		'[$1]",clickEvent:{action:"open_url",value:"http://$1"}},{text:"&r',
 		@string
 	));
 }
