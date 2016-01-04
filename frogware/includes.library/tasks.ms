@@ -312,7 +312,7 @@ proc _fw_task(@task, @state, @secs) {
 				}
 			}
 			bind(entity_damage, array('id': 'fwdamage2'), array('type': 'PLAYER', 'world': 'custom'), @e) {
-				if(_fw_player(@e['player'])) {
+				if(array_index_exists(@e, 'damager') && _fw_player(@e['player'])) {
 					@damager = @e['damager'];
 					if(array_index_exists(@e, 'shooter')) {
 						@damager = @e['shooter'];
