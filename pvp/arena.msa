@@ -617,6 +617,19 @@
 		if($setting && !array_index_exists(@arena, $setting)) {
 			die('No data stored for setting: '.$setting);
 		}
+
+		if(!@args || @args[0] == 'all') {
+			if(!$setting) {
+				clear_value('arena.'.$id);
+				die('Deleted '.$id.' arena permanently.');
+			} else {
+				array_remove(@arena, $setting);
+				msg('Deleted "'.$setting.'" setting for '.$id.'.');
+			}
+			store_value('arena', $id, @arena);
+			die();
+		}
+
 		switch($setting) {
 			case 'spawn':
 				@loc = ploc();
@@ -681,16 +694,16 @@
 				}
 				msg('Activated '.$setting.': '.@arena[$setting]);
 			
-			default:
-				if(!$setting) {
-					clear_value('arena.'.$id)
-					die('Deleted '.$id.' arena permanently.')
-				} else {
-					array_remove(@arena, $setting)
-					msg('Deleted "'.$setting.'" setting for '.$id.'.')
+			case 'options':
+				foreach(@key in array_keys(@arena[$setting])) {
+					if(@key == @args[0]) {
+						array_remove(@arena[$setting], @args[0]);
+						msg('Deleted "'.@args[0].'" from "'.$setting.'" for '.$id.'.');
+						break();
 				}
 		}
-		store_value('arena.'.$id, @arena)
+		}
+		store_value('arena', $id, @arena);
 		
 	case 'info':
 	case 'i':
@@ -736,8 +749,6 @@
 					msg(@setting.' '.color('gray').'[...]')
 				} else if(array_contains(array('team'), @setting)) {
 					continue()
-				} else if(is_array(@value)) {
-					msg(@setting.' '.color('gray').array_implode(@value, ', '))
                 } else {
 					msg(@setting.' '.color('gray').@value)
 				}
