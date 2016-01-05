@@ -1,4 +1,5 @@
-# CLICKING SIGNS!
+# Caches shop location, price, owner, stock.
+# Tell shop owners when they're out of stock.
 bind(player_interact, null, array('block': 68), @e) {
 	include('includes.library/shops.ms');
 	if(@shop = _get_shop(@e['location'])) {
@@ -28,6 +29,22 @@ bind(player_interact, null, array('block': 68), @e) {
 					&& @s['location'][2] == @location[2]
 					&& @s['location'][3] == @location[3]) {
 						if(@count < @shop['buy'][2]) {
+							@msg = color('gold').'[OUT OF STOCK] '.color('r').data_name(@shop['item']).color(7)
+								.' @ '.@location[0].','.@location[1].','.@location[2].' '._worldname(@location[3]);
+							if(ponline(@shop['owner'])) {
+								tmsg(@shop['owner'], @msg);
+							} else {
+								@pdata = _pdata(@shop['owner']);
+								if(!array_index_exists(@pdata, 'mail')) {
+									 @pdata['mail'] = array();
+								}
+								array_push(@pdata['mail'], array(
+									simple_date('MMM d h:mm a', time(), 'CST'),
+									player(),
+									@msg,
+								));
+								_store_pdata(@player, @pdata);
+							}
 							array_remove(@shops[0], @i);
 						} else {
 							@shops[0][@i] = array(
@@ -77,6 +94,22 @@ bind(player_interact, null, array('block': 68), @e) {
 					&& @s['location'][2] == @location[2]
 					&& @s['location'][3] == @location[3]) {
 						if(@count < @shop['sell'][3]) {
+							@msg = color('gold').'[OUT OF CURRENCY] '.color('r').data_name(@currency).color(7)
+								.' @ '.@location[0].','.@location[1].','.@location[2].' '._worldname(@location[3]);
+							if(ponline(@shop['owner'])) {
+								tmsg(@shop['owner'], @msg);
+							} else {
+								@pdata = _pdata(@shop['owner']);
+								if(!array_index_exists(@pdata, 'mail')) {
+									 @pdata['mail'] = array();
+								}
+								array_push(@pdata['mail'], array(
+									simple_date('MMM d h:mm a', time(), 'CST'),
+									player(),
+									@msg,
+								));
+								_store_pdata(@player, @pdata);
+							}
 							array_remove(@shops[1], @i);
 						} else {
 							@shops[1][@i] = array(
