@@ -409,3 +409,10 @@
 	.round(@maxMem / 1000000).'MB Max');
 	msg(color(@color).array_implode(@bar, ''));
 <<<
+
+*:/setrider $player $player2 = >>>
+	if(!has_permission('group.moderator')) {
+		die('You do not have permission.');
+	}
+	set_entity_rider(puuid(player($player)), puuid(player($player2)));
+<<<
