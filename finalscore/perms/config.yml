@@ -1,0 +1,237 @@
+member:
+  permissions:
+    group.member: true
+    permissions.build: true
+    command.sethome: true
+    multiverse.core.list.who: true
+    stargate.create.personal: true
+    stargate.create.network: true
+    stargate.create.network.galaxy: false
+    stargate.create.gate: true
+    stargate.destroy.personal: true
+    stargate.option: true
+    worldedit.help: true
+    worldedit.wand.toggle: true
+    worldedit.selection.*: true
+    worldguard.region.wand: true
+    worldguard.region.claim: true
+    worldguard.region.select.*: true
+    worldguard.region.info: true
+    worldguard.region.info.*: true
+    worldguard.region.list: true
+    worldguard.region.list.own: true
+    worldguard.region.addowner.own.*: true
+    worldguard.region.remove.own.*: true
+    worldguard.region.setpriority.own.*: true
+    worldguard.region.removemember.own.*: true
+    worldguard.region.addmember.own.*: true
+    worldguard.region.flag.regions.own.*: true
+    worldguard.region.flag.flags.mob-spawning.*: true
+    worldguard.region.flag.flags.snow-fall.*: true
+    worldguard.region.flag.flags.snow-melt.*: true
+    worldguard.region.flag.flags.ice-form.*: true
+    worldguard.region.flag.flags.ice-melt.*: true
+    worldguard.region.flag.flags.use.*: true
+    worldguard.region.flag.flags.chest-access.*: true
+    worldguard.region.flag.flags.block-break.*: true
+    worldguard.region.flag.flags.block-place.*: true
+  worlds:
+    outworld:
+      stargate.create.personal: false
+      stargate.create.network: false
+      worldguard.region.claim: false
+      command.sethome: false
+    outworld_nether:
+      stargate.create.personal: false
+      stargate.create.network: false
+      worldguard.region.claim: false
+      command.sethome: false
+    outworld_the_end:
+      stargate.create.personal: false
+      stargate.create.network: false
+      worldguard.region.claim: false
+      command.sethome: false
+    dev:
+      stargate.create.personal: false
+      stargate.create.network: false
+      worldedit.navigation.*: true
+      command.gm: true
+      worldguard.region.flag.flags.other-explosion.*: true
+      worldguard.region.flag.flags.ghast-fireball.*: true
+      worldguard.region.flag.flags.spawn.*: true
+      worldguard.region.flag.flags.teleport.*: true
+      worldguard.region.flag.flags.invincible.*: true
+      worldguard.region.claim: false
+    custom:
+      stargate.create.personal: false
+      stargate.create.network: false
+      worldguard.region.claim: false
+      command.sethome: false
+      worldedit.selection.*: false
+  inheritance: default
+regular:
+  permissions:
+    group.regular: true
+    logblock.tools.tool: true
+    pmonitor.showstate: true
+  inheritance: member
+donor:
+  permissions:
+    group.donor: true
+  worlds:
+    world:
+      livemap.tracers: true
+      livemap.deathmarkers: true
+    world3:
+      livemap.tracers: true
+      livemap.deathmarkers: true
+    world4:
+      livemap.tracers: true
+      livemap.deathmarkers: true
+    omega:
+      livemap.tracers: true
+      livemap.deathmarkers: true
+  inheritance: regular
+builder:
+  permissions:
+    group.builder: true
+  worlds:
+    dev:
+      worldguard.region.*: true
+      command.fly: true
+      command.gm.others: true
+      command.sign: true
+      command.effect: true
+      command.velocity: true
+      command.playsound: true
+      command.explosion: true
+      command.time: true
+      command.heal: true
+      command.heal.others: true
+      command.mob: true
+      command.cb: true
+    custom:
+      worldedit.navigation.*: true
+      command.fly: true
+      command.gm: true
+      command.sign: true
+      command.effect: true
+      command.velocity: true
+      command.playsound: true
+      command.explosion: true
+      command.time: true
+      command.heal: true
+      command.heal.others: true
+      command.mob: true
+      command.cb: true
+  inheritance: regular
+engineer:
+  permissions:
+    group.engineer: true
+    worldedit.clipboard.copy: true
+  worlds:
+    dev:
+      worldedit.tool.*: true
+      worldedit.generation.*: true
+      worldedit.brush.*: true
+      vanish.standard: true
+      worldedit.region.*: true
+      worldedit.clipboard.*: true
+      worldedit.history.*: true
+      worldedit.global-mask: true
+      worldedit.scripting.execute: true
+      worldedit.scripting.execute.*: true
+      worldedit.fast: true
+      worldedit.wand: true
+    custom:
+      worldedit.tool.*: true
+      worldedit.generation.*: true
+      worldedit.brush.*: true
+      vanish.standard: true
+      worldedit.region.*: true
+      worldedit.clipboard.*: true
+      worldedit.history.*: true
+      worldedit.global-mask: true
+      worldguard.region.*: true
+      worldedit.scripting.execute: true
+      worldedit.scripting.execute.*: true
+      worldedit.fast: true
+      worldedit.wand: true
+  inheritance: builder
+moderator:
+  permissions:
+    group.moderator: true
+    deadbolt.*: true
+    worldguard.*: true
+    multiverse.teleport.*: true
+    logblock.lookup: true
+    logblock.tp: true
+    logblock.tools.toolblock: true
+    vanish.standard: true
+    deadbolt.broadcast.*: false
+    OpenInv.openinv: true
+    OpenInv.crossworld: true
+    OpenInv.anychest: true
+    OpenInv.editinv: true
+    OpenInv.openender: true
+    OpenInv.editender: true
+    OpenInv.silent: true
+    stargate.admin: true
+    stargate.destroy: true
+    redstoneclockdetector.*: true
+    PhysicalShop.admin: true
+    worldedit.history.*: true
+    worldedit.butcher: true
+    worldedit.remove: true
+    worldedit.extinguish: true
+    worldedit.navigation.*: true
+    worldedit.analysis.*: true
+    command.fly: true
+    command.gm: true
+    command.gm.others: true
+    command.sign: true
+    command.effect: true
+    command.velocity: true
+    command.playsound: true
+    command.explosion: true
+    command.time: true
+    command.endercrystal: true
+    command.mob: true
+    command.sethome.others: true
+    chat.staff: true
+    nocheat.admin: true
+    minecraft.command.toggledownfall: true
+  worlds:
+    dev:
+      worldedit.*: true
+    custom:
+      worldedit.*: true
+  inheritance: engineer
+admin:
+  permissions:
+    group.admin: true
+    vanish.fakeannounce: true
+    vanish.statusupdates: true
+    vanish.adminalerts: true
+    vanish.reload: true
+    vanish.toggle.all: true
+    commandhelper.reloadaliases: true
+    commandhelper.interpreter: true
+    command.resettimes: true
+  inheritance: moderator
+default:
+  permissions:
+    group.default: true
+    permissions.build: false
+    command.join.to: true
+    command.join.from: true
+  worlds:
+    custom:
+      permissions.build: true
+      command.join.to: false
+    outworld:
+      command.join.to: false
+      command.join.from: false
+    outworld_nether:
+      command.join.to: false
+      command.join.from: false
