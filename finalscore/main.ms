@@ -26,7 +26,7 @@ bind(player_login, null, null, @event) {
 	if(@event['result'] !== 'ALLOWED') {
 		die();
 	}
-	@update = false; 
+	@update = false;
 	@pdata = null;
 	@uuidDashed = get_value('players', to_lower(@event['player']));
 	if(is_null(@uuidDashed)) { # new player or changed name
@@ -41,7 +41,7 @@ bind(player_login, null, null, @event) {
 			}
 			@pdata['names'][] = @pdata['name'];
 			@pdata['name'] = @event['player'];
-			
+
 			# just in case, they're not in a survival world, we may need to fetch their inventory for them later
 			# TODO: handle inventory for name changes automatically
 			set_timeout(2000, closure(){
@@ -50,14 +50,14 @@ bind(player_login, null, null, @event) {
 					console('PK NOTE: Restore '.@event['player'].'\'s inventory! (Previously '.@pdata['names'].')');
 				}
 			});
-			
+
 		} else { # new player!
 			@pdata = array(
 				'joined': simple_date('YYYY-MM-dd'),
 				'name': @event['player'],
 			);
 		}
-		
+
 	} else { # existing player
 		if(@uuidDashed != @event['uuid']) {
 			modify_event('result', 'KICK_OTHER');
@@ -65,20 +65,20 @@ bind(player_login, null, null, @event) {
 				.' Please contact an administrator if this is in error.');
 			die();
 		}
-	
+
 		@uuid = replace(@uuidDashed, '-', '');
 		@pdata = get_value('uuids', @uuid);
-	
+
 		if(is_null(@pdata)) {
 			modify_event('result', 'KICK_OTHER');
 			modify_event('kickmsg', 'ERROR: User data is missing for known player.');
 			die();
 		}
-		
+
 		if(!array_index_exists(@pdata, 'name')) {
 			@pdata['name'] = @event['player'];
 			@update = true;
-			
+
 		} else if(@pdata['name'] != @event['player']) {
 			# player changed their name back or data was inaccurate
 			if(!array_index_exists(@pdata, 'names')) {
@@ -89,7 +89,7 @@ bind(player_login, null, null, @event) {
 			@update = true;
 		}
 	}
-	
+
 	# Check if player is banned.
 	if(array_index_exists(@pdata, 'ban')) {
 		if(!array_index_exists(@pdata['ban'], 'time') || @pdata['ban']['time'] > time()) {
@@ -105,7 +105,7 @@ bind(player_login, null, null, @event) {
 			@update = true;
 		}
 	}
-	
+
 	if(!array_index_exists(@pdata, 'ips')) {
 		@pdata['ips'] = array();
 	}
@@ -116,9 +116,9 @@ bind(player_login, null, null, @event) {
 		}
 		@update = true;
 	}
-	
+
 	export('pdata.'.to_lower(@event['player']), @pdata);
-	
+
 	if(@update) {
 		store_value('uuids', @uuid, @pdata);
 	}
@@ -127,9 +127,10 @@ bind(player_login, null, null, @event) {
 # Player join messages and tab list colors
 bind(player_join, null, null, @event) {
 	modify_event('join_message', null);
-	
+
 	# BLOCK CODES
 	# Disables cheat features in mods that play nice.
+	/*
 	msg(colorize('&f &f &2 &0 &4 &8 ')); # Zombe zcheat
 	msg(colorize('&f &f &4 &0 &9 &6 ')); # Zombe noclip
 	msg(colorize('&f &f &1 &0 &2 &4 ')); # Zombe fly
@@ -146,33 +147,34 @@ bind(player_join, null, null, @event) {
 	msg(colorize('&0&1&8&9&a&b&f&f')); # Smart-moving jump
 	msg(colorize('&3 &6 &3 &6 &3 &6 &e ')); # Voxelmap radar
 	msg(colorize('&3 &6 &3 &6 &3 &6 &d ')); # Voxelmap cave
-	
+	*/
+
 	set_timeout(250, closure(@loc = ploc(), @player = player()){
 		if(!ponline(@player)) {
 			console('ERROR: Player was not online 250ms after joining.');
 			die();
 		}
-		
+
 		if(!(has_permission('group.admin') && get_value('silentjoin'))) {
 			broadcast(colorize('&8'.simple_date('h:mm').' '.'&e&o* '._colorname().'&o'.player().' &e&ojoined the game *'));
 		}
-		
+
 		# Makes a call to the ban manager to store the player's UUID
 		# @endpoint - String - The action to take in the ban manager.
-		# @player - String - The player name making the call to the ban manager, or the UUID of the player. 
+		# @player - String - The player name making the call to the ban manager, or the UUID of the player.
 		# This player must be an admin or moderator.
 		# @params - Associative Array - The parameters to post to the ban manager.
-		# @error - Closure (Optional) - Closure to execute when the request returns an error. 
+		# @error - Closure (Optional) - Closure to execute when the request returns an error.
 		# The closure is passed the error message. Defaults to printing the error message to the user.
 		proc _bm_request(@endpoint, @player, @params,
 			@error = closure(@error_msg, console('Error saving UUID to ban manager: '.@error_msg, false))) {
-			
+
 				# Add the authentication parameters
 				@params['accessor_token'] = 'final-score-minecraft-server';
 				@params['timestamp'] = simple_date('yyyy-MM-dd HH:mm:ss Z');
 				@params['nonce'] = rand();
 				@params['uuid'] = @player;
-				
+
 				# Generate the HMAC
 				@hmac_key = comp_read('key.txt');
 				@msg = '';
@@ -180,7 +182,7 @@ bind(player_join, null, null, @event) {
 					@msg .= @key . @params[@key];
 				}
 				@params['hmac'] = hmac_sha1(@hmac_key, @msg);
-				
+
 				http_request('http://finalscoremc.com/fsmcbm/ban-manager.php?action='.@endpoint, array(
 					'method': 'POST',
 					'params': @params,
@@ -192,17 +194,17 @@ bind(player_join, null, null, @event) {
 					}
 				))
 		}
-	
-		_bm_request('set_user_uuid', 'a1634f37480a4bb9a0b2200266597ac0', 
+
+		_bm_request('set_user_uuid', 'a1634f37480a4bb9a0b2200266597ac0',
 			array('username': player(), 'user_uuid': puuid())
 		);
-		
+
 		#Welcome messages
 		@line = color('1').color('l').'----------------------';
 		msg(@line);
 		msg(colorize(' &6&l\u1260&d&l\u1260&b&l\u1260&4&l\u1260 &6&lFINALSCORE&e&lMC \u00AB &r\u25AA \u25AA \u25AA'));
 		msg(@line);
-		
+
 		@pdata = _pdata(player());
 		@updatePdata = false;
 		if(array_index_exists(@pdata, 'mail')) {
@@ -217,9 +219,9 @@ bind(player_join, null, null, @event) {
 		} else {
 			run('/mumble');
 		}
-		
+
 		_refresh_tablist(all_players());
-		
+
 		# SET NEW LOCATION
 		if(array_index_exists(@pdata, 'homeless')) {
 		# homeless players are players left on deleted worlds
@@ -233,11 +235,11 @@ bind(player_join, null, null, @event) {
 			set_ploc(@warp['loc']);
 			pfacing(@warp['yaw'], @warp['pitch']);
 		}
-		
+
 		if(@updatePdata) {
 			_store_pdata(player(), @pdata);
 		}
-		
+
 		set_timeout(800, closure(){
 			if(pworld() === 'custom') {
 				_equip_park();
@@ -324,9 +326,9 @@ bind(player_interact, null, array('block': 118, 'button': 'right'), @event) {
 
 # Block lighters
 bind(player_interact, null, array('item': 259, 'button': 'right'), @event) {
-	if(has_permission('group.regular') 
+	if(has_permission('group.regular')
 	|| !array_index_exists(@event, 'location')
-	|| pworld() === 'outworld' 
+	|| pworld() === 'outworld'
 	|| pworld() === 'outworld_nether') {
 		die();
 	}
@@ -350,7 +352,7 @@ bind(player_interact, null, array('item': 259, 'button': 'right'), @event) {
 # Button commands
 bind(player_interact, null, array('block': 77, 'button': 'right'), @event) {
 	@sign = _relative(@event['location'], 'up');
-	if(is_sign_at(@sign)) { 
+	if(is_sign_at(@sign)) {
 		@line = get_sign_text(@sign);
 		if(@type = reg_match('\u00A7[0-9a-f]{1}\\[(.+)\\]', @line[1])) {
 			if(is_alias('/'.to_lower(@type[1]).if(@line[2], ' ').to_lower(@line[2]).if(@line[3], ' ').to_lower(@line[3]))) {
@@ -358,9 +360,9 @@ bind(player_interact, null, array('block': 77, 'button': 'right'), @event) {
 			} else {
 				die('Unknown button command.');
 			}
-		} else if(length(@line[1]) > 1 
-		&& @line[1][0] === '/' 
-		&& length(@line[0]) > 2 
+		} else if(length(@line[1]) > 1
+		&& @line[1][0] === '/'
+		&& length(@line[0]) > 2
 		&& substr(@line[0], 0, 2) == color(1)) {
 			msg('Ran command:' @line[1] @line[2] @line[3]);
 			run_cmd(@line[1] @line[2] @line[3]);
@@ -497,7 +499,7 @@ bind(creature_spawn, null, array('reason': '/(NETHER_PORTAL|SPAWNER)/'), @event)
 
 # Limit breeding in high entity areas
 bind(creature_spawn, null, array('reason': 'BREEDING'), @event) {
-	if(@event['type'] !== 'HORSE' 
+	if(@event['type'] !== 'HORSE'
 	&& array_size(entities_in_radius(@event['location'], 64)) > 300) {
 		cancel();
 		play_effect(@event['location'], 'SMOKE', array('id': 4));
@@ -523,7 +525,7 @@ bind(block_break, null, array('type': 56), @event) {
 				}
 			}
 		}
-	
+
 		if(@report) {
 			@msg = color('c').'[!] '.color('f').player().' found '.color('b').'diamonds '.color(7)
 				.'(light level: '.get_light_at(@event['location']).')';
@@ -626,7 +628,7 @@ bind(note_play, null, null, @event) {
 			@sound = 'note_pling';
 	}
 	play_sound(@event['location'], array(
-		'sound': @sound,		
+		'sound': @sound,
 		'pitch': _get_pitch(@event['tone'], @event['octave']),
 		'volume': if(is_block_powered(@event['location']), 9, 1)
 	));
