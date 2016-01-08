@@ -43,7 +43,7 @@ bind(player_interact, null, array('block': 68), @e) {
 									player(),
 									@msg,
 								));
-								_store_pdata(@player, @pdata);
+								_store_pdata(@shop['owner'], @pdata);
 							}
 							array_remove(@shops[0], @i);
 						} else {
@@ -108,7 +108,7 @@ bind(player_interact, null, array('block': 68), @e) {
 									player(),
 									@msg,
 								));
-								_store_pdata(@player, @pdata);
+								_store_pdata(@shop['owner'], @pdata);
 							}
 							array_remove(@shops[1], @i);
 						} else {
