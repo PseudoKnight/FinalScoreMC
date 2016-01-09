@@ -228,6 +228,7 @@
 	if(!array_index_exists(@pvp['arena'], 'mode'), @pvp['arena']['mode'] = 'dm');
 	if(!array_index_exists(@pvp['arena'], 'ff'), @pvp['arena']['ff'] = true);
 	if(!array_index_exists(@pvp['arena'], 'flags'), @pvp['arena']['flags'] = array());
+	if(!array_index_exists(@pvp['arena'], 'respawnmode'), @pvp['arena']['respawnmode'] = 'normal');
 	if(!array_index_exists(@pvp['arena'], 'delay')) {
 		if(array_index_exists(@pvp['arena'], 'classes')) {
 			@pvp['arena']['delay'] = 45;
@@ -322,6 +323,10 @@
 			if(array_index_exists(@pvp['arena'], 'lives') && @pvp['arena']['lives'] > 1) {
 				create_objective('lives', 'DUMMY', @id);
 				set_objective_display('lives', array('displayname': color('a').'Lives Left', 'slot': 'SIDEBAR'), @id);
+			}
+			if(@pvp['arena']['respawnmode'] == 'mob') {
+				create_objective('respawns', 'DUMMY', @id);
+				set_objective_display('respawns', array('displayname': color('a').'Respawns Left', 'slot': 'SIDEBAR'), @id);
 			}
 			if(array_index_exists(@pvp['arena'], 'mobprotect')) {
 				create_objective('mobhealth', 'DUMMY', @id);

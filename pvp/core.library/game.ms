@@ -13,9 +13,9 @@ if(array_index_exists(@pvp['arena'], 'classes')) {
 # CORE
 proc _pvp_start_match(@id) {
 	@pvp = import('pvp'.@id)
-	if(array_index_exists(@pvp['arena'], 'rsoutput'), 
+	if(array_index_exists(@pvp['arena'], 'rsoutput'),
 		set_block_at(@pvp['arena']['rsoutput'], '69:14'))
-	if(array_index_exists(@pvp['arena'], 'time'), 
+	if(array_index_exists(@pvp['arena'], 'time'),
 		set_world_time(@pvp['arena']['lobby'][3], @pvp['arena']['time']))
 
 	if(array_index_exists(@pvp['arena'], 'chestspawn')) {
@@ -29,7 +29,7 @@ proc _pvp_start_match(@id) {
 					set_block_at(@pvp['arena']['chestspawn'][@i]['loc'], '0:0')
 				}
 			} else if(array_index_exists(@pvp['arena'], 'chestgroup')) {
-				if(get_block_at(@pvp['arena']['chestspawn'][@i]['loc'])[0] === '0', 
+				if(get_block_at(@pvp['arena']['chestspawn'][@i]['loc'])[0] === '0',
 					set_block_at(@pvp['arena']['chestspawn'][@i]['loc'], '54:0'))
 				@r = rand(array_size(@pvp['arena']['chestgroup'][@pvp['arena']['chestspawn'][@i]['group']]))
 				for(@y = 0, @y < 27, @y++) {
@@ -39,7 +39,7 @@ proc _pvp_start_match(@id) {
 			}
 		}
 	}
-	
+
 	if(array_index_exists(@pvp['arena'], 'itemspawn')) {
 		@pvp['itemspawn'] = array()
 		for(@i = 0, @i < array_size(@pvp['arena']['itemspawn']), @i++) {
@@ -51,7 +51,7 @@ proc _pvp_start_match(@id) {
 			array_set(@pvp['itemspawn'], @i, array(0, @time))
 		}
 	}
-	
+
 	if(array_index_exists(@pvp['arena'], 'mobspawn')) {
 		@pvp['mobspawn'] = array()
 		for(@i = 0, @i < array_size(@pvp['arena']['mobspawn']), @i++) {
@@ -63,11 +63,23 @@ proc _pvp_start_match(@id) {
 			array_set(@pvp['mobspawn'], @i, @time)
 		}
 	}
-	
+
+	if(@pvp['arena']['respawnmode'] == 'mob') {
+		@pvp['team'][@team]['respawns'] = array();
+		foreach(@team: @locations in @pvp['arena']['respawn']) {
+			foreach(@loc in @locations) {
+				@type = if(@team == 0, 'VILLAGER:FARMER', 'VILLAGER:BUTCHER');
+				@loc[1] += 1;
+				@uuid = _spawn_mob(@type, 1, @loc)[0];
+				@pvp['team'][@team]['respawns'][] = @uuid;
+			}
+		}
+	}
+
 	if(array_index_exists(@pvp['arena'], 'timer')) {
 		@pvp['starttime'] = time() / 1000
 	}
-	
+
 	_remove_region_entities(@pvp['arena']['region'], array('DROPPED_ITEM', 'EXPERIENCE_ORB'))
 	_pvp_initialize_players(@id, array_keys(@pvp['players']))
 
@@ -77,7 +89,7 @@ proc _pvp_start_match(@id) {
 		_regionmsg(@pvp['arena']['broadcast'], color('gray').'[PVP] '.@pvp['arena']['team'][1]['color']
 			.@pvp['team'][1]['captain']. ' is the captain of '.@pvp['arena']['team'][1]['name'].'.')
 	}
-	
+
 	if(array_index_exists(@pvp['arena'], 'mobprotect')) {
 		queue_push(closure(){
 			foreach(@team: @mob in @pvp['arena']['mobprotect']) {
@@ -87,7 +99,7 @@ proc _pvp_start_match(@id) {
 			}
 		}, @id)
 	}
-	
+
 	# MODES
 	if(@pvp['arena']['mode'] !== 'dm') {
 		include('../modes.library/'.@pvp['arena']['mode'].'.ms');
@@ -99,15 +111,15 @@ proc _pvp_start_match(@id) {
 			include('../weapons.library/'.@weapon.'.ms');
 		}
 	}
-	
+
 	include('events.ms');
 
 	@pvp['interval'] = set_interval(1000, closure(){
 		@pvp = import('pvp'.@id)
 		@check = false
-		if(@pvp['arena']['mode'] === 'koth', 
+		if(@pvp['arena']['mode'] === 'koth',
 			@hillcount = 0)
-		
+
 		if(array_index_exists(@pvp['arena'], 'timer')) {
 			@totalsecsleft = ceil((@pvp['arena']['timer'][1] * 60) - ((time() / 1000) - @pvp['starttime']))
 			if(@totalsecsleft < 0) {
@@ -168,7 +180,7 @@ proc _pvp_start_match(@id) {
 					try(set_entity_fall_distance(puuid(@player), 0));
 					set_ploc(@player, @loc);
 					pfacing(@player, 0, 0);
-					
+
 					preset_time(@player);
 					set_pstorm(@player, null);
 					_pvp_equip(@id, @player);
@@ -185,26 +197,26 @@ proc _pvp_start_match(@id) {
 						pkill(@player);
 					}
 				})
-			} else if(@pvp['arena']['mode'] === 'koth' 
-			&& array_contains(sk_current_regions(@player), @pvp['arena']['kothregion'])) { 
+			} else if(@pvp['arena']['mode'] === 'koth'
+			&& array_contains(sk_current_regions(@player), @pvp['arena']['kothregion'])) {
 				@king = @player
 				@hillcount++
 			}
-			
+
 		}
-		
+
 		foreach(@p in @pvp['spectators']) {
 			if(!array_contains(sk_current_regions(@p), @pvp['arena']['region'])) {
 				_remove_spectator(@id, @p, @pvp)
 			}
 		}
-		
+
 		if(@pvp['arena']['mode'] === 'koth' && @hillcount == 1) {
 			@score = get_pscore('seconds', @king, @id)
 			set_pscore('seconds', @king, @score - 1, @id)
 			@check = true
 		}
-		
+
 		if(array_index_exists(@pvp['arena'], 'itemspawn')) {
 			foreach(@i: @item in @pvp['arena']['itemspawn']) {
 				try(
@@ -216,7 +228,7 @@ proc _pvp_start_match(@id) {
 				, # doesn't exist
 					if(@pvp['itemspawn'][@i][1] + (@item['cooldown'] * 1000) < time()) {
 						@id = drop_item(@item['loc'], @item['item'], false);
-						try( # maybe chunk isn't loaded? 
+						try( # maybe chunk isn't loaded?
 							set_entity_velocity(@id, array(0, 0, 0));
 							play_sound(@item['loc'], array('sound': 'ENDERMAN_TELEPORT', 'pitch': 1.5));
 							make_effect(@item['loc'], 'ENDER_SIGNAL');
@@ -227,7 +239,7 @@ proc _pvp_start_match(@id) {
 				);
 			}
 		}
-		
+
 		if(array_index_exists(@pvp['arena'], 'mobspawn')) {
 			foreach(@i: @mob in @pvp['arena']['mobspawn']) {
 				if((@pvp['mobspawn'][@i] + (@mob['respawn'] * 1000)) < time()) {
@@ -236,10 +248,10 @@ proc _pvp_start_match(@id) {
 				}
 			}
 		}
-		
+
 		if(array_index_exists(@pvp['arena'], 'chestspawn')) {
 			foreach(@i: @chest in @pvp['arena']['chestspawn']) {
-				if(array_index_exists(@pvp['chestspawn'], @i) 
+				if(array_index_exists(@pvp['chestspawn'], @i)
 				&& (@pvp['chestspawn'][@i] + (@chest['cooldown'] * 1000)) < time()) {
 					if(get_block_at(@chest['loc'])[0] === '0') {
 						set_block_at(@chest['loc'], '54:0');
@@ -252,10 +264,10 @@ proc _pvp_start_match(@id) {
 			}
 		}
 
-		if(@check, 
+		if(@check,
 			_pvp_check_objectives(@id))
 	})
-	
+
 }
 
 proc _pvp_check_objectives(@id) {
@@ -267,7 +279,7 @@ proc _pvp_check_objectives(@id) {
 		die()
 	}
 
-	if(array_contains(array('dm', 'koth', 'tntrun'), @pvp['arena']['mode']) 
+	if(array_contains(array('dm', 'koth', 'tntrun'), @pvp['arena']['mode'])
 	&& array_size(@pvp['players']) <= 1) {
 		_pvp_end_match(@id, array_keys(@pvp['players']))
 		die()
@@ -299,7 +311,7 @@ proc _pvp_check_objectives(@id) {
 	}
 
 	#check team scores
-	if(@pvp['arena']['mode'] === 'ctf' 
+	if(@pvp['arena']['mode'] === 'ctf'
 	&& (@pvp['team'][0]['score'] >= @pvp['arena']['score'] || @pvp['team'][1]['score'] >= @pvp['arena']['score'])) {
 		if(@pvp['team'][0]['score'] >= @pvp['arena']['score']) {
 			@topteam = 0
@@ -314,11 +326,11 @@ proc _pvp_check_objectives(@id) {
 
 proc _pvp_end_match(@id, @winners) {
 	@pvp = import('pvp'.@id)
-	
+
 	if(@pvp['running'] != 2, return())
 
 	try(
-	
+
 		foreach(array_keys(@pvp['players']), @player) {
 			if(array_contains(@winners, @player)) {
 				@leader = @player;
@@ -327,7 +339,7 @@ proc _pvp_end_match(@id, @winners) {
 				}
 			}
 		}
-		
+
 		queue_push(closure(){
 			if(array_index_exists(@pvp, 'stats')) {
 				_regionmsg(@pvp['arena']['broadcast'], colorize('&7&m|------------------------------&7&l[ &f&lTHE FINAL SCORE&7&l ]&7&m--|'));
@@ -354,21 +366,21 @@ proc _pvp_end_match(@id, @winners) {
 				_worldmsg('custom', color('gray').'[PVP] '.color('r').'Nobody wins! Wait.. what?!');
 			}
 		}, @id);
-		
 
-		
+
+
 		if(array_index_exists(@pvp['arena'], 'chestspawn')) {
 			for(@i = 0, @i < array_size(@pvp['arena']['chestspawn']), @i++) {
-				if(get_block_at(@pvp['arena']['chestspawn'][@i]['loc']) === '54:0', 
+				if(get_block_at(@pvp['arena']['chestspawn'][@i]['loc']) === '54:0',
 					set_block_at(@pvp['arena']['chestspawn'][@i]['loc'], '0:0'))
 			}
 		}
-	
+
 	)
 
 	try(
-	
-		if(array_index_exists(@pvp['arena'], 'rsoutput'), 
+
+		if(array_index_exists(@pvp['arena'], 'rsoutput'),
 			set_block_at(@pvp['arena']['rsoutput'], '69:6'))
 
 		if(@pvp['arena']['mode'] === 'ctf') {
@@ -380,7 +392,7 @@ proc _pvp_end_match(@id, @winners) {
 			queue_clear(@id.'0hat')
 			queue_clear(@id.'1hat')
 		}
-	
+
 		@chests = all_virtualchests();
 		foreach(@chest in @chests) {
 			if(@chest === @id.'0'
@@ -393,9 +405,9 @@ proc _pvp_end_match(@id, @winners) {
 		}
 
 		clear_task(@pvp['interval'])
-	
+
 	, return())
-	
+
 	@pvp['running'] = 3
 
 	queue_delay(4000, @id);
@@ -433,9 +445,9 @@ proc _pvp_end_match(@id, @winners) {
 				skcb_paste(array(0, 0, 0, 'custom'), array('origin': true));
 			}
 		}
-		
+
 		remove_scoreboard(@id);
-		
+
 		# Store stats
 		if(!array_index_exists(@pvp['arena'], 'flags') || !array_contains(@pvp['arena']['flags'], 'debug')) {
 			@arena = get_value('arena.'.@id);
@@ -449,7 +461,7 @@ proc _pvp_end_match(@id, @winners) {
 			}
 			store_value('arena.'.@id, @arena);
 		}
-		
+
 		# Reset
 		@pvp = array('players': associative_array(), 'running': 0);
 		export('pvp'.@id, @pvp);

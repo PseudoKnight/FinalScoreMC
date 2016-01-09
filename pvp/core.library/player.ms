@@ -3,8 +3,17 @@ proc _add_player(@player, @pvp) {
 }
 
 proc _remove_player(@player, @pvp) {
-	array_remove(@pvp['players'], @player)
+	if(array_index_exists(@pvp['players'][player()], 'class')) {
+		_class('unload', player(), @pvp['players'][player()]['class'], @pvp)
+	}
+	array_remove(@pvp['players'], player());
 	dm_set_pvisible(@player, true);
+
+	# Delay spectator mode so that health amount is updated.
+	# Health can be above zero when pkill() or set_phealth() are used.
+	queue_push(closure(){
+		_set_spectator(@id, player(), @pvp);
+	});
 }
 
 proc _pvp_initialize_players(@id, @players) {
@@ -16,9 +25,9 @@ proc _pvp_initialize_players(@id, @players) {
 			array_remove(@pvp['players'], @player);
 			continue();
 		}
-		if(pmode(@player) === 'CREATIVE', 
+		if(pmode(@player) === 'CREATIVE',
 			set_pmode(@player, 'SURVIVAL'))
-		if(has_permission(@player, 'vanish.standard'), 
+		if(has_permission(@player, 'vanish.standard'),
 			scriptas(@player, run('/v off')))
 		set_pscoreboard(@player, @id);
 		if(array_index_exists(@pvp['players'][@player], 'team')) {
@@ -36,32 +45,32 @@ proc _pvp_initialize_players(@id, @players) {
 					set_pscore('lives', @player, @pvp['arena']['lives'], @id);
 				}
 		}
-		
+
 		if(array_contains(@pvp['arena']['flags'], 'hideplayers')) {
 			dm_set_pvisible(@player, false);
 		}
-		
+
 		if(array_index_exists(@pvp['arena'], 'lives')) {
 			@pvp['players'][@player]['lives'] = @pvp['arena']['lives'];
 		}
-		
+
 		if(array_index_exists(@pvp['arena'], 'respawntime')) {
 			@pvp['players'][@player]['respawn'] = 0;
 		}
-		
+
 		if(array_index_exists(@pvp, 'stats')) {
 			@pvp['stats'][@player] = array(
-				'kills': 0, 
+				'kills': 0,
 				'lastdamaged': 0,
 				'lastdamager': '',
-				'damager': '', 
+				'damager': '',
 				'damaged': 0,
-				'damage': 0, 
+				'damage': 0,
 				'deaths': 0,
 				'pickups': 0,
 			);
 		}
-		
+
 		set_pbed_location(@player, @pvp['arena']['lobby']);
 
 		_clear_pinv(@player);
@@ -69,16 +78,16 @@ proc _pvp_initialize_players(@id, @players) {
 		if(array_index_exists(@pvp['arena'], 'classes') && !array_index_exists(@pvp['players'][@player], 'class')) {
 			_class_select_random(@player, @pvp);
 		}
-		
+
 		foreach(@p in @pvp['spectators']) {
 			raw_set_pvanish(@p, true, @player);
 		}
-		
+
 		set_phunger(@player, 20);
 		set_psaturation(@player, 5);
 		set_phealth(@player, 20);
 		_pvp_equip(@id, @player);
-		
+
 		# Select spawn location
 		if(array_index_exists(@pvp, 'team')) {
 			@loc = @pvp['arena']['spawn'][@pvp['players'][@player]['team']][@c[@pvp['players'][@player]['team']]];
@@ -95,10 +104,10 @@ proc _pvp_initialize_players(@id, @players) {
 				@c[0]++;
 			}
 		}
-		
+
 		# Teleport to spawn location
 		# Teleporting players one at a time helps prevent client-side invisible players
-		queue_push(closure(){ 
+		queue_push(closure(){
 			try( # sometimes they're dead
 				set_entity_fall_distance(puuid(@player), 0);
 				set_ploc(@player, @loc);
