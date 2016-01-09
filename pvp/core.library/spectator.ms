@@ -1,4 +1,4 @@
-proc _set_spectator(@id, @player, @pvp) {
+proc _set_spectator(@player, @pvp) {
 	if(pinfo(@player, 5) > 0) {
 		@pvp['spectators'][] = @player
 		set_collides_with_entities(@player, false)
@@ -20,9 +20,8 @@ proc _set_spectator(@id, @player, @pvp) {
 		}
 		set_peffect(@player, 14, 0, 9999, true)
 	} else {
-		bind(player_spawn, null, array('player': @player), @e, @id) {
+		bind(player_spawn, null, array('player': @player), @e, @pvp) {
 			unbind()
-			@pvp = import('pvp'.@id)
 			if(@pvp['running'] && array_size(@pvp['players']) > 1) {
 				@pvp['spectators'][] = player()
 				@spawn = false
@@ -50,7 +49,7 @@ proc _set_spectator(@id, @player, @pvp) {
 	}
 }
 
-proc _remove_spectator(@id, @player, @pvp) {
+proc _remove_spectator(@player, @pvp) {
 	try(
 		array_remove_values(@pvp['spectators'], @player)
 		if(ponline(@player)) {

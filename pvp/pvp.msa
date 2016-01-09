@@ -56,7 +56,7 @@
 		}
 		if(array_contains(@pvp['spectators'], player())) {
 			include('core.library/spectator.ms');
-			_remove_spectator(@id, player(), @pvp);
+			_remove_spectator(player(), @pvp);
 		}
 		if(array_index_exists(@pvp['arena'], 'team')) {
 			_assign_team(player(), @pvp);
@@ -124,7 +124,7 @@
 		if(array_index_exists(@pvp['arena'], 'resourcepack')) {
 			send_resourcepack(player(), 'http://mc.finalscoremc.com:25966/resourcepacks/'.@pvp['arena']['resourcepack'].'.zip');
 		}
-		_set_spectator(@id, player(), @pvp);
+		_set_spectator(player(), @pvp);
 	} else {
 		msg('The arena isn\'t running.');
 	}

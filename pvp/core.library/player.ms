@@ -12,7 +12,7 @@ proc _remove_player(@player, @pvp) {
 	# Delay spectator mode so that health amount is updated.
 	# Health can be above zero when pkill() or set_phealth() are used.
 	queue_push(closure(){
-		_set_spectator(@id, player(), @pvp);
+		_set_spectator(player(), @pvp);
 	});
 }
 

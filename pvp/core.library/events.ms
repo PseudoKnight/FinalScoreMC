@@ -179,7 +179,7 @@ bind(player_quit, array('id': @id.'quit', 'priority': 'HIGH'), null, @e, @id) {
 		dm_set_pvisible(true);
 		_pvp_check_objectives(@id)
 	} else if(array_contains(@pvp['spectators'], player())) {
-		_remove_spectator(@id, player(), @pvp)
+		_remove_spectator(player(), @pvp);
 	} else {
 		die()
 	}
@@ -414,7 +414,7 @@ bind(player_command, array('id': @id.'command'), null, @e, @id) {
 		_pvp_check_objectives(@id);
 
 	} else if(array_contains(@pvp['spectators'], player())) {
-		_remove_spectator(@id, player(), @pvp);
+		_remove_spectator(player(), @pvp);
 	}
 }
 

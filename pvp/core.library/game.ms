@@ -207,7 +207,7 @@ proc _pvp_start_match(@id) {
 
 		foreach(@p in @pvp['spectators']) {
 			if(!array_contains(sk_current_regions(@p), @pvp['arena']['region'])) {
-				_remove_spectator(@id, @p, @pvp)
+				_remove_spectator(@p, @pvp);
 			}
 		}
 
@@ -435,7 +435,7 @@ proc _pvp_end_match(@id, @winners) {
 			unbind(@bind)
 		}
 		foreach(@p in @pvp['spectators']) {
-			_remove_spectator(@id, @p, @pvp)
+			_remove_spectator(@p, @pvp);
 		}
 		_remove_region_entities(@pvp['arena']['region']);
 
