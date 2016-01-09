@@ -15,11 +15,11 @@ bind(player_interact, array('id': @id.'railgun'), array('item': 175, 'button': '
 	@loc = @origin[]
 
 	#msg(((nano_time() - @start) / 1000000).'ms'.' - START GET BLOCKS')
-	
+
 	@entities = array()
 	@previouschunkx = 0
 	@previouschunkz = 0
-	
+
 	# SOMETHING LIKE THIS WOULD GET CORNER BLOCKS
 	# @newblocklocx = floor(@newloc[x])
 	# @newblocklocz = floor(@newloc[z])
@@ -31,14 +31,14 @@ bind(player_interact, array('id': @id.'railgun'), array('item': 175, 'button': '
 	  # if(@distx < @distz) {
 		# if( _is_solid(@newloc[x], @oldloc[z])){
 		  # break()
-		# } 
+		# }
 	  # } else {
 		# if(_is_solid(@oldloc[x], @newloc[z])) {
 		  # break()
 		# }
 	  # }
 	# }
-	
+
 	while(@n < 80) {
 		@loc['x'] += @x
 		@loc['y'] += @y
@@ -52,9 +52,7 @@ bind(player_interact, array('id': @id.'railgun'), array('item': 175, 'button': '
 			if(@currentchunkx != @previouschunkx
 			|| @currentchunkz != @previouschunkz) {
 				foreach(@e in all_entities('custom', @currentchunkx, @currentchunkz)) {
-					if(is_entity_living(@e)
-					&& (entity_type(@e) !== 'PLAYER'
-					|| get_player_from_entity_id(@e) != player())) {
+					if(is_entity_living(@e) && @e != puuid()) {
 						@entities[] = @e
 					}
 				}
@@ -65,9 +63,9 @@ bind(player_interact, array('id': @id.'railgun'), array('item': 175, 'button': '
 			@n++
 		}
 	}
-	
+
 	#msg(((nano_time() - @start) / 1000000).'ms'.' - CALCULATE HITS')
-	
+
 	foreach(@e in @entities) {
 		@eloc = entity_loc(@e)
 		@eloc['y'] += 1.5
@@ -88,16 +86,16 @@ bind(player_interact, array('id': @id.'railgun'), array('item': 175, 'button': '
 			play_sound(@origin, array('sound': 'SUCCESSFUL_HIT'), player())
 		}
 	}
-	
+
 	#msg(((nano_time() - @start) / 1000000).'ms'.' - END RAILGUN')
-	
+
 	play_sound(ploc(), array('sound': 'ZOMBIE_REMEDY', 'pitch': 1.8, 'volume': 3))
 	@item = pinv(player(), null)
 	@item['qty'] -= 1
 	queue_clear(player().'railgun')
 	if(@item['qty'] == 0) {
 		set_pinv(array(null: null))
-	} else { 
+	} else {
 		@item['type'] = 402
 		@item['name'] = 'FIREWORK_CHARGE'
 		set_pinv(array(null: @item))
