@@ -59,8 +59,13 @@
 			case 'resourcepack':
 			case 'respawnmode':
 
-				@arena['parent'] = @args[0];
+				@arena[$setting] = @args[0];
 				msg(colorize('Set &a' . $setting . '&r to &a' . @args[0]));
+
+			# message option
+			case 'description':
+				@arena[$setting] = colorize($);
+				msg('Set description to ' . colorize($));
 
 			# single exact locations
 			case 'lobby':
@@ -734,7 +739,7 @@
 					msg(color('gold').'mode '.color(7).'(team mode required for "teamratio")'))
 			}
 			foreach(@setting: @value in @arena) {
-				if(array_contains(array('spawn', 'kit', 'itemspawn', 'chestspawn', 'mobspawn', 'classes'), @setting)) {
+				if(array_contains(array('spawn', 'kit', 'itemspawn', 'chestspawn', 'mobspawn', 'classes', 'respawn'), @setting)) {
 					msg(@setting.' '.color('gray').'[...]')
 				} else if(array_contains(array('team'), @setting)) {
 					continue()
