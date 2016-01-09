@@ -1,7 +1,7 @@
 ### CAKES ###
 
 *:/cake [$cmd] [$] = >>>
-	switch($cmd) {	
+	switch($cmd) {
 	case 'list':
 		@cakes = get_value('cakeinfo')
 		@names = array('challenge': '', 'secret': '')
@@ -62,31 +62,30 @@
 		@cakes = get_value('cakes')
 		@args = parse_args($)
 		@id = @args[0]
-		
+
 		if(!array_index_exists(@cakes, @id) && get_block_at(@loc) !== '92:0') {
 			die('That doesn\'t appear to be a cake. Is it obstructed by a sign or other partial block?')
 		}
-		
+
 		if(!@cakes) {
 			@cakes = associative_array()
 		}
-		
+
 		if(array_size(@args) < 2) {
 			die('Usage: /cake set <id> <coins> [type]')
 		}
-		
+
 		if(!array_index_exists(@cakes, @id)) {
 			@cakes[@id] = array(integer(@loc[0]), integer(@loc[1]), integer(@loc[2]), @loc[3])
 		}
-		
+
 		@coins = @args[1]
-		
+
+		@type = 'challenge'
 		if(array_size(@args) == 3) {
 			@type = to_lower(@args[2])
-		} else {
-			@type = 'challenge'
 		}
-		
+
 		if(@type !== 'secret' && @type !== 'challenge') {
 			die(color('red').'You can only have "secret" and "challenge" cake types.')
 		}
@@ -98,7 +97,10 @@
 			@cake = associative_array()
 			@cake['players'] = associative_array()
 		}
-		
+
+		if(array_size(@args) == 4) {
+			@cake['difficulty'] = @args[3];
+		}
 		@cake['coins'] = @coins
 		@cake['type'] = @type
 		@cakeinfo[@id] = @cake
@@ -198,7 +200,7 @@
 		}
 		set_ploc(array(@cakes[$][0] + 0.5, @cakes[$][1], @cakes[$][2] + 0.5, @cakes[$][3]))
 		msg('Teleported.')
-		
+
 	case 'resetplayer':
 		if(!has_permission('group.moderator'), die('You do not have permission to use cake commands.'));
 		@args = parse_args($)
@@ -222,7 +224,7 @@
 			} else {
 				msg('Failed to remove '.@amount.' coins.');
 			}
-			
+
 		} else if(array_size(@args) == 2) {
 			@id = '';
 			@player = '';
@@ -247,7 +249,7 @@
 			} else {
 				msg('Failed to remove '.@cakeinfo[@id]['coins'].' coins.');
 			}
-			
+
 		} else {
 			msg('Usage: /cake resetplayer [cakeid] <player>');
 		}
