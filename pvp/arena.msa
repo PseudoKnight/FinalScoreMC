@@ -607,14 +607,13 @@
 			die('No data stored for setting: '.$setting);
 		}
 
-		if(!@args || @args[0] == 'all') {
+		if(!$ || @args[0] == 'all') {
 			if(!$setting) {
-				clear_value('arena.'.$id);
+				clear_value('arena', $id);
 				die('Deleted '.$id.' arena permanently.');
-			} else {
-				array_remove(@arena, $setting);
-				msg('Deleted "'.$setting.'" setting for '.$id.'.');
 			}
+			array_remove(@arena, $setting);
+			msg('Deleted "'.$setting.'" setting for '.$id.'.');
 			store_value('arena', $id, @arena);
 			die();
 		}
