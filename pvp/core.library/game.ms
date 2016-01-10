@@ -65,11 +65,12 @@ proc _pvp_start_match(@id) {
 	}
 
 	if(@pvp['arena']['respawnmode'] == 'mob') {
-		@pvp['team'][@team]['respawns'] = array();
 		foreach(@team: @locations in @pvp['arena']['respawn']) {
+			@pvp['team'][@team]['respawns'] = array();
 			foreach(@loc in @locations) {
 				@type = if(@team == 0, 'VILLAGER:FARMER', 'VILLAGER:BUTCHER');
 				@loc[1] += 1;
+				load_chunk(@loc);
 				@uuid = _spawn_mob(@type, 1, @loc)[0];
 				@pvp['team'][@team]['respawns'][] = @uuid;
 			}
@@ -93,9 +94,10 @@ proc _pvp_start_match(@id) {
 	if(array_index_exists(@pvp['arena'], 'mobprotect')) {
 		queue_push(closure(){
 			foreach(@team: @mob in @pvp['arena']['mobprotect']) {
-				 @entityid = _spawn_mob(@mob['type'], 1, @mob['loc'])[0]
-				 set_mob_name(@entityid, @pvp['arena']['team'][@team]['color'].@pvp['arena']['team'][@team]['name'])
-				 @pvp['team'][@team]['mobprotect'] = @entityid;
+				load_chunk(@mob['loc']);
+				@entityid = _spawn_mob(@mob['type'], 1, @mob['loc'])[0];
+				set_mob_name(@entityid, @pvp['arena']['team'][@team]['color'].@pvp['arena']['team'][@team]['name']);
+				@pvp['team'][@team]['mobprotect'] = @entityid;
 			}
 		}, @id)
 	}
