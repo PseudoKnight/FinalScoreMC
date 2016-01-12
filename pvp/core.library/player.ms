@@ -122,6 +122,9 @@ proc _pvp_equip(@id, @player) {
 		return();
 	}
 	@pvp = import('pvp'.@id)
+	if(!array_index_exists(@pvp['players'], @player)) {
+		return();
+	}
 	if(array_index_exists(@pvp['players'][@player], 'inv')) {
 		set_pinv(@player, @pvp['players'][@player]['inv']);
 	} else {
