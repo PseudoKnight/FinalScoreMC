@@ -16,7 +16,7 @@
 	if(!@arena) {
 		die('Can\'t find that arena.');
 	}
-	if(pworld() !== 'custom') {
+	if(pworld() !== 'custom' && array_index_exists(@arena, 'lobby')) {
 		set_ploc(@arena['lobby']);
 	}
 	if(!@pvp) {
