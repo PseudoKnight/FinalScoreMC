@@ -1,35 +1,39 @@
 *:/times [$arg='usage'] [$id] [$player] = >>>
 	if(!(@id = $id)) {
-		@id = sk_current_regions()[-1]
+		@regions = sk_current_regions();
+		if(!@regions) {
+			die('You are not standing in a course.');
+		}
+		@id = @regions[-1];
 	}
-	
+
 	switch($arg) {
 	case 'usage':
-	
+
 		msg('Usage: /times <top|me|playerName> [courseID]')
-		
+
 	case 'top':
 	case 'top10':
-		
+
 		@times = get_value('times', @id)
-		if(!@times || !array_index_exists(@times, 'top')) { 
+		if(!@times || !array_index_exists(@times, 'top')) {
 			die('No top times for '.to_upper(@id).'.')
 		}
 		msg(color('yellow').color('bold').'=== TOP TIMES - '.to_upper(@id).' ===')
 		for(@i = 0, @i < array_size(@times['top']), @i++) {
 			msg(color(7).if(@i < 9, ' ').(@i + 1).color('green').' [ '.@times['top'][@i][1].' ] '.color('r').@times['top'][@i][0])
 		}
-		
+
 	case 'me':
-	
-		@time = get_value('times.'.@id, player())
+
+		@time = get_value('times.'.@id, puuid(player(), true));
 		if(!@time) {
 			die('You do not have a time for '.to_upper(@id).'.')
 		}
 		msg('Your best time for '.color('gold').to_upper(@id).color('r').' is '.color('green').@time.' seconds.')
-		
+
 	case 'reset':
-	
+
 		if(!has_permission('command.resettimes')) {
 			die('You do not have permission to reset stats for this course.')
 		}
@@ -41,7 +45,7 @@
 			clear_value(@key)
 		}
 		msg('Reset stats for '.to_upper(@id).'.')
-	
+
 	case 'resetplayer':
 		if(!has_permission('command.resettimes')) {
 			die('You do not have permission to reset stats for this course.')
@@ -49,6 +53,7 @@
 		if(!$player) {
 			die('This requires a player.');
 		}
+		@puuid = _get_uuid(to_lower($player));
 		@courses = get_values('times'.if(@id !== 'all', '.'.@id))
 		if(is_null(@courses)) {
 			die('Unknown arena.');
@@ -66,11 +71,11 @@
 				}
 			} else {
 				try(
-					@name = split('.', @key)[2];
+					@uuid = split('.', @key)[2];
 				, # catch
 					continue();
 				)
-				if(@name == $player) {
+				if(@uuid == @puuid) {
 					msg('Removing '.$player.'\'s time in '.split('.', @key)[1]);
 					clear_value(@key);
 					@count += 1;
@@ -79,14 +84,15 @@
 		}
 		msg('Finished resetting '.$player.'\'s times in '.@count.' courses.');
 
-	
-	default: 
-	
-		@time = get_value('times.'.@id, $arg)
+
+	default:
+
+		@uuid = _get_uuid(to_lower($arg));
+		@time = get_value('times.'.@id, @uuid);
 		if(!@time) {
 			die('No time for '.$arg.' on '.@id.'.')
 		}
 		msg(color('yellow').$arg.'\'s best time for '.color('gold').to_upper(@id).color('r').' is '.color('green').@time.' seconds.')
-		
+
 	}
 <<<

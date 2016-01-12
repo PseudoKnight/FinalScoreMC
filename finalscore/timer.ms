@@ -11,44 +11,45 @@ register_command('timer', array(
 	'usage': '/timer <start|stop> <id> <player>',
 	'permission': 'command.timer',
 	'executor': closure(@alias, @sender, @args, @info) {
-	
+
 		if(array_size(@args) != 3
 		|| phas_flight(@args[2])) {
 			die();
 		}
-		
+
 		@id = @args[1];
 		@player = @args[2];
 		@startLoc = ploc(@player);
 
 		@timers = import('timer');
-		
+
 		if(@args[0] === 'start') {
-		
+
 			set_phunger(@player, 20);
 			set_psaturation(@player, 5);
 			set_pinv(@player, array(0: array('type': 39, 'meta': array(
 				'display': color('green').color('bold').'Restart Button'
 			))));
-			
+
 			if(array_index_exists(@timers, @player)) {
 				clear_task(@timers[@player][2]);
 			} else {
 				_add_activity(@player.'timer', @player.' on '.to_upper(@id));
 			}
-			
+
 			@timers[@player] = array(@id, time(), 0);
-			@ptime = get_value('times.'.@id, @player);
-			if(is_null(@ptime)) { 
+			@uuid = _get_uuid(to_lower(@player), false);
+			@ptime = get_value('times.'.@id, @uuid);
+			if(is_null(@ptime)) {
 				@ptime = 0;
 			}
-			
+
 			set_plevel(@player, 0);
 			set_pexp(@player, 0);
 			play_sound(ploc(@player), array('sound': 'FIREWORK_BLAST'), @player);
-			
+
 			@stop = false;
-			
+
 			@timers[@player][2] = set_interval(1000, closure(){
 				if(ponline(@player)) {
 					@ploc = ploc(@player);
@@ -64,7 +65,7 @@ register_command('timer', array(
 						} else {
 							set_plevel(@player, @time);
 						}
-						
+
 						if(@time < @ptime) {
 							@percent = round((@time / @ptime) * 100);
 							set_pexp(@player, @percent);
@@ -77,17 +78,17 @@ register_command('timer', array(
 								play_sound(@ploc, array('sound': 'CLICK', 'pitch': 2), @player);
 							}
 						}
-						
+
 					} else if(@ploc['y'] < 0) {
 						pkill(@player);
-						
+
 					} else {
 						@stop = true;
 					}
 				} else {
 					@stop = true;
 				}
-				
+
 				if(@stop) {
 					array_remove(@timers, @player);
 					unbind(@player.'timerbreak');
@@ -102,7 +103,7 @@ register_command('timer', array(
 					_remove_activity(@player.'timer');
 				}
 			});
-			
+
 			if(!has_bind(@player.'timerbreak')) {
 				bind(block_break, array('id': @player.'timerbreak'), array('player': @player), @e) {
 					play_sound(ploc(), array('sound': 'VILLAGER_NO'), player());
@@ -133,12 +134,12 @@ register_command('timer', array(
 					}
 				}
 			}
-			
-		
+
+
 		} else if(@args[0] === 'stop'
 		&& array_index_exists(@timers, @player)
 		&& @timers[@player][0] == @id) {
-			
+
 			@time = round((time() - @timers[@player][1]) / 1000, 1);
 			unbind(@player.'timerbreak');
 			unbind(@player.'reset');
@@ -148,24 +149,25 @@ register_command('timer', array(
 			array_remove(@timers, @player);
 			_remove_activity(@player.'timer');
 			play_sound(ploc(@player), array('sound': 'ORB_PICKUP'), @player);
-			
+
 			tmsg(@player, 'You achieved a time of '.color('bold').@time.color('r').' seconds.');
 			console(@player.' achieved a time of '.@time.' at '.@id);
 			set_plevel(@player, integer(@time));
 
 			# PERSONAL TIME
-			@ptime = get_value('times.'.@id, @player);
-			if(@ptime && @time > @ptime) {
+			@uuid = _get_uuid(to_lower(@player), false);
+			@ptime = get_value('times.'.@id, @uuid);
+			if(@ptime && @time >= @ptime) {
 				die();
 			}
-			
+
 			if(@ptime) {
 				tmsg(@player, 'You beat your personal best time of '.color('bold').@ptime.color('r').' seconds.');
 			}
 			@loc = ploc(@player);
 			@loc['y'] += 3;
-			store_value('times.'.@id, @player, @time);
-			
+			store_value('times.'.@id, @uuid, @time);
+
 			# TOP TIMES
 			@times = get_value('times', @id);
 			if(!@times) {
@@ -173,7 +175,7 @@ register_command('timer', array(
 				store_value('times', @id, @times);
 				die();
 			}
-			
+
 			@place = 0;
 			for(@i = 0, @i < 10, @i++) {
 				if(!@place) {
@@ -219,6 +221,6 @@ register_command('timer', array(
 					'fade': array(array(rand(256), rand(256), rand(256))),
 				));
 			}
-		}	
+		}
 	});
 );
