@@ -97,6 +97,7 @@ builder:
     group.builder: true
   worlds:
     dev:
+      vanish.standard: true
       worldguard.region.*: true
       command.fly: true
       command.gm.others: true
@@ -111,6 +112,7 @@ builder:
       command.mob: true
       command.cb: true
     custom:
+      vanish.standard: true
       worldedit.navigation.*: true
       command.fly: true
       command.gm: true
@@ -134,7 +136,6 @@ engineer:
       worldedit.tool.*: true
       worldedit.generation.*: true
       worldedit.brush.*: true
-      vanish.standard: true
       worldedit.region.*: true
       worldedit.clipboard.*: true
       worldedit.history.*: true
@@ -147,7 +148,6 @@ engineer:
       worldedit.tool.*: true
       worldedit.generation.*: true
       worldedit.brush.*: true
-      vanish.standard: true
       worldedit.region.*: true
       worldedit.clipboard.*: true
       worldedit.history.*: true
