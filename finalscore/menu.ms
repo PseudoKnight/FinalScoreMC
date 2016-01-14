@@ -30,26 +30,50 @@ queue_push(closure(){
 			'hard': 'dark_red',
 			'very-hard': 'dark_purple',
 		);
+		@difficultyorder = array('easy', 'easy-medium', 'medium', 'medium-hard', 'hard', 'very-hard', 'other');
+		@difficulties = associative_array(
+			'easy': array(),
+			'easy-medium': array(),
+			'medium': array(),
+			'medium-hard': array(),
+			'hard': array(),
+			'very-hard': array(),
+			'other': array(),
+		);
 
 		@courses = @main[];
 		@courses['id'] = 'courses';
 		@courses['title'] = 'Obstacle Courses / Parkour';
 		@cakes = get_value('cakeinfo');
-		@slot = 0;
 		foreach(@name: @cake in @cakes) {
-			if(@slot > 44, break());
 			if(@cake['type'] === 'challenge') {
 				@lore = array();
+				@difficulty = 'other';
 				if(array_index_exists(@cake, 'difficulty')) {
 					@lore[] = color(@color[@cake['difficulty']]).color('l').to_upper(@cake['difficulty']);
+					@difficulty = @cake['difficulty'];
 				}
 				@lore[] = color('gold').@cake['coins'].' coins';
 				@lore[] = color('green').'Achieved by '.array_size(@cake['players']).' players';
-				if(@times = get_value('times', @name)) {
-					@lore[] = color('green').'Best Time: '.@times['top'][0][1].'s ('.@times['top'][0][0].')';
+				@times = get_values('times', @name);
+				if(@times) {
+					@total = 0.0;
+					foreach(@time in @times) {
+						if(is_array(@time)) {
+							continue();
+						}
+						@total += @time;
+					}
+					@avgtime = round((@total / (array_size(@times) - 1)) * 1000);
+					if(@avgtime >= 60) {
+						@avgtime = simple_date('m\u0027m\u0027s\u0027s\u0027', @avgtime);
+					} else {
+						@avgtime = simple_date('s\u0027s\u0027', @avgtime);
+					}
+					@lore[] = color('green').'Average best time: ' . @avgtime;
 				}
 				@lore[] = color('dark_gray').'Run: /warp '.@name;
-				@courses[@slot] = array(
+				@difficulties[@difficulty][] = array(
 					'type': 351,
 					'data': 8,
 					'meta': array(
@@ -57,6 +81,13 @@ queue_push(closure(){
 						'lore': @lore,
 					),
 				);
+			}
+		}
+		@slot = 0;
+		foreach(@difficulty in @difficultyorder) {
+			foreach(@item in @difficulties[@difficulty]) {
+				if(@slot > 44, break());
+				@courses[@slot] = @item;
 				@slot++;
 			}
 		}
