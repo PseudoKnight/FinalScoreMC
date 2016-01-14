@@ -113,6 +113,9 @@ bind(player_interact, array('id': @id.'railgun'), array('item': 175, 'button': '
 	}
 
 	foreach(@p in array_keys(@pvp['players'])) {
+		if(@p == player()) {
+			continue();
+		}
 		@ploc = ploc(@p);
 		@ploc['y'] += 2.5;
 		@dist = _squared_distance_to_segment(@ploc, @origin, @loc);
