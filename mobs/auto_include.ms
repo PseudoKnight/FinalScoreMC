@@ -4,29 +4,34 @@ proc _spawn_mob(@mob, @qty, @loc, @owner = 'Notch') {
 		return(array());
 	}
 	@mobs = spawn_mob(@mob['type'], @qty, @loc);
-	foreach(@m in @mobs) {
-		if(array_index_exists(@mob, 'name'), set_mob_name(@m, @mob['name']));
-		if(array_index_exists(@mob, 'gear'), set_mob_equipment(@m, @mob['gear']));
-		if(array_index_exists(@mob, 'droprate'), set_equipment_droprates(@m, @mob['droprate']));
-		if(array_index_exists(@mob, 'tags'), set_entity_spec(@m, @mob['tags']));
-		if(array_index_exists(@mob, 'tame'), tame_mob(@owner, @m));
-		if(array_index_exists(@mob, 'age'), set_mob_age(@m, @mob['age']));
-		if(array_index_exists(@mob, 'health')) {
-			set_max_health(@m, @mob['health']);
-			set_entity_health(@m, 100);
-		}
-		if(array_index_exists(@mob, 'rider')) {
-			if(@mob['rider'] === 'owner') {
-				set_entity_rider(@m, puuid());
-			} else {
-				@rider = _spawn_mob(@mob['rider'], 1, @loc)[0];
-				set_entity_rider(@m, @rider);
+	foreach(@i: @m in @mobs) {
+		try(
+			if(array_index_exists(@mob, 'name'), set_mob_name(@m, @mob['name']));
+			if(array_index_exists(@mob, 'gear'), set_mob_equipment(@m, @mob['gear']));
+			if(array_index_exists(@mob, 'droprate'), set_equipment_droprates(@m, @mob['droprate']));
+			if(array_index_exists(@mob, 'tags'), set_entity_spec(@m, @mob['tags']));
+			if(array_index_exists(@mob, 'tame'), tame_mob(@owner, @m));
+			if(array_index_exists(@mob, 'age'), set_mob_age(@m, @mob['age']));
+			if(array_index_exists(@mob, 'health')) {
+				set_max_health(@m, @mob['health']);
+				set_entity_health(@m, 100);
 			}
-		}
-		if(array_index_exists(@mob, 'onfire')) {
-			set_entity_onfire(@m, @mob['onfire']);
-		}
-		set_entity_persistence(@m, true);
+			if(array_index_exists(@mob, 'rider')) {
+				if(@mob['rider'] === 'owner') {
+					set_entity_rider(@m, puuid());
+				} else {
+					@rider = _spawn_mob(@mob['rider'], 1, @loc)[0];
+					set_entity_rider(@m, @rider);
+				}
+			}
+			if(array_index_exists(@mob, 'onfire')) {
+				set_entity_onfire(@m, @mob['onfire']);
+			}
+			set_entity_persistence(@m, true);
+		, # failed to spawn
+			array_remove(@mobs, @i);
+			console('Failed to spawn mob @ '.@loc);
+		);
 	}
 	if(array_index_exists(@mob, 'explode')) {
 		@display = array();
