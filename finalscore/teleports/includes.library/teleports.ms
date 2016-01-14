@@ -1,9 +1,14 @@
 @blockedworlds = array('outworld', 'outworld_nether', 'outworld_the_end')
 
 #Warms up a tp with effects and configurable timer
-proc _warmuptp(@length, @player, @loc, @yaw = null, @pitch = null, @cleareffects = false) {
-	set_peffect(@player, 9, 1, 7, true, false);
-	play_sound(ploc(@player), array('sound': 'PORTAL_TRIGGER', 'volume': 1, 'pitch': 1));
+proc _warmuptp(@player, @loc, @yaw = null, @pitch = null, @cleareffects = false) {
+	@length = 3.7;
+	if(pmode(@player) == 'CREATIVE') {
+		@length = 0.1;
+	} else {
+		set_peffect(@player, 9, 1, 7, true, false);
+		play_sound(ploc(@player), array('sound': 'PORTAL_TRIGGER', 'volume': 1, 'pitch': 1));
+	}
 	set_timeout(round(@length * 1000), closure(){
 		if(!ponline(@player), die())
 		@ploc = ploc(@player);

@@ -3,7 +3,7 @@
 		call_alias('/warps list')
 		die()
 	}
-	
+
 	@args = parse_args($)
 	if(array_size(@args) == 2) {
 		if(get_command_block()) {
@@ -21,7 +21,7 @@
 	if(!@warp, die('That warp does not exist.'))
 	include('includes.library/teleports.ms')
 	if(array_contains(@blockedworlds, pworld(@player)), die('You cannot warp in this world.'))
-	_warmuptp(3.7, @player, @warp['loc'], @warp['yaw'], @warp['pitch'], if(@warp['loc'][3] === 'custom', true, false))
+	_warmuptp(@player, @warp['loc'], @warp['yaw'], @warp['pitch'], if(@warp['loc'][3] === 'custom', true, false))
 <<<
 
 *:/setwarp [$warp] = >>>
@@ -82,16 +82,16 @@
 				dm_delete_markerset('warps')
 			}
 		}
-		
+
 		if(function_exists('dm_create_markerset')) {
 			dm_create_markerset('warps', array('label': 'Warps', 'persistent': true))
 		}
 		if(function_exists('dm_set_markerset_hide_by_default')) {
 			dm_set_markerset_hide_by_default('warps', true)
 		}
-		
+
 		@warps = get_values('warp')
-		
+
 		foreach(@name: @warp in @warps) {
 			if(function_exists('dm_create_marker')) {
 				dm_create_marker('warps', array('id': @name, 'label': to_upper(@name), 'location': @warp['loc'], 'world': @warp['loc'][3], 'icon': 'star', 'persistent': true))
@@ -99,7 +99,7 @@
 		}
 
 		msg(color('green').'Done.')
-		
+
 	default:
 		msg('Available sub-commands: "/warps del <warp>", "/warps list".')
 	}

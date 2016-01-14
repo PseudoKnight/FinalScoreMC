@@ -49,7 +49,7 @@
 		export('tp.overrides', @overrides);
 		die('That teleport location does not appear to be safe. /override');
 	}
-	_warmuptp(3.7, player(), @loc, @pdata['homes'][@world][3], @pdata['homes'][@world][4])
+	_warmuptp(player(), @loc, @pdata['homes'][@world][3], @pdata['homes'][@world][4])
 <<<
 
 *:/override = >>>
@@ -58,7 +58,7 @@
 	if(!@overrides || !array_index_exists(@overrides, player())) {
 		die('You do not have an unsafe teleport to override.');
 	}
-	_warmuptp(3.7, player(), @overrides[player()]);
+	_warmuptp(player(), @overrides[player()]);
 	array_remove(@overrides, player());
 	export('tp.overrides', @overrides);
 <<<
