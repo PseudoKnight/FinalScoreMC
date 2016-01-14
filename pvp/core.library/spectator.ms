@@ -1,49 +1,50 @@
 proc _set_spectator(@player, @pvp) {
 	if(pinfo(@player, 5) > 0) {
-		@pvp['spectators'][] = @player
-		set_collides_with_entities(@player, false)
+		@pvp['spectators'][] = @player;
 		foreach(@p in all_players('custom')) {
 			if(ponline(@p)) {
-				raw_set_pvanish(@player, true, @p)
+				raw_set_pvanish(@player, true, @p);
 			}
 		}
-		set_pflight(@player, true)
-		@spawn = false
+		@spawn = false;
 		foreach(@p in array_keys(@pvp['players'])) {
-			if(array_contains(sk_current_regions(@p), @pvp['arena']['region'])) {
-				set_ploc(@player, ploc(@p))
-				@spawn = true
+			if(ponline(@p) && array_contains(sk_current_regions(@p), @pvp['arena']['region'])) {
+				set_ploc(@player, ploc(@p));
+				@spawn = true;
 			}
 		}
 		if(!@spawn) {
-			set_ploc(@player, @pvp['arena']['spawn'][0][0])
+			set_ploc(@player, @pvp['arena']['spawn'][0][0]);
 		}
-		set_peffect(@player, 14, 0, 9999, true)
+		set_peffect(@player, 14, 0, 9999, true);
+		set_collides_with_entities(@player, false);
+		set_pflight(@player, true);
 	} else {
 		bind(player_spawn, null, array('player': @player), @e, @pvp) {
-			unbind()
+			unbind();
 			if(@pvp['running'] && array_size(@pvp['players']) > 1) {
-				@pvp['spectators'][] = player()
-				@spawn = false
+				@pvp['spectators'][] = player();
+				@spawn = false;
 				foreach(@p in array_keys(@pvp['players'])) {
-					if(array_contains(sk_current_regions(@p), @pvp['arena']['region'])) {
-						modify_event('location', ploc(@p))
-						@spawn = true
+					if(ponline(@p) && array_contains(sk_current_regions(@p), @pvp['arena']['region'])) {
+						modify_event('location', ploc(@p));
+						@spawn = true;
 					}
 				}
 				if(!@spawn) {
-					modify_event('location', @pvp['arena']['spawn'][0][0])
+					modify_event('location', @pvp['arena']['spawn'][0][0]);
 				}
 				queue_push(closure(){
 					foreach(@p in all_players('custom')) {
 						if(ponline(@p)) {
-							raw_set_pvanish(player(), true, @p)
+							raw_set_pvanish(player(), true, @p);
 						}
 					}
-					set_pflight(player(), true)
-					set_peffect(player(), 14, 0, 9999, true)
-					set_collides_with_entities(false)
-				})
+
+					set_peffect(player(), 14, 0, 9999, true);
+					set_collides_with_entities(false);
+					set_pflight(player(), true);
+				});
 			}
 		}
 	}
@@ -53,22 +54,22 @@ proc _remove_spectator(@player, @pvp) {
 	try(
 		array_remove_values(@pvp['spectators'], @player)
 		if(ponline(@player)) {
-			set_collides_with_entities(@player, true)
+			set_pflight(@player, false);
+			set_collides_with_entities(@player, true);
+			dm_set_pvisible(@player, true);
 			if(array_index_exists(@pvp['arena'], 'resourcepack')) {
-				send_resourcepack(@player, 'http://mc.finalscoremc.com:25966/resourcepacks/default.zip')
+				send_resourcepack(@player, 'http://mc.finalscoremc.com:25966/resourcepacks/default.zip');
 			}
 			foreach(@p in all_players('custom')) {
 				if(ponline(@p)) {
-					raw_set_pvanish(@player, false, @p)
+					raw_set_pvanish(@player, false, @p);
 				}
 			}
-			dm_set_pvisible(@player, true);
 			set_entity_fall_distance(puuid(@player), 0);
-			set_pflight(@player, false);
 			if(pinfo(@player, 5) > 0) {
 				set_peffect(@player, 14, 0, 0);
 				if(!array_index_exists(@pvp['players'], @player)) {
-					set_ploc(@player, @pvp['arena']['lobby'])
+					set_ploc(@player, @pvp['arena']['lobby']);
 				}
 			}
 		}
