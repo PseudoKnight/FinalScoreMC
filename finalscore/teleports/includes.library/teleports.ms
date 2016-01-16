@@ -1,4 +1,4 @@
-@blockedworlds = array('outworld', 'outworld_nether', 'outworld_the_end')
+@blockedworlds = array('outworld', 'outworld_nether', 'outworld_the_end');
 
 #Warms up a tp with effects and configurable timer
 proc _warmuptp(@player, @loc, @yaw = null, @pitch = null, @cleareffects = false) {
@@ -10,10 +10,12 @@ proc _warmuptp(@player, @loc, @yaw = null, @pitch = null, @cleareffects = false)
 		play_sound(ploc(@player), array('sound': 'PORTAL_TRIGGER', 'volume': 1, 'pitch': 1));
 	}
 	set_timeout(round(@length * 1000), closure(){
-		if(!ponline(@player), die())
+		if(!ponline(@player)) {
+			die();
+		}
 		@ploc = ploc(@player);
 		if(!is_null(@yaw) && !is_null(@pitch)) {
-			pfacing(@player, @yaw, @pitch)
+			pfacing(@player, @yaw, @pitch);
 		}
 		set_peffect(@player, 15, 1, 2, true, false);
 		set_ploc(@player, @loc);
@@ -23,7 +25,7 @@ proc _warmuptp(@player, @loc, @yaw = null, @pitch = null, @cleareffects = false)
 		play_sound(@ploc, array('sound': 'GHAST_FIREBALL', 'volume': 2));
 		play_sound(@loc, array('sound': 'GHAST_FIREBALL', 'volume': 2));
 		if(@cleareffects) {
-			_clear_peffects(@player)
+			_clear_peffects(@player);
 		}
 	})
 }

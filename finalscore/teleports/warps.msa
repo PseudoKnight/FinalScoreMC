@@ -1,106 +1,133 @@
 *:/warp [$] = >>>
 	if(!$) {
-		call_alias('/warps list')
-		die()
+		call_alias('/warps list');
+		die();
 	}
 
-	@args = parse_args($)
+	@args = parse_args($);
 	if(array_size(@args) == 2) {
 		if(get_command_block()) {
-			@player = @args[0]
-			@warpid = @args[1]
+			@player = @args[0];
+			@warpid = @args[1];
 		} else {
-			die('You cannot teleport others.')
+			die('You cannot teleport others.');
 		}
 	} else {
-		 @player = player()
-		 @warpid = @args[0]
+		 @player = player();
+		 @warpid = @args[0];
 	}
 
-	@warp = get_value('warp.'.to_lower(@warpid))
-	if(!@warp, die('That warp does not exist.'))
-	include('includes.library/teleports.ms')
-	if(array_contains(@blockedworlds, pworld(@player)), die('You cannot warp in this world.'))
-	_warmuptp(@player, @warp['loc'], @warp['yaw'], @warp['pitch'], if(@warp['loc'][3] === 'custom', true, false))
+	@warp = get_value('warp.'.to_lower(@warpid));
+	if(!@warp) {
+		die('That warp does not exist.');
+	}
+
+	include('includes.library/teleports.ms');
+	if(array_contains(@blockedworlds, pworld(@player))) {
+		die('You cannot warp in this world.');
+	}
+
+	_warmuptp(@player, @warp['loc'], @warp['yaw'], @warp['pitch'], if(@warp['loc'][3] === 'custom', true, false));
 <<<
 
 *:/setwarp [$warp] = >>>
-	if(!has_permission('group.moderator'), die('You do not have permission to use this command.'))
-	if(!$warp, die('You need to specify a warp name.'))
-	if(reg_count('\\w', $warp) < 0, die('This needs to be in alphanumeric characters.'))
-	@loc = ploc()
-	@loc = array(round(@loc[0], 1), @loc[1], round(@loc[2], 1), @loc[3])
+	if(!has_permission('group.moderator')) {
+		die('You do not have permission to use this command.');
+	}
+	if(!$warp) {
+		die('You need to specify a warp name.');
+	}
+	if(reg_count('\\w', $warp) < 0) {
+		die('This needs to be in alphanumeric characters.');
+	}
+	@loc = ploc();
+	@loc = array(round(@loc[0], 1), @loc[1], round(@loc[2], 1), @loc[3]);
 	if(has_value('warp.'.$warp)) {
 		try(
-		if(function_exists('dm_delete_marker')) {
-			dm_delete_marker('warps', 'warp.'.$warp)
-		}
-		)
+			if(function_exists('dm_delete_marker')) {
+				dm_delete_marker('warps', 'warp.'.$warp);
+			}
+		);
 	}
-	store_value('warp.'.$warp, array('loc': @loc, 'yaw': round(pfacing()[0]), 'pitch': round(pfacing()[1])))
+	store_value('warp.'.$warp, array('loc': @loc, 'yaw': round(pfacing()[0]), 'pitch': round(pfacing()[1])));
 	if(function_exists('dm_create_marker')) {
-		dm_create_marker('warps', array('id': 'warp.'.$warp, 'label': 'WARP.'.to_upper($warp), 'location': @loc, 'world': @loc[3], 'icon': 'star', 'persistent': true)) # radius is workaround for a bug
+		dm_create_marker('warps', array('id': 'warp.'.$warp, 'label': 'WARP.'.to_upper($warp), 'location': @loc, 'world': @loc[3], 'icon': 'star', 'persistent': true)); # radius is workaround for a bug
 	}
-	msg('Warp created.')
+	msg('Warp created.');
 <<<
 
 *:/warps [$cmd] [$id] = >>>
 	switch($cmd) {
-	case 'del':
-	case 'delete':
-		if(!has_permission('group.moderator'), die('You do not have permission to use this command.'))
-		if(!$id, die('This requires a warp name.'))
-		if(!has_value('warp.'.$id), die('There is no warp by that name.'))
-		clear_value('warp.'.$id)
-		try(
-		if(function_exists('dm_delete_marker')) {
-			dm_delete_marker('warps', 'warp.'.$id)
-		}
-		)
-		msg('Deleted warp.')
-	case 'list':
-		@warps = get_values('warp')
-		@worlds = get_worlds()
-		@warplist = associative_array()
-		foreach(@world in @worlds) {
-			@warplist[@world] = ''
-		}
-		foreach(@warpkey: @warpdata in @warps) {
-			@warplist[@warpdata['loc'][3]] .= split('.', @warpkey)[1].' '
-		}
-		msg(color('bold').'AVAILABLE WARPS:')
-		foreach(@worldname: @worldwarps in @warplist) {
-			if(@worldwarps) {
-				msg(color(7).'['.to_upper(_worldname(@worldname)).'] '.color(15).@worldwarps)
+		case 'del':
+		case 'delete':
+			if(!has_permission('group.moderator')) {
+				die('You do not have permission to use this command.');
 			}
-		}
-	case 'resetmarkers':
-		if(!has_permission('group.admin'), die('You do not have permission to use this command.'))
-		if(!function_exists('dm_all_markersets')) { die('Uneditable at this time.') }
-		if(array_contains(if(function_exists('dm_all_markersets')) { dm_all_markersets() }, 'warps')) {
-			if(function_exists('dm_delete_markerset')) {
-				dm_delete_markerset('warps')
+			if(!$id) {
+				die('This requires a warp name.');
 			}
-		}
-
-		if(function_exists('dm_create_markerset')) {
-			dm_create_markerset('warps', array('label': 'Warps', 'persistent': true))
-		}
-		if(function_exists('dm_set_markerset_hide_by_default')) {
-			dm_set_markerset_hide_by_default('warps', true)
-		}
-
-		@warps = get_values('warp')
-
-		foreach(@name: @warp in @warps) {
-			if(function_exists('dm_create_marker')) {
-				dm_create_marker('warps', array('id': @name, 'label': to_upper(@name), 'location': @warp['loc'], 'world': @warp['loc'][3], 'icon': 'star', 'persistent': true))
+			if(!has_value('warp.'.$id)) {
+				die('There is no warp by that name.');
 			}
-		}
+			clear_value('warp.'.$id);
+			try(
+				if(function_exists('dm_delete_marker')) {
+					dm_delete_marker('warps', 'warp.'.$id);
+				}
+			);
+			msg('Deleted warp.');
 
-		msg(color('green').'Done.')
+		case 'list':
+			@warps = get_values('warp');
+			@worlds = get_worlds();
+			@warplist = associative_array();
+			foreach(@world in @worlds) {
+				@warplist[@world] = '';
+			}
+			foreach(@warpkey: @warpdata in @warps) {
+				@warplist[@warpdata['loc'][3]] .= split('.', @warpkey)[1].' ';
+			}
+			msg(color('bold').'AVAILABLE WARPS:');
+			foreach(@worldname: @worldwarps in @warplist) {
+				if(@worldwarps) {
+					msg(color(7).'['.to_upper(_worldname(@worldname)).'] '.color(15).@worldwarps);
+				}
+			}
+		case 'resetmarkers':
+			if(!has_permission('group.admin')) {
+				die('You do not have permission to use this command.');
+			}
+			if(!function_exists('dm_all_markersets')) {
+				die('Uneditable at this time.')
+			}
+			@markersets = array();
+			if(function_exists('dm_all_markersets')) {
+				@markersets = dm_all_markersets();
+			}
+			if(array_contains(@markersets, 'warps')) {
+				if(function_exists('dm_delete_markerset')) {
+					dm_delete_markerset('warps');
+				}
+			}
 
-	default:
-		msg('Available sub-commands: "/warps del <warp>", "/warps list".')
+			if(function_exists('dm_create_markerset')) {
+				dm_create_markerset('warps', array('label': 'Warps', 'persistent': true));
+			}
+			if(function_exists('dm_set_markerset_hide_by_default')) {
+				dm_set_markerset_hide_by_default('warps', true);
+			}
+
+			@warps = get_values('warp');
+
+			foreach(@name: @warp in @warps) {
+				if(function_exists('dm_create_marker')) {
+					dm_create_marker('warps', array('id': @name, 'label': to_upper(@name), 'location': @warp['loc'], 'world': @warp['loc'][3], 'icon': 'star', 'persistent': true));
+				}
+			}
+
+			msg(color('green').'Done.');
+
+		default:
+			msg('Available sub-commands: "/warps del <warp>", "/warps list".');
 	}
 <<<

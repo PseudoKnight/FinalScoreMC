@@ -43,10 +43,10 @@ bind(player_teleport, null, null, @event) {
 			});
 		}
 	}
-	
+
 	@loc = _relative(@event['to'], 'down');
 	@block = get_block_at(@loc); # loads chunk to help prevent players falling through floor
-	
+
 	# take the rest off the overloaded teleportation event
 	set_timeout(50, closure(){
 		if(@block[0] !== '0' && # don't run this if the [to] location is in the air
@@ -66,7 +66,9 @@ bind(player_teleport, null, null, @event) {
 
 # Block enderpearls
 bind(player_interact, null, array('item': 368, 'button': 'right'), @event) {
-	if(pworld() === 'custom', cancel())
+	if(pworld() === 'custom') {
+		cancel();
+	}
 }
 
 # Main world_changed handler
