@@ -208,10 +208,12 @@
 		}
 	}
 
-	# Check if enough players
-	foreach(array_keys(@pvp['players']), @player) {
-		if(!ponline(@player) || pworld(@player) !== 'custom') {
-			array_remove(@pvp['players'], @player);
+	# Check if enough players and teleport them to lobby
+	foreach(@p in array_keys(@pvp['players'])) {
+		if(!ponline(@p) || pworld(@p) !== 'custom') {
+			array_remove(@pvp['players'], @p);
+		} else {
+			set_ploc(@p, @pvp['arena']['lobby']);
 		}
 	}
 	if(array_size(@pvp['players']) < if(array_index_exists(@pvp['arena'], 'min'), @pvp['arena']['min'], 2)) {
