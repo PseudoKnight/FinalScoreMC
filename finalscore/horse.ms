@@ -3,7 +3,7 @@ bind(player_interact_entity, null, array('clicked': 'HORSE'), @event) {
 	if(!_is_survival_world(pworld())) {
 		die();
 	}
-	
+
 	@yVelocity = round(entity_spec(@event['id'])['jump'], 2);
 	@jump = 0;
 	# calculate jump height in meters
@@ -20,12 +20,11 @@ bind(player_interact_entity, null, array('clicked': 'HORSE'), @event) {
 			action_msg(colorize('&c'.@health.' \u2764 &e'.@jump.' \u279A &a'.@speed.' \u279F'));
 		});
 	}
-	
+
 	@item = pinv(player(), null);
 	@owner = get_mob_owner(@event['id']);
 	if(@owner && @owner != player()) {
 		msg('This horse is owned by '.@owner);
-		
 		if(!has_permission('group.moderator')
 		&& (!@item || (@item['type'] != 322	&& @item['type'] != 396))) {
 			@pdata = null;
@@ -49,17 +48,18 @@ bind(player_interact_entity, null, array('clicked': 'HORSE'), @event) {
 		tame_mob(@event['id']);
 		msg('You now own this horse.');
 	}
-	
+
 	# skeleton/zombie horses
 	if(!is_cancelled() && !pinfo(player(), 11)) {
 		@horse = entity_spec(@event['id']);
 		if(@horse['variant'] === 'ZOMBIE' || @horse['variant'] === 'SKELETON') {
 			if(@item) {
 				switch(@item['type']) {
-					case 322:
-					case 396:
+					case 322: # gold apple
+					case 396: # gold carrot
+					case 420: # lead
 						die();
-					case 367:
+					case 367: # rotten flesh
 						@heatlh = get_entity_health(@event['id']);
 						if(@health != 100) {
 							cancel();
@@ -87,12 +87,12 @@ bind(entity_damage, null, array('type': 'HORSE'), @event) {
 	if(!_is_survival_world(@world)) {
 		die();
 	}
-	
+
 	@owner = get_mob_owner(@event['id']);
 	if(is_null(@owner)) {
 		 die();
 	}
-	
+
 	switch(@event['cause']) {
 		case 'ENTITY_ATTACK':
 			@isplayer = ponline(@event['damager']);
@@ -101,16 +101,16 @@ bind(entity_damage, null, array('type': 'HORSE'), @event) {
 			|| (!@isplayer && !get_entity_rider(@event['id']))) {
 				cancel();
 			}
-			
+
 		case 'PROJECTILE':
 			@isplayer = ponline(@event['shooter']);
-			
+
 			if((@isplayer && @owner != @event['shooter'])
 			|| (!@isplayer && !get_entity_rider(@event['id']))) {
 				cancel();
 			}
-			
-		default: 
+
+		default:
 			if(!get_entity_rider(@event['id'])) {
 				modify_event('amount', 0);
 			}
