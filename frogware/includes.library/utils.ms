@@ -23,8 +23,8 @@ proc _fw_loc(@height = 0, @minrange = false) {
 	@region = sk_region_info('frogware', 'custom')[0]
 	@return = 1
 	@loc = array(
-		@region[0][0] - rand(sqrt((@region[0][0] - @region[1][0]) ** 2)) + 0.5, 
-		@region[1][1] + @height, 
+		@region[0][0] - rand(sqrt((@region[0][0] - @region[1][0]) ** 2)) + 0.5,
+		@region[1][1] + @height,
 		@region[0][2] - rand(sqrt((@region[0][2] - @region[1][2]) ** 2)) + 0.5,
 		'custom'
 	)
@@ -57,7 +57,9 @@ proc _fw_mobs(@mob = 'random', @num = 'random') {
 			@m = spawn_mob(@mob, 1, @loc)[0];
 			array_push(@entities, @m);
 			if(@mob == 'wolf:angry') {
-				set_mob_target(@m, puuid(_fw_leader()));
+				if(function_exists('set_mob_target')) {
+					set_mob_target(@m, puuid(_fw_leader()));
+				}
 			}
 		}
 	}
@@ -164,7 +166,7 @@ proc _fw_msg(@msg) {
 	}
 }
 
-#Given two blocks, iterates through all the blocks inside the cuboid, and calls the 
+#Given two blocks, iterates through all the blocks inside the cuboid, and calls the
 #user defined function on them. The used defined procedure should accept 3 parameters,
 #the x, y, and z coordinates of the block.
 proc _iterate_cuboid(@b1, @b2, @block, @percent) {
