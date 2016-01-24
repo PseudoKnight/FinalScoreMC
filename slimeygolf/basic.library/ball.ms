@@ -3,14 +3,15 @@ proc _place_ball(@mobtype, @loc, @ball) {
 	@loc['x'] += 0.5;
 	@loc['y'] += 1;
 	@loc['z'] += 0.5;
-	
+
 	@ball['id'] = spawn_mob(@mobtype.':1', 1, @loc)[0];
 	@ball['velocity'] = array(x: 0, y: 0, z: 0);
-		
+
 	set_entity_velocity(@ball['id'], array(0, 0, 0));
 	set_timeout(50, closure(){
 		set_mob_effect(@ball['id'], 11, 4, 99999, true);
-		set_mob_effect(@ball['id'], 2, 7, 99999, true);
+		set_mob_effect(@ball['id'], 2, 127, 99999, true);
+		set_mob_effect(@ball['id'], 8, -128, 99999, true);
 	});
 }
 
@@ -22,4 +23,37 @@ proc _remove_ball(@id) {
 	try(
 		entity_remove(@id);
 	)
+}
+
+proc _get_block_below(@loc) {
+	@block = get_block_at(@loc);
+	if(@block != '0:0') {
+		if(@block == '35:15') {
+			play_sound(@loc, array('sound': 'WOOD_CLICK', 'pitch': 0.5 + @loc['y'] - floor(@loc['y'])));
+		}
+		return(@block);
+	}
+	# check closer if it's over the edge
+	@rx = @loc['x'] - floor(@loc['x']);
+	@dirx = '';
+	if(@rx < 0.21) {
+		@dirx = 'east';
+	} else if(@rx > 0.79) {
+		@dirx = 'west';
+	}
+	if(@dirx && get_block_at(_relative(@loc, @dirx)) != '0:0') {
+		return(@block);
+	} else {
+		@rz = @loc['z'] - floor(@loc['z']);
+		@dirz = '';
+		if(@rz < 0.21) {
+			@dirz = 'south';
+		} else if(@rz > 0.79) {
+			@dirz = 'north';
+		}
+		if(@dirz && get_block_at(_relative(@loc, @dirz)) != '0:0') {
+			return(@block);
+		}
+	}
+	return(null);
 }
