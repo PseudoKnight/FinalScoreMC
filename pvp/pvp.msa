@@ -159,7 +159,7 @@
 	}
 
 	# Get arena settings
-	@pvp['arena'] = get_value('arena.'.@id);
+	@pvp['arena'] = get_value('arena', @id);
 	if(is_null(@pvp['arena'])) {
 		die('Can\'t find that arena.');
 	}
@@ -168,6 +168,16 @@
 		del_virtualchest(@id.'options');
 		unbind(@id.'options');
 	}
+
+	# Set defaults
+	@defaults = associative_array(
+		'mode': 'dm',
+		'ff': 'true',
+		'flags': array(),
+		'respawnmode': 'normal',
+		'delay': 10,
+	);
+	@pvp['arena'] = array_merge(@defaults, @pvp['arena']);
 
 	# Get child or parent arena settings
 	if(array_index_exists(@pvp['arena'], 'parent')) {
@@ -192,13 +202,6 @@
 		@secondaryName = null;
 	}
 
-	# Check if arena is in testing
-	if(array_index_exists(@pvp['arena'], 'flags')
-	&& array_contains(@pvp['arena']['flags'], 'debug')
-	&& !array_contains(pgroup(), 'builder')) {
-		die('This arena is still in testing and can only be started by Builders.');
-	}
-
 	if(array_index_exists(@pvp['arena'], 'sharedarenas')) {
 		foreach(@arenaid in @pvp['arena']['sharedarenas']) {
 			@otherpvp = import('pvp'.@arenaid);
@@ -208,12 +211,18 @@
 		}
 	}
 
+	# Check if arena is in testing
+	if(array_contains(@pvp['arena']['flags'], 'debug')
+	&& !has_permission('group.builder')) {
+		die('This arena is still in testing and can only be started by Builders.');
+	}
+
 	# Check if enough players and teleport them to lobby
 	foreach(@p in array_keys(@pvp['players'])) {
 		if(!ponline(@p) || pworld(@p) !== 'custom') {
 			array_remove(@pvp['players'], @p);
 		} else {
-			set_ploc(@p, @pvp['arena']['lobby']);
+			set_ploc(@p, @pvp['arena']['lobby']); # TODO: remove once players can't join multiple games
 		}
 	}
 	if(array_size(@pvp['players']) < if(array_index_exists(@pvp['arena'], 'min'), @pvp['arena']['min'], 2)) {
@@ -225,21 +234,11 @@
 	if(!array_index_exists(@pvp['arena'], 'region'), die('No region defined for arena.'));
 	if(!array_index_exists(@pvp['arena'], 'spawn'), die('No spawns defined for arena.'));
 
-	# Set arena defaults
+	# Configure remaining arena settings
 	if(!array_index_exists(@pvp['arena'], 'broadcast'), @pvp['arena']['broadcast'] = @pvp['arena']['region']);
-	if(!array_index_exists(@pvp['arena'], 'mode'), @pvp['arena']['mode'] = 'dm');
-	if(!array_index_exists(@pvp['arena'], 'ff'), @pvp['arena']['ff'] = true);
-	if(!array_index_exists(@pvp['arena'], 'flags'), @pvp['arena']['flags'] = array());
-	if(!array_index_exists(@pvp['arena'], 'respawnmode'), @pvp['arena']['respawnmode'] = 'normal');
-	if(!array_index_exists(@pvp['arena'], 'delay')) {
-		if(array_index_exists(@pvp['arena'], 'classes')) {
-			@pvp['arena']['delay'] = 45;
-		} else {
-			@pvp['arena']['delay'] = 10;
-		}
-	}
 	if(array_contains(@pvp['arena']['flags'], 'keepinventory'), @pvp['arena']['denydrop'] = 'all');
 	if(array_index_exists(@pvp['arena'], 'classes')) {
+		@pvp['arena']['delay'] = 45;
 		if(!array_index_exists(@pvp['arena'], 'class_picking'), @pvp['arena']['class_picking'] = 'player');
 	}
 

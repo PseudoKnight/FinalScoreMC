@@ -41,17 +41,18 @@
 				@arena[$setting] = integer(@args[0]);
 				msg(colorize('Set &a' . $setting . '&r to &a' . @args[0]));
 
-			# integers w/ teams
+			# 2 integer options
 			case 'timer':
 
 				if(!@args[0] || !@args[1] || !is_integral(@args[0]) || !is_integral(@args[1])) {
-					die($setting . ' requires two integers. (team, value)');
+					die($setting . ' requires two integers.');
 				}
 				@arena[$setting] = array(integer(@args[0]) - 1, integer(@args[1]));
 				msg(colorize('Set &a' . $setting . '&r for team &a' . @args[0] . '&r to &a' . @args[1]));
 
 			# string options
 			case 'broadcast':
+			case 'class_picking':
 			case 'kothregion':
 			case 'parent':
 			case 'powerup':
@@ -62,10 +63,74 @@
 				@arena[$setting] = @args[0];
 				msg(colorize('Set &a' . $setting . '&r to &a' . @args[0]));
 
+			# 2 string options
+			case 'captain':
+			case 'nametags':
+
+				@arena[$setting][0] = array(@args[0], @args[1]);
+				msg(colorize('Set &a' . $setting . '&r to &a' . @args[0] . '&r and &a' . @args[1] . '&r.'));
+
+			# boolean option (true default)
+			case 'ff':
+			case 'stats':
+				switch(@args[0]) {
+					case 'true':
+					case 'on':
+					case '1':
+					case 'yes':
+						try(
+							array_remove(@arena, $setting);
+						,
+							die('Already set to true by default.');
+						)
+						msg(colorize('Turned &a' . $setting . '&r on (default)'));
+
+					case 'false':
+					case 'off':
+					case '0':
+					case 'no':
+						@arena[$setting] = false;
+						msg(colorize('Turned &a' . $setting . '&r off'));
+
+					default:
+						die('Only accepts values: true or false');
+				}
+
+			# boolean option (false default)
+			case 'build':
+			case 'debug':
+			case 'hideplayers':
+			case 'infinitedispensers':
+			case 'keepinventory':
+			case 'nobottles':
+			case 'noinventory':
+			case 'noxp':
+			case 'rallycall':
+			case 'stackedpickup':
+
+				switch(@args[0]) {
+					case 'true':
+					case 'on':
+					case '1':
+					case 'yes':
+						@arena['flags'][] = $setting;
+						msg(colorize('Turned &a' . $setting . '&r on'));
+
+					case 'false':
+					case 'off':
+					case '0':
+					case 'no':
+						array_remove_values(@arena['flags'], $setting);
+						msg(colorize('Turned &a' . $setting . '&r off (default)'));
+
+					default:
+						die('Only accepts values: true or false');
+				}
+
 			# message option
 			case 'description':
 				@arena[$setting] = colorize($);
-				msg('Set description to ' . colorize($));
+				msg(colorize('Set &a' . $setting . '&r to "' . $ . '"'));
 
 			# single exact locations
 			case 'lobby':
@@ -125,19 +190,29 @@
 				msg('Set shared arenas to '.@arena['sharedarenas'])
 
 			case 'spawnblock':
-				@block = get_block_at(pcursor())
-				@arena['spawnblock'][if(array_size(@args) == 1, @args[0], 0)] = @block
+				@block = get_block_at(pcursor());
+				if(!@args[0]) {
+					die('Requires a valid block id.');
+				}
+				@arena['spawnblock'][@args[0]] = @block;
 				msg('Set spawnblock to '.color(10).@block
-					.if(array_size(@args) == 1, color('r').' for team '.color(10).@args[0]))
+					.if(array_size(@args) == 1, color('r').' for team '.color(10).@args[0]));
 
 			case 'mode':
-				if(!@args[0]
-				|| !array_contains_ic(array('dm', 'ddm', 'tdm', 'ctf', 'koth', 'infection', 'tntrun'), @args[0])) {
-					die('Available modes: dm (default deathmatch), tdm (team deathmatch), ctf (capture the flag),'
-						.'koth (king of the hill), infection.')
+				@modes = array(
+					'dm': 'Death Match',
+					'ddm': 'Dynamic Teams DM',
+					'tdm': 'Team DM',
+					'ctf': 'Capture the Flag',
+					'koth': 'King of the Hill',
+					'infection': 'Zombie Infection',
+					'tntrun': 'TNT Run Survival',
+				);
+				if(!array_index_exists(@modes, to_lower(@args[0]))) {
+					die('Available modes: ' . @modes);
 				}
-				@arena['mode'] = to_lower(@args[0])
-				msg('Set arena game mode to '.color(10).@args[0])
+				@arena['mode'] = to_lower(@args[0]);
+				msg('Set arena game mode to '.color(10).@args[0]);
 
 			case 'mobprotect':
 				if(!@args[1]) {
@@ -170,11 +245,6 @@
 				|| length(@arena['team'][1]['name']) > 16, die('Name too long. (16 character limit)'))
 				msg('Set team names to '.colorize(@args[0]).' vs '.colorize(@args[1]))
 
-			case 'nametags':
-				@arena['nametags'][0] = @args[0]
-				@arena['nametags'][1] = @args[1]
-				msg('Set nametag visibility to '.@args[0].' and '.@args[1].'.');
-
 			case 'kit':
 				if(!array_index_exists(@arena, 'kit'), @arena['kit'] = array(array(), array()))
 				@inv = pinv();
@@ -189,11 +259,6 @@
 					die('Only accepts values 1 or 2 for teams, or blank for when there are no teams.')
 				}
 
-			case 'captain':
-				@arena['captain'][0] = @args[0]
-				@arena['captain'][1] = @args[1]
-				msg('Captain classes set to '.color(10).@args[0].color('r').' and '.color(10).@args[1])
-
 			case 'restore':
 				if(!has_permission('group.engineer'), die('Only engineers, moderators and admins can do this.'))
 				@regions = array()
@@ -204,18 +269,6 @@
 				}
 				@arena['restore'] = @regions
 				msg('Restore area set to '.color(10).@regions)
-
-			case 'ff':
-				if(!@args[0], die('This requires true or false.'))
-				if(@args[0] === 'true') {
-					try(array_remove(@arena, 'ff'), die('Already set to true by default.'))
-					msg('Set friendly-fire '.color(10).'on'.color('r').'. (default)')
-				} else if(@args[0] === 'false') {
-					@arena['ff'] = false
-					msg('Set friendly-fire '.color(10).'off'.color('r').'.')
-				} else {
-					die('Only accepts values: true or false (defaults to true)')
-				}
 
 			case 'itemspawn':
 				if(!array_index_exists(@arena, 'itemspawn'), @arena['itemspawn'] = array())
@@ -357,15 +410,6 @@
 				msg('Set '.color(10).@args[1].' '.@args[0].color('r').' to spawn here every '
 					.color(10).@args[2].color('r').' seconds'.if(@args[3], ' and at '.color(10).'start.', '.'))
 
-			case 'stats':
-				if(@args[0] === 'true') {
-					@arena['stats'] = true
-					msg('Set arena to display stats at the end of the match.')
-				} else {
-					@arena['stats'] = false
-					msg('Set arena to NOT display stats at the end of the match.')
-				}
-
 			case 'weapons':
 				@weapons = array('endernades', 'skullrockets',  'shotgunballs', 'primedtnt', 'pistoltears', 'firefire',
 					'railgun', 'fireball', 'firebreath', 'spawner', 'grapple', 'tracker', 'mine');
@@ -382,30 +426,6 @@
 					if(!array_contains(@weapons, @weapon), die('Unknown flag: '.@weapon))
 				}
 				msg('Weapons activated: '.color(10).@arena['weapons']);
-
-			case 'flags':
-				@flags = array('noinventory', 'stackedpickup', 'debug', 'keepinventory', 'rallycall', 'build',
-					'infinitedispensers', 'noxp', 'nobottles', 'hideplayers')
-				if(!@args[0] || @args[1]) {
-					die('You need to specify a comma separated list of pre-defined flags.'
-						.'(no spaces) Current available flags: '.@flags)
-				}
-				if($action === 'add' && array_index_exists(@arena, 'flags')) {
-					@arena['flags'] = array_merge(@arena['flags'], split(',', @args[0]));
-				} else {
-					@arena['flags'] = split(',', @args[0]);
-				}
-				foreach(@flag in @arena['flags']) {
-					if(!array_contains(@flags, @flag), die('Unknown flag: '.@flag))
-				}
-				msg('Activated these flags: '.color(10).@arena['flags'])
-
-			case 'class_picking':
-				if(@args[0] !== 'random' && @args[0] !== 'player') {
-					die('Must be "random" or "player"');
-				}
-				@arena['class_picking'] = @args[0];
-				msg('Set class picking to '.@args[0].'.');
 
 			case 'options':
 				@options = array('lives', 'score', 'class_picks', 'class_picking');
