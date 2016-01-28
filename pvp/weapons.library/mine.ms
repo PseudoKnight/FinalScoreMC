@@ -2,7 +2,7 @@ array_push(@pvp['binds'], @id.'minedrop');
 bind(item_drop, array('id': @id.'minedrop'), array('item': 148), @event, @id) {
 	@pvp = import('pvp'.@id);
 	if(!array_index_exists(@pvp['players'], player()), die());
-	
+
 	@item = @event['item'];
 	@item['meta']['display'] = player();
 	modify_event('item', @item);
@@ -27,7 +27,7 @@ array_push(@pvp['binds'], @id.'minepickup');
 bind(item_pickup, array('id': @id.'minepickup'), array('item': 148), @event, @id) {
 	@pvp = import('pvp'.@id);
 	if(!array_index_exists(@pvp['players'], player()), die());
-	
+
 	if(@event['item']['meta']['display'] == player()) {
 		@item = @event['item'];
 		@item['meta']['display'] = 'MINE';
@@ -45,7 +45,7 @@ bind(item_pickup, array('id': @id.'minepickup'), array('item': 148), @event, @id
 				@damager = @event['item']['meta']['display'];
 				if(array_index_exists(@pvp['players'], @damager)
 				&& sk_region_check_flag(ploc(@damager), 'PVP', @damager)) {
-					damage_entity(puuid(), @power, puuid(@damager));
+					try(damage_entity(puuid(), @power, puuid(@damager)));
 				} else {
 					damage_entity(puuid(), @power);
 					_stats_damage(@damager, player(), @power, @pvp);
