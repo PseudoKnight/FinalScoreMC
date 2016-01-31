@@ -1,3 +1,4 @@
+/*
 bind(player_move, null, array('world': 'outworld'), @event) {
 	@loc = ploc();
 	@block = get_block_at(@loc);
@@ -15,16 +16,17 @@ bind(player_move, null, array('world': 'outworld'), @event) {
 		case '1:5':
 			set_block_at(@loc, '1:0');
 	}
-	
+
 }
 
 bind(item_despawn, null, array('item': 6), @event) {
 	if(@event['location']['world'] !== 'outworld') {
 		die();
 	}
-	
+
 	@block = get_block_at(_relative(@event['location'], 'down'));
 	if((@block[0] == 2 || @block[0] == 3) && @block[1] === ':') {
 		set_block_at(@event['location'], @event['item']['type'].':'.@event['item']['data']);
 	}
 }
+*/
