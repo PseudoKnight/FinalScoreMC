@@ -363,6 +363,7 @@
 						_remove_activity('golf'.@course);
 					}
 					clear_task();
+					set_block_at(@golf['course']['loc'], 0);
 					break();
 				}
 			}
@@ -379,6 +380,7 @@
 				remove_scoreboard(@course);
 			}
 			clear_task();
+			set_block_at(@golf['course']['loc'], 0);
 		}
 	});
 <<<
