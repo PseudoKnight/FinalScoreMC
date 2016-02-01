@@ -360,7 +360,9 @@ if(@pvp['arena']['respawnmode'] == 'mob') {
 	bind(entity_death, array('id': @id.'mobrespawns'), array('type': 'VILLAGER'), @e, @id) {
 		@pvp = import('pvp'.@id)
 		foreach(@team: @data in @pvp['team']) {
-			if(array_contains(@data['respawns'], @e['id'])) {
+			@index = array_index(@data['respawns'], @e['id']);
+			if(!is_null(@index)) {
+				array_remove(@data['respawns'], @index);
 				set_pscore('respawns', @pvp['arena']['team'][@team]['name'], array_size(@data['respawns']), @id);
 				break();
 			}
