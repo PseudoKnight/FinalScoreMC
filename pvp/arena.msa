@@ -179,11 +179,16 @@
 				msg(colorize('Set a &a' . $setting . '&r to current location for team &a' . (@team + 1)));
 
 			case 'arenaselect':
-				if(array_size(@args) < 2) {
-					die('Requires an arena select type (eg. random) and then a comma separated list of child arenas.')
+				if(array_size(@args) == 2) {
+					@arena['arenaselect'] = array('type': @args[0], 'arenas': split(',', @args[1]));
+					msg('Set arena to select '.@args[0].'ly from these child arenas: '.@arena['arenaselect']['arenas']);
+				} else if($action == 'add') {
+					@arena['arenaselect']['arenas'][] = @args[0];
+					msg('Added arena to these child arenas: '.@arena['arenaselect']['arenas']);
+				} else {
+					die('Requires an arena select type (eg. random) and then a comma separated list of child arenas.');
 				}
-				@arena['arenaselect'] = array('type': @args[0], 'arenas': split(',', @args[1]))
-				msg('Set arena to select '.@args[0].'ly from these child arenas: '.@arena['arenaselect']['arenas'])
+
 
 			case 'sharedarenas':
 				@arena['sharedarenas'] = split(',', @args[0])
