@@ -1,4 +1,4 @@
-/* 
+/*
 	Gets the pitch for the given tone and octave
 */
 proc _get_pitch(@tone, @octave) {
@@ -99,30 +99,30 @@ proc _equip_park(@player) {
 	if(!@player) {
 		@player = player();
 	}
-	
+
 	if(pworld(@player) !== 'custom') {
 		return();
 	}
 
 	_clear_pinv(@player)
-	
+
 	set_pinv(@player, array(
 		2: array('name': 'BOOK', 'meta': array(
 			'display': 'Park Directory',
 		)),
 		3: array('name': 'COOKED_MUTTON', 'qty': 64, 'meta': array(
-			'display': 'Frog Legs', 
+			'display': 'Frog Legs',
 			'lore': array('Good eatin\''),
 		)),
 	))
-	
+
 	try(
 	@pdata = _pdata(@player)
 	if(array_index_exists(@pdata, 'support')
 	&& @pdata['support'] >= 10) {
 		set_pinv(@player, array(
 			4: array(
-				'type': 401, 
+				'type': 401,
 				'meta': array(
 					'display': color('green').color('bold').'Random Firework',
 					'lore': array(
@@ -211,7 +211,7 @@ proc _relative(@originloc, @dir, @amount = 1) {
 			@loc['y'] -= @amount
 		}
 		@loc[1] -= @amount
-		
+
 	case 'up':
 		if(array_index_exists(@loc, 'y')) {
 			@loc['y'] += @amount
@@ -223,28 +223,28 @@ proc _relative(@originloc, @dir, @amount = 1) {
 			@loc['z'] -= @amount
 		}
 		@loc[2] -= @amount
-		
+
 	case 'south':
 		if(array_index_exists(@loc, 'z')) {
 			@loc['z'] += @amount
 		}
 		@loc[2] += @amount
-		
+
 	case 'west':
 		if(array_index_exists(@loc, 'x')) {
 			@loc['x'] -= @amount
 		}
 		@loc[0] -= @amount
-		
+
 	case 'east':
 		if(array_index_exists(@loc, 'x')) {
 			@loc['x'] += @amount
 		}
 		@loc[0] += @amount
-	
+
 	default:
 		console('Error: unhandled relative direction: '.@dir);
-		
+
 	}
 	return(@loc)
 }
@@ -287,17 +287,18 @@ proc _relative_coords(@originloc, @x, @y, @z) {
 /*
 	Gets a normalized vector when given a yaw and pitch
 */
-proc _get_vector(@yaw, @pitch = 0, @magnitude = 1) {
+proc _get_vector(@yaw, @pitch = 0, @magnitude = 1, @angle = 0) {
 	if(is_array(@yaw)) {
+		@angle = @magnitude;
+		@magnitude = @pitch;
 		@pitch = @yaw[1];
 		@yaw = @yaw[0];
-		@magnitude = @pitch;
 	}
 	@yaw = @yaw + 90;
 	@pitch = 0 - @pitch;
-	@vector = array('x': 0, 'y': 0, 'z': 0);
+	@vector = associative_array('x': 0, 'y': 0, 'z': 0);
 	@vector['x'] = @magnitude * (cos(to_radians(@yaw)) * cos(to_radians(@pitch)));
-	@vector['y'] = @magnitude * sin(to_radians(@pitch));
+	@vector['y'] = @magnitude * sin(to_radians(@pitch)) + @angle;
 	@vector['z'] = @magnitude * (sin(to_radians(@yaw)) * cos(to_radians(@pitch)));
 	return(@vector);
 }
@@ -328,7 +329,7 @@ proc _clear_pinv(@player) {
 proc _acc_add(@player, @amount) {
 	try(
 		@pdata = _pdata(@player)
-	, #catch 
+	, #catch
 		return(false)
 	)
 	if(!array_index_exists(@pdata, 'coins'), @pdata['coins'] = 100)
@@ -343,7 +344,7 @@ proc _acc_add(@player, @amount) {
 proc _acc_subtract(@player, @amount) {
 	try(
 		@pdata = _pdata(@player)
-	, #catch 
+	, #catch
 		return(false)
 	)
 	if(!array_index_exists(@pdata, 'coins'), @pdata['coins'] = 100)
@@ -358,7 +359,7 @@ proc _acc_subtract(@player, @amount) {
 proc _acc_balance(@player) {
 	try(
 		@pdata = _pdata(@player)
-	, #catch 
+	, #catch
 		return(0)
 	)
 	if(!array_index_exists(@pdata, 'coins')) {
@@ -495,22 +496,22 @@ proc _refresh_tablist(@players) {
 */
 proc _worldname(@world) {
 	@worlds = array(
-		'world': 'Alpha', 
-		'world_nether': 'Alpha Nether', 
-		'world3': 'Delta', 
-		'world3_nether': 'Delta Nether', 
-		'world4': 'Gamma', 
+		'world': 'Alpha',
+		'world_nether': 'Alpha Nether',
+		'world3': 'Delta',
+		'world3_nether': 'Delta Nether',
+		'world4': 'Gamma',
 		'world4_nether': 'Gamma Nether',
-		'world_the_end': 'The End', 
-		'custom': 'FrogPark', 
-		'dev': 'Dev', 
-		'outworld': 'Outworld', 
-		'omega': 'Omega', 
+		'world_the_end': 'The End',
+		'custom': 'FrogPark',
+		'dev': 'Dev',
+		'outworld': 'Outworld',
+		'omega': 'Omega',
 		'omega_nether':	'Omega Nether',
 		'outworld': 'Outworld',
 		'outworld_nether': 'Outworld Nether',
 	)
-	if(array_index_exists(@worlds, to_lower(@world))) { 
+	if(array_index_exists(@worlds, to_lower(@world))) {
 		return(@worlds[to_lower(@world)])
 	} else {
 		return(to_lower(@world))
@@ -522,24 +523,24 @@ proc _worldname(@world) {
 */
 proc _worldid(@world) {
 	@worlds = array(
-		'alpha': 'world', 
-		'alphanether': 'world_nether', 
-		'delta': 'world3', 
-		'deltanether': 'world3_nether', 
-		'gamma': 'world4', 
-		'gammanether': 'world4_nether', 
-		'theend': 'world_the_end', 
-		'custom': 'custom', 
-		'frogpark': 'custom', 
-		'dev': 'dev', 
-		'outworld': 'outworld', 
-		'omega': 'omega', 
+		'alpha': 'world',
+		'alphanether': 'world_nether',
+		'delta': 'world3',
+		'deltanether': 'world3_nether',
+		'gamma': 'world4',
+		'gammanether': 'world4_nether',
+		'theend': 'world_the_end',
+		'custom': 'custom',
+		'frogpark': 'custom',
+		'dev': 'dev',
+		'outworld': 'outworld',
+		'omega': 'omega',
 		'omeganether': 'omega_nether',
 		'outworld': 'outworld',
 		'outworldnether': 'outworld_nether',
 	)
 	@alias = to_lower(reg_replace('[_-]', '', @world))
-	if(array_index_exists(@worlds, @alias)) { 
+	if(array_index_exists(@worlds, @alias)) {
 		return(@worlds[@alias])
 	} else {
 		return(to_lower(@world))
@@ -631,12 +632,12 @@ proc _string_width(@string) {
 proc _fill_string(@replaceChar, @fillChar, @string, @lineWidth = 320) {
 	@width = _string_width(replace(@string, @replaceChar, ''));
 	@fillCount = reg_count('\\'.@replaceChar, @string);
-	
+
 	@remainingWidth = @lineWidth - @width;
 	@charWidth = _char_width(@fillChar);
 
 	@fillWidth = (@remainingWidth / @charWidth) / @fillCount;
-	
+
 	@fillArray = array();
 	array_resize(@fillArray, floor(@fillWidth), @fillChar);
 	@fillString = array_implode(@fillArray, '');
@@ -705,7 +706,7 @@ proc _get_inventory_count(@loc, @item) {
 			@count = @count + @i['qty']
 		}
 	}
-	return(@count) 
+	return(@count)
 }
 
 /*
@@ -812,7 +813,7 @@ proc _pdata_by_uuid(@uuid) {
 proc _store_pdata(@player, @data) {
 	if(!is_array(@data), return());
 	@player = to_lower(@player);
-	@uuid = _get_uuid(@player);	
+	@uuid = _get_uuid(@player);
 	x_new_thread('storePlayerData', closure(){
 		store_value('uuids', @uuid, @data);
 	});
