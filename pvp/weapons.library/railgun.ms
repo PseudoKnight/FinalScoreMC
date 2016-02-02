@@ -89,6 +89,7 @@ bind(player_interact, array('id': @id.'railgun'), array('item': 175, 'button': '
 		@loc['x'] += @x;
 		@loc['y'] += @y;
 		@loc['z'] += @z;
+		play_effect(@loc, array('flame', 'crit', 'cloud')[rand(3)], array('speed': 0, 'radius': 64));
 		if(get_block_info(@loc, 'solid') && !_whitelisted_block(@loc)) {
 			play_effect(@loc, 'lava_pop', array('particleCount': 8));
 			break();
