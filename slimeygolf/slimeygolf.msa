@@ -19,9 +19,9 @@
 	}
 
 	@golf = array(
-		course: array(name: @course, loc: array(0, 0, 0, @loc['world']), par: 0),
-		players: associative_array(),
-		spectators: array(),
+		'course': array('name': @course, 'world': @loc['world'], 'loc': array(), 'par': 0),
+		'players': associative_array(),
+		'spectators': array(),
 	);
 
 	_add_activity('golf'.@course, 'SlimeyGolf: '.to_upper(@course));
@@ -93,13 +93,15 @@
 					@lowesthole = @player['hole'];
 				}
 			}
-			if(@lowesthole == @ball['hole']) {
-				@golf['course']['loc'][0] = @event['location']['x'];
-				@golf['course']['loc'][1] = @event['location']['y'] - 2;
-				@golf['course']['loc'][2] = @event['location']['z'];
-				set_block_at(@golf['course']['loc'], 152);
-			} else {
-				set_block_at(_relative(@event['location'], 'down', 2), 152);
+
+			if(!array_index_exists(@golf['course']['loc'], @ball['hole'])) {
+				@golf['course']['loc'][@ball['hole']] = array(
+					@event['location']['x'],
+					@event['location']['y'] - 2,
+					@event['location']['z'],
+					@event['location']['world'],
+				);
+				set_block_at(@golf['course']['loc'][@ball['hole']], 152);
 			}
 
 			# par for this hole
@@ -185,7 +187,7 @@
 	}
 
 	set_interval(50, closure(){
-		foreach(@player in all_players(@golf['course']['loc'][3])) {
+		foreach(@player in all_players(@golf['course']['world'])) {
 			if(!array_index_exists(@golf['players'], @player)) {
 				if(array_contains(sk_current_regions(@player), @course)) {
 					if(array_size(@golf['players']) < 4) {
@@ -246,61 +248,52 @@
 							}
 						}
 						if(@lastplayer) {
-							set_block_at(@golf['course']['loc'], 0);
+							set_block_at(@golf['course']['loc'][@ball['hole']], 0);
 							# check if last hole
 							if(@ball['hole'] == 9) {
-								@end = true;
+								@loweststrokes = 999;
+								@winner = '';
 								foreach(@p: @b in @golf['players']) {
-									if(@b['hole'] <= 9 && @p != @player) {
-										@end = false;
-										break();
-									}
-								}
-								if(@end) {
-									@loweststrokes = 999;
-									@winner = '';
-									foreach(@p: @b in @golf['players']) {
-										if(ponline(@p)) {
-											if(function_exists('set_collides_with_entities')) {
-												set_collides_with_entities(@p, true);
-											}
-											@world = pworld(@p);
-											if(@world === 'dev' || @world === 'custom') {
-												_clear_pinv(@p);
-											}
-											@strokes = get_pscore('strokes', @p, @course);
-											if(@strokes < @loweststrokes) {
-												@winner = @p;
-												@loweststrokes = @strokes;
-											}
-										}
-									}
-									foreach(@p in @golf['spectators']) {
+									if(ponline(@p)) {
 										if(function_exists('set_collides_with_entities')) {
 											set_collides_with_entities(@p, true);
 										}
-									}
-
-									_regionmsg(@course, colorize(
-										'&a&lSLIMEY&6&lGOLF &a\u2308\u2328 \uFE52\u2328\u2309&r\n'
-										._colorname(@winner).'&l'.@winner.'&r&l is the winner!'
-									))
-
-									if(array_size(@golf['players']) > 1) {
-										_acc_add(@winner, 1);
-									}
-
-									unbind(@course);
-									unbind(@course.'_target')
-									set_timeout(10000, closure(){
-										if(array_contains(get_scoreboards(), @course)) {
-											remove_scoreboard(@course);
-											_remove_activity('golf'.@course);
+										@world = pworld(@p);
+										if(@world === 'dev' || @world === 'custom') {
+											_clear_pinv(@p);
 										}
-									});
-									clear_task();
-									break();
+										@strokes = get_pscore('strokes', @p, @course);
+										if(@strokes < @loweststrokes) {
+											@winner = @p;
+											@loweststrokes = @strokes;
+										}
+									}
 								}
+								foreach(@p in @golf['spectators']) {
+									if(function_exists('set_collides_with_entities')) {
+										set_collides_with_entities(@p, true);
+									}
+								}
+
+								_regionmsg(@course, colorize(
+									'&a&lSLIMEY&6&lGOLF &a\u2308\u2328 \uFE52\u2328\u2309&r\n'
+									._colorname(@winner).'&l'.@winner.'&r&l is the winner!'
+								))
+
+								if(array_size(@golf['players']) > 1) {
+									_acc_add(@winner, 1);
+								}
+
+								unbind(@course);
+								unbind(@course.'_target')
+								set_timeout(10000, closure(){
+									if(array_contains(get_scoreboards(), @course)) {
+										remove_scoreboard(@course);
+										_remove_activity('golf'.@course);
+									}
+								});
+								clear_task();
+								break();
 							}
 						}
 
@@ -363,7 +356,6 @@
 						_remove_activity('golf'.@course);
 					}
 					clear_task();
-					set_block_at(@golf['course']['loc'], 0);
 					break();
 				}
 			}
@@ -380,7 +372,6 @@
 				remove_scoreboard(@course);
 			}
 			clear_task();
-			set_block_at(@golf['course']['loc'], 0);
 		}
 	});
 <<<
