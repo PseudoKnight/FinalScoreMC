@@ -30,7 +30,7 @@ proc _pmsg(@player, @message) {
 		))
 		_store_pdata(@player, @pdata)
 		msg(color(7).'(To '.@player.'): '.color('r').@message)
-		msg(color('yellow').'Type /unsend immediately if you wish to remove this offline message.');
+		msg(color('yellow').'Type /unsend if you wish to remove this offline message.');
 		export(player().'_mail', @pdata['name']);
 	)
 }
@@ -77,7 +77,7 @@ proc _hover_tell(@recipients, @components) {
 	Create clickable links for a JSON message
 */
 proc _clickable_links(@string) {
-	return(reg_replace('(?:https?://|www\\.)([\\da-z.-]+\\.[a-z.]{2,6}[/\\w:.?=&-]*)', 
+	return(reg_replace('(?:https?://|www\\.)([\\da-z.-]+\\.[a-z.]{2,6}[/\\w:.?=&-]*)',
 		'[$1]",clickEvent:{action:"open_url",value:"http://$1"}},{text:"&r',
 		@string
 	));

@@ -19,7 +19,7 @@ set_cron('*/10 * * * *', closure(){
 bind(server_ping, null, null, @event) {
 	@currently = import('currently')
 	modify_event('motd', colorize('&6&l\u1260&d&l\u1260&b&l\u1260&4&l\u1260 &6&lFINALSCORE&e&lMC \u00AB &f\u25AA \u25AA \u25AA'
-		.if(!is_null(@currently), '\n&aPlaying&f: '.@currently)));
+		.if(!is_null(@currently), '\n&aNow Playing&f: '.@currently)));
 }
 
 bind(player_login, null, null, @event) {
