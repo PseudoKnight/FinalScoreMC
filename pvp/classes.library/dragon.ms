@@ -42,15 +42,16 @@ case 'load':
 			_flap(player())
 		}
 	}
-	
+
 	bind(entity_damage, array('id': @player.'dragonfall'), array('type': 'PLAYER', 'cause': 'FALL', 'world': 'custom'), @e, @player) {
 		if(@e['player'] == @player) {
 			modify_event('amount', 1);
 		}
 	}
-	
+
 case 'powerup':
-	set_pexp(@player, 100)
+	set_pexp(@player, 100);
+	set_pflight(@player, true);
 
 case 'unload':
 	unbind(@player.'dragonfly');
@@ -58,5 +59,5 @@ case 'unload':
 	set_pexp(@player, 0);
 	set_pflight(@player, false);
 	queue_clear(@player.'flap');
-	
+
 }
