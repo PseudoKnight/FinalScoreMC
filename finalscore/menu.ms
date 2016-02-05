@@ -73,7 +73,10 @@ queue_push(closure(){
 					@lore[] = color('green').'Average best time: ' . @avgtime;
 				}
 				@lore[] = color('dark_gray').'Run: /warp '.@name;
-				@difficulties[@difficulty][@cake['coins']] = array(
+				if(!array_index_exists(@difficulties[@difficulty], @cake['coins'])) {
+					@difficulties[@difficulty][@cake['coins']] = array();
+				}
+				@difficulties[@difficulty][@cake['coins']][] = array(
 					'type': 351,
 					'data': 8,
 					'meta': array(
@@ -85,10 +88,12 @@ queue_push(closure(){
 		}
 		@slot = 0;
 		foreach(@difficulty in @difficultyorder) {
-			foreach(@item in @difficulties[@difficulty]) {
-				if(@slot > 44, break());
-				@courses[@slot] = @item;
-				@slot++;
+			foreach(@coins in @difficulties[@difficulty]) {
+				foreach(@item in @coins) {
+					if(@slot > 44, break());
+					@courses[@slot] = @item;
+					@slot++;
+				}
 			}
 		}
 		@courses[46]['type'] = 57;
