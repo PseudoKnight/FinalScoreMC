@@ -73,7 +73,7 @@ queue_push(closure(){
 					@lore[] = color('green').'Average best time: ' . @avgtime;
 				}
 				@lore[] = color('dark_gray').'Run: /warp '.@name;
-				@difficulties[@difficulty][] = array(
+				@difficulties[@difficulty][@cake['coins']] = array(
 					'type': 351,
 					'data': 8,
 					'meta': array(
