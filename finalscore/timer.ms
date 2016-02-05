@@ -83,6 +83,11 @@ register_command('timer', array(
 						pkill(@player);
 
 					} else {
+						if(extension_exists('CHNaughty')) {
+							action_msg(@player, 'X');
+						} else if(!_is_survival_world(pworld(@player))) {
+							set_plevel(@player, 0);
+						}
 						@stop = true;
 					}
 				} else {
