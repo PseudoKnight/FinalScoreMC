@@ -41,12 +41,17 @@
 			array_remove(@pvp['players'], @player);
 		}
 	}
-	_click_tell(all_players('custom'), array(
+	@msg = array(
 		'&7[PVP] &r'.player().' has joined '
 		. to_upper(if(array_index_exists(@arena, 'parent'), @arena['parent'].': ').@id)
 		. '. ('.array_size(@pvp['players']).') ',
 		array('&b[JOIN]', '/pvp join '.@id)
-	));
+	);
+	if(array_size(@pvp['players']) > array_get(@arena, 'min', 2)) {
+		@msg[] = ' ';
+		@msg[] = array('&a[START]', '/pvp start '.@id);
+	}
+	_click_tell(all_players('custom'), @msg);
 	console(player().' joined '.@id);
 
 	include('core.library/player.ms');
