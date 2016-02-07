@@ -9,7 +9,7 @@ proc _7_start(@7) {
 		set_pbed_location(@player, @7['lobby'])
 		@i++
 	}
-	
+
 	@countdown = array(3)
 	@7['task'] = set_interval(1000, closure(){
 		if(@countdown[0] > 0) {
@@ -31,23 +31,23 @@ proc _7_start(@7) {
 				}
 			}
 			clear_task()
-			
+
 			@7['task'] = set_interval(100, closure(){
 				foreach(@player: @p in @7['players']) {
-					if(!ponline(@player) 
+					if(!ponline(@player)
 					|| !array_contains(sk_current_regions(@player), '7_schematic')
 					|| pinfo(@player, 5) <= 0) {
 						_7_remove_player(@player, @7);
 					} else {
 						@p['time'] -= 0.10;
-						
+
 						@loc = ploc(@player);
 						@loc['x'] = floor(@loc['x']);
 						@loc['y'] = floor(@loc['y']);
 						@loc['z'] = floor(@loc['z']);
-					
+
 						if(!is_null(@p['block'])
-						&& (@p['block'][0] != @loc['x'] 
+						&& (@p['block'][0] != @loc['x']
 						|| @p['block'][2] != @loc['z']
 						|| @p['block'][1] != @loc['y'])) {
 							@pitch = 0;
@@ -86,16 +86,16 @@ proc _7_start(@7) {
 							}
 							@p['block'] = null;
 						}
-						
+
 						if(is_null(@p['block']) && entity_grounded(puuid(@player))) {
 							@p['block'] = array(@loc['x'], @loc['y'], @loc['z'], 'custom');
 						}
-						
+
 						@int = ceil(@p['time'])
 						set_pscore('time', @player, @int, '7')
 						set_pexp(@player, min(100, integer(100 * (@p['time'] / 7))))
 						set_plevel(@player, @int)
-						
+
 						if(@p['time'] <= 0) {
 							_7_remove_player(@player, @7);
 						} else if(@p['time'] < 2) {
@@ -135,7 +135,7 @@ proc _7_remove_player(@player, @7) {
 			if(array_contains(sk_current_regions(@player), '7')) {
 				if(pinfo(@player, 5) > 0) {
 					pkill(@player);
-					explosion(ploc(@player), 4);
+					explosion(_relative(ploc(@player), 'up'), 4);
 				}
 				@timeleft = round(@7['players'][@player]['time'], 1);
 				if(@timeleft <= 0) {
