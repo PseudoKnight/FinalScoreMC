@@ -47,7 +47,7 @@
 		. '. ('.array_size(@pvp['players']).') ',
 		array('&b[JOIN]', '/pvp join '.@id)
 	);
-	if(array_size(@pvp['players']) > array_get(@arena, 'min', 2)) {
+	if(array_size(@pvp['players']) >= array_get(@arena, 'min', 2)) {
 		@msg[] = ' ';
 		@msg[] = array('&a[START]', '/pvp start '.@id);
 	}
