@@ -2,21 +2,28 @@ proc _repopulate_menu(){
     @main = array(
 		'id': 'main',
 		'title': 'Frog Park Directory',
-		'size': 54,
-		45: array(
-			'type': 267,
+		'size': 45,
+		36: associative_array(
+			'name': 'IRON_SWORD',
 			'meta': array(
 				'display': color('green').'PVP Arenas',
 				'lore': array(color('dark_gray').'Open: pvp'),
 			),
 		),
-		46: array(
-			'type': 42,
+		37: associative_array(
+			'name': 'IRON_BLOCK',
 			'meta': array(
 				'display': color('green').'Obstacle Courses / Parkour',
 				'lore': array(color('dark_gray').'Open: courses'),
 			),
 		),
+        38: associative_array(
+            'name': 'IRON_SPADE',
+            'meta': array(
+                'display': color('green').'Other Games',
+                'lore': array(color('dark_gray').'Open: other'),
+            ),
+        )
 	);
 	create_virtualchest(@main);
 
@@ -39,6 +46,14 @@ proc _repopulate_menu(){
 			'very-hard': array(),
 			'other': array(),
 		);
+        @dye = associative_array(
+            'easy': array(100, 255, 100),
+			'easy-medium': array(255, 255, 100),
+			'medium': array(255, 170, 60),
+			'medium-hard': array(255, 100, 50),
+			'hard': array(200, 0, 0),
+			'very-hard': array(200, 50, 120),
+        );
 
 		@courses = @main[];
 		@courses['id'] = 'courses';
@@ -76,11 +91,11 @@ proc _repopulate_menu(){
 					@difficulties[@difficulty][@cake['coins']] = array();
 				}
 				@difficulties[@difficulty][@cake['coins']][] = array(
-					'type': 351,
-					'data': 8,
+					'name': 'LEATHER_HELMET',
 					'meta': array(
 						'display': color('green').to_upper(@name),
 						'lore': @lore,
+                        'color': @dye[@difficulty],
 					),
 				);
 			}
@@ -95,7 +110,7 @@ proc _repopulate_menu(){
 				}
 			}
 		}
-		@courses[46]['type'] = 57;
+		@courses[37]['name'] = 'DIAMOND_BLOCK';
 		create_virtualchest(@courses);
 		@cakes = null;
 		@courses = null;
@@ -108,12 +123,14 @@ proc _repopulate_menu(){
 		@arenas = get_values('arena');
 		@slot = 0;
 		foreach(@name: @arena in @arenas) {
-			if(@slot > 44, break());
+			if(@slot > 35, break());
 			if(array_index_exists(@arena, 'parent'), continue());
 			@name = split('.', @name)[1];
 			@lore = array();
 			if(array_index_exists(@arena, 'description')) {
-				@lore[] = @arena['description'];
+                foreach(@line in @arena['description']) {
+				    @lore[] = @line;
+                }
 			} else if(array_index_exists(@arena, 'mode')) {
 				if(@arena['mode'] == 'koth') {
 					@lore[] = color('green').'King of the Hill';
@@ -134,9 +151,53 @@ proc _repopulate_menu(){
 			);
 			@slot++;
 		}
-		@pvp[45]['type'] = 276;
+		@pvp[36]['name'] = 'DIAMOND_SWORD';
 		create_virtualchest(@pvp);
 		@arenas = null;
 		@pvp = null;
+	});
+
+    queue_push(closure(){
+		@other = @main[];
+		@other['id'] = 'other';
+		@other['title'] = 'Other Games';
+		@other[0] = array(
+            'name': 'SNOW_BLOCK',
+            'meta': array(
+                'display': color('green').'Spleef',
+                'lore': color('dark_gray').'Run: /warp spleef';
+            ),
+        );
+        @other[1] = array(
+            'name': 'STAINED_CLAY',
+            'data': 2,
+            'meta': array(
+                'display': color('gold').'Cube'.color('red').'Climber',
+                'lore': color('dark_gray').'Run: /warp cubeclimber';
+            ),
+        );
+        @other[2] = array(
+            'name': 'EMERALD_ORE',
+            'meta': array(
+                'display': color('green').'Seven Seconds to Live',
+                'lore': color('dark_gray').'Run: /warp 7';
+            ),
+        );
+        @other[3] = array(
+            'name': 'EMERALD_BLOCK',
+            'meta': array(
+                'display': color('green').'FrogWare',
+                'lore': color('dark_gray').'Run: /warp frogware';
+            ),
+        );
+        @other[4] = array(
+            'name': 'SLIME_BLOCK',
+            'meta': array(
+                'display': color('green').'Slimey Golf',
+                'lore': color('dark_gray').'Run: /warp slimeygolf';
+            ),
+        );
+		@other[38]['name'] = 'DIAMOND_SPADE';
+		create_virtualchest(@other);
 	});
 }
