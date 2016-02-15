@@ -16,7 +16,8 @@ bind(world_changed, null, null, @event) {
 }
 
 bind(player_interact, null, null, @event) {
-	if(!has_permission('permissions.build')) {
+	if(!has_permission('permissions.build')
+	&& (@event['action'] != 'right_click_air' || !material_info(@event['item'])['isEdible'])) {
 		cancel();
 	}
 }
