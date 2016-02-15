@@ -27,7 +27,7 @@ proc _fw_task(@task, @state, @secs) {
 				array(@region[1][0], @region[1][1] + 2, @region[1][2], 'custom'),
 				'133:0', 3);
 			}, 'fw3');
-				
+
 		} else {
 			foreach(@p in all_players('custom')) {
 				if(_fw_player(@p)) {
@@ -41,7 +41,7 @@ proc _fw_task(@task, @state, @secs) {
 			_remove_region_entities('frogware');
 			_fw_startround(@secs);
 		}
-		
+
 	case 'keepaway':
 		if(@state == 'start') {
 			_fw_msg('Look out!')
@@ -57,7 +57,7 @@ proc _fw_task(@task, @state, @secs) {
 				}
 			}
 			_fw_set_winners();
-			
+
 		} else {
 			foreach(@p in all_players('custom')) {
 				if(_fw_player(@p)) {
@@ -70,9 +70,9 @@ proc _fw_task(@task, @state, @secs) {
 			_remove_region_entities('frogware')
 			unbind('fwtaskdamage')
 			_fw_startround(@secs)
-			
+
 		}
-		
+
 	case 'harvest':
 		if(@state == 'start') {
 			_fw_msg('Bring in the harvest!')
@@ -93,14 +93,14 @@ proc _fw_task(@task, @state, @secs) {
 					play_sound(ploc(), array('sound': 'zombie_metal'), player())
 				}
 			}
-			
+
 		} else {
 			unbind('fwpickup')
 			_remove_region_entities('frogware', array('DROPPED_ITEM'));
 			_fw_startround(@secs);
-			
+
 		}
-		
+
 	case 'koth':
 		if(@state == 'start') {
 			_fw_msg('King of the Hill')
@@ -136,7 +136,7 @@ proc _fw_task(@task, @state, @secs) {
 			_iterate_cuboid(array(@loc[0] + 1, @loc[1] + 1, @loc[2] + 1, 'custom'),
 			array(@loc[0] - 1, @loc[1] + 1, @loc[2] - 1, 'custom'),
 			'133:0', 100)
-			
+
 		} else {
 			foreach(@p in all_players('custom')) {
 				if(_fw_player(@p)) {
@@ -149,9 +149,9 @@ proc _fw_task(@task, @state, @secs) {
 			}
 			_remove_region_entities('frogware');
 			_fw_startround(@secs);
-		
+
 		}
-	
+
 	case 'cake':
 		if(@state == 'start') {
 			_fw_msg('Let there be cake!')
@@ -167,7 +167,7 @@ proc _fw_task(@task, @state, @secs) {
 					play_sound(ploc(), array('sound': 'zombie_metal'), player())
 				}
 			}
-		
+
 		} else {
 			foreach(@p in all_players('custom')) {
 				if(_fw_player(@p)) {
@@ -177,7 +177,7 @@ proc _fw_task(@task, @state, @secs) {
 			unbind('fwcake')
 			_fw_startround(@secs)
 		}
-	
+
 	case 'fall':
 		if(@state == 'start') {
 			_fw_msg('Alls well that falls well.')
@@ -194,7 +194,7 @@ proc _fw_task(@task, @state, @secs) {
 				array(@region[1][0], @region[1][1] + 3, @region[1][2], 'custom'),
 				'133:0', 3);
 			}, 'fw3')
-		
+
 		} else {
 			foreach(@p in all_players('custom')) {
 				if(_fw_player(@p)
@@ -204,9 +204,9 @@ proc _fw_task(@task, @state, @secs) {
 				}
 			}
 			_fw_startround(@secs);
-		
+
 		}
-		
+
 	case 'cluck':
 		if(@state == 'start') {
 			if(!rand(4), @mob = 'BAT', @mob = 'CHICKEN')
@@ -239,7 +239,7 @@ proc _fw_task(@task, @state, @secs) {
 					}
 				}
 			}
-		
+
 		} else {
 			unbind('fwcluck')
 			foreach(@p in all_players('custom')) {
@@ -248,9 +248,9 @@ proc _fw_task(@task, @state, @secs) {
 				}
 			}
 			_fw_startround(@secs)
-		
+
 		}
-		
+
 	case 'frogegg':
 		if(@state == 'start') {
 			_fw_msg('Pop the frog egg!')
@@ -279,15 +279,15 @@ proc _fw_task(@task, @state, @secs) {
 					}
 				}
 			}
-			
+
 		} else {
 			unbind('fwegg')
 			_remove_region_entities('frogware')
 			_fw_clear_blocks(1);
 			_fw_startround(@secs)
-		
+
 		}
-		
+
 	case 'pvp':
 		if(@state == 'start') {
 			_fw_msg('Last hit.')
@@ -326,7 +326,7 @@ proc _fw_task(@task, @state, @secs) {
 					}
 				}
 			}
-			
+
 		} else {
 			foreach(@p in all_players('custom')) {
 				if(_fw_player(@p)) {
@@ -335,9 +335,9 @@ proc _fw_task(@task, @state, @secs) {
 			}
 			unbind('fwdamage2')
 			_fw_startround(@secs)
-		
+
 		}
-	
+
 	case 'lavafall':
 		if(@state == 'start') {
 			_fw_msg('The lava is lava')
@@ -365,7 +365,7 @@ proc _fw_task(@task, @state, @secs) {
 				}
 			}
 			_fw_set_winners();
-			
+
 		} else {
 			_remove_region_entities('frogware')
 			foreach(@p in all_players('custom')) {
@@ -379,7 +379,7 @@ proc _fw_task(@task, @state, @secs) {
 			unbind('fwdamage2');
 			_fw_startround(@secs);
 		}
-		
+
 	case 'shepherd':
 		if(@state == 'start') {
 			@colors = array('WHITE', 'ORANGE', 'MAGENTA', 'LIGHT_BLUE', 'YELLOW', 'LIME', 'PINK', 'GRAY', 'SILVER', 'CYAN', 'PURPLE', 'BLUE', 'BROWN', 'GREEN', 'RED', 'BLACK')
@@ -407,14 +407,14 @@ proc _fw_task(@task, @state, @secs) {
 					pgive_item(@p, '359:235', 1) # shears
 				}
 			}
-			
-		
+
+
 		} else {
 			_remove_region_entities('frogware')
 			unbind('fwpickup')
 			_fw_startround(@secs)
 		}
-		
+
 	case 'anvil':
 		if(@state == 'start') {
 			_fw_msg('Alls not well... ALLS NOT WELL!')
@@ -447,7 +447,7 @@ proc _fw_task(@task, @state, @secs) {
 				}, 'fw3');
 				queue_delay(1000, 'fw3');
 			}
-			
+
 		} else {
 			unbind('fwdamage2');
 			_remove_region_entities('frogware');
@@ -459,16 +459,13 @@ proc _fw_task(@task, @state, @secs) {
 			}
 			_fw_startround(@secs);
 		}
-	
+
 	case 'trade':
 		if(@state == 'start') {
 			_fw_msg('Make a trade');
 			_fw_mobs('villager');
-			@items = array('WHEAT', 'POTATO_ITEM', 'PUMPKIN', 'MELON', 'STRING', 'COAL',
-					'PAPER', 'BOOK', 'WRITTEN_BOOK', 'ROTTEN_FLESH', 'GOLD_INGOT', 'IRON_INGOT', 
-					'DIAMOND', 'PORK', 'RAW_CHICKEN', 'LEATHER', 'WOOL');
 			for(@i = 0, @i < 100, @i++) {
-				drop_item(_fw_loc(), array('name': array_rand(@items, 1, false), 'qty': rand(1, 32)));
+				drop_item(_fw_loc(), array('name': 'EMERALD', 'qty': 1));
 			}
 			bind(inventory_click, array('id': 'fwclick'), array('slottype': 'RESULT'), @e) {
 				if(_fw_player(@e['player']) && @e['slotitem']) {
@@ -483,7 +480,7 @@ proc _fw_task(@task, @state, @secs) {
 			_remove_region_entities('frogware');
 			_fw_startround(@secs);
 		}
-	
+
 	case 'fish':
 		if(@state == 'start') {
 			_fw_msg('Catch a thing');
@@ -500,11 +497,11 @@ proc _fw_task(@task, @state, @secs) {
 					}
 				}
 			}
-			
+
 		} else {
 			unbind('fwfish');
 			_fw_startround(@secs);
 		}
 	}
-	
+
 }

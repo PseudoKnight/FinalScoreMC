@@ -30,7 +30,7 @@ proc _fw_endgame(@winners) {
 	}
 	if(array_contains(get_scoreboards(), 'fw')) {
 		set_timeout(5000, closure(){
-			remove_scoreboard('fw') 
+			remove_scoreboard('fw')
 			_remove_activity('frogware');
 		});
 	}
@@ -49,7 +49,7 @@ proc _fw_startround(@secs = 12) {
 			array_remove(@blocks, @index);
 		}
 	}
-	
+
 	if(pworld() !== 'custom') {
 		_fw_endgame(array())
 		_fw_msg('Host left the game.')
@@ -67,7 +67,7 @@ proc _fw_startround(@secs = 12) {
 				@total++
 				if(array_contains(sk_current_regions(@p), 'frogware')) {
 					foreach(@team in get_teams('fw')) {
-						if(@team['name'] === 'winners' 
+						if(@team['name'] === 'winners'
 						&& array_contains(@team['players'], @p)) {
 							set_pscore('score', @p, get_pscore('score', @p, 'fw') + 1, 'fw')
 							_fw_changeteam(@p, 'losers')
@@ -97,7 +97,7 @@ proc _fw_startround(@secs = 12) {
 						'shepherd', 'anvil', 'trade', 'fish');
 			} else if((@highscore / @goal) < 0.90 || @total == 1) {
 				@tasks = array('climb', 'keepaway', 'harvest', 'koth', 'cake', 'fall', 'cluck', 'frogegg', 'lavafall',
-						'shepherd', 'anvil');
+						'shepherd', 'anvil', 'trade');
 			} else {
 				@tasks = array('pvp');
 			}
