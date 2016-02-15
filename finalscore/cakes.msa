@@ -16,15 +16,15 @@
 			@total[@cake['type']] += 1
 			if(array_index_exists(@cake['players'], @player)) {
 				@count[@cake['type']] += 1
-				@names[@cake['type']] .= color('gray').@id.':'.array_size(@cake['players']).' '
+				@names[@cake['type']] .= color('gray').@id.'|'.array_size(@cake['players']).' '
 			} else {
-				@names[@cake['type']] .= color('r').@id.':'.array_size(@cake['players']).' '
+				@names[@cake['type']] .= color('r').@id.'|'.array_size(@cake['players']).' '
 			}
 		}
 		if($) {
-			msg(color('gold').'CAKES ACHIEVED BY '.to_upper($).'. (#) players who achieved the cake')
+			msg(color('gold').'CAKES ACHIEVED BY '.to_upper($).'. (plus # of others who achieved it)')
 		} else {
-			msg(color('gold').'CAKES YOU\'VE ACHIEVED. (#) players who achieved the cake')
+			msg(color('gold').'CAKES YOU\'VE ACHIEVED. (plus # of others who achieved it)')
 		}
 		msg(color('green').color('l').'Challenge'.color('green').'('.@count['challenge'].'/'.@total['challenge'].') '.color('r').@names['challenge'])
 		msg(color('green').color('l').'Secret'.color('green').'('.@count['secret'].'/'.@total['secret'].') '.color('r').@names['secret'])
@@ -98,7 +98,7 @@
 			@cake['players'] = associative_array()
 		}
 
-		if(@coins != @cake['coins']) {
+		if(array_index_exists(@cake, 'coins') && @coins != @cake['coins']) {
 			foreach(@uuid in array_keys(@cake['players'])) {
 				@pdata = _pdata_by_uuid(@uuid);
 				if(ponline(@pdata['name'])) {
