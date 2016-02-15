@@ -129,8 +129,12 @@
 
 			# message option
 			case 'description':
-				@arena[$setting] = colorize($);
-				msg(colorize('Set &a' . $setting . '&r to "' . $ . '"'));
+				if($action == 'add') {
+					@arena[$setting][] = colorize($);
+				} else {
+					@arena[$setting] = array(colorize($));
+				}
+				msg(colorize('Set &a' . $setting . '&r to '.@arena[$setting]));
 
 			# single exact locations
 			case 'lobby':
