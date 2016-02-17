@@ -129,13 +129,33 @@ proc _fw_task(@task, @state, @secs) {
 			} else if(!rand(4)) {
 				_fw_randompotion(array('speed', 'jump'));
 			}
-			@loc = _fw_loc()
-			_iterate_cuboid(array(@loc[0] + 2, @loc[1], @loc[2] + 2, 'custom'),
-			array(@loc[0] - 2, @loc[1], @loc[2] - 2, 'custom'),
-			'155:0', 100)
-			_iterate_cuboid(array(@loc[0] + 1, @loc[1] + 1, @loc[2] + 1, 'custom'),
-			array(@loc[0] - 1, @loc[1] + 1, @loc[2] - 1, 'custom'),
-			'133:0', 100)
+			@loc = _fw_loc();
+			if(rand(4)) {
+				# platform
+				_iterate_cuboid(array(@loc[0] + 2, @loc[1], @loc[2] + 2, 'custom'),
+				array(@loc[0] - 2, @loc[1], @loc[2] - 2, 'custom'),
+				'155:0', 100);
+				_iterate_cuboid(array(@loc[0] + 1, @loc[1] + 1, @loc[2] + 1, 'custom'),
+				array(@loc[0] - 1, @loc[1] + 1, @loc[2] - 1, 'custom'),
+				'133:0', 100);
+			} else {
+				# pillar (king of the ladder)
+				_iterate_cuboid(array(@loc[0], @loc[1], @loc[2], 'custom'),
+				array(@loc[0], @loc[1] + 5, @loc[2], 'custom'),
+				'133:0', 100);
+				_iterate_cuboid(array(@loc[0], @loc[1], @loc[2] + 1, 'custom'),
+				array(@loc[0], @loc[1] + 5, @loc[2] + 1, 'custom'),
+				'65:3', 100);
+				_iterate_cuboid(array(@loc[0] - 1, @loc[1], @loc[2], 'custom'),
+				array(@loc[0] - 1, @loc[1] + 5, @loc[2], 'custom'),
+				'65:4', 100);
+				_iterate_cuboid(array(@loc[0], @loc[1], @loc[2] - 1, 'custom'),
+				array(@loc[0], @loc[1] + 5, @loc[2] - 1, 'custom'),
+				'65:0', 100);
+				_iterate_cuboid(array(@loc[0] + 1, @loc[1], @loc[2], 'custom'),
+				array(@loc[0] + 1, @loc[1] + 5, @loc[2], 'custom'),
+				'65:5', 100);
+			}
 
 		} else {
 			foreach(@p in all_players('custom')) {
@@ -293,8 +313,11 @@ proc _fw_task(@task, @state, @secs) {
 			_fw_msg('Last hit.')
 			_fw_randompotion(array('speed', 'jump', 'blind', 'invis'))
 			@weapon = '267:226'; # iron sword
-			if(!rand(3)) {
-				@weapon = '261:379'; # bow
+			switch(rand(3)) {
+				case 0:
+					@weapon = '261:379'; # bow
+				case 1:
+					@weapon = '332:0';
 			}
 			@meta = null;
 			if(!rand(4)) {
@@ -311,13 +334,13 @@ proc _fw_task(@task, @state, @secs) {
 					}
 				}
 			}
-			bind(entity_damage, array('id': 'fwdamage2'), array('type': 'PLAYER', 'world': 'custom'), @e) {
+			bind(entity_damage, array('id': 'fwdamage2'), array('type': 'PLAYER', 'world': 'custom'), @e, @weapon) {
 				if(array_index_exists(@e, 'damager') && _fw_player(@e['player'])) {
 					@damager = @e['damager'];
 					if(array_index_exists(@e, 'shooter')) {
 						@damager = @e['shooter'];
 					}
-					if(_fw_player(@damager)) {
+					if(_fw_player(@damager) && (@weapon == '267:226' || array_index_exists(@e, 'shooter'))) {
 						if(_fw_changeteam(@damager, 'winners')) {
 							play_sound(ploc(), array('sound': 'zombie_metal'), player())
 						}
@@ -474,7 +497,7 @@ proc _fw_task(@task, @state, @secs) {
 					}
 				}
 			}
-			
+
 		} else {
 			unbind('fwclick');
 			_remove_region_entities('frogware');
