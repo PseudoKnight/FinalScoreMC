@@ -8,6 +8,7 @@ proc _repopulate_menu(){
 			'meta': array(
 				'display': color('green').'PVP Arenas',
 				'lore': array(color('dark_gray').'Open: pvp'),
+                'flags': array('HIDE_ATTRIBUTES'),
 			),
 		),
 		37: associative_array(
@@ -22,20 +23,29 @@ proc _repopulate_menu(){
             'meta': array(
                 'display': color('green').'Other Games',
                 'lore': array(color('dark_gray').'Open: other'),
+                'flags': array('HIDE_ATTRIBUTES'),
             ),
         )
 	);
 	create_virtualchest(@main);
 
 	queue_push(closure(){
-		@color = associative_array(
-			'easy': 'green',
-			'easy-medium': 'yellow',
-			'medium': 'gold',
-			'medium-hard': 'red',
+		@chatcolor = associative_array(
+			'easy': 'aqua',
+			'easy-medium': 'green',
+			'medium': 'yellow',
+			'medium-hard': 'gold',
 			'hard': 'dark_red',
 			'very-hard': 'dark_purple',
 		);
+        @datacolor = associative_array(
+            'easy': 3,
+            'easy-medium': 5,
+            'medium': 4,
+            'medium-hard': 1,
+            'hard': 14,
+            'very-hard': 10,
+        );
 		@difficultyorder = array('easy', 'easy-medium', 'medium', 'medium-hard', 'hard', 'very-hard', 'other');
 		@difficulties = associative_array(
 			'easy': array(),
@@ -46,14 +56,6 @@ proc _repopulate_menu(){
 			'very-hard': array(),
 			'other': array(),
 		);
-        @dye = associative_array(
-            'easy': array(100, 255, 100),
-			'easy-medium': array(255, 255, 100),
-			'medium': array(255, 170, 60),
-			'medium-hard': array(255, 100, 50),
-			'hard': array(200, 0, 0),
-			'very-hard': array(200, 50, 120),
-        );
 
 		@courses = @main[];
 		@courses['id'] = 'courses';
@@ -64,7 +66,7 @@ proc _repopulate_menu(){
 				@lore = array();
 				@difficulty = 'other';
 				if(array_index_exists(@cake, 'difficulty')) {
-					@lore[] = color(@color[@cake['difficulty']]).color('l').to_upper(@cake['difficulty']);
+					@lore[] = color(@chatcolor[@cake['difficulty']]).color('l').to_upper(@cake['difficulty']);
 					@difficulty = @cake['difficulty'];
 				}
 				@lore[] = color('gold').@cake['coins'].' coins';
@@ -91,11 +93,11 @@ proc _repopulate_menu(){
 					@difficulties[@difficulty][@cake['coins']] = array();
 				}
 				@difficulties[@difficulty][@cake['coins']][] = array(
-					'name': 'LEATHER_HELMET',
+					'name': 'STAINED_GLASS_PANE',
+                    'data': @datacolor[@difficulty],
 					'meta': array(
 						'display': color('green').to_upper(@name),
 						'lore': @lore,
-                        'color': @dye[@difficulty],
 					),
 				);
 			}
