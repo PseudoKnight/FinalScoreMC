@@ -22,7 +22,7 @@
 	if($) {
 		@message .= $;
 	}
-	
+
 	# check if a game is running before recompiling
 	@activities = import('activities');
 	if(@activities) {
@@ -42,35 +42,35 @@
 			}
 		}
 	}
-	
+
 	# If we're clearing global variables, let's store and restore some
 	if(@clearGlobal && !@clearProtected) {
 		@requests = import('requests');
 		if(is_array(@requests)) {
 			store_value('session.requests', @requests);
 		}
-		
+
 		@conv = import('conv');
 		if(is_array(@conv)) {
 			store_value('session.conv', @conv);
 		}
-		
+
 		@ignorelist = import('ignorelist');
 		if(is_array(@ignorelist)) {
 			store_value('session.ignorelist', @ignorelist);
 		}
-		
+
 		@timers = import('timers');
 		if(is_array(@timers)) {
 			store_value('session.timers', @timers);
 		}
-		
+
 		@staffchat = import('staffchat');
 		if(is_array(@staffchat)) {
 			store_value('session.staffchat', @staffchat);
 		}
 	}
-	
+
 	foreach(@world in get_worlds()) {
 		queue_push(closure(){
 			save_world(@world);
@@ -101,13 +101,13 @@
 		case 1:
 			store_value('silentjoin', true);
 			msg('Turned silent join on for admins.');
-			
+
 		case 'off':
 		case 'false':
 		case 0:
 			store_value('silentjoin', false);
 			msg('Turned silent join off for admins.');
-		
+
 	}
 <<<
 
@@ -132,14 +132,14 @@
 		msg('entityType groups: living, hostile');
 	}
 	@removenamed = false;
-	@type = array(WITHER, WITCH, CREEPER, SKELETON, SPIDER, GIANT, ZOMBIE, SLIME, GHAST, PIG_ZOMBIE, ENDERMAN, 
+	@type = array(WITHER, WITCH, CREEPER, SKELETON, SPIDER, GIANT, ZOMBIE, SLIME, GHAST, PIG_ZOMBIE, ENDERMAN,
 		CAVE_SPIDER, SILVERFISH, BLAZE, MAGMA_CUBE, ENDER_DRAGON, GUARDIAN, ENDERMITE);
 	@radius = 64;
 	@loc = get_command_block();
 	if(is_null(@loc)) {
 		@loc = ploc();
 	}
-	
+
 	foreach(@arg in parse_args($)) {
 		if(is_numeric(@arg)) {
 			@radius = min(@arg, 128);
@@ -148,8 +148,8 @@
 		} else {
 			switch(@arg) {
 				case 'living':
-					@type = array(WITHER, BAT, WITCH, CREEPER, SKELETON, SPIDER, GIANT, ZOMBIE, SLIME, GHAST, PIG_ZOMBIE, 
-					ENDERMAN, CAVE_SPIDER, SILVERFISH, BLAZE, MAGMA_CUBE, ENDER_DRAGON, PIG, SHEEP, COW, CHICKEN, SQUID, 
+					@type = array(WITHER, BAT, WITCH, CREEPER, SKELETON, SPIDER, GIANT, ZOMBIE, SLIME, GHAST, PIG_ZOMBIE,
+					ENDERMAN, CAVE_SPIDER, SILVERFISH, BLAZE, MAGMA_CUBE, ENDER_DRAGON, PIG, SHEEP, COW, CHICKEN, SQUID,
 					WOLF, MUSHROOM_COW, SNOWMAN, OCELOT, IRON_GOLEM, VILLAGER, HORSE, RABBIT, GUARDIAN, ENDERMITE);
 				case 'hostile':
 					continue();
@@ -309,7 +309,7 @@
 			}
 		}
 
-	, 
+	,
 		# OFFLINE INFO
 		@uuid = _get_uuid(to_lower($player), true, false);
 		@pdata = _pdata_by_uuid(replace(@uuid, '-', ''));
@@ -343,14 +343,19 @@
 <<<
 
 *:/matchip $ip = >>>
-	if(!has_permission('group.moderator'), die('You do not have permission.'))
-	@players = get_values('uuids')
-	msg(color('bold').'Matched Players for IP: '.$ip)
-	foreach(@key: @player in @players) {
-		if(array_index_exists(@player, 'ips') && array_contains(@player['ips'], $ip)) {
-			msg('Matched: '.@player['name'])
-		}
+	if(!has_permission('group.moderator')) {
+		die('You do not have permission.');
 	}
+	x_new_thread('ip_match', closure(){
+		@players = get_values('uuids');
+		@msg = 'Matched players for '.$ip.': ';
+		foreach(@player in @players) {
+			if(array_index_exists(@player, 'ips') && array_contains(@player['ips'], $ip)) {
+				@msg .= @player['name'].' ';
+			}
+		}
+		msg(@msg);
+	});
 <<<
 
 *:/coins [$action] [$player] [$amount] = >>>
