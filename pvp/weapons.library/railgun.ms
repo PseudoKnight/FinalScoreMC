@@ -1,7 +1,5 @@
 array_push(@pvp['binds'], @id.'railgun');
 bind(player_interact, array('id': @id.'railgun'), array('item': 175, 'button': 'right'), @e, @id) {
-	@start = time();
-
 	@pvp = import('pvp'.@id);
 	if(!array_index_exists(@pvp['players'], player()), die());
 	@origin = _relative(ploc(), 'up', 2.3);
@@ -163,6 +161,4 @@ bind(player_interact, array('id': @id.'railgun'), array('item': 175, 'button': '
 			}
 		}, player().'railgun');
 	}
-
-	msg((time() - @start).'ms'.' - END RAILGUN');
 }

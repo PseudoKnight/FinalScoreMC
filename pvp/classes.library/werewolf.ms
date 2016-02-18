@@ -29,13 +29,13 @@ case 'equip':
 		102: array('type': 299, 'meta': array('color': array('r': @r, 'g': @g, 'b': @b))),
 	))
 	queue_clear(@player.'evolve')
-	
+
 case 'powerup':
-	set_peffect(@player, 1, 3, 16);
-	set_peffect(@player, 5, 3, 16);
-	set_peffect(@player, 8, 1, 16);
+	set_peffect(@player, 1, 3, 17);
+	set_peffect(@player, 5, 3, 17);
+	set_peffect(@player, 8, 1, 17);
 	set_timeout(50, closure(){ # powerups flash night vision, so we have to delay here
-		try(set_peffect(@player, 16, 0, 22));
+		try(set_peffect(@player, 16, 0, 23));
 	});
 	play_sound(ploc(@player), array('sound': 'WOLF_HOWL', 'pitch': 0.9, 'volume': 2))
 	set_pinv(@player, array(
@@ -44,7 +44,7 @@ case 'powerup':
 		102: array('type': 299, 'meta': array('color': array('r': 50, 'g': 50, 'b': 50))),
 		103: array('type': 35, 'data': 7),
 	))
-	set_timeout(16000, closure(){
+	set_timeout(17000, closure(){
 		if(ponline(@player) && pinfo(@player, 5) > 0) {
 			foreach(@effect in get_peffect(@player)) {
 				# if there's 6 seconds of night vision left, he hasn't gotten another powerup
@@ -67,5 +67,5 @@ case 'powerup':
 case 'unload':
 	unbind(@player.'werewolf')
 	unbind(@player.'kill')
-	
+
 }

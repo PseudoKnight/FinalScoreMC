@@ -2,7 +2,7 @@ proc _class(@action, @player, @class, @pvp) {
 	if(array_index_exists(@pvp['arena']['classes'][@class], 'script')) {
 		include('../classes.library/'.@class.'.ms')
 	}
-	
+
 	switch(@action) {
 	case 'load':
 		if(array_index_exists(@pvp['arena']['classes'][@class], 'doublejump')) {
@@ -15,21 +15,26 @@ proc _class(@action, @player, @class, @pvp) {
 				play_effect(_relative(ploc(), 'up'), 'cloud', array('speed': 0, 'particleCount': 5, 'offsetX': 0.4, 'offsetZ': 0.4, 'offsetY': 0))
 				set_pflight(false)
 				set_pexp(0)
-				queue_delay(900, player().'doublejump')
+				queue_delay(2000, player().'doublejump')
 				queue_push(closure(){
 					set_pexp(100)
 					set_pflight(true)
 				}, player().'doublejump')
 			}
+			bind(entity_damage, array('id': @player.'falldamage'), array('cause': 'FALL', 'id': puuid(@player)), @e) {
+				if(pinfo(get_player_from_entity_id(@e['id']), 11)) {
+					cancel(); # is sneaking
+				}
+			}
 		}
-		
+
 		if(array_index_exists(@pvp['arena']['classes'][@class], 'hunger')
 		&& !is_numeric(@pvp['arena']['classes'][@class]['hunger'][1])) {
 			bind(food_level_changed, array('id': @player.'food'), array(player: @player), @event) {
 				cancel()
 			}
 		}
-		
+
 	case 'equip':
 		if(array_index_exists(@pvp['arena']['classes'][@class], 'hunger')) {
 			set_phunger(@player, @pvp['arena']['classes'][@class]['hunger'][0])
@@ -54,7 +59,7 @@ proc _class(@action, @player, @class, @pvp) {
 		if(array_index_exists(@pvp['arena']['classes'][@class], 'xp')) {
 			set_pexp(@player, @pvp['arena']['classes'][@class]['xp'])
 		}
-		
+
 	case 'powerup':
 		set_phealth(@player, min(20, pinfo(@player, 5) + 2));
 		set_phunger(@player, min(20, phunger(@player) + 4));
@@ -86,13 +91,14 @@ proc _class(@action, @player, @class, @pvp) {
 			}
 			set_pinv(@player, @inv);
 		}
-		
+
 	case 'unload':
-		unbind(@player.'doublejump')
-		unbind(@player.'food')
-		queue_clear(@player.'doublejump')
-		set_pflight(@player, false)
-		set_pwalkspeed(@player, 0.2)
+		unbind(@player.'doublejump');
+		unbind(@player.'falldamage');
+		unbind(@player.'food');
+		queue_clear(@player.'doublejump');
+		set_pflight(@player, false);
+		set_pwalkspeed(@player, 0.2);
 
 	}
 }
@@ -224,7 +230,7 @@ proc _class_select(@id, @pvp) {
 					foreach(@name: @player in @pvp['players']) {
 						if(@name != player()
 						&& @player['team'] == @pvp['players'][player()]['team']
-						&& (pget_virtualchest(@p) == @id.@player['team'] 
+						&& (pget_virtualchest(@p) == @id.@player['team']
 						|| @player['class'] == @pvp['arena']['captain'][@player['team']])) {
 							@count++;
 						}

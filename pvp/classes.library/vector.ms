@@ -1,24 +1,32 @@
 switch(@action) {
 case 'load':
 	bind(player_interact, array('id': @player.'interact'), array('player': @player, 'button': 'right', 'item': '292'), @e) {
-		cancel()
-		if(get_block_at(ploc())[0] === '0'
-		|| phunger() == 0, die())
-		@facing = pfacing(player())
-		@facing[0] = @facing[0] + 90
-		@facing[1] = 0 - @facing[1]
-		@x = 1.40 * cos(to_radians(@facing[0])) * cos(to_radians(@facing[1]))
-		@y = max((1.40 * sin(to_radians(@facing[1]))) + 0.2, 0.2)
-		@z = 1.40 * sin(to_radians(@facing[0])) * cos(to_radians(@facing[1]))
+		cancel();
+		if(get_block_at(ploc())[0] === '0' || phunger() == 0) {
+			die();
+		}
+		@facing = pfacing(player());
+		@facing[0] = @facing[0] + 90;
+		@facing[1] = 0 - @facing[1];
+		@x = 1.40 * cos(to_radians(@facing[0])) * cos(to_radians(@facing[1]));
+		@y = max((1.40 * sin(to_radians(@facing[1]))) + 0.2, 0.2);
+		@z = 1.40 * sin(to_radians(@facing[0])) * cos(to_radians(@facing[1]));
+		set_pvelocity(player(), @x, @y, @z);
 		set_timeout(50, closure(){
-			set_pvelocity(player(), @x, @y, @z)
-			play_sound(ploc(), array('sound': 'GHAST_CHARGE', 'pitch': 2, 'volume': 2))
+			@facing = pfacing(player());
+			@facing[0] = @facing[0] + 90;
+			@facing[1] = 0 - @facing[1];
+			@x = 1.40 * cos(to_radians(@facing[0])) * cos(to_radians(@facing[1]));
+			@y = max((1.40 * sin(to_radians(@facing[1]))) + 0.2, 0.2);
+			@z = 1.40 * sin(to_radians(@facing[0])) * cos(to_radians(@facing[1]));
+			set_pvelocity(player(), @x, @y, @z);
+			play_sound(ploc(), array('sound': 'GHAST_CHARGE', 'pitch': 2, 'volume': 2));
 			if(psaturation() >= 1) {
-				set_psaturation(psaturation() - 1)
+				set_psaturation(psaturation() - 1);
 			} else if(phunger() >= 1) {
-				set_phunger(phunger() - 1)
+				set_phunger(phunger() - 1);
 			}
-		})
+		});
 	}
 	bind(entity_damage, array('id': @player.'falldamage'), array('type': 'PLAYER', 'cause': 'FALL', 'world': 'custom'), @e, @p = @player) {
 		if(@e['player'] == @p, cancel())
@@ -31,7 +39,7 @@ case 'load':
 			} else {
 				modify_event('amount', 5)
 			}
-		} else if(@e['player'] == @p 
+		} else if(@e['player'] == @p
 		&& !ponline(@e['damager'])
 		&& entity_type(@e['damager']) === 'ZOMBIE') {
 			cancel()
@@ -58,5 +66,5 @@ case 'unload':
 	unbind(@player.'damage')
 	unbind(@player.'death')
 	queue_clear(@player)
-	
+
 }

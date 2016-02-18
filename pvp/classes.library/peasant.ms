@@ -17,14 +17,14 @@ case 'load':
 				set_timeout(50, closure(){
 					@vector = entity_velocity(puuid(@damaged));
 					@vector['x'] *= 2;
-					@vector['y'] *= 2;
+					@vector['y'] *= 3;
 					@vector['z'] *= 2;
 					set_pvelocity(@damaged, @vector);
 				});
-				
+
 			case 394: # poison potato -> poison effect
 				set_peffect(@damaged, 19, 0, 10);
-				
+
 			case 393: # cooked potato -> hot potato
 				if(@item['qty'] == 1) {
 					set_pinv(@damager, array(null: null));
@@ -32,11 +32,11 @@ case 'load':
 					@item['qty']--;
 					set_pinv(@damager, array(null: @item));
 				}
-				
+
 				if(!is_null(@item['meta']['lore'])) {
 					clear_task(@item['meta']['lore'][0]);
 				}
-				
+
 				# get the slot this potato will be in so we can track multiple potatos
 				@slot = 0;
 				while(@slot < 9) {
@@ -48,18 +48,18 @@ case 'load':
 						die();
 					}
 				}
-				
+
 				if(@item['meta']['display'] === 'HOT POTATO') {
-					@item['meta']['display'] = '10';
+					@item['meta']['display'] = '12';
 				}
-				
+
 				@task = set_interval(1000, closure() {
 					try(
 						@potato = pinv(@damaged, @slot);
 						if(@potato['meta']['display'] === '1') {
 							bind(entity_damage, array('id': @damaged.'hotpotatodmg'), array('type': 'PLAYER', 'world': 'custom'), @e,
 									@damager, @pvp) {
-									
+
 								if(!array_index_exists(@pvp['players'], @e['player']), die());
 								_stats_damage(@damager, @e['player'], @e['amount'], @pvp);
 							}
@@ -78,22 +78,22 @@ case 'load':
 						die();
 					);
 				});
-				
+
 				@item['meta']['lore'] = array(@task);
-				
+
 				@inv = associative_array();
 				@inv[@slot] = @item;
 				set_pinv(@damaged, @inv);
 
 		}
 	}
-		
+
 	bind(item_drop, array('id': @player.'hotdrop'), array('item': 393), @e, @pvp) {
 		if(array_index_exists(@pvp['players'], player())) {
 			cancel();
 		}
 	}
-			
+
 	bind(item_pickup, array('id': @player.'hotpickup', 'priority': 'HIGH'), array('item': 111), @e, @pvp) {
 		if(!array_index_exists(@pvp['players'], @e['player'])) {
 			die();
@@ -111,7 +111,7 @@ case 'load':
 			}
 		}
 	}
-	
+
 case 'unload':
 	unbind(@player.'pot');
 	unbind(@player.'hotdrop');

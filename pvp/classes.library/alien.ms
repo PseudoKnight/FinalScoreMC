@@ -5,7 +5,7 @@ case 'load':
 		if(pexp() >= 100) {
 			@arrow = shoot_projectile(player(), 'ARROW')
 			@velocity = entity_velocity(@arrow)
-			set_entity_velocity(@arrow, array(@velocity['x'] * 2.9, @velocity['y'] * 2.9, @velocity['z'] * 2.9));
+			set_entity_velocity(@arrow, array(@velocity['x'] * 2.8, @velocity['y'] * 2.8, @velocity['z'] * 2.8));
 			set_entity_onfire(@arrow, 1)
 			play_sound(ploc(), array('sound': 'ENDERDRAGON_HIT', 'pitch': 2))
 			set_pexp(0)
@@ -17,12 +17,12 @@ case 'load':
 					if(@xp >= 100) {
 						clear_task()
 					}
-					
+
 				, clear_task())
 			})
 			if(extension_exists('CHSpigot')) {
 				@dmg = get_arrow_damage(@arrow);
-				set_arrow_damage(@arrow, @dmg * 0.70);
+				set_arrow_damage(@arrow, @dmg * 0.65);
 			}
 		}
 	}
@@ -30,7 +30,7 @@ case 'load':
 	bind(projectile_hit, array('id': @player.'hit'), array('type': 'ARROW'), @e, @shooter = puuid(@player)) {
 		if(@e['shooter'] == @shooter && entity_type(@e['id']), try(entity_remove(@e['id'])))
 	}
-	
+
 	bind(player_interact, array('id': @player.'teleport'), array('item': 381, 'player': @player, 'button': 'right'), @e, @pvp) {
 		cancel()
 		@loc = pcursor(array(0, 65, 66, 68, 70, 72, 77, 85, 143, 147, 148, 157, 171, 188, 189, 190, 191, 192));
@@ -47,7 +47,7 @@ case 'load':
 				break()
 			}
 		}
-		
+
 		@item = pinv(player(), null)
 		@item['qty'] -= 1
 		if(@item['qty'] == 0) {
@@ -58,7 +58,7 @@ case 'load':
 		set_timeout(400, closure(){
 			psend_block_change(@loc, @block);
 		});
-		
+
 		if(@player) {
 			@loc1 = ploc(@player)
 			@loc2 = ploc()
@@ -71,17 +71,22 @@ case 'load':
 			play_sound(@loc2, array('sound': 'ENDERMAN_TELEPORT', 'pitch': 0.5))
 			make_effect(_relative(@loc2, 'up', 2), 'ENDER_SIGNAL')
 		} else {
-			play_sound(ploc(), array('sound': 'ENDERMAN_IDLE', 'pitch': 2))
+			play_sound(ploc(), array('sound': 'ENDERMAN_SCREAM', 'pitch': 2, 'volume': 5));
 		}
-		
+
 	}
-	
+
+	bind(item_held, array('id': @player.'telegraph'), array('player': @player, 'to': 1), @e) {
+		play_sound(ploc(), array('sound': 'ENDERMAN_IDLE', 'pitch': 2, 'volume': 5));
+	}
+
 case 'powerup':
 	set_pexp(@player, 100)
 
 case 'unload':
-	unbind(@player.'plasmagun')
-	unbind(@player.'hit')
-	unbind(@player.'teleport')
-	
+	unbind(@player.'plasmagun');
+	unbind(@player.'hit');
+	unbind(@player.'teleport');
+	unbind(@player.'telegraph');
+
 }
