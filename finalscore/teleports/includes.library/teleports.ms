@@ -1,4 +1,4 @@
-@blockedworlds = array('outworld', 'outworld_nether', 'outworld_the_end');
+@blockedworlds = array('outworld', 'outworld_nether', 'outworld_the_end', 'lastmanstanding');
 
 #Warms up a tp with effects and configurable timer
 proc _warmuptp(@player, @loc, @yaw = null, @pitch = null, @cleareffects = false) {
