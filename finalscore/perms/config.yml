@@ -36,6 +36,11 @@ member:
     worldguard.region.flag.flags.block-break.*: true
     worldguard.region.flag.flags.block-place.*: true
   worlds:
+    LastManStanding:
+      stargate.create.personal: false
+      stargate.create.network: false
+      worldguard.region.claim: false
+      command.sethome: false
     outworld:
       stargate.create.personal: false
       stargate.create.network: false
@@ -67,7 +72,6 @@ member:
       stargate.create.network: false
       worldguard.region.claim: false
       command.sethome: false
-      worldedit.selection.*: false
   inheritance: default
 regular:
   permissions:
@@ -144,6 +148,7 @@ engineer:
       worldedit.scripting.execute.*: true
       worldedit.fast: true
       worldedit.wand: true
+      worldedit.schematic.*: true
     custom:
       worldedit.tool.*: true
       worldedit.generation.*: true
