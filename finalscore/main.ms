@@ -244,9 +244,6 @@ bind(player_join, null, null, @event) {
 			if(pworld() === 'custom') {
 				_equip_park();
 			}
-			if(ponline(@event['player']) && @loc[3] == pworld() && @loc[1] > ploc()[1]) {
-				set_ploc(@loc);
-			}
 		});
 	});
 }
