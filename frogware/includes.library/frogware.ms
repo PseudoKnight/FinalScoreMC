@@ -45,7 +45,16 @@ proc _fw_startround(@secs = 12) {
 	@blocks = import('frogware.blocks');
 	if(!is_null(@blocks)) {
 		foreach(@index: @block in @blocks) {
-			set_block_at(@block, 0);
+			if(@block[1] < @loc[1][1]) {
+				if(@block[0] == @loc[0][0] || @block[0] == @loc[1][0]
+				|| @block[2] == @loc[0][2] || @block[2] == @loc[1][2]) {
+					set_block_at(@block, '35:15');
+				} else {
+					set_block_at(@block, '155:0');
+				}
+			} else {
+				set_block_at(@block, 0);
+			}
 			array_remove(@blocks, @index);
 		}
 	}
@@ -97,7 +106,7 @@ proc _fw_startround(@secs = 12) {
 						'shepherd', 'anvil', 'trade', 'fish');
 			} else if((@highscore / @goal) < 0.90 || @total == 1) {
 				@tasks = array('climb', 'keepaway', 'harvest', 'koth', 'cake', 'fall', 'cluck', 'frogegg', 'lavafall',
-						'shepherd', 'anvil', 'trade');
+						'shepherd', 'anvil', 'trade', 'fish');
 			} else {
 				@tasks = array('pvp');
 			}
