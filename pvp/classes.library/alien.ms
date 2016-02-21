@@ -76,8 +76,10 @@ case 'load':
 
 	}
 
-	bind(item_held, array('id': @player.'telegraph'), array('player': @player, 'to': 1), @e) {
-		play_sound(ploc(), array('sound': 'ENDERMAN_IDLE', 'pitch': 2, 'volume': 5));
+	bind(item_held, array('id': @player.'telegraph'), null, @e, @player) {
+		if(@e['player'] == @player && @e['to'] == 1) {
+			play_sound(ploc(), array('sound': 'ENDERMAN_IDLE', 'pitch': 2, 'volume': 5));
+		}
 	}
 
 case 'powerup':

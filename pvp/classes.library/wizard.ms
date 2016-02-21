@@ -30,6 +30,9 @@ case 'load':
 		}, player().'lightning');
 		queue_delay(5000, player().'lightning');
 		queue_push(closure(){
+			if(!ponline(@e['player'])) {
+				return();
+			}
 			@newitem = pinv(player(), @slot)
 			if(!is_null(@newitem) && @newitem['type'] == 280) {
 				@inv = associative_array();
