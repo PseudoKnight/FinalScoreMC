@@ -249,8 +249,8 @@ proc _fw_task(@task, @state, @secs) {
 			} else {
 				_fw_set_winners();
 				queue_push(closure(){
-					_iterate_cuboid(array(@region[0][0], @region[1][1] - 1, @region[0][2], 'custom'),
-					array(@region[1][0], @region[1][1] - 1, @region[1][2], 'custom'),
+					_iterate_cuboid(array(@region[0][0] + 1, @region[1][1] - 1, @region[0][2] + 1, 'custom'),
+					array(@region[1][0] - 1, @region[1][1] - 1, @region[1][2] - 1, 'custom'),
 					'8:0', 3);
 				}, 'fw3');
 				bind(entity_damage, array('id': 'fwfall'), array('type': 'PLAYER', 'cause': 'FALL'), @e) {

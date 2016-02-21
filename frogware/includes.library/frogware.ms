@@ -37,7 +37,8 @@ proc _fw_endgame(@winners) {
 }
 
 proc _fw_startround(@secs = 12) {
-	@loc = sk_region_info('frogware', 'custom')[0][1];
+	@region = sk_region_info('frogware', 'custom')[0];
+	@loc = @region[1];
 	@loc[0] += 18;
 	@loc[2] += 18;
 	play_effect(@loc, 'RECORD_PLAY', array('id': 0, 'radius': 32));
@@ -45,13 +46,8 @@ proc _fw_startround(@secs = 12) {
 	@blocks = import('frogware.blocks');
 	if(!is_null(@blocks)) {
 		foreach(@index: @block in @blocks) {
-			if(@block[1] < @loc[1][1]) {
-				if(@block[0] == @loc[0][0] || @block[0] == @loc[1][0]
-				|| @block[2] == @loc[0][2] || @block[2] == @loc[1][2]) {
-					set_block_at(@block, '35:15');
-				} else {
-					set_block_at(@block, '155:0');
-				}
+			if(@block[1] < @region[1][1]) {
+				set_block_at(@block, '155:0');
 			} else {
 				set_block_at(@block, 0);
 			}
