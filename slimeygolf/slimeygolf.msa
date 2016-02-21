@@ -187,11 +187,13 @@
 	}
 
 	set_interval(50, closure(){
+		@count = 0;
 		foreach(@player in all_players(@golf['course']['world'])) {
 			if(!array_index_exists(@golf['players'], @player)) {
 				if(array_contains(sk_current_regions(@player), @course)) {
 					if(array_size(@golf['players']) < 4) {
 						_add_player(@player, @golf);
+						@count++;
 					} else if(!array_contains(@golf['spectators'], @player)) {
 						if(function_exists('set_collides_with_entities')) {
 							set_collides_with_entities(@player, false);
@@ -205,6 +207,8 @@
 					array_remove_values(@golf['spectators'], @player);
 				}
 				continue();
+			} else {
+				@count++;
 			}
 			@ball = @golf['players'][@player];
 			if(_ball_exists(@ball['id'])) {
@@ -360,8 +364,9 @@
 				}
 			}
 
-		} else {
-			console('No players left in world, stopping SlimeyGolf.');
+		}
+		if(@count == 0) {
+			console('No players left, stopping SlimeyGolf.');
 			foreach(@player in array_keys(@golf['players'])) {
 				_remove_player(@player, @golf);
 			}
