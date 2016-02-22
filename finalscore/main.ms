@@ -34,23 +34,26 @@ bind(player_login, null, null, @event) {
 		@pdata = get_value('uuids', @uuid);
 		store_value('players', to_lower(@event['player']), @event['uuid']);
 		@update = true;
-		if(@pdata) { # someone changed their name
-			export('pdata.'.to_lower(@pdata['name']), null);
-			if(!array_index_exists(@pdata, 'names')) {
-				@pdata['names'] = array();
-			}
-			@pdata['names'][] = @pdata['name'];
-			@pdata['name'] = @event['player'];
-
-			# just in case, they're not in a survival world, we may need to fetch their inventory for them later
-			# TODO: handle inventory for name changes automatically
-			set_timeout(2000, closure(){
-				try(@world = pworld(@event['player']), die());
-				if(!_is_survival_world(@world)) {
-					console('PK NOTE: Restore '.@event['player'].'\'s inventory! (Previously '.@pdata['names'].')');
+		if(@pdata) { # someone changed their name or name doesn't exist
+			if(array_index_exists(@pdata, 'name')) {
+				export('pdata.'.to_lower(@pdata['name']), null);
+				if(!array_index_exists(@pdata, 'names')) {
+					@pdata['names'] = array();
 				}
-			});
+				@pdata['names'][] = @pdata['name'];
 
+				# just in case, they're not in a survival world, we may need to fetch their inventory for them later
+				# TODO: handle inventory for name changes automatically
+				set_timeout(2000, closure(){
+					try(@world = pworld(@event['player']), die());
+					if(!_is_survival_world(@world)) {
+						console('PK NOTE: Restore '.@event['player'].'\'s inventory! (Previously '.@pdata['names'].')');
+					}
+				});
+			} else {
+				msg('WARNING: ' . @event['player'] . ' did not have their name stored.');
+			}
+			@pdata['name'] = @event['player'];
 		} else { # new player!
 			@pdata = array(
 				'joined': simple_date('YYYY-MM-dd'),
