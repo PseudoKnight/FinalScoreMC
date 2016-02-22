@@ -6,7 +6,7 @@
 	tmsg($to, color('gray').$from.': '.color('r').colorize($))
 <<<
 
-/* 
+/*
 	Spawns a temporary minecart that gets removed when the player exits or quits
 	Usage Example: runalias /tempcart @p
 */
@@ -37,7 +37,7 @@
 
 /ride $player $npcType $speed $ = >>>
 	if(extension_exists('CHCitizens')) {
-	
+
 	if(pinfo($player, 11)) {
 		die();
 	}
@@ -69,7 +69,7 @@
 			);
 		});
 	});
-	
+
 	proc _remove_npc(@npc) {
 		unbind(@npc.'nav');
 		unbind(@npc.'despawn');
@@ -78,14 +78,14 @@
 			ctz_remove_npc(@npc);
 		});
 	}
-	
+
 	bind(ctz_npc_navigation_complete, array('id': @npc.'nav'), array('world': pworld($player)), @e, @npc, @path) {
 		if(@e['npc'] == @npc) {
 			if(get_entity_rider(ctz_npc_entity_id(@npc)) == null) {
 				_remove_npc(@npc);
 				die();
 			}
-		
+
 			if(array_size(@path) > 0) {
 				ctz_set_npc_target(@npc, split(',', @path[0]));
 				array_remove(@path, 0);
@@ -94,13 +94,13 @@
 			}
 		}
 	}
-	
+
 	bind(ctz_npc_despawn, array('id': @npc.'despawn'), array('world': pworld($player)), @e, @npc) {
 		if(@e['npc'] == @npc) {
 			_remove_npc(@npc);
 		}
 	}
-	
+
 	}
 <<<
 
@@ -132,10 +132,21 @@
 
 *:/effect $player $effect [$strength=0] [$length=30] = >>>
 	if(get_command_block() || has_permission('command.effect')) {
-		try(@player = player($player), @ex, die('Who is that? Are they online?'))
-		@effects = _get_effects()
-		if(!array_index_exists(@effects, $effect), die('These are the available effect names: '.array_keys(@effects)))
-		set_peffect(@player, @effects[$effect], $strength, $length)
+		try {
+			@player = player($player);
+		} catch(PlayerOfflineException @e) {
+			die('Who is that? Are they online?');
+		}
+		@effects = _get_effects();
+		if(!array_index_exists(@effects, $effect)) {
+			if($effect == 'milk') {
+				_clear_peffects(@player);
+			} else {
+				die('These are the available effect names: milk '.array_implode(array_keys(@effects), ' '));
+			}
+		} else {
+			set_peffect(@player, @effects[$effect], $strength, $length);
+		}
 	}
 <<<
 
@@ -167,10 +178,10 @@
 				});
 			}
 		});
-		
+
 	} else {
 		# entity is not a player
-		
+
 		@entities = entities_in_radius(@loc, 3, $entity);
 		@entity = '';
 		if(array_size(@entities) > 1) {
@@ -250,12 +261,12 @@
 /setblock $x $y $z $id [$data=0] [$mode='replace'] = >>>
 	if(@cmdblk = get_command_block()) {
 		@loc = _relative_coords(@cmdblk, $x, $y, $z)
-		
+
 		if(!is_numeric(@id = $id)
 		&& is_null(@id = data_values($id)), die())
-		
+
 		@id = split(':', @id)[0]
-		
+
 		switch($mode) {
 		case 'replace':
 			set_block_at(@loc, @id.':'.$data, false)
@@ -282,13 +293,13 @@
 	if(@cmdblk = get_command_block()) {
 		@loc1 = _relative_coords(@cmdblk, $x1, $y1, $z1)
 		@loc2 = _relative_coords(@cmdblk, $x2, $y2, $z2)
-		
+
 		if(!is_numeric(@id = $id)
 		&& is_null(@id = data_values($id))) {
 			die()
-		}	
+		}
 		@id = split(':', @id)[0]
-		
+
 		if($replaceid !== '') {
 			if(!is_numeric(@replaceid = $replaceid)
 			&& is_null(@replaceid = data_values($replaceid))) {
@@ -296,7 +307,7 @@
 			}
 			@replaceid = split(':', @replaceid)[0]
 		}
-		
+
 		switch($mode) {
 		case 'replace':
 			for(@x = min(@loc1['x'], @loc2['x']), @x <= max(@loc1['x'], @loc2['x']), @x++) {
@@ -308,7 +319,7 @@
 					}
 				}
 			}
-			
+
 		case 'toggle':
 			for(@x = min(@loc1['x'], @loc2['x']), @x <= max(@loc1['x'], @loc2['x']), @x++) {
 				for(@y = min(@loc1['y'], @loc2['y']), @y <= max(@loc1['y'], @loc2['y']), @y++) {
@@ -322,7 +333,7 @@
 					}
 				}
 			}
-			
+
 		case 'keep':
 			for(@x = min(@loc1['x'], @loc2['x']), @x <= max(@loc1['x'], @loc2['x']), @x++) {
 				for(@y = min(@loc1['y'], @loc2['y']), @y <= max(@loc1['y'], @loc2['y']), @y++) {
@@ -333,7 +344,7 @@
 					}
 				}
 			}
-			
+
 		case 'destroy':
 			for(@x = min(@loc1['x'], @loc2['x']), @x <= max(@loc1['x'], @loc2['x']), @x++) {
 				for(@y = min(@loc1['y'], @loc2['y']), @y <= max(@loc1['y'], @loc2['y']), @y++) {
@@ -345,7 +356,7 @@
 					}
 				}
 			}
-			
+
 		case 'fall':
 			for(@x = min(@loc1['x'], @loc2['x']), @x <= max(@loc1['x'], @loc2['x']), @x++) {
 				for(@y = min(@loc1['y'], @loc2['y']), @y <= max(@loc1['y'], @loc2['y']), @y++) {
@@ -358,7 +369,7 @@
 					}
 				}
 			}
-			
+
 		case 'hollow':
 		case 'outline':
 			console('Hollow and outline modes for /fill are not yet supported.')
