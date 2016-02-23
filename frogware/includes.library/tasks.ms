@@ -208,6 +208,10 @@ proc _fw_task(@task, @state, @secs) {
 				_fw_randompotion(array('speed'))
 			}
 			if(rand(4)) {
+				for(@i = 0, @i < max(1, floor(_fw_totalplayers() / 2)), @i++) {
+					set_block_at(_fw_loc(), '92:0');
+				}
+			} else {
 				for(@i = 0, @i <= _fw_totalplayers(), @i++) {
 					set_block_at(_fw_loc(), '92:4')
 				}
@@ -270,6 +274,7 @@ proc _fw_task(@task, @state, @secs) {
 					}
 				}
 			}
+			unbind('fwfall');
 			_fw_startround(@secs);
 
 		}
