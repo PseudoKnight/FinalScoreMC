@@ -1,7 +1,7 @@
 @blockedworlds = array('outworld', 'outworld_nether', 'outworld_the_end', 'lastmanstanding');
 
 #Warms up a tp with effects and configurable timer
-proc _warmuptp(@player, @loc, @yaw = null, @pitch = null, @cleareffects = false) {
+proc _warmuptp(@player, @loc, @cleareffects = false) {
 	@length = 3.7;
 	if(pmode(@player) == 'CREATIVE') {
 		@length = 0.1;
@@ -14,9 +14,6 @@ proc _warmuptp(@player, @loc, @yaw = null, @pitch = null, @cleareffects = false)
 			die();
 		}
 		@ploc = ploc(@player);
-		if(!is_null(@yaw) && !is_null(@pitch)) {
-			pfacing(@player, @yaw, @pitch);
-		}
 		set_peffect(@player, 15, 1, 2, true, false);
 		set_ploc(@player, @loc);
 		set_peffect(@player, 15, 1, 2, true, false);

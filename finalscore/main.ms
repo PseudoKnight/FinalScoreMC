@@ -234,9 +234,7 @@ bind(player_join, null, null, @event) {
 			@updatePdata = true;
 		} else if(!has_permission('group.member')) {
 			@warp = get_value('warp.intro');
-			@loc = @warp['loc'];
-			set_ploc(@warp['loc']);
-			pfacing(@warp['yaw'], @warp['pitch']);
+			set_ploc(@warp);
 		}
 
 		if(@updatePdata) {

@@ -1,3 +1,21 @@
+/homes update = >>>
+	foreach(@key: @pdata in get_values('uuids')) {
+		if(!array_index_exists(@pdata, 'name')) {
+			continue();
+		}
+		if(ponline(@pdata['name'])) {
+			@pdata = _pdata(@pdata['name']);
+		}
+		if(array_index_exists(@pdata, 'homes')) {
+			foreach(@world: @loc in @pdata['homes']) {
+				array_insert(@loc, @world, 3);
+				@pdata['homes'][@world] = @loc;
+				store_value(@key, @pdata);
+			}
+		}
+	}
+<<<
+
 *:/home [$] = >>>
 	include('includes.library/teleports.ms');
 	if(array_contains(@blockedworlds, pworld())) {
@@ -39,7 +57,7 @@
 			die("@player has not set a home for @world");
 		}
 	}
-	@loc = array(@pdata['homes'][@world][0], @pdata['homes'][@world][1], @pdata['homes'][@world][2], @world);
+	@loc = @pdata['homes'][@world];
 	if(_is_survival_world(@world) && !_is_safe_location(@loc)) {
 		@overrides = import('tp.overrides');
 		if(!@overrides) {
@@ -49,7 +67,7 @@
 		export('tp.overrides', @overrides);
 		die('That teleport location does not appear to be safe. /override');
 	}
-	_warmuptp(player(), @loc, @pdata['homes'][@world][3], @pdata['homes'][@world][4])
+	_warmuptp(player(), @loc);
 <<<
 
 *:/override = >>>
@@ -83,8 +101,9 @@
 		floor(@loc[0]) + 0.5,
 		@loc[1],
 		floor(@loc[2]) + 0.5,
+		pworld(),
 		round(@facing[0], 2),
-		round(@facing[1], 2)
+		round(@facing[1], 2),
 	));
 	_store_pdata(@player, @pdata);
 	msg('Set home to this location.');

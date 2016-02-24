@@ -27,7 +27,7 @@
 		die('You cannot warp in this world.');
 	}
 
-	_warmuptp(@player, @warp['loc'], @warp['yaw'], @warp['pitch'], if(@warp['loc'][3] === 'custom', true, false));
+	_warmuptp(@player, @warp, @warp[3] == 'custom');
 <<<
 
 *:/setwarp [$warp] = >>>
@@ -41,7 +41,7 @@
 		die('This needs to be in alphanumeric characters.');
 	}
 	@loc = ploc();
-	@loc = array(round(@loc[0], 1), @loc[1], round(@loc[2], 1), @loc[3]);
+	@loc = array(round(@loc[0], 1), @loc[1], round(@loc[2], 1), @loc[3], round(@loc[4]), round(@loc[5]));
 	if(has_value('warp.'.$warp)) {
 		try(
 			if(function_exists('dm_delete_marker')) {
@@ -49,7 +49,7 @@
 			}
 		);
 	}
-	store_value('warp.'.$warp, array('loc': @loc, 'yaw': round(pfacing()[0]), 'pitch': round(pfacing()[1])));
+	store_value('warp.'.$warp, @loc);
 	if(function_exists('dm_create_marker')) {
 		dm_create_marker('warps', array('id': 'warp.'.$warp, 'label': 'WARP.'.to_upper($warp), 'location': @loc, 'world': @loc[3], 'icon': 'star', 'persistent': true)); # radius is workaround for a bug
 	}
@@ -58,6 +58,17 @@
 
 *:/warps [$cmd] [$id] = >>>
 	switch($cmd) {
+		case 'update':
+			if(!has_permission('group.admin')) {
+				die('You do not have permission to use this command.');
+			}
+			foreach(@key: @warp in get_values('warp')) {
+				@newwarp = @warp['loc'];
+				@newwarp[] = @warp['yaw'];
+				@newwarp[] = @warp['pitch'];
+				store_value(@key, @newwarp);
+			}
+
 		case 'del':
 		case 'delete':
 			if(!has_permission('group.moderator')) {
@@ -85,7 +96,7 @@
 				@warplist[@world] = '';
 			}
 			foreach(@warpkey: @warpdata in @warps) {
-				@warplist[@warpdata['loc'][3]] .= split('.', @warpkey)[1].' ';
+				@warplist[@warpdata[3]] .= split('.', @warpkey)[1].' ';
 			}
 			msg(color('bold').'AVAILABLE WARPS:');
 			foreach(@worldname: @worldwarps in @warplist) {
@@ -121,7 +132,7 @@
 
 			foreach(@name: @warp in @warps) {
 				if(function_exists('dm_create_marker')) {
-					dm_create_marker('warps', array('id': @name, 'label': to_upper(@name), 'location': @warp['loc'], 'world': @warp['loc'][3], 'icon': 'star', 'persistent': true));
+					dm_create_marker('warps', array('id': @name, 'label': to_upper(@name), 'location': @warp, 'world': @warp[3], 'icon': 'star', 'persistent': true));
 				}
 			}
 

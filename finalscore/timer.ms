@@ -126,7 +126,6 @@ register_command('timer', array(
 				bind(player_interact, array('id': @player.'reset'), array('player': @player, 'item': 39), @e, @startLoc) {
 					cancel();
 					set_ploc(@startLoc);
-					pfacing(@startLoc['yaw'], @startLoc['pitch']);
 				}
 			}
 			if(!has_bind(@player.'timerdeath')) {

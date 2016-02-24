@@ -83,8 +83,8 @@
 		@closestDistance = 10000;
 		@loc = ploc(@player);
 		foreach(@warp in @warps) {
-			if(@warp['loc'][3] == @loc['world']) {
-				@dist = sqrt(((@warp['loc'][0] - @loc[0]) ** 2) + ((@warp['loc'][2] - @loc[2]) ** 2));
+			if(@warp[3] == @loc['world']) {
+				@dist = sqrt(((@warp[0] - @loc[0]) ** 2) + ((@warp[2] - @loc[2]) ** 2));
 				if(@dist < @closestDistance) {
 					@closest = @warp;
 					@closestDistance = @dist;
@@ -95,7 +95,7 @@
 			die('You cannot directly join a player who is in '._worldname(pworld(@player)));
 		}
 		include('includes.library/teleports.ms');
-		_warmuptp(player(), @closest['loc'], @closest['yaw'], @closest['pitch'], if(@closest['loc'][3] === 'custom', true, false));
+		_warmuptp(player(), @closest, @closest[3] == 'custom');
 		die('Teleporting you near '.@player);
 	}
 
@@ -175,8 +175,8 @@
 			@closestDistance = 10000;
 			@loc = ploc(@requests[player()][1]);
 			foreach(@warp in @warps) {
-				if(@warp['loc'][3] == @loc['world']) {
-					@dist = sqrt(((@warp['loc'][0] - @loc[0]) ** 2) + ((@warp['loc'][2] - @loc[2]) ** 2));
+				if(@warp[3] == @loc['world']) {
+					@dist = sqrt(((@warp[0] - @loc[0]) ** 2) + ((@warp[2] - @loc[2]) ** 2));
 					if(@dist < @closestDistance) {
 						@closest = @warp;
 						@closestDistance = @dist;
@@ -186,7 +186,7 @@
 			if(is_null(@closest)) {
 				die('You cannot join a player in '._worldname(pworld(@requests[player()][1])));
 			}
-			_warmuptp(player(), @closest['loc'], @closest['yaw'], @closest['pitch'], if(@closest['loc'][3] === 'custom', true, false));
+			_warmuptp(player(), @closest, @closest[3] == 'custom');
 			die('Teleporting you near '.@requests[player()][1]);
 		}
 		msg(color('b').'Teleporting to '.@requests[player()][1].' in 3 seconds...');
