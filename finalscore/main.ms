@@ -258,6 +258,13 @@ bind(player_command, null, null, @event) {
 bind(player_quit, null, null, @event) {
 	modify_event('message', null);
 	broadcast(colorize('&8'.simple_date('h:mm').' '.'&e&o* '._colorname().'&o'.player().' &e&oleft the game *'));
+	@pdata = _pdata(@event['player']);
+	try {
+		@pdata['world'] = pworld();
+		_store_pdata(@event['player'], @pdata);
+	} catch(PlayerOfflineException @e) {
+		msg('Cannot fetch player world while quitting.');
+	}
 	export('pdata.'.to_lower(@event['player']), null);
 }
 
