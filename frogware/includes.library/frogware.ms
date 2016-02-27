@@ -20,8 +20,10 @@ proc _fw_endgame(@winners) {
 	foreach(@p in all_players('custom')) {
 		if(array_contains(@winners, @p)) {
 			@coins = _fw_totalplayers();
-			_acc_add(@p, @coins);
-			tmsg(@p, color('6').'+'.@coins.' coins');
+			if(@coins > 3) {
+				_acc_add(@p, @coins - 2);
+				tmsg(@p, color('6').'+'.@coins.' coins');
+			}
 			_fw_changeteam(@p, 'winners');
 		} else {
 			_fw_changeteam(@p, 'losers');
