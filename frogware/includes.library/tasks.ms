@@ -119,7 +119,8 @@ proc _fw_task(@task, @state, @secs) {
 			bind(item_pickup, array('id': 'fwpickup'), array('item': 296), @e) {
 				if(_fw_player(player())
 				&& _fw_changeteam(player(), 'winners')) {
-					play_sound(ploc(), array('sound': 'zombie_metal'), player())
+					modify_event('item', null);
+					play_sound(ploc(), array('sound': 'zombie_metal'), player());
 				}
 			}
 
@@ -472,8 +473,11 @@ proc _fw_task(@task, @state, @secs) {
 				if(_fw_player(@e['player'])) {
 					if(@e['item']['data'] == @data) {
 						if(_fw_changeteam(player(), 'winners')) {
-							play_sound(ploc(), array('sound': 'zombie_metal'), player())
+							play_sound(ploc(), array('sound': 'zombie_metal'), player());
 						}
+					} else {
+						modify_event('item', null);
+						play_sound(ploc(), array('sound': 'villager_no'), player());
 					}
 				}
 			}
