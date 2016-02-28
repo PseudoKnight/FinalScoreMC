@@ -97,7 +97,7 @@ bind(player_interact, array('id': @id.'firebreath'), array('item': 377, 'button'
 	}
 	*/
 	foreach(@p in array_keys(@pvp['players'])) {
-		if(@p == player() || !ponline(@p)) {
+		if(@p == player() || pinfo(@p, 5) == 0) {
 			continue();
 		}
 		@ploc = ploc(@p);
