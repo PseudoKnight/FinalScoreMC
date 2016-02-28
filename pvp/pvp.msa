@@ -434,14 +434,14 @@
 	set_interval(1000, closure(){
 		@timeleft[0] -= 1;;
 		if(@timeleft[0] > 0) {
-			if(@timeleft[0] <= 3) {
+			if(@timeleft[0] <= 4) {
 				play_sound(@pvp['arena']['lobby'], array('sound': 'NOTE_PLING', 'pitch': 1, 'volume': 3));
 				if(extension_exists('CHNaughty')) {
 					foreach(@p in array_keys(@pvp['players'])) {
 						try(title_msg(@p, color('yellow').@timeleft[0], null, 0, @timeleft[0] * 20, 20));
 					}
 				}
-			} else if(@timeleft[0] > 4 && array_index_exists(@pvp['arena'], 'classes')) {
+			} else if(@timeleft[0] > 5 && array_index_exists(@pvp['arena'], 'classes')) {
 				@choosing = false;
 				foreach(@p in array_keys(@pvp['players'])) {
 					if(ponline(@p) && !is_null(pget_virtualchest(@p))) {
@@ -450,7 +450,7 @@
 					}
 				}
 				if(!@choosing) {
-					@timeleft[0] = 4;
+					@timeleft[0] = 5;
 				}
 			} else if(@timeleft[0] > 4) {
 				if(extension_exists('CHNaughty')) {
