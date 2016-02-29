@@ -23,7 +23,7 @@
 	}
 
 	include('includes.library/teleports.ms');
-	if(array_contains(@blockedworlds, pworld(@player))) {
+	if(!_allows_teleports(pworld(@player))) {
 		die('You cannot warp in this world.');
 	}
 

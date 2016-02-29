@@ -71,28 +71,6 @@ proc _get_pitch(@tone, @octave) {
 }
 
 /*
-	Gets the player count for the whole server or world if specified.
-*/
-proc _player_count(@world) {
-	@players = all_players();
-	if(@world) {
-		foreach(@index: @player in @players) {
-			if(pworld(@player) != @world) {
-				array_remove(@players, @index);
-			}
-		}
-	}
-	return(array_size(@players));
-}
-
-/*
-	Returns if the world is a survival world
-*/
-proc _is_survival_world(@world) {
-	return(!(@world === 'dev' || @world === 'custom'));
-}
-
-/*
 	Sets a player's inventory for Frog Park
 */
 proc _equip_park(@player) {
@@ -490,31 +468,29 @@ proc _refresh_tablist(@players) {
 	}
 }
 
+/*
+	Returns the worlds config
+*/
+proc _worlds_config() {
+	@worlds = import('worlds');
+	if(is_null(@worlds)) {
+		@worlds = yml_decode(read('worlds.yml'));
+		export('worlds', @worlds);
+	}
+	return(@worlds);
+}
 
 /*
 	Returns world alias when given world folder name
 */
 proc _worldname(@world) {
-	@worlds = array(
-		'world': 'Alpha',
-		'world_nether': 'Alpha Nether',
-		'world3': 'Delta',
-		'world3_nether': 'Delta Nether',
-		'world4': 'Gamma',
-		'world4_nether': 'Gamma Nether',
-		'world_the_end': 'The End',
-		'custom': 'FrogPark',
-		'dev': 'Dev',
-		'outworld': 'Outworld',
-		'omega': 'Omega',
-		'omega_nether':	'Omega Nether',
-		'outworld': 'Outworld',
-		'outworld_nether': 'Outworld Nether',
-	)
-	if(array_index_exists(@worlds, to_lower(@world))) {
-		return(@worlds[to_lower(@world)])
-	} else {
-		return(to_lower(@world))
+	@worlds = _worlds_config();
+	@world = to_lower(@world);
+	try {
+		return(@worlds[@world]['name']);
+	} catch(IndexOverflowException @ex) {
+		# default to lower case name
+		return(@world);
 	}
 }
 
@@ -544,6 +520,32 @@ proc _worldid(@world) {
 		return(@worlds[@alias])
 	} else {
 		return(to_lower(@world))
+	}
+}
+
+/*
+	Returns if the world is a survival world
+*/
+proc _is_survival_world(@world) {
+	@worlds = _worlds_config();
+	try {
+		return(@worlds[@world]['mode'] == 'survival');
+	} catch(IndexOverflowException @ex) {
+		# default to true
+		return(true);
+	}
+}
+
+/*
+	Returns if the world allows teleports
+*/
+proc _allows_teleports(@world) {
+	@worlds = _worlds_config();
+	try {
+		return(@worlds[@world]['teleports']);
+	} catch(IndexOverflowException @ex) {
+		# default to true
+		return(true);
 	}
 }
 

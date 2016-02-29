@@ -48,7 +48,7 @@
 
 *:/spawn [$world] = >>>
 	include('includes.library/teleports.ms');
-	if(array_contains(@blockedworlds, $world) || array_contains(@blockedworlds, pworld())) {
+	if(!_allows_teleports($world) || !_allows_teleports(pworld())) {
 		msg('You cannot teleport directly to or from that world.');
 	} else if($world) {
 		@world = _worldid($world)

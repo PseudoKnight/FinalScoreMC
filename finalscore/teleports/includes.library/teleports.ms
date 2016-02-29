@@ -1,5 +1,3 @@
-@blockedworlds = array('outworld', 'outworld_nether', 'outworld_the_end', 'lastmanstanding');
-
 #Warms up a tp with effects and configurable timer
 proc _warmuptp(@player, @loc, @cleareffects = false) {
 	@length = 3.7;

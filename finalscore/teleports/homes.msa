@@ -18,7 +18,7 @@
 
 *:/home [$] = >>>
 	include('includes.library/teleports.ms');
-	if(array_contains(@blockedworlds, pworld())) {
+	if(!_allows_teleports(pworld())) {
 		die('You cannot teleport in this world.');
 	}
 	@world = pworld();
