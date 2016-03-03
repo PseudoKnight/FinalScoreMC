@@ -1,27 +1,35 @@
+alpha: world
 world:
   name: 'Alpha'
   mode: survival
   teleports: true
+alphanether: world_nether
 world_nether:
   name: 'Alpha Nether'
   mode: survival
   teleports: true
+end: world_the_end
+theend: world_the_end
 world_the_end:
   name: 'The End'
   mode: survival
   teleports: true
+delta: world3
 world3:
   name: 'Delta'
   mode: survival
   teleports: true
+deltanether: world3_nether
 world3_nether:
   name: 'Delta Nether'
   mode: survival
   teleports: true
+gamma: world4
 world4:
   name: 'Gamma'
   mode: survival
   teleports: true
+gammanether: world4_nether
 world4_nether:
   name: 'Gamma Nether'
   mode: survival
@@ -30,6 +38,7 @@ omega:
   name: 'Omega'
   mode: survival
   teleports: true
+omeganether: omega_nether
 omega_nether:
   name: 'Omega Nether'
   mode: survival
@@ -38,10 +47,12 @@ outworld:
   name: 'Outworld'
   mode: survival
   teleports: false
+outworldnether: outworld_nether
 outworld_nether:
   name: 'Outworld Nether'
   mode: survival
   teleports: false
+outworldend: outworld_the_end
 outworld_the_end:
   name: 'Outworld End'
   mode: survival
@@ -50,6 +61,7 @@ dev:
   name: 'Dev'
   mode: creative
   teleports: true
+frogpark: custom
 custom:
   name: 'FrogPark'
   mode: adventure
