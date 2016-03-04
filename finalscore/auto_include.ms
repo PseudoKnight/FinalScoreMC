@@ -600,11 +600,11 @@ proc _wrap_string(@string, @width = 320) {
 proc _click_tell(@recipients, @components) {
 	@message = ' [""';
 	foreach(@c in @components) {
-		@message .= ',{text:"';
+		@message .= ',{"text":"';
 		if(!is_array(@c)) {
 			@message .= colorize(@c).'"}';
 		} else {
-			@message .= colorize(@c[0]).'",clickEvent:{action:"run_command",value:"'.@c[1].'"}}';
+			@message .= colorize(@c[0]).'","clickEvent":{"action":"run_command","value":"'.@c[1].'"}}';
 		}
 	}
 	@message .= ']';

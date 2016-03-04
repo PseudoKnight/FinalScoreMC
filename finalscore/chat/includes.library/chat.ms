@@ -60,11 +60,11 @@ proc _remove_ignored(@sender, @recipients) {
 proc _hover_tell(@recipients, @components) {
 	@message = ' [""';
 	foreach(@c in @components) {
-		@message .= ',{text:"';
+		@message .= ',{"text":"';
 		if(!is_array(@c)) {
 			@message .= colorize(@c).'"}';
 		} else {
-			@message .= colorize(@c[0]).'",hoverEvent:{action:"show_text",value:"'.colorize(@c[1]).'"}}';
+			@message .= colorize(@c[0]).'","hoverEvent":{"action":"show_text","value":"'.colorize(@c[1]).'"}}';
 		}
 	}
 	@message .= ']';
@@ -78,7 +78,7 @@ proc _hover_tell(@recipients, @components) {
 */
 proc _clickable_links(@string) {
 	return(reg_replace('(?:https?://|www\\.)([\\da-z.-]+\\.[a-z.]{2,6}[/\\w:.?=&-]*)',
-		'[$1]",clickEvent:{action:"open_url",value:"http://$1"}},{text:"&r',
+		'[$1]","clickEvent":{"action":"open_url","value":"http://$1"}},{"text":"&r',
 		@string
 	));
 }
