@@ -205,6 +205,8 @@ proc _pvp_start_match(@id) {
 				@hillcount++
 			}
 
+		} else {
+			@check = true;
 		}
 
 		foreach(@p in @pvp['spectators']) {
@@ -331,7 +333,7 @@ proc _pvp_end_match(@id, @winners) {
 
 	if(@pvp['running'] != 2, return())
 
-	try(
+	try {
 
 		foreach(array_keys(@pvp['players']), @player) {
 			if(array_contains(@winners, @player)) {
@@ -353,7 +355,10 @@ proc _pvp_end_match(@id, @winners) {
 						._pad_stat(@stats['deaths'], 2).'---------'
 						._pad_stat(@stats['pickups'], 2).'--------'
 						._pad_stat(round(@stats['damage']), 3).'------'
-						.if(array_contains(@winners, @player), color('gold').color('bold').@player.' +'.@pvp['coins'], @player).'-', '-', ' '));
+						.if(array_contains(@winners, @player),
+							color('gold').color('bold').@player.if(@pvp['coins'] > 0, ' +'.@pvp['coins']),
+							@player)
+						.'-', '-', ' '));
 				}
 				_regionmsg(@pvp['arena']['broadcast'], colorize('&7&m|----------------------------------------------------|'));
 			} else if(array_index_exists(@pvp, 'team') && array_size(@winners) > 0) {
@@ -378,9 +383,11 @@ proc _pvp_end_match(@id, @winners) {
 			}
 		}
 
-	)
+	} catch(Exception @ex) {
+		console(@ex);
+	}
 
-	try(
+	try {
 
 		if(array_index_exists(@pvp['arena'], 'rsoutput'),
 			set_block_at(@pvp['arena']['rsoutput'], '69:6'))
@@ -408,14 +415,17 @@ proc _pvp_end_match(@id, @winners) {
 
 		clear_task(@pvp['interval'])
 
-	, return())
+	} catch(Exception @ex) {
+		console(@ex);
+		return();
+	}
 
 	@pvp['running'] = 3
 
 	queue_delay(4000, @id);
 	queue_push(closure(){
 		foreach(array_keys(@pvp['players']), @player) {
-			try(
+			try {
 				if(array_index_exists(@pvp['players'][@player], 'class')) {
 					_class('unload', @player, @pvp['players'][@player]['class'], @pvp)
 				}
@@ -431,7 +441,9 @@ proc _pvp_end_match(@id, @winners) {
 					_equip_park(@player);
 					_clear_peffects(@player);
 				}
-			)
+			} catch(Exception @ex) {
+				console(@ex);
+			}
 		}
 		foreach(@bind in @pvp['binds']) {
 			unbind(@bind)
