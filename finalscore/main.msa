@@ -306,7 +306,7 @@
 		'offsetX': 0.5,
 		'offsetY': 0.5,
 		'offsetZ': 0.5,
-		'speed': 0.1)
+		'speed': 0)
 	);
 	@messages = array('Fancy!', 'Stylin\'!', 'Groovy!', 'Lookin\' good!', 'Tasteful!', 'Awesome!', 'Rad!', 'Cool!');
 	title_msg(null, color(6).array_rand(@messages, 1, false)[0], 10, 40, 10);
