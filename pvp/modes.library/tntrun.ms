@@ -49,8 +49,12 @@ bind(player_interact, array('id': @id.'tntthrow'), array('button': 'left', 'item
 			set_entity_loc(@rider, _relative(ploc(), 'up', 3));
 			set_timeout(50, closure(){
 				@vector = _get_vector(pfacing(), 1, 0.1);
-				set_entity_velocity(@rider, @vector);
-				play_sound(ploc(), array('sound': 'IRONGOLEM_THROW'));
+				try {
+					set_entity_velocity(@rider, @vector);
+					play_sound(ploc(), array('sound': 'IRONGOLEM_THROW'));
+				} catch(BadEntityException @ex) {
+					// it done blown up!
+				}
 			});
 		}
 	}
