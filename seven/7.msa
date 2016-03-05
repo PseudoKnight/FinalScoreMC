@@ -23,7 +23,7 @@
 
 		@timer = array(7);
 		@7['state'] = 1;
-		@7['lobby'] = get_value('warp.7')['loc'];
+		@7['lobby'] = get_value('warp.7');
 		_add_activity('7', '7 Seconds to Live');
 		create_scoreboard('7');
 		create_objective('time', 'DUMMY', '7');
