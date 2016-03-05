@@ -27,8 +27,6 @@ proc _pvp_initialize_players(@id, @players) {
 		}
 		if(pmode(@player) === 'CREATIVE',
 			set_pmode(@player, 'SURVIVAL'))
-		if(has_permission(@player, 'vanish.standard'),
-			scriptas(@player, run('/v off')))
 		set_pscoreboard(@player, @id);
 		if(array_index_exists(@pvp['players'][@player], 'team')) {
 			team_add_player(@pvp['arena']['team'][@pvp['players'][@player]['team']]['name'], @player, @id);
