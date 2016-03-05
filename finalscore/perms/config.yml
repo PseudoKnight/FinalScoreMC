@@ -36,6 +36,16 @@ member:
     worldguard.region.flag.flags.block-break.*: true
     worldguard.region.flag.flags.block-place.*: true
   worlds:
+    world:
+      livemap.markers: true
+    world3:
+      livemap.markers: true
+    world4:
+      livemap.markers: true
+    omega:
+      livemap.markers: true
+    outworld:
+      livemap.markers: true
     LastManStanding:
       stargate.create.personal: false
       stargate.create.network: false
@@ -77,7 +87,6 @@ regular:
   permissions:
     group.regular: true
     logblock.tools.tool: true
-    pmonitor.showstate: true
   inheritance: member
 donor:
   permissions:
@@ -85,23 +94,20 @@ donor:
   worlds:
     world:
       livemap.tracers: true
-      livemap.deathmarkers: true
     world3:
       livemap.tracers: true
-      livemap.deathmarkers: true
     world4:
       livemap.tracers: true
-      livemap.deathmarkers: true
     omega:
       livemap.tracers: true
-      livemap.deathmarkers: true
+    outworld:
+      livemap.tracers: true
   inheritance: regular
 builder:
   permissions:
     group.builder: true
   worlds:
     dev:
-      vanish.standard: true
       worldguard.region.*: true
       command.fly: true
       command.gm.others: true
@@ -116,7 +122,6 @@ builder:
       command.mob: true
       command.cb: true
     custom:
-      vanish.standard: true
       worldedit.navigation.*: true
       command.fly: true
       command.gm: true
@@ -149,6 +154,7 @@ engineer:
       worldedit.fast: true
       worldedit.wand: true
       worldedit.schematic.*: true
+      AWE.user.mode.change: true
     custom:
       worldedit.tool.*: true
       worldedit.generation.*: true

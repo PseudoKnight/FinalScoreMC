@@ -6,7 +6,7 @@ if(extension_exists('CHDynmap')) {
 	}
 
 	bind(player_move, null, array('threshold': 10), @event) {
-		if(pmode() === 'CREATIVE' || !has_permission('livemap.tracers')) {
+		if(!_is_survival_world(pworld()) || !has_permission('livemap.tracers')) {
 			die();
 		}
 
@@ -43,7 +43,7 @@ if(extension_exists('CHDynmap')) {
 	}
 
 	bind(player_teleport, null, null, @event) {
-		if(!has_permission('group.donor')) {
+		if(!has_permission('group.donor') || !_is_survival_world(@event['from']['world'])) {
 			die();
 		}
 		set_timeout(50, closure(){
@@ -62,18 +62,21 @@ if(extension_exists('CHDynmap')) {
 	}
 
 	bind(player_death, null, null, @event) {
-		if(!_is_survival_world(pworld()) || !has_permission('livemap.deathmarkers')) {
+		if(!_is_survival_world(pworld()) || !has_permission('livemap.markers')) {
 			die();
 		}
 		dm_create_marker('tracers', array(
 			'world': pworld(),
 			'label': @event['death_message'],
 			'icon': 'skull',
-			'location': ploc()
+			'location': ploc(),
 		));
 	}
 
-	bind(player_quit, null, null, @event) {
+	bind(player_quit, array('priority': 'HIGHEST'), null, @event) {
+		if(!_is_survival_world(pworld()) || !has_permission('livemap.markers')) {
+			die();
+		}
 		if(array_contains(dm_all_markers('tracers'), player())) {
 			dm_delete_marker('tracers', player());
 		}
@@ -87,11 +90,19 @@ if(extension_exists('CHDynmap')) {
 	}
 
 	bind(player_join, null, null, @event) {
-		try {
-			dm_delete_marker('tracers', player().'_quit');
-		} catch(NotFoundException @e) {
-			 # first time joining this session
+		if(!_is_survival_world(pworld())) {
+			die();
 		}
+		set_timeout(50, closure(){
+			if(!has_permission('livemap.markers')) {
+				return();
+			}
+			try {
+				dm_delete_marker('tracers', player().'_quit');
+			} catch(NotFoundException @e) {
+				 # first time joining this session
+			}
+		});
 	}
 
 }
