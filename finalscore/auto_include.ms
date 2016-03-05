@@ -712,6 +712,9 @@ proc _pdata(@player, @autocomplete = true) {
 	if(is_null(@pdata)) {
 		@uuid = _get_uuid(@player, @autocomplete);
 		@pdata = _pdata_by_uuid(@uuid);
+		if(ponline(@player)) {
+			export('pdata.'.@player, @pdata);
+		}
 	}
 	return(@pdata);
 }
