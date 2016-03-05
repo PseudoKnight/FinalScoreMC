@@ -333,6 +333,7 @@
 		})
 		if(array_index_exists(@pdata, 'homeless'), msg(color('gray').'Homeless: '.color('r').'TRUE'))
 		if(array_index_exists(@pdata, 'ips'), msg(color('gray').'IPs: '.color('r').array_implode(@pdata['ips'], ' ')))
+		if(array_index_exists(@pdata, 'world'), msg(color('gray').'World: '.color('r').@pdata['world']))
 	)
 	msg(color('gray').'Group: '.color('r').array_get(@pdata, 'group', 'default'));
 	if(array_index_exists(@pdata, 'names'), msg(color('gray').'Aliases: '.color('r').array_implode(@pdata['names'], ', ')))
