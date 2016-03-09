@@ -28,28 +28,24 @@ proc _worldname(@world) {
 	Returns a world folder name when given a world alias
 */
 proc _worldid(@world) {
-	@worlds = array(
-		'alpha': 'world',
-		'alphanether': 'world_nether',
-		'delta': 'world3',
-		'deltanether': 'world3_nether',
-		'gamma': 'world4',
-		'gammanether': 'world4_nether',
-		'theend': 'world_the_end',
-		'custom': 'custom',
-		'frogpark': 'custom',
-		'dev': 'dev',
-		'outworld': 'outworld',
-		'omega': 'omega',
-		'omeganether': 'omega_nether',
-		'outworld': 'outworld',
-		'outworldnether': 'outworld_nether',
-	)
-	@alias = to_lower(reg_replace('[_-]', '', @world))
-	if(array_index_exists(@worlds, @alias)) {
-		return(@worlds[@alias])
+	@worlds = _worlds_config();
+	@world_name = to_lower(@world);
+	@world_id = '';
+	if(array_index_exists(@worlds, @world)) {
+		@world_id = @worlds[@world_name];
 	} else {
-		return(to_lower(@world))
+		@world_name  = reg_replace('[_-]', '', @world_name);
+		if(array_index_exists(@worlds, @world_name)) {
+			@world_id = @worlds[@world_name];
+		} else {
+			throw(InvalidWorldException, 'A world by that name does not exist.');
+		}
+	}
+	@world_id = @worlds[@alias];
+	if(is_array(@world_id)) {
+		return(@world_name);
+	} else {
+		return(@world_id);
 	}
 }
 
