@@ -228,7 +228,7 @@ bind(player_join, null, null, @event) {
 		# SET NEW LOCATION
 		if(array_index_exists(@pdata, 'homeless')) {
 		# homeless players are players left on deleted worlds
-			@loc = get_spawn('world');
+			@loc = get_spawn('omega');
 			set_ploc(@loc);
 			array_remove(@pdata, 'homeless');
 			@updatePdata = true;
