@@ -229,12 +229,6 @@
 	console(player().' kicked '.@player.'. (Reason: "'.$.'")')
 <<<
 
-/homeless $player = >>>
-	@pdata = _pdata($player)
-	@pdata['homeless'] = true
-	_store_pdata($player, @pdata)
-<<<
-
 /clearchat = >>>
 	for(@i = 0, @i < 20, @i++) {
 		broadcast('')

@@ -13,23 +13,23 @@
                 return(@ext)
             }
         }
-       
+
     }
-   
+
     proc _desc_func(@func) {
         # Colorfully describe a function.
         try(
             @desc = reflect_docs(@func, 'description')
             @returns = reflect_docs(@func, 'type')
             @args = reflect_docs(@func, 'args')
-           
+
             msg(color(YELLOW) . @func . ':' color(GREEN) . 'Returns' @returns .
             '.' color(BLUE) . 'Expects' @args . '.' color(YELLOW) . @desc)
         ,
             msg(color(RED) . 'Could not show information for' @func)
         )
     }
- 
+
     if (!$) {
         # List known extensions.
         @extensions = array_keys(extension_info())
@@ -45,14 +45,14 @@
         # Show functions in a given extension.
         @args = parse_args($)
         @extensions = extension_info()
-       
+
         # Get extension name regardless of case.
         @extension = _get_closest(@args[0], array_keys(@extensions))
-       
+
         if (@extension) {
             @extension = @extensions[@extension]
             @functions = @extension['functions']
-           
+
             foreach (@function in @functions) {
                 _desc_func(@function)
             }
@@ -69,7 +69,7 @@
     }
 <<<
 
-/* 
+/*
 	Lists the type and amount of events bound
 */
 /bindcount = >>>
@@ -83,7 +83,7 @@
 			@list[@type] = 1;
 		}
 	}
-	
+
 	foreach(@key: @value in @list) {
 		msg(@key.': '.@value);
 	}
@@ -102,7 +102,7 @@
 				clear_value(@key)
 			}
 			msg('Deleted '.$namespace)
-			
+
 		case 'rename':
 			foreach(@key: @value in @data) {
 				store_value(replace($namespace, $, @key), @data[@key])
@@ -112,61 +112,21 @@
 <<<
 
 /*
-	Convert multiverse-inventories inventory to inventory array
-	and then sets it to your inventory.
+    Set all players in outworld to homeless.
+    This is used when the outworld is reset.
 */
-/invconvert $player [$world = 'default'] = >>>
-	if(pmode() !== 'CREATIVE') {
-		die('Only do this in creative mode. This replaces your inventory.');
-	}
-	proc _parse_inv(@oinv, @armor = false) {
-		@inv = array();
-		if(@armor) {
-			@inv[99] = null;
-		}
-		foreach(@item in @oinv) {
-			@i = associative_array();
-			@i['name'] = @item['is']['type'];
-			if(array_index_exists(@item['is'], 'amount')) {
-				@i['qty'] = @item['is']['amount'];
-			}
-			if(array_index_exists(@item['is'], 'damage')) {
-				@i['data'] = @item['is']['damage'];
-			}
-			if(array_index_exists(@item['is'], 'meta')) {
-				@i['meta'] = associative_array();
-				if(array_index_exists(@item['is']['meta'], 'enchants')) {
-					@i['meta']['enchants'] = array();
-					foreach(@enchant: @level in @item['is']['meta']['enchants']) {
-						@i['meta']['enchants'][] = array('etype': @enchant, 'elevel': @level);
-					}
-				}
-				if(array_index_exists(@item['is']['meta'], 'repair-cost')) {
-					@i['meta']['repair'] = @item['is']['meta']['repair-cost'];
-				}
-				if(array_index_exists(@item['is']['meta'], 'title')) {
-					@i['meta']['title'] = @item['is']['meta']['title'];
-				}
-				if(array_index_exists(@item['is']['meta'], 'author')) {
-					@i['meta']['author'] = @item['is']['meta']['author'];
-				}
-				if(array_index_exists(@item['is']['meta'], 'pages')) {
-					@i['meta']['pages'] = @item['is']['meta']['pages'];
-				}
-				# TODO: more meta
-			}
-			@inv[] = @i;
-		}
-		return(@inv);
-	}
-	@endpoint = '';
-	if($world === 'default') {
-		@endpoint = 'groups/default/'.$player.'.yml';
-	} else {
-		@endpoint = 'worlds/'.$world.'/'.$player.'.yml';
-	}
-	@original = yml_decode(read('../../../Multiverse-Inventories/'.@endpoint))['SURVIVAL'];
-	set_pinv(_parse_inv(json_decode(@original['armorContents']), true));
-	set_pinv(_parse_inv(json_decode(@original['inventoryContents'])));
-	set_penderchest(_parse_inv(json_decode(@original['enderChestContents'])));
+/homeless [$player] = >>>
+    if($player) {
+    	@pdata = _pdata($player);
+    	@pdata['homeless'] = true;
+    	_store_pdata($player, @pdata);
+    }
+    foreach(@key: @pdata in get_values('uuids')) {
+        if(array_index_exists(@pdata, 'world')
+        && (@pdata['world'] == 'outworld' || @pdata['world'] == 'outworld_nether' || @pdata['world'] == 'outworld_the_end')) {
+            @pdata['homeless'] = true;
+            @pdata['world'] = 'omega';
+            store_value(@key, @pdata);
+        }
+    }
 <<<
