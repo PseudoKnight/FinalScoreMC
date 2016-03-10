@@ -41,7 +41,7 @@ proc _worldid(@world) {
 			throw(InvalidWorldException, 'A world by that name does not exist.');
 		}
 	}
-	@world_id = @worlds[@alias];
+	@world_id = @worlds[@world_name];
 	if(is_array(@world_id)) {
 		return(@world_name);
 	} else {
