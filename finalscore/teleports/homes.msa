@@ -25,23 +25,15 @@
 	@player = player();
 	if($) {
 		@args = parse_args($);
-		if(array_contains(get_worlds(), _worldid(to_lower(@args[0])))) {
-			@world = _worldid(to_lower(@args[0]));
+		try {
+			@world = _worldid(@args[0]);
 			if(array_size(@args) == 2) {
 				@player = @args[1];
 			}
-		} else {
+		} catch(InvalidWorldException @ex) {
 			@player = @args[0];
 			if(array_size(@args) == 2) {
-				if(array_contains(get_worlds(), _worldid(to_lower(@args[1])))) {
-					@world = _worldid(to_lower(@args[1]));
-				} else {
-					@worlds = '';
-					foreach(@world in get_worlds()) {
-						@worlds .= replace(_worldname(@world), ' ', '').', ';
-					}
-					die(color('yellow') . 'Available worlds: ' . @worlds);
-				}
+				@world = _worldid(@args[1]);
 			}
 		}
 	}
