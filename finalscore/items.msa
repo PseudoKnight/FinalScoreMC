@@ -1,6 +1,8 @@
 # Add an item into your inventory in the next available slot.
 *:/i [$item=0] [$amount=1] = >>>
-	if(pmode() !== 'CREATIVE', die('You\'re not in creative mode.'));
+	if(!has_permission('command.items')) {
+		die('You are not allowed to create custom items here.');
+	}
 	if($item == 0, die('Usage: /i [id:data] [quantity] '.color(gray).'(supports item names)'))
 	@item = split(':', $item)
 	if(!is_numeric(@item[0]), @item[0] = data_values(@item[0]))
@@ -17,7 +19,9 @@
 
 # Set the display name for the item in-hand
 *:/display [$] = >>>
-	if(pmode() !== 'CREATIVE', die('You\'re not in creative mode.'));
+	if(!has_permission('command.items')) {
+		die('You are not allowed to create custom items here.');
+	}
 	if(!$, die(color(gold).'Usage: /display <item display name> '.color(gray).'(supports &0 color codes)'))
 	@meta = get_itemmeta(null)
 	if(is_null(@meta), @meta = associative_array())
@@ -27,7 +31,9 @@
 
 # Enchant tool in hand with specified enchantment
 *:/enchant [$type='list'] [$level=1] = >>>
-	if(pmode() !== 'CREATIVE', die('You\'re not in creative mode.'));
+	if(!has_permission('command.items')) {
+		die('You are not allowed to create custom items here.');
+	}
 	# enchantment aliases
 	@enchants = array(
 		'power': 'ARROW_DAMAGE',
@@ -64,7 +70,9 @@
 
 # Remove all enchantments from item in hand
 *:/unenchant = >>>
-	if(pmode() !== 'CREATIVE', die('You\'re not in creative mode.'));
+	if(!has_permission('command.items')) {
+		die('You are not allowed to create custom items here.');
+	}
 	@item = pinv(player(), null)
 	array_remove(@item, 'enchants')
 	array_remove(@item[meta], 'enchants')
@@ -73,7 +81,9 @@
 
 # Set individual lines of lore for the item in-hand
 *:/lore [$line] [$] = >>>
-	if(pmode() !== 'CREATIVE', die('You\'re not in creative mode.'));
+	if(!has_permission('command.items')) {
+		die('You are not allowed to create custom items here.');
+	}
 	if(!$ || !is_numeric($line) || $line < 1) {
 		die(color('gold').'Usage: /lore <line#> <lore string> '.color('gray').'(supports &0 color codes)');
 	}
@@ -84,16 +94,18 @@
 	}
 	@meta['lore'][$line - 1] = colorize($);
 	set_itemmeta(null, @meta);
-<<<	
+<<<
 
 # Spawn player head
 *:/skull [$player] = >>>
-	if(pmode() !== 'CREATIVE', die('You\'re not in creative mode.'));
+	if(!has_permission('command.items')) {
+		die('You are not allowed to create custom items here.');
+	}
 	if($player) {
 		pgive_item(player(), '397:3', 1, array('owner': $player));
 		die();
 	}
-	
+
 	if(extension_exists('CHVirtualChests')) {
 	if(!array_contains(all_virtualchests(), 'skulls')) {
 		@skulls = array(
@@ -399,7 +411,9 @@
 
 # Dye leather armor in-hand with the specified R G B values (0 - 255)
 *:/dye [$r] [$g] [$b] = >>>
-	if(pmode() !== 'CREATIVE', die('You\'re not in creative mode.'));
+	if(!has_permission('command.items')) {
+		die('You are not allowed to create custom items here.');
+	}
 	if(!$b, die(color(gold).'Usage: /dye <red#> <green#> <blue#> '.color(gray).'(0 - 255)'))
 	try(
 		set_armor_color(pinfo(player(), 15), array(min(max($r, 0), 255), min(max($g, 0), 255), min(max($b, 0), 255)))
@@ -410,13 +424,13 @@
 
 # Create potions or add potion effects to existing potions
 *:/potion [$id] [$seconds = 30] [$strength = 1] = >>>
-	if(pmode() !== 'CREATIVE') {
-		die('You\'re not in creative mode.');
+	if(!has_permission('command.items')) {
+		die('You are not allowed to create custom items here.');
 	}
 	if(!$id) {
 		die('Usage: /potion <potionEffect> <seconds> <strength>');
 	}
-	
+
 	@effects = _get_effects();
 	@id = $id;
 	if(!is_numeric(@id)) {
@@ -425,7 +439,7 @@
 		}
 		@id = @effects[@id];
 	}
-	
+
 	@item = pinv(player(), null);
 	if(@item && @item['type'] == 373) { # add potion effecs to potion
 		if(is_null(@item['meta'])) {
@@ -436,16 +450,9 @@
 		}
 		@item['meta']['potions'][] = associative_array('id': @id, 'strength': $strength - 1, 'seconds': $seconds);
 		set_pinv(array(null: @item));
-		
+
 	} else { # create new potion
-	
-		@data = 16 # data effects the color of the potion
-		@effectdata = array(1: 2, 2: 10, 5: 9, 6: 5, 7: 12, 10: 1, 12: 3, 14: 14, 16: 6, 18: 8);
-		if(array_index_exists(@effectdata, @id)) {
-			@data = @effectdata[@id]
-		}
-	
-		set_pinv(array(null: array('type': 373, 'data': @data, 'meta': array(
+		set_pinv(array(null: array('type': 373, 'meta': array(
 			'potions': array(array('id': @id, 'strength': $strength - 1, 'seconds': $seconds))
 		))));
 	}
