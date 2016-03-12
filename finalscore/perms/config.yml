@@ -77,6 +77,7 @@ member:
       worldguard.region.flag.flags.teleport.*: true
       worldguard.region.flag.flags.invincible.*: true
       worldguard.region.claim: false
+      command.items: true
     custom:
       stargate.create.personal: false
       stargate.create.network: false
@@ -135,6 +136,7 @@ builder:
       command.heal.others: true
       command.mob: true
       command.cb: true
+      command.items: true
   inheritance: regular
 engineer:
   permissions:
@@ -212,6 +214,7 @@ moderator:
     chat.staff: true
     nocheat.admin: true
     minecraft.command.toggledownfall: true
+    command.items: true
   worlds:
     dev:
       worldedit.*: true
