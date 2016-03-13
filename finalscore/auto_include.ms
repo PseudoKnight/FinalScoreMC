@@ -492,39 +492,33 @@ proc _worldmsg(@world, @msg) {
 }
 
 /*
-	Returns the width of the character
+	Returns the character width map
 */
-proc _char_width(@char, @bold = 0) {
+proc _char_width() {
 	# Thanks to Octopod for this list
-	switch(@char) {
-		case ',':
-		case '!':
-		case ':':
-		case 'i':
-		case '|':
-		case '.':
-			return(2 + @bold);
-		case '`':
-		case '\'':
-		case 'l':
-			return(3 + @bold);
-		case '[':
-		case ']':
-		case ' ':
-		case 'I':
-		case 't':
-			return(4 + @bold);
-		case '*':
-		case '>':
-		case '<':
-		case '{':
-		case '}':
-		case 'f':
-		case 'k':
-			return(5 + @bold);
-		default:
-			return(6 + @bold);
-	}
+	@char = associative_array(
+		',': 2,
+		'!': 2,
+		':': 2,
+		'i': 2,
+		'|': 2,
+		'.': 2,
+		'`': 3,
+		'\'': 3,
+		'l': 3,
+		'[': 4,
+		']': 4,
+		' ': 4,
+		'I': 4,
+		't': 4,
+		'*': 5,
+		'>': 5,
+		'<': 5,
+		'{': 5,
+		'}': 5,
+		'f': 5,
+		'k': 5,
+	);
 }
 
 /*
@@ -533,6 +527,7 @@ proc _char_width(@char, @bold = 0) {
 proc _string_width(@string) {
 	@width = 0;
 	@bold = 0;
+	@chars = _char_width();
 	foreach(@i: @c in @string) {
 		if(@c === '\u00a7') {
 			if(@string[@i + 1] === 'l') {
@@ -542,7 +537,11 @@ proc _string_width(@string) {
 			}
 			continue(2);
 		}
-		@width += _char_width(@c, @bold);
+		if(array_index_exists(@chars, @c)) {
+			@width += @chars[@c] + @bold;
+		} else {
+			@width += 6 + @bold;
+		}
 	}
 	return(@width);
 }
@@ -555,7 +554,11 @@ proc _fill_string(@replaceChar, @fillChar, @string, @lineWidth = 320) {
 	@fillCount = reg_count('\\'.@replaceChar, @string);
 
 	@remainingWidth = @lineWidth - @width;
-	@charWidth = _char_width(@fillChar);
+	@charWidth = 6;
+	@chars = _char_width();
+	if(array_index_exists(@chars, @fillChar)) {
+		@charWidth = @chars[@fillChar];
+	}
 
 	@fillWidth = (@remainingWidth / @charWidth) / @fillCount;
 
