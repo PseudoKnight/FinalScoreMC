@@ -430,7 +430,8 @@ proc _pvp_end_match(@id, @winners) {
 					_class('unload', @player, @pvp['players'][@player]['class'], @pvp)
 				}
 				if(ponline(@player) && pinfo(@player, 5) > 0) {
-					close_pinv(@player)
+					close_pinv(@player);
+					set_pmode(@player, 'ADVENTURE');
 					if(array_index_exists(@pvp['arena'], 'resourcepack')) {
 						send_resourcepack(@player, 'http://mc.finalscoremc.com:25966/resourcepacks/default.zip')
 					}

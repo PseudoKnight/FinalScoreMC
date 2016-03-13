@@ -378,9 +378,6 @@
 	}
 
 	foreach(@p in array_keys(@pvp['players'])) {
-		if(pmode(@p) === 'CREATIVE') {
-			set_pmode(@p, 'SURVIVAL');
-		}
 		if(array_index_exists(@pvp['arena'], 'resourcepack')) {
 			send_resourcepack(@p, 'http://mc.finalscoremc.com:25966/resourcepacks/'.@pvp['arena']['resourcepack'].'.zip');
 		}

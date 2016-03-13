@@ -18,17 +18,20 @@ proc _fw_endgame(@winners) {
 	sk_region_flag('custom', 'frogware', 'pvp', 'deny');
 	_fw_msg('Best frog'.if(array_size(@winners) > 1, 's').' in the house: '.array_implode(@winners, ' & '))
 	foreach(@p in all_players('custom')) {
-		if(array_contains(@winners, @p)) {
-			@coins = _fw_totalplayers();
-			if(@coins > 3) {
-				_acc_add(@p, @coins - 2);
-				tmsg(@p, color('6').'+'.@coins.' coins');
+		if(_fw_player(@p)) {
+			if(array_contains(@winners, @p)) {
+				@coins = _fw_totalplayers();
+				if(@coins > 3) {
+					_acc_add(@p, @coins - 2);
+					tmsg(@p, color('6').'+'.@coins.' coins');
+				}
+				_fw_changeteam(@p, 'winners');
+			} else {
+				_fw_changeteam(@p, 'losers');
 			}
-			_fw_changeteam(@p, 'winners');
-		} else {
-			_fw_changeteam(@p, 'losers');
+			_clear_pinv(@p);
+			set_pmode(@p, 'SURVIVAL');
 		}
-		_clear_pinv(@p);
 	}
 	if(array_contains(get_scoreboards(), 'fw')) {
 		set_timeout(5000, closure(){

@@ -15,7 +15,7 @@
 		set_pscoreboard(player(), 'fw')
 		team_add_player('losers', player(), 'fw')
 		include('includes.library/frogware.ms')
-		
+
 		@scores = array()
 		foreach(@p in all_players('custom')) {
 			if(_fw_player(@p)) {
@@ -23,14 +23,13 @@
 			}
 		}
 		set_pscore('score', player(), if(@scores, min(@scores), 0), 'fw')
-		
+
 		set_ploc(_fw_loc(-1))
-		if(pmode() === 'CREATIVE', set_pmode('SURVIVAL'))
 		set_phunger(20)
 		set_psaturation(5)
 		set_phealth(20)
 		_clear_pinv(player())
-		
+
 	case 'start':
 		if(get_pscoreboard(player()) !== 'fw', die('You haven\'t joined first.'))
 		if(!is_numeric($pts), die('You must specify the point goal as a number. eg. /frogware start 25'))
@@ -40,6 +39,7 @@
 		include('includes.library/frogware.ms')
 		foreach(@p in all_players('custom')) {
 			if(_fw_player(@p)) {
+				set_pmode(@p, 'SURVIVAL');
 				set_phunger(@p, 20)
 				set_psaturation(@p, 5)
 				set_phealth(@p, 20)
@@ -47,7 +47,7 @@
 			}
 		}
 		_fw_startgame($pts)
-	
+
 	case 'forcestop':
 		queue_clear('fw');
 		queue_clear('fw2');
@@ -55,7 +55,7 @@
 		remove_scoreboard('fw');
 		unbind('fwdamage');
 		_remove_activity('frogware');
-	
+
 	default:
 		msg(color('bold').'FROGWARE --------------');
 		msg('| FrogWare is a game inspired by GarryWare,\n'

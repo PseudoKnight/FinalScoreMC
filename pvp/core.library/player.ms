@@ -25,8 +25,11 @@ proc _pvp_initialize_players(@id, @players) {
 			array_remove(@pvp['players'], @player);
 			continue();
 		}
-		if(pmode(@player) === 'CREATIVE',
-			set_pmode(@player, 'SURVIVAL'))
+		if(array_contains(@pvp['arena']['flags'], 'build')) {
+			set_pmode(@player, 'SURVIVAL');
+		} else {
+			set_pmode(@player, 'ADVENTURE');
+		}
 		set_pscoreboard(@player, @id);
 		if(array_index_exists(@pvp['players'][@player], 'team')) {
 			team_add_player(@pvp['arena']['team'][@pvp['players'][@player]['team']]['name'], @player, @id);

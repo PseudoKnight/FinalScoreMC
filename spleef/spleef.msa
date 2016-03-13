@@ -102,8 +102,8 @@
 		_regionmsg(@cfg['region']['wrapper'], color('a').'[Spleef] '.color('r').'Match starting in 3 seconds...')
 		@region = sk_region_info(@cfg['region']['floor'], @world)[0]
 		@mat = get_block_at(@cfg['option']['material'])
-		
-		#Given two blocks, iterates through all the blocks inside the cuboid, and calls the 
+
+		#Given two blocks, iterates through all the blocks inside the cuboid, and calls the
 		#user defined function on them. The used defined procedure should accept 3 parameters,
 		#the x, y, and z coordinates of the block.
 		proc _iterate_cuboid(@b1, @b2, @proc_name, @mat) {
@@ -188,7 +188,7 @@
 
 
 			foreach(array_keys(@currentspleef), @player,
-				if(pmode(@player) === 'CREATIVE', set_pmode(@player, 'SURVIVAL'))
+				set_pmode(@player, 'SURVIVAL');
 			)
 		))
 
@@ -231,26 +231,26 @@
 					_iterate_cuboid(array(@region[1][0], @region[0][1], @region[0][2]), array(@region[1][0], @region[0][1], @region[1][2]), '_removeedge')
 				}
 				@spleefsettings['counter'] = @spleefsettings['counter'] + 1
-  
+
 				if(array_size(@currentspleef) <= 1 && (!array_index_exists(@currentspleef, 'PseudoKnight') || pinfo('PseudoKnight', 11) == true)) {
 					@winner = array_implode(array_keys(@currentspleef))
 					if(@winner !== '') {
 						_regionmsg(@cfg['region']['wrapper'], color('a').'[Spleef] '._colorname(@winner).@winner.color(r).' is the winner!')
 						set_ploc(@winner, @cfg['warp']['lobby'])
-						_clear_pinv(@winner)
+						_clear_pinv(@winner);
+						set_pmode(@player, 'ADVENTURE');
 						_acc_add(@winner, @reward)
 						tmsg(@winner, color('a').'[Spleef] '.color('r').@reward.' coins!')
 					} else {
 						_regionmsg(@cfg['region']['wrapper'], color('a').'[Spleef] '.color('r').'No one wins.')
 					}
-					unbind('spleef_quit');
 					unbind('spleef_break');
 					@currentspleef = array();
 					export('currentspleef', @currentspleef);
 					_remove_activity('currentspleef');
 					clear_task();
 				}
-	
+
 				foreach(array_keys(@currentspleef), @player,
 					if(!ponline(@player) || pworld(@player) != @world || !array_contains(sk_current_regions(@player), @cfg['region']['arena'])) {
 						array_remove(@currentspleef, @player)
@@ -259,10 +259,11 @@
 						if(ponline(@player) && pworld() == @world) {
 							set_ploc(@player, @cfg['warp']['lobby'])
 							_clear_pinv(@player)
+							set_pmode(@player, 'ADVENTURE');
 						}
 					}
 				)
-	
+
 				foreach(all_players('custom'), @player,
 					if(array_index_exists(@currentspleef, @player), continue())
 					if(ponline(@player) && array_contains(sk_current_regions(@player), @cfg['region']['arena'])) {
@@ -272,21 +273,6 @@
 				)
 				export('spleefsettings', @spleefsettings)
 			))
-
-			bind(player_quit, array('id': 'spleef_quit'), array('player': player()), @event, @spleefinterval, @cfg,
-				@currentspleef = import('currentspleef')
-				unbind()
-				unbind('spleef_break')
-				clear_task(@spleefinterval)
-				_regionmsg(@cfg['region']['wrapper'], color('a').'[Spleef] '.color('r').' Host left the server.')
-				console('Spleef host left server.')
-				foreach(array_keys(@currentspleef), @player,
-					set_ploc(@player, @cfg['warp']['lobby'])
-				)
-				@currentspleef = array();
-				export('currentspleef', @currentspleef);
-				_remove_activity('currentspleef');
-			)
 
 			bind(block_break, array('id': 'spleef_break'), null, @event, @cfg,
 				@currentspleef = import('currentspleef')
