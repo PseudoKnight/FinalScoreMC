@@ -4,8 +4,6 @@ case 'load':
 		cancel()
 		if(pexp() >= 100) {
 			@arrow = shoot_projectile(player(), 'ARROW')
-			@velocity = entity_velocity(@arrow)
-			set_entity_velocity(@arrow, array(@velocity['x'] * 2.8, @velocity['y'] * 2.8, @velocity['z'] * 2.8));
 			set_entity_onfire(@arrow, 1)
 			play_sound(ploc(), array('sound': 'ENDERDRAGON_HIT', 'pitch': 2))
 			set_pexp(0)

@@ -14,8 +14,6 @@ bind(player_interact, array('id': @id.'grapple'), array('item': 417, 'button': '
 	}
 
 	@arrow = shoot_projectile(player(), 'arrow');
-	@v = entity_velocity(@arrow);
-	set_entity_velocity(@arrow, array(@v['x'] * 1.5, @v['y'] * 1.5, @v['z'] * 1.5));
 	set_entity_spec(@arrow, array('critical': true));
 	play_sound(ploc(), array('sound': 'SHOOT_ARROW'));
 	@shooter = puuid();
