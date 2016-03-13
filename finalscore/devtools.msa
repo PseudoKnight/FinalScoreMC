@@ -120,13 +120,16 @@
     	@pdata = _pdata($player);
     	@pdata['homeless'] = true;
     	_store_pdata($player, @pdata);
-    }
-    foreach(@key: @pdata in get_values('uuids')) {
-        if(array_index_exists(@pdata, 'world')
-        && (@pdata['world'] == 'outworld' || @pdata['world'] == 'outworld_nether' || @pdata['world'] == 'outworld_the_end')) {
-            @pdata['homeless'] = true;
-            @pdata['world'] = 'omega';
-            store_value(@key, @pdata);
+        msg('Set '.$player.' to "homeless".');
+    } else {
+        foreach(@key: @pdata in get_values('uuids')) {
+            if(array_index_exists(@pdata, 'world')
+            && (@pdata['world'] == 'outworld' || @pdata['world'] == 'outworld_nether' || @pdata['world'] == 'outworld_the_end')) {
+                @pdata['homeless'] = true;
+                @pdata['world'] = 'omega';
+                store_value(@key, @pdata);
+                msg('Set '.@pdata['name'].' to "homeless".');
+            }
         }
     }
 <<<

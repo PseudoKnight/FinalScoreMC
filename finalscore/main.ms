@@ -40,6 +40,7 @@ bind(player_login, null, null, @event) {
 				if(!array_index_exists(@pdata, 'names')) {
 					@pdata['names'] = array();
 				}
+				array_remove_values(@pdata['names'], @pdata['name']);
 				@pdata['names'][] = @pdata['name'];
 
 				# just in case, they're not in a survival world, we may need to fetch their inventory for them later

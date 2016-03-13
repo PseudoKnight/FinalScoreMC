@@ -54,9 +54,9 @@ case 'load':
 				}
 
 				@task = set_interval(1000, closure() {
-					try(
+					try {
 						@potato = pinv(@damaged, @slot);
-						if(@potato['meta']['display'] === '1') {
+						if(@potato['meta']['display'] == '1') {
 							bind(entity_damage, array('id': @damaged.'hotpotatodmg'), array('type': 'PLAYER', 'world': 'custom'), @e,
 									@damager, @pvp) {
 
@@ -73,10 +73,10 @@ case 'load':
 							@inv[@slot] = @potato;
 							set_pinv(@damaged, @inv);
 						}
-					, #catch
+					} catch(Exception @e) {
 						clear_task();
 						die();
-					);
+					};
 				});
 
 				@item['meta']['lore'] = array(@task);

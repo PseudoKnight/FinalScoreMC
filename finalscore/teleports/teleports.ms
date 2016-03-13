@@ -11,6 +11,7 @@ bind(player_teleport, null, null, @event) {
 	if(@event['to']['world'] != @event['from']['world']) {
 		if(_is_survival_world(@event['from']['world'])
 		&& _is_survival_world(@event['to']['world'])) {
+			/* update for 1.9
 			try( # sometimes entity does not exist and causes an exception in get_entity_vehicle()
 				@vehicle = get_entity_vehicle(puuid());
 				if(entity_type(@vehicle) === 'HORSE') {
@@ -28,6 +29,7 @@ bind(player_teleport, null, null, @event) {
 					die();
 				}
 			);
+			*/
 		} else {
 			set_timeout(50, closure(){
 				@world = @event['from']['world'];
@@ -35,11 +37,21 @@ bind(player_teleport, null, null, @event) {
 					@world = 'survival';
 				}
 				@pdata = _pdata(player());
+				/* 1.8 */
 				if(!array_index_exists(@pdata, 'lastloc')) {
 					@pdata['lastloc'] = associative_array();
 				}
 				@pdata['lastloc'][@world] = array_normalize(@event['from'])[0..5];
 				_store_pdata(player(), @pdata);
+				/* 1.9
+				@worlds = _worlds_config();
+				@mode = @worlds[@world]['mode'];
+				if(!array_index_exists(@pdata, @mode)) {
+					@pdata[@mode] = associative_array();
+				}
+				@pdata[@mode]['loc'] = array_normalize(@event['from'])[0..5];
+				_store_pdata(player(), @pdata);
+				*/
 			});
 		}
 	}
@@ -68,16 +80,5 @@ bind(player_teleport, null, null, @event) {
 bind(player_interact, null, array('item': 368, 'button': 'right'), @event) {
 	if(pworld() === 'custom') {
 		cancel();
-	}
-}
-
-# Main world_changed handler
-bind(world_changed, null, null, @event) {
-	if(@event['from'] !== 'custom'
-	&& @event['to'] === 'custom') {
-		# if teleporting to Frog Park
-		set_timeout(200, closure(){
-			_equip_park();
-		});
 	}
 }
