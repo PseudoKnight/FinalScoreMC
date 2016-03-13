@@ -5,16 +5,39 @@
 	switch($action) {
 	case 'update':
 		if(!has_permission('group.admin'), die('You do not have permission.'))
-		# @arenas = get_values('arena')
-		# foreach(@key: @arena in @arenas) {
-			# if(array_index_exists(@arena, 'itemspawn')) {
-				# for(@i = 0, @i < array_size(@arena['itemspawn']), @i++) {
-					# @arena['itemspawn'][@i]['loc'][1] += 1
-				# }
-				# store_value(@key, @arena)
-			# }
-		# }
-		msg('Nothing to update.')
+		@arenas = get_values('arena');
+		include('../finalscore/savestates/util.library/convert.ms');
+		foreach(@key: @arena in @arenas) {
+			if(array_index_exists(@arena, 'classes')) {
+				foreach(@c: @class in @arena['classes']){
+					foreach(@i: @item in array_get(@class, 'kit', array())) {
+						if(@item && ((array_index_exists(@item, 'type') && @item['type'] == 373)
+						|| (array_index_exists(@item, 'name') && @item['name'] == 'POTION'))) {
+							if(array_index_exists(@item, 'data') && @item['data'] > 0
+							&& (!array_index_exists(@item, 'meta') || !@item['meta'] || !array_index_exists(@item['meta'], 'potions'))) {
+								@potion = _convert_potion(@item);
+								msg('Fixed '.@item.' in '.@c);
+								@arena['classes'][@c]['kit'][@i] = @potion;
+								msg('Now '.@potion);
+							}
+						}
+					}
+					foreach(@i: @item in array_get(@class, 'ammo', array())) {
+						if(@item && ((array_index_exists(@item, 'type') && @item['type'] == 373)
+						|| (array_index_exists(@item, 'name') && @item['name'] == 'POTION'))) {
+							if(array_index_exists(@item, 'data') && @item['data'] > 0
+							&& (!array_index_exists(@item, 'meta') || !@item['meta'] || !array_index_exists(@item['meta'], 'potions'))) {
+								@potion = _convert_potion(@item);
+								msg('Fixed '.@item.' in '.@c);
+								@arena['classes'][@c]['ammo'][@i] = @potion;
+								msg('Now '.@potion);
+							}
+						}
+					}
+				}
+				store_value(@key, @arena);
+			}
+		}
 
 	case 'set':
 	case 's':
