@@ -496,7 +496,7 @@ proc _worldmsg(@world, @msg) {
 */
 proc _char_width() {
 	# Thanks to Octopod for this list
-	@char = associative_array(
+	return(associative_array(
 		',': 2,
 		'!': 2,
 		':': 2,
@@ -518,7 +518,7 @@ proc _char_width() {
 		'}': 5,
 		'f': 5,
 		'k': 5,
-	);
+	));
 }
 
 /*

@@ -322,7 +322,7 @@ proc _convert_potion(@olditem, @toyml = false) {
 		}
 	}
 	@item['name'] = 'POTION';
-	if(!array_index_exists(@item, 'meta')) {
+	if(!array_index_exists(@item, 'meta') || !@item['meta']) {
 		@item['meta'] = associative_array();
 	}
 	if(!array_index_exists(@item['meta'], 'potions')) {
