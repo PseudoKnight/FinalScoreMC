@@ -12,13 +12,13 @@
 			set_pflight(@player, 1)
 			msg('Turned on fly mode for '.@player.'.')
 			tmsg(@player, player().' turned on fly mode on you.')
-			
+
 		case '0':
 		case 'off':
 			set_pflight(@player, 0)
 			msg('Turned off fly mode for '.@player.'.')
 			tmsg(@player, player().' turned off fly mode on you.')
-			
+
 		default:
 			msg('Usage: /fly <player> <1|0>')
 	}
@@ -39,57 +39,69 @@
 # Set game mode for players
 *:/gamemode [$] = call_alias('/gm '.$)
 *:/gm [$] = >>>
-	if(!has_permission('command.gm'), die('You do not have permission.'))
-	
-	@player = player()
-	@mode = 'toggle'
+	if(!has_permission('command.gm')) {
+		die('You do not have permission.');
+	}
+
+	@player = player();
+	@mode = 'toggle';
 	if($) {
-		@args = parse_args($)
-		try(@player = player(@args[0])
+		@args = parse_args($);
+		try {
+			@player = player(@args[0])
 			if(@player != player() && !has_permission('command.gm.others')) {
-				die('You do not have permission to set another\'s game mode.')
+				die('You do not have permission to set another\'s game mode.');
 			} else if(pworld(@player) != pworld()) {
-				die('You do not have permission to set another\'s game mode in another world.')
+				die('You do not have permission to set another\'s game mode in another world.');
 			}
 			if(array_size(@args) >= 2) {
-				@mode = @args[1]
+				@mode = @args[1];
 			}
-		
-		, # catch
+		} catch(PlayerOfflineException @ex) {
 			if(is_numeric(@args[0])) {
-				@mode = @args[0]
+				@mode = @args[0];
 			} else {
-				die('Who is that? Are they online?')
+				die('Who is that? Are they online?');
 			}
-		)
+		}
 	}
-	
+
 	switch(to_lower(@mode)) {
 		case '0':
 		case 's':
-			@mode = 'SURVIVAL'
-			
+			@mode = 'SURVIVAL';
+
 		case '1':
 		case 'c':
-			@mode = 'CREATIVE'
-			
+			@mode = 'CREATIVE';
+
 		case '2':
 		case 'a':
-			@mode = 'ADVENTURE'
-			
+			@mode = 'ADVENTURE';
+
+		case '3':
+			@mode = 'SPECTATOR';
+
 		case 'toggle':
-			if(pmode(@player) === 'SURVIVAL') {
-				@mode = 'CREATIVE'
+			@world_mode = to_upper(_worlds_config()[pworld()]['mode']);
+			if(pmode(@player) == @world_mode) {
+				if(@world_mode == 'CREATIVE'){
+					@mode = 'SURVIVAL';
+				} else {
+					@mode = 'CREATIVE';
+				}
 			} else {
-				@mode = 'SURVIVAL'
+				@mode = @world_mode;
 			}
-			
-		default: 
-			die('Usage: /gm <player> [mode] OR /gm [mode]')
+
+		default:
+			die('Usage: /gm <player> [mode] OR /gm [mode]');
 	}
-	
-	set_pmode(@player, @mode)
-	if(@player != player(), msg('Set '.@player.'\'s game mode to '.@mode))
+
+	set_pmode(@player, @mode);
+	if(@player != player()) {
+		msg('Set '.@player.'\'s game mode to '.@mode);
+	}
 <<<
 
 # Set the time of day for this world
@@ -146,20 +158,20 @@
 	}
 	@horse = spawn_entity('horse', 1, _relative(ploc(), 'up'))[0];
 	set_mob_age(@horse, 0);
-	tame_mob(@horse); 
+	tame_mob(@horse);
 	set_entity_spec(@horse, array('jump': 0.8, 'saddle': array('name': 'saddle')));
 	set_entity_rider(@horse, puuid());
-	
+
 	bind(vehicle_leave, array('id': player().'horse_leave'), array('vehicletype': 'HORSE', 'passengertype': 'PLAYER'),
 			@e, @player = player()) {
-			
+
 		if(@e['player'] == @player) {
 			unbind();
 			unbind(@player.'horse_quit');
 			try(entity_remove(@e['vehicle']));
 		}
 	}
-	
+
 	bind(player_quit, array('id': player().'horse_quit'), array('player': player()), @e, @horse) {
 		unbind();
 		unbind(player().'horse_leave');
@@ -173,7 +185,7 @@
 	if(!sk_can_build(@l) || get_block_at(@l) != '25:0') {
 		die();
 	}
-	
+
 	@instrument = 'NOTE_PIANO';
 	switch(split(':', get_block_at(_relative(@l, 'down')))[0]) {
 		case '1':
