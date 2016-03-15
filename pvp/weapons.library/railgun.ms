@@ -1,7 +1,10 @@
 array_push(@pvp['binds'], @id.'railgun');
 bind(player_interact, array('id': @id.'railgun'), array('item': 175, 'button': 'right'), @e, @id) {
 	@pvp = import('pvp'.@id);
-	if(!array_index_exists(@pvp['players'], player()), die());
+	if(!array_index_exists(@pvp['players'], player()) || pinfo(player(), 6) != @e['item']) {
+		die();
+	}
+
 	@origin = _relative(ploc(), 'up', 2.3);
 	@facing = pfacing(player());
 	@facing[0] = @facing[0] + 90;

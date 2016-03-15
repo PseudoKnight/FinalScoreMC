@@ -1,6 +1,9 @@
 switch(@action) {
 case 'load':
 	bind(player_interact, array('id': @player.'lightning'), array('item': 369, 'button': 'right', 'player': @player), @e, @pvp) {
+		if(pinfo(player(), 6) != @e['item']) {
+			die();
+		}
 		@loc = pcursor(array(0, 65, 66, 68, 70, 72, 77, 85, 143, 147, 148, 157, 171, 188, 189, 190, 191, 192));
 		bind(entity_damage, array('id': player().'lightningdmg'), array('type': 'PLAYER', 'cause': 'LIGHTNING', 'world': 'custom'), @e,
 				@damager = player(), @pvp) {
@@ -44,6 +47,9 @@ case 'load':
 	}
 
 	bind(player_interact, array('id': @player.'woosh'), array('item': 288, 'button': 'right', 'player': @player), @e) {
+		if(pinfo(player(), 6) != @e['item']) {
+			die();
+		}
 		@loc1 = ploc()
 		foreach(@player in players_in_radius(ploc(), 8)) {
 			if(@player == player() || pinfo(@player, 5) <= 0, continue())

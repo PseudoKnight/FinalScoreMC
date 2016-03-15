@@ -1,6 +1,9 @@
 switch(@action) {
 case 'load':
 	bind(player_interact, array('id': @player.'plasmagun'), array('item': 382, 'button': 'right', 'player': @player), @e) {
+		if(pinfo(player(), 6) != @e['item']) {
+			die();
+		}
 		cancel()
 		if(pexp() >= 100) {
 			@arrow = shoot_projectile(player(), 'ARROW')
@@ -30,6 +33,9 @@ case 'load':
 	}
 
 	bind(player_interact, array('id': @player.'teleport'), array('item': 381, 'player': @player, 'button': 'right'), @e, @pvp) {
+		if(pinfo(6) != @e['item']) {
+			die();
+		}
 		cancel()
 		@loc = pcursor(array(0, 65, 66, 68, 70, 72, 77, 85, 143, 147, 148, 157, 171, 188, 189, 190, 191, 192));
 		@block = get_block_at(@loc);

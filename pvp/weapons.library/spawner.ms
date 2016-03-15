@@ -1,8 +1,10 @@
 array_push(@pvp['binds'], @id.'spawner')
 bind(player_interact, array('id': @id.'spawner'), array('button': 'right', 'item': 383), @e, @id) {
 	@pvp = import('pvp'.@id);
-	if(!array_index_exists(@pvp['players'], player()), die());
-	
+	if(!array_index_exists(@pvp['players'], player()) || pinfo(player(), 6) != @e['item']) {
+		die();
+	}
+
 	if(@e['action'] === 'right_click_block') {
 		cancel()
 		@item = pinv(player(), null)
@@ -10,11 +12,11 @@ bind(player_interact, array('id': @id.'spawner'), array('button': 'right', 'item
 		|| is_null(@item['meta']['display'])) {
 			die()
 		}
-		
+
 		@loc = _relative(@e['location'], @e['facing']);
 		@loc['x'] += 0.5;
 		@loc['z'] += 0.5;
-		
+
 		@mob = to_lower(@item['meta']['display'])
 		if(!is_null(@item['meta']['lore'])
 		&& @item['meta']['lore'][0] === 'Target Near') {

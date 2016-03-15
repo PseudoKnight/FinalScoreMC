@@ -9,14 +9,14 @@ case 'load':
 			}
 		}
 	}
-	
+
 	bind(player_interact, array('id': @player.'web'), array('player': @player, 'button': 'right', 'item': 291), @e, @pvp) {
 		@loc = ptarget_space();
 		foreach(@player in array_merge(array_keys(@pvp['players']), @pvp['spectators'])) {
 			psend_block_change(@player, @loc, 30);
 		}
 	}
-	
+
 case 'unload':
 	unbind(@player.'damage');
 	unbind(@player.'web');

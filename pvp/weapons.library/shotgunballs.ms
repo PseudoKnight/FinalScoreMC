@@ -1,7 +1,9 @@
 array_push(@pvp['binds'], @id.'shotgunshoot')
 bind(player_interact, array('id': @id.'shotgunshoot'), array('item': 332, 'button': 'right'), @e, @id) {
 	@pvp = import('pvp'.@id)
-	if(!array_index_exists(@pvp['players'], player()), die())
+	if(!array_index_exists(@pvp['players'], player()) || pinfo(player(), 6) != @e['item']) {
+		die();
+	}
 	cancel()
 	@entities = array()
 	for(@i = 0, @i < 8, @i++) {

@@ -1,6 +1,9 @@
 switch(@action) {
 case 'load':
 	bind(player_interact, array('id': @player.'blind'), array('player': @player, 'item': 290, 'button': 'right'), @e) {
+		if(pinfo(player(), 6) != @e['item']) {
+			die();
+		}
 		@item = pinv(player(), null);
 		if(@item['data'] > 0) {
 			die();
