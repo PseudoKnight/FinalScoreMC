@@ -33,7 +33,7 @@ case 'load':
 	}
 
 	bind(player_interact, array('id': @player.'teleport'), array('item': 381, 'player': @player, 'button': 'right'), @e, @pvp) {
-		if(pinfo(6) != @e['item']) {
+		if(pinfo(player(), 6) != @e['item']) {
 			die();
 		}
 		cancel()
