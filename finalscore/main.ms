@@ -607,6 +607,13 @@ bind(creature_spawn, null, array('reason': 'SPAWNER_EGG'), @event) {
 	});
 }
 
+# block skeleton trap horses in regions
+bind(creature_spawn, null, array('reason': 'LIGHTNING', 'type': 'HORSE'), @event) {
+	if(sk_regions_at(@event['location'])) {
+		cancel();
+	}
+}
+
 # prevent enderpearls from damaging item frames and paintings
 bind(entity_damage, null, array('type': 'ITEM_FRAME', 'cause': 'PROJECTILE'), @event) {
 	if(entity_type(@event['damager']) === 'ENDER_PEARL') {
