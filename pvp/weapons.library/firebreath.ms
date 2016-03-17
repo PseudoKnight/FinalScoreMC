@@ -107,7 +107,7 @@ bind(player_interact, array('id': @id.'firebreath'), array('item': 377, 'button'
 		@dist = _squared_distance_to_segment(@ploc, @loc, @targetc);
 		if(@dist < 2.25) { # 1.5 ^ 2
 			@uuid = puuid(@p);
-			@damage = if(entity_can_see(puuid(), @uuid), 7, 3.5);
+			@damage = if(entity_can_see(puuid(), @uuid), 6, 3.5);
 			damage_entity(@uuid, @damage, puuid());
 			set_entity_onfire(@uuid, 1);
 			continue();
@@ -115,7 +115,7 @@ bind(player_interact, array('id': @id.'firebreath'), array('item': 377, 'button'
 		@dist = _squared_distance_to_segment(@ploc, @loc, @targetl)
 		if(@dist < 2.25) { # 1.5 ^ 2
 			@uuid = puuid(@p);
-			@damage = if(entity_can_see(puuid(), @uuid), 6, 3);
+			@damage = if(entity_can_see(puuid(), @uuid), 5, 3);
 			damage_entity(@uuid, @damage, puuid());
 			set_entity_onfire(@uuid, 1);
 			continue();
@@ -123,7 +123,7 @@ bind(player_interact, array('id': @id.'firebreath'), array('item': 377, 'button'
 		@dist = _squared_distance_to_segment(@ploc, @loc, @targetr)
 		if(@dist < 2.25) { # 1.5 ^ 2
 			@uuid = puuid(@p);
-			@damage = if(entity_can_see(puuid(), @uuid), 6, 3);
+			@damage = if(entity_can_see(puuid(), @uuid), 5, 3);
 			damage_entity(@uuid, @damage, puuid());
 			set_entity_onfire(@uuid, 1);
 			continue();

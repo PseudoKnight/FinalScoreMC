@@ -23,7 +23,7 @@ case 'load':
 			})
 			if(extension_exists('CHSpigot')) {
 				@dmg = get_arrow_damage(@arrow);
-				set_arrow_damage(@arrow, @dmg * 0.65);
+				set_arrow_damage(@arrow, @dmg * 0.5);
 			}
 		}
 	}

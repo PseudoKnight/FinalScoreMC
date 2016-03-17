@@ -31,7 +31,7 @@ case 'load':
 			unbind(player().'lightningdmg');
 			export(player().'lightning', null);
 		}, player().'lightning');
-		queue_delay(5000, player().'lightning');
+		queue_delay(6000, player().'lightning');
 		queue_push(closure(){
 			if(!ponline(@e['player'])) {
 				return();

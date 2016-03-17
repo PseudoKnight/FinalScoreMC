@@ -35,9 +35,9 @@ case 'load':
 		if(@e['damager'] == @p) {
 			@helm = pinv(@e['player'], 103)
 			if(@helm && @helm['type'] == 20) {
-				modify_event('amount', 16)
+				modify_event('amount', 13);
 			} else {
-				modify_event('amount', 5)
+				modify_event('amount', 4);
 			}
 		} else if(@e['player'] == @p
 		&& !ponline(@e['damager'])

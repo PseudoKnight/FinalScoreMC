@@ -132,7 +132,7 @@ bind(player_interact, array('id': @id.'railgun'), array('item': 175, 'button': '
 			}
 		}
 		if(@hit) {
-			try(damage_entity(puuid(@p), 20, puuid()));
+			try(damage_entity(puuid(@p), 16, puuid()));
 			play_effect(@ploc, 'lava_pop', array('particleCount': 4));
 			play_sound(@origin, array('sound': 'SUCCESSFUL_HIT'), player());
 		}

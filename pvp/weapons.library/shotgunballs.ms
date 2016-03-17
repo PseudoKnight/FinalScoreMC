@@ -29,7 +29,7 @@ bind(entity_damage, array('id': @id.'shotgundamage'), array('type': 'PLAYER', 'c
 		if(array_index_exists(@pvp['players'], @e['shooter'])) {
 			@weapon = pinv(@e['shooter'], null);
 			if(!is_null(@weapon) && @weapon['type'] == 341) {
-				modify_event('amount', 8);
+				modify_event('amount', 7);
 			}
 		}
 	}

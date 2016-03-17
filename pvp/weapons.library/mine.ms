@@ -33,7 +33,7 @@ bind(item_pickup, array('id': @id.'minepickup'), array('item': 148), @event, @id
 		@item['meta']['display'] = 'MINE';
 		modify_event('item', @item);
 	} else {
-		@power = @event['item']['qty'] * 8;
+		@power = @event['item']['qty'] * 7;
 		modify_event('item', null);
 		@loc = _relative(ploc(), 'up');
 		play_sound(@loc, array('sound': 'NOTE_BASS', 'pitch': 2));

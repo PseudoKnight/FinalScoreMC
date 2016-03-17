@@ -63,7 +63,7 @@ case 'load':
 								if(!array_index_exists(@pvp['players'], @e['player']), die());
 								_stats_damage(@damager, @e['player'], @e['amount'], @pvp);
 							}
-							explosion(_relative(ploc(@damaged), 'up', 1.5), 3, true);
+							explosion(_relative(ploc(@damaged), 'up', 1.5), 2, true);
 							unbind(@damaged.'hotpotatodmg');
 							clear_task();
 						} else {

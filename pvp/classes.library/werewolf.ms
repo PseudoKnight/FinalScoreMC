@@ -32,7 +32,7 @@ case 'equip':
 
 case 'powerup':
 	set_peffect(@player, 1, 3, 17);
-	set_peffect(@player, 5, 3, 17);
+	set_peffect(@player, 5, 1, 17);
 	set_peffect(@player, 8, 1, 17);
 	set_timeout(50, closure(){ # powerups flash night vision, so we have to delay here
 		try(set_peffect(@player, 16, 0, 23));
