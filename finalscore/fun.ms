@@ -1,6 +1,7 @@
 bind(player_interact, null, array('item': 401, 'button': 'right'), @event) {
 	if(pworld() !== 'custom'
-	|| !array_contains(pgroup(), 'donor')) {
+	|| !array_contains(pgroup(), 'donor')
+	|| pinfo(player(), 6) != @event['item']) {
 		die()
 	}
 	cancel()
@@ -11,7 +12,7 @@ bind(player_interact, null, array('item': 401, 'button': 'right'), @event) {
 	}
 	@loc['x'] += 0.5
 	@loc['z'] += 0.5
-	
+
 	@numcolors = rand(3)
 	@colors = array()
 	for(@i = 0, @i <= @numcolors, @i++) {
@@ -30,7 +31,7 @@ bind(player_interact, null, array('item': 401, 'button': 'right'), @event) {
 		'fade': @fadecolors,
 		'type': array_rand(array('BALL', 'BALL_LARGE', 'STAR', 'BURST', 'CREEPER'), 1, false)[0],
 	))
-	
+
 	@slot = pinfo(player(), 15)
 	@item = pinv(player(), @slot)
 	@item['type'] = 402
