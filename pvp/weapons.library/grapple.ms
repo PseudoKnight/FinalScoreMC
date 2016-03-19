@@ -1,33 +1,38 @@
 array_push(@pvp['binds'], @id.'grapple')
-bind(player_interact, array('id': @id.'grapple'), array('item': 417, 'button': 'right'), @event, @id) {
+bind(projectile_launch, array('id': @id.'grapple'), array('type': 'FISHING_HOOK', 'world': 'custom'), @event, @id) {
 	@pvp = import('pvp'.@id);
+	@player = @event['player'];
+	@hook = @event['id'];
+
 	if(!array_index_exists(@pvp['players'], player())) {
 		die();
 	}
 
-	if(has_bind('grapple'.player())) {
+	if(!ptake_item(@player, 262, 1)) {
 		die();
 	}
 
-	if(!ptake_item(262, 1)) {
-		die();
-	}
-
-	@arrow = shoot_projectile(player(), 'arrow');
+	@arrow = shoot_projectile(@player, 'arrow');
 	set_entity_spec(@arrow, array('critical': true));
-	play_sound(ploc(), array('sound': 'SHOOT_ARROW'));
-	@shooter = puuid();
+	set_arrow_damage(@arrow, 1);
+	play_sound(ploc(@player), array('sound': 'SHOOT_ARROW'));
+	@shooter = puuid(@player);
+	@slot = pinfo(@player, 15);
 
-	bind(projectile_hit, array(id: 'grapple'.player()), array('id': @arrow), @event, @shooter) {
-		unbind();
+	set_timeout(50, closure(){
+		try(set_entity_rider(@arrow, @hook));
+	});
 
-		@loc2 = @event['location'];
+	proc _reel(@loc2, @shooter, @slot, @hook, @target, @mover) {
+
 		@player = get_player_from_entity_id(@shooter);
-
 		@loc1 = entity_loc(@shooter);
 
 		@dist = sqrt(((@loc2['x'] - @loc1['x']) ** 2) + ((@loc2['y'] - @loc1['y']) ** 2) + ((@loc2['z'] - @loc1['z']) ** 2));
-		if(@dist > 64) {
+		if(@dist > 31) {
+			if(@target != @shooter) {
+				try(entity_remove(@target));
+			}
 			die();
 		}
 
@@ -35,68 +40,67 @@ bind(player_interact, array('id': @id.'grapple'), array('item': 417, 'button': '
 		play_sound(@loc2, array('sound': 'IRONGOLEM_HIT', 'pitch': 2));
 		play_sound(@loc1, array('sound': 'HORSE_BREATHE', 'pitch': 1.7));
 
-		@squid = spawn_mob('SQUID', 1, @loc2)[0];
-		set_mob_effect(@squid, 14, 0, 12, true, false);
-		set_mob_effect(@squid, 11, 5, 12, true, false);
-		set_leashholder(@squid, @shooter);
-
-		@armorstand = spawn_entity('ARMOR_STAND', 1, _relative(@loc2, 'down', 2.5))[0];
-		set_entity_spec(@armorstand, array('gravity': false, 'small': true, 'visible': false));
-		set_entity_rider(@armorstand, @squid);
-
-		@grapple = array(time: 0);
 		@endtask = closure(){
-			if(ponline(@player) && !entity_grounded(@shooter)) {
-				set_entity_velocity(@shooter, array(0, 0.4, 0));
+			if(!entity_grounded(@mover)) {
+				set_entity_velocity(@mover, array(0, 0.4, 0));
 			}
-			try {
-				entity_remove(@armorstand);
-				entity_remove(@squid);
-			} catch(BadEntityException @e) {
-				# entity doesn't exist, moving on
+
+			if(ponline(@player)) {
+				@inv = associative_array();
+				@inv[@slot] = null;
+				set_pinv(@player, @inv);
+				set_timeout(50, closure(){
+					@inv[@slot] = array('name': 'FISHING_ROD');
+					set_pinv(@player, @inv);
+				});
 			}
 		}
 		@task = closure(){
-			@grapple['time'] += 1;
-			if(!ponline(@player)
-			|| get_entity_health(@shooter) <= 0
-			|| @grapple['time'] > 100
-			|| pinfo(@player, 11)) {
-				execute(@endtask);
-				clear_task();
-			} else {
-				try {
-					@loc2 = entity_loc(@event['id']);
-					@loc1 = entity_loc(@shooter);
+			try {
+				if(get_entity_health(@shooter) == 0
+				|| get_entity_health(@mover) == 0
+				|| pinfo(@player, 15) != @slot
+				|| !entity_exists(@hook)) {
+					clear_task();
+					execute(@endtask);
+				} else {
+					@loc2 = entity_loc(@target);
+					@loc1 = entity_loc(@mover);
 					@dist = sqrt(((@loc2['x'] - @loc1['x']) ** 2) + ((@loc2['y'] - @loc1['y']) ** 2) + ((@loc2['z'] - @loc1['z']) ** 2));
 					@dist = min(20, @dist);
 					@x = (@loc2['x'] - @loc1['x']) / @dist;
 					@y = (@loc2['y'] - @loc1['y']) / @dist * 1.1;
 					@z = (@loc2['z'] - @loc1['z']) / @dist;
-					set_entity_velocity(@shooter, array(@x, @y, @z));
-					set_entity_fall_distance(@shooter, 0);
+					set_entity_velocity(@mover, array(@x, @y, @z));
+					set_entity_fall_distance(@mover, 0);
 					if(@dist >= 10) {
 						@pitch = 1.4 + (0.6 * (@dist - 10) / 20);
 						play_sound(@loc1, array('sound': 'HORSE_BREATHE', 'pitch': @pitch));
 					}
-				} catch(BadEntityException @e){
-					execute(@endtask);
-					clear_task();
 				}
+			} catch(BadEntityException @e) {
+				clear_task();
+				execute(@endtask);
 			}
 		}
 		execute(@task);
 		set_interval(100, @task);
 	}
 
-	set_timeout(1100, closure(){
-		if(has_bind('grapple'.player())) {
-			try {
-				entity_remove(@arrow);
-				unbind('grapple'.player());
-			} catch(BadEntityException @e) {
-				# entity doesn't exist, moving on
-			}
+	bind(projectile_hit, array('id': 'hit'.@arrow), array('id': @arrow), @event, @shooter, @slot, @hook) {
+		_reel(@event['location'], @shooter, @slot, @hook, @event['id'], @shooter);
+	}
+
+	bind(entity_damage_player, array('id': 'damage'.@arrow), array('id': @arrow), @event, @shooter, @slot, @hook) {
+		_reel(@event['location'], @shooter, @slot, @hook, @shooter, puuid(@event['player']));
+	}
+
+	set_timeout(800, closure(){
+		if(has_bind('hit'.@arrow)
+		&& has_bind('damage'.@player)) {
+			try(entity_remove(@arrow));
 		}
+		unbind('hit'.@arrow);
+		unbind('damage'.@arrow);
 	});
 }
