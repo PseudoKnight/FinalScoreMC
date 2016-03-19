@@ -584,6 +584,9 @@ bind(entity_enter_portal, null, array('type': '/^(?!PLAYER)\\w*/', 'world': '/(d
 bind(player_portal_travel, null, null, @e) {
 	if(!_is_survival_world(@e['from']['world'])) {
 		cancel();
+	} else if(@e['from']['world'] == 'outworld' && @e['type'] == 'END_PORTAL') {
+		cancel();
+		set_ploc(get_spawn('outworld_the_end'));
 	}
 }
 
