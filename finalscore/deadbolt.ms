@@ -1,5 +1,5 @@
 # DeadboltHelper
-# Automatically locks chests when right-clicking with sign. 
+# Automatically locks chests when right-clicking with sign.
 # This feature already exists in Deadbolt, however,
 # this allows me to customize which blocks I want to auto-protect with signs.
 # DEPENDENCIES:
@@ -8,7 +8,7 @@
 proc _get_deadbolt(@loc) {
 	try(
 		@signtext = get_sign_text(@loc);
-	, 
+	,
 		return(null);
 	);
 	if(!reg_match('(?i)^(\\u00A7[0-9a-f])?\\[private\\]$', @signtext[0])) {
@@ -18,10 +18,10 @@ proc _get_deadbolt(@loc) {
 }
 
 bind(player_interact, null, array('button': 'right', 'item': 323), @e) {
-	if(@e['action'] !== 'right_click_block' || pinfo(player(), 11)) { 
+	if(@e['action'] !== 'right_click_block' || pinfo(player(), 11) || !pinfo(player(), 6) != @e['item']) {
 		die();
 	}
-	
+
 	@blockid = split(':', @e['block'])[0]
 	if((@blockid == 54 || @blockid == 146)
 	&& sk_can_build(@e['location'])) {
@@ -47,15 +47,15 @@ bind(player_interact, null, array('button': 'right', 'item': 323), @e) {
 			@data = 4
 		case 'east':
 			@data = 5
-		default: 
+		default:
 			die()
 		}
 		@location = _relative(@e['location'], @e['facing'])
 		set_block_at(@location, '68:'.@data)
 		set_sign_text(@location, array(
-			color('dark_red').'[PRIVATE]', 
-			if(length(player()) > 15, substr(player(), 0, 15), player()), 
-			'', 
+			color('dark_red').'[PRIVATE]',
+			if(length(player()) > 15, substr(player(), 0, 15), player()),
+			'',
 			'',
 		))
 		@slot = pinv(player(), null)

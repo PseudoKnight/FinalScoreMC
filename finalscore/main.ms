@@ -301,7 +301,7 @@ bind(block_place, null, array('type': 144), @event) {
 bind(player_interact, null, array('block': 118, 'button': 'right'), @event) {
 	if(@event['block'] === '118:3') {
 		@result = null;
-		switch(@event['item']) {
+		switch(pinfo(player(), 6)) {
 			case '325:0':
 				@result = 326;
 			case '374:0':

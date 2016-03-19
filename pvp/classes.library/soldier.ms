@@ -6,7 +6,7 @@ case 'load':
 			modify_event('amount', 2);
 		}
 	}
-	
+
 	bind(player_interact, array('id': @player.'soldiershoot'), array('player': @player, 'item': 291), @e) {
 		@item = pinv(player(), null);
 		if(@item['data'] >= 128, die());
@@ -26,8 +26,11 @@ case 'load':
 			play_sound(ploc(), array('sound': 'FIREWORK_LARGE_BLAST', 'pitch': 1.5, 'volume': 2));
 		});
 	}
-	
+
 	bind(player_interact, array('id': @player.'soldierreload'), array('player': @player, 'item': 265), @e) {
+		if(pinfo(player(), 6) != @e['item']){
+			die();
+		}
 		@item = pinv(player(), null);
 		set_pinv(player(), array(null: null));
 		@slot = pinfo(player(), 15);
@@ -50,9 +53,11 @@ case 'load':
 			}
 		});
 	}
-	
+
 	bind(player_interact, array('id': @player.'grenade'), array('player': @player, 'item': 273), @e) {
-		ptake_item(player(), 273, 1);
+		if(!ptake_item(player(), 273, 1)) {
+			die();
+		}
 		@loc = _relative(ploc(), 'up', 2);
 		@armorStand = spawn_entity('ARMOR_STAND', 1, @loc)[0];
 		set_entity_spec(@armorStand, array('visible': false, 'small': true, 'arms': true));
@@ -71,10 +76,10 @@ case 'load':
 			);
 		});
 	}
-	
+
 case 'unload':
 	unbind(@player.'soldierdmg');
-	unbind(@player.'soldiershoot'); 
-	unbind(@player.'soldierreload'); 
+	unbind(@player.'soldiershoot');
+	unbind(@player.'soldierreload');
 	unbind(@player.'grenade');
 }
