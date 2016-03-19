@@ -38,7 +38,7 @@ proc _worldid(@world) {
 		if(array_index_exists(@worlds, @world_name)) {
 			@world_id = @worlds[@world_name];
 		} else {
-			throw(InvalidWorldException, 'A world by that name does not exist.');
+			throw(InvalidWorldException, 'A world by the name "'.@world.'" does not exist.');
 		}
 	}
 	@world_id = @worlds[@world_name];

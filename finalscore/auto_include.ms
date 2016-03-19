@@ -1,3 +1,12 @@
+set_uncaught_exception_handler(closure(@ex){
+	msg(color('red').@ex['message']);
+	console(@ex['classType'].': '.@ex['message']);
+	foreach(@trace in @ex['stackTrace']) {
+		console(split('LocalPackages', @trace['file'])[-1].':'.@trace['line'].' '.@trace['id']);
+	}
+	return(true);
+});
+
 /*
 	Gets the pitch for the given tone and octave
 */
