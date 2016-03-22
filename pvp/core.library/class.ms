@@ -212,7 +212,7 @@ proc _class_select(@id, @pvp) {
 			if(array_index_exists(@pvp['players'][player()], 'picks')) {
 				@pvp['players'][player()]['picks'] -= 1;
 			}
-			@pvp['players'][player()]
+			/*
 			if(@class !== 'random') {
 				if(!array_index_exists(@pvp['arena']['classes'][@class], 'picked')) {
 					@pvp['arena']['classes'][@class]['picked'] = 1;
@@ -220,6 +220,7 @@ proc _class_select(@id, @pvp) {
 					@pvp['arena']['classes'][@class]['picked'] += 1;
 				}
 			}
+			*/
 			if(array_index_exists(@pvp['arena'], 'captain')) {
 				if(array_contains(@pvp['arena']['captain'], @class)) {
 					clear_virtualchest(@id.@pvp['players'][player()]['team'], 0);
