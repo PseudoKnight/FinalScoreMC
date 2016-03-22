@@ -67,7 +67,7 @@ bind(projectile_launch, array('id': @id.'grapple'), array('type': 'FISHING_HOOK'
 					@loc2 = entity_loc(@target);
 					@loc1 = entity_loc(@mover);
 					@dist = sqrt(((@loc2['x'] - @loc1['x']) ** 2) + ((@loc2['y'] - @loc1['y']) ** 2) + ((@loc2['z'] - @loc1['z']) ** 2));
-					@dist = min(20, @dist);
+					@dist = max(0.1, min(20, @dist));
 					@x = (@loc2['x'] - @loc1['x']) / @dist;
 					@y = (@loc2['y'] - @loc1['y']) / @dist * 1.1;
 					@z = (@loc2['z'] - @loc1['z']) / @dist;
