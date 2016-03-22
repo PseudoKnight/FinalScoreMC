@@ -359,3 +359,16 @@
 
 # Colour codes
 *:/colors = msg(colorize('&00&11&22&33&44&55&66&77&88&99&aa&bb&cc&dd&ee&ff &kk&r&ll&r&mm&r&nn&r&oo &rr'))
+
+# Vanish
+*:/v = >>>
+	if(!has_permission('command.vanish')) {
+		die('You do not have permission.');
+	}
+	if(pmode() == 'SPECTATOR') {
+		@worlds = _worlds_config();
+		set_pmode(@worlds[pworld()]['mode']);
+	} else {
+		set_pmode('SPECTATOR');
+	}
+<<<
