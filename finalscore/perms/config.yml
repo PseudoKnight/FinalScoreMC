@@ -45,8 +45,6 @@ member:
       livemap.markers: true
     omega:
       livemap.markers: true
-    outworld:
-      livemap.markers: true
     LastManStanding:
       stargate.create.personal: false
       stargate.create.network: false
@@ -102,8 +100,6 @@ donor:
       livemap.tracers: true
     omega:
       livemap.tracers: true
-    outworld:
-      livemap.tracers: true
   inheritance: regular
 builder:
   permissions:
@@ -138,6 +134,7 @@ builder:
       command.mob: true
       command.cb: true
       command.items: true
+      command.vanish: true
   inheritance: regular
 engineer:
   permissions:
@@ -216,6 +213,7 @@ moderator:
     nocheat.admin: true
     minecraft.command.toggledownfall: true
     command.items: true
+    command.vanish: true
   worlds:
     dev:
       worldedit.*: true
