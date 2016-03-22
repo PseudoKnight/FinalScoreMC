@@ -1,4 +1,4 @@
-set_cron('*/10 * * * *', closure(){
+set_cron('*/5 * * * *', closure(){
 	foreach(@world in get_worlds()) {
 		queue_push(closure(){
 			save_world(@world);
@@ -9,7 +9,7 @@ set_cron('*/10 * * * *', closure(){
 		@currently = import('currently');
 		@allocMem = get_server_info(15);
 		@freeMem = get_server_info(16);
-		console('---[ SAVED ]---[ TPS: '.tps()[1].' ]'
+		console('---[ SAVED ]---[ TPS: '.tps()[0].' ]'
 			.'---[ MEM: '.floor((@allocMem - @freeMem) / 1000000).' / '.floor(@allocMem / 1000000).' / 2863 MB ]'
 			.'---[ PLAYERS: '.array_size(all_players()).' ]'
 			.'---'.if(!is_null(@currently), '[ CURRENTLY: '.@currently.' ]---'), false);
