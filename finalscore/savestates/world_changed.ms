@@ -11,6 +11,7 @@ bind(world_changed, null, null, @event) {
             _store_pstate(@event['player'], 'survival');
             _clear_pstate(@event['player']);
         } else if(@worlds[@to]['mode'] == 'survival') {
+            console('Loading survival inventory for '.@event['player'].' coming from '.@from.'.');
             _get_pstate(@event['player'], 'survival');
         } else {
             _clear_pstate(@event['player']);
