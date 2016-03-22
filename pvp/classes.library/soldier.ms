@@ -12,7 +12,7 @@ case 'load':
 		if(@item['data'] >= 128, die());
 		@bullet = shoot_projectile(@e['player'], 'EGG');
 		@v = entity_velocity(@bullet);
-		set_entity_velocity(@bullet, array(@v['x'] * 2.9, @v['y'] * 2.9, @v['z'] * 2.9));
+		set_entity_velocity(@bullet, array(@v['x'] * 2.8, @v['y'] * 2.8, @v['z'] * 2.8));
 		play_sound(ploc(), array('sound': 'FIREWORK_LARGE_BLAST', 'pitch': 1.5, 'volume': 2));
 		@slot = pinfo(player(), 15);
 		set_timeout(50, closure(){
@@ -22,7 +22,7 @@ case 'load':
 			set_pinv(player(), @inv);
 			@bullet = shoot_projectile(@e['player'], 'EGG');
 			@v = entity_velocity(@bullet);
-			set_entity_velocity(@bullet, array(@v['x'] * 2.9, @v['y'] * 2.9, @v['z'] * 2.9));
+			set_entity_velocity(@bullet, array(@v['x'] * 2.8, @v['y'] * 2.8, @v['z'] * 2.8));
 			play_sound(ploc(), array('sound': 'FIREWORK_LARGE_BLAST', 'pitch': 1.5, 'volume': 2));
 		});
 	}
