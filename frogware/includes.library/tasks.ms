@@ -254,8 +254,8 @@ proc _fw_task(@task, @state, @secs) {
 			} else {
 				_fw_set_winners();
 				queue_push(closure(){
-					_iterate_cuboid(array(@region[0][0] + 1, @region[1][1] - 1, @region[0][2] + 1, 'custom'),
-					array(@region[1][0] - 1, @region[1][1] - 1, @region[1][2] - 1, 'custom'),
+					_iterate_cuboid(array(@region[0][0] - 1, @region[1][1] - 1, @region[0][2] - 1, 'custom'),
+					array(@region[1][0] + 1, @region[1][1] - 1, @region[1][2] + 1, 'custom'),
 					'8:0', 3);
 				}, 'fw3');
 				bind(entity_damage, array('id': 'fwfall'), array('type': 'PLAYER', 'cause': 'FALL'), @e) {
@@ -266,7 +266,14 @@ proc _fw_task(@task, @state, @secs) {
 			}
 
 		} else {
-			if(!get_teams('fw')[1]['players']) {
+			if(has_bind('fwfall')){
+				unbind('fwfall');
+				foreach(@p in all_players('custom')) {
+					if(_fw_player(@p) && !array_contains(sk_current_regions(@p), 'frogware')) {
+						set_ploc(@p, _relative(ploc(@p), 'up'));
+					}
+				}
+			} else {
 				foreach(@p in all_players('custom')) {
 					if(_fw_player(@p)
 					&& get_block_at(ploc(@p)) === '133:0'
@@ -275,7 +282,6 @@ proc _fw_task(@task, @state, @secs) {
 					}
 				}
 			}
-			unbind('fwfall');
 			_fw_startround(@secs);
 
 		}
