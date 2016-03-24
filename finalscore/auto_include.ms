@@ -376,6 +376,7 @@ proc _get_effects() {
 		'fireresistance': 12,
 		'waterbreathing': 13,
 		'invis': 14,
+		'invisibility': 14,
 		'blindness': 15,
 		'nightvision': 16,
 		'hunger': 17,
@@ -383,9 +384,14 @@ proc _get_effects() {
 		'poison': 19,
 		'wither': 20,
 		'boost': 21,
+		'healthboost': 21,
 		'absorption': 22,
-		'saturation': 23
-	))
+		'saturation': 23,
+		'glowing': 24,
+		'levitation': 25,
+		'luck': 26,
+		'badluck': 27,
+	));
 }
 
 /*
