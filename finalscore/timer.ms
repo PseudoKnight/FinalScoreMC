@@ -13,7 +13,8 @@ register_command('timer', array(
 	'executor': closure(@alias, @sender, @args, @info) {
 
 		if(array_size(@args) != 3
-		|| phas_flight(@args[2])) {
+		|| phas_flight(@args[2])
+		|| pmode(@args[2]) != 'ADVENTURE') {
 			die();
 		}
 
@@ -96,7 +97,6 @@ register_command('timer', array(
 
 				if(@stop) {
 					array_remove(@timers, @player);
-					unbind(@player.'timerbreak');
 					unbind(@player.'reset');
 					unbind(@player.'timerdeath');
 					if(ponline(@player) && pworld(@player) === 'custom') {
@@ -109,19 +109,6 @@ register_command('timer', array(
 				}
 			});
 
-			if(!has_bind(@player.'timerbreak')) {
-				bind(block_break, array('id': @player.'timerbreak'), array('player': @player), @e) {
-					play_sound(ploc(), array('sound': 'VILLAGER_NO'), player());
-					@timers = import('timer');
-					unbind();
-					unbind(player().'reset');
-					unbind(player().'timerdeath');
-					ptake_item(player(), 39, 1);
-					clear_task(@timers[player()][2]);
-					array_remove(@timers, player());
-					_remove_activity(player().'timer');
-				}
-			}
 			if(!has_bind(@player.'reset')) {
 				bind(player_interact, array('id': @player.'reset'), array('player': @player, 'item': 39), @e, @startLoc) {
 					cancel();
@@ -145,7 +132,6 @@ register_command('timer', array(
 		&& @timers[@player][0] == @id) {
 
 			@time = round((time() - @timers[@player][1]) / 1000, 1);
-			unbind(@player.'timerbreak');
 			unbind(@player.'reset');
 			unbind(@player.'timerdeath');
 			ptake_item(@player, 39, 1);
