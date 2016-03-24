@@ -25,7 +25,7 @@ proc _get_pstate(@player, @state) {
 	}
 
 	try {
-		if(array_index_exists(@pstate, 'bed') is_array(@pstate['bed'])) {
+		if(array_index_exists(@pstate, 'bed') && is_array(@pstate['bed'])) {
 			set_pbed_location(@player, @pstate['bed']);
 		} else if(is_array(pbed_location(@player))) {
 			set_pbed_location(@player, get_spawn(pworld(@player)));
