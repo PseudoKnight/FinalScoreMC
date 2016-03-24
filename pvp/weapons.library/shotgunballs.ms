@@ -9,7 +9,7 @@ bind(player_interact, array('id': @id.'shotgunshoot'), array('item': 332, 'butto
 	for(@i = 0, @i < 8, @i++) {
 		@entities[@i] = shoot_projectile(player(), 'SNOWBALL')
 		@v = entity_velocity(@entities[@i])
-		set_entity_velocity(@entities[@i], array(@v['x'] * 2.8 + ((rand(3) - 1)), @v['y'] * 2.8 + ((rand(3) - 1)), @v['z'] * 2.8 + ((rand(3) - 1))))
+		set_entity_velocity(@entities[@i], array(@v['x'] * 2 + (rand(3) - 1), @v['y'] * 2 + (rand(3) - 1), @v['z'] * 2 + (rand(3) - 1)));
 	}
 	set_timeout(300, closure(){
 		foreach(@snowball in @entities) {
