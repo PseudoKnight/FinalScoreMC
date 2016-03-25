@@ -13,7 +13,7 @@ proc _pgive_item(@item, @amount) {
         die('Amount must be a positive integer.');
     }
 	try {
-		pgive_item(@item[0].':'.@item[1], $amount);
+		pgive_item(@item[0].':'.@item[1], @amount);
 		msg(color('yellow').'You\'ve been given '.@amount.' '.data_name(@item[0].':'.@item[1]).'.');
 	} catch(Exception @ex) {
 		msg(color('red').'The item '.@item.' doesn\'t appear to exist.');
