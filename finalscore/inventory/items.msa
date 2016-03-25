@@ -6,7 +6,7 @@
 	if($item == 0) {
 		die('Usage: /i [id:data] [quantity] '.color('gray').'(supports item names)');
 	}
-	include('utils.library/items.ms');
+	include('util.library/items.ms');
 	_pgive_item($item, $amount);
 <<<
 
@@ -35,7 +35,7 @@
 		die(color('gold').'Usage: /enchant <type> [level]\n'
 		.'Example: /enchant sharpness 4');
 	}
-	include('utils.library/items.ms');
+	include('util.library/items.ms');
 	_enchant_item($type, $level);
 <<<
 
@@ -75,7 +75,7 @@
 	if($player) {
 		pgive_item(player(), '397:3', 1, array('owner': $player));
 	} else {
-		include('utils.library/items.ms');
+		include('util.library/items.ms');
 		_popen_skullmenu();
 	}
 <<<
@@ -103,6 +103,6 @@
 	if(!$type) {
 		die('Usage: /potion <potionType> <potionEffect> [seconds] [strength]');
 	}
-	include('utils.library/items.ms');
+	include('util.library/items.ms');
 	_pset_potion($type, $id, $seconds, $strength);
 <<<
