@@ -4,5 +4,5 @@
 	}
 
 	include('util.library/convert.ms');
-	_inv_convert($player);
+	_inv_convert($player, $world);
 <<<

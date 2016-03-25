@@ -1,10 +1,10 @@
-proc _inv_convert($player){
-	if($player) {
+proc _inv_convert(@player, @world){
+	if(@player) {
 		@endpoint = '';
-		if(!$world) {
-			@endpoint = 'groups/default/'.$player.'.yml';
+		if(!@world) {
+			@endpoint = 'groups/default/'.@player.'.yml';
 		} else {
-			@endpoint = 'worlds/'.$world.'/'.$player.'.yml';
+			@endpoint = 'worlds/'.@world.'/'.@player.'.yml';
 		}
 		@original = yml_decode(read('../../../../Multiverse-Inventories/'.@endpoint))['SURVIVAL'];
 		try {
@@ -44,7 +44,7 @@ proc _inv_convert($player){
 					deserialize_penderchest(yml_encode(@inv));
 				}
 			} catch(Exception @custom) {
-				msg('Failed to process '.$player);
+				msg('Failed to process '.@player);
 				msg(@json['message']);
 				msg(@json['stackTrace']);
 				msg(@custom['message']);
