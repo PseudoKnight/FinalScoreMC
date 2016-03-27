@@ -50,7 +50,7 @@
 	include('includes.library/teleports.ms');
 	@world = if($world, _worldid($world), pworld());
 	if(!_allows_teleports(@world) || !_allows_teleports(pworld())) {
-		msg('You cannot teleport directly to or from that world.');
+		die('You cannot teleport directly to or from that world.');
 	}
 	@loc = get_spawn(@world);
 	@loc = array(@loc[0] + 0.5, @loc[1] - 1, @loc[2] + 0.5, @loc[3]);
