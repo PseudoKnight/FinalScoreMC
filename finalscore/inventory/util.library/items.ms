@@ -121,7 +121,7 @@ proc _pset_potion(@type, @id, @seconds, @strength){
             // verify valid regular potion
             if((@extended == 'true' || @extended == 'false')
             && (@upgraded == 'true' || @upgraded == 'false')) {
-                @item['meta']['base']['extended'] = (@extended == 'true';
+                @item['meta']['base']['extended'] = (@extended == 'true');
                 @item['meta']['base']['upgraded'] = (@upgraded == 'true');
             }
             try {
