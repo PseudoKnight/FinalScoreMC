@@ -442,9 +442,6 @@ bind(block_dispense, null, array('type': 'DISPENSER'), @e) {
 			);
 			foreach(@i in 0..8) {
 				if(!is_null(@inv[@i])) {
-					if(@inv[@i]['name'] == 'MONSTER_EGG') {
-						die(); // fix in 1.9
-					}
 					@inv[@i]['qty'] = 64;
 				}
 			}
