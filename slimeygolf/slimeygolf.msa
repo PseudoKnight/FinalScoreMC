@@ -1,5 +1,5 @@
 *:/slimeygolf = >>>
-	include('basic.library/games.ms');
+	include('basic.library/game.ms');
 	@loc = get_command_block();
 	if(!@loc) {
 		@loc = ploc();
