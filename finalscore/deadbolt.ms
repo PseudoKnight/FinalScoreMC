@@ -18,7 +18,7 @@ proc _get_deadbolt(@loc) {
 }
 
 bind(player_interact, null, array('button': 'right', 'item': 323), @e) {
-	if(@e['action'] !== 'right_click_block' || pinfo(player(), 11) || !pinfo(player(), 6) != @e['item']) {
+	if(@e['action'] !== 'right_click_block' || pinfo(player(), 11) || pinfo(player(), 6) != @e['item']) {
 		die();
 	}
 
