@@ -258,6 +258,8 @@ bind(player_quit, null, null, @event) {
 		msg('Cannot fetch player world while quitting.');
 	}
 	export('pdata.'.to_lower(@event['player']), null);
+	save_players();
+	console('---[ SAVED ]---[ PLAYERS ]---', false);
 }
 
 bind(player_death, null, null, @event) {
