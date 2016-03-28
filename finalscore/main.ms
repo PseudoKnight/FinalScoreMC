@@ -277,15 +277,18 @@ bind(player_death, null, null, @event) {
 
 /*
 	Blocks spawning of the wither
-	TODO: Needs to be updated for 1.9 maybe
 */
 bind(block_place, null, array('type': 144), @event) {
-	if(pworld() !== 'outworld' && pworld() !== 'outworld_nether'
-	&& get_block_at(_relative(@event['location'], 'down')) === '88:0') {
-		@item = pinv(player(), null);
-		if(@item && @item['data'] == 1) {
-			cancel();
-			msg(color('yellow').'You can only spawn withers in the outworld.');
+	if(pworld() != 'outworld' && pworld() != 'outworld_nether') {
+		foreach(@dir in array('north', 'south', 'east', 'west', 'up', 'down')) {
+			if(get_block_at(_relative(@event['location'], @dir)) == '88:0') {
+				@item = pinv(player(), null);
+				if(@item && @item['data'] == 1) {
+					cancel();
+					msg(color('yellow').'You can only spawn withers in the outworld.');
+					break();
+				}
+			}
 		}
 	}
 }
