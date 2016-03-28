@@ -275,12 +275,6 @@ bind(player_death, null, null, @event) {
 	}
 }
 
-bind(player_spawn, array('priority': 'LOWEST'), array('world': 'custom'), @event) {
-	set_timeout(50, closure(){
-		_equip_park();
-	});
-}
-
 /*
 	Blocks spawning of the wither
 	TODO: Needs to be updated for 1.9 maybe
