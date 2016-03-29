@@ -1,6 +1,6 @@
-include('basic.library/course.ms');
-include('basic.library/player.ms');
-include('basic.library/ball.ms');
+include('course.ms');
+include('player.ms');
+include('ball.ms');
 
 proc _start_game(@course, @loc) {
 	@golf = array(
