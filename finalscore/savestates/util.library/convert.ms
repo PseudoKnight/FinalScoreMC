@@ -6,7 +6,7 @@ proc _inv_convert(@player, @world){
 		} else {
 			@endpoint = 'worlds/'.@world.'/'.@player.'.yml';
 		}
-		@original = yml_decode(read('../../../../Multiverse-Inventories/'.@endpoint))['SURVIVAL'];
+		@original = yml_decode(read('../../../../../Multiverse-Inventories/'.@endpoint))['SURVIVAL'];
 		try {
 			@inv = array();
 			if(array_index_exists(@original, 'inventoryContents')) {
@@ -64,14 +64,14 @@ proc _inv_convert(@player, @world){
 			@name = @pdata['name'];
 			@endpoint = 'groups/default/'.@pdata['name'].'.yml';
 			try {
-				@original = yml_decode(read('../../../../Multiverse-Inventories/'.@endpoint))['SURVIVAL'];
+				@original = yml_decode(read('../../../../../Multiverse-Inventories/'.@endpoint))['SURVIVAL'];
 			} catch(Exception @e) {
 				# no valid data... check for files with aliases
 				if(array_index_exists(@pdata, 'names')) {
 					foreach(@name in @pdata['names']) {
 						@endpoint = 'groups/default/'.@name.'.yml';
 						try {
-							@original = yml_decode(read('../../../../Multiverse-Inventories/'.@endpoint))['SURVIVAL'];
+							@original = yml_decode(read('../../../../../Multiverse-Inventories/'.@endpoint))['SURVIVAL'];
 							# found one, but keep looking for the latest
 						} catch(Exception @e) {
 							continue();
@@ -89,7 +89,7 @@ proc _inv_convert(@player, @world){
 			@total++;
 			@world = '';
 			try {
-				@world = yml_decode(read('../../../../Multiverse-Inventories/players/'.@name.'.yml'))['playerData']['lastWorld'];
+				@world = yml_decode(read('../../../../../Multiverse-Inventories/players/'.@name.'.yml'))['playerData']['lastWorld'];
 				if(_is_survival_world(@world)) {
 					continue();
 				}
