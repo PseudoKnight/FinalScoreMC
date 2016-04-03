@@ -248,3 +248,6 @@ default:
     outworld_nether:
       command.join.to: false
       command.join.from: false
+    outworld_the_end:
+      command.join.to: false
+      command.join.from: false
