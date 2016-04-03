@@ -270,6 +270,22 @@ bind(player_death, null, null, @event) {
 		@log .= json_encode(@event['drops']);
 		console(@log, false);
 		msg('You died @ '.@loc);
+		@time = array(60);
+		set_interval(1000, closure(){
+			if(!ponline(player()) || pinfo(player(), 5) > 0) {
+				clear_task();
+			} else {
+				@time[0] -= 1;
+				if(@time[0] < 30) {
+					if(@time[0] == 0) {
+						clear_task();
+						pkick(player(), 'Kicked after sitting in death screen for 60 seconds.');
+					} else {
+						action_msg(@time[0]);
+					}
+				}
+			}
+		});
 	} else {
 		modify_event('death_message', null);
 	}
