@@ -124,39 +124,41 @@ proc _repopulate_menu(){
 		@pvp['title'] = 'PVP Arenas';
 		@arenas = get_values('arena');
 		@slot = 0;
-		foreach(@name: @arena in @arenas) {
-			if(@slot > 35, break());
-			if(array_index_exists(@arena, 'parent'), continue());
-			@name = split('.', @name)[1];
-			@lore = array();
-			if(array_index_exists(@arena, 'description')) {
-                foreach(@line in @arena['description']) {
-				    @lore[] = @line;
-                }
-			} else if(array_index_exists(@arena, 'mode')) {
-				if(@arena['mode'] == 'koth') {
-					@lore[] = color('green').'King of the Hill';
-				} else if(@arena['mode'] == 'ctf') {
-					@lore[] = color('green').'Capture the Flag';
-				}
-			}
-			@lore[] = color('green').if(array_index_exists(@arena, 'min'), @arena['min'], 2)
-					.if(array_index_exists(@arena, 'max'), '-'.@arena['max'], '+').' players';
-			@lore[] = color('dark_gray').'Run: /warp '.@name;
-			@pvp[@slot] = array(
-				'type': 351,
-				'data': 8,
-				'meta': array(
-					'display': color('green').to_upper(@name),
-					'lore': @lore,
-				),
-			);
-			@slot++;
-		}
-		@pvp[36]['name'] = 'DIAMOND_SWORD';
-		create_virtualchest(@pvp);
-		@arenas = null;
-		@pvp = null;
+        queue_push(closure(){
+    		foreach(@name: @arena in @arenas) {
+    			if(@slot > 35, break());
+    			if(array_index_exists(@arena, 'parent'), continue());
+    			@name = split('.', @name)[1];
+    			@lore = array();
+    			if(array_index_exists(@arena, 'description')) {
+                    foreach(@line in @arena['description']) {
+    				    @lore[] = @line;
+                    }
+    			} else if(array_index_exists(@arena, 'mode')) {
+    				if(@arena['mode'] == 'koth') {
+    					@lore[] = color('green').'King of the Hill';
+    				} else if(@arena['mode'] == 'ctf') {
+    					@lore[] = color('green').'Capture the Flag';
+    				}
+    			}
+    			@lore[] = color('green').if(array_index_exists(@arena, 'min'), @arena['min'], 2)
+    					.if(array_index_exists(@arena, 'max'), '-'.@arena['max'], '+').' players';
+    			@lore[] = color('dark_gray').'Run: /warp '.@name;
+    			@pvp[@slot] = array(
+    				'type': 351,
+    				'data': 8,
+    				'meta': array(
+    					'display': color('green').to_upper(@name),
+    					'lore': @lore,
+    				),
+    			);
+    			@slot++;
+    		}
+    		@pvp[36]['name'] = 'DIAMOND_SWORD';
+    		create_virtualchest(@pvp);
+    		@arenas = null;
+    		@pvp = null;
+        });
 	});
 
     queue_push(closure(){
