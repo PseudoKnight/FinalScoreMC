@@ -80,7 +80,7 @@
 	}
 	queue_push(closure(){
 		save_players();
-		set_timeout(50, closure(){
+		set_timeout(100, closure(){
 			broadcast(color('yellow').'Recompiling scripts...');
 			@start = time();
 			run('/recompile -rf'.if(!@clearGlobal, 'g'));
