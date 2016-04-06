@@ -23,7 +23,7 @@
 			array(-487, 55, -647, @world)
 		),
 		'option': array(
-			'soulsand': array(-488, 56, -656, @world),
+			'knockback': array(-488, 56, -656, @world),
 			'platforming': array(-488, 56, -654, @world),
 			'obstacles': array(-488, 56, -652, @world),
 			'material': array(-488, 54, -642, @world)
@@ -118,6 +118,7 @@
 
 		set_timeout(1000, closure(
 			#difficult terrain
+			/*
 			if(get_block_at(@cfg['option']['soulsand']) === '124:0' && get_block_at(@cfg['option']['platforming']) ==  '123:0') {
 			proc _setfloor(@x, @y, @z, @mat) {
 				if(rand(10) < 6) {
@@ -126,8 +127,9 @@
 					set_block_at(@x, @y, @z, 88, 'custom', false)
 				}
 			}
+			*/
 			#platforming
-			} else if(get_block_at(@cfg['option']['platforming']) === '124:0' && get_block_at(@cfg['option']['soulsand']) === '123:0') {
+			if(get_block_at(@cfg['option']['platforming']) === '124:0' && get_block_at(@cfg['option']['soulsand']) === '123:0') {
 				proc _setfloor(@x, @y, @z, @mat) {
 					if(rand(10) < 3) {
 						set_block_at(@x, @y, @z, @mat, 'custom', false)
@@ -136,6 +138,7 @@
 					}
 				}
 			#difficult terrain + platforming
+			/*
 			} else if(get_block_at(@cfg['option']['soulsand']) === '124:0' && get_block_at(@cfg['option']['platforming']) === '124:0') {
 				proc _setfloor(@x, @y, @z, @mat) {
 					if(assign(@rand, rand(10)) < 2) {
@@ -146,6 +149,7 @@
 						set_block_at(@x, @y, @z, 88, 'custom', false)
 					}
 				}
+			*/
 			#regular floor
 			} else {
 				proc _setfloor(@x, @y, @z, @mat) {
@@ -214,6 +218,11 @@
 				))
 			)
 
+			if(get_block_at(@cfg['option']['knockback']) === '124:0') {
+				sk_region_flag('custom', 'spleef-arena', 'pvp', 'allow');
+			} else {
+				sk_region_flag('custom', 'spleef-arena', 'pvp', 'deny');
+			}
 
 			@spleefinterval = set_interval(1000, closure(
 				@spleefsettings = import('spleefsettings')
