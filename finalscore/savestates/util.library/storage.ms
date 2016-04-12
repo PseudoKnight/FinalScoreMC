@@ -8,9 +8,12 @@ proc _get_pstate(@player, @state) {
 
 	try {
 		deserialize_pinv(@player, array_get(@pstate, 'inv', ''));
-	} catch(IndexOverflowException @ex) {
+	} catch(Exception @ex) {
 		console('WARNING: Failed to load survival inventory for '.@player.'.');
 		console(@ex['message']);
+		if(array_index_exists(@pdata, 'inv')) {
+			console(@pstate['inv']);
+		}
 		_clear_pinv(@player);
 	}
 
@@ -19,6 +22,9 @@ proc _get_pstate(@player, @state) {
 	} catch(Exception @ex) {
 		console('WARNING: Failed to load survival enderchest for '.@player.'.');
 		console(@ex['message']);
+		if(array_index_exists(@pdata, 'ender')) {
+			console(@pstate['inv']);
+		}
 		@inv = array();
 		array_resize(@inv, 27);
 		set_penderchest(@player, @inv);
