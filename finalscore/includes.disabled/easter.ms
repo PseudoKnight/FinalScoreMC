@@ -1,52 +1,71 @@
 bind('creature_spawn', null, array('type': 'ZOMBIE', 'reason': 'NATURAL'), @event) {
+	if(rand(3), die());
 	if(@event['location']['world'] === 'outworld') {
-		# @mobs = array(
-			# 51: 'SKELETON', 
-			# 52: 'SPIDER', 
-			# 54: 'ZOMBIE', 
-			# 55: 'SLIME', 
-			# 57: 'PIGZOMBIE', 
-			# 58: 'ENDERMAN', 
-			# 59: 'CAVESPIDER', 
-			# 62: 'MAGMACUBE', 
-			# 65: 'BAT', 
-			# 66: 'WITCH', 
-			# 67: 'ENDERMITE',
-			# 68: 'GUARDIAN',
-			# 90: 'PIG', 
-			# 91: 'SHEEP', 
-			# 92: 'COW', 
-			# 93: 'CHICKEN', 
-			# 94: 'SQUID', 
-			# 95: 'WOLF', 
-			# 96: 'MOOSHROOM', 
-			# 98: 'OCELOT', 
-			# 100: 'HORSE',
-			# 101: 'RABBIT',
-			# 120: 'VILLAGER',
-		# );
+		@mobs = associative_array(
+			50: 'CREEPER',
+			51: 'SKELETON',
+			52: 'SPIDER',
+			54: 'ZOMBIE',
+			55: 'SLIME',
+			57: 'PIGZOMBIE',
+			58: 'ENDERMAN',
+			59: 'CAVESPIDER',
+			62: 'MAGMACUBE',
+			65: 'BAT',
+			66: 'WITCH',
+			67: 'ENDERMITE',
+			68: 'GUARDIAN',
+			69: 'SHULKER',
+			90: 'PIG',
+			91: 'SHEEP',
+			92: 'COW',
+			93: 'CHICKEN',
+			94: 'SQUID',
+			95: 'WOLF',
+			96: 'MOOSHROOM',
+			98: 'OCELOT',
+			100: 'HORSE',
+			101: 'RABBIT',
+			120: 'VILLAGER',
+		);
 		set_timeout(50, closure(){
 			if(entity_exists(@event['id'])) {
-				set_mob_equipment(@event['id'], array(
-					'WEAPON': array('type': 383),
+				set_mob_equipment(@event['id'], associative_array(
+					'WEAPON': array('type': 383, 'data': array_rand(@mobs)[0]),
+					'OFF_HAND': array('type': 383, 'data': array_rand(@mobs)[0]),
 					'HELMET': array('type': 397, 'data': 3, 'meta': array('owner': 'rabbit2077')),
 					'CHESTPLATE': array('type': 299, 'meta': array('color': array('r': 180, 'g': 180, 'b': 180))),
 					'LEGGINGS': array('type': 300, 'meta': array('color': array('r': 180, 'g': 180, 'b': 180))),
 					'BOOTS': array('type': 309),
 				));
-				set_equipment_droprates(@event['id'], null);
-				set_mob_effect(@event['id'], 1, 0, 9999, true);
+				set_equipment_droprates(@event['id'], associative_array(
+					'WEAPON': 1,
+					'OFF_HAND': 1,
+					'HELMET': 0,
+					'CHESTPLATE': 0,
+					'LEGGINGS': 0,
+					'BOOTS': 0,
+				));
+				if(!entity_spec(@event['id'])['baby']){
+					set_mob_effect(@event['id'], 1, 0, 9999, true);
+				}
 				set_mob_effect(@event['id'], 8, 1, 9999, true);
 			}
-		})
+		});
 	}
 }
 
+/*
 bind('entity_death', null, array('type': 'ZOMBIE'), @event) {
 	if(@event['location']['world'] === 'outworld') {
+		if(@rider = get_entity_rider(@event['id'])) {
+			try(entity_remove(@rider));
+		}
+
 		@inv = get_mob_equipment(@event['id']);
 		if(!is_null(@inv['helmet'])
 		&& @inv['helmet']['type'] == 397) {
+
 			@player = '';
 			if(array_index_exists(@event['cause'], 'damager')) {
 				if(ponline(@event['cause']['damager'])) {
@@ -72,27 +91,28 @@ bind('entity_death', null, array('type': 'ZOMBIE'), @event) {
 				if(function_exists('play_effect')) {
 					play_effect(@loc, 'COLOURED_DUST', array('particleCount': 15, 'offsetX': 1, 'offsetY': 1, 'offsetZ': 1));
 				}
-				@mobs = array(
-					51: 'SKELETON', 
-					52: 'SPIDER', 
-					54: 'ZOMBIE', 
-					55: 'SLIME', 
-					57: 'PIGZOMBIE', 
-					58: 'ENDERMAN', 
-					59: 'CAVESPIDER', 
-					62: 'MAGMACUBE', 
-					65: 'BAT', 
+				@mobs = associative_array(
+					51: 'SKELETON',
+					52: 'SPIDER',
+					54: 'ZOMBIE',
+					55: 'SLIME',
+					57: 'PIGZOMBIE',
+					58: 'ENDERMAN',
+					59: 'CAVESPIDER',
+					62: 'MAGMACUBE',
+					65: 'BAT',
 					66: 'WITCH',
 					67: 'ENDERMITE',
 					68: 'GUARDIAN',
-					90: 'PIG', 
-					91: 'SHEEP', 
-					92: 'COW', 
-					93: 'CHICKEN', 
-					94: 'SQUID', 
-					95: 'WOLF', 
-					96: 'MOOSHROOM', 
-					98: 'OCELOT', 
+					69: 'SHULKER',
+					90: 'PIG',
+					91: 'SHEEP',
+					92: 'COW',
+					93: 'CHICKEN',
+					94: 'SQUID',
+					95: 'WOLF',
+					96: 'MOOSHROOM',
+					98: 'OCELOT',
 					100: 'HORSE',
 					101: 'RABBIT',
 					120: 'VILLAGER',
@@ -102,6 +122,8 @@ bind('entity_death', null, array('type': 'ZOMBIE'), @event) {
 		}
 	}
 }
+*/
+
 
 bind('target_player', null, array('mobtype': 'ZOMBIE'), @event) {
 	if(entity_loc(@event['id'])['world'] === 'outworld') {
@@ -109,6 +131,31 @@ bind('target_player', null, array('mobtype': 'ZOMBIE'), @event) {
 		if(!is_null(@inv['helmet'])
 		&& @inv['helmet']['type'] == 397
 		&& entity_can_see(@event['id'], puuid(@event['player']))) {
+			/*
+			if(!get_entity_rider(@event['id']) && !entity_spec(@event['id'])['baby']) {
+				@skeleton = spawn_mob('SKELETON', 1, entity_loc(@event['id']))[0];
+				set_mob_name(@skeleton, 'Dinnerbone');
+				set_entity_rider(@event['id'], @skeleton);
+				set_timeout(50, closure(){
+					// override default gear a tick later
+					try {
+						set_mob_equipment(@skeleton, associative_array(
+							'HELMET': array('name': 'SKULL_ITEM', 'data': 3, 'meta': associative_array(
+								'owner': 'Robbydeezle',
+							)),
+							'WEAPON': null,
+							'CHESTPLATE': null,
+							'LEGGINGS': null,
+							'BOOTS': null,
+							'OFF_HAND': null,
+						));
+						set_equipment_droprates(@skeleton, null);
+					} catch(BadEntityException @ex) {
+						// skeleton no longer exists
+					}
+				});
+			}
+			*/
 			shoot_projectile(@event['id'], 'EGG', @event['player'], rand() + 1);
 			set_timeout((1 + rand(3)) * 1000, closure() {
 				if(entity_exists(@event['id'])
@@ -121,29 +168,41 @@ bind('target_player', null, array('mobtype': 'ZOMBIE'), @event) {
 		}
 	}
 }
+/*
+bind('target_player', null, array('mobtype': 'SKELETON'), @event) {
+	if(get_mob_name(@event['id']) == 'Dinnerbone'
+	&& !get_entity_vehicle(@event['id'])
+	&& entity_loc(@event['id'])['world'] === 'outworld') {
+		entity_remove(@event['id']);
+	}
+}
+*/
 
 bind('projectile_hit', null, array('type': 'EGG'), @event) {
 	if(entity_loc(@event['id'])['world'] === 'outworld') {
-		@mobs = array(
-			51: 'SKELETON', 
-			52: 'SPIDER', 
-			54: 'ZOMBIE', 
-			55: 'SLIME', 
-			58: 'ENDERMAN', 
-			59: 'CAVESPIDER', 
-			62: 'MAGMACUBE', 
-			65: 'BAT', 
-			66: 'WITCH', 
+		@mobs = associative_array(
+			50: 'CREEPER',
+			51: 'SKELETON',
+			52: 'SPIDER',
+			54: 'ZOMBIE',
+			55: 'SLIME',
+			57: 'PIGZOMBIE',
+			58: 'ENDERMAN',
+			59: 'CAVESPIDER',
+			62: 'MAGMACUBE',
+			65: 'BAT',
+			66: 'WITCH',
 			67: 'ENDERMITE',
 			68: 'GUARDIAN',
-			90: 'PIG', 
-			91: 'SHEEP', 
-			92: 'COW', 
-			93: 'CHICKEN', 
-			94: 'SQUID', 
-			95: 'WOLF', 
-			96: 'MOOSHROOM', 
-			98: 'OCELOT', 
+			69: 'SHULKER',
+			90: 'PIG',
+			91: 'SHEEP',
+			92: 'COW',
+			93: 'CHICKEN',
+			94: 'SQUID',
+			95: 'WOLF',
+			96: 'MOOSHROOM',
+			98: 'OCELOT',
 			100: 'HORSE',
 			101: 'RABBIT',
 			120: 'VILLAGER',
