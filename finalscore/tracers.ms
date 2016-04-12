@@ -6,7 +6,8 @@ if(extension_exists('CHDynmap')) {
 	}
 
 	bind(player_move, null, array('threshold': 10), @event) {
-		if(!_is_survival_world(pworld()) || !has_permission('livemap.tracers')) {
+		@mode = pmode();
+		if(@mode == 'CREATIVE' || @mode == 'SPECTATOR' || !has_permission('livemap.tracers')) {
 			die();
 		}
 
