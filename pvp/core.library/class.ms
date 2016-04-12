@@ -5,29 +5,6 @@ proc _class(@action, @player, @class, @pvp) {
 
 	switch(@action) {
 	case 'load':
-		if(array_index_exists(@pvp['arena']['classes'][@class], 'doublejump')) {
-			set_pflight(@player, true)
-			set_pexp(@player, 100)
-			bind(player_toggle_flight, array('id': @player.'doublejump'), array('flying': true, 'player': @player), @e) {
-				cancel()
-				@vel = entity_velocity(puuid())
-				set_pvelocity(@vel['x'] * 1.9, 0.9, @vel['z'] * 1.9)
-				play_effect(_relative(ploc(), 'up'), 'cloud', array('speed': 0, 'particleCount': 5, 'offsetX': 0.4, 'offsetZ': 0.4, 'offsetY': 0))
-				set_pflight(false)
-				set_pexp(0)
-				queue_delay(2000, player().'doublejump')
-				queue_push(closure(){
-					set_pexp(100)
-					set_pflight(true)
-				}, player().'doublejump')
-			}
-			bind(entity_damage, array('id': @player.'falldamage'), array('cause': 'FALL', 'id': puuid(@player)), @e) {
-				if(pinfo(get_player_from_entity_id(@e['id']), 11)) {
-					cancel(); # is sneaking
-				}
-			}
-		}
-
 		if(array_index_exists(@pvp['arena']['classes'][@class], 'hunger')
 		&& !is_numeric(@pvp['arena']['classes'][@class]['hunger'][1])) {
 			bind(food_level_changed, array('id': @player.'food'), array(player: @player), @event) {
