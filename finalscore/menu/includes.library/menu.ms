@@ -169,7 +169,7 @@ proc _repopulate_menu(){
             'name': 'SNOW_BLOCK',
             'meta': array(
                 'display': color('green').'Spleef',
-                'lore': color('dark_gray').'Run: /warp spleef';
+                'lore': color('dark_gray').'Run: /warp spleef',
             ),
         );
         @other[1] = array(
@@ -177,28 +177,35 @@ proc _repopulate_menu(){
             'data': 2,
             'meta': array(
                 'display': color('gold').'Cube'.color('red').'Climber',
-                'lore': color('dark_gray').'Run: /warp cubeclimber';
+                'lore': color('dark_gray').'Run: /warp cubeclimber',
             ),
         );
         @other[2] = array(
             'name': 'EMERALD_ORE',
             'meta': array(
                 'display': color('green').'Seven Seconds to Live',
-                'lore': color('dark_gray').'Run: /warp 7';
+                'lore': color('dark_gray').'Run: /warp 7',
             ),
         );
         @other[3] = array(
             'name': 'EMERALD_BLOCK',
             'meta': array(
                 'display': color('green').'FrogWare',
-                'lore': color('dark_gray').'Run: /warp frogware';
+                'lore': color('dark_gray').'Run: /warp frogware',
             ),
         );
         @other[4] = array(
             'name': 'SLIME_BLOCK',
             'meta': array(
                 'display': color('green').'Slimey Golf',
-                'lore': color('dark_gray').'Run: /warp slimeygolf';
+                'lore': color('dark_gray').'Run: /warp slimeygolf',
+            ),
+        );
+        @other[5] = array(
+            'name': 'SEA_LANTERN',
+            'meta': array(
+                'display': color('green').'SNAKE',
+                'lore': color('dark_gray').'Run: /warp snake',
             ),
         );
 		@other[38]['name'] = 'DIAMOND_SPADE';
