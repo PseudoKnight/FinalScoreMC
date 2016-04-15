@@ -100,7 +100,7 @@ proc _fw_startround(@secs = 12) {
 		if(array_size(@winners) > 0 || @total == 0) {
 			_fw_endgame(@winners)
 		} else {
-			@secs = 13 - round(8 * (@highscore / @goal))
+			@secs = 13 - integer(round(8 * (@highscore / @goal)))
 			@tasks = array();
 			if((@highscore / @goal) < 0.33) {
 				@tasks = array('climb', 'keepaway', 'harvest', 'koth', 'cake', 'fall', 'cluck', 'frogegg', 'lavafall',

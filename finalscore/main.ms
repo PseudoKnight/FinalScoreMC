@@ -264,7 +264,7 @@ bind(player_quit, null, null, @event) {
 
 bind(player_death, null, null, @event) {
 	if(_is_survival_world(@event['location']['world'])) {
-		@loc = round(@event['location'][0]).','.round(@event['location'][1]).','.round(@event['location'][2]);
+		@loc = floor(@event['location'][0]).','.floor(@event['location'][1]).','.floor(@event['location'][2]);
 		@log = @event['player'].' died @ '.@loc.' on '.@event['location'][3].': ';
 		_minify_inv(@event['drops']);
 		@log .= json_encode(@event['drops']);

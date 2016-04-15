@@ -131,7 +131,7 @@ proc _pvp_start_match(@id) {
 			@minleft = floor(@totalsecsleft / 60)
 			@secsleft = mod(@totalsecsleft, 60)
 			@timeleft = @minleft.':'.if(@secsleft < 10, '0').@secsleft
-			@percentage = round((@totalsecsleft / (@pvp['arena']['timer'][1] * 60)) * 100)
+			// @percentage = round((@totalsecsleft / (@pvp['arena']['timer'][1] * 60)) * 100)
 			if(extension_exists('CHNaughty')) {
 				foreach(@p in array_keys(@pvp['players'])) {
 					action_msg(@p, @timeleft);
@@ -354,7 +354,7 @@ proc _pvp_end_match(@id, @winners) {
 						._pad_stat(@stats['kills'], 2).'-------'
 						._pad_stat(@stats['deaths'], 2).'---------'
 						._pad_stat(@stats['pickups'], 2).'--------'
-						._pad_stat(round(@stats['damage']), 3).'------'
+						._pad_stat(integer(@stats['damage']), 3).'------'
 						.if(array_contains(@winners, @player),
 							color('gold').color('bold').@player.if(@pvp['coins'] > 0, ' +'.@pvp['coins']),
 							@player)

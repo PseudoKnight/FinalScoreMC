@@ -60,7 +60,7 @@ register_command('timer', array(
 							console('[Timer] '.@timers);
 							die();
 						}
-						@time = round((time() - @timers[@player][1]) / 1000);
+						@time = integer(round((time() - @timers[@player][1]) / 1000));
 						if(extension_exists('CHNaughty')) {
 							action_msg(@player, @time);
 						} else {
@@ -68,7 +68,7 @@ register_command('timer', array(
 						}
 
 						if(@time < @ptime) {
-							@percent = round((@time / @ptime) * 100);
+							@percent = integer((@time / @ptime) * 100);
 							set_pexp(@player, @percent);
 						}
 

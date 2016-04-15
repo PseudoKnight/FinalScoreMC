@@ -10,9 +10,9 @@ bind(player_interact, null, array('block': 68), @e) {
 			}
 
 			@location = array(
-				round(@e['location']['x']),
-				round(@e['location']['y']),
-				round(@e['location']['z']),
+				integer(@e['location']['x']),
+				integer(@e['location']['y']),
+				integer(@e['location']['z']),
 				@e['location']['world'],
 			);
 
@@ -152,9 +152,9 @@ bind(block_break, null, array('type': 68), @e) {
 		}
 
 		@location = array(
-			round(@e['location']['x']),
-			round(@e['location']['y']),
-			round(@e['location']['z']),
+			integer(@e['location']['x']),
+			integer(@e['location']['y']),
+			integer(@e['location']['z']),
 			@e['location']['world'],
 		);
 

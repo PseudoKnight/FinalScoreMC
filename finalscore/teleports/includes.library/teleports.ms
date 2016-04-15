@@ -7,7 +7,7 @@ proc _warmuptp(@player, @loc, @cleareffects = false) {
 		set_peffect(@player, 9, 1, 7, true, false);
 		play_sound(ploc(@player), array('sound': 'PORTAL_TRIGGER', 'volume': 1, 'pitch': 1));
 	}
-	set_timeout(round(@length * 1000), closure(){
+	set_timeout(integer(@length * 1000), closure(){
 		if(!ponline(@player)) {
 			die();
 		}

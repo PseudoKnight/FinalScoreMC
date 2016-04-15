@@ -462,7 +462,8 @@ proc _arena(@action, @id, @setting, @string) {
                 msg('You can save this kit by using "/arena set '.@id.' kit '.if(array_size(@args) > 0, @args[0]).'"')
 
             case 'chestspawn':
-                @loc = array(round(pcursor()[0]), round(pcursor()[1]), round(pcursor()[2]), pcursor()[3])
+                @pcursor = pcursor();
+                @loc = array(integer(@pcursor[0]), integer(@pcursor[1]), integer(@pcursor[2]), @pcursor[3]);
                 if(split(':', get_block_at(@loc))[0] !== '54', die('This is not a chest'))
                 foreach(@chest in @arena['chestspawn']) {
                     if(@chest['loc'][0] == @loc[0]

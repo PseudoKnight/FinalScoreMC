@@ -80,7 +80,7 @@ proc _repopulate_menu(){
 						}
 						@total += @time;
 					}
-					@avgtime = round((@total / (array_size(@times) - 1)) * 1000);
+					@avgtime = integer(round((@total / (array_size(@times) - 1)) * 1000));
 					if(@avgtime >= 60) {
 						@avgtime = simple_date('m\u0027m\u0027s\u0027s\u0027', @avgtime);
 					} else {

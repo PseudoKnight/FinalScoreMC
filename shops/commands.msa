@@ -16,7 +16,7 @@
 	if(length($) > 11) {
 		die(color(6).'[Shop] There is a 15 character limit per line.');
 	}
-	
+
 	@line = 0;
 	if($transaction === 'buy') {
 		@line = 1;
@@ -25,17 +25,17 @@
 	} else {
 		die(color(6).'[Shop] You need to specify "buy" or "sell".');
 	}
-	
+
 	@loc = pcursor();
-	
+
 	if(!@shop = _get_shop(@loc)) {
 		die(color(6).'[Shop] There is no shop sign there.');
 	}
-	
+
 	if(!_is_shop_owner(player(), @shop['owner']) && !has_permission('shop.admin')) {
 		die(color(6).'[Shop] You do not own this shop.');
 	}
-	
+
 	@signText = get_sign_text(@loc);
 	@signText[@line] = if(@line == 1, 'Buy ', 'Sell ').$;
 	@shop[$transaction] = _get_price(@signText[@line]);
@@ -44,13 +44,13 @@
 	}
 	set_sign_text(@loc, @signText);
 	msg(color(6).'[Shop] Modified');
-		
+
 	@shops = get_value('shop', @shop['key']);
 	if(!@shops) {
 		die();
 	}
-	
-	@loc = array(round(@loc['x']), round(@loc['y']), round(@loc['z']), @loc['world']);
+
+	@loc = array(integer(@loc['x']), integer(@loc['y']), integer(@loc['z']), @loc['world']);
 
 	@t = @line - 1;
 	foreach(@i: @s in @shops[@t]) {
@@ -64,9 +64,9 @@
 					array_remove(@shops[@t], @i);
 				} else {
 					@shops[@t][@i] = array(
-						'location': @loc, 
-						'price': @shop['buy'][1], 
-						'owner': @shop['owner'], 
+						'location': @loc,
+						'price': @shop['buy'][1],
+						'owner': @shop['owner'],
 						'stock': @count,
 					);
 				}
@@ -91,9 +91,9 @@
 					array_remove(@shops[@t], @i);
 				} else {
 					@shops[@t][@i] = array(
-						'location': @loc, 
-						'price': @shop['sell'][1], 
-						'owner': @shop['owner'], 
+						'location': @loc,
+						'price': @shop['sell'][1],
+						'owner': @shop['owner'],
 						'stock': @count
 					);
 				}
@@ -120,7 +120,7 @@
 	}
 	@itemid = replace(@item, ':', '.');
 	@shops = get_value('shop', @itemid);
-	if(!@shops) { 
+	if(!@shops) {
 		die(color('gold').'No stocked shops found for '.color('o').'"'.$.'" ('.@item.')');
 	} else {
 		msg(color('gold').'Shops you can buy or sell '.color('o').'"'.$.'"');

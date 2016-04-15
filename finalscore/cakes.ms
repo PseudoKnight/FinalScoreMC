@@ -31,7 +31,7 @@ bind(player_interact, null, array('block': 92), @event) {
 	}
 	@cakeinfo[@id]['players'][@uuid] = time();
 	store_value('cakeinfo', @cakeinfo);
-	
+
 	set_timeout(50, closure(){
 		@count = 0;
 		@total = 0;
@@ -68,20 +68,20 @@ bind(player_interact, null, array('block': 68), @event) {
 		@coins = _acc_balance(player())
 		if(@event['action'] === 'left_click_block') {
 			msg(color('yellow').'[Coin Shop] '.color(r).@count.if(@count == 1, ' item', ' items').' left. '
-			.'Your coins: '.if(@coins < @cost[1], color('red'), color('green')).round(@coins))
+			.'Your coins: '.if(@coins < @cost[1], color('red'), color('green')).floor(@coins))
 		} else { #right_click_block
 			if(@count < 1) {
 				die(color('yellow').'[Coin Shop] '.color('r').'There are no items left.')
 			}
-			if(@coins < @cost[1], die(color('yellow').'[Coin Shop] '.color(r).'You only have '.color('red').round(@coins).color('r').' left.'))
+			if(@coins < @cost[1], die(color('yellow').'[Coin Shop] '.color(r).'You only have '.color('red').floor(@coins).color('r').' left.'))
 			@chest = get_inventory(@chestloc);
 			foreach(@c in 0..27) {
 				if(!is_null(@chest[@c])) {
 					@pinv = pinv();
 					foreach(@p in 0..35) {
 						if(is_null(@pinv[@p])
-						|| (@pinv[@p]['type'] == @chest[@c]['type'] 
-						&& @pinv[@p]['data'] == @chest[@c]['data'] 
+						|| (@pinv[@p]['type'] == @chest[@c]['type']
+						&& @pinv[@p]['data'] == @chest[@c]['data']
 						&& @pinv[@p]['qty'] + @chest[@c]['qty'] <= max_stack_size(@pinv[@p]))) {
 							if(!is_null(@pinv[@p])) {
 								@chest[@c]['qty'] += @pinv[@p]['qty'];
@@ -91,7 +91,7 @@ bind(player_interact, null, array('block': 68), @event) {
 							set_pinv(player(), @newinv);
 							set_inventory_item(@chestloc, @c, null);
 							_acc_subtract(player(), @cost[1]);
-							msg(color('yellow').'[Coin Shop] '.color('r').'Transaction successful. Your coins: '.round(@coins - @cost[1]).' (-'.@cost[1].')');
+							msg(color('yellow').'[Coin Shop] '.color('r').'Transaction successful. Your coins: '.floor(@coins - @cost[1]).' (-'.@cost[1].')');
 							break(2);
 						}
 					}
