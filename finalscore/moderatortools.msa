@@ -289,7 +289,8 @@
 		@onlineinfo = pinfo(@player)
 		msg(color('gray').'--[ '.color('l').@player.color('gray').' ]-------------------------')
 		msg(color('gray').'UUID: '.color('r').puuid(@player));
-		msg(color('gray').'Location: '.color('r')._worldname(@onlineinfo[7]).'('.@onlineinfo[7].') '.round(@onlineinfo[1][0]).','.round(@onlineinfo[1][1]).','.round(@onlineinfo[1][2]))
+		msg(color('gray').'Location: '.color('r')._worldname(@onlineinfo[7]).'('.@onlineinfo[7].') '
+				.floor(@onlineinfo[1][0]).','.floor(@onlineinfo[1][1]).','.floor(@onlineinfo[1][2]));
 		if(pmode(@player) === 'CREATIVE') {
 			msg(color('gray').'Gamemode: '.color('r').'CREATIVE')
 		}
@@ -356,7 +357,7 @@
 
 *:/coins [$action] [$player] [$amount] = >>>
 	if(!$action) {
-		msg(color('gold').round(_acc_balance(player())).' coins')
+		msg(color('gold').integer(_acc_balance(player())).' coins')
 	} else {
 		if(!has_permission('group.moderator'), die('You do not have permission.'))
 		if(!$player, die('Usage: /coins <add|sub|info> <player> <amount>'))
@@ -380,7 +381,7 @@
 			}
 		case 'info':
 			if(@coins = _acc_balance($player)) {
-				msg(color('gold').round(_acc_balance($player)).' coins')
+				msg(color('gold').integer(_acc_balance($player)).' coins')
 			} else {
 				msg('Can\'t find player.')
 			}
@@ -394,20 +395,20 @@
 	@allocMem = get_server_info(15);
 	@freeMem = get_server_info(16);
 	@bar = array();
-	array_resize(@bar, round((@allocMem - @freeMem) / @barMem), '\u258D');
+	array_resize(@bar, integer((@allocMem - @freeMem) / @barMem), '\u258D');
 	@bar[] = color(7);
-	array_resize(@bar, array_size(@bar) + round(@freeMem / @barMem), '\u258D');
+	array_resize(@bar, array_size(@bar) + integer(@freeMem / @barMem), '\u258D');
 	@bar[] = color(8);
-	array_resize(@bar, array_size(@bar) + round((@maxMem - @allocMem) / @barMem), '\u258D');
+	array_resize(@bar, array_size(@bar) + integer((@maxMem - @allocMem) / @barMem), '\u258D');
 	@color = 'green';
 	if(@allocMem == @maxMem && @freeMem < @maxMem / 10) {
 		@color = 'red';
 	} else if(@allocMem - @freeMem > @maxMem / 2) {
 		@color = 'yellow';
 	}
-	msg(round((@allocMem - @freeMem) / 1000000).'MB Used - '
-	.round(@allocMem / 1000000).'MB Allocated - '
-	.round(@maxMem / 1000000).'MB Max');
+	msg(floor((@allocMem - @freeMem) / 1000000).'MB Used - '
+	.floor(@allocMem / 1000000).'MB Allocated - '
+	.floor(@maxMem / 1000000).'MB Max');
 	msg(color(@color).array_implode(@bar, ''));
 <<<
 
