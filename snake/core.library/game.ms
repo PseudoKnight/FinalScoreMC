@@ -64,13 +64,14 @@ proc _snake_queue(@args) {
     // Start countdown
     @help = array(
         '',
-        'Left or right-click to turn',
-        'Left or right-click to turn',
-        'SNAKE',
+        'Press \'f\' to activate ability',
+        'Press \'f\' to activate ability',
+        'To turn, click left or right mouse buttons',
+        'To turn, click left or right mouse buttons',
         'SNAKE',
         'SNAKE',
     );
-    @countdown = array(5);
+    @countdown = array(6);
     set_interval(1000, closure(){
         if(@countdown[0] > 0) {
             foreach(@p in array_keys(@game['snakes'])) {
@@ -84,6 +85,7 @@ proc _snake_queue(@args) {
             _snake_bind_events(@game);
             _snake_add_powerup(@game);
             _snake_start_task(@game);
+            _snake_play_song();
         }
         @countdown[0] -= 1;
     });
@@ -122,7 +124,6 @@ proc _snake_start_task(@game) {
             clear_task();
             _snake_end(@active, @game);
         }
-        _snake_remove_powerups(@game);
         if(array_size(@game['powerups']) < @game['numPowerups']) {
             _snake_add_powerup(@game);
         }
@@ -134,6 +135,7 @@ proc _snake_end(@winner, @game) {
         title_msg(@player, @winner.' wins!', '');
     }
     _snake_unbind_events();
+    _snake_stop_song();
     set_timeout(3000, closure(){
         foreach(@player: @snake in @game['snakes']) {
             _snake_remove(@player, @game);

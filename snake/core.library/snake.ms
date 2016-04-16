@@ -49,11 +49,7 @@ proc _snake_add(@player, @game) {
     set_pinv(@player, associative_array(
         0: associative_array(
             'name': 'STICK',
-            'meta': associative_array('display': 'JOYSTICK', 'lore': array(
-                'Right-click to turn right.',
-                'Left-click to turn left.',
-                'Swap to offhand (f) to activate ability.',
-            )),
+            'meta': associative_array('display': 'JOYSTICK'),
         ),
         103: associative_array(
             'name': 'SKULL_ITEM',
@@ -115,14 +111,15 @@ proc _snake_update(@player, @game) {
             array_remove(@snake['blocks'], 0);
         }
         @snake['click'] = false;
-        _snake_powerup(@player, @powerup, @game);
+        if(_snake_powerup(@player, @powerup, @game)) {
+            _snake_remove_powerup(@snake['loc'], @game);
+        }
         return(true);
     } else if(@block == '169:0') {
         @dir = _snake_direction_of(@snake['loc'], '0:0');
         if(!@dir) {
             return(false);
         }
-        play_sound(@snake['loc'], associative_array('sound': 'ENDERMAN_TELEPORT', 'pitch': 2, 'volume': 2));
         @snake['loc'] = _relative(@snake['loc'], @dir);
         @snake['dir'] = @dir;
         @snake['blocks'][] = @snake['loc'][];

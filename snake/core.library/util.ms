@@ -45,5 +45,23 @@ proc _snake_change_speed(@value, @game) {
         @game['speed'] = @speeds[@new];
         clear_task(@game['interval']);
         _snake_start_task(@game);
+        return(true);
     }
+    return(false);
+}
+
+proc _snake_play_song() {
+    @loc = sk_region_info('snake', 'custom', 0)[1];
+    @loc[0] += 20;
+    @loc[1] += 15;
+    @loc[2] += 20;
+    play_effect(@loc, 'RECORD_PLAY', array('id': rand(2257, 2266), 'radius': 32));
+}
+
+proc _snake_stop_song() {
+    @loc = sk_region_info('snake', 'custom', 0)[1];
+    @loc[0] += 20;
+    @loc[1] += 15;
+    @loc[2] += 20;
+    play_effect(@loc, 'RECORD_PLAY', array('id': 0, 'radius': 32));
 }

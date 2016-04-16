@@ -1,5 +1,5 @@
 proc _snake_bind_events(@game) {
-    bind(player_interact, array('id': 'snake-interact'), array('hand': 'main_hand'), @event, @game) {
+    bind(player_interact, array('id': 'snake-interact'), null, @event, @game) {
         if(array_index_exists(@game['snakes'], player())) {
             _snake_turn(@event['button'], @game['snakes'][player()]);
         }
