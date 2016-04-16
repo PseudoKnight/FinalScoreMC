@@ -1,0 +1,30 @@
+proc _snake_bind_events(@game) {
+    bind(player_interact, array('id': 'snake-interact'), array('hand': 'main_hand'), @event, @game) {
+        if(array_index_exists(@game['snakes'], player())) {
+            _snake_turn(@event['button'], @game['snakes'][player()]);
+        }
+    }
+
+    bind(item_swap, array('id': 'snake-swap'), null, @event, @game) {
+        if(array_index_exists(@game['snakes'], player())) {
+            cancel();
+            _snake_ability(player(), @game);
+        }
+    }
+
+    bind(entity_explode, array('id': 'snake-explode'), array('type': 'PRIMED_TNT'), @event, @game) {
+        if(array_contains(sk_regions_at(@event['location']), 'snake')) {
+            foreach(@block in @event['blocks']) {
+                if(split(':', get_block_at(@block))[0] == '159') {
+                    set_block_at(@block, 0, false);
+                }
+            }
+        }
+    }
+}
+
+proc _snake_unbind_events() {
+    unbind('snake-interact');
+    unbind('snake-swap');
+    unbind('snake-explode');
+}

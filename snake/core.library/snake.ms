@@ -4,15 +4,14 @@
     'loc': current location
     'dir': current direction
     'top': relative direction for clockwise rotation (eg. north)
-    'length': the number of blocks a snake maxes out at
-    'head': the block for the color of their block
-    'tail': the block for the color of their tail
+    'length': the number of blocks this snake maxes out at
+    'head': the block type:data for the color of their block
+    'tail': the block type:data for the color of their tail
     'blocks': an array of ordered block locations representing the tail, new ones pushed on end, such that
               order is back of tail to head. This is used for removing blocks.
     'ability': a powerup ability
     'alive': whether the snake is active or dead
-    'click': if clicked this tick
-    'region': surface they're currently on
+    'click': set to true if an action is performed, set to false on update
 */
 
 proc _snake_add(@player, @game) {
@@ -30,12 +29,7 @@ proc _snake_add(@player, @game) {
     if(!@startLoc) {
         return();
     }
-    @dir = '';
-    foreach(@dir in array('up', 'east', 'north', 'west', 'south', 'down')) {
-        if(get_block_at(_relative(@startLoc, @dir)) == '0:0') {
-            break();
-        }
-    }
+    @dir = _snake_direction_of(@startLoc, '0:0');
     @headLoc = _relative(@startLoc, @dir);
     @head = @colors[array_size(@game['snakes'])][0];
     @tail = @colors[array_size(@game['snakes'])][1];
@@ -60,10 +54,6 @@ proc _snake_add(@player, @game) {
                 'Left-click to turn left.',
                 'Swap to offhand (f) to activate ability.',
             )),
-        ),
-        1: associative_array(
-            'name': 'STAINED_CLAY',
-            'data': split(':', @head)[1],
         ),
         103: associative_array(
             'name': 'SKULL_ITEM',
@@ -108,31 +98,24 @@ proc _snake_kill(@player, @game) {
 }
 
 proc _snake_set_top(@snake) {
-    foreach(@dir in array('north', 'south', 'east', 'west', 'up', 'down')) {
-        if(get_block_at(_relative(@snake['loc'], @dir)) == '166:0') {
-            @snake['top'] = @dir;
-            break();
-        }
-    }
+    @snake['top'] = _snake_direction_of(@snake['loc'], '166:0');
 }
 
-proc _snake_update(@snake) {
+proc _snake_update(@player, @game) {
+    @snake = @game['snakes'][@player];
     set_block_at(@snake['loc'], @snake['tail'], false);
     @snake['loc'] = _relative(@snake['loc'], @snake['dir']);
     @block = get_block_at(@snake['loc']);
-    @powerup = '';
-    if(@block == '0:0' || (@powerup = reg_match('^170\\:[048]$', @block))) {
+    @powerup = _snake_get_powerup_from(split(':', @block)[0]);
+    if(@block == '0:0' || @powerup) {
         @snake['blocks'][] = @snake['loc'][];
         set_block_at(@snake['loc'], @snake['head'], false);
-        if(@powerup) {
-            play_sound(@snake['loc'], associative_array('sound': 'EAT', 'volume': 2));
-            @snake['length'] = ceil(@snake['length'] * 1.5);
-        }
         if(array_size(@snake['blocks']) > @snake['length']) {
             set_block_at(@snake['blocks'][0], 0, false);
             array_remove(@snake['blocks'], 0);
         }
         @snake['click'] = false;
+        _snake_powerup(@player, @powerup, @game);
         return(true);
     } else if(@block == '169:0') {
         @dir = _snake_direction_of(@snake['loc'], '0:0');
@@ -153,10 +136,6 @@ proc _snake_update(@snake) {
         return(true);
     }
     return(false);
-}
-
-proc _snake_ability(@snake) {
-    # switch
 }
 
 proc _snake_turn(@rotation, @snake) {

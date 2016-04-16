@@ -1,5 +1,22 @@
+/*
+    Game data
+
+    'arena': the arena name, used to get region names for valid spawn locations
+    'surfaces': the number of regions where valid spawn locations exist
+    'removeTail': whether the tail gets removed on snake death
+    'startingLength': the length of a snake when the game starts
+    'snakes': an array of arrays of snake data for each player (see snake.ms)
+    'powerups': an array of arrays of current powerups in the game
+    'speed': a game option that controls the interval frequency (how often the snakes update)
+    'numPowerups': the number of powerups that can exist in the game at any given time
+    'extraBlocks': extraneous obstacle blocks to clean-up
+    'debug': debug mode
+*/
+
 include('util.ms');
+include('powerups.ms');
 include('snake.ms');
+include('events.ms');
 
 proc _snake_queue(@args) {
     // Check if a game is already running
@@ -16,6 +33,7 @@ proc _snake_queue(@args) {
     @game['snakes'] = associative_array();
     @game['powerups'] = array();
     @game['speed'] = 'normal';
+    @game['extraBlocks'] = array();
     @game['debug'] = false;
 
     // Command options
@@ -40,7 +58,7 @@ proc _snake_queue(@args) {
     }
 
     if(!array_index_exists(@game, 'numPowerups')) {
-        @game['numPowerups'] = array_size(@game['snakes']);
+        @game['numPowerups'] = array_size(@game['snakes']) * 2;
     }
 
     // Start countdown
@@ -63,40 +81,15 @@ proc _snake_queue(@args) {
             }
         } else {
             clear_task();
-            _snake_start(@game);
+            _snake_bind_events(@game);
+            _snake_add_powerup(@game);
+            _snake_start_task(@game);
         }
         @countdown[0] -= 1;
     });
 }
 
-proc _snake_add_powerup(@game) {
-    @region = 'snake_'.@game['arena'].rand(1, @game['surfaces'] + 1);
-    @loc = _snake_valid_location(@region);
-    if(@loc) {
-        @block = _snake_block(170, @loc);
-        set_block_at(@loc, @block, false);
-        @game['powerups'][] = associative_array('block': @block, 'loc': @loc);
-    }
-}
-
-proc _snake_remove_powerups(@game) {
-    foreach(@i: @pu in @game['powerups']) {
-        if(get_block_at(@pu['loc']) != @pu['block']) {
-            array_remove(@game['powerups'], @i);
-        }
-    }
-}
-
-proc _snake_remove_all_powerups(@game) {
-    foreach(@pu in @game['powerups']) {
-        set_block_at(@pu['loc'], '0:0', false);
-    }
-    @game['powerups'] = array();
-}
-
-proc _snake_start(@game) {
-    _snake_bind_events(@game);
-    _snake_add_powerup(@game);
+proc _snake_start_task(@game) {
     @ms = 200;
     switch(@game['speed']) {
         case 'impossible':
@@ -108,7 +101,7 @@ proc _snake_start(@game) {
         case 'slow':
             @ms = 250;
     }
-    set_interval(@ms, closure() {
+    @game['interval'] = set_interval(@ms, closure() {
         @alive = 0;
         @active = 'No one';
         foreach(@player: @snake in @game['snakes']) {
@@ -117,7 +110,7 @@ proc _snake_start(@game) {
                 continue();
             }
             if(@snake['alive']) {
-                if(_snake_update(@snake)) {
+                if(_snake_update(@player, @game)) {
                     @alive++;
                     @active = @player;
                 } else {
@@ -146,25 +139,8 @@ proc _snake_end(@winner, @game) {
             _snake_remove(@player, @game);
         }
         _snake_remove_all_powerups(@game);
+        foreach(@loc in @game['extraBlocks']) {
+            set_block_at(@loc, 0, false);
+        }
     });
-}
-
-proc _snake_bind_events(@game) {
-    bind(player_interact, array('id': 'snake-interact'), array('hand': 'main_hand'), @event, @game) {
-        if(array_index_exists(@game['snakes'], player())) {
-            _snake_turn(@event['button'], @game['snakes'][player()]);
-        }
-    }
-
-    bind(item_swap, array('id': 'snake-swap'), null, @event, @game) {
-        if(array_index_exists(@game['snakes'], player())) {
-            cancel();
-            _snake_ability(@game['snakes'][player()]);
-        }
-    }
-}
-
-proc _snake_unbind_events() {
-    unbind('snake-interact');
-    unbind('snake-swap');
 }

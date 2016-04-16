@@ -23,7 +23,7 @@ proc _snake_direction_of(@loc, @block) {
 }
 
 proc _snake_block(@id, @loc) {
-    if(@id == 170) {
+    if(@id == '170') {
         @dir = _snake_direction_of(@loc, '166:0');
         switch(@dir) {
             case 'east':
@@ -35,4 +35,15 @@ proc _snake_block(@id, @loc) {
         }
     }
     return(@id.':0');
+}
+
+proc _snake_change_speed(@value, @game) {
+    @speeds = array('slow', 'normal', 'fast', 'superfast', 'impossible');
+    @current = array_index(@speeds, @game['speed']);
+    @new = @current + @value;
+    if(@new > -1 && array_index_exists(@speeds, @new)) {
+        @game['speed'] = @speeds[@new];
+        clear_task(@game['interval']);
+        _snake_start_task(@game);
+    }
 }
