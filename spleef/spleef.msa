@@ -129,7 +129,7 @@
 			}
 			*/
 			#platforming
-			if(get_block_at(@cfg['option']['platforming']) === '124:0' && get_block_at(@cfg['option']['soulsand']) === '123:0') {
+			if(get_block_at(@cfg['option']['platforming']) === '124:0') {
 				proc _setfloor(@x, @y, @z, @mat) {
 					if(rand(10) < 3) {
 						set_block_at(@x, @y, @z, @mat, 'custom', false)
