@@ -688,3 +688,11 @@ bind(item_drop, array('id': @id.'dropspec'), null, @e, @id) {
 		cancel();
 	}
 }
+
+array_push(@pvp['binds'], @id.'pickupspec');
+bind(item_pickup, array('id': @id.'pickupspec'), null, @e, @id) {
+	@pvp = import('pvp'.@id);
+	if(array_contains(@pvp['spectators'], @e['player'])) {
+		cancel();
+	}
+}
