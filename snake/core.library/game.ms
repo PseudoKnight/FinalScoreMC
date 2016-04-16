@@ -132,7 +132,7 @@ proc _snake_start_task(@game) {
 
 proc _snake_end(@winner, @game) {
     foreach(@player in array_keys(@game['snakes'])) {
-        title_msg(@player, @winner.' wins!', '');
+        title_msg(@player, @winner.' wins!', '', 20, 60, 20);
     }
     _snake_unbind_events();
     _snake_stop_song();

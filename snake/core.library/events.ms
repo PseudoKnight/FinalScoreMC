@@ -16,7 +16,13 @@ proc _snake_bind_events(@game) {
         if(array_contains(sk_regions_at(@event['location']), 'snake')) {
             foreach(@block in @event['blocks']) {
                 if(split(':', get_block_at(@block))[0] == '159') {
-                    set_block_at(@block, 0, false);
+                    foreach(@player: @snake in @game['snakes']) {
+                        if(@snake['loc'][0] == @block[0] && @snake['loc'][1] == @block[1] && @snake['loc'][2] == @block[2]) {
+                            _snake_kill(@player, @game);
+                        } else {
+                            set_block_at(@block, 0, false);
+                        }
+                    }
                 }
             }
         }

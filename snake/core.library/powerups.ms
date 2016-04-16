@@ -94,7 +94,7 @@ proc _snake_powerup(@player, @powerup, @game) {
     switch(@powerup) {
         case 'food':
             play_sound(@snake['loc'], associative_array('sound': 'EAT', 'volume': 2));
-            @snake['length'] = ceil(@snake['length'] * 1.5);
+            @snake['length'] = ceil(@snake['length'] * 2);
             return(true);
 
         case 'faster':

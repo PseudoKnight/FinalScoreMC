@@ -90,7 +90,7 @@ proc _snake_kill(@player, @game) {
         }
     }
     @snake['alive'] = false;
-    play_sound(@snake['loc'], associative_array('sound': 'ZOMBIE_DEATH', 'pitch': 2, 'volume': 2));
+    play_sound(@snake['loc'], associative_array('sound': 'ZOMBIE_DEATH', 'pitch': 2, 'volume': 3));
 }
 
 proc _snake_set_top(@snake) {
