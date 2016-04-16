@@ -103,7 +103,6 @@ proc _equip_park(@player) {
 		)),
 	))
 
-	try(
 	@pdata = _pdata(@player)
 	if(array_index_exists(@pdata, 'support')
 	&& @pdata['support'] >= 10) {
@@ -120,8 +119,8 @@ proc _equip_park(@player) {
 			),
 		))
 	}
-	)
 
+	set_pflight(@player, false);
 }
 
 /*
