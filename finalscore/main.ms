@@ -583,25 +583,6 @@ bind(player_interact_entity, null, array('clicked': 'PAINTING'), @event) {
 	}
 }
 
-# Prevent undesireable interdimensional travel
-bind(entity_enter_portal, null, array('type': 'ENDER_DRAGON'), @e) {
-	cancel();
-}
-
-bind(entity_enter_portal, null, array('type': '/^(?!PLAYER)\\w*/', 'world': '/(dev|custom)/'), @e) {
-	entity_remove(@e['id']);
-}
-
-# Works around major bug in MV-NetherPortals
-bind(player_portal_travel, null, null, @e) {
-	if(!_is_survival_world(@e['from']['world'])) {
-		cancel();
-	} else if(@e['from']['world'] == 'outworld' && @e['type'] == 'END_PORTAL') {
-		cancel();
-		set_ploc(get_spawn('outworld_the_end'));
-	}
-}
-
 # Block creeper damage on the surface.
 bind(entity_explode, null, array('type': 'CREEPER'), @event) {
 	if(@event['location']['y'] > 62
