@@ -17,6 +17,7 @@ include('util.ms');
 include('powerups.ms');
 include('snake.ms');
 include('events.ms');
+include('bot.ms');
 
 proc _snake_queue(@args) {
     // Check if a game is already running
@@ -58,7 +59,13 @@ proc _snake_queue(@args) {
     }
 
     if(!array_index_exists(@game, 'numPowerups')) {
-        @game['numPowerups'] = array_size(@game['snakes']) * 2;
+        @game['numPowerups'] = array_size(@game['snakes']) * 3;
+    }
+
+    foreach(@bot in array('Dopey', 'Sleepy', 'Bashful', 'Grumpy')) {
+        if(array_size(@game['snakes']) < 7) {
+            _snake_add(@bot, @game);
+        }
     }
 
     // Start countdown
@@ -107,11 +114,14 @@ proc _snake_start_task(@game) {
         @alive = 0;
         @active = 'No one';
         foreach(@player: @snake in @game['snakes']) {
-            if(!ponline(@player) || !array_contains(sk_current_regions(@player), 'snake')) {
+            if(!@snake['bot'] && (!ponline(@player) || !array_contains(sk_current_regions(@player), 'snake'))) {
                 _snake_remove(@player, @game);
                 continue();
             }
             if(@snake['alive']) {
+                if(@snake['bot']) {
+                    _snake_bot_update(@player, @game);
+                }
                 if(_snake_update(@player, @game)) {
                     @alive++;
                     @active = @player;
@@ -132,7 +142,9 @@ proc _snake_start_task(@game) {
 
 proc _snake_end(@winner, @game) {
     foreach(@player in array_keys(@game['snakes'])) {
-        title_msg(@player, @winner.' wins!', '', 20, 60, 20);
+        if(ponline(@player)) {
+            title_msg(@player, @winner.' wins!', '', 20, 60, 20);
+        }
     }
     _snake_unbind_events();
     _snake_stop_song();

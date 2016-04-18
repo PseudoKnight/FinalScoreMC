@@ -37,6 +37,60 @@ proc _snake_block(@id, @loc) {
     return(@id.':0');
 }
 
+proc _snake_safe_block(@loc) {
+    @id = split(':', get_block_at(@loc))[0];
+    if(@id == '159' || @id == '155' || @id == '88') {
+        return(false);
+    }
+    return(true);
+}
+
+proc _snake_opposite_dir(@dir) {
+    switch(@dir) {
+        case 'up':
+            return('down');
+        case 'down':
+            return('up');
+        case 'north':
+            return('south');
+        case 'south':
+            return('north');
+        case 'east':
+            return('west');
+        case 'west':
+            return('east');
+    }
+}
+
+proc _snake_farthest_dir(@loc1, @loc2) {
+    @x = @loc1[0] - @loc2[0];
+    @y = @loc1[1] - @loc2[1];
+    @z = @loc1[2] - @loc2[2];
+    @ax = abs(@x);
+    @ay = abs(@y);
+    @az = abs(@z);
+    if(@ax > @ay && @ax > @az) {
+        if(@x > 0) {
+            return('west');
+        } else if(@x < 0) {
+            return('east');
+        }
+    } else if(@az > @ax && @az > @ay) {
+        if(@z > 0) {
+            return('north');
+        } else if(@z < 0) {
+            return('south');
+        }
+    } else {
+        if(@y > 0) {
+            return('down');
+        } else if(@y < 0) {
+            return('up');
+        }
+    }
+    return(null);
+}
+
 proc _snake_change_speed(@value, @game) {
     @speeds = array('slow', 'normal', 'fast', 'superfast', 'impossible');
     @current = array_index(@speeds, @game['speed']);

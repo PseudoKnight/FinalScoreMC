@@ -12,6 +12,7 @@
     'ability': a powerup ability
     'alive': whether the snake is active or dead
     'click': set to true if an action is performed, set to false on update
+    'bot': the name of the bot, if a bot
 */
 
 proc _snake_add(@player, @game) {
@@ -43,27 +44,32 @@ proc _snake_add(@player, @game) {
         'loc': @headLoc,
         'dir': @dir,
         'click': false,
+        'bot': '',
     );
-    set_pflight(@player, true);
-    set_peffect(@player, 14, 0, 9999, true, false);
-    set_pinv(@player, associative_array(
-        0: associative_array(
-            'name': 'STICK',
-            'meta': associative_array('display': 'JOYSTICK'),
-        ),
-        103: associative_array(
-            'name': 'SKULL_ITEM',
-            'data': 3,
-            'meta': associative_array('owner': @player),
-    )));
     set_block_at(@headLoc, @head, false);
     set_block_at(@startLoc, @tail, false);
     _snake_set_top(@game['snakes'][@player]);
-    set_ploc(@player, _relative(@headLoc, @game['snakes'][@player]['top'], 20));
-    @yaw = get_yaw(ploc(@player), @headLoc);
-    @pitch = get_pitch(ploc(@player), @headLoc);
-    pfacing(@player, @yaw, @pitch);
-    set_pflying(@player, true);
+    if(ponline(@player)) {
+        set_ploc(@player, _relative(@headLoc, @game['snakes'][@player]['top'], 20));
+        @yaw = get_yaw(ploc(@player), @headLoc);
+        @pitch = get_pitch(ploc(@player), @headLoc);
+        pfacing(@player, @yaw, @pitch);
+        set_pflight(@player, true);
+        set_pflying(@player, true);
+        set_peffect(@player, 14, 0, 9999, true, false);
+        set_pinv(@player, associative_array(
+            0: associative_array(
+                'name': 'STICK',
+                'meta': associative_array('display': 'JOYSTICK'),
+            ),
+            103: associative_array(
+                'name': 'SKULL_ITEM',
+                'data': 3,
+                'meta': associative_array('owner': @player),
+        )));
+    } else {
+        @game['snakes'][@player]['bot'] = @player;
+    }
 }
 
 proc _snake_remove(@player, @game) {
