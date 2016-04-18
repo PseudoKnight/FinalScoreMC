@@ -48,7 +48,7 @@ proc _pvp_start_match(@id) {
 			} else {
 				@time = time()
 			}
-			array_set(@pvp['itemspawn'], @i, array(0, @time))
+			array_set(@pvp['itemspawn'], @i, array('', @time))
 		}
 	}
 
@@ -117,20 +117,22 @@ proc _pvp_start_match(@id) {
 	include('events.ms');
 
 	@pvp['interval'] = set_interval(1000, closure(){
-		@pvp = import('pvp'.@id)
-		@check = false
-		if(@pvp['arena']['mode'] === 'koth',
-			@hillcount = 0)
+		@pvp = import('pvp'.@id);
+		@arena = @pvp['arena'];
+		@check = false;
+		if(@arena['mode'] == 'koth') {
+			@hillcount = 0;
+		}
 
-		if(array_index_exists(@pvp['arena'], 'timer')) {
-			@totalsecsleft = ceil((@pvp['arena']['timer'][1] * 60) - ((time() / 1000) - @pvp['starttime']))
+		if(array_index_exists(@arena, 'timer')) {
+			@totalsecsleft = ceil((@arena['timer'][1] * 60) - ((time() / 1000) - @pvp['starttime']))
 			if(@totalsecsleft < 0) {
-				_pvp_end_match(@id, @pvp['team'][@pvp['arena']['timer'][0]]['players'])
-				die()
+				_pvp_end_match(@id, @pvp['team'][@arena['timer'][0]]['players']);
+				die();
 			}
-			@minleft = floor(@totalsecsleft / 60)
-			@secsleft = mod(@totalsecsleft, 60)
-			@timeleft = @minleft.':'.if(@secsleft < 10, '0').@secsleft
+			@minleft = floor(@totalsecsleft / 60);
+			@secsleft = mod(@totalsecsleft, 60);
+			@timeleft = @minleft.':'.if(@secsleft < 10, '0').@secsleft;
 			// @percentage = round((@totalsecsleft / (@pvp['arena']['timer'][1] * 60)) * 100)
 			if(extension_exists('CHNaughty')) {
 				foreach(@p in array_keys(@pvp['players'])) {
@@ -139,44 +141,44 @@ proc _pvp_start_match(@id) {
 			}
 		}
 
-		foreach(@player in array_keys(@pvp['players'])) {
-			if(pinfo(@player, 5) <= 0, continue())
-			if(array_index_exists(@pvp['arena'], 'respawntime')
-			&& @pvp['players'][@player]['respawn'] != 0) {
-				if(!array_contains(sk_current_regions(@player), @pvp['arena']['broadcast']) && ploc(@player)['y'] < 256) {
-					_regionmsg(@pvp['arena']['broadcast'], color('gray').'[PVP] '
-						.@pvp['players'][@player]['color'].@player
-						.color('r').' left the arena.')
-					if(array_index_exists(@pvp['players'][@player], 'class')) {
-						_class('unload', @player, @pvp['players'][@player]['class'], @pvp)
+		foreach(@player: @p in @pvp['players']) {
+			if(pinfo(@player, 5) <= 0) {
+				// dead
+			 	continue();
+			}
+			if(array_index_exists(@arena, 'respawntime') && @p['respawn'] != 0) {
+				if(!array_contains(sk_current_regions(@player), @arena['broadcast']) && ploc(@player)['y'] < 256) {
+					_regionmsg(@arena['broadcast'], colorize('&7[PVP] '.@p['color'].@player.'&r left the arena.'));
+					if(array_index_exists(@p, 'class')) {
+						_class('unload', @player, @p['class'], @pvp);
 					}
-					if(array_index_exists(@pvp['arena'], 'resourcepack')) {
-						send_resourcepack(@player, 'http://mc.finalscoremc.com:25966/resourcepacks/default.zip')
+					if(array_index_exists(@arena, 'resourcepack')) {
+						send_resourcepack(@player, 'http://mc.finalscoremc.com:25966/resourcepacks/default.zip');
 					}
 					array_remove(@pvp['players'], @player);
 					dm_set_pvisible(@player, true);
 					set_pflight(@player, false);
 					preset_time(@player);
 					set_pstorm(@player, null);
-					_clear_pinv(@player)
-					_clear_peffects(@player)
-					@check = true
-				} else if(@pvp['players'][@player]['respawn'] < time()) {
+					_clear_pinv(@player);
+					_clear_peffects(@player);
+					@check = true;
+				} else if(@p['respawn'] < time()) {
 					@loc = array();
-					if(array_index_exists(@pvp['arena'], 'captain')) {
-						if(@pvp['team'][@pvp['players'][@player]['team']]['captain'] === '') {
+					if(array_index_exists(@arena, 'captain')) {
+						if(@pvp['team'][@p['team']]['captain'] === '') {
 							continue();
 						}
-						@loc = ploc(@pvp['team'][@pvp['players'][@player]['team']]['captain']);
+						@loc = ploc(@pvp['team'][@p['team']]['captain']);
 						play_sound(ploc(@player), array('sound': 'GHAST_FIREBALL'));
 						make_effect(_relative(ploc(@player), 'up'), 'MOBSPAWNER_FLAMES');
 					} else {
-						if(array_index_exists(@pvp['players'], 'team')) {
-							@r = rand(0, array_size(@pvp['arena']['spawn'][@pvp['players'][@player]['team']]));
-							@loc = @pvp['arena']['spawn'][@pvp['players'][@player]['team']][@r];
+						if(array_index_exists(@pvp, 'team')) {
+							@r = rand(0, array_size(@arena['spawn'][@p['team']]));
+							@loc = @arena['spawn'][@p['team']][@r];
 						} else {
-							@r = rand(0, array_size(@pvp['arena']['spawn'][0]));
-							@loc = @pvp['arena']['spawn'][0][@r];
+							@r = rand(0, array_size(@arena['spawn'][0]));
+							@loc = @arena['spawn'][0][@r];
 						}
 					}
 					try(set_entity_fall_distance(puuid(@player), 0));
@@ -186,23 +188,22 @@ proc _pvp_start_match(@id) {
 					preset_time(@player);
 					set_pstorm(@player, null);
 					_pvp_equip(@id, @player);
-					@pvp['players'][@player]['respawn'] = 0;
+					@p['respawn'] = 0;
 					close_pinv(@player);
 				} else {
-					@timeleft = ceil((@pvp['players'][@player]['respawn'] - time()) / 1000);
+					@timeleft = ceil((@p['respawn'] - time()) / 1000);
 					title_msg(@player, @timeleft, null, 0, 20, 0);
 				}
-			} else if(!array_contains(sk_current_regions(@player), @pvp['arena']['region'])) {
+			} else if(!array_contains(sk_current_regions(@player), @arena['region'])) {
 				tmsg(@player, color('gray').'[PVP] '.color('r').'You exited the combat region.')
-				queue_push(closure(){
-					if(pworld(@player) === 'custom') {
+				set_timeout(closure(){
+					if(pworld(@player) == 'custom') {
 						pkill(@player);
 					}
-				})
-			} else if(@pvp['arena']['mode'] === 'koth'
-			&& array_contains(sk_current_regions(@player), @pvp['arena']['kothregion'])) {
-				@king = @player
-				@hillcount++
+				});
+			} else if(@arena['mode'] == 'koth' && array_contains(sk_current_regions(@player), @arena['kothregion'])) {
+				@king = @player;
+				@hillcount++;
 			}
 
 		} else {
@@ -210,42 +211,49 @@ proc _pvp_start_match(@id) {
 		}
 
 		foreach(@p in @pvp['spectators']) {
-			if(!array_contains(sk_current_regions(@p), @pvp['arena']['region'])) {
+			if(!array_contains(sk_current_regions(@p), @arena['region'])) {
 				_remove_spectator(@p, @pvp);
 			}
 		}
 
-		if(@pvp['arena']['mode'] === 'koth' && @hillcount == 1) {
-			@score = get_pscore('seconds', @king, @id)
-			set_pscore('seconds', @king, @score - 1, @id)
-			@check = true
+		if(@arena['mode'] == 'koth' && @hillcount == 1) {
+			@score = get_pscore('seconds', @king, @id);
+			set_pscore('seconds', @king, @score - 1, @id);
+			@check = true;
 		}
 
-		if(array_index_exists(@pvp['arena'], 'itemspawn')) {
-			foreach(@i: @item in @pvp['arena']['itemspawn']) {
-				try(
-					@loc = _relative(entity_loc(@pvp['itemspawn'][@i][0]), 'up', 0.4);
-					@pvp['itemspawn'][@i][1] = time();
-					if(extension_exists('CHSpigot')) {
-						play_effect(@loc, 'FIREWORKS_SPARK', array('radius': 64, 'speed': 0));
+		if(array_index_exists(@arena, 'itemspawn')) {
+			foreach(@i: @item in @arena['itemspawn']) {
+				if(@pvp['itemspawn'][@i][0]) {
+					try {
+						@loc = _relative(entity_loc(@pvp['itemspawn'][@i][0]), 'up', 0.4);
+						@pvp['itemspawn'][@i][1] = time();
+						if(extension_exists('CHSpigot')) {
+							play_effect(@loc, 'FIREWORKS_SPARK', array('radius': 64, 'speed': 0));
+						}
+						continue();
+					} catch(BadEntityException @ex) {
+						// item drop was picked up or is unloaded
 					}
-				, # doesn't exist
-					if(@pvp['itemspawn'][@i][1] + (@item['cooldown'] * 1000) < time()) {
-						@id = drop_item(@item['loc'], @item['item'], false);
-						try( # maybe chunk isn't loaded?
-							set_entity_velocity(@id, array(0, 0, 0));
-							play_sound(@item['loc'], array('sound': 'ENDERMAN_TELEPORT', 'pitch': 1.5));
-							make_effect(@item['loc'], 'ENDER_SIGNAL');
-							@pvp['itemspawn'][@i][0] = @id;
-							@pvp['itemspawn'][@i][1] = time();
-						)
+				}
+				if(@pvp['itemspawn'][@i][1] + (@item['cooldown'] * 1000) < time()) {
+					@id = drop_item(@item['loc'], @item['item'], false);
+					try {
+						set_entity_velocity(@id, array(0, 0, 0));
+						play_sound(@item['loc'], array('sound': 'ENDERMAN_TELEPORT', 'pitch': 1.5));
+						make_effect(@item['loc'], 'ENDER_SIGNAL');
+						@pvp['itemspawn'][@i][0] = @id;
+						@pvp['itemspawn'][@i][1] = time();
+					} catch(BadEntityException @ex) {
+						// chunk might not be loaded, so try again next tick
+						@pvp['itemspawn'][@i][0] = '';
 					}
-				);
+				}
 			}
 		}
 
-		if(array_index_exists(@pvp['arena'], 'mobspawn')) {
-			foreach(@i: @mob in @pvp['arena']['mobspawn']) {
+		if(array_index_exists(@arena, 'mobspawn')) {
+			foreach(@i: @mob in @arena['mobspawn']) {
 				if((@pvp['mobspawn'][@i] + (@mob['respawn'] * 1000)) < time()) {
 					_spawn_mob(@mob['type'], @mob['qty'], @mob['loc']);
 					@pvp['mobspawn'][@i] = time();
@@ -253,23 +261,24 @@ proc _pvp_start_match(@id) {
 			}
 		}
 
-		if(array_index_exists(@pvp['arena'], 'chestspawn')) {
-			foreach(@i: @chest in @pvp['arena']['chestspawn']) {
+		if(array_index_exists(@arena, 'chestspawn')) {
+			foreach(@i: @chest in @arena['chestspawn']) {
 				if(array_index_exists(@pvp['chestspawn'], @i)
 				&& (@pvp['chestspawn'][@i] + (@chest['cooldown'] * 1000)) < time()) {
 					if(get_block_at(@chest['loc'])[0] === '0') {
 						set_block_at(@chest['loc'], '54:0');
-						for(@y = 0, @y < array_size(@chest['items']), @y++,
+						for(@y = 0, @y < array_size(@chest['items']), @y++) {
 							set_inventory_item(@chest['loc'], @y, @chest['items'][@y]);
-						)
+						}
 						@pvp['chestspawn'][@i] = time();
 					}
 				}
 			}
 		}
 
-		if(@check,
-			_pvp_check_objectives(@id))
+		if(@check) {
+			_pvp_check_objectives(@id);
+		}
 	})
 
 }
