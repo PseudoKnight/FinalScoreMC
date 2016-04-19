@@ -110,7 +110,7 @@ proc _snake_powerup(@player, @powerup, @game) {
             return(true);
 
         default:
-            if(@powerup) {
+            if(@powerup && !@game['snakes'][@player]['bot']) {
                 @snake['ability'] = @powerup;
                 play_sound(@snake['loc'], associative_array('sound': 'ENDERMAN_TELEPORT', 'pitch': 2, 'volume': 2));
                 set_pinv(@player, associative_array(1: associative_array('type': _snake_get_block_from(@powerup))));
