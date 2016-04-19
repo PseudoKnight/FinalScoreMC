@@ -73,6 +73,10 @@ bind(player_chat, null, null, @event) {
 		@components[] = array('&a\u2666 ', 'Server Supporter');
 	}
 
+	if(array_index_exists(@pdata, 'icon')) {
+		@components[] = @pdata['icon'].' ';
+	}
+
 	@color = _colorname();
 
 	@components[] = array(@color.player().'&8: ',

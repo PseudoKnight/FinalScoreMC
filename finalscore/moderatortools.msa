@@ -91,6 +91,18 @@
 	});
 <<<
 
+/icon $player [$] = >>>
+	@pdata = _pdata($player);
+	if($) {
+		@pdata['icon'] = colorize($);
+		msg('Added icon: '.@pdata['icon']);
+	} else if(array_index_exists(@pdata, 'icon')) {
+		array_remove(@pdata, 'icon');
+		msg('Removed icon.');
+	}
+	_store_pdata($player, @pdata);
+<<<
+
 /silentjoin [$state] = >>>
 	@state = $state;
 	if(!@state) {
