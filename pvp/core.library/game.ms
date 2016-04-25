@@ -196,7 +196,7 @@ proc _pvp_start_match(@id) {
 				}
 			} else if(!array_contains(sk_current_regions(@player), @arena['region'])) {
 				tmsg(@player, color('gray').'[PVP] '.color('r').'You exited the combat region.')
-				set_timeout(closure(){
+				set_timeout(50, closure(){
 					if(pworld(@player) == 'custom') {
 						pkill(@player);
 					}
