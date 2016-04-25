@@ -1,4 +1,4 @@
-set_cron('*/5 * * * *', closure(){
+set_cron('*/3 * * * *', closure(){
 	foreach(@world in get_worlds()) {
 		queue_push(closure(){
 			save_world(@world);
@@ -150,8 +150,15 @@ bind(player_join, null, null, @event) {
 			die();
 		}
 
+		@pdata = _pdata(player());
 		if(!(has_permission('group.admin') && get_value('silentjoin'))) {
-			broadcast(colorize('&8'.simple_date('h:mm').' '.'&e&o* '._colorname().'&o'.player().' &e&ojoined the game *'));
+			@msg = _colorname().'&o'.player().'&e&o ';
+			if(array_index_exists(@pdata, 'enter')) {
+				@msg .= @pdata['enter'];
+			} else {
+				@msg .= 'joined the game';
+			}
+			broadcast(colorize('&8'.simple_date('h:mm').' '.'&e&o* '.@msg.' &e&o*'));
 		}
 
 		# Makes a call to the ban manager to store the player's UUID
@@ -200,7 +207,6 @@ bind(player_join, null, null, @event) {
 		msg(colorize(' &6&l\u1260&d&l\u1260&b&l\u1260&4&l\u1260 &6&lFINALSCORE&e&lMC \u00AB &r\u25AA \u25AA \u25AA'));
 		msg(@line);
 
-		@pdata = _pdata(player());
 		@updatePdata = false;
 		if(array_index_exists(@pdata, 'mail')) {
 			foreach(@mail in @pdata['mail']) {
@@ -211,9 +217,9 @@ bind(player_join, null, null, @event) {
 		} else if(@motd = get_value('motd')) {
 			msg(@motd);
 			msg(@line);
-		} else {
-			run('/mumble');
-		}
+		} //else {
+			//run('/mumble');
+		//}
 
 		_refresh_tablist(all_players());
 
@@ -249,8 +255,14 @@ bind(player_command, null, null, @event) {
 
 bind(player_quit, null, null, @event) {
 	modify_event('message', null);
-	broadcast(colorize('&8'.simple_date('h:mm').' '.'&e&o* '._colorname().'&o'.player().' &e&oleft the game *'));
 	@pdata = _pdata(@event['player']);
+	@msg = _colorname().'&o'.player().'&e&o ';
+	if(array_index_exists(@pdata, 'exit')) {
+		@msg .= @pdata['exit'];
+	} else {
+		@msg .= 'left the game';
+	}
+	broadcast(colorize('&8'.simple_date('h:mm').' '.'&e&o* '.@msg.' &e&o*'));
 	try {
 		@pdata['world'] = pworld();
 		_store_pdata(@event['player'], @pdata);

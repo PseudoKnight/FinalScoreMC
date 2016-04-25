@@ -368,7 +368,36 @@
 	if(pmode() == 'SPECTATOR') {
 		@worlds = _worlds_config();
 		set_pmode(@worlds[pworld()]['mode']);
+		if(extension_exists('CHDynmap')) {
+			dm_set_pvisible(true);
+		}
 	} else {
 		set_pmode('SPECTATOR');
+		if(extension_exists('CHDynmap')) {
+			dm_set_pvisible(false);
+		}
 	}
+<<<
+
+# Custom join/leave messages
+*:/enter [$] = >>>
+	if(!$) {
+		die('Enter a message to be displayed when entering the server.');
+	}
+
+	@pdata = _pdata(player());
+	@pdata['enter'] = $;
+	_store_pdata(player(), @pdata);
+	msg(colorize('&7Set server enter message to: '._colorname().'&o'.player().' &e&o'.@pdata['enter']));
+<<<
+
+*:/exit [$] = >>>
+	if(!$) {
+		die('Enter a message to be displayed when exiting the server.');
+	}
+
+	@pdata = _pdata(player());
+	@pdata['exit'] = $;
+	_store_pdata(player(), @pdata);
+	msg(colorize('&7Set server exit message to: '._colorname().'&o'.player().' &e&o'.@pdata['exit']));
 <<<
