@@ -13,9 +13,9 @@ proc _snake_valid_location(@region) {
     return(null);
 }
 
-proc _snake_direction_of(@loc, @block) {
+proc _snake_direction_of(@loc, @block, @not) {
     foreach(@dir in array('up', 'down', 'north', 'south', 'east', 'west')) {
-        if(get_block_at(_relative(@loc, @dir)) == @block) {
+        if((!@not || @not != @dir) && get_block_at(_relative(@loc, @dir)) == @block) {
             return(@dir);
         }
     }

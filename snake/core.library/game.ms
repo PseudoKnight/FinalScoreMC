@@ -35,6 +35,7 @@ proc _snake_queue(@args) {
     @game['powerups'] = array();
     @game['speed'] = 'normal';
     @game['extraBlocks'] = array();
+    @game['numPowerups'] = @game['surfaces'] * 2;
     @game['debug'] = false;
 
     // Command options
@@ -56,10 +57,6 @@ proc _snake_queue(@args) {
         if(array_size(@game['snakes']) == 7) {
             break();
         }
-    }
-
-    if(!array_index_exists(@game, 'numPowerups')) {
-        @game['numPowerups'] = array_size(@game['snakes']) * 3;
     }
 
     foreach(@bot in array('Dopey', 'Sleepy', 'Bashful', 'Grumpy')) {
