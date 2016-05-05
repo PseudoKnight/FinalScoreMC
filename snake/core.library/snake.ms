@@ -26,7 +26,7 @@ proc _snake_add(@player, @game) {
         array('159:15', '159:7'), # black
     );
     @region = 'snake_'.@game['arena'].rand(1, @game['surfaces'] + 1);
-    @startLoc = _snake_valid_location(@region);
+    @startLoc = _snake_valid_location(@region, 2);
     if(!@startLoc) {
         return();
     }
@@ -44,7 +44,9 @@ proc _snake_add(@player, @game) {
         'loc': @headLoc,
         'dir': @dir,
         'click': false,
+        'region': @region,
         'bot': '',
+        'target': null,
     );
     set_block_at(@headLoc, @head, false);
     set_block_at(@startLoc, @tail, false);
@@ -58,7 +60,7 @@ proc _snake_add(@player, @game) {
         set_pflying(@player, true);
         set_peffect(@player, 14, 0, 9999, true, false);
         set_pinv(@player, associative_array(
-            0: associative_array(
+            -106: associative_array(
                 'name': 'STICK',
                 'meta': associative_array('display': 'JOYSTICK'),
             ),
@@ -80,7 +82,7 @@ proc _snake_remove(@player, @game) {
     if(ponline(@player) && pworld(@player) == 'custom') {
         set_pflight(@player, false);
         set_peffect(@player, 14, 0, 0);
-        set_pinv(@player, array(0: null, 1: null, 103: null));
+        set_pinv(@player, associative_array(-106: null, 0: null, 103: null));
     }
 }
 
@@ -118,6 +120,7 @@ proc _snake_update(@player, @game) {
         }
         @snake['click'] = false;
         if(_snake_powerup(@player, @powerup, @game)) {
+            @snake['target'] = null;
             _snake_remove_powerup(@snake['loc'], @game);
         }
         return(true);
@@ -135,6 +138,8 @@ proc _snake_update(@player, @game) {
             array_remove(@snake['blocks'], 0);
         }
         @snake['click'] = false;
+        @snake['region'] = sk_regions_at(@snake['loc'])[1];
+        @snake['target'] = null;
         _snake_set_top(@snake);
         return(true);
     }

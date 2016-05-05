@@ -1,11 +1,26 @@
-proc _snake_valid_location(@region) {
+proc _snake_valid_location(@region, @padding = 0) {
     @i = 0;
     while(@i < 20) {
         @i++;
         @coords = sk_region_info(@region, 'custom')[0];
-        @x = @coords[1][0] + rand(1 + @coords[0][0] - @coords[1][0]);
-        @y = @coords[1][1] + rand(1 + @coords[0][1] - @coords[1][1]);
-        @z = @coords[1][2] + rand(1 + @coords[0][2] - @coords[1][2]);
+        @x = 0;
+        @y = 0;
+        @z = 0;
+        if(@padding == 0 || @coords[1][0] == @coords[0][0]) {
+            @x = @coords[1][0] + rand(1 + @coords[0][0] - @coords[1][0]);
+        } else {
+            @x = (@coords[1][0] + @padding) + rand(1 + @coords[0][0] - @coords[1][0] - (@padding * 2));
+        }
+        if(@padding == 0 || @coords[1][1] == @coords[0][1]) {
+            @y = @coords[1][1] + rand(1 + @coords[0][1] - @coords[1][1]);
+        } else {
+            @y = (@coords[1][1] + @padding) + rand(1 + @coords[0][1] - @coords[1][1] - (@padding * 2));
+        }
+        if(@padding == 0 || @coords[1][2] == @coords[0][2]) {
+            @z = @coords[1][2] + rand(1 + @coords[0][2] - @coords[1][2]);
+        } else {
+            @z = (@coords[1][2] + @padding) + rand(1 + @coords[0][2] - @coords[1][2] - (@padding * 2));
+        }
         if(get_block_at(@x, @y, @z, 'custom') == '0:0') {
             return(array(@x, @y, @z, 'custom'));
         }

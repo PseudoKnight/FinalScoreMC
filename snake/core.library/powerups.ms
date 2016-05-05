@@ -69,6 +69,7 @@ proc _snake_add_powerup(@game) {
             'block': @block,
             'loc': @loc,
             'type': @type,
+            'region': @region,
         );
     }
 }
@@ -113,7 +114,7 @@ proc _snake_powerup(@player, @powerup, @game) {
             if(@powerup && !@game['snakes'][@player]['bot']) {
                 @snake['ability'] = @powerup;
                 play_sound(@snake['loc'], associative_array('sound': 'ENDERMAN_TELEPORT', 'pitch': 2, 'volume': 2));
-                set_pinv(@player, associative_array(1: associative_array('type': _snake_get_block_from(@powerup))));
+                set_pinv(@player, associative_array(0: associative_array('type': _snake_get_block_from(@powerup))));
                 return(true);
             }
     }
@@ -126,13 +127,13 @@ proc _snake_ability(@player, @game) {
         case 'tnt':
             @item = pinv(@player, 1);
             if(@item) {
-                set_pinv(@player, associative_array(1: null));
+                set_pinv(@player, associative_array(0: null));
                 spawn_entity('PRIMED_TNT', 1, array(
                     @snake['loc'][0] + 0.5, @snake['loc'][1] + 0.5, @snake['loc'][2] + 0.5, @snake['loc'][3]
                 ));
                 set_timeout(4000, closure(){
                     if(@snake['ability'] == 'tnt') {
-                        set_pinv(@player, associative_array(1: associative_array('name': 'TNT')));
+                        set_pinv(@player, associative_array(0: associative_array('name': 'TNT')));
                     }
                 });
             }
