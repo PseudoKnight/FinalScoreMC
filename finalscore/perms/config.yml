@@ -87,6 +87,7 @@ regular:
   permissions:
     group.regular: true
     logblock.tools.tool: true
+    worldguard.region.unlimited: true
   inheritance: member
 donor:
   permissions:
