@@ -3,22 +3,23 @@ proc _snake_get_powerup_from(@id) {
         case 1:
         case 2:
         case 4:
+        case 5:
         case 170:
             return('food');
 
         case 3:
             return('poop');
 
-        case 5:
+        case 6:
         case 46:
             return('tnt');
 
-        case 6:
         case 7:
+        case 8:
         case 133:
             return('faster');
 
-        case 8:
+        case 9:
         case 152:
             return('slower');
     }
@@ -30,6 +31,7 @@ proc _snake_get_block_from(@powerup) {
         case 1:
         case 2:
         case 4:
+        case 5:
         case 'food':
             return(170);
 
@@ -37,16 +39,16 @@ proc _snake_get_block_from(@powerup) {
         case 'poop':
             return(3);
 
-        case 5:
+        case 6:
         case 'tnt':
             return(46);
 
-        case 6:
         case 7:
+        case 8:
         case 'faster':
             return(133);
 
-        case 8:
+        case 9:
         case 'slower':
             return(152);
     }
@@ -57,8 +59,8 @@ proc _snake_add_powerup(@game) {
     @region = 'snake_'.@game['arena'].rand(1, @game['surfaces'] + 1);
     @loc = _snake_valid_location(@region);
     if(@loc) {
-        @r = rand(8) + 1;
-        @block = _snake_block(_snake_get_block_from(@r), @loc);
+        @r = rand(9) + 1;
+        @block = _snake_get_block_from(@r);
         @type = _snake_get_powerup_from(@r);
         if((@type == 'faster' && @game['speed'] == 'impossible')
         || (@type == 'slower' && @game['speed'] == 'slow')) {
@@ -91,34 +93,33 @@ proc _snake_remove_all_powerups(@game) {
 }
 
 proc _snake_powerup(@player, @powerup, @game) {
+    if(!@powerup) {
+        return(false);
+    }
     @snake = @game['snakes'][@player];
     switch(@powerup) {
         case 'food':
             play_sound(@snake['loc'], associative_array('sound': 'EAT', 'volume': 2));
             @snake['length'] = ceil(@snake['length'] * 2);
-            return(true);
 
         case 'faster':
             if(_snake_change_speed(1, @game)) {
                 play_sound(@snake['loc'], associative_array('sound': 'SUCCESSFUL_HIT', 'volume': 3));
             }
-            return(true);
 
         case 'slower':
             if(_snake_change_speed(-1, @game)) {
                 play_sound(@snake['loc'], associative_array('sound': 'SUCCESSFUL_HIT', 'pitch': 0.5, 'volume': 3));
             }
-            return(true);
 
         default:
-            if(@powerup && !@game['snakes'][@player]['bot']) {
-                @snake['ability'] = @powerup;
-                play_sound(@snake['loc'], associative_array('sound': 'ENDERMAN_TELEPORT', 'pitch': 2, 'volume': 2));
+            @snake['ability'] = @powerup;
+            play_sound(@snake['loc'], associative_array('sound': 'ENDERMAN_TELEPORT', 'pitch': 2, 'volume': 2));
+            if(!@game['snakes'][@player]['bot']) {
                 set_pinv(@player, associative_array(0: associative_array('type': _snake_get_block_from(@powerup))));
-                return(true);
             }
     }
-    return(false);
+    return(true);
 }
 
 proc _snake_ability(@player, @game) {

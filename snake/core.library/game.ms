@@ -59,7 +59,7 @@ proc _snake_queue(@args) {
         }
     }
 
-    foreach(@bot in array('Dopey', 'Sleepy', 'Bashful', 'Grumpy')) {
+    foreach(@bot in array('Dopey', 'Sleepy', 'Bashful', 'Grumpy', 'Happy')) {
         if(array_size(@game['snakes']) < 7) {
             _snake_add(@bot, @game);
         }

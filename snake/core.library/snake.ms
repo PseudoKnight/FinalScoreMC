@@ -58,17 +58,12 @@ proc _snake_add(@player, @game) {
         pfacing(@player, @yaw, @pitch);
         set_pflight(@player, true);
         set_pflying(@player, true);
-        set_peffect(@player, 14, 0, 9999, true, false);
         set_pinv(@player, associative_array(
             -106: associative_array(
                 'name': 'STICK',
                 'meta': associative_array('display': 'JOYSTICK'),
             ),
-            103: associative_array(
-                'name': 'SKULL_ITEM',
-                'data': 3,
-                'meta': associative_array('owner': @player),
-        )));
+        ));
     } else {
         @game['snakes'][@player]['bot'] = @player;
     }
@@ -81,8 +76,7 @@ proc _snake_remove(@player, @game) {
     array_remove(@game['snakes'], @player);
     if(ponline(@player) && pworld(@player) == 'custom') {
         set_pflight(@player, false);
-        set_peffect(@player, 14, 0, 0);
-        set_pinv(@player, associative_array(-106: null, 0: null, 103: null));
+        set_pinv(@player, associative_array(-106: null, 0: null));
     }
 }
 

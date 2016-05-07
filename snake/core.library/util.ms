@@ -37,21 +37,6 @@ proc _snake_direction_of(@loc, @block, @not) {
     return(null);
 }
 
-proc _snake_block(@id, @loc) {
-    if(@id == '170') {
-        @dir = _snake_direction_of(@loc, '166:0');
-        switch(@dir) {
-            case 'east':
-            case 'west':
-                return(@id.':4');
-            case 'north':
-            case 'south':
-                return(@id.':8');
-        }
-    }
-    return(@id.':0');
-}
-
 proc _snake_safe_block(@loc) {
     @id = split(':', get_block_at(@loc))[0];
     if(@id == '159' || @id == '155' || @id == '88') {
@@ -75,6 +60,7 @@ proc _snake_opposite_dir(@dir) {
         case 'west':
             return('east');
     }
+    return(null);
 }
 
 proc _snake_farthest_dir(@loc1, @loc2) {
