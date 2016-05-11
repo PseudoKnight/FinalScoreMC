@@ -13,6 +13,10 @@
     'debug': debug mode
 */
 
+if(has_bind('snake-interact')) {
+    die('Game is already running.');
+}
+
 include('util.ms');
 include('powerups.ms');
 include('snake.ms');
@@ -20,11 +24,6 @@ include('events.ms');
 include('bot.ms');
 
 proc _snake_queue(@args) {
-    // Check if a game is already running
-    if(has_bind('snake-interact')) {
-        die('Game is already running.');
-    }
-
     // Default options
     @game = associative_array();
     @game['arena'] = 'plane';
@@ -37,6 +36,7 @@ proc _snake_queue(@args) {
     @game['extraBlocks'] = array();
     @game['numPowerups'] = @game['surfaces'] * 2;
     @game['debug'] = false;
+    @game['numPlayers'] = 7
 
     // Command options
     foreach(@arg in @args) {
@@ -49,18 +49,23 @@ proc _snake_queue(@args) {
         @game[@key] = @value;
     }
 
+    // Create scoreboard
+    create_scoreboard('snake');
+    create_objective('length', 'DUMMY', 'snake');
+    set_objective_display('length', associative_array('displayname': 'SNAKE', 'slot': 'SIDEBAR'), 'snake');
+
     // Add players in region
     foreach(@p in all_players()) {
         if(array_contains(sk_current_regions(@p), 'snake') && pmode(@p) == 'ADVENTURE') {
             _snake_add(@p, @game);
         }
-        if(array_size(@game['snakes']) == 7) {
+        if(array_size(@game['snakes']) == @game['numPlayers']) {
             break();
         }
     }
 
-    foreach(@bot in array('Dopey', 'Sleepy', 'Bashful', 'Grumpy', 'Happy')) {
-        if(array_size(@game['snakes']) < 7) {
+    foreach(@bot in array('Dopey', 'Sleepy', 'Bashful', 'Grumpy', 'Happy', 'Sneezy')) {
+        if(array_size(@game['snakes']) < @game['numPlayers']) {
             _snake_add(@bot, @game);
         }
     }
@@ -98,8 +103,6 @@ proc _snake_queue(@args) {
 proc _snake_start_task(@game) {
     @ms = 200;
     switch(@game['speed']) {
-        case 'impossible':
-            @ms = 50;
         case 'superfast':
             @ms = 100;
         case 'fast':
@@ -153,5 +156,6 @@ proc _snake_end(@winner, @game) {
         foreach(@loc in @game['extraBlocks']) {
             set_block_at(@loc, 0, false);
         }
+        remove_scoreboard('snake');
     });
 }

@@ -93,7 +93,7 @@ proc _snake_farthest_dir(@loc1, @loc2) {
 }
 
 proc _snake_change_speed(@value, @game) {
-    @speeds = array('slow', 'normal', 'fast', 'superfast', 'impossible');
+    @speeds = array('slow', 'normal', 'fast', 'superfast');
     @current = array_index(@speeds, @game['speed']);
     @new = @current + @value;
     if(@new > -1 && array_index_exists(@speeds, @new)) {

@@ -1,19 +1,20 @@
 proc _snake_bot_update(@bot, @game) {
     @snake = @game['snakes'][@bot];
     @percent = rand(100);
-    if(@bot == 'Sleepy') {
-        if(!_snake_safe_block(_relative(@snake['loc'], @snake['dir']))) {
-            @dir = _snake_direction_of(@snake['loc'], '0:0', @snake['dir']);
-            if(@dir) {
-                @snake['dir'] = @dir
-            }
-        } else if(@snake['target']) {
+    switch(@bot) {
+    case 'Sleepy':
+        if(@snake['target']) {
             // go to target
             @dir = _snake_farthest_dir(@snake['loc'], @snake['target']['loc']);
             if(@dir && _snake_safe_block(_relative(@snake['loc'], @dir))) {
                 @snake['dir'] = @dir;
             } else if(split(':', get_block_at(@snake['target']['loc']))[0] == '159') {
                 @snake['target'] = null;
+            }
+        } else if(!_snake_safe_block(_relative(@snake['loc'], @snake['dir']))) {
+            @dir = _snake_direction_of(@snake['loc'], '0:0', @snake['dir']);
+            if(@dir) {
+                @snake['dir'] = @dir
             }
         } else if(@percent < 7) {
             // turn
@@ -24,7 +25,7 @@ proc _snake_bot_update(@bot, @game) {
         } else if(@percent < 14) {
             _snake_bot_target_powerup(@snake, @game);
         }
-    } else if(@bot == 'Dopey') {
+    case 'Dopey':
         if(@percent < 25 || !_snake_safe_block(_relative(@snake['loc'], @snake['dir']))) {
             @dir = _snake_direction_of(@snake['loc'], '0:0', @snake['dir']);
             if(@dir) {
@@ -54,8 +55,10 @@ proc _snake_bot_update(@bot, @game) {
             if(!_snake_bot_target_powerup(@snake, @game)) {
                 _snake_bot_target_snake(@snake, @game);
             }
+        } else if(@percent < 35) {
+            _snake_ability(@bot, @game);
         }
-    } else if(@bot == 'Grumpy') {
+    case 'Grumpy':
         if(!@snake['target']) {
             if(!_snake_bot_target_snake(@snake, @game)) {
                 _snake_bot_target_powerup(@snake, @game);
@@ -89,8 +92,10 @@ proc _snake_bot_update(@bot, @game) {
             if(@dir) {
                 @snake['dir'] = @dir;
             }
+        } else if(@percent < 15) {
+            _snake_ability(@bot, @game);
         }
-    } else if(@bot == 'Bashful') {
+    case 'Bashful':
         @othersnake = array_rand(@game['snakes'])[0];
         if(@othersnake != @bot
         && @game['snakes'][@othersnake]['alive']
@@ -119,13 +124,8 @@ proc _snake_bot_update(@bot, @game) {
                 @snake['dir'] = @dir;
             }
         }
-    } else if(@bot == 'Happy') {
-        if(!_snake_safe_block(_relative(@snake['loc'], @snake['dir']))) {
-            @dir = _snake_direction_of(@snake['loc'], '0:0', @snake['dir']);
-            if(@dir) {
-                @snake['dir'] = @dir
-            }
-        } else if(@snake['target']) {
+    case 'Happy':
+        if(@snake['target']) {
             // go to target
             @dir = _snake_farthest_dir(@snake['loc'], @snake['target']['loc']);
             if(@dir && _snake_safe_block(_relative(@snake['loc'], @dir))) {
@@ -133,6 +133,11 @@ proc _snake_bot_update(@bot, @game) {
             } else if(split(':', get_block_at(@snake['target']['loc']))[0] == '159') {
                 @snake['target'] = null;
             }
+        } else if(!_snake_safe_block(_relative(@snake['loc'], @snake['dir']))) {
+                @dir = _snake_direction_of(@snake['loc'], '0:0', @snake['dir']);
+                if(@dir) {
+                    @snake['dir'] = @dir
+                }
         } else if(@percent < 20) {
             // turn
             @dir = _snake_direction_of(@snake['loc'], '0:0', @snake['dir']);
@@ -141,6 +146,32 @@ proc _snake_bot_update(@bot, @game) {
             }
         } else if(@percent < 50) {
             _snake_bot_target_powerup(@snake, @game, 'food');
+        }
+
+    case 'Sneezy':
+        if(@snake['target']) {
+            // go to target
+            @dir = _snake_farthest_dir(@snake['loc'], @snake['target']['loc']);
+            if(@dir && _snake_safe_block(_relative(@snake['loc'], @dir))) {
+                @snake['dir'] = @dir;
+            } else if(split(':', get_block_at(@snake['target']['loc']))[0] == '159') {
+                @snake['target'] = null;
+            }
+        } else if(!_snake_safe_block(_relative(@snake['loc'], @snake['dir']))) {
+            @dir = _snake_direction_of(@snake['loc'], '0:0', @snake['dir']);
+            if(@dir) {
+                @snake['dir'] = @dir
+            }
+        } else if(@percent < 15) {
+            // turn
+            @dir = _snake_direction_of(@snake['loc'], '0:0', @snake['dir']);
+            if(@dir) {
+                @snake['dir'] = @dir;
+            }
+        } else if(@snake['ability'] && @percent < 30) {
+            _snake_ability(@bot, @game);
+        } else if(@percent < 25) {
+            _snake_bot_target_powerup(@snake, @game);
         }
     }
 }

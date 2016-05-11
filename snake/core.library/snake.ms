@@ -17,13 +17,13 @@
 
 proc _snake_add(@player, @game) {
     @colors = array(
-        array('159:11', '159:3'), # blue
-        array('159:1', '159:4'), # orange
-        array('159:13', '159:5'), # green
-        array('159:14', '159:6'), # red
-        array('159:8', '159:0'), # white
-        array('159:10', '159:2'), # purple
-        array('159:15', '159:7'), # black
+        array('159:11', '159:3', '9'), # blue
+        array('159:1', '159:4', '6'), # orange
+        array('159:13', '159:5', 'a'), # green
+        array('159:14', '159:6', 'c'), # red
+        array('159:8', '159:0', 'f'), # white
+        array('159:10', '159:2', 'd'), # purple
+        array('159:15', '159:7', '8'), # black
     );
     @region = 'snake_'.@game['arena'].rand(1, @game['surfaces'] + 1);
     @startLoc = _snake_valid_location(@region, 2);
@@ -34,6 +34,7 @@ proc _snake_add(@player, @game) {
     @headLoc = _relative(@startLoc, @dir);
     @head = @colors[array_size(@game['snakes'])][0];
     @tail = @colors[array_size(@game['snakes'])][1];
+    @color = @colors[array_size(@game['snakes'])][2];
     @game['snakes'][@player] = associative_array(
         'blocks': array(@startLoc, @headLoc),
         'ability': '',
@@ -51,7 +52,14 @@ proc _snake_add(@player, @game) {
     set_block_at(@headLoc, @head, false);
     set_block_at(@startLoc, @tail, false);
     _snake_set_top(@game['snakes'][@player]);
+
+    create_team(@player, 'snake');
+    set_team_display(@player, associative_array('prefix': color(@color)), 'snake');
+    team_add_player(@player, @player, 'snake');
+    set_pscore('length', @player, @game['startingLength'], 'snake');
+
     if(ponline(@player)) {
+        set_pscoreboard(@player, 'snake');
         set_ploc(@player, _relative(@headLoc, @game['snakes'][@player]['top'], 20));
         @yaw = get_yaw(ploc(@player), @headLoc);
         @pitch = get_pitch(ploc(@player), @headLoc);
