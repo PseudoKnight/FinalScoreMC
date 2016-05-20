@@ -30,7 +30,7 @@ proc _fw_endgame(@winners) {
 				_fw_changeteam(@p, 'losers');
 			}
 			_clear_pinv(@p);
-			set_pmode(@p, 'SURVIVAL');
+			set_pmode(@p, 'ADVENTURE');
 		}
 	}
 	if(array_contains(get_scoreboards(), 'fw')) {
