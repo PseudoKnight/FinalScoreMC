@@ -3,14 +3,11 @@
 
     'arena': the arena name, used to get region names for valid spawn locations
     'surfaces': the number of regions where valid spawn locations exist
-    'removeTail': whether the tail gets removed on snake death
-    'startingLength': the length of a snake when the game starts
     'snakes': an array of arrays of snake data for each player (see snake.ms)
     'powerups': an array of arrays of current powerups in the game
     'speed': a game option that controls the interval frequency (how often the snakes update)
     'numPowerups': the number of powerups that can exist in the game at any given time
     'extraBlocks': extraneous obstacle blocks to clean-up
-    'debug': debug mode
 */
 
 if(has_bind('snake-interact')) {
@@ -27,15 +24,12 @@ proc _snake_queue(@args) {
     // Default options
     @game = associative_array();
     @game['arena'] = 'plane';
-    @game['surfaces'] = 5;
-    @game['removeTail'] = false;
-    @game['startingLength'] = 4;
+    @game['surfaces'] = 6;
     @game['snakes'] = associative_array();
     @game['powerups'] = array();
     @game['speed'] = 'normal';
     @game['extraBlocks'] = array();
-    @game['numPowerups'] = @game['surfaces'] * 2;
-    @game['debug'] = false;
+    @game['numPowerups'] = @game['surfaces'];
     @game['numPlayers'] = 7
 
     // Command options
@@ -51,8 +45,8 @@ proc _snake_queue(@args) {
 
     // Create scoreboard
     create_scoreboard('snake');
-    create_objective('length', 'DUMMY', 'snake');
-    set_objective_display('length', associative_array('displayname': 'SNAKE', 'slot': 'SIDEBAR'), 'snake');
+    create_objective('alive', 'DUMMY', 'snake');
+    set_objective_display('alive', associative_array('displayname': 'SNAKE', 'slot': 'SIDEBAR'), 'snake');
 
     // Add players in region
     foreach(@p in all_players()) {
@@ -64,10 +58,11 @@ proc _snake_queue(@args) {
         }
     }
 
-    foreach(@bot in array('Dopey', 'Sleepy', 'Bashful', 'Grumpy', 'Happy', 'Sneezy')) {
-        if(array_size(@game['snakes']) < @game['numPlayers']) {
-            _snake_add(@bot, @game);
-        }
+    @bots = array('Dopey', 'Sleepy', 'Bashful', 'Grumpy', 'Happy', 'Sneezy');
+    while(array_size(@game['snakes']) < @game['numPlayers']) {
+        @index = array_rand(@bots, 1, false)[0];
+        _snake_add(@bots[@index], @game);
+        array_remove(@bots, @index);
     }
 
     // Start countdown

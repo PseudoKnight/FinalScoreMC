@@ -52,9 +52,7 @@ proc _snake_bot_update(@bot, @game) {
                 }
             }
         } else if(@percent < 30) {
-            if(!_snake_bot_target_powerup(@snake, @game)) {
-                _snake_bot_target_snake(@snake, @game);
-            }
+            _snake_bot_target_powerup(@snake, @game);
         } else if(@percent < 35) {
             _snake_ability(@bot, @game);
         }

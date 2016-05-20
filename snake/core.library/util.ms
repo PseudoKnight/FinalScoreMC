@@ -29,7 +29,7 @@ proc _snake_valid_location(@region, @padding = 0) {
 }
 
 proc _snake_direction_of(@loc, @block, @not) {
-    foreach(@dir in array('up', 'down', 'north', 'south', 'east', 'west')) {
+    foreach(@dir in array('down', 'up', 'north', 'south', 'east', 'west')) {
         if((!@not || @not != @dir) && get_block_at(_relative(@loc, @dir)) == @block) {
             return(@dir);
         }

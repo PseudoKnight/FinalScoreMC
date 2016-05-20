@@ -4,7 +4,6 @@
     'loc': current location
     'dir': current direction
     'top': relative direction for clockwise rotation (eg. north)
-    'length': the number of blocks this snake maxes out at
     'head': the block type:data for the color of their block
     'tail': the block type:data for the color of their tail
     'blocks': an array of ordered block locations representing the tail, new ones pushed on end, such that
@@ -26,7 +25,7 @@ proc _snake_add(@player, @game) {
         array('159:15', '159:7', '8'), # black
     );
     @region = 'snake_'.@game['arena'].rand(1, @game['surfaces'] + 1);
-    @startLoc = _snake_valid_location(@region, 2);
+    @startLoc = _snake_valid_location(@region, 4);
     if(!@startLoc) {
         return();
     }
@@ -40,7 +39,6 @@ proc _snake_add(@player, @game) {
         'ability': '',
         'head': @head,
         'tail': @tail,
-        'length': @game['startingLength'],
         'alive': true,
         'loc': @headLoc,
         'dir': @dir,
@@ -56,7 +54,7 @@ proc _snake_add(@player, @game) {
     create_team(@player, 'snake');
     set_team_display(@player, associative_array('prefix': color(@color)), 'snake');
     team_add_player(@player, @player, 'snake');
-    set_pscore('length', @player, @game['startingLength'], 'snake');
+    set_pscore('alive', @player, 1, 'snake');
 
     if(ponline(@player)) {
         set_pscoreboard(@player, 'snake');
@@ -66,6 +64,7 @@ proc _snake_add(@player, @game) {
         pfacing(@player, @yaw, @pitch);
         set_pflight(@player, true);
         set_pflying(@player, true);
+        _clear_pinv(@player);
         set_pinv(@player, associative_array(
             -106: associative_array(
                 'name': 'STICK',
@@ -84,22 +83,17 @@ proc _snake_remove(@player, @game) {
     array_remove(@game['snakes'], @player);
     if(ponline(@player) && pworld(@player) == 'custom') {
         set_pflight(@player, false);
-        set_pinv(@player, associative_array(-106: null, 0: null));
+        _equip_park(@player);
     }
 }
 
 proc _snake_kill(@player, @game) {
     @snake = @game['snakes'][@player];
-    if(@game['removeTail']) {
-        foreach(@block in @snake['blocks']) {
-            set_block_at(@block, 0, false);
-        }
-    } else {
-        foreach(@block in @snake['blocks']) {
-            set_block_at(@block, @snake['head'], false);
-        }
+    foreach(@block in @snake['blocks']) {
+        set_block_at(@block, @snake['head'], false);
     }
     @snake['alive'] = false;
+    set_pscore('alive', @player, 0, 'snake');
     play_sound(@snake['loc'], associative_array('sound': 'ZOMBIE_DEATH', 'pitch': 2, 'volume': 3));
 }
 
@@ -116,10 +110,6 @@ proc _snake_update(@player, @game) {
     if(@block == '0:0' || @powerup) {
         @snake['blocks'][] = @snake['loc'][];
         set_block_at(@snake['loc'], @snake['head'], false);
-        if(array_size(@snake['blocks']) > @snake['length']) {
-            set_block_at(@snake['blocks'][0], 0, false);
-            array_remove(@snake['blocks'], 0);
-        }
         @snake['click'] = false;
         if(_snake_powerup(@player, @powerup, @game)) {
             @snake['target'] = null;
@@ -135,10 +125,6 @@ proc _snake_update(@player, @game) {
         @snake['dir'] = @dir;
         @snake['blocks'][] = @snake['loc'][];
         set_block_at(@snake['loc'], @snake['head'], false);
-        if(array_size(@snake['blocks']) > @snake['length']) {
-            set_block_at(@snake['blocks'][0], 0, false);
-            array_remove(@snake['blocks'], 0);
-        }
         @snake['click'] = false;
         @snake['region'] = sk_regions_at(@snake['loc'])[1];
         @snake['target'] = null;
