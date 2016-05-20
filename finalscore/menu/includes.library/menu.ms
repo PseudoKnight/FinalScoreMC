@@ -1,11 +1,11 @@
 proc _repopulate_menu(){
-    @main = array(
+    @main = associative_array(
 		'id': 'main',
 		'title': 'Frog Park Directory',
 		'size': 45,
 		36: associative_array(
 			'name': 'IRON_SWORD',
-			'meta': array(
+			'meta': associative_array(
 				'display': color('green').'PVP Arenas',
 				'lore': array(color('dark_gray').'Open: pvp'),
                 'flags': array('HIDE_ATTRIBUTES'),
@@ -13,14 +13,14 @@ proc _repopulate_menu(){
 		),
 		37: associative_array(
 			'name': 'IRON_BLOCK',
-			'meta': array(
+			'meta': associative_array(
 				'display': color('green').'Obstacle Courses / Parkour',
 				'lore': array(color('dark_gray').'Open: courses'),
 			),
 		),
         38: associative_array(
             'name': 'IRON_SPADE',
-            'meta': array(
+            'meta': associative_array(
                 'display': color('green').'Other Games',
                 'lore': array(color('dark_gray').'Open: other'),
                 'flags': array('HIDE_ATTRIBUTES'),
@@ -92,10 +92,10 @@ proc _repopulate_menu(){
 				if(!array_index_exists(@difficulties[@difficulty], @cake['coins'])) {
 					@difficulties[@difficulty][@cake['coins']] = array();
 				}
-				@difficulties[@difficulty][@cake['coins']][] = array(
+				@difficulties[@difficulty][@cake['coins']][] = associative_array(
 					'name': 'STAINED_GLASS_PANE',
                     'data': @datacolor[@difficulty],
-					'meta': array(
+					'meta': associative_array(
 						'display': color('green').to_upper(@name),
 						'lore': @lore,
 					),
@@ -144,10 +144,10 @@ proc _repopulate_menu(){
     			@lore[] = color('green').if(array_index_exists(@arena, 'min'), @arena['min'], 2)
     					.if(array_index_exists(@arena, 'max'), '-'.@arena['max'], '+').' players';
     			@lore[] = color('dark_gray').'Run: /warp '.@name;
-    			@pvp[@slot] = array(
+    			@pvp[@slot] = associative_array(
     				'type': 351,
     				'data': 8,
-    				'meta': array(
+    				'meta': associative_array(
     					'display': color('green').to_upper(@name),
     					'lore': @lore,
     				),
@@ -165,47 +165,65 @@ proc _repopulate_menu(){
 		@other = @main[];
 		@other['id'] = 'other';
 		@other['title'] = 'Other Games';
-		@other[0] = array(
+		@other[0] = associative_array(
             'name': 'SNOW_BLOCK',
-            'meta': array(
+            'meta': associative_array(
                 'display': color('green').'Spleef',
-                'lore': color('dark_gray').'Run: /warp spleef',
+                'lore': array(
+                    'Last man standing (2+ players)',
+                    color('dark_gray').'Run: /warp spleef',
+                ),
             ),
         );
-        @other[1] = array(
+        @other[1] = associative_array(
             'name': 'STAINED_CLAY',
             'data': 2,
-            'meta': array(
+            'meta': associative_array(
                 'display': color('gold').'Cube'.color('red').'Climber',
-                'lore': color('dark_gray').'Run: /warp cubeclimber',
+                'lore': array(
+                    'Race to the top (2+ players)',
+                    color('dark_gray').'Run: /warp cubeclimber',
+                ),
             ),
         );
-        @other[2] = array(
+        @other[2] = associative_array(
             'name': 'EMERALD_ORE',
-            'meta': array(
+            'meta': associative_array(
                 'display': color('green').'Seven Seconds to Live',
-                'lore': color('dark_gray').'Run: /warp 7',
+                'lore': array(
+                    'Last man not blown up (2+ players)',
+                    color('dark_gray').'Run: /warp 7',
+                ),
             ),
         );
-        @other[3] = array(
+        @other[3] = associative_array(
             'name': 'EMERALD_BLOCK',
-            'meta': array(
+            'meta': associative_array(
                 'display': color('green').'FrogWare',
-                'lore': color('dark_gray').'Run: /warp frogware',
+                'lore': array(
+                    'First to 25 points (1+ players)',
+                    color('dark_gray').'Run: /warp frogware',
+                ),
             ),
         );
-        @other[4] = array(
+        @other[4] = associative_array(
             'name': 'SLIME_BLOCK',
-            'meta': array(
+            'meta': associative_array(
                 'display': color('green').'Slimey Golf',
-                'lore': color('dark_gray').'Run: /warp slimeygolf',
+                'lore': array(
+                    'Lowest stroke count wins (1+ players)',
+                    color('dark_gray').'Run: /warp slimeygolf',
+                ),
             ),
         );
-        @other[5] = array(
+        @other[5] = associative_array(
             'name': 'SEA_LANTERN',
-            'meta': array(
+            'meta': associative_array(
                 'display': color('green').'SNAKE',
-                'lore': color('dark_gray').'Run: /warp snake',
+                'lore': array(
+                    'Last snake slithering (1+ players)',
+                    color('dark_gray').'Run: /warp snake',
+                ),
             ),
         );
 		@other[38]['name'] = 'DIAMOND_SPADE';
