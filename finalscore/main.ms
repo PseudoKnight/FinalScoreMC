@@ -1,4 +1,4 @@
-set_cron('*/3 * * * *', closure(){
+set_cron('*/4 * * * *', closure(){
 	foreach(@world in get_worlds()) {
 		queue_push(closure(){
 			save_world(@world);
@@ -158,7 +158,7 @@ bind(player_join, null, null, @event) {
 			} else {
 				@msg .= 'joined the game';
 			}
-			broadcast(colorize('&8'.simple_date('h:mm').' '.'&e&o* '.@msg.' &e&o*'));
+			broadcast(colorize('&8'.simple_date('h:mm').' &2\u00bb &o'.@msg));
 		}
 
 		# Makes a call to the ban manager to store the player's UUID
@@ -262,7 +262,7 @@ bind(player_quit, null, null, @event) {
 	} else {
 		@msg .= 'left the game';
 	}
-	broadcast(colorize('&8'.simple_date('h:mm').' '.'&e&o* '.@msg.' &e&o*'));
+	broadcast(colorize('&8'.simple_date('h:mm').' &4\u00ab &o'.@msg));
 	try {
 		@pdata['world'] = pworld();
 		_store_pdata(@event['player'], @pdata);
