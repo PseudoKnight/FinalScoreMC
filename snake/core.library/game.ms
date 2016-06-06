@@ -27,7 +27,7 @@ proc _snake_queue(@args) {
     @game['surfaces'] = 6;
     @game['snakes'] = associative_array();
     @game['powerups'] = array();
-    @game['speed'] = 'normal';
+    @game['speed'] = 'slow';
     @game['extraBlocks'] = array();
     @game['numPowerups'] = @game['surfaces'];
     @game['numPlayers'] = 7
@@ -59,8 +59,8 @@ proc _snake_queue(@args) {
     }
 
     @bots = array('Dopey', 'Sleepy', 'Bashful', 'Grumpy', 'Happy', 'Sneezy');
-    while(array_size(@game['snakes']) < @game['numPlayers']) {
-        @index = array_rand(@bots, 1, false)[0];
+    while(array_size(@game['snakes']) < @game['numPlayers'] && @bots) {
+        @index = array_rand(@bots)[0];
         _snake_add(@bots[@index], @game);
         array_remove(@bots, @index);
     }
