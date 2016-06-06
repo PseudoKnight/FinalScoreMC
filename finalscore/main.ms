@@ -459,35 +459,36 @@ bind(player_interact, null, array('block': 26, 'button': 'right'), @event) {
 # Dispenser handling
 # Infinite dispensers on creative/game worlds
 # Special behavior for other items (eg. place armor stands)
-bind(block_dispense, null, array('type': 'DISPENSER'), @e) {
-	if(!_is_survival_world(@e['location']['world'])) {
-		if(!array_contains(sk_region_check_flag(@e['location'], 'blocked-cmds'), '/finitedispensers')) {
-			try(
-				@inv = get_inventory(@e['location']);
-			, #catch
+bind(block_dispense, null, array('type': 'DISPENSER'), @event) {
+	if(!_is_survival_world(@event['location']['world'])) {
+		if(!array_contains(sk_region_check_flag(@event['location'], 'blocked-cmds'), '/finitedispensers')) {
+			try {
+				@inv = get_inventory(@event['location']);
+			} catch(CastException @ex) {
 				die();
-			);
-			foreach(@i in 0..8) {
-				if(!is_null(@inv[@i])) {
-					@inv[@i]['qty'] = 64;
-				}
 			}
+			foreach(@i: @item in @inv) {
+				if(@item && max_stack_size(@item) > @item['qty'] && @item['name'] != 'MONSTER_EGG') {
+					@item['qty'] = max_stack_size(@item);
 			queue_push(closure(){
-				try(
-					set_inventory(@e['location'], @inv);
-				, #catch
-					console('Could not refill dispenser at '.@e['location']);
-				);
+						try {
+							set_inventory_item(@event['location'], @i, @item);
+						} catch(CastException @ex) {
+							console('Could not refill dispenser at '. @event['location']);
+						}
 			});
+					break();
 		}
-	} else if(@e['item']['type'] == 416) { # armor stand
-		try(
-			@inv = get_inventory(@e['location']);
-		, #catch
+			}
+		}
+	} else if(@event['item']['type'] == 416) { # armor stand
+		try {
+			@inv = get_inventory(@event['location']);
+		} catch(CastException @ex) {
 			die();
-		);
+		}
 		cancel();
-		@loc = @e['location'][];
+		@loc = @event['location'][];
 		switch(split(':', get_block_at(@loc))[1]) {
 			case '8':
 				@loc['y'] -= 1;
@@ -509,7 +510,7 @@ bind(block_dispense, null, array('type': 'DISPENSER'), @e) {
 		@loc['z'] += 0.5;
 		spawn_entity('ARMOR_STAND', 1, @loc);
 		set_timeout(50, closure(){
-			set_inventory(@e['location'], @inv);
+			set_inventory(@event['location'], @inv);
 		});
 	}
 }
