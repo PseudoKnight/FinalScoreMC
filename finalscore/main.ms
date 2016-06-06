@@ -552,12 +552,11 @@ bind(block_break, null, array('type': 56), @event) {
 		}
 
 		if(@report) {
-			@msg = color('c').'[!] '.color('f').player().' found '.color('b').'diamonds '.color(7)
-				.'(light level: '.get_light_at(@event['location']).')';
+			@msg = color('c').'[!] '._colorname().player().color('r').' found diamonds';
 			broadcast(@msg, 'group.moderator');
 			console(@msg);
 		}
-	})
+	});
 }
 
 # leash villagers
