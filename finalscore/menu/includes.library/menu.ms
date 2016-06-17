@@ -37,6 +37,7 @@ proc _repopulate_menu(){
 			'medium-hard': 'gold',
 			'hard': 'dark_red',
 			'very-hard': 'dark_purple',
+            'other': 'white',
 		);
         @datacolor = associative_array(
             'easy': 3,
@@ -45,6 +46,7 @@ proc _repopulate_menu(){
             'medium-hard': 1,
             'hard': 14,
             'very-hard': 10,
+            'other': 0,
         );
 		@difficultyorder = array('easy', 'easy-medium', 'medium', 'medium-hard', 'hard', 'very-hard', 'other');
 		@difficulties = associative_array(
