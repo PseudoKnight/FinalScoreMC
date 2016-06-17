@@ -57,9 +57,7 @@ proc _remove_spectator(@player, @pvp) {
 			set_pflight(@player, false);
 			set_collides_with_entities(@player, true);
 			dm_set_pvisible(@player, true);
-			if(array_index_exists(@pvp['arena'], 'resourcepack')) {
-				send_resourcepack(@player, 'http://mc.finalscoremc.com:25966/resourcepacks/default.zip');
-			}
+
 			foreach(@p in all_players('custom')) {
 				if(ponline(@p)) {
 					raw_set_pvanish(@player, false, @p);
@@ -71,6 +69,13 @@ proc _remove_spectator(@player, @pvp) {
 				if(!array_index_exists(@pvp['players'], @player)) {
 					set_ploc(@player, @pvp['arena']['lobby']);
 				}
+			} else {
+				respawn(@player);
+			}
+			if(array_index_exists(@pvp['arena'], 'resourcepack')) {
+				set_timeout(100, closure(){
+					send_resourcepack(@player, 'http://mc.finalscoremc.com:25966/resourcepacks/default.zip');
+				});
 			}
 		}
 	, @ex, #catch
