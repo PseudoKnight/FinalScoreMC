@@ -72,7 +72,7 @@ proc _pset_potion(@type, @id, @seconds, @strength){
 	}
 
 	@item = pinv(player(), null);
-	if(@item && @item['type'] == @type) { # add potion effecs to potion
+	if(@item && @item['name'] == @type) { # add potion effecs to potion
 		if(is_null(@item['meta'])) {
 			@item['meta'] = associative_array();
 		}
@@ -83,6 +83,8 @@ proc _pset_potion(@type, @id, @seconds, @strength){
 		set_pinv(array(null: @item));
 
 	} else { # create new potion
+        @extended = @seconds;
+        @upgraded = @strength;
         @item = associative_array('name': @type, 'meta': associative_array());
         @potionTypes = array(
             '',
