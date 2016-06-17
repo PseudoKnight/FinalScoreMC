@@ -8,6 +8,9 @@ case 'load':
 	}
 
 	bind(player_interact, array('id': @player.'soldiershoot'), array('player': @player, 'item': 291), @e) {
+		if(pinfo(player(), 6) != @e['item']){
+			die();
+		}
 		@item = pinv(player(), null);
 		if(@item['data'] >= 128, die());
 		@bullet = shoot_projectile(@e['player'], 'EGG');
