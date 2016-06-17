@@ -32,6 +32,9 @@ case 'load':
 				set_peffect(player(), 14, 0, 20);
 				play_effect(_relative(ploc(), 'up', 2), 'spell', array('speed': 0, 'particleCount': 10, 'offsetY': 0.4, 'offsetX': 0.2, 'offsetZ': 0.2));
 			} else {
+				if(has_bind(player().'falldamage')) {
+					die();
+				}
 				bind(entity_damage, array('id': player().'falldamage'), array('cause': 'FALL', 'id': puuid()), @e, @player = player()) {
 					if(pinfo(@player, 11)) {
 						cancel(); # is sneaking
