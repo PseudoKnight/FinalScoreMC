@@ -595,6 +595,13 @@ bind(player_interact_entity, null, array('clicked': 'PAINTING'), @event) {
 	}
 }
 
+# animal sitter
+bind(player_interact_entity, null, array('clicked': '/(WOLF|OCELOT)/'), @e) {
+	if(!sk_can_build(entity_loc(@e['id'])) && get_mob_owner(@e['id']) == player()) {
+		set_entity_spec(@e['id'], associative_array('sitting': false));
+	}
+}
+
 # Block creeper damage on the surface.
 bind(entity_explode, null, array('type': 'CREEPER'), @event) {
 	if(@event['location']['y'] > 62
