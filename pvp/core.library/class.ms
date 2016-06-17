@@ -227,11 +227,11 @@ proc _class_select(@id, @pvp) {
 			}
 			if(@class === 'random') {
 				@classes = @pvp['arena']['classes'];
-				# if(array_index_exists(@pvp['players'][player()], 'team')) {
-					# @classes = array_filter(@pvp['arena']['classes'], closure(@key, @value){
-						# return(@value['team'] == @pvp['players'][player()]['team']);
-					# });
-				# }
+				if(array_index_exists(@pvp['players'][player()], 'team')) {
+					@classes = array_filter(@pvp['arena']['classes'], closure(@key, @value){
+						return(@value['team'] == @pvp['players'][player()]['team']);
+					});
+				}
 				@class = array_rand(@classes, 1, true)[0];
 			}
 			msg(color('green').to_upper(@class).color('r').' has been selected.');
