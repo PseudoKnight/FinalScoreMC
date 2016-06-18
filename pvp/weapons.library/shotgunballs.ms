@@ -1,15 +1,21 @@
-array_push(@pvp['binds'], @id.'shotgunshoot')
+array_push(@pvp['binds'], @id.'shotgunshoot');
 bind(player_interact, array('id': @id.'shotgunshoot'), array('item': 332, 'button': 'right'), @e, @id) {
-	@pvp = import('pvp'.@id)
+	@pvp = import('pvp'.@id);
 	if(!array_index_exists(@pvp['players'], player()) || pinfo(player(), 6) != @e['item']) {
 		die();
 	}
-	cancel()
-	@entities = array()
+	cancel();
+	@entities = array();
+	@dir = _get_vector(pfacing());
+	@loc = ploc();
+	@loc['x'] += @dir['x'];
+	@loc['y'] += 2.3 + @dir['y'];
+	@loc['z'] += @dir['z'];
 	for(@i = 0, @i < 8, @i++) {
-		@entities[@i] = shoot_projectile(player(), 'SNOWBALL')
-		@v = entity_velocity(@entities[@i])
-		set_entity_velocity(@entities[@i], array(@v['x'] * 1.9 + (rand(3) - 1), @v['y'] * 1.9 + (rand(3) - 1), @v['z'] * 1.9 + (rand(3) - 1)));
+		@entities[@i] = shoot_projectile(player(), 'SNOWBALL');
+		@v = entity_velocity(@entities[@i]);
+		set_entity_loc(@entities[@i], @loc);
+		set_entity_velocity(@entities[@i], array(@v['x'] * 1.9 + (rand() * 2 - 1), @v['y'] * 1.9 + (rand() * 2 - 1), @v['z'] * 1.9 + (rand() * 2 - 1)));
 	}
 	set_timeout(300, closure(){
 		foreach(@snowball in @entities) {
@@ -22,10 +28,10 @@ bind(player_interact, array('id': @id.'shotgunshoot'), array('item': 332, 'butto
 		play_sound(ploc(), array('sound': 'PISTON_RETRACT', 'pitch': 1.5));
 	});
 }
-array_push(@pvp['binds'], @id.'shotgundamage')
+array_push(@pvp['binds'], @id.'shotgundamage');
 bind(entity_damage, array('id': @id.'shotgundamage'), array('type': 'PLAYER', 'cause': 'PROJECTILE', 'world': 'custom'), @e, @id) {
 	if(ponline(@e['shooter'])) {
-		@pvp = import('pvp'.@id)
+		@pvp = import('pvp'.@id);
 		if(array_index_exists(@pvp['players'], @e['shooter'])) {
 			@weapon = pinv(@e['shooter'], null);
 			if(!is_null(@weapon) && @weapon['type'] == 341) {
