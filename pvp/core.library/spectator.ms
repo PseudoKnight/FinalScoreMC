@@ -20,9 +20,10 @@ proc _set_spectator(@player, @pvp) {
 		set_collides_with_entities(@player, false);
 		set_pflight(@player, true);
 	} else {
-		bind(player_spawn, null, array('player': @player), @e, @pvp) {
+		bind(player_spawn, associative_array('priority': 'HIGH'), associative_array('player': @player), @e, @pvp) {
 			unbind();
 			if(@pvp['running'] && array_size(@pvp['players']) > 1) {
+				consume();
 				@pvp['spectators'][] = player();
 				@spawn = false;
 				foreach(@p in array_keys(@pvp['players'])) {
@@ -34,16 +35,18 @@ proc _set_spectator(@player, @pvp) {
 				if(!@spawn) {
 					modify_event('location', @pvp['arena']['spawn'][0][0]);
 				}
-				queue_push(closure(){
-					foreach(@p in all_players('custom')) {
-						if(ponline(@p)) {
-							raw_set_pvanish(player(), true, @p);
+				set_timeout(50, closure(){
+					if(@pvp['running']) {
+						foreach(@p in all_players('custom')) {
+							if(ponline(@p)) {
+								raw_set_pvanish(player(), true, @p);
+							}
 						}
-					}
 
-					set_peffect(player(), 14, 0, 9999, true);
-					set_collides_with_entities(false);
-					set_pflight(player(), true);
+						set_peffect(player(), 14, 0, 9999, true);
+						set_collides_with_entities(false);
+						set_pflight(player(), true);
+					}
 				});
 			}
 		}
