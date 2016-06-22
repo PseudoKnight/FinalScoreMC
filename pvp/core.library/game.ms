@@ -433,6 +433,7 @@ proc _pvp_end_match(@id, @winners) {
 
 	queue_delay(4000, @id);
 	queue_push(closure(){
+		@pvp['running'] = 0;
 		foreach(array_keys(@pvp['players']), @player) {
 			try {
 				if(array_index_exists(@pvp['players'][@player], 'class')) {
