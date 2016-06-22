@@ -1,4 +1,4 @@
-set_cron('*/4 * * * *', closure(){
+set_cron('*/5 * * * *', closure(){
 	foreach(@world in get_worlds()) {
 		queue_push(closure(){
 			save_world(@world);
@@ -384,13 +384,6 @@ bind(player_interact, null, array('block': 77, 'button': 'right'), @event) {
 			} else {
 				die('Unknown button command.');
 			}
-		} else if(length(@line[1]) > 1
-		&& @line[1][0] === '/'
-		&& length(@line[0]) > 2
-		&& substr(@line[0], 0, 2) == color(1)) {
-			msg('Ran command:' @line[1] @line[2] @line[3]);
-			run_cmd(@line[1] @line[2] @line[3]);
-			console('Deprecated sign command @ '.@event['location']);
 		}
 	}
 }
@@ -470,15 +463,15 @@ bind(block_dispense, null, array('type': 'DISPENSER'), @event) {
 			foreach(@i: @item in @inv) {
 				if(@item && max_stack_size(@item) > @item['qty'] && @item['name'] != 'MONSTER_EGG') {
 					@item['qty'] = max_stack_size(@item);
-			queue_push(closure(){
+					queue_push(closure(){
 						try {
 							set_inventory_item(@event['location'], @i, @item);
 						} catch(CastException @ex) {
 							console('Could not refill dispenser at '. @event['location']);
 						}
-			});
+					});
 					break();
-		}
+				}
 			}
 		}
 	} else if(@event['item']['type'] == 416) { # armor stand
