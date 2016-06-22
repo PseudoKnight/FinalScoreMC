@@ -24,7 +24,7 @@ proc _snake_queue(@args) {
     // Default options
     @game = associative_array();
     @game['arena'] = 'plane';
-    @game['surfaces'] = 6;
+    @game['surfaces'] = 5;
     @game['snakes'] = associative_array();
     @game['powerups'] = array();
     @game['speed'] = 'slow';
