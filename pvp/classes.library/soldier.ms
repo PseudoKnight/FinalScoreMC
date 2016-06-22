@@ -13,20 +13,30 @@ case 'load':
 		}
 		@item = pinv(player(), null);
 		if(@item['data'] >= 128, die());
-		@bullet = shoot_projectile(@e['player'], 'EGG');
-		@v = entity_velocity(@bullet);
-		set_entity_velocity(@bullet, array(@v['x'] * 2.3, @v['y'] * 2.3, @v['z'] * 2.3));
-		play_sound(ploc(), array('sound': 'FIREWORK_LARGE_BLAST', 'pitch': 1.5, 'volume': 2));
 		@slot = pinfo(player(), 15);
+
+		proc _shoot() {
+			// get new location so that the egg does not hit the shooting player
+			@dir = _get_vector(pfacing());
+			@loc = ploc();
+			@loc['x'] += @dir['x'];
+			@loc['y'] += 2.2 + @dir['y'];
+			@loc['z'] += @dir['z'];
+
+			@bullet = shoot_projectile(player(), 'EGG');
+			@v = entity_velocity(@bullet);
+			set_entity_loc(@bullet, @loc);
+			set_entity_velocity(@bullet, array(@v['x'] * 2.3, @v['y'] * 2.3, @v['z'] * 2.3));
+			play_sound(ploc(), array('sound': 'FIREWORK_LARGE_BLAST', 'pitch': 1.5, 'volume': 2));
+		}
+
+		_shoot();
 		set_timeout(50, closure(){
 			@item['data'] += 8;
 			@inv = associative_array();
 			@inv[@slot] = @item;
 			set_pinv(player(), @inv);
-			@bullet = shoot_projectile(@e['player'], 'EGG');
-			@v = entity_velocity(@bullet);
-			set_entity_velocity(@bullet, array(@v['x'] * 2.3, @v['y'] * 2.3, @v['z'] * 2.3));
-			play_sound(ploc(), array('sound': 'FIREWORK_LARGE_BLAST', 'pitch': 1.5, 'volume': 2));
+			_shoot();
 		});
 	}
 
@@ -72,7 +82,7 @@ case 'load':
 		@z = 1.40 * sin(to_radians(@loc['yaw'])) * cos(to_radians(@loc['pitch']));
 		set_entity_velocity(@armorStand, array(@x, @y, @z));
 		play_sound(@loc, array('sound': 'IRONGOLEM_THROW'));
-		set_timeout(5000, closure(){
+		set_timeout(4000, closure(){
 			try(
 				explosion(entity_loc(@armorStand), 3, true);
 				entity_remove(@armorStand);
