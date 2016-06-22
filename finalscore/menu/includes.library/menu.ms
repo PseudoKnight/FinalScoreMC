@@ -219,6 +219,16 @@ proc _repopulate_menu(){
             ),
         );
         @other[5] = associative_array(
+            'type': 168,
+            'meta': associative_array(
+                'display': color('green').'Sunken City Golf',
+                'lore': array(
+                    'Lowest stroke count wins (1+ players)',
+                    color('dark_gray').'Run: /warp sunkencitygolf',
+                ),
+            ),
+        );
+        @other[6] = associative_array(
             'name': 'SEA_LANTERN',
             'meta': associative_array(
                 'display': color('green').'SNAKE',
