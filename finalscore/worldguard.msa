@@ -22,14 +22,14 @@
 	} else {
 		@region = array_get(sk_current_regions(), -1, '');
 	}
-	
+
 	if(!@region) {
 		die('Unknown region.');
 	} else if((!array_contains(sk_region_owners(@region, pworld())['players'], puuid())
 	&& !has_permission('group.moderator'))) {
 		die('You do not own this region.');
 	}
-	
+
 	if(@state === 'toggle') {
 		foreach(@flag in sk_region_info(@region, pworld(), 3)) {
 			if(@flag[0] === 'block-break') {
@@ -41,7 +41,7 @@
 			@state = 'deny';
 		}
 	}
-	
+
 	switch(@state) {
 		case 'on':
 		case 'allow':
@@ -49,7 +49,7 @@
 			sk_region_flag(pworld(), @region, 'block-break', 'ALLOW', 'members');
 			sk_region_flag(pworld(), @region, 'block-place', 'ALLOW', 'members');
 			msg('Members are now allowed to build in '.@region);
-		
+
 		case 'off':
 		case 'deny':
 		case 'false':
@@ -71,26 +71,26 @@
 		case 'f':
 			try(
 				@region = @args[1];
-				if(has_permission('group.moderator') || @args[2] !== 'mob-spawning') {  
+				if(has_permission('group.moderator') || @args[2] !== 'mob-spawning') {
 					run('/region '.$);
 					die();
 				}
 				try(
 					@rg = sk_region_info(@region, pworld());
-				, 
+				,
 					die('That region doesn\'t exist.');
 				)
 				if(!array_contains(@rg[1]['players'], puuid())) {
 					die('You do not own this region.');
 				}
 				foreach(@flagname in @rg[3]) {
-					if(@flagname[0] === 'mob-spawning') { 
+					if(@flagname[0] === 'mob-spawning') {
 						sudo('/region flag '.@region.' mob-spawning');
 						break();
 					}
 				}
 				@state = @args[3];
-				if(@state === 'allow') { 
+				if(@state === 'allow') {
 					sudo('/region flag '.@region.' deny-spawn');
 				} else if(@state === 'deny') {
 					sudo('/region flag '.@region.' deny-spawn CREEPER,ENDERMAN,SKELETON,SPIDER,ZOMBIE,SLIME,WITCH');
@@ -98,14 +98,14 @@
 			, # all else fails, run the original command
 				run('/region '.$);
 			);
-		
+
 		case 'rename':
 			@from = @args[1];
 			@to = @args[2];
 			if(!sk_region_exists(pworld(), @from)) {
 				die('That region doesn\'t exist.');
 			}
-			if(!has_permission('group.moderator') 
+			if(!has_permission('group.moderator')
 			&& !array_contains(sk_region_owners(@from, pworld())['players'], puuid())) {
 				die('No permission.');
 			}
@@ -117,7 +117,7 @@
 			}
 			sk_region_rename(pworld(), @from, @to);
 			msg('Renamed '.@from.' to '.@to.'.');
-			
+
 		case 'redefine':
 		case 'update':
 		case 'move':
@@ -128,7 +128,7 @@
 			@region = @args[1];
 			try(
 				@owners = sk_region_owners(@region, pworld());
-			, 
+			,
 				die(color('RED').'That region doesn\'t exist.');
 			);
 			if(!array_contains(@owners['players'], puuid())) {
@@ -152,7 +152,38 @@
 				}
 			}
 			sudo('/rg redefine '.@region);
-		
+
+		case 'finitedispensers':
+			if(_is_survival_world(pworld())) {
+				die();
+			}
+			@region = @args[1];
+			try {
+				@owners = sk_region_owners(@region, pworld());
+			} catch(PluginInternalException @ex) {
+				die(color('RED').'That region doesn\'t exist.');
+			}
+			if(!array_contains(@owners['players'], puuid())) {
+				die(color('RED').'You do not own this region.');
+			}
+			@flags = sk_region_info(@region, pworld(), 3);
+			@commands = '';
+			foreach(@flag in @flags) {
+				if(@flag[0] == 'blocked-cmds') {
+					@commands = @flag[1];
+					break();
+				}
+			}
+			@commandArray = split(', ', substr(@commands, 1, length(@commands) - 1));
+			if(array_contains(@commandArray, '/finitedispensers')) {
+				array_remove_values(@commandArray, '/finitedispensers');
+				msg('Set dispensers to infinite.');
+			} else {
+				@commandArray[] = '/finitedispensers';
+				msg('Set dispensers to finite.');
+			}
+			sk_region_flag(pworld(), @region, 'blocked-cmds', array_implode(@commandArray, ', '));
+
 		default:
 			run('/region '.$);
 	}
