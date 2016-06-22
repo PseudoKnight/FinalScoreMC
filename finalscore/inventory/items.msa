@@ -59,8 +59,9 @@
 		die(color('gold').'Usage: /lore <line#> <lore string> '.color('gray').'(supports &0 color codes)');
 	}
 	@meta = get_itemmeta(null);
-	if(is_null(@meta), @meta = associative_array())
-	if(is_null(@meta['lore'])) {
+	if(is_null(@meta)) {
+		@meta = associative_array('lore': array());
+	} else if(is_null(@meta['lore'])) {
 		@meta['lore'] = array();
 	}
 	@meta['lore'][$line - 1] = colorize($);
