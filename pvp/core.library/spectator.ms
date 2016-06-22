@@ -73,6 +73,7 @@ proc _remove_spectator(@player, @pvp) {
 					set_ploc(@player, @pvp['arena']['lobby']);
 				}
 			} else {
+				console('WARNING: Spectator somehow dead');
 				respawn(@player);
 			}
 			if(array_index_exists(@pvp['arena'], 'resourcepack')) {
