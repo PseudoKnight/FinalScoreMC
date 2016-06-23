@@ -66,41 +66,82 @@
 
 *:/region $ = >>>
 	@args = parse_args($);
+	@region = @args[1];
 	switch(@args[0]) {
 		case 'flag':
 		case 'f':
-			try(
-				@region = @args[1];
-				if(has_permission('group.moderator') || @args[2] !== 'mob-spawning') {
+			try {
+				@setting = @args[2];
+				@value = @args[3];
+				if(has_permission('group.moderator') && @setting !== 'infinite-dispensers') {
 					run('/region '.$);
 					die();
 				}
-				try(
-					@rg = sk_region_info(@region, pworld());
-				,
+				try {
+					@flags = sk_region_info(@region, pworld(), 3);
+				} catch(PluginInternalException @ex) {
 					die('That region doesn\'t exist.');
-				)
-				if(!array_contains(@rg[1]['players'], puuid())) {
-					die('You do not own this region.');
 				}
-				foreach(@flagname in @rg[3]) {
-					if(@flagname[0] === 'mob-spawning') {
-						sudo('/region flag '.@region.' mob-spawning');
-						break();
-					}
+				try {
+					@owners = sk_region_owners(@region, pworld());
+				} catch(PluginInternalException @ex) {
+					die(color('RED').'That region doesn\'t exist.');
 				}
-				@state = @args[3];
-				if(@state === 'allow') {
-					sudo('/region flag '.@region.' deny-spawn');
-				} else if(@state === 'deny') {
-					sudo('/region flag '.@region.' deny-spawn CREEPER,ENDERMAN,SKELETON,SPIDER,ZOMBIE,SLIME,WITCH');
+				switch(@setting) {
+					case 'mob-spawning':
+						foreach(@flagname in @flags) {
+							if(@flagname[0] === 'mob-spawning') {
+								sudo('/region flag '.@region.' mob-spawning');
+								break();
+							}
+						}
+						if(@value === 'allow') {
+							sudo('/region flag '.@region.' deny-spawn');
+						} else if(@value === 'deny') {
+							sudo('/region flag '.@region.' deny-spawn CREEPER,ENDERMAN,SKELETON,SPIDER,ZOMBIE,SLIME,WITCH');
+						}
+
+					case 'infinite-dispensers':
+						if(_is_survival_world(pworld())) {
+							die('You cannot toggle infinite dispensers in this world.');
+						}
+						@commands = '';
+						foreach(@flag in @flags) {
+							if(@flag[0] == 'blocked-cmds') {
+								@commands = @flag[1];
+								break();
+							}
+						}
+						@commandArray = split(', ', substr(@commands, 1, length(@commands) - 1));
+						if(@value == 'allow') {
+							if(array_contains(@commandArray, '/finitedispensers')) {
+								array_remove_values(@commandArray, '/finitedispensers');
+								msg('Set dispensers to infinite.');
+							} else {
+								die();
+							}
+						} else if(@value == 'deny') {
+							if(!array_contains(@commandArray, '/finitedispensers')) {
+								@commandArray[] = '/finitedispensers';
+								msg('Set dispensers to finite.');
+							} else {
+								die();
+							}
+						} else {
+							die();
+						}
+						sk_region_flag(pworld(), @region, 'blocked-cmds', array_implode(@commandArray, ', '));
+
+					default:
+						run('/region '.$);
 				}
-			, # all else fails, run the original command
+			} catch(Exception @ex) {
+				// All else fails, run the original command
 				run('/region '.$);
-			);
+			}
 
 		case 'rename':
-			@from = @args[1];
+			@from = @region;
 			@to = @args[2];
 			if(!sk_region_exists(pworld(), @from)) {
 				die('That region doesn\'t exist.');
@@ -125,12 +166,11 @@
 				run('/region '.$);
 				die();
 			}
-			@region = @args[1];
-			try(
+			try {
 				@owners = sk_region_owners(@region, pworld());
-			,
+			} catch(PluginInternalException @ex) {
 				die(color('RED').'That region doesn\'t exist.');
-			);
+			}
 			if(!array_contains(@owners['players'], puuid())) {
 				die(color('RED').'You do not own this region.');
 			}
@@ -152,37 +192,6 @@
 				}
 			}
 			sudo('/rg redefine '.@region);
-
-		case 'finitedispensers':
-			if(_is_survival_world(pworld())) {
-				die();
-			}
-			@region = @args[1];
-			try {
-				@owners = sk_region_owners(@region, pworld());
-			} catch(PluginInternalException @ex) {
-				die(color('RED').'That region doesn\'t exist.');
-			}
-			if(!array_contains(@owners['players'], puuid())) {
-				die(color('RED').'You do not own this region.');
-			}
-			@flags = sk_region_info(@region, pworld(), 3);
-			@commands = '';
-			foreach(@flag in @flags) {
-				if(@flag[0] == 'blocked-cmds') {
-					@commands = @flag[1];
-					break();
-				}
-			}
-			@commandArray = split(', ', substr(@commands, 1, length(@commands) - 1));
-			if(array_contains(@commandArray, '/finitedispensers')) {
-				array_remove_values(@commandArray, '/finitedispensers');
-				msg('Set dispensers to infinite.');
-			} else {
-				@commandArray[] = '/finitedispensers';
-				msg('Set dispensers to finite.');
-			}
-			sk_region_flag(pworld(), @region, 'blocked-cmds', array_implode(@commandArray, ', '));
 
 		default:
 			run('/region '.$);
