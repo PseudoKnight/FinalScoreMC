@@ -461,8 +461,8 @@ bind(block_dispense, null, array('type': 'DISPENSER'), @event) {
 				die();
 			}
 			foreach(@i: @item in @inv) {
-				if(@item && max_stack_size(@item) > @item['qty'] && @item['name'] != 'MONSTER_EGG') {
-					@item['qty'] = max_stack_size(@item);
+				if(@item && @item['qty'] < 64 && @item['name'] != 'MONSTER_EGG') {
+					@item['qty'] = 64;
 					queue_push(closure(){
 						try {
 							set_inventory_item(@event['location'], @i, @item);
