@@ -45,7 +45,14 @@ bind(player_interact, null, array('block': 92), @event) {
 		}
 		set_phunger(20)
 		set_psaturation(5.0)
-		msg(color('green').'You got the '.to_upper(@id).' '.@cakeinfo[@id]['type'].' cake! ('.@count.'/'.@total.')')
+		@action = 'found';
+		if(@cakeinfo[@id]['type'] == 'challenge') {
+			@action = 'achieved';
+		}
+
+		broadcast(_colorname().player().color('r').' '.@action.' the'.color('a').' ['.to_upper(@id).'] '
+				.color('r').@cakeinfo[@id]['type'].' cake! '.color('a').@count.'/'.@total);
+
 		if(!has_permission('group.builder')) {
 			_acc_add(player(), @cakeinfo[@id]['coins'])
 			msg(color('gold').'+ '.@cakeinfo[@id]['coins'].' coins')
@@ -53,6 +60,9 @@ bind(player_interact, null, array('block': 92), @event) {
 		}
 		make_effect(@event['location'], 'ENDER_SIGNAL')
 		make_effect(@event['location'], 'RECORD_PLAY:2263')
+		set_timeout(8800, closure(){
+			make_effect(@event['location'], 'RECORD_PLAY:0');
+		});
 		if(split(':', get_block_at(@event['location']))[1] > 0) {
 			set_block_at(@event['location'], '92:0')
 		}
