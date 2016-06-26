@@ -4,10 +4,13 @@ bind(player_interact, null, array('block': 92), @event) {
 		die();
 	}
 	@location = @event['location'];
+
+	// fake cake special case
 	if(@location['x'] == -510 && @location['z'] == 162) {
 		set_block_at(array(-485, 62, 162, 'custom'), '152:0');
 		die();
 	}
+
 	@cakes = get_value('cakes');
 	@id = null;
 	foreach(@key: @l in @cakes) {
@@ -23,49 +26,52 @@ bind(player_interact, null, array('block': 92), @event) {
 	}
 	cancel();
 	@cakeinfo = get_value('cakeinfo');
-	if(!array_index_exists(@cakeinfo, @id), die('The cake is a lie.'));
+	if(!array_index_exists(@cakeinfo, @id)) {
+		// this shouldn't happen
+		die('The cake is a lie.');
+	}
+	@thiscake = @cakeinfo[@id];
 
 	@uuid = puuid(player(), true);
-	if(array_index_exists(@cakeinfo[@id]['players'], @uuid)) {
+	if(array_index_exists(@thiscake['players'], @uuid)) {
 		die('You\'ve already got this cake.');
 	}
-	@cakeinfo[@id]['players'][@uuid] = time();
+	@thiscake['players'][@uuid] = time();
 	store_value('cakeinfo', @cakeinfo);
 
 	set_timeout(50, closure(){
 		@count = 0;
 		@total = 0;
 		foreach(@cake in @cakeinfo) {
-			if(@cake['type'] == @cakeinfo[@id]['type']) {
-				@total += 1
+			if(@cake['type'] == @thiscake['type']) {
+				@total += 1;
 				if(array_index_exists(@cake['players'], @uuid)) {
-					@count += 1
+					@count += 1;
 				}
 			}
 		}
-		set_phunger(20)
-		set_psaturation(5.0)
-		@action = 'found';
-		if(@cakeinfo[@id]['type'] == 'challenge') {
-			@action = 'achieved';
-		}
+		set_phunger(20);
+		set_psaturation(5.0);
 
-		broadcast(_colorname().player().color('r').' '.@action.' the'.color('a').' ['.to_upper(@id).'] '
-				.color('r').@cakeinfo[@id]['type'].' cake! '.color('a').@count.'/'.@total);
+		broadcast(_colorname().player().color('r').if(@thiscake['type'] == 'secret', ' found ', ' achieved ')
+				.color('a').' ['.to_upper(@id).'] '.color('r').@thiscake['type'].' cake! '.color('a').@count.'/'.@total);
 
 		if(!has_permission('group.builder')) {
-			_acc_add(player(), @cakeinfo[@id]['coins'])
-			msg(color('gold').'+ '.@cakeinfo[@id]['coins'].' coins')
-			console(player().' got '.@cakeinfo[@id]['coins'].' coins at '.@id)
+			_acc_add(player(), @thiscake['coins']);
+			msg(color('gold').'+ '.@thiscake['coins'].' coins');
+			console(player().' got '.@thiscake['coins'].' coins at '.@id);
 		}
-		make_effect(@event['location'], 'ENDER_SIGNAL')
-		make_effect(@event['location'], 'RECORD_PLAY:2263')
+
+		if(split(':', get_block_at(@event['location']))[1] > 0) {
+			set_block_at(@event['location'], '92:0');
+		}
+
+		make_effect(@event['location'], 'ENDER_SIGNAL');
+		make_effect(@event['location'], 'RECORD_PLAY:2263');
 		set_timeout(8800, closure(){
+			// turn off music
 			make_effect(@event['location'], 'RECORD_PLAY:0');
 		});
-		if(split(':', get_block_at(@event['location']))[1] > 0) {
-			set_block_at(@event['location'], '92:0')
-		}
 	});
 }
 
