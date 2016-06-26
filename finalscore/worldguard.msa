@@ -66,11 +66,11 @@
 
 *:/region $ = >>>
 	@args = parse_args($);
-	@region = @args[1];
 	switch(@args[0]) {
 		case 'flag':
 		case 'f':
 			try {
+				@region = @args[1];
 				@setting = @args[2];
 				@value = @args[3];
 				if(has_permission('group.moderator') && @setting !== 'infinite-dispensers') {
@@ -141,7 +141,7 @@
 			}
 
 		case 'rename':
-			@from = @region;
+			@from = @args[1];
 			@to = @args[2];
 			if(!sk_region_exists(pworld(), @from)) {
 				die('That region doesn\'t exist.');
@@ -166,6 +166,7 @@
 				run('/region '.$);
 				die();
 			}
+			@region = @args[1];
 			try {
 				@owners = sk_region_owners(@region, pworld());
 			} catch(PluginInternalException @ex) {
