@@ -87,7 +87,7 @@ proc _equip_park(@player) {
 		@player = player();
 	}
 
-	if(pworld(@player) !== 'custom') {
+	if(pworld(@player) !== 'custom' || pmode(@player) == 'CREATIVE') {
 		return();
 	}
 
