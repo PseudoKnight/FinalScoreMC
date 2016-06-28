@@ -54,7 +54,7 @@ bind(player_interact, null, array('block': 92), @event) {
 		set_psaturation(5.0);
 
 		broadcast(_colorname().player().color('r').if(@thiscake['type'] == 'secret', ' found ', ' achieved ')
-				.color('a').' ['.to_upper(@id).'] '.color('r').@thiscake['type'].' cake! '.color('a').@count.'/'.@total);
+				.color('a').'['.to_upper(@id).'] '.color('r').@thiscake['type'].' cake! '.color('a').@count.'/'.@total);
 
 		if(!has_permission('group.builder')) {
 			_acc_add(player(), @thiscake['coins']);

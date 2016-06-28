@@ -4,12 +4,12 @@
 	}
 	include('includes.library/teleports.ms');
 	@pdata = _pdata(player());
-	if(array_index_exists(@pdata, 'lastloc')
-	&& array_index_exists(@pdata['lastloc'], 'survival')) {
-		_warmuptp(player(), @pdata['lastloc']['survival']);
+	if(array_index_exists(@pdata, 'survival')
+	&& array_index_exists(@pdata['survival'], 'loc')) {
+		_warmuptp(player(), @pdata['survival']['loc']);
 	} else {
 		@loc = get_spawn('omega');
-		@loc = array(@loc[0] + 0.5, @loc[1] - 1, @loc[2] + 0.5, @loc[3])
+		@loc = array(@loc[0] + 0.5, @loc[1] - 1, @loc[2] + 0.5, @loc[3]);
 		_warmuptp(player(), @loc);
 	}
 <<<
@@ -20,9 +20,9 @@
 	}
 	include('includes.library/teleports.ms');
 	@pdata = _pdata(player());
-	if(array_index_exists(@pdata, 'lastloc')
-	&& array_index_exists(@pdata['lastloc'], 'custom')) {
-		_warmuptp(player(), @pdata['lastloc']['custom']);
+	if(array_index_exists(@pdata, 'adventure')
+	&& array_index_exists(@pdata['adventure'], 'loc')) {
+		_warmuptp(player(), @pdata['adventure']['loc']);
 	} else {
 		@loc = get_spawn('custom');
 		@loc = array(@loc[0] + 0.5, @loc[1] - 1, @loc[2] + 0.5, @loc[3]);
@@ -36,9 +36,9 @@
 	}
 	include('includes.library/teleports.ms');
 	@pdata = _pdata(player());
-	if(array_index_exists(@pdata, 'lastloc')
-	&& array_index_exists(@pdata['lastloc'], 'dev')) {
-		_warmuptp(player(), @pdata['lastloc']['dev']);
+	if(array_index_exists(@pdata, 'creative')
+	&& array_index_exists(@pdata['creative'], 'loc')) {
+		_warmuptp(player(), @pdata['creative']['loc']);
 	} else {
 		@loc = get_spawn('dev');
 		@loc = array(@loc[0] + 0.5, @loc[1] - 1, @loc[2] + 0.5, @loc[3]);

@@ -16,13 +16,6 @@ bind(player_teleport, null, null, @event) {
 				@from = 'survival';
 			}
 			@pdata = _pdata(player());
-			/* 1.8 */
-			if(!array_index_exists(@pdata, 'lastloc')) {
-				@pdata['lastloc'] = associative_array();
-			}
-			@pdata['lastloc'][@from] = array_normalize(@event['from'])[0..5];
-			_store_pdata(player(), @pdata);
-			/* 1.9
 			@worlds = _worlds_config();
 			@mode = @worlds[@from]['mode'];
 			if(!array_index_exists(@pdata, @mode)) {
@@ -30,7 +23,6 @@ bind(player_teleport, null, null, @event) {
 			}
 			@pdata[@mode]['loc'] = array_normalize(@event['from'])[0..5];
 			_store_pdata(player(), @pdata);
-			*/
 		});
 	}
 
