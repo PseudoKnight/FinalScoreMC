@@ -11,6 +11,10 @@ bind(player_teleport, null, null, @event) {
 	@from = @event['from']['world'];
 	@to = @event['to']['world'];
 	if(@from != @to	&& (!_is_survival_world(@from) || !_is_survival_world(@to))) {
+		if(@event['type'] == 'SPECTATE') {
+			cancel();
+			die(color('yellow').'You cannot spectate a player not in this dimension.');
+		}
 		set_timeout(50, closure(){
 			if(_is_survival_world(@from)) {
 				@from = 'survival';
