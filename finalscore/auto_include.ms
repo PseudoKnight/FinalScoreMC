@@ -87,8 +87,13 @@ proc _equip_park(@player) {
 		@player = player();
 	}
 
-	if(pworld(@player) !== 'custom' || pmode(@player) == 'CREATIVE') {
+	@mode = pmode(@player);
+	if(pworld(@player) !== 'custom' || @mode == 'CREATIVE') {
 		return();
+	}
+
+	if(@mode == 'SURVIVAL') {
+		set_pmode(@player, 'ADVENTURE');
 	}
 
 	_clear_pinv(@player)
