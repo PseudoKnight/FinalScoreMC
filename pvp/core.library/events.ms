@@ -95,52 +95,76 @@ bind(player_death, array('priority': 'high', 'id': @id.'death'), null, @e, @id) 
 		@pvp['players'][player()]['respawn'] = time() + (@pvp['arena']['respawntime'] * 1000)
 	}
 
+	@drops = array();
 	if(array_contains(@pvp['arena']['flags'], 'keepinventory')) {
-		@pvp['players'][player()]['inv'] = pinv()
-	}
-
-	@drops = array()
-	foreach(@drop in @e['drops']) {
-		if(@pvp['arena']['mode'] === 'ctf' && !is_null(@flag = _flag(@drop))) {
-			_regionmsg(@pvp['arena']['broadcast'], color('gray').'[PVP] '.@pvp['players'][player()]['color']
-				.player().color('r').' dropped the '.@pvp['arena']['team'][@flag]['color'].'flag')
-			if(@e['cause']['cause'] === 'VOID' || @e['cause']['cause'] === 'LAVA') {
-				_pvp_flag_spawn(@id, @flag)
-			} else {
-				_pvp_flag_spawn(@id, @flag, _relative(ploc(), 'up'))
-			}
-		} else if(array_index_exists(@pvp['arena'], 'captain')
-		&& @drop['type'] == @pvp['team'][@pvp['players'][player()]['team']]['captainhat']['type']
-		&& (max_stack_size(@pvp['team'][@pvp['players'][player()]['team']]['captainhat']['type']) == 1
-		|| @drop['data'] == @pvp['team'][@pvp['players'][player()]['team']]['captainhat']['data'])) {
-			@pvp['team'][@pvp['players'][player()]['team']]['captain'] = ''
-			_class('unload', player(), @pvp['players'][player()]['class'], @pvp)
-			foreach(@classname: @class in @pvp['arena']['classes']) {
-				if(@classname != @pvp['players'][player()]['class']
-				&& (!array_index_exists(@class, 'team') || @class['team'] == @pvp['players'][player()]['team'])) {
-					@pvp['players'][player()]['class'] = @classname
-					break()
+		@inv = pinv();
+		if(array_index_exists(@pvp['arena'], 'dropchance')) {
+			proc _drop(@inv, @slot, @chance) {
+				@item = @inv[@slot];
+				if(@item && rand(100) < @chance) {
+					@qtyLeft = floor(@item['qty'] / 2);
+					@item['qty'] = @item['qty'] - @qtyLeft;
+					drop_item(player(), @item);
+					msg('You dropped: '.if(@item['qty'] > 1, @item['qty'].' ').@item['name']);
+					if(@qtyLeft) {
+						@item['qty'] = @qtyLeft;
+					} else {
+						@inv[@slot] = null;
+					}
 				}
 			}
-			_class('load', player(), @pvp['players'][player()]['class'], @pvp)
-			_regionmsg(@pvp['arena']['broadcast'], color('gray').'[PVP] '.@pvp['players'][player()]['color']
-				.to_upper(@pvp['arena']['team'][@pvp['players'][player()]['team']]['name']).color('r').' - Captain has died and dropped his hat!')
-			foreach(@p: @player in @pvp['players']) {
-				if(@player['team'] == @pvp['players'][player()]['team']) {
-					set_compass_target(@p, ploc())
+			foreach(@slot in 0..35) {
+				_drop(@inv, @slot, @pvp['arena']['dropchance']);
+			}
+			foreach(@slot in 100..103) {
+				_drop(@inv, @slot, @pvp['arena']['dropchance']);
+			}
+			_drop(@inv, -106, @pvp['arena']['dropchance']);
+		}
+		@pvp['players'][player()]['inv'] = @inv;
+	} else {
+		foreach(@drop in @e['drops']) {
+			if(@pvp['arena']['mode'] === 'ctf' && !is_null(@flag = _flag(@drop))) {
+				_regionmsg(@pvp['arena']['broadcast'], color('gray').'[PVP] '.@pvp['players'][player()]['color']
+					.player().color('r').' dropped the '.@pvp['arena']['team'][@flag]['color'].'flag')
+				if(@e['cause']['cause'] === 'VOID' || @e['cause']['cause'] === 'LAVA') {
+					_pvp_flag_spawn(@id, @flag)
+				} else {
+					_pvp_flag_spawn(@id, @flag, _relative(ploc(), 'up'))
 				}
-			}
+			} else if(array_index_exists(@pvp['arena'], 'captain')
+			&& @drop['type'] == @pvp['team'][@pvp['players'][player()]['team']]['captainhat']['type']
+			&& (max_stack_size(@pvp['team'][@pvp['players'][player()]['team']]['captainhat']['type']) == 1
+			|| @drop['data'] == @pvp['team'][@pvp['players'][player()]['team']]['captainhat']['data'])) {
+				@pvp['team'][@pvp['players'][player()]['team']]['captain'] = ''
+				_class('unload', player(), @pvp['players'][player()]['class'], @pvp)
+				foreach(@classname: @class in @pvp['arena']['classes']) {
+					if(@classname != @pvp['players'][player()]['class']
+					&& (!array_index_exists(@class, 'team') || @class['team'] == @pvp['players'][player()]['team'])) {
+						@pvp['players'][player()]['class'] = @classname
+						break()
+					}
+				}
+				_class('load', player(), @pvp['players'][player()]['class'], @pvp)
+				_regionmsg(@pvp['arena']['broadcast'], color('gray').'[PVP] '.@pvp['players'][player()]['color']
+					.to_upper(@pvp['arena']['team'][@pvp['players'][player()]['team']]['name']).color('r').' - Captain has died and dropped his hat!')
+				foreach(@p: @player in @pvp['players']) {
+					if(@player['team'] == @pvp['players'][player()]['team']) {
+						set_compass_target(@p, ploc())
+					}
+				}
 
-			if(@e['cause']['cause'] === 'VOID' || @e['cause']['cause'] === 'LAVA') {
-				_pvp_hat_spawn(@id, @pvp['players'][player()]['team'])
-			} else {
-				_pvp_hat_spawn(@id, @pvp['players'][player()]['team'], _relative(ploc(), 'up'))
+				if(@e['cause']['cause'] === 'VOID' || @e['cause']['cause'] === 'LAVA') {
+					_pvp_hat_spawn(@id, @pvp['players'][player()]['team'])
+				} else {
+					_pvp_hat_spawn(@id, @pvp['players'][player()]['team'], _relative(ploc(), 'up'))
+				}
+			} else if(!array_index_exists(@pvp['arena'], 'denydrop')
+			|| array_index_exists(@pvp['arena'], 'denydrop')
+			&& is_array(@pvp['arena']['denydrop'])
+			&& !array_contains(@pvp['arena']['denydrop'], @drop['type'])) {
+				array_push(@drops, @drop)
 			}
-		} else if(!array_index_exists(@pvp['arena'], 'denydrop')
-		|| array_index_exists(@pvp['arena'], 'denydrop')
-		&& is_array(@pvp['arena']['denydrop'])
-		&& !array_contains(@pvp['arena']['denydrop'], @drop['type'])) {
-			array_push(@drops, @drop)
 		}
 	}
 
