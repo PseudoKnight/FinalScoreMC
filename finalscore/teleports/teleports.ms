@@ -16,9 +16,6 @@ bind(player_teleport, null, null, @event) {
 			die(color('yellow').'You cannot spectate a player not in this dimension.');
 		}
 		set_timeout(50, closure(){
-			if(_is_survival_world(@from)) {
-				@from = 'survival';
-			}
 			@pdata = _pdata(player());
 			@worlds = _worlds_config();
 			@mode = @worlds[@from]['mode'];
