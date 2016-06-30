@@ -1,4 +1,7 @@
 proc _set_spectator(@player, @pvp) {
+	if(!ponline(@player)) {
+		return();
+	}
 	if(pinfo(@player, 5) > 0) {
 		@pvp['spectators'][] = @player;
 		foreach(@p in all_players('custom')) {
