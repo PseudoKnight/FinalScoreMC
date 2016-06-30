@@ -98,7 +98,11 @@ bind(player_interact_at_entity, null, array('clicked': 'ARMOR_STAND'), @event) {
 
 			set_interval(50, closure(){
 				if(!ponline(player()) || !pinfo(player(), 11) || !entity_exists(@event['id'])) {
-					try(set_entity_spec(@event['id'], array('gravity': @armorstand['gravity'])));
+					try {
+						set_entity_spec(@event['id'], array('gravity': @armorstand['gravity']));
+					} catch(BadEntityException @ex) {
+						// no longer exists
+					}
 					clear_task();
 					export(player().'posing', null);
 					return();

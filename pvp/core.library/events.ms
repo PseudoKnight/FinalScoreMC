@@ -82,13 +82,15 @@ bind(player_death, array('priority': 'high', 'id': @id.'death'), null, @e, @id) 
 		});
 	}
 	set_timeout(5000, closure(){
-		try(
+		try {
 			if(pinfo(player(), 5) <= 0) {
 				if(function_exists('respawn')) {
 					respawn(player())
 				}
 			}
-		)
+		} catch(PlayerOfflineException @ex) {
+			// rage quit
+		}
 	})
 
 	if(array_index_exists(@pvp['arena'], 'respawntime')) {
@@ -276,7 +278,7 @@ bind(player_spawn, array('id': @id.'spawn'), array('world': 'custom'), @e, @id) 
 			@team = @pvp['players'][player()]['team'];
 			while(@pvp['team'][@team]['respawns']) {
 				@uuid = @pvp['team'][@team]['respawns'][0];
-				try(
+				try {
 					@loc = entity_loc(@uuid);
 					@loc[1] -= 1;
 					modify_event('location', @loc);
@@ -284,9 +286,11 @@ bind(player_spawn, array('id': @id.'spawn'), array('world': 'custom'), @e, @id) 
 					array_remove(@pvp['team'][@team]['respawns'], 0);
 					set_pscore('respawns', @pvp['arena']['team'][@team]['name'], array_size(@pvp['team'][@team]['respawns']), @id);
 					die();
-				, # catch
+				} catch(BadEntityException @ex) {
+					// Either the mob is dead or the chunk is unloaded.
+					// Remove it just to be sure.
 					array_remove(@pvp['team'][@pvp['players'][player()]['team']]['respawns'], 0);
-				);
+				}
 			}
 			_remove_player(player(), @pvp);
 		} else {
@@ -347,16 +351,13 @@ if(array_index_exists(@pvp['arena'], 'mobprotect')) {
 	bind(entity_death, array('id': @id.'mobprotectdeath'), null, @e, @id) {
 		@pvp = import('pvp'.@id)
 		foreach(@team: @data in @pvp['arena']['mobprotect']) {
-			try(
-				if(@pvp['team'][@team]['mobprotect'] == @e['id']) {
-
-					if(@team == 0) {
-						_pvp_end_match(@id, @pvp['team'][1]['players'])
-					} else {
-						_pvp_end_match(@id, @pvp['team'][0]['players'])
-					}
+			if(@pvp['team'][@team]['mobprotect'] == @e['id']) {
+				if(@team == 0) {
+					_pvp_end_match(@id, @pvp['team'][1]['players']);
+				} else {
+					_pvp_end_match(@id, @pvp['team'][0]['players']);
 				}
-			);
+			}
 		}
 	}
 
@@ -364,17 +365,15 @@ if(array_index_exists(@pvp['arena'], 'mobprotect')) {
 	bind(entity_damage, array('id': @id.'mobprotectdamage'), null, @e, @id) {
 		@pvp = import('pvp'.@id)
 		foreach(@team: @data in @pvp['arena']['mobprotect']) {
-			try(
-				if(@pvp['team'][@team]['mobprotect'] == @e['id']) {
-					@health = get_entity_health(@e['id'])
-					set_pscore('mobhealth', @pvp['arena']['team'][@team]['name'], ceil(@health), @id);
-					foreach(@p: @player in @pvp['players']) {
-						if(@player['team'] == @team) {
-							play_sound(ploc(@p), array('sound': 'NOTE_PLING', 'pitch': 0.5 + (1.5 * (@health / 100))), @p);
-						}
+			if(@pvp['team'][@team]['mobprotect'] == @e['id']) {
+				@health = get_entity_health(@e['id'])
+				set_pscore('mobhealth', @pvp['arena']['team'][@team]['name'], ceil(@health), @id);
+				foreach(@p: @player in @pvp['players']) {
+					if(@player['team'] == @team) {
+						play_sound(ploc(@p), array('sound': 'NOTE_PLING', 'pitch': 0.5 + (1.5 * (@health / 100))), @p);
 					}
 				}
-			);
+			}
 		}
 	}
 }
@@ -476,13 +475,21 @@ bind(entity_damage, array('id': @id.'EntityDamage', 'priority': 'LOWEST'), array
 				if(array_index_exists(@pvp['players'], @e['shooter'])) {
 					@damager = @e['shooter'];
 				} else {
-					try(@damager = get_mob_owner(@e['shooter']));
+					try {
+						@damager = get_mob_owner(@e['shooter']);
+					} catch(UntameableMobException @ex) {
+						die();
+					}
 				}
 			} else if(array_index_exists(@e, 'damager')) {
 				if(array_index_exists(@pvp['players'], @e['damager'])) {
 					@damager = @e['damager'];
 				} else {
-					try(@damager = get_mob_owner(@e['shooter']));
+					try {
+						@damager = get_mob_owner(@e['shooter']);
+					} catch(UntameableMobException @ex) {
+						die();
+					}
 				}
 			}
 

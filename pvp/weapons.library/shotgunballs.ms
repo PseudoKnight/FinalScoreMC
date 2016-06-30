@@ -19,7 +19,11 @@ bind(player_interact, array('id': @id.'shotgunshoot'), array('item': 332, 'butto
 	}
 	set_timeout(300, closure(){
 		foreach(@snowball in @entities) {
-			try(entity_remove(@snowball));
+			try {
+				entity_remove(@snowball);
+			} catch(BadEntityException @ex) {
+				// this ball hit something
+			}
 		}
 	});
 	play_sound(ploc(), array('sound': 'ZOMBIE_WOOD', 'pitch': 1.5, 'volume': 2));

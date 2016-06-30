@@ -19,7 +19,7 @@ case 'load':
 					_flap(@player)
 				} else {
 					set_interval(200, closure(){
-						try(
+						try {
 							if(pinfo(player(), 103)['type'] != 397) {
 								clear_task();
 							} else if(entity_grounded(puuid(@player))) {
@@ -32,7 +32,9 @@ case 'load':
 								}
 							}
 
-						, clear_task())
+						} catch(Exception @ex) {
+							clear_task();
+						}
 					})
 				}
 			}, @player.'flap')

@@ -1,5 +1,9 @@
 proc _get_shop(@loc) {
-	try(@sign = get_sign_text(@loc), return(null));
+	try {
+		@sign = get_sign_text(@loc);
+	} catch(RangeException @ex) {
+		return(null);
+	}
 	@itemMatch = reg_match('^\\[(.+)\\]$', @sign[0]);
 	@item = '';
 	if(!@itemMatch) {
@@ -18,15 +22,15 @@ proc _get_shop(@loc) {
 	}
 
 	# Update owner player name, if changed
-	try(
+	try {
 		@autocomplete = (length(@owner) == 15 && @owner[13] === '~');
 		if(@autocomplete) {
 			@owner = substr(@owner, 0, 13);
 		}
 		@pdata = _pdata(@owner, @autocomplete);
-	, # catch
+	} catch(NotFoundException @ex) {
 		return(null);
-	);
+	}
 	@currentName = @pdata['name'];
 	if(@autocomplete) {
 		@currentName = substr(@pdata['name'], 0, 13);
@@ -70,14 +74,17 @@ proc _get_price(@string) {
 
 proc _is_shop_owner(@player, @shopOwner) {
 	if(length(@player) > 15) {
-		try(
+		try {
 			if(substr(@shopOwner, 0, 13) == substr(@player, 0, 13)) {
 				return(true);
 			}
-		)
+		} catch(RangeException @ex) {
+			return(false);
+		}
 	} else if(@shopOwner == @player) {
 		return(true);
 	}
+	return(false);
 }
 
 proc _data_values(@item) {

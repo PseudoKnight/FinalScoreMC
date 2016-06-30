@@ -69,11 +69,11 @@ proc _arena(@action, @id, @setting, @string) {
                     case 'on':
                     case '1':
                     case 'yes':
-                        try(
+                        try {
                             array_remove(@arena, @setting);
-                        ,
+                        } catch(IndexOverflowException @ex) {
                             die('Already set to true by default.');
-                        )
+                        }
                         msg(colorize('Turned &a' . @setting . '&r on (default)'));
 
                     case 'false':

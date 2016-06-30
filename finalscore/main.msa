@@ -63,7 +63,7 @@
 			die(color('red').'Unknown type: '.@type.'\nShareable: '.@shareables)
 		}
 	}
-	try(@player = player($player).'', die('Unknown player.'))
+	@player = _find_player($player);
 	export('share'.@player, array(
 		'player': player(),
 		'types': @types
@@ -111,13 +111,15 @@
 			die(color('red').'Unknown type: '.@type.'\nShareable: '.@shareables)
 		}
 	}
-	try(@player = player($player),
+	try {
+		@player = player($player);
+	} catch(PlayerOfflineException @ex) {
 		if(get_value('players', to_lower($player))) {
-			@player = $player
+			@player = $player;
 		} else {
-			die('Unknown player.')
+			die('Unknown player.');
 		}
-	)
+	}
 
 	@pdata = _pdata(player())
 	if(!array_index_exists(@pdata, 'shared') || !array_index_exists(@pdata['shared'], @player)) {
@@ -192,17 +194,17 @@
 			msg('Compass is now pointing to this location.');
 
 		default:
-			try(
+			try {
 				@player = player($target);
 				if(pworld(@player) != pworld(), die('Player is not in this world.'));
 				set_compass_target(ploc(@player));
 				msg('Compass is now pointing to '.@player.'\'s last location.');
-			, # catch
+			} catch(PlayerOfflineException @ex) {
 				if(is_numeric($target) && is_numeric($arg)) {
 					set_compass_target(array($target, 0, $arg, pworld()));
 					msg('Compass is now pointing to x:'.$target.' z:'.$arg);
 				}
-			);
+			}
 	}
 <<<
 
@@ -274,11 +276,11 @@
 		msg(color('a').'Get help on any of these topics:');
 		msg(color('6').array_implode(array_keys(@help), ' '));
 	} else {
-		try(
+		try {
 			msg(to_upper($selection).': '.color('a').@help[to_lower($selection)]);
-		, # catch
+		} catch(IndexOverflowException @ex) {
 			msg(color('c').'Unknown entry. Type "/help" to find available entries.');
-		);
+		}
 	}
 <<<
 *:/rules = call_alias('/help rules')

@@ -21,13 +21,21 @@
 		if(@e['player'] == @player) {
 			unbind()
 			unbind(@player.'quit')
-			try(entity_remove(@e['vehicle']))
+			try {
+				entity_remove(@e['vehicle']);
+			} catch(BadEntityException @ex) {
+				// already removed or unloaded
+			}
 		}
 	}
 	bind(player_quit, array(id: $player.'quit'), array('player': $player), @e, @cart) {
 		unbind()
 		unbind(player().'vehicle_leave')
-		try(entity_remove(@cart))
+		try {
+			entity_remove(@cart);
+		} catch(BadEntityException @ex) {
+			// already removed or unloaded
+		}
 	}
 <<<
 
@@ -63,10 +71,12 @@
 		@targetLoc[3] = @loc[3];
 		ctz_set_npc_face_loc(@npc, @targetLoc);
 		set_timeout(1000, closure(){
-			try(
+			try {
 				ctz_set_npc_target(@npc, @targetLoc);
 				array_remove(@path, 0);
-			);
+			} catch(BadEntityException @ex) {
+				// already removed or unloaded
+			}
 		});
 	});
 
@@ -120,7 +130,7 @@
 *:/give [$player=''] [$item=0] [$amount=1] = >>>
 	if(!get_command_block() && !has_permission('group.moderator'), die('You do not have permission to use this command.'))
 	if($player === '', die('Usage: /give [player] [id:data] [quantity]'))
-	try(@player = player($player), die('Unknown player.'))
+	@player = _find_player($player);
 	if($item == 0, die('You need to specify an item id or name.'))
 	@item = split(':', $item)
 	if(!is_numeric(@item[0]), @item[0] = data_values(@item[0]))

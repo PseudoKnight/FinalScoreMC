@@ -17,7 +17,9 @@ case 'load':
 		}
 	}
 	bind(projectile_hit, array('id': @player.'hit'), array('type': 'ARROW'), @e, @shooter = puuid(@player)) {
-		if(@e['shooter'] == @shooter && entity_type(@e['id']), try(entity_remove(@e['id'])))
+		if(@e['shooter'] == @shooter && entity_type(@e['id'])) {
+			entity_remove(@e['id']);
+		}
 	}
 	bind(entity_damage, array('id': @player.'damage'), array('cause': 'PROJECTILE', 'world': 'custom'), @e, @p = @player) {
 		if(@e['shooter'] == @p, modify_event('amount', 28))

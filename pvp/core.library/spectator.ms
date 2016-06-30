@@ -54,7 +54,7 @@ proc _set_spectator(@player, @pvp) {
 }
 
 proc _remove_spectator(@player, @pvp) {
-	try(
+	try {
 		array_remove_values(@pvp['spectators'], @player)
 		if(ponline(@player)) {
 			set_pflight(@player, false);
@@ -82,7 +82,8 @@ proc _remove_spectator(@player, @pvp) {
 				});
 			}
 		}
-	, @ex, #catch
-		console(@ex)
-	)
+	} catch(Exception @ex) {
+		// not sure why this happens, but let's log it and continue
+		console(@ex);
+	}
 }

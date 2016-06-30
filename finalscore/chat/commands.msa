@@ -1,6 +1,6 @@
 # Sending chat from the console
 /s $name $ = >>>
-	broadcast(color('8').simple_date('h:mm').color('gray').' [console] '.color('aqua').$name.color('dark_gray').': '.color('r').$) 
+	broadcast(color('8').simple_date('h:mm').color('gray').' [console] '.color('aqua').$name.color('dark_gray').': '.color('r').$)
 	if(function_exists('dm_broadcast_to_web')) {
 		dm_broadcast_to_web($, $name)
 	}
@@ -12,7 +12,7 @@
 		msg('You have been muted.')
 		die()
 	}
-	broadcast(color('8').simple_date('h:mm').' '.if(player() !== '~console' && array_contains(pgroup(), 'donor'), color('green').'\u2666 ')._colorname().player().color('gray').': '.color('r').$) 
+	broadcast(color('8').simple_date('h:mm').' '.if(player() !== '~console' && array_contains(pgroup(), 'donor'), color('green').'\u2666 ')._colorname().player().color('gray').': '.color('r').$)
 <<<
 
 *:/me $ = >>>
@@ -32,7 +32,7 @@
 	if($player === 'all') {
 		@player = 'all'
 	} else {
-		try(@player = player($player), die('No player found.'))
+		@player = _find_player($player);
 	}
 	@ignorelist = import('ignorelist')
 	if(!array_index_exists(@ignorelist, @player)) {
@@ -48,7 +48,7 @@
 	if($player === 'all') {
 		@player = 'all'
 	} else {
-		try(@player = player($player), die('No player found.'))
+		@player = _find_player($player);
 	}
 	@ignorelist = import('ignorelist')
 	if(!array_index_exists(@ignorelist, @player)) {
@@ -68,7 +68,7 @@
 
 *:/mute $player = >>>
 	if(!has_permission('group.moderator'), die('You do not have permission to use this command.'))
-	try(@player = player($player), die('No player found.'))
+	@player = _find_player($player);
 	@ignorelist = import('ignorelist')
 	if(!array_index_exists(@ignorelist, @player)) {
 		@ignorelist[@player] = array()
@@ -83,7 +83,7 @@
 
 *:/unmute $player = >>>
 	if(!has_permission('group.moderator'), die('You do not have permission to use this command.'))
-	try(@player = player($player), die('No player found.'))
+	@player = _find_player($player);
 	@ignorelist = import('ignorelist')
 	if(!array_index_exists(@ignorelist, @player) || !array_contains(@ignorelist[@player], 'all')) {
 		die('That player isn\'t muted.')
@@ -158,7 +158,7 @@
 	if(is_null(@staffchat)) {
 		@staffchat = array()
 	}
-	
+
 	if(array_contains(@staffchat, player())) {
 		array_remove_values(@staffchat, player())
 		export('staffchat', @staffchat)

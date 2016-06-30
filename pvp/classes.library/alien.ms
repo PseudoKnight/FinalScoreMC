@@ -11,15 +11,16 @@ case 'load':
 			play_sound(ploc(), array('sound': 'ENDERDRAGON_HIT', 'pitch': 2))
 			set_pexp(0)
 			set_interval(250, closure(){
-				try(
+				try {
 					@xp = pexp()
 					@xp += 10
 					set_pexp(@xp)
 					if(@xp >= 100) {
 						clear_task()
 					}
-
-				, clear_task())
+				} catch(Exception @ex) {
+					clear_task();
+				}
 			})
 			if(extension_exists('CHSpigot')) {
 				@dmg = get_arrow_damage(@arrow);
@@ -29,7 +30,9 @@ case 'load':
 	}
 
 	bind(projectile_hit, array('id': @player.'hit'), array('type': 'ARROW'), @e, @shooter = puuid(@player)) {
-		if(@e['shooter'] == @shooter && entity_type(@e['id']), try(entity_remove(@e['id'])))
+		if(@e['shooter'] == @shooter && entity_type(@e['id'])) {
+			entity_remove(@e['id']);
+		}
 	}
 
 	bind(player_interact, array('id': @player.'teleport'), array('item': 381, 'player': @player, 'button': 'right'), @e, @pvp) {

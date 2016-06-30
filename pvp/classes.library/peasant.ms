@@ -104,7 +104,11 @@ case 'load':
 				@droppedItem = drop_item(_relative(ploc(), 'up', 2), @inv[@slot], true);
 				set_entity_spec(@droppedItem, array('pickupdelay': 200));
 				set_timeout(1000 * @inv[@slot]['meta']['display'], closure(){
-					try(explosion(entity_loc(@droppedItem), 3, true));
+					try {
+						explosion(entity_loc(@droppedItem), 3, true);
+					} catch(BadEntityException @ex) {
+						// dropped hot potato no longer exists
+					}
 				});
 				@inv[@slot] = null;
 				set_pinv(@inv);

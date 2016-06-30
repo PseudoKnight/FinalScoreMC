@@ -56,7 +56,11 @@ if(extension_exists('CHDynmap')) {
 				@dist = sqrt((@event['to']['x'] - @event['from']['x'])**2
 					+ (@event['to']['z'] - @event['from']['z'])**2);
 				if(@dist > 64) {
-					try(dm_set_marker_corners('tracers', player(), array(@event['to'])));
+					try {
+						dm_set_marker_corners('tracers', player(), array(@event['to']));
+					} catch(Exception @ex) {
+						// ignore
+					}
 				}
 			}
 		});

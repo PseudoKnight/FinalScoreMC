@@ -3,16 +3,16 @@ case 'load':
 	bind('inventory_click', array('id': @player.'invclick'), array('player': @player), @event) {
 		cancel();
 	}
-	
+
 	set_interval(250, closure() {
-		try(
+		try {
 			if(pinv(@player, 103)['type'] != 7) {
 				clear_task();
 			}
-		, 
+		} catch(Exception @ex) {
 			clear_task();
 			die();
-		);
+		}
 		
 		@hunter = puuid(@player);
 		foreach(@p in array_keys(@pvp['players'])) {
@@ -31,7 +31,7 @@ case 'load':
 			}
 		}
 	});
-	
+
 case 'unload':
 	unbind(@player.'invclick');
 }

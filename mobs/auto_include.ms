@@ -5,7 +5,7 @@ proc _spawn_mob(@mob, @qty, @loc, @owner = 'Notch') {
 	}
 	@mobs = spawn_mob(@mob['type'], @qty, @loc);
 	foreach(@i: @m in @mobs) {
-		try(
+		try {
 			if(array_index_exists(@mob, 'name'), set_mob_name(@m, @mob['name']));
 			if(array_index_exists(@mob, 'gear'), set_mob_equipment(@m, @mob['gear']));
 			if(array_index_exists(@mob, 'droprate'), set_equipment_droprates(@m, @mob['droprate']));
@@ -28,10 +28,10 @@ proc _spawn_mob(@mob, @qty, @loc, @owner = 'Notch') {
 				set_entity_onfire(@m, @mob['onfire']);
 			}
 			set_entity_persistence(@m, true);
-		, # failed to spawn
+		} catch(BadEntityException @ex) {
 			array_remove(@mobs, @i);
 			console('Failed to spawn mob @ '.@loc);
-		);
+		}
 	}
 	if(array_index_exists(@mob, 'explode')) {
 		@display = array();
@@ -44,40 +44,50 @@ proc _spawn_mob(@mob, @qty, @loc, @owner = 'Notch') {
 		}
 		set_interval(1000, closure(){
 			@mob['explode'][0] -= 1;
+			@cleanup = false;
 			foreach(@i: @m in @mobs) {
-				try(
+				try {
 					if(get_entity_health(@m) > 0) {
-						try(
-							if(@mob['explode'][0] <= 3) {
-								set_mob_name(@display[@i], color('yellow').@mob['explode'][0]);
-							} else {
-								set_mob_name(@display[@i], @mob['explode'][0]);
-							}
-							if(@mob['explode'][0] == 0) {
-								try(entity_remove(@display[@i]));
-								explosion(entity_loc(@m), @mob['explode'][1], true);
-								damage_entity(@m, 20);
-							} else {
-								play_sound(entity_loc(@m), array('sound': 'NOTE_STICKS', 'pitch': 2, 'volume': 1));
-							}
-						, # display entity doesn't exist
-							damage_entity(@m, 20);
-						);
-					} else {
-						try(entity_remove(@display[@i]));
+						if(@mob['explode'][0] <= 3) {
+							set_mob_name(@display[@i], color('yellow').@mob['explode'][0]);
+						} else {
+							set_mob_name(@display[@i], @mob['explode'][0]);
+						}
+						if(@mob['explode'][0] == 0) {
+							@cleanup = true;
+							explosion(entity_loc(@m), @mob['explode'][1], true);
+						} else {
+							play_sound(entity_loc(@m), array('sound': 'NOTE_STICKS', 'pitch': 2, 'volume': 1));
+						}
 					}
-				);
+				} catch(BadEntityException @ex) {
+					@cleanup = true;
+				}
 			}
-			if(@mob['explode'][0] == 0) {
+			if(@cleanup) {
+				try {
+					entity_remove(@display[@i]);
+				} catch(BadEntityException @ex) {
+					// already removed
+				}
+				try {
+					entity_remove(@m);
+				} catch(BadEntityException @ex) {
+					// already removed
+				}
 				clear_task();
 			}
-		})
+		});
 	}
 	if(array_index_exists(@mob, 'effects')) {
 		queue_push(closure(){
 			foreach(@m in @mobs) {
-				foreach(@e in @mob['effects']) {
-					try(set_mob_effect(@m, @e['id'], @e['strength'], @e['seconds'], true));
+				try {
+					foreach(@e in @mob['effects']) {
+						set_mob_effect(@m, @e['id'], @e['strength'], @e['seconds'], true);
+					}
+				} catch(BadEntityException @ex) {
+					// mob is gone for some reason
 				}
 			}
 		})

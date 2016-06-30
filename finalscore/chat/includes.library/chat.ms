@@ -1,5 +1,8 @@
 proc _pmsg(@player, @message) {
-	try(if(@player !== '~console', @player = player(@player))
+	try{
+		if(@player !== '~console') {
+			@player = player(@player);
+		}
 		if(@recipients = _remove_ignored(player(), array(@player))) {
 			@player = @recipients[0]
 			@message = colorize(@message)
@@ -13,15 +16,15 @@ proc _pmsg(@player, @message) {
 		} else {
 			msg('You cannot message that player.')
 		}
-	, # else
+	} catch(PlayerOfflineException @ex) {
 		if(length(@player) < 4) {
 			die(color('gold').'You must provide at least the first 4 characters of a player\'s name for offline messages.');
 		}
-		try(
-			@pdata = _pdata(@player)
-		, #catch
-			die(color('red').'Unknown player. If you wish to send an offline message, use their full name.')
-		)
+		try {
+			@pdata = _pdata(@player);
+		} catch(NotFoundException @ex) {
+			die(color('red').'Unknown player. If you wish to send an offline message, use their full name.');
+		}
 		if(!array_index_exists(@pdata, 'mail'), @pdata['mail'] = array())
 		array_push(@pdata['mail'], array(
 			simple_date('MMM d h:mm a', time(), 'CST'),
@@ -32,7 +35,7 @@ proc _pmsg(@player, @message) {
 		msg(color(7).'(To '.@player.'): '.color('r').@message)
 		msg(color('yellow').'Type /unsend if you wish to remove this offline message.');
 		export(player().'_mail', @pdata['name']);
-	)
+	}
 }
 
 proc _remove_ignored(@sender, @recipients) {

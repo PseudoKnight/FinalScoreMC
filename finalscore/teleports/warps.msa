@@ -43,11 +43,13 @@
 	@loc = ploc();
 	@loc = array(round(@loc[0], 1), @loc[1], round(@loc[2], 1), @loc[3], floor(@loc[4]), floor(@loc[5]));
 	if(has_value('warp.'.$warp)) {
-		try(
+		try {
 			if(function_exists('dm_delete_marker')) {
 				dm_delete_marker('warps', 'warp.'.$warp);
 			}
-		);
+		} catch(Exception @ex) {
+			// ignore
+		}
 	}
 	store_value('warp.'.$warp, @loc);
 	if(function_exists('dm_create_marker')) {
@@ -81,11 +83,13 @@
 				die('There is no warp by that name.');
 			}
 			clear_value('warp.'.$id);
-			try(
+			try {
 				if(function_exists('dm_delete_marker')) {
 					dm_delete_marker('warps', 'warp.'.$id);
 				}
-			);
+			} catch(Exception @ex) {
+				// ignore
+			}
 			msg('Deleted warp.');
 
 		case 'list':

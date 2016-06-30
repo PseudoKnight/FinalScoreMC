@@ -237,7 +237,7 @@
 *:/kick [$player] [$='Kicked.'] = >>>
 	if(!$player, die('Usage: /kick <player> <reason>'))
 	if(!has_permission('group.moderator'), die('You do not have permission.'))
-	try(@player = player($player), die('Unknown player.'))
+	@player = _find_player($player);
 	pkick(@player, $)
 	console(player().' kicked '.@player.'. (Reason: "'.$.'")')
 <<<
@@ -276,7 +276,7 @@
 #Run commands as other players and show them which command it was
 *:/runas $player $ = >>>
 	if(!get_command_block() && !has_permission('group.admin'), die('You do not have permission for this command'))
-	try(@player = player($player), die('No player found.'))
+	@player = _find_player($player);
 	if(substr($, 0, 2) === '-s') {
 		@cmd = substr($, 3)
 	} else {
@@ -294,7 +294,7 @@
 
 *:/player $player = >>>
 	if(!has_permission('group.moderator'), die('You do not have permission to use this command.'))
-	try(
+	try {
 		# ONLINE INFO
 		@player = player($player)
 		@pdata = _pdata(@player)
@@ -317,7 +317,7 @@
 			}
 		}
 
-	,
+	} catch(PlayerOfflineException @ex) {
 		# OFFLINE INFO
 		@uuid = _get_uuid(to_lower($player), true, false);
 		@pdata = _pdata_by_uuid(replace(@uuid, '-', ''));
@@ -342,7 +342,7 @@
 		if(array_index_exists(@pdata, 'homeless'), msg(color('gray').'Homeless: '.color('r').'TRUE'))
 		if(array_index_exists(@pdata, 'ips'), msg(color('gray').'IPs: '.color('r').array_implode(@pdata['ips'], ' ')))
 		if(array_index_exists(@pdata, 'world'), msg(color('gray').'World: '.color('r').@pdata['world']))
-	)
+	}
 	msg(color('gray').'Group: '.color('r').array_get(@pdata, 'group', 'default'));
 	if(array_index_exists(@pdata, 'names'), msg(color('gray').'Aliases: '.color('r').array_implode(@pdata['names'], ', ')))
 	if(array_index_exists(@pdata, 'joined'), msg(color('gray').'Joined: '.color('r').@pdata['joined']))

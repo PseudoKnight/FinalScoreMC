@@ -59,11 +59,7 @@
 
 # TELEPORTATION BETWEEN FRIENDS #
 *:/join $player = >>>
-	try(
-		@player = player($player);
-	, # catch
-		die('Player not found.');
-	);
+	@player = _find_player($player);
 	if(!has_permission('command.join.from')) {
 		die('You cannot use teleport commands in '._worldname(pworld()));
 	}
@@ -114,11 +110,7 @@
 *:/tpa $player = call_alias('/join '.$player);
 
 *:/invite $player = >>>
-	try(
-		@player = player($player);
-	,
-		die('Player not found.');
-	);
+	@player = _find_player($player);
 	if(!has_permission(@player, 'command.join.from')) {
 		die('That player is out of reach.');
 	}
@@ -211,22 +203,16 @@
 	if(!has_permission('group.moderator')) {
 		die('You do not have permission.');
 	}
-	try(
-		set_ploc(player(), ploc($player));
-	,
-		die('Unknown player.');
-	);
+	@player = _find_player($player);
+	set_ploc(player(), ploc(@player));
 <<<
 
 *:/bring $player = >>>
 	if(!has_permission('group.moderator')) {
 		die('You do not have permission.');
 	}
-	try(
-		set_ploc($player, ploc())
-	, # catch
-		die('Unknown player.');
-	);
+	@player = _find_player($player);
+	set_ploc(@player, ploc());
 <<<
 
 *:/put $player = >>>
@@ -238,9 +224,6 @@
 	@loc[0] += 0.5;
 	@loc['z'] += 0.5;
 	@loc[2] += 0.5;
-	try(
-		set_ploc($player, @loc);
-	, # catch
-		die('Unknown player.');
-	);
+	@player = _find_player($player);
+	set_ploc(@player, @loc);
 <<<

@@ -3,13 +3,13 @@ proc _pvp_flag_spawn(@id, @team, @loc) {
 	if(!is_array(@loc)) {
 		@loc = @pvp['arena']['ctfflag'][@team];
 	}
-	try(
+	try {
 		if(_horizontal_distance(entity_loc(@pvp['team'][@team]['flag']), @pvp['arena']['ctfflag'][@team]) > 3) {
 			@pvp['team'][@team]['flag'] = drop_item(@loc, array('type': 425, 'data': if(@team == 0, '1', '4')), 0)
 		}
-	, # doesn't exist
+	} catch(BadEntityException @ex) {
 		@pvp['team'][@team]['flag'] = drop_item(@loc, array('type': 425, 'data': if(@team == 0, '1', '4')), 0);
-	);
+	}
 	queue_delay('30000', @id.@team.'flag');
 	queue_push(closure(_pvp_flag_spawn(@id, @team)), @id.@team.'flag');
 }
@@ -29,19 +29,19 @@ _pvp_flag_spawn(@id, 0);
 _pvp_flag_spawn(@id, 1);
 
 array_push(@pvp['binds'], @id.'flagpickup')
-bind(item_pickup, array('id': @id.'flagpickup'), null, @e, @id) { 
+bind(item_pickup, array('id': @id.'flagpickup'), null, @e, @id) {
 	@pvp = import('pvp'.@id)
 	if(!array_index_exists(@pvp['players'], player())) {
 		die();
 	}
-		
+
 	@flag = _flag(@e['item']);
 	if(is_null(@flag)) {
 		die();
 	}
-	
+
 	if(@flag == @pvp['players'][player()]['team']) {
-		if(_horizontal_distance(ploc(), @pvp['arena']['ctfflag'][@flag]) > 3) { 
+		if(_horizontal_distance(ploc(), @pvp['arena']['ctfflag'][@flag]) > 3) {
 			queue_clear(@id.@flag.'flag');
 			modify_event('item', null);
 			_pvp_flag_spawn(@id, @flag);
@@ -82,7 +82,7 @@ bind(item_pickup, array('id': @id.'flagpickup'), null, @e, @id) {
 }
 
 array_push(@pvp['binds'], @id.'protectdrops')
-bind(entity_damage, array('id': @id.'protectdrops'), array('type': 'DROPPED_ITEM', 'world': 'custom'), 
+bind(entity_damage, array('id': @id.'protectdrops'), array('type': 'DROPPED_ITEM', 'world': 'custom'),
 @e, @region = @pvp['arena']['region']) {
 	if(array_contains(sk_regions_at(entity_loc(@e['id'])), @region)) {
 		cancel()
@@ -94,8 +94,8 @@ if(!array_contains(@pvp['arena']['flags'], 'noinventory')) {
 	bind(inventory_click, array('id': @id.'flagclick'), array('slottype': 'ARMOR'), @e, @id) {
 		@pvp = import('pvp'.@id)
 		if(!array_index_exists(@pvp['players'], player()), die())
-		
-		if(!is_null(_flag(@e['slotitem']))) { 
+
+		if(!is_null(_flag(@e['slotitem']))) {
 			cancel();
 		}
 	}

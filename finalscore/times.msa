@@ -99,11 +99,12 @@
 					}
 				}
 			} else {
-				try(
+				try {
 					@uuid = split('.', @key)[2];
-				, # catch
+				} catch(IndexOverflowException @ex) {
+					// not a player time
 					continue();
-				)
+				}
 				if(@uuid == @puuid) {
 					msg('Removing '.$player.'\'s time in '.split('.', @key)[1]);
 					clear_value(@key);

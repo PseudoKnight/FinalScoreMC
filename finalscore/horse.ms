@@ -28,13 +28,13 @@ bind(player_interact_entity, null, array('clicked': 'HORSE'), @event) {
 		if(!has_permission('group.moderator')
 		&& (!@item || (@item['type'] != 322	&& @item['type'] != 396))) {
 			@pdata = null;
-			try(
+			try {
 				@pdata = _pdata(@owner);
-			, #catch
+			} catch(NotFoundException @ex) {
 				cancel();
 				die('We have no records for the owner of this horse.'
 					.' If this is in error, contact an administrator.');
-			);
+			}
 			if(!array_index_exists(@pdata, 'shared')
 			|| !array_index_exists(@pdata['shared'], player())
 			|| !array_contains(@pdata['shared'][player()], 'horses')) {

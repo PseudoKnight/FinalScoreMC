@@ -59,16 +59,18 @@ case 'load':
 
 			damage_entity(puuid(@player), 1, puuid())
 
-			try(
-				# if we use a queue, velocity works more consistently with grounded entities
-				queue_push(closure(){
+			# if we use a queue, velocity works more consistently with grounded entities
+			queue_push(closure(){
+				try {
 					set_pvelocity(@player,
 						1.4 * ((@loc2['x'] - @loc1['x']) / @dist), # vector normalization
 						max(0.1, min(1.4, (@loc2['y'] - @loc1['y']) / @dist)), # always bounce upwards
 						1.4 * ((@loc2['z'] - @loc1['z']) / @dist),
-					)
-				})
-			)
+					);
+				} catch(PlayerOfflineException @ex) {
+					// they logged off, feather OP
+				}
+			});
 		}
 
 		play_sound(@loc1, array('sound': 'ENDERDRAGON_WINGS', 'pitch': 0.5));

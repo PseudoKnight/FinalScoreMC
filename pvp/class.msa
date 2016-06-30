@@ -4,8 +4,12 @@ if($, @args = parse_args($), @args = array())
 array_resize(@args, 3)
 switch($cmd) {
 case 'set':
-	try(@arenaid = split(':', $id)[0]
-	@classid = split(':', $id)[1], die('You need to specify an arena.'))
+	try {
+		@arenaid = split(':', $id)[0];
+		@classid = split(':', $id)[1];
+	} catch(IndexOverflowException @ex) {
+		die('You need to specify an arena and class.');
+	}
 	@arena = get_value('arena', @arenaid)
 	if(!@arena, die('No arena by that name: '.@arenaid))
 	if(!array_index_exists(@arena, 'classes')) {
@@ -19,7 +23,7 @@ case 'set':
 		if(!pinv(player(), null), die('You must select an item on your hotbar.'))
 		@arena['classes'][@classid]['selector'] = pinv(player(), null)
 		msg('Class selector set to this item.')
-	
+
 	case 'kit':
 		@inv = pinv()
 		foreach(array_keys(@inv), @slot) {
@@ -42,7 +46,7 @@ case 'set':
 		}
 		@arena['classes'][@classid]['kit'] = @inv
 		msg('Set kit to current inventory.')
-	
+
 	case 'ammo':
 		@inv = pinv();
 		_minify_inv(@inv);
@@ -59,14 +63,14 @@ case 'set':
 			@arena['classes'][@classid]['stacklimit'][@args[0]] = integer(@args[1]);
 		}
 		msg('Set stack size limit to '.@args[1].' for item id '.@args[0].'.');
-		
+
 	case 'speed':
 		if(@args[0] < 0 || @args[0] > 1) {
 			die('Must be betwee 0 and 1')
 		}
 		@arena['classes'][@classid]['speed'] = @args[0]
 		msg('Set class speed to '.@args[0].' (default 0.2)')
-		
+
 	case 'hunger':
 		if(@args[0] < 0 || @args[0] > 20) {
 			die('Hunger must be within 0 and 20')
@@ -98,7 +102,7 @@ case 'set':
 		} else {
 			die('Requires a strength integer and a length integer in seconds.')
 		}
-		
+
 	case 'doublejump':
 		if($ === 'true') {
 			@arena['classes'][@classid]['doublejump'] = 'normal' # string instead of boolean leaves room for alternative doublejump modes
@@ -107,7 +111,7 @@ case 'set':
 			array_remove(@arena['classes'][@classid], 'doublejump')
 			msg('Turned off doublejump for class.')
 		}
-	
+
 	case 'script':
 		if($ === 'true') {
 			@arena['classes'][@classid]['script'] = true
@@ -116,11 +120,11 @@ case 'set':
 			array_remove(@arena['classes'][@classid], 'script')
 			msg('Turned OFF special script loading for this class.')
 		}
-		
+
 	case 'team':
 		@arena['classes'][@classid]['team'] = $
 		msg('Set team to '.$)
-	
+
 	case 'xp':
 		if(is_numeric($) && $ <= 100 && $ >= 0) {
 			@arena['classes'][@classid]['xp'] = $
@@ -128,15 +132,19 @@ case 'set':
 		} else {
 			die('It needs to be a number from 0 to 100')
 		}
-		
+
 	default:
 		die('Available settings: selector, kit, effect, hunger, speed, spawner, doublejump, script')
 	}
 	store_value('arena', @arenaid, @arena)
-	
+
 case 'delete':
-	try(@arenaid = split(':', $id)[0]
-	@classid = split(':', $id)[1], die('You need to specify an arena.'))
+	try {
+		@arenaid = split(':', $id)[0];
+		@classid = split(':', $id)[1];
+	} catch(IndexOverflowException @ex) {
+		die('You need to specify an arena and class.');
+	}
 	@arena = get_value('arena', @arenaid)
 	if(!@arena, die('No arena by that name: '.@arenaid))
 	if(!array_index_exists(@arena['classes'], @classid), die('No class by that name.'))
@@ -150,18 +158,26 @@ case 'delete':
 	store_value('arena', @arenaid, @arena)
 
 case 'info':
-	try(@arenaid = split(':', $id)[0]
-	@classid = split(':', $id)[1], die('You need to specify an arena.'))
+	try {
+		@arenaid = split(':', $id)[0];
+		@classid = split(':', $id)[1];
+	} catch(IndexOverflowException @ex) {
+		die('You need to specify an arena and class.');
+	}
 	@arena = get_value('arena', @arenaid)
 	if(!@arena, die('No arena by that name: '.@arenaid))
 	if(!array_index_exists(@arena['classes'], @classid), die('No class by that name.'))
 	foreach(@setting: @value in @arena['classes'][@classid]) {
 		msg(color('gray').@setting.' '.color('r').@value)
 	}
-	
+
 case 'rename':
-	try(@arenaid = split(':', $id)[0]
-	@classid = split(':', $id)[1], die('You need to specify an arena.'))
+	try {
+		@arenaid = split(':', $id)[0];
+		@classid = split(':', $id)[1];
+	} catch(IndexOverflowException @ex) {
+		die('You need to specify an arena and class.');
+	}
 	@arena = get_value('arena', @arenaid)
 	if(!@arena, die('No arena by that name: '.@arenaid))
 	if(!array_index_exists(@arena['classes'], @classid), die('No class by that name.'))
@@ -172,24 +188,32 @@ case 'rename':
 	array_remove(@arena['classes'], @classid)
 	store_value('arena', @arenaid, @arena)
 	msg('Changed '.@classid.' class name to '.to_lower($setting))
-	
+
 case 'equip':
-	try(@arenaid = split(':', $id)[0]
-	@classid = split(':', $id)[1], die('You need to specify an arena.'))
+	try {
+		@arenaid = split(':', $id)[0];
+		@classid = split(':', $id)[1];
+	} catch(IndexOverflowException @ex) {
+		die('You need to specify an arena and class.');
+	}
 	@arena = get_value('arena', @arenaid)
 	if(!@arena, die('No arena by that name: '.@arenaid))
 	@pvp = associative_array()
 	@pvp['arena'] = @arena
 	include('core.library/class.ms')
 	_class('equip', player(), @classid, @pvp)
-	
+
 case 'selector':
-	try(@arenaid = split(':', $id)[0]
-	@classid = split(':', $id)[1], die('You need to specify an arena.'))
+	try {
+		@arenaid = split(':', $id)[0];
+		@classid = split(':', $id)[1];
+	} catch(IndexOverflowException @ex) {
+		die('You need to specify an arena and class.');
+	}
 	@arena = get_value('arena', @arenaid)
 	if(!@arena, die('No arena by that name: '.@arenaid))
 	set_pinv(player(), array(null: @arena['classes'][@classid]['selector']))
-	
+
 case 'list':
 	@arena = get_value('arena', $id)
 	if(!@arena, die('No arena by that name: '.$id))
@@ -198,7 +222,7 @@ case 'list':
 		@list .= @class.' '
 	}
 	msg(color('gray').'CLASSES IN '.to_upper($id).': '.color('r').@list)
-	
+
 default:
 	msg(color('bold').'SUBCOMMANDS ---------------');
 	msg('/class set <arena:class> <setting> [value[s]] '.color('gray').'Creates/overwrites settings');
@@ -207,6 +231,6 @@ default:
 	msg('/class equip <arena:class> '.color('gray').'Sets your inventory to the class');
 	msg('/class rename <arena:class> <newname> '.color('gray').'Renames the class');
 	msg('/class list <arena> '.color('gray').'List classes in that arena');
-	
+
 }
 <<<

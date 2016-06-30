@@ -1,7 +1,7 @@
 # Set fly mode for players
 *:/fly $player $mode = >>>
 	if(!has_permission('command.fly'), die('You do not have permission.'))
-	try(@player = player($player), die('Who is that? Are they online?'))
+	@player = _find_player($player);
 	if(@player != player() && !has_permission('command.fly.others'), die('You do not have permission.'))
 	if(pworld(@player) != pworld()) {
 		die('You do not have permission to set a fly mode in another world.')
@@ -107,11 +107,11 @@
 # Set the time of day for this world
 *:/time $time = >>>
 	if(!has_permission('command.time'), die('You do not have permission.'))
-	try(
+	try {
 		set_world_time(pworld(), $time)
-	, # catch
-		msg('Usage: /time <day|night|sunrise|sunset|0-24000>')
-	)
+	} catch(FormatException @ex) {
+		msg('Usage: /time <day|night|sunrise|sunset|0-24000>');
+	}
 	msg('Set time to '.$time)
 <<<
 
@@ -121,7 +121,7 @@
 	@player = player()
 	if($player) {
 		if(!has_permission('command.heal.others'), die('You do not have permission to heal others.'))
-		try(@player = player($player), die('Unknown player.'))
+		@player = _find_player($player);
 		if(pworld(@player) != pworld()) {
 			die('You do not have permission to heal a player in another world.')
 		}
@@ -168,14 +168,22 @@
 		if(@e['player'] == @player) {
 			unbind();
 			unbind(@player.'horse_quit');
-			try(entity_remove(@e['vehicle']));
+			try {
+				entity_remove(@e['vehicle']);
+			} catch(BadEntityException @ex) {
+				// horse removed already or unloaded
+			}
 		}
 	}
 
 	bind(player_quit, array('id': player().'horse_quit'), array('player': player()), @e, @horse) {
 		unbind();
 		unbind(player().'horse_leave');
-		try(entity_remove(@horse));
+		try {
+			entity_remove(@horse);
+		} catch(BadEntityException @ex) {
+			// horse removed already or unloaded
+		}
 	}
 <<<
 

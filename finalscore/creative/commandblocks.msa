@@ -1,9 +1,9 @@
 # Set the command in the targeted command block (overwrites)
 *:/scb [$] = >>>
 	# Configure a set of allowed commands and aliases for non-ops
-	@allowedcmds = array('/velocity', '/tp', '/sayas', '/testfor', '/playsound', '/setblock', '/tempcart', 
+	@allowedcmds = array('/velocity', '/tp', '/sayas', '/testfor', '/playsound', '/setblock', '/tempcart',
 		'/bedspawn', '/give', '/effect', '/warp', '/tellraw', '/testforblock', '/time', '/entitydata');
-	
+
 	if(!has_permission('command.cb'), die('You do not have permission.'))
 	if(!$, die(color(gold).'Usage: /scb </command>'))
 	if(!array_contains_ic(@allowedcmds, parse_args($)[0]), die('Allowed commands: '.array_implode(@allowedcmds)))
@@ -12,7 +12,7 @@
 			die(color(red).'Cannot use unlimited @a or @e selectors. Please use ranges. eg. @a[r=8]');
 		}
 	}
-	@block = pcursor(array(0, 8, 9, 27, 28, 50, 55, 63, 64, 65, 66, 68, 69, 
+	@block = pcursor(array(0, 8, 9, 27, 28, 50, 55, 63, 64, 65, 66, 68, 69,
 		70, 71, 72, 75, 76, 77, 96, 131, 132, 143, 147, 148, 149, 150, 157))
 	@blocktype = data_name(get_block_at(@block))
 	if(@blocktype !== 'Command Block', die("You are looking at @blocktype. That is not a command block."))
@@ -26,9 +26,9 @@
 # Add to the command in the targeted command block
 *:/acb [$] = >>>
 	# Configure a set of allowed commands and aliases for non-ops
-	@allowedcmds = array('/velocity', '/tp', '/sayas', '/testfor', '/playsound', '/setblock', '/tempcart', 
+	@allowedcmds = array('/velocity', '/tp', '/sayas', '/testfor', '/playsound', '/setblock', '/tempcart',
 		'/bedspawn', '/give', '/effect', '/warp', '/tellraw', '/testforblock', '/time', '/entitydata')
-	
+
 	if(!has_permission('command.cb'), die('You do not have permission.'))
 	if(!$, die(color(gold).'Usage: /acb <additional parameters>'))
 	foreach(@arg in parse_args($)) {
@@ -36,13 +36,13 @@
 			die(color(red).'Cannot use unlimited @a or @e selectors. Please use ranges. eg. @a[r=8]');
 		}
 	}
-	@block = pcursor(array(0, 8, 9, 27, 28, 50, 55, 63, 64, 65, 66, 68, 69, 
+	@block = pcursor(array(0, 8, 9, 27, 28, 50, 55, 63, 64, 65, 66, 68, 69,
 		70, 71, 72, 75, 76, 77, 96, 131, 132, 143, 147, 148, 149, 150, 157))
-	try(
-		@cmd = get_block_command(@block)
-	, # catch
-		die('You are looking at '.data_name(get_block_at(@block)).'. That is not a command block.')
-	)
+	try {
+		@cmd = get_block_command(@block);
+	} catch(FormatException @ex) {
+		die('You are looking at '.data_name(get_block_at(@block)).'. That is not a command block.');
+	}
 	@parts = parse_args(@cmd)
 	if((@parts[0] === '/runalias' && array_contains_ic(@allowedcmds, @parts[1]))
 	|| (array_size(@parts) > 1 && array_contains_ic(@allowedcmds, @parts[1]))) {
@@ -57,13 +57,13 @@
 # Uses WorldEdit selection position 1 (and 2 for when it's a /fill command)
 *:/relcoords = >>>
 	if(!has_permission('command.cb'), die('You do not have permission.'))
-	@block = pcursor(array(0, 8, 9, 27, 28, 50, 55, 63, 64, 65, 66, 68, 69, 
+	@block = pcursor(array(0, 8, 9, 27, 28, 50, 55, 63, 64, 65, 66, 68, 69,
 		70, 71, 72, 75, 76, 77, 96, 131, 132, 143, 147, 148, 149, 150, 157))
-	try(
-		@cmd = get_block_command(@block)
-	, # catch
-		die('You are looking at '.data_name(get_block_at(@block)).'. That is not a command block.')
-	)
+	try {
+		@cmd = get_block_command(@block);
+	} catch(FormatException @ex) {
+		die('You are looking at '.data_name(get_block_at(@block)).'. That is not a command block.');
+	}
 	@loc1 = sk_pos1()
 	@x1 = integer(@loc1[0] - @block['x'])
 	@y1 = integer(@loc1[1] - @block['y'])

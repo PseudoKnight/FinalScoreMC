@@ -26,7 +26,11 @@ proc _remove_player(@player, @golf) {
 	unbind('golf_swing_'.@player);
 	unbind('golf_hit_'.@player);
 	@ball = @golf['players'][@player];
-	try(entity_remove(@ball['id']));
+	try {
+		entity_remove(@ball['id']);
+	} catch(BadEntityException @ex) {
+		// no ball
+	}
 	if(ponline(@player)) {
 		if(function_exists('set_collides_with_entities')) {
 			set_collides_with_entities(@player, true);
@@ -46,7 +50,11 @@ proc _remove_player(@player, @golf) {
 		}
 	}
 	if(@lastplayer) {
-		try(set_block_at(@golf['course']['loc'][@ball['hole']], 0));
+		try {
+			set_block_at(@golf['course']['loc'][@ball['hole']], 0);
+		} catch(IndexOverflowException @ex) {
+			// nothing to reset
+		}
 	}
 	array_remove(@golf['players'], @player);
 }

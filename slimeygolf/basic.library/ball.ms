@@ -20,9 +20,11 @@ proc _ball_exists(@id) {
 }
 
 proc _remove_ball(@id) {
-	try(
+	try {
 		entity_remove(@id);
-	)
+	} catch(BadEntityException @ex) {
+		// already removed
+	}
 }
 
 proc _get_block_below(@loc) {

@@ -16,7 +16,7 @@ proc _weapon_cooldown(@player, @time, @type, @onCooldown, @remove = 1) {
 				set_pinv(@player, array(null: @newItem));
 				@slot = pinfo(@player, 15);
 				set_timeout(@time, closure(){
-					try(
+					try {
 						@newItem = pinv(@player, @slot);
 						if(!is_null(@newItem)
 						&& @newItem['name'] == @type) {
@@ -27,7 +27,9 @@ proc _weapon_cooldown(@player, @time, @type, @onCooldown, @remove = 1) {
 								execute(@onCooldown);
 							}
 						}
-					);
+					} catch(PlayerOfflineException @ex) {
+						// gun safety failure
+					}
 				});
 			}
 	}

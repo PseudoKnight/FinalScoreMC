@@ -83,10 +83,12 @@ case 'load':
 		set_entity_velocity(@armorStand, array(@x, @y, @z));
 		play_sound(@loc, array('sound': 'IRONGOLEM_THROW'));
 		set_timeout(4000, closure(){
-			try(
+			try {
 				explosion(entity_loc(@armorStand), 3, true);
 				entity_remove(@armorStand);
-			);
+			} catch(BadEntityException @ex) {
+				// grenade no longer exists
+			}
 		});
 	}
 

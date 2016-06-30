@@ -18,16 +18,16 @@
 
     proc _desc_func(@func) {
         # Colorfully describe a function.
-        try(
+        try {
             @desc = reflect_docs(@func, 'description')
             @returns = reflect_docs(@func, 'type')
             @args = reflect_docs(@func, 'args')
 
             msg(color(YELLOW) . @func . ':' color(GREEN) . 'Returns' @returns .
             '.' color(BLUE) . 'Expects' @args . '.' color(YELLOW) . @desc)
-        ,
+        } catch(FormatException @ex) {
             msg(color(RED) . 'Could not show information for' @func)
-        )
+        }
     }
 
     if (!$) {

@@ -8,6 +8,17 @@ set_uncaught_exception_handler(closure(@ex){
 });
 
 /*
+	Gets online player from truncated name in user input
+*/
+proc _find_player(@player) {
+	try {
+		@player = player(@player);
+	} catch(PlayerOfflineException @ex) {
+		die(color('yellow').'Could not find player starting with "'.@player.'"');
+	}
+}
+
+/*
 	Gets the pitch for the given tone and octave
 */
 proc _get_pitch(@tone, @octave) {
@@ -318,11 +329,11 @@ proc _clear_pinv(@player) {
 	Add an amount to a player's coin balance
 */
 proc _acc_add(@player, @amount) {
-	try(
-		@pdata = _pdata(@player)
-	, #catch
-		return(false)
-	)
+	try {
+		@pdata = _pdata(@player);
+	} catch(NotFoundException @ex) {
+		return(false);
+	}
 	if(!array_index_exists(@pdata, 'coins'), @pdata['coins'] = 100)
 	@pdata['coins'] = @pdata['coins'] + @amount
 	_store_pdata(@player, @pdata)
@@ -333,11 +344,11 @@ proc _acc_add(@player, @amount) {
 	Subtracts an amount from a player's coin balance
 */
 proc _acc_subtract(@player, @amount) {
-	try(
-		@pdata = _pdata(@player)
-	, #catch
-		return(false)
-	)
+	try {
+		@pdata = _pdata(@player);
+	} catch(NotFoundException @ex) {
+		return(false);
+	}
 	if(!array_index_exists(@pdata, 'coins'), @pdata['coins'] = 100)
 	@pdata['coins'] = @pdata['coins'] - @amount
 	_store_pdata(@player, @pdata)
@@ -348,11 +359,11 @@ proc _acc_subtract(@player, @amount) {
 	Returns the amount of coins a player has
 */
 proc _acc_balance(@player) {
-	try(
-		@pdata = _pdata(@player)
-	, #catch
-		return(0)
-	)
+	try {
+		@pdata = _pdata(@player);
+	} catch(NotFoundException @ex) {
+		return(0);
+	}
 	if(!array_index_exists(@pdata, 'coins')) {
 		return(100)
 	} else {
@@ -429,12 +440,12 @@ proc _remove_region_entities(@region, @entities) {
 					if(@type === 'ARMOR_STAND' && entity_spec(@entity)['visible']) {
 						continue();
 					}
-					try(
+					try {
 						entity_remove(@entity);
-					, # if fail
+					} catch(BadEntityException @ex) {
 						console('Entity not found when trying to remove from region.');
 						console('Region: '.@region.', EntityID: '.@entity);
-					)
+					}
 				}
 			}
 		}
@@ -640,7 +651,11 @@ proc _click_tell(@recipients, @components) {
 	@item: 0:0 format
 */
 proc _get_inventory_count(@loc, @item) {
-	try(@inv = get_inventory(@loc), return(null))
+	try {
+		@inv = get_inventory(@loc);
+	} catch(FormatException @ex) {
+		return(null);
+	}
 	if(is_numeric(@item), @item = @item.':0')
 	@count = 0
 	foreach(@i in @inv) {

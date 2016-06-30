@@ -181,7 +181,11 @@ proc _pvp_start_match(@id) {
 							@loc = @arena['spawn'][0][@r];
 						}
 					}
-					try(set_entity_fall_distance(puuid(@player), 0));
+					try {
+						set_entity_fall_distance(puuid(@player), 0);
+					} catch(BadEntityException @ex) {
+						// this happened once... wat
+					}
 					set_ploc(@player, @loc);
 					pfacing(@player, 0, 0);
 
