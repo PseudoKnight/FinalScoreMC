@@ -288,7 +288,7 @@ proc _pvp_start(@pvp, @id){
 				if(extension_exists('CHNaughty')) {
 					foreach(@p in array_keys(@pvp['players'])) {
 						try {
-							action_msg(@p, 'Starting in '.@timeleft[0]).'...');
+							action_msg(@p, 'Starting in '.@timeleft[0].'...');
 						} catch(PlayerOfflineException @ex) {
 							// they quickly left after someone started the game.
 							// forgot their dentist appointment.
