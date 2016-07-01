@@ -71,7 +71,7 @@ proc _spawn_mob(@mob, @qty, @loc, @owner = 'Notch') {
 					// already removed
 				}
 				try {
-					entity_remove(@m);
+					damage_entity(@m, 50);
 				} catch(BadEntityException @ex) {
 					// already removed
 				}
