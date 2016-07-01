@@ -55,13 +55,16 @@ proc _class(@action, @player, @class, @pvp) {
 			@inv = pinv(@player);
 			foreach(@slot: @item in @pvp['arena']['classes'][@class]['ammo']) {
 				@max = 64;
-				if(array_index_exists(@pvp['arena']['classes'][@class], 'stacklimit')
+				if(@item && array_index_exists(@pvp['arena']['classes'][@class], 'stacklimit')
 				&& array_index_exists(@pvp['arena']['classes'][@class]['stacklimit'], @item['type'])) {
 					@max = @pvp['arena']['classes'][@class]['stacklimit'][@item['type']];
 				}
 				@item = @item[];
 				if(!is_null(@inv[@slot])) {
 					@item['qty'] = min(@max, if(array_index_exists(@item, 'qty'), @item['qty'], 1) + @inv[@slot]['qty']);
+					if(@max == 1) {
+						@item['data'] = 0;
+					}
 				}
 				@inv[@slot] = @item;
 			}
