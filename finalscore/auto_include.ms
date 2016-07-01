@@ -12,7 +12,7 @@ set_uncaught_exception_handler(closure(@ex){
 */
 proc _find_player(@player) {
 	try {
-		@player = player(@player);
+		return(player(@player));
 	} catch(PlayerOfflineException @ex) {
 		die(color('yellow').'Could not find player starting with "'.@player.'"');
 	}
