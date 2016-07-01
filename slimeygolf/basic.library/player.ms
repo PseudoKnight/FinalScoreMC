@@ -28,7 +28,7 @@ proc _remove_player(@player, @golf) {
 	@ball = @golf['players'][@player];
 	try {
 		entity_remove(@ball['id']);
-	} catch(BadEntityException @ex) {
+	} catch(Exception @ex) {
 		// no ball
 	}
 	if(ponline(@player)) {
