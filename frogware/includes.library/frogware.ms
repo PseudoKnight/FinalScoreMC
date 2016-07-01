@@ -76,6 +76,9 @@ proc _fw_startround(@secs = 12) {
 			if(_fw_player(@p)) {
 				@total++
 				if(array_contains(sk_current_regions(@p), 'frogware')) {
+					if(pmode(@p) == 'ADVENTURE') {
+						set_pmode(@p, 'SURVIVAL');
+					}
 					foreach(@team in get_teams('fw')) {
 						if(@team['name'] === 'winners'
 						&& array_contains(@team['players'], @p)) {
