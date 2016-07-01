@@ -21,14 +21,14 @@
 	# switch(@type) {
 		# case 54:
 		# case 146:
-		
-		
+
+
 		# case 68:
-		
-		
+
+
 		# default:
 			# if(material_info(@type)[isSolid]) {
-				
+
 			# }
 	# }
 # }
@@ -38,9 +38,9 @@
 	# foreach(@block in @event[blocks]) {
 		# @type = split(':', get_block_at(@block))[0]
 		# if(@type == 54 || @type == 146) {
-			
+
 		# } else if(@type == 68) {
-			
+
 		# }
 	# }
 # }
@@ -75,7 +75,7 @@ bind(block_place, null, array('type': 154), @event) {
 				}
 			}
 		}
-    
+
 		if(@signs) {
 			foreach(@sign in @signs) {
 				if((@shop = _get_shop(@sign)) && !_is_shop_owner(player(), @shop['owner'])) {

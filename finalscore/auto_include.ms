@@ -702,17 +702,17 @@ proc _distance(@loc1, @loc2, @3d = true) {
 	request finishes. It will be sent the array of returned values.
 */
 proc _player_uuid(@players, @closure) {
-    @success = closure(@response){
-        @array = json_decode(@response['body']);
-        execute(@array, @closure);
-    };
-    @options = array(
-        'method': 'POST',
-        'headers': array('Content-Type': 'application/json'),
-        'params': json_encode(@players),
-        'success': @success,
-    );
-    http_request('https://api.mojang.com/profiles/minecraft', @options);
+	@success = closure(@response){
+		@array = json_decode(@response['body']);
+		execute(@array, @closure);
+	};
+	@options = array(
+		'method': 'POST',
+		'headers': array('Content-Type': 'application/json'),
+		'params': json_encode(@players),
+		'success': @success,
+	);
+	http_request('https://api.mojang.com/profiles/minecraft', @options);
 }
 
 /*

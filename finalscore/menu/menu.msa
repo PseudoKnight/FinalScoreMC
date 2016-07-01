@@ -1,10 +1,10 @@
 *:/menu [$action] = >>>
-    include('includes.library/menu.ms');
-    switch($action) {
-        case 'repopulate':
-            if(!pisop()) {
-                die('You do not have permission.');
-            }
-            _repopulate_menu();
-    }
+	include('includes.library/menu.ms');
+	switch($action) {
+		case 'repopulate':
+			if(!pisop()) {
+				die('You do not have permission.');
+			}
+			_repopulate_menu();
+	}
 <<<

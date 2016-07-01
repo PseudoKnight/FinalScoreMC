@@ -1,44 +1,44 @@
 /lms $action = >>>
-    if($action == 'enable') {
-        bind(player_interact, array('id': 'lms-interact'), array('block': 54), @e) {
-            if(pworld() == 'LastManStanding') {
-                cancel();
-                set_block_at(@e['location'], 0);
-                include('includes.library/utils.ms');
-                _generate_chest();
-                popen_virtualchest(player());
-            }
-        }
+	if($action == 'enable') {
+		bind(player_interact, array('id': 'lms-interact'), array('block': 54), @e) {
+			if(pworld() == 'LastManStanding') {
+				cancel();
+				set_block_at(@e['location'], 0);
+				include('includes.library/utils.ms');
+				_generate_chest();
+				popen_virtualchest(player());
+			}
+		}
 
-        bind(virtualchest_closed, array('id': 'lms-closed'), null, @e) {
-            if(pworld() == 'LastManStanding') {
-                del_virtualchest(pget_virtualchest());
-            }
-        }
+		bind(virtualchest_closed, array('id': 'lms-closed'), null, @e) {
+			if(pworld() == 'LastManStanding') {
+				del_virtualchest(pget_virtualchest());
+			}
+		}
 
-        bind(block_place, array('id': 'lms-place'), array('type': 54), @e) {
-            if(pworld() == 'LastManStanding') {
-                cancel();
-            }
-        }
+		bind(block_place, array('id': 'lms-place'), array('type': 54), @e) {
+			if(pworld() == 'LastManStanding') {
+				cancel();
+			}
+		}
 
-        bind(player_spawn, array('id': 'lms-spawn'), null, @e) {
-            if(pworld() == 'LastManStanding') {
-                set_timeout(50, closure(){
-                    if(pworld() == 'LastManStanding') {
-                        set_pmode('SPECTATOR');
-                    }
-                });
-            }
-        }
-        msg('enabled.');
-    } else if($action == 'disable') {
-        if(!has_bind('lms-interact')) {
-            msg('LMS is not enabled.');
-        }
-        unbind('lms-interact');
-        unbind('lms-closed');
-        unbind('lms-place');
-        unbind('lms-spawn');
-    }
+		bind(player_spawn, array('id': 'lms-spawn'), null, @e) {
+			if(pworld() == 'LastManStanding') {
+				set_timeout(50, closure(){
+					if(pworld() == 'LastManStanding') {
+						set_pmode('SPECTATOR');
+					}
+				});
+			}
+		}
+		msg('enabled.');
+	} else if($action == 'disable') {
+		if(!has_bind('lms-interact')) {
+			msg('LMS is not enabled.');
+		}
+		unbind('lms-interact');
+		unbind('lms-closed');
+		unbind('lms-place');
+		unbind('lms-spawn');
+	}
 <<<

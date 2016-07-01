@@ -615,8 +615,8 @@ proc _convert_potion(@olditem, @toyml = false) {
 proc _convert_monster_egg(@data) {
 	@item = associative_array(
 		'==': 'org.bukkit.inventory.ItemStack',
-	    'type': 'MONSTER_EGG',
-	    'meta': associative_array(
+		'type': 'MONSTER_EGG',
+		'meta': associative_array(
 			'==': 'ItemMeta',
 			'meta-type': 'UNSPECIFIC',
 		),

@@ -1,9 +1,9 @@
 proc _pvp_join(@id){
-    @pvp = import('pvp'.@id);
-    @arena = get_value('arena.'.@id);
-    if(!@arena) {
-        die('Can\'t find that arena.');
-    }
+	@pvp = import('pvp'.@id);
+	@arena = get_value('arena.'.@id);
+	if(!@arena) {
+		die('Can\'t find that arena.');
+	}
 	if(pworld() !== 'custom' && array_index_exists(@arena, 'lobby')) {
 		set_ploc(@arena['lobby']);
 	}

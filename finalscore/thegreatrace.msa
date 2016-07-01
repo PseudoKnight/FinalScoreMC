@@ -31,15 +31,15 @@
 
 	# Create an array of points in a circle around the target location
 	@radius = 8;
-    @circle = array();
-    for(@angle = 0, @angle < 6.28, @angle += 0.4) {
-        @circle[] = array(
+	@circle = array();
+	for(@angle = 0, @angle < 6.28, @angle += 0.4) {
+		@circle[] = array(
 			'x': @radius * cos(@angle) + @target['x'],
 			'y': @target['y'] + 4,
 			'z': @radius * sin(@angle) + @target['z'],
 			'world': @world,
 		);
-    }
+	}
 
 	# Setup scoreboard
 	create_scoreboard('race');
