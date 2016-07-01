@@ -291,7 +291,7 @@ bind(player_death, null, null, @event) {
 				if(@time[0] < 30) {
 					if(@time[0] == 0) {
 						clear_task();
-						pkick(player(), 'Kicked after sitting in death screen for 60 seconds.');
+						pkick(player(), 'You died while AFK @ '.@loc);
 					} else {
 						action_msg(@time[0]);
 					}
