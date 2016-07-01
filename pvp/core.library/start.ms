@@ -1,5 +1,7 @@
 proc _pvp_start(@pvp, @id){
-	if(array_index_exists(@pvp['arena'], 'options')) {
+	@arena = @pvp['arena'];
+
+	if(array_index_exists(@arena, 'options')) {
 		del_virtualchest(@id.'options');
 		unbind(@id.'options');
 	}
@@ -12,33 +14,33 @@ proc _pvp_start(@pvp, @id){
 		'respawnmode': 'normal',
 		'delay': 10,
 	);
-	@pvp['arena'] = array_merge(@defaults, @pvp['arena']);
+	@pvp['arena'] = array_merge(@defaults, @arena);
 
 	# Get child or parent arena settings
-	if(array_index_exists(@pvp['arena'], 'parent')) {
-		@parent = get_value('arena.'.@pvp['arena']['parent']);
+	if(array_index_exists(@arena, 'parent')) {
+		@parent = get_value('arena.'.@arena['parent']);
 		if(!@parent) {
 			die('Can\'t find parent arena.');
 		}
-		@primaryName = to_upper(@pvp['arena']['parent']);
+		@primaryName = to_upper(@arena['parent']);
 		@secondaryName = to_upper(@id);
-		@pvp['arena'] = array_merge(@parent, @pvp['arena']);
-	} else if(array_index_exists(@pvp['arena'], 'arenaselect')) {
-		@childid = array_rand(@pvp['arena']['arenaselect']['arenas'], 1, false)[0];
+		@pvp['arena'] = array_merge(@parent, @arena);
+	} else if(array_index_exists(@arena, 'arenaselect')) {
+		@childid = array_rand(@arena['arenaselect']['arenas'], 1, false)[0];
 		@child = get_value('arena', @childid);
 		if(!@child) {
 			die('Can\'t find child arena.');
 		}
 		@primaryName = to_upper(@id);
 		@secondaryName = to_upper(@childid);
-		@pvp['arena'] = array_merge(@pvp['arena'], @child);
+		@pvp['arena'] = array_merge(@arena, @child);
 	} else {
 		@primaryName = to_upper(@id);
 		@secondaryName = null;
 	}
 
-	if(array_index_exists(@pvp['arena'], 'sharedarenas')) {
-		foreach(@arenaid in @pvp['arena']['sharedarenas']) {
+	if(array_index_exists(@arena, 'sharedarenas')) {
+		foreach(@arenaid in @arena['sharedarenas']) {
 			@otherpvp = import('pvp'.@arenaid);
 			if(@otherpvp && @otherpvp['running']) {
 				die('Another PVP match is running in that region.');
@@ -47,7 +49,7 @@ proc _pvp_start(@pvp, @id){
 	}
 
 	# Check if arena is in testing
-	if(array_contains(@pvp['arena']['flags'], 'debug')
+	if(array_contains(@arena['flags'], 'debug')
 	&& !has_permission('group.builder')) {
 		die('This arena is still in testing and can only be started by Builders.');
 	}
@@ -57,63 +59,63 @@ proc _pvp_start(@pvp, @id){
 		if(!ponline(@p) || pworld(@p) !== 'custom') {
 			array_remove(@pvp['players'], @p);
 		} else {
-			set_ploc(@p, @pvp['arena']['lobby']); # TODO: remove once players can't join multiple games
+			set_ploc(@p, @arena['lobby']); # TODO: remove once players can't join multiple games
 		}
 	}
-	if(array_size(@pvp['players']) < if(array_index_exists(@pvp['arena'], 'min'), @pvp['arena']['min'], 2)) {
+	if(array_size(@pvp['players']) < if(array_index_exists(@arena, 'min'), @arena['min'], 2)) {
 		die('There aren\'t enough players. ('.array_size(@pvp['players']).')');
 	}
 
 	# Check arena settings
-	if(!array_index_exists(@pvp['arena'], 'lobby'), die('No lobby defined for arena.'));
-	if(!array_index_exists(@pvp['arena'], 'region'), die('No region defined for arena.'));
-	if(!array_index_exists(@pvp['arena'], 'spawn'), die('No spawns defined for arena.'));
+	if(!array_index_exists(@arena, 'lobby'), die('No lobby defined for arena.'));
+	if(!array_index_exists(@arena, 'region'), die('No region defined for arena.'));
+	if(!array_index_exists(@arena, 'spawn'), die('No spawns defined for arena.'));
 
 	# Configure remaining arena settings
-	if(!array_index_exists(@pvp['arena'], 'broadcast'), @pvp['arena']['broadcast'] = @pvp['arena']['region']);
-	if(array_contains(@pvp['arena']['flags'], 'keepinventory'), @pvp['arena']['denydrop'] = 'all');
-	if(array_index_exists(@pvp['arena'], 'classes')) {
-		@pvp['arena']['delay'] = 45;
-		if(!array_index_exists(@pvp['arena'], 'class_picking'), @pvp['arena']['class_picking'] = 'player');
+	if(!array_index_exists(@arena, 'broadcast'), @arena['broadcast'] = @arena['region']);
+	if(array_contains(@arena['flags'], 'keepinventory'), @arena['denydrop'] = 'all');
+	if(array_index_exists(@arena, 'classes')) {
+		@arena['delay'] = 45;
+		if(!array_index_exists(@arena, 'class_picking'), @arena['class_picking'] = 'player');
 	}
 
 	# Dynamically determine if it should be a team game
-	if(@pvp['arena']['mode'] === 'ddm') {
+	if(@arena['mode'] === 'ddm') {
 		@size = array_size(@pvp['players']);
 		if(@size > 5 && @size % 2 == 0) {
-			@pvp['arena']['mode'] = 'tdm';
-			@pvp['arena']['ff'] = false;
-			if(array_index_exists(@pvp['arena'], 'kit')) {
-				@pvp['arena']['kit'][1] = @pvp['arena']['kit'][0];
+			@arena['mode'] = 'tdm';
+			@arena['ff'] = false;
+			if(array_index_exists(@arena, 'kit')) {
+				@arena['kit'][1] = @arena['kit'][0];
 			}
 
-			@spawns = @pvp['arena']['spawn'][0][];
-			@pvp['arena']['spawn'] = array();
+			@spawns = @arena['spawn'][0][];
+			@arena['spawn'] = array();
 			@team = 0;
 			foreach(@spawn in @spawns) {
-				@pvp['arena']['spawn'][@team] = @spawn;
+				@arena['spawn'][@team] = @spawn;
 			}
 
 		} else {
-			@pvp['arena']['mode'] = 'dm';
+			@arena['mode'] = 'dm';
 		}
 	}
 
-	if(!array_index_exists(@pvp['arena'], 'team') && array_contains(array('ctf', 'tdm', 'infection'), @pvp['arena']['mode'])) {
-		@pvp['arena']['team'] = array(
+	if(!array_index_exists(@arena, 'team') && array_contains(array('ctf', 'tdm', 'infection'), @arena['mode'])) {
+		@arena['team'] = array(
 			array('name': 'Red', 'color': color('c')),
 			array('name': 'Blue', 'color': color('3'))
 		);
-	} else if(array_index_exists(@pvp['arena'], 'team')) {
-		@pvp['arena']['team'][0]['color'] = color(@pvp['arena']['team'][0]['color']);
-		@pvp['arena']['team'][1]['color'] = color(@pvp['arena']['team'][1]['color']);
+	} else if(array_index_exists(@arena, 'team')) {
+		@arena['team'][0]['color'] = color(@arena['team'][0]['color']);
+		@arena['team'][1]['color'] = color(@arena['team'][1]['color']);
 	}
-	if(!array_index_exists(@pvp['arena'], 'score')) {
-		switch(@pvp['arena']['mode']) {
+	if(!array_index_exists(@arena, 'score')) {
+		switch(@arena['mode']) {
 			case 'ctf':
-				@pvp['arena']['score'] = 5;
+				@arena['score'] = 5;
 			case 'koth':
-				@pvp['arena']['score'] = 60;
+				@arena['score'] = 60;
 		}
 	}
 
@@ -123,66 +125,66 @@ proc _pvp_start(@pvp, @id){
 	create_scoreboard(@id);
 
 	# PREPARE TEAMS
-	if(array_index_exists(@pvp['arena'], 'team')) {
-		if(@pvp['arena']['mode'] === 'ctf') {
+	if(array_index_exists(@arena, 'team')) {
+		if(@arena['mode'] === 'ctf') {
 			@pvp['team'][0]['score'] = 0;
 			@pvp['team'][0]['flag'] = 0;
 			@pvp['team'][1]['score'] = 0;
 			@pvp['team'][1]['flag'] = 0;
 		}
-		if(array_index_exists(@pvp['arena'], 'captain')) {
+		if(array_index_exists(@arena, 'captain')) {
 			@pvp['team'][0]['hatentity'] = 0;
 			@pvp['team'][1]['hatentity'] = 0;
 			@pvp['team'][0]['captain'] = '';
 			@pvp['team'][1]['captain'] = '';
 		}
-		create_team(@pvp['arena']['team'][0]['name'], @id);
-		create_team(@pvp['arena']['team'][1]['name'], @id);
-		set_team_display(@pvp['arena']['team'][0]['name'], array('prefix': @pvp['arena']['team'][0]['color']), @id);
-		set_team_display(@pvp['arena']['team'][1]['name'], array('prefix': @pvp['arena']['team'][1]['color']), @id);
-		set_team_options(@pvp['arena']['team'][0]['name'], array(
+		create_team(@arena['team'][0]['name'], @id);
+		create_team(@arena['team'][1]['name'], @id);
+		set_team_display(@arena['team'][0]['name'], array('prefix': @arena['team'][0]['color']), @id);
+		set_team_display(@arena['team'][1]['name'], array('prefix': @arena['team'][1]['color']), @id);
+		set_team_options(@arena['team'][0]['name'], array(
 			'friendlyinvisibles': true,
-			'nametagvisibility': if(array_index_exists(@pvp['arena'], 'nametags'), @pvp['arena']['nametags'][0], 'ALWAYS')
+			'nametagvisibility': if(array_index_exists(@arena, 'nametags'), @arena['nametags'][0], 'ALWAYS')
 		), @id);
-		set_team_options(@pvp['arena']['team'][1]['name'], array(
+		set_team_options(@arena['team'][1]['name'], array(
 			'friendlyinvisibles': true,
-			'nametagvisibility': if(array_index_exists(@pvp['arena'], 'nametags'), @pvp['arena']['nametags'][1], 'ALWAYS')
+			'nametagvisibility': if(array_index_exists(@arena, 'nametags'), @arena['nametags'][1], 'ALWAYS')
 		), @id);
 	}
 
-	switch(@pvp['arena']['mode']) {
+	switch(@arena['mode']) {
 		case 'koth':
 			create_objective('seconds', 'DUMMY', @id);
 			set_objective_display('seconds', array('displayname': color('a').'Seconds Left', 'slot': 'SIDEBAR'), @id);
 		case 'tdm':
 		case 'dm':
-			if(array_index_exists(@pvp['arena'], 'lives') && @pvp['arena']['lives'] > 1) {
+			if(array_index_exists(@arena, 'lives') && @arena['lives'] > 1) {
 				create_objective('lives', 'DUMMY', @id);
 				set_objective_display('lives', array('displayname': color('a').'Lives Left', 'slot': 'SIDEBAR'), @id);
 			}
-			if(@pvp['arena']['respawnmode'] == 'mob') {
+			if(@arena['respawnmode'] == 'mob') {
 				create_objective('respawns', 'DUMMY', @id);
 				set_objective_display('respawns', array('displayname': color('a').'Respawns Left', 'slot': 'SIDEBAR'), @id);
 			}
-			if(array_index_exists(@pvp['arena'], 'mobprotect')) {
+			if(array_index_exists(@arena, 'mobprotect')) {
 				create_objective('mobhealth', 'DUMMY', @id);
 				set_objective_display('mobhealth', array('displayname': color('a').'Mob Health', 'slot': 'SIDEBAR'), @id);
-				team_add_player(@pvp['arena']['team'][0]['name'], @pvp['arena']['team'][0]['name'], @id);
-				team_add_player(@pvp['arena']['team'][1]['name'], @pvp['arena']['team'][1]['name'], @id);
+				team_add_player(@arena['team'][0]['name'], @arena['team'][0]['name'], @id);
+				team_add_player(@arena['team'][1]['name'], @arena['team'][1]['name'], @id);
 			}
 		case 'ctf':
 			create_objective('captures', 'DUMMY', @id);
-			set_objective_display('captures', array('displayname': color('a').'Captures ('.@pvp['arena']['score'].')', 'slot': 'SIDEBAR'), @id);
-			team_add_player(@pvp['arena']['team'][0]['name'], @pvp['arena']['team'][0]['name'], @id);
-			set_pscore('captures', @pvp['arena']['team'][0]['name'], 0, @id);
-			team_add_player(@pvp['arena']['team'][1]['name'], @pvp['arena']['team'][1]['name'], @id);
-			set_pscore('captures', @pvp['arena']['team'][1]['name'], 0, @id);
+			set_objective_display('captures', array('displayname': color('a').'Captures ('.@arena['score'].')', 'slot': 'SIDEBAR'), @id);
+			team_add_player(@arena['team'][0]['name'], @arena['team'][0]['name'], @id);
+			set_pscore('captures', @arena['team'][0]['name'], 0, @id);
+			team_add_player(@arena['team'][1]['name'], @arena['team'][1]['name'], @id);
+			set_pscore('captures', @arena['team'][1]['name'], 0, @id);
 	}
 
 	@pvp['binds'] = array();
 	include('game.ms');
 
-	if(array_index_exists(@pvp['arena'], 'team')) {
+	if(array_index_exists(@arena, 'team')) {
 		if(!array_index_exists(@pvp, 'team')) {
 			@pvp['team'] = array(associative_array(), associative_array());
 		}
@@ -190,8 +192,8 @@ proc _pvp_start(@pvp, @id){
 			@pvp['team'][0]['players'] = array();
 			@pvp['team'][1]['players'] = array();
 		}
-		if(!array_index_exists(@pvp['arena'], 'teamratio')) {
-			@pvp['arena']['teamratio'] = array(1, 1);
+		if(!array_index_exists(@arena, 'teamratio')) {
+			@arena['teamratio'] = array(1, 1);
 		}
 		@players = array_keys(@pvp['players'])
 		for(@i = 0, @i < array_size(@pvp['players']), @i++) {
@@ -202,19 +204,19 @@ proc _pvp_start(@pvp, @id){
 		}
 	}
 
-	if(array_index_exists(@pvp['arena'], 'captain')) {
-		@pvp['team'][0]['captainhat'] = @pvp['arena']['classes'][@pvp['arena']['captain'][0]]['kit'][103];
-		@pvp['team'][1]['captainhat'] = @pvp['arena']['classes'][@pvp['arena']['captain'][1]]['kit'][103];
+	if(array_index_exists(@arena, 'captain')) {
+		@pvp['team'][0]['captainhat'] = @arena['classes'][@arena['captain'][0]]['kit'][103];
+		@pvp['team'][1]['captainhat'] = @arena['classes'][@arena['captain'][1]]['kit'][103];
 	}
 
 	foreach(@p in array_keys(@pvp['players'])) {
-		if(array_index_exists(@pvp['arena'], 'resourcepack')) {
-			send_resourcepack(@p, 'http://mc.finalscoremc.com:25966/resourcepacks/'.@pvp['arena']['resourcepack'].'.zip');
+		if(array_index_exists(@arena, 'resourcepack')) {
+			send_resourcepack(@p, 'http://mc.finalscoremc.com:25966/resourcepacks/'.@arena['resourcepack'].'.zip');
 		}
 	}
 
 	@pvp['coins'] = if(array_size(@pvp['players']) > 2, 1, 0);
-	if(!array_index_exists(@pvp, 'stats') || @pvp['arena']['stats']) {
+	if(!array_index_exists(@pvp, 'stats') || @arena['stats']) {
 		@pvp['stats'] = associative_array();
 	}
 
@@ -222,7 +224,7 @@ proc _pvp_start(@pvp, @id){
 	@pvp['running'] = 1;
 
 	# CLASSES
-	if(array_index_exists(@pvp['arena'], 'classes')) {
+	if(array_index_exists(@arena, 'classes')) {
 		_class_select(@id, @pvp);
 	}
 
@@ -232,37 +234,37 @@ proc _pvp_start(@pvp, @id){
 
 	if(array_index_exists(@pvp, 'team')) {
 		_worldmsg('custom',
-			@pvp['arena']['team'][0]['color'].'['.@pvp['arena']['team'][0]['name'].'] '.
+			@arena['team'][0]['color'].'['.@arena['team'][0]['name'].'] '.
 			array_implode(@pvp['team'][0]['players'], ' ').'\n'.color('r').
-			@pvp['arena']['team'][1]['color'].'['.@pvp['arena']['team'][1]['name'].'] '.
+			@arena['team'][1]['color'].'['.@arena['team'][1]['name'].'] '.
 			array_implode(@pvp['team'][1]['players'], ' ')
 		);
 	} else {
 		_worldmsg('custom', color('gold').' '.array_implode(array_keys(@pvp['players']), colorize('&r vs &6')));
 	}
-	if(array_index_exists(@pvp['arena'], 'lives')) {
-		_regionmsg(@pvp['arena']['broadcast'], colorize('- &e&l'.@pvp['arena']['lives'].' LIVES'));
+	if(array_index_exists(@arena, 'lives')) {
+		_regionmsg(@arena['broadcast'], colorize('- &e&l'.@arena['lives'].' LIVES'));
 	}
-	if(array_index_exists(@pvp['arena'], 'class_picking') && @pvp['arena']['class_picking'] === 'random') {
-		_regionmsg(@pvp['arena']['broadcast'], colorize('- &e&lALL RANDOM CLASSES'));
+	if(array_index_exists(@arena, 'class_picking') && @arena['class_picking'] === 'random') {
+		_regionmsg(@arena['broadcast'], colorize('- &e&lALL RANDOM CLASSES'));
 	}
-	if(array_index_exists(@pvp['arena'], 'class_picks') &&
-	(!array_index_exists(@pvp['arena'], 'lives') || @pvp['arena']['class_picks'] < @pvp['arena']['lives'])) {
-		_regionmsg(@pvp['arena']['broadcast'], colorize('- &e&l'.@pvp['arena']['class_picks'].' CLASS PICKS'));
+	if(array_index_exists(@arena, 'class_picks') &&
+	(!array_index_exists(@arena, 'lives') || @arena['class_picks'] < @arena['lives'])) {
+		_regionmsg(@arena['broadcast'], colorize('- &e&l'.@arena['class_picks'].' CLASS PICKS'));
 	}
 	_worldmsg('custom', colorize('&7&m|----------------------------------------------------|'));
 
-	play_sound(@pvp['arena']['lobby'], array('sound': 'WITHER_SPAWN', 'pitch': 1.5, 'volume': 3));
+	play_sound(@arena['lobby'], array('sound': 'WITHER_SPAWN', 'pitch': 1.5, 'volume': 3));
 
 	_add_activity('pvp'.@id, @title);
 
 	# COUNTDOWN TO START
-	@timeleft = array(@pvp['arena']['delay']);
+	@timeleft = array(@arena['delay']);
 	set_interval(1000, closure(){
 		@timeleft[0] -= 1;;
 		if(@timeleft[0] > 0) {
 			if(@timeleft[0] <= 4) {
-				play_sound(@pvp['arena']['lobby'], array('sound': 'NOTE_PLING', 'pitch': 1, 'volume': 3));
+				play_sound(@arena['lobby'], array('sound': 'NOTE_PLING', 'pitch': 1, 'volume': 3));
 				if(extension_exists('CHNaughty')) {
 					foreach(@p in array_keys(@pvp['players'])) {
 						try {
@@ -273,7 +275,7 @@ proc _pvp_start(@pvp, @id){
 						}
 					}
 				}
-			} else if(@timeleft[0] > 5 && array_index_exists(@pvp['arena'], 'classes')) {
+			} else if(@timeleft[0] > 5 && array_index_exists(@arena, 'classes')) {
 				@choosing = false;
 				foreach(@p in array_keys(@pvp['players'])) {
 					if(ponline(@p) && !is_null(pget_virtualchest(@p))) {
