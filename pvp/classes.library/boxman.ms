@@ -7,7 +7,12 @@ case 'load':
 		}
 	}
 
+	bind(inventory_click, array('id': @player.'boxmanclick'), array('player': @player), @e) {
+		cancel();
+	}
+
 case 'unload':
 	unbind(@player.'boxman');
+	unbind(@player.'boxmanclick');
 
 }
