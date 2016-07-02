@@ -10,7 +10,7 @@
 			@region = @args[1];
 			@state = @args[0];
 		} else {
-			die('Unknown region.');
+			die(color('gold').'Unknown region.');
 		}
 	} else if(array_size(@args) == 1) {
 		if(sk_region_exists(pworld(), @args[0])) {
@@ -24,10 +24,10 @@
 	}
 
 	if(!@region) {
-		die('Unknown region.');
+		die(color('gold').'Unknown region.');
 	} else if((!array_contains(sk_region_owners(@region, pworld())['players'], puuid())
 	&& !has_permission('group.moderator'))) {
-		die('You do not own this region.');
+		die(color('gold').'You do not own this region.');
 	}
 
 	if(@state === 'toggle') {
@@ -58,7 +58,7 @@
 			msg('Members are now prohibited from building in '.@region);
 
 		default:
-			die('Unknown state.');
+			die(color('gold').'Unknown state.');
 	}
 <<<
 
@@ -66,6 +66,10 @@
 
 *:/region $ = >>>
 	@args = parse_args($);
+	if(array_size(@args) < 2) {
+		run('/region '.$);
+		die();
+	}
 	switch(@args[0]) {
 		case 'flag':
 		case 'f':
@@ -80,12 +84,12 @@
 				try {
 					@flags = sk_region_info(@region, pworld(), 3);
 				} catch(PluginInternalException @ex) {
-					die('That region doesn\'t exist.');
+					die(color('GOLD').'That region doesn\'t exist.');
 				}
 				try {
 					@owners = sk_region_owners(@region, pworld());
 				} catch(PluginInternalException @ex) {
-					die(color('RED').'That region doesn\'t exist.');
+					die(color('GOLD').'That region doesn\'t exist.');
 				}
 				switch(@setting) {
 					case 'mob-spawning':
@@ -103,7 +107,7 @@
 
 					case 'infinite-dispensers':
 						if(_is_survival_world(pworld())) {
-							die('You cannot toggle infinite dispensers in this world.');
+							die(color('GOLD').'You cannot toggle infinite dispensers in this world.');
 						}
 						@commands = '';
 						foreach(@flag in @flags) {
@@ -144,17 +148,17 @@
 			@from = @args[1];
 			@to = @args[2];
 			if(!sk_region_exists(pworld(), @from)) {
-				die('That region doesn\'t exist.');
+				die(color('GOLD').'That region doesn\'t exist.');
 			}
 			if(!has_permission('group.moderator')
 			&& !array_contains(sk_region_owners(@from, pworld())['players'], puuid())) {
-				die('No permission.');
+				die(color('GOLD').'No permission.');
 			}
 			if(!reg_match('^[a-zA-Z0-9-_]{1,32}$', @to)[0]) {
-				die('You can only use alphanumeric characters and underscores/dashes.');
+				die(color('GOLD').'You can only use alphanumeric characters and underscores/dashes.');
 			}
 			if(sk_region_exists(pworld(), @to)) {
-				 die('A region by that name already exists.');
+				 die(color('GOLD').'A region by that name already exists.');
 			}
 			sk_region_rename(pworld(), @from, @to);
 			msg('Renamed '.@from.' to '.@to.'.');
@@ -170,18 +174,18 @@
 			try {
 				@owners = sk_region_owners(@region, pworld());
 			} catch(PluginInternalException @ex) {
-				die(color('RED').'That region doesn\'t exist.');
+				die(color('GOLD').'That region doesn\'t exist.');
 			}
 			if(!array_contains(@owners['players'], puuid())) {
-				die(color('RED').'You do not own this region.');
+				die(color('GOLD').'You do not own this region.');
 			}
 			@p1 = sk_pos1();
 			@p2 = sk_pos2();
 			if(is_null(@p1) || is_null(@p2)) {
-				die(color('RED').'Please make a selection.');
+				die(color('GOLD').'Please make a selection.');
 			}
 			if(abs(@p1['x'] - @p2['x']) * abs(@p1['z'] - @p2['z']) > 10000) {
-				die(color('RED').'Selection too large. (100m^2 limit)');
+				die(color('GOLD').'Selection too large. (100m^2 limit) Ask staff if you need a larger region.');
 			}
 			sk_region_create(pworld(), @region.'-temp', array(@p1, @p2));
 			@regions = sk_region_intersect(pworld(), @region.'-temp');
@@ -189,10 +193,59 @@
 			foreach(@rg in @regions) {
 				@owners = sk_region_owners(@rg, pworld());
 				if(!array_contains(@owners['players'], puuid())) {
-					die(color('RED').'This selection overlaps a region you do not own.');
+					die(color('GOLD').'This selection overlaps a region you do not own.');
 				}
 			}
 			sudo('/rg redefine '.@region);
+
+		case 'claim':
+			if(pworld() != 'dev') {
+				run('/region '.$);
+				die();
+			}
+			@p1 = sk_pos1();
+			@p2 = sk_pos2();
+			@p1['x'] = 0;
+			@p2['z'] = 255;
+			if(!array_contains(sk_regions_at(@p1), 'plots')
+			|| !array_contains(sk_regions_at(@p2), 'plots')) {
+				die(color('GOLD').'You can only claim regions within the green "plots" region in the southeast.');
+			}
+			if(abs(@p1['x'] - @p2['x']) * abs(@p1['z'] - @p2['z']) > 10000) {
+				die(color('GOLD').'Selection too large. (100m^2 limit) Ask staff if you need a larger region.');
+			}
+			@region = @args[1];
+			if(sk_region_exists(pworld(), @region)) {
+				 die(color('GOLD').'A region by that name already exists.');
+			}
+			sk_region_create(pworld(), @region, array(@p1, @p2));
+			@regions = sk_region_intersect(pworld(), @region);
+			if(array_size(@regions) != 1) {
+				sk_region_remove(pworld(), @region);
+				array_remove_values(@regions, 'plots');
+				die(color('GOLD').'Selection is overlapping one or more regions. '.@regions);
+			}
+
+			// add walls
+			@minX = min(@p1['x'], @p2['x']);
+			@minZ = min(@p1['z'], @p2['z']);
+			@maxX = max(@p1['x'], @p2['x']);
+			@maxZ = max(@p1['z'], @p2['z']);
+			for(@x = @minX, @x <= @maxX, @x++) {
+				queue_push(closure(){
+					set_block_at(@x, 63, @minZ, '159:14', 'dev');
+					set_block_at(@x, 63, @maxZ, '159:14', 'dev');
+				});
+			}
+			for(@z = @minZ, @z <= @maxZ, @z++) {
+				queue_push(closure(){
+					set_block_at(@minX, 63, @z, '159:14', 'dev');
+					set_block_at(@maxX, 63, @z, '159:14', 'dev');
+				});
+			}
+
+			sk_region_addowner(@region, pworld(), puuid());
+			msg(color('green').'Successfully created Dev plot by the name "'.@region.'" here.');
 
 		default:
 			run('/region '.$);
