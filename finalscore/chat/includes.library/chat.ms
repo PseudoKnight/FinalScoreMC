@@ -81,7 +81,7 @@ proc _hover_tell(@recipients, @components) {
 */
 proc _clickable_links(@string) {
 	return(reg_replace('(?:https?://|www\\.)([\\da-z.-]+\\.[a-z.]{2,6}[/\\w\\#~:.?=&-]*)',
-		'&b[\u25E4$1]&r","clickEvent":{"action":"open_url","value":"http://$1"}},{"text":"&r',
+		'&b[\u21D6 $1]&r","clickEvent":{"action":"open_url","value":"http://$1"}},{"text":"&r',
 		@string
 	));
 }
