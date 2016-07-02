@@ -1,11 +1,67 @@
 switch(@action) {
 case 'load':
-	bind(entity_damage, array('id': @player.'pot'), array('type': 'PLAYER', 'cause': 'ENTITY_ATTACK', 'world': 'custom'), @e, @pvp) {
+	proc _prime_hot_potato(@damager, @damaged, @item) {
+		if(!is_null(@item['meta']['lore'])) {
+			clear_task(@item['meta']['lore'][0]);
+		}
+
+		# get the slot this potato will be in so we can track multiple potatos
+		@slot = 0;
+		while(@slot < 9) {
+			if(is_null(pinv(@damaged, @slot))) {
+				break();
+			}
+			@slot++;
+			if(@slot > 8) {
+				die();
+			}
+		}
+
+		if(@item['meta']['display'] === 'HOT POTATO') {
+			@item['meta']['display'] = '12';
+		}
+
+		@task = set_interval(1000, closure() {
+			try {
+				@potato = pinv(@damaged, @slot);
+				if(@potato['meta']['display'] == '1') {
+					bind(entity_damage, array('id': @damaged.'hotpotatodmg'), array('type': 'PLAYER', 'world': 'custom'), @e,
+							@damager, @pvp) {
+
+						if(!array_index_exists(@pvp['players'], @e['player']), die());
+						_stats_damage(@damager, @e['player'], @e['amount'], @pvp);
+					}
+					explosion(_relative(ploc(@damaged), 'up', 1.5), 2, true);
+					unbind(@damaged.'hotpotatodmg');
+					clear_task();
+				} else {
+					@potato['meta']['display'] = string(integer(@potato['meta']['display']) - 1);
+					play_sound(ploc(@damaged), array('sound': 'NOTE_STICKS'));
+					@inv = associative_array();
+					@inv[@slot] = @potato;
+					set_pinv(@damaged, @inv);
+				}
+			} catch(Exception @e) {
+				clear_task();
+				die();
+			};
+		});
+
+		@item['meta']['lore'] = array(@task);
+
+		@inv = associative_array();
+		@inv[@slot] = @item;
+		set_pinv(@damaged, @inv);
+	}
+	bind(entity_damage, array('id': @player.'pot'), array('type': 'PLAYER', 'cause': 'ENTITY_ATTACK', 'world': 'custom'), @e, @pvp, @player) {
 		if(!array_index_exists(@pvp['players'], @e['damager'])) {
 			die();
 		}
 		@damager = @e['damager'];
 		@damaged = @e['player'];
+		if(@damaged == @player) {
+			drop_item(@damager, array('name': 'POTATO_ITEM'));
+		}
 		@item = pinv(@damager, null);
 		if(is_null(@item)) {
 			die();
@@ -26,64 +82,8 @@ case 'load':
 				set_peffect(@damaged, 19, 0, 10);
 
 			case 393: # cooked potato -> hot potato
-				if(@item['qty'] == 1) {
-					set_pinv(@damager, array(null: null));
-				} else {
-					@item['qty']--;
-					set_pinv(@damager, array(null: @item));
-				}
-
-				if(!is_null(@item['meta']['lore'])) {
-					clear_task(@item['meta']['lore'][0]);
-				}
-
-				# get the slot this potato will be in so we can track multiple potatos
-				@slot = 0;
-				while(@slot < 9) {
-					if(is_null(pinv(@damaged, @slot))) {
-						break();
-					}
-					@slot++;
-					if(@slot > 8) {
-						die();
-					}
-				}
-
-				if(@item['meta']['display'] === 'HOT POTATO') {
-					@item['meta']['display'] = '12';
-				}
-
-				@task = set_interval(1000, closure() {
-					try {
-						@potato = pinv(@damaged, @slot);
-						if(@potato['meta']['display'] == '1') {
-							bind(entity_damage, array('id': @damaged.'hotpotatodmg'), array('type': 'PLAYER', 'world': 'custom'), @e,
-									@damager, @pvp) {
-
-								if(!array_index_exists(@pvp['players'], @e['player']), die());
-								_stats_damage(@damager, @e['player'], @e['amount'], @pvp);
-							}
-							explosion(_relative(ploc(@damaged), 'up', 1.5), 2, true);
-							unbind(@damaged.'hotpotatodmg');
-							clear_task();
-						} else {
-							@potato['meta']['display'] = string(integer(@potato['meta']['display']) - 1);
-							play_sound(ploc(@damaged), array('sound': 'NOTE_STICKS'));
-							@inv = associative_array();
-							@inv[@slot] = @potato;
-							set_pinv(@damaged, @inv);
-						}
-					} catch(Exception @e) {
-						clear_task();
-						die();
-					};
-				});
-
-				@item['meta']['lore'] = array(@task);
-
-				@inv = associative_array();
-				@inv[@slot] = @item;
-				set_pinv(@damaged, @inv);
+				set_pinv(@damager, array(null: null));
+				_prime_hot_potato(@damager, @damaged, @item);
 
 		}
 	}
@@ -116,8 +116,15 @@ case 'load':
 		}
 	}
 
+	bind(player_consume, array('id': @player.'hoteat'), array('player': @player, 'item': 393), @e) {
+		set_timeout(50, closure(){
+			_prime_hot_potato(player(), player(), @e['item']);
+		});
+	}
+
 case 'unload':
 	unbind(@player.'pot');
 	unbind(@player.'hotdrop');
 	unbind(@player.'hotpickup');
+	unbind(@player.'hoteat');
 }
