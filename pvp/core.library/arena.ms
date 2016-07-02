@@ -800,7 +800,7 @@ proc _arena(@action, @id, @setting, @string) {
 			die('There is no defined arena by that name.');
 		}
 		if(array_index_exists(@arena, 'played')) {
-			array_remove(@arena, 'stats');
+			array_remove(@arena, 'played');
 		}
 		if(array_index_exists(@arena, 'classes')) {
 			foreach(@class: @c in @arena['classes']) {
