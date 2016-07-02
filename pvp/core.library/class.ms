@@ -57,8 +57,8 @@ proc _class(@action, @player, @class, @pvp) {
 			foreach(@slot: @item in @pvp['arena']['classes'][@class]['ammo']) {
 				@max = 64;
 				if(@item && array_index_exists(@pvp['arena']['classes'][@class], 'stacklimit')
-				&& array_index_exists(@pvp['arena']['classes'][@class]['stacklimit'], @item['type'])) {
-					@max = @pvp['arena']['classes'][@class]['stacklimit'][@item['type']];
+				&& array_index_exists(@pvp['arena']['classes'][@class]['stacklimit'], @item['name'])) {
+					@max = @pvp['arena']['classes'][@class]['stacklimit'][@item['name']];
 				}
 				@item = @item[];
 				if(!is_null(@inv[@slot])) {

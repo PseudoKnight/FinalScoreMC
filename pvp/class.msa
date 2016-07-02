@@ -55,14 +55,14 @@ case 'set':
 
 	case 'stacklimit':
 		if(array_size(@args) < 2) {
-			die('Stacklimit needs two integers: item id and stack size limit.');
+			die('Stacklimit needs two values: item name and stack size limit.');
 		}
 		if(@args[1] < 1) {
 			array_remove(@arena['classes'][@classid]['stacklimit'], @args[0]);
 		} else {
 			@arena['classes'][@classid]['stacklimit'][@args[0]] = integer(@args[1]);
 		}
-		msg('Set stack size limit to '.@args[1].' for item id '.@args[0].'.');
+		msg('Set stack size limit to '.@args[1].' for item '.@args[0].'.');
 
 	case 'speed':
 		if(@args[0] < 0 || @args[0] > 1) {
