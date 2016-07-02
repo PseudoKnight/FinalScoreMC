@@ -1,7 +1,5 @@
 proc _pvp_start(@pvp, @id){
-	@arena = @pvp['arena'];
-
-	if(array_index_exists(@arena, 'options')) {
+	if(array_index_exists(@pvp['arena'], 'options')) {
 		del_virtualchest(@id.'options');
 		unbind(@id.'options');
 	}
@@ -14,30 +12,32 @@ proc _pvp_start(@pvp, @id){
 		'respawnmode': 'normal',
 		'delay': 10,
 	);
-	@pvp['arena'] = array_merge(@defaults, @arena);
+	@pvp['arena'] = array_merge(@defaults, @pvp['arena']);
 
 	# Get child or parent arena settings
-	if(array_index_exists(@arena, 'parent')) {
-		@parent = get_value('arena.'.@arena['parent']);
+	if(array_index_exists(@pvp['arena'], 'parent')) {
+		@parent = get_value('arena.'.@pvp['arena']['parent']);
 		if(!@parent) {
 			die('Can\'t find parent arena.');
 		}
-		@primaryName = to_upper(@arena['parent']);
+		@primaryName = to_upper(@pvp['arena']['parent']);
 		@secondaryName = to_upper(@id);
-		@pvp['arena'] = array_merge(@parent, @arena);
-	} else if(array_index_exists(@arena, 'arenaselect')) {
-		@childid = array_rand(@arena['arenaselect']['arenas'], 1, false)[0];
+		@pvp['arena'] = array_merge(@parent, @pvp['arena']);
+	} else if(array_index_exists(@pvp['arena'], 'arenaselect')) {
+		@childid = array_rand(@pvp['arena']['arenaselect']['arenas'], 1, false)[0];
 		@child = get_value('arena', @childid);
 		if(!@child) {
 			die('Can\'t find child arena.');
 		}
 		@primaryName = to_upper(@id);
 		@secondaryName = to_upper(@childid);
-		@pvp['arena'] = array_merge(@arena, @child);
+		@pvp['arena'] = array_merge(@pvp['arena'], @child);
 	} else {
 		@primaryName = to_upper(@id);
 		@secondaryName = null;
 	}
+
+	@arena = @pvp['arena'];
 
 	if(array_index_exists(@arena, 'sharedarenas')) {
 		foreach(@arenaid in @arena['sharedarenas']) {
