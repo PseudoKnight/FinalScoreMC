@@ -22,8 +22,8 @@ proc _ball_exists(@id) {
 proc _remove_ball(@id) {
 	try {
 		entity_remove(@id);
-	} catch(BadEntityException @ex) {
-		// already removed
+	} catch(Exception @ex) {
+		// doesn't exist
 	}
 }
 
