@@ -73,10 +73,7 @@ proc _class(@action, @player, @class, @pvp) {
 		}
 
 	case 'unload':
-		unbind(@player.'doublejump');
-		unbind(@player.'falldamage');
 		unbind(@player.'food');
-		queue_clear(@player.'doublejump');
 		set_pflight(@player, false);
 		set_pwalkspeed(@player, 0.2);
 

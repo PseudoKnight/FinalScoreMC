@@ -104,7 +104,9 @@ case 'equip':
 	_cloak(@player, @armor)
 
 case 'unload':
-	unbind(@player.'ninja')
-	queue_clear(@player.'cloaked')
+	unbind(@player.'ninja');
+	unbind(@player.'doublejump');
+	queue_clear(@player.'cloaked');
+	queue_clear(@player.'doublejump');
 
 }
