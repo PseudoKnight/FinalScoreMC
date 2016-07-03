@@ -55,13 +55,15 @@ bind(projectile_launch, array('id': @id.'grapple'), array('type': 'FISHING_HOOK'
 				});
 			}
 		}
-		@task = closure(){
+		@task = closure(@interval = true){
 			try {
 				if(get_entity_health(@shooter) == 0
 				|| get_entity_health(@mover) == 0
 				|| pinfo(@player, 15) != @slot
 				|| !entity_exists(@hook)) {
-					clear_task();
+					if(@interval) {
+						clear_task();
+					}
 					execute(@endtask);
 				} else {
 					@loc2 = entity_loc(@target);
@@ -79,11 +81,13 @@ bind(projectile_launch, array('id': @id.'grapple'), array('type': 'FISHING_HOOK'
 					}
 				}
 			} catch(BadEntityException @e) {
-				clear_task();
+				if(@interval) {
+					clear_task();
+				}
 				execute(@endtask);
 			}
 		}
-		execute(@task);
+		execute(false, @task);
 		set_interval(100, @task);
 	}
 
