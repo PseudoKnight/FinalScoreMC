@@ -1,8 +1,13 @@
 switch(@action) {
 case 'load':
-	proc _prime_hot_potato(@damager, @damaged, @item) {
-		if(!is_null(@item['meta']['lore'])) {
-			clear_task(@item['meta']['lore'][0]);
+	proc _prime_hot_potato(@damager, @damaged, @item, @pvp) {
+		try {
+			if(!is_null(@item['meta']['lore'])) {
+				clear_task(@item['meta']['lore'][0]);
+			}
+		} catch(IndexOverflowException @ex) {
+			// not a hot potato
+			return();
 		}
 
 		# get the slot this potato will be in so we can track multiple potatos
@@ -83,7 +88,7 @@ case 'load':
 
 			case 393: # cooked potato -> hot potato
 				set_pinv(@damager, array(null: null));
-				_prime_hot_potato(@damager, @damaged, @item);
+				_prime_hot_potato(@damager, @damaged, @item, @pvp);
 
 		}
 	}
@@ -116,10 +121,12 @@ case 'load':
 		}
 	}
 
-	bind(player_consume, array('id': @player.'hoteat'), array('player': @player, 'item': 393), @e) {
-		set_timeout(50, closure(){
-			_prime_hot_potato(player(), player(), @e['item']);
-		});
+	bind(player_consume, array('id': @player.'hoteat'), array('item': 393), @e, @player, @pvp) {
+		if(@player == @e['player']) {
+			set_timeout(50, closure(){
+				_prime_hot_potato(player(), player(), @e['item'], @pvp);
+			});
+		}
 	}
 
 case 'unload':
