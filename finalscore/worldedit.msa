@@ -1,0 +1,8 @@
+*:'//up' [$] = call_alias('/up '.$);
+*:/up [$] = >>>
+    if(sk_can_build(_relative(ploc(), 'up'))) {
+        run('/up '.$);
+    } else {
+        die(color('red').'You are not allowed to build here.');
+    }
+<<<
