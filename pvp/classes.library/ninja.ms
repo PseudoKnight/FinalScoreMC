@@ -45,7 +45,7 @@ case 'load':
 						@y = 0;
 						@z = sin(to_radians(@facing[0])) * cos(to_radians(@facing[1]));
 						set_pvelocity(@player, @x, @y, @z);
-						play_named_sound(ploc(@player), array('sound': 'item.armor.equip_leather'), @player);
+						play_named_sound(ploc(@player), array('sound': 'item.armor.equip_leather'));
 						set_pinv(@player, array(0: null));
 						set_timeout(100, closure(){
 							@facing = pfacing(@player);
@@ -62,7 +62,7 @@ case 'load':
 						unbind();
 					}
 				}
-				set_timeout(200, closure(){
+				set_timeout(250, closure(){
 					unbind(player().'falldamage');
 				});
 			}
