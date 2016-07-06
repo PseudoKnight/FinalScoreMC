@@ -205,8 +205,8 @@
 			}
 			@p1 = sk_pos1();
 			@p2 = sk_pos2();
-			@p1['x'] = 0;
-			@p2['z'] = 255;
+			@p1['y'] = 0;
+			@p2['y'] = 255;
 			if(!array_contains(sk_regions_at(@p1), 'plots')
 			|| !array_contains(sk_regions_at(@p2), 'plots')) {
 				die(color('GOLD').'You can only claim regions within the green "plots" region in the southeast.');
@@ -227,24 +227,30 @@
 			}
 
 			// add walls
+			@data = rand(0, 16);
+			if(@data == 5) {
+				@data == 14;
+			}
+			@block = '159'.@data;
 			@minX = min(@p1['x'], @p2['x']);
 			@minZ = min(@p1['z'], @p2['z']);
 			@maxX = max(@p1['x'], @p2['x']);
 			@maxZ = max(@p1['z'], @p2['z']);
 			for(@x = @minX, @x <= @maxX, @x++) {
 				queue_push(closure(){
-					set_block_at(@x, 63, @minZ, '159:14', 'dev');
-					set_block_at(@x, 63, @maxZ, '159:14', 'dev');
+					set_block_at(@x, 63, @minZ, @block, 'dev');
+					set_block_at(@x, 63, @maxZ, @block, 'dev');
 				});
 			}
 			for(@z = @minZ, @z <= @maxZ, @z++) {
 				queue_push(closure(){
-					set_block_at(@minX, 63, @z, '159:14', 'dev');
-					set_block_at(@maxX, 63, @z, '159:14', 'dev');
+					set_block_at(@minX, 63, @z, @block, 'dev');
+					set_block_at(@maxX, 63, @z, @block, 'dev');
 				});
 			}
 
 			sk_region_addowner(@region, pworld(), puuid());
+			sk_region_setpriority(pworld(), @region, 1);
 			msg(color('green').'Successfully created Dev plot by the name "'.@region.'" here.');
 
 		default:
