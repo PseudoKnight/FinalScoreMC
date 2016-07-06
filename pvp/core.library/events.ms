@@ -203,22 +203,10 @@ bind(player_quit, array('id': @id.'quit', 'priority': 'HIGH'), null, @e, @id) {
 			set_pscore('lives', player(), 0, @id)
 		}
 		dm_set_pvisible(true);
-		_pvp_check_objectives(@id)
+		set_ploc(@pvp['arena']['lobby']);
+		_pvp_check_objectives(@id);
 	} else if(array_contains(@pvp['spectators'], player())) {
 		_remove_spectator(player(), @pvp);
-	} else {
-		die()
-	}
-
-	array_push(@pvp['binds'], player().'join');
-	bind(player_join, array('id': player().'join'), array('player': player()), @e, @id) {
-		unbind()
-		set_timeout(500, closure(){
-			@pvp = import('pvp'.@id)
-			if(!is_null(@pvp) && @pvp['running'] && pworld() === 'custom') {
-				set_ploc(@pvp['arena']['lobby']);
-			}
-		});
 	}
 }
 
