@@ -681,49 +681,55 @@ if(array_contains(@pvp['arena']['flags'], 'infinitedispensers')) {
 ### SPECATORS ###
 
 array_push(@pvp['binds'], @id.'interactspec')
-bind(player_interact, array('id': @id.'interactspec'), null, @e, @id) {
+bind(player_interact, array('id': @id.'interactspec', 'priority': 'HIGHEST'), null, @e, @id) {
 	@pvp = import('pvp'.@id)
 	if(array_contains(@pvp['spectators'], @e['player'])) {
-		cancel()
-	}
-}
-
-array_push(@pvp['binds'], @id.'interactentityspec')
-bind(player_interact_entity, array('id': @id.'interactentityspec'), array('clicked': 'HORSE'), @e, @id) {
-	@pvp = import('pvp'.@id)
-	if(array_contains(@pvp['spectators'], @e['player'])) {
-		cancel()
-	}
-}
-
-array_push(@pvp['binds'], @id.'targetspec')
-bind(target_player, array('id': @id.'targetspec'), null, @e, @id) {
-	@pvp = import('pvp'.@id)
-	if(array_contains(@pvp['spectators'], @e['player'])) {
-		cancel()
-	}
-}
-
-array_push(@pvp['binds'], @id.'platespec')
-bind(pressure_plate_activated, array('id': @id.'platespec'), null, @e, @id) {
-	@pvp = import('pvp'.@id)
-	if(array_contains(@pvp['spectators'], @e['player'])) {
-		cancel()
-	}
-}
-
-array_push(@pvp['binds'], @id.'dropspec');
-bind(item_drop, array('id': @id.'dropspec'), null, @e, @id) {
-	@pvp = import('pvp'.@id);
-	if(array_contains(@pvp['spectators'], @e['player'])) {
+		consume();
 		cancel();
 	}
 }
 
-array_push(@pvp['binds'], @id.'pickupspec');
+array_push(@pvp['binds'], @id.'interactentityspec')
+bind(player_interact_entity, array('id': @id.'interactentityspec', 'priority': 'HIGHEST'), array('clicked': 'HORSE'), @e, @id) {
+	@pvp = import('pvp'.@id)
+	if(array_contains(@pvp['spectators'], @e['player'])) {
+		consume();
+		cancel();
+	}
+}
+
+array_push(@pvp['binds'], @id.'targetspec')
+bind(target_player, array('id': @id.'targetspec', 'priority': 'HIGHEST'), null, @e, @id) {
+	@pvp = import('pvp'.@id)
+	if(array_contains(@pvp['spectators'], @e['player'])) {
+		consume();
+		cancel();
+	}
+}
+
+array_push(@pvp['binds'], @id.'platespec')
+bind(pressure_plate_activated, array('id': @id.'platespec', 'priority': 'HIGHEST'), null, @e, @id) {
+	@pvp = import('pvp'.@id)
+	if(array_contains(@pvp['spectators'], @e['player'])) {
+		consume();
+		cancel();
+	}
+}
+
+array_push(@pvp['binds'], @id.'dropspec');
+bind(item_drop, array('id': @id.'dropspec', 'priority': 'HIGHEST'), null, @e, @id) {
+	@pvp = import('pvp'.@id);
+	if(array_contains(@pvp['spectators'], @e['player'])) {
+		consume();
+		cancel();
+	}
+}
+
+array_push(@pvp['binds'], @id.'pickupspec', 'priority': 'HIGHEST');
 bind(item_pickup, array('id': @id.'pickupspec'), null, @e, @id) {
 	@pvp = import('pvp'.@id);
 	if(array_contains(@pvp['spectators'], @e['player'])) {
+		consume();
 		cancel();
 	}
 }
