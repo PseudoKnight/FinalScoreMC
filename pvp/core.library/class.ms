@@ -81,20 +81,19 @@ proc _class(@action, @player, @class, @pvp) {
 }
 
 proc _class_select_random(@player, @pvp) {
-	if(array_index_exists(@pvp['players'][@player], 'class')) {
-		_class('unload', @player, @pvp['players'][@player]['class'], @pvp);
-	}
 	@rand = array_rand(@pvp['arena']['classes'], array_size(@pvp['arena']['classes']));
-	foreach(@r in @rand) {
-		if(!array_index_exists(@pvp['arena']['classes'][@r], 'team')
-		|| @pvp['players'][@player]['team'] == @pvp['arena']['classes'][@r]['team']) {
-			@pvp['players'][@player]['class'] = @r;
+	@class = '';
+	foreach(@class in @rand) {
+		if(!array_index_exists(@pvp['arena']['classes'][@class], 'team')
+		|| @pvp['players'][@player]['team'] == @pvp['arena']['classes'][@class]['team']) {
 			break();
 		}
 	}
 	if(array_index_exists(@pvp['players'][@player], 'class')) {
-		_class('load', @player, @pvp['players'][@player]['class'], @pvp);
+		_class('unload', @player, @pvp['players'][@player]['class'], @pvp);
+		_class('load', @player, @class, @pvp);
 	}
+	@pvp['players'][@player]['class'] = @class;
 }
 
 proc _class_select(@id, @pvp) {
@@ -223,9 +222,7 @@ proc _class_select(@id, @pvp) {
 			}
 			play_sound(ploc(), array('sound': 'CLICK'))
 			cancel()
-			if(array_index_exists(@pvp['players'][player()], 'class')) {
-				_class('unload', player(), @pvp['players'][player()]['class'], @pvp)
-			}
+
 			if(@class === 'random') {
 				@classes = @pvp['arena']['classes'];
 				if(array_index_exists(@pvp['players'][player()], 'team')) {
@@ -236,8 +233,11 @@ proc _class_select(@id, @pvp) {
 				@class = array_rand(@classes, 1, true)[0];
 			}
 			msg(color('green').to_upper(@class).color('r').' has been selected.');
+			if(array_index_exists(@pvp['players'][player()], 'class')) {
+				_class('unload', player(), @pvp['players'][player()]['class'], @pvp);
+				_class('load', player(), @class, @pvp);
+			}
 			@pvp['players'][player()]['class'] = @class
-			_class('load', player(), @class, @pvp)
 			close_pinv()
 		}
 	}
