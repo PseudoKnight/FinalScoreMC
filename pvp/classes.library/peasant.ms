@@ -77,9 +77,9 @@ case 'load':
 				modify_event('amount', 3);
 				set_timeout(50, closure(){
 					@vector = entity_velocity(puuid(@damaged));
-					@vector['x'] *= 2;
-					@vector['y'] *= 3;
-					@vector['z'] *= 2;
+					@vector['x'] *= 1.5;
+					@vector['y'] *= 2.5;
+					@vector['z'] *= 1.5;
 					set_pvelocity(@damaged, @vector);
 				});
 
