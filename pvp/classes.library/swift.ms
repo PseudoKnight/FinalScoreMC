@@ -1,20 +1,27 @@
 switch(@action) {
 case 'load':
-	bind(entity_damage, array('id': @player.'grab'), array('type': 'PLAYER', 'cause': 'ENTITY_ATTACK', 'world': 'custom'), @e, @pvp, @player) {
-		if(@e['damager'] == @player && !get_entity_vehicle(puuid(@player))) {
-			modify_event('amount', 3);
-			set_entity_rider(puuid(@e['damager']), puuid(@e['player']));
-			play_sound(ploc(@e['damager']), array('sound': 'GHAST_SCREAM2', 'pitch': 1.6 + (rand(5) / 10)));
+	proc _swift_grab(@swift, @entity) {
+		if(!get_entity_vehicle(puuid(@swift)) && !get_entity_rider(puuid(@swift))) {
+			set_entity_rider(puuid(@swift), @entity);
+			play_sound(ploc(@swift), array('sound': 'GHAST_SCREAM2', 'pitch': 1.6 + (rand(5) / 10)));
 			set_timeout(200, closure(){
-				play_sound(ploc(@e['damager']), array('sound': 'GHAST_SCREAM2', 'pitch': 1.6 + (rand(5) / 10)));
+				play_sound(ploc(@swift), array('sound': 'GHAST_SCREAM2', 'pitch': 1.6 + (rand(5) / 10)));
 			});
+			return(true);
 		}
 	}
 
-	bind(entity_damage, array('id': @player.'damage'), array('type': 'PLAYER', 'world': 'custom'), @e, @p = @player) {
-		if(@e['player'] == @p && (@e['cause'] == 'FALL' || @e['cause'] == 'FLY_INTO_WALL')){
-			// Reduce damage by 2, with a max of 3 damage
-			modify_event('amount', min(max(@e['amount'] - 2, 0), 3));
+	bind(entity_damage, array('id': @player.'grab'), array('type': 'PLAYER', 'cause': 'ENTITY_ATTACK', 'world': 'custom'), @e, @pvp, @player) {
+		if(@e['damager'] == @player) {
+			if(_swift_grab(@player, puuid(@e['player']))) {
+				modify_event('amount', 3);
+			}
+		}
+	}
+
+	bind(player_interact_entity, array('id': @player.'clickgrab'), array('clicked': 'PLAYER'), @e, @player) {
+		if(@e['player'] == @player) {
+			_swift_grab(@player, @e['id']);
 		}
 	}
 
@@ -39,14 +46,14 @@ case 'load':
 			@v['y'] += @nv['y'];
 			@v['z'] += @nv['z'];
 			@magnitude = _distance(associative_array('x': 0, 'y': 0, 'z': 0), @v);
-			if(@magnitude > 3) {
-				@v['x'] = (@v['x'] / @magnitude) * 3;
-				@v['y'] = (@v['y'] / @magnitude) * 3;
-				@v['z'] = (@v['z'] / @magnitude) * 3;
+			if(@magnitude > 2.5) {
+				@v['x'] = (@v['x'] / @magnitude) * 2.5;
+				@v['y'] = (@v['y'] / @magnitude) * 2.5;
+				@v['z'] = (@v['z'] / @magnitude) * 2.5;
 			}
 			set_entity_velocity(@uuid, @v);
 			play_sound(ploc(), array('sound': 'BAT_TAKEOFF', 'volume': 0.5));
-			set_timeout(100, closure(){
+			set_timeout(150, closure(){
 				set_entity_gliding(@uuid, true);
 			});
 		}
@@ -60,6 +67,13 @@ case 'load':
 		set_timeout(1000, closure(){
 			set_pexp(0);
 		});
+	}
+
+	bind(entity_damage, array('id': @player.'damage'), array('type': 'PLAYER', 'world': 'custom'), @e, @p = @player) {
+		if(@e['player'] == @p && (@e['cause'] == 'FALL' || @e['cause'] == 'FLY_INTO_WALL')){
+			// Reduce damage by 2, with a max of 3 damage
+			modify_event('amount', min(max(@e['amount'] - 2, 0), 3));
+		}
 	}
 
 	bind(player_toggle_sneak, array('id': @player.'sneak'), array('sneaking': true), @e, @player) {
@@ -84,5 +98,6 @@ case 'unload':
 	unbind(@player.'boost');
 	unbind(@player.'sneak');
 	unbind(@player.'damage');
+	unbind(@player.'clickgrab');
 
 }
