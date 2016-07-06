@@ -41,19 +41,17 @@ case 'load':
 		@closure = closure(@grounded){
 			@v = entity_velocity(@uuid);
 			@facing = pfacing();
-			@nv = _get_vector(@facing[0], @facing[1], 1, if(@grounded, 0.5, 0));
+			@nv = _get_vector(@facing[0], @facing[1], 1, if(@grounded, 0.7, 0));
 			@v['x'] += @nv['x'];
 			@v['y'] += @nv['y'];
 			@v['z'] += @nv['z'];
 			@magnitude = _distance(associative_array('x': 0, 'y': 0, 'z': 0), @v);
-			if(@magnitude > 2.5) {
-				@v['x'] = (@v['x'] / @magnitude) * 2.5;
-				@v['y'] = (@v['y'] / @magnitude) * 2.5;
-				@v['z'] = (@v['z'] / @magnitude) * 2.5;
-			}
+			@v['x'] = (@v['x'] / @magnitude) * 1.1;
+			@v['y'] = (@v['y'] / @magnitude) * 1.1;
+			@v['z'] = (@v['z'] / @magnitude) * 1.1;
 			set_entity_velocity(@uuid, @v);
 			play_sound(ploc(), array('sound': 'BAT_TAKEOFF', 'volume': 0.5));
-			set_timeout(150, closure(){
+			set_timeout(100, closure(){
 				set_entity_gliding(@uuid, true);
 			});
 		}
@@ -64,16 +62,9 @@ case 'load':
 		} else {
 			execute(@grounded, @closure);
 		}
-		set_timeout(1000, closure(){
+		set_timeout(500, closure(){
 			set_pexp(0);
 		});
-	}
-
-	bind(entity_damage, array('id': @player.'damage'), array('type': 'PLAYER', 'world': 'custom'), @e, @p = @player) {
-		if(@e['player'] == @p && (@e['cause'] == 'FALL' || @e['cause'] == 'FLY_INTO_WALL')){
-			// Reduce damage by 2, with a max of 3 damage
-			modify_event('amount', min(max(@e['amount'] - 2, 0), 3));
-		}
 	}
 
 	bind(player_toggle_sneak, array('id': @player.'sneak'), array('sneaking': true), @e, @player) {
@@ -92,6 +83,10 @@ case 'load':
 			}
 		}
 	}
+
+case 'powerup':
+	set_phunger(@player, min(20, phunger(@player) + 2));
+	set_psaturation(@player, psaturation(@player) + 2);
 
 case 'unload':
 	unbind(@player.'grab');
