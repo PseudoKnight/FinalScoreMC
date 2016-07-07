@@ -230,7 +230,11 @@ proc _class_select(@id, @pvp) {
 						return(@value['team'] == @pvp['players'][player()]['team']);
 					});
 				}
-				@class = array_rand(@classes, 1, true)[0];
+				if(@classes) {
+					@class = array_rand(@classes, 1, true)[0];
+				} else {
+					@class = array_rand(@pvp['arena']['classes'], 1, true)[0];
+				}
 			}
 			msg(color('green').to_upper(@class).color('r').' has been selected.');
 			if(array_index_exists(@pvp['players'][player()], 'class')) {
