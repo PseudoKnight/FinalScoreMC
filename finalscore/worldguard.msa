@@ -205,6 +205,9 @@
 			}
 			@p1 = sk_pos1();
 			@p2 = sk_pos2();
+			if(!@p1 || !@p2) {
+				die(color('GOLD').'You must select two points to claim a region.');
+			}
 			@p1['y'] = 0;
 			@p2['y'] = 255;
 			if(!array_contains(sk_regions_at(@p1), 'plots')
@@ -231,7 +234,7 @@
 			if(@data == 5) {
 				@data == 14;
 			}
-			@block = '159'.@data;
+			@block = '159:'.@data;
 			@minX = min(@p1['x'], @p2['x']);
 			@minZ = min(@p1['z'], @p2['z']);
 			@maxX = max(@p1['x'], @p2['x']);
