@@ -82,18 +82,18 @@ proc _pvp_start(@pvp, @id){
 	# Dynamically determine if it should be a team game
 	if(@arena['mode'] === 'ddm') {
 		@size = array_size(@pvp['players']);
-		if(@size > 5 && @size % 2 == 0) {
+		if(@size % 2 == 0) {
 			@arena['mode'] = 'tdm';
 			@arena['ff'] = false;
 			if(array_index_exists(@arena, 'kit')) {
 				@arena['kit'][1] = @arena['kit'][0];
 			}
 
-			@spawns = @arena['spawn'][0][];
-			@arena['spawn'] = array();
-			@team = 0;
-			foreach(@spawn in @spawns) {
+			// Alternate spawns
+			@team = 1;
+			foreach(@spawn in @arena['spawn'][0]) {
 				@arena['spawn'][@team] = @spawn;
+				@team = if(@team == 1, 2, 1);
 			}
 
 		} else {
