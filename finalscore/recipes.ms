@@ -3,11 +3,18 @@
 # Enchanted lore books
 add_recipe(array(
 	'type': 'SHAPELESS',
-	'result': array('type': 403, 'qty': 1, 'meta': array(
+	'result': associative_array('name': 'ENCHANTED_BOOK', 'qty': 1, 'meta': associative_array(
 		'display': color('k').'Enchanted Lore Book',
 		'lore': array(color('k').'This is random text.', color('k').'More random text.'),
 	)),
 	'ingredients': array('387:0', '403:0')
+));
+
+# Bottle o' Enchanting experience storage
+add_recipe(array(
+	'type': 'SHAPELESS',
+	'result': associative_array('name': 'EXP_BOTTLE', 'qty': 1),
+	'ingredients': array('374:0')
 ));
 
 # Special recipe handling (enchanted lore books and player heads)
@@ -15,14 +22,14 @@ bind('inventory_click', null, array('slottype': 'RESULT'), @event) {
 	if(is_null(@event['slotitem']), die())
 
 	if(@event['inventorytype'] == 'WORKBENCH' || @event['inventorytype'] == 'CRAFTING') {
-		if(@event['slotitem']['type'] == 403
+		if(@event['slotitem']['name'] == 'ENCHANTED_BOOK'
 		&& strip_colors(@event['slotitem']['meta']['display']) === 'Enchanted Lore Book') {
 
 			@slotitem = @event['slotitem'];
 
 			foreach(@item in @event['inventory']) {
 				if(is_null(@item), continue())
-				if(@item['type'] == 387) {
+				if(@item['name'] == 'WRITTEN_BOOK') {
 
 					@slotitem['meta']['display'] = colorize(@item['meta']['title']);
 
@@ -36,18 +43,34 @@ bind('inventory_click', null, array('slottype': 'RESULT'), @event) {
 					}
 					@slotitem['meta']['lore'] = @wrappedLines;
 
-				} else if(@item['type'] == 403) {
+				} else if(@item['name'] == 'ENCHANTED_BOOK') {
 					@slotitem['meta']['stored'] = @item['meta']['stored'];
 				}
 			}
 
 			modify_event('slotitem', @slotitem);
 
+		} else if(@event['slotitem']['name'] == 'EXP_BOTTLE') {
+			@xp = ptexp();
+			@qty = 7;
+			if(@event['shiftclick']) {
+				foreach(@item in @event['inventory']) {
+					if(@item && @item['name'] == 'GLASS_BOTTLE') {
+						@qty *= @item['qty'];
+						break();
+					}
+				}
+			}
+			if(@xp >= @qty) {
+				set_ptexp(@xp - @qty);
+			} else {
+				cancel();
+			}
 		}
 
 	} else if(@event['inventorytype'] === 'ANVIL') {
 		if(!is_null(@event['inventory'][1])
-		&& @event['inventory'][1]['type'] == 403
+		&& @event['inventory'][1]['name'] == 'ENCHANTED_BOOK'
 		&& @event['inventory'][1]['meta']['lore']) {
 			# enchanted lore book
 
@@ -66,7 +89,7 @@ bind('inventory_click', null, array('slottype': 'RESULT'), @event) {
 
 			modify_event('slotitem', @slotitem);
 
-		} else if(@event['slotitem']['type'] == 397
+		} else if(@event['slotitem']['type'] == 'SKULL_ITEM'
 		&& @event['slotitem']['data'] == 3
 		&& !is_null(@event['slotitem']['meta'])
 		&& !is_null(@event['slotitem']['meta']['display'])) {
