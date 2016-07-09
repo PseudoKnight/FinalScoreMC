@@ -19,17 +19,18 @@
 		if(!@times || !array_index_exists(@times, 'top')) {
 			die('No top times for '.to_upper(@id).'.')
 		}
-		msg(colorize('&e&l---[ &e&lTOP TIMES - '.to_upper(@id).' &e&m]---------'));
+		msg(colorize('&e&m|------------------&e&l[ TOP TIMES - '.to_upper(@id).' ]&e&m---|'));
 		for(@i = 0, @i < array_size(@times['top']), @i++) {
 			@time = '';
-			if(@times['top'][@i][1] >= 59) {
+			if(@times['top'][@i][1] >= 60) {
 				@time = simple_date('m\u0027m\u0027 ss.S', integer(@times['top'][@i][1] * 1000));
 			} else {
 				@time = simple_date('s.S', integer(@times['top'][@i][1] * 1000));
 			}
 			@time = substr(@time, 0, length(@time) - 2).'s';
-			msg(colorize(if(@i < 9, '&80').'&7'.(@i + 1).'&a [ '.@time.' ] &r'.@times['top'][@i][0]));
+			msg(colorize(' '.if(@i < 9, '&80').'&7'.(@i + 1).'&a [ '.@time.' ] &r'.@times['top'][@i][0]));
 		}
+		msg(colorize('&e&m|----------------------------------------------------|'));
 
 	case 'me':
 
@@ -114,6 +115,26 @@
 		}
 		msg('Finished resetting '.$player.'\'s times in '.@count.' courses.');
 
+	case 'recalculate':
+	case 'recalc':
+		if(!has_permission('command.recalculatetimes')) {
+			die('You do not have permission to recalculate times for this course.')
+		}
+		@times = get_values('times', @id);
+		array_remove(@times, 'times.'.@id);
+		@array = array();
+		foreach(@key: @time in @times) {
+			@array[] = array(split('.', @key)[2], @time);
+		}
+		array_sort(@array, closure(@left, @right){
+			return(@left[1] > @right[1]);
+		});
+		@max = min(10, array_size(@array));
+		for(@i = 0, @i < @max, @i++) {
+			@array[@i][0] = get_value('uuids', @array[@i][0])['name'];
+		}
+		store_value('times', @id, associative_array('top': @array[cslice(0, @max - 1)]));
+		msg('Finished recalculating times.');
 
 	default:
 
