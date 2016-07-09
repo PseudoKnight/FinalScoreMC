@@ -1,8 +1,8 @@
 set_uncaught_exception_handler(closure(@ex){
 	msg(color('red').@ex['message']);
-	console(@ex['classType'].': '.@ex['message']);
+	console(@ex['classType'].': '.@ex['message'], false);
 	foreach(@trace in @ex['stackTrace']) {
-		console(split('LocalPackages', @trace['file'])[-1].':'.@trace['line'].' '.@trace['id']);
+		console(split('LocalPackages', @trace['file'])[-1].':'.@trace['line'].' '.@trace['id'], false);
 	}
 	return(true);
 });
@@ -245,7 +245,7 @@ proc _relative(@originloc, @dir, @amount = 1) {
 		@loc[0] += @amount
 
 	default:
-		console('Error: unhandled relative direction: '.@dir);
+		console('Error: unhandled relative direction: '.@dir, false);
 
 	}
 	return(@loc)
@@ -418,7 +418,7 @@ proc _get_effects() {
 proc _remove_region_entities(@region, @entities) {
 	@world = 'custom'; # we don't need this for other worlds
 	if(!sk_region_exists(@world, @region)) {
-		console('Can\'t remove entities because region doesn\'t exist: '.@region);
+		console('Can\'t remove entities because region doesn\'t exist: '.@region, false);
 		return(false);
 	}
 	@loc = sk_region_info(@region, @world)[0];
@@ -443,8 +443,8 @@ proc _remove_region_entities(@region, @entities) {
 					try {
 						entity_remove(@entity);
 					} catch(BadEntityException @ex) {
-						console('Entity not found when trying to remove from region.');
-						console('Region: '.@region.', EntityID: '.@entity);
+						console('Entity not found when trying to remove from region.', false);
+						console('Region: '.@region.', EntityID: '.@entity, false);
 					}
 				}
 			}

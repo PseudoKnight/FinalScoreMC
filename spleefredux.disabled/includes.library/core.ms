@@ -7,7 +7,7 @@ proc _spl_queue_start(@id, @world = @pworld) {
 	if(!sk_region_exists(@world, 'spl_'.@id.'_floor')) {
 		die('Spleef floor region does not exist.')
 	}
-	
+
 	if(!array_index_exists(@arena, 'lobby')) {
 		die('Spleef lobby teleport point does not exist.')
 	}
@@ -16,23 +16,23 @@ proc _spl_queue_start(@id, @world = @pworld) {
 	@spl = import('spleef.'.@id)
 	@spl['state'] = 1
 	export('spleef.'.@id, @spl)
-	
+
 	if(!array_index_exists(@arena, 'countdown')) {
 		@arena['countdown'] = 30
 	}
-	
+
 	# ARENA GENERATION
 	if(array_index_exists(@arena, 'floorblocks')) {
 		@floorblock = @arena['floorblocks'][rand(array_size(@arena['floorblocks']))]
 	} else {
 		@floorblock = data_values('quartz_block')
 	}
-	
+
 	@rg = sk_region_info('spl_'.@id.'_floor', @world, 0)
 	@width = @rg[0][0] - @rg[1][0]
 	@delay = ceil((((@arena['countdown'] - 5) / 2) * 1000) / @width)
 	@y = @rg[1][1]
-	
+
 	for(@x = @rg[1][0], @x <= @rg[0][0], @x++) {
 		queue_push(closure(){
 			for(@z = @rg[1][2], @z <= @rg[0][2], @z++) {
@@ -43,8 +43,8 @@ proc _spl_queue_start(@id, @world = @pworld) {
 			queue_delay(@delay, 'spl_'.@id)
 		}
 	}
-	
-	# COUNTDOWN	
+
+	# COUNTDOWN
 	for(@i = 5, @i > 0, @i--) {
 		queue_push(closure(){
 			play_sound(@arena['lobby'], array('sound': 'CLICK', 'volume': 3))
@@ -54,21 +54,21 @@ proc _spl_queue_start(@id, @world = @pworld) {
 
 	# START
 	queue_push(closure(
-	
+
 		@spl = import('spleef.'.@id)
-		
+
 		foreach(@i: @player in @spl['nextplayers']) {
 			if(!ponline(@player) || !array_contains(sk_current_regions(@player), 'spl_'.@id)) {
 				array_remove(@spl['nextplayers'], @i)
 			}
 		}
-		
+
 		if(array_size(@spl['nextplayers']) < 2) {
 			play_sound(@arena['lobby'], array('sound': 'VILLAGER_NO', 'volume': 3))
 			_remove_activity('spleef.'.@id);
 			die()
 		}
-		
+
 		@spl['players'] = @spl['nextplayers']
 		@spl['nextplayers'] = array()
 		@spl['state'] = 2
@@ -78,10 +78,10 @@ proc _spl_queue_start(@id, @world = @pworld) {
 			@floorblock[1] = 0
 		}
 		@tool = _spl_get_tool(@floorblock)
-		
+
 		foreach(@player in @spl['players']) {
 			if(@limit == 0) {
-				console('Spleef hit teleport attempt limit!')
+				console('Spleef hit teleport attempt limit!', false);
 				break()
 			} else {
 				@limit--
@@ -95,8 +95,8 @@ proc _spl_queue_start(@id, @world = @pworld) {
 			_spl_clear_pinv(@player)
 			set_pinv(@player, array(0: @tool))
 		}
-		console('Debug: spleef checked '.@limit.' locations for '.array_size(@spl['players']).' players.')
-		
+		console('Debug: spleef checked '.@limit.' locations for '.array_size(@spl['players']).' players.', false);
+
 		if(array_index_exists(@arena, 'drops')) {
 			bind(block_break, array('id': 'block_break_spl_'.@id), array('type': @floorblock[0], 'data': @floorblock[1]), @e, @arenaid = @id) {
 				if(array_contains(sk_regions_at(@e['location']), 'spl_'.@arenaid.'_floor')) {
@@ -105,12 +105,12 @@ proc _spl_queue_start(@id, @world = @pworld) {
 				}
 			}
 		}
-		
+
 		play_sound(@arena['lobby'], array('sound': 'FIREWORK_BLAST', 'volume': 3))
-			
+
 		set_interval(250, closure(){
 			@spl = import('spleef.'.@id)
-			
+
 			foreach(@i: @player in @spl['players']) {
 				if(!ponline(@player)) {
 					array_remove(@spl['players'], @i)
@@ -120,17 +120,17 @@ proc _spl_queue_start(@id, @world = @pworld) {
 					array_remove(@spl['players'], @i)
 				}
 			}
-			
+
 			export('spleef.'.@id, @spl)
-			
+
 			if(array_size(@spl['players']) <= 1) {
 				clear_task()
 				_spl_end(@id)
 			}
 		})
-		
+
 		export('spleef.'.@id, @spl)
-		
+
 	), 'spl_'.@id)
 
 }
@@ -163,9 +163,9 @@ proc _spl_end(@id, @world = @pworld) {
 			_remove_activity('spleef.'.@id);
 		))
 	}
-	
+
 	if(has_bind('block_break_spl_'.@id)) {
 		unbind('block_break_spl_'.@id)
 	}
-	
+
 }

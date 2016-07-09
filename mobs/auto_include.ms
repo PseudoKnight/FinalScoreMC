@@ -30,7 +30,7 @@ proc _spawn_mob(@mob, @qty, @loc, @owner = 'Notch') {
 			set_entity_persistence(@m, true);
 		} catch(BadEntityException @ex) {
 			array_remove(@mobs, @i);
-			console('Failed to spawn mob @ '.@loc);
+			console('Failed to spawn mob @ '.@loc, false);
 		}
 	}
 	if(array_index_exists(@mob, 'explode')) {

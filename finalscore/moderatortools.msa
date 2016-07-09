@@ -220,7 +220,7 @@
 	_store_pdata($player, @pdata)
 	if(ponline($player), pkick($player, if(@message, @message, 'Banned. Appeal at FinalScoreMC.com')))
 	msg($player.' is now banned.')
-	console(player().' banned '.$player.'.'.if(@message, ' (Reason: "'.@message.'")'))
+	console(player().' banned '.$player.'.'.if(@message, ' (Reason: "'.@message.'")'), false);
 <<<
 
 *:/unban [$player] = >>>
@@ -231,7 +231,7 @@
 	array_remove(@pdata, 'ban')
 	_store_pdata($player, @pdata)
 	msg($player.' is now unbanned.')
-	console(player().' unbanned '.$player)
+	console(player().' unbanned '.$player, false);
 <<<
 
 *:/kick [$player] [$='Kicked.'] = >>>
@@ -239,7 +239,7 @@
 	if(!has_permission('group.moderator'), die('You do not have permission.'))
 	@player = _find_player($player);
 	pkick(@player, $)
-	console(player().' kicked '.@player.'. (Reason: "'.$.'")')
+	console(player().' kicked '.@player.'. (Reason: "'.$.'")', false);
 <<<
 
 /clearchat = >>>
@@ -284,7 +284,7 @@
 		tmsg(@player, color('a').player().' ran this command for you:')
 		tmsg(@player, color('6').@cmd)
 	}
-	console('\''.@cmd.'\' was run on '.@player)
+	console('\''.@cmd.'\' was run on '.@player, false);
 	scriptas(@player,
 		if(!call_alias(@cmd)) {
 			sudo(@cmd)

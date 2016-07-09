@@ -397,7 +397,7 @@ proc _pvp_end_match(@id, @winners) {
 		}
 
 	} catch(Exception @ex) {
-		console(@ex);
+		console(@ex, false);
 	}
 
 	try {
@@ -429,7 +429,7 @@ proc _pvp_end_match(@id, @winners) {
 		clear_task(@pvp['interval'])
 
 	} catch(Exception @ex) {
-		console(@ex);
+		console(@ex, false);
 		return();
 	}
 
@@ -457,7 +457,7 @@ proc _pvp_end_match(@id, @winners) {
 					_clear_peffects(@player);
 				}
 			} catch(Exception @ex) {
-				console(@ex);
+				console(@ex, false);
 			}
 		}
 		foreach(@bind in @pvp['binds']) {

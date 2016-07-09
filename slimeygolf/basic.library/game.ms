@@ -23,7 +23,7 @@ proc _start_game(@course, @loc) {
 	}
 
 	if(array_size(@golf['players']) == 0) {
-		console('No players in SlimeyGolf, removing scoreboard...');
+		console('No players in SlimeyGolf, removing scoreboard...', false);
 		remove_scoreboard(@course);
 		_remove_activity('golf'.@course);
 		die('No players in "slimeygolf" region.');
@@ -337,7 +337,7 @@ proc _start_game(@course, @loc) {
 				_remove_player(@player, @golf);
 				_remove_ball(@ball['id']);
 				if(array_size(@golf['players']) == 0) {
-					console('Last player left SlimeyGolf, stopping.');
+					console('Last player left SlimeyGolf, stopping.', false);
 					unbind(@course);
 					unbind(@course.'_target');
 					if(array_contains(get_scoreboards(), @course)) {
@@ -351,7 +351,7 @@ proc _start_game(@course, @loc) {
 
 		}
 		if(@count == 0) {
-			console('No players left, stopping SlimeyGolf.');
+			console('No players left, stopping SlimeyGolf.', false);
 			foreach(@player in array_keys(@golf['players'])) {
 				_remove_player(@player, @golf);
 			}

@@ -382,7 +382,7 @@
 
 		case 'hollow':
 		case 'outline':
-			console('Hollow and outline modes for /fill are not yet supported.')
+			console('Hollow and outline modes for /fill are not yet supported.', false);
 		}
 	}
 <<<

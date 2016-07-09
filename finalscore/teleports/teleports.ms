@@ -41,7 +41,7 @@ bind(player_teleport, null, null, @event) {
 					});
 				} catch(Exception @ex) {
 					msg('Failed to teleport your horse with you. The chunk may have unloaded too quickly.');
-					console('Failed to teleport horse.');
+					console('Failed to teleport horse.', false);
 				}
 			});
 			die();

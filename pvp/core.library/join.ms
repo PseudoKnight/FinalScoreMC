@@ -40,7 +40,7 @@ proc _pvp_join(@id){
 		@msg[] = array('&a[START]', '/pvp start '.@id);
 	}
 	_click_tell(all_players('custom'), @msg);
-	console(player().' joined '.@id);
+	console(player().' joined '.@id, false);
 
 	include('player.ms');
 	if(@pvp['running'] == 1 || @pvp['running'] == 2) {

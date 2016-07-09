@@ -57,7 +57,7 @@ register_command('timer', array(
 					if(array_contains(sk_current_regions(@player), @id)) {
 						if(!array_index_exists(@timers, @player)) {
 							console('[Timer] ERROR: Failed to find player in array:', false);
-							console('[Timer] '.@timers);
+							console('[Timer] '.@timers, false);
 							die();
 						}
 						@time = integer(round((time() - @timers[@player][1]) / 1000));
@@ -141,7 +141,7 @@ register_command('timer', array(
 			play_sound(ploc(@player), array('sound': 'ORB_PICKUP'), @player);
 
 			tmsg(@player, 'You achieved a time of '.color('bold').@time.color('r').' seconds.');
-			console(@player.' achieved a time of '.@time.' at '.@id);
+			console(@player.' achieved a time of '.@time.' at '.@id, false);
 			set_plevel(@player, integer(@time));
 
 			# PERSONAL TIME

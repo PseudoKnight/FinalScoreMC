@@ -38,8 +38,8 @@ proc _get_shop(@loc) {
 	if(@currentName != @owner) {
 		@owner = @pdata['name'];
 		if(length(@owner) > 15) {
-			console('Cannot convert shop owner from '.@sign[3].' to '.@owner.' due to length.');
-			console('Location: '.@loc);
+			console('Cannot convert shop owner from '.@sign[3].' to '.@owner.' due to length.', false);
+			console('Location: '.@loc, false);
 			return(null);
 		}
 		@sign[3] = @pdata['name'];

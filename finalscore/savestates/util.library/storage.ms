@@ -1,7 +1,7 @@
 proc _get_pstate(@player, @state) {
 	@pdata = _pdata(@player);
 	if(!array_index_exists(@pdata, @state)) {
-		console('WARNING: No survival state for '.@player.'.');
+		console('WARNING: No survival state for '.@player.'.', false);
 		return();
 	}
 	@pstate = @pdata[@state];
@@ -9,10 +9,10 @@ proc _get_pstate(@player, @state) {
 	try {
 		deserialize_pinv(@player, array_get(@pstate, 'inv', ''));
 	} catch(Exception @ex) {
-		console('WARNING: Failed to load survival inventory for '.@player.'.');
-		console(@ex['message']);
+		console('WARNING: Failed to load survival inventory for '.@player.'.', false);
+		console(@ex['message'], false);
 		if(array_index_exists(@pdata, 'inv')) {
-			console(@pstate['inv']);
+			console(@pstate['inv'], false);
 		}
 		_clear_pinv(@player);
 	}
@@ -20,10 +20,10 @@ proc _get_pstate(@player, @state) {
 	try {
 		deserialize_penderchest(@player, array_get(@pstate, 'ender', ''));
 	} catch(Exception @ex) {
-		console('WARNING: Failed to load survival enderchest for '.@player.'.');
-		console(@ex['message']);
+		console('WARNING: Failed to load survival enderchest for '.@player.'.', false);
+		console(@ex['message'], false);
 		if(array_index_exists(@pdata, 'ender')) {
-			console(@pstate['inv']);
+			console(@pstate['inv'], false);
 		}
 		@inv = array();
 		array_resize(@inv, 27);
@@ -37,11 +37,12 @@ proc _get_pstate(@player, @state) {
 			set_pbed_location(@player, get_spawn(pworld(@player)));
 		}
 	} catch(Exception @ex) {
-		console('WARNING: Failed to load bed location for '.@player.'.');
-		console(@ex['message']);
+		console('WARNING: Failed to load bed location for '.@player.'.', false);
+		console(@ex['message'], false);
 	}
 
 	try {
+		// TODO: Figure out how this didn't clear some golden hearts from custom potions
 		foreach(@effect in get_peffect(@player)) {
 			set_peffect(@player, @effect['id'], 0, 0);
 		}
@@ -49,8 +50,8 @@ proc _get_pstate(@player, @state) {
 			set_peffect(@player, @effect['id'], @effect['strength'], @effect['seconds']);
 		}
 	} catch(Exception @ex) {
-		console('WARNING: Failed to load effects for '.@player'.');
-		console(@ex['message']);
+		console('WARNING: Failed to load effects for '.@player'.', false);
+		console(@ex['message'], false);
 	}
 
 	try {
@@ -60,8 +61,8 @@ proc _get_pstate(@player, @state) {
 		set_ptexp(@player, array_get(@pstate, 'texp', 0));
 		set_ponfire(@player, array_get(@pstate, 'fire', 0));
 	} catch(Exception @ex) {
-		console('WARNING: Failed to load player state for '.@player.'.');
-		console(@ex['message']);
+		console('WARNING: Failed to load player state for '.@player.'.', false);
+		console(@ex['message'], false);
 	}
 }
 

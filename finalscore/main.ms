@@ -96,7 +96,7 @@ bind(player_login, null, null, @event) {
 			}
 		} else {
 			array_remove(@pdata, 'ban');
-			console('Ban on '.@event['player'].' expired.');
+			console('Ban on '.@event['player'].' expired.', false);
 			@update = true;
 		}
 	}
@@ -146,7 +146,7 @@ bind(player_join, null, null, @event) {
 
 	set_timeout(250, closure(@loc = ploc(), @player = player()){
 		if(!ponline(@player)) {
-			console('ERROR: Player was not online 250ms after joining.');
+			console('ERROR: Player was not online 250ms after joining.', false);
 			die();
 		}
 
@@ -467,7 +467,7 @@ bind(block_dispense, null, array('type': 'DISPENSER'), @event) {
 						try {
 							set_inventory_item(@event['location'], @i, @item);
 						} catch(CastException @ex) {
-							console('Could not refill dispenser at '. @event['location']);
+							console('Could not refill dispenser at '. @event['location'], false);
 						}
 					});
 					break();
@@ -547,7 +547,7 @@ bind(block_break, null, array('type': 56), @event) {
 		if(@report) {
 			@msg = color('c').'[!] '._colorname().player().color('r').' found diamonds';
 			broadcast(@msg, 'group.moderator');
-			console(@msg);
+			console(@msg, false);
 		}
 	});
 }

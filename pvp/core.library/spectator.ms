@@ -76,7 +76,7 @@ proc _remove_spectator(@player, @pvp) {
 					set_ploc(@player, @pvp['arena']['lobby']);
 				}
 			} else {
-				console('WARNING: Spectator somehow dead');
+				console('WARNING: Spectator somehow dead', false);
 				respawn(@player);
 			}
 			if(array_index_exists(@pvp['arena'], 'resourcepack')) {
@@ -87,6 +87,6 @@ proc _remove_spectator(@player, @pvp) {
 		}
 	} catch(Exception @ex) {
 		// not sure why this happens, but let's log it and continue
-		console(@ex);
+		console(@ex, false);
 	}
 }

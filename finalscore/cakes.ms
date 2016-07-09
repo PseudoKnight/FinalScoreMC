@@ -59,7 +59,7 @@ bind(player_interact, null, array('block': 92), @event) {
 		if(!has_permission('group.builder')) {
 			_acc_add(player(), @thiscake['coins']);
 			msg(color('gold').'+ '.@thiscake['coins'].' coins');
-			console(player().' got '.@thiscake['coins'].' coins at '.@id);
+			console(player().' got '.@thiscake['coins'].' coins at '.@id, false);
 		}
 
 		if(split(':', get_block_at(@event['location']))[1] > 0) {
