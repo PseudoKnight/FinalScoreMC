@@ -28,9 +28,13 @@ register_command('timer', array(
 
 			set_phunger(@player, 20);
 			set_psaturation(@player, 5);
-			set_pinv(@player, array(0: array('type': 39, 'meta': array(
-				'display': color('green').color('bold').'Restart Button'
-			))));
+			@restartButton = associative_array(0: associative_array(
+				'type': 371,
+				'meta': array(
+					'display': color('green').color('bold').'Restart Button'
+				),
+			));
+			set_pinv(@player, @restartButton);
 
 			if(array_index_exists(@timers, @player)) {
 				clear_task(@timers[@player][2]);
@@ -102,7 +106,7 @@ register_command('timer', array(
 					if(ponline(@player) && pworld(@player) === 'custom') {
 						set_plevel(@player, 0);
 						set_pexp(@player, 0);
-						ptake_item(@player, 39, 1);
+						ptake_item(@player, 371, 1);
 					}
 					clear_task();
 					_remove_activity(@player.'timer');
@@ -110,17 +114,20 @@ register_command('timer', array(
 			});
 
 			if(!has_bind(@player.'reset')) {
-				bind(player_interact, array('id': @player.'reset'), array('player': @player, 'item': 39), @e, @startLoc) {
+				bind(player_interact, array('id': @player.'reset'), array('player': @player, 'item': 371), @e, @startLoc) {
 					cancel();
 					set_ploc(@startLoc);
 				}
 			}
 			if(!has_bind(@player.'timerdeath')) {
-				bind(player_death, array('id': @player.'timerdeath'), array('player': @player), @e) {
+				bind(player_death, array('id': @player.'timerdeath'), array('player': @player), @e, @restartButton) {
 					if(!_is_survival_world(pworld())) {
 						modify_event('drops', array());
 						set_timeout(500, closure(){
 							respawn();
+							set_timeout(50, closure(){
+								set_pinv(@restartButton);
+							});
 						});
 					}
 				}
@@ -134,7 +141,7 @@ register_command('timer', array(
 			@time = round((time() - @timers[@player][1]) / 1000, 1);
 			unbind(@player.'reset');
 			unbind(@player.'timerdeath');
-			ptake_item(@player, 39, 1);
+			ptake_item(@player, 371, 1);
 			clear_task(@timers[@player][2]);
 			array_remove(@timers, @player);
 			_remove_activity(@player.'timer');
