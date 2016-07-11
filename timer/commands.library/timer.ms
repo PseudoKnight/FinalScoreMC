@@ -196,6 +196,10 @@ if(@args[0] === 'start') {
             array_remove(@times['top'], 10);
         }
         store_value('times', @id, @times);
+
+        // Recalculate average placement
+        include('recalculateoverall.ms');
+
     } else {
         launch_firework(@loc, array(
             'strength': 0,

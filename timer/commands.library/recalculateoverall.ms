@@ -1,0 +1,25 @@
+x_new_thread('times', closure(){
+    @times = get_values('times');
+    @players = array();
+    foreach(@time in @times) {
+        if(is_array(@time) && array_index_exists(@time, 'top')) {
+            foreach(@i: @t in @time['top']) {
+                if(!array_index_exists(@players, @t[0])) {
+                    @players[@t[0]] = array('total': 10 - @i, 'placement': @i + 1, 'count': 1);
+                } else {
+                    @players[@t[0]]['total'] += (10 - @i);
+                    @players[@t[0]]['placement'] += (@i + 1);
+                    @players[@t[0]]['count']++;
+                }
+            }
+        }
+    }
+    @averages = array();
+    foreach(@p: @score in @players) {
+        @averages[] = array(@p, @score['total'], round(@score['placement'] / @score['count'], 1));
+    }
+    array_sort(@averages, closure(@left, @right){
+        return(@left[1] < @right[1]);
+    });
+    store_value('times', @averages[0..9]);
+});

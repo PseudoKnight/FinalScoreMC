@@ -8,7 +8,7 @@ if(is_null(@courses)) {
 }
 @count = 0;
 foreach(@key: @time in @courses) {
-    if(is_array(@time)) {
+    if(is_array(@time) && array_index_exists(@time, 'top')) {
         foreach(@i: @t in @time['top']) {
             if(@t[0] == $player) {
                 msg('Removing '.$player.' from top ten in '.split('.', @key)[1]);

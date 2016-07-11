@@ -48,6 +48,12 @@
 		}
 		include('commands.library/recalculate.ms');
 
+	case 'recalculateoverall':
+		if(!has_permission('command.recalculatetimes')) {
+			die('You do not have permission to recalculate average placements.');
+		}
+		include('commands.library/recalculateoverall.ms');
+
 	default:
 
 		@uuid = _get_uuid(to_lower($arg));
