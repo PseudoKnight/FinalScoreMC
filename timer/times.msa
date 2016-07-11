@@ -1,5 +1,6 @@
 *:/times [$arg='usage'] [$id] [$player] = >>>
-	if(!(@id = $id)) {
+	@id = $id;
+	if(!@id) {
 		@regions = sk_current_regions();
 		if(!@regions) {
 			die('You are not standing in a course.');
@@ -15,126 +16,37 @@
 	case 'top':
 	case 'top10':
 
-		@times = get_value('times', @id)
-		if(!@times || !array_index_exists(@times, 'top')) {
-			die('No top times for '.to_upper(@id).'.')
-		}
-		msg(colorize('&e&m|------------------&e&l[ TOP TIMES - '.to_upper(@id).' ]&e&m---|'));
-		for(@i = 0, @i < array_size(@times['top']), @i++) {
-			@time = '';
-			if(@times['top'][@i][1] >= 60) {
-				@time = simple_date('m\u0027m\u0027 ss.S', integer(@times['top'][@i][1] * 1000));
-			} else {
-				@time = simple_date('s.S', integer(@times['top'][@i][1] * 1000));
-			}
-			@time = substr(@time, 0, length(@time) - 2).'s';
-			msg(colorize(' '.if(@i < 9, '&80').'&7'.(@i + 1).'&a [ '.@time.' ] &r'.@times['top'][@i][0]));
-		}
-		msg(colorize('&e&m|----------------------------------------------------|'));
+		include('commands.library/top.ms');
 
 	case 'me':
 
-		@time = get_value('times.'.@id, puuid(player(), true));
-		if(!@time) {
-			die('You do not have a time for '.to_upper(@id).'.')
-		}
-		msg('Your best time for '.color('gold').to_upper(@id).color('r').' is '.color('green').@time.' seconds.')
+		include('commands.library/me.ms');
 
 	case 'avg':
 
-		@times = get_values('times', @id);
-		@total = 0;
-		@alltimes = array();
-		foreach(@time in @times) {
-			if(is_array(@time)) {
-				continue();
-			}
-			@total += @time;
-			@alltimes[] = @time;
-		}
-		array_sort(@alltimes, 'NUMERIC');
-		@median = array_size(@alltimes) / 2;
-		if(array_size(@alltimes) % 2 > 0) {
-			@median = (@alltimes[floor(@median)] + @alltimes[ceil(@median)]) / 2;
-		} else {
-			@median = @alltimes[@median];
-		}
-		@avg = round(@total / (array_size(@times) - 1), 1);
-		msg('Median time: '.color('green').@median.color('r').' | Average time: '.color('green').@avg);
+		include('commands.library/avg.ms');
 
 	case 'reset':
 
 		if(!has_permission('command.resettimes')) {
-			die('You do not have permission to reset stats for this course.')
+		    die('You do not have permission to reset stats for this course.')
 		}
-		if(!has_value('times', @id)) {
-			die('There are no stats to reset for '.to_upper(@id).'.')
-		}
-		@times = get_values('times', @id)
-		foreach(@key: @time in @times) {
-			clear_value(@key)
-		}
-		msg('Reset stats for '.to_upper(@id).'.')
+		include('commands.library/reset.ms');
 
 	case 'resetplayer':
+
 		if(!has_permission('command.resettimes')) {
 			die('You do not have permission to reset stats for this course.')
 		}
-		if(!$player) {
-			die('This requires a player.');
-		}
-		@puuid = _get_uuid(to_lower($player));
-		@courses = get_values('times'.if(@id !== 'all', '.'.@id))
-		if(is_null(@courses)) {
-			die('Unknown arena.');
-		}
-		@count = 0;
-		foreach(@key: @time in @courses) {
-			if(is_array(@time)) {
-				foreach(@i: @t in @time['top']) {
-					if(@t[0] == $player) {
-						msg('Removing '.$player.' from top ten in '.split('.', @key)[1]);
-						array_remove(@time['top'], @i);
-						store_value(@key, @time);
-						break();
-					}
-				}
-			} else {
-				try {
-					@uuid = split('.', @key)[2];
-				} catch(IndexOverflowException @ex) {
-					// not a player time
-					continue();
-				}
-				if(@uuid == @puuid) {
-					msg('Removing '.$player.'\'s time in '.split('.', @key)[1]);
-					clear_value(@key);
-					@count += 1;
-				}
-			}
-		}
-		msg('Finished resetting '.$player.'\'s times in '.@count.' courses.');
+		include('commands.library/resetplayer.ms');
 
 	case 'recalculate':
 	case 'recalc':
+
 		if(!has_permission('command.recalculatetimes')) {
 			die('You do not have permission to recalculate times for this course.')
 		}
-		@times = get_values('times', @id);
-		array_remove(@times, 'times.'.@id);
-		@array = array();
-		foreach(@key: @time in @times) {
-			@array[] = array(split('.', @key)[2], @time);
-		}
-		array_sort(@array, closure(@left, @right){
-			return(@left[1] > @right[1]);
-		});
-		@max = min(10, array_size(@array));
-		for(@i = 0, @i < @max, @i++) {
-			@array[@i][0] = get_value('uuids', @array[@i][0])['name'];
-		}
-		store_value('times', @id, associative_array('top': @array[cslice(0, @max - 1)]));
-		msg('Finished recalculating times.');
+		include('commands.library/recalculate.ms');
 
 	default:
 
