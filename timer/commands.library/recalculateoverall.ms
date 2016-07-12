@@ -1,5 +1,5 @@
+@times = get_values('times');
 x_new_thread('times', closure(){
-    @times = get_values('times');
     @players = array();
     foreach(@time in @times) {
         if(is_array(@time) && array_index_exists(@time, 'top')) {
@@ -21,5 +21,7 @@ x_new_thread('times', closure(){
     array_sort(@averages, closure(@left, @right){
         return(@left[1] < @right[1]);
     });
-    store_value('times', @averages[0..9]);
+    x_run_on_main_thread_later(closure(){
+        store_value('times', @averages[0..9]);
+    });
 });
