@@ -1,8 +1,9 @@
 *:'//up' [$] = call_alias('/up '.$);
-*:/up [$] = >>>
-    if(sk_can_build(_relative(ploc(), 'up'))) {
-        run('/up '.$);
+*:/up [$amount=0] = >>>
+    @loc = _relative(ploc(), 'up', integer($amount));
+    if(@loc['y'] > 255 || sk_can_build(@loc)) {
+        run('/up '.$amount);
     } else {
-        die(color('red').'You are not allowed to build here.');
+        die(color('red').'You are not allowed to build there.');
     }
 <<<
