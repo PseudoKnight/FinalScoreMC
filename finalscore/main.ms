@@ -653,3 +653,21 @@ bind(note_play, null, null, @event) {
 	@event['location']['z'] += 0.5;
 	play_effect(_relative(@event['location'], 'up'), 'note');
 }
+
+bind(block_place, null, array('type': 29), @e) {
+	@pitch = pfacing()[1];
+	if(@pitch > 60) {
+		modify_event('data', 1);
+	} else if(@pitch < -46.5) {
+		modify_event('data', 0);
+	}
+}
+
+bind(block_place, null, array('type': 33), @e) {
+	@pitch = pfacing()[1];
+	if(@pitch > 60) {
+		modify_event('data', 1);
+	} else if(@pitch < -46.5) {
+		modify_event('data', 0);
+	}
+}
