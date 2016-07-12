@@ -465,7 +465,7 @@ bind(entity_damage, array('id': @id.'EntityDamage', 'priority': 'LOWEST'), array
 				} else {
 					try {
 						@damager = get_mob_owner(@e['shooter']);
-					} catch(UntameableMobException @ex) {
+					} catch(Exception @ex) {
 						die();
 					}
 				}
