@@ -45,21 +45,34 @@ proc _fw_loc(@height = 0, @minrange = false) {
 
 proc _fw_mobs(@mob = 'random', @num = 'random') {
 	if(@mob == 'random') {
-		@mobs = array('creeper', 'zombie', 'silverfish', 'slime', 'magmacube', 'pigzombie:400', 'enderman', 'wolf:angry', 'giant', 'shulker')
+		@mobs = array('creeper', 'zombie', 'silverfish', 'slime', 'magmacube', 'pigzombie:400', 'shulker', 'ghast', 'blaze', 'zombie:husk', 'polarbear')
 		@mob = @mobs[rand(array_size(@mobs))]
 	}
+	@height = 0;
 	if(@num == 'random') {
-		@num = rand(25, 50)
+		if(@mob == 'ghast') {
+			@num = rand(3, 9);
+			@height = 24;
+		} else if(@mob == 'blaze') {
+			@num = rand(10, 20);
+			@height = 18;
+		} else if(@mob == 'shulker') {
+			@num = rand(15, 25);
+		} else {
+			@num = rand(25, 50);
+		}
 	}
 	@entities = array()
 	for(@i = 0, @i < @num, @i++) {
-		if(@loc = _fw_loc(0, true)) {
+		if(@loc = _fw_loc(@height, true)) {
 			@m = spawn_mob(@mob, 1, @loc)[0];
 			array_push(@entities, @m);
 			if(@mob == 'wolf:angry') {
 				if(function_exists('set_mob_target')) {
 					set_mob_target(@m, puuid(_fw_leader()));
 				}
+			} else if(@mob == 'polarbear' && !rand(8)) {
+				set_mob_age(@m, -3000);
 			}
 		}
 	}
@@ -150,10 +163,17 @@ proc _fw_randompotion(@potentials, @secs = 20) {
 		'invis': array(14, 1),
 		'blind': array(15, 1)
 	)
-	@potion = array_rand(@potentials, 1, false)
+	@potion = array_rand(@potentials, 1, false)[0];
+	if(@potion == 'blind') {
+		@region = sk_region_info('frogware', 'custom')[0];
+		@loc = @region[1];
+		@loc[0] += 18;
+		@loc[2] += 18;
+		play_effect(@loc, 'RECORD_PLAY', array('id': if(rand(2), 2256, 2266), 'radius': 32));
+	}
 	foreach(@p in all_players('custom')) {
 		if(_fw_player(@p)) {
-			set_peffect(@p, @potions[@potion[0]][0], @potions[@potion[0]][1], @secs)
+			set_peffect(@p, @potions[@potion][0], @potions[@potion][1], @secs)
 		}
 	}
 }
@@ -174,17 +194,33 @@ proc _iterate_cuboid(@b1, @b2, @block, @percent) {
 	if(is_null(@blocks)) {
 		@blocks = array();
 	}
-	for(@x = min(@b1[0], @b2[0]), @x <= max(@b1[0], @b2[0]), @x++) {
-		for(@y = min(@b1[1], @b2[1]), @y <= max(@b1[1], @b2[1]), @y++) {
-			for(@z = min(@b1[2], @b2[2]), @z <= max(@b1[2], @b2[2]), @z++) {
+
+	@region = sk_region_info('frogware', 'custom')[0];
+	@minX = max(@region[1][0], min(@b1[0], @b2[0]));
+	@maxX = min(@region[0][0], max(@b1[0], @b2[0]));
+	@minY = min(@b1[1], @b2[1]);
+	@maxY = max(@b1[1], @b2[1]);
+	@minZ = max(@region[1][2], min(@b1[2], @b2[2]));
+	@maxZ = min(@region[0][2], max(@b1[2], @b2[2]));
+
+	@count = 0;
+	for(@x = @minX, @x <= @maxX, @x++) {
+		for(@y = @minY, @y <= @maxY, @y++) {
+			for(@z = @minZ, @z <= @maxZ, @z++) {
 				if(rand(100) < @percent) {
 					set_block_at(@x, @y, @z, @block, 'custom');
 					@blocks[] = array(@x, @y, @z, 'custom');
 				}
+				if(@count++ > 3000) {
+					console('Warning: _iterate_cuboid logic potentially caused infinite loop.');
+					break(3);
+				}
 			}
 		}
 	}
-	export('frogware.blocks', @blocks);
+	if(@block != 0) {
+		export('frogware.blocks', @blocks);
+	}
 }
 
 proc _fw_clear_blocks(@height = 1) {

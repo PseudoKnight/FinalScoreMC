@@ -29,7 +29,7 @@ proc _fw_endgame(@winners) {
 			} else {
 				_fw_changeteam(@p, 'losers');
 			}
-			_clear_pinv(@p);
+			_equip_park(@p);
 			set_pmode(@p, 'ADVENTURE');
 		}
 	}
@@ -82,6 +82,7 @@ proc _fw_startround(@secs = 12) {
 					foreach(@team in get_teams('fw')) {
 						if(@team['name'] === 'winners'
 						&& array_contains(@team['players'], @p)) {
+							play_sound(ploc(@p), associative_array('sound': 'VILLAGER_YES'), @p);
 							set_pscore('score', @p, get_pscore('score', @p, 'fw') + 1, 'fw')
 							_fw_changeteam(@p, 'losers')
 							@count++
@@ -93,10 +94,11 @@ proc _fw_startround(@secs = 12) {
 					} else if(@score > @highscore) {
 						@highscore = @score
 					}
+					_clear_pinv(@p);
 				} else {
 					set_pscoreboard(@p)
 					reset_all_pscores(@p, 'fw')
-					_clear_pinv(@p)
+					_equip_park(@p);
 				}
 			}
 		}
@@ -118,7 +120,11 @@ proc _fw_startround(@secs = 12) {
 			if(@total == 1 && @task === 'pvp', @task = @tasks[rand(array_size(@tasks))])
 			queue_delay(1000, 'fw2')
 			queue_push(closure(){
-				play_effect(@loc, 'RECORD_PLAY', array('id': rand(2256, 2268), 'radius': 32));
+				@record = rand(2257, 2267);
+				if(@record == 2266) {
+					@record++;
+				}
+				play_effect(@loc, 'RECORD_PLAY', array('id': @record, 'radius': 32));
 				_fw_task(@task, 'start', @secs)
 			}, 'fw2')
 			for(@i = @secs, @i >= 0, @i--) {

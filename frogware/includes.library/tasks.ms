@@ -59,7 +59,7 @@ proc _fw_task(@task, @state, @secs) {
 
 	case 'keepaway':
 		if(@state == 'start') {
-			_fw_msg('Look out!')
+			_fw_msg('Don\'t take damage!')
 			if(!rand(4)) {
 				_fw_randompotion(array('speed', 'jump', 'blind'))
 			}
@@ -68,17 +68,18 @@ proc _fw_task(@task, @state, @secs) {
 				_fw_mobs('random', 25);
 			}
 			bind(entity_damage, array('id': 'fwtaskdamage'), array('type': 'PLAYER', 'world': 'custom'), @e) {
-				if((@e['cause'] === 'ENTITY_ATTACK' || @e['cause'] === 'ENTITY_EXPLOSION')
-				&& _fw_player(@e['player'])
-				&& !ponline(@e['damager'])) {
-					_fw_changeteam(@e['player'], 'losers')
+				if(_fw_player(@e['player'])
+				&& (!array_index_exists(@e, 'damager') || !ponline(@e['damager']))) {
+					if(_fw_changeteam(@e['player'], 'losers')) {
+						play_sound(ploc(@e['player']), array('sound': 'zombie_unfect'), @e['player']);
+					}
 				}
 			}
 			if(rand(2)) {
 				bind(target_player, array('id': 'fwtargetplayer'), null, @e) {
 					if(rand(2)) {
 						@leader = _fw_leader();
-						if(_fw_player(@e['player']) && @e['player'] != @leader) {
+						if(@leader && _fw_player(@e['player']) && @e['player'] != @leader) {
 							modify_event('player', @leader);
 						}
 					}
@@ -90,9 +91,6 @@ proc _fw_task(@task, @state, @secs) {
 			foreach(@p in all_players('custom')) {
 				if(_fw_player(@p)) {
 					_clear_peffects(@p)
-					if(array_contains(get_teams('fw')[1]['players'], @p)) {
-						play_sound(ploc(@p), array('sound': 'zombie_metal'), @p)
-					}
 				}
 			}
 			_remove_region_entities('frogware')
@@ -260,7 +258,9 @@ proc _fw_task(@task, @state, @secs) {
 				}, 'fw3');
 				bind(entity_damage, array('id': 'fwfall'), array('type': 'PLAYER', 'cause': 'FALL'), @e) {
 					if(_fw_player(@e['player'])) {
-						_fw_changeteam(@e['player'], 'losers');
+						if(_fw_changeteam(@e['player'], 'losers')) {
+							play_sound(ploc(@e['player']), array('sound': 'zombie_unfect'), @e['player']);
+						}
 					}
 				}
 			}
@@ -403,8 +403,9 @@ proc _fw_task(@task, @state, @secs) {
 						if(_fw_changeteam(@damager, 'winners')) {
 							play_sound(ploc(), array('sound': 'zombie_metal'), player())
 						}
-						_fw_changeteam(@e['player'], 'losers')
-						play_sound(ploc(@e['player']), array('sound': 'zombie_unfect'), @e['player'])
+						if(_fw_changeteam(@e['player'], 'losers')) {
+							play_sound(ploc(@e['player']), array('sound': 'zombie_unfect'), @e['player']);
+						}
 					}
 				}
 			}
@@ -442,8 +443,9 @@ proc _fw_task(@task, @state, @secs) {
 				'10:0', 3)
 			bind(entity_damage, array('id': 'fwdamage2'), array('type': 'PLAYER', 'cause': 'LAVA', 'world': 'custom'), @e) {
 				if(_fw_player(@e['player'])) {
-					_fw_changeteam(@e['player'], 'losers')
-					play_sound(ploc(@e['player']), array('sound': 'zombie_unfect'), @e['player'])
+					if(_fw_changeteam(@e['player'], 'losers')) {
+						play_sound(ploc(@e['player']), array('sound': 'zombie_unfect'), @e['player']);
+					}
 				}
 			}
 			_fw_set_winners();
@@ -453,9 +455,6 @@ proc _fw_task(@task, @state, @secs) {
 			foreach(@p in all_players('custom')) {
 				if(_fw_player(@p)) {
 					_clear_peffects(@p)
-					if(array_contains(get_teams('fw')[1]['players'], @p)) {
-						play_sound(ploc(@p), array('sound': 'zombie_metal'), @p)
-					}
 				}
 			}
 			unbind('fwdamage2');
