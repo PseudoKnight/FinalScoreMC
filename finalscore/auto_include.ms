@@ -151,53 +151,54 @@ proc _item_meta(@item, @index) {
 }
 
 /*
-	Removes unnecessary indexes in item arrays for compact storage
-*/
-proc _minify_item(@item) {
-	array_remove(@item, 'type');
-	array_remove(@item, 'enchants');
-	if(@item['data'] == 0) {
-		array_remove(@item, 'data');
-	}
-	if(@item['qty'] == 1) {
-		array_remove(@item, 'qty');
-	}
-	if(is_null(@item['meta'])) {
-		array_remove(@item, 'meta');
-	} else {
-		if(array_size(@item['meta']['enchants']) == 0) {
-			array_remove(@item['meta'], 'enchants');
-		}
-		if(is_null(@item['meta']['display'])) {
-			array_remove(@item['meta'], 'display');
-		}
-		if(is_null(@item['meta']['lore'])) {
-			array_remove(@item['meta'], 'lore');
-		}
-		if(array_index_exists(@item['meta'], 'firework')
-		&& is_null(@item['meta']['firework'])) {
-			array_remove(@item['meta'], 'firework');
-		}
-		if(@item['meta']['repair'] == 0) {
-			array_remove(@item['meta'], 'repair');
-		}
-		if(array_size(@item['meta']['flags']) == 0) {
-			array_remove(@item['meta'], 'flags');
-		}
-	}
-}
-
-/*
-	Compacts all item arrays in an inventory array
+	Compacts all an inventory array by removing unnecessary keys in item arrays
 */
 proc _minify_inv(@inv, @keepnulls = false) {
-	foreach(@slot: @item in @inv) {
-		if(@item == null) {
-			if(!@keepnulls) {
-				array_remove(@inv, @slot);
-			}
+	proc _minify_item(@item) {
+		array_remove(@item, 'type');
+		array_remove(@item, 'enchants');
+		if(@item['data'] == 0) {
+			array_remove(@item, 'data');
+		}
+		if(@item['qty'] == 1) {
+			array_remove(@item, 'qty');
+		}
+		if(is_null(@item['meta'])) {
+			array_remove(@item, 'meta');
 		} else {
-			_minify_item(@item);
+			if(array_size(@item['meta']['enchants']) == 0) {
+				array_remove(@item['meta'], 'enchants');
+			}
+			if(is_null(@item['meta']['display'])) {
+				array_remove(@item['meta'], 'display');
+			}
+			if(is_null(@item['meta']['lore'])) {
+				array_remove(@item['meta'], 'lore');
+			}
+			if(array_index_exists(@item['meta'], 'firework')
+			&& is_null(@item['meta']['firework'])) {
+				array_remove(@item['meta'], 'firework');
+			}
+			if(@item['meta']['repair'] == 0) {
+				array_remove(@item['meta'], 'repair');
+			}
+			if(array_size(@item['meta']['flags']) == 0) {
+				array_remove(@item['meta'], 'flags');
+			}
+		}
+	}
+
+	if(array_index_exists(@inv, 'type')) {
+		_minify_item(@inv);
+	} else {
+		foreach(@slot: @item in @inv) {
+			if(@item == null) {
+				if(!@keepnulls) {
+					array_remove(@inv, @slot);
+				}
+			} else {
+				_minify_item(@item);
+			}
 		}
 	}
 }
@@ -483,22 +484,6 @@ proc _colorname(@player) {
 }
 
 /*
-	Refreshes the player colors on the tab list.
-	This needs to be done for all players when new players join
-	and for players that change scoreboards. (for 1.8.0)
-*/
-proc _refresh_tablist(@players) {
-	foreach(@p in @players) {
-		if(length(@p) > 14) {
-			# max tab list length is 16 chars including colors
-			set_list_name(@p, _colorname(@p).substr(@p, 0, 14));
-		} else {
-			set_list_name(@p, _colorname(@p).@p);
-		}
-	}
-}
-
-/*
 	Messsages every player within a WorldGuard region
 */
 proc _regionmsg(@region, @msg) {
@@ -668,13 +653,6 @@ proc _get_inventory_count(@loc, @item) {
 }
 
 /*
-	Returns the max distance on the x or z axis between two locations
-*/
-proc _horizontal_distance(@loc1, @loc2) {
-	return(max(sqrt((@loc1[0] - @loc2[0]) ** 2), sqrt((@loc1[2] - @loc2[2]) ** 2)))
-}
-
-/*
 	Returns the distance between two points
 	If @3d is false, returns the 2d distance with x,z
 */
@@ -692,27 +670,6 @@ proc _distance(@loc1, @loc2, @3d = true) {
 			return(sqrt(((@loc1[0] - @loc2[0]) ** 2) + ((@loc1[2] - @loc2[2]) ** 2)));
 		}
 	}
-}
-
-/*
-	Retrieves a player's mojang UUID from the mojang api, and returns the results
-	as an array that corresponds to the input array of player names.
-	@param players An array of players that will be checked.
-	@param closure The callback closure, which will be called once the
-	request finishes. It will be sent the array of returned values.
-*/
-proc _player_uuid(@players, @closure) {
-	@success = closure(@response){
-		@array = json_decode(@response['body']);
-		execute(@array, @closure);
-	};
-	@options = array(
-		'method': 'POST',
-		'headers': array('Content-Type': 'application/json'),
-		'params': json_encode(@players),
-		'success': @success,
-	);
-	http_request('https://api.mojang.com/profiles/minecraft', @options);
 }
 
 /*

@@ -276,7 +276,7 @@ proc _arena(@action, @id, @setting, @string) {
 					if(!@args[0], @cooldown = 60, @cooldown = @args[0])
 					if(!@args[1], @start = true, @start = @args[1])
 					@item = pinv(player(), null);
-					_minify_item(@item);
+					_minify_inv(@item);
 					array_push(@arena['itemspawn'], array(
 						'start': @start,
 						'cooldown': @cooldown,
