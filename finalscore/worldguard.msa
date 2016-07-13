@@ -187,10 +187,19 @@
 			if(abs(@p1['x'] - @p2['x']) * abs(@p1['z'] - @p2['z']) > 10000) {
 				die(color('GOLD').'Selection too large. (100m^2 limit) Ask staff if you need a larger region.');
 			}
+
+			if(pworld() == 'dev' && !has_permission('group.builder')
+			&& (!array_contains(sk_regions_at(@p1), 'plots') || !array_contains(sk_regions_at(@p2), 'plots'))) {
+				die(color('GOLD').'You may not expand your region outside of the "plots" region.');
+			}
+
 			sk_region_create(pworld(), @region.'-temp', array(@p1, @p2));
 			@regions = sk_region_intersect(pworld(), @region.'-temp');
 			sk_region_remove(pworld(), @region.'-temp');
 			foreach(@rg in @regions) {
+				if(@rg == 'plots') {
+					continue();
+				}
 				@owners = sk_region_owners(@rg, pworld());
 				if(!array_contains(@owners['players'], puuid())) {
 					die(color('GOLD').'This selection overlaps a region you do not own.');
