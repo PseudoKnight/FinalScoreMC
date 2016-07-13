@@ -65,7 +65,7 @@ proc _fw_mobs(@mob = 'random', @num = 'random') {
 	@entities = array()
 	for(@i = 0, @i < @num, @i++) {
 		if(@loc = _fw_loc(@height, true)) {
-			@m = spawn_mob(@mob, 1, @loc)[0];
+			@m = _spawn_mob(@mob, 1, @loc)[0];
 			array_push(@entities, @m);
 			if(@mob == 'wolf:angry') {
 				if(function_exists('set_mob_target')) {
@@ -169,7 +169,12 @@ proc _fw_randompotion(@potentials, @secs = 20) {
 		@loc = @region[1];
 		@loc[0] += 18;
 		@loc[2] += 18;
-		play_effect(@loc, 'RECORD_PLAY', array('id': if(rand(2), 2256, 2266), 'radius': 32));
+		queue_push(closure(){
+			play_effect(@loc, 'RECORD_PLAY', array('id': 0, 'radius': 32));
+		}, 'fw-music');
+		queue_push(closure(){
+			play_effect(@loc, 'RECORD_PLAY', array('id': if(rand(2), 2256, 2266), 'radius': 32));
+		}, 'fw-music');
 	}
 	foreach(@p in all_players('custom')) {
 		if(_fw_player(@p)) {
@@ -179,6 +184,9 @@ proc _fw_randompotion(@potentials, @secs = 20) {
 }
 
 proc _fw_msg(@msg) {
+	if(is_array(@msg)) {
+		@msg = array_rand(@msg, 1, false)[0];
+	}
 	foreach(@p in all_players('custom')) {
 		if(_fw_player(@p)) {
 			title_msg(@p, null, @msg, 0, 40, 20);

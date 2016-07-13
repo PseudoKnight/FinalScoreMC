@@ -16,7 +16,18 @@ proc _fw_startgame(@pts) {
 proc _fw_endgame(@winners) {
 	unbind('fwdamage')
 	sk_region_flag('custom', 'frogware', 'pvp', 'deny');
-	_fw_msg('Best frog'.if(array_size(@winners) > 1, 's').' in the house: '.array_implode(@winners, ' & '))
+	@messages = array(
+		'Best frog in the house: ',
+		'Best in show: ',
+		'BeWare this frog: ',
+		'All your base are belong to ',
+		'Be jelly of ',
+		'All hail, king of the frogs, ',
+		'Viletoad honors ',
+		'Achievement get: Beaten by ',
+		'Most hoppity: ',
+	)
+	_fw_msg(color('green').array_rand(@messages, 1, false)[0].array_implode(@winners, ' & '));
 	foreach(@p in all_players('custom')) {
 		if(_fw_player(@p)) {
 			if(array_contains(@winners, @p)) {

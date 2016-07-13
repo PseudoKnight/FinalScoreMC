@@ -2,7 +2,12 @@ proc _fw_task(@task, @state, @secs) {
 	switch(@task) {
 	case 'climb':
 		if(@state == 'start') {
-			_fw_msg('Climb.')
+			_fw_msg(array(
+				'Climb.',
+				'Get on up!',
+				'Parkour to the top!',
+				'JUMP JUMP JUMP',
+			));
 			if(!rand(4)) {
 				_fw_randompotion(array('speed', 'jump', 'blind'))
 			}
@@ -59,13 +64,21 @@ proc _fw_task(@task, @state, @secs) {
 
 	case 'keepaway':
 		if(@state == 'start') {
-			_fw_msg('Don\'t take damage!')
+			_fw_msg(array(
+				'Don\'t take damage!',
+				'Watch out!',
+				'Everything\'s out to get you!',
+				'Be safe.',
+			));
 			if(!rand(4)) {
 				_fw_randompotion(array('speed', 'jump', 'blind'))
 			}
 			_fw_mobs();
 			if(!rand(4)) {
 				_fw_mobs('random', 25);
+			}
+			foreach(@p in all_players()) {
+				set_ponfire(@p, 0);
 			}
 			bind(entity_damage, array('id': 'fwtaskdamage'), array('type': 'PLAYER', 'world': 'custom'), @e) {
 				if(_fw_player(@e['player'])
@@ -102,7 +115,13 @@ proc _fw_task(@task, @state, @secs) {
 
 	case 'harvest':
 		if(@state == 'start') {
-			_fw_msg('Bring in the harvest!')
+			_fw_msg(array(
+				'Bring in the harvest!',
+				'The farm life\'s for you.',
+				'Bring life from the bones of the fallen! *cough* I mean, get wheat.',
+				'Get what? Get wheat!',
+				'Plant some seeds. Grow them with bonemeal. Get some wheat.',
+			));
 			_fw_items(array('type': 351, 'data': 15, 'qty': 1), 100);
 			@region = sk_region_info('frogware', 'custom')[0]
 			_iterate_cuboid(array(@region[0][0], @region[1][1], @region[0][2], 'custom'),
@@ -131,7 +150,12 @@ proc _fw_task(@task, @state, @secs) {
 
 	case 'koth':
 		if(@state == 'start') {
-			_fw_msg('King of the Hill')
+			_fw_msg(array(
+				'King of the Hill',
+				'Be the Emerald King, Lord Frog Hill',
+				'This hill\'s only big enough for one of you.',
+				'The others are disrespecting your hill. Fight!',
+			))
 			if(!rand(4)) {
 				_fw_mobs()
 			}
@@ -202,7 +226,12 @@ proc _fw_task(@task, @state, @secs) {
 
 	case 'cake':
 		if(@state == 'start') {
-			_fw_msg('Let there be cake!')
+			_fw_msg(array(
+				'Let there be cake!',
+				'Tea party!',
+				'And now for the gluttony round.',
+				'I hope you like cake!',
+			));
 			if(!rand(4)) {
 				_fw_randompotion(array('speed'))
 			}
@@ -234,7 +263,11 @@ proc _fw_task(@task, @state, @secs) {
 
 	case 'fall':
 		if(@state == 'start') {
-			_fw_msg('Alls well that falls well.')
+			_fw_msg(array(
+				'Alls well that falls well.',
+				'What goes up, must come down.',
+				'Stay on target!',
+			));
 			foreach(@p in all_players('custom')) {
 				if(_fw_player(@p)) {
 					set_pvelocity(@p, rand(), 3, rand())
@@ -289,7 +322,11 @@ proc _fw_task(@task, @state, @secs) {
 	case 'cluck':
 		if(@state == 'start') {
 			if(!rand(4), @mob = 'BAT', @mob = 'CHICKEN')
-			_fw_msg('Shoot '.if(@mob === 'BAT', '1', '3').'!')
+			@count = if(@mob === 'BAT', '1', '3');
+			_fw_msg(array(
+				'Shoot '.@count.'!',
+				'KILL ALL '.@mob.'S! Well, '.@count.' of them.',
+			));
 			foreach(@p in all_players('custom')) {
 				if(_fw_player(@p)) {
 					pgive_item(@p, '261:379', 1, array(array('elevel': 1, 'etype': 'ARROW_FIRE')));
@@ -332,7 +369,12 @@ proc _fw_task(@task, @state, @secs) {
 
 	case 'frogegg':
 		if(@state == 'start') {
-			_fw_msg('Pop the frog egg!')
+			_fw_msg(array(
+				'Pop the frog egg!',
+				'That ain\'t no dragon egg!',
+				'That\'s no obsidian! It\'s something to right-click!',
+				'Let\'s make an omellete.',
+			))
 			@loc = _fw_loc()
 			set_block_at(@loc, '122:0')
 			if(!rand(4)) {
@@ -369,7 +411,12 @@ proc _fw_task(@task, @state, @secs) {
 
 	case 'pvp':
 		if(@state == 'start') {
-			_fw_msg('Last hit.')
+			_fw_msg(array(
+				'Last hit gets you a point.',
+				'Hit others, but don\'t get hit yourself.',
+				'PVP round!',
+				'It\'s a free-for-all!',
+			));
 			_fw_randompotion(array('speed', 'jump', 'blind', 'invis'))
 			@weapon = '267:226'; # iron sword
 			switch(rand(3)) {
@@ -423,7 +470,11 @@ proc _fw_task(@task, @state, @secs) {
 
 	case 'lavafall':
 		if(@state == 'start') {
-			_fw_msg('The lava is lava')
+			_fw_msg(array(
+				'The lava is lava',
+				'Do you smell something burning?',
+				'Frogs don\'t like lava. Just sayin\'.',
+			))
 			if(!rand(4)) {
 				_fw_randompotion(array('speed', 'blind'))
 			}
@@ -465,7 +516,13 @@ proc _fw_task(@task, @state, @secs) {
 		if(@state == 'start') {
 			@colors = array('WHITE', 'ORANGE', 'MAGENTA', 'LIGHT_BLUE', 'YELLOW', 'LIME', 'PINK', 'GRAY', 'SILVER', 'CYAN', 'PURPLE', 'BLUE', 'BROWN', 'GREEN', 'RED', 'BLACK')
 			@colorindex = rand(array_size(@colors))
-			_fw_msg(@colors[@colorindex].color('r').' is the new black')
+			@color = @colors[@colorindex];
+			_fw_msg(array(
+				@color.color('r').' is the new black',
+				'Shear the '.@color.color('r').' ones! I swear I\'m not sheepist.',
+				'I could use a new '.@color.color('r').' wool coat.',
+				'Farmer bob needs your help. Get all the '.@color.color('r').' wool.',
+			));
 			@count = min(_fw_totalplayers() * 24, 200)
 			@region = sk_region_info('frogware', 'custom')[0]
 			for(@i = 0, @i < @count, @i++) {
@@ -501,7 +558,13 @@ proc _fw_task(@task, @state, @secs) {
 
 	case 'anvil':
 		if(@state == 'start') {
-			_fw_msg('Alls not well... ALLS NOT WELL!')
+			_fw_msg(array(
+				'Alls not well... ALLS NOT WELL!',
+				'When it rains, it pours.',
+				'ACME delivery!',
+				'Etho\'s gonna getcha!',
+				'It\'s a bird! It\'s a plane! No! It\'s ** SPLAT **',
+			))
 			if(!rand(4)) {
 				_fw_randompotion(array('speed', 'blind'))
 			}
@@ -546,7 +609,11 @@ proc _fw_task(@task, @state, @secs) {
 
 	case 'trade':
 		if(@state == 'start') {
-			_fw_msg('Make a trade');
+			_fw_msg(array(
+				'Make a trade.',
+				'Haggle.',
+				'Barter.',
+			));
 			_fw_mobs('villager');
 			for(@i = 0, @i < 100, @i++) {
 				drop_item(_fw_loc(), array('name': 'EMERALD', 'qty': 1));
@@ -567,12 +634,17 @@ proc _fw_task(@task, @state, @secs) {
 
 	case 'fish':
 		if(@state == 'start') {
-			_fw_msg('Catch a thing');
+			_fw_msg(array(
+				'Catch a thing!',
+				'Reel it in!',
+				'Catch a frog or a pig... I don\'t care. Whatever. *sigh*',
+			));
 			foreach(@p in all_players('custom')) {
 				if(_fw_player(@p)) {
 					pgive_item(@p, '346:60', 1);
 				}
 			}
+			_fw_mobs('speedypig', 1);
 			@region = sk_region_info('frogware', 'custom')[0];
 			bind(player_fish, array('id': 'fwfish'), array('state': '/(CAUGHT_ENTITY|CAUGHT_FISH)/'), @e) {
 				if(_fw_player(@e['player'])) {
