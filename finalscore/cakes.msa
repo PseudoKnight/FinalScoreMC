@@ -276,6 +276,6 @@
 		msg('/cake tp <id> '.color('gray').'Teleports you to a cake.');
 		msg('/cake rename <old> <new> '.color('gray').'Renames a cake.');
 		msg('/cake delete [id] '.color('gray').'Deletes the prize for the cake you\'re looking at.');
-		msg('/cask reset <id> <player> '.color('gray').'Deletes player from cake.');
+		msg('/cask resetplayer <id> <player> '.color('gray').'Deletes player from cake.');
 	}
 <<<
