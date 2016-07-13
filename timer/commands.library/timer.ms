@@ -14,6 +14,7 @@ if(@args[0] === 'start') {
 
     set_phunger(@player, 20);
     set_psaturation(@player, 5);
+    set_ponfire(@player, 0);
     @restartButton = associative_array(0: associative_array(
         'type': 371,
         'meta': array(
