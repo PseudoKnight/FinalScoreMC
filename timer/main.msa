@@ -44,15 +44,9 @@
 	case 'recalc':
 
 		if(!has_permission('command.recalculatetimes')) {
-			die('You do not have permission to recalculate times for this course.')
+			die('You do not have permission to recalculate times.');
 		}
 		include('commands.library/recalculate.ms');
-
-	case 'recalculateoverall':
-		if(!has_permission('command.recalculatetimes')) {
-			die('You do not have permission to recalculate average placements.');
-		}
-		include('commands.library/recalculateoverall.ms');
 
 	default:
 
