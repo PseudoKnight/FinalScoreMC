@@ -5,9 +5,9 @@ x_new_thread('times', closure(){
         if(is_array(@time) && array_index_exists(@time, 'top')) {
             foreach(@i: @t in @time['top']) {
                 if(!array_index_exists(@players, @t[0])) {
-                    @players[@t[0]] = array('total': 10 - @i, 'placement': @i + 1, 'count': 1);
+                    @players[@t[0]] = array('total': array_size(@time['top']) - @i, 'placement': @i + 1, 'count': 1);
                 } else {
-                    @players[@t[0]]['total'] += (10 - @i);
+                    @players[@t[0]]['total'] += (array_size(@time['top']) - @i);
                     @players[@t[0]]['placement'] += (@i + 1);
                     @players[@t[0]]['count']++;
                 }
