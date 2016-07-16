@@ -12,7 +12,7 @@ case 'load':
 	}
 
 	bind(entity_damage, array('id': @player.'grab'), array('type': 'PLAYER', 'cause': 'ENTITY_ATTACK', 'world': 'custom'), @e, @pvp, @player) {
-		if(@e['damager'] == @player) {
+		if(@e['damager'] == @player && get_entity_vehicle(puuid(@player)) != @e['id']) {
 			if(_swift_grab(@player, puuid(@e['player']))) {
 				modify_event('amount', 3);
 			}
@@ -73,13 +73,27 @@ case 'load':
 			@rider = get_entity_rider(@uuid);
 			if(@rider) {
 				set_entity_rider(@uuid, null);
-				set_entity_velocity(@rider, entity_velocity(@uuid));
+				@v = entity_velocity(@uuid);
+				@v['x'] *= 3;
+				@v['y'] *= 2;
+				@v['z'] *= 3;
+				set_timeout(50, closure(){
+					set_entity_rider(@uuid, null);
+					set_entity_velocity(@rider, @v);
+				});
 			}
 		} else {
 			@vehicle = get_entity_vehicle(@uuid);
 			if(@vehicle && @vehicle == puuid(@player)) {
-				set_entity_rider(null, @uuid);
-				set_entity_velocity(@uuid, entity_velocity(@vehicle));
+				set_entity_rider(@vehicle, null);
+				@v = entity_velocity(@vehicle);
+				@v['x'] *= 3;
+				@v['y'] *= 2;
+				@v['z'] *= 3;
+				set_timeout(50, closure(){
+					set_entity_rider(@vehicle, null);
+					set_entity_velocity(@uuid, @v);
+				});
 			}
 		}
 	}
