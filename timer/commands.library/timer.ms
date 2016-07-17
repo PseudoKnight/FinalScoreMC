@@ -102,6 +102,12 @@ if(@args[0] === 'start') {
 
     if(!has_bind(@player.'reset')) {
         bind(player_interact, array('id': @player.'reset'), array('player': @player, 'item': 371), @e, @startLoc) {
+            if(@e['action'] == 'right_click_block') {
+                @block = split(':', @e['block'])[0];
+                if(@block == '77' || @block == '143') {
+                    die();
+                }
+            }
             cancel();
             set_ploc(@startLoc);
         }
