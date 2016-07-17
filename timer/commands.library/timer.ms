@@ -161,7 +161,7 @@ if(@args[0] === 'start') {
     }
 
     @place = 0;
-    for(@i = 0, @i < 10, @i++) {
+    for(@i = 0, @i < 15, @i++) {
         if(!@place) {
             if(!array_index_exists(@times['top'], @i) || @time < @times['top'][@i][1]) {
                 array_insert(@times['top'], array(@player, @time), @i);
@@ -193,13 +193,14 @@ if(@args[0] === 'start') {
             'fade': array(array(rand(256), rand(256), rand(256))),
             'type': 'BALL_LARGE',
         ));
-        if(array_size(@times['top']) > 10) {
-            array_remove(@times['top'], 10);
+        if(array_size(@times['top']) > 15) {
+            array_remove(@times['top'], 15);
         }
         store_value('times', @id, @times);
 
         // Recalculate average placement
-        include('recalculateoverall.ms');
+        @id = 'all';
+        include('recalculate.ms');
 
     } else {
         launch_firework(@loc, array(

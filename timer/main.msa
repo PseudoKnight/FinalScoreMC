@@ -14,7 +14,6 @@
 		msg('Usage: /times <top|me|playerName> [courseID]')
 
 	case 'top':
-	case 'top10':
 
 		include('commands.library/top.ms');
 

@@ -1,4 +1,4 @@
-if(@id = 'all') {
+if(@id == 'all') {
 
     @times = get_values('times');
     x_new_thread('times', closure(){
@@ -24,7 +24,7 @@ if(@id = 'all') {
             return(@left[1] < @right[1]);
         });
         x_run_on_main_thread_later(closure(){
-            store_value('times', @averages[0..9]);
+            store_value('times', @averages[0..14]);
         });
     });
 
@@ -39,7 +39,7 @@ if(@id = 'all') {
     array_sort(@array, closure(@left, @right){
         return(@left[1] > @right[1]);
     });
-    @max = min(10, array_size(@array));
+    @max = min(15, array_size(@array));
     for(@i = 0, @i < @max, @i++) {
         @array[@i][0] = get_value('uuids', @array[@i][0])['name'];
     }

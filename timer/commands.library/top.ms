@@ -1,7 +1,7 @@
 if(@id == 'all') {
 
     @top = get_value('times');
-    msg(colorize('&e&m|----------&e&l[ TOP10 SCORE TOTALS / AVG PLACEMENT ]&e&m---|'));
+    msg(colorize('&e&m|----------&e&l[ TOP15 SCORE TOTALS / AVG PLACEMENT ]&e&m---|'));
     for(@i = 0, @i < array_size(@top), @i++) {
         msg(colorize(' '.if(@i < 9, '&80').'&7'.(@i + 1).'&a [ '.@top[@i][1].' / '.@top[@i][2].' ] &r'.@top[@i][0]));
     }
