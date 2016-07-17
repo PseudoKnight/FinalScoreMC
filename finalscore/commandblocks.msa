@@ -268,18 +268,25 @@
 	}
 <<<
 
-/setblock $x $y $z $id [$data=0] [$mode='replace'] = >>>
+/setblock $x $y $z $id [$data='0'] [$mode='replace'] [$replaceid=''] [$replacedata='0'] = >>>
 	if(@cmdblk = get_command_block()) {
 		@loc = _relative_coords(@cmdblk, $x, $y, $z)
 
-		if(!is_numeric(@id = $id)
-		&& is_null(@id = data_values($id)), die())
+		if(!is_numeric(@id = $id) && is_null(@id = data_values($id))) {
+			die();
+		}
 
 		@id = split(':', @id)[0]
 
 		switch($mode) {
 		case 'replace':
-			set_block_at(@loc, @id.':'.$data, false)
+			if($replaceid) {
+				if(get_block_at(@loc) == $replaceid.':'.$replacedata) {
+					set_block_at(@loc, @id.':'.$data, false);
+				}
+			} else {
+				set_block_at(@loc, @id.':'.$data, false);
+			}
 		case 'keep':
 			if(get_block_at(@loc)[0] === '0') {
 				set_block_at(@loc, @id.':'.$data, false)
@@ -295,6 +302,13 @@
 				set_block_at(@loc, '0:0')
 				spawn_falling_block(@loc, @block)
 			}
+		case 'timed':
+			@ms = integer($replaceid);
+			@block = get_block_at(@loc);
+			set_block_at(@loc, @id.':'.$data, false);
+			set_timeout(@ms, closure(){
+				set_block_at(@loc, @block);
+			});
 		}
 	}
 <<<
