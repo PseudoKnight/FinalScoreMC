@@ -27,7 +27,7 @@ case 'load':
 			@v = entity_velocity(@bullet);
 			set_entity_loc(@bullet, @loc);
 			set_entity_velocity(@bullet, array(@v['x'] * 2.3, @v['y'] * 2.3, @v['z'] * 2.3));
-			play_sound(ploc(), array('sound': 'FIREWORK_LARGE_BLAST', 'pitch': 1.5, 'volume': 2));
+			play_sound(ploc(), array('sound': 'FIREWORK_BLAST', 'pitch': 0.6, 'volume': 2));
 		}
 
 		_shoot();

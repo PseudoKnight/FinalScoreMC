@@ -26,6 +26,7 @@ case 'load':
 					set_pinv(player(), @inv);
 				} else {
 					clear_task();
+					play_named_sound(ploc(), array('sound': 'block.enchantment_table.use'));
 				}
 			} catch(Exception @e) {
 				clear_task();
