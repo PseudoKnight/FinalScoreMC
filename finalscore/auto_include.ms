@@ -109,6 +109,7 @@ proc _equip_park(@player) {
 
 	_clear_pinv(@player)
 
+	@pdata = _pdata(@player);
 	set_pinv(@player, array(
 		2: array('name': 'BOOK', 'meta': array(
 			'display': 'Park Directory',
@@ -117,24 +118,21 @@ proc _equip_park(@player) {
 			'display': 'Frog Legs',
 			'lore': array('Good eatin\''),
 		)),
-	))
-
-	@pdata = _pdata(@player)
-	if(array_index_exists(@pdata, 'support')
-	&& @pdata['support'] >= 10) {
-		set_pinv(@player, array(
-			4: array(
-				'type': 401,
+		4: if(array_index_exists(@pdata, 'support') && @pdata['support'] >= 10) {
+			array(
+				'name': 'FIREWORK',
 				'meta': array(
-					'display': color('green').color('bold').'Random Firework',
+					'display': color('k').'X'.color('green').color('bold').' Random Firework '.color('r').color('k').'X',
 					'lore': array(
 						color('f').'Available to ',
 						color('f').'server supporters',
 					)
 				)
-			),
-		))
-	}
+			)
+		} else {
+			null
+		},
+	))
 
 	set_pflight(@player, false);
 }
