@@ -75,7 +75,7 @@ case 'load':
 				set_entity_rider(@uuid, null);
 				@v = entity_velocity(@uuid);
 				@v['x'] *= 3;
-				@v['y'] *= 2;
+				@v['y'] *= 1.6;
 				@v['z'] *= 3;
 				set_timeout(50, closure(){
 					set_entity_rider(@uuid, null);
@@ -88,7 +88,7 @@ case 'load':
 				set_entity_rider(@vehicle, null);
 				@v = entity_velocity(@vehicle);
 				@v['x'] *= 3;
-				@v['y'] *= 2;
+				@v['y'] *= 1.6;
 				@v['z'] *= 3;
 				set_timeout(50, closure(){
 					set_entity_rider(@vehicle, null);
