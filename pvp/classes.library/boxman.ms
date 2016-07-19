@@ -12,31 +12,38 @@ case 'load':
 	}
 
 	bind(player_interact, array('id': @player.'boxmanattack'), array('player': @player), @e) {
-		@slot = if(@e['button'] == 'left', -106, 0);
+		@slot = 0;
+		@checkSlot = -106;
+		if(@e['button'] == 'left') {
+			@slot = -106;
+			@checkSlot = 0;
+		}
 		@item = pinv(player(), @slot);
-		if(@item) {
-			proc _box_target(@loc) {
-				@players = players_in_radius(@loc, 16);
-				foreach(@p in @players){
-					if(@p != player() && raw_pcan_see(@p)) {
-						return(puuid(@p));
-					}
-				}
-			}
-
+		if(@item && @item['name'] == 'STEP') {
 			@loc = _relative(ploc(), 'up');
 
-			@target = _box_target(ptarget_space());
-			if(!@target) {
-				_box_target(@loc);
-				if(!@target) {
-					die();
+			@targetLoc = pcursor(array(0, 65, 66, 68, 70, 72, 77, 85, 143, 147, 148, 157, 171, 188, 189, 190, 191, 192));
+			psend_block_change(player(), @targetLoc, '35:2');
+			set_timeout(800, closure(){
+				psend_block_change(player(), @targetLoc, 0);
+			});
+			@target = '';
+			foreach(@p in players_in_radius(@targetLoc, 4)){
+				if(@p != player() && raw_pcan_see(@p)) {
+					@target = puuid(@p);
 				}
+			}
+			if(!@target) {
+				die();
 			}
 
 			@inv = associative_array();
 			@inv[@slot] = null;
 			set_pinv(player(), @inv);
+
+			if(!pinv(player(), @checkSlot)) {
+				set_pwalkspeed(player(), 0.1);
+			}
 
 			@loc = _relative(ploc(), 'up');
 			@box = spawn_entity('ARMOR_STAND', 1, @loc)[0];
@@ -56,10 +63,20 @@ case 'load':
 
 			@returnToSender = closure(){
 				if(ponline(player()) && pinfo(player(), 5) > 0) {
+					set_pwalkspeed(player(), 0.2);
 					@helmet = pinv(player(), 103);
-					if(@helmet && @helmet['type'] == 44) {
-						@inv[@slot] = @item;
+					if(@helmet && @helmet['name'] == 'STEP') {
+						@inv[@slot] = associative_array('name': 'WOOL', 'data': 2);
 						set_pinv(player(), @inv);
+						set_timeout(800, closure(){
+							if(ponline(player()) && pinfo(player(), 5) > 0) {
+								@helmet = pinv(player(), 103);
+								if(@helmet && @helmet['name'] == 'STEP') {
+									@inv[@slot] = @item;
+									set_pinv(player(), @inv);
+								}
+							}
+						});
 					}
 				}
 				try {
@@ -79,7 +96,7 @@ case 'load':
 						@loc = entity_loc(@box);
 						@targetLoc = entity_loc(@target);
 						set_entity_loc(@box, location_shift(@loc, @targetLoc, 1));
-						if(_distance(@loc, @targetLoc) < 1.1) {
+						if(_distance(@loc, @targetLoc) < 1) {
 							damage_entity(@target, 2, puuid());
 						}
 						play_named_sound(@loc, associative_array('sound': 'entity.guardian.attack'));
@@ -111,5 +128,6 @@ case 'unload':
 	unbind(@player.'boxmanclick');
 	unbind(@player.'boxmanattack');
 	unbind(@player.'boxmanbox');
+	set_pwalkspeed(player(), 0.2);
 
 }
