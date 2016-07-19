@@ -40,52 +40,37 @@ case 'load':
 			die();
 		}
 		cancel()
-		@loc = pcursor(array(0, 65, 66, 68, 70, 72, 77, 85, 143, 147, 148, 157, 171, 188, 189, 190, 191, 192));
-		@block = get_block_at(@loc);
-		psend_block_change(@loc, '35:10');
-		@loc['x'] += 0.5;
-		@loc['z'] += 0.5;
-		@loc['y'] += 0.5;
-		play_effect(@loc, 'TILE_DUST', array('id': 90, 'particleCount': 54, 'offsetX': 1.5, 'offsetY': 1.5, 'offsetZ': 1.5, 'speed': 0.1, 'radius': 64));
-		@player = ''
-		foreach(@p in players_in_radius(@loc, 3)) {
-			if(@p != player() && array_index_exists(@pvp['players'], @p)) {
-				@player = @p
-				break()
-			}
+		@players = _hit_scan(1, 'happy_villager', 'ender_signal', @pvp);
+
+		if(@players) {
+			@player = @players[0];
+			@loc1 = ploc();
+			@facing1 = pfacing();
+			@loc2 = ploc(@player)
+			@facing2 = pfacing(@player);
+
+			// keep facing the same direction
+			@loc1['yaw'] = @facing2[0];
+			@loc1['pitch'] = @facing2[1];
+			@loc2['yaw'] = @facing1[0];
+			@loc2['pitch'] = @facing1[1];
+
+
+			set_ploc(@loc2)
+			damage_entity(puuid(), 1, puuid())
+			set_ploc(@player, @loc1)
+			play_sound(@loc2, array('sound': 'ENDERMAN_TELEPORT', 'pitch': 0.5))
+			play_sound(@loc1, array('sound': 'ENDERMAN_TELEPORT', 'pitch': 0.5))
+			make_effect(_relative(@loc1, 'up', 2), 'ENDER_SIGNAL')
 		}
 
+		play_named_sound(ploc(), array('sound': 'entity.elder_guardian.hurt', 'pitch': 2));
 		@item = pinv(player(), null)
 		@item['qty'] -= 1
 		if(@item['qty'] == 0) {
 			set_pinv(player(), array(null: null))
 		} else {
 			set_pinv(player(), array(null: @item))
-		}
-		set_timeout(400, closure(){
-			psend_block_change(@loc, @block);
-		});
-
-		if(@player) {
-			@loc1 = ploc(@player)
-			@loc2 = ploc()
-			set_ploc(@loc1)
-			damage_entity(puuid(), 1, puuid())
-			set_ploc(@player, @loc2)
-			damage_entity(puuid(@player), 1, puuid())
-			play_sound(@loc1, array('sound': 'ENDERMAN_TELEPORT', 'pitch': 0.5))
-			make_effect(_relative(@loc1, 'up', 2), 'ENDER_SIGNAL')
-			play_sound(@loc2, array('sound': 'ENDERMAN_TELEPORT', 'pitch': 0.5))
-			make_effect(_relative(@loc2, 'up', 2), 'ENDER_SIGNAL')
-		} else {
-			play_sound(ploc(), array('sound': 'ENDERMAN_SCREAM', 'pitch': 2, 'volume': 5));
-		}
-
-	}
-
-	bind(item_held, array('id': @player.'telegraph'), null, @e, @player) {
-		if(@e['player'] == @player && @e['to'] == 1) {
-			play_sound(ploc(), array('sound': 'ENDERMAN_IDLE', 'pitch': 2, 'volume': 5));
 		}
 	}
 
@@ -96,6 +81,5 @@ case 'unload':
 	unbind(@player.'plasmagun');
 	unbind(@player.'hit');
 	unbind(@player.'teleport');
-	unbind(@player.'telegraph');
 
 }
