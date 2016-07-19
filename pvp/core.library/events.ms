@@ -257,9 +257,9 @@ bind(player_spawn, array('id': @id.'spawn'), array('world': 'custom'), @e, @id) 
 		@newLoc['pitch'] = 90;
 		modify_event('location', @newLoc);
 
-		queue_push(closure(){
+		set_timeout(50, closure(){
 			set_pstorm(player(), true);
-		}, player());
+		});
 
 	} else if(array_index_exists(@pvp, 'team')) {
 		if(@pvp['arena']['respawnmode'] == 'mob') {
