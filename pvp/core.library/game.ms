@@ -190,13 +190,15 @@ proc _pvp_start_match(@id) {
 					pfacing(@player, 0, 0);
 
 					preset_time(@player);
-					set_pstorm(@player, null);
 					_pvp_equip(@id, @player);
 					@p['respawn'] = 0;
 					close_pinv(@player);
 				} else {
 					@timeleft = ceil((@p['respawn'] - time()) / 1000);
 					title_msg(@player, @timeleft, null, 0, 20, 0);
+					if(@timeleft < 2) {
+						set_pstorm(@player, false);
+					}
 				}
 			} else if(!array_contains(sk_current_regions(@player), @arena['region'])) {
 				tmsg(@player, color('gray').'[PVP] '.color('r').'You exited the combat region.')
