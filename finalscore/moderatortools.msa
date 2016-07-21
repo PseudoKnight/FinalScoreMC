@@ -64,11 +64,6 @@
 		if(is_array(@timers)) {
 			store_value('session.timers', @timers);
 		}
-
-		@staffchat = import('staffchat');
-		if(is_array(@staffchat)) {
-			store_value('session.staffchat', @staffchat);
-		}
 	}
 
 	foreach(@world in get_worlds()) {

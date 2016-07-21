@@ -1,10 +1,12 @@
-@requests = get_value('session.requests');
-if(!@requests) {
-	@requests = associative_array();
+if(!import('requests')) {
+	@ignorelist = get_value('session.requests')
+	if(!@ignorelist) {
+		@ignorelist = associative_array();
 } else {
 	clear_value('session.requests');
 }
-export('requests', @requests);
+	export('requests', @ignorelist);
+}
 
 # Main teleport handler
 bind(player_teleport, null, null, @event) {

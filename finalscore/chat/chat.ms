@@ -1,26 +1,22 @@
-@ignorelist = get_value('session.ignorelist')
-if(!@ignorelist) {
-	@ignorelist = associative_array()
-} else {
-	clear_value('session.ignorelist')
+if(!import('ignorelist')) {
+	@ignorelist = get_value('session.ignorelist')
+	if(!@ignorelist) {
+		@ignorelist = associative_array();
+	} else {
+		clear_value('session.ignorelist');
+	}
+	export('ignorelist', @ignorelist);
 }
-export('ignorelist', @ignorelist)
 
-@conv = get_value('session.conv')
-if(!@conv) {
-	@conv = associative_array()
-} else {
-	clear_value('session.conv')
+if(!import('conv')) {
+	@ignorelist = get_value('session.conv')
+	if(!@ignorelist) {
+		@ignorelist = associative_array();
+	} else {
+		clear_value('session.conv');
+	}
+	export('conv', @ignorelist);
 }
-export('conv', @conv)
-
-@staffchat = get_value('session.staffchat')
-if(!@staffchat) {
-	@staffchat = array()
-} else {
-	clear_value('session.staffchat')
-}
-export('staffchat', @staffchat)
 
 # PMs, ignores, and mutes
 bind(player_chat, null, null, @event) {
@@ -37,18 +33,6 @@ bind(player_chat, null, null, @event) {
 		_pmsg(@p, @message)
 		console(player().' @ '.@p.': '.@message, false)
 		die()
-	}
-
-	# STAFF CHAT CHANNEL
-	@staffchat = import('staffchat')
-	if(array_contains(@staffchat, player())) {
-		if(@event['message'][0] === '!') {
-			@event['message'] = substr(@event['message'], 1)
-		} else {
-			broadcast(color('dark_gray').simple_date('h:mm').' '.color('aqua').'[STAFF] '.if(array_contains(pgroup(), 'donor'), color('green').'\u2666 ')
-				._colorname().player().color('gray').': '.color('r').colorize(@event['message']), 'chat.staff')
-			die()
-		}
 	}
 
 	# Remove players that are ignoring this player, or everyone if muted.

@@ -1,10 +1,12 @@
-@timers = get_value('session.timers');
-if(!@timers) {
-	@timers = associative_array();
-} else {
-	clear_value('session.timers');
+if(!import('timers')) {
+	@ignorelist = get_value('session.timers')
+	if(!@ignorelist) {
+		@ignorelist = associative_array();
+	} else {
+		clear_value('session.timers');
+	}
+	export('timers', @ignorelist);
 }
-export('timer', @timers);
 
 register_command('timer', array(
 	'description': 'Handles time trials for speed runs.',
