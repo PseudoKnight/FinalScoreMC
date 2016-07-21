@@ -51,7 +51,7 @@ case 'load':
 			@v['z'] = (@v['z'] / @magnitude) * 1.1;
 			set_entity_velocity(@uuid, @v);
 			play_sound(ploc(), array('sound': 'BAT_TAKEOFF', 'volume': 0.5));
-			set_timeout(100, closure(){
+			set_timeout(150, closure(){
 				set_entity_gliding(@uuid, true);
 			});
 		}
@@ -74,9 +74,9 @@ case 'load':
 			if(@rider) {
 				set_entity_rider(@uuid, null);
 				@v = entity_velocity(@uuid);
-				@v['x'] *= 3;
+				@v['x'] *= 2.5;
 				@v['y'] *= 1.6;
-				@v['z'] *= 3;
+				@v['z'] *= 2.5;
 				set_timeout(50, closure(){
 					set_entity_rider(@uuid, null);
 					set_entity_velocity(@rider, @v);
@@ -87,9 +87,9 @@ case 'load':
 			if(@vehicle && @vehicle == puuid(@player)) {
 				set_entity_rider(@vehicle, null);
 				@v = entity_velocity(@vehicle);
-				@v['x'] *= 3;
+				@v['x'] *= 2.5;
 				@v['y'] *= 1.6;
-				@v['z'] *= 3;
+				@v['z'] *= 2.5;
 				set_timeout(50, closure(){
 					set_entity_rider(@vehicle, null);
 					set_entity_velocity(@uuid, @v);
