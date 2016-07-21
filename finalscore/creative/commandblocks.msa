@@ -2,7 +2,7 @@
 *:/scb [$] = >>>
 	# Configure a set of allowed commands and aliases for non-ops
 	@allowedcmds = array('/velocity', '/tp', '/sayas', '/testfor', '/playsound', '/setblock', '/tempcart',
-		'/bedspawn', '/give', '/effect', '/warp', '/tellraw', '/testforblock', '/time', '/entitydata');
+		'/bedspawn', '/give', '/effect', '/warp', '/tellraw', '/testforblock', '/time');
 
 	if(!has_permission('command.cb'), die('You do not have permission.'))
 	if(!$, die(color(gold).'Usage: /scb </command>'))
@@ -14,8 +14,11 @@
 	}
 	@block = pcursor(array(0, 8, 9, 27, 28, 50, 55, 63, 64, 65, 66, 68, 69,
 		70, 71, 72, 75, 76, 77, 96, 131, 132, 143, 147, 148, 149, 150, 157))
-	@blocktype = data_name(get_block_at(@block))
-	if(@blocktype !== 'Command Block', die("You are looking at @blocktype. That is not a command block."))
+	try {
+		get_block_command(@block);
+	} catch(FormatException @ex) {
+		die('You are looking at '.data_name(get_block_at(@block)).'. That is not a command block.');
+	}
 	@cmd = $
 	if(is_alias(@cmd), @cmd = '/runalias '.@cmd)
 	set_block_command(@block, @cmd)
@@ -27,7 +30,7 @@
 *:/acb [$] = >>>
 	# Configure a set of allowed commands and aliases for non-ops
 	@allowedcmds = array('/velocity', '/tp', '/sayas', '/testfor', '/playsound', '/setblock', '/tempcart',
-		'/bedspawn', '/give', '/effect', '/warp', '/tellraw', '/testforblock', '/time', '/entitydata')
+		'/bedspawn', '/give', '/effect', '/warp', '/tellraw', '/testforblock', '/time')
 
 	if(!has_permission('command.cb'), die('You do not have permission.'))
 	if(!$, die(color(gold).'Usage: /acb <additional parameters>'))
