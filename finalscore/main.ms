@@ -433,6 +433,9 @@ bind(vehicle_collide, null, array('type': 'MINECART', 'collisiontype': 'BLOCK', 
 
 # Let one player in a world make the sun rise
 bind(player_enter_bed, null, null, @event) {
+	if(!_is_survival_world(pworld())) {
+		die();
+	}
     if(get_world_time() > 13700 && get_world_time() < 22300) {
 		set_world_time(22300);
 		msg(color('aqua').'You summoned the sun.');
