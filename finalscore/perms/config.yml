@@ -76,6 +76,7 @@ member:
       worldguard.region.flag.flags.spawn.*: true
       worldguard.region.flag.flags.teleport.*: true
       worldguard.region.flag.flags.invincible.*: true
+      worldguard.region.flag.flags.entry.*: true
       worldguard.region.claim: false
       command.items: true
     custom:
