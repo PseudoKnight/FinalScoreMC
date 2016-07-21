@@ -309,6 +309,13 @@
 			set_timeout(@ms, closure(){
 				set_block_at(@loc, @block);
 			});
+		case 'toggle':
+			@block = get_block_at(@loc)
+			if(@block == $replaceid.':'.$replacedata) {
+				set_block_at(@loc, @id.':'.$data, false)
+			} else if(@block == @id.':'.$data) {
+				set_block_at(@loc, $replaceid.':'.$replacedata, false)
+			}
 		}
 	}
 <<<
