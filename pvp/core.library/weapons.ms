@@ -37,7 +37,7 @@ proc _weapon_cooldown(@player, @time, @type, @onCooldown, @remove = 1) {
 
 proc _hit_scan(@damage, @tracerParticle, @hitParticle, @pvp){
 	@origin = _relative(ploc(), 'up', 2.3);
-	@vector = _get_vector(pfacing());
+	@vector = _get_vector(@origin['yaw'], @origin['pitch']);
 	@x = @vector['x'];
 	@y = @vector['y'];
 	@z = @vector['z'];
