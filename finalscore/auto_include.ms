@@ -122,7 +122,7 @@ proc _equip_park(@player) {
 			array(
 				'name': 'FIREWORK',
 				'meta': array(
-					'display': color('k').'X'.color('green').color('bold').' Random Firework '.color('r').color('k').'X',
+					'display': color('r').color('k').'X'.color('green').color('bold').' Random Firework '.color('r').color('k').'X',
 					'lore': array(
 						color('f').'Available to ',
 						color('f').'server supporters',
