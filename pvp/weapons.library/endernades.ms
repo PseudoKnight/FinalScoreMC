@@ -2,13 +2,34 @@ array_push(@pvp['binds'], @id.'endernades')
 bind(player_teleport, array('id': @id.'endernades'), array('type': 'ENDER_PEARL'), @e, @id) {
 	@pvp = import('pvp'.@id);
 	if(!array_index_exists(@pvp['players'], player()), die());
-
 	cancel();
-	bind(entity_damage, array('id': 'endernade'), array('cause': 'BLOCK_EXPLOSION', 'type': 'PLAYER'), @e, @damager = @e['player'], @pvp) {
-		_stats_damage(@damager, @e['player'], @e['amount'], @pvp);
+	@a = @e['to'];
+	play_effect(@a, 'EXPLOSION_LARGE');
+	play_sound(@a, associative_array('sound': 'EXPLODE', 'volume': 3));
+	foreach(@p in players_in_radius(@a, 6)) {
+		if(pinfo(@p, 5) <= 0) {
+			continue();
+		}
+		# a delayed velocity works more consistently with grounded entities
+		set_timeout(50, closure(){
+			@b = _relative(ploc(@p), 'up', 2);
+			@dist = sqrt(((@b['x'] - @a['x']) ** 2) + ((@b['y'] - @a['y']) ** 2) + ((@b['z'] - @a['z']) ** 2));
+			if(@p == player() && @a['y'] < @b['y']) {
+				damage_entity(puuid(@p), 1, puuid());
+			} else {
+				damage_entity(puuid(@p), min(8, 8 / @dist), puuid());
+			}
+			try {
+				set_pvelocity(@p,
+					min(2, (@b['x'] - @a['x']) / (@dist ** 2)),
+					min(2, (@b['y'] - @a['y']) / (@dist ** 2)),
+					min(2, (@b['z'] - @a['z']) / (@dist ** 2))
+				);
+			} catch(PlayerOfflineException @ex) {
+				// blew completely off server
+			}
+		});
 	}
-	explosion(@e['to'], 2, true);
-	unbind('endernade');
 }
 
 array_push(@pvp['binds'], @id.'endernadesreload')
