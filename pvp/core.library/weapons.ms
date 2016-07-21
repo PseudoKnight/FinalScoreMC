@@ -10,16 +10,20 @@ proc _weapon_cooldown(@player, @time, @type, @onCooldown, @remove = 1) {
 			if(@item['qty'] == 0) {
 				set_pinv(@player, array(null: null));
 			} else {
-				@newItem = @item[];
-				@newItem['name'] = @type;
-				@newItem['data'] = 0;
-				set_pinv(@player, array(null: @newItem));
+				if(@type == null) {
+					set_pinv(@player, array(null: null));
+				} else {
+					@newItem = @item[];
+					@newItem['name'] = @type;
+					@newItem['data'] = 0;
+					set_pinv(@player, array(null: @newItem));
+				}
 				@slot = pinfo(@player, 15);
 				set_timeout(@time, closure(){
 					try {
 						@newItem = pinv(@player, @slot);
-						if(!is_null(@newItem)
-						&& @newItem['name'] == @type) {
+						if(@type == null || (!is_null(@newItem)
+						&& @newItem['name'] == @type)) {
 							@inv = associative_array();
 							@inv[@slot] = @item;
 							set_pinv(@player, @inv);
