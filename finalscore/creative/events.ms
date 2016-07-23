@@ -57,21 +57,21 @@ bind(player_interact, null, associative_array('button': 'right', 'item': 211), @
 
 # Allow breaking command blocks for builders
 bind(block_break, null, associative_array('type': 137), @event) {
-	if(sk_can_build(@event['location'])) {
+	if(!pisop() && sk_can_build(@event['location'])) {
 		set_block_at(@event['location'], 0);
 		make_effect(@event['location'], 'STEP_SOUND:'.@event['block']['type']);
 	}
 }
 
 bind(block_break, null, associative_array('type': 210), @event) {
-	if(sk_can_build(@event['location'])) {
+	if(!pisop() && sk_can_build(@event['location'])) {
 		set_block_at(@event['location'], 0);
 		make_effect(@event['location'], 'STEP_SOUND:'.@event['block']['type']);
 	}
 }
 
 bind(block_break, null, associative_array('type': 211), @event) {
-	if(sk_can_build(@event['location'])) {
+	if(!pisop() && sk_can_build(@event['location'])) {
 		set_block_at(@event['location'], 0);
 		make_effect(@event['location'], 'STEP_SOUND:'.@event['block']['type']);
 	}
