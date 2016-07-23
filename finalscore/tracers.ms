@@ -1,13 +1,20 @@
 if(extension_exists('CHDynmap')) {
 
+	unregister_permission('livemap.tracers');
+	register_permission(associative_array(
+		'name': 'livemap.tracers',
+		'default': 'FALSE',
+		'description': 'Draws player movement lines on Dynmap.',
+		'children': null,
+	));
+
 	if(!array_contains(dm_all_markersets(), 'tracers')) {
 		dm_create_markerset('tracers', array('label': 'Tracers', 'persistent': false));
 		dm_set_markerset_hide_by_default('tracers', false);
 	}
 
 	bind(player_move, null, array('threshold': 10), @event) {
-		@mode = pmode();
-		if(@mode == 'CREATIVE' || @mode == 'SPECTATOR' || !has_permission('livemap.tracers')) {
+		if(pmode() == 'SPECTATOR' || !has_permission('livemap.tracers')) {
 			die();
 		}
 
@@ -44,7 +51,7 @@ if(extension_exists('CHDynmap')) {
 	}
 
 	bind(player_teleport, null, null, @event) {
-		if(!has_permission('group.donor') || !_is_survival_world(@event['from']['world'])) {
+		if(!has_permission('livemap.tracers')) {
 			die();
 		}
 		set_timeout(50, closure(){
@@ -67,7 +74,7 @@ if(extension_exists('CHDynmap')) {
 	}
 
 	bind(player_death, null, null, @event) {
-		if(!_is_survival_world(pworld()) || !has_permission('livemap.markers')) {
+		if(!has_permission('livemap.markers')) {
 			die();
 		}
 		dm_create_marker('tracers', array(
@@ -79,7 +86,7 @@ if(extension_exists('CHDynmap')) {
 	}
 
 	bind(player_quit, array('priority': 'HIGHEST'), null, @event) {
-		if(!_is_survival_world(pworld()) || !has_permission('livemap.markers')) {
+		if(!has_permission('livemap.markers')) {
 			die();
 		}
 		if(array_contains(dm_all_markers('tracers'), player())) {
@@ -95,9 +102,6 @@ if(extension_exists('CHDynmap')) {
 	}
 
 	bind(player_join, null, null, @event) {
-		if(!_is_survival_world(pworld())) {
-			die();
-		}
 		set_timeout(50, closure(){
 			if(!has_permission('livemap.markers')) {
 				return();
