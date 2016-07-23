@@ -104,7 +104,7 @@
 				if(ponline(@pdata['name'])) {
 					@pdata = _pdata(@pdata['name']);
 				}
-				@pdata['coins'] += (@coins - @cake['coins']);
+				@pdata['coins'] = array_get(@pdata, 'coins', 100) + (@coins - @cake['coins']);
 				_store_pdata(@pdata['name'], @pdata);
 			}
 		}
