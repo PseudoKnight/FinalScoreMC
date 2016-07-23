@@ -124,6 +124,11 @@ proc _pvp_start(@pvp, @id){
 	}
 	create_scoreboard(@id);
 
+	if(array_contains(@arena['flags'], 'heartsdisplay')) {
+		create_objective('health', 'HEALTH', @id);
+		set_objective_display('health', associative_array('displayname': color(4).'\u2764', 'slot': 'BELOW_NAME'), @id);
+	}
+
 	# PREPARE TEAMS
 	if(array_index_exists(@arena, 'team')) {
 		if(@arena['mode'] === 'ctf') {

@@ -98,6 +98,7 @@ proc _arena(@action, @id, @setting, @string) {
 			case 'noxp':
 			case 'rallycall':
 			case 'stackedpickup':
+			case 'heartsdisplay':
 
 				switch(@args[0]) {
 					case 'true':
