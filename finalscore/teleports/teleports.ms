@@ -2,9 +2,9 @@ if(!import('requests')) {
 	@ignorelist = get_value('session.requests')
 	if(!@ignorelist) {
 		@ignorelist = associative_array();
-} else {
-	clear_value('session.requests');
-}
+	} else {
+		clear_value('session.requests');
+	}
 	export('requests', @ignorelist);
 }
 
@@ -29,27 +29,22 @@ bind(player_teleport, null, null, @event) {
 		});
 	}
 
-	try {
-		@vehicle = get_entity_vehicle(puuid());
-		if(entity_type(@vehicle) === 'HORSE'
-		&& _is_survival_world(@from)
-		&& _is_survival_world(@to)) {
-			set_timeout(1, closure(){
-				try {
-					set_entity_loc(@vehicle, @event['to']);
-					# a longer delay is necessary in 1.9 to reduce glitching
-					set_timeout(200, closure(){
-						set_entity_rider(@vehicle, puuid());
-					});
-				} catch(Exception @ex) {
-					msg('Failed to teleport your horse with you. The chunk may have unloaded too quickly.');
-					console('Failed to teleport horse.', false);
-				}
-			});
-			die();
-		}
-	} catch(BadEntityException @ex) {
-		# sometimes entity does not exist and causes an exception in get_entity_vehicle()
+	@vehicle = get_entity_vehicle(puuid());
+	if(entity_type(@vehicle) === 'HORSE'
+	&& _is_survival_world(@from)
+	&& _is_survival_world(@to)) {
+		set_timeout(50, closure(){
+			try {
+				set_entity_loc(@vehicle, @event['to']);
+				# a longer delay is necessary in 1.9 to reduce glitching
+				set_timeout(100, closure(){
+					set_entity_rider(@vehicle, puuid());
+				});
+			} catch(Exception @ex) {
+				msg('Failed to teleport your horse with you.');
+				console('Failed to teleport horse.', false);
+			}
+		});
 	}
 }
 
