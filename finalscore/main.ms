@@ -641,6 +641,7 @@ bind(entity_damage, null, array('type': 'ITEM_FRAME', 'cause': 'PROJECTILE'), @e
 	}
 }
 
+// Custom noteblock sounds
 bind(note_play, null, null, @event) {
 	cancel();
 	@sound = 'NOTE_'.@event['instrument'];
@@ -664,6 +665,7 @@ bind(note_play, null, null, @event) {
 	play_effect(_relative(@event['location'], 'up'), 'note');
 }
 
+// Attempt to fix desired piston placements at certain angles
 bind(block_place, null, array('type': 29), @e) {
 	@pitch = pfacing()[1];
 	if(@pitch > 60) {
@@ -679,5 +681,40 @@ bind(block_place, null, array('type': 33), @e) {
 		modify_event('data', 1);
 	} else if(@pitch < -46.5) {
 		modify_event('data', 0);
+	}
+}
+
+// Protect non-rideable tameable animals from damage by non-owners
+bind(entity_damage, null, array('type': 'OCELOT'), @event) {
+	@owner = get_mob_owner(@event['id']);
+	if(is_null(@owner) || !_is_survival_world(@event['world'])) {
+		 die();
+	}
+
+	if(@event['cause'] == 'ENTITY_ATTACK') {
+		if(ponline(@event['damager']) && @owner != @event['damager']) {
+			cancel();
+		}
+	} else if(@event['cause'] == 'PROJECTILE') {
+		if(ponline(@event['shooter']) && @owner != @event['shooter']) {
+			cancel();
+		}
+	}
+}
+
+bind(entity_damage, null, array('type': 'WOLF'), @event) {
+	@owner = get_mob_owner(@event['id']);
+	if(is_null(@owner) || !_is_survival_world(@event['world'])) {
+		 die();
+	}
+
+	if(@event['cause'] == 'ENTITY_ATTACK') {
+		if(ponline(@event['damager']) && @owner != @event['damager']) {
+			cancel();
+		}
+	} else if(@event['cause'] == 'PROJECTILE') {
+		if(ponline(@event['shooter']) && @owner != @event['shooter']) {
+			cancel();
+		}
 	}
 }
