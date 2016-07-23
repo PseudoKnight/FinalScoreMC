@@ -1,3 +1,7 @@
+foreach(@p in all_players()) {
+	export(@p.'posing', null);
+}
+
 bind(player_interact_at_entity, null, array('clicked': 'ARMOR_STAND'), @event) {
 	if(!sk_can_build(entity_loc(@event['id']))) {
 		cancel();

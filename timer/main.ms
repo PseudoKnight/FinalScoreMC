@@ -1,11 +1,11 @@
 if(!import('timers')) {
-	@ignorelist = get_value('session.timers')
-	if(!@ignorelist) {
-		@ignorelist = associative_array();
+	@timers = get_value('session.timers')
+	if(!@timers) {
+		@timers = associative_array();
 	} else {
 		clear_value('session.timers');
 	}
-	export('timers', @ignorelist);
+	export('timers', @timers);
 }
 
 register_command('timer', array(

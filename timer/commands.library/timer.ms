@@ -8,7 +8,7 @@ if(array_size(@args) != 3
 @player = @args[2];
 @startLoc = ploc(@player);
 
-@timers = import('timer');
+@timers = import('timers');
 
 if(@args[0] === 'start') {
 

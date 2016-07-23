@@ -9,13 +9,13 @@ if(!import('ignorelist')) {
 }
 
 if(!import('conv')) {
-	@ignorelist = get_value('session.conv')
-	if(!@ignorelist) {
-		@ignorelist = associative_array();
+	@conv = get_value('session.conv')
+	if(!@conv) {
+		@conv = associative_array();
 	} else {
 		clear_value('session.conv');
 	}
-	export('conv', @ignorelist);
+	export('conv', @conv);
 }
 
 # PMs, ignores, and mutes
