@@ -40,7 +40,7 @@ proc _fw_endgame(@winners) {
 			} else {
 				_fw_changeteam(@p, 'losers');
 			}
-			_equip_park(@p);
+			_equip_kit(@p);
 			set_pmode(@p, 'ADVENTURE');
 		}
 	}
@@ -109,7 +109,7 @@ proc _fw_startround(@secs = 12) {
 				} else {
 					set_pscoreboard(@p)
 					reset_all_pscores(@p, 'fw')
-					_equip_park(@p);
+					_equip_kit(@p);
 				}
 			}
 		}

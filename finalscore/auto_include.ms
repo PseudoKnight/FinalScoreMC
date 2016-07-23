@@ -91,50 +91,61 @@ proc _get_pitch(@tone, @octave) {
 }
 
 /*
-	Sets a player's inventory for Frog Park
+	Sets a player's inventory with a preset kit
 */
-proc _equip_park(@player) {
+proc _equip_kit(@player, @kit = 'adventure') {
 	if(!@player) {
 		@player = player();
 	}
 
-	@mode = pmode(@player);
-	if(pworld(@player) !== 'custom' || @mode == 'CREATIVE') {
+	if(_is_survival_world(pworld(@player))) {
 		return();
 	}
 
-	if(@mode == 'SURVIVAL') {
-		set_pmode(@player, 'ADVENTURE');
-	}
-
-	_clear_pinv(@player)
-
-	@pdata = _pdata(@player);
-	set_pinv(@player, array(
-		2: array('name': 'BOOK', 'meta': array(
-			'display': 'Park Directory',
-		)),
-		3: array('name': 'COOKED_MUTTON', 'qty': 64, 'meta': array(
-			'display': 'Frog Legs',
-			'lore': array('Good eatin\''),
-		)),
-		4: if(array_index_exists(@pdata, 'support') && @pdata['support'] >= 10) {
-			array(
-				'name': 'FIREWORK',
-				'meta': array(
-					'display': color('r').color('k').'X'.color('green').color('bold').' Random Firework '.color('r').color('k').'X',
-					'lore': array(
-						color('f').'Available to ',
-						color('f').'server supporters',
+	switch(@kit) {
+		case 'adventure':
+			@mode = pmode(@player);
+			if(@mode == 'SURVIVAL') {
+				set_pmode(@player, 'ADVENTURE');
+			}
+			_clear_pinv(@player);
+			@pdata = _pdata(@player);
+			set_pinv(@player, associative_array(
+				2: associative_array('name': 'BOOK', 'meta': associative_array(
+					'display': 'Park Directory',
+				)),
+				3: associative_array('name': 'COOKED_MUTTON', 'qty': 64, 'meta': associative_array(
+					'display': 'Frog Legs',
+					'lore': array('Good eatin\''),
+				)),
+				4: if(array_index_exists(@pdata, 'support') && @pdata['support'] >= 10) {
+					associative_array(
+						'name': 'FIREWORK',
+						'meta': associative_array(
+							'display': colorize('&r&kX&a&l Random Firework &r&kX'),
+							'lore': array(
+								color('f').'Available to ',
+								color('f').'server supporters',
+							)
+						)
 					)
-				)
-			)
-		} else {
-			null
-		},
-	))
+				} else {
+					null
+				},
+			));
+			set_pflight(@player, false);
 
-	set_pflight(@player, false);
+		case 'creative':
+			_clear_pinv(@player);
+			set_pinv(@player, associative_array(
+				0: associative_array('name': 'COMPASS', 'meta': associative_array(
+					'display': 'Teleporter',
+				)),
+				1: associative_array('name': 'GOLD_AXE', 'meta': associative_array(
+					'display': 'WorldEdit Selector',
+				)),
+			));
+	}
 }
 
 /*

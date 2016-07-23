@@ -455,7 +455,7 @@ proc _pvp_end_match(@id, @winners) {
 					set_entity_fall_distance(puuid(@player), 0);
 					set_ploc(@player, @pvp['arena']['lobby']);
 					set_pflight(@player, false);
-					_equip_park(@player);
+					_equip_kit(@player);
 					_clear_peffects(@player);
 				}
 			} catch(Exception @ex) {

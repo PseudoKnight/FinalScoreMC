@@ -9,15 +9,12 @@ bind(world_changed, null, null, @event) {
 		include('util.library/storage.ms');
 		if(@worlds[@from]['mode'] == 'survival') {
 			_store_pstate(@event['player'], 'survival');
-			_clear_pstate(@event['player']);
+			_clear_pstate(@event['player'], @worlds[@to]['mode']);
 		} else if(@worlds[@to]['mode'] == 'survival') {
 			console('Loading survival inventory for '.@event['player'].' coming from '.@from.'.', false);
 			_get_pstate(@event['player'], 'survival');
 		} else {
-			_clear_pstate(@event['player']);
-		}
-		if(@worlds[@to]['mode'] == 'adventure') {
-			_equip_park();
+			_clear_pstate(@event['player'], @worlds[@to]['mode']);
 		}
 	}
 }
@@ -35,7 +32,7 @@ bind(player_spawn, array('priority': 'LOWEST'), null, @event) {
 		}
 	} else if(@event['location']['world'] == 'custom') {
 		set_timeout(50, closure(){
-			_equip_park();
+			_equip_kit();
 		});
 	}
 }

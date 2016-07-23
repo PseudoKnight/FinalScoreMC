@@ -83,7 +83,7 @@ proc _snake_remove(@player, @game) {
 	array_remove(@game['snakes'], @player);
 	if(ponline(@player) && pworld(@player) == 'custom') {
 		set_pflight(@player, false);
-		_equip_park(@player);
+		_equip_kit(@player);
 	}
 }
 

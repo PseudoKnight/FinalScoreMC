@@ -248,7 +248,7 @@ bind(player_join, null, null, @event) {
 
 		set_timeout(800, closure(){
 			if(pworld() === 'custom') {
-				_equip_park();
+				_equip_kit();
 			}
 		});
 	});

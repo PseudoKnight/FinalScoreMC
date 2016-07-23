@@ -93,8 +93,8 @@ proc _store_pstate(@player, @state) {
 	_store_pdata(@player, @pdata);
 }
 
-proc _clear_pstate(@player) {
-	_clear_pinv(@player);
+proc _clear_pstate(@player, @state) {
+	_equip_kit(@player, @state);
 	@inv = array();
 	array_resize(@inv, 27);
 	set_penderchest(@player, @inv);
