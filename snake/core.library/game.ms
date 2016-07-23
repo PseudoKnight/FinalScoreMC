@@ -90,6 +90,7 @@ proc _snake_queue(@args) {
 			_snake_add_powerup(@game);
 			_snake_start_task(@game);
 			_snake_play_song();
+			_add_activity('snake', 'Snake');
 		}
 		@countdown[0] -= 1;
 	});
@@ -152,5 +153,6 @@ proc _snake_end(@winner, @game) {
 			set_block_at(@loc, 0, false);
 		}
 		remove_scoreboard('snake');
+		_remove_activity('snake');
 	});
 }
