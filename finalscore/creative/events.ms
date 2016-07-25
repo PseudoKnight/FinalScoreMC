@@ -43,12 +43,6 @@ bind(player_interact, null, associative_array('button': 'right', 'item': 137), @
 	}
 }
 
-bind(player_interact, null, associative_array('button': 'right', 'item': 210), @event) {
-	if(@event['action'] === 'right_click_block') {
-		_place_command_block(@event['location'], @event['facing'], @event['item']);
-	}
-}
-
 bind(player_interact, null, associative_array('button': 'right', 'item': 211), @event) {
 	if(@event['action'] === 'right_click_block') {
 		_place_command_block(@event['location'], @event['facing'], @event['item']);
@@ -63,17 +57,22 @@ bind(block_break, null, associative_array('type': 137), @event) {
 	}
 }
 
-bind(block_break, null, associative_array('type': 210), @event) {
+bind(block_break, null, associative_array('type': 211), @event) {
 	if(!pisop() && sk_can_build(@event['location'])) {
 		set_block_at(@event['location'], 0);
 		make_effect(@event['location'], 'STEP_SOUND:'.@event['block']['type']);
 	}
 }
 
-bind(block_break, null, associative_array('type': 211), @event) {
-	if(!pisop() && sk_can_build(@event['location'])) {
-		set_block_at(@event['location'], 0);
-		make_effect(@event['location'], 'STEP_SOUND:'.@event['block']['type']);
+# Display command to builders
+bind(player_interact, null, associative_array('button': 'right', 'block': 137), @event) {
+	if(!pisop() && !pinfo(player(), 11) && @event['hand'] == 'main_hand' && has_permission('group.builder')){
+		@cmd = get_block_command(@event['location']);
+		@args = parse_args(@cmd);
+		if(array_size(@args) > 1 && (@args[0] == '/runalias' || @args[0] == 'runalias')) {
+			@cmd = array_implode(@args[cslice(1, array_size(@args) - 1)], ' ');
+		}
+		runas('~console', '/tellraw '.player().' ["",{"text":"[COPY]","clickEvent":{"action":"suggest_command","value":"/scb '.@cmd.'"}},{"text":" '.@cmd.'"},]');
 	}
 }
 
