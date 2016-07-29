@@ -138,6 +138,14 @@ builder:
       command.cb: true
       command.items: true
       command.vanish: true
+    world:
+      livemap.tracers: true
+    world3:
+      livemap.tracers: true
+    world4:
+      livemap.tracers: true
+    omega:
+      livemap.tracers: true
   inheritance: regular
 engineer:
   permissions:
