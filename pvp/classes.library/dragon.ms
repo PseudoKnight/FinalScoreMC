@@ -55,7 +55,7 @@ case 'load':
 	bind(projectile_hit, array('id': @player.'dragonsbreath'), array('type': 'FIREBALL'), @e, @player = puuid(@player)) {
 		if(@e['shooter'] == @player) {
 			@cloud = spawn_entity('AREA_EFFECT_CLOUD', 1, @e['location'])[0];
-			set_entity_spec(@cloud, associative_array('particle': 'DRAGON_BREATH', 'duration': 300, 'source': puuid(@player),
+			set_entity_spec(@cloud, associative_array('particle': 'FLAME', 'duration': 300, 'source': puuid(@player),
 				'potionmeta': associative_array('base': associative_array('type': 'INSTANT_DAMAGE'))
 			));
 		}
