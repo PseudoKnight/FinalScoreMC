@@ -65,14 +65,26 @@ bind(block_break, null, associative_array('type': 211), @event) {
 }
 
 # Display command to builders
+proc _msg_block_command(@loc) {
+	@cmd = get_block_command(@loc);
+	@args = parse_args(@cmd);
+	if(array_size(@args) > 1 && (@args[0] == '/runalias' || @args[0] == 'runalias')) {
+		@cmd = array_implode(@args[cslice(1, array_size(@args) - 1)], ' ');
+	}
+	@cmd = replace(@cmd, '\\', '\\\\');
+	@cmd = replace(@cmd, '"', '\\u0022');
+	runas('~console', '/tellraw '.player().' ["",{"text":"[COPY]","clickEvent":{"action":"suggest_command","value":"/scb '.@cmd.'"}},{"text":" '.@cmd.'"}]');
+}
+
 bind(player_interact, null, associative_array('button': 'right', 'block': 137), @event) {
 	if(!pisop() && !pinfo(player(), 11) && @event['hand'] == 'main_hand' && has_permission('group.builder')){
-		@cmd = get_block_command(@event['location']);
-		@args = parse_args(@cmd);
-		if(array_size(@args) > 1 && (@args[0] == '/runalias' || @args[0] == 'runalias')) {
-			@cmd = array_implode(@args[cslice(1, array_size(@args) - 1)], ' ');
-		}
-		runas('~console', '/tellraw '.player().' ["",{"text":"[COPY]","clickEvent":{"action":"suggest_command","value":"/scb '.@cmd.'"}},{"text":" '.@cmd.'"},]');
+		_msg_block_command(@event['location']);
+	}
+}
+
+bind(player_interact, null, associative_array('button': 'right', 'block': 211), @event) {
+	if(!pisop() && !pinfo(player(), 11) && @event['hand'] == 'main_hand' && has_permission('group.builder')){
+		_msg_block_command(@event['location']);
 	}
 }
 
