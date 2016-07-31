@@ -330,28 +330,67 @@ bind(block_place, null, array('type': 144), @event) {
 
 /*
 	Infinite Cauldrons
-	Refills buckets and water bottles without reducing water levels
+	Refills buckets and water bottles without reducing water levels, unless sneaking.
+	Also lets players incrementally fill cauldrons with water bottles.
 */
 bind(player_interact, null, array('block': 118, 'button': 'right'), @event) {
-	if(@event['block'] === '118:3') {
+	@slot = null;
+	if(@event['hand'] == 'off_hand') {
+		@slot = -106;
+	}
+	@data = integer(array_get(split(':', @event['block']), 1, 0));
+	if(@event['item'] == '373:0'){
+		@item = pinv(player(), @slot);
+		if(@item['meta']['base']['type'] == 'WATER') {
+			cancel();
+
+			// Fill cauldron with some water
+			@data++;
+			set_block_at(@event['location'], '118:'.@data);
+
+			// Give empty bottle
+			@inv = associative_array();
+			@inv[@slot] = associative_array('name': 'GLASS_BOTTLE');
+			set_pinv(player(), @inv);
+		}
+	} else if(@data > 0) {
+		// There's some water
 		@result = null;
-		switch(pinfo(player(), 6)) {
-			case '325:0':
-				@result = 326;
-			case '374:0':
-				@result = 373;
+		switch(@event['item']) {
+			case '325:0': // bucket
+				if(@data < 3) {
+					die();
+				}
+				@result = 326; // water bucket
+			case '374:0': // bottle
+				@result = 373; // water bottle
 			default:
 				die();
 		}
 		cancel();
-		@item = pinv(player(), null);
+		@item = pinv(player(), @slot);
 		if(@item['qty'] == 1) {
-			set_pinv(array(null: array('type': @result, 'qty': 1)));
+			@inv = associative_array();
+			@inv[@slot] = associative_array('type': @result, 'qty': 1);
+			set_pinv(@inv);
 		} else {
 			@item['qty'] -= 1;
-			set_pinv(array(null: @item));
+			@inv = associative_array();
+			@inv[@slot] = @item;
+			set_pinv(@inv);
 			pgive_item(@result, 1);
 		}
+
+		// Remove some water from the cauldron if sneaking
+		if(pinfo(player(), 11)) {
+			if(@result == 373) {
+				@data--;
+				set_block_at(@event['location'], '118:'.@data);
+			} else {
+				set_block_at(@event['location'], '118:0');
+			}
+		}
+
 	}
 }
 
