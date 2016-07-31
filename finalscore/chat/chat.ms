@@ -42,7 +42,7 @@ bind(player_chat, null, null, @event) {
 	}
 
 	# Basic hostile word filters
-	@filteredMessage = reg_replace('(?i)(fuck|shit|damn|nigg|cunt|fag|hax|nub|noob|griefer)', '\u2639', @event['message']);
+	@filteredMessage = reg_replace('(?i)(fuck|shit|damn|nigg|cunt|fag)', '\u2639', @event['message']);
 
 	# Chat escaping
 	@escapedMessage = replace(@filteredMessage, '\\', '\\\\');
