@@ -16,31 +16,37 @@ bind(player_interact, null, array('item': 401, 'button': 'right'), @event) {
 	@loc['x'] += 0.5;
 	@loc['z'] += 0.5;
 
-	@numcolors = rand(3);
-	@colors = array();
-	for(@i = 0, @i <= @numcolors, @i++) {
-		@colors[] = array(rand(256), rand(256), rand(256));
+	foreach(@f in range(rand(1, 4))) {
+		@meta = associative_array('strength': rand(3), 'effects': array());
+		foreach(@m in range(rand(1, 4))) {
+			@numcolors = rand(3);
+			@colors = array();
+			for(@i = 0, @i <= @numcolors, @i++) {
+				@colors[] = array(rand(256), rand(256), rand(256));
+			}
+			@numcolors = rand(3);
+			@fadecolors = array();
+			for(@i = 0, @i <= @numcolors, @i++) {
+				@fadecolors[] = array(rand(256), rand(256), rand(256));
+			}
+
+			@meta['effects'][] = associative_array(
+				'flicker': rand(2),
+				'trail': rand(2),
+				'colors': @colors,
+				'fade': @fadecolors,
+				'type': array_rand(array('BALL', 'BALL_LARGE', 'STAR', 'BURST', 'CREEPER'), 1, false)[0],
+			);
+		}
+		launch_firework(@loc, @meta);
 	}
-	@numcolors = rand(3);
-	@fadecolors = array();
-	for(@i = 0, @i <= @numcolors, @i++) {
-		@fadecolors[] = array(rand(256), rand(256), rand(256));
-	}
-	launch_firework(@loc, associative_array(
-		'strength': rand(4),
-		'flicker': rand(2),
-		'trail': rand(2),
-		'colors': @colors,
-		'fade': @fadecolors,
-		'type': array_rand(array('BALL', 'BALL_LARGE', 'STAR', 'BURST', 'CREEPER'), 1, false)[0],
-	));
 
 	@slot = pinfo(player(), 15);
 	@item = pinv(player(), @slot);
 	@item['type'] = 402;
 	@item['name'] = 'FIREWORK_CHARGE';
 	set_pinv(player(), array(null: @item));
-	set_timeout(2000, closure(){
+	set_timeout(5000, closure(){
 		try {
 			@item = pinv(player(), @slot);
 			if(@item && @item['type'] == 402) {
