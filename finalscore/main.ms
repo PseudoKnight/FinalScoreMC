@@ -339,7 +339,7 @@ bind(player_interact, null, array('block': 118, 'button': 'right'), @event) {
 		@slot = -106;
 	}
 	@data = integer(array_get(split(':', @event['block']), 1, 0));
-	if(@event['item'] == '373:0'){
+	if(@data < 3 && @event['item'] == '373:0'){
 		@item = pinv(player(), @slot);
 		if(@item['meta']['base']['type'] == 'WATER') {
 			cancel();
