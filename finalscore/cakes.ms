@@ -70,6 +70,7 @@ bind(player_interact, null, array('block': 92), @event) {
 		make_effect(@event['location'], 'RECORD_PLAY:2263');
 		@loc = @event['location'][];
 		@loc['x'] += 0.5;
+		@loc['y'] += 0.5;
 		@loc['z'] += 0.5;
 		@cloud = spawn_entity('AREA_EFFECT_CLOUD', 1, @loc)[0];
 		set_entity_spec(@cloud, associative_array('particle': 'NOTE', 'radius': 1, 'duration': 160));
