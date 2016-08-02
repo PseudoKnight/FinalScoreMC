@@ -6,16 +6,13 @@ bind(player_interact, array('id': @id.'shotgunshoot'), array('item': 332, 'butto
 	}
 	cancel();
 	@entities = array();
-	@dir = _get_vector(pfacing());
-	@loc = ploc();
-	@loc['x'] += @dir['x'];
-	@loc['y'] += 2.3 + @dir['y'];
-	@loc['z'] += @dir['z'];
 	for(@i = 0, @i < 8, @i++) {
 		@entities[@i] = shoot_projectile(player(), 'SNOWBALL');
 		@v = entity_velocity(@entities[@i]);
-		set_entity_loc(@entities[@i], @loc);
-		set_entity_velocity(@entities[@i], array(@v['x'] * 1.9 + (rand() * 2 - 1), @v['y'] * 1.9 + (rand() * 2 - 1), @v['z'] * 1.9 + (rand() * 2 - 1)));
+		@v['x'] = ((@v['x'] / @v['magnitude']) * 3.2) + ((rand() * 1.6) - 0.8);
+		@v['y'] = ((@v['y'] / @v['magnitude']) * 3.2) + ((rand() * 1.6) - 0.8);
+		@v['z'] = ((@v['z'] / @v['magnitude']) * 3.2) + ((rand() * 1.6) - 0.8);
+		set_entity_velocity(@entities[@i], @v);
 	}
 	set_timeout(300, closure(){
 		foreach(@snowball in @entities) {
