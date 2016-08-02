@@ -1,7 +1,7 @@
 proc _place_ball(@mobtype, @loc, @ball, @course) {
 	@loc = @loc[];
 	@loc['x'] += 0.5;
-	@loc['y'] += 1;
+	@loc['y'] += 1.076;
 	@loc['z'] += 0.5;
 
 	@ball['id'] = spawn_mob(@mobtype.':1', 1, @loc)[0];
@@ -14,8 +14,7 @@ proc _place_ball(@mobtype, @loc, @ball, @course) {
 	team_add_player('everyone', @ball['id'], @course);
 	set_timeout(50, closure(){
 		set_mob_effect(@ball['id'], 11, 4, 99999, true, false);
-		//set_mob_effect(@ball['id'], 2, 127, 99999, true);
-		//set_mob_effect(@ball['id'], 8, -128, 99999, true);
+		set_mob_effect(@ball['id'], 25, -1, 1, true, false);
 	});
 }
 
@@ -46,8 +45,8 @@ proc _get_block_below(@loc, @v) {
 		@center['x'] = floor(@center['x']) + 0.5;
 		@center['z'] = floor(@center['z']) + 0.5;
 		@dist = _distance(@center, @loc);
-		@v['x'] += (@center['x'] - @loc['x']) / (@dist * 8);
-		@v['z'] += (@center['z'] - @loc['z']) / (@dist * 8);
+		@v['x'] += ((@center['x'] - @loc['x']) / @dist) * 0.02;
+		@v['z'] += ((@center['z'] - @loc['z']) / @dist) * 0.02;
 	}
 
 	# check closer if it's over the edge

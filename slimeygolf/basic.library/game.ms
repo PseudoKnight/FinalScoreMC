@@ -100,23 +100,38 @@ proc _start_game(@course, @loc) {
 					slot: 'SIDEBAR'), @golf['course']['name']);
 			}
 
-			bind(player_interact_entity, array(id: 'golf_swing_'.player()), array(clicked: @mobcheck), @event,
+			bind(player_interact_at_entity, array(id: 'golf_swing_'.player()), array(clicked: @mobcheck), @event,
 			@player = player(), @golf) {
 				if(@player != player(), die());
 				@ball = @golf['players'][player()];
 				if(@event['id'] != @ball['id'], die());
 				cancel();
 				if(!@ball['swing']) {
+					@ball['loc'] = entity_loc(@event['id']);
+					@ball['origin'] = ploc();
+					@ball['origin']['y'] = @ball['loc']['y'];
+					@dist = _distance(@ball['origin'], @ball['loc']);
+					@v = associative_array(
+						'x': (@ball['loc']['x'] - @ball['origin']['x']) / (@dist * 5),
+						'z': (@ball['loc']['z'] - @ball['origin']['z']) / (@dist * 5),
+					);
 					set_pexp(0);
 					@ball['swing'] = true;
+					@loc = @ball['loc'][];
+					@loc['y'] += 0.1;
 					set_interval(50, closure(){
-						if(pexp() < 115 && @ball['swing']) {
-							set_pexp(pexp() + 5);
+						if(pexp() < 116 && @ball['swing']) {
+							set_pexp(pexp() + 4);
 						} else {
 							clear_task();
 							@ball['swing'] = false;
 							set_pexp(0);
 						}
+						@v['x'] *= 1.1
+						@v['z'] *= 1.1
+						@loc['x'] += @v['x'];
+						@loc['z'] += @v['z'];
+						play_effect(@loc, 'FIREWORKS_SPARK', associative_array('speed': 0));
 					});
 				}
 			}
@@ -133,7 +148,7 @@ proc _start_game(@course, @loc) {
 				&& @ball['id'] == @event['id']) {
 					@ball['moveable'] = true;
 					@ball['swing'] = false;
-					@xp = max(1, @xp - 10);
+					@xp = max(1, @xp - 12);
 					set_pexp(@player, @xp);
 					set_plevel(@player, plevel(@player) + 1);
 					set_pscore('strokes', @player, get_pscore('strokes', @player, @golf['course']['name']) + 1,
@@ -188,10 +203,12 @@ proc _start_game(@course, @loc) {
 				if(!@ball['moveable'] && (@loc['x'] != @ball['loc']['x'] || @loc['z'] != @ball['loc']['z'])) {
 					set_entity_loc(@ball['id'], @ball['loc']);
 					set_entity_velocity(@ball['id'], array('x': 0, 'y': 0, 'z': 0));
+					set_mob_effect(@ball['id'], 25, -1, 1, true, false);
 				} else {
 					@v = entity_velocity(@ball['id']);
 					@block = _get_block_below(_relative(@loc, 'down', 0.077), @v);
 					if(@block) {
+						set_mob_effect(@ball['id'], 25, -1, 1, true, false);
 						@v['y'] = 0;
 						if(@block == '35:15') { # if ball dropped into the hole
 							# check for birdie/eagle
@@ -279,6 +296,8 @@ proc _start_game(@course, @loc) {
 							@ball['id'] = 0;
 							continue();
 						}
+					} else {
+						set_mob_effect(@ball['id'], 25, 0, 0);
 					}
 
 					@ricochetPitch = 0
@@ -316,6 +335,7 @@ proc _start_game(@course, @loc) {
 					} else if(@v['magnitude'] < 0.875 && @v['magnitude'] > 0.125) {
 						@v['x'] = (@v['x'] / @v['magnitude']) * (1.07 * @v['magnitude']);
 						@v['z'] = (@v['z'] / @v['magnitude']) * (1.07 * @v['magnitude']);
+						play_effect(@loc, 'SLIME');
 					}
 
 					if(@ricochetPitch > 1) {
@@ -329,8 +349,9 @@ proc _start_game(@course, @loc) {
 					}
 				}
 
-			} else if(!ponline(@player)
-			|| !array_contains(sk_current_regions(@player), @course)) {
+			}
+
+			if(!ponline(@player) || !array_contains(sk_current_regions(@player), @course)) {
 				_remove_player(@player, @golf);
 				_remove_ball(@ball['id'], @course);
 				if(array_size(@golf['players']) == 0) {
