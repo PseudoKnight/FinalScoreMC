@@ -118,20 +118,22 @@ proc _start_game(@course, @loc) {
 					set_pexp(0);
 					@ball['swing'] = true;
 					@loc = @ball['loc'][];
-					@loc['y'] += 0.1;
 					set_interval(50, closure(){
-						if(pexp() < 116 && @ball['swing']) {
+						@xp = pexp();
+						if(@xp < 116 && @ball['swing']) {
 							set_pexp(pexp() + 4);
 						} else {
 							clear_task();
 							@ball['swing'] = false;
 							set_pexp(0);
 						}
-						@v['x'] *= 1.1
-						@v['z'] *= 1.1
-						@loc['x'] += @v['x'];
-						@loc['z'] += @v['z'];
-						play_effect(@loc, 'FIREWORKS_SPARK', associative_array('speed': 0));
+						if(@xp < 80) {
+							@v['x'] *= 1.1
+							@v['z'] *= 1.1
+							@loc['x'] += @v['x'];
+							@loc['z'] += @v['z'];
+							play_effect(@loc, 'TILE_DUST', associative_array('id': 80, 'speed': 0));
+						}
 					});
 				}
 			}
