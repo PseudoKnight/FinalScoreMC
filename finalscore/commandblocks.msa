@@ -10,31 +10,50 @@
 	Spawns a temporary minecart that gets removed when the player exits or quits
 	Usage Example: runalias /tempcart @p
 */
-/tempcart $player = >>>
+/tempcart $player [$timer] [$offset] = >>>
 	if(is_null(@loc = get_command_block()), die())
 	@loc = array(@loc[0] + 0.5, @loc[1] + 2, @loc[2] + 0.5, @loc[3])
-	@rider = puuid($player)
-	@cart = spawn_entity('minecart', 1, @loc)[0]
-	set_entity_rider(@cart, @rider)
-	if(has_bind($player.'vehicle_leave'), die())
-	bind(vehicle_leave, array(id: $player.'vehicle_leave'), array('vehicletype': 'MINECART', 'passengertype': 'PLAYER'), @e, @player = $player) {
-		if(@e['player'] == @player) {
+	if(ponline($player)) {
+		@rider = puuid($player)
+		@cart = spawn_entity('minecart', 1, @loc)[0]
+		set_entity_rider(@cart, @rider)
+		if(has_bind($player.'vehicle_leave'), die())
+		bind(vehicle_leave, array(id: $player.'vehicle_leave'), array('vehicletype': 'MINECART', 'passengertype': 'PLAYER'), @e, @player = $player) {
+			if(@e['player'] == @player) {
+				unbind()
+				unbind(@player.'quit')
+				try {
+					entity_remove(@e['vehicle']);
+				} catch(BadEntityException @ex) {
+					// already removed or unloaded
+				}
+			}
+		}
+		bind(player_quit, array(id: $player.'quit'), array('player': $player), @e, @cart) {
 			unbind()
-			unbind(@player.'quit')
+			unbind(player().'vehicle_leave')
 			try {
-				entity_remove(@e['vehicle']);
+				entity_remove(@cart);
 			} catch(BadEntityException @ex) {
 				// already removed or unloaded
 			}
 		}
-	}
-	bind(player_quit, array(id: $player.'quit'), array('player': $player), @e, @cart) {
-		unbind()
-		unbind(player().'vehicle_leave')
-		try {
-			entity_remove(@cart);
-		} catch(BadEntityException @ex) {
-			// already removed or unloaded
+	} else {
+		@material = $player;
+		@cart = spawn_entity('minecart', 1, @loc)[0];
+		@stand = spawn_entity('armor_stand', 1, @loc)[0];
+		set_entity_rider(@cart, @stand);
+		set_entity_spec(@stand, associative_array('visible': false));
+		set_entity_spec(@cart, associative_array('block': @material, 'offset': if($offset, integer($offset), 0)));
+		if($timer) {
+			set_timeout(integer($timer), closure(){
+				try {
+					entity_remove(@stand);
+					entity_remove(@cart);
+				} catch(BadEntityException @ex) {
+					// already removed
+				}
+			});
 		}
 	}
 <<<
