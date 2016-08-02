@@ -27,7 +27,8 @@ bind(player_spawn, array('priority': 'LOWEST'), null, @event) {
 		&& array_index_exists(@pdata['survival'], 'bed')
 		&& is_array(@pdata['survival']['bed'])
 		&& @pdata['survival']['bed'][3] != @event['location']['world']) {
-			console(@event['player'].' respawned at the wrong world. Fixing...', false);
+			console(@event['player'].' respawned at '.@event['location'].' but has bed set to '.@pdata['survival']['bed']
+					.'. Adjusting to current world\'s spawn...', false);
 			modify_event('location', get_spawn(@event['location']['world']));
 		}
 	} else if(@event['location']['world'] == 'custom') {
