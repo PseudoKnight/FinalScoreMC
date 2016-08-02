@@ -27,7 +27,7 @@ proc _weapon_cooldown(@player, @time, @type, @onCooldown, @remove = 1) {
 							@inv = associative_array();
 							@inv[@slot] = @item;
 							set_pinv(@player, @inv);
-							if(@onCooldown) {
+							if(is_closure(@onCooldown)) {
 								execute(@onCooldown);
 							}
 						}
