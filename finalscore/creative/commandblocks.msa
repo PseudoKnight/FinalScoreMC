@@ -1,8 +1,8 @@
 # Set the command in the targeted command block (overwrites)
 *:/scb [$] = >>>
 	# Configure a set of allowed commands and aliases for non-ops
-	@allowedcmds = array('/velocity', '/tp', '/sayas', '/testfor', '/playsound', '/setblock', '/tempcart',
-		'/bedspawn', '/give', '/effect', '/warp', '/tellraw', '/testforblock', '/time');
+	@allowedcmds = array('/velocity', '/tp', '/sayas', '/testfor', '/testforblock', '/testforblocks', '/playsound',
+		'/setblock', '/tempcart', '/bedspawn', '/give', '/effect', '/warp', '/tellraw', '/time');
 
 	if(!has_permission('command.cb'), die('You do not have permission.'))
 	if(!$, die(color(gold).'Usage: /scb </command>'))
@@ -29,8 +29,8 @@
 # Add to the command in the targeted command block
 *:/acb [$] = >>>
 	# Configure a set of allowed commands and aliases for non-ops
-	@allowedcmds = array('/velocity', '/tp', '/sayas', '/testfor', '/playsound', '/setblock', '/tempcart',
-		'/bedspawn', '/give', '/effect', '/warp', '/tellraw', '/testforblock', '/time')
+	@allowedcmds = array('/velocity', '/tp', '/sayas', '/testfor', '/testforblock', '/testforblocks', '/playsound',
+		'/setblock', '/tempcart', '/bedspawn', '/give', '/effect', '/warp', '/tellraw', '/time');
 
 	if(!has_permission('command.cb'), die('You do not have permission.'))
 	if(!$, die(color(gold).'Usage: /acb <additional parameters>'))
