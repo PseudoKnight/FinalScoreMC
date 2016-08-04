@@ -3,7 +3,9 @@
 	Usage Example: runalias /sayas Server @p Welcome to the server.
 */
 /sayas $from $to $ = >>>
-	tmsg($to, color('gray').$from.': '.color('r').colorize($))
+	if(is_array(@loc = get_command_block()) && @loc['world'] == pworld($to)) {
+		tmsg($to, colorize('&7'.$from.': &r'.$));
+	}
 <<<
 
 /*
@@ -14,6 +16,9 @@
 	if(is_null(@loc = get_command_block()), die())
 	@loc = array(@loc[0] + 0.5, @loc[1] + 2, @loc[2] + 0.5, @loc[3])
 	if(ponline($player)) {
+		if(@loc['world'] != pworld($player)) {
+			die('This commandblock cannot set a player into a tempcart across worlds.');
+		}
 		@rider = puuid($player)
 		@cart = spawn_entity('minecart', 1, @loc)[0]
 		set_entity_rider(@cart, @rider)
@@ -138,7 +143,10 @@
 	Usage Example: runalias /bedspawn @p ~-1 ~ ~1
 */
 /bedspawn $player [$x] [$y] [$z] = >>>
-	@cmdblk = get_command_block()
+	@cmdblk = get_command_block();
+	if(@cmdblk['world'] != pworld($player)) {
+		die('This commandblock cannot set spawn for players in another world.');
+	}
 	if($x === '') {
 		set_pbed_location($player, ploc($player))
 	} else {
@@ -147,24 +155,42 @@
 <<<
 
 *:/give [$player=''] [$item=0] [$amount=1] = >>>
-	if(!get_command_block() && !has_permission('group.moderator'), die('You do not have permission to use this command.'))
-	if($player === '', die('Usage: /give [player] [id:data] [quantity]'))
+	if(is_null(@loc = get_command_block()) && !has_permission('group.moderator')) {
+		die('You do not have permission to use this command.');
+	}
+	if($player === '') {
+		die('Usage: /give [player] [id:data] [quantity]');
+	}
 	@player = _find_player($player);
-	if($item == 0, die('You need to specify an item id or name.'))
+	if(@loc && @loc['world'] != pworld(@player)) {
+		die('This commandblock cannot give to players in another world.');
+	}
+	if($item == 0) {
+		die('You need to specify an item id or name.');
+	}
 	@item = split(':', $item)
-	if(!is_numeric(@item[0]), @item[0] = data_values(@item[0]))
-	if(is_null(@item[0]), die('Unknown item name'))
-	if(!array_index_exists(@item, 1), @item[1] = 0)
-	pgive_item(@player, @item[0].':'.@item[1], $amount)
-	msg(color('yellow').'You gave '.@player.' '.$amount.' '.data_name(@item[0].':'.@item[1]).'.')
+	if(!is_numeric(@item[0])) {
+		@item[0] = data_values(@item[0]);
+	}
+	if(is_null(@item[0])) {
+		die('Unknown item name');
+	}
+	if(!array_index_exists(@item, 1)) {
+		@item[1] = 0;
+	}
+	pgive_item(@player, @item[0].':'.@item[1], $amount);
+	msg(color('yellow').'You gave '.@player.' '.$amount.' '.data_name(@item[0].':'.@item[1]).'.');
 <<<
 
 *:/effect $player $effect [$strength=0] [$length=30] = >>>
-	if(get_command_block() || has_permission('command.effect')) {
+	if((@loc = get_command_block()) || has_permission('command.effect')) {
 		try {
 			@player = player($player);
 		} catch(PlayerOfflineException @e) {
 			die('Who is that? Are they online?');
+		}
+		if(@loc && @loc['world'] != pworld(@player)) {
+			die('This commandblock cannot apply an effect to players in another world.');
 		}
 		@effects = _get_effects();
 		if(!array_index_exists(@effects, $effect)) {
@@ -186,6 +212,9 @@
 	}
 	if(ponline($entity)) {
 		@player = $entity;
+		if(@loc && @loc['world'] != pworld(@player)) {
+			die('This commandblock cannot apply a velocity to players in another world.');
+		}
 		@loc = ploc(@player);
 		#if(!get_collides_with_entities($player) || (!is_null(@l) && _distance(@l, @loc) > 8)) {
 			# get next nearest, if any

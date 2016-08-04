@@ -6,9 +6,12 @@
 
 	@args = parse_args($);
 	if(array_size(@args) == 2) {
-		if(get_command_block()) {
+		if(@loc = get_command_block()) {
 			@player = @args[0];
 			@warpid = @args[1];
+			if(@loc['world'] != pworld(@player)) {
+				die('This commandblock cannot teleport players in other worlds.');
+			}
 		} else {
 			die('You cannot teleport others.');
 		}

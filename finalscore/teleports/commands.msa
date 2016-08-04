@@ -190,7 +190,10 @@
 <<<
 
 /tp $player $x $y $z = >>>
-	if(get_command_block()) {
+	if(@cmdblk = get_command_block()) {
+		if(@cmdblk['world'] != pworld($player)) {
+			die('This commandblock cannot teleport players in other worlds.');
+		}
 		@loc = _relative_coords(ploc($player), $x, $y, $z);
 		set_ploc($player, @loc);
 	} else {
