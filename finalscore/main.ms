@@ -724,24 +724,7 @@ bind(block_place, null, array('type': 33), @e) {
 }
 
 // Protect non-rideable tameable animals from damage by non-owners
-bind(entity_damage, null, array('type': 'OCELOT'), @event) {
-	@owner = get_mob_owner(@event['id']);
-	if(is_null(@owner) || !_is_survival_world(@event['world'])) {
-		 die();
-	}
-
-	if(@event['cause'] == 'ENTITY_ATTACK') {
-		if(ponline(@event['damager']) && @owner != @event['damager']) {
-			cancel();
-		}
-	} else if(@event['cause'] == 'PROJECTILE') {
-		if(ponline(@event['shooter']) && @owner != @event['shooter']) {
-			cancel();
-		}
-	}
-}
-
-bind(entity_damage, null, array('type': 'WOLF'), @event) {
+bind(entity_damage, null, array('type': '/(WOLF|OCELOT)/'), @event) {
 	@owner = get_mob_owner(@event['id']);
 	if(is_null(@owner) || !_is_survival_world(@event['world'])) {
 		 die();
