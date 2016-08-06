@@ -65,12 +65,16 @@ case 'load':
 		}
 
 		play_named_sound(ploc(), array('sound': 'entity.elder_guardian.hurt', 'pitch': 2));
-		@item = pinv(player(), null)
-		@item['qty'] -= 1
-		if(@item['qty'] == 0) {
-			set_pinv(player(), array(null: null))
-		} else {
-			set_pinv(player(), array(null: @item))
+		try {
+			@item = pinv(player(), null);
+			@item['qty'] -= 1;
+			if(@item['qty'] == 0) {
+				set_pinv(player(), array(null: null));
+			} else {
+				set_pinv(player(), array(null: @item));
+			}
+		} catch(CastException @ex) {
+			// Player is probably dead.
 		}
 	}
 
