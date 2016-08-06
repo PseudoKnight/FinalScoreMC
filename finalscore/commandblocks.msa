@@ -16,7 +16,7 @@
 	if(is_null(@loc = get_command_block()), die())
 	@loc = array(@loc[0] + 0.5, @loc[1] + 2, @loc[2] + 0.5, @loc[3])
 	if(ponline($player)) {
-		if(@loc['world'] != pworld($player)) {
+		if(@loc[3] != pworld($player)) {
 			die('This commandblock cannot set a player into a tempcart across worlds.');
 		}
 		@rider = puuid($player)
