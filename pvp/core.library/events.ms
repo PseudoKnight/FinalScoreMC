@@ -481,12 +481,10 @@ bind(entity_damage, array('id': @id.'EntityDamage', 'priority': 'LOWEST'), array
 				}
 			}
 
-			if(!@pvp['arena']['ff']
-			&& array_index_exists(@pvp['players'], @damager)
-			&& (!array_index_exists(@pvp['arena'], 'team')
-			|| @pvp['players'][@e['player']]['team'] == @pvp['players'][@damager]['team'])) {
-				cancel()
-
+			if((@damager == @e['player'] && @e['cause'] == 'PROJECTILE')
+			|| (!@pvp['arena']['ff'] && array_index_exists(@pvp['players'], @damager)
+			&& (!array_index_exists(@pvp['arena'], 'team') || @pvp['players'][@e['player']]['team'] == @pvp['players'][@damager]['team']))) {
+				cancel();
 			} else {
 				_stats_damage(@damager, @e['player'], @e['amount'], @pvp);
 			}
