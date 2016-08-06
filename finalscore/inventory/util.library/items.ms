@@ -116,26 +116,18 @@ proc _pset_potion(@type, @id, @seconds, @strength){
 			'LUCK',
 			''
 		);
-		if(@potionTypes[@id]) {
+		// verify valid regular potion
+		if(@potionTypes[@id]
+		&& (@extended == 'true' || @extended == 'false')
+		&& (@upgraded == 'true' || @upgraded == 'false')) {
 			@item['meta']['base'] = associative_array(
 				'type': @potionTypes[@id],
+				'extended': (@extended == 'true'),
+				'upgraded': (@upgraded == 'true'),
 			);
-			// verify valid regular potion
-			if((@extended == 'true' || @extended == 'false')
-			&& (@upgraded == 'true' || @upgraded == 'false')) {
-				@item['meta']['base']['extended'] = (@extended == 'true');
-				@item['meta']['base']['upgraded'] = (@upgraded == 'true');
-			}
-			try {
-				set_pinv(array(null: @item));
-				return();
-			} catch(FormatException @ex) {
-				// fall back to custom potions
-				array_remove(@item['meta']['base'], 'extended');
-				array_remove(@item['meta']['base'], 'upgraded');
-			}
+		} else {
+			@item['meta']['potions'] = array(associative_array('id': @id, 'strength': @strength - 1, 'seconds': @seconds));
 		}
-		@item['meta']['potions'] = array(array('id': @id, 'strength': @strength - 1, 'seconds': @seconds));
 		set_pinv(array(null: @item));
 	}
 }
