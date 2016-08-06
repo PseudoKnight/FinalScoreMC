@@ -118,9 +118,9 @@ proc _fw_task(@task, @state, @secs) {
 			_fw_msg(array(
 				'Bring in the harvest!',
 				'The farm life\'s for you.',
-				'Bring life from the bones of the fallen! *cough* I mean, get wheat.',
+				'Bring life from the bones of the fallen!',
 				'Get what? Get wheat!',
-				'Plant some seeds. Grow them with bonemeal. Get some wheat.',
+				'Plant seeds. Bonemeal them. Get wheat.',
 			));
 			_fw_items(array('type': 351, 'data': 15, 'qty': 1), 100);
 			@region = sk_region_info('frogware', 'custom')[0]
@@ -153,7 +153,7 @@ proc _fw_task(@task, @state, @secs) {
 			_fw_msg(array(
 				'King of the Hill',
 				'Be the Emerald King, Lord Frog Hill',
-				'This hill\'s only big enough for one of you.',
+				'This hill\'s only big enough for one of you!',
 				'The others are disrespecting your hill. Fight!',
 			))
 			if(!rand(4)) {
@@ -372,7 +372,7 @@ proc _fw_task(@task, @state, @secs) {
 			_fw_msg(array(
 				'Pop the frog egg!',
 				'That ain\'t no dragon egg!',
-				'That\'s no obsidian! It\'s something to right-click!',
+				'That\'s no obsidian! It\'s a thing to right-click!',
 				'Let\'s make an omellete.',
 			))
 			@loc = _fw_loc()
@@ -519,9 +519,9 @@ proc _fw_task(@task, @state, @secs) {
 			@color = @colors[@colorindex];
 			_fw_msg(array(
 				@color.color('r').' is the new black',
-				'Shear the '.@color.color('r').' ones! I swear I\'m not sheepist.',
+				'Shear the '.@color.color('r').' ones!',
 				'I could use a new '.@color.color('r').' wool coat.',
-				'Farmer bob needs your help. Get all the '.@color.color('r').' wool.',
+				'Farmer bob needs your help. Get the '.@color.color('r').' wool.',
 			));
 			@count = min(_fw_totalplayers() * 24, 200)
 			@region = sk_region_info('frogware', 'custom')[0]
@@ -637,7 +637,7 @@ proc _fw_task(@task, @state, @secs) {
 			_fw_msg(array(
 				'Catch a thing!',
 				'Reel it in!',
-				'Catch a frog or a pig... I don\'t care. Whatever. *sigh*',
+				'Catch a frog or a pig... Either.',
 			));
 			foreach(@p in all_players('custom')) {
 				if(_fw_player(@p)) {
