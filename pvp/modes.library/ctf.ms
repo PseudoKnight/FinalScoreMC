@@ -7,7 +7,7 @@ proc _pvp_flag_spawn(@id, @team, @loc) {
 		if(_horizontal_distance(entity_loc(@pvp['team'][@team]['flag']), @pvp['arena']['ctfflag'][@team]) > 3) {
 			@pvp['team'][@team]['flag'] = drop_item(@loc, array('type': 425, 'data': if(@team == 0, '1', '4')), 0)
 		}
-	} catch(BadEntityException @ex) {
+	} catch(Exception @ex) {
 		@pvp['team'][@team]['flag'] = drop_item(@loc, array('type': 425, 'data': if(@team == 0, '1', '4')), 0);
 	}
 	queue_delay('30000', @id.@team.'flag');
