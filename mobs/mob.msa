@@ -9,48 +9,48 @@
 			if(!_get_mob($), die('Unknown mob type.'));
 			@mob['type'] = $;
 			msg('Type set.');
-			
+
 		case 'name':
 			if(length($) > 64, die('Name is too long.'));
 			@mob['name'] = colorize($);
 			msg('Name set.');
-			
+
 		case 'age':
 			if(!is_integral($), die('Must be a number.'));
 			@mob['age'] = $;
 			msg('Age set.');
-			
+
 		case 'gear':
 			@mob['gear'] = array(
 				'WEAPON': pinv(player(), 0),
 				'HELMET': pinv(player(), 103),
 				'CHESTPLATE': pinv(player(), 102),
 				'LEGGINGS': pinv(player(), 101),
-				'BOOTS': pinv(player(), 100)			
+				'BOOTS': pinv(player(), 100)
 			);
 			msg('Gear set.');
-			
+
 		case 'droprate':
 			@args = parse_args($);
 			if(array_size(@args) == 1) {
 				@mob['droprate'] = array(
-					'WEAPON': @args[0], 
-					'BOOTS': @args[0], 
-					'LEGGINGS': @args[0],  
-					'CHESTPLATE': @args[0], 
+					'WEAPON': @args[0],
+					'BOOTS': @args[0],
+					'LEGGINGS': @args[0],
+					'CHESTPLATE': @args[0],
 					'HELMET': @args[0]
 				);
 			} else {
 				@mob['droprate'] = array(
-					'WEAPON': @args[0], 
-					'BOOTS': @args[1], 
-					'LEGGINGS': @args[2],  
-					'CHESTPLATE': @args[3], 
+					'WEAPON': @args[0],
+					'BOOTS': @args[1],
+					'LEGGINGS': @args[2],
+					'CHESTPLATE': @args[3],
 					'HELMET': @args[4]
 				);
 			}
 			msg('Droprate set.');
-			
+
 		case 'effect':
 			@args = parse_args($);
 			if(!is_numeric(@args[0]), die('Must be numeric'));
@@ -73,11 +73,11 @@
 				));
 				msg('Effect added');
 			}
-			
+
 		case 'tags':
 			@mob['tags'] = json_decode($);
 			msg('Set the tags to '.$);
-			
+
 		case 'tame':
 			if($) {
 				@mob['tame'] = true;
@@ -85,7 +85,7 @@
 				array_remove(@mob, 'tame');
 			}
 			msg('Made mob tamed state to '.$);
-			
+
 		case 'rider':
 			@mob['rider'] = $;
 			msg('Set mob rider to '.$);
@@ -98,7 +98,7 @@
 			if(@args[1] > 8, die('That explosion is too big.'));
 			@mob['explode'] = @args;
 			msg('Set mob to explode after '.@args[0].' seconds with strength of '.@args[1]);
-			
+
 		case 'onfire':
 			if(!is_numeric($), die('Must be a number.'));
 			if($ == 0 && array_index_exists(@mob, 'onfire')) {
@@ -109,16 +109,16 @@
 				msg('Mob will spawn on fire for '.$.' seconds.');
 			}
 
-		
+
 		case 'health':
 			@mob['health'] = $;
 			msg('Set health to '.$);
-			
+
 		default:
 			die('Available settings: type, name, gear, droprate, effect, health, tame, tags, rider, explode, onfire');
 		}
 		store_value('mob.'.$id, @mob);
-		
+
 	case 'delete':
 		if($setting) {
 			@mob = get_value('mob.'.$id);
@@ -130,13 +130,13 @@
 			clear_value('mob.'.$id);
 			msg('Custom mob deleted.');
 		}
-	
+
 	case 'info':
 		@mob = get_value('mob.'.$id);
 		foreach(@setting: @value in @mob) {
 			msg(color('gray').@setting.' '.color('r').@value);
 		}
-	
+
 	case 'spawn':
 		@mobType = $id;
 		@mobCount = 1;
@@ -150,7 +150,7 @@
 			@loc[2] + 0.5,
 			@loc[3]
 		), player());
-	
+
 	case 'list':
 		@mobs = get_values('mob');
 		@list = '';
@@ -164,38 +164,14 @@
 		msg('/mob info <mob> '.color('gray').'Displays information about custom mob');
 		msg('/mob spawn <mob> '.color('gray').'Spawns mob where you\'re looking');
 		msg('/mob list '.color('gray').'Lists all custom mobs');
-		
+
 	}
 <<<
 
 *:/summon $entity $x $y $z = >>>
-	if(!@cmdBlock = get_command_block(), die());
-	if($x[0] === '~') {
-		if($x === '~') {
-			@x = @cmdBlock['x'];
-		} else {
-			@x = @cmdBlock['x'] + substr($x, 1);
-		}
-	} else {
-		@x = $x;
+	if(!@cmdBlock = get_command_block()) {
+		die('This is for commandblocks only.');
 	}
-	if($y[0] === '~') {
-		if($y === '~') {
-			@y = @cmdBlock['y'];
-		} else {
-			@y = @cmdBlock['y'] + substr($y, 1);
-		}
-	} else {
-		@y = $y;
-	}
-	if($z[0] === '~') {
-		if($z === '~') {
-			@z = @cmdBlock['z'];
-		} else {
-			@z = @cmdBlock['z'] + substr($z, 1);
-		}
-	} else {
-		@z = $z;
-	}
-	spawn_mob($entity, 1, array(@x, @y, @z, @cmdBlock['world']));
+	@loc = _relative_coords(@cmdBlock, $x, $y, $z);
+	_spawn_mob($entity, 1, @loc);
 <<<
