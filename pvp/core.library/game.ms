@@ -196,7 +196,7 @@ proc _pvp_start_match(@id) {
 				} else {
 					@timeleft = ceil((@p['respawn'] - time()) / 1000);
 					title_msg(@player, @timeleft, null, 0, 20, 0);
-					if(@timeleft < 2) {
+					if(@timeleft == 3) {
 						set_pstorm(@player, false);
 					}
 				}
