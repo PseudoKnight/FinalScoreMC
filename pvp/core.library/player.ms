@@ -156,6 +156,9 @@ proc _pvp_equip(@id, @player) {
 			}
 		}
 	}
+	if(array_contains(@pvp['arena']['flags'], 'heartdisplay')) {
+		set_pscore('health', @player, integer(pinfo(player(), 5)), @id);
+	}
 }
 
 proc _assign_team(@player, @pvp) {
