@@ -60,6 +60,7 @@ proc _remove_spectator(@player, @pvp) {
 	try {
 		array_remove_values(@pvp['spectators'], @player)
 		if(ponline(@player)) {
+			set_pmode(@player, 'ADVENTURE');
 			set_pflight(@player, false);
 			set_collides_with_entities(@player, true);
 			dm_set_pvisible(@player, true);
