@@ -81,7 +81,7 @@
 			die(color('a').'[Spleef] '.color('r').'Match currently in progress.')
 		}
 
-		foreach(@pjlayer in array_keys(@nextspleef)) {
+		foreach(@player in array_keys(@nextspleef)) {
 			if(!ponline(@player) || !array_contains(sk_current_regions(@player), @cfg['region']['wrapper'])) {
 				array_remove(@nextspleef, @player)
 			}
