@@ -1,0 +1,17 @@
+*:/arena [$action] [$id] [$setting] [$] = >>>
+	include('commands.library/arena.ms');
+	_arena($action, $id, $setting, $);
+<<<
+
+*:/class [$action] [$id] [$setting] [$] = >>>
+    if(!has_permission('group.builder')) {
+        die('You do not have permission.');
+    }
+    include('commands.library/class.ms');
+    _class_cmd($action, $id, $setting, $);
+<<<
+
+*:/pvp [$action] [$id] [$] = >>>
+    include('commands.library/pvp.ms');
+    _pvp($action, $id, $);
+<<<

@@ -1,0 +1,239 @@
+proc _class_cmd(@action, @id, @setting, @args) {
+    if(@args) {
+        @args = parse_args(@args);
+    } else {
+        @args = array();
+    }
+    array_resize(@args, 3);
+    switch(@action) {
+        case 'set':
+        	try {
+        		@arenaid = split(':', @id)[0];
+        		@classid = split(':', @id)[1];
+        	} catch(IndexOverflowException @ex) {
+        		die('You need to specify an arena and class.');
+        	}
+        	@arena = get_value('arena', @arenaid)
+        	if(!@arena, die('No arena by that name: '.@arenaid))
+        	if(!array_index_exists(@arena, 'classes')) {
+        		@arena['classes'] = associative_array();
+        	}
+        	if(!array_index_exists(@arena['classes'], @classid)) {
+        		@arena['classes'][@classid] = associative_array()
+        	}
+            switch(@setting) {
+            	case 'selector':
+            		if(!pinv(player(), null), die('You must select an item on your hotbar.'))
+            		@arena['classes'][@classid]['selector'] = pinv(player(), null)
+            		msg('Class selector set to this item.')
+
+            	case 'kit':
+            		@inv = pinv()
+            		foreach(array_keys(@inv), @slot) {
+            			if(is_null(@inv[@slot])) {
+            				array_remove(@inv, @slot)
+            			} else {
+            				foreach(@i:@v in @inv[@slot]) {
+            					if(@i === 'meta' && @v) {
+            						foreach(@mi:@mv in @inv[@slot]['meta']) {
+            							if(!@mv || @mi === 'enchants') {
+            								array_remove(@inv[@slot]['meta'], @mi)
+            							}
+            						}
+            					}
+            					if(!@v) {
+            						array_remove(@inv[@slot], @i)
+            					}
+            				}
+            			}
+            		}
+            		@arena['classes'][@classid]['kit'] = @inv
+            		msg('Set kit to current inventory.')
+
+            	case 'ammo':
+            		@inv = pinv();
+            		_minify_inv(@inv);
+            		@arena['classes'][@classid]['ammo'] = @inv;
+            		msg('Set ammo to current inventory.');
+
+            	case 'stacklimit':
+            		if(array_size(@args) < 2) {
+            			die('Stacklimit needs two values: item name and stack size limit.');
+            		}
+            		if(@args[1] < 1) {
+            			array_remove(@arena['classes'][@classid]['stacklimit'], @args[0]);
+            		} else {
+            			@arena['classes'][@classid]['stacklimit'][@args[0]] = integer(@args[1]);
+            		}
+            		msg('Set stack size limit to '.@args[1].' for item '.@args[0].'.');
+
+            	case 'speed':
+            		if(@args[0] < 0 || @args[0] > 1) {
+            			die('Must be betwee 0 and 1')
+            		}
+            		@arena['classes'][@classid]['speed'] = @args[0]
+            		msg('Set class speed to '.@args[0].' (default 0.2)')
+
+            	case 'hunger':
+            		if(@args[0] < 0 || @args[0] > 20) {
+            			die('Hunger must be within 0 and 20')
+            		}
+            		if(!@args[1]) {
+            			@args[1] = 5
+            		} else if(@args[1] && @args[1] !== '~' && (@args[1] < 0 || @args[1] > 20)) {
+            			die('Saturation must be within 0 and 20')
+            		}
+            		@arena['classes'][@classid]['hunger'] =	array(@args[0], @args[1])
+            		msg('Set hunger to '.@args[0].' hunger '.if(@args[1] === '~', 'statically.', 'and '.@args[1].' saturation.'))
+
+            	case 'effect':
+            		@effects = _get_effects()
+            		if(!array_contains(array_keys(@effects), @args[0]), die('Unknown potion effect. '.array_keys(@effects)))
+            		@effect = @effects[@args[0]]
+            		if(!array_index_exists(@arena['classes'][@classid], 'effect'), @arena['classes'][@classid]['effect'] = associative_array())
+            		if(@args[1] && @args[2]) {
+            			if(@args[1] == 0 || @args[2] == 0) {
+            				array_remove(@arena['classes'][@classid]['effect'], @effect)
+            				if(array_size(@arena['classes'][@classid]['effect']) == 0) {
+            					array_remove(@arena['classes'][@classid], 'effect')
+            				}
+            				msg('Removed potion effect '.@args[0].'.')
+            			} else {
+            				@arena['classes'][@classid]['effect'][@effect] = associative_array('strength': @args[1] - 1, 'length': @args[2])
+            				msg('Set a potion effect for this class: '.@args[0].' with a strength of '.@args[1].' and a length of '.@args[2].' seconds.')
+            			}
+            		} else {
+            			die('Requires a strength integer and a length integer in seconds.')
+            		}
+
+            	case 'doublejump':
+            		if(@args === 'true') {
+            			@arena['classes'][@classid]['doublejump'] = 'normal' # string instead of boolean leaves room for alternative doublejump modes
+            			msg('Turned on doublejump for class.')
+            		} else if(@args[0] === 'false' && array_index_exists(@arena['classes'][@classid], 'doublejump')) {
+            			array_remove(@arena['classes'][@classid], 'doublejump')
+            			msg('Turned off doublejump for class.')
+            		}
+
+            	case 'script':
+            		if(@args[0] === 'true') {
+            			@arena['classes'][@classid]['script'] = true
+            			msg('Turned ON special script loading for this class.')
+            		} else if(@args[0] === 'false' && array_index_exists(@arena['classes'][@classid], 'script')) {
+            			array_remove(@arena['classes'][@classid], 'script')
+            			msg('Turned OFF special script loading for this class.')
+            		}
+
+            	case 'team':
+            		@arena['classes'][@classid]['team'] = @args[0];
+            		msg('Set team to '.@args[0]);
+
+            	case 'xp':
+            		if(is_numeric(@args[0]) && @args[0] <= 100 && @args[0] >= 0) {
+            			@arena['classes'][@classid]['xp'] = @args[0]
+            			msg('Set class to start with '.@args[0].'% of their experience bar.')
+            		} else {
+            			die('It needs to be a number from 0 to 100')
+            		}
+
+            	default:
+            		die('Available settings: selector, kit, effect, hunger, speed, spawner, doublejump, script')
+            }
+        	store_value('arena', @arenaid, @arena)
+
+        case 'delete':
+        	try {
+        		@arenaid = split(':', @id)[0];
+        		@classid = split(':', @id)[1];
+        	} catch(IndexOverflowException @ex) {
+        		die('You need to specify an arena and class.');
+        	}
+        	@arena = get_value('arena', @arenaid)
+        	if(!@arena, die('No arena by that name: '.@arenaid))
+        	if(!array_index_exists(@arena['classes'], @classid), die('No class by that name.'))
+        	if(@setting) {
+        		array_remove(@arena['classes'][@classid], @setting)
+        		msg(@setting.' deleted from '.@classid)
+        	} else {
+        		array_remove(@arena['classes'], @classid)
+        		msg('Class deleted.')
+        	}
+        	store_value('arena', @arenaid, @arena)
+
+        case 'info':
+        	try {
+        		@arenaid = split(':', @id)[0];
+        		@classid = split(':', @id)[1];
+        	} catch(IndexOverflowException @ex) {
+        		die('You need to specify an arena and class.');
+        	}
+        	@arena = get_value('arena', @arenaid)
+        	if(!@arena, die('No arena by that name: '.@arenaid))
+        	if(!array_index_exists(@arena['classes'], @classid), die('No class by that name.'))
+        	foreach(@setting: @value in @arena['classes'][@classid]) {
+        		msg(color('gray').@setting.' '.color('r').@value)
+        	}
+
+        case 'rename':
+        	try {
+        		@arenaid = split(':', @id)[0];
+        		@classid = split(':', @id)[1];
+        	} catch(IndexOverflowException @ex) {
+        		die('You need to specify an arena and class.');
+        	}
+        	@arena = get_value('arena', @arenaid)
+        	if(!@arena, die('No arena by that name: '.@arenaid))
+        	if(!array_index_exists(@arena['classes'], @classid), die('No class by that name.'))
+        	@arena['classes'][@setting] = @arena['classes'][@classid]
+        	if(array_index_exists(@arena['classes'][@setting], 'selector')) {
+        		@arena['classes'][@setting]['selector']['meta']['display'] = to_upper(@setting);
+        	}
+        	array_remove(@arena['classes'], @classid)
+        	store_value('arena', @arenaid, @arena)
+        	msg('Changed '.@classid.' class name to '.to_lower(@setting))
+
+        case 'equip':
+        	try {
+        		@arenaid = split(':', @id)[0];
+        		@classid = split(':', @id)[1];
+        	} catch(IndexOverflowException @ex) {
+        		die('You need to specify an arena and class.');
+        	}
+        	@arena = get_value('arena', @arenaid)
+        	if(!@arena, die('No arena by that name: '.@arenaid))
+        	@pvp = associative_array()
+        	@pvp['arena'] = @arena
+        	include('../core.library/class.ms')
+        	_class('equip', player(), @classid, @pvp)
+
+        case 'selector':
+        	try {
+        		@arenaid = split(':', @id)[0];
+        		@classid = split(':', @id)[1];
+        	} catch(IndexOverflowException @ex) {
+        		die('You need to specify an arena and class.');
+        	}
+        	@arena = get_value('arena', @arenaid)
+        	if(!@arena, die('No arena by that name: '.@arenaid))
+        	set_pinv(player(), array(null: @arena['classes'][@classid]['selector']))
+
+        case 'list':
+        	@arena = get_value('arena', @id)
+        	if(!@arena, die('No arena by that name: '.@id))
+        	@list = ''
+        	foreach(@class in array_keys(@arena['classes'])) {
+        		@list .= @class.' '
+        	}
+        	msg(color('gray').'CLASSES IN '.to_upper(@id).': '.color('r').@list)
+
+        default:
+        	msg(color('bold').'SUBCOMMANDS ---------------');
+        	msg('/class set <arena:class> <setting> [value[s]] '.color('gray').'Creates/overwrites settings');
+        	msg('/class delete <arena:class> [setting] '.color('gray').'Deletes a setting or class');
+        	msg('/class info <arena:class> '.color('gray').'Displays information about the class');
+        	msg('/class equip <arena:class> '.color('gray').'Sets your inventory to the class');
+        	msg('/class rename <arena:class> <newname> '.color('gray').'Renames the class');
+        	msg('/class list <arena> '.color('gray').'List classes in that arena');
+
+    }
+}

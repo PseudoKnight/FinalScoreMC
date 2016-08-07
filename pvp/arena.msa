@@ -1,8 +1,0 @@
-*:/ar [$action] [$id] [$setting] [$] = >>>
-	include('core.library/arena.ms');
-	_arena($action, $id, $setting, $);
-<<<
-*:/arena [$action] [$id] [$setting] [$] = >>>
-	include('core.library/arena.ms');
-	_arena($action, $id, $setting, $);
-<<<
