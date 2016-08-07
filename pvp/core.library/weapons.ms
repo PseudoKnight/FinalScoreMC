@@ -39,8 +39,8 @@ proc _weapon_cooldown(@player, @time, @type, @onCooldown, @remove = 1) {
 	}
 }
 
-proc _hit_scan(@damage, @tracerParticle, @hitParticle, @pvp){
-	@origin = _relative(ploc(), 'up', 2.3);
+proc _hit_scan(@range, @damage, @tracerParticle, @hitParticle, @pvp){
+	@origin = _relative(ploc(), 'up', if(get_entity_gliding(puuid()), 1, 2.3));
 	@vector = _get_vector(@origin['yaw'], @origin['pitch']);
 	@x = @vector['x'];
 	@y = @vector['y'];
@@ -98,7 +98,7 @@ proc _hit_scan(@damage, @tracerParticle, @hitParticle, @pvp){
 	if(!is_array(@tracerParticle)) {
 		@particle = @tracerParticle;
 	}
-	while(@n < 80) {
+	while(@n < @range) {
 		@n++;
 		@loc['x'] += @x;
 		@loc['y'] += @y;
@@ -132,7 +132,9 @@ proc _hit_scan(@damage, @tracerParticle, @hitParticle, @pvp){
 			}
 		}
 		if(@hit) {
-			try(damage_entity(puuid(@p), @damage, puuid()));
+			if(@damage) {
+				try(damage_entity(puuid(@p), @damage, puuid()));
+			}
 			play_effect(@ploc, @hitParticle, array('particleCount': 4));
 			play_sound(@origin, array('sound': 'SUCCESSFUL_HIT'), player());
 			@players[] = @p;
