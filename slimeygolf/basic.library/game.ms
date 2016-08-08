@@ -45,7 +45,7 @@ proc _start_game(@course, @loc) {
 	@bounciness = 0.8;
 
 	# Place ball
-	bind(player_interact, array(id: @course), array(item: 341, button: 'right', block: 159), @event, @golf) {
+	bind(player_interact, array('id': @course), array('item': 341, 'button': 'right', 'block': 159), @event, @golf) {
 		if(array_index_exists(@golf['players'], player())
 		&& @event['action'] === 'right_click_block'
 		&& @event['facing'] === 'up'
@@ -100,11 +100,14 @@ proc _start_game(@course, @loc) {
 					slot: 'SIDEBAR'), @golf['course']['name']);
 			}
 
-			bind(player_interact_at_entity, array(id: 'golf_swing_'.player()), array(clicked: @mobcheck), @event,
-			@player = player(), @golf) {
+			bind(player_interact_at_entity, array(id: 'golf_swing_'.player()), array('clicked': @mobcheck), @event,
+					@player = player(), @golf) {
+
 				if(@player != player(), die());
 				@ball = @golf['players'][player()];
-				if(@event['id'] != @ball['id'], die());
+				if(@event['id'] != @ball['id']){
+					die();
+				}
 				cancel();
 				if(!@ball['swing']) {
 					@ball['loc'] = entity_loc(@event['id']);
@@ -112,28 +115,25 @@ proc _start_game(@course, @loc) {
 					@ball['origin']['y'] = @ball['loc']['y'];
 					@dist = _distance(@ball['origin'], @ball['loc']);
 					@v = associative_array(
-						'x': (@ball['loc']['x'] - @ball['origin']['x']) / (@dist * 5),
-						'z': (@ball['loc']['z'] - @ball['origin']['z']) / (@dist * 5),
+						'x': (@ball['loc']['x'] - @ball['origin']['x']) / (@dist * 6),
+						'z': (@ball['loc']['z'] - @ball['origin']['z']) / (@dist * 6),
 					);
 					set_pexp(0);
 					@ball['swing'] = true;
 					@loc = @ball['loc'][];
 					set_interval(50, closure(){
 						@xp = pexp();
-						if(@xp < 116 && @ball['swing']) {
+						if(@xp < 108 && @ball['swing']) {
 							set_pexp(pexp() + 4);
 						} else {
 							clear_task();
 							@ball['swing'] = false;
-							set_pexp(0);
 						}
-						if(@xp < 80) {
-							@v['x'] *= 1.1
-							@v['z'] *= 1.1
-							@loc['x'] += @v['x'];
-							@loc['z'] += @v['z'];
-							play_effect(@loc, 'TILE_DUST', associative_array('id': 80, 'speed': 0));
-						}
+						@v['x'] *= 1.15
+						@v['z'] *= 1.15
+						@loc['x'] += @v['x'];
+						@loc['z'] += @v['z'];
+						play_effect(@loc, 'TILE_DUST', associative_array('id': 80, 'speed': 0));
 					});
 				}
 			}
@@ -150,9 +150,9 @@ proc _start_game(@course, @loc) {
 				&& @ball['id'] == @event['id']) {
 					@ball['moveable'] = true;
 					@ball['swing'] = false;
-					@xp = max(1, @xp - 12);
-					set_pexp(@player, @xp);
+					@xp = max(2, @xp - 8);
 					set_plevel(@player, plevel(@player) + 1);
+					set_pexp(@player, @xp);
 					set_pscore('strokes', @player, get_pscore('strokes', @player, @golf['course']['name']) + 1,
 						@golf['course']['name']);
 					play_sound(entity_loc(@event['id']), array('sound': 'WOOD_CLICK', 'pitch': 2 - (1.3 / @xp)));
