@@ -200,14 +200,21 @@ bind(player_interact_at_entity, null, array('clicked': 'ARMOR_STAND'), @event) {
 				}
 
 			case 420: # lead carries armor stand
-				if(!pinfo(player(), 11)) {
+				if(!pinfo(player(), 11) && !get_entity_rider(puuid())) {
 					cancel();
-					title_msg(null, color(6).'Moving Armor Stand. Sneak to drop.', 0, 40, 10);
-					set_entity_rider(puuid(), @event['id']);
-
-					bind(player_toggle_sneak, null, array('player': player()), @event) {
-						set_entity_rider(puuid(), null);
-						unbind();
+					title_msg(null, color(6).'Moving Armor Stand. Click to place.', 0, 40, 10);
+					bind(player_interact, null, array('player': player()), @event, @world = pworld(), @stand = @event['id']) {
+						if(array_index_exists(@event, 'location')) {
+							unbind();
+							@loc = @event['location'];
+							if(@loc['world'] != @world || !entity_exists(@stand)) {
+								die();
+							}
+							@loc = _relative(@loc, @event['facing']);
+							@loc['x'] += 0.5;
+							@loc['z'] += 0.5;
+							set_entity_loc(@stand, @loc);
+						}
 					}
 				}
 
