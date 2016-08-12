@@ -12,15 +12,9 @@ case 'load':
 		@y = max((1.40 * sin(to_radians(@facing[1]))) + 0.2, 0.2);
 		@z = 1.40 * sin(to_radians(@facing[0])) * cos(to_radians(@facing[1]));
 		set_pvelocity(player(), @x, @y, @z);
+		play_sound(ploc(), array('sound': 'GHAST_CHARGE', 'pitch': 2, 'volume': 2));
 		set_timeout(50, closure(){
-			@facing = pfacing(player());
-			@facing[0] = @facing[0] + 90;
-			@facing[1] = 0 - @facing[1];
-			@x = 1.40 * cos(to_radians(@facing[0])) * cos(to_radians(@facing[1]));
-			@y = max((1.40 * sin(to_radians(@facing[1]))) + 0.2, 0.2);
-			@z = 1.40 * sin(to_radians(@facing[0])) * cos(to_radians(@facing[1]));
 			set_pvelocity(player(), @x, @y, @z);
-			play_sound(ploc(), array('sound': 'GHAST_CHARGE', 'pitch': 2, 'volume': 2));
 			if(psaturation() >= 1) {
 				set_psaturation(psaturation() - 1);
 			} else if(phunger() >= 1) {
