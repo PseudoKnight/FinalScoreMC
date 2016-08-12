@@ -16,26 +16,25 @@ bind(player_interact, null, array('item': 401, 'button': 'right'), @event) {
 	@loc['x'] += 0.5;
 	@loc['z'] += 0.5;
 
-	foreach(@f in range(rand(1, 4))) {
-		@meta = associative_array('strength': rand(3), 'effects': array());
-		foreach(@m in range(rand(1, 4))) {
-			@numcolors = rand(3);
-			@colors = array();
-			for(@i = 0, @i <= @numcolors, @i++) {
-				@colors[] = array(rand(256), rand(256), rand(256));
-			}
-			@numcolors = rand(3);
-			@fadecolors = array();
-			for(@i = 0, @i <= @numcolors, @i++) {
-				@fadecolors[] = array(rand(256), rand(256), rand(256));
-			}
+	@colors = array();
+	for(@i = 0, @i < 3, @i++) {
+		@colors[] = array(rand(256), rand(256), rand(256));
+	}
 
+	foreach(@f in range(rand(1, 4))) {
+		@meta = associative_array('strength': @f, 'effects': array());
+		foreach(@m in range(rand(1, 3))) {
+			@type = array_rand(array('BALL', 'BALL_LARGE', 'STAR', 'BURST', 'CREEPER'), 1, false)[0];
+			@startcolors = array_rand(@colors, rand(1, 3), false);
+			@endcolors = array_filter(@colors, closure(@key, @value){
+				return(!array_contains(@startcolors, @value));
+			});
 			@meta['effects'][] = associative_array(
 				'flicker': rand(2),
 				'trail': rand(2),
-				'colors': @colors,
-				'fade': @fadecolors,
-				'type': array_rand(array('BALL', 'BALL_LARGE', 'STAR', 'BURST', 'CREEPER'), 1, false)[0],
+				'colors': @startcolors,
+				'fade': @endcolors,
+				'type': @type,
 			);
 		}
 		launch_firework(@loc, @meta);
