@@ -61,8 +61,7 @@ case 'load':
 	_manti_noise(@player)
 
 case 'powerup':
-	set_phunger(@player, min(20, phunger(@player) + 4));
-	set_psaturation(@player, psaturation(@player) + 4);
+	set_phunger(@player, min(20, phunger(@player) + 8));
 
 case 'unload':
 	unbind(@player.'interact')

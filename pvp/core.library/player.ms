@@ -11,7 +11,7 @@ proc _remove_player(@player, @pvp) {
 
 	# Delay spectator mode so that health amount is updated.
 	# Health can be above zero when pkill() or set_phealth() are used.
-	queue_push(closure(){
+	set_timeout(50, closure(){
 		_set_spectator(player(), @pvp);
 	});
 }
@@ -88,7 +88,6 @@ proc _pvp_initialize_players(@id, @players) {
 		}
 
 		set_phunger(@player, 20);
-		set_psaturation(@player, 5);
 		set_phealth(@player, 20);
 		_pvp_equip(@id, @player);
 
@@ -132,6 +131,7 @@ proc _pvp_equip(@id, @player) {
 	if(!array_index_exists(@pvp['players'], @player)) {
 		return();
 	}
+	set_psaturation(@player, 0);
 	if(array_index_exists(@pvp['players'][@player], 'inv')) {
 		set_pinv(@player, @pvp['players'][@player]['inv']);
 	} else {

@@ -38,9 +38,7 @@ proc _class(@action, @player, @class, @pvp) {
 		}
 
 	case 'powerup':
-		set_phealth(@player, min(20, pinfo(@player, 5) + 4));
-		set_phunger(@player, min(20, phunger(@player) + 2));
-		set_psaturation(@player, psaturation(@player) + 2);
+		set_phunger(@player, min(20, phunger(@player) + 4));
 		set_ponfire(@player, false);
 		@flash = true;
 		foreach(@effect in get_peffect(@player)) {
@@ -51,6 +49,7 @@ proc _class(@action, @player, @class, @pvp) {
 		if(@flash) {
 			set_peffect(@player, 16, 0, 1, true)
 		}
+		set_peffect(@player, 10, 1, 5, true);
 		play_sound(ploc(@player), array('sound': 'enderman_teleport', 'pitch': 2), @player)
 		if(array_index_exists(@pvp['arena']['classes'][@class], 'ammo')) {
 			@inv = pinv(@player);
