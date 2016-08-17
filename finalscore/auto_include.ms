@@ -425,8 +425,7 @@ proc _get_effects() {
 	@region: The WorldGuard region name. It will use the player or commandblock world.
 	@entities: An array of entity types to remove. (some entity types are automatically protected)
 */
-proc _remove_region_entities(@region, @entities) {
-	@world = 'custom'; # we don't need this for other worlds
+proc _remove_region_entities(@region, @entities, @world = 'custom') {
 	if(!sk_region_exists(@world, @region)) {
 		console('Can\'t remove entities because region doesn\'t exist: '.@region, false);
 		return(false);
