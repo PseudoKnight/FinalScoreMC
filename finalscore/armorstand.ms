@@ -220,18 +220,26 @@ bind(player_interact_at_entity, null, array('clicked': 'ARMOR_STAND'), @event) {
 
 			default:
 				@poseable = _get_poseable(@event['id'], @armorstand, @event['position']);
-				if(@poseable == 'ArmLeft') {
+				if(@poseable == 'ArmLeft' || @poseable == 'Head') {
+					@slot = 'off_hand';
+					if(@poseable == 'Head') {
+						@slot = 'helmet';
+					}
 					cancel();
-					@tool = get_mob_equipment(@event['id'])['off_hand'];
+					@tool = get_mob_equipment(@event['id'])[@slot];
 					if(!@item) {
 						if(@tool) {
-							set_mob_equipment(@event['id'], associative_array('off_hand': null));
+							@equipment = associative_array();
+							@equipment[@slot] = null;
+							set_mob_equipment(@event['id'], @equipment);
 							set_pinv(player(), array(null: @tool));
 						}
 					} else if(@item['qty'] == 1 || !@tool) {
 						@oldQty = @item['qty'];
 						@item['qty'] = 1;
-						set_mob_equipment(@event['id'], associative_array('off_hand': @item));
+						@equipment = associative_array();
+						@equipment[@slot] = @item;
+						set_mob_equipment(@event['id'], @equipment);
 						if(!@tool) {
 							if(@oldQty > 1) {
 								@item['qty'] = @oldQty - 1;
