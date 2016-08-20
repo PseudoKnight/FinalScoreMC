@@ -69,8 +69,22 @@ bind('inventory_click', null, array('slottype': 'RESULT'), @event) {
 				cancel();
 			}
 		} else if(@event['slotitem']['name'] == 'FIREWORK') {
-			@event['slotitem']['qty'] = 16;
-			modify_event('slotitem', @event['slotitem']);
+			if(@event['shiftclick']) {
+				// Minecraft crafts these items oddly, so instead of replacing the result it is more consistent to give
+				// the difference. TODO: A side effect of this method is that if there's no room in the inventory for
+				// the difference, it will still consume the items.
+				@min = 64;
+				foreach(@item in @event['inventory']) {
+					if(@item && @item['name'] != 'FIREWORK'){
+						@min = min(@min, @item['qty']);
+					}
+				}
+				@remaining = (@min * 13);
+				pgive_item(401, @remaining, @event['slotitem']['meta']);
+			} else {
+				@event['slotitem']['qty'] = 16;
+				modify_event('slotitem', @event['slotitem']);
+			}
 		}
 
 	} else if(@event['inventorytype'] === 'ANVIL') {
