@@ -235,7 +235,7 @@
 						_regionmsg(@cfg['region']['wrapper'], color('a').'[Spleef] '._colorname(@winner).@winner.color(r).' is the winner!')
 						set_ploc(@winner, @cfg['warp']['lobby'])
 						set_peffect(@winner, 1, 0, 0);
-						set_peffect(@player, 8, 0, 0);
+						set_peffect(@winner, 8, 0, 0);
 						_clear_pinv(@winner);
 						set_pmode(@winner, 'ADVENTURE');
 						_acc_add(@winner, @reward)
