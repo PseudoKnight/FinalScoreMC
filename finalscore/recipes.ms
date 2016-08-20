@@ -19,7 +19,9 @@ add_recipe(array(
 
 # Special recipe handling (enchanted lore books and player heads)
 bind('inventory_click', null, array('slottype': 'RESULT'), @event) {
-	if(is_null(@event['slotitem']), die())
+	if(is_null(@event['slotitem'])) {
+		die();
+	}
 
 	if(@event['inventorytype'] == 'WORKBENCH' || @event['inventorytype'] == 'CRAFTING') {
 		if(@event['slotitem']['name'] == 'ENCHANTED_BOOK'
@@ -66,6 +68,9 @@ bind('inventory_click', null, array('slottype': 'RESULT'), @event) {
 			} else {
 				cancel();
 			}
+		} else if(@event['slotitem']['name'] == 'FIREWORK') {
+			@event['slotitem']['qty'] = 16;
+			modify_event('slotitem', @event['slotitem']);
 		}
 
 	} else if(@event['inventorytype'] === 'ANVIL') {
