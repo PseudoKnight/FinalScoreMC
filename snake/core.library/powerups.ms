@@ -91,6 +91,7 @@ proc _snake_ability(@player, @game) {
 						@item['qty'] -= 1;
 						set_pinv(@player, associative_array(0: @item));
 					}
+					play_sound(@snake['loc'], associative_array('sound': 'FUSE', 'volume': 2));
 					spawn_entity('PRIMED_TNT', 1, array(
 						@snake['loc'][0] + 0.5, @snake['loc'][1] + 0.5, @snake['loc'][2] + 0.5, @snake['loc'][3]
 					));
@@ -119,7 +120,10 @@ proc _snake_ability(@player, @game) {
 						@item['qty'] -= 1;
 						set_pinv(@player, associative_array(0: @item));
 					}
+
+					// shoot missile
 					@missile = associative_array('dir': @snake['dir'], 'loc': @snake['loc'][], 'skip': true);
+					play_named_sound(@snake['loc'], associative_array('sound': 'entity.shulker.shoot', 'volume': 2));
 					set_interval(50, 0, closure(){
 						if(!@missile['skip']) {
 							set_block_at(@missile['loc'], 0, false);
@@ -135,16 +139,22 @@ proc _snake_ability(@player, @game) {
 						} else {
 							clear_task();
 							if(@block != '169:0') {
+								play_named_sound(@missile['loc'], associative_array('sound': 'entity.shulker_bullet.hit', 'volume': 2));
+								play_effect(@missile['loc'], 'CLOUD', associative_array('speed': 0.07, 'particleCount': 5));
 								set_block_at(@missile['loc'], 0, false);
 							}
-							if(@snake['alive'] && @snake['ability'] == 'missile') {
-								@item = pinv(@player, 0);
-								if(@item) {
-									@item['qty'] += 1;
-									set_pinv(@player, associative_array(0: @item));
-								} else {
-									set_pinv(@player, associative_array(0: associative_array('name': 'REDSTONE_BLOCK')));
-								}
+						}
+					});
+
+					// reload
+					set_timeout(4000, closure(){
+						if(@snake['alive'] && @snake['ability'] == 'missile') {
+							@item = pinv(@player, 0);
+							if(@item) {
+								@item['qty'] += 1;
+								set_pinv(@player, associative_array(0: @item));
+							} else {
+								set_pinv(@player, associative_array(0: associative_array('name': 'REDSTONE_BLOCK')));
 							}
 						}
 					});
