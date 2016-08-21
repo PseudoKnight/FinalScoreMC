@@ -8,10 +8,12 @@ proc _snake_bot_update(@bot, @game) {
 			@dir = _snake_farthest_dir(@snake['loc'], @snake['target']['loc']);
 			if(@dir && _snake_safe_block(_relative(@snake['loc'], @dir))) {
 				@snake['dir'] = @dir;
+				return();
 			} else if(split(':', get_block_at(@snake['target']['loc']))[0] == '159') {
 				@snake['target'] = null;
 			}
-		} else if(!_snake_safe_block(_relative(@snake['loc'], @snake['dir']))) {
+		}
+		if(!_snake_safe_block(_relative(@snake['loc'], @snake['dir']))) {
 			@dir = _snake_direction_of(@snake['loc'], '0:0', @snake['dir']);
 			if(@dir) {
 				@snake['dir'] = @dir
@@ -152,10 +154,12 @@ proc _snake_bot_update(@bot, @game) {
 			@dir = _snake_farthest_dir(@snake['loc'], @snake['target']['loc']);
 			if(@dir && _snake_safe_block(_relative(@snake['loc'], @dir))) {
 				@snake['dir'] = @dir;
+				return();
 			} else if(split(':', get_block_at(@snake['target']['loc']))[0] == '159') {
 				@snake['target'] = null;
 			}
-		} else if(!_snake_safe_block(_relative(@snake['loc'], @snake['dir']))) {
+		}
+		if(!_snake_safe_block(_relative(@snake['loc'], @snake['dir']))) {
 			@dir = _snake_direction_of(@snake['loc'], '0:0', @snake['dir']);
 			if(@dir) {
 				@snake['dir'] = @dir
