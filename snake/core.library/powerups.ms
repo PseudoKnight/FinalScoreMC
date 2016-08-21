@@ -123,10 +123,14 @@ proc _snake_ability(@player, @game) {
 
 					// shoot missile
 					@missile = associative_array('dir': @snake['dir'], 'loc': @snake['loc'][], 'skip': true);
-					play_named_sound(@snake['loc'], associative_array('sound': 'entity.shulker.shoot', 'volume': 2));
+					play_named_sound(@snake['loc'], associative_array('sound': 'entity.shulker.shoot', 'volume': 2, 'pitch': 2));
 					set_interval(50, 0, closure(){
 						if(!@missile['skip']) {
 							set_block_at(@missile['loc'], 0, false);
+						}
+						if(array_size(@game['snakes']) < 2) {
+							clear_task();
+							die();
 						}
 						@missile['loc'] = _relative(@missile['loc'], @missile['dir']);
 						@block = get_block_at(@missile['loc']);
@@ -136,13 +140,31 @@ proc _snake_ability(@player, @game) {
 							} else {
 								@missile['skip'] = false;
 							}
+						} else if(@block == '169:0') {
+							@dir = _snake_direction_of(@missile['loc'], '0:0', _snake_opposite_dir(@missile['dir']));
+							if(@dir) {
+								@missile['dir'] = @dir;
+								@missile['loc'] = _relative(@missile['loc'], @dir);
+								set_block_at(@missile['loc'], '152', false);
+							} else {
+								clear_task();
+							}
 						} else {
 							clear_task();
-							if(@block != '169:0') {
-								play_named_sound(@missile['loc'], associative_array('sound': 'entity.shulker_bullet.hit', 'volume': 2));
-								play_effect(@missile['loc'], 'CLOUD', associative_array('speed': 0.07, 'particleCount': 5));
+							play_named_sound(@missile['loc'], associative_array('sound': 'entity.shulker_bullet.hit', 'volume': 2, 'pitch': 1.5));
+							if(split(':', @block)[0] == '159') {
 								set_block_at(@missile['loc'], 0, false);
+								foreach(@player: @othersnake in @game['snakes']) {
+									if(@othersnake['loc'][0] == @missile['loc'][0] && @othersnake['loc'][1] == @missile['loc'][1] && @othersnake['loc'][2] == @missile['loc'][2]) {
+										_snake_kill(@player, @game);
+									}
+								}
 							}
+							@loc = @missile['loc'][];
+							@loc[0] += 0.5;
+							@loc[1] += 0.5;
+							@loc[2] += 0.5;
+							play_effect(@loc, 'CLOUD', associative_array('speed': 0.07, 'particleCount': 5));
 						}
 					});
 
