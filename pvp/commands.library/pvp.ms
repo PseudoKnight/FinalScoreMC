@@ -78,6 +78,9 @@ proc _pvp(@action, @id, @arg){
             if(@pvp['running']) {
                 die('Match already in progress.');
             }
+            if(!array_index_exists(@pvp['players'], player())) {
+                die('You have not joined.');
+            }
             # Get arena settings
             @pvp['arena'] = get_value('arena', @id);
             if(is_null(@pvp['arena'])) {
