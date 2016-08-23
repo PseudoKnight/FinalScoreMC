@@ -5,13 +5,14 @@ proc _pvp_start(@pvp, @id){
 	}
 
 	@childid = '';
+	@picked = '';
 	if(array_index_exists(@pvp['arena'], 'arenaselect') && @pvp['arena']['arenaselect']['type'] == 'vote') {
 		@voted = array_filter(@pvp['players'], closure(@key, @value){
 			return(array_index_exists(@value, 'arena'));
 		});
-		@picked = array_rand(@voted, 1, false);
+		@picked = array_get(array_rand(@voted), 0, '');
 		if(@picked) {
-			@childid = @picked[0]['arena'];
+			@childid = @pvp['players'][@picked]['arena'];
 		}
 
 		// Store total votes
@@ -282,6 +283,9 @@ proc _pvp_start(@pvp, @id){
 	if(array_index_exists(@arena, 'class_picks') &&
 	(!array_index_exists(@arena, 'lives') || @arena['class_picks'] < @arena['lives'])) {
 		_regionmsg(@arena['broadcast'], colorize('- &e&l'.@arena['class_picks'].' CLASS PICKS'));
+	}
+	if(@picked) {
+		_regionmsg(@arena['broadcast'], colorize('- &e&lArena picked by '.@picked));
 	}
 	_worldmsg('custom', colorize('&7&m|----------------------------------------------------|'));
 
