@@ -7,7 +7,6 @@ case 'load':
 			set_timeout(200, closure(){
 				play_sound(ploc(@swift), array('sound': 'GHAST_SCREAM2', 'pitch': 1.6 + (rand(5) / 10)));
 			});
-			raw_set_pvanish(get_player_from_entity_id(@entity), true, @swift);
 			return(true);
 		}
 	}
@@ -156,29 +155,11 @@ case 'load':
 			@rider = get_entity_rider(@uuid);
 			if(@rider) {
 				set_entity_rider(@uuid, null);
-				raw_set_pvanish(get_player_from_entity_id(@rider), false, @player);
 				@v = entity_velocity(@uuid);
 				@v['x'] *= 2;
 				@v['y'] *= 1.5;
 				@v['z'] *= 2;
 				set_entity_velocity(@rider, @v);
-			}
-		} else {
-			@vehicle = get_entity_vehicle(@uuid);
-			if(@vehicle && @vehicle == puuid(@player)) {
-				set_entity_rider(@vehicle, null);
-				raw_set_pvanish(@player, false, get_player_from_entity_id(@vehicle));
-				set_entity_velocity(@rider, entity_velocity(@vehicle));
-			}
-		}
-	}
-
-	bind(player_death, array('id': @player.'death', 'priority': 'HIGHEST'), null, @e, @pvp) {
-		if(array_index_exists(@pvp['players'], player())) {
-			if(@vehicle = get_entity_vehicle(puuid())) {
-				raw_set_pvanish(player(), false, get_player_from_entity_id(@vehicle));
-			} else if(@rider = get_entity_rider(puuid())){
-				raw_set_pvanish(get_player_from_entity_id(@rider), false, player());
 			}
 		}
 	}
@@ -192,6 +173,5 @@ case 'unload':
 	unbind(@player.'sneak');
 	unbind(@player.'damage');
 	unbind(@player.'clickgrab');
-	unbind(@player.'death');
 
 }
