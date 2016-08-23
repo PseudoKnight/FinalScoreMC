@@ -746,10 +746,6 @@ proc _arena(@action, @id, @setting, @string) {
 					color(@arena['team'][0]['color']).@arena['team'][0]['name'].color('gray').' vs '
 					.color(@arena['team'][1]['color']).@arena['team'][1]['name']))
 				if(!array_index_exists(@arena, 'parent')) {
-					# always required settings
-					if(!array_index_exists(@arena, 'lobby'), msg(color('red').'lobby '.color(7).'(required)'))
-					if(!array_index_exists(@arena, 'spawn'), msg(color('red').'spawn '.color(7).'(required)'))
-					if(!array_index_exists(@arena, 'region'), msg(color('red').'region '.color(7).'(required)'))
 					# dependent settings
 					if(array_index_exists(@arena, 'captain') && !array_index_exists(@arena, 'classes'),
 						msg(color('gold').'classes '.color(7).'(required for setting "captain")'))
@@ -767,14 +763,16 @@ proc _arena(@action, @id, @setting, @string) {
 						msg(color('gold').'mode '.color(7).'(team mode required for "team")'))
 					if(array_index_exists(@arena, 'teamratio') && !array_index_exists(@arena, 'mode'),
 						msg(color('gold').'mode '.color(7).'(team mode required for "teamratio")'))
+					if(array_index_exists(@arena, 'dropchance') && !array_contains(@arena['flags'], 'keepinventory'),
+						msg(color('gold').'keepinventory '.color(7).'(this flag required for "dropchance")'))
 				}
 				foreach(@setting: @value in @arena) {
 					if(array_contains(array('spawn', 'kit', 'itemspawn', 'chestspawn', 'mobspawn', 'classes', 'respawn'), @setting)) {
-						msg(@setting.' '.color('gray').'[...]')
+						msg(@setting.' '.color('gray').'['.array_size(@value).' value(s) ...]');
 					} else if(array_contains(array('team'), @setting)) {
-						continue()
+						continue();
 					} else {
-						msg(@setting.' '.color('gray').@value)
+						msg(@setting.' '.color('gray').@value);
 					}
 				}
 			}
@@ -842,10 +840,10 @@ proc _arena(@action, @id, @setting, @string) {
 			msg('/arena stats id '.color('gray').'View stats for arena.');
 			msg('/arena resetstats id '.color('gray').'Reset stats for arena.');
 			msg('/arena list '.color('gray').'List all arenas');
-			msg(color('bold').'SETTINGS **required ------------');
-			msg('lobby ** '.color('gray').'Sets the lobby warp point');
-			msg('spawn ** '.color('gray').'Adds a spawn point');
-			msg('region ** '.color('gray').'The combat region name');
+			msg(color('bold').'SETTINGS ------------------');
+			msg('lobby '.color('gray').'Sets the lobby warp point');
+			msg('spawn '.color('gray').'Adds a spawn point');
+			msg('region '.color('gray').'The combat region name');
 			msg('parent '.color('gray').'The parent arena configuration.');
 			msg('arenaselect '.color('gray').'Type of select and then a comma list of arenas.');
 			msg('sharedarenas '.color('gray').'A comma separated list of arena ids.');
@@ -862,7 +860,9 @@ proc _arena(@action, @id, @setting, @string) {
 			msg('kit '.color('gray').'Sets the respawn kits - accepts team num as value');
 			msg('classes '.color('gray').'Available classes [team1list team2list]');
 			msg('captain '.color('gray').'The captain class for each team');
+			msg('delay '.color('gray').'The starting delay (10 or 45 when classes)');
 			msg('respawntime '.color('gray').'The respawn time in seconds');
+			msg('respawnmode '.color('gray').'"normal" (default) or "mob" for villager respawns');
 			msg('restore '.color('gray').'A list of schematics to restore.');
 			msg('time '.color('gray').'The starting time');
 			msg('ff '.color('gray').'Sets team friendly-fire (true)');
@@ -875,6 +875,7 @@ proc _arena(@action, @id, @setting, @string) {
 			msg('max '.color('gray').'Start the match as soon as this number of players join.');
 			msg('effect '.color('gray').'The starting potion effect for all or team.');
 			msg('denydrop '.color('gray').'Comma list of IDs not dropped on death or "all"');
+			msg('dropchance '.color('gray').'Chance to drop an item when keepinventory is enabled');
 			msg('delay '.color('gray').'Delay before game starts after command (3)');
 			msg('timer '.color('gray').'Time in minutes till team num wins.');
 			msg('resourcepack '.color('gray').'Custom resource pack to load.');
