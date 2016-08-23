@@ -440,7 +440,7 @@ proc _pvp_end_match(@id, @winners) {
 	queue_delay(4000, @id);
 	queue_push(closure(){
 		@pvp['running'] = 0;
-		foreach(array_keys(@pvp['players']), @player) {
+		foreach(@player in array_keys(@pvp['players'])) {
 			try {
 				if(array_index_exists(@pvp['players'][@player], 'class')) {
 					_class('unload', @player, @pvp['players'][@player]['class'], @pvp)
@@ -453,7 +453,11 @@ proc _pvp_end_match(@id, @winners) {
 					}
 					dm_set_pvisible(@player, true);
 					set_entity_fall_distance(puuid(@player), 0);
-					set_ploc(@player, @pvp['arena']['lobby']);
+					if(array_index_exists(@pvp['arena'], 'podium') && array_contains(@winners, @player)) {
+						set_ploc(@player, @pvp['arena']['podium']);
+					} else {
+						set_ploc(@player, @pvp['arena']['lobby']);
+					}
 					set_pflight(@player, false);
 					_equip_kit(@player);
 					_clear_peffects(@player);

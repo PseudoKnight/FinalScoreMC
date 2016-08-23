@@ -130,6 +130,7 @@ proc _arena(@action, @id, @setting, @string) {
 
 				# single exact locations
 				case 'lobby':
+				case 'podium':
 
 					if(pworld() !== 'custom') {
 						die('You can only set location in the custom world.');
