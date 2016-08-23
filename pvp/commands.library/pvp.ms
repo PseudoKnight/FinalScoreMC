@@ -14,6 +14,18 @@ proc _pvp(@action, @id, @arg){
                 msg(@key.': '.color('gray').@value);
             }
 
+        case 'vote':
+            @id = to_lower(@id);
+            @pvp = import('pvp'.@id);
+            if(!@pvp) {
+                die('Game is not queued.');
+            }
+            if(!array_index_exists(@pvp['players'], player())) {
+                die('You haven\'t joined.');
+            }
+            @pvp['players'][player()]['arena'] = @arg;
+            msg(color('a').'You voted for '.to_upper(@arg).'.');
+
         case 'spectate':
             if(pworld() !== 'custom') {
                 die('You are not in Frog Park.');

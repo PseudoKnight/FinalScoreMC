@@ -184,7 +184,7 @@ proc _arena(@action, @id, @setting, @string) {
 					} else {
 						die('Requires an arena select type (eg. random) and then a comma separated list of child arenas.');
 					}
-
+					array_sort(@arena['arenaselect']['arenas']);
 
 				case 'sharedarenas':
 					@arena['sharedarenas'] = split(',', @args[0])
@@ -643,6 +643,12 @@ proc _arena(@action, @id, @setting, @string) {
 			}
 
 			switch(@setting) {
+				case 'arenaselect':
+					foreach(@value in split(',', @args[0])) {
+						array_remove_values(@arena[@setting]['arenas'], @value);
+					}
+					msg('Removed '.@args[0].' from '.@setting.': '.@arena[@setting]);
+
 				case 'spawn':
 					@loc = ploc();
 					@loc = array(round(@loc[0], 1), round(@loc[1], 1), round(@loc[2], 1), @loc[3]);

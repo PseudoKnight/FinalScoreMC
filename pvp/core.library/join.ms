@@ -63,6 +63,13 @@ proc _pvp_join(@id){
 		}
 		popen_virtualchest(@id.'options');
 
+	} else if(@pvp['running'] == 0 && array_index_exists(@arena, 'arenaselect') && @arena['arenaselect']['type'] == 'vote') {
+		@msg = '["'.color(6).'Vote for arena:'.color('r').'\n"';
+		foreach(@arena in @arena['arenaselect']['arenas']) {
+			@msg .= ',{"text":"'.to_upper(@arena).' ","clickEvent":{"action":"run_command","value":"/pvp vote '.@id.' '.@arena.'"}}';
+		}
+		runas('~console', '/tellraw '.player().' '.@msg.']');
+
 	} else if(@pvp['running'] == 1) {
 		if(array_index_exists(@pvp['arena'], 'classes')) {
 			if(!array_index_exists(@pvp['players'][player()], 'team') || @pvp['players'][player()]['team'] == 0) {

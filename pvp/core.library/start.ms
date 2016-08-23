@@ -4,6 +4,30 @@ proc _pvp_start(@pvp, @id){
 		unbind(@id.'options');
 	}
 
+	@childid = '';
+	if(array_index_exists(@pvp['arena'], 'arenaselect') && @pvp['arena']['arenaselect']['type'] == 'vote') {
+		@voted = array_filter(@pvp['players'], closure(@key, @value){
+			return(array_index_exists(@value, 'arena'));
+		});
+		@picked = array_rand(@voted, 1, false);
+		if(@picked) {
+			@childid = @picked[0]['arena'];
+		}
+
+		// Store total votes
+		if(!array_index_exists(@pvp['arena'], 'arenavotes')) {
+			@pvp['arena']['arenavotes'] = associative_array();
+		}
+		foreach(@vote in @voted) {
+			if(!array_index_exists(@pvp['arena']['arenavotes'], @vote['arena'])) {
+				@pvp['arena']['arenavotes'][@vote['arena']] = 1;
+			} else {
+				@pvp['arena']['arenavotes'][@vote['arena']] += 1;
+			}
+		}
+		store_value('arena', @id, @pvp['arena']);
+	}
+
 	# Set defaults
 	@defaults = associative_array(
 		'mode': 'dm',
@@ -24,7 +48,9 @@ proc _pvp_start(@pvp, @id){
 		@secondaryName = to_upper(@id);
 		@pvp['arena'] = array_merge(@parent, @pvp['arena']);
 	} else if(array_index_exists(@pvp['arena'], 'arenaselect')) {
-		@childid = array_rand(@pvp['arena']['arenaselect']['arenas'], 1, false)[0];
+		if(!@childid) {
+			@childid = array_rand(@pvp['arena']['arenaselect']['arenas'], 1, false)[0];
+		}
 		@child = get_value('arena', @childid);
 		if(!@child) {
 			die('Can\'t find child arena.');
