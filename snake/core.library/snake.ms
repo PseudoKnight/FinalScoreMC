@@ -46,6 +46,7 @@ proc _snake_add(@player, @game) {
 		'region': @region,
 		'bot': '',
 		'target': null,
+		'laser-immune': false,
 	);
 	set_block_at(@headLoc, @head, false);
 	set_block_at(@startLoc, @tail, false);
@@ -107,13 +108,12 @@ proc _snake_update(@player, @game) {
 	@snake['loc'] = _relative(@snake['loc'], @snake['dir']);
 	@block = get_block_at(@snake['loc']);
 	@powerup = _snake_get_powerup_from(split(':', @block)[0]);
-	if(@block == '0:0' || @powerup) {
+	if(@block == '0:0' || (@powerup && _snake_remove_powerup(@snake['loc'], @game))) {
 		@snake['blocks'][] = @snake['loc'][];
 		set_block_at(@snake['loc'], @snake['head'], false);
 		@snake['click'] = false;
 		if(_snake_powerup(@player, @powerup, @game)) {
 			@snake['target'] = null;
-			_snake_remove_powerup(@snake['loc'], @game);
 		}
 		return(true);
 	} else if(@block == '169:0') {
@@ -129,6 +129,11 @@ proc _snake_update(@player, @game) {
 		@snake['region'] = sk_regions_at(@snake['loc'])[1];
 		@snake['target'] = null;
 		_snake_set_top(@snake);
+		return(true);
+	} else if(@block == '95:14' && @snake['laser-immune']) {
+		@snake['blocks'][] = @snake['loc'][];
+		set_block_at(@snake['loc'], @snake['head'], false);
+		@snake['click'] = false;
 		return(true);
 	}
 	return(false);
