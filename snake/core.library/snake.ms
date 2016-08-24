@@ -117,11 +117,25 @@ proc _snake_update(@player, @game) {
 		}
 		return(true);
 	} else if(@block == '169:0') {
-		@dir = _snake_direction_of(@snake['loc'], '0:0');
+		@dir = '';
+		@loc = null;
+		foreach(@d in array('down', 'up', 'north', 'south', 'east', 'west')) {
+			if(@d != @snake['dir']) {
+				@loc = _relative(@snake['loc'], @d);
+				@block = get_block_at(@loc);
+				if(@block == '0:0' || (@powerup = _snake_get_powerup_from(@block))) {
+					@dir = @d;
+					break();
+				}
+			}
+		}
 		if(!@dir) {
 			return(false);
 		}
-		@snake['loc'] = _relative(@snake['loc'], @dir);
+		if(@powerup && _snake_remove_powerup(@loc, @game) && _snake_powerup(@player, @powerup, @game)) {
+			@snake['target'] = null;
+		}
+		@snake['loc'] = @loc;
 		@snake['dir'] = @dir;
 		@snake['blocks'][] = @snake['loc'][];
 		set_block_at(@snake['loc'], @snake['head'], false);

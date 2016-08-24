@@ -39,7 +39,7 @@ proc _snake_direction_of(@loc, @block, @not) {
 
 proc _snake_safe_block(@loc) {
 	@id = split(':', get_block_at(@loc))[0];
-	if(@id == '159' || @id == '155' || @id == '88') {
+	if(@id == '159' || @id == '155') {
 		return(false);
 	}
 	return(true);
