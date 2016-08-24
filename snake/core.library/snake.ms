@@ -63,6 +63,7 @@ proc _snake_add(@player, @game) {
 		@yaw = get_yaw(ploc(@player), @headLoc);
 		@pitch = get_pitch(ploc(@player), @headLoc);
 		pfacing(@player, @yaw, @pitch);
+		set_pmode(@player, 'SURVIVAL');
 		set_pflight(@player, true);
 		set_pflying(@player, true);
 		_clear_pinv(@player);
@@ -83,7 +84,6 @@ proc _snake_remove(@player, @game) {
 	}
 	array_remove(@game['snakes'], @player);
 	if(ponline(@player) && pworld(@player) == 'custom') {
-		set_pflight(@player, false);
 		_equip_kit(@player);
 	}
 }
