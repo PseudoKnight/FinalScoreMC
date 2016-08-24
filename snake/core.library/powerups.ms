@@ -89,7 +89,7 @@ proc _snake_ability(@player, @game) {
 	switch(@snake['ability']) {
 		case 'tnt':
 			if(@snake['bot']) {
-				_snake_drop_tnt(@snake['loc']);
+				_snake_drop_tnt(@snake['loc'], @snake['dir']);
 			} else {
 				@item = pinv(@player, 0);
 				if(@item) {
@@ -99,7 +99,7 @@ proc _snake_ability(@player, @game) {
 						@item['qty'] -= 1;
 						set_pinv(@player, associative_array(0: @item));
 					}
-					_snake_drop_tnt(@snake['loc']);
+					_snake_drop_tnt(@snake['loc'], @snake['dir']);
 					set_timeout(5000, closure(){
 						if(@snake['alive'] && @snake['ability'] == 'tnt') {
 							@item = pinv(@player, 0);
@@ -169,10 +169,28 @@ proc _snake_ability(@player, @game) {
 	}
 }
 
-proc _snake_drop_tnt(@loc) {
+proc _snake_drop_tnt(@loc, @dir) {
 	play_sound(@loc, associative_array('sound': 'FUSE', 'volume': 2));
-	@tnt = spawn_entity('PRIMED_TNT', 1, array(@loc[0] + 0.5, @loc[1] + 0.5, @loc[2] + 0.5, @loc[3]))[0];
-	set_entity_spec(@tnt, associative_array('fuseticks': 60));
+	@loc = _relative(@loc, @dir);
+	@loc[0] += 0.5;
+	@loc[1] += 0.5;
+	@loc[2] += 0.5;
+	@tnt = spawn_entity('PRIMED_TNT', 1, @loc)[0];
+	set_entity_spec(@tnt, associative_array('fuseticks': 28));
+	switch(@dir) {
+		case 'north':
+			set_entity_velocity(@tnt, associative_array('z': -1.1));
+		case 'south':
+			set_entity_velocity(@tnt, associative_array('z': 1.1));
+		case 'east':
+			set_entity_velocity(@tnt, associative_array('x': 1.1));
+		case 'west':
+			set_entity_velocity(@tnt, associative_array('x': -1.1));
+		case 'up':
+			set_entity_velocity(@tnt, associative_array('y': 1.1));
+		case 'down':
+			set_entity_velocity(@tnt, associative_array('y': -1.1));
+	}
 }
 
 proc _snake_launch_missile(@loc, @dir, @game) {
