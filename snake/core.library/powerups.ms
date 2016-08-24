@@ -74,7 +74,7 @@ proc _snake_powerup(@player, @powerup, @game) {
 	play_sound(@snake['loc'], associative_array('sound': 'ENDERMAN_TELEPORT', 'pitch': 2, 'volume': 2));
 	if(!@game['snakes'][@player]['bot']) {
 		@item = pinv(@player, 0);
-		if(@item && @item['type'] == _snake_get_block_from(@powerup)) {
+		if(@item && @item['type'] == split(':', _snake_get_block_from(@powerup))[0]) {
 			@item['qty'] += 1;
 			set_pinv(@player, associative_array(0: @item));
 		} else {
