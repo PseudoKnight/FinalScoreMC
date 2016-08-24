@@ -280,8 +280,11 @@ proc _snake_shoot_laser(@player, @loc, @dir, @game) {
 		}
 	}
 	@time = time();
-	set_interval(50, closure(){
-		if(!@game['snakes'][@player]['alive'] || @game['snakes'][@player]['dir'] != @originalDir || time() > @time + 2000) {
+	set_interval(100, closure(){
+		if(!array_index_exists(@game['snakes'], @player)
+		|| !@game['snakes'][@player]['alive']
+		|| @game['snakes'][@player]['dir'] != @originalDir
+		|| time() > @time + 5000) {
 			@game['snakes'][@player]['laser-immune'] = false;
 			foreach(@loc in @blocks) {
 				if(get_block_at(@loc) == '95:14') {
