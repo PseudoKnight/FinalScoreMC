@@ -6,7 +6,7 @@ proc _snake_get_powerup_from(@id) {
 			return('tnt');
 		case 2:
 		case 152:
-		case '152:0'
+		case '152:0':
 			return('missile');
 		case 3:
 		case 95:
