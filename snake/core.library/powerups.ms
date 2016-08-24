@@ -142,26 +142,17 @@ proc _snake_ability(@player, @game) {
 
 		case 'laser':
 			if(@snake['bot']) {
-				_snake_shoot_laser(@player, @snake['loc'][], @snake['dir'], @game);
+				_snake_shoot_laser(@player, @snake['loc'][], @snake['dir'], 2, @game);
 			} else {
 				@item = pinv(@player, 0);
 				if(@item) {
-					if(@item['qty'] == 1) {
+					@amount = @item['qty'];
 						set_pinv(@player, associative_array(0: null));
-					} else {
-						@item['qty'] -= 1;
-						set_pinv(@player, associative_array(0: @item));
-					}
-					_snake_shoot_laser(@player, @snake['loc'][], @snake['dir'], @game);
+					_snake_shoot_laser(@player, @snake['loc'][], @snake['dir'], @amount, @game);
 					set_timeout(5000, closure(){
 						if(@snake['alive'] && @snake['ability'] == 'laser') {
 							@item = pinv(@player, 0);
-							if(@item) {
-								@item['qty'] += 1;
-								set_pinv(@player, associative_array(0: @item));
-							} else {
-								set_pinv(@player, associative_array(0: associative_array('name': 'STAINED_GLASS', 'data': 14)));
-							}
+							set_pinv(@player, associative_array(0: associative_array('name': 'STAINED_GLASS', 'data': 14, 'qty': @amount)));
 						}
 					});
 				}
@@ -261,19 +252,20 @@ proc _snake_launch_missile(@loc, @dir, @game) {
 	set_interval(50, @move);
 }
 
-proc _snake_shoot_laser(@player, @loc, @dir, @game) {
+proc _snake_shoot_laser(@player, @loc, @dir, @range, @game) {
 	@game['snakes'][@player]['laser-immune'] = true;
 	@originalDir = @dir;
 	play_named_sound(@loc, associative_array('sound': 'entity.guardian.death', 'volume': 3, 'pitch': 2));
 	play_named_sound(@loc, associative_array('sound': 'entity.guardian.attack', 'volume': 3));
 	@blocks = array();
-	while(true){
+	while(@range > 0){
 		@loc = _relative(@loc, @dir);
 		@block = get_block_at(@loc);
 		if(@block == '0:0') {
 			set_block_at(@loc, '95:14', false);
 			@blocks[] = @loc;
 		} else if(@block == '169:0' || @block == '152:0') {
+			@range--;
 			@newDir = _snake_direction_of(@loc, '0:0');
 			if(@newDir) {
 				@dir = @newDir;
