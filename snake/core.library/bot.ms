@@ -26,6 +26,8 @@ proc _snake_bot_update(@bot, @game) {
 			}
 		} else if(@percent < 14) {
 			_snake_bot_target_powerup(@snake, @game);
+		} else if(@percent < 19) {
+			_snake_ability(@bot, @game);
 		}
 	case 'Dopey':
 		if(@percent < 25 || !_snake_safe_block(_relative(@snake['loc'], @snake['dir']))) {
@@ -123,6 +125,8 @@ proc _snake_bot_update(@bot, @game) {
 			if(@dir) {
 				@snake['dir'] = @dir;
 			}
+		} else if(@percent < 15) {
+			_snake_ability(@bot, @game);
 		}
 	case 'Happy':
 		if(@snake['target']) {
@@ -146,6 +150,8 @@ proc _snake_bot_update(@bot, @game) {
 			}
 		} else if(@percent < 50) {
 			_snake_bot_target_powerup(@snake, @game, 'food');
+		} else if(@percent < 55) {
+			_snake_ability(@bot, @game);
 		}
 
 	case 'Sneezy':
