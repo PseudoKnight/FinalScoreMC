@@ -147,7 +147,7 @@ proc _snake_ability(@player, @game) {
 				@item = pinv(@player, 0);
 				if(@item) {
 					@amount = @item['qty'];
-						set_pinv(@player, associative_array(0: null));
+					set_pinv(@player, associative_array(0: null));
 					_snake_shoot_laser(@player, @snake['loc'][], @snake['dir'], @amount, @game);
 					set_timeout(5000, closure(){
 						if(@snake['alive'] && @snake['ability'] == 'laser') {
@@ -162,12 +162,14 @@ proc _snake_ability(@player, @game) {
 
 proc _snake_drop_tnt(@loc, @dir) {
 	play_sound(@loc, associative_array('sound': 'FUSE', 'volume': 2));
-	@loc = _relative(@loc, @dir);
+	if(@dir) {
+		@loc = _relative(@loc, @dir);
+	}
 	@loc[0] += 0.5;
 	@loc[1] += 0.5;
 	@loc[2] += 0.5;
 	@tnt = spawn_entity('PRIMED_TNT', 1, @loc)[0];
-	set_entity_spec(@tnt, associative_array('fuseticks': 28));
+	set_entity_spec(@tnt, associative_array('fuseticks': if(@dir, 28, 1)));
 	switch(@dir) {
 		case 'north':
 			set_entity_velocity(@tnt, associative_array('z': -1.1));
