@@ -45,11 +45,12 @@ proc _snake_bot_update(@bot, @game) {
 					@snake['target'] = null;
 				}
 			} else {
-				if(!@game['snakes'][@snake['target']['name']]['alive']
-				|| @snake['region'] != @game['snakes'][@snake['target']['name']]['region']) {
+				@target = @snake['target']['name'];
+				if(!@game['snakes'][@target]['alive']
+				|| @snake['region'] != @game['snakes'][@target]['region']) {
 					@snake['target'] = null;
 				} else {
-					@dir = _snake_farthest_dir(@snake['loc'], @game['snakes'][@snake['target']['name']]['loc']);
+					@dir = _snake_farthest_dir(@snake['loc'], @game['snakes'][@target]['loc']);
 					if(@dir && _snake_safe_block(_relative(@snake['loc'], @dir))) {
 						@snake['dir'] = @dir;
 					}
@@ -68,11 +69,12 @@ proc _snake_bot_update(@bot, @game) {
 		}
 		if(@snake['target']) {
 			if(@snake['target']['type'] == 'snake') {
-				if(!@game['snakes'][@snake['target']['name']]['alive']
-				|| @snake['region'] != @game['snakes'][@snake['target']['name']]['region']) {
+				@target = @snake['target']['name'];
+				if(!@game['snakes'][@target]['alive']
+				|| @snake['region'] != @game['snakes'][@target]['region']) {
 					@snake['target'] = null;
 				} else {
-					@dir = _snake_farthest_dir(@snake['loc'], @game['snakes'][@snake['target']['name']]['loc']);
+					@dir = _snake_farthest_dir(@snake['loc'], @game['snakes'][@target]['loc']);
 					if(@dir && _snake_safe_block(_relative(@snake['loc'], @dir))) {
 						@snake['dir'] = @dir;
 						return();
