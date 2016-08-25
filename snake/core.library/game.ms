@@ -8,6 +8,7 @@
 	'speed': a game option that controls the interval frequency (how often the snakes update)
 	'numPowerups': the number of powerups that can exist in the game at any given time
 	'extraBlocks': extraneous obstacle blocks to clean-up
+	'numPlayers': the number of snakes in the game
 */
 
 if(has_bind('snake-interact')) {

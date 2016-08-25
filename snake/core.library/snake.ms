@@ -11,7 +11,10 @@
 	'ability': a powerup ability
 	'alive': whether the snake is active or dead
 	'click': set to true if an action is performed, set to false on update
+	'region': the current worldguard region the snake is in
 	'bot': the name of the bot, if a bot
+	'target': the bot's current target location array
+	'laser-immune': whether or not a snake can pass through a laser (set to true when firing a laser)
 */
 
 proc _snake_add(@player, @game) {
