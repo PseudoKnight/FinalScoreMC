@@ -1,5 +1,9 @@
 set_uncaught_exception_handler(closure(@ex){
-	msg(color('red').@ex['message']);
+	if(@loc = get_command_block()) {
+		console('Exception occurred in CommandBlock at '.array_normalize(@loc)[0..3], false);
+	} else {
+		msg(color('red').@ex['message']);
+	}
 	console(@ex['classType'].': '.@ex['message'], false);
 	foreach(@trace in @ex['stackTrace']) {
 		console(split('LocalPackages', @trace['file'])[-1].':'.@trace['line'].' '.@trace['id'], false);
