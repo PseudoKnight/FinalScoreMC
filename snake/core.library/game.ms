@@ -11,10 +11,6 @@
 	'numPlayers': the number of snakes in the game
 */
 
-if(has_bind('snake-interact')) {
-	die('Game is already running.');
-}
-
 include('util.ms');
 include('powerups.ms');
 include('snake.ms');
@@ -45,9 +41,13 @@ proc _snake_queue(@args) {
 	}
 
 	// Create scoreboard
-	create_scoreboard('snake');
-	create_objective('alive', 'DUMMY', 'snake');
-	set_objective_display('alive', associative_array('displayname': 'SNAKE', 'slot': 'SIDEBAR'), 'snake');
+    try {
+    	create_scoreboard('snake');
+    	create_objective('alive', 'DUMMY', 'snake');
+    	set_objective_display('alive', associative_array('displayname': 'SNAKE', 'slot': 'SIDEBAR'), 'snake');
+    } catch(ScoreboardException @ex) {
+        die('Snake is still running.');
+    }
 
 	// Add players in region
 	foreach(@p in all_players()) {
