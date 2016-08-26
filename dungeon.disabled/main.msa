@@ -1,4 +1,0 @@
-/createdungeon [$scale=2] = >>>
-	include('includes.library/dungeon.ms')
-	_create_dungeon('dungeon', pworld(), $scale)
-<<<
