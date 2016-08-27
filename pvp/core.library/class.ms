@@ -188,34 +188,28 @@ proc _class_select(@id, @pvp) {
 			if(array_index_exists(@pvp['players'][player()], 'picks')) {
 				@pvp['players'][player()]['picks'] -= 1;
 			}
-			/*
-			if(@class !== 'random') {
-				if(!array_index_exists(@pvp['arena']['classes'][@class], 'picked')) {
-					@pvp['arena']['classes'][@class]['picked'] = 1;
-				} else {
-					@pvp['arena']['classes'][@class]['picked'] += 1;
-				}
-			}
-			*/
 			if(array_index_exists(@pvp['arena'], 'captain')) {
+				@team = @pvp['players'][player()]['team'];
 				if(array_contains(@pvp['arena']['captain'], @class)) {
-					clear_virtualchest(@id.@pvp['players'][player()]['team'], 0);
-					@pvp['team'][@pvp['players'][player()]['team']]['captain'] = player();
-				} else if(!is_null(@e['inventory'][0])) {
-					@count = 0;
+					clear_virtualchest(@id.@team, @e['slot']);
+					@pvp['team'][@team]['captain'] = player();
+				} else if(@pvp['running'] < 2 && array_size(pviewing_virtualchest(@id.@team)) == 1) {
+					@captain = false;
 					foreach(@name: @player in @pvp['players']) {
-						if(@name != player()
-						&& @player['team'] == @pvp['players'][player()]['team']
-						&& (pget_virtualchest(@p) == @id.@player['team']
-						|| @player['class'] == @pvp['arena']['captain'][@player['team']])) {
-							@count++;
+						if(@player['team'] == @team	&& @player['class'] == @pvp['arena']['captain'][@player['team']]) {
+							@captain = true;
 						}
 					}
-					if(@count == 0) {
-						# No players choosing or chose captain
-						clear_virtualchest(@id.@pvp['players'][player()]['team'], 0);
-						@pvp['team'][@pvp['players'][player()]['team']]['captain'] = player();
-						@class = @pvp['arena']['captain'][@pvp['players'][player()]['team']];
+					if(!@captain) {
+						foreach(@slot: @item in @e['inventory']) {
+							if(@item && !is_null(@item['meta']) && !is_null(@item['meta']['display']
+							&& @pvp['arena']['captain'][@team] == to_lower(strip_colors(@item['meta']['display']))) {
+								clear_virtualchest(@id.@team, @slot);
+								@pvp['team'][@team]['captain'] = player();
+								@class = @pvp['arena']['captain'][@team];
+								break();
+							}
+						}
 					}
 				}
 			}
