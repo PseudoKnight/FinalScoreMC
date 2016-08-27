@@ -25,6 +25,7 @@ proc _arena(@action, @id, @setting, @string) {
 				case 'score':
 				case 'time':
 				case 'dropchance':
+				case 'saturation':
 
 					if(!is_integral(@args[0])) {
 						die(@setting . ' requires an integer.');

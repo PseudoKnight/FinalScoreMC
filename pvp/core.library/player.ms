@@ -131,7 +131,11 @@ proc _pvp_equip(@id, @player) {
 	if(!array_index_exists(@pvp['players'], @player)) {
 		return();
 	}
-	set_psaturation(@player, 0);
+	if(array_index_exists(@pvp['arena'], 'saturation')) {
+		set_psaturation(@player, @pvp['arena']['saturation']);
+	} else {
+		set_psaturation(@player, 0);
+	}
 	if(array_index_exists(@pvp['players'][@player], 'inv')) {
 		set_pinv(@player, @pvp['players'][@player]['inv']);
 	} else {
