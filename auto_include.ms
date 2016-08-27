@@ -137,7 +137,9 @@ proc _equip_kit(@player, @kit = 'adventure') {
 					null
 				},
 			));
-			set_pflight(@player, false);
+			if(@mode != 'CREATIVE') {
+				set_pflight(@player, false);
+			}
 
 		case 'creative':
 			_clear_pinv(@player);
