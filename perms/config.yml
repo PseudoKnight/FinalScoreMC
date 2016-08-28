@@ -110,7 +110,6 @@ builder:
     group.builder: true
   worlds:
     dev:
-      worldguard.region.*: true
       command.fly: true
       command.gm.others: true
       command.sign: true
@@ -123,8 +122,9 @@ builder:
       command.heal.others: true
       command.mob: true
       command.cb: true
+      limitedworldedit: true
+      worldguard.region.claim: true
     custom:
-      worldedit.navigation.*: true
       command.fly: true
       command.gm: true
       command.sign: true
@@ -139,6 +139,8 @@ builder:
       command.cb: true
       command.items: true
       command.vanish: true
+      worldedit.navigation.*: true
+      worldguard.region.claim: true
     world:
       livemap.tracers: true
     world3:
@@ -154,33 +156,24 @@ engineer:
     worldedit.clipboard.copy: true
   worlds:
     dev:
-      worldedit.tool.*: true
-      worldedit.generation.*: true
-      worldedit.brush.*: true
-      worldedit.region.*: true
-      worldedit.clipboard.*: true
-      worldedit.history.*: true
-      worldedit.global-mask: true
-      worldedit.scripting.execute: true
-      worldedit.scripting.execute.*: true
-      worldedit.fast: true
-      worldedit.wand: true
-      worldedit.schematic.*: true
-      AWE.user.mode.change: true
-    custom:
-      worldedit.tool.*: true
-      worldedit.generation.*: true
-      worldedit.brush.*: true
-      worldedit.region.*: true
-      worldedit.clipboard.*: true
-      worldedit.history.*: true
-      worldedit.global-mask: true
       worldguard.region.*: true
-      worldedit.scripting.execute: true
-      worldedit.scripting.execute.*: true
-      worldedit.fast: true
-      worldedit.wand: true
+    custom:
+      worldguard.region.*: true
+      limitedworldedit: true
   inheritance: builder
+limitedworldedit:
+  permissions:
+    AWE.user.mode.change: true
+    worldguard.region.*: true
+    worldedit.brush.*: true
+    worldedit.clipboard.*: true
+    worldedit.fast: true
+    worldedit.generation.*: true
+    worldedit.global-mask: true
+    worldedit.history.*: true
+    worldedit.region.*: true
+    worldedit.schematic.*: true
+    worldedit.tool.*: true
 moderator:
   permissions:
     group.moderator: true

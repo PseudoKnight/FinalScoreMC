@@ -21,3 +21,14 @@ bind(player_interact, null, null, @event) {
 		cancel();
 	}
 }
+
+// Add limited WorldEdit perms if player says he has WorldEdit CUI
+bind(player_command, null, array('command': '/we cui'), @event) {
+	if(has_permission('limitedworldedit')) {
+		@perms = import('perms');
+		foreach(@perm: @value in @perms['limitedworldedit']['permissions']) {
+			set_permission(@perm, @value);
+		}
+		action_msg('Enabled WorldEdit.');
+	}
+}
