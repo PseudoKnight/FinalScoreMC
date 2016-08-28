@@ -299,11 +299,12 @@
 		die(color('gold').'That item cannot be put on your head without losing data tags.');
 	}
 	if(@item['qty'] == 1) {
-		set_pinv(player(), array(null: null));
-		set_pinv(player(), array(103: @item));
+		set_pinv(player(), array(null: null, 103: @item));
 	} else {
 		@item['qty'] -= 1;
-		set_pinv(player(), array(null: @item, 103: array('type': @item['type'], 'data': @item['data'], 'qty': 1)));
+		@hat = @item[];
+		@hat['qty'] = 1;
+		set_pinv(player(), array(null: @item, 103: @hat));
 	}
 	@loc = ploc();
 	play_sound(@loc, array('sound': 'CHICKEN_EGG_POP'));
