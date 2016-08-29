@@ -16,6 +16,7 @@
 	'bot': the name of the bot, if a bot
 	'target': the bot's current target location array
 	'laser-immune': whether or not a snake can pass through a laser (set to true when firing a laser)
+	'last-dir': cheap checks so bots can avoid looping in on themselves
 */
 
 proc _snake_add(@player, @game) {
@@ -52,6 +53,7 @@ proc _snake_add(@player, @game) {
 		'bot': '',
 		'target': null,
 		'laser-immune': false,
+		'last-dir': '',
 	);
 	set_block_at(@headLoc, @head, false);
 	set_block_at(@startLoc, @tail, false);

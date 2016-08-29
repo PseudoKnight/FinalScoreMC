@@ -37,8 +37,8 @@ proc _snake_direction_of(@loc, @block, @not) {
 	return(null);
 }
 
-proc _snake_safe_dir(@loc, @direction) {
-	foreach(@dir in array('down', 'up', 'north', 'south', 'east', 'west')) {
+proc _snake_safe_dir(@loc, @direction, @last) {
+	foreach(@dir in array(@last, 'down', 'up', 'north', 'south', 'east', 'west')) {
 		if(@dir != @direction && _snake_safe_block(_relative(@loc, @dir))) {
 			return(@dir);
 		}
@@ -50,9 +50,12 @@ proc _snake_safe_block(@loc, @recurse = true) {
 	@id = split(':', get_block_at(@loc))[0];
 	if(@id == '159' || @id == '155' || @id == '166' || @id == '35') {
 		return(false);
-	} else if(@id == '169') {
+	} else {
 		if(!@recurse) {
-			return(false);
+			if(@id == '169') {
+				return(false);
+			}
+			return(true);
 		}
 		foreach(@dir in array('down', 'up', 'north', 'south', 'east', 'west')) {
 			if(_snake_safe_block(_relative(@loc, @dir), false)) {
@@ -61,7 +64,6 @@ proc _snake_safe_block(@loc, @recurse = true) {
 		}
 		return(false);
 	}
-	return(true);
 }
 
 proc _snake_opposite_dir(@dir) {
