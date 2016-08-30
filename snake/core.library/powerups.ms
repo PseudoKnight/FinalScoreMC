@@ -198,20 +198,20 @@ proc _snake_drop_tnt(@loc, @dir) {
 	@loc[1] += 0.5;
 	@loc[2] += 0.5;
 	@tnt = spawn_entity('PRIMED_TNT', 1, @loc)[0];
-	set_entity_spec(@tnt, associative_array('fuseticks': if(@dir, 28, 1)));
+	set_entity_spec(@tnt, associative_array('fuseticks': if(@dir, 32, 1)));
 	switch(@dir) {
 		case 'north':
-			set_entity_velocity(@tnt, associative_array('z': -1.1));
+			set_entity_velocity(@tnt, associative_array('z': -1.2));
 		case 'south':
-			set_entity_velocity(@tnt, associative_array('z': 1.1));
+			set_entity_velocity(@tnt, associative_array('z': 1.2));
 		case 'east':
-			set_entity_velocity(@tnt, associative_array('x': 1.1));
+			set_entity_velocity(@tnt, associative_array('x': 1.2));
 		case 'west':
-			set_entity_velocity(@tnt, associative_array('x': -1.1));
+			set_entity_velocity(@tnt, associative_array('x': -1.2));
 		case 'up':
-			set_entity_velocity(@tnt, associative_array('y': 1.1));
+			set_entity_velocity(@tnt, associative_array('y': 1.2));
 		case 'down':
-			set_entity_velocity(@tnt, associative_array('y': -1.1));
+			set_entity_velocity(@tnt, associative_array('y': -1.2));
 	}
 }
 
