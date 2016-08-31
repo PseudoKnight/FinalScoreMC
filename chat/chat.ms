@@ -54,16 +54,21 @@ bind(player_chat, null, null, @event) {
 
 	@pdata = _pdata(player());
 	if(array_index_exists(@pdata, 'support')) {
-		@components[] = array('&a\u2666 ', 'Server Supporter');
+		@components[] = array('&a\u2666', 'Server Supporter');
+	}
+
+	@pstate = _pstate(player());
+	if(array_index_exists(@pstate, 'trophies')) {
+		@components[] = array('&6\u2660', '&6&lTrophies\n'.array_implode(@pstate['trophies'], '\n'));
 	}
 
 	if(array_index_exists(@pdata, 'icon')) {
-		@components[] = @pdata['icon'].' ';
+		@components[] = @pdata['icon'];
 	}
 
 	@color = _colorname();
 
-	@components[] = array(@color.player().'&8: ',
+	@components[] = array(' '.@color.player().'&8: ',
 		if(has_permission('group.moderator'), '&bSTAFF\n')
 		.if(array_index_exists(@pdata, 'names'), @color.array_implode(@pdata['names']).'\n')
 		.'&8[world] &r'._worldname(pworld()));

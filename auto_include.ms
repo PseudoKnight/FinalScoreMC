@@ -752,6 +752,18 @@ proc _store_pdata(@player, @data) {
 }
 
 /*
+	Gets current session data for player
+*/
+proc _pstate(@player) {
+	@pstate = import('pstate.'.@player);
+	if(is_null(@pstate)) {
+		@pstate = associative_array();
+		export('pstate.'.@player, @pstate);
+	}
+	return(@pstate);
+}
+
+/*
 	Adds an activity to the activities list.
 	This is used for checking which games are running.
 */

@@ -276,7 +276,8 @@ bind(player_quit, null, null, @event) {
 	} catch(PlayerOfflineException @e) {
 		msg('Cannot fetch player world while quitting.');
 	}
-	export('pdata.'.to_lower(@event['player']), null);
+	export('pdata.'.to_lower(@event['player']), null); // clear player data cache
+	export('pstate.'.player(), null); // clear player state data
 	save_players();
 	console('---[ SAVED ]---[ PLAYERS ]---', false);
 }

@@ -124,3 +124,54 @@ bind(player_interact, null, array('block': 68), @event) {
 		}
 	}
 }
+
+# Calculate trophies
+bind(player_join, null, null, @event) {
+	queue_push(closure(){
+		try {
+			@uuid = puuid(player(), true);
+		} catch(PlayerOfflineException @ex) {
+			return();
+		}
+		@cakeinfo = get_value('cakeinfo');
+		@count = associative_array('challenge': 0, 'secret': 0);
+		@total = associative_array('challenge': 0, 'secret': 0);
+		foreach(@cake in @cakeinfo) {
+			@type = @cake['type'];
+			@total[@type]++;
+			if(array_index_exists(@cake['players'], @uuid)) {
+				@count[@type]++;
+			}
+		}
+		@percent = associative_array(
+			'challenge': @count['challenge'] / @total['challenge'],
+			'secret': @count['secret'] / @total['secret'],
+		);
+
+		@pstate = _pstate(player());
+		if(@percent['challenge'] > 0.8) {
+			if(!array_index_exists(@pstate, 'trophies')) {
+				@pstate['trophies'] = array();
+			}
+			if(@percent['challenge'] == 1.0) {
+				@pstate['trophies'][] = color('yellow').'100% Challenge Cakes';
+			} else if(@percent['challenge'] > 0.9) {
+				@pstate['trophies'][] = '>90% Challenge Cakes';
+			} else {
+				@pstate['trophies'][] = '>80% Challenge Cakes';
+			}
+		}
+		if(@percent['secret'] > 0.8) {
+			if(!array_index_exists(@pstate, 'trophies')) {
+				@pstate['trophies'] = array();
+			}
+			if(@percent['secret'] == 1.0) {
+				@pstate['trophies'][] = color('yellow').'100% Secret Cakes';
+			} else if(@percent['secret'] > 0.9) {
+				@pstate['trophies'][] = '>90% Secret Cakes';
+			} else {
+				@pstate['trophies'][] = '>80% Secret Cakes';
+			}
+		}
+	}, 'trophies');
+}
