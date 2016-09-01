@@ -196,7 +196,8 @@ proc _class_select(@id, @pvp) {
 				} else if(@pvp['running'] < 2 && array_size(pviewing_virtualchest(@id.@team)) == 1) {
 					@captain = false;
 					foreach(@name: @player in @pvp['players']) {
-						if(@player['team'] == @team	&& @player['class'] == @pvp['arena']['captain'][@player['team']]) {
+						if(@player['team'] == @team && array_index_exists(@player, 'class')
+						&& @player['class'] == @pvp['arena']['captain'][@player['team']]) {
 							@captain = true;
 						}
 					}
@@ -220,7 +221,7 @@ proc _class_select(@id, @pvp) {
 				@classes = @pvp['arena']['classes'];
 				if(array_index_exists(@pvp['players'][player()], 'team')) {
 					@classes = array_filter(@pvp['arena']['classes'], closure(@key, @value){
-						return(@value['team'] == @pvp['players'][player()]['team']);
+						return(!array_index_exists(@value, 'team') || @value['team'] == @pvp['players'][player()]['team']);
 					});
 				}
 				if(@classes) {
