@@ -12,6 +12,10 @@ proc _snake_get_powerup_from(@id) {
 		case 95:
 		case '95:14':
 			return('laser');
+		case 4:
+		case 133:
+		case '133:0':
+			return('boost');
 	}
 	return(null);
 }
@@ -27,6 +31,9 @@ proc _snake_get_block_from(@powerup) {
 		case 3:
 		case 'laser':
 			return('95:14');
+		case 4:
+		case 'boost':
+			return(133);
 	}
 	return(null);
 }
@@ -35,7 +42,7 @@ proc _snake_add_powerup(@game) {
 	@region = 'snake_'.@game['arena'].rand(1, @game['surfaces'] + 1);
 	@loc = _snake_valid_location(@region);
 	if(@loc) {
-		@r = rand(3) + 1;
+		@r = rand(4) + 1;
 		@block = _snake_get_block_from(@r);
 		@type = _snake_get_powerup_from(@r);
 		set_block_at(@loc, @block, false);
@@ -164,11 +171,12 @@ proc _snake_ability(@player, @game) {
 		case 'laser':
 			if(@snake['bot']) {
 				if(@snake['ability-count']) {
-					_snake_shoot_laser(@player, @snake['loc'][], @snake['dir'], 2, @game);
-					@snake['ability-count'] -= 1;
+					@count = @snake['ability-count'];
+					_snake_shoot_laser(@player, @snake['loc'][], @snake['dir'], @count, @game);
+					@snake['ability-count'] = 0;
 					set_timeout(5000, closure(){
 						if(@snake['ability'] == 'laser') {
-							@snake['ability-count'] += 1;
+							@snake['ability-count'] += @count;
 						}
 					});
 				}
@@ -181,7 +189,43 @@ proc _snake_ability(@player, @game) {
 					set_timeout(5000, closure(){
 						if(@snake['alive'] && @snake['ability'] == 'laser') {
 							@item = pinv(@player, 0);
+							if(@item) {
+								@amount += @item['qty'];
+							}
 							set_pinv(@player, associative_array(0: associative_array('name': 'STAINED_GLASS', 'data': 14, 'qty': @amount)));
+						}
+					});
+				}
+			}
+		case 'boost':
+			if(@snake['bot']) {
+				if(@snake['ability-count']) {
+					play_sound(@snake['loc'], associative_array('sound': 'GHAST_FIREBALL', 'volume': 3));
+					@count = @snake['ability-count'];
+					@snake['boost'] = @count;
+					@snake['ability-count'] = 0;
+					set_timeout(5000, closure(){
+						if(@snake['ability'] == 'boost') {
+							@snake['boost'] = 0;
+							@snake['ability-count'] = @count;
+						}
+					});
+				}
+			} else {
+				@item = pinv(@player, 0);
+				if(@item) {
+					play_sound(@snake['loc'], associative_array('sound': 'GHAST_FIREBALL', 'volume': 3));
+					@amount = @item['qty'];
+					set_pinv(@player, associative_array(0: null));
+					@snake['boost'] = @amount;
+					set_timeout(5000, closure(){
+						@snake['boost'] = 0;
+						if(@snake['alive'] && @snake['ability'] == 'boost') {
+							@item = pinv(@player, 0);
+							if(@item) {
+								@amount += @item['qty'];
+							}
+							set_pinv(@player, associative_array(0: associative_array('name': 'EMERALD_BLOCK', 'qty': @amount)));
 						}
 					});
 				}
@@ -277,7 +321,7 @@ proc _snake_launch_missile(@loc, @dir, @game) {
 				@missile['loc'][0] += 0.5;
 				@missile['loc'][1] += 0.5;
 				@missile['loc'][2] += 0.5;
-				play_effect(@missile['loc'], 'CLOUD', associative_array('speed': 0.07, 'particleCount': 5));
+				play_effect(@missile['loc'], 'CLOUD', associative_array('speed': 0.08, 'particleCount': 8, 'radius': 40));
 			}
 		} catch(Exception @ex) {
 			if(@clear) {
@@ -328,8 +372,12 @@ proc _snake_shoot_laser(@player, @loc, @dir, @range, @game) {
 		}
 	}
 	@time = time();
+	@loc[0] += 0.5;
+	@loc[1] += 0.5;
+	@loc[2] += 0.5;
 	set_interval(100, closure(){
 		try {
+			play_effect(@loc, 'LAVA_POP', associative_array('speed': 0, 'particleCount': 8, 'offsetX': 0.5, 'offsetY': 0.5, 'offsetZ': 0.5));
 			if(!array_index_exists(@game['snakes'], @player)
 			|| !@game['snakes'][@player]['alive']
 			|| @game['snakes'][@player]['dir'] != @originalDir

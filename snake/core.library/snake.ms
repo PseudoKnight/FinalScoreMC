@@ -17,6 +17,8 @@
 	'target': the bot's current target location array
 	'laser-immune': whether or not a snake can pass through a laser (set to true when firing a laser)
 	'last-dir': cheap checks so bots can avoid looping in on themselves
+	'sleep': how many ticks to sleep until updating
+	'boost': boost speed multiplier
 */
 
 proc _snake_add(@player, @game) {
@@ -54,6 +56,8 @@ proc _snake_add(@player, @game) {
 		'target': null,
 		'laser-immune': false,
 		'last-dir': '',
+		'sleep': 5,
+		'boost': 0,
 	);
 	set_block_at(@headLoc, @head, false);
 	set_block_at(@startLoc, @tail, false);
@@ -111,7 +115,11 @@ proc _snake_set_top(@snake) {
 
 proc _snake_update(@player, @game) {
 	@snake = @game['snakes'][@player];
+	@snake['sleep'] = max(1, 5 - @snake['boost']);
 	set_block_at(@snake['loc'], @snake['tail'], false);
+	if(@snake['boost']) {
+		play_effect(@snake['loc'], 'HAPPY_VILLAGER', associative_array('particleCount': 8, 'offsetX': 0.6, 'offsetY': 0.6, 'offsetZ': 0.6, 'radius': 40));
+	}
 	@snake['loc'] = _relative(@snake['loc'], @snake['dir']);
 	@block = get_block_at(@snake['loc']);
 	@powerup = _snake_get_powerup_from(split(':', @block)[0]);

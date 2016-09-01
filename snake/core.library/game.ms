@@ -24,9 +24,8 @@ proc _snake_queue(@args) {
 	@game['surfaces'] = 5;
 	@game['snakes'] = associative_array();
 	@game['powerups'] = array();
-	@game['speed'] = 'slow';
 	@game['extraBlocks'] = array();
-	@game['numPowerups'] = @game['surfaces'];
+	@game['numPowerups'] = 20;
 	@game['numPlayers'] = 7
 
 	// Command options
@@ -98,16 +97,7 @@ proc _snake_queue(@args) {
 }
 
 proc _snake_start_task(@game) {
-	@ms = 200;
-	switch(@game['speed']) {
-		case 'superfast':
-			@ms = 100;
-		case 'fast':
-			@ms = 150;
-		case 'slow':
-			@ms = 250;
-	}
-	@game['interval'] = set_interval(@ms, closure() {
+	@game['interval'] = set_interval(50, closure() {
 		@alive = 0;
 		@active = 'No one';
 		foreach(@player: @snake in @game['snakes']) {
@@ -116,14 +106,19 @@ proc _snake_start_task(@game) {
 				continue();
 			}
 			if(@snake['alive']) {
-				if(@snake['bot']) {
-					_snake_bot_update(@player, @game);
-				}
-				if(_snake_update(@player, @game)) {
+				if(!(@snake['sleep']--)) {
+					if(@snake['bot']) {
+						_snake_bot_update(@player, @game);
+					}
+					if(_snake_update(@player, @game)) {
+						@alive++;
+						@active = @player;
+					} else {
+						_snake_kill(@player, @game);
+					}
+				} else {
 					@alive++;
 					@active = @player;
-				} else {
-					_snake_kill(@player, @game);
 				}
 			}
 		}
