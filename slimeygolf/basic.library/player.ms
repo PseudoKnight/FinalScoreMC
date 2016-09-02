@@ -14,9 +14,6 @@ proc _add_player(@player, @golf) {
 		0: array(type: 341),
 	));
     set_collides_with_entities(@player, false);
-	set_pscoreboard(@player, @golf['course']['name']);
-	set_pscore('strokes', @player, 1, @golf['course']['name']);
-	set_pscore('strokes', @player, 0, @golf['course']['name']);
 	return(true);
 }
 
@@ -24,26 +21,26 @@ proc _remove_player(@player, @golf) {
 	unbind('golf_swing_'.@player);
 	unbind('golf_hit_'.@player);
 	@ball = @golf['players'][@player];
-	_remove_ball(@ball['id'], @golf['course']['name']);
+	_remove_ball(@ball['id'], @golf['name']);
 	if(ponline(@player)) {
-		if(pworld(@player) == @golf['course']['world']) {
+		if(pworld(@player) == @golf['world']) {
 			_clear_pinv(@player);
 		}
         set_collides_with_entities(@player, true);
-		reset_all_pscores(@player, @golf['course']['name']);
 		set_pscoreboard(@player);
 	}
+	@hole = @ball['hole'];
 	@lastplayer = true;
 	foreach(@p: @b in @golf['players']) {
 		if(@p != @player
-		&& @b['hole'] <= @ball['hole']) {
+		&& @b['hole'] <= @hole) {
 			@lastplayer = false;
 			break();
 		}
 	}
 	if(@lastplayer) {
 		try {
-			set_block_at(@golf['course']['loc'][@ball['hole']], 0);
+			set_block_at(@golf[@hole]['loc'], 0);
 		} catch(IndexOverflowException @ex) {
 			// nothing to reset
 		}
