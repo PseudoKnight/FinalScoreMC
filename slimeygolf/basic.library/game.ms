@@ -13,8 +13,6 @@ proc _start_game(@course, @loc) {
 	create_scoreboard(@course);
 	create_objective('strokes', 'DUMMY', @course);
 	set_objective_display('strokes', array(displayname: color('a').'STROKES (PAR: 0)', slot: 'SIDEBAR'), @course);
-	create_team('everyone', @course);
-	set_team_options('everyone', associative_array('collisionrule': 'FOR_OTHER_TEAMS'), @course);
 
 	foreach(@player in all_players(@loc['world'])) {
 		if(ponline(@player) && array_contains(sk_current_regions(@player), @course)
@@ -127,6 +125,7 @@ proc _start_game(@course, @loc) {
 							set_pexp(pexp() + 4);
 						} else {
 							clear_task();
+							set_pexp(0);
 							@ball['swing'] = false;
 						}
 						@v['x'] *= 1.15

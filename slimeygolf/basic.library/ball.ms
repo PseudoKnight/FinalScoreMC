@@ -11,7 +11,7 @@ proc _place_ball(@mobtype, @loc, @ball, @course) {
 
 	set_entity_ai(@ball['id'], false);
 	set_entity_velocity(@ball['id'], array(0, 0, 0));
-	team_add_player('everyone', @ball['id'], @course);
+	set_collides_with_entities(@ball['id'], false);
 	set_timeout(50, closure(){
 		set_mob_effect(@ball['id'], 11, 4, 99999, true, false);
 		set_mob_effect(@ball['id'], 25, -1, 1, true, false);
@@ -24,7 +24,6 @@ proc _ball_exists(@id) {
 
 proc _remove_ball(@id, @course) {
 	try {
-		team_remove_player('everyone', @id, @course);
 		entity_remove(@id);
 	} catch(Exception @ex) {
 		// doesn't exist

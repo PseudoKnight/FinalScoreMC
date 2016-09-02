@@ -13,10 +13,10 @@ proc _add_player(@player, @golf) {
 	set_pinv(@player, array(
 		0: array(type: 341),
 	));
+    set_collides_with_entities(@player, false);
 	set_pscoreboard(@player, @golf['course']['name']);
 	set_pscore('strokes', @player, 1, @golf['course']['name']);
 	set_pscore('strokes', @player, 0, @golf['course']['name']);
-	team_add_player('everyone', @player, @golf['course']['name']);
 	return(true);
 }
 
@@ -29,8 +29,8 @@ proc _remove_player(@player, @golf) {
 		if(pworld(@player) == @golf['course']['world']) {
 			_clear_pinv(@player);
 		}
+        set_collides_with_entities(@player, true);
 		reset_all_pscores(@player, @golf['course']['name']);
-		team_remove_player('everyone', @player, @golf['course']['name']);
 		set_pscoreboard(@player);
 	}
 	@lastplayer = true;
