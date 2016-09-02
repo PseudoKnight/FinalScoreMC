@@ -19,10 +19,10 @@ proc _repopulate_menu(){
 			),
 		),
 		38: associative_array(
-			'name': 'IRON_SPADE',
+			'name': 'IRON_LEGGINGS',
 			'meta': associative_array(
-				'display': color('green').'Other Games',
-				'lore': array(color('dark_gray').'Open: other'),
+				'display': color('green').'Minigames',
+				'lore': array(color('dark_gray').'Open: minigames'),
 				'flags': array('HIDE_ATTRIBUTES'),
 			),
 		)
@@ -165,14 +165,14 @@ proc _repopulate_menu(){
 
 	queue_push(closure(){
 		@other = @main[];
-		@other['id'] = 'other';
-		@other['title'] = 'Other Games';
+		@other['id'] = 'minigames';
+		@other['title'] = 'Minigames';
 		@other[0] = associative_array(
 			'name': 'SNOW_BLOCK',
 			'meta': associative_array(
-				'display': color('green').'Spleef',
+				'display': color('yellow').'Spleef',
 				'lore': array(
-					'Last man standing (2+ players)',
+					color('r').'Last man standing (2+ players)',
 					color('dark_gray').'Run: /warp spleef',
 				),
 			),
@@ -183,7 +183,7 @@ proc _repopulate_menu(){
 			'meta': associative_array(
 				'display': color('gold').'Cube'.color('red').'Climber',
 				'lore': array(
-					'Race to the top (2+ players)',
+					color('r').'Race to the top (2+ players)',
 					color('dark_gray').'Run: /warp cubeclimber',
 				),
 			),
@@ -193,7 +193,7 @@ proc _repopulate_menu(){
 			'meta': associative_array(
 				'display': color('green').'Seven Seconds to Live',
 				'lore': array(
-					'Last man not blown up (2+ players)',
+					color('r').'Last man not blown up (2 - 8 players)',
 					color('dark_gray').'Run: /warp 7',
 				),
 			),
@@ -203,7 +203,7 @@ proc _repopulate_menu(){
 			'meta': associative_array(
 				'display': color('green').'FrogWare',
 				'lore': array(
-					'First to 25 points (1+ players)',
+					color('r').'First to 25 points (1+ players)',
 					color('dark_gray').'Run: /warp frogware',
 				),
 			),
@@ -213,7 +213,7 @@ proc _repopulate_menu(){
 			'meta': associative_array(
 				'display': color('green').'Slimey Golf',
 				'lore': array(
-					'Lowest stroke count wins (1+ players)',
+					color('r').'Minigolf (1 - 4 players)',
 					color('dark_gray').'Run: /warp slimeygolf',
 				),
 			),
@@ -221,24 +221,24 @@ proc _repopulate_menu(){
 		@other[5] = associative_array(
 			'type': 168,
 			'meta': associative_array(
-				'display': color('green').'Sunken City Golf',
+				'display': color('aqua').'Sunken City Golf',
 				'lore': array(
-					'Lowest stroke count wins (1+ players)',
+					color('r').'Minigolf (1 - 4 players)',
 					color('dark_gray').'Run: /warp sunkencitygolf',
 				),
 			),
 		);
 		@other[6] = associative_array(
-			'name': 'SEA_LANTERN',
+			'name': 'REDSTONE_BLOCK',
 			'meta': associative_array(
-				'display': color('green').'SNAKE',
+				'display': color('red').'Snake',
 				'lore': array(
-					'Last snake slithering (1+ players)',
+					color('r').'Last snake slithering (1 - 7 players)',
 					color('dark_gray').'Run: /warp snake',
 				),
 			),
 		);
-		@other[38]['name'] = 'DIAMOND_SPADE';
+		@other[38]['name'] = 'DIAMOND_LEGGINGS';
 		create_virtualchest(@other);
 	});
 }
