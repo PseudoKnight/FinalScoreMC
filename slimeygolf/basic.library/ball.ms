@@ -6,8 +6,6 @@ proc _place_ball(@mobtype, @loc, @ball, @course) {
 
 	@ball['id'] = spawn_mob(@mobtype.':1', 1, @loc)[0];
 	@ball['velocity'] = array(x: 0, y: 0, z: 0);
-	@ball['loc'] = @loc;
-	@ball['moveable'] = false;
 
 	set_entity_ai(@ball['id'], false);
 	set_entity_velocity(@ball['id'], array(0, 0, 0));

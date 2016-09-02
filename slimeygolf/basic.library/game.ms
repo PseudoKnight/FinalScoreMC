@@ -7,6 +7,7 @@ proc _start_game(@course, @loc) {
 		'course': array('name': @course, 'world': @loc['world'], 'loc': array(), 'par': 0),
 		'players': associative_array(),
 		'spectators': array(),
+		'hole': array(null);
 	);
 
 	_add_activity('golf'.@course, 'SlimeyGolf: '.to_upper(@course));
@@ -108,17 +109,16 @@ proc _start_game(@course, @loc) {
 				}
 				cancel();
 				if(!@ball['swing']) {
-					@ball['loc'] = entity_loc(@event['id']);
+					@loc = entity_loc(@event['id']);
 					@ball['origin'] = ploc();
-					@ball['origin']['y'] = @ball['loc']['y'];
-					@dist = _distance(@ball['origin'], @ball['loc']);
+					@ball['origin']['y'] = @loc['y'];
+					@dist = _distance(@ball['origin'], @@loc);
 					@v = associative_array(
-						'x': (@ball['loc']['x'] - @ball['origin']['x']) / (@dist * 6),
-						'z': (@ball['loc']['z'] - @ball['origin']['z']) / (@dist * 6),
+						'x': (@loc['x'] - @ball['origin']['x']) / (@dist * 6),
+						'z': (@loc['z'] - @ball['origin']['z']) / (@dist * 6),
 					);
 					set_pexp(0);
 					@ball['swing'] = true;
-					@loc = @ball['loc'][];
 					set_interval(50, closure(){
 						@xp = pexp();
 						if(@xp < 108 && @ball['swing']) {
@@ -147,7 +147,6 @@ proc _start_game(@course, @loc) {
 				@ball = @golf['players'][@player];
 				if(@xp > 0 && @ball['swing']
 				&& @ball['id'] == @event['id']) {
-					@ball['moveable'] = true;
 					@ball['swing'] = false;
 					@xp = max(2, @xp - 8);
 					set_plevel(@player, plevel(@player) + 1);
@@ -201,153 +200,144 @@ proc _start_game(@course, @loc) {
 			@ball = @golf['players'][@player];
 			if(_ball_exists(@ball['id'])) {
 				@loc = entity_loc(@ball['id']);
-				if(!@ball['moveable'] && (@loc['x'] != @ball['loc']['x'] || @loc['z'] != @ball['loc']['z'])) {
-					set_entity_loc(@ball['id'], @ball['loc']);
-					set_entity_velocity(@ball['id'], array('x': 0, 'y': 0, 'z': 0));
+				@v = entity_velocity(@ball['id']);
+				@block = _get_block_below(_relative(@loc, 'down', 0.077), @v);
+				if(@block) {
 					set_mob_effect(@ball['id'], 25, -1, 1, true, false);
-				} else {
-					@v = entity_velocity(@ball['id']);
-					@block = _get_block_below(_relative(@loc, 'down', 0.077), @v);
-					if(@block) {
-						set_mob_effect(@ball['id'], 25, -1, 1, true, false);
-						@v['y'] = 0;
-						if(@block == '35:15') { # if ball dropped into the hole
-							# check for birdie/eagle
-							@hits = plevel(@player);
-							@par = @golf['course'][@ball['hole']];
-							if(@hits == @par - 1) {
-								# BIRDIE
-								launch_firework(@loc,
-									array(strength: 0, trail: true, type: 'BURST'));
-								play_sound(ploc(@player), array(sound: 'VILLAGER_YES'));
-							} else if(@hits <= @par - 2) {
-								# EAGLE
-								launch_firework(@loc,
-									array(strength: 0, trail: true, type: 'BALL_LARGE'));
-								play_sound(ploc(@player), array(sound: 'VILLAGER_YES'));
-							} else if(@hits > @par) {
-								play_sound(ploc(@player), array(sound: 'VILLAGER_NO'));
-							}
+					@v['y'] = 0;
+					if(@block == '35:15') { # if ball dropped into the hole
+						# check for birdie/eagle
+						@hits = plevel(@player);
+						@par = @golf['course'][@ball['hole']];
+						if(@hits == @par - 1) {
+							# BIRDIE
+							launch_firework(@loc,
+								array(strength: 0, trail: true, type: 'BURST'));
+							play_sound(ploc(@player), array(sound: 'VILLAGER_YES'));
+						} else if(@hits <= @par - 2) {
+							# EAGLE
+							launch_firework(@loc,
+								array(strength: 0, trail: true, type: 'BALL_LARGE'));
+							play_sound(ploc(@player), array(sound: 'VILLAGER_YES'));
+						} else if(@hits > @par) {
+							play_sound(ploc(@player), array(sound: 'VILLAGER_NO'));
+						}
 
-							# clean up the hole for this player
-							_remove_ball(@ball['id'], @course);
-							unbind('golf_swing_'.@player);
-							unbind('golf_hit_'.@player);
+						# clean up the hole for this player
+						_remove_ball(@ball['id'], @course);
+						unbind('golf_swing_'.@player);
+						unbind('golf_hit_'.@player);
 
-							# check if last player to leave hole
-							@lastplayer = true;
-							foreach(@p: @b in @golf['players']) {
-								if(@p != @player
-								&& @b['hole'] <= @ball['hole']) {
-									@lastplayer = false;
-									break();
-								}
+						# check if last player to leave hole
+						@lastplayer = true;
+						foreach(@p: @b in @golf['players']) {
+							if(@p != @player
+							&& @b['hole'] <= @ball['hole']) {
+								@lastplayer = false;
+								break();
 							}
-							if(@lastplayer) {
-								set_block_at(@golf['course']['loc'][@ball['hole']], 0);
-								# check if last hole
-								if(@ball['hole'] == 9) {
-									@loweststrokes = 999;
-									@winner = '';
-									foreach(@p: @b in @golf['players']) {
-										if(ponline(@p)) {
-											if(function_exists('set_collides_with_entities')) {
-												set_collides_with_entities(@p, true);
-											}
-											@world = pworld(@p);
-											if(@world === 'dev' || @world === 'custom') {
-												_clear_pinv(@p);
-											}
-											@strokes = get_pscore('strokes', @p, @course);
-											if(@strokes < @loweststrokes) {
-												@winner = @p;
-												@loweststrokes = @strokes;
-											}
-										}
-									}
-									foreach(@p in @golf['spectators']) {
+						}
+						if(@lastplayer) {
+							set_block_at(@golf['course']['loc'][@ball['hole']], 0);
+							# check if last hole
+							if(@ball['hole'] == 9) {
+								@loweststrokes = 999;
+								@winner = '';
+								foreach(@p: @b in @golf['players']) {
+									if(ponline(@p)) {
 										if(function_exists('set_collides_with_entities')) {
 											set_collides_with_entities(@p, true);
 										}
-									}
-
-									_regionmsg(@course, colorize(
-										'&a&lSLIMEY&6&lGOLF &a\u2308\u2328 \uFE52\u2328\u2309&r\n'
-										._colorname(@winner).'&l'.@winner.'&r&l is the winner!'
-									))
-
-									if(array_size(@golf['players']) > 1) {
-										_acc_add(@winner, 1);
-									}
-
-									unbind(@course);
-									set_timeout(10000, closure(){
-										if(array_contains(get_scoreboards(), @course)) {
-											remove_scoreboard(@course);
-											_remove_activity('golf'.@course);
+										@world = pworld(@p);
+										if(@world === 'dev' || @world === 'custom') {
+											_clear_pinv(@p);
 										}
-									});
-									clear_task();
-									break();
+										@strokes = get_pscore('strokes', @p, @course);
+										if(@strokes < @loweststrokes) {
+											@winner = @p;
+											@loweststrokes = @strokes;
+										}
+									}
 								}
-							}
+								foreach(@p in @golf['spectators']) {
+									if(function_exists('set_collides_with_entities')) {
+										set_collides_with_entities(@p, true);
+									}
+								}
 
-							# prepare player for next hole
-							@ball['hole'] += 1;
-							@ball['id'] = 0;
-							continue();
+								_regionmsg(@course, colorize(
+									'&a&lSLIMEY&6&lGOLF &a\u2308\u2328 \uFE52\u2328\u2309&r\n'
+									._colorname(@winner).'&l'.@winner.'&r&l is the winner!'
+								))
+
+								if(array_size(@golf['players']) > 1) {
+									_acc_add(@winner, 1);
+								}
+
+								unbind(@course);
+								set_timeout(10000, closure(){
+									if(array_contains(get_scoreboards(), @course)) {
+										remove_scoreboard(@course);
+										_remove_activity('golf'.@course);
+									}
+								});
+								clear_task();
+								break();
+							}
 						}
+
+						# prepare player for next hole
+						@ball['hole'] += 1;
+						@ball['id'] = 0;
+						continue();
+					}
+				} else {
+					set_mob_effect(@ball['id'], 25, 0, 0);
+				}
+
+				@ricochetPitch = 0
+				@forceX = 0;
+				if(@v['x'] == 0) {
+					@forceX = abs(@ball['velocity']['x']);
+					@v['magnitude'] = 1;
+					if(@forceX < 0.002) {
+						@v['x'] = 0;
 					} else {
-						set_mob_effect(@ball['id'], 25, 0, 0);
-					}
-
-					@ricochetPitch = 0
-					@forceX = 0;
-					if(@v['x'] == 0) {
-						@forceX = abs(@ball['velocity']['x']);
-						@v['magnitude'] = 1;
-						if(@forceX < 0.002) {
-							@v['x'] = 0;
-						} else {
-							@v['x'] = 0 - @ball['velocity']['x'] * @bounciness;
-							if(@forceX > 0.05) {
-								@ricochetPitch = 1 + @forceX / 2;
-							}
+						@v['x'] = 0 - @ball['velocity']['x'] * @bounciness;
+						if(@forceX > 0.05) {
+							@ricochetPitch = 1 + @forceX / 2;
 						}
 					}
+				}
 
-					@forceZ = 0;
-					if(@v['z'] == 0) {
-						@forceZ = abs(@ball['velocity']['z']);
-						@v['magnitude'] = 1;
-						if(@forceZ < 0.002) {
-							@v['z'] = 0;
-						} else {
-							@v['z'] = 0 - @ball['velocity']['z'] * @bounciness;
-							if(@forceZ > 0.06 && @forceZ > @forceX) {
-								@ricochetPitch = 1 + @forceZ / 2;
-							}
+				@forceZ = 0;
+				if(@v['z'] == 0) {
+					@forceZ = abs(@ball['velocity']['z']);
+					@v['magnitude'] = 1;
+					if(@forceZ < 0.002) {
+						@v['z'] = 0;
+					} else {
+						@v['z'] = 0 - @ball['velocity']['z'] * @bounciness;
+						if(@forceZ > 0.06 && @forceZ > @forceX) {
+							@ricochetPitch = 1 + @forceZ / 2;
 						}
 					}
+				}
 
-					if(@v['x'] == 0 && @v['z'] == 0) {
-						@ball['moveable'] = false;
-						@ball['loc'] = @loc;
-					} else if(@v['magnitude'] < 0.875 && @v['magnitude'] > 0.125) {
-						@v['x'] = (@v['x'] / @v['magnitude']) * (1.07 * @v['magnitude']);
-						@v['z'] = (@v['z'] / @v['magnitude']) * (1.07 * @v['magnitude']);
-						play_effect(@loc, 'SLIME');
-					}
+				if(@v['magnitude'] < 0.875 && @v['magnitude'] > 0.125) {
+					@v['x'] = (@v['x'] / @v['magnitude']) * (1.07 * @v['magnitude']);
+					@v['z'] = (@v['z'] / @v['magnitude']) * (1.07 * @v['magnitude']);
+					play_effect(@loc, 'SLIME');
+				}
 
-					if(@ricochetPitch > 1) {
-						play_sound(@loc, array('sound': 'WOOD_CLICK', 'pitch': min(2, @ricochetPitch)));
-					}
+				if(@ricochetPitch > 1) {
+					play_sound(@loc, array('sound': 'WOOD_CLICK', 'pitch': min(2, @ricochetPitch)));
+				}
 
-					@ball['velocity'] = array('x': @v['x'], 'y': @v['y'], 'z': @v['z']);
-					set_entity_velocity(@ball['id'], @ball['velocity']);
-					if(@ball['type'] >= 2) {
-						play_entity_effect(@ball['id'], 'HURT');
-					}
+				@ball['velocity'] = array('x': @v['x'], 'y': @v['y'], 'z': @v['z']);
+				set_entity_velocity(@ball['id'], @ball['velocity']);
+				if(@ball['type'] >= 2) {
+					play_entity_effect(@ball['id'], 'HURT');
 				}
 
 			}
