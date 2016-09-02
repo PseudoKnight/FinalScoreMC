@@ -12,6 +12,7 @@ proc _spawn_mob(@mob, @qty, @loc, @owner = 'Notch') {
 			if(array_index_exists(@mob, 'tags'), set_entity_spec(@m, @mob['tags']));
 			if(array_index_exists(@mob, 'tame'), tame_mob(@owner, @m));
 			if(array_index_exists(@mob, 'age'), set_mob_age(@m, @mob['age']));
+			if(array_index_exists(@mob, 'ai'), set_entity_ai(@m, @mob['ai']));
 			if(array_index_exists(@mob, 'health')) {
 				set_max_health(@m, @mob['health']);
 				set_entity_health(@m, 100);

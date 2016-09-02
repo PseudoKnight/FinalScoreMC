@@ -20,6 +20,10 @@
 			@mob['age'] = $;
 			msg('Age set.');
 
+		case 'ai':
+			@mob['ai'] = ($ == 'true');
+			msg('AI set.');
+
 		case 'gear':
 			@mob['gear'] = array(
 				'WEAPON': pinv(player(), 0),
