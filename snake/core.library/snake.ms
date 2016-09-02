@@ -118,7 +118,11 @@ proc _snake_update(@player, @game) {
 	@snake['sleep'] = max(1, 5 - @snake['boost']);
 	set_block_at(@snake['loc'], @snake['tail'], false);
 	if(@snake['boost']) {
-		play_effect(@snake['loc'], 'HAPPY_VILLAGER', associative_array('particleCount': 8, 'offsetX': 0.6, 'offsetY': 0.6, 'offsetZ': 0.6, 'radius': 40));
+		@loc = @snake['loc'][];
+		@loc[0] += 0.5;
+		@loc[1] += 0.5;
+		@loc[2] += 0.5;
+		play_effect(@loc, 'HAPPY_VILLAGER', associative_array('particleCount': 8, 'offsetX': 0.6, 'offsetY': 0.6, 'offsetZ': 0.6, 'radius': 40));
 	}
 	@snake['loc'] = _relative(@snake['loc'], @snake['dir']);
 	@block = get_block_at(@snake['loc']);

@@ -25,7 +25,7 @@ proc _snake_queue(@args) {
 	@game['snakes'] = associative_array();
 	@game['powerups'] = array();
 	@game['extraBlocks'] = array();
-	@game['numPowerups'] = 20;
+	@game['numPowerups'] = 15;
 	@game['numPlayers'] = 7
 
 	// Command options

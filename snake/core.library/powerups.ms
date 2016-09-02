@@ -205,8 +205,8 @@ proc _snake_ability(@player, @game) {
 					@snake['boost'] = @count;
 					@snake['ability-count'] = 0;
 					set_timeout(5000, closure(){
+						@snake['boost'] = 0;
 						if(@snake['ability'] == 'boost') {
-							@snake['boost'] = 0;
 							@snake['ability-count'] = @count;
 						}
 					});
@@ -377,7 +377,7 @@ proc _snake_shoot_laser(@player, @loc, @dir, @range, @game) {
 	@loc[2] += 0.5;
 	set_interval(100, closure(){
 		try {
-			play_effect(@loc, 'LAVA_POP', associative_array('speed': 0, 'particleCount': 8, 'offsetX': 0.5, 'offsetY': 0.5, 'offsetZ': 0.5));
+			play_effect(@loc, 'LAVA_POP', associative_array('speed': 0, 'particleCount': 8, 'offsetX': 0.5, 'offsetY': 0.5, 'offsetZ': 0.5, 'radius': 40));
 			if(!array_index_exists(@game['snakes'], @player)
 			|| !@game['snakes'][@player]['alive']
 			|| @game['snakes'][@player]['dir'] != @originalDir
