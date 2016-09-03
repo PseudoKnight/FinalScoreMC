@@ -9,6 +9,7 @@
 	'numPowerups': the number of powerups that can exist in the game at any given time
 	'extraBlocks': extraneous obstacle blocks to clean-up
 	'numPlayers': the number of snakes in the game
+	'botsOnly': indicated if only bots are left in the game
 */
 
 include('util.ms');
@@ -27,6 +28,7 @@ proc _snake_queue(@args) {
 	@game['extraBlocks'] = array();
 	@game['numPowerups'] = 15;
 	@game['numPlayers'] = 7
+	@game['botsOnly'] = false;
 
 	// Command options
 	foreach(@arg in @args) {
@@ -100,6 +102,7 @@ proc _snake_start_task(@game) {
 	@game['interval'] = set_interval(50, closure() {
 		@alive = 0;
 		@active = 'No one';
+		@playersAlive = 0;
 		foreach(@player: @snake in @game['snakes']) {
 			if(!@snake['bot'] && (!ponline(@player) || !array_contains(sk_current_regions(@player), 'snake'))) {
 				_snake_remove(@player, @game);
@@ -109,6 +112,8 @@ proc _snake_start_task(@game) {
 				if(!(@snake['sleep']--)) {
 					if(@snake['bot']) {
 						_snake_bot_update(@player, @game);
+					} else {
+						@playersAlive++;
 					}
 					if(_snake_update(@player, @game)) {
 						@alive++;
@@ -117,10 +122,16 @@ proc _snake_start_task(@game) {
 						_snake_kill(@player, @game);
 					}
 				} else {
+					if(!@snake['bot']) {
+						@playersAlive++;
+					}
 					@alive++;
 					@active = @player;
 				}
 			}
+		}
+		if(@playersAlive == 0) {
+			@game['botsOnly'] = true;
 		}
 		if((@alive < 2 && array_size(@game['snakes']) > 1) || @alive < 1) {
 			clear_task();

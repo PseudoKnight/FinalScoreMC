@@ -115,7 +115,7 @@ proc _snake_set_top(@snake) {
 
 proc _snake_update(@player, @game) {
 	@snake = @game['snakes'][@player];
-	@snake['sleep'] = max(1, 5 - @snake['boost']);
+	@snake['sleep'] = if(@game['botsOnly'], 2, max(1, 5 - @snake['boost']));
 	set_block_at(@snake['loc'], @snake['tail'], false);
 	if(@snake['boost']) {
 		@loc = @snake['loc'][];
