@@ -209,6 +209,16 @@ proc _repopulate_menu(){
 			),
 		);
 		@other[4] = associative_array(
+			'name': 'REDSTONE_BLOCK',
+			'meta': associative_array(
+				'display': color('red').'Snake',
+				'lore': array(
+					color('r').'Last snake slithering (1 - 7 players)',
+					color('dark_gray').'Run: /warp snake',
+				),
+			),
+		);
+		@other[9] = associative_array(
 			'name': 'SLIME_BLOCK',
 			'meta': associative_array(
 				'display': color('green').'Slimey Golf',
@@ -218,7 +228,7 @@ proc _repopulate_menu(){
 				),
 			),
 		);
-		@other[5] = associative_array(
+		@other[10] = associative_array(
 			'type': 168,
 			'meta': associative_array(
 				'display': color('aqua').'Sunken City Golf',
@@ -228,13 +238,14 @@ proc _repopulate_menu(){
 				),
 			),
 		);
-		@other[6] = associative_array(
-			'name': 'REDSTONE_BLOCK',
+		@other[11] = associative_array(
+			'name': 'LOG',
+			'data': 3,
 			'meta': associative_array(
-				'display': color('red').'Snake',
+				'display': color('yellow').'Island Golf',
 				'lore': array(
-					color('r').'Last snake slithering (1 - 7 players)',
-					color('dark_gray').'Run: /warp snake',
+					color('r').'Minigolf (1 - 4 players)',
+					color('dark_gray').'Run: /warp islandgolf',
 				),
 			),
 		);
