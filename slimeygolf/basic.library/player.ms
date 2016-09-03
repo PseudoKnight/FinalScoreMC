@@ -9,10 +9,7 @@ proc _add_player(@player, @golf) {
 		velocity: array('x': 0, 'y': 0, 'z': 0),
 		swing: false,
 	);
-	_clear_pinv(@player);
-	set_pinv(@player, array(
-		0: array(type: 341),
-	));
+	pgive_item(@player, 341, 1);
     set_collides_with_entities(@player, false);
 	return(true);
 }
@@ -23,9 +20,6 @@ proc _remove_player(@player, @golf) {
 	@ball = @golf['players'][@player];
 	_remove_ball(@ball['id'], @golf['name']);
 	if(ponline(@player)) {
-		if(pworld(@player) == @golf['world']) {
-			_clear_pinv(@player);
-		}
         set_collides_with_entities(@player, true);
 		set_pscoreboard(@player);
 	}

@@ -232,6 +232,12 @@ proc _start_game(@course, @loc) {
 						unbind('golf_swing_'.@player);
 						unbind('golf_hit_'.@player);
 
+						if(@hole > 1) {
+							@golf[@hole]['total'][@player] = @golf[@hole - 1]['total'][@player] + @golf[@hole]['strokes'][@player];
+						} else {
+							@golf[@hole]['total'][@player] = @golf[@hole]['strokes'][@player];
+						}
+
 						# check if last player to leave hole
 						@lastplayer = true;
 						foreach(@p: @b in @golf['players']) {
@@ -283,11 +289,6 @@ proc _start_game(@course, @loc) {
 						}
 
 						# prepare player for next hole
-						if(@hole > 1) {
-							@golf[@hole]['total'][@player] = @golf[@hole - 1]['total'][@player] + @golf[@hole]['strokes'][@player];
-						} else {
-							@golf[@hole]['total'][@player] = @golf[@hole]['strokes'][@player];
-						}
 						@ball['hole'] += 1;
 						@ball['id'] = 0;
 						continue();
