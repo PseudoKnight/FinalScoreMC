@@ -9,8 +9,10 @@ proc _start_game(@course, @loc) {
 		'par': 0,
 		'players': associative_array(),
 		'spectators': array(),
+		'lowestHole': 1,
 	);
 
+	_create_scoreboards(@golf);
 	foreach(@player in all_players(@loc['world'])) {
 		if(ponline(@player) && array_contains(sk_current_regions(@player), @course)
 		&& _add_player(@player, @golf)
@@ -19,11 +21,7 @@ proc _start_game(@course, @loc) {
 		}
 	}
 
-	if(array_size(@golf['players']) == 0) {
-		die();
-	} else {
-		_add_activity('golf'.@course, 'SlimeyGolf: '.to_upper(@course));
-	}
+	_add_activity('golf'.@course, 'SlimeyGolf: '.to_upper(@course));
 
 	foreach(@player in array_keys(@golf['players'])) {
 		tmsg(@player, colorize(
@@ -68,13 +66,6 @@ proc _start_game(@course, @loc) {
 
 			_place_ball(@mobtype, @event['location'], @ball, @golf['name']);
 
-			@lowesthole = 10;
-			foreach(@player in @golf['players']) {
-				if(@player['hole'] < @lowesthole) {
-					@lowesthole = @player['hole'];
-				}
-			}
-
 			@hole = @ball['hole'];
 			if(!array_index_exists(@golf, @hole)) {
 				@golf[@hole] = associative_array(
@@ -89,14 +80,9 @@ proc _start_game(@course, @loc) {
 					'total': associative_array(),
 				);
 				@golf['par'] += @golf[@hole]['par'];
-				create_scoreboard(@golf['name'].@hole);
-				create_objective('strokes', 'DUMMY', @golf['name'].@hole);
-				set_objective_display('strokes', array('displayname': color('a').'Hole '.@hole, 'slot': 'SIDEBAR'), @golf['name'].@hole);
 				set_pscore('strokes', 'Par', @golf[@hole]['par'], @golf['name'].@hole);
 				set_block_at(@golf[@hole]['loc'], 152);
 			}
-
-			set_pscoreboard(player(), @golf['name'].@hole);
 
 			if(!array_index_exists(@golf[@hole]['strokes'], player())) {
 				@golf[@hole]['strokes'][player()] = 0;
@@ -185,8 +171,7 @@ proc _start_game(@course, @loc) {
 		foreach(@player in all_players(@golf['world'])) {
 			if(!array_index_exists(@golf['players'], @player)) {
 				if(array_contains(sk_current_regions(@player), @course)) {
-					if(array_size(@golf['players']) < 4) {
-						_add_player(@player, @golf);
+					if(@golf['lowestHole'] == 1 && array_size(@golf['players']) < 4 && _add_player(@player, @golf)) {
 						@count++;
 					} else if(!array_contains(@golf['spectators'], @player)) {
 						set_collides_with_entities(@player, false);
@@ -249,6 +234,25 @@ proc _start_game(@course, @loc) {
 						}
 						if(@lastplayer) {
 							set_block_at(@golf[@hole]['loc'], 0);
+							@golf['lowestHole'] = @hole + 1;
+
+							# update sidebars and score output for players
+							@header = color(7).'Hole'.color('r').@hole.color(8).'*';
+							@scores = color(7).'Score'.color(8).'*';
+							foreach(@p: @b in @golf['players']) {
+								@header .= _fill_string('*', '.', '*'.color('a').@p.color(8).'*', 73).'*';
+								@scores .= color('r').@golf[@hole]['strokes'][@p].' ('.@golf[@hole]['total'][@p].')'.color(8).'*';
+							}
+							@header = _fill_string('*', '.', @header);
+							@scores = _fill_string('*', '.', @scores);
+							_regionmsg(@golf['name'], @header);
+							_regionmsg(@golf['name'], @scores);
+							foreach(@p: @b in @golf['players']) {
+								if(@hole < 9) {
+									set_pscoreboard(@p, @golf['name'].@golf['lowestHole']);
+								}
+							}
+
 							# check if last hole
 							if(@hole == 9) {
 								@loweststrokes = 999;
@@ -373,5 +377,13 @@ proc _golf_cleanup(@golf) {
 		}
 	} catch(ScoreboardException @ex) {
 		// Never finished the game, so nothing left to cleanup
+	}
+}
+
+proc _create_scoreboards(@golf) {
+	for(@i = 1, @i < 10, @i++) {
+		create_scoreboard(@golf['name'].@i);
+		create_objective('strokes', 'DUMMY', @golf['name'].@i);
+		set_objective_display('strokes', array('displayname': color('a').'Hole '.@i, 'slot': 'SIDEBAR'), @golf['name'].@i);
 	}
 }

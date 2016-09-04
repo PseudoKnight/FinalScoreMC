@@ -11,7 +11,7 @@
 	if(!@course) {
 		die('No Slimey Golf course here.');
 	}
-	if(array_contains(get_scoreboards(), @course)) {
+	if(array_contains(get_scoreboards(), @course.'1')) {
 		die('This game is already active.');
 	}
 	_start_game(@course, @loc);
