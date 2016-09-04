@@ -221,50 +221,48 @@ proc _minify_inv(@inv, @keepnulls = false) {
 /*
 	Returns a new shifted location from origin based on a single direction and distance
 */
-proc _relative(@originloc, @dir, @amount = 1) {
-	@loc = @originloc[]
-	switch(@dir) {
-	case 'down':
-		if(array_index_exists(@loc, 'y')) {
-			@loc['y'] -= @amount
-		}
-		@loc[1] -= @amount
-
-	case 'up':
-		if(array_index_exists(@loc, 'y')) {
-			@loc['y'] += @amount
-		}
-		@loc[1] += @amount
-
-	case 'north':
-		if(array_index_exists(@loc, 'z')) {
-			@loc['z'] -= @amount
-		}
-		@loc[2] -= @amount
-
-	case 'south':
-		if(array_index_exists(@loc, 'z')) {
-			@loc['z'] += @amount
-		}
-		@loc[2] += @amount
-
-	case 'west':
-		if(array_index_exists(@loc, 'x')) {
-			@loc['x'] -= @amount
-		}
-		@loc[0] -= @amount
-
-	case 'east':
-		if(array_index_exists(@loc, 'x')) {
-			@loc['x'] += @amount
-		}
-		@loc[0] += @amount
-
-	default:
-		console('Error: unhandled relative direction: '.@dir, false);
-
+proc _relative(@loc, @dir, @amount = 1, @inPlace = false) {
+	if(!@inPlace) {
+		@loc = @loc[];
 	}
-	return(@loc)
+	switch(@dir) {
+		case 'down':
+			if(is_associative(@loc)) {
+				@loc['y'] -= @amount
+			}
+			@loc[1] -= @amount
+
+		case 'up':
+			if(is_associative(@loc)) {
+				@loc['y'] += @amount
+			}
+			@loc[1] += @amount
+
+		case 'north':
+			if(is_associative(@loc)) {
+				@loc['z'] -= @amount
+			}
+			@loc[2] -= @amount
+
+		case 'south':
+			if(is_associative(@loc)) {
+				@loc['z'] += @amount
+			}
+			@loc[2] += @amount
+
+		case 'west':
+			if(is_associative(@loc)) {
+				@loc['x'] -= @amount
+			}
+			@loc[0] -= @amount
+
+		case 'east':
+			if(is_associative(@loc)) {
+				@loc['x'] += @amount
+			}
+			@loc[0] += @amount
+	}
+	return(@loc);
 }
 
 /*
