@@ -198,18 +198,38 @@ proc _start_game(@course, @loc) {
 						@hole = @ball['hole'];
 						@hits = plevel(@player);
 						@par = @golf[@hole]['par'];
+						@type = 'Par';
 						if(@hits == @par - 1) {
-							# BIRDIE
+							@type = 'Birdie';
 							launch_firework(@loc,
 								array(strength: 0, trail: true, type: 'BURST'));
 							play_sound(ploc(@player), array(sound: 'VILLAGER_YES'));
-						} else if(@hits <= @par - 2) {
-							# EAGLE
+						} else if(@hits == @par - 2) {
+							@type = 'Eagle';
 							launch_firework(@loc,
 								array(strength: 0, trail: true, type: 'BALL_LARGE'));
 							play_sound(ploc(@player), array(sound: 'VILLAGER_YES'));
+						} else if(@hits == @par - 3) {
+							@type = 'Albatross';
+							launch_firework(@loc,
+								array(strength: 0, trail: true, type: 'BALL_LARGE'));
+							launch_firework(@loc,
+								array(strength: 1, trail: true, type: 'BALL_LARGE'));
+							launch_firework(@loc,
+								array(strength: 2, trail: true, type: 'BALL_LARGE'));
+							play_sound(ploc(@player), array(sound: 'VILLAGER_YES'));
 						} else if(@hits > @par) {
 							play_sound(ploc(@player), array(sound: 'VILLAGER_NO'));
+							switch(@hits - @par) {
+								case 1:
+									@type = 'Bogey';
+								case 2:
+									@type = 'Double Bogey';
+								case 3:
+									@type = 'Triple Bogey';
+								default:
+									@type = '';
+							}
 						}
 
 						# clean up the hole for this player
@@ -237,16 +257,21 @@ proc _start_game(@course, @loc) {
 							@golf['lowestHole'] = @hole + 1;
 
 							# update sidebars and score output for players
-							@header = color(7).'Hole'.color('r').@hole.color(8).'*';
-							@scores = color(7).'Score'.color(8).'*';
-							foreach(@p: @b in @golf['players']) {
-								@header .= _fill_string('*', '.', '*'.color('a').@p.color(8).'*', 73).'*';
-								@scores .= color('r').@golf[@hole]['strokes'][@p].' ('.@golf[@hole]['total'][@p].')'.color(8).'*';
+							if(array_size(@golf['players']) > 1) {
+								@header = color(7).'Hole\''.color('r').@hole.color(8).'*';
+								@scores = color(7).'Score'.color(8).'*';
+								foreach(@p: @b in @golf['players']) {
+									@header .= _fill_string('*', '.', '*'.color('a').@p.color(8).'*', 72).'*';
+									@scores .= _fill_string('*', '.', '*'.color('r').@golf[@hole]['strokes'][@p].' ('.@golf[@hole]['total'][@p].')'.color(8).'*', 72).'*';
+								}
+								@header = _fill_string('*', '.', @header);
+								@scores = _fill_string('*', '.', @scores);
+								_regionmsg(@golf['name'], @header);
+								_regionmsg(@golf['name'], @scores);
+							} else {
+								tmsg(@player, colorize('&7&l[ &a&lHOLE &6&l'.@hole.' &7&l] &r'.if(@type, @type, @golf[@hole]['strokes'][@player]).'&7 (Total Strokes: &r'.@golf[@hole]['total'][@player].'&7)'));
 							}
-							@header = _fill_string('*', '.', @header);
-							@scores = _fill_string('*', '.', @scores);
-							_regionmsg(@golf['name'], @header);
-							_regionmsg(@golf['name'], @scores);
+
 							foreach(@p: @b in @golf['players']) {
 								if(@hole < 9) {
 									set_pscoreboard(@p, @golf['name'].@golf['lowestHole']);
@@ -261,10 +286,7 @@ proc _start_game(@course, @loc) {
 									if(ponline(@p)) {
 										set_collides_with_entities(@p, true);
 										@world = pworld(@p);
-										if(@world === 'dev' || @world === 'custom') {
-											_clear_pinv(@p);
-										}
-										@strokes = @golf[@hole]['total'][@player];
+										@strokes = @golf[@hole]['total'][@p];
 										if(@strokes < @loweststrokes) {
 											@winner = @p;
 											@loweststrokes = @strokes;
