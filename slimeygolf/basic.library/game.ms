@@ -79,8 +79,7 @@ proc _start_game(@course, @loc) {
 					'strokes': associative_array(),
 					'total': associative_array(),
 				);
-				@golf['par'] += @golf[@hole]['par'];
-				set_pscore('strokes', 'Par', @golf[@hole]['par'], @golf['name'].@hole);
+				set_pscore('strokes', '--Par-------', @golf[@hole]['par'], @golf['name'].@hole);
 				set_block_at(@golf[@hole]['loc'], 152);
 			}
 
@@ -205,12 +204,19 @@ proc _start_game(@course, @loc) {
 								array(strength: 0, trail: true, type: 'BURST'));
 							play_sound(ploc(@player), array(sound: 'VILLAGER_YES'));
 						} else if(@hits == @par - 2) {
-							@type = 'Eagle';
+							@type = 'Eagle!';
 							launch_firework(@loc,
 								array(strength: 0, trail: true, type: 'BALL_LARGE'));
 							play_sound(ploc(@player), array(sound: 'VILLAGER_YES'));
 						} else if(@hits == @par - 3) {
-							@type = 'Albatross';
+							@type = 'Albatross!!';
+							launch_firework(@loc,
+								array(strength: 0, trail: true, type: 'BALL_LARGE'));
+							launch_firework(@loc,
+								array(strength: 1, trail: true, type: 'BALL_LARGE'));
+							play_sound(ploc(@player), array(sound: 'VILLAGER_YES'));
+						} else if(@hits == @par - 3) {
+							@type = 'Condor!!!';
 							launch_firework(@loc,
 								array(strength: 0, trail: true, type: 'BALL_LARGE'));
 							launch_firework(@loc,
@@ -255,21 +261,28 @@ proc _start_game(@course, @loc) {
 						if(@lastplayer) {
 							set_block_at(@golf[@hole]['loc'], 0);
 							@golf['lowestHole'] = @hole + 1;
+							@golf['par'] += @golf[@hole]['par'];
 
 							# update sidebars and score output for players
+							@score = 0;
 							if(array_size(@golf['players']) > 1) {
 								@header = color(7).'Hole\''.color('r').@hole.color(8).'*';
 								@scores = color(7).'Score'.color(8).'*';
 								foreach(@p: @b in @golf['players']) {
+									@score = @golf[@hole]['total'][@p] - @golf['par'];
 									@header .= _fill_string('*', '.', '*'.color('a').@p.color(8).'*', 72).'*';
-									@scores .= _fill_string('*', '.', '*'.color('r').@golf[@hole]['strokes'][@p].' ('.@golf[@hole]['total'][@p].')'.color(8).'*', 72).'*';
+									@scores .= _fill_string('*', '.', '*'.color('r').@golf[@hole]['strokes'][@p]
+											.' ('.if(@score < 0, '&a', if(@score > 0, '&6+')).@score.')'.color(8).'*', 72).'*';
 								}
 								@header = _fill_string('*', '.', @header);
 								@scores = _fill_string('*', '.', @scores);
 								_regionmsg(@golf['name'], @header);
 								_regionmsg(@golf['name'], @scores);
 							} else {
-								tmsg(@player, colorize('&7&l[ &a&lHOLE &6&l'.@hole.' &7&l] &r'.if(@type, @type, @golf[@hole]['strokes'][@player]).'&7 (Total Strokes: &r'.@golf[@hole]['total'][@player].'&7)'));
+								@score = @golf[@hole]['total'][@player] - @golf['par'];
+								tmsg(@player, colorize('&7&l[ &a&lHOLE &6&l'.@hole.' &7&l] &r'
+										.if(@type, @type, @golf[@hole]['strokes'][@player])
+										.'&7 (Course: &r'.if(@score < 0, '&a', if(@score > 0, '&6+')).@score.'&7)'));
 							}
 
 							foreach(@p: @b in @golf['players']) {
@@ -284,8 +297,6 @@ proc _start_game(@course, @loc) {
 								@winner = '';
 								foreach(@p: @b in @golf['players']) {
 									if(ponline(@p)) {
-										set_collides_with_entities(@p, true);
-										@world = pworld(@p);
 										@strokes = @golf[@hole]['total'][@p];
 										if(@strokes < @loweststrokes) {
 											@winner = @p;
@@ -293,14 +304,23 @@ proc _start_game(@course, @loc) {
 										}
 									}
 								}
-								foreach(@p in @golf['spectators']) {
-									set_collides_with_entities(@p, true);
-								}
 
-								_regionmsg(@course, colorize(
-									'&a&lSLIMEY&6&lGOLF &a\u2308\u2328 \uFE52\u2328\u2309&r\n'
-									._colorname(@winner).'&l'.@winner.'&r&l is the winner!'
-								))
+								if(array_size(@golf['players']) > 1) {
+									_regionmsg(@course, colorize(
+										'&a&lSLIMEY&6&lGOLF &a\u2308\u2328 \uFE52\u2328\u2309&r\n'
+										._colorname(@winner).'&l'.@winner.'&r&l is the winner!'
+									));
+								} else if(@score <= -9) {
+									_regionmsg(@course, colorize(
+										'&a&lSLIMEY&6&lGOLF &a\u2308\u2328 \uFE52\u2328\u2309&r\n'
+										.'&lFantastic!'
+									));
+								} else if(@score < 0) {
+									_regionmsg(@course, colorize(
+										'&a&lSLIMEY&6&lGOLF &a\u2308\u2328 \uFE52\u2328\u2309&r\n'
+										.'&lGood Job!'
+									));
+								}
 
 								if(array_size(@golf['players']) > 1) {
 									_acc_add(@winner, 1);
@@ -390,6 +410,9 @@ proc _golf_cleanup(@golf) {
 	foreach(@player in array_keys(@golf['players'])) {
 		_remove_player(@player, @golf);
 	}
+	foreach(@p in @golf['spectators']) {
+		set_collides_with_entities(@p, true);
+	}
 	unbind(@golf['name']);
 	_remove_activity('golf'.@golf['name']);
 	clear_task();
@@ -406,6 +429,6 @@ proc _create_scoreboards(@golf) {
 	for(@i = 1, @i < 10, @i++) {
 		create_scoreboard(@golf['name'].@i);
 		create_objective('strokes', 'DUMMY', @golf['name'].@i);
-		set_objective_display('strokes', array('displayname': color('a').'Hole '.@i, 'slot': 'SIDEBAR'), @golf['name'].@i);
+		set_objective_display('strokes', array('displayname': colorize('&7&l[ &a&lHole &6&l'.@i.'&7&l ]'), 'slot': 'SIDEBAR'), @golf['name'].@i);
 	}
 }
