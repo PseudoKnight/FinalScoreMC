@@ -272,7 +272,7 @@ proc _start_game(@course, @loc) {
 									@score = @golf[@hole]['total'][@p] - @golf['par'];
 									@header .= _fill_string('*', '.', '*'.color('a').@p.color(8).'*', 72).'*';
 									@scores .= _fill_string('*', '.', '*'.color('r').@golf[@hole]['strokes'][@p]
-											.' ('.if(@score < 0, '&a', if(@score > 0, '&6+')).@score.')'.color(8).'*', 72).'*';
+											.' ('.if(@score < 0, color('a'), if(@score > 0, color(6).'+')).@score.color('r').')*', 72).'*';
 								}
 								@header = _fill_string('*', '.', @header);
 								@scores = _fill_string('*', '.', @scores);
