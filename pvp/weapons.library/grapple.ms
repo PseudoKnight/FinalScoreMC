@@ -96,7 +96,8 @@ bind(projectile_launch, array('id': @id.'grapple'), array('type': 'FISHING_HOOK'
 	}
 
 	bind(entity_damage_player, array('id': 'damage'.@arrow), array('id': @arrow), @event, @shooter, @slot, @hook) {
-		_reel(@event['location'], @shooter, @slot, @hook, @shooter, puuid(@event['player']));
+		@hit = puuid(@event['player']);
+		_reel(@event['location'], @shooter, @slot, @hit, @shooter, @hit);
 	}
 
 	set_timeout(800, closure(){
