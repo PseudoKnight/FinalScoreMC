@@ -13,7 +13,14 @@ if(@id == 'all') {
         die('No top times for '.to_upper(@id).'.');
     }
     msg(colorize('&e&m|------------------&e&l[ TOP TIMES - '.to_upper(@id).' ]&e&m---|'));
+    @lastTime = 1.0;
+    @lastCount = 0;
     for(@i = 0, @i < array_size(@times['top']), @i++) {
+        if(@times['top'][@i][1] == @lastTime){
+            @lastCount++;
+        } else {
+            @lastCount = 0;
+        }
         @time = '';
         if(@times['top'][@i][1] >= 60) {
             @time = simple_date('m\u0027m\u0027 ss.S', integer(@times['top'][@i][1] * 1000));
@@ -21,7 +28,8 @@ if(@id == 'all') {
             @time = simple_date('s.S', integer(@times['top'][@i][1] * 1000));
         }
         @time = substr(@time, 0, length(@time) - 2).'s';
-        msg(colorize(' '.if(@i < 9, '&80').'&7'.(@i + 1).'&a [ '.@time.' ] &r'.@times['top'][@i][0]));
+        msg(colorize(' '.if(@i < 9, '&80').'&7'.(@i + 1 - @lastCount).'&a [ '.@time.' ] &r'.@times['top'][@i][0]));
+        @lastTime = @times['top'][@i][1];
     }
 
 }

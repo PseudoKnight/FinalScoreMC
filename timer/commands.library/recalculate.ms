@@ -5,14 +5,26 @@ if(@id == 'all') {
         @players = array();
         foreach(@time in @times) {
             if(is_array(@time) && array_index_exists(@time, 'top')) {
+                @lastTime = 1.0;
+                @lastCount = 0;
                 foreach(@i: @t in @time['top']) {
-                    if(!array_index_exists(@players, @t[0])) {
-                        @players[@t[0]] = array('total': array_size(@time['top']) - @i, 'placement': @i + 1, 'count': 1);
+                    if(@t[1] == @lastTime){
+                      @lastCount++;
                     } else {
-                        @players[@t[0]]['total'] += (array_size(@time['top']) - @i);
-                        @players[@t[0]]['placement'] += (@i + 1);
+                      @lastCount = 0;
+                    }
+                    if(!array_index_exists(@players, @t[0])) {
+                        @players[@t[0]] = array(
+                          'total': array_size(@time['top']) - @i + @lastCount,
+                          'placement': @i + 1 - @lastCount,
+                          'count': 1,
+                        );
+                    } else {
+                        @players[@t[0]]['total'] += (array_size(@time['top']) - @i + @lastCount);
+                        @players[@t[0]]['placement'] += (@i + 1 - @lastCount);
                         @players[@t[0]]['count']++;
                     }
+                    @lastTime = @t[1];
                 }
             }
         }
