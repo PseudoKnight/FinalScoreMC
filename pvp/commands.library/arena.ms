@@ -106,6 +106,9 @@ proc _arena(@action, @id, @setting, @string) {
 						case 'on':
 						case '1':
 						case 'yes':
+							if(!array_index_exists(@arena, 'flags')) {
+								@arena['flags'] = array();
+							}
 							@arena['flags'][] = @setting;
 							msg(colorize('Turned &a' . @setting . '&r on'));
 
@@ -113,7 +116,7 @@ proc _arena(@action, @id, @setting, @string) {
 						case 'off':
 						case '0':
 						case 'no':
-							array_remove_values(@arena['flags'], @setting);
+							array_remove_values(array_get(@arena, 'flags', array()), @setting);
 							msg(colorize('Turned &a' . @setting . '&r off (default)'));
 
 						default:
