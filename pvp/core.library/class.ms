@@ -88,11 +88,13 @@ proc _class_select_random(@player, @pvp) {
 			break();
 		}
 	}
-	if(array_index_exists(@pvp['players'][@player], 'class')) {
-		_class('unload', @player, @pvp['players'][@player]['class'], @pvp);
-		_class('load', @player, @class, @pvp);
+	if(@class) {
+		if(array_index_exists(@pvp['players'][@player], 'class')) {
+			_class('unload', @player, @pvp['players'][@player]['class'], @pvp);
+			_class('load', @player, @class, @pvp);
+		}
+		@pvp['players'][@player]['class'] = @class;
 	}
-	@pvp['players'][@player]['class'] = @class;
 }
 
 proc _class_select(@id, @pvp) {
