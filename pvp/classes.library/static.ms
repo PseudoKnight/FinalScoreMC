@@ -13,7 +13,7 @@ case 'load':
 			clear_task();
 			die();
 		}
-		
+
 		@hunter = puuid(@player);
 		foreach(@p in array_keys(@pvp['players'])) {
 			if(@p == @player, continue());
@@ -25,9 +25,7 @@ case 'load':
 				set_ptexp(@player, ptexp(@player) + 1);
 				set_pinv(@p, array(103: array('type': 86)));
 				set_peffect(@p, 9, 0, 4);
-				if(!rand(8)) {
-					play_named_sound(ploc(@player), array('sound': 'mob.guardian.attack', 'pitch': 2));
-				}
+				play_named_sound(ploc(@p), array('sound': 'entity.guardian.attack', 'pitch': 2));
 			}
 		}
 	});

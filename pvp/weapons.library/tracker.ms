@@ -4,7 +4,7 @@ bind(item_held, array('id': @id.'tracker'), null, @event, @id) {
 	if(!array_index_exists(@pvp['players'], player())) {
 		die();
 	}
-	
+
 	if(pinfo(player(), 6) === '345:0') {
 		set_interval(1500, 500, closure(){
 			if(pinfo(player(), 6) === '345:0') {

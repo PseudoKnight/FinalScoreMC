@@ -1,89 +1,6 @@
-proc _materials(@level) {
-	switch(@level) {
-		case 0:
-			return(associative_array(
-				' ': '7:0',
-				'wall': array('24:0', '24:2'),
-				'room': '0:0',
-				'door': '0:0',
-				'column': '24:1',
-				'stairs': '128:2',
-				'ceiling': '24:0',
-				'floor': '172:0',
-				'utility': array(58),
-				'decor': array(31),
-			));
-		case 1:
-			return(associative_array(
-				' ': '7:0',
-				'wall': array('162'),
-				'room': '0:0',
-				'door': '0:0',
-				'column': '162:1',
-				'stairs': '164:2',
-				'ceiling': '161:1',
-				'floor': '2',
-				'utility': array(58),
-				'decor': array('18:2'),
-			));
-		case 2:
-			return(associative_array(
-				' ': '7:0',
-				'wall': array('112'),
-				'room': '0:0',
-				'door': '0:0',
-				'column': '113',
-				'stairs': '114:2',
-				'ceiling': '112:0',
-				'floor': '112:1',
-				'utility': array(61, '145:2'),
-				'decor': array('118:2'),
-			));
-		case 3:
-			return(associative_array(
-				' ': '7:0',
-				'wall': array('1:0', '98:0', '98:1', '98:2', '98:3', '97:4'),
-				'room': '0:0',
-				'door': '0:0',
-				'column': '47:0',
-				'stairs': '109:2',
-				'ceiling': '98:0',
-				'floor': '98:1',
-				'utility': array('58', '116', '117', '118:2'),
-				'decor': array('66'),
-			));
-		default:
-			return(associative_array(
-				' ': '7:0',
-				'wall': array(201),
-				'room': '0:0',
-				'door': '0:0',
-				'column': 202,
-				'stairs': '203:2',
-				'ceiling': 201,
-				'floor': 201,
-				'utility': array('116'),
-				'decor': array('199'),
-			));
-	}
-}
+proc _generate_dungeon(@region, @world, @type, @seed) {
+	include('../config.library/'.@type.'.ms');
 
-proc _spawner_mobs(@level) {
-	switch(@level) {
-		case 0:
-			return(array('ENDER_CRYSTAL', 'ENDERMITE', 'ZOMBIE'));
-		case 1:
-			return(array('CAVE_SPIDER', 'SPIDER', 'SILVERFISH'));
-		case 2:
-			return(array('PIG_ZOMBIE', 'MAGMA_CUBE', 'BLAZE'));
-		case 3:
-			return(array('ENDER_CRYSTAL', 'ZOMBIE',	'SPIDER', 'SILVERFISH', 'SKELETON', 'BLAZE', 'WITCH', 'CREEPER'));
-		default:
-			return(array('ENDER_CRYSTAL', 'ENDERMITE', 'ENDERMAN', 'GUARDIAN', 'SHULKER'));
-	}
-}
-
-proc _generate_dungeon(@region, @world, @level, @scale, @seed) {
 	if(!@seed) {
 		@seed = time();
 	}
@@ -130,7 +47,7 @@ proc _generate_dungeon(@region, @world, @level, @scale, @seed) {
 				@materialMap[@c] = array();
 				@roomMap[@c] = array();
 				for(@r = 0, @r < @length, @r++) {
-					@type = ' ';
+					@type = 'empty';
 					if(@r == 0 || @r == @length - 1
 					|| @c == 0 || @c == @width - 1) {
 						@type = 'wall';
@@ -343,7 +260,7 @@ proc _generate_dungeon(@region, @world, @level, @scale, @seed) {
 
 						// Floor
 						@levelLoc = array(@regionMinX + @x, @y, @regionMinZ + @z, @world);
-						if(@materialMap[@c][@r] === 'column' && srand(@random) < 0.16) {
+						if(@mobTypes && @materialMap[@c][@r] === 'column' && srand(@random) < 0.16) {
 							set_block_at(@levelLoc, '52:0', false)
 							@rand = integer(srand(@random) * array_size(@mobTypes));
 							@mob = array_get(@mobTypes, @rand, 'ZOMBIE');
@@ -388,6 +305,7 @@ proc _generate_dungeon(@region, @world, @level, @scale, @seed) {
 										if(srand(@random) < 0.25, associative_array('name': 'STONE_PICKAXE', 'qty': 1, 'data': 128), null),
 										if(srand(@random) < 0.25, associative_array('name': 'DIAMOND_AXE', 'data': 1546), null),
 										if(srand(@random) < 0.20, associative_array('name': 'DIAMOND_SWORD', 'data': 1546), null),
+										if(srand(@random) < 0.20, associative_array('name': 'COMPASS'), null),
 										if(srand(@random) < 0.09, associative_array('name': 'GOLD_HELMET', 'data': 60), null),
 										if(srand(@random) < 0.08, associative_array('name': 'GOLD_CHESTPLATE', 'data': 50), null),
 										if(srand(@random) < 0.05, associative_array('name': 'GOLD_LEGGINGS', 'data': 50), null),
@@ -423,7 +341,7 @@ proc _generate_dungeon(@region, @world, @level, @scale, @seed) {
 										set_block_at(@loc, @materials['room'], false);
 									}
 								default:
-									set_block_at(@loc, @materials[' '], false);
+									set_block_at(@loc, @materials['empty'], false);
 							}
 						}
 
@@ -456,6 +374,13 @@ proc _generate_dungeon(@region, @world, @level, @scale, @seed) {
 		}
 		sleep(0.05);
 		x_run_on_main_thread_later(closure(){
+			@sx = (@rooms[0]['c1'] * @scale) + @regionMinX + 1;
+			@sy = @coords[1][1];
+			@sz = (@rooms[0]['r1'] * @scale) + @regionMinZ + 1;
+			@ex = (@rooms[@next]['c1'] * @scale) + @regionMinX + 1;
+			@ey = @coords[1][1];
+			@ez = (@rooms[@next]['r1'] * @scale) + @regionMinZ + 1;
+			_set_locations(array(@sx, @sy, @sz, @world), array(@ex, @ey, @ez, @world));
 			res_free_resource(@random);
 			_remove_region_entities(@region, array(), @world);
 			msg('Dungeon generation complete!');

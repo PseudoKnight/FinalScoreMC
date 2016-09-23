@@ -96,13 +96,19 @@ proc _pvp_start(@pvp, @id){
 	# Check arena settings
 	if(!array_index_exists(@arena, 'lobby'), die('No lobby defined for arena.'));
 	if(!array_index_exists(@arena, 'region'), die('No region defined for arena.'));
-	if(!array_index_exists(@arena, 'spawn'), die('No spawns defined for arena.'));
+
+	# Load custom arena scripts
+	if(array_contains(@arena['flags'], 'script')){
+		include('../arenas.library/'.@id.'.ms');
+	}
 
 	# Configure remaining arena settings
 	if(!array_index_exists(@arena, 'broadcast'), @arena['broadcast'] = @arena['region']);
 	if(array_contains(@arena['flags'], 'keepinventory'), @arena['denydrop'] = 'all');
 	if(array_index_exists(@arena, 'classes')) {
-		@arena['delay'] = 45;
+		if(array_size(@arena['classes']) > 1){
+			@arena['delay'] = 45;
+		}
 		if(!array_index_exists(@arena, 'class_picking'), @arena['class_picking'] = 'player');
 	}
 
@@ -310,7 +316,7 @@ proc _pvp_start(@pvp, @id){
 						}
 					}
 				}
-			} else if(@timeleft[0] > 5 && array_index_exists(@arena, 'classes')) {
+			} else if(@timeleft[0] > 5 && array_index_exists(@arena, 'classes') && array_size(@arena['classes']) > 1) {
 				@choosing = false;
 				foreach(@p in array_keys(@pvp['players'])) {
 					if(ponline(@p) && !is_null(pget_virtualchest(@p))) {

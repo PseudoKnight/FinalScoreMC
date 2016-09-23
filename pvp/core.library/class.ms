@@ -82,9 +82,10 @@ proc _class(@action, @player, @class, @pvp) {
 proc _class_select_random(@player, @pvp) {
 	@rand = array_rand(@pvp['arena']['classes'], array_size(@pvp['arena']['classes']));
 	@class = '';
-	foreach(@class in @rand) {
-		if(!array_index_exists(@pvp['arena']['classes'][@class], 'team')
-		|| @pvp['players'][@player]['team'] == @pvp['arena']['classes'][@class]['team']) {
+	foreach(@c in @rand) {
+		if(!array_index_exists(@pvp['arena']['classes'][@c], 'team')
+		|| @pvp['players'][@player]['team'] == @pvp['arena']['classes'][@c]['team']) {
+			@class = @c;
 			break();
 		}
 	}
