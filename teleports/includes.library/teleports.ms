@@ -1,7 +1,7 @@
 #Warms up a tp with effects and configurable timer
 proc _warmuptp(@player, @loc, @cleareffects = false) {
 	@length = 3.7;
-	if(pmode(@player) == 'CREATIVE') {
+	if(!_is_survival_world(pworld(@player))) {
 		@length = 0.1;
 	} else {
 		set_peffect(@player, 9, 1, 7, true, false);
