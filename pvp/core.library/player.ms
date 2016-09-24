@@ -89,7 +89,6 @@ proc _pvp_initialize_players(@id, @players) {
 			raw_set_pvanish(@p, true, @player);
 		}
 
-		set_phunger(@player, 20);
 		set_phealth(@player, 20);
 		_pvp_equip(@id, @player);
 
@@ -132,6 +131,11 @@ proc _pvp_equip(@id, @player) {
 	@pvp = import('pvp'.@id)
 	if(!array_index_exists(@pvp['players'], @player)) {
 		return();
+	}
+	if(array_index_exists(@pvp['arena'], 'hunger')) {
+		set_phunger(@player, @pvp['arena']['hunger']);
+	} else {
+		set_phunger(@player, 20);
 	}
 	if(array_index_exists(@pvp['arena'], 'saturation')) {
 		set_psaturation(@player, @pvp['arena']['saturation']);
