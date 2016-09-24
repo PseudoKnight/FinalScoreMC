@@ -5,6 +5,27 @@ proc _set_locations(@start, @end){
 	noop();
 }
 
+proc _loot(@level) {
+	return(array(
+		array(0.50, associative_array('name': 'TORCH', 'qty': array(1, 16))),
+		array(0.40, associative_array('name': 'BREAD', 'qty': array(1, 7))),
+		array(0.35, associative_array('name': 'GOLDEN_APPLE')),
+		array(0.25, associative_array('name': 'STONE_PICKAXE', 'qty': 1, 'data': 128)),
+		array(0.25, associative_array('name': 'DIAMOND_AXE', 'data': 1546)),
+		array(0.20, associative_array('name': 'DIAMOND_SWORD', 'data': 1546)),
+		array(0.09, associative_array('name': 'GOLD_HELMET', 'data': 60)),
+		array(0.08, associative_array('name': 'GOLD_CHESTPLATE', 'data': 50)),
+		array(0.05, associative_array('name': 'GOLD_LEGGINGS', 'data': 50)),
+		array(0.08, associative_array('name': 'GOLD_BOOTS', 'data': 50)),
+		array(0.03, associative_array('name': 'CHAINMAIL_LEGGINGS', 'data': 100)),
+		array(0.01, associative_array('name': 'IRON_CHESTPLATE', 'data': 150)),
+		array(0.01, associative_array('name': 'IRON_LEGGINGS', 'data': 150)),
+		array(0.01, associative_array('name': 'IRON_BOOTS', 'data': 150)),
+		array(0.03, associative_array('name': 'SHIELD', 'data': 300)),
+		array(0.03, associative_array('name': 'INK_SACK', 'data': 4, 'qty': array(1, 3))),
+	));
+}
+
 proc _materials(@level) {
 	switch(@level) {
 		case 0:

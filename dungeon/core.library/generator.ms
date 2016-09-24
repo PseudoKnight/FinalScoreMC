@@ -248,6 +248,7 @@ proc _generate_dungeon(@region, @world, @type, @seed) {
 
 			@mobTypes = _spawner_mobs(@level);
 			@materials = _materials(@level);
+			@loot = _loot(@level);
 
 			// Build dungeon level
 			for(@z = 0, @z < @length * @scale, @z++) {
@@ -298,25 +299,20 @@ proc _generate_dungeon(@region, @world, @type, @seed) {
 									}
 								case 'chest':
 									set_block_at(@loc, 54, false);
-									set_inventory(@loc, array(
-										if(srand(@random) < 0.50, associative_array('name': 'TORCH', 'qty': integer(srand(@random) * 16) + 1), null),
-										if(srand(@random) < 0.40, associative_array('name': 'BREAD', 'qty': integer(srand(@random) * 7) + 1), null),
-										if(srand(@random) < 0.35, associative_array('name': 'GOLDEN_APPLE'), null),
-										if(srand(@random) < 0.25, associative_array('name': 'STONE_PICKAXE', 'qty': 1, 'data': 128), null),
-										if(srand(@random) < 0.25, associative_array('name': 'DIAMOND_AXE', 'data': 1546), null),
-										if(srand(@random) < 0.20, associative_array('name': 'DIAMOND_SWORD', 'data': 1546), null),
-										if(srand(@random) < 0.20, associative_array('name': 'COMPASS'), null),
-										if(srand(@random) < 0.09, associative_array('name': 'GOLD_HELMET', 'data': 60), null),
-										if(srand(@random) < 0.08, associative_array('name': 'GOLD_CHESTPLATE', 'data': 50), null),
-										if(srand(@random) < 0.05, associative_array('name': 'GOLD_LEGGINGS', 'data': 50), null),
-										if(srand(@random) < 0.08, associative_array('name': 'GOLD_BOOTS', 'data': 50), null),
-										if(srand(@random) < 0.03, associative_array('name': 'CHAINMAIL_LEGGINGS', 'data': 100), null),
-										if(srand(@random) < 0.01, associative_array('name': 'IRON_CHESTPLATE', 'data': 150), null),
-										if(srand(@random) < 0.01, associative_array('name': 'IRON_LEGGINGS', 'data': 150), null),
-										if(srand(@random) < 0.01, associative_array('name': 'IRON_BOOTS', 'data': 150), null),
-										if(srand(@random) < 0.03, associative_array('name': 'SHIELD', 'data': 300), null),
-										if(srand(@random) < 0.03, associative_array('name': 'INK_SACK', 'data': 4, 'qty': integer(srand(@random) * 3) + 1), null),
-									));
+									@inv = array();
+									foreach(@weightedLoot in @loot){
+										if(srand(@random) < @weightedLoot[0]){
+											if(array_index_exists(@weightedLoot[1], 'qty')
+											&& is_array(@weightedLoot[1]['qty'])) {
+												@item = @weightedLoot[1][];
+												@item['qty'] = integer(srand(@random) * (@item['qty'][1] - @item['qty'][0]) + @item['qty'][0]);
+											} else {
+												@item = @weightedLoot[1];
+											}
+											@inv[] = @item;
+										}
+									}
+									set_inventory(@loc, @inv);
 									@materialMap[@c][@r] = 'room';
 								case 'utility':
 									if(@scale == 1 || (@y < @floorHeight - @height + 1 && srand(@random) < 0.6)) {
