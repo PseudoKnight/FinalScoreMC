@@ -16,7 +16,7 @@ bind(item_held, array('id': @id.'tracker'), null, @event, @id) {
 						@dist = _distance(@loc1, @loc2);
 						if(@dist < 32) {
 							@pitch = 0.5 + (0.5 * ((32 - @dist) / 32));
-							play_sound(@loc1, array('sound': 'NOTE_STICKS', 'pitch': @pitch) player());
+							play_sound(@loc1, array('sound': 'NOTE_STICKS', 'pitch': @pitch), player());
 							break();
 						}
 					}
