@@ -70,14 +70,15 @@ bind(projectile_launch, array('id': @id.'grapple'), array('type': 'FISHING_HOOK'
 					@loc1 = entity_loc(@mover);
 					@dist = sqrt(((@loc2['x'] - @loc1['x']) ** 2) + ((@loc2['y'] - @loc1['y']) ** 2) + ((@loc2['z'] - @loc1['z']) ** 2));
 					@dist = max(0.1, min(20, @dist));
-					@x = (@loc2['x'] - @loc1['x']) / @dist;
-					@y = (@loc2['y'] - @loc1['y']) / @dist * 1.1;
-					@z = (@loc2['z'] - @loc1['z']) / @dist;
-					set_entity_velocity(@mover, array(@x, @y, @z));
-					set_entity_fall_distance(@mover, 0);
-					if(@dist >= 10) {
+					if(@dist > 10) {
 						@pitch = 1.4 + (0.6 * (@dist - 10) / 20);
 						play_sound(@loc1, array('sound': 'HORSE_BREATHE', 'pitch': @pitch));
+					} else if(@dist > 2) {
+						@x = (@loc2['x'] - @loc1['x']) / @dist;
+						@y = (@loc2['y'] - @loc1['y']) / @dist * 1.1;
+						@z = (@loc2['z'] - @loc1['z']) / @dist;
+						set_entity_velocity(@mover, array(@x, @y, @z));
+						set_entity_fall_distance(@mover, 0);
 					}
 				}
 			} catch(BadEntityException @e) {
@@ -97,6 +98,7 @@ bind(projectile_launch, array('id': @id.'grapple'), array('type': 'FISHING_HOOK'
 
 	bind(entity_damage_player, array('id': 'damage'.@arrow), array('id': @arrow), @event, @shooter, @slot, @hook) {
 		@hit = puuid(@event['player']);
+		try(set_entity_rider(@hit, @hook));
 		_reel(@event['location'], @shooter, @slot, @hit, @shooter, @hit);
 	}
 
