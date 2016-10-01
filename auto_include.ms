@@ -118,7 +118,7 @@ proc _equip_kit(@player, @kit = 'adventure') {
 				2: associative_array('name': 'BOOK', 'meta': associative_array(
 					'display': 'Park Directory',
 				)),
-				3: associative_array('name': 'COOKED_MUTTON', 'qty': 64, 'meta': associative_array(
+				3: associative_array('name': 'COOKED_MUTTON', 'qty': 32, 'meta': associative_array(
 					'display': 'Frog Legs',
 					'lore': array('Good eatin\''),
 				)),
