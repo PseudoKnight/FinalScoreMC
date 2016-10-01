@@ -249,6 +249,10 @@ proc _start_game(@course, @loc) {
 							@golf[@hole]['total'][@player] = @golf[@hole]['strokes'][@player];
 						}
 
+						if(@hole < 9) {
+							set_pscoreboard(@player, @golf['name'].@golf['lowestHole']);
+						}
+
 						# check if last player to leave hole
 						@lastplayer = true;
 						foreach(@p: @b in @golf['players']) {
@@ -286,12 +290,6 @@ proc _start_game(@course, @loc) {
 								tmsg(@player, colorize('&7&l[ &a&lHOLE &6&l'.@hole.' &7&l] &r'
 										.if(@type, @type, @golf[@hole]['strokes'][@player])
 										.'&7 (Course: &r'.if(@score < 0, '&a', if(@score > 0, '&6+')).@score.'&7)'));
-							}
-
-							foreach(@p: @b in @golf['players']) {
-								if(@hole < 9) {
-									set_pscoreboard(@p, @golf['name'].@golf['lowestHole']);
-								}
 							}
 
 							# check if last hole
