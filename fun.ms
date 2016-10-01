@@ -37,7 +37,10 @@ bind(player_interact, null, array('item': 401, 'button': 'right'), @event) {
 				'type': @type,
 			);
 		}
-		launch_firework(@loc, @meta);
+		@firework = launch_firework(@loc, @meta);
+		if(!rand(7)) {
+			set_metadata(@firework, 'mob', array_rand(array('chicken', 'bat', 'pig'), 1, false)[0]);
+		}
 	}
 
 	@slot = pinfo(player(), 15);
@@ -59,4 +62,22 @@ bind(player_interact, null, array('item': 401, 'button': 'right'), @event) {
 			// ignore
 		}
 	});
+}
+
+bind(firework_explode, null, null, @event){
+	if(has_metadata(@event['id'], 'mob')){
+		@mob = get_metadata(@event['id'], 'mob', 'CommandHelper');
+		@mobs = spawn_mob(@mob, 15, @event['location']);
+		@yaw = 0;
+		foreach(@m in @mobs){
+			if(@mob == 'pig'){
+				set_mob_equipment(@m, associative_array('CHESTPLATE': associative_array('name': 'ELYTRA')));
+				set_entity_gliding(@m, true);
+			}
+			set_entity_onfire(@m, 20);
+			set_mob_effect(@m, 20, 0, 600, true, false);
+			set_entity_velocity(@m, _get_vector(@yaw, 0));
+			@yaw += 24;
+		}
+	}
 }
