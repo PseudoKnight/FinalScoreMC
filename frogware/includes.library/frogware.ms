@@ -37,6 +37,11 @@ proc _fw_endgame(@winners) {
 					tmsg(@p, color('6').'+'.@coins.' coins');
 				}
 				_fw_changeteam(@p, 'winners');
+				@pstate = _pstate(@p);
+				if(!array_index_exists(@pstate, 'trophies')) {
+					@pstate['trophies'] = array();
+				}
+				@pstate['trophies'][] = color('yellow').'Best Frog in the House!';
 			} else {
 				_fw_changeteam(@p, 'losers');
 			}
@@ -46,8 +51,9 @@ proc _fw_endgame(@winners) {
 	}
 	if(array_contains(get_scoreboards(), 'fw')) {
 		set_timeout(5000, closure(){
-			remove_scoreboard('fw')
+			remove_scoreboard('fw');
 			_remove_activity('frogware');
+			store_value('frogware', @winners);
 		});
 	}
 }
