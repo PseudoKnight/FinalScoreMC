@@ -149,7 +149,7 @@ bind(player_join, null, null, @event) {
 		);
 
 		@pstate = _pstate(player());
-		if(@percent['challenge'] > 0.8) {
+		if(@percent['challenge'] > 0.75) {
 			if(!array_index_exists(@pstate, 'trophies')) {
 				@pstate['trophies'] = array();
 			}
@@ -158,10 +158,10 @@ bind(player_join, null, null, @event) {
 			} else if(@percent['challenge'] > 0.9) {
 				@pstate['trophies'][] = '>90% Challenge Cakes';
 			} else {
-				@pstate['trophies'][] = '>80% Challenge Cakes';
+				@pstate['trophies'][] = color('gray').'>75% Challenge Cakes';
 			}
 		}
-		if(@percent['secret'] > 0.8) {
+		if(@percent['secret'] > 0.75) {
 			if(!array_index_exists(@pstate, 'trophies')) {
 				@pstate['trophies'] = array();
 			}
@@ -170,7 +170,7 @@ bind(player_join, null, null, @event) {
 			} else if(@percent['secret'] > 0.9) {
 				@pstate['trophies'][] = '>90% Secret Cakes';
 			} else {
-				@pstate['trophies'][] = '>80% Secret Cakes';
+				@pstate['trophies'][] = color('gray').'>75% Secret Cakes';
 			}
 		}
 	}, 'trophies');

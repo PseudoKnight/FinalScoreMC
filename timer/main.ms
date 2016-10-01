@@ -32,9 +32,9 @@ bind(player_join, null, null, @event) {
 						case 2:
 							@rank = '&e\u278C';
 						case 3:
-							@rank = '\u278D';
+							@rank = '&e\u278D';
 						case 4:
-							@rank = '\u278E';
+							@rank = '&e\u278E';
 						case 5:
 							@rank = '\u278F';
 						case 6:
@@ -45,6 +45,16 @@ bind(player_join, null, null, @event) {
 							@rank = '\u2792';
 						case 9:
 							@rank = '\u2793';
+						case 10:
+							@rank = '\u24EB';
+						case 11:
+							@rank = '\u24EC';
+						case 12:
+							@rank = '\u24ED';
+						case 13:
+							@rank = '\u24EE';
+						case 14:
+							@rank = '\u24EF';
 					}
 					if(!array_index_exists(@pstate, 'trophies')) {
 						@pstate['trophies'] = array();
