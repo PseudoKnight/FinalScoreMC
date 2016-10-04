@@ -83,7 +83,7 @@ proc _generate_dungeon(@region, @world, @type, @seed) {
 				'c1': @c,
 				'roomwidth': 5,
 				'roomlength': 1,
-				'connected': false,
+				'connected': 1,
 			);
 			@unconnected = array(0);
 
@@ -116,7 +116,7 @@ proc _generate_dungeon(@region, @world, @type, @seed) {
 							'c1': @c,
 							'roomwidth': @roomwidth,
 							'roomlength': @roomlength,
-							'connected': false,
+							'connected': 0,
 						);
 
 						// Mask room
@@ -143,7 +143,7 @@ proc _generate_dungeon(@region, @world, @type, @seed) {
 				}
 
 				array_remove_values(@unconnected, @next);
-				@rooms[@next]['connected'] = true;
+				@rooms[@next]['connected'] = @rooms[@previous]['connected'] + 1;
 
 				@r = @rooms[@next]['r1'];
 				@c = @rooms[@next]['c1'];
@@ -370,9 +370,17 @@ proc _generate_dungeon(@region, @world, @type, @seed) {
 		}
 		sleep(0.05);
 		x_run_on_main_thread_later(closure(){
-			@sx = (@rooms[0]['c1'] * @scale) + @regionMinX + 1;
+			@roomid = 0;
+			@distance = 0;
+			foreach(@id: @room in @rooms){
+				if(@room['connected'] > @distance) {
+					@roomid = @id;
+					@distance = @room['connected'];
+				}
+			}
+			@sx = (@rooms[@roomid]['c1'] * @scale) + @regionMinX + 1;
 			@sy = @coords[1][1];
-			@sz = (@rooms[0]['r1'] * @scale) + @regionMinZ + 1;
+			@sz = (@rooms[@roomid]['r1'] * @scale) + @regionMinZ + 1;
 			@ex = (@rooms[@next]['c1'] * @scale) + @regionMinX + 1;
 			@ey = @coords[1][1];
 			@ez = (@rooms[@next]['r1'] * @scale) + @regionMinZ + 1;
