@@ -9,7 +9,7 @@ bind(creature_spawn, null, array('type': 'ZOMBIE', 'reason': 'NATURAL'), @e) {
 			} else {
 				set_mob_equipment(@e['id'], array(
 					'WEAPON': array('name': 'PUMPKIN'),
-					'HELMET': array('name': 'CARROT_ITEM'),
+					'HELMET': null,
 					'CHESTPLATE': array('name': 'LEATHER_CHESTPLATE'),
 					'LEGGINGS': array('name': 'LEATHER_LEGGINGS'),
 					'BOOTS': array('name': 'LEATHER_BOOTS'),
