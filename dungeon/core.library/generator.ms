@@ -135,7 +135,7 @@ proc _generate_dungeon(@region, @world, @type, @seed) {
 			@next = 0;
 			@previous = @next;
 			@try = array();
-			@limit = 700;
+			@limit = 1000;
 			while(@unconnected) {
 				@limit--;
 				if(@limit < 0){
@@ -193,7 +193,7 @@ proc _generate_dungeon(@region, @world, @type, @seed) {
 				}
 				if(!@success) {
 					if(@previous == @next) {
-						@limit = 10000;
+						@limit = 1000;
 						do {
 							@next = integer(srand(@random) * array_size(@rooms));
 							@limit--;
@@ -382,9 +382,17 @@ proc _generate_dungeon(@region, @world, @type, @seed) {
 					@distance = @room['connected'];
 				}
 			}
-			@sx = (@rooms[@roomid]['c1'] * @scale) + @regionMinX + 1;
+			for(@c = 0, @c < @rooms[@roomid]['roomwidth'], @c++) {
+				for(@r = 0, @r < @rooms[@roomid]['roomlength'], @r++) {
+					if(@materialMap[@c + @rooms[@roomid]['c1']][@r + @rooms[@roomid]['r1']] != 'column') {
+						break(2);
+					}
+				}
+			}
+
+			@sx = ((@rooms[@roomid]['c1'] + @c) * @scale) + @regionMinX + 1;
 			@sy = @coords[1][1];
-			@sz = (@rooms[@roomid]['r1'] * @scale) + @regionMinZ + 1;
+			@sz = ((@rooms[@roomid]['r1'] + @r) * @scale) + @regionMinZ + 1;
 			@ex = (@rooms[@next]['c1'] * @scale) + @regionMinX + 1;
 			@ey = @coords[1][1];
 			@ez = (@rooms[@next]['r1'] * @scale) + @regionMinZ + 1;
