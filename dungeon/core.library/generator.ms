@@ -151,7 +151,8 @@ proc _generate_dungeon(@region, @world, @type, @seed) {
 				@roomlength = @rooms[@next]['roomlength'];
 
 				@success = false;
-				foreach(@dir in array_rand(range(4), 4, false)) {
+				foreach(@d in range(4)) {
+					@dir = integer(srand(@random) * 4);
 					try {
 						switch(@dir){
 							case 0:
@@ -192,12 +193,15 @@ proc _generate_dungeon(@region, @world, @type, @seed) {
 				}
 				if(!@success) {
 					if(@previous == @next) {
-						foreach(@next in array_rand(range(array_size(@rooms)), array_size(@rooms), false)){
-							if(@next != @previous && @rooms[@next]['connected'] && !array_contains(@try, @next)){
-								@try[] = @next;
-								break();
-							}
+						@limit = 10000;
+						do {
+							@next = integer(srand(@random) * array_size(@rooms));
+							@limit--;
+						} while(@limit > 0 && (@next == @previous || @rooms[@next]['connected'] == 0 || array_contains(@try, @next)));
+						if(@limit <= 0){
+							msg('Room selector hit limit!');
 						}
+						@try[] = @next;
 					} else {
 						// go back one if we haven't already
 						@next = @previous;
