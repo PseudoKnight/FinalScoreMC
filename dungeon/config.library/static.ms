@@ -3,7 +3,7 @@
 
 proc _set_locations(@start, @end){
 	@pvp = import('pvpstatic');
-    @pvp['arena']['spawn'] = array(array(@start), array(@end));
+    @pvp['arena']['spawn'] = array(array(@end), array(@start));
 }
 
 proc _loot(@level) {

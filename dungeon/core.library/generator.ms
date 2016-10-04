@@ -389,13 +389,12 @@ proc _generate_dungeon(@region, @world, @type, @seed) {
 					}
 				}
 			}
-
 			@sx = ((@rooms[@roomid]['c1'] + @c) * @scale) + @regionMinX + 1;
 			@sy = @coords[1][1];
 			@sz = ((@rooms[@roomid]['r1'] + @r) * @scale) + @regionMinZ + 1;
-			@ex = (@rooms[@next]['c1'] * @scale) + @regionMinX + 1;
+			@ex = (@rooms[0]['c1'] * @scale) + @regionMinX + 1;
 			@ey = @coords[1][1];
-			@ez = (@rooms[@next]['r1'] * @scale) + @regionMinZ + 1;
+			@ez = (@rooms[0]['r1'] * @scale) + @regionMinZ + 1;
 			_set_locations(array(@sx, @sy, @sz, @world), array(@ex, @ey, @ez, @world));
 			res_free_resource(@random);
 			_remove_region_entities(@region, array(), @world);
