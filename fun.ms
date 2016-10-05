@@ -38,7 +38,7 @@ bind(player_interact, null, array('item': 401, 'button': 'right'), @event) {
 			);
 		}
 		@firework = launch_firework(@loc, @meta);
-		if(!rand(7)) {
+		if(@f > 1 && !rand(5)) {
 			set_metadata(@firework, 'mob', array_rand(array('chicken', 'bat', 'pig'), 1, false)[0]);
 		}
 	}
@@ -72,6 +72,7 @@ bind(firework_explode, null, null, @event){
 		foreach(@m in @mobs){
 			if(@mob == 'pig'){
 				set_mob_equipment(@m, associative_array('CHESTPLATE': associative_array('name': 'ELYTRA')));
+				set_equipment_droprates(@m, null);
 				set_entity_gliding(@m, true);
 			}
 			set_entity_onfire(@m, 20);
