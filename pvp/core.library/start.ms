@@ -281,17 +281,17 @@ proc _pvp_start(@pvp, @id){
 		_worldmsg('custom', color('gold').' '.array_implode(array_keys(@pvp['players']), colorize('&r vs &6')));
 	}
 	if(array_index_exists(@arena, 'lives')) {
-		_regionmsg(@arena['broadcast'], colorize('- &e&l'.@arena['lives'].' LIVES'));
+		_regionmsg(@arena['broadcast'], colorize('* &e&l'.@arena['lives'].if(@arena['lives'] > 1, ' LIVES', ' LIFE')));
 	}
 	if(array_index_exists(@arena, 'class_picking') && @arena['class_picking'] === 'random') {
-		_regionmsg(@arena['broadcast'], colorize('- &e&lALL RANDOM CLASSES'));
+		_regionmsg(@arena['broadcast'], colorize('* &e&lALL RANDOM CLASSES'));
 	}
 	if(array_index_exists(@arena, 'class_picks') &&
 	(!array_index_exists(@arena, 'lives') || @arena['class_picks'] < @arena['lives'])) {
-		_regionmsg(@arena['broadcast'], colorize('- &e&l'.@arena['class_picks'].' CLASS PICKS'));
+		_regionmsg(@arena['broadcast'], colorize('* &e&l'.@arena['class_picks'].' CLASS PICKS'));
 	}
 	if(@picked) {
-		_regionmsg(@arena['broadcast'], colorize('- &e&lArena picked by '.@picked));
+		_regionmsg(@arena['broadcast'], colorize('* &e&lArena picked by '.@picked));
 	}
 	_worldmsg('custom', colorize('&7&m|----------------------------------------------------|'));
 
