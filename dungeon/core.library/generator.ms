@@ -83,7 +83,7 @@ proc _generate_dungeon(@region, @world, @type, @seed) {
 				'c1': @c,
 				'roomwidth': 5,
 				'roomlength': 1,
-				'connected': 1,
+				'connected': 0,
 			);
 			@unconnected = array(0);
 
@@ -136,6 +136,7 @@ proc _generate_dungeon(@region, @world, @type, @seed) {
 			@previous = @next;
 			@try = array();
 			@limit = 1000;
+			@connected = associative_array();
 			while(@unconnected) {
 				@limit--;
 				if(@limit < 0){
@@ -143,7 +144,10 @@ proc _generate_dungeon(@region, @world, @type, @seed) {
 				}
 
 				array_remove_values(@unconnected, @next);
-				@rooms[@next]['connected'] = @rooms[@previous]['connected'] + 1;
+				@connected[@next] = null;
+				if(@rooms[@next]['connected'] == 0){
+					@rooms[@next]['connected'] = @rooms[@previous]['connected'] + 1;
+				}
 
 				@r = @rooms[@next]['r1'];
 				@c = @rooms[@next]['c1'];
@@ -151,8 +155,10 @@ proc _generate_dungeon(@region, @world, @type, @seed) {
 				@roomlength = @rooms[@next]['roomlength'];
 
 				@success = false;
+				@dirs = array(0, 1, 2, 3);
 				foreach(@d in range(4)) {
-					@dir = integer(srand(@random) * 4);
+					@dir = integer(srand(@random) * array_size(@dirs));
+					array_remove_values(@dirs, @dir);
 					try {
 						switch(@dir){
 							case 0:
@@ -193,12 +199,12 @@ proc _generate_dungeon(@region, @world, @type, @seed) {
 				}
 				if(!@success) {
 					if(@previous == @next) {
-						@limit = 1000;
+						@limit2 = array_size(@rooms);
 						do {
-							@next = integer(srand(@random) * array_size(@rooms));
-							@limit--;
-						} while(@limit > 0 && (@next == @previous || @rooms[@next]['connected'] == 0 || array_contains(@try, @next)));
-						if(@limit <= 0){
+							@next = array_keys(@connected)[integer(srand(@random) * array_size(@connected))];
+							@limit2--;
+						} while(@limit2 > 0 && (@next == @previous || array_contains(@try, @next)));
+						if(@limit2 < 1){
 							msg('Room selector hit limit!');
 						}
 						@try[] = @next;
