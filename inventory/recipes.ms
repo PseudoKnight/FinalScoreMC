@@ -108,7 +108,7 @@ bind('inventory_click', null, array('slottype': 'RESULT'), @event) {
 
 			modify_event('slotitem', @slotitem);
 
-		} else if(@event['slotitem']['type'] == 'SKULL_ITEM'
+		} else if(@event['slotitem']['name'] == 'SKULL_ITEM'
 		&& @event['slotitem']['data'] == 3
 		&& !is_null(@event['slotitem']['meta'])
 		&& !is_null(@event['slotitem']['meta']['display'])) {
