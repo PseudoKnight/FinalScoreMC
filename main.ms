@@ -734,11 +734,11 @@ bind(entity_damage, null, array('type': '/(WOLF|OCELOT)/'), @event) {
 	}
 
 	if(@event['cause'] == 'ENTITY_ATTACK') {
-		if(ponline(@event['damager']) && @owner != @event['damager']) {
+		if(length(@event['damager']) < 17 && @owner != @event['damager']) {
 			cancel();
 		}
 	} else if(@event['cause'] == 'PROJECTILE') {
-		if(ponline(@event['shooter']) && @owner != @event['shooter']) {
+		if(length(@event['shooter']) < 17 && @owner != @event['shooter']) {
 			cancel();
 		}
 	}

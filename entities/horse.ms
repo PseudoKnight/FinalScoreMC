@@ -95,7 +95,7 @@ bind(entity_damage, null, array('type': 'HORSE'), @event) {
 
 	switch(@event['cause']) {
 		case 'ENTITY_ATTACK':
-			@isplayer = ponline(@event['damager']);
+			@isplayer = length(@event['damager']) < 17;
 
 			if((@isplayer && @owner != @event['damager'])
 			|| (!@isplayer && !get_entity_rider(@event['id']))) {
@@ -103,7 +103,7 @@ bind(entity_damage, null, array('type': 'HORSE'), @event) {
 			}
 
 		case 'PROJECTILE':
-			@isplayer = ponline(@event['shooter']);
+			@isplayer = length(@event['shooter']) < 17;
 
 			if((@isplayer && @owner != @event['shooter'])
 			|| (!@isplayer && !get_entity_rider(@event['id']))) {

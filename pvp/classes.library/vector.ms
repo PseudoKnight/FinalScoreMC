@@ -34,7 +34,7 @@ case 'load':
 				modify_event('amount', 4);
 			}
 		} else if(@e['player'] == @p
-		&& !ponline(@e['damager'])
+		&& length(@e['damager']) > 16
 		&& entity_type(@e['damager']) === 'ZOMBIE') {
 			cancel()
 		}

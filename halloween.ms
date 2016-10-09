@@ -22,7 +22,7 @@ bind(creature_spawn, null, array('type': 'ZOMBIE', 'reason': 'NATURAL'), @e) {
 
 bind(entity_death, null, array('type': 'ZOMBIE'), @e) {
 	if(@e['cause']['cause'] === 'ENTITY_ATTACK'
-	&& ponline(@e['cause']['damager'])
+	&& length(@e['cause']['damager']) < 17
 	&& !rand(15)
 	&& array_size(entities_in_radius(entity_loc(@e['id']), 2, 'ZOMBIE')) == 1) {
 		modify_event('drops', array(array('name': 'SKULL_ITEM', 'data': 2)));
@@ -64,7 +64,7 @@ bind(creature_spawn, null, array('type': 'SKELETON', 'reason': 'NATURAL'), @e) {
 
 bind(entity_death, null, array('type': 'SKELETON'), @e) {
 	if(@e['cause']['cause'] === 'ENTITY_ATTACK'
-	&& ponline(@e['cause']['damager'])
+	&& length(@e['cause']['damager']) < 17
 	&& !rand(15)
 	&& array_size(entities_in_radius(entity_loc(@e['id']), 2, 'SKELETON')) == 1) {
 		modify_event('drops', array(array('name': 'SKULL_ITEM')));
