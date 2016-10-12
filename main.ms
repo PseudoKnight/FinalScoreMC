@@ -144,22 +144,70 @@ bind(player_join, null, null, @event) {
 	msg(colorize('&3 &6 &3 &6 &3 &6 &d ')); # Voxelmap cave
 	*/
 
-	set_timeout(250, closure(@loc = ploc(), @player = player()){
-		if(!ponline(@player)) {
-			console('ERROR: Player was not online 250ms after joining.', false);
-			die();
-		}
-
+	set_timeout(50, closure(){
 		@pdata = _pdata(player());
-		if(!(has_permission('group.admin') && get_value('silentjoin'))) {
-			@msg = _colorname().'&o'.player().'&e&o ';
-			if(array_index_exists(@pdata, 'enter')) {
-				@msg .= @pdata['enter'];
-			} else {
-				@msg .= 'joined the game';
+		queue_push(closure(){
+			if(!(has_permission('group.admin') && get_value('silentjoin'))) {
+				@msg = _colorname().'&o'.player().'&e&o ';
+				if(array_index_exists(@pdata, 'enter')) {
+					@msg .= @pdata['enter'];
+				} else {
+					@msg .= 'joined the game';
+				}
+				broadcast(colorize('&8'.simple_date('h:mm').' &2\u00bb &o'.@msg));
 			}
-			broadcast(colorize('&8'.simple_date('h:mm').' &2\u00bb &o'.@msg));
-		}
+
+			foreach(@p in all_players()) {
+				if(length(@p) > 14) {
+					# max tab list length is 16 chars including colors
+					set_list_name(@p, _colorname(@p).substr(@p, 0, 14));
+				} else {
+					set_list_name(@p, _colorname(@p).@p);
+				}
+			}
+		}, 'join');
+
+		queue_push(closure(){
+			#Welcome messages
+			@line = color('1').color('l').'----------------------';
+			msg(@line);
+			msg(colorize(' &6&l\u1260&d&l\u1260&b&l\u1260&4&l\u1260 &6&lFINALSCORE&e&lMC \u00AB &r\u25AA \u25AA \u25AA'));
+			msg(@line);
+			if(@motd = get_value('motd')) {
+				msg(@motd);
+				msg(@line);
+			}
+		}, 'join');
+
+		queue_push(closure(){
+			if(array_index_exists(@pdata, 'mail')) {
+				foreach(@mail in @pdata['mail']) {
+					msg(color('gray').@mail[0].' (From '.@mail[1].'): '.color('r').@mail[2]);
+				}
+				array_remove(@pdata, 'mail');
+				_store_pdata(player(), @pdata);
+			}
+		}, 'join');
+
+		queue_push(closure(){
+			# SET NEW LOCATION
+			if(array_index_exists(@pdata, 'homeless')) {
+				# homeless players are players left on deleted worlds
+				@loc = get_spawn('omega');
+				set_ploc(@loc);
+				array_remove(@pdata, 'homeless');
+				_store_pdata(player(), @pdata);
+			} else if(!has_permission('group.member')) {
+				@warp = get_value('warp.intro');
+				set_ploc(@warp);
+			}
+		}, 'join');
+
+		queue_push(closure(){
+			if(pworld() === 'custom') {
+				_equip_kit();
+			}
+		}, 'join');
 
 		# Makes a call to the ban manager to store the player's UUID
 		# @endpoint - String - The action to take in the ban manager.
@@ -200,57 +248,6 @@ bind(player_join, null, null, @event) {
 		_bm_request('set_user_uuid', 'a1634f37480a4bb9a0b2200266597ac0',
 			array('username': player(), 'user_uuid': puuid())
 		);
-
-		#Welcome messages
-		@line = color('1').color('l').'----------------------';
-		msg(@line);
-		msg(colorize(' &6&l\u1260&d&l\u1260&b&l\u1260&4&l\u1260 &6&lFINALSCORE&e&lMC \u00AB &r\u25AA \u25AA \u25AA'));
-		msg(@line);
-
-		@updatePdata = false;
-		if(array_index_exists(@pdata, 'mail')) {
-			foreach(@mail in @pdata['mail']) {
-				msg(color('gray').@mail[0].' (From '.@mail[1].'): '.color('r').@mail[2]);
-			}
-			array_remove(@pdata, 'mail');
-			@updatePdata = true;
-		} else if(@motd = get_value('motd')) {
-			msg(@motd);
-			msg(@line);
-		} //else {
-			//run('/mumble');
-		//}
-
-		foreach(@p in all_players()) {
-			if(length(@p) > 14) {
-				# max tab list length is 16 chars including colors
-				set_list_name(@p, _colorname(@p).substr(@p, 0, 14));
-			} else {
-				set_list_name(@p, _colorname(@p).@p);
-			}
-		}
-
-		# SET NEW LOCATION
-		if(array_index_exists(@pdata, 'homeless')) {
-		# homeless players are players left on deleted worlds
-			@loc = get_spawn('omega');
-			set_ploc(@loc);
-			array_remove(@pdata, 'homeless');
-			@updatePdata = true;
-		} else if(!has_permission('group.member')) {
-			@warp = get_value('warp.intro');
-			set_ploc(@warp);
-		}
-
-		if(@updatePdata) {
-			_store_pdata(player(), @pdata);
-		}
-
-		set_timeout(800, closure(){
-			if(pworld() === 'custom') {
-				_equip_kit();
-			}
-		});
 	});
 }
 
