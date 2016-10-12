@@ -2,15 +2,15 @@
 *:/cubeclimber [$action] [$player] = >>>
 switch($action) {
 	case 'start':
-	
-		if(!sk_region_exists(pworld(), 'cubeclimber')) { 
+
+		if(!sk_region_exists(pworld(), 'cubeclimber')) {
 			die('Define the \'cubeclimber\' region first.');
 		}
-		
-		if(!sk_region_exists(pworld(), 'cubeclimber_blocks')) { 
+
+		if(!sk_region_exists(pworld(), 'cubeclimber_blocks')) {
 			die('Define the \'cubeclimber_blocks\' region first.');
 		}
-		
+
 		@count = 0;
 		foreach(@p in all_players()) {
 			if(array_contains(sk_current_regions(@p), 'cubeclimber')
@@ -18,11 +18,11 @@ switch($action) {
 				@count++;
 			}
 		}
-		
+
 		if(@count < 2) {
 			die('You need to have at least 2 players to start CubeClimber.');
 		}
-		
+
 		@cc = import('cubeclimber');
 		if(!@cc) {
 			@cc = array(
@@ -30,26 +30,26 @@ switch($action) {
 				'highest': 0,
 			);
 			export('cubeclimber', @cc);
-			
+
 			foreach(@p in all_players()) {
 				if(pworld(@p) == pworld()) {
-					tmsg(@p, colorize(player().' queued up a game of &7[&6Cube&cClimber&7]'));
+					tmsg(@p, player().colorize(' queued up a game of &7[&6Cube&cClimber&7]'));
 				}
 			}
 		} else {
 			die('Already running.');
 		}
-		
+
 		if(!array_contains(get_scoreboards(), 'cc')) {
 			create_scoreboard('cc');
 			create_objective('height', 'DUMMY', 'cc');
 			set_objective_display('height', array('slot': 'SIDEBAR', 'displayname': 'Starting...'), 'cc');
 			_add_activity('cubeclimber', 'CubeClimber');
 		}
-		
+
 		include('includes.library/cubeclimber.ms');
 		_cc_start();
-		
+
 	case 'reset':
 		if(!has_permission('cubeclimber.reset'), die('You do not have permission.'));
 		if(array_contains(get_scoreboards(), 'cc')) {
@@ -62,7 +62,7 @@ switch($action) {
 		}
 		export('cubeclimber', null);
 		msg('CubeClimber reset.');
-		
+
 	case 'mystats':
 	case 'stats':
 		if($player) {
@@ -71,7 +71,7 @@ switch($action) {
 			@player = player();
 		}
 		@pstats = get_value('cubeclimber.player', @player);
-		if(!@pstats) { 
+		if(!@pstats) {
 			die('No statistics recorded for player '.@player);
 		}
 		msg(color('red').color('bold').'[ PERFORMANCE ]');
@@ -86,12 +86,12 @@ switch($action) {
 		msg(color('yellow').'[ '.@pstats[1].' ] '.color('r').'Total Games Played');
 		msg(color('yellow').'[ '.@pstats[2].' ] '.color('r').'Total Blocks Climbed');
 		msg(color('yellow').'[ '.@pstats[3].' ] '.color('r').'Total Opponents Played');
-		
+
 	case 'top':
 	case 'top10':
 	case 'toptimes':
 		@toptimes = get_value('cubeclimber', 'toptimes');
-		if(!@toptimes) { 
+		if(!@toptimes) {
 			die('No top times recorded.');
 		}
 		msg(color('gold').color('bold').'Top Times');
@@ -100,7 +100,7 @@ switch($action) {
 		foreach(@this in @toptimes) {
 			msg(color('gold').'[ '.@this[@time].' ] '.color('r').@this[@player]);
 		}
-		
+
 	case 'resetstats':
 		if(!has_permission('cubeclimber.resetstats'), die('You do not have permission.'));
 		@stats = get_values('cubeclimber');
@@ -108,7 +108,7 @@ switch($action) {
 			clear_value(@key);
 		}
 		msg('CubeClimber stats reset.');
-		
+
 	case 'resettimes':
 		if(!has_permission('cubeclimber.resetstats'), die('You do not have permission.'));
 		@players = get_values('cubeclimber.player');
@@ -120,8 +120,8 @@ switch($action) {
 		}
 		store_value('cubeclimber', 'toptimes', array());
 		msg('CubeClimber times reset.');
-		
-	default: 
+
+	default:
 		msg(colorize('&7[&6Cube&cClimber&7] '
 		.'is a minigame where the goal is to reach the top of the block tower first. '
 		.'Blocks that you walk on will change to your randomly assigned color. You can '

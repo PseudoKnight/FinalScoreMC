@@ -70,7 +70,7 @@ proc _cc_start(@world = 'custom') {
 
 	foreach(@p in all_players()) {
 		if(pworld(@p) == @world) {
-			tmsg(@p, colorize('&7[&6Cube&cClimber&7] &rStarting in '.@secondToStart.' seconds...'));
+			tmsg(@p, colorize('&7[&6Cube&cClimber&7] &rStarting in ').@secondToStart.' seconds...');
 		}
 	}
 
@@ -211,7 +211,7 @@ proc _cc_start(@world = 'custom') {
 							if(@newheight > @cc['highest']) {
 
 								@cc['highest'] = @newheight;
-							
+
 								play_sound(@ploc, array(
 									'sound': 'note_piano',
 									'pitch': if(@newheight >= @basenote, @notes[@newheight - @basenote], 0.5),

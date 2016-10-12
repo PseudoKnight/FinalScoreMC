@@ -17,9 +17,9 @@ set_cron('*/5 * * * *', closure(){
 })
 
 bind(server_ping, null, null, @event) {
-	@currently = import('currently')
-	modify_event('motd', colorize('&6&l\u1260&d&l\u1260&b&l\u1260&4&l\u1260 &6&lFINALSCORE&e&lMC \u00AB &f\u25AA \u25AA \u25AA'
-		.if(!is_null(@currently), '\n&aNow Playing&f: '.@currently)));
+	@currently = import('currently');
+	@motd = colorize('&6&l\u1260&d&l\u1260&b&l\u1260&4&l\u1260 &6&lFINALSCORE&e&lMC \u00AB &f\u25AA \u25AA \u25AA');
+	modify_event('motd', @motd.if(!is_null(@currently), colorize('\n&aNow Playing&f: ').@currently));
 }
 
 bind(player_login, null, null, @event) {
