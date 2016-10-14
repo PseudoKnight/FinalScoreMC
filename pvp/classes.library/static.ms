@@ -19,7 +19,7 @@ case 'load':
 		foreach(@p in array_keys(@pvp['players'])) {
 			if(@p == @player, continue());
 			@helm = pinv(@p, 103);
-			if(entity_can_see(@hunter, puuid(@p))) {
+			if(entity_can_see(@hunter, puuid(@p)) && _distance(ploc(@p), ploc(@player)) < 6) {
 				if(is_null(@helm)) {
 					set_inventory_item(puuid(@p), 103, associative_array('type': 86));
 				}
