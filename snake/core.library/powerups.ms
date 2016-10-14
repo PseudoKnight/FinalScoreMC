@@ -38,6 +38,20 @@ proc _snake_get_block_from(@powerup) {
 	return(null);
 }
 
+proc _snake_get_name_from(@powerup) {
+	switch(@powerup) {
+		case 'tnt':
+			return('TNT');
+		case 'missile':
+			return('Missile');
+		case 'laser':
+			return('Laser');
+		case 'boost':
+			return('Speed Boost');
+	}
+	return(null);
+}
+
 proc _snake_add_powerup(@game) {
 	@region = 'snake_'.@game['arena'].rand(1, @game['surfaces'] + 1);
 	@loc = _snake_valid_location(@region);
@@ -90,7 +104,10 @@ proc _snake_powerup(@player, @powerup, @game) {
 			@item['qty'] += 1;
 			set_pinv(@player, associative_array(0: @item));
 		} else {
-			set_pinv(@player, associative_array(0: associative_array('type': _snake_get_block_from(@powerup))));
+			set_pinv(@player, associative_array(0: associative_array(
+				'type': _snake_get_block_from(@powerup),
+				'meta': associative_array('display': _snake_get_name_from(@powerup)),
+			)));
 		}
 	}
 	return(true);
@@ -161,7 +178,10 @@ proc _snake_ability(@player, @game) {
 								@item['qty'] += 1;
 								set_pinv(@player, associative_array(0: @item));
 							} else {
-								set_pinv(@player, associative_array(0: associative_array('name': 'REDSTONE_BLOCK')));
+								set_pinv(@player, associative_array(0: associative_array(
+									'name': 'REDSTONE_BLOCK',
+									'meta': associative_array('display': 'Missile'),
+								)));
 							}
 						}
 					});
@@ -192,7 +212,12 @@ proc _snake_ability(@player, @game) {
 							if(@item) {
 								@amount += @item['qty'];
 							}
-							set_pinv(@player, associative_array(0: associative_array('name': 'STAINED_GLASS', 'data': 14, 'qty': @amount)));
+							set_pinv(@player, associative_array(0: associative_array(
+								'name': 'STAINED_GLASS',
+								'data': 14,
+								'qty': @amount,
+								'meta': associative_array('display': 'Laser'),
+							)));
 						}
 					});
 				}
@@ -225,7 +250,11 @@ proc _snake_ability(@player, @game) {
 							if(@item) {
 								@amount += @item['qty'];
 							}
-							set_pinv(@player, associative_array(0: associative_array('name': 'EMERALD_BLOCK', 'qty': @amount)));
+							set_pinv(@player, associative_array(0: associative_array(
+								'name': 'EMERALD_BLOCK',
+								'qty': @amount,
+								'meta': associative_array('display': 'Speed Boost'),
+							)));
 						}
 					});
 				}
