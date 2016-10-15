@@ -63,16 +63,10 @@ proc _generate_dungeon(@region, @world, @type, @seed) {
 			// Place entrance stairway
 			@c = (integer(srand(@random) * ((@width / 2) - 1)) * 2) + 1;
 			@r = (integer(srand(@random) * ((@length / 2) - 5)) * 2) + 3;
-			for(@r2 = @r - 1, @r2 <= 5 + @r, @r2++) {
-				for(@c2 = @c - 1, @c2 <= 1 + @c, @c2++) {
-					if(@c2 == @c && @r2 >= @r - 1 && @r2 < @r + 5) {
-						if(@r2 == @r - 1) {
-							@materialMap[@c2][@r2] = 'door';
-						} else {
-							@materialMap[@c2][@r2] = 'stairs';
-							@roomMap[@c2][@r2] = 0;
-						}
-					}
+			for(@r2 = @r, @r2 < 5 + @r, @r2++) {
+				for(@c2 = @c, @c2 < 1 + @c, @c2++) {
+					@materialMap[@c2][@r2] = 'stairs';
+					@roomMap[@c2][@r2] = 0;
 				}
 			}
 
