@@ -70,10 +70,8 @@ proc _generate_dungeon(@region, @world, @type, @seed) {
 							@materialMap[@c2][@r2] = 'door';
 						} else {
 							@materialMap[@c2][@r2] = 'stairs';
+							@roomMap[@c2][@r2] = 0;
 						}
-						@roomMap[@c2][@r2] = 0;
-					} else {
-						@materialMap[@c2][@r2] = 'wall';
 					}
 				}
 			}
@@ -81,7 +79,7 @@ proc _generate_dungeon(@region, @world, @type, @seed) {
 			@rooms[] = array(
 				'r1': @r,
 				'c1': @c,
-				'roomwidth': 5,
+				'roomwidth': 1,
 				'roomlength': 1,
 				'connected': 0,
 			);
