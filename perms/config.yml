@@ -80,6 +80,7 @@ member:
       worldguard.region.claim: false
       command.items: true
       command.vanish: true
+      bl.getbanners: true
     custom:
       stargate.create.personal: false
       stargate.create.network: false
