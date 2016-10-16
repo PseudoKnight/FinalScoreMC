@@ -102,6 +102,7 @@ proc _arena(@action, @id, @setting, @string) {
 				case 'stackedpickup':
 				case 'heartsdisplay':
 				case 'script':
+				case 'exitrespawn':
 
 					switch(@args[0]) {
 						case 'true':

@@ -201,12 +201,22 @@ proc _pvp_start_match(@id) {
 					}
 				}
 			} else if(!array_contains(sk_current_regions(@player), @arena['region'])) {
-				tmsg(@player, color('gray').'[PVP] '.color('r').'You exited the combat region.')
-				set_timeout(50, closure(){
-					if(pworld(@player) == 'custom') {
-						pkill(@player);
+				if(array_contains(@arena['flags'], 'exitrespawn')) {
+					set_entity_fall_distance(puuid(@player), 0);
+					if(array_index_exists(@pvp, 'team')) {
+						@team = @pvp['players'][@player]['team'];
+						set_ploc(@player, @arena['spawn'][@team][0]);
+					} else {
+						set_ploc(@player, @arena['spawn'][0][0]);
 					}
-				});
+				} else {
+					tmsg(@player, color('gray').'[PVP] '.color('r').'You exited the combat region.')
+					set_timeout(50, closure(){
+						if(pworld(@player) == 'custom') {
+							pkill(@player);
+						}
+					});
+				}
 			} else if(@arena['mode'] == 'koth' && array_contains(sk_current_regions(@player), @arena['kothregion'])) {
 				@king = @player;
 				@hillcount++;
