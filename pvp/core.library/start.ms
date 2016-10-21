@@ -98,6 +98,7 @@ proc _pvp_start(@pvp, @id){
 	if(!array_index_exists(@arena, 'region'), die('No region defined for arena.'));
 
 	# Load custom arena scripts
+	@pvp['binds'] = array();
 	if(array_contains(@arena['flags'], 'script')){
 		include('../arenas.library/'.@id.'.ms');
 	}
@@ -219,7 +220,6 @@ proc _pvp_start(@pvp, @id){
 			set_pscore('captures', @arena['team'][1]['name'], 0, @id);
 	}
 
-	@pvp['binds'] = array();
 	include('game.ms');
 
 	if(array_index_exists(@arena, 'team')) {
@@ -249,7 +249,9 @@ proc _pvp_start(@pvp, @id){
 
 	foreach(@p in array_keys(@pvp['players'])) {
 		if(array_index_exists(@arena, 'resourcepack')) {
-			send_resourcepack(@p, 'http://mc.finalscoremc.com:25966/resourcepacks/'.@arena['resourcepack'].'.zip');
+			set_timeout(100, closure(){
+				send_resourcepack(@p, 'http://mc.finalscoremc.com:25966/resourcepacks/'.@arena['resourcepack'].'.zip');
+			});
 		}
 	}
 
