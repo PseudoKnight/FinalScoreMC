@@ -1,14 +1,28 @@
 switch(@action) {
 case 'load':
+	tmsg(@player, 'Hunt the other players. Do not let them escape via the stairs!');
+	tmsg(@player, 'When you\'re spotted, you regain health and hunger.');
+	tmsg(@player, 'Sprint to "ghost" through walls and rematerialize out of sight.');
+	tmsg(@player, 'Scare them, hit them, and then ghost away to safety.');
+
 	bind('inventory_click', array('id': @player.'invclick'), array('player': @player), @event) {
 		cancel();
 	}
 	
+	bind('item_pickup', array('id': @player.'pickup'), array('player': @player), @event) {
+		cancel();
+	}
+	
+	set_pflyspeed(@player, 0.08);
 	bind('player_toggle_sprint', array('id': @player.'sprint'), array('player': @player), @event, @pvp) {
 		@mode = pmode();
 		if(@event['sprinting'] && @mode != 'SPECTATOR') {
 			set_pmode('SPECTATOR');
-			play_sound(ploc(), associative_array('sound': 'STEP_WOOL', 'pitch': 0.5));
+			@loc = ploc();
+			play_sound(@loc, associative_array('sound': 'STEP_WOOL', 'pitch': 0.5));
+			@cloud = spawn_entity('AREA_EFFECT_CLOUD', 1, @loc)[0];
+			set_entity_spec(@cloud, associative_array('duration': 20, 'particle': 'SMOKE', 'radius': 0.1));
+			set_entity_rider(puuid(), @cloud);
 		} else if(!@event['sprinting'] && @mode == 'SPECTATOR') {
 			@armorstand = spawn_entity('ARMOR_STAND', 1, ploc())[0];
 			set_entity_spec(@armorstand, associative_array('visible': false));
@@ -79,7 +93,7 @@ case 'load':
 				set_peffect(@p, 9, 0, 4);
 				set_peffect(@p, 15, 0, 240);
 				play_named_sound(@loc, array('sound': 'entity.guardian.attack', 'pitch': 2), @p);
-			} else {
+			} else if(pinv(@p, 103)) {
 				set_pinv(@p, associative_array(103: null));
 			}
 		}
@@ -88,5 +102,7 @@ case 'load':
 case 'unload':
 	unbind(@player.'invclick');
 	unbind(@player.'sprint');
+	unbind(@player.'pickup');
 	set_pmode(@player, 'ADVENTURE');
+	set_pflyspeed(@player, 0.1);
 }
