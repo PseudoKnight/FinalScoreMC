@@ -44,15 +44,15 @@ proc _loot(@level) {
 proc _materials(@level) {
 	return(associative_array(
 		'empty': '7:0',
-		'wall': array('73:0'),
+		'wall': array('7:0'),
 		'room': '0:0',
 		'door': '0:0',
-		'column': '73:0',
+		'column': '7:0',
         'stairs': '114:2',
-		'ceiling': '73:0',
+		'ceiling': '7:0',
 		'floor': '73:0',
-		'utility': array('73:0'),
-		'decor': array('73:0'),
+		'utility': array('7:0'),
+		'decor': array('7:0'),
 	));
 }
 
