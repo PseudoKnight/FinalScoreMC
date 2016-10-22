@@ -33,6 +33,12 @@ bind(item_pickup, array('id': @id.'minepickup'), array('item': 148), @event, @id
 		@item['meta']['display'] = 'MINE';
 		modify_event('item', @item);
 	} else {
+		@damager = @event['item']['meta']['display'];
+		if(array_index_exists(@pvp, 'team') && @pvp['players'][@damager]['team'] == @pvp['players'][player()]['team']) {
+			// no teammate damage
+			cancel();
+			die();
+		}
 		@power = @event['item']['qty'] * 7;
 		modify_event('item', null);
 		@loc = _relative(ploc(), 'up');
@@ -42,7 +48,6 @@ bind(item_pickup, array('id': @id.'minepickup'), array('item': 148), @event, @id
 			set_timeout(50, closure(){
 				play_sound(@loc, array('sound': 'EXPLODE', 'pitch': 1.6));
 				play_effect(@loc, 'EXPLOSION_LARGE', array('particleCount': 2, 'radius': 64));
-				@damager = @event['item']['meta']['display'];
 				if(array_index_exists(@pvp['players'], @damager)
 				&& sk_region_check_flag(ploc(@damager), 'PVP', @damager)) {
 					try(damage_entity(puuid(), @power, puuid(@damager)));
