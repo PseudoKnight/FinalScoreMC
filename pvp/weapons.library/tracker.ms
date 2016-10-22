@@ -5,7 +5,8 @@ bind(item_held, array('id': @id.'tracker'), null, @event, @id) {
 		die();
 	}
 
-	if(pinfo(player(), 6) === '345:0') {
+	@item = pinv(player(), @event['to']);
+	if(@item && @item['name'] == 'COMPASS') {
 		set_interval(1000, 50, closure(){
 			if(pinfo(player(), 6) === '345:0') {
 				foreach(@p: @player in @pvp['players']) {
