@@ -459,7 +459,9 @@ proc _pvp_end_match(@id, @winners) {
 					close_pinv(@player);
 					set_pmode(@player, 'ADVENTURE');
 					if(array_index_exists(@pvp['arena'], 'resourcepack')) {
-						send_resourcepack(@player, 'http://mc.finalscoremc.com:25966/resourcepacks/default.zip')
+						queue_push(closure(){
+							send_resourcepack(@player, 'http://mc.finalscoremc.com:25966/resourcepacks/default.zip');
+						}, @id);
 					}
 					dm_set_pvisible(@player, true);
 					set_entity_fall_distance(puuid(@player), 0);

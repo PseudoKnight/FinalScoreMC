@@ -247,12 +247,12 @@ proc _pvp_start(@pvp, @id){
 		@pvp['team'][1]['captainhat'] = @arena['classes'][@arena['captain'][1]]['kit'][103];
 	}
 
-	foreach(@p in array_keys(@pvp['players'])) {
-		if(array_index_exists(@arena, 'resourcepack')) {
-			set_timeout(100, closure(){
+	if(array_index_exists(@arena, 'resourcepack')) {
+		set_timeout(50, closure(){
+			foreach(@p in array_keys(@pvp['players'])) {
 				send_resourcepack(@p, 'http://mc.finalscoremc.com:25966/resourcepacks/'.@arena['resourcepack'].'.zip');
-			});
-		}
+			}
+		});
 	}
 
 	@pvp['coins'] = if(array_size(@pvp['players']) > 2, 1, 0);
