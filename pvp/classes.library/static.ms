@@ -20,9 +20,13 @@ case 'load':
 			set_pmode('SPECTATOR');
 			@loc = ploc();
 			play_sound(@loc, associative_array('sound': 'STEP_WOOL', 'pitch': 0.5));
-			@cloud = spawn_entity('AREA_EFFECT_CLOUD', 1, @loc)[0];
-			set_entity_spec(@cloud, associative_array('duration': 20, 'particle': 'SMOKE', 'radius': 0.1));
-			set_entity_rider(puuid(), @cloud);
+			play_effect(_relative(@loc, 'up', 2), 'SMOKE', associative_array(
+				'speed': 0,
+				'particleCount': 10,
+				'offsetX': 0.5,
+				'offsetY': 1,
+				'offsetZ': 0.5,
+			));
 		} else if(!@event['sprinting'] && @mode == 'SPECTATOR') {
 			@armorstand = spawn_entity('ARMOR_STAND', 1, ploc())[0];
 			set_entity_spec(@armorstand, associative_array('visible': false));
