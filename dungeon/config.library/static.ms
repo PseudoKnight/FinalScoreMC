@@ -8,8 +8,9 @@ proc _set_locations(@start, @end){
 
 proc _loot(@level) {
 	return(array(
-		array(0.25, associative_array('name': 'COMPASS')),
-		array(0.20, associative_array('name': 'BREAD', 'qty': array(1, 4))),
+		array(0.25, associative_array('name': 'IRON_PLATE', 'meta': associative_array('display': 'MINE'))),
+		array(0.25, associative_array('name': 'BREAD')),
+		array(0.20, associative_array('name': 'COMPASS')),
 		array(0.20, associative_array('name': 'GOLDEN_APPLE')),
 		array(0.16, associative_array('name': 'MILK_BUCKET')),
 		array(0.08, associative_array('name': 'WOOD_AXE')),
@@ -34,10 +35,8 @@ proc _loot(@level) {
 		array(0.01, associative_array('name': 'DIAMOND_CHESTPLATE')),
 		array(0.01, associative_array('name': 'DIAMOND_LEGGINGS')),
 		array(0.01, associative_array('name': 'DIAMOND_BOOTS')),
-		array(0.02, associative_array('name': 'SHIELD')),
-		array(0.08, associative_array('name': 'BOW')),
-		array(0.08, associative_array('name': 'SPECTRAL_ARROW', 'qty': array(1, 4))),
-		array(0.20, associative_array('name': 'IRON_PLATE', 'meta': associative_array('display': 'MINE'))),
+		array(0.10, associative_array('name': 'BOW')),
+		array(0.10, associative_array('name': 'SPECTRAL_ARROW', 'qty': array(1, 4))),
 	));
 }
 
