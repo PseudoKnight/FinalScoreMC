@@ -270,7 +270,7 @@ proc _generate_dungeon(@region, @world, @type, @seed) {
 							set_spawner_type(@levelLoc, @mob);
 						} else {
 							if(@level < 2 || srand(@random) > 0.03) {
-								set_block_at(@levelLoc, @materials['floor'], false);
+								set_block_at(@levelLoc, array_rand(@materials['floor'], 1, false)[0], false);
 							} else if(@level == 2) {
 								set_block_at(@levelLoc, '213', false);
 							} else if(@level == 3) {
@@ -363,6 +363,8 @@ proc _generate_dungeon(@region, @world, @type, @seed) {
 							} else if(@z - (@rooms[0]['r1'] * @scale) - 1 < @height + 2) {
 								set_block_at(@ceilingLoc, @materials['room'], false);
 							}
+						} else if(@materialMap[@c][@r] === 'room') {
+							set_block_at(@ceilingLoc, @materials['empty'], false);
 						} else {
 							set_block_at(@ceilingLoc, 7, false);
 						}

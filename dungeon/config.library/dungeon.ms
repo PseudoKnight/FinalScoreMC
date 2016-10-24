@@ -37,7 +37,7 @@ proc _materials(@level) {
 				'column': '24:1',
 				'stairs': '128:2',
 				'ceiling': '24:0',
-				'floor': '172:0',
+				'floor': array('172:0'),
 				'utility': array(58),
 				'decor': array(31),
 			));
@@ -50,7 +50,7 @@ proc _materials(@level) {
 				'column': '162:1',
 				'stairs': '164:2',
 				'ceiling': '161:1',
-				'floor': '2',
+				'floor': array('2'),
 				'utility': array(58),
 				'decor': array('18:2'),
 			));
@@ -63,7 +63,7 @@ proc _materials(@level) {
 				'column': '113',
 				'stairs': '114:2',
 				'ceiling': '112:0',
-				'floor': '112:1',
+				'floor': array('112:1'),
 				'utility': array(61, '145:2'),
 				'decor': array('118:2'),
 			));
@@ -76,7 +76,7 @@ proc _materials(@level) {
 				'column': '47:0',
 				'stairs': '109:2',
 				'ceiling': '98:0',
-				'floor': '98:1',
+				'floor': array('98:1'),
 				'utility': array('58', '116', '117', '118:2'),
 				'decor': array('66'),
 			));
@@ -89,7 +89,7 @@ proc _materials(@level) {
 				'column': 202,
 				'stairs': '203:2',
 				'ceiling': 201,
-				'floor': 201,
+				'floor': array(201),
 				'utility': array('116'),
 				'decor': array('199'),
 			));
