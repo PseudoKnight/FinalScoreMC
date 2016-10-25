@@ -12,7 +12,12 @@ bind(player_interact, array('id': @id.'pistoltears'), array('item': 370, 'button
 	set_entity_velocity(@entity, @v);
 	set_arrow_damage(@entity, 1.25);
 	play_sound(ploc(), array('sound': 'ZOMBIE_WOOD', 'pitch': 2, 'volume': 2));
+	@bind = bind(projectile_hit, null, associative_array('id': @entity), @event) {
+		try(entity_remove(@event['id']));
+	}
+	
 	_weapon_cooldown(player(), 2000, 'GOLD_NUGGET', closure(){
 		play_sound(ploc(), array('sound': 'DOOR_OPEN', 'pitch': 2));
+		unbind(@bind);
 	});
 }

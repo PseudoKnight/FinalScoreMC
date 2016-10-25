@@ -37,6 +37,8 @@ proc _loot(@level) {
 		array(0.01, associative_array('name': 'DIAMOND_BOOTS')),
 		array(0.10, associative_array('name': 'BOW')),
 		array(0.10, associative_array('name': 'SPECTRAL_ARROW', 'qty': array(1, 4))),
+		array(0.4, associative_array('name': 'SNOW_BALL', 'qty': 2, 'meta': associative_array('display': 'SHOTGUN'))),
+		array(0.2, associative_array('name': 'GHAST_TEAR', 'qty': array(1, 7), 'meta': associative_array('display': 'PISTOL')));
 	));
 }
 
