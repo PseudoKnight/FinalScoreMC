@@ -1,9 +1,9 @@
 switch(@action) {
 case 'load':
-	tmsg(@player, 'Hunt the other players. Do not let them escape via the stairs!');
-	tmsg(@player, 'When you\'re spotted, you regain health and hunger.');
-	tmsg(@player, 'Sprint to "ghost" through walls and rematerialize out of sight.');
-	tmsg(@player, 'Scare them, hit them, and then ghost away to safety.');
+	tmsg(@player, color('e').'Hunt the other players. Do not let them escape via the stairs!');
+	tmsg(@player, color('e').'When you\'re spotted, you regain health and hunger.');
+	tmsg(@player, color('e').'Sprint to "ghost" through walls and rematerialize out of sight.');
+	tmsg(@player, color('e').'Scare them, hit them, and then ghost away to safety.');
 
 	bind('inventory_click', array('id': @player.'invclick'), array('player': @player), @event) {
 		cancel();
@@ -20,7 +20,7 @@ case 'load':
 			set_pmode('SPECTATOR');
 			@loc = ploc();
 			play_sound(@loc, associative_array('sound': 'STEP_WOOL', 'pitch': 0.5));
-			play_effect(_relative(@loc, 'up', 2), 'SMOKE', associative_array(
+			play_effect(_relative(@loc, 'up', 2), 'CRIT', associative_array(
 				'speed': 0,
 				'particleCount': 10,
 				'offsetX': 0.5,
@@ -64,39 +64,77 @@ case 'load':
 			});
 		}
 	}
+	
+	@sneak = array();
+	
+	proc _reveal(@player, @sneak, @pvp) {
+		set_pinv(@player, associative_array(
+			103: associative_array('name': 'BEDROCK'),
+			102: associative_array('name': 'CHAINMAIL_CHESTPLATE')
+		));
+		foreach(@p: @pinfo in @pvp['players']) {
+			if(@pinfo['team'] == 1) {
+				psend_block_change(@p, @sneak[0], 0);
+			}
+		}
+		@ploc = _relative(ploc(@player), 'up', 2);
+		play_effect(@ploc, 'EXPLOSION_LARGE');
+		play_sound(@ploc, associative_array('sound': 'ENDERMAN_DEATH', 'pitch': 2));
+		array_remove(@sneak, 0);
+	}
+	
+	bind(player_toggle_sneak, associative_array('id': @player.'sneak'), associative_array('player': @player), @event, @sneak, @pvp) {
+		if(@event['sneaking']) {
+			set_pinv(player(), associative_array(103: null, 102: null));
+			@sneak[0] = _relative(ploc(), 'up', 1);
+			foreach(@p: @player in @pvp['players']) {
+				if(@player['team'] == 1) {
+					psend_block_change(@p, @event['location'], 7);
+				}
+			}
+		} else if(!pinv(player(), 103)) {
+			_reveal(player(), @sneak, @pvp);
+		}
+	}
 
 	set_interval(250, closure() {
-		try {
-			if(pinv(@player, 103)['type'] != 7) {
-				clear_task();
-				die();
-			}
-		} catch(Exception @ex) {
+		if(!array_index_exists(@pvp['players'], @player)) {
 			clear_task();
 			die();
 		}
 		
-		if(pmode(@player) == 'SPECTATOR') {
+		try {
+			if(pmode(@player) == 'SPECTATOR') {
+				die();
+			} else if(pinfo(@player, 11)) {
+				if(@sneak && _distance(@sneak[0], ploc(@player)) > 1.5) {
+					_reveal(@player, @sneak, @pvp);
+				} else {
+					die();
+				}
+			}
+		} catch(PlayerOfflineException @ex) {
+			clear_task();
 			die();
 		}
 
 		@hunter = puuid(@player);
 		foreach(@p in array_keys(@pvp['players'])) {
 			if(@p == @player, continue());
-			if(entity_can_see(@hunter, puuid(@p)) && _distance(ploc(@p), ploc(@player)) < 6) {
+			if(entity_can_see(@hunter, puuid(@p)) && (@dist = _distance(ploc(@p), ploc(@player))) < 6) {
 				@helm = pinv(@p, 103);
 				@loc = ploc(@p);
 				if(is_null(@helm)) {
 					set_pinv(@p, associative_array(103: associative_array('type': 86)));
 					play_named_sound(@loc, associative_array('sound': 'entity.elder_guardian.death', 'pitch': 2), @p);
-					set_phunger(@player, min(20, phunger(@player) + 1));
-					set_phealth(@player, min(20, pinfo(@player, 5) + 1));
+					set_phunger(@player, min(20, phunger(@player) + if(@dist < 3, 2, 1)));
+					set_phealth(@player, min(20, pinfo(@player, 5) + if(@dist < 3, 2, 1)));
 					set_peffect(@player, 5, 0, 2);
 				}
 				set_ptexp(@player, ptexp(@player) + 1);
 				set_peffect(@p, 9, 0, 4);
 				set_peffect(@p, 15, 0, 240);
-				play_named_sound(@loc, array('sound': 'entity.guardian.attack', 'pitch': 2), @p);
+				play_named_sound(@loc, array('sound': 'entity.guardian.attack', 'pitch': 1.5), @p);
 			} else if(pinv(@p, 103)) {
 				set_pinv(@p, associative_array(103: null));
 			}
@@ -107,6 +145,7 @@ case 'unload':
 	unbind(@player.'invclick');
 	unbind(@player.'sprint');
 	unbind(@player.'pickup');
+	unbind(@player.'sneak');
 	set_pmode(@player, 'ADVENTURE');
 	set_pflyspeed(@player, 0.1);
 }
