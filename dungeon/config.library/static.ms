@@ -1,5 +1,5 @@
 @level = 1;
-@scale = 2;
+@scale = 1;
 
 proc _set_locations(@start, @end){
 	@pvp = import('pvpstatic');
