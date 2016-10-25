@@ -62,8 +62,8 @@ proc _generate_dungeon(@region, @world, @type, @seed) {
 
 			// Place entrance stairway
 			@c = (integer(srand(@random) * ((@width / 2) - 1)) * 2) + 1;
-			@r = (integer(srand(@random) * ((@length / 2) - 5)) * 2) + 3;
-			for(@r2 = @r, @r2 < 5 + @r, @r2++) {
+			@r = (integer(srand(@random) * ((@length / 2) - 7)) * 2) + 5;
+			for(@r2 = @r, @r2 < 7 + @r, @r2++) {
 				for(@c2 = @c, @c2 < 1 + @c, @c2++) {
 					@materialMap[@c2][@r2] = 'stairs';
 					@roomMap[@c2][@r2] = 0;
@@ -338,6 +338,8 @@ proc _generate_dungeon(@region, @world, @type, @seed) {
 								case 'stairs':
 									if(@z - (@rooms[0]['r1'] * @scale) - 1 == @y - @floorHeight + @height + 1) {
 										set_block_at(@loc, @materials['stairs'], false);
+									} else if(@z - (@rooms[0]['r1'] * @scale) - 1 > @y - @floorHeight + @height + 1) {
+										set_block_at(@loc, 7, false);
 									} else {
 										set_block_at(@loc, @materials['room'], false);
 									}
@@ -392,12 +394,12 @@ proc _generate_dungeon(@region, @world, @type, @seed) {
 					}
 				}
 			}
-			@sx = ((@rooms[@roomid]['c1'] + @c) * @scale) + @regionMinX + 1;
+			@sx = ((@rooms[@roomid]['c1'] + @c) * @scale) + @regionMinX + 0.5;
 			@sy = @coords[1][1];
-			@sz = ((@rooms[@roomid]['r1'] + @r) * @scale) + @regionMinZ + 1;
-			@ex = (@rooms[0]['c1'] * @scale) + @regionMinX + 1;
+			@sz = ((@rooms[@roomid]['r1'] + @r) * @scale) + @regionMinZ + 0.5;
+			@ex = (@rooms[0]['c1'] * @scale) + @regionMinX + 0.5;
 			@ey = @coords[1][1];
-			@ez = (@rooms[0]['r1'] * @scale) + @regionMinZ + 1;
+			@ez = (@rooms[0]['r1'] * @scale) + @regionMinZ + 0.5;
 			_set_locations(array(@sx, @sy, @sz, @world), array(@ex, @ey, @ez, @world));
 			res_free_resource(@random);
 			_remove_region_entities(@region, array(), @world);
