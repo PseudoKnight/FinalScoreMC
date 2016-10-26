@@ -79,12 +79,17 @@ case 'load':
 		}
 		@ploc = _relative(ploc(@player), 'up', 2);
 		play_effect(@ploc, 'EXPLOSION_LARGE');
-		play_sound(@ploc, associative_array('sound': 'ENDERMAN_DEATH', 'pitch': 2));
+		foreach(@p in array_keys(@pvp['players'])) {
+			if(@p == @player, continue());
+			if(entity_can_see(puuid(@player), puuid(@p)) && _distance(ploc(@p), @ploc) < 6) {
+				play_named_sound(@ploc, associative_array('sound': 'entity.elder_guardian.death', 'pitch': 2));
+			}
+		}
 		array_remove(@sneak, 0);
 	}
 	
 	bind(player_toggle_sneak, associative_array('id': @player.'sneak'), associative_array('player': @player), @event, @sneak, @pvp) {
-		if(@event['sneaking']) {
+		if(@event['sneaking'] && pmode() != 'SPECTATOR') {
 			set_pinv(player(), associative_array(103: null, 102: null));
 			@sneak[0] = _relative(ploc(), 'up', 1);
 			foreach(@p: @player in @pvp['players']) {
@@ -98,7 +103,7 @@ case 'load':
 	}
 
 	set_interval(250, closure() {
-		if(!array_index_exists(@pvp['players'], @player)) {
+		if(!has_bind(@player.'sprint')) {
 			clear_task();
 			die();
 		}
@@ -127,8 +132,8 @@ case 'load':
 				if(is_null(@helm)) {
 					set_pinv(@p, associative_array(103: associative_array('type': 86)));
 					play_named_sound(@loc, associative_array('sound': 'entity.elder_guardian.death', 'pitch': 2), @p);
-					set_phunger(@player, min(20, phunger(@player) + if(@dist < 3, 2, 1)));
-					set_phealth(@player, min(20, pinfo(@player, 5) + if(@dist < 3, 2, 1)));
+					set_phunger(@player, min(20, phunger(@player) + 1));
+					set_phealth(@player, min(20, pinfo(@player, 5) + if(@dist < 2, 2, 1)));
 					set_peffect(@player, 5, 0, 2);
 				}
 				set_ptexp(@player, ptexp(@player) + 1);
