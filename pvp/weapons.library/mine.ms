@@ -28,13 +28,15 @@ bind(item_pickup, array('id': @id.'minepickup'), array('item': 148), @event, @id
 	@pvp = import('pvp'.@id);
 	if(!array_index_exists(@pvp['players'], player()), die());
 
-	if(@event['item']['meta']['display'] == player()) {
+	@damager = @event['item']['meta']['display'];
+	if(@damager == player()) {
 		@item = @event['item'];
 		@item['meta']['display'] = 'MINE';
 		modify_event('item', @item);
 	} else {
-		@damager = @event['item']['meta']['display'];
-		if(array_index_exists(@pvp, 'team') && @pvp['players'][@damager]['team'] == @pvp['players'][player()]['team']) {
+		if(array_index_exists(@pvp, 'team')
+		&& array_index_exists(@pvp['players'], @damager)
+		&& @pvp['players'][@damager]['team'] == @pvp['players'][player()]['team']) {
 			// no teammate damage
 			cancel();
 			die();
