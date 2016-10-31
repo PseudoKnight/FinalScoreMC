@@ -14,15 +14,9 @@ if(@id == 'all') {
                       @lastCount = 0;
                     }
                     if(!array_index_exists(@players, @t[0])) {
-                        @players[@t[0]] = array(
-                          'total': array_size(@time['top']) - @i + @lastCount,
-                          'placement': @i + 1 - @lastCount,
-                          'count': 1,
-                        );
+                        @players[@t[0]] = array_size(@time['top']) - @i + @lastCount;
                     } else {
-                        @players[@t[0]]['total'] += (array_size(@time['top']) - @i + @lastCount);
-                        @players[@t[0]]['placement'] += (@i + 1 - @lastCount);
-                        @players[@t[0]]['count']++;
+                        @players[@t[0]] += array_size(@time['top']) - @i + @lastCount;
                     }
                     @lastTime = @t[1];
                 }
@@ -30,13 +24,13 @@ if(@id == 'all') {
         }
         @averages = array();
         foreach(@p: @score in @players) {
-            @averages[] = array(@p, @score['total'], round(@score['placement'] / @score['count'], 1));
+            @averages[] = array(@p, @score);
         }
         array_sort(@averages, closure(@left, @right){
             return(@left[1] < @right[1]);
         });
         x_run_on_main_thread_later(closure(){
-            store_value('times', @averages[0..14]);
+            store_value('times', @averages[0..19]);
         });
     });
 
@@ -51,7 +45,7 @@ if(@id == 'all') {
     array_sort(@array, closure(@left, @right){
         return(@left[1] > @right[1]);
     });
-    @max = min(15, array_size(@array));
+    @max = min(20, array_size(@array));
     for(@i = 0, @i < @max, @i++) {
         @array[@i][0] = get_value('uuids', @array[@i][0])['name'];
     }

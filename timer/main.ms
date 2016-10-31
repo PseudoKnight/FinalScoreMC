@@ -22,7 +22,7 @@ bind(player_join, null, null, @event) {
 	queue_push(closure(){
 		try {
 			@top = get_value('times');
-			for(@i = 0, @i < 10, @i++) {
+			for(@i = 0, @i < array_size(@top), @i++) {
 				if(@top[@i][0] == player()) {
 					@pstate = _pstate(player());
 					@rank = '&e\u278A';
@@ -55,6 +55,16 @@ bind(player_join, null, null, @event) {
 							@rank = '\u24EE';
 						case 14:
 							@rank = '\u24EF';
+						case 15:
+							@rank = '\u24F0';
+						case 16:
+							@rank = '\u24F1';
+						case 17:
+							@rank = '\u24F2';
+						case 18:
+							@rank = '\u24F3';
+						case 19:
+							@rank = '\u24F4';
 					}
 					if(!array_index_exists(@pstate, 'trophies')) {
 						@pstate['trophies'] = array();

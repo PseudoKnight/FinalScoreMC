@@ -167,7 +167,7 @@ if(@args[0] === 'start') {
     }
 
     @place = 0;
-    for(@i = 0, @i < 15, @i++) {
+    for(@i = 0, @i < 20, @i++) {
         if(!@place) {
             if(!array_index_exists(@times['top'], @i) || @time < @times['top'][@i][1]) {
                 array_insert(@times['top'], array(@player, @time), @i);
@@ -199,8 +199,8 @@ if(@args[0] === 'start') {
             'fade': array(array(rand(256), rand(256), rand(256))),
             'type': 'BALL_LARGE',
         ));
-        if(array_size(@times['top']) > 15) {
-            array_remove(@times['top'], 15);
+        if(array_size(@times['top']) > 20) {
+            array_remove(@times['top'], 20);
         }
         store_value('times', @id, @times);
 
