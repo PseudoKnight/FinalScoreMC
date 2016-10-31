@@ -5,48 +5,50 @@
 <<<
 
 *:/transfer $ = >>>
-	@args = parse_args($)
+	@args = parse_args($);
 	@player = '';
 	@thing = '';
 	foreach(@arg in @args) {
 		if(ponline(@arg)) {
-			@player = @arg
+			@player = @arg;
 		} else{
 			switch(@arg) {
 			case 'horse':
 			case 'donkey':
 			case 'mule':
-				@thing = 'HORSE'
+				@thing = 'HORSE';
 			case 'wolf':
 			case 'dog':
-				@thing = 'WOLF'
+				@thing = 'WOLF';
 			case 'cat':
 			case 'kitten':
 			case 'ocelot':
-				@thing = 'OCELOT'
+				@thing = 'OCELOT';
 			}
 		}
 	}
 	if(!@player) {
-		die('Unknown player.')
+		die('Unknown player.');
 	}
 	if(!@thing) {
-		die('Please specify "horse", "wolf", or "cat".')
+		die('Please specify "horse", "wolf", or "cat".');
 	}
 	bind(player_interact_entity, array('id': 'transfer'.player().@player), array('clicked': @thing), @e, @player, @owner = player()) {
-		if(player() != @owner,
-			die())
-		cancel()
-		unbind()
-		if(get_mob_owner(@e['id']) != player(),
-			die(color('red').'This '.entity_type(@e['id']).' belongs to '.get_mob_owner(@e['id']).'.'))
-		tame_mob(@player, @e['id'])
-		msg(color('green').'The '.entity_type(@e['id']).' now belongs to '.@player.'.')
+		if(player() != @owner) {
+			die();
+		}
+		cancel();
+		unbind();
+		if(get_mob_owner(@e['id']) != player() && !has_permission('group.moderator')) {
+			die(color('red').'This '.entity_type(@e['id']).' belongs to '.get_mob_owner(@e['id']).'.');
+		}
+		tame_mob(@player, @e['id']);
+		msg(color('green').'The '.entity_type(@e['id']).' now belongs to '.@player.'.');
 		if(ponline(@player)) {
-			tmsg(@player, color('green').player().' gave a '.entity_type(@e['id']).' to you.')
+			tmsg(@player, color('green').player().' gave a '.entity_type(@e['id']).' to you.');
 		}
 	}
-	msg(color('yellow').'Right-click the '.@thing.' you wish to give to '.@player.'.')
+	msg(color('yellow').'Right-click the '.@thing.' you wish to give to '.@player.'.');
 <<<
 
 *:/share = >>>
