@@ -20,7 +20,7 @@
 
 	# Get target location
 	if(!$) {
-		@border = yml_decode(read('../../../WorldBorder/config.yml'))['worlds'][@world];
+		@border = yml_decode(read('../../WorldBorder/config.yml'))['worlds'][@world];
 		@x = @border['x'] - @border['radiusX'] + rand(@border['radiusX'] * 2);
 		@z = @border['z'] - @border['radiusZ'] + rand(@border['radiusZ'] * 2);
 		@target = get_highest_block_at(@x, @z, @world);
