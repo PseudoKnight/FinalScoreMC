@@ -46,9 +46,9 @@ proc _snake_safe_dir(@loc, @direction, @last) {
 	return(@direction);
 }
 
-proc _snake_safe_block(@loc, @recurse = true) {
+proc _snake_safe_block(@loc, @recurse = true, @avoid = array()) {
 	@id = split(':', get_block_at(@loc))[0];
-	if(@id == '159' || @id == '155' || @id == '166' || @id == '35') {
+	if(@id == '159' || @id == '155' || @id == '166' || @id == '35' || array_contains(@avoid, @id)) {
 		return(false);
 	} else {
 		if(!@recurse) {

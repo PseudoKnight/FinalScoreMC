@@ -60,7 +60,7 @@ proc _snake_queue(@args) {
 		}
 	}
 
-	@bots = array('Dopey', 'Sleepy', 'Bashful', 'Grumpy', 'Happy', 'Sneezy');
+	@bots = array('Grumpy','BatSnake','SharkBot');
 	while(array_size(@game['snakes']) < @game['numPlayers'] && @bots) {
 		@index = array_rand(@bots)[0];
 		_snake_add(@bots[@index], @game);
