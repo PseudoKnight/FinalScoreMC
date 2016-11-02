@@ -212,7 +212,7 @@ proc _pvp_start_match(@id) {
 				} else {
 					tmsg(@player, color('gray').'[PVP] '.color('r').'You exited the combat region.')
 					set_timeout(50, closure(){
-						if(pworld(@player) == 'custom') {
+						if(pworld(@player) == 'custom' && pinfo(@player, 5) > 0) {
 							pkill(@player);
 						}
 					});
