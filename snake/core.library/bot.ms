@@ -130,14 +130,10 @@ proc _snake_bot_target_powerup(@snake, @game, @type = 'all') {
 	@closest = 1000;
 	foreach(@powerup in @game['powerups']) {
 		if((@type == 'all' || @powerup['type'] == @type)) {
-			if(@powerup['region'] == @snake['region']) {
-				@dist = _distance(@powerup['loc'], @snake['loc']);
-				if(@dist < @closest) {
-					@snake['target'] = associative_array('type': 'powerup', 'loc': @powerup['loc']);
-					@closest = @dist;
-				}
-			} else if(@closest == 1000) {
+			@dist = _distance(@powerup['loc'], @snake['loc']);
+			if(@dist < @closest) {
 				@snake['target'] = associative_array('type': 'powerup', 'loc': @powerup['loc']);
+				@closest = @dist;
 			}
 		}
 	}
