@@ -232,7 +232,7 @@ proc _snake_ability(@player, @game) {
 					set_timeout(5000, closure(){
 						@snake['boost'] = 0;
 						if(@snake['ability'] == 'boost') {
-							@snake['ability-count'] = @count;
+							@snake['ability-count'] += @count;
 						}
 					});
 				}
