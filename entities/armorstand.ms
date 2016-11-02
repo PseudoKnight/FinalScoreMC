@@ -271,6 +271,9 @@ bind(entity_damage, null, array('type': 'ARMOR_STAND'), @event) {
 
 	if(sk_can_build(@damager, @event['location'])) {
 		@armorstand = entity_spec(@event['id']);
+		if(!@armorstand['visible']) {
+			die();
+		}
 		if(@armorstand['arms']) {
 			if(!array_index_exists(@event, 'shooter')) {
 				cancel();
