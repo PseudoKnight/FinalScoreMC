@@ -60,7 +60,7 @@ proc _snake_queue(@args) {
 		}
 	}
 
-	@bots = array('Grumpy','BatSnake','SharkBot');
+	@bots = array('Grumpy','BatSnake','SharkBot','CrazyBot');
 	while(array_size(@game['snakes']) < @game['numPlayers'] && @bots) {
 		@index = array_rand(@bots)[0];
 		_snake_add(@bots[@index], @game);
@@ -103,6 +103,9 @@ proc _snake_start_task(@game) {
 		@alive = 0;
 		@active = 'No one';
 		@playersAlive = 0;
+		while(array_size(@game['powerups']) < @game['numPowerups']) {
+			_snake_add_powerup(@game);
+		}
 		foreach(@player: @snake in @game['snakes']) {
 			if(!@snake['bot'] && (!ponline(@player) || !array_contains(sk_current_regions(@player), 'snake'))) {
 				_snake_remove(@player, @game);
@@ -136,9 +139,6 @@ proc _snake_start_task(@game) {
 		if((@alive < 2 && array_size(@game['snakes']) > 1) || @alive < 1) {
 			clear_task();
 			_snake_end(@active, @game);
-		}
-		if(array_size(@game['powerups']) < @game['numPowerups']) {
-			_snake_add_powerup(@game);
 		}
 	});
 }

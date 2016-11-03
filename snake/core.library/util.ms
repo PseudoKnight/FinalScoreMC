@@ -50,20 +50,16 @@ proc _snake_safe_block(@loc, @recurse = true, @avoid = array()) {
 	@id = split(':', get_block_at(@loc))[0];
 	if(@id == '159' || @id == '155' || @id == '166' || @id == '35' || array_contains(@avoid, @id)) {
 		return(false);
-	} else {
-		if(!@recurse) {
-			if(@id == '169') {
-				return(false);
-			}
+	}
+	if(!@recurse) {
+		return(true);
+	}
+	foreach(@dir in array('down', 'up', 'north', 'south', 'east', 'west')) {
+		if(_snake_safe_block(_relative(@loc, @dir), false)) {
 			return(true);
 		}
-		foreach(@dir in array('down', 'up', 'north', 'south', 'east', 'west')) {
-			if(_snake_safe_block(_relative(@loc, @dir), false)) {
-				return(true);
-			}
-		}
-		return(false);
 	}
+	return(false);
 }
 
 proc _snake_opposite_dir(@dir) {
@@ -80,35 +76,6 @@ proc _snake_opposite_dir(@dir) {
 			return('west');
 		case 'west':
 			return('east');
-	}
-	return(null);
-}
-
-proc _snake_farthest_dir(@loc1, @loc2) {
-	@x = @loc1[0] - @loc2[0];
-	@y = @loc1[1] - @loc2[1];
-	@z = @loc1[2] - @loc2[2];
-	@ax = abs(@x);
-	@ay = abs(@y);
-	@az = abs(@z);
-	if(@ax > @ay && @ax > @az) {
-		if(@x > 0) {
-			return('west');
-		} else if(@x < 0) {
-			return('east');
-		}
-	} else if(@az > @ax && @az > @ay) {
-		if(@z > 0) {
-			return('north');
-		} else if(@z < 0) {
-			return('south');
-		}
-	} else {
-		if(@y > 0) {
-			return('down');
-		} else if(@y < 0) {
-			return('up');
-		}
 	}
 	return(null);
 }
