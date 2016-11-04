@@ -218,7 +218,9 @@ proc _snake_bot_change_dir(@snake, @loc1, @loc2) {
 					@dir = 'up';
 				}
 		}
-		if(@dir && @dir != @snake['dir'] && _snake_safe_block(get_block_at(_relative(@loc1, @dir)))) {
+		if(@dir && @dir != @snake['dir']
+		&& @dir != _snake_opposite_dir(@snake['dir'])
+		&& _snake_safe_block(get_block_at(_relative(@loc1, @dir)))) {
 			@snake['last-dir'] = @snake['dir'];
 			@snake['dir'] = @dir;
 			return(true);
