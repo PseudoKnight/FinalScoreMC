@@ -101,8 +101,22 @@ proc _snake_remove(@player, @game) {
 
 proc _snake_kill(@player, @game) {
 	@snake = @game['snakes'][@player];
-	foreach(@block in @snake['blocks']) {
-		set_block_at(@block, @snake['head'], false);
+	for(@i = array_size(@snake['blocks']) - 1, @i >= 0, @i -= 3) {
+		queue_push(closure(){
+			@n = 0;
+			while(@n < 3) {
+				try {
+					@block = @snake['blocks'][@i - @n];
+					if(get_block_at(@block) == @snake['tail']) {
+						set_block_at(@block, @snake['head'], false);
+						play_effect(@block, 'PARTICLE_SMOKE', associative_array('particleCount': 8, 'speed': 0, 'offsetX': 1, 'offsetY': 1, 'offsetZ': 1, 'radius': 40));
+					}
+					@n++;
+				} catch(Exception @ex) {
+					break();
+				}
+			}
+		}, @player);
 	}
 	@snake['alive'] = false;
 	set_pscore('alive', @player, 0, 'snake');
@@ -156,11 +170,11 @@ proc _snake_update(@player, @game) {
 		}
 		@snake['loc'] = @loc;
 		@snake['dir'] = @dir;
+		@snake['last-dir'] = @dir;
 		@snake['blocks'][] = @snake['loc'][];
 		set_block_at(@snake['loc'], @snake['head'], false);
 		@snake['click'] = false;
 		@snake['region'] = sk_regions_at(@snake['loc'])[1];
-		@snake['target'] = null;
 		_snake_set_top(@snake);
 		return(true);
 	} else if(@block == '95:14' && @snake['laser-immune']) {
@@ -172,197 +186,79 @@ proc _snake_update(@player, @game) {
 	return(false);
 }
 
-proc _snake_turn(@rotation, @snake) {
-	if(@snake['click']) {
-		return();
-	}
-	@snake['click'] = true;
-	switch(@snake['top']) {
+proc _snake_turn(@top, @dir) {
+	switch(@top) {
 		case 'north':
-			switch(@snake['dir']) {
+			switch(@dir) {
 				case 'east':
-					if(@rotation == 'right') {
-						@snake['dir'] = 'up';
-					} else {
-						@snake['dir'] = 'down';
-					}
-
+					return(array('down', 'up'));
 				case 'west':
-					if(@rotation == 'right') {
-						@snake['dir'] = 'down';
-					} else {
-						@snake['dir'] = 'up';
-					}
-
+					return(array('up', 'down'));
 				case 'up':
-					if(@rotation == 'right') {
-						@snake['dir'] = 'west';
-					} else {
-						@snake['dir'] = 'east';
-					}
-
+					return(array('east', 'west'));
 				case 'down':
-					if(@rotation == 'right') {
-						@snake['dir'] = 'east';
-					} else {
-						@snake['dir'] = 'west';
-					}
+					return(array('west', 'east'));
 			}
 
 		case 'south':
-			switch(@snake['dir']) {
+			switch(@dir) {
 				case 'east':
-					if(@rotation == 'right') {
-						@snake['dir'] = 'down';
-					} else {
-						@snake['dir'] = 'up';
-					}
-
+					return(array('up', 'down'));
 				case 'west':
-					if(@rotation == 'right') {
-						@snake['dir'] = 'up';
-					} else {
-						@snake['dir'] = 'down';
-					}
-
+					return(array('down', 'up'));
 				case 'up':
-					if(@rotation == 'right') {
-						@snake['dir'] = 'east';
-					} else {
-						@snake['dir'] = 'west';
-					}
-
+					return(array('west', 'east'));
 				case 'down':
-					if(@rotation == 'right') {
-						@snake['dir'] = 'west';
-					} else {
-						@snake['dir'] = 'east';
-					}
+					return(array('east', 'west'));
 			}
 
 		case 'east':
-			switch(@snake['dir']) {
+			switch(@dir) {
 				case 'north':
-					if(@rotation == 'right') {
-						@snake['dir'] = 'down';
-					} else {
-						@snake['dir'] = 'up';
-					}
-
+					return(array('up', 'down'));
 				case 'south':
-					if(@rotation == 'right') {
-						@snake['dir'] = 'up';
-					} else {
-						@snake['dir'] = 'down';
-					}
-
+					return(array('down', 'up'));
 				case 'up':
-					if(@rotation == 'right') {
-						@snake['dir'] = 'north';
-					} else {
-						@snake['dir'] = 'south';
-					}
-
+					return(array('south', 'north'));
 				case 'down':
-					if(@rotation == 'right') {
-						@snake['dir'] = 'south';
-					} else {
-						@snake['dir'] = 'north';
-					}
+					return(array('north', 'south'));
 			}
 
 		case 'west':
-			switch(@snake['dir']) {
+			switch(@dir) {
 				case 'north':
-					if(@rotation == 'right') {
-						@snake['dir'] = 'up';
-					} else {
-						@snake['dir'] = 'down';
-					}
-
+					return(array('down', 'up'));
 				case 'south':
-					if(@rotation == 'right') {
-						@snake['dir'] = 'down';
-					} else {
-						@snake['dir'] = 'up';
-					}
-
+					return(array('up', 'down'));
 				case 'up':
-					if(@rotation == 'right') {
-						@snake['dir'] = 'south';
-					} else {
-						@snake['dir'] = 'north';
-					}
-
+					return(array('north', 'south'));
 				case 'down':
-					if(@rotation == 'right') {
-						@snake['dir'] = 'north';
-					} else {
-						@snake['dir'] = 'south';
-					}
+					return(array('south', 'north'));
 			}
 
 		case 'up':
-			switch(@snake['dir']) {
+			switch(@dir) {
 				case 'north':
-					if(@rotation == 'right') {
-						@snake['dir'] = 'east';
-					} else {
-						@snake['dir'] = 'west';
-					}
-
+					return(array('west', 'east'));
 				case 'south':
-					if(@rotation == 'right') {
-						@snake['dir'] = 'west';
-					} else {
-						@snake['dir'] = 'east';
-					}
-
+					return(array('east', 'west'));
 				case 'east':
-					if(@rotation == 'right') {
-						@snake['dir'] = 'south';
-					} else {
-						@snake['dir'] = 'north';
-					}
-
+					return(array('north', 'south'));
 				case 'west':
-					if(@rotation == 'right') {
-						@snake['dir'] = 'north';
-					} else {
-						@snake['dir'] = 'south';
-					}
+					return(array('south', 'north'));
 			}
 
 
 		case 'down':
-			switch(@snake['dir']) {
+			switch(@dir) {
 				case 'north':
-					if(@rotation == 'right') {
-						@snake['dir'] = 'west';
-					} else {
-						@snake['dir'] = 'east';
-					}
-
+					return(array('east', 'west'));
 				case 'south':
-					if(@rotation == 'right') {
-						@snake['dir'] = 'east';
-					} else {
-						@snake['dir'] = 'west';
-					}
-
+					return(array('west', 'east'));
 				case 'east':
-					if(@rotation == 'right') {
-						@snake['dir'] = 'north';
-					} else {
-						@snake['dir'] = 'south';
-					}
-
+					return(array('south', 'north'));
 				case 'west':
-					if(@rotation == 'right') {
-						@snake['dir'] = 'south';
-					} else {
-						@snake['dir'] = 'north';
-					}
+					return(array('north', 'south'));
 			}
 
 	}

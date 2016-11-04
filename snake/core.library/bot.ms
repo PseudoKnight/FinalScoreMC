@@ -29,17 +29,16 @@ proc _snake_bot_update(@bot, @game) {
 				}
 			} else {
 				// go to target
-				if(_snake_bot_change_dir(@snake, @snake['loc'], @snake['target']['loc'])) {
-					return();
-				} else if(split(':', get_block_at(@snake['target']['loc']))[0] == '159') {
+				if(split(':', get_block_at(@snake['target']['loc']))[0] == '159') {
 					@snake['target'] = null;
+				} else if(_snake_bot_change_dir(@snake, @snake['loc'], @snake['target']['loc'])) {
+					return();
 				}
 			}
 		}
 		if(@percent < 10
-		|| !_snake_safe_block(_relative(@snake['loc'], @snake['dir']))
-		|| !_snake_safe_block(_relative(@snake['loc'], @snake['dir'], 3), false)) {
-			@dir = _snake_safe_dir(@snake['loc'], @snake['dir'], @snake['last-dir']);
+		|| !_snake_safe_path(@snake['loc'], @snake['top'], @snake['dir'])) {
+			@dir = _snake_safe_dir(@snake);
 			@snake['last-dir'] = @snake['dir'];
 			@snake['dir'] = @dir;
 			_snake_ability(@bot, @game);
@@ -73,16 +72,15 @@ proc _snake_bot_update(@bot, @game) {
 				}
 			} else {
 				// go to target
-				if(_snake_bot_change_dir(@snake, @snake['loc'], @snake['target']['loc'])) {
-					return();
-				} else if(split(':', get_block_at(@snake['target']['loc']))[0] == '159') {
+				if(split(':', get_block_at(@snake['target']['loc']))[0] == '159') {
 					@snake['target'] = null;
+				} else if(_snake_bot_change_dir(@snake, @snake['loc'], @snake['target']['loc'])) {
+					return();
 				}
 			}
 		}
-		if(!_snake_safe_block(_relative(@snake['loc'], @snake['dir']), true, array('46', '95', '152'))
-		|| !_snake_safe_block(_relative(@snake['loc'], @snake['dir'], 3), false)) {
-			@dir = _snake_safe_dir(@snake['loc'], @snake['dir'], @snake['last-dir']);
+		if(!_snake_safe_path(@snake['loc'], @snake['top'], @snake['dir'])) {
+			@dir = _snake_safe_dir(@snake);
 			@snake['last-dir'] = @snake['dir'];
 			@snake['dir'] = @dir;
 		}
@@ -110,9 +108,8 @@ proc _snake_bot_update(@bot, @game) {
 			}
 		}
 		if(@percent < 10
-		|| !_snake_safe_block(_relative(@snake['loc'], @snake['dir']))
-		|| !_snake_safe_block(_relative(@snake['loc'], @snake['dir'], 3), false)) {
-			@dir = _snake_safe_dir(@snake['loc'], @snake['dir'], @snake['last-dir']);
+		|| !_snake_safe_path(@snake['loc'], @snake['top'], @snake['dir'])) {
+			@dir = _snake_safe_dir(@snake);
 			@snake['last-dir'] = @snake['dir'];
 			@snake['dir'] = @dir;
 		}
@@ -145,16 +142,15 @@ proc _snake_bot_update(@bot, @game) {
 				}
 			} else {
 				// go to target
-				if(_snake_bot_change_dir(@snake, @snake['loc'], @snake['target']['loc'])) {
-					return();
-				} else if(split(':', get_block_at(@snake['target']['loc']))[0] == '159') {
+				if(split(':', get_block_at(@snake['target']['loc']))[0] == '159') {
 					@snake['target'] = null;
+				} else if(_snake_bot_change_dir(@snake, @snake['loc'], @snake['target']['loc'])) {
+					return();
 				}
 			}
 		}
-		if(!_snake_safe_block(_relative(@snake['loc'], @snake['dir']))
-		|| !_snake_safe_block(_relative(@snake['loc'], @snake['dir'], 3), false)) {
-			@dir = _snake_safe_dir(@snake['loc'], @snake['dir'], @snake['last-dir']);
+		if(!_snake_safe_path(@snake['loc'], @snake['top'], @snake['dir'])) {
+			@dir = _snake_safe_dir(@snake);
 			@snake['last-dir'] = @snake['dir'];
 			@snake['dir'] = @dir;
 		}
@@ -162,12 +158,12 @@ proc _snake_bot_update(@bot, @game) {
 }
 
 proc _snake_bot_target_powerup(@snake, @game, @type = 'all') {
-	@closest = 32;
+	@closest = 25;
 	foreach(@powerup in @game['powerups']) {
 		if(@type == 'all' || @powerup['type'] == @type) {
 			@dist = _distance(@powerup['loc'], @snake['loc']);
 			if(@dist < @closest) {
-				@snake['target'] = associative_array('type': 'powerup', 'loc': @powerup['loc'], 'interest': 48);
+				@snake['target'] = associative_array('type': 'powerup', 'loc': @powerup['loc'], 'interest': 50);
 				@closest = @dist;
 			}
 		}
@@ -176,12 +172,12 @@ proc _snake_bot_target_powerup(@snake, @game, @type = 'all') {
 }
 
 proc _snake_bot_target_snake(@snake, @game) {
-	@closest = 20;
+	@closest = 25;
 	foreach(@bot: @othersnake in @game['snakes']) {
 		if(!@othersnake['bot'] && @othersnake['alive']) {
 			@dist = _distance(@othersnake['loc'], @snake['loc']);
 			if(@dist < @closest) {
-				@snake['target'] = associative_array('type': 'snake', 'name': @bot, 'interest': 64);
+				@snake['target'] = associative_array('type': 'snake', 'name': @bot, 'interest': 50);
 				@closest = @dist;
 			}
 		}
@@ -189,7 +185,7 @@ proc _snake_bot_target_snake(@snake, @game) {
 	return(is_array(@snake['target']));
 }
 
-proc _snake_bot_change_dir(@snake, @loc1, @loc2, @not = '') {
+proc _snake_bot_change_dir(@snake, @loc1, @loc2) {
 	@x = @loc1[0] - @loc2[0];
 	@y = @loc1[1] - @loc2[1];
 	@z = @loc1[2] - @loc2[2];
@@ -222,7 +218,7 @@ proc _snake_bot_change_dir(@snake, @loc1, @loc2, @not = '') {
 					@dir = 'up';
 				}
 		}
-		if(@dir && _snake_safe_block(_relative(@loc1, @dir), false)) {
+		if(@dir && @dir != @snake['dir'] && _snake_safe_block(get_block_at(_relative(@loc1, @dir)))) {
 			@snake['last-dir'] = @snake['dir'];
 			@snake['dir'] = @dir;
 			return(true);

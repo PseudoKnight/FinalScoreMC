@@ -37,29 +37,37 @@ proc _snake_direction_of(@loc, @block, @not) {
 	return(null);
 }
 
-proc _snake_safe_dir(@loc, @direction, @last) {
-	foreach(@dir in array(@last, 'down', 'up', 'north', 'south', 'east', 'west')) {
-		if(@dir != @direction && _snake_safe_block(_relative(@loc, @dir))) {
-			return(@dir);
+proc _snake_safe_dir(@snake) {
+	@turn = _snake_turn(@snake['top'], @snake['dir']);
+	if(_snake_safe_block(get_block_at(_relative(@snake['loc'], @snake['last-dir'])))) {
+		return(@snake['last-dir']);
+	}
+	foreach(@t in @turn) {
+		if(@t != @snake['last-dir'] && _snake_safe_block(get_block_at(_relative(@snake['loc'], @t)))) {
+			return(@t);
 		}
 	}
-	return(@direction);
+	return(@snake['dir']);
 }
 
-proc _snake_safe_block(@loc, @recurse = true, @avoid = array()) {
-	@id = split(':', get_block_at(@loc))[0];
-	if(@id == '159' || @id == '155' || @id == '166' || @id == '35' || array_contains(@avoid, @id)) {
+proc _snake_safe_path(@loc, @top, @dir) {
+	@loc = _relative(@loc, @dir);
+	if(!_snake_safe_block(get_block_at(@loc))) {
 		return(false);
 	}
-	if(!@recurse) {
+	@turn = _snake_turn(@top, @dir);
+	@block = get_block_at(_relative(@loc, @dir));
+	if((_snake_safe_block(@block)
+	&& (@block == '169:0' || _snake_safe_block(get_block_at(_relative(@loc, @dir, 2)))))
+	|| _snake_safe_block(get_block_at(_relative(@loc, @turn[0])))
+	|| _snake_safe_block(get_block_at(_relative(@loc, @turn[1])))) {
 		return(true);
 	}
-	foreach(@dir in array('down', 'up', 'north', 'south', 'east', 'west')) {
-		if(_snake_safe_block(_relative(@loc, @dir), false)) {
-			return(true);
-		}
-	}
 	return(false);
+}
+
+proc _snake_safe_block(@block) {
+	return(@block == '0:0' || @block == '169:0' || _snake_get_powerup_from(@block));
 }
 
 proc _snake_opposite_dir(@dir) {
