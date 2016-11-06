@@ -205,8 +205,8 @@ proc _class_select(@id, @pvp) {
 						}
 					}
 					if(!@captain) {
-						foreach(@slot: @item in @e['inventory']) {
-							if(@item && !is_null(@item['meta']) && !is_null(@item['meta']['display'])
+						foreach(@slot: @item in get_virtualchest(@id.@team)) {
+							if(is_array(@item) && !is_null(@item['meta']) && !is_null(@item['meta']['display'])
 							&& @pvp['arena']['captain'][@team] == to_lower(strip_colors(@item['meta']['display']))) {
 								clear_virtualchest(@id.@team, @slot);
 								@pvp['team'][@team]['captain'] = player();
