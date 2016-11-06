@@ -92,10 +92,12 @@ bind(player_interact, null, associative_array('button': 'right', 'block': 211), 
 bind(player_interact, null, array('block': 25, 'button': 'left'), @event) {
 	if(pmode() === 'CREATIVE' && !pinfo(player(), 11)) {
 		// It won't break if in survival, and it'll play the note if we don't cancel
+		@flying = pinfo(player(), 18);
 		set_pmode('SURVIVAL');
 		set_timeout(50, closure(){
 			// return the player to creative
 			set_pmode('CREATIVE');
+			set_pflying(@flying);
 			// The block will appear as air due to the client-side block-break,
 			// so resend the noteblock
 			psend_block_change(@event['location'], 25);
