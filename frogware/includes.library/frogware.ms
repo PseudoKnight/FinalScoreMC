@@ -35,13 +35,13 @@ proc _fw_endgame(@winners) {
 				if(@coins > 3) {
 					_acc_add(@p, @coins - 2);
 					tmsg(@p, color('6').'+'.@coins.' coins');
+					@pstate = _pstate(@p);
+					if(!array_index_exists(@pstate, 'trophies')) {
+						@pstate['trophies'] = array();
+					}
+					@pstate['trophies'][] = color('yellow').'Best Frog in the House!';
 				}
 				_fw_changeteam(@p, 'winners');
-				@pstate = _pstate(@p);
-				if(!array_index_exists(@pstate, 'trophies')) {
-					@pstate['trophies'] = array();
-				}
-				@pstate['trophies'][] = color('yellow').'Best Frog in the House!';
 			} else {
 				_fw_changeteam(@p, 'losers');
 			}
