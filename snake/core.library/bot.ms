@@ -14,7 +14,7 @@ proc _snake_bot_update(@bot, @game) {
 			@snake['target']['interest']--;
 			if(@snake['target']['type'] == 'snake') {
 				@target = @snake['target']['name'];
-				if(!@game['snakes'][@target]['alive']) {
+				if(!array_index_exists(@game['snakes'], @target) || !@game['snakes'][@target]['alive']) {
 					@snake['target'] = null;
 				} else {
 					@targetLoc = _relative(@game['snakes'][@target]['loc'], @game['snakes'][@target]['dir']);
@@ -62,7 +62,7 @@ proc _snake_bot_update(@bot, @game) {
 			@snake['target']['interest']--;
 			if(@snake['target']['type'] == 'snake') {
 				@target = @snake['target']['name'];
-				if(!@game['snakes'][@target]['alive']) {
+				if(!array_index_exists(@game['snakes'], @target) || !@game['snakes'][@target]['alive']) {
 					@snake['target'] = null;
 				} else {
 					@targetLoc = _relative(@game['snakes'][@target]['loc'], @game['snakes'][@target]['dir']);
@@ -93,7 +93,7 @@ proc _snake_bot_update(@bot, @game) {
 		if(@snake['target']) {
 			@snake['target']['interest']--;
 			@target = @snake['target']['name'];
-			if(!@game['snakes'][@target]['alive']) {
+			if(!array_index_exists(@game['snakes'], @target) || !@game['snakes'][@target]['alive']) {
 				@snake['target'] = null;
 			} else {
 				@targetLoc = _relative(@game['snakes'][@target]['loc'], @game['snakes'][@target]['dir']);
@@ -129,7 +129,7 @@ proc _snake_bot_update(@bot, @game) {
 			@snake['target']['interest']--;
 			if(@snake['target']['type'] == 'snake') {
 				@target = @snake['target']['name'];
-				if(!@game['snakes'][@target]['alive']) {
+				if(!array_index_exists(@game['snakes'], @target) || !@game['snakes'][@target]['alive']) {
 					@snake['target'] = null;
 				} else {
 					@targetLoc = _relative(@game['snakes'][@target]['loc'], @game['snakes'][@target]['dir']);
