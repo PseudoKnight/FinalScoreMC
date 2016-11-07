@@ -27,6 +27,7 @@ bind(projectile_launch, array('id': @id.'grapple'), array('type': 'FISHING_HOOK'
 
 		@player = get_player_from_entity_id(@shooter);
 		@loc1 = entity_loc(@shooter);
+		@startingHealth = max(1, get_entity_health(@shooter));
 
 		@dist = sqrt(((@loc2['x'] - @loc1['x']) ** 2) + ((@loc2['y'] - @loc1['y']) ** 2) + ((@loc2['z'] - @loc1['z']) ** 2));
 		if(@dist > 31) {
@@ -57,7 +58,7 @@ bind(projectile_launch, array('id': @id.'grapple'), array('type': 'FISHING_HOOK'
 		}
 		@task = closure(@interval = true){
 			try {
-				if(get_entity_health(@shooter) == 0
+				if(get_entity_health(@shooter) < @startingHealth
 				|| get_entity_health(@mover) == 0
 				|| pinfo(@player, 15) != @slot
 				|| !entity_exists(@hook)) {
