@@ -83,6 +83,9 @@ proc _pvp_initialize_players(@id, @players) {
 			if(array_index_exists(@pvp['players'][@player], 'class')) {
 				_class('load', @player, @pvp['players'][@player]['class'], @pvp);
 			}
+			if(array_index_exists(@pvp['arena'], 'class_picks')) {
+				@pvp['players'][@player]['picks'] = @pvp['arena']['class_picks'];
+			}
 		}
 
 		foreach(@p in @pvp['spectators']) {

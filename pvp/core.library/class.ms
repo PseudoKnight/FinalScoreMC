@@ -158,17 +158,12 @@ proc _class_select(@id, @pvp) {
 		update_virtualchest(@id.'1', @chest[1])
 	}
 	foreach(@p: @pdata in @pvp['players']) {
-		if(@size1 > 2
-		&& (!array_index_exists(@pdata, 'team') || @pdata['team'] == 0)) {
+		if(@size1 > 2 && (!array_index_exists(@pdata, 'team') || @pdata['team'] == 0)) {
 			if(array_index_exists(@pvp['arena'], 'class_picks')) {
 				@pvp['players'][@p]['picks'] = @pvp['arena']['class_picks'];
 			}
 			popen_virtualchest(@p, @id.'0');
-		} else if(@size2 > 2
-		&& @pdata['team'] == 1) {
-			if(array_index_exists(@pvp['arena'], 'class_picks')) {
-				@pvp['players'][@p]['picks'] = @pvp['arena']['class_picks'];
-			}
+		} else if(@size2 > 2 && @pdata['team'] == 1) {
 			popen_virtualchest(@p, @id.'1');
 		}
 	}
