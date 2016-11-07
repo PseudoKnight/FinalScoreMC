@@ -21,7 +21,7 @@ proc _pvp_initialize_players(@id, @players) {
 	@c = array(0, 0); # for selecting initial spawn locations
 	@loc = array();
 	foreach(@player in @players) {
-		if(!ponline(@player) || pinfo(@player, 5) == 0 !get_collides_with_entities(@player) || pworld(@player) !== 'custom') {
+		if(!ponline(@player) || pinfo(@player, 5) == 0 || !get_collides_with_entities(@player) || pworld(@player) !== 'custom') {
 			array_remove(@pvp['players'], @player);
 			continue();
 		}
