@@ -1,6 +1,6 @@
 switch(@action) {
 case 'load':
-	bind(player_interact, array('id': @player.'interact'), array('player': @player, 'button': 'right', 'item': '292'), @e) {
+	bind(player_interact, array('id': @player.'interact'), array('player': @player, 'button': 'right', 'item': '292', 'hand': 'main_hand'), @e) {
 		cancel();
 		if(get_block_at(ploc())[0] === '0' || phunger() == 0) {
 			die();
@@ -55,7 +55,7 @@ case 'load':
 	_manti_noise(@player)
 
 case 'powerup':
-	set_phunger(@player, min(20, phunger(@player) + 8));
+	set_phunger(@player, min(20, phunger(@player) + 4));
 
 case 'unload':
 	unbind(@player.'interact')
