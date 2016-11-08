@@ -140,7 +140,8 @@ proc _pvp_start_match(@id) {
 				}
 			}
 		}
-
+		
+		@king = '';
 		foreach(@player: @p in @pvp['players']) {
 			if(pinfo(@player, 5) <= 0) {
 				// dead
@@ -232,16 +233,29 @@ proc _pvp_start_match(@id) {
 			}
 		}
 
-		if(@arena['mode'] == 'koth' && @hillcount == 1) {
-			@score = get_pscore('seconds', @king, @id);
-			set_pscore('seconds', @king, @score - 1, @id);
-			@check = true;
-			
-			if(array_index_exists(@arena, 'kothbeacon')) {
-				set_block_at(@arena['kothbeacon'], '95:'.array_index(array_keys(@pvp['players']), @king));
+		if(@arena['mode'] == 'koth') {
+			@team = get_teams(@id)[0];
+			if(@hillcount == 1) {
+				@score = get_pscore('seconds', @king, @id);
+				set_pscore('seconds', @king, @score + 1, @id);
+				@check = true;
+				if(!array_contains(@team['players'], @king)) {
+					if(@team['size'] == 1) {
+						team_remove_player('king', @team['players'][0], @id);
+					}
+					team_add_player('king', @king, @id);
+				}
+				if(array_index_exists(@arena, 'kothbeacon')) {
+					set_block_at(@arena['kothbeacon'], '95:'.array_index(array_keys(@pvp['players']), @king));
+				}
+			} else {
+				if(@team['size'] == 1) {
+					team_remove_player('king', @team['players'][0], @id);
+				}
+				if(array_index_exists(@arena, 'kothbeacon')) {
+					set_block_at(@arena['kothbeacon'], 7);
+				}
 			}
-		} else if(array_index_exists(@arena, 'kothbeacon')) {
-			set_block_at(@arena['kothbeacon'], 7);
 		}
 
 		if(array_index_exists(@arena, 'itemspawn')) {
@@ -338,7 +352,7 @@ proc _pvp_check_objectives(@id) {
 	#check ffa player scores
 	if(@pvp['arena']['mode'] === 'koth') {
 		foreach(@player: @data in @pvp['players']) {
-			if(get_pscore('seconds', @player, @id)  <= 0) {
+			if(get_pscore('seconds', @player, @id)  >= 0) {
 				_pvp_end_match(@id, array(@player))
 				die()
 			}
