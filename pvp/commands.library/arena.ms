@@ -64,7 +64,6 @@ proc _arena(@action, @id, @setting, @string) {
 					msg(colorize('Set &a' . @setting . '&r to &a' . @args[0] . '&r and &a' . @args[1] . '&r.'));
 
 				# boolean option (true default)
-				case 'ff':
 				case 'stats':
 					switch(@args[0]) {
 						case 'true':
@@ -181,6 +180,38 @@ proc _arena(@action, @id, @setting, @string) {
 					}
 					@arena[@setting][@team][] = @loc;
 					msg(colorize('Set a &a' . @setting . '&r to current location for team &a' . (@team + 1)));
+					
+				case 'ff':
+					switch(@args[0]) {
+						case 'true':
+						case 'on':
+						case '1':
+						case 'yes':
+							try {
+								array_remove(@arena, @setting);
+							} catch(IndexOverflowException @ex) {
+								die('Already set to true by default.');
+							}
+							msg(colorize('Turned &a' . @setting . '&r on (default)'));
+
+						case 'false':
+						case 'off':
+						case '0':
+						case 'no':
+							@arena[@setting] = 'false';
+							msg(colorize('Turned &a' . @setting . '&r off'));
+							
+						case 'knockback':
+							@arena[@setting] = 'knockback';
+							msg(colorize('Allow &aknockback&r only'));
+							
+						case 'reduced':
+							@arena[@setting] = 'reduced';
+							msg(colorize('Set &areduced&r friendly-fire'));
+
+						default:
+							die('Only accepts values: true, false, knockback, reduced');
+					}
 
 				case 'arenaselect':
 					if(array_size(@args) == 2) {
