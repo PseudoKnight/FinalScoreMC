@@ -32,10 +32,17 @@ proc _snake_bind_events(@game) {
 			}
 		}
 	}
+	
+	bind(inventory_open, array('id': 'snake-inventory'), null, @event, @game) {
+		if(array_index_exists(@game['snakes'], player())) {
+			cancel();
+		}
+	}
 }
 
 proc _snake_unbind_events() {
 	unbind('snake-interact');
 	unbind('snake-swap');
 	unbind('snake-explode');
+	unbind('snake-inventory');
 }

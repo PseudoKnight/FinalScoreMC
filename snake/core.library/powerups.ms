@@ -138,7 +138,7 @@ proc _snake_ability(@player, @game) {
 					}
 					_snake_drop_tnt(@snake['loc'], @snake['dir']);
 					set_timeout(5000, closure(){
-						if(@snake['alive'] && @snake['ability'] == 'tnt') {
+						if(@snake['alive'] && @snake['ability'] == 'tnt' && pinv(@player, -106)) {
 							@item = pinv(@player, 0);
 							if(@item) {
 								@item['qty'] += 1;
@@ -172,7 +172,7 @@ proc _snake_ability(@player, @game) {
 					}
 					_snake_launch_missile(@snake['loc'][], @snake['dir'], @game);
 					set_timeout(5000, closure(){
-						if(@snake['alive'] && @snake['ability'] == 'missile') {
+						if(@snake['alive'] && @snake['ability'] == 'missile' && pinv(@player, -106)) {
 							@item = pinv(@player, 0);
 							if(@item) {
 								@item['qty'] += 1;
@@ -207,7 +207,7 @@ proc _snake_ability(@player, @game) {
 					set_pinv(@player, associative_array(0: null));
 					_snake_shoot_laser(@player, @snake['loc'][], @snake['dir'], @amount, @game);
 					set_timeout(5000, closure(){
-						if(@snake['alive'] && @snake['ability'] == 'laser') {
+						if(@snake['alive'] && @snake['ability'] == 'laser' && pinv(@player, -106)) {
 							@item = pinv(@player, 0);
 							if(@item) {
 								@amount += @item['qty'];
@@ -245,7 +245,7 @@ proc _snake_ability(@player, @game) {
 					@snake['boost'] = @amount;
 					set_timeout(5000, closure(){
 						@snake['boost'] = 0;
-						if(@snake['alive'] && @snake['ability'] == 'boost') {
+						if(@snake['alive'] && @snake['ability'] == 'boost' && pinv(@player, -106)) {
 							@item = pinv(@player, 0);
 							if(@item) {
 								@amount += @item['qty'];
