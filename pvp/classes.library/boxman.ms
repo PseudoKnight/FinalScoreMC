@@ -68,7 +68,7 @@ case 'load':
 					if(@helmet && @helmet['name'] == 'STEP') {
 						@inv[@slot] = associative_array('name': 'WOOL', 'data': 2);
 						set_pinv(player(), @inv);
-						set_timeout(800, closure(){
+						set_timeout(1000, closure(){
 							if(ponline(player()) && pinfo(player(), 5) > 0) {
 								@helmet = pinv(player(), 103);
 								if(@helmet && @helmet['name'] == 'STEP') {
