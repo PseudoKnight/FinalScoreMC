@@ -236,6 +236,12 @@ proc _pvp_start_match(@id) {
 			@score = get_pscore('seconds', @king, @id);
 			set_pscore('seconds', @king, @score - 1, @id);
 			@check = true;
+			
+			if(array_index_exists(@arena, 'kothbeacon')) {
+				set_block_at(@arena['kothbeacon'], '95:'.array_index(array_keys(@pvp['players']), @king));
+			}
+		} else if(array_index_exists(@arena, 'kothbeacon')) {
+			set_block_at(@arena['kothbeacon'], 7);
 		}
 
 		if(array_index_exists(@arena, 'itemspawn')) {
