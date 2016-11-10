@@ -223,8 +223,11 @@
 			|| !array_contains(sk_regions_at(@p2), 'plots')) {
 				die(color('GOLD').'You can only claim regions within the green "plots" region in the southeast.');
 			}
-			if(abs(@p1['x'] - @p2['x']) * abs(@p1['z'] - @p2['z']) > 10000) {
-				die(color('GOLD').'Selection too large. (100m^2 limit) Ask staff if you need a larger region.');
+			@size = abs(@p1['x'] - @p2['x']) * abs(@p1['z'] - @p2['z']);
+			if(@size > 10000) {
+				die(color('GOLD').'Selection too large. (100x100 upper limit) Ask staff if you need a larger region.');
+			} else if(@size < 64) {
+				die(color('GOLD').'Selection too small. (8x8 lower limit)');
 			}
 			@region = @args[1];
 			if(sk_region_exists(pworld(), @region)) {
