@@ -122,6 +122,7 @@ bind(player_login, null, null, @event) {
 # Player join messages and tab list colors
 bind(player_join, null, null, @event) {
 	modify_event('join_message', null);
+	@lastPlayed = if(!@event['first_login'], plast_played(), null);
 
 	# BLOCK CODES
 	# Disables cheat features in mods that play nice.
@@ -154,7 +155,13 @@ bind(player_join, null, null, @event) {
 				} else {
 					@msg .= 'joined the game';
 				}
-				broadcast(colorize('&8'.simple_date('h:mm').' &2\u00bb &o'.@msg));
+				@msg = colorize('&8'.simple_date('h:mm').' &2\u00bb &o'.@msg);
+				@hover = 'New Player!';
+				if(@lastPlayed) {
+					@hover = 'Last played: '.simple_date('MMM d, yyyy', @lastPlayed);
+				}
+				include('/chat/includes.library/chat.ms');
+				_hover_tell(all_players(), array(array(@msg, @hover)));
 			}
 
 			foreach(@p in all_players()) {
