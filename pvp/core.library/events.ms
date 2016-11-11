@@ -480,6 +480,10 @@ bind(entity_damage, array('id': @id.'EntityDamage', 'priority': 'LOWEST'), array
 					}
 				}
 			}
+			
+			if(!@damager) {
+				die();
+			}
 
 			if(@pvp['arena']['ff'] != 'true'
 			&& ((array_index_exists(@pvp['arena'], 'team') && @pvp['players'][@e['player']]['team'] == @pvp['players'][@damager]['team'])
