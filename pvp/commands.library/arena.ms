@@ -36,12 +36,13 @@ proc _arena(@action, @id, @setting, @string) {
 
 				# 2 integer options
 				case 'timer':
+				case 'teamratio':
 
 					if(!@args[0] || !@args[1] || !is_integral(@args[0]) || !is_integral(@args[1])) {
 						die(@setting . ' requires two integers.');
 					}
-					@arena[@setting] = array(integer(@args[0]) - 1, integer(@args[1]));
-					msg(colorize('Set &a' . @setting . '&r for team &a' . @args[0] . '&r to &a' . @args[1]));
+					@arena[@setting] = array(integer(@args[0]), integer(@args[1]));
+					msg(colorize('Set &a' . @setting . '&r to &a' . @args[0] . '&r : &a' . @args[1]));
 
 				# string options
 				case 'broadcast':
@@ -152,7 +153,7 @@ proc _arena(@action, @id, @setting, @string) {
 					if(!@args[0] || !is_integral(@args[0])) {
 						die('This requires a team #.');
 					}
-					@team = @args[0] - 1;
+					@team = @args[0];
 					@loc = ploc();
 					@loc = array(
 						round(@loc['x'], 1),
@@ -161,7 +162,7 @@ proc _arena(@action, @id, @setting, @string) {
 						@loc['world'],
 					);
 					@arena[@setting][@team] = @loc;
-					msg(colorize('Set &a' . @setting . '&r for team &a' . @args[0] . '&r to this location.'));
+					msg(colorize('Set &a' . @setting . '&r for team &a' . @team . '&r to this location.'));
 
 				# multiple exact locations w/ teams
 				case 'respawn':
@@ -176,11 +177,11 @@ proc _arena(@action, @id, @setting, @string) {
 					@loc = ploc();
 					@loc = array(round(@loc['x'], 1), round(@loc['y'], 1), round(@loc['z'], 1), @loc['world']);
 					@team = 0;
-					if(@args[0] === '2') {
+					if(@args[0] === '1') {
 						@team = 1;
 					}
 					@arena[@setting][@team][] = @loc;
-					msg(colorize('Set a &a' . @setting . '&r to current location for team &a' . (@team + 1)));
+					msg(colorize('Set a &a' . @setting . '&r to current location for team &a' . @team));
 					
 				case 'ff':
 					switch(@args[0]) {
@@ -237,7 +238,7 @@ proc _arena(@action, @id, @setting, @string) {
 					}
 					@arena['spawnblock'][@args[0]] = @block;
 					msg('Set spawnblock to '.color(10).@block
-						.if(array_size(@args) == 1, color('r').' for team '.color(10).@args[0]));
+						.if(@args[0], color('r').' for team '.color(10).@args[0]));
 
 				case 'mode':
 					@modes = array(
@@ -264,16 +265,11 @@ proc _arena(@action, @id, @setting, @string) {
 					}
 					@loc = ploc();
 					@loc = array(floor(@loc['x']) + 0.5, @loc['y'] + 1, floor(@loc['z']) + 0.5, @loc['world']);
-					@arena['mobprotect'][@args[0] - 1] = array(
+					@arena['mobprotect'][@args[0]] = array(
 						'loc': @loc,
 						'type': @args[1],
 					);
 					msg(colorize('Set &a' . @args[1] . '&r to spawn at start for team &a' . @args[0]));
-
-				case 'teamratio':
-					if(array_size(@args) < 2, die('Needs two integers, for team 1 and team 2.'))
-					@arena['teamratio'] = array(@args[0], @args[1])
-					msg('Set team ratio to '.color(10).@args[0].':'.@args[1])
 
 				case 'team':
 					if(!@args[0] || !@args[1], die('Usage: /arena set <arena> team &4Team1 &cTeam2'))
@@ -290,14 +286,14 @@ proc _arena(@action, @id, @setting, @string) {
 					if(!array_index_exists(@arena, 'kit'), @arena['kit'] = array(array(), array()))
 					@inv = pinv();
 					_minify_inv(@inv, true);
-					if(!@args[0] || @args[0] == 1) {
+					if(!@args[0] || @args[0] == '0') {
 						@arena['kit'][0] = @inv
 						msg('Set kit to current inventory.')
-					} else if(@args[0] == 2) {
+					} else if(@args[0] == '1') {
 						@arena['kit'][1] = @inv
 						msg('Set kit to current inventory.')
 					} else {
-						die('Only accepts values 1 or 2 for teams, or blank for when there are no teams.')
+						die('Only accepts values 0 or 1 for teams, or blank for when there are no teams.')
 					}
 
 				case 'restore':
@@ -397,9 +393,9 @@ proc _arena(@action, @id, @setting, @string) {
 
 				case 'rsoutputscore':
 					if(!@args[0], die('This requires a team #.'))
-					@team = @args[0] - 1
+					@team = @args[0];
 					@arena['rsoutputscore'][@team] = pcursor()
-					msg('Set this block to turn into a redstone torch when team '.color(10).@args[0].color('r').' scores.')
+					msg('Set this block to turn into a redstone torch when team '.color(10).@team.color('r').' scores.')
 
 				case 'effect':
 					@effects = _get_effects()
@@ -410,9 +406,14 @@ proc _arena(@action, @id, @setting, @string) {
 					if(!array_index_exists(@arena, 'effect')) {
 						@arena['effect'] = array(associative_array(), associative_array(), associative_array())
 					}
-					if(@args[0] === 'all', @args[0] = 0)
+					@index = @args[0];
+					if(@index === 'all') {
+						@index = 0;
+					} else {
+						@index = integer(@index) + 1;
+					}
 					if(@args[2] == 0 || @args[3] == 0) {
-						array_remove(@arena['effect'][@args[0]], @effect)
+						array_remove(@arena['effect'][@index], @effect)
 						if(array_size(@arena['effect'][0]) == 0
 						&& array_size(@arena['effect'][1]) == 0
 						&& array_size(@arena['effect'][2]) == 0) {
@@ -420,10 +421,10 @@ proc _arena(@action, @id, @setting, @string) {
 						}
 						msg('Removed potion effect '.@args[1].'.')
 					} else {
-						@arena['effect'][@args[0]][@effect] = array('strength': @args[2] - 1, 'length': @args[3])
+						@arena['effect'][@index][@effect] = array('strength': @args[2] - 1, 'length': @args[3])
 						msg('Set '.color(10).@args[1].color('r').' with a strength of '.color(10).@args[2].color('r')
 							.' and a length of '.color(10).@args[3].color('r').' seconds'
-							.' for '.color(10).if(@args[0] != 0, 'team ').@args[0])
+							.' for '.color(10).if(@args[0] != 'all', 'team ').@args[0]);
 					}
 
 				case 'denydrop':
@@ -495,13 +496,14 @@ proc _arena(@action, @id, @setting, @string) {
 			@arena = get_value('arena.'.@id)
 			switch(@setting) {
 				case 'kit':
-					_clear_pinv()
-					if(@args[0]) {
-						set_pinv(player(), @arena['kit'][@args[0] - 1])
+					_clear_pinv();
+					@team = @args[0];
+					if(@team) {
+						set_pinv(player(), @arena['kit'][@team])
 					} else {
 						set_pinv(player(), @arena['kit'][0])
 					}
-					msg('You can save this kit by using "/arena set '.@id.' kit '.if(array_size(@args) > 0, @args[0]).'"')
+					msg('You can save this kit by using "/arena set '.@id.' kit '.if(@team, @team).'"')
 
 				case 'chestspawn':
 					@pcursor = pcursor();
@@ -699,7 +701,7 @@ proc _arena(@action, @id, @setting, @string) {
 						&& @spawn[2] < @loc[2] + 2 && @spawn[2] > @loc[2] + 2) {
 							@found = true;
 							array_remove(@arena['spawn'][0], @index);
-							msg('Removed this spawn location'.if(array_index_exists(@arena, 'team'), ' for team 1.', '.'));
+							msg('Removed this spawn location'.if(array_index_exists(@arena, 'team'), ' for team 0.', '.'));
 							break();
 						}
 					}
@@ -709,7 +711,7 @@ proc _arena(@action, @id, @setting, @string) {
 							&& @spawn[1] < @loc[1] + 2 && @spawn[1] > @loc[1] + 2
 							&& @spawn[2] < @loc[2] + 2 && @spawn[2] > @loc[2] + 2) {
 								array_remove(@arena['spawn'][1], @index);
-								msg('Removed this spawn location'.if(array_index_exists(@arena, 'team'), ' for team 2.', '.'));
+								msg('Removed this spawn location'.if(array_index_exists(@arena, 'team'), ' for team 1.', '.'));
 								break();
 							}
 						}
@@ -893,11 +895,11 @@ proc _arena(@action, @id, @setting, @string) {
 			msg('lives '.color('gray').'Number of lives until elimination');
 			msg('score '.color('gray').'The target score to win. (ctf: 5, koth: 60)');
 			msg('mobprotect '.color('gray').'Team protects mob [team type].');
-			msg('teamratio '.color('gray').'The ratio of players for team 1 and 2.');
-			msg('team '.color('gray').'Team info - [&4Team1 &cTeam2]');
+			msg('teamratio '.color('gray').'The ratio of players for team 0 and 1.');
+			msg('team '.color('gray').'Team info - [&4Team0 &cTeam1]');
 			msg('nametags '.color('gray').'Name tag visiblity per team');
 			msg('kit '.color('gray').'Sets the respawn kits - accepts team num as value');
-			msg('classes '.color('gray').'Available classes [team1list team2list]');
+			msg('classes '.color('gray').'Available classes [team0list team1list]');
 			msg('captain '.color('gray').'The captain class for each team');
 			msg('delay '.color('gray').'The starting delay (10 or 45 when classes)');
 			msg('respawntime '.color('gray').'The respawn time in seconds');
