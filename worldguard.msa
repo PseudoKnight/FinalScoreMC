@@ -76,7 +76,7 @@
 			try {
 				@region = @args[1];
 				@setting = @args[2];
-				@value = @args[3];
+				@value = array_get(@args, 3, 'allow');
 				if(has_permission('group.moderator') && @setting !== 'infinite-dispensers') {
 					run('/region '.$);
 					die();
