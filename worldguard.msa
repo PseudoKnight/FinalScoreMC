@@ -102,7 +102,7 @@
 						if(@value === 'allow') {
 							sudo('/region flag '.@region.' deny-spawn');
 						} else if(@value === 'deny') {
-							sudo('/region flag '.@region.' deny-spawn CREEPER,ENDERMAN,HUSK,SKELETON,SLIME,SPIDER,STRAY,WITCH,ZOMBIE');
+							sudo('/region flag '.@region.' deny-spawn CREEPER,ENDERMAN,HUSK,SKELETON,SLIME,SPIDER,STRAY,WITCH,ZOMBIE,ZOMBIE_VILLAGER');
 						}
 
 					case 'infinite-dispensers':
