@@ -137,11 +137,13 @@
 	if(!$) {
 		msg('Usage: /remove [radius] [entityType] [-n]');
 		msg('This will preserve named mobs, except when given the -n flag.');
-		msg('entityType groups: living, hostile');
+		msg('Special entityType groups: living, hostile, hologram');
 	}
 	@removenamed = false;
-	@type = array(WITHER, WITCH, CREEPER, SKELETON, SPIDER, GIANT, ZOMBIE, SLIME, GHAST, PIG_ZOMBIE, ENDERMAN,
-		CAVE_SPIDER, SILVERFISH, BLAZE, MAGMA_CUBE, ENDER_DRAGON, GUARDIAN, ENDERMITE);
+	@type = array('BLAZE', 'CAVE_SPIDER', 'CREEPER', 'ELDER_GUARDIAN', 'ENDER_DRAGON', 'ENDERMAN', 'ENDERMITE',
+			'EVOKER', 'GUARDIAN', 'GHAST', 'GIANT', 'HUSK', 'MAGMA_CUBE', 'PIG_ZOMBIE', 'SILVERFISH', 'SKELETON',
+			'SLIME', 'SPIDER', 'STRAY', 'WITCH', 'WITHER', 'WITHER_SKELETON', 'VEX', 'VINDICATOR', 'ZOMBIE',
+			'ZOMBIE_VILLAGER');
 	@radius = 64;
 	@loc = get_command_block();
 	if(is_null(@loc)) {
@@ -156,13 +158,13 @@
 		} else {
 			switch(@arg) {
 				case 'living':
-					@type = array(WITHER, BAT, WITCH, CREEPER, SKELETON, SPIDER, GIANT, ZOMBIE, SLIME, GHAST, PIG_ZOMBIE,
-					ENDERMAN, CAVE_SPIDER, SILVERFISH, BLAZE, MAGMA_CUBE, ENDER_DRAGON, PIG, SHEEP, COW, CHICKEN, SQUID,
-					WOLF, MUSHROOM_COW, SNOWMAN, OCELOT, IRON_GOLEM, VILLAGER, HORSE, RABBIT, GUARDIAN, ENDERMITE);
+					@type = array_merge(@type, array('BAT', 'CHICKEN', 'COW', 'DONKEY', 'HORSE', 'IRON_GOLEM', 'LLAMA',
+							'MULE', 'MUSHROOM_COW', 'OCELOT', 'PIG', 'RABBIT', 'SHEEP', 'SKELETON_HORSE', 'SNOWMAN',
+							'SQUID', 'VILLAGER', 'WOLF', 'ZOMBIE_HORSE'));
 				case 'hostile':
 					continue();
 				case 'hologram':
-					@type = ARMOR_STAND;
+					@type = 'ARMOR_STAND';
 					@removenamed = true;
 				default:
 					@type = @arg;

@@ -439,11 +439,6 @@ bind(player_interact, null, array('block': 77, 'button': 'right'), @event) {
 	}
 }
 
-# prevent people from pushing minecart hoppers underneath chests
-bind(vehicle_collide, null, array('type': 'MINECART_HOPPER', 'hittype': 'PLAYER'), @event) {
-	cancel();
-}
-
 # prevent enderdragon egg teleportation
 bind(player_interact, null, array('block': 122), @event) {
 	if(!_is_survival_world(pworld())) {
@@ -564,16 +559,9 @@ bind(block_dispense, null, array('type': 'DISPENSER'), @event) {
 	}
 }
 
-# Limit the number of mobs that can be built up from a mob spawner
-bind(creature_spawn, null, array('reason': '/(NETHER_PORTAL|SPAWNER)/'), @event) {
-	if(array_size(entities_in_radius(@event['location'], 48, @event['type'])) > 150) {
-		cancel();
-	}
-}
-
 # Limit breeding in high entity areas
 bind(creature_spawn, null, array('reason': 'BREEDING'), @event) {
-	if(@event['type'] !== 'HORSE'
+	if(!array_contains(array('DONKEY', 'HORSE', 'MULE'), @event['type'])
 	&& array_size(entities_in_radius(@event['location'], 64)) > 300) {
 		cancel();
 		play_effect(@event['location'], 'SMOKE', array('id': 4));
@@ -730,20 +718,37 @@ bind(block_place, null, array('type': 33), @e) {
 	}
 }
 
-// Protect non-rideable tameable animals from damage by non-owners
-bind(entity_damage, null, array('type': '/(WOLF|OCELOT)/'), @event) {
+// Protect tameable animals from damage by non-owners
+bind(entity_damage, null, array('type': '/(DONKEY|HORSE|LLAMA|MULE|OCELOT|SKELETON_HORSE|WOLF|ZOMBIE_HORSE)/'), @event) {
+	if(!_is_survival_world(@event['world'])) {
+		die();
+	}
+
 	@owner = get_mob_owner(@event['id']);
-	if(is_null(@owner) || !_is_survival_world(@event['world'])) {
+	if(is_null(@owner)) {
 		 die();
 	}
 
-	if(@event['cause'] == 'ENTITY_ATTACK') {
-		if(length(@event['damager']) < 17 && @owner != @event['damager']) {
-			cancel();
-		}
-	} else if(@event['cause'] == 'PROJECTILE') {
-		if(length(@event['shooter']) < 17 && @owner != @event['shooter']) {
-			cancel();
-		}
+	switch(@event['cause']) {
+		case 'ENTITY_ATTACK':
+			@isplayer = length(@event['damager']) < 17;
+
+			if((@isplayer && @owner != @event['damager'])
+			|| (!@isplayer && !get_entity_rider(@event['id']))) {
+				cancel();
+			}
+
+		case 'PROJECTILE':
+			@isplayer = length(@event['shooter']) < 17;
+
+			if((@isplayer && @owner != @event['shooter'])
+			|| (!@isplayer && !get_entity_rider(@event['id']))) {
+				cancel();
+			}
+
+		default:
+			if(!get_entity_rider(@event['id'])) {
+				modify_event('amount', 0);
+			}
 	}
 }

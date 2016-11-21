@@ -30,7 +30,8 @@ bind(player_teleport, null, null, @event) {
 	}
 
 	@vehicle = get_entity_vehicle(puuid());
-	if(entity_type(@vehicle) === 'HORSE'
+	@type = entity_type(@vehicle);
+	if(array_contains(array('DONKEY', 'HORSE', 'LLAMA', 'MULE', 'SKELETON_HORSE', 'ZOMBIE_HORSE'), @type)
 	&& _is_survival_world(@from)
 	&& _is_survival_world(@to)) {
 		set_timeout(50, closure(){

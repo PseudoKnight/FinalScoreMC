@@ -13,10 +13,16 @@
 			@player = @arg;
 		} else{
 			switch(@arg) {
-			case 'horse':
 			case 'donkey':
-			case 'mule':
+				@thing = 'DONKEY';
+			case 'horse':
 				@thing = 'HORSE';
+			case 'mule':
+				@thing = 'MULE';
+			case 'skeletonhorse':
+				@thing = 'SKELETON_HORSE';
+			case 'zombiehorse':
+				@thing = 'ZOMBIE_HORSE';
 			case 'wolf':
 			case 'dog':
 				@thing = 'WOLF';
@@ -31,7 +37,7 @@
 		die('Unknown player.');
 	}
 	if(!@thing) {
-		die('Please specify "horse", "wolf", or "cat".');
+		die('Please specify "horse", "mule", "donkey", "zombiehorse", "skeletonhorse", "wolf", or "cat".');
 	}
 	bind(player_interact_entity, array('id': 'transfer'.player().@player), array('clicked': @thing), @e, @player, @owner = player()) {
 		if(player() != @owner) {

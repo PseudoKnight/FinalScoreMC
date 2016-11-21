@@ -34,12 +34,8 @@ bind(creature_spawn, null, array('type': 'SKELETON', 'reason': 'NATURAL'), @e) {
 		queue_push(closure(){
 			try(
 				set_entity_persistence(@e['id'], true);
-				/*
-				Enable in 1.11+
-				@horse = spawn_mob('HORSE', 1, @e['location'])[0];
-				set_entity_spec(@horse, array('variant': if(rand(2), 'SKELETON', 'ZOMBIE')));
+				@horse = spawn_mob('HORSE:'.if(rand(2), 'SKELETON', 'ZOMBIE'), 1, @e['location'])[0];
 				set_entity_rider(@horse, @e['id']);
-				*/
 				if(rand(3)) {
 					set_mob_equipment(@e['id'], array(
 						'WEAPON': array('name': 'BOW', 'enchants': array(array('etype': 'ARROW_DAMAGE', 'elevel': 2))),

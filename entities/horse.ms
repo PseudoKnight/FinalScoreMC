@@ -1,18 +1,22 @@
 # prevent non-owners from riding a horse, unless shared
-bind(player_interact_entity, null, array('clicked': 'HORSE'), @event) {
+bind(player_interact_entity, null, array('clicked': '/(DONKEY|HORSE|LLAMA|MULE|SKELETON_HORSE|ZOMBIE_HORSE)/'), @event) {
 	if(!_is_survival_world(pworld())) {
 		die();
 	}
 
-	@yVelocity = round(entity_spec(@event['id'])['jump'], 2);
 	@jump = 0;
-	# calculate jump height in meters
-	while(@yVelocity > 0) {
-		@jump += @yVelocity;
-		@yVelocity -= 0.08;
-		@yVelocity *= 0.98;
+	try {
+		@yVelocity = round(entity_spec(@event['id'])['jump'], 2);
+		# calculate jump height in meters
+		while(@yVelocity > 0) {
+			@jump += @yVelocity;
+			@yVelocity -= 0.08;
+			@yVelocity *= 0.98;
+		}
+		@jump = round(@jump, 1);
+	} catch(IndexOverflowException @ex) {
+		// llama
 	}
-	@jump = round(@jump, 1);
 	@health = round(get_max_health(@event['id']) / 2, 1);
 	@speed = round(get_attribute(@event['id'], 'movementspeed') * 43, 2);
 	if(function_exists('action_msg')) {
@@ -24,7 +28,7 @@ bind(player_interact_entity, null, array('clicked': 'HORSE'), @event) {
 	@item = pinv(player(), null);
 	@owner = get_mob_owner(@event['id']);
 	if(@owner && @owner != player()) {
-		msg('This horse is owned by '.@owner);
+		msg('This animal is owned by '.@owner);
 		if(!has_permission('group.moderator')
 		&& (!@item || (@item['type'] != 322	&& @item['type'] != 396))) {
 			@pdata = null;
@@ -46,13 +50,12 @@ bind(player_interact_entity, null, array('clicked': 'HORSE'), @event) {
 		}
 	} else if(is_null(@owner) && !is_null(entity_spec(@event['id'])['saddle'])) {
 		tame_mob(@event['id']);
-		msg('You now own this horse.');
+		msg('You now own this animal.');
 	}
 
 	# skeleton/zombie horses
 	if(!is_cancelled() && !pinfo(player(), 11)) {
-		@horse = entity_spec(@event['id']);
-		if(@horse['variant'] === 'ZOMBIE' || @horse['variant'] === 'SKELETON') {
+		if(@event['clicked'] === 'ZOMBIE_HORSE' || @event['clicked'] === 'SKELETON_HORSE') {
 			if(@item) {
 				switch(@item['type']) {
 					case 322: # gold apple
@@ -78,41 +81,5 @@ bind(player_interact_entity, null, array('clicked': 'HORSE'), @event) {
 				set_entity_rider(@event['id'], puuid());
 			}
 		}
-	}
-}
-
-# don't allow most horse damage unless being rode
-bind(entity_damage, null, array('type': 'HORSE'), @event) {
-	@world = entity_loc(@event['id'])['world'];
-	if(!_is_survival_world(@world)) {
-		die();
-	}
-
-	@owner = get_mob_owner(@event['id']);
-	if(is_null(@owner)) {
-		 die();
-	}
-
-	switch(@event['cause']) {
-		case 'ENTITY_ATTACK':
-			@isplayer = length(@event['damager']) < 17;
-
-			if((@isplayer && @owner != @event['damager'])
-			|| (!@isplayer && !get_entity_rider(@event['id']))) {
-				cancel();
-			}
-
-		case 'PROJECTILE':
-			@isplayer = length(@event['shooter']) < 17;
-
-			if((@isplayer && @owner != @event['shooter'])
-			|| (!@isplayer && !get_entity_rider(@event['id']))) {
-				cancel();
-			}
-
-		default:
-			if(!get_entity_rider(@event['id'])) {
-				modify_event('amount', 0);
-			}
 	}
 }
