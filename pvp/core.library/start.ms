@@ -165,10 +165,12 @@ proc _pvp_start(@pvp, @id){
 
 	# PREPARE TEAMS
 	if(array_index_exists(@arena, 'team')) {
-		if(@arena['mode'] === 'ctf') {
-			@pvp['team'][0]['score'] = 0;
-			@pvp['team'][0]['flag'] = 0;
+		if(array_index_exists(@arena, 'score')) {
 			@pvp['team'][1]['score'] = 0;
+			@pvp['team'][0]['score'] = 0;
+		}
+		if(@arena['mode'] === 'ctf') {
+			@pvp['team'][0]['flag'] = 0;
 			@pvp['team'][1]['flag'] = 0;
 		}
 		if(array_index_exists(@arena, 'captain')) {
@@ -212,6 +214,16 @@ proc _pvp_start(@pvp, @id){
 				set_objective_display('mobhealth', array('displayname': color('a').'Mob Health', 'slot': 'SIDEBAR'), @id);
 				team_add_player(@arena['team'][0]['name'], @arena['team'][0]['name'], @id);
 				team_add_player(@arena['team'][1]['name'], @arena['team'][1]['name'], @id);
+			}
+			if(array_index_exists(@arena, 'score')) {
+				create_objective('score', 'DUMMY', @id);
+				set_objective_display('score', array('displayname': color('a').'Score', 'slot': 'SIDEBAR'), @id);
+				if(@arena['mode'] == 'tdm') {
+					team_add_player(@arena['team'][0]['name'], @arena['team'][0]['name'], @id);
+					set_pscore('score', @arena['team'][0]['name'], 0, @id);
+					team_add_player(@arena['team'][1]['name'], @arena['team'][1]['name'], @id);
+					set_pscore('score', @arena['team'][1]['name'], 0, @id);
+				}
 			}
 		case 'ctf':
 			create_objective('captures', 'DUMMY', @id);

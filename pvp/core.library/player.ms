@@ -45,6 +45,9 @@ proc _pvp_initialize_players(@id, @players) {
 				if(array_index_exists(@pvp['arena'], 'lives') && @pvp['arena']['lives'] > 1) {
 					set_pscore('lives', @player, @pvp['arena']['lives'], @id);
 				}
+				if(array_index_exists(@pvp['arena'], 'score') && @pvp['arena']['mode'] == 'dm') {
+					set_pscore('score', @player, 0, @id);
+				}
 		}
 
 		if(array_contains(@pvp['arena']['flags'], 'hideplayers')) {
