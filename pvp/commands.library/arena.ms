@@ -172,13 +172,16 @@ proc _arena(@action, @id, @setting, @string) {
 						die('You can only set location in the custom world.');
 					}
 					if(!array_index_exists(@arena, @setting)) {
-						@arena[@setting] = array(array(), array());
+						@arena[@setting] = array();
 					}
 					@loc = ploc();
 					@loc = array(round(@loc['x'], 1), round(@loc['y'], 1), round(@loc['z'], 1), @loc['world']);
 					@team = 0;
-					if(@args[0] === '1') {
-						@team = 1;
+					if(@args[0]) {
+						@team = integer(@args[0]);
+					}
+					if(!array_index_exists(@arena[@setting], @team)) {
+						@arena[@setting][@team] = array();
 					}
 					@arena[@setting][@team][] = @loc;
 					msg(colorize('Set a &a' . @setting . '&r to current location for team &a' . @team));

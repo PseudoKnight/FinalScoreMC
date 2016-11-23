@@ -124,14 +124,33 @@ proc _pvp_start(@pvp, @id){
 			}
 
 			// Alternate spawns
-			@team = 1;
-			foreach(@spawn in @arena['spawn'][0]) {
-				@arena['spawn'][@team] = @spawn;
-				@team = if(@team == 1, 2, 1);
+			if(array_size(@arena['spawn']) == 1 || !@arena['spawn'][1]) {
+				@team = 1;
+				foreach(@spawn in @arena['spawn'][0]) {
+					@arena['spawn'][@team] = @spawn;
+					@team = if(@team == 1, 2, 1);
+				}
+			// or remove excess spawn groups
+			} else {
+				while(array_size(@arena['spawn']) > 2) {
+					array_remove(@arena['spawn'], rand(array_size(@arena['spawn'])));
+				}
 			}
 
 		} else {
 			@arena['mode'] = 'dm';
+			
+			// Merge spawns, if needed
+			if(array_size(@arena['spawn']) > 1) {
+				@size = array_size(@arena['spawn'][0]);
+				@newSpawns = array();
+				for(@i = 0, @i < @size, @i++) {
+					foreach(@spawns in @arena['spawn']) {
+						@newSpawns[] = @spawns[@i];
+					}
+				}
+				@arena['spawn'][0] = @newSpawns;
+			}
 		}
 	}
 
