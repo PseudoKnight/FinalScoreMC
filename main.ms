@@ -662,7 +662,7 @@ bind(creature_spawn, null, array('reason': 'SPAWNER_EGG'), @event) {
 }
 
 # block skeleton trap horses in regions
-bind(creature_spawn, null, array('reason': 'LIGHTNING', 'type': 'HORSE'), @event) {
+bind(creature_spawn, null, array('reason': 'LIGHTNING', 'type': 'SKELETON_HORSE'), @event) {
 	if(@event['location']['world'] != 'outworld') {
 		cancel();
 	}
