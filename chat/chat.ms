@@ -68,10 +68,11 @@ bind(player_chat, null, null, @event) {
 
 	@color = _colorname();
 
-	@components[] = array(' '.@color.player().'&8: ',
+	@components[] = array(' '.@color.player(),
 		if(has_permission('group.moderator'), '&bSTAFF\n')
 		.if(array_index_exists(@pdata, 'names'), @color.array_implode(@pdata['names']).'\n')
 		.'&8[world] &r'._worldname(pworld()));
+	@components[] = '&8: &r';
 
 	@clickableMessage = _clickable_links(@escapedMessage);
 

@@ -149,19 +149,20 @@ bind(player_join, null, null, @event) {
 		@pdata = _pdata(player());
 		queue_push(closure(){
 			if(!(has_permission('group.admin') && get_value('silentjoin'))) {
-				@msg = _colorname().'&o'.player().'&e&o ';
+				include('/chat/includes.library/chat.ms');
+				@pre = '&8'.simple_date('h:mm').' &2\u00bb ';
+				@name = _colorname().color('italic').player();
+				@msg = '&e&o ';
 				if(array_index_exists(@pdata, 'enter')) {
 					@msg .= @pdata['enter'];
 				} else {
 					@msg .= 'joined the game';
 				}
-				@msg = colorize('&8'.simple_date('h:mm').' &2\u00bb &o'.@msg);
 				@hover = 'New Player!';
 				if(@lastPlayed) {
 					@hover = 'Last played: '.simple_date('MMM d, yyyy', @lastPlayed);
 				}
-				include('/chat/includes.library/chat.ms');
-				_hover_tell(all_players(), array(array(@msg, @hover)));
+				_hover_tell(all_players(), array(@pre, array(@name, @hover), @msg));
 			}
 
 			foreach(@p in all_players()) {
