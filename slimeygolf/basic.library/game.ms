@@ -93,12 +93,12 @@ proc _start_game(@course, @loc) {
 
 				if(@player != player(), die());
 				@ball = @golf['players'][player()];
-				if(@event['id'] != @ball['id']){
+				if(@event['id'] != @ball['slime']){
 					die();
 				}
 				cancel();
 				if(!@ball['swing']) {
-					@loc = entity_loc(@event['id']);
+					@loc = entity_loc(@ball['id']);
 					@ball['origin'] = ploc();
 					@ball['origin']['y'] = @loc['y'];
 					@dist = _distance(@ball['origin'], @loc);
@@ -128,7 +128,7 @@ proc _start_game(@course, @loc) {
 				}
 			}
 
-			bind(entity_damage, array(id: 'golf_hit_'.player()), array(id: @ball['id'], cause: 'ENTITY_ATTACK'), @event, @golf) {
+			bind(entity_damage, array(id: 'golf_hit_'.player()), array('id': @ball['slime'], 'cause': 'ENTITY_ATTACK'), @event, @golf) {
 				cancel();
 				if(!array_index_exists(@golf['players'], @event['damager'])) {
 					die();
@@ -138,7 +138,7 @@ proc _start_game(@course, @loc) {
 				@ball = @golf['players'][@player];
 				@hole = @ball['hole'];
 				if(@xp > 0 && @ball['swing']
-				&& @ball['id'] == @event['id']) {
+				&& @ball['slime'] == @event['id']) {
 					@ball['swing'] = false;
 					@xp = max(2, @xp - 8);
 					set_plevel(@player, plevel(@player) + 1);
@@ -147,15 +147,15 @@ proc _start_game(@course, @loc) {
 					set_pscore('strokes', @player, @golf[@hole]['strokes'][@player], @golf['name'].@hole);
 					play_sound(entity_loc(@event['id']), array('sound': 'WOOD_CLICK', 'pitch': 2 - (1.3 / @xp)));
 					@ploc = entity_loc(puuid(@player));
-					@eloc = entity_loc(@event['id']);
+					@eloc = entity_loc(@ball['id']);
 					@dist = _distance(@ploc, @eloc);
 					@x = ((@eloc['x'] - @ploc['x']) / @dist) * (@xp / 90);
 					@z = ((@eloc['z'] - @ploc['z']) / @dist) * (@xp / 90);
 					@ball['velocity'] = array('x': @x, 'y': 0, 'z': @z);
-					set_entity_velocity(@event['id'], @ball['velocity']);
+					set_entity_velocity(@ball['id'], @ball['velocity']);
 					set_timeout(50, closure(){
 						@ball['velocity'] = array('x': @x, 'y': 0, 'z': @z);
-						set_entity_velocity(@event['id'], @ball['velocity']);
+						set_entity_velocity(@ball['id'], @ball['velocity']);
 					})
 					set_pinv(@player, array(0: array('type': 341)));
 				} else {

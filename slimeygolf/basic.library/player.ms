@@ -7,6 +7,7 @@ proc _add_player(@player, @golf) {
 		type: array_size(@golf['players']),
 		hole: 1,
 		id: 0,
+		slime: 0,
 		velocity: array('x': 0, 'y': 0, 'z': 0),
 		swing: false,
 	);
