@@ -632,13 +632,6 @@ bind(player_interact_entity, null, array('clicked': 'PAINTING'), @event) {
 	}
 }
 
-# animal sitter
-bind(player_interact_entity, null, array('clicked': '/(WOLF|OCELOT)/'), @e) {
-	if(!sk_can_build(entity_loc(@e['id'])) && get_mob_owner(@e['id']) == player()) {
-		set_entity_spec(@e['id'], associative_array('sitting': false));
-	}
-}
-
 # Block creeper damage on the surface.
 bind(entity_explode, null, array('type': 'CREEPER'), @event) {
 	if(@event['location']['y'] > 62
@@ -715,40 +708,5 @@ bind(block_place, null, array('type': 33), @e) {
 		modify_event('data', 1);
 	} else if(@pitch < -46.5) {
 		modify_event('data', 0);
-	}
-}
-
-// Protect tameable animals from damage by non-owners
-bind(entity_damage, null, array('type': '/(DONKEY|HORSE|LLAMA|MULE|OCELOT|SKELETON_HORSE|WOLF|ZOMBIE_HORSE)/'), @event) {
-	if(!_is_survival_world(@event['world'])) {
-		die();
-	}
-
-	@owner = get_mob_owner(@event['id']);
-	if(is_null(@owner)) {
-		 die();
-	}
-
-	switch(@event['cause']) {
-		case 'ENTITY_ATTACK':
-			@isplayer = length(@event['damager']) < 17;
-
-			if((@isplayer && @owner != @event['damager'])
-			|| (!@isplayer && !get_entity_rider(@event['id']))) {
-				cancel();
-			}
-
-		case 'PROJECTILE':
-			@isplayer = length(@event['shooter']) < 17;
-
-			if((@isplayer && @owner != @event['shooter'])
-			|| (!@isplayer && !get_entity_rider(@event['id']))) {
-				cancel();
-			}
-
-		default:
-			if(!get_entity_rider(@event['id'])) {
-				modify_event('amount', 0);
-			}
 	}
 }
