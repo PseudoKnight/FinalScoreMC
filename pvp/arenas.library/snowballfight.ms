@@ -28,3 +28,36 @@ bind(entity_damage_player, array('id': @id.'snowballtp'), array('damager': 'SNOW
     set_ploc(@player, @loc);
     _pvp_check_objectives(@id);
 }
+
+@pvp['binds'][] = @id.'snowballpickup';
+bind(item_pickup, array('id': @id.'snowballpickup', 'priority': 'HIGHEST'), array('item': data_values('snowball'), @e, @id) {
+    @pvp = import('pvp'.@id)
+    if(!array_index_exists(@pvp['players'], player())) {
+        die();
+    }
+    consume();
+    if(!pinv(player(), 0)) {
+        modify_event('item', null);
+        set_pinv(player(), associative_array(0: associative_array('name': 'SNOW_BALL')));
+    } else if(!pinv(player(), -106)) {
+        modify_event('item', null);
+        set_pinv(player(), associative_array(-106: associative_array('name': 'SNOW_BALL')));
+    } else {
+        cancel();
+    }
+}
+
+@pvp['binds'][] = @id.'snowballshovel';
+bind(block_break, array('id': @id.'snowballshovel'), array('type': data_values('snow')), @e, @id) {
+    @pvp = import('pvp'.@id)
+    if(!array_index_exists(@pvp['players'], player())) {
+        die();
+    }
+    cancel();
+    @loc = @e['location'];
+    @loc['x'] += 0.5;
+    @loc['y'] += 0.1;
+    @loc['z'] += 0.5;
+    @snowball = spawn_entity('DROPPED_ITEM', 1, @loc)[0];
+    set_entity_spec(@snowball, associative_array('itemstack': associative_array('name': 'SNOW_BALL')));
+}
