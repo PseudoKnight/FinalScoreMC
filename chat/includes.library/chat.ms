@@ -76,7 +76,6 @@ proc _hover_tell(@recipients, @components) {
 	}
 	@raw .= '"}]';
 	foreach(@player in @recipients) {
-		if(pisop(), console('Debug: '.@raw));
 		runas('~console', '/tellraw '.@player.@raw);
 	}
 }
