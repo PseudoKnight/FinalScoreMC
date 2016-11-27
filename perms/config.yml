@@ -165,7 +165,6 @@ engineer:
 limitedworldedit:
   permissions:
     AWE.user.mode.change: true
-    worldguard.region.*: true
     worldedit.brush.*: true
     worldedit.clipboard.*: true
     worldedit.fast: true
