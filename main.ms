@@ -260,8 +260,12 @@ bind(player_join, null, null, @event) {
 }
 
 bind(player_command, null, null, @event) {
-	if(length(@event['prefix']) > 1 && @event['prefix'][1] !== '/') {
-		console(@event['player'].' ran: '.@event['command'], false);
+	try {
+		if(@event['command'] != '/we cui' && @event['command'][1] !== '/') {
+			console(@event['player'].' ran: '.@event['command'], false);
+		}
+	} catch(RangeException @ex) {
+		call_alias('/help');
 	}
 }
 
