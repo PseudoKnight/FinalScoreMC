@@ -200,6 +200,9 @@ proc _minify_inv(@inv, @keepnulls = false) {
 			if(array_size(@item['meta']['flags']) == 0) {
 				array_remove(@item['meta'], 'flags');
 			}
+			if(array_index_exists(@item['meta'], 'inventory')) {
+				_minify_inv(@item['meta']['inventory']);
+			}
 		}
 	}
 
