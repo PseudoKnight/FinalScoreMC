@@ -47,7 +47,7 @@ proc _get_pstate(@player, @state) {
 			set_peffect(@player, @effect['id'], 0, 0);
 		}
 		foreach(@effect in array_get(@pstate, 'effects', array())) {
-			set_peffect(@player, @effect['id'], @effect['strength'], @effect['seconds']);
+			set_peffect(@player, @effect['id'], @effect['strength'], @effect['seconds'], @effect['ambient']);
 		}
 	} catch(Exception @ex) {
 		console('WARNING: Failed to load effects for '.@player'.', false);
