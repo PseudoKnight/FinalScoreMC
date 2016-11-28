@@ -126,6 +126,9 @@ bind(player_death, array('priority': 'high', 'id': @id.'death'), null, @e, @id) 
 		@pvp['players'][player()]['inv'] = @inv;
 	} else {
 		foreach(@drop in @e['drops']) {
+			if(!@drop) {
+				continue();
+			}
 			if(@pvp['arena']['mode'] === 'ctf' && !is_null(@flag = _flag(@drop))) {
 				_regionmsg(@pvp['arena']['broadcast'], color('gray').'[PVP] '.@pvp['players'][player()]['color']
 					.player().color('r').' dropped the '.@pvp['arena']['team'][@flag]['color'].'flag')
