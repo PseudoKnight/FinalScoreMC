@@ -120,9 +120,6 @@ proc _pvp_start_match(@id) {
 		@pvp = import('pvp'.@id);
 		@arena = @pvp['arena'];
 		@check = false;
-		if(@arena['mode'] == 'koth') {
-			@hillcount = 0;
-		}
 
 		if(array_index_exists(@arena, 'timer')) {
 			@totalsecsleft = ceil((@arena['timer'][1] * 60) - ((time() / 1000) - @pvp['starttime']))
@@ -141,7 +138,6 @@ proc _pvp_start_match(@id) {
 			}
 		}
 		
-		@king = '';
 		foreach(@player: @p in @pvp['players']) {
 			if(pinfo(@player, 5) <= 0) {
 				// dead
@@ -218,9 +214,6 @@ proc _pvp_start_match(@id) {
 						}
 					});
 				}
-			} else if(@arena['mode'] == 'koth' && array_contains(sk_current_regions(@player), @arena['kothregion'])) {
-				@king = @player;
-				@hillcount++;
 			}
 
 		} else {
@@ -230,31 +223,6 @@ proc _pvp_start_match(@id) {
 		foreach(@p in @pvp['spectators']) {
 			if(!array_contains(sk_current_regions(@p), @arena['region'])) {
 				_remove_spectator(@p, @pvp);
-			}
-		}
-
-		if(@arena['mode'] == 'koth') {
-			@team = get_teams(@id)[0];
-			if(@hillcount == 1) {
-				@score = get_pscore('seconds', @king, @id);
-				set_pscore('seconds', @king, @score + 1, @id);
-				@check = true;
-				if(!array_contains(@team['players'], @king)) {
-					if(@team['size'] == 1) {
-						team_remove_player('king', @team['players'][0], @id);
-					}
-					team_add_player('king', @king, @id);
-				}
-				if(array_index_exists(@arena, 'kothbeacon')) {
-					set_block_at(@arena['kothbeacon'], '95:'.array_index(array_keys(@pvp['players']), @king));
-				}
-			} else {
-				if(@team['size'] == 1) {
-					team_remove_player('king', @team['players'][0], @id);
-				}
-				if(array_index_exists(@arena, 'kothbeacon')) {
-					set_block_at(@arena['kothbeacon'], 7);
-				}
 			}
 		}
 
@@ -311,6 +279,11 @@ proc _pvp_start_match(@id) {
 				}
 			}
 		}
+		
+		// Mode specific code
+		if(_interval(@pvp)) {
+			@check = true;
+		}
 
 		if(@check) {
 			_pvp_check_objectives(@id);
@@ -322,19 +295,7 @@ proc _pvp_start_match(@id) {
 proc _pvp_check_objectives(@id) {
 	@pvp = import('pvp'.@id)
 
-	#check total player count
-	if(array_size(@pvp['players']) < 1) {
-		_pvp_end_match(@id, array())
-		die()
-	}
-
-	if(array_contains(array('dm', 'koth', 'tntrun'), @pvp['arena']['mode'])
-	&& array_size(@pvp['players']) <= 1) {
-		_pvp_end_match(@id, array_keys(@pvp['players']))
-		die()
-	}
-
-	#check team player counts
+	#check player counts
 	if(array_index_exists(@pvp, 'team')) {
 		@teamcount = array(0, 0)
 		foreach(@player in @pvp['players']) {
@@ -347,6 +308,9 @@ proc _pvp_check_objectives(@id) {
 			_pvp_end_match(@id, @pvp['team'][@winner]['players'])
 			die()
 		}
+	} else if(array_size(@pvp['players']) <= 1) {
+		_pvp_end_match(@id, array_keys(@pvp['players']));
+		die();
 	}
 
 	#check ffa player scores
@@ -437,8 +401,6 @@ proc _pvp_end_match(@id, @winners) {
 				_worldmsg('custom', color('gray').'[PVP] '.color('r').'Nobody wins! Wait.. what?!');
 			}
 		}, @id);
-
-
 
 		if(array_index_exists(@pvp['arena'], 'chestspawn')) {
 			for(@i = 0, @i < array_size(@pvp['arena']['chestspawn']), @i++) {
