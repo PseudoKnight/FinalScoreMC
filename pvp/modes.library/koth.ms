@@ -1,34 +1,66 @@
-proc _interval(@pvp) {
-    @hillcount = 0;
-    @king = '';
-    foreach(@player in array_keys(@pvp['players'])) {
-        if(pinfo(@player, 5) > 0 && array_contains(sk_current_regions(@player), @arena['kothregion'])) {
-            @king = @player;
-            @hillcount++;
+proc _interval(@pvp, @id) {
+    if(array_index_exists(@pvp, 'team')) {
+        @kingteam = -1;
+        foreach(@p: @player in @pvp['players']) {
+            if(pinfo(@p, 5) > 0 && array_contains(sk_current_regions(@p), @pvp['arena']['kothregion'])) {
+                if(@king && @king != @player['team']) {
+                    // contested
+                    @kingteam = -1;
+                    break();
+                } else {
+                    @king = @player['team'];
+                }
+            }
         }
+        
+    	@teams = get_teams(@id);
+    	if(@kingteam > -1) {
+            @team = @teams[@kingteam]['name']
+    		@score = get_pscore('seconds', @team, @id);
+    		set_pscore('seconds', @team, @score + 1, @id);
+    		if(array_index_exists(@pvp['arena'], 'kothbeacon')) {
+    			set_block_at(@pvp['arena']['kothbeacon'], '95:'.(@kingteam + 3));
+    		}
+            return(true);
+    	} else {
+    		if(array_index_exists(@pvp['arena'], 'kothbeacon')) {
+    			set_block_at(@pvp['arena']['kothbeacon'], 7);
+    		}
+            return(false);
+    	}
+        
+    } else {
+        @hillcount = 0;
+        @king = '';
+        foreach(@player in array_keys(@pvp['players'])) {
+            if(pinfo(@player, 5) > 0 && array_contains(sk_current_regions(@player), @pvp['arena']['kothregion'])) {
+                @king = @player;
+                @hillcount++;
+            }
+        }
+        
+    	@team = get_teams(@id)[0];
+    	if(@hillcount == 1) {
+    		@score = get_pscore('seconds', @king, @id);
+    		set_pscore('seconds', @king, @score + 1, @id);
+    		if(!array_contains(@team['players'], @king)) {
+    			if(@team['size'] == 1) {
+    				team_remove_player('king', @team['players'][0], @id);
+    			}
+    			team_add_player('king', @king, @id);
+    		}
+    		if(array_index_exists(@pvp['arena'], 'kothbeacon')) {
+    			set_block_at(@pvp['arena']['kothbeacon'], '95:'.(array_index(array_keys(@pvp['players']), @king) + 1));
+    		}
+            return(true);
+    	} else {
+    		if(@team['size'] == 1) {
+    			team_remove_player('king', @team['players'][0], @id);
+    		}
+    		if(array_index_exists(@pvp['arena'], 'kothbeacon')) {
+    			set_block_at(@pvp['arena']['kothbeacon'], 7);
+    		}
+            return(false);
+    	}
     }
-    
-	@team = get_teams(@id)[0];
-	if(@hillcount == 1) {
-		@score = get_pscore('seconds', @king, @id);
-		set_pscore('seconds', @king, @score + 1, @id);
-		if(!array_contains(@team['players'], @king)) {
-			if(@team['size'] == 1) {
-				team_remove_player('king', @team['players'][0], @id);
-			}
-			team_add_player('king', @king, @id);
-		}
-		if(array_index_exists(@arena, 'kothbeacon')) {
-			set_block_at(@arena['kothbeacon'], '95:'.array_index(array_keys(@pvp['players']), @king) + 1);
-		}
-        return(true);
-	} else {
-		if(@team['size'] == 1) {
-			team_remove_player('king', @team['players'][0], @id);
-		}
-		if(array_index_exists(@arena, 'kothbeacon')) {
-			set_block_at(@arena['kothbeacon'], 7);
-		}
-        return(false);
-	}
 }

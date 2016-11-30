@@ -281,7 +281,7 @@ proc _pvp_start_match(@id) {
 		}
 		
 		// Mode specific code
-		if(_interval(@pvp)) {
+		if(_interval(@pvp, @id)) {
 			@check = true;
 		}
 
@@ -314,7 +314,7 @@ proc _pvp_check_objectives(@id) {
 	}
 
 	#check ffa player scores
-	if(@pvp['arena']['mode'] === 'koth') {
+	if(@pvp['arena']['mode'] === 'koth' && !array_index_exists(@pvp, 'team')) {
 		foreach(@player: @data in @pvp['players']) {
 			if(get_pscore('seconds', @player, @id)  >= 0) {
 				_pvp_end_match(@id, array(@player))

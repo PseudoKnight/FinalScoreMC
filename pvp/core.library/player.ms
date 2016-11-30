@@ -39,7 +39,9 @@ proc _pvp_initialize_players(@id, @players) {
 		}
 		switch(@pvp['arena']['mode']) {
 			case 'koth':
-				set_pscore('seconds', @player, neg(@pvp['arena']['score']), @id);
+				if(!array_index_exists(@pvp, 'team')) {
+					set_pscore('seconds', @player, neg(@pvp['arena']['score']), @id);
+				}
 			case 'tdm':
 			case 'dm':
 				if(array_index_exists(@pvp['arena'], 'lives') && @pvp['arena']['lives'] > 1) {

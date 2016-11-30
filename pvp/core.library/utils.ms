@@ -43,6 +43,6 @@ proc _horizontal_distance(@loc1, @loc2) {
 /*
 	Core game interval (overrided by game modes)
 */
-proc _interval(@pvp){
+proc _interval(@pvp, @id){
 	return(false);
 }

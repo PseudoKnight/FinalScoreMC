@@ -216,8 +216,15 @@ proc _pvp_start(@pvp, @id){
 		case 'koth':
 			create_objective('seconds', 'DUMMY', @id);
 			set_objective_display('seconds', array('displayname': color('a').'Seconds Left', 'slot': 'SIDEBAR'), @id);
-			create_team('king', @id);
-			set_team_display('king', array('prefix': color('green')), @id);
+			if(array_index_exists(@arena, 'team')) {
+				team_add_player(@arena['team'][0]['name'], @arena['team'][0]['name'], @id);
+				set_pscore('seconds', @arena['team'][0]['name'], 0, @id);
+				team_add_player(@arena['team'][1]['name'], @arena['team'][1]['name'], @id);
+				set_pscore('seconds', @arena['team'][1]['name'], 0, @id);
+			} else {
+				create_team('king', @id);
+				set_team_display('king', array('prefix': color('green')), @id);
+			}
 		case 'tdm':
 		case 'dm':
 			if(array_index_exists(@arena, 'lives') && @arena['lives'] > 1) {
