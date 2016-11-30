@@ -576,6 +576,16 @@ bind(creature_spawn, null, array('reason': 'BREEDING'), @event) {
 	}
 }
 
+bind(creature_spawn, null, array('reason': 'EGG'), @event) {
+	if(array_size(entities_in_radius(@event['location'], 8)) > 200) {
+		cancel();
+		play_effect(@event['location'], 'SMOKE', array('id': 4));
+		foreach(@p in players_in_radius(@event['location'], 16)) {
+			tmsg(@p, color('gold').'Chicken failed to hatch due to overcrowding.');
+		}
+	}
+}
+
 # Anti-xray helper
 bind(block_break, null, array('type': 56), @event) {
 	if(!_is_survival_world(pworld())) {
