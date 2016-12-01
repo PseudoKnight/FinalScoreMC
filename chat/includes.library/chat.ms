@@ -70,7 +70,7 @@ proc _hover_tell(@recipients, @components) {
 		}
 	}
 	@raw = ' [{"text":"';
-	@matches = reg_match_all('(&[0-9a-fr])(&[k-o])?([^&]+)', @message);
+	@matches = reg_match_all('(&[0-9a-fr])(&[k-o])*([^&]+)', @message);
 	foreach(@m in @matches) {
 		@raw .= '"},{'._color(@m[1])._style(@m[2]).'"text":"'.@m[3];
 	}
@@ -96,6 +96,7 @@ proc _color(@char, @colors = associative_array(
 	'&c': '"color":"red",',
 	'&d': '"color":"light_purple",',
 	'&e': '"color":"yellow",',
+	'&f': '"color":"white",',
 	'&r': '"color":"reset",')) {
 	return(array_get(@colors, @char, 'reset'));
 }
