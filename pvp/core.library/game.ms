@@ -299,10 +299,10 @@ proc _pvp_check_objectives(@id) {
 	if(array_index_exists(@pvp, 'team')) {
 		@teamcount = array(0, 0)
 		foreach(@player in @pvp['players']) {
-			if(!array_index_exists(@pvp['arena'], 'respawntime') || @player['respawn'] == 0) {
+			//if(!array_index_exists(@pvp['arena'], 'respawntime') || @player['respawn'] == 0) {
 				@teamcount[@player['team']]++
 				@winner = @player['team']
-			}
+			//}
 		}
 		if(@teamcount[0] == 0 || @teamcount[1] == 0) {
 			_pvp_end_match(@id, @pvp['team'][@winner]['players'])

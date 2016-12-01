@@ -265,8 +265,8 @@ bind(player_spawn, array('id': @id.'spawn'), array('world': 'custom'), @e, @id) 
 		});
 
 	} else if(array_index_exists(@pvp, 'team')) {
+		@team = @pvp['players'][player()]['team'];
 		if(@pvp['arena']['respawnmode'] == 'mob') {
-			@team = @pvp['players'][player()]['team'];
 			while(@pvp['team'][@team]['respawns']) {
 				@uuid = @pvp['team'][@team]['respawns'][0];
 				try {
@@ -285,8 +285,8 @@ bind(player_spawn, array('id': @id.'spawn'), array('world': 'custom'), @e, @id) 
 			}
 			_remove_player(player(), @pvp);
 		} else {
-			@r = rand(0, array_size(@pvp['arena']['spawn'][@pvp['players'][player()]['team']]));
-			modify_event('location', @pvp['arena']['spawn'][@pvp['players'][player()]['team']][@r]);
+			@r = rand(0, array_size(@pvp['arena']['spawn'][@team]));
+			modify_event('location', @pvp['arena']['spawn'][@team][@r]);
 		}
 	} else {
 		@r = rand(0, array_size(@pvp['arena']['spawn'][0]))
