@@ -69,12 +69,12 @@ proc _hover_tell(@recipients, @components) {
 			@message .= '"},{"text":"'.colorize(@c[0]).'","hoverEvent":{"action":"show_text","value":"'.colorize(@c[1]).'"}},{"text":"';
 		}
 	}
-	@raw = ' [{"text":"';
-	@matches = reg_match_all('(&[0-9a-fr])(&[k-o])*([^&]+)', @message);
+	@raw = ' [""';
+	@matches = reg_match_all('(&[0-9a-fk-or])(&[k-o])*([^&]+)', @message);
 	foreach(@m in @matches) {
-		@raw .= '"},{'._color(@m[1])._style(@m[2]).'"text":"'.@m[3];
+		@raw .= ',{'.if(@c = _color(@m[1]),@c,_style(@m[1]))._style(@m[2]).'"text":"'.@m[3].'"}';
 	}
-	@raw .= '"}]';
+	@raw .= ']';
 	foreach(@player in @recipients) {
 		runas('~console', '/tellraw '.@player.@raw);
 	}
@@ -98,7 +98,7 @@ proc _color(@char, @colors = associative_array(
 	'&e': '"color":"yellow",',
 	'&f': '"color":"white",',
 	'&r': '"color":"reset",')) {
-	return(array_get(@colors, @char, 'reset'));
+	return(array_get(@colors, @char, ''));
 }
 
 proc _style(@char, @styles = associative_array(
@@ -116,7 +116,7 @@ proc _style(@char, @styles = associative_array(
 */
 proc _clickable_links(@string) {
 	return(reg_replace('(?:https?://|www\\.)([\\da-z.-]+\\.[a-z.]{2,6})([/\\w\\#~:.?=&-]*)',
-		'&b\u29C9$1&r","clickEvent":{"action":"open_url","value":"http://$1$2"},"hoverEvent":{"action":"show_text","value":"http://$1$2"}},{"text":"&r',
+		'"},{"color":"aqua","text":"\u29C9$1","clickEvent":{"action":"open_url","value":"http://$1$2"},"hoverEvent":{"action":"show_text","value":"http://$1$2"}},{"text":"',
 		@string
 	));
 }
