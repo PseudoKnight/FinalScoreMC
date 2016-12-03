@@ -3,7 +3,6 @@
 	case 'join':
 		if(!sk_region_exists('custom', 'frogware'), die('Define the frogware region first.'))
 		if(!array_contains(get_scoreboards(), 'fw')) {
-			_add_activity('frogware', 'FrogWare');
 			create_scoreboard('fw')
 			create_objective('score', 'DUMMY', 'fw')
 			create_team('losers', 'fw')
@@ -36,6 +35,7 @@
 		if(queue_running('fw') || queue_running('fw2')) {
 			die('Already running.')
 		}
+		_add_activity('frogware', 'FrogWare');
 		include('includes.library/frogware.ms')
 		foreach(@p in all_players('custom')) {
 			if(_fw_player(@p)) {
