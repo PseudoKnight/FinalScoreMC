@@ -29,12 +29,12 @@ bind(player_spawn, array('priority': 'LOWEST'), null, @event) {
 		&& is_array(@pdata['survival']['bed'])) {
 			@bed = @pdata['survival']['bed'];
 			@spawn = @event['location'];
-			if(@bed[0] != integer(@spawn[0])
-			|| @bed[1] != integer(@spawn[1])
-			|| @bed[2] != integer(@spawn[2])
+			console(@event['player'].' respawned at '.@spawn.' and bed set to '.@bed, false);
+			if(integer(@bed[0]) != integer(@spawn[0])
+			|| integer(@bed[1]) != integer(@spawn[1])
+			|| integer(@bed[2]) != integer(@spawn[2])
 			|| @bed[3] != @world) {
-				console(@event['player'].' respawned at '.@spawn.' but has bed set to '.@bed
-						.'. Adjusting to current world\'s spawn...', false);
+				console('Adjusting spawn to '.@event['player'].'\'s world.', false);
 				modify_event('location', get_spawn(@world));
 			}
 		}
