@@ -223,24 +223,33 @@
 			'- Do NOT break or take anything belonging to another player, unless otherwise specified.\n'.
 			'- Do NOT harass, spam, or swear in chat.\n'.
 			'- Do NOT actively use mods for the purpose of cheating.\n',
+		'commands':
+			'Get a list and description of useful commands at >>> http://finalscoremc.com/commands <<<',
 		'homes':
-			'You can have one home per world. Set them by typing "/sethome", then "/home" to teleport to them.'.
-			' You can teleport to your homes on other worlds with "/home worldname", or homes of other players'.
-			' with "/home playername".',
+			'You can have one home per world. Set them by typing "/sethome", then "/home" to teleport to them. '.
+			'You can teleport to your homes on other worlds with "/home worldname", homes of other players with '.
+			'"/home playername", or both wtih "/home worldname playername".',
+		'privatemessages': 'messages',
 		'messages':
-			'Send a private message to another player with "/msg <playername> <message>" or "@playername <message>". '.
+			'Send a private message to another player with "/msg playername message" or "@playername message". '.
 			'You can use "/r <message>" for a reply.',
-		'spawn':
+		'spawns':
 			'There is one central spawn on each world, including nethers. Type "/spawn" to teleport to the spawn of '.
 			'the world you are in or follow it with a world name to teleport there.',
-		'stargate':
+		'portal': 'startgates',
+		'gates': 'stargates',
+		'stargates':
 			'Stargates are special portals you build to teleport within a network of locations. There is a more '.
 			'detailed guide on the website. But to make one, first build the gate as seen (without sign or button), '.
 			'place a sign on the correct location, then type the gate name on line one and the gate network name on '.
 			'line three.',
-		'private-chests':
+		'privatechests': 'privatesigns',
+		'privatedoors': 'privatesigns',
+		'private': 'privatesigns',
+		'privatesigns':
 			'You can put a [private] sign on a chest, furnace, and the block above/below doors. The following lines '.
-			'after [private] should contain the players you want to give access.',
+			'after [private] should contain the players you want to give access. Optionally "[Everyone]" provides '.
+			'access to everyone, and "[Timer:4]" will close a door 4 seconds after it was opened.',
 		'shops':
 			'Chest shops allow players to buy and sell different items using currency. (g: gold, d: diamond, i: iron, '.
 			'e: emerald) Right click the SIGN with the currency in hand to BUY. Shop owners can edit shop '.
@@ -249,43 +258,73 @@
 		'website':
 			'The website is at >>> http://finalscoremc.com <<< There you can find a command reference, guides, '.
 			'videos, live maps, and more.',
-		'live-map':
+		'map': 'livemap',
+		'livemap':
 			'>>> http://mc.finalscoremc.com:25966 <<< The website has a handy live map that shows the '.
 			'location of players and their homes, among other things.',
 		'staff':
-			'You can get help from anyone with a blue name. Current staff members are: PseudoKnight, '.
-			'Scottyd_Utah, Nefyoni, fredwaffles, Raymond_II, TrulyAnnoying',
+			'You can get help from anyone with a blue name. Orange players are Frog Park staff and can help there.',
+		'owner':
+			'Scottyd_Utah currently owns the domain name and Minecraft server hosting. PseudoKnight owns the '.
+			'custom software, provides the website, and primarily runs the server.',
 		'plugins':
-			'Type "/plugins" for a full list of plugins installed, or check the website for more details.',
+			'Type "/plugins" for a full list of plugins installed. Most server functionality is written in '.
+			'MethodScript using the CommandHelper plugin. You can find those scripts at '.
+			'http://github.com/PseudoKnight/FinalScoreMC',
+		'groups': 'permissions',
+		'ranks': 'permissions',
 		'permissions':
-			'We currently have 7 groups: member (new players with minor restrictions), regular, donor '.
-			'(green names or diamonds), builder, engineer, moderator (blue), and '.
-			'admin (blue). New players get bumped up to the regular group after some time, as long as '.
-			'they\'re not causing trouble.',
-		'mumble':
-			'Everyone is welcome to use our voice chat server using Mumble. The server is at mum.finalscoremc.com '.
-			'with port 64758. You can get Mumble at >>> http://mumble.sourceforge.net <<<',
+			'We currently have 8 permission groups: '.
+			'default (white names; new un-added players), '.
+			'member (yellow names; most players are in this group; minor restrictions), '.
+			'regular (like member, but long time or otherwise trusted players), '.
+			'donor (green names or diamonds; minor cosmetic bonuses), '.
+			'builder (orange names; Frog Park staff; builds things for the park), '.
+			'engineer (like builder, but with protected region override), '.
+			'moderator (blue names; server staff), '.
+			'and admin (like moderator, but has access to everything; aka op).',
+		'mumble': 'voice',
+		'discord': 'voice',
+		'voice':
+			'Everyone is welcome to use our voice chat servers. Our mumble server is at mum.finalscoremc.com '.
+			'with port 64758. You can get Mumble at >>> http://mumble.sourceforge.net <<<. Also, we have a Discord '.
+			'server at >>> https://discordapp.com/invite/0aBtE3n1P6GixDwO <<<.',
+		'worldguard': 'regions',
 		'regions':
 			'Regions are protected zones where only owners and members can build or access chests. You can create '.
 			'your own region by using a golden axe (or commands), left and right clicking to select a cuboid for '.
 			'the region, then use "/rg claim <regionid>". More details are on the website.',
 		'whitelist':
-			'You can get on the whitelist by asking a staff member, a friend who is already a regular, or requesting '.
-			'it on the http://myextralife.com whitelist forum thread.',
+			'You can get on the whitelist by asking a staff member, or a friend who is a regular can do it using the '.
+			'"/approve playername" command.',
+		'survival': 'worlds',
 		'worlds':
 			'There are four primary worlds: Alpha (Plaza at spawn), Delta (Final City at spawn), Gamma (Gamma City '.
 			'at spawn), and Omega. In addition, there are four respective nether dimensions and one End dimension. '.
 			'You can type "/mv who" to see which worlds players are on.',
-		'world-seeds':
+		'seeds': 'worldseeds',
+		'worldseeds':
 			'These are the seeds for the four main worlds -- Alpha: -621778714517541268, Delta: '.
-			'-8443156782283251243, Gamma: -754633420005903009, Omega: 950483747.'
+			'-8443156782283251243, Gamma: -754633420005903009, Omega: 950483747. Outworld seeds are not provided.'
 	);
 	if($selection === 'help') {
 		msg(color('a').'Get help on any of these topics:');
-		msg(color('6').array_implode(array_keys(@help), ' '));
+		@topics = array_filter(@help, closure(@key, @value){
+			return(length(@value) > 16);
+		});
+		msg(color('6').array_implode(array_keys(@topics), ' '));
 	} else {
 		try {
-			msg(to_upper($selection).': '.color('a').@help[to_lower($selection)]);
+			@title = to_lower($selection);
+			@text = array_get(@help, @title, '');
+			if(!@text) {
+				@text = @help[@title.'s'];
+			}
+			if(length(@text) < 17) {
+				@title = @text;
+				@text = @help[@text];
+			}
+			msg(to_upper(@title).': '.color('a').@text);
 		} catch(IndexOverflowException @ex) {
 			msg(color('c').'Unknown entry. Type "/help" to find available entries.');
 		}
