@@ -287,8 +287,8 @@
 		'discord': 'voice',
 		'voice':
 			'Everyone is welcome to use our voice chat servers. Our mumble server is at mum.finalscoremc.com '.
-			'with port 64758. You can get Mumble at >>> http://mumble.sourceforge.net <<<. Also, we have a Discord '.
-			'server at >>> https://discordapp.com/invite/0aBtE3n1P6GixDwO <<<.',
+			'with port 64758. You can get Mumble @ \n>>> http://mumble.sourceforge.net <<<\n Also, we have a Discord '.
+			'server @ \n>>> https://discordapp.com/invite/0aBtE3n1P6GixDwO <<<',
 		'worldguard': 'regions',
 		'regions':
 			'Regions are protected zones where only owners and members can build or access chests. You can create '.
