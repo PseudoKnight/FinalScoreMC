@@ -175,7 +175,8 @@ proc _arena(@action, @id, @setting, @string) {
 						@arena[@setting] = array();
 					}
 					@loc = ploc();
-					@loc = array(round(@loc['x'], 1), round(@loc['y'], 1), round(@loc['z'], 1), @loc['world']);
+					@loc = array(round(@loc['x'], 1), round(@loc['y'], 1), round(@loc['z'], 1), @loc['world'],
+							round(@loc['yaw'], 1), round(@loc['pitch'], 1));
 					@team = 0;
 					if(@args[0]) {
 						@team = integer(@args[0]);
