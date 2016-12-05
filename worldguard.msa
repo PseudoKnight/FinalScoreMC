@@ -91,8 +91,11 @@
 				} catch(PluginInternalException @ex) {
 					die(color('GOLD').'That region doesn\'t exist.');
 				}
-				switch(@setting) {
+				switch(to_lower(@setting)) {
 					case 'mob-spawning':
+					case 'mob-spawns':
+					case 'mobspawns':
+					case 'mobspawning':
 						foreach(@flagname in @flags) {
 							if(@flagname[0] === 'mob-spawning') {
 								sudo('/region flag '.@region.' mob-spawning');
@@ -104,7 +107,8 @@
 						} else if(@value === 'deny') {
 							sudo('/region flag '.@region.' deny-spawn CREEPER,ENDERMAN,HUSK,SKELETON,SLIME,SPIDER,STRAY,WITCH,ZOMBIE,ZOMBIE_VILLAGER');
 						}
-
+					
+					case 'infdisp':
 					case 'infinite-dispensers':
 						if(_is_survival_world(pworld())) {
 							die(color('GOLD').'You cannot toggle infinite dispensers in this world.');
