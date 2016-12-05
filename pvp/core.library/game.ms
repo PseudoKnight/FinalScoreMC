@@ -300,10 +300,12 @@ proc _pvp_check_objectives(@id) {
 		@teamcount = array(0, 0)
 		@winner = -1;
 		foreach(@player in @pvp['players']) {
-			//if(!array_index_exists(@pvp['arena'], 'respawntime') || @player['respawn'] == 0) {
+			if(!array_index_exists(@pvp['arena'], 'captain')
+			|| !array_index_exists(@pvp['arena'], 'respawntime')
+			|| @player['respawn'] == 0) {
 				@teamcount[@player['team']]++;
 				@winner = @player['team'];
-			//}
+			}
 		}
 		if(@teamcount[0] == 0 || @teamcount[1] == 0) {
 			if(@winner > -1) {
