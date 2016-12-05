@@ -53,6 +53,7 @@ proc _arena(@action, @id, @setting, @string) {
 				case 'region':
 				case 'resourcepack':
 				case 'respawnmode':
+				case 'goalname':
 
 					@arena[@setting] = @args[0];
 					msg(colorize('Set &a' . @setting . '&r to &a' . @args[0]));
@@ -167,6 +168,7 @@ proc _arena(@action, @id, @setting, @string) {
 				# multiple exact locations w/ teams
 				case 'respawn':
 				case 'spawn':
+				case 'blockbreak':
 
 					if(pworld() !== 'custom') {
 						die('You can only set location in the custom world.');
@@ -174,15 +176,20 @@ proc _arena(@action, @id, @setting, @string) {
 					if(!array_index_exists(@arena, @setting)) {
 						@arena[@setting] = array();
 					}
-					@loc = ploc();
-					@loc = array(round(@loc['x'], 1), round(@loc['y'], 1), round(@loc['z'], 1), @loc['world'],
-							round(@loc['yaw'], 1), round(@loc['pitch'], 1));
 					@team = 0;
 					if(@args[0]) {
 						@team = integer(@args[0]);
 					}
 					if(!array_index_exists(@arena[@setting], @team)) {
 						@arena[@setting][@team] = array();
+					}
+					@loc = ploc();
+					if(@args[1] == 'there') {
+						@loc = pcursor();
+						@loc = array_normalize(@loc)[0..3];
+					} else {
+						@loc = array(round(@loc['x'], 1), round(@loc['y'], 1), round(@loc['z'], 1), @loc['world'],
+								round(@loc['yaw'], 1), round(@loc['pitch'], 1));
 					}
 					@arena[@setting][@team][] = @loc;
 					msg(colorize('Set a &a' . @setting . '&r to current location for team &a' . @team));
@@ -234,15 +241,6 @@ proc _arena(@action, @id, @setting, @string) {
 				case 'sharedarenas':
 					@arena['sharedarenas'] = split(',', @args[0])
 					msg('Set shared arenas to '.@arena['sharedarenas'])
-
-				case 'spawnblock':
-					@block = get_block_at(pcursor());
-					if(!@args[0]) {
-						die('Requires a valid block id.');
-					}
-					@arena['spawnblock'][@args[0]] = @block;
-					msg('Set spawnblock to '.color(10).@block
-						.if(@args[0], color('r').' for team '.color(10).@args[0]));
 
 				case 'mode':
 					@modes = array(

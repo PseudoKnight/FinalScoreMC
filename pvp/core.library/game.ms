@@ -298,15 +298,20 @@ proc _pvp_check_objectives(@id) {
 	#check player counts
 	if(array_index_exists(@pvp, 'team')) {
 		@teamcount = array(0, 0)
+		@winner = -1;
 		foreach(@player in @pvp['players']) {
 			//if(!array_index_exists(@pvp['arena'], 'respawntime') || @player['respawn'] == 0) {
-				@teamcount[@player['team']]++
-				@winner = @player['team']
+				@teamcount[@player['team']]++;
+				@winner = @player['team'];
 			//}
 		}
 		if(@teamcount[0] == 0 || @teamcount[1] == 0) {
-			_pvp_end_match(@id, @pvp['team'][@winner]['players'])
-			die()
+			if(@winner > -1) {
+				_pvp_end_match(@id, @pvp['team'][@winner]['players']);
+			} else {
+				_pvp_end_match(@id, array());
+			}
+			die();
 		}
 	} else if(array_size(@pvp['players']) <= 1) {
 		_pvp_end_match(@id, array_keys(@pvp['players']));

@@ -678,6 +678,71 @@ if(array_contains(@pvp['arena']['flags'], 'infinitedispensers')) {
 	}
 }
 
+if(array_index_exists(@pvp['arena'], 'blockbreak')) {
+	@alllocations = array_merge(@pvp['arena']['blockbreak'][0], @pvp['arena']['blockbreak'][1]);
+	@blocktypes = array();
+	foreach(@loc in @alllocations) {
+		@type = split(':', get_block_at(@loc))[0];
+		if(!array_contains(@blocktypes, @type)) {
+			@blocktypes[] = @type;
+		}
+	}
+	foreach(@type in @blocktypes) {
+		@pvp['binds'][] = @id.'blockbreak'.@type;
+		bind(block_break, array('id': @id.'blockbreak'.@type), array('type': integer(@type)), @event, @id) {
+			@pvp = import('pvp'.@id);
+			if(!array_index_exists(@pvp['players'], player())) {
+				die();
+			}
+			
+			@blockloc = @event['location'];
+			@arena = @pvp['arena'];
+			foreach(@team in array(0, 1)) {
+				foreach(@index: @loc in @arena['blockbreak'][@team]) {
+					if(@loc[0] == @blockloc[0]
+					&& @loc[1] == @blockloc[1]
+					&& @loc[2] == @blockloc[2]) {
+						modify_event('drops', array());
+						array_remove(@arena['blockbreak'][@team], @index);
+						@count = array_size(@arena['blockbreak'][@team]);
+						set_pscore('blocks', @arena['team'][@team]['name'], @count, @id);
+						if(@count < 1) {
+							_pvp_end_match(@id, @pvp['team'][if(@team, 0, 1)]['players']);
+						}
+						break(2);
+					}
+				}
+			}
+		}
+	}
+	
+	@pvp['binds'][] = @id.'blockexplode';
+	bind(entity_explode, array('id': @id.'blockexplode'), array('type': 'PRIMED_TNT'), @event, @id) {
+		if(@event['location']['world'] != 'custom') {
+			die();
+		}
+		@pvp = import('pvp'.@id);
+		@arena = @pvp['arena'];
+		foreach(@blockloc in @event['blocks']) {
+			foreach(@team in array(0, 1)) {
+				foreach(@index: @loc in @arena['blockbreak'][@team]) {
+					if(@loc[0] == @blockloc[0]
+					&& @loc[1] == @blockloc[1]
+					&& @loc[2] == @blockloc[2]) {
+						array_remove(@arena['blockbreak'][@team], @index);
+						@count = array_size(@arena['blockbreak'][@team]);
+						set_pscore('blocks', @arena['team'][@team]['name'], @count, @id);
+						if(@count < 1) {
+							_pvp_end_match(@id, @pvp['team'][if(@team, 0, 1)]['players']);
+						}
+						break(2);
+					}
+				}
+			}
+		}
+	}
+}
+
 ### SPECATORS ###
 
 array_push(@pvp['binds'], @id.'interactspec')

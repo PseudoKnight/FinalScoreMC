@@ -217,7 +217,7 @@ proc _pvp_start(@pvp, @id){
 	switch(@arena['mode']) {
 		case 'koth':
 			create_objective('seconds', 'DUMMY', @id);
-			set_objective_display('seconds', array('displayname': color('a').'Seconds Left', 'slot': 'SIDEBAR'), @id);
+			set_objective_display('seconds', array('displayname': colorize(array_get(@arena, 'goalname', '&aSeconds Left')), 'slot': 'SIDEBAR'), @id);
 			if(array_index_exists(@arena, 'team')) {
 				team_add_player(@arena['team'][0]['name'], @arena['team'][0]['name'], @id);
 				set_pscore('seconds', @arena['team'][0]['name'], 0, @id);
@@ -231,21 +231,21 @@ proc _pvp_start(@pvp, @id){
 		case 'dm':
 			if(array_index_exists(@arena, 'lives') && @arena['lives'] > 1) {
 				create_objective('lives', 'DUMMY', @id);
-				set_objective_display('lives', array('displayname': color('a').'Lives Left', 'slot': 'SIDEBAR'), @id);
+				set_objective_display('lives', array('displayname': colorize(array_get(@arena, 'goalname', '&aLives Left')), 'slot': 'SIDEBAR'), @id);
 			}
 			if(@arena['respawnmode'] == 'mob') {
 				create_objective('respawns', 'DUMMY', @id);
-				set_objective_display('respawns', array('displayname': color('a').'Respawns Left', 'slot': 'SIDEBAR'), @id);
+				set_objective_display('respawns', array('displayname': colorize(array_get(@arena, 'goalname', '&aRespawns Left')), 'slot': 'SIDEBAR'), @id);
 			}
 			if(array_index_exists(@arena, 'mobprotect')) {
 				create_objective('mobhealth', 'DUMMY', @id);
-				set_objective_display('mobhealth', array('displayname': color('a').'Mob Health', 'slot': 'SIDEBAR'), @id);
+				set_objective_display('mobhealth', array('displayname': colorize(array_get(@arena, 'goalname', '&aMob Health')), 'slot': 'SIDEBAR'), @id);
 				team_add_player(@arena['team'][0]['name'], @arena['team'][0]['name'], @id);
 				team_add_player(@arena['team'][1]['name'], @arena['team'][1]['name'], @id);
 			}
 			if(array_index_exists(@arena, 'score')) {
 				create_objective('score', 'DUMMY', @id);
-				set_objective_display('score', array('displayname': color('a').'Score', 'slot': 'SIDEBAR'), @id);
+				set_objective_display('score', array('displayname': colorize(array_get(@arena, 'goalname', '&aScore')), 'slot': 'SIDEBAR'), @id);
 				if(@arena['mode'] == 'tdm') {
 					team_add_player(@arena['team'][0]['name'], @arena['team'][0]['name'], @id);
 					set_pscore('score', @arena['team'][0]['name'], 0, @id);
@@ -253,9 +253,17 @@ proc _pvp_start(@pvp, @id){
 					set_pscore('score', @arena['team'][1]['name'], 0, @id);
 				}
 			}
+			if(array_index_exists(@arena, 'blockbreak')) {
+				create_objective('blocks', 'DUMMY', @id);
+				set_objective_display('blocks', array('displayname': colorize(array_get(@arena, 'goalname', '&aBlocks')), 'slot': 'SIDEBAR'), @id);
+				team_add_player(@arena['team'][0]['name'], @arena['team'][0]['name'], @id);
+				set_pscore('blocks', @arena['team'][0]['name'], array_size(@arena['blockbreak'][0]), @id);
+				team_add_player(@arena['team'][1]['name'], @arena['team'][1]['name'], @id);
+				set_pscore('blocks', @arena['team'][1]['name'], array_size(@arena['blockbreak'][1]), @id);
+			}
 		case 'ctf':
 			create_objective('captures', 'DUMMY', @id);
-			set_objective_display('captures', array('displayname': color('a').'Captures ('.@arena['score'].')', 'slot': 'SIDEBAR'), @id);
+			set_objective_display('captures', array('displayname': colorize(array_get(@arena, 'goalname', '&aCaptures ('.@arena['score'].')')), 'slot': 'SIDEBAR'), @id);
 			team_add_player(@arena['team'][0]['name'], @arena['team'][0]['name'], @id);
 			set_pscore('captures', @arena['team'][0]['name'], 0, @id);
 			team_add_player(@arena['team'][1]['name'], @arena['team'][1]['name'], @id);
