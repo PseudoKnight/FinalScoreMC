@@ -72,11 +72,11 @@ bind(player_chat, null, null, @event) {
 		if(has_permission('group.moderator'), '&bSTAFF\n')
 		.if(array_index_exists(@pdata, 'names'), @color.array_implode(@pdata['names']).'\n')
 		.'&8[world] &r'._worldname(pworld()));
-	@components[] = '&8:&r ';
+	@components[] = '&8: ';
 
 	@clickableMessage = _clickable_links(@escapedMessage);
 
-	@components[] = @clickableMessage.'&r';
+	@components[] = '&r'.@clickableMessage;
 
 	# Send chat message
 	_hover_tell(@recipients, @components);

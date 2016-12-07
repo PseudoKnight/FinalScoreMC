@@ -61,18 +61,16 @@ proc _remove_ignored(@sender, @recipients) {
 	Constructs and sends a tellraw command with a hover event
 */
 proc _hover_tell(@recipients, @components) {
-	@message = '';
+	@raw = ' [""';
 	foreach(@c in @components) {
 		if(!is_array(@c)) {
-			@message .= @c;
+			@matches = reg_match_all('(&[0-9a-fk-or])(&[k-o])?(&[k-o])?(&[k-o])?((?:&[^0-9a-fk-or]|[^&])*)', @c);
+			foreach(@m in @matches) {
+				@raw .= ',{'._color(@m[1])._color(@m[2])._color(@m[3])._color(@m[4]).'"text":"'.@m[5].'"}';
+			}
 		} else {
-			@message .= '"},{"text":"'.colorize(@c[0]).'","hoverEvent":{"action":"show_text","value":"'.colorize(@c[1]).'"}},{"text":"';
+			@raw .= ',{"text":"'.colorize(@c[0]).'","hoverEvent":{"action":"show_text","value":"'.colorize(@c[1]).'"}}';
 		}
-	}
-	@raw = ' [""';
-	@matches = reg_match_all('(&[0-9a-fk-or])(&[k-o])*([^&]+)', @message);
-	foreach(@m in @matches) {
-		@raw .= ',{'.if(@c = _color(@m[1]),@c,_style(@m[1]))._style(@m[2]).'"text":"'.@m[3].'"}';
 	}
 	@raw .= ']';
 	foreach(@player in @recipients) {
@@ -97,18 +95,15 @@ proc _color(@char, @colors = associative_array(
 	'&d': '"color":"light_purple",',
 	'&e': '"color":"yellow",',
 	'&f': '"color":"white",',
-	'&r': '"color":"reset",')) {
-	return(array_get(@colors, @char, ''));
-}
-
-proc _style(@char, @styles = associative_array(
-		'&k': '"obfuscated":true,',
-		'&l': '"bold":true,',
-		'&m': '"strikethrough":true,',
-		'&n': '"underline":true,',
-		'&o': '"italic":true,'
-	)) {
-	return(array_get(@styles, @char, ''));
+	'&k': '"obfuscated":true,',
+	'&l': '"bold":true,',
+	'&m': '"strikethrough":true,',
+	'&n': '"underline":true,',
+	'&o': '"italic":true,',
+	'&r': '"color":"reset",',
+	'': '',
+)) {
+	return(@colors[@char]);
 }
 
 /*
