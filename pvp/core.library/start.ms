@@ -130,45 +130,44 @@ proc _pvp_start(@pvp, @id){
 				@arena['kit'][1] = @arena['kit'][0];
 			}
 
-			// Alternate spawns
-			if(array_size(@arena['spawn']) == 1 || !@arena['spawn'][1]) {
-				@oldspawns = @arena['spawn'][0][];
-				@arena['spawn'][0] = array();
-				@team = 0;
-				foreach(@spawn in @oldspawns) {
-					@arena['spawn'][@team][] = @spawn;
-					@team = if(@team == 0, 1, 0);
-				}
-			// or remove excess spawn groups
-			} else {
-				while(array_size(@arena['spawn']) > 2) {
-					array_remove(@arena['spawn'], rand(array_size(@arena['spawn'])));
-				}
-			}
-
-		} else {
-			if(array_index_exists(@arena, 'team')) {
-				array_remove(@arena, 'team');
-			}
-			
-			// Merge spawns, if needed
-			if(array_size(@arena['spawn']) > 1 && @arena['spawn'][1]) {
-				@size = array_size(@arena['spawn'][0]);
-				@newSpawns = array();
-				for(@i = 0, @i < @size, @i++) {
-					foreach(@spawns in @arena['spawn']) {
-						@newSpawns[] = @spawns[@i];
-					}
-				}
-				@arena['spawn'][0] = @newSpawns;
-			}
+		} else if(array_index_exists(@arena, 'team')) {
+			array_remove(@arena, 'team');
 		}
 	}
 
 	if(array_index_exists(@arena, 'team')) {
 		@arena['team'][0]['color'] = color(@arena['team'][0]['color']);
 		@arena['team'][1]['color'] = color(@arena['team'][1]['color']);
+		
+		// Alternate spawns
+		if(array_size(@arena['spawn']) == 1 || !@arena['spawn'][1]) {
+			@oldspawns = @arena['spawn'][0][];
+			@arena['spawn'][0] = array();
+			@team = 0;
+			foreach(@spawn in @oldspawns) {
+				@arena['spawn'][@team][] = @spawn;
+				@team = if(@team == 0, 1, 0);
+			}
+		// or remove excess spawn groups
+		} else {
+			while(array_size(@arena['spawn']) > 2) {
+				array_remove(@arena['spawn'], rand(array_size(@arena['spawn'])));
+			}
+		}
+	} else {
+		// Merge spawns, if needed
+		if(array_size(@arena['spawn']) > 1 && @arena['spawn'][1]) {
+			@size = array_size(@arena['spawn'][0]);
+			@newSpawns = array();
+			for(@i = 0, @i < @size, @i++) {
+				foreach(@spawns in @arena['spawn']) {
+					@newSpawns[] = @spawns[@i];
+				}
+			}
+			@arena['spawn'][0] = @newSpawns;
+		}
 	}
+	
 	if(!array_index_exists(@arena, 'score')) {
 		switch(@arena['mode']) {
 			case 'ctf':
