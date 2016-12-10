@@ -115,9 +115,16 @@ proc _pvp_start(@pvp, @id){
 
 	# Dynamically determine if it should be a team game
 	if(@arena['mode'] === 'ddm') {
+		@arena['mode'] = 'dm';
 		@size = array_size(@pvp['players']);
 		if(@size % 2 == 0) {
-			@arena['mode'] = 'tdm';
+			if(!array_index_exists(@arena, 'team')) {
+				@arena['team'] = array(
+					array('name': 'Red', 'color': color('c')),
+					array('name': 'Blue', 'color': color('3'))
+				);
+			}
+			
 			@arena['ff'] = false;
 			if(array_index_exists(@arena, 'kit')) {
 				@arena['kit'][1] = @arena['kit'][0];
@@ -140,7 +147,9 @@ proc _pvp_start(@pvp, @id){
 			}
 
 		} else {
-			@arena['mode'] = 'dm';
+			if(array_index_exists(@arena, 'team')) {
+				array_remove(@arena, 'team');
+			}
 			
 			// Merge spawns, if needed
 			if(array_size(@arena['spawn']) > 1 && @arena['spawn'][1]) {
@@ -156,12 +165,7 @@ proc _pvp_start(@pvp, @id){
 		}
 	}
 
-	if(!array_index_exists(@arena, 'team') && array_contains(array('ctf', 'tdm', 'infection'), @arena['mode'])) {
-		@arena['team'] = array(
-			array('name': 'Red', 'color': color('c')),
-			array('name': 'Blue', 'color': color('3'))
-		);
-	} else if(array_index_exists(@arena, 'team')) {
+	if(array_index_exists(@arena, 'team')) {
 		@arena['team'][0]['color'] = color(@arena['team'][0]['color']);
 		@arena['team'][1]['color'] = color(@arena['team'][1]['color']);
 	}
@@ -227,7 +231,6 @@ proc _pvp_start(@pvp, @id){
 				create_team('king', @id);
 				set_team_display('king', array('prefix': color('green')), @id);
 			}
-		case 'tdm':
 		case 'dm':
 			if(array_index_exists(@arena, 'lives') && @arena['lives'] > 1) {
 				create_objective('lives', 'DUMMY', @id);
@@ -246,7 +249,7 @@ proc _pvp_start(@pvp, @id){
 			if(array_index_exists(@arena, 'score')) {
 				create_objective('score', 'DUMMY', @id);
 				set_objective_display('score', array('displayname': colorize(array_get(@arena, 'goalname', '&aScore')), 'slot': 'SIDEBAR'), @id);
-				if(@arena['mode'] == 'tdm') {
+				if(array_index_exists(@pvp, 'team')) {
 					team_add_player(@arena['team'][0]['name'], @arena['team'][0]['name'], @id);
 					set_pscore('score', @arena['team'][0]['name'], 0, @id);
 					team_add_player(@arena['team'][1]['name'], @arena['team'][1]['name'], @id);

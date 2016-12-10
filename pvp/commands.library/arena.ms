@@ -246,7 +246,6 @@ proc _arena(@action, @id, @setting, @string) {
 					@modes = array(
 						'dm': 'Death Match',
 						'ddm': 'Dynamic Teams DM',
-						'tdm': 'Team DM',
 						'ctf': 'Capture the Flag',
 						'koth': 'King of the Hill',
 						'infection': 'Zombie Infection',
@@ -891,7 +890,7 @@ proc _arena(@action, @id, @setting, @string) {
 			msg('arenaselect '.color('gray').'Type of select and then a comma list of arenas.');
 			msg('sharedarenas '.color('gray').'A comma separated list of arena ids.');
 			msg('broadcast '.color('gray').'The region all messages are broadcasted.');
-			msg('mode '.color('gray').'dm, tdm, ctf, infection, koth.');
+			msg('mode '.color('gray').'dm, ctf, infection, koth.');
 			msg('ctfflag '.color('gray').'The flag spawn location for CTF (1 is red, 2 is blue)');
 			msg('kothregion '.color('gray').'The king of the hill region - feet position');
 			msg('lives '.color('gray').'Number of lives until elimination');

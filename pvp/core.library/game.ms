@@ -331,16 +331,16 @@ proc _pvp_check_objectives(@id) {
 	}
 	
 	#check scores
-	if(array_index_exists(@pvp['arena'], 'score')) {
+	if(@pvp['arena']['mode'] == 'dm' && array_index_exists(@pvp['arena'], 'score')) {
 		@scoreTarget = @pvp['arena']['score'];
-		if(@pvp['arena']['mode'] === 'dm') {
+		if(!array_index_exists(@pvp, 'team')) {
 			foreach(@player: @data in @pvp['players']) {
 				if(get_pscore('score', @player, @id) >= @scoreTarget) {
 					_pvp_end_match(@id, array(@player));
 					die();
 				}
 			}
-		} else if(@pvp['arena']['mode'] === 'tdm') {
+		} else {
 			if(get_pscore('score', @pvp['arena']['team'][0]['name'], @id) >= @scoreTarget) {
 				_pvp_end_match(@id, @pvp['team'][0]['players']);
 			} else if(get_pscore('score', @pvp['arena']['team'][1]['name'], @id) >= @scoreTarget) {
