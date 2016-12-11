@@ -101,11 +101,12 @@ proc _pvp_initialize_players(@id, @players) {
 
 		# Select spawn location
 		if(array_index_exists(@pvp, 'team')) {
-			@loc = @pvp['arena']['spawn'][@pvp['players'][@player]['team']][@c[@pvp['players'][@player]['team']]];
-			if(@c[@pvp['players'][@player]['team']] == array_size(@pvp['arena']['spawn'][@pvp['players'][@player]['team']]) - 1) {
-				@c[@pvp['players'][@player]['team']] = 0;
+			@team = @pvp['players'][@player]['team'];
+			@loc = @pvp['arena']['spawn'][@team][@c[@team]];
+			if(@c[@team] == array_size(@pvp['arena']['spawn'][@team]) - 1) {
+				@c[@team] = 0;
 			} else {
-				@c[@pvp['players'][@player]['team']]++;
+				@c[@team]++;
 			}
 		} else {
 			@loc = @pvp['arena']['spawn'][0][@c[0]];

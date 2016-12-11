@@ -3,30 +3,31 @@ proc _interval(@pvp, @id) {
         @kingteam = -1;
         foreach(@p: @player in @pvp['players']) {
             if(pinfo(@p, 5) > 0 && array_contains(sk_current_regions(@p), @pvp['arena']['kothregion'])) {
-                if(@king && @king != @player['team']) {
+                if(@kingteam > -1 && @kingteam != @player['team']) {
                     // contested
                     @kingteam = -1;
                     break();
                 } else {
-                    @king = @player['team'];
+                    @kingteam = @player['team'];
                 }
             }
         }
         
     	@teams = get_teams(@id);
     	if(@kingteam > -1) {
-            @team = @teams[@kingteam]['name']
+            @team = @pvp['arena']['team'][@kingteam]['name'];
     		@score = get_pscore('seconds', @team, @id);
     		set_pscore('seconds', @team, @score + 1, @id);
     		if(array_index_exists(@pvp['arena'], 'kothbeacon')) {
     			set_block_at(@pvp['arena']['kothbeacon'], '95:'.(@kingteam + 3));
     		}
-            return(true);
+            if(@score >= -1) {
+                _pvp_end_match(@id, @pvp['team'][@kingteam]['players']);
+            }
     	} else {
     		if(array_index_exists(@pvp['arena'], 'kothbeacon')) {
     			set_block_at(@pvp['arena']['kothbeacon'], 7);
     		}
-            return(false);
     	}
         
     } else {
@@ -52,7 +53,9 @@ proc _interval(@pvp, @id) {
     		if(array_index_exists(@pvp['arena'], 'kothbeacon')) {
     			set_block_at(@pvp['arena']['kothbeacon'], '95:'.(array_index(array_keys(@pvp['players']), @king) + 1));
     		}
-            return(true);
+            if(@score >= -1) {
+                _pvp_end_match(@id, array(@king));
+            }
     	} else {
     		if(@team['size'] == 1) {
     			team_remove_player('king', @team['players'][0], @id);
@@ -60,7 +63,6 @@ proc _interval(@pvp, @id) {
     		if(array_index_exists(@pvp['arena'], 'kothbeacon')) {
     			set_block_at(@pvp['arena']['kothbeacon'], 7);
     		}
-            return(false);
     	}
     }
 }

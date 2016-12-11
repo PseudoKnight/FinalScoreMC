@@ -114,14 +114,16 @@ proc _pvp_start(@pvp, @id){
 	}
 
 	# Dynamically determine if it should be a team game
-	if(@arena['mode'] === 'ddm') {
-		@arena['mode'] = 'dm';
+	if(@arena['mode'] === 'ddm' || @arena['mode'] === 'koth') {
+		if(@arena['mode'] == 'ddm') {
+		    @arena['mode'] = 'dm';
+		}
 		@size = array_size(@pvp['players']);
 		if(@size % 2 == 0) {
 			if(!array_index_exists(@arena, 'team')) {
 				@arena['team'] = array(
-					array('name': 'Red', 'color': color('c')),
-					array('name': 'Blue', 'color': color('3'))
+					array('name': 'Red', 'color': 'c'),
+					array('name': 'Blue', 'color': '3')
 				);
 			}
 			
@@ -153,6 +155,7 @@ proc _pvp_start(@pvp, @id){
 			while(array_size(@arena['spawn']) > 2) {
 				array_remove(@arena['spawn'], rand(array_size(@arena['spawn'])));
 			}
+			@arena['spawn'] = array_normalize(@arena['spawn']);
 		}
 	} else {
 		// Merge spawns, if needed
@@ -223,9 +226,9 @@ proc _pvp_start(@pvp, @id){
 			set_objective_display('seconds', array('displayname': colorize(array_get(@arena, 'goalname', '&aSeconds Left')), 'slot': 'SIDEBAR'), @id);
 			if(array_index_exists(@arena, 'team')) {
 				team_add_player(@arena['team'][0]['name'], @arena['team'][0]['name'], @id);
-				set_pscore('seconds', @arena['team'][0]['name'], 0, @id);
+				set_pscore('seconds', @arena['team'][0]['name'], neg(@arena['score']), @id);
 				team_add_player(@arena['team'][1]['name'], @arena['team'][1]['name'], @id);
-				set_pscore('seconds', @arena['team'][1]['name'], 0, @id);
+				set_pscore('seconds', @arena['team'][1]['name'], neg(@arena['score']), @id);
 			} else {
 				create_team('king', @id);
 				set_team_display('king', array('prefix': color('green')), @id);

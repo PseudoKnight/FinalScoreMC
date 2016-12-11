@@ -319,16 +319,6 @@ proc _pvp_check_objectives(@id) {
 		_pvp_end_match(@id, array_keys(@pvp['players']));
 		die();
 	}
-
-	#check ffa player scores
-	if(@pvp['arena']['mode'] === 'koth' && !array_index_exists(@pvp, 'team')) {
-		foreach(@player: @data in @pvp['players']) {
-			if(get_pscore('seconds', @player, @id)  >= 0) {
-				_pvp_end_match(@id, array(@player))
-				die()
-			}
-		}
-	}
 	
 	#check scores
 	if(@pvp['arena']['mode'] == 'dm' && array_index_exists(@pvp['arena'], 'score')) {
