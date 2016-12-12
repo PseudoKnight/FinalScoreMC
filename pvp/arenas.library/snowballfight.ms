@@ -10,6 +10,8 @@ bind(entity_damage_player, array('id': @id.'snowballtp'), array('damager': 'SNOW
     && @pvp['players'][@player]['team'] == @pvp['players'][@damager]['team']) {
         die();
     }
+    @pvp['stats'][@damager]['kills']++;
+    @pvp['stats'][@player]['deaths']++;
     @loc = _relative(ploc(@player), 'up', 2);
     play_effect(@loc, 'SNOWBALL_BREAK', associative_array(
         'particleCount': 20,
@@ -37,9 +39,13 @@ bind(item_pickup, array('id': @id.'snowballpickup', 'priority': 'HIGHEST'), arra
     if(!pinv(player(), 0)) {
         modify_event('item', null);
         set_pinv(player(), associative_array(0: associative_array('name': 'SNOW_BALL')));
+        play_sound(ploc(), associative_array('sound': 'ITEM_PICKUP', 'pitch': 2, 'volume': 0.5), player());
+        @pvp['stats'][player()]['pickups']++;
     } else if(!pinv(player(), -106)) {
         modify_event('item', null);
         set_pinv(player(), associative_array(-106: associative_array('name': 'SNOW_BALL')));
+        play_sound(ploc(), associative_array('sound': 'ITEM_PICKUP', 'pitch': 2, 'volume': 0.5), player());
+        @pvp['stats'][player()]['pickups']++;
     } else {
         cancel();
     }
@@ -54,10 +60,11 @@ bind(player_interact, array('id': @id.'snowballshovel'), array('item': data_valu
     cancel();
     @loc = @e['location'];
     @loc['x'] += 0.5;
-    @loc['y'] += 0.25;
+    @loc['y'] += 0.9;
     @loc['z'] += 0.5;
     @snowball = spawn_entity('DROPPED_ITEM', 1, @loc)[0];
     set_entity_spec(@snowball, associative_array('itemstack': associative_array('name': 'SNOW_BALL')));
+    play_sound(@loc, associative_array('sound': 'DIG_SNOW', 'pitch': 0.8));
 }
 
 @pvp['binds'][] = @id.'shovelbreak';

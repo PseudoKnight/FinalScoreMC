@@ -5,7 +5,7 @@ proc _interval(@pvp, @id) {
             if(pinfo(@p, 5) > 0 && array_contains(sk_current_regions(@p), @pvp['arena']['kothregion'])) {
                 if(@kingteam > -1 && @kingteam != @player['team']) {
                     // contested
-                    @kingteam = -1;
+                    @kingteam = -2;
                     break();
                 } else {
                     @kingteam = @player['team'];
@@ -19,15 +19,17 @@ proc _interval(@pvp, @id) {
     		@score = get_pscore('seconds', @team, @id);
     		set_pscore('seconds', @team, @score + 1, @id);
     		if(array_index_exists(@pvp['arena'], 'kothbeacon')) {
-    			set_block_at(@pvp['arena']['kothbeacon'], '95:'.(@kingteam + 3));
+    			set_block_at(@pvp['arena']['kothbeacon'], '95:'.if(@kingteam, '11', '14'));
     		}
             if(@score >= -1) {
                 _pvp_end_match(@id, @pvp['team'][@kingteam]['players']);
             }
-    	} else {
-    		if(array_index_exists(@pvp['arena'], 'kothbeacon')) {
+    	} else if(array_index_exists(@pvp['arena'], 'kothbeacon')) {
+            if(@kingteam == -2) {
     			set_block_at(@pvp['arena']['kothbeacon'], 7);
-    		}
+            } else {
+                set_block_at(@pvp['arena']['kothbeacon'], '95:0');
+            }
     	}
         
     } else {
@@ -61,7 +63,11 @@ proc _interval(@pvp, @id) {
     			team_remove_player('king', @team['players'][0], @id);
     		}
     		if(array_index_exists(@pvp['arena'], 'kothbeacon')) {
-    			set_block_at(@pvp['arena']['kothbeacon'], 7);
+                if(@hillcount > 1) {
+                    set_block_at(@pvp['arena']['kothbeacon'], '95:0');
+                } else {
+    			    set_block_at(@pvp['arena']['kothbeacon'], 7);
+                }
     		}
     	}
     }
