@@ -42,7 +42,7 @@ bind(projectile_launch, array('id': @id.'grapple'), array('type': 'FISHING_HOOK'
 		play_sound(@loc1, array('sound': 'HORSE_BREATHE', 'pitch': 1.7));
 
 		@endtask = closure(){
-			if(!entity_grounded(@mover)) {
+			if(!entity_grounded(@mover) && !get_entity_gliding(@mover)) {
 				set_entity_velocity(@mover, array(0, 0.4, 0));
 			}
 
@@ -112,4 +112,14 @@ bind(projectile_launch, array('id': @id.'grapple'), array('type': 'FISHING_HOOK'
 		unbind('hit'.@arrow);
 		unbind('damage'.@arrow);
 	});
+}
+
+array_push(@pvp['binds'], @id.'grappledamage');
+bind(entity_damage, array('id': @id.'grappledamage'), array('type': 'PLAYER', 'cause': 'FLY_INTO_WALL'), @event, @id) {
+	@pvp = import('pvp'.@id);
+	if(!array_index_exists(@pvp['players'], @event['player'])
+	|| !(@item = pinv(@event['player'], null)) || @item['name'] != 'FISHING_ROD') {
+		die();
+	}
+	cancel();
 }
