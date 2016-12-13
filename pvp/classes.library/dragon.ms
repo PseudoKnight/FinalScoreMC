@@ -45,7 +45,7 @@ case 'load':
 		}
 	}
 
-	bind(entity_damage, array('id': @player.'dragonfall'), array('type': 'PLAYER', 'cause': 'FALL', 'world': 'custom'), @e, @player) {
+	bind(entity_damage, array('id': @player.'dragonfall'), array('type': 'PLAYER', 'cause': 'FALL'), @e, @player) {
 		if(@e['player'] == @player) {
 			modify_event('amount', 1);
 		}

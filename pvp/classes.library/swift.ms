@@ -11,7 +11,7 @@ case 'load':
 		}
 	}
 
-	bind(entity_damage, array('id': @player.'grab'), array('type': 'PLAYER', 'cause': 'ENTITY_ATTACK', 'world': 'custom'), @e, @pvp, @player) {
+	bind(entity_damage, array('id': @player.'grab'), array('type': 'PLAYER', 'cause': 'ENTITY_ATTACK'), @e, @pvp, @player) {
 		if(@e['damager'] == @player && get_entity_vehicle(puuid(@player)) != @e['id']) {
 			if(get_entity_vehicle(puuid(@player)) == @e['id']) {
 				cancel();

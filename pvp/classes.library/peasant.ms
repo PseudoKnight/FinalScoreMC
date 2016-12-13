@@ -30,7 +30,7 @@ case 'load':
 			try {
 				@potato = pinv(@damaged, @slot);
 				if(@potato['meta']['display'] == '1') {
-					bind(entity_damage, array('id': @damaged.'hotpotatodmg'), array('type': 'PLAYER', 'world': 'custom'), @e,
+					bind(entity_damage, array('id': @damaged.'hotpotatodmg'), array('type': 'PLAYER'), @e,
 							@damager, @pvp) {
 
 						if(!array_index_exists(@pvp['players'], @e['player']), die());
@@ -58,7 +58,7 @@ case 'load':
 		@inv[@slot] = @item;
 		set_pinv(@damaged, @inv);
 	}
-	bind(entity_damage, array('id': @player.'pot'), array('type': 'PLAYER', 'cause': 'ENTITY_ATTACK', 'world': 'custom'), @e, @pvp, @player) {
+	bind(entity_damage, array('id': @player.'pot'), array('type': 'PLAYER', 'cause': 'ENTITY_ATTACK'), @e, @pvp, @player) {
 		if(!array_index_exists(@pvp['players'], @e['damager'])) {
 			die();
 		}

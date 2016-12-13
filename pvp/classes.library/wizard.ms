@@ -5,7 +5,7 @@ case 'load':
 			die();
 		}
 		@loc = pcursor(array(0, 65, 66, 68, 70, 72, 77, 85, 143, 147, 148, 157, 171, 188, 189, 190, 191, 192));
-		bind(entity_damage, array('id': player().'lightningdmg'), array('type': 'PLAYER', 'cause': 'LIGHTNING', 'world': 'custom'), @e,
+		bind(entity_damage, array('id': player().'lightningdmg'), array('type': 'PLAYER', 'cause': 'LIGHTNING'), @e,
 				@damager = player(), @pvp) {
 
 			if(!array_index_exists(@pvp['players'], @e['player']), die());

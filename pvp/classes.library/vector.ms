@@ -22,10 +22,10 @@ case 'load':
 			}
 		});
 	}
-	bind(entity_damage, array('id': @player.'falldamage'), array('type': 'PLAYER', 'cause': 'FALL', 'world': 'custom'), @e, @p = @player) {
+	bind(entity_damage, array('id': @player.'falldamage'), array('type': 'PLAYER', 'cause': 'FALL'), @e, @p = @player) {
 		if(@e['player'] == @p, cancel())
 	}
-	bind(entity_damage, array('id': @player.'damage'), array('type': 'PLAYER', 'cause': 'ENTITY_ATTACK', 'world': 'custom'), @e, @p = @player) {
+	bind(entity_damage, array('id': @player.'damage'), array('type': 'PLAYER', 'cause': 'ENTITY_ATTACK'), @e, @p = @player) {
 		if(@e['damager'] == @p) {
 			@helm = pinv(@e['player'], 103)
 			if(@helm && @helm['type'] == 20) {

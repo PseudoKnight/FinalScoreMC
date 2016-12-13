@@ -3,8 +3,8 @@ case 'load':
 	bind(target_player, array('id': @player.'necrotarget'), array('player': @player), @e) {
 		cancel()
 	}
-	bind(entity_damage, array('id': @player.'necrodamage', 'priority': 'HIGH'), array('type': 'PLAYER', 'world': 'custom'), @e, @p = @player) {
-		if(@e['player'] == @p 
+	bind(entity_damage, array('id': @player.'necrodamage', 'priority': 'HIGH'), array('type': 'PLAYER'), @e, @p = @player) {
+		if(@e['player'] == @p
 		&& ((array_index_exists(@e, 'damager')
 		&& !ponline(@e['damager'])
 		&& entity_type(@e['damager']) === 'ZOMBIE')

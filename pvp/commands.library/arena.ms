@@ -141,8 +141,8 @@ proc _arena(@action, @id, @setting, @string) {
 				case 'podium':
 				case 'kothbeacon':
 
-					if(pworld() !== 'custom') {
-						die('You can only set location in the custom world.');
+					if(_is_survival_world(pworld())) {
+						die('You can\'t set location in survival world.');
 					}
 					@loc = ploc();
 					@arena[@setting] = array(round(@loc['x'], 1), @loc['y'], round(@loc['z'], 1), @loc['world']);
@@ -170,8 +170,8 @@ proc _arena(@action, @id, @setting, @string) {
 				case 'spawn':
 				case 'blockbreak':
 
-					if(pworld() !== 'custom') {
-						die('You can only set location in the custom world.');
+					if(_is_survival_world(pworld())) {
+						die('You can\'t set location in survival world.');
 					}
 					if(!array_index_exists(@arena, @setting)) {
 						@arena[@setting] = array();
@@ -579,30 +579,30 @@ proc _arena(@action, @id, @setting, @string) {
 			}
 
 			if(array_index_exists(@arena, 'region')) {
-				@region = sk_region_info(@arena['region'], 'custom')[0]
+				@region = sk_region_info(@arena['region'], pworld())[0]
 				for(@i = 0, @i < array_size(@region), @i++) {
 					@region[@i] = _relative(@region[@i], @dir, @distance)
 					array_remove(@region[@i], 3);
 				}
-				sk_region_update('custom', @arena['region'], @region)
+				sk_region_update(pworld(), @arena['region'], @region)
 			}
 
 			if(array_index_exists(@arena, 'broadcast')
 			&& (!array_index_exists(@arena, 'region') || @arena['broadcast'] != @arena['region'])) {
-				@region = sk_region_info(@arena['broadcast'], 'custom')[0]
+				@region = sk_region_info(@arena['broadcast'], pworld())[0]
 				for(@i = 0, @i < array_size(@region), @i++) {
 					@region[@i] = _relative(@region[@i], @dir, @distance)
 					array_remove(@region[@i], 3);
 				}
-				sk_region_update('custom', @arena['broadcast'], @region)
+				sk_region_update(pworld(), @arena['broadcast'], @region)
 			}
 
 			if(array_index_exists(@arena, 'kothregion')) {
-				@region = sk_region_info(@arena['kothregion'], 'custom')[0]
+				@region = sk_region_info(@arena['kothregion'], pworld())[0]
 				for(@i = 0, @i < array_size(@region), @i++) {
 					@region[@i] = _relative(@region[@i], @dir, @distance)
 				}
-				sk_region_update('custom', @arena['kothregion'], @region)
+				sk_region_update(pworld(), @arena['kothregion'], @region)
 			}
 
 			if(array_index_exists(@arena, 'mobprotect')) {

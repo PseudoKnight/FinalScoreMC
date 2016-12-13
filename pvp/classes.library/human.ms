@@ -21,7 +21,7 @@ case 'load':
 			entity_remove(@e['id']);
 		}
 	}
-	bind(entity_damage, array('id': @player.'damage'), array('cause': 'PROJECTILE', 'world': 'custom'), @e, @p = @player) {
+	bind(entity_damage, array('id': @player.'damage'), array('cause': 'PROJECTILE'), @e, @p = @player) {
 		if(@e['shooter'] == @p, modify_event('amount', 28))
 	}
 	bind(player_death, array('id': @player.'death'), array('player': @player), @e) {

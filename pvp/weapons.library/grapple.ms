@@ -1,5 +1,5 @@
 array_push(@pvp['binds'], @id.'grapple')
-bind(projectile_launch, array('id': @id.'grapple'), array('type': 'FISHING_HOOK', 'world': 'custom'), @event, @id) {
+bind(projectile_launch, array('id': @id.'grapple'), array('type': 'FISHING_HOOK'), @event, @id) {
 	@pvp = import('pvp'.@id);
 	@player = @event['player'];
 	@hook = @event['id'];

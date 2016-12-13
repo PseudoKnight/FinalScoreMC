@@ -4,8 +4,8 @@ proc _set_spectator(@player, @pvp) {
 	}
 	if(pinfo(@player, 5) > 0) {
 		@pvp['spectators'][] = @player;
-		foreach(@p in all_players('custom')) {
-			if(ponline(@p)) {
+		foreach(@p in all_players()) {
+			if(ponline(@p) && pworld(@p) == pworld(@player)) {
 				raw_set_pvanish(@player, true, @p);
 			}
 		}
@@ -40,8 +40,8 @@ proc _set_spectator(@player, @pvp) {
 				}
 				set_timeout(50, closure(){
 					if(@pvp['running']) {
-						foreach(@p in all_players('custom')) {
-							if(ponline(@p)) {
+						foreach(@p in all_players()) {
+							if(ponline(@p) && pworld(@p) == pworld()) {
 								raw_set_pvanish(player(), true, @p);
 							}
 						}
@@ -65,7 +65,7 @@ proc _remove_spectator(@player, @pvp) {
 			set_collides_with_entities(@player, true);
 			dm_set_pvisible(@player, true);
 
-			foreach(@p in all_players('custom')) {
+			foreach(@p in all_players()) {
 				if(ponline(@p)) {
 					raw_set_pvanish(@player, false, @p);
 				}

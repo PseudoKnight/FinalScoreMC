@@ -82,7 +82,7 @@ bind(item_pickup, array('id': @id.'flagpickup'), null, @e, @id) {
 }
 
 array_push(@pvp['binds'], @id.'protectdrops')
-bind(entity_damage, array('id': @id.'protectdrops'), array('type': 'DROPPED_ITEM', 'world': 'custom'),
+bind(entity_damage, array('id': @id.'protectdrops'), array('type': 'DROPPED_ITEM'),
 @e, @region = @pvp['arena']['region']) {
 	if(array_contains(sk_regions_at(entity_loc(@e['id'])), @region)) {
 		cancel()
