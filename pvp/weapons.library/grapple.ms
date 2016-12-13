@@ -30,7 +30,7 @@ bind(projectile_launch, array('id': @id.'grapple'), array('type': 'FISHING_HOOK'
 		@startingHealth = max(1, get_entity_health(@shooter));
 
 		@dist = sqrt(((@loc2['x'] - @loc1['x']) ** 2) + ((@loc2['y'] - @loc1['y']) ** 2) + ((@loc2['z'] - @loc1['z']) ** 2));
-		if(@dist > 31) {
+		if(@dist >= 32) {
 			if(@target != @shooter) {
 				try(entity_remove(@target));
 			}
@@ -71,16 +71,30 @@ bind(projectile_launch, array('id': @id.'grapple'), array('type': 'FISHING_HOOK'
 					@loc1 = entity_loc(@mover);
 					@dist = sqrt(((@loc2['x'] - @loc1['x']) ** 2) + ((@loc2['y'] - @loc1['y']) ** 2) + ((@loc2['z'] - @loc1['z']) ** 2));
 					@dist = max(0.1, min(20, @dist));
-					if(@dist > 2) {
+					if(@dist > 2.5) {
 						if(@dist > 10) {
 							@pitch = 1.4 + (0.6 * (@dist - 10) / 20);
 							play_sound(@loc1, array('sound': 'HORSE_BREATHE', 'pitch': @pitch));
 						}
+						if(get_entity_gliding(@mover)) {
+							@dist = @dist / 1.8;
+						}
 						@x = (@loc2['x'] - @loc1['x']) / @dist;
-						@y = (@loc2['y'] - @loc1['y']) / @dist * 1.1;
+						@y = (@loc2['y'] - @loc1['y']) / @dist * if(get_entity_gliding(@mover), 1, 1.1);
 						@z = (@loc2['z'] - @loc1['z']) / @dist;
 						set_entity_velocity(@mover, array(@x, @y, @z));
 						set_entity_fall_distance(@mover, 0);
+					} else if(!pinfo(@player, 11)) {
+						if(entity_type(@target) == 'ARROW') {
+							entity_remove(@target);
+							pgive_item(@player, 262, 1);
+						}
+						if(@interval) {
+							clear_task();
+						}
+						execute(@endtask);
+					} else {
+						set_entity_velocity(@mover, array(0, 0.08, 0));
 					}
 				}
 			} catch(BadEntityException @e) {
@@ -117,9 +131,16 @@ bind(projectile_launch, array('id': @id.'grapple'), array('type': 'FISHING_HOOK'
 array_push(@pvp['binds'], @id.'grappledamage');
 bind(entity_damage, array('id': @id.'grappledamage'), array('type': 'PLAYER', 'cause': 'FLY_INTO_WALL'), @event, @id) {
 	@pvp = import('pvp'.@id);
-	if(!array_index_exists(@pvp['players'], @event['player'])
-	|| !(@item = pinv(@event['player'], null)) || @item['name'] != 'FISHING_ROD') {
-		die();
+	if(array_index_exists(@pvp['players'], @event['player'])) {
+		cancel();
 	}
-	cancel();
+}
+
+array_push(@pvp['binds'], @id.'grapplepickup');
+bind(item_pickup, array('id': @id.'grapplepickup'), array('item': 262), @event, @id) {
+	@pvp = import('pvp'.@id);
+	if(array_index_exists(@pvp['players'], player())
+	&& pinfo(player(), 11)) {
+		cancel();
+	}
 }
