@@ -83,7 +83,7 @@ proc _pvp_start(@pvp, @id){
 
 	# Check if enough players and teleport them to lobby
 	foreach(@p in array_keys(@pvp['players'])) {
-		if(!ponline(@p) || pworld(@p) !== 'custom') {
+		if(!ponline(@p) || _is_survival_world(pworld(@p))) {
 			array_remove(@pvp['players'], @p);
 		} else {
 			set_ploc(@p, @arena['lobby']); # TODO: remove once players can't join multiple games
@@ -325,17 +325,18 @@ proc _pvp_start(@pvp, @id){
 
 	# ANNOUNCE
 	@title = @primaryName.if(@secondaryName, ': '.@secondaryName);
-	_worldmsg('custom', _fill_string('*', '-', colorize('&7&m|--&7&l[ &r&l'.@title.' &7&l]&7&m*|')));
+	@world = @arena['lobby'][3];
+	_worldmsg(@world, _fill_string('*', '-', colorize('&7&m|--&7&l[ &r&l'.@title.' &7&l]&7&m*|')));
 
 	if(array_index_exists(@pvp, 'team')) {
-		_worldmsg('custom',
+		_worldmsg(@world,
 			@arena['team'][0]['color'].'['.@arena['team'][0]['name'].'] '.
 			array_implode(@pvp['team'][0]['players'], ' ').'\n'.color('r').
 			@arena['team'][1]['color'].'['.@arena['team'][1]['name'].'] '.
 			array_implode(@pvp['team'][1]['players'], ' ')
 		);
 	} else {
-		_worldmsg('custom', color('gold').' '.array_implode(array_keys(@pvp['players']), colorize('&r vs &6')));
+		_worldmsg(@world, color('gold').' '.array_implode(array_keys(@pvp['players']), colorize('&r vs &6')));
 	}
 	if(array_index_exists(@arena, 'lives')) {
 		_regionmsg(@arena['broadcast'], colorize('* &e&l'.@arena['lives'].if(@arena['lives'] > 1, ' LIVES', ' LIFE')));
@@ -350,7 +351,7 @@ proc _pvp_start(@pvp, @id){
 	if(@picked) {
 		_regionmsg(@arena['broadcast'], colorize('* &e&lArena picked by '.@picked));
 	}
-	_worldmsg('custom', colorize('&7&m|----------------------------------------------------|'));
+	_worldmsg(@world, colorize('&7&m|----------------------------------------------------|'));
 
 	play_sound(@arena['lobby'], array('sound': 'WITHER_SPAWN', 'pitch': 1.5, 'volume': 3));
 

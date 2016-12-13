@@ -4,7 +4,7 @@ proc _pvp_join(@id){
 	if(!@arena) {
 		die('Can\'t find that arena.');
 	}
-	if(pworld() !== 'custom' && array_index_exists(@arena, 'lobby')) {
+	if(_is_survival_world(pworld()) && array_index_exists(@arena, 'lobby')) {
 		set_ploc(@arena['lobby']);
 	}
 	if(!@pvp) {
@@ -39,7 +39,7 @@ proc _pvp_join(@id){
 		@msg[] = ' ';
 		@msg[] = array('&a[START]', '/pvp start '.@id);
 	}
-	_click_tell(all_players('custom'), @msg);
+	_click_tell(all_players(pworld()), @msg);
 	console(player().' joined '.@id, false);
 
 	include('player.ms');

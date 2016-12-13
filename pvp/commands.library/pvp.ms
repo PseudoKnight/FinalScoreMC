@@ -27,7 +27,7 @@ proc _pvp(@action, @id, @arg){
             msg(color('a').'You voted for '.to_upper(@arg).'.');
 
         case 'spectate':
-            if(pworld() !== 'custom') {
+            if(_is_survival_world(pworld())) {
                 die('You are not in Frog Park.');
             }
             @id = to_lower(@id);

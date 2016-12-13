@@ -173,7 +173,7 @@ proc _class_select(@id, @pvp) {
 		bind(inventory_click, array('id': @id.'classselector'), array('slottype': 'CONTAINER'), @e, @id) {
 			@pvp = import('pvp'.@id)
 			if(!array_index_exists(@pvp['players'], player())
-			|| pworld() !== 'custom'
+			|| _is_survival_world(pworld())
 			|| is_null(@e['slotitem'])
 			|| is_null(@e['slotitem']['meta'])
 			|| is_null(@e['slotitem']['meta']['display'])) {

@@ -214,7 +214,7 @@ bind(player_quit, array('id': @id.'quit', 'priority': 'HIGH'), null, @e, @id) {
 }
 
 array_push(@pvp['binds'], @id.'spawn')
-bind(player_spawn, array('id': @id.'spawn'), array('world': 'custom'), @e, @id) {
+bind(player_spawn, array('id': @id.'spawn'), null, @e, @id) {
 	@pvp = import('pvp'.@id)
 	if(!array_index_exists(@pvp['players'], player()),
 		die())
@@ -330,7 +330,7 @@ if(array_contains(@pvp['arena']['flags'], 'noxp')) {
 	array_push(@pvp['binds'], @id.'noxp')
 	bind(entity_death, array('id': @id.'noxp'), null, @e, @id) {
 		@pvp = import('pvp'.@id)
-		if(@e['location']['world'] === 'custom'
+		if(!_is_survival_world(@e['location']['world'])
 		&& array_contains(sk_regions_at(@e['location']), @pvp['arena']['region'])) {
 			modify_event('xp', 0)
 		}
@@ -453,7 +453,7 @@ if(!array_contains(@pvp['arena']['flags'], 'build')) {
 }
 
 array_push(@pvp['binds'], @id.'EntityDamage')
-bind(entity_damage, array('id': @id.'EntityDamage', 'priority': 'LOWEST'), array('world': 'custom'), @e, @id) {
+bind(entity_damage, array('id': @id.'EntityDamage', 'priority': 'LOWEST'), null, @e, @id) {
 	@pvp = import('pvp'.@id)
 	if(array_index_exists(@e, 'damager')
 	&& array_contains(@pvp['spectators'], @e['damager'])) {
@@ -661,7 +661,7 @@ if(array_index_exists(@pvp['arena'], 'captain')) {
 
 if(array_index_exists(@pvp['arena'], 'captain')) {
 	array_push(@pvp['binds'], @id.'protectdrops')
-	bind(entity_damage, array('id': @id.'protectdrops'), array('type': 'DROPPED_ITEM', 'world': 'custom'),
+	bind(entity_damage, array('id': @id.'protectdrops'), array('type': 'DROPPED_ITEM'),
 	@e, @region = @pvp['arena']['region']) {
 		if(array_contains(sk_regions_at(entity_loc(@e['id'])), @region)) {
 			cancel()
@@ -672,7 +672,7 @@ if(array_index_exists(@pvp['arena'], 'captain')) {
 if(array_contains(@pvp['arena']['flags'], 'infinitedispensers')) {
 	array_push(@pvp['binds'], @id.'infinitedispensers')
 	bind(projectile_hit, array('id': @id.'infinitedispensers'), array('type': 'ARROW'), @e) {
-		if(@e['location']['world'] === 'custom' && is_array(@e['shooter'])) {
+		if(!_is_survival_world(@e['location']['world']) && is_array(@e['shooter'])) {
 			entity_remove(@e['id'])
 		}
 	}
@@ -718,7 +718,7 @@ if(array_index_exists(@pvp['arena'], 'blockbreak')) {
 	
 	@pvp['binds'][] = @id.'blockexplode';
 	bind(entity_explode, array('id': @id.'blockexplode'), array('type': 'PRIMED_TNT'), @event, @id) {
-		if(@event['location']['world'] != 'custom') {
+		if(_is_survival_world(@event['location']['world'])) {
 			die();
 		}
 		@pvp = import('pvp'.@id);

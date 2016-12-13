@@ -209,7 +209,7 @@ proc _pvp_start_match(@id) {
 				} else {
 					tmsg(@player, color('gray').'[PVP] '.color('r').'You exited the combat region.')
 					set_timeout(50, closure(){
-						if(pworld(@player) == 'custom' && pinfo(@player, 5) > 0) {
+						if(!_is_survival_world(pworld(@player)) && pinfo(@player, 5) > 0) {
 							pkill(@player);
 						}
 					});
@@ -355,6 +355,7 @@ proc _pvp_check_objectives(@id) {
 
 proc _pvp_end_match(@id, @winners) {
 	@pvp = import('pvp'.@id)
+	@world = @pvp['arena']['lobby'][3];
 
 	if(@pvp['running'] != 2, return())
 
@@ -387,15 +388,15 @@ proc _pvp_end_match(@id, @winners) {
 				}
 				_regionmsg(@pvp['arena']['broadcast'], colorize('&7&m|----------------------------------------------------|'));
 			} else if(array_index_exists(@pvp, 'team') && array_size(@winners) > 0) {
-				_worldmsg('custom', color('gray').'[PVP] '
+				_worldmsg(@world, color('gray').'[PVP] '
 					.@pvp['players'][@leader]['color'].color('bold')
 					.@pvp['arena']['team'][@pvp['players'][@leader]['team']]['name'].' win!\n'
 					.@pvp['players'][@leader]['color'].array_implode(@winners, ' '));
 			} else if(array_size(@winners) > 0) {
-				_worldmsg('custom', color('gray').'[PVP] '.color('r').array_implode(@winners, ' and ').' wins!');
+				_worldmsg(@world, color('gray').'[PVP] '.color('r').array_implode(@winners, ' and ').' wins!');
 
 			} else {
-				_worldmsg('custom', color('gray').'[PVP] '.color('r').'Nobody wins! Wait.. what?!');
+				_worldmsg(@world, color('gray').'[PVP] '.color('r').'Nobody wins! Wait.. what?!');
 			}
 		}, @id);
 
@@ -487,7 +488,7 @@ proc _pvp_end_match(@id, @winners) {
 		if(array_index_exists(@pvp['arena'], 'restore')) {
 			foreach(@region in @pvp['arena']['restore']) {
 				skcb_load(@region);
-				skcb_paste(array(0, 0, 0, 'custom'), array('origin': true));
+				skcb_paste(array(0, 0, 0, @world), array('origin': true));
 			}
 		}
 
