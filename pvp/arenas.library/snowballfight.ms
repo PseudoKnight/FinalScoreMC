@@ -6,11 +6,13 @@ bind(entity_damage_player, array('id': @id.'snowballtp'), array('damager': 'SNOW
     if(!array_index_exists(@pvp['players'], @player)) {
         die();
     }
-    if(array_index_exists(@pvp, 'team')
-    && @pvp['players'][@player]['team'] == @pvp['players'][@damager]['team']) {
-        die();
+    if(array_index_exists(@pvp['players'], @damager)) {
+        if(array_index_exists(@pvp, 'team')
+        && @pvp['players'][@player]['team'] == @pvp['players'][@damager]['team']) {
+            die();
+        }
+        @pvp['stats'][@damager]['kills']++;
     }
-    @pvp['stats'][@damager]['kills']++;
     @pvp['stats'][@player]['deaths']++;
     @loc = _relative(ploc(@player), 'up', 2);
     play_effect(@loc, 'SNOWBALL_BREAK', associative_array(
@@ -27,6 +29,16 @@ bind(entity_damage_player, array('id': @id.'snowballtp'), array('damager': 'SNOW
     @loc = array_rand(@pvp['arena']['spawn'][@team], 1, false)[0];
     set_ploc(@player, @loc);
     play_named_sound(@loc, associative_array('sound': 'entity.llama.spit', 'pitch': 0.5), @player);
+    _pvp_equip(@id, @player);
+}
+
+@pvp['binds'][] = @id.'snowmanhit';
+bind(entity_damage, array('id': @id.'snowmanhit'), array('type': 'SNOWMAN', 'cause': 'PROJECTILE', 'world': @pvp['arena']['lobby'][3]), @e, @id) {
+    @loc = entity_loc(@e['id']);
+    @loc['y'] += 1;
+    play_sound(@loc, array('sound': 'ZOMBIE_INFECT'));
+    play_effect(@loc, 'cloud', array('speed': 0, 'particleCount': 10, 'offsetX': 0.4, 'offsetZ': 0.4, 'offsetY': 0.4));
+    entity_remove(@e['id']);
 }
 
 @pvp['binds'][] = @id.'snowballpickup';

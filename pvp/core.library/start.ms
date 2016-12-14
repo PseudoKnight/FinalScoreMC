@@ -97,11 +97,7 @@ proc _pvp_start(@pvp, @id){
 	if(!array_index_exists(@arena, 'lobby'), die('No lobby defined for arena.'));
 	if(!array_index_exists(@arena, 'region'), die('No region defined for arena.'));
 
-	# Load custom arena scripts
 	@pvp['binds'] = array();
-	if(array_contains(@arena['flags'], 'script')){
-		include('../arenas.library/'.@id.'.ms');
-	}
 
 	# Configure remaining arena settings
 	if(!array_index_exists(@arena, 'broadcast'), @arena['broadcast'] = @arena['region']);

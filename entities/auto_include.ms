@@ -13,6 +13,19 @@ proc _spawn_mob(@mob, @qty, @loc, @owner = 'Notch') {
 			if(array_index_exists(@mob, 'tame'), tame_mob(@owner, @m));
 			if(array_index_exists(@mob, 'age'), set_mob_age(@m, @mob['age']));
 			if(array_index_exists(@mob, 'ai'), set_entity_ai(@m, @mob['ai']));
+			if(array_index_exists(@mob, 'lifetime')) {
+				set_timeout(@mob['lifetime'] * 1000, closure(){
+					try {
+						@loc = entity_loc(@m);
+						@loc['y'] += 1;
+						play_sound(@loc, array('sound': 'ZOMBIE_INFECT'));
+						play_effect(@loc, 'cloud', array('speed': 0, 'particleCount': 10, 'offsetX': 0.4, 'offsetZ': 0.4, 'offsetY': 0.4));
+						entity_remove(@m);
+					} catch(BadEntityException @ex) {
+						// already dead
+					}
+				});
+			}
 			if(array_index_exists(@mob, 'health')) {
 				set_max_health(@m, @mob['health']);
 				set_entity_health(@m, 100);
@@ -76,6 +89,46 @@ proc _spawn_mob(@mob, @qty, @loc, @owner = 'Notch') {
 				} catch(BadEntityException @ex) {
 					// already removed
 				}
+				clear_task();
+			}
+		});
+	}
+	if(array_index_exists(@mob, 'targetnear')) {
+		@range = @mob['targetnear'];
+		@projectile = 'ARROW';
+		switch(to_upper(@mob['type'])) {
+			case 'SNOWGOLEM':
+				@projectile = 'SNOWBALL';
+			case 'CHICKEN':
+				@projectile = 'EGG';
+			case 'BLAZE':
+				@projectile = 'SMALL_FIREBALL';
+			case 'WITHER':
+				@projectile = 'WITHER_SKULL';
+			case 'GHAST':
+				@projectile = 'FIREBALL';
+			case 'ENDERDRAGON':
+				@projectile = 'DRAGON_FIREBALL';
+		}
+		set_interval(1500, closure() {
+			foreach(@i: @m in @mobs) {
+				try {
+					@loc1 = entity_loc(@m);
+					foreach(@p in players_in_radius(@loc1, @range)) {
+						if(@p != @owner) {
+							@loc2 = ploc(@p);
+							@loc2['y'] += 2;
+							@loc1['yaw'] = get_yaw(@loc1, @loc2);
+							@loc1['pitch'] = get_pitch(@loc1, @loc2);
+							set_entity_loc(@m, @loc1);
+							shoot_projectile(@m, @projectile, @p);
+							break();
+						}
+					}
+				} catch(BadEntityException @ex) {
+					array_remove(@mobs, @i);
+				}
+			} else {
 				clear_task();
 			}
 		});

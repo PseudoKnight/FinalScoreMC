@@ -15,14 +15,23 @@
 			@mob['name'] = colorize($);
 			msg('Name set.');
 
+		// Single integer values
 		case 'age':
-			if(!is_integral($), die('Must be a number.'));
-			@mob['age'] = $;
-			msg('Age set.');
+		case 'health':
+		case 'lifetime':
+		case 'onfire':
+		case 'targetnear':
+			if(!is_integral($)) {
+				die('Must be an integer.');
+			}
+			@mob[$setting] = integer($);
+			msg(to_upper($setting).' set to '.@mob[$setting]);
 
+		// Single boolean
 		case 'ai':
-			@mob['ai'] = ($ == 'true');
-			msg('AI set.');
+		case 'tame':
+			@mob[$setting] = ($ == 'true');
+			msg(to_upper($setting).' set to '.@mob[$setting]);
 
 		case 'gear':
 			@mob['gear'] = array(
@@ -82,14 +91,6 @@
 			@mob['tags'] = json_decode($);
 			msg('Set the tags to '.$);
 
-		case 'tame':
-			if($) {
-				@mob['tame'] = true;
-			} else if(array_index_exists(@mob, 'tame')) {
-				array_remove(@mob, 'tame');
-			}
-			msg('Made mob tamed state to '.$);
-
 		case 'rider':
 			@mob['rider'] = $;
 			msg('Set mob rider to '.$);
@@ -103,23 +104,9 @@
 			@mob['explode'] = @args;
 			msg('Set mob to explode after '.@args[0].' seconds with strength of '.@args[1]);
 
-		case 'onfire':
-			if(!is_numeric($), die('Must be a number.'));
-			if($ == 0 && array_index_exists(@mob, 'onfire')) {
-				array_remove(@mob, 'onfire');
-				msg('Mob will not spawn on fire.');
-			} else {
-				@mob['onfire'] = $;
-				msg('Mob will spawn on fire for '.$.' seconds.');
-			}
-
-
-		case 'health':
-			@mob['health'] = $;
-			msg('Set health to '.$);
-
 		default:
-			die('Available settings: type, name, gear, droprate, effect, health, tame, tags, rider, explode, onfire');
+			die('Available settings: type, name, gear, droprate, effect, health, tame, tags, rider, explode, onfire,'
+					.' lifetime, targetnear');
 		}
 		store_value('mob.'.$id, @mob);
 

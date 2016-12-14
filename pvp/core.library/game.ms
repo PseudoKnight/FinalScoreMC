@@ -5,6 +5,11 @@ include('player.ms');
 include('stats.ms');
 include('weapons.ms');
 
+# ARENA
+if(array_contains(@arena['flags'], 'script')){
+	include('../arenas.library/'.@id.'.ms');
+}
+
 # CLASSES
 if(array_index_exists(@pvp['arena'], 'classes')) {
 	include('class.ms');

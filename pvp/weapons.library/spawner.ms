@@ -12,8 +12,11 @@ bind(player_interact, array('id': @id.'spawner'), array('button': 'right', 'item
 		|| is_null(@item['meta']['display'])) {
 			die()
 		}
-
-		@loc = _relative(@e['location'], @e['facing']);
+		
+		@loc = @e['location'];
+		if(get_block_info(@loc)['solid']) {
+			@loc = _relative(@loc, @e['facing']);
+		}
 		@loc['x'] += 0.5;
 		@loc['z'] += 0.5;
 
@@ -27,6 +30,7 @@ bind(player_interact, array('id': @id.'spawner'), array('button': 'right', 'item
 		} else {
 			_spawn_mob(@mob, 1, @loc, player())
 		}
+		@loc['y'] += 1;
 		play_sound(@loc, array('sound': 'ZOMBIE_INFECT', 'pitch': 1.5));
 		play_effect(@loc, 'cloud', array('speed': 0, 'particleCount': 10, 'offsetX': 0.4, 'offsetZ': 0.4, 'offsetY': 0.4));
 		_weapon_cooldown(player(), 2000, 'PUMPKIN_SEEDS', false);
