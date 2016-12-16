@@ -1,4 +1,4 @@
-proc _spawn_mob(@mob, @qty, @loc, @owner = 'Notch') {
+proc _spawn_mob(@mob, @qty, @loc, @args) {
 	@mob = _get_mob(@mob);
 	if(is_null(@mob)) {
 		return(array());
@@ -10,7 +10,7 @@ proc _spawn_mob(@mob, @qty, @loc, @owner = 'Notch') {
 			if(array_index_exists(@mob, 'gear'), set_mob_equipment(@m, @mob['gear']));
 			if(array_index_exists(@mob, 'droprate'), set_equipment_droprates(@m, @mob['droprate']));
 			if(array_index_exists(@mob, 'tags'), set_entity_spec(@m, @mob['tags']));
-			if(array_index_exists(@mob, 'tame'), tame_mob(@owner, @m));
+			if(array_index_exists(@mob, 'tame'), tame_mob(@args, @m));
 			if(array_index_exists(@mob, 'age'), set_mob_age(@m, @mob['age']));
 			if(array_index_exists(@mob, 'ai'), set_entity_ai(@m, @mob['ai']));
 			if(array_index_exists(@mob, 'lifetime')) {
@@ -32,7 +32,7 @@ proc _spawn_mob(@mob, @qty, @loc, @owner = 'Notch') {
 			}
 			if(array_index_exists(@mob, 'rider')) {
 				if(@mob['rider'] === 'owner') {
-					set_entity_rider(@m, puuid(@owner));
+					set_entity_rider(@m, puuid(@args));
 				} else {
 					@rider = _spawn_mob(@mob['rider'], 1, @loc)[0];
 					set_entity_rider(@m, @rider);
@@ -115,7 +115,7 @@ proc _spawn_mob(@mob, @qty, @loc, @owner = 'Notch') {
 				try {
 					@loc1 = entity_loc(@m);
 					foreach(@p in players_in_radius(@loc1, @range)) {
-						if(@p != @owner) {
+						if(!array_contains(@args, @p)) {
 							@loc2 = ploc(@p);
 							@loc2['y'] += 2;
 							@loc1['yaw'] = get_yaw(@loc1, @loc2);
