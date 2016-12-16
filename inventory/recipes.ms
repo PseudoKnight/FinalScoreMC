@@ -68,25 +68,6 @@ bind('inventory_click', null, array('slottype': 'RESULT'), @event) {
 			} else {
 				cancel();
 			}
-		} else if(@event['slotitem']['name'] == 'FIREWORK') {
-			if(@event['shiftclick']) {
-				// Minecraft crafts these items oddly, so instead of replacing the result it is more consistent to give
-				// the difference.
-				/* TODO: FIX DUPING IN 1.11
-				@min = 64;
-				foreach(@item in @event['inventory']) {
-					if(@item && @item['name'] != 'FIREWORK'){
-						@min = min(@min, @item['qty']);
-					}
-				}
-				@remaining = (@min * 13);
-				pgive_item(401, @remaining, @event['slotitem']['meta']);
-				*/
-				cancel();
-			} else {
-				@event['slotitem']['qty'] = 16;
-				modify_event('slotitem', @event['slotitem']);
-			}
 		}
 
 	} else if(@event['inventorytype'] === 'ANVIL') {
