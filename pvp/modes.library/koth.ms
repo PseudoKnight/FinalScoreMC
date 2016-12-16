@@ -1,6 +1,7 @@
 proc _interval(@pvp, @id) {
     if(array_index_exists(@pvp, 'team')) {
         @kingteam = -1;
+        @count = 0;
         foreach(@p: @player in @pvp['players']) {
             if(pinfo(@p, 5) > 0 && array_contains(sk_current_regions(@p), @pvp['arena']['kothregion'])) {
                 if(@kingteam > -1 && @kingteam != @player['team']) {
@@ -9,6 +10,7 @@ proc _interval(@pvp, @id) {
                     break();
                 } else {
                     @kingteam = @player['team'];
+                    @count++;
                 }
             }
         }
@@ -17,7 +19,7 @@ proc _interval(@pvp, @id) {
     	if(@kingteam > -1) {
             @team = @pvp['arena']['team'][@kingteam]['name'];
     		@score = get_pscore('seconds', @team, @id);
-    		set_pscore('seconds', @team, @score + 1, @id);
+    		set_pscore('seconds', @team, @score + @count, @id);
     		if(array_index_exists(@pvp['arena'], 'kothbeacon')) {
     			set_block_at(@pvp['arena']['kothbeacon'], '95:'.if(@kingteam, '11', '14'));
     		}
