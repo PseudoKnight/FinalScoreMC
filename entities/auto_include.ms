@@ -94,6 +94,9 @@ proc _spawn_mob(@mob, @qty, @loc, @args) {
 		});
 	}
 	if(array_index_exists(@mob, 'targetnear')) {
+		if(!is_array(@args)) {
+			@args = array(@args);
+		}
 		@range = @mob['targetnear'];
 		@projectile = 'ARROW';
 		switch(to_upper(@mob['type'])) {
