@@ -441,7 +441,7 @@ bind(player_interact, null, array('block': 26, 'button': 'right'), @event) {
 # Infinite dispensers on creative/game worlds
 # Special behavior for other items (eg. place armor stands)
 bind(block_dispense, null, array('type': 'DISPENSER'), @event) {
-	if(array_contains(array(325, 326, 327), @event['item']['type'])) {
+	if(@event['item'] && array_contains(array(325, 326, 327), @event['item']['type'])) {
 		// Always ignore buckets
 	} else if(!_is_survival_world(@event['location']['world'])) {
 		if(!array_contains(sk_region_check_flag(@event['location'], 'blocked-cmds'), '/finitedispensers')) {
@@ -464,7 +464,7 @@ bind(block_dispense, null, array('type': 'DISPENSER'), @event) {
 				}
 			}
 		}
-	} else if(@event['item']['type'] == 416) { # armor stand
+	} else if(@event['item'] && @event['item']['type'] == 416) { # armor stand
 		try {
 			@inv = get_inventory(@event['location']);
 		} catch(CastException @ex) {
