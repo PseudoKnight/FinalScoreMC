@@ -123,7 +123,7 @@ proc _pvp_start(@pvp, @id){
 				);
 			}
 			
-			@arena['ff'] = false;
+			@arena['ff'] = 'knockback';
 			if(array_index_exists(@arena, 'kit')) {
 				@arena['kit'][1] = @arena['kit'][0];
 			}
@@ -140,7 +140,7 @@ proc _pvp_start(@pvp, @id){
 		// Alternate spawns
 		if(array_size(@arena['spawn']) == 1 || !@arena['spawn'][1]) {
 			@oldspawns = @arena['spawn'][0][];
-			@arena['spawn'][0] = array();
+			@arena['spawn'] = array(array(), array());
 			@team = 0;
 			foreach(@spawn in @oldspawns) {
 				@arena['spawn'][@team][] = @spawn;
