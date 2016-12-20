@@ -1,6 +1,7 @@
 bind(player_interact, null, array('item': 401, 'button': 'right'), @event) {
 	if(pworld() !== 'custom'
-	|| pinfo(player(), 6) != @event['item']) {
+	|| pinfo(player(), 6) != @event['item']
+	|| get_entity_gliding(puuid())) {
 		die();
 	}
 	@pdata = _pdata(player());
