@@ -115,7 +115,7 @@ proc _pvp_start(@pvp, @id){
 		    @arena['mode'] = 'dm';
 		}
 		@size = array_size(@pvp['players']);
-		if(@size % 2 == 0) {
+		if(@size > 3 && @size % 2 == 0) {
 			if(!array_index_exists(@arena, 'team')) {
 				@arena['team'] = array(
 					array('name': 'Red', 'color': 'c'),
@@ -123,7 +123,6 @@ proc _pvp_start(@pvp, @id){
 				);
 			}
 			
-			@arena['ff'] = 'knockback';
 			if(array_index_exists(@arena, 'kit')) {
 				@arena['kit'][1] = @arena['kit'][0];
 			}
