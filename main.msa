@@ -434,6 +434,10 @@
 	if(!$) {
 		die('Enter a message to be displayed when entering the server.');
 	}
+	
+	if(length($) > 88) {
+		die('Enter messages must be 88 or less characters.');
+	}
 
 	@pdata = _pdata(player());
 	@pdata['enter'] = $;
@@ -444,6 +448,10 @@
 *:/exit [$] = >>>
 	if(!$) {
 		die('Enter a message to be displayed when exiting the server.');
+	}
+	
+	if(length($) > 88) {
+		die('Exit messages must be 88 or less characters.');
 	}
 
 	@pdata = _pdata(player());
