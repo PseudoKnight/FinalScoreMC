@@ -2,19 +2,27 @@ bind(world_changed, null, null, @event) {
 	@to = @event['to'];
 	@from = @event['from'];
 	@worlds = _worlds_config();
-	if(@worlds[@from]['mode'] != @worlds[@to]['mode']) {
+	@fromMode = @worlds[@from]['mode'];
+	@toMode = @worlds[@to]['mode'];
+	if(@fromMode != @toMode) {
 		# let's swap inventory
 		close_pinv();
-		set_pmode(@worlds[@to]['mode']);
+		if(@toMode == pmode()) {
+			if(@toMode == 'survival' || @toMode == 'adventure') {
+				set_pflight(false);
+			}
+		} else {
+			set_pmode(@toMode);
+		}
 		include('util.library/storage.ms');
-		if(@worlds[@from]['mode'] == 'survival') {
+		if(@fromMode == 'survival') {
 			_store_pstate(@event['player'], 'survival');
-			_clear_pstate(@event['player'], @worlds[@to]['mode']);
-		} else if(@worlds[@to]['mode'] == 'survival') {
+			_clear_pstate(@event['player'], @toMode);
+		} else if(@toMode == 'survival') {
 			console('Loading survival inventory for '.@event['player'].' coming from '.@from.'.', false);
 			_get_pstate(@event['player'], 'survival');
 		} else {
-			_clear_pstate(@event['player'], @worlds[@to]['mode']);
+			_clear_pstate(@event['player'], @toMode);
 		}
 	}
 }
