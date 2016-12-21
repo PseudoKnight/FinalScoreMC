@@ -6,7 +6,7 @@ include('stats.ms');
 include('weapons.ms');
 
 # ARENA
-if(array_contains(@arena['flags'], 'script')){
+if(array_contains(@pvp['arena']['flags'], 'script')){
 	include('../arenas.library/'.@id.'.ms');
 }
 
