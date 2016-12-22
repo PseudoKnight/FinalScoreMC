@@ -68,26 +68,6 @@ bind('inventory_click', null, array('slottype': 'RESULT'), @event) {
 			} else {
 				cancel();
 			}
-		} else if(@event['slotitem']['name'] == 'FIREWORK') {
-			@slotitem = @event['slotitem'];
-			if(@slotitem['meta'] && @slotitem['meta']['firework']['effects']) {
-				die();
-			}
-			@strength = 0;
-			foreach(@item in @event['inventory']) {
-				if(@item && @item['name'] == 'SULPHUR') {
-					@strength++;
-				}
-			}
-			if(@strength > 1) {
-				if(@event['shiftclick']) {
-					cancel();
-				} else {
-					modify_event('slotitem', associative_array('name': 'FIREWORK', 'qty': 3, 'meta': associative_array(
-						'firework': associative_array('strength': @strength, 'effects': array()),
-					)));
-				}
-			}
 		}
 
 	} else if(@event['inventorytype'] === 'ANVIL') {
