@@ -2,6 +2,7 @@ proc _interval(@pvp, @id) {
     if(array_index_exists(@pvp, 'team')) {
         @kingteam = -1;
         @count = 0;
+        @players = array();
         foreach(@p: @player in @pvp['players']) {
             if(pinfo(@p, 5) > 0 && array_contains(sk_current_regions(@p), @pvp['arena']['kothregion'])) {
                 if(@kingteam > -1 && @kingteam != @player['team']) {
@@ -10,6 +11,7 @@ proc _interval(@pvp, @id) {
                     break();
                 } else {
                     @kingteam = @player['team'];
+                    @players[] = @p;
                     @count++;
                 }
             }
@@ -20,6 +22,9 @@ proc _interval(@pvp, @id) {
             @team = @pvp['arena']['team'][@kingteam]['name'];
     		@score = get_pscore('seconds', @team, @id);
     		set_pscore('seconds', @team, @score + @count, @id);
+            foreach(@p in @players) {
+                @pvp['stats'][@p]['seconds']++;
+            }
     		if(array_index_exists(@pvp['arena'], 'kothbeacon')) {
     			set_block_at(@pvp['arena']['kothbeacon'], '95:'.if(@kingteam, '11', '14'));
     		}
@@ -48,6 +53,7 @@ proc _interval(@pvp, @id) {
     	if(@hillcount == 1) {
     		@score = get_pscore('seconds', @king, @id);
     		set_pscore('seconds', @king, @score + 1, @id);
+            @pvp['stats'][@king]['seconds']++;
     		if(!array_contains(@team['players'], @king)) {
     			if(@team['size'] == 1) {
     				team_remove_player('king', @team['players'][0], @id);
@@ -73,4 +79,13 @@ proc _interval(@pvp, @id) {
     		}
     	}
     }
+}
+
+proc _stats_table(){
+    return(array(
+		array('kills', 2, '-------'),
+        array('deaths', 2, '--------'),
+		array('seconds', 3, '--------'),
+		array('pickups', 3, '-------')
+	));
 }

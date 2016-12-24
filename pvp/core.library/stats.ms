@@ -24,3 +24,12 @@ proc _pad_stat(@amount, @length) {
 	}
 	return(color(8).@pad.color('r').@amount);
 }
+
+proc _stats_table() {
+	return(array(
+		array('kills', 2, '-------'),
+		array('deaths', 2, '---------'),
+		array('pickups', 2, '--------'),
+		array('damage', 3, '------')
+	));
+}

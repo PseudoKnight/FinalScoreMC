@@ -377,21 +377,27 @@ proc _pvp_end_match(@id, @winners) {
 
 		queue_push(closure(){
 			if(array_index_exists(@pvp, 'stats')) {
-				_regionmsg(@pvp['arena']['broadcast'], colorize('&7&m|------------------------------&7&l[ &f&lTHE FINAL SCORE&7&l ]&7&m--|'));
-				_regionmsg(@pvp['arena']['broadcast'], colorize(replace('--&7KILLS &8:&7 DEATHS &8:&7 PICKUPS &8:&7 DAMAGE', '-', ' ')));
+				@table = _stats_table();
+				@a = @table[0];
+				@b = @table[1];
+				@c = @table[2];
+				@d = @table[3];
+				@r = @pvp['arena']['broadcast'];
+				_regionmsg(@r, colorize('&7&m|------------------------------&7&l[ &f&lTHE FINAL SCORE&7&l ]&7&m--|'));
+				_regionmsg(@r, colorize(replace('--&7'.to_upper(@a[0]).' &8:&7 '.to_upper(@b[0]).' &8:&7 '.to_upper(@c[0]).' &8:&7 '.to_upper(@d[0]), '-', ' ')));
 				_regionmsg(@pvp['arena']['broadcast'], colorize('&7&m|----------------------------------------------------|'));
 				foreach(@player: @stats in @pvp['stats']) {
-					_regionmsg(@pvp['arena']['broadcast'], replace('----'
-						._pad_stat(@stats['kills'], 2).'-------'
-						._pad_stat(@stats['deaths'], 2).'---------'
-						._pad_stat(@stats['pickups'], 2).'--------'
-						._pad_stat(integer(@stats['damage']), 3).'------'
+					_regionmsg(@r, replace('----'
+						._pad_stat(@stats[@a[0]], @a[1]).@a[2]
+						._pad_stat(@stats[@b[0]], @b[1]).@b[2]
+						._pad_stat(@stats[@c[0]], @c[1]).@c[2]
+						._pad_stat(integer(@stats[@d[0]]), @d[1]).@d[2]
 						.if(array_contains(@winners, @player),
 							color('gold').color('bold').@player.if(@pvp['coins'] > 0, ' +'.@pvp['coins']),
 							@player)
 						.'-', '-', ' '));
 				}
-				_regionmsg(@pvp['arena']['broadcast'], colorize('&7&m|----------------------------------------------------|'));
+				_regionmsg(@r, colorize('&7&m|----------------------------------------------------|'));
 			} else if(array_index_exists(@pvp, 'team') && array_size(@winners) > 0) {
 				_worldmsg(@world, color('gray').'[PVP] '
 					.@pvp['players'][@leader]['color'].color('bold')
