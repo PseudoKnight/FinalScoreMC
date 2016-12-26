@@ -160,6 +160,7 @@ proc _get_mob(@mob = null) {
 			@mobTypes = reflect_pull('enum', 'Mobs');
 			store_value('mobs', @mobTypes);
 		}
+		export('mobs', @mobTypes);
 	}
 	if(is_null(@mob)) {
 		@mob = @mobTypes[rand(array_size(@mobTypes))];
