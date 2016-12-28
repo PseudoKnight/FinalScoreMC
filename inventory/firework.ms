@@ -1,6 +1,6 @@
 bind(player_interact, null, array('item': 401, 'button': 'right'), @event) {
 	if(get_entity_gliding(puuid())) {
-        set_timeout(100, closure(){
+        set_timeout(150, closure(){
             set_entity_gliding(puuid(), true);
         });
         
