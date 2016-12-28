@@ -95,6 +95,12 @@
 	if(array_index_exists(@ignorelist, 'all') && array_contains(@ignorelist['all'], @player)) {
 		die();
 	}
+	
+	@pdata = _pdata(@player);
+	if(array_index_exists(@pdata, 'joinaccept')) {
+		_warmuptp(player(), ploc(@player));
+		die();
+	}
 
 	@requests = import('requests');
 	if(array_index_exists(@requests, @player)
@@ -187,6 +193,18 @@
 	}
 	array_remove(@requests, player());
 	export('requests', @requests);
+<<<
+
+*:/autojoinaccept = >>>
+	@pdata = _pdata(player());
+	if(array_index_exists(@pdata, 'joinaccept')) {
+		array_remove(@pdata, 'joinaccept');
+		msg(colorize('Toggled auto-join-accept &c&loff&r.'));
+	} else {
+		@pdata['joinaccept'] = true;
+		msg(colorize('Toggled auto-join-accept &a&lon&r.'));
+	}
+	_store_pdata(player(), @pdata);
 <<<
 
 /tp $player $x $y $z = >>>
