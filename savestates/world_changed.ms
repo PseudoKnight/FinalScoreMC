@@ -31,22 +31,22 @@ bind(player_spawn, array('priority': 'LOWEST'), null, @event) {
 	@world = @event['location']['world'];
 	if(@event['bed_spawn'] && _is_survival_world(@world)) {
 		// workaround some issues with players spawning in the wrong world but at the right coords
-		@pdata = _pdata(@event['player']);
-		if(array_index_exists(@pdata, 'survival')
-		&& array_index_exists(@pdata['survival'], 'bed')
-		&& is_array(@pdata['survival']['bed'])) {
-			@bed = @pdata['survival']['bed'];
-			@spawn = @event['location'];
-			@pbed = pbed_location(@event['player']);
-			if(@pbed[0] + 0.5 != @spawn[0]
-			|| @pbed[1] != integer(@spawn[1])
-			|| @pbed[2] + 0.5 != @spawn[2]
-			|| @pbed[3] != @world) {
-				console(@event['player'].' respawned at '.@spawn, false);
-				console(@event['player'].' bed set to '.@bed, false);
-				console(@event['player'].' pbed set to '.@pbed, false);
-				modify_event('location', get_spawn(@world));
+		@spawn = @event['location'];
+		@pbed = pbed_location(@event['player']);
+		if(@pbed[0] + 0.5 != @spawn[0]
+		|| @pbed[1] != integer(@spawn[1])
+		|| @pbed[2] + 0.5 != @spawn[2]
+		|| @pbed[3] != @world) {
+			@pdata = _pdata(@event['player']);
+			@bed = null;
+			if(array_index_exists(@pdata, 'survival')
+			&& array_index_exists(@pdata['survival'], 'bed')) {
+				@bed = @pdata['survival']['bed'];
 			}
+			console(@event['player'].' respawned at '.@spawn, false);
+			console(@event['player'].' pdata bed set to '.@bed, false);
+			console(@event['player'].' pbed set to '.@pbed, false);
+			modify_event('location', get_spawn(@world));
 		}
 	} else if(@world == 'custom') {
 		set_timeout(50, closure(){
