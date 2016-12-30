@@ -640,3 +640,13 @@ bind(note_play, null, null, @event) {
 	@event['location']['z'] += 0.5;
 	play_effect(_relative(@event['location'], 'up'), 'note');
 }
+
+// Improve bow launching
+bind(entity_damage_player, null, array('damager': 'ARROW'), @event) {
+	if(!entity_grounded(puuid()) && player() == @event['data']) {
+		@item = pinv(player(), 102);
+		if(@item && @item['name'] == 'ELYTRA') {
+			set_entity_gliding(puuid(), true);
+		}
+	}
+}
