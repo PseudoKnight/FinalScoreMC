@@ -106,6 +106,8 @@ proc _start_game(@players) {
             @hockey['holder'] = player();
             @hockey['last'] = player();
             @hockey['distance'] = @dist;
+            @hockey['velocity'] = associative_array('x': 0, 'y': 0, 'z': 0);
+            @hockey['lastloc'] = entity_loc(@hockey['puck']);
             set_pexp(0);
             play_sound(@eloc, array('sound': 'WOOD_CLICK', 'pitch': 0.6));
         }
@@ -114,7 +116,6 @@ proc _start_game(@players) {
         if(@hockey['holder'] == player()) {
             set_pexp(@hockey['holder'], 0);
             @hockey['holder'] = '';
-            @hockey['velocity'] = associative_array('x': 0, 'y': 0, 'z': 0);
         }
     }
     bind(player_quit, associative_array('id': 'hockey-quit'), null, @event, @hockey) {
@@ -207,21 +208,22 @@ proc _start_game(@players) {
             set_entity_loc(@hockey['puck'], @hockey['lastloc']);
             
         } else if(@hockey['holder'] && (@block == '79:0' || @block == '174:0')) {
-            @uuid = puuid(@hockey['holder']);
-            @newloc = entity_loc(@uuid);
+            @newloc = ploc(@hockey['holder']);
             if(@newloc['world'] != @world) {
                 _place_puck(@hockey);
             } else {
-                @vector = _get_vector(pfacing(@hockey['holder'])[0], 0, @hockey['distance'], 0);
+                if(@hockey['distance'] > 2.24) {
+                    @hockey['distance'] -= 0.05;
+                } else if(@hockey['distance'] < 2.16) {
+                    @hockey['distance'] += 0.05;
+                }
+                @vector = _get_vector(pfacing(@hockey['holder']), @hockey['distance'], 0);
                 @newloc['x'] += @vector['x'];
+                @newloc['y'] += 1;
                 @newloc['z'] += @vector['z'];
                 set_entity_loc(@hockey['puck'], @newloc);
                 @hockey['lastloc'] = @l;
                 set_pexp(@hockey['holder'], min(100, pexp(@hockey['holder']) + 2));
-                @v = entity_velocity(@uuid);
-                @v['y'] = 0;
-                @hockey['velocity'] = @v;
-                set_entity_velocity(@hockey['puck'], @v);
             }
             
         } else {
