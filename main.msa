@@ -172,50 +172,6 @@
 	}
 <<<
 
-*:/compass = >>>
-	msg('Set your compass target to a specific location.\n'
-		.'Available targets: here, spawn, home (yours or others), players, or coordinates.\n'
-		.'Usage: /compass [here|spawn|home [player]|playerName|x z]\n'
-		.'Example: /compass home PseudoKnight\n'
-		.'Example: /compass -100 150');
-<<<
-
-*:/compass $target [$arg] = >>>
-	switch($target) {
-		case 'spawn':
-			set_compass_target(get_spawn());
-			msg('Compass is now pointing to '._worldname(pworld()).'\'s spawn.');
-
-		case 'home':
-			if($arg) {
-				@pdata = _pdata($arg);
-			} else {
-				@pdata = _pdata(player());
-			}
-			if(!array_index_exists(@pdata, 'homes'), die('No home to target.'));
-			if(!array_index_exists(@pdata['homes'], pworld()), die('No home in this world to target.'));
-			set_compass_target(@pdata['homes'][pworld()]);
-			msg('Compass is now pointing to '.if($arg, $arg.'\'s', 'your').' home.');
-
-		case 'here':
-			set_compass_target(ploc());
-			msg('Compass is now pointing to this location.');
-
-		default:
-			try {
-				@player = player($target);
-				if(pworld(@player) != pworld(), die('Player is not in this world.'));
-				set_compass_target(ploc(@player));
-				msg('Compass is now pointing to '.@player.'\'s last location.');
-			} catch(PlayerOfflineException @ex) {
-				if(is_numeric($target) && is_numeric($arg)) {
-					set_compass_target(array($target, 0, $arg, pworld()));
-					msg('Compass is now pointing to x:'.$target.' z:'.$arg);
-				}
-			}
-	}
-<<<
-
 #Runs the help procedure to list or display entries
 *:/help [$selection='help'] = >>>
 	@help = array(
@@ -331,40 +287,6 @@
 	}
 <<<
 *:/rules = call_alias('/help rules')
-
-# Put whatever they have in their hand onto their head. This shouldn't dupe.
-*:/hat = >>>
-	if(!is_null(pinv(player(), 103))) {
-		die(color('gold').'You already have something on your head.');
-	}
-	@item = pinv(player(), null);
-	if(is_null(@item)) {
-		die(color('gold').'You need to hold something before you can put it on your head.');
-	}
-	@excluded = array('MONSTER_EGG');
-	if(array_contains(@excluded, @item['name'])) {
-		die(color('gold').'That item cannot be put on your head without losing data tags.');
-	}
-	if(@item['qty'] == 1) {
-		set_pinv(player(), array(null: null, 103: @item));
-	} else {
-		@item['qty'] -= 1;
-		@hat = @item[];
-		@hat['qty'] = 1;
-		set_pinv(player(), array(null: @item, 103: @hat));
-	}
-	@loc = ploc();
-	play_sound(@loc, array('sound': 'CHICKEN_EGG_POP'));
-	play_effect(_relative(@loc, 'up', 2.7), 'CLOUD', array(
-		'particleCount': 10,
-		'offsetX': 0.5,
-		'offsetY': 0.5,
-		'offsetZ': 0.5,
-		'speed': 0)
-	);
-	@messages = array('Fancy!', 'Stylin\'!', 'Groovy!', 'Lookin\' good!', 'Tasteful!', 'Awesome!', 'Rad!', 'Cool!');
-	title_msg(null, color(6).array_rand(@messages, 1, false)[0], 10, 40, 10);
-<<<
 
 # PLAYER LISTS #
 *:/who = >>>
