@@ -1,4 +1,5 @@
 proc _start_game(@players) {
+    _add_activity('hockey', 'Ice Hockey');
     @hockey = associative_array(
         'players': @players,
         'puck': '',
@@ -324,5 +325,6 @@ proc _end_game(@hockey){
         tmsg(@p, @msg);
     }
     remove_scoreboard('hockey');
+    _remove_activity('hockey');
     entity_remove(@hockey['puck']);
 }
