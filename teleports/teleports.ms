@@ -25,6 +25,7 @@ bind(player_teleport, null, null, @event) {
 				@pdata[@mode] = associative_array();
 			}
 			@pdata[@mode]['loc'] = array_normalize(@event['from'])[0..5];
+			@pdata[@mode]['loc'][1] -= 1;
 			_store_pdata(player(), @pdata);
 		});
 	}
