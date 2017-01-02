@@ -159,15 +159,15 @@ proc _start_game(@players) {
                         @teams = get_teams('hockey');
                         if(array_size(@teams[0]['players']) > array_size(@teams[1]['players'])) {
                             team_add_player(@teams[1]['name'], @p, 'hockey');
-                            set_pinv(@p, @bluegear);
+                            if(@teams[1]['name'] == 'red', set_pinv(@p, @redgear), set_pinv(@p, @bluegear));
                         } else {
                             team_add_player(@teams[0]['name'], @p, 'hockey');
-                            set_pinv(@p, @redgear);
+                            if(@teams[0]['name'] == 'red', set_pinv(@p, @redgear), set_pinv(@p, @bluegear));
                         }
                         set_pheld_slot(@p, 0);
                     }
                     action_msg(@p, @time);
-                    set_peffect(@p, 8, -8, 2, false, false);
+                    set_peffect(@p, 8, -6, 2, false, false);
                 } else if(array_contains(@hockey['players'], @p)) {
                     array_remove_values(@hockey['players'], @p);
                     @teams = get_teams('hockey');
