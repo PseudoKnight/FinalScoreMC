@@ -7,7 +7,7 @@
 	if(is_null(@item)) {
 		die(color('gold').'You need to hold something before you can put it on your head.');
 	}
-	@excluded = array('MONSTER_EGG');
+	@excluded = array();
 	if(array_contains(@excluded, @item['name'])) {
 		die(color('gold').'That item cannot be put on your head without losing data tags.');
 	}

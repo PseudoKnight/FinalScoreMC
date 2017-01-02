@@ -451,7 +451,7 @@ bind(block_dispense, null, array('type': 'DISPENSER'), @event) {
 				die();
 			}
 			foreach(@i: @item in @inv) {
-				if(@item && @item['qty'] < 64 && @item['name'] != 'MONSTER_EGG') {
+				if(@item && @item['qty'] < 64) {
 					@item['qty'] = 64;
 					queue_push(closure(){
 						try {
