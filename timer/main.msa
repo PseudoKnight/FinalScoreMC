@@ -11,7 +11,7 @@
 	switch($arg) {
 	case 'usage':
 
-		msg('Usage: /times <top|me|playerName> [courseID]')
+		msg('Usage: /times <top|me|avg|playerName> [courseID]')
 
 	case 'top':
 
