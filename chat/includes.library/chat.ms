@@ -60,16 +60,23 @@ proc _remove_ignored(@sender, @recipients) {
 /*
 	Constructs and sends a tellraw command with a hover event
 */
-proc _hover_tell(@recipients, @components) {
+proc _tellraw(@recipients, @components) {
 	@raw = ' [""';
 	foreach(@c in @components) {
 		if(!is_array(@c)) {
 			@matches = reg_match_all('(&[0-9a-fk-or])(&[k-o])?(&[k-o])?(&[k-o])?((?:&[^0-9a-fk-or]|[^&])*)', @c);
 			foreach(@m in @matches) {
-				@raw .= ',{'._color(@m[1])._color(@m[2])._color(@m[3])._color(@m[4]).'"text":"'.@m[5].'"}';
+				@raw .= ',{'._color(@m[1])._color(@m[2])._color(@m[3])._color(@m[4]).'"text":"'._clickable_links(@m[5]).'"}';
 			}
 		} else {
-			@raw .= ',{"text":"'.colorize(@c[0]).'","hoverEvent":{"action":"show_text","value":"'.colorize(@c[1]).'"}}';
+			switch(@c[0]) {
+				case 'hover':
+					@raw .= ',{"text":"'.colorize(@c[1]).'","hoverEvent":{"action":"show_text","value":"'.colorize(@c[2]).'"}}';
+				case 'colorize':
+					@raw .= ',"'.colorize(@c[1]).'"';
+				case 'plain':
+					@raw .= ',"'.@c[1].'"';
+			}
 		}
 	}
 	@raw .= ']';

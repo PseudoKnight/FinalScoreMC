@@ -162,7 +162,7 @@ bind(player_join, null, null, @event) {
 				if(@lastPlayed) {
 					@hover = 'Last played: '.simple_date('MMM d, yyyy', @lastPlayed);
 				}
-				_hover_tell(all_players(), array(@pre, array(@name, @hover), @msg));
+				_tellraw(all_players(), array(array('colorize', @pre), array('hover', @name, @hover), @msg));
 			}
 
 			foreach(@p in all_players()) {

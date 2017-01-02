@@ -50,36 +50,34 @@ bind(player_chat, null, null, @event) {
 
 	# Construct chat components
 	@components = array();
-	@components[] = '&8'.simple_date('h:mm').' ';
+	@components[] = array('colorize', '&8'.simple_date('h:mm').' ');
 
 	@pdata = _pdata(player());
 	if(array_index_exists(@pdata, 'support')) {
-		@components[] = array('&a\u2666', 'Server Supporter');
+		@components[] = array('hover', '&a\u2666', 'Server Supporter');
 	}
 
 	@pstate = _pstate(player());
 	if(array_index_exists(@pstate, 'trophies')) {
-		@components[] = array('&6\u2660', '&6&lTrophies\n'.array_implode(@pstate['trophies'], '\n'));
+		@components[] = array('hover', '&6\u2660', '&6&lTrophies\n'.array_implode(@pstate['trophies'], '\n'));
 	}
 
 	if(array_index_exists(@pdata, 'icon')) {
-		@components[] = @pdata['icon'];
+		@components[] = array('plain', @pdata['icon']);
 	}
 
 	@color = _colorname();
 
-	@components[] = array(' '.@color.player(),
+	@components[] = array('hover', ' '.@color.player(),
 		if(has_permission('group.moderator'), '&bSTAFF\n')
 		.if(array_index_exists(@pdata, 'names'), @color.array_implode(@pdata['names']).'\n')
 		.'&8[world] &r'._worldname(pworld()));
 	@components[] = '&8: ';
 
-	@clickableMessage = _clickable_links(@escapedMessage);
-
-	@components[] = '&r'.@clickableMessage;
+	@components[] = '&r'.@escapedMessage;
 
 	# Send chat message
-	_hover_tell(@recipients, @components);
+	_tellraw(@recipients, @components);
 	console(if(!@recipients, '[MUTED] ').player().': '.@event['message'], false);
 	if(@recipients) {
 		if(function_exists('dm_broadcast_to_web')) {
