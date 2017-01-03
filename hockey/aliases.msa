@@ -14,5 +14,5 @@
     } else if(array_size(@players) % 2 == 1) {
         //die('Teams are not even.');
     }
-    _start_game(@players);
+    _queue_game(@players);
 <<<

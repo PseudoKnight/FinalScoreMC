@@ -1,5 +1,7 @@
-proc _start_game(@players) {
+proc _queue_game(@players) {
     _add_activity('hockey', 'Ice Hockey');
+    @red = associative_array('name': 'STAINED_GLASS_PANE', 'data': 14);
+    @blue = associative_array('name': 'STAINED_GLASS_PANE', 'data': 11);
     @hockey = associative_array(
         'players': @players,
         'puck': '',
@@ -12,6 +14,21 @@ proc _start_game(@players) {
         'blue': '',
         'loc': associative_array(),
         'lastloc': associative_array(),
+        'redgear': associative_array(
+            4: @red, 5: @red, 6: @red, 7: @red, 8: @red,
+            100: associative_array('name': 'LEATHER_BOOTS', 'meta': associative_array('color': array(255, 0, 0))),
+            101: associative_array('name': 'LEATHER_LEGGINGS', 'meta': associative_array('color': array(255, 0, 0))),
+            102: associative_array('name': 'LEATHER_CHESTPLATE', 'meta': associative_array('color': array(255, 0, 0))),
+            103: associative_array('name': 'LEATHER_HELMET', 'meta': associative_array('color':array(255, 0, 0))),
+        ),
+        'bluegear': associative_array(
+            4: @blue, 5: @blue, 6: @blue, 7: @blue, 8: @blue,
+            100: associative_array('name': 'LEATHER_BOOTS', 'meta': associative_array('color': array(0, 0, 255))),
+            101: associative_array('name': 'LEATHER_LEGGINGS', 'meta': associative_array('color': array(0, 0, 255))),
+            102: associative_array('name': 'LEATHER_CHESTPLATE', 'meta': associative_array('color': array(0, 0, 255))),
+            103: associative_array('name': 'LEATHER_HELMET', 'meta': associative_array('color': array(0, 0, 255))),
+        ),
+        'width': 'z',
     );
     @hockey['players'] = @players;
     
@@ -24,54 +41,54 @@ proc _start_game(@players) {
     create_team('red', 'hockey');
     set_team_display('red', array('displayname': @hockey['red'], 'prefix': color('red')), 'hockey');
     set_pscore('score', @hockey['red'], 0, 'hockey');
-    @item = associative_array('name': 'STAINED_GLASS_PANE', 'data': 14);
-    @redgear = associative_array(
-        4: @item, 5: @item, 6: @item, 7: @item, 8: @item,
-        100: associative_array('name': 'LEATHER_BOOTS', 'meta': associative_array('color': array(255, 0, 0))),
-        101: associative_array('name': 'LEATHER_LEGGINGS', 'meta': associative_array('color': array(255, 0, 0))),
-        102: associative_array('name': 'LEATHER_CHESTPLATE', 'meta': associative_array('color': array(255, 0, 0))),
-        103: associative_array('name': 'LEATHER_HELMET', 'meta': associative_array('color':array(255, 0, 0))),
-    );
     
     @hockey['blue'] = color('blue').array_rand(array('Gothem Knights', 'Stirling Kings', 'PantsCo Pixies', 'Canada Wizards'), 1, false)[0];
     create_team('blue', 'hockey');
     set_team_display('blue', array('displayname': @hockey['blue'], 'prefix': color('blue')), 'hockey');
     set_pscore('score', @hockey['blue'], 0, 'hockey');
-    @item = associative_array('name': 'STAINED_GLASS_PANE', 'data': 11);
-    @bluegear = associative_array(
-        4: @item, 5: @item, 6: @item, 7: @item, 8: @item,
-        100: associative_array('name': 'LEATHER_BOOTS', 'meta': associative_array('color': array(0, 0, 255))),
-        101: associative_array('name': 'LEATHER_LEGGINGS', 'meta': associative_array('color': array(0, 0, 255))),
-        102: associative_array('name': 'LEATHER_CHESTPLATE', 'meta': associative_array('color': array(0, 0, 255))),
-        103: associative_array('name': 'LEATHER_HELMET', 'meta': associative_array('color': array(0, 0, 255))),
-    );
     
     @t = 0;
+    @world = '';
     foreach(@p in array_rand(@players, array_size(@players), false)) {
         @world = pworld(@p);
         set_pscoreboard(@p, 'hockey');
         if(@t) {
             team_add_player('red', @p, 'hockey');
             @t = 0;
-            set_pinv(@p, @redgear);
+            set_pinv(@p, @hockey['redgear']);
         } else {
             team_add_player('blue', @p, 'hockey');
             @t = 1;
-            set_pinv(@p, @bluegear);
+            set_pinv(@p, @hockey['bluegear']);
         }
         set_pheld_slot(@p, 0);
     }
     
     // get puck spawn point
     @region = sk_region_info('hockey', @world, 0);
-    @loc = associative_array(
+    @hockey['loc'] = associative_array(
         'x': (@region[0][0] + @region[1][0]) / 2 + 0.5,
         'y': @region[1][1] + 0.078,
         'z': (@region[0][2] + @region[1][2]) / 2 + 0.5,
         'world': @world
     );
-    @hockey['loc'] = @loc;
+    if(@region[0][0] - @region[1][0] < @region[0][2] - @region[1][2]) {
+        @hockey['width'] = 'x';
+    }
     
+    @countdown = array(5);
+    set_interval(1000, closure(){
+        play_sound(@hockey['loc'], associative_array('sound': 'NOTE_PLING', 'volume': 2, 'pitch': @countdown[0]));
+        if(@countdown[0] > 0) {
+            @countdown[0]--;
+        } else {
+            clear_task();
+            _start_game(@hockey);
+        }
+    });
+}
+
+proc _start_game(@hockey) {
     _place_puck(@hockey);
     
     // bind events
@@ -81,9 +98,10 @@ proc _start_game(@players) {
             set_entity_loc(@hockey['puck'], @hockey['lastloc']);
             die();
         }
-        @xp = 20;
+        cancel();
+        @xp = 40;
         if(@event['damager'] == @hockey['holder']) {
-            @xp = max(1, pexp(@event['damager'])) ** 1.3;
+            @xp = max(1, (pexp(@event['damager']) / 2) ** 1.35);
         }
         @player = @event['damager'];
         play_sound(entity_loc(@event['id']), array('sound': 'WOOD_CLICK', 'pitch': 2 - (1.3 / @xp)));
@@ -147,6 +165,7 @@ proc _start_game(@players) {
     // core game loop
     @count = array(20);
     @bounciness = 0.85;
+    @world = @hockey['loc']['world'];
     set_interval(50, 0, closure(){
         if(@count[0]-- == 0) {
             @count[0] = 20;
@@ -159,12 +178,13 @@ proc _start_game(@players) {
                         @teams = get_teams('hockey');
                         if(array_size(@teams[0]['players']) > array_size(@teams[1]['players'])) {
                             team_add_player(@teams[1]['name'], @p, 'hockey');
-                            if(@teams[1]['name'] == 'red', set_pinv(@p, @redgear), set_pinv(@p, @bluegear));
+                            if(@teams[1]['name'] == 'red', set_pinv(@p, @hockey['redgear']), set_pinv(@p, @hockey['bluegear']));
                         } else {
                             team_add_player(@teams[0]['name'], @p, 'hockey');
-                            if(@teams[0]['name'] == 'red', set_pinv(@p, @redgear), set_pinv(@p, @bluegear));
+                            if(@teams[0]['name'] == 'red', set_pinv(@p, @hockey['redgear']), set_pinv(@p, @hockey['bluegear']));
                         }
                         set_pheld_slot(@p, 0);
+                        set_pscoreboard(@p, 'hockey');
                     }
                     action_msg(@p, @time);
                     set_peffect(@p, 8, -6, 2, false, false);
@@ -212,10 +232,14 @@ proc _start_game(@players) {
             if(@newloc['world'] != @world) {
                 _place_puck(@hockey);
             } else {
-                if(@hockey['distance'] > 2.24) {
-                    @hockey['distance'] -= 0.05;
-                } else if(@hockey['distance'] < 2.16) {
-                    @hockey['distance'] += 0.05;
+                if(@hockey['distance'] > 2.22) {
+                    @hockey['distance'] -= 0.03;
+                    set_pexp(@hockey['holder'], pexp(@hockey['holder']) + 1);
+                } else if(@hockey['distance'] < 2.18) {
+                    @hockey['distance'] += 0.03;
+                    set_pexp(@hockey['holder'], pexp(@hockey['holder']) + 1);
+                } else {
+                    set_pexp(@hockey['holder'], min(100, pexp(@hockey['holder']) + 2));
                 }
                 @vector = _get_vector(pfacing(@hockey['holder']), @hockey['distance'], 0);
                 @newloc['x'] += @vector['x'];
@@ -223,11 +247,10 @@ proc _start_game(@players) {
                 @newloc['z'] += @vector['z'];
                 set_entity_loc(@hockey['puck'], @newloc);
                 @hockey['lastloc'] = @l;
-                set_pexp(@hockey['holder'], min(100, pexp(@hockey['holder']) + 2));
             }
             
         } else {
-            if(!array_contains(sk_regions_at(@l), 'hockey') || @l['y'] > @loc['y']) {
+            if(!array_contains(sk_regions_at(@l), 'hockey') || @l['y'] > @hockey['loc']['y']) {
                 _place_puck(@hockey);
                 die();
             }
@@ -276,15 +299,17 @@ proc _start_game(@players) {
 }
 
 proc _place_puck(@hockey){
+    @loc = @hockey['loc'][];
+    @loc[@hockey['width']] += rand(5) - 2;
     if(!@hockey['puck']) {
-        @hockey['puck'] = spawn_mob('SLIME:1', 1, @hockey['loc'])[0];
+        @hockey['puck'] = spawn_mob('SLIME:1', 1, @loc)[0];
         set_timeout(50, closure(){
             set_mob_effect(@hockey['puck'], 11, 4, 99999, true, false);
             set_mob_effect(@hockey['puck'], 25, -1, 99999, true, false);
             set_mob_effect(@hockey['puck'], 2, 10, 99999, true, false);
         });
     } else {
-        set_entity_loc(@hockey['puck'], @hockey['loc']);
+        set_entity_loc(@hockey['puck'], @loc);
     }
     @hockey['holder'] = '';
     @hockey['last'] = '';
