@@ -265,11 +265,15 @@ bind(entity_damage, null, array('type': 'ARMOR_STAND'), @event) {
 		@damager = @event['damager'];
 	}
 
-	if(@damager === '' || !ponline(@damager)) {
+	if(@damager === '') {
 		die();
 	}
-
-	if(sk_can_build(@damager, @event['location'])) {
+	
+	if(!ponline(@damager)) {
+		if(@event['cause'] == 'ENTITY_EXPLOSION' && entity_type(@damager) == 'FIREWORK') {
+			cancel();
+		}
+	} else if(sk_can_build(@damager, @event['location'])) {
 		@armorstand = entity_spec(@event['id']);
 		if(!@armorstand['visible']) {
 			die();
