@@ -166,12 +166,7 @@ bind(player_join, null, null, @event) {
 			}
 
 			foreach(@p in all_players()) {
-				if(length(@p) > 14) {
-					# max tab list length is 16 chars including colors
-					set_list_name(@p, _colorname(@p).substr(@p, 0, 14));
-				} else {
-					set_list_name(@p, _colorname(@p).@p);
-				}
+				set_list_name(@p, _colorname(@p).@p);
 			}
 		}, 'join');
 
