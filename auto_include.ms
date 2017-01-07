@@ -590,12 +590,8 @@ proc _fill_string(@replaceChar, @fillChar, @string, @lineWidth = 320) {
 		@charWidth = @chars[@fillChar];
 	}
 
-	@fillWidth = (@remainingWidth / @charWidth) / @fillCount;
-
-	@fillArray = array();
-	array_resize(@fillArray, floor(@fillWidth), @fillChar);
-	@fillString = array_implode(@fillArray, '');
-	return(replace(@string, @replaceChar, @fillString));
+	@fillWidth = floor(@remainingWidth / @charWidth / @fillCount);
+	return(replace(@string, @replaceChar, string_multiply(@fillChar, @fillWidth)));
 }
 
 /*
