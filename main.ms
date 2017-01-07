@@ -638,10 +638,11 @@ bind(note_play, null, null, @event) {
 
 // Improve bow launching
 bind(entity_damage_player, null, array('damager': 'ARROW'), @event) {
-	if(!entity_grounded(puuid()) && player() == @event['data']) {
+	if(player() == @event['data'] && !entity_grounded(puuid()) && !get_entity_gliding(puuid())) {
 		@item = pinv(player(), 102);
 		if(@item && @item['name'] == 'ELYTRA') {
 			set_entity_gliding(puuid(), true);
+			play_sound(ploc(), array('sound': 'ENDERDRAGON_WINGS', 'pitch': 1.3, 'volume': 0.4));
 		}
 	}
 }
