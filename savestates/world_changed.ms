@@ -33,10 +33,7 @@ bind(player_spawn, array('priority': 'LOWEST'), null, @event) {
 		// workaround some issues with players spawning in the wrong world but at the right coords
 		@spawn = @event['location'];
 		@pbed = pbed_location(@event['player']);
-		if(@pbed[0] + 0.5 != @spawn[0]
-		|| @pbed[1] != integer(@spawn[1])
-		|| @pbed[2] + 0.5 != @spawn[2]
-		|| @pbed[3] != @world) {
+		if(@pbed[3] != @world || _distance(@pbed, @spawn) > 4) {
 			@pdata = _pdata(@event['player']);
 			@bed = null;
 			if(array_index_exists(@pdata, 'survival')
