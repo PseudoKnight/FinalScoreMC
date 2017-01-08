@@ -10,6 +10,7 @@ member:
     stargate.create.gate: true
     stargate.destroy.personal: true
     stargate.option: true
+    worldedit.calc: true
     worldedit.help: true
     worldedit.wand.toggle: true
     worldedit.selection.*: true
