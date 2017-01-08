@@ -317,6 +317,11 @@ proc _pvp_start(@pvp, @id){
 	if(array_index_exists(@arena, 'classes')) {
 		_class_select(@id, @pvp);
 	}
+	
+	# ARENA
+	if(array_contains(@pvp['arena']['flags'], 'script')){
+		_prepare_arena(@pvp);
+	}
 
 	# ANNOUNCE
 	@title = @primaryName.if(@secondaryName, ': '.@secondaryName);

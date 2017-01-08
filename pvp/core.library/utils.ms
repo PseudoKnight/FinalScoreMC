@@ -46,3 +46,10 @@ proc _horizontal_distance(@loc1, @loc2) {
 proc _interval(@pvp, @id){
 	return(false);
 }
+
+/*
+	Core arena preparation (overrided by arena code)
+*/
+proc _prepare_arena(@pvp) {
+	noop();
+}

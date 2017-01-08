@@ -118,6 +118,11 @@ proc _pvp_start_match(@id) {
 			include('../weapons.library/'.@weapon.'.ms');
 		}
 	}
+	
+	# ARENA
+	if(array_contains(@pvp['arena']['flags'], 'script')){
+		_load_events(@pvp);
+	}
 
 	include('events.ms');
 
