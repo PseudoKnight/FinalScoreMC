@@ -121,7 +121,7 @@ proc _pvp_start_match(@id) {
 	
 	# ARENA
 	if(array_contains(@pvp['arena']['flags'], 'script')){
-		_load_events(@pvp);
+		_load_events(@id);
 	}
 
 	include('events.ms');
