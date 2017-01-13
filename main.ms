@@ -625,6 +625,8 @@ bind(note_play, null, null, @event) {
 		case '159':
 		case '172':
 			@sound = 'note_pling';
+		case '165':
+			@sound = 'chicken_egg_pop';
 	}
 	play_sound(@event['location'], array(
 		'sound': @sound,
