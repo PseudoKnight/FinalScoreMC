@@ -141,14 +141,23 @@
 	spawn_entity(ENDER_CRYSTAL, 1, array(@loc[0] + 0.5, @loc[1] + 1, @loc[2] + 0.5, @loc[3]))
 <<<
 
-# Overwrite a line on the sign you're looking at.
-*:/sign $line [$=''] = >>>
-	if(!has_permission('command.sign'), die('You do not have permission.'))
-	@sign = pcursor()
-	if(!is_sign_at(@sign), die('That is not a sign'))
-	@lines = get_sign_text(@sign)
-	array_set(@lines, $line - 1, colorize($))
-	set_sign_text(@sign, @lines)
+# Overwrite lines on the sign you're looking at.
+*:/sign $ = >>>
+	if(!has_permission('command.sign')) {
+		die('You do not have permission.');
+	}
+	@sign = pcursor();
+	if(!is_sign_at(@sign)) {
+		die('That is not a sign');
+	}
+	@lines = get_sign_text(@sign);
+	@args = split(' ', $, 1);
+	if(is_integral(@args[0])) {
+		@lines[@args[0] - 1] = colorize(@args[1]);
+	} else {
+		@lines = split('\\', colorize($));
+	}
+	set_sign_text(@sign, @lines);
 <<<
 
 # spawn a temporary horse
