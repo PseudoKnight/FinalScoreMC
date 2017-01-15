@@ -12,7 +12,7 @@ bind(sign_changed, null, null, @event) {
 
 # Allow command block placement for builders
 proc _place_command_block(@loc, @face, @block) {
-	if(has_permission('group.builder')
+	if(!pisop() && has_permission('group.builder')
 	&& !_is_survival_world(@loc['world'])) {
 		@clicked = split(':', get_block_at(@loc))[0];
 		if(pinfo(player(), 11) || (@clicked != '137' && @clicked != '210' && @clicked != '211')) {
