@@ -37,12 +37,31 @@ bind(player_portal_travel, null, null, @event) {
 	}
 }
 
-# Prevent undesireable interdimensional travel
-bind(entity_enter_portal, null, array('type': 'ENDER_DRAGON'), @event) {
-	cancel();
-}
-
-# Prevent items/entities from being thrown through non-survival portals
-bind(entity_enter_portal, null, array('type': '/^(?!PLAYER)\\w*/', 'world': '/(dev|custom)/'), @event) {
-	entity_remove(@event['id']);
+# Handle entity portal travel between dimensions
+bind(entity_portal_travel, null, null, @event) {
+	@from = @event['from'];
+	@to = @event['to'];
+	if(!_is_survival_world(@from['world'])) {
+		cancel();
+		entity_remove(@event['id']);
+	} else if(@to['world'] == 'world_nether') {
+		@l = @from;
+		@l['x'] /= 8;
+		@l['z'] /= 8;
+		@l['world'] = @from['world'].'_nether';
+		modify_event('to', @l);
+	} else if(@match = reg_match('^(.*)_nether$', @from['world'])) {
+		@l = @from;
+		@l['x'] *= 8;
+		@l['z'] *= 8;
+		@l['world'] = @match[1];
+		modify_event('to', @l);
+	} else if(@to['world'] == 'world_the_end') {
+		cancel();
+		if(@match = reg_match('^(.*)_the_end$', @from['world'])) {
+			set_entity_loc(@event['id'], get_spawn(@match[1]));
+		} else {
+			set_entity_loc(@event['id'], get_spawn(@from['world'].'_the_end'));
+		}
+	}
 }
