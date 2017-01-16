@@ -1,4 +1,3 @@
-/*
 bind(player_move, null, array('world': 'outworld'), @event) {
 	@loc = ploc();
 	@block = get_block_at(@loc);
@@ -29,4 +28,3 @@ bind(item_despawn, null, array('item': 6), @event) {
 		set_block_at(@event['location'], @event['item']['type'].':'.@event['item']['data']);
 	}
 }
-*/
