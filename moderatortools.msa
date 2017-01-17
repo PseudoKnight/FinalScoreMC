@@ -318,7 +318,8 @@
 		# OFFLINE INFO
 		@uuid = _get_uuid(to_lower($player), true, false);
 		@pdata = _pdata_by_uuid(replace(@uuid, '-', ''));
-		@minutes = (time() - plast_played(@pdata['name'])) / 60000;
+		@lastPlayed = plast_played(@pdata['name']);
+		@minutes = (time() - @lastPlayed) / 60000;
 		@hours = @minutes / 60
 		@days = @hours / 24
 		msg(color('gray').'--[ '.color('l').@pdata['name'].color('gray').' ]-------------------------')
@@ -329,7 +330,9 @@
 			.if(array_index_exists(@pdata['ban'], 'time'), 'temporarily ')
 			.if(array_index_exists(@pdata['ban'], 'message'), '- "'.@pdata['ban']['message'].'"')))
 		msg(color('gray').'Last Played: '.color('r').
-		if(@days >= 3) {
+		if(@days > 14) {
+			simple_date('MMMMM dd, YYYY', @lastPlayed)
+		} else if(@days >= 3) {
 			'Over '.floor(@days).' days ago'
 		} else if(@hours >= 2) {
 			'Over '.floor(@hours).' hours ago'
