@@ -99,17 +99,17 @@ proc _start_game(@hockey) {
             die();
         }
         cancel();
-        @xp = 40;
+        @xp = 30;
         if(@event['damager'] == @hockey['holder']) {
-            @xp = max(1, (pexp(@event['damager']) / 2) ** 1.35);
+            @xp = max(1, (pexp(@event['damager']) / 2) ** 1.25);
         }
         @player = @event['damager'];
         play_sound(entity_loc(@event['id']), array('sound': 'WOOD_CLICK', 'pitch': 2 - (1.3 / @xp)));
         @ploc = entity_loc(puuid(@player));
         @eloc = entity_loc(@hockey['puck']);
         @dist = _distance(@ploc, @eloc);
-        @x = ((@eloc['x'] - @ploc['x']) / @dist) * (@xp / 100);
-        @z = ((@eloc['z'] - @ploc['z']) / @dist) * (@xp / 100);
+        @x = ((@eloc['x'] - @ploc['x']) / @dist) * (@xp / 50);
+        @z = ((@eloc['z'] - @ploc['z']) / @dist) * (@xp / 50);
         @hockey['velocity'] = array('x': @x, 'y': 0, 'z': @z);
         set_entity_velocity(@hockey['puck'], @hockey['velocity']);
         @hockey['last'] = @player;
