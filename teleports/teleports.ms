@@ -10,9 +10,11 @@ if(!import('requests')) {
 
 # Main teleport handler
 bind(player_teleport, null, null, @event) {
-	@from = @event['from']['world'];
-	@to = @event['to']['world'];
-	if(@from != @to	&& (!_is_survival_world(@from) || !_is_survival_world(@to))) {
+	@from = @event['from'];
+	@to = @event['to'];
+	@fromWorld = @from['world'];
+	@toWorld = @to['world'];
+	if(@fromWorld != @toWorld && (!_is_survival_world(@fromWorld) || !_is_survival_world(@toWorld))) {
 		if(@event['type'] == 'SPECTATE') {
 			cancel();
 			die(color('yellow').'You cannot spectate a player not in this dimension.');
@@ -20,12 +22,18 @@ bind(player_teleport, null, null, @event) {
 		set_timeout(50, closure(){
 			@pdata = _pdata(player());
 			@worlds = _worlds_config();
-			@mode = @worlds[@from]['mode'];
+			@mode = @worlds[@fromWorld]['mode'];
 			if(!array_index_exists(@pdata, @mode)) {
 				@pdata[@mode] = associative_array();
 			}
-			@pdata[@mode]['loc'] = array_normalize(@event['from'])[0..5];
-			@pdata[@mode]['loc'][1] -= 1;
+			@pdata[@mode]['loc'] = array(
+				round(@from['x'], 3),
+				round(@from['y'], 3) - 1,
+				round(@from['z'], 3),
+				@from['world'],
+				round(@from['yaw'], 1),
+				round(@from['pitch'], 1),
+			);
 			_store_pdata(player(), @pdata);
 		});
 	}
