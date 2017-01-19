@@ -290,6 +290,23 @@ proc _pvp_start_match(@id) {
 			}
 		}
 		
+		if(array_index_exists(@arena, 'blockbreak') && @pvp['blockcheck']) {
+			foreach(@team in array(0, 1)) {
+				foreach(@index: @loc in @arena['blockbreak'][@team]) {
+					if(get_block_at(@loc) == '0:0') {
+						array_remove(@arena['blockbreak'][@team], @index);
+						@count = array_size(@arena['blockbreak'][@team]);
+						set_pscore('blocks', @arena['team'][@team]['name'], @count, @id);
+						if(@count < 1) {
+							_pvp_end_match(@id, @pvp['team'][if(@team, 0, 1)]['players']);
+							die()
+						}
+					}
+				}
+			}
+			@pvp['blockcheck'] = false;
+		}
+		
 		// Mode specific code
 		if(_interval(@pvp, @id)) {
 			@check = true;
