@@ -68,7 +68,7 @@ proc _snake_add(@player, @game) {
 	team_add_player(@player, @player, 'snake');
 	set_pscore('alive', @player, 1, 'snake');
 
-	if(ponline(@player)) {
+	if(ponline(@player) && _set_pstate_activity(@player, 'SNAKE')) {
 		set_pscoreboard(@player, 'snake');
 		set_ploc(@player, _relative(@headLoc, @game['snakes'][@player]['top'], 20));
 		@yaw = get_yaw(ploc(@player), @headLoc);
@@ -84,6 +84,7 @@ proc _snake_add(@player, @game) {
 				'meta': associative_array('display': 'JOYSTICK'),
 			),
 		));
+		_set_pstate_activity(@player, 'SNAKE');
 	} else {
 		@game['snakes'][@player]['bot'] = @player;
 	}
@@ -94,8 +95,9 @@ proc _snake_remove(@player, @game) {
 		set_block_at(@block, 0, false);
 	}
 	array_remove(@game['snakes'], @player);
-	if(ponline(@player) && pworld(@player) == 'custom') {
+	if(ponline(@player)) {
 		_equip_kit(@player);
+		_set_pstate_activity(@player, null);
 	}
 }
 

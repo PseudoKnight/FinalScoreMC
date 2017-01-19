@@ -18,6 +18,7 @@ proc _quit_player(@player, @id) {
 		dm_set_pvisible(@player, true);
 		_equip_kit(@player);
 		_clear_peffects(@player);
+		_set_pstate_activity(@player, null);
 	}
 	_pvp_check_objectives(@id);
 }
@@ -41,7 +42,8 @@ proc _pvp_initialize_players(@id, @players) {
 	@c = array(0, 0); # for selecting initial spawn locations
 	@loc = array();
 	foreach(@player in @players) {
-		if(!ponline(@player) || pinfo(@player, 5) == 0 || !get_collides_with_entities(@player) || _is_survival_world(pworld(@player))) {
+		if(!ponline(@player) || pinfo(@player, 5) == 0 || _is_survival_world(pworld(@player)) ||
+		!_set_pstate_activity(@player, to_upper(@id))) {
 			array_remove(@pvp['players'], @player);
 			continue();
 		}

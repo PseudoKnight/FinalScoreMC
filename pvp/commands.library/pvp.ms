@@ -41,6 +41,9 @@ proc _pvp(@action, @id, @arg){
             if(!array_contains(get_scoreboards(), @id)) {
                 die('The arena isn\'t running.');
             }
+            if(!_set_pstate_activity(player(), @id)) {
+                die('You\'re in another game.');
+            }
             include('../core.library/spectator.ms');
             set_pscoreboard(player(), @id);
             @pvp = import('pvp'.@id);

@@ -754,10 +754,27 @@ proc _store_pdata(@player, @data) {
 proc _pstate(@player) {
 	@pstate = import('pstate.'.@player);
 	if(is_null(@pstate)) {
-		@pstate = associative_array();
+		@pstate = array('activity': null);
 		export('pstate.'.@player, @pstate);
 	}
 	return(@pstate);
+}
+
+/*
+	Sets the activity for the player
+*/
+proc _set_pstate_activity(@player, @activity) {
+	@pstate = _pstate(@player);
+	if(@pstate['activity'] && @activity != null) {
+		return(false);
+	}
+	@pstate['activity'] = @activity;
+	if(@activity) {
+		set_list_name(@player, color('gray').'['.color('reset').@activity.color('gray').'] '._colorname(@player).@player);
+	} else {
+		set_list_name(@player, _colorname(@player).@player);
+	}
+	return(true);
 }
 
 /*
