@@ -45,7 +45,7 @@ bind(item_pickup, array('id': @id.'flagpickup'), null, @e, @id) {
 			queue_clear(@id.@flag.'flag');
 			modify_event('item', null);
 			_pvp_flag_spawn(@id, @flag);
-			_regionmsg(@pvp['arena']['broadcast'], color('gray').'[PVP] '
+			_pvp_msg(@pvp, color('gray').'[PVP] '
 				.@pvp['arena']['team'][@flag]['color'].player().color('r').' returned the '
 				.@pvp['arena']['team'][@flag]['color'].'flag');
 			play_sound(ploc(), array('sound': 'ENDERDRAGON_WINGS', 'pitch': 0));
@@ -57,7 +57,7 @@ bind(item_pickup, array('id': @id.'flagpickup'), null, @e, @id) {
 				@pvp['team'][@flag]['score']++;
 				set_pscore('captures', @pvp['arena']['team'][@flag]['name'], @pvp['team'][@flag]['score'], @id)
 				set_pinv(player(), array(103: null));
-				_regionmsg(@pvp['arena']['broadcast'], color('gray').'[PVP] '
+				_pvp_msg(@pvp, color('gray').'[PVP] '
 					.@pvp['arena']['team'][@flag]['color'].player().color('r').' secured the '
 					.@pvp['arena']['team'][@heldflag]['color'].'flag'.color('r').'!');
 				if(array_index_exists(@pvp['arena'], 'rsoutputscore')) {
@@ -74,7 +74,7 @@ bind(item_pickup, array('id': @id.'flagpickup'), null, @e, @id) {
 		queue_clear(@id.@flag.'flag');
 		modify_event('item', null);
 		set_pinv(player(), array(103: array('type': 425, 'data': if(@flag, 4, 1))));
-		_regionmsg(@pvp['arena']['broadcast'], color('gray').'[PVP] '
+		_pvp_msg(@pvp, color('gray').'[PVP] '
 			.@pvp['arena']['team'][if(@flag, 0, 1)]['color'].player().color('r').' picked up the '
 			.@pvp['arena']['team'][@flag]['color'].'flag');
 		play_sound(ploc(), array('sound': 'ENDERDRAGON_WINGS', 'volume': 3));

@@ -52,7 +52,7 @@ bind(player_death, array('priority': 'high', 'id': @id.'death'), null, @e, @id) 
 		@deathmessage = array_implode(@parts);
 	}
 
-	_regionmsg(@pvp['arena']['broadcast'], @deathmessage);
+	_pvp_msg(@pvp, @deathmessage);
 
 	if(array_index_exists(@pvp['arena'], 'lives')) {
 		@pvp['players'][player()]['lives'] = @pvp['players'][player()]['lives'] - 1
@@ -130,7 +130,7 @@ bind(player_death, array('priority': 'high', 'id': @id.'death'), null, @e, @id) 
 				continue();
 			}
 			if(@pvp['arena']['mode'] === 'ctf' && !is_null(@flag = _flag(@drop))) {
-				_regionmsg(@pvp['arena']['broadcast'], color('gray').'[PVP] '.@pvp['players'][player()]['color']
+				_pvp_msg(@pvp, color('gray').'[PVP] '.@pvp['players'][player()]['color']
 					.player().color('r').' dropped the '.@pvp['arena']['team'][@flag]['color'].'flag')
 				if(@e['cause']['cause'] === 'VOID' || @e['cause']['cause'] === 'LAVA') {
 					_pvp_flag_spawn(@id, @flag)
@@ -151,7 +151,7 @@ bind(player_death, array('priority': 'high', 'id': @id.'death'), null, @e, @id) 
 					}
 				}
 				_class('load', player(), @pvp['players'][player()]['class'], @pvp)
-				_regionmsg(@pvp['arena']['broadcast'], color('gray').'[PVP] '.@pvp['players'][player()]['color']
+				_pvp_msg(@pvp, color('gray').'[PVP] '.@pvp['players'][player()]['color']
 					.to_upper(@pvp['arena']['team'][@pvp['players'][player()]['team']]['name']).color('r').' - Captain has died and dropped his hat!')
 				foreach(@p: @player in @pvp['players']) {
 					if(@player['team'] == @pvp['players'][player()]['team']) {
@@ -405,7 +405,7 @@ bind(player_command, array('id': @id.'command'), null, @e, @id) {
 
 	if(array_index_exists(@pvp['players'], player())) {
 		set_ploc(@pvp['arena']['lobby']);
-		_regionmsg(@pvp['arena']['broadcast'], color('gray').'[PVP] '
+		_pvp_msg(@pvp, color('gray').'[PVP] '
 			.@pvp['players'][player()]['color'].player().color('r').' left the arena.');
 		if(@pvp['arena']['mode'] === 'ctf'
 		&& !is_null(@flag = _flag(pinv(player(), 103)))) {
@@ -542,7 +542,7 @@ if(array_contains(@pvp['arena']['flags'], 'rallycall')) {
 		)
 		set_timeout(3000, closure(){
 			if(@pvp['players'][player()]['respawn'] == 0) {
-				_regionmsg(@pvp['arena']['broadcast'], color('gray').'[PVP] '
+				_pvp_msg(@pvp, color('gray').'[PVP] '
 					.@pvp['players'][player()]['color'].player().color('r').' rallied his crew!')
 				foreach(array_keys(@pvp['players']), @p) {
 					if(@p != player()
@@ -630,7 +630,7 @@ if(array_index_exists(@pvp['arena'], 'captain')) {
 				@pvp['team'][0]['captain'] = player()
 				_class('load', player(), @pvp['players'][player()]['class'], @pvp)
 				_class('equip', player(), @pvp['players'][player()]['class'], @pvp)
-				_regionmsg(@pvp['arena']['broadcast'], color('gray').'[PVP] '
+				_pvp_msg(@pvp, color('gray').'[PVP] '
 					.@pvp['arena']['team'][0]['color'].player().color('r').' became the new captain!')
 				clear_virtualchest(@id.'0', 0)
 			} else {
@@ -649,7 +649,7 @@ if(array_index_exists(@pvp['arena'], 'captain')) {
 				@pvp['team'][1]['captain'] = player()
 				_class('load', player(), @pvp['players'][player()]['class'], @pvp)
 				_class('equip', player(), @pvp['players'][player()]['class'], @pvp)
-				_regionmsg(@pvp['arena']['broadcast'], color('gray').'[PVP] '
+				_pvp_msg(@pvp, color('gray').'[PVP] '
 					.@pvp['arena']['team'][1]['color'].player().color('r').' became the new captain!')
 				clear_virtualchest(@id.'1', 0)
 			} else {

@@ -90,9 +90,9 @@ proc _pvp_start_match(@id) {
 	_pvp_initialize_players(@id, array_keys(@pvp['players']))
 
 	if(array_index_exists(@pvp['arena'], 'captain')) {
-		_regionmsg(@pvp['arena']['broadcast'], color('gray').'[PVP] '.@pvp['arena']['team'][0]['color']
+		_pvp_msg(@pvp, color('gray').'[PVP] '.@pvp['arena']['team'][0]['color']
 			.@pvp['team'][0]['captain']. ' is the captain of '.@pvp['arena']['team'][0]['name'].'.')
-		_regionmsg(@pvp['arena']['broadcast'], color('gray').'[PVP] '.@pvp['arena']['team'][1]['color']
+		_pvp_msg(@pvp, color('gray').'[PVP] '.@pvp['arena']['team'][1]['color']
 			.@pvp['team'][1]['captain']. ' is the captain of '.@pvp['arena']['team'][1]['name'].'.')
 	}
 
@@ -155,7 +155,7 @@ proc _pvp_start_match(@id) {
 			}
 			if(array_index_exists(@arena, 'respawntime') && @p['respawn'] != 0) {
 				if(!array_contains(sk_current_regions(@player), @arena['broadcast']) && ploc(@player)['y'] < 256) {
-					_regionmsg(@arena['broadcast'], colorize('&7[PVP] '.@p['color'].@player.'&r left the arena.'));
+					_pvp_msg(@pvp, colorize('&7[PVP] '.@p['color'].@player.'&r left the arena.'));
 					if(array_index_exists(@p, 'class')) {
 						_class('unload', @player, @p['class'], @pvp);
 					}
@@ -407,7 +407,7 @@ proc _pvp_end_match(@id, @winners) {
 				@r = @pvp['arena']['broadcast'];
 				_regionmsg(@r, colorize('&7&m|------------------------------&7&l[ &f&lTHE FINAL SCORE&7&l ]&7&m--|'));
 				_regionmsg(@r, colorize(replace('--&7'.to_upper(@a[0]).' &8:&7 '.to_upper(@b[0]).' &8:&7 '.to_upper(@c[0]).' &8:&7 '.to_upper(@d[0]), '-', ' ')));
-				_regionmsg(@pvp['arena']['broadcast'], colorize('&7&m|----------------------------------------------------|'));
+				_regionmsg(@pvp, colorize('&7&m|----------------------------------------------------|'));
 				foreach(@player: @stats in @pvp['stats']) {
 					_regionmsg(@r, replace('----'
 						._pad_stat(@stats[@a[0]], @a[1]).@a[2]

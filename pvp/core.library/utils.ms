@@ -1,3 +1,12 @@
+proc _pvp_msg(@pvp, @message) {
+	foreach(@player in array_keys(@pvp['players'])) {
+		tmsg(@player, @message);
+	}
+	foreach(@spectator in @pvp['spectators']) {
+		tmsg(@spectator, @message);
+	}
+}
+
 proc _squared_distance_to_segment(@p1, @p2a, @p2b) {
 	@vx = @p2b['x'] - @p2a['x'];
 	@vy = @p2b['y'] - @p2a['y'];
