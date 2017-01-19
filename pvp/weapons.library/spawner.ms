@@ -29,7 +29,7 @@ bind(player_interact, array('id': @id.'spawner'), array('button': 'right', 'item
 			}
 		} else if(array_index_exists(@pvp, 'team')) {
 			@team = @pvp['players'][player()]['team'];
-			_spawn_mob(@mob, 1, @loc, @pvp['team'][@team]['players']);
+			_spawn_mob(@mob, 1, @loc, player(), @pvp['team'][@team]['players']);
 		} else {
 			_spawn_mob(@mob, 1, @loc, player());
 		}
