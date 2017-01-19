@@ -1,8 +1,28 @@
-proc _add_player(@player, @pvp) {
-	@pvp['players'][player()] = associative_array()
+proc _quit_player(@player, @id) {
+	@pvp = import('pvp'.@id);
+	if(@pvp['arena']['mode'] === 'ctf' && !is_null(@flag = _flag(pinv(@player, 103)))) {
+		_pvp_flag_spawn(@id, @flag);
+	}
+	if(array_index_exists(@pvp['players'][@player], 'class')) {
+		_class('unload', @player, @pvp['players'][@player]['class'], @pvp);
+	}
+	array_remove(@pvp['players'], @player);
+	if(array_index_exists(@pvp['arena'], 'lives') && @pvp['arena']['lives'] > 1) {
+		set_pscore('lives', @player, 0, @id);
+	}
+	if(ponline(@player)) {
+		preset_time(@player);
+		set_pstorm(@player, null);
+		set_entity_fall_distance(puuid(@player), 0);
+		set_ploc(@player, @pvp['arena']['lobby']);
+		dm_set_pvisible(@player, true);
+		_equip_kit(@player);
+		_clear_peffects(@player);
+	}
+	_pvp_check_objectives(@id);
 }
 
-proc _remove_player(@player, @pvp) {
+proc _switch_to_spectator(@player, @pvp) {
 	if(array_index_exists(@pvp['players'][player()], 'class')) {
 		_class('unload', player(), @pvp['players'][player()]['class'], @pvp)
 	}

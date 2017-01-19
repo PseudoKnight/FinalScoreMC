@@ -175,11 +175,11 @@ bind(player_death, array('priority': 'high', 'id': @id.'death'), null, @e, @id) 
 
 	if(@pvp['arena']['respawnmode'] == 'mob'
 	&& !@pvp['team'][@pvp['players'][player()]['team']]['respawns']) {
-		_remove_player(player(), @pvp);
+		_switch_to_spectator(player(), @pvp);
 
 	} else if(array_index_exists(@pvp['arena'], 'lives')
 	&& !@pvp['players'][player()]['lives']) {
-		_remove_player(player(), @pvp);
+		_switch_to_spectator(player(), @pvp);
 	}
 
 	modify_event('drops', @drops)
@@ -191,23 +191,8 @@ array_push(@pvp['binds'], @id.'quit')
 bind(player_quit, array('id': @id.'quit', 'priority': 'HIGH'), null, @e, @id) {
 	@pvp = import('pvp'.@id)
 	if(array_index_exists(@pvp['players'], player())) {
-		if(@pvp['arena']['mode'] === 'ctf'
-		&& !is_null(@flag = _flag(pinv(player(), 103)))) {
-			_pvp_flag_spawn(@id, @flag)
-		}
-
-		modify_event('message', color('gray').'[PVP] '
-			.@pvp['players'][player()]['color'].@e['message'])
-		if(array_index_exists(@pvp['players'][player()], 'class')) {
-			_class('unload', player(), @pvp['players'][player()]['class'], @pvp)
-		}
-		array_remove(@pvp['players'], player())
-		if(array_index_exists(@pvp['arena'], 'lives') && @pvp['arena']['lives'] > 1) {
-			set_pscore('lives', player(), 0, @id)
-		}
-		dm_set_pvisible(true);
-		set_ploc(@pvp['arena']['lobby']);
-		_pvp_check_objectives(@id);
+		modify_event('message', color('gray').'[PVP] '.@pvp['players'][player()]['color'].@e['message']);
+		_quit_player(player(), @id);
 	} else if(array_contains(@pvp['spectators'], player())) {
 		_remove_spectator(player(), @pvp);
 	}
@@ -223,8 +208,8 @@ bind(player_spawn, array('id': @id.'spawn'), null, @e, @id) {
 
 	if(!array_index_exists(@pvp['arena'], 'respawntime')) {
 		queue_push(closure(){
-			_pvp_equip(@id, player())
-		})
+			_pvp_equip(@id, player());
+		}, @id);
 	} else if(array_index_exists(@pvp['arena'], 'classes')) {
 		if(@pvp['arena']['class_picking'] === 'random') {
 			_class_select_random(player(), @pvp);
@@ -283,7 +268,7 @@ bind(player_spawn, array('id': @id.'spawn'), null, @e, @id) {
 					array_remove(@pvp['team'][@pvp['players'][player()]['team']]['respawns'], 0);
 				}
 			}
-			_remove_player(player(), @pvp);
+			_switch_to_spectator(player(), @pvp);
 		} else {
 			@r = rand(0, array_size(@pvp['arena']['spawn'][@team]));
 			modify_event('location', @pvp['arena']['spawn'][@team][@r]);
@@ -399,36 +384,16 @@ bind(player_teleport, array('id': @id.'enderpearl', 'priority': 'highest'), arra
 array_push(@pvp['binds'], @id.'command')
 bind(player_command, array('id': @id.'command'), null, @e, @id) {
 	@pvp = import('pvp'.@id);
-	if(!array_contains(array('/accept', '/warp', '/spawn', '/home', '/join'), @e['prefix'])) {
+	if(!array_contains(array('/accept', '/warp', '/spawn', '/home', '/join', '/dev', '/park', '/survival'), @e['prefix'])) {
 		die();
 	}
 
 	if(array_index_exists(@pvp['players'], player())) {
-		set_ploc(@pvp['arena']['lobby']);
-		_pvp_msg(@pvp, color('gray').'[PVP] '
-			.@pvp['players'][player()]['color'].player().color('r').' left the arena.');
-		if(@pvp['arena']['mode'] === 'ctf'
-		&& !is_null(@flag = _flag(pinv(player(), 103)))) {
-			_pvp_flag_spawn(@id, @flag);
-		}
-		if(array_index_exists(@pvp['players'][player()], 'class')) {
-			_class('unload', player(), @pvp['players'][player()]['class'], @pvp);
-		}
+		_pvp_msg(@pvp, color('gray').'[PVP] '.@pvp['players'][player()]['color'].player().color('r').' left the arena.');
 		if(array_index_exists(@pvp['arena'], 'resourcepack')) {
 			send_resourcepack(player(), 'http://mc.finalscoremc.com:25966/resourcepacks/default.zip');
 		}
-		array_remove(@pvp['players'], player());
-		if(array_index_exists(@pvp['arena'], 'lives') && @pvp['arena']['lives'] > 1) {
-			set_pscore('lives', player(), 0, @id);
-		}
-		set_pflight(player(), false);
-		dm_set_pvisible(player(), true);
-		preset_time(player());
-		set_pstorm(player(), null);
-		_clear_pinv();
-		_clear_peffects(player());
-		_pvp_check_objectives(@id);
-
+		_quit_player(player(), @id);
 	} else if(array_contains(@pvp['spectators'], player())) {
 		_remove_spectator(player(), @pvp);
 	}

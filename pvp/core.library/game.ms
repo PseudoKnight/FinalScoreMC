@@ -156,20 +156,10 @@ proc _pvp_start_match(@id) {
 			if(array_index_exists(@arena, 'respawntime') && @p['respawn'] != 0) {
 				if(!array_contains(sk_current_regions(@player), @arena['broadcast']) && ploc(@player)['y'] < 256) {
 					_pvp_msg(@pvp, colorize('&7[PVP] '.@p['color'].@player.'&r left the arena.'));
-					if(array_index_exists(@p, 'class')) {
-						_class('unload', @player, @p['class'], @pvp);
-					}
 					if(array_index_exists(@arena, 'resourcepack')) {
 						send_resourcepack(@player, 'http://mc.finalscoremc.com:25966/resourcepacks/default.zip');
 					}
-					array_remove(@pvp['players'], @player);
-					dm_set_pvisible(@player, true);
-					set_pflight(@player, false);
-					preset_time(@player);
-					set_pstorm(@player, null);
-					_clear_pinv(@player);
-					_clear_peffects(@player);
-					@check = true;
+					_quit_player(@player, @id);
 				} else if(@p['respawn'] < time()) {
 					@loc = array();
 					if(array_index_exists(@arena, 'captain')) {
@@ -321,6 +311,10 @@ proc _pvp_start_match(@id) {
 
 proc _pvp_check_objectives(@id) {
 	@pvp = import('pvp'.@id)
+	
+	if(@pvp['running'] != 2) {
+		return();
+	}
 
 	#check player counts
 	if(array_index_exists(@pvp, 'team')) {
@@ -384,7 +378,9 @@ proc _pvp_end_match(@id, @winners) {
 	@pvp = import('pvp'.@id)
 	@world = @pvp['arena']['lobby'][3];
 
-	if(@pvp['running'] != 2, return())
+	if(@pvp['running'] != 2) {
+		return();
+	}
 
 	try {
 
@@ -407,7 +403,7 @@ proc _pvp_end_match(@id, @winners) {
 				@r = @pvp['arena']['broadcast'];
 				_regionmsg(@r, colorize('&7&m|------------------------------&7&l[ &f&lTHE FINAL SCORE&7&l ]&7&m--|'));
 				_regionmsg(@r, colorize(replace('--&7'.to_upper(@a[0]).' &8:&7 '.to_upper(@b[0]).' &8:&7 '.to_upper(@c[0]).' &8:&7 '.to_upper(@d[0]), '-', ' ')));
-				_regionmsg(@pvp, colorize('&7&m|----------------------------------------------------|'));
+				_regionmsg(@r, colorize('&7&m|----------------------------------------------------|'));
 				foreach(@player: @stats in @pvp['stats']) {
 					_regionmsg(@r, replace('----'
 						._pad_stat(@stats[@a[0]], @a[1]).@a[2]
@@ -485,26 +481,30 @@ proc _pvp_end_match(@id, @winners) {
 		foreach(@player in array_keys(@pvp['players'])) {
 			try {
 				if(array_index_exists(@pvp['players'][@player], 'class')) {
-					_class('unload', @player, @pvp['players'][@player]['class'], @pvp)
+					_class('unload', @player, @pvp['players'][@player]['class'], @pvp);
+					array_remove(@pvp['players'][@player], 'class');
 				}
-				if(ponline(@player) && pinfo(@player, 5) > 0) {
-					close_pinv(@player);
-					set_pmode(@player, 'ADVENTURE');
-					if(array_index_exists(@pvp['arena'], 'resourcepack')) {
-						queue_push(closure(){
-							send_resourcepack(@player, 'http://mc.finalscoremc.com:25966/resourcepacks/default.zip');
-						}, @id);
+				if(ponline(@player)) {
+					@closure = closure(){
+						close_pinv(@player);
+						if(array_index_exists(@pvp['arena'], 'resourcepack')) {
+							queue_push(closure(){
+								send_resourcepack(@player, 'http://mc.finalscoremc.com:25966/resourcepacks/default.zip');
+							}, @id);
+						}
+						_quit_player(@player, @id);
+						if(array_index_exists(@pvp['arena'], 'podium') && array_contains(@winners, @player)) {
+							queue_push(closure(){
+								set_ploc(@player, @pvp['arena']['podium']);
+							}, @id);
+						}
 					}
-					dm_set_pvisible(@player, true);
-					set_entity_fall_distance(puuid(@player), 0);
-					if(array_index_exists(@pvp['arena'], 'podium') && array_contains(@winners, @player)) {
-						set_ploc(@player, @pvp['arena']['podium']);
+					if(pinfo(@player, 5) == 0) {
+						respawn(@player);
+						queue_push(@closure, @id);
 					} else {
-						set_ploc(@player, @pvp['arena']['lobby']);
+						execute(@closure);
 					}
-					set_pflight(@player, false);
-					_equip_kit(@player);
-					_clear_peffects(@player);
 				}
 			} catch(Exception @ex) {
 				console(@ex, false);
@@ -524,13 +524,14 @@ proc _pvp_end_match(@id, @winners) {
 				skcb_paste(array(0, 0, 0, @world), array('origin': true));
 			}
 		}
+		queue_push(closure(){
+			remove_scoreboard(@id);
 
-		remove_scoreboard(@id);
-
-		# Reset
-		@pvp = array('players': associative_array(), 'running': 0);
-		export('pvp'.@id, @pvp);
-		_remove_activity('pvp'.@id);
+			# Reset
+			@pvp = array('players': associative_array(), 'running': 0);
+			export('pvp'.@id, @pvp);
+			_remove_activity('pvp'.@id);
+		}, @id);
 
 	}, @id);
 }

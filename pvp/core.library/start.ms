@@ -306,7 +306,7 @@ proc _pvp_start(@pvp, @id){
 	}
 
 	@pvp['coins'] = if(array_size(@pvp['players']) > 2, 1, 0);
-	if(!array_index_exists(@pvp, 'stats') || @arena['stats']) {
+	if(!array_index_exists(@arena, 'stats')) {
 		@pvp['stats'] = associative_array();
 	}
 
