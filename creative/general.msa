@@ -221,6 +221,10 @@
 		case '159':
 		case '172':
 			@instrument = 'NOTE_PLING';
+		case '165':
+			@instrument = 'CHICKEN_EGG_POP';
+		case '173':
+			@instrument = 'FIREWORK_BLAST';
 	}
 
 	@clicks = $note;
