@@ -1,4 +1,4 @@
-proc _pvp_join(@id){
+proc _pvp_join(@id, @force){
 	@pvp = import('pvp'.@id);
 	@arena = get_value('arena.'.@id);
 	if(!@arena) {
@@ -6,6 +6,18 @@ proc _pvp_join(@id){
 	}
 	if(_is_survival_world(pworld()) && array_index_exists(@arena, 'lobby')) {
 		set_ploc(@arena['lobby']);
+	}
+	if(_pstate(player())['activity']) {
+		if(@force) {
+			_set_pstate_activity(player(), null);
+		} else {
+			@msg = array(
+				'You are already playing \\"'._pstate(player())['activity'].'\\". ',
+				array('&b[FORCE JOIN]', '/pvp join '.@id.' force')
+			);
+			_click_tell(array(player()), @msg);
+			die();
+		}
 	}
 	if(!@pvp) {
 		@pvp = array('players': associative_array(), 'running': 0);

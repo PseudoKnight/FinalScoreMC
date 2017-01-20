@@ -2,7 +2,7 @@ proc _pvp(@action, @id, @arg){
     switch(@action) {
         case 'join':
             include('../core.library/join.ms');
-            _pvp_join(to_lower(@id));
+            _pvp_join(to_lower(@id), @arg);
 
         case 'debug':
             @id = to_lower(@id);

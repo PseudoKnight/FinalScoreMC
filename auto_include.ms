@@ -765,12 +765,12 @@ proc _pstate(@player) {
 */
 proc _set_pstate_activity(@player, @activity) {
 	@pstate = _pstate(@player);
-	if(@pstate['activity'] && @activity != null) {
+	if(@pstate['activity'] && @activity) {
 		return(false);
 	}
 	@pstate['activity'] = @activity;
 	if(@activity) {
-		set_list_name(@player, color('gray').'['.color('reset').@activity.color('gray').'] '._colorname(@player).@player);
+		set_list_name(@player, color('gray').@activity.' '._colorname(@player).@player);
 	} else {
 		set_list_name(@player, _colorname(@player).@player);
 	}
