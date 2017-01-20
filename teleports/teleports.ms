@@ -41,11 +41,11 @@ bind(player_teleport, null, null, @event) {
 	@vehicle = get_entity_vehicle(puuid());
 	@type = entity_type(@vehicle);
 	if(array_contains(array('DONKEY', 'HORSE', 'LLAMA', 'MULE', 'SKELETON_HORSE', 'ZOMBIE_HORSE'), @type)
-	&& _is_survival_world(@from)
-	&& _is_survival_world(@to)) {
+	&& _is_survival_world(@fromWorld)
+	&& _is_survival_world(@toWorld)) {
 		set_timeout(50, closure(){
 			try {
-				set_entity_loc(@vehicle, @event['to']);
+				set_entity_loc(@vehicle, @to);
 				# a longer delay is necessary in 1.9 to reduce glitching
 				set_timeout(100, closure(){
 					set_entity_rider(@vehicle, puuid());
