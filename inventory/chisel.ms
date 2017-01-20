@@ -36,7 +36,7 @@ bind(player_interact, null, array('button': 'right', 'block': 43), @event) {
 		'offsetY': 0.3,
 		'offsetZ': 0.3,
 	));
-	play_sound(@event['location'], array('sound': 'DIG_STONE'));
+	play_sound(@event['location'], array('sound': 'DIG_STONE', 'category': 'BLOCKS'));
 	
 	@unbreaking = 0;
 	@enchants = @item['enchants'];
@@ -59,7 +59,7 @@ bind(player_interact, null, array('button': 'right', 'block': 43), @event) {
 		}
 		if(@item['data'] > @maxDamage) {
 			set_pinv(player(), array(null: null));
-			play_sound(ploc(), array('sound': 'ITEM_BREAK'));
+			play_sound(ploc(), array('sound': 'ITEM_BREAK', 'category': 'PLAYERS'));
 		} else {
 			set_pinv(player(), array(null: @item));
 		}

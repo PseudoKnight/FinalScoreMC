@@ -37,7 +37,7 @@ proc _axe_carve(@event) {
 		'offsetY': 0.3,
 		'offsetZ': 0.3,
 	));
-	play_sound(@event['location'], array('sound': 'DIG_WOOD'));
+	play_sound(@event['location'], array('sound': 'DIG_WOOD', 'category': 'BLOCKS'));
 	
 	@unbreaking = 0;
 	@enchants = @item['enchants'];
@@ -60,7 +60,7 @@ proc _axe_carve(@event) {
 		}
 		if(@item['data'] > @maxDamage) {
 			set_pinv(player(), array(null: null));
-			play_sound(ploc(), array('sound': 'ITEM_BREAK'));
+			play_sound(ploc(), array('sound': 'ITEM_BREAK', 'category': 'PLAYERS'));
 		} else {
 			set_pinv(player(), array(null: @item));
 		}
