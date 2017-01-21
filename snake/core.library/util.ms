@@ -50,10 +50,17 @@ proc _snake_safe_dir(@snake) {
 	return(@snake['dir']);
 }
 
-proc _snake_safe_path(@loc, @top, @dir) {
+proc _snake_safe_path(@loc, @top, @dir, @missiles) {
 	@loc = _relative(@loc, @dir);
 	if(!_snake_safe_block(get_block_at(@loc))) {
 		return(false);
+	}
+	foreach(@missile in @missiles) {
+		if(@missile['loc'][0] == @loc[0]
+		|| @missile['loc'][1] == @loc[1]
+		|| @missile['loc'][2] == @loc[2]) {
+			return(false);
+		}
 	}
 	@turn = _snake_turn(@top, @dir);
 	@block = get_block_at(_relative(@loc, @dir));

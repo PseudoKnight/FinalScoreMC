@@ -290,6 +290,8 @@ proc _snake_drop_tnt(@loc, @dir) {
 
 proc _snake_launch_missile(@loc, @dir, @game) {
 	@missile = associative_array('dir': @dir, 'loc': @loc, 'skip': true);
+	@key = time();
+	@game['missiles'][@key] = @missile;
 	play_named_sound(@loc, associative_array('sound': 'entity.shulker.shoot', 'volume': 2, 'pitch': 2));
 	@move = closure(@clear = true){
 		try {
@@ -297,6 +299,7 @@ proc _snake_launch_missile(@loc, @dir, @game) {
 				set_block_at(@missile['loc'], 0, false);
 			}
 			if(array_size(@game['snakes']) < 2) {
+				array_remove(@game['missiles'], @key);
 				if(@clear) {
 					clear_task();
 				}
@@ -321,6 +324,7 @@ proc _snake_launch_missile(@loc, @dir, @game) {
 						@missile['skip'] = false;
 					}
 				} else if(@clear){
+					array_remove(@game['missiles'], @key);
 					clear_task();
 				}
 			} else if(@block == '152:0') {
@@ -331,6 +335,7 @@ proc _snake_launch_missile(@loc, @dir, @game) {
 					play_sound(@missile['loc'], associative_array('sound': 'IRONGOLEM_HIT', 'pitch': 1.5, 'volume': 2));
 				}
 			} else {
+				array_remove(@game['missiles'], @key);
 				if(@clear) {
 					clear_task();
 				}
@@ -357,6 +362,7 @@ proc _snake_launch_missile(@loc, @dir, @game) {
 				clear_task();
 			}
 			set_block_at(@missile['loc'], 0, false);
+			array_remove(@game['missiles'], @key);
 		}
 	}
 	execute(false, @move);

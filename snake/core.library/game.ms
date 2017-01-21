@@ -10,6 +10,7 @@
 	'extraBlocks': extraneous obstacle blocks to clean-up
 	'numPlayers': the number of snakes in the game
 	'botsOnly': indicated if only bots are left in the game
+	'missiles': an array of flying missiles
 */
 
 include('util.ms');
@@ -29,6 +30,7 @@ proc _snake_queue(@args) {
 	@game['numPowerups'] = 15;
 	@game['numPlayers'] = 7
 	@game['botsOnly'] = false;
+	@game['missiles'] = associative_array();
 
 	// Command options
 	foreach(@arg in @args) {
