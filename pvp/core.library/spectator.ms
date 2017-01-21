@@ -25,7 +25,7 @@ proc _set_spectator(@player, @pvp) {
 	} else {
 		bind(player_spawn, associative_array('priority': 'HIGH'), associative_array('player': @player), @e, @pvp) {
 			unbind();
-			if(@pvp['running'] && array_size(@pvp['players']) > 1) {
+			if(@pvp['running'] == 2) {
 				consume();
 				@pvp['spectators'][] = player();
 				@spawn = false;
@@ -39,7 +39,7 @@ proc _set_spectator(@player, @pvp) {
 					modify_event('location', @pvp['arena']['spawn'][0][0]);
 				}
 				set_timeout(50, closure(){
-					if(@pvp['running']) {
+					if(@pvp['running'] == 2) {
 						foreach(@p in all_players()) {
 							if(ponline(@p) && pworld(@p) == pworld()) {
 								raw_set_pvanish(player(), true, @p);
