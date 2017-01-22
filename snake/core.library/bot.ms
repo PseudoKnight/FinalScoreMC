@@ -4,8 +4,8 @@ proc _snake_bot_update(@bot, @game) {
 	switch(@bot) {
 	case 'Grumpy':
 		if(!@snake['target']) {
-			if(!_snake_bot_target_snake(@snake, @game)) {
-				_snake_bot_target_powerup(@snake, @game);
+			if(@snake['ability-count'] == 0 || !_snake_bot_target_snake(@snake, @game)) {
+				_snake_bot_target_powerup(@snake, @game, 'missile');
 			}
 		} else if(@snake['target']['interest'] == 0) {
 			@snake['target'] = null;
@@ -19,9 +19,11 @@ proc _snake_bot_update(@bot, @game) {
 				} else {
 					@targetLoc = _relative(@game['snakes'][@target]['loc'], @game['snakes'][@target]['dir']);
 					if(_snake_bot_change_dir(@snake, @snake['loc'], @targetLoc)) {
-						if(@snake['loc'][0] == @targetLoc[0]
+						// if going towards player now / farthest distance
+						if(@snake['ability-count'] > 1
+						&& (@snake['loc'][0] == @targetLoc[0]
 						|| @snake['loc'][1] == @targetLoc[1]
-						|| @snake['loc'][2] == @targetLoc[2]) {
+						|| @snake['loc'][2] == @targetLoc[2])) {
 							_snake_ability(@bot, @game);
 						}
 						return();
@@ -36,12 +38,13 @@ proc _snake_bot_update(@bot, @game) {
 				}
 			}
 		}
-		if(@percent < 10
-		|| !_snake_safe_path(@snake['loc'], @snake['top'], @snake['dir'], @game['missiles'])) {
+		if(!_snake_safe_path(@snake['loc'], @snake['top'], @snake['dir'], @game['missiles'])) {
 			@dir = _snake_safe_dir(@snake);
+			if(@dir == @snake['dir']) {
+				_snake_ability(@bot, @game);
+			}
 			@snake['last-dir'] = @snake['dir'];
 			@snake['dir'] = @dir;
-			_snake_ability(@bot, @game);
 		}
 	case 'BatSnake':
 		if(!@snake['target']) {
