@@ -19,12 +19,18 @@ proc _snake_bot_update(@bot, @game) {
 				} else {
 					@targetLoc = _relative(@game['snakes'][@target]['loc'], @game['snakes'][@target]['dir']);
 					if(_snake_bot_change_dir(@snake, @snake['loc'], @targetLoc)) {
-						// if going towards player now / farthest distance
-						if(@snake['ability-count'] > 1
-						&& (@snake['loc'][0] == @targetLoc[0]
-						|| @snake['loc'][1] == @targetLoc[1]
-						|| @snake['loc'][2] == @targetLoc[2])) {
-							_snake_ability(@bot, @game);
+						if(_snake_opposite_dir(@snake['dir']) == @game['snakes'][@target]['dir']
+						|| (@snake['ability-count'] > 1 && @snake['dir'] != @game['snakes'][@target]['dir'])) {
+							@aligned = false;
+							for(@i = 0, @i < 3, @i++) {
+								if(@snake['loc'][@i] == @targetLoc[@i]) {
+									if(@aligned) {
+										_snake_ability(@bot, @game);
+										return();
+									}
+									@aligned = true;
+								}
+							}
 						}
 						return();
 					}
@@ -101,10 +107,17 @@ proc _snake_bot_update(@bot, @game) {
 			} else {
 				@targetLoc = _relative(@game['snakes'][@target]['loc'], @game['snakes'][@target]['dir']);
 				if(_snake_bot_change_dir(@snake, @snake['loc'], @targetLoc)) {
-					if(@snake['loc'][0] == @targetLoc[0]
-					|| @snake['loc'][1] == @targetLoc[1]
-					|| @snake['loc'][2] == @targetLoc[2]) {
-						_snake_ability(@bot, @game);
+					if(@snake['ability']) {
+						@aligned = false;
+						for(@i = 0, @i < 3, @i++) {
+							if(@snake['loc'][@i] == @targetLoc[@i]) {
+								if(@aligned) {
+									_snake_ability(@bot, @game);
+									return();
+								}
+								@aligned = true;
+							}
+						}
 					}
 					return();
 				}
