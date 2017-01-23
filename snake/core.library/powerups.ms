@@ -119,7 +119,7 @@ proc _snake_ability(@player, @game) {
 		case 'tnt':
 			if(@snake['bot']) {
 				if(@snake['ability-count']) {
-					_snake_drop_tnt(@snake['loc'], @snake['dir']);
+					@game['tnt'][] = _snake_drop_tnt(@snake['loc'], @snake['dir']);
 					@snake['ability-count'] -= 1;
 					set_timeout(5000, closure(){
 						if(@snake['ability'] == 'tnt') {
@@ -136,7 +136,7 @@ proc _snake_ability(@player, @game) {
 						@item['qty'] -= 1;
 						set_pinv(@player, associative_array(0: @item));
 					}
-					_snake_drop_tnt(@snake['loc'], @snake['dir']);
+					@game['tnt'][] = _snake_drop_tnt(@snake['loc'], @snake['dir']);
 					set_timeout(5000, closure(){
 						if(@snake['alive'] && @snake['ability'] == 'tnt' && pinv(@player, -106)) {
 							@item = pinv(@player, 0);
@@ -286,6 +286,7 @@ proc _snake_drop_tnt(@loc, @dir) {
 		case 'down':
 			set_entity_velocity(@tnt, associative_array('y': -1.2));
 	}
+	return(@tnt);
 }
 
 proc _snake_launch_missile(@loc, @dir, @game) {

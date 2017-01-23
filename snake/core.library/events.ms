@@ -19,6 +19,7 @@ proc _snake_bind_events(@game) {
 
 	bind(entity_explode, array('id': 'snake-explode'), array('type': 'PRIMED_TNT'), @event, @game) {
 		if(array_contains(sk_regions_at(@event['location']), 'snake')) {
+			array_remove_values(@game['tnt'], @event['id']);
 			foreach(@block in @event['blocks']) {
 				if(split(':', get_block_at(@block))[0] == '159') {
 					foreach(@player: @snake in @game['snakes']) {

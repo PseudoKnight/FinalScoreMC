@@ -11,6 +11,7 @@
 	'numPlayers': the number of snakes in the game
 	'botsOnly': indicated if only bots are left in the game
 	'missiles': an array of flying missiles
+	'tnt': an array of primed tnt entities
 */
 
 include('util.ms');
@@ -31,6 +32,7 @@ proc _snake_queue(@args) {
 	@game['numPlayers'] = 7
 	@game['botsOnly'] = false;
 	@game['missiles'] = associative_array();
+	@game['tnt'] = array();
 
 	// Command options
 	foreach(@arg in @args) {
