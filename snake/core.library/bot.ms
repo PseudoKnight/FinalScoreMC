@@ -202,7 +202,7 @@ proc _snake_bot_target_powerup(@snake, @game, @type = 'all') {
 proc _snake_bot_target_snake(@snake, @game) {
 	@closest = 25;
 	foreach(@bot: @othersnake in @game['snakes']) {
-		if((@game['botsOnly'] || !@othersnake['bot']) && @othersnake['alive']) {
+		if((@game['botsOnly'] && @snake['bot'] != @othersnake['bot'] || !@othersnake['bot']) && @othersnake['alive']) {
 			@dist = _distance(@othersnake['loc'], @snake['loc']);
 			if(@dist < @closest) {
 				@snake['target'] = associative_array('type': 'snake', 'name': @bot, 'interest': 50);
