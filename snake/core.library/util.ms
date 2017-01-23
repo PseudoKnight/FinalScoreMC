@@ -39,11 +39,13 @@ proc _snake_direction_of(@loc, @block, @not) {
 
 proc _snake_safe_dir(@snake) {
 	@turn = _snake_turn(@snake['top'], @snake['dir']);
-	if(_snake_safe_block(get_block_at(_relative(@snake['loc'], @snake['last-dir'])))) {
+	@loc = _relative(@snake['loc'], @snake['last-dir']);
+	if(_snake_safe_block(get_block_at(@loc), @loc)) {
 		return(@snake['last-dir']);
 	}
 	foreach(@t in @turn) {
-		if(@t != @snake['last-dir'] && _snake_safe_block(get_block_at(_relative(@snake['loc'], @t)))) {
+		@loc = _relative(@snake['loc'], @t);
+		if(@t != @snake['last-dir'] && _snake_safe_block(get_block_at(@loc), @loc)) {
 			return(@t);
 		}
 	}
@@ -52,7 +54,7 @@ proc _snake_safe_dir(@snake) {
 
 proc _snake_safe_path(@loc, @top, @dir, @missiles) {
 	@loc = _relative(@loc, @dir);
-	if(!_snake_safe_block(get_block_at(@loc))) {
+	if(!_snake_safe_block(get_block_at(@loc), @loc)) {
 		return(false);
 	}
 	foreach(@missile in @missiles) {
@@ -73,7 +75,19 @@ proc _snake_safe_path(@loc, @top, @dir, @missiles) {
 	return(false);
 }
 
-proc _snake_safe_block(@block) {
+proc _snake_safe_block(@block, @loc) {
+	// special case for lasers, as the powerup block is the same as the deadly laser
+	if(@loc && @block == '95:14') {
+		@game = import('snake');
+		foreach(@powerup in @game['powerups']){
+			if(@powerup['loc'][0] == @loc[0]
+			&& @powerup['loc'][1] == @loc[1]
+			&& @powerup['loc'][2] == @loc[2]) {
+				return(true);
+			}
+		}
+		return(false);
+	}
 	return(@block == '0:0' || @block == '169:0' || _snake_get_powerup_from(@block));
 }
 

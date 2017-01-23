@@ -98,6 +98,7 @@ proc _snake_queue(@args) {
 		}
 		@countdown[0] -= 1;
 	});
+	export('snake', @game);
 }
 
 proc _snake_start_task(@game) {
@@ -161,6 +162,7 @@ proc _snake_end(@winner, @game) {
 		foreach(@loc in @game['extraBlocks']) {
 			set_block_at(@loc, 0, false);
 		}
+		export('snake', null);
 		remove_scoreboard('snake');
 		_remove_activity('snake');
 	});
