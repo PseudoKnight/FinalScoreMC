@@ -3,7 +3,6 @@ member:
     group.member: true
     permissions.build: true
     command.sethome: true
-    multiverse.core.list.who: true
     stargate.create.personal: true
     stargate.create.network: true
     stargate.create.network.galaxy: false
@@ -180,7 +179,6 @@ moderator:
     group.moderator: true
     deadbolt.*: true
     worldguard.*: true
-    multiverse.teleport.*: true
     logblock.lookup: true
     logblock.tp: true
     logblock.tools.toolblock: true

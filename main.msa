@@ -257,7 +257,7 @@
 		'worlds':
 			'There are four primary worlds: Alpha (Plaza at spawn), Delta (Final City at spawn), Gamma (Gamma City '.
 			'at spawn), and Omega. In addition, there are four respective nether dimensions and one End dimension. '.
-			'You can type "/mv who" to see which worlds players are on.',
+			'You can type "/where" to see which worlds players are on.',
 		'seeds': 'worldseeds',
 		'worldseeds':
 			'These are the seeds for the four main worlds -- Alpha: -621778714517541268, Delta: '.
@@ -312,7 +312,20 @@
 	}
 <<<
 
-*:/where = run('/mv who');
+*:/where = >>>
+	@worlds = _worlds_config();
+	@list = associative_array();
+	foreach(@player in all_players()) {
+		@world = @worlds[pworld(@player)]['name'];
+		if(!array_index_exists(@list, @world)) {
+			@list[@world] = array();
+		}
+		@list[@world][] = _colorname(@player).@player;
+	}
+	foreach(@world: @players in @list) {
+		msg(@world.': '.array_implode(@players));
+	}
+<<<
 
 # DICE ROLLING #
 *:/roll [$sides=6] = >>>
