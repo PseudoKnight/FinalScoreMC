@@ -36,7 +36,6 @@ member:
     worldguard.region.flag.flags.block-break.*: true
     worldguard.region.flag.flags.block-place.*: true
     worldguard.region.flag.flags.tnt.*: true
-    mv.bypass.gamemode.*: true
     bukkit.command.tps: true
   worlds:
     world:
