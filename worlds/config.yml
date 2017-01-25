@@ -3,66 +3,97 @@ world:
   name: 'Alpha'
   mode: survival
   teleports: true
+  environment: NORMAL
+  seed: '-621778714517541268'
+  generator: 'CleanroomGenerator:.'
 alphanether: world_nether
 world_nether:
   name: 'Alpha Nether'
   mode: survival
   teleports: true
+  environment: NETHER
+  respawn: world
 end: world_the_end
 theend: world_the_end
 world_the_end:
   name: 'The End'
   mode: survival
   teleports: true
+  environment: THE_END
+  respawn: omega
 delta: world3
 world3:
   name: 'Delta'
   mode: survival
   teleports: true
+  environment: NORMAL
+  seed: '-8443156782283251243'
+  generator: 'CleanroomGenerator:.'
 deltanether: world3_nether
 world3_nether:
   name: 'Delta Nether'
   mode: survival
   teleports: true
+  environment: NETHER
+  respawn: world3
 gamma: world4
 world4:
   name: 'Gamma'
   mode: survival
   teleports: true
+  environment: NORMAL
+  seed: '-754633420005903009'
+  generator: 'CleanroomGenerator:.'
 gammanether: world4_nether
 world4_nether:
   name: 'Gamma Nether'
   mode: survival
   teleports: true
+  environment: NETHER
+  respawn: world4
 omega:
   name: 'Omega'
   mode: survival
   teleports: true
+  environment: NORMAL
 omeganether: omega_nether
 omega_nether:
   name: 'Omega Nether'
   mode: survival
   teleports: true
+  environment: NETHER
+  respawn: omega
 outworld:
   name: 'Outworld'
   mode: survival
   teleports: false
+  environment: NORMAL
 outworldnether: outworld_nether
 outworld_nether:
   name: 'Outworld Nether'
   mode: survival
   teleports: false
+  environment: NETHER
+  respawn: outworld
 outworldend: outworld_the_end
 outworld_the_end:
   name: 'Outworld End'
   mode: survival
   teleports: false
+  environment: THE_END
+  respawn: outworld
 dev:
   name: 'Dev'
   mode: creative
   teleports: true
+  environment: NORMAL
+  seed: '0'
+  generator: 'CleanroomGenerator:14,air,1,sandstone:2,15,air,1,sandstone:2,15,air,1,sandstone:2,15,air,1,sandstone:2'
 frogpark: custom
 custom:
   name: 'FrogPark'
   mode: adventure
   teleports: true
+  environment: NORMAL
+  seed: '0'
+  generator: 'CleanroomGenerator:.'
