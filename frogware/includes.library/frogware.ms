@@ -63,7 +63,11 @@ proc _fw_startround(@secs = 12) {
 	@loc = @region[1];
 	@loc[0] += 18;
 	@loc[2] += 18;
-	play_effect(@loc, 'RECORD_PLAY', array('id': 0, 'radius': 32));
+	foreach(@p in all_players('custom')) {
+		if(_fw_player(@p)) {
+			stop_named_sound(@p, 'record.stal', 'RECORDS');
+		}
+	}
 
 	@blocks = import('frogware.blocks');
 	if(!is_null(@blocks)) {
@@ -137,11 +141,7 @@ proc _fw_startround(@secs = 12) {
 			if(@total == 1 && @task === 'pvp', @task = @tasks[rand(array_size(@tasks))])
 			queue_delay(1000, 'fw2')
 			queue_push(closure(){
-				@record = rand(2257, 2267);
-				if(@record == 2266) {
-					@record++;
-				}
-				play_effect(@loc, 'RECORD_PLAY', array('id': @record, 'radius': 32));
+				play_named_sound(@loc, array('sound': 'record.stal', 'pitch': 10 / @secs, 'category': 'RECORDS', 'volume': 3));
 				_fw_task(@task, 'start', @secs)
 			}, 'fw2')
 			for(@i = @secs, @i >= 0, @i--) {
