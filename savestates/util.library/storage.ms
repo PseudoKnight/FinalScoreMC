@@ -32,9 +32,16 @@ proc _get_pstate(@player, @state) {
 
 	try {
 		if(array_index_exists(@pstate, 'bed') && is_array(@pstate['bed'])) {
-			set_pbed_location(@player, @pstate['bed']);
+			set_pbed_location(@player, @pstate['bed'], false);
 		} else if(is_array(pbed_location(@player))) {
-			set_pbed_location(@player, get_spawn(pworld(@player)));
+			if(array_index_exists(@pdata, 'homes') && array_index_exists(@pdata['homes'], pworld(@player))) {
+				set_pbed_location(@player, @pdata['homes'][pworld(@player)]);
+			} else {
+				@spawn = get_spawn(pworld(@player));
+				@spawn[1] -= 1;
+				set_pbed_location(@player, @spawn);
+				console('set bed to spawn');
+			}
 		}
 	} catch(Exception @ex) {
 		console('WARNING: Failed to load bed location for '.@player.'.', false);
