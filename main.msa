@@ -326,6 +326,7 @@
 		msg(@world.': '.array_implode(@players));
 	}
 <<<
+*:/mvw = call_alias('/where')
 
 # DICE ROLLING #
 *:/roll [$sides=6] = >>>

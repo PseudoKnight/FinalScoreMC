@@ -55,7 +55,7 @@ proc _worldid(@world) {
 proc _is_survival_world(@world) {
 	@worlds = _worlds_config();
 	try {
-		return(@worlds[@world]['mode'] == 'survival');
+		return(@worlds[@world]['group'] == 'survival');
 	} catch(IndexOverflowException @ex) {
 		# default to true
 		return(true);

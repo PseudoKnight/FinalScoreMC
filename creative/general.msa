@@ -83,7 +83,7 @@
 			@mode = 'SPECTATOR';
 
 		case 'toggle':
-			@world_mode = to_upper(_worlds_config()[pworld()]['mode']);
+			@world_mode = _worlds_config()[pworld()]['mode'];
 			if(pmode(@player) == @world_mode) {
 				if(@world_mode == 'CREATIVE'){
 					@mode = 'SURVIVAL';

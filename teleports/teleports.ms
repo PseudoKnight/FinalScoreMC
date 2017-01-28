@@ -22,11 +22,11 @@ bind(player_teleport, null, null, @event) {
 		set_timeout(50, closure(){
 			@pdata = _pdata(player());
 			@worlds = _worlds_config();
-			@mode = @worlds[@fromWorld]['mode'];
-			if(!array_index_exists(@pdata, @mode)) {
-				@pdata[@mode] = associative_array();
+			@group = @worlds[@fromWorld]['group'];
+			if(!array_index_exists(@pdata, @group)) {
+				@pdata[@group] = associative_array();
 			}
-			@pdata[@mode]['loc'] = array(
+			@pdata[@group]['loc'] = array(
 				round(@from['x'], 3),
 				round(@from['y'], 3) - 1,
 				round(@from['z'], 3),

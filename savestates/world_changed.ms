@@ -2,27 +2,28 @@ bind(world_changed, null, null, @event) {
 	@to = @event['to'];
 	@from = @event['from'];
 	@worlds = _worlds_config();
-	@fromMode = @worlds[@from]['mode'];
-	@toMode = @worlds[@to]['mode'];
-	if(@fromMode != @toMode) {
+	@fromGroup = @worlds[@from]['group'];
+	@toGroup = @worlds[@to]['group'];
+	if(@fromGroup != @toGroup) {
 		# let's swap inventory
 		close_pinv();
+		@toMode = @worlds[@to]['mode'];
 		if(@toMode == pmode()) {
-			if(@toMode == 'survival' || @toMode == 'adventure') {
+			if(@toMode == 'SURVIVAL' || @toMode == 'ADVENTURE') {
 				set_pflight(false);
 			}
 		} else {
 			set_pmode(@toMode);
 		}
 		include('util.library/storage.ms');
-		if(@fromMode == 'survival') {
+		if(@fromGroup == 'survival') {
 			_store_pstate(@event['player'], 'survival');
-			_clear_pstate(@event['player'], @toMode);
-		} else if(@toMode == 'survival') {
+			_clear_pstate(@event['player'], @toGroup);
+		} else if(@toGroup == 'survival') {
 			console('Loading survival inventory for '.@event['player'].' coming from '.@from.'.', false);
 			_get_pstate(@event['player'], 'survival');
 		} else {
-			_clear_pstate(@event['player'], @toMode);
+			_clear_pstate(@event['player'], @toGroup);
 		}
 	}
 }

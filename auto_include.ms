@@ -97,20 +97,22 @@ proc _get_pitch(@tone, @octave) {
 /*
 	Sets a player's inventory with a preset kit
 */
-proc _equip_kit(@player, @kit = 'adventure') {
+proc _equip_kit(@player, @kit = 'minigames') {
 	if(!@player) {
 		@player = player();
 	}
 
-	if(_is_survival_world(pworld(@player))) {
+	@worlds = _worlds_config();
+	@world = pworld(@player);
+	if(@worlds[@world]['group'] == 'survival') {
 		return();
 	}
 
 	switch(@kit) {
-		case 'adventure':
+		case 'minigames':
 			@mode = pmode(@player);
-			if(@mode == 'SURVIVAL') {
-				set_pmode(@player, 'ADVENTURE');
+			if(@mode != @worlds[@world]['mode']) {
+				set_pmode(@player, @worlds[@world]['mode']);
 			}
 			_clear_pinv(@player);
 			@pdata = _pdata(@player);
@@ -141,7 +143,7 @@ proc _equip_kit(@player, @kit = 'adventure') {
 				set_pflight(@player, false);
 			}
 
-		case 'creative':
+		case 'dev':
 			_clear_pinv(@player);
 			set_pinv(@player, associative_array(
 				0: associative_array('name': 'COMPASS', 'meta': associative_array(

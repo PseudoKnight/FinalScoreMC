@@ -1,8 +1,0 @@
-*:/inv convert [$player] [$world] = >>>
-	if(!has_permission('group.admin')) {
-		die('You do not have permission.');
-	}
-
-	include('util.library/convert.ms');
-	_inv_convert($player, $world);
-<<<
