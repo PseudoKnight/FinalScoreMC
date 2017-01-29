@@ -14,6 +14,9 @@ bind(world_changed, null, null, @event) {
 			}
 		} else {
 			set_pmode(@toMode);
+			if(extension_exists('CHDynmap')) {
+				dm_set_pvisible(true);
+			}
 		}
 		include('util.library/storage.ms');
 		if(@fromGroup == 'survival') {
