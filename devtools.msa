@@ -1,5 +1,5 @@
 # Script: Function Documentation
-# Author: __import__
+# Author: LewsTherin
 
 # Output colorful information about extensions and functions.
 # /doc - List all known extensions, including builtins.
