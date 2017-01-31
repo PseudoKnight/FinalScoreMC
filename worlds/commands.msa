@@ -1,0 +1,71 @@
+/world [$action] [$name] [$] = >>>
+    switch($action) {
+        case 'create':
+            @start = time();
+            if(!$name || !reg_match('[a-zA-Z_]*', $name)) {
+                die(color('red').'Requires a valid world name.');
+            }
+            @world = array(
+                'name': $name,
+                'mode': 'SURVIVAL',
+                'group': $name,
+                'teleports': true,
+                'environment': 'NORMAL',
+                'seed': null,
+            );
+            if($) {
+                @args = parse_args($);
+                foreach(@arg in @args) {
+                    @split = split(':', @arg);
+                    @key = to_lower(@split[0]);
+                    @value = @split[1];
+                    if(@key != 'generator') {
+                        @value = to_upper(@value);
+                    }
+                    @world[@key] = @value;
+                }
+            }
+            _create_world($name, @world);
+            @stop = time();
+            msg(color('green').'Created world "'.$name.'" ('.(@stop - @start).'ms)');
+            
+        case 'unload':
+            if(!$name || !array_contains(get_worlds(), $name)) {
+                die(color('red').'Requires a valid world name.');
+            }
+            @newLoc = get_spawn('custom');
+            @newLoc['y'] -= 1;
+            foreach(@p in all_players($name)) {
+                set_ploc(@p, @newLoc);
+            }
+            set_timeout(100, closure(){
+                @start = time();
+                unload_world($name, false);
+                @worlds = _worlds_config();
+                array_remove(@worlds, $name);
+                @stop = time();
+                msg(color('green').'Unloaded world "'.$name.'" ('.(@stop - @start).'ms)');
+            });
+        
+        case 'list':
+            @loadedworlds = get_worlds();
+            @worlds = _worlds_config();
+            @worldnames = array();
+            foreach(@world in @loadedworlds) {
+                @worldnames[] = @worlds[@world]['name'];
+            }
+            array_sort(@worldnames);
+            @list = '';
+            foreach(@world in @worldnames) {
+                if(!@list) {
+                    @list .= color('gray').'Loaded Worlds: '.color('reset').@world;
+                } else {
+                    @list .= ', '.@world;
+                }
+            }
+            msg(@list);
+            
+        default:
+            msg(color('gray').'Usage: /world [create|unload] [name] [parameters]');
+    }
+<<<

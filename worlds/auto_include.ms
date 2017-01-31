@@ -74,3 +74,20 @@ proc _allows_teleports(@world) {
 		return(true);
 	}
 }
+
+/*
+	Creates and adds a world to config temporarily
+*/
+proc _create_world(@name, @world) {
+	@worlds = _worlds_config();
+	@worlds[@name] = @world;
+	if(array_index_exists(@world, 'seed')) {
+		if(array_index_exists(@world, 'generator')) {
+			create_world(@name, 'NORMAL', @world['environment'], @world['seed'], @world['generator']);
+		} else {
+			create_world(@name, 'NORMAL', @world['environment'], @world['seed']);
+		}
+	} else {
+		create_world(@name, 'NORMAL', @world['environment']);
+	}
+}
