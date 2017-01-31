@@ -51,6 +51,8 @@ proc _set_spectator(@player, @pvp) {
 						set_pflight(player(), true);
 					}
 				});
+			} else {
+				_set_pstate_activity(player(), null);
 			}
 		}
 	}
