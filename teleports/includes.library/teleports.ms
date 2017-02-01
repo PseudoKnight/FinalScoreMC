@@ -12,7 +12,6 @@ proc _warmuptp(@player, @loc, @cleareffects = false) {
 			die();
 		}
 		@ploc = ploc(@player);
-		set_peffect(@player, 15, 1, 2, true, false);
 		set_ploc(@player, @loc);
 		set_peffect(@player, 15, 1, 2, true, false);
 		play_effect(_relative(@ploc, 'up', 2), 'CLOUD', array('particleCount': 25, 'speed': 0.01, 'offsetX': 0.3, 'offsetY': 0.6, 'offsetZ': 0.3));
