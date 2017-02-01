@@ -2,6 +2,9 @@
     switch($action) {
         case 'create':
             @start = time();
+            if(array_contains(get_worlds(), $name)) {
+                die(color('red').'The world "'.$name.'" already exists.');
+            }
             if(!$name || !reg_match('[a-zA-Z_]*', $name)) {
                 die(color('red').'Requires a valid world name.');
             }
