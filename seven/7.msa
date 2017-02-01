@@ -62,6 +62,7 @@
 				}
 				@7['spawns'] = @arenas[@7['arena']]['spawns'];
 				@skplayer = array_keys(@7['players'])[0];
+				set_block_at(@startblock, 0);
 				skcb_load(@7['arena']);
 				skcb_paste(array(0, 0, 0, 'custom'), array('origin': true));
 				@7['state'] = 3;
