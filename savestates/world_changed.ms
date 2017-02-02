@@ -50,7 +50,7 @@ bind(player_spawn, array('priority': 'LOWEST'), null, @event) {
 	}
 	if(!_is_survival_world(@world)) {
 		set_timeout(50, closure(){
-			_equip_kit(player(), to_lower(pmode()));
+			_equip_kit();
 		});
 	}
 }

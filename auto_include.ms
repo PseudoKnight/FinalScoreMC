@@ -97,22 +97,17 @@ proc _get_pitch(@tone, @octave) {
 /*
 	Sets a player's inventory with a preset kit
 */
-proc _equip_kit(@player, @kit = 'minigames') {
+proc _equip_kit(@player) {
 	if(!@player) {
 		@player = player();
 	}
 
-	@worlds = _worlds_config();
-	@world = pworld(@player);
-	if(@worlds[@world]['group'] == 'survival') {
-		return();
-	}
-
-	switch(@kit) {
+	@worldInfo = _worlds_config()[pworld(@player)];
+	switch(@worldInfo['group']) {
 		case 'minigames':
 			@mode = pmode(@player);
-			if(@mode != @worlds[@world]['mode']) {
-				set_pmode(@player, @worlds[@world]['mode']);
+			if(@mode != @worldInfo['mode']) {
+				set_pmode(@player, @worldInfo['mode']);
 			}
 			_clear_pinv(@player);
 			@pdata = _pdata(@player);

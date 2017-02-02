@@ -101,7 +101,7 @@ proc _store_pstate(@player, @state) {
 }
 
 proc _clear_pstate(@player, @state) {
-	_equip_kit(@player, @state);
+	_equip_kit(@player);
 	@inv = array();
 	array_resize(@inv, 27);
 	set_penderchest(@player, @inv);
