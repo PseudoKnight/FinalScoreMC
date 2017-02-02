@@ -13,12 +13,16 @@ proc _quit_player(@player, @id) {
 	if(ponline(@player)) {
 		preset_time(@player);
 		set_pstorm(@player, null);
-		set_entity_fall_distance(puuid(@player), 0);
-		set_ploc(@player, @pvp['arena']['lobby']);
 		dm_set_pvisible(@player, true);
 		_equip_kit(@player);
 		_clear_peffects(@player);
 		_set_pstate_activity(@player, null);
+		try {
+			set_entity_fall_distance(puuid(@player), 0);
+		} catch(BadEntityException @ex) {
+			// player quitting, so no entity
+		}
+		set_ploc(@player, @pvp['arena']['lobby']);
 	}
 	_pvp_check_objectives(@id);
 }
