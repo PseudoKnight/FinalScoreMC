@@ -43,11 +43,14 @@
             }
             set_timeout(100, closure(){
                 @start = time();
-                unload_world($name, false);
-                @worlds = _worlds_config();
-                array_remove(@worlds, $name);
-                @stop = time();
-                msg(color('green').'Unloaded world "'.$name.'" ('.(@stop - @start).'ms)');
+                if(unload_world($name, false)) {
+                    @worlds = _worlds_config();
+                    array_remove(@worlds, $name);
+                    @stop = time();
+                    msg(color('green').'Unloaded world "'.$name.'" ('.(@stop - @start).'ms)');
+                } else {
+                    msg(color('red').'Failed to unload world "'.$name.'"');
+                }
             });
         
         case 'list':
