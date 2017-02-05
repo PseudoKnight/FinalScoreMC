@@ -319,7 +319,7 @@ bind(player_death, null, null, @event) {
 	Blocks spawning of the wither
 */
 bind(block_place, null, array('type': 144), @event) {
-	if(pworld() != 'outworld' && pworld() != 'outworld_nether') {
+	if(!has_permission('build.wither')) {
 		foreach(@dir in array('north', 'south', 'east', 'west', 'up', 'down')) {
 			if(get_block_at(_relative(@event['location'], @dir)) == '88:0') {
 				@item = pinv(player(), null);

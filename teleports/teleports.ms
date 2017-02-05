@@ -14,35 +14,38 @@ bind(player_teleport, null, null, @event) {
 	@to = @event['to'];
 	@fromWorld = @from['world'];
 	@toWorld = @to['world'];
-	if(@fromWorld != @toWorld && (!_is_survival_world(@fromWorld) || !_is_survival_world(@toWorld))) {
-		if(@event['type'] == 'SPECTATE') {
-			cancel();
-			die(color('yellow').'You cannot spectate a player not in this dimension.');
-		}
-		set_timeout(50, closure(){
-			@pdata = _pdata(player());
-			@worlds = _worlds_config();
-			@group = @worlds[@fromWorld]['group'];
-			if(!array_index_exists(@pdata, @group)) {
-				@pdata[@group] = associative_array();
+	if(@fromWorld != @toWorld
+	&& @fromWorld != 'shard') { // temporary world, don't save location
+		@worlds = _worlds_config();
+		@fromGroup = @worlds[@fromWorld]['group'];
+		@toGroup = @worlds[@toWorld]['group'];
+		if(@fromGroup != @toGroup) {
+			if(@event['type'] == 'SPECTATE') {
+				cancel();
+				die(color('yellow').'You cannot spectate a player not in this dimension.');
 			}
-			@pdata[@group]['loc'] = array(
-				round(@from['x'], 3),
-				round(@from['y'], 3) - 1,
-				round(@from['z'], 3),
-				@from['world'],
-				round(@from['yaw'], 1),
-				round(@from['pitch'], 1),
-			);
-			_store_pdata(player(), @pdata);
-		});
+			set_timeout(50, closure(){
+				@pdata = _pdata(player());
+				if(!array_index_exists(@pdata, @fromGroup)) {
+					@pdata[@fromGroup] = associative_array();
+				}
+				@pdata[@fromGroup]['loc'] = array(
+					round(@from['x'], 3),
+					round(@from['y'], 3) - 1,
+					round(@from['z'], 3),
+					@from['world'],
+					round(@from['yaw'], 1),
+					round(@from['pitch'], 1),
+				);
+				_store_pdata(player(), @pdata);
+			});
+		}
 	}
 
 	@vehicle = get_entity_vehicle(puuid());
 	@type = entity_type(@vehicle);
 	if(array_contains(array('DONKEY', 'HORSE', 'LLAMA', 'MULE', 'SKELETON_HORSE', 'ZOMBIE_HORSE'), @type)
-	&& _is_survival_world(@fromWorld)
-	&& _is_survival_world(@toWorld)) {
+	&& (@fromWorld == @toWorld || _is_survival_world(@fromWorld) && _is_survival_world(@toWorld))) {
 		set_timeout(50, closure(){
 			try {
 				set_entity_loc(@vehicle, @to);

@@ -46,21 +46,26 @@ member:
       livemap.markers: true
     omega:
       livemap.markers: true
-    LastManStanding:
+    shard:
       stargate.create.personal: false
       stargate.create.network: false
       worldguard.region.claim: false
       command.sethome: false
+      deadbolt.admin.bypass: true
+      deadbolt.admin.snoop: true
+      build.wither: true
     outworld:
       stargate.create.personal: false
       stargate.create.network: false
       worldguard.region.claim: false
       command.sethome: false
+      build.wither: true
     outworld_nether:
       stargate.create.personal: false
       stargate.create.network: false
       worldguard.region.claim: false
       command.sethome: false
+      build.wither: true
     outworld_the_end:
       stargate.create.personal: false
       stargate.create.network: false
@@ -182,7 +187,8 @@ moderator:
     logblock.tp: true
     logblock.tools.toolblock: true
     vanish.standard: true
-    deadbolt.broadcast.*: false
+    deadbolt.broadcast.break: false
+    deadbolt.broadcast.snoop: false
     OpenInv.openinv: true
     OpenInv.crossworld: true
     OpenInv.anychest: true
@@ -254,3 +260,6 @@ default:
     outworld_the_end:
       command.join.to: false
       command.join.from: false
+    shard:
+      permissions.build: true
+      command.join.to: false
