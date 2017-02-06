@@ -4,13 +4,18 @@ bind(player_interact, null, array('item': 264, 'hand': 'main_hand', 'block': 0),
         die();
     }
     if(array_contains(get_worlds(), 'shard')) {
-        action_msg('Shard already exists!');
+        if(pworld() == 'shard') {
+            action_msg('You can\'t go deeper!');
+        } else {
+            action_msg('Shard already exists!');
+        }
         die();
     }
     @start = time();
     
     // Get players
     @world = pworld();
+    @worldname = _worldname(@world);
     @players = array();
     foreach(@p in all_players()) {
         if(pworld(@p) != @world) {
@@ -71,9 +76,8 @@ bind(player_interact, null, array('item': 264, 'hand': 'main_hand', 'block': 0),
     set_timeout(50, closure(){
         // Create shard
         @start = time();
-        @worlds = _worlds_config();
         _create_world('shard', array(
-            'name': @worlds[@world]['name'].' Shard',
+            'name': @worldname.'//Shard',
             'mode': 'SURVIVAL',
             'group': 'shard',
             'teleports': false,
@@ -85,18 +89,19 @@ bind(player_interact, null, array('item': 264, 'hand': 'main_hand', 'block': 0),
         console('Created shard ('.(@stop - @start).'ms)', false);
         
         set_timeout(150, closure(){
+            include('../inventory/util.library/loot.ms');
             // Set pre-player world settings
-            @region = array(
-                'x': array(min(@x, @x2) * 512, (max(@x, @x2) + 1) * 512),
-                'z': array(min(@z, @z2) * 512, (max(@z, @z2) + 1) * 512),
-            );
-            @centerX = @region['x'][0] + 512;
-            @centerZ = @region['z'][0] + 512;
+            @minX = min(@x, @x2) * 512;
+            @maxX = (max(@x, @x2) + 1) * 512;
+            @minZ = min(@z, @z2) * 512;
+            @maxZ = (max(@z, @z2) + 1) * 512;
+            @centerX = @minX + 512;
+            @centerZ = @minZ + 512;
             @loc = get_highest_block_at(@centerX, @centerZ, 'shard');
             set_spawn(@loc);
             set_world_time('shard', get_world_time(@world));
-            set_world_border('shard', array('size': 1024, 'center': @loc));
-            set_world_border('shard', array('size': 1, 'seconds': 1200));
+            set_world_border('shard', array('width': 1024, 'center': @loc));
+            set_world_border('shard', array('width': 1, 'seconds': array_size(@players) * 200 + 500));
             
             // Teleport players
             @loc['y'] -= 1;
@@ -109,17 +114,18 @@ bind(player_interact, null, array('item': 264, 'hand': 'main_hand', 'block': 0),
                     @bedloc = @ploc[];
                     @ploc['world'] = 'shard';
                     if(@p != player()
-                    && (@ploc['x'] < @region['x'][0]
-                    || @ploc['x'] > @region['x'][1]
-                    || @ploc['z'] < @region['z'][0]
-                    || @ploc['z'] > @region['z'][1])) {
+                    && (@ploc['x'] < @minX
+                    || @ploc['x'] > @maxX
+                    || @ploc['z'] < @minZ
+                    || @ploc['z'] > @maxZ)) {
                         @ploc = @loc;
                     }
+                    play_sound(@bedloc, array('sound': 'GLASS', 'pitch': 0.5));
+                    set_peffect(@p, 15, 1, 2, true, false);
                     set_ploc(@p, @ploc);
                     set_pbed_location(@p, @bedloc);
                     set_peffect(@p, 15, 1, 2, true, false);
-                    play_sound(@bedloc, array('sound': 'GLASS', 'pitch': 0.7));
-                    play_sound(@ploc, array('sound': 'GLASS', 'pitch': 0.7), @p);
+                    play_sound(@ploc, array('sound': 'GLASS', 'pitch': 0.5), @p);
                     play_sound(@ploc, array('sound': 'WITHER_SPAWN', 'pitch': 0.7), @p);
                 }, 'shard');
             }
@@ -139,9 +145,14 @@ bind(player_interact, null, array('item': 264, 'hand': 'main_hand', 'block': 0),
                     unbind('shard-quit');
                     unbind('shard-death');
                     unbind('shard-spawn');
+                    unbind('shard-invclick');
+                    unbind('shard-interact1');
+                    unbind('shard-interact2');
                     set_timeout(100, closure(){
                         if(array_size(all_players('shard')) > 0 || !unload_world('shard')) {
                             console('Failed to unload shard world!', false);
+                        } else {
+                            array_remove(_worlds_config(), 'shard');
                         }
                     });
                 }
@@ -166,6 +177,34 @@ bind(player_interact, null, array('item': 264, 'hand': 'main_hand', 'block': 0),
             
             bind(player_spawn, array('id': 'shard-spawn'), null, @event) {
                 _check_shard();
+            }
+            
+            bind(inventory_click, array('id': 'shard-invclick'), array('slottype': 'CONTAINER'), @event) {
+                if(pworld() == 'shard') {
+                    if(@event['inventorytype'] == 'HOPPER') {
+                        cancel();
+                        action_msg('Clicking in hoppers is not allowed!');
+                    } else if(@event['inventorysize'] > 5) {
+                        @marker = @event['inventory'][0];
+                        if(@event['slot'] == 0 || !@marker || @marker['name'] != 'CHEST'
+                        || !@marker['meta'] || @marker['meta']['display'] != 'LOOT CHEST') {
+                            cancel();
+                            action_msg('Clicking on this item is not allowed!');
+                        }
+                    }
+                }
+            }
+            
+            bind(player_interact, array('id': 'shard-interact1'), array('block': 54), @event) {
+                if(pworld() == 'shard') {
+                    _set_random_contents(@event['location'], 6);
+                }
+            }
+            
+            bind(player_interact, array('id': 'shard-interact2'), array('block': 146), @event) {
+                if(pworld() == 'shard') {
+                    _set_random_contents(@event['location'], 6);
+                }
             }
             
         });

@@ -46,6 +46,9 @@ proc _enchant_item(@type, @level) {
 		'thorns': 'THORNS',
 		'aquaaffinity': 'WATER_WORKER',
 		'depthstrider': 'DEPTH_STRIDER',
+		'mending': 'MENDING',
+		'frostwalker': 'FROST_WALKER',
+		'sweepingedge': 'SWEEPING_EDGE',
 	);
 	if(!is_integral(@level)) {
 		die('Enchantment level must be an integer.');

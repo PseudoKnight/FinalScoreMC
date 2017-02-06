@@ -228,6 +228,9 @@ moderator:
       worldedit.*: true
     custom:
       worldedit.*: true
+      logblock.tools.toolblock: false
+    shard:
+      logblock.tools.toolblock: false
   inheritance: engineer
 admin:
   permissions:
