@@ -275,7 +275,7 @@ proc _start_game(@course, @loc) {
 								foreach(@p: @b in @golf['players']) {
 									@score = @golf[@hole]['total'][@p] - @golf['par'];
 									if(_string_width(@p) > 72){
-										@p = substr(@p, 0, 14);
+										@p = substr(@p, 0, 12);
 									}
 									@header .= _fill_string('*', '.', '*'.color('a').@p.color(8).'*', 72).'*';
 									@scores .= _fill_string('*', '.', '*'.color('r').@golf[@hole]['strokes'][@p]
