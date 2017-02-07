@@ -185,10 +185,13 @@ bind(player_interact_at_entity, null, array('clicked': 'ARMOR_STAND'), @event) {
 
 			case 375: # spider eye toggles visibility
 				if(!_is_survival_world(pworld())) {
-					@visible = if(@armorstand['visible'], false, true);
-					title_msg(null, color(6).'Toggled visibility '.if(@visible, 'on', 'off').' for armor stand.', 0, 40, 10);
-					set_entity_spec(@event['id'], array('visible': @visible));
-					cancel();
+					@gear = get_mob_equipment(@event['id'])
+					@visible = @armorstand['visible'];
+					if(!@visible || @gear['weapon'] || @gear['off_hand'] || @gear['helmet'] || @gear['chestplate'] || @gear['leggings'] || @gear['boots']) {
+						title_msg(null, color(6).'Toggled visibility '.if(@visible, 'off', 'on').' for armor stand.', 0, 40, 10);
+						set_entity_spec(@event['id'], array('visible': !@visible));
+						cancel();
+					}
 				}
 
 			case 416: # armor stand toggles size
@@ -219,6 +222,10 @@ bind(player_interact_at_entity, null, array('clicked': 'ARMOR_STAND'), @event) {
 				}
 
 			default:
+				if(!@armorstand['visible']) {
+					cancel();
+					die();
+				}
 				@poseable = _get_poseable(@event['id'], @armorstand, @event['position']);
 				if(@poseable == 'ArmLeft' || @poseable == 'Head') {
 					@slot = 'off_hand';
