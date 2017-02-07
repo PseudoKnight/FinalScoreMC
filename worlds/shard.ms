@@ -80,7 +80,7 @@ bind(player_interact, null, array('item': 264, 'hand': 'main_hand', 'block': 0),
             'name': @worldname.'//Shard',
             'mode': 'SURVIVAL',
             'group': 'shard',
-            'teleports': false,
+            'teleports': true,
             'environment': 'NORMAL',
             'seed': null,
             'generator': 'CleanroomGenerator:.',
@@ -125,7 +125,6 @@ bind(player_interact, null, array('item': 264, 'hand': 'main_hand', 'block': 0),
                     play_sound(@bedloc, array('sound': 'GLASS', 'pitch': 0.5));
                     set_peffect(@p, 15, 1, 2, true, false);
                     set_ploc(@p, @ploc);
-                    set_pbed_location(@p, @ploc);
                     set_peffect(@p, 15, 1, 2, true, false);
                     play_sound(@ploc, array('sound': 'GLASS', 'pitch': 0.5), @p);
                     play_sound(@ploc, array('sound': 'WITHER_SPAWN', 'pitch': 0.7), @p);
@@ -136,7 +135,7 @@ bind(player_interact, null, array('item': 264, 'hand': 'main_hand', 'block': 0),
                 set_timeout(50, closure(){
                     @count = 0;
                     foreach(@p in all_players()) {
-                        if(pworld(@p) == 'shard' && pinfo(@p, 5) > 0 && pmode(@p) != 'SPECTATOR') {
+                        if(pworld(@p) == 'shard' && pmode(@p) != 'SPECTATOR') {
                             @count++;
                         }
                     }
@@ -150,6 +149,7 @@ bind(player_interact, null, array('item': 264, 'hand': 'main_hand', 'block': 0),
                         unbind('shard-death');
                         unbind('shard-spawn');
                         unbind('shard-interact');
+                        unbind('shard-worldchanged');
                         @loc = get_spawn('custom');
                         @loc['y'] -= 1;
                         foreach(@p in all_players()) {
@@ -185,11 +185,14 @@ bind(player_interact, null, array('item': 264, 'hand': 'main_hand', 'block': 0),
                 }
             }
             
-            bind(player_spawn, array('id': 'shard-spawn', 'priority': 'MONITOR'), null, @event) {
+            bind(player_spawn, array('id': 'shard-spawn', 'priority': 'LOWEST'), array('world': 'shard'), @event) {
+                modify_event('location', get_spawn('shard'));
+                set_pmode('SPECTATOR');
                 _check_shard();
-                if(@event['location']['world'] == 'shard') {
-                    set_pmode('SPECTATOR');
-                }
+            }
+            
+            bind(world_changed, array('id': 'shard-worldchanged'), array('from': 'shard'), @event) {
+                _check_shard();
             }
             
             bind(player_interact, array('id': 'shard-interact'), null, @event) {

@@ -31,7 +31,7 @@ bind(world_changed, null, null, @event) {
 	}
 }
 
-bind(player_spawn, array('priority': 'LOWEST'), null, @event) {
+bind(player_spawn, array('priority': 'LOW'), null, @event) {
 	@world = @event['location']['world'];
 	if(!@event['bed_spawn']) {
 		@pdata = _pdata(player());

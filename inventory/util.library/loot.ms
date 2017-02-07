@@ -1,5 +1,5 @@
 proc _set_random_contents(@loc, @count) {
-	if(has_metadata(@loc, 'loot') {
+	if(has_metadata(@loc, 'loot')) {
 		return();
 	}
 	
