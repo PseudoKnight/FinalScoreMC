@@ -100,8 +100,10 @@ bind(player_interact, null, array('item': 264, 'hand': 'main_hand', 'block': 0),
             @loc = get_highest_block_at(@centerX, @centerZ, 'shard');
             set_spawn(@loc);
             set_world_time('shard', get_world_time(@world));
+            storm(false, 'shard');
             set_world_border('shard', array('width': 1024, 'center': @loc));
             set_world_border('shard', array('width': 1, 'seconds': array_size(@players) * 200 + 500));
+            _add_activity('shard', @worldname.'//Shard');
             
             // Teleport players
             @loc['y'] -= 1;
@@ -123,7 +125,7 @@ bind(player_interact, null, array('item': 264, 'hand': 'main_hand', 'block': 0),
                     play_sound(@bedloc, array('sound': 'GLASS', 'pitch': 0.5));
                     set_peffect(@p, 15, 1, 2, true, false);
                     set_ploc(@p, @ploc);
-                    set_pbed_location(@p, @bedloc);
+                    set_pbed_location(@p, @ploc);
                     set_peffect(@p, 15, 1, 2, true, false);
                     play_sound(@ploc, array('sound': 'GLASS', 'pitch': 0.5), @p);
                     play_sound(@ploc, array('sound': 'WITHER_SPAWN', 'pitch': 0.7), @p);
@@ -131,31 +133,39 @@ bind(player_interact, null, array('item': 264, 'hand': 'main_hand', 'block': 0),
             }
             
             proc _check_shard() {
-                @count = 0;
-                foreach(@p in all_players()) {
-                    if(pworld(@p) == 'shard' && pinfo(@p, 5) > 0) {
-                        @count++;
-                    }
-                }
-                if(@count == 1) {
-                    set_world_border('shard', array('size': 1, 'seconds': 20));
-                    storm(true, 'shard');
-                    set_thunder(true, 'shard');
-                } else if(@count == 0) {
-                    unbind('shard-quit');
-                    unbind('shard-death');
-                    unbind('shard-spawn');
-                    unbind('shard-invclick');
-                    unbind('shard-interact1');
-                    unbind('shard-interact2');
-                    set_timeout(100, closure(){
-                        if(array_size(all_players('shard')) > 0 || !unload_world('shard')) {
-                            console('Failed to unload shard world!', false);
-                        } else {
-                            array_remove(_worlds_config(), 'shard');
+                set_timeout(50, closure(){
+                    @count = 0;
+                    foreach(@p in all_players()) {
+                        if(pworld(@p) == 'shard' && pinfo(@p, 5) > 0 && pmode(@p) != 'SPECTATOR') {
+                            @count++;
                         }
-                    });
-                }
+                    }
+                    if(@count == 1) {
+                        set_world_border('shard', array('size': 1, 'seconds': 20));
+                        storm(true, 'shard');
+                        set_thunder(true, 'shard');
+                    } else if(@count == 0) {
+                        _remove_activity('shard');
+                        unbind('shard-quit');
+                        unbind('shard-death');
+                        unbind('shard-spawn');
+                        unbind('shard-interact');
+                        @loc = get_spawn('custom');
+                        @loc['y'] -= 1;
+                        foreach(@p in all_players()) {
+                            if(pworld(@p) == 'shard') {
+                                set_ploc(@p, @loc);
+                            }
+                        }
+                        set_timeout(50, closure(){
+                            if(array_size(all_players('shard')) > 0 || !unload_world('shard')) {
+                                console('Failed to unload shard world!', false);
+                            } else {
+                                array_remove(_worlds_config(), 'shard');
+                            }
+                        });
+                    }
+                });
             }
             
             // Events
@@ -175,35 +185,26 @@ bind(player_interact, null, array('item': 264, 'hand': 'main_hand', 'block': 0),
                 }
             }
             
-            bind(player_spawn, array('id': 'shard-spawn'), null, @event) {
+            bind(player_spawn, array('id': 'shard-spawn', 'priority': 'MONITOR'), null, @event) {
                 _check_shard();
+                if(@event['location']['world'] == 'shard') {
+                    set_pmode('SPECTATOR');
+                }
             }
             
-            bind(inventory_click, array('id': 'shard-invclick'), array('slottype': 'CONTAINER'), @event) {
-                if(pworld() == 'shard') {
-                    if(@event['inventorytype'] == 'HOPPER') {
-                        cancel();
-                        action_msg('Clicking in hoppers is not allowed!');
-                    } else if(@event['inventorysize'] > 5) {
-                        @marker = @event['inventory'][0];
-                        if(@event['slot'] == 0 || !@marker || @marker['name'] != 'CHEST'
-                        || !@marker['meta'] || @marker['meta']['display'] != 'LOOT CHEST') {
-                            cancel();
-                            action_msg('Clicking on this item is not allowed!');
-                        }
+            bind(player_interact, array('id': 'shard-interact'), null, @event) {
+                if(@event['block'] != 0 && pworld() == 'shard') {
+                    switch(split(':', @event['block'], 1)[0]) {
+                        case '23':
+                        case '61':
+                        case '117':
+                        case '154':
+                        case '158':
+                            _set_random_contents(@event['location'], 0);
+                        case '54':
+                        case '146':
+                            _set_random_contents(@event['location'], 3);
                     }
-                }
-            }
-            
-            bind(player_interact, array('id': 'shard-interact1'), array('block': 54), @event) {
-                if(pworld() == 'shard') {
-                    _set_random_contents(@event['location'], 6);
-                }
-            }
-            
-            bind(player_interact, array('id': 'shard-interact2'), array('block': 146), @event) {
-                if(pworld() == 'shard') {
-                    _set_random_contents(@event['location'], 6);
                 }
             }
             

@@ -54,6 +54,7 @@ member:
       deadbolt.admin.bypass: true
       deadbolt.admin.snoop: true
       build.wither: true
+      PhysicalShop.admin: true
     outworld:
       stargate.create.personal: false
       stargate.create.network: false

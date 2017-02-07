@@ -1,25 +1,9 @@
 proc _set_random_contents(@loc, @count) {
-	try {
-		@marker = get_inventory(@loc, 0);
-		if(@marker && @marker['name'] == 'CHEST'
-		&& @marker['meta'] && @marker['meta']['display'] == 'LOOT CHEST') {
-			return();
-		}
-	} catch(Exception @ex) {
+	if(has_metadata(@loc, 'loot') {
 		return();
 	}
 	
 	@limits = array(
-		7: 1, // BED_ROCK
-		46: 16, // TNT
-        52: 0, // MOB_SPAWNER (meta)
-		54: 0, // CHEST
-		137: 0, // COMMAND
-		138: 1, // BEACON
-		166: 0, // BARRIER
-		210: 0, // COMMAND_REPEATING
-		211: 0, // COMMAND_CHAIN
-		217: 0, // STRUCTURE_VOID
         260: 2, // APPLE
 		297: 8, // BREAD
 		319: 16, // PORK
@@ -57,29 +41,28 @@ proc _set_random_contents(@loc, @count) {
 	@size = get_inventory_size(@loc);
 	@inv = array();
 	array_resize(@inv, @size);
-	do {
-		@inv[rand(1, @size)] = _random_item(@limits);
-	} while(@count-- > 0);
-	@inv[0] = array('name': 'CHEST', 'meta': array('display': 'LOOT CHEST'));
+	while(@count > 0) {
+		@inv[rand(0, @size)] = _random_item(@limits);
+		@count--;
+	}
 	try {
 		set_inventory(@loc, @inv);
 	} catch(FormatException @ex) {
-		// probably potion that can't exist
+		@inv = array();
+		array_resize(@inv, @size);
+		set_inventory(@loc, @inv);
 	}
+	set_metadata(@loc, 'loot', 1);
 }
 
 proc _random_item(@limits) {
-	@id = rand(1, 424); // total materials
-	if(@id > 229) { // if item, adjust range to above 255
-		@id += 26;
-	}
+	@id = rand(256, 450); // total materials
 	@max = max_stack_size(@id);
     @meta = null;
 	if(array_index_exists(@limits, @id)) {
 		@max = @limits[@id];
         // Apply meta
         switch(@id){
-            case 52:
             case 383:
                 @meta = array('spawntype': array_rand(array(
                     'BAT', 'BLAZE', 'CAVE_SPIDER', 'CHICKEN', 'COW', 'CREEPER', 'ELDER_GUARDIAN', 'ENDERMAN', 'ENDERMITE',
