@@ -105,13 +105,14 @@
 	@requests = import('requests');
 	if(array_index_exists(@requests, @player)
 	&& @requests[@player][0] === 'join'
-	&& @requests[@player][1] == player()) {
-		die('You\'ve already sent a join request to this player.');
+	&& @requests[@player][1] == player()
+	&& @requests[@player][2] + 300000 > time()) { // 5 minutes
+		die('You\'ve already sent a join request to this player in the last 5 minutes.');
 	}
-	@requests[@player] = array('join', player());
+	@requests[@player] = array('join', player(), time());
 	export('requests', @requests);
-	tmsg(@player, color('b').player().' has requested to join you. /accept');
-	msg(color('b').'Request to join sent to '.@player.'.');
+	tmsg(@player, color('dark_gray').simple_date('h:mm').' '.color('b').player().' has requested to join you. /accept');
+	msg(color('dark_gray').simple_date('h:mm').' '.color('b').'Request to join sent to '.@player.'.');
 <<<
 *:/tpa $player = call_alias('/join '.$player);
 
@@ -135,20 +136,21 @@
 	@requests = import('requests');
 	if(array_index_exists(@requests, @player)
 	&& @requests[@player][0] === 'invite'
-	&& @requests[@player][1] == player()) {
-		die('You\'ve already send an invite request to this player.');
+	&& @requests[@player][1] == player()
+	&& @requests[@player][2] + 300000 > time()) { // 5 minutes
+		die('You\'ve already sent an invite request to this player in the last 5 minutes.');
 	}
-	@requests[@player] = array('invite', player());
+	@requests[@player] = array('invite', player(), time());
 	export('requests', @requests);
-	tmsg(@player, color('b').player().' has requested that you join them. /accept');
-	msg(color('b').'Invitation sent to '.@player.'.');
+	tmsg(@player, color('dark_gray').simple_date('h:mm').' '.color('b').player().' has requested that you join them. /accept');
+	msg(color('dark_gray').simple_date('h:mm').' '.color('b').'Invitation sent to '.@player.'.');
 <<<
 
 *:/accept = >>>
 	include('includes.library/teleports.ms');
 	@requests = import('requests');
-	if(!array_index_exists(@requests, player())) {
-		die('There is nothing to accept.');
+	if(!array_index_exists(@requests, player()) || @requests[player()][2] + 300000 < time()) {
+		die('There is no request to accept from the last 5 minutes.');
 	}
 	if(!ponline(@requests[player()][1])) {
 		die('That player is no longer online.');
