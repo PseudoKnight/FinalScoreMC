@@ -5,6 +5,7 @@ proc _set_random_contents(@loc, @count) {
 	
 	@limits = array(
 		260: 2, // APPLE
+		264: 16, // DIAMOND
 		297: 8, // BREAD
 		319: 16, // PORK
 		320: 8, // GRILLED_PORK
@@ -57,7 +58,7 @@ proc _set_random_contents(@loc, @count) {
 
 proc _random_item(@limits) {
 	@id = rand(256, 450); // total materials
-	@max = max_stack_size(@id);
+	@max = ceil(max_stack_size(@id) / 2);
 	@meta = null;
 	if(array_index_exists(@limits, @id)) {
 		@max = @limits[@id];
