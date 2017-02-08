@@ -4,7 +4,7 @@ proc _set_random_contents(@loc, @count) {
 	}
 	
 	@limits = array(
-        260: 2, // APPLE
+		260: 2, // APPLE
 		297: 8, // BREAD
 		319: 16, // PORK
 		320: 8, // GRILLED_PORK
@@ -58,35 +58,36 @@ proc _set_random_contents(@loc, @count) {
 proc _random_item(@limits) {
 	@id = rand(256, 450); // total materials
 	@max = max_stack_size(@id);
-    @meta = null;
+	@meta = null;
 	if(array_index_exists(@limits, @id)) {
 		@max = @limits[@id];
-        // Apply meta
-        switch(@id){
-            case 383:
-                @meta = array('spawntype': array_rand(array(
-                    'BAT', 'BLAZE', 'CAVE_SPIDER', 'CHICKEN', 'COW', 'CREEPER', 'ELDER_GUARDIAN', 'ENDERMAN', 'ENDERMITE',
-                    'EVOKER', 'GHAST', 'GUARDIAN', 'HORSE', 'IRON_GOLEM', 'LLAMA', 'MAGMA_CUBE', 'MUSHROOM_COW', 'OCELOT',
-                    'PIG', 'PIG_ZOMBIE', 'POLAR_BEAR', 'RABBIT', 'SHEEP', 'SHULKER', 'SILVERFISH', 'SKELETON', 'SLIME',
-                    'SNOWMAN', 'SPIDER', 'SQUID', 'VEX', 'VILLAGER', 'VINDICATOR', 'WITCH', 'WOLF', 'ZOMBIE'
-                ), 1, false)[0]);
-            case 403:
-                @meta = array('stored': array(array('elevel': 1, 'etype': array_rand(array(
-                    'ARROW_DAMAGE', 'ARROW_FIRE', 'ARROW_INFINITE', 'ARROW_KNOCKBACK', 'DAMAGE_ALL', 'DAMAGE_ARTHROPODS',
-                    'DAMAGE_UNDEAD', 'DIG_SPEED', 'DURABILITY', 'FIRE_ASPECT', 'KNOCKBACK', 'LOOT_BONUS_BLOCKS',
-                    'LOOT_BONUS_MOBS', 'OXYGEN', 'PROTECTION_ENVIRONMENTAL', 'PROTECTION_EXPLOSIONS', 'PROTECTION_FALL',
-                    'PROTECTION_FIRE', 'PROTECTION_PROJECTILE', 'SILK_TOUCH', 'THORNS', 'WATER_WORKER', 'DEPTH_STRIDER',
-                    'MENDING', 'FROST_WALKER', 'SWEEPING_EDGE'
-                ), 1, false)[0])));
-            case 373:
-            case 438:
-            case 440:
-            case 441:
-                @meta = array('base': array('extended': boolean(rand(2)), 'upgraded': boolean(rand(2)), 'type': array_rand(array(
-                    'SPEED', 'SLOWNESS', 'STRENGTH', 'INSTANT_HEAL', 'INSTANT_DAMAGE', 'JUMP', 'REGEN', 'FIRE_RESISTANCE',
-                    'WATER_BREATHING', 'INVISIBILITY', 'NIGHT_VISION', 'WEAKNESS', 'POISON', 'LUCK'
-                ), 1, false)[0]));
-        }
+		// Apply meta
+		switch(@id){
+			case 383:
+				@meta = array('spawntype': array_rand(array(
+					'BAT', 'BLAZE', 'CAVE_SPIDER', 'CHICKEN', 'COW', 'CREEPER', 'ELDER_GUARDIAN', 'ENDERMAN', 'ENDERMITE',
+					'EVOKER', 'GHAST', 'GUARDIAN', 'HORSE', 'IRON_GOLEM', 'LLAMA', 'MAGMA_CUBE', 'MUSHROOM_COW', 'OCELOT',
+					'PIG', 'PIG_ZOMBIE', 'POLAR_BEAR', 'RABBIT', 'SHEEP', 'SHULKER', 'SILVERFISH', 'SKELETON', 'SLIME',
+					'SNOWMAN', 'SPIDER', 'SQUID', 'VEX', 'VILLAGER', 'VINDICATOR', 'WITCH', 'WOLF', 'ZOMBIE'
+				), 1, false)[0]);
+			case 403:
+				@meta = array('stored': array(array('elevel': 1, 'etype': array_rand(array(
+					'ARROW_DAMAGE', 'ARROW_FIRE', 'ARROW_INFINITE', 'ARROW_KNOCKBACK', 'DAMAGE_ALL', 'DAMAGE_ARTHROPODS',
+					'DAMAGE_UNDEAD', 'DIG_SPEED', 'DURABILITY', 'FIRE_ASPECT', 'KNOCKBACK', 'LOOT_BONUS_BLOCKS',
+					'LOOT_BONUS_MOBS', 'OXYGEN', 'PROTECTION_ENVIRONMENTAL', 'PROTECTION_EXPLOSIONS', 'PROTECTION_FALL',
+					'PROTECTION_FIRE', 'PROTECTION_PROJECTILE', 'SILK_TOUCH', 'THORNS', 'WATER_WORKER', 'DEPTH_STRIDER',
+					'MENDING', 'FROST_WALKER', 'SWEEPING_EDGE'
+				), 1, false)[0])));
+			case 373:
+			case 438:
+			case 440:
+			case 441:
+				@rand = rand(3);
+				@meta = array('base': array('extended': (@rand == 1), 'upgraded': (@rand == 2), 'type': array_rand(array(
+					'SPEED', 'SLOWNESS', 'STRENGTH', 'INSTANT_HEAL', 'INSTANT_DAMAGE', 'JUMP', 'REGEN', 'FIRE_RESISTANCE',
+					'WATER_BREATHING', 'INVISIBILITY', 'NIGHT_VISION', 'WEAKNESS', 'POISON', 'LUCK'
+				), 1, false)[0]));
+		}
 	}
 	if(@max <= 0) {
 		return(null);
@@ -94,7 +95,7 @@ proc _random_item(@limits) {
 	@item = array(
 		'type': @id,
 		'qty': rand(1, @max + 1),
-        'meta': @meta,
+		'meta': @meta,
 	);
 	return(@item);
 }
