@@ -4,7 +4,7 @@ bind(player_interact, null, array('item': 401, 'button': 'right'), @event) {
             set_entity_gliding(puuid(), true);
         });
         
-    } else if(!_is_survival_world(pworld())) {
+    } else if(pworld() == 'custom' || pworld() == 'dev') {
     	@pdata = _pdata(player());
     	if(!array_index_exists(@pdata, 'support')) {
     		die();

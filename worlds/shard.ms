@@ -1,14 +1,31 @@
 bind(player_interact, null, array('item': 264, 'hand': 'main_hand', 'block': 0), @event) {
-    if(!pisop()) {
-        action_msg('Only ops can generate shards!');
-        die();
+    proc _random_spawn_location() {
+        @worldborder = get_world_border('shard');
+        @width = @worldborder['width'];
+        @loc = @worldborder['center'];
+        @loc['x'] += rand() * @width - @width / 2;
+        @loc['z'] += rand() * @width - @width / 2;
+        return(get_highest_block_at(@loc));
     }
+    
     if(array_contains(get_worlds(), 'shard')) {
         if(pworld() == 'shard') {
             action_msg('You can\'t go deeper!');
         } else {
-            action_msg('Shard already exists!');
+            play_sound(ploc(), array('sound': 'GLASS', 'pitch': 0.5));
+            @loc = get_spawn('shard');
+            @loc['y'] -= 1;
+            set_ploc(_random_spawn_location());
+            set_peffect(player(), 11, 3, 30, true);
+            play_sound(@loc, array('sound': 'GLASS', 'pitch': 0.5), player());
+            if(get_world_border('shard')['width'] < 128) {
+                set_pmode('SPECTATOR');
+            }
         }
+        die();
+    }
+    if(!has_permission('group.moderator')) {
+        action_msg('Only staff can generate shards for now!');
         die();
     }
     @start = time();
@@ -102,7 +119,7 @@ bind(player_interact, null, array('item': 264, 'hand': 'main_hand', 'block': 0),
             set_world_time('shard', get_world_time(@world));
             storm(false, 'shard');
             set_world_border('shard', array('width': 1024, 'center': @loc));
-            set_world_border('shard', array('width': 1, 'seconds': array_size(@players) * 200 + 500));
+            set_world_border('shard', array('width': 1, 'seconds': array_size(@players) * 120 + 660));
             _add_activity('shard', @worldname.'//Shard');
             
             // Teleport players
@@ -113,19 +130,17 @@ bind(player_interact, null, array('item': 264, 'hand': 'main_hand', 'block': 0),
                 }
                 queue_push(closure(){
                     @ploc = ploc(@p);
-                    @bedloc = @ploc[];
+                    play_sound(@ploc, array('sound': 'GLASS', 'pitch': 0.5));
                     @ploc['world'] = 'shard';
                     if(@p != player()
                     && (@ploc['x'] < @minX
                     || @ploc['x'] > @maxX
                     || @ploc['z'] < @minZ
                     || @ploc['z'] > @maxZ)) {
-                        @ploc = @loc;
+                        @ploc = _random_spawn_location();
                     }
-                    play_sound(@bedloc, array('sound': 'GLASS', 'pitch': 0.5));
-                    set_peffect(@p, 15, 1, 2, true, false);
                     set_ploc(@p, @ploc);
-                    set_peffect(@p, 15, 1, 2, true, false);
+                    set_peffect(@p, 11, 3, 60, true);
                     play_sound(@ploc, array('sound': 'GLASS', 'pitch': 0.5), @p);
                     play_sound(@ploc, array('sound': 'WITHER_SPAWN', 'pitch': 0.7), @p);
                 }, 'shard');
@@ -140,7 +155,7 @@ bind(player_interact, null, array('item': 264, 'hand': 'main_hand', 'block': 0),
                         }
                     }
                     if(@count == 1) {
-                        set_world_border('shard', array('size': 1, 'seconds': 20));
+                        set_world_border('shard', array('width': 1, 'seconds': 20));
                         storm(true, 'shard');
                         set_thunder(true, 'shard');
                     } else if(@count == 0) {
@@ -150,6 +165,7 @@ bind(player_interact, null, array('item': 264, 'hand': 'main_hand', 'block': 0),
                         unbind('shard-spawn');
                         unbind('shard-interact');
                         unbind('shard-worldchanged');
+                        unbind('shard-itemframe');
                         @loc = get_spawn('custom');
                         @loc['y'] -= 1;
                         foreach(@p in all_players()) {
@@ -182,13 +198,15 @@ bind(player_interact, null, array('item': 264, 'hand': 'main_hand', 'block': 0),
                 if(@event['location']['world'] == 'shard') {
                     consume();
                     modify_event('death_message', color('k').'X'.color('r').' '.@event['death_message']);
+                    export('playerspawn', ploc());
                 }
             }
             
             bind(player_spawn, array('id': 'shard-spawn', 'priority': 'LOWEST'), array('world': 'shard'), @event) {
-                modify_event('location', get_spawn('shard'));
+                modify_event('location', import('playerspawn', get_spawn('shard')));
                 set_pmode('SPECTATOR');
                 _check_shard();
+                export('playerspawn', null);
             }
             
             bind(world_changed, array('id': 'shard-worldchanged'), array('from': 'shard'), @event) {
@@ -209,6 +227,12 @@ bind(player_interact, null, array('item': 264, 'hand': 'main_hand', 'block': 0),
                             _set_random_contents(@event['location'], 3);
                     }
                 }
+            }
+            
+            bind(entity_damage, array('id': 'shard-itemframe'), array('type': 'ITEM_FRAME'), @event) {
+            	if(@event['world'] == 'shard') {
+            		cancel();
+            	}
             }
             
         });
