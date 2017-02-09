@@ -56,7 +56,7 @@ proc _set_random_contents(@loc, @count) {
 	set_metadata(@loc, 'loot', 1);
 	if(@size == 54) {
 		@type = get_block_at(@loc);
-		foreach(@dir in array('north', 'south', 'east' 'west')) {
+		foreach(@dir in array('north', 'south', 'east', 'west')) {
 			@checkLoc = _relative(@loc, @dir);
 			if(get_block_at(@checkLoc) == @type) {
 				set_metadata(@checkLoc, 'loot', 1);
