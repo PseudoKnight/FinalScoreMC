@@ -166,20 +166,21 @@ bind(player_interact, null, array('item': 264, 'hand': 'main_hand', 'block': 0),
                         unbind('shard-interact');
                         unbind('shard-worldchanged');
                         unbind('shard-itemframe');
-                        @loc = get_spawn('custom');
-                        @loc['y'] -= 1;
                         foreach(@p in all_players()) {
                             if(pworld(@p) == 'shard') {
-                                set_ploc(@p, @loc);
+                                queue_push(closure(){
+                                    @pdata = _pdata(@p);
+                                    set_ploc(@p, @pdata['survival']['loc']);
+                                });
                             }
                         }
-                        set_timeout(50, closure(){
+                        queue_push(closure(){
                             if(array_size(all_players('shard')) > 0 || !unload_world('shard')) {
                                 console('Failed to unload shard world!', false);
                             } else {
                                 array_remove(_worlds_config(), 'shard');
                             }
-                        });
+                        }, 'shard');
                     }
                 });
             }
@@ -199,12 +200,12 @@ bind(player_interact, null, array('item': 264, 'hand': 'main_hand', 'block': 0),
                     consume();
                     modify_event('death_message', color('k').'X'.color('r').' '.@event['death_message']);
                     export('playerspawn', ploc());
+                    set_pmode('SPECTATOR');
                 }
             }
             
             bind(player_spawn, array('id': 'shard-spawn', 'priority': 'LOWEST'), array('world': 'shard'), @event) {
                 modify_event('location', import('playerspawn', get_spawn('shard')));
-                set_pmode('SPECTATOR');
                 _check_shard();
                 export('playerspawn', null);
             }
