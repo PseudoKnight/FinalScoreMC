@@ -149,15 +149,23 @@ bind(player_interact, null, array('item': 264, 'hand': 'main_hand', 'block': 0),
             proc _check_shard() {
                 set_timeout(50, closure(){
                     @count = 0;
+                    @last = '';
                     foreach(@p in all_players()) {
                         if(pworld(@p) == 'shard' && pmode(@p) != 'SPECTATOR') {
                             @count++;
+                            @last = @p;
                         }
                     }
                     if(@count == 1) {
                         set_world_border('shard', array('width': 1, 'seconds': 20));
                         storm(true, 'shard');
                         set_thunder(true, 'shard');
+                        _worldmsg('shard', color('green').@last.' wins!');
+                        set_timeout(20000, closure(){
+                            if(array_contains(get_worlds(), 'shard') && pworld(@last) == 'shard') {
+                                explosion(_relative(ploc(@last), 'up', 2), 5);
+                            }
+                        });
                     } else if(@count == 0) {
                         _remove_activity('shard');
                         unbind('shard-quit');
