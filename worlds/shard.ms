@@ -64,7 +64,7 @@ bind(player_interact, null, array('item': 264, 'hand': 'main_hand', 'block': 0),
         // world does not exist yet
     }
     
-    // Copy region files
+    // Setup region files
     @environment = world_info(@world)['environment'];
     @chunk = get_chunk_loc();
     @x = floor(@chunk['x'] / 32);
@@ -77,173 +77,179 @@ bind(player_interact, null, array('item': 264, 'hand': 'main_hand', 'block': 0),
     } else if(@environment == 'THE_END') {
         @dim = '/DIM1';
     }
-    try {
-        copy_file("@base/@{world}@dim/region/r.@x.@z.mca", "@base/shard/region/r.@x.@z.mca");
-        copy_file("@base/@{world}@dim/region/r.@x2.@z.mca", "@base/shard/region/r.@x2.@z.mca");
-        copy_file("@base/@{world}@dim/region/r.@x.@z2.mca", "@base/shard/region/r.@x.@z2.mca");
-        copy_file("@base/@{world}@dim/region/r.@x2.@z2.mca", "@base/shard/region/r.@x2.@z2.mca");
-    } catch(IOException @ex) {
-        console('Failed to copy files!', false);
-        die();
-    }
-    
     @stop = time();
-    console('Setup regions files ('.(@stop - @start).'ms)', false);
+    console('Shard setup completed ('.(@stop - @start).'ms)', false);
     
     set_timeout(50, closure(){
-        // Create shard
+        // Copy region files
         @start = time();
-        _create_world('shard', array(
-            'name': @worldname.'//Shard',
-            'mode': 'SURVIVAL',
-            'group': 'shard',
-            'teleports': true,
-            'environment': 'NORMAL',
-            'seed': null,
-            'generator': 'CleanroomGenerator:.',
-        ));
+        try {
+            copy_file("@base/@{world}@dim/region/r.@x.@z.mca", "@base/shard/region/r.@x.@z.mca");
+            copy_file("@base/@{world}@dim/region/r.@x2.@z.mca", "@base/shard/region/r.@x2.@z.mca");
+            copy_file("@base/@{world}@dim/region/r.@x.@z2.mca", "@base/shard/region/r.@x.@z2.mca");
+            copy_file("@base/@{world}@dim/region/r.@x2.@z2.mca", "@base/shard/region/r.@x2.@z2.mca");
+        } catch(IOException @ex) {
+            console('Failed to copy files!', false);
+            die();
+        }
         @stop = time();
-        console('Created shard ('.(@stop - @start).'ms)', false);
+        console('Copy region files ('.(@stop - @start).'ms)', false);
         
-        set_timeout(150, closure(){
-            include('../inventory/util.library/loot.ms');
-            // Set pre-player world settings
-            @minX = min(@x, @x2) * 512;
-            @maxX = (max(@x, @x2) + 1) * 512;
-            @minZ = min(@z, @z2) * 512;
-            @maxZ = (max(@z, @z2) + 1) * 512;
-            @centerX = @minX + 512;
-            @centerZ = @minZ + 512;
-            @loc = get_highest_block_at(@centerX, @centerZ, 'shard');
-            set_spawn(@loc);
-            set_world_time('shard', get_world_time(@world));
-            storm(false, 'shard');
-            set_world_border('shard', array('width': 1024, 'center': @loc));
-            set_world_border('shard', array('width': 1, 'seconds': array_size(@players) * 120 + 660));
-            _add_activity('shard', @worldname.'//Shard');
+        set_timeout(50, closure(){
+            // Create shard
+            @start = time();
+            _create_world('shard', array(
+                'name': @worldname.'//Shard',
+                'mode': 'SURVIVAL',
+                'group': 'shard',
+                'teleports': true,
+                'environment': 'NORMAL',
+                'seed': null,
+                'generator': 'CleanroomGenerator:.',
+            ));
+            @stop = time();
+            console('Created shard ('.(@stop - @start).'ms)', false);
             
-            // Teleport players
-            @loc['y'] -= 1;
-            foreach(@p in @players) {
-                if(pworld(@p) != @world) {
-                    continue();
+            set_timeout(150, closure(){
+                include('../inventory/util.library/loot.ms');
+                // Set pre-player world settings
+                @minX = min(@x, @x2) * 512;
+                @maxX = (max(@x, @x2) + 1) * 512;
+                @minZ = min(@z, @z2) * 512;
+                @maxZ = (max(@z, @z2) + 1) * 512;
+                @centerX = @minX + 512;
+                @centerZ = @minZ + 512;
+                @loc = get_highest_block_at(@centerX, @centerZ, 'shard');
+                set_spawn(@loc);
+                set_world_time('shard', get_world_time(@world));
+                storm(false, 'shard');
+                set_world_border('shard', array('width': 1024, 'center': @loc));
+                set_world_border('shard', array('width': 1, 'seconds': array_size(@players) * 120 + 660));
+                _add_activity('shard', @worldname.'//Shard');
+                
+                // Teleport players
+                @loc['y'] -= 1;
+                foreach(@p in @players) {
+                    if(pworld(@p) != @world) {
+                        continue();
+                    }
+                    queue_push(closure(){
+                        @ploc = ploc(@p);
+                        play_sound(@ploc, array('sound': 'GLASS', 'pitch': 0.5));
+                        @ploc['world'] = 'shard';
+                        if(@p != player()
+                        && (@ploc['x'] < @minX
+                        || @ploc['x'] > @maxX
+                        || @ploc['z'] < @minZ
+                        || @ploc['z'] > @maxZ)) {
+                            @ploc = _random_spawn_location();
+                        }
+                        set_ploc(@p, @ploc);
+                        set_peffect(@p, 11, 3, 60, true);
+                        play_sound(@ploc, array('sound': 'GLASS', 'pitch': 0.5), @p);
+                        play_sound(@ploc, array('sound': 'WITHER_SPAWN', 'pitch': 0.7), @p);
+                    }, 'shard');
                 }
-                queue_push(closure(){
-                    @ploc = ploc(@p);
-                    play_sound(@ploc, array('sound': 'GLASS', 'pitch': 0.5));
-                    @ploc['world'] = 'shard';
-                    if(@p != player()
-                    && (@ploc['x'] < @minX
-                    || @ploc['x'] > @maxX
-                    || @ploc['z'] < @minZ
-                    || @ploc['z'] > @maxZ)) {
-                        @ploc = _random_spawn_location();
-                    }
-                    set_ploc(@p, @ploc);
-                    set_peffect(@p, 11, 3, 60, true);
-                    play_sound(@ploc, array('sound': 'GLASS', 'pitch': 0.5), @p);
-                    play_sound(@ploc, array('sound': 'WITHER_SPAWN', 'pitch': 0.7), @p);
-                }, 'shard');
-            }
-            
-            proc _check_shard() {
-                set_timeout(50, closure(){
-                    @count = 0;
-                    @last = '';
-                    foreach(@p in all_players()) {
-                        if(pworld(@p) == 'shard' && pmode(@p) != 'SPECTATOR') {
-                            @count++;
-                            @last = @p;
-                        }
-                    }
-                    if(@count == 1) {
-                        set_world_border('shard', array('width': 1, 'seconds': 20));
-                        storm(true, 'shard');
-                        set_thunder(true, 'shard');
-                        _worldmsg('shard', color('green').@last.' wins!');
-                        set_timeout(20000, closure(){
-                            if(array_contains(get_worlds(), 'shard') && pworld(@last) == 'shard') {
-                                explosion(_relative(ploc(@last), 'up', 2), 5);
-                            }
-                        });
-                    } else if(@count == 0) {
-                        _remove_activity('shard');
-                        unbind('shard-quit');
-                        unbind('shard-death');
-                        unbind('shard-spawn');
-                        unbind('shard-interact');
-                        unbind('shard-worldchanged');
-                        unbind('shard-itemframe');
+                
+                proc _check_shard() {
+                    set_timeout(50, closure(){
+                        @count = 0;
+                        @last = '';
                         foreach(@p in all_players()) {
-                            if(pworld(@p) == 'shard') {
-                                queue_push(closure(){
-                                    @pdata = _pdata(@p);
-                                    set_ploc(@p, @pdata['survival']['loc']);
-                                });
+                            if(pworld(@p) == 'shard' && pmode(@p) != 'SPECTATOR') {
+                                @count++;
+                                @last = @p;
                             }
                         }
-                        queue_push(closure(){
-                            if(array_size(all_players('shard')) > 0 || !unload_world('shard')) {
-                                console('Failed to unload shard world!', false);
-                            } else {
-                                array_remove(_worlds_config(), 'shard');
+                        if(@count == 1) {
+                            set_world_border('shard', array('width': 1, 'seconds': 20));
+                            storm(true, 'shard');
+                            set_thunder(true, 'shard');
+                            _worldmsg('shard', color('green').@last.' wins!');
+                            set_timeout(20000, closure(){
+                                if(array_contains(get_worlds(), 'shard') && pworld(@last) == 'shard') {
+                                    explosion(_relative(ploc(@last), 'up', 2), 5);
+                                }
+                            });
+                        } else if(@count == 0) {
+                            _remove_activity('shard');
+                            unbind('shard-quit');
+                            unbind('shard-death');
+                            unbind('shard-spawn');
+                            unbind('shard-interact');
+                            unbind('shard-worldchanged');
+                            unbind('shard-itemframe');
+                            foreach(@p in all_players()) {
+                                if(pworld(@p) == 'shard') {
+                                    queue_push(closure(){
+                                        @pdata = _pdata(@p);
+                                        set_ploc(@p, @pdata['survival']['loc']);
+                                    });
+                                }
                             }
-                        }, 'shard');
+                            queue_push(closure(){
+                                if(array_size(all_players('shard')) > 0 || !unload_world('shard')) {
+                                    console('Failed to unload shard world!', false);
+                                } else {
+                                    array_remove(_worlds_config(), 'shard');
+                                }
+                            }, 'shard');
+                        }
+                    });
+                }
+                
+                // Events
+                bind(player_quit, array('priority': 'HIGHEST', 'id': 'shard-quit'), null, @event) {
+                    if(pworld() == 'shard') {
+                        @loc = get_spawn('custom');
+                        @loc['y'] -= 1;
+                        set_ploc(@loc);
+                        _check_shard();
                     }
-                });
-            }
-            
-            // Events
-            bind(player_quit, array('priority': 'HIGHEST', 'id': 'shard-quit'), null, @event) {
-                if(pworld() == 'shard') {
-                    @loc = get_spawn('custom');
-                    @loc['y'] -= 1;
-                    set_ploc(@loc);
+                }
+                
+                bind(player_death, array('priority': 'HIGHEST', 'id': 'shard-death'), null, @event) {
+                    if(@event['location']['world'] == 'shard') {
+                        consume();
+                        modify_event('death_message', color('k').'X'.color('r').' '.@event['death_message']);
+                        export('playerspawn', ploc());
+                        set_pmode('SPECTATOR');
+                    }
+                }
+                
+                bind(player_spawn, array('id': 'shard-spawn', 'priority': 'LOWEST'), array('world': 'shard'), @event) {
+                    modify_event('location', import('playerspawn', get_spawn('shard')));
+                    _check_shard();
+                    export('playerspawn', null);
+                }
+                
+                bind(world_changed, array('id': 'shard-worldchanged'), array('from': 'shard'), @event) {
                     _check_shard();
                 }
-            }
-            
-            bind(player_death, array('priority': 'HIGHEST', 'id': 'shard-death'), null, @event) {
-                if(@event['location']['world'] == 'shard') {
-                    consume();
-                    modify_event('death_message', color('k').'X'.color('r').' '.@event['death_message']);
-                    export('playerspawn', ploc());
-                    set_pmode('SPECTATOR');
-                }
-            }
-            
-            bind(player_spawn, array('id': 'shard-spawn', 'priority': 'LOWEST'), array('world': 'shard'), @event) {
-                modify_event('location', import('playerspawn', get_spawn('shard')));
-                _check_shard();
-                export('playerspawn', null);
-            }
-            
-            bind(world_changed, array('id': 'shard-worldchanged'), array('from': 'shard'), @event) {
-                _check_shard();
-            }
-            
-            bind(player_interact, array('id': 'shard-interact'), null, @event) {
-                if(@event['block'] != 0 && pworld() == 'shard') {
-                    switch(split(':', @event['block'], 1)[0]) {
-                        case '23':
-                        case '61':
-                        case '117':
-                        case '154':
-                        case '158':
-                            _set_random_contents(@event['location'], 0);
-                        case '54':
-                        case '146':
-                            _set_random_contents(@event['location'], 3);
+                
+                bind(player_interact, array('id': 'shard-interact'), null, @event) {
+                    if(@event['block'] != 0 && pworld() == 'shard') {
+                        switch(split(':', @event['block'], 1)[0]) {
+                            case '23':
+                            case '61':
+                            case '117':
+                            case '154':
+                            case '158':
+                                _set_random_contents(@event['location'], 0);
+                            case '54':
+                            case '146':
+                                _set_random_contents(@event['location'], 3);
+                        }
                     }
                 }
-            }
-            
-            bind(entity_damage, array('id': 'shard-itemframe'), array('type': 'ITEM_FRAME'), @event) {
-            	if(@event['world'] == 'shard') {
-            		cancel();
-            	}
-            }
-            
+                
+                bind(entity_damage, array('id': 'shard-itemframe'), array('type': 'ITEM_FRAME'), @event) {
+                	if(@event['world'] == 'shard') {
+                		cancel();
+                	}
+                }
+                
+            });
         });
     });
 }
