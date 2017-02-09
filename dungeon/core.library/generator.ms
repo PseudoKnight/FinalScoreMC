@@ -279,7 +279,7 @@ proc _generate_dungeon(@region, @world, @type, @seed) {
 							} else if(@level == 3) {
 								set_block_at(@levelLoc, '8', false);
 							} else {
-								set_block_at(@levelLoc, @materials['floor'], false);
+								set_block_at(@levelLoc, array_rand(@materials['floor'], 1, false)[0], false);
 							}
 						}
 
