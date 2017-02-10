@@ -38,11 +38,11 @@ proc _snake_direction_of(@loc, @block, @not) {
 }
 
 proc _snake_safe_dir(@snake) {
-	@turn = _snake_turn(@snake['top'], @snake['dir']);
 	@loc = _relative(@snake['loc'], @snake['last-dir']);
 	if(_snake_safe_block(get_block_at(@loc), @loc)) {
 		return(@snake['last-dir']);
 	}
+	@turn = _snake_turn(@snake['top'], @snake['dir']);
 	foreach(@t in @turn) {
 		@loc = _relative(@snake['loc'], @t);
 		if(@t != @snake['last-dir'] && _snake_safe_block(get_block_at(@loc), @loc)) {

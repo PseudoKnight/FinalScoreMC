@@ -76,12 +76,13 @@ proc _snake_queue(@args) {
 		'',
 		'Press \'f\' to activate ability',
 		'Press \'f\' to activate ability',
+		'Press \'f\' to activate ability',
 		'To turn, click left or right mouse buttons',
 		'To turn, click left or right mouse buttons',
-		'SNAKE',
+		'To turn, click left or right mouse buttons',
 		'SNAKE',
 	);
-	@countdown = array(6);
+	@countdown = array(7);
 	set_interval(1000, closure(){
 		if(@countdown[0] > 0) {
 			foreach(@p in array_keys(@game['snakes'])) {

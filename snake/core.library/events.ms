@@ -13,7 +13,10 @@ proc _snake_bind_events(@game) {
 	bind(item_swap, array('id': 'snake-swap'), null, @event, @game) {
 		if(array_index_exists(@game['snakes'], player())) {
 			cancel();
-			_snake_ability(player(), @game);
+			@slot = pheld_slot();
+			if(@slot < 2) {
+				_snake_ability(player(), @slot, @game);
+			}
 		}
 	}
 

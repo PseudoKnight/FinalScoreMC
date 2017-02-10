@@ -8,8 +8,8 @@
 	'tail': the block type:data for the color of their tail
 	'blocks': an array of ordered block locations representing the tail, new ones pushed on end, such that
 			  order is back of tail to head. This is used for removing blocks.
-	'ability': a powerup ability
-	'ability-count': the current ammo (used for bots)
+	'ability': a powerup abilities
+	'ability-count': the current ammo for each ability
 	'alive': whether the snake is active or dead
 	'click': set to true if an action is performed, set to false on update
 	'region': the current worldguard region the snake is in
@@ -43,8 +43,8 @@ proc _snake_add(@player, @game) {
 	@color = @colors[array_size(@game['snakes'])][2];
 	@game['snakes'][@player] = associative_array(
 		'blocks': array(@startLoc, @headLoc),
-		'ability': '',
-		'ability-count': 0,
+		'ability': array('', ''),
+		'ability-count': array(0, 0),
 		'head': @head,
 		'tail': @tail,
 		'alive': true,
