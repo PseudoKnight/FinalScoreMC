@@ -1,6 +1,15 @@
 @month = simple_date('MMM');
-if(@month == 'Oct') {
-    include('seasons.library/halloween.ms');
+@day = integer(simple_date('d'));
+if(@month == 'Feb') {
+    if(@day > 8 && @day < 16) {
+        include('seasons.library/valentines.ms');
+    }
 } else if(@month == 'Apr') {
-    include('seasons.library/easter.ms');
+    if(@day > 7) {
+        include('seasons.library/easter.ms');
+    }
+} else if(@month == 'Oct') {
+    if(@day > 7) {
+        include('seasons.library/halloween.ms');
+    }
 }
