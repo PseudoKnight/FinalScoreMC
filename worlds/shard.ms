@@ -124,7 +124,6 @@ bind(player_interact, null, array('item': 264, 'hand': 'main_hand', 'block': 0),
                 set_world_time('shard', get_world_time(@world));
                 storm(false, 'shard');
                 set_world_border('shard', array('width': 1024, 'center': @loc));
-                set_world_border('shard', array('width': 1, 'seconds': array_size(@players) * 120 + 660));
                 _add_activity('shard', @worldname.'//Shard');
                 
                 // Teleport players
@@ -179,12 +178,14 @@ bind(player_interact, null, array('item': 264, 'hand': 'main_hand', 'block': 0),
                             unbind('shard-interact');
                             unbind('shard-worldchanged');
                             unbind('shard-itemframe');
+                            unbind('shard-place1');
+                            unbind('shard-place2');
                             foreach(@p in all_players()) {
                                 if(pworld(@p) == 'shard') {
                                     queue_push(closure(){
                                         @pdata = _pdata(@p);
                                         set_ploc(@p, @pdata['survival']['loc']);
-                                    });
+                                    }, 'shard');
                                 }
                             }
                             queue_push(closure(){
@@ -208,12 +209,17 @@ bind(player_interact, null, array('item': 264, 'hand': 'main_hand', 'block': 0),
                     }
                 }
                 
-                bind(player_death, array('priority': 'HIGHEST', 'id': 'shard-death'), null, @event) {
+                bind(player_death, array('priority': 'HIGHEST', 'id': 'shard-death'), null, @event, @players) {
                     if(@event['location']['world'] == 'shard') {
                         consume();
                         modify_event('death_message', color('k').'X'.color('r').' '.@event['death_message']);
                         export('playerspawn', ploc());
                         set_pmode('SPECTATOR');
+                        if(get_world_border('shard')['width'] > 1000) {
+                            @seconds = array_size(@players) * 180 + 600;
+                            set_world_border('shard', array('width': 1, 'seconds': @seconds));
+                            _worldmsg('shard', 'Shard has started to collapse! ETA '.floor(@seconds / 60).' minutes');
+                        }
                     }
                 }
                 
