@@ -98,6 +98,9 @@ proc _snake_powerup(@player, @powerup, @game) {
 		}
 		if(@snake['ability'][@slot] == @powerup) {
 			@snake['ability-count'][@slot] += 1;
+		} else if(@snake['ability'][if(@slot, 0, 1)] == @powerup) {
+			@slot = if(@slot, 0, 1);
+			@snake['ability-count'][@slot] += 1;
 		} else {
 			@snake['ability'][@slot] = @powerup;
 			@snake['ability-count'][@slot] = 1;
