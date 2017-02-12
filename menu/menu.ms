@@ -18,7 +18,7 @@ queue_push(closure(){
 
 	bind(inventory_click, null, null, @e) {
 		if(is_null(pget_virtualchest())
-		|| _is_survival_world(pworld())) {
+		|| pworld() != 'custom') {
 			die();
 		}
 		cancel();

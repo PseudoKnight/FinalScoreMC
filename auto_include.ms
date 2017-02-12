@@ -148,9 +148,6 @@ proc _equip_kit(@player) {
 					'display': 'WorldEdit Selector',
 				)),
 			));
-			
-		case 'shard':
-			_clear_pinv(@player);
 	}
 }
 
