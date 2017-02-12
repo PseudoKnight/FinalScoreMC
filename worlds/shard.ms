@@ -243,6 +243,14 @@ bind(player_interact, null, array('item': 264, 'hand': 'main_hand', 'block': 0),
                     }
                 }
                 
+                bind(block_place, array('id': 'shard-place1'), array('type': 54), @event) {
+                    _set_random_contents(@event['location'], 0);
+                }
+                
+                bind(block_place, array('id': 'shard-place2'), array('type': 146), @event) {
+                    _set_random_contents(@event['location'], 0);
+                }
+                
                 bind(entity_damage, array('id': 'shard-itemframe'), array('type': 'ITEM_FRAME'), @event) {
                 	if(@event['world'] == 'shard') {
                 		cancel();
