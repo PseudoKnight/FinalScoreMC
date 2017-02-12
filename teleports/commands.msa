@@ -97,7 +97,7 @@
 	}
 	
 	@pdata = _pdata(@player);
-	if(array_index_exists(@pdata, 'joinaccept')) {
+	if(array_index_exists(@pdata, 'joinaccept') && entity_grounded(puuid(@player))) {
 		_warmuptp(player(), ploc(@player));
 		die();
 	}
