@@ -5,6 +5,10 @@ bind(player_interact, null, array('item': 264, 'hand': 'main_hand', 'block': 0),
         @loc = @worldborder['center'];
         @loc['x'] += rand() * @width - @width / 2;
         @loc['z'] += rand() * @width - @width / 2;
+        @loc = get_highest_block_at(@loc);
+        if(get_block_at(@loc) == '9:0') {
+            return(_random_spawn_location());
+        }
         return(get_highest_block_at(@loc));
     }
     
