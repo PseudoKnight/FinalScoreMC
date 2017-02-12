@@ -84,6 +84,7 @@ proc _snake_add(@player, @game) {
 				'meta': associative_array('display': 'JOYSTICK'),
 			),
 		));
+		set_pheld_slot(@player, 0);
 		_set_pstate_activity(@player, 'SNAKE');
 	} else {
 		@game['snakes'][@player]['bot'] = @player;
