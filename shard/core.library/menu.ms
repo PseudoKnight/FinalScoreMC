@@ -44,7 +44,7 @@ proc _create_menu() {
         }
         cancel();
         @slot = @event['slot']
-        if(@slot == 22) {
+        if(@slot == 26) {
             close_pinv();
             include('game.ms');
             _shard_create(@rules);
