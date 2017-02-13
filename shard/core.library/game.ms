@@ -1,6 +1,4 @@
-include('../rules.library/rule.ms');
-
-proc _shard_create(@rule){
+proc _shard_create(@rules){
     @start = time();
     // Get players
     @world = pworld();
@@ -95,8 +93,14 @@ proc _shard_create(@rule){
                 set_world_time('shard', get_world_time(@world));
                 storm(false, 'shard');
                 set_world_border('shard', array('width': 1024, 'center': @loc));
-                set_metadata('shard', 'rule', @rule);
                 _add_activity('shard', @worldname.'//Shard');
+                
+                @binds = array();
+                foreach(@rule in @rules) {
+                    if(@rule[1]) {
+                        include('../rules.library/'.@rule[0].'.ms');
+                    }
+                }
                 
                 // Teleport players
                 @loc['y'] -= 1;
@@ -113,7 +117,7 @@ proc _shard_create(@rule){
                         || @ploc['x'] > @maxX
                         || @ploc['z'] < @minZ
                         || @ploc['z'] > @maxZ)) {
-                            @ploc = _random_spawn_location();
+                            @ploc = _get_spawn_location();
                         }
                         set_ploc(@p, @ploc);
                         _shard_equip(@p);
@@ -123,7 +127,7 @@ proc _shard_create(@rule){
                     }, 'shard');
                 }
                 
-                proc _check_shard() {
+                proc _check_shard(@binds) {
                     set_timeout(50, closure(){
                         @count = 0;
                         @last = '';
@@ -145,11 +149,9 @@ proc _shard_create(@rule){
                             });
                         } else if(@count == 0) {
                             _remove_activity('shard');
-                            unbind('shard-quit');
-                            unbind('shard-death');
-                            unbind('shard-spawn');
-                            unbind('shard-worldchanged');
-                            _shard_unbind();
+                            foreach(@bind in @binds) {
+                                unbind(@bind);
+                            }
                             foreach(@p in all_players()) {
                                 if(pworld(@p) == 'shard') {
                                     queue_push(closure(){
@@ -170,14 +172,16 @@ proc _shard_create(@rule){
                 }
                 
                 // Events
-                _shard_bind();
-                
-                bind(player_quit, array('priority': 'HIGHEST', 'id': 'shard-quit'), null, @event) {
+                @binds[] = 'shard-quit';
+                @binds[] = 'shard-death';
+                @binds[] = 'shard-spawn';
+                @binds[] = 'shard-worldchanged';
+                bind(player_quit, array('priority': 'HIGHEST', 'id': 'shard-quit'), null, @event, @binds) {
                     if(pworld() == 'shard') {
                         @loc = get_spawn('custom');
                         @loc['y'] -= 1;
                         set_ploc(@loc);
-                        _check_shard();
+                        _check_shard(@binds);
                     }
                 }
                 
@@ -195,14 +199,14 @@ proc _shard_create(@rule){
                     }
                 }
                 
-                bind(player_spawn, array('id': 'shard-spawn', 'priority': 'LOWEST'), array('world': 'shard'), @event) {
+                bind(player_spawn, array('id': 'shard-spawn', 'priority': 'LOWEST'), array('world': 'shard'), @event, @binds) {
                     modify_event('location', import('playerspawn', get_spawn('shard')));
-                    _check_shard();
+                    _check_shard(@binds);
                     export('playerspawn', null);
                 }
                 
-                bind(world_changed, array('id': 'shard-worldchanged'), array('from': 'shard'), @event) {
-                    _check_shard();
+                bind(world_changed, array('id': 'shard-worldchanged'), array('from': 'shard'), @event, @binds) {
+                    _check_shard(@binds);
                 }
                 
             });

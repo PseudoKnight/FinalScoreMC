@@ -1,44 +1,35 @@
-proc _shard_equip(@player) {
-    _clear_pinv(@player);
-}
-
-proc _shard_bind() {
-    bind(player_interact, array('id': 'shard-interact'), null, @event) {
-        if(@event['block'] != 0 && pworld() == 'shard') {
-            switch(split(':', @event['block'], 1)[0]) {
-                case '23':
-                case '61':
-                case '117':
-                case '154':
-                case '158':
-                    _set_random_contents(@event['location'], 0);
-                case '54':
-                case '146':
-                    _set_random_contents(@event['location'], 3);
-            }
-        }
-    }
-    
-    bind(block_place, array('id': 'shard-place1'), array('type': 54), @event) {
-        _set_random_contents(@event['location'], 0);
-    }
-    
-    bind(block_place, array('id': 'shard-place2'), array('type': 146), @event) {
-        _set_random_contents(@event['location'], 0);
-    }
-    
-    bind(entity_damage, array('id': 'shard-itemframe'), array('type': 'ITEM_FRAME'), @event) {
-        if(@event['world'] == 'shard') {
-            cancel();
+@binds[] = 'shard-interact';
+bind(player_interact, array('id': 'shard-interact'), null, @event) {
+    if(@event['block'] != 0 && pworld() == 'shard') {
+        switch(split(':', @event['block'], 1)[0]) {
+            case '23':
+            case '61':
+            case '117':
+            case '154':
+            case '158':
+                _set_random_contents(@event['location'], 0);
+            case '54':
+            case '146':
+                _set_random_contents(@event['location'], 3);
         }
     }
 }
 
-proc _shard_unbind(){
-    unbind('shard-interact');
-    unbind('shard-place1');
-    unbind('shard-place2');
-    unbind('shard-itemframe');
+@binds[] = 'shard-place1';
+bind(block_place, array('id': 'shard-place1'), array('type': 54), @event) {
+    _set_random_contents(@event['location'], 0);
+}
+
+@binds[] = 'shard-place2';
+bind(block_place, array('id': 'shard-place2'), array('type': 146), @event) {
+    _set_random_contents(@event['location'], 0);
+}
+
+@binds[] = 'shard-itemframe';
+bind(entity_damage, array('id': 'shard-itemframe'), array('type': 'ITEM_FRAME'), @event) {
+    if(@event['world'] == 'shard') {
+        cancel();
+    }
 }
 
 proc _set_random_contents(@loc, @count) {
