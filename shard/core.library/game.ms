@@ -93,6 +93,7 @@ proc _shard_create(@rules){
                 set_world_time('shard', get_world_time(@world));
                 storm(false, 'shard');
                 set_world_border('shard', array('width': 1024, 'center': @loc));
+                set_gamerule('shard', 'NATURALREGENERATION', true);
                 _add_activity('shard', @worldname.'//Shard');
                 
                 @binds = array();
