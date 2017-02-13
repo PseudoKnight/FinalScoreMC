@@ -60,26 +60,30 @@ proc _create_menu() {
         } else {
             @item = @event['slotitem'];
             @rule = null;
-            if(array_index_exists(@rules, @slot)) {
-                @rule = @rules[@slot];
-            } else if(array_index_exists(@rules, @slot - 9)) {
-                @slot -= 9;
-                @item = @event['inventory'][@slot];
-                @rule = @rules[@slot];
-            }
-            if(@rule) {
-                if(@rule[1]) {
-                    @item['data'] = 8;
-                    @item['meta']['display'] = color('gray').'DEACTIVATED';
-                    @rule[1] = 0;
-                } else {
-                    @item['data'] = 10;
-                    @item['meta']['display'] = color('green').'ACTIVATED';
-                    @rule[1] = 1;
+            try {
+                if(array_index_exists(@rules, @slot)) {
+                    @rule = @rules[@slot];
+                } else if(array_index_exists(@rules, @slot - 9)) {
+                    @slot -= 9;
+                    @item = @event['inventory'][@slot];
+                    @rule = @rules[@slot];
                 }
-                @inv = array();
-                @inv[@slot] = @item;
-                update_virtualchest('shard', @inv);
+                if(@rule) {
+                    if(@rule[1]) {
+                        @item['data'] = 8;
+                        @item['meta']['display'] = color('gray').'DEACTIVATED';
+                        @rule[1] = 0;
+                    } else {
+                        @item['data'] = 10;
+                        @item['meta']['display'] = color('green').'ACTIVATED';
+                        @rule[1] = 1;
+                    }
+                    @inv = array();
+                    @inv[@slot] = @item;
+                    update_virtualchest('shard', @inv);
+                }
+            } catch(IndexOverflowException @ex) {
+                // probably a negative slot
             }
         }
     }
