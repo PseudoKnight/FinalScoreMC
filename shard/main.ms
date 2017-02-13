@@ -9,9 +9,9 @@ bind(player_interact, null, array('item': 264, 'hand': 'main_hand', 'block': 0),
             @loc = get_spawn('shard');
             @loc['y'] -= 1;
             set_ploc(_random_spawn_location());
-            @mode = get_metadata('shard', 'mode', 'CommandHelper');
+            @rule = get_metadata('shard', 'rule', 'CommandHelper');
             include('core.library/game.ms');
-            include('modes.library/'.@mode.'.ms');
+            include('rules.library/'.@rule.'.ms');
             _shard_equip(player());
             set_peffect(player(), 11, 3, 30, true);
             play_sound(@loc, array('sound': 'GLASS', 'pitch': 0.5), player());
@@ -30,7 +30,7 @@ bind(player_interact, null, array('item': 264, 'hand': 'main_hand', 'block': 0),
     create_virtualchest(array(
         'id': 'shard',
         'size': 9,
-        'title': 'Modes',
+        'title': 'Rules',
         0: array(
             'name': 'CHEST', 'meta': array(
                 'display': color('aqua').color('bold').'LOOT',
@@ -53,12 +53,12 @@ bind(player_interact, null, array('item': 264, 'hand': 'main_hand', 'block': 0),
             die();
         }
         cancel();
-        @mode = strip_colors(_item_meta(@event['slotitem'], 'display'));
-        if(@mode) {
+        @rule = strip_colors(_item_meta(@event['slotitem'], 'display'));
+        if(@rule) {
             close_pinv();
             include('core.library/game.ms');
-            include('modes.library/'.to_lower(@mode).'.ms');
-            _shard_create(@mode);
+            include('rules.library/'.to_lower(@rule).'.ms');
+            _shard_create(@rule);
         }
     }
     

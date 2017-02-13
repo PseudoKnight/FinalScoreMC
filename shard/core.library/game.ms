@@ -1,6 +1,6 @@
-include('../modes.library/mode.ms');
+include('../rules.library/rule.ms');
 
-proc _shard_create(@mode){
+proc _shard_create(@rule){
     @start = time();
     // Get players
     @world = pworld();
@@ -95,7 +95,7 @@ proc _shard_create(@mode){
                 set_world_time('shard', get_world_time(@world));
                 storm(false, 'shard');
                 set_world_border('shard', array('width': 1024, 'center': @loc));
-                set_metadata('shard', 'mode', @mode);
+                set_metadata('shard', 'rule', @rule);
                 _add_activity('shard', @worldname.'//Shard');
                 
                 // Teleport players
