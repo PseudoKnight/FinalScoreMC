@@ -26,8 +26,12 @@ proc _create_menu() {
                 'lore': array(color('white').'Players keep their current inventory.', color('red').'VERY UNFAIR!'),
             )
         ),
-        22: array(
-            'name': 'DIAMOND_SWORD', 'meta': array('display': color('green').color('bold').'ENTER SHARD')
+        26: array(
+            'name': 'DIAMOND_SWORD', 'meta': array(
+                'display': color('green').color('bold').'ENTER SHARD',
+                'enchants': array(array('elevel': 1, 'etype': 'DURABILITY')),
+                'flags': array('HIDE_ENCHANTS')
+            )
         ),
     ));
     popen_virtualchest('shard');
