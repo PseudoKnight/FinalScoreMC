@@ -1,9 +1,9 @@
 bind(player_interact, null, array('item': 401, 'button': 'right'), @event) {
-	if(get_entity_gliding(puuid())) {
+	@gliding = get_entity_gliding(puuid());
+	if(@gliding) {
         set_timeout(150, closure(){
             set_entity_gliding(puuid(), true);
         });
-        die();
     }
 	@slot = if(@event['hand'] == 'main_hand', null, -106);
 	@item = pinv(player(), @slot);
@@ -17,45 +17,57 @@ bind(player_interact, null, array('item': 401, 'button': 'right'), @event) {
 			}
 		}
 		if(@mobs) {
-			cancel(); // handle manually
-			if(@event['block'] != '0') {
-				@loc = _relative(@event['location'], @event['facing']);
-				@loc['x'] += 0.5;
-				@loc['y'] += 0.5;
-				@loc['z'] += 0.5;
-				@horse = launch_firework(@loc, @item['meta']['firework']);
-				set_entity_velocity(@horse, _get_vector(pfacing(), 0.05, 0));
+			if(@gliding) {
+				@loc = _relative(ploc(), 'up');
+				@horse = null;
 				foreach(@mob in @mobs) {
 					@rider = spawn_entity(@mob, 1, @loc)[0];
-					set_entity_rider(@horse, @rider);
+					if(@horse) {
+						set_entity_rider(@horse, @rider);
+					}
 					@horse = @rider;
 				}
 			} else {
-				@loc = _relative(ploc(), 'up', 2);
-				@rider = launch_firework(@loc, @item['meta']['firework']);
-				foreach(@mob in @mobs) {
-					@horse = spawn_entity(@mob, 1, @loc)[0];
-					set_entity_rider(@horse, @rider);
-					@rider = @horse;
-				}
-				set_mob_equipment(@horse, array('chestplate': array('name': 'ELYTRA')));
-				set_equipment_droprates(@horse, null);
-				set_entity_velocity(@horse, _get_vector(pfacing(), 1.5, 0));
-				set_entity_gliding(@horse, true);
-			}
-			if(pmode() != 'CREATIVE') {
-				@inv = associative_array();
-				if(@item['qty'] > 1) {
-					@item['qty']--;
-					@inv[@slot] = @item;
+				cancel(); // handle manually
+				if(@event['block'] != '0') {
+					@loc = _relative(@event['location'], @event['facing']);
+					@loc['x'] += 0.5;
+					@loc['y'] += 0.5;
+					@loc['z'] += 0.5;
+					@horse = launch_firework(@loc, @item['meta']['firework']);
+					set_entity_velocity(@horse, _get_vector(pfacing(), 0.05, 0));
+					foreach(@mob in @mobs) {
+						@rider = spawn_entity(@mob, 1, @loc)[0];
+						set_entity_rider(@horse, @rider);
+						@horse = @rider;
+					}
 				} else {
-					@inv[@slot] = null;
+					@loc = _relative(ploc(), 'up', 2);
+					@rider = launch_firework(@loc, @item['meta']['firework']);
+					foreach(@mob in @mobs) {
+						@horse = spawn_entity(@mob, 1, @loc)[0];
+						set_entity_rider(@horse, @rider);
+						@rider = @horse;
+					}
+					set_mob_equipment(@horse, array('chestplate': array('name': 'ELYTRA')));
+					set_equipment_droprates(@horse, null);
+					set_entity_velocity(@horse, _get_vector(pfacing(), 1.5, 0));
+					set_entity_gliding(@horse, true);
 				}
-				set_pinv(@inv);
+				if(pmode() != 'CREATIVE') {
+					@inv = associative_array();
+					if(@item['qty'] > 1) {
+						@item['qty']--;
+						@inv[@slot] = @item;
+					} else {
+						@inv[@slot] = null;
+					}
+					set_pinv(@inv);
+				}
 			}
 		}
 		
-	} else if(pworld() == 'custom' || pworld() == 'dev') {
+	} else if(!@gliding && (pworld() == 'custom' || pworld() == 'dev')) {
     	@pdata = _pdata(player());
     	if(!array_index_exists(@pdata, 'support')) {
     		die();

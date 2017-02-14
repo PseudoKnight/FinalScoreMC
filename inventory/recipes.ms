@@ -96,6 +96,10 @@ bind('inventory_click', null, array('slottype': 'RESULT'), @event) {
 			}
 			
 		} else if(@slotitem['name'] == 'FIREWORK') {
+			if(array_size(@slotitem['meta']['lore']) == 3) {
+				cancel();
+				die();
+			}
 			@meta = null;
 			@type = null;
 			@count = array(0, 0);
