@@ -1,5 +1,24 @@
 # RECIPES
 
+# Player head recipe
+if(!get_recipe_for(array('name': 'SKULL_ITEM', 'data': 3))) {
+	add_recipe(array(
+		'type': 'SHAPED',
+		'result': array('name': 'SKULL_ITEM', 'data': 3),
+		'ingredients': array('S': '397:0', 'C': '337:0'),
+		'shape': array('CCC', 'CSC', 'CCC'),
+	));
+}
+
+# Skeleton skull recipe
+if(!get_recipe_for(array('name': 'SKULL_ITEM', 'data': 0))) {
+	add_recipe(array(
+		'type': 'SHAPELESS',
+		'result': array('name': 'SKULL_ITEM', 'data': 0),
+		'ingredients': array('397:2'),
+	));
+}
+
 # Enchanted lore books
 add_recipe(array(
 	'type': 'SHAPELESS',
@@ -17,17 +36,24 @@ add_recipe(array(
 	'ingredients': array('374:0')
 ));
 
-# Special recipe handling (enchanted lore books and player heads)
+# Spawner egg ingredient
+add_recipe(array(
+	'type': 'SHAPELESS',
+	'result': associative_array('name': 'FIREWORK', 'qty': 1),
+	'ingredients': array('401:0', '383:0')
+));
+
+# Special recipe handling (eg. enchanted lore books, exp bottles, player heads)
 bind('inventory_click', null, array('slottype': 'RESULT'), @event) {
-	if(is_null(@event['slotitem'])) {
+	@slotitem = @event['slotitem'];
+	if(is_null(@slotitem)) {
 		die();
 	}
 
 	if(@event['inventorytype'] == 'WORKBENCH' || @event['inventorytype'] == 'CRAFTING') {
-		if(@event['slotitem']['name'] == 'ENCHANTED_BOOK'
-		&& strip_colors(@event['slotitem']['meta']['display']) === 'Enchanted Lore Book') {
-
-			@slotitem = @event['slotitem'];
+		
+		if(@slotitem['name'] == 'ENCHANTED_BOOK'
+		&& strip_colors(@slotitem['meta']['display']) === 'Enchanted Lore Book') {
 
 			foreach(@item in @event['inventory']) {
 				if(is_null(@item), continue())
@@ -52,7 +78,7 @@ bind('inventory_click', null, array('slottype': 'RESULT'), @event) {
 
 			modify_event('slotitem', @slotitem);
 
-		} else if(@event['slotitem']['name'] == 'EXP_BOTTLE') {
+		} else if(@slotitem['name'] == 'EXP_BOTTLE') {
 			@xp = ptexp();
 			@qty = 7;
 			if(@event['shiftclick']) {
@@ -68,6 +94,37 @@ bind('inventory_click', null, array('slottype': 'RESULT'), @event) {
 			} else {
 				cancel();
 			}
+			
+		} else if(@slotitem['name'] == 'FIREWORK') {
+			@meta = null;
+			@type = null;
+			@count = array(0, 0);
+			foreach(@item in @event['inventory']) {
+				if(@item) {
+					if(@item['name'] == 'FIREWORK') {
+						@meta = @item['meta'];
+						@count[0] = @item['qty'];
+					} else if(@item['name'] == 'MONSTER_EGG') {
+						@type = @item['meta']['spawntype'];
+						@count[1] = @item['qty'];
+					}
+				}
+			}
+			if(!@type) {
+				cancel();
+				die();
+			}
+			if(@event['shiftclick']) {
+				@slotitem['qty'] = min(@count[0], @count[1]);
+			}
+			if(!@meta) {
+				@slotitem['meta'] = array('lore': array());
+			} else {
+				@slotitem['meta'] = @meta;
+			}
+			@slotitem['meta']['lore'][] = color('gray').'Spawn Type: '.@type;
+			modify_event('slotitem', @slotitem);
+			
 		}
 
 	} else if(@event['inventorytype'] === 'ANVIL') {
@@ -76,7 +133,6 @@ bind('inventory_click', null, array('slottype': 'RESULT'), @event) {
 		&& @event['inventory'][1]['meta']['lore']) {
 			# enchanted lore book
 
-			@slotitem = @event['slotitem'];
 			if(!is_null(@slotitem['meta']['display'])) {
 				@slotitem['meta']['display'] = colorize(@slotitem['meta']['display']);
 			} else {
@@ -91,33 +147,14 @@ bind('inventory_click', null, array('slottype': 'RESULT'), @event) {
 
 			modify_event('slotitem', @slotitem);
 
-		} else if(@event['slotitem']['name'] == 'SKULL_ITEM'
-		&& @event['slotitem']['data'] == 3
-		&& !is_null(@event['slotitem']['meta'])
-		&& !is_null(@event['slotitem']['meta']['display'])) {
+		} else if(@slotitem['name'] == 'SKULL_ITEM'
+		&& @slotitem['data'] == 3
+		&& !is_null(@slotitem['meta'])
+		&& !is_null(@slotitem['meta']['display'])) {
 			# named player head
 
-			@event['slotitem']['meta']['owner'] = @event['slotitem']['meta']['display'];
-			modify_event('slotitem', @event['slotitem']);
+			@slotitem['meta']['owner'] = @slotitem['meta']['display'];
+			modify_event('slotitem', @slotitem);
 		}
 	}
-}
-
-# Player head recipe
-if(!get_recipe_for(array('name': 'SKULL_ITEM', 'data': 3))) {
-	add_recipe(array(
-		'type': 'SHAPED',
-		'result': array('name': 'SKULL_ITEM', 'data': 3),
-		'ingredients': array('S': '397:0', 'C': '337:0'),
-		'shape': array('CCC', 'CSC', 'CCC'),
-	));
-}
-
-# Skeleton skull recipe
-if(!get_recipe_for(array('name': 'SKULL_ITEM', 'data': 0))) {
-	add_recipe(array(
-		'type': 'SHAPELESS',
-		'result': array('name': 'SKULL_ITEM', 'data': 0),
-		'ingredients': array('397:2'),
-	));
 }
