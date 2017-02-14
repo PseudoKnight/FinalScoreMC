@@ -96,10 +96,6 @@ bind('inventory_click', null, array('slottype': 'RESULT'), @event) {
 			}
 			
 		} else if(@slotitem['name'] == 'FIREWORK') {
-			if(array_size(@slotitem['meta']['lore']) == 3) {
-				cancel();
-				die();
-			}
 			@meta = null;
 			@type = null;
 			@count = array(0, 0);
@@ -107,6 +103,10 @@ bind('inventory_click', null, array('slottype': 'RESULT'), @event) {
 				if(@item) {
 					if(@item['name'] == 'FIREWORK') {
 						@meta = @item['meta'];
+						if(@meta && @meta['lore'] && array_size(@meta['lore']) == 3) {
+							cancel();
+							die();
+						}
 						@count[0] = @item['qty'];
 					} else if(@item['name'] == 'MONSTER_EGG') {
 						@type = @item['meta']['spawntype'];
@@ -124,6 +124,9 @@ bind('inventory_click', null, array('slottype': 'RESULT'), @event) {
 			if(!@meta) {
 				@slotitem['meta'] = array('lore': array());
 			} else {
+				if(!@meta['lore']) {
+					@meta['lore'] = array();
+				}
 				@slotitem['meta'] = @meta;
 			}
 			@slotitem['meta']['lore'][] = color('gray').'Spawn Type: '.@type;
