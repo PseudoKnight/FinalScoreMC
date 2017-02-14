@@ -115,7 +115,6 @@ bind('inventory_click', null, array('slottype': 'RESULT'), @event) {
 				}
 			}
 			if(!@type) {
-				cancel();
 				die();
 			}
 			if(@event['shiftclick']) {
