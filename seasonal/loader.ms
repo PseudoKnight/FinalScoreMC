@@ -1,7 +1,7 @@
 @month = simple_date('MMM');
 @day = integer(simple_date('d'));
 if(@month == 'Feb') {
-    if(@day > 8 && @day < 16) {
+    if(@day > 9 && @day < 15) {
         include('seasons.library/valentines.ms');
     }
 } else if(@month == 'Apr') {
