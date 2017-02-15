@@ -110,7 +110,7 @@ proc _shard_create(@rules){
                 set_spawn(@loc);
                 set_world_time('shard', get_world_time(@world));
                 storm(false, 'shard');
-                set_world_border('shard', array('width': @maxX - @minX, 'center': @loc));
+                set_world_border('shard', array('width': min(@maxX - @minX, @maxZ - @minZ), 'center': @loc));
                 set_gamerule('shard', 'NATURALREGENERATION', true);
                 
                 // Start game
