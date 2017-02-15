@@ -18,8 +18,8 @@ bind(player_interact, null, array('item': 264, 'hand': 'main_hand', 'block': 0),
         }
         die();
     }
-    if(!has_permission('group.moderator')) {
-        action_msg('Only staff can generate shards for now!');
+    if(!has_permission('group.engineer')) {
+        action_msg('Only engineers can generate shards for now!');
         die();
     }
     

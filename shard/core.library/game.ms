@@ -97,6 +97,7 @@ proc _shard_create(@rules){
                 _add_activity('shard', @worldname.'//Shard');
                 
                 @binds = array();
+                @randomspawn = false;
                 foreach(@rule in @rules) {
                     if(@rule[1]) {
                         include('../rules.library/'.@rule[0].'.ms');
@@ -113,7 +114,8 @@ proc _shard_create(@rules){
                         @ploc = ploc(@p);
                         play_sound(@ploc, array('sound': 'GLASS', 'pitch': 0.5));
                         @ploc['world'] = 'shard';
-                        if(@p != player()
+                        if(@randomspawn
+                        || @p != player()
                         && (@ploc['x'] < @minX
                         || @ploc['x'] > @maxX
                         || @ploc['z'] < @minZ

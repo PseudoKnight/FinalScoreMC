@@ -1,8 +1,13 @@
 proc _create_menu() {
+    if(array_contains(all_virtualchests(), 'shard')) {
+        action_msg('Another player is generating a shard.');
+        die();
+    }
     @rules = array(
         array('loot', 1),
         array('keep', 0),
         array('regen', 0),
+        array('randomspawn', 0),
     );
     @activated = array('name': 'INK_SACK', 'data': 10, 'meta': array('display': color('green').'ACTIVATED'));
     @deactivated = array('name': 'INK_SACK', 'data': 8, 'meta': array('display': color('gray').'DEACTIVATED'));
@@ -13,6 +18,7 @@ proc _create_menu() {
         0: @activated,
         1: @deactivated,
         2: @deactivated,
+        3: @deactivated,
         9: array(
             'name': 'CHEST', 'meta': array(
                 'display': color('aqua').color('bold').'RANDOM LOOT',
@@ -32,6 +38,15 @@ proc _create_menu() {
                     color('white').'Disables health regeneration from hunger satiation.',
                     color('white').'Potions and golden apples still regenerate health.',
                     color('gold').'HARD, BUT FAIR!'
+                ),
+            )
+        ),
+        12: array(
+            'name': 'STEP', 'data': 9, 'meta': array(
+                'display': color('aqua').color('bold').'RANDOM SPAWNS',
+                'lore': array(
+                    color('white').'Selects a random spawn for all players.',
+                    color('yellow').'RANDOM, BUT FAIR!'
                 ),
             )
         ),
