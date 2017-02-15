@@ -81,19 +81,39 @@ proc _shard_create(@rules){
             console('Created shard ('.(@stop - @start).'ms)', false);
             
             set_timeout(150, closure(){
-                // Set pre-player world settings
+                // Calculate area and center
                 @minX = min(@x, @x2) * 512;
                 @maxX = (max(@x, @x2) + 1) * 512;
                 @minZ = min(@z, @z2) * 512;
                 @maxZ = (max(@z, @z2) + 1) * 512;
                 @centerX = @minX + 512;
                 @centerZ = @minZ + 512;
+                
+                // Randomize center slightly
+                @randX = rand(0, 65) - 32;
+                @centerX += @randX;
+                @randZ = rand(0, 65) - 32;
+                @centerZ += @randZ;
+                if(@randX < 0) {
+                    @maxX += @randX * 2;
+                } else {
+                    @minX += @randX * 2;
+                }
+                if(@randZ < 0) {
+                    @maxZ += @randZ * 2;
+                } else {
+                    @minZ += @randZ * 2;
+                }
                 @loc = get_highest_block_at(@centerX, @centerZ, 'shard');
+                
+                // Set world settings
                 set_spawn(@loc);
                 set_world_time('shard', get_world_time(@world));
                 storm(false, 'shard');
-                set_world_border('shard', array('width': 1024, 'center': @loc));
+                set_world_border('shard', array('width': @maxX - @minX, 'center': @loc));
                 set_gamerule('shard', 'NATURALREGENERATION', true);
+                
+                // Start game
                 create_scoreboard('shard');
                 _add_activity('shard', @worldname.'//Shard');
                 

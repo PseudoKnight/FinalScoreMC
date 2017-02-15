@@ -2,7 +2,7 @@
 for(@i = 0, @i < @rule['value'], @i++) {
     create_team(@teams[@i], 'shard');
     set_team_display(@teams[@i], array('prefix': color(@teams[@i])), 'shard');
-    set_team_options(@teams[@i], array('friendlyinvisibles': true), 'shard');
+    set_team_options(@teams[@i], array('friendlyinvisibles': true, 'friendlyfire': false), 'shard');
 }
 
 proc _get_team(@player) {
