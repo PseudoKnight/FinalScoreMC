@@ -11,6 +11,7 @@ bind(player_interact, null, array('item': 264, 'hand': 'main_hand', 'block': 0),
             set_ploc(_get_spawn_location());
             _shard_equip(player());
             set_peffect(player(), 11, 3, 30, true);
+            set_pscoreboard(player(), 'shard');
             play_sound(@loc, array('sound': 'GLASS', 'pitch': 0.5), player());
             if(get_world_border('shard')['width'] < 128) {
                 set_pmode('SPECTATOR');

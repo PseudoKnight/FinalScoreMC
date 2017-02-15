@@ -3,11 +3,12 @@ proc _create_menu() {
         action_msg('Another player is generating a shard.');
         die();
     }
-    @rules = array(
-        array('loot', 1),
-        array('keep', 0),
-        array('regen', 0),
-        array('randomspawn', 0),
+    @rules = associative_array(
+        array('name': 'loot', 'value': true),
+        array('name': 'keep', 'value': false),
+        array('name': 'regen', 'value': false),
+        array('name': 'randomspawn', 'value': false),
+        array('name': 'teams', 'value': 0, 'min': 2, 'max': 4),
     );
     @activated = array('name': 'INK_SACK', 'data': 10, 'meta': array('display': color('green').'ACTIVATED'));
     @deactivated = array('name': 'INK_SACK', 'data': 8, 'meta': array('display': color('gray').'DEACTIVATED'));
@@ -19,6 +20,7 @@ proc _create_menu() {
         1: @deactivated,
         2: @deactivated,
         3: @deactivated,
+        4: @deactivated,
         9: array(
             'name': 'CHEST', 'meta': array(
                 'display': color('aqua').color('bold').'RANDOM LOOT',
@@ -26,9 +28,10 @@ proc _create_menu() {
             )
         ),
         10: array(
-            'name': 'DIAMOND_BLOCK', 'meta': array(
+            'name': 'DIAMOND_CHESTPLATE', 'meta': array(
                 'display': color('aqua').color('bold').'KEEP INVENTORY',
                 'lore': array(color('white').'Players keep their current inventory.', color('red').'VERY UNFAIR!'),
+                'flags': array('HIDE_ATTRIBUTES')
             )
         ),
         11: array(
@@ -43,10 +46,20 @@ proc _create_menu() {
         ),
         12: array(
             'name': 'STEP', 'data': 9, 'meta': array(
-                'display': color('aqua').color('bold').'RANDOM SPAWNS',
+                'display': color('aqua').color('bold').'ALL RANDOM SPAWNS',
                 'lore': array(
-                    color('white').'Selects a random spawn for all players.',
-                    color('yellow').'RANDOM, BUT FAIR!'
+                    color('white').'Selects a random spawn for all players,',
+                    color('white').'even if they\'re within the region.',
+                    color('yellow').'RANDOM, BUT FAIR-ISH!'
+                ),
+            )
+        ),
+        13: array(
+            'name': 'SKULL_ITEM', 'data': 3, 'meta': array(
+                'display': color('aqua').color('bold').'TEAMS',
+                'lore': array(
+                    color('white').'Number of teams',
+                    color('green').'MORE FAIR!'
                 ),
             )
         ),
@@ -54,7 +67,7 @@ proc _create_menu() {
             'name': 'DIAMOND_SWORD', 'meta': array(
                 'display': color('green').color('bold').'ENTER SHARD',
                 'enchants': array(array('elevel': 1, 'etype': 'DURABILITY')),
-                'flags': array('HIDE_ENCHANTS')
+                'flags': array('HIDE_ENCHANTS', 'HIDE_ATTRIBUTES')
             )
         ),
     ));
@@ -67,7 +80,7 @@ proc _create_menu() {
             die();
         }
         cancel();
-        @slot = @event['slot']
+        @slot = @event['slot'];
         if(@slot == 26) {
             close_pinv();
             include('game.ms');
@@ -75,30 +88,43 @@ proc _create_menu() {
         } else {
             @item = @event['slotitem'];
             @rule = null;
-            try {
-                if(array_index_exists(@rules, @slot)) {
-                    @rule = @rules[@slot];
-                } else if(array_index_exists(@rules, @slot - 9)) {
-                    @slot -= 9;
-                    @item = @event['inventory'][@slot];
-                    @rule = @rules[@slot];
-                }
-                if(@rule) {
-                    if(@rule[1]) {
+            if(array_index_exists(@rules, @slot)) {
+                @rule = @rules[@slot];
+            } else if(array_index_exists(@rules, @slot - 9)) {
+                @slot -= 9;
+                @item = @event['inventory'][@slot];
+                @rule = @rules[@slot];
+            }
+            if(@rule) {
+                if(is_boolean(@rule['value'])) {
+                    if(@rule['value']) {
                         @item['data'] = 8;
                         @item['meta']['display'] = color('gray').'DEACTIVATED';
-                        @rule[1] = 0;
+                        @rule['value'] = false;
                     } else {
                         @item['data'] = 10;
                         @item['meta']['display'] = color('green').'ACTIVATED';
-                        @rule[1] = 1;
+                        @rule['value'] = true;
                     }
-                    @inv = array();
-                    @inv[@slot] = @item;
-                    update_virtualchest('shard', @inv);
+                } else {
+                    if(@rule['value'] >= @rule['min']) {
+                        @rule['value'] = mod(@rule['value'] + 1, @rule['max'] + 1)
+                    } else {
+                        @rule['value'] = @rule['min'];
+                    }
+                    if(@rule['value']) {
+                        @item['qty'] = @rule['value'];
+                        @item['data'] = 10;
+                        @item['meta']['display'] = color('green').'ACTIVATED';
+                    } else {
+                        @item['qty'] = 1;
+                        @item['data'] = 8;
+                        @item['meta']['display'] = color('gray').'DEACTIVATED';
+                    }
                 }
-            } catch(IndexOverflowException @ex) {
-                // probably a negative slot
+                @inv = array();
+                @inv[@slot] = @item;
+                update_virtualchest('shard', @inv);
             }
         }
     }

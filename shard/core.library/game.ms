@@ -94,13 +94,14 @@ proc _shard_create(@rules){
                 storm(false, 'shard');
                 set_world_border('shard', array('width': 1024, 'center': @loc));
                 set_gamerule('shard', 'NATURALREGENERATION', true);
+                create_scoreboard('shard');
                 _add_activity('shard', @worldname.'//Shard');
                 
                 @binds = array();
                 @randomspawn = false;
                 foreach(@rule in @rules) {
-                    if(@rule[1]) {
-                        include('../rules.library/'.@rule[0].'.ms');
+                    if(@rule['value']) {
+                        include('../rules.library/'.@rule['name'].'.ms');
                     }
                 }
                 
@@ -125,6 +126,7 @@ proc _shard_create(@rules){
                         set_ploc(@p, @ploc);
                         _shard_equip(@p);
                         set_peffect(@p, 11, 3, 60, true);
+                        set_pscoreboard(@p, 'shard');
                         play_sound(@ploc, array('sound': 'GLASS', 'pitch': 0.5), @p);
                         play_sound(@ploc, array('sound': 'WITHER_SPAWN', 'pitch': 0.7), @p);
                     }, 'shard');
@@ -164,6 +166,7 @@ proc _shard_create(@rules){
                                 }
                             }
                             queue_push(closure(){
+                                remove_scoreboard('shard');
                                 if(array_size(all_players('shard')) > 0 || !unload_world('shard')) {
                                     console('Failed to unload shard world!', false);
                                 } else {
