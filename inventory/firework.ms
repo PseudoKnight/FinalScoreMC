@@ -43,16 +43,21 @@ bind(player_interact, null, array('item': 401, 'button': 'right'), @event) {
 					}
 				} else {
 					@loc = _relative(ploc(), 'up', 2);
-					@rider = launch_firework(@loc, @item['meta']['firework']);
+					@firework = launch_firework(@loc, @item['meta']['firework']);
+					@horse = null;
 					foreach(@mob in @mobs) {
-						@horse = spawn_entity(@mob, 1, @loc)[0];
-						set_entity_rider(@horse, @rider);
-						@rider = @horse;
+						@rider = spawn_entity(@mob, 1, @loc)[0];
+						if(@horse) {
+							set_entity_rider(@horse, @rider);
+						} else {
+							set_mob_equipment(@rider, array('chestplate': array('name': 'ELYTRA')));
+							set_equipment_droprates(@rider, null);
+							set_entity_velocity(@rider, _get_vector(pfacing(), 1.5, 0));
+							set_entity_gliding(@rider, true);
+						}
+						@horse = @rider;
 					}
-					set_mob_equipment(@horse, array('chestplate': array('name': 'ELYTRA')));
-					set_equipment_droprates(@horse, null);
-					set_entity_velocity(@horse, _get_vector(pfacing(), 1.5, 0));
-					set_entity_gliding(@horse, true);
+					set_entity_rider(@horse, @firework);
 				}
 				if(pmode() != 'CREATIVE') {
 					@inv = associative_array();
