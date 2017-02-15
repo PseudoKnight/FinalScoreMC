@@ -58,8 +58,7 @@ proc _create_menu() {
             'name': 'SKULL_ITEM', 'data': 3, 'meta': array(
                 'display': color('aqua').color('bold').'TEAMS',
                 'lore': array(
-                    color('white').'Number of teams',
-                    color('green').'MORE FAIR!'
+                    color('white').'Number of teams'
                 ),
             )
         ),

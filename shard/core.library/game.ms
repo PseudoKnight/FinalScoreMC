@@ -136,10 +136,29 @@ proc _shard_create(@rules){
                     set_timeout(50, closure(){
                         @count = 0;
                         @last = '';
-                        foreach(@p in all_players()) {
-                            if(pworld(@p) == 'shard' && pmode(@p) != 'SPECTATOR') {
-                                @count++;
-                                @last = @p;
+                        if(get_teams()) {
+                            @left = array();
+                            foreach(@p in all_players()) {
+                                if(pworld(@p) == 'shard' && pmode(@p) != 'SPECTATOR') {
+                                    @team = _get_team(@p);
+                                    if(@team) {
+                                        if(!array_contains(@left, @team)) {
+                                            @left[] = @team;
+                                            @count++;
+                                            @last = 'Team '.@team;
+                                        }
+                                    } else {
+                                        @last = @p;
+                                        @count++; // still count players not in a team
+                                    }
+                                }
+                            }
+                        } else {
+                            foreach(@p in all_players()) {
+                                if(pworld(@p) == 'shard' && pmode(@p) != 'SPECTATOR') {
+                                    @count++;
+                                    @last = @p;
+                                }
                             }
                         }
                         if(@count == 1) {
