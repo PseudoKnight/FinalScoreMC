@@ -655,7 +655,7 @@ bind(entity_damage_player, null, array('damager': 'ARROW'), @event) {
 	}
 }
 
-// Block firework damage in PARKING
+// Block firework damage in Park
 bind(entity_damage, null, array('type': 'PLAYER', 'cause': 'ENTITY_EXPLOSION', 'world': 'custom'), @event) {
 	if(entity_type(@event['damager']) == 'FIREWORK') {
 		cancel();
