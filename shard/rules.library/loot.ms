@@ -93,11 +93,31 @@ proc _random_item(@limits) {
 			case 438:
 			case 440:
 			case 441:
-				@rand = rand(3);
-				@meta = array('base': array('extended': (@rand == 1), 'upgraded': (@rand == 2), 'type': array_rand(array(
-					'SPEED', 'SLOWNESS', 'STRENGTH', 'INSTANT_HEAL', 'INSTANT_DAMAGE', 'JUMP', 'REGEN', 'FIRE_RESISTANCE',
-					'WATER_BREATHING', 'INVISIBILITY', 'NIGHT_VISION', 'WEAKNESS', 'POISON', 'LUCK'
-				), 1, false)[0]));
+				@state = rand(3);
+				if(rand(2)) {
+					@meta = array('base': array('extended': (@state == 1), 'upgraded': (@state == 2), 'type':
+						array_rand(array('SPEED', 'SLOWNESS', 'STRENGTH', 'INSTANT_HEAL', 'INSTANT_DAMAGE', 'JUMP',
+						'REGEN', 'FIRE_RESISTANCE', 'WATER_BREATHING', 'INVISIBILITY', 'NIGHT_VISION', 'WEAKNESS',
+						'POISON', 'LUCK'), 1, false)[0]
+					));
+				} else {
+					@types = array(
+						array('id': 3, 'seconds': 300, 'strength': 0),
+						array('id': 4, 'seconds': 180, 'strength': 0),
+						array('id': 9, 'seconds': 30, 'strength': 0),
+						array('id': 11, 'seconds': 180, 'strength': 0),
+						array('id': 15, 'seconds': 30, 'strength': 0),
+						array('id': 17, 'seconds': 60, 'strength': 0),
+						array('id': 20, 'seconds': 15, 'strength': 0),
+						array('id': 21, 'seconds': 300, 'strength': 0),
+						array('id': 22, 'seconds': 300, 'strength': 0),
+						array('id': 23, 'seconds': 60, 'strength': 0),
+						array('id': 24, 'seconds': 60, 'strength': 0),
+						array('id': 25, 'seconds': 15, 'strength': 0),
+						array('id': 27, 'seconds': 180, 'strength': 0),
+					);
+					@meta = array('potions': array(array_rand(@types, 1, false)[0]));
+				}
 		}
 	}
 	if(@max <= 0) {
@@ -113,41 +133,44 @@ proc _random_item(@limits) {
 
 @binds[] = 'shard-interact';
 bind(player_interact, array('id': 'shard-interact'), null, @event) {
-    if(@event['block'] != 0 && pworld() == 'shard') {
-        switch(split(':', @event['block'], 1)[0]) {
-            case '23':
-            case '61':
-            case '117':
-            case '154':
-            case '158':
-                _set_random_contents(@event['location'], 0);
-            case '54':
-            case '146':
+	if(@event['block'] != 0 && pworld() == 'shard') {
+		switch(split(':', @event['block'], 1)[0]) {
+			case '23':
+			case '61':
+			case '117':
+			case '154':
+			case '158':
+				_set_random_contents(@event['location'], 0);
+			case '54':
+			case '146':
 				@luck = 0;
 				foreach(@effect in get_peffect()) {
 					if(@effect['id'] == 26) {
 						@luck += @effect['strength'] + 1;
 						break();
+					} else if(@effect['id'] == 27) {
+						@luck -= @effect['strength'] + 1;
+						break();
 					}
 				}
-                _set_random_contents(@event['location'], 3 + @luck);
-        }
-    }
+				_set_random_contents(@event['location'], 3 + @luck);
+		}
+	}
 }
 
 @binds[] = 'shard-place1';
 bind(block_place, array('id': 'shard-place1'), array('type': 54), @event) {
-    _set_random_contents(@event['location'], 0);
+	_set_random_contents(@event['location'], 0);
 }
 
 @binds[] = 'shard-place2';
 bind(block_place, array('id': 'shard-place2'), array('type': 146), @event) {
-    _set_random_contents(@event['location'], 0);
+	_set_random_contents(@event['location'], 0);
 }
 
 @binds[] = 'shard-itemframe';
 bind(entity_damage, array('id': 'shard-itemframe'), array('type': 'ITEM_FRAME'), @event) {
-    if(@event['world'] == 'shard') {
-        cancel();
-    }
+	if(@event['world'] == 'shard') {
+		cancel();
+	}
 }
