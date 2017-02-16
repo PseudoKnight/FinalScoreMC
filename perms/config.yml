@@ -55,23 +55,28 @@ member:
       deadbolt.admin.snoop: true
       build.wither: true
       PhysicalShop.admin: true
+      build.wither: true
+      item.lighter: true
     outworld:
       stargate.create.personal: false
       stargate.create.network: false
       worldguard.region.claim: false
       command.sethome: false
       build.wither: true
+      item.lighter: true
     outworld_nether:
       stargate.create.personal: false
       stargate.create.network: false
       worldguard.region.claim: false
       command.sethome: false
       build.wither: true
+      item.lighter: true
     outworld_the_end:
       stargate.create.personal: false
       stargate.create.network: false
       worldguard.region.claim: false
       command.sethome: false
+      item.lighter: true
     dev:
       stargate.create.personal: false
       stargate.create.network: false
@@ -97,6 +102,7 @@ regular:
     group.regular: true
     logblock.tools.tool: true
     worldguard.region.unlimited: true
+    item.lighter: true
   inheritance: member
 donor:
   permissions:
