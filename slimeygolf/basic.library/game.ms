@@ -274,10 +274,11 @@ proc _start_game(@course, @loc) {
 								@scores = color(7).'Score'.color(8).'*';
 								foreach(@p: @b in @golf['players']) {
 									@score = @golf[@hole]['total'][@p] - @golf['par'];
+									@pname = @p;
 									if(_string_width(@p) > 72){
-										@p = substr(@p, 0, 12);
+										@pname = substr(@p, 0, 12);
 									}
-									@header .= _fill_string('*', '.', '*'.color('a').@p.color(8).'*', 72).'*';
+									@header .= _fill_string('*', '.', '*'.color('a').@pname.color(8).'*', 72).'*';
 									@scores .= _fill_string('*', '.', '*'.color('r').@golf[@hole]['strokes'][@p]
 											.' ('.if(@score < 0, color('a'), if(@score > 0, color(6).'+')).@score.color('r').')*', 72).'*';
 								}
