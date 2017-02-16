@@ -62,8 +62,8 @@ proc _enchant_item(@type, @level) {
 
 proc _pset_potion(@type, @id, @seconds, @strength){
 	@type = to_upper(@type);
-	if(@type != 'POTION' && @type != 'SPLASH_POTION' && @type != 'LINGERING_POTION') {
-		die(color('gold').'First argument must be a potion type: potion, splash_potion, or lingering_potion.');
+	if(@type != 'POTION' && @type != 'SPLASH_POTION' && @type != 'LINGERING_POTION' && @type != 'TIPPED_ARROW') {
+		die(color('gold').'First argument must be a potion type: potion, splash_potion, lingering_potion, or tipped_arrow.');
 	}
 
 	@effects = _get_effects();
