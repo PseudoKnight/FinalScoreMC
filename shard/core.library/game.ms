@@ -153,7 +153,7 @@ proc _shard_create(@rules){
                 }
                 
                 proc _check_shard(@binds) {
-                    set_timeout(50, closure(){
+                    queue_push(closure(){
                         @count = 0;
                         @last = '';
                         if(get_teams()) {
@@ -195,12 +195,17 @@ proc _shard_create(@rules){
                             foreach(@p in all_players()) {
                                 if(pworld(@p) == 'shard') {
                                     queue_push(closure(){
-                                        @pdata = _pdata(@p);
-                                        set_ploc(@p, @pdata['survival']['loc']);
+                                        if(pworld(@p) == 'shard') {
+                                            @pdata = _pdata(@p);
+                                            set_ploc(@p, @pdata['survival']['loc']);
+                                        }
                                     }, 'shard');
                                 }
                             }
                             queue_push(closure(){
+                                if(!array_contains(get_worlds(), 'shard')) {
+                                    die();
+                                }
                                 if(array_size(all_players('shard')) == 0 && unload_world('shard')) {
                                     remove_scoreboard('shard');
                                     array_remove(_worlds_config(), 'shard');
@@ -213,7 +218,7 @@ proc _shard_create(@rules){
                                 }
                             }, 'shard');
                         }
-                    });
+                    }, 'shard');
                 }
                 
                 // Events
