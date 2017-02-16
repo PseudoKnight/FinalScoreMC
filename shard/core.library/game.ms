@@ -187,15 +187,11 @@ proc _shard_create(@rules){
                             set_thunder(true, 'shard');
                             _worldmsg('shard', color('green').@last.' wins!');
                             set_timeout(20000, closure(){
-                                if(array_contains(get_worlds(), 'shard') && pworld(@last) == 'shard') {
+                                if(array_contains(get_worlds(), 'shard') && ponline(@last) && pworld(@last) == 'shard') {
                                     explosion(_relative(ploc(@last), 'up', 2), 5);
                                 }
                             });
                         } else if(@count == 0) {
-                            _remove_activity('shard');
-                            foreach(@bind in @binds) {
-                                unbind(@bind);
-                            }
                             foreach(@p in all_players()) {
                                 if(pworld(@p) == 'shard') {
                                     queue_push(closure(){
@@ -205,11 +201,15 @@ proc _shard_create(@rules){
                                 }
                             }
                             queue_push(closure(){
-                                remove_scoreboard('shard');
-                                if(array_size(all_players('shard')) > 0 || !unload_world('shard')) {
-                                    console('Failed to unload shard world!', false);
-                                } else {
+                                if(array_size(all_players('shard')) == 0 && unload_world('shard')) {
+                                    remove_scoreboard('shard');
                                     array_remove(_worlds_config(), 'shard');
+                                    _remove_activity('shard');
+                                    foreach(@bind in @binds) {
+                                        unbind(@bind);
+                                    }
+                                } else {
+                                    console('Failed to unload shard world!', false);
                                 }
                             }, 'shard');
                         }
@@ -234,13 +234,20 @@ proc _shard_create(@rules){
                     if(@event['location']['world'] == 'shard') {
                         consume();
                         modify_event('death_message', color('k').'X'.color('r').' '.@event['death_message']);
-                        export('playerspawn', ploc());
+                        @loc = ploc();
+                        if(@loc['y'] < 0) {
+                            @loc['y'] = 0;
+                        }
+                        export('playerspawn', @loc);
                         set_pmode('SPECTATOR');
                         if(get_world_border('shard')['width'] > 1000) {
                             @seconds = array_size(@players) * 180 + 600;
                             set_world_border('shard', array('width': 1, 'seconds': @seconds));
                             _worldmsg('shard', color('red').color('bold').'Shard has started to collapse! ('.floor(@seconds / 60).' minutes)');
                         }
+                        set_timeout(50, closure(){
+                            respawn();
+                        });
                     }
                 }
                 
