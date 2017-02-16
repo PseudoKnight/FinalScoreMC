@@ -123,7 +123,14 @@ bind(player_interact, array('id': 'shard-interact'), null, @event) {
                 _set_random_contents(@event['location'], 0);
             case '54':
             case '146':
-                _set_random_contents(@event['location'], 3);
+				@luck = 0;
+				foreach(@effect in get_peffect()) {
+					if(@effect['id'] == 26) {
+						@luck += @effect['strength'] + 1;
+						break();
+					}
+				}
+                _set_random_contents(@event['location'], 3 + @luck);
         }
     }
 }
