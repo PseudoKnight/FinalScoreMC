@@ -31,7 +31,7 @@ bind(player_interact, array('id': @id.'spawner'), array('button': 'right', 'item
 			@team = @pvp['players'][player()]['team'];
 			_spawn_mob(@mob, 1, @loc, player(), @pvp['team'][@team]['players']);
 		} else {
-			_spawn_mob(@mob, 1, @loc, player());
+			_spawn_mob(@mob, 1, @loc, player(), array(player()));
 		}
 		@loc['y'] += 1;
 		play_sound(@loc, array('sound': 'ZOMBIE_INFECT', 'pitch': 1.5));
