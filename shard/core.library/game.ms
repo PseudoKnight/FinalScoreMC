@@ -245,7 +245,7 @@ proc _shard_create(@rules){
                         }
                         export('playerspawn', @loc);
                         set_pmode('SPECTATOR');
-                        if(get_world_border('shard')['width'] > 1000) {
+                        if(get_world_border('shard')['width'] > 960) {
                             @seconds = array_size(@players) * 180 + 600;
                             set_world_border('shard', array('width': 1, 'seconds': @seconds));
                             _worldmsg('shard', color('red').color('bold').'Shard has started to collapse! ('.floor(@seconds / 60).' minutes)');
