@@ -1,4 +1,4 @@
 // Override
 proc _shard_equip(@player) {
-    noop(); // Keep current inventory
+	noop(); // Keep current inventory
 }
