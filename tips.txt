@@ -1,0 +1,119 @@
+&7/help [topic]&r : Displays information about the server.
+
+&7/who&r or &7/list&r : Shows a list of current players per-group.
+
+&7/where&r : Shows a list of current players per-world.
+
+&7/shop <transaction>&r : Edit the shop sign that you’re looking at.
+ &7&oExample: /shop buy 1 for 2g
+
+&7/shop list <item name>&r : List all shops where you can buy or sell a particular item.
+
+&7/hat&r : Put whatever you have in your hand onto your head.
+
+&7/compass <target>&r : Sets compass to point to target: spawn, home [player], here, player, or x z coordinates.
+
+&7/transfer <mob> <player>&r : Transfers ownership of a horse, wolf, or cat to another online player.
+ &7&oExample: /transfer horse PseudoKnight
+
+&7/share <player> <horses>&r : Changes what you share with another player. Currently only supports ‘horses’.
+
+&7/unshare <player> <horses>&r : Removes a share with this player.
+
+&7/livemap&r : Sends you a clickable link to the Live Map.
+
+&7/here&r : Broadcasts to all players a clickable link to your location on the Live Map.
+
+&7/lastseen <player>&r : Gets the last time the player was on the server.
+
+&7/cake list&r : Lists all the cakes you have and haven’t found.
+
+&7/msg <player> <message>&r : Send a private or offline message to a player. (alternatively /tell or /w)
+
+&7/r <message>&r : Replies to the last person who sent you a /msg.
+
+&7/me <message>&r : Broadcasts an action message to everyone.
+
+&7/enter <message>&r : Changes the message following your name after you enter the server.
+
+&7/exit <message>&r : Changes the message following your name after you leave the server.
+
+&7/ignore&r and &7/unignore <player|all>&r : Filter global chat messages from that player or all players.
+
+&7/colors&r : Displays all color code characters that can be used in chat after &.
+
+&7/roll [#]&r : Displays a random number in chat from 1 up to the specified number. (default: 6)
+
+&7/survival /park /dev&r : These teleport you to the respective world types at your last known location.
+
+&7/spawn [world]&r : Teleports you to spawn for current or specified world.
+
+&7/warp [name]&r : Teleports you to a warp location. If none is specified, available warps are listed.
+
+&7/home [world] [player]&r : Teleports you to a home set by a player with /sethome.
+
+&7/join <player>&r : Requests to teleport to another player, who must type "/accept".
+
+&7/invite <player>&r : Requests another player teleport to you. They must type "/accept".
+
+&7/autojoinaccept&r : Toggles automatically accepting all join requests.
+
+&7/rg info [region]&r : Displays info on specified region or current region if unspecified.
+
+&7/rg claim <region>&r : Creates a region with current WorldEdit selection.
+ &7&oExample: /rg claim my_region
+
+&7/rg delete <region>&r : Deletes a region you own.
+
+&7/rg rename <region> <newname>&r : Script that changes the name of a region you own.
+
+&7/rg move <region>&r : Updates the region boundaries to the current selection.
+
+&7/rg addmember <region> <player(s)>&r : Allow player(s) to build and access chests.
+ &7&oExample: /rg addmember finalcity PseudoKnight
+
+&7/rg remmember <region> <player(s)>&r : Removes member(s) from your specified region.
+
+Bottles can be crafted into exp bottles by using your own experience.
+
+When right-clicking armor stands with an open hand while sneaking, you can pose many of its elements.
+
+Right-clicking armor stands with at least 2 sticks in your hands will give the armor stand arms.
+
+Hitting armor stands will remove arms first, then the baseplate, before destroying the armor stand itself.
+
+The left hand of armor stands can have items placed in them too.
+
+Any item can be placed in the helmet slot of an armor stand.
+
+Dispensers can place armor stands.
+
+Horses are protected from all damage unless they are being ridden, and even they are still protected from other players.
+
+Undead horses can be fed rotten flesh.
+
+There are noteblock sounds with these blocks: ICE/PACKED_ICE, ANVIL, HARDENED/STAINED_CLAY, COAL_BLOCK, and SLIME_BLOCK.
+
+If powered by redstone, noteblocks can be heard up to 9 chunks away. (144 meters)
+
+Right-clicking paintings will cycle through them.
+
+When minecarts collide with unpowered dispensers, they get added to the dispenser inventory.
+
+Beds will set your bed location, make the sun rise, and halt precipitation regardless of other players in the world.
+
+Leads can be used on villagers (except dimwits/green villagers).
+
+Creepers do not do block damage above sea level (y > 62) with the exception of the outworlds.
+
+You can get help from anyone with a blue name. Orange players are Frog Park staff and can help there.
+
+Get a list and description of useful commands @ http://finalscoremc.com/commands
+
+You can have one /home per world, excluding the outworld.
+
+Our mumble server is at mum.finalscoremc.com with port 64758. You can get Mumble @ http://mumble.sourceforge.net
+
+We have a Discord server @ https://discordapp.com/invite/0aBtE3n1P6GixDwO
+
+There are four primary worlds: Alpha, Delta, Gamma, and Omega.
