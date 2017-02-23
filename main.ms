@@ -176,19 +176,19 @@ bind(player_join, null, null, @event) {
 
 		queue_push(closure(){
 			#Welcome messages
-			@line = string_multiply('-', 52);
+			@line = string_multiply('-', 53);
 			msg(color('1').color('m').'\u2575'.@line.color('1').'\u2575');
 			msg(string_multiply(' ', 18).colorize('&6&l\u1260 &d&l\u1260 &b&l\u1260 &4&l\u1260 &6&lFINALSCORE&e&lMC \u00AB &r\u25AA \u25AA \u25AA'));
 			msg(color('1').color('m').'\u2577'.@line.color('1').'\u2577');
 			if(@motd = get_value('motd')) {
-				msg('\n'.@motd);
+				msg('\n '.@motd);
 				msg(color('1').color('m').'\n\u2575'.@line.color('1').'\u2575');
 			} else {
 				@tips = import('tips');
 				if(@tips) {
 					@tip = @tips[rand(array_size(@tips))];
-					msg(string_multiply(' ', 5).color('gray').color('bold').'TIP');
-					msg('\n '.colorize(@tip));
+					msg(string_multiply(' ', 6).color('gray').color('bold').'TIP:');
+					msg(' '.colorize(@tip));
 					msg(color('1').color('m').'\n\u2575'.@line.color('1').'\u2575');
 				}
 			}
