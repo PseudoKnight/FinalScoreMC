@@ -1,3 +1,9 @@
+*:/tip = >>>
+	@tips = import('tips', array('Sometimes there\'s no more tips.'));
+	@tip = @tips[rand(array_size(@tips))];
+	msg(colorize('&7TIP: &r'.@tip));
+<<<
+
 *:/transfer = >>>
 	msg('Transfers ownership of a mob to another online player.\n'
 		.'Usage: /transfer <mob> <player>\n'

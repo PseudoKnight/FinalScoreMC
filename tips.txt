@@ -65,7 +65,7 @@
 
 &7/rg delete <region>&r : Deletes a region you own.
 
-&7/rg rename <region> <newname>&r : Script that changes the name of a region you own.
+&7/rg rename <region> <newname>&r : Changes the name of a region you own.
 
 &7/rg move <region>&r : Updates the region boundaries to the current selection.
 
