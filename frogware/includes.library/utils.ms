@@ -65,7 +65,7 @@ proc _fw_mobs(@mob = 'random', @num = 'random') {
 	@entities = array()
 	for(@i = 0, @i < @num, @i++) {
 		if(@loc = _fw_loc(@height, true)) {
-			@m = _spawn_mob(@mob, 1, @loc)[0];
+			@m = _spawn_mob(@mob, @loc);
 			array_push(@entities, @m);
 			if(@mob == 'wolf:angry') {
 				if(function_exists('set_mob_target')) {

@@ -129,18 +129,19 @@
 		}
 
 	case 'spawn':
-		@mobType = $id;
+		@mobType = _get_mob($id);
 		@mobCount = 1;
-		if($setting) {
-			@mobCount = $setting;
+		if(is_integral($setting)) {
+			@mobCount = integer($setting);
 		}
 		@loc = pcursor();
-		_spawn_mob(@mobType, @mobCount, array(
-			@loc[0] + 0.5,
-			@loc[1] + 1,
-			@loc[2] + 0.5,
-			@loc[3]
-		), player());
+		@loc['x'] += 0.5;
+		@loc['y'] += 1;
+		@loc['z'] += 0.5;
+		while(@mobCount > 0) {
+			_spawn_mob(@mobType, @loc, player());
+			@mobCount--;
+		}
 
 	case 'list':
 		@mobs = get_values('mob');
@@ -166,5 +167,5 @@
 	@loc = _relative_coords(@cmdBlock, $x, $y, $z);
 	@loc['x'] += 0.5;
 	@loc['z'] += 0.5;
-	_spawn_mob($entity, 1, @loc);
+	_spawn_mob($entity, @loc);
 <<<
