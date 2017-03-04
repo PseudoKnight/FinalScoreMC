@@ -36,6 +36,7 @@
 		case 'gear':
 			@mob['gear'] = array(
 				'WEAPON': pinv(player(), 0),
+				'OFF_HAND': pinv(player(), -106),
 				'HELMET': pinv(player(), 103),
 				'CHESTPLATE': pinv(player(), 102),
 				'LEGGINGS': pinv(player(), 101),
@@ -48,6 +49,7 @@
 			if(array_size(@args) == 1) {
 				@mob['droprate'] = array(
 					'WEAPON': @args[0],
+					'OFF_HAND': @args[0],
 					'BOOTS': @args[0],
 					'LEGGINGS': @args[0],
 					'CHESTPLATE': @args[0],
@@ -56,10 +58,11 @@
 			} else {
 				@mob['droprate'] = array(
 					'WEAPON': @args[0],
-					'BOOTS': @args[1],
-					'LEGGINGS': @args[2],
-					'CHESTPLATE': @args[3],
-					'HELMET': @args[4]
+					'OFF_HAND': @args[1],
+					'BOOTS': @args[2],
+					'LEGGINGS': @args[3],
+					'CHESTPLATE': @args[4],
+					'HELMET': @args[5],
 				);
 			}
 			msg('Droprate set.');
