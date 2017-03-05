@@ -70,9 +70,11 @@ bind(player_interact, null, array('item': 401, 'button': 'right'), @event) {
 					set_pinv(@inv);
 				}
 			}
+			die();
 		}
 		
-	} else if(!@gliding && (pworld() == 'custom' || pworld() == 'dev')) {
+	}
+	if(!@gliding && (pworld() == 'custom' || pworld() == 'dev')) {
     	@pdata = _pdata(player());
     	if(!array_index_exists(@pdata, 'support')) {
     		die();
