@@ -1,0 +1,158 @@
+*:/level [$action] [$name] [$] = >>>
+	@action = 'start'
+	if($action) {
+		@action = $action;
+	}
+	@name = $name;
+	switch(@action) {
+		case 'setspawn':
+			if(!has_permission('group.engineer')) {
+				die(color('red').'No permission.');
+			}
+			@arena = get_value('level', @name);
+			@group = 'spawns';
+			if($) {
+				@group = $;
+			}
+			if(!@arena) {
+				@arena = associative_array();
+				@arena[@group] = array();
+			}
+			if(!array_index_exists(@arena, @group)) {
+				@arena[@group] = array();
+			}
+			@loc = array_normalize(_relative(ploc(), 'up'))[0..3];
+			@arena[@group][] = @loc;
+			store_value('level', @name, @arena);
+			die('Added spawn location');
+			
+		case 'delete':
+			if(!has_permission('group.engineer')) {
+				die(color('red').'No permission.');
+			}
+			clear_value('level', @name);
+			die('Deleted arena');
+			
+		case 'setlobby':
+			if(!has_permission('group.engineer')) {
+				die(color('red').'No permission.');
+			}
+			@arena = get_value('level', @name);
+			if(!@arena) {
+				@arena = associative_array();
+			}
+			@loc = array_normalize(ploc())[0..3];
+			@arena['lobby'] = @loc;
+			store_value('level', @name, @arena);
+			die('Set lobby location');
+			
+		case 'setschematic':
+			if(!has_permission('group.engineer')) {
+				die(color('red').'No permission.');
+			}
+			@arena = get_value('level', @name);
+			if(!@arena) {
+				@arena = associative_array();
+			}
+			@arena['schematic'] = $;
+			store_value('level', @name, @arena);
+			die('Set schematic');
+			
+		case 'setconfigs':
+			if(!has_permission('group.engineer')) {
+				die(color('red').'No permission.');
+			}
+			@arena = get_value('level', @name);
+			if(!@arena) {
+				@arena = associative_array();
+			}
+			@arena['configs'] = parse_args($);
+			store_value('level', @name, @arena);
+			die('Set configs for this region.');
+			
+		case 'start':
+			@region = sk_current_regions();
+			if(!@region) {
+				die('There\'s no arena here.');
+			}
+			@region = @region[-1];
+			@arena = get_value('level', @region);
+			if(!@arena) {
+				die('This region is not defined as an arena.');
+			}
+			if(!@name) {
+				@name = @arena['configs'][rand(array_size(@arena['trials']))];
+			}
+			if(array_contains(get_scoreboards(), 'level'.@region)) {
+				die(color('red').'Game already running.');
+			}
+			@level = array(
+				'name': @name,
+				'wave': 0,
+				'players': array(),
+				'title': '',
+				'subtitle': '',
+				'music': '',
+				'mobs': array(),
+				'world': pworld(),
+				'arena': @arena,
+				'region': @region,
+				'config': yml_decode(read('configs/'.@name.'.yml'))
+			);
+			set_world_time(@level['world'], 'sunset');
+			set_gamerule(@level['world'], 'doDaylightCycle', false);
+			_remove_region_entities(@level['region']);
+			
+			create_scoreboard('level'.@region);
+			create_objective('health', 'HEALTH', 'level'.@region);
+			set_objective_display('health', array('slot': 'BELOW_NAME'), 'level'.@region);
+			
+			if(array_index_exists(@level['config'], 'shop')) {
+				@shop = array(
+					'id': 'level'.@region,
+					'title': 'BUY OR SELL',
+				);
+				@items = associative_array();
+				foreach(@index: @item in @level['config']['shop']) {
+					@meta = associative_array();
+					if(array_index_exists(@item, 'meta')) {
+						@meta = @item['meta'];
+					}
+					@meta['lore'] = array('Buy for '.@item['cost'].' level'.if(@item['cost'] > 1, 's'));
+					@shop[@index] = array('name': @item['name'], 'qty': @item['cost'], 'meta': @meta);
+					@items[@item['name']] = @item['cost'];
+				}
+				@level['shop'] = @items;
+				create_virtualchest(@shop);
+			}
+			
+			@levels = 0;
+			if(array_index_exists(@level['config'], 'levels')) {
+				@levels = @level['config']['levels'];
+			}
+			foreach(@p in all_players(@level['world'])) {
+				if(array_contains(sk_current_regions(@p), @level['region'])) {
+					@level['players'][] = @p;
+					set_pscoreboard(@p, 'level'.@region);
+					_clear_pinv(@p);
+					set_pinv(@p, @level['config']['gear']);
+					if(array_index_exists(@level['config'], 'shop')) {
+						pgive_item(@p, 388, 1, array('display': 'Open Shop'));
+					}
+					set_pbed_location(@p, @level['arena']['lobby']);
+					set_entity_health(puuid(@p), 100);
+					set_phunger(@p, 20);
+					set_psaturation(@p, 5);
+					set_plevel(@p, @levels);
+					set_pexp(@p, 0);
+					title_msg(@p, @level['config']['title'], 'by '.@level['config']['author'], 20, 40, 20);
+				}
+			}
+			
+			include('core.library/game.ms');
+			_level_start(@level);
+			
+		default:
+			die('Available subcommands: setspawn, delspawns, setlobby, setschematic, setconfigs, start.');
+	}
+<<<

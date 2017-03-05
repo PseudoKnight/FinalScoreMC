@@ -1,0 +1,492 @@
+title: 'Step Lightly'
+author: 'gothem8'
+levels: 4
+gear:
+    0:
+        name: WOOD_SWORD
+shop:
+    0:
+        name: STONE_SWORD
+        cost: 2
+    1:
+        name: IRON_SWORD
+        cost: 3
+    2:
+        name: DIAMOND_SWORD
+        cost: 4
+    3:
+        name: IRON_AXE
+        cost: 3
+    4:
+        name: DIAMOND_AXE
+        cost: 4
+    5:
+        name: BOW
+        cost: 4
+    9:
+        name: MILK_BUCKET
+        cost: 1
+    10:
+        name: CARROT_ITEM
+        cost: 1
+    11:
+        name: POTION
+        cost: 1
+        meta:
+            base:
+                type: SPEED
+    12:
+        name: TIPPED_ARROW
+        cost: 1
+        meta:
+            base:
+                upgraded: true
+                type: INSTANT_HEAL
+    18:
+        name: LEATHER_HELMET
+        cost: 1
+    19:
+        name: LEATHER_CHESTPLATE
+        cost: 3
+    20:
+        name: LEATHER_LEGGINGS
+        cost: 2
+    21:
+        name: GOLD_HELMET
+        cost: 2
+    22:
+        name: GOLD_CHESTPLATE
+        cost: 5
+    23:
+        name: GOLD_LEGGINGS
+        cost: 3
+    27:
+        name: CHAINMAIL_HELMET
+        cost: 2
+    28:
+        name: CHAINMAIL_CHESTPLATE
+        cost: 5
+    29:
+        name: CHAINMAIL_LEGGINGS
+        cost: 4
+    30:
+        name: CHAINMAIL_BOOTS
+        cost: 1
+    31:
+        name: IRON_HELMET
+        cost: 2
+    32:
+        name: IRON_CHESTPLATE
+        cost: 6
+    33:
+        name: IRON_LEGGINGS
+        cost: 5
+    34:
+        name: IRON_BOOTS
+        cost: 2
+    36:
+        name: DIAMOND_HELMET
+        cost: 3
+    37:
+        name: DIAMOND_CHESTPLATE
+        cost: 8
+    38:
+        name: DIAMOND_LEGGINGS
+        cost: 6
+    39:
+        name: DIAMOND_BOOTS
+        cost: 3
+    40:
+        name: SHIELD
+        cost: 5
+waves:
+    1:
+        title: 'Baby Steps'
+        subtitle: 'A Mitey Start'
+        music: 'record.cat'
+        mobs:
+            - ENDERMITE
+            - ENDERMITE
+            - ENDERMITE
+            - ENDERMITE
+    2:
+        subtitle: 'Parasites'
+        mobs:
+            - ENDERMITE
+            - ENDERMITE
+            - ENDERMITE
+            - SILVERFISH
+            - SILVERFISH
+            - SILVERFISH
+    3:
+        subtitle: 'Zombaby'
+        mobs:
+            - 'ZOMBIE:BABY'
+            - 'ZOMBIE:BABY'
+    4:
+        subtitle: 'Are you chicken?'
+        mobs:
+            - type: CHICKEN
+              rider: 'ZOMBIE:BABY'
+            - type: CHICKEN
+              rider: 'ZOMBIE:BABY'
+            - type: CHICKEN
+              rider: 'ZOMBIE:BABY'
+    5:
+        subtitle: 'Silver Husks'
+        mobs:
+            - 'ZOMBIE:HUSK-BABY'
+            - 'ZOMBIE:HUSK-BABY'
+            - SILVERFISH
+            - SILVERFISH
+    6:
+        subtitle: 'BOSS: Mr. Jellybean'
+        mobs:
+            - type: 'ZOMBIE:BABY'
+              pos: 'center'
+              gear:
+                  weapon:
+                      name: DIAMOND_SWORD
+                  boots:
+                      name: DIAMOND_BOOTS
+                  leggings:
+                      name: DIAMOND_LEGGINGS
+                  chestplate:
+                      name: DIAMOND_CHESTPLATE
+                  helmet:
+                      name: DIAMOND_HELMET
+              droprate:
+                  weapon: 1
+                  boots: 1
+                  leggings: 1
+                  chestplate: 1
+                  helmet: 1
+    7:
+        title: "That's Cold"
+        subtitle: 'Bear the Pain'
+        music: 'record.far'
+        mobs:
+            - type: POLARBEAR
+              age: -800
+            - POLARBEAR
+            - POLARBEAR
+            - POLARBEAR
+            - POLARBEAR
+    8:
+        subtitle: 'Whiteout'
+        mobs:
+            - SKELETON
+            - SKELETON
+            - 'SKELETON:STRAY'
+            - 'SKELETON:STRAY'
+    9:
+        subtitle: 'Grave Digger'
+        mobs:
+            - ZOMBIE
+            - ZOMBIE
+            - ZOMBIE
+            - ZOMBIE
+            - CREEPER
+    10:
+        subtitle: 'The Pack'
+        mobs:
+            - type: 'WOLF:ANGRY'
+              effects:
+                  - id: 1
+                    strength: 0
+                    seconds: 300
+            - type: 'WOLF:ANGRY'
+              effects:
+                  - id: 1
+                    strength: 0
+                    seconds: 300
+            - type: 'WOLF:ANGRY'
+              effects:
+                  - id: 1
+                    strength: 0
+                    seconds: 300
+            - type: 'WOLF:ANGRY'
+              effects:
+                  - id: 1
+                    strength: 0
+                    seconds: 300
+            - type: 'WOLF:ANGRY'
+              effects:
+                  - id: 1
+                    strength: 0
+                    seconds: 300
+            - type: 'WOLF:ANGRY'
+              effects:
+                  - id: 1
+                    strength: 0
+                    seconds: 300
+            - type: 'WOLF:ANGRY'
+              effects:
+                  - id: 1
+                    strength: 0
+                    seconds: 300
+            - type: 'WOLF:ANGRY'
+              effects:
+                  - id: 1
+                    strength: 0
+                    seconds: 300
+    11:
+        subtitle: 'Stray Focused'
+        mobs:
+            - 'SKELETON:STRAY'
+            - 'SKELETON:STRAY'
+            - 'SKELETON:STRAY'
+            - 'SKELETON:STRAY'
+    12:
+        subtitle: 'BOSS: Undead King'
+        mobs:
+            - type: POLARBEAR
+              rider: 'SKELETON:STRAY'
+              pos: 'center'
+              gear:
+                  weapon:
+                      name: BOW
+                  boots:
+                      name: CHAINMAIL_BOOTS
+                  leggings:
+                      name: CHAINMAIL_LEGGINGS
+                  chestplate:
+                      name: CHAINMAIL_CHESTPLATE
+                  helmet:
+                      name: CHAINMAIL_HELMET
+              droprate:
+                  weapon: 1
+    13:
+        title: "This Ain't Right"
+        subtitle: 'Turned'
+        music: 'music.game'
+        mobs:
+            - 'ZOMBIE:VILLAGER'
+            - 'ZOMBIE:VILLAGER'
+            - 'ZOMBIE:VILLAGER'
+            - 'ZOMBIE:VILLAGER'
+            - 'ZOMBIE:VILLAGER'
+            - 'ZOMBIE:VILLAGER'
+            - 'ZOMBIE:VILLAGER'
+            - 'ZOMBIE:VILLAGER'
+    14:
+        subtitle: 'ENDeavour'
+        mobs:
+            - ENDERMAN
+            - ENDERMAN
+            - ENDERMAN
+            - ENDERMAN
+            - ENDERMITE
+            - ENDERMITE
+            - ENDERMITE
+            - ENDERMITE
+    15:
+        subtitle: 'Up, Up, & Boom'
+        mobs:
+            - CREEPER
+            - CREEPER
+            - CREEPER
+            - CREEPER
+            - CREEPER
+            - CREEPER
+            - SHULKER
+    16:
+        subtitle: 'Hot and Cold'
+        mobs:
+            - 'ZOMBIE:HUSK'
+            - 'ZOMBIE:HUSK'
+            - 'ZOMBIE:HUSK'
+            - 'SKELETON:STRAY'
+            - 'SKELETON:STRAY'
+            - 'SKELETON:STRAY'
+    17:
+        subtitle: 'Spikey Fish'
+        mobs:
+            - type: GUARDIAN
+              pos: 'center'
+            - type: GUARDIAN
+              pos: 'center'
+            - type: GUARDIAN
+              pos: 'center'
+            - type: GUARDIAN
+              pos: 'center'
+    18:
+        subtitle: 'BOSS: Atomic Creeper'
+        mobs:
+            - type: 'CREEPER:POWERED'
+              pos: 'center'
+              effects:
+                  - id: 11
+                    strength: 3
+                    seconds: 300
+                  - id: 1
+                    strength: 0
+                    seconds: 300
+    19:
+        title: 'The Outcasts'
+        subtitle: 'Axe Murderers'
+        music: 'music.credits'
+        mobs:
+            - VINDICATOR
+            - VINDICATOR
+            - VINDICATOR
+            - VINDICATOR
+            - VINDICATOR
+            - VINDICATOR
+    20:
+        subtitle: 'Which is Witch?'
+        mobs:
+            - WITCH
+            - WITCH
+            - WITCH
+            - WITCH
+    21:
+        subtitle: 'Torment'
+        mobs:
+            - VINDICATOR
+            - VINDICATOR
+            - type: VEX
+              pos: 'center'
+            - type: VEX
+              pos: 'center'
+            - type: VEX
+              pos: 'center'
+            - type: VEX
+              pos: 'center'
+    22:
+        subtitle: 'The Apprentice'
+        mobs:
+            - EVOKER
+            - SILVERFISH
+            - SILVERFISH
+            - SILVERFISH
+            - SILVERFISH
+    23:
+        subtitle: 'Onslaught'
+        mobs:
+            - VINDICATOR
+            - VINDICATOR
+            - VINDICATOR
+            - VINDICATOR
+            - IRONGOLEM
+            - IRONGOLEM
+    24:
+        subtitle: 'BOSS: Trivoken'
+        mobs:
+            - type: EVOKER
+              pos: 'center'
+              rider:
+                  type: EVOKER
+                  rider:
+                      type: EVOKER
+    25:
+        title: 'Never Say Nether'
+        subtitle: 'Pork Chops'
+        music: 'music.nether'
+        mobs:
+            - 'PIGZOMBIE:400'
+            - 'PIGZOMBIE:400'
+            - 'PIGZOMBIE:400'
+            - 'PIGZOMBIE:400'
+            - 'PIGZOMBIE:400'
+            - 'PIGZOMBIE:400'
+            - 'PIGZOMBIE:400'
+            - 'PIGZOMBIE:400'
+            - 'PIGZOMBIE:400'
+            - 'PIGZOMBIE:400'
+    26:
+        subtitle: 'Death From Above'
+        mobs:
+            - GHAST
+            - GHAST
+            - 'PIGZOMBIE:400'
+            - 'PIGZOMBIE:400'
+            - 'PIGZOMBIE:400'
+            - 'PIGZOMBIE:400'
+            - 'PIGZOMBIE:400'
+            - 'PIGZOMBIE:400'
+            - 'PIGZOMBIE:400'
+            - 'PIGZOMBIE:400'
+    27:
+        subtitle: 'Flamiliar?'
+        mobs:
+            - type: CHICKEN
+              rider: 'PIGZOMBIE:400'
+            - type: CHICKEN
+              rider: 'PIGZOMBIE:400'
+            - type: CHICKEN
+              rider: 'PIGZOMBIE:400'
+            - type: CHICKEN
+              rider: 'PIGZOMBIE:400'
+            - type: CHICKEN
+              rider: 'PIGZOMBIE:400'
+            - type: CHICKEN
+              rider: 'PIGZOMBIE:400'
+            - type: CHICKEN
+              rider: 'PIGZOMBIE:400'
+            - type: CHICKEN
+              rider: 'PIGZOMBIE:400'
+    28:
+        subtitle: 'Get Over Here'
+        mobs:
+            - GHAST
+            - GHAST
+            - GHAST
+            - GHAST
+            - BLAZE
+    29:
+        subtitle: 'Set Ablaze'
+        mobs:
+            - type: BLAZE
+              pos: 'center'
+            - type: BLAZE
+              pos: 'center'
+            - 'PIGZOMBIE:400'
+            - 'PIGZOMBIE:400'
+            - 'PIGZOMBIE:400'
+            - 'PIGZOMBIE:400'
+            - 'PIGZOMBIE:400'
+            - 'PIGZOMBIE:400'
+            - 'PIGZOMBIE:400'
+            - 'PIGZOMBIE:400'
+            - 'PIGZOMBIE:400'
+            - 'PIGZOMBIE:400'
+            - 'PIGZOMBIE:400'
+            - 'PIGZOMBIE:400'
+            - 'PIGZOMBIE:400'
+            - 'PIGZOMBIE:400'
+            - 'PIGZOMBIE:400'
+            - 'PIGZOMBIE:400'
+    30:
+        subtitle: '4 Horsemen & Apocalypse'
+        mobs:
+            - type: 'HORSE:SKELETON'
+              age: 0
+              pos: 'center'
+              tags:
+                  saddle: true
+              rider: SKELETON
+            - type: 'HORSE:SKELETON'
+              age: 0
+              pos: 'center'
+              tags:
+                  saddle: true
+              rider: SKELETON
+            - type: 'HORSE:SKELETON'
+              age: 0
+              pos: 'center'
+              tags:
+                  saddle: true
+              rider: SKELETON
+            - type: 'HORSE:SKELETON'
+              age: 0
+              pos: 'center'
+              tags:
+                  saddle: true
+              rider: SKELETON
+            - type: 'SKELETON:WITHER'
+              pos: 'center'
+              effects:
+                  - id: 11
+                    strength: 3
+                    seconds: 600
