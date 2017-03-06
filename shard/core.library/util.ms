@@ -11,8 +11,3 @@ proc _get_spawn_location(@retries = 3) {
 	}
 	return(@loc);
 }
-
-// Sets the equipment for the start of the game
-proc _shard_equip(@player) {
-	_clear_pinv(@player);
-}

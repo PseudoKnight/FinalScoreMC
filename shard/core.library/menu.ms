@@ -29,7 +29,7 @@ proc _create_menu() {
 						color('red').'VERY UNFAIR!'
 			)))
 		),
-		'regen': array(
+		'noregen': array(
 			'default': false,
 			'shown': true,
 			'item': array(
@@ -62,6 +62,17 @@ proc _create_menu() {
 					'display': color('aqua').color('bold').'TEAMS',
 					'lore': array(
 						color('white').'Number of teams'
+			)))
+		),
+		'width': array(
+			'default': 1024,
+			'shown': true,
+			'values': array(0, 256, 384, 512, 768, 1024),
+			'item': array(
+				'name': 'END_CRYSTAL', 'meta': array(
+					'display': color('aqua').color('bold').'WORLDBORDER WIDTH',
+					'lore': array(
+						color('white').'Width of shard world border'
 			)))
 		),
 	);
@@ -115,7 +126,11 @@ proc _create_menu() {
 		if(@slot == 44) {
 			close_pinv();
 			include('game.ms');
-			_shard_create(@rules);
+			@associative_rules = associative_array();
+			foreach(@rule in @rules) {
+				@associative_rules[@rule['name']] = @rule['value'];
+			}
+			_shard_create(@associative_rules);
 		} else {
 			@rule = null;
 			if(@item['name'] == 'INK_SACK') {
@@ -146,9 +161,14 @@ proc _create_menu() {
 						@rule['value'] = @values[@index];
 					}
 					if(@rule['value']) {
-						@item['qty'] = @rule['value'];
+						if(@rule['value'] > 127) {
+							@item['meta']['display'] = color('green').@rule['value'];
+							@item['qty'] = @index;
+						} else {
+							@item['meta']['display'] = color('green').'ACTIVATED';
+							@item['qty'] = @rule['value'];
+						}
 						@item['data'] = 10;
-						@item['meta']['display'] = color('green').'ACTIVATED';
 					} else {
 						@item['qty'] = 1;
 						@item['data'] = 8;

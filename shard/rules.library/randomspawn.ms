@@ -1,1 +1,0 @@
-@randomspawn = true;
