@@ -45,7 +45,7 @@ proc _create_menu() {
 			'default': false,
 			'shown': true,
 			'item': array(
-				'name': 'STEP', 'data': 9, 'meta': array(
+				'name': 'MELON_SEEDS', 'meta': array(
 					'display': color('aqua').color('bold').'ALL RANDOM SPAWNS',
 					'lore': array(
 						color('white').'Selects a random spawn for all players,',
@@ -78,18 +78,19 @@ proc _create_menu() {
 		'timelimit': array(
 			'default': 20,
 			'shown': true,
-			'values': array(0, 10, 15, 20, 25, 30, 35, 45, 50, 60),
+			'values': array(0, 10, 15, 20, 25, 30, 45, 60),
 			'item': array(
 				'name': 'WATCH', 'meta': array(
 					'display': color('aqua').color('bold').'TIME LIMIT',
 					'lore': array(
-						color('white').'How much time for the worldborder to collapse'
+						color('white').'How much time for the worldborder to collapse',
+						color('white').'If deactivated, the worldborder will not collapse.'
 			)))
 		),
 		'buffertime': array(
 			'default': 0,
 			'shown': true,
-			'values': array(0, 1, 2, 3, 5, 10, 20),
+			'values': array(0, 1, 3, 5, 10, 15, 20),
 			'item': array(
 				'name': 'WATCH', 'meta': array(
 					'display': color('aqua').color('bold').'BUFFER TIME',
