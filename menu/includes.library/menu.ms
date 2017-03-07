@@ -21,8 +21,8 @@ proc _repopulate_menu(){
 		47: associative_array(
 			'name': 'IRON_LEGGINGS',
 			'meta': associative_array(
-				'display': color('green').'Minigames',
-				'lore': array(color('dark_gray').'Open: minigames'),
+				'display': color('green').'Other Games',
+				'lore': array(color('dark_gray').'Open: other'),
 				'flags': array('HIDE_ATTRIBUTES'),
 			),
 		)
@@ -143,15 +143,17 @@ proc _repopulate_menu(){
 						@lore[] = color('green').'Capture the Flag';
 					}
 				}
-				@lore[] = color('green').if(array_index_exists(@arena, 'min'), @arena['min'], 2)
+				@min = if(array_index_exists(@arena, 'min'), @arena['min'], 2);
+				@lore[] = color('green').@min
 						.if(array_index_exists(@arena, 'max'), '-'.@arena['max'], '+').' players';
 				@lore[] = color('dark_gray').'Run: /warp '.@name;
 				@pvp[@slot] = associative_array(
-					'type': 351,
-					'data': 8,
+					'type': 306,
+					'qty': @min,
 					'meta': associative_array(
 						'display': color('green').to_upper(@name),
 						'lore': @lore,
+						'flags': array('HIDE_ATTRIBUTES'),
 					),
 				);
 				@slot++;
@@ -165,8 +167,8 @@ proc _repopulate_menu(){
 
 	queue_push(closure(){
 		@other = @main[];
-		@other['id'] = 'minigames';
-		@other['title'] = 'Minigames';
+		@other['id'] = 'other';
+		@other['title'] = 'Other Games';
 		@other[0] = associative_array(
 			'name': 'SNOW_BLOCK',
 			'meta': associative_array(
@@ -246,6 +248,17 @@ proc _repopulate_menu(){
 				'lore': array(
 					color('r').'Minigolf (1 - 4 players)',
 					color('dark_gray').'Run: /warp islandgolf',
+				),
+			),
+		);
+		@other[18] = associative_array(
+			'name': 'SMOOTH_BRICK',
+			'data': 2,
+			'meta': associative_array(
+				'display': color('yellow').'Gladiator Arena',
+				'lore': array(
+					color('r').'Survive waves of mobs (1+ players)',
+					color('dark_gray').'Run: /warp gladiator',
 				),
 			),
 		);
