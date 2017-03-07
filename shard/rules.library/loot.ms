@@ -24,6 +24,7 @@ proc _set_random_contents(@loc, @count) {
 		393: 8, // BAKED_POTATO
 		395: 0, // EMPTY_MAP
 		396: 8, // GOLDEN_CARROT
+		397: 8, // SKULL_ITEM
 		400: 8, // PUMPKIN_PIE
 		403: 1, // ENCHANTED_BOOK (meta)
 		407: 4, // EXPLOSIVE_MINECART
@@ -72,8 +73,10 @@ proc _random_item(@limits) {
 	@meta = null;
 	if(array_index_exists(@limits, @id)) {
 		@max = @limits[@id];
-		// Apply meta
+		// Special item handling (eg. meta)
 		switch(@id){
+			case 397:
+				@id = @id.':1'; // set to wither skull
 			case 383:
 				@meta = array('spawntype': array_rand(array(
 					'BAT', 'BLAZE', 'CAVE_SPIDER', 'CHICKEN', 'COW', 'CREEPER', 'ELDER_GUARDIAN', 'ENDERMAN', 'ENDERMITE',
