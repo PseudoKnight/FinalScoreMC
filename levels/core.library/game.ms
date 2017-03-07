@@ -80,22 +80,25 @@ proc _level_start(@level) {
 	if(array_index_exists(@level['config'], 'shop')) {
 		bind(player_interact, array('id': 'openshop'.@level['region']), array('button': 'right', 'item': 388), @event, @level) {
 			if(array_contains(@level['players'], player()) && pworld() == @level['world']) {
-				@inv = pinv();
-				foreach(@item in @inv) {
-					if(@item && (!@item['meta'] || !@item['meta']['lore'])) {
-						if(!@item['meta']) {
-							@item['meta'] = associative_array();
-						}
-						if(array_index_exists(@level['shop'], @item['name'])) {
-							@refund = @level['shop'][@item['name']] / 2;
-						} else {
-							@refund = round(0.5 / min(16, material_info(@item['type'])['maxStacksize']), 2);
-						}
-						@item['meta']['lore'] = array('Sell each for '.@refund.' levels');
-					}
-				}
-				set_pinv(@inv);
 				popen_virtualchest('level'.@level['region']);
+			}
+		}
+		
+		bind(item_pickup, array('id': 'pickup'.@level['region']), null, @event, @level) {
+			if(array_contains(@level['players'], player())) {
+				@item = @event['item'];
+				if(!@item['meta'] || !@item['meta']['lore']) {
+					if(!@item['meta']) {
+						@item['meta'] = associative_array();
+					}
+					if(array_index_exists(@level['shop'], @item['name'])) {
+						@refund = @level['shop'][@item['name']] / 2;
+					} else {
+						@refund = round(0.5 / min(16, material_info(@item['type'])['maxStacksize']), 2);
+					}
+					@item['meta']['lore'] = array('Sell each for '.@refund.' levels');
+					modify_event('item', @item);
+				}
 			}
 		}
 		
@@ -108,7 +111,7 @@ proc _level_start(@level) {
 						@cost = integer(@parts[2]);
 						if(plevel() >= @cost) {
 							@meta = @item['meta'];
-							array_remove(@meta, 'lore');
+							@meta['lore'] = array('Sell each for '.@level['shop'][@item['name']] / 2.' levels');
 							pgive_item(@item['type'], 1, @meta);
 							set_plevel(plevel() - @cost);
 							play_sound(ploc(), array('sound': 'ANVIL_LAND', 'pitch': 2, 'volume': 0.5), player());
