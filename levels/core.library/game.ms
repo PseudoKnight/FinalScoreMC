@@ -265,6 +265,7 @@ proc _level_end(@level, @win) {
 	unbind('mobdeath'.@level['region']);
 	unbind('interact'.@level['region']);
 	unbind('openshop'.@level['region']);
+	unbind('pickup'.@level['region']);
 	unbind('shop'.@level['region']);
 	foreach(@p in @level['players']) {
 		if(ponline(@p)) {
