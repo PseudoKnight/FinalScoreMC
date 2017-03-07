@@ -99,8 +99,8 @@ proc _level_start(@level) {
 			}
 		}
 		
-		bind(inventory_click, array('id': 'shop'.@level['region']), array('slottype': 'CONTAINER', 'action': 'PICKUP_ALL'), @event, @level) {
-			if(array_contains(pviewing_virtualchest('level'.@level['region']), player())) {
+		bind(inventory_click, array('id': 'shop'.@level['region']), array('action': 'PICKUP_ALL'), @event, @level) {
+			if(pget_virtualchest() == 'level'.@level['region']) {
 				@item = @event['slotitem'];
 				if(@item && @item['meta'] && @item['meta']['lore']) {
 					@parts = parse_args(@item['meta']['lore'][0]);
