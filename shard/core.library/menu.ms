@@ -75,6 +75,31 @@ proc _create_menu() {
 						color('white').'Width of shard world border'
 			)))
 		),
+		'timelimit': array(
+			'default': 20,
+			'shown': true,
+			'values': array(0, 10, 15, 20, 25, 30, 35, 45, 50, 60),
+			'item': array(
+				'name': 'WATCH', 'meta': array(
+					'display': color('aqua').color('bold').'TIME LIMIT',
+					'lore': array(
+						color('white').'How much time for the worldborder to collapse'
+			)))
+		),
+		'buffertime': array(
+			'default': 0,
+			'shown': true,
+			'values': array(0, 1, 2, 3, 5, 10, 20),
+			'item': array(
+				'name': 'WATCH', 'meta': array(
+					'display': color('aqua').color('bold').'BUFFER TIME',
+					'enchants': array(array('etype': 'DURABILITY', 'elevel': 1)),
+					'flags': array('HIDE_ENCHANTS'),
+					'lore': array(
+						color('white').'How much time before the worldborder collapses.',
+						color('white').'If deactivated, the worldborder will collapse after first death.'
+			)))
+		),
 	);
 	@menu = array(
 		'id': 'shard',
@@ -97,7 +122,18 @@ proc _create_menu() {
 			continue();
 		}
 		if(@option['default']) {
-			@menu[@index] = @activated;
+			if(is_integral(@option['default'])) {
+				if(@option['default'] > 127) {
+					@menu[@index] = @activated[];
+					@menu[@index]['meta']['display'] = color('green').@option['default'];
+					@menu[@index]['qty'] = array_index(@option['values'], @option['default']);
+				} else {
+					@menu[@index] = @activated[];
+					@menu[@index]['qty'] = @option['default'];
+				}
+			} else {
+				@menu[@index] = @activated;
+			}
 		} else {
 			@menu[@index] = @deactivated;
 		}

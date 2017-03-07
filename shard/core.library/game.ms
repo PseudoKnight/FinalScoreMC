@@ -112,6 +112,14 @@ proc _shard_create(@rules){
 					set_world_border('shard', array('width': 300000));
 				}
 				set_gamerule('shard', 'NATURALREGENERATION', !@rules['noregen']);
+				if(@rules['buffertime']) {
+					set_timeout(@rules['buffertime'] * 60000, closure(){
+						if(array_contains(get_worlds(), 'shard')) {
+							set_world_border('shard', array('width': 1, 'seconds': @rules['timelimit'] * 60));
+							_worldmsg('shard', color('red').color('bold').'Shard has started to collapse! ('.@rules['timelimit'].' minutes)');
+						}
+					});
+				}
 				
 				// Start game
 				create_scoreboard('shard');
@@ -246,10 +254,9 @@ proc _shard_create(@rules){
 						}
 						export('playerspawn', @loc);
 						set_pmode('SPECTATOR');
-						if(@rules['width'] && get_world_border('shard')['width'] == @rules['width']) {
-							@seconds = array_size(@players) * 180 + 600;
-							set_world_border('shard', array('width': 1, 'seconds': @seconds));
-							_worldmsg('shard', color('red').color('bold').'Shard has started to collapse! ('.floor(@seconds / 60).' minutes)');
+						if(@rules['width'] && !@rules['buffertime'] && get_world_border('shard')['width'] == @rules['width']) {
+							set_world_border('shard', array('width': 1, 'seconds': @rules['timelimit'] * 60));
+							_worldmsg('shard', color('red').color('bold').'Shard has started to collapse! ('.@rules['timelimit'].' minutes)');
 						}
 						set_timeout(50, closure(){
 							respawn();
