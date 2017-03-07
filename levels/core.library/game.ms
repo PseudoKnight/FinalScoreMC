@@ -80,6 +80,21 @@ proc _level_start(@level) {
 	if(array_index_exists(@level['config'], 'shop')) {
 		bind(player_interact, array('id': 'openshop'.@level['region']), array('button': 'right', 'item': 388), @event, @level) {
 			if(array_contains(@level['players'], player()) && pworld() == @level['world']) {
+				@inv = pinv();
+				foreach(@item in @inv) {
+					if(@item && (!@item['meta'] || !@item['meta']['lore'])) {
+						if(!@item['meta']) {
+							@item['meta'] = associative_array();
+						}
+						if(array_index_exists(@level['shop'], @item['name'])) {
+							@refund = @item['qty'] * (@level['shop'][@item['name']] / 2);
+						} else {
+							@refund = round(0.5 / min(16, material_info(@item['type'])['maxStacksize']), 2);
+						}
+						@item['meta']['lore'] = array('Sell for '.@refund.' levels');
+					}
+				}
+				set_pinv(@inv);
 				popen_virtualchest('level'.@level['region']);
 			}
 		}
@@ -89,7 +104,7 @@ proc _level_start(@level) {
 				@item = @event['slotitem'];
 				if(@item && @item['meta'] && @item['meta']['lore']) {
 					@parts = parse_args(@item['meta']['lore'][0]);
-					if(array_size(@parts) > 2 && is_integral(@parts[2])) {
+					if(array_size(@parts) > 2 && @parts[0] == 'Buy' && is_integral(@parts[2])) {
 						@cost = integer(@parts[2]);
 						if(plevel() >= @cost) {
 							@meta = @item['meta'];
