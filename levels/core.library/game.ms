@@ -1,14 +1,73 @@
+include('player.ms');
 proc _level_start(@level) {
 	@entities = array();
 	sk_region_flag(@level['world'], @level['region'], 'mob-spawning', 'allow');
 	
-	bind(creature_spawn, array('id': 'spawn'.@level['region']), null, @event, @world = @level['world'], @region = @level['region'], @entities) {
+	bind(player_death, array('id': 'death'.@level['region']), null, @event, @level) {
+		if(array_contains(@level['players'], player())) {
+			array_remove_values(@level['players'], player());
+			@level['spectators'][] = player();
+			@loc = ploc();
+			if(@loc['y'] < 0) {
+				@loc['y'] = 0;
+			}
+			export(player().'spawn', @loc);
+			set_pmode('SPECTATOR');
+		}
+	}
+	
+	bind(player_spawn, array('id': 'spawn'.@level['region']), array('world': 'custom'), @event, @level) {
+		if(array_contains(@level['spectators'], player())) {
+			consume();
+			@loc = import(player().'spawn');
+			if(@loc) {
+				modify_event('location', @loc);
+				export(player().'spawn', null);
+			}
+		}
+	}
+	
+	bind(player_quit, array('id': 'quit'.@level['region']), null, @event, @level) {
+		if(array_contains(@level['players'], player())) {
+			set_ploc(@level['arena']['lobby']);
+			_level_remove_player(player(), @level);
+		} else if(array_contains(@level['spectators'], player())) {
+			_level_remove_spectator(player(), @level);
+		}
+	}
+	
+	bind(player_teleport, array('id': 'teleport'.@level['region']), null, @event, @level) {
+		if(@event['type'] == 'PLUGIN' || @event['type'] == 'SPECTATE') {
+			@from = array_contains(sk_regions_at(@event['from']), @level['region']);
+			@to = array_contains(sk_regions_at(@event['to']), @level['region']);
+			if(@from && !@to) {
+				if(array_contains(@level['spectators'], player())) {
+					cancel();
+					_level_remove_spectator(player(), @level);
+				} else if(array_contains(@level['players'], player())) {
+					_level_remove_player(player(), @level);
+				}
+			} else if(@to && !@from) {
+				if(@level['wave'] < 2) {
+					set_timeout(50, closure() {
+						if(pworld() == @level['world']) {
+							_level_add_player(player(), @level);
+						}
+					});
+				} else {
+					_level_add_spectator(player(), @level);
+				}
+			}
+		}
+	}
+	
+	bind(creature_spawn, array('id': 'mobspawn'.@level['region']), null, @event, @world = @level['world'], @region = @level['region'], @entities) {
 		if(@event['location']['world'] == @world && array_contains(sk_regions_at(@event['location']), @region)) {
 			@entities[] = @event['id'];
 		}
 	}
 	
-	bind(entity_death, array('id': 'death'.@level['region']), null, @event, @entities) {
+	bind(entity_death, array('id': 'mobdeath'.@level['region']), null, @event, @entities) {
 		array_remove_values(@entities, @event['id']);
 	}
 	
@@ -68,6 +127,13 @@ proc _level_start(@level) {
 
 	@sleep = array(3);
 	set_interval(1000, closure(){
+		// Check if players are still in play
+		foreach(@p in @level['spectators']) {
+			if(!array_contains(sk_current_regions(@p), @level['region'])) {
+				_level_remove_spectator(@p, @level);
+			}
+		}
+		
 		if(array_index_exists(@level['config'], 'shop') && pviewing_virtualchest('level'.@level['region'])) {
 			die();
 		
@@ -159,13 +225,6 @@ proc _level_start(@level) {
 				array_remove(@entities, @r);
 			}
 			
-			// Check if players are still in play
-			foreach(@i: @p in @level['players']) {
-				if(!ponline(@p) || pinfo(@p, 5) == 0 || !array_contains(sk_current_regions(@p), @level['region'])) {
-					array_remove(@level['players'], @i);
-				}
-			}
-			
 			// If no players, we lose!
 			if(!@level['players']) {
 				clear_task();
@@ -180,8 +239,12 @@ proc _level_end(@level, @win) {
 	sk_region_flag(@level['world'], @level['region'], 'mob-spawning', 'deny');
 	set_gamerule(@level['world'], 'doDaylightCycle', true);
 	_remove_region_entities(@level['region']);
-	unbind('spawn'.@level['region']);
 	unbind('death'.@level['region']);
+	unbind('spawn'.@level['region']);
+	unbind('quit'.@level['region']);
+	unbind('teleport'.@level['region']);
+	unbind('mobspawn'.@level['region']);
+	unbind('mobdeath'.@level['region']);
 	unbind('interact'.@level['region']);
 	unbind('openshop'.@level['region']);
 	unbind('shop'.@level['region']);
@@ -191,7 +254,16 @@ proc _level_end(@level, @win) {
 				title_msg(@p, 'You win!', '');
 			}
 			stop_named_sound(@p, @level['music'], 'RECORDS');
-			_equip_kit(@p);
+			_level_remove_player(@p, @level);
+		}
+	}
+	foreach(@p in @level['spectators']) {
+		if(ponline(@p)) {
+			if(@win) {
+				title_msg(@p, 'They win!', '');
+			}
+			stop_named_sound(@p, @level['music'], 'RECORDS');
+			_level_remove_spectator(@p, @level);
 		}
 	}
 	if(array_index_exists(@level['arena'], 'schematic')) {

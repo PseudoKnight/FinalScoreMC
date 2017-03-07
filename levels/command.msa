@@ -81,7 +81,7 @@
 				die('This region is not defined as an arena.');
 			}
 			if(!@name) {
-				@name = @arena['configs'][rand(array_size(@arena['trials']))];
+				@name = @arena['configs'][rand(array_size(@arena['configs']))];
 			}
 			if(array_contains(get_scoreboards(), 'level'.@region)) {
 				die(color('red').'Game already running.');
@@ -90,6 +90,7 @@
 				'name': @name,
 				'wave': 0,
 				'players': array(),
+				'spectators': array(),
 				'title': '',
 				'subtitle': '',
 				'music': '',
@@ -126,30 +127,14 @@
 				create_virtualchest(@shop);
 			}
 			
-			@levels = 0;
-			if(array_index_exists(@level['config'], 'levels')) {
-				@levels = @level['config']['levels'];
-			}
+			include('core.library/game.ms');
+			
 			foreach(@p in all_players(@level['world'])) {
 				if(array_contains(sk_current_regions(@p), @level['region'])) {
-					@level['players'][] = @p;
-					set_pscoreboard(@p, 'level'.@region);
-					_clear_pinv(@p);
-					set_pinv(@p, @level['config']['gear']);
-					if(array_index_exists(@level['config'], 'shop')) {
-						pgive_item(@p, 388, 1, array('display': 'Open Shop'));
-					}
-					set_pbed_location(@p, @level['arena']['lobby']);
-					set_entity_health(puuid(@p), 100);
-					set_phunger(@p, 20);
-					set_psaturation(@p, 5);
-					set_plevel(@p, @levels);
-					set_pexp(@p, 0);
-					title_msg(@p, @level['config']['title'], 'by '.@level['config']['author'], 20, 40, 20);
+					_level_add_player(@p, @level);
 				}
 			}
 			
-			include('core.library/game.ms');
 			_level_start(@level);
 			
 		default:

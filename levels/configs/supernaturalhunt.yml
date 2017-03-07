@@ -1,6 +1,6 @@
 title: 'Supernatural Hunt'
 author: 'NinjaKing1200'
-levels: 4
+levels: 5
 shop:
     0:
         name: STONE_SWORD
@@ -31,6 +31,7 @@ shop:
         cost: 1
         meta:
             base:
+                upgraded: true
                 type: SPEED
     12:
         name: TIPPED_ARROW
@@ -117,6 +118,7 @@ waves:
             - SILVERFISH
             - ENDERMITE
             - ENDERMITE
+            - ENDERMITE
     3:
         subtitle: 'Crawling Itch'
         mobs:
@@ -129,24 +131,19 @@ waves:
         mobs:
             - SKELETON
             - SKELETON
-            - 'SKELETON:STRAY'
     5:
         subtitle: 'Dead End'
         mobs:
             - SKELETON
             - SKELETON
-            - SKELETON
+            - ZOMBIE
             - ZOMBIE
             - ZOMBIE
     6:
-        subtitle: 'BOSS: 3 Stooges'
+        subtitle: 'BOSS: Ender Bros.'
         mobs:
             - type: ENDERMAN
-              pos: 'center'
-              rider:
-                  type: ENDERMAN
-                  rider:
-                      type: ENDERMAN
+              rider: ENDERMAN
     7:
         title: 'The Final Score'
         subtitle: 'FishDish_12'
@@ -316,7 +313,7 @@ waves:
               effects:
                   - id: 1
                     strength: 0
-                    strength: 600
+                    seconds: 600
                   - id: 5
                     strength: 0
                     seconds: 600
@@ -394,8 +391,8 @@ waves:
         title: 'Internet Rage'
         subtitle: 'Shrek'
         mobs:
-            - 'SLIME:4'
-            - 'SLIME:4'
+            - 'SLIME:8'
+            - 'SLIME:8'
     16:
         subtitle: 'JOHN CENA'
         mobs:
@@ -465,16 +462,23 @@ waves:
             - SKELETON
             - SKELETON
     19:
-        subtitle: 'Doge'
+        subtitle: 'Harlem Shake'
         mobs:
-            type: WOLF
-            effects:
-                - id: 1
-                  strength: 0
-                  seconds: 600
-                - id: 5
-                  strength: 1
-                  seconds: 600
+            - SQUID
+            - SQUID
+            - SQUID
+            - SQUID
+            - SQUID
+            - SQUID
+            - SQUID
+            - SQUID
+            - SQUID
+            - SQUID
+            - SQUID
+            - SQUID
+            - SQUID
+            - SQUID
+            - SQUID
     20:
         subtitle: 'BOSS: Belibers'
         mobs:
@@ -483,4 +487,50 @@ waves:
             - ZOMBIE
             - ZOMBIE
             - ZOMBIE
-                  
+    21:
+        title: 'Ghost Stories'
+        subtitle: 'UnderTheSkin'
+        mobs:
+            - type: SILVERFISH
+              effects:
+                  - id: 14
+                    strength: 0
+                    seconds: 600
+            - type: SILVERFISH
+              effects:
+                  - id: 14
+                    strength: 0
+                    seconds: 600
+            - type: SILVERFISH
+              effects:
+                  - id: 14
+                    strength: 0
+                    seconds: 600
+    22:
+        subtitle: 'Insanity'
+        mobs:
+            - type: VEX
+              pos: 'center'
+            - type: VEX
+              pos: 'center'
+            - type: VEX
+              pos: 'center'
+    23:
+        subtitle: 'Haunted'
+        mobs:
+            - 'SKELETON:STRAY'
+            - 'SKELETON:STRAY'
+            - 'SKELETON:STRAY'
+            - 'SKELETON:STRAY'
+            - type: VEX
+              pos: 'center'
+            - type: VEX
+              pos: 'center'
+            - type: VEX
+              pos: 'center'
+            - type: VEX
+              pos: 'center'
+            - type: VEX
+              pos: 'center'
+            - type: VEX
+              pos: 'center'

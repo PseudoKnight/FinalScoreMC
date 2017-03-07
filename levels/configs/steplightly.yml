@@ -1,6 +1,6 @@
 title: 'Step Lightly'
 author: 'gothem8'
-levels: 4
+levels: 5
 gear:
     0:
         name: WOOD_SWORD
@@ -34,6 +34,7 @@ shop:
         cost: 1
         meta:
             base:
+                upgraded: true
                 type: SPEED
     12:
         name: TIPPED_ARROW
@@ -464,25 +465,29 @@ waves:
               age: 0
               pos: 'center'
               tags:
-                  saddle: true
+                  saddle:
+                      name: SADDLE
               rider: SKELETON
             - type: 'HORSE:SKELETON'
               age: 0
               pos: 'center'
               tags:
-                  saddle: true
+                  saddle:
+                      name: SADDLE
               rider: SKELETON
             - type: 'HORSE:SKELETON'
               age: 0
               pos: 'center'
               tags:
-                  saddle: true
+                  saddle:
+                      name: SADDLE
               rider: SKELETON
             - type: 'HORSE:SKELETON'
               age: 0
               pos: 'center'
               tags:
-                  saddle: true
+                  saddle:
+                      name: SADDLE
               rider: SKELETON
             - type: 'SKELETON:WITHER'
               pos: 'center'
