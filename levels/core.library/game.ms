@@ -87,11 +87,11 @@ proc _level_start(@level) {
 							@item['meta'] = associative_array();
 						}
 						if(array_index_exists(@level['shop'], @item['name'])) {
-							@refund = @item['qty'] * (@level['shop'][@item['name']] / 2);
+							@refund = @level['shop'][@item['name']] / 2;
 						} else {
 							@refund = round(0.5 / min(16, material_info(@item['type'])['maxStacksize']), 2);
 						}
-						@item['meta']['lore'] = array('Sell for '.@refund.' levels');
+						@item['meta']['lore'] = array('Sell each for '.@refund.' levels');
 					}
 				}
 				set_pinv(@inv);
