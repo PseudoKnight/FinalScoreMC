@@ -262,10 +262,6 @@ proc _start_game(@course, @loc) {
 							@golf[@hole]['total'][@player] = @golf[@hole]['strokes'][@player];
 						}
 
-						if(@hole < 9) {
-							set_pscoreboard(@player, @golf['name'].@golf['lowestHole']);
-						}
-
 						# check if last player to leave hole
 						@lastplayer = true;
 						foreach(@p: @b in @golf['players']) {
@@ -277,7 +273,7 @@ proc _start_game(@course, @loc) {
 						}
 						if(@lastplayer) {
 							set_block_at(@golf[@hole]['loc'], 0);
-							@golf['lowestHole'] = @hole + 1;
+							@golf['lowestHole'] = min(9, @hole + 1);
 							@golf['par'] += @golf[@hole]['par'];
 
 							# update sidebars and score output for players
@@ -286,6 +282,7 @@ proc _start_game(@course, @loc) {
 								@header = color(7).'Hole\''.color('r').@hole.color(8).'*';
 								@scores = color(7).'Score'.color(8).'*';
 								foreach(@p: @b in @golf['players']) {
+									set_pscoreboard(@p, @golf['name'].@golf['lowestHole']);
 									@score = @golf[@hole]['total'][@p] - @golf['par'];
 									@pname = @p;
 									if(_string_width(@p) > 72){
@@ -300,6 +297,7 @@ proc _start_game(@course, @loc) {
 								_regionmsg(@golf['name'], @header);
 								_regionmsg(@golf['name'], @scores);
 							} else {
+								set_pscoreboard(@player, @golf['name'].@golf['lowestHole']);
 								@score = @golf[@hole]['total'][@player] - @golf['par'];
 								tmsg(@player, colorize('&7&l[ &a&lHOLE &6&l'.@hole.' &7&l] &r'
 										.if(@type, @type, @golf[@hole]['strokes'][@player])
