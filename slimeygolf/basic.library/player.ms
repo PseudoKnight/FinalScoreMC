@@ -20,10 +20,11 @@ proc _add_player(@player, @golf) {
 }
 
 proc _remove_player(@player, @golf) {
-	unbind('golf_swing_'.@player);
+	unbind('golf_swing1_'.@player);
+	unbind('golf_swing2_'.@player);
 	unbind('golf_hit_'.@player);
 	@ball = @golf['players'][@player];
-	_remove_ball(@ball['id'], @golf['name']);
+	_remove_ball(@ball, @golf['name']);
 	if(ponline(@player)) {
         set_collides_with_entities(@player, true);
 		set_pscoreboard(@player);

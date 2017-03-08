@@ -49,8 +49,9 @@ proc _start_game(@course, @loc) {
 			set_pexp(player(), 0);
 
 			if(_ball_exists(@ball['id'])) {
-				_remove_ball(@ball['id'], @golf['name']);
-				unbind('golf_swing_'.player());
+				_remove_ball(@ball, @golf['name']);
+				unbind('golf_swing1_'.player());
+				unbind('golf_swing2_'.player());
 				unbind('golf_hit_'.player());
 			} else {
 				set_plevel(player(), 0);
@@ -87,16 +88,8 @@ proc _start_game(@course, @loc) {
 				@golf[@hole]['strokes'][player()] = 0;
 				set_pscore('strokes', player(), 0, @golf['name'].@hole);
 			}
-
-			bind(player_interact_at_entity, array(id: 'golf_swing_'.player()), array('clicked': @mobcheck), @event,
-					@player = player(), @golf) {
-
-				if(@player != player(), die());
-				@ball = @golf['players'][player()];
-				if(@event['id'] != @ball['slime']){
-					die();
-				}
-				cancel();
+			
+			proc _charge_swing(@ball) {
 				if(!@ball['swing']) {
 					@loc = entity_loc(@ball['id']);
 					@ball['origin'] = ploc();
@@ -128,7 +121,29 @@ proc _start_game(@course, @loc) {
 				}
 			}
 
-			bind(entity_damage, array(id: 'golf_hit_'.player()), array('id': @ball['slime'], 'cause': 'ENTITY_ATTACK'), @event, @golf) {
+			bind(player_interact_at_entity, array(id: 'golf_swing1_'.player()), array('clicked': @mobcheck), @event,
+					@player = player(), @golf) {
+
+				if(@player != player(), die());
+				@ball = @golf['players'][player()];
+				if(@event['id'] == @ball['slime']){
+					cancel();
+					_charge_swing(@ball);
+				}
+			}
+			
+			bind(player_interact_at_entity, array(id: 'golf_swing2_'.player()), array('clicked': 'ARMOR_STAND'), @event,
+					@player = player(), @golf) {
+
+				if(@player != player(), die());
+				@ball = @golf['players'][player()];
+				if(@event['id'] == @ball['id']){
+					cancel();
+					_charge_swing(@ball);
+				}
+			}
+
+			bind(entity_damage, array(id: 'golf_hit_'.player()), array('id': '/('.@ball['id'].'|'.@ball['slime'].')/', 'cause': 'ENTITY_ATTACK'), @event, @golf) {
 				cancel();
 				if(!array_index_exists(@golf['players'], @event['damager'])) {
 					die();
@@ -137,8 +152,7 @@ proc _start_game(@course, @loc) {
 				@player = @event['damager'];
 				@ball = @golf['players'][@player];
 				@hole = @ball['hole'];
-				if(@xp > 0 && @ball['swing']
-				&& @ball['slime'] == @event['id']) {
+				if(@xp > 0 && @ball['swing']) {
 					@ball['swing'] = false;
 					@xp = max(2, @xp - 8);
 					set_plevel(@player, plevel(@player) + 1);
@@ -158,8 +172,6 @@ proc _start_game(@course, @loc) {
 						set_entity_velocity(@ball['id'], @ball['velocity']);
 					})
 					set_pinv(@player, array(0: array('type': 341)));
-				} else {
-					cancel();
 				}
 			}
 		}
@@ -187,10 +199,10 @@ proc _start_game(@course, @loc) {
 			@ball = @golf['players'][@player];
 			if(_ball_exists(@ball['id'])) {
 				@loc = entity_loc(@ball['id']);
+				set_entity_loc(@ball['slime'], @loc);
 				@v = entity_velocity(@ball['id']);
-				@block = _get_block_below(_relative(@loc, 'down', 0.077), @v);
+				@block = _get_block_below(_relative(@loc, 'down', 0.01), @v);
 				if(@block) {
-					set_mob_effect(@ball['id'], 25, -1, 1, true, false);
 					@v['y'] = 0;
 					if(@block == '35:15') { # if ball dropped into the hole
 						# check for birdie/eagle
@@ -239,8 +251,9 @@ proc _start_game(@course, @loc) {
 						}
 
 						# clean up the hole for this player
-						_remove_ball(@ball['id'], @course);
-						unbind('golf_swing_'.@player);
+						_remove_ball(@ball, @course);
+						unbind('golf_swing1_'.@player)
+						unbind('golf_swing2_'.@player);
 						unbind('golf_hit_'.@player);
 
 						if(@hole > 1) {
@@ -341,8 +354,6 @@ proc _start_game(@course, @loc) {
 						@ball['id'] = 0;
 						continue();
 					}
-				} else {
-					set_mob_effect(@ball['id'], 25, 0, 0);
 				}
 
 				@ricochetPitch = 0
@@ -394,7 +405,7 @@ proc _start_game(@course, @loc) {
 
 			if(!ponline(@player) || !array_contains(sk_current_regions(@player), @course)) {
 				_remove_player(@player, @golf);
-				_remove_ball(@ball['id'], @course);
+				_remove_ball(@ball, @course);
 				if(array_size(@golf['players']) == 0) {
 					_golf_cleanup(@golf);
 					break();

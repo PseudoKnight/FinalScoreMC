@@ -1,20 +1,20 @@
 proc _place_ball(@mobtype, @loc, @ball, @course) {
 	@loc = @loc[];
 	@loc['x'] += 0.5;
-	@loc['y'] += 1.076;
+	@loc['y'] -= 1;
 	@loc['z'] += 0.5;
 
 	@ball['id'] = spawn_entity('ARMOR_STAND', 1, @loc)[0];
+	@loc['y'] += 2;
 	@ball['slime'] = spawn_mob(@mobtype.':1', 1, @loc)[0];
 	@ball['velocity'] = array('x': 0, 'y': 0, 'z': 0);
 
 	set_entity_ai(@ball['slime'], false);
 	set_entity_velocity(@ball['id'], array(0, 0, 0));
-	set_entity_spec(@ball['id'], associative_array('marker': true, 'visible': false));
-	set_entity_rider(@ball['id'], @ball['slime']);
+	set_entity_spec(@ball['id'], associative_array('visible': false, 'small': true));
+	set_entity_loc(@ball['id'], @loc);
 	set_timeout(50, closure(){
 		set_mob_effect(@ball['slime'], 11, 4, 99999, true, false);
-		set_mob_effect(@ball['id'], 25, -1, 1, true, false);
 	});
 }
 
@@ -22,12 +22,10 @@ proc _ball_exists(@id) {
 	return(@id && entity_exists(@id));
 }
 
-proc _remove_ball(@id, @course) {
+proc _remove_ball(@ball, @course) {
 	try {
-		if(@slime = get_entity_rider(@id)) {
-			entity_remove(@slime);
-		}
-		entity_remove(@id);
+		entity_remove(@ball['slime']);
+		entity_remove(@ball['id']);
 	} catch(Exception @ex) {
 		// doesn't exist
 	}
