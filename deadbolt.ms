@@ -1,38 +1,27 @@
 # DeadboltHelper
 # Updates out-dated names on [private] signs
-
-proc _get_deadbolt(@loc) {
+bind(player_interact, null, array('block': data_values('wallsign')), @event) {
+	@sign = null;
 	try {
-		@signtext = get_sign_text(@loc);
+		@sign = get_sign_text(@event['location']);
 	} catch(RangeException @ex) {
-		return(null);
+		die(); // wallsign isn't a sign
 	}
-	if(!reg_match('(?i)^(\\u00A7[0-9a-f])?\\[private\\]$', @signtext[0])) {
-		return(null);
-	}
-	return(@signtext);
-}
-
-bind(player_interact, null, array('block': data_values('wallsign')), @e) {
-	if(@db = _get_deadbolt(@e['location'])) {
-		@changed = false;
+	if(reg_match('(?i)^(\\u00A7[0-9a-f])?\\[private\\]$', @sign[0])) {
 		for(@i = 1, @i < 4, @i++) {
-			if(@db[@i] === '' || @db[@i][0] === '[' || @db[@i] == player()) {
+			if(@sign[@i] === '' || @sign[@i][0] === '[' || @sign[@i] == player()) {
 				continue();
 			}
 			try {
-				@pdata = _pdata(@db[@i], (length(@db[@i]) == 15));
+				@pdata = _pdata(@sign[@i], (length(@sign[@i]) == 15));
 			} catch(NotFoundException @ex) {
 				continue();
 			}
-			if(@pdata['name'] != @db[@i]) {
+			if(@pdata['name'] != @sign[@i]) {
 				@newplayer = @pdata['name'];
-				@db[@i] = substr(@newplayer, 0, if(length(@newplayer) > 15, 15, length(@newplayer)));
-				@changed = true;
+				@sign[@i] = substr(@newplayer, 0, if(length(@newplayer) > 15, 15, length(@newplayer)));
+				set_sign_text(@event['location'], @sign);
 			}
-		}
-		if(@changed) {
-			set_sign_text(@e['location'], @db);
 		}
 	}
 }
