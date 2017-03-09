@@ -167,7 +167,7 @@ proc _start_game(@hockey) {
     @bounciness = 0.85;
     @world = @hockey['loc']['world'];
     set_interval(50, 0, closure(){
-        if(@count[0]-- == 0) {
+        if(--@count[0] == 0) {
             @count[0] = 20;
             @hockey['seconds']--;
             @time = simple_date('m:ss', @hockey['seconds'] * 1000);
