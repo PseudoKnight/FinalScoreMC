@@ -67,7 +67,7 @@ proc _create_menu() {
 		'width': array(
 			'default': 1024,
 			'shown': true,
-			'values': array(0, 256, 384, 512, 768, 1024),
+			'values': array(256, 384, 512, 768, 1024),
 			'item': array(
 				'name': 'END_CRYSTAL', 'meta': array(
 					'display': color('aqua').color('bold').'WORLDBORDER WIDTH',
@@ -194,13 +194,14 @@ proc _create_menu() {
 					@index++;
 					if(@index == array_size(@values)) {
 						@rule['value'] = @values[0];
+						@index = 0;
 					} else {
 						@rule['value'] = @values[@index];
 					}
 					if(@rule['value']) {
 						if(@rule['value'] > 127) {
 							@item['meta']['display'] = color('green').@rule['value'];
-							@item['qty'] = @index;
+							@item['qty'] = @index + 1;
 						} else {
 							@item['meta']['display'] = color('green').'ACTIVATED';
 							@item['qty'] = @rule['value'];

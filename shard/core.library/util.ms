@@ -7,7 +7,7 @@ proc _get_spawn_location(@retries = 3) {
 	@loc['z'] += rand() * @width - @width / 2;
 	@loc = get_highest_block_at(@loc);
 	if(@retries && (@loc['y'] == 0 || get_block_at(@loc) == '9:0')) {
-		@loc = _get_spawn_location(@retries--);
+		@loc = _get_spawn_location(--@retries);
 	}
 	return(@loc);
 }

@@ -81,36 +81,36 @@ proc _shard_create(@rules){
 			console('Created shard ('.(@stop - @start).'ms)', false);
 			
 			set_timeout(150, closure(){
-				// Calculate area and center
-				@width = max(256, @rules['width']);
-				@radius = @width / 2;
-				@minX = min(@x, @x2) * @radius;
-				@maxX = (max(@x, @x2) + 1) * @radius;
-				@minZ = min(@z, @z2) * @radius;
-				@maxZ = (max(@z, @z2) + 1) * @radius;
-				@centerX = @minX + @radius;
-				@centerZ = @minZ + @radius;
+				// Calculate center
+				if(@rules['width'] <= 512) { // use player location if possible
+					@ploc = ploc();
+					@centerX = @ploc['x'];
+					@centerZ = @ploc['z'];
+				} else { // otherwise use center of entire shard
+					@centerX = min(@x, @x2) * 512 + 512;
+					@centerZ = min(@z, @z2) * 512 + 512;
+					
+					// Randomize center slightly
+					@randX = rand(0, 65) - 32;
+					@centerX += @randX;
+					@randZ = rand(0, 65) - 32;
+					@centerZ += @randZ;
+				}
 				
-				// Randomize center slightly
-				@randX = rand(0, 65) - 32;
-				@centerX += @randX;
-				@minX += @randX;
-				@maxX += @randX;
-				@randZ = rand(0, 65) - 32;
-				@centerZ += @randZ;
-				@minZ += @randZ;
-				@maxZ += @randZ;
+				// Calculate worldborder region
+				@radius = @rules['width'] / 2;
+				@minX = @centerX - @radius;
+				@maxX = @centerX + @radius;
+				@minZ = @centerZ - @radius;
+				@maxZ = @centerZ + @radius;
+				
 				@loc = get_highest_block_at(@centerX, @centerZ, 'shard');
 				
 				// Set world settings
 				set_spawn(@loc);
 				set_world_time('shard', get_world_time(@world));
 				storm(false, 'shard');
-				if(@rules['width']) {
-					set_world_border('shard', array('width': min(@maxX - @minX, @maxZ - @minZ), 'center': @loc));
-				} else {
-					set_world_border('shard', array('width': 300000));
-				}
+				set_world_border('shard', array('width': @rules['width'], 'center': @loc));
 				set_gamerule('shard', 'NATURALREGENERATION', !@rules['noregen']);
 				if(@rules['buffertime'] && @rules['timelimit']) {
 					set_timeout(@rules['buffertime'] * 60000, closure(){
@@ -143,11 +143,10 @@ proc _shard_create(@rules){
 						play_sound(@ploc, array('sound': 'GLASS', 'pitch': 0.5));
 						@ploc['world'] = 'shard';
 						if(@rules['randomspawn']
-						|| @p != player()
-						&& (@ploc['x'] < @minX
+						|| @ploc['x'] < @minX
 						|| @ploc['x'] > @maxX
 						|| @ploc['z'] < @minZ
-						|| @ploc['z'] > @maxZ)) {
+						|| @ploc['z'] > @maxZ) {
 							@ploc = _get_spawn_location();
 						}
 						set_ploc(@p, @ploc);
@@ -254,7 +253,7 @@ proc _shard_create(@rules){
 						}
 						export('playerspawn', @loc);
 						set_pmode('SPECTATOR');
-						if(@rules['width'] && @rules['timelimit'] && !@rules['buffertime'] && get_world_border('shard')['width'] == @rules['width']) {
+						if(@rules['timelimit'] && !@rules['buffertime'] && get_world_border('shard')['width'] == @rules['width']) {
 							set_world_border('shard', array('width': 1, 'seconds': @rules['timelimit'] * 60));
 							_worldmsg('shard', color('red').color('bold').'Shard has started to collapse! ('.@rules['timelimit'].' minutes)');
 						}
