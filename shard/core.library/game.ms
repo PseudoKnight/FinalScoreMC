@@ -112,7 +112,7 @@ proc _shard_create(@rules){
 				storm(false, 'shard');
 				set_world_border('shard', array('width': @rules['width'], 'center': @loc));
 				set_gamerule('shard', 'NATURALREGENERATION', !@rules['noregen']);
-				if(@rules['buffertime'] && @rules['timelimit']) {
+				if(!@rules['treasurehunt'] && @rules['buffertime'] && @rules['timelimit']) {
 					set_timeout(@rules['buffertime'] * 60000, closure(){
 						if(array_contains(get_worlds(), 'shard')) {
 							set_world_border('shard', array('width': 1, 'seconds': @rules['timelimit'] * 60));
@@ -164,7 +164,7 @@ proc _shard_create(@rules){
 					queue_push(closure(){
 						@count = 0;
 						@last = '';
-						if(get_teams()) {
+						if(get_teams('shard')) {
 							@left = array();
 							foreach(@p in all_players()) {
 								if(pworld(@p) == 'shard' && pmode(@p) != 'SPECTATOR') {
@@ -200,6 +200,7 @@ proc _shard_create(@rules){
 								}
 							});
 						} else if(@count == 0) {
+							unbind('shard-worldchanged');
 							foreach(@p in all_players()) {
 								if(pworld(@p) == 'shard') {
 									queue_push(closure(){
@@ -231,9 +232,6 @@ proc _shard_create(@rules){
 				
 				// Events
 				@binds[] = 'shard-quit';
-				@binds[] = 'shard-death';
-				@binds[] = 'shard-spawn';
-				@binds[] = 'shard-worldchanged';
 				bind(player_quit, array('priority': 'HIGHEST', 'id': 'shard-quit'), null, @event, @binds) {
 					if(pworld() == 'shard') {
 						@loc = get_spawn('custom');
@@ -243,19 +241,22 @@ proc _shard_create(@rules){
 					}
 				}
 				
+				@binds[] = 'shard-death';
 				bind(player_death, array('priority': 'HIGHEST', 'id': 'shard-death'), null, @event, @players, @rules) {
 					if(@event['location']['world'] == 'shard') {
 						consume();
 						modify_event('death_message', color('k').'X'.color('r').' '.@event['death_message']);
-						@loc = ploc();
-						if(@loc['y'] < 0) {
-							@loc['y'] = 0;
-						}
-						export('playerspawn', @loc);
-						set_pmode('SPECTATOR');
-						if(@rules['timelimit'] && !@rules['buffertime'] && get_world_border('shard')['width'] == @rules['width']) {
-							set_world_border('shard', array('width': 1, 'seconds': @rules['timelimit'] * 60));
-							_worldmsg('shard', color('red').color('bold').'Shard has started to collapse! ('.@rules['timelimit'].' minutes)');
+						if(!@rules['treasurehunt']) {
+							@loc = ploc();
+							if(@loc['y'] < 0) {
+								@loc['y'] = 0;
+							}
+							export('playerspawn', @loc);
+							set_pmode('SPECTATOR');
+							if(@rules['timelimit'] && !@rules['buffertime'] && get_world_border('shard')['width'] == @rules['width']) {
+								set_world_border('shard', array('width': 1, 'seconds': @rules['timelimit'] * 60));
+								_worldmsg('shard', color('red').color('bold').'Shard has started to collapse! ('.@rules['timelimit'].' minutes)');
+							}
 						}
 						set_timeout(50, closure(){
 							respawn();
@@ -263,8 +264,9 @@ proc _shard_create(@rules){
 					}
 				}
 				
+				@binds[] = 'shard-spawn';
 				bind(player_spawn, array('id': 'shard-spawn', 'priority': 'LOWEST'), array('world': 'shard'), @event, @binds) {
-					modify_event('location', import('playerspawn', get_spawn('shard')));
+					modify_event('location', import('playerspawn', _get_spawn_location()));
 					_check_shard(@binds);
 					export('playerspawn', null);
 				}

@@ -84,7 +84,8 @@ proc _create_menu() {
 					'display': color('aqua').color('bold').'TIME LIMIT',
 					'lore': array(
 						color('white').'How much time for the worldborder to collapse',
-						color('white').'If deactivated, the worldborder will not collapse.'
+						color('white').'If deactivated, the worldborder will not collapse',
+						color('white').'and it will override BUFFER TIME'
 			)))
 		),
 		'buffertime': array(
@@ -99,6 +100,21 @@ proc _create_menu() {
 					'lore': array(
 						color('white').'How much time before the worldborder collapses.',
 						color('white').'If deactivated, the worldborder will collapse after first death.'
+			)))
+		),
+		'treasurehunt': array(
+			'default': 0,
+			'shown': true,
+			'values': array(0, 3, 5, 7, 10),
+			'item': array(
+				'name': 'ENDER_CHEST', 'meta': array(
+					'display': color('aqua').color('bold').'TREASURE HUNT',
+					'lore': array(
+						color('white').'Collect randomly buried treasure. Players respawn.',
+						color('white').'One minute after a treasure is found and retrieved,',
+						color('white').'another is spawned. Compasses point to treasures,',
+						color('white').'but coordinates are also given.',
+						color('white').'Overrides TIME LIMIT.',
 			)))
 		),
 	);
