@@ -64,7 +64,7 @@ proc _end_treasurehunt(@winner, @binds) {
 }
 
 create_objective('Treasures', 'DUMMY', 'shard');
-set_objective_display('Treasures', array('slot': 'SIDEBAR'), 'shard');
+set_objective_display('Treasures', array('slot': 'SIDEBAR', 'displayname': 'Treasures ('.@rules['treasurehunt'].')'), 'shard');
 _create_treasure(max(5, 60 * @rules['buffertime']), @rules);
 
 @binds[] = 'shard-break';
