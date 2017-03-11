@@ -464,31 +464,75 @@ waves:
             - type: 'HORSE:SKELETON'
               age: 0
               pos: 'center'
+              tame: true
               tags:
                   saddle:
                       name: SADDLE
-              rider: SKELETON
+              rider:
+                  type: SKELETON
+                  gear:
+                      helmet:
+                          name: IRON_HELMET
+                      chestplate:
+                          name: IRON_CHESTPLATE
+                      leggings:
+                          name: IRON_LEGGINGS
+                      boots:
+                          name: IRON_BOOTS
             - type: 'HORSE:SKELETON'
               age: 0
               pos: 'center'
+              tame: true
               tags:
                   saddle:
                       name: SADDLE
-              rider: SKELETON
+              rider:
+                  type: SKELETON
+                  gear:
+                      helmet:
+                          name: IRON_HELMET
+                      chestplate:
+                          name: IRON_CHESTPLATE
+                      leggings:
+                          name: IRON_LEGGINGS
+                      boots:
+                          name: IRON_BOOTS
             - type: 'HORSE:SKELETON'
               age: 0
               pos: 'center'
+              tame: true
               tags:
                   saddle:
                       name: SADDLE
-              rider: SKELETON
+              rider:
+                  type: SKELETON
+                  gear:
+                      helmet:
+                          name: IRON_HELMET
+                      chestplate:
+                          name: IRON_CHESTPLATE
+                      leggings:
+                          name: IRON_LEGGINGS
+                      boots:
+                          name: IRON_BOOTS
             - type: 'HORSE:SKELETON'
               age: 0
               pos: 'center'
+              tame: true
               tags:
                   saddle:
                       name: SADDLE
-              rider: SKELETON
+              rider:
+                  type: SKELETON
+                  gear:
+                      helmet:
+                          name: IRON_HELMET
+                      chestplate:
+                          name: IRON_CHESTPLATE
+                      leggings:
+                          name: IRON_LEGGINGS
+                      boots:
+                          name: IRON_BOOTS
             - type: 'SKELETON:WITHER'
               pos: 'center'
               effects:

@@ -189,7 +189,7 @@ proc _level_start(@level) {
 						@locs = @level['arena'][@mob['pos']];
 					}
 					@loc = @locs[rand(array_size(@locs))];
-					_spawn_mob(@mob, @loc);
+					_spawn_mob(@mob, @loc, player());
 				} else {
 					@loc = @locs[rand(array_size(@locs))];
 					spawn_mob(@mob, 1, @loc);
