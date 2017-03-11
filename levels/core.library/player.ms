@@ -1,4 +1,7 @@
 proc _level_add_player(@player, @level) {
+	if(pinfo(@player, 5) == 0) {
+		die();
+	}
 	@level['players'][] = @player;
 	set_pscoreboard(@player, 'level'.@level['region']);
 	_clear_peffects(@player);
