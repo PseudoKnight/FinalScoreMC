@@ -220,6 +220,16 @@ proc _repopulate_menu(){
 				),
 			),
 		);
+		@other[5] = associative_array(
+			'name': 'PACKED_ICE',
+			'meta': associative_array(
+				'display': color('aqua').'Hockey',
+				'lore': array(
+					color('r').'Team slime hockey (4 - 8 players)',
+					color('dark_gray').'Run: /warp hockey',
+				),
+			),
+		);
 		@other[9] = associative_array(
 			'name': 'SLIME_BLOCK',
 			'meta': associative_array(
