@@ -39,6 +39,16 @@ bind(player_join, null, null, @event) {
                         @rank = '\u24EE';
                     case 14:
                         @rank = '\u24EF';
+					case 15:
+						@rank = '\u24F0';
+					case 16:
+						@rank = '\u24F1';
+					case 17:
+						@rank = '\u24F2';
+					case 18:
+						@rank = '\u24F3';
+					case 19:
+						@rank = '\u24F4';
                 }
                 @pstate = _pstate(player());
                 if(!array_index_exists(@pstate, 'trophies')) {

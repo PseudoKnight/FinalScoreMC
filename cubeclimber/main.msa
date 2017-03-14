@@ -88,7 +88,6 @@ switch($action) {
 		msg(color('yellow').'[ '.@pstats[3].' ] '.color('r').'Total Opponents Played');
 
 	case 'top':
-	case 'top10':
 	case 'toptimes':
 		@toptimes = get_value('cubeclimber', 'toptimes');
 		if(!@toptimes) {
@@ -120,6 +119,36 @@ switch($action) {
 		}
 		store_value('cubeclimber', 'toptimes', array());
 		msg('CubeClimber times reset.');
+		
+	case 'recalctimes':
+		if(!has_permission('cubeclimber.resetstats'), die('You do not have permission.'));
+		@allstats = get_values('cubeclimber');
+		@toptimes = array();
+		foreach(@key: @value in @allstats) {
+			if(substr(@key, 12) == 'toptimes' || !array_index_exists(@value, 4)) {
+				continue();
+			}
+			@player = substr(@key, 19);
+			@time = @value[4];
+			@top = false;
+			foreach(@i: @toptime in @toptimes) {
+				if(@i > 20) {
+					break();
+				}
+				if(@toptime[1] > @time) {
+					array_insert(@toptimes, array(@player, @time), @i);
+					@top = true;
+					break();
+				}
+			}
+			if(!@top && array_size(@toptimes) < 20) {
+				@toptimes[] = array(@player, @time);
+			} else if(array_size(@toptimes) > 20) {
+				array_remove(@toptimes, 20);
+			}
+		}
+		store_value('cubeclimber', 'toptimes', @toptimes);
+		msg('CubeClimber times recalculated.');
 
 	default:
 		msg(colorize('&7[&6Cube&cClimber&7] '
@@ -128,6 +157,6 @@ switch($action) {
 		.'break blocks of that same color.'));
 		msg('/cubeclimber start '.color(7).'Start the game.');
 		msg('/cc stats '.color(7).'View your statistics.');
-		msg('/cc toptimes '.color(7).'View the top 10 times.');
+		msg('/cc toptimes '.color(7).'View the top times.');
 }
 <<<

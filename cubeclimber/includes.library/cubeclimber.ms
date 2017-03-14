@@ -290,7 +290,7 @@ proc _cc_end(@winners, @world = 'custom') {
 				@pstats[4] = @time;
 
 				@top = false;
-				for(@i = 0, @i < 10, @i++) {
+				for(@i = 0, @i < 20, @i++) {
 					if(!@top) {
 						if(!array_index_exists(@toptimes, @i) || @time < @toptimes[@i][1]) {
 							array_insert(@toptimes, array(@p, @time), @i);
@@ -304,19 +304,18 @@ proc _cc_end(@winners, @world = 'custom') {
 				}
 
 				if(@top) {
-					tmsg(@p, color('yellow').color('bold').'TOP TEN TIME!');
-					if(array_size(@toptimes) > 10) {
-						array_remove(@toptimes, 10);
+					tmsg(@p, color('yellow').color('bold').'TOP TWENTY TIME!');
+					if(array_size(@toptimes) > 20) {
+						array_remove(@toptimes, 20);
 					}
 				}
+				store_value('cubeclimber', 'toptimes', @toptimes);
 			}
 		}
 
 		store_value('cubeclimber.player', @p, @pstats);
 
 	}
-
-	store_value('cubeclimber', 'toptimes', @toptimes);
 
 	# ORDER SCORES
 	@scores = array();
