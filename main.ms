@@ -187,8 +187,7 @@ bind(player_join, null, null, @event) {
 				@tips = import('tips');
 				if(@tips) {
 					@tip = @tips[rand(array_size(@tips))];
-					msg(string_multiply(' ', 6).color('gray').color('bold').'TIP:');
-					msg(' '.colorize(@tip));
+					msg('\n '.colorize(@tip));
 					msg(color('1').color('m').'\n\u2575'.@line.color('1').'\u2575');
 				}
 			}
