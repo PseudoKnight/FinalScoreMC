@@ -2,8 +2,8 @@ proc _repopulate_menu(){
 	@main = associative_array(
 		'id': 'main',
 		'title': 'Frog Park Directory',
-		'size': 54,
-		45: associative_array(
+		'size': 63,
+		57: associative_array(
 			'name': 'IRON_SWORD',
 			'meta': associative_array(
 				'display': color('green').'PVP Arenas',
@@ -11,14 +11,14 @@ proc _repopulate_menu(){
 				'flags': array('HIDE_ATTRIBUTES'),
 			),
 		),
-		46: associative_array(
+		58: associative_array(
 			'name': 'IRON_BLOCK',
 			'meta': associative_array(
 				'display': color('green').'Obstacle Courses / Parkour',
 				'lore': array(color('dark_gray').'Open: courses'),
 			),
 		),
-		47: associative_array(
+		59: associative_array(
 			'name': 'IRON_LEGGINGS',
 			'meta': associative_array(
 				'display': color('green').'Other Games',
@@ -104,17 +104,16 @@ proc _repopulate_menu(){
 				);
 			}
 		}
-		@slot = 0;
-		foreach(@difficulty in @difficultyorder) {
+		foreach(@i: @difficulty in @difficultyorder) {
+			@slot = @i * 9;
 			foreach(@coins in @difficulties[@difficulty]) {
 				foreach(@item in @coins) {
-					if(@slot > 44, break());
 					@courses[@slot] = @item;
 					@slot++;
 				}
 			}
 		}
-		@courses[46]['name'] = 'DIAMOND_BLOCK';
+		@courses[58]['name'] = 'DIAMOND_BLOCK';
 		create_virtualchest(@courses);
 		@cakes = null;
 		@courses = null;
@@ -158,7 +157,7 @@ proc _repopulate_menu(){
 				);
 				@slot++;
 			}
-			@pvp[45]['name'] = 'DIAMOND_SWORD';
+			@pvp[57]['name'] = 'DIAMOND_SWORD';
 			create_virtualchest(@pvp);
 			@arenas = null;
 			@pvp = null;
@@ -272,7 +271,7 @@ proc _repopulate_menu(){
 				),
 			),
 		);
-		@other[47]['name'] = 'DIAMOND_LEGGINGS';
+		@other[59]['name'] = 'DIAMOND_LEGGINGS';
 		create_virtualchest(@other);
 	});
 }
