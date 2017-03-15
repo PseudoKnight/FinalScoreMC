@@ -264,7 +264,46 @@
 		} else {
 			msg('Usage: /cake resetplayer [cakeid] <player>');
 		}
-
+		
+	case 'stats':
+		@chatcolor = associative_array(
+			'easy': 'aqua',
+			'easy-medium': 'green',
+			'medium': 'yellow',
+			'medium-hard': 'gold',
+			'hard': 'dark_red',
+			'very-hard': 'dark_purple',
+			'other': 'white',
+		);
+		@cakes = get_value('cakeinfo');
+		@list = array();
+		foreach(@id: @cake in @cakes) {
+			if(@cake['type'] != $) {
+				continue();
+			}
+			@time = time();
+			foreach(@ptime in @cake['players']) {
+				if(@ptime < @time) {
+					@time = @ptime;
+				}
+			}
+			@color = '';
+			if(array_index_exists(@cake, 'difficulty')) {
+				@color = color(@chatcolor[@cake['difficulty']]);
+			}
+			@list[] = array(
+				'name': @id,
+				'color': @color,
+				'rate': round((time() - @time) / 604800000 / array_size(@cake['players']), 2)
+			);
+		}
+		array_sort(@list, closure(@left, @right){
+			return(@left['rate'] > @right['rate']);
+		});
+		msg('Frequency of completion:');
+		foreach(@cake in @list) {
+			msg(@cake['color'].@cake['name'].': '.@cake['rate'].' weeks');
+		}
 
 	default:
 		msg(color('green').'[CAKE] Commands to create, change and remove cake prizes.');
