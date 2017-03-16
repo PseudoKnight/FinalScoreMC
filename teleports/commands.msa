@@ -49,7 +49,7 @@
 *:/spawn [$world] = >>>
 	include('includes.library/teleports.ms');
 	@world = if($world, _worldid($world), pworld());
-	if(!_allows_teleports(@world) || !_allows_teleports(pworld())) {
+	if(!pisop() && (!_allows_teleports(@world) || !_allows_teleports(pworld()))) {
 		die('You cannot teleport directly to or from that world.');
 	}
 	@loc = get_spawn(@world);
