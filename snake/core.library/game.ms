@@ -74,9 +74,9 @@ proc _snake_queue(@args) {
 	// Start countdown
 	@help = array(
 		'',
-		'Press \'f\' to activate ability',
-		'Press \'f\' to activate ability',
-		'Press \'f\' to activate ability',
+		'Press slot # to activate ability',
+		'Press slot # to activate ability',
+		'Press slot # to activate ability',
 		'To turn, click left or right mouse buttons',
 		'To turn, click left or right mouse buttons',
 		'To turn, click left or right mouse buttons',
@@ -90,6 +90,7 @@ proc _snake_queue(@args) {
 					continue();
 				}
 				title_msg(@p, @countdown[0], array_get(@help, @countdown[0], ''), 0, 25, 0);
+				set_pheld_slot(@p, 8);
 			}
 		} else {
 			clear_task();

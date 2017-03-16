@@ -8,7 +8,6 @@
 	'tail': the block type:data for the color of their tail
 	'blocks': an array of ordered block locations representing the tail, new ones pushed on end, such that
 			  order is back of tail to head. This is used for removing blocks.
-	'ability': a powerup abilities
 	'ability-count': the current ammo for each ability
 	'alive': whether the snake is active or dead
 	'click': set to true if an action is performed, set to false on update
@@ -43,8 +42,7 @@ proc _snake_add(@player, @game) {
 	@color = @colors[array_size(@game['snakes'])][2];
 	@game['snakes'][@player] = associative_array(
 		'blocks': array(@startLoc, @headLoc),
-		'ability': array('', ''),
-		'ability-count': array(0, 0),
+		'ability-count': array(0, 0, 0, 0),
 		'head': @head,
 		'tail': @tail,
 		'alive': true,
@@ -84,7 +82,7 @@ proc _snake_add(@player, @game) {
 				'meta': associative_array('display': 'JOYSTICK'),
 			),
 		));
-		set_pheld_slot(@player, 0);
+		set_pheld_slot(@player, 8);
 		_set_pstate_activity(@player, 'SNAKE');
 	} else {
 		@game['snakes'][@player]['bot'] = @player;

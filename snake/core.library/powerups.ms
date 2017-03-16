@@ -1,21 +1,21 @@
 proc _snake_get_powerup_from(@id) {
 	switch(@id) {
 		case 1:
-		case 46:
-		case '46:0':
-			return('tnt');
+		case 133:
+		case '133:0':
+			return('boost');
 		case 2:
 		case 152:
 		case '152:0':
 			return('missile');
 		case 3:
+		case 46:
+		case '46:0':
+			return('tnt');
+		case 4:
 		case 95:
 		case '95:14':
 			return('laser');
-		case 4:
-		case 133:
-		case '133:0':
-			return('boost');
 	}
 	return(null);
 }
@@ -23,17 +23,17 @@ proc _snake_get_powerup_from(@id) {
 proc _snake_get_block_from(@powerup) {
 	switch(@powerup) {
 		case 1:
-		case 'tnt':
-			return(46);
+		case 'boost':
+			return(133);
 		case 2:
 		case 'missile':
 			return(152);
 		case 3:
+		case 'tnt':
+			return(46);
+		case 4:
 		case 'laser':
 			return('95:14');
-		case 4:
-		case 'boost':
-			return(133);
 	}
 	return(null);
 }
@@ -50,6 +50,19 @@ proc _snake_get_name_from(@powerup) {
 			return('Speed Boost');
 	}
 	return(null);
+}
+
+proc _snake_get_slot_from(@powerup) {
+	switch(@powerup) {
+		case 'boost':
+			return(0);
+		case 'missile':
+			return(1);
+		case 'tnt':
+			return(2);
+		case 'laser':
+			return(3);
+	}
 }
 
 proc _snake_add_powerup(@game) {
@@ -91,20 +104,9 @@ proc _snake_powerup(@player, @powerup, @game) {
 		return(false);
 	}
 	@snake = @game['snakes'][@player];
+	@slot = _snake_get_slot_from(@powerup);
+	@snake['ability-count'][@slot] += 1;
 	if(!@snake['bot']) {
-		@slot = pheld_slot(@player);
-		if(@slot > 1) {
-			return(true);
-		}
-		if(@snake['ability'][@slot] == @powerup) {
-			@snake['ability-count'][@slot] += 1;
-		} else if(@snake['ability'][if(@slot, 0, 1)] == @powerup) {
-			@slot = if(@slot, 0, 1);
-			@snake['ability-count'][@slot] += 1;
-		} else {
-			@snake['ability'][@slot] = @powerup;
-			@snake['ability-count'][@slot] = 1;
-		}
 		@item = pinv(@player, @slot);
 		if(@item && @item['type'] == split(':', _snake_get_block_from(@powerup))[0]) {
 			@item['qty'] += 1;
@@ -119,18 +121,6 @@ proc _snake_powerup(@player, @powerup, @game) {
 			);
 			set_pinv(@player, @inv);
 		}
-	} else {
-		if(@snake['ability'][0] == @powerup) {
-			@snake['ability-count'][0] += 1;
-		} else if(@snake['ability'][1] == @powerup) {
-			@snake['ability-count'][1] += 1;
-		} else if(!@snake['ability'][1]) {
-			@snake['ability'][0] = @powerup;
-			@snake['ability-count'][0] = 1;
-		} else {
-			@snake['ability'][1] = @powerup;
-			@snake['ability-count'][1] = 1;
-		}
 	}
 	play_sound(@snake['loc'], associative_array('sound': 'ENDERMAN_TELEPORT', 'pitch': 2, 'volume': 2));
 	return(true);
@@ -138,16 +128,15 @@ proc _snake_powerup(@player, @powerup, @game) {
 
 proc _snake_ability(@player, @slot, @game) {
 	@snake = @game['snakes'][@player];
-	switch(@snake['ability'][@slot]) {
+	@ability = _snake_get_powerup_from(@slot + 1);
+	switch(@ability) {
 		case 'tnt':
 			if(@snake['bot']) {
 				if(@snake['ability-count'][@slot]) {
 					@game['tnt'][] = _snake_drop_tnt(@snake['loc'], @snake['dir']);
 					@snake['ability-count'][@slot] -= 1;
 					set_timeout(5000, closure(){
-						if(@snake['ability'][@slot] == 'tnt') {
-							@snake['ability-count'][@slot] += 1;
-						}
+						@snake['ability-count'][@slot] += 1;
 					});
 				}
 			} else {
@@ -163,7 +152,7 @@ proc _snake_ability(@player, @slot, @game) {
 					set_pinv(@player, @inv);
 					@game['tnt'][] = _snake_drop_tnt(@snake['loc'], @snake['dir']);
 					set_timeout(5000, closure(){
-						if(@snake['alive'] && @snake['ability'][@slot] == 'tnt' && pinv(@player, -106)) {
+						if(@snake['alive'] && pinv(@player, -106)) {
 							@item = pinv(@player, @slot);
 							@inv = associative_array();
 							if(@item) {
@@ -183,9 +172,7 @@ proc _snake_ability(@player, @slot, @game) {
 					_snake_launch_missile(@snake['loc'][], @snake['dir'], @game);
 					@snake['ability-count'][@slot] -= 1;
 					set_timeout(5000, closure(){
-						if(@snake['ability'][@slot] == 'missile') {
-							@snake['ability-count'][@slot] += 1;
-						}
+						@snake['ability-count'][@slot] += 1;
 					});
 				}
 			} else {
@@ -201,7 +188,7 @@ proc _snake_ability(@player, @slot, @game) {
 					set_pinv(@player, @inv);
 					_snake_launch_missile(@snake['loc'][], @snake['dir'], @game);
 					set_timeout(5000, closure(){
-						if(@snake['alive'] && @snake['ability'][@slot] == 'missile' && pinv(@player, -106)) {
+						if(@snake['alive'] && pinv(@player, -106)) {
 							@item = pinv(@player, @slot);
 							@inv = associative_array();
 							if(@item) {
@@ -226,9 +213,7 @@ proc _snake_ability(@player, @slot, @game) {
 					_snake_shoot_laser(@player, @snake['loc'][], @snake['dir'], @count, @game);
 					@snake['ability-count'][@slot] = 0;
 					set_timeout(5000, closure(){
-						if(@snake['ability'][@slot] == 'laser') {
-							@snake['ability-count'][@slot] += @count;
-						}
+						@snake['ability-count'][@slot] += @count;
 					});
 				}
 			} else {
@@ -240,7 +225,7 @@ proc _snake_ability(@player, @slot, @game) {
 					set_pinv(@player, @inv);
 					_snake_shoot_laser(@player, @snake['loc'][], @snake['dir'], @amount, @game);
 					set_timeout(5000, closure(){
-						if(@snake['alive'] && @snake['ability'][@slot] == 'laser' && pinv(@player, -106)) {
+						if(@snake['alive'] && pinv(@player, -106)) {
 							@item = pinv(@player, @slot);
 							@inv = associative_array();
 							if(@item) {
@@ -266,9 +251,7 @@ proc _snake_ability(@player, @slot, @game) {
 					@snake['ability-count'][@slot] = 0;
 					set_timeout(5000, closure(){
 						@snake['boost'] = 0;
-						if(@snake['ability'][@slot] == 'boost') {
-							@snake['ability-count'][@slot] += @count;
-						}
+						@snake['ability-count'][@slot] += @count;
 					});
 				}
 			} else {
@@ -282,7 +265,7 @@ proc _snake_ability(@player, @slot, @game) {
 					@snake['boost'] = @amount;
 					set_timeout(5000, closure(){
 						@snake['boost'] = 0;
-						if(@snake['alive'] && @snake['ability'][@slot] == 'boost' && pinv(@player, -106)) {
+						if(@snake['alive'] && pinv(@player, -106)) {
 							@item = pinv(@player, @slot);
 							if(@item) {
 								@amount += @item['qty'];
