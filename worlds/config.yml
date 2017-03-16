@@ -102,6 +102,7 @@ dev:
   environment: NORMAL
   seed: '0'
   generator: 'CleanroomGenerator:14,air,1,sandstone:2,15,air,1,sandstone:2,15,air,1,sandstone:2,15,air,1,sandstone:2'
+park: custom
 frogpark: custom
 custom:
   name: 'FrogPark'
