@@ -277,6 +277,14 @@
 		);
 		@cakes = get_value('cakeinfo');
 		@list = array();
+		@min = 100;
+		foreach(@id: @cake in @cakes) {
+			if(@cake['type'] != $) {
+				continue();
+			}
+			@min = min(@min, array_size(@cake['players']));
+		}
+		@min--;
 		foreach(@id: @cake in @cakes) {
 			if(@cake['type'] != $) {
 				continue();
@@ -287,14 +295,16 @@
 					@time = @ptime;
 				}
 			}
-			@color = '';
+			@prefix = '';
 			if(array_index_exists(@cake, 'difficulty')) {
-				@color = color(@chatcolor[@cake['difficulty']]);
+				@prefix = color(@chatcolor[@cake['difficulty']]);
+			} else {
+				@prefix = @cake['coins'].' ';
 			}
 			@list[] = array(
 				'name': @id,
-				'color': @color,
-				'rate': round((time() - @time) / 604800000 / array_size(@cake['players']), 2)
+				'prefix': @prefix,
+				'rate': round((time() - @time) / 604800000 / (array_size(@cake['players']) - @min), 2)
 			);
 		}
 		array_sort(@list, closure(@left, @right){
@@ -302,7 +312,7 @@
 		});
 		msg('Frequency of completion:');
 		foreach(@cake in @list) {
-			msg(@cake['color'].@cake['name'].': '.@cake['rate'].' weeks');
+			msg(@cake['prefix'].@cake['name'].': '.@cake['rate'].' weeks');
 		}
 
 	default:
