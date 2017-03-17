@@ -225,11 +225,6 @@ bind(player_interact_at_entity, null, array('clicked': 'ARMOR_STAND'), @event) {
 				@equipment = get_mob_equipment(@event['id']);
 				if(!@armorstand['visible']) {
 					cancel();
-					// Special case for minigame
-					if(@equipment['weapon'] && @equipment['weapon']['name'] == 'WOOD_SWORD'
-					&& @equipment['weapon']['meta'] && @equipment['weapon']['meta']['display'] == 'level start') {
-						call_alias('/level');
-					}
 					die();
 				}
 				@poseable = _get_poseable(@event['id'], @armorstand, @event['position']);
