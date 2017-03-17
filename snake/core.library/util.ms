@@ -123,17 +123,16 @@ proc _snake_change_speed(@value, @game) {
 }
 
 proc _snake_play_song() {
-	@loc = sk_region_info('snake', 'custom', 0)[1];
-	@loc[0] += 25;
-	@loc[1] += 15;
-	@loc[2] += 25;
-	play_effect(@loc, 'RECORD_PLAY', array('id': rand(2257, 2266), 'radius': 40));
+	@songs = array('security_robots', 'so_long', 'neon_transit', 'flying_me_softly', 'epic_fall', 'zigzag');
+	@song = @songs[rand(array_size(@songs))];
+	foreach(@p in all_players()) {
+		if(array_contains(sk_current_regions(@p), 'snake')) {
+			action_msg(@p, color('aqua').@song.' by Alexandr Zhelanov');
+		}
+	}
+	runas('~console', '/jukebox music @snake http://finalscoremc.com/media/'.@song.'.mp3 {volume:30,fadeDuration:3}');
 }
 
 proc _snake_stop_song() {
-	@loc = sk_region_info('snake', 'custom', 0)[1];
-	@loc[0] += 25;
-	@loc[1] += 15;
-	@loc[2] += 25;
-	play_effect(@loc, 'RECORD_PLAY', array('id': 0, 'radius': 40));
+	runas('~console', '/jukebox stop music @snake {fadeDuration:6}');
 }

@@ -82,7 +82,7 @@ proc _snake_add(@player, @game) {
 				'meta': associative_array('display': 'JOYSTICK'),
 			),
 		));
-		set_pheld_slot(@player, 8);
+		runas('~console', '/jukebox show add '.@player.' @snake');
 		_set_pstate_activity(@player, 'SNAKE');
 	} else {
 		@game['snakes'][@player]['bot'] = @player;
@@ -95,6 +95,7 @@ proc _snake_remove(@player, @game) {
 	}
 	array_remove(@game['snakes'], @player);
 	if(ponline(@player)) {
+		runas('~console', '/jukebox show remove '.@player.' @snake');
 		_equip_kit(@player);
 		_set_pstate_activity(@player, null);
 	}
@@ -121,7 +122,7 @@ proc _snake_kill(@player, @game) {
 	}
 	@snake['alive'] = false;
 	set_pscore('alive', @player, 0, 'snake');
-	play_sound(@snake['loc'], associative_array('sound': 'ZOMBIE_DEATH', 'pitch': 2, 'volume': 3));
+	play_sound(@snake['loc'], associative_array('sound': 'ZOMBIE_DEATH', 'pitch': 2, 'volume': 4));
 }
 
 proc _snake_set_top(@snake) {

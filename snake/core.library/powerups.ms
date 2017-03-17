@@ -122,7 +122,7 @@ proc _snake_powerup(@player, @powerup, @game) {
 			set_pinv(@player, @inv);
 		}
 	}
-	play_sound(@snake['loc'], associative_array('sound': 'ENDERMAN_TELEPORT', 'pitch': 2, 'volume': 2));
+	play_sound(@snake['loc'], associative_array('sound': 'ENDERMAN_TELEPORT', 'pitch': 2, 'volume': 4));
 	return(true);
 }
 
@@ -245,7 +245,7 @@ proc _snake_ability(@player, @slot, @game) {
 		case 'boost':
 			if(@snake['bot']) {
 				if(@snake['ability-count'][@slot]) {
-					play_sound(@snake['loc'], associative_array('sound': 'GHAST_FIREBALL', 'volume': 3));
+					play_sound(@snake['loc'], associative_array('sound': 'GHAST_FIREBALL', 'volume': 4));
 					@count = @snake['ability-count'][@slot];
 					@snake['boost'] = @count;
 					@snake['ability-count'][@slot] = 0;
@@ -259,7 +259,7 @@ proc _snake_ability(@player, @slot, @game) {
 			} else {
 				@item = pinv(@player, @slot);
 				if(@item) {
-					play_sound(@snake['loc'], associative_array('sound': 'GHAST_FIREBALL', 'volume': 3));
+					play_sound(@snake['loc'], associative_array('sound': 'GHAST_FIREBALL', 'volume': 4));
 					@amount = @item['qty'];
 					@inv = associative_array();
 					@inv[@slot] = null;
@@ -289,7 +289,7 @@ proc _snake_ability(@player, @slot, @game) {
 }
 
 proc _snake_drop_tnt(@loc, @dir) {
-	play_sound(@loc, associative_array('sound': 'FUSE', 'volume': 2));
+	play_sound(@loc, associative_array('sound': 'FUSE', 'volume': 4));
 	if(@dir) {
 		@loc = _relative(@loc, @dir);
 	}
@@ -319,7 +319,7 @@ proc _snake_launch_missile(@loc, @dir, @game) {
 	@missile = associative_array('dir': @dir, 'loc': @loc, 'skip': true);
 	@key = time();
 	@game['missiles'][@key] = @missile;
-	play_named_sound(@loc, associative_array('sound': 'entity.shulker.shoot', 'volume': 2, 'pitch': 2));
+	play_named_sound(@loc, associative_array('sound': 'entity.shulker.shoot', 'volume': 4, 'pitch': 2));
 	@move = closure(@clear = true){
 		try {
 			if(!@missile['skip']) {
@@ -359,14 +359,14 @@ proc _snake_launch_missile(@loc, @dir, @game) {
 				@dir = _snake_direction_of(@missile['loc'], '0:0', @missile['dir']);
 				if(@dir) {
 					@missile['dir'] = @dir;
-					play_sound(@missile['loc'], associative_array('sound': 'IRONGOLEM_HIT', 'pitch': 1.5, 'volume': 2));
+					play_sound(@missile['loc'], associative_array('sound': 'IRONGOLEM_HIT', 'pitch': 1.5, 'volume': 4));
 				}
 			} else {
 				array_remove(@game['missiles'], @key);
 				if(@clear) {
 					clear_task();
 				}
-				play_named_sound(@missile['loc'], associative_array('sound': 'entity.shulker_bullet.hit', 'volume': 2, 'pitch': 1.5));
+				play_named_sound(@missile['loc'], associative_array('sound': 'entity.shulker_bullet.hit', 'volume': 4, 'pitch': 1.5));
 				if(split(':', @block)[0] == '159') {
 					set_block_at(@missile['loc'], 0, false);
 					foreach(@player: @snake in @game['snakes']) {
@@ -399,8 +399,8 @@ proc _snake_launch_missile(@loc, @dir, @game) {
 proc _snake_shoot_laser(@player, @loc, @dir, @range, @game) {
 	@game['snakes'][@player]['laser-immune'] = true;
 	@originalDir = @dir;
-	play_named_sound(@loc, associative_array('sound': 'entity.guardian.death', 'volume': 3, 'pitch': 2));
-	play_named_sound(@loc, associative_array('sound': 'entity.guardian.attack', 'volume': 3));
+	play_named_sound(@loc, associative_array('sound': 'entity.guardian.death', 'volume': 4, 'pitch': 2));
+	play_named_sound(@loc, associative_array('sound': 'entity.guardian.attack', 'volume': 4));
 	@blocks = array();
 	while(@range > 0){
 		@loc = _relative(@loc, @dir);

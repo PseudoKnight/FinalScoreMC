@@ -84,20 +84,25 @@ proc _snake_queue(@args) {
 	);
 	@countdown = array(7);
 	set_interval(1000, closure(){
-		if(@countdown[0] > 0) {
-			foreach(@p in array_keys(@game['snakes'])) {
-				if(!ponline(@p)) {
-					continue();
-				}
-				title_msg(@p, @countdown[0], array_get(@help, @countdown[0], ''), 0, 25, 0);
-				set_pheld_slot(@p, 8);
+		foreach(@p in array_keys(@game['snakes'])) {
+			if(!ponline(@p)) {
+				continue();
 			}
-		} else {
+			if(@countdown[0]) {
+				title_msg(@p, @countdown[0], array_get(@help, @countdown[0], ''), 0, 25, 0);
+			} else {
+				title_msg(@p, '', color('italic').'Go snake, go!', 0, 20, 20);
+			}
+			set_pheld_slot(@p, 8);
+		}
+		if(@countdown[0] == 6) {
+			_snake_play_song();
+		}
+		if(@countdown[0] == 0) {
 			clear_task();
 			_snake_bind_events(@game);
 			_snake_add_powerup(@game);
 			_snake_start_task(@game);
-			_snake_play_song();
 			_add_activity('snake', 'Snake');
 		}
 		@countdown[0] -= 1;
