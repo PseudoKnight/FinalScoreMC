@@ -16,9 +16,7 @@
 &7/transfer <mob> <player>&r : Transfers ownership of a horse, wolf, or cat to another online player.
  &7&oExample: /transfer horse PseudoKnight
 
-&7/share <player> <horses>&r : Changes what you share with another player. Currently only supports ‘horses’.
-
-&7/unshare <player> <horses>&r : Removes a share with this player.
+&7/share&r or &7/unshare <player> <horses>&r : Changes what you share with another player. Currently only supports ‘horses’.
 
 &7/livemap&r : Sends you a clickable link to the Live Map.
 
@@ -34,11 +32,9 @@
 
 &7/me <message>&r : Broadcasts an action message to everyone.
 
-&7/enter <message>&r : Changes the message following your name after you enter the server.
+&7/enter&r or &7/exit <message>&r : Changes the message following your name after you enter or exit the server.
 
-&7/exit <message>&r : Changes the message following your name after you leave the server.
-
-&7/ignore&r and &7/unignore <player|all>&r : Filter global chat messages from that player or all players.
+&7/ignore&r or &7/unignore <player|all>&r : Filter global chat messages from that player or all players.
 
 &7/colors&r : Displays all color code characters that can be used in chat after &.
 
@@ -102,7 +98,7 @@ When minecarts collide with unpowered dispensers, they get added to the dispense
 
 Beds will set your bed location, make the sun rise, and halt precipitation regardless of other players in the world.
 
-Leads can be used on villagers (except dimwits/green villagers).
+Leads can be used on villagers (except green villagers).
 
 Creepers do not do block damage above sea level (y > 62) with the exception of the outworlds.
 
@@ -114,6 +110,16 @@ You can have one /home per world, excluding the outworld.
 
 Our mumble server is at mum.finalscoremc.com with port 64758. You can get Mumble @ http://mumble.sourceforge.net
 
-We have a Discord server @ https://discordapp.com/invite/0aBtE3n1P6GixDwO
+We have a Discord server @ &bhttps://discordapp.com/invite/0aBtE3n1P6GixDwO
 
 There are four primary worlds: Alpha, Delta, Gamma, and Omega.
+
+If you changed your name, you can update [private] and shop signs to your new name by clicking the sign.
+
+You can add up to three spawn eggs to a firework.
+
+Players who contribute $5 or more to the server costs have a green emerald next to their name in chat.
+
+Players who contribute $10 or more to the server costs can launch random fireworks in the park and get trails on the livemap.
+
+Hovering your cursor over someone's name in chat allows you to see their group, current world, and former names.
