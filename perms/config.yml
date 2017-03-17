@@ -103,6 +103,9 @@ regular:
     worldguard.region.unlimited: true
     item.lighter: true
     worldedit.calc: true
+  worlds:
+    dev:
+      limitedworldedit: true
   inheritance: member
 donor:
   permissions:

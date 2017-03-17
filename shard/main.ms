@@ -19,8 +19,8 @@ bind(player_interact, null, array('item': 264, 'hand': 'main_hand', 'block': 0),
 		}
 		die();
 	}
-	if(!has_permission('group.builder')) {
-		action_msg('Only park staff can generate shards for now!');
+	if(!has_permission('group.regular')) {
+		action_msg('Only trusted players can generate shards for now!');
 		die();
 	}
 	
