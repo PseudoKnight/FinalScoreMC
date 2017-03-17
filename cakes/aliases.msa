@@ -49,12 +49,16 @@
 			@id = $
 		}
 		@cake = get_value('cakeinfo')[@id];
+		@names = '';
+		foreach(@p: @time in @cake['players']){
+			@names .= get_value('uuids', @p)['name'].' ';
+		}
 		msg('Cake info for "'.@id.'":');
 		msg(color('green').@cake['coins'].color('r').' coins.');
-		msg(color('green').array_size(@cake['players']).color('r').' players.');
+		msg(color('green').array_size(@cake['players']).color('r').' players: '.@names);
 
 	case 'set':
-		if(!has_permission('group.moderator'), die('You do not have permission to use cake commands.'));
+		if(!has_permission('group.engineer'), die('You do not have permission to use cake commands.'));
 		if(!$) {
 			die('/cake set <id> <coins> [type]')
 		}
@@ -121,7 +125,7 @@
 
 
 	case 'move':
-		if(!has_permission('group.moderator'), die('You do not have permission to use cake commands.'));
+		if(!has_permission('group.engineer'), die('You do not have permission to use cake commands.'));
 		if(!$, die('This needs an id.'))
 		@loc = pcursor()
 		if(get_block_at(@loc) !== '92:0', die('That doesn\'t appear to be a cake. Is it obstructed by a sign or other partial block?'))
@@ -136,7 +140,7 @@
 
 	case 'delete':
 	case 'remove':
-		if(!has_permission('group.moderator'), die('You do not have permission to use cake commands.'));
+		if(!has_permission('group.engineer'), die('You do not have permission to use cake commands.'));
 		@cakes = get_value('cakes')
 		if(!$) {
 			@cursorloc = pcursor()
@@ -165,7 +169,7 @@
 		msg('Deleted cake '.@id)
 
 	case 'rename':
-		if(!has_permission('group.moderator'), die('You do not have permission to use cake commands.'));
+		if(!has_permission('group.engineer'), die('You do not have permission to use cake commands.'));
 		@cakes = get_value('cakes')
 		@args = parse_args($)
 		if(array_size(@args) == 1) {
@@ -201,7 +205,7 @@
 		msg('Changed '.@old.' to '.@new.'.')
 
 	case 'tp':
-		if(!has_permission('group.moderator'), die('You do not have permission to use cake commands.'));
+		if(!has_permission('group.engineer'), die('You do not have permission to use cake commands.'));
 		if(!$) {
 			die('This needs an id.')
 		}
