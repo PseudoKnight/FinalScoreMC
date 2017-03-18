@@ -1,4 +1,4 @@
-proc _repopulate_menu(){
+proc _create_park_menu(){
 	@main = associative_array(
 		'id': 'main',
 		'title': 'Frog Park Directory',

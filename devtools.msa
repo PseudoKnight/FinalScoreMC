@@ -70,6 +70,14 @@
 <<<
 
 /*
+	Re-creates park menu
+*/
+/menu update = >>>
+	include('menu/includes.library/park.ms');
+	_create_park_menu();
+<<<
+
+/*
 	Lists the type and amount of events bound
 */
 /bindcount = >>>
