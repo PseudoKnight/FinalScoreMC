@@ -1,7 +1,8 @@
 proc _create_treasure(@delay, @score, @rules) {
 	set_timeout(@delay * 1000, closure(){
+		set_objective_display('Distance', array('slot': 'SIDEBAR'), 'shard');
 		@worldborder = get_world_border('shard');
-		@width = max(1, @worldborder['width'] - @rules['width'] / (@rules['treasurehunt'] - @score));
+		@width = max(32, @worldborder['width'] - @rules['width'] / (@rules['treasurehunt'] - @score + 1));
 		@loc = @worldborder['center'];
 		@loc['x'] += rand() * @width - @width / 2;
 		@loc['y'] = rand(4, 62);
@@ -12,9 +13,20 @@ proc _create_treasure(@delay, @score, @rules) {
 		foreach(@p in all_players()) {
 			if(pworld(@p) == 'shard') {
 				set_compass_target(@p, @loc);
-				tmsg(@p, 'The treasure is at '.integer(@loc['x']).' '.integer(@loc['y']).' '.integer(@loc['z']).'!');
+				play_sound(ploc(@p), array('sound': 'SUCCESSFUL_HIT'), @p);
 			}
 		}
+		set_interval(1000, 0, closure(){
+			if(get_block_at(@loc) != '130:0') {
+				clear_task();
+			}
+			foreach(@p in all_players()) {
+				if(pworld(@p) == 'shard' && get_pscoreboard(@p) == 'shard') {
+					@dist = integer(_distance(@loc, ploc()));
+					set_pscore('Distance', @p, @dist, 'shard');
+				}
+			}
+		});
 	});
 }
 
@@ -65,12 +77,14 @@ proc _end_treasurehunt(@winner, @binds) {
 
 create_objective('Treasures', 'DUMMY', 'shard');
 set_objective_display('Treasures', array('slot': 'SIDEBAR', 'displayname': 'Treasures ('.@rules['treasurehunt'].')'), 'shard');
+create_objective('Distance', 'DUMMY', 'shard');
 _create_treasure(max(5, 60 * @rules['buffertime']), 0, @rules);
 
 @binds[] = 'shard-break';
 bind(block_break, array('id': 'shard-break'), array('type': 130), @event, @rules, @binds) {
 	if(has_metadata(@event['location'], 'treasure')) {
 		play_sound(@event['location'], array('sound': 'LEVEL_UP', 'pitch': 0.7));
+		set_objective_display('Treasures', array('slot': 'SIDEBAR'), 'shard');
 		foreach(@p in all_players()) {
 			if(pworld(@p) == 'shard') {
 				tmsg(@p, player().' has found the treasure!');
