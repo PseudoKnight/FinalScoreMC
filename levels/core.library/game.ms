@@ -84,6 +84,18 @@ proc _level_start(@level) {
 			}
 		}
 		
+		bind(player_interact, array('id': 'resurrect'.@level['region']), array('button': 'right', 'item': 399), @event, @level) {
+			foreach(@p in players_in_radius(ploc(), 16)) {
+				if(array_contains(@level['spectators'], @p)) {
+					set_pmode(@p, 'ADVENTURE');
+					_level_add_player(@p, @level);
+					set_ploc(@p, ploc());
+					ptake_item(399, 1);
+					break();
+				}
+			}
+		}
+		
 		bind(item_pickup, array('id': 'pickup'.@level['region']), null, @event, @level) {
 			if(array_contains(@level['players'], player())) {
 				@item = @event['item'];
@@ -230,7 +242,9 @@ proc _level_start(@level) {
 						}
 					}
 				}
-				@level['subtitle'] = @wave['subtitle'];
+				if(array_index_exists(@wave, 'subtitle')) {
+					@level['subtitle'] = @wave['subtitle'];
+				}
 				@level['mobs'] = @wave['mobs'];
 			} catch(IndexOverflowException @ex) {
 				clear_task();
@@ -264,6 +278,7 @@ proc _level_end(@level, @win) {
 	unbind('mobspawn'.@level['region']);
 	unbind('mobdeath'.@level['region']);
 	unbind('interact'.@level['region']);
+	unbind('resurrect'.@level['region']);
 	unbind('openshop'.@level['region']);
 	unbind('pickup'.@level['region']);
 	unbind('shop'.@level['region']);

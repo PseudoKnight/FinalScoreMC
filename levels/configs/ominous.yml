@@ -1,0 +1,271 @@
+title: 'Ominous'
+author: 'PseudoKnight'
+levels: 1
+gear:
+    0:
+        name: WOOD_SWORD
+shop:
+    0:
+        name: STONE_SWORD
+        cost: 2
+    1:
+        name: IRON_SWORD
+        cost: 3
+    2:
+        name: DIAMOND_SWORD
+        cost: 4
+    3:
+        name: IRON_AXE
+        cost: 3
+    4:
+        name: DIAMOND_AXE
+        cost: 4
+    5:
+        name: BOW
+        cost: 3
+    9:
+        name: MILK_BUCKET
+        cost: 1
+    10:
+        name: CARROT_ITEM
+        cost: 1
+    11:
+        name: POTION
+        cost: 1
+        meta:
+            base:
+                extended: true
+                type: SPEED
+    12:
+        name: GOLDEN_APPLE
+        cost: 3
+    13:
+        name: TIPPED_ARROW
+        cost: 1
+        meta:
+            base:
+                upgraded: true
+                type: INSTANT_HEAL
+    14:
+        name: TIPPED_ARROW
+        cost: 1
+        meta:
+            base:
+                extended: true
+                type: WEAKNESS
+    15:
+        name: NETHER_STAR
+        cost: 5
+        meta:
+            display: 'Resurrection Star'
+    18:
+        name: LEATHER_HELMET
+        cost: 1
+    19:
+        name: LEATHER_CHESTPLATE
+        cost: 3
+    20:
+        name: LEATHER_LEGGINGS
+        cost: 2
+    21:
+        name: GOLD_HELMET
+        cost: 2
+    22:
+        name: GOLD_CHESTPLATE
+        cost: 5
+    23:
+        name: GOLD_LEGGINGS
+        cost: 3
+    27:
+        name: CHAINMAIL_HELMET
+        cost: 2
+    28:
+        name: CHAINMAIL_CHESTPLATE
+        cost: 5
+    29:
+        name: CHAINMAIL_LEGGINGS
+        cost: 4
+    30:
+        name: CHAINMAIL_BOOTS
+        cost: 1
+    31:
+        name: IRON_HELMET
+        cost: 2
+    32:
+        name: IRON_CHESTPLATE
+        cost: 6
+    33:
+        name: IRON_LEGGINGS
+        cost: 5
+    34:
+        name: IRON_BOOTS
+        cost: 2
+    36:
+        name: DIAMOND_HELMET
+        cost: 3
+    37:
+        name: DIAMOND_CHESTPLATE
+        cost: 8
+    38:
+        name: DIAMOND_LEGGINGS
+        cost: 6
+    39:
+        name: DIAMOND_BOOTS
+        cost: 3
+    40:
+        name: SHIELD
+        cost: 5
+waves:
+    1:
+        subtitle: 'Who dares disturb me?!'
+        music: 'music.nether'
+        mobs:
+            - ENDERMITE
+            - ENDERMITE
+            - ENDERMITE
+            - ENDERMITE
+            - ENDERMITE
+            - ENDERMITE
+            - ENDERMITE
+    2:
+        mobs:
+            - ENDERMITE
+            - ENDERMITE
+            - ENDERMITE
+            - ENDERMITE
+            - ENDERMITE
+            - ENDERMITE
+            - ENDERMITE
+    3:
+        title: 'Worthless endermites!'
+        subtitle: 'How fair thee against the UNDEAD?'
+        mobs:
+            - ZOMBIE
+            - ZOMBIE
+            - ZOMBIE
+    4:
+        mobs:
+            - ZOMBIE
+            - ZOMBIE
+            - ZOMBIE
+            - ZOMBIE
+            - ZOMBIE
+    5:
+        title: 'Fool!'
+        subtitle: 'You cannot kill the undead!'
+        mobs:
+            - ZOMBIE
+            - ZOMBIE
+            - ZOMBIE
+            - ZOMBIE
+            - ZOMBIE
+            - ZOMBIE
+            - ZOMBIE
+            - ZOMBIE
+    6:
+        mobs:
+            - ZOMBIE
+            - ZOMBIE
+            - ZOMBIE
+            - ZOMBIE
+            - ZOMBIE
+            - ZOMBIE
+            - ZOMBIE
+            - ZOMBIE
+            - ZOMBIE
+            - ZOMBIE
+            - ZOMBIE
+            - ZOMBIE
+            - ZOMBIE
+            - ZOMBIE
+    7:
+        title: 'Annoying.'
+        subtitle: 'Perhaps that which crawls...'
+        mobs:
+            - SPIDER
+            - SPIDER
+            - SPIDER
+            - SPIDER
+            - SPIDER
+    8:
+        subtitle: 'Yes. I see it now. The terror.'
+        mobs:
+            - SPIDER
+            - SPIDER
+            - SPIDER
+            - SPIDER
+            - SPIDER
+            - SPIDER
+            - SPIDER
+            - CAVESPIDER
+    9:
+        subtitle: 'Aha! The poison -- what you fear.'
+        mobs:
+            - CAVESPIDER
+            - CAVESPIDER
+            - CAVESPIDER
+            - CAVESPIDER
+            - CAVESPIDER
+    10:
+        subtitle: 'My butler will show you to the door.'
+        mobs:
+            - type: 'SLIME:1'
+              name: 'GEORGE'
+    11:
+        title: 'GEORGE!'
+        subtitle: 'Now I must hire a new butler! Applicants?'
+        mobs:
+            - 'SLIME:4'
+            - 'SLIME:2'
+            - 'SLIME:2'
+            - 'SLIME:2'
+            - 'SLIME:2'
+            - 'SLIME:2'
+            - 'SLIME:2'
+            - 'SLIME:2'
+            - 'SLIME:2'
+            - 'SLIME:2'
+            - 'SLIME:2'
+            - 'SLIME:2'
+            - 'SLIME:2'
+            - 'SLIME:2'
+            - 'SLIME:2'
+    12:
+        subtitle: 'Thanks for culling the less worthy.'
+        mobs:
+            - 'MAGMACUBE:4'
+            - 'MAGMACUBE:2'
+            - 'MAGMACUBE:2'
+            - 'MAGMACUBE:2'
+            - 'MAGMACUBE:2'
+            - 'MAGMACUBE:2'
+            - 'MAGMACUBE:2'
+            - 'MAGMACUBE:2'
+            - 'MAGMACUBE:2'
+            - 'MAGMACUBE:2'
+            - 'MAGMACUBE:2'
+            - 'MAGMACUBE:2'
+            - 'MAGMACUBE:2'
+            - 'MAGMACUBE:2'
+    13:
+        subtitle: 'Release the houuuunds.'
+        mobs:
+            - 'WOLF:ANGRY'
+            - 'WOLF:ANGRY'
+            - 'WOLF:ANGRY'
+            - 'WOLF:ANGRY'
+            - 'WOLF:ANGRY'
+            - 'WOLF:ANGRY'
+            - 'WOLF:ANGRY'
+            - 'WOLF:ANGRY'
+            - 'WOLF:ANGRY'
+            - 'WOLF:ANGRY'
+            - 'WOLF:ANGRY'
+            - 'WOLF:ANGRY'
+            - 'WOLF:ANGRY'
+            - 'WOLF:ANGRY'
+    14:
+        subtitle: 'To be continued...'
+        mobs:
+            - type: 'MAGMACUBE:1'
+              name: 'George #2'

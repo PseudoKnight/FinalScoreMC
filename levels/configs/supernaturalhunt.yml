@@ -19,7 +19,7 @@ shop:
         cost: 4
     5:
         name: BOW
-        cost: 4
+        cost: 3
     9:
         name: MILK_BUCKET
         cost: 1
@@ -31,15 +31,30 @@ shop:
         cost: 1
         meta:
             base:
-                upgraded: true
+                extended: true
                 type: SPEED
     12:
+        name: GOLDEN_APPLE
+        cost: 3
+    13:
         name: TIPPED_ARROW
         cost: 1
         meta:
             base:
                 upgraded: true
                 type: INSTANT_HEAL
+    14:
+        name: TIPPED_ARROW
+        cost: 1
+        meta:
+            base:
+                extended: true
+                type: WEAKNESS
+    15:
+        name: NETHER_STAR
+        cost: 5
+        meta:
+            display: 'Resurrection Star'
     18:
         name: LEATHER_HELMET
         cost: 1
