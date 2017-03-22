@@ -1,38 +1,49 @@
 bind('creature_spawn', null, array('type': 'ZOMBIE', 'reason': 'NATURAL'), @event) {
-	if(rand(3), die());
-	if(@event['location']['world'] === 'outworld') {
-		@mobs = associative_array(
-			50: 'CREEPER',
-			51: 'SKELETON',
-			52: 'SPIDER',
-			54: 'ZOMBIE',
-			55: 'SLIME',
-			57: 'PIGZOMBIE',
-			58: 'ENDERMAN',
-			59: 'CAVESPIDER',
-			62: 'MAGMACUBE',
-			65: 'BAT',
-			66: 'WITCH',
-			67: 'ENDERMITE',
-			68: 'GUARDIAN',
-			69: 'SHULKER',
-			90: 'PIG',
-			91: 'SHEEP',
-			92: 'COW',
-			93: 'CHICKEN',
-			94: 'SQUID',
-			95: 'WOLF',
-			96: 'MOOSHROOM',
-			98: 'OCELOT',
-			100: 'HORSE',
-			101: 'RABBIT',
-			120: 'VILLAGER',
+	if(!rand(3) && @event['location']['world'] === 'outworld') {
+		@mobs = array(
+			'BAT',
+			'CAVE_SPIDER',
+			'CHICKEN',
+			'COW',
+			'ELDER_GUARDIAN',
+			'ENDERMAN',
+			'ENDERMITE',
+			'EVOKER',
+			'GUARDIAN',
+			'HORSE',
+			'HUSK',
+			'LLAMA',
+			'MAGMA_CUBE',
+			'MULE',
+			'MUSHROOM_COW',
+			'OCELOT',
+			'PIG',
+			'PIG_ZOMBIE',
+			'POLAR_BEAR',
+			'RABBIT',
+			'SHEEP',
+			'SHULKER',
+			'SKELETON',
+			'SKELETON_HORSE',
+			'SLIME',
+			'SPIDER',
+			'SQUID',
+			'STRAY',
+			'VEX',
+			'VILLAGER',
+			'VINDICATOR',
+			'WITCH',
+			'WITHER_SKELETON',
+			'WOLF',
+			'ZOMBIE',
+			'ZOMBIE_HORSE',
+			'ZOMBIE_VILLAGER',
 		);
 		set_timeout(50, closure(){
 			if(entity_exists(@event['id'])) {
 				set_mob_equipment(@event['id'], associative_array(
-					'WEAPON': array('type': 383, 'data': array_rand(@mobs)[0]),
-					'OFF_HAND': array('type': 383, 'data': array_rand(@mobs)[0]),
+					'WEAPON': array('type': 383, 'meta': array('spawntype': @mobs[rand(array_size(@mobs))])),
+					'OFF_HAND': array('type': 383, 'meta': array('spawntype': @mobs[rand(array_size(@mobs))])),
 					'HELMET': array('type': 397, 'data': 3, 'meta': array('owner': 'rabbit2077')),
 					'CHESTPLATE': array('type': 299, 'meta': array('color': array('r': 180, 'g': 180, 'b': 180))),
 					'LEGGINGS': array('type': 300, 'meta': array('color': array('r': 180, 'g': 180, 'b': 180))),
@@ -131,31 +142,6 @@ bind('target_player', null, array('mobtype': 'ZOMBIE'), @event) {
 		if(!is_null(@inv['helmet'])
 		&& @inv['helmet']['type'] == 397
 		&& entity_can_see(@event['id'], puuid(@event['player']))) {
-			/*
-			if(!get_entity_rider(@event['id']) && !entity_spec(@event['id'])['baby']) {
-				@skeleton = spawn_mob('SKELETON', 1, entity_loc(@event['id']))[0];
-				set_mob_name(@skeleton, 'Dinnerbone');
-				set_entity_rider(@event['id'], @skeleton);
-				set_timeout(50, closure(){
-					// override default gear a tick later
-					try {
-						set_mob_equipment(@skeleton, associative_array(
-							'HELMET': array('name': 'SKULL_ITEM', 'data': 3, 'meta': associative_array(
-								'owner': 'Robbydeezle',
-							)),
-							'WEAPON': null,
-							'CHESTPLATE': null,
-							'LEGGINGS': null,
-							'BOOTS': null,
-							'OFF_HAND': null,
-						));
-						set_equipment_droprates(@skeleton, null);
-					} catch(BadEntityException @ex) {
-						// skeleton no longer exists
-					}
-				});
-			}
-			*/
 			shoot_projectile(@event['id'], 'EGG', @event['player'], rand() + 1);
 			set_timeout((1 + rand(3)) * 1000, closure() {
 				if(entity_exists(@event['id'])
@@ -168,50 +154,53 @@ bind('target_player', null, array('mobtype': 'ZOMBIE'), @event) {
 		}
 	}
 }
-/*
-bind('target_player', null, array('mobtype': 'SKELETON'), @event) {
-	if(get_mob_name(@event['id']) == 'Dinnerbone'
-	&& !get_entity_vehicle(@event['id'])
-	&& entity_loc(@event['id'])['world'] === 'outworld') {
-		entity_remove(@event['id']);
-	}
-}
-*/
 
 bind('projectile_hit', null, array('type': 'EGG'), @event) {
 	if(entity_loc(@event['id'])['world'] === 'outworld') {
-		@mobs = associative_array(
-			50: 'CREEPER',
-			51: 'SKELETON',
-			52: 'SPIDER',
-			54: 'ZOMBIE',
-			55: 'SLIME',
-			57: 'PIGZOMBIE',
-			58: 'ENDERMAN',
-			59: 'CAVESPIDER',
-			62: 'MAGMACUBE',
-			65: 'BAT',
-			66: 'WITCH',
-			67: 'ENDERMITE',
-			68: 'GUARDIAN',
-			69: 'SHULKER',
-			90: 'PIG',
-			91: 'SHEEP',
-			92: 'COW',
-			93: 'CHICKEN',
-			94: 'SQUID',
-			95: 'WOLF',
-			96: 'MOOSHROOM',
-			98: 'OCELOT',
-			100: 'HORSE',
-			101: 'RABBIT',
-			120: 'VILLAGER',
+		@mobs = array(
+			'BAT',
+			'CAVE_SPIDER',
+			'CHICKEN',
+			'COW',
+			'ELDER_GUARDIAN',
+			'ENDERMAN',
+			'ENDERMITE',
+			'EVOKER',
+			'GUARDIAN',
+			'HORSE',
+			'HUSK',
+			'LLAMA',
+			'MAGMA_CUBE',
+			'MULE',
+			'MUSHROOM_COW',
+			'OCELOT',
+			'PIG',
+			'PIG_ZOMBIE',
+			'POLAR_BEAR',
+			'RABBIT',
+			'SHEEP',
+			'SHULKER',
+			'SKELETON',
+			'SKELETON_HORSE',
+			'SLIME',
+			'SPIDER',
+			'SQUID',
+			'STRAY',
+			'VEX',
+			'VILLAGER',
+			'VINDICATOR',
+			'WITCH',
+			'WITHER_SKELETON',
+			'WOLF',
+			'ZOMBIE',
+			'ZOMBIE_HORSE',
+			'ZOMBIE_VILLAGER',
 		);
 		@mob = array_rand(@mobs, 1, false)[0];
 		@loc = _relative(@event['location'], 'up');
 		@loc['x'] = floor(@loc['x']) + 0.5;
 		@loc['z'] = floor(@loc['z']) + 0.5;
-		@entity = spawn_mob(@mob, 1, @loc)[0];
+		@entity = spawn_entity(@mob, 1, @loc)[0];
 		play_sound(@loc, array('sound': 'CHICKEN_EGG_POP', 'pitch': 0.5));
 		if(function_exists('play_effect')) {
 			play_effect(@loc, 'COLOURED_DUST', array('particleCount': 15, 'offsetX': 1, 'offsetY': 1, 'offsetZ': 1));
