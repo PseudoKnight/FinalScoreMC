@@ -16,13 +16,13 @@ proc _create_treasure(@delay, @score, @rules) {
 				play_sound(ploc(@p), array('sound': 'SUCCESSFUL_HIT'), @p);
 			}
 		}
-		set_interval(1000, 0, closure(){
-			if(get_block_at(@loc) != '130:0') {
+		set_interval(1000, closure(){
+			if(get_block_at(@loc) != '130:2') {
 				clear_task();
 			}
 			foreach(@p in all_players()) {
 				if(pworld(@p) == 'shard' && get_pscoreboard(@p) == 'shard') {
-					@dist = integer(_distance(@loc, ploc()));
+					@dist = integer(_distance(@loc, ploc(@p)));
 					set_pscore('Distance', @p, @dist, 'shard');
 				}
 			}
