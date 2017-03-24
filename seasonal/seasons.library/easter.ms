@@ -1,5 +1,5 @@
 bind('creature_spawn', null, array('type': 'ZOMBIE', 'reason': 'NATURAL'), @event) {
-	if(!rand(3) && @event['location']['world'] === 'outworld') {
+	if(@event['location']['world'] === 'outworld') {
 		@mobs = array(
 			'BAT',
 			'CAVE_SPIDER',
