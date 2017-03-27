@@ -187,11 +187,11 @@ proc _create_menu() {
 		} else {
 			@rule = null;
 			if(@item['name'] == 'INK_SACK') {
-				@rule = @rules[@slot];
+				@rule = array_get(@rules, @slot, null);
 			} else {
 				@slot -= 9;
 				@item = @event['inventory'][@slot];
-				@rule = @rules[@slot];
+				@rule = array_get(@rules, @slot, null);
 			}
 			if(@rule) {
 				if(is_boolean(@rule['value'])) {
