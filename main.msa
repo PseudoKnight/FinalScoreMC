@@ -65,8 +65,8 @@
 
 *:/share = >>>
 	msg('Share horses with friends you trust.\n'
-		.'Usage: /share horses <player>\n'
-		.'Example: /share horses PseudoKnight');
+		.'Usage: /share <player> horses\n'
+		.'Example: /share PseudoKnight horses');
 <<<
 
 *:/share $player $ = >>>
@@ -113,8 +113,8 @@
 
 *:/unshare = >>>
 	msg('Undo previous shares.\n'
-		.'Usage: /unshare horses <player>\n'
-		.'Example: /unshare horses PseudoKnight');
+		.'Usage: /unshare <player> horses\n'
+		.'Example: /unshare PseudoKnight horses');
 <<<
 
 *:/unshare $player $ = >>>
