@@ -43,20 +43,40 @@ bind(player_teleport, null, null, @event) {
 	}
 	
 	try {
-		@vehicle = get_entity_vehicle(puuid());
+		@uuid = puuid();
+		
+		// Teleport living vehicle with player
+		@vehicle = get_entity_vehicle(@uuid);
 		@type = entity_type(@vehicle);
 		if(array_contains(array('DONKEY', 'HORSE', 'LLAMA', 'MULE', 'SKELETON_HORSE', 'ZOMBIE_HORSE'), @type)
 		&& (@fromWorld == @toWorld || _is_survival_world(@fromWorld) && _is_survival_world(@toWorld))) {
 			set_timeout(50, closure(){
 				try {
 					set_entity_loc(@vehicle, @to);
-					# a longer delay is necessary in 1.9 to reduce glitching
 					set_timeout(50, closure(){
-						set_entity_rider(@vehicle, puuid());
+						set_entity_rider(@vehicle, @uuid);
 					});
 				} catch(Exception @ex) {
 					msg('Failed to teleport your horse with you.');
 					console('Failed to teleport horse.', false);
+				}
+			});
+		}
+		
+		// Teleport leashed entities with player
+		@item = pinv(player(), null);
+		if(@item && @item['name'] = 'LEASH') {
+			@entities = array();
+			foreach(@e in entities_in_radius(@from, 7)) {
+				if(get_leashholder(@e) == @uuid) {
+					@entities[] = @e;
+					set_leashholder(@e, null);
+				}
+			}
+			set_timeout(50, closure(){
+				foreach(@e in @entities) {
+					set_entity_loc(@e, @to);
+					set_leashholder(@e, @uuid);
 				}
 			});
 		}
