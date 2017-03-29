@@ -141,6 +141,7 @@ proc _snake_ability(@player, @slot, @game) {
 				}
 			} else {
 				@item = pinv(@player, @slot);
+				@world = pworld(@player);
 				if(@item) {
 					@inv = associative_array();
 					if(@item['qty'] == 1) {
@@ -152,7 +153,7 @@ proc _snake_ability(@player, @slot, @game) {
 					set_pinv(@player, @inv);
 					@game['tnt'][] = _snake_drop_tnt(@snake['loc'], @snake['dir']);
 					set_timeout(7000, closure(){
-						if(@snake['alive'] && pinv(@player, -106)) {
+						if(@snake['alive'] && pworld(@player) == @world) {
 							@item = pinv(@player, @slot);
 							@inv = associative_array();
 							if(@item) {
@@ -177,6 +178,7 @@ proc _snake_ability(@player, @slot, @game) {
 				}
 			} else {
 				@item = pinv(@player, @slot);
+				@world = pworld(@player);
 				if(@item) {
 					@inv = associative_array();
 					if(@item['qty'] == 1) {
@@ -188,7 +190,7 @@ proc _snake_ability(@player, @slot, @game) {
 					set_pinv(@player, @inv);
 					_snake_launch_missile(@snake['loc'][], @snake['dir'], @game);
 					set_timeout(7000, closure(){
-						if(@snake['alive'] && pinv(@player, -106)) {
+						if(@snake['alive'] && pworld(@player) == @world) {
 							@item = pinv(@player, @slot);
 							@inv = associative_array();
 							if(@item) {
@@ -218,6 +220,7 @@ proc _snake_ability(@player, @slot, @game) {
 				}
 			} else {
 				@item = pinv(@player, @slot);
+				@world = pworld(@player);
 				if(@item) {
 					@amount = @item['qty'];
 					@inv = associative_array();
@@ -225,7 +228,7 @@ proc _snake_ability(@player, @slot, @game) {
 					set_pinv(@player, @inv);
 					_snake_shoot_laser(@player, @snake['loc'][], @snake['dir'], @amount, @game);
 					set_timeout(7000, closure(){
-						if(@snake['alive'] && pinv(@player, -106)) {
+						if(@snake['alive'] && pworld(@player) == @world) {
 							@item = pinv(@player, @slot);
 							@inv = associative_array();
 							if(@item) {
@@ -258,6 +261,7 @@ proc _snake_ability(@player, @slot, @game) {
 				}
 			} else {
 				@item = pinv(@player, @slot);
+				@world = pworld(@player);
 				if(@item) {
 					play_sound(@snake['loc'], associative_array('sound': 'GHAST_FIREBALL', 'volume': 4));
 					@amount = @item['qty'];
@@ -268,7 +272,7 @@ proc _snake_ability(@player, @slot, @game) {
 					set_timeout(5000, closure(){
 						@snake['boost'] = 0;
 						set_timeout(2000, closure(){
-							if(@snake['alive'] && pinv(@player, -106)) {
+							if(@snake['alive'] && pworld(@player) == @world) {
 								@item = pinv(@player, @slot);
 								if(@item) {
 									@amount += @item['qty'];
@@ -378,6 +382,8 @@ proc _snake_launch_missile(@loc, @dir, @game) {
 					_snake_remove_powerup(@missile['loc'], @game);
 					set_block_at(@missile['loc'], 0, false);
 					_snake_drop_tnt(@missile['loc']);
+				} else {
+					play_sound(@missile['loc'], associative_array('sound': 'FIZZ', 'volume': 4));
 				}
 				@missile['loc'][0] += 0.5;
 				@missile['loc'][1] += 0.5;
@@ -418,6 +424,11 @@ proc _snake_shoot_laser(@player, @loc, @dir, @range, @game) {
 			}
 		} else if(@block == '95:14') {
 			break();
+		} else if(@block == '46:0') {
+			_snake_remove_powerup(@loc, @game);
+			set_block_at(@loc, '95:14', false);
+			@blocks[] = @loc;
+			_snake_drop_tnt(@loc);
 		} else {
 			if(split(':', @block)[0] == '159') {
 				foreach(@p: @snake in @game['snakes']) {
@@ -425,10 +436,6 @@ proc _snake_shoot_laser(@player, @loc, @dir, @range, @game) {
 						_snake_kill(@p, @game);
 					}
 				}
-			} else if(@block == '46:0') {
-				_snake_remove_powerup(@loc, @game);
-				set_block_at(@loc, 0, false);
-				_snake_drop_tnt(@loc);
 			}
 			break();
 		}
