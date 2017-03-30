@@ -142,13 +142,15 @@ bind('target_player', null, array('mobtype': 'ZOMBIE'), @event) {
 		if(!is_null(@inv['helmet'])
 		&& @inv['helmet']['type'] == 397
 		&& entity_can_see(@event['id'], puuid(@event['player']))) {
-			shoot_projectile(@event['id'], 'EGG', @event['player'], rand() + 1);
+			@e = shoot_projectile(@event['id'], 'EGG', @event['player'], rand() + 1);
+			set_metadata(@e, 'bunny', true);
 			set_timeout((1 + rand(3)) * 1000, closure() {
 				if(entity_exists(@event['id'])
 				&& ponline(@event['player'])
 				&& pinfo(@event['player'], 5) > 10
 				&& entity_can_see(@event['id'], puuid(@event['player']))) {
-					shoot_projectile(@event['id'], 'EGG', @event['player'], rand() + 1);
+					@e = shoot_projectile(@event['id'], 'EGG', @event['player'], rand() + 1);
+					set_metadata(@e, 'bunny', true);
 				}
 			});
 		}
@@ -156,7 +158,7 @@ bind('target_player', null, array('mobtype': 'ZOMBIE'), @event) {
 }
 
 bind('projectile_hit', null, array('type': 'EGG'), @event) {
-	if(entity_loc(@event['id'])['world'] === 'outworld') {
+	if(has_metadata(@event['id'], 'bunny')) {
 		@mobs = array(
 			'BAT',
 			'CAVE_SPIDER',
