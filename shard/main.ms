@@ -21,10 +21,10 @@ bind(player_interact, null, array('item': 264, 'hand': 'main_hand', 'block': 0),
 	}
 	if(!has_permission('group.regular')) {
 		action_msg('Only trusted players can generate shards for now!');
-		die();
+	} else if(array_contains(all_virtualchests(), 'shard')) {
+		action_msg('Another player is generating a shard.');
+	} else {
+		include('core.library/menu.ms');
+		_open_objective_menu();
 	}
-	
-	// Open menu
-	include('core.library/menu.ms');
-	_create_menu();
 }

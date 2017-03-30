@@ -112,7 +112,7 @@ proc _shard_create(@rules){
 				storm(false, 'shard');
 				set_world_border('shard', array('width': @rules['width'], 'center': @loc));
 				set_gamerule('shard', 'NATURALREGENERATION', !@rules['noregen']);
-				if(!@rules['treasurehunt'] && @rules['buffertime'] && @rules['timelimit']) {
+				if(@rules['objective'] != 'treasurehunt' && @rules['buffertime'] && @rules['timelimit']) {
 					set_timeout(@rules['buffertime'] * 60000, closure(){
 						if(array_contains(get_worlds(), 'shard')) {
 							set_world_border('shard', array('width': 1, 'seconds': @rules['timelimit'] * 60));
@@ -127,7 +127,9 @@ proc _shard_create(@rules){
 				
 				@binds = array();
 				foreach(@rule: @value in @rules) {
-					if(@value && file_exists('../rules.library/'.@rule.'.ms')) {
+					if(@rule == 'objective' && file_exists('../objectives.library/'.@value.'.ms')) {
+						include('../objectives.library/'.@value.'.ms');
+					} else if(@value && file_exists('../rules.library/'.@rule.'.ms')) {
 						include('../rules.library/'.@rule.'.ms');
 					}
 				}
@@ -246,7 +248,7 @@ proc _shard_create(@rules){
 					if(@event['location']['world'] == 'shard') {
 						consume();
 						modify_event('death_message', color('k').'X'.color('r').' '.@event['death_message']);
-						if(!@rules['treasurehunt']) {
+						if(@rules['objective'] != 'treasurehunt') {
 							@loc = ploc();
 							if(@loc['y'] < 0) {
 								@loc['y'] = 0;
