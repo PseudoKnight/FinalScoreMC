@@ -79,6 +79,17 @@ proc _open_rules_menu(@objective) {
 						color('red').'VERY UNFAIR!'
 			)))
 		),
+		'megadestruction': array(
+			'default': false,
+			'shown': true,
+			'item': array(
+				'name': 'TNT', 'meta': array(
+					'display': color('aqua').color('bold').'MEGA DESTRUCTION',
+					'lore': array(
+						color('white').'Who needs tools when you have',
+						color('white').'instant TNT and Fireballs.',
+			)))
+		),
 		'noregen': array(
 			'default': false,
 			'shown': true,

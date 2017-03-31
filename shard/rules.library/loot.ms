@@ -177,3 +177,24 @@ bind(entity_damage, array('id': 'shard-itemframe'), array('type': 'ITEM_FRAME'),
 		cancel();
 	}
 }
+
+@binds[] = 'shard-explosion';
+bind(entity_explode, array('id': 'shard-explosion'), null, @event) {
+	if(@event['location']['world'] == 'shard') {
+		foreach(@block in @event['blocks']) {
+			switch(split(':', get_block_at(@block), 1)[0]) {
+				case '23':
+				case '61':
+				case '117':
+				case '154':
+				case '158':
+					@inv = array();
+					array_resize(@inv, get_inventory_size(@block));
+					set_inventory(@block, @inv);
+				case '54':
+				case '146':
+					_set_random_contents(@block, 3);
+			}
+		}
+	}
+}
