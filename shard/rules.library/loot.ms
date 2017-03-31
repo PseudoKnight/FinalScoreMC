@@ -6,19 +6,34 @@ proc _set_random_contents(@loc, @count) {
 	@limits = array(
 		260: 2, // APPLE
 		264: 16, // DIAMOND
+		295: 0, // SEEDS
 		297: 8, // BREAD
 		319: 16, // PORK
 		320: 8, // GRILLED_PORK
+		321: 0, // PAINTING
 		322: 1, // GOLDEN_APPLE
+		323: 0, // SIGN
+		324: 0, // WOOD_DOOR
+		330: 0, // IRON_DOOR
+		336: 0, // CLAY_BRICK
+		337: 0, // CLAY_BALL
+		342: 0, // STORAGE_MINECART
+		343: 0, // POWERED_MINECART
 		349: 16, // FISH
 		350: 8, // COOKED_FISH
 		358: 0, // MAP
+		359: 0, // SHEARS
+		361: 0, // PUMPKIN_SEEDS
+		362: 0, // MELON_SEEDS
 		363: 16, // RAW BEEF
 		364: 8, // COOKED_BEEF
 		365: 16, // RAW_CHICKEN
 		366: 8, // COOKED_CHICKEN
 		373: 1, // POTION (meta)
+		380: 0, // CAULDRON
 		383: 16, // MONSTER_EGG (meta)
+		389: 0, // ITEM_FRAME
+		390: 0, // FLOWER_POT_ITEM
 		391: 16, // CARROT_ITEM
 		392: 16, // POTATO_ITEM
 		393: 8, // BAKED_POTATO
@@ -27,14 +42,24 @@ proc _set_random_contents(@loc, @count) {
 		397: 8, // SKULL_ITEM
 		400: 8, // PUMPKIN_PIE
 		403: 1, // ENCHANTED_BOOK (meta)
+		405: 0, // NETHER_BRICK_ITEM
+		406: 0, // QUARTZ
 		407: 4, // EXPLOSIVE_MINECART
+		408: 0, // HOPPER_MINECART
 		411: 16, // RABBIT
 		412: 8, // COOKED_RABBIT
 		422: 0, // COMMAND_MINECART
 		423: 16, // MUTTON
 		424: 8, // COOKED_MUTTON
 		426: 8, // END_CRYSTAL
+		427: 0, // SPRUCE_DOOR_ITEM
+		428: 0, // BIRCH_DOOR_ITEM
+		429: 0, // JUNGLE_DOOR_ITEM
+		430: 0, // ACACIA_DOOR_ITEM
+		431: 0, // DARK_OAK_DOOR_ITEM
+		433: 0, // CHORUS_FRUIT_POPPED
 		434: 16, // BEETROOT
+		435: 0, // BEETROOT_SEEDS
 		438: 1, // SPLASH_POTION (meta)
 		440: 16, // TIPPED_ARROW (meta)
 		441: 1, // LINGERING_POTION (meta)
@@ -44,8 +69,11 @@ proc _set_random_contents(@loc, @count) {
 	@inv = array();
 	array_resize(@inv, @size);
 	while(@count > 0) {
-		@inv[rand(0, @size)] = _random_item(@limits);
-		@count--;
+		@item = _random_item(@limits);
+		if(@item) {
+			@inv[rand(0, @size)] = @item;
+			@count--;
+		}
 	}
 	try {
 		set_inventory(@loc, @inv);
