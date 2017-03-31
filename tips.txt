@@ -108,7 +108,7 @@ Get a list and description of useful commands @ http://finalscoremc.com/commands
 
 You can have one /home per world, excluding the outworld.
 
-Our mumble server is at mum.finalscoremc.com with port 64758. You can get Mumble @ http://mumble.sourceforge.net
+Our mumble server is at mum.finalscoremc.com with port 64758. You can get Mumble @ http://mumble.info
 
 We have a Discord server @ &bhttps://discordapp.com/invite/0aBtE3n1P6GixDwO
 
