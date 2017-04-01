@@ -39,7 +39,7 @@ bind('creature_spawn', null, array('type': 'ZOMBIE', 'reason': 'NATURAL'), @even
 			'ZOMBIE_HORSE',
 			'ZOMBIE_VILLAGER',
 		);
-		set_timeout(50, closure(){
+		queue_push(closure(){
 			if(entity_exists(@event['id'])) {
 				set_mob_equipment(@event['id'], associative_array(
 					'WEAPON': array('type': 383, 'meta': array('spawntype': @mobs[rand(array_size(@mobs))])),
@@ -62,7 +62,7 @@ bind('creature_spawn', null, array('type': 'ZOMBIE', 'reason': 'NATURAL'), @even
 				}
 				set_mob_effect(@event['id'], 8, 1, 9999, true);
 			}
-		});
+		}, 'easter');
 	}
 }
 
@@ -220,5 +220,15 @@ bind('player_interact_entity', null, array('clicked': '/(HORSE|WOLF)/'), @event)
 bind('creature_spawn', null, array('type': 'CHICKEN', 'reason': 'EGG'), @event) {
 	if(@event['location']['world'] === 'outworld') {
 		cancel();
+	}
+}
+
+if(@day == 1) {
+	bind('creature_spawn', null, null, @event) {
+		if(@event['reason'] != 'SPAWNER_EGG') {
+			queue_push(closure(){
+				try(set_mob_name(@event['id'], 'Dinnerbone'));
+			}, 'easter');
+		}
 	}
 }
