@@ -66,94 +66,55 @@ bind('creature_spawn', null, array('type': 'ZOMBIE', 'reason': 'NATURAL'), @even
 	}
 }
 
-/*
 bind('entity_death', null, array('type': 'ZOMBIE'), @event) {
 	if(@event['location']['world'] === 'outworld') {
-		if(@rider = get_entity_rider(@event['id'])) {
-			try(entity_remove(@rider));
-		}
-
 		@inv = get_mob_equipment(@event['id']);
 		if(!is_null(@inv['helmet'])
 		&& @inv['helmet']['type'] == 397) {
-
-			@player = '';
-			if(array_index_exists(@event['cause'], 'damager')) {
-				if(ponline(@event['cause']['damager'])) {
-					@player = @event['cause']['damager'];
-				} else if(array_index_exists(@event['cause'], 'shooter')
-				&& ponline(@event['cause']['shooter'])) {
-					@player = @event['cause']['shooter'];
-				}
-			}
-
-			if(@player !== '') {
-				@looting = 0;
-				@weapon = pinv(@player, null);
-				if(!is_null(@weapon)) {
-					foreach(@enchant in @weapon['enchants']) {
-						if(@enchant['etype'] === 'LOOT_BONUS_MOBS') {
-							@looting = @enchant['elevel'];
-							break();
-						}
-					}
-				}
-				@loc = _relative(@event['location'], 'up');
-				if(function_exists('play_effect')) {
-					play_effect(@loc, 'COLOURED_DUST', array('particleCount': 15, 'offsetX': 1, 'offsetY': 1, 'offsetZ': 1));
-				}
-				@mobs = associative_array(
-					51: 'SKELETON',
-					52: 'SPIDER',
-					54: 'ZOMBIE',
-					55: 'SLIME',
-					57: 'PIGZOMBIE',
-					58: 'ENDERMAN',
-					59: 'CAVESPIDER',
-					62: 'MAGMACUBE',
-					65: 'BAT',
-					66: 'WITCH',
-					67: 'ENDERMITE',
-					68: 'GUARDIAN',
-					69: 'SHULKER',
-					90: 'PIG',
-					91: 'SHEEP',
-					92: 'COW',
-					93: 'CHICKEN',
-					94: 'SQUID',
-					95: 'WOLF',
-					96: 'MOOSHROOM',
-					98: 'OCELOT',
-					100: 'HORSE',
-					101: 'RABBIT',
-					120: 'VILLAGER',
-				);
-				modify_event('drops', array(array('type': 383, 'qty': rand(1, 4 + @looting), 'data': array_rand(@mobs)[0])));
+			@loc = _relative(@event['location'], 'up');
+			if(function_exists('play_effect')) {
+				play_effect(@loc, 'COLOURED_DUST', array('particleCount': 15, 'offsetX': 1, 'offsetY': 1, 'offsetZ': 1));
 			}
 		}
 	}
 }
-*/
 
-
-bind('target_player', null, array('mobtype': 'ZOMBIE'), @event) {
-	if(entity_loc(@event['id'])['world'] === 'outworld') {
-		@inv = get_mob_equipment(@event['id']);
-		if(!is_null(@inv['helmet'])
-		&& @inv['helmet']['type'] == 397
-		&& entity_can_see(@event['id'], puuid(@event['player']))) {
-			@e = shoot_projectile(@event['id'], 'EGG', @event['player'], rand() + 1);
-			set_metadata(@e, 'bunny', true);
-			set_timeout((1 + rand(3)) * 1000, closure() {
-				if(entity_exists(@event['id'])
-				&& ponline(@event['player'])
-				&& pinfo(@event['player'], 5) > 10
-				&& entity_can_see(@event['id'], puuid(@event['player']))) {
-					@e = shoot_projectile(@event['id'], 'EGG', @event['player'], rand() + 1);
-					set_metadata(@e, 'bunny', true);
+bind('target_player', null, array('mobtype': 'ZOMBIE'), @event, @day) {
+	try {
+		if(entity_loc(@event['id'])['world'] === 'outworld') {
+			@inv = get_mob_equipment(@event['id']);
+			if(!is_null(@inv['helmet'])
+			&& @inv['helmet']['type'] == 397
+			&& entity_can_see(@event['id'], puuid(@event['player']))) {
+				@e = shoot_projectile(@event['id'], 'EGG', @event['player'], rand() + 1);
+				if(@day == 1) {
+					if(get_mob_name(@event['id']) == 'Dinnerbone') {
+						set_mob_name(@event['id'], 'Dinnerbun');
+					} else {
+						set_mob_name(@event['id'], 'Dinnerbone');
+					}
 				}
-			});
+				set_metadata(@e, 'bunny', true);
+				set_timeout((1 + rand(3)) * 1000, closure() {
+					if(entity_exists(@event['id'])
+					&& ponline(@event['player'])
+					&& pinfo(@event['player'], 5) > 10
+					&& entity_can_see(@event['id'], puuid(@event['player']))) {
+						@e = shoot_projectile(@event['id'], 'EGG', @event['player'], rand() + 1);
+						if(@day == 1) {
+							if(get_mob_name(@event['id']) == 'Dinnerbone') {
+								set_mob_name(@event['id'], 'Dinnerbun');
+							} else {
+								set_mob_name(@event['id'], 'Dinnerbone');
+							}
+						}
+						set_metadata(@e, 'bunny', true);
+					}
+				});
+			}
 		}
+	} catch(BadEntityException @ex) {
+		// non-existent entity is targeting somehow
 	}
 }
 
@@ -220,15 +181,5 @@ bind('player_interact_entity', null, array('clicked': '/(HORSE|WOLF)/'), @event)
 bind('creature_spawn', null, array('type': 'CHICKEN', 'reason': 'EGG'), @event) {
 	if(@event['location']['world'] === 'outworld') {
 		cancel();
-	}
-}
-
-if(@day == 1) {
-	bind('creature_spawn', null, null, @event) {
-		if(@event['reason'] != 'SPAWNER_EGG') {
-			queue_push(closure(){
-				try(set_mob_name(@event['id'], 'Dinnerbone'));
-			}, 'easter');
-		}
 	}
 }
