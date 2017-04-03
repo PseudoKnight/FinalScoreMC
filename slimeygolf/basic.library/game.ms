@@ -103,8 +103,8 @@ proc _start_game(@course, @loc) {
 					@ball['swing'] = true;
 					set_interval(50, closure(){
 						@xp = pexp();
-						if(@xp < 108 && @ball['swing']) {
-							set_pexp(pexp() + 4);
+						if(@xp < 100 && @ball['swing']) {
+							set_pexp(min(100, pexp() + 4));
 						} else {
 							clear_task();
 							if(@ball['swing']) {
@@ -154,7 +154,7 @@ proc _start_game(@course, @loc) {
 				@hole = @ball['hole'];
 				if(@xp > 0 && @ball['swing']) {
 					@ball['swing'] = false;
-					@xp = max(2, @xp - 8);
+					@xp = max(2, @xp);
 					set_plevel(@player, plevel(@player) + 1);
 					set_pexp(@player, @xp);
 					@golf[@hole]['strokes'][@player] += 1;
