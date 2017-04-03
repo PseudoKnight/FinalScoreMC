@@ -35,6 +35,10 @@
 		die(color('gold').'Usage: /enchant <type> [level]\n'
 		.'Example: /enchant sharpness 4');
 	}
+	@item = pinv(player(), null);
+	if(!@item) {
+		die('You must hold an item.');
+	}
 	include('util.library/items.ms');
 	_enchant_item($type, $level);
 <<<
