@@ -3,7 +3,9 @@
 
 proc _set_locations(@start, @end){
 	@pvp = import('pvpstatic');
-    @pvp['arena']['spawn'] = array(array(@end), array(@start));
+	if(@pvp) {
+    	@pvp['arena']['spawn'] = array(array(@end), array(@start));
+	}
 }
 
 proc _loot(@level) {
@@ -49,7 +51,7 @@ proc _materials(@level) {
 		'room': '0:0',
 		'door': '0:0',
 		'column': '7:0',
-        'stairs': '114:2',
+		'ladder': '65:3',
 		'ceiling': '7:0',
 		'floor': array('73:0', '110:0'),
 		'utility': array('7:0'),

@@ -38,6 +38,7 @@ proc _generate_dungeon(@region, @world, @type, @seed) {
 	msg('Generating dungeon with seed "'.@seed.'" ...');
 	x_new_thread('dungeon', closure(){
 		@random = res_create_resource('RANDOM', @seed);
+		@rooms = null;
 
 		foreach(@level in range(@level)) {
 			// Define grid
@@ -61,14 +62,18 @@ proc _generate_dungeon(@region, @world, @type, @seed) {
 			}
 
 			// Define rooms
+			@entrance = null;
+			if(!is_null(@rooms)) {
+				@entrance = @rooms[0];
+			}
 			@rooms = array();
 
-			// Place entrance stairway
+			// Place entrance ladder
 			@c = (integer(srand(@random) * ((@width / 2) - 1)) * 2) + 1;
-			@r = (integer(srand(@random) * ((@length / 2) - 7)) * 2) + 5;
-			for(@r2 = @r, @r2 < 7 + @r, @r2++) {
+			@r = (integer(srand(@random) * ((@length / 2) - 1)) * 2) + 1;
+			for(@r2 = @r, @r2 < 1 + @r, @r2++) {
 				for(@c2 = @c, @c2 < 1 + @c, @c2++) {
-					@materialMap[@c2][@r2] = 'stairs';
+					@materialMap[@c2][@r2] = 'ladder';
 					@roomMap[@c2][@r2] = 0;
 				}
 			}
@@ -279,8 +284,14 @@ proc _generate_dungeon(@region, @world, @type, @seed) {
 
 						// Floor
 						@levelLoc = array(@regionMinX + @x, @y, @regionMinZ + @z, @world);
-						if(@mobTypes && @materialMap[@c][@r] === 'column' && srand(@random) < 0.16) {
-							set_block_at(@levelLoc, '52:0', false)
+						if(@entrance && @entrance['c1'] == @c && @entrance['r1'] == @r) {
+							if(@z % 2 == 0 && @x % 2 == 0) {
+								set_block_at(@loc, @materials['ladder'], false);
+							} else {
+								set_block_at(@loc, 0, false);
+							}
+						} else if(@mobTypes && @materialMap[@c][@r] === 'column' && srand(@random) < 0.16) {
+							set_block_at(@levelLoc, '52:0', false);
 							@rand = integer(srand(@random) * array_size(@mobTypes));
 							@mob = array_get(@mobTypes, @rand, 'ZOMBIE');
 							set_spawner_type(@levelLoc, @mob);
@@ -320,8 +331,8 @@ proc _generate_dungeon(@region, @world, @type, @seed) {
 										} else {
 											set_block_at(@loc, @materials['room'], false);
 										}
-									} else if(@y > @floorHeight) {
-										set_block_at(@loc, @materials['empty'], false);
+									} else if(@y == @floorHeight) {
+										set_block_at(@loc, @materials['ceiling'], false);
 									} else {
 										set_block_at(@loc, @materials['room'], false);
 									}
@@ -364,11 +375,9 @@ proc _generate_dungeon(@region, @world, @type, @seed) {
 									}
 								case 'column':
 									set_block_at(@loc, @materials['column'], false);
-								case 'stairs':
-									if(@z - (@rooms[0]['r1'] * @scale) - 1 == @y - @floorHeight + @maxHeight + 1) {
-										set_block_at(@loc, @materials['stairs'], false);
-									} else if(@z - (@rooms[0]['r1'] * @scale) - 1 > @y - @floorHeight + @maxHeight + 1) {
-										set_block_at(@loc, 7, false);
+								case 'ladder':
+									if(@z % 2 == 0 && @x % 2 == 0) {
+										set_block_at(@loc, @materials['ladder'], false);
 									} else {
 										set_block_at(@loc, @materials['room'], false);
 									}
@@ -377,25 +386,13 @@ proc _generate_dungeon(@region, @world, @type, @seed) {
 							}
 						}
 
-						// Ceiling
-						@ceilingLoc = array(@regionMinX + @x, @floorHeight, @regionMinZ + @z, @world);
-						if(@materialMap[@c][@r] === 'stairs') {
-							if(@z - (@rooms[0]['r1'] * @scale) - 1 == @maxHeight + 1) {
-								set_block_at(@ceilingLoc, @materials['stairs'], false);
-							} else if(@z - (@rooms[0]['r1'] * @scale) - 1 < @maxHeight + 1) {
-								set_block_at(@ceilingLoc, @materials['room'], false);
-							}
-						} else {
-							set_block_at(@ceilingLoc, @materials['ceiling'], false);
-						}
-
 						// Bedrock level divider
-						@ceilingLoc[1]++;
-						if(@materialMap[@c][@r] === 'stairs') {
-							if(@z - (@rooms[0]['r1'] * @scale) - 1 == @maxHeight + 2) {
-								set_block_at(@ceilingLoc, @materials['stairs'], false);
-							} else if(@z - (@rooms[0]['r1'] * @scale) - 1 < @maxHeight + 2) {
-								set_block_at(@ceilingLoc, @materials['room'], false);
+						@ceilingLoc = array(@regionMinX + @x, @floorHeight + 1, @regionMinZ + @z, @world);
+						if(@materialMap[@c][@r] === 'ladder') {
+							if(@z % 2 == 0 && @x % 2 == 0) {
+								set_block_at(@ceilingLoc, @materials['ladder'], false);
+							} else {
+								set_block_at(@ceilingLoc, 0, false);
 							}
 						} else if(@materialMap[@c][@r] === 'room') {
 							set_block_at(@ceilingLoc, @materials['empty'], false);
