@@ -1,13 +1,13 @@
 proc _generate_dungeon(@region, @world, @type, @seed) {
+	@minroomsize = 3
+	@maxroomsize = 11
+	@maxHeight = 4
+	
 	include('../config.library/'.@type.'.ms');
 
 	if(!@seed) {
 		@seed = time();
 	}
-
-	@minroomsize = 3
-	@maxroomsize = 11
-	@height = 4
 
 	// Get size, scaled
 	if(!sk_region_exists(@world, @region)) {
@@ -43,9 +43,11 @@ proc _generate_dungeon(@region, @world, @type, @seed) {
 			// Define grid
 			@materialMap = array();
 			@roomMap = array();
+			@heightMap = array();
 			for(@c = 0, @c < @width, @c++) {
 				@materialMap[@c] = array();
 				@roomMap[@c] = array();
+				@heightMap[@c] = array();
 				for(@r = 0, @r < @length, @r++) {
 					@type = 'empty';
 					if(@r == 0 || @r == @length - 1
@@ -54,6 +56,7 @@ proc _generate_dungeon(@region, @world, @type, @seed) {
 					}
 					@materialMap[@c][@r] = @type;
 					@roomMap[@c][@r] = -1;
+					@heightMap[@c][@r] = @maxHeight;
 				}
 			}
 
@@ -214,6 +217,7 @@ proc _generate_dungeon(@region, @world, @type, @seed) {
 				}
 				@r = @room['r1'];
 				@c = @room['c1'];
+				@height = rand(3, @maxHeight + 1);
 				@roomwidth = @room['roomwidth'];
 				@roomlength = @room['roomlength'];
 				@rowOdd = null;
@@ -222,6 +226,7 @@ proc _generate_dungeon(@region, @world, @type, @seed) {
 					for(@c2 = @c - 1, @c2 <= @roomwidth + @c, @c2++) {
 						if(@r2 >= @r && @r2 < @roomlength + @r
 						&& @c2 >= @c && @c2 < @roomwidth + @c) {
+							@heightMap[@c2][@r2] = @height;
 							if(@materialMap[@c2 + 1][@r2] == 'door'
 							|| @materialMap[@c2 - 1][@r2] == 'door'
 							|| @materialMap[@c2][@r2 + 1] == 'door'
@@ -267,9 +272,10 @@ proc _generate_dungeon(@region, @world, @type, @seed) {
 				sleep(0.05);
 				x_run_on_main_thread_later(closure(){
 					for(@x = 0, @x < @width * @scale, @x++) {
-						@y = @coords[1][1] + (@level * (@height + 3));
+						@y = @coords[1][1] + (@level * (@maxHeight + 3));
 						@r = floor(@z / @scale);
 						@c = floor(@x / @scale);
+						@height = @heightMap[@c][@r];
 
 						// Floor
 						@levelLoc = array(@regionMinX + @x, @y, @regionMinZ + @z, @world);
@@ -298,13 +304,29 @@ proc _generate_dungeon(@region, @world, @type, @seed) {
 								case 'wall':
 									set_block_at(@loc, array_rand(@materials['wall'], 1, false)[0], false);
 								case 'room':
-									if(@level != 1 || srand(@random) > 0.03) {
-										set_block_at(@loc, @materials['room'], false);
+									if(@y == @floorHeight - 1) {
+										@north = @materialMap[@c][@r - 1];
+										@south = @materialMap[@c][@r + 1];
+										@west = @materialMap[@c - 1][@r];
+										@east = @materialMap[@c + 1][@r];
+										if((@east == 'wall' || @east == 'door') && @x % 2 == 1) {
+											set_block_at(@loc, @materials['edge'][0], false);
+										} else if((@west == 'wall' || @west == 'door') && @x % 2 == 0) {
+											set_block_at(@loc, @materials['edge'][1], false);
+										} else if((@south == 'wall' || @south == 'door') && @z % 2 == 1) {
+											set_block_at(@loc, @materials['edge'][2], false);
+										} else if((@north == 'wall' || @north == 'door') && @z % 2 == 0) {
+											set_block_at(@loc, @materials['edge'][3], false);
+										} else {
+											set_block_at(@loc, @materials['room'], false);
+										}
+									} else if(@y > @floorHeight) {
+										set_block_at(@loc, @materials['empty'], false);
 									} else {
-										set_block_at(@loc, '30', false);
+										set_block_at(@loc, @materials['room'], false);
 									}
 								case 'door':
-									if(@y < @floorHeight - 2) {
+									if(@y < @floorHeight - @height + 2) {
 										set_block_at(@loc, @materials['door'], false);
 									} else {
 										set_block_at(@loc, array_rand(@materials['wall'], 1, false)[0], false);
@@ -343,9 +365,9 @@ proc _generate_dungeon(@region, @world, @type, @seed) {
 								case 'column':
 									set_block_at(@loc, @materials['column'], false);
 								case 'stairs':
-									if(@z - (@rooms[0]['r1'] * @scale) - 1 == @y - @floorHeight + @height + 1) {
+									if(@z - (@rooms[0]['r1'] * @scale) - 1 == @y - @floorHeight + @maxHeight + 1) {
 										set_block_at(@loc, @materials['stairs'], false);
-									} else if(@z - (@rooms[0]['r1'] * @scale) - 1 > @y - @floorHeight + @height + 1) {
+									} else if(@z - (@rooms[0]['r1'] * @scale) - 1 > @y - @floorHeight + @maxHeight + 1) {
 										set_block_at(@loc, 7, false);
 									} else {
 										set_block_at(@loc, @materials['room'], false);
@@ -358,9 +380,9 @@ proc _generate_dungeon(@region, @world, @type, @seed) {
 						// Ceiling
 						@ceilingLoc = array(@regionMinX + @x, @floorHeight, @regionMinZ + @z, @world);
 						if(@materialMap[@c][@r] === 'stairs') {
-							if(@z - (@rooms[0]['r1'] * @scale) - 1 == @height + 1) {
+							if(@z - (@rooms[0]['r1'] * @scale) - 1 == @maxHeight + 1) {
 								set_block_at(@ceilingLoc, @materials['stairs'], false);
-							} else if(@z - (@rooms[0]['r1'] * @scale) - 1 < @height + 1) {
+							} else if(@z - (@rooms[0]['r1'] * @scale) - 1 < @maxHeight + 1) {
 								set_block_at(@ceilingLoc, @materials['room'], false);
 							}
 						} else {
@@ -370,9 +392,9 @@ proc _generate_dungeon(@region, @world, @type, @seed) {
 						// Bedrock level divider
 						@ceilingLoc[1]++;
 						if(@materialMap[@c][@r] === 'stairs') {
-							if(@z - (@rooms[0]['r1'] * @scale) - 1 == @height + 2) {
+							if(@z - (@rooms[0]['r1'] * @scale) - 1 == @maxHeight + 2) {
 								set_block_at(@ceilingLoc, @materials['stairs'], false);
-							} else if(@z - (@rooms[0]['r1'] * @scale) - 1 < @height + 2) {
+							} else if(@z - (@rooms[0]['r1'] * @scale) - 1 < @maxHeight + 2) {
 								set_block_at(@ceilingLoc, @materials['room'], false);
 							}
 						} else if(@materialMap[@c][@r] === 'room') {

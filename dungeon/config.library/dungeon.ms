@@ -1,5 +1,6 @@
 @level = 5;
 @scale = 2;
+@maxHeight = 8;
 
 proc _set_locations(@start, @end){
 	noop();
@@ -40,6 +41,7 @@ proc _materials(@level) {
 				'floor': array('172:0'),
 				'utility': array(58),
 				'decor': array(31),
+				'edge': array('128:4', '128:5', '128:6', '128:7'),
 			));
 		case 1:
 			return(associative_array(
@@ -53,6 +55,7 @@ proc _materials(@level) {
 				'floor': array('2'),
 				'utility': array(58),
 				'decor': array('18:2'),
+				'edge': array('161', '161', '161', '161'),
 			));
 		case 2:
 			return(associative_array(
@@ -66,11 +69,12 @@ proc _materials(@level) {
 				'floor': array('112:1'),
 				'utility': array(61, '145:2'),
 				'decor': array('118:2'),
+				'edge': array('114:4', '114:5', '114:6', '114:7'),
 			));
 		case 3:
 			return(associative_array(
 				'empty': '7:0',
-				'wall': array('1:0', '98:0', '98:1', '98:2', '98:3', '97:4'),
+				'wall': array('1:0', '98:0', '98:1', '98:2', '97:4'),
 				'room': '0:0',
 				'door': '0:0',
 				'column': '47:0',
@@ -79,6 +83,7 @@ proc _materials(@level) {
 				'floor': array('98:1'),
 				'utility': array('58', '116', '117', '118:2'),
 				'decor': array('66'),
+				'edge': array('109:4', '109:5', '109:6', '109:7'),
 			));
 		default:
 			return(associative_array(
@@ -92,6 +97,7 @@ proc _materials(@level) {
 				'floor': array(201),
 				'utility': array('116'),
 				'decor': array('199'),
+				'edge': array('203:4', '203:5', '203:6', '203:7'),
 			));
 	}
 }
