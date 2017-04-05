@@ -216,6 +216,8 @@ proc _generate_dungeon(@region, @world, @type, @seed) {
 				@c = @room['c1'];
 				@roomwidth = @room['roomwidth'];
 				@roomlength = @room['roomlength'];
+				@rowOdd = null;
+				@columnOdd = null;
 				for(@r2 = @r - 1, @r2 <= @roomlength + @r, @r2++) {
 					for(@c2 = @c - 1, @c2 <= @roomwidth + @c, @c2++) {
 						if(@r2 >= @r && @r2 < @roomlength + @r
@@ -227,18 +229,23 @@ proc _generate_dungeon(@region, @world, @type, @seed) {
 								@materialMap[@c2][@r2] = 'room';
 							} else {
 								switch(integer(srand(@random) * 100)) {
-									case 0..3:
-										if(@roomlength == 1
+									case 0..8:
+										if((!is_null(@rowOdd) && (@rowOdd != @r2 % 2 || @columnOdd != @c2 % 2))
+										|| @roomlength == 1
 										|| @roomwidth == 1) {
 											@materialMap[@c2][@r2] = 'room';
 										} else {
 											@materialMap[@c2][@r2] = 'column';
+											if(is_null(@rowOdd)) {
+												@rowOdd = @r2 % 2;
+												@columnOdd = @c2 % 2;
+											}
 										}
-									case 4..6:
+									case 9..11:
 										@materialMap[@c2][@r2] = 'chest';
-									case 7:
+									case 12:
 										@materialMap[@c2][@r2] = 'utility';
-									case 8..12:
+									case 13..17:
 										@materialMap[@c2][@r2] = 'decor';
 									default:
 										@materialMap[@c2][@r2] = 'room';
