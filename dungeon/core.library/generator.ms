@@ -118,7 +118,7 @@ proc _generate_dungeon(@region, @world, @type, @seed) {
 							'roomwidth': @roomwidth,
 							'roomlength': @roomlength,
 							'connected': 0,
-							'height': rand(3, @maxHeight + 1),
+							'height': if(@roomwidth == 1 || @roomlength == 1, 3, rand(3, @maxHeight + 1)),
 						);
 
 						// Mask room
@@ -300,13 +300,29 @@ proc _generate_dungeon(@region, @world, @type, @seed) {
 										@west = @materialMap[@c - 1][@r];
 										@east = @materialMap[@c + 1][@r];
 										if((@east == 'wall' || @east == 'door') && @x % 2 == 1) {
-											set_block_at(@loc, @materials['edge'][0], false);
+											if(@height == 3 && @east == 'door' && @z % 2 == 0) {
+												set_block_at(@loc, @materials['edge'][3], false);
+											} else {
+												set_block_at(@loc, @materials['edge'][0], false);
+											}
 										} else if((@west == 'wall' || @west == 'door') && @x % 2 == 0) {
-											set_block_at(@loc, @materials['edge'][1], false);
+											if(@height == 3 && @west == 'door' && @z % 2 == 1) {
+												set_block_at(@loc, @materials['edge'][2], false);
+											} else {
+												set_block_at(@loc, @materials['edge'][1], false);
+											}
 										} else if((@south == 'wall' || @south == 'door') && @z % 2 == 1) {
-											set_block_at(@loc, @materials['edge'][2], false);
+											if(@height == 3 && @south == 'door' &&@x % 2 == 1) {
+												set_block_at(@loc, @materials['edge'][0], false);
+											} else {
+												set_block_at(@loc, @materials['edge'][2], false);
+											}
 										} else if((@north == 'wall' || @north == 'door') && @z % 2 == 0) {
-											set_block_at(@loc, @materials['edge'][3], false);
+											if(@height == 3 && @north == 'door' && @x % 2 == 0) {
+												set_block_at(@loc, @materials['edge'][1], false);
+											} else {
+												set_block_at(@loc, @materials['edge'][3], false);
+											}
 										} else {
 											set_block_at(@loc, @materials['room'], false);
 										}
@@ -318,6 +334,22 @@ proc _generate_dungeon(@region, @world, @type, @seed) {
 								case 'door':
 									if(@y < @floorHeight - @height + 2) {
 										set_block_at(@loc, @materials['door'], false);
+									} else if(@y < @floorHeight - @height + 3) {
+										@north = @materialMap[@c][@r - 1];
+										@south = @materialMap[@c][@r + 1];
+										@west = @materialMap[@c - 1][@r];
+										@east = @materialMap[@c + 1][@r];
+										if(@east == 'wall' && @x % 2 == 1) {
+											set_block_at(@loc, @materials['edge'][0], false);
+										} else if(@west == 'wall' && @x % 2 == 0) {
+											set_block_at(@loc, @materials['edge'][1], false);
+										} else if(@south == 'wall' && @z % 2 == 1) {
+											set_block_at(@loc, @materials['edge'][2], false);
+										} else if(@north == 'wall' && @z % 2 == 0) {
+											set_block_at(@loc, @materials['edge'][3], false);
+										} else {
+											set_block_at(@loc, @materials['wall'], false);
+										}
 									} else {
 										set_block_at(@loc, array_rand(@materials['wall'], 1, false)[0], false);
 									}
@@ -429,7 +461,7 @@ proc _generate_dungeon(@region, @world, @type, @seed) {
 					);
 					set_block_at(@loc, @materials['ladder'], false);
 					@loc[1]++;
-					set_block_at(@loc, 0, false);
+					set_block_at(@loc, 96, false);
 				});
 			}
 		}
