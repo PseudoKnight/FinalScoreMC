@@ -1,6 +1,5 @@
 @level = 5;
-@scale = 2;
-@maxHeight = 8;
+@maxRoomHeight = 8;
 
 proc _set_locations(@start, @end){
 	noop();
@@ -11,7 +10,6 @@ proc _loot(@level) {
 		array(0.50, associative_array('name': 'TORCH', 'qty': array(1, 16))),
 		array(0.40, associative_array('name': 'BREAD', 'qty': array(1, 7))),
 		array(0.35, associative_array('name': 'GOLDEN_APPLE')),
-		array(0.25, associative_array('name': 'STONE_PICKAXE', 'qty': 1, 'data': 128)),
 		array(0.25, associative_array('name': 'DIAMOND_AXE', 'data': 1546)),
 		array(0.20, associative_array('name': 'DIAMOND_SWORD', 'data': 1546)),
 		array(0.09, associative_array('name': 'GOLD_HELMET', 'data': 60)),
