@@ -84,6 +84,7 @@ proc _generate_dungeon(@region, @world, @type, @seed) {
 				'roomwidth': 1,
 				'roomlength': 1,
 				'connected': 0,
+				'height': @maxHeight,
 			);
 			@unconnected = array(0);
 
@@ -117,6 +118,7 @@ proc _generate_dungeon(@region, @world, @type, @seed) {
 							'roomwidth': @roomwidth,
 							'roomlength': @roomlength,
 							'connected': 0,
+							'height': rand(3, @maxHeight + 1),
 						);
 
 						// Mask room
@@ -204,9 +206,6 @@ proc _generate_dungeon(@region, @world, @type, @seed) {
 							@next = array_keys(@connected)[integer(srand(@random) * array_size(@connected))];
 							@limit2--;
 						} while(@limit2 > 0 && (@next == @previous || array_contains(@try, @next)));
-						if(@limit2 < 1){
-							msg('Room selector hit limit!');
-						}
 						@try[] = @next;
 					} else {
 						// go back one if we haven't already
@@ -222,7 +221,6 @@ proc _generate_dungeon(@region, @world, @type, @seed) {
 				}
 				@r = @room['r1'];
 				@c = @room['c1'];
-				@height = rand(3, @maxHeight + 1);
 				@roomwidth = @room['roomwidth'];
 				@roomlength = @room['roomlength'];
 				@rowOdd = null;
@@ -231,34 +229,21 @@ proc _generate_dungeon(@region, @world, @type, @seed) {
 					for(@c2 = @c - 1, @c2 <= @roomwidth + @c, @c2++) {
 						if(@r2 >= @r && @r2 < @roomlength + @r
 						&& @c2 >= @c && @c2 < @roomwidth + @c) {
-							@heightMap[@c2][@r2] = @height;
-							if(@materialMap[@c2 + 1][@r2] == 'door'
+							@heightMap[@c2][@r2] = @room['height'];
+							if(@roomlength == 1
+							|| @roomwidth == 1
+							|| @materialMap[@c2 + 1][@r2] == 'door'
 							|| @materialMap[@c2 - 1][@r2] == 'door'
 							|| @materialMap[@c2][@r2 + 1] == 'door'
-							|| @materialMap[@c2][@r2 - 1] == 'door') {
+							|| @materialMap[@c2][@r2 - 1] == 'door'
+							|| (!is_null(@rowOdd) && (@rowOdd != @r2 % 2 || @columnOdd != @c2 % 2))
+							|| integer(srand(@random) * 100) < 90) {
 								@materialMap[@c2][@r2] = 'room';
 							} else {
-								switch(integer(srand(@random) * 100)) {
-									case 0..8:
-										if((!is_null(@rowOdd) && (@rowOdd != @r2 % 2 || @columnOdd != @c2 % 2))
-										|| @roomlength == 1
-										|| @roomwidth == 1) {
-											@materialMap[@c2][@r2] = 'room';
-										} else {
-											@materialMap[@c2][@r2] = 'column';
-											if(is_null(@rowOdd)) {
-												@rowOdd = @r2 % 2;
-												@columnOdd = @c2 % 2;
-											}
-										}
-									case 9..11:
-										@materialMap[@c2][@r2] = 'chest';
-									case 12:
-										@materialMap[@c2][@r2] = 'utility';
-									case 13..17:
-										@materialMap[@c2][@r2] = 'decor';
-									default:
-										@materialMap[@c2][@r2] = 'room';
+								@materialMap[@c2][@r2] = 'column';
+								if(is_null(@rowOdd)) {
+									@rowOdd = @r2 % 2;
+									@columnOdd = @c2 % 2;
 								}
 							}
 						} else if(@materialMap[@c2][@r2] !== 'door') {
@@ -284,13 +269,7 @@ proc _generate_dungeon(@region, @world, @type, @seed) {
 
 						// Floor
 						@levelLoc = array(@regionMinX + @x, @y, @regionMinZ + @z, @world);
-						if(@entrance && @entrance['c1'] == @c && @entrance['r1'] == @r) {
-							if(@z % 2 == 0 && @x % 2 == 0) {
-								set_block_at(@loc, @materials['ladder'], false);
-							} else {
-								set_block_at(@loc, 0, false);
-							}
-						} else if(@mobTypes && @materialMap[@c][@r] === 'column' && srand(@random) < 0.16) {
+						if(@mobTypes && @materialMap[@c][@r] === 'column' && srand(@random) < 0.16) {
 							set_block_at(@levelLoc, '52:0', false);
 							@rand = integer(srand(@random) * array_size(@mobTypes));
 							@mob = array_get(@mobTypes, @rand, 'ZOMBIE');
@@ -342,37 +321,6 @@ proc _generate_dungeon(@region, @world, @type, @seed) {
 									} else {
 										set_block_at(@loc, array_rand(@materials['wall'], 1, false)[0], false);
 									}
-								case 'chest':
-									set_block_at(@loc, 54, false);
-									@inv = array();
-									foreach(@weightedLoot in @loot){
-										if(srand(@random) < @weightedLoot[0]){
-											if(array_index_exists(@weightedLoot[1], 'qty')
-											&& is_array(@weightedLoot[1]['qty'])) {
-												@item = @weightedLoot[1][];
-												@item['qty'] = integer(srand(@random) * (@item['qty'][1] - @item['qty'][0]) + @item['qty'][0]);
-											} else {
-												@item = @weightedLoot[1];
-											}
-											@inv[] = @item;
-										}
-									}
-									set_inventory(@loc, @inv);
-									@materialMap[@c][@r] = 'room';
-								case 'utility':
-									if(@scale == 1 || (@y < @floorHeight - @height + 1 && srand(@random) < 0.6)) {
-										set_block_at(@loc, array_get(@materials['utility'], integer(srand(@random) * array_size(@materials['utility'])), 0), false);
-										@materialMap[@c][@r] = 'room';
-									} else {
-										set_block_at(@loc, @materials['room'], false);
-									}
-								case 'decor':
-									if(@scale == 1 || (@y < @floorHeight - @height + 1 && srand(@random) < 0.6)) {
-										set_block_at(@loc, array_get(@materials['decor'], integer(srand(@random) * array_size(@materials['decor'])), 0), false);
-										@materialMap[@c][@r] = 'room';
-									} else {
-										set_block_at(@loc, @materials['room'], false);
-									}
 								case 'column':
 									set_block_at(@loc, @materials['column'], false);
 								case 'ladder':
@@ -400,6 +348,88 @@ proc _generate_dungeon(@region, @world, @type, @seed) {
 							set_block_at(@ceilingLoc, 7, false);
 						}
 					}
+				});
+			}
+			
+			// Populate rooms
+			foreach(@room in @rooms) {
+				sleep(0.05);
+				x_run_on_main_thread_later(closure(){
+					if(@room['roomlength'] == 1 || @room['roomwidth'] == 1) {
+						die();
+					}
+					
+					@yFloor = @coords[1][1] + (@level * (@maxHeight + 3));
+					@height = @room['height'];
+					
+					@chests = integer(srand(@random) * min(@room['roomlength'], @room['roomwidth']));
+					while(@chests-- > 0) {
+						@loc = array(
+							@regionMinX + @room['c1'] * @scale + 1 + integer(srand(@random) * (@room['roomwidth'] - 1) * @scale),
+							@yFloor + 1,
+							@regionMinZ + @room['r1'] * @scale + 1 + integer(srand(@random) * (@room['roomlength'] - 1) * @scale),
+							@world
+						);
+						if(get_block_at(@loc) == '0:0') {
+							set_block_at(@loc, 54, false);
+							@inv = array();
+							foreach(@weightedLoot in @loot){
+								if(srand(@random) < @weightedLoot[0]){
+									if(array_index_exists(@weightedLoot[1], 'qty')
+									&& is_array(@weightedLoot[1]['qty'])) {
+										@item = @weightedLoot[1][];
+										@item['qty'] = integer(srand(@random) * (@item['qty'][1] - @item['qty'][0]) + @item['qty'][0]);
+									} else {
+										@item = @weightedLoot[1];
+									}
+									@inv[] = @item;
+								}
+							}
+							set_inventory(@loc, @inv);
+						}
+					}
+					
+					@utilities = integer(srand(@random) * min(@room['roomlength'], @room['roomwidth']) / 2);
+					while(@utilities-- > 0) {
+						@loc = array(
+							@regionMinX + @room['c1'] * @scale + 1 + integer(srand(@random) * (@room['roomwidth'] - 1) * @scale),
+							@yFloor + 1,
+							@regionMinZ + @room['r1'] * @scale + 1 + integer(srand(@random) * (@room['roomlength'] - 1) * @scale),
+							@world
+						);
+						if(get_block_at(@loc) == '0:0') {
+							set_block_at(@loc, array_get(@materials['utility'], integer(srand(@random) * array_size(@materials['utility'])), 0), false);
+						}
+					}
+					
+					@decorations = integer(srand(@random) * max(@room['roomlength'], @room['roomwidth']));
+					while(@decorations-- > 0) {
+						@loc = array(
+							@regionMinX + @room['c1'] * @scale + 1 + integer(srand(@random) * (@room['roomwidth'] - 1) * @scale),
+							@yFloor + 1,
+							@regionMinZ + @room['r1'] * @scale + 1 + integer(srand(@random) * (@room['roomlength'] - 1) * @scale),
+							@world
+						);
+						if(get_block_at(@loc) == '0:0') {
+							set_block_at(@loc, array_get(@materials['decor'], integer(srand(@random) * array_size(@materials['decor'])), 0), false);
+						}
+					}
+				});
+			}
+			
+			// Pop ladder into level
+			if(@entrance) {
+				sleep(0.05);
+				x_run_on_main_thread_later(closure(){
+					@loc = array(
+						@regionMinX + @entrance['c1'] * @scale,
+						@coords[1][1] + (@level * (@maxHeight + 3)),
+						@regionMinZ + @entrance['r1'] * @scale,
+						@world,
+					);
+					set_block_at(@loc, @materials['ladder'], false);
+					@loc[1]++;
+					set_block_at(@loc, 0, false);
 				});
 			}
 		}
