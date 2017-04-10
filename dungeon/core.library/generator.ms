@@ -41,6 +41,20 @@ proc _generate_dungeon(@region, @world, @genType, @seed) {
 	x_new_thread('dungeon', closure(){
 		@random = res_create_resource('RANDOM', @seed);
 		@rooms = null;
+		@farthestRoom = null;
+		@exitRoom = null;
+		
+		// Place entrance room
+		@c = integer(srand(@random) * (@width / 2 - 3)) * 2 + 3;
+		@r = integer(srand(@random) * (@length / 2 - 3)) * 2 + 3;
+		@entranceRoom = array(
+			'r1': @r,
+			'c1': @c,
+			'width': 3,
+			'length': 3,
+			'connected': 0,
+			'height': 4,
+		);
 
 		foreach(@level in range(@level)) {
 			// Define grid
@@ -64,38 +78,37 @@ proc _generate_dungeon(@region, @world, @genType, @seed) {
 			}
 
 			// Define rooms
-			@entrance = null;
-			if(!is_null(@rooms)) {
-				@entrance = @rooms[0];
-			}
 			@rooms = array();
-
-			// Place entrance ladder
-			@c = (integer(srand(@random) * ((@width / 2) - 1)) * 2) + 1;
-			@r = (integer(srand(@random) * ((@length / 2) - 1)) * 2) + 1;
-			for(@r2 = @r, @r2 < 1 + @r, @r2++) {
-				for(@c2 = @c, @c2 < 1 + @c, @c2++) {
-					@layoutMap[@c2][@r2] = 'ladder';
-					@roomMap[@c2][@r2] = 0;
+			if(@entranceRoom) {
+				@rooms[] = @entranceRoom;
+				@entranceRoom = null;
+			} else {
+				@r = @exitRoom['r1'];
+				@c = @exitRoom['c1'];
+				@rooms[] = array(
+					'r1': @r,
+					'c1': @c,
+					'width': min(@exitRoom['width'], 3),
+					'length': min(@exitRoom['length'], 3),
+					'connected': 0,
+					'height': 4,
+				);
+				for(@r2 = @r, @r2 < @rooms[0]['length'] + @r, @r2++) {
+					for(@c2 = @c, @c2 < @rooms[0]['width'] + @c, @c2++) {
+						@layoutMap[@c2][@r2] = 'room';
+						@roomMap[@c2][@r2] = 0;
+					}
 				}
 			}
-
-			@rooms[] = array(
-				'r1': @r,
-				'c1': @c,
-				'width': 1,
-				'length': 1,
-				'connected': 0,
-				'height': @maxRoomHeight,
-			);
-			@unconnected = array(0);
+			
 
 			// Place rooms
+			@unconnected = array(0);
 			for(@r = 1, @r < @length, @r += 2) {
 				for(@c = 1, @c < @width, @c += 2) {
 					if(@roomMap[@c][@r] == -1) {
-						@roomWidth = integer(srand(@random) * (((@maxRoomSize - @minRoomSize) / 2) + 1)) * 2 + @minRoomSize;
-						@roomLength = integer(srand(@random) * (((@maxRoomSize - @minRoomSize) / 2) + 1)) * 2 + @minRoomSize;
+						@roomWidth = integer(srand(@random) * ((@maxRoomSize - @minRoomSize) / 2 + 1)) * 2 + @minRoomSize;
+						@roomLength = integer(srand(@random) * ((@maxRoomSize - @minRoomSize) / 2 + 1)) * 2 + @minRoomSize;
 
 						// Check placement
 						for(@r2 = @r, @r2 < @r + @roomLength, @r2 += 2) {
@@ -139,8 +152,10 @@ proc _generate_dungeon(@region, @world, @genType, @seed) {
 			@next = 0;
 			@previous = @next;
 			@try = array();
-			@limit = 1000;
+			@limit = 2000;
 			@connected = associative_array();
+			@maxRoomDistance = 0;
+			@farthestRoom = null;
 			while(@unconnected) {
 				@limit--;
 				if(@limit < 0){
@@ -151,6 +166,10 @@ proc _generate_dungeon(@region, @world, @genType, @seed) {
 				@connected[@next] = null;
 				if(@rooms[@next]['connected'] == 0){
 					@rooms[@next]['connected'] = @rooms[@previous]['connected'] + 1;
+					if(@rooms[@next]['connected'] > @maxRoomDistance) {
+						@maxRoomDistance = @rooms[@next]['connected'];
+						@farthestRoom = @next;
+					}
 				}
 
 				@r = @rooms[@next]['r1'];
@@ -203,7 +222,7 @@ proc _generate_dungeon(@region, @world, @genType, @seed) {
 				}
 				if(!@success) {
 					if(@previous == @next) {
-						@limit2 = array_size(@rooms);
+						@limit2 = array_size(@rooms) * 2;
 						do {
 							@next = array_keys(@connected)[integer(srand(@random) * array_size(@connected))];
 							@limit2--;
@@ -216,7 +235,7 @@ proc _generate_dungeon(@region, @world, @genType, @seed) {
 				}
 			}
 
-			// Plan room
+			// Plan room layout
 			foreach(@n: @room in @rooms){
 				if(@n == 0){
 					continue();
@@ -457,44 +476,46 @@ proc _generate_dungeon(@region, @world, @genType, @seed) {
 			}
 			
 			// Pop ladder into level
-			if(@entrance) {
+			if(@exitRoom) {
 				sleep(0.05);
 				x_run_on_main_thread_later(closure(){
 					@loc = array(
-						@regionMinX + @entrance['c1'] * @scale,
-						@coords[1][1] + (@level * (@maxRoomHeight + 3)),
-						@regionMinZ + @entrance['r1'] * @scale,
+						@regionMinX + @exitRoom['c1'] * @scale,
+						@coords[1][1] + @level * (@maxRoomHeight + 3) + 1,
+						@regionMinZ + @exitRoom['r1'] * @scale,
 						@world,
 					);
-					set_block_at(@loc, @materials['ladder'], false);
-					@loc[1]++;
 					set_block_at(@loc, 96, false);
+					@ladderHeight = @maxRoomHeight + 3;
+					while(@ladderHeight-- > 0) {
+						@loc[1]--;
+						set_block_at(@loc, @materials['ladder'], false);
+						if(@ladderHeight > 3) {
+							set_block_at(_relative(@loc, 'south'), array_rand(@materials['wall'], 1, false)[0], false);
+							set_block_at(_relative(@loc, 'east'), array_rand(@materials['wall'], 1, false)[0], false);
+							set_block_at(_relative(@loc, 'west'), array_rand(@materials['wall'], 1, false)[0], false);
+						}
+						set_block_at(_relative(@loc, 'north'), array_rand(@materials['wall'], 1, false)[0], false);
+					}
 				});
 			}
+			@exitRoom = @rooms[@farthestRoom];
 		}
 		sleep(0.05);
 		x_run_on_main_thread_later(closure(){
-			@roomid = 0;
-			@distance = 0;
-			foreach(@id: @room in @rooms){
-				if(@room['connected'] > @distance) {
-					@roomid = @id;
-					@distance = @room['connected'];
-				}
-			}
-			for(@c = 0, @c < @rooms[@roomid]['width'], @c++) {
-				for(@r = 0, @r < @rooms[@roomid]['length'], @r++) {
-					if(@layoutMap[@c + @rooms[@roomid]['c1']][@r + @rooms[@roomid]['r1']] != 'column') {
+			for(@c = 0, @c < @exitRoom['width'], @c++) {
+				for(@r = 0, @r < @exitRoom['length'], @r++) {
+					if(@layoutMap[@c + @exitRoom['c1']][@r + @exitRoom['r1']] != 'column') {
 						break(2);
 					}
 				}
 			}
-			@sx = ((@rooms[@roomid]['c1'] + @c) * @scale) + @regionMinX + 0.5;
+			@sx = (@exitRoom['c1'] + @c) * @scale + @regionMinX + 0.5;
 			@sy = @coords[1][1];
-			@sz = ((@rooms[@roomid]['r1'] + @r) * @scale) + @regionMinZ + 0.5;
-			@ex = (@rooms[0]['c1'] * @scale) + @regionMinX + 0.5;
+			@sz = (@exitRoom['r1'] + @r) * @scale + @regionMinZ + 0.5;
+			@ex = @rooms[0]['c1'] * @scale + @regionMinX + 0.5;
 			@ey = @coords[1][1];
-			@ez = (@rooms[0]['r1'] * @scale) + @regionMinZ + 0.5;
+			@ez = @rooms[0]['r1'] * @scale + @regionMinZ + 0.5;
 			_set_locations(array(@sx, @sy, @sz, @world), array(@ex, @ey, @ez, @world));
 			res_free_resource(@random);
 			_remove_region_entities(@region, array(), @world);
