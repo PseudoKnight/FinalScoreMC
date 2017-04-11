@@ -23,8 +23,8 @@ include('bot.ms');
 proc _snake_queue(@args) {
 	// Default options
 	@game = associative_array();
-	@game['arena'] = 'plane';
-	@game['surfaces'] = 5;
+	@game['arena'] = '';
+	@game['surfaces'] = 0;
 	@game['snakes'] = associative_array();
 	@game['powerups'] = array();
 	@game['extraBlocks'] = array();
@@ -44,6 +44,22 @@ proc _snake_queue(@args) {
 		@value = @split[1];
 		@game[@key] = @value;
 	}
+	
+	// Get arena
+	foreach(@region in sk_current_regions()) {
+		if(string_starts_with(@region, 'snake_')) {
+			@game['arena'] = substr(@region, 6);
+			break();
+		}
+	}
+	if(!@game['arena']) {
+		die('Not in a snake region.');
+	}
+	
+	// Get region count
+	while(sk_region_exists('custom', 'snake_'.@game['arena'].(@game['surfaces'] + 1))) {
+		@game['surfaces']++;
+	}
 
 	// Create scoreboard
     try {
@@ -56,7 +72,7 @@ proc _snake_queue(@args) {
 
 	// Add players in region
 	foreach(@p in all_players()) {
-		if(array_contains(sk_current_regions(@p), 'snake') && pmode(@p) == 'ADVENTURE') {
+		if(array_contains(sk_current_regions(@p), 'snake_'.@game['arena']) && pmode(@p) == 'ADVENTURE') {
 			_snake_add(@p, @game);
 		}
 		if(array_size(@game['snakes']) == @game['numPlayers']) {
@@ -96,7 +112,7 @@ proc _snake_queue(@args) {
 			set_pheld_slot(@p, 8);
 		}
 		if(@countdown[0] == 6) {
-			_snake_play_song();
+			_snake_play_song(@game);
 		}
 		if(@countdown[0] == 0) {
 			clear_task();
@@ -119,7 +135,7 @@ proc _snake_start_task(@game) {
 			_snake_add_powerup(@game);
 		}
 		foreach(@player: @snake in @game['snakes']) {
-			if(!@snake['bot'] && (!ponline(@player) || !array_contains(sk_current_regions(@player), 'snake'))) {
+			if(!@snake['bot'] && (!ponline(@player) || !array_contains(sk_current_regions(@player), 'snake_'.@game['arena']))) {
 				_snake_remove(@player, @game);
 				continue();
 			}
