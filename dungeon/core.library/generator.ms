@@ -419,12 +419,12 @@ proc _generate_dungeon(@region, @world, @genType, @seed) {
 					@yFloor = @coords[1][1] + (@level * (@maxRoomHeight + 3));
 					@roomHeight = @room['height'];
 					
-					@chests = integer(srand(@random) * min(@room['length'], @room['width']));
+					@chests = integer(srand(@random) * min(@room['length'], @room['width']) / 1.2);
 					while(@chests-- > 0) {
 						@loc = array(
-							@regionMinX + @room['c1'] * @scale + 1 + integer(srand(@random) * (@room['width'] - 1) * @scale),
+							@regionMinX + @room['c1'] * @scale + 1 + integer(srand(@random) * (@room['width'] - 1)) * @scale,
 							@yFloor + 1,
-							@regionMinZ + @room['r1'] * @scale + 1 + integer(srand(@random) * (@room['length'] - 1) * @scale),
+							@regionMinZ + @room['r1'] * @scale + 1 + integer(srand(@random) * (@room['length'] - 1)) * @scale,
 							@world
 						);
 						if(get_block_at(@loc) == '0:0') {
