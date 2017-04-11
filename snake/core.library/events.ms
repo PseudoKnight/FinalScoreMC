@@ -34,6 +34,7 @@ proc _snake_bind_events(@game) {
 						}
 					}
 				} else if(@id == '46') {
+					set_block_at(@block, 0, false);
 					_snake_remove_powerup(@block, @game);
 					_snake_drop_tnt(@block);
 				}
