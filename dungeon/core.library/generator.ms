@@ -502,7 +502,7 @@ proc _generate_dungeon(@region, @world, @genType, @seed) {
 			@sy = @coords[1][1];
 			@sz = (@exitRoom['r1'] + @r) * @scale + @regionMinZ + 0.5;
 			@ex = @rooms[0]['c1'] * @scale + @regionMinX + 0.5;
-			@ey = @coords[1][1];
+			@ey = @coords[1][1] + @maxRoomHeight * @level;
 			@ez = @rooms[0]['r1'] * @scale + @regionMinZ + 0.5;
 			_set_locations(array(@sx, @sy, @sz, @world), array(@ex, @ey, @ez, @world));
 			res_free_resource(@random);
