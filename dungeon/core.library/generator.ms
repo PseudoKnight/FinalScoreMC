@@ -276,7 +276,6 @@ proc _generate_dungeon(@region, @world, @genType, @seed) {
 
 			@mobTypes = _spawner_mobs(@level);
 			@materials = _materials(@level);
-			@loot = _loot(@level);
 
 			// Build dungeon level
 			for(@z = 0, @z < @length * @scale, @z++) {
@@ -430,20 +429,7 @@ proc _generate_dungeon(@region, @world, @genType, @seed) {
 						);
 						if(get_block_at(@loc) == '0:0') {
 							set_block_at(@loc, 54, false);
-							@inv = array();
-							foreach(@weightedLoot in @loot){
-								if(srand(@random) < @weightedLoot[0]){
-									if(array_index_exists(@weightedLoot[1], 'qty')
-									&& is_array(@weightedLoot[1]['qty'])) {
-										@item = @weightedLoot[1][];
-										@item['qty'] = integer(srand(@random) * (@item['qty'][1] - @item['qty'][0]) + @item['qty'][0]);
-									} else {
-										@item = @weightedLoot[1];
-									}
-									@inv[] = @item;
-								}
-							}
-							set_inventory(@loc, @inv);
+							set_inventory(@loc, _get_loot(@level, @random));
 						}
 					}
 					
@@ -490,10 +476,12 @@ proc _generate_dungeon(@region, @world, @genType, @seed) {
 					while(@ladderHeight-- > 0) {
 						@loc[1]--;
 						set_block_at(@loc, @materials['ladder'], false);
-						if(@ladderHeight > 3) {
+						if(@ladderHeight > 2) {
 							set_block_at(_relative(@loc, 'south'), array_rand(@materials['wall'], 1, false)[0], false);
 							set_block_at(_relative(@loc, 'east'), array_rand(@materials['wall'], 1, false)[0], false);
 							set_block_at(_relative(@loc, 'west'), array_rand(@materials['wall'], 1, false)[0], false);
+						} else {
+							set_block_at(_relative(@loc, 'south'), 0, false);
 						}
 						set_block_at(_relative(@loc, 'north'), array_rand(@materials['wall'], 1, false)[0], false);
 					}

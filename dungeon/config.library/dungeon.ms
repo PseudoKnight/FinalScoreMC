@@ -2,27 +2,49 @@
 @maxRoomHeight = 8;
 
 proc _set_locations(@start, @end){
-	noop();
+	set_ploc(@start);
+	set_block_at(_relative(@end, 'up'), data_values('beacon'), false);
 }
 
-proc _loot(@level) {
-	return(array(
-		array(0.50, associative_array('name': 'TORCH', 'qty': array(1, 16))),
-		array(0.40, associative_array('name': 'BREAD', 'qty': array(1, 7))),
-		array(0.35, associative_array('name': 'GOLDEN_APPLE')),
-		array(0.25, associative_array('name': 'DIAMOND_AXE', 'data': 1546)),
-		array(0.20, associative_array('name': 'DIAMOND_SWORD', 'data': 1546)),
-		array(0.09, associative_array('name': 'GOLD_HELMET', 'data': 60)),
-		array(0.08, associative_array('name': 'GOLD_CHESTPLATE', 'data': 50)),
-		array(0.05, associative_array('name': 'GOLD_LEGGINGS', 'data': 50)),
-		array(0.08, associative_array('name': 'GOLD_BOOTS', 'data': 50)),
-		array(0.03, associative_array('name': 'CHAINMAIL_LEGGINGS', 'data': 100)),
-		array(0.01, associative_array('name': 'IRON_CHESTPLATE', 'data': 150)),
-		array(0.01, associative_array('name': 'IRON_LEGGINGS', 'data': 150)),
-		array(0.01, associative_array('name': 'IRON_BOOTS', 'data': 150)),
-		array(0.03, associative_array('name': 'SHIELD', 'data': 300)),
-		array(0.03, associative_array('name': 'INK_SACK', 'data': 4, 'qty': array(1, 3))),
-	));
+proc _get_loot(@level, @random, @loot = array(
+	array(0.50, associative_array('name': 'TORCH', 'qty': array(1, 10))),
+	array(0.40, associative_array('name': 'BREAD', 'qty': array(1, 5))),
+	array(0.35, associative_array('name': 'GOLDEN_APPLE')),
+	array(0.25, associative_array('name': 'DIAMOND_AXE', 'data': 1546)),
+	array(0.20, associative_array('name': 'DIAMOND_SWORD', 'data': 1546)),
+	array(0.04, associative_array('name': 'LEATHER_HELMET')),
+	array(0.04, associative_array('name': 'LEATHER_CHESTPLATE')),
+	array(0.04, associative_array('name': 'LEATHER_LEGGINGS')),
+	array(0.04, associative_array('name': 'LEATHER_BOOTS')),
+	array(0.03, associative_array('name': 'GOLD_HELMET', 'data': 50)),
+	array(0.03, associative_array('name': 'GOLD_CHESTPLATE', 'data': 50)),
+	array(0.03, associative_array('name': 'GOLD_LEGGINGS', 'data': 50)),
+	array(0.03, associative_array('name': 'GOLD_BOOTS', 'data': 50)),
+	array(0.02, associative_array('name': 'CHAINMAIL_HELMET', 'data': 100)),
+	array(0.02, associative_array('name': 'CHAINMAIL_CHESTPLATE', 'data': 100)),
+	array(0.02, associative_array('name': 'CHAINMAIL_LEGGINGS', 'data': 100)),
+	array(0.02, associative_array('name': 'CHAINMAIL_BOOTS', 'data': 100)),
+	array(0.01, associative_array('name': 'IRON_HELMET', 'data': 150)),
+	array(0.01, associative_array('name': 'IRON_CHESTPLATE', 'data': 150)),
+	array(0.01, associative_array('name': 'IRON_LEGGINGS', 'data': 150)),
+	array(0.01, associative_array('name': 'IRON_BOOTS', 'data': 150)),
+	array(0.03, associative_array('name': 'SHIELD', 'data': 300)),
+	array(0.03, associative_array('name': 'INK_SACK', 'data': 4, 'qty': array(1, 3))),
+)) {
+	@inv = array();
+	foreach(@weightedLoot in @loot){
+		if(srand(@random) < @weightedLoot[0]){
+			if(array_index_exists(@weightedLoot[1], 'qty')
+			&& is_array(@weightedLoot[1]['qty'])) {
+				@item = @weightedLoot[1][];
+				@item['qty'] = integer(srand(@random) * (@item['qty'][1] - @item['qty'][0]) + @item['qty'][0]);
+			} else {
+				@item = @weightedLoot[1];
+			}
+			@inv[] = @item;
+		}
+	}
+	return(@inv);
 }
 
 proc _materials(@level) {
