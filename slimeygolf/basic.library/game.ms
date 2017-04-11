@@ -33,9 +33,6 @@ proc _start_game(@course, @loc) {
 		));
 	}
 
-	# Physics defaults
-	@bounciness = 0.8;
-
 	# Place ball
 	bind(player_interact, array('id': @course), array('item': 341, 'button': 'right', 'block': 159), @event, @golf) {
 		if(array_index_exists(@golf['players'], player())
@@ -178,6 +175,10 @@ proc _start_game(@course, @loc) {
 	}
 
 	set_interval(50, closure(){
+		# Physics defaults
+		@bounciness = 0.8;
+		@friction = 1.07;
+		
 		@count = 0;
 		foreach(@player in all_players(@golf['world'])) {
 			if(!array_index_exists(@golf['players'], @player)) {
@@ -351,6 +352,8 @@ proc _start_game(@course, @loc) {
 						@ball['hole'] += 1;
 						@ball['id'] = 0;
 						continue();
+					} else if(@block == '88:0') {
+						@friction = 0.9
 					}
 				}
 
@@ -384,11 +387,11 @@ proc _start_game(@course, @loc) {
 				}
 
 				if(@v['magnitude'] < 0.875 && @v['magnitude'] > 0.125) {
-					@v['x'] = (@v['x'] / @v['magnitude']) * (1.07 * @v['magnitude']);
-					@v['z'] = (@v['z'] / @v['magnitude']) * (1.07 * @v['magnitude']);
+					@v['x'] = (@v['x'] / @v['magnitude']) * (@friction * @v['magnitude']);
+					@v['z'] = (@v['z'] / @v['magnitude']) * (@friction * @v['magnitude']);
 					play_effect(@loc, 'SLIME');
 				}
-
+				
 				if(@ricochetPitch > 1) {
 					play_sound(@loc, array('sound': 'WOOD_CLICK', 'pitch': min(2, @ricochetPitch)));
 				}
