@@ -79,9 +79,12 @@ proc _generate_dungeon(@region, @world, @genType, @seed) {
 
 			// Define rooms
 			@rooms = array();
-			if(@entranceRoom) {
+			@r = 0;
+			@c = 0;
+			if(@level == 0) {
+				@r = @entranceRoom['r1'];
+				@c = @entranceRoom['c1'];
 				@rooms[] = @entranceRoom;
-				@entranceRoom = null;
 			} else {
 				@r = @exitRoom['r1'];
 				@c = @exitRoom['c1'];
@@ -93,14 +96,13 @@ proc _generate_dungeon(@region, @world, @genType, @seed) {
 					'connected': 0,
 					'height': 4,
 				);
-				for(@r2 = @r, @r2 < @rooms[0]['length'] + @r, @r2++) {
-					for(@c2 = @c, @c2 < @rooms[0]['width'] + @c, @c2++) {
-						@layoutMap[@c2][@r2] = 'room';
-						@roomMap[@c2][@r2] = 0;
-					}
+			}
+			for(@r2 = @r, @r2 < @rooms[0]['length'] + @r, @r2++) {
+				for(@c2 = @c, @c2 < @rooms[0]['width'] + @c, @c2++) {
+					@layoutMap[@c2][@r2] = 'room';
+					@roomMap[@c2][@r2] = 0;
 				}
 			}
-			
 
 			// Place rooms
 			@unconnected = array(0);
@@ -498,12 +500,12 @@ proc _generate_dungeon(@region, @world, @genType, @seed) {
 					}
 				}
 			}
-			@sx = (@exitRoom['c1'] + @c) * @scale + @regionMinX + 0.5;
+			@ex = (@exitRoom['c1'] + @c) * @scale + @regionMinX + 0.5;
+			@ey = @coords[1][1] + @level * (@maxRoomHeight + 3);
+			@ez = (@exitRoom['r1'] + @r) * @scale + @regionMinZ + 0.5;
+			@sx = @entranceRoom['c1'] * @scale + @regionMinX + 0.5;
 			@sy = @coords[1][1];
-			@sz = (@exitRoom['r1'] + @r) * @scale + @regionMinZ + 0.5;
-			@ex = @rooms[0]['c1'] * @scale + @regionMinX + 0.5;
-			@ey = @coords[1][1] + @maxRoomHeight * @level;
-			@ez = @rooms[0]['r1'] * @scale + @regionMinZ + 0.5;
+			@sz = @entranceRoom['r1'] * @scale + @regionMinZ + 0.5;
 			_set_locations(array(@sx, @sy, @sz, @world), array(@ex, @ey, @ez, @world));
 			res_free_resource(@random);
 			_remove_region_entities(@region, array(), @world);
