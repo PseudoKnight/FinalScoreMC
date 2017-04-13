@@ -16,7 +16,7 @@ proc _level_start(@level) {
 		}
 	}
 	
-	bind(player_spawn, array('id': 'spawn'.@level['region']), array('world': 'custom'), @event, @level) {
+	bind(player_spawn, array('id': 'spawn'.@level['region']), null, @event, @level) {
 		if(array_contains(@level['spectators'], player())) {
 			consume();
 			@loc = import(player().'spawn');
