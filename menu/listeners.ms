@@ -17,10 +17,10 @@ bind(inventory_click, null, null, @event) {
 }
 
 bind(player_interact_at_entity, null, array('clicked': 'ARMOR_STAND'), @event) {
-	if(get_mob_name(@event['id']) == color('green').'Start') {
+	if(pmode() != 'CREATIVE' && get_mob_name(@event['id']) == color('green').'Start') {
 		@equipment = get_mob_equipment(@event['id']);
-		if(@equipment['weapon'] && @equipment['weapon']['meta']) {
-			call_alias(@equipment['weapon']['meta']['display']);
+		if(@equipment['helmet'] && @equipment['helmet']['meta']) {
+			call_alias(@equipment['helmet']['meta']['display']);
 		}
 	}
 }
