@@ -1,7 +1,7 @@
 @level = 5;
 @maxRoomHeight = 8;
 
-proc _set_locations(@start, @end){
+proc _set_locations(@start, @end, @spawns){
 	set_ploc(@start);
 	set_block_at(_relative(@end, 'up'), data_values('beacon'), false);
 }

@@ -43,6 +43,7 @@ proc _generate_dungeon(@region, @world, @genType, @seed) {
 		@rooms = null;
 		@farthestRoom = null;
 		@exitRoom = null;
+		@spawns = array();
 		
 		// Place entrance room
 		@c = integer(srand(@random) * (@width / 2 - 3)) * 2 + 3;
@@ -262,6 +263,14 @@ proc _generate_dungeon(@region, @world, @genType, @seed) {
 							|| (!is_null(@rowOdd) && (@rowOdd != @r2 % 2 || @columnOdd != @c2 % 2))
 							|| integer(srand(@random) * 100) < 90) {
 								@layoutMap[@c2][@r2] = 'room';
+								if(integer(srand(@random) * 100) < 15) {
+									@spawns[] = array(
+										@regionMinX + @c2 * @scale,
+										@coords[1][1] + @level * (@maxRoomHeight + 3) + 1,
+										@regionMinZ + @r2 * @scale,
+										@world,
+									);
+								}
 							} else {
 								@layoutMap[@c2][@r2] = 'column';
 								if(is_null(@rowOdd)) {
@@ -506,7 +515,7 @@ proc _generate_dungeon(@region, @world, @genType, @seed) {
 			@sx = @entranceRoom['c1'] * @scale + @regionMinX + 0.5;
 			@sy = @coords[1][1];
 			@sz = @entranceRoom['r1'] * @scale + @regionMinZ + 0.5;
-			_set_locations(array(@sx, @sy, @sz, @world), array(@ex, @ey, @ez, @world));
+			_set_locations(array(@sx, @sy, @sz, @world), array(@ex, @ey, @ez, @world), @spawns);
 			res_free_resource(@random);
 			_remove_region_entities(@region, array(), @world);
 			msg(color('green').@genType.' generation complete!');
