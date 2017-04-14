@@ -1,6 +1,6 @@
 switch(@action) {
 case 'load':
-	tmsg(@player, color('e').'Hunt the other players. Do not let them escape via the stairs!');
+	tmsg(@player, color('e').'Hunt the other players. Do not let them press the button!');
 	tmsg(@player, color('e').'When you\'re spotted, you regain health and hunger.');
 	tmsg(@player, color('e').'Sprint to "ghost" through walls and rematerialize out of sight.');
 	tmsg(@player, color('e').'Scare them, hit them, and then ghost away to safety.');
@@ -38,7 +38,7 @@ case 'load':
 					}
 					@ploc = ploc();
 					@ploc['y'] = @pvp['arena']['spawn'][0][0][1] + 1;
-					if(get_block_at(@ploc) == '0:0') {
+					if(get_block_at(@ploc) == '9:0') {
 						set_entity_loc(@armorstand, @ploc);
 						@seen = false;
 						@hunter = puuid();
@@ -138,7 +138,6 @@ case 'load':
 				}
 				set_ptexp(@player, ptexp(@player) + 1);
 				set_peffect(@p, 9, 0, 4);
-				set_peffect(@p, 15, 0, 240);
 				play_named_sound(@loc, array('sound': 'entity.guardian.attack', 'pitch': 1.5), @p);
 			} else if(pinv(@p, 103)) {
 				set_pinv(@p, associative_array(103: null));

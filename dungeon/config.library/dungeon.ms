@@ -1,4 +1,4 @@
-@level = 5;
+@level = 6;
 @maxRoomHeight = 8;
 
 proc _set_locations(@start, @end, @spawns){
@@ -100,10 +100,24 @@ proc _materials(@level) {
 				'column': '47:0',
 				'ladder': '65:3',
 				'ceiling': array('98:0'),
-				'floor': array('98:1', '98:1', '98:1', '98:1', '98:1', '98:1', '98:2', '98:2', '8:0'),
+				'floor': array('98:1', '98:1', '98:1', '98:1', '98:1', '98:1', '98:2', '98:2', '9:0'),
 				'utility': array('58', '116', '117', '118:2'),
 				'decor': array('66'),
 				'edge': array('109:4', '109:5', '109:6', '109:7'),
+			));
+		case 4:
+			return(associative_array(
+				'empty': '7:0',
+				'wall': array('168:1'),
+				'room': '9:0',
+				'door': '9:0',
+				'column': '168:1',
+				'ladder': '65:3',
+				'ceiling': array('168'),
+				'floor': array('168:2'),
+				'utility': array('169'),
+				'decor': array('169'),
+				'edge': array('168:2', '168:2', '168:2', '168:2'),
 			));
 		default:
 			return(associative_array(
@@ -125,14 +139,16 @@ proc _materials(@level) {
 proc _spawner_mobs(@level) {
 	switch(@level) {
 		case 0:
-			return(array('ENDER_CRYSTAL', 'ENDERMITE', 'ZOMBIE'));
+			return(array('ENDER_CRYSTAL', 'ENDERMITE', 'HUSK'));
 		case 1:
 			return(array('CAVE_SPIDER', 'SPIDER', 'SILVERFISH'));
 		case 2:
 			return(array('PIG_ZOMBIE', 'MAGMA_CUBE', 'BLAZE'));
 		case 3:
-			return(array('ENDER_CRYSTAL', 'ZOMBIE',	'SPIDER', 'SILVERFISH', 'SKELETON', 'BLAZE', 'WITCH', 'CREEPER'));
+			return(array('ENDER_CRYSTAL', 'ZOMBIE',	'SPIDER', 'SILVERFISH', 'SKELETON', 'STRAY', 'WITCH', 'CREEPER'));
+		case 4:
+			return(array('GUARDIAN'));
 		default:
-			return(array('ENDER_CRYSTAL', 'ENDERMITE', 'ENDERMAN', 'GUARDIAN', 'SHULKER'));
+			return(array('ENDER_CRYSTAL', 'ENDERMITE', 'ENDERMAN', 'SHULKER'));
 	}
 }

@@ -3,7 +3,7 @@ proc _generate_dungeon(@region, @world, @genType, @seed) {
 	@scale = 2;
 	@minRoomSize = 3
 	@maxRoomSize = 11
-	@maxRoomHeight = 4
+	@maxRoomHeight = 3
 	
 	include('../config.library/'.@genType.'.ms');
 
@@ -426,7 +426,7 @@ proc _generate_dungeon(@region, @world, @genType, @seed) {
 							@regionMinZ + @room['r1'] * @scale + 1 + integer(srand(@random) * (@room['length'] - 1)) * @scale,
 							@world
 						);
-						if(get_block_at(@loc) == '0:0') {
+						if(get_block_at(@loc) == @materials['room']) {
 							set_block_at(@loc, 54, false);
 							set_inventory(@loc, _get_loot(@level, @random));
 						}
@@ -440,7 +440,7 @@ proc _generate_dungeon(@region, @world, @genType, @seed) {
 							@regionMinZ + @room['r1'] * @scale + 1 + integer(srand(@random) * (@room['length'] - 1) * @scale),
 							@world
 						);
-						if(get_block_at(@loc) == '0:0') {
+						if(get_block_at(@loc) == @materials['room']) {
 							set_block_at(@loc, @materials['utility'][integer(srand(@random) * array_size(@materials['utility']))], false);
 						}
 					}
@@ -453,7 +453,7 @@ proc _generate_dungeon(@region, @world, @genType, @seed) {
 							@regionMinZ + @room['r1'] * @scale + 1 + integer(srand(@random) * (@room['length'] - 1) * @scale),
 							@world
 						);
-						if(get_block_at(@loc) == '0:0') {
+						if(get_block_at(@loc) == @materials['room']) {
 							set_block_at(@loc, @materials['decor'][integer(srand(@random) * array_size(@materials['decor']))], false);
 						}
 					}
