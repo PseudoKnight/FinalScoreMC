@@ -8,7 +8,7 @@ proc _generate_dungeon(@region, @world, @genType, @seed) {
 	include('../config.library/'.@genType.'.ms');
 
 	if(!@seed) {
-		@seed = time();
+		@seed = integer(time() / 100000);
 	}
 
 	// Get size, scaled
@@ -19,6 +19,7 @@ proc _generate_dungeon(@region, @world, @genType, @seed) {
 	@coords = sk_region_info(@region, @world, 0);
 	@regionMinX = @coords[1][0];
 	@regionMaxX = @coords[0][0];
+	@regionMinY = @coords[1][1];
 	@regionMinZ = @coords[1][2];
 	@regionMaxZ = @coords[0][2];
 	@regionWidth = @coords[0][0] - @coords[1][0];
@@ -26,11 +27,11 @@ proc _generate_dungeon(@region, @world, @genType, @seed) {
 	@width = ceil(@regionWidth / @scale);
 	@length = ceil(@regionLength / @scale);
 
-	if(!(@width % 2)) {
-		@width--;
+	if(@width % 2 == 0) {
+		@width -= 1;
 	}
-	if(!(@length % 2)) {
-		@length--;
+	if(@length % 2 == 0) {
+		@length -= 1;
 	}
 	if(@width < 21 || @length < 21) {
 		die('Region too small!');
@@ -266,7 +267,7 @@ proc _generate_dungeon(@region, @world, @genType, @seed) {
 								if(integer(srand(@random) * 100) < 15) {
 									@spawns[] = array(
 										@regionMinX + @c2 * @scale,
-										@coords[1][1] + @level * (@maxRoomHeight + 3) + 1,
+										@regionMinY + @level * (@maxRoomHeight + 3) + 1,
 										@regionMinZ + @r2 * @scale,
 										@world,
 									);
@@ -293,7 +294,7 @@ proc _generate_dungeon(@region, @world, @genType, @seed) {
 				sleep(0.05);
 				x_run_on_main_thread_later(closure(){
 					for(@x = 0, @x < @width * @scale, @x++) {
-						@y = @coords[1][1] + (@level * (@maxRoomHeight + 3));
+						@y = @regionMinY + (@level * (@maxRoomHeight + 3));
 						@r = floor(@z / @scale);
 						@c = floor(@x / @scale);
 						@roomHeight = @heightMap[@c][@r];
@@ -306,15 +307,7 @@ proc _generate_dungeon(@region, @world, @genType, @seed) {
 							@mob = array_get(@mobTypes, @rand, 'ZOMBIE');
 							set_spawner_type(@levelLoc, @mob);
 						} else {
-							if(@level < 2 || srand(@random) > 0.03) {
-								set_block_at(@levelLoc, array_rand(@materials['floor'], 1, false)[0], false);
-							} else if(@level == 2) {
-								set_block_at(@levelLoc, '213', false);
-							} else if(@level == 3) {
-								set_block_at(@levelLoc, '8', false);
-							} else {
-								set_block_at(@levelLoc, array_rand(@materials['floor'], 1, false)[0], false);
-							}
+							set_block_at(@levelLoc, array_rand(@materials['floor'], 1, false)[0], false);
 						}
 
 						// Walls
@@ -359,7 +352,7 @@ proc _generate_dungeon(@region, @world, @genType, @seed) {
 											set_block_at(@loc, @materials['room'], false);
 										}
 									} else if(@y == @ceilingHeight) {
-										set_block_at(@loc, @materials['ceiling'], false);
+										set_block_at(@loc, array_rand(@materials['ceiling'], 1, false)[0], false);
 									} else {
 										set_block_at(@loc, @materials['room'], false);
 									}
@@ -427,7 +420,7 @@ proc _generate_dungeon(@region, @world, @genType, @seed) {
 						die();
 					}
 					
-					@yFloor = @coords[1][1] + (@level * (@maxRoomHeight + 3));
+					@yFloor = @regionMinY + (@level * (@maxRoomHeight + 3));
 					@roomHeight = @room['height'];
 					
 					@chests = integer(srand(@random) * min(@room['length'], @room['width']) / 1.2);
@@ -478,7 +471,7 @@ proc _generate_dungeon(@region, @world, @genType, @seed) {
 				x_run_on_main_thread_later(closure(){
 					@loc = array(
 						@regionMinX + @exitRoom['c1'] * @scale,
-						@coords[1][1] + @level * (@maxRoomHeight + 3) + 1,
+						@regionMinY + @level * (@maxRoomHeight + 3) + 1,
 						@regionMinZ + @exitRoom['r1'] * @scale,
 						@world,
 					);
@@ -510,10 +503,10 @@ proc _generate_dungeon(@region, @world, @genType, @seed) {
 				}
 			}
 			@ex = (@exitRoom['c1'] + @c) * @scale + @regionMinX + 0.5;
-			@ey = @coords[1][1] + @level * (@maxRoomHeight + 3);
+			@ey = @regionMinY + @level * (@maxRoomHeight + 3);
 			@ez = (@exitRoom['r1'] + @r) * @scale + @regionMinZ + 0.5;
 			@sx = @entranceRoom['c1'] * @scale + @regionMinX + 0.5;
-			@sy = @coords[1][1];
+			@sy = @regionMinY;
 			@sz = @entranceRoom['r1'] * @scale + @regionMinZ + 0.5;
 			_set_locations(array(@sx, @sy, @sz, @world), array(@ex, @ey, @ez, @world), @spawns);
 			res_free_resource(@random);

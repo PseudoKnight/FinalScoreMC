@@ -62,7 +62,7 @@ proc _materials(@level) {
 		'door': '0:0',
 		'column': '7:0',
 		'ladder': '65:3',
-		'ceiling': '7:0',
+		'ceiling': array('7:0'),
 		'floor': array('73:0', '110:0'),
 		'utility': array('7:0'),
 		'decor': array('7:0'),
