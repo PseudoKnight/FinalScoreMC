@@ -62,8 +62,8 @@
 	}
 <<<
 
-*:/rg $ = run_cmd('/region '.$);
-
+*:/rg $ = call_alias('/region '.$);
+*:/plot $ = call_alias('/region '.$);
 *:/region $ = >>>
 	@args = parse_args($);
 	if(array_size(@args) < 2) {
@@ -166,6 +166,30 @@
 			}
 			sk_region_rename(pworld(), @from, @to);
 			msg('Renamed '.@from.' to '.@to.'.');
+
+		case 'clear':
+			if(pworld() != 'dev') {
+				die(color('GOLD').'You can only use this in dev plots');
+			}
+			@region = @args[1];
+			if(!sk_region_exists('dev', @region)) {
+				die(color('GOLD').'That region doesn\'t exist.');
+			}
+			if(!has_permission('group.moderator')
+			&& !array_contains(sk_region_owners(@region, 'dev')['players'], puuid())) {
+				die(color('GOLD').'No permission.');
+			}
+			@info = sk_region_info(@region, 'dev');
+			if(!array_contains(sk_regions_at(@info[0][0]), 'plots')) {
+				die(color('GOLD').'You can only use this in dev plots');
+			}
+			sk_pos1(@info[0][0][0..2]);
+			sk_pos2(@info[0][1][0..2]);
+			msg('Clearing plot...');
+			sudo('//schematic load plots-column');
+			set_timeout(1000, closure(){
+				sudo('//set #clipboard');
+			});
 
 		case 'redefine':
 		case 'update':
