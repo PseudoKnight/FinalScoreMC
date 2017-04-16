@@ -12,7 +12,7 @@ bind(item_swap, array('priority': 'MONITOR'), null, @event) {
 }
 
 bind(entity_damage, array('priority': 'MONITOR'), array('type': 'PLAYER'), @event) {
-	if(@event['finalamount'] == 0) {
+	if(@event['finalamount'] == 0 && @event['amount'] > 0) {
 		@equipment = get_mob_equipment(@event['id']);
 		if(@equipment['off_hand'] && @equipment['off_hand']['name'] == 'SHIELD'
 		|| @equipment['weapon'] && @equipment['weapon']['name'] == 'SHIELD') {
