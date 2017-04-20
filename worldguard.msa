@@ -207,8 +207,14 @@
 			if(!array_contains(@owners['players'], puuid())) {
 				die(color('GOLD').'You do not own this region.');
 			}
-			@p1 = sk_pos1();
-			@p2 = sk_pos2();
+			@p1 = null;
+			@p2 = null;
+			try {
+				@p1 = sk_pos1();
+				@p2 = sk_pos2();
+			} catch(PluginInternalException @ex) {
+				die(color('GOLD').'You can only update cuboid regions, not polygonal regions.');
+			}
 			if(is_null(@p1) || is_null(@p2)) {
 				die(color('GOLD').'Please make a selection.');
 			}
