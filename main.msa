@@ -359,15 +359,15 @@
 	}
 	if(pmode() == 'SPECTATOR') {
 		@worlds = _worlds_config();
-		set_pmode(@worlds[pworld()]['mode']);
 		if(extension_exists('CHDynmap')) {
 			dm_set_pvisible(true);
 		}
+		set_pmode(@worlds[pworld()]['mode']);
 	} else {
-		set_pmode('SPECTATOR');
 		if(extension_exists('CHDynmap')) {
 			dm_set_pvisible(false);
 		}
+		set_pmode('SPECTATOR');
 	}
 <<<
 
