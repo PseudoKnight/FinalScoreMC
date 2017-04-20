@@ -321,6 +321,41 @@ bind(player_death, null, null, @event) {
 				}
 			}
 		});
+		
+		if(array_index_exists(@event['cause'], 'damager')) {
+			@damager = @event['cause']['damager'];
+			if(@event['cause']['cause'] == 'PROJECTILE') {
+				@damager = @event['cause']['shooter'];
+			}
+			if(length(@damager) > 16 && !get_mob_name(@damager)) {
+				@names = get_value('mobnames');
+				if(!@names) {
+					http_request('http://www.wordgenerator.net/application/p.php?type=1&id=fake_words', array(
+						'method': 'GET',
+						'success': closure(@response){
+							if(!@response['error']) {
+								@names = split(',', @response['body']);
+								try {
+									set_mob_name(@damager, @names[0]);
+									array_remove(@names, 0);
+									store_value('mobnames', @names);
+								} catch(BadEntityException @ex) {
+									// ignore
+								}
+							}
+						}
+					));
+				} else {
+					try {
+						set_mob_name(@damager, @names[0]);
+						array_remove(@names, 0);
+						store_value('mobnames', @names);
+					} catch(BadEntityException @ex) {
+						// ignore
+					}
+				}
+			}
+		}
 	} else {
 		modify_event('death_message', null);
 	}
