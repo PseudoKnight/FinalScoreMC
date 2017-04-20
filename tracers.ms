@@ -82,6 +82,9 @@ if(extension_exists('CHDynmap')) {
 
 	bind(player_death, null, null, @event) {
 		if(has_permission('livemap.markers')) {
+			if(array_contains(dm_all_markers('tracers'), player())) {
+				dm_delete_marker('tracers', player());
+			}
 			dm_create_marker('tracers', array(
 				'world': pworld(),
 				'label': @event['death_message'],
