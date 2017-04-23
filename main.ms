@@ -337,6 +337,7 @@ bind(player_death, null, null, @event) {
 								@names = split(',', @response['body']);
 								try {
 									set_mob_name(@damager, @names[0]);
+									set_entity_persistence(@damager, true);
 									array_remove(@names, 0);
 									store_value('mobnames', @names);
 								} catch(BadEntityException @ex) {
@@ -348,6 +349,7 @@ bind(player_death, null, null, @event) {
 				} else {
 					try {
 						set_mob_name(@damager, @names[0]);
+						set_entity_persistence(@damager, true);
 						array_remove(@names, 0);
 						store_value('mobnames', @names);
 					} catch(BadEntityException @ex) {
