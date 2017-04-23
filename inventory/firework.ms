@@ -121,7 +121,7 @@ bind(player_interact, null, array('item': 401, 'button': 'right'), @event) {
     			);
     		}
     		@firework = launch_firework(@loc, @meta);
-    		if(@f > 1 && !rand(5)) {
+    		if(@f > 1 && !rand(4)) {
     			set_metadata(@firework, 'mob', array_rand(array('chicken', 'bat', 'pig'), 1, false)[0]);
     		}
     	}
@@ -153,16 +153,29 @@ bind(firework_explode, null, null, @event){
 		@mob = get_metadata(@event['id'], 'mob', 'CommandHelper');
 		@mobs = spawn_mob(@mob, 15, @event['location']);
 		@yaw = 0;
+		@cookie = @mob == 'bat' && rand(2);
 		foreach(@m in @mobs){
+			set_entity_onfire(@m, 20);
 			if(@mob == 'pig'){
 				set_mob_equipment(@m, associative_array('CHESTPLATE': associative_array('name': 'ELYTRA')));
 				set_equipment_droprates(@m, null);
 				set_entity_gliding(@m, true);
+			} else if(@cookie) {
+				@cookie = spawn_entity('DROPPED_ITEM', 1, @event['location'])[0];
+				set_entity_spec(@cookie, array('itemstack': array('name': 'COOKIE')));
+				set_entity_rider(@m, @cookie);
+				set_entity_onfire(@m, 0);
 			}
-			set_entity_onfire(@m, 20);
-			set_mob_effect(@m, 20, 0, 600, true, false);
 			set_entity_velocity(@m, _get_vector(@yaw, 0));
 			@yaw += 24;
 		}
+		set_timeout(50, closure(){
+			foreach(@m in @mobs){
+				if(@cookie) {
+					set_mob_effect(@m, 14, 0, 600, true, false);
+				}
+				set_mob_effect(@m, 20, 0, 600, true, false);
+			}
+		});
 	}
 }
