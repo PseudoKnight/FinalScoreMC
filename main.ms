@@ -709,3 +709,8 @@ bind(entity_damage, null, array('cause': 'ENTITY_EXPLOSION', 'world': 'custom'),
 		cancel();
 	}
 }
+
+// Always drop full enderdragon experience
+bind(entity_death, null, array('type': 'ENDER_DRAGON'), @event) {
+	modify_event('xp', 12000);
+}
