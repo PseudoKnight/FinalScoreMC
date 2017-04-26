@@ -2,7 +2,7 @@
 *:/scb [$] = >>>
 	# Configure a set of allowed commands and aliases for non-ops
 	@allowedcmds = array('/velocity', '/tp', '/sayas', '/testfor', '/testforblock', '/testforblocks', '/playsound',
-		'/setblock', '/tempcart', '/bedspawn', '/give', '/effect', '/warp', '/tellraw', '/time');
+		'/setblock', '/tempcart', '/bedspawn', '/give', '/effect', '/warp', '/tellraw', '/time', '/cloud');
 
 	if(!has_permission('command.cb'), die('You do not have permission.'))
 	if(!$, die(color(gold).'Usage: /scb </command>'))
@@ -30,7 +30,7 @@
 *:/acb [$] = >>>
 	# Configure a set of allowed commands and aliases for non-ops
 	@allowedcmds = array('/velocity', '/tp', '/sayas', '/testfor', '/testforblock', '/testforblocks', '/playsound',
-		'/setblock', '/tempcart', '/bedspawn', '/give', '/effect', '/warp', '/tellraw', '/time');
+		'/setblock', '/tempcart', '/bedspawn', '/give', '/effect', '/warp', '/tellraw', '/time', '/cloud');
 
 	if(!has_permission('command.cb'), die('You do not have permission.'))
 	if(!$, die(color(gold).'Usage: /acb <additional parameters>'))

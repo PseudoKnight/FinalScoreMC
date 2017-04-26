@@ -137,6 +137,7 @@ builder:
       command.heal.others: true
       command.mob: true
       command.cb: true
+      command.cloud: true
       limitedworldedit: true
       worldguard.region.claim: true
     custom:
@@ -154,6 +155,7 @@ builder:
       command.cb: true
       command.items: true
       command.vanish: true
+      command.cloud: true
       worldedit.navigation.*: true
       worldguard.region.claim: true
     world:

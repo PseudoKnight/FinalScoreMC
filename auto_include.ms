@@ -621,6 +621,15 @@ proc _wrap_string(@string, @width = 320) {
 }
 
 /*
+ 	Returns a filtered array of strings with only those that start with the given case-insensitive characters
+*/
+proc _strings_start_with_ic(@strings, @chars) {
+	return(array_filter(@strings, closure(@index, @string) {
+		return(length(@chars) <= length(@string) && equals_ic(@chars, substr(@string, 0, length(@chars))));
+	}));
+}
+
+/*
 	Create clickable commands for a JSON message
 */
 proc _click_tell(@recipients, @components) {
