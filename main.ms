@@ -151,6 +151,9 @@ bind(player_join, null, null, @event) {
 
 	set_timeout(50, closure(){
 		@pdata = _pdata(player());
+		@title = colorize('&6&l\u1260 &d&l\u1260 &b&l\u1260 &4&l\u1260 &6&lFINALSCORE&e&lMC \u00AB &r\u25AA \u25AA \u25AA');
+		
+		// Join message
 		queue_push(closure(){
 			if(!(has_permission('group.admin') && get_value('silentjoin'))) {
 				include('/chat/includes.library/chat.ms');
@@ -169,11 +172,23 @@ bind(player_join, null, null, @event) {
 				_tellraw(all_players(), array(array('colorize', @pre), array('hover', @name, @hover), @msg));
 			}
 
+		}, 'join');
+		
+		// Tab list
+		queue_push(closure(){
 			foreach(@p in all_players()) {
 				set_list_name(@p, _colorname(@p).@p);
 			}
+			@title = colorize('&6&lFINALSCORE&e&lMC');
+			@currently = import('currently');
+			if(@currently) {
+				psend_list_header_footer(@title, color('gray').'Currently playing:\n'.color('reset').@currently);
+			} else {
+				psend_list_header_footer(@title, null);
+			}
 		}, 'join');
-
+		
+		// Welcome messages
 		queue_push(closure(){
 			#Welcome messages
 			@line = string_multiply('-', 53);
@@ -192,7 +207,8 @@ bind(player_join, null, null, @event) {
 				}
 			}
 		}, 'join');
-
+		
+		// Mail
 		queue_push(closure(){
 			if(array_index_exists(@pdata, 'mail')) {
 				foreach(@mail in @pdata['mail']) {
@@ -202,9 +218,9 @@ bind(player_join, null, null, @event) {
 				_store_pdata(player(), @pdata);
 			}
 		}, 'join');
-
+		
+		// Teleport misplaced players
 		queue_push(closure(){
-			# SET NEW LOCATION
 			if(array_index_exists(@pdata, 'homeless')) {
 				# homeless players are players left on deleted worlds
 				@loc = get_spawn('omega');
@@ -216,7 +232,8 @@ bind(player_join, null, null, @event) {
 				set_ploc(@warp);
 			}
 		}, 'join');
-
+		
+		// Park inventory
 		queue_push(closure(){
 			if(pworld() === 'custom') {
 				_equip_kit();
