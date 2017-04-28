@@ -80,8 +80,7 @@
 	if($player) {
 		pgive_item(player(), '397:3', 1, array('owner': $player));
 	} else {
-		include('util.library/items.ms');
-		_popen_skullmenu();
+		msg(color('gray').'Usage: '.color('r').'/skull <player>');
 	}
 <<<
 
