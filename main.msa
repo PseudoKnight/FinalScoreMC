@@ -182,8 +182,8 @@
 *:/help [$selection='help'] = >>>
 	@help = array(
 		'rules':
-			'- Do NOT break or take anything belonging to another player, unless otherwise specified.\n'.
-			'- Do NOT harass, spam, or swear in chat.\n'.
+			'\n- Do NOT break or take anything belonging to another player, unless otherwise specified.\n'.
+			'- Do NOT harass, spam, or swear at people in chat.\n'.
 			'- Do NOT actively use mods for the purpose of cheating.\n',
 		'commands':
 			'Get a list and description of useful commands at >>> http://finalscoremc.com/commands <<<',
