@@ -4,11 +4,11 @@ proc _set_locations(@start, @end, @spawns){
     	@pvp['arena']['spawn'] = array(array(@end), array(@start));
 	}
 	
-	@loc = _relative(@end, 'up', 4);
-	set_block_at(@loc, data_values('commandblock'), false);
-	set_block_command(@loc, 'runalias /pvp end static 2');
-	@loc[1] -= 1;
-	set_block_at(@loc, '77:0', false);
+	@end['y'] += 4;
+	set_block_at(@end, data_values('commandblock'), false);
+	set_block_command(@end, 'runalias /pvp end static 2');
+	@end[1] -= 1;
+	set_block_at(@end, '77:0', false);
 }
 
 proc _get_loot(@level, @random, @loot = array(

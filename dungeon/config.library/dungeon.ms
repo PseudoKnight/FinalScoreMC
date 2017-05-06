@@ -1,35 +1,46 @@
-@level = 7;
-@maxRoomHeight = 8;
+@level = 8;
+@maxRoomHeight = 9;
 
 proc _set_locations(@start, @end, @spawns){
 	set_ploc(@start);
-	set_block_at(_relative(@end, 'up'), data_values('beacon'), false);
+	
+	set_block_at(@end, data_values('beacon'), false);
 }
 
 proc _get_loot(@level, @random, @loot = array(
-	array(0.50, associative_array('name': 'TORCH', 'qty': array(1, 10))),
-	array(0.40, associative_array('name': 'BREAD', 'qty': array(1, 5))),
+
+	array(0.50, associative_array('name': 'TORCH', 'qty': array(1, 9))),
+	array(0.40, associative_array('name': 'BREAD', 'qty': array(1, 4))),
+	array(0.40, associative_array('name': 'IRON_SWORD')),
 	array(0.35, associative_array('name': 'GOLDEN_APPLE')),
+	array(0.20, associative_array('name': 'ARROW', 'qty': array(1, 8))),
 	array(0.25, associative_array('name': 'DIAMOND_AXE', 'data': 1546)),
 	array(0.20, associative_array('name': 'DIAMOND_SWORD', 'data': 1546)),
-	array(0.04, associative_array('name': 'LEATHER_HELMET')),
-	array(0.04, associative_array('name': 'LEATHER_CHESTPLATE')),
-	array(0.04, associative_array('name': 'LEATHER_LEGGINGS')),
-	array(0.04, associative_array('name': 'LEATHER_BOOTS')),
-	array(0.03, associative_array('name': 'GOLD_HELMET', 'data': 50)),
-	array(0.03, associative_array('name': 'GOLD_CHESTPLATE', 'data': 50)),
-	array(0.03, associative_array('name': 'GOLD_LEGGINGS', 'data': 50)),
-	array(0.03, associative_array('name': 'GOLD_BOOTS', 'data': 50)),
-	array(0.02, associative_array('name': 'CHAINMAIL_HELMET', 'data': 100)),
-	array(0.02, associative_array('name': 'CHAINMAIL_CHESTPLATE', 'data': 100)),
-	array(0.02, associative_array('name': 'CHAINMAIL_LEGGINGS', 'data': 100)),
-	array(0.02, associative_array('name': 'CHAINMAIL_BOOTS', 'data': 100)),
-	array(0.01, associative_array('name': 'IRON_HELMET', 'data': 150)),
-	array(0.01, associative_array('name': 'IRON_CHESTPLATE', 'data': 150)),
-	array(0.01, associative_array('name': 'IRON_LEGGINGS', 'data': 150)),
-	array(0.01, associative_array('name': 'IRON_BOOTS', 'data': 150)),
+	array(0.04, associative_array('name': 'BOW', 'data': 376)),
+	array(0.05, associative_array('name': 'LEATHER_HELMET')),
+	array(0.05, associative_array('name': 'LEATHER_CHESTPLATE')),
+	array(0.05, associative_array('name': 'LEATHER_LEGGINGS')),
+	array(0.05, associative_array('name': 'LEATHER_BOOTS')),
+	array(0.04, associative_array('name': 'GOLD_HELMET', 'data': 50)),
+	array(0.04, associative_array('name': 'GOLD_CHESTPLATE', 'data': 50)),
+	array(0.04, associative_array('name': 'GOLD_LEGGINGS', 'data': 50)),
+	array(0.04, associative_array('name': 'GOLD_BOOTS', 'data': 50)),
+	array(0.03, associative_array('name': 'CHAINMAIL_HELMET', 'data': 100)),
+	array(0.03, associative_array('name': 'CHAINMAIL_CHESTPLATE', 'data': 100)),
+	array(0.03, associative_array('name': 'CHAINMAIL_LEGGINGS', 'data': 100)),
+	array(0.03, associative_array('name': 'CHAINMAIL_BOOTS', 'data': 100)),
+	array(0.02, associative_array('name': 'IRON_HELMET', 'data': 125)),
+	array(0.02, associative_array('name': 'IRON_CHESTPLATE', 'data': 200)),
+	array(0.02, associative_array('name': 'IRON_LEGGINGS', 'data': 185)),
+	array(0.02, associative_array('name': 'IRON_BOOTS', 'data': 155)),
+	array(0.01, associative_array('name': 'DIAMOND_HELMET', 'data': 333)),
+	array(0.01, associative_array('name': 'DIAMOND_CHESTPLATE', 'data': 498)),
+	array(0.01, associative_array('name': 'DIAMOND_LEGGINGS', 'data': 465)),
+	array(0.01, associative_array('name': 'DIAMOND_BOOTS', 'data': 399)),
+	array(0.01, associative_array('name': 'TOTEM')),
+	array(0.01, associative_array('name': 'GOLDEN_CARROT'), 'qty': array(8, 16)),
 	array(0.03, associative_array('name': 'SHIELD', 'data': 300)),
-	array(0.03, associative_array('name': 'INK_SACK', 'data': 4, 'qty': array(1, 3))),
+	array(0.03, associative_array('name': 'INK_SACK', 'data': 4, 'qty': array(1, 4))),
 )) {
 	@inv = array();
 	foreach(@weightedLoot in @loot){
@@ -133,6 +144,20 @@ proc _materials(@level) {
 				'decor': array('169'),
 				'edge': array('168:2', '168:2', '168:2', '168:2'),
 			));
+		case 6:
+			return(associative_array(
+				'empty': '7:0',
+				'wall': array('5:5'),
+				'room': '0:0',
+				'door': '0:0',
+				'column': '139:0',
+				'ladder': '65:3',
+				'ceiling': array('5:2'),
+				'floor': array('5:2'),
+				'utility': array('116'),
+				'decor': array('47'),
+				'edge': array('135:4', '135:5', '135:6', '135:7'),
+			));
 		default:
 			return(associative_array(
 				'empty': '7:0',
@@ -155,7 +180,7 @@ proc _spawner_mobs(@level) {
 		case 0:
 			return(array('ZOMBIE', 'SPIDER'));
 		case 1:
-			return(array('ENDER_CRYSTAL', 'ENDERMITE', 'HUSK'));
+			return(array('ENDER_CRYSTAL', 'ENDERMITE', 'ZOMBIE_VILLAGER'));
 		case 2:
 			return(array('CAVE_SPIDER', 'SPIDER', 'SILVERFISH'));
 		case 3:
@@ -164,6 +189,8 @@ proc _spawner_mobs(@level) {
 			return(array('ENDER_CRYSTAL', 'ZOMBIE',	'SPIDER', 'SILVERFISH', 'SKELETON', 'STRAY', 'WITCH', 'CREEPER'));
 		case 5:
 			return(array('GUARDIAN'));
+		case 6:
+			return(array('VINDICATOR', 'VEX', 'EVOKER'));
 		default:
 			return(array('ENDER_CRYSTAL', 'ENDERMITE', 'ENDERMAN', 'SHULKER'));
 	}

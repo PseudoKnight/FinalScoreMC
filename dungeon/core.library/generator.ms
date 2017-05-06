@@ -1,9 +1,9 @@
 proc _generate_dungeon(@region, @world, @genType, @seed) {
 	@level = 1;
 	@scale = 2;
-	@minRoomSize = 3
-	@maxRoomSize = 11
-	@maxRoomHeight = 3
+	@minRoomSize = 3;
+	@maxRoomSize = 11;
+	@maxRoomHeight = 3;
 	
 	include('../config.library/'.@genType.'.ms');
 
@@ -266,10 +266,10 @@ proc _generate_dungeon(@region, @world, @genType, @seed) {
 								@layoutMap[@c2][@r2] = 'room';
 								if(integer(srand(@random) * 100) < 15) {
 									@spawns[] = array(
-										@regionMinX + @c2 * @scale,
-										@regionMinY + @level * (@maxRoomHeight + 3) + 1,
-										@regionMinZ + @r2 * @scale,
-										@world,
+										'x': @regionMinX + @c2 * @scale,
+										'y': @regionMinY + @level * (@maxRoomHeight + 3) + 1,
+										'z': @regionMinZ + @r2 * @scale,
+										'world': @world,
 									);
 								}
 							} else {
@@ -503,7 +503,8 @@ proc _generate_dungeon(@region, @world, @genType, @seed) {
 			@sx = @entranceRoom['c1'] * @scale + @regionMinX + 0.5;
 			@sy = @regionMinY;
 			@sz = @entranceRoom['r1'] * @scale + @regionMinZ + 0.5;
-			_set_locations(array(@sx, @sy, @sz, @world), array(@ex, @ey, @ez, @world), @spawns);
+			_set_locations(array('x': @sx, 'y': @sy, 'z': @sz, 'world': @world),
+					array('x': @ex, 'y': @ey, 'z': @ez, 'world': @world), @spawns);
 			res_free_resource(@random);
 			_remove_region_entities(@region, array(), @world);
 			msg(color('green').@genType.' generation complete!');
