@@ -134,8 +134,8 @@ bind(player_join, null, null, @event) {
 			return();
 		}
 		@cakeinfo = get_value('cakeinfo');
-		@count = associative_array('challenge': 0, 'secret': 0);
-		@total = associative_array('challenge': 0, 'secret': 0);
+		@count = associative_array('challenge': 0, 'coop': 0, 'secret': 0);
+		@total = associative_array('challenge': 0, 'coop': 0, 'secret': 0);
 		foreach(@cake in @cakeinfo) {
 			@type = @cake['type'];
 			@total[@type]++;

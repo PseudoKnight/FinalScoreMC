@@ -14,7 +14,7 @@ proc _create_park_menu(){
 		58: associative_array(
 			'name': 'IRON_BLOCK',
 			'meta': associative_array(
-				'display': color('green').'Obstacle Courses / Parkour',
+				'display': color('green').'Solo Courses / Parkour',
 				'lore': array(color('dark_gray').'Open: courses'),
 			),
 		),
@@ -28,6 +28,10 @@ proc _create_park_menu(){
 		)
 	);
 	create_virtualchest(@main);
+	
+	@other = @main[];
+	@other['id'] = 'other';
+	@other['title'] = 'Other Games';
 
 	queue_push(closure(){
 		@chatcolor = associative_array(
@@ -61,10 +65,10 @@ proc _create_park_menu(){
 
 		@courses = @main[];
 		@courses['id'] = 'courses';
-		@courses['title'] = 'Obstacle Courses / Parkour';
+		@courses['title'] = 'Solo Courses / Parkour';
 		@cakes = get_value('cakeinfo');
 		foreach(@name: @cake in @cakes) {
-			if(@cake['type'] === 'challenge') {
+			if(@cake['type'] === 'challenge' || @cake['type'] == 'coop') {
 				@lore = array();
 				@difficulty = 'other';
 				if(array_index_exists(@cake, 'difficulty')) {
@@ -73,35 +77,48 @@ proc _create_park_menu(){
 				}
 				@lore[] = color('gold').@cake['coins'].' coins';
 				@lore[] = color('green').'Achieved by '.array_size(@cake['players']).' players';
-				@times = get_values('times', @name);
-				if(@times) {
-					@total = 0.0;
-					foreach(@time in @times) {
-						if(is_array(@time)) {
-							continue();
+				if(@cake['type'] == 'challenge') {
+					@times = get_values('times', @name);
+					if(@times) {
+						@total = 0.0;
+						foreach(@time in @times) {
+							if(is_array(@time)) {
+								continue();
+							}
+							@total += @time;
 						}
-						@total += @time;
+						@avgtime = integer(round((@total / (array_size(@times) - 1)) * 1000));
+						if(@avgtime >= 60) {
+							@avgtime = simple_date('m\u0027m\u0027s\u0027s\u0027', @avgtime);
+						} else {
+							@avgtime = simple_date('s\u0027s\u0027', @avgtime);
+						}
+						@lore[] = color('green').'Average best time: ' . @avgtime;
 					}
-					@avgtime = integer(round((@total / (array_size(@times) - 1)) * 1000));
-					if(@avgtime >= 60) {
-						@avgtime = simple_date('m\u0027m\u0027s\u0027s\u0027', @avgtime);
-					} else {
-						@avgtime = simple_date('s\u0027s\u0027', @avgtime);
-					}
-					@lore[] = color('green').'Average best time: ' . @avgtime;
 				}
 				@lore[] = color('dark_gray').'Run: /warp '.@name;
-				if(!array_index_exists(@difficulties[@difficulty], @cake['coins'])) {
-					@difficulties[@difficulty][@cake['coins']] = array();
+				if(@cake['type'] == 'challenge') {
+					if(!array_index_exists(@difficulties[@difficulty], @cake['coins'])) {
+						@difficulties[@difficulty][@cake['coins']] = array();
+					}
+					@difficulties[@difficulty][@cake['coins']][] = associative_array(
+						'name': 'STAINED_GLASS_PANE',
+						'data': @datacolor[@difficulty],
+						'meta': associative_array(
+							'display': color('green').to_upper(@name),
+							'lore': @lore,
+						),
+					);
+				} else {
+					@other[array_size(@other) - 6] =  associative_array(
+						'name': 'STAINED_GLASS',
+						'data': @datacolor[@difficulty],
+						'meta': associative_array(
+							'display': color('green').to_upper(@name),
+							'lore': @lore,
+						),
+					);
 				}
-				@difficulties[@difficulty][@cake['coins']][] = associative_array(
-					'name': 'STAINED_GLASS_PANE',
-					'data': @datacolor[@difficulty],
-					'meta': associative_array(
-						'display': color('green').to_upper(@name),
-						'lore': @lore,
-					),
-				);
 			}
 		}
 		foreach(@i: @difficulty in @difficultyorder) {
@@ -165,10 +182,9 @@ proc _create_park_menu(){
 	});
 
 	queue_push(closure(){
-		@other = @main[];
 		@other['id'] = 'other';
 		@other['title'] = 'Other Games';
-		@other[0] = associative_array(
+		@other[9] = associative_array(
 			'name': 'SNOW_BLOCK',
 			'meta': associative_array(
 				'display': color('yellow').'Spleef',
@@ -178,7 +194,7 @@ proc _create_park_menu(){
 				),
 			),
 		);
-		@other[1] = associative_array(
+		@other[10] = associative_array(
 			'name': 'STAINED_CLAY',
 			'data': 2,
 			'meta': associative_array(
@@ -189,7 +205,7 @@ proc _create_park_menu(){
 				),
 			),
 		);
-		@other[2] = associative_array(
+		@other[11] = associative_array(
 			'name': 'EMERALD_ORE',
 			'meta': associative_array(
 				'display': color('green').'Seven Seconds to Live',
@@ -199,7 +215,7 @@ proc _create_park_menu(){
 				),
 			),
 		);
-		@other[3] = associative_array(
+		@other[12] = associative_array(
 			'name': 'EMERALD_BLOCK',
 			'meta': associative_array(
 				'display': color('green').'FrogWare',
@@ -209,7 +225,7 @@ proc _create_park_menu(){
 				),
 			),
 		);
-		@other[4] = associative_array(
+		@other[13] = associative_array(
 			'name': 'REDSTONE_BLOCK',
 			'meta': associative_array(
 				'display': color('red').'Snake',
@@ -219,7 +235,7 @@ proc _create_park_menu(){
 				),
 			),
 		);
-		@other[5] = associative_array(
+		@other[14] = associative_array(
 			'name': 'PACKED_ICE',
 			'meta': associative_array(
 				'display': color('aqua').'Hockey',
@@ -229,7 +245,7 @@ proc _create_park_menu(){
 				),
 			),
 		);
-		@other[9] = associative_array(
+		@other[18] = associative_array(
 			'name': 'SLIME_BLOCK',
 			'meta': associative_array(
 				'display': color('green').'Slimey Golf',
@@ -239,7 +255,7 @@ proc _create_park_menu(){
 				),
 			),
 		);
-		@other[10] = associative_array(
+		@other[19] = associative_array(
 			'type': 168,
 			'meta': associative_array(
 				'display': color('aqua').'Sunken City Golf',
@@ -249,7 +265,7 @@ proc _create_park_menu(){
 				),
 			),
 		);
-		@other[11] = associative_array(
+		@other[20] = associative_array(
 			'name': 'LOG',
 			'data': 3,
 			'meta': associative_array(
@@ -260,7 +276,7 @@ proc _create_park_menu(){
 				),
 			),
 		);
-		@other[18] = associative_array(
+		@other[27] = associative_array(
 			'name': 'SMOOTH_BRICK',
 			'data': 2,
 			'meta': associative_array(

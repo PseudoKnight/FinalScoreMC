@@ -3,31 +3,32 @@
 *:/cake [$cmd] [$] = >>>
 	switch($cmd) {
 	case 'list':
-		@cakes = get_value('cakeinfo')
-		@names = array('challenge': '', 'secret': '')
-		@count = array('challenge': 0, 'secret': 0)
-		@total = array('challenge': 0, 'secret': 0)
+		@cakes = get_value('cakeinfo');
+		@names = array('challenge': '', 'coop': '', 'secret': '');
+		@count = array('challenge': 0, 'coop': 0, 'secret': 0);
+		@total = array('challenge': 0, 'coop': 0, 'secret': 0);
 		if($) {
 			@player = puuid($, true);
 		} else {
 			@player = puuid(player(), true);
 		}
 		foreach(@id: @cake in @cakes) {
-			@total[@cake['type']] += 1
+			@total[@cake['type']] += 1;
 			if(array_index_exists(@cake['players'], @player)) {
-				@count[@cake['type']] += 1
-				@names[@cake['type']] .= color('gray').@id.'|'.array_size(@cake['players']).' '
+				@count[@cake['type']] += 1;
+				@names[@cake['type']] .= color('gray').@id.'|'.array_size(@cake['players']).' ';
 			} else {
-				@names[@cake['type']] .= color('r').@id.'|'.array_size(@cake['players']).' '
+				@names[@cake['type']] .= color('r').@id.'|'.array_size(@cake['players']).' ';
 			}
 		}
 		if($) {
-			msg(color('gold').'CAKES ACHIEVED BY '.to_upper($).'. (plus # of others who achieved it)')
+			msg(color('gold').'CAKES ACHIEVED BY '.to_upper($).'. (plus # of others who achieved it)');
 		} else {
-			msg(color('gold').'CAKES YOU\'VE ACHIEVED. (plus # of others who achieved it)')
+			msg(color('gold').'CAKES YOU\'VE ACHIEVED. (plus # of others who achieved it)');
 		}
-		msg(color('green').color('l').'Challenge'.color('green').'('.@count['challenge'].'/'.@total['challenge'].') '.color('r').@names['challenge'])
-		msg(color('green').color('l').'Secret'.color('green').'('.@count['secret'].'/'.@total['secret'].') '.color('r').@names['secret'])
+		msg(color('green').color('l').'Challenge'.color('green').'('.@count['challenge'].'/'.@total['challenge'].') '.color('r').@names['challenge']);
+		msg(color('green').color('l').'Coop'.color('green').'('.@count['coop'].'/'.@total['coop'].') '.color('r').@names['coop'])
+		msg(color('green').color('l').'Secret'.color('green').'('.@count['secret'].'/'.@total['secret'].') '.color('r').@names['secret']);
 
 	case 'info':
 		@id = '';
@@ -86,12 +87,12 @@
 		@coins = @args[1]
 
 		@type = 'challenge'
-		if(array_size(@args) == 3) {
+		if(array_size(@args) >= 3) {
 			@type = to_lower(@args[2])
 		}
 
-		if(@type !== 'secret' && @type !== 'challenge') {
-			die(color('red').'You can only have "secret" and "challenge" cake types.')
+		if(@type !== 'secret' && @type !== 'challenge' && @type !== 'coop') {
+			die(color('red').'You can only have "secret", "challenge", or "coop" cake types.')
 		}
 
 		@cakeinfo = get_value('cakeinfo')
@@ -324,7 +325,7 @@
 		msg('/cake list '.color('gray').'List the names of all cake prizes.');
 		msg('/cake info [id] '.color('gray').'Shows cake info and current cooldowns');
 		msg('/cake set [id] <coins> [type] '.color('gray').'Sets the cake you\'re looking at to give coins when'
-			.' clicked. Type can be "secret" or "challenge".');
+			.' clicked. Type can be "secret", "challenge", or "coop".');
 		msg('/cake move <id> '.color('gray').'Moves the prize cake to a new location.');
 		msg('/cake tp <id> '.color('gray').'Teleports you to a cake.');
 		msg('/cake rename <old> <new> '.color('gray').'Renames a cake.');
