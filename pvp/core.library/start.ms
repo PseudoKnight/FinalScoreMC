@@ -353,7 +353,7 @@ proc _pvp_start(@pvp, @id){
 	}
 	_worldmsg(@world, colorize('&7&m|----------------------------------------------------|'));
 
-	play_sound(@arena['lobby'], array('sound': 'WITHER_SPAWN', 'pitch': 1.5, 'volume': 3));
+	play_sound(@arena['lobby'], array('sound': 'WITHER_SPAWN', 'pitch': 1.5, 'volume': 3, 'category': 'VOICE'));
 
 	_add_activity('pvp'.@id, @title);
 

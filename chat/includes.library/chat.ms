@@ -7,7 +7,9 @@ proc _pmsg(@player, @message) {
 			@player = @recipients[0]
 			@message = colorize(@message)
 			tmsg(@player, color(7).'(From '.player().'): '.color('r').@message)
-			if(@player !== '~console', play_sound(ploc(@player), array('sound': 'CHICKEN_EGG_POP', 'pitch': 2), @player))
+			if(@player !== '~console') {
+				play_sound(ploc(@player), array('sound': 'CHICKEN_EGG_POP', 'pitch': 2, 'category': 'VOICE'), @player);
+			}
 			msg(color(7).'(To '.@player.'): '.color('r').@message)
 			@conv = import('conv')
 			@conv[@player] = player()
