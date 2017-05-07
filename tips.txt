@@ -123,3 +123,19 @@ Players who contribute $5 or more to the server costs have a green emerald next 
 Players who contribute $10 or more to the server costs can launch random fireworks in the park and get trails on the livemap.
 
 Hovering your cursor over someone's name in chat allows you to see their group, current world, and former names.
+
+Right-clicking on double stone/sandstone slabs with a pickaxe will chisel them to smooth stone/sandstone.
+
+Right-clicking on logs with an axe will add bark on all sides.
+
+Cauldrons are an infinite water source, unless sneaking. You can incrementally fill cauldrons using water bottles.
+
+You can wash dyes from hardened clay and wool using a cauldron.
+
+Temporary mirror world "shards" can be created by right-clicking a diamond while in the location you want to mirror.
+
+You can teleport with a horse you're riding (includes donkeys, llamas, etc)
+
+If holding a lead when teleporting, you may bring all leashed mobs with you.
+
+You can adjust the volume of notification sounds (eg. direct messages) via the Voice/Speech slider in Sound Options.
