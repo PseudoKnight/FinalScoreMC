@@ -114,7 +114,7 @@ proc _create_park_menu(){
 						'name': 'STAINED_GLASS',
 						'data': @datacolor[@difficulty],
 						'meta': associative_array(
-							'display': color('green').to_upper(@name),
+							'display': color(7).'Coop: '.color('green').to_upper(@name),
 							'lore': @lore,
 						),
 					);
