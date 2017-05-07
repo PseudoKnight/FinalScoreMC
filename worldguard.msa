@@ -76,7 +76,10 @@
 			try {
 				@region = @args[1];
 				@setting = @args[2];
-				@value = array_get(@args, 3, 'allow');
+				@value = '';
+				if(array_size(@args) > 3) {
+					@value = @args[3];
+				}
 				if(has_permission('group.moderator') && @setting !== 'infinite-dispensers') {
 					run('/region '.$);
 					die();
@@ -102,8 +105,10 @@
 								break();
 							}
 						}
-						if(@value === 'allow') {
+						if(!@value) {
 							sudo('/region flag '.@region.' deny-spawn');
+						} else if(@value === 'allow') {
+							sudo('/region flag '.@region.' deny-spawn GIANT');
 						} else if(@value === 'deny') {
 							sudo('/region flag '.@region.' deny-spawn CREEPER,ENDERMAN,HUSK,SKELETON,SLIME,SPIDER,STRAY,WITCH,ZOMBIE,ZOMBIE_VILLAGER');
 						}
@@ -121,7 +126,7 @@
 							}
 						}
 						@commandArray = split(', ', substr(@commands, 1, length(@commands) - 1));
-						if(@value == 'allow') {
+						if(!@value || @value == 'allow') {
 							if(array_contains(@commandArray, '/finitedispensers')) {
 								array_remove_values(@commandArray, '/finitedispensers');
 								msg('Set dispensers to infinite.');
