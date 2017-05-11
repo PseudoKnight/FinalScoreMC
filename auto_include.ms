@@ -36,185 +36,61 @@ proc _get_pitch(@tone, @octave) {
 			return(0.5);
 		case 'G':
 			if(@octave == 1) {
-				return(1.06)
+				return(1.06);
 			}
 			return(0.53);
 		case 'G#':
 			if(@octave == 1) {
-				return(1.12)
+				return(1.12);
 			}
 			return(0.56);
 		case 'A':
 			if(@octave == 1) {
-				return(1.19)
+				return(1.19);
 			}
 			return(0.6);
 		case 'A#':
 			if(@octave == 1) {
-				return(1.26)
+				return(1.26);
 			}
 			return(0.63);
 		case 'B':
 			if(@octave == 1) {
-				return(1.33)
+				return(1.33);
 			}
 			return(0.67);
 		case 'C':
 			if(@octave == 1) {
-				return(1.41)
+				return(1.41);
 			}
 			return(0.7);
 		case 'C#':
 			if(@octave == 1) {
-				return(1.50)
+				return(1.50);
 			}
 			return(0.75);
 		case 'D':
 			if(@octave == 1) {
-				return(1.59)
+				return(1.59);
 			}
 			return(0.79);
 		case 'D#':
 			if(@octave == 1) {
-				return(1.68)
+				return(1.68);
 			}
 			return(0.84);
 		case 'E':
 			if(@octave == 1) {
-				return(1.78)
+				return(1.78);
 			}
 			return(0.89);
 		case 'F':
 			if(@octave == 1) {
-				return(1.89)
+				return(1.89);
 			}
 			return(0.94);
 		default:
 			return(1.0);
-	}
-}
-
-/*
-	Sets a player's inventory with a preset kit
-*/
-proc _equip_kit(@player) {
-	if(!@player) {
-		@player = player();
-	}
-
-	@worldInfo = _worlds_config()[pworld(@player)];
-	switch(@worldInfo['group']) {
-		case 'minigames':
-			@mode = pmode(@player);
-			if(@mode != @worldInfo['mode']) {
-				set_pmode(@player, @worldInfo['mode']);
-			}
-			_clear_pinv(@player);
-			@pdata = _pdata(@player);
-			set_pinv(@player, associative_array(
-				2: associative_array('name': 'BOOK', 'meta': associative_array(
-					'display': 'Park Directory',
-				)),
-				3: associative_array('name': 'COOKED_MUTTON', 'qty': 32, 'meta': associative_array(
-					'display': 'Frog Legs',
-					'lore': array('Good eatin\''),
-				)),
-				4: if(array_index_exists(@pdata, 'support') && @pdata['support'] >= 10) {
-					associative_array(
-						'name': 'FIREWORK',
-						'meta': associative_array(
-							'display': colorize('&r&kX&a&l Random Firework &r&kX'),
-							'lore': array(
-								color('f').'Available to ',
-								color('f').'server supporters',
-							)
-						)
-					)
-				} else {
-					null
-				},
-			));
-			if(@mode != 'CREATIVE') {
-				set_pflight(@player, false);
-			}
-
-		case 'dev':
-			_clear_pinv(@player);
-			set_pinv(@player, associative_array(
-				0: associative_array('name': 'COMPASS', 'meta': associative_array(
-					'display': 'Teleporter',
-				)),
-				1: associative_array('name': 'GOLD_AXE', 'meta': associative_array(
-					'display': 'WorldEdit Selector',
-				)),
-			));
-	}
-}
-
-/*
-	Returns specific item meta or null if it doesn't exist
-*/
-proc _item_meta(@item, @index) {
-	if(is_null(@item)
-	|| is_null(@item['meta'])) {
-		return(null)
-	}
-	return(@item['meta'][@index])
-}
-
-/*
-	Compacts all an inventory array by removing unnecessary keys in item arrays
-*/
-proc _minify_inv(@inv, @keepnulls = false) {
-	proc _minify_item(@item) {
-		array_remove(@item, 'type');
-		array_remove(@item, 'enchants');
-		if(@item['data'] == 0) {
-			array_remove(@item, 'data');
-		}
-		if(@item['qty'] == 1) {
-			array_remove(@item, 'qty');
-		}
-		if(is_null(@item['meta'])) {
-			array_remove(@item, 'meta');
-		} else {
-			if(array_size(@item['meta']['enchants']) == 0) {
-				array_remove(@item['meta'], 'enchants');
-			}
-			if(is_null(@item['meta']['display'])) {
-				array_remove(@item['meta'], 'display');
-			}
-			if(is_null(@item['meta']['lore'])) {
-				array_remove(@item['meta'], 'lore');
-			}
-			if(array_index_exists(@item['meta'], 'firework')
-			&& is_null(@item['meta']['firework'])) {
-				array_remove(@item['meta'], 'firework');
-			}
-			if(@item['meta']['repair'] == 0) {
-				array_remove(@item['meta'], 'repair');
-			}
-			if(array_size(@item['meta']['flags']) == 0) {
-				array_remove(@item['meta'], 'flags');
-			}
-			if(array_index_exists(@item['meta'], 'inventory')) {
-				_minify_inv(@item['meta']['inventory']);
-			}
-		}
-	}
-
-	if(array_index_exists(@inv, 'type')) {
-		_minify_item(@inv);
-	} else {
-		foreach(@slot: @item in @inv) {
-			if(@item == null) {
-				if(!@keepnulls) {
-					array_remove(@inv, @slot);
-				}
-			} else {
-				_minify_item(@item);
-			}
-		}
 	}
 }
 
@@ -228,39 +104,39 @@ proc _relative(@loc, @dir, @amount = 1, @inPlace = false) {
 	switch(@dir) {
 		case 'down':
 			if(is_associative(@loc)) {
-				@loc['y'] -= @amount
+				@loc['y'] -= @amount;
 			}
-			@loc[1] -= @amount
+			@loc[1] -= @amount;
 
 		case 'up':
 			if(is_associative(@loc)) {
-				@loc['y'] += @amount
+				@loc['y'] += @amount;
 			}
-			@loc[1] += @amount
+			@loc[1] += @amount;
 
 		case 'north':
 			if(is_associative(@loc)) {
-				@loc['z'] -= @amount
+				@loc['z'] -= @amount;
 			}
-			@loc[2] -= @amount
+			@loc[2] -= @amount;
 
 		case 'south':
 			if(is_associative(@loc)) {
-				@loc['z'] += @amount
+				@loc['z'] += @amount;
 			}
-			@loc[2] += @amount
+			@loc[2] += @amount;
 
 		case 'west':
 			if(is_associative(@loc)) {
-				@loc['x'] -= @amount
+				@loc['x'] -= @amount;
 			}
-			@loc[0] -= @amount
+			@loc[0] -= @amount;
 
 		case 'east':
 			if(is_associative(@loc)) {
-				@loc['x'] += @amount
+				@loc['x'] += @amount;
 			}
-			@loc[0] += @amount
+			@loc[0] += @amount;
 	}
 	return(@loc);
 }
@@ -272,32 +148,32 @@ proc _relative_coords(@originloc, @x, @y, @z) {
 	@loc = @originloc[]
 	if(@x[0] === '~') {
 		if(@x === '~') {
-			@loc['x'] = @originloc['x']
+			@loc['x'] = @originloc['x'];
 		} else {
-			@loc['x'] = @originloc['x'] + substr(@x, 1)
+			@loc['x'] = @originloc['x'] + substr(@x, 1);
 		}
 	} else {
-		@loc['x'] = @x
+		@loc['x'] = @x;
 	}
 	if(@y[0] === '~') {
 		if(@y === '~') {
-			@loc['y'] = @originloc['y']
+			@loc['y'] = @originloc['y'];
 		} else {
-			@loc['y'] = @originloc['y'] + substr(@y, 1)
+			@loc['y'] = @originloc['y'] + substr(@y, 1);
 		}
 	} else {
-		@loc['y'] = @y
+		@loc['y'] = @y;
 	}
 	if(@z[0] === '~') {
 		if(@z === '~') {
-			@loc['z'] = @originloc['z']
+			@loc['z'] = @originloc['z'];
 		} else {
-			@loc['z'] = @originloc['z'] + substr(@z, 1)
+			@loc['z'] = @originloc['z'] + substr(@z, 1);
 		}
 	} else {
-		@loc['z'] = @z
+		@loc['z'] = @z;
 	}
-	return(@loc)
+	return(@loc);
 }
 
 /*
@@ -320,26 +196,6 @@ proc _get_vector(@yaw, @pitch = 0, @magnitude = 1, @angle = 0) {
 }
 
 /*
-	Removes all items from a player's inventory and armor slots
-*/
-proc _clear_pinv(@player) {
-	if(!@player) {
-		@player = player()
-	}
-	@world = pworld(@player)
-	if(_is_survival_world(@world)) {
-		return()
-	}
-	set_pinv(@player, associative_array(
-		0: null, 1: null, 2: null, 3: null, 4: null, 5: null, 6: null, 7: null, 8: null,
-		9: null, 10: null, 11: null, 12: null, 13: null, 14: null, 15: null, 16: null, 17: null,
-		18: null, 19: null, 20: null, 21: null, 22: null, 23: null, 24: null, 25: null, 26: null,
-		27: null, 28: null, 29: null, 30: null, 31: null, 32: null, 33: null, 34: null, 35: null,
-		100: null, 101: null, 102: null, 103: null, -106: null
-	));
-}
-
-/*
 	Add an amount to a player's coin balance
 */
 proc _acc_add(@player, @amount) {
@@ -348,10 +204,12 @@ proc _acc_add(@player, @amount) {
 	} catch(NotFoundException @ex) {
 		return(false);
 	}
-	if(!array_index_exists(@pdata, 'coins'), @pdata['coins'] = 100)
-	@pdata['coins'] = @pdata['coins'] + @amount
-	_store_pdata(@player, @pdata)
-	return(true)
+	if(!array_index_exists(@pdata, 'coins')) {
+		@pdata['coins'] = 100; // default
+	}
+	@pdata['coins'] += @amount;
+	_store_pdata(@player, @pdata);
+	return(true);
 }
 
 /*
@@ -363,10 +221,12 @@ proc _acc_subtract(@player, @amount) {
 	} catch(NotFoundException @ex) {
 		return(false);
 	}
-	if(!array_index_exists(@pdata, 'coins'), @pdata['coins'] = 100)
-	@pdata['coins'] = @pdata['coins'] - @amount
-	_store_pdata(@player, @pdata)
-	return(true)
+	if(!array_index_exists(@pdata, 'coins')) {
+		@pdata['coins'] = 100;
+	}
+	@pdata['coins'] -= @amount;
+	_store_pdata(@player, @pdata);
+	return(true);
 }
 
 /*
@@ -379,9 +239,9 @@ proc _acc_balance(@player) {
 		return(0);
 	}
 	if(!array_index_exists(@pdata, 'coins')) {
-		return(100)
+		return(100);
 	} else {
-		return(@pdata['coins'])
+		return(@pdata['coins']);
 	}
 }
 
@@ -470,203 +330,13 @@ proc _remove_region_entities(@region, @entities, @world = 'custom') {
 	Remove all potion effects from a player
 */
 proc _clear_peffects(@player) {
-	if(!@player, @player = player())
-	@effects = get_peffect(@player)
+	if(!@player) {
+		@player = player();
+	}
+	@effects = get_peffect(@player);
 	foreach(@e in @effects) {
-		set_peffect(@player, @e['id'], 0, 0)
+		set_peffect(@player, @e['id'], 0, 0);
 	}
-}
-
-/*
-	Returns a Minecraft color code for the specified player's group
-*/
-proc _colorname(@player) {
-	if(!@player, @player = player());
-	@color = 'white';
-	if(has_permission(@player, 'group.moderator')) {
-		@color = 'aqua';
-	} else if(has_permission(@player, 'group.donor')) {
-		@color = 'green';
-	} else if(has_permission(@player, 'group.builder')) {
-		@color = 'gold';
-	} else if(has_permission(@player, 'group.member')) {
-		@color = 'yellow';
-	}
-	return(color(@color));
-}
-
-/*
-	Messsages every player within a WorldGuard region
-*/
-proc _regionmsg(@region, @msg) {
-	foreach(@player in all_players()) {
-		if(ponline(@player)
-		&& array_contains(sk_current_regions(@player), @region)) {
-			tmsg(@player, @msg)
-		}
-	}
-}
-
-/*
-	Messsages every player within a world
-*/
-proc _worldmsg(@world, @msg) {
-	foreach(@player in all_players(@world)) {
-		if(ponline(@player)) {
-			tmsg(@player, @msg)
-		}
-	}
-}
-
-/*
-	Returns the character width map
-*/
-proc _char_width() {
-	# Thanks to Octopod for this list
-	return(associative_array(
-		',': 2,
-		'!': 2,
-		':': 2,
-		'i': 2,
-		'|': 2,
-		'.': 2,
-		'`': 3,
-		'\'': 3,
-		'l': 3,
-		'[': 4,
-		']': 4,
-		' ': 4,
-		'I': 4,
-		't': 4,
-		'*': 5,
-		'>': 5,
-		'<': 5,
-		'{': 5,
-		'}': 5,
-		'f': 5,
-		'k': 5,
-	));
-}
-
-/*
-	Returns the pixel width of the string
-*/
-proc _string_width(@string) {
-	@width = 0;
-	@bold = 0;
-	@chars = _char_width();
-	foreach(@i: @c in @string) {
-		if(@c === '\u00a7') {
-			if(@string[@i + 1] === 'l') {
-				@bold = 1;
-			} else if(reg_match('[0-9a-fr]', @string[@i + 1])) {
-				@bold = 0;
-			}
-			continue(2);
-		}
-		if(array_index_exists(@chars, @c)) {
-			@width += @chars[@c] + @bold;
-		} else {
-			@width += 6 + @bold;
-		}
-	}
-	return(@width);
-}
-
-/*
-	Fills a string evenly with a character so that it extends to a full line
-*/
-proc _fill_string(@replaceChar, @fillChar, @string, @lineWidth = 320) {
-	@width = _string_width(replace(@string, @replaceChar, ''));
-	@fillCount = reg_count('\\'.@replaceChar, @string);
-
-	@remainingWidth = @lineWidth - @width;
-	@charWidth = 6;
-	@chars = _char_width();
-	if(array_index_exists(@chars, @fillChar)) {
-		@charWidth = @chars[@fillChar];
-	}
-
-	@fillWidth = floor(@remainingWidth / @charWidth / @fillCount);
-	return(replace(@string, @replaceChar, string_multiply(@fillChar, @fillWidth)));
-}
-
-/*
-	Takes a string and returns an array of strings of the specified width.
-	This will not split words.
-*/
-proc _wrap_string(@string, @width = 320) {
-	@words = split(' ', @string);
-	@lines = array();
-	@linewidth = 0;
-	@line = '';
-	foreach(@word in @words) {
-		@wordwidth = _string_width(@word);
-		@linewidth += @wordwidth;
-		if(@linewidth + 3 < @width) {
-			if(length(@line) > 0) {
-				@linewidth += 3;
-				@line .= ' '.@word;
-			} else {
-				@line .= @word;
-			}
-		} else {
-			@lines[] = @line;
-			@linewidth = @wordwidth;
-			@line = @word;
-		}
-	}
-	@lines[] = @line;
-	return(@lines);
-}
-
-/*
- 	Returns a filtered array of strings with only those that start with the given case-insensitive characters
-*/
-proc _strings_start_with_ic(@strings, @chars) {
-	return(array_filter(@strings, closure(@index, @string) {
-		return(length(@chars) <= length(@string) && equals_ic(@chars, substr(@string, 0, length(@chars))));
-	}));
-}
-
-/*
-	Create clickable commands for a JSON message
-*/
-proc _click_tell(@recipients, @components) {
-	@message = ' [""';
-	foreach(@c in @components) {
-		@message .= ',{"text":"';
-		if(!is_array(@c)) {
-			@message .= colorize(@c).'"}';
-		} else {
-			@message .= colorize(@c[0]).'","clickEvent":{"action":"run_command","value":"'.@c[1].'"}}';
-		}
-	}
-	@message .= ']';
-	foreach(@player in @recipients) {
-		runas('~console', '/tellraw '.@player.@message);
-	}
-}
-
-/*
-	Returns how many of an item an inventory contains at a location.
-	@item: 0:0 format
-*/
-proc _get_inventory_count(@loc, @item) {
-	try {
-		@inv = get_inventory(@loc);
-	} catch(FormatException @ex) {
-		return(null);
-	}
-	if(is_numeric(@item), @item = @item.':0')
-	@count = 0
-	foreach(@i in @inv) {
-		if(!is_null(@i)
-		&& (@i['type'].':'.@i['data'] === @item || @item === 'all')) {
-			@count = @count + @i['qty']
-		}
-	}
-	return(@count)
 }
 
 /*
