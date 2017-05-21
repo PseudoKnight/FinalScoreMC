@@ -154,7 +154,7 @@ proc _pvp_start_match(@id) {
 			 	continue();
 			}
 			if(array_index_exists(@arena, 'respawntime') && @p['respawn'] != 0) {
-				if(!array_contains(sk_current_regions(@player), @arena['broadcast']) && ploc(@player)['y'] < 256) {
+				if(ploc(@player)['y'] < 256 && !array_contains(sk_current_regions(@player), @arena['region'])) {
 					_pvp_msg(@pvp, colorize('&7[PVP] '.@p['color'].@player.'&r left the arena.'));
 					if(array_index_exists(@arena, 'resourcepack')) {
 						send_resourcepack(@player, 'http://mc.finalscoremc.com:25966/resourcepacks/default.zip');
@@ -400,12 +400,11 @@ proc _pvp_end_match(@id, @winners) {
 				@b = @table[1];
 				@c = @table[2];
 				@d = @table[3];
-				@r = @pvp['arena']['broadcast'];
-				_regionmsg(@r, colorize('&7&m|------------------------------&7&l[ &f&lTHE FINAL SCORE&7&l ]&7&m--|'));
-				_regionmsg(@r, colorize(replace('--&7'.to_upper(@a[0]).' &8:&7 '.to_upper(@b[0]).' &8:&7 '.to_upper(@c[0]).' &8:&7 '.to_upper(@d[0]), '-', ' ')));
-				_regionmsg(@r, colorize('&7&m|----------------------------------------------------|'));
+				_pvp_msg(@pvp, colorize('&7&m|------------------------------&7&l[ &f&lTHE FINAL SCORE&7&l ]&7&m--|'));
+				_pvp_msg(@pvp, colorize(replace('--&7'.to_upper(@a[0]).' &8:&7 '.to_upper(@b[0]).' &8:&7 '.to_upper(@c[0]).' &8:&7 '.to_upper(@d[0]), '-', ' ')));
+				_pvp_msg(@pvp, colorize('&7&m|----------------------------------------------------|'));
 				foreach(@player: @stats in @pvp['stats']) {
-					_regionmsg(@r, replace('----'
+					_pvp_msg(@pvp, replace('----'
 						._pad_stat(@stats[@a[0]], @a[1]).@a[2]
 						._pad_stat(@stats[@b[0]], @b[1]).@b[2]
 						._pad_stat(@stats[@c[0]], @c[1]).@c[2]
@@ -415,7 +414,7 @@ proc _pvp_end_match(@id, @winners) {
 							@player)
 						.'-', '-', ' '));
 				}
-				_regionmsg(@r, colorize('&7&m|----------------------------------------------------|'));
+				_pvp_msg(@pvp, colorize('&7&m|----------------------------------------------------|'));
 			} else if(array_index_exists(@pvp, 'team') && array_size(@winners) > 0) {
 				_worldmsg(@world, color('gray').'[PVP] '
 					.@pvp['players'][@leader]['color'].color('bold')

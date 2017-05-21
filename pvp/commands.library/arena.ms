@@ -45,7 +45,6 @@ proc _arena(@action, @id, @setting, @string) {
 					msg(colorize('Set &a' . @setting . '&r to &a' . @args[0] . '&r : &a' . @args[1]));
 
 				# string options
-				case 'broadcast':
 				case 'class_picking':
 				case 'kothregion':
 				case 'parent':
@@ -585,16 +584,6 @@ proc _arena(@action, @id, @setting, @string) {
 					array_remove(@region[@i], 3);
 				}
 				sk_region_update(pworld(), @arena['region'], @region)
-			}
-
-			if(array_index_exists(@arena, 'broadcast')
-			&& (!array_index_exists(@arena, 'region') || @arena['broadcast'] != @arena['region'])) {
-				@region = sk_region_info(@arena['broadcast'], pworld())[0]
-				for(@i = 0, @i < array_size(@region), @i++) {
-					@region[@i] = _relative(@region[@i], @dir, @distance)
-					array_remove(@region[@i], 3);
-				}
-				sk_region_update(pworld(), @arena['broadcast'], @region)
 			}
 
 			if(array_index_exists(@arena, 'kothregion')) {

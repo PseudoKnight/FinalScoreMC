@@ -85,8 +85,6 @@ proc _pvp_start(@pvp, @id){
 	foreach(@p in array_keys(@pvp['players'])) {
 		if(!ponline(@p) || _is_survival_world(pworld(@p))) {
 			array_remove(@pvp['players'], @p);
-		} else {
-			set_ploc(@p, @arena['lobby']); # TODO: remove once players can't join multiple games
 		}
 	}
 	if(array_size(@pvp['players']) < if(array_index_exists(@arena, 'min'), @arena['min'], 2)) {
@@ -100,7 +98,6 @@ proc _pvp_start(@pvp, @id){
 	@pvp['binds'] = array();
 
 	# Configure remaining arena settings
-	if(!array_index_exists(@arena, 'broadcast'), @arena['broadcast'] = @arena['region']);
 	if(array_contains(@arena['flags'], 'keepinventory'), @arena['denydrop'] = 'all');
 	if(array_index_exists(@arena, 'classes')) {
 		if(array_size(@arena['classes']) > 1){
@@ -339,17 +336,17 @@ proc _pvp_start(@pvp, @id){
 		_worldmsg(@world, color('gold').' '.array_implode(array_keys(@pvp['players']), colorize('&r vs &6')));
 	}
 	if(array_index_exists(@arena, 'lives')) {
-		_regionmsg(@arena['broadcast'], colorize('* &e&l'.@arena['lives'].if(@arena['lives'] > 1, ' LIVES', ' LIFE')));
+		_pvp_msg(@pvp, colorize('* &e&l'.@arena['lives'].if(@arena['lives'] > 1, ' LIVES', ' LIFE')));
 	}
 	if(array_index_exists(@arena, 'class_picking') && @arena['class_picking'] === 'random') {
-		_regionmsg(@arena['broadcast'], colorize('* &e&lALL RANDOM CLASSES'));
+		_pvp_msg(@pvp, colorize('* &e&lALL RANDOM CLASSES'));
 	}
 	if(array_index_exists(@arena, 'class_picks') &&
 	(!array_index_exists(@arena, 'lives') || @arena['class_picks'] < @arena['lives'])) {
-		_regionmsg(@arena['broadcast'], colorize('* &e&l'.@arena['class_picks'].' CLASS PICKS'));
+		_pvp_msg(@pvp, colorize('* &e&l'.@arena['class_picks'].' CLASS PICKS'));
 	}
 	if(@picked) {
-		_regionmsg(@arena['broadcast'], colorize('* &e&lArena picked by '.@picked));
+		_pvp_msg(@pvp, colorize('* &e&lArena picked by '.@picked));
 	}
 	_worldmsg(@world, colorize('&7&m|----------------------------------------------------|'));
 
