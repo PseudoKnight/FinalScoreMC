@@ -14,6 +14,7 @@ proc _colorname(@player) {
 	} else if(has_permission(@player, 'group.member')) {
 		return(color('YELLOW'));
 	}
+	return(color('WHITE'));
 }
 
 /*
