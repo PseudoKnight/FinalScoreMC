@@ -5,23 +5,23 @@ case 'load':
 			die();
 		}
 		cancel()
-		if(pexp() >= 100) {
+		if(pexp() == 100) {
 			@arrow = shoot_projectile(player(), 'ARROW')
 			set_entity_onfire(@arrow, 1)
 			play_sound(ploc(), array('sound': 'ENDERDRAGON_HIT', 'pitch': 2))
-			set_pexp(0)
+			set_pexp(0);
 			set_interval(250, closure(){
 				try {
-					@xp = pexp()
-					@xp += 10
-					set_pexp(@xp)
-					if(@xp >= 100) {
-						clear_task()
+					@xp = pexp();
+					@xp += 10;
+					set_pexp(min(100, @xp));
+					if(@xp == 100) {
+						clear_task();
 					}
 				} catch(Exception @ex) {
 					clear_task();
 				}
-			})
+			});
 			if(extension_exists('CHSpigot')) {
 				@dmg = get_arrow_damage(@arrow);
 				set_arrow_damage(@arrow, @dmg * 0.5);
