@@ -17,7 +17,7 @@ proc _create_treasure(@delay, @score, @rules) {
 			}
 		}
 		set_interval(1000, closure(){
-			if(get_block_at(@loc) != '130:2') {
+			if(!array_contains(get_worlds(), 'shard') || get_block_at(@loc) != '130:2') {
 				clear_task();
 			}
 			foreach(@p in all_players()) {

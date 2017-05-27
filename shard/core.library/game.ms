@@ -162,7 +162,8 @@ proc _shard_create(@rules){
 					}, 'shard');
 				}
 				
-				proc _check_shard(@binds) {
+				@isTreasureHunt = (@rules['objective'] == 'treasurehunt');
+				proc _check_shard(@binds, @treasureHunt = @isTreasureHunt) {
 					queue_push(closure(){
 						@count = 0;
 						@last = '';
@@ -191,7 +192,7 @@ proc _shard_create(@rules){
 								}
 							}
 						}
-						if(@count == 1) {
+						if(@count == 1 && !@treasureHunt) {
 							set_world_border('shard', array('width': 1, 'seconds': 20));
 							storm(true, 'shard');
 							set_thunder(true, 'shard');
