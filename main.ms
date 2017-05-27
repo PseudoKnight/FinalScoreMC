@@ -729,5 +729,10 @@ bind(entity_damage, null, array('cause': 'ENTITY_EXPLOSION', 'world': 'custom'),
 
 // Always drop full enderdragon experience
 bind(entity_death, null, array('type': 'ENDER_DRAGON'), @event) {
-	modify_event('xp', 12000);
+	if(@event['xp'] < 12000) {
+		modify_event('xp', 12000);
+		@loc = get_highest_block_at(0, 0, @event['location']['world']);
+		@loc['y'] += 1;
+		set_block_at(@loc, data_values('enderdragon_egg'));
+	}
 }
