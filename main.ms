@@ -736,3 +736,22 @@ bind(entity_death, null, array('type': 'ENDER_DRAGON'), @event) {
 		set_block_at(@loc, data_values('enderdragon_egg'));
 	}
 }
+
+// Block ghast fireball damage to all but natural nether blocks
+bind(entity_explode, null, array('type': 'FIREBALL'), @event) {
+	@world = @event['location']['world'];
+	if(world_info(@world)['environment'] == 'NETHER' && @world != 'outworld_nether') {
+		@blocks = @event['blocks'];
+		@breakables = array('87:0', '88:0', '153:0');
+		@modify = false;
+		foreach(@index: @block in @blocks) {
+			if(!array_contains(@breakables, get_block_at(@block))) {
+				array_remove(@blocks, @index);
+				@modify = true;
+			}
+		}
+		if(@modify) {
+			modify_event('blocks', @blocks);
+		}
+	}
+}
