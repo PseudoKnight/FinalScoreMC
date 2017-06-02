@@ -81,6 +81,9 @@
 				die('This region is not defined as an arena.');
 			}
 			
+			if(array_contains(all_virtualchests(), 'level'.@region)) {
+				die('Game is already running.');
+			}
 			@menu = array(
 				'id': 'level'.@region,
 				'title': 'Pick a Script',
