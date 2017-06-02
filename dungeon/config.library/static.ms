@@ -4,6 +4,7 @@ proc _set_locations(@start, @end, @spawns){
     	@pvp['arena']['spawn'] = array(array(@end), array(@start));
 	}
 	
+	@end = @end[];
 	@end['y'] += 4;
 	set_block_at(@end, data_values('commandblock'), false);
 	set_block_command(@end, 'runalias /pvp end static 2');
@@ -27,17 +28,17 @@ proc _get_loot(@level, @random, @loot = array(
 	array(0.01, associative_array('name': 'DIAMOND_SWORD')),
 	array(0.16, associative_array('name': 'LEATHER_CHESTPLATE')),
 	array(0.16, associative_array('name': 'LEATHER_LEGGINGS')),
-	array(0.32, associative_array('name': 'LEATHER_BOOTS', 'enchants': array(array('elevel': 1, 'etype': 'DEPTH_STRIDER')))),
+	array(0.32, associative_array('name': 'LEATHER_BOOTS')),
 	array(0.08, associative_array('name': 'GOLD_CHESTPLATE')),
 	array(0.08, associative_array('name': 'GOLD_LEGGINGS')),
-	array(0.16, associative_array('name': 'GOLD_BOOTS', 'enchants': array(array('elevel': 1, 'etype': 'DEPTH_STRIDER')))),
+	array(0.16, associative_array('name': 'GOLD_BOOTS')),
 	array(0.04, associative_array('name': 'CHAINMAIL_LEGGINGS')),
 	array(0.02, associative_array('name': 'IRON_CHESTPLATE')),
 	array(0.02, associative_array('name': 'IRON_LEGGINGS')),
-	array(0.04, associative_array('name': 'IRON_BOOTS', 'enchants': array(array('elevel': 1, 'etype': 'DEPTH_STRIDER')))),
+	array(0.04, associative_array('name': 'IRON_BOOTS')),
 	array(0.01, associative_array('name': 'DIAMOND_CHESTPLATE')),
 	array(0.01, associative_array('name': 'DIAMOND_LEGGINGS')),
-	array(0.02, associative_array('name': 'DIAMOND_BOOTS', 'enchants': array(array('elevel': 1, 'etype': 'DEPTH_STRIDER')))),
+	array(0.02, associative_array('name': 'DIAMOND_BOOTS')),
 	array(0.10, associative_array('name': 'BOW')),
 	array(0.10, associative_array('name': 'SPECTRAL_ARROW', 'qty': array(1, 4))),
 	array(0.04, associative_array('name': 'SNOW_BALL', 'qty': 2, 'meta': associative_array('display': 'SHOTGUN'))),
@@ -63,18 +64,18 @@ proc _materials(@level) {
 	return(associative_array(
 		'empty': '9:0',
 		'wall': array('7:0'),
-		'room': '9:0',
-		'door': '9:0',
+		'room': '0:0',
+		'door': '0:0',
 		'column': '7:0',
 		'ladder': '65:3',
 		'ceiling': array('7:0'),
 		'floor': array('73:0', '110:0'),
 		'utility': array('7:0'),
 		'decor': array('7:0'),
-		'edge': array('9:0', '9:0', '9:0', '9:0'),
+		'edge': array('7:0', '7:0', '7:0', '7:0'),
 	));
 }
 
-proc _spawner_mobs(@level) {
-	return(null);
+proc _level_mobs(@level) {
+	return(array('spawner': array(), 'single': array()));
 }

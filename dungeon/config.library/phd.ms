@@ -111,6 +111,6 @@ proc _materials(@level) {
 	}
 }
 
-proc _spawner_mobs(@level) {
-	return(null);
+proc _level_mobs(@level) {
+	return(array('spawner': array(), 'single': array()));
 }

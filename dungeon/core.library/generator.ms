@@ -39,6 +39,7 @@ proc _generate_dungeon(@region, @world, @genType, @seed) {
 
 	// Dungeon planning (off the server thread)
 	msg(color('yellow').'Generating '.@genType.' with seed "'.@seed.'" ...');
+	_remove_region_entities(@region, array(), @world);
 	x_new_thread('dungeon', closure(){
 		@random = res_create_resource('RANDOM', @seed);
 		@rooms = null;
@@ -59,6 +60,7 @@ proc _generate_dungeon(@region, @world, @genType, @seed) {
 		);
 
 		foreach(@level in range(@level)) {
+			@spawns[@level] = array();
 			// Define grid
 			@layoutMap = array();
 			@roomMap = array();
@@ -264,8 +266,8 @@ proc _generate_dungeon(@region, @world, @genType, @seed) {
 							|| (!is_null(@rowOdd) && (@rowOdd != @r2 % 2 || @columnOdd != @c2 % 2))
 							|| integer(srand(@random) * 100) < 90) {
 								@layoutMap[@c2][@r2] = 'room';
-								if(integer(srand(@random) * 100) < 15) {
-									@spawns[] = array(
+								if(srand(@random) < 0.001) {
+									@spawns[@level][] = array(
 										'x': @regionMinX + @c2 * @scale,
 										'y': @regionMinY + @level * (@maxRoomHeight + 3) + 1,
 										'z': @regionMinZ + @r2 * @scale,
@@ -286,7 +288,7 @@ proc _generate_dungeon(@region, @world, @genType, @seed) {
 				}
 			}
 
-			@mobTypes = _spawner_mobs(@level);
+			@mobTypes = _level_mobs(@level);
 			@materials = _materials(@level);
 
 			// Build dungeon level
@@ -301,14 +303,7 @@ proc _generate_dungeon(@region, @world, @genType, @seed) {
 						@loc = array(@regionMinX + @x, @y, @regionMinZ + @z, @world);
 
 						// Floor
-						if(@mobTypes && @layoutMap[@c][@r] === 'column' && srand(@random) < 0.16) {
-							set_block_at(@loc, '52:0', false);
-							@rand = integer(srand(@random) * array_size(@mobTypes));
-							@mob = array_get(@mobTypes, @rand, 'ZOMBIE');
-							set_spawner_type(@loc, @mob);
-						} else {
-							set_block_at(@loc, array_rand(@materials['floor'], 1, false)[0], false);
-						}
+						set_block_at(@loc, array_rand(@materials['floor'], 1, false)[0], false);
 
 						// Walls
 						@ceilingHeight = @y + @roomHeight + 1;
@@ -418,6 +413,22 @@ proc _generate_dungeon(@region, @world, @genType, @seed) {
 					@yFloor = @regionMinY + (@level * (@maxRoomHeight + 3));
 					@roomHeight = @room['height'];
 					
+					// spawner
+					if(@mobTypes['spawner'] && srand(@random) < 0.7) {
+						@loc = array(
+							@regionMinX + @room['c1'] * @scale + 1 + integer(srand(@random) * (@room['width'] - 1)) * @scale,
+							@yFloor + 1,
+							@regionMinZ + @room['r1'] * @scale + 1 + integer(srand(@random) * (@room['length'] - 1)) * @scale,
+							@world
+						);
+						if(get_block_at(@loc) == @materials['room']) {
+							set_block_at(@loc, '52:0', false);
+							@rand = integer(srand(@random) * array_size(@mobTypes['spawner']));
+							@mob = array_get(@mobTypes['spawner'], @rand, 'ZOMBIE');
+							set_spawner_type(@loc, @mob);
+						}
+					}
+					
 					@chests = integer(srand(@random) * min(@room['length'], @room['width']) / 1.2);
 					while(@chests-- > 0) {
 						@loc = array(
@@ -455,6 +466,14 @@ proc _generate_dungeon(@region, @world, @genType, @seed) {
 						);
 						if(get_block_at(@loc) == @materials['room']) {
 							set_block_at(@loc, @materials['decor'][integer(srand(@random) * array_size(@materials['decor']))], false);
+						}
+					}
+					
+					if(@mobTypes['single']) {
+						foreach(@loc in @spawns[@level]) {
+							@mob = @mobTypes['single'][integer(srand(@random) * array_size(@mobTypes['single']))];
+							@entity = spawn_entity(@mob, 1, @loc)[0];
+							set_entity_persistence(@entity, true);
 						}
 					}
 				});
@@ -506,7 +525,7 @@ proc _generate_dungeon(@region, @world, @genType, @seed) {
 			_set_locations(array('x': @sx, 'y': @sy, 'z': @sz, 'world': @world),
 					array('x': @ex, 'y': @ey, 'z': @ez, 'world': @world), @spawns);
 			res_free_resource(@random);
-			_remove_region_entities(@region, array(), @world);
+			_remove_region_entities(@region, array('DROPPED_ITEM'), @world);
 			msg(color('green').@genType.' generation complete!');
 		});
 
