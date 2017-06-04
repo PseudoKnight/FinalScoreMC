@@ -33,16 +33,19 @@ proc _snake_queue(@args) {
 	@game['botsOnly'] = false;
 	@game['missiles'] = associative_array();
 	@game['tnt'] = array();
+	export('snake', @game);
 
 	// Command options
-	foreach(@arg in @args) {
-		@split = split(':', @arg);
-		if(array_size(@split) < 2) {
-			die('Invalid setting: '.@arg);
+	if(pisop()) {
+		foreach(@arg in @args) {
+			@split = split(':', @arg);
+			if(array_size(@split) < 2) {
+				die('Invalid setting: '.@arg);
+			}
+			@key = @split[0];
+			@value = @split[1];
+			@game[@key] = @value;
 		}
-		@key = @split[0];
-		@value = @split[1];
-		@game[@key] = @value;
 	}
 	
 	// Get arena
@@ -69,11 +72,28 @@ proc _snake_queue(@args) {
     } catch(ScoreboardException @ex) {
         die('Snake is still running.');
     }
+	
+	// Create color select menu
+	create_virtualchest(array(
+		'id': 'snake',
+		'size': 9,
+		'title': 'Choose your color',
+		'0': array('name': 'STAINED_CLAY', 'data': 11),
+		'1': array('name': 'STAINED_CLAY', 'data': 1),
+		'2': array('name': 'STAINED_CLAY', 'data': 13),
+		'3': array('name': 'STAINED_CLAY', 'data': 14),
+		'4': array('name': 'STAINED_CLAY', 'data': 8),
+		'5': array('name': 'STAINED_CLAY', 'data': 10),
+		'6': array('name': 'STAINED_CLAY', 'data': 15),
+	));
 
 	// Add players in region
+	@loadMenu = false;
 	foreach(@p in all_players()) {
 		if(array_contains(sk_current_regions(@p), 'snake_'.@game['arena']) && pmode(@p) == 'ADVENTURE') {
-			_snake_add(@p, @game);
+			if(_snake_add(@p, @game) && !@game['snakes'][@p]['head']) {
+				@loadMenu = true;
+			}
 		}
 		if(array_size(@game['snakes']) == @game['numPlayers']) {
 			break();
@@ -87,6 +107,42 @@ proc _snake_queue(@args) {
 		array_remove(@bots, @index);
 	}
 
+	// Optionally open color select menu
+	if(@loadMenu) {
+		foreach(@player: @snake in @game['snakes']) {
+			if(ponline(@player) && !@snake['head']) {
+				popen_virtualchest(@player, 'snake');
+			}
+		}
+		bind(inventory_click, array('id': 'snake-invclick'), null, @event, @game) {
+			if(pget_virtualchest(player()) == 'snake' && array_index_exists(@game['snakes'], player())) {
+				@item = @event['slotitem'];
+				if(@item) {
+					_snake_set_color(player(), @item['data'], @game);
+					clear_virtualchest('snake', @event['slot']);
+					close_pinv();
+				}
+			}
+		}
+		bind(inventory_close, null, null, @event, @game) {
+			set_timeout(50, closure() {
+				if(!pviewing_virtualchest('snake')) {
+					unbind();
+					unbind('snake-invclick');
+					_snake_set_colors(@game);
+					del_virtualchest('snake');
+					_snake_countdown(@game);
+				}
+			});
+		}
+	} else {
+		_snake_set_colors(@game);
+		del_virtualchest('snake');
+		_snake_countdown(@game);
+	}
+}
+
+proc _snake_countdown(@game) {
 	// Start countdown
 	@help = array(
 		'',
@@ -123,7 +179,6 @@ proc _snake_queue(@args) {
 		}
 		@countdown[0] -= 1;
 	});
-	export('snake', @game);
 }
 
 proc _snake_start_task(@game) {

@@ -21,30 +21,22 @@
 */
 
 proc _snake_add(@player, @game) {
-	@colors = array(
-		array('159:11', '159:3', '9'), # blue
-		array('159:1', '159:4', '6'), # orange
-		array('159:13', '159:5', 'a'), # green
-		array('159:14', '159:6', 'c'), # red
-		array('159:8', '159:0', 'f'), # white
-		array('159:10', '159:2', 'd'), # purple
-		array('159:15', '159:7', '8'), # black
-	);
+	if(ponline(@player) && !_set_pstate_activity(@player, 'SNAKE')) {
+		return(false);
+	}
+	
 	@region = 'snake_'.@game['arena'].rand(1, @game['surfaces'] + 1);
 	@startLoc = _snake_valid_location(@region, 4);
 	if(!@startLoc) {
-		return();
+		return(false);
 	}
 	@dir = _snake_direction_of(@startLoc, '0:0');
 	@headLoc = _relative(@startLoc, @dir);
-	@head = @colors[array_size(@game['snakes'])][0];
-	@tail = @colors[array_size(@game['snakes'])][1];
-	@color = @colors[array_size(@game['snakes'])][2];
 	@game['snakes'][@player] = associative_array(
 		'blocks': array(@startLoc, @headLoc),
 		'ability-count': array(0, 0, 0, 0),
-		'head': @head,
-		'tail': @tail,
+		'head': '',
+		'tail': '',
 		'alive': true,
 		'loc': @headLoc,
 		'dir': @dir,
@@ -57,16 +49,17 @@ proc _snake_add(@player, @game) {
 		'sleep': 5,
 		'boost': 0,
 	);
-	set_block_at(@headLoc, @head, false);
-	set_block_at(@startLoc, @tail, false);
 	_snake_set_top(@game['snakes'][@player]);
 
 	create_team(@player, 'snake');
-	set_team_display(@player, associative_array('prefix': color(@color)), 'snake');
 	team_add_player(@player, @player, 'snake');
 	set_pscore('alive', @player, 1, 'snake');
 
-	if(ponline(@player) && _set_pstate_activity(@player, 'SNAKE')) {
+	if(ponline(@player)) {
+		@item = pinv(@player, -106);
+		if(@item && @item['name'] == 'STAINED_CLAY') {
+			_snake_set_color(@player, @item['data'], @game);
+		}
 		set_pscoreboard(@player, 'snake');
 		set_ploc(@player, _relative(@headLoc, @game['snakes'][@player]['top'], 20));
 		@yaw = get_yaw(ploc(@player), @headLoc);
@@ -75,17 +68,60 @@ proc _snake_add(@player, @game) {
 		set_pmode(@player, 'SURVIVAL');
 		set_pflight(@player, true);
 		set_pflying(@player, true);
-		_clear_pinv(@player);
-		set_pinv(@player, associative_array(
-			-106: associative_array(
-				'name': 'STICK',
-				'meta': associative_array('display': 'JOYSTICK'),
-			),
-		));
 		runas('~console', '/jukebox show add '.@player.' @snake');
 		_set_pstate_activity(@player, 'SNAKE');
 	} else {
 		@game['snakes'][@player]['bot'] = @player;
+	}
+	return(true);
+}
+
+proc _snake_set_color(@player, @color, @game,
+@colors = array(
+	array(11, '3', '9'), # blue
+	array(1, '4', '6'), # orange
+	array(13, '5', 'a'), # green
+	array(14, '6', 'c'), # red
+	array(8, '0', 'f'), # white
+	array(10, '2', 'd'), # purple
+	array(15, '7', '8'), # black
+)) {
+	@snake = @game['snakes'][@player];
+	foreach(@slot: @colorArray in @colors) {
+		if(@colorArray[0] == @color) {
+			clear_virtualchest('snake', @slot);
+			@head = '159:'.@colorArray[0];
+			@tail = '159:'.@colorArray[1];
+			@text = @colorArray[2];
+			@snake['head'] = @head;
+			@snake['tail'] = @tail;
+			set_team_display(@player, associative_array('prefix': color(@text)), 'snake');
+			set_block_at(@snake['loc'], @head, false);
+			set_block_at(@snake['blocks'][0], @tail, false);
+			if(ponline(@player)) {
+				_clear_pinv(@player);
+				set_pinv(@player, array(
+					-106: array('name': 'STAINED_CLAY', 'data': @colorArray[0]),
+					8: array('name': 'REDSTONE_TORCH_ON', 'meta': associative_array('display': 'JOYSTICK')),
+				));
+			}
+			break();
+		}
+	}
+}
+
+// Set colors for all snakes that don't have one set
+proc _snake_set_colors(@game) {
+	foreach(@name: @snake in @game['snakes']) {
+		if(!@snake['head']) {
+			@inv = get_virtualchest('snake');
+			foreach(@slot in range(7)) {
+				if(@inv[@slot]) {
+					_snake_set_color(@name, @inv[@slot]['data'], @game);
+					break();
+				}
+			}
+		}
 	}
 }
 
@@ -96,7 +132,7 @@ proc _snake_remove(@player, @game) {
 	array_remove(@game['snakes'], @player);
 	if(ponline(@player)) {
 		runas('~console', '/jukebox show remove '.@player.' @snake');
-		_equip_kit(@player);
+		_equip_kit(@player, array(-106: pinv(@player, -106)));
 		_set_pstate_activity(@player, null);
 	}
 }

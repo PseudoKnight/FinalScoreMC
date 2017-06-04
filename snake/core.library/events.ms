@@ -10,7 +10,7 @@ proc _snake_bind_events(@game) {
 		}
 	}
 
-	bind(item_held, array('id': 'snake-swap'), null, @event, @game) {
+	bind(item_held, array('id': 'snake-held'), null, @event, @game) {
 		if(array_index_exists(@game['snakes'], player())) {
 			cancel();
 			@slot = @event['to'];
@@ -47,11 +47,18 @@ proc _snake_bind_events(@game) {
 			cancel();
 		}
 	}
+	
+	bind(item_swap, array('id': 'snake-swap'), null, @event, @game) {
+		if(array_index_exists(@game['snakes'], player())) {
+			cancel();
+		}
+	}
 }
 
 proc _snake_unbind_events() {
 	unbind('snake-interact');
-	unbind('snake-swap');
+	unbind('snake-held');
 	unbind('snake-explode');
 	unbind('snake-inventory');
+	unbind('snake-swap');
 }
