@@ -1,4 +1,4 @@
-*:/snake [$] = >>>
-	include('core.library/game.ms');
-	_snake_queue(parse_args($));
+*:/snake = >>>
+	include('core.library/menu.ms');
+	_snake_menu();
 <<<

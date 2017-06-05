@@ -20,7 +20,7 @@ include('snake.ms');
 include('events.ms');
 include('bot.ms');
 
-proc _snake_queue(@args) {
+proc _snake_queue(@mode) {
 	// Default options
 	@game = associative_array();
 	@game['arena'] = '';
@@ -33,21 +33,9 @@ proc _snake_queue(@args) {
 	@game['botsOnly'] = false;
 	@game['missiles'] = associative_array();
 	@game['tnt'] = array();
+	@game['endless'] = (@mode == 'endless');
 	export('snake', @game);
 
-	// Command options
-	if(pisop()) {
-		foreach(@arg in @args) {
-			@split = split(':', @arg);
-			if(array_size(@split) < 2) {
-				die('Invalid setting: '.@arg);
-			}
-			@key = @split[0];
-			@value = @split[1];
-			@game[@key] = @value;
-		}
-	}
-	
 	// Get arena
 	foreach(@region in sk_current_regions()) {
 		if(string_starts_with(@region, 'snake_')) {
@@ -100,6 +88,7 @@ proc _snake_queue(@args) {
 		}
 	}
 
+	// Add bots to fill up slots
 	@bots = array('Grumpy','BatSnake','SharkBot','CrazyBot');
 	while(array_size(@game['snakes']) < @game['numPlayers'] && @bots) {
 		@index = array_rand(@bots)[0];
@@ -218,6 +207,10 @@ proc _snake_start_task(@game) {
 		}
 		if(@playersAlive == 0) {
 			@game['botsOnly'] = true;
+			if(@game['endless']) {
+				clear_task();
+				_snake_end(null, @game);
+			}
 		}
 		if((@alive < 2 && array_size(@game['snakes']) > 1) || @alive < 1) {
 			clear_task();
@@ -227,6 +220,18 @@ proc _snake_start_task(@game) {
 }
 
 proc _snake_end(@winner, @game) {
+	if(@game['endless']) {
+		@highscore = 0;
+		foreach(@p: @snake in @game['snakes']) {
+			if(ponline(@p)) {
+				@score = get_pscore('alive', @p, 'snake');
+				if(@score > @highscore) {
+					@winner = @p;
+					@highscore = @score;
+				}
+			}
+		}
+	}
 	foreach(@player in array_keys(@game['snakes'])) {
 		if(ponline(@player)) {
 			title_msg(@player, @winner.' wins!', '', 20, 60, 20);

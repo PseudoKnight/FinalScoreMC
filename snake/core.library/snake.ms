@@ -26,13 +26,13 @@ proc _snake_add(@player, @game) {
 	}
 	
 	@region = 'snake_'.@game['arena'].rand(1, @game['surfaces'] + 1);
-	@startLoc = _snake_valid_location(@region, 4);
+	@startLoc = _snake_valid_location(@region, 5);
 	if(!@startLoc) {
 		return(false);
 	}
 	@dir = _snake_direction_of(@startLoc, '0:0');
 	@headLoc = _relative(@startLoc, @dir);
-	@game['snakes'][@player] = associative_array(
+	@game['snakes'][@player] = array(
 		'blocks': array(@startLoc, @headLoc),
 		'ability-count': array(0, 0, 0, 0),
 		'head': '',
@@ -50,10 +50,12 @@ proc _snake_add(@player, @game) {
 		'boost': 0,
 	);
 	_snake_set_top(@game['snakes'][@player]);
-
-	create_team(@player, 'snake');
-	team_add_player(@player, @player, 'snake');
-	set_pscore('alive', @player, 1, 'snake');
+	
+	if(!get_pscore('alive', @player, 'snake')) {
+		create_team(@player, 'snake');
+		team_add_player(@player, @player, 'snake');
+		set_pscore('alive', @player, 1, 'snake');
+	}
 
 	if(ponline(@player)) {
 		@item = pinv(@player, -106);
@@ -78,18 +80,20 @@ proc _snake_add(@player, @game) {
 
 proc _snake_set_color(@player, @color, @game,
 @colors = array(
-	array(11, '3', '9'), # blue
-	array(1, '4', '6'), # orange
-	array(13, '5', 'a'), # green
-	array(14, '6', 'c'), # red
-	array(8, '0', 'f'), # white
-	array(10, '2', 'd'), # purple
-	array(15, '7', '8'), # black
+	array(11, 3, '9'), # blue
+	array(1, 4, '6'), # orange
+	array(13, 5, 'a'), # green
+	array(14, 6, 'c'), # red
+	array(8, 0, 'f'), # white
+	array(10, 2, 'd'), # purple
+	array(15, 7, '8'), # black
 )) {
 	@snake = @game['snakes'][@player];
 	foreach(@slot: @colorArray in @colors) {
 		if(@colorArray[0] == @color) {
-			clear_virtualchest('snake', @slot);
+			if(array_contains(all_virtualchests(), 'snake')) {
+				clear_virtualchest('snake', @slot);
+			}
 			@head = '159:'.@colorArray[0];
 			@tail = '159:'.@colorArray[1];
 			@text = @colorArray[2];
@@ -145,9 +149,16 @@ proc _snake_kill(@player, @game) {
 			while(@n < 3) {
 				try {
 					@block = @snake['blocks'][@i - @n];
-					if(get_block_at(@block) == @snake['tail']) {
-						set_block_at(@block, @snake['head'], false);
+					@blockType = get_block_at(@block);
+					if(@blockType == @snake['tail']) {
+						if(@game['endless']) {
+							set_block_at(@block, 0, false);
+						} else {
+							set_block_at(@block, @snake['head'], false);
+						}
 						play_effect(@block, 'PARTICLE_SMOKE', associative_array('particleCount': 8, 'speed': 0, 'offsetX': 1, 'offsetY': 1, 'offsetZ': 1, 'radius': 40));
+					} else if(@game['endless'] && @blockType == @snake['head']) {
+						set_block_at(@block, 0, false);
 					}
 					@n++;
 				} catch(Exception @ex) {
@@ -157,7 +168,23 @@ proc _snake_kill(@player, @game) {
 		}, @player);
 	}
 	@snake['alive'] = false;
-	set_pscore('alive', @player, 0, 'snake');
+	if(@game['endless']) {
+		foreach(@p: @s in @game['snakes']) {
+			if(@s['alive']) {
+				set_pscore('alive', @p, get_pscore('alive', @p, 'snake') + 1, 'snake');
+			}
+		}
+		if(@snake['bot']) {
+			@color = integer(split(':', @snake['head'])[1]);
+			if(_snake_add(@player, @game)) {
+				_snake_set_color(@player, @color, @game);
+			} else {
+				set_pscore('alive', @player, 0, 'snake');
+			}
+		}
+	} else {
+		set_pscore('alive', @player, 0, 'snake');
+	}
 	play_sound(@snake['loc'], associative_array('sound': 'ZOMBIE_DEATH', 'pitch': 2, 'volume': 4));
 }
 
