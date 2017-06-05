@@ -37,6 +37,7 @@ proc _snake_add(@player, @game) {
 		'ability-count': array(0, 0, 0, 0),
 		'head': '',
 		'tail': '',
+		'color': color('white'),
 		'alive': true,
 		'loc': @headLoc,
 		'dir': @dir,
@@ -58,7 +59,7 @@ proc _snake_add(@player, @game) {
 	}
 
 	if(ponline(@player)) {
-		@item = pinv(@player, -106);
+		@item = pinv(@player, 7);
 		if(@item && @item['name'] == 'STAINED_CLAY') {
 			_snake_set_color(@player, @item['data'], @game);
 		}
@@ -96,16 +97,17 @@ proc _snake_set_color(@player, @color, @game,
 			}
 			@head = '159:'.@colorArray[0];
 			@tail = '159:'.@colorArray[1];
-			@text = @colorArray[2];
+			@text = color(@colorArray[2]);
 			@snake['head'] = @head;
 			@snake['tail'] = @tail;
-			set_team_display(@player, associative_array('prefix': color(@text)), 'snake');
+			@snake['color'] = @text;
+			set_team_display(@player, associative_array('prefix': @text), 'snake');
 			set_block_at(@snake['loc'], @head, false);
 			set_block_at(@snake['blocks'][0], @tail, false);
 			if(ponline(@player)) {
 				_clear_pinv(@player);
 				set_pinv(@player, array(
-					-106: array('name': 'STAINED_CLAY', 'data': @colorArray[0]),
+					7: array('name': 'STAINED_CLAY', 'data': @colorArray[0]),
 					8: array('name': 'REDSTONE_TORCH_ON', 'meta': associative_array('display': 'JOYSTICK')),
 				));
 			}
@@ -136,7 +138,7 @@ proc _snake_remove(@player, @game) {
 	array_remove(@game['snakes'], @player);
 	if(ponline(@player)) {
 		runas('~console', '/jukebox show remove '.@player.' @snake');
-		_equip_kit(@player, array(-106: pinv(@player, -106)));
+		_equip_kit(@player, array(7: pinv(@player, 7)));
 		_set_pstate_activity(@player, null);
 	}
 }
@@ -176,8 +178,10 @@ proc _snake_kill(@player, @game) {
 		}
 		if(@snake['bot']) {
 			@color = integer(split(':', @snake['head'])[1]);
+			@abilities = @snake['ability-count'];
 			if(_snake_add(@player, @game)) {
-				_snake_set_color(@player, @color, @game);
+				_snake_set_color(@player, @color, @game); // keep color
+				@game['snakes'][@player]['ability-count'] = @abilities; // keep abilities
 			} else {
 				set_pscore('alive', @player, 0, 'snake');
 			}

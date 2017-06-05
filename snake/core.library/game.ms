@@ -89,7 +89,7 @@ proc _snake_queue(@mode) {
 	}
 
 	// Add bots to fill up slots
-	@bots = array('Grumpy','BatSnake','SharkBot','CrazyBot');
+	@bots = array('Grumpy','BatSnake','SharkBot','CrazyBot', 'NinjaBot');
 	while(array_size(@game['snakes']) < @game['numPlayers'] && @bots) {
 		@index = array_rand(@bots)[0];
 		_snake_add(@bots[@index], @game);
@@ -222,19 +222,38 @@ proc _snake_start_task(@game) {
 proc _snake_end(@winner, @game) {
 	if(@game['endless']) {
 		@highscore = 0;
+		@second = 0;
+		@runnerup = '';
 		foreach(@p: @snake in @game['snakes']) {
 			if(ponline(@p)) {
 				@score = get_pscore('alive', @p, 'snake');
 				if(@score > @highscore) {
+					@runnerup = @winner;
 					@winner = @p;
+					@second = @highscore;
 					@highscore = @score;
+				} else if(!@runnerup) {
+					@runnerup = @p;
+					@second = @score;
 				}
 			}
 		}
-	}
-	foreach(@player in array_keys(@game['snakes'])) {
-		if(ponline(@player)) {
-			title_msg(@player, @winner.' wins!', '', 20, 60, 20);
+		@title = @game['snakes'][@winner]['color'].@winner.' '.@highscore;
+		@subtitle = '';
+		if(@runnerup) {
+			@subtitle = @game['snakes'][@runnerup]['color'].@runnerup.' '.@second;
+		}
+		foreach(@player in array_keys(@game['snakes'])) {
+			if(ponline(@player)) {
+				title_msg(@player, @title, @subtitle, 20, 70, 20);
+			}
+		}
+	} else {
+		@title = @game['snakes'][@winner]['color'].@winner.' wins!';
+		foreach(@player in array_keys(@game['snakes'])) {
+			if(ponline(@player)) {
+				title_msg(@player, @title, '', 20, 60, 20);
+			}
 		}
 	}
 	_snake_unbind_events();
