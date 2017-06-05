@@ -1,4 +1,7 @@
 proc _snake_menu() {
+	if(array_contains(all_virtualchests(), 'snake')) {
+		die('Already running.');
+	}
 	create_virtualchest(array(
 		'id': 'snake',
 		'type': 'HOPPER',
