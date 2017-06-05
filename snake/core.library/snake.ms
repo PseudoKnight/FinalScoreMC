@@ -25,7 +25,26 @@ proc _snake_add(@player, @game) {
 		return(false);
 	}
 	
-	@region = 'snake_'.@game['arena'].rand(1, @game['surfaces'] + 1);
+	@num = 0;
+	@region = '';
+	while(@num++ < @game['surfaces']) {
+		@region = 'snake_'.@game['arena'].@num;
+		@found = false;
+		foreach(@snake in @game['snakes']) {
+			if(@snake['region'] == @region) {
+				@found = true;
+				break();
+			}
+		}
+		if(!@found) {
+			break();
+		}
+	}
+	if(@num > @game['surfaces']) {
+		@region = 'snake_'.@game['arena'].rand(1, @game['surfaces'] + 1);
+	} else {
+		@region = 'snake_'.@game['arena'].@num;
+	}
 	@startLoc = _snake_valid_location(@region, 5);
 	if(!@startLoc) {
 		return(false);
