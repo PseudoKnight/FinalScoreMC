@@ -9,22 +9,22 @@
 		case 'stats':
 			@topScores = get_value('snake.endless.top');
 			if(!@topScores) {
-				die('There are no top scores.. yet!');
+				die(color('gold').'There are no top scores.. yet!');
 			}
-			msg(color('bold').'Current Top Snake Scores [Endless Mode]');
+			msg(color('green').color('bold').'Current Top Snake Scores [Endless Mode]');
 			foreach(@topScore in @topScores) {
 				@name = _pdata_by_uuid(@topScore['uuid'])['name'];
-				msg('['.@topScore['value'].'] '.@name);
+				msg(color('green').'['.@topScore['value'].'] '.color('white').@name);
 			}
 		
 		case 'resetstats':
 			if(!has_permission('group.moderator')) {
-				die('You do not have permission.');
+				die(color('red').'You do not have permission.');
 			}
 			foreach(@key: @value in get_values('snake.endless')) {
 				clear_value(@key);
 			}
-			msg('Reset stats.');
+			msg(color('green').'Reset stats.');
 		
 		default:
 			msg('Usage: /snake [top]');

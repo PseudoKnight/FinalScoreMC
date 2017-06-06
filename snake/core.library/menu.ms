@@ -5,9 +5,9 @@ proc _snake_menu() {
 	create_virtualchest(array(
 		'id': 'snake',
 		'type': 'HOPPER',
-		'title': 'Choose a Mode',
-		'1': array('name': 'REDSTONE_BLOCK', 'meta': array('display': 'STANDARD MODE')),
-		'3': array('name': 'WATCH', 'meta': array('display': 'ENDLESS MODE')),
+		'title': color('bold').'Choose a Mode',
+		'1': array('name': 'REDSTONE_BLOCK', 'meta': array('display': color('red').color('bold').'ELIMINATION MODE')),
+		'3': array('name': 'WATCH', 'meta': array('display': color('yellow').color('bold').'ENDLESS MODE')),
 	));
 	popen_virtualchest('snake');
 	bind(inventory_click, array('id': 'snake-invclick'), null, @event) {

@@ -44,7 +44,7 @@ proc _snake_queue(@mode) {
 		}
 	}
 	if(!@game['arena']) {
-		die('Not in a snake region.');
+		die(color('red').'Not in a snake region.');
 	}
 	
 	// Get region count
@@ -58,21 +58,21 @@ proc _snake_queue(@mode) {
     	create_objective('alive', 'DUMMY', 'snake');
     	set_objective_display('alive', associative_array('displayname': 'SNAKE', 'slot': 'SIDEBAR'), 'snake');
     } catch(ScoreboardException @ex) {
-        die('Snake is still running.');
+        die(color('red').'Snake is still running.');
     }
 	
 	// Create color select menu
 	create_virtualchest(array(
 		'id': 'snake',
 		'size': 9,
-		'title': 'Choose your color',
-		'0': array('name': 'STAINED_CLAY', 'data': 11),
-		'1': array('name': 'STAINED_CLAY', 'data': 1),
-		'2': array('name': 'STAINED_CLAY', 'data': 13),
-		'3': array('name': 'STAINED_CLAY', 'data': 14),
-		'4': array('name': 'STAINED_CLAY', 'data': 8),
-		'5': array('name': 'STAINED_CLAY', 'data': 10),
-		'6': array('name': 'STAINED_CLAY', 'data': 15),
+		'title': color('bold').'Choose Your Snake Color',
+		'0': array('name': 'STAINED_CLAY', 'data': 3),
+		'1': array('name': 'STAINED_CLAY', 'data': 4),
+		'2': array('name': 'STAINED_CLAY', 'data': 5),
+		'3': array('name': 'STAINED_CLAY', 'data': 6),
+		'4': array('name': 'STAINED_CLAY', 'data': 0),
+		'5': array('name': 'STAINED_CLAY', 'data': 2),
+		'6': array('name': 'STAINED_CLAY', 'data': 7),
 	));
 
 	// Add players in region
@@ -91,7 +91,7 @@ proc _snake_queue(@mode) {
 		del_virtualchest('snake');
 		remove_scoreboard('snake');
 		export('snake', null);
-		die('No players in region in adventure mode.');
+		die(color('red').'No players in region in adventure mode.');
 	}
 
 	// Add bots to fill up slots
@@ -141,13 +141,13 @@ proc _snake_countdown(@game) {
 	// Start countdown
 	@help = array(
 		'',
-		'Press slot # to activate ability',
-		'Press slot # to activate ability',
-		'Press slot # to activate ability',
-		'To turn, click left or right mouse buttons',
-		'To turn, click left or right mouse buttons',
-		'To turn, click left or right mouse buttons',
-		'SNAKE',
+		'Press '.color('green').'slot #'.color('reset').' to activate pickup',
+		'Press '.color('green').'slot #'.color('reset').' to activate pickup',
+		'Press '.color('green').'slot #'.color('reset').' to activate pickup',
+		'Use '.color('green').'left and right mouse buttons'.color('reset').' to turn',
+		'Use '.color('green').'left and right mouse buttons'.color('reset').' to turn',
+		'Use '.color('green').'left and right mouse buttons'.color('reset').' to turn',
+		color('red').color('bold').'SNAKE',
 	);
 	@countdown = array(7);
 	set_interval(1000, closure(){
@@ -158,7 +158,7 @@ proc _snake_countdown(@game) {
 			if(@countdown[0]) {
 				title_msg(@p, @countdown[0], array_get(@help, @countdown[0], ''), 0, 25, 0);
 			} else {
-				title_msg(@p, '', color('italic').'Go snake, go!', 0, 20, 20);
+				title_msg(@p, '', color('green').color('italic').'Go snake, go!', 0, 20, 20);
 			}
 			set_pheld_slot(@p, 8);
 		}
@@ -299,12 +299,12 @@ proc _snake_end(@winner, @game) {
 		
 		// Display scores
 		@topPlayer = @scores[0]['name'];
-		@title = @game['snakes'][@topPlayer]['color'].@topPlayer.' '.@scores[0]['value']
+		@title = '['.@scores[0]['value'].'] '.@game['snakes'][@topPlayer]['color'].@topPlayer
 				.if(@scores[0]['topscore'], color('bold').' TOPSCORE!', if(@scores[0]['highscore'], color('bold').' HIGHSCORE!'));
 		@subtitle = '';
 		if(array_size(@scores) > 1) {
 			@secondPlayer = @scores[1]['name'];
-			@subtitle = @game['snakes'][@secondPlayer]['color'].@secondPlayer.' '.@scores[1]['value']
+			@subtitle = '['.@scores[1]['value'].'] '.@game['snakes'][@secondPlayer]['color'].@secondPlayer
 					.if(@scores[1]['topscore'], color('bold').' TOPSCORE!', if(@scores[1]['highscore'], color('bold').' HIGHSCORE!'));
 		}
 		foreach(@player in array_keys(@game['snakes'])) {

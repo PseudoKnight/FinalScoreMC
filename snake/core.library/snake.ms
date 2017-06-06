@@ -110,7 +110,7 @@ proc _snake_set_color(@player, @color, @game,
 )) {
 	@snake = @game['snakes'][@player];
 	foreach(@slot: @colorArray in @colors) {
-		if(@colorArray[0] == @color) {
+		if(@colorArray[1] == @color) {
 			if(array_contains(all_virtualchests(), 'snake')) {
 				clear_virtualchest('snake', @slot);
 			}
@@ -126,7 +126,7 @@ proc _snake_set_color(@player, @color, @game,
 			if(ponline(@player)) {
 				_clear_pinv(@player);
 				set_pinv(@player, array(
-					7: array('name': 'STAINED_CLAY', 'data': @colorArray[0]),
+					7: array('name': 'STAINED_CLAY', 'data': @colorArray[1]),
 					8: array('name': 'REDSTONE_TORCH_ON', 'meta': associative_array('display': 'JOYSTICK')),
 				));
 			}
@@ -196,7 +196,7 @@ proc _snake_kill(@player, @game) {
 			}
 		}
 		if(@snake['bot']) {
-			@color = integer(split(':', @snake['head'])[1]);
+			@color = integer(split(':', @snake['tail'])[1]);
 			@abilities = @snake['ability-count'];
 			if(_snake_add(@player, @game)) {
 				_snake_set_color(@player, @color, @game); // keep color

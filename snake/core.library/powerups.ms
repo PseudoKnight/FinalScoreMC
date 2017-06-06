@@ -108,19 +108,18 @@ proc _snake_powerup(@player, @powerup, @game) {
 	@snake['ability-count'][@slot] += 1;
 	if(!@snake['bot']) {
 		@item = pinv(@player, @slot);
+		@inv = associative_array();
 		if(@item && @item['type'] == split(':', _snake_get_block_from(@powerup))[0]) {
 			@item['qty'] += 1;
-			@inv = associative_array();
 			@inv[@slot] = @item;
-			set_pinv(@player, @inv);
 		} else {
-			@inv = associative_array();
 			@inv[@slot] = associative_array(
 				'type': _snake_get_block_from(@powerup),
 				'meta': associative_array('display': _snake_get_name_from(@powerup)),
 			);
-			set_pinv(@player, @inv);
 		}
+		set_pinv(@player, @inv);
+		title_msg(@player, '', color('dark_gray').'+'.@powerup, 2, 0, 40);
 	}
 	play_sound(@snake['loc'], associative_array('sound': 'ENDERMAN_TELEPORT', 'pitch': 2, 'volume': 4));
 	return(true);
