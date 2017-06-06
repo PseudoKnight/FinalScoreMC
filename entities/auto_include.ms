@@ -73,6 +73,7 @@ proc _spawn_mob(@mob, @loc, @owner, @teammates) {
 				set_entity_rider(@m, @display);
 				set_interval(1000, closure(){
 					@mob['explode'][0] -= 1;
+					@cleanup = false;
 					try {
 						if(get_entity_health(@m) > 0) {
 							if(@mob['explode'][0] <= 3) {
@@ -88,16 +89,11 @@ proc _spawn_mob(@mob, @loc, @owner, @teammates) {
 							}
 						}
 					} catch(BadEntityException @ex) {
-						try {
-							entity_remove(@display);
-						} catch(BadEntityException @ex) {
-							// already removed
-						}
-						try {
-							damage_entity(@m, 50);
-						} catch(BadEntityException @ex) {
-							// already removed
-						}
+						@cleanup = true;
+					}
+					if(@cleanup) {
+						try(entity_remove(@display));
+						try(damage_entity(@m, 50));
 						clear_task();
 					}
 				});
