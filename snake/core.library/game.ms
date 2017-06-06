@@ -87,6 +87,12 @@ proc _snake_queue(@mode) {
 			break();
 		}
 	}
+	if(@game['endless'] && array_size(@game['snakes']) == 0) {
+		del_virtualchest('snake');
+		remove_scoreboard('snake');
+		export('snake', null);
+		die('No players in region in adventure mode.');
+	}
 
 	// Add bots to fill up slots
 	@bots = array('Grumpy','BatSnake','SharkBot','CrazyBot', 'NinjaBot');
@@ -221,33 +227,88 @@ proc _snake_start_task(@game) {
 
 proc _snake_end(@winner, @game) {
 	if(@game['endless']) {
-		@highscore = 0;
-		@second = 0;
-		@runnerup = '';
+		// Sort player scores
+		@scores = array();
 		foreach(@p: @snake in @game['snakes']) {
 			if(ponline(@p)) {
-				@score = get_pscore('alive', @p, 'snake');
-				if(@score > @highscore) {
-					@runnerup = @winner;
-					@winner = @p;
-					@second = @highscore;
-					@highscore = @score;
-				} else if(!@runnerup) {
-					@runnerup = @p;
-					@second = @score;
+				@pscore = get_pscore('alive', @p, 'snake');
+				@array = array('name': @p, 'value': @pscore, 'highscore': false, 'topscore': false);
+				foreach(@i: @score in @scores) {
+					if(@pscore > @score['value']) {
+						array_insert(@scores, @array, @i);
+					} else if(@i == array_size(@scores) - 1) {
+						@scores[] = @array;
+					}
+				} else {
+					@scores[] = @array;
 				}
 			}
 		}
-		@title = @game['snakes'][@winner]['color'].@winner.' '.@highscore;
+		
+		// Store and set highscores and topscores
+		@topscores = get_value('snake.endless.top');
+		if(!@topscores) {
+			@topscores = array();
+		}
+		@updateTopScores = false;
+		foreach(@score in @scores) {
+			@uuid = puuid(@score['name'], true);
+			@pscore = get_value('snake.endless', @uuid);
+			if(!@pscore || @score['value'] > @pscore) {
+				store_value('snake.endless', @uuid, @score['value']);
+				@score['highscore'] = true;
+				
+				@coins = @score['value'] - @pscore;
+				_acc_add(@score['name'], @coins);
+				tmsg(@score['name'], color('gold').'+'.@coins.' coins');
+				
+				@array = array('uuid': @uuid, 'value': @score['value']);
+				foreach(@i: @topscore in @topscores) {
+					if(@topscore['uuid'] == @uuid) {
+						@topscores[@i] = @array;
+						@score['topscore'] = true;
+						break();
+					} else if(@score['value'] > @topscore['value']) {
+						array_insert(@topscores, @array, @i);
+						@score['topscore'] = true;
+						break();
+					} else if(@i == array_size(@topscores) - 1 && @i < 20) {
+						@topscores[] = @array;
+						@score['topscore'] = true;
+						break();
+					}
+				} else {
+					@topscores[] = @array;
+					@score['topscore'] = true;
+				}
+				if(array_size(@topscores) > 20) {
+					array_remove(@topscores, 20);
+				}
+				if(@score['topscore']) {
+					@updateTopScores = true;
+				}
+			}
+		}
+		if(@updateTopScores) {
+			store_value('snake.endless.top', @topscores);
+		}
+		
+		// Display scores
+		@topPlayer = @scores[0]['name'];
+		@title = @game['snakes'][@topPlayer]['color'].@topPlayer.' '.@scores[0]['value']
+				.if(@scores[0]['topscore'], color('bold').' TOPSCORE!', if(@scores[0]['highscore'], color('bold').' HIGHSCORE!'));
 		@subtitle = '';
-		if(@runnerup) {
-			@subtitle = @game['snakes'][@runnerup]['color'].@runnerup.' '.@second;
+		if(array_size(@scores) > 1) {
+			@secondPlayer = @scores[1]['name'];
+			@subtitle = @game['snakes'][@secondPlayer]['color'].@secondPlayer.' '.@scores[1]['value']
+					.if(@scores[1]['topscore'], color('bold').' TOPSCORE!', if(@scores[1]['highscore'], color('bold').' HIGHSCORE!'));
 		}
 		foreach(@player in array_keys(@game['snakes'])) {
 			if(ponline(@player)) {
 				title_msg(@player, @title, @subtitle, 20, 70, 20);
 			}
 		}
+		
 	} else {
 		@title = @game['snakes'][@winner]['color'].@winner.' wins!';
 		foreach(@player in array_keys(@game['snakes'])) {
