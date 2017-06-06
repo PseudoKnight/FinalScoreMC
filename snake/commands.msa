@@ -2,6 +2,7 @@
 	if(!$action) {
 		include('core.library/menu.ms');
 		_snake_menu();
+		die();
 	}
 	switch($action) {
 		case 'top':

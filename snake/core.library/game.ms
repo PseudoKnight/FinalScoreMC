@@ -263,19 +263,23 @@ proc _snake_end(@winner, @game) {
 				tmsg(@score['name'], color('gold').'+'.@coins.' coins');
 				
 				@array = array('uuid': @uuid, 'value': @score['value']);
+				@remove = false;
 				foreach(@i: @topscore in @topscores) {
 					if(@topscore['uuid'] == @uuid) {
-						@topscores[@i] = @array;
-						@score['topscore'] = true;
+						if(@remove) {
+							array_remove(@topscores, @i);
+						} else {
+							@topscores[@i] = @array;
+							@score['topscore'] = true;
+						}
 						break();
 					} else if(@score['value'] > @topscore['value']) {
 						array_insert(@topscores, @array, @i);
 						@score['topscore'] = true;
-						break();
+						@remove = true;
 					} else if(@i == array_size(@topscores) - 1 && @i < 20) {
 						@topscores[] = @array;
 						@score['topscore'] = true;
-						break();
 					}
 				} else {
 					@topscores[] = @array;
