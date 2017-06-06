@@ -5,8 +5,12 @@ bind(creature_spawn, null, array('reason': 'VILLAGE_DEFENSE'), @event) {
     }
     
     @loc = @event['location'];
+    @viewdistance = 8;
 	foreach(@p in all_players(@loc['world'])) {
-        if(_chunk_distance(ploc(@p), @loc, false) <= pview_distance(@p)) {
+        if(extension_exists('CHPaper')) {
+            @viewdistance = pview_distance(@p);
+        }
+        if(_chunk_distance(ploc(@p), @loc, false) <= @viewdistance) {
             die();
         }
     }
