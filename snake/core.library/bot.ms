@@ -220,14 +220,9 @@ proc _snake_bot_update(@bot, @game) {
 		} else if(@snake['target']['interest'] == 0) {
 			@snake['target'] = null;
 		}
-		if(@snake['boost'] == 0 && @snake['ability-count'][0] > 0) {
-			_snake_ability(@bot, 0, @game);
-		} else if(@snake['ability-count'][1] > 0) {
-			_snake_ability(@bot, 1, @game);
-		} else if(@snake['ability-count'][3] > 0) {
-			_snake_ability(@bot, 3, @game);
-		} else if(@snake['ability-count'][2] > 0) {
-			_snake_ability(@bot, 2, @game);
+		@randAbility = rand(4);
+		if(@snake['ability-count'][@randAbility] > 0 && (@randAbility != 0 || @snake['boost'] == 0)) {
+			_snake_ability(@bot, @randAbility, @game);
 		}
 		if(@snake['target']) {
 			@snake['target']['interest']--;
