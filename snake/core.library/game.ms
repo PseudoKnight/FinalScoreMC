@@ -121,7 +121,7 @@ proc _snake_queue(@mode) {
 		}
 		bind(inventory_close, null, null, @event, @game) {
 			set_timeout(50, closure() {
-				if(!pviewing_virtualchest('snake')) {
+				if(array_contains(all_virtualchests(), 'snake') && !pviewing_virtualchest('snake')) {
 					unbind();
 					unbind('snake-invclick');
 					_snake_set_colors(@game);
