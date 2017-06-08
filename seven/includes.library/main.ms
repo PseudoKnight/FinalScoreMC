@@ -93,7 +93,7 @@ proc _7_start(@7) {
 
 						@int = ceil(@p['time'])
 						set_pscore('time', @player, @int, '7')
-						set_pexp(@player, min(100, integer(100 * (@p['time'] / 7))))
+						set_pexp(@player, max(0, min(100, integer(100 * (@p['time'] / 7)))));
 						set_plevel(@player, @int)
 
 						if(@p['time'] <= 0) {
