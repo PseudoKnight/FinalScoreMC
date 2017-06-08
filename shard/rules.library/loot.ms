@@ -109,8 +109,8 @@ proc _random_item(@limits) {
 				@meta = array('spawntype': array_rand(array(
 					'BAT', 'BLAZE', 'CAVE_SPIDER', 'CHICKEN', 'COW', 'CREEPER', 'ELDER_GUARDIAN', 'ENDERMAN', 'ENDERMITE',
 					'EVOKER', 'GHAST', 'GUARDIAN', 'HORSE', 'IRON_GOLEM', 'LLAMA', 'MAGMA_CUBE', 'MUSHROOM_COW', 'OCELOT',
-					'PIG', 'PIG_ZOMBIE', 'POLAR_BEAR', 'RABBIT', 'SHEEP', 'SHULKER', 'SILVERFISH', 'SKELETON', 'SLIME',
-					'SNOWMAN', 'SPIDER', 'SQUID', 'VEX', 'VILLAGER', 'VINDICATOR', 'WITCH', 'WOLF', 'ZOMBIE'
+					'PARROT', 'PIG', 'PIG_ZOMBIE', 'POLAR_BEAR', 'RABBIT', 'SHEEP', 'SHULKER', 'SILVERFISH', 'SKELETON',
+					'SLIME', 'SNOWMAN', 'SPIDER', 'SQUID', 'VEX', 'VILLAGER', 'VINDICATOR', 'WITCH', 'WOLF', 'ZOMBIE'
 				), 1, false)[0]);
 			case 403:
 				@meta = array('stored': array(array('elevel': 1, 'etype': array_rand(array(

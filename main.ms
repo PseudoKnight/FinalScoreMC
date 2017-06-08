@@ -697,6 +697,8 @@ bind(note_play, null, null, @event) {
 			@sound = 'chicken_egg_pop';
 		case '173':
 			@sound = 'firework_blast';
+		case '169':
+			@sound = 'block_note_chime';
 	}
 	play_sound(@event['location'], array(
 		'sound': @sound,

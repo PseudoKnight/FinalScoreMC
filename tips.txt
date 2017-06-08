@@ -13,7 +13,7 @@
 
 &7/compass <target>&r : Sets compass to point to target: spawn, home [player], here, player, or x z coordinates.
 
-&7/transfer <mob> <player>&r : Transfers ownership of a horse, wolf, or cat to another online player.
+&7/transfer <mob> <player>&r : Transfers ownership of a horse, wolf, parrot, or cat to another online player.
  &7&oExample: /transfer horse PseudoKnight
 
 &7/share&r or &7/unshare <player> <horses>&r : Changes what you share with another player. Currently only supports ‘horses’.
@@ -88,7 +88,7 @@ Horses are protected from all damage unless they are being ridden, and even they
 
 Undead horses can be fed rotten flesh.
 
-There are noteblock sounds with these blocks: ICE/PACKED_ICE, ANVIL, HARDENED/STAINED_CLAY, COAL_BLOCK, and SLIME_BLOCK.
+There are also noteblock sounds with these blocks: ICE, ANVIL, STAINED_CLAY, COAL_BLOCK, SLIME_BLOCK, and SEA_LANTERN.
 
 If powered by redstone, noteblocks can be heard up to 9 chunks away. (144 meters)
 

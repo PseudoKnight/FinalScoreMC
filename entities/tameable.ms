@@ -1,5 +1,5 @@
 // Protect tameable animals from damage by non-owners
-bind(entity_damage, null, array('type': '/(DONKEY|HORSE|LLAMA|MULE|OCELOT|SKELETON_HORSE|WOLF|ZOMBIE_HORSE)/'), @event) {
+bind(entity_damage, null, array('type': '/(DONKEY|HORSE|LLAMA|MULE|OCELOT|SKELETON_HORSE|WOLF|ZOMBIE_HORSE|PARROT)/'), @event) {
 	if(!_is_survival_world(@event['world'])) {
 		die();
 	}
@@ -34,7 +34,7 @@ bind(entity_damage, null, array('type': '/(DONKEY|HORSE|LLAMA|MULE|OCELOT|SKELET
 }
 
 # animal sitter
-bind(player_interact_entity, null, array('clicked': '/(WOLF|OCELOT)/'), @e) {
+bind(player_interact_entity, null, array('clicked': '/(WOLF|OCELOT|PARROT)/'), @e) {
 	@owner = get_mob_owner(@e['id']);
 	if(@owner != player()) {
 		action_msg('Owned by '.@owner);

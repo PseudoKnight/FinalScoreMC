@@ -36,6 +36,8 @@
 			case 'kitten':
 			case 'ocelot':
 				@thing = 'OCELOT';
+			case 'parrot':
+				@thing = 'PARROT';
 			}
 		}
 	}
@@ -43,7 +45,7 @@
 		die('Unknown player.');
 	}
 	if(!@thing) {
-		die('Please specify "horse", "mule", "donkey", "zombiehorse", "skeletonhorse", "wolf", or "cat".');
+		die('Please specify "horse", "mule", "donkey", "zombiehorse", "skeletonhorse", "wolf", "parrot", or "cat".');
 	}
 	bind(player_interact_entity, array('id': 'transfer'.player().@player), array('clicked': @thing), @e, @player, @owner = player()) {
 		if(player() != @owner) {
