@@ -36,9 +36,11 @@ bind(entity_damage, null, array('type': '/(DONKEY|HORSE|LLAMA|MULE|OCELOT|SKELET
 # animal sitter
 bind(player_interact_entity, null, array('clicked': '/(WOLF|OCELOT|PARROT)/'), @e) {
 	@owner = get_mob_owner(@e['id']);
-	if(@owner != player()) {
-		action_msg('Owned by '.@owner);
-	} else if(!sk_can_build(entity_loc(@e['id']))) {
-		set_entity_spec(@e['id'], associative_array('sitting': false));
+	if(@owner) {
+		if(@owner != player()) {
+			action_msg('Owned by '.@owner);
+		} else if(!sk_can_build(entity_loc(@e['id']))) {
+			set_entity_spec(@e['id'], associative_array('sitting': false));
+		}
 	}
 }
