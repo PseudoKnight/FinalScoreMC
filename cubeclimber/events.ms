@@ -20,35 +20,35 @@ bind(player_join, null, null, @event) {
                     case 4:
                         @rank = '&e\u278E';
                     case 5:
-                        @rank = '\u278F';
+                        @rank = '&f\u278F';
                     case 6:
-                        @rank = '\u2790';
+                        @rank = '&f\u2790';
                     case 7:
-                        @rank = '\u2791';
+                        @rank = '&f\u2791';
                     case 8:
-                        @rank = '\u2792';
+                        @rank = '&f\u2792';
                     case 9:
-                        @rank = '\u2793';
+                        @rank = '&f\u2793';
                     case 10:
-                        @rank = '\u24EB';
+                        @rank = '&f\u24EB';
                     case 11:
-                        @rank = '\u24EC';
+                        @rank = '&f\u24EC';
                     case 12:
-                        @rank = '\u24ED';
+                        @rank = '&f\u24ED';
                     case 13:
-                        @rank = '\u24EE';
+                        @rank = '&f\u24EE';
                     case 14:
-                        @rank = '\u24EF';
+                        @rank = '&f\u24EF';
 					case 15:
-						@rank = '\u24F0';
+						@rank = '&f\u24F0';
 					case 16:
-						@rank = '\u24F1';
+						@rank = '&f\u24F1';
 					case 17:
-						@rank = '\u24F2';
+						@rank = '&f\u24F2';
 					case 18:
-						@rank = '\u24F3';
+						@rank = '&f\u24F3';
 					case 19:
-						@rank = '\u24F4';
+						@rank = '&f\u24F4';
                 }
                 @pstate = _pstate(player());
                 if(!array_index_exists(@pstate, 'trophies')) {

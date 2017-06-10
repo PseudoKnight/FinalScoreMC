@@ -156,7 +156,7 @@ bind(player_join, null, null, @event) {
 			if(@percent['challenge'] == 1.0) {
 				@pstate['trophies'][] = color('yellow').'100% Challenge Cakes';
 			} else if(@percent['challenge'] > 0.9) {
-				@pstate['trophies'][] = '>90% Challenge Cakes';
+				@pstate['trophies'][] = color('white').'>90% Challenge Cakes';
 			} else {
 				@pstate['trophies'][] = color('gray').'>75% Challenge Cakes';
 			}
@@ -168,7 +168,7 @@ bind(player_join, null, null, @event) {
 			if(@percent['secret'] == 1.0) {
 				@pstate['trophies'][] = color('yellow').'100% Secret Cakes';
 			} else if(@percent['secret'] > 0.9) {
-				@pstate['trophies'][] = '>90% Secret Cakes';
+				@pstate['trophies'][] = color('white').'>90% Secret Cakes';
 			} else {
 				@pstate['trophies'][] = color('gray').'>75% Secret Cakes';
 			}
