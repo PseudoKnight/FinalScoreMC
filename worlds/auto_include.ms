@@ -53,13 +53,7 @@ proc _worldid(@world) {
 	Returns if the world is a survival world
 */
 proc _is_survival_world(@world) {
-	@worlds = _worlds_config();
-	try {
-		return(@worlds[@world]['group'] == 'survival');
-	} catch(IndexOverflowException @ex) {
-		# default to true
-		return(true);
-	}
+	return(has_metadata(@world, 'survival'));
 }
 
 /*
@@ -89,5 +83,8 @@ proc _create_world(@name, @world) {
 		}
 	} else {
 		create_world(@name, 'NORMAL', @world['environment']);
+	}
+	if(@world['group'] == 'survival') {
+		set_metadata(@id, 'survival', true);
 	}
 }
