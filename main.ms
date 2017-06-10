@@ -670,18 +670,26 @@ bind(note_play, null, null, @event) {
 	switch(split(':', get_block_at(_relative(@event['location'], 'down')))[0]) {
 		case '79':
 		case '174':
-			@sound = 'orb_pickup';
+			@sound = 'ORB_PICKUP';
 		case '145':
-			@sound = 'anvil_land';
+			@sound = 'ANVIL_LAND';
 		case '159':
 		case '172':
-			@sound = 'note_pling';
+			@sound = 'NOTE_PLING';
 		case '165':
-			@sound = 'chicken_egg_pop';
+			@sound = 'CHICKEN_EGG_POP';
 		case '173':
-			@sound = 'firework_blast';
+			@sound = 'FIREWORK_BLAST';
 		case '169':
-			@sound = 'block_note_chime';
+			@sound = 'BLOCK_NOTE_CHIME';
+		case '35':
+			@sound = 'BLOCK_NOTE_GUITAR';
+		case '82':
+			@sound = 'BLOCK_NOTE_FLUTE';
+		case '41':
+			@sound = 'BLOCK_NOTE_BELL';
+		case '216':
+			@sound = 'BLOCK_NOTE_XYLOPHONE';
 	}
 	play_sound(@event['location'], array(
 		'sound': @sound,
