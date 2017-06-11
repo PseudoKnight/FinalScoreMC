@@ -7,7 +7,11 @@ bind(player_join, null, null, @event) {
 			return();
 		}
 		@topScores = get_value('snake.endless.top');
+		@size = min(20, integer(array_size(@topScores) / 2));
 		foreach(@i: @topScore in @topScores) {
+			if(@i == @size) {
+				break();
+			}
 			if(@topScore['uuid'] == @uuid) {
 				@pstate = _pstate(player());
 				if(!array_index_exists(@pstate, 'trophies')) {
