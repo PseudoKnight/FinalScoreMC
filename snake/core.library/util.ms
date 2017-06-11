@@ -1,5 +1,5 @@
 proc _is_snake_tail(@block) {
-	@split = split(':', @block)[0];
+	@split = split(':', @block);
 	return(@split[0] == '159' || @split[0] == '251' && @split[1] != '15');
 }
 
