@@ -100,7 +100,7 @@ proc _snake_queue(@mode) {
 	}
 
 	// Add bots to fill up slots
-	@bots = array('Grumpy','BatSnake','SharkBot','CrazyBot', 'NinjaBot');
+	@bots = _snake_bots();
 	while(array_size(@game['snakes']) < @game['numPlayers'] && @bots) {
 		@index = array_rand(@bots)[0];
 		_snake_add(@bots[@index], @game);
@@ -282,16 +282,13 @@ proc _snake_end(@winner, @game) {
 						array_insert(@topscores, @array, @i);
 						@score['topscore'] = true;
 						@remove = true;
-					} else if(@i == array_size(@topscores) - 1 && @i < 20) {
+					} else if(@i == array_size(@topscores) - 1) {
 						@topscores[] = @array;
 						@score['topscore'] = true;
 					}
 				} else {
 					@topscores[] = @array;
 					@score['topscore'] = true;
-				}
-				if(array_size(@topscores) > 20) {
-					array_remove(@topscores, 20);
 				}
 				if(@score['topscore']) {
 					@updateTopScores = true;

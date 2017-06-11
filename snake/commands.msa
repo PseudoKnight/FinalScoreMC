@@ -7,15 +7,17 @@
 	switch($action) {
 		case 'top':
 		case 'stats':
-			@topScores = get_value('snake.endless.top');
-			if(!@topScores) {
+			@top = get_value('snake.endless.top');
+			if(!@top) {
 				die(color('gold').'There are no top scores.. yet!');
 			}
-			msg(color('green').color('bold').'Current Top Snake Scores [Endless Mode]');
-			foreach(@topScore in @topScores) {
-				@name = _pdata_by_uuid(@topScore['uuid'])['name'];
-				msg(color('green').'['.@topScore['value'].'] '.color('white').@name);
-			}
+			msg(color('green').color('bold').'Top Snakes [Endless Mode]');
+			@i = 0;
+			@size = min(20, array_size(@top));
+			do {
+				@name = _pdata_by_uuid(@top[@i]['uuid'])['name'];
+				msg(color('green').'['.@top[@i]['value'].'] '.color('white').@name);
+			} while(++@i < @size);
 		
 		case 'resetstats':
 			if(!has_permission('group.moderator')) {

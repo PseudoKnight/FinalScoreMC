@@ -1,3 +1,7 @@
+proc _snake_bots() {
+	return(array('Grumpy','BatSnake','SharkBot','CrazyBot', 'NinjaBot'));
+}
+
 proc _snake_bot_update(@bot, @game) {
 	@snake = @game['snakes'][@bot];
 	@percent = rand(100);

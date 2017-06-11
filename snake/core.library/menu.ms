@@ -6,8 +6,17 @@ proc _snake_menu() {
 		'id': 'snake',
 		'type': 'HOPPER',
 		'title': color('bold').'Choose a Mode',
-		'1': array('name': 'REDSTONE_BLOCK', 'meta': array('display': color('red').color('bold').'ELIMINATION MODE')),
-		'3': array('name': 'WATCH', 'meta': array('display': color('yellow').color('bold').'ENDLESS MODE')),
+		'1': array('name': 'REDSTONE_BLOCK', 'meta': array(
+			'display': color('red').color('bold').'ELIMINATION MODE',
+			'lore': color('white').'Be the last snake slithering.',
+		)),
+		'3': array('name': 'WATCH', 'meta': array(
+			'display': color('yellow').color('bold').'ENDLESS MODE',
+			'lore': array(
+				color('white').'Bots respawn and retain powerups.',
+				color('white').'Survive as long as you can.',
+			)
+		)),
 	));
 	popen_virtualchest('snake');
 	bind(inventory_click, array('id': 'snake-invclick'), null, @event) {
