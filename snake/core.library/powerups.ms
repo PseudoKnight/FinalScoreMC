@@ -370,7 +370,7 @@ proc _snake_launch_missile(@loc, @dir, @game) {
 					clear_task();
 				}
 				play_named_sound(@missile['loc'], associative_array('sound': 'entity.shulker_bullet.hit', 'volume': 4, 'pitch': 1.5));
-				if(split(':', @block)[0] == '159') {
+				if(_is_snake_tail(@block)) {
 					set_block_at(@missile['loc'], 0, false);
 					foreach(@player: @snake in @game['snakes']) {
 						if(@snake['loc'][0] == @missile['loc'][0] && @snake['loc'][1] == @missile['loc'][1] && @snake['loc'][2] == @missile['loc'][2]) {
@@ -429,7 +429,7 @@ proc _snake_shoot_laser(@player, @loc, @dir, @range, @game) {
 			@blocks[] = @loc;
 			_snake_drop_tnt(@loc);
 		} else {
-			if(split(':', @block)[0] == '159') {
+			if(_is_snake_tail(@block)) {
 				foreach(@p: @snake in @game['snakes']) {
 					if(@snake['loc'][0] == @loc[0] && @snake['loc'][1] == @loc[1] && @snake['loc'][2] == @loc[2]) {
 						_snake_kill(@p, @game);

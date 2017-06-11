@@ -1,3 +1,8 @@
+proc _is_snake_tail(@block) {
+	@id = split(':', @block)[0];
+	return(@id == '159' || @id == '251');
+}
+
 proc _snake_valid_location(@region, @padding = 0) {
 	@i = 0;
 	while(@i < 20) {

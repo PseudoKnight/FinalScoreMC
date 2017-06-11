@@ -79,8 +79,8 @@ proc _snake_add(@player, @game) {
 
 	if(ponline(@player)) {
 		@item = pinv(@player, 7);
-		if(@item && @item['name'] == 'STAINED_CLAY') {
-			_snake_set_color(@player, @item['data'], @game);
+		if(@item && (@item['name'] == 'STAINED_CLAY' || @item['name'] == 'CONCRETE')) {
+			_snake_set_color(@player, @item['type'].':'.@item['data'], @game);
 		}
 		set_pscoreboard(@player, 'snake');
 		set_ploc(@player, _relative(@headLoc, @game['snakes'][@player]['top'], 20));
@@ -100,13 +100,18 @@ proc _snake_add(@player, @game) {
 
 proc _snake_set_color(@player, @color, @game,
 @colors = array(
-	array(11, 3, '9'), # blue
-	array(1, 4, '6'), # orange
-	array(13, 5, 'a'), # green
-	array(14, 6, 'c'), # red
-	array(8, 0, 'f'), # white
-	array(10, 2, 'd'), # purple
-	array(15, 7, '8'), # black
+	array('159:11', '159:3', '9'), # blue
+	array('159:1', '159:4', '6'), # orange
+	array('159:13', '159:5', '2'), # green
+	array('159:14', '159:6', 'c'), # red
+	array('159:8', '159:0', '7'), # white
+	array('159:10', '159:2', '5'), # purple
+	array('159:15', '159:7', '8'), # black
+	array('251:11', '251:3', 'b'), # neon blue
+	array('251:1', '251:4', 'e'), # neon yellow
+	array('251:13', '251:5', 'a'), # neon green
+	array('251:14', '251:6', 'd'), # neon pink
+	array('251:8', '251:0', 'f'), # neon white
 )) {
 	@snake = @game['snakes'][@player];
 	foreach(@slot: @colorArray in @colors) {
@@ -114,8 +119,8 @@ proc _snake_set_color(@player, @color, @game,
 			if(array_contains(all_virtualchests(), 'snake')) {
 				clear_virtualchest('snake', @slot);
 			}
-			@head = '159:'.@colorArray[0];
-			@tail = '159:'.@colorArray[1];
+			@head = @colorArray[0];
+			@tail = @colorArray[1];
 			@text = color(@colorArray[2]);
 			@snake['head'] = @head;
 			@snake['tail'] = @tail;
@@ -125,8 +130,9 @@ proc _snake_set_color(@player, @color, @game,
 			set_block_at(@snake['blocks'][0], @tail, false);
 			if(ponline(@player)) {
 				_clear_pinv(@player);
+				@block = split(':', @colorArray[1]);
 				set_pinv(@player, array(
-					7: array('name': 'STAINED_CLAY', 'data': @colorArray[1]),
+					7: array('type': @block[0], 'data': @block[1]),
 					8: array('name': 'REDSTONE_TORCH_ON', 'meta': associative_array('display': 'JOYSTICK')),
 				));
 			}
@@ -140,9 +146,10 @@ proc _snake_set_colors(@game) {
 	foreach(@name: @snake in @game['snakes']) {
 		if(!@snake['head']) {
 			@inv = get_virtualchest('snake');
-			foreach(@slot in range(7)) {
+			foreach(@slot in range(@game['numPlayers'])) {
 				if(@inv[@slot]) {
-					_snake_set_color(@name, @inv[@slot]['data'], @game);
+					@item = @inv[@slot]['type'].':'.@inv[@slot]['data'];
+					_snake_set_color(@name, @item, @game);
 					break();
 				}
 			}
@@ -196,7 +203,7 @@ proc _snake_kill(@player, @game) {
 			}
 		}
 		if(@snake['bot']) {
-			@color = integer(split(':', @snake['tail'])[1]);
+			@color = @snake['tail'];
 			@abilities = @snake['ability-count'];
 			if(_snake_add(@player, @game)) {
 				_snake_set_color(@player, @color, @game); // keep color

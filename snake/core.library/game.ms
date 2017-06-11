@@ -29,7 +29,7 @@ proc _snake_queue(@mode) {
 	@game['powerups'] = array();
 	@game['extraBlocks'] = array();
 	@game['numPowerups'] = 15;
-	@game['numPlayers'] = 7
+	@game['numPlayers'] = 12;
 	@game['botsOnly'] = false;
 	@game['missiles'] = associative_array();
 	@game['tnt'] = array();
@@ -64,15 +64,20 @@ proc _snake_queue(@mode) {
 	// Create color select menu
 	create_virtualchest(array(
 		'id': 'snake',
-		'size': 9,
+		'size': 18,
 		'title': color('bold').'Choose Your Snake Color',
-		'0': array('name': 'STAINED_CLAY', 'data': 3),
-		'1': array('name': 'STAINED_CLAY', 'data': 4),
-		'2': array('name': 'STAINED_CLAY', 'data': 5),
-		'3': array('name': 'STAINED_CLAY', 'data': 6),
-		'4': array('name': 'STAINED_CLAY', 'data': 0),
-		'5': array('name': 'STAINED_CLAY', 'data': 2),
-		'6': array('name': 'STAINED_CLAY', 'data': 7),
+		'0': array('name': 'STAINED_CLAY', 'data': 3, 'meta': array('display': 'Blue')),
+		'1': array('name': 'STAINED_CLAY', 'data': 4, 'meta': array('display': 'Orange')),
+		'2': array('name': 'STAINED_CLAY', 'data': 5, 'meta': array('display': 'Green')),
+		'3': array('name': 'STAINED_CLAY', 'data': 6, 'meta': array('display': 'Red')),
+		'4': array('name': 'STAINED_CLAY', 'data': 0, 'meta': array('display': 'Gray')),
+		'5': array('name': 'STAINED_CLAY', 'data': 2, 'meta': array('display': 'Purple')),
+		'6': array('name': 'STAINED_CLAY', 'data': 7, 'meta': array('display': 'Black')),
+		'7': array('name': 'CONCRETE', 'data': 3, 'meta': array('display': 'Neon Blue')),
+		'8': array('name': 'CONCRETE', 'data': 4, 'meta': array('display': 'Neon Yellow')),
+		'9': array('name': 'CONCRETE', 'data': 5, 'meta': array('display': 'Neon Green')),
+		'10': array('name': 'CONCRETE', 'data': 6, 'meta': array('display': 'Neon Pink')),
+		'11': array('name': 'CONCRETE', 'data': 0, 'meta': array('display': 'Neon White')),
 	));
 
 	// Add players in region
@@ -113,7 +118,7 @@ proc _snake_queue(@mode) {
 			if(pget_virtualchest(player()) == 'snake' && array_index_exists(@game['snakes'], player())) {
 				@item = @event['slotitem'];
 				if(@item) {
-					_snake_set_color(player(), @item['data'], @game);
+					_snake_set_color(player(), @item['type'].':'.@item['data'], @game);
 					clear_virtualchest('snake', @event['slot']);
 					close_pinv();
 				}

@@ -40,7 +40,7 @@ proc _snake_bot_update(@bot, @game) {
 				}
 			} else {
 				// go to target
-				if(split(':', get_block_at(@snake['target']['loc']))[0] == '159') {
+				if(_is_snake_tail(get_block_at(@snake['target']['loc']))) {
 					@snake['target'] = null;
 				} else if(_snake_bot_change_dir(@snake, @snake['loc'], @snake['target']['loc'])) {
 					return();
@@ -86,7 +86,7 @@ proc _snake_bot_update(@bot, @game) {
 				}
 			} else {
 				// go to target
-				if(split(':', get_block_at(@snake['target']['loc']))[0] == '159') {
+				if(_is_snake_tail(get_block_at(@snake['target']['loc']))) {
 					@snake['target'] = null;
 				} else if(_snake_bot_change_dir(@snake, @snake['loc'], @snake['target']['loc'])) {
 					return();
@@ -143,7 +143,7 @@ proc _snake_bot_update(@bot, @game) {
 				}
 			} else {
 				// go to target
-				if(split(':', get_block_at(@snake['target']['loc']))[0] == '159') {
+				if(_is_snake_tail(get_block_at(@snake['target']['loc']))) {
 					@snake['target'] = null;
 				} else if(_snake_bot_change_dir(@snake, @snake['loc'], @snake['target']['loc'])) {
 					return();
@@ -188,7 +188,7 @@ proc _snake_bot_update(@bot, @game) {
 				}
 			} else {
 				// go to target
-				if(split(':', get_block_at(@snake['target']['loc']))[0] == '159') {
+				if(_is_snake_tail(get_block_at(@snake['target']['loc']))) {
 					@snake['target'] = null;
 				} else if(_snake_bot_change_dir(@snake, @snake['loc'], @snake['target']['loc'])) {
 					return();
@@ -236,7 +236,7 @@ proc _snake_bot_update(@bot, @game) {
 				}
 			} else {
 				// go to target
-				if(split(':', get_block_at(@snake['target']['loc']))[0] == '159') {
+				if(_is_snake_tail(get_block_at(@snake['target']['loc']))) {
 					@snake['target'] = null;
 				} else if(_snake_bot_change_dir(@snake, @snake['loc'], @snake['target']['loc'])) {
 					return();
