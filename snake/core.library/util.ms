@@ -1,6 +1,6 @@
 proc _is_snake_tail(@block) {
-	@id = split(':', @block)[0];
-	return(@id == '159' || @id == '251');
+	@split = split(':', @block)[0];
+	return(@split[0] == '159' || @split[0] == '251' && @split[1] != '15');
 }
 
 proc _snake_valid_location(@region, @padding = 0) {

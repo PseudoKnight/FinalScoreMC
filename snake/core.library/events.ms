@@ -24,9 +24,8 @@ proc _snake_bind_events(@game) {
 		if(array_contains(sk_regions_at(@event['location']), 'snake_'.@game['arena'])) {
 			array_remove_values(@game['tnt'], @event['id']);
 			foreach(@block in @event['blocks']) {
-				@data = get_block_at(@block);
-				@id = split(':', @data)[0];
-				if(@id == '159' || (@id == '251' && @data != '251:15')) {
+				@id = get_block_at(@block);
+				if(_is_snake_tail(@id)) {
 					foreach(@player: @snake in @game['snakes']) {
 						if(@snake['loc'][0] == @block[0] && @snake['loc'][1] == @block[1] && @snake['loc'][2] == @block[2]) {
 							_snake_kill(@player, @game);
@@ -34,7 +33,7 @@ proc _snake_bind_events(@game) {
 							set_block_at(@block, 0, false);
 						}
 					}
-				} else if(@id == '46') {
+				} else if(@id == '46:0') {
 					set_block_at(@block, 0, false);
 					_snake_remove_powerup(@block, @game);
 					_snake_drop_tnt(@block);
