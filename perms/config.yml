@@ -36,6 +36,7 @@ member:
     worldguard.region.flag.flags.block-place.*: true
     worldguard.region.flag.flags.tnt.*: true
     bukkit.command.tps: true
+    advancement.all: true
   worlds:
     world:
       livemap.markers: true
@@ -56,6 +57,7 @@ member:
       PhysicalShop.admin: true
       build.wither: true
       item.lighter: true
+      advancement.all: false
     outworld:
       stargate.create.personal: false
       stargate.create.network: false
@@ -90,11 +92,13 @@ member:
       command.items: true
       command.vanish: true
       bl.getbanners: true
+      advancement.all: false
     custom:
       stargate.create.personal: false
       stargate.create.network: false
       worldguard.region.claim: false
       command.sethome: false
+      advancement.all: false
   inheritance: default
 regular:
   permissions:
