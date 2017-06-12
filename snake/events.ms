@@ -7,6 +7,9 @@ bind(player_join, null, null, @event) {
 			return();
 		}
 		@topScores = get_value('snake.endless.top');
+		if(!@topScores) {
+			die();
+		}
 		@size = min(20, integer(array_size(@topScores) / 2));
 		foreach(@i: @topScore in @topScores) {
 			if(@i == @size) {
