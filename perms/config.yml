@@ -110,6 +110,7 @@ regular:
   worlds:
     dev:
       limitedworldedit: true
+      fawe.worldguard: true
   inheritance: member
 donor:
   permissions:
@@ -184,7 +185,6 @@ engineer:
   inheritance: builder
 limitedworldedit:
   permissions:
-    AWE.user.mode.change: true
     worldedit.brush.*: true
     worldedit.clipboard.*: true
     worldedit.fast: true
@@ -202,7 +202,6 @@ moderator:
     logblock.lookup: true
     logblock.tp: true
     logblock.tools.toolblock: true
-    vanish.standard: true
     deadbolt.broadcast.break: false
     deadbolt.broadcast.snoop: false
     OpenInv.openinv: true
@@ -234,7 +233,6 @@ moderator:
     command.endercrystal: true
     command.mob: true
     command.sethome.others: true
-    chat.staff: true
     nocheat.admin: true
     minecraft.command.toggledownfall: true
     command.items: true
@@ -251,11 +249,6 @@ moderator:
 admin:
   permissions:
     group.admin: true
-    vanish.fakeannounce: true
-    vanish.statusupdates: true
-    vanish.adminalerts: true
-    vanish.reload: true
-    vanish.toggle.all: true
     commandhelper.reloadaliases: true
     commandhelper.interpreter: true
     command.resettimes: true
