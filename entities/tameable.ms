@@ -19,10 +19,7 @@ bind(entity_damage, null, array('type': '/(DONKEY|HORSE|LLAMA|MULE|OCELOT|SKELET
 			}
 
 		case 'PROJECTILE':
-			@isplayer = length(@event['shooter']) < 17;
-
-			if((@isplayer && @owner != @event['shooter'])
-			|| (!@isplayer && !get_entity_rider(@event['id']))) {
+			if(length(@event['shooter']) < 17 || !get_entity_rider(@event['id'])) {
 				cancel();
 			}
 
