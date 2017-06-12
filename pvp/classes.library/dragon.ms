@@ -24,7 +24,7 @@ case 'load':
 								clear_task();
 							} else if(entity_grounded(puuid(@player))) {
 								@xp = pexp(@player);
-								if(@xp > 98) {
+								if(@xp > 97) {
 									clear_task();
 									set_pflight(@player, true);
 								} else {
@@ -40,7 +40,7 @@ case 'load':
 			}, @player.'flap')
 			queue_delay(500, @player.'flap')
 		}
-		if(pexp() > 98) {
+		if(pexp() > 97) {
 			_flap(player())
 		}
 	}
@@ -63,7 +63,7 @@ case 'load':
 
 
 case 'powerup':
-	set_pexp(@player, 100);
+	set_pexp(@player, 99);
 	set_pflight(@player, true);
 
 case 'unload':

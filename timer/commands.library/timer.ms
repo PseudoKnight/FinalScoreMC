@@ -60,7 +60,7 @@ if(@args[0] === 'start') {
 
                 if(@time < @ptime) {
                     @percent = integer((@time / @ptime) * 100);
-                    set_pexp(@player, @percent);
+                    set_pexp(@player, min(99, @percent));
                 }
 
                 if(@time + 5 > @ptime && @time < @ptime + 0.5) {

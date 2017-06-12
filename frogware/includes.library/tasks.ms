@@ -353,9 +353,9 @@ proc _fw_task(@task, @state, @secs) {
 				&& _fw_player(@e['cause']['shooter'])) {
 					modify_event('xp', 0)
 					if(@e['type'] === 'BAT') {
-						set_pexp(@e['cause']['shooter'], 100)
+						set_pexp(@e['cause']['shooter'], 99)
 					} else {
-						set_pexp(@e['cause']['shooter'], min(100, pexp(@e['cause']['shooter']) + 33))
+						set_pexp(@e['cause']['shooter'], min(99, pexp(@e['cause']['shooter']) + 33))
 					}
 					if(pexp(@e['cause']['shooter']) > 90
 					&& _fw_changeteam(@e['cause']['shooter'], 'winners')) {

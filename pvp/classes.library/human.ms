@@ -8,10 +8,10 @@ case 'load':
 			set_entity_velocity(@arrow, array(@velocity['x'], @velocity['y'], @velocity['z']));
 			set_entity_onfire(@arrow, 1)
 			play_sound(ploc(), array('sound': 'ENDERDRAGON_HIT', 'pitch': 2))
-			set_pexp(0)
+			set_pexp(0);
 			set_timeout(450, closure(){
 				if(ponline(player()) && pinfo(player(), 5) > 0) {
-					set_pexp(100)
+					set_pexp(99);
 				}
 			})
 		}

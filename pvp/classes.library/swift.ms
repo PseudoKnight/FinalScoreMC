@@ -32,7 +32,7 @@ case 'load':
 		if(pexp() > 0) {
 			die();
 		}
-		set_pexp(100);
+		set_pexp(99);
 		if(psaturation() > 0) {
 			set_psaturation(psaturation() - 1);
 		} else {
@@ -75,7 +75,7 @@ case 'load':
 		if(pexp() > 0) {
 			die();
 		}
-		set_pexp(100);
+		set_pexp(99);
 		set_phunger(max(0, phunger() - 1));
 		@uuid = puuid();
 		@grounded = entity_grounded(@uuid);

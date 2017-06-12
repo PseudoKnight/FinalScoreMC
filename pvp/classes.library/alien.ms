@@ -4,18 +4,18 @@ case 'load':
 		if(pinfo(player(), 6) != @e['item']) {
 			die();
 		}
-		cancel()
-		if(pexp() == 100) {
-			@arrow = shoot_projectile(player(), 'ARROW')
-			set_entity_onfire(@arrow, 1)
-			play_sound(ploc(), array('sound': 'ENDERDRAGON_HIT', 'pitch': 2))
+		cancel();
+		if(pexp() == 99) {
+			@arrow = shoot_projectile(player(), 'ARROW');
+			set_entity_onfire(@arrow, 1);
+			play_sound(ploc(), array('sound': 'ENDERDRAGON_HIT', 'pitch': 2));
 			set_pexp(0);
 			set_interval(250, closure(){
 				try {
 					@xp = pexp();
-					@xp += 10;
-					set_pexp(min(100, @xp));
-					if(@xp == 100) {
+					@xp += 9;
+					set_pexp(min(99, @xp));
+					if(@xp == 99) {
 						clear_task();
 					}
 				} catch(Exception @ex) {
@@ -39,14 +39,14 @@ case 'load':
 		if(pinfo(player(), 6) != @e['item']) {
 			die();
 		}
-		cancel()
+		cancel();
 		@players = _hit_scan(40, 1, 'happy_villager', 'ender_signal', @pvp);
 
 		if(@players) {
 			@player = @players[0];
 			@loc1 = ploc();
 			@facing1 = pfacing();
-			@loc2 = ploc(@player)
+			@loc2 = ploc(@player);
 			@facing2 = pfacing(@player);
 
 			// keep facing the same direction
@@ -56,12 +56,12 @@ case 'load':
 			@loc2['pitch'] = @facing1[1];
 
 
-			set_ploc(@loc2)
-			damage_entity(puuid(), 1, puuid())
-			set_ploc(@player, @loc1)
-			play_sound(@loc2, array('sound': 'ENDERMAN_TELEPORT', 'pitch': 0.5))
-			play_sound(@loc1, array('sound': 'ENDERMAN_TELEPORT', 'pitch': 0.5))
-			make_effect(_relative(@loc1, 'up', 2), 'ENDER_SIGNAL')
+			set_ploc(@loc2);
+			damage_entity(puuid(), 1, puuid());
+			set_ploc(@player, @loc1);
+			play_sound(@loc2, array('sound': 'ENDERMAN_TELEPORT', 'pitch': 0.5));
+			play_sound(@loc1, array('sound': 'ENDERMAN_TELEPORT', 'pitch': 0.5));
+			make_effect(_relative(@loc1, 'up', 2), 'ENDER_SIGNAL');
 		}
 
 		play_named_sound(ploc(), array('sound': 'entity.elder_guardian.hurt', 'pitch': 2));
@@ -79,7 +79,7 @@ case 'load':
 	}
 
 case 'powerup':
-	set_pexp(@player, 100)
+	set_pexp(@player, 99);
 
 case 'unload':
 	unbind(@player.'plasmagun');

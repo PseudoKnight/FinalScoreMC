@@ -87,7 +87,7 @@ case 'equip':
 		queue_push(closure(){
 			if(ponline(@player) && pinfo(@player, 5) > 0) {
 				if(pinfo(@player, 11) && !pinv(@player, 100)) {
-					set_pexp(@player, max(0, pexp(@player) - 4))
+					set_pexp(@player, max(0, pexp(@player) - 3));
 					if(pexp(@player) <= 0) {
 						set_pinv(@player, @gear)
 						set_peffect(@player, 14, 0, 0)
@@ -95,7 +95,7 @@ case 'equip':
 						play_effect(_relative(ploc(@player), 'up', 2), 'spell', array('speed': 0, 'particleCount': 10, 'offsetY': 0.4, 'offsetX': 0.2, 'offsetZ': 0.2))
 					}
 				} else {
-					set_pexp(@player, min(100, pexp(@player) + 4))
+					set_pexp(@player, min(99, pexp(@player) + 3));
 				}
 				_cloak(@player, @gear)
 			}

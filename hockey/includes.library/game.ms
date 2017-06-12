@@ -239,7 +239,7 @@ proc _start_game(@hockey) {
                     @hockey['distance'] += 0.03;
                     set_pexp(@hockey['holder'], pexp(@hockey['holder']) + 1);
                 } else {
-                    set_pexp(@hockey['holder'], min(100, pexp(@hockey['holder']) + 2));
+                    set_pexp(@hockey['holder'], min(99, pexp(@hockey['holder']) + 2));
                 }
                 @vector = _get_vector(pfacing(@hockey['holder']), @hockey['distance'], 0);
                 @newloc['x'] += @vector['x'];

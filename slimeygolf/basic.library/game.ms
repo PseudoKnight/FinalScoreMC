@@ -100,8 +100,8 @@ proc _start_game(@course, @loc) {
 					@ball['swing'] = true;
 					set_interval(50, closure(){
 						@xp = pexp();
-						if(@xp < 100 && @ball['swing']) {
-							set_pexp(min(100, pexp() + 4));
+						if(@xp < 99 && @ball['swing']) {
+							set_pexp(min(99, pexp() + 4));
 						} else {
 							clear_task();
 							if(@ball['swing']) {

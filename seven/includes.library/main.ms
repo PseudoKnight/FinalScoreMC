@@ -5,7 +5,7 @@ proc _7_start(@7) {
 			@i = 0
 		}
 		set_ploc(@player, @7['spawns'][@i])
-		set_pexp(@player, 100)
+		set_pexp(@player, 99)
 		set_pbed_location(@player, @7['lobby'])
 		@i++
 	}
@@ -93,7 +93,7 @@ proc _7_start(@7) {
 
 						@int = ceil(@p['time'])
 						set_pscore('time', @player, @int, '7')
-						set_pexp(@player, max(0, min(100, integer(100 * (@p['time'] / 7)))));
+						set_pexp(@player, max(0, min(99, integer(100 * (@p['time'] / 7)))));
 						set_plevel(@player, @int)
 
 						if(@p['time'] <= 0) {
