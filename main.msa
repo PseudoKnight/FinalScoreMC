@@ -294,7 +294,10 @@
 		}
 	}
 <<<
-*:/rules = call_alias('/help rules')
+*:/rules = >>>
+	broadcast(player().' read the rules.', 'group.moderator');
+	call_alias('/help rules');
+<<<
 
 # PLAYER LISTS #
 *:/who = >>>
