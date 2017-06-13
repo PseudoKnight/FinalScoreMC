@@ -88,7 +88,7 @@ case 'equip':
 			if(ponline(@player) && pinfo(@player, 5) > 0) {
 				if(pinfo(@player, 11) && !pinv(@player, 100)) {
 					set_pexp(@player, max(0, pexp(@player) - 3));
-					if(pexp(@player) <= 0) {
+					if(pexp(@player) == 0) {
 						set_pinv(@player, @gear)
 						set_peffect(@player, 14, 0, 0)
 						set_peffect(@player, 16, 0, 0)

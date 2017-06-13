@@ -28,7 +28,7 @@ case 'load':
 									clear_task();
 									set_pflight(@player, true);
 								} else {
-									set_pexp(@player, @xp + 2);
+									set_pexp(@player, min(99, @xp + 2));
 								}
 							}
 
@@ -40,7 +40,7 @@ case 'load':
 			}, @player.'flap')
 			queue_delay(500, @player.'flap')
 		}
-		if(pexp() > 97) {
+		if(pexp() == 99) {
 			_flap(player())
 		}
 	}
