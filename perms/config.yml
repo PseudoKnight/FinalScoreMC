@@ -179,8 +179,10 @@ engineer:
   worlds:
     dev:
       worldguard.region.*: true
+      fawe.worldguard.member: true
     custom:
       worldguard.region.*: true
+      fawe.worldguard.member: true
       limitedworldedit: true
   inheritance: builder
 limitedworldedit:
