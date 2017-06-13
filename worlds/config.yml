@@ -5,7 +5,7 @@ world:
   group: 'survival'
   teleports: true
   environment: NORMAL
-  seed: '-621778714517541268'
+  seed: -621778714517541268
   generator: 'CleanroomGenerator:.'
 alphanether: world_nether
 world_nether:
@@ -31,7 +31,7 @@ world3:
   group: 'survival'
   teleports: true
   environment: NORMAL
-  seed: '-8443156782283251243'
+  seed: -8443156782283251243
   generator: 'CleanroomGenerator:.'
 deltanether: world3_nether
 world3_nether:
@@ -48,7 +48,7 @@ world4:
   group: 'survival'
   teleports: true
   environment: NORMAL
-  seed: '-754633420005903009'
+  seed: -754633420005903009
   generator: 'CleanroomGenerator:.'
 gammanether: world4_nether
 world4_nether:
@@ -100,7 +100,7 @@ dev:
   group: 'dev'
   teleports: true
   environment: NORMAL
-  seed: '0'
+  seed: 0
   generator: 'CleanroomGenerator:14,air,1,sandstone:2,15,air,1,sandstone:2,15,air,1,sandstone:2,15,air,1,sandstone:2'
 park: custom
 frogpark: custom
@@ -110,5 +110,5 @@ custom:
   group: 'minigames'
   teleports: true
   environment: NORMAL
-  seed: '0'
+  seed: 0
   generator: 'CleanroomGenerator:.'
