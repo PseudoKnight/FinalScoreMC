@@ -101,7 +101,6 @@ proc _snake_add(@player, @game) {
 proc _snake_set_color(@player, @color, @game,
 @colors = array(
 	array('159:11', '159:3', '9'), # blue
-	array('159:1', '159:4', '6'), # orange
 	array('159:13', '159:5', '2'), # green
 	array('159:14', '159:6', 'c'), # red
 	array('159:8', '159:0', '7'), # white
