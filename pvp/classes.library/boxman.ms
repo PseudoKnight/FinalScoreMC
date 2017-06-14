@@ -66,7 +66,7 @@ case 'load':
 					set_pwalkspeed(player(), 0.2);
 					@helmet = pinv(player(), 103);
 					if(@helmet && @helmet['name'] == 'STEP') {
-						@inv[@slot] = associative_array('name': 'WOOL', 'data': 2);
+						@inv[@slot] = associative_array('name': 'CONCRETE', 'data': 2);
 						set_pinv(player(), @inv);
 						set_timeout(1000, closure(){
 							if(ponline(player()) && pinfo(player(), 5) > 0) {
@@ -86,7 +86,7 @@ case 'load':
 				}
 			}
 
-			set_interval(150, closure(){
+			set_interval(50, closure(){
 				try {
 					if(get_entity_health(@target) <= 0 || !ponline(player()) || pinfo(player(), 5) == 0
 					|| !pinv(player(), 103)) {
@@ -95,9 +95,9 @@ case 'load':
 					} else {
 						@loc = entity_loc(@box);
 						@targetLoc = entity_loc(@target);
-						set_entity_loc(@box, location_shift(@loc, @targetLoc, 1));
+						set_entity_loc(@box, location_shift(@loc, @targetLoc, 0.3));
 						if(_distance(@loc, @targetLoc) < 1) {
-							damage_entity(@target, 2, puuid());
+							damage_entity(@target, 1, puuid());
 						}
 						play_named_sound(@loc, associative_array('sound': 'entity.guardian.attack'));
 					}
