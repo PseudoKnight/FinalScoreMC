@@ -23,37 +23,19 @@ proc _class_cmd(@action, @id, @setting, @args) {
         	}
             switch(@setting) {
             	case 'selector':
-            		if(!pinv(player(), null), die('You must select an item on your hotbar.'))
-            		@arena['classes'][@classid]['selector'] = pinv(player(), null)
-            		msg('Class selector set to this item.')
+                    @item = pinv(player(), null);
+            		if(!@item) {
+                        die('You must select an item on your hotbar.');
+                    }
+            		@arena['classes'][@classid]['selector'] = _minify_inv(@item);
+            		msg('Class selector set to this item.');
 
             	case 'kit':
-            		@inv = pinv()
-            		foreach(array_keys(@inv), @slot) {
-            			if(is_null(@inv[@slot])) {
-            				array_remove(@inv, @slot)
-            			} else {
-            				foreach(@i:@v in @inv[@slot]) {
-            					if(@i === 'meta' && @v) {
-            						foreach(@mi:@mv in @inv[@slot]['meta']) {
-            							if(!@mv || @mi === 'enchants') {
-            								array_remove(@inv[@slot]['meta'], @mi)
-            							}
-            						}
-            					}
-            					if(!@v) {
-            						array_remove(@inv[@slot], @i)
-            					}
-            				}
-            			}
-            		}
-            		@arena['classes'][@classid]['kit'] = @inv
-            		msg('Set kit to current inventory.')
+            		@arena['classes'][@classid]['kit'] = _minify_inv(pinv());
+            		msg('Set kit to current inventory.');
 
             	case 'ammo':
-            		@inv = pinv();
-            		_minify_inv(@inv);
-            		@arena['classes'][@classid]['ammo'] = @inv;
+            		@arena['classes'][@classid]['ammo'] = _minify_inv(pinv());
             		msg('Set ammo to current inventory.');
 
             	case 'stacklimit':
