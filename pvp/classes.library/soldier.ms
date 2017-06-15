@@ -1,9 +1,16 @@
 switch(@action) {
 case 'load':
-	bind(entity_damage, array('id': @player.'soldierdmg'), array('type': 'PLAYER'), @e, @shooter = @player) {
-		if(@e['cause'] === 'PROJECTILE'
+	@damaged = array();
+	bind(entity_damage, array('id': @player.'soldierdmg'), array('type': 'PLAYER'), @e, @damaged, @shooter = @player) {
+		if(@e['cause'] == 'PROJECTILE'
 		&& @e['shooter'] == @shooter) {
-			modify_event('amount', 2);
+			if(@damaged && @damaged[0] == @e['player']) {
+				@damaged[1] += 1.0;
+			} else {
+				@damaged[0] = @e['player'];
+				@damaged[1] = 2;
+			}
+			modify_event('amount', @damaged[1]);
 		}
 	}
 
@@ -40,9 +47,12 @@ case 'load':
 		});
 	}
 
-	bind(player_interact, array('id': @player.'soldierreload'), array('player': @player, 'item': 265), @e) {
+	bind(player_interact, array('id': @player.'soldierreload'), array('player': @player, 'item': 265), @e, @damaged) {
 		if(pinfo(player(), 6) != @e['item']){
 			die();
+		}
+		if(@damaged) {
+			array_remove(@damaged, 0);
 		}
 		@item = pinv(player(), null);
 		set_pinv(player(), array(null: null));
