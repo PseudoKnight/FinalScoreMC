@@ -24,7 +24,7 @@ case 'load':
 								clear_task();
 							} else if(entity_grounded(puuid(@player))) {
 								@xp = pexp(@player);
-								if(@xp > 97) {
+								if(@xp > 98) {
 									clear_task();
 									set_pflight(@player, true);
 								} else {

@@ -13,8 +13,8 @@ case 'load':
 			set_interval(250, closure(){
 				try {
 					@xp = pexp();
-					@xp += 9;
-					set_pexp(min(99, @xp));
+					@xp = min(99, @xp + 9);
+					set_pexp(@xp);
 					if(@xp == 99) {
 						clear_task();
 					}
