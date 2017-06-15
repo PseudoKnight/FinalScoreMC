@@ -200,15 +200,19 @@ proc _snake_bot_update(@bot, @game) {
 			}
 		}
 		if(@game['tnt']) {
-			foreach(@tnt in @game['tnt']) {
-				@loc = entity_loc(@tnt);
-				if(_distance(@snake['loc'], @loc) < 6) {
-					@targetLoc = @snake['loc'][];
-					@targetLoc[0] += @snake['loc'][0] - @loc[0];
-					@targetLoc[1] += @snake['loc'][1] - @loc[1];
-					@targetLoc[2] += @snake['loc'][2] - @loc[2];
-					_snake_bot_change_dir(@snake, @snake['loc'], @targetLoc);
-					return();
+			foreach(@i: @tnt in @game['tnt']) {
+				try {
+					@loc = entity_loc(@tnt);
+					if(_distance(@snake['loc'], @loc) < 6) {
+						@targetLoc = @snake['loc'][];
+						@targetLoc[0] += @snake['loc'][0] - @loc[0];
+						@targetLoc[1] += @snake['loc'][1] - @loc[1];
+						@targetLoc[2] += @snake['loc'][2] - @loc[2];
+						_snake_bot_change_dir(@snake, @snake['loc'], @targetLoc);
+						return();
+					}
+				} catch(BadEntityException @ex) {
+					array_remove(@game['tnt'], @i);
 				}
 			}
 		} else if(!_snake_safe_path(@snake['loc'], @snake['top'], @snake['dir'], @game['missiles'])) {
