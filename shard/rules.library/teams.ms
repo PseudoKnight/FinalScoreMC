@@ -29,10 +29,23 @@ bind(player_interact, array('id': 'shard-teams2'), array('item': 35, 'button': '
 	if(pworld() == 'shard') {
 		@team = integer(split(':', @event['item'])[1]) - 3;
 		if(@team > -1 && @team < @numTeams) {
-			_worldmsg('shard', player().' joined team '.color(@teams[@team]).@teams[@team]);
-			team_add_player(@teams[@team], player(), 'shard');
-			foreach(@c in array(3, 4, 5, 6)) {
-				ptake_item('35:'.@c, @numTeams);
+			@count = 0;
+			@otherCount = 0;
+			foreach(@t in get_teams('shard')) {
+				if(@t['name'] == @teams[@team]) {
+					@count = array_size(@t['players']);
+				} else {
+					@otherCount = max(@otherCount, array_size(@t['players']));
+				}
+			}
+			if(@otherCount >= @count) {
+				_worldmsg('shard', player().' joined team '.color(@teams[@team]).@teams[@team]);
+				team_add_player(@teams[@team], player(), 'shard');
+				foreach(@c in array(3, 4, 5, 6)) {
+					ptake_item('35:'.@c, 1);
+				}
+			} else {
+				msg('Too many players on that team. Please wait or join another team.');
 			}
 		}
 	}
