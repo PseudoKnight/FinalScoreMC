@@ -1,7 +1,7 @@
 switch(@action) {
 case 'load':
 	bind(player_interact, array('id': @player.'interact'), array('player': @player, 'button': 'right', 'item': 399), @e) {
-		if(split(':', @e['block'])[0] !== '77' && pexp() >= 100) {
+		if(split(':', @e['block'])[0] !== '77' && pexp() == 99) {
 			cancel()
 			@arrow = shoot_projectile(player(), 'ARROW')
 			@velocity = entity_velocity(@arrow)
