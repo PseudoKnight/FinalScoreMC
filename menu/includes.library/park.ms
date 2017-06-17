@@ -230,7 +230,7 @@ proc _create_park_menu(){
 			'meta': associative_array(
 				'display': color('red').'Snake',
 				'lore': array(
-					color('r').'Last snake slithering (1 - 12 players)',
+					color('r').'Last snake slithering (1 - 9 players)',
 					color('dark_gray').'Run: /warp snake',
 				),
 			),

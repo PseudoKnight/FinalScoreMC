@@ -29,7 +29,7 @@ proc _snake_queue(@mode) {
 	@game['powerups'] = array();
 	@game['extraBlocks'] = array();
 	@game['numPowerups'] = 15;
-	@game['numPlayers'] = 12;
+	@game['numPlayers'] = 9;
 	@game['botsOnly'] = false;
 	@game['missiles'] = associative_array();
 	@game['tnt'] = array();
@@ -69,9 +69,7 @@ proc _snake_queue(@mode) {
 		'0': array('name': 'STAINED_CLAY', 'data': 3, 'meta': array('display': 'Blue')),
 		'1': array('name': 'STAINED_CLAY', 'data': 5, 'meta': array('display': 'Green')),
 		'2': array('name': 'STAINED_CLAY', 'data': 6, 'meta': array('display': 'Red')),
-		'3': array('name': 'STAINED_CLAY', 'data': 0, 'meta': array('display': 'Gray')),
 		'4': array('name': 'STAINED_CLAY', 'data': 2, 'meta': array('display': 'Purple')),
-		'5': array('name': 'STAINED_CLAY', 'data': 7, 'meta': array('display': 'Black')),
 		'6': array('name': 'CONCRETE', 'data': 3, 'meta': array('display': 'Neon Blue')),
 		'7': array('name': 'CONCRETE', 'data': 4, 'meta': array('display': 'Neon Yellow')),
 		'8': array('name': 'CONCRETE', 'data': 5, 'meta': array('display': 'Neon Green')),
