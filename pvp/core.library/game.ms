@@ -291,6 +291,7 @@ proc _pvp_start_match(@id) {
 							_pvp_end_match(@id, @pvp['team'][if(@team, 0, 1)]['players']);
 							die()
 						}
+						play_sound(@loc, array('sound': 'ZOMBIE_UNFECT', 'volume': 5), @pvp['team'][@team]['players']);
 					}
 				}
 			}
