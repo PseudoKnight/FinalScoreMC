@@ -13,8 +13,8 @@
 
 &7/compass <target>&r : Sets compass to point to target: spawn, home [player], here, player, or x z coordinates.
 
-&7/transfer <mob> <player>&r : Transfers ownership of a horse, wolf, parrot, or cat to another online player.
- &7&oExample: /transfer horse PseudoKnight
+&7/transfer <player>&r : Transfers ownership of a tamed mob to another online player.
+ &7&oExample: /transfer PseudoKnight
 
 &7/share&r or &7/unshare <player> <horses>&r : Changes what you share with another player. Currently only supports ‘horses’.
 
