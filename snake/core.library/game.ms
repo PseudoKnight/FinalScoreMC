@@ -64,7 +64,7 @@ proc _snake_queue(@mode) {
 	// Create color select menu
 	create_virtualchest(array(
 		'id': 'snake',
-		'size': 18,
+		'size': 9,
 		'title': color('bold').'Choose Your Snake Color',
 		'0': array('name': 'STAINED_CLAY', 'data': 3, 'meta': array('display': 'Blue')),
 		'1': array('name': 'STAINED_CLAY', 'data': 5, 'meta': array('display': 'Green')),
