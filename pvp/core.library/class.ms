@@ -170,14 +170,14 @@ proc _class_select(@id, @pvp) {
 
 	if(@size1 > 2 || @size2 > 2) {
 		array_push(@pvp['binds'], @id.'classselector')
-		bind(inventory_click, array('id': @id.'classselector'), array('slottype': 'CONTAINER'), @e, @id) {
-			@pvp = import('pvp'.@id)
+		bind(inventory_click, array('id': @id.'classselector'), null, @e, @id) {
+			@pvp = import('pvp'.@id);
 			if(!array_index_exists(@pvp['players'], player())
-			|| _is_survival_world(pworld())
+			|| !pget_virtualchest()
 			|| is_null(@e['slotitem'])
 			|| is_null(@e['slotitem']['meta'])
 			|| is_null(@e['slotitem']['meta']['display'])) {
-				die()
+				die();
 			}
 			@class = to_lower(strip_colors(@e['slotitem']['meta']['display']))
 			if(!array_index_exists(@pvp['arena']['classes'], @class) && @class !== 'random') {
@@ -203,7 +203,7 @@ proc _class_select(@id, @pvp) {
 						foreach(@slot: @item in get_virtualchest(@id.@team)) {
 							if(is_array(@item) && !is_null(@item['meta']) && !is_null(@item['meta']['display'])
 							&& @pvp['arena']['captain'][@team] == to_lower(strip_colors(@item['meta']['display']))) {
-								clear_virtualchest(@id.@team, @slot);
+								clear_virtualchest(@id.@team, integer(@slot));
 								@pvp['team'][@team]['captain'] = player();
 								@class = @pvp['arena']['captain'][@team];
 								break();
