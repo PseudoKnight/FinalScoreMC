@@ -339,7 +339,11 @@ if(array_index_exists(@pvp['arena'], 'mobprotect')) {
 
 	array_push(@pvp['binds'], @id.'mobprotectdamage');
 	bind(entity_damage, array('id': @id.'mobprotectdamage'), null, @e, @id) {
-		@pvp = import('pvp'.@id)
+		@pvp = import('pvp'.@id);
+		if(!array_index_exists(@pvp['arena'], 'mobprotect')) {
+			// still initializing game
+			die();
+		}
 		foreach(@team: @data in @pvp['arena']['mobprotect']) {
 			if(@pvp['team'][@team]['mobprotect'] == @e['id']) {
 				@health = get_entity_health(@e['id'])
