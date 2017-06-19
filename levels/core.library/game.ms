@@ -267,6 +267,10 @@ proc _level_start(@level) {
 }
 
 proc _level_end(@level, @win) {
+	_remove_activity('level'.@level['region']);
+	if(array_contains(all_virtualchests(), 'level'.@level['region'])) {
+		del_virtualchest('level'.@level['region']);
+	}
 	remove_scoreboard('level'.@level['region']);
 	sk_region_flag(@level['world'], @level['region'], 'mob-spawning', 'deny');
 	set_gamerule(@level['world'], 'doDaylightCycle', true);

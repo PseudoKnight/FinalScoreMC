@@ -81,9 +81,14 @@
 				die('This region is not defined as an arena.');
 			}
 			
-			if(array_contains(all_virtualchests(), 'level'.@region)) {
+			@activities = import('activities');
+			if(@activities && array_index_exists(@activities, 'level'.@region)) {
 				die('Game is already running.');
 			}
+			if(array_contains(all_virtualchests(), 'levelstart'.@region)) {
+				die('Someone is already starting the game.');
+			}
+			
 			@menu = array(
 				'id': 'level'.@region,
 				'title': 'Pick a Script',
@@ -98,13 +103,13 @@
 				@index++;
 			}
 			create_virtualchest(@menu);
-			popen_virtualchest('level'.@region);
+			popen_virtualchest('levelstart'.@region);
 			
 			bind(inventory_close, null, null, @e, @player = player(), @region) {
 				if(player() == @player) {
 					unbind(player().'click');
 					unbind();
-					del_virtualchest('level'.@region);
+					del_virtualchest('levelstart'.@region);
 				}
 			}
 			
@@ -114,9 +119,6 @@
 					close_pinv(); // unbinds and deletes menu
 					
 					@name = to_lower(@item['meta']['display']);
-					if(array_contains(get_scoreboards(), 'level'.@region)) {
-						die(color('red').'Game already running.');
-					}
 					@level = array(
 						'name': @name,
 						'wave': 0,
@@ -131,6 +133,7 @@
 						'region': @region,
 						'config': yml_decode(read('configs/'.@name.'.yml'))
 					);
+					_add_activity('level'.@region, to_upper(@region).': '.@level['config']['title']);
 					set_world_time(@level['world'], 'sunset');
 					set_gamerule(@level['world'], 'doDaylightCycle', false);
 					_remove_region_entities(@level['region']);
