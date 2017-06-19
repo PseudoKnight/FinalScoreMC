@@ -1,5 +1,5 @@
 #Warms up a tp with effects and configurable timer
-proc _warmuptp(@player, @loc, @cleareffects = false) {
+proc _warmuptp(@player, @loc, @cleareffects = false, @force = false) {
 	@length = 3.7;
 	if(!_is_survival_world(pworld(@player))) {
 		@length = 0.1;
@@ -13,6 +13,9 @@ proc _warmuptp(@player, @loc, @cleareffects = false) {
 		}
 		@ploc = ploc(@player);
 		set_ploc(@player, @loc);
+		if(@force) { // Teleporting crossworlds can be innaccurate, this forces an accurate location
+			set_ploc(@player, @loc);
+		}
 		set_peffect(@player, 15, 1, 2, true, false);
 		play_effect(_relative(@ploc, 'up', 2), 'CLOUD', array('particleCount': 25, 'speed': 0.01, 'offsetX': 0.3, 'offsetY': 0.6, 'offsetZ': 0.3));
 		play_effect(_relative(@loc, 'up', 2), 'CLOUD', array('particleCount': 25, 'speed': 0.01, 'offsetX': 0.3, 'offsetY': 0.6, 'offsetZ': 0.3));
