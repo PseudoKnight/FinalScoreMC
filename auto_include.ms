@@ -468,7 +468,7 @@ proc _add_activity(@id, @title) {
 	@serverTitle = colorize('&6&lFINALSCORE&e&lMC');
 	@footer = color('gray').'Activities:\n'.color('reset').array_implode(array_normalize(@activities), ', ');
 	foreach(@p in all_players()) {
-		psend_list_header_footer(@p, @serverTitle, color('gray').'Activities:\n'.color('reset').@footer);
+		psend_list_header_footer(@p, @serverTitle, @footer);
 	}
 }
 
