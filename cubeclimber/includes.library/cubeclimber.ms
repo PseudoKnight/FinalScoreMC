@@ -376,7 +376,6 @@ proc _cc_reset(){
 	unbind('cube-interact');
 	unbind('cube-teleport');
 	export('cubeclimber', null);
-	export('currently', null);
 	remove_scoreboard('cc');
 	_remove_activity('cubeclimber');
 }

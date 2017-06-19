@@ -10,20 +10,28 @@ set_cron('*/5 * * * *', closure(){
 	}
 	queue_push(closure(){
 		save_players();
-		@currently = import('currently');
+		@currently = '';
+		@activitiesArray = import('activities');
+		if(@activitiesArray) {
+			@activities = array_implode(array_normalize(@activitiesArray), ', ');
+		}
 		@allocMem = get_server_info(15);
 		@freeMem = get_server_info(16);
 		console('---[ SAVED ]---[ TPS: '.tps()[0].' ]'
 			.'---[ MEM: '.floor((@allocMem - @freeMem) / 1000000).' / '.floor(@allocMem / 1000000).' / 2863 MB ]'
 			.'---[ PLAYERS: '.array_size(all_players()).' ]'
-			.'---'.if(!is_null(@currently), '[ CURRENTLY: '.@currently.' ]---'), false);
+			.'---'.if(@currently, '[ Activities: '.@currently.' ]---'), false);
 	});
 })
 
 bind(server_ping, null, null, @event) {
-	@currently = import('currently');
+	@activities = import('activities');
+	@currently = '';
+	if(@activities) {
+		@currently = array_implode(array_normalize(@activities), ', ');
+	}
 	@motd = colorize('&6&l\u1260&d&l\u1260&b&l\u1260&4&l\u1260 &6&lFINALSCORE&e&lMC \u00AB &f\u25AA \u25AA \u25AA');
-	modify_event('motd', @motd.if(!is_null(@currently), colorize('\n&aNow Playing&f: ').@currently));
+	modify_event('motd', @motd.if(@currently, colorize('\n&aActivities&f: ').@currently));
 }
 
 bind(player_login, null, null, @event) {
@@ -180,9 +188,10 @@ bind(player_join, null, null, @event) {
 				set_list_name(@p, _colorname(@p).@p);
 			}
 			@title = colorize('&6&lFINALSCORE&e&lMC');
-			@currently = import('currently');
-			if(@currently) {
-				psend_list_header_footer(@title, color('gray').'Currently playing:\n'.color('reset').@currently);
+			@activities = import('activities');
+			if(@activities) {
+				@currently = array_implode(array_normalize(@activities), ', ');
+				psend_list_header_footer(@title, color('gray').'Activities: :\n'.color('reset').@currently);
 			} else {
 				psend_list_header_footer(@title, null);
 			}

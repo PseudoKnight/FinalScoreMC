@@ -464,11 +464,11 @@ proc _add_activity(@id, @title) {
 	}
 	@activities[@id] = @title;
 	export('activities', @activities);
-	export('currently', @title);
 	
 	@serverTitle = colorize('&6&lFINALSCORE&e&lMC');
+	@footer = color('gray').'Activities:\n'.color('reset').array_implode(array_normalize(@activities), ', ');
 	foreach(@p in all_players()) {
-		psend_list_header_footer(@p, @serverTitle, color('gray').'Currently playing:\n'.color('reset').@title);
+		psend_list_header_footer(@p, @serverTitle, color('gray').'Activities:\n'.color('reset').@footer);
 	}
 }
 
@@ -480,7 +480,6 @@ proc _remove_activity(@id) {
 	if(!is_null(@activities) && array_index_exists(@activities, @id)) {
 		array_remove(@activities, @id);
 		export('activities', @activities);
-		export('currently', null);
 		
 		@serverTitle = colorize('&6&lFINALSCORE&e&lMC');
 		foreach(@p in all_players()) {

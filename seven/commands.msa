@@ -105,10 +105,9 @@
 						set_peffect(@player, 8, -10, 10);
 					}
 				} else if(@timer[0] == 0) {
-					clear_task()
-					export('currently', 'Seven Seconds to Live')
-					include('includes.library/main.ms')
-					_7_start(@7)
+					clear_task();
+					include('includes.library/main.ms');
+					_7_start(@7);
 				}
 			}
 		})
