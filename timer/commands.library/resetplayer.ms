@@ -1,7 +1,7 @@
-if(!$player) {
+if(!@player) {
     die('This requires a player.');
 }
-@puuid = _get_uuid(to_lower($player));
+@puuid = _get_uuid(to_lower(@player));
 @courses = get_values('times'.if(@id !== 'all', '.'.@id))
 if(is_null(@courses)) {
     die('Unknown arena.');
@@ -10,8 +10,8 @@ if(is_null(@courses)) {
 foreach(@key: @time in @courses) {
     if(is_array(@time) && array_index_exists(@time, 'top')) {
         foreach(@i: @t in @time['top']) {
-            if(@t[0] == $player) {
-                msg('Removing '.$player.' from top ten in '.split('.', @key)[1]);
+            if(@t[0] == @player) {
+                msg('Removing '.@player.' from top ten in '.split('.', @key)[1]);
                 array_remove(@time['top'], @i);
                 store_value(@key, @time);
                 break();
@@ -25,10 +25,10 @@ foreach(@key: @time in @courses) {
             continue();
         }
         if(@uuid == @puuid) {
-            msg('Removing '.$player.'\'s time in '.split('.', @key)[1]);
+            msg('Removing '.@player.'\'s time in '.split('.', @key)[1]);
             clear_value(@key);
             @count += 1;
         }
     }
 }
-msg('Finished resetting '.$player.'\'s times in '.@count.' courses.');
+msg('Finished resetting '.@player.'\'s times in '.@count.' courses.');
