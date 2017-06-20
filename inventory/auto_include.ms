@@ -143,6 +143,7 @@ proc _minify_inv(@inv, @keepnulls = false) {
 			}
 		}
 	}
+	return(@inv);
 }
 
 /*
