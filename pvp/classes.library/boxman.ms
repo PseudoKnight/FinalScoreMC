@@ -11,7 +11,7 @@ case 'load':
 		cancel();
 	}
 
-	bind(player_interact, array('id': @player.'boxmanattack'), array('player': @player), @e) {
+	bind(player_interact, array('id': @player.'boxmanattack'), array('player': @player), @e, @pvp) {
 		@slot = 0;
 		@checkSlot = -106;
 		if(@e['button'] == 'left') {
@@ -47,13 +47,13 @@ case 'load':
 
 			@loc = _relative(ploc(), 'up');
 			@box = spawn_entity('ARMOR_STAND', 1, @loc)[0];
-			set_mob_equipment(@box, associative_array('WEAPON': @item));
-			set_entity_spec(@box, associative_array(
+			set_mob_equipment(@box, array('WEAPON': @item));
+			set_entity_spec(@box, array(
 				'gravity': false,
 				'visible': false,
 				'arms': true,
-				'poses': associative_array(
-					'poseArmRight': associative_array(
+				'poses': array(
+					'poseArmRight': array(
 						'x': 0.8,
 						'y': 0.6,
 						'z': -0.8,
@@ -62,22 +62,16 @@ case 'load':
 			));
 
 			@returnToSender = closure(){
-				if(ponline(player()) && pinfo(player(), 5) > 0) {
+				if(ponline(player()) && pinfo(player(), 5) > 0 && array_index_exists(@pvp['players'], player())) {
 					set_pwalkspeed(player(), 0.2);
-					@helmet = pinv(player(), 103);
-					if(@helmet && @helmet['name'] == 'STEP') {
-						@inv[@slot] = associative_array('name': 'CONCRETE', 'data': 2);
-						set_pinv(player(), @inv);
-						set_timeout(1000, closure(){
-							if(ponline(player()) && pinfo(player(), 5) > 0) {
-								@helmet = pinv(player(), 103);
-								if(@helmet && @helmet['name'] == 'STEP') {
-									@inv[@slot] = @item;
-									set_pinv(player(), @inv);
-								}
-							}
-						});
-					}
+					@inv[@slot] = array('name': 'CONCRETE', 'data': 2);
+					set_pinv(player(), @inv);
+					set_timeout(1200, closure(){
+						if(ponline(player()) && pinfo(player(), 5) > 0 && array_index_exists(@pvp['players'], player())) {
+							@inv[@slot] = @item;
+							set_pinv(player(), @inv);
+						}
+					});
 				}
 				try {
 					entity_remove(@box);
@@ -88,8 +82,10 @@ case 'load':
 
 			set_interval(50, closure(){
 				try {
-					if(get_entity_health(@target) <= 0 || !ponline(player()) || pinfo(player(), 5) == 0
-					|| !pinv(player(), 103)) {
+					if(get_entity_health(@target) <= 0
+					|| !ponline(player())
+					|| pinfo(player(), 5) == 0
+					|| !array_index_exists(@pvp['players'], player())) {
 						clear_task();
 						execute(@returnToSender);
 					} else {
@@ -99,7 +95,7 @@ case 'load':
 						if(_distance(@loc, @targetLoc) < 1) {
 							damage_entity(@target, 1, puuid());
 						}
-						play_named_sound(@loc, associative_array('sound': 'entity.guardian.attack'));
+						play_named_sound(@loc, array('sound': 'entity.guardian.attack'));
 					}
 				} catch(Exception @ex) {
 					clear_task();
@@ -116,9 +112,29 @@ case 'load':
 			if(@weapon && @weapon['type'] == 44) {
 				@loc = entity_loc(@e['id']);
 				play_effect(@loc, 'EXPLOSION_LARGE');
-				play_named_sound(@loc, associative_array('sound': 'block.enderchest.open'));
+				play_named_sound(@loc, array('sound': 'block.enderchest.open'));
 				entity_remove(@e['id']);
 				consume();
+			}
+		}
+	}
+	
+	bind(player_toggle_sneak, associative_array('id': @player.'sneak'), array('player': @player), @event, @pvp) {
+		if(@event['sneaking']) {
+			set_pinv(player(), array(103: null));
+			@block = get_block_at(ploc());
+			foreach(@p: @player in @pvp['players']) {
+				if(@p != player()) {
+					psend_block_change(@p, @event['location'], @block);
+				}
+			}
+		} else {
+			set_pinv(player(), array(103: array('name': 'STEP', 'data': 8)));
+			@block = get_block_at(@event['location']);
+			foreach(@p: @player in @pvp['players']) {
+				if(@p != player()) {
+					psend_block_change(@p, @event['location'], @block);
+				}
 			}
 		}
 	}
@@ -128,6 +144,7 @@ case 'unload':
 	unbind(@player.'boxmanclick');
 	unbind(@player.'boxmanattack');
 	unbind(@player.'boxmanbox');
+	unbind(@player.'sneak');
 	set_pwalkspeed(player(), 0.2);
 
 }
