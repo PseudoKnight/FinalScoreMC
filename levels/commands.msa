@@ -90,7 +90,7 @@
 			}
 			
 			@menu = array(
-				'id': 'level'.@region,
+				'id': 'levelstart'.@region,
 				'title': 'Pick a Script',
 				'size': 9,
 			);
