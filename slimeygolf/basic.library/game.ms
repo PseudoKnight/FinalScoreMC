@@ -21,7 +21,7 @@ proc _start_game(@course, @loc) {
 		}
 	}
 
-	_add_activity('golf'.@course, 'SlimeyGolf: '.to_upper(@course));
+	_add_activity(@course, @course);
 
 	foreach(@player in array_keys(@golf['players'])) {
 		tmsg(@player, colorize(
@@ -428,7 +428,7 @@ proc _golf_cleanup(@golf) {
 		set_collides_with_entities(@p, true);
 	}
 	unbind(@golf['name']);
-	_remove_activity('golf'.@golf['name']);
+	_remove_activity(@golf['name']);
 	clear_task();
 	try {
 		for(@i = 1, @i < 10, @i++) {
