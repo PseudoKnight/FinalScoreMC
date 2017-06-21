@@ -238,6 +238,7 @@ proc _snake_end(@winner, @game) {
 				foreach(@i: @score in @scores) {
 					if(@pscore > @score['value']) {
 						array_insert(@scores, @array, @i);
+						break();
 					} else if(@i == array_size(@scores) - 1) {
 						@scores[] = @array;
 					}
