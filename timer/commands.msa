@@ -1,4 +1,4 @@
-*:/times [$arg='usage'] [$id] [$player] = >>>
+*:/times [$arg='top'] [$id] [$player] = >>>
 	@id = $id;
 	if(!@id) {
 		@regions = sk_current_regions();
@@ -7,55 +7,12 @@
 		}
 		@id = @regions[-1];
 	}
+	
 	@player = $player;
 
-	switch($arg) {
-	case 'usage':
-
-		msg('Usage: /times <top|me|avg|playerName> [courseID]')
-
-	case 'top':
-
-		include('commands.library/top.ms');
-
-	case 'me':
-
-		include('commands.library/me.ms');
-
-	case 'avg':
-
-		include('commands.library/avg.ms');
-
-	case 'reset':
-
-		if(!has_permission('command.resettimes')) {
-		    die('You do not have permission to reset stats for this course.')
-		}
-		include('commands.library/reset.ms');
-
-	case 'resetplayer':
-
-		if(!has_permission('command.resettimes')) {
-			die('You do not have permission to reset stats for this course.')
-		}
-		include('commands.library/resetplayer.ms');
-
-	case 'recalculate':
-	case 'recalc':
-
-		if(!has_permission('command.recalculatetimes')) {
-			die('You do not have permission to recalculate times.');
-		}
-		include('commands.library/recalculate.ms');
-
-	default:
-
-		@uuid = _get_uuid(to_lower($arg));
-		@time = get_value('times.'.@id, @uuid);
-		if(!@time) {
-			die('No time for '.$arg.' on '.@id.'.')
-		}
-		msg(color('yellow').$arg.'\'s best time for '.color('gold').to_upper(@id).color('r').' is '.color('green').@time.' seconds.')
-
+	try {
+		include('commands.library/'.$arg.'.ms');
+	} catch(IOException @ex) {
+		msg('Usage: /times <top|avg> [course] [player]');
 	}
 <<<

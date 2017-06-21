@@ -6,8 +6,16 @@ if(@id == 'all') {
         msg(colorize(' '.if(@i < 9, '&80').'&7'.(@i + 1).'&a [ '.@top[@i][1].' ] &r'.@top[@i][0]));
     }
 
+} else if(@player) {
+    @uuid = _get_uuid(to_lower(@player));
+    @time = get_value('times.'.@id, @uuid);
+    if(!@time) {
+        die('No time for '.@player.' on '.@id.'.')
+    }
+    msg(color('yellow').@player.'\'s best time for '.color('gold').to_upper(@id).color('r').' is '.color('green').@time.' seconds.')
+    
 } else {
-
+    
     @times = get_value('times', @id);
     if(!@times || !array_index_exists(@times, 'top')) {
         die('No top times for '.to_upper(@id).'.');

@@ -1,3 +1,6 @@
+if(!has_permission('command.resettimes')) {
+    die('You do not have permission to reset stats for this course.')
+}
 if(!has_value('times', @id)) {
     die('There are no stats to reset for '.to_upper(@id).'.')
 }

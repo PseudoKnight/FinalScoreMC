@@ -1,3 +1,6 @@
+if(!has_permission('command.recalculatetimes')) {
+    die('You do not have permission to recalculate times.');
+}
 if(@id == 'all') {
 
     @times = get_values('times');

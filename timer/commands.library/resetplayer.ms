@@ -1,3 +1,6 @@
+if(!has_permission('command.resettimes')) {
+    die('You do not have permission to reset stats for this course.')
+}
 if(!@player) {
     die('This requires a player.');
 }
