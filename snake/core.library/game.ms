@@ -69,12 +69,12 @@ proc _snake_queue(@mode) {
 		'0': array('name': 'STAINED_CLAY', 'data': 3, 'meta': array('display': 'Blue')),
 		'1': array('name': 'STAINED_CLAY', 'data': 5, 'meta': array('display': 'Green')),
 		'2': array('name': 'STAINED_CLAY', 'data': 6, 'meta': array('display': 'Red')),
-		'4': array('name': 'STAINED_CLAY', 'data': 2, 'meta': array('display': 'Purple')),
-		'6': array('name': 'CONCRETE', 'data': 3, 'meta': array('display': 'Neon Blue')),
-		'7': array('name': 'CONCRETE', 'data': 4, 'meta': array('display': 'Neon Yellow')),
-		'8': array('name': 'CONCRETE', 'data': 5, 'meta': array('display': 'Neon Green')),
-		'9': array('name': 'CONCRETE', 'data': 6, 'meta': array('display': 'Neon Pink')),
-		'10': array('name': 'CONCRETE', 'data': 0, 'meta': array('display': 'Neon White')),
+		'3': array('name': 'STAINED_CLAY', 'data': 2, 'meta': array('display': 'Purple')),
+		'4': array('name': 'CONCRETE', 'data': 3, 'meta': array('display': 'Neon Blue')),
+		'5': array('name': 'CONCRETE', 'data': 4, 'meta': array('display': 'Neon Yellow')),
+		'6': array('name': 'CONCRETE', 'data': 5, 'meta': array('display': 'Neon Green')),
+		'7': array('name': 'CONCRETE', 'data': 6, 'meta': array('display': 'Neon Pink')),
+		'8': array('name': 'CONCRETE', 'data': 0, 'meta': array('display': 'Neon White')),
 	));
 
 	// Add players in region
