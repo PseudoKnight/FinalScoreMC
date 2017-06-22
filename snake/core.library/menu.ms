@@ -1,5 +1,6 @@
 proc _snake_menu() {
-	if(array_contains(all_virtualchests(), 'snake')) {
+	if(array_contains(all_virtualchests(), 'snake')
+	|| array_contains(get_scoreboards(), 'snake')) {
 		die('Already running.');
 	}
 	create_virtualchest(array(
