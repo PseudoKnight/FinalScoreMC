@@ -111,6 +111,9 @@ regular:
     dev:
       limitedworldedit: true
       fawe.worldguard: true
+      command.time: true
+      command.heal: true
+      command.playsound: true
   inheritance: member
 donor:
   permissions:
@@ -135,10 +138,7 @@ builder:
       command.sign: true
       command.effect: true
       command.velocity: true
-      command.playsound: true
       command.explosion: true
-      command.time: true
-      command.heal: true
       command.heal.others: true
       command.mob: true
       command.cb: true
