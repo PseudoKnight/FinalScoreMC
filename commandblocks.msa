@@ -437,9 +437,9 @@
 			}
 
 		case 'fall':
-			for(@x = min(@loc1['x'], @loc2['x']), @x <= max(@loc1['x'], @loc2['x']), @x++) {
+			for(@x = min(@loc1['x'], @loc2['x']) + 0.5, @x <= max(@loc1['x'], @loc2['x']) + 0.5, @x += 1.0) {
 				for(@y = min(@loc1['y'], @loc2['y']), @y <= max(@loc1['y'], @loc2['y']), @y++) {
-					for(@z = min(@loc1['z'], @loc2['z']), @z <= max(@loc1['z'], @loc2['z']), @z++) {
+					for(@z = min(@loc1['z'], @loc2['z']) + 0.5, @z <= max(@loc1['z'], @loc2['z']) + 0.5, @z += 1.0) {
 						@block = get_block_at(@x, @y, @z, @cmdblk['world'])
 						if(@block[0] !== '0') {
 							set_block_at(@x, @y, @z, '0:0', @cmdblk['world'], false)
