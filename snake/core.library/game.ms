@@ -276,7 +276,10 @@ proc _snake_end(@winner, @game) {
 							@score['topscore'] = true;
 						}
 						break();
-					} else if(@score['value'] > @topscore['value']) {
+					} else if(@remove) {
+						continue();
+					}
+					if(@score['value'] > @topscore['value']) {
 						array_insert(@topscores, @array, @i);
 						@score['topscore'] = true;
 						@remove = true;
