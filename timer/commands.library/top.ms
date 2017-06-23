@@ -37,7 +37,7 @@ if(@id == 'all') {
         }
         @time = substr(@time, 0, length(@time) - 2).'s';
         @place = @i + 1 - @lastCount;
-        msg(colorize(' '.if(@place < 9, '&80').'&7'.@place.'&a [ '.@time.' ] &r'.@times['top'][@i][0]));
+        msg(colorize(' '.if(@place < 10, '&80').'&7'.@place.'&a [ '.@time.' ] &r'.@times['top'][@i][0]));
         @lastTime = @times['top'][@i][1];
     }
 
