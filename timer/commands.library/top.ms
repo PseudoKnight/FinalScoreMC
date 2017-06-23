@@ -36,7 +36,8 @@ if(@id == 'all') {
             @time = simple_date('s.S', integer(@times['top'][@i][1] * 1000));
         }
         @time = substr(@time, 0, length(@time) - 2).'s';
-        msg(colorize(' '.if(@i < 9, '&80').'&7'.(@i + 1 - @lastCount).'&a [ '.@time.' ] &r'.@times['top'][@i][0]));
+        @place = @i + 1 - @lastCount;
+        msg(colorize(' '.if(@place < 9, '&80').'&7'.@place.'&a [ '.@time.' ] &r'.@times['top'][@i][0]));
         @lastTime = @times['top'][@i][1];
     }
 
