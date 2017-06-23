@@ -190,7 +190,7 @@ bind(player_join, null, null, @event) {
 			@title = colorize('&6&lFINALSCORE&e&lMC');
 			@activities = import('activities');
 			if(@activities) {
-				@currently = array_implode(array_normalize(@activities), ', ');
+				@currently = array_implode(array_normalize(@activities), '\n');
 				psend_list_header_footer(@title, color('gray').'Activities: :\n'.color('reset').@currently);
 			} else {
 				psend_list_header_footer(@title, null);

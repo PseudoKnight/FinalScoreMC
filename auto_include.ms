@@ -466,7 +466,7 @@ proc _add_activity(@id, @title) {
 	export('activities', @activities);
 	
 	@serverTitle = colorize('&6&lFINALSCORE&e&lMC');
-	@footer = color('gray').'Activities:\n'.color('reset').array_implode(array_normalize(@activities), ', ');
+	@footer = color('gray').'Activities:\n'.color('reset').array_implode(array_normalize(@activities), '\n');
 	foreach(@p in all_players()) {
 		psend_list_header_footer(@p, @serverTitle, @footer);
 	}
@@ -482,8 +482,9 @@ proc _remove_activity(@id) {
 		export('activities', @activities);
 		
 		@serverTitle = colorize('&6&lFINALSCORE&e&lMC');
+		@footer = color('gray').'Activities:\n'.color('reset').array_implode(array_normalize(@activities), '\n');
 		foreach(@p in all_players()) {
-			psend_list_header_footer(@p, @serverTitle, null);
+			psend_list_header_footer(@p, @serverTitle, @footer);
 		}
 	}
 }
