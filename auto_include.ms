@@ -490,5 +490,7 @@ proc _remove_activity(@id) {
 		foreach(@p in all_players()) {
 			psend_list_header_footer(@p, @serverTitle, @footer);
 		}
+		return(true);
 	}
+	return(false);
 }
