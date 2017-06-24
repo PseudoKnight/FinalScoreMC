@@ -1,18 +1,29 @@
 include('player.ms');
 proc _level_start(@level) {
+	// Setup exception handler to clean-up game
+	set_uncaught_exception_handler(closure(@ex){
+		console(@ex['classType'].': '.@ex['message'], false);
+		foreach(@trace in @ex['stackTrace']) {
+			console(split('LocalPackages', @trace['file'])[-1].':'.@trace['line'].' '.@trace['id'], false);
+		}
+		msg(color('red').@ex['message']);
+		msg(color('yellow').'Cleaning up game...');
+		_level_end(@level, false);
+		return(true);
+	});
+	
 	@entities = array();
 	sk_region_flag(@level['world'], @level['region'], 'mob-spawning', 'allow');
 	
 	bind(player_death, array('id': 'death'.@level['region']), null, @event, @level) {
 		if(array_contains(@level['players'], player())) {
-			array_remove_values(@level['players'], player());
-			@level['spectators'][] = player();
+			_level_remove_player(player(), @level);
+			_level_add_spectator(player(), @level);
 			@loc = ploc();
 			if(@loc['y'] < 0) {
 				@loc['y'] = 0;
 			}
 			export(player().'spawn', @loc);
-			set_pmode('SPECTATOR');
 		}
 	}
 	
@@ -75,6 +86,11 @@ proc _level_start(@level) {
 		if(get_mob_owner(@event['id'])) {
 			array_remove_values(@entities, @event['id']);
 		}
+	}
+	
+	foreach(@mob in @level['config']['mobs']) {
+		include('../mobs.library/'.to_lower(@mob).'.ms');
+		_load_mob(@level);
 	}
 	
 	if(array_index_exists(@level['config'], 'shop')) {
@@ -157,117 +173,122 @@ proc _level_start(@level) {
 
 	@sleep = array(3);
 	set_interval(1000, closure(){
-		// Check if players are still in play
-		foreach(@p in @level['spectators']) {
-			if(!array_contains(sk_current_regions(@p), @level['region'])) {
-				_level_remove_spectator(@p, @level);
-			}
-		}
-		
-		if(array_index_exists(@level['config'], 'shop') && pviewing_virtualchest('level'.@level['region'])) {
-			die();
-		
-		} else if(@sleep[0] > 0) {
-			@sleep[0]--;
-			
-		} else if(@level['title']) {
-			foreach(@p in @level['players']) {
-				if(ponline(@p)) {
-					title_msg(@p, @level['title'], '', 20, 40, 20);
-				}
-			}
-			@sleep[0] = 3;
-			@level['title'] = '';
-
-		} else if(@level['subtitle']) {
-			foreach(@i: @p in @level['players']) {
-				if(ponline(@p)) {
-					title_msg(@p, '', @level['subtitle'], 20, 40, 20);
-				}
-			}
-			@sleep[0] = 3;
-			@level['subtitle'] = '';
-			
-		} else if(@level['mobs']) {
-			foreach(@p in @level['players']) {
-				if(ponline(@p)) {
-					play_named_sound(ploc(@p), array('sound': 'entity.evocation_illager.prepare_summon', 'volume': 0.4), @p);
-				}
-			}
-			foreach(@mob in @level['mobs']) {
-				@locs = @level['arena']['spawns'];
-				if(is_array(@mob)) {
-					if(array_index_exists(@mob, 'pos')) {
-						@locs = @level['arena'][@mob['pos']];
-					}
-					@loc = @locs[rand(array_size(@locs))];
-					_spawn_mob(@mob, @loc, player());
-				} else {
-					@loc = @locs[rand(array_size(@locs))];
-					spawn_mob(@mob, 1, @loc);
-				}
-			}
-			@level['mobs'] = array();
-			@sleep[0] = 10;
-			
-		} else if(!@entities) {
-			foreach(@p in @level['players']) {
-				if(ponline(@p)) {
-					play_sound(ploc(@p), array('sound': 'LEVEL_UP', 'pitch': 0.7), @p);
-				}
-			}
-			@level['wave']++;
-			try {
-				@wave = @level['config']['waves'][@level['wave']];
-				if(array_index_exists(@wave, 'title')) {
-					@level['title'] = @wave['title'];
-				}
-				if(array_index_exists(@wave, 'music')) {
-					if(@level['music']) {
-						foreach(@p in @level['players']) {
-							if(ponline(@p)) {
-								stop_named_sound(@p, @level['music'], 'RECORDS');
-							}
-						}
-					}
-					@level['music'] = @wave['music'];
-					play_named_sound(ploc(@p), array('sound': @level['music'], 'volume': 5, 'category': 'RECORDS'));
-				}
-				if(array_index_exists(@wave, 'items')) {
-					foreach(@p in @level['players']) {
-						if(ponline(@p)) {
-							foreach(@item in @wave['items']) {
-								drop_item(@p, @item);
-							}
-						}
-					}
-				}
-				if(array_index_exists(@wave, 'subtitle')) {
-					@level['subtitle'] = @wave['subtitle'];
-				}
-				@level['mobs'] = @wave['mobs'];
-			} catch(IndexOverflowException @ex) {
-				clear_task();
-				_level_end(@level, true);
-			}
-		} else {
-			// Check random entity if it's still in region
-			@r = array_rand(@entities)[0];
-			if(!entity_exists(@entities[@r]) || !array_contains(sk_regions_at(entity_loc(@entities[@r])), @level['region'])) {
-				array_remove(@entities, @r);
-			}
-			
-			// If no players, we lose!
+		try {
+			// Check if players are still in play
 			if(!@level['players']) {
 				clear_task();
 				_level_end(@level, false);
 			}
+			foreach(@p in @level['spectators']) {
+				if(!array_contains(sk_current_regions(@p), @level['region'])) {
+					_level_remove_spectator(@p, @level);
+				}
+			}
+			
+			if(array_index_exists(@level['config'], 'shop') && pviewing_virtualchest('level'.@level['region'])) {
+				die();
+			
+			} else if(@sleep[0] > 0) {
+				@sleep[0]--;
+				
+			} else if(@level['title']) {
+				foreach(@p in @level['players']) {
+					if(ponline(@p)) {
+						title_msg(@p, @level['title'], if(array_index_exists(@level['config'], 'beta'), 'BETA', null), 20, 40, 20);
+					}
+				}
+				@sleep[0] = 3;
+				@level['title'] = '';
+
+			} else if(@level['subtitle']) {
+				foreach(@i: @p in @level['players']) {
+					if(ponline(@p)) {
+						title_msg(@p, '', @level['subtitle'], 20, 40, 20);
+					}
+				}
+				@sleep[0] = 3;
+				@level['subtitle'] = '';
+				
+			} else if(@level['mobs']) {
+				foreach(@p in @level['players']) {
+					if(ponline(@p)) {
+						play_named_sound(ploc(@p), array('sound': 'entity.evocation_illager.prepare_summon', 'volume': 0.4), @p);
+					}
+				}
+				foreach(@mob in @level['mobs']) {
+					@locs = @level['arena']['spawns'];
+					if(is_array(@mob)) {
+						if(array_index_exists(@mob, 'pos')) {
+							@locs = @level['arena'][@mob['pos']];
+						}
+						@loc = @locs[rand(array_size(@locs))];
+						_spawn_mob(@mob, @loc, player(), array());
+					} else {
+						@loc = @locs[rand(array_size(@locs))];
+						spawn_mob(@mob, 1, @loc);
+					}
+				}
+				@level['mobs'] = array();
+				@sleep[0] = 10;
+				
+			} else if(!@entities) {
+				foreach(@p in @level['players']) {
+					if(ponline(@p)) {
+						play_sound(ploc(@p), array('sound': 'LEVEL_UP', 'pitch': 0.7), @p);
+					}
+				}
+				@level['wave']++;
+				try {
+					@wave = @level['config']['waves'][@level['wave']];
+					if(array_index_exists(@wave, 'title')) {
+						@level['title'] = @wave['title'];
+					}
+					if(array_index_exists(@wave, 'music')) {
+						if(@level['music']) {
+							foreach(@p in @level['players']) {
+								if(ponline(@p)) {
+									stop_named_sound(@p, @level['music'], 'RECORDS');
+								}
+							}
+						}
+						@level['music'] = @wave['music'];
+						play_named_sound(ploc(@p), array('sound': @level['music'], 'volume': 5, 'category': 'RECORDS'));
+					}
+					if(array_index_exists(@wave, 'items')) {
+						foreach(@p in @level['players']) {
+							if(ponline(@p)) {
+								foreach(@item in @wave['items']) {
+									drop_item(@p, @item);
+								}
+							}
+						}
+					}
+					if(array_index_exists(@wave, 'subtitle')) {
+						@level['subtitle'] = @wave['subtitle'];
+					}
+					@level['mobs'] = @wave['mobs'];
+				} catch(IndexOverflowException @ex) {
+					clear_task();
+					_level_end(@level, true);
+				}
+			} else {
+				// Check random entity if it's still in region
+				@r = array_rand(@entities)[0];
+				if(!entity_exists(@entities[@r]) || !array_contains(sk_regions_at(entity_loc(@entities[@r])), @level['region'])) {
+					array_remove(@entities, @r);
+				}
+			}
+		} catch(Exception @ex) {
+			clear_task();
+			_level_end(@level, false);
 		}
 	});
 }
 
 proc _level_end(@level, @win) {
-	_remove_activity('level'.@level['region']);
+	if(!_remove_activity('level'.@level['region'])) {
+		die();
+	}
 	if(array_contains(all_virtualchests(), 'level'.@level['region'])) {
 		del_virtualchest('level'.@level['region']);
 	}
@@ -286,6 +307,10 @@ proc _level_end(@level, @win) {
 	unbind('openshop'.@level['region']);
 	unbind('pickup'.@level['region']);
 	unbind('shop'.@level['region']);
+	foreach(@mob in @level['config']['mobs']) {
+		include('../mobs.library/'.to_lower(@mob).'.ms');
+		_unload_mob(@level);
+	}
 	foreach(@p in @level['players']) {
 		if(ponline(@p)) {
 			if(@win) {
