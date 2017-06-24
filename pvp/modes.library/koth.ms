@@ -28,8 +28,11 @@ proc _interval(@pvp, @id) {
     		if(array_index_exists(@pvp['arena'], 'kothbeacon')) {
     			set_block_at(@pvp['arena']['kothbeacon'], '95:'.if(@kingteam, '11', '14'));
     		}
-            if(@score >= -1) {
-                _pvp_end_match(@id, @pvp['team'][@kingteam]['players']);
+            if(@score >= -11) {
+                play_sound(@pvp['arena']['kothbeacon'], array('sound': 'NOTE_PLING', 'volume': 5));
+                if(@score >= -1) {
+                    _pvp_end_match(@id, @pvp['team'][@kingteam]['players']);
+                }
             }
     	} else if(array_index_exists(@pvp['arena'], 'kothbeacon')) {
             if(@kingteam == -2) {
@@ -63,8 +66,11 @@ proc _interval(@pvp, @id) {
     		if(array_index_exists(@pvp['arena'], 'kothbeacon')) {
     			set_block_at(@pvp['arena']['kothbeacon'], '95:'.(array_index(array_keys(@pvp['players']), @king) + 1));
     		}
-            if(@score >= -1) {
-                _pvp_end_match(@id, array(@king));
+            if(@score >= -11) {
+                play_sound(@pvp['arena']['kothbeacon'], array('sound': 'NOTE_PLING', 'volume': 5));
+                if(@score >= -1) {
+                    _pvp_end_match(@id, array(@king));
+                }
             }
     	} else {
     		if(@team['size'] == 1) {
