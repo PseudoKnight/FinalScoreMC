@@ -14,6 +14,18 @@
 	'tnt': an array of primed tnt entities
 */
 
+// Setup exception handler to clean-up game
+set_uncaught_exception_handler(closure(@ex){
+	console(@ex['classType'].': '.@ex['message'], false);
+	foreach(@trace in @ex['stackTrace']) {
+		console(split('LocalPackages', @trace['file'])[-1].':'.@trace['line'].' '.@trace['id'], false);
+	}
+	msg(color('red').@ex['message']);
+	msg(color('yellow').'Cleaning up game...');
+	_snake_cleanup(import('snake'));
+	return(true);
+});
+
 include('util.ms');
 include('powerups.ms');
 include('snake.ms');
@@ -216,12 +228,10 @@ proc _snake_start_task(@game) {
 		if(@playersAlive == 0) {
 			@game['botsOnly'] = true;
 			if(@game['endless']) {
-				clear_task();
 				_snake_end(null, @game);
 			}
 		}
 		if((@alive < 2 && array_size(@game['snakes']) > 1) || @alive < 1) {
-			clear_task();
 			_snake_end(@active, @game);
 		}
 	});
@@ -324,8 +334,14 @@ proc _snake_end(@winner, @game) {
 			}
 		}
 	}
+	_snake_cleanup(@game);
+}
+
+proc _snake_cleanup(@game) {
 	_snake_unbind_events();
 	_snake_stop_song();
+	clear_task(@game['interval']);
+	del_virtualchest('snake');
 	set_timeout(3000, closure(){
 		foreach(@player: @snake in @game['snakes']) {
 			_snake_remove(@player, @game);
