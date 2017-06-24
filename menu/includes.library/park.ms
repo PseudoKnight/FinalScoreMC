@@ -80,7 +80,7 @@ proc _create_park_menu(){
 				if(@cake['type'] == 'challenge') {
 					@times = get_value('times', @name);
 					if(@times) {
-						@time = @times['top'][-1][1];
+						@time = @times[-1][2];
 						if(@time >= 60) {
 							@time = simple_date('m\u0027m\u0027 s.S', integer(@time * 1000));
 						} else {

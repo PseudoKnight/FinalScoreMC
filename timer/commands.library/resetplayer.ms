@@ -11,11 +11,11 @@ if(is_null(@courses)) {
 }
 @count = 0;
 foreach(@key: @time in @courses) {
-    if(is_array(@time) && array_index_exists(@time, 'top')) {
-        foreach(@i: @t in @time['top']) {
-            if(@t[0] == @player) {
+    if(is_array(@time) && @key != 'times') {
+        foreach(@i: @t in @time) {
+            if(@t[0] == @puuid) {
                 msg('Removing '.@player.' from top ten in '.split('.', @key)[1]);
-                array_remove(@time['top'], @i);
+                array_remove(@time, @i);
                 store_value(@key, @time);
                 break();
             }

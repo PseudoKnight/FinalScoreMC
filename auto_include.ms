@@ -364,7 +364,7 @@ proc _distance(@loc1, @loc2, @3d = true) {
 */
 proc _get_uuid(@player, @autocomplete = true, @dashless = true) {
 	if(ponline(@player)) {
-		return(puuid(@player, true));
+		return(puuid(@player, @dashless));
 	} else {
 		@uuidDashed = get_value('players', @player);
 		if(is_null(@uuidDashed)) {
