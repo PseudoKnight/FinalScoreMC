@@ -78,22 +78,16 @@ proc _create_park_menu(){
 				@lore[] = color('gold').@cake['coins'].' coins';
 				@lore[] = color('green').'Achieved by '.array_size(@cake['players']).' players';
 				if(@cake['type'] == 'challenge') {
-					@times = get_values('times', @name);
+					@times = get_value('times', @name);
 					if(@times) {
-						@total = 0.0;
-						foreach(@time in @times) {
-							if(is_array(@time)) {
-								continue();
-							}
-							@total += @time;
-						}
-						@avgtime = integer(round((@total / (array_size(@times) - 1)) * 1000));
-						if(@avgtime >= 60) {
-							@avgtime = simple_date('m\u0027m\u0027s\u0027s\u0027', @avgtime);
+						@time = @times['top'][-1][1];
+						if(@time >= 60) {
+							@time = simple_date('m\u0027m\u0027 s.S', integer(@time * 1000));
 						} else {
-							@avgtime = simple_date('s\u0027s\u0027', @avgtime);
+							@time = simple_date('s.S', integer(@time * 1000));
 						}
-						@lore[] = color('green').'Average best time: ' . @avgtime;
+						@time = substr(@time, 0, length(@time) - 2).'s';
+						@lore[] = color('green').'Time to beat: ' . @time;
 					}
 				}
 				@lore[] = color('dark_gray').'Run: /warp '.@name;
