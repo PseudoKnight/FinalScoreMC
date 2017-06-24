@@ -1,6 +1,7 @@
 title: 'Supernatural Hunt'
 author: 'NinjaKing1200'
 levels: 5
+beta: true
 shop:
     0:
         name: STONE_SWORD

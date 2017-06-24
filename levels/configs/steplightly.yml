@@ -1,6 +1,8 @@
 title: 'Step Lightly'
 author: 'gothem8'
 levels: 5
+mobs:
+    - EVILSNOWMAN
 gear:
     0:
         name: WOOD_SWORD
@@ -196,13 +198,24 @@ waves:
             - 'SKELETON:STRAY'
             - 'SKELETON:STRAY'
     9:
-        subtitle: 'Grave Digger'
+        subtitle: 'Nice to Snow You'
         mobs:
-            - ZOMBIE
-            - ZOMBIE
-            - ZOMBIE
-            - ZOMBIE
-            - CREEPER
+            - type: SNOWGOLEM
+              targetnear: 16
+            - type: SNOWGOLEM
+              targetnear: 16
+            - type: SNOWGOLEM
+              targetnear: 16
+            - type: SNOWGOLEM
+              targetnear: 16
+            - type: SNOWGOLEM
+              targetnear: 16
+            - type: SNOWGOLEM
+              targetnear: 16
+            - type: SNOWGOLEM
+              targetnear: 16
+            - type: SNOWGOLEM
+              targetnear: 16
     10:
         subtitle: 'The Pack'
         mobs:
@@ -387,14 +400,10 @@ waves:
             - IRONGOLEM
             - IRONGOLEM
     24:
-        subtitle: 'BOSS: Trivoken'
+        subtitle: 'BOSS: Illusioner'
         mobs:
-            - type: EVOKER
+            - type: ILLUSIONER
               pos: 'center'
-              rider:
-                  type: EVOKER
-                  rider:
-                      type: EVOKER
     25:
         title: 'Never Say Nether'
         subtitle: 'Pork Chops'
