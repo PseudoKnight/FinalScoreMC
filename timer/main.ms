@@ -22,8 +22,9 @@ bind(player_join, null, null, @event) {
 	queue_push(closure(){
 		try {
 			@top = get_value('times');
+			@uuid = puuid(player(), true);
 			for(@i = 0, @i < array_size(@top), @i++) {
-				if(@top[@i][0] == player()) {
+				if(@top[@i][0] == @uuid) {
 					@pstate = _pstate(player());
 					@rank = '&e\u278A';
 					switch(@i) {
