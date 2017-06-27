@@ -76,6 +76,7 @@ proc _shard_create(@rules){
 				'environment': 'NORMAL',
 				'seed': null,
 				'generator': 'CleanroomGenerator:.',
+				'difficulty': 'HARD',
 			));
 			@stop = time();
 			console('Created shard ('.(@stop - @start).'ms)', false);
