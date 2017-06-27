@@ -93,6 +93,7 @@ member:
       command.vanish: true
       bl.getbanners: true
       advancement.all: false
+      command.heal: true
     custom:
       stargate.create.personal: false
       stargate.create.network: false
@@ -112,7 +113,6 @@ regular:
       limitedworldedit: true
       fawe.worldguard: true
       command.time: true
-      command.heal: true
       command.playsound: true
   inheritance: member
 donor:

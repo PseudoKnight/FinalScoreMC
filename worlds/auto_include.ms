@@ -11,6 +11,17 @@ proc _worlds_config() {
 }
 
 /*
+	Returns world group
+*/
+proc _world_group(@world) {
+	@worlds = _worlds_config();
+	if(array_index_exists(@worlds, @world)) {
+		return(@worlds[@world]['group']);
+	}
+	return(null);
+}
+
+/*
 	Returns world alias when given world folder name
 */
 proc _worldname(@world) {

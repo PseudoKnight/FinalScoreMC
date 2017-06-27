@@ -1,5 +1,5 @@
 *:/tip = >>>
-	@tips = import('tips', array('Sometimes there\'s no more tips.'));
+	@tips = import(_world_group(pworld()).'-tips', array('Sometimes there\'s no more tips.'));
 	@tip = @tips[rand(array_size(@tips))];
 	msg(colorize('&7TIP: &r'.@tip));
 <<<

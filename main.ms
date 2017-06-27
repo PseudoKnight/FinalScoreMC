@@ -1,6 +1,8 @@
-@file = read('tips.txt');
-@tips = split('\n\n', @file);
-export('tips', @tips);
+foreach(@group in array('survival', 'dev', 'minigames')) {
+	@file = read(@group.'-tips.txt');
+	@tips = split('\n\n', @file);
+	export(@group.'-tips', @tips);
+}
 
 set_cron('*/5 * * * *', closure(){
 	foreach(@world in get_worlds()) {
@@ -208,7 +210,7 @@ bind(player_join, null, null, @event) {
 				msg('\n '.@motd);
 				msg(color('1').color('m').'\n\u2575'.@line.color('1').'\u2575');
 			} else {
-				@tips = import('tips');
+				@tips = import(_world_group(pworld()).'-tips');
 				if(@tips) {
 					@tip = @tips[rand(array_size(@tips))];
 					msg('\n '.colorize(@tip));
