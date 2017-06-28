@@ -163,6 +163,7 @@ builder:
       command.cloud: true
       worldedit.navigation.*: true
       worldguard.region.claim: true
+      bl.getbanners: true
     world:
       livemap.tracers: true
     world3:
@@ -182,6 +183,7 @@ engineer:
       fawe.worldguard.member: true
     custom:
       worldguard.region.*: true
+      fawe.worldguard: true
       fawe.worldguard.member: true
       limitedworldedit: true
   inheritance: builder
