@@ -117,16 +117,20 @@ proc _spawn_mob(@mob, @loc, @owner, @teammates) {
 				}
 				set_interval(1500, closure() {
 					try {
-						@loc1 = entity_loc(@m);
-						foreach(@p in players_in_radius(@loc1, @range)) {
-							if(!array_contains(@teammates, @p)) {
-								@loc2 = ploc(@p);
-								@loc2['y'] += 2;
-								@loc1['yaw'] = get_yaw(@loc1, @loc2);
-								@loc1['pitch'] = get_pitch(@loc1, @loc2);
-								set_entity_loc(@m, @loc1);
-								shoot_projectile(@m, @projectile, @p);
-								break();
+						if(get_entity_health(@m) == 0.0) {
+							clear_task();
+						} else {
+							@loc1 = entity_loc(@m);
+							foreach(@p in players_in_radius(@loc1, @range)) {
+								if(!array_contains(@teammates, @p)) {
+									@loc2 = ploc(@p);
+									@loc2['y'] += 2;
+									@loc1['yaw'] = get_yaw(@loc1, @loc2);
+									@loc1['pitch'] = get_pitch(@loc1, @loc2);
+									set_entity_loc(@m, @loc1);
+									shoot_projectile(@m, @projectile, @p);
+									break();
+								}
 							}
 						}
 					} catch(BadEntityException @ex) {

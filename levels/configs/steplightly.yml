@@ -483,9 +483,9 @@ waves:
             - 'PIGZOMBIE:400'
             - 'PIGZOMBIE:400'
     30:
-        subtitle: '4 Horsemen & Apocalypse'
+        subtitle: 'FINAL BOSS: 4 Horsemen & Apocalypse'
         mobs:
-            - type: 'HORSE:SKELETON'
+            - type: 'HORSE:ZOMBIE'
               age: 0
               pos: 'center'
               tame: true
@@ -493,7 +493,7 @@ waves:
                   saddle:
                       name: SADDLE
               rider:
-                  type: SKELETON
+                  type: ZOMBIE
                   gear:
                       helmet:
                           name: IRON_HELMET
@@ -529,7 +529,7 @@ waves:
                   saddle:
                       name: SADDLE
               rider:
-                  type: SKELETON
+                  type: 'SKELETON:STRAY'
                   gear:
                       helmet:
                           name: IRON_HELMET
@@ -539,7 +539,7 @@ waves:
                           name: IRON_LEGGINGS
                       boots:
                           name: IRON_BOOTS
-            - type: 'HORSE:SKELETON'
+            - type: 'HORSE:ZOMBIE'
               age: 0
               pos: 'center'
               tame: true
@@ -547,7 +547,7 @@ waves:
                   saddle:
                       name: SADDLE
               rider:
-                  type: SKELETON
+                  type: 'ZOMBIE:HUSK'
                   gear:
                       helmet:
                           name: IRON_HELMET

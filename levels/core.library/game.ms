@@ -194,7 +194,7 @@ proc _level_start(@level) {
 			} else if(@level['title']) {
 				foreach(@p in @level['players']) {
 					if(ponline(@p)) {
-						title_msg(@p, @level['title'], if(array_index_exists(@level['config'], 'beta'), 'BETA', null), 20, 40, 20);
+						title_msg(@p, @level['title'], null, 20, 40, 20);
 					}
 				}
 				@sleep[0] = 3;
