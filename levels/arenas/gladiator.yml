@@ -1,0 +1,22 @@
+classic:
+    name: DIAMOND_SWORD
+    display: 'Classic'
+    lore:
+        - 'by rivergod'
+ominous:
+    name: WOOD_SWORD
+    display: 'Ominous'
+    lore:
+        - 'by PseudoKnight'
+        - '(experimental)'
+steplightly:
+    name: WOOD_SWORD
+    display: 'Step Lightly'
+    lore:
+        - 'by gothem8'
+supernaturalhunt:
+    name: WOOD_SWORD
+    display: 'Supernatural Hunt'
+    lore:
+        - 'by NinjaKing1200'
+        - '(beta)'

@@ -58,18 +58,6 @@
 			store_value('level', @name, @arena);
 			die('Set schematic');
 			
-		case 'setconfigs':
-			if(!has_permission('group.engineer')) {
-				die(color('red').'No permission.');
-			}
-			@arena = get_value('level', @name);
-			if(!@arena) {
-				@arena = associative_array();
-			}
-			@arena['configs'] = parse_args($);
-			store_value('level', @name, @arena);
-			die('Set configs for this region.');
-			
 		case 'start':
 			@region = sk_current_regions();
 			if(!@region) {
@@ -80,6 +68,14 @@
 			if(!@arena) {
 				die('This region is not defined as an arena.');
 			}
+			
+			@scripts = '';
+			try {
+				@scripts = read('arenas/'.@region.'.yml');
+			} catch(IOException @ex) {
+				die('This are no levels defined for this region.');
+			}
+			@scripts = yml_decode(@scripts);
 			
 			@activities = import('activities');
 			if(@activities && array_index_exists(@activities, 'level'.@region)) {
@@ -95,10 +91,10 @@
 				'size': 9,
 			);
 			@index = 0;
-			foreach(@id in @arena['configs']) {
+			foreach(@id: @item in @scripts) {
 				@menu[@index] = array(
-					'name': 'WOOD_SWORD',
-					'meta': array('display': @id, 'flags': array('HIDE_ATTRIBUTES')),
+					'name': @item['name'],
+					'meta': array('display': @item['display'], 'lore': @item['lore'], 'flags': array('HIDE_ATTRIBUTES')),
 				);
 				@index++;
 			}
@@ -118,7 +114,7 @@
 				if(@item && @item['meta'] && @item['meta']['display']) {
 					close_pinv(); // unbinds and deletes menu
 					
-					@name = to_lower(@item['meta']['display']);
+					@name = replace(to_lower(@item['meta']['display']), ' ', '');
 					@level = array(
 						'name': @name,
 						'wave': 0,
@@ -131,7 +127,7 @@
 						'world': pworld(),
 						'arena': @arena,
 						'region': @region,
-						'config': yml_decode(read('configs/'.@name.'.yml'))
+						'config': yml_decode(read('scripts/'.@name.'.yml'))
 					);
 					_add_activity('level'.@region, to_upper(@region).': '.@level['config']['title']);
 					set_world_time(@level['world'], 'sunset');
