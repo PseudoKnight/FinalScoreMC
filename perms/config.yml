@@ -100,6 +100,7 @@ member:
       worldguard.region.claim: false
       command.sethome: false
       advancement.all: false
+      deadbolt.user.create.*: false
   inheritance: default
 regular:
   permissions:
@@ -164,6 +165,7 @@ builder:
       worldedit.navigation.*: true
       worldguard.region.claim: true
       bl.getbanners: true
+      deadbolt.user.create.*: true
     world:
       livemap.tracers: true
     world3:
