@@ -88,9 +88,11 @@ proc _level_start(@level) {
 		}
 	}
 	
-	foreach(@mob in @level['config']['mobs']) {
-		include('../mobs.library/'.to_lower(@mob).'.ms');
-		_load_mob(@level);
+	if(array_index_exists(@level['config'], 'mobs')) {
+		foreach(@mob in @level['config']['mobs']) {
+			include('../mobs.library/'.to_lower(@mob).'.ms');
+			_load_mob(@level);
+		}
 	}
 	
 	if(array_index_exists(@level['config'], 'shop')) {
