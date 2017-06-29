@@ -12,15 +12,11 @@ if(array_size(@args) != 3
 
 if(@args[0] === 'start') {
 
+    set_phealth(@player, 20);
     set_phunger(@player, 20);
     set_psaturation(@player, 5);
     set_ponfire(@player, 0);
-    @restartButton = associative_array(0: associative_array(
-        'type': 371,
-        'meta': array(
-            'display': color('green').color('bold').'Restart Button'
-        ),
-    ));
+    @restartButton = array(0: array('type': 371, 'meta': array('display': color('green').color('bold').'Restart Button')));
     set_pinv(@player, @restartButton);
 
     if(array_index_exists(@timers, @player)) {
