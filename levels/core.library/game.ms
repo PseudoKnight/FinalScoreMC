@@ -310,9 +310,11 @@ proc _level_end(@level, @win) {
 	unbind('openshop'.@level['region']);
 	unbind('pickup'.@level['region']);
 	unbind('shop'.@level['region']);
-	foreach(@mob in @level['config']['mobs']) {
-		include('../mobs.library/'.to_lower(@mob).'.ms');
-		_unload_mob(@level);
+	if(array_index_exists(@level['config'], 'mobs')) {
+		foreach(@mob in @level['config']['mobs']) {
+			include('../mobs.library/'.to_lower(@mob).'.ms');
+			_unload_mob(@level);
+		}
 	}
 	foreach(@p in @level['players']) {
 		if(ponline(@p)) {
