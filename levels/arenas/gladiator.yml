@@ -3,20 +3,18 @@ classic:
     display: 'Classic'
     lore:
         - 'by rivergod'
-ominous:
-    name: WOOD_SWORD
-    display: 'Ominous'
-    lore:
-        - 'by PseudoKnight'
-        - '(experimental)'
+        - 'No Upgrades. Endure the onslaught.'
 steplightly:
     name: WOOD_SWORD
     display: 'Step Lightly'
     lore:
         - 'by gothem8'
+        - 'Buy items with levels.'
+        - 'Sell items to get more levels.'
 supernaturalhunt:
-    name: WOOD_SWORD
+    name: STONE_SWORD
     display: 'Supernatural Hunt'
     lore:
         - 'by NinjaKing1200'
-        - '(beta)'
+        - 'Buy items with levels.'
+        - 'Sell items to get more levels.'

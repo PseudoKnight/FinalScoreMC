@@ -18,10 +18,10 @@ shop:
         cost: 4
     3:
         name: IRON_AXE
-        cost: 3
+        cost: 2
     4:
         name: DIAMOND_AXE
-        cost: 4
+        cost: 3
     5:
         name: BOW
         cost: 3
@@ -39,6 +39,13 @@ shop:
                 extended: true
                 type: SPEED
     12:
+        name: POTION
+        cost: 1
+        meta:
+            base:
+                extended: true
+                type: STRENGTH
+    12:
         name: GOLDEN_APPLE
         cost: 3
     13:
@@ -48,13 +55,6 @@ shop:
             base:
                 upgraded: true
                 type: INSTANT_HEAL
-    14:
-        name: TIPPED_ARROW
-        cost: 1
-        meta:
-            base:
-                extended: true
-                type: WEAKNESS
     15:
         name: NETHER_STAR
         cost: 8
@@ -127,12 +127,14 @@ waves:
             - ENDERMITE
             - ENDERMITE
             - ENDERMITE
+            - ENDERMITE
     2:
         subtitle: 'Parasites'
         mobs:
             - ENDERMITE
             - ENDERMITE
             - ENDERMITE
+            - SILVERFISH
             - SILVERFISH
             - SILVERFISH
             - SILVERFISH
@@ -155,6 +157,7 @@ waves:
         mobs:
             - 'ZOMBIE:HUSK-BABY'
             - 'ZOMBIE:HUSK-BABY'
+            - SILVERFISH
             - SILVERFISH
             - SILVERFISH
     6:
@@ -185,7 +188,7 @@ waves:
         music: 'record.far'
         mobs:
             - type: POLARBEAR
-              age: -800
+              age: -400
             - POLARBEAR
             - POLARBEAR
             - POLARBEAR
@@ -198,7 +201,7 @@ waves:
             - 'SKELETON:STRAY'
             - 'SKELETON:STRAY'
     9:
-        subtitle: 'Nice to Snow You'
+        subtitle: 'Nice Snowing Ya'
         mobs:
             - type: SNOWGOLEM
               targetnear: 16
@@ -310,15 +313,14 @@ waves:
             - ENDERMITE
             - ENDERMITE
     15:
-        subtitle: 'Up, Up, & Boom'
+        subtitle: 'Arachnids'
         mobs:
-            - CREEPER
-            - CREEPER
-            - CREEPER
-            - CREEPER
-            - CREEPER
-            - CREEPER
-            - SHULKER
+            - CAVESPIDER
+            - CAVESPIDER
+            - SPIDER
+            - SPIDER
+            - SPIDER
+            - SPIDER
     16:
         subtitle: 'Hot and Cold'
         mobs:
@@ -329,18 +331,7 @@ waves:
             - 'SKELETON:STRAY'
             - 'SKELETON:STRAY'
     17:
-        subtitle: 'Spikey Fish'
-        mobs:
-            - type: GUARDIAN
-              pos: 'center'
-            - type: GUARDIAN
-              pos: 'center'
-            - type: GUARDIAN
-              pos: 'center'
-            - type: GUARDIAN
-              pos: 'center'
-    18:
-        subtitle: 'BOSS: Atomic Creeper'
+        subtitle: 'Atomic Creeper'
         mobs:
             - type: 'CREEPER:POWERED'
               pos: 'center'
@@ -351,6 +342,13 @@ waves:
                   - id: 1
                     strength: 0
                     seconds: 300
+    18:
+        subtitle: 'BOSS: Spike Lord'
+        mobs:
+            - type: CAVESPIDER
+              rider:
+                  type: GUARDIAN
+              pos: 'center'
     19:
         title: 'The Outcasts'
         subtitle: 'Axe Murderers'
@@ -390,6 +388,7 @@ waves:
             - SILVERFISH
             - SILVERFISH
             - SILVERFISH
+            - SILVERFISH
     23:
         subtitle: 'Onslaught'
         mobs:
@@ -404,6 +403,8 @@ waves:
         mobs:
             - type: ILLUSIONER
               pos: 'center'
+            - SILVERFISH
+            - SILVERFISH
     25:
         title: 'Never Say Nether'
         subtitle: 'Pork Chops'
@@ -496,31 +497,13 @@ waves:
                   type: ZOMBIE
                   gear:
                       helmet:
-                          name: IRON_HELMET
+                          name: DIAMOND_HELMET
                       chestplate:
-                          name: IRON_CHESTPLATE
+                          name: DIAMOND_CHESTPLATE
                       leggings:
-                          name: IRON_LEGGINGS
+                          name: DIAMOND_LEGGINGS
                       boots:
-                          name: IRON_BOOTS
-            - type: 'HORSE:SKELETON'
-              age: 0
-              pos: 'center'
-              tame: true
-              tags:
-                  saddle:
-                      name: SADDLE
-              rider:
-                  type: SKELETON
-                  gear:
-                      helmet:
-                          name: IRON_HELMET
-                      chestplate:
-                          name: IRON_CHESTPLATE
-                      leggings:
-                          name: IRON_LEGGINGS
-                      boots:
-                          name: IRON_BOOTS
+                          name: DIAMOND_BOOTS
             - type: 'HORSE:SKELETON'
               age: 0
               pos: 'center'
@@ -532,13 +515,31 @@ waves:
                   type: 'SKELETON:STRAY'
                   gear:
                       helmet:
-                          name: IRON_HELMET
+                          name: DIAMOND_HELMET
                       chestplate:
-                          name: IRON_CHESTPLATE
+                          name: DIAMOND_CHESTPLATE
                       leggings:
-                          name: IRON_LEGGINGS
+                          name: DIAMOND_LEGGINGS
                       boots:
-                          name: IRON_BOOTS
+                          name: DIAMOND_BOOTS
+            - type: 'HORSE:SKELETON'
+              age: 0
+              pos: 'center'
+              tame: true
+              tags:
+                  saddle:
+                      name: SADDLE
+              rider:
+                  type: 'SKELETON:STRAY'
+                  gear:
+                      helmet:
+                          name: DIAMOND_HELMET
+                      chestplate:
+                          name: DIAMOND_CHESTPLATE
+                      leggings:
+                          name: DIAMOND_LEGGINGS
+                      boots:
+                          name: DIAMOND_BOOTS
             - type: 'HORSE:ZOMBIE'
               age: 0
               pos: 'center'
@@ -547,16 +548,16 @@ waves:
                   saddle:
                       name: SADDLE
               rider:
-                  type: 'ZOMBIE:HUSK'
+                  type: 'SKELETON:STRAY'
                   gear:
                       helmet:
-                          name: IRON_HELMET
+                          name: DIAMOND_HELMET
                       chestplate:
-                          name: IRON_CHESTPLATE
+                          name: DIAMOND_CHESTPLATE
                       leggings:
-                          name: IRON_LEGGINGS
+                          name: DIAMOND_LEGGINGS
                       boots:
-                          name: IRON_BOOTS
+                          name: DIAMOND_BOOTS
             - type: 'SKELETON:WITHER'
               pos: 'center'
               effects:
