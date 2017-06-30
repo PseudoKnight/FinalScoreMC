@@ -1,7 +1,7 @@
 if(@id == 'all') {
 
     @top = get_value('times');
-    msg(colorize('&e&m|------&e&l[ TOP SCORE TOTALS ]&e&m---|'));
+    msg(colorize('&e&m|------------------&e&l[ TOP SCORE TOTALS ]'));
     for(@i = 0, @i < array_size(@top), @i++) {
         msg(colorize(' '.if(@i < 9, '&80').'&7'.(@i + 1).'&a [ '.@top[@i][2].' ] &r'.@top[@i][1]));
     }
@@ -20,7 +20,7 @@ if(@id == 'all') {
     if(!@times) {
         die('No top times for '.to_upper(@id).'.');
     }
-    msg(colorize('&e&m|------------------&e&l[ TOP TIMES - '.to_upper(@id).' ]&e&m---|'));
+    msg(colorize('&e&m|-------------------&e&l[ TOP TIMES: '.to_upper(@id).' ]'));
     @lastTime = 1.0;
     @lastCount = 0;
     for(@i = 0, @i < array_size(@times), @i++) {
