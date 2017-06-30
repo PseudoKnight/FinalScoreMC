@@ -8,6 +8,12 @@ bind(inventory_click, null, null, @event) {
 				case 'Open':
 					popen_virtualchest(@action[1]);
 					play_sound(ploc(), array('sound': 'CLICK', 'pitch': 1.2), player());
+				case 'Load':
+					@menu = @action[1];
+					include('includes.library/'.@menu.'.ms');
+					_refresh_menu();
+					popen_virtualchest(@menu);
+					play_sound(ploc(), array('sound': 'CLICK', 'pitch': 1.2), player());
 				case 'Run':
 					run_cmd(@action[1]);
 					close_pinv();

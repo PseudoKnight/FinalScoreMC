@@ -7,7 +7,7 @@ proc _create_park_menu(){
 			'name': 'IRON_SWORD',
 			'meta': associative_array(
 				'display': color('green').'PVP Arenas',
-				'lore': array(color('dark_gray').'Open: pvp'),
+				'lore': array(color('dark_gray').'Load: pvp'),
 				'flags': array('HIDE_ATTRIBUTES'),
 			),
 		),
@@ -131,14 +131,14 @@ proc _create_park_menu(){
 	});
 
 	queue_push(closure(){
-		@pvp = @main[];
-		@pvp['id'] = 'pvp';
-		@pvp['title'] = 'PVP Arenas';
 		@arenas = get_values('arena');
-		@slot = 0;
 		queue_push(closure(){
+			@pvp = @main[];
+			@pvp['id'] = 'pvp';
+			@pvp['title'] = 'PVP Arenas';
+			@pvp['inv'] = array();
+			@pvp['lastCount'] = 0;
 			foreach(@name: @arena in @arenas) {
-				if(@slot > 35, break());
 				if(array_index_exists(@arena, 'parent'), continue());
 				@name = split('.', @name)[1];
 				@lore = array();
@@ -157,7 +157,7 @@ proc _create_park_menu(){
 				@lore[] = color('green').@min
 						.if(array_index_exists(@arena, 'max'), '-'.@arena['max'], '+').' players';
 				@lore[] = color('dark_gray').'Run: /warp '.@name;
-				@pvp[@slot] = associative_array(
+				@pvp['inv'][] = associative_array(
 					'type': 306,
 					'qty': @min,
 					'meta': associative_array(
@@ -166,12 +166,11 @@ proc _create_park_menu(){
 						'flags': array('HIDE_ATTRIBUTES'),
 					),
 				);
-				@slot++;
 			}
 			@pvp[57]['name'] = 'DIAMOND_SWORD';
-			create_virtualchest(@pvp);
-			@arenas = null;
-			@pvp = null;
+			export('menu.pvp', @pvp);
+			include('pvp.ms');
+			_refresh_menu();
 		});
 	});
 
