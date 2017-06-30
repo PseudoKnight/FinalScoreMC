@@ -57,6 +57,9 @@ proc _level_start(@level) {
 					_level_remove_spectator(player(), @level);
 				} else if(array_contains(@level['players'], player())) {
 					_level_remove_player(player(), @level);
+					if(!@level['players']) {
+						_level_end(@level, false);
+					}
 				}
 			} else if(@to && !@from) {
 				if(@level['wave'] < 2) {
@@ -109,9 +112,10 @@ proc _level_start(@level) {
 					_level_add_player(@p, @level);
 					set_ploc(@p, ploc());
 					ptake_item(399, 1);
-					break();
+					die();
 				}
 			}
+			msg('Ghost player must be within 16 meters to resurrect!')
 		}
 		
 		bind(item_pickup, array('id': 'pickup'.@level['region']), null, @event, @level) {
@@ -124,7 +128,7 @@ proc _level_start(@level) {
 					if(array_index_exists(@level['shop'], @item['name'])) {
 						@refund = @level['shop'][@item['name']] / 2;
 					} else {
-						@refund = round(0.5 / min(16, material_info(@item['type'])['maxStacksize']), 2);
+						@refund = round(1 / min(16, material_info(@item['type'])['maxStacksize']), 2);
 					}
 					@item['meta']['lore'] = array('Sell each for '.@refund.' levels');
 					modify_event('item', @item);
@@ -174,12 +178,12 @@ proc _level_start(@level) {
 	}
 
 	@sleep = array(3);
-	set_interval(1000, closure(){
+	@level['task'] = set_interval(1000, closure(){
 		try {
 			// Check if players are still in play
 			if(!@level['players']) {
-				clear_task();
 				_level_end(@level, false);
+				die();
 			}
 			foreach(@p in @level['spectators']) {
 				if(!array_contains(sk_current_regions(@p), @level['region'])) {
@@ -254,7 +258,7 @@ proc _level_start(@level) {
 							}
 						}
 						@level['music'] = @wave['music'];
-						play_named_sound(ploc(@p), array('sound': @level['music'], 'volume': 5, 'category': 'RECORDS'));
+						play_named_sound(ploc(@p), array('sound': @level['music'], 'volume': 3, 'category': 'RECORDS'));
 					}
 					if(array_index_exists(@wave, 'items')) {
 						foreach(@p in @level['players']) {
@@ -270,7 +274,6 @@ proc _level_start(@level) {
 					}
 					@level['mobs'] = @wave['mobs'];
 				} catch(IndexOverflowException @ex) {
-					clear_task();
 					_level_end(@level, true);
 				}
 			} else {
@@ -281,16 +284,14 @@ proc _level_start(@level) {
 				}
 			}
 		} catch(Exception @ex) {
-			clear_task();
 			_level_end(@level, false);
 		}
 	});
 }
 
 proc _level_end(@level, @win) {
-	if(!_remove_activity('level'.@level['region'])) {
-		die();
-	}
+	clear_task(@level['task']);
+	_remove_activity('level'.@level['region']);
 	if(array_contains(all_virtualchests(), 'level'.@level['region'])) {
 		del_virtualchest('level'.@level['region']);
 	}
