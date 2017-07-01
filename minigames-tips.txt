@@ -1,10 +1,10 @@
 To open a teleport menu, right-click while holding the book titled "Park Directory".
 
-The park is filled with cakes that reward coins, some are behind challenges, while secret cakes are often hidden around landmarks or behing puzzles. You can use "/cake list" to track your progress.
+The park is filled with cakes that reward coins, some are challenges, while secret cakes are often hidden around landmarks or puzzles. Use "/cake list" to track your progress.
 
 When you get 75% or more of the challenge or secret cakes, you get a special trophy next to your name in chat.
 
-A few park activitiess offer chat badge trophies, including parkour completion percentages, secret cake discovery percentages, FrogWare, Snake, and CubeClimber.
+A few park activities offer chat badge trophies, including parkour completion percentages, secret cake discovery percentages, FrogWare, Snake, and CubeClimber.
 
 You can use "/warp" to teleport directly to activities for which you know the name. (eg. "/warp showdown")
 
@@ -16,4 +16,4 @@ Your inventory here is separate from your survival inventory.
 
 At any time you can type "/survival" to go back to where you were last in the survival worlds.
 
-If anything breaks in the park, you can contact park staff (orange names), server staff (blue names), or directly to PseudoKnight with "/msg PseudoKnight halp, it borked, and here's how...". Details can help us track down the problem.
+If anything breaks in the park, contact park staff (orange names) or directly to PseudoKnight with "/msg PseudoKnight halp..." with details to help us track down the problem.
