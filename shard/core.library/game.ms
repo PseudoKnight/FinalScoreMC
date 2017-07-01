@@ -107,6 +107,11 @@ proc _shard_create(@rules){
 				
 				@loc = get_highest_block_at(@centerX, @centerZ, 'shard');
 				
+				// Set dynmap marker
+				if(extension_exists('CHDynmap')) {
+					include('../util.library/dynmap.ms');
+				}
+				
 				// Set world settings
 				set_spawn(@loc);
 				set_world_time('shard', get_world_time(@world));
@@ -204,6 +209,9 @@ proc _shard_create(@rules){
 								}
 							});
 						} else if(@count == 0) {
+							if(extension_exists('CHDynmap')) {
+								dm_delete_marker('markers', 'shard');
+							}
 							unbind('shard-worldchanged');
 							foreach(@p in all_players()) {
 								if(pworld(@p) == 'shard') {

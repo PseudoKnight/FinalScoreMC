@@ -97,12 +97,12 @@ proc _create_world(@name, @world) {
 	}
 	// Flags a world in the survival world group
 	if(@world['group'] == 'survival') {
-		set_metadata(@id, 'survival', true);
+		set_metadata(@name, 'survival', true);
 	}
 	// Since difficulty isn't currently loaded from level.dat
 	@difficulty = 'NORMAL';
 	if(array_index_exists(@world, 'difficulty')) {
 		@difficulty = @world['difficulty'];
 	}
-	set_difficulty(@id, @difficulty);
+	set_difficulty(@name, @difficulty);
 }
