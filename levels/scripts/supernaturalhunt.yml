@@ -175,7 +175,7 @@ waves:
                     seconds: 600
     7:
         title: 'The Final Score'
-        subtitle: 'FishDish_12'
+        subtitle: 'TheFishDish'
         mobs:
             - type: ZOMBIE
               gear:
@@ -183,7 +183,7 @@ waves:
                       name: SKULL_ITEM
                       data: 3
                       meta:
-                          owner: FishDish_12
+                          owner: TheFishDish
                   chestplate:
                       name: LEATHER_CHESTPLATE
                       meta:
@@ -211,7 +211,7 @@ waves:
                       name: SKULL_ITEM
                       data: 3
                       meta:
-                          owner: FishDish_12
+                          owner: TheFishDish
                   chestplate:
                       name: LEATHER_CHESTPLATE
                       meta:
@@ -239,7 +239,7 @@ waves:
                       name: SKULL_ITEM
                       data: 3
                       meta:
-                          owner: FishDish_12
+                          owner: TheFishDish
                   chestplate:
                       name: LEATHER_CHESTPLATE
                       meta:
@@ -267,7 +267,7 @@ waves:
                       name: SKULL_ITEM
                       data: 3
                       meta:
-                          owner: FishDish_12
+                          owner: TheFishDish
                   chestplate:
                       name: LEATHER_CHESTPLATE
                       meta:
@@ -295,7 +295,7 @@ waves:
                       name: SKULL_ITEM
                       data: 3
                       meta:
-                          owner: FishDish_12
+                          owner: TheFishDish
                   chestplate:
                       name: LEATHER_CHESTPLATE
                       meta:
@@ -323,7 +323,7 @@ waves:
                       name: SKULL_ITEM
                       data: 3
                       meta:
-                          owner: FishDish_12
+                          owner: TheFishDish
                   chestplate:
                       name: LEATHER_CHESTPLATE
                       meta:
@@ -503,8 +503,8 @@ waves:
         mobs:
             - type: ZOMBIE
               gear:
-                weapon:
-                    name: STONE_SWORD
+                  weapon:
+                      name: STONE_SWORD
                   helmet:
                       name: SKULL_ITEM
                       data: 3
@@ -533,8 +533,8 @@ waves:
                               b: 0
             - type: ZOMBIE
               gear:
-                weapon:
-                    name: STONE_SWORD
+                  weapon:
+                      name: STONE_SWORD
                   helmet:
                       name: SKULL_ITEM
                       data: 3
@@ -563,8 +563,8 @@ waves:
                               b: 0
             - type: ZOMBIE
               gear:
-                weapon:
-                    name: STONE_SWORD
+                  weapon:
+                      name: STONE_SWORD
                   helmet:
                       name: SKULL_ITEM
                       data: 3
@@ -593,8 +593,8 @@ waves:
                               b: 0
             - type: ZOMBIE
               gear:
-                weapon:
-                    name: STONE_SWORD
+                  weapon:
+                      name: STONE_SWORD
                   helmet:
                       name: SKULL_ITEM
                       data: 3

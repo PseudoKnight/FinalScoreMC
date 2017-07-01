@@ -57,9 +57,6 @@ proc _level_start(@level) {
 					_level_remove_spectator(player(), @level);
 				} else if(array_contains(@level['players'], player())) {
 					_level_remove_player(player(), @level);
-					if(!@level['players']) {
-						_level_end(@level, false);
-					}
 				}
 			} else if(@to && !@from) {
 				if(@level['wave'] < 2) {
@@ -107,7 +104,7 @@ proc _level_start(@level) {
 		
 		bind(player_interact, array('id': 'resurrect'.@level['region']), array('button': 'right', 'item': 399), @event, @level) {
 			foreach(@p in players_in_radius(ploc(), 16)) {
-				if(array_contains(@level['spectators'], @p)) {
+				if(pmode(@p) == 'SPECTATOR') {
 					set_pmode(@p, 'ADVENTURE');
 					_level_add_player(@p, @level);
 					set_ploc(@p, ploc());
@@ -291,11 +288,9 @@ proc _level_start(@level) {
 
 proc _level_end(@level, @win) {
 	clear_task(@level['task']);
-	_remove_activity('level'.@level['region']);
 	if(array_contains(all_virtualchests(), 'level'.@level['region'])) {
 		del_virtualchest('level'.@level['region']);
 	}
-	remove_scoreboard('level'.@level['region']);
 	sk_region_flag(@level['world'], @level['region'], 'mob-spawning', 'deny');
 	set_gamerule(@level['world'], 'doDaylightCycle', true);
 	_remove_region_entities(@level['region']);
@@ -334,6 +329,10 @@ proc _level_end(@level, @win) {
 			_level_remove_spectator(@p, @level);
 		}
 	}
+	if(!_remove_activity('level'.@level['region'])){
+		die(); // just in case this fires twice
+	}
+	remove_scoreboard('level'.@level['region']);
 	if(array_index_exists(@level['arena'], 'schematic')) {
 		skcb_load(@level['arena']['schematic']);
 		skcb_paste(array(0, 0, 0, @level['world']), array('origin': true));

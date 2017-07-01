@@ -1,9 +1,9 @@
 proc _level_add_player(@player, @level) {
 	if(pinfo(@player, 5) == 0) {
-		die();
+		return(false);
 	}
 	if(!_set_pstate_activity(@player, to_upper(@level['region']))) {
-		die();
+		return(false);
 	}
 	@level['players'][] = @player;
 	set_pscoreboard(@player, 'level'.@level['region']);

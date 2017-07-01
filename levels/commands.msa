@@ -58,6 +58,18 @@
 			store_value('level', @name, @arena);
 			die('Set schematic');
 			
+		case 'setstartblock':
+			if(!has_permission('group.engineer')) {
+				die(color('red').'No permission.');
+			}
+			@arena = get_value('level', @name);
+			if(!@arena) {
+				@arena = associative_array();
+			}
+			@arena['startblock'] = array('loc': ptarget_space(), 'type': $);
+			store_value('level', @name, @arena);
+			die('Set startblock');
+			
 		case 'start':
 			@region = sk_current_regions();
 			if(!@region) {
@@ -155,6 +167,10 @@
 						}
 						@level['shop'] = @items;
 						create_virtualchest(@shop);
+					}
+					
+					if(array_index_exists(@level['arena'], 'startblock')) {
+						set_block_at(@level['arena']['startblock']['loc'], @level['arena']['startblock']['type']);
 					}
 					
 					include('core.library/game.ms');
