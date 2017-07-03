@@ -10,7 +10,7 @@ bind(inventory_click, null, null, @event) {
 					play_sound(ploc(), array('sound': 'CLICK', 'pitch': 1.2), player());
 				case 'Load':
 					@menu = @action[1];
-					include('includes.library/'.@menu.'.ms');
+					include('menus.library/'.@menu.'.ms');
 					_refresh_menu();
 					popen_virtualchest(@menu);
 					play_sound(ploc(), array('sound': 'CLICK', 'pitch': 1.2), player());
