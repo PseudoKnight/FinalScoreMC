@@ -157,17 +157,8 @@ waves:
             - ZOMBIE
     6:
         subtitle: 'BOSS: Stray Away!'
+        duplicate: 3
         mobs:
-            - type: 'SKELETON:STRAY'
-              effects:
-                  - id: 1
-                    strength: 0
-                    seconds: 600
-            - type: 'SKELETON:STRAY'
-              effects:
-                  - id: 1
-                    strength: 0
-                    seconds: 600
             - type: 'SKELETON:STRAY'
               effects:
                   - id: 1
@@ -176,147 +167,8 @@ waves:
     7:
         title: 'The Final Score'
         subtitle: 'TheFishDish'
+        duplicate: 4
         mobs:
-            - type: ZOMBIE
-              gear:
-                  helmet:
-                      name: SKULL_ITEM
-                      data: 3
-                      meta:
-                          owner: TheFishDish
-                  chestplate:
-                      name: LEATHER_CHESTPLATE
-                      meta:
-                          color:
-                              r: 0
-                              g: 220
-                              b: 255
-                  leggings:
-                      name: LEATHER_LEGGINGS
-                      meta:
-                          color:
-                              r: 0
-                              g: 220
-                              b: 255
-                  boots:
-                      name: LEATHER_BOOTS
-                      meta:
-                          color:
-                              r: 0
-                              g: 220
-                              b: 255
-            - type: ZOMBIE
-              gear:
-                  helmet:
-                      name: SKULL_ITEM
-                      data: 3
-                      meta:
-                          owner: TheFishDish
-                  chestplate:
-                      name: LEATHER_CHESTPLATE
-                      meta:
-                          color:
-                              r: 0
-                              g: 220
-                              b: 255
-                  leggings:
-                      name: LEATHER_LEGGINGS
-                      meta:
-                          color:
-                              r: 0
-                              g: 220
-                              b: 255
-                  boots:
-                      name: LEATHER_BOOTS
-                      meta:
-                          color:
-                              r: 0
-                              g: 220
-                              b: 255
-            - type: ZOMBIE
-              gear:
-                  helmet:
-                      name: SKULL_ITEM
-                      data: 3
-                      meta:
-                          owner: TheFishDish
-                  chestplate:
-                      name: LEATHER_CHESTPLATE
-                      meta:
-                          color:
-                              r: 0
-                              g: 220
-                              b: 255
-                  leggings:
-                      name: LEATHER_LEGGINGS
-                      meta:
-                          color:
-                              r: 0
-                              g: 220
-                              b: 255
-                  boots:
-                      name: LEATHER_BOOTS
-                      meta:
-                          color:
-                              r: 0
-                              g: 220
-                              b: 255
-            - type: ZOMBIE
-              gear:
-                  helmet:
-                      name: SKULL_ITEM
-                      data: 3
-                      meta:
-                          owner: TheFishDish
-                  chestplate:
-                      name: LEATHER_CHESTPLATE
-                      meta:
-                          color:
-                              r: 0
-                              g: 220
-                              b: 255
-                  leggings:
-                      name: LEATHER_LEGGINGS
-                      meta:
-                          color:
-                              r: 0
-                              g: 220
-                              b: 255
-                  boots:
-                      name: LEATHER_BOOTS
-                      meta:
-                          color:
-                              r: 0
-                              g: 220
-                              b: 255
-            - type: ZOMBIE
-              gear:
-                  helmet:
-                      name: SKULL_ITEM
-                      data: 3
-                      meta:
-                          owner: TheFishDish
-                  chestplate:
-                      name: LEATHER_CHESTPLATE
-                      meta:
-                          color:
-                              r: 0
-                              g: 220
-                              b: 255
-                  leggings:
-                      name: LEATHER_LEGGINGS
-                      meta:
-                          color:
-                              r: 0
-                              g: 220
-                              b: 255
-                  boots:
-                      name: LEATHER_BOOTS
-                      meta:
-                          color:
-                              r: 0
-                              g: 220
-                              b: 255
             - type: ZOMBIE
               gear:
                   helmet:
@@ -346,7 +198,8 @@ waves:
                               g: 220
                               b: 255
     8:
-        subtitle: 'Rigzlii'
+        subtitle: 'Noved17'
+        duplicate: 4
         mobs:
             - type: ZOMBIE
               gear:
@@ -356,150 +209,31 @@ waves:
                       name: SKULL_ITEM
                       data: 3
                       meta:
-                          owner: Rigzlii
+                          owner: Noved17
                   chestplate:
                       name: LEATHER_CHESTPLATE
                       meta:
                           color:
-                              r: 0
+                              r: 255
                               g: 255
                               b: 0
                   leggings:
                       name: LEATHER_LEGGINGS
                       meta:
                           color:
-                              r: 0
+                              r: 255
                               g: 255
                               b: 0
                   boots:
                       name: LEATHER_BOOTS
                       meta:
                           color:
-                              r: 0
-                              g: 255
-                              b: 0
-            - type: ZOMBIE
-              gear:
-                  weapon:
-                      name: WOOD_SWORD
-                  helmet:
-                      name: SKULL_ITEM
-                      data: 3
-                      meta:
-                          owner: Rigzlii
-                  chestplate:
-                      name: LEATHER_CHESTPLATE
-                      meta:
-                          color:
-                              r: 0
-                              g: 255
-                              b: 0
-                  leggings:
-                      name: LEATHER_LEGGINGS
-                      meta:
-                          color:
-                              r: 0
-                              g: 255
-                              b: 0
-                  boots:
-                      name: LEATHER_BOOTS
-                      meta:
-                          color:
-                              r: 0
-                              g: 255
-                              b: 0
-            - type: ZOMBIE
-              gear:
-                  weapon:
-                      name: WOOD_SWORD
-                  helmet:
-                      name: SKULL_ITEM
-                      data: 3
-                      meta:
-                          owner: Rigzlii
-                  chestplate:
-                      name: LEATHER_CHESTPLATE
-                      meta:
-                          color:
-                              r: 0
-                              g: 255
-                              b: 0
-                  leggings:
-                      name: LEATHER_LEGGINGS
-                      meta:
-                          color:
-                              r: 0
-                              g: 255
-                              b: 0
-                  boots:
-                      name: LEATHER_BOOTS
-                      meta:
-                          color:
-                              r: 0
-                              g: 255
-                              b: 0
-            - type: ZOMBIE
-              gear:
-                  weapon:
-                      name: WOOD_SWORD
-                  helmet:
-                      name: SKULL_ITEM
-                      data: 3
-                      meta:
-                          owner: Rigzlii
-                  chestplate:
-                      name: LEATHER_CHESTPLATE
-                      meta:
-                          color:
-                              r: 0
-                              g: 255
-                              b: 0
-                  leggings:
-                      name: LEATHER_LEGGINGS
-                      meta:
-                          color:
-                              r: 0
-                              g: 255
-                              b: 0
-                  boots:
-                      name: LEATHER_BOOTS
-                      meta:
-                          color:
-                              r: 0
-                              g: 255
-                              b: 0
-            - type: ZOMBIE
-              gear:
-                  weapon:
-                      name: WOOD_SWORD
-                  helmet:
-                      name: SKULL_ITEM
-                      data: 3
-                      meta:
-                          owner: Rigzlii
-                  chestplate:
-                      name: LEATHER_CHESTPLATE
-                      meta:
-                          color:
-                              r: 0
-                              g: 255
-                              b: 0
-                  leggings:
-                      name: LEATHER_LEGGINGS
-                      meta:
-                          color:
-                              r: 0
-                              g: 255
-                              b: 0
-                  boots:
-                      name: LEATHER_BOOTS
-                      meta:
-                          color:
-                              r: 0
+                              r: 255
                               g: 255
                               b: 0
     9:
         subtitle: 'crazypixie216'
+        duplicate: 4
         mobs:
             - type: ZOMBIE
               gear:
@@ -516,153 +250,25 @@ waves:
                           color:
                               r: 255
                               g: 255
-                              b: 0
+                              b: 255
                   leggings:
                       name: LEATHER_LEGGINGS
                       meta:
                           color:
                               r: 255
                               g: 255
-                              b: 0
+                              b: 255
                   boots:
                       name: LEATHER_BOOTS
                       meta:
                           color:
                               r: 255
                               g: 255
-                              b: 0
-            - type: ZOMBIE
-              gear:
-                  weapon:
-                      name: STONE_SWORD
-                  helmet:
-                      name: SKULL_ITEM
-                      data: 3
-                      meta:
-                          owner: crazypixie216
-                  chestplate:
-                      name: LEATHER_CHESTPLATE
-                      meta:
-                          color:
-                              r: 255
-                              g: 255
-                              b: 0
-                  leggings:
-                      name: LEATHER_LEGGINGS
-                      meta:
-                          color:
-                              r: 255
-                              g: 255
-                              b: 0
-                  boots:
-                      name: LEATHER_BOOTS
-                      meta:
-                          color:
-                              r: 255
-                              g: 255
-                              b: 0
-            - type: ZOMBIE
-              gear:
-                  weapon:
-                      name: STONE_SWORD
-                  helmet:
-                      name: SKULL_ITEM
-                      data: 3
-                      meta:
-                          owner: crazypixie216
-                  chestplate:
-                      name: LEATHER_CHESTPLATE
-                      meta:
-                          color:
-                              r: 255
-                              g: 255
-                              b: 0
-                  leggings:
-                      name: LEATHER_LEGGINGS
-                      meta:
-                          color:
-                              r: 255
-                              g: 255
-                              b: 0
-                  boots:
-                      name: LEATHER_BOOTS
-                      meta:
-                          color:
-                              r: 255
-                              g: 255
-                              b: 0
-            - type: ZOMBIE
-              gear:
-                  weapon:
-                      name: STONE_SWORD
-                  helmet:
-                      name: SKULL_ITEM
-                      data: 3
-                      meta:
-                          owner: crazypixie216
-                  chestplate:
-                      name: LEATHER_CHESTPLATE
-                      meta:
-                          color:
-                              r: 255
-                              g: 255
-                              b: 0
-                  leggings:
-                      name: LEATHER_LEGGINGS
-                      meta:
-                          color:
-                              r: 255
-                              g: 255
-                              b: 0
-                  boots:
-                      name: LEATHER_BOOTS
-                      meta:
-                          color:
-                              r: 255
-                              g: 255
-                              b: 0
+                              b: 255
     10:
         subtitle: 'CommandHelper'
+        duplicate: 4
         mobs:
-            - type: ZOMBIE
-              gear:
-                  weapon:
-                      name: STONE_SWORD
-                  helmet:
-                      name: SKULL_ITEM
-                      data: 3
-                      meta:
-                          owner: CommandHelper
-                  chestplate:
-                      name: LEATHER_CHESTPLATE
-                      meta:
-                          color:
-                              r: 255
-                              g: 0
-                              b: 0
-                          enchants:
-                              - elevel: 3
-                                etype: PROTECTION_ENVIRONMENTAL
-                  leggings:
-                      name: LEATHER_LEGGINGS
-                      meta:
-                          color:
-                              r: 255
-                              g: 0
-                              b: 0
-                          enchants:
-                              - elevel: 3
-                                etype: PROTECTION_ENVIRONMENTAL
-                  boots:
-                      name: LEATHER_BOOTS
-                      meta:
-                          color:
-                              r: 255
-                              g: 0
-                              b: 0
-                          enchants:
-                              - elevel: 3
-                                etype: PROTECTION_ENVIRONMENTAL
             - type: ZOMBIE
               gear:
                   weapon:
@@ -704,6 +310,7 @@ waves:
                                 etype: PROTECTION_ENVIRONMENTAL
     11:
         subtitle: 'fredwaffles'
+        duplicate: 4
         mobs:
             - type: ZOMBIE
               effects:
@@ -744,6 +351,7 @@ waves:
                               b: 0
     12:
         subtitle: 'king_of_insanity'
+        duplicate: 4
         mobs:
             - type: ZOMBIE
               effects:
@@ -781,6 +389,7 @@ waves:
                               b: 0
     13:
         subtitle: 'Nefyoni'
+        duplicate: 4
         mobs:
             - type: ZOMBIE
               effects:
@@ -821,6 +430,7 @@ waves:
                               b: 255
     14:
         subtitle: 'Viletoad'
+        duplicate: 4
         mobs:
             - type: ZOMBIE
               effects:
@@ -846,6 +456,7 @@ waves:
                       name: CHAINMAIL_BOOTS
     15:
         subtitle: 'rivergod'
+        duplicate: 4
         mobs:
             - type: ZOMBIE
               effects:
@@ -871,6 +482,7 @@ waves:
                       name: CHAINMAIL_BOOTS
     16:
         subtitle: 'Infuryo'
+        duplicate: 4
         mobs:
             - type: ZOMBIE
               effects:
@@ -899,6 +511,7 @@ waves:
                       name: IRON_BOOTS
     16:
         subtitle: 'PseudoKnight'
+        duplicate: 4
         mobs:
             - type: ZOMBIE
               effects:
@@ -927,6 +540,7 @@ waves:
                       name: IRON_BOOTS
     17:
         subtitle: 'BOSS: gothem8'
+        duplicate: 6
         mobs:
             - type: VEX
               pos: 'center'
@@ -943,29 +557,22 @@ waves:
                           owner: gothem8
     18:
         title: 'Ghost Stories'
-        subtitle: 'Under The Skin'
+        subtitle: 'Flight'
         mobs:
-            - type: SILVERFISH
-              effects:
-                  - id: 14
-                    strength: 0
-                    seconds: 600
-            - type: SILVERFISH
-              effects:
-                  - id: 14
-                    strength: 0
-                    seconds: 600
-            - type: SILVERFISH
-              effects:
-                  - id: 14
-                    strength: 0
-                    seconds: 600
+            - 'ZOMBIE:BABY'
+            - 'ZOMBIE:BABY'
+            - 'ZOMBIE:BABY'
+            - 'ZOMBIE:HUSK'
+            - 'ZOMBIE:HUSK'
     19:
-        subtitle: 'Insanity'
+        subtitle: "Don't Blink"
         mobs:
-            - VEX
-            - VEX
-            - VEX
+            - GHAST
+            - 'SKELETON:STRAY'
+            - 'SKELETON:STRAY'
+            - WITCH
+            - WITCH
+            - WITCH
     20:
         subtitle: 'Haunted'
         mobs:

@@ -145,11 +145,8 @@ waves:
             - 'ZOMBIE:BABY'
     4:
         subtitle: 'Are you chicken?'
+        duplicate: 3
         mobs:
-            - type: CHICKEN
-              rider: 'ZOMBIE:BABY'
-            - type: CHICKEN
-              rider: 'ZOMBIE:BABY'
             - type: CHICKEN
               rider: 'ZOMBIE:BABY'
     5:
@@ -202,61 +199,14 @@ waves:
             - 'SKELETON:STRAY'
     9:
         subtitle: 'Nice Snowing Ya'
+        duplicate: 8
         mobs:
-            - type: SNOWGOLEM
-              targetnear: 16
-            - type: SNOWGOLEM
-              targetnear: 16
-            - type: SNOWGOLEM
-              targetnear: 16
-            - type: SNOWGOLEM
-              targetnear: 16
-            - type: SNOWGOLEM
-              targetnear: 16
-            - type: SNOWGOLEM
-              targetnear: 16
-            - type: SNOWGOLEM
-              targetnear: 16
             - type: SNOWGOLEM
               targetnear: 16
     10:
         subtitle: 'The Pack'
+        duplicate: 8
         mobs:
-            - type: 'WOLF:ANGRY'
-              effects:
-                  - id: 1
-                    strength: 0
-                    seconds: 300
-            - type: 'WOLF:ANGRY'
-              effects:
-                  - id: 1
-                    strength: 0
-                    seconds: 300
-            - type: 'WOLF:ANGRY'
-              effects:
-                  - id: 1
-                    strength: 0
-                    seconds: 300
-            - type: 'WOLF:ANGRY'
-              effects:
-                  - id: 1
-                    strength: 0
-                    seconds: 300
-            - type: 'WOLF:ANGRY'
-              effects:
-                  - id: 1
-                    strength: 0
-                    seconds: 300
-            - type: 'WOLF:ANGRY'
-              effects:
-                  - id: 1
-                    strength: 0
-                    seconds: 300
-            - type: 'WOLF:ANGRY'
-              effects:
-                  - id: 1
-                    strength: 0
-                    seconds: 300
             - type: 'WOLF:ANGRY'
               effects:
                   - id: 1
@@ -435,21 +385,8 @@ waves:
             - 'PIGZOMBIE:400'
     27:
         subtitle: 'Flamiliar?'
+        duplicate: 8
         mobs:
-            - type: CHICKEN
-              rider: 'PIGZOMBIE:400'
-            - type: CHICKEN
-              rider: 'PIGZOMBIE:400'
-            - type: CHICKEN
-              rider: 'PIGZOMBIE:400'
-            - type: CHICKEN
-              rider: 'PIGZOMBIE:400'
-            - type: CHICKEN
-              rider: 'PIGZOMBIE:400'
-            - type: CHICKEN
-              rider: 'PIGZOMBIE:400'
-            - type: CHICKEN
-              rider: 'PIGZOMBIE:400'
             - type: CHICKEN
               rider: 'PIGZOMBIE:400'
     28:

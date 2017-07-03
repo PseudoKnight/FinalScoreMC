@@ -218,17 +218,19 @@ proc _level_start(@level) {
 						play_named_sound(ploc(@p), array('sound': 'entity.evocation_illager.prepare_summon', 'volume': 0.4), @p);
 					}
 				}
-				foreach(@mob in @level['mobs']) {
-					@locs = @level['arena']['spawns'];
-					if(is_array(@mob)) {
-						if(array_index_exists(@mob, 'pos')) {
-							@locs = @level['arena'][@mob['pos']];
+				while(@level['duplicate']--) {
+					foreach(@mob in @level['mobs']) {
+						@spawns = @level['arena']['spawns'];
+						if(is_array(@mob)) {
+							if(array_index_exists(@mob, 'pos')) {
+								@spawns = @level['arena'][@mob['pos']];
+							}
+							@loc = @spawns[rand(array_size(@spawns))];
+							_spawn_mob(@mob, @loc, player(), @level['spectators']);
+						} else {
+							@loc = @spawns[rand(array_size(@spawns))];
+							spawn_mob(@mob, 1, @loc);
 						}
-						@loc = @locs[rand(array_size(@locs))];
-						_spawn_mob(@mob, @loc, player(), @level['spectators']);
-					} else {
-						@loc = @locs[rand(array_size(@locs))];
-						spawn_mob(@mob, 1, @loc);
 					}
 				}
 				@level['mobs'] = array();
@@ -268,6 +270,11 @@ proc _level_start(@level) {
 					}
 					if(array_index_exists(@wave, 'subtitle')) {
 						@level['subtitle'] = @wave['subtitle'];
+					}
+					if(array_index_exists(@wave, 'duplicate')) {
+						@level['duplicate'] = @wave['duplicate'];
+					} else {
+						@level['duplicate'] = 1;
 					}
 					@level['mobs'] = @wave['mobs'];
 				} catch(IndexOverflowException @ex) {
