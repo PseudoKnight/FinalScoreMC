@@ -1,4 +1,4 @@
-proc _set_random_contents(@loc, @count) {
+proc _set_inventory_contents(@loc, @count) {
 	if(has_metadata(@loc, 'loot')) {
 		return();
 	}
@@ -160,69 +160,4 @@ proc _random_item(@limits) {
 		'meta': @meta,
 	);
 	return(@item);
-}
-
-@binds[] = 'shard-interact';
-bind(player_interact, array('id': 'shard-interact'), null, @event) {
-	if(@event['block'] != 0 && pworld() == 'shard') {
-		switch(split(':', @event['block'], 1)[0]) {
-			case '23':
-			case '61':
-			case '117':
-			case '154':
-			case '158':
-				_set_random_contents(@event['location'], 0);
-			case '54':
-			case '146':
-				@luck = 0;
-				foreach(@effect in get_peffect()) {
-					if(@effect['id'] == 26) {
-						@luck += @effect['strength'] + 1;
-						break();
-					} else if(@effect['id'] == 27) {
-						@luck -= @effect['strength'] + 1;
-						break();
-					}
-				}
-				_set_random_contents(@event['location'], 3 + @luck);
-		}
-	}
-}
-
-@binds[] = 'shard-place1';
-bind(block_place, array('id': 'shard-place1'), array('type': 54), @event) {
-	_set_random_contents(@event['location'], 0);
-}
-
-@binds[] = 'shard-place2';
-bind(block_place, array('id': 'shard-place2'), array('type': 146), @event) {
-	_set_random_contents(@event['location'], 0);
-}
-
-@binds[] = 'shard-itemframe';
-bind(entity_damage, array('id': 'shard-itemframe'), array('type': 'ITEM_FRAME'), @event) {
-	if(@event['world'] == 'shard') {
-		cancel();
-	}
-}
-
-@binds[] = 'shard-explosion';
-bind(entity_explode, array('id': 'shard-explosion'), null, @event) {
-	if(@event['location']['world'] == 'shard') {
-		foreach(@block in @event['blocks']) {
-			switch(split(':', get_block_at(@block), 1)[0]) {
-				case '23':
-				case '61':
-				case '117':
-				case '154':
-				case '158':
-					@inv = array();
-					array_resize(@inv, get_inventory_size(@block));
-					set_inventory(@block, @inv);
-				case '54':
-				case '146':
-					_set_random_contents(@block, 3);
-			}
-		}
-	}
 }

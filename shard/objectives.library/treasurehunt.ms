@@ -30,7 +30,7 @@ proc _create_treasure(@delay, @score, @rules) {
 	});
 }
 
-proc _end_treasurehunt(@winner, @binds) {
+proc _end_treasurehunt(@winner) {
 	if(ponline(@winner)) {
 		_worldmsg('shard', color('green').@winner.' wins!');
 	} else {
@@ -46,32 +46,7 @@ proc _end_treasurehunt(@winner, @binds) {
 	}
 
 	set_timeout(20000, closure(){
-		unbind('shard-worldchanged');
-		foreach(@p in all_players()) {
-			if(pworld(@p) == 'shard') {
-				queue_push(closure(){
-					if(pworld(@p) == 'shard') {
-						@pdata = _pdata(@p);
-						set_ploc(@p, @pdata['survival']['loc']);
-					}
-				}, 'shard');
-			}
-		}
-		queue_push(closure(){
-			if(!array_contains(get_worlds(), 'shard')) {
-				die();
-			}
-			if(array_size(all_players('shard')) == 0 && unload_world('shard')) {
-				remove_scoreboard('shard');
-				array_remove(_worlds_config(), 'shard');
-				_remove_activity('shard');
-				foreach(@bind in @binds) {
-					unbind(@bind);
-				}
-			} else {
-				console('Failed to unload shard world!', false);
-			}
-		}, 'shard');
+		_unload_shard();
 	});
 }
 
@@ -81,7 +56,7 @@ create_objective('Distance', 'DUMMY', 'shard');
 _create_treasure(max(5, 60 * @rules['buffertime']), 0, @rules);
 
 @binds[] = 'shard-break';
-bind(block_break, array('id': 'shard-break'), array('type': 130), @event, @rules, @binds) {
+bind(block_break, array('id': 'shard-break'), array('type': 130), @event, @rules) {
 	if(has_metadata(@event['location'], 'treasure')) {
 		play_sound(@event['location'], array('sound': 'LEVEL_UP', 'pitch': 0.7));
 		set_objective_display('Treasures', array('slot': 'SIDEBAR'), 'shard');
@@ -96,14 +71,14 @@ bind(block_break, array('id': 'shard-break'), array('type': 130), @event, @rules
 			@score = get_pscore('Treasures', @team, 'shard') + 1;
 			set_pscore('Treasures', @team, @score, 'shard');
 			if(@score == @rules['treasures']) {
-				_end_treasurehunt(@team, @binds);
+				_end_treasurehunt(@team);
 				die();
 			}
 		} else {
 			@score = get_pscore('Treasures', player(), 'shard') + 1;
 			set_pscore('Treasures', player(), @score, 'shard');
 			if(@score == @rules['treasures']) {
-				_end_treasurehunt(player(), @binds);
+				_end_treasurehunt(player());
 				die();
 			}
 		}

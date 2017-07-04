@@ -117,8 +117,9 @@ proc _shard_create(@rules){
 				set_world_time('shard', get_world_time(@world));
 				storm(false, 'shard');
 				set_world_border('shard', array('width': @rules['width'], 'center': @loc));
-				set_gamerule('shard', 'NATURALREGENERATION', !@rules['noregen']);
-				if(@rules['objective'] != 'treasurehunt' && @rules['buffertime'] && @rules['timelimit']) {
+				set_gamerule('shard', 'NATURALREGENERATION', !array_index_exists(@rules, 'regen') || !@rules['noregen']);
+				@respawnPlayers = (@rules['objective'] == 'treasurehunt' || @rules['objective'] == 'scavengerbingo');
+				if(!@respawnPlayers && @rules['buffertime'] && @rules['timelimit']) {
 					set_timeout(@rules['buffertime'] * 60000, closure(){
 						if(array_contains(get_worlds(), 'shard')) {
 							set_world_border('shard', array('width': 1, 'seconds': @rules['timelimit'] * 60));
@@ -131,6 +132,75 @@ proc _shard_create(@rules){
 				create_scoreboard('shard');
 				_add_activity('shard', @worldname.'//Shard');
 				
+				// Default procedures (overrideable)
+				proc _unload_shard() {
+					@binds = import('shard.binds');
+					export('shard.binds', null);
+					
+					// Bingo clean-up
+					export('shard.bingcard', null);
+					foreach(@chest in all_virtualchests()) {
+						if(string_ends_with(@chest, 'bingo')) {
+							del_virtualchest(@chest);
+						}
+					}
+					
+					if(extension_exists('CHDynmap')) {
+						dm_delete_marker('markers', 'shard');
+					}
+					
+					unbind('shard-worldchanged');
+					foreach(@p in all_players()) {
+						if(pworld(@p) == 'shard') {
+							queue_push(closure(){
+								if(pworld(@p) == 'shard') {
+									@pdata = _pdata(@p);
+									set_ploc(@p, @pdata['survival']['loc']);
+								}
+							}, 'shard');
+						}
+					}
+					queue_push(closure(){
+						if(!array_contains(get_worlds(), 'shard')) {
+							die();
+						}
+						if(array_size(all_players('shard')) == 0 && unload_world('shard')) {
+							remove_scoreboard('shard');
+							array_remove(_worlds_config(), 'shard');
+							_remove_activity('shard');
+							foreach(@bind in @binds) {
+								unbind(@bind);
+							}
+						} else {
+							console('Failed to unload shard world!', false);
+						}
+					}, 'shard');
+				}
+				
+				proc _set_inventory_contents(@loc, @count) {
+					// Clear all inventory
+					if(has_metadata(@loc, 'loot')) {
+						return();
+					}
+				
+					@size = get_inventory_size(@loc);
+					@inv = array();
+					array_resize(@inv, @size);
+					set_inventory(@loc, @inv);
+					set_metadata(@loc, 'loot', 1);
+					if(@size == 54) {
+						@type = get_block_at(@loc);
+						foreach(@dir in array('north', 'south', 'east', 'west')) {
+							@checkLoc = _relative(@loc, @dir);
+							if(get_block_at(@checkLoc) == @type) {
+								set_metadata(@checkLoc, 'loot', 1);
+								break();
+							}
+						}
+					}
+				}
+				
+				// Load objective and rule scripts
 				@binds = array();
 				foreach(@rule: @value in @rules) {
 					if(@rule == 'objective' && file_exists('../objectives.library/'.@value.'.ms')) {
@@ -158,7 +228,7 @@ proc _shard_create(@rules){
 							@ploc = _get_spawn_location();
 						}
 						set_ploc(@p, @ploc);
-						if(!@rules['keep']) {
+						if(!array_index_exists(@rules, 'keep') || !@rules['keep']) {
 							_clear_pinv(@p);
 						}
 						set_peffect(@p, 11, 3, 60, true);
@@ -167,9 +237,13 @@ proc _shard_create(@rules){
 						play_sound(@ploc, array('sound': 'WITHER_SPAWN', 'pitch': 0.7), @p);
 					}, 'shard');
 				}
+				if(@rules['objective'] == 'scavengerbingo') {
+					queue_push(closure() {
+						_refresh_card();
+					});
+				}
 				
-				@isTreasureHunt = (@rules['objective'] == 'treasurehunt');
-				proc _check_shard(@binds, @treasureHunt = @isTreasureHunt) {
+				proc _check_shard(@willRespawnPlayers = @respawnPlayers) {
 					queue_push(closure(){
 						@count = 0;
 						@last = '';
@@ -198,7 +272,7 @@ proc _shard_create(@rules){
 								}
 							}
 						}
-						if(@count == 1 && !@treasureHunt) {
+						if(@count == 1 && !@willRespawnPlayers) {
 							set_world_border('shard', array('width': 1, 'seconds': 20));
 							storm(true, 'shard');
 							set_thunder(true, 'shard');
@@ -209,56 +283,28 @@ proc _shard_create(@rules){
 								}
 							});
 						} else if(@count == 0) {
-							if(extension_exists('CHDynmap')) {
-								dm_delete_marker('markers', 'shard');
-							}
-							unbind('shard-worldchanged');
-							foreach(@p in all_players()) {
-								if(pworld(@p) == 'shard') {
-									queue_push(closure(){
-										if(pworld(@p) == 'shard') {
-											@pdata = _pdata(@p);
-											set_ploc(@p, @pdata['survival']['loc']);
-										}
-									}, 'shard');
-								}
-							}
-							queue_push(closure(){
-								if(!array_contains(get_worlds(), 'shard')) {
-									die();
-								}
-								if(array_size(all_players('shard')) == 0 && unload_world('shard')) {
-									remove_scoreboard('shard');
-									array_remove(_worlds_config(), 'shard');
-									_remove_activity('shard');
-									foreach(@bind in @binds) {
-										unbind(@bind);
-									}
-								} else {
-									console('Failed to unload shard world!', false);
-								}
-							}, 'shard');
+							_unload_shard();
 						}
 					}, 'shard');
 				}
 				
 				// Events
 				@binds[] = 'shard-quit';
-				bind(player_quit, array('priority': 'HIGHEST', 'id': 'shard-quit'), null, @event, @binds) {
+				bind(player_quit, array('priority': 'HIGHEST', 'id': 'shard-quit'), null, @event) {
 					if(pworld() == 'shard') {
 						@loc = get_spawn('custom');
 						@loc['y'] -= 1;
 						set_ploc(@loc);
-						_check_shard(@binds);
+						_check_shard();
 					}
 				}
 				
 				@binds[] = 'shard-death';
-				bind(player_death, array('priority': 'HIGHEST', 'id': 'shard-death'), null, @event, @players, @rules) {
+				bind(player_death, array('priority': 'HIGHEST', 'id': 'shard-death'), null, @event, @players, @rules, @respawnPlayers) {
 					if(@event['location']['world'] == 'shard') {
 						consume();
 						modify_event('death_message', color('k').'X'.color('r').' '.@event['death_message']);
-						if(@rules['objective'] != 'treasurehunt') {
+						if(!@respawnPlayers) {
 							@loc = ploc();
 							if(@loc['y'] < 0) {
 								@loc['y'] = 0;
@@ -277,15 +323,82 @@ proc _shard_create(@rules){
 				}
 				
 				@binds[] = 'shard-spawn';
-				bind(player_spawn, array('id': 'shard-spawn', 'priority': 'LOWEST'), array('world': 'shard'), @event, @binds) {
+				bind(player_spawn, array('id': 'shard-spawn', 'priority': 'LOWEST'), array('world': 'shard'), @event) {
 					modify_event('location', import('playerspawn', _get_spawn_location()));
-					_check_shard(@binds);
+					_check_shard();
 					export('playerspawn', null);
 				}
 				
-				bind(world_changed, array('id': 'shard-worldchanged'), array('from': 'shard'), @event, @binds) {
-					_check_shard(@binds);
+				bind(world_changed, array('id': 'shard-worldchanged'), array('from': 'shard'), @event) {
+					_check_shard();
 				}
+				
+				@binds[] = 'shard-interact';
+				bind(player_interact, array('id': 'shard-interact'), null, @event) {
+					if(@event['block'] != 0 && pworld() == 'shard') {
+						switch(split(':', @event['block'], 1)[0]) {
+							case '23':
+							case '61':
+							case '117':
+							case '154':
+							case '158':
+								_set_inventory_contents(@event['location'], 0);
+							case '54':
+							case '146':
+								@luck = 0;
+								foreach(@effect in get_peffect()) {
+									if(@effect['id'] == 26) {
+										@luck += @effect['strength'] + 1;
+										break();
+									} else if(@effect['id'] == 27) {
+										@luck -= @effect['strength'] + 1;
+										break();
+									}
+								}
+								_set_inventory_contents(@event['location'], 3 + @luck);
+						}
+					}
+				}
+				
+				@binds[] = 'shard-place1';
+				bind(block_place, array('id': 'shard-place1'), array('type': 54), @event) {
+					_set_inventory_contents(@event['location'], 0);
+				}
+				
+				@binds[] = 'shard-place2';
+				bind(block_place, array('id': 'shard-place2'), array('type': 146), @event) {
+					_set_inventory_contents(@event['location'], 0);
+				}
+				
+				@binds[] = 'shard-itemframe';
+				bind(entity_damage, array('id': 'shard-itemframe'), array('type': 'ITEM_FRAME'), @event) {
+					if(@event['world'] == 'shard') {
+						cancel();
+					}
+				}
+				
+				@binds[] = 'shard-explosion';
+				bind(entity_explode, array('id': 'shard-explosion'), null, @event) {
+					if(@event['location']['world'] == 'shard') {
+						foreach(@block in @event['blocks']) {
+							switch(split(':', get_block_at(@block), 1)[0]) {
+								case '23':
+								case '61':
+								case '117':
+								case '154':
+								case '158':
+									@inv = array();
+									array_resize(@inv, get_inventory_size(@block));
+									set_inventory(@block, @inv);
+								case '54':
+								case '146':
+									_set_inventory_contents(@block, 3);
+							}
+						}
+					}
+				}
+				
+				export('shard.binds', @binds);
 				
 			});
 		});

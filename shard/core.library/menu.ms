@@ -1,12 +1,12 @@
 proc _open_objective_menu() {
-	@objectives = array('treasurehunt', 'elimination');
+	@objectives = array('treasurehunt', 'elimination', 'scavengerbingo');
 	@menu = array(
 		'id': 'shard',
 		'type': 'HOPPER',
 		'title': 'Choose an Objective',
 		'0': array(
 			'name': 'IRON_SWORD', 'meta': array(
-				'display': color('aqua').'ELIMINATION',
+				'display': color('aqua').'Elimination',
 				'flags': array('HIDE_ATTRIBUTES'),
 				'lore': array(
 					color('white').'Eliminate all other players not in your team.',
@@ -14,12 +14,20 @@ proc _open_objective_menu() {
 		),
 		'1': array(
 			'name': 'ENDER_CHEST', 'meta': array(
-				'display': color('aqua').'TREASUREHUNT',
+				'display': color('aqua').'Treasure Hunt',
 				'lore': array(
 					color('white').'Collect randomly buried treasure. Players respawn.',
 					color('white').'One minute after a treasure is found and retrieved,',
 					color('white').'another is spawned. Compasses point to treasures,',
 					color('white').'but coordinates are also given.',
+			))
+		),
+		'2': array(
+			'name': 'EMPTY_MAP', 'meta': array(
+				'display': color('aqua').'Scavenger Bingo',
+				'lore': array(
+					color('white').'Find and collect items to complete your bingo card.',
+					color('white').'Five across, down, or diagonal wins the game.',
 			))
 		),
 	);
@@ -34,7 +42,7 @@ proc _open_objective_menu() {
 		}
 		@item = @event['slotitem'];
 		if(@item && @item['meta'] && @item['meta']['display']) {
-			@objective = to_lower(substr(@item['meta']['display'], 2));
+			@objective = replace(to_lower(substr(@item['meta']['display'], 2)), ' ', '');
 			if(array_contains(@objectives, @objective)) {
 				unbind();
 				unbind(player().'open');
@@ -57,6 +65,7 @@ proc _open_rules_menu(@objective) {
 	@deactivated = array('name': 'INK_SACK', 'data': 8, 'meta': array('display': color('gray').'DEACTIVATED'));
 	@options = array(
 		'loot': array(
+			'objective': array('elimination', 'treasurehunt'),
 			'default': true,
 			'shown': true,
 			'item': array(
@@ -68,6 +77,7 @@ proc _open_rules_menu(@objective) {
 			)))
 		),
 		'keep': array(
+			'objective': array('elimination', 'treasurehunt'),
 			'default': false,
 			'shown': true,
 			'item': array(
@@ -91,6 +101,7 @@ proc _open_rules_menu(@objective) {
 			)))
 		),
 		'noregen': array(
+			'objective': array('elimination'),
 			'default': false,
 			'shown': true,
 			'item': array(
@@ -115,6 +126,7 @@ proc _open_rules_menu(@objective) {
 			)))
 		),
 		'teams': array(
+			'objective': array('elimination', 'treasurehunt'),
 			'default': 0,
 			'shown': true,
 			'values': array(0, 2, 3, 4),
@@ -137,7 +149,7 @@ proc _open_rules_menu(@objective) {
 			)))
 		),
 		'timelimit': array(
-			'objective': 'elimination',
+			'objective': array('elimination'),
 			'default': 20,
 			'shown': true,
 			'values': array(0, 10, 15, 20, 25, 30, 45, 60),
@@ -151,6 +163,7 @@ proc _open_rules_menu(@objective) {
 			)))
 		),
 		'buffertime': array(
+			'objective': array('elimination', 'treasurehunt'),
 			'default': 0,
 			'shown': true,
 			'values': array(0, 1, 3, 5, 10, 15, 20),
@@ -171,7 +184,7 @@ proc _open_rules_menu(@objective) {
 			))
 		),
 		'treasures': array(
-			'objective': 'treasurehunt',
+			'objective': array('treasurehunt'),
 			'default': 3,
 			'shown': true,
 			'values': array(3, 5, 7, 10),
@@ -201,7 +214,7 @@ proc _open_rules_menu(@objective) {
 	@index = 0;
 	@rules = array();
 	foreach(@name: @option in @options) {
-		if(array_index_exists(@option, 'objective') && @option['objective'] != @objective) {
+		if(array_index_exists(@option, 'objective') && !array_contains(@option['objective'], @objective)) {
 			continue();
 		}
 		if(@option['default']) {
