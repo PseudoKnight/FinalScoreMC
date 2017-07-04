@@ -237,11 +237,6 @@ proc _shard_create(@rules){
 						play_sound(@ploc, array('sound': 'WITHER_SPAWN', 'pitch': 0.7), @p);
 					}, 'shard');
 				}
-				if(@rules['objective'] == 'scavengerbingo') {
-					queue_push(closure() {
-						_refresh_card();
-					});
-				}
 				
 				proc _check_shard(@willRespawnPlayers = @respawnPlayers) {
 					queue_push(closure(){
@@ -315,6 +310,8 @@ proc _shard_create(@rules){
 								set_world_border('shard', array('width': 1, 'seconds': @rules['timelimit'] * 60));
 								_worldmsg('shard', color('red').color('bold').'Shard has started to collapse! ('.@rules['timelimit'].' minutes)');
 							}
+						} else {
+							modify_event('keep_inventory', true);
 						}
 						set_timeout(50, closure(){
 							respawn();

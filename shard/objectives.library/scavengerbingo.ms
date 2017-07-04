@@ -293,7 +293,6 @@
 	'NAME_TAG',
 	'MUTTON',
 	'COOKED_MUTTON',
-	'BANNER',
 	'SPRUCE_DOOR_ITEM',
 	'BIRCH_DOOR_ITEM',
 	'JUNGLE_DOOR_ITEM',
@@ -328,6 +327,11 @@ for(@i = 0, @i < 5, @i++) {
 }
 export('shard.bingocard', @card);
 
+// Scoreboard
+create_objective('inarow', 'DUMMY', 'shard');
+set_objective_display('inarow', array('slot': 'SIDEBAR', 'displayname': 'In a Row (5)'), 'shard');
+create_objective('reroll', 'DUMMY', 'shard');
+
 proc _bingo_win(@player) {
 	_worldmsg('shard', color('green').@player.' wins!');
 	launch_firework(ploc(@player), array('strength': 3, 'type': 'BALL_LARGE', 'flicker': true));
@@ -348,14 +352,17 @@ proc _refresh_card() {
 		for(@i = 0, @i < 5, @i++) {
 			for(@j = 0, @j < 5, @j++) {
 				@item = @card[@i][@j];
+				@size = array_size(@item['players']);
 				if(array_contains(@item['players'], @p)) {
 					@chest[2 + @i + (@j * 9)] = array('name': 'STAINED_GLASS_PANE', 'data': 14,
 							'qty': array_size(@item['players']), 'meta': array('display': 'ACHIEVED'));
-				} else if(array_size(@item['players']) == 1) {
+				} else if(@size == 1) {
 					@chest[2 + @i + (@j * 9)] = array('name': @item['material'], 'meta': array(
-							'enchants': array('elevel': 1, 'etype': 'DAMAGE_ALL'), 'flags': array('HIDE_ENCHANTS')));
+							'enchants': array(array('elevel': 1, 'etype': 'DAMAGE_ALL')), 'flags': array('HIDE_ENCHANTS')));
+				} else if(@size == 0) {
+					@chest[2 + @i + (@j * 9)] = array('name': @item['material']);
 				} else {
-					@chest[2 + @i + (@j * 9)] = array('name': @item['material'], 'qty': array_size(@item['players']) + 1);
+					@chest[2 + @i + (@j * 9)] = array('name': @item['material'], 'qty': array_size(@item['players']));
 				}
 			}
 		}
@@ -364,31 +371,38 @@ proc _refresh_card() {
 	}
 }
 
-proc _check_card(@player, @i, @j) {
+proc _check_card(@player, @row, @column) {
 	@card = import('shard.bingocard');
+	@range = range(5);
 	// Check horizontal/vertical
-	if(array_contains(@card[0][@j]['players'], @player)
-	&& array_contains(@card[1][@j]['players'], @player)
-	&& array_contains(@card[2][@j]['players'], @player)
-	&& array_contains(@card[3][@j]['players'], @player)
-	&& array_contains(@card[4][@j]['players'], @player)
-	|| array_contains(@card[@i][0]['players'], @player)
-	&& array_contains(@card[@i][1]['players'], @player)
-	&& array_contains(@card[@i][2]['players'], @player)
-	&& array_contains(@card[@i][3]['players'], @player)
-	&& array_contains(@card[@i][4]['players'], @player)) {
-		_bingo_win(@player);
+	@foundRow = 0;
+	foreach(@i in @range) {
+		if(array_contains(@card[@row][@i]['players'], @player)) {
+			@foundRow++;
+		}
+	}
+	@foundColumn = 0;
+	foreach(@i in @range) {
+		if(array_contains(@card[@i][@column]['players'], @player)) {
+			@foundColumn++;
+		}
 	}
 	// Check diagonal
-	if(array_contains(@card[2][2]['players'], @player)
-	&& (array_contains(@card[0][0]['players'], @player)
-	&& array_contains(@card[1][1]['players'], @player)
-	&& array_contains(@card[3][3]['players'], @player)
-	&& array_contains(@card[4][4]['players'], @player)
-	|| array_contains(@card[0][4]['players'], @player)
-	&& array_contains(@card[1][3]['players'], @player)
-	&& array_contains(@card[3][1]['players'], @player)
-	&& array_contains(@card[4][0]['players'], @player))) {
+	@foundDiagDown = 0;
+	foreach(@i in @range) {
+		if(array_contains(@card[@i][@i]['players'], @player)) {
+			@foundDiagDown++;
+		}
+	}
+	@foundDiagUp = 0;
+	foreach(@i in @range) {
+		if(array_contains(@card[@i][4 - @i]['players'], @player)) {
+			@foundDiagUp++;
+		}
+	}
+	@score = max(@foundRow, @foundColumn, @foundDiagDown, @foundDiagUp);
+	set_pscore('inarow', @player, @score, 'shard');
+	if(@score == 5) {
 		_bingo_win(@player);
 	}
 }
@@ -397,6 +411,7 @@ proc _check_card(@player, @i, @j) {
 bind(world_changed, array('id': 'shard-bingo-worldchanged', 'priority': 'LOW'), array('to': 'shard'), @event) {
 	queue_push(closure(){
 		pgive_item(player(), 395, 1, array('display': 'Bingo Card'));
+		_refresh_card();
 	}, 'shard');
 }
 
@@ -405,6 +420,30 @@ bind(player_interact, array('id': 'shard-bingo-playerinteract'), array('item': 3
 	if(pworld() == 'shard') {
 		cancel();
 		popen_virtualchest(player().'bingo');
+	}
+}
+
+@binds[] = 'shard-bingo-inventoryclick';
+bind(inventory_click, array('id': 'shard-bingo-inventoryclick'), null, @event, @items) {
+	if(pget_virtualchest() == player().'bingo' && @event['slotitem'])
+	 	if(!get_pscore('reroll', player(), 'shard')) {
+			die('You\'ve re-rolled an item already.');
+		}
+		@material = @event['slotitem']['name'];
+		@card = import('shard.bingocard');
+		for(@i = 0, @i < 5, @i++) {
+			for(@j = 0, @j < 5, @j++) {
+				if(@card[@i][@j]['material'] == @material && array_size(@card[@i][@j]['players']) == 0) {
+					@newmaterial = array_rand(@items, 1, false)[0];
+					@card[@i][@j] = array('players': array(), 'material': @newmaterial);
+					set_pscore('reroll', player(), 1, 'shard');
+					_refresh_card();
+					_worldmsg('shard', player().' re-rolled '.@material.' and got '.@newmaterial.'.');
+					die();
+				}
+			}
+		}
+		msg('Someone already got that item!');
 	}
 }
 
@@ -424,6 +463,7 @@ bind(item_pickup, array('id': 'shard-bingo-itempickup'), null, @event, @card) {
 					}
 					@item['players'][] = player();
 					launch_firework(ploc());
+					_worldmsg('shard', player().' found 'color('green').'['.@event['item']['name'].']');
 					_refresh_card();
 					_check_card(player(), @i, @j);
 				}
