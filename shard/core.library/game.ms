@@ -374,6 +374,12 @@ proc _shard_create(@rules){
 					}
 				}
 				
+				@binds[] = 'shard-itemframe2';
+				bind(hanging_break, array('id': 'shard-itemframe2'), array('type': 'ITEM_FRAME', 'world': 'shard'), @event) {
+					cancel();
+					entity_remove(@event['id']);
+				}
+				
 				@binds[] = 'shard-explosion';
 				bind(entity_explode, array('id': 'shard-explosion'), null, @event) {
 					if(@event['location']['world'] == 'shard') {

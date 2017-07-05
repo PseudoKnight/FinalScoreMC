@@ -196,6 +196,18 @@ proc _open_rules_menu(@objective) {
 						color('white').'find to win the shard.',
 			)))
 		),
+		'bingosize': array(
+			'objective': array('scavengerbingo'),
+			'default': 5,
+			'shown': true,
+			'values': array(3, 4, 5, 6),
+			'item': array(
+				'name': 'DAYLIGHT_DETECTOR', 'meta': array(
+					'display': color('aqua').color('bold').'BINGO SIZE',
+					'lore': array(
+						color('white').'The height and width of the bingo card.',
+			)))
+		),
 	);
 	@menu = array(
 		'id': 'shard',
