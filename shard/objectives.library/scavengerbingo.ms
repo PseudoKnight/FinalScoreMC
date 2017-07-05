@@ -364,7 +364,8 @@ proc _refresh_card(@cardSize = @size) {
 					@chest[@offset + @i + @j * @width] = array('name': @item['material'], 'meta': array('enchants':
 							array(array('elevel': 1, 'etype': 'DAMAGE_ALL')), 'flags': array('HIDE_ENCHANTS')));
 				} else {
-					@chest[@offset + @i + @j * @width] = array('name': @item['material']);
+					@chest[@offset + @i + @j * @width] = array('name': @item['material'], 'meta': array('lore':
+							array('Click to re-roll this item.')));
 				}
 			}
 		}
@@ -429,7 +430,7 @@ bind(player_interact, array('id': 'shard-bingo-playerinteract'), array('item': 3
 @binds[] = 'shard-bingo-inventoryclick';
 bind(inventory_click, array('id': 'shard-bingo-inventoryclick'), null, @event, @items, @size) {
 	if(pget_virtualchest() == to_lower(player()).'bingo' && @event['slotitem']) {
-	 	if(!get_pscore('reroll', player(), 'shard')) {
+	 	if(get_pscore('reroll', player(), 'shard')) {
 			die('You\'ve re-rolled an item already.');
 		}
 		@material = @event['slotitem']['name'];
