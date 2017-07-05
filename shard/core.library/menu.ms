@@ -1,5 +1,5 @@
 proc _open_objective_menu() {
-	@objectives = array('treasurehunt', 'elimination', 'scavengerbingo');
+	@objectives = array('treasurehunt', 'elimination', 'scavengerhunt');
 	@menu = array(
 		'id': 'shard',
 		'type': 'HOPPER',
@@ -24,9 +24,9 @@ proc _open_objective_menu() {
 		),
 		'2': array(
 			'name': 'EMPTY_MAP', 'meta': array(
-				'display': color('aqua').'Scavenger Bingo',
+				'display': color('aqua').'Scavenger Hunt',
 				'lore': array(
-					color('white').'Find and collect items to complete your bingo card.',
+					color('white').'Find and collect items to complete your card.',
 					color('white').'Five across, down, or diagonal wins the game.',
 			))
 		),
@@ -196,16 +196,16 @@ proc _open_rules_menu(@objective) {
 						color('white').'find to win the shard.',
 			)))
 		),
-		'bingosize': array(
-			'objective': array('scavengerbingo'),
+		'cardsize': array(
+			'objective': array('scavengerhunt'),
 			'default': 5,
 			'shown': true,
 			'values': array(3, 4, 5, 6),
 			'item': array(
 				'name': 'DAYLIGHT_DETECTOR', 'meta': array(
-					'display': color('aqua').color('bold').'BINGO SIZE',
+					'display': color('aqua').color('bold').'CARD SIZE',
 					'lore': array(
-						color('white').'The height and width of the bingo card.',
+						color('white').'The height and width of the card.',
 			)))
 		),
 	);

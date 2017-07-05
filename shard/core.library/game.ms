@@ -118,7 +118,7 @@ proc _shard_create(@rules){
 				storm(false, 'shard');
 				set_world_border('shard', array('width': @rules['width'], 'center': @loc));
 				set_gamerule('shard', 'NATURALREGENERATION', !array_index_exists(@rules, 'regen') || !@rules['noregen']);
-				@respawnPlayers = (@rules['objective'] == 'treasurehunt' || @rules['objective'] == 'scavengerbingo');
+				@respawnPlayers = (@rules['objective'] == 'treasurehunt' || @rules['objective'] == 'scavengerhunt');
 				if(!@respawnPlayers && @rules['buffertime'] && @rules['timelimit']) {
 					set_timeout(@rules['buffertime'] * 60000, closure(){
 						if(array_contains(get_worlds(), 'shard')) {
@@ -137,10 +137,10 @@ proc _shard_create(@rules){
 					@binds = import('shard.binds');
 					export('shard.binds', null);
 					
-					// Bingo clean-up
-					export('shard.bingcard', null);
+					// Scavenger Hunt clean-up
+					export('shard.card', null);
 					foreach(@chest in all_virtualchests()) {
-						if(string_ends_with(@chest, 'bingo')) {
+						if(string_ends_with(@chest, 'card')) {
 							del_virtualchest(@chest);
 						}
 					}

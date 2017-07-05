@@ -317,7 +317,7 @@
 
 // grid of random items
 @card = array();
-@size = @rules['bingosize'];
+@size = @rules['cardsize'];
 for(@i = 0, @i < @size, @i++) {
 	@card[@i] = array();
 	for(@j = 0, @j < @size, @j++) {
@@ -326,14 +326,14 @@ for(@i = 0, @i < @size, @i++) {
 		array_remove(@items, @index);
 	}
 }
-export('shard.bingocard', @card);
+export('shard.card', @card);
 
 // Scoreboard
 create_objective('inarow', 'DUMMY', 'shard');
 set_objective_display('inarow', array('slot': 'SIDEBAR', 'displayname': 'In a Row ('.@size.')'), 'shard');
 create_objective('reroll', 'DUMMY', 'shard');
 
-proc _bingo_win(@player) {
+proc _scavengerhunt_win(@player) {
 	_worldmsg('shard', color('green').@player.' wins!');
 	launch_firework(ploc(@player), array('strength': 3, 'type': 'BALL_LARGE', 'flicker': true));
 	set_timeout(20000, closure(){
@@ -342,7 +342,7 @@ proc _bingo_win(@player) {
 }
 
 proc _refresh_card(@cardSize = @size) {
-	@card = import('shard.bingocard');
+	@card = import('shard.card');
 	@chest = associative_array();
 	@offset = 2;
 	@width = 9;
@@ -369,14 +369,14 @@ proc _refresh_card(@cardSize = @size) {
 				}
 			}
 		}
-		@chest['id'] = @p.'bingo';
+		@chest['id'] = @p.'card';
 		@chest['title'] = @p.'\'s Card';
 		create_virtualchest(@chest);
 	}
 }
 
 proc _check_card(@player, @row, @column, @cardSize = @size) {
-	@card = import('shard.bingocard');
+	@card = import('shard.card');
 	@range = range(@cardSize);
 	// Check horizontal/vertical
 	@foundRow = 0;
@@ -407,34 +407,34 @@ proc _check_card(@player, @row, @column, @cardSize = @size) {
 	@score = max(@foundRow, @foundColumn, @foundDiagDown, @foundDiagUp);
 	set_pscore('inarow', @player, @score, 'shard');
 	if(@score == @cardSize) {
-		_bingo_win(@player);
+		_scavengerhunt_win(@player);
 	}
 }
 
-@binds[] = 'shard-bingo-worldchanged';
-bind(world_changed, array('id': 'shard-bingo-worldchanged', 'priority': 'LOW'), array('to': 'shard'), @event) {
+@binds[] = 'shard-scavenger-worldchanged';
+bind(world_changed, array('id': 'shard-scavenger-worldchanged', 'priority': 'LOW'), array('to': 'shard'), @event) {
 	queue_push(closure(){
-		pgive_item(player(), 395, 1, array('display': 'Bingo Card'));
+		pgive_item(player(), 395, 1, array('display': 'Scavenger Hunt Card'));
 		_refresh_card();
 	}, 'shard');
 }
 
-@binds[] = 'shard-bingo-playerinteract';
-bind(player_interact, array('id': 'shard-bingo-playerinteract'), array('item': 395, 'button': 'right'), @event) {
+@binds[] = 'shard-scavenger-playerinteract';
+bind(player_interact, array('id': 'shard-scavenger-playerinteract'), array('item': 395, 'button': 'right'), @event) {
 	if(pworld() == 'shard') {
 		cancel();
-		popen_virtualchest(player().'bingo');
+		popen_virtualchest(player().'card');
 	}
 }
 
-@binds[] = 'shard-bingo-inventoryclick';
-bind(inventory_click, array('id': 'shard-bingo-inventoryclick'), null, @event, @items, @size) {
-	if(pget_virtualchest() == to_lower(player()).'bingo' && @event['slotitem']) {
+@binds[] = 'shard-scavenger-inventoryclick';
+bind(inventory_click, array('id': 'shard-scavenger-inventoryclick'), null, @event, @items, @size) {
+	if(pget_virtualchest() == to_lower(player()).'card' && @event['slotitem']) {
 	 	if(get_pscore('reroll', player(), 'shard')) {
 			die('You\'ve re-rolled an item already.');
 		}
 		@material = @event['slotitem']['name'];
-		@card = import('shard.bingocard');
+		@card = import('shard.card');
 		for(@i = 0, @i < @size, @i++) {
 			for(@j = 0, @j < @size, @j++) {
 				if(@card[@i][@j]['material'] == @material && array_size(@card[@i][@j]['players']) == 0) {
@@ -451,8 +451,8 @@ bind(inventory_click, array('id': 'shard-bingo-inventoryclick'), null, @event, @
 	}
 }
 
-@binds[] = 'shard-bingo-itempickup';
-bind(item_pickup, array('id': 'shard-bingo-itempickup'), null, @event, @card, @size) {
+@binds[] = 'shard-scavenger-itempickup';
+bind(item_pickup, array('id': 'shard-scavenger-itempickup'), null, @event, @card, @size) {
 	if(pworld() == 'shard') {
 		@thisMaterial = @event['item']['name'];
 		for(@i = 0, @i < @size, @i++) {
