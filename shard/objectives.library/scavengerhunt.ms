@@ -478,7 +478,7 @@ if(@size) {
 		// Check horizontal/vertical
 		@maxRow = min(6, @row + 5) - 4;
 		@contiguous = 0;
-		for(@i = max(0, @row - 4), @i < @maxRow + @contiguous, @i++) {
+		for(@i = max(0, @row - 3), @i < @maxRow + @contiguous, @i++) {
 			if(array_contains(@card[@i][@column]['players'], @player)) {
 				@contiguous++;
 				if(@contiguous == 4) {
@@ -491,7 +491,7 @@ if(@size) {
 		}
 		@maxColumn = min(9, @column + 5) - 4;
 		@contiguous = 0;
-		for(@i = max(0, @column - 4), @i < @maxColumn + @contiguous, @i++) {
+		for(@i = max(0, @column - 3), @i < @maxColumn + @contiguous, @i++) {
 			if(array_contains(@card[@row][@i]['players'], @player)) {
 				@contiguous++;
 				if(@contiguous == 4) {
@@ -506,10 +506,11 @@ if(@size) {
 		if(@column - @row < 6 && @row - @column < 4) {
 			@offset = @column - @row;
 			@contiguous = 0;
-			for(@i = @row - 4, @i < @row + 1 + @contiguous, @i++) {
-				if(array_index_exists(@card, @i)
-				&& array_index_exists(@card[@i], @i + @offset)
-				&& array_contains(@card[@i][@i + @offset]['players'], @player)) {
+			for(@i = @row - 3, @i < @row + 1 + @contiguous, @i++) {
+				@j = @i + @offset;
+				if(@i > -1 && @j > -1
+				&& @i < 6 && @j < 9
+				&& array_contains(@card[@i][@j]['players'], @player)) {
 					@contiguous++;
 					if(@contiguous == 4) {
 						_scavengerhunt_win(@player);
@@ -524,9 +525,10 @@ if(@size) {
 		if(@total > 2 && @total < 11) {
 			@offset = 8 - @column - @row;
 			@contiguous = 0;
-			for(@i = @row - 4, @i < @row + 1 + @contiguous, @i++) {
-				if(array_index_exists(@card, @i)
-				&& array_index_exists(@card[@i], 8 - @i - @offset)
+			for(@i = @row - 3, @i < @row + 1 + @contiguous, @i++) {
+				@j = 8 - @i - @offset;
+				if(@i > -1 && @j > -1
+				&& @i < 6 && @j < 9
 				&& array_contains(@card[@i][8 - @i - @offset]['players'], @player)) {
 					@contiguous++;
 					if(@contiguous == 4) {
