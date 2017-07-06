@@ -6,15 +6,6 @@ for(@i = 0, @i < @numTeams, @i++) {
 	set_team_options(@teams[@i], array('friendlyinvisibles': true, 'friendlyfire': false), 'shard');
 }
 
-proc _get_team(@player) {
-	foreach(@team in get_teams('shard')) {
-		if(array_contains(@team['players'], @player)) {
-			return(@team['name']);
-		}
-	}
-	return(null);
-}
-
 @binds[] = 'shard-teams1';
 bind(world_changed, array('id': 'shard-teams1', 'priority': 'LOW'), array('to': 'shard'), @event, @numTeams, @teams) {
 	queue_push(closure(){

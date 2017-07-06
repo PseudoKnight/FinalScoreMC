@@ -200,12 +200,15 @@ proc _open_rules_menu(@objective) {
 			'objective': array('scavengerhunt'),
 			'default': 5,
 			'shown': true,
-			'values': array(3, 4, 5, 6),
+			'values': array(0, 3, 4, 5, 6),
 			'item': array(
 				'name': 'DAYLIGHT_DETECTOR', 'meta': array(
 					'display': color('aqua').color('bold').'CARD SIZE',
 					'lore': array(
 						color('white').'The height and width of the card.',
+						color('white').'If disabled, uses a full card,',
+						color('white').'and requires 4 in a row. In this mode,',
+						color('white').'only one player may get each item.',
 			)))
 		),
 	);

@@ -449,7 +449,8 @@ bind(player_interact, null, array('block': 77, 'button': 'right'), @event) {
 
 # prevent enderdragon egg teleportation
 bind(player_interact, null, array('block': 122), @event) {
-	if(!_is_survival_world(pworld())) {
+	@world = pworld();
+	if(@world == 'dev' || @world == 'custom') {
 		cancel();
 	}
 }

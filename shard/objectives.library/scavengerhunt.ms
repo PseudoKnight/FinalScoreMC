@@ -243,7 +243,6 @@
 	'BED',
 	'DIODE',
 	'COOKIE',
-	'MAP',
 	'SHEARS',
 	'MELON',
 	'PUMPKIN_SEEDS',
@@ -256,7 +255,6 @@
 	'ENDER_PEARL',
 	'GOLD_NUGGET',
 	'NETHER_STALK',
-	'POTION',
 	'GLASS_BOTTLE',
 	'SPIDER_EYE',
 	'FERMENTED_SPIDER_EYE',
@@ -318,9 +316,11 @@
 // grid of random items
 @card = array();
 @size = @rules['cardsize'];
-for(@i = 0, @i < @size, @i++) {
+@width = if(@size, @size, 9);
+@height = if(@size, @size, 6);
+for(@i = 0, @i < @height, @i++) {
 	@card[@i] = array();
-	for(@j = 0, @j < @size, @j++) {
+	for(@j = 0, @j < @width, @j++) {
 		@index = array_rand(@items, 1)[0];
 		@card[@i][@j] = array('players': array(), 'material': @items[@index]);
 		array_remove(@items, @index);
@@ -330,9 +330,31 @@ export('shard.card', @card);
 
 // Scoreboard
 create_objective('inarow', 'DUMMY', 'shard');
-set_objective_display('inarow', array('slot': 'SIDEBAR', 'displayname': 'In a Row ('.@size.')'), 'shard');
 create_objective('reroll', 'DUMMY', 'shard');
+create_objective('total', 'DUMMY', 'shard');
+if(@size) {
+	set_objective_display('inarow', array('slot': 'SIDEBAR', 'displayname': 'In a Row ('.@size.')'), 'shard');
+} else {
+	set_objective_display('total', array('slot': 'SIDEBAR', 'displayname': 'Total'), 'shard');
+}
 
+// Player colors
+@colors = array(
+	array(1, 6),
+	array(2, 13),
+	array(3, 11),
+	array(4, 14),
+	array(5, 10),
+	array(6, 12),
+	array(9, 3),
+	array(11, 9),
+	array(13, 2),
+	array(14, 4),
+);
+@colorMap = associative_array();
+export('shard.colors', @colorMap);
+
+// Procedures
 proc _scavengerhunt_win(@player) {
 	_worldmsg('shard', color('green').@player.' wins!');
 	launch_firework(ploc(@player), array('strength': 3, 'type': 'BALL_LARGE', 'flicker': true));
@@ -341,103 +363,233 @@ proc _scavengerhunt_win(@player) {
 	});
 }
 
-proc _refresh_card(@cardSize = @size) {
-	@card = import('shard.card');
-	@chest = associative_array();
-	@offset = 2;
-	@width = 9;
-	if(@cardSize == 3) {
-		@chest['type'] = 'DROPPER';
-		@offset = 0;
-		@width = 3;
-	} else {
-		@chest['size'] = 9 * @cardSize;
+if(@size) {
+	proc _refresh_card(@create = false, @cardSize = @size) {
+		@card = import('shard.card');
+		@chest = associative_array();
+		@offset = 2;
+		@chestWidth = 9;
+		if(@cardSize == 3) {
+			@chest['type'] = 'DROPPER';
+			@offset = 0;
+			@chestWidth = 3;
+		} else {
+			@chest['size'] = 9 * @cardSize;
+		}
+		// Personalize virtual chest per player
+		foreach(@p in all_players('shard')) {
+			for(@i = 0, @i < @cardSize, @i++) {
+				for(@j = 0, @j < @cardSize, @j++) {
+					@item = @card[@i][@j];
+					if(array_contains(@item['players'], @p)) {
+						@chest[@offset + @j + @i * @chestWidth] = array('name': 'STAINED_GLASS_PANE', 'data': 14);
+					} else if(array_size(@item['players'])) {
+						@chest[@offset + @j + @i * @chestWidth] = array('name': @item['material'], 'meta': array('enchants':
+								array(array('elevel': 1, 'etype': 'DAMAGE_ALL')), 'flags': array('HIDE_ENCHANTS')));
+					} else {
+						@chest[@offset + @j + @i * @chestWidth] = array('name': @item['material'], 'meta': array('lore':
+								array('Click to re-roll this item.')));
+					}
+				}
+			}
+			@chest['id'] = @p.'card';
+			@chest['title'] = @p.'\'s Card';
+			if(@create) {
+				create_virtualchest(@chest);
+			} else {
+				update_virtualchest(@chest);
+			}
+		}
 	}
-	// Personalize virtual chest per player
-	foreach(@p in all_players('shard')) {
-		for(@i = 0, @i < @cardSize, @i++) {
-			for(@j = 0, @j < @cardSize, @j++) {
+	
+	proc _check_card(@player, @row, @column, @cardSize = @size) {
+		@card = import('shard.card');
+		@range = range(@cardSize);
+		// Check horizontal/vertical
+		@foundRow = 0;
+		foreach(@i in @range) {
+			if(array_contains(@card[@row][@i]['players'], @player)) {
+				@foundRow++;
+			}
+		}
+		@foundColumn = 0;
+		foreach(@i in @range) {
+			if(array_contains(@card[@i][@column]['players'], @player)) {
+				@foundColumn++;
+			}
+		}
+		// Check diagonal
+		@foundDiagDown = 0;
+		foreach(@i in @range) {
+			if(array_contains(@card[@i][@i]['players'], @player)) {
+				@foundDiagDown++;
+			}
+		}
+		@foundDiagUp = 0;
+		foreach(@i in @range) {
+			if(array_contains(@card[@i][@cardSize - 1 - @i]['players'], @player)) {
+				@foundDiagUp++;
+			}
+		}
+		@score = max(@foundRow, @foundColumn, @foundDiagDown, @foundDiagUp);
+		set_pscore('inarow', @player, @score, 'shard');
+		if(@score == @cardSize) {
+			_scavengerhunt_win(@player);
+		}
+	}
+	
+} else {
+	proc _refresh_card(@create = false) {
+		@card = import('shard.card');
+		@colors = import('shard.colors');
+		@chest = array(
+			'id': 'shardcard',
+			'title': 'Get 4 In A Row',
+		);
+		@offset = 2;
+		@chestWidth = 9;
+		for(@i = 0, @i < 6, @i++) {
+			for(@j = 0, @j < 9, @j++) {
 				@item = @card[@i][@j];
-				if(array_contains(@item['players'], @p)) {
-					@chest[@offset + @i + @j * @width] = array('name': 'STAINED_GLASS_PANE', 'data': 14);
-				} else if(array_size(@item['players'])) {
-					@chest[@offset + @i + @j * @width] = array('name': @item['material'], 'meta': array('enchants':
-							array(array('elevel': 1, 'etype': 'DAMAGE_ALL')), 'flags': array('HIDE_ENCHANTS')));
+				if(@item['material'] == 'STAINED_GLASS_PANE') {
+					continue();
+				}
+				if(@item['players']) {
+					@chest[@j + @i * @chestWidth] = array('name': 'STAINED_GLASS_PANE', 'data': @colors[@item['players'][0]][0],
+							'meta': array('display': @item['players'][0]));
+					@item['material'] = 'STAINED_GLASS_PANE';
 				} else {
-					@chest[@offset + @i + @j * @width] = array('name': @item['material'], 'meta': array('lore':
+					@chest[@j + @i * @chestWidth] = array('name': @item['material'], 'meta': array('lore':
 							array('Click to re-roll this item.')));
 				}
 			}
 		}
-		@chest['id'] = @p.'card';
-		@chest['title'] = @p.'\'s Card';
-		create_virtualchest(@chest);
+		if(@create) {
+			create_virtualchest(@chest);
+		} else {
+			update_virtualchest(@chest);
+		}
+	}
+	_refresh_card(true);
+	
+	proc _check_card(@player, @row, @column) {
+		@card = import('shard.card');
+		@range = range(4);
+		// Check horizontal/vertical
+		@maxRow = min(6, @row + 5) - 4;
+		@contiguous = 0;
+		for(@i = max(0, @row - 4), @i < @maxRow + @contiguous, @i++) {
+			if(array_contains(@card[@i][@column]['players'], @player)) {
+				@contiguous++;
+				if(@contiguous == 4) {
+					_scavengerhunt_win(@player);
+					return();
+				}
+			} else {
+				@contiguous = 0;
+			}
+		}
+		@maxColumn = min(9, @column + 5) - 4;
+		@contiguous = 0;
+		for(@i = max(0, @column - 4), @i < @maxColumn + @contiguous, @i++) {
+			if(array_contains(@card[@row][@i]['players'], @player)) {
+				@contiguous++;
+				if(@contiguous == 4) {
+					_scavengerhunt_win(@player);
+					return();
+				}
+			} else {
+				@contiguous = 0;
+			}
+		}
+		// Check diagonal
+		if(@column - @row < 6 && @row - @column < 4) {
+			@offset = @column - @row;
+			@contiguous = 0;
+			for(@i = @row - 4, @i < @row + 1 + @contiguous, @i++) {
+				if(array_index_exists(@card, @i)
+				&& array_index_exists(@card[@i], @i + @offset)
+				&& array_contains(@card[@i][@i + @offset]['players'], @player)) {
+					@contiguous++;
+					if(@contiguous == 4) {
+						_scavengerhunt_win(@player);
+						return();
+					}
+				} else {
+					@contiguous = 0;
+				}
+			}
+		}
+		@total = @column + @row;
+		if(@total > 2 && @total < 11) {
+			@offset = 8 - @column - @row;
+			@contiguous = 0;
+			for(@i = @row - 4, @i < @row + 1 + @contiguous, @i++) {
+				if(array_index_exists(@card, @i)
+				&& array_index_exists(@card[@i], 8 - @i - @offset)
+				&& array_contains(@card[@i][8 - @i - @offset]['players'], @player)) {
+					@contiguous++;
+					if(@contiguous == 4) {
+						_scavengerhunt_win(@player);
+						return();
+					}
+				} else {
+					@contiguous = 0;
+				}
+			}
+		}
 	}
 }
 
-proc _check_card(@player, @row, @column, @cardSize = @size) {
-	@card = import('shard.card');
-	@range = range(@cardSize);
-	// Check horizontal/vertical
-	@foundRow = 0;
-	foreach(@i in @range) {
-		if(array_contains(@card[@row][@i]['players'], @player)) {
-			@foundRow++;
-		}
-	}
-	@foundColumn = 0;
-	foreach(@i in @range) {
-		if(array_contains(@card[@i][@column]['players'], @player)) {
-			@foundColumn++;
-		}
-	}
-	// Check diagonal
-	@foundDiagDown = 0;
-	foreach(@i in @range) {
-		if(array_contains(@card[@i][@i]['players'], @player)) {
-			@foundDiagDown++;
-		}
-	}
-	@foundDiagUp = 0;
-	foreach(@i in @range) {
-		if(array_contains(@card[@i][@cardSize - 1 - @i]['players'], @player)) {
-			@foundDiagUp++;
-		}
-	}
-	@score = max(@foundRow, @foundColumn, @foundDiagDown, @foundDiagUp);
-	set_pscore('inarow', @player, @score, 'shard');
-	if(@score == @cardSize) {
-		_scavengerhunt_win(@player);
-	}
-}
 
+
+// Events
 @binds[] = 'shard-scavenger-worldchanged';
-bind(world_changed, array('id': 'shard-scavenger-worldchanged', 'priority': 'LOW'), array('to': 'shard'), @event) {
+bind(world_changed, array('id': 'shard-scavenger-worldchanged', 'priority': 'LOW'), array('to': 'shard'), @event, @size, @colors, @colorMap) {
 	queue_push(closure(){
-		pgive_item(player(), 395, 1, array('display': 'Scavenger Hunt Card'));
-		_refresh_card();
+		try {
+			@colorMap[player()] = @colors[0];
+			array_remove(@colors, 0);
+			create_team(player(), 'shard');
+			team_add_player(player(), player(), 'shard');
+			set_team_display(player(), array('prefix': color(@colorMap[player()][1])), 'shard');
+			pgive_item(player(), 395, 1, array('display': 'Scavenger Hunt Card'));
+			if(@size) {
+				_refresh_card(true);
+			}
+		} catch(IndexOverflowException @ex) {
+			set_pmode('SPECTATOR');
+		}
 	}, 'shard');
 }
 
 @binds[] = 'shard-scavenger-playerinteract';
-bind(player_interact, array('id': 'shard-scavenger-playerinteract'), array('item': 395, 'button': 'right'), @event) {
+bind(player_interact, array('id': 'shard-scavenger-playerinteract'), array('item': 395, 'button': 'right'), @event, @size) {
 	if(pworld() == 'shard') {
 		cancel();
-		popen_virtualchest(player().'card');
+		if(@size) {
+			popen_virtualchest(player().'card');
+		} else {
+			popen_virtualchest('shardcard');
+		}
 	}
 }
 
 @binds[] = 'shard-scavenger-inventoryclick';
-bind(inventory_click, array('id': 'shard-scavenger-inventoryclick'), null, @event, @items, @size) {
-	if(pget_virtualchest() == to_lower(player()).'card' && @event['slotitem']) {
+bind(inventory_click, array('id': 'shard-scavenger-inventoryclick'), null, @event, @card, @items, @width, @height) {
+	@menu = pget_virtualchest();
+	if(@event['slotitem'] && (@menu == to_lower(player()).'card' || @menu == 'shardcard')) {
 	 	if(get_pscore('reroll', player(), 'shard')) {
 			die('You\'ve re-rolled an item already.');
 		}
 		@material = @event['slotitem']['name'];
-		@card = import('shard.card');
-		for(@i = 0, @i < @size, @i++) {
-			for(@j = 0, @j < @size, @j++) {
-				if(@card[@i][@j]['material'] == @material && array_size(@card[@i][@j]['players']) == 0) {
+		if(@material == 'STAINED_GLASS_PANE') {
+			die();
+		}
+		for(@i = 0, @i < @height, @i++) {
+			for(@j = 0, @j < @width, @j++) {
+				@item = @card[@i][@j];
+				if(@item['material'] == @material && !@item['players']) {
 					@newmaterial = array_rand(@items, 1, false)[0];
 					@card[@i][@j] = array('players': array(), 'material': @newmaterial);
 					set_pscore('reroll', player(), 1, 'shard');
@@ -452,11 +604,17 @@ bind(inventory_click, array('id': 'shard-scavenger-inventoryclick'), null, @even
 }
 
 @binds[] = 'shard-scavenger-itempickup';
-bind(item_pickup, array('id': 'shard-scavenger-itempickup'), null, @event, @card, @size) {
+bind(item_pickup, array('id': 'shard-scavenger-itempickup'), null, @event, @card, @size, @width, @height) {
 	if(pworld() == 'shard') {
 		@thisMaterial = @event['item']['name'];
-		for(@i = 0, @i < @size, @i++) {
-			for(@j = 0, @j < @size, @j++) {
+		if(@thisMaterial == 'STAINED_GLASS_PANE') {
+			die();
+		} else if(@thisMaterial == 'MAP') {
+			modify_event('item', array('name': 'EMPTY_MAP', 'meta': array('display': 'Scavenger Hunt Card')));
+			die();
+		}
+		for(@i = 0, @i < @height, @i++) {
+			for(@j = 0, @j < @width, @j++) {
 				@item = @card[@i][@j];
 				if(@item['material'] == @thisMaterial && !array_contains(@item['players'], player())) {
 					if(@event['item']['qty'] > 1) {
@@ -466,10 +624,12 @@ bind(item_pickup, array('id': 'shard-scavenger-itempickup'), null, @event, @card
 						modify_event('item', null);
 					}
 					@item['players'][] = player();
+					set_pscore('total', player(), get_pscore('total', player(), 'shard') + 1, 'shard');
 					launch_firework(ploc());
 					_worldmsg('shard', player().' found '.color('green').'['.@event['item']['name'].']');
 					_refresh_card();
 					_check_card(player(), @i, @j);
+					break(2);
 				}
 			}
 		}
