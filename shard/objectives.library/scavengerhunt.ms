@@ -24,7 +24,6 @@
 	'WEB',
 	'DEAD_BUSH',
 	'PISTON_BASE',
-	'WOOL',
 	'YELLOW_FLOWER',
 	'BROWN_MUSHROOM',
 	'RED_MUSHROOM',
@@ -476,7 +475,7 @@ if(@size) {
 		@card = import('shard.card');
 		@range = range(4);
 		// Check horizontal/vertical
-		@maxRow = min(6, @row + 5) - 4;
+		@maxRow = min(6, @row + 4) - 3;
 		@contiguous = 0;
 		for(@i = max(0, @row - 3), @i < @maxRow + @contiguous, @i++) {
 			if(array_contains(@card[@i][@column]['players'], @player)) {
@@ -489,7 +488,7 @@ if(@size) {
 				@contiguous = 0;
 			}
 		}
-		@maxColumn = min(9, @column + 5) - 4;
+		@maxColumn = min(9, @column + 4) - 3;
 		@contiguous = 0;
 		for(@i = max(0, @column - 3), @i < @maxColumn + @contiguous, @i++) {
 			if(array_contains(@card[@row][@i]['players'], @player)) {
@@ -550,8 +549,9 @@ if(@size) {
 bind(world_changed, array('id': 'shard-scavenger-worldchanged', 'priority': 'LOW'), array('to': 'shard'), @event, @size, @colors, @colorMap) {
 	queue_push(closure(){
 		try {
-			@colorMap[player()] = @colors[0];
-			array_remove(@colors, 0);
+			@index = array_rand(@colors, 1)[0];
+			@colorMap[player()] = @colors[@index];
+			array_remove(@colors, @index);
 			create_team(player(), 'shard');
 			team_add_player(player(), player(), 'shard');
 			set_team_display(player(), array('prefix': color(@colorMap[player()][1])), 'shard');

@@ -46,6 +46,7 @@ proc _unload_shard() {
 			queue_push(closure(){
 				if(pworld(@p) == 'shard') {
 					@pdata = _pdata(@p);
+					set_entity_fall_distance(puuid(@p), 0);
 					set_ploc(@p, @pdata['survival']['loc']);
 				}
 			}, 'shard');
