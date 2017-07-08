@@ -67,7 +67,7 @@ bind(block_break, array('id': 'shard-break'), array('type': 130), @event, @rules
 		}
 		@score = 0;
 		if(@rules['teams']) {
-			@team = _get_team(player());
+			@team = get_pteam(player(), 'shard')['name'];
 			@score = get_pscore('Treasures', @team, 'shard') + 1;
 			set_pscore('Treasures', @team, @score, 'shard');
 			if(@score == @rules['treasures']) {

@@ -100,14 +100,11 @@ proc _fw_startround(@secs = 12) {
 					if(pmode(@p) == 'ADVENTURE') {
 						set_pmode(@p, 'SURVIVAL');
 					}
-					foreach(@team in get_teams('fw')) {
-						if(@team['name'] === 'winners'
-						&& array_contains(@team['players'], @p)) {
-							play_sound(ploc(@p), associative_array('sound': 'VILLAGER_YES'), @p);
-							set_pscore('score', @p, get_pscore('score', @p, 'fw') + 1, 'fw')
-							_fw_changeteam(@p, 'losers')
-							@count++
-						}
+					if(get_pteam(@p, 'fw')['name'] == 'winners') {
+						play_sound(ploc(@p), associative_array('sound': 'VILLAGER_YES'), @p);
+						set_pscore('score', @p, get_pscore('score', @p, 'fw') + 1, 'fw')
+						_fw_changeteam(@p, 'losers')
+						@count++
 					}
 					@score = get_pscore('score', @p, 'fw')
 					if(@score == @goal) {

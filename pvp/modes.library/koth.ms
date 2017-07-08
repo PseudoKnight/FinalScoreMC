@@ -17,7 +17,6 @@ proc _interval(@pvp, @id) {
             }
         }
         
-    	@teams = get_teams(@id);
     	if(@kingteam > -1) {
             @team = @pvp['arena']['team'][@kingteam]['name'];
     		@score = get_pscore('seconds', @team, @id);

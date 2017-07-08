@@ -12,16 +12,6 @@ proc _get_spawn_location(@retries = 3) {
 	return(@loc);
 }
 
-// Returns team a player is in
-proc _get_team(@player) {
-	foreach(@team in get_teams('shard')) {
-		if(array_contains(@team['players'], @player)) {
-			return(@team['name']);
-		}
-	}
-	return(null);
-}
-
 // Unloads the shard world and cleans-up data
 proc _unload_shard() {
 	@binds = import('shard.binds');

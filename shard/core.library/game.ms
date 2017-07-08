@@ -202,7 +202,7 @@ proc _shard_create(@rules){
 							@left = array();
 							foreach(@p in all_players()) {
 								if(pworld(@p) == 'shard' && pmode(@p) != 'SPECTATOR') {
-									@team = _get_team(@p);
+									@team = get_pteam(@p, 'shard')['name'];
 									if(@team) {
 										if(!array_contains(@left, @team)) {
 											@left[] = @team;

@@ -139,17 +139,10 @@ proc _start_game(@hockey) {
     bind(player_quit, associative_array('id': 'hockey-quit'), null, @event, @hockey) {
         if(array_contains(@hockey['players'], player())) {
             array_remove_values(@hockey['players'], player());
-            @teams = get_teams('hockey');
-            if(array_contains(@teams[0]['players'], player())) {
-                team_remove_player(@teams[0]['name'], player(), 'hockey');
-                if(array_size(@teams[0]['players']) < 2) {
-                    _end_game(@hockey);
-                }
-            } else {
-                team_remove_player(@teams[1]['name'], player(), 'hockey');
-                if(array_size(@teams[1]['players']) < 2) {
-                    _end_game(@hockey);
-                }
+            @team = get_pteam(player(), 'hockey');
+            team_remove_player(@team['name'], player(), 'hockey');
+            if(array_size(@team['players']) < 2) {
+                _end_game(@hockey);
             }
             if(@hockey['holder'] == player()) {
                 _place_puck(@hockey);
@@ -190,17 +183,10 @@ proc _start_game(@hockey) {
                     set_peffect(@p, 8, -6, 2, false, false);
                 } else if(array_contains(@hockey['players'], @p)) {
                     array_remove_values(@hockey['players'], @p);
-                    @teams = get_teams('hockey');
-                    if(array_contains(@teams[0]['players'], @p)) {
-                        team_remove_player(@teams[0]['name'], @p, 'hockey');
-                        if(array_size(@teams[0]['players']) < 2) {
-                            _end_game(@hockey);
-                        }
-                    } else {
-                        team_remove_player(@teams[1]['name'], @p, 'hockey');
-                        if(array_size(@teams[1]['players']) < 2) {
-                            _end_game(@hockey);
-                        }
+                    @team = get_pteam(@p, 'hockey');
+                    team_remove_player(@team['name'], @p, 'hockey');
+                    if(array_size(@team['players']) < 2) {
+                        _end_game(@hockey);
                     }
                 }
             }
