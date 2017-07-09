@@ -91,9 +91,10 @@ bind(player_login, null, null, @event) {
 		} else if(@pdata['name'] != @event['player']) {
 			# player changed their name back or data was inaccurate
 			if(!array_index_exists(@pdata, 'names')) {
-				@pdata['names'] = array(@pdata['name']);
+				@pdata['names'] = array(); # data was probably inaccurate
 			}
 			array_remove_values(@pdata['names'], @event['player']);
+			@pdata['names'][] = @pdata['name'];
 			@pdata['name'] = @event['player'];
 			@update = true;
 		}
