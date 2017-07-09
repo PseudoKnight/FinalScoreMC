@@ -105,6 +105,7 @@
 <<<
 
 # Set the time of day for this world
+*:/time set $time = call_alias('/time '.$time);
 *:/time $time = >>>
 	if(!has_permission('command.time'), die('You do not have permission.'))
 	try {
