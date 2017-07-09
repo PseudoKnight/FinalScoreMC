@@ -8,7 +8,7 @@ proc _set_locations(@start, @end, @spawns){
 	@end['y'] += 4;
 	set_block_at(@end, data_values('commandblock'), false);
 	set_block_command(@end, 'runalias /pvp end static 2');
-	@end[1] -= 1;
+	@end['y'] -= 1;
 	set_block_at(@end, '77:0', false);
 }
 

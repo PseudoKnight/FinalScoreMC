@@ -37,8 +37,8 @@ case 'load':
 						die();
 					}
 					@ploc = ploc();
-					@ploc['y'] = @pvp['arena']['spawn'][0][0][1] + 1;
-					if(get_block_at(@ploc) == '9:0') {
+					@ploc['y'] = @pvp['arena']['spawn'][0][0]['y'] + 1;
+					if(get_block_at(@ploc) == '0:0') {
 						set_entity_loc(@armorstand, @ploc);
 						@seen = false;
 						@hunter = puuid();
@@ -72,6 +72,9 @@ case 'load':
 			103: associative_array('name': 'BEDROCK'),
 			102: associative_array('name': 'CHAINMAIL_CHESTPLATE')
 		));
+		if(!@sneak) {
+			return();
+		}
 		foreach(@p: @pinfo in @pvp['players']) {
 			if(@pinfo['team'] == 1) {
 				psend_block_change(@p, @sneak[0], 0);
