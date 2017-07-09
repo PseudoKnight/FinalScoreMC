@@ -14,8 +14,7 @@ bind(player_teleport, null, null, @event) {
 	@to = @event['to'];
 	@fromWorld = @from['world'];
 	@toWorld = @to['world'];
-	if(@fromWorld != @toWorld
-	&& @fromWorld != 'shard') { // temporary world, don't save location
+	if(@fromWorld != @toWorld) {
 		@worlds = _worlds_config();
 		@fromGroup = @worlds[@fromWorld]['group'];
 		@toGroup = @worlds[@toWorld]['group'];
@@ -24,21 +23,23 @@ bind(player_teleport, null, null, @event) {
 				cancel();
 				die(color('yellow').'You cannot spectate a player not in this dimension.');
 			}
-			set_timeout(50, closure(){
-				@pdata = _pdata(player());
-				if(!array_index_exists(@pdata, @fromGroup)) {
-					@pdata[@fromGroup] = associative_array();
-				}
-				@pdata[@fromGroup]['loc'] = array(
-					round(@from['x'], 3),
-					round(@from['y'], 3) - 1,
-					round(@from['z'], 3),
-					@from['world'],
-					round(@from['yaw'], 1),
-					round(@from['pitch'], 1),
-				);
-				_store_pdata(player(), @pdata);
-			});
+			if(@fromWorld != 'shard') { // temporary world, don't save location
+				set_timeout(50, closure(){
+					@pdata = _pdata(player());
+					if(!array_index_exists(@pdata, @fromGroup)) {
+						@pdata[@fromGroup] = associative_array();
+					}
+					@pdata[@fromGroup]['loc'] = array(
+						round(@from['x'], 3),
+						round(@from['y'], 3) - 1,
+						round(@from['z'], 3),
+						@from['world'],
+						round(@from['yaw'], 1),
+						round(@from['pitch'], 1),
+					);
+					_store_pdata(player(), @pdata);
+				});
+			}
 		}
 	}
 	
