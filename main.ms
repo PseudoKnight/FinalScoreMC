@@ -761,3 +761,43 @@ bind(entity_explode, null, array('type': 'FIREBALL'), @event) {
 		}
 	}
 }
+
+// Hand instruments
+bind(item_swap, null, null, @event,
+	@instruments = array(
+		'IRON_NUGGET': array('note': 'flute', 'name': 'Ocarina'),
+		'GOLD_NUGGET': array('note': 'bell', 'name': 'Bell'),
+		'STRING': array('note': 'guitar', 'name': 'Lute'),
+		'BONE': array('note': 'xylophone', 'name': 'Bones'),
+	)
+) {
+	@offhand = @event['off_hand'];
+	if(@offhand) {
+		@material = @offhand['name'];
+		if(array_index_exists(@instruments, @material)) {
+			@instrument = @instruments[@offhand['name']];
+			action_msg('Playing '.@instrument['name'].'...');
+			if(has_bind(player().'instrument')) {
+				unbind(player().'instrument');
+			}
+			bind(item_held, array('id': player().'instrument'), null, @event,
+				@material,
+				@player = player(),
+				@sound = 'block.note.'.@instrument['note'],
+				@notes = array(0.62, 0.7, 0.8, 0.95, 1.05, 1.25, 1.4, 1.59),
+			) {
+				@num = @event['to'];
+				if(@player == player() && @num != 8) {
+					@item = pinv(player(), -106);
+					if(@item && @item['name'] == @material) {
+						cancel();
+						play_named_sound(ploc(), array('sound': @sound, 'pitch': @notes[@num], 'category': 'VOICE'));
+					} else {
+						unbind();
+					}
+				}
+			}
+			set_timeout(50, closure(try(set_pheld_slot(8))));
+		}
+	}
+}
