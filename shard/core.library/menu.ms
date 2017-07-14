@@ -114,7 +114,7 @@ proc _open_rules_menu(@objective) {
 			)))
 		),
 		'randomspawn': array(
-			'default': false,
+			'default': true,
 			'shown': true,
 			'item': array(
 				'name': 'MELON_SEEDS', 'meta': array(

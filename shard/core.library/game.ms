@@ -177,16 +177,27 @@ proc _shard_create(@rules){
 						@ploc = ploc(@p);
 						play_sound(@ploc, array('sound': 'GLASS', 'pitch': 0.5));
 						@ploc['world'] = 'shard';
+						@airDrop = false;
 						if(@rules['randomspawn']
 						|| @ploc['x'] < @minX
 						|| @ploc['x'] > @maxX
 						|| @ploc['z'] < @minZ
 						|| @ploc['z'] > @maxZ) {
 							@ploc = _get_spawn_location();
+							if(@rules['objective'] == 'scavengerhunt' || !@rules['keep']) {
+								@ploc['y'] = 300;
+								@airDrop = true;
+							}
 						}
 						set_ploc(@p, @ploc);
 						if(!array_index_exists(@rules, 'keep') || !@rules['keep']) {
 							_clear_pinv(@p);
+						}
+						if(@airDrop) {
+							set_pinv(@p, array(102: array('name': 'ELYTRA', 'data': 400)));
+							queue_push(closure(){
+								set_entity_gliding(puuid(@p), true);
+							}, 'shard');
 						}
 						set_peffect(@p, 11, 3, 60, true);
 						set_pscoreboard(@p, 'shard');
