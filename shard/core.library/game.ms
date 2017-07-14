@@ -2,10 +2,11 @@ proc _shard_create(@rules){
 	@start = time();
 	// Get players
 	@world = pworld();
+	@worldgroup = _world_group(@world);
 	@worldname = _worldname(@world);
 	@players = array();
 	foreach(@p in all_players()) {
-		if(pworld(@p) != @world) {
+		if(_world_group(pworld(@p)) != @worldgroup) {
 			continue();
 		}
 		@item = pinv(@p, null);
@@ -169,7 +170,7 @@ proc _shard_create(@rules){
 				// Teleport players
 				@loc['y'] -= 1;
 				foreach(@p in @players) {
-					if(pworld(@p) != @world) {
+					if(_world_group(pworld(@p)) != @worldgroup) {
 						continue();
 					}
 					queue_push(closure(){
