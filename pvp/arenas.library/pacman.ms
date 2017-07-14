@@ -23,12 +23,12 @@ proc _load_events(@id) {
 				set_pscore('dots', 'PAC-MAN', @dots, @id);
 				@pvp['stats'][player()]['pickups']++;
 				play_sound(@event['location'], array('sound': 'CHICKEN_EGG_POP', 'pitch': 2), player());
-				if(@dots == @pvp['arena']['score']) {
+				if(@dots == 0) {
 					_pvp_end_match(@id, @pvp['team'][0]['players']);
 				}
 			} else if(@block == '148:0') {
 				play_named_sound(@event['location'], array('sound': 'entity.illusion_illager.prepare_blindness', 'pitch': 1.4, 'volume': 3));
-				set_peffect(player(), 5, 1, 10);
+				set_peffect(player(), 16, 1, 15);
 				set_block_at(_relative(@event['location'], 'up', 27), 0);
 				@scaredyghost = array(
 					103: array('name': 'CONCRETE', 'data': 11),
@@ -39,7 +39,7 @@ proc _load_events(@id) {
 						@hat = pinv(@p, 103);
 						if(@hat) {
 							set_pinv(@p, @scaredyghost);
-							set_peffect(@p, 1, -2, 15);
+							set_peffect(@p, 1, -3, 15);
 						}
 					}
 				}
@@ -74,7 +74,6 @@ proc _load_events(@id) {
 				@pvp['stats'][player()]['deaths']++;
 				@newInv = array(null: array('name': 'EYE_OF_ENDER'), -106: array('name': 'EYE_OF_ENDER'),102: null, 103: null);
 				set_pinv(@newInv);
-				set_peffect(player(), 1, 1, 30, false, false);
 				set_interval(1000, closure(){
 					try {
 						@regions = sk_current_regions();

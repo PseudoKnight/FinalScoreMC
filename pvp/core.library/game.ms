@@ -537,7 +537,7 @@ proc _pvp_end_match(@id, @winners) {
 			remove_scoreboard(@id);
 
 			# Reset
-			@pvp = array('players': associative_array(), 'running': 0);
+			@pvp = array('players': associative_array(), 'running': 0, 'id': @pvp['id']);
 			export('pvp'.@id, @pvp);
 			_remove_activity('pvp'.@id);
 		}, @id);
