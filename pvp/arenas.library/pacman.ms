@@ -84,6 +84,8 @@ proc _load_events(@id) {
 							play_sound(ploc(), array('sound': 'FIREWORK_LAUNCH', 'pitch': 1.3), player());
 						} else if(!array_contains(@regions, 'pacman')) {
 							clear_task();
+						} else {
+							action_msg(player(), colorize('&kX&r Return to Spawn &k&X'));
 						}
 					} catch(PlayerOfflineException @ex) {
 						clear_task();
@@ -122,4 +124,13 @@ proc _load_events(@id) {
 			cancel();
 		}
 	}
+}
+
+proc _stats_table(){
+    return(array(
+		array('kills', 2, '-------'),
+        array('deaths', 2, '--------'),
+		array('pickups', 3, '-------'),
+		array('damage', 2, '----'),
+	));
 }

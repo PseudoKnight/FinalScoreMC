@@ -240,7 +240,7 @@ proc _class_select(@id, @pvp) {
 				}
 				if(@count >= @pvp['arena']['classes'][@class]['limit']) {
 					foreach(@slot: @item in get_virtualchest(@id.@team)) {
-						if(@item && !is_null(@item['meta']) && !is_null(@item['meta']['display'])
+						if(is_array(@item) && !is_null(@item['meta'])
 						&& @class == to_lower(strip_colors(@item['meta']['display']))) {
 							clear_virtualchest(@id.@team, integer(@slot));
 							break();
