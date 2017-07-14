@@ -10,6 +10,7 @@ member:
     stargate.destroy.personal: true
     stargate.option: true
     worldedit.help: true
+    worldedit.calc: true
     worldedit.wand.toggle: true
     worldedit.selection.*: true
     worldguard.region.wand: true
@@ -108,7 +109,6 @@ regular:
     logblock.tools.tool: true
     worldguard.region.unlimited: true
     item.lighter: true
-    worldedit.calc: true
   worlds:
     dev:
       limitedworldedit: true
