@@ -20,7 +20,7 @@ proc _pvp_join(@id, @force){
 		}
 	}
 	if(!@pvp) {
-		@pvp = array('players': associative_array(), 'running': 0);
+		@pvp = array('players': associative_array(), 'running': 0, 'id': @id);
 		@pvp['players'][player()] = associative_array();
 		export('pvp'.@id, @pvp);
 	} else {

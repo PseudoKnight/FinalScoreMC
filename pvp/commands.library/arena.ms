@@ -9,10 +9,17 @@ proc _arena(@action, @id, @setting, @string) {
 		case 'set':
 		case 's':
 		case 'add':
-			if(!has_permission('group.builder'), die('You do not have permission.'))
-			if(reg_count('^[a-z0-9]+$', @id) < 1, die('You can only use lowercase alphanumeric characters for the ID'))
-			@arena = get_value('arena.'.@id)
-			if(!@arena, @arena = associative_array())
+			if(!has_permission('group.builder')) {
+				die('You do not have permission.');
+			}
+			if(reg_count('^[a-z0-9]+$', @id) < 1) {
+				die('You can only use lowercase alphanumeric characters for the ID');
+			}
+			@arena = get_value('arena.'.@id);
+			if(!@arena) {
+				@arena = associative_array();
+				msg('Creating new arena... ');
+			}
 			switch(@setting) {
 
 				# integers
@@ -27,6 +34,7 @@ proc _arena(@action, @id, @setting, @string) {
 				case 'dropchance':
 				case 'saturation':
 				case 'hunger':
+				case 'rounds':
 
 					if(!is_integral(@args[0])) {
 						die(@setting . ' requires an integer.');
@@ -790,10 +798,6 @@ proc _arena(@action, @id, @setting, @string) {
 						msg(color('gold').'mode '.color(7).'("koth" required for setting "kothregion")'))
 					if(array_index_exists(@arena, 'rsoutputscore') && !array_index_exists(@arena, 'mode'),
 						msg(color('gold').'mode '.color(7).'("ctf" required for setting "rsoutputscore")'))
-					if(array_index_exists(@arena, 'team') && !array_index_exists(@arena, 'mode'),
-						msg(color('gold').'mode '.color(7).'(team mode required for "team")'))
-					if(array_index_exists(@arena, 'teamratio') && !array_index_exists(@arena, 'mode'),
-						msg(color('gold').'mode '.color(7).'(team mode required for "teamratio")'))
 					if(array_index_exists(@arena, 'dropchance') && !array_contains(@arena['flags'], 'keepinventory'),
 						msg(color('gold').'keepinventory '.color(7).'(this flag required for "dropchance")'))
 				}
@@ -878,7 +882,6 @@ proc _arena(@action, @id, @setting, @string) {
 			msg('parent '.color('gray').'The parent arena configuration.');
 			msg('arenaselect '.color('gray').'Type of select and then a comma list of arenas.');
 			msg('sharedarenas '.color('gray').'A comma separated list of arena ids.');
-			msg('broadcast '.color('gray').'The region all messages are broadcasted.');
 			msg('mode '.color('gray').'dm, ctf, infection, koth.');
 			msg('ctfflag '.color('gray').'The flag spawn location for CTF (1 is red, 2 is blue)');
 			msg('kothregion '.color('gray').'The king of the hill region - feet position');

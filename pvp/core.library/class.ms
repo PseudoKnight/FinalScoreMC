@@ -229,6 +229,25 @@ proc _class_select(@id, @pvp) {
 				}
 			}
 			msg(color('green').to_upper(@class).color('r').' has been selected.');
+			if(array_index_exists(@pvp['arena']['classes'][@class], 'limit')) {
+				@team = @pvp['players'][player()]['team'];
+				@count = 1;
+				foreach(@name: @player in @pvp['players']) {
+					if(@player['team'] == @team && array_index_exists(@player, 'class')
+					&& @player['class'] == @class) {
+						@count++;
+					}
+				}
+				if(@count >= @pvp['arena']['classes'][@class]['limit']) {
+					foreach(@slot: @item in get_virtualchest(@id.@team)) {
+						if(@item && !is_null(@item['meta']) && !is_null(@item['meta']['display'])
+						&& @class == to_lower(strip_colors(@item['meta']['display']))) {
+							clear_virtualchest(@id.@team, integer(@slot));
+							break();
+						}
+					}
+				}
+			}
 			if(array_index_exists(@pvp['players'][player()], 'class')) {
 				_class('unload', player(), @pvp['players'][player()]['class'], @pvp);
 				_class('load', player(), @class, @pvp);

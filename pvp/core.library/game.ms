@@ -375,6 +375,15 @@ proc _pvp_check_objectives(@id) {
 
 }
 
+proc _pvp_end_round(@id, @winners) {
+	@pvp = import('pvp'.@id);
+	if(array_index_exists(@pvp, 'round') && @pvp['arena']['rounds'] < @pvp['round']) {
+		@pvp['round']++;
+	} else {
+		_pvp_end_match(@id, @winners);
+	}
+}
+
 proc _pvp_end_match(@id, @winners) {
 	@pvp = import('pvp'.@id)
 	@world = @pvp['arena']['lobby'][3];

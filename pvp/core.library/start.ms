@@ -171,6 +171,10 @@ proc _pvp_start(@pvp, @id){
 				@arena['score'] = 60;
 		}
 	}
+	
+	if(array_index_exists(@arena, 'rounds')) {
+		@pvp['round'] = 1;
+	}
 
 	if(array_contains(get_scoreboards(), @id)) {
 		remove_scoreboard(@id);

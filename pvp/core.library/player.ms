@@ -14,15 +14,15 @@ proc _quit_player(@player, @id) {
 		preset_time(@player);
 		set_pstorm(@player, null);
 		dm_set_pvisible(@player, true);
-		_equip_kit(@player);
-		_clear_peffects(@player);
-		_set_pstate_activity(@player, null);
 		try {
 			set_entity_fall_distance(puuid(@player), 0);
 		} catch(BadEntityException @ex) {
 			// player quitting, so no entity
 		}
 		set_ploc(@player, @pvp['arena']['lobby']);
+		_equip_kit(@player);
+		_clear_peffects(@player);
+		_set_pstate_activity(@player, null);
 	}
 	_pvp_check_objectives(@id);
 }

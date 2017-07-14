@@ -88,15 +88,6 @@ proc _class_cmd(@action, @id, @setting, @args) {
             			die('Requires a strength integer and a length integer in seconds.')
             		}
 
-            	case 'doublejump':
-            		if(@args === 'true') {
-            			@arena['classes'][@classid]['doublejump'] = 'normal' # string instead of boolean leaves room for alternative doublejump modes
-            			msg('Turned on doublejump for class.')
-            		} else if(@args[0] === 'false' && array_index_exists(@arena['classes'][@classid], 'doublejump')) {
-            			array_remove(@arena['classes'][@classid], 'doublejump')
-            			msg('Turned off doublejump for class.')
-            		}
-
             	case 'script':
             		if(@args[0] === 'true') {
             			@arena['classes'][@classid]['script'] = true
@@ -117,9 +108,13 @@ proc _class_cmd(@action, @id, @setting, @args) {
             		} else {
             			die('It needs to be a number from 0 to 100')
             		}
+                
+                case 'limit':
+                    @arena['classes'][@classid]['limit'] = integer(@args[0]);
+                    msg('Set limit to '.@args[0]);
 
             	default:
-            		die('Available settings: selector, kit, effect, hunger, speed, spawner, doublejump, script')
+            		die('Available settings: selector, kit, effect, hunger, speed, spawner, script, team, xp');
             }
         	store_value('arena', @arenaid, @arena)
 
