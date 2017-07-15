@@ -170,10 +170,10 @@ proc _shard_create(@rules){
 				// Teleport players
 				@loc['y'] -= 1;
 				foreach(@p in @players) {
-					if(_world_group(pworld(@p)) != @worldgroup) {
-						continue();
-					}
 					queue_push(closure(){
+						if(_world_group(pworld(@p)) != @worldgroup) {
+							return();
+						}
 						@ploc = ploc(@p);
 						play_sound(@ploc, array('sound': 'GLASS', 'pitch': 0.5));
 						@ploc['world'] = 'shard';
@@ -183,10 +183,12 @@ proc _shard_create(@rules){
 						|| @ploc['x'] > @maxX
 						|| @ploc['z'] < @minZ
 						|| @ploc['z'] > @maxZ) {
-							@ploc = _get_spawn_location();
 							if(@rules['objective'] == 'scavengerhunt' || !@rules['keep']) {
-								@ploc['y'] = 300;
+								@ploc = _get_spawn_location(0);
+								@ploc['y'] += 128;
 								@airDrop = true;
+							} else {
+								@ploc = _get_spawn_location();
 							}
 						}
 						set_ploc(@p, @ploc);
@@ -194,11 +196,14 @@ proc _shard_create(@rules){
 							_clear_pinv(@p);
 						}
 						if(@airDrop) {
-							set_pinv(@p, array(102: array('name': 'ELYTRA', 'data': 400)));
-							queue_push(closure(){
-								set_entity_gliding(puuid(@p), true);
-							}, 'shard');
+							pgive_item(@p, '443:402', 1);
+							set_peffect(@p, 25, -4, 15);
+							bind(entity_toggle_glide, null, array('type': 'PLAYER', 'player': @p), @event) {
+								set_peffect(player(), 25, 0, 0);
+								unbind();
+							}
 						}
+						set_plevel(@p, 0);
 						set_peffect(@p, 11, 3, 60, true);
 						set_pscoreboard(@p, 'shard');
 						play_sound(@ploc, array('sound': 'GLASS', 'pitch': 0.5), @p);
