@@ -578,30 +578,32 @@ bind(player_interact, array('id': 'shard-scavenger-playerinteract'), array('item
 }
 
 @binds[] = 'shard-scavenger-inventoryclick';
-bind(inventory_click, array('id': 'shard-scavenger-inventoryclick'), null, @event, @card, @items, @width, @height) {
-	@menu = pget_virtualchest();
-	if(@event['slotitem'] && (@menu == to_lower(player()).'card' || @menu == 'shardcard')) {
-	 	if(get_pscore('reroll', player(), 'shard')) {
-			die('You\'ve re-rolled an item already.');
-		}
-		@material = @event['slotitem']['name'];
-		if(@material == 'STAINED_GLASS_PANE') {
-			die();
-		}
-		for(@i = 0, @i < @height, @i++) {
-			for(@j = 0, @j < @width, @j++) {
-				@item = @card[@i][@j];
-				if(@item['material'] == @material && !@item['players']) {
-					@newmaterial = array_rand(@items, 1, false)[0];
-					@card[@i][@j] = array('players': array(), 'material': @newmaterial);
-					set_pscore('reroll', player(), 1, 'shard');
-					_refresh_card();
-					_worldmsg('shard', player().' re-rolled '.@material.' and got '.@newmaterial.'.');
-					die();
+bind(inventory_click, array('id': 'shard-scavenger-inventoryclick'), array('clicktype': 'LEFT'), @event, @card, @items, @width, @height) {
+	if(@event['slotitem'] && @event['rawslot'] < @event['inventorysize']) {
+		@menu = pget_virtualchest();
+		if(@menu == 'shardcard' || @menu == to_lower(player()).'card') {
+		 	if(get_pscore('reroll', player(), 'shard')) {
+				die('You\'ve re-rolled an item already.');
+			}
+			@material = @event['slotitem']['name'];
+			if(@material == 'STAINED_GLASS_PANE') {
+				die();
+			}
+			for(@i = 0, @i < @height, @i++) {
+				for(@j = 0, @j < @width, @j++) {
+					@item = @card[@i][@j];
+					if(@item['material'] == @material && !@item['players']) {
+						@newmaterial = array_rand(@items, 1, false)[0];
+						@card[@i][@j] = array('players': array(), 'material': @newmaterial);
+						set_pscore('reroll', player(), 1, 'shard');
+						_refresh_card();
+						_worldmsg('shard', player().' re-rolled '.@material.' and got '.@newmaterial.'.');
+						die();
+					}
 				}
 			}
+			msg('Someone already got that item!');
 		}
-		msg('Someone already got that item!');
 	}
 }
 
