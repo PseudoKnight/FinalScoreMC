@@ -92,10 +92,26 @@
 	if(!$b) {
 		die(color('gold').'Usage: /dye <red#> <green#> <blue#> '.color('gray').'(0 - 255)');
 	}
-	try {
-		set_armor_color(pinfo(player(), 15), array(min(max($r, 0), 255), min(max($g, 0), 255), min(max($b, 0), 255)));
-	} catch(Exception @ex) {
-		die(color('gold').'Hold leather armor in your hand and type the command. eg. /dye 255 255 255');
+	@item = pinv(player(), null);
+	if(!@item) {
+		die(color('gold').'You must be holding an item in your hand.');
+	}
+	@color = array(min(max($r, 0), 255), min(max($g, 0), 255), min(max($b, 0), 255));
+	if(string_starts_with(@item['name'], 'LEATHER_')) {
+		try {
+			set_armor_color(pinfo(player(), 15), @color);
+		} catch(Exception @ex) {
+			die(color('gold').'Hold leather armor in your hand and type the command. eg. /dye 255 255 255');
+		}
+	} else if(@item['name'] == 'MAP') {
+		if(!@item['meta']) {
+			@item['meta'] = array('color': @color);
+		} else {
+			@item['meta']['color'] = @color;
+		}
+		set_pinv(player(), array(null: @item));
+	} else {
+		die(color('gold').'You must be holding leather armor or a map in your hand.');
 	}
 <<<
 
