@@ -1,21 +1,3 @@
-/homes update = >>>
-	foreach(@key: @pdata in get_values('uuids')) {
-		if(!array_index_exists(@pdata, 'name')) {
-			continue();
-		}
-		if(ponline(@pdata['name'])) {
-			@pdata = _pdata(@pdata['name']);
-		}
-		if(array_index_exists(@pdata, 'homes')) {
-			foreach(@world: @loc in @pdata['homes']) {
-				array_insert(@loc, @world, 3);
-				@pdata['homes'][@world] = @loc;
-				store_value(@key, @pdata);
-			}
-		}
-	}
-<<<
-
 *:/home [$] = >>>
 	include('includes.library/teleports.ms');
 	if(!_allows_teleports(pworld())) {

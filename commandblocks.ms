@@ -1,6 +1,6 @@
 register_command('cloud', array(
 	'description': 'Spawns a particle cloud.',
-	'usage': '/cloud [x y z] <particle> <radius> [seconds] [color]',
+	'usage': '/cloud [x y z] <particle> <radius> [seconds] [r,g,b]',
 	'permission': 'command.cloud',
 	'executor': closure(@alias, @sender, @args, @info) {
 		@numArgs = array_size(@args);
