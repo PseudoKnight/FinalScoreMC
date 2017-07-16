@@ -53,6 +53,7 @@ proc _enchant_item(@type, @level) {
 	if(!is_integral(@level)) {
 		die('Enchantment level must be an integer.');
 	}
+	@level = min(99, integer(@level));
 	if(array_index_exists(@enchants, to_lower(@type))) {
 		enchant_inv_unsafe(null, @enchants[to_lower(@type)], @level);
 	} else {
@@ -82,7 +83,7 @@ proc _pset_potion(@type, @id, @seconds, @strength){
 		if(!array_index_exists(@item['meta'], 'potions')) {
 			@item['meta']['potions'] = array();
 		}
-		@item['meta']['potions'][] = associative_array('id': @id, 'strength': @strength - 1, 'seconds': @seconds);
+		@item['meta']['potions'][] = associative_array('id': @id, 'strength': min(99, @strength - 1), 'seconds': @seconds);
 		set_pinv(array(null: @item));
 
 	} else { # create new potion
