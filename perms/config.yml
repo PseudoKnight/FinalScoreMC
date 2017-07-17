@@ -109,6 +109,7 @@ regular:
     logblock.tools.tool: true
     worldguard.region.unlimited: true
     item.lighter: true
+    command.approve: true
   worlds:
     dev:
       limitedworldedit: true
