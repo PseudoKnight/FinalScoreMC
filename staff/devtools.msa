@@ -1,74 +1,3 @@
-# Script: Function Documentation
-# Author: LewsTherin
-
-# Output colorful information about extensions and functions.
-# /doc - List all known extensions, including builtins.
-# /doc <extensionname> - List all functions in a given extension.
-# /doc <func>[,func] [func] - List specific functions.
-*:/doc [$] = >>>
-	proc _get_closest(@name, @list) {
-		# Search an array for a matching entry, regardless of case, and return it.
-		foreach(@ext in @list) {
-			if (to_lower(@ext) == to_lower(@name)) {
-				return(@ext)
-			}
-		}
-
-	}
-
-	proc _desc_func(@func) {
-		# Colorfully describe a function.
-		try {
-			@desc = reflect_docs(@func, 'description')
-			@returns = reflect_docs(@func, 'type')
-			@args = reflect_docs(@func, 'args')
-
-			msg(color(YELLOW) . @func . ':' color(GREEN) . 'Returns' @returns .
-			'.' color(BLUE) . 'Expects' @args . '.' color(YELLOW) . @desc)
-		} catch(FormatException @ex) {
-			msg(color(RED) . 'Could not show information for' @func)
-		}
-	}
-
-	if (!$) {
-		# List known extensions.
-		@extensions = array_keys(extension_info())
-		if (@extensions) {
-			msg(color(BLUE) . 'Installed extensions:')
-			foreach (@extension in @extensions) {
-				msg(color(RED) . ' - ' . color(GREEN) . @extension)
-			}
-		} else {
-			msg(color(RED) . 'No extensions installed!')
-		}
-	} else {
-		# Show functions in a given extension.
-		@args = parse_args($)
-		@extensions = extension_info()
-
-		# Get extension name regardless of case.
-		@extension = _get_closest(@args[0], array_keys(@extensions))
-
-		if (@extension) {
-			@extension = @extensions[@extension]
-			@functions = @extension['functions']
-
-			foreach (@function in @functions) {
-				_desc_func(@function)
-			}
-		} else {
-			while(@args) {
-				@many = split(',', array_remove(@args, 0))
-				foreach (@function in @many) {
-					# Get function name regardless of case.
-					@functionname = to_lower(@function)
-					_desc_func(@functionname)
-				}
-			}
-		}
-	}
-<<<
-
 /*
 	Lists the type and amount of events bound
 */
@@ -108,29 +37,6 @@
 				store_value(replace($namespace, $, @key), @data[@key])
 				clear_value(@key)
 			}
-	}
-<<<
-
-/*
-	Set all players in outworld to homeless.
-	This is used when the outworld is reset.
-*/
-/homeless [$player] = >>>
-	if($player) {
-		@pdata = _pdata($player);
-		@pdata['homeless'] = true;
-		_store_pdata($player, @pdata);
-		msg('Set '.$player.' to "homeless".');
-	} else {
-		foreach(@key: @pdata in get_values('uuids')) {
-			if(array_index_exists(@pdata, 'world')
-			&& (@pdata['world'] == 'outworld' || @pdata['world'] == 'outworld_nether' || @pdata['world'] == 'outworld_the_end')) {
-				@pdata['homeless'] = true;
-				@pdata['world'] = 'omega';
-				store_value(@key, @pdata);
-				msg('Set '.@pdata['name'].' to "homeless".');
-			}
-		}
 	}
 <<<
 
