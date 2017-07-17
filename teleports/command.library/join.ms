@@ -10,7 +10,7 @@ register_command('join', array(
 		if(!has_permission('command.join.from')) {
 			die(color('gold').'You cannot use teleport commands in '._worldname(pworld()));
 		}
-		include('includes.library/teleports.ms');
+		include('../includes.library/teleports.ms');
 		if(!has_permission(@player, 'command.join.to')) {
 			@warps = get_values('warp');
 			@closest = null;

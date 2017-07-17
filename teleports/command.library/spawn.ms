@@ -2,7 +2,7 @@ register_command('spawn', array(
 	'description': 'Teleports you to a world\'s spawn.',
 	'usage': '/spawn [world]',
 	'executor': closure(@alias, @sender, @args, @info) {
-		include('includes.library/teleports.ms');
+		include('../includes.library/teleports.ms');
 		@world = if(@args, _worldid(@args[0]), pworld());
 		if(!pisop() && (!_allows_teleports(@world) || !_allows_teleports(pworld()))) {
 			die(color('gold').'You cannot teleport directly to or from that world.');
