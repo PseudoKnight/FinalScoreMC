@@ -18,7 +18,7 @@ register_command('cloud', array(
 			@loc = _relative(ploc(), 'up');
 		}
 		@color = array(0, 0, 0);
-		@duration = math_const('INTEGER_MAX') - 20;
+		@duration = 600;
 		
 		if(@numArgs > 4) {
 			@loc = _relative_coords(@loc, @args[0], @args[1], @args[2]);
@@ -37,7 +37,7 @@ register_command('cloud', array(
 		
 		@cloud = spawn_entity('AREA_EFFECT_CLOUD', 1, @loc)[0];
 		set_entity_spec(@cloud, array(
-			'duration': @duration,
+			'duration': if(@duration == -20, math_const('INTEGER_MAX') - 20, @duration),
 			'particle': @args[@offset],
 			'radius': min(16, double(@args[@offset + 1])),
 			'color': @color,
