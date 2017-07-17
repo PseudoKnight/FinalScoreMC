@@ -1,9 +1,3 @@
-foreach(@group in array('survival', 'dev', 'minigames')) {
-	@file = read(@group.'-tips.txt');
-	@tips = split('\n\n', @file);
-	export(@group.'-tips', @tips);
-}
-
 set_cron('*/5 * * * *', closure(){
 	foreach(@world in get_worlds()) {
 		queue_push(closure(){

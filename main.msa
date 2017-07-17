@@ -1,9 +1,3 @@
-*:/tip = >>>
-	@tips = import(_world_group(pworld()).'-tips', array('Sometimes there\'s no more tips.'));
-	@tip = @tips[rand(array_size(@tips))];
-	msg(colorize('&7TIP: &r'.@tip));
-<<<
-
 *:/transfer = >>>
 	msg('Transfers ownership of a tamed mob to another online player.\n'
 		.'Usage: /transfer <player>');
