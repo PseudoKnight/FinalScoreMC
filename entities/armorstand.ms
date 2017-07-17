@@ -201,6 +201,13 @@ bind(player_interact_at_entity, null, array('clicked': 'ARMOR_STAND'), @event) {
 					set_entity_spec(@event['id'], array('small': @small));
 					cancel();
 				}
+				
+			case 421: # name tag adds mob name
+				if(!_is_survival_world(pworld())) {
+					set_mob_name(@event['id'], @item['meta']['display']);
+					set_name_visible(@event['id'], true);
+					cancel();
+				}
 
 			case 420: # lead carries armor stand
 				if(!pinfo(player(), 11) && !get_entity_rider(puuid())) {
