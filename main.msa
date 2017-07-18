@@ -374,33 +374,6 @@
 	msg(colorize('&8'.simple_date('h:mm').' &4\u00ab &o'._colorname().'&o'.player().'&e&o '.@msg));
 <<<
 
-*:/livemap [$player] = >>>
-	@player = player();
-	if($player) {
-		@player = _find_player($player);
-	}
-	@loc = ploc(@player);
-	@x = @loc['x'];
-	@z = @loc['z'];
-	@world = @loc['world'];
-	@url = "http://mc.finalscoremc.com:25966/?worldname=@{world}&mapname=detailed&zoom=2&x=@{x}&y=64&z=@{z}";
-	@msg = '["",{"text":"'.color('b').'[\u21D6 Go to Live Map]'.color('r').'","clickEvent":{"action":"open_url","value":"'.@url.'"}}]';
-	runas('~console', '/tellraw '.player().' '.@msg);
-<<<
-
-*:/here = >>>
-	@loc = ploc();
-	@x = @loc['x'];
-	@z = @loc['z'];
-	@world = @loc['world'];
-	@url = "http://mc.finalscoremc.com:25966/?worldname=@{world}&mapname=detailed&zoom=2&x=@{x}&y=64&z=@{z}";
-	@msg = '["",{"text":"'.color('b').'[\u21D6 '.player().'\'s location on the Live Map]'.color('r').'","clickEvent":'
-			.'{"action":"open_url","value":"'.@url.'"}}]';
-	foreach(@player in all_players()) {
-		runas('~console', "/tellraw @player @msg");
-	}
-<<<
-
 *:/lastseen $player = >>>
 	if(ponline($player)) {
 		die('Um, right now!');

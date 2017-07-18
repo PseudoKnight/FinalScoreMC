@@ -467,3 +467,13 @@
 		run('/tp' $player $x $y $z);
 	}
 <<<
+
+/summon $entity $x $y $z = >>>
+	if(!@cmdBlock = get_command_block()) {
+		die('This is for commandblocks only.');
+	}
+	@loc = _relative_coords(@cmdBlock, $x, $y, $z);
+	@loc['x'] += 0.5;
+	@loc['z'] += 0.5;
+	_spawn_mob($entity, @loc);
+<<<
