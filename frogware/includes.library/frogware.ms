@@ -73,7 +73,7 @@ proc _fw_startround(@secs = 12) {
 	if(!is_null(@blocks)) {
 		foreach(@index: @block in @blocks) {
 			if(@block[1] < @region[1][1]) {
-				set_block_at(@block, '155:0');
+				set_block_at(@block, '251:0');
 			} else {
 				set_block_at(@block, 0);
 			}
