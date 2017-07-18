@@ -29,7 +29,7 @@ register_command('join', array(
 				die(color('gold').'You cannot directly join a player who is in '._worldname(pworld(@player)));
 			}
 			_warmuptp(player(), @closest, @closest[3] == 'custom');
-			die(color('green').'Teleporting you near '.@player);
+			die(color('b').'Teleporting you near '.@player);
 		}
 
 		# Check it the player is being ignored
