@@ -1,6 +1,9 @@
 register_command('r', array(
 	'description': 'Replies to the private message.',
 	'usage': '/r <message>',
+	'settabcompleter': closure(@alias, @sender, @args, @info) {
+		return(array());
+	},
 	'executor': closure(@alias, @sender, @args, @info) {
 		if(!@args) {
 			return(false);

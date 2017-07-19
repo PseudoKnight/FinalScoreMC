@@ -1,6 +1,9 @@
 register_command('survival', array(
 	'description': 'Teleports you to your last known location in the survival worlds.',
 	'usage': '/survival',
+	'tabcompleter': closure(@alias, @sender, @args, @info) {
+		return(array());
+	},
 	'executor': closure(@alias, @sender, @args, @info) {
 		if(_is_survival_world(pworld())) {
 			die(color('yellow').'You are already in survival.');

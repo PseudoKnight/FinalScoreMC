@@ -2,6 +2,9 @@ register_command('homeless', array(
 	'description': 'Sets players\' current world (ie. outworld) as not existing anymore.',
 	'usage': '/homeless [player]',
 	'permission': 'command.homeless',
+	'tabcompleter': closure(@alias, @sender, @args, @info) {
+		return(array());
+	},
 	'executor': closure(@alias, @sender, @args, @info) {
 		if(@args) {
 			@player = @args[0];

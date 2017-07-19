@@ -1,6 +1,9 @@
 register_command('dev', array(
 	'description': 'Teleports you to your last known location in the dev world.',
 	'usage': '/dev',
+	'tabcompleter': closure(@alias, @sender, @args, @info) {
+		return(array());
+	},
 	'executor': closure(@alias, @sender, @args, @info) {
 		if(pworld() == 'dev') {
 			die(color('yellow').'You are already in dev.');

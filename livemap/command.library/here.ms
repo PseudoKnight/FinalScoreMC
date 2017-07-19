@@ -1,6 +1,9 @@
 register_command('here', array(
 	'description': 'Sends everyone a link to this location on the livemap.',
 	'usage': '/here',
+	'tabcompleter': closure(@alias, @sender, @args, @info) {
+		return(array());
+	},
 	'executor': closure(@alias, @sender, @args, @info) {
 		@loc = ploc();
 		@x = @loc['x'];

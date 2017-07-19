@@ -2,6 +2,9 @@ register_command('icon', array(
 	'description': 'Sets an icon next to a player\'s name in chat.',
 	'usage': '/icon <player> [icon]',
 	'permission': 'command.icon',
+	'tabcompleter': closure(@alias, @sender, @args, @info) {
+		return(array());
+	},
 	'executor': closure(@alias, @sender, @args, @info) {
 		if(!@args) {
 			return(false);

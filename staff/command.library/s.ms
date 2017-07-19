@@ -2,6 +2,9 @@ register_command('s', array(
 	'description': 'Sends a chat message from console.',
 	'usage': '/s <FakePlayerName> <message>',
 	'permission': 'command.s',
+	'tabcompleter': closure(@alias, @sender, @args, @info) {
+		return(array());
+	},
 	'executor': closure(@alias, @sender, @args, @info) {
 		if(array_size(@args) < 2) {
 			return(false);

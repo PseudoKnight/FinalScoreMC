@@ -2,6 +2,9 @@ register_command('player', array(
 	'description': 'Displays information about the given player.',
 	'usage': '/player <player>',
 	'permission': 'command.player',
+	'tabcompleter': closure(@alias, @sender, @args, @info) {
+		return(array());
+	},
 	'executor': closure(@alias, @sender, @args, @info) {
 		if(!@args) {
 			return(false);

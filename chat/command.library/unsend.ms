@@ -1,6 +1,9 @@
 register_command('unsend', array(
 	'description': 'Unsends the last offline message you sent.',
 	'usage': '/unsend',
+	'settabcompleter': closure(@alias, @sender, @args, @info) {
+		return(array());
+	},
 	'executor': closure(@alias, @sender, @args, @info) {
 		@player = import(player().'_mail');
 		if(is_null(@player)) {

@@ -2,6 +2,12 @@ register_command('silentjoin', array(
 	'description': 'Toggles silent joining for admins.',
 	'usage': '/silentjoin [on|off]',
 	'permission': 'command.silentjoin',
+	'tabcompleter': closure(@alias, @sender, @args, @info) {
+		if(array_size(@args) == 1) {
+			return(_strings_start_with_ic(array('on', 'off'), @args[-1]));
+		}
+		return(array());
+	},
 	'executor': closure(@alias, @sender, @args, @info) {
 		@state = 1;
 		if(!@args) {

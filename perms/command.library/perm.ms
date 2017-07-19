@@ -2,6 +2,16 @@ register_command('perm', array(
 	'description': 'Manages permission groups.',
 	'usage': '/perm <reload|setgroup|ingroup|havegroup> [player] <group>',
 	'permission': 'command.perm',
+	'tabcompleter': closure(@alias, @sender, @args, @info) {
+		if(array_size(@args) == 1) {
+			return(_strings_start_with_ic(array('reload', 'setgroup', 'ingroup', 'havegroup'), @args[-1]));
+		} else if(array_size(@args) == 3) {
+			@groups = array_keys(import('perms'));
+			array_remove(@groups, 'limitedworldedit');
+			return(_strings_start_with_ic(@groups, @args[-1]));
+		}
+		return(array());
+	},
 	'executor': closure(@alias, @sender, @args, @info) {
 		if(!@args) {
 			return(false);

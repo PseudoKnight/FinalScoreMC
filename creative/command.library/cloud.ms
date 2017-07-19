@@ -2,6 +2,12 @@ register_command('cloud', array(
 	'description': 'Spawns a particle cloud.',
 	'usage': '/cloud [x y z] <particle> <radius> [seconds] [r,g,b]',
 	'permission': 'command.cloud',
+	'tabcompleter': closure(@alias, @sender, @args, @info) {
+		if(array_size(@args) == 4 || array_size(@args) == 1) {
+			return(_strings_start_with_ic(reflect_pull('enum', 'Particle'), @args[-1]));
+		}
+		return(array());
+	},
 	'executor': closure(@alias, @sender, @args, @info) {
 		@numArgs = array_size(@args);
 		if(@numArgs < 2 || @numArgs > 7) {
@@ -42,10 +48,5 @@ register_command('cloud', array(
 			'radius': min(16, double(@args[@offset + 1])),
 			'color': @color,
 		));
-	},
-	'tabcompleter': closure(@alias, @sender, @args, @info) {
-		if(array_size(@args) == 4 || array_size(@args) == 1) {
-			return(_strings_start_with_ic(reflect_pull('enum', 'Particle'), @args[-1]));
-		}
 	}
 ));

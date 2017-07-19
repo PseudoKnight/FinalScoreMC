@@ -145,6 +145,7 @@ builder:
       command.mob: true
       command.cb: true
       command.cloud: true
+      command.acme: true
       limitedworldedit: true
       worldguard.region.claim: true
     custom:

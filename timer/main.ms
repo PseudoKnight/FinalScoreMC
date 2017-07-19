@@ -9,7 +9,7 @@ if(!import('timers')) {
 }
 
 register_command('timer', array(
-	'description': 'Handles time trials for speed runs.',
+	'description': 'Handles time trials for speed runs. (CommandBlocks Only)',
 	'usage': '/timer <start|stop> <id> <player>',
 	'permission': 'command.timer',
 	'executor': closure(@alias, @sender, @args, @info) {

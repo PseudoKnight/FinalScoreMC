@@ -8,6 +8,9 @@
 register_command('race', array(
 	'description': 'Creates a race in survival for all players in the area.',
 	'usage': '/race [x] [z]',
+	'tabcompleter': closure(@alias, @sender, @args, @info) {
+		return(array());
+	},
 	'executor': closure(@alias, @sender, @args, @info) {
 		@world = pworld();
 		if(!_is_survival_world(@world)) {

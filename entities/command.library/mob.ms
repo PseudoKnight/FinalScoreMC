@@ -5,6 +5,9 @@ register_command('mob', array(
 	'tabcompleter': closure(@alias, @sender, @args, @info) {
 		if(array_size(@args) == 1) {
 			return(_strings_start_with_ic(array('list', 'info', 'set', 'delete', 'spawn'), @args[-1]));
+		} else if(array_size(@args) == 3) {
+			return(_strings_start_with_ic(array('type', 'name', 'age', 'health', 'lifetime', 'onfire', 'targetnear',
+					'ai', 'tame', 'gear', 'droprate', 'effect', 'tags', 'rider', 'explode'), @args[-1]));
 		}
 		return(array());
 	},

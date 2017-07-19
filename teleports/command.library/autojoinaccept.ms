@@ -1,6 +1,9 @@
 register_command('autojoinaccept', array(
 	'description': 'Accepts a teleport request.',
 	'usage': '/autojoinaccept',
+	'tabcompleter': closure(@alias, @sender, @args, @info) {
+		return(array());
+	},
 	'executor': closure(@alias, @sender, @args, @info) {
 		@pdata = _pdata(player());
 		if(array_index_exists(@pdata, 'joinaccept')) {
