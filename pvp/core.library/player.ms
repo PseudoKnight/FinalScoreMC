@@ -20,9 +20,11 @@ proc _quit_player(@player, @id) {
 			// player quitting, so no entity
 		}
 		set_ploc(@player, @pvp['arena']['lobby']);
-		_equip_kit(@player);
 		_clear_peffects(@player);
 		_set_pstate_activity(@player, null);
+		set_timeout(50, closure(){
+			_equip_kit(@player); // helps clear maps after teleporting
+		});
 	}
 	_pvp_check_objectives(@id);
 }
