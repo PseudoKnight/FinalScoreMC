@@ -1,15 +1,3 @@
-# Add an item into your inventory in the next available slot.
-*:/i [$item=0] [$amount=1] = >>>
-	if(!has_permission('command.items')) {
-		die('You are not allowed to create custom items here.');
-	}
-	if($item == 0) {
-		die('Usage: /i [id:data] [quantity] '.color('gray').'(supports item names)');
-	}
-	include('util.library/items.ms');
-	_pgive_item($item, $amount);
-<<<
-
 # Set the display name for the item in-hand
 *:/display [$] = >>>
 	if(!has_permission('command.items')) {
@@ -39,8 +27,43 @@
 	if(!@item) {
 		die('You must hold an item.');
 	}
-	include('util.library/items.ms');
-	_enchant_item($type, $level);
+	@enchants = associative_array(
+		'power': 'ARROW_DAMAGE',
+		'flame': 'ARROW_FIRE',
+		'infinity': 'ARROW_INFINITE',
+		'punch': 'ARROW_KNOCKBACK',
+		'sharpness': 'DAMAGE_ALL',
+		'baneofarthropods': 'DAMAGE_ARTHROPODS',
+		'smite': 'DAMAGE_UNDEAD',
+		'efficiency': 'DIG_SPEED',
+		'unbreaking': 'DURABILITY',
+		'fireaspect': 'FIRE_ASPECT',
+		'knockback': 'KNOCKBACK',
+		'fortune': 'LOOT_BONUS_BLOCKS',
+		'looting': 'LOOT_BONUS_MOBS',
+		'respiration': 'OXYGEN',
+		'protection': 'PROTECTION_ENVIRONMENTAL',
+		'blastprotection': 'PROTECTION_EXPLOSIONS',
+		'featherfalling': 'PROTECTION_FALL',
+		'fireprotection': 'PROTECTION_FIRE',
+		'projectileprotection': 'PROTECTION_PROJECTILE',
+		'silktouch': 'SILK_TOUCH',
+		'thorns': 'THORNS',
+		'aquaaffinity': 'WATER_WORKER',
+		'depthstrider': 'DEPTH_STRIDER',
+		'mending': 'MENDING',
+		'frostwalker': 'FROST_WALKER',
+		'sweepingedge': 'SWEEPING_EDGE',
+	);
+	if(!is_integral($level)) {
+		die('Enchantment level must be an integer.');
+	}
+	@level = min(99, integer($level));
+	if(array_index_exists(@enchants, to_lower($type))) {
+		enchant_inv_unsafe(null, @enchants[to_lower($type)], @level);
+	} else {
+		msg(color('red').'Available enchantments: '.array_keys(@enchants));
+	}
 <<<
 
 # Remove all enchantments from item in hand
@@ -52,77 +75,4 @@
 	array_remove(@item, 'enchants');
 	array_remove(@item['meta'], 'enchants');
 	set_pinv(array(null: @item));
-<<<
-
-# Set individual lines of lore for the item in-hand
-*:/lore [$line] [$] = >>>
-	if(!has_permission('command.items')) {
-		die('You are not allowed to create custom items here.');
-	}
-	if(!$ || !is_numeric($line) || $line < 1) {
-		die(color('gold').'Usage: /lore <line#> <lore string> '.color('gray').'(supports &0 color codes)');
-	}
-	@meta = get_itemmeta(null);
-	if(is_null(@meta)) {
-		@meta = associative_array('lore': array());
-	} else if(is_null(@meta['lore'])) {
-		@meta['lore'] = array();
-	}
-	@meta['lore'][$line - 1] = colorize($);
-	set_itemmeta(null, @meta);
-<<<
-
-# Spawn player head
-*:/skull [$player] = >>>
-	if(!has_permission('command.items')) {
-		die('You are not allowed to create custom items here.');
-	}
-	if($player) {
-		pgive_item(player(), '397:3', 1, array('owner': $player));
-	} else {
-		msg(color('gray').'Usage: '.color('r').'/skull <player>');
-	}
-<<<
-
-# Dye leather armor in-hand with the specified R G B values (0 - 255)
-*:/dye [$r] [$g] [$b] = >>>
-	if(!has_permission('command.items')) {
-		die('You are not allowed to create custom items here.');
-	}
-	if(!$b) {
-		die(color('gold').'Usage: /dye <red#> <green#> <blue#> '.color('gray').'(0 - 255)');
-	}
-	@item = pinv(player(), null);
-	if(!@item) {
-		die(color('gold').'You must be holding an item in your hand.');
-	}
-	@color = array(min(max($r, 0), 255), min(max($g, 0), 255), min(max($b, 0), 255));
-	if(string_starts_with(@item['name'], 'LEATHER_')) {
-		try {
-			set_armor_color(pinfo(player(), 15), @color);
-		} catch(Exception @ex) {
-			die(color('gold').'Hold leather armor in your hand and type the command. eg. /dye 255 255 255');
-		}
-	} else if(@item['name'] == 'MAP') {
-		if(!@item['meta']) {
-			@item['meta'] = array('color': @color);
-		} else {
-			@item['meta']['color'] = @color;
-		}
-		set_pinv(player(), array(null: @item));
-	} else {
-		die(color('gold').'You must be holding leather armor or a map in your hand.');
-	}
-<<<
-
-# Create potions or add potion effects to existing potions
-*:/potion [$type] [$id] [$seconds = 30] [$strength = 1] = >>>
-	if(!has_permission('command.items')) {
-		die('You are not allowed to create custom items here.');
-	}
-	if(!$type) {
-		die('Usage: /potion <potionType> <potionEffect> [seconds] [strength]');
-	}
-	include('util.library/items.ms');
-	_pset_potion($type, $id, $seconds, $strength);
 <<<

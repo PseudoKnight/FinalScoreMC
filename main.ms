@@ -433,11 +433,7 @@ bind(player_interact, null, array('block': 77, 'button': 'right'), @event) {
 	if(is_sign_at(@sign)) {
 		@line = get_sign_text(@sign);
 		if(@type = reg_match('\u00A7[0-9a-f]{1}\\[(.+)\\]', @line[1])) {
-			if(is_alias('/'.to_lower(@type[1]).if(@line[2], ' ').to_lower(@line[2]).if(@line[3], ' ').to_lower(@line[3]))) {
-				call_alias('/'.to_lower(trim(@type[1])).' '.to_lower(trim(@line[2])).' '.to_lower(trim(@line[3])));
-			} else {
-				die('Unknown button command.');
-			}
+			run_cmd('/'.to_lower(trim(@type[1])).' '.to_lower(trim(@line[2])).' '.to_lower(trim(@line[3])));
 		}
 	}
 }
