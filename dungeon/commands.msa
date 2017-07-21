@@ -1,4 +1,0 @@
-/dungeon [$region='dungeon'] [$type='dungeon'] [$seed=0] = >>>
-	include('core.library/generator.ms')
-	_generate_dungeon($region, pworld(), $type, integer($seed));
-<<<
