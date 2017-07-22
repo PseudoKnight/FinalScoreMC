@@ -36,8 +36,11 @@ register_command('pvp', array(
 				if(!array_index_exists(@pvp['players'], player())) {
 					die(color('yellow').'You haven\'t joined.');
 				}
-				@pvp['players'][player()]['arena'] = @arg;
-				msg(color('green').'You voted for '.to_upper(@arg).'.');
+				if(array_size(@args) < 3) {
+					die(color('gold').'You need to specify an arena.');
+				}
+				@pvp['players'][player()]['arena'] = @args[2];
+				msg(color('green').'You voted for '.to_upper(@args[2]).'.');
 
 			case 'spectate':
 				if(_is_survival_world(pworld())) {
