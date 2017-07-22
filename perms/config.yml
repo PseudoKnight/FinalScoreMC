@@ -181,15 +181,13 @@ engineer:
   permissions:
     group.engineer: true
     worldedit.clipboard.copy: true
+    fawe.admin: true
+    fawe.bypass: true
   worlds:
     dev:
       worldguard.region.*: true
-      fawe.admin: true
-      fawe.bypass: true
     custom:
       worldguard.region.*: true
-      fawe.worldguard: true
-      fawe.worldguard.member: true
       limitedworldedit: true
   inheritance: builder
 limitedworldedit:
