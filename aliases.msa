@@ -1,32 +1,3 @@
-*:/transfer = >>>
-	msg('Transfers ownership of a tamed mob to another online player.\n'
-		.'Usage: /transfer <player>');
-<<<
-
-*:/transfer $player = >>>
-	@player = _find_player($player);
-	bind(player_interact_entity, array('id': 'transfer'.player().@player), null, @e, @player, @commandsender = player()) {
-		if(player() != @commandsender) {
-			die();
-		}
-		cancel();
-		unbind();
-		@owner = get_mob_owner(@e['id']);
-		if(!@owner) {
-			die(color('red').'This mob has no owner or cannot be tamed!');
-		}
-		if(@owner != player() && !has_permission('group.moderator')) {
-			die(color('red').'This '.entity_type(@e['id']).' belongs to '.@owner.'.');
-		}
-		tame_mob(@player, @e['id']);
-		msg(color('green').'This '.entity_type(@e['id']).' now belongs to '.@player.'.');
-		if(ponline(@player)) {
-			tmsg(@player, color('green').player().' gave a '.entity_type(@e['id']).' to you.');
-		}
-	}
-	msg(color('yellow').'Right-click the tamed mob you wish to give to '.@player.'.');
-<<<
-
 *:/share = >>>
 	msg('Share horses with friends you trust.\n'
 		.'Usage: /share <player> horses\n'
@@ -284,22 +255,6 @@
 		call_alias('/who')
 	}
 <<<
-
-*:/where = >>>
-	@worlds = _worlds_config();
-	@list = associative_array();
-	foreach(@player in all_players()) {
-		@world = @worlds[pworld(@player)]['name'];
-		if(!array_index_exists(@list, @world)) {
-			@list[@world] = array();
-		}
-		@list[@world][] = _colorname(@player).@player;
-	}
-	foreach(@world: @players in @list) {
-		msg(@world.': '.array_implode(@players));
-	}
-<<<
-*:/mvw = call_alias('/where')
 
 # DICE ROLLING #
 *:/roll [$sides=6] = >>>

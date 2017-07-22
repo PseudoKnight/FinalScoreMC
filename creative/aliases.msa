@@ -78,90 +78,81 @@
 	msg('Set time to '.$time)
 <<<
 
-# Spawn an endercrystal at the targeted location.
-*:/endercrystal = >>>
-	if(!has_permission('command.endercrystal'), die('You do not have permission.'))
-	@loc = _relative(pcursor(), 'up')
-	set_block_at(@loc, '7:0')
-	spawn_entity(ENDER_CRYSTAL, 1, array(@loc[0] + 0.5, @loc[1] + 1, @loc[2] + 0.5, @loc[3]))
+# Set the display name for the item in-hand
+*:/display [$] = >>>
+	if(!has_permission('command.items')) {
+		die('You are not allowed to create custom items here.');
+	}
+	if(!$) {
+		die(color('gold').'Usage: /display <item display name> '.color('gray').'(supports &0 color codes)');
+	}
+	@meta = get_itemmeta(null);
+	if(is_null(@meta)) {
+		@meta = associative_array();
+	}
+	@meta['display'] = colorize($);
+	set_itemmeta(null, @meta);
 <<<
 
-# spawn a temporary horse
-*:/horse = >>>
-	if(pmode() !== 'CREATIVE' || get_entity_vehicle(puuid())) {
-		die('You are not in creative mode.');
+# Enchant tool in hand with specified enchantment
+*:/enchant [$type='list'] [$level=1] = >>>
+	if(!has_permission('command.items')) {
+		die('You are not allowed to create custom items here.');
 	}
-	@horse = spawn_entity('horse', 1, _relative(ploc(), 'up'))[0];
-	set_mob_age(@horse, 0);
-	tame_mob(@horse);
-	set_entity_spec(@horse, array('jump': 0.8, 'saddle': array('name': 'saddle')));
-	set_entity_rider(@horse, puuid());
-
-	bind(vehicle_leave, array('id': player().'horse_leave'), array('vehicletype': 'HORSE', 'passengertype': 'PLAYER'),
-			@e, @player = player()) {
-
-		if(@e['player'] == @player) {
-			unbind();
-			unbind(@player.'horse_quit');
-			try {
-				entity_remove(@e['vehicle']);
-			} catch(BadEntityException @ex) {
-				// horse removed already or unloaded
-			}
-		}
+	if(!$type) {
+		die(color('gold').'Usage: /enchant <type> [level]\n'
+		.'Example: /enchant sharpness 4');
 	}
-
-	bind(player_quit, array('id': player().'horse_quit'), array('player': player()), @e, @horse) {
-		unbind();
-		unbind(player().'horse_leave');
-		try {
-			entity_remove(@horse);
-		} catch(BadEntityException @ex) {
-			// horse removed already or unloaded
-		}
+	@item = pinv(player(), null);
+	if(!@item) {
+		die('You must hold an item.');
 	}
-<<<
-
-# set a note to a noteblock
-*:/note $note [$octave = 0] = >>>
-	@l = pcursor();
-	if(!sk_can_build(@l) || get_block_at(@l) != '25:0') {
-		die();
+	@enchants = associative_array(
+		'power': 'ARROW_DAMAGE',
+		'flame': 'ARROW_FIRE',
+		'infinity': 'ARROW_INFINITE',
+		'punch': 'ARROW_KNOCKBACK',
+		'sharpness': 'DAMAGE_ALL',
+		'baneofarthropods': 'DAMAGE_ARTHROPODS',
+		'smite': 'DAMAGE_UNDEAD',
+		'efficiency': 'DIG_SPEED',
+		'unbreaking': 'DURABILITY',
+		'fireaspect': 'FIRE_ASPECT',
+		'knockback': 'KNOCKBACK',
+		'fortune': 'LOOT_BONUS_BLOCKS',
+		'looting': 'LOOT_BONUS_MOBS',
+		'respiration': 'OXYGEN',
+		'protection': 'PROTECTION_ENVIRONMENTAL',
+		'blastprotection': 'PROTECTION_EXPLOSIONS',
+		'featherfalling': 'PROTECTION_FALL',
+		'fireprotection': 'PROTECTION_FIRE',
+		'projectileprotection': 'PROTECTION_PROJECTILE',
+		'silktouch': 'SILK_TOUCH',
+		'thorns': 'THORNS',
+		'aquaaffinity': 'WATER_WORKER',
+		'depthstrider': 'DEPTH_STRIDER',
+		'mending': 'MENDING',
+		'frostwalker': 'FROST_WALKER',
+		'sweepingedge': 'SWEEPING_EDGE',
+	);
+	if(!is_integral($level)) {
+		die('Enchantment level must be an integer.');
 	}
-
-	@instrument = 'NOTE_PIANO';
-	switch(split(':', get_block_at(_relative(@l, 'down')))[0]) {
-		case '1':
-			@instrument = 'NOTE_BASS_DRUM';
-		case '5':
-		case '17':
-			@instrument = 'NOTE_BASS_GUITAR';
-		case '12':
-		case '13':
-			@instrument = 'NOTE_SNARE_DRUM';
-		case '20':
-			@instrument = 'NOTE_STICKS';
-		case '79':
-		case '174':
-			@instrument = 'ORB_PICKUP';
-		case '159':
-		case '172':
-			@instrument = 'NOTE_PLING';
-		case '165':
-			@instrument = 'CHICKEN_EGG_POP';
-		case '173':
-			@instrument = 'FIREWORK_BLAST';
-	}
-
-	@clicks = $note;
-	@pitch = 0.5;
-	@notes = array('F#', 'G', 'G#', 'A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F');
-	if(!is_numeric(@clicks)) {
-		@pitch = _get_pitch($note, $octave);
-		@clicks = array_index(@notes, to_upper($note)) + ($octave * 12);
+	@level = min(99, integer($level));
+	if(array_index_exists(@enchants, to_lower($type))) {
+		enchant_inv_unsafe(null, @enchants[to_lower($type)], @level);
 	} else {
-		@pitch = _get_pitch(@notes[@clicks % 12], floor(@clicks / 12));
+		msg(color('red').'Available enchantments: '.array_keys(@enchants));
 	}
-	play_sound(@l, array('sound': @instrument, 'category': 'RECORDS', 'pitch': @pitch));
-	sudo('/setblock '.@l[0].' '.@l[1].' '.@l[2].' minecraft:noteblock 0 replace {note:'.@clicks.'b}');
+<<<
+
+# Remove all enchantments from item in hand
+*:/unenchant = >>>
+	if(!has_permission('command.items')) {
+		die('You are not allowed to create custom items here.');
+	}
+	@item = pinv(player(), null);
+	array_remove(@item, 'enchants');
+	array_remove(@item['meta'], 'enchants');
+	set_pinv(array(null: @item));
 <<<

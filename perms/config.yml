@@ -82,7 +82,8 @@ member:
     dev:
       stargate.create.personal: false
       stargate.create.network: false
-      worldedit.navigation.*: true
+      worldedit.navigation.jumpto.*: true
+      worldedit.navigation.thru.*: true
       command.gm: true
       worldguard.region.flag.flags.other-explosion.*: true
       worldguard.region.flag.flags.ghast-fireball.*: true

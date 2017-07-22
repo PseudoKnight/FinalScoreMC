@@ -1,7 +1,7 @@
 register_command('7', array(
 	'description': 'Starts and manages "Seven Seconds to Live" minigame.',
 	'usage': '/7 [start|list|create|edit|save|delete|reset|setspawn|resetspawns] [map_id]',
-	'aliases': array('/seven'),
+	'aliases': array('seven'),
 	'tabcompleter': closure(@alias, @sender, @args, @info) {
 		if(array_size(@args) == 1) {
 			return(_strings_start_with_ic(array('start', 'list', 'create', 'edit', 'save', 'delete',
