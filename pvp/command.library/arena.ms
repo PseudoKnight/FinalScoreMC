@@ -3,7 +3,7 @@ register_command('arena', array(
 	'usage': '/arena <list|set|add|load|move|delete|info|stats|resetstats> [arena_id] [setting] [value(s)]',
 	'tabcompleter': closure(@alias, @sender, @args, @info) {
 		if(array_size(@args) == 1) {
-			return(_strings_start_with_ic(array('list', 'set', 'add', 'load', 'show', 'move', 'delete', 'info',
+			return(_strings_start_with_ic(array('list', 'set', 'add', 'load', 'move', 'delete', 'info',
 					'stats', 'resetstats'), @args[-1]));
 		} else if(array_size(@args) == 3) {
 			@action = @args[0];
