@@ -68,6 +68,7 @@ register_command('mob', array(
 					// Single boolean
 					case 'ai':
 					case 'tame':
+					case 'glowing':
 						if(array_size(@args) == 3) {
 							return(false);
 						}
@@ -117,25 +118,25 @@ register_command('mob', array(
 						if(!is_numeric(@args[3])) {
 							die('Must be numeric');
 						}
-						@id = integer(@args[3]);
+						@effectid = integer(@args[3]);
 						if(!array_index_exists(@mob, 'effects')) {
 							@mob['effects'] = array();
 						}
 						@duration = integer(@args[5]);
 						if(@duration == 0) {
 							foreach(@index: @effect in @mob['effects']) {
-								if(@effect['id'] == @id) {
+								if(@effect['id'] == @effectid) {
 									array_remove(@mob['effects'], @index);
 									msg(color('green').'Effect removed');
 									break();
 								}
 							}
 						} else {
-							array_push(@mob['effects'], array(
-								'id': @id,
+							@mob['effects'][] = array(
+								'id': @effectid,
 								'strength': @args[4] - 1,
 								'seconds': @duration
-							));
+							);
 							msg(color('green').'Effect added');
 						}
 

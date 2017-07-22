@@ -64,6 +64,9 @@ proc _spawn_mob(@mob, @loc, @owner, @teammates) {
 			
 			case 'onfire':
 				set_entity_onfire(@m, @value);
+			
+			case 'glowing':
+				set_entity_glowing(@m, @value);
 				
 			case 'explode':
 				@display = spawn_entity('ARMOR_STAND', 1, @loc)[0];
