@@ -388,7 +388,7 @@ register_command('arena', array(
 							die(color('gold').'You must look at a chest you want to spawn.');
 						}
 						@group = @args[3];
-						if(!array_index_exists(@arena['chestgroup'], @@group)) {
+						if(!array_index_exists(@arena['chestgroup'], @group)) {
 							@arena['chestgroup'][@group] = array();
 						}
 						foreach(@key: @chestloc in @arena['chestgroup'][@group]) {
