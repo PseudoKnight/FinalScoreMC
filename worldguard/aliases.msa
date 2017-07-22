@@ -135,7 +135,7 @@
 		case 'redefine':
 		case 'update':
 		case 'move':
-			if(has_permission('group.moderator') || array_size(@args) < 2) {
+			if(has_permission('worldguard.region.*') || array_size(@args) < 2) {
 				run('/region '.$);
 				die();
 			}
