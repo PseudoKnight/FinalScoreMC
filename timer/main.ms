@@ -201,7 +201,7 @@ register_command('timer', array(
 		            default:
 		                @place = @place.'th';
 		        }
-		        tmsg(@player, 'You got a '.color('bold').@place.color('r').' place time for this course!');
+		        broadcast(@player.' got a '.color('bold').@place.color('r').' place time for '.@id.'!');
 		        launch_firework(@loc, array(
 		            'strength': 1,
 		            'flicker': true,
