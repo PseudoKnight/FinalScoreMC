@@ -41,6 +41,14 @@ bind(player_teleport, null, null, @event) {
 				});
 			}
 		}
+	} else if(@event['type'] == 'END_GATEWAY' && @fromWorld == 'world_the_end') {
+		if(get_block_at(_relative(@from, 'east')) == '209:0'
+		|| get_block_at(_relative(@from, 'west')) == '209:0'
+		|| get_block_at(_relative(@from, 'north')) == '209:0'
+		|| get_block_at(_relative(@from, 'south')) == '209:0') {
+			cancel();
+			die();
+		}
 	}
 	
 	try {
