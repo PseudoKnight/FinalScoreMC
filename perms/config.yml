@@ -37,7 +37,6 @@ member:
     worldguard.region.flag.flags.block-place.*: true
     worldguard.region.flag.flags.tnt.*: true
     bukkit.command.tps: true
-    advancement.all: true
   worlds:
     world:
       livemap.markers: true
@@ -267,6 +266,7 @@ default:
     permissions.build: false
     command.join.to: true
     command.join.from: true
+    advancement.all: true
   worlds:
     custom:
       permissions.build: true
