@@ -169,3 +169,26 @@
 		set_block_at(@loc, '95:8');
 	}
 <<<
+
+*:/heal [$player] = >>>
+	if(!has_permission('command.heal')) {
+		die(color('gold').'You do not have permission to heal.');
+	}
+	@player = player();
+	if($player) {
+		if(!has_permission('command.heal.others')) {
+			die(color('gold').'You do not have permission to heal others.');
+		}
+		@player = _find_player($player);
+		if(pworld(@player) != pworld()) {
+			die(color('gold').'You cannot heal a player in another world.');
+		}
+	}
+	set_phunger(@player, 20);
+	set_psaturation(@player, 5.0);
+	set_phealth(@player, 20);
+	tmsg(@player, color('green').'Healed!');
+	if(@player != player()) {
+		msg(color('green').'Healed!');
+	}
+<<<
