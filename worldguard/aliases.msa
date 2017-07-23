@@ -16,7 +16,7 @@
 				if(array_size(@args) > 3) {
 					@value = @args[3];
 				}
-				if(has_permission('group.moderator') && @setting !== 'infinite-dispensers') {
+				if(has_permission('worldguard.region.*') && @setting !== 'infinite-dispensers') {
 					run('/region '.$);
 					die();
 				}
