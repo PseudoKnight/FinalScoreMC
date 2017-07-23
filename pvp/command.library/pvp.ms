@@ -1,7 +1,6 @@
 register_command('pvp', array(
 	'description': 'Starting and managing active PVP games.',
 	'usage': '/pvp <join|start|vote|debug|spectate|addtime|end> <game_id> [value]',
-	'permission': 'command.class',
 	'tabcompleter': closure(@alias, @sender, @args, @info) {
 		if(array_size(@args) == 1) {
 			return(_strings_start_with_ic(array('join', 'start', 'vote', 'debug', 'spectate', 'addtime', 'end'), @args[-1]));
