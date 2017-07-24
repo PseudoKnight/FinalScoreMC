@@ -242,7 +242,7 @@ register_command('class', array(
 				if(!@arena) {
 					die(color('gold').'No arena by that name: '.@arenaid);
 				}
-				switch(@args[3]) {
+				switch(@args[2]) {
 					case 'kit':
 						@pvp = associative_array();
 						@pvp['arena'] = @arena;
