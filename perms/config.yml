@@ -189,6 +189,7 @@ engineer:
     custom:
       worldguard.region.*: true
       limitedworldedit: true
+      command.setwarp: true
   inheritance: builder
 limitedworldedit:
   permissions:
@@ -240,6 +241,7 @@ moderator:
     command.endercrystal: true
     command.mob: true
     command.sethome.others: true
+    command.setwarp: true
     nocheat.admin: true
     minecraft.command.toggledownfall: true
     command.items: true
