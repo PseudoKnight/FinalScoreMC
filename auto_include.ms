@@ -310,8 +310,11 @@ proc _remove_region_entities(@region, @entities, @world = 'custom') {
 				@type = entity_type(@entity);
 				if((!@entities && !array_contains(@excludeEntities, @type))
 				|| array_contains(@entities, @type)) {
-					if(@type === 'ARMOR_STAND' && entity_spec(@entity)['visible']) {
-						continue();
+					if(@type === 'ARMOR_STAND') {
+						if(entity_spec(@entity)['visible']
+						|| !array_contains(sk_regions_at(entity_loc(@entity)), @region)) {
+							continue();
+						}
 					}
 					try {
 						entity_remove(@entity);
