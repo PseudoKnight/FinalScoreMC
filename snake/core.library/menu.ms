@@ -25,11 +25,22 @@ proc _snake_menu() {
 			@item = @event['slotitem'];
 			if(@item) {
 				close_pinv();
-				include('game.ms');
-				if(@event['slot'] == 1) {
-					_snake_queue('standard');
-				} else if(@event['slot'] == 3) {
-					_snake_queue('endless');
+				try {
+					include('game.ms');
+					if(@event['slot'] == 1) {
+						_snake_queue('standard');
+					} else if(@event['slot'] == 3) {
+						_snake_queue('endless');
+					}
+				} catch(Exception @ex) {
+					console(@ex['classType'].': '.@ex['message'], false);
+					foreach(@trace in @ex['stackTrace']) {
+						console(split('LocalPackages', @trace['file'])[-1].':'.@trace['line'].' '.@trace['id'], false);
+					}
+					msg(color('red').@ex['message']);
+					msg(color('yellow').'Cleaning up game...');
+					_snake_cleanup(import('snake'));
+					return(true);
 				}
 			}
 		}

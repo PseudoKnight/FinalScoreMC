@@ -14,18 +14,6 @@
 	'tnt': an array of primed tnt entities
 */
 
-// Setup exception handler to clean-up game
-set_uncaught_exception_handler(closure(@ex){
-	console(@ex['classType'].': '.@ex['message'], false);
-	foreach(@trace in @ex['stackTrace']) {
-		console(split('LocalPackages', @trace['file'])[-1].':'.@trace['line'].' '.@trace['id'], false);
-	}
-	msg(color('red').@ex['message']);
-	msg(color('yellow').'Cleaning up game...');
-	_snake_cleanup(import('snake'));
-	return(true);
-});
-
 include('util.ms');
 include('powerups.ms');
 include('snake.ms');

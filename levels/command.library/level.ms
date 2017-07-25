@@ -209,7 +209,18 @@ register_command('level', array(
 							}
 						}
 						
-						_level_start(@level);
+						try {
+							_level_start(@level);
+						} catch(Exception @ex) {
+							console(@ex['classType'].': '.@ex['message'], false);
+							foreach(@trace in @ex['stackTrace']) {
+								console(split('LocalPackages', @trace['file'])[-1].':'.@trace['line'].' '.@trace['id'], false);
+							}
+							msg(color('red').@ex['message']);
+							msg(color('yellow').'Cleaning up game...');
+							_level_end(@level, false);
+							return(true);
+						}
 					}
 				}
 				
