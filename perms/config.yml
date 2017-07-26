@@ -269,6 +269,7 @@ default:
     command.join.to: true
     command.join.from: true
     advancement.all: true
+    minecraft.autocraft: true
   worlds:
     custom:
       permissions.build: true
