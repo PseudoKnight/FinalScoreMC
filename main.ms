@@ -698,7 +698,7 @@ bind(note_play, null, null, @event) {
 		'sound': @sound,
 		'category': 'RECORDS',
 		'pitch': _get_pitch(@event['tone'], @event['octave']),
-		'volume': if(is_block_powered(@event['location']), 9, 1)
+		'volume': if(is_block_powered(@event['location']), 8, 1)
 	));
 	@event['location']['x'] += 0.5;
 	@event['location']['z'] += 0.5;

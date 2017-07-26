@@ -90,7 +90,7 @@ Undead horses can be fed rotten flesh.
 
 There are also noteblock sounds with these blocks: ICE, ANVIL, STAINED_CLAY, COAL_BLOCK, SLIME_BLOCK, and SEA_LANTERN.
 
-If powered by redstone, noteblocks can be heard up to 9 chunks away. (144 meters)
+If powered by redstone, noteblocks can be heard up to 8 chunks away. (128 meters)
 
 Right-clicking paintings will cycle through them.
 
