@@ -63,12 +63,53 @@ proc _remove_ignored(@sender, @recipients) {
 	Constructs and sends a tellraw command with a hover event
 */
 proc _tellraw(@recipients, @components) {
+	proc _colorize(@text) {
+		@colors = array(
+			'&0': '"color":"black",',
+			'&1': '"color":"dark_blue",',
+			'&2': '"color":"dark_green",',
+			'&3': '"color":"dark_aqua",',
+			'&4': '"color":"dark_red",',
+			'&5': '"color":"dark_purple",',
+			'&6': '"color":"gold",',
+			'&7': '"color":"gray",',
+			'&8': '"color":"dark_gray",',
+			'&9': '"color":"blue",',
+			'&a': '"color":"green",',
+			'&b': '"color":"aqua",',
+			'&c': '"color":"red",',
+			'&d': '"color":"light_purple",',
+			'&e': '"color":"yellow",',
+			'&f': '"color":"white",',
+			'&k': '"obfuscated":true,',
+			'&l': '"bold":true,',
+			'&m': '"strikethrough":true,',
+			'&n': '"underline":true,',
+			'&o': '"italic":true,',
+			'&r': '"color":"reset",',
+			'': '',
+		);
+		@matches = reg_match_all('(&[0-9a-fk-or])?(&[k-o])?(&[k-o])?(&[k-o])?((?:&[^0-9a-fk-or]|[^&])*)', @text);
+		@raw = '';
+		foreach(@m in @matches) {
+			if(@m[0]) {
+				@raw .= ',{'.@colors[@m[1]].@colors[@m[2]].@colors[@m[3]].@colors[@m[4]].'"text":"'.@m[5].'"}';
+			}
+		}
+		return(@raw);
+	}
+	
 	@raw = ' [""';
 	foreach(@c in @components) {
 		if(!is_array(@c)) {
-			@matches = reg_match_all('(&[0-9a-fk-or])(&[k-o])?(&[k-o])?(&[k-o])?((?:&[^0-9a-fk-or]|[^&])*)', @c);
-			foreach(@m in @matches) {
-				@raw .= ',{'._color(@m[1])._color(@m[2])._color(@m[3])._color(@m[4]).'"text":"'._clickable_links(@m[5]).'"}';
+			@parts = reg_match('(.*?)(?:https?://|www\\.)([\\da-z.-]+\\.[a-z.]{2,6})([/\\w\\#~:.?=&-]*)(.*)', @c);
+			if(@parts) {
+				@raw .= _colorize(@parts[1])
+						.',{"color":"aqua","text":"\u29C9'.@parts[2].'","clickEvent":{"action":"open_url","value":"http://'
+						.@parts[2].@parts[3].'"},"hoverEvent":{"action":"show_text","value":"http://'.@parts[2].@parts[3].'"}}'
+						._colorize(@parts[4]);
+			} else {
+				@raw .= _colorize(@c);
 			}
 		} else {
 			switch(@c[0]) {
@@ -85,42 +126,4 @@ proc _tellraw(@recipients, @components) {
 	foreach(@player in @recipients) {
 		runas('~console', '/tellraw '.@player.@raw);
 	}
-}
-
-proc _color(@char, @colors = associative_array(
-	'&0': '"color":"black",',
-	'&1': '"color":"dark_blue",',
-	'&2': '"color":"dark_green",',
-	'&3': '"color":"dark_aqua",',
-	'&4': '"color":"dark_red",',
-	'&5': '"color":"dark_purple",',
-	'&6': '"color":"gold",',
-	'&7': '"color":"gray",',
-	'&8': '"color":"dark_gray",',
-	'&9': '"color":"blue",',
-	'&a': '"color":"green",',
-	'&b': '"color":"aqua",',
-	'&c': '"color":"red",',
-	'&d': '"color":"light_purple",',
-	'&e': '"color":"yellow",',
-	'&f': '"color":"white",',
-	'&k': '"obfuscated":true,',
-	'&l': '"bold":true,',
-	'&m': '"strikethrough":true,',
-	'&n': '"underline":true,',
-	'&o': '"italic":true,',
-	'&r': '"color":"reset",',
-	'': '',
-)) {
-	return(@colors[@char]);
-}
-
-/*
-	Create clickable links for a JSON message
-*/
-proc _clickable_links(@string) {
-	return(reg_replace('(?:https?://|www\\.)([\\da-z.-]+\\.[a-z.]{2,6})([/\\w\\#~:.?=&-]*)',
-		'"},{"color":"aqua","text":"\u29C9$1","clickEvent":{"action":"open_url","value":"http://$1$2"},"hoverEvent":{"action":"show_text","value":"http://$1$2"}},{"text":"',
-		@string
-	));
 }
