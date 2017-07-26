@@ -9,7 +9,10 @@ bind(projectile_launch, array('id': @id.'grapple'), array('type': 'FISHING_HOOK'
 	}
 
 	if(!ptake_item(@player, 262, 1)) {
+		cancel();
 		die();
+	} else if(!phas_item(@player, 262)) {
+		play_sound(ploc(), array('sound': 'ITEM_BREAK'));
 	}
 
 	@arrow = shoot_projectile(@player, 'arrow');
