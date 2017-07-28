@@ -169,7 +169,9 @@ bind(player_interact_at_entity, null, array('clicked': 'ARMOR_STAND'), @event) {
 		switch(if(@item, @item['type'], null)) {
 			case 280: # 2 sticks attaches arms
 				if(@item['qty'] >= 2 && !@armorstand['arms']) {
-					set_entity_spec(@event['id'], array('arms': true));
+					set_timeout(50, closure(){ // workaround client rendering issue in 1.12
+						set_entity_spec(@event['id'], array('arms': true));
+					});
 					@item['qty'] -= 2;
 					set_pinv(player(), array(null: if(@item['qty'] > 0, @item, null)));
 					cancel();
@@ -189,7 +191,9 @@ bind(player_interact_at_entity, null, array('clicked': 'ARMOR_STAND'), @event) {
 					@visible = @armorstand['visible'];
 					if(!@visible || @gear['weapon'] || @gear['off_hand'] || @gear['helmet'] || @gear['chestplate'] || @gear['leggings'] || @gear['boots']) {
 						title_msg(null, color(6).'Toggled visibility '.if(@visible, 'off', 'on').' for armor stand.', 0, 40, 10);
-						set_entity_spec(@event['id'], array('visible': !@visible));
+						set_timeout(50, closure(){ // workaround client rendering issue in 1.12
+							set_entity_spec(@event['id'], array('visible': !@visible));
+						});
 						cancel();
 					}
 				}
@@ -198,7 +202,9 @@ bind(player_interact_at_entity, null, array('clicked': 'ARMOR_STAND'), @event) {
 				if(!_is_survival_world(pworld())) {
 					@small = if(@armorstand['small'], false, true);
 					title_msg(null, color(6).if(@small, 'Shrunk', 'Embiggened').' armor stand.', 0, 40, 10);
-					set_entity_spec(@event['id'], array('small': @small));
+					set_timeout(50, closure(){ // workaround client rendering issue in 1.12
+						set_entity_spec(@event['id'], array('small': @small));
+					});
 					cancel();
 				}
 				
