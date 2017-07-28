@@ -10,13 +10,15 @@ register_command('player', array(
 			return(false);
 		}
 		@player = @args[0];
+		@uuid = '';
 		try {
 			# ONLINE INFO
 			@player = player(@player);
+			@uuid = puuid(@player);
 			@pdata = _pdata(@player);
 			@onlineinfo = pinfo(@player);
 			msg(color('gray').'--[ '.color('l').@player.color('gray').' ]-------------------------');
-			msg(color('gray').'UUID: '.color('r').puuid(@player));
+			msg(color('gray').'UUID: '.color('r').@uuid);
 			msg(color('gray').'Location: '.color('r')._worldname(@onlineinfo[7]).'('.@onlineinfo[7].') '
 					.floor(@onlineinfo[1][0]).','.floor(@onlineinfo[1][1]).','.floor(@onlineinfo[1][2]));
 			if(pmode(@player) === 'CREATIVE') {
@@ -68,5 +70,11 @@ register_command('player', array(
 		if(array_index_exists(@pdata, 'approval'), msg(color('gray').'Approved by: '.color('r').@pdata['approval']));
 		if(array_index_exists(@pdata, 'coins'), msg(color('gray').'Coins: '.color('r').@pdata['coins']));
 		if(array_index_exists(@pdata, 'support'), msg(color('gray').'Support: '.color('r').'$'.@pdata['support']));
+		_bm_request('lookup_uuid', 'a1634f37480a4bb9a0b2200266597ac0', array('user_uuid': replace(@uuid, '-', '')), closure(@result) {
+			if(@result) {
+				msg(color('gray').'Notes: '.color('r').@result['user']['notes']);
+				msg(color('gray').'Relations: '.color('r').@result['user']['relations']);
+			}
+		});
 	}
 ));

@@ -245,46 +245,17 @@ bind(player_join, null, null, @event) {
 				_equip_kit();
 			}
 		}, 'join');
+		
+		// View distance
+		queue_push(closure(){
+			if(array_index_exists(@pdata, 'viewdistance')) {
+				set_pview_distance(@pdata['viewdistance']);
+			} else {
+				set_pview_distance(8);
+			}
+		}, 'join');
 
-		# Makes a call to the ban manager to store the player's UUID
-		# @endpoint - String - The action to take in the ban manager.
-		# @player - String - The player name making the call to the ban manager, or the UUID of the player.
-		# This player must be an admin or moderator.
-		# @params - Associative Array - The parameters to post to the ban manager.
-		# @error - Closure (Optional) - Closure to execute when the request returns an error.
-		# The closure is passed the error message. Defaults to printing the error message to the user.
-		proc _bm_request(@endpoint, @player, @params,
-			@error = closure(@error_msg, console('Error saving UUID to ban manager: '.@error_msg, false))) {
-
-				# Add the authentication parameters
-				@params['accessor_token'] = 'final-score-minecraft-server';
-				@params['timestamp'] = simple_date('yyyy-MM-dd HH:mm:ss Z');
-				@params['nonce'] = rand();
-				@params['uuid'] = @player;
-
-				# Generate the HMAC
-				@hmac_key = comp_read('key.txt');
-				@msg = '';
-				foreach(@key in array_keys(@params)) {
-					@msg .= @key . @params[@key];
-				}
-				@params['hmac'] = hmac_sha1(@hmac_key, @msg);
-
-				http_request('http://finalscoremc.com/fsmcbm/ban-manager.php?action='.@endpoint, array(
-					'method': 'POST',
-					'params': @params,
-					'success': closure(@response){
-						@result = json_decode(@response['body']);
-						if(@result && array_index_exists(@result, 'error') && @result['error'] !== 'Nothing found.') {
-							execute(@result['error'], @error);
-						}
-					}
-				))
-		}
-
-		_bm_request('set_user_uuid', 'a1634f37480a4bb9a0b2200266597ac0',
-			array('username': player(), 'user_uuid': puuid())
-		);
+		_bm_request('set_user_uuid', 'a1634f37480a4bb9a0b2200266597ac0', array('username': player(), 'user_uuid': puuid()));
 	});
 }
 
