@@ -36,7 +36,7 @@ bind(player_spawn, array('priority': 'LOW'), null, @event) {
 	if(!@event['bed_spawn']) {
 		@pdata = _pdata(player());
 		if(array_index_exists(@pdata, 'homes') && array_index_exists(@pdata['homes'], @world)) {
-			@home = @pdata['homes'][@world];
+			@home = @pdata['homes'][@world][];
 			@home[1] += 1;
 			modify_event('location', @home);
 		} else {
