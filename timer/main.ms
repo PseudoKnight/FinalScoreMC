@@ -151,7 +151,7 @@ register_command('timer', array(
 			_remove_activity(@player.'timer');
 			play_sound(ploc(@player), array('sound': 'ORB_PICKUP'), @player);
 		
-			tmsg(@player, color('yellow').'You achieved a time of '.color('bold').@time.color('r').' seconds.');
+			tmsg(@player, color('yellow').'You achieved a time of '.color('bold').@time.color('yellow').' seconds.');
 			console(@player.' achieved a time of '.@time.' at '.@id, false);
 			set_plevel(@player, integer(@time));
 		
@@ -163,7 +163,7 @@ register_command('timer', array(
 			}
 		
 			if(@ptime) {
-				tmsg(@player, color('green').'You beat your personal best time of '.color('bold').@ptime.color('r').' seconds.');
+				tmsg(@player, color('green').'You beat your personal best time of '.color('bold').@ptime.color('green').' seconds.');
 			}
 			@loc = ploc(@player);
 			@loc['y'] += 3;
@@ -210,9 +210,9 @@ register_command('timer', array(
 						@place = @place.'th';
 				}
 				if(@rankup) {
-					broadcast(color('green').@player.' got a '.color('bold').@place.color('r').' place time for '.to_upper(@id).'!');
+					broadcast(color('green').@player.' got a '.color('bold').@place.color('green').' place time for '.to_upper(@id).'!');
 				} else if(@tied) {
-					broadcast(color('green').@player.' tied the '.color('bold').@place.color('r').' place time for '.to_upper(@id).'!');
+					broadcast(color('green').@player.' tied the '.color('bold').@place.color('green').' place time for '.to_upper(@id).'!');
 				}
 				launch_firework(@loc, array(
 					'strength': 1,
