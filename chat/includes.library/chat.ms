@@ -102,7 +102,7 @@ proc _tellraw(@recipients, @components) {
 	@raw = ' [""';
 	foreach(@c in @components) {
 		if(!is_array(@c)) {
-			@parts = reg_match('(.*?)(?:https?://|www\\.)([\\da-z.-]+\\.[a-z.]{2,6})([/\\w\\#~:.?=&-]*)(.*)', @c);
+			@parts = reg_match('(.*?)(?:https?://|www\\.)([\\da-z.-]+\\.[a-z.]{2,6})([/\\w\\#\\+~:.?=&-]*)(.*)', @c);
 			if(@parts) {
 				@raw .= _colorize(@parts[1])
 						.',{"color":"aqua","text":"\u29C9'.@parts[2].'","clickEvent":{"action":"open_url","value":"http://'
