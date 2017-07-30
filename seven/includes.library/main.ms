@@ -142,6 +142,7 @@ proc _7_remove_player(@player, @7) {
 					_regionmsg('7', @player.' ran out of time.');
 				} else {
 					_regionmsg('7', @player.' blew up with '.color('gold').@timeleft.' seconds'.color('r').' left.');
+					set_pscore('time', @player, get_pscore('time', @player, '7') * -1, '7')
 				}
 			} else {
 				_regionmsg('7', @player.' left the game.');
