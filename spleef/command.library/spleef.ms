@@ -223,22 +223,58 @@ register_command('spleef', array(
 					} else {
 						sk_region_flag('custom', 'spleef-arena', 'pvp', 'deny');
 					}
-		
+					
+					@wormLoc = @region[0][];
+					@wormLoc[0] -= 20;
+					@wormLoc[2] -= 20;
+					@targetLoc = array();
+					@worminterval = set_interval(200, closure(){
+						if(!@targetLoc) {
+							@player = array_rand(@currentspleef, 1)[0];
+							@targetLoc[0] = ploc(@player);
+							@targetLoc[0][0] = floor(@targetLoc[0][0]);
+							@targetLoc[0][2] = floor(@targetLoc[0][2]);
+						} else {
+							@xDist = abs(@wormLoc[0] - @targetLoc[0][0]);
+							@zDist = abs(@wormLoc[2] - @targetLoc[0][2]);
+							if(@xDist > @zDist) {
+								// do x
+								if(@wormLoc[0] > @targetLoc[0][0]) {
+									@wormLoc[0] -= 1;
+								} else {
+									@wormLoc[0] += 1;
+								}
+								if(@xDist < 0.5) {
+									array_remove(@targetLoc, 0);
+								}
+							} else {
+								// do z
+								if(@wormLoc[2] > @targetLoc[0][2]) {
+									@wormLoc[2] -= 1;
+								} else {
+									@wormLoc[2] += 1;
+								}
+								if(@zDist < 0.5) {
+									array_remove(@targetLoc, 0);
+								}
+							}
+							@block = get_block_at(@wormLoc);
+							@entityLoc = @wormLoc[];
+							@entityLoc[0] += 0.5;
+							@entityLoc[2] += 0.5;
+							if(@block != '0:0') {
+								set_block_at(@wormLoc, 0);
+								spawn_falling_block(@entityLoc, @block);
+							}
+							play_effect(@entityLoc, 'CLOUD', array('particleCount': 4, 'speed': 0.01));
+							play_sound(@entityLoc, array('sound': 'FUSE', 'pitch': 2));
+						}
+					});
+					
 					@spleefinterval = set_interval(1000, closure(){
 						@spleefsettings = import('spleefsettings');
 						@currentspleef = import('currentspleef');
 						@reward = import('reward');
-						if(@spleefsettings['counter'] == 60) {
-							proc _removeedge(@x, @y, @z) {
-								if(get_block_at(@x, @y, @z)[0] !== '0') {
-									set_block_at(@x, @y, @z, '0:0', 'custom', false);
-								}
-							}
-							_iterate_cuboid(array(@region[0][0], @region[0][1], @region[0][2]), array(@region[0][0], @region[0][1], @region[1][2]), '_removeedge');
-							_iterate_cuboid(array(@region[0][0], @region[0][1], @region[0][2]), array(@region[1][0], @region[0][1], @region[0][2]), '_removeedge');
-							_iterate_cuboid(array(@region[0][0], @region[0][1], @region[1][2]), array(@region[1][0], @region[0][1], @region[1][2]), '_removeedge');
-							_iterate_cuboid(array(@region[1][0], @region[0][1], @region[0][2]), array(@region[1][0], @region[0][1], @region[1][2]), '_removeedge');
-						}
 						@spleefsettings['counter']++;
 		
 						if(array_size(@currentspleef) <= 1 && (!array_index_exists(@currentspleef, 'PseudoKnight') || pinfo('PseudoKnight', 11) == true)) {
@@ -260,6 +296,7 @@ register_command('spleef', array(
 							export('currentspleef', @currentspleef);
 							_remove_activity('currentspleef');
 							clear_task();
+							clear_task(@worminterval);
 						}
 		
 						foreach(@player in array_keys(@currentspleef)){
@@ -281,9 +318,9 @@ register_command('spleef', array(
 							if(array_index_exists(@currentspleef, @player)) {
 								continue();
 							}
-							if(ponline(@player) && array_contains(sk_current_regions(@player), @cfg['region']['arena'])) {
+							if(ponline(@player) && pmode(@player) != 'SPECTATOR' && array_contains(sk_current_regions(@player), @cfg['region']['arena'])) {
 								set_ploc(@player, @cfg['warp']['lobby']);
-								msg(color('green').'[Spleef] '.color('r').'Please do not interfere with a spleef match in progress.');
+								tmsg(@player, color('green').'[Spleef] '.color('r').'Please do not interfere with a spleef match in progress.');
 							}
 						}
 						export('spleefsettings', @spleefsettings);
