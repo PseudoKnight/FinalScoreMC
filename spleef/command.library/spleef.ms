@@ -224,54 +224,70 @@ register_command('spleef', array(
 						sk_region_flag('custom', 'spleef-arena', 'pvp', 'deny');
 					}
 					
+					proc _fall_block(@loc) {
+						@block = get_block_at(@loc);
+						@entityLoc = @loc[];
+						@entityLoc[0] += 0.5;
+						@entityLoc[2] += 0.5;
+						if(@block != '0:0') {
+							set_block_at(@loc, 0);
+							spawn_falling_block(@entityLoc, @block);
+						}
+						@entityLoc[1] += 1;
+						play_effect(@entityLoc, 'CLOUD', array('particleCount': 4, 'speed': 0.01));
+						play_sound(@entityLoc, array('sound': 'FUSE', 'pitch': 2));
+					}
+					
 					@wormLoc = @region[0][];
 					@wormLoc[0] -= 20;
 					@wormLoc[2] -= 20;
 					@targetLoc = array();
-					@worminterval = set_interval(200, closure(){
-						if(!@targetLoc) {
+					@wormSleep = array(array_size(@currentspleef) - 2);
+					@worminterval = set_interval(150, closure(){
+						@count = array_size(@currentspleef);
+						if(!@count) {
+							clear_task();
+						} else if(!@targetLoc) {
 							@player = array_rand(@currentspleef, 1)[0];
-							@targetLoc[0] = ploc(@player);
-							@targetLoc[0][0] = floor(@targetLoc[0][0]);
-							@targetLoc[0][2] = floor(@targetLoc[0][2]);
+							@targetLoc[0] = array_normalize(ploc(@player))[0..3];
+							@targetLoc[0][0] = round(@targetLoc[0][0]);
+							@targetLoc[0][1] = @wormLoc[1];
+							@targetLoc[0][2] = round(@targetLoc[0][2]);
+						} else if(@wormSleep[0] > 0) {
+							@wormSleep[0]--;
 						} else {
-							@xDist = abs(@wormLoc[0] - @targetLoc[0][0]);
-							@zDist = abs(@wormLoc[2] - @targetLoc[0][2]);
-							if(@xDist > @zDist) {
-								// do x
-								if(@wormLoc[0] > @targetLoc[0][0]) {
-									@wormLoc[0] -= 1;
-								} else {
-									@wormLoc[0] += 1;
-								}
-								if(@xDist < 0.5) {
-									array_remove(@targetLoc, 0);
-								}
+							@wormSleep[0] = @count - 2;
+							@xDist = abs(@targetLoc[0][0] - @wormLoc[0]);
+							@zDist = abs(@targetLoc[0][2] - @wormLoc[2]);
+							if(@xDist == 0 && @zDist == 0) {
+								// eat all surrounding blocks and clear target
+								@targetLoc[0][0] -= 1;
+								_fall_block(@targetLoc[0]);
+								@targetLoc[0][2] -= 1;
+								_fall_block(@targetLoc[0]);
+								@targetLoc[0][0] += 1;
+								_fall_block(@targetLoc[0]);
+								array_remove(@targetLoc, 0);
 							} else {
-								// do z
-								if(@wormLoc[2] > @targetLoc[0][2]) {
-									@wormLoc[2] -= 1;
+								if(@xDist > @zDist) {
+									if(@wormLoc[0] > @targetLoc[0][0]) {
+										@wormLoc[0] -= 1;
+									} else {
+										@wormLoc[0] += 1;
+									}
 								} else {
-									@wormLoc[2] += 1;
+									if(@wormLoc[2] > @targetLoc[0][2]) {
+										@wormLoc[2] -= 1;
+									} else {
+										@wormLoc[2] += 1;
+									}
 								}
-								if(@zDist < 0.5) {
-									array_remove(@targetLoc, 0);
-								}
+								_fall_block(@wormLoc);
 							}
-							@block = get_block_at(@wormLoc);
-							@entityLoc = @wormLoc[];
-							@entityLoc[0] += 0.5;
-							@entityLoc[2] += 0.5;
-							if(@block != '0:0') {
-								set_block_at(@wormLoc, 0);
-								spawn_falling_block(@entityLoc, @block);
-							}
-							play_effect(@entityLoc, 'CLOUD', array('particleCount': 4, 'speed': 0.01));
-							play_sound(@entityLoc, array('sound': 'FUSE', 'pitch': 2));
 						}
 					});
 					
-					@spleefinterval = set_interval(1000, closure(){
+					@spleefinterval = set_interval(500, closure(){
 						@spleefsettings = import('spleefsettings');
 						@currentspleef = import('currentspleef');
 						@reward = import('reward');
