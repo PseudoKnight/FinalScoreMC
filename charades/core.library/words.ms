@@ -1,4 +1,4 @@
-proc _get_word_types() {
+proc _get_categories() {
 	return(array('easy', 'medium', 'hard', 'very-hard', 'idioms', 'animals', 'people', 'movies', 'tv-shows', 'books'));
 }
 
@@ -17,31 +17,31 @@ proc _get_word(@closure) {
 	);
 	
 	@charades = import('charades');
-	@wordType = @inputMap[@charades['wordType']];
-	@words = get_value('charades', @wordType);
+	@category = @inputMap[@charades['category']];
+	@words = get_value('charades', @category);
 	if(!@words) {
-		http_request('http://www.wordgenerator.net/application/p.php?type=1&id='.@wordType, array(
+		http_request('http://www.wordgenerator.net/application/p.php?type=1&id='.@category, array(
 			'method': 'GET',
 			'success': closure(@response){
 				if(!@response['error']) {
 					@words = split(',', @response['body']);
 					@word = @words[0];
-					if(@charades['wordType'] == 'books') {
+					if(@charades['category'] == 'books') {
 						@word = split(' by ', @word)[0];
 					}
 					array_remove(@words, 0);
-					store_value('charades', @wordType, @words);
+					store_value('charades', @category, @words);
 					execute(@word, @closure);
 				}
 			}
 		));
 	} else {
 		@word = @words[0];
-		if(@charades['wordType'] == 'books') {
+		if(@charades['category'] == 'books') {
 			@word = split(' by ', @word)[0];
 		}
 		array_remove(@words, 0);
-		store_value('charades', @wordType, @words);
+		store_value('charades', @category, @words);
 		execute(@word, @closure);
 	}
 }

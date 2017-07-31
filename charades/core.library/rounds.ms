@@ -7,9 +7,15 @@ proc _start_round() {
 		array_remove(@charades['playersLeft'], @index);
 	} while(!ponline(@builder) || !array_contains(sk_current_regions(@builder), 'charades'));
 	
+	if(!@charades['playersLeft']) {
+		_msg_charades(color('yellow').color('bold').'Last turn!');
+	}
+	
 	team_add_player('builder', @builder, 'charades');
 	set_pmode(@builder, 'CREATIVE');
 	_clear_pinv(@builder);
+	
+	set_permission(@builder, 'command.skull', true);
 	
 	_get_word(closure(@word) {
 		tmsg(@builder, 'The word to build is '.color('green').color('bold').@word);
@@ -40,6 +46,7 @@ proc _start_round() {
 					}
 					_end_round(null, @word);
 				} else if(pmode(@builder) != 'CREATIVE') {
+					console('Builder\'s turn already ended.');
 					clear_task();
 				} else {
 					_msg_charades(integer(@timer[0]), 'action');
@@ -105,11 +112,13 @@ proc _end_round(@guesser, @word) {
 				team_add_player('guessers', @builder, 'charades');
 				_equip_kit(@builder);
 				set_pmode(@builder, 'SPECTATOR');
+				
+				set_permission(@builder, 'command.skull', false);
 			}
 		}
 	}
 	
-	set_timeout(5000, closure(){
+	set_timeout(7000, closure(){
 		skcb_load('charades');
 		skcb_paste(array(0, 0, 0, 'custom'), array('origin': true));
 		_remove_region_entities('charades');

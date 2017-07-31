@@ -1,10 +1,10 @@
 register_command('charades', array(
 	'description': 'A visual game of charades in Minecraft',
-	'usage': '/charades [word-type]',
+	'usage': '/charades [category]',
 	'tabcompleter': closure(@alias, @sender, @args, @info) {
 		if(array_size(@args) == 1) {
 			include('../core.library/words.ms');
-			return(_strings_start_with_ic(_get_word_types(), @args[-1]));
+			return(_strings_start_with_ic(_get_categories(), @args[-1]));
 		}
 	},
 	'executor': closure(@alias, @sender, @args, @info) {
@@ -13,15 +13,15 @@ register_command('charades', array(
 		}
 		include('../core.library/words.ms');
 		
-		@wordTypes = _get_word_types();
-		@wordType = '';
+		@categories = _get_categories();
+		@category = '';
 		if(@args) {
-		    @wordType = @args[0];
-			if(!array_contains(@wordTypes, @wordType)) {
-				die(color('yellow').'Available word types: '.array_implode(@wordTypes, ', ').'.');
+		    @category = @args[0];
+			if(!array_contains(@categories, @category)) {
+				die(color('yellow').'Available categories: '.array_implode(@categories, ', ').'.');
 			}
 		} else {
-			@wordType = array_rand(@wordTypes, 1, false)[0];
+			@category = array_rand(@categories, 1, false)[0];
 		}
 		
 		@players = array();
@@ -33,7 +33,7 @@ register_command('charades', array(
 		if(array_size(@players) < 3) {
 			die(color('gold').'Requires at least 3 players.');
 		}
-		export('charades', array('wordType': @wordType, 'playersLeft': @players, 'interval': 0));
+		export('charades', array('category': @category, 'playersLeft': @players, 'interval': 0));
 		
 		create_scoreboard('charades');
 		create_objective('score', 'DUMMY', 'charades');
@@ -46,7 +46,8 @@ register_command('charades', array(
 		foreach(@p in @players) {
 			set_pscore('score', @p, 0, 'charades');
 			team_add_player('guessers', @p, 'charades');
-			title_msg(@p, 'Charades', to_upper(@wordType), 20, 60, 40);
+			title_msg(@p, 'Charades', to_upper(@category), 20, 60, 40);
+			tmsg(@p, color('yellow').color('bold').'Charades Category: '.color('yellow').@category);
 			set_ploc(@p, @spawn);
 			set_pmode(@p, 'SPECTATOR');
 			set_pscoreboard(@p, 'charades');
