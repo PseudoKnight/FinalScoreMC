@@ -18,8 +18,9 @@ proc _start_round() {
 	set_permission(@builder, 'command.skull', true);
 	
 	_get_word(closure(@word) {
-		tmsg(@builder, 'The word to build is '.color('green').color('bold').@word);
-		
+		title_msg(@builder, 'Your turn to build!', '"'.@word.'"', 20, 40, 20);
+		tmsg(@builder, 'You must build "'.color('green').color('bold').@word.color('reset').'"');
+			
 		@timer = array(150.0);
 		@charades['interval'] = set_interval(500, closure(){
 			try {
@@ -69,8 +70,14 @@ proc _start_round() {
 						cancel();
 						@letters = levenshtein(to_lower(@event['message']), to_lower(@word));
 						if(@letters < 2) {
+							play_sound(ploc(), array('sound': 'LEVEL_UP'));
 							_end_round(player(), @word);
 						} else {
+							if(@letters == 3 && length(@word) > 6) {
+								play_sound(ploc(), array('sound': 'VILLAGER_YES'), player());
+							} else {
+								play_sound(ploc(), array('sound': 'VILLAGER_NO'), player());
+							}
 							_regionmsg('charades', color(8).simple_date('h:mm').' [Charades] '.color('yellow').player().color(8).': '.color('r').@event['message']);
 							msg(color('yellow').@letters.' letters don\'t match.');
 						}
@@ -96,10 +103,10 @@ proc _end_round(@guesser, @word) {
 	}
 	
 	if(@guesser) {
-		_msg_charades(color('green').color('bold').@guesser.color('green').' correctly guessed "'.color('bold').@word.color('green').'"!');
+		_regionmsg('charades', color('green').color('bold').@guesser.color('green').' correctly guessed "'.color('bold').@word.color('green').'"!');
 		set_pscore('score', @guesser, get_pscore('score', @guesser, 'charades') + 1, 'charades');
 	} else {
-		_msg_charades(color('yellow').color('yellow').'The answer you were looking for was "'.color('bold').@word.color('yellow').'"!');
+		_regionmsg('charades', color('yellow').color('yellow').'The answer you were looking for was "'.color('bold').@word.color('yellow').'"!');
 	}
 	
 	foreach(@t in get_teams('charades')) {
@@ -127,7 +134,9 @@ proc _end_round(@guesser, @word) {
 			_start_round();
 		} else {
 			// end game
-			set_block_at(sk_region_info('charades-beacon', 'custom', 0)[0], '95:3');
+			@center = sk_region_info('charades-beacon', 'custom', 0)[0];
+			set_block_at(@center, '95:3');
+			play_sound(@center, array('sound': 'UI_TOAST_CHALLENGE_COMPLETE', 'volume': 5));
 			
 			@top = 0;
 			@topPlayers = array();
@@ -152,11 +161,11 @@ proc _end_round(@guesser, @word) {
 			}
 			
 			if(array_size(@topPlayers) == 1) {
-				_msg_charades(color('green').@topPlayers[0].' wins!');
+				_regionmsg('charades', color('green').@topPlayers[0].' wins!');
 			} else if(array_size(@topPlayers) > 1) {
-				_msg_charades(color('green').array_implode(@topPlayers, ' and ').' tied for the win!');
+				_regionmsg('charades', color('green').array_implode(@topPlayers, ' and ').' tied for the win!');
 			} else {
-				_msg_charades(color('green').'Nobody wins! I\'M NOT SURE HOW THIS IS POSSIBLE. IS ANYONE THERE? WHY AM I YELLING?!');
+				_regionmsg('charades', color('yellow').'Nobody wins! I\'M NOT SURE HOW THIS IS POSSIBLE. IS ANYONE THERE? WHY AM I YELLING?!');
 			}
 			_unbind_charade_events();
 			export('charades', null);
