@@ -30,9 +30,9 @@ register_command('charades', array(
 				@players[] = @p;
 			}
 		}
-		//if(array_size(@players) < 3) {
-		//	die(color('gold').'Requires at least 3 players.');
-		//}
+		if(array_size(@players) < 3) {
+			die(color('gold').'Requires at least 3 players.');
+		}
 		export('charades', array('wordType': @wordType, 'playersLeft': @players, 'interval': 0));
 		
 		create_scoreboard('charades');
@@ -46,7 +46,7 @@ register_command('charades', array(
 		foreach(@p in @players) {
 			set_pscore('score', @p, 0, 'charades');
 			team_add_player('guessers', @p, 'charades');
-			title_msg(@p, 'Charades', to_upper(@wordType), 20, 40, 20);
+			title_msg(@p, 'Charades', to_upper(@wordType), 20, 60, 40);
 			set_ploc(@p, @spawn);
 			set_pmode(@p, 'SPECTATOR');
 			set_pscoreboard(@p, 'charades');
@@ -55,7 +55,10 @@ register_command('charades', array(
 		set_block_at(@spawn, 169);
 		
 		include('../core.library/rounds.ms');
-		include('../core.library/util.ms');
+		include('../core.library/utils.ms');
+		include('../core.library/events.ms');
+		
+		_bind_charade_events();
 		_start_round();
 	}
 ));

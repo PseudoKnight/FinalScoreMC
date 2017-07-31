@@ -9,6 +9,7 @@ proc _start_round() {
 	
 	team_add_player('builder', @builder, 'charades');
 	set_pmode(@builder, 'CREATIVE');
+	_clear_pinv(@builder);
 	
 	_get_word(closure(@word) {
 		tmsg(@builder, 'The word to build is '.color('green').color('bold').@word);
@@ -31,15 +32,18 @@ proc _start_round() {
 						}
 					}
 				}
-				if(!ponline(@builder) || !array_contains(sk_current_regions(@builder), 'charades') || get_pteam(@builder, 'charades')['name'] != 'builder') {
+				if(!ponline(@builder) || !array_contains(sk_current_regions(@builder), 'charades')) {
 					team_remove_player('builder', @builder, 'charades');
 					if(ponline(@builder)) {
+						set_ploc(@builder, get_value('warp.charades'));
 						_equip_kit(@builder);
 					}
 					_end_round(null, @word);
+				} else if(pmode(@builder) != 'CREATIVE') {
+					clear_task();
 				} else {
 					_msg_charades(integer(@timer[0]), 'action');
-					if(@timer[0] < 1) {
+					if(@timer[0] <= 0) {
 						_end_round(null, @word);
 					}
 				}
@@ -56,24 +60,17 @@ proc _start_round() {
 					if(get_pteam(player(), 'charades')['name'] == 'guessers') {
 						consume();
 						cancel();
-						if(levenshtein(to_lower(@event['message']), to_lower(@word)) < 2) {
+						@letters = levenshtein(to_lower(@event['message']), to_lower(@word));
+						if(@letters < 2) {
 							_end_round(player(), @word);
 						} else {
-							_msg_charades(color(8).simple_date('h:mm').' '.color('yellow').player().color(8).': '.color('r').@event['message']);
+							_regionmsg('charades', color(8).simple_date('h:mm').' [Charades] '.color('yellow').player().color(8).': '.color('r').@event['message']);
+							msg(color('yellow').@letters.' letters don\'t match.');
 						}
 					}
 				} catch(Exception @ex) {
 					// they left the game, ignore
 				}
-			}
-
-		}
-		
-		bind(item_spawn, array('id': 'charades-item'), null, @event) {
-			if(@event['location']['world'] == 'custom' && array_contains(sk_regions_at(@event['location']), 'charades-build')) {
-				set_timeout(50, closure(){
-					try(set_entity_gravity(@event['id'], false));
-				});
 			}
 		}
 	});
@@ -81,21 +78,21 @@ proc _start_round() {
 
 proc _end_round(@guesser, @word) {
 	unbind('charades-guessing');
-	unbind('charades-item');
 	
 	@charades = import('charades');
 	if(!@charades) {
-		die(); // already ended somehow
+		console('Charades ended already.');
+		die();
 	}
 	if(@charades['interval']) {
 		clear_task(@charades['interval']);
 	}
 	
 	if(@guesser) {
-		_msg_charades(color('green').color('bold').@guesser.color('green').' correctly guessed the word: '.color('bold').@word.color('green').'!');
+		_msg_charades(color('green').color('bold').@guesser.color('green').' correctly guessed "'.color('bold').@word.color('green').'"!');
 		set_pscore('score', @guesser, get_pscore('score', @guesser, 'charades') + 1, 'charades');
 	} else {
-		_msg_charades(color('yellow').color('bold').'Times up! '.color('yellow').'The word you were looking for was: '.color('bold').@word.color('yellow').'!');
+		_msg_charades(color('yellow').color('yellow').'The answer you were looking for was "'.color('bold').@word.color('yellow').'"!');
 	}
 	
 	foreach(@t in get_teams('charades')) {
@@ -152,6 +149,7 @@ proc _end_round(@guesser, @word) {
 			} else {
 				_msg_charades(color('green').'Nobody wins! I\'M NOT SURE HOW THIS IS POSSIBLE. IS ANYONE THERE? WHY AM I YELLING?!');
 			}
+			_unbind_charade_events();
 			export('charades', null);
 			remove_scoreboard('charades');
 		}
