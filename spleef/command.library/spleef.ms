@@ -37,6 +37,7 @@ register_command('spleef', array(
 				'speed': array(-488, 56, -658, @world),
 				'jump': array(-488, 56, -660, @world),
 				'material': array(-488, 54, -642, @world),
+				'snake': array(-488, 56, -662, @world),
 			)
 		);
 	
@@ -238,54 +239,56 @@ register_command('spleef', array(
 						play_sound(@entityLoc, array('sound': 'FUSE', 'pitch': 2));
 					}
 					
-					@wormLoc = @region[0][];
-					@wormLoc[0] -= 20;
-					@wormLoc[2] -= 20;
-					@targetLoc = array();
-					@wormSleep = array(array_size(@currentspleef) - 2);
-					@worminterval = set_interval(150, closure(){
-						@count = array_size(@currentspleef);
-						if(!@count) {
-							clear_task();
-						} else if(!@targetLoc) {
-							@player = array_rand(@currentspleef, 1)[0];
-							@targetLoc[0] = array_normalize(ploc(@player))[0..3];
-							@targetLoc[0][0] = round(@targetLoc[0][0]);
-							@targetLoc[0][1] = @wormLoc[1];
-							@targetLoc[0][2] = round(@targetLoc[0][2]);
-						} else if(@wormSleep[0] > 0) {
-							@wormSleep[0]--;
-						} else {
-							@wormSleep[0] = @count - 2;
-							@xDist = abs(@targetLoc[0][0] - @wormLoc[0]);
-							@zDist = abs(@targetLoc[0][2] - @wormLoc[2]);
-							if(@xDist == 0 && @zDist == 0) {
-								// eat all surrounding blocks and clear target
-								@targetLoc[0][0] -= 1;
-								_fall_block(@targetLoc[0]);
-								@targetLoc[0][2] -= 1;
-								_fall_block(@targetLoc[0]);
-								@targetLoc[0][0] += 1;
-								_fall_block(@targetLoc[0]);
-								array_remove(@targetLoc, 0);
+					if(get_block_at(@cfg['option']['snake']) === '124:0') {
+						@wormLoc = @region[0][];
+						@wormLoc[0] -= 20;
+						@wormLoc[2] -= 20;
+						@targetLoc = array();
+						@wormSleep = array(array_size(@currentspleef) - 2);
+						@worminterval = set_interval(200, closure(){
+							@count = array_size(@currentspleef);
+							if(!@count) {
+								clear_task();
+							} else if(!@targetLoc) {
+								@player = array_rand(@currentspleef, 1)[0];
+								@targetLoc[0] = array_normalize(ploc(@player))[0..3];
+								@targetLoc[0][0] = round(@targetLoc[0][0]);
+								@targetLoc[0][1] = @wormLoc[1];
+								@targetLoc[0][2] = round(@targetLoc[0][2]);
+							} else if(@wormSleep[0] > 0) {
+								@wormSleep[0]--;
 							} else {
-								if(@xDist > @zDist) {
-									if(@wormLoc[0] > @targetLoc[0][0]) {
-										@wormLoc[0] -= 1;
-									} else {
-										@wormLoc[0] += 1;
-									}
+								@wormSleep[0] = @count - 2;
+								@xDist = abs(@targetLoc[0][0] - @wormLoc[0]);
+								@zDist = abs(@targetLoc[0][2] - @wormLoc[2]);
+								if(@xDist == 0 && @zDist == 0) {
+									// eat all surrounding blocks and clear target
+									@targetLoc[0][0] -= 1;
+									_fall_block(@targetLoc[0]);
+									@targetLoc[0][2] -= 1;
+									_fall_block(@targetLoc[0]);
+									@targetLoc[0][0] += 1;
+									_fall_block(@targetLoc[0]);
+									array_remove(@targetLoc, 0);
 								} else {
-									if(@wormLoc[2] > @targetLoc[0][2]) {
-										@wormLoc[2] -= 1;
+									if(@xDist > @zDist) {
+										if(@wormLoc[0] > @targetLoc[0][0]) {
+											@wormLoc[0] -= 1;
+										} else {
+											@wormLoc[0] += 1;
+										}
 									} else {
-										@wormLoc[2] += 1;
+										if(@wormLoc[2] > @targetLoc[0][2]) {
+											@wormLoc[2] -= 1;
+										} else {
+											@wormLoc[2] += 1;
+										}
 									}
+									_fall_block(@wormLoc);
 								}
-								_fall_block(@wormLoc);
 							}
-						}
-					});
+						});
+					}
 					
 					@spleefinterval = set_interval(500, closure(){
 						@spleefsettings = import('spleefsettings');
@@ -304,6 +307,8 @@ register_command('spleef', array(
 								set_pmode(@winner, 'ADVENTURE');
 								_acc_add(@winner, @reward);
 								tmsg(@winner, color('a').'[Spleef] '.color('r').@reward.' coins!');
+							} else if(get_block_at(@cfg['option']['snake']) === '124:0') {
+								_regionmsg(@cfg['region']['wrapper'], color('a').'[Spleef] '.color('r').'Snekey Sneke wins.');
 							} else {
 								_regionmsg(@cfg['region']['wrapper'], color('a').'[Spleef] '.color('r').'No one wins.');
 							}
