@@ -239,6 +239,7 @@ register_command('spleef', array(
 						play_sound(@entityLoc, array('sound': 'FUSE', 'pitch': 2));
 					}
 					
+					@worminterval = '';
 					if(get_block_at(@cfg['option']['snake']) === '124:0') {
 						@wormLoc = @region[0][];
 						@wormLoc[0] -= 20;
@@ -317,7 +318,9 @@ register_command('spleef', array(
 							export('currentspleef', @currentspleef);
 							_remove_activity('currentspleef');
 							clear_task();
-							clear_task(@worminterval);
+							if(@worminterval) {
+								clear_task(@worminterval);
+							}
 						}
 		
 						foreach(@player in array_keys(@currentspleef)){
