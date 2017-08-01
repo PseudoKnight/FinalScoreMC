@@ -78,7 +78,11 @@ register_command('7', array(
 					@7['spawns'] = @arenas[@7['arena']]['spawns'];
 					@skplayer = array_keys(@7['players'])[0];
 					set_block_at(@startblock, 0);
-					skcb_load(@7['arena']);
+					if(array_index_exists(@arenas[@7['arena']], 'author')) {
+						skcb_load(@arenas[@7['arena']]['author'][0].'/'.@7['arena']);
+					} else {
+						skcb_load(@7['arena']);
+					}
 					skcb_paste(array(0, 0, 0, 'custom'), array('origin': true));
 					@7['state'] = 3;
 
@@ -143,18 +147,13 @@ register_command('7', array(
 					} else if(array_index_exists(@arenas, @schematic)) {
 						die(color('gold').'Arena already exists by that name.')
 					}
-					@arenas[@schematic] = array('spawns': array())
+					@arenas[@schematic] = array('spawns': array(), 'author': array(puuid(), player()));
+					store_value('seven', @arenas);
 					@startblock = sk_region_info('7_schematic', 'custom')[0][0];
 					set_block_at(@startblock, 169);
-					sudo('/awe toggle off');
-					sudo('/rg select 7_schematic')
-					sudo('//copy')
-					sudo('//schematic save '.@schematic)
-					sudo('//sel')
-					sudo('/awe toggle on');
-					set_block_at(@startblock, 0);
-					store_value('seven', @arenas)
-					msg('Created arena '.@schematic)
+					sudo('/rg select 7_schematic');
+					queue_push(closure(){sudo('//copy')}, '7');
+					queue_push(closure(){sudo('//schematic save '.@schematic)}, '7');
 
 				case 'edit':
 				case 'load':
@@ -165,8 +164,11 @@ register_command('7', array(
 					if(!array_index_exists(@arenas, @schematic)) {
 						die(color('gold').'No arena by that name.')
 					}
-
-					skcb_load(@schematic);
+					if(array_index_exists(@arenas[@schematic], 'author')) {
+						skcb_load(@arenas[@schematic]['author'][0].'/'.@schematic);
+					} else {
+						skcb_load(@schematic);
+					}
 					skcb_paste(array(0, 0, 0, 'custom'), array('origin': true));
 					msg('If done editing, you may use /7 save '.@schematic)
 					msg('Then set the spawn points with /7 spawn '.@schematic)
@@ -175,16 +177,23 @@ register_command('7', array(
 					if(!@schematic) {
 						die(color('gold').'Please specify a schematic filename.')
 					}
+					
+					@arenas = get_value('seven');
+					if(!array_index_exists(@arenas, @schematic)) {
+						die(color('gold').'Arena doesn\'t exist by that name.');
+					}
+					if(!array_index_exists(@arenas[@schematic], 'author')) {
+						@arenas[@schematic]['author'] = array(puuid(), player());
+						store_value('seven', @arenas);
+					} else if(@arenas[@schematic]['author'][0] != puuid()) {
+						die(color('gold').'You are not the author');
+					}
+					
 					@startblock = sk_region_info('7_schematic', 'custom')[0][0];
 					set_block_at(@startblock, 169);
-					sudo('/awe toggle off');
 					sudo('/rg select 7_schematic');
-					sudo('//copy');
-					sudo('//schematic save '.@schematic);
-					sudo('//sel');
-					sudo('/awe toggle on');
-					msg('Saved arena '.@schematic)
-					set_block_at(@startblock, 0);
+					queue_push(closure(){sudo('//copy')}, '7');
+					queue_push(closure(){sudo('//schematic save '.@schematic)}, '7');
 
 				case 'setspawn':
 				case 'spawn':
