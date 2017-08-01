@@ -18,7 +18,7 @@ proc _start_round() {
 	set_permission(@builder, 'command.skull', true);
 	
 	_get_word(closure(@word) {
-		title_msg(@builder, 'Your turn to build!', '"'.@word.'"', 20, 40, 20);
+		title_msg(@builder, 'Your turn to build!', '\\"'.@word.'\\"', 20, 40, 20);
 		tmsg(@builder, 'You must build "'.color('green').color('bold').@word.color('reset').'"');
 			
 		@timer = array(150.0);
