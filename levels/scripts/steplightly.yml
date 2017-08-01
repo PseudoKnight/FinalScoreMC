@@ -431,7 +431,7 @@ waves:
                   saddle:
                       name: SADDLE
               rider:
-                  type: ZOMBIE
+                  type: 'SKELETON:STRAY'
                   gear:
                       helmet:
                           name: DIAMOND_HELMET
@@ -500,4 +500,7 @@ waves:
               effects:
                   - id: 11
                     strength: 3
+                    seconds: 600
+                  - id: 1
+                    strength: 1
                     seconds: 600
