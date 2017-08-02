@@ -565,18 +565,6 @@ bind(block_break, null, array('type': 56), @event) {
 	});
 }
 
-# leash villagers
-bind(player_interact_entity, null, array('clicked': 'VILLAGER'), @event) {
-	@item = pinv(player(), null);
-	if(@item && @item['type'] == 420
-	&& get_player_from_entity_id(get_leashholder(@event['id'])) != player()) {
-		cancel();
-		set_leashholder(@event['id'], puuid());
-		@item['qty'] = @item['qty'] - 1;
-		set_pinv(array(null: @item));
-	}
-}
-
 # painting cycler
 bind(player_interact_entity, null, array('clicked': 'PAINTING','hand':'main_hand'), @event) {
 	if(pmode() != 'ADVENTURE' && sk_can_build(entity_loc(@event['id']))) {
