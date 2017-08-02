@@ -73,13 +73,13 @@ proc _start_round() {
 							play_sound(ploc(), array('sound': 'LEVEL_UP'));
 							_end_round(player(), @word);
 						} else {
-							if(@letters == 3 && length(@word) > 6) {
+							_regionmsg('charades', color(8).simple_date('h:mm').' [Charades] '.color('yellow').player().color(8).': '.color('r').@event['message']);
+							if(@letters < length(@word) / 2) {
 								play_sound(ploc(), array('sound': 'VILLAGER_YES'), player());
+								msg(color('yellow').'You\'re on the right track!');
 							} else {
 								play_sound(ploc(), array('sound': 'VILLAGER_NO'), player());
 							}
-							_regionmsg('charades', color(8).simple_date('h:mm').' [Charades] '.color('yellow').player().color(8).': '.color('r').@event['message']);
-							msg(color('yellow').@letters.' letters don\'t match.');
 						}
 					}
 				} catch(Exception @ex) {
