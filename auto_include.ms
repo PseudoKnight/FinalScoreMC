@@ -1,7 +1,7 @@
 set_uncaught_exception_handler(closure(@ex){
 	if(@loc = get_command_block()) {
 		console('Exception occurred in CommandBlock at '.array_normalize(@loc)[0..3], false);
-	} else {
+	} else if(ponline(player())) {
 		msg(color('red').@ex['message']);
 	}
 	console(@ex['classType'].': '.@ex['message'], false);
