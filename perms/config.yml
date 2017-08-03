@@ -110,6 +110,7 @@ regular:
     worldguard.region.unlimited: true
     item.lighter: true
     command.approve: true
+    fawe.tips: true
   worlds:
     dev:
       limitedworldedit: true
