@@ -54,7 +54,7 @@ proc _chat(@player, @message, @recipients) {
 	@components[] = array('hover', ' '.@color.@player,
 		if(ponline(@player) && has_permission(@player, 'group.moderator'), '&bSTAFF\n')
 		.if(array_index_exists(@pdata, 'names'), @color.array_implode(@pdata['names']).'\n')
-		.if(ponline(@player), '&8[world] &r'._worldname(pworld(@player))));
+		.'&8[world] &r'.if(ponline(@player), _worldname(pworld(@player)), 'Real World'));
 	@components[] = '&8: ';
 
 	@components[] = '&r'.@escapedMessage;

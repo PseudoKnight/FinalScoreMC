@@ -5,14 +5,22 @@ proc _colorname(@player) {
 	if(!@player) {
 		@player = player();
 	}
-	if(has_permission(@player, 'group.moderator')) {
-		return(color('AQUA'));
-	} else if(has_permission(@player, 'group.donor')) {
-		return(color('GREEN'));
-	} else if(has_permission(@player, 'group.builder')) {
-		return(color('GOLD'));
-	} else if(has_permission(@player, 'group.member')) {
-		return(color('YELLOW'));
+	try {
+		@group = _pdata(@player)['group'];
+		switch(@group) {
+			case 'admin':
+			case 'moderator':
+				return(color('AQUA'));
+			case 'donor':
+				return(color('GREEN'));
+			case 'engineer':
+			case 'builder':
+				return(color('GOLD'));
+		 	case 'member':
+				return(color('YELLOW'));
+		}
+	} catch(IndexOverflowException @ex) {
+		// No group
 	}
 	return(color('WHITE'));
 }
