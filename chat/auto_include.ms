@@ -16,7 +16,8 @@ proc _colorname(@player) {
 			case 'engineer':
 			case 'builder':
 				return(color('GOLD'));
-		 	case 'member':
+			case 'regular':
+			case 'member':
 				return(color('YELLOW'));
 		}
 	} catch(IndexOverflowException @ex) {
