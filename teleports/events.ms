@@ -48,6 +48,10 @@ bind(player_teleport, null, null, @event) {
 		|| get_block_at(_relative(@from, 'south')) == '209:0') {
 			cancel();
 			die();
+		} else if(abs(@from['x']) > 512 || abs(@from['z']) > 512) {
+			// coming from the ring islands, do a safe tp
+			cancel();
+			set_ploc(get_spawn(@fromWorld));
 		}
 	}
 	
