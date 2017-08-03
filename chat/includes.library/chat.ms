@@ -77,7 +77,7 @@ proc _pmsg(@from, @player, @message) {
 		if(@recipients = _remove_ignored(@from, array(@player))) {
 			@player = @recipients[0];
 			@message = colorize(@message);
-			tmsg(@player, color(7).'(From '.@from.'): '.color('r').@message);
+			tmsg(@player, color(7).'(From '.@from.if(!ponline(@from), ' on web').'): '.color('r').@message);
 			if(@player !== '~console') {
 				play_sound(ploc(@player), array('sound': 'CHICKEN_EGG_POP', 'pitch': 2, 'category': 'VOICE'), @player);
 			}
@@ -103,7 +103,7 @@ proc _pmsg(@from, @player, @message) {
 		}
 		array_push(@pdata['mail'], array(
 			simple_date('MMM d h:mm a', time(), 'CST'),
-			@from,
+			@from.if(!ponline(@from), ' on web'),
 			@message
 		));
 		_store_pdata(@player, @pdata);
