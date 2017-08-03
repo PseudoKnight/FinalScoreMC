@@ -1,22 +1,93 @@
-proc _pmsg(@player, @message) {
+proc _chat(@player, @message, @recipients) {
+	# PRIVATE MESSAGING
+	if(@message[0] === '@') {
+		@p = substr(parse_args(@message)[0], 1)
+		if((length(@p) + 2) >= length(@message)) {
+			die();
+		}
+		@message = substr(@message, length(@p) + 2);
+		_pmsg(@player, @p, @message);
+		console(@player.' @ '.@p.': '.@message, false);
+		die();
+	}
+
+	# Remove players that are ignoring this player, or everyone if muted.
+	@recipients = _remove_ignored(@player, @recipients);
+	if(array_size(@recipients) == 1 && array_size(all_players()) > 1) {
+		die('No players can receive your chat.');
+	}
+
+	# Basic hostile word filters
+	@filteredMessage = reg_replace('(?i)(fuck|shit|damn|nigg|cunt|fag)', '\u2639', @message);
+
+	# Chat escaping
+	@escapedMessage = replace(@filteredMessage, '\\', '\\\\');
+	@escapedMessage = replace(@escapedMessage, '"', '\\u0022');
+
+	# Construct chat components
+	@components = array();
+	@components[] = array('colorize', '&8'.simple_date('h:mm').' ');
+
+	@pdata = _pdata(@player);
+	if(array_index_exists(@pdata, 'support')) {
+		@components[] = array('hover', '&a\u2666', 'Server Supporter');
+	}
+
+	if(ponline(@player)) {
+		@pstate = _pstate(@player);
+		if(array_index_exists(@pstate, 'trophies')) {
+			@components[] = array('hover', '&6\u2660', '&6&lTrophies\n'.array_implode(@pstate['trophies'], '\n'));
+		}
+	} else {
+		if(array_index_exists(@pdata, 'ban')) {
+			die(@player.' tried to speak in web chat');
+		}
+		@components[] = array('hover', '&2\u29E0', 'Chat from Web');
+	}
+
+	if(array_index_exists(@pdata, 'icon')) {
+		@components[] = array('plain', @pdata['icon']);
+	}
+	
+	@color = _colorname(@player);
+
+	@components[] = array('hover', ' '.@color.@player,
+		if(ponline(@player) && has_permission(@player, 'group.moderator'), '&bSTAFF\n')
+		.if(array_index_exists(@pdata, 'names'), @color.array_implode(@pdata['names']).'\n')
+		.if(ponline(@player), '&8[world] &r'._worldname(pworld(@player))));
+	@components[] = '&8: ';
+
+	@components[] = '&r'.@escapedMessage;
+
+	# Send chat message
+	_tellraw(@recipients, @components);
+	console(if(!@recipients, '[MUTED] ').@player.': '.@message, false);
+	if(@recipients) {
+		if(function_exists('dm_broadcast_to_web')) {
+			dm_broadcast_to_web(@filteredMessage, @player);
+		}
+	}
+}
+
+proc _pmsg(@from, @player, @message) {
 	try{
 		if(@player !== '~console') {
 			@player = player(@player);
 		}
-		if(@recipients = _remove_ignored(player(), array(@player))) {
-			@player = @recipients[0]
-			@message = colorize(@message)
-			tmsg(@player, color(7).'(From '.player().'): '.color('r').@message)
+		if(@recipients = _remove_ignored(@from, array(@player))) {
+			@player = @recipients[0];
+			@message = colorize(@message);
+			tmsg(@player, color(7).'(From '.@from.'): '.color('r').@message);
 			if(@player !== '~console') {
 				play_sound(ploc(@player), array('sound': 'CHICKEN_EGG_POP', 'pitch': 2, 'category': 'VOICE'), @player);
 			}
-			msg(color(7).'(To '.@player.'): '.color('r').@message)
-			@conv = import('conv')
-			@conv[@player] = player()
-			@conv[player()] = @player
-			export('conv', @conv)
+			msg(color(7).'(To '.@player.'): '.color('r').@message);
+			@conv = import('conv');
+			@conv[@player] = @from;
+			@conv[@from] = @player;
+			export('conv', @conv);
 		} else {
-			msg('You cannot message that player.')
+			msg('You cannot message that player.');
 		}
 	} catch(PlayerOfflineException @ex) {
 		if(length(@player) < 4) {
@@ -27,16 +98,18 @@ proc _pmsg(@player, @message) {
 		} catch(NotFoundException @ex) {
 			die(color('red').'Unknown player. If you wish to send an offline message, use their full name.');
 		}
-		if(!array_index_exists(@pdata, 'mail'), @pdata['mail'] = array())
+		if(!array_index_exists(@pdata, 'mail')) {
+			@pdata['mail'] = array();
+		}
 		array_push(@pdata['mail'], array(
 			simple_date('MMM d h:mm a', time(), 'CST'),
-			player(),
+			@from,
 			@message
-		))
-		_store_pdata(@player, @pdata)
-		msg(color(7).'(To '.@player.'): '.color('r').@message)
+		));
+		_store_pdata(@player, @pdata);
+		msg(color(7).'(To '.@player.'): '.color('r').@message);
 		msg(color('yellow').'Type /unsend if you wish to remove this offline message.');
-		export(player().'_mail', @pdata['name']);
+		export(@from.'_mail', @pdata['name']);
 	}
 }
 

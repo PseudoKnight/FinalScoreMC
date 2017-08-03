@@ -17,6 +17,6 @@ register_command('r', array(
 			die(color('gold').'That player is no longer online.');
 		}
 		include('../includes.library/chat.ms');
-		_pmsg(@player, array_implode(@args));
+		_pmsg(player(), @player, array_implode(@args));
 	}
 ));

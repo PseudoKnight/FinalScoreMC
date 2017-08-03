@@ -12,14 +12,14 @@
 
 # MESSAGING #
 *:/msg $player $ = >>>
-	include('includes.library/chat.ms')
-	_pmsg($player, $)
+	include('includes.library/chat.ms');
+	_pmsg(player(), $player, $);
 <<<
 *:/tell $player $ = >>>
-	include('includes.library/chat.ms')
-	_pmsg($player, $)
+	include('includes.library/chat.ms');
+	_pmsg(player(), $player, $);
 <<<
 *:/w $player $ = >>>
-	include('includes.library/chat.ms')
-	_pmsg($player, $)
+	include('includes.library/chat.ms');
+	_pmsg(player(), $player, $);
 <<<
