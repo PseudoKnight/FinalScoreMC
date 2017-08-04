@@ -134,11 +134,11 @@ donor:
 builder:
   permissions:
     group.builder: true
+    command.sign: true
   worlds:
     dev:
       command.fly: true
       command.gm.others: true
-      command.sign: true
       command.effect: true
       command.velocity: true
       command.explosion: true
@@ -152,7 +152,6 @@ builder:
     custom:
       command.fly: true
       command.gm: true
-      command.sign: true
       command.effect: true
       command.velocity: true
       command.playsound: true
