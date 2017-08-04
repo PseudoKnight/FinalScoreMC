@@ -15,14 +15,23 @@ foreach(@id: @world in @worlds) {
             create_world(@id, 'NORMAL', @world['environment']);
         }
     }
+    
     // Flags a world in the survival world group
     if(@world['group'] == 'survival') {
         set_metadata(@id, 'survival', true);
     }
+    
     // Since difficulty isn't currently loaded from level.dat
     @difficulty = 'NORMAL';
     if(array_index_exists(@world, 'difficulty')) {
         @difficulty = @world['difficulty'];
     }
     set_difficulty(@id, @difficulty);
+    
+    // Disable natural spawning on certain worlds, otherwise use server defaults
+    if(array_index_exists(@world, 'spawning')) {
+        if(extension_exists('CHPaper')) {
+            set_spawning(@id, @world['spawning']);
+        }
+    }
 }
