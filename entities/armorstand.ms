@@ -210,8 +210,13 @@ bind(player_interact_at_entity, null, array('clicked': 'ARMOR_STAND'), @event) {
 				
 			case 421: # name tag adds mob name
 				if(!_is_survival_world(pworld())) {
-					set_mob_name(@event['id'], @item['meta']['display']);
-					set_name_visible(@event['id'], true);
+					if(!@item['meta'] || !@item['meta']['display']) {
+						set_mob_name(@event['id'], '');
+						set_name_visible(@event['id'], false);
+					} else {
+						set_mob_name(@event['id'], @item['meta']['display']);
+						set_name_visible(@event['id'], true);
+					}
 					cancel();
 				}
 
