@@ -68,7 +68,7 @@ proc _start_round() {
 					if(get_pteam(player(), 'charades')['name'] == 'guessers') {
 						consume();
 						cancel();
-						@letters = levenshtein(to_lower(@event['message']), to_lower(@word));
+						@letters = _get_match(@event['message'], @word);
 						if(@letters < 2) {
 							play_sound(ploc(), array('sound': 'LEVEL_UP'));
 							_end_round(player(), @word);

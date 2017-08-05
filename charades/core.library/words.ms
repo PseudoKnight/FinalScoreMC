@@ -2,6 +2,25 @@ proc _get_categories() {
 	return(array('easy', 'medium', 'hard', 'very-hard', 'idioms', 'animals', 'people', 'movies', 'tv-shows', 'books'));
 }
 
+proc _get_match(@one, @two) {
+	@one = reg_replace('^(a|the)\\s', '', to_lower(@one));
+	@two = reg_replace('^(a|the)\\s', '', to_lower(@two));
+	return(levenshtein(@one, @two));
+}
+
+proc _get_word_from_list(@words, @category) {
+	@word = '';
+	do {
+		@word = @words[0];
+		if(@category == 'book_names_popular') {
+			@word = trimr(split('by', @word)[0]);
+		}
+		array_remove(@words, 0);
+		store_value('charades', @category, @words);
+	} while(length(@word) < 3 && @words);
+	return(@word);
+}
+
 proc _get_word(@closure) {
 	@inputMap = array(
 		'easy': 'charades_easy',
@@ -25,23 +44,11 @@ proc _get_word(@closure) {
 			'success': closure(@response){
 				if(!@response['error']) {
 					@words = split(',', @response['body']);
-					@word = @words[0];
-					if(@charades['category'] == 'books') {
-						@word = split(' by ', @word)[0];
-					}
-					array_remove(@words, 0);
-					store_value('charades', @category, @words);
-					execute(@word, @closure);
+					execute(_get_word_from_list(@words, @category), @closure);
 				}
 			}
 		));
 	} else {
-		@word = @words[0];
-		if(@charades['category'] == 'books') {
-			@word = split(' by ', @word)[0];
-		}
-		array_remove(@words, 0);
-		store_value('charades', @category, @words);
-		execute(@word, @closure);
+		execute(_get_word_from_list(@words, @category), @closure);
 	}
 }
