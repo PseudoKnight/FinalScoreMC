@@ -17,7 +17,7 @@ register_command('skipper', array(
 				}
 			}
 			bind(world_changed, array('id': player().'skipperchanged'), array('player': player()), @event) {
-				unbind(player().'hopper');
+				unbind(player().'skipperglide');
 				unbind();
 			}
 			if(!pinv(player(), 103)) {
