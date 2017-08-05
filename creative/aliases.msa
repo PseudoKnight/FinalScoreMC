@@ -69,13 +69,19 @@
 # Set the time of day for this world
 *:/time set $time = call_alias('/time '.$time);
 *:/time $time = >>>
-	if(!has_permission('command.time'), die('You do not have permission.'))
 	try {
-		set_world_time(pworld(), $time)
+		if(has_permission('command.time')) {
+			set_world_time(pworld(), $time);
+			msg('Set world time to '.$time);
+		} else if(!_is_surival_world(pworld())){
+			set_ptime(player(), $time);
+			msg('Set your visible time to '.$time);
+		} else {
+			die(color('gold').'You do not have permission to set this world\'s time.');
+		}
 	} catch(FormatException @ex) {
 		msg('Usage: /time <day|night|sunrise|sunset|0-24000>');
 	}
-	msg('Set time to '.$time)
 <<<
 
 # Set the display name for the item in-hand
