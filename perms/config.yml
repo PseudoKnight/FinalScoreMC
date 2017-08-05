@@ -95,6 +95,7 @@ member:
       bl.getbanners: true
       advancement.all: false
       command.heal: true
+      command.skipper: true
     custom:
       stargate.create.personal: false
       stargate.create.network: false
