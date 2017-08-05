@@ -280,12 +280,6 @@ bind(player_spawn, array('id': @id.'spawn'), null, @e, @id) {
 
 }
 
-# allow use of enderpearls in PVP arenas (overrides main.ms cancel)
-array_push(@pvp['binds'], @id.'interactpearls')
-bind(player_interact, array('id': @id.'interactpearls', 'priority': 'high'), array('button': 'right', 'item': 368), @e) {
-	consume()
-}
-
 if(array_index_exists(@pvp['arena'], 'chestspawn')) {
 	array_push(@pvp['binds'], @id.'interactchest')
 	bind(player_interact, array('id': @id.'interactchest'), array('block': 54), @e, @id) {

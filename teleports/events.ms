@@ -28,6 +28,8 @@ bind(player_teleport, null, null, @event) {
 			@to = get_spawn(@fromWorld);
 			modify_event('to', @to);
 		}
+	} else if(@event['type'] == 'ENDER_PEARL' && @fromWorld == 'custom') {
+		cancel();
 	}
 	
 	if(_is_survival_world(@fromWorld) && _is_survival_world(@toWorld)) {
@@ -76,12 +78,5 @@ bind(player_teleport, null, null, @event) {
 		} catch(BadEntityException @ex) {
 			// sometimes player doesn't have UUID during this event
 		}
-	}
-}
-
-# Block enderpearls
-bind(player_interact, null, array('item': 368, 'button': 'right'), @event) {
-	if(pworld() === 'custom') {
-		cancel();
 	}
 }
