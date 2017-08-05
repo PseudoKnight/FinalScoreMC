@@ -74,7 +74,7 @@ proc _start_round() {
 							_end_round(player(), @word);
 						} else {
 							_regionmsg('charades', color(8).simple_date('h:mm').' [Charades] '.color('yellow').player().color(8).': '.color('r').@event['message']);
-							if(@letters < length(@word) / 2) {
+							if(@letters < max(@event['message'], length(@word)) / 2) {
 								play_sound(ploc(), array('sound': 'VILLAGER_YES'), player());
 								msg(color('yellow').'You\'re on the right track!');
 							} else {
