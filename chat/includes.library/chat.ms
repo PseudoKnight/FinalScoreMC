@@ -157,7 +157,7 @@ proc _tellraw(@recipients, @components) {
 			'&k': '"obfuscated":true,',
 			'&l': '"bold":true,',
 			'&m': '"strikethrough":true,',
-			'&n': '"underline":true,',
+			'&n': '"underlined":true,',
 			'&o': '"italic":true,',
 			'&r': '"color":"reset",',
 			'': '',
