@@ -20,7 +20,9 @@ proc _prepare_menu(@template) {
 		'meta': associative_array(
 			'display': color('gold').'Cube'.color('red').'Climber',
 			'lore': array(
-				color('r').'Race to the top (2+ players)',
+				color('r').'Players race to the top of randomly placed cubes',
+				color('r').'and click certain color blocks to remove them.',
+				color('r').'First player to the top wins. (2+ players)',
 				color('dark_gray').'Run: /warp cubeclimber',
 			),
 		),
@@ -30,7 +32,10 @@ proc _prepare_menu(@template) {
 		'meta': associative_array(
 			'display': color('green').'Seven Seconds to Live',
 			'lore': array(
-				color('r').'Last man not blown up (2 - 8 players)',
+				color('r').'Players have seven seconds to live...',
+				color('r').'but they can add time by collecting ores!',
+				color('r').'The rarer the ore, the more time added.',
+				color('r').'Last man not blown up wins. (2 - 8 players)',
 				color('dark_gray').'Run: /warp 7',
 			),
 		),
@@ -40,6 +45,7 @@ proc _prepare_menu(@template) {
 		'meta': associative_array(
 			'display': color('green').'FrogWare',
 			'lore': array(
+				color('r').'Players are given random tasks to complete in seconds.',
 				color('r').'First to 25 points (1+ players)',
 				color('dark_gray').'Run: /warp frogware',
 			),
@@ -51,6 +57,7 @@ proc _prepare_menu(@template) {
 			'display': color('red').'Snake',
 			'lore': array(
 				color('r').'Last snake slithering (1 - 9 players)',
+				color('r').'Collect powerups. Obliterate other snakes.',
 				color('dark_gray').'Run: /warp snake',
 			),
 		),
@@ -62,6 +69,20 @@ proc _prepare_menu(@template) {
 			'lore': array(
 				color('r').'Team slime hockey (4 - 8 players)',
 				color('dark_gray').'Run: /warp hockey',
+			),
+		),
+	);
+	@menu[15] = associative_array(
+		'name': 'ORANGE_GLAZED_TERRACOTTA',
+		'meta': associative_array(
+			'display': color('aqua').'Charades',
+			'lore': array(
+				color('r').'Builders are given something random to build.',
+				color('r').'Others guess the answer within the alloted time.',
+				color('r').'Points are awarded for guessing and being guessed.',
+				color('r').'It continues until everyone has had a turn building.',
+				color('r').'(3+ Players)',
+				color('dark_gray').'Run: /warp charades',
 			),
 		),
 	);
