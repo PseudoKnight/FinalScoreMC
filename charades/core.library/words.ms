@@ -15,7 +15,7 @@ proc _get_match(@one, @two) {
 	// it's not a match, but let's check if they got one word right
 	@words = parse_args(@one);
 	foreach(@word in @words) {
-		if(string_position(@two, @word) >= 0) {
+		if(length(@word) > 3 && string_position(@two, @word) >= 0) {
 			return(1);
 		}
 	}
@@ -24,16 +24,12 @@ proc _get_match(@one, @two) {
 }
 
 proc _get_word_from_list(@words, @category) {
-	@word = '';
-	do {
-		@word = @words[0];
-		if(@category == 'book_names_popular') {
-			@word = trimr(split('by', @word)[0]);
-		}
-		array_remove(@words, 0);
-		store_value('charades', @category, @words);
-	} while(length(@word) < 3 && @words);
-	return(@word);
+	@word = @words[0];
+	if(@category == 'book_names_popular') {
+		@word = trimr(split('by', @word)[0]);
+	}
+	array_remove(@words, 0);
+	store_value('charades', @category, @words);
 }
 
 proc _get_word(@closure) {
@@ -58,7 +54,7 @@ proc _get_word(@closure) {
 			'method': 'GET',
 			'success': closure(@response){
 				if(!@response['error']) {
-					@words = split(',', @response['body']);
+					@words = split(',', replace(@response['body'], '\n', ''));
 					execute(_get_word_from_list(@words, @category), @closure);
 				}
 			}
