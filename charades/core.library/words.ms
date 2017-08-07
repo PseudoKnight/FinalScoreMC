@@ -3,9 +3,24 @@ proc _get_categories() {
 }
 
 proc _get_match(@one, @two) {
+	// ignore beginning articles
 	@one = reg_replace('^(a|the)\\s', '', to_lower(@one));
 	@two = reg_replace('^(a|the)\\s', '', to_lower(@two));
-	return(levenshtein(@one, @two));
+	
+	// ignore single spelling errors
+	if(levenshtein(@one, @two) < 2) {
+		return(2);
+	}
+	
+	// it's not a match, but let's check if they got one word right
+	@words = parse_args(@one);
+	foreach(@word in @words) {
+		if(string_position(@two, @word) >= 0) {
+			return(1);
+		}
+	}
+	
+	return(0);
 }
 
 proc _get_word_from_list(@words, @category) {

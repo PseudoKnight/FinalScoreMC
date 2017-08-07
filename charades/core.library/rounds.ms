@@ -65,21 +65,22 @@ proc _start_round() {
 		bind(player_chat, array('id': 'charades-guessing', 'priority': 'HIGH'), null, @event, @word) {
 			if(get_pscoreboard(player()) == 'charades') {
 				try {
+					consume();
+					cancel();
 					if(get_pteam(player(), 'charades')['name'] == 'guessers') {
-						consume();
-						cancel();
-						@letters = _get_match(@event['message'], @word);
-						if(@letters < 2) {
-							play_sound(ploc(), array('sound': 'LEVEL_UP'));
-							_end_round(player(), @word);
-						} else {
-							_regionmsg('charades', color(8).simple_date('h:mm').' [Charades] '.color('yellow').player().color(8).': '.color('r').@event['message']);
-							if(@letters < max(@event['message'], length(@word)) / 2) {
+						_regionmsg('charades', color(8).simple_date('h:mm').' [Charades] '.color('yellow').player().color(8).': '.color('r').@event['message']);
+						switch(_get_match(@event['message'], @word)) {
+							case 2:
+								// Complete match
+								play_sound(ploc(), array('sound': 'LEVEL_UP'));
+								_end_round(player(), @word);
+							case 1:
+								// One word matches
 								play_sound(ploc(), array('sound': 'VILLAGER_YES'), player());
 								msg(color('yellow').'You\'re on the right track!');
-							} else {
+							case 0:
+								// No words match
 								play_sound(ploc(), array('sound': 'VILLAGER_NO'), player());
-							}
 						}
 					}
 				} catch(Exception @ex) {
