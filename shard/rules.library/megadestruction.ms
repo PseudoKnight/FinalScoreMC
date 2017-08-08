@@ -36,6 +36,7 @@ bind(world_changed, array('id': 'shard-mega', 'priority': 'LOW'), array('to': 's
 	queue_push(closure(){
 		pgive_item(player(), 46, 64);
 		pgive_item(player(), 385, 64);
+		pgive_item(player(), 259);
 	}, 'shard');
 }
 
@@ -48,19 +49,5 @@ bind(player_interact, array('id': 'shard-fireball'), array('item': 385, 'block':
 		_weapon_cooldown(player(), 1000, 'FIREWORK_CHARGE', closure(){
 			play_sound(ploc(), array('sound': 'FIZZ', 'pitch': 1.5));
 		});
-	}
-}
-
-@binds[] = 'shard-primedtnt';
-bind(player_interact, array('id': 'shard-primedtnt'), array('item': 46, 'button': 'right'), @event) {
-	if(pworld() == 'shard' && @event['action'] == 'right_click_block') {
-		cancel();
-		ptake_item(46, 1);
-		@loc = _relative(@event['location'], @event['facing']);
-		@loc['x'] += 0.5;
-		@loc['y'] += 0.5;
-		@loc['z'] += 0.5;
-		@tnt = spawn_entity('PRIMED_TNT', 1, @loc)[0];
-		set_entity_spec(@tnt, array('fuseticks': 80));
 	}
 }
