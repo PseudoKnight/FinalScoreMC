@@ -14,7 +14,7 @@ Use "/heal" when testing in Survial/Adventure mode.
 
 Use "/horse" to spawn a temporary race horse for testing.
 
-You can use "/note" as another way to change the note of noteblocks. (eg. "/note #F 1" where 1 is the octave)
+You can use "/note" as another way to change the note of noteblocks. (eg. "/note F# 1" where 1 is the octave)
 
 Spawn banners with preset letters using "/getbanners". (eg. "/getbanners /0 &&fa %1 abc" gives you A B & C banners with no border "/0", cyan letters "&&fa", and dark blue background "%1")
 

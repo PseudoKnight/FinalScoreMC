@@ -52,6 +52,6 @@ register_command('note', array(
 			@pitch = _get_pitch(@notes[@clicks % 12], floor(@clicks / 12));
 		}
 		play_sound(@l, array('sound': @instrument, 'category': 'RECORDS', 'pitch': @pitch));
-		sudo('/setblock '.@l[0].' '.@l[1].' '.@l[2].' minecraft:noteblock 0 replace {note:'.@clicks.'b}');
+		sudo('/blockdata '.@l[0].' '.@l[1].' '.@l[2].' {"note":'.@clicks.'b}');
 	}
 ));
