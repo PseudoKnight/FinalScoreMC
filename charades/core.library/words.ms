@@ -56,6 +56,9 @@ proc _get_word(@closure) {
 				if(!@response['error']) {
 					@words = split(',', replace(@response['body'], '\n', ''));
 					execute(_get_word_from_list(@words, @category), @closure);
+				} else {
+					@charades['playersLeft'] = array();
+					_end_round(null, null);
 				}
 			}
 		));

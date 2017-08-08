@@ -101,13 +101,16 @@ proc _end_round(@guesser, @word) {
 	}
 	if(@charades['interval']) {
 		clear_task(@charades['interval']);
+		@charades['interval'] = 0;
 	}
 	
 	if(@guesser) {
 		_regionmsg('charades', color('green').color('bold').@guesser.color('green').' correctly guessed "'.color('bold').@word.color('green').'"!');
 		set_pscore('score', @guesser, get_pscore('score', @guesser, 'charades') + 1, 'charades');
+	} else if(@word) {
+		_regionmsg('charades', color('yellow').'The answer you were looking for was "'.color('bold').@word.color('yellow').'"!');
 	} else {
-		_regionmsg('charades', color('yellow').color('yellow').'The answer you were looking for was "'.color('bold').@word.color('yellow').'"!');
+		_regionmsg('charades', color('gold').'The game was called on account of rain.');
 	}
 	
 	foreach(@t in get_teams('charades')) {
