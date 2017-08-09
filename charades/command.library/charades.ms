@@ -55,11 +55,18 @@ register_command('charades', array(
 		
 		set_block_at(@spawn, 169);
 		
-		include('../core.library/rounds.ms');
-		include('../core.library/utils.ms');
-		include('../core.library/events.ms');
+		include('../core.library/game.ms');
 		
 		_bind_charade_events();
-		_start_round();
+		try {
+			_start_round();
+		} catch(Exception @ex) {
+			console('Exception encountered in Charades.', false);
+			console(@ex['classType'].': '.@ex['message'], false);
+			foreach(@trace in @ex['stackTrace']) {
+				console(split('LocalPackages', @trace['file'])[-1].':'.@trace['line'].' '.@trace['id'], false);
+			}
+			_end_game();
+		}
 	}
 ));

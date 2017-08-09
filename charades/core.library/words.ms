@@ -54,7 +54,8 @@ proc _get_word(@closure) {
 			'method': 'GET',
 			'success': closure(@response){
 				if(!@response['error']) {
-					@words = split(',', replace(@response['body'], '\n', ''));
+					@words = split(',', @response['body']);
+					array_remove(@words, array_size(@words) - 1);
 					execute(_get_word_from_list(@words, @category), @closure);
 				} else {
 					@charades['playersLeft'] = array();

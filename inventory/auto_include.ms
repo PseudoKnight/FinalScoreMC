@@ -25,6 +25,10 @@ proc _equip_kit(@player, @inv) {
 	if(!@player) {
 		@player = player();
 	}
+	
+	if(!ponline(@player)) {
+		return();
+	}
 
 	@worldInfo = _worlds_config()[pworld(@player)];
 	switch(@worldInfo['group']) {
