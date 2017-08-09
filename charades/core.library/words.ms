@@ -30,6 +30,7 @@ proc _get_word_from_list(@words, @category) {
 	}
 	array_remove(@words, 0);
 	store_value('charades', @category, @words);
+	return(@word);
 }
 
 proc _get_word(@closure) {
