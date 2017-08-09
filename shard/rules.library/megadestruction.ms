@@ -36,7 +36,7 @@ bind(world_changed, array('id': 'shard-mega', 'priority': 'LOW'), array('to': 's
 	queue_push(closure(){
 		pgive_item(player(), 46, 64);
 		pgive_item(player(), 385, 64);
-		pgive_item(player(), 259);
+		pgive_item(player(), 259, 1);
 	}, 'shard');
 }
 
