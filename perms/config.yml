@@ -148,6 +148,7 @@ builder:
       command.cb: true
       command.cloud: true
       command.acme: true
+      command.goto: true
       limitedworldedit: true
       worldguard.region.claim: true
     custom:
@@ -165,6 +166,7 @@ builder:
       command.items: true
       command.vanish: true
       command.cloud: true
+      command.goto: true
       worldedit.navigation.*: true
       worldguard.region.claim: true
       bl.getbanners: true
@@ -247,6 +249,8 @@ moderator:
     minecraft.command.toggledownfall: true
     command.items: true
     command.vanish: true
+    command.goto: true
+    command.goto.anywhere: true
   worlds:
     dev:
       worldedit.*: true

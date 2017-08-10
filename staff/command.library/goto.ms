@@ -7,6 +7,9 @@ register_command('goto', array(
 			return(false);
 		}
 		@player = _find_player(@args[0]);
+		if(!has_permission('command.goto.anywhere') && _is_survival_world(pworld(@player))) {
+			die(color('gold').'You cannot goto that player.');
+		}
 		set_ploc(player(), ploc(@player));
 	}
 ));
