@@ -34,16 +34,32 @@ register_command('shop', array(
 				msg(color('gold').'Shops you can buy or sell '.color('o').'"'.@value.'"');
 				msg(color('gray').'-----------------------------------------------------');
 			}
+			@save = false;
 			foreach(@key: @shop in @shops[0]) {
-				msg(colorize('Buy '.@shop['price'].'&7 ('.@shop['stock'].') &e'.@shop['owner'].'&7 '
-				.@shop['location'][0].','.@shop['location'][1].','.@shop['location'][2].' '._worldname(@shop['location'][3])));
+				if((@shopsign = _get_shop(@shop['location'])) && @shopsign['item'] == @item) {
+					msg(colorize('Buy '.@shop['price'].'&7 ('.@shop['stock'].') &e'.@shop['owner'].'&7 '
+					.@shop['location'][0].','.@shop['location'][1].','.@shop['location'][2].' '._worldname(@shop['location'][3])));
+				} else {
+					array_remove(@shops[0], @key);
+					@save = true;
+				}
 			}
 			msg(color('gray').'-----------------------------------------------------');
-			foreach(@key: @shop in @shops[1]) {
-				msg(colorize('Sell '.@shop['price'].'&7 ('.@shop['stock'].') &e'.@shop['owner'].'&7 '
-				.@shop['location'][0].','.@shop['location'][1].','.@shop['location'][2].' '._worldname(@shop['location'][3])));
-			}
-			msg(color('gray').'-----------------------------------------------------');
+			set_timeout(50, closure(){
+				foreach(@key: @shop in @shops[1]) {
+					if((@shopsign = _get_shop(@shop['location'])) && @shopsign['item'] == @item) {
+						msg(colorize('Sell '.@shop['price'].'&7 ('.@shop['stock'].') &e'.@shop['owner'].'&7 '
+						.@shop['location'][0].','.@shop['location'][1].','.@shop['location'][2].' '._worldname(@shop['location'][3])));
+					} else {
+						array_remove(@shops[1], @key);
+						@save = true;
+					}
+				}
+				msg(color('gray').'-----------------------------------------------------');
+				if(@save) {
+					store_value('shop', @itemid, @shops);
+				}
+			});
 			
 		} else if(@args[0] == 'edit') {
 			if(array_size(@args) < 5) {
