@@ -271,8 +271,8 @@ proc _shard_create(@rules){
 				bind(player_death, array('priority': 'HIGHEST', 'id': 'shard-death'), null, @event, @players, @rules, @respawnPlayers) {
 					if(@event['location']['world'] == 'shard') {
 						consume();
-						modify_event('death_message', color('k').'X'.color('r').' '.@event['death_message']);
 						if(!@respawnPlayers) {
+							modify_event('death_message', color('k').'X'.color('r').' '.@event['death_message']);
 							@loc = ploc();
 							if(@loc['y'] < 0) {
 								@loc['y'] = 0;
@@ -284,6 +284,7 @@ proc _shard_create(@rules){
 								_worldmsg('shard', color('red').color('bold').'Shard has started to collapse! ('.@rules['timelimit'].' minutes)');
 							}
 						} else {
+							modify_event('death_message', null);
 							modify_event('keep_inventory', true);
 						}
 						set_timeout(50, closure(){
