@@ -26,8 +26,12 @@ proc _unload_shard() {
 		}
 	}
 	
-	if(extension_exists('CHDynmap')) {
-		dm_delete_marker('markers', 'shard');
+	try {
+		if(extension_exists('CHDynmap')) {
+			dm_delete_marker('markers', 'shard');
+		}
+	} catch(NotFoundException @ex) {
+		// shard probably doesn't exist, but continue anyway
 	}
 	
 	unbind('shard-worldchanged');
