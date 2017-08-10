@@ -1,11 +1,18 @@
 # RECIPES
 
-# Player head recipe
+# Player head recipes
 if(!get_recipe_for(array('name': 'SKULL_ITEM', 'data': 3))) {
 	add_recipe(array(
 		'type': 'SHAPED',
 		'result': array('name': 'SKULL_ITEM', 'data': 3),
 		'ingredients': array('S': '397:0', 'C': '337:0'),
+		'shape': array('CCC', 'CSC', 'CCC'),
+	));
+
+	add_recipe(array(
+		'type': 'SHAPED',
+		'result': array('name': 'SKULL_ITEM', 'data': 3),
+		'ingredients': array('S': '397:1', 'C': '337:0'),
 		'shape': array('CCC', 'CSC', 'CCC'),
 	));
 }
