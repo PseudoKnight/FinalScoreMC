@@ -12,7 +12,7 @@ register_command('icon', array(
 		@player = @args[0];
 		@pdata = _pdata(@player);
 		if(array_size(@args) == 2) {
-			@pdata['icon'] = colorize($);
+			@pdata['icon'] = colorize(@args[1]);
 			msg('Added icon: '.@pdata['icon']);
 		} else if(array_index_exists(@pdata, 'icon')) {
 			array_remove(@pdata, 'icon');
