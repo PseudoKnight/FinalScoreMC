@@ -73,7 +73,7 @@
 		if(has_permission('command.time')) {
 			set_world_time(pworld(), $time);
 			msg('Set world time to '.$time);
-		} else if(!_is_surival_world(pworld())){
+		} else if(!_is_survival_world(pworld())){
 			set_ptime(player(), $time);
 			msg('Set your visible time to '.$time);
 		} else {
