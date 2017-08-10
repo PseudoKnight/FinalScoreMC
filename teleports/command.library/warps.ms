@@ -14,7 +14,7 @@ register_command('warps', array(
 		switch(@args[0]) {
 			case 'del':
 			case 'delete':
-				if(!has_permission('group.moderator')) {
+				if(!has_permission('command.setwarp')) {
 					die(color('gold').'You do not have permission to use this command.');
 				}
 				if(array_size(@args) < 2) {
