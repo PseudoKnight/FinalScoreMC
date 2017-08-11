@@ -875,7 +875,7 @@ register_command('arena', array(
 					if(!array_index_exists(@arena, @args[2])) {
 						die(color('gold').'That setting is not defined for this arena.');
 					}
-					msg(@setting.' '.color('gray').@arena[@setting]);
+					msg(@args[2].' '.color('gray').@arena[@args[2]]);
 				} else {
 					msg(color('l').':: '.to_upper(@id).' :: '.if(array_index_exists(@arena, 'team'),
 						color(@arena['team'][0]['color']).@arena['team'][0]['name'].color('gray').' vs '
