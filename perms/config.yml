@@ -189,10 +189,12 @@ engineer:
   worlds:
     dev:
       worldguard.region.*: true
+      command.class: true
     custom:
       worldguard.region.*: true
       limitedworldedit: true
       command.setwarp: true
+      command.class: true
   inheritance: builder
 limitedworldedit:
   permissions:
