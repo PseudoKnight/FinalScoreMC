@@ -198,6 +198,7 @@ engineer:
   inheritance: builder
 limitedworldedit:
   permissions:
+    worldedit.analysis.*: true
     worldedit.brush.*: true
     worldedit.clipboard.*: true
     worldedit.fast: true
