@@ -15,11 +15,12 @@ bind(player_teleport, null, null, @event) {
 	@fromWorld = @from['world'];
 	@toWorld = @to['world'];
 	
-	if(@event['type'] == 'END_GATEWAY' && @fromWorld == 'world_the_end') {
-		if(get_block_at(_relative(@from, 'east')) == '209:0'
+	if(@event['type'] == 'END_GATEWAY') {
+		if(@fromWorld == 'world_the_end'
+		&& (get_block_at(_relative(@from, 'east')) == '209:0'
 		|| get_block_at(_relative(@from, 'west')) == '209:0'
 		|| get_block_at(_relative(@from, 'north')) == '209:0'
-		|| get_block_at(_relative(@from, 'south')) == '209:0') {
+		|| get_block_at(_relative(@from, 'south')) == '209:0')) {
 			// this is probably a stargate in the end
 			cancel();
 			die();
