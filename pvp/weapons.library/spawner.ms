@@ -20,22 +20,24 @@ bind(player_interact, array('id': @id.'spawner'), array('button': 'right', 'item
 		@loc['x'] += 0.5;
 		@loc['z'] += 0.5;
 
-		@mob = to_lower(@item['meta']['display'])
-		if(!is_null(@item['meta']['lore'])
-		&& @item['meta']['lore'][0] === 'Target Near') {
-			foreach(@player in players_in_radius(@loc, 20)) {
-				if(@player == player(), continue())
-				_spawn_mob(@mob, @loc, @player)
+		@mob = to_lower(@item['meta']['display']);
+		set_timeout(50, closure(){
+			if(!is_null(@item['meta']['lore'])
+			&& @item['meta']['lore'][0] === 'Target Near') {
+				foreach(@player in players_in_radius(@loc, 20)) {
+					if(@player == player(), continue())
+					_spawn_mob(@mob, @loc, @player)
+				}
+			} else if(array_index_exists(@pvp, 'team')) {
+				@team = @pvp['players'][player()]['team'];
+				_spawn_mob(@mob, @loc, player(), @pvp['team'][@team]['players']);
+			} else {
+				_spawn_mob(@mob, @loc, player(), array(player()));
 			}
-		} else if(array_index_exists(@pvp, 'team')) {
-			@team = @pvp['players'][player()]['team'];
-			_spawn_mob(@mob, @loc, player(), @pvp['team'][@team]['players']);
-		} else {
-			_spawn_mob(@mob, @loc, player(), array(player()));
-		}
-		@loc['y'] += 1;
-		play_sound(@loc, array('sound': 'ZOMBIE_INFECT', 'pitch': 1.5));
-		play_effect(@loc, 'cloud', array('speed': 0, 'particleCount': 10, 'offsetX': 0.4, 'offsetZ': 0.4, 'offsetY': 0.4));
+		});
+		@effectLoc = _relative(@loc, 'up');
+		play_sound(@effectLoc, array('sound': 'ZOMBIE_INFECT', 'pitch': 1.5));
+		play_effect(@effectLoc, 'cloud', array('speed': 0, 'particleCount': 10, 'offsetX': 0.4, 'offsetZ': 0.4, 'offsetY': 0.4));
 		_weapon_cooldown(player(), 2000, 'PUMPKIN_SEEDS', false);
 	}
 }
