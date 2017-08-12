@@ -140,12 +140,14 @@ register_command('mob', array(
 							msg(color('green').'Effect added');
 						}
 
+					# associative arrays
 					case 'tags':
+					case 'attributes':
 						if(array_size(@args) == 3) {
 							return(false);
 						}
-						@mob['tags'] = json_decode(array_implode(@args[3..-1]));
-						msg(color('green').'Set the tags to '.@mob['tags']);
+						@mob[@setting] = json_decode(array_implode(@args[3..-1]));
+						msg(color('green').'Set '.@setting.' to '.@mob[@setting]);
 
 					case 'rider':
 						if(array_size(@args) == 3) {

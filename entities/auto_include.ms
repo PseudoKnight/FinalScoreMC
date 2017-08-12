@@ -28,6 +28,11 @@ proc _spawn_mob(@mob, @loc, @owner, @teammates) {
 			case 'tags':
 				set_entity_spec(@m, @value);
 			
+			case 'attributes':
+				foreach(@k: @v in @value) {
+					set_attribute(@m, @k, @v);
+				}
+			
 			case 'tame':
 				tame_mob(@owner, @m);
 				
