@@ -74,6 +74,7 @@ bind(projectile_launch, array('id': @id.'grapple'), array('type': 'FISHING_HOOK'
 					@loc1 = entity_loc(@mover);
 					@dist = sqrt(((@loc2['x'] - @loc1['x']) ** 2) + ((@loc2['y'] - @loc1['y']) ** 2) + ((@loc2['z'] - @loc1['z']) ** 2));
 					@dist = max(0.1, min(20, @dist));
+					set_entity_fall_distance(@mover, 0);
 					if(@dist > 2.5) {
 						if(@dist > 10) {
 							@pitch = 1.4 + (0.6 * (@dist - 10) / 20);
@@ -86,7 +87,6 @@ bind(projectile_launch, array('id': @id.'grapple'), array('type': 'FISHING_HOOK'
 						@y = (@loc2['y'] - @loc1['y']) / @dist * if(get_entity_gliding(@mover), 1, 1.1);
 						@z = (@loc2['z'] - @loc1['z']) / @dist;
 						set_entity_velocity(@mover, array(@x, @y, @z));
-						set_entity_fall_distance(@mover, 0);
 					} else if(!pinfo(@player, 11)) {
 						if(entity_type(@target) == 'ARROW') {
 							entity_remove(@target);
