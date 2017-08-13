@@ -25,8 +25,11 @@ bind(player_interact, array('id': @id.'spawner'), array('button': 'right', 'item
 			if(!is_null(@item['meta']['lore'])
 			&& @item['meta']['lore'][0] === 'Target Near') {
 				foreach(@player in players_in_radius(@loc, 20)) {
-					if(@player == player(), continue())
-					_spawn_mob(@mob, @loc, @player)
+					if(@player == player() || !array_index_exists(@pvp['players'], @player)
+					|| array_index_exists(@pvp, 'team') && @pvp['players'][@player]['team'] == @pvp['players'][player()]['team']) {
+						continue();
+					}
+					_spawn_mob(@mob, @loc, @player);
 				}
 			} else if(array_index_exists(@pvp, 'team')) {
 				@team = @pvp['players'][player()]['team'];
