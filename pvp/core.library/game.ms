@@ -402,7 +402,7 @@ proc _pvp_end_match(@id, @winners) {
 				}
 			}
 		}
-
+		queue_delay(100, @id);
 		queue_push(closure(){
 			if(array_index_exists(@pvp, 'stats')) {
 				@table = _stats_table();
