@@ -132,8 +132,8 @@
 
 *:/velocity $entity $x $y $z [$double] = >>>
 	@loc = get_command_block();
-	if(is_null(@loc) && (!has_permission('group.builder') || _is_survival_world(pworld()))) {
-		die('You cannot run this command.');
+	if(is_null(@loc) && !has_permission('group.builder')) {
+		die(color('gold').'You cannot run this command.');
 	}
 	if(ponline($entity)) {
 		@player = $entity;
@@ -141,6 +141,9 @@
 			die('This commandblock cannot apply a velocity to players in another world.');
 		}
 		@loc = ploc(@player);
+		if(_is_survival_world(@loc['world'])) {
+			die(color('gold').'You cannot set a velocity on players in survival worlds.');
+		}
 		#if(!get_collides_with_entities($player) || (!is_null(@l) && _distance(@l, @loc) > 8)) {
 			# get next nearest, if any
 		#	die();
