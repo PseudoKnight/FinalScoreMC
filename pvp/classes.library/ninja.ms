@@ -40,7 +40,7 @@ case 'load':
 		}
 	}
 	
-	bind(entity_damage, array('id': @player.'falldamage'), array('cause': 'FALL', 'id': puuid()), @e, @player) {
+	bind(entity_damage, array('id': @player.'falldamage'), array('cause': 'FALL', 'id': puuid(@player)), @e, @player) {
 		cancel();
 		@facing = pfacing(@player);
 		@facing[0] = @facing[0] + 90;
