@@ -1,37 +1,39 @@
 switch(@action) {
 case 'load':
-	proc _set_equipment(@player, @thorns) {
-		@kit = array(
-			'chestplate': array('name': 'LEATHER_CHESTPLATE', 'enchants': array(), 'meta': array(
-				'color': array('r': 0, 'g': 50, 'b': 0),
-			)),
-			'leggings': array('name': 'LEATHER_LEGGINGS', 'enchants': array(), 'meta': array(
-				'color': array('r': 1, 'g': 28, 'b': 58),
-			)),
-			'boots': array('name': 'LEATHER_BOOTS', 'enchants': array(), 'meta': array(
-				'color': array('r': 1, 'g': 28, 'b': 58),
-			)),
-		);
-		if(@thorns) {
-			@kit['chestplate']['enchants'][] = array('elevel': 2, 'etype': 'THORNS');
+	proc _set_equipment(@player, @thorns, @pvp) {
+		if(array_index_exists(@pvp['players'], @player) && @pvp['players'][@player]['class'] == 'ent') {
+			@kit = array(
+				'chestplate': array('name': 'LEATHER_CHESTPLATE', 'enchants': array(), 'meta': array(
+					'color': array('r': 0, 'g': 50, 'b': 0),
+				)),
+				'leggings': array('name': 'LEATHER_LEGGINGS', 'enchants': array(), 'meta': array(
+					'color': array('r': 1, 'g': 28, 'b': 58),
+				)),
+				'boots': array('name': 'LEATHER_BOOTS', 'enchants': array(), 'meta': array(
+					'color': array('r': 1, 'g': 28, 'b': 58),
+				)),
+			);
+			if(@thorns) {
+				@kit['chestplate']['enchants'][] = array('elevel': 4, 'etype': 'THORNS');
+			}
+			set_mob_equipment(puuid(@player), @kit);
 		}
-		set_mob_equipment(puuid(@player), @kit);
 	}
 
-	bind(item_held, array('id': @player.'entbark'), null, @event, @player) {
+	bind(item_held, array('id': @player.'entbark'), null, @event, @player, @pvp) {
 		if(@player == player() && (@event['to'] == 1 && pinv(player(), 1) || @event['from'] == 1)) {
-			_set_equipment(player(), @event['to'] == 1);
+			_set_equipment(player(), @event['to'] == 1, @pvp);
 		}
 	}
 	
-	bind(entity_damage, array('id': @player.'entdamage', 'priority': 'LOW'), array('id': puuid(@player)), @event, @player) {
+	bind(entity_damage, array('id': @player.'entdamage', 'priority': 'LOW'), array('id': puuid(@player)), @event, @player, @pvp) {
 		if(pheld_slot(@player) == 1) {
 			@item = pinv(@player, 1);
 			if(@item) {
 				@item['qty']--;
 				if(@item['qty'] == 0) {
 					set_pinv(@player, array(1: null));
-					_set_equipment(@player, false);
+					_set_equipment(@player, false, @pvp);
 				} else {
 					set_pinv(@player, array(1: @item));
 				}

@@ -3,7 +3,8 @@ case 'load':
 	@glideState = array(false);
 	set_interval(100, closure(){
 		try {
-			if(!array_index_exists(@pvp['players'], @player)
+			if(pinfo(@player, 5) == 0
+			|| !array_index_exists(@pvp['players'], @player)
 			|| @pvp['players'][@player]['class'] != 'swift') {
 				clear_task();
 				die();

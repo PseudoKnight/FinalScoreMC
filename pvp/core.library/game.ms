@@ -402,7 +402,7 @@ proc _pvp_end_match(@id, @winners) {
 				}
 			}
 		}
-		queue_delay(100, @id);
+		queue_delay(150, @id); // make sure all players are either alive or spec, not in between
 		queue_push(closure(){
 			if(array_index_exists(@pvp, 'stats')) {
 				@table = _stats_table();

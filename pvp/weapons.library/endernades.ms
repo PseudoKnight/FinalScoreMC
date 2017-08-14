@@ -6,7 +6,7 @@ bind(player_teleport, array('id': @id.'endernades'), array('type': 'ENDER_PEARL'
 	@a = @e['to'];
 	play_effect(@a, 'EXPLOSION_LARGE');
 	play_sound(@a, associative_array('sound': 'EXPLODE', 'volume': 3));
-	foreach(@p in players_in_radius(@a, 6)) {
+	foreach(@p in players_in_radius(@a, 7)) {
 		if(pinfo(@p, 5) <= 0) {
 			continue();
 		}
@@ -17,13 +17,13 @@ bind(player_teleport, array('id': @id.'endernades'), array('type': 'ENDER_PEARL'
 			if(@p == player() && @a['y'] < @b['y']) {
 				damage_entity(puuid(@p), 1, puuid());
 			} else {
-				damage_entity(puuid(@p), min(8, 8 / @dist), puuid());
+				damage_entity(puuid(@p), 8 / max(1, @dist - 1), puuid());
 			}
 			try {
 				set_pvelocity(@p,
-					min(2, (@b['x'] - @a['x']) / (@dist ** 2)),
-					min(2, (@b['y'] - @a['y']) / (@dist ** 2)),
-					min(2, (@b['z'] - @a['z']) / (@dist ** 2))
+					min(2.2, (@b['x'] - @a['x']) / (@dist ** 2)),
+					min(2.2, (@b['y'] - @a['y']) / (@dist ** 2)),
+					min(2.2, (@b['z'] - @a['z']) / (@dist ** 2))
 				);
 			} catch(PlayerOfflineException @ex) {
 				// blew completely off server
