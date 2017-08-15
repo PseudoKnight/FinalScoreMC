@@ -50,6 +50,13 @@ add_recipe(array(
 	'ingredients': array('401:0', '383:0')
 ));
 
+# Fix broken enchantment books
+add_recipe(array(
+	'type': 'SHAPELESS',
+	'result': array('name': 'ENCHANTED_BOOK', 'qty': 1, 'meta': array('display': 'Fix Enchanted Book')),
+	'ingredients': array('340:0')
+));
+
 # Special recipe handling (eg. enchanted lore books, exp bottles, player heads)
 bind('inventory_click', null, array('slottype': 'RESULT'), @event) {
 	@slotitem = @event['slotitem'];
@@ -59,31 +66,50 @@ bind('inventory_click', null, array('slottype': 'RESULT'), @event) {
 
 	if(@event['inventorytype'] == 'WORKBENCH' || @event['inventorytype'] == 'CRAFTING') {
 		
-		if(@slotitem['name'] == 'ENCHANTED_BOOK'
-		&& strip_colors(@slotitem['meta']['display']) === 'Enchanted Lore Book') {
+		if(@slotitem['name'] == 'ENCHANTED_BOOK') {
+			if(strip_colors(@slotitem['meta']['display']) === 'Enchanted Lore Book') {
+				foreach(@item in @event['inventory']) {
+					if(is_null(@item), continue())
+					if(@item['name'] == 'WRITTEN_BOOK') {
 
-			foreach(@item in @event['inventory']) {
-				if(is_null(@item), continue())
-				if(@item['name'] == 'WRITTEN_BOOK') {
+						@slotitem['meta']['display'] = colorize(@item['meta']['title']);
 
-					@slotitem['meta']['display'] = colorize(@item['meta']['title']);
+						@lines = split('\n', @item['meta']['pages'][0]);
+						@wrappedLines = array();
+						foreach(@line in @lines) {
+							@wrappedLines = array_merge(@wrappedLines, _wrap_string(@line, 112));
+						}
+						foreach(@index: @line in @wrappedLines) {
+							@wrappedLines[@index] = colorize(@line);
+						}
+						@slotitem['meta']['lore'] = @wrappedLines;
 
-					@lines = split('\n', @item['meta']['pages'][0]);
-					@wrappedLines = array();
-					foreach(@line in @lines) {
-						@wrappedLines = array_merge(@wrappedLines, _wrap_string(@line, 112));
+					} else if(@item['name'] == 'ENCHANTED_BOOK') {
+						@slotitem['meta']['stored'] = @item['meta']['stored'];
 					}
-					foreach(@index: @line in @wrappedLines) {
-						@wrappedLines[@index] = colorize(@line);
+				}
+				modify_event('slotitem', @slotitem);
+				
+			} else {
+				# Fix broken enchantment books
+				@stored = null;
+				foreach(@item in @event['inventory']) {
+					if(@item) {
+						if(@item['name'] == 'BOOK') {
+							if(@item['enchants']) {
+								@stored = @item['enchants'];
+								break();
+							} else {
+								die();
+							}
+						}
 					}
-					@slotitem['meta']['lore'] = @wrappedLines;
-
-				} else if(@item['name'] == 'ENCHANTED_BOOK') {
-					@slotitem['meta']['stored'] = @item['meta']['stored'];
+				}
+				if(@stored) {
+					@slotitem['meta'] = array('stored': @stored, 'display': null);
+					modify_event('slotitem', @slotitem);
 				}
 			}
-
-			modify_event('slotitem', @slotitem);
 
 		} else if(@slotitem['name'] == 'EXP_BOTTLE') {
 			@xp = ptexp();
