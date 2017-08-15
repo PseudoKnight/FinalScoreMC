@@ -129,7 +129,7 @@ bind(player_interact, array('id': @id.'firebreath'), array('item': 377, 'button'
 			continue();
 		}
 	}
-	_weapon_cooldown(player(), 1100, 'FIREWORK_CHARGE', closure(){
+	_weapon_cooldown(player(), 1200, 'FIREWORK_CHARGE', closure(){
 		play_sound(ploc(), array('sound': 'FIZZ', 'pitch': 2));
 	});
 }

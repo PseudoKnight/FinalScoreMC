@@ -3,18 +3,25 @@ case 'load':
 	proc _set_equipment(@player, @thorns, @pvp) {
 		if(array_index_exists(@pvp['players'], @player) && @pvp['players'][@player]['class'] == 'ent') {
 			@kit = array(
-				'chestplate': array('name': 'LEATHER_CHESTPLATE', 'enchants': array(), 'meta': array(
+				'helmet': array('name': 'LOG', 'data': 1),
+				'chestplate': array('name': 'LEATHER_CHESTPLATE', 'meta': array(
 					'color': array('r': 0, 'g': 50, 'b': 0),
 				)),
-				'leggings': array('name': 'LEATHER_LEGGINGS', 'enchants': array(), 'meta': array(
+				'leggings': array('name': 'LEATHER_LEGGINGS', 'meta': array(
 					'color': array('r': 1, 'g': 28, 'b': 58),
 				)),
-				'boots': array('name': 'LEATHER_BOOTS', 'enchants': array(), 'meta': array(
+				'boots': array('name': 'LEATHER_BOOTS', 'meta': array(
 					'color': array('r': 1, 'g': 28, 'b': 58),
 				)),
 			);
 			if(@thorns) {
-				@kit['chestplate']['enchants'][] = array('elevel': 4, 'etype': 'THORNS');
+				@enchants = array(array('elevel': 13, 'etype': 'THORNS'));
+				foreach(@item in @kit) {
+					@item['enchants'] = @enchants;
+				}
+				set_peffect(@player, 5, 0, 0, true, false);
+			} else {
+				set_peffect(@player, 5, 0, 999, true, false);
 			}
 			set_mob_equipment(puuid(@player), @kit);
 		}
@@ -56,7 +63,7 @@ case 'load':
 		
 		@radius = 6;
 		@circle = array();
-		for(@angle = 0, @angle < 6.28, @angle += 0.6) {
+		for(@angle = 0, @angle < 6.28, @angle += 0.5) {
 			@circle[] = array(
 				@radius * cos(@angle) + @target['x'],
 				@target['y'],
@@ -89,13 +96,16 @@ case 'load':
 	}
 	
 	bind(player_toggle_sneak, array('id': @player.'entsneak'), array('player': @player, 'sneaking': true), @event, @pvp) {
+		if(pheld_slot() != 0) {
+			die();
+		}
 		set_pexp(0);
 		@loc = ploc();
 		play_sound(@loc, array('sound': 'entity_illusion_illager_prepare_blindness', 'pitch': 0.7));
 		play_sound(@loc, array('sound': 'entity_husk_ambient', 'pitch': 0.8));
 		set_interval(100, closure(){
 			try {
-				if(!pinfo(player(), 11)) {
+				if(!pinfo(player(), 11) || pheld_slot() != 0) {
 					clear_task();
 					set_pexp(0);
 					die();
@@ -106,7 +116,7 @@ case 'load':
 				} else {
 					set_pexp(0);
 					clear_task();
-					@players = _hit_scan(13, 1, 'HAPPY_VILLAGER', 'CRIT', @pvp);
+					@players = _hit_scan(13, 2, 'HAPPY_VILLAGER', 'CRIT', @pvp);
 					@loc = ploc();
 					if(@players) {
 						@p = @players[0];
@@ -145,9 +155,15 @@ case 'load':
 		});
 	}
 	
+	bind(player_death, array('id': @player.'entdeath'), array('player': @player), @event) {
+		drop_item(@event['location'], array('name': 'APPLE'), true);
+		play_sound(@event['location'], array('sound': 'entity_husk_death', 'pitch': 0.5));
+	}
+	
 case 'unload':
 	unbind(@player.'entfall');
 	unbind(@player.'entsneak');
 	unbind(@player.'entbark');
 	unbind(@player.'entdamage');
+	unbind(@player.'entdeath');
 }
