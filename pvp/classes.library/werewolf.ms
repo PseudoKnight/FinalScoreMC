@@ -43,7 +43,9 @@ case 'powerup':
 	});
 	play_sound(ploc(@player), array('sound': 'WOLF_HOWL', 'pitch': 0.9, 'volume': 2))
 	set_pinv(@player, array(
-		100: array('type': 301, 'meta': array('color': array('r': 50, 'g': 50, 'b': 50))),
+		100: array('type': 301, 'meta': array('color': array('r': 50, 'g': 50, 'b': 50)),
+			'enchants': array(array('elevel': 2, 'etype': 'DEPTH_STRIDER'))
+		),
 		101: array('type': 300, 'meta': array('color': array('r': 50, 'g': 50, 'b': 50))),
 		102: array('type': 299, 'meta': array('color': array('r': 50, 'g': 50, 'b': 50))),
 		103: array('type': 35, 'data': 7),
