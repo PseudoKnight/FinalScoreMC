@@ -41,7 +41,7 @@ case 'powerup':
 			// player logged off last tick, nice timing
 		}
 	});
-	play_sound(ploc(@player), array('sound': 'WOLF_HOWL', 'pitch': 0.9, 'volume': 2))
+	play_sound(ploc(@player), array('sound': 'WOLF_HOWL', 'pitch': 0.9, 'volume': 3))
 	set_pinv(@player, array(
 		100: array('type': 301, 'meta': array('color': array('r': 50, 'g': 50, 'b': 50)),
 			'enchants': array(array('elevel': 2, 'etype': 'DEPTH_STRIDER'))
