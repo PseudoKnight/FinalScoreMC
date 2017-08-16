@@ -8,10 +8,10 @@ case 'load':
 					'color': array('r': 0, 'g': 50, 'b': 0),
 				)),
 				'leggings': array('name': 'LEATHER_LEGGINGS', 'meta': array(
-					'color': array('r': 1, 'g': 28, 'b': 58),
+					'color': array('r': 58, 'g': 28, 'b': 1),
 				)),
 				'boots': array('name': 'LEATHER_BOOTS', 'meta': array(
-					'color': array('r': 1, 'g': 28, 'b': 58),
+					'color': array('r': 58, 'g': 28, 'b': 1),
 				)),
 			);
 			if(@thorns) {
@@ -33,7 +33,7 @@ case 'load':
 		}
 	}
 	
-	bind(entity_damage, array('id': @player.'entdamage', 'priority': 'LOW'), array('id': puuid(@player)), @event, @player, @pvp) {
+	bind(entity_damage, array('id': @player.'entdamage', 'priority': 'MONITOR'), array('id': puuid(@player)), @event, @player, @pvp) {
 		if(pheld_slot(@player) == 1) {
 			@item = pinv(@player, 1);
 			if(@item) {

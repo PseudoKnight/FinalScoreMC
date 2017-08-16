@@ -420,7 +420,8 @@ bind(entity_damage, array('id': @id.'EntityDamage', 'priority': 'LOWEST'), null,
 	@pvp = import('pvp'.@id)
 	if(array_index_exists(@e, 'damager')
 	&& array_contains(@pvp['spectators'], @e['damager'])) {
-		cancel()
+		cancel();
+		consume();
 
 	} else if(@e['type'] === 'PLAYER') {
 		if(array_index_exists(@pvp['players'], @e['player'])) {

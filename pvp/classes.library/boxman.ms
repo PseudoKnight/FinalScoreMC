@@ -119,21 +119,26 @@ case 'load':
 		}
 	}
 	
-	bind(player_toggle_sneak, associative_array('id': @player.'sneak'), array('player': @player), @event, @pvp) {
+	@sneakLoc = array();
+	bind(player_toggle_sneak, associative_array('id': @player.'sneak'), array('player': @player), @event, @pvp, @sneakLoc) {
 		if(@event['sneaking']) {
+			@sneakLoc['x'] = @event['location']['x'];
+			@sneakLoc['y'] = @event['location']['y'];
+			@sneakLoc['z'] = @event['location']['z'];
+			@sneakLoc['world'] = @event['location']['world'];
 			set_pinv(player(), array(103: null));
 			@block = get_block_at(ploc());
 			foreach(@p: @player in @pvp['players']) {
 				if(@p != player()) {
-					psend_block_change(@p, @event['location'], @block);
+					psend_block_change(@p, @sneakLoc, @block);
 				}
 			}
 		} else {
 			set_pinv(player(), array(103: array('name': 'STEP', 'data': 8)));
-			@block = get_block_at(@event['location']);
+			@block = get_block_at(@sneakLoc);
 			foreach(@p: @player in @pvp['players']) {
 				if(@p != player()) {
-					psend_block_change(@p, @event['location'], @block);
+					psend_block_change(@p, @sneakLoc, @block);
 				}
 			}
 		}
