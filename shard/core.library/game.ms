@@ -23,6 +23,9 @@ proc _shard_create(@rules){
 	}
 
 	// Remove existing region files
+	if(extension_exists('CHDynmap')) {
+		dm_set_update_renders_paused(true);
+	}
 	@base = '../../../../..'; // relative to script location
 	try {
 		@files = list_files("@base/shard/region");
@@ -83,6 +86,10 @@ proc _shard_create(@rules){
 			console('Created shard ('.(@stop - @start).'ms)', false);
 			
 			set_timeout(150, closure(){
+				if(extension_exists('CHDynmap')) {
+					dm_set_update_renders_paused(false);
+				}
+				
 				// Calculate center
 				if(@rules['width'] <= 512) { // use player location if possible
 					@ploc = ploc();

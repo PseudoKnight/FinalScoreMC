@@ -245,15 +245,6 @@ bind(player_join, null, null, @event) {
 				_equip_kit();
 			}
 		}, 'join');
-		
-		// View distance
-		queue_push(closure(){
-			if(array_index_exists(@pdata, 'viewdistance')) {
-				set_pview_distance(@pdata['viewdistance']);
-			} else {
-				set_pview_distance(8);
-			}
-		}, 'join');
 
 		_bm_request('set_user_uuid', 'a1634f37480a4bb9a0b2200266597ac0', array('username': player(), 'user_uuid': puuid()));
 	});
