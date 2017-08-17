@@ -14,7 +14,7 @@ register_command('pvp', array(
 		switch(@args[0]) {
 			case 'join':
 				include('../core.library/join.ms');
-				_pvp_join(to_lower(@args[1]), array_size(@args) > 2 && @args[2] == 'force');
+				_pvp_join(to_lower(@args[1]));
 
 			case 'debug':
 				@id = to_lower(@args[1]);
@@ -120,7 +120,7 @@ register_command('pvp', array(
 					die(color('gold').'Not running.');
 				}
 				include('../core.library/game.ms');
-				if(array_size(@args) < 3 || is_numeric(@args[2])) {
+				if(array_size(@args) > 2 && is_numeric(@args[2])) {
 					_pvp_end_match(@id, @pvp['team'][@args[2] - 1]['players']);
 				} else {
 					_pvp_end_match(@id, array());

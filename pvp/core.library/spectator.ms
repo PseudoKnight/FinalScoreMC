@@ -2,8 +2,8 @@ proc _set_spectator(@player, @pvp) {
 	if(!ponline(@player)) {
 		return();
 	}
+	@pvp['spectators'][] = player();
 	if(pinfo(@player, 5) > 0) {
-		@pvp['spectators'][] = @player;
 		foreach(@p in all_players()) {
 			if(ponline(@p) && pworld(@p) == pworld(@player)) {
 				raw_set_pvanish(@player, true, @p);
@@ -27,7 +27,6 @@ proc _set_spectator(@player, @pvp) {
 			unbind();
 			if(@pvp['running'] == 2) {
 				consume();
-				@pvp['spectators'][] = player();
 				@spawn = false;
 				foreach(@p in array_keys(@pvp['players'])) {
 					if(ponline(@p) && array_contains(sk_current_regions(@p), @pvp['arena']['region'])) {

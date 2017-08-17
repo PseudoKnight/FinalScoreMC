@@ -1,4 +1,4 @@
-proc _pvp_join(@id, @force){
+proc _pvp_join(@id){
 	@pvp = import('pvp'.@id);
 	@arena = get_value('arena.'.@id);
 	if(!@arena) {
@@ -8,16 +8,7 @@ proc _pvp_join(@id, @force){
 		set_ploc(@arena['lobby']);
 	}
 	if(_pstate(player())['activity']) {
-		if(@force) {
-			_set_pstate_activity(player(), null);
-		} else {
-			@msg = array(
-				'You are already playing \\"'._pstate(player())['activity'].'\\". ',
-				array('&b[FORCE JOIN]', '/pvp join '.@id.' force')
-			);
-			_click_tell(array(player()), @msg);
-			die();
-		}
+		die('You are already playing "'._pstate(player())['activity'].'".');
 	}
 	if(!@pvp) {
 		@pvp = array('players': associative_array(), 'running': 0, 'id': @id);
