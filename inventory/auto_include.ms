@@ -133,7 +133,9 @@ proc _minify_inv(@inv, @keepnulls = false) {
 			}
 		}
 	}
-
+	if(!is_array(@inv)) {
+		throw('FormatException', 'This must be an item!');
+	}
 	if(array_index_exists(@inv, 'type')) {
 		_minify_item(@inv);
 	} else {

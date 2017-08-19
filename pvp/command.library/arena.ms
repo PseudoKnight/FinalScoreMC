@@ -7,6 +7,7 @@ register_command('arena', array(
 					'stats', 'resetstats'), @args[-1]));
 		} else if(array_size(@args) == 3) {
 			@action = @args[0];
+			@completions = array();
 			if(@action == 'set' || @action == 'delete') {
 				@completions = array('class_picks', 'delay', 'lives', 'max', 'min', 'respawntime', 'score', 'time',
 						'dropchance', 'saturation', 'hunger', 'rounds', 'timer', 'teamratio', 'class_picking',
@@ -372,7 +373,7 @@ register_command('arena', array(
 								'loc': array(round(ploc()[0], 1), ploc()[1] + 1.5, round(ploc()[2], 1), ploc()[3]),
 								'item': @item,
 							));
-							msg(color('green').'Set current item to spawn here.');
+							msg(color('green').'Set held item to spawn here '.if(@start, 'on start and '), 'every '.@cooldown.' seconds.');
 							psend_block_change(player(), ploc(), data_values('gold_block'));
 						} else {
 							die(color('gold').'The first value must be an integer of the number of seconds in the cooldown (default: 30).'
@@ -627,9 +628,10 @@ register_command('arena', array(
 					return(false);
 				}
 				@id = @args[1];
-				if(array_size(@args) < 3) {
+				if(array_size(@args) < 4) {
 					die(color('gold').'Requires a direction after the arena id (north, south, east, west, up, down)'
-							.' and an integer specifying the distance.');
+							.' and an integer specifying the distance. '.color('red').'WARNING: This moves almost ALL'
+							.' locations in an arena configuration. You should know what you\'re doing.');
 				}
 				if(!is_integral(@args[3])) {
 					die(color('gold').'Should be a integer after direction.');

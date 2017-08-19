@@ -48,7 +48,7 @@ proc _pvp_start_match(@id) {
 	if(array_index_exists(@pvp['arena'], 'itemspawn')) {
 		@pvp['itemspawn'] = array()
 		for(@i = 0, @i < array_size(@pvp['arena']['itemspawn']), @i++) {
-			if(@pvp['arena']['itemspawn'][@i]['start'] === 'true') {
+			if(@pvp['arena']['itemspawn'][@i]['start']) {
 				@time = 0
 			} else {
 				@time = time()
