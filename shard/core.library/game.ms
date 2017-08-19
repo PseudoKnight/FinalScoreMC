@@ -358,7 +358,9 @@ proc _shard_create(@rules){
 				@binds[] = 'shard-itemframe2';
 				bind(hanging_break, array('id': 'shard-itemframe2'), array('type': 'ITEM_FRAME', 'world': 'shard'), @event) {
 					cancel();
-					entity_remove(@event['id']);
+					if(entity_loc(@event['id'])['world'] == 'shard') { // entities may share the same UUID
+						entity_remove(@event['id']);
+					}
 				}
 				
 				@binds[] = 'shard-explosion';

@@ -558,7 +558,7 @@ bind(block_break, null, array('type': 56), @event) {
 
 # painting cycler
 bind(player_interact_entity, null, array('clicked': 'PAINTING','hand':'main_hand'), @event) {
-	if(pmode() != 'ADVENTURE' && sk_can_build(entity_loc(@event['id']))) {
+	if(pmode() != 'ADVENTURE' && pworld() != 'shard' && sk_can_build(entity_loc(@event['id']))) {
 		@paintings = get_value('paintings');
 		if(is_null(@paintings)) {
 			@paintings = reflect_pull('enum', 'Art');
