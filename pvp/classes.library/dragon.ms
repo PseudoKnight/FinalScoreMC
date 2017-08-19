@@ -8,15 +8,16 @@ case 'load':
 		proc _flap(@player) {
 			queue_push(closure(){
 				if(pexp(@player) > 0 && !pinfo(@player, 11)) {
-					@facing = pfacing(@player)
-					@facing[0] = @facing[0] + 90
-					@facing[1] = 0 - @facing[1]
-					@x = cos(to_radians(@facing[0])) * cos(to_radians(@facing[1]))
-					@z = sin(to_radians(@facing[0])) * cos(to_radians(@facing[1]))
-					set_pexp(@player, max(0, pexp(@player) - 8))
+					@facing = pfacing(@player);
+					@facing[0] = @facing[0] + 90;
+					@facing[1] = 0 - @facing[1];
+					@x = cos(to_radians(@facing[0])) * cos(to_radians(@facing[1]));
+					@z = sin(to_radians(@facing[0])) * cos(to_radians(@facing[1]));
+					set_pexp(@player, max(0, pexp(@player) - 8));
 					set_pvelocity(@player, @x * 0.6, 0.47, @z * 0.6);
-					play_sound(ploc(@player), array('sound': 'ENDERDRAGON_WINGS', 'pitch': 1.2))
-					_flap(@player)
+					play_sound(ploc(@player), array('sound': 'ENDERDRAGON_WINGS', 'pitch': 1.2));
+					set_entity_fall_distance(puuid(@player), 0);
+					_flap(@player);
 				} else {
 					set_interval(200, closure(){
 						try {

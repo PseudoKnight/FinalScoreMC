@@ -160,6 +160,9 @@ case 'load':
 		play_sound(@event['location'], array('sound': 'entity_husk_death', 'pitch': 0.5));
 	}
 	
+case 'powerup':
+	set_peffect(@player, 11, 0, 30);
+	
 case 'unload':
 	unbind(@player.'entfall');
 	unbind(@player.'entsneak');
