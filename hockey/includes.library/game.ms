@@ -187,11 +187,13 @@ proc _start_game(@hockey) {
                     team_remove_player(@team['name'], @p, 'hockey');
                     if(array_size(@team['players']) < 2) {
                         _end_game(@hockey);
+                        die();
                     }
                 }
             }
             if(@hockey['seconds'] < 1) {
                 _end_game(@hockey);
+                die();
             }
         }
         
