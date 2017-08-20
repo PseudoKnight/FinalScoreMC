@@ -71,14 +71,11 @@ proc _remove_spectator(@player, @pvp) {
 					raw_set_pvanish(@player, false, @p);
 				}
 			}
-			set_entity_fall_distance(puuid(@player), 0);
 			if(pinfo(@player, 5) > 0) {
+				set_entity_fall_distance(puuid(@player), 0);
 				set_peffect(@player, 14, 0, 0);
-				if(!array_index_exists(@pvp['players'], @player)) {
-					set_ploc(@player, @pvp['arena']['lobby']);
-				}
+				set_ploc(@player, @pvp['arena']['lobby']);
 			} else {
-				console('WARNING: Spectator somehow dead', false);
 				respawn(@player);
 			}
 			if(array_index_exists(@pvp['arena'], 'resourcepack')) {
