@@ -2,7 +2,7 @@ proc _set_spectator(@player, @pvp) {
 	if(!ponline(@player)) {
 		return();
 	}
-	@pvp['spectators'][] = player();
+	@pvp['spectators'][] = @player;
 	if(pinfo(@player, 5) > 0) {
 		foreach(@p in all_players()) {
 			if(ponline(@p) && pworld(@p) == pworld(@player)) {
