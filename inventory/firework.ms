@@ -170,11 +170,15 @@ bind(firework_explode, null, null, @event){
 			@yaw += 24;
 		}
 		set_timeout(50, closure(){
-			foreach(@m in @mobs){
-				if(@cookie) {
-					set_mob_effect(@m, 14, 0, 600, true, false);
+			try {
+				foreach(@m in @mobs){
+					if(@cookie) {
+						set_mob_effect(@m, 14, 0, 600, true, false);
+					}
+					set_mob_effect(@m, 20, 0, 600, true, false);
 				}
-				set_mob_effect(@m, 20, 0, 600, true, false);
+			} catch(BadEntityException @ex) {
+				// firework may have exploded right before chunk unloaded
 			}
 		});
 	}
