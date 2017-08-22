@@ -448,10 +448,14 @@ proc _set_pstate_activity(@player, @activity) {
 		return(false);
 	}
 	@pstate['activity'] = @activity;
-	if(@activity) {
-		set_list_name(@player, color('gray').@activity.' '._colorname(@player).@player);
-	} else {
-		set_list_name(@player, _colorname(@player).@player);
+	try {
+		if(@activity) {
+			set_list_name(@player, color('gray').@activity.' '._colorname(@player).@player);
+		} else {
+			set_list_name(@player, _colorname(@player).@player);
+		}
+	} catch(PlayerOfflineException @ex) {
+		// if in a player_quit event, setting list name will throw offline exception even though ponline() returns true
 	}
 	return(true);
 }
