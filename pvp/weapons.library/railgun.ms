@@ -18,7 +18,7 @@ bind(player_interact, array('id': @id.'railgun'), array('item': 175, 'button': '
 		@item['name'] = 'FIREWORK_CHARGE';
 		set_pinv(array(null: @item));
 		@slot = pinfo(player(), 15);
-		queue_delay(7000, player().'railgun');
+		queue_delay(8000, player().'railgun');
 		queue_push(closure(){
 			if(ponline(player())) {
 				@item = pinv(player(), @slot);
