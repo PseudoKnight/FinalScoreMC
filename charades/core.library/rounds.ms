@@ -135,7 +135,12 @@ proc _end_round(@guesser, @word) {
 		_remove_region_entities('charades');
 		
 		if(@charades['playersLeft'] && ponline(@charades['playersLeft'][0])) {
-			_start_round();
+			try {
+				_start_round();
+			} catch(Exception @ex) {
+				console(@ex);
+				_end_game();
+			}
 		} else {
 			_end_game();
 		}
