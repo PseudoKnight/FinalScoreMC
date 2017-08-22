@@ -34,7 +34,8 @@ register_command('arena', array(
 		if(!@args) {
 			return(false);
 		}
-		switch(@args[0]) {
+		@action = @args[0];
+		switch(@action) {
 			case 'set':
 			case 's':
 			case 'add':
