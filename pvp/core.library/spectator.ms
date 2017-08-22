@@ -27,6 +27,9 @@ proc _set_spectator(@player, @pvp) {
 			unbind();
 			if(@pvp['running'] == 2) {
 				consume();
+				if(!array_contains(@pvp['spectators'], player())) {
+					@pvp['spectators'][] = player();
+				}
 				@spawn = false;
 				foreach(@p in array_keys(@pvp['players'])) {
 					if(ponline(@p) && array_contains(sk_current_regions(@p), @pvp['arena']['region'])) {
