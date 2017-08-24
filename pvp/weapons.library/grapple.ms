@@ -112,10 +112,12 @@ bind(projectile_launch, array('id': @id.'grapple'), array('type': 'FISHING_HOOK'
 	}
 
 	bind(projectile_hit, array('id': 'hit'.@arrow), array('id': @arrow), @event, @shooter, @slot, @hook) {
+		unbind();
 		_reel(@event['location'], @shooter, @slot, @hook, @event['id'], @shooter);
 	}
 
 	bind(entity_damage_player, array('id': 'damage'.@arrow), array('id': @arrow), @event, @shooter, @slot, @hook) {
+		unbind();
 		@hit = puuid(@event['player']);
 		try(set_entity_rider(@hit, @hook));
 		_reel(@event['location'], @shooter, @slot, @hit, @shooter, @hit);
@@ -123,7 +125,7 @@ bind(projectile_launch, array('id': @id.'grapple'), array('type': 'FISHING_HOOK'
 
 	set_timeout(800, closure(){
 		if(has_bind('hit'.@arrow)
-		&& has_bind('damage'.@player)) {
+		&& has_bind('damage'.@arrow)) {
 			try(entity_remove(@arrow));
 		}
 		unbind('hit'.@arrow);
