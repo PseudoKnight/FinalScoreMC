@@ -27,8 +27,10 @@ proc _end_game() {
 			} else if(@s == @top) {
 				@topPlayers[] = @p;
 			}
-			set_ploc(@p, @warp);
-			_equip_kit(@p);
+			if(ponline(@p)) {
+				set_ploc(@p, @warp);
+				_equip_kit(@p);
+			}
 		}
 	}
 	
