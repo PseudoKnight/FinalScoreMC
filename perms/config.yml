@@ -149,8 +149,11 @@ builder:
       command.cloud: true
       command.acme: true
       command.goto: true
+      command.bring: true
+      command.put: true
       limitedworldedit: true
       worldguard.region.claim: true
+      minecraft.command.stopsound: true
     custom:
       command.fly: true
       command.gm: true
@@ -167,10 +170,13 @@ builder:
       command.vanish: true
       command.cloud: true
       command.goto: true
+      command.bring: true
+      command.put: true
       worldedit.navigation.*: true
       worldguard.region.claim: true
       bl.getbanners: true
       deadbolt.user.create.*: true
+      minecraft.command.stopsound: true
     world:
       livemap.tracers: true
     world3:
