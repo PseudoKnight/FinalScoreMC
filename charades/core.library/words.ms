@@ -1,5 +1,5 @@
 proc _get_categories() {
-	return(array('easy', 'medium', 'hard', 'very-hard', 'idioms', 'animals', 'people', 'movies', 'tv-shows', 'books'));
+	return(array('easy', 'medium', 'hard', 'very_hard', 'idioms', 'animals', 'people', 'movies', 'tv_shows', 'books'));
 }
 
 proc _get_match(@one, @two) {
@@ -25,7 +25,7 @@ proc _get_match(@one, @two) {
 
 proc _get_word_from_list(@words, @category) {
 	@word = @words[0];
-	if(@category == 'book_names_popular') {
+	if(@category == 'books') {
 		@word = trimr(split('by', @word)[0]);
 	}
 	array_remove(@words, 0);
@@ -38,26 +38,26 @@ proc _get_word(@closure) {
 		'easy': 'charades_easy',
 		'medium': 'charades_moderate',
 		'hard': 'charades_hard',
-		'very-hard': 'charades_very_hard',
+		'very_hard': 'charades_very_hard',
 		'idioms': 'idioms_popular',
 		'animals': 'animal_names',
 		'people': 'people_character_names_popular',
 		'movies': 'movie_names_popular',
-		'tv-shows': 'tv_show_names_popular',
+		'tv_shows': 'tv_show_names_popular',
 		'books': 'book_names_popular',
 	);
 	
 	@charades = import('charades');
-	@category = @inputMap[@charades['category']];
-	@words = get_value('charades', @category);
+	@cat = @inputMap[@charades['category']];
+	@words = get_value('charades', @charades['category']);
 	if(!@words) {
-		http_request('http://www.wordgenerator.net/application/p.php?type=1&id='.@category, array(
+		http_request('http://www.wordgenerator.net/application/p.php?type=1&id='.@cat, array(
 			'method': 'GET',
 			'success': closure(@response){
 				if(!@response['error']) {
 					@words = split(',', @response['body']);
 					array_remove(@words, array_size(@words) - 1);
-					execute(_get_word_from_list(@words, @category), @closure);
+					execute(_get_word_from_list(@words, @charades['category']), @closure);
 				} else {
 					@charades['playersLeft'] = array();
 					_end_round(null, null);
@@ -65,6 +65,6 @@ proc _get_word(@closure) {
 			}
 		));
 	} else {
-		execute(_get_word_from_list(@words, @category), @closure);
+		execute(_get_word_from_list(@words, @charades['category']), @closure);
 	}
 }
