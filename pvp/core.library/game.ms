@@ -220,9 +220,13 @@ proc _pvp_start_match(@id) {
 			@check = true;
 		}
 
-		foreach(@p in @pvp['spectators']) {
-			if(!array_contains(sk_current_regions(@p), @arena['region'])) {
-				_remove_spectator(@p, @pvp);
+		foreach(@i: @p in @pvp['spectators']) {
+			try {
+				if(!array_contains(sk_current_regions(@p), @arena['region'])) {
+					_remove_spectator(@p, @pvp);
+				}
+			} catch(PlayerOfflineException @ex) {
+				array_remove(@pvp['spectators'], @i);
 			}
 		}
 
