@@ -2,3 +2,4 @@ disabled*
 key.txt
 .remote-sync.json
 secret
+charades/data

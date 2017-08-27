@@ -20,8 +20,6 @@ register_command('charades', array(
 			if(!array_contains(@categories, @category)) {
 				die(color('yellow').'Available categories: '.array_implode(@categories, ', ').'.');
 			}
-		} else {
-			@category = array_rand(array('easy', 'medium', 'hard', 'animals'), 1, false)[0];
 		}
 		
 		@players = array();
@@ -33,7 +31,12 @@ register_command('charades', array(
 		if(array_size(@players) < 3) {
 			die(color('gold').'Requires at least 3 players.');
 		}
-		export('charades', array('category': @category, 'playersLeft': @players, 'interval': 0));
+		
+		if(@category) {
+			export('charades', array('category': @category, 'playersLeft': @players, 'interval': 0));
+		} else {
+			export('charades', array('playersLeft': @players, 'interval': 0));
+		}
 		
 		create_scoreboard('charades');
 		create_objective('score', 'DUMMY', 'charades');
@@ -47,7 +50,6 @@ register_command('charades', array(
 			set_pscore('score', @p, 0, 'charades');
 			team_add_player('guessers', @p, 'charades');
 			title_msg(@p, 'Charades', to_upper(@category), 20, 60, 40);
-			tmsg(@p, color('yellow').color('bold').'Charades Category: '.color('yellow').@category);
 			set_ploc(@p, @spawn);
 			set_pmode(@p, 'SPECTATOR');
 			set_pscoreboard(@p, 'charades');
