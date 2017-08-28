@@ -40,7 +40,7 @@ case 'load':
 			die();
 		}
 		cancel();
-		@players = _hit_scan(40, 1, 'happy_villager', 'ender_signal', @pvp);
+		@players = _hit_scan(ploc(), 40, 1, 'happy_villager', 'ender_signal', @pvp);
 
 		if(@players) {
 			@player = @players[0];
@@ -54,7 +54,6 @@ case 'load':
 			@loc1['pitch'] = @facing2[1];
 			@loc2['yaw'] = @facing1[0];
 			@loc2['pitch'] = @facing1[1];
-
 
 			set_ploc(@loc2);
 			damage_entity(puuid(), 1, puuid());

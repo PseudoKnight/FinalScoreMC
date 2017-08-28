@@ -1,51 +1,43 @@
 proc _weapon_cooldown(@player, @time, @type, @onCooldown, @remove = 1) {
-	switch(@type) {
-		case 'damage':
-			#TODO: weapon damage
-			null;
-
-		default:
-			@item = pinv(@player, null);
-			@item['qty'] -= @remove;
-			if(@item['qty'] == 0) {
-				set_pinv(@player, array(null: null));
-			} else {
-				if(@type == null) {
-					set_pinv(@player, array(null: null));
-				} else {
-					@newItem = @item[];
-					@newItem['name'] = @type;
-					@newItem['data'] = 0;
-					set_pinv(@player, array(null: @newItem));
-				}
-				@slot = pinfo(@player, 15);
-				set_timeout(@time, closure(){
-					try {
-						@newItem = pinv(@player, @slot);
-						if(@type == null || (!is_null(@newItem)
-						&& @newItem['name'] == @type)) {
-							@inv = associative_array();
-							@inv[@slot] = @item;
-							set_pinv(@player, @inv);
-							if(is_closure(@onCooldown)) {
-								execute(@onCooldown);
-							}
-						}
-					} catch(PlayerOfflineException @ex) {
-						// gun safety failure
+	@item = pinv(@player, null);
+	@item['qty'] -= @remove;
+	if(@item['qty'] == 0) {
+		set_pinv(@player, array(null: null));
+	} else {
+		if(@type == null) {
+			set_pinv(@player, array(null: null));
+		} else {
+			@newItem = @item[];
+			@newItem['name'] = @type;
+			@newItem['data'] = 0;
+			set_pinv(@player, array(null: @newItem));
+		}
+		@slot = pinfo(@player, 15);
+		set_timeout(@time, closure(){
+			try {
+				@newItem = pinv(@player, @slot);
+				if(@type == null || (!is_null(@newItem)
+				&& @newItem['name'] == @type)) {
+					@inv = associative_array();
+					@inv[@slot] = @item;
+					set_pinv(@player, @inv);
+					if(is_closure(@onCooldown)) {
+						execute(@onCooldown);
 					}
-				});
+				}
+			} catch(PlayerOfflineException @ex) {
+				// gun safety failure
 			}
+		});
 	}
 }
 
-proc _hit_scan(@range, @damage, @tracerParticle, @hitParticle, @pvp){
-	@origin = _relative(ploc(), 'up', if(get_entity_gliding(puuid()), 1, 2.3));
+proc _hit_scan(@origin, @range, @damage, @tracerParticle, @hitParticle, @pvp){
+	@origin = _relative(@origin, 'up', if(get_entity_gliding(puuid()), 1, 2.3));
 	@vector = _get_vector(@origin['yaw'], @origin['pitch']);
 	@x = @vector['x'];
 	@y = @vector['y'];
 	@z = @vector['z'];
-	@n = 0;
 	@loc = @origin[];
 
 	proc _whitelisted_block(@loc, @whitelisted = array(
@@ -98,8 +90,8 @@ proc _hit_scan(@range, @damage, @tracerParticle, @hitParticle, @pvp){
 	if(!is_array(@tracerParticle)) {
 		@particle = @tracerParticle;
 	}
-	while(@n < @range) {
-		@n++;
+	while(@range > 0) {
+		@range--;
 		@loc['x'] += @x;
 		@loc['y'] += @y;
 		@loc['z'] += @z;
@@ -108,7 +100,7 @@ proc _hit_scan(@range, @damage, @tracerParticle, @hitParticle, @pvp){
 		}
 		play_effect(@loc, @particle, array('speed': 0, 'radius': 64));
 		if(get_block_info(@loc, 'solid') && !_whitelisted_block(@loc)) {
-			play_effect(@loc, @hitParticle, array('particleCount': 8));
+			play_effect(@loc, @hitParticle, array('particleCount': 8, 'speed': 0.05));
 			break();
 		}
 	}
@@ -135,7 +127,7 @@ proc _hit_scan(@range, @damage, @tracerParticle, @hitParticle, @pvp){
 			if(@damage) {
 				try(damage_entity(puuid(@p), @damage, puuid()));
 			}
-			play_effect(@ploc, @hitParticle, array('particleCount': 4));
+			play_effect(@ploc, @hitParticle, array('particleCount': 4, 'speed': 0.05));
 			play_sound(@origin, array('sound': 'SUCCESSFUL_HIT'), player());
 			@players[] = @p;
 		}
