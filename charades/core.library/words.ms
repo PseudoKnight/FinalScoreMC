@@ -28,15 +28,22 @@ proc _get_word(@category) {
 	if(!@words) {
 		@wordArray = json_decode(read('../data/'.@category.'.json'));
 		@words = associative_array();
-		foreach(@word in @wordArray) {
-			@words[@word] = 0;
+		foreach(@w in @wordArray) {
+			@words[@w] = 0; // number of times used
 		}
 	}
-	@count = 0;
-	@word = null;
-	do {
-		@word = array_index(@words, @count);
-	} while(is_null(@word));
+	
+	// get 3 random words and pick the one least used
+	@randomWords = array_rand(@words, 3);
+	@word = '';
+	@wordCount = 999;
+	foreach(@w in @randomWords) {
+		if(@words[@w] < @wordCount) {
+			@word = @w;
+			@wordCount = @words[@w];
+		}
+	}
+	
 	@words[@word]++;
 	store_value('charades', @category, @words);
 	return(@word);
