@@ -41,7 +41,7 @@ proc _set_spectator(@player, @pvp) {
 					modify_event('location', @pvp['arena']['spawn'][0][0]);
 				}
 				set_timeout(50, closure(){
-					if(@pvp['running'] == 2) {
+					if(ponline(player()) && @pvp['running'] == 2) {
 						foreach(@p in all_players()) {
 							if(ponline(@p) && pworld(@p) == pworld()) {
 								raw_set_pvanish(player(), true, @p);
@@ -62,7 +62,7 @@ proc _set_spectator(@player, @pvp) {
 
 proc _remove_spectator(@player, @pvp) {
 	try {
-		array_remove_values(@pvp['spectators'], @player)
+		array_remove_values(@pvp['spectators'], @player);
 		if(ponline(@player)) {
 			set_pmode(@player, 'ADVENTURE');
 			set_pflight(@player, false);
