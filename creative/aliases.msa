@@ -84,22 +84,6 @@
 	}
 <<<
 
-# Set the display name for the item in-hand
-*:/display [$] = >>>
-	if(!has_permission('command.items')) {
-		die('You are not allowed to create custom items here.');
-	}
-	if(!$) {
-		die(color('gold').'Usage: /display <item display name> '.color('gray').'(supports &0 color codes)');
-	}
-	@meta = get_itemmeta(null);
-	if(is_null(@meta)) {
-		@meta = associative_array();
-	}
-	@meta['display'] = colorize($);
-	set_itemmeta(null, @meta);
-<<<
-
 # Enchant tool in hand with specified enchantment
 *:/enchant [$type='list'] [$level=1] = >>>
 	if(!has_permission('command.items')) {
@@ -152,17 +136,6 @@
 	}
 <<<
 
-# Remove all enchantments from item in hand
-*:/unenchant = >>>
-	if(!has_permission('command.items')) {
-		die('You are not allowed to create custom items here.');
-	}
-	@item = pinv(player(), null);
-	array_remove(@item, 'enchants');
-	array_remove(@item['meta'], 'enchants');
-	set_pinv(array(null: @item));
-<<<
-
 *:/up [$amount=0] = >>>
 	if(pmode() != 'CREATIVE') {
 		die(color('gold').'You are not in CREATIVE mode.');
@@ -173,28 +146,5 @@
 		set_pflying(true);
 	} else {
 		set_block_at(@loc, '95:8');
-	}
-<<<
-
-*:/heal [$player] = >>>
-	if(!has_permission('command.heal')) {
-		die(color('gold').'You do not have permission to heal.');
-	}
-	@player = player();
-	if($player) {
-		if(!has_permission('command.heal.others')) {
-			die(color('gold').'You do not have permission to heal others.');
-		}
-		@player = _find_player($player);
-		if(pworld(@player) != pworld()) {
-			die(color('gold').'You cannot heal a player in another world.');
-		}
-	}
-	set_phunger(@player, 20);
-	set_psaturation(@player, 5.0);
-	set_phealth(@player, 20);
-	tmsg(@player, color('green').'Healed!');
-	if(@player != player()) {
-		msg(color('green').'Healed!');
 	}
 <<<
