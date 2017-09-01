@@ -239,6 +239,14 @@ bind(player_join, null, null, @event) {
 			}
 		}, 'join');
 		
+		// Populate session
+		queue_push(closure(){
+			if(@lastPlayed) {
+				@session = _psession(player());
+				@session['lastplayed'] = simple_date('MMM d, yyyy', @lastPlayed);
+			}
+		}, 'join');
+		
 		// Park inventory
 		queue_push(closure(){
 			if(pworld() === 'custom') {
