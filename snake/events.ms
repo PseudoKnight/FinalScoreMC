@@ -16,9 +16,9 @@ bind(player_join, null, null, @event) {
 				break();
 			}
 			if(@topScore['uuid'] == @uuid) {
-				@pstate = _pstate(player());
-				if(!array_index_exists(@pstate, 'trophies')) {
-					@pstate['trophies'] = array();
+				@session = _psession(player());
+				if(!array_index_exists(@session, 'trophies')) {
+					@session['trophies'] = array();
 				}
 				@rank = '&e\u278A';
 				switch(@i) {
@@ -61,7 +61,7 @@ bind(player_join, null, null, @event) {
 					case 19:
 						@rank = '&f\u24F4';
 				}
-				@pstate['trophies'][] = @rank.' \uA874 Snake Endless Mode';
+				@session['trophies'][] = @rank.' \uA874 Snake Endless Mode';
 				break();
 			}
 		}

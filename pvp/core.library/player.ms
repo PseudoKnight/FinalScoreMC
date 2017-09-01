@@ -21,7 +21,7 @@ proc _quit_player(@player, @id) {
 		}
 		set_ploc(@player, @pvp['arena']['lobby']);
 		_clear_peffects(@player);
-		_set_pstate_activity(@player, null);
+		_set_pactivity(@player, null);
 		set_timeout(50, closure(){
 			_equip_kit(@player); // helps clear maps after teleporting
 		});
@@ -49,7 +49,7 @@ proc _pvp_initialize_players(@id, @players) {
 	@loc = array();
 	foreach(@player in @players) {
 		if(!ponline(@player) || pinfo(@player, 5) == 0 || _is_survival_world(pworld(@player)) ||
-		!_set_pstate_activity(@player, to_upper(@id))) {
+		!_set_pactivity(@player, to_upper(@id))) {
 			array_remove(@pvp['players'], @player);
 			continue();
 		}

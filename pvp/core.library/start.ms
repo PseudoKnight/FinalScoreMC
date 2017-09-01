@@ -83,7 +83,7 @@ proc _pvp_start(@pvp, @id){
 
 	# Check if enough players and teleport them to lobby
 	foreach(@p in array_keys(@pvp['players'])) {
-		if(!ponline(@p) || _is_survival_world(pworld(@p)) || _pstate(@p)['activity']) {
+		if(!ponline(@p) || _is_survival_world(pworld(@p)) || _psession(@p)['activity']) {
 			array_remove(@pvp['players'], @p);
 		}
 	}

@@ -1,6 +1,6 @@
 proc _add_player(@player, @golf) {
-	@pstate = _pstate(@player);
-	if(pmode(@player) === 'CREATIVE' || array_get(@pstate, 'game', null)) {
+	@session = _psession(@player);
+	if(pmode(@player) === 'CREATIVE' || array_get(@session, 'game', null)) {
 		return(false);
 	}
 	@golf['players'][@player] = array(
@@ -15,7 +15,7 @@ proc _add_player(@player, @golf) {
     set_collides_with_entities(@player, false);
 	set_pscoreboard(@player, @golf['name'].'1');
 	set_pscore('strokes', @player, 0, @golf['name'].'1');
-	@pstate['game'] = @golf['name'];
+	@session['game'] = @golf['name'];
 	return(true);
 }
 
@@ -45,7 +45,7 @@ proc _remove_player(@player, @golf) {
 			// nothing to reset
 		}
 	}
-	@pstate = _pstate(@player);
-	@pstate['game'] = null;
+	@session = _psession(@player);
+	@session['game'] = null;
 	array_remove(@golf['players'], @player);
 }

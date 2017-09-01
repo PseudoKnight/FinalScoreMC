@@ -148,29 +148,29 @@ bind(player_join, null, null, @event) {
 			'secret': @count['secret'] / @total['secret'],
 		);
 
-		@pstate = _pstate(player());
+		@session = _psession(player());
 		if(@percent['challenge'] > 0.75) {
-			if(!array_index_exists(@pstate, 'trophies')) {
-				@pstate['trophies'] = array();
+			if(!array_index_exists(@session, 'trophies')) {
+				@session['trophies'] = array();
 			}
 			if(@percent['challenge'] == 1.0) {
-				@pstate['trophies'][] = color('yellow').'100% Challenge Cakes';
+				@session['trophies'][] = color('yellow').'100% Challenge Cakes';
 			} else if(@percent['challenge'] > 0.9) {
-				@pstate['trophies'][] = color('white').'>90% Challenge Cakes';
+				@session['trophies'][] = color('white').'>90% Challenge Cakes';
 			} else {
-				@pstate['trophies'][] = color('gray').'>75% Challenge Cakes';
+				@session['trophies'][] = color('gray').'>75% Challenge Cakes';
 			}
 		}
 		if(@percent['secret'] > 0.75) {
-			if(!array_index_exists(@pstate, 'trophies')) {
-				@pstate['trophies'] = array();
+			if(!array_index_exists(@session, 'trophies')) {
+				@session['trophies'] = array();
 			}
 			if(@percent['secret'] == 1.0) {
-				@pstate['trophies'][] = color('yellow').'100% Secret Cakes';
+				@session['trophies'][] = color('yellow').'100% Secret Cakes';
 			} else if(@percent['secret'] > 0.9) {
-				@pstate['trophies'][] = color('white').'>90% Secret Cakes';
+				@session['trophies'][] = color('white').'>90% Secret Cakes';
 			} else {
-				@pstate['trophies'][] = color('gray').'>75% Secret Cakes';
+				@session['trophies'][] = color('gray').'>75% Secret Cakes';
 			}
 		}
 	}, 'trophies');

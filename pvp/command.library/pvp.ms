@@ -56,7 +56,7 @@ register_command('pvp', array(
 				if(!array_contains(get_scoreboards(), @id)) {
 					die(color('gold').'The arena isn\'t running.');
 				}
-				if(!_set_pstate_activity(player(), to_upper(@id))) {
+				if(!_set_pactivity(player(), to_upper(@id))) {
 					die(color('gold').'You\'re in another game.');
 				}
 				include('../core.library/spectator.ms');

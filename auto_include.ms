@@ -428,39 +428,6 @@ proc _store_pdata(@player, @data) {
 }
 
 /*
-	Gets current session data for player
-*/
-proc _pstate(@player) {
-	@pstate = import('pstate.'.@player);
-	if(is_null(@pstate)) {
-		@pstate = array('activity': null);
-		export('pstate.'.@player, @pstate);
-	}
-	return(@pstate);
-}
-
-/*
-	Sets the activity for the player
-*/
-proc _set_pstate_activity(@player, @activity) {
-	@pstate = _pstate(@player);
-	if(@pstate['activity'] && @activity) {
-		return(false);
-	}
-	@pstate['activity'] = @activity;
-	try {
-		if(@activity) {
-			set_list_name(@player, color('gray').@activity.' '._colorname(@player).@player);
-		} else {
-			set_list_name(@player, _colorname(@player).@player);
-		}
-	} catch(PlayerOfflineException @ex) {
-		// if in a player_quit event, setting list name will throw offline exception even though ponline() returns true
-	}
-	return(true);
-}
-
-/*
 	Adds an activity to the activities list.
 	This is used for checking which games are running.
 */

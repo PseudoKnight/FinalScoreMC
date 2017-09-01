@@ -21,7 +21,7 @@
 */
 
 proc _snake_add(@player, @game) {
-	if(ponline(@player) && !_set_pstate_activity(@player, 'SNAKE')) {
+	if(ponline(@player) && !_set_pactivity(@player, 'SNAKE')) {
 		return(false);
 	}
 	
@@ -91,7 +91,7 @@ proc _snake_add(@player, @game) {
 		set_pflight(@player, true);
 		set_pflying(@player, true);
 		runas('~console', '/jukebox show add '.@player.' @snake');
-		_set_pstate_activity(@player, 'SNAKE');
+		_set_pactivity(@player, 'SNAKE');
 	} else {
 		@game['snakes'][@player]['bot'] = @player;
 	}
@@ -162,7 +162,7 @@ proc _snake_remove(@player, @game) {
 	if(ponline(@player)) {
 		runas('~console', '/jukebox show remove '.@player.' @snake');
 		_equip_kit(@player, array(7: pinv(@player, 7)));
-		_set_pstate_activity(@player, null);
+		_set_pactivity(@player, null);
 	}
 }
 

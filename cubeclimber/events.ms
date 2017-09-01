@@ -50,11 +50,11 @@ bind(player_join, null, null, @event) {
 					case 19:
 						@rank = '&f\u24F4';
                 }
-                @pstate = _pstate(player());
-                if(!array_index_exists(@pstate, 'trophies')) {
-                    @pstate['trophies'] = array();
+                @session = _psession(player());
+                if(!array_index_exists(@session, 'trophies')) {
+                    @session['trophies'] = array();
                 }
-                @pstate['trophies'][] = @rank.' \u231B CubeClimber Time';
+                @session['trophies'][] = @rank.' \u231B CubeClimber Time';
                 break();
             }
         }

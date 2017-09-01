@@ -2,7 +2,7 @@ proc _level_add_player(@player, @level) {
 	if(pinfo(@player, 5) == 0) {
 		return(false);
 	}
-	if(!_set_pstate_activity(@player, to_upper(@level['region']))) {
+	if(!_set_pactivity(@player, to_upper(@level['region']))) {
 		return(false);
 	}
 	@level['players'][] = @player;
@@ -31,7 +31,7 @@ proc _level_remove_player(@player, @level) {
 	array_remove_values(@level['players'], @player);
 	_clear_peffects(@player);
 	_equip_kit(@player);
-	_set_pstate_activity(@player, null);
+	_set_pactivity(@player, null);
 }
 
 proc _level_add_spectator(@player, @level) {

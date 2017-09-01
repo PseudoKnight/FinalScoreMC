@@ -54,7 +54,7 @@ proc _set_spectator(@player, @pvp) {
 					}
 				});
 			} else {
-				_set_pstate_activity(player(), null);
+				_set_pactivity(player(), null);
 			}
 		}
 	}
@@ -86,7 +86,7 @@ proc _remove_spectator(@player, @pvp) {
 					send_resourcepack(@player, 'http://mc.finalscoremc.com:25966/resourcepacks/default.zip');
 				});
 			}
-			_set_pstate_activity(@player, null);
+			_set_pactivity(@player, null);
 		}
 	} catch(Exception @ex) {
 		// not sure why this happens, but let's log it and continue

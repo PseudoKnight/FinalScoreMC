@@ -251,7 +251,7 @@ bind(player_join, null, null, @event) {
 			@uuid = puuid(player(), true);
 			for(@i = 0, @i < array_size(@top), @i++) {
 				if(@top[@i][0] == @uuid) {
-					@pstate = _pstate(player());
+					@session = _psession(player());
 					@rank = '&e\u278A';
 					switch(@i) {
 						case 1:
@@ -293,10 +293,10 @@ bind(player_join, null, null, @event) {
 						case 19:
 							@rank = '&f\u24F4';
 					}
-					if(!array_index_exists(@pstate, 'trophies')) {
-						@pstate['trophies'] = array();
+					if(!array_index_exists(@session, 'trophies')) {
+						@session['trophies'] = array();
 					}
-					@pstate['trophies'][] = @rank.' \u231B Time Trials';
+					@session['trophies'][] = @rank.' \u231B Time Trials';
 					break();
 				}
 			}

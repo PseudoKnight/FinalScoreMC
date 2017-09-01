@@ -34,9 +34,9 @@ proc _chat(@player, @message, @recipients) {
 	}
 
 	if(ponline(@player)) {
-		@pstate = _pstate(@player);
-		if(array_index_exists(@pstate, 'trophies')) {
-			@components[] = array('hover', '&6\u2660', '&6&lTrophies\n'.array_implode(@pstate['trophies'], '\n'));
+		@session = _psession(@player);
+		if(array_index_exists(@session, 'trophies')) {
+			@components[] = array('hover', '&6\u2660', '&6&lTrophies\n'.array_implode(@session['trophies'], '\n'));
 		}
 	} else {
 		if(array_index_exists(@pdata, 'ban')) {
