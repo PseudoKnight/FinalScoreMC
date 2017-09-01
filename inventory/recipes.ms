@@ -57,6 +57,13 @@ add_recipe(array(
 	'ingredients': array('340:0')
 ));
 
+# Faster bone -> bone-block recipe
+add_recipe(array(
+	'type': 'SHAPELESS',
+	'result': array('name': 'BONE_BLOCK', 'qty': 3),
+	'ingredients': array('352:0', '352:0', '352:0', '352:0', '352:0', '352:0', '352:0', '352:0', '352:0')
+));
+
 # Special recipe handling (eg. enchanted lore books, exp bottles, player heads)
 bind('inventory_click', null, array('slottype': 'RESULT'), @event) {
 	@slotitem = @event['slotitem'];
