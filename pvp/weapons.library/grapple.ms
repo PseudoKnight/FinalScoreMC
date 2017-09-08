@@ -73,7 +73,7 @@ bind(projectile_launch, array('id': @id.'grapple'), array('type': 'FISHING_HOOK'
 					@loc2 = entity_loc(@target);
 					@loc1 = entity_loc(@mover);
 					@dist = sqrt(((@loc2['x'] - @loc1['x']) ** 2) + ((@loc2['y'] - @loc1['y']) ** 2) + ((@loc2['z'] - @loc1['z']) ** 2));
-					@dist = max(0.1, min(20, @dist));
+					@dist = clamp(@dist, 0.1, 20);
 					set_entity_fall_distance(@mover, 0);
 					if(@dist > 2.5) {
 						if(@dist > 10) {

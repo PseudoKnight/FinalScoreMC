@@ -64,7 +64,7 @@ case 'load':
 				try {
 					set_pvelocity(@player,
 						1.4 * ((@loc2['x'] - @loc1['x']) / @dist), # vector normalization
-						max(0.1, min(1.4, (@loc2['y'] - @loc1['y']) / @dist)), # always bounce upwards
+						clamp((@loc2['y'] - @loc1['y']) / @dist, 0.1, 1.4), # always bounce upwards
 						1.4 * ((@loc2['z'] - @loc1['z']) / @dist),
 					);
 				} catch(PlayerOfflineException @ex) {
