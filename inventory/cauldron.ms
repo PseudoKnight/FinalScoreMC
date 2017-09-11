@@ -2,9 +2,9 @@
 	Infinite Cauldrons
 	Refills buckets and water bottles without reducing water levels, unless sneaking.
 	Also lets players incrementally fill cauldrons with water bottles.
-    
-    Undyeing More items
-    Stained clay, Wool
+	
+	Undyeing More items
+	Stained clay, Wool, Carpet
 */
 bind(player_interact, null, array('block': 118, 'button': 'right'), @event) {
 	@slot = null;
@@ -37,10 +37,12 @@ bind(player_interact, null, array('block': 118, 'button': 'right'), @event) {
 				@result = 326; // water bucket
 			case '374': // bottle
 				@result = 373; // water bottle
-            case '159':
-                @result = 172; // hardened clay
-            case '35':
-                @result = 35; // wool
+			case '159':
+				@result = 172; // hardened clay
+			case '35':
+				@result = 35; // wool
+			case '171':
+				@result = 171; // wool carpet
 			default:
 				die();
 		}
@@ -56,9 +58,9 @@ bind(player_interact, null, array('block': 118, 'button': 'right'), @event) {
 			@inv[@slot] = @item;
 			set_pinv(@inv);
 			@remaining = pgive_item(@result, 1);
-            if(@remaining) {
-                drop_item(associative_array('type': @result));
-            }
+			if(@remaining) {
+				drop_item(associative_array('type': @result));
+			}
 		}
 
 		// Remove some water from the cauldron if sneaking
