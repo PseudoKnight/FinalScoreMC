@@ -166,6 +166,7 @@ proc _shard_create(@rules){
 				
 				// Load objective and rule scripts
 				@binds = array();
+				export('shard.binds', @binds);
 				foreach(@rule: @value in @rules) {
 					if(@rule == 'objective' && file_exists('../objectives.library/'.@value.'.ms')) {
 						include('../objectives.library/'.@value.'.ms');
@@ -383,8 +384,6 @@ proc _shard_create(@rules){
 						}
 					}
 				}
-				
-				export('shard.binds', @binds);
 				
 			});
 		});

@@ -15,7 +15,6 @@ proc _get_spawn_location(@retries = 3) {
 // Unloads the shard world and cleans-up data
 proc _unload_shard() {
 	@binds = import('shard.binds');
-	export('shard.binds', null);
 	
 	// Scavenger Hunt clean-up
 	export('shard.card', null);
@@ -57,6 +56,7 @@ proc _unload_shard() {
 			foreach(@bind in @binds) {
 				unbind(@bind);
 			}
+			export('shard.binds', null);
 		} else {
 			console('Failed to unload shard world!', false);
 		}
