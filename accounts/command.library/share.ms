@@ -41,7 +41,7 @@ register_command('share', array(
 				@pdata['shared'][@share['player']] = array();
 			}
 			foreach(@type in @share['types']) {
-				@pdata['shared'][@share['player'][] = @type;
+				@pdata['shared'][@share['player']][] = @type;
 			}
 			_store_pdata(player(), @pdata);
 			msg(color('green').'Now sharing '.array_implode(@share['types'], ' and ').' with '.@share['player'].'.');
