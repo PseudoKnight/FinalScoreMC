@@ -2,9 +2,6 @@ register_command('heal', array(
 	'description': 'Sets a player\'s health, hunger and status to defaults.',
 	'usage': '/heal [player]',
 	'permission': 'command.heal',
-	'tabcompleter': closure(@alias, @sender, @args, @info) {
-		return(array());
-	},
 	'executor': closure(@alias, @sender, @args, @info) {
 		@player = player();
 		if(@args) {
