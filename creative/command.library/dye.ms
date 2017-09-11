@@ -14,9 +14,9 @@ register_command('dye', array(
 			die(color('gold').'You must be holding an item in your hand.');
 		}
 		@color = array(
-			clamp(integer(@args[0]), 0, 255),
-			clamp(integer(@args[1]), 0, 255),
-			clamp(integer(@args[2]), 0, 255)
+			integer(clamp(@args[0], 0, 255)),
+			integer(clamp(@args[1], 0, 255)),
+			integer(clamp(@args[2], 0, 255))
 		);
 		if(string_starts_with(@item['name'], 'LEATHER_')) {
 			try {
