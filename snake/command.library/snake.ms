@@ -9,6 +9,13 @@ register_command('snake', array(
 	},
 	'executor': closure(@alias, @sender, @args, @info) {
 		if(!@args) {
+			if(queue_running('snake_cleanup')) {
+				die(color('gold').'The game is still resetting.');
+			}
+			if(array_contains(all_virtualchests(), 'snake')
+			|| array_contains(get_scoreboards(), 'snake')) {
+				die(color('gold').'Already running.');
+			}
 			include('../core.library/menu.ms');
 			_snake_menu();
 			die();

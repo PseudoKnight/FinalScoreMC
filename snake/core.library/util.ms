@@ -141,3 +141,39 @@ proc _snake_play_song(@game) {
 proc _snake_stop_song() {
 	runas('~console', '/jukebox stop music @snake {fadeDuration:6}');
 }
+
+proc _snake_clean_surfaces(@region, @count) {
+	while(@count) {
+		@area = sk_region_info('snake_'.@region.@count, 'custom', 0);
+		@minX = min(@area[1][0], @area[0][0]);
+		@maxX = max(@area[1][0], @area[0][0]);
+		@minY = min(@area[1][1], @area[0][1]);
+		@maxY = max(@area[1][1], @area[0][1]);
+		@minZ = min(@area[1][2], @area[0][2]);
+		@maxZ = max(@area[1][2], @area[0][2]);
+		if(@minX == @maxX) {
+			for(@x = @minX, @x <= @maxX, @x++) {
+				for(@y = @minY, @y <= @maxY, @y++) {
+					queue_push(closure(){
+						for(@z = @minZ, @z <= @maxZ, @z++) {
+							set_block_at(@x, @y, @z, 0, 'custom', false);
+							play_effect(array(@x, @y, @z, 'custom'), 'CRIT', array('speed': 0.01, 'radius': 48));
+						}
+					}, 'snake_cleanup');
+				}
+			}
+		} else {
+			for(@z = @minZ, @z <= @maxZ, @z++) {
+				for(@y = @minY, @y <= @maxY, @y++) {
+					queue_push(closure(){
+						for(@x = @minX, @x <= @maxX, @x++) {
+							set_block_at(@x, @y, @z, 0, 'custom', false);
+							play_effect(array(@x, @y, @z, 'custom'), 'CRIT', array('speed': 0.01, 'radius': 48));
+						}
+					}, 'snake_cleanup');
+				}
+			}
+		}
+		@count--;
+	}
+}

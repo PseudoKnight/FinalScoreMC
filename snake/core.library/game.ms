@@ -27,7 +27,6 @@ proc _snake_queue(@mode) {
 	@game['surfaces'] = 0;
 	@game['snakes'] = associative_array();
 	@game['powerups'] = array();
-	@game['extraBlocks'] = array();
 	@game['numPowerups'] = 15;
 	@game['numPlayers'] = 9;
 	@game['botsOnly'] = false;
@@ -310,7 +309,7 @@ proc _snake_end(@winner, @game) {
 		}
 		foreach(@player in array_keys(@game['snakes'])) {
 			if(ponline(@player)) {
-				title_msg(@player, @title, @subtitle, 20, 70, 20);
+				title_msg(@player, @title, @subtitle, 40, 80, 40);
 			}
 		}
 		
@@ -318,7 +317,7 @@ proc _snake_end(@winner, @game) {
 		@title = @game['snakes'][@winner]['color'].@winner.' wins!';
 		foreach(@player in array_keys(@game['snakes'])) {
 			if(ponline(@player)) {
-				title_msg(@player, @title, '', 20, 60, 20);
+				title_msg(@player, @title, '', 40, 80, 40);
 			}
 		}
 	}
@@ -330,16 +329,13 @@ proc _snake_cleanup(@game) {
 	_snake_stop_song();
 	clear_task(@game['interval']);
 	del_virtualchest('snake');
-	set_timeout(3000, closure(){
+	_snake_clean_surfaces(@game['arena'], @game['surfaces']);
+	queue_push(closure(){
 		foreach(@player: @snake in @game['snakes']) {
 			_snake_remove(@player, @game);
-		}
-		_snake_remove_all_powerups(@game);
-		foreach(@loc in @game['extraBlocks']) {
-			set_block_at(@loc, 0, false);
 		}
 		export('snake', null);
 		remove_scoreboard('snake');
 		_remove_activity('snake');
-	});
+	}, 'snake_cleanup');
 }

@@ -155,9 +155,6 @@ proc _snake_set_colors(@game) {
 }
 
 proc _snake_remove(@player, @game) {
-	foreach(@block in @game['snakes'][@player]['blocks']) {
-		set_block_at(@block, 0, false);
-	}
 	array_remove(@game['snakes'], @player);
 	if(ponline(@player)) {
 		runas('~console', '/jukebox show remove '.@player.' @snake');
