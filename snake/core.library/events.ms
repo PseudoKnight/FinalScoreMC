@@ -14,7 +14,7 @@ proc _snake_bind_events(@game) {
 		if(array_index_exists(@game['snakes'], player())) {
 			cancel();
 			@slot = @event['to'];
-			if(@slot < 4) {
+			if(@slot < 5) {
 				_snake_ability(player(), @slot, @game);
 			}
 		}

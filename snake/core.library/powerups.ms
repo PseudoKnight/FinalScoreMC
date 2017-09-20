@@ -16,6 +16,10 @@ proc _snake_get_powerup_from(@id) {
 		case 95:
 		case '95:14':
 			return('laser');
+		case 5:
+		case 138:
+		case '138:0':
+			return('nuke');
 	}
 	return(null);
 }
@@ -34,6 +38,9 @@ proc _snake_get_block_from(@powerup) {
 		case 4:
 		case 'laser':
 			return('95:14');
+		case 5:
+		case 'nuke':
+			return(138);
 	}
 	return(null);
 }
@@ -48,6 +55,8 @@ proc _snake_get_name_from(@powerup) {
 			return('Laser');
 		case 'boost':
 			return('Speed Boost');
+		case 'nuke':
+			return('Nuke');
 	}
 	return(null);
 }
@@ -62,6 +71,8 @@ proc _snake_get_slot_from(@powerup) {
 			return(2);
 		case 'laser':
 			return(3);
+		case 'nuke':
+			return(4);
 	}
 }
 
@@ -69,7 +80,7 @@ proc _snake_add_powerup(@game) {
 	@region = 'snake_'.@game['arena'].rand(1, @game['surfaces'] + 1);
 	@loc = _snake_valid_location(@region);
 	if(@loc) {
-		@r = rand(4) + 1;
+		@r = rand(5) + 1;
 		@block = _snake_get_block_from(@r);
 		@type = _snake_get_powerup_from(@r);
 		set_block_at(@loc, @block, false);
@@ -97,6 +108,15 @@ proc _snake_remove_all_powerups(@game) {
 		set_block_at(@pu['loc'], '0:0', false);
 	}
 	@game['powerups'] = array();
+}
+
+proc _snake_check_powerups(@game) {
+	foreach(@key: @pu in @game['powerups']) {
+		if(!_snake_get_powerup_from(get_block_at(@pu['loc']))) {
+			set_block_at(@pu['loc'], '0:0', false);
+			array_remove(@game['powerups'], @key);
+		}
+	}
 }
 
 proc _snake_powerup(@player, @powerup, @game) {
@@ -288,7 +308,121 @@ proc _snake_ability(@player, @slot, @game) {
 					});
 				}
 			}
+		case 'nuke':
+			if(@snake['bot']) {
+				if(@snake['ability-count'][@slot]) {
+					@snake['ability-count'][@slot]--;
+					_snake_drop_nuke(@snake['loc'], @game);
+				}
+			} else {
+				@item = pinv(@player, @slot);
+				if(@item) {
+					@item['qty']--;
+					@inv = associative_array();
+					if(@item['qty']) {
+						@inv[@slot] = @item;
+					} else {
+						@inv[@slot] = null;
+					}
+					set_pinv(@player, @inv);
+					_snake_drop_nuke(@snake['loc'], @game);
+				}
+			}
 	}
+}
+
+proc _snake_drop_nuke(@loc, @game) {
+	// get center of region for targeting
+	@region = sk_regions_at(@loc)[1];
+	@coords = sk_region_info(@region, 'custom', 0)
+	@x = floor(@coords[0][0] - (@coords[0][0] - @coords[1][0]) / 2) + 0.5;
+	@y = floor(@coords[0][1] - (@coords[0][1] - @coords[1][1]) / 2) + 0.5;
+	@z = floor(@coords[0][2] - (@coords[0][2] - @coords[1][2]) / 2) + 0.5;
+	@target = array(@x, @y, @z, 'custom');
+	
+	// determine sides of blast plane (coord to side, direction from target to side, coord of side)
+	@sides = array(array(0, 1, 2), array(2, 1, 0), array(0, -1, 2), array(2, -1, 0));
+	if(@coords[0][0] == @coords[1][0]) {
+		@sides = array(array(2, 1, 1), array(1, 1, 2), array(2, -1, 1), array(1, -1, 2));
+	} else if(@coords[0][2] == @coords[1][2]) {
+		@sides = array(array(0, 1, 1), array(1, 1, 0), array(0, -1, 1), array(1, -1, 0));
+	}
+	
+	// get max radius of region
+	@maxradius = ceil(max(@coords[0][0] - @coords[1][0], @coords[0][1] - @coords[1][1], @coords[0][2] - @coords[1][2]) / 2);
+	
+	// create nuke marker
+	@loc = @loc[];
+	@loc[0] += 0.5;
+	@loc[1] -= 0.5;
+	@loc[2] += 0.5;
+	@marker = spawn_entity('ARMOR_STAND', 1, @loc)[0];
+	set_entity_spec(@marker, array('marker': true, 'visible': false, 'gravity': false, 'small': true));
+	set_mob_equipment(@marker, array('helmet': array('name': 'BEACON')));
+	
+	// now move it to the target location over time
+	play_sound(@loc, array('sound': 'ZOMBIE_UNFECT', 'volume': 4));
+	set_interval(50, closure(){
+		if(_distance(@loc, @target) > 0.3) {
+			@newLoc = location_shift(@loc, @target, 0.25);
+			@loc[0] = @newLoc[0];
+			@loc[1] = @newLoc[1];
+			@loc[2] = @newLoc[2];
+			set_entity_loc(@marker, @loc);
+		} else {
+			clear_task();
+			entity_remove(@marker);
+			
+			// trigger nuke
+			@state = array('radius': 1, 'side': 0);
+			play_sound(@target, array('sound': 'EXPLODE', 'pitch': 0.5, 'volume': 3));
+			set_interval(50, closure(){
+				@side = @state['side'];
+				@radius = @state['radius'];
+				
+				// set new wall
+				@coord = @sides[@side][0];
+				@dir = @sides[@side][1];
+				@loc = @target[];
+				@loc[@coord] += @radius * @dir;
+				if(@loc[@coord] > @coords[1][@coord]
+				&& @loc[@coord] < @coords[0][@coord] + 1) {
+					@coord = @sides[@side][2];
+					for(@i = 0 - @radius, @i <= @radius, @i++) {
+						@loc[@coord] = @target[@coord] + @i;
+						if(@loc[@coord] > @coords[1][@coord]
+						&& @loc[@coord] < @coords[0][@coord] + 1) {
+							@block = get_block_at(@loc);
+							if(@block != '0:0') {
+								set_block_at(@loc, 0, false);
+								if(_is_snake_tail(@block)) {
+									foreach(@player: @snake in @game['snakes']) {
+										if(@snake['loc'][0] == floor(@loc[0])
+										&& @snake['loc'][1] == floor(@loc[1])
+										&& @snake['loc'][2] == floor(@loc[2])) {
+											_snake_kill(@player, @game);
+											break();
+										}
+									}
+								}
+							}
+							play_effect(@loc, 'EXPLOSION_LARGE', array('radius': 48));
+						}
+					}
+				}
+				
+				// go to the new side
+				if(++@state['side'] > 3) {
+					@state['radius']++;
+					@state['side'] = 0;
+					if(@state['radius'] > @maxradius) {
+						clear_task();
+						_snake_check_powerups(@game);
+					}
+				}
+			});
+		}
+	});
 }
 
 proc _snake_drop_tnt(@loc, @dir) {

@@ -53,7 +53,7 @@ proc _snake_add(@player, @game) {
 	@headLoc = _relative(@startLoc, @dir);
 	@game['snakes'][@player] = array(
 		'blocks': array(@startLoc, @headLoc),
-		'ability-count': array(0, 0, 0, 0),
+		'ability-count': array(0, 0, 0, 0, 0),
 		'head': '',
 		'tail': '',
 		'color': color('white'),
