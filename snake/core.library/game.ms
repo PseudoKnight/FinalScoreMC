@@ -60,6 +60,8 @@ proc _snake_queue(@mode) {
         die(color('red').'Snake is still running.');
     }
 	
+	_snake_clean_surfaces(@game['arena'], @game['surfaces']);
+	
 	// Create color select menu
 	create_virtualchest(array(
 		'id': 'snake',
@@ -125,16 +127,20 @@ proc _snake_queue(@mode) {
 				if(array_contains(all_virtualchests(), 'snake') && !pviewing_virtualchest('snake')) {
 					unbind();
 					unbind('snake-invclick');
-					_snake_set_colors(@game);
-					del_virtualchest('snake');
-					_snake_countdown(@game);
+					queue_push(closure(){
+						_snake_set_colors(@game);
+						del_virtualchest('snake');
+						_snake_countdown(@game);
+					}, 'snake_cleanup');
 				}
 			});
 		}
 	} else {
-		_snake_set_colors(@game);
-		del_virtualchest('snake');
-		_snake_countdown(@game);
+		queue_push(closure(){
+			_snake_set_colors(@game);
+			del_virtualchest('snake');
+			_snake_countdown(@game);
+		}, 'snake_cleanup');
 	}
 }
 
@@ -150,7 +156,7 @@ proc _snake_countdown(@game) {
 		'Use '.color('green').'left and right mouse buttons'.color('reset').' to turn',
 		color('red').color('bold').'SNAKE',
 	);
-	@countdown = array(7);
+	@countdown = array(8);
 	set_interval(1000, closure(){
 		foreach(@p in array_keys(@game['snakes'])) {
 			if(!ponline(@p)) {
@@ -329,13 +335,12 @@ proc _snake_cleanup(@game) {
 	_snake_stop_song();
 	clear_task(@game['interval']);
 	del_virtualchest('snake');
-	_snake_clean_surfaces(@game['arena'], @game['surfaces']);
-	queue_push(closure(){
+	set_timeout(7000, closure(){
 		foreach(@player: @snake in @game['snakes']) {
 			_snake_remove(@player, @game);
 		}
 		export('snake', null);
 		remove_scoreboard('snake');
 		_remove_activity('snake');
-	}, 'snake_cleanup');
+	});
 }
