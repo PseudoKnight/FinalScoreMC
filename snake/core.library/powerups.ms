@@ -312,7 +312,7 @@ proc _snake_ability(@player, @slot, @game) {
 			if(@snake['bot']) {
 				if(@snake['ability-count'][@slot]) {
 					@snake['ability-count'][@slot]--;
-					_snake_drop_nuke(@snake['loc'], @game);
+					_snake_drop_nuke(@snake, @game);
 				}
 			} else {
 				@item = pinv(@player, @slot);
@@ -325,16 +325,16 @@ proc _snake_ability(@player, @slot, @game) {
 						@inv[@slot] = null;
 					}
 					set_pinv(@player, @inv);
-					_snake_drop_nuke(@snake['loc'], @game);
+					_snake_drop_nuke(@snake, @game);
 				}
 			}
 	}
 }
 
-proc _snake_drop_nuke(@loc, @game) {
+proc _snake_drop_nuke(@snake, @game) {
 	// get center of region for targeting
-	@region = sk_regions_at(@loc)[1];
-	@coords = sk_region_info(@region, 'custom', 0)
+	@region = @snake['region'];
+	@coords = sk_region_info(@region, 'custom', 0);
 	@x = floor(@coords[0][0] - (@coords[0][0] - @coords[1][0]) / 2) + 0.5;
 	@y = floor(@coords[0][1] - (@coords[0][1] - @coords[1][1]) / 2) + 0.5;
 	@z = floor(@coords[0][2] - (@coords[0][2] - @coords[1][2]) / 2) + 0.5;
@@ -352,7 +352,7 @@ proc _snake_drop_nuke(@loc, @game) {
 	@maxradius = ceil(max(@coords[0][0] - @coords[1][0], @coords[0][1] - @coords[1][1], @coords[0][2] - @coords[1][2]) / 2);
 	
 	// create nuke marker
-	@loc = @loc[];
+	@loc = @snake['loc'][];
 	@loc[0] += 0.5;
 	@loc[1] -= 0.5;
 	@loc[2] += 0.5;
@@ -397,9 +397,7 @@ proc _snake_drop_nuke(@loc, @game) {
 								set_block_at(@loc, 0, false);
 								if(_is_snake_tail(@block)) {
 									foreach(@player: @snake in @game['snakes']) {
-										if(@snake['loc'][0] == floor(@loc[0])
-										&& @snake['loc'][1] == floor(@loc[1])
-										&& @snake['loc'][2] == floor(@loc[2])) {
+										if(@snake['head'] == @block) {
 											_snake_kill(@player, @game);
 											break();
 										}

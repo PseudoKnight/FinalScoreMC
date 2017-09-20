@@ -228,7 +228,7 @@ proc _snake_bot_update(@bot, @game) {
 		} else if(@snake['target']['interest'] == 0) {
 			@snake['target'] = null;
 		}
-		@randAbility = rand(4);
+		@randAbility = rand(5);
 		if(@snake['ability-count'][@randAbility] > 0 && (@randAbility != 0 || @snake['boost'] == 0)) {
 			_snake_ability(@bot, @randAbility, @game);
 		}
