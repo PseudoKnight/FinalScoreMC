@@ -99,7 +99,7 @@
 			&& !array_contains(sk_region_owners(@from, pworld())['players'], puuid())) {
 				die(color('GOLD').'No permission.');
 			}
-			if(!reg_match('^[a-zA-Z0-9-_]{1,32}$', @to)[0]) {
+			if(!reg_match('^[a-zA-Z0-9-_]{1,32}$', @to)) {
 				die(color('GOLD').'You can only use alphanumeric characters and underscores/dashes.');
 			}
 			if(sk_region_exists(pworld(), @to)) {
