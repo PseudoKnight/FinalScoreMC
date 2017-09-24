@@ -476,7 +476,7 @@ proc _snake_launch_missile(@loc, @dir, @game) {
 					@missile['skip'] = false;
 				}
 			} else if(@block == '169:0') {
-				@dir = _snake_direction_of(@missile['loc'], '0:0', _snake_opposite_dir(@missile['dir']));
+				@dir = _snake_dir_of_surface(@missile['loc'], _snake_opposite_dir(@missile['dir']));
 				if(@dir) {
 					@missile['dir'] = @dir;
 					@missile['loc'] = _relative(@missile['loc'], @dir);
@@ -547,7 +547,7 @@ proc _snake_shoot_laser(@player, @loc, @dir, @range, @game) {
 			@blocks[] = @loc;
 		} else if(@block == '169:0' || @block == '152:0') {
 			@range--;
-			@newDir = _snake_direction_of(@loc, '0:0');
+			@newDir = _snake_dir_of_surface(@loc, _snake_opposite_dir(@dir));
 			if(@newDir) {
 				@dir = @newDir;
 			} else {

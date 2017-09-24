@@ -33,13 +33,24 @@ proc _snake_valid_location(@region, @padding = 0) {
 	return(null);
 }
 
-proc _snake_direction_of(@loc, @block, @not) {
+proc _snake_direction_of(@loc, @block) {
 	foreach(@dir in array('down', 'up', 'north', 'south', 'east', 'west')) {
-		if((!@not || @not != @dir) && get_block_at(_relative(@loc, @dir)) == @block) {
+		if(get_block_at(_relative(@loc, @dir)) == @block) {
 			return(@dir);
 		}
 	}
 	return(null);
+}
+
+proc _snake_dir_of_surface(@loc, @notThisDir) {
+	foreach(@dir in array('down', 'up', 'north', 'south', 'east', 'west')) {
+		if(@dir != @notThisDir) {
+			@loc = _relative(@loc, @dir);
+			if(array_size(sk_regions_at(@loc)) > 1) {
+				return(@dir);
+			}
+		}
+	}
 }
 
 proc _snake_safe_dir(@snake) {
@@ -48,10 +59,12 @@ proc _snake_safe_dir(@snake) {
 		return(@snake['last-dir']);
 	}
 	@turn = _snake_turn(@snake['top'], @snake['dir']);
-	foreach(@t in @turn) {
-		@loc = _relative(@snake['loc'], @t);
-		if(@t != @snake['last-dir'] && _snake_safe_block(get_block_at(@loc), @loc)) {
-			return(@t);
+	if(is_array(@turn)) {
+		foreach(@t in @turn) {
+			@loc = _relative(@snake['loc'], @t);
+			if(@t != @snake['last-dir'] && _snake_safe_block(get_block_at(@loc), @loc)) {
+				return(@t);
+			}
 		}
 	}
 	return(@snake['dir']);

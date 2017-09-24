@@ -224,8 +224,9 @@ proc _snake_set_top(@snake) {
 
 proc _snake_update(@player, @game) {
 	@snake = @game['snakes'][@player];
+	
+	// Boost
 	@snake['sleep'] = if(@game['botsOnly'], if(@snake['boost'], 1, 2), max(1, 5 - @snake['boost']));
-	set_block_at(@snake['loc'], @snake['tail'], false);
 	if(@snake['boost']) {
 		@loc = @snake['loc'][];
 		@loc[0] += 0.5;
@@ -233,9 +234,13 @@ proc _snake_update(@player, @game) {
 		@loc[2] += 0.5;
 		play_effect(@loc, 'HAPPY_VILLAGER', associative_array('particleCount': 8, 'offsetX': 0.6, 'offsetY': 0.6, 'offsetZ': 0.6, 'radius': 40));
 	}
+	
+	set_block_at(@snake['loc'], @snake['tail'], false);
 	@snake['loc'] = _relative(@snake['loc'], @snake['dir']);
 	@block = get_block_at(@snake['loc']);
 	@powerup = _snake_get_powerup_from(split(':', @block)[0]);
+	
+	// Air or powerup, move through
 	if(@block == '0:0' || (@powerup && _snake_remove_powerup(@snake['loc'], @game))) {
 		@snake['blocks'][] = @snake['loc'][];
 		set_block_at(@snake['loc'], @snake['head'], false);
@@ -244,22 +249,15 @@ proc _snake_update(@player, @game) {
 			@snake['target'] = null;
 		}
 		return(true);
+		
+	// Sea lantern, check for adjacent surface to move to
 	} else if(@block == '169:0') {
-		@dir = '';
-		@loc = null;
-		foreach(@d in array('down', 'up', 'north', 'south', 'east', 'west')) {
-			if(@d != @snake['dir']) {
-				@loc = _relative(@snake['loc'], @d);
-				@block = get_block_at(@loc);
-				if(@block == '0:0' || (@powerup = _snake_get_powerup_from(@block))) {
-					@dir = @d;
-					break();
-				}
-			}
-		}
+		@dir = _snake_dir_of_surface(@snake['loc'], _snake_opposite_dir(@snake['dir']));
 		if(!@dir) {
 			return(false);
 		}
+		@loc = _relative(@snake['loc'], @dir);
+		@powerup = _snake_get_powerup_from(get_block_at(@loc));
 		if(@powerup && _snake_remove_powerup(@loc, @game) && _snake_powerup(@player, @powerup, @game)) {
 			@snake['target'] = null;
 		}
@@ -272,12 +270,16 @@ proc _snake_update(@player, @game) {
 		@snake['region'] = sk_regions_at(@snake['loc'])[1];
 		_snake_set_top(@snake);
 		return(true);
-	} else if(@block == '95:14' && @snake['laser-immune']) {
+		
+	// Laser, move through if snake is also shooting laser
+	} else if(@block == '95:14' && @snake['laser']) {
 		@snake['blocks'][] = @snake['loc'][];
 		set_block_at(@snake['loc'], @snake['head'], false);
 		@snake['click'] = false;
 		return(true);
 	}
+	
+	// Hit non-traversable block, dead
 	return(false);
 }
 
