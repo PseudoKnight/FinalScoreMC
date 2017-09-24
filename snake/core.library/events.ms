@@ -53,6 +53,12 @@ proc _snake_bind_events(@game) {
 			cancel();
 		}
 	}
+	
+	bind(item_drop, array('id': 'snake-drop'), null, @event, @game) {
+		if(array_index_exists(@game['snakes'], player())) {
+			cancel();
+		}
+	}
 }
 
 proc _snake_unbind_events() {
@@ -61,4 +67,5 @@ proc _snake_unbind_events() {
 	unbind('snake-explode');
 	unbind('snake-inventory');
 	unbind('snake-swap');
+	unbind('snake-drop');
 }

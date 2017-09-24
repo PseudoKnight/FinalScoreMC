@@ -150,6 +150,9 @@ proc _snake_set_colors(@game) {
 					break();
 				}
 			}
+		} else {
+			set_block_at(@snake['loc'], @snake['head'], false);
+			set_block_at(@snake['blocks'][0], @snake['tail'], false);
 		}
 	}
 }
@@ -165,32 +168,17 @@ proc _snake_remove(@player, @game) {
 
 proc _snake_kill(@player, @game) {
 	@snake = @game['snakes'][@player];
-	for(@i = array_size(@snake['blocks']) - 1, @i >= 0, @i -= 3) {
-		queue_push(closure(){
-			@n = 0;
-			while(@n < 3) {
-				try {
-					@block = @snake['blocks'][@i - @n];
-					@blockType = get_block_at(@block);
-					if(@blockType == @snake['tail']) {
-						if(@game['endless']) {
-							set_block_at(@block, 0, false);
-						} else {
-							set_block_at(@block, @snake['head'], false);
-						}
-						play_effect(@block, 'PARTICLE_SMOKE', associative_array('particleCount': 8, 'speed': 0, 'offsetX': 1, 'offsetY': 1, 'offsetZ': 1, 'radius': 40));
-					} else if(@game['endless'] && @blockType == @snake['head']) {
-						set_block_at(@block, 0, false);
-					}
-					@n++;
-				} catch(Exception @ex) {
-					break();
-				}
-			}
-		}, @player);
+	if(!@snake['alive']) {
+		return();
 	}
 	@snake['alive'] = false;
 	if(@game['endless']) {
+		@block = @snake['blocks'][-1];
+		@blockType = get_block_at(@block);
+		if(@blockType == @snake['head']) {
+			set_block_at(@block, @snake['tail'], false);
+			play_effect(@block, 'PARTICLE_SMOKE', associative_array('particleCount': 8, 'speed': 0, 'offsetX': 1, 'offsetY': 1, 'offsetZ': 1, 'radius': 40));
+		}
 		foreach(@p: @s in @game['snakes']) {
 			if(@s['alive']) {
 				set_pscore('alive', @p, get_pscore('alive', @p, 'snake') + 1, 'snake');
@@ -208,6 +196,24 @@ proc _snake_kill(@player, @game) {
 		}
 	} else {
 		set_pscore('alive', @player, 0, 'snake');
+		for(@i = array_size(@snake['blocks']) - 1, @i >= 0, @i -= 3) {
+			queue_push(closure(){
+				@n = 0;
+				while(@n < 3) {
+					try {
+						@block = @snake['blocks'][@i - @n];
+						@blockType = get_block_at(@block);
+						if(@blockType == @snake['tail']) {
+							set_block_at(@block, @snake['head'], false);
+							play_effect(@block, 'PARTICLE_SMOKE', associative_array('particleCount': 8, 'speed': 0, 'offsetX': 1, 'offsetY': 1, 'offsetZ': 1, 'radius': 40));
+						}
+						@n++;
+					} catch(Exception @ex) {
+						break();
+					}
+				}
+			}, @player);
+		}
 	}
 	play_sound(@snake['loc'], associative_array('sound': 'ZOMBIE_DEATH', 'pitch': 2, 'volume': 4));
 }
