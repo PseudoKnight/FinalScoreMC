@@ -143,8 +143,8 @@ proc _generate_dungeon(@region, @world, @genType, @seed) {
 						);
 
 						// Mask room
-                        for(@r2 = @r, @r2 < @roomLength + @r, @r2++) {
-                            for(@c2 = @c, @c2 < @roomWidth + @c, @c2++) {
+						for(@r2 = @r, @r2 < @roomLength + @r, @r2++) {
+							for(@c2 = @c, @c2 < @roomWidth + @c, @c2++) {
 								@roomMap[@c2][@r2] = array_size(@rooms) - 1;
 							}
 						}
