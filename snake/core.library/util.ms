@@ -45,8 +45,8 @@ proc _snake_direction_of(@loc, @block) {
 proc _snake_dir_of_surface(@loc, @notThisDir) {
 	foreach(@dir in array('down', 'up', 'north', 'south', 'east', 'west')) {
 		if(@dir != @notThisDir) {
-			@loc = _relative(@loc, @dir);
-			if(array_size(sk_regions_at(@loc)) > 1) {
+			@l = _relative(@loc, @dir);
+			if(array_size(sk_regions_at(@l)) > 1) {
 				return(@dir);
 			}
 		}

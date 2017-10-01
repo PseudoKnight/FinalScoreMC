@@ -375,6 +375,7 @@ proc _snake_drop_nuke(@snake, @game) {
 			
 			// trigger nuke
 			@state = array('radius': 1, 'side': 0);
+			set_block_at(@target, 51, false);
 			play_sound(@target, array('sound': 'EXPLODE', 'pitch': 0.5, 'volume': 3));
 			set_interval(50, closure(){
 				@side = @state['side'];
@@ -394,7 +395,7 @@ proc _snake_drop_nuke(@snake, @game) {
 						&& @loc[@coord] < @coords[0][@coord] + 1) {
 							@block = get_block_at(@loc);
 							if(@block != '0:0') {
-								set_block_at(@loc, 0, false);
+								set_block_at(@loc, 51, false);
 								if(_is_snake_tail(@block)) {
 									foreach(@player: @snake in @game['snakes']) {
 										if(@snake['head'] == @block) {
