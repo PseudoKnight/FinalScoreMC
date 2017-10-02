@@ -7,7 +7,9 @@ case 'load':
 		set_pflight(@e['player'], false);
 		proc _flap(@player) {
 			queue_push(closure(){
-				if(pexp(@player) > 0 && !pinfo(@player, 11)) {
+				if(pinfo(@player, 5) == 0) {
+					clear_task();
+				} else if(pexp(@player) > 0 && !pinfo(@player, 11)) {
 					@facing = pfacing(@player);
 					@facing[0] = @facing[0] + 90;
 					@facing[1] = 0 - @facing[1];

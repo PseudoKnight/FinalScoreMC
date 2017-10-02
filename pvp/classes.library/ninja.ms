@@ -2,6 +2,9 @@ switch(@action) {
 case 'load':
 	set_pflight(@player, true);
 	bind(player_toggle_flight, array('id': @player.'doublejump'), array('flying': true, 'player': @player), @e) {
+		if(pinfo(player(), 5) == 0) {
+			die();
+		}
 		cancel();
 		@vel = entity_velocity(puuid());
 		set_pvelocity(@vel['x'] * 1.9, 0.9, @vel['z'] * 1.9);
