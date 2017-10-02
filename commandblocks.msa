@@ -385,7 +385,7 @@
 <<<
 
 /tp $player $x $y $z = >>>
-	if(@cmdblk = get_command_block() && ponline($player)) {
+	if((@cmdblk = get_command_block()) && ponline($player)) {
 		if(@cmdblk['world'] != pworld($player)) {
 			die('This commandblock cannot teleport players in other worlds.');
 		}
