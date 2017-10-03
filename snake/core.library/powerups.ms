@@ -534,20 +534,19 @@ proc _snake_launch_missile(@loc, @dir, @game) {
 	set_interval(50, @move);
 }
 
-proc _snake_shoot_laser(@player, @loc, @dir, @range, @game) {
-	@game['snakes'][@player]['laser-immune'] = true;
+proc _snake_shoot_laser(@player, @loc, @dir, @seconds, @game) {
+	@game['snakes'][@player]['laser'] = time() + (@seconds * 500);
 	@originalDir = @dir;
 	play_named_sound(@loc, associative_array('sound': 'entity.guardian.death', 'volume': 4, 'pitch': 2));
 	play_named_sound(@loc, associative_array('sound': 'entity.guardian.attack', 'volume': 4));
 	@blocks = array();
-	while(@range > 0){
+	while(true){
 		@loc = _relative(@loc, @dir);
 		@block = get_block_at(@loc);
 		if(@block == '0:0') {
 			set_block_at(@loc, '95:14', false);
 			@blocks[] = @loc;
 		} else if(@block == '169:0' || @block == '152:0') {
-			@range--;
 			@newDir = _snake_dir_of_surface(@loc, _snake_opposite_dir(@dir));
 			if(@newDir) {
 				@dir = @newDir;
@@ -572,7 +571,6 @@ proc _snake_shoot_laser(@player, @loc, @dir, @range, @game) {
 			break();
 		}
 	}
-	@time = time();
 	@loc[0] += 0.5;
 	@loc[1] += 0.5;
 	@loc[2] += 0.5;
@@ -582,8 +580,8 @@ proc _snake_shoot_laser(@player, @loc, @dir, @range, @game) {
 			if(!array_index_exists(@game['snakes'], @player)
 			|| !@game['snakes'][@player]['alive']
 			|| @game['snakes'][@player]['dir'] != @originalDir
-			|| time() > @time + 3000) {
-				@game['snakes'][@player]['laser-immune'] = false;
+			|| time() > @game['snakes'][@player]['laser']) {
+				@game['snakes'][@player]['laser'] = 0;
 				foreach(@loc in @blocks) {
 					if(get_block_at(@loc) == '95:14') {
 						set_block_at(@loc, 0, false);

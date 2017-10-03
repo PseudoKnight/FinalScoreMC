@@ -14,7 +14,7 @@
 	'region': the current worldguard region the snake is in
 	'bot': the name of the bot, if a bot
 	'target': the bot's current target location array
-	'laser-immune': whether or not a snake can pass through a laser (set to true when firing a laser)
+	'laser': timestamp when laser will stop firing, 0 if not firing
 	'last-dir': cheap checks so bots can avoid looping in on themselves
 	'sleep': how many ticks to sleep until updating
 	'boost': boost speed multiplier
@@ -64,7 +64,7 @@ proc _snake_add(@player, @game) {
 		'region': @region,
 		'bot': '',
 		'target': null,
-		'laser-immune': false,
+		'laser': 0,
 		'last-dir': '',
 		'sleep': 5,
 		'boost': 0,
