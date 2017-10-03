@@ -128,7 +128,7 @@
 	if(!is_integral($level)) {
 		die('Enchantment level must be an integer.');
 	}
-	@level = clamp(integer($level), 1, 99);
+	@level = integer(clamp($level, 1, 99));
 	if(array_index_exists(@enchants, to_lower($type))) {
 		enchant_inv_unsafe(null, @enchants[to_lower($type)], @level);
 	} else {
