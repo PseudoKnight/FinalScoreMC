@@ -207,10 +207,10 @@ register_command('cake', array(
 					if(!@old) {
 						die(color('gold').'No cake prize found.');
 					}
-					@new = @args[0];
-				} else if(array_size(@args) == 3) {
-					@old = @args[0];
 					@new = @args[1];
+				} else if(array_size(@args) == 3) {
+					@old = @args[1];
+					@new = @args[2];
 					if(!array_index_exists(@cakes, @old)) {
 						die(color('gold').'No cake by that ID found.');
 					}
