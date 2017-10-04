@@ -74,7 +74,7 @@ register_command('timer', array(
 							set_pexp(@player, min(99, @percent));
 						}
 		
-						if(@time + 5 > @ptime && @time < @ptime + 0.5) {
+						if(@time + 5 > @ptime && @time <= @ptime + 0.5) {
 							if(@time == round(@ptime)) {
 								play_sound(@ploc, array('sound': 'VILLAGER_NO'), @player);
 							} else {
