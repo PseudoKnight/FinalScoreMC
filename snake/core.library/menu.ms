@@ -7,6 +7,13 @@ proc _snake_menu() {
 			'display': color('red').color('bold').'ELIMINATION MODE',
 			'lore': color('white').'Be the last snake slithering.',
 		)),
+		'2': array('name': 'DIAMOND_SWORD', 'meta': array(
+			'display': color('aqua').color('bold').'VERSUS MODE',
+			'lore': array(
+				color('white').'Like elimination, but with no bots.',
+				color('white').'Be the last snake slithering.',
+			)
+		)),
 		'3': array('name': 'WATCH', 'meta': array(
 			'display': color('yellow').color('bold').'ENDLESS MODE',
 			'lore': array(
@@ -23,11 +30,12 @@ proc _snake_menu() {
 				close_pinv();
 				try {
 					include('game.ms');
-					if(@event['slot'] == 1) {
-						_snake_queue('standard');
-					} else if(@event['slot'] == 3) {
-						_snake_queue('endless');
-					}
+					@modes = array(
+						1: 'elimination',
+						2: 'versus',
+						3: 'endless',
+					);
+					_snake_queue(array_get(@modes, @event['slot'], 'secret'));
 				} catch(Exception @ex) {
 					console(@ex['classType'].': '.@ex['message'], false);
 					foreach(@trace in @ex['stackTrace']) {

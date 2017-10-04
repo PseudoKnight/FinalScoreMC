@@ -32,7 +32,7 @@ proc _snake_queue(@mode) {
 	@game['botsOnly'] = false;
 	@game['missiles'] = associative_array();
 	@game['tnt'] = array();
-	@game['endless'] = (@mode == 'endless');
+	@game['mode'] = @mode;
 	export('snake', @game);
 
 	// Get arena
@@ -90,7 +90,7 @@ proc _snake_queue(@mode) {
 			break();
 		}
 	}
-	if(@game['endless'] && array_size(@game['snakes']) == 0) {
+	if(@game['mode'] == 'endless' && array_size(@game['snakes']) == 0) {
 		del_virtualchest('snake');
 		remove_scoreboard('snake');
 		export('snake', null);
@@ -98,11 +98,13 @@ proc _snake_queue(@mode) {
 	}
 
 	// Add bots to fill up slots
-	@bots = _snake_bots();
-	while(array_size(@game['snakes']) < @game['numPlayers'] && @bots) {
-		@index = array_rand(@bots)[0];
-		_snake_add(@bots[@index], @game);
-		array_remove(@bots, @index);
+	if(@game['mode'] != 'versus') {
+		@bots = _snake_bots();
+		while(array_size(@game['snakes']) < @game['numPlayers'] && @bots) {
+			@index = array_rand(@bots)[0];
+			_snake_add(@bots[@index], @game);
+			array_remove(@bots, @index);
+		}
 	}
 
 	// Optionally open color select menu
@@ -154,7 +156,7 @@ proc _snake_countdown(@game) {
 		'Use '.color('green').'left and right mouse buttons'.color('reset').' to turn',
 		'Use '.color('green').'left and right mouse buttons'.color('reset').' to turn',
 		'Use '.color('green').'left and right mouse buttons'.color('reset').' to turn',
-		color('red').color('bold').'SNAKE',
+		color('red').color('bold').'SNAKE: '.to_upper(@game['mode']),
 	);
 	@countdown = array(8);
 	set_interval(1000, closure(){
@@ -220,7 +222,7 @@ proc _snake_start_task(@game) {
 		}
 		if(@playersAlive == 0) {
 			@game['botsOnly'] = true;
-			if(@game['endless']) {
+			if(@game['mode'] == 'endless') {
 				_snake_end(null, @game);
 			}
 		}
@@ -231,7 +233,7 @@ proc _snake_start_task(@game) {
 }
 
 proc _snake_end(@winner, @game) {
-	if(@game['endless']) {
+	if(@game['mode'] == 'endless') {
 		// Sort player scores
 		@scores = array();
 		foreach(@p: @snake in @game['snakes']) {

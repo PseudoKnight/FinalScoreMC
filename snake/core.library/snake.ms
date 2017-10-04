@@ -172,7 +172,7 @@ proc _snake_kill(@player, @game) {
 		return();
 	}
 	@snake['alive'] = false;
-	if(@game['endless']) {
+	if(@game['mode'] == 'endless') {
 		@block = @snake['blocks'][-1];
 		@blockType = get_block_at(@block);
 		if(@blockType == @snake['head']) {
