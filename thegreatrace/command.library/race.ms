@@ -83,10 +83,10 @@ register_command('race', array(
 					if(@dist > 32) {
 						array_remove(@players, @index);
 					} else if(@timer[0]) {
-						title_msg(@p, @timer[0], 'The Great Race', 0, 40, 0);
+						title(@p, @timer[0], 'The Great Race', 0, 40, 0);
 						play_sound(@l, array('sound': 'NOTE_PLING'), @p);
 					} else {
-						title_msg(@p, 'GO!', 'The Great Race', 0, 40, 20);
+						title(@p, 'GO!', 'The Great Race', 0, 40, 20);
 						play_sound(@l, array('sound': 'FIREWORK_BLAST2'), @p);
 						set_compass_target(@p, @target);
 						tmsg(@p, 'Target Location: '.@target['x'].' / '.@target['y'].' / '.@target['z']);

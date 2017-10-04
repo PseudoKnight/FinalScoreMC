@@ -139,7 +139,7 @@ proc _snake_powerup(@player, @powerup, @game) {
 			);
 		}
 		set_pinv(@player, @inv);
-		title_msg(@player, '', color('dark_gray').'+'.@powerup, 2, 0, 40);
+		title(@player, '', color('dark_gray').'+'.@powerup, 2, 0, 40);
 	}
 	play_sound(@snake['loc'], associative_array('sound': 'ENDERMAN_TELEPORT', 'pitch': 2, 'volume': 4));
 	return(true);

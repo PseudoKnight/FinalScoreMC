@@ -34,6 +34,6 @@ register_command('hat', array(
 			'speed': 0)
 		);
 		@messages = array('Fancy!', 'Stylin\'!', 'Groovy!', 'Lookin\' good!', 'Tasteful!', 'Awesome!', 'Rad!', 'Cool!');
-		title_msg(null, color(6).array_rand(@messages, 1, false)[0], 10, 40, 10);
+		title(null, color(6).array_rand(@messages, 1, false)[0], 10, 40, 10);
 	}
 ));

@@ -23,7 +23,7 @@ proc _level_add_player(@player, @level) {
 	}
 	set_plevel(@player, @levels);
 	set_pexp(@player, 0);
-	title_msg(@player, @level['config']['title'], 'by '.@level['config']['author']
+	title(@player, @level['config']['title'], 'by '.@level['config']['author']
 		.if(array_index_exists(@level['config'], 'subtitle'), '('.@level['config']['subtitle'].')', ''), 20, 40, 20);
 }
 

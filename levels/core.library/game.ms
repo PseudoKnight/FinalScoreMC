@@ -185,7 +185,7 @@ proc _level_start(@level) {
 			} else if(@level['title']) {
 				foreach(@p in @level['players']) {
 					if(ponline(@p)) {
-						title_msg(@p, @level['title'], null, 20, 40, 20);
+						title(@p, @level['title'], null, 20, 40, 20);
 					}
 				}
 				@sleep[0] = 3;
@@ -194,7 +194,7 @@ proc _level_start(@level) {
 			} else if(@level['subtitle']) {
 				foreach(@i: @p in @level['players']) {
 					if(ponline(@p)) {
-						title_msg(@p, '', @level['subtitle'], 20, 40, 20);
+						title(@p, '', @level['subtitle'], 20, 40, 20);
 					}
 				}
 				@sleep[0] = 3;
@@ -309,7 +309,7 @@ proc _level_end(@level, @win) {
 	foreach(@p in @level['players']) {
 		if(ponline(@p)) {
 			if(@win) {
-				title_msg(@p, 'You win!', '');
+				title(@p, 'You win!', '');
 			}
 			stop_named_sound(@p, @level['music'], 'RECORDS');
 			_level_remove_player(@p, @level);
@@ -318,7 +318,7 @@ proc _level_end(@level, @win) {
 	foreach(@p in @level['spectators']) {
 		if(ponline(@p)) {
 			if(@win) {
-				title_msg(@p, 'They win!', '');
+				title(@p, 'They win!', '');
 			}
 			stop_named_sound(@p, @level['music'], 'RECORDS');
 			_level_remove_spectator(@p, @level);

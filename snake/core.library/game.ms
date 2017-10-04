@@ -163,9 +163,9 @@ proc _snake_countdown(@game) {
 				continue();
 			}
 			if(@countdown[0]) {
-				title_msg(@p, @countdown[0], array_get(@help, @countdown[0], ''), 0, 25, 0);
+				title(@p, @countdown[0], array_get(@help, @countdown[0], ''), 0, 25, 0);
 			} else {
-				title_msg(@p, '', color('green').color('italic').'Go snake, go!', 0, 20, 20);
+				title(@p, '', color('green').color('italic').'Go snake, go!', 0, 20, 20);
 			}
 			set_pheld_slot(@p, 8);
 		}
@@ -316,7 +316,7 @@ proc _snake_end(@winner, @game) {
 			}
 			foreach(@player in array_keys(@game['snakes'])) {
 				if(ponline(@player)) {
-					title_msg(@player, @title, @subtitle, 40, 80, 40);
+					title(@player, @title, @subtitle, 40, 80, 40);
 				}
 			}
 		}
@@ -325,7 +325,7 @@ proc _snake_end(@winner, @game) {
 		@title = @game['snakes'][@winner]['color'].@winner.' wins!';
 		foreach(@player in array_keys(@game['snakes'])) {
 			if(ponline(@player)) {
-				title_msg(@player, @title, '', 40, 80, 40);
+				title(@player, @title, '', 40, 80, 40);
 			}
 		}
 	}

@@ -49,7 +49,7 @@ register_command('charades', array(
 		foreach(@p in @players) {
 			set_pscore('score', @p, 0, 'charades');
 			team_add_player('guessers', @p, 'charades');
-			title_msg(@p, 'Charades', to_upper(@category), 20, 60, 40);
+			title(@p, 'Charades', to_upper(@category), 20, 60, 40);
 			set_ploc(@p, @spawn);
 			set_pmode(@p, 'SPECTATOR');
 			set_pscoreboard(@p, 'charades');

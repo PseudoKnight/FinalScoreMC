@@ -83,7 +83,7 @@ register_command('pvp', array(
 				if(extension_exists('CHNaughty')) {
 					foreach(@p in array_merge(array_keys(@pvp['players']), @pvp['spectators'])) {
 						try {
-							title_msg(@p, 'Added '.@arg.' minutes', null, 20, 20, 20);
+							title(@p, 'Added '.@arg.' minutes', null, 20, 20, 20);
 						} catch(PlayerOfflineException @ex) {
 							// we'll remove them elsewhere
 						}

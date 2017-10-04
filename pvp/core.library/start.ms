@@ -368,7 +368,7 @@ proc _pvp_start(@pvp, @id){
 				if(extension_exists('CHNaughty')) {
 					foreach(@p in array_keys(@pvp['players'])) {
 						try {
-							title_msg(@p, color('yellow').@timeleft[0], null, 0, @timeleft[0] * 20, 20);
+							title(@p, color('yellow').@timeleft[0], null, 0, @timeleft[0] * 20, 20);
 						} catch(PlayerOfflineException @ex) {
 							// they quit during the countdown.
 							// performance anxiety.
@@ -402,7 +402,7 @@ proc _pvp_start(@pvp, @id){
 				if(extension_exists('CHNaughty')) {
 					foreach(@p in array_keys(@pvp['players'])) {
 						try {
-							title_msg(@p, null, @title, 20, 60, 20);
+							title(@p, null, @title, 20, 60, 20);
 						} catch(PlayerOfflineException @ex) {
 							// ignore them until later
 						}
@@ -413,7 +413,7 @@ proc _pvp_start(@pvp, @id){
 			if(extension_exists('CHNaughty')) {
 				foreach(@p in array_keys(@pvp['players'])) {
 					try {
-						title_msg(@p, color('green').'GO!', null, 0, 0, 20);
+						title(@p, color('green').'GO!', null, 0, 0, 20);
 					} catch(PlayerOfflineException @ex) {
 						// tease.
 					}
