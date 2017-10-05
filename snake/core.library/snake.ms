@@ -10,7 +10,7 @@
 			  order is back of tail to head. This is used for removing blocks.
 	'ability-count': the current ammo for each ability
 	'alive': whether the snake is active or dead
-	'click': set to true if an action is performed, set to false on update
+	'turned': set to true if an action is performed, set to false on update
 	'region': the current worldguard region the snake is in
 	'bot': the name of the bot, if a bot
 	'target': the bot's current target location array
@@ -61,7 +61,7 @@ proc _snake_add(@player, @game) {
 		'alive': true,
 		'loc': @headLoc,
 		'dir': @dir,
-		'click': false,
+		'turned': false,
 		'region': @region,
 		'bot': '',
 		'target': null,
@@ -278,7 +278,7 @@ proc _snake_move(@player, @game) {
 	} else if(@block == '95:14' && @snake['laser']) {
 		@snake['blocks'][] = @snake['loc'][];
 		set_block_at(@snake['loc'], @snake['head'], false);
-		@snake['click'] = false;
+		@snake['turned'] = false;
 		return(true);
 	}
 	

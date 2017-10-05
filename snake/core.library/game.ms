@@ -209,7 +209,7 @@ proc _snake_start_task(@game) {
 						if(@snake['laser']) {
 							_snake_update_laser(@player, @game);
 						}
-						@snake['click'] = false;
+						@snake['turned'] = false;
 						@alive++;
 						@active = @player;
 					} else {

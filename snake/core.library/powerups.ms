@@ -593,7 +593,7 @@ proc _snake_update_laser(@player, @game) {
 		'offsetZ': 0.5,
 		'radius': 40
 	));
-	if(@snake['click']) {
+	if(@snake['turned']) {
 		_snake_clear_laser(@player, @game);
 		_snake_shoot_laser(@player, @snake['loc'], @snake['dir'], @game);
 	} else if(time() > @snake['laser']) {

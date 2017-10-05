@@ -55,6 +55,8 @@ proc _snake_bot_update(@bot, @game) {
 			@dir = _snake_safe_dir(@snake);
 			if(@dir == @snake['dir']) {
 				_snake_ability(@bot, 1, @game);
+			} else {
+				@snake['turned'] = true;
 			}
 			@snake['last-dir'] = @snake['dir'];
 			@snake['dir'] = @dir;
@@ -101,6 +103,8 @@ proc _snake_bot_update(@bot, @game) {
 			@dir = _snake_safe_dir(@snake);
 			if(@dir == @snake['dir']) {
 				_snake_ability(@bot, 1, @game);
+			} else {
+				@snake['turned'] = true;
 			}
 			@snake['last-dir'] = @snake['dir'];
 			@snake['dir'] = @dir;
@@ -159,6 +163,8 @@ proc _snake_bot_update(@bot, @game) {
 			@dir = _snake_safe_dir(@snake);
 			if(@dir == @snake['dir']) {
 				_snake_ability(@bot, 1, @game);
+			} else {
+				@snake['turned'] = true;
 			}
 			@snake['last-dir'] = @snake['dir'];
 			@snake['dir'] = @dir;
@@ -219,6 +225,7 @@ proc _snake_bot_update(@bot, @game) {
 			@dir = _snake_safe_dir(@snake);
 			@snake['last-dir'] = @snake['dir'];
 			@snake['dir'] = @dir;
+			@snake['turned'] = true;
 		}
 	case 'NinjaBot':
 		if(!@snake['target']) {
@@ -255,6 +262,7 @@ proc _snake_bot_update(@bot, @game) {
 			@dir = _snake_safe_dir(@snake);
 			@snake['last-dir'] = @snake['dir'];
 			@snake['dir'] = @dir;
+			@snake['turned'] = true;
 		}
 	}
 }
@@ -325,6 +333,7 @@ proc _snake_bot_change_dir(@snake, @loc1, @loc2) {
 		&& _snake_safe_block(get_block_at(_relative(@loc1, @dir)))) {
 			@snake['last-dir'] = @snake['dir'];
 			@snake['dir'] = @dir;
+			@snake['turned'] = true;
 			return(true);
 		}
 	}

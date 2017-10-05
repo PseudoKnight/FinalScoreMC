@@ -2,10 +2,10 @@ proc _snake_bind_events(@game) {
 	bind(player_interact, array('id': 'snake-interact'), null, @event, @game) {
 		if(array_index_exists(@game['snakes'], player())) {
 			@snake = @game['snakes'][player()];
-			if(!@snake['click']) {
+			if(!@snake['turned']) {
 				@turn = _snake_turn(@snake['top'], @snake['dir']);
 				@snake['dir'] = array_get(@turn, if(@event['button'] == 'right', 1, 0));
-				@snake['click'] = true;
+				@snake['turned'] = true;
 			}
 		}
 	}
