@@ -173,6 +173,9 @@ proc _snake_kill(@player, @game) {
 	if(!@snake['alive']) {
 		return();
 	}
+	if(@snake['laser']) {
+		_snake_clear_laser(@player, @game)
+	}
 	@snake['alive'] = false;
 	if(@game['mode'] == 'endless') {
 		@block = @snake['blocks'][-1];

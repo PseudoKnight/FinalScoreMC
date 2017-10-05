@@ -92,7 +92,7 @@ proc _snake_queue(@mode) {
 		}
 	}
 	if(@game['mode'] == 'endless' && array_size(@game['snakes']) == 0
-	|| @game['mode'] == 'versus' && array_size(@game['snakes'] < 2)) {
+	|| @game['mode'] == 'versus' && array_size(@game['snakes']) < 2) {
 		del_virtualchest('snake');
 		remove_scoreboard('snake');
 		export('snake', null);
@@ -214,9 +214,6 @@ proc _snake_start_task(@game) {
 						@alive++;
 						@active = @player;
 					} else {
-						if(@snake['laser']) {
-							_snake_clear_laser(@player, @game)
-						}
 						_snake_kill(@player, @game);
 					}
 				} else {

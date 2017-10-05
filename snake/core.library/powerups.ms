@@ -229,7 +229,7 @@ proc _snake_ability(@player, @slot, @game) {
 
 		case 'laser':
 			if(@snake['bot']) {
-				if(@snake['ability-count'][@slot]) {
+				if(!@snake['laser'] && @snake['ability-count'][@slot]) {
 					@count = @snake['ability-count'][@slot];
 					@snake['laser'] = time() + (@count * 500);
 					play_named_sound(@snake['loc'], array('sound': 'entity.guardian.death', 'volume': 4, 'pitch': 2));
@@ -240,7 +240,7 @@ proc _snake_ability(@player, @slot, @game) {
 						@snake['ability-count'][@slot] += @count;
 					});
 				}
-			} else {
+			} else if(!@snake['laser']) {
 				@item = pinv(@player, @slot);
 				@world = pworld(@player);
 				if(@item) {
@@ -601,7 +601,6 @@ proc _snake_update_laser(@player, @game) {
 	} else if(time() > @snake['laser']) {
 		_snake_clear_laser(@player, @game);
 		@snake['laser'] = 0;
-		@snake['laser-blocks'] = null;
 	}
 }
 
@@ -612,4 +611,5 @@ proc _snake_clear_laser(@player, @game) {
 			set_block_at(@l, 0, false);
 		}
 	}
+	@snake['laser-blocks'] = null;
 }
