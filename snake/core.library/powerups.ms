@@ -232,6 +232,8 @@ proc _snake_ability(@player, @slot, @game) {
 				if(@snake['ability-count'][@slot]) {
 					@count = @snake['ability-count'][@slot];
 					@snake['laser'] = time() + (@count * 500);
+					play_named_sound(@loc, array('sound': 'entity.guardian.death', 'volume': 4, 'pitch': 2));
+					play_named_sound(@loc, array('sound': 'entity.guardian.attack', 'volume': 4));
 					_snake_shoot_laser(@player, @snake['loc'][], @snake['dir'], @game);
 					@snake['ability-count'][@slot] = 0;
 					set_timeout(7000, closure(){
@@ -247,6 +249,8 @@ proc _snake_ability(@player, @slot, @game) {
 					@inv[@slot] = null;
 					set_pinv(@player, @inv);
 					@snake['laser'] = time() + (@amount * 500);
+					play_named_sound(@loc, array('sound': 'entity.guardian.death', 'volume': 4, 'pitch': 2));
+					play_named_sound(@loc, array('sound': 'entity.guardian.attack', 'volume': 4));
 					_snake_shoot_laser(@player, @snake['loc'][], @snake['dir'], @game);
 					set_timeout(7000, closure(){
 						if(@snake['alive'] && pworld(@player) == @world) {
@@ -542,8 +546,6 @@ proc _snake_launch_missile(@loc, @dir, @game) {
 
 proc _snake_shoot_laser(@player, @loc, @dir, @game) {
 	@originalDir = @dir;
-	play_named_sound(@loc, array('sound': 'entity.guardian.death', 'volume': 4, 'pitch': 2));
-	play_named_sound(@loc, array('sound': 'entity.guardian.attack', 'volume': 4));
 	@blocks = array();
 	while(true){
 		@loc = _relative(@loc, @dir);
