@@ -196,37 +196,41 @@ proc _snake_start_task(@game) {
 		foreach(@player: @snake in @game['snakes']) {
 			if(!@snake['bot'] && (!ponline(@player) || !array_contains(sk_current_regions(@player), 'snake_'.@game['arena']))) {
 				_snake_remove(@player, @game);
-				continue();
-			}
-			if(@snake['alive']) {
+			} else if(@snake['alive']) {
+				if(!@snake['bot']) {
+					@playersAlive++;
+				}
 				if(!(@snake['sleep']--)) {
 					if(@snake['bot']) {
 						_snake_bot_update(@player, @game);
-					} else {
-						@playersAlive++;
 					}
-					if(_snake_update(@player, @game)) {
+					if(_snake_move(@player, @game)) {
+						if(@snake['laser']) {
+							_snake_update_laser(@player, @game);
+						}
+						@snake['click'] = false;
 						@alive++;
 						@active = @player;
 					} else {
+						if(@snake['laser']) {
+							_snake_clear_laser(@player, @game)
+						}
 						_snake_kill(@player, @game);
 					}
 				} else {
-					if(!@snake['bot']) {
-						@playersAlive++;
-					}
 					@alive++;
 					@active = @player;
 				}
 			}
 		}
-		if(@playersAlive == 0) {
-			@game['botsOnly'] = true;
-			if(@game['mode'] == 'endless') {
+		if(!@playersAlive || !@alive) {
+			if(@game['mode'] == 'endless' || !@alive) {
 				_snake_end(null, @game);
+			} else {
+				@game['botsOnly'] = true;
 			}
 		}
-		if((@alive < 2 && array_size(@game['snakes']) > 1) || @alive < 1) {
+		if(@alive < 2 && array_size(@game['snakes']) > 1) {
 			_snake_end(@active, @game);
 		}
 	});

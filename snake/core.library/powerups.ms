@@ -231,7 +231,8 @@ proc _snake_ability(@player, @slot, @game) {
 			if(@snake['bot']) {
 				if(@snake['ability-count'][@slot]) {
 					@count = @snake['ability-count'][@slot];
-					_snake_shoot_laser(@player, @snake['loc'][], @snake['dir'], @count, @game);
+					@snake['laser'] = time() + (@count * 500);
+					_snake_shoot_laser(@player, @snake['loc'][], @snake['dir'], @game);
 					@snake['ability-count'][@slot] = 0;
 					set_timeout(7000, closure(){
 						@snake['ability-count'][@slot] += @count;
@@ -245,7 +246,8 @@ proc _snake_ability(@player, @slot, @game) {
 					@inv = associative_array();
 					@inv[@slot] = null;
 					set_pinv(@player, @inv);
-					_snake_shoot_laser(@player, @snake['loc'][], @snake['dir'], @amount, @game);
+					@snake['laser'] = time() + (@amount * 500);
+					_snake_shoot_laser(@player, @snake['loc'][], @snake['dir'], @game);
 					set_timeout(7000, closure(){
 						if(@snake['alive'] && pworld(@player) == @world) {
 							@item = pinv(@player, @slot);
@@ -534,11 +536,10 @@ proc _snake_launch_missile(@loc, @dir, @game) {
 	set_interval(50, @move);
 }
 
-proc _snake_shoot_laser(@player, @loc, @dir, @seconds, @game) {
-	@game['snakes'][@player]['laser'] = time() + (@seconds * 500);
+proc _snake_shoot_laser(@player, @loc, @dir, @game) {
 	@originalDir = @dir;
-	play_named_sound(@loc, associative_array('sound': 'entity.guardian.death', 'volume': 4, 'pitch': 2));
-	play_named_sound(@loc, associative_array('sound': 'entity.guardian.attack', 'volume': 4));
+	play_named_sound(@loc, array('sound': 'entity.guardian.death', 'volume': 4, 'pitch': 2));
+	play_named_sound(@loc, array('sound': 'entity.guardian.attack', 'volume': 4));
 	@blocks = array();
 	while(true){
 		@loc = _relative(@loc, @dir);
@@ -574,28 +575,35 @@ proc _snake_shoot_laser(@player, @loc, @dir, @seconds, @game) {
 	@loc[0] += 0.5;
 	@loc[1] += 0.5;
 	@loc[2] += 0.5;
-	set_interval(100, closure(){
-		try {
-			play_effect(@loc, 'LAVA_POP', associative_array('speed': 0, 'particleCount': 8, 'offsetX': 0.5, 'offsetY': 0.5, 'offsetZ': 0.5, 'radius': 40));
-			if(!array_index_exists(@game['snakes'], @player)
-			|| !@game['snakes'][@player]['alive']
-			|| @game['snakes'][@player]['dir'] != @originalDir
-			|| time() > @game['snakes'][@player]['laser']) {
-				@game['snakes'][@player]['laser'] = 0;
-				foreach(@loc in @blocks) {
-					if(get_block_at(@loc) == '95:14') {
-						set_block_at(@loc, 0, false);
-					}
-				}
-				clear_task();
-			}
-		} catch(Exception @ex) {
-			clear_task();
-			foreach(@loc in @blocks) {
-				if(get_block_at(@loc) == '95:14') {
-					set_block_at(@loc, 0, false);
-				}
-			}
+	@blocks[] = @loc;
+	@game['snakes'][@player]['laser-blocks'] = @blocks;
+}
+
+proc _snake_update_laser(@player, @game) {
+	@snake = @game['snakes'][@player];
+	play_effect(@snake['laser-blocks'][-1], 'LAVA_POP', array(
+		'speed': 0,
+		'particleCount': 8,
+		'offsetX': 0.5,
+		'offsetY': 0.5,
+		'offsetZ': 0.5,
+		'radius': 40
+	));
+	if(@snake['click']) {
+		_snake_clear_laser(@player, @game);
+		_snake_shoot_laser(@player, @snake['loc'], @snake['dir'], @game);
+	} else if(time() > @snake['laser']) {
+		_snake_clear_laser(@player, @game);
+		@snake['laser'] = 0;
+		@snake['laser-blocks'] = null;
+	}
+}
+
+proc _snake_clear_laser(@player, @game) {
+	@snake = @game['snakes'][@player];
+	foreach(@l in @snake['laser-blocks']) {
+		if(get_block_at(@l) == '95:14') {
+			set_block_at(@l, 0, false);
 		}
-	});
+	}
 }

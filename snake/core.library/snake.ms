@@ -15,6 +15,7 @@
 	'bot': the name of the bot, if a bot
 	'target': the bot's current target location array
 	'laser': timestamp when laser will stop firing, 0 if not firing
+	'laser-blocks': the block locations that constitute this snake's laser
 	'last-dir': cheap checks so bots can avoid looping in on themselves
 	'sleep': how many ticks to sleep until updating
 	'boost': boost speed multiplier
@@ -65,6 +66,7 @@ proc _snake_add(@player, @game) {
 		'bot': '',
 		'target': null,
 		'laser': 0,
+		'laser-blocks': null,
 		'last-dir': '',
 		'sleep': 5,
 		'boost': 0,
@@ -222,7 +224,7 @@ proc _snake_set_top(@snake) {
 	@snake['top'] = _snake_direction_of(@snake['loc'], '166:0');
 }
 
-proc _snake_update(@player, @game) {
+proc _snake_move(@player, @game) {
 	@snake = @game['snakes'][@player];
 	
 	// Boost
@@ -232,19 +234,18 @@ proc _snake_update(@player, @game) {
 		@loc[0] += 0.5;
 		@loc[1] += 0.5;
 		@loc[2] += 0.5;
-		play_effect(@loc, 'HAPPY_VILLAGER', associative_array('particleCount': 8, 'offsetX': 0.6, 'offsetY': 0.6, 'offsetZ': 0.6, 'radius': 40));
+		play_effect(@loc, 'HAPPY_VILLAGER', array('particleCount': 8, 'offsetX': 0.6, 'offsetY': 0.6, 'offsetZ': 0.6, 'radius': 40));
 	}
 	
 	set_block_at(@snake['loc'], @snake['tail'], false);
 	@snake['loc'] = _relative(@snake['loc'], @snake['dir']);
 	@block = get_block_at(@snake['loc']);
-	@powerup = _snake_get_powerup_from(split(':', @block)[0]);
+	@powerup = _snake_get_powerup_from(@block);
 	
 	// Air or powerup, move through
 	if(@block == '0:0' || (@powerup && _snake_remove_powerup(@snake['loc'], @game))) {
 		@snake['blocks'][] = @snake['loc'][];
 		set_block_at(@snake['loc'], @snake['head'], false);
-		@snake['click'] = false;
 		if(_snake_powerup(@player, @powerup, @game)) {
 			@snake['target'] = null;
 		}
@@ -257,16 +258,18 @@ proc _snake_update(@player, @game) {
 			return(false);
 		}
 		@loc = _relative(@snake['loc'], @dir);
-		@powerup = _snake_get_powerup_from(get_block_at(@loc));
+		@block = get_block_at(@loc);
+		@powerup = _snake_get_powerup_from(@block);
 		if(@powerup && _snake_remove_powerup(@loc, @game) && _snake_powerup(@player, @powerup, @game)) {
 			@snake['target'] = null;
+		} else if(!(@block == '0:0' || @block == '95:14' && @snake['laser'])) {
+			return(false);
 		}
 		@snake['loc'] = @loc;
 		@snake['dir'] = @dir;
 		@snake['last-dir'] = @dir;
 		@snake['blocks'][] = @snake['loc'][];
 		set_block_at(@snake['loc'], @snake['head'], false);
-		@snake['click'] = false;
 		@snake['region'] = sk_regions_at(@snake['loc'])[1];
 		_snake_set_top(@snake);
 		return(true);
