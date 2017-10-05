@@ -91,11 +91,12 @@ proc _snake_queue(@mode) {
 			break();
 		}
 	}
-	if(@game['mode'] == 'endless' && array_size(@game['snakes']) == 0) {
+	if(@game['mode'] == 'endless' && array_size(@game['snakes']) == 0
+	|| @game['mode'] == 'versus' && array_size(@game['snakes'] < 2)) {
 		del_virtualchest('snake');
 		remove_scoreboard('snake');
 		export('snake', null);
-		die(color('red').'No players in region in adventure mode.');
+		die(color('red').'Not enough players in region in adventure mode.');
 	}
 
 	// Add bots to fill up slots
@@ -231,7 +232,7 @@ proc _snake_start_task(@game) {
 				@game['botsOnly'] = true;
 			}
 		}
-		if(@alive < 2 && array_size(@game['snakes']) > 1) {
+		if(@alive < 2) {
 			_snake_end(@active, @game);
 		}
 	});
@@ -328,7 +329,7 @@ proc _snake_end(@winner, @game) {
 			}
 		}
 		
-	} else {
+	} else if(@winner) {
 		@title = @game['snakes'][@winner]['color'].@winner.' wins!';
 		foreach(@player in array_keys(@game['snakes'])) {
 			if(ponline(@player)) {
