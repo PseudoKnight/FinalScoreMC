@@ -262,7 +262,7 @@ proc _snake_bot_update(@bot, @game) {
 proc _snake_bot_target_powerup(@snake, @game, @type = 'all') {
 	@closest = 25;
 	foreach(@powerup in @game['powerups']) {
-		if(@type == 'all' || @powerup['type'] == @type) {
+		if(!array_contains(@game['nukes'], @powerup['region']) && (@type == 'all' || @powerup['type'] == @type)) {
 			@dist = _distance(@powerup['loc'], @snake['loc']);
 			if(@dist < @closest) {
 				@snake['target'] = associative_array('type': 'powerup', 'loc': @powerup['loc'], 'interest': 50);
@@ -276,7 +276,7 @@ proc _snake_bot_target_powerup(@snake, @game, @type = 'all') {
 proc _snake_bot_target_snake(@snake, @game) {
 	@closest = 25;
 	foreach(@bot: @othersnake in @game['snakes']) {
-		if((@game['botsOnly'] && @snake['bot'] != @othersnake['bot'] || !@othersnake['bot']) && @othersnake['alive']) {
+		if(!array_contains(@game['nukes'], @othersnake['region']) && (@game['botsOnly'] && @snake['bot'] != @othersnake['bot'] || !@othersnake['bot']) && @othersnake['alive']) {
 			@dist = _distance(@othersnake['loc'], @snake['loc']);
 			if(@dist < @closest) {
 				@snake['target'] = associative_array('type': 'snake', 'name': @bot, 'interest': 50);

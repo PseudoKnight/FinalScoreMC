@@ -33,6 +33,7 @@ proc _snake_queue(@mode) {
 	@game['missiles'] = associative_array();
 	@game['tnt'] = array();
 	@game['mode'] = @mode;
+	@game['nukes'] = array();
 	export('snake', @game);
 
 	// Get arena

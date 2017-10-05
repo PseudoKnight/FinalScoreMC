@@ -336,6 +336,7 @@ proc _snake_ability(@player, @slot, @game) {
 proc _snake_drop_nuke(@snake, @game) {
 	// get center of region for targeting
 	@region = @snake['region'];
+	@game['nukes'][] = @region;
 	@coords = sk_region_info(@region, 'custom', 0);
 	@x = floor(@coords[0][0] - (@coords[0][0] - @coords[1][0]) / 2) + 0.5;
 	@y = floor(@coords[0][1] - (@coords[0][1] - @coords[1][1]) / 2) + 0.5;
@@ -419,6 +420,7 @@ proc _snake_drop_nuke(@snake, @game) {
 					if(@state['radius'] > @maxradius) {
 						clear_task();
 						_snake_check_powerups(@game);
+						array_remove_values(@game['nukes'], @region);
 					}
 				}
 			});
