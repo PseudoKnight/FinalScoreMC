@@ -533,7 +533,9 @@ proc _snake_launch_missile(@loc, @dir, @game) {
 		}
 	}
 	execute(false, @move);
-	set_interval(50, @move);
+	if(array_index_exists(@game['missiles'], @key)) {
+		set_interval(50, @move);
+	}
 }
 
 proc _snake_shoot_laser(@player, @loc, @dir, @game) {
