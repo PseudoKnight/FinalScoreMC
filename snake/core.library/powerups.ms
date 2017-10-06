@@ -17,8 +17,8 @@ proc _snake_get_powerup_from(@id) {
 		case '95:14':
 			return('laser');
 		case 5:
-		case 138:
-		case '138:0':
+		case 255:
+		case '255:0':
 			return('nuke');
 	}
 	return(null);
@@ -40,7 +40,7 @@ proc _snake_get_block_from(@powerup) {
 			return('95:14');
 		case 5:
 		case 'nuke':
-			return(138);
+			return(255);
 	}
 	return(null);
 }
@@ -365,7 +365,7 @@ proc _snake_drop_nuke(@snake, @game) {
 	@loc[2] += 0.5;
 	@marker = spawn_entity('ARMOR_STAND', 1, @loc)[0];
 	set_entity_spec(@marker, array('marker': true, 'visible': false, 'gravity': false, 'small': true));
-	set_mob_equipment(@marker, array('helmet': array('name': 'BEACON')));
+	set_mob_equipment(@marker, array('helmet': array('name': 'DIAMOND_BLOCK')));
 	
 	// now move it to the target location over time
 	play_sound(@loc, array('sound': 'ZOMBIE_UNFECT', 'volume': 4));
@@ -412,7 +412,9 @@ proc _snake_drop_nuke(@snake, @game) {
 									}
 								}
 							}
-							play_effect(@loc, 'EXPLOSION_LARGE', array('radius': 48));
+							if(!rand(3)) {
+								play_effect(@loc, 'EXPLOSION_LARGE', array('radius': 48));
+							}
 						}
 					}
 				}
