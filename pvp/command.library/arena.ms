@@ -531,7 +531,7 @@ register_command('arena', array(
 
 					case 'weapons':
 						@weapons = array('endernades', 'skullrockets',  'shotgunballs', 'primedtnt', 'pistoltears', 'firefire',
-							'railgun', 'fireball', 'firebreath', 'spawner', 'grapple', 'tracker', 'mine');
+							'railgun', 'fireball', 'firebreath', 'spawner', 'grapple', 'tracker', 'mine', 'rifle');
 						if(@action === 'add' && array_index_exists(@arena, 'weapons')) {
 							@arena['weapons'] = array_merge(@arena['weapons'], split(',', @args[3]));
 						} else {

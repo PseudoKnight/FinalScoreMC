@@ -40,7 +40,7 @@ case 'load':
 			die();
 		}
 		cancel();
-		@players = _hit_scan(ploc(), 40, 1, 'happy_villager', 'ender_signal', @pvp);
+		@players = _hit_scan(player(), 40, 1, 'happy_villager', 'ender_signal', @pvp);
 
 		if(@players) {
 			@player = @players[0];

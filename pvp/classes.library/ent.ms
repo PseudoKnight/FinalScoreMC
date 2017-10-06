@@ -116,7 +116,7 @@ case 'load':
 				} else {
 					set_pexp(0);
 					clear_task();
-					@players = _hit_scan(ploc(), 13, 2, 'HAPPY_VILLAGER', 'CRIT', @pvp);
+					@players = _hit_scan(player(), 13, 2, 'HAPPY_VILLAGER', 'CRIT', @pvp);
 					@loc = ploc();
 					if(@players) {
 						@p = @players[0];
