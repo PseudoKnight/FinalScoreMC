@@ -184,7 +184,7 @@ proc _fw_msg(@msg) {
 	}
 	foreach(@p in all_players('custom')) {
 		if(_fw_player(@p)) {
-			title(@p, null, @msg, 0, 40, 20);
+			title(@p, '', @msg, 0, 40, 20);
 		}
 	}
 }

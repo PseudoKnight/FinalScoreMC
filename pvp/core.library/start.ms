@@ -365,14 +365,12 @@ proc _pvp_start(@pvp, @id){
 		if(@timeleft[0] > 0) {
 			if(@timeleft[0] <= 4) {
 				play_sound(@arena['lobby'], array('sound': 'NOTE_PLING', 'pitch': 1, 'volume': 3));
-				if(extension_exists('CHNaughty')) {
-					foreach(@p in array_keys(@pvp['players'])) {
-						try {
-							title(@p, color('yellow').@timeleft[0], null, 0, @timeleft[0] * 20, 20);
-						} catch(PlayerOfflineException @ex) {
-							// they quit during the countdown.
-							// performance anxiety.
-						}
+				foreach(@p in array_keys(@pvp['players'])) {
+					try {
+						title(@p, color('yellow').@timeleft[0], null, 0, @timeleft[0] * 20, 20);
+					} catch(PlayerOfflineException @ex) {
+						// they quit during the countdown.
+						// performance anxiety.
 					}
 				}
 			} else if(@timeleft[0] > 5 && array_index_exists(@arena, 'classes') && array_size(@arena['classes']) > 1) {
@@ -399,24 +397,20 @@ proc _pvp_start(@pvp, @id){
 				}
 			}
 			if(@timeleft[0] == 4) {
-				if(extension_exists('CHNaughty')) {
-					foreach(@p in array_keys(@pvp['players'])) {
-						try {
-							title(@p, null, @title, 20, 60, 20);
-						} catch(PlayerOfflineException @ex) {
-							// ignore them until later
-						}
+				foreach(@p in array_keys(@pvp['players'])) {
+					try {
+						title(@p, '', @title, 20, 60, 20);
+					} catch(PlayerOfflineException @ex) {
+						// ignore them until later
 					}
 				}
 			}
 		} else {
-			if(extension_exists('CHNaughty')) {
-				foreach(@p in array_keys(@pvp['players'])) {
-					try {
-						title(@p, color('green').'GO!', null, 0, 0, 20);
-					} catch(PlayerOfflineException @ex) {
-						// tease.
-					}
+			foreach(@p in array_keys(@pvp['players'])) {
+				try {
+					title(@p, color('green').'GO!', null, 0, 0, 20);
+				} catch(PlayerOfflineException @ex) {
+					// tease.
 				}
 			}
 			clear_task();

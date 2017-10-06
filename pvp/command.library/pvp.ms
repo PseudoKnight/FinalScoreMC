@@ -80,13 +80,11 @@ register_command('pvp', array(
 					die();
 				}
 				@pvp['arena']['timer'][1] += @args[2];
-				if(extension_exists('CHNaughty')) {
-					foreach(@p in array_merge(array_keys(@pvp['players']), @pvp['spectators'])) {
-						try {
-							title(@p, 'Added '.@arg.' minutes', null, 20, 20, 20);
-						} catch(PlayerOfflineException @ex) {
-							// we'll remove them elsewhere
-						}
+				foreach(@p in array_merge(array_keys(@pvp['players']), @pvp['spectators'])) {
+					try {
+						title(@p, 'Added '.@arg.' minutes', null, 20, 20, 20);
+					} catch(PlayerOfflineException @ex) {
+						// we'll remove them elsewhere
 					}
 				}
 

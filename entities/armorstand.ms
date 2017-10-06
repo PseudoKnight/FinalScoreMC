@@ -65,7 +65,7 @@ bind(player_interact_at_entity, null, array('clicked': 'ARMOR_STAND'), @event) {
 
 		# Start posing
 		if(@poseable === 'armorstand') {
-			title(null, color(6).'Rotating Armor Stand.', 0, 40, 10);
+			title('', color(6).'Rotating Armor Stand.', 0, 40, 10);
 
 			@dir = pfacing();
 			@eloc = entity_loc(@event['id']);
@@ -93,7 +93,7 @@ bind(player_interact_at_entity, null, array('clicked': 'ARMOR_STAND'), @event) {
 			});
 
 		} else if(@poseable === 'Torso') {
-			title(null, color(6).'Adjusting Armor Stand position.', 0, 40, 10);
+			title('', color(6).'Adjusting Armor Stand position.', 0, 40, 10);
 
 			@eloc = entity_loc(@event['id']);
 			@originalYaw = @eloc['yaw'];
@@ -123,7 +123,7 @@ bind(player_interact_at_entity, null, array('clicked': 'ARMOR_STAND'), @event) {
 			});
 
 		} else {
-			title(null, color(6).'Posing '.@poseable.'.', 0, 40, 10);
+			title('', color(6).'Posing '.@poseable.'.', 0, 40, 10);
 
 			@dir = pfacing();
 			@eloc = entity_loc(@event['id']);
@@ -180,7 +180,7 @@ bind(player_interact_at_entity, null, array('clicked': 'ARMOR_STAND'), @event) {
 			case 288: # feather toggles gravity
 				if(!_is_survival_world(pworld())) {
 					@gravity = if(@armorstand['gravity'], false, true);
-					title(null, color(6).'Toggled gravity '.if(@gravity, 'on', 'off').' for armor stand.', 0, 40, 10);
+					title('', color(6).'Toggled gravity '.if(@gravity, 'on', 'off').' for armor stand.', 0, 40, 10);
 					set_entity_spec(@event['id'], array('gravity': @gravity));
 					cancel();
 				}
@@ -190,7 +190,7 @@ bind(player_interact_at_entity, null, array('clicked': 'ARMOR_STAND'), @event) {
 					@gear = get_mob_equipment(@event['id'])
 					@visible = @armorstand['visible'];
 					if(!@visible || @gear['weapon'] || @gear['off_hand'] || @gear['helmet'] || @gear['chestplate'] || @gear['leggings'] || @gear['boots']) {
-						title(null, color(6).'Toggled visibility '.if(@visible, 'off', 'on').' for armor stand.', 0, 40, 10);
+						title('', color(6).'Toggled visibility '.if(@visible, 'off', 'on').' for armor stand.', 0, 40, 10);
 						set_timeout(50, closure(){ // workaround client rendering issue in 1.12
 							set_entity_spec(@event['id'], array('visible': !@visible));
 						});
@@ -201,7 +201,7 @@ bind(player_interact_at_entity, null, array('clicked': 'ARMOR_STAND'), @event) {
 			case 416: # armor stand toggles size
 				if(!_is_survival_world(pworld())) {
 					@small = if(@armorstand['small'], false, true);
-					title(null, color(6).if(@small, 'Shrunk', 'Embiggened').' armor stand.', 0, 40, 10);
+					title('', color(6).if(@small, 'Shrunk', 'Embiggened').' armor stand.', 0, 40, 10);
 					set_timeout(50, closure(){ // workaround client rendering issue in 1.12
 						set_entity_spec(@event['id'], array('small': @small));
 					});
@@ -227,7 +227,7 @@ bind(player_interact_at_entity, null, array('clicked': 'ARMOR_STAND'), @event) {
 			case 420: # lead carries armor stand
 				if(!pinfo(player(), 11) && !get_entity_rider(puuid())) {
 					cancel();
-					title(null, color(6).'Moving Armor Stand. Click to place.', 0, 40, 10);
+					title('', color(6).'Moving Armor Stand. Click to place.', 0, 40, 10);
 					bind(player_interact, null, array('player': player()), @event, @world = pworld(), @stand = @event['id']) {
 						if(array_index_exists(@event, 'location')) {
 							unbind();
