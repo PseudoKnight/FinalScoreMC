@@ -162,6 +162,7 @@ proc _snake_set_colors(@game) {
 proc _snake_remove(@player, @game) {
 	array_remove(@game['snakes'], @player);
 	if(ponline(@player)) {
+		set_pflight(@player, false);
 		runas('~console', '/jukebox show remove '.@player.' @snake');
 		_equip_kit(@player, array(7: pinv(@player, 7)));
 		_set_pactivity(@player, null);
