@@ -4,7 +4,11 @@ case 'load':
 		if(pinfo(player(), 6) != @e['item']) {
 			die();
 		}
-		@loc = pcursor(array(0, 50, 65, 66, 68, 70, 72, 77, 85, 143, 147, 148, 157, 171, 188, 189, 190, 191, 192));
+		@trace = ray_trace(player(), 96);
+		@loc = @trace['location'];
+		if(@trace['entities']) {
+			@loc = @trace['entities'][0]['location'];
+		}
 		bind(entity_damage, array('id': player().'lightningdmg'), array('type': 'PLAYER', 'cause': 'LIGHTNING'), @e,
 				@damager = player(), @pvp) {
 
@@ -16,12 +20,9 @@ case 'load':
 				}
 			});
 		}
+		play_effect(@loc, 'CRIT', array('particleCount': 10, 'radius': 96));
 		@lightning = lightning(@loc);
 		export(player().'lightning', @lightning);
-		@block = get_block_at(@loc);
-		foreach(@player in array_keys(@pvp['players'])) {
-			psend_block_change(@loc, 173);
-		}
 		@slot = pinfo(player(), 15)
 		@item = pinv(player(), null)
 		set_pinv(player(), array(null: array('type': 280)))

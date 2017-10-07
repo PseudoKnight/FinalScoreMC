@@ -58,7 +58,9 @@ proc _hit_scan(@player, @range, @damage, @tracerParticle, @hitParticle, @pvp){
 				} catch(PlayerOfflineException @ex) {
 					// not a player, but let's still kill it
 				}
-				damage_entity(@entity['uuid'], @damage, @damager);
+				if(!is_null(@damage)) {
+					damage_entity(@entity['uuid'], @damage, @damager);
+				}
 				play_effect(@entity['location'], @hitParticle, array('particleCount': 4, 'speed': 0.05));
 			}
 		}
