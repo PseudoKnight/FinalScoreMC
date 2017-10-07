@@ -11,7 +11,7 @@ proc _reload_rifle() {
 	set_timeout(2400, closure(){
 		if(ponline(player()) && pinfo(player(), 5) > 0) {
 			@newitem = pinv(player(), 0);
-			if(is_null(@newitem) || @newitem['type'] != 291 || @newitem['qty'] != @item['qty'] - 1) {
+			if(is_null(@newitem) || @newitem['type'] != 291 || @newitem['qty'] != @item['qty']) {
 				die();
 			}
 			@item['data'] = 10;
@@ -40,10 +40,10 @@ bind(player_interact, array('id': @id.'rifle'), array('item': 291), @event, @pvp
 	@item['data'] += 8;
 	set_pinv(player(), array(0: @item));
 	
-	_hit_scan(player(), 64, 2, 'VOID_FOG', 'LARGE_SMOKE', @pvp);
+	_hit_scan(player(), 64, 1.75, 'VOID_FOG', 'LARGE_SMOKE', @pvp);
 	play_sound(ploc(), array('sound': 'FIREWORK_BLAST', 'pitch': 0.7, 'volume': 3));
 	set_timeout(50, closure(){
-		_hit_scan(player(), 64, 2, 'VOID_FOG', 'LARGE_SMOKE', @pvp);
+		_hit_scan(player(), 64, 1.75, 'VOID_FOG', 'LARGE_SMOKE', @pvp);
 		play_sound(ploc(), array('sound': 'FIREWORK_BLAST', 'pitch': 0.7, 'volume': 3));
 	});
 }
