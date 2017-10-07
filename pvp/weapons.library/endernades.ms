@@ -1,8 +1,15 @@
 array_push(@pvp['binds'], @id.'endernades')
-bind(player_teleport, array('id': @id.'endernades'), array('type': 'ENDER_PEARL'), @e, @id) {
+bind(player_teleport, array('id': @id.'endernades', 'priority': 'highest'), array('type': 'ENDER_PEARL'), @e, @id) {
 	@pvp = import('pvp'.@id);
-	if(!array_index_exists(@pvp['players'], player()), die());
+	if(!array_index_exists(@pvp['players'], player())) {
+		die();
+	}
 	cancel();
+	consume();
+	if(!array_contains(sk_regions_at(@e['to']), @pvp['arena']['region'])) {
+		die();
+	}
+	
 	@a = @e['to'];
 	play_effect(@a, 'EXPLOSION_LARGE');
 	play_sound(@a, associative_array('sound': 'EXPLODE', 'volume': 3));

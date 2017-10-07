@@ -368,14 +368,15 @@ if(@pvp['arena']['respawnmode'] == 'mob') {
 }
 
 array_push(@pvp['binds'], @id.'enderpearl')
-bind(player_teleport, array('id': @id.'enderpearl', 'priority': 'highest'), array('type': 'ENDER_PEARL'), @e, @id) {
-	@pvp = import('pvp'.@id)
-	if(!array_index_exists(@pvp['players'], player()),
-		die())
+bind(player_teleport, array('id': @id.'enderpearl', 'priority': 'high'), array('type': 'ENDER_PEARL'), @e, @id) {
+	@pvp = import('pvp'.@id);
+	if(!array_index_exists(@pvp['players'], player())) {
+		die();
+	}
 
+	consume();
 	if(!array_contains(sk_regions_at(@e['to']), @pvp['arena']['region'])) {
-		cancel()
-		consume()
+		cancel();
 	}
 }
 
