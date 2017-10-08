@@ -95,6 +95,9 @@ proc _snake_queue(@mode) {
 	|| @game['mode'] == 'versus' && array_size(@game['snakes']) < 2) {
 		del_virtualchest('snake');
 		remove_scoreboard('snake');
+		foreach(@player: @snake in @game['snakes']) {
+			_sname_remove(@player, @game);
+		}
 		export('snake', null);
 		die(color('red').'Not enough players in region in adventure mode.');
 	}
