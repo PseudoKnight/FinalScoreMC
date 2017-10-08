@@ -21,7 +21,7 @@ proc _start_round() {
 	_msg_charades(color('yellow').color('bold').'Charades Category: '.color('yellow').@category);
 	
 	@word = _get_word(@category);
-	title(@builder, 'Your turn to build!', '\\"'.@word.'\\"', 20, 40, 20);
+	title(@builder, 'Your turn to build!', '"'.@word.'"', 20, 40, 20);
 	tmsg(@builder, 'You must build "'.color('green').color('bold').@word.color('reset').'"');
 		
 	@timer = array(150.0);
