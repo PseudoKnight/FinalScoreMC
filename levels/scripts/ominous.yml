@@ -1,8 +1,6 @@
 title: 'Ominous'
-subtitle: 'BETA'
 author: 'PseudoKnight'
 levels: 1
-beta: true
 gear:
     0:
         name: WOOD_SWORD
