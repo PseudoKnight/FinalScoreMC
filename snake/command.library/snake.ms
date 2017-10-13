@@ -43,6 +43,20 @@ register_command('snake', array(
 					clear_value(@key);
 				}
 				msg(color('green').'Reset stats.');
+				
+			case 'reload':
+				if(!has_permission('group.moderator')) {
+					die(color('gold').'You do not have permission.');
+				}
+				if(queue_running('snake_cleanup')) {
+					die(color('gold').'The game is still resetting.');
+				}
+				if(array_contains(all_virtualchests(), 'snake')
+				|| array_contains(get_scoreboards(), 'snake')) {
+					die(color('gold').'Already running.');
+				}
+				x_recompile_includes('../core.library');
+				msg(color('green').'Done!');
 			
 			default:
 				return(false);
