@@ -9,7 +9,7 @@ proc _load_events(@id) {
     bind('player_death', array('id': 'staticdeathnoise', 'priority': 'HIGHEST'), null, @event, @pvp) {
         if(array_index_exists(@pvp['players'], player())) {
             if(@pvp['players'][player()]['team'] == 1) {
-                play_named_sound(ploc(), associative_array('sound': 'entity.wolf.howl', 'pitch': 1.7, 'volume': 3));
+                play_named_sound(ploc(), array('sound': 'entity.wolf.howl', 'pitch': 1.7, 'volume': 3));
             	@stand = spawn_entity('ARMOR_STAND', 1, @event['location'])[0];
             	set_entity_spec(@stand, array(
             		'arms': true,
@@ -23,8 +23,42 @@ proc _load_events(@id) {
             			)
             	));
             } else {
-                play_named_sound(ploc(), associative_array('sound': 'entity.vex.death', 'pitch': 0.5, 'volume': 3));
+                play_named_sound(ploc(), array('sound': 'entity.vex.death', 'pitch': 0.5, 'volume': 3));
             }
         }
     }
+    
+    @heartsound = array('sound': 'NOTE_BASS', 'pitch': 0.5);
+    @static = @pvp['team']['players'][1][0];
+    set_interval(50, closure(){
+        try {
+            if(@pvp['running'] == 2) {
+                foreach(@player: @p in @pvp['players']) {
+                    if(ponline(@player)) {
+                        @time = time();
+                        if(!array_index_exists(@p, 'heartrate')) {
+                            @p['heartrate'] = 1000; // ms between beats
+                            @p['heartbeat'] = @time + @p['heartrate']; // time at which next beat will occur
+                            @p['lastscare'] = @time;
+                        } else if(@time > @p['heartbeat']) {
+                            @p['heartbeat'] = @time + @p['heartrate'];
+                            @heartsound['volume'] = 200 / @p['heartrate'];
+                            play_sound(ploc(@player), @heartsound, array(@player, @static));
+                            set_timeout(max(50, @p['heartrate'] / 8), closure() {
+                                play_sound(ploc(@player), @heartsound, array(@player, @static));
+                            });
+                        } else if(@time > @p['lastscare'] + 20 && @p['heartrate'] < 1000) {
+                            @p['heartrate'] += 200;
+                            @p['lastscare'] = @time;
+                        }
+                    }
+                }
+            } else if(@pvp['running'] != 1) {
+                clear_task();
+            }
+        } catch(Exception @ex) {
+            // not sure what can go wrong here, but if I've learned anything, something will
+            clear_task();
+        }
+    });
 }

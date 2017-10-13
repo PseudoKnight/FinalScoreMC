@@ -127,7 +127,7 @@ case 'load':
 		}
 
 		@hunter = puuid(@player);
-		foreach(@p in array_keys(@pvp['players'])) {
+		foreach(@p: @data in @pvp['players']) {
 			if(@p == @player, continue());
 			if(entity_can_see(@hunter, puuid(@p)) && (@dist = _distance(ploc(@p), ploc(@player))) < 6) {
 				@helm = pinv(@p, 103);
@@ -142,6 +142,8 @@ case 'load':
 				set_ptexp(@player, ptexp(@player) + 1);
 				set_peffect(@p, 9, 0, 4);
 				play_named_sound(@loc, array('sound': 'entity.guardian.attack', 'pitch': 1.5), @p);
+				@data['heartrate'] = max(200, @data['heartrate'] - 200);
+				@data['lastscare'] = time();
 			} else if(pinv(@p, 103)) {
 				set_pinv(@p, associative_array(103: null));
 			}
