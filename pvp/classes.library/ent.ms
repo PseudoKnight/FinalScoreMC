@@ -103,19 +103,22 @@ case 'load':
 		@loc = ploc();
 		play_sound(@loc, array('sound': 'entity_illusion_illager_prepare_blindness', 'pitch': 0.7));
 		play_sound(@loc, array('sound': 'entity_husk_ambient', 'pitch': 0.8));
+		try(set_attribute(puuid(), 'knockbackresistance', 1));
 		set_interval(100, closure(){
 			try {
 				if(!pinfo(player(), 11) || pheld_slot() != 0) {
 					clear_task();
 					set_pexp(0);
+					try(set_attribute(puuid(), 'knockbackresistance', 0));
 					die();
 				}
 				@xp = pexp();
 				if(@xp < 99) {
 					set_pexp(min(99, @xp + 3));
 				} else {
-					set_pexp(0);
 					clear_task();
+					set_pexp(0);
+					try(set_attribute(puuid(), 'knockbackresistance', 0));
 					@players = _hit_scan(player(), 13, 2, 'HAPPY_VILLAGER', 'HAPPY_VILLAGER', @pvp);
 					@loc = ploc();
 					if(@players) {
@@ -169,4 +172,5 @@ case 'unload':
 	unbind(@player.'entbark');
 	unbind(@player.'entdamage');
 	unbind(@player.'entdeath');
+	try(set_attribute(puuid(@player), 'knockbackresistance', 0));
 }
