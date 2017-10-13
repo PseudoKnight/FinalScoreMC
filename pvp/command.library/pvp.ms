@@ -123,6 +123,18 @@ register_command('pvp', array(
 				} else {
 					_pvp_end_match(@id, array());
 				}
+				
+			case 'reload':
+				if(!has_permission('group.moderator')) {
+					die(color('gold').'No permission.');
+				}
+				foreach(@activity: @title in import('activities', array())) {
+					if(string_starts_with(@activity, 'pvp')) {
+						die(color('gold').'PVP is running.');
+					}
+				}
+				x_recompile_includes('../');
+				msg(color('green').'Done!');
 
 			default:
 				return(false);
