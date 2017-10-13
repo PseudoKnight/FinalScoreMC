@@ -46,7 +46,7 @@ register_command('note', array(
 		@pitch = 0.5;
 		@notes = array('F#', 'G', 'G#', 'A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F');
 		if(!is_numeric(@clicks)) {
-			@pitch = _get_pitch(@args[0], @octave);
+			@pitch = _get_pitch(to_upper(@args[0]), @octave);
 			@clicks = array_index(@notes, to_upper(@args[0])) + (@octave * 12);
 		} else {
 			@pitch = _get_pitch(@notes[@clicks % 12], floor(@clicks / 12));
