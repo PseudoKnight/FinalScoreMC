@@ -133,8 +133,12 @@ register_command('pvp', array(
 						die(color('gold').'PVP is running.');
 					}
 				}
-				x_recompile_includes('../');
-				msg(color('green').'Done!');
+				if(@args[1] == 'all') {
+					x_recompile_includes('..');
+				} else {
+					x_recompile_includes('../'.@args[1]);
+				}
+				msg(color('green').'Done recompiling '.@args[1].'!');
 
 			default:
 				return(false);
