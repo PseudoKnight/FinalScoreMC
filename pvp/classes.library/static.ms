@@ -138,12 +138,12 @@ case 'load':
 					set_phunger(@player, min(20, phunger(@player) + 1));
 					set_phealth(@player, min(20, pinfo(@player, 5) + if(@dist < 2, 2, 1)));
 					set_peffect(@player, 5, 0, 2);
+					@data['heartrate'] = max(300, @data['heartrate'] - 200);
+					@data['lastscare'] = time();
 				}
 				set_ptexp(@player, ptexp(@player) + 1);
 				set_peffect(@p, 9, 0, 4);
 				play_named_sound(@loc, array('sound': 'entity.guardian.attack', 'pitch': 1.5), @p);
-				@data['heartrate'] = max(200, @data['heartrate'] - 200);
-				@data['lastscare'] = time();
 			} else if(pinv(@p, 103)) {
 				set_pinv(@p, associative_array(103: null));
 			}

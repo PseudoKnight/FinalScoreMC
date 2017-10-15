@@ -28,26 +28,26 @@ proc _load_events(@id) {
         }
     }
     
-    @heartsound = array('sound': 'NOTE_BASS', 'pitch': 0.5);
-    @static = @pvp['team']['players'][1][0];
+    @heartsound = array('sound': 'NOTE_BASS_DRUM', 'pitch': 0.5);
+    @static = @pvp['team'][0]['players'][0];
     set_interval(50, closure(){
         try {
             if(@pvp['running'] == 2) {
                 foreach(@player: @p in @pvp['players']) {
-                    if(ponline(@player)) {
+                    if(@player != @static && ponline(@player)) {
                         @time = time();
                         if(!array_index_exists(@p, 'heartrate')) {
-                            @p['heartrate'] = 1000; // ms between beats
+                            @p['heartrate'] = 1100; // ms between beats
                             @p['heartbeat'] = @time + @p['heartrate']; // time at which next beat will occur
                             @p['lastscare'] = @time;
                         } else if(@time > @p['heartbeat']) {
                             @p['heartbeat'] = @time + @p['heartrate'];
-                            @heartsound['volume'] = 200 / @p['heartrate'];
+                            @heartsound['volume'] = 400 / @p['heartrate'] - 0.26;
                             play_sound(ploc(@player), @heartsound, array(@player, @static));
-                            set_timeout(max(50, @p['heartrate'] / 8), closure() {
+                            set_timeout(integer(max(50, @p['heartrate'] / 8)), closure() {
                                 play_sound(ploc(@player), @heartsound, array(@player, @static));
                             });
-                        } else if(@time > @p['lastscare'] + 20 && @p['heartrate'] < 1000) {
+                        } else if(@time > @p['lastscare'] + 10000 && @p['heartrate'] < 1100) {
                             @p['heartrate'] += 200;
                             @p['lastscare'] = @time;
                         }
@@ -58,6 +58,7 @@ proc _load_events(@id) {
             }
         } catch(Exception @ex) {
             // not sure what can go wrong here, but if I've learned anything, something will
+            console(@ex);
             clear_task();
         }
     });
