@@ -26,16 +26,26 @@ register_command('note', array(
 				@instrument = 'NOTE_SNARE_DRUM';
 			case '20':
 				@instrument = 'NOTE_STICKS';
+			case '35':
+				@instrument = 'BLOCK_NOTE_GUITAR';
+			case '41':
+				@instrument = 'BLOCK_NOTE_BELL';
 			case '79':
 			case '174':
 				@instrument = 'ORB_PICKUP';
+			case '82':
+				@instrument = 'BLOCK_NOTE_FLUTE';
 			case '159':
 			case '172':
 				@instrument = 'NOTE_PLING';
 			case '165':
 				@instrument = 'CHICKEN_EGG_POP';
+			case '169':
+				@instrument = 'BLOCK_NOTE_CHIME';
 			case '173':
 				@instrument = 'FIREWORK_BLAST';
+			case '216':
+				@instrument = 'BLOCK_NOTE_XYLOPHONE';
 		}
 	
 		@clicks = @args[0];
