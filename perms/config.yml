@@ -214,6 +214,7 @@ limitedworldedit:
     worldedit.region.*: true
     worldedit.schematic.*: true
     worldedit.tool.*: true
+    worldedit.light.*: true
 moderator:
   permissions:
     group.moderator: true
