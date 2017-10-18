@@ -13,7 +13,7 @@ set_cron('*/5 * * * *', closure(){
 		}
 		@allocMem = get_server_info(15);
 		@freeMem = get_server_info(16);
-		console('---[ SAVED ]---[ TPS: '.tps()[0].' ]'
+		console('---[ SAVED ]---[ TPS: '.round(tps()[0], 1).' ]'
 			.'---[ MEM: '.floor((@allocMem - @freeMem) / 1000000).' / '.floor(@allocMem / 1000000).' / 2863 MB ]'
 			.'---[ PLAYERS: '.array_size(all_players()).' ]'
 			.'---'.if(@currently, '[ Activities: '.@currently.' ]---'), false);
