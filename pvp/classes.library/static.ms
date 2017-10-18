@@ -1,6 +1,6 @@
 switch(@action) {
 case 'load':
-	tmsg(@player, color('e').'Hunt the other players. Do not let them press the button!');
+	tmsg(@player, color('e').'Hunt the other players!');
 	tmsg(@player, color('e').'When you\'re spotted, you regain health and hunger.');
 	tmsg(@player, color('e').'Sprint to "ghost" through walls and rematerialize out of sight.');
 	tmsg(@player, color('e').'Scare them, hit them, and then ghost away to safety.');
@@ -65,46 +65,6 @@ case 'load':
 		}
 	}
 	
-	@sneak = array();
-	
-	proc _reveal(@player, @sneak, @pvp) {
-		set_pinv(@player, associative_array(
-			103: associative_array('name': 'BEDROCK'),
-			102: associative_array('name': 'CHAINMAIL_CHESTPLATE')
-		));
-		if(!@sneak) {
-			return();
-		}
-		foreach(@p: @pinfo in @pvp['players']) {
-			if(@pinfo['team'] == 1) {
-				psend_block_change(@p, @sneak[0], 0);
-			}
-		}
-		@ploc = _relative(ploc(@player), 'up', 2);
-		play_effect(@ploc, 'EXPLOSION_LARGE');
-		foreach(@p in array_keys(@pvp['players'])) {
-			if(@p == @player, continue());
-			if(entity_can_see(puuid(@player), puuid(@p)) && _distance(ploc(@p), @ploc) < 6) {
-				play_named_sound(@ploc, associative_array('sound': 'entity.elder_guardian.death', 'pitch': 2));
-			}
-		}
-		array_remove(@sneak, 0);
-	}
-	
-	bind(player_toggle_sneak, associative_array('id': @player.'sneak'), associative_array('player': @player), @event, @sneak, @pvp) {
-		if(@event['sneaking'] && pmode() != 'SPECTATOR') {
-			set_pinv(player(), associative_array(103: null, 102: null));
-			@sneak[0] = _relative(ploc(), 'up', 1);
-			foreach(@p: @player in @pvp['players']) {
-				if(@player['team'] == 1) {
-					psend_block_change(@p, @event['location'], 7);
-				}
-			}
-		} else if(!pinv(player(), 103)) {
-			_reveal(player(), @sneak, @pvp);
-		}
-	}
-
 	set_interval(250, closure() {
 		if(!has_bind(@player.'sprint')) {
 			clear_task();
@@ -154,7 +114,6 @@ case 'unload':
 	unbind(@player.'invclick');
 	unbind(@player.'sprint');
 	unbind(@player.'pickup');
-	unbind(@player.'sneak');
 	set_pmode(@player, 'ADVENTURE');
 	set_pflyspeed(@player, 0.1);
 }
