@@ -16,9 +16,9 @@ register_command('roll', array(
 			die(color('a').'[Dice] '.color('f').'There\'s a minimum of 2 sides.');
 		}
 		if(@sides == 2) {
-			@message = color('a').'[Coin] '._colorname(player()).player().color('f').' flipped a coin and got '.if(rand(2) == 0, 'heads.', 'tails.');
+			@message = color('a').'[Coin] '.display_name().color('f').' flipped a coin and got '.if(rand(2) == 0, 'heads.', 'tails.');
 		} else {
-			@message = color('a').'[Dice] '._colorname(player()).player().color('f').' rolled a '.color('a').(rand(@sides) + 1).' on a '.@sides.'-sided die.';
+			@message = color('a').'[Dice] '.display_name().color('f').' rolled a '.color('a').(rand(@sides) + 1).' on a '.@sides.'-sided die.';
 		}
 		foreach(@p in all_players(pworld())) {
 			if(!ponline(@p)) {

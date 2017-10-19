@@ -55,7 +55,7 @@ case 'load':
 		
 		modify_event('amount', @damage * 0.2);
 		foreach(@p in players_in_radius(@target, 6)) {
-			if(@p != @player && array_index_exists(@pvp['players'], @p) && pinfo(@p, 5) > 0) {
+			if(@p != @player && array_index_exists(@pvp['players'], @p) && phealth(@p) > 0) {
 				damage_entity(puuid(@p), @damage, puuid(@player));
 			}
 		}
@@ -106,7 +106,7 @@ case 'load':
 		try(set_attribute(puuid(), 'knockbackresistance', 1));
 		set_interval(100, closure(){
 			try {
-				if(!pinfo(player(), 11) || pheld_slot() != 0) {
+				if(!psneaking() || pheld_slot() != 0) {
 					clear_task();
 					set_pexp(0);
 					try(set_attribute(puuid(), 'knockbackresistance', 0));

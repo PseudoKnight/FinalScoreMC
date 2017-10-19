@@ -10,10 +10,10 @@ case 'load':
 
 	bind(player_death, array('id': @player.'kill'), null, @e, @player) {
 		if(@e['killer'] == @player && !is_null(pinv(@player, 103))) {
-			set_phealth(@player, min(20, pinfo(@player, 5) + 4))
+			set_phealth(@player, min(20, phealth(@player) + 4))
 			play_sound(ploc(@player), array('sound': 'EAT', 'pitch': 0.5))
 			set_timeout(1000, closure(){
-				set_phealth(@player, min(20, pinfo(@player, 5) + 4))
+				set_phealth(@player, min(20, phealth(@player) + 4))
 				play_sound(ploc(@player), array('sound': 'EAT', 'pitch': 0.5))
 			})
 		}
@@ -51,7 +51,7 @@ case 'powerup':
 		103: array('type': 35, 'data': 7),
 	))
 	set_timeout(17000, closure(){
-		if(ponline(@player) && pinfo(@player, 5) > 0) {
+		if(ponline(@player) && phealth(@player) > 0) {
 			foreach(@effect in get_peffect(@player)) {
 				# if there's 6 seconds of night vision left, he hasn't gotten another powerup
 				if(@effect['id'] == 16 && @effect['seconds'] < 7) {

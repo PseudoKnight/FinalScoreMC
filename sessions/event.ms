@@ -27,6 +27,7 @@ bind(player_join, null, null, @event) {
 	set_timeout(50, closure(){
 		@pdata = _pdata(player());
 		@title = colorize('&6&l\u1260 &d&l\u1260 &b&l\u1260 &4&l\u1260 &6&lFINALSCORE&e&lMC \u00AB &r\u25AA \u25AA \u25AA');
+		set_display_name(_colorname().player());
 		
 		// Join message
 		queue_push(closure(){
@@ -52,7 +53,7 @@ bind(player_join, null, null, @event) {
 		// Tab list
 		queue_push(closure(){
 			foreach(@p in all_players()) {
-				set_list_name(@p, _colorname(@p).@p);
+				set_list_name(@p, display_name(@p));
 			}
 			@title = colorize('&6&lFINALSCORE&e&lMC');
 			@activities = import('activities');

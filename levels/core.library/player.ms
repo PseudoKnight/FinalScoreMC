@@ -1,5 +1,5 @@
 proc _level_add_player(@player, @level) {
-	if(pinfo(@player, 5) == 0) {
+	if(phealth(@player) == 0) {
 		return(false);
 	}
 	if(!_set_pactivity(@player, to_upper(@level['region']))) {

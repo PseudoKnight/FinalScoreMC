@@ -50,7 +50,7 @@ bind(player_death, null, null, @event) {
 		msg('You died @ '.@loc);
 		@time = array(60);
 		set_interval(1000, closure(){
-			if(!ponline(player()) || pinfo(player(), 5) > 0) {
+			if(!ponline(player()) || phealth() > 0) {
 				clear_task();
 			} else {
 				@time[0] -= 1;
@@ -307,7 +307,7 @@ bind(block_break, null, array('type': 56), @event) {
 		}
 
 		if(@report) {
-			@msg = color('c').'[!] '._colorname().player().color('r').' found diamonds';
+			@msg = color('c').'[!] '.display_name().color('r').' found diamonds';
 			broadcast(@msg, 'group.moderator');
 			console(@msg, false);
 		}

@@ -20,7 +20,7 @@ case 'load':
 		}
 		@item = pinv(player(), null);
 		if(@item['data'] >= 128, die());
-		@slot = pinfo(player(), 15);
+		@slot = pheld_slot();
 
 		proc _shoot() {
 			// get new location so that the egg does not hit the shooting player
@@ -56,10 +56,10 @@ case 'load':
 		}
 		@item = pinv(player(), null);
 		set_pinv(player(), array(null: null));
-		@slot = pinfo(player(), 15);
+		@slot = pheld_slot();
 		play_sound(ploc(), array('sound': 'DOOR_OPEN', 'pitch': 2));
 		set_timeout(1000, closure(){
-			if(ponline(@e['player']) && pinfo(player(), 5) > 0) {
+			if(ponline(@e['player']) && phealth() > 0) {
 				@newitem = pinv(player(), @slot);
 				if(!is_null(@newitem) && @newitem['type'] == 265) {
 					@item['qty'] = @newitem['qty'] + @item['qty'] - 1;

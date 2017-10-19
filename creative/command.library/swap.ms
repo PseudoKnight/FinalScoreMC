@@ -22,7 +22,7 @@ register_command('swap', array(
 						set_peffect(player(), 15, 0, 1, true, false);
 						set_peffect(player(), 16, 0, 1, true, false);
 						@item = pinv(player(), null);
-						@slot = pinfo(player(), 15);
+						@slot = pheld_slot();
 						set_timeout(50, closure(){
 							if(ponline(player()) && pworld() == 'dev') {
 								@inv = associative_array();

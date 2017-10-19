@@ -36,7 +36,7 @@ proc _7_start(@7) {
 				foreach(@player: @p in @7['players']) {
 					if(!ponline(@player)
 					|| !array_contains(sk_current_regions(@player), '7_schematic')
-					|| pinfo(@player, 5) <= 0) {
+					|| phealth(@player) <= 0) {
 						_7_remove_player(@player, @7);
 					} else {
 						@p['time'] -= 0.10;
@@ -133,7 +133,7 @@ proc _7_remove_player(@player, @7) {
 	if(ponline(@player)) {
 		if(pworld(@player) === 'custom') {
 			if(array_contains(sk_current_regions(@player), '7')) {
-				if(pinfo(@player, 5) > 0) {
+				if(phealth(@player) > 0) {
 					pkill(@player);
 					explosion(_relative(ploc(@player), 'up'), 4);
 				}

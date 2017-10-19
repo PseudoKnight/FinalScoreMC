@@ -60,7 +60,7 @@ register_command('race', array(
 		@timer = array(3);
 		set_interval(1000, closure(){
 			foreach(@index: @p in @players) {
-				if(!ponline(@p) || pworld(@p) != @world || pinfo(@p, 5) == 0) {
+				if(!ponline(@p) || pworld(@p) != @world || phealth(@p) == 0) {
 					array_remove(@players, @index);
 				}
 			}

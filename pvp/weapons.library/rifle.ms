@@ -9,7 +9,7 @@ proc _reload_rifle() {
 	set_pinv(player(), array(0: @item));
 	play_sound(ploc(), array('sound': 'DOOR_OPEN', 'pitch': 2));
 	set_timeout(2400, closure(){
-		if(ponline(player()) && pinfo(player(), 5) > 0) {
+		if(ponline(player()) && phealth() > 0) {
 			@newitem = pinv(player(), 0);
 			if(is_null(@newitem) || @newitem['type'] != 291 || @newitem['qty'] != @item['qty']) {
 				die();

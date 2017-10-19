@@ -74,7 +74,7 @@ case 'load':
 		try {
 			if(pmode(@player) == 'SPECTATOR') {
 				die();
-			} else if(pinfo(@player, 11)) {
+			} else if(psneaking(@player)) {
 				if(@sneak && _distance(@sneak[0], ploc(@player)) > 1.5) {
 					_reveal(@player, @sneak, @pvp);
 				} else {
@@ -96,7 +96,7 @@ case 'load':
 					set_pinv(@p, associative_array(103: associative_array('type': 86)));
 					play_named_sound(@loc, associative_array('sound': 'entity.elder_guardian.death', 'pitch': 2), @p);
 					set_phunger(@player, min(20, phunger(@player) + 1));
-					set_phealth(@player, min(20, pinfo(@player, 5) + if(@dist < 2, 2, 1)));
+					set_phealth(@player, min(20, phealth(@player) + if(@dist < 2, 2, 1)));
 					set_peffect(@player, 5, 0, 2);
 					@data['heartrate'] = max(300, @data['heartrate'] - 200);
 					@data['lastscare'] = time();

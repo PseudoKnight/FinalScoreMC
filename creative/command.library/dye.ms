@@ -20,7 +20,7 @@ register_command('dye', array(
 		);
 		if(string_starts_with(@item['name'], 'LEATHER_')) {
 			try {
-				set_armor_color(pinfo(player(), 15), @color);
+				set_armor_color(pheld_slot(), @color);
 			} catch(Exception @ex) {
 				die(color('gold').'Hold leather armor in your hand and type the command. eg. /dye 255 255 255');
 			}

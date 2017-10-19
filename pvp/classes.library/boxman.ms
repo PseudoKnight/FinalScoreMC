@@ -62,12 +62,12 @@ case 'load':
 			));
 
 			@returnToSender = closure(){
-				if(ponline(player()) && pinfo(player(), 5) > 0 && array_index_exists(@pvp['players'], player())) {
+				if(ponline(player()) && phealth() > 0 && array_index_exists(@pvp['players'], player())) {
 					set_pwalkspeed(player(), 0.2);
 					@inv[@slot] = array('name': 'CONCRETE', 'data': 2);
 					set_pinv(player(), @inv);
 					set_timeout(1200, closure(){
-						if(ponline(player()) && pinfo(player(), 5) > 0 && array_index_exists(@pvp['players'], player())) {
+						if(ponline(player()) && phealth() > 0 && array_index_exists(@pvp['players'], player())) {
 							@inv[@slot] = @item;
 							set_pinv(player(), @inv);
 						}
@@ -84,7 +84,7 @@ case 'load':
 				try {
 					if(get_entity_health(@target) <= 0
 					|| !ponline(player())
-					|| pinfo(player(), 5) == 0
+					|| phealth() == 0
 					|| !array_index_exists(@pvp['players'], player())) {
 						clear_task();
 						execute(@returnToSender);

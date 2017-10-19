@@ -20,7 +20,7 @@ bind(projectile_launch, array('id': @id.'grapple'), array('type': 'FISHING_HOOK'
 	set_arrow_damage(@arrow, 1);
 	play_sound(ploc(@player), array('sound': 'SHOOT_ARROW'));
 	@shooter = puuid(@player);
-	@slot = pinfo(@player, 15);
+	@slot = pheld_slot(@player);
 
 	set_timeout(50, closure(){
 		try(set_entity_rider(@arrow, @hook));
@@ -63,7 +63,7 @@ bind(projectile_launch, array('id': @id.'grapple'), array('type': 'FISHING_HOOK'
 			try {
 				if(get_entity_health(@shooter) < @startingHealth
 				|| get_entity_health(@mover) == 0
-				|| pinfo(@player, 15) != @slot
+				|| pheld_slot(@player) != @slot
 				|| !entity_exists(@hook)) {
 					if(@interval) {
 						clear_task();
@@ -87,7 +87,7 @@ bind(projectile_launch, array('id': @id.'grapple'), array('type': 'FISHING_HOOK'
 						@y = (@loc2['y'] - @loc1['y']) / @dist * if(get_entity_gliding(@mover), 1, 1.1);
 						@z = (@loc2['z'] - @loc1['z']) / @dist;
 						set_entity_velocity(@mover, array(@x, @y, @z));
-					} else if(!pinfo(@player, 11)) {
+					} else if(!psneaking(@player)) {
 						if(entity_type(@target) == 'ARROW') {
 							entity_remove(@target);
 							pgive_item(@player, 262, 1);
@@ -145,7 +145,7 @@ array_push(@pvp['binds'], @id.'grapplepickup');
 bind(item_pickup, array('id': @id.'grapplepickup'), array('item': 262), @event, @id) {
 	@pvp = import('pvp'.@id);
 	if(array_index_exists(@pvp['players'], player())
-	&& pinfo(player(), 11)) {
+	&& psneaking()) {
 		cancel();
 	}
 }

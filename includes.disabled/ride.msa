@@ -5,7 +5,7 @@
 /ride $player $npcType $speed $ = >>>
 	if(extension_exists('CHCitizens')) {
 
-	if(pinfo($player, 11)) {
+	if(psneaking($player)) {
 		die();
 	}
 

@@ -48,7 +48,7 @@ bind(player_interact_at_entity, null, array('clicked': 'ARMOR_STAND'), @event) {
 
 	@item = pinv(player(), null);
 	@armorstand = entity_spec(@event['id']);
-	if(is_null(@item) && pinfo(player(), 11)) {
+	if(is_null(@item) && psneaking()) {
 		if(!@armorstand['visible']) {
 			die();
 		}
@@ -72,7 +72,7 @@ bind(player_interact_at_entity, null, array('clicked': 'ARMOR_STAND'), @event) {
 			@newloc = @eloc[];
 
 			@taskid = set_interval(50, closure(){
-				if(!pinfo(player(), 11) || !entity_exists(@event['id'])) {
+				if(!psneaking() || !entity_exists(@event['id'])) {
 					clear_task();
 					export(player().'posing', null);
 					return();
@@ -101,7 +101,7 @@ bind(player_interact_at_entity, null, array('clicked': 'ARMOR_STAND'), @event) {
 			set_entity_spec(@event['id'], array('gravity': false));
 
 			set_interval(50, closure(){
-				if(!ponline(player()) || !pinfo(player(), 11) || !entity_exists(@event['id'])) {
+				if(!ponline(player()) || !psneaking() || !entity_exists(@event['id'])) {
 					try {
 						set_entity_spec(@event['id'], array('gravity': @armorstand['gravity']));
 					} catch(BadEntityException @ex) {
@@ -133,7 +133,7 @@ bind(player_interact_at_entity, null, array('clicked': 'ARMOR_STAND'), @event) {
 			@newspec['poses'][@poseable] = @armorstand['poses'][@poseable][];
 
 			set_interval(50, closure(){
-				if(!ponline(player()) || !pinfo(player(), 11) || !entity_exists(@event['id'])) {
+				if(!ponline(player()) || !psneaking() || !entity_exists(@event['id'])) {
 					clear_task();
 					export(player().'posing', null);
 					return();
@@ -225,7 +225,7 @@ bind(player_interact_at_entity, null, array('clicked': 'ARMOR_STAND'), @event) {
 				}
 
 			case 420: # lead carries armor stand
-				if(!pinfo(player(), 11) && !get_entity_rider(puuid())) {
+				if(!psneaking() && !get_entity_rider(puuid())) {
 					cancel();
 					title('', color(6).'Moving Armor Stand. Click to place.', 0, 40, 10);
 					bind(player_interact, null, array('player': player()), @event, @world = pworld(), @stand = @event['id']) {

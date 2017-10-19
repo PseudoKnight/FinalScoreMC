@@ -82,7 +82,7 @@ bind(player_interact, null, array('item': 401, 'button': 'right'), @event) {
         
         @slot = -106;
         if(@event['hand'] == 'main_hand') {
-            @slot = pinfo(player(), 15);
+            @slot = pheld_slot();
         }
         @item = pinv(player(), @slot);
         if(@item['meta'] && @item['meta']['firework']['effects']) {

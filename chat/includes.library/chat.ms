@@ -48,12 +48,10 @@ proc _chat(@player, @message, @recipients) {
 	if(array_index_exists(@pdata, 'icon')) {
 		@components[] = array('plain', @pdata['icon']);
 	}
-	
-	@color = _colorname(@player);
 
-	@components[] = array('hover', ' '.@color.@player,
+	@components[] = array('hover', ' '.display_name(@player),
 		if(ponline(@player) && has_permission(@player, 'group.moderator'), '&bSTAFF\n')
-		.if(array_index_exists(@pdata, 'names'), @color.array_implode(@pdata['names']).'\n')
+		.if(array_index_exists(@pdata, 'names'), '&7'.array_implode(@pdata['names']).'\n')
 		.if(ponline(@player) && array_index_exists(@session, 'lastplayed'), '&8[last played] &r'.@session['lastplayed'].'\n')
 		.'&8[world] &r'.if(ponline(@player), _worldname(pworld(@player)), 'Real World'));
 	@components[] = '&8: ';

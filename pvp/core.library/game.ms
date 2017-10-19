@@ -149,7 +149,7 @@ proc _pvp_start_match(@id) {
 		}
 		
 		foreach(@player: @p in @pvp['players']) {
-			if(pinfo(@player, 5) <= 0) {
+			if(phealth(@player) <= 0) {
 				// dead
 			 	continue();
 			}
@@ -209,7 +209,7 @@ proc _pvp_start_match(@id) {
 				} else {
 					tmsg(@player, color('gray').'[PVP] '.color('r').'You exited the combat region.')
 					set_timeout(50, closure(){
-						if(!_is_survival_world(pworld(@player)) && pinfo(@player, 5) > 0) {
+						if(!_is_survival_world(pworld(@player)) && phealth(@player) > 0) {
 							pkill(@player);
 						}
 					});
@@ -515,7 +515,7 @@ proc _pvp_end_match(@id, @winners) {
 							}, @id);
 						}
 					}
-					if(pinfo(@player, 5) == 0) {
+					if(phealth(@player) == 0) {
 						respawn(@player);
 						queue_push(@closure, @id);
 					} else {

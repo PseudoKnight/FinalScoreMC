@@ -83,7 +83,7 @@ proc _store_pstate(@player, @state) {
 	@pstate['inv'] = serialize_pinv(@player);
 	@pstate['ender'] = serialize_penderchest(@player);
 
-	@pstate['hp'] = pinfo(@player, 5);
+	@pstate['hp'] = phealth(@player);
 	@pstate['hunger'] = phunger(@player);
 	@pstate['sat'] = psaturation(@player);
 	@pstate['texp'] = ptexp(@player);

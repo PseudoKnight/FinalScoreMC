@@ -83,7 +83,7 @@ bind(player_death, array('priority': 'high', 'id': @id.'death'), null, @e, @id) 
 	}
 	set_timeout(5000, closure(){
 		try {
-			if(pinfo(player(), 5) <= 0) {
+			if(phealth() <= 0) {
 				if(function_exists('respawn')) {
 					respawn(player())
 				}
@@ -512,7 +512,7 @@ if(array_contains(@pvp['arena']['flags'], 'rallycall')) {
 				foreach(array_keys(@pvp['players']), @p) {
 					if(@p != player()
 					&& @pvp['players'][player()]['team'] == @pvp['players'][@p]['team']
-					&& pinfo(@p, 5) > 0
+					&& phealth(@p) > 0
 					&& @pvp['players'][@p]['respawn'] == 0) {
 						set_ploc(@p, ploc(player()))
 					}

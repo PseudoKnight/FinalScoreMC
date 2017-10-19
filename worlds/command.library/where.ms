@@ -13,7 +13,7 @@ register_command('where', array(
 			if(!array_index_exists(@list, @world)) {
 				@list[@world] = array();
 			}
-			@list[@world][] = _colorname(@player).@player;
+			@list[@world][] = display_name(@player);
 		}
 		foreach(@world: @players in @list) {
 			msg(@world.': '.array_implode(@players));

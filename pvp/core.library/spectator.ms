@@ -3,7 +3,7 @@ proc _set_spectator(@player, @pvp) {
 		return();
 	}
 	@pvp['spectators'][] = @player;
-	if(pinfo(@player, 5) > 0) {
+	if(phealth(@player) > 0) {
 		foreach(@p in all_players()) {
 			if(ponline(@p) && pworld(@p) == pworld(@player)) {
 				raw_set_pvanish(@player, true, @p);
@@ -74,7 +74,7 @@ proc _remove_spectator(@player, @pvp) {
 					raw_set_pvanish(@player, false, @p);
 				}
 			}
-			if(pinfo(@player, 5) > 0) {
+			if(phealth(@player) > 0) {
 				set_entity_fall_distance(puuid(@player), 0);
 				set_peffect(@player, 14, 0, 0);
 				set_ploc(@player, @pvp['arena']['lobby']);

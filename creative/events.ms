@@ -15,7 +15,7 @@ proc _place_command_block(@loc, @face, @block) {
 	if(!pisop() && has_permission('group.builder')
 	&& !_is_survival_world(@loc['world'])) {
 		@clicked = split(':', get_block_at(@loc))[0];
-		if(pinfo(player(), 11) || (@clicked != '137' && @clicked != '210' && @clicked != '211')) {
+		if(psneaking() || (@clicked != '137' && @clicked != '210' && @clicked != '211')) {
 			@loc = _relative(@loc, @face);
 			if(sk_can_build(@loc)) {
 				@data = 0;
@@ -83,20 +83,20 @@ proc _msg_block_command(@loc) {
 }
 
 bind(player_interact, null, associative_array('button': 'right', 'block': 137), @event) {
-	if(!pisop() && !pinfo(player(), 11) && @event['hand'] == 'main_hand' && has_permission('group.builder')){
+	if(!pisop() && !psneaking() && @event['hand'] == 'main_hand' && has_permission('group.builder')){
 		_msg_block_command(@event['location']);
 	}
 }
 
 bind(player_interact, null, associative_array('button': 'right', 'block': 211), @event) {
-	if(!pisop() && !pinfo(player(), 11) && @event['hand'] == 'main_hand' && has_permission('group.builder')){
+	if(!pisop() && !psneaking() && @event['hand'] == 'main_hand' && has_permission('group.builder')){
 		_msg_block_command(@event['location']);
 	}
 }
 
 # Don't instant-break noteblocks in creative mode if not sneaking
 bind(player_interact, null, array('block': 25, 'button': 'left'), @event) {
-	if(pmode() === 'CREATIVE' && !pinfo(player(), 11)) {
+	if(pmode() === 'CREATIVE' && !psneaking()) {
 		// It won't break if in survival, and it'll play the note if we don't cancel
 		set_pmode('SURVIVAL');
 		set_pflight(true);

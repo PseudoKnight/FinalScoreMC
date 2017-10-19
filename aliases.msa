@@ -124,8 +124,8 @@
 	foreach(@player in @allplayers) {
 		for(@i = 0, @i < array_size(@list), @i++) {
 			if(array_contains_ic(pgroup(@player), @list[@i][0])) {
-				@list[@i][2] = @list[@i][2].' '.pinfo(@player, 4)
-				break()
+				@list[@i][2] = @list[@i][2].' '.display_name(@player);
+				break();
 			}
 		}
 	}

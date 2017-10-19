@@ -15,7 +15,7 @@ case 'load':
 		}
 		play_sound(ploc(), array('sound': 'HORSE_SKELETON_DEATH', 'pitch': 0.5, 'volume': 2));
 		set_pinv(player(), array(null: array('type': 290, 'data': 59)));
-		@slot = pinfo(player(), 15);
+		@slot = pheld_slot();
 		set_interval(1000, closure(){
 			try {
 				@item = pinv(player(), @slot);

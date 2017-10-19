@@ -45,7 +45,7 @@ case 'load':
 
 	proc _manti_noise(@player) {
 		if(ponline(@player)) {
-			if(pinfo(@player, 5) > 0) {
+			if(phealth(@player) > 0) {
 				play_sound(ploc(@player), array('sound': 'CAT_PURREOW', 'pitch': 0, 'volume': 2))
 			}
 			queue_delay(1000 * rand(6, 18), @player)

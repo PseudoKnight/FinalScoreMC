@@ -64,7 +64,7 @@ bind(player_interact, null, array('block': 118, 'button': 'right'), @event) {
 		}
 
 		// Remove some water from the cauldron if sneaking
-		if(pinfo(player(), 11)) {
+		if(psneaking()) {
 			if(@result == 373) {
 				@data--;
 				set_block_at(@event['location'], '118:'.@data);

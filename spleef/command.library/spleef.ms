@@ -297,10 +297,10 @@ register_command('spleef', array(
 						@reward = import('reward');
 						@spleefsettings['counter']++;
 		
-						if(array_size(@currentspleef) <= 1 && (!array_index_exists(@currentspleef, 'PseudoKnight') || pinfo('PseudoKnight', 11) == true)) {
+						if(array_size(@currentspleef) <= 1 && (!array_index_exists(@currentspleef, 'PseudoKnight') || psneaking('PseudoKnight') == true)) {
 							@winner = array_implode(array_keys(@currentspleef));
 							if(@winner !== '') {
-								_regionmsg(@cfg['region']['wrapper'], color('a').'[Spleef] '._colorname(@winner).@winner.color(r).' is the winner!');
+								_regionmsg(@cfg['region']['wrapper'], color('a').'[Spleef] '.display_name(@winner).color('r').' is the winner!');
 								set_ploc(@winner, @cfg['warp']['lobby']);
 								set_peffect(@winner, 1, 0, 0);
 								set_peffect(@winner, 8, 0, 0);
@@ -327,7 +327,7 @@ register_command('spleef', array(
 							if(!ponline(@player) || pworld(@player) != @world || !array_contains(sk_current_regions(@player), @cfg['region']['arena'])) {
 								array_remove(@currentspleef, @player);
 								export('currentspleef', @currentspleef);
-								_regionmsg(@cfg['region']['wrapper'], color('green').'[Spleef] '._colorname(@player).@player.color('r').' was knocked out.');
+								_regionmsg(@cfg['region']['wrapper'], color('green').'[Spleef] '.display_name(@player).color('r').' was knocked out.');
 								if(ponline(@player) && pworld() == @world) {
 									set_ploc(@player, @cfg['warp']['lobby']);
 									set_peffect(@player, 1, 0, 0);

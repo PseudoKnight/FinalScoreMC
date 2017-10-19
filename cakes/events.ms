@@ -53,7 +53,7 @@ bind(player_interact, null, array('block': 92), @event) {
 		set_phunger(20);
 		set_psaturation(5.0);
 
-		broadcast(_colorname().player().color('r').if(@thiscake['type'] == 'secret', ' found ', ' achieved ')
+		broadcast(display_name().color('r').if(@thiscake['type'] == 'secret', ' found ', ' achieved ')
 				.color('a').'['.to_upper(@id).'] '.color('r').@thiscake['type'].' cake! '.color('a').@count.'/'.@total);
 
 		if(!has_permission('group.builder')) {

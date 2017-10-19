@@ -100,7 +100,7 @@ bind('target_player', null, array('mobtype': 'ZOMBIE'), @event, @day) {
 				set_timeout((1 + rand(3)) * 1000, closure() {
 					if(entity_exists(@event['id'])
 					&& ponline(@event['player'])
-					&& pinfo(@event['player'], 5) > 10
+					&& phealth(@event['player']) > 10
 					&& entity_can_see(@event['id'], puuid(@event['player']))) {
 						@mob = @mobs[rand(array_size(@mobs))];
 						set_mob_equipment(@event['id'], associative_array(

@@ -23,9 +23,9 @@ case 'load':
 		play_effect(@loc, 'CRIT', array('particleCount': 10, 'radius': 96));
 		@lightning = lightning(@loc);
 		export(player().'lightning', @lightning);
-		@slot = pinfo(player(), 15)
-		@item = pinv(player(), null)
-		set_pinv(player(), array(null: array('type': 280)))
+		@slot = pheld_slot();
+		@item = pinv(player(), null);
+		set_pinv(player(), array(null: array('type': 280)));
 		queue_clear(player().'lightning');
 		queue_delay(1000, player().'lightning');
 		queue_push(closure(){
@@ -53,7 +53,7 @@ case 'load':
 		}
 		@loc1 = ploc()
 		foreach(@player in players_in_radius(ploc(), 8)) {
-			if(@player == player() || pinfo(@player, 5) <= 0, continue())
+			if(@player == player() || phealth(@player) <= 0, continue())
 			@loc2 = ploc(@player)
 			@loc2['y'] += 2
 			@dist = sqrt(((@loc2['x'] - @loc1['x']) ** 2) + ((@loc2['y'] - @loc1['y']) ** 2) + ((@loc2['z'] - @loc1['z']) ** 2))

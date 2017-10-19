@@ -21,9 +21,9 @@ proc _set_pactivity(@player, @activity) {
 	@session['activity'] = @activity;
 	try {
 		if(@activity) {
-			set_list_name(@player, color('gray').@activity.' '._colorname(@player).@player);
+			set_list_name(@player, color('gray').@activity.' '.display_name(@player));
 		} else {
-			set_list_name(@player, _colorname(@player).@player);
+			set_list_name(@player, display_name(@player));
 		}
 	} catch(PlayerOfflineException @ex) {
 		// if in a player_quit event, setting list name will throw offline exception even though ponline() returns true

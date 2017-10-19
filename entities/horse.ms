@@ -54,7 +54,7 @@ bind(player_interact_entity, null, array('clicked': '/(DONKEY|HORSE|LLAMA|MULE|S
 	}
 
 	# skeleton/zombie horses
-	if(!is_cancelled() && !pinfo(player(), 11)) {
+	if(!is_cancelled() && !psneaking()) {
 		if(@event['clicked'] === 'ZOMBIE_HORSE' || @event['clicked'] === 'SKELETON_HORSE') {
 			if(@item) {
 				switch(@item['type']) {

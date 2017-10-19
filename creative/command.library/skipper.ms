@@ -12,7 +12,7 @@ register_command('skipper', array(
 			msg(color('green').'Disabled skipper mode.');
 		} else {
 			bind(entity_toggle_glide, array('id': player().'skipperglide'), array('type': 'PLAYER', 'player': player()), @event) {
-				if(!@event['gliding'] && !pinfo(player(), 11)) {
+				if(!@event['gliding'] && !psneaking()) {
 					cancel();
 				}
 			}

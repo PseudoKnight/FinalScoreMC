@@ -48,7 +48,7 @@ proc _pvp_initialize_players(@id, @players) {
 	@c = array(0, 0); # for selecting initial spawn locations
 	@loc = array();
 	foreach(@player in @players) {
-		if(!ponline(@player) || pinfo(@player, 5) == 0 || _is_survival_world(pworld(@player)) ||
+		if(!ponline(@player) || phealth(@player) == 0 || _is_survival_world(pworld(@player)) ||
 		!_set_pactivity(@player, to_upper(@id))) {
 			array_remove(@pvp['players'], @player);
 			continue();
@@ -204,7 +204,7 @@ proc _pvp_equip(@id, @player) {
 		}
 	}
 	if(array_contains(@pvp['arena']['flags'], 'heartdisplay')) {
-		set_pscore('health', @player, integer(pinfo(player(), 5)), @id);
+		set_pscore('health', @player, integer(phealth()), @id);
 	}
 }
 
