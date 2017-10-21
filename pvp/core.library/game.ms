@@ -232,29 +232,28 @@ proc _pvp_start_match(@id) {
 
 		if(array_index_exists(@arena, 'itemspawn')) {
 			foreach(@i: @item in @arena['itemspawn']) {
-				if(@pvp['itemspawn'][@i][0]) {
+				@itemspawn = @pvp['itemspawn'][@i];
+				if(@itemspawn[0]) {
 					try {
-						@loc = _relative(entity_loc(@pvp['itemspawn'][@i][0]), 'up', 0.4);
-						@pvp['itemspawn'][@i][1] = time();
-						if(extension_exists('CHSpigot')) {
-							play_effect(@loc, 'FIREWORKS_SPARK', array('radius': 64, 'speed': 0));
-						}
+						@loc = _relative(entity_loc(@itemspawn[0]), 'up', 0.4);
+						@itemspawn[1] = time();
+						play_effect(@loc, 'FIREWORKS_SPARK', array('radius': 64, 'speed': 0));
 						continue();
 					} catch(BadEntityException @ex) {
 						// item drop was picked up or is unloaded
 					}
 				}
-				if(@pvp['itemspawn'][@i][1] + (@item['cooldown'] * 1000) < time()) {
+				if@itemspawn[1] + (@item['cooldown'] * 1000) < time()) {
 					@id = drop_item(@item['loc'], @item['item'], false);
 					try {
 						set_entity_velocity(@id, array(0, 0, 0));
 						play_sound(@item['loc'], array('sound': 'ENDERMAN_TELEPORT', 'pitch': 1.5));
 						make_effect(@item['loc'], 'ENDER_SIGNAL');
-						@pvp['itemspawn'][@i][0] = @id;
-						@pvp['itemspawn'][@i][1] = time();
+						@itemspawn[0] = @id;
+						@itemspawn[1] = time();
 					} catch(BadEntityException @ex) {
 						// chunk might not be loaded, so try again next tick
-						@pvp['itemspawn'][@i][0] = '';
+						@itemspawn[0] = '';
 					}
 				}
 			}
