@@ -74,12 +74,6 @@ case 'load':
 		try {
 			if(pmode(@player) == 'SPECTATOR') {
 				die();
-			} else if(psneaking(@player)) {
-				if(@sneak && _distance(@sneak[0], ploc(@player)) > 1.5) {
-					_reveal(@player, @sneak, @pvp);
-				} else {
-					die();
-				}
 			}
 		} catch(PlayerOfflineException @ex) {
 			clear_task();

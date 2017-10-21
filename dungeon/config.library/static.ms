@@ -1,3 +1,5 @@
+@maxRoomHeight = 16;
+
 proc _set_locations(@start, @end, @spawns){
 	@pvp = import('pvpstatic');
 	if(@pvp) {
