@@ -147,6 +147,4 @@ bind(player_quit, null, null, @event) {
 	}
 	export('pdata.'.to_lower(@event['player']), null); // clear player data cache
 	export('session.'.player(), null); // clear player state data
-	save_players();
-	console('---[ SAVED ]---[ PLAYERS ]---', false);
 }
