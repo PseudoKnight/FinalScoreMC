@@ -1,27 +1,23 @@
 bind('creature_spawn', null, array('type': 'ZOMBIE', 'reason': 'NATURAL'), @event) {
 	if(@event['location']['world'] === 'outworld') {
-		queue_push(closure(){
-			if(entity_exists(@event['id'])) {
-				set_mob_equipment(@event['id'], associative_array(
-					'HELMET': array('type': 397, 'data': 3, 'meta': array('owner': 'rabbit2077')),
-					'CHESTPLATE': array('type': 299, 'meta': array('color': array('r': 180, 'g': 180, 'b': 180))),
-					'LEGGINGS': array('type': 300, 'meta': array('color': array('r': 180, 'g': 180, 'b': 180))),
-					'BOOTS': array('type': 309),
-				));
-				set_equipment_droprates(@event['id'], associative_array(
-					'WEAPON': 1,
-					'OFF_HAND': 1,
-					'HELMET': 0,
-					'CHESTPLATE': 0,
-					'LEGGINGS': 0,
-					'BOOTS': 0,
-				));
-				if(!entity_spec(@event['id'])['baby']){
-					set_mob_effect(@event['id'], 1, 0, 9999, true);
-				}
-				set_mob_effect(@event['id'], 8, 1, 9999, true);
-			}
-		}, 'easter');
+		set_mob_equipment(@event['id'], associative_array(
+			'HELMET': array('type': 397, 'data': 3, 'meta': array('owner': 'rabbit2077')),
+			'CHESTPLATE': array('type': 299, 'meta': array('color': array('r': 180, 'g': 180, 'b': 180))),
+			'LEGGINGS': array('type': 300, 'meta': array('color': array('r': 180, 'g': 180, 'b': 180))),
+			'BOOTS': array('type': 309),
+		));
+		set_equipment_droprates(@event['id'], associative_array(
+			'WEAPON': 1,
+			'OFF_HAND': 1,
+			'HELMET': 0,
+			'CHESTPLATE': 0,
+			'LEGGINGS': 0,
+			'BOOTS': 0,
+		));
+		if(!entity_spec(@event['id'])['baby']){
+			set_mob_effect(@event['id'], 1, 0, 9999, true);
+		}
+		set_mob_effect(@event['id'], 8, 1, 9999, true);
 	}
 }
 
