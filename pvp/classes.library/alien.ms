@@ -8,12 +8,13 @@ case 'load':
 		if(pexp() == 99) {
 			@arrow = shoot_projectile(player(), 'ARROW');
 			set_entity_onfire(@arrow, 1);
-			play_sound(ploc(), array('sound': 'ENDERDRAGON_HIT', 'pitch': 2));
+			set_entity_gravity(@arrow, false);
+			play_sound(ploc(), array('sound': 'ENDERDRAGON_HIT', 'pitch': 2, 'volume': 2));
 			set_pexp(0);
-			set_interval(250, closure(){
+			set_interval(50, closure(){
 				try {
 					@xp = pexp();
-					@xp = min(99, @xp + 10);
+					@xp = min(99, @xp + 2);
 					set_pexp(@xp);
 					if(@xp == 99) {
 						clear_task();
@@ -30,8 +31,11 @@ case 'load':
 	}
 
 	bind(projectile_hit, array('id': @player.'hit'), array('type': 'ARROW'), @e, @shooter = puuid(@player)) {
-		if(@e['shooter'] == @shooter && entity_type(@e['id'])) {
-			entity_remove(@e['id']);
+		if(@e['shooter'] == @shooter) {
+			play_effect(@e['location'], 'LAVA_POP', array('particleCount': 7, 'radius': 96));
+			play_sound(@e['location'], array('sound': 'NOTE_BASS_DRUM', 'pitch': 2, 'volume': 2));
+			play_sound(@e['location'], array('sound': 'FIZZ', 'pitch': 2, 'volume': 2));
+			try(entity_remove(@e['id']));
 		}
 	}
 
