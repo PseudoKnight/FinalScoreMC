@@ -243,7 +243,7 @@ proc _pvp_start_match(@id) {
 						// item drop was picked up or is unloaded
 					}
 				}
-				if@itemspawn[1] + (@item['cooldown'] * 1000) < time()) {
+				if(@itemspawn[1] + (@item['cooldown'] * 1000) < time()) {
 					@id = drop_item(@item['loc'], @item['item'], false);
 					try {
 						set_entity_velocity(@id, array(0, 0, 0));
