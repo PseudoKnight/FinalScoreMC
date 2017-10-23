@@ -39,10 +39,10 @@ case 'load':
 			if(@item) {
 				@item['qty']--;
 				if(@item['qty'] == 0) {
-					set_pinv(@player, array(1: null));
+					set_pinv(@player, 1, null);
 					_set_equipment(@player, false, @pvp);
 				} else {
-					set_pinv(@player, array(1: @item));
+					set_pinv(@player, 1, @item);
 				}
 			}
 		}

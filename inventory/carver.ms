@@ -59,10 +59,10 @@ proc _axe_carve(@event) {
 				@maxDamage = 59;
 		}
 		if(@item['data'] > @maxDamage) {
-			set_pinv(player(), array(null: null));
+			set_pinv(player(), null, null);
 			play_sound(ploc(), array('sound': 'ITEM_BREAK', 'category': 'PLAYERS'));
 		} else {
-			set_pinv(player(), array(null: @item));
+			set_pinv(player(), null, @item);
 		}
 	}
 }

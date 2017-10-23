@@ -6,7 +6,7 @@ proc _reload_rifle() {
 	}
 	@item['qty']--;
 	@item['data'] = 131;
-	set_pinv(player(), array(0: @item));
+	set_pinv(player(), 0, @item);
 	play_sound(ploc(), array('sound': 'DOOR_OPEN', 'pitch': 2));
 	set_timeout(2400, closure(){
 		if(ponline(player()) && phealth() > 0) {
@@ -15,7 +15,7 @@ proc _reload_rifle() {
 				die();
 			}
 			@item['data'] = 10;
-			set_pinv(player(), array(0: @item));
+			set_pinv(player(), 0, @item);
 			play_sound(ploc(), array('sound': 'DOOR_CLOSE', 'pitch': 2));
 		}
 	});
@@ -38,7 +38,7 @@ bind(player_interact, array('id': @id.'rifle'), array('item': 291), @event, @pvp
 		die();
 	}
 	@item['data'] += 8;
-	set_pinv(player(), array(0: @item));
+	set_pinv(player(), 0, @item);
 	
 	_hit_scan(player(), 64, 1.75, 'VOID_FOG', 'LARGE_SMOKE', @pvp);
 	play_sound(ploc(), array('sound': 'FIREWORK_BLAST', 'pitch': 0.7, 'volume': 3));

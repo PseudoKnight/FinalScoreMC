@@ -56,7 +56,7 @@ bind(item_pickup, array('id': @id.'flagpickup'), null, @e, @id) {
 				play_sound(@pvp['arena']['ctfflag'][@flag], array('sound': 'ZOMBIE_METAL', 'volume': 3));
 				@pvp['team'][@flag]['score']++;
 				set_pscore('captures', @pvp['arena']['team'][@flag]['name'], @pvp['team'][@flag]['score'], @id)
-				set_pinv(player(), array(103: null));
+				set_pinv(player(), 103, null);
 				_pvp_msg(@pvp, color('gray').'[PVP] '
 					.@pvp['arena']['team'][@flag]['color'].player().color('r').' secured the '
 					.@pvp['arena']['team'][@heldflag]['color'].'flag'.color('r').'!');
@@ -73,7 +73,7 @@ bind(item_pickup, array('id': @id.'flagpickup'), null, @e, @id) {
 	} else {
 		queue_clear(@id.@flag.'flag');
 		modify_event('item', null);
-		set_pinv(player(), array(103: array('type': 425, 'data': if(@flag, 4, 1))));
+		set_pinv(player(), 103, array('type': 425, 'data': if(@flag, 4, 1)));
 		_pvp_msg(@pvp, color('gray').'[PVP] '
 			.@pvp['arena']['team'][if(@flag, 0, 1)]['color'].player().color('r').' picked up the '
 			.@pvp['arena']['team'][@flag]['color'].'flag');

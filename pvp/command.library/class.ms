@@ -250,7 +250,7 @@ register_command('class', array(
 						_class('equip', player(), @classid, @pvp);
 						
 					case 'selector':
-						set_pinv(player(), array(null: @arena['classes'][@classid]['selector']));
+						set_pinv(player(), null, @arena['classes'][@classid]['selector']);
 						
 					case 'ammo':
 						set_pinv(player(), @arena['classes'][@classid]['ammo']);

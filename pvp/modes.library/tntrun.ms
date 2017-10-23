@@ -33,7 +33,7 @@ array_push(@pvp['binds'], @id.'tntpickup');
 bind(player_interact_entity, array('id': @id.'tntpickup'), array('clicked': 'PRIMED_TNT'), @e, @pvp, @tnt) {
 	if(array_index_exists(@pvp['players'], player()) && is_null(get_entity_rider(puuid()))) {
 		set_entity_rider(puuid(player()), @e['id']);
-		set_pinv(player(), array(null: array('name': 'TNT')));
+		set_pinv(player(), null, array('name': 'TNT'));
 		play_sound(ploc(), array('sound': 'CHICKEN_EGG_POP', 'pitch': 0.5));
 		@tnt[] = @e['id'];
 	}
@@ -42,7 +42,7 @@ bind(player_interact_entity, array('id': @id.'tntpickup'), array('clicked': 'PRI
 array_push(@pvp['binds'], @id.'tntthrow');
 bind(player_interact, array('id': @id.'tntthrow'), array('button': 'left', 'item': data_values('TNT')), @e, @pvp) {
 	if(array_index_exists(@pvp['players'], player())) {
-		set_pinv(player(), array(null: null));
+		set_pinv(player(), null, null);
 		@rider = get_entity_rider(puuid());
 		if(!is_null(@rider)) {
 			set_entity_rider(null, @rider);

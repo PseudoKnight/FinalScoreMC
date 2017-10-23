@@ -46,7 +46,7 @@ register_command('potion', array(
 				@item['meta']['potions'] = array();
 			}
 			@item['meta']['potions'][] = array('id': @id, 'strength': min(99, @strength - 1), 'seconds': @seconds);
-			set_pinv(array(null: @item));
+			set_pinv(player(), null, @item);
 
 		} else { # create new potion
 			@extended = @seconds;
@@ -94,7 +94,7 @@ register_command('potion', array(
 			} else {
 				@item['meta']['potions'] = array(array('id': @id, 'strength': @strength - 1, 'seconds': @seconds));
 			}
-			set_pinv(array(null: @item));
+			set_pinv(player(), null, @item);
 		}
 	}
 ));

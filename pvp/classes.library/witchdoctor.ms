@@ -14,16 +14,14 @@ case 'load':
 			}
 		}
 		play_sound(ploc(), array('sound': 'HORSE_SKELETON_DEATH', 'pitch': 0.5, 'volume': 2));
-		set_pinv(player(), array(null: array('type': 290, 'data': 59)));
+		set_pinv(player(), null, array('type': 290, 'data': 59));
 		@slot = pheld_slot();
 		set_interval(1000, closure(){
 			try {
 				@item = pinv(player(), @slot);
 				if(@item['type'] == 290 && @item['data'] > 0) {
-					@inv = associative_array();
 					@item['data'] -= 4;
-					@inv[@slot] = @item;
-					set_pinv(player(), @inv);
+					set_pinv(player(), @slot, @item);
 				} else {
 					clear_task();
 					play_named_sound(ploc(), array('sound': 'block.enchantment_table.use'));

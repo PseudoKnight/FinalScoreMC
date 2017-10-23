@@ -50,12 +50,9 @@ bind(projectile_launch, array('id': @id.'grapple'), array('type': 'FISHING_HOOK'
 			}
 
 			if(ponline(@player)) {
-				@inv = associative_array();
-				@inv[@slot] = null;
-				set_pinv(@player, @inv);
+				set_pinv(@player, @slot, null);
 				set_timeout(50, closure(){
-					@inv[@slot] = array('name': 'FISHING_ROD');
-					set_pinv(@player, @inv);
+					set_pinv(@player, @slot, array('name': 'FISHING_ROD'));
 				});
 			}
 		}

@@ -536,9 +536,7 @@ if(array_contains(@pvp['arena']['flags'], 'stackedpickup')) {
 			&& @e['item']['type'] != 373
 			&& @e['item']['enchants'] == @item['enchants']) {
 				if(@item['data'] > @e['item']['data']) {
-					@inv = associative_array();
-					@inv[@slot] = @e['item'];
-					set_pinv(player(), @inv);
+					set_pinv(player(), @slot, @e['item']);
 				}
 				modify_event('item', null)
 				break()

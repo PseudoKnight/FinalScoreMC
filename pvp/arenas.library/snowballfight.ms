@@ -52,13 +52,13 @@ proc _load_events(@id) {
         consume();
         if(!pinv(player(), 0)) {
             modify_event('item', null);
-            set_pinv(player(), associative_array(0: associative_array('name': 'SNOW_BALL')));
-            play_sound(ploc(), associative_array('sound': 'ITEM_PICKUP', 'pitch': 2, 'volume': 0.5), player());
+            set_pinv(player(), 0, array('name': 'SNOW_BALL'));
+            play_sound(ploc(), array('sound': 'ITEM_PICKUP', 'pitch': 2, 'volume': 0.5), player());
             @pvp['stats'][player()]['pickups']++;
         } else if(!pinv(player(), -106)) {
             modify_event('item', null);
-            set_pinv(player(), associative_array(-106: associative_array('name': 'SNOW_BALL')));
-            play_sound(ploc(), associative_array('sound': 'ITEM_PICKUP', 'pitch': 2, 'volume': 0.5), player());
+            set_pinv(player(), -106, array('name': 'SNOW_BALL'));
+            play_sound(ploc(), array('sound': 'ITEM_PICKUP', 'pitch': 2, 'volume': 0.5), player());
             @pvp['stats'][player()]['pickups']++;
         } else {
             cancel();

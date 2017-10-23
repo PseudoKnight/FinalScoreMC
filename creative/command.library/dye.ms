@@ -30,7 +30,7 @@ register_command('dye', array(
 			} else {
 				@item['meta']['color'] = @color;
 			}
-			set_pinv(player(), array(null: @item));
+			set_pinv(player(), null, @item);
 		} else {
 			die(color('gold').'You must be holding leather armor or a map in your hand.');
 		}

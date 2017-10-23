@@ -7,8 +7,8 @@ bind(player_interact_entity, null, array('clicked': 'VILLAGER'), @event) {
 	&& get_player_from_entity_id(get_leashholder(@event['id'])) != player()) {
 		cancel();
 		set_leashholder(@event['id'], puuid());
-		@item['qty'] = @item['qty'] - 1;
-		set_pinv(array(null: @item));
+		@item['qty']--;
+		set_pinv(player(), null, @item);
 	}
 	@inv = get_inventory(@event['id']);
 	@output = '';

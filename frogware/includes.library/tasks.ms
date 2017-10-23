@@ -278,14 +278,6 @@ proc _fw_task(@task, @state, @secs) {
 			queue_delay(600, 'fw3')
 			if(rand(2)) {
 				queue_push(closure(){
-					if(rand(2)) {
-						foreach(@p in all_players('custom')) {
-							if(_fw_player(@p)) {
-								set_pinv(@p, associative_array(102: associative_array('name': 'ELYTRA')));
-								set_entity_gliding(puuid(@p), true);
-							}
-						}
-					}
 					_iterate_cuboid(array(@region[0][0], @region[1][1] + 3, @region[0][2], 'custom'),
 					array(@region[1][0], @region[1][1] + 3, @region[1][2], 'custom'),
 					'133:0', 3);

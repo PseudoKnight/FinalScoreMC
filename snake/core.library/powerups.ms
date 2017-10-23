@@ -162,14 +162,8 @@ proc _snake_ability(@player, @slot, @game) {
 				@item = pinv(@player, @slot);
 				@world = pworld(@player);
 				if(@item) {
-					@inv = associative_array();
-					if(@item['qty'] == 1) {
-						@inv[@slot] = null;
-					} else {
-						@item['qty'] -= 1;
-						@inv[@slot] = @item;
-					}
-					set_pinv(@player, @inv);
+					@item['qty']--;
+					set_pinv(@player, @slot, @item);
 					@game['tnt'][] = _snake_drop_tnt(@snake['loc'], @snake['dir']);
 					set_timeout(7000, closure(){
 						if(@snake['alive'] && pworld(@player) == @world) {
@@ -199,14 +193,8 @@ proc _snake_ability(@player, @slot, @game) {
 				@item = pinv(@player, @slot);
 				@world = pworld(@player);
 				if(@item) {
-					@inv = associative_array();
-					if(@item['qty'] == 1) {
-						@inv[@slot] = null;
-					} else {
-						@item['qty'] -= 1;
-						@inv[@slot] = @item;
-					}
-					set_pinv(@player, @inv);
+					@item['qty']--;
+					set_pinv(@player, @slot, @item);
 					_snake_launch_missile(@snake['loc'][], @snake['dir'], @game);
 					set_timeout(7000, closure(){
 						if(@snake['alive'] && pworld(@player) == @world) {
@@ -245,9 +233,7 @@ proc _snake_ability(@player, @slot, @game) {
 				@world = pworld(@player);
 				if(@item) {
 					@amount = @item['qty'];
-					@inv = associative_array();
-					@inv[@slot] = null;
-					set_pinv(@player, @inv);
+					set_pinv(@player, @slot, null);
 					@snake['laser'] = time() + (@amount * 500);
 					play_named_sound(@snake['loc'], array('sound': 'entity.guardian.death', 'volume': 4, 'pitch': 2));
 					play_named_sound(@snake['loc'], array('sound': 'entity.guardian.attack', 'volume': 4));
@@ -290,9 +276,7 @@ proc _snake_ability(@player, @slot, @game) {
 				if(@item) {
 					play_sound(@snake['loc'], associative_array('sound': 'GHAST_FIREBALL', 'volume': 4));
 					@amount = @item['qty'];
-					@inv = associative_array();
-					@inv[@slot] = null;
-					set_pinv(@player, @inv);
+					set_pinv(@player, @slot, null);
 					@snake['boost'] = @amount;
 					set_timeout(5000, closure(){
 						@snake['boost'] = 0;
@@ -324,13 +308,7 @@ proc _snake_ability(@player, @slot, @game) {
 				@item = pinv(@player, @slot);
 				if(@item) {
 					@item['qty']--;
-					@inv = associative_array();
-					if(@item['qty']) {
-						@inv[@slot] = @item;
-					} else {
-						@inv[@slot] = null;
-					}
-					set_pinv(@player, @inv);
+					set_pinv(@player, @slot, @item);
 					_snake_drop_nuke(@snake, @game);
 				}
 			}

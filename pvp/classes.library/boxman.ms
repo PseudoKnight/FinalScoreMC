@@ -37,9 +37,7 @@ case 'load':
 				die();
 			}
 
-			@inv = associative_array();
-			@inv[@slot] = null;
-			set_pinv(player(), @inv);
+			set_pinv(player(), @slot, null);
 
 			if(!pinv(player(), @checkSlot)) {
 				set_pwalkspeed(player(), 0.1);
@@ -64,12 +62,10 @@ case 'load':
 			@returnToSender = closure(){
 				if(ponline(player()) && phealth() > 0 && array_index_exists(@pvp['players'], player())) {
 					set_pwalkspeed(player(), 0.2);
-					@inv[@slot] = array('name': 'CONCRETE', 'data': 2);
-					set_pinv(player(), @inv);
+					set_pinv(player(), @slot, array('name': 'CONCRETE', 'data': 2));
 					set_timeout(1200, closure(){
 						if(ponline(player()) && phealth() > 0 && array_index_exists(@pvp['players'], player())) {
-							@inv[@slot] = @item;
-							set_pinv(player(), @inv);
+							set_pinv(player(), @slot, @item);
 						}
 					});
 				}
@@ -126,7 +122,7 @@ case 'load':
 			@sneakLoc['y'] = @event['location']['y'];
 			@sneakLoc['z'] = @event['location']['z'];
 			@sneakLoc['world'] = @event['location']['world'];
-			set_pinv(player(), array(103: null));
+			set_pinv(player(), 103, null);
 			@block = get_block_at(ploc());
 			foreach(@p: @player in @pvp['players']) {
 				if(@p != player()) {
@@ -134,7 +130,7 @@ case 'load':
 				}
 			}
 		} else {
-			set_pinv(player(), array(103: array('name': 'STEP', 'data': 8)));
+			set_pinv(player(), 103, array('name': 'STEP', 'data': 8));
 			@block = get_block_at(@sneakLoc);
 			foreach(@p: @player in @pvp['players']) {
 				if(@p != player()) {

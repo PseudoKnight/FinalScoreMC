@@ -9,6 +9,6 @@ register_command('unenchant', array(
 		@item = pinv(player(), null);
 		array_remove(@item, 'enchants');
 		array_remove(@item['meta'], 'enchants');
-		set_pinv(array(null: @item));
+		set_pinv(player(), null, @item);
 	}
 ));

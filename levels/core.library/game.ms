@@ -153,9 +153,7 @@ proc _level_start(@level) {
 					}
 					@xp -= @levels;
 					set_pexp(integer(@xp * 100));
-					@inv = associative_array();
-					@inv[@event['slot']] = null;
-					set_pinv(@inv);
+					set_pinv(player(), @event['slot'], null);
 					play_sound(ploc(), array('sound': 'LEVEL_UP', 'pitch': 2, 'volume': 0.5), player());
 				}
 			}

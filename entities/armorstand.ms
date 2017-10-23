@@ -173,7 +173,7 @@ bind(player_interact_at_entity, null, array('clicked': 'ARMOR_STAND'), @event) {
 						set_entity_spec(@event['id'], array('arms': true));
 					});
 					@item['qty'] -= 2;
-					set_pinv(player(), array(null: if(@item['qty'] > 0, @item, null)));
+					set_pinv(player(), null, @item);
 					cancel();
 				}
 
@@ -262,7 +262,7 @@ bind(player_interact_at_entity, null, array('clicked': 'ARMOR_STAND'), @event) {
 							@equipment = associative_array();
 							@equipment[@slot] = null;
 							set_mob_equipment(@event['id'], @equipment);
-							set_pinv(player(), array(null: @tool));
+							set_pinv(player(), null, @tool);
 						}
 					} else if(@item['qty'] == 1 || !@tool) {
 						@oldQty = @item['qty'];
@@ -273,12 +273,12 @@ bind(player_interact_at_entity, null, array('clicked': 'ARMOR_STAND'), @event) {
 						if(!@tool) {
 							if(@oldQty > 1) {
 								@item['qty'] = @oldQty - 1;
-								set_pinv(player(), array(null: @item));
+								set_pinv(player(), null, @item);
 							} else {
-								set_pinv(player(), array(null: null));
+								set_pinv(player(), null, null);
 							}
 						} else {
-							set_pinv(player(), array(null: @tool));
+							set_pinv(player(), null, @tool);
 						}
 					}
 				}

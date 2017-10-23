@@ -108,9 +108,7 @@ bind(player_interact, null, array('block': 68), @event) {
 							if(!is_null(@pinv[@p])) {
 								@chest[@c]['qty'] += @pinv[@p]['qty'];
 							}
-							@newinv = associative_array();
-							@newinv[@p] = @chest[@c];
-							set_pinv(player(), @newinv);
+							set_pinv(player(), @p, @chest[@c]);
 							set_inventory_item(@chestloc, @c, null);
 							_acc_subtract(player(), @cost[1]);
 							msg(color('yellow').'[Coin Shop] '.color('r').'Transaction successful. Your coins: '.floor(@coins - @cost[1]).' (-'.@cost[1].')');

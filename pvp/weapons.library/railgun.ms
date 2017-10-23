@@ -12,11 +12,11 @@ bind(player_interact, array('id': @id.'railgun'), array('item': 175, 'button': '
 	@item['qty'] -= 1;
 	queue_clear(player().'railgun');
 	if(@item['qty'] == 0) {
-		set_pinv(array(null: null));
+		set_pinv(player(), null, null);
 	} else {
 		@item['type'] = 402;
 		@item['name'] = 'FIREWORK_CHARGE';
-		set_pinv(array(null: @item));
+		set_pinv(player(), null, @item);
 		@slot = pheld_slot();
 		queue_delay(8000, player().'railgun');
 		queue_push(closure(){
@@ -24,11 +24,9 @@ bind(player_interact, array('id': @id.'railgun'), array('item': 175, 'button': '
 				@item = pinv(player(), @slot);
 				if(!is_null(@item) && @item['type'] == 402) {
 					play_sound(ploc(), array('sound': 'FIZZ', 'pitch': 0));
-					@inv = associative_array();
 					@item['type'] = 175;
 					@item['name'] = 'DOUBLE_PLANT';
-					@inv[@slot] = @item;
-					set_pinv(@inv);
+					set_pinv(player(), @slot, @item);
 				}
 			}
 		}, player().'railgun');

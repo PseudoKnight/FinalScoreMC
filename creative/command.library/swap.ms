@@ -25,17 +25,14 @@ register_command('swap', array(
 						@slot = pheld_slot();
 						set_timeout(50, closure(){
 							if(ponline(player()) && pworld() == 'dev') {
-								@inv = associative_array();
-								@inv[@slot] = null;
-								set_pinv(player(), @inv);
+								set_pinv(player(), @slot, null);
 								set_ploc(@loc);
 								set_peffect(player(), 25, 0, 0);
 								play_named_sound(@loc, array('sound': 'entity.illusion_illager.mirror_move', 'pitch': 1.2));
 								play_sound(@loc, array('sound': 'WITHER_SHOOT', 'pitch': 1.3, 'volume': 0.1));
 								set_timeout(1000, closure(){
 									if(ponline(player()) && pworld() == 'dev') {
-										@inv[@slot] = @item;
-										set_pinv(player(), @inv);
+										set_pinv(player(), @slot, @item);
 									}
 								});
 							}

@@ -21,7 +21,7 @@ register_command('skipper', array(
 				unbind();
 			}
 			if(!pinv(player(), 103)) {
-				set_pinv(player(), array(102: array('name': 'ELYTRA')));
+				set_pinv(player(), 102, array('name': 'ELYTRA'));
 			}
 			msg(color('green').'Enabled skipper mode.');
 		}

@@ -60,14 +60,8 @@ bind(player_interact, null, array('item': 401, 'button': 'right'), @event) {
 					set_entity_rider(@horse, @firework);
 				}
 				if(pmode() != 'CREATIVE') {
-					@inv = associative_array();
-					if(@item['qty'] > 1) {
-						@item['qty']--;
-						@inv[@slot] = @item;
-					} else {
-						@inv[@slot] = null;
-					}
-					set_pinv(@inv);
+					@item['qty']--;
+					set_pinv(player(), @slot, @item);
 				}
 			}
 			die();
@@ -128,18 +122,14 @@ bind(player_interact, null, array('item': 401, 'button': 'right'), @event) {
 
     	@item['type'] = 402;
     	@item['name'] = 'FIREWORK_CHARGE';
-        @inv = associative_array();
-        @inv[@slot] = @item;
-    	set_pinv(player(), @inv);
+    	set_pinv(player(), @slot, @item);
     	set_timeout(4000, closure(){
     		try {
     			@item = pinv(player(), @slot);
     			if(@item && @item['type'] == 402) {
     				@item['type'] = 401;
     				@item['name'] = 'FIREWORK';
-    				@inv = associative_array();
-    				@inv[@slot] = @item;
-    				set_pinv(player(), @inv);
+    				set_pinv(player(), @slot, @item);
     			}
     		} catch(PlayerOfflineException @ex) {
     			// ignore

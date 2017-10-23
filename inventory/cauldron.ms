@@ -22,9 +22,7 @@ bind(player_interact, null, array('block': 118, 'button': 'right'), @event) {
 			set_block_at(@event['location'], '118:'.@data);
 
 			// Give empty bottle
-			@inv = associative_array();
-			@inv[@slot] = associative_array('name': 'GLASS_BOTTLE');
-			set_pinv(player(), @inv);
+			set_pinv(player(), @slot, array('name': 'GLASS_BOTTLE'));
 		}
 	} else if(@data > 0) {
 		// There's some water
@@ -49,14 +47,10 @@ bind(player_interact, null, array('block': 118, 'button': 'right'), @event) {
 		cancel();
 		@item = pinv(player(), @slot);
 		if(@item['qty'] == 1) {
-			@inv = associative_array();
-			@inv[@slot] = associative_array('type': @result, 'qty': 1);
-			set_pinv(@inv);
+			set_pinv(player(), @slot, array('type': @result, 'qty': 1));
 		} else {
-			@item['qty'] -= 1;
-			@inv = associative_array();
-			@inv[@slot] = @item;
-			set_pinv(@inv);
+			@item['qty']--;
+			set_pinv(player(), @slot, @item);
 			@remaining = pgive_item(@result, 1);
 			if(@remaining) {
 				drop_item(associative_array('type': @result));

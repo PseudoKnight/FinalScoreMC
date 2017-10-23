@@ -1,5 +1,5 @@
 # An alternate function for pickaxes
-# Smooths certain block types: 
+# Smooths certain block types:
 # 43:0 -> 43:8 - Smooth Stone Double Slab
 # 43:1 -> 43:9 - Smooth Sandstone Double Slab
 
@@ -12,7 +12,7 @@ bind(player_interact, null, array('button': 'right', 'block': 43), @event) {
 	
 	@item = pinv(player(), null);
 	if(is_null(@item) || !array_contains(array(
-		'DIAMOND_PICKAXE', 
+		'DIAMOND_PICKAXE',
 		'IRON_PICKAXE',
 		'STONE_PICKAXE',
 		'WOOD_PICKAXE',
@@ -58,10 +58,10 @@ bind(player_interact, null, array('button': 'right', 'block': 43), @event) {
 				@maxDamage = 59;
 		}
 		if(@item['data'] > @maxDamage) {
-			set_pinv(player(), array(null: null));
+			set_pinv(player(), null, null);
 			play_sound(ploc(), array('sound': 'ITEM_BREAK', 'category': 'PLAYERS'));
 		} else {
-			set_pinv(player(), array(null: @item));
+			set_pinv(player(), null, @item);
 		}
 	}
 }

@@ -87,7 +87,7 @@ case 'load':
 				@helm = pinv(@p, 103);
 				@loc = ploc(@p);
 				if(is_null(@helm)) {
-					set_pinv(@p, associative_array(103: associative_array('type': 86)));
+					set_pinv(@p, 103, array('type': 86));
 					play_named_sound(@loc, associative_array('sound': 'entity.elder_guardian.death', 'pitch': 2), @p);
 					set_phunger(@player, min(20, phunger(@player) + 1));
 					set_phealth(@player, min(20, phealth(@player) + if(@dist < 2, 2, 1)));
@@ -99,7 +99,7 @@ case 'load':
 				set_peffect(@p, 9, 0, 4);
 				play_named_sound(@loc, array('sound': 'entity.guardian.attack', 'pitch': 1.5), @p);
 			} else if(pinv(@p, 103)) {
-				set_pinv(@p, associative_array(103: null));
+				set_pinv(@p, 103, null);
 			}
 		}
 	});

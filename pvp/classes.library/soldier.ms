@@ -40,9 +40,7 @@ case 'load':
 		_shoot();
 		set_timeout(50, closure(){
 			@item['data'] += 8;
-			@inv = associative_array();
-			@inv[@slot] = @item;
-			set_pinv(player(), @inv);
+			set_pinv(player(), @slot, @item);
 			_shoot();
 		});
 	}
@@ -55,7 +53,7 @@ case 'load':
 			array_remove(@damaged, 0);
 		}
 		@item = pinv(player(), null);
-		set_pinv(player(), array(null: null));
+		set_pinv(player(), null, null);
 		@slot = pheld_slot();
 		play_sound(ploc(), array('sound': 'DOOR_OPEN', 'pitch': 2));
 		set_timeout(1000, closure(){

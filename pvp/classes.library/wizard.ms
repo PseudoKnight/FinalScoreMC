@@ -25,7 +25,7 @@ case 'load':
 		export(player().'lightning', @lightning);
 		@slot = pheld_slot();
 		@item = pinv(player(), null);
-		set_pinv(player(), array(null: array('type': 280)));
+		set_pinv(player(), null, array('type': 280));
 		queue_clear(player().'lightning');
 		queue_delay(1000, player().'lightning');
 		queue_push(closure(){
@@ -39,9 +39,7 @@ case 'load':
 			}
 			@newitem = pinv(player(), @slot)
 			if(!is_null(@newitem) && @newitem['type'] == 280) {
-				@inv = associative_array();
-				@inv[@slot] = @item;
-				set_pinv(@inv);
+				set_pinv(player(), @slot, @item);
 				play_sound(ploc(), array('sound': 'FIZZ'))
 			}
 		}, player().'lightning')

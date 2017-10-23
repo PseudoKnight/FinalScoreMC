@@ -93,7 +93,7 @@ proc _spl_queue_start(@id, @world = @pworld) {
 			}
 			set_ploc(@player, @loc)
 			_spl_clear_pinv(@player)
-			set_pinv(@player, array(0: @tool))
+			set_pinv(@player, 0, @tool)
 		}
 		console('Debug: spleef checked '.@limit.' locations for '.array_size(@spl['players']).' players.', false);
 

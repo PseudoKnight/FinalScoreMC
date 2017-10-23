@@ -31,8 +31,8 @@ register_command('timer', array(
 			set_phunger(@player, 20);
 			set_psaturation(@player, 5);
 			set_ponfire(@player, 0);
-			@restartButton = array(0: array('type': 371, 'meta': array('display': color('green').color('bold').'Restart Button')));
-			set_pinv(@player, @restartButton);
+			@restartButton = array('type': 371, 'meta': array('display': color('green').color('bold').'Restart Button'));
+			set_pinv(@player, 0, @restartButton);
 		
 			if(array_index_exists(@timers, @player)) {
 				clear_task(@timers[@player][2]);
@@ -130,7 +130,7 @@ register_command('timer', array(
 						set_timeout(500, closure(){
 							respawn();
 							set_timeout(50, closure(){
-								set_pinv(@restartButton);
+								set_pinv(player(), 0, @restartButton);
 							});
 						});
 					}

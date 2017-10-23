@@ -42,9 +42,7 @@ case 'load':
 				} else {
 					@potato['meta']['display'] = string(integer(@potato['meta']['display']) - 1);
 					play_sound(ploc(@damaged), array('sound': 'NOTE_STICKS'));
-					@inv = associative_array();
-					@inv[@slot] = @potato;
-					set_pinv(@damaged, @inv);
+					set_pinv(@damaged, @slot, @potato);
 				}
 			} catch(Exception @e) {
 				clear_task();
@@ -53,10 +51,7 @@ case 'load':
 		});
 
 		@item['meta']['lore'] = array(@task);
-
-		@inv = associative_array();
-		@inv[@slot] = @item;
-		set_pinv(@damaged, @inv);
+		set_pinv(@damaged, @slot, @item);
 	}
 	bind(entity_damage, array('id': @player.'pot'), array('type': 'PLAYER', 'cause': 'ENTITY_ATTACK'), @e, @pvp, @player) {
 		if(!array_index_exists(@pvp['players'], @e['damager'])) {
@@ -87,7 +82,7 @@ case 'load':
 				set_peffect(@damaged, 19, 0, 10);
 
 			case 393: # cooked potato -> hot potato
-				set_pinv(@damager, array(null: null));
+				set_pinv(@damager, null, null);
 				_prime_hot_potato(@damager, @damaged, @item, @pvp);
 
 		}
@@ -115,8 +110,7 @@ case 'load':
 						// dropped hot potato no longer exists
 					}
 				});
-				@inv[@slot] = null;
-				set_pinv(@inv);
+				set_pinv(player(), @slot, null);
 			}
 		}
 	}
