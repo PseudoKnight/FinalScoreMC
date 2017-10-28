@@ -7,10 +7,10 @@ register_command('runas', array(
 			return(false);
 		}
 		@player = _find_player(@args[0]);
-		@cmd = @args[1];
-		if(substr(@cmd, 0, 2) === '-s') {
-			@cmd = substr(@cmd, 3);
+		if(@args[1] === '-s') {
+			@cmd = array_implode(@args[2..-1]);
 		} else {
+			@cmd = array_implode(@args[1..-1]);
 			tmsg(@player, color('a').player().' ran this command for you:');
 			tmsg(@player, color('6').@cmd);
 		}
