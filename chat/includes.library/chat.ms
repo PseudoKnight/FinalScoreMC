@@ -49,11 +49,17 @@ proc _chat(@player, @message, @recipients) {
 		@components[] = array('plain', @pdata['icon']);
 	}
 
-	@components[] = array('hover', ' '.display_name(@player),
-		if(ponline(@player) && has_permission(@player, 'group.moderator'), '&bSTAFF\n')
-		.if(array_index_exists(@pdata, 'names'), '&7'.array_implode(@pdata['names']).'\n')
-		.if(ponline(@player) && array_index_exists(@session, 'lastplayed'), '&8[last played] &r'.@session['lastplayed'].'\n')
-		.'&8[world] &r'.if(ponline(@player), _worldname(pworld(@player)), 'Real World'));
+	if(ponline(@player)) {
+		@components[] = array('hover', ' '.display_name(@player),
+			if(has_permission(@player, 'group.moderator'), '&bSTAFF\n')
+			.if(array_index_exists(@pdata, 'names'), '&7'.array_implode(@pdata['names']).'\n')
+			.if(array_index_exists(@session, 'lastplayed'), '&8[last played] &r'.@session['lastplayed'].'\n')
+			.'&8[world] &r'._worldname(pworld(@player)));
+	} else {
+		@components[] = array('hover', ' '._colorname(@player).@player,
+			.if(array_index_exists(@pdata, 'names'), '&7'.array_implode(@pdata['names']).'\n')
+			.'&8[world] &rReal World');
+	}
 	@components[] = '&8: ';
 
 	@components[] = '&r'.@escapedMessage;
