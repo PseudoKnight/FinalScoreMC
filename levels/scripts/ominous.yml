@@ -16,10 +16,10 @@ shop:
         cost: 4
     3:
         name: IRON_AXE
-        cost: 3
+        cost: 2
     4:
         name: DIAMOND_AXE
-        cost: 4
+        cost: 3
     5:
         name: BOW
         cost: 3
@@ -37,6 +37,13 @@ shop:
                 extended: true
                 type: SPEED
     12:
+        name: POTION
+        cost: 1
+        meta:
+            base:
+                extended: true
+                type: STRENGTH
+    12:
         name: GOLDEN_APPLE
         cost: 3
     13:
@@ -46,16 +53,9 @@ shop:
             base:
                 upgraded: true
                 type: INSTANT_HEAL
-    14:
-        name: TIPPED_ARROW
-        cost: 1
-        meta:
-            base:
-                extended: true
-                type: WEAKNESS
     15:
         name: NETHER_STAR
-        cost: 5
+        cost: 8
         meta:
             display: 'Resurrection Star'
     18:
@@ -120,7 +120,8 @@ waves:
         subtitle: 'Who dares disturb me?!'
         music: 'music.nether'
         mobs:
-            - ENDERMITE
+            - type: ENDERMITE
+              pos: mid
             - ENDERMITE
             - ENDERMITE
             - ENDERMITE
@@ -129,7 +130,8 @@ waves:
             - ENDERMITE
     2:
         mobs:
-            - ENDERMITE
+            - type: ENDERMITE
+              pos: mid
             - ENDERMITE
             - ENDERMITE
             - ENDERMITE
@@ -140,12 +142,14 @@ waves:
         title: 'Worthless endermites!'
         subtitle: 'How fair thee against the UNDEAD?'
         mobs:
-            - ZOMBIE
+            - type: ZOMBIE
+              pos: center
             - ZOMBIE
             - ZOMBIE
     4:
         mobs:
-            - ZOMBIE
+            - type: ZOMBIE
+              pos: center
             - ZOMBIE
             - ZOMBIE
             - ZOMBIE
@@ -154,7 +158,8 @@ waves:
         title: 'Fool!'
         subtitle: 'You cannot kill the undead!'
         mobs:
-            - ZOMBIE
+            - type: ZOMBIE
+              pos: center
             - ZOMBIE
             - ZOMBIE
             - ZOMBIE
@@ -164,7 +169,8 @@ waves:
             - ZOMBIE
     6:
         mobs:
-            - ZOMBIE
+            - type: ZOMBIE
+              pos: center
             - ZOMBIE
             - ZOMBIE
             - ZOMBIE
@@ -182,77 +188,128 @@ waves:
         title: 'Annoying.'
         subtitle: 'Perhaps that which crawls...'
         mobs:
-            - SPIDER
-            - SPIDER
-            - SPIDER
-            - SPIDER
-            - SPIDER
+            - type: SPIDER
+              pos: spider
+            - type: SPIDER
+              pos: spider
+            - type: SPIDER
+              pos: spider
+            - type: SPIDER
+              pos: spider
+            - type: SPIDER
+              pos: spider
     8:
         subtitle: 'Yes. I see it now. The terror.'
         mobs:
-            - SPIDER
-            - SPIDER
-            - SPIDER
-            - SPIDER
-            - SPIDER
-            - SPIDER
-            - SPIDER
-            - CAVESPIDER
+            - type: SPIDER
+              pos: spider
+            - type: SPIDER
+              pos: spider
+            - type: SPIDER
+              pos: spider
+            - type: SPIDER
+              pos: spider
+            - type: SPIDER
+              pos: spider
+            - type: SPIDER
+              pos: spider
+            - type: SPIDER
+              pos: spider
+            - type: CAVESPIDER
+              pos: spider
     9:
         subtitle: 'Aha! The poison -- what you fear.'
         mobs:
-            - CAVESPIDER
-            - CAVESPIDER
-            - CAVESPIDER
-            - CAVESPIDER
-            - CAVESPIDER
+            - type: CAVESPIDER
+              pos: spider
+            - type: CAVESPIDER
+              pos: spider
+            - type: CAVESPIDER
+              pos: spider
+            - type: CAVESPIDER
+              pos: spider
+            - type: CAVESPIDER
+              pos: spider
     10:
         subtitle: 'My butler will show you to the door.'
         mobs:
             - type: 'SLIME:1'
               name: 'GEORGE'
+              pos: center
     11:
         title: 'GEORGE!'
         subtitle: 'Now I must hire a new butler! Applicants?'
         mobs:
-            - 'SLIME:4'
-            - 'SLIME:2'
-            - 'SLIME:2'
-            - 'SLIME:2'
-            - 'SLIME:2'
-            - 'SLIME:2'
-            - 'SLIME:2'
-            - 'SLIME:2'
-            - 'SLIME:2'
-            - 'SLIME:2'
-            - 'SLIME:2'
-            - 'SLIME:2'
-            - 'SLIME:2'
-            - 'SLIME:2'
-            - 'SLIME:2'
+            - type: 'SLIME:4'
+              pos: mid
+            - type: 'SLIME:2'
+              pos: mid
+            - type: 'SLIME:2'
+              pos: mid
+            - type: 'SLIME:2'
+              pos: mid
+            - type: 'SLIME:2'
+              pos: mid
+            - type: 'SLIME:2'
+              pos: mid
+            - type: 'SLIME:2'
+              pos: mid
+            - type: 'SLIME:2'
+              pos: mid
+            - type: 'SLIME:2'
+              pos: mid
+            - type: 'SLIME:2'
+              pos: mid
+            - type: 'SLIME:2'
+              pos: mid
+            - type: 'SLIME:2'
+              pos: mid
+            - type: 'SLIME:2'
+              pos: mid
+            - type: 'SLIME:2'
+              pos: mid
+            - type: 'SLIME:2'
+              pos: mid
     12:
         subtitle: 'Thanks for culling the less worthy.'
         mobs:
-            - 'MAGMACUBE:4'
-            - 'MAGMACUBE:2'
-            - 'MAGMACUBE:2'
-            - 'MAGMACUBE:2'
-            - 'MAGMACUBE:2'
-            - 'MAGMACUBE:2'
-            - 'MAGMACUBE:2'
-            - 'MAGMACUBE:2'
-            - 'MAGMACUBE:2'
-            - 'MAGMACUBE:2'
-            - 'MAGMACUBE:2'
-            - 'MAGMACUBE:2'
-            - 'MAGMACUBE:2'
-            - 'MAGMACUBE:2'
+            - type: 'MAGMACUBE:4'
+              pos: mid
+            - type: 'MAGMACUBE:2'
+              pos: mid
+            - type: 'MAGMACUBE:2'
+              pos: mid
+            - type: 'MAGMACUBE:2'
+              pos: mid
+            - type: 'MAGMACUBE:2'
+              pos: mid
+            - type: 'MAGMACUBE:2'
+              pos: mid
+            - type: 'MAGMACUBE:2'
+              pos: mid
+            - type: 'MAGMACUBE:2'
+              pos: mid
+            - type: 'MAGMACUBE:2'
+              pos: mid
+            - type: 'MAGMACUBE:2'
+              pos: mid
+            - type: 'MAGMACUBE:2'
+              pos: mid
+            - type: 'MAGMACUBE:2'
+              pos: mid
+            - type: 'MAGMACUBE:2'
+              pos: mid
+            - type: 'MAGMACUBE:2'
+              pos: mid
     13:
         subtitle: 'Release the houuuunds.'
         mobs:
-            - 'WOLF:ANGRY'
-            - 'WOLF:ANGRY'
-            - 'WOLF:ANGRY'
+            - type: 'WOLF:ANGRY'
+              pos: mid
+            - type: 'WOLF:ANGRY'
+              pos: mid
+            - type: 'WOLF:ANGRY'
+              pos: mid
             - 'WOLF:ANGRY'
             - 'WOLF:ANGRY'
             - 'WOLF:ANGRY'
@@ -269,3 +326,4 @@ waves:
         mobs:
             - type: 'MAGMACUBE:1'
               name: 'George #2'
+              pos: mid

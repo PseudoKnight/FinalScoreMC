@@ -1,0 +1,8 @@
+ominous:
+    name: STONE_SWORD
+    display: 'Ominous'
+    lore:
+        - 'by PseudoKnight'
+        - '[Incomplete]'
+        - 'Buy items with levels.'
+        - 'Sell items to get more levels.'
