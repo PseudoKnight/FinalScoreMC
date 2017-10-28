@@ -60,8 +60,10 @@ proc _spawn_mob(@mob, @loc, @owner, @teammates) {
 					if(@value === 'owner') {
 						set_entity_rider(@m, puuid(@owner));
 					} else {
-						@rider = _spawn_mob(@value, @loc);
-						set_entity_rider(@m, @rider);
+						set_timeout(50, closure() {
+							@rider = _spawn_mob(@value, @loc);
+							set_entity_rider(@m, @rider);
+						});
 					}
 				
 				case 'onfire':
@@ -71,36 +73,38 @@ proc _spawn_mob(@mob, @loc, @owner, @teammates) {
 					set_entity_glowing(@m, @value);
 					
 				case 'explode':
-					@display = spawn_entity('ARMOR_STAND', 1, @loc)[0];
-					set_entity_spec(@display, array('small': true, 'visible': false));
-					set_mob_name(@display, @mob['explode'][0]);
-					set_name_visible(@display, true);
-					set_entity_rider(@m, @display);
-					set_interval(1000, closure(){
-						@mob['explode'][0] -= 1;
-						@cleanup = false;
-						try {
-							if(get_entity_health(@m) > 0) {
-								if(@mob['explode'][0] <= 3) {
-									set_mob_name(@display, color('yellow').@mob['explode'][0]);
-								} else {
-									set_mob_name(@display, @mob['explode'][0]);
+					set_timeout(50, closure(){
+						@display = spawn_entity('ARMOR_STAND', 1, @loc)[0];
+						set_entity_spec(@display, array('small': true, 'visible': false));
+						set_mob_name(@display, @mob['explode'][0]);
+						set_name_visible(@display, true);
+						set_entity_rider(@m, @display);
+						set_interval(1000, closure(){
+							@mob['explode'][0] -= 1;
+							@cleanup = false;
+							try {
+								if(get_entity_health(@m) > 0) {
+									if(@mob['explode'][0] <= 3) {
+										set_mob_name(@display, color('yellow').@mob['explode'][0]);
+									} else {
+										set_mob_name(@display, @mob['explode'][0]);
+									}
+									if(@mob['explode'][0] == 0) {
+										@cleanup = true;
+										explosion(entity_loc(@m), @mob['explode'][1], true);
+									} else {
+										play_sound(entity_loc(@m), array('sound': 'NOTE_STICKS', 'pitch': 2, 'volume': 1));
+									}
 								}
-								if(@mob['explode'][0] == 0) {
-									@cleanup = true;
-									explosion(entity_loc(@m), @mob['explode'][1], true);
-								} else {
-									play_sound(entity_loc(@m), array('sound': 'NOTE_STICKS', 'pitch': 2, 'volume': 1));
-								}
+							} catch(BadEntityException @ex) {
+								@cleanup = true;
 							}
-						} catch(BadEntityException @ex) {
-							@cleanup = true;
-						}
-						if(@cleanup) {
-							try(entity_remove(@display));
-							try(damage_entity(@m, 50));
-							clear_task();
-						}
+							if(@cleanup) {
+								try(entity_remove(@display));
+								try(damage_entity(@m, 50));
+								clear_task();
+							}
+						});
 					});
 					
 				case 'targetnear':
