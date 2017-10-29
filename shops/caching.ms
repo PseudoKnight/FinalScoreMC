@@ -1,6 +1,9 @@
 # Caches shop location, price, owner, stock.
 # Tell shop owners when they're out of stock.
 bind(player_interact, null, array('block': 68), @e) {
+	if(@e['location']['world'] == 'shard') {
+		die();
+	}
 	include('includes.library/shops.ms');
 	if(@shop = _get_shop(@e['location'])) {
 		queue_push(closure(){
