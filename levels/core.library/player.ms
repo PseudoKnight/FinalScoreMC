@@ -5,12 +5,13 @@ proc _level_add_player(@player, @level) {
 	if(!_set_pactivity(@player, to_upper(@level['region']))) {
 		return(false);
 	}
+	@c = @level['config'];
 	@level['players'][] = @player;
 	set_pscoreboard(@player, 'level'.@level['region']);
 	_clear_peffects(@player);
 	_clear_pinv(@player);
-	set_pinv(@player, @level['config']['gear']);
-	if(array_index_exists(@level['config'], 'shop')) {
+	set_pinv(@player, @c['gear']);
+	if(array_index_exists(@c, 'shop')) {
 		pgive_item(@player, 388, 1, array('display': 'Open Shop', 'lore': array(@player.'\'s Shop Token')));
 	}
 	set_pbed_location(@player, @level['arena']['lobby']);
@@ -18,13 +19,12 @@ proc _level_add_player(@player, @level) {
 	set_phunger(@player, 20);
 	set_psaturation(@player, 5);
 	@levels = 0;
-	if(array_index_exists(@level['config'], 'levels')) {
-		@levels = @level['config']['levels'];
+	if(array_index_exists(@c, 'levels')) {
+		@levels = @c['levels'];
 	}
 	set_plevel(@player, @levels);
 	set_pexp(@player, 0);
-	title(@player, @level['config']['title'], 'by '.@level['config']['author']
-		.if(array_index_exists(@level['config'], 'subtitle'), '('.@level['config']['subtitle'].')', ''), 20, 40, 20);
+	title(@player, @c['title'], if(array_index_exists(@c, 'subtitle'), '('.@c['subtitle'].')', ''), 20, 40, 20);
 }
 
 proc _level_remove_player(@player, @level) {

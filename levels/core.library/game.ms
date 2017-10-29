@@ -1,4 +1,60 @@
 include('player.ms');
+
+proc _level_prepare(@name, @arena, @region, @world) {
+	@level = array(
+		'name': @name,
+		'wave': 0,
+		'players': array(),
+		'spectators': array(),
+		'title': '',
+		'subtitle': '',
+		'music': '',
+		'mobs': array(),
+		'world': @world,
+		'arena': @arena,
+		'region': @region,
+		'config': yml_decode(read('../scripts/'.@name.'.yml'))
+	);
+	_add_activity('level'.@region, to_upper(@region).': '.@level['config']['title']);
+	set_world_time(@level['world'], 'sunset');
+	set_gamerule(@level['world'], 'doDaylightCycle', false);
+	_remove_region_entities(@level['region']);
+	
+	create_scoreboard('level'.@region);
+	create_objective('health', 'HEALTH', 'level'.@region);
+	set_objective_display('health', array('slot': 'BELOW_NAME'), 'level'.@region);
+	
+	if(array_index_exists(@level['config'], 'shop')) {
+		@shop = array(
+			'id': 'level'.@region,
+			'title': 'BUY OR SELL',
+		);
+		@items = associative_array();
+		foreach(@index: @item in @level['config']['shop']) {
+			@meta = associative_array();
+			if(array_index_exists(@item, 'meta')) {
+				@meta = @item['meta'];
+			}
+			@meta['lore'] = array('Buy for '.@item['cost'].' level'.if(@item['cost'] > 1, 's'));
+			@shop[@index] = array('name': @item['name'], 'qty': @item['cost'], 'meta': @meta);
+			@items[@item['name']] = @item['cost'];
+		}
+		@level['shop'] = @items;
+		create_virtualchest(@shop);
+	}
+	
+	if(array_index_exists(@level['arena'], 'startblock')) {
+		set_block_at(@level['arena']['startblock']['loc'], @level['arena']['startblock']['type']);
+	}
+	
+	foreach(@p in all_players(@level['world'])) {
+		if(array_contains(sk_current_regions(@p), @level['region'])) {
+			_level_add_player(@p, @level);
+		}
+	}
+	return(@level);
+}
+
 proc _level_start(@level) {
 	@entities = array();
 	sk_region_flag(@level['world'], @level['region'], 'mob-spawning', 'allow');

@@ -13,6 +13,14 @@ register_command('level', array(
 		}
 		@action = @args[0];
 		switch(@action) {
+			case 'reload':
+				if(!has_permission('group.engineer')) {
+					die(color('gold').'No permission.');
+				}
+				x_recompile_includes('../core.library');
+				x_recompile_includes('../mobs.library');
+				msg(color('green').'Done!');
+			
 			case 'setspawn':
 				if(!has_permission('group.engineer')) {
 					die(color('gold').'No permission.');
@@ -99,7 +107,13 @@ register_command('level', array(
 				msg(color('green').'Set startblock');
 				
 			case 'start':
-				@region = sk_current_regions();
+				if(@block = get_command_block()) {
+					@region = sk_regions_at(@block);
+					@world = @block['world'];
+				} else {
+					@region = sk_current_regions();
+					@world = pworld();
+				}
 				if(!@region) {
 					die(color('gold').'There\'s no arena here.');
 				}
@@ -123,6 +137,25 @@ register_command('level', array(
 				}
 				if(array_contains(all_virtualchests(), 'levelstart'.@region)) {
 					die(color('gold').'Someone is already starting the game.');
+				}
+				
+				include('../core.library/game.ms');
+				
+				if(array_size(@scripts) == 1) {
+					@name = array_keys(@scripts)[0];
+					try {
+						@level = _level_prepare(@name, @arena, @region, @world);
+						_level_start(@level);
+					} catch(Exception @ex) {
+						console(@ex['classType'].': '.@ex['message'], false);
+						foreach(@trace in @ex['stackTrace']) {
+							console(split('LocalPackages', @trace['file'])[-1].':'.@trace['line'].' '.@trace['id'], false);
+						}
+						msg(color('red').@ex['message']);
+						msg(color('yellow').'Cleaning up game...');
+						_level_end(@level, false);
+					}
+					return();
 				}
 				
 				@menu = array(
@@ -155,61 +188,9 @@ register_command('level', array(
 						close_pinv(); // unbinds and deletes menu
 						
 						@name = replace(to_lower(@item['meta']['display']), ' ', '');
-						@level = array(
-							'name': @name,
-							'wave': 0,
-							'players': array(),
-							'spectators': array(),
-							'title': '',
-							'subtitle': '',
-							'music': '',
-							'mobs': array(),
-							'world': pworld(),
-							'arena': @arena,
-							'region': @region,
-							'config': yml_decode(read('../scripts/'.@name.'.yml'))
-						);
-						_add_activity('level'.@region, to_upper(@region).': '.@level['config']['title']);
-						set_world_time(@level['world'], 'sunset');
-						set_gamerule(@level['world'], 'doDaylightCycle', false);
-						_remove_region_entities(@level['region']);
-						
-						create_scoreboard('level'.@region);
-						create_objective('health', 'HEALTH', 'level'.@region);
-						set_objective_display('health', array('slot': 'BELOW_NAME'), 'level'.@region);
-						
-						if(array_index_exists(@level['config'], 'shop')) {
-							@shop = array(
-								'id': 'level'.@region,
-								'title': 'BUY OR SELL',
-							);
-							@items = associative_array();
-							foreach(@index: @item in @level['config']['shop']) {
-								@meta = associative_array();
-								if(array_index_exists(@item, 'meta')) {
-									@meta = @item['meta'];
-								}
-								@meta['lore'] = array('Buy for '.@item['cost'].' level'.if(@item['cost'] > 1, 's'));
-								@shop[@index] = array('name': @item['name'], 'qty': @item['cost'], 'meta': @meta);
-								@items[@item['name']] = @item['cost'];
-							}
-							@level['shop'] = @items;
-							create_virtualchest(@shop);
-						}
-						
-						if(array_index_exists(@level['arena'], 'startblock')) {
-							set_block_at(@level['arena']['startblock']['loc'], @level['arena']['startblock']['type']);
-						}
-						
-						include('../core.library/game.ms');
-						
-						foreach(@p in all_players(@level['world'])) {
-							if(array_contains(sk_current_regions(@p), @level['region'])) {
-								_level_add_player(@p, @level);
-							}
-						}
-						
+
 						try {
+							@level = _level_prepare(@name, @arena, @region, @world);
 							_level_start(@level);
 						} catch(Exception @ex) {
 							console(@ex['classType'].': '.@ex['message'], false);
@@ -219,7 +200,6 @@ register_command('level', array(
 							msg(color('red').@ex['message']);
 							msg(color('yellow').'Cleaning up game...');
 							_level_end(@level, false);
-							return(true);
 						}
 					}
 				}
