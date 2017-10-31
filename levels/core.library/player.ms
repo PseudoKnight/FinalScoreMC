@@ -10,7 +10,9 @@ proc _level_add_player(@player, @level) {
 	set_pscoreboard(@player, 'level'.@level['region']);
 	_clear_peffects(@player);
 	_clear_pinv(@player);
-	set_pinv(@player, @c['gear']);
+	if(array_index_exists(@c, 'gear')) {
+		set_pinv(@player, @c['gear']);
+	}
 	if(array_index_exists(@c, 'shop')) {
 		pgive_item(@player, 388, 1, array('display': 'Open Shop', 'lore': array(@player.'\'s Shop Token')));
 	}

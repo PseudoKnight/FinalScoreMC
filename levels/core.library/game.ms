@@ -13,7 +13,8 @@ proc _level_prepare(@name, @arena, @region, @world) {
 		'world': @world,
 		'arena': @arena,
 		'region': @region,
-		'config': yml_decode(read('../scripts/'.@name.'.yml'))
+		'config': yml_decode(read('../scripts/'.@name.'.yml')),
+		'trigger': null,
 	);
 	_add_activity('level'.@region, to_upper(@region).': '.@level['config']['title']);
 	set_world_time(@level['world'], 'sunset');
@@ -117,7 +118,7 @@ proc _level_start(@level) {
 	}
 	
 	bind(creature_spawn, array('id': 'mobspawn'.@level['region']), null, @event, @world = @level['world'], @region = @level['region'], @entities) {
-		if(@event['location']['world'] == @world && array_contains(sk_regions_at(@event['location']), @region)) {
+		if(@event['type'] != 'ARMOR_STAND' && @event['location']['world'] == @world && array_contains(sk_regions_at(@event['location']), @region)) {
 			@entities[] = @event['id'];
 		}
 	}
@@ -136,6 +137,22 @@ proc _level_start(@level) {
 		foreach(@mob in @level['config']['mobs']) {
 			include('../mobs.library/'.to_lower(@mob).'.ms');
 			_load_mob(@level);
+		}
+	}
+	
+	bind(player_interact_at_entity, array('id': 'interactstand'.@level['region'], 'priority': 'HIGHEST'),
+			array('clicked': 'ARMOR_STAND'), @event, @region = @level['region']) {
+				
+		if(array_contains(sk_regions_at(entity_loc(@event['id'])), @region)) {
+			if(entity_spec(@event['id'])['visible']) {
+				cancel();
+				@equipment = get_mob_equipment(@event['id']);
+				@loc = _relative(entity_loc(@event['id']), 'up');
+				entity_remove(@event['id']);
+				foreach(@item in @equipment) {
+					drop_item(@loc, @item);
+				}
+			}
 		}
 	}
 	
@@ -215,7 +232,7 @@ proc _level_start(@level) {
 			}
 		}
 	}
-
+	
 	@sleep = array(3);
 	@level['task'] = set_interval(1000, closure(){
 		try {
@@ -235,6 +252,10 @@ proc _level_start(@level) {
 			
 			} else if(@sleep[0] > 0) {
 				@sleep[0]--;
+				
+			} else if(@level['trigger']) {
+				set_block_at(@level['trigger'], 0);
+				@level['trigger'] = null;
 				
 			} else if(@level['title']) {
 				foreach(@p in @level['players']) {
@@ -276,7 +297,7 @@ proc _level_start(@level) {
 					}
 				}
 				@level['mobs'] = array();
-				@sleep[0] = 10;
+				@sleep[0] = 5;
 				
 			} else if(!@entities) {
 				foreach(@p in @level['players']) {
@@ -318,6 +339,12 @@ proc _level_start(@level) {
 					} else {
 						@level['duplicate'] = 1;
 					}
+					if(array_index_exists(@wave, 'trigger')
+					&& array_index_exists(@arena['triggers'], @wave['trigger'])) {
+						@trigger = @arena['triggers'][@wave['trigger']];
+						set_block_at(@trigger, 152);
+						@level['trigger'] = @trigger;
+					}
 					@level['mobs'] = @wave['mobs'];
 				} catch(IndexOverflowException @ex) {
 					_level_end(@level, true);
@@ -350,6 +377,7 @@ proc _level_end(@level, @win) {
 	unbind('mobspawn'.@level['region']);
 	unbind('mobdeath'.@level['region']);
 	unbind('interact'.@level['region']);
+	unbind('interactstand'.@level['region']);
 	unbind('resurrect'.@level['region']);
 	unbind('openshop'.@level['region']);
 	unbind('pickup'.@level['region']);
@@ -363,7 +391,7 @@ proc _level_end(@level, @win) {
 	foreach(@p in @level['players']) {
 		if(ponline(@p)) {
 			if(@win) {
-				title(@p, 'You win!', '');
+				title(@p, color('green').'Success!', '');
 			}
 			stop_named_sound(@p, @level['music'], 'RECORDS');
 			_level_remove_player(@p, @level);
@@ -372,7 +400,7 @@ proc _level_end(@level, @win) {
 	foreach(@p in @level['spectators']) {
 		if(ponline(@p)) {
 			if(@win) {
-				title(@p, 'They win!', '');
+				title(@p, color('green').'Success!', '');
 			}
 			stop_named_sound(@p, @level['music'], 'RECORDS');
 			_level_remove_spectator(@p, @level);

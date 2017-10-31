@@ -109,43 +109,46 @@ proc _spawn_mob(@mob, @loc, @owner, @teammates) {
 					
 				case 'targetnear':
 					@range = @mob['targetnear'];
-					@projectile = 'ARROW';
+					@projectile = '';
 					switch(to_upper(@mob['type'])) {
 						case 'SNOWGOLEM':
 							@projectile = 'SNOWBALL';
 						case 'CHICKEN':
 							@projectile = 'EGG';
-						case 'BLAZE':
-							@projectile = 'SMALL_FIREBALL';
-						case 'WITHER':
-							@projectile = 'WITHER_SKULL';
-						case 'GHAST':
-							@projectile = 'FIREBALL';
-						case 'ENDERDRAGON':
-							@projectile = 'DRAGON_FIREBALL';
 					}
-					set_interval(1500, closure() {
-						try {
-							if(get_entity_health(@m) == 0.0) {
-								clear_task();
-							} else {
-								@loc1 = entity_loc(@m);
-								foreach(@p in players_in_radius(@loc1, @range)) {
-									if(!array_contains(@teammates, @p)) {
-										@loc2 = ploc(@p);
-										@loc2['y'] += 2;
-										@loc1['yaw'] = get_yaw(@loc1, @loc2);
-										@loc1['pitch'] = get_pitch(@loc1, @loc2);
-										set_entity_loc(@m, @loc1);
-										shoot_projectile(@m, @projectile, @p);
-										break();
+					if(@projectile) {
+						set_interval(1500, closure() {
+							try {
+								if(get_entity_health(@m) == 0.0) {
+									clear_task();
+								} else {
+									@loc1 = entity_loc(@m);
+									foreach(@p in players_in_radius(@loc1, @range)) {
+										if(!array_contains(@teammates, @p)) {
+											@loc2 = ploc(@p);
+											@loc2['y'] += 2;
+											@loc1['yaw'] = get_yaw(@loc1, @loc2);
+											@loc1['pitch'] = get_pitch(@loc1, @loc2);
+											set_entity_loc(@m, @loc1);
+											shoot_projectile(@m, @projectile, @p);
+											break();
+										}
 									}
 								}
+							} catch(BadEntityException @ex) {
+								clear_task();
 							}
-						} catch(BadEntityException @ex) {
-							clear_task();
-						}
-					});
+						});
+					} else {
+						set_timeout(50, closure(){
+							foreach(@p in players_in_radius(entity_loc(@m), @range)) {
+								if(!array_contains(@teammates, @p)) {
+									damage_entity(@m, 0, puuid(@p));
+									break();
+								}
+							}
+						});
+					}
 					
 				case 'effects':
 					queue_push(closure(){

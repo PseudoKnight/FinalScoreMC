@@ -1,8 +1,78 @@
-title: 'Lair'
+title: 'Trespasser'
 author: 'PseudoKnight'
-gear:
+shop:
     0:
-        name: WOOD_SWORD
+        name: STONE_SWORD
+        cost: 2
+    1:
+        name: IRON_SWORD
+        cost: 3
+    2:
+        name: DIAMOND_SWORD
+        cost: 4
+    9:
+        name: CARROT_ITEM
+        cost: 1
+    10:
+        name: GOLDEN_APPLE
+        cost: 3
+    11:
+        name: SHIELD
+        cost: 5
+    18:
+        name: LEATHER_HELMET
+        cost: 1
+    19:
+        name: LEATHER_CHESTPLATE
+        cost: 3
+    20:
+        name: LEATHER_LEGGINGS
+        cost: 2
+    21:
+        name: GOLD_HELMET
+        cost: 2
+    22:
+        name: GOLD_CHESTPLATE
+        cost: 5
+    23:
+        name: GOLD_LEGGINGS
+        cost: 3
+    27:
+        name: CHAINMAIL_HELMET
+        cost: 2
+    28:
+        name: CHAINMAIL_CHESTPLATE
+        cost: 5
+    29:
+        name: CHAINMAIL_LEGGINGS
+        cost: 4
+    30:
+        name: CHAINMAIL_BOOTS
+        cost: 1
+    31:
+        name: IRON_HELMET
+        cost: 2
+    32:
+        name: IRON_CHESTPLATE
+        cost: 6
+    33:
+        name: IRON_LEGGINGS
+        cost: 5
+    34:
+        name: IRON_BOOTS
+        cost: 2
+    36:
+        name: DIAMOND_HELMET
+        cost: 3
+    37:
+        name: DIAMOND_CHESTPLATE
+        cost: 8
+    38:
+        name: DIAMOND_LEGGINGS
+        cost: 6
+    39:
+        name: DIAMOND_BOOTS
+        cost: 3
 waves:
     1:
         music: 'music.nether'
@@ -13,7 +83,11 @@ waves:
         subtitle: 'What is this?'
         duplicate: 8
         mobs:
-            - ENDERMITE
+            - type: ENDERMITE
+              effects:
+                  - id: 1
+                    strength: 0
+                    seconds: 300
     3:
         title: 'Who dares disturb me?!'
         subtitle: 'How fair thee against the UNDEAD?'
@@ -33,6 +107,10 @@ waves:
               pos: door
             - type: ZOMBIE
               pos: door
+              effects:
+                  - id: 1
+                    strength: 0
+                    seconds: 300
     5:
         subtitle: 'You can only join them.'
         duplicate: 2
@@ -67,6 +145,10 @@ waves:
               pos: door
             - type: ZOMBIE
               pos: door
+              effects:
+                  - id: 1
+                    strength: 0
+                    seconds: 300
     7:
         music: 'music.nether'
         title: 'Annoying.'
@@ -95,7 +177,7 @@ waves:
             - type: CAVESPIDER
               pos: spider
     9:
-        subtitle: 'Aha! The poison -- what you fear.'
+        subtitle: 'Aha! Poison is what you fear!'
         duplicate: 5
         mobs:
             - type: CAVESPIDER
@@ -108,8 +190,9 @@ waves:
               name: 'GEORGE'
               pos: center
     11:
+        music: 'music.nether'
         title: 'GEORGE!'
-        subtitle: 'Now I must hire a new butler! Applicants?'
+        subtitle: 'Now I must hire a new butler!'
         mobs:
             - 'SLIME:4'
             - 'SLIME:2'
@@ -149,15 +232,23 @@ waves:
         mobs:
             - type: 'WOLF:ANGRY'
               pos: door
+              targetnear: 8
             - type: 'WOLF:ANGRY'
               pos: door
+              targetnear: 8
             - type: 'WOLF:ANGRY'
               pos: door
-            - 'WOLF:ANGRY'
-            - 'WOLF:ANGRY'
-            - 'WOLF:ANGRY'
-            - 'WOLF:ANGRY'
-            - 'WOLF:ANGRY'
+              targetnear: 8
+            - type: 'WOLF:ANGRY'
+              targetnear: 8
+            - type: 'WOLF:ANGRY'
+              targetnear: 8
+            - type: 'WOLF:ANGRY'
+              targetnear: 8
+            - type: 'WOLF:ANGRY'
+              targetnear: 8
+            - type: 'WOLF:ANGRY'
+              targetnear: 8
     14:
         subtitle: 'I said "good day, sir"!'
         mobs:

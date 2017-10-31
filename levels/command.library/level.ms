@@ -106,6 +106,25 @@ register_command('level', array(
 				store_value('level', @name, @arena);
 				msg(color('green').'Set startblock');
 				
+			case 'settrigger':
+				if(!has_permission('group.engineer')) {
+					die(color('gold').'No permission.');
+				}
+				if(array_size(@args) < 3) {
+					die(color('gold').'This requires an arena id and trigger id.');
+				}
+				@name = @args[1];
+				@arena = get_value('level', @name);
+				if(!@arena) {
+					@arena = associative_array();
+				}
+				if(!array_index_exists(@arena, 'triggers')) {
+					@arena['triggers'] = associative_array();
+				}
+				@arena['triggers'][@args[2]] =  ptarget_space();
+				store_value('level', @name, @arena);
+				msg(color('green').'Set trigger location for '.@args[2]);
+				
 			case 'start':
 				if(@block = get_command_block()) {
 					@region = sk_regions_at(@block);
