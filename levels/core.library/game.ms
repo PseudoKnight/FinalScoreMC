@@ -15,7 +15,11 @@ proc _level_prepare(@name, @arena, @region, @world) {
 		'region': @region,
 		'config': yml_decode(read('../scripts/'.@name.'.yml')),
 		'trigger': null,
+		'coins': 20,
 	);
+	if(array_index_exists(@level['config'], 'coins')) {
+		@level['coins'] = @level['config']['coins'];
+	}
 	_add_activity('level'.@region, to_upper(@region).': '.@level['config']['title']);
 	set_world_time(@level['world'], 'sunset');
 	set_gamerule(@level['world'], 'doDaylightCycle', false);
@@ -62,6 +66,7 @@ proc _level_start(@level) {
 	
 	bind(player_death, array('id': 'death'.@level['region']), null, @event, @level) {
 		if(array_contains(@level['players'], player())) {
+			@level['coins'] /= 2;
 			_level_remove_player(player(), @level);
 			_level_add_spectator(player(), @level);
 			@loc = ploc();
@@ -388,10 +393,12 @@ proc _level_end(@level, @win) {
 			_unload_mob(@level);
 		}
 	}
+	@coins = ceil(@level['coins']);
 	foreach(@p in @level['players']) {
 		if(ponline(@p)) {
 			if(@win) {
-				title(@p, color('green').'Success!', '');
+				title(@p, color('green').'Success!', color('gold').'+ '.@coins.' Coins');
+				_acc_add(@p, @coins);
 			}
 			stop_named_sound(@p, @level['music'], 'RECORDS');
 			_level_remove_player(@p, @level);
