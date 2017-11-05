@@ -201,7 +201,7 @@ register_command('level', array(
 					}
 				}
 				
-				bind(inventory_click, array('id': player().'click'), array('player': player()), @e, @arena, @region) {
+				bind(inventory_click, array('id': player().'click'), array('player': player()), @e, @arena, @region, @world) {
 					@item = @e['slotitem'];
 					if(@item && @item['meta'] && @item['meta']['display']) {
 						close_pinv(); // unbinds and deletes menu

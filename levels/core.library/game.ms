@@ -307,7 +307,7 @@ proc _level_start(@level) {
 			} else if(!@entities) {
 				foreach(@p in @level['players']) {
 					if(ponline(@p)) {
-						play_sound(ploc(@p), array('sound': 'LEVEL_UP', 'pitch': 0.7), @p);
+						play_sound(ploc(@p), array('sound': 'BLOCK_ENCHANTMENT_TABLE_USE', 'pitch': 0.5), @p);
 					}
 				}
 				@level['wave']++;
