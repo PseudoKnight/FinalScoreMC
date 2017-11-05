@@ -18,6 +18,7 @@ bind(player_interact, array('id': @id.'railgun'), array('item': 175, 'button': '
 		@item['name'] = 'FIREWORK_CHARGE';
 		set_pinv(player(), null, @item);
 		@slot = pheld_slot();
+		set_pcooldown('FIREWORK_CHARGE', 8000 / 50);
 		queue_delay(8000, player().'railgun');
 		queue_push(closure(){
 			if(ponline(player())) {

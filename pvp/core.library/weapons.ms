@@ -11,6 +11,7 @@ proc _weapon_cooldown(@player, @time, @type, @onCooldown, @remove = 1) {
 			@newItem['name'] = @type;
 			@newItem['data'] = 0;
 			set_pinv(@player, null, @newItem);
+			set_pcooldown(@player, @type, @time / 50);
 		}
 		@slot = pheld_slot(@player);
 		set_timeout(@time, closure(){
@@ -44,9 +45,9 @@ proc _hit_scan(@player, @range, @damage, @tracerParticle, @hitParticle, @pvp){
 		play_effect(@location, @hitParticle, array('particleCount': 8, 'speed': 0.05, 'radius': @visibleRange));
 	}
 	if(@entities) {
-		play_sound(@origin, array('sound': 'SUCCESSFUL_HIT'), player());
 		foreach(@entity in @entities) {
 			if(is_entity_living(@entity['uuid']) && array_contains(sk_regions_at(@entity['location']), @pvp['arena']['region'])) {
+				play_sound(@origin, array('sound': 'SUCCESSFUL_HIT'), player());
 				try {
 					@player = player(@entity['uuid']);
 					if(!array_index_exists(@pvp['players'], @player)) {

@@ -231,29 +231,12 @@ proc _snake_ability(@player, @slot, @game) {
 			} else if(!@snake['laser']) {
 				@item = pinv(@player, @slot);
 				@world = pworld(@player);
-				if(@item) {
-					@amount = @item['qty'];
-					set_pinv(@player, @slot, null);
-					@snake['laser'] = time() + (@amount * 500);
+				if(@item && pcooldown(@player, 'STAINED_GLASS') == 0) {
+					@snake['laser'] = time() + (@item['qty'] * 500);
+					set_pcooldown(@player, 'STAINED_GLASS', 7000 / 50);
 					play_named_sound(@snake['loc'], array('sound': 'entity.guardian.death', 'volume': 4, 'pitch': 2));
 					play_named_sound(@snake['loc'], array('sound': 'entity.guardian.attack', 'volume': 4));
 					_snake_shoot_laser(@player, @snake['loc'][], @snake['dir'], @game);
-					set_timeout(7000, closure(){
-						if(@snake['alive'] && pworld(@player) == @world) {
-							@item = pinv(@player, @slot);
-							@inv = associative_array();
-							if(@item) {
-								@amount += @item['qty'];
-							}
-							@inv[@slot] = associative_array(
-								'name': 'STAINED_GLASS',
-								'data': 14,
-								'qty': @amount,
-								'meta': associative_array('display': 'Laser'),
-							);
-							set_pinv(@player, @inv);
-						}
-					});
 				}
 			}
 		case 'boost':
@@ -273,28 +256,12 @@ proc _snake_ability(@player, @slot, @game) {
 			} else {
 				@item = pinv(@player, @slot);
 				@world = pworld(@player);
-				if(@item) {
+				if(@item && pcooldown(@player, 'EMERALD_BLOCK') == 0) {
 					play_sound(@snake['loc'], associative_array('sound': 'GHAST_FIREBALL', 'volume': 4));
-					@amount = @item['qty'];
-					set_pinv(@player, @slot, null);
-					@snake['boost'] = @amount;
+					@snake['boost'] = @item['qty'];
+					set_pcooldown(@player, 'EMERALD_BLOCK', 7000 / 50);
 					set_timeout(5000, closure(){
 						@snake['boost'] = 0;
-						set_timeout(2000, closure(){
-							if(@snake['alive'] && pworld(@player) == @world) {
-								@item = pinv(@player, @slot);
-								if(@item) {
-									@amount += @item['qty'];
-								}
-								@inv = associative_array();
-								@inv[@slot] = associative_array(
-									'name': 'EMERALD_BLOCK',
-									'qty': @amount,
-									'meta': associative_array('display': 'Speed Boost'),
-								);
-								set_pinv(@player, @inv);
-							}
-						});
 					});
 				}
 			}

@@ -26,6 +26,7 @@ case 'load':
 		@slot = pheld_slot();
 		@item = pinv(player(), null);
 		set_pinv(player(), null, array('type': 280));
+		set_pcooldown('STICK', 7000 / 50);
 		queue_clear(player().'lightning');
 		queue_delay(1000, player().'lightning');
 		queue_push(closure(){

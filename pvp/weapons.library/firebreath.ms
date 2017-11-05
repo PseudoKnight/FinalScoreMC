@@ -9,13 +9,13 @@ bind(player_interact, array('id': @id.'firebreath'), array('item': 377, 'button'
 	@facing = pfacing(player());
 	@facing[0] = @facing[0] + 90;
 	@facing[1] = 0 - @facing[1];
-	@xc = 1.25 * cos(to_radians(@facing[0])) * cos(to_radians(@facing[1]));
-	@y = 1.25 * sin(to_radians(@facing[1]));
-	@zc = 1.25 * sin(to_radians(@facing[0])) * cos(to_radians(@facing[1]));
-	@xl = 1.25 * cos(to_radians(@facing[0] - 40)) * cos(to_radians(@facing[1]));
-	@zl = 1.25 * sin(to_radians(@facing[0] - 40)) * cos(to_radians(@facing[1]));
-	@xr = 1.25 * cos(to_radians(@facing[0] + 40)) * cos(to_radians(@facing[1]));
-	@zr = 1.25 * sin(to_radians(@facing[0] + 40)) * cos(to_radians(@facing[1]));
+	@xc = cos(to_radians(@facing[0])) * cos(to_radians(@facing[1]));
+	@y = sin(to_radians(@facing[1]));
+	@zc = sin(to_radians(@facing[0])) * cos(to_radians(@facing[1]));
+	@xl = cos(to_radians(@facing[0] - 40)) * cos(to_radians(@facing[1]));
+	@zl = sin(to_radians(@facing[0] - 40)) * cos(to_radians(@facing[1]));
+	@xr = cos(to_radians(@facing[0] + 40)) * cos(to_radians(@facing[1]));
+	@zr = sin(to_radians(@facing[0] + 40)) * cos(to_radians(@facing[1]));
 
 	@loc = ploc();
 	@loc['y'] += 1.9;
