@@ -21,8 +21,11 @@
 		}
 		@rider = puuid($player)
 		@cart = spawn_entity('minecart', 1, @loc)[0]
+		set_entity_max_speed(@cart, 0.5); // 0.4 default, 0.5 doesn't glitch, 0.53 glitches
 		set_entity_rider(@cart, @rider)
-		if(has_bind($player.'vehicle_leave'), die())
+		if(has_bind($player.'vehicle_leave')) {
+			die();
+		}
 		bind(vehicle_leave, array(id: $player.'vehicle_leave'), array('vehicletype': 'MINECART', 'passengertype': 'PLAYER'), @e, @player = $player) {
 			if(@e['player'] == @player) {
 				unbind()
@@ -50,6 +53,7 @@
 		set_entity_rider(@cart, @stand);
 		set_entity_spec(@stand, associative_array('visible': false));
 		set_entity_spec(@cart, associative_array('block': @material, 'offset': if($offset, integer($offset), 0)));
+		set_entity_max_speed(@cart, 0.5);
 		if($timer) {
 			set_timeout(integer($timer), closure(){
 				try {
