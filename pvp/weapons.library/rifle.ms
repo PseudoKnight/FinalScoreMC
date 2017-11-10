@@ -1,44 +1,48 @@
-proc _reload_rifle() {
-	@item = pinv(player(), null);
-	if(@item['qty'] == 1) {
-		play_sound(ploc(), array('sound': 'CLICK', 'pitch': 2));
+@pvp['binds'][] = @id.'riflereload';
+bind(player_interact, array('id': @id.'riflereload'), array('item': 265), @event, @pvp) {
+	if(!array_index_exists(@pvp['players'], player()) || pinfo(player(), 6) != @event['item']){
 		die();
 	}
-	@item['qty']--;
-	@item['data'] = 131;
-	set_pinv(player(), 0, @item);
+	@ammo = pinv(player(), null);
+	@ammo['qty']--;
+	set_pinv(player(), null, null);
+	@ammoslot = pheld_slot();
 	play_sound(ploc(), array('sound': 'DOOR_OPEN', 'pitch': 2));
-	set_timeout(2400, closure(){
-		if(ponline(player()) && phealth() > 0) {
-			@newitem = pinv(player(), 0);
-			if(is_null(@newitem) || @newitem['type'] != 291 || @newitem['qty'] != @item['qty']) {
-				die();
+	foreach(@weaponslot: @weapon in pinv()) {
+		if(@weapon && @weapon['type'] == 291) {
+			// Found weaponslot
+			set_pcooldown(@weapon['name'], 2000 / 50);
+			break();
+		}
+	}
+	set_timeout(2000, closure(){
+		if(ponline(@event['player']) && phealth()) {
+			@inv = pinv();
+			if(!is_null(@inv[@ammoslot]) && @inv[@ammoslot]['type'] == 265) {
+				@inv[@ammoslot]['qty'] += @ammo['qty'];
+			} else {
+				@inv[@ammoslot] = @ammo;
 			}
-			@item['data'] = 10;
-			set_pinv(player(), 0, @item);
-			play_sound(ploc(), array('sound': 'DOOR_CLOSE', 'pitch': 2));
+			@weapon['data'] = 10;
+			@inv[@weaponslot] = @weapon;
+			set_pinv(player(), @inv);
+			play_sound(ploc(), array('sound': 'DOOR_CLOSE', 'pitch': 2))
 		}
 	});
 }
 
-array_push(@pvp['binds'], @id.'rifle');
+@pvp['binds'][] = @id.'rifle';
 bind(player_interact, array('id': @id.'rifle'), array('item': 291), @event, @pvp) {
 	if(!array_index_exists(@pvp['players'], player()) || pinfo(player(), 6) != @event['item']){
 		die();
 	}
-	@item = pinv(player(), 0);
-	if(!@item['meta'] || @item['meta']['display'] != 'Rifle') {
+	@item = pinv(player(), null);
+	if(!@item['meta'] || @item['meta']['display'] != 'Rifle' || @item['data'] >= 130 || pcooldown(@item['name'])) {
 		die();
 	}
 	
-	if(@event['button'] == 'left') {
-		_reload_rifle();
-		die();
-	} else if(@item['data'] >= 130) {
-		die();
-	}
 	@item['data'] += 8;
-	set_pinv(player(), 0, @item);
+	set_pinv(player(), null, @item);
 	
 	_hit_scan(player(), 64, 1.8, 'VOID_FOG', 'LARGE_SMOKE', @pvp);
 	play_sound(ploc(), array('sound': 'FIREWORK_BLAST', 'pitch': 0.7, 'volume': 3));
