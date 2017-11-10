@@ -1,8 +1,8 @@
 switch(@action) {
 case 'load':
 	set_pheld_slot(@player, 0);
-	bind(item_held, array('id': @player.'boxman'), null, @e, @p = @player) {
-		if(@e['player'] == @p) {
+	bind(item_held, array('id': @player.'boxman'), null, @e, @player) {
+		if(@e['player'] == @player) {
 			cancel();
 		}
 	}
@@ -101,9 +101,14 @@ case 'load':
 		}
 	}
 
-	bind(entity_damage, array('id': @player.'boxmanbox', 'priority': 'HIGH'), array('type': 'ARMOR_STAND'), @e, @pvp) {
-		if((array_index_exists(@e, 'damager') && array_index_exists(@pvp['players'], @e['damager']))
-		|| (array_index_exists(@e, 'shooter') && array_index_exists(@pvp['players'], @e['shooter']))) {
+	bind(entity_damage, array('id': @player.'boxmanbox', 'priority': 'HIGH'), array('type': 'ARMOR_STAND'), @e, @pvp, @player) {
+		@damager = null;
+		if(array_index_exists(@e, 'damager') && array_index_exists(@pvp['players'], @e['damager'])) {
+			@damager = @e['damager'];
+		} else if(array_index_exists(@e, 'shooter') && array_index_exists(@pvp['players'], @e['shooter'])) {
+			@damager = @e['shooter'];
+		}
+		if(@damager && @damager != @player) {
 			@weapon = get_mob_equipment(@e['id'])['weapon']
 			if(@weapon && @weapon['type'] == 44) {
 				@loc = entity_loc(@e['id']);
@@ -114,38 +119,12 @@ case 'load':
 			}
 		}
 	}
-	
-	@sneakLoc = array();
-	bind(player_toggle_sneak, associative_array('id': @player.'sneak'), array('player': @player), @event, @pvp, @sneakLoc) {
-		if(@event['sneaking']) {
-			@sneakLoc['x'] = @event['location']['x'];
-			@sneakLoc['y'] = @event['location']['y'];
-			@sneakLoc['z'] = @event['location']['z'];
-			@sneakLoc['world'] = @event['location']['world'];
-			set_pinv(player(), 103, null);
-			@block = get_block_at(ploc());
-			foreach(@p: @player in @pvp['players']) {
-				if(@p != player()) {
-					psend_block_change(@p, @sneakLoc, @block);
-				}
-			}
-		} else {
-			set_pinv(player(), 103, array('name': 'STEP', 'data': 8));
-			@block = get_block_at(@sneakLoc);
-			foreach(@p: @player in @pvp['players']) {
-				if(@p != player()) {
-					psend_block_change(@p, @sneakLoc, @block);
-				}
-			}
-		}
-	}
 
 case 'unload':
 	unbind(@player.'boxman');
 	unbind(@player.'boxmanclick');
 	unbind(@player.'boxmanattack');
 	unbind(@player.'boxmanbox');
-	unbind(@player.'sneak');
 	set_pwalkspeed(player(), 0.2);
 
 }
