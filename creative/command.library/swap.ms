@@ -10,12 +10,11 @@ register_command('swap', array(
 			msg('Disabled time swap.');
 		} else {
 			bind(player_interact, array('id': 'timeswap'), array('item': 347, 'button': 'right', 'hand': 'main_hand'), @event) {
-				if(pworld() == 'dev') {
+				if(pworld() == 'dev' && !pcooldown('WATCH')) {
 					@loc = ploc();
+					@z = 50;
 					if(@loc['z'] > -1000) {
-						@loc['z'] -= 50;
-					} else {
-						@loc['z'] += 50;
+						@z = -50;
 					}
 					if(!get_block_info(_relative(@loc, 'up'), 'solid')
 					&& !get_block_info(_relative(@loc, 'up', 2), 'solid')) {
@@ -25,16 +24,12 @@ register_command('swap', array(
 						@slot = pheld_slot();
 						set_timeout(50, closure(){
 							if(ponline(player()) && pworld() == 'dev') {
-								set_pinv(player(), @slot, null);
-								set_ploc(@loc);
+								set_pcooldown('WATCH', 2000 / 50);
+								relative_teleport(array(0, 0, @z, @loc['world']));
 								set_peffect(player(), 25, 0, 0);
+								@loc = ploc();
 								play_named_sound(@loc, array('sound': 'entity.illusion_illager.mirror_move', 'pitch': 1.2));
 								play_sound(@loc, array('sound': 'WITHER_SHOOT', 'pitch': 1.3, 'volume': 0.1));
-								set_timeout(1000, closure(){
-									if(ponline(player()) && pworld() == 'dev') {
-										set_pinv(player(), @slot, @item);
-									}
-								});
 							}
 						});
 					} else {
