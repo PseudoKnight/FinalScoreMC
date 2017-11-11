@@ -26,14 +26,14 @@ case 'load':
 		@slot = pheld_slot();
 		@item = pinv(player(), null);
 		set_pinv(player(), null, array('type': 280));
-		set_pcooldown('STICK', 7000 / 50);
+		set_pcooldown('STICK', 8000 / 50);
 		queue_clear(player().'lightning');
 		queue_delay(1000, player().'lightning');
 		queue_push(closure(){
 			unbind(player().'lightningdmg');
 			export(player().'lightning', null);
 		}, player().'lightning');
-		queue_delay(6000, player().'lightning');
+		queue_delay(7000, player().'lightning');
 		queue_push(closure(){
 			if(!ponline(@e['player'])) {
 				return();
@@ -41,7 +41,7 @@ case 'load':
 			@newitem = pinv(player(), @slot)
 			if(!is_null(@newitem) && @newitem['type'] == 280) {
 				set_pinv(player(), @slot, @item);
-				play_sound(ploc(), array('sound': 'FIZZ'))
+				play_sound(ploc(), array('sound': 'FIZZ', 'volume': 4))
 			}
 		}, player().'lightning')
 	}

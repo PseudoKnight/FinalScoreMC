@@ -44,10 +44,10 @@ bind(player_interact, array('id': @id.'rifle'), array('item': 291), @event, @pvp
 	@item['data'] += 8;
 	set_pinv(player(), null, @item);
 	
-	_hit_scan(player(), 64, 1.8, 'VOID_FOG', 'LARGE_SMOKE', @pvp);
+	_hit_scan(player(), 64, 1.9, 'VOID_FOG', 'LARGE_SMOKE', @pvp);
 	play_sound(ploc(), array('sound': 'FIREWORK_BLAST', 'pitch': 0.7, 'volume': 3));
 	set_timeout(50, closure(){
-		_hit_scan(player(), 64, 1.8, 'VOID_FOG', 'LARGE_SMOKE', @pvp);
+		_hit_scan(player(), 64, 1.9, 'VOID_FOG', 'LARGE_SMOKE', @pvp);
 		play_sound(ploc(), array('sound': 'FIREWORK_BLAST', 'pitch': 0.7, 'volume': 3));
 	});
 }
