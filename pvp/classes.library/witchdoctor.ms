@@ -11,7 +11,7 @@ case 'load':
 			if(@player != player() && raw_pcan_see(@player)) {
 				set_peffect(@player, 15, 0, 7);
 				@cloud = spawn_entity('AREA_EFFECT_CLOUD', 1, ploc(@player))[0];
-				set_entity_spec(@cloud, array('radius': 0.5, 'duration': 7000 / 50));
+				set_entity_spec(@cloud, array('particle': 'SMOKE_LARGE', 'radius': 1, 'duration': 7000 / 50));
 				set_entity_rider(puuid(@player), @cloud);
 			}
 		}
@@ -21,7 +21,7 @@ case 'load':
 		set_timeout(15000, closure(){
 			if(ponline(player())) {
 				@item = pinv(player(), @slot);
-				if(@item['type'] == 290) {
+				if(@item && @item['type'] == 290) {
 					play_named_sound(ploc(), array('sound': 'block.enchantment_table.use'));
 				}
 			}
