@@ -10,7 +10,7 @@ case 'load':
 		set_pvelocity(@vel['x'] * 1.9, 0.9, @vel['z'] * 1.9);
 		play_effect(_relative(ploc(), 'up'), 'cloud', array('speed': 0, 'particleCount': 5, 'offsetX': 0.4, 'offsetZ': 0.4, 'offsetY': 0));
 		set_pflight(false);
-		set_entity_fall_distance(puuid(@player), 0);
+		set_entity_fall_distance(puuid(), 0);
 		queue_delay(2000, player().'doublejump');
 		queue_push(closure(){
 			set_pflight(true);
