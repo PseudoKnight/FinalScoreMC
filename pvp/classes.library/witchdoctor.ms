@@ -4,33 +4,32 @@ case 'load':
 		if(pinfo(player(), 6) != @e['item']) {
 			die();
 		}
-		@item = pinv(player(), null);
-		if(@item['data'] > 0) {
+		if(pcooldown('WOOD_HOE')) {
 			die();
 		}
 		foreach(@player in players_in_radius(ploc(), 18)) {
-			if(@player != player() && get_collides_with_entities(@player)) {
+			if(@player != player() && raw_pcan_see(@player)) {
 				set_peffect(@player, 15, 0, 7);
+				@cloud = spawn_entity('AREA_EFFECT_CLOUD', 1, ploc(@player))[0];
+				set_entity_spec(@cloud, array('radius': 0.5, 'duration': 7000 / 50));
+				set_entity_rider(puuid(@player), @cloud);
 			}
 		}
 		play_sound(ploc(), array('sound': 'HORSE_SKELETON_DEATH', 'pitch': 0.5, 'volume': 2));
-		set_pinv(player(), null, array('type': 290, 'data': 59));
 		@slot = pheld_slot();
-		set_interval(1000, closure(){
-			try {
+		set_pcooldown('WOOD_HOE', 15000 / 50);
+		set_timeout(15000, closure(){
+			if(ponline(player())) {
 				@item = pinv(player(), @slot);
-				if(@item['type'] == 290 && @item['data'] > 0) {
-					@item['data'] -= 4;
-					set_pinv(player(), @slot, @item);
-				} else {
-					clear_task();
+				if(@item['type'] == 290) {
 					play_named_sound(ploc(), array('sound': 'block.enchantment_table.use'));
 				}
-			} catch(Exception @e) {
-				clear_task();
 			}
 		});
 	}
+	
+case 'powerup':
+	set_pcooldown('WOOD_HOE', 0);
 
 case 'unload':
 	unbind(@player.'blind');
