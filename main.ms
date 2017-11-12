@@ -347,11 +347,9 @@ bind(entity_explode, null, array('type': 'CREEPER'), @event) {
 	}
 }
 
-# prevent egg-spawned named mobs from despawning
+# prevent egg-spawned mobs from despawning
 bind(creature_spawn, null, array('reason': 'SPAWNER_EGG'), @event) {
-	if(get_mob_name(@event['id'])) {
-		set_entity_persistence(@event['id'], true);
-	}
+	set_entity_persistence(@event['id'], true);
 }
 
 # block skeleton trap horses in regions
