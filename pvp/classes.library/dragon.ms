@@ -8,7 +8,7 @@ case 'load':
 		proc _flap(@player) {
 			queue_push(closure(){
 				if(phealth(@player) == 0) {
-					clear_task();
+					queue_clear(@player.'flap');
 				} else if(pexp(@player) > 0 && !psneaking(@player)) {
 					@facing = pfacing(@player);
 					@facing[0] = @facing[0] + 90;
@@ -40,8 +40,8 @@ case 'load':
 						}
 					})
 				}
-			}, @player.'flap')
-			queue_delay(500, @player.'flap')
+			}, @player.'flap');
+			queue_delay(500, @player.'flap');
 		}
 		if(pexp() == 99) {
 			_flap(player())
