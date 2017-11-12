@@ -29,7 +29,7 @@ case 'load':
 			});
 			@target = '';
 			foreach(@p in players_in_radius(@targetLoc, 4)){
-				if(@p != player() && raw_pcan_see(@p)) {
+				if(@p != player() && raw_pcan_see(@p) && pmode(@p) != 'SPECTATOR') {
 					@target = puuid(@p);
 				}
 			}
