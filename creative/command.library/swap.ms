@@ -12,9 +12,12 @@ register_command('swap', array(
 			bind(player_interact, array('id': 'timeswap'), array('item': 347, 'button': 'right', 'hand': 'main_hand'), @event) {
 				if(pworld() == 'dev' && !pcooldown('WATCH')) {
 					@loc = ploc();
-					@z = 50;
 					if(@loc['z'] > -1000) {
 						@z = -50;
+						@loc['z'] -= 50;
+					} else {
+						@z = 50;
+						@loc['z'] += 50;
 					}
 					if(!get_block_info(_relative(@loc, 'up'), 'solid')
 					&& !get_block_info(_relative(@loc, 'up', 2), 'solid')) {
@@ -27,7 +30,6 @@ register_command('swap', array(
 								set_pcooldown('WATCH', 2000 / 50);
 								relative_teleport(array(0, 0, @z, @loc['world']));
 								set_peffect(player(), 25, 0, 0);
-								@loc = ploc();
 								play_named_sound(@loc, array('sound': 'entity.illusion_illager.mirror_move', 'pitch': 1.2));
 								play_sound(@loc, array('sound': 'WITHER_SHOOT', 'pitch': 1.3, 'volume': 0.1));
 							}
