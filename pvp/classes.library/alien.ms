@@ -18,6 +18,8 @@ case 'load':
 					set_pexp(@xp);
 					if(@xp == 99) {
 						clear_task();
+					} else if(@xp == 20) {
+						try(entity_remove(@arrow));
 					}
 				} catch(Exception @ex) {
 					clear_task();
@@ -25,7 +27,7 @@ case 'load':
 			});
 			if(extension_exists('CHSpigot')) {
 				@dmg = get_arrow_damage(@arrow);
-				set_arrow_damage(@arrow, @dmg * 0.5);
+				set_arrow_damage(@arrow, @dmg * 0.55);
 			}
 		}
 	}
