@@ -19,15 +19,6 @@ shop:
     11:
         name: SHIELD
         cost: 5
-    18:
-        name: LEATHER_HELMET
-        cost: 1
-    19:
-        name: LEATHER_CHESTPLATE
-        cost: 3
-    20:
-        name: LEATHER_LEGGINGS
-        cost: 2
     21:
         name: GOLD_HELMET
         cost: 2
@@ -232,26 +223,30 @@ waves:
         mobs:
             - type: 'WOLF:ANGRY'
               pos: door
-              targetnear: 8
+              targetnear: 12
             - type: 'WOLF:ANGRY'
               pos: door
-              targetnear: 8
+              targetnear: 12
             - type: 'WOLF:ANGRY'
               pos: door
-              targetnear: 8
+              targetnear: 12
             - type: 'WOLF:ANGRY'
-              targetnear: 8
+              targetnear: 12
             - type: 'WOLF:ANGRY'
-              targetnear: 8
+              targetnear: 12
             - type: 'WOLF:ANGRY'
-              targetnear: 8
+              targetnear: 12
             - type: 'WOLF:ANGRY'
-              targetnear: 8
+              targetnear: 12
             - type: 'WOLF:ANGRY'
-              targetnear: 8
+              targetnear: 12
     14:
         subtitle: 'I said "good day, sir"!'
         mobs:
-            - type: 'MAGMACUBE:1'
+            - type: 'MAGMACUBE:2'
               name: 'George #2'
               pos: center
+              effects:
+                  - id: 11
+                    strength: 2
+                    seconds: 300
