@@ -1,10 +1,15 @@
 bind(player_interact, null, array('item': 401, 'button': 'right'), @event) {
-	@gliding = get_entity_gliding(puuid());
-	if(@gliding) {
-        set_timeout(150, closure(){
-            set_entity_gliding(puuid(), true);
-        });
-    }
+	@uuid = puuid();
+	@gliding = get_entity_gliding(@uuid);
+	if(@gliding || !entity_grounded(@uuid) && (@chestplate = pinv(player(), 102)) && @chestplate['name'] == 'ELYTRA') {
+		if(!@gliding) {
+			set_entity_gliding(@uuid, true);
+			@gliding = true;
+		}
+		set_timeout(150, closure(){
+			try(set_entity_gliding(@uuid, true));
+		});
+	}
 	@slot = if(@event['hand'] == 'main_hand', null, -106);
 	@item = pinv(player(), @slot);
 	@lore = _item_meta(@item, 'lore');
@@ -69,73 +74,73 @@ bind(player_interact, null, array('item': 401, 'button': 'right'), @event) {
 		
 	}
 	if(!@gliding && (pworld() == 'custom' || pworld() == 'dev')) {
-    	@pdata = _pdata(player());
-    	if(!array_index_exists(@pdata, 'support')) {
-    		die();
-    	}
-        
-        @slot = -106;
-        if(@event['hand'] == 'main_hand') {
-            @slot = pheld_slot();
-        }
-        @item = pinv(player(), @slot);
-        if(@item['meta'] && @item['meta']['firework']['effects']) {
-            die();
-        }
-        
-    	cancel();
-    	if(@event['action'] === 'right_click_block') {
-    		@loc = _relative(@event['location'], @event['facing']);
-    	} else {
-    		@loc = ploc();
-    	}
-    	@loc['x'] += 0.5;
-    	@loc['z'] += 0.5;
+		@pdata = _pdata(player());
+		if(!array_index_exists(@pdata, 'support')) {
+			die();
+		}
+		
+		@slot = -106;
+		if(@event['hand'] == 'main_hand') {
+			@slot = pheld_slot();
+		}
+		@item = pinv(player(), @slot);
+		if(@item['meta'] && @item['meta']['firework']['effects']) {
+			die();
+		}
+		
+		cancel();
+		if(@event['action'] === 'right_click_block') {
+			@loc = _relative(@event['location'], @event['facing']);
+		} else {
+			@loc = ploc();
+		}
+		@loc['x'] += 0.5;
+		@loc['z'] += 0.5;
 
-    	@colors = array();
-    	for(@i = 0, @i < 3, @i++) {
-    		@colors[] = array(rand(256), rand(256), rand(256));
-    	}
+		@colors = array();
+		for(@i = 0, @i < 3, @i++) {
+			@colors[] = array(rand(256), rand(256), rand(256));
+		}
 
-    	foreach(@f in range(rand(2, 4))) {
-    		@meta = associative_array('strength': @f, 'effects': array());
+		foreach(@f in range(rand(2, 4))) {
+			@meta = associative_array('strength': @f, 'effects': array());
 			@num = rand(1, 3);
-    		foreach(@m in range(@num)) {
-    			@type = array_rand(array('BALL', 'BALL_LARGE', 'STAR', 'BURST', 'CREEPER'), 1, false)[0];
-    			@startcolors = array_rand(@colors, rand(1, 3), false);
-    			@endcolors = array_filter(@colors, closure(@key, @value){
-    				return(!array_contains(@startcolors, @value));
-    			});
-    			@meta['effects'][] = associative_array(
-    				'flicker': rand(2),
-    				'trail': if(@num == 1, rand(2), 0),
-    				'colors': @startcolors,
-    				'fade': @endcolors,
-    				'type': @type,
-    			);
-    		}
-    		@firework = launch_firework(@loc, @meta);
-    		if(@f > 1 && !rand(4)) {
-    			set_metadata(@firework, 'mob', array_rand(array('chicken', 'bat', 'pig'), 1, false)[0]);
-    		}
-    	}
+			foreach(@m in range(@num)) {
+				@type = array_rand(array('BALL', 'BALL_LARGE', 'STAR', 'BURST', 'CREEPER'), 1, false)[0];
+				@startcolors = array_rand(@colors, rand(1, 3), false);
+				@endcolors = array_filter(@colors, closure(@key, @value){
+					return(!array_contains(@startcolors, @value));
+				});
+				@meta['effects'][] = associative_array(
+					'flicker': rand(2),
+					'trail': if(@num == 1, rand(2), 0),
+					'colors': @startcolors,
+					'fade': @endcolors,
+					'type': @type,
+				);
+			}
+			@firework = launch_firework(@loc, @meta);
+			if(@f > 1 && !rand(4)) {
+				set_metadata(@firework, 'mob', array_rand(array('chicken', 'bat', 'pig'), 1, false)[0]);
+			}
+		}
 
-    	@item['type'] = 402;
-    	@item['name'] = 'FIREWORK_CHARGE';
-    	set_pinv(player(), @slot, @item);
-    	set_timeout(4000, closure(){
-    		try {
-    			@item = pinv(player(), @slot);
-    			if(@item && @item['type'] == 402) {
-    				@item['type'] = 401;
-    				@item['name'] = 'FIREWORK';
-    				set_pinv(player(), @slot, @item);
-    			}
-    		} catch(PlayerOfflineException @ex) {
-    			// ignore
-    		}
-    	});
-    }
+		@item['type'] = 402;
+		@item['name'] = 'FIREWORK_CHARGE';
+		set_pinv(player(), @slot, @item);
+		set_timeout(4000, closure(){
+			try {
+				@item = pinv(player(), @slot);
+				if(@item && @item['type'] == 402) {
+					@item['type'] = 401;
+					@item['name'] = 'FIREWORK';
+					set_pinv(player(), @slot, @item);
+				}
+			} catch(PlayerOfflineException @ex) {
+				// ignore
+			}
+		});
+	}
 }
 
 bind(firework_explode, null, null, @event){
