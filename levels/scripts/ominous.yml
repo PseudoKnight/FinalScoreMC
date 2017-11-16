@@ -10,58 +10,34 @@ shop:
     2:
         name: DIAMOND_SWORD
         cost: 4
-    9:
+    3:
         name: CARROT_ITEM
         cost: 1
-    10:
+    4:
         name: GOLDEN_APPLE
         cost: 3
-    11:
-        name: SHIELD
-        cost: 5
-    21:
-        name: GOLD_HELMET
-        cost: 2
-    22:
-        name: GOLD_CHESTPLATE
-        cost: 5
-    23:
-        name: GOLD_LEGGINGS
-        cost: 3
-    27:
-        name: CHAINMAIL_HELMET
-        cost: 2
-    28:
-        name: CHAINMAIL_CHESTPLATE
-        cost: 5
-    29:
-        name: CHAINMAIL_LEGGINGS
-        cost: 4
-    30:
-        name: CHAINMAIL_BOOTS
-        cost: 1
-    31:
+    9:
         name: IRON_HELMET
         cost: 2
-    32:
+    10:
         name: IRON_CHESTPLATE
         cost: 6
-    33:
+    11:
         name: IRON_LEGGINGS
         cost: 5
-    34:
+    12:
         name: IRON_BOOTS
         cost: 2
-    36:
+    13:
         name: DIAMOND_HELMET
         cost: 3
-    37:
+    14:
         name: DIAMOND_CHESTPLATE
         cost: 8
-    38:
+    15:
         name: DIAMOND_LEGGINGS
         cost: 6
-    39:
+    16:
         name: DIAMOND_BOOTS
         cost: 3
 waves:
@@ -81,7 +57,7 @@ waves:
                     seconds: 300
     3:
         title: 'Who dares disturb me?!'
-        subtitle: 'How fair thee against the UNDEAD?'
+        subtitle: 'How fare thee against the UNDEAD?'
         mobs:
             - type: ZOMBIE
               pos: center
