@@ -101,6 +101,7 @@ member:
       stargate.create.network: false
       worldguard.region.claim: false
       command.sethome: false
+      command.7: true
       advancement.all: false
       deadbolt.user.create.*: false
   inheritance: default

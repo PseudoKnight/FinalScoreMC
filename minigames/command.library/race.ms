@@ -3,7 +3,9 @@
 	Players sprint and/or ride to the target location. First there wins.
 	NO teleports. Horses/Minecarts/Potions are allowed.
 
-	REQUIRES WORLDBORDER
+	DEPENDENCIES:
+	- WorldBorder plugin to define a random location within the valid world space. The read() location is relative to the script!
+	- CHNaughty extension for action_msg()
 */
 register_command('race', array(
 	'description': 'Creates a race in survival for all players in the area.',
@@ -13,9 +15,6 @@ register_command('race', array(
 	},
 	'executor': closure(@alias, @sender, @args, @info) {
 		@world = pworld();
-		if(!_is_survival_world(@world)) {
-			die(color('gold').'You can only play The Great Race in a survival world.');
-		}
 
 		# Get players
 		@start = ploc();
@@ -114,8 +113,11 @@ register_command('race', array(
 
 					} else {
 						# WINNER!
-						launch_firework(_relative(@l, 'up', 2));
-						_worldmsg(@world, @p.' won The Great Race!');
+						@l['y'] += 2;
+						launch_firework(@l);
+						foreach(@player in all_players(@world)) {
+							tmsg(@player, @p.' won The Great Race!');
+						}
 						unbind('thegreatrace');
 						remove_scoreboard('race');
 						clear_task();

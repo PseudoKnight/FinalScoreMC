@@ -1,9 +1,25 @@
+/*
+	Spleef is a game where players must be the last player standing above the floor to win.
+	Players are given pickaxes to dig out blocks underneath other players to win.
+	Features player-configurable floor blocks and various player-toggleable options.
+	Relevant locations are hard-coded in the @cfg.
+	
+	DEPENDENCIES:
+	- WorldGuard plugin and SKCompat extension for regions
+	- _add_activity() and _remove_activity() procedures to keep a list of all current activities on server.
+	- _regionmsg() proc to broadcast to players only within a region.
+	- _clear_pinv() proc to remove all items from a player's inventory.
+	- _acc_add() proc to reward players with coins.
+*/
 register_command('spleef', array(
 	'description': 'Starts, joins, or sets the floor of a Spleef game.',
 	'usage': '/spleef <join|start|floor>',
 	'tabcompleter': closure(@alias, @sender, @args, @info) {
 		if(array_size(@args) == 1) {
-			return(_strings_start_with_ic(array('join', 'floor', 'start'), @args[-1]));
+			@chars = @args[-1];
+			return(array_filter(array('join', 'floor', 'start'), closure(@index, @string) {
+				return(length(@chars) <= length(@string) && equals_ic(@chars, substr(@string, 0, length(@chars))));
+			}));
 		}
 		return(array());
 	},
@@ -141,16 +157,16 @@ register_command('spleef', array(
 						#platforming
 						proc _setfloor(@x, @y, @z, @mat) {
 							if(rand(2)) {
-								set_block_at(@x, @y, @z, @mat, 'custom', false);
+								set_block_at(@x, @y, @z, @mat, @world, false);
 							} else {
-								set_block_at(@x, @y, @z, 0, 'custom', false);
+								set_block_at(@x, @y, @z, 0, @world, false);
 							}
 						}
 					} else {
 						#regular floor
 						proc _setfloor(@x, @y, @z, @mat) {
 							if(get_block_at(@x, @y, @z) != @mat) {
-								set_block_at(@x, @y, @z, @mat, 'custom', false);
+								set_block_at(@x, @y, @z, @mat, @world, false);
 							}
 						}
 					}
@@ -162,25 +178,25 @@ register_command('spleef', array(
 					if(get_block_at(@cfg['option']['obstacles']) ==  '124:0') {
 						proc _setwalls(@x, @y, @z) {
 							if(assign(@rand, rand(100)) < 5) {
-								set_block_at(array(@x, @y, @z, 'custom'), '98:0', false);
-								set_block_at(array(@x, @y + 1, @z, 'custom'), '98:0', false);
+								set_block_at(array(@x, @y, @z, @world), '98:0', false);
+								set_block_at(array(@x, @y + 1, @z, @world), '98:0', false);
 							} else if(@rand < 6) {
-								set_block_at(array(@x, @y, @z, 'custom'), '98:1', false);
-								set_block_at(array(@x, @y + 1, @z, 'custom'), '98:1', false);
+								set_block_at(array(@x, @y, @z, @world), '98:1', false);
+								set_block_at(array(@x, @y + 1, @z, @world), '98:1', false);
 							} else if(@rand < 7) {
-								set_block_at(array(@x, @y, @z, 'custom'), '98:2', false);
-								set_block_at(array(@x, @y + 1, @z, 'custom'), '98:2', false);
+								set_block_at(array(@x, @y, @z, @world), '98:2', false);
+								set_block_at(array(@x, @y + 1, @z, @world), '98:2', false);
 							} else if(get_block_at(@x, @y, @z)[0] !== '0') {
-								set_block_at(array(@x, @y, @z, 'custom'), 0, false);
-								set_block_at(array(@x, @y + 1, @z, 'custom'), 0, false);
+								set_block_at(array(@x, @y, @z, @world), 0, false);
+								set_block_at(array(@x, @y + 1, @z, @world), 0, false);
 							}
 						}
 						#clear walls if random obstacles is turned off
 					} else {
 						proc _setwalls(@x, @y, @z) {
 							if(get_block_at(@x, @y, @z)[0] !== '0') {
-								set_block_at(array(@x, @y, @z, 'custom'), '0:0', false);
-								set_block_at(array(@x, @y + 1, @z, 'custom'), '0:0', false);
+								set_block_at(array(@x, @y, @z, @world), '0:0', false);
+								set_block_at(array(@x, @y + 1, @z, @world), '0:0', false);
 							}
 						}
 					}
@@ -200,12 +216,12 @@ register_command('spleef', array(
 						@location = array(@region[0][0] - rand(sqrt((@region[0][0] - @region[1][0]) ** 2)), @region[0][1], @region[0][2] - rand(sqrt((@region[0][2] - @region[1][2]) ** 2)));
 						#check if they're spawning into a block
 						if(get_block_at(array(@location[0], @location[1] + 1, @location[2]))[0] !== '0') {
-							set_block_at(@location[0], @location[1] + 1, @location[2], 0, 'custom', false);
-							set_block_at(@location[0], @location[1] + 2, @location[2], 0, 'custom', false);
+							set_block_at(@location[0], @location[1] + 1, @location[2], 0, @world, false);
+							set_block_at(@location[0], @location[1] + 2, @location[2], 0, @world, false);
 						}
 						#check if they're spawning over air
 						if(get_block_at(@location[0], @location[1], @location[2])[0] === '0') {
-							set_block_at(@location[0], @location[1], @location[2], @mat, 'custom', false);
+							set_block_at(@location[0], @location[1], @location[2], @mat, @world, false);
 						}
 						set_ploc(@player, array(@location[0] + 0.5, @location[1], @location[2] + 0.5, @world));
 						set_pinv(@player, 0,
@@ -220,9 +236,9 @@ register_command('spleef', array(
 					}
 		
 					if(get_block_at(@cfg['option']['knockback']) === '124:0') {
-						sk_region_flag('custom', 'spleef-arena', 'pvp', 'allow');
+						sk_region_flag(@world, 'spleef-arena', 'pvp', 'allow');
 					} else {
-						sk_region_flag('custom', 'spleef-arena', 'pvp', 'deny');
+						sk_region_flag(@world, 'spleef-arena', 'pvp', 'deny');
 					}
 					
 					proc _fall_block(@loc) {
@@ -338,7 +354,7 @@ register_command('spleef', array(
 							}
 						}
 		
-						foreach(@player in all_players('custom')){
+						foreach(@player in all_players(@world)){
 							if(array_index_exists(@currentspleef, @player)) {
 								continue();
 							}

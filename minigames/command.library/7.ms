@@ -1,11 +1,27 @@
+/*
+	Seven Seconds to Live is a game where players are given seven seconds on a clock before they blow up.
+	Players can get additional time added to their clock by running on ores -- the higher value the ores, the more
+	time is added to their clock. The last player to have not blown up or fallen out of the map wins.
+	The command features several subcommands to create and edit multiple arenas for players to play on.
+	
+	DEPENDENCIES:
+	- WorldGuard plugin and SKCompat extension for regions and arena schematics.
+	- _add_activity() and _remove_activity() procedures to keep a list of all current activities on server.
+	- _regionmsg() proc to broadcast to players only within a region.
+*/
 register_command('7', array(
 	'description': 'Starts and manages "Seven Seconds to Live" minigame.',
 	'usage': '/7 [start|list|create|edit|save|delete|reset|setspawn|resetspawns] [map_id]',
+	'permission': 'command.7',
 	'aliases': array('seven'),
 	'tabcompleter': closure(@alias, @sender, @args, @info) {
 		if(array_size(@args) == 1) {
-			return(_strings_start_with_ic(array('start', 'list', 'create', 'edit', 'save', 'delete',
-					'reset', 'setspawn', 'resetspawns'), @args[-1]));
+			@chars = @args[-1];
+			return(array_filter(array('start', 'list', 'create', 'edit', 'save', 'delete', 'reset', 'setspawn', 'resetspawns'),
+				closure(@index, @string) {
+					return(length(@chars) <= length(@string) && equals_ic(@chars, substr(@string, 0, length(@chars))));
+				}
+			));
 		}
 		return(array());
 	},
@@ -14,6 +30,7 @@ register_command('7', array(
 		if(array_size(@args) > 1) {
 			@schematic = @args[1];
 		}
+		@world = pworld(@sender);
 		if(!@args || @args[0] == 'start') {
 			@arenas = get_value('seven')
 			if(!@arenas || array_size(@arenas) < 1) {
@@ -118,7 +135,7 @@ register_command('7', array(
 									}
 			
 									if(is_null(@p['block']) && entity_grounded(puuid(@player))) {
-										@p['block'] = array(@loc['x'], @loc['y'], @loc['z'], 'custom');
+										@p['block'] = array(@loc['x'], @loc['y'], @loc['z'], @world);
 									}
 			
 									@int = ceil(@p['time'])
@@ -137,14 +154,18 @@ register_command('7', array(
 							if(array_size(@7['players']) <= 1) {
 								if(array_size(@7['players']) == 1) {
 									@winner = array_implode(array_keys(@7['players']));
-									_worldmsg('custom', @winner.' wins with '.color('gold').round(@7['players'][@winner]['time'], 1).' Seconds to Live');
+									foreach(@player in all_players(@world)) {
+										tmsg(@player, @winner.' wins with '.color('gold').round(@7['players'][@winner]['time'], 1).' Seconds to Live');
+									}
 									set_timeout(3000, closure(){
 										if(ponline(@winner)) {
 											set_ploc(@winner, @7['lobby']);
 										}
 									})
 								} else {
-									_worldmsg('custom', color(6).'Everybody dies.');
+									foreach(@player in all_players(@world)) {
+										tmsg(@player, color(6).'Everybody dies.');
+									}
 								}
 								set_timeout(7000, closure(){
 									remove_scoreboard('7');
@@ -161,11 +182,13 @@ register_command('7', array(
 			
 			proc _7_remove_player(@player, @7) {
 				if(ponline(@player)) {
-					if(pworld(@player) === 'custom') {
+					if(pworld(@player) === @world) {
 						if(array_contains(sk_current_regions(@player), '7')) {
 							if(phealth(@player) > 0) {
 								pkill(@player);
-								explosion(_relative(ploc(@player), 'up'), 4);
+								@ploc = ploc(@player);
+								@ploc['y']++;
+								explosion(@ploc, 4);
 							}
 							@timeleft = round(@7['players'][@player]['time'], 1);
 							if(@timeleft <= 0) {
@@ -191,8 +214,10 @@ register_command('7', array(
 				@7 = array('players': associative_array(), 'state': 0)
 				export('7', @7)
 			}
-
-			_worldmsg('custom', colorize('&6&l7 Seconds to Live&r has been queued up by '.player().' /warp 7'))
+			
+			foreach(@player in all_players(@world)) {
+				tmsg(@player, colorize('&6&l7 Seconds to Live&r has been queued up by '.player().' /warp 7'));
+			}
 
 			@timer = array(7);
 			@7['state'] = 1;
@@ -201,7 +226,7 @@ register_command('7', array(
 			create_scoreboard('7');
 			create_objective('time', 'DUMMY', '7');
 			set_objective_display('time', array('displayname': color(6).'SECONDS TO LIVE', 'slot': 'SIDEBAR'), '7');
-			@startblock = sk_region_info('7_schematic', 'custom')[0][0];
+			@startblock = sk_region_info('7_schematic', @world)[0][0];
 			set_interval(1000, closure(){
 				@num = 0
 				foreach(@player in all_players()) {
@@ -241,14 +266,16 @@ register_command('7', array(
 					} else {
 						skcb_load(@7['arena']);
 					}
-					skcb_paste(array(0, 0, 0, 'custom'), array('origin': true));
+					skcb_paste(array(0, 0, 0, @world), array('origin': true));
 					@7['state'] = 3;
 
 				} else if(@7['state'] == 3) {
 					if(get_block_at(@startblock) !== '0:0') {
 						@7['state'] = 4;
 						set_block_at(@startblock, 0);
-						_worldmsg('custom', colorize('&6&l7 Seconds to Live&r... /warp 7'));
+						foreach(@player in all_players(@world)) {
+							tmsg(@player, colorize('&6&l7 Seconds to Live&r... /warp 7'));
+						}
 					}
 
 				} else if(@7['state'] == 4) {
@@ -256,13 +283,15 @@ register_command('7', array(
 
 					if(@num != array_size(@7['players'])) {
 						if(@num < 2) {
-							_worldmsg('custom', colorize('&67 Seconds to Live&r game canceled.'))
-							clear_task()
-							@7['state'] = 0
-							@7['players'] = associative_array()
-							remove_scoreboard('7')
+							foreach(@player in all_players(@world)) {
+								tmsg(@player, colorize('&67 Seconds to Live&r game canceled.'));
+							}
+							clear_task();
+							@7['state'] = 0;
+							@7['players'] = associative_array();
+							remove_scoreboard('7');
 							_remove_activity('7');
-							die()
+							die();
 						}
 
 						foreach(@player in array_keys(@7['players'])) {
@@ -306,7 +335,7 @@ register_command('7', array(
 					}
 					@arenas[@schematic] = array('spawns': array(), 'author': array(puuid(), player()));
 					store_value('seven', @arenas);
-					@startblock = sk_region_info('7_schematic', 'custom')[0][0];
+					@startblock = sk_region_info('7_schematic', @world)[0][0];
 					set_block_at(@startblock, 169);
 					sudo('/rg select 7_schematic');
 					queue_push(closure(){sudo('//copy')}, '7');
@@ -326,7 +355,7 @@ register_command('7', array(
 					} else {
 						skcb_load(@schematic);
 					}
-					skcb_paste(array(0, 0, 0, 'custom'), array('origin': true));
+					skcb_paste(array(0, 0, 0, @world), array('origin': true));
 					msg('If done editing, you may use /7 save '.@schematic)
 					msg('Then set the spawn points with /7 spawn '.@schematic)
 
@@ -346,7 +375,7 @@ register_command('7', array(
 						die(color('gold').'You are not the author');
 					}
 					
-					@startblock = sk_region_info('7_schematic', 'custom')[0][0];
+					@startblock = sk_region_info('7_schematic', @world)[0][0];
 					set_block_at(@startblock, 169);
 					sudo('/rg select 7_schematic');
 					queue_push(closure(){sudo('//copy')}, '7');
@@ -363,7 +392,7 @@ register_command('7', array(
 						die(color('gold').'Arena doesn\'t exist by that name.')
 					}
 					@loc = ploc()
-					@loc = array(round(@loc[0], 1), @loc[1], round(@loc[2], 1), 'custom')
+					@loc = array(round(@loc[0], 1), @loc[1], round(@loc[2], 1), @world)
 					@arenas[@schematic]['spawns'][] = @loc
 					msg(color('green').'Set spawn '.array_size(@arenas[@schematic]['spawns']).' here.')
 					store_value('seven', @arenas)

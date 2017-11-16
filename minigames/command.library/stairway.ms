@@ -1,3 +1,12 @@
+/*
+	Stairway creates a stairway of randomly placed blocks to heaven (world height).
+	Records are stored for how high the player made it.
+	
+	DEPENDENCIES:
+	- MCJukeBox plugin to play music while the player climbs. Remove runas() functions if you do not need this.
+	- WorldGuard plugin and SKCompat extension for region detection.
+	- _acc_add() proc for rewarding players who reach the top.
+*/
 register_command('stairway', array(
 	'description': 'Starts a randomly generated block stairway in the region.',
 	'usage': '/stairway <player>',
@@ -7,7 +16,7 @@ register_command('stairway', array(
 			return(false);
 		}
 		@player = @args[0];
-		if(import('stairway') || pworld(@player) != 'custom' || !array_contains(sk_current_regions(@player), 'stairway')) {
+		if(import('stairway') || !array_contains(sk_current_regions(@player), 'stairway')) {
 			die();
 		}
 		runas('~console', '/jukebox show add '.@player.' @stairway');
