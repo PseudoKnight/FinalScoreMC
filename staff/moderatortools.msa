@@ -64,6 +64,8 @@
 		if(is_array(@timers)) {
 			store_value('session.timers', @timers);
 		}
+	} else {
+		export('recompile', true);
 	}
 
 	foreach(@world in get_worlds()) {
@@ -80,6 +82,7 @@
 			run('/recompile -rf'.if(!@clearGlobal, 'g'));
 			@stop = time();
 			broadcast(color('yellow').'Recompiled scripts!'.if(@message, ' "'.@message.'"').' ('.round((@stop - @start) / 1000, 1).'s)');
+			export('recompile', null);
 		});
 	});
 <<<
