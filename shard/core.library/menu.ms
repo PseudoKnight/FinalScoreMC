@@ -285,6 +285,9 @@ proc _open_rules_menu(@objective) {
 				@rule = array_get(@rules, @slot, null);
 			} else {
 				@slot -= 9;
+				if(@slot < 0) {
+					die();
+				}
 				@item = @event['inventory'][@slot];
 				@rule = array_get(@rules, @slot, null);
 			}
