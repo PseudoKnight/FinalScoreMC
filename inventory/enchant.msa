@@ -1,0 +1,51 @@
+# Enchant tool in hand with specified enchantment
+*:/enchant [$type='list'] [$level=1] = >>>
+	if(!has_permission('command.items')) {
+		die('You are not allowed to create custom items here.');
+	}
+	if(!$type) {
+		die(color('gold').'Usage: /enchant <type> [level]\n'
+		.'Example: /enchant sharpness 4');
+	}
+	@item = pinv(player(), null);
+	if(!@item) {
+		die('You must hold an item.');
+	}
+	@enchants = associative_array(
+		'power': 'ARROW_DAMAGE',
+		'flame': 'ARROW_FIRE',
+		'infinity': 'ARROW_INFINITE',
+		'punch': 'ARROW_KNOCKBACK',
+		'sharpness': 'DAMAGE_ALL',
+		'baneofarthropods': 'DAMAGE_ARTHROPODS',
+		'smite': 'DAMAGE_UNDEAD',
+		'efficiency': 'DIG_SPEED',
+		'unbreaking': 'DURABILITY',
+		'fireaspect': 'FIRE_ASPECT',
+		'knockback': 'KNOCKBACK',
+		'fortune': 'LOOT_BONUS_BLOCKS',
+		'looting': 'LOOT_BONUS_MOBS',
+		'respiration': 'OXYGEN',
+		'protection': 'PROTECTION_ENVIRONMENTAL',
+		'blastprotection': 'PROTECTION_EXPLOSIONS',
+		'featherfalling': 'PROTECTION_FALL',
+		'fireprotection': 'PROTECTION_FIRE',
+		'projectileprotection': 'PROTECTION_PROJECTILE',
+		'silktouch': 'SILK_TOUCH',
+		'thorns': 'THORNS',
+		'aquaaffinity': 'WATER_WORKER',
+		'depthstrider': 'DEPTH_STRIDER',
+		'mending': 'MENDING',
+		'frostwalker': 'FROST_WALKER',
+		'sweepingedge': 'SWEEPING_EDGE',
+	);
+	if(!is_integral($level)) {
+		die('Enchantment level must be an integer.');
+	}
+	@level = integer(clamp($level, 1, 99));
+	if(array_index_exists(@enchants, to_lower($type))) {
+		enchant_inv_unsafe(null, @enchants[to_lower($type)], @level);
+	} else {
+		msg(color('red').'Available enchantments: '.array_keys(@enchants));
+	}
+<<<
