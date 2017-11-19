@@ -70,6 +70,7 @@ proc _class(@action, @player, @class, @pvp) {
 			}
 			set_pinv(@player, @inv);
 		}
+		set_parrow_count(@player, 0);
 
 	case 'unload':
 		unbind(@player.'food');
