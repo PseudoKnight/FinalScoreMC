@@ -16,24 +16,41 @@ register_command('stairway', array(
 			return(false);
 		}
 		@player = @args[0];
-		if(import('stairway') || !array_contains(sk_current_regions(@player), 'stairway')) {
+		if(!array_contains(sk_current_regions(@player), 'stairway')) {
 			die();
 		}
+		@players = import('stairway');
+		if(is_null(@players)) {
+			@players = associative_array();
+		} else if(array_index_exists(@players, @player)) {
+			die();
+		}
+		if(array_size(@players) == 0) {
+			@players[@player] = 0;
+			runas('~console', '/jukebox music @stairway http://finalscoremc.com/media/stairway.mp3 {volume:30,fadeDuration:3}');
+		} else {
+			@players[@player] = rand(16);
+		}
 		runas('~console', '/jukebox show add '.@player.' @stairway');
-		runas('~console', '/jukebox music @stairway http://finalscoremc.com/media/stairway.mp3 {volume:30,fadeDuration:3}');
 		@ploc = ploc(@player);
 		@startY = @ploc['y'] + 1;
 		@loc = array(floor(@ploc[0]), floor(@ploc[1]), floor(@ploc[2]), @ploc[3]);
+		@startY = integer(@ploc[1] + 1);
 		@loc[0]++;
 		@loc[1]++;
-		set_block_at(@loc, 95);
+		set_block_at(@loc, '95:'.@players[@player]);
+		set_pbed_location(@player, @loc, true);
 		@oldLoc = array();
-		export('stairway', true);
+		export('stairway', @players);
 		
 		proc _stairway_end(@player, @height) {
 			clear_task();
-			export('stairway', null);
-			runas('~console', '/jukebox stop music @stairway {fadeDuration:6}');
+			@players = import('stairway');
+			array_remove(@players, @player);
+			export('stairway', @players);
+			if(!@players) {
+				runas('~console', '/jukebox stop music @stairway {fadeDuration:6}');
+			}
 			@complete = get_value('stairway');
 			if(!@complete) {
 				@complete = associative_array();
@@ -67,7 +84,7 @@ register_command('stairway', array(
 				die();
 			}
 			@ploc = ploc(@player);
-			if(get_block_at(@ploc) == '95:0' && @ploc[1] >= @loc[1] && @loc[1] < 255) {
+			if(split(':', get_block_at(@ploc))[0] == '95' && @ploc[1] >= @loc[1] && @loc[1] < 255) {
 				if(@oldLoc) {
 					set_block_at(@oldLoc, 0);
 				}
@@ -95,7 +112,8 @@ register_command('stairway', array(
 				@loc[0] = @newLoc[0];
 				@loc[1] = @newLoc[1];
 				@loc[2] = @newLoc[2];
-				set_block_at(@loc, 95);
+				set_block_at(@loc, '95:'.@players[@player]);
+				title(@player, '', integer(@loc[1]) - @startY);
 			} else if(@oldLoc && @ploc['y'] < @startY) {
 				set_block_at(@oldLoc, 0);
 				set_block_at(@loc, 0);
