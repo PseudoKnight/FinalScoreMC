@@ -41,7 +41,7 @@ proc _hit_scan(@player, @range, @damage, @tracerParticle, @hitParticle, @pvp){
 	@entities = @trace['entities'];
 	@players = array();
 	
-	if(@trace['result'] == 'hit') {
+	if(@trace['hitblock']) {
 		play_effect(@location, @hitParticle, array('particleCount': 8, 'speed': 0.05, 'radius': @visibleRange));
 	}
 	if(@entities) {
