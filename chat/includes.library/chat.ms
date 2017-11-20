@@ -72,7 +72,7 @@ proc _chat(@player, @message, @recipients) {
 			dm_broadcast_to_web(@filteredMessage, @player);
 		}
 	}
-	runas('~console', '/discord broadcast '.@player.': '.@filteredMessage);
+	runas('~console', '/discord broadcast **'.@player.'**: '.@filteredMessage);
 }
 
 proc _pmsg(@from, @player, @message) {
