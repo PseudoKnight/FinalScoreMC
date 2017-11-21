@@ -53,10 +53,12 @@ proc _refresh_menu() {
 	@menu = @menuPvp['menu'][];
 	@i = 0;
 	foreach(@item in @menuPvp['inv']) {
-		if(@item['qty'] <= @count) {
-			@menu[@i] = @item;
-			@i++;
+		if(@item['qty'] > @count) {
+			@item = @item[];
+			@item['type'] = 166;
 		}
+		@menu[@i] = @item;
+		@i++;
 	}
 	create_virtualchest(@menu);
 }
