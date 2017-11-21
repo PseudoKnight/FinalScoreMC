@@ -28,13 +28,21 @@ proc _prepare_menu(@template) {
 		'other': array(),
 	);
 
-	@menu = @template[];
-	@menu['id'] = 'courses';
-	@menu['title'] = 'Solo Courses / Parkour';
-	@menu[58]['name'] = 'DIAMOND_BLOCK';
+	@menu1 = @template[];
+	@menu1['id'] = 'courses1';
+	@menu1['title'] = 'Solo Courses / Parkour #1';
+	@menu1[31]['name'] = 'DIAMOND_BLOCK';
 	
-	@other = get_virtualchest('other');
-	@otherSlot = 0;
+	@menu2 = @template[];
+	@menu2['id'] = 'courses2';
+	@menu2['title'] = 'Solo Courses / Parkour #2';
+	@menu2[32]['name'] = 'GOLD_BLOCK';
+	
+	@menu3 = @template[];
+	@menu3['id'] = 'courses3';
+	@menu3['title'] = 'Coop Courses / Parkour';
+	@menu3[33]['name'] = 'EMERALD_BLOCK';
+	@menu3slot = 0;
 	
 	@cakes = get_value('cakeinfo');
 	foreach(@name: @cake in @cakes) {
@@ -74,7 +82,7 @@ proc _prepare_menu(@template) {
 					),
 				);
 			} else {
-				@other[@otherSlot++] =  associative_array(
+				@menu3[@menu3slot++] =  associative_array(
 					'name': 'STAINED_GLASS',
 					'data': @datacolor[@difficulty],
 					'meta': associative_array(
@@ -89,12 +97,17 @@ proc _prepare_menu(@template) {
 		@slot = @i * 9;
 		foreach(@coins in @difficulties[@difficulty]) {
 			foreach(@item in @coins) {
-				@menu[@slot] = @item;
+				if(@i < 3) {
+					@menu1[@slot] = @item;
+				} else {
+					@menu2[@slot % 27] = @item;
+				}
 				@slot++;
 			}
 		}
 	}
 	
-	create_virtualchest(@menu);
-	create_virtualchest(@other);
+	create_virtualchest(@menu1);
+	create_virtualchest(@menu2);
+	create_virtualchest(@menu3);
 }

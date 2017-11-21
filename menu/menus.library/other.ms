@@ -2,11 +2,11 @@ proc _prepare_menu(@template) {
 	@menu = @template[];
 	@menu['id'] = 'other';
 	@menu['title'] = 'Other Games';
-	@menu[59]['name'] = 'DIAMOND_LEGGINGS';
+	@menu[30]['name'] = 'SLIME_BALL';
 	
-	@menu[9] = associative_array(
+	@menu[0] = array(
 		'name': 'SNOW_BLOCK',
-		'meta': associative_array(
+		'meta': array(
 			'display': color('yellow').'Spleef',
 			'lore': array(
 				color('r').'Last man standing (2+ players)',
@@ -14,10 +14,10 @@ proc _prepare_menu(@template) {
 			),
 		),
 	);
-	@menu[10] = associative_array(
+	@menu[1] = array(
 		'name': 'STAINED_CLAY',
 		'data': 2,
-		'meta': associative_array(
+		'meta': array(
 			'display': color('gold').'Cube'.color('red').'Climber',
 			'lore': array(
 				color('r').'Players race to the top of randomly placed cubes',
@@ -27,9 +27,9 @@ proc _prepare_menu(@template) {
 			),
 		),
 	);
-	@menu[11] = associative_array(
+	@menu[2] = array(
 		'name': 'EMERALD_ORE',
-		'meta': associative_array(
+		'meta': array(
 			'display': color('green').'Seven Seconds to Live',
 			'lore': array(
 				color('r').'Players have seven seconds to live...',
@@ -40,9 +40,9 @@ proc _prepare_menu(@template) {
 			),
 		),
 	);
-	@menu[12] = associative_array(
+	@menu[3] = array(
 		'name': 'EMERALD_BLOCK',
-		'meta': associative_array(
+		'meta': array(
 			'display': color('green').'FrogWare',
 			'lore': array(
 				color('r').'Players are given random tasks to complete in seconds.',
@@ -51,9 +51,9 @@ proc _prepare_menu(@template) {
 			),
 		),
 	);
-	@menu[13] = associative_array(
+	@menu[4] = array(
 		'name': 'REDSTONE_BLOCK',
-		'meta': associative_array(
+		'meta': array(
 			'display': color('red').'Snake',
 			'lore': array(
 				color('r').'Last snake slithering (1 - 9 players)',
@@ -62,9 +62,9 @@ proc _prepare_menu(@template) {
 			),
 		),
 	);
-	@menu[14] = associative_array(
+	@menu[5] = array(
 		'name': 'PACKED_ICE',
-		'meta': associative_array(
+		'meta': array(
 			'display': color('aqua').'Hockey',
 			'lore': array(
 				color('r').'Team slime hockey (4 - 8 players)',
@@ -72,9 +72,9 @@ proc _prepare_menu(@template) {
 			),
 		),
 	);
-	@menu[15] = associative_array(
+	@menu[6] = array(
 		'name': 'ORANGE_GLAZED_TERRACOTTA',
-		'meta': associative_array(
+		'meta': array(
 			'display': color('aqua').'Charades',
 			'lore': array(
 				color('r').'Builders are given something random to build.',
@@ -86,9 +86,29 @@ proc _prepare_menu(@template) {
 			),
 		),
 	);
-	@menu[18] = associative_array(
+	@menu[7] = array(
+		'name': 'SMOOTH_BRICK',
+		'data': 2,
+		'meta': array(
+			'display': color('yellow').'Gladiator Arena',
+			'lore': array(
+				color('r').'Survive waves of mobs (1+ players)',
+				color('dark_gray').'Run: /warp gladiator',
+			),
+		),
+	);
+	@menu[8] = array(
+		'name': 'COAL_BLOCK',
+		'meta': array(
+			'display': color('white').'Lair',
+			'lore': array(
+				color('dark_gray').'Run: /warp lair',
+			),
+		),
+	);
+	@menu[9] = array(
 		'name': 'SLIME_BLOCK',
-		'meta': associative_array(
+		'meta': array(
 			'display': color('green').'Slimey Golf',
 			'lore': array(
 				color('r').'Minigolf (1 - 4 players)',
@@ -96,9 +116,9 @@ proc _prepare_menu(@template) {
 			),
 		),
 	);
-	@menu[19] = associative_array(
+	@menu[10] = array(
 		'type': 168,
-		'meta': associative_array(
+		'meta': array(
 			'display': color('aqua').'Sunken City Golf',
 			'lore': array(
 				color('r').'Minigolf (1 - 4 players)',
@@ -106,25 +126,14 @@ proc _prepare_menu(@template) {
 			),
 		),
 	);
-	@menu[20] = associative_array(
+	@menu[11] = array(
 		'name': 'LOG',
 		'data': 3,
-		'meta': associative_array(
+		'meta': array(
 			'display': color('yellow').'Island Golf',
 			'lore': array(
 				color('r').'Minigolf (1 - 4 players)',
 				color('dark_gray').'Run: /warp islandgolf',
-			),
-		),
-	);
-	@menu[27] = associative_array(
-		'name': 'SMOOTH_BRICK',
-		'data': 2,
-		'meta': associative_array(
-			'display': color('yellow').'Gladiator Arena',
-			'lore': array(
-				color('r').'Survive waves of mobs (1+ players)',
-				color('dark_gray').'Run: /warp gladiator',
 			),
 		),
 	);

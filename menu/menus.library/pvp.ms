@@ -2,7 +2,7 @@ proc _prepare_menu(@template) {
 	@menu = @template[];
 	@menu['id'] = 'pvp';
 	@menu['title'] = 'PVP Arenas';
-	@menu[57]['name'] = 'DIAMOND_SWORD';
+	@menu[29]['name'] = 'DIAMOND_SWORD';
 	
 	@menuPvp = array(
 		'inv': array(),

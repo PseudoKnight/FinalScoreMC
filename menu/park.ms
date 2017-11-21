@@ -10,33 +10,51 @@ bind(player_interact, null, array('item': data_values('book'), 'button': 'right'
 }
 
 queue_push(closure(){
-	@main = associative_array(
+	@main = array(
 		'id': 'main',
 		'title': 'Frog Park Directory',
-		'size': 63,
-		57: associative_array(
+		'size': 36,
+		27: array('name': 'STONE_BUTTON'),
+		28: array('name': 'STONE_BUTTON'),
+		29: array(
 			'name': 'IRON_SWORD',
-			'meta': associative_array(
+			'meta': array(
 				'display': color('green').'PVP Arenas',
 				'lore': array(color('dark_gray').'Load: pvp'),
 				'flags': array('HIDE_ATTRIBUTES'),
 			),
 		),
-		58: associative_array(
-			'name': 'IRON_BLOCK',
-			'meta': associative_array(
-				'display': color('green').'Solo Courses / Parkour',
-				'lore': array(color('dark_gray').'Open: courses'),
-			),
-		),
-		59: associative_array(
-			'name': 'IRON_LEGGINGS',
-			'meta': associative_array(
+		30: array(
+			'name': 'SNOW_BALL',
+			'meta': array(
 				'display': color('green').'Other Games',
 				'lore': array(color('dark_gray').'Open: other'),
 				'flags': array('HIDE_ATTRIBUTES'),
 			),
-		)
+		),
+		31: array(
+			'name': 'IRON_BLOCK',
+			'meta': array(
+				'display': color('green').'Solo Courses / Parkour',
+				'lore': array(color('aqua').'Easy - Medium', color('dark_gray').'Open: courses1'),
+			),
+		),
+		32:array(
+			'name': 'IRON_BLOCK',
+			'meta': array(
+				'display': color('green').'Solo Courses / Parkour',
+				'lore': array(color('gold').'Medium - Very Hard', color('dark_gray').'Open: courses2'),
+			),
+		),
+		33:array(
+			'name': 'IRON_BLOCK',
+			'meta': array(
+				'display': color('green').'Coop Courses / Parkour',
+				'lore': array(color('dark_gray').'Open: courses3'),
+			),
+		),
+		34: array('name': 'STONE_BUTTON'),
+		35: array('name': 'STONE_BUTTON'),
 	);
 	create_virtualchest(@main);
 
