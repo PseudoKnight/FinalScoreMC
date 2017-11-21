@@ -148,24 +148,18 @@
 		if(_is_survival_world(@loc['world'])) {
 			die(color('gold').'You cannot set a velocity on players in survival worlds.');
 		}
-		#if(!get_collides_with_entities($player) || (!is_null(@l) && _distance(@l, @loc) > 8)) {
-			# get next nearest, if any
-		#	die();
-		#}
-		set_timeout(50, closure(){
-			make_effect(@loc, 'MOBSPAWNER_FLAMES');
-			play_sound(@loc, array('sound': 'GHAST_FIREBALL', 'volume': 2));
-			set_pvelocity(@player, $x, $y, $z);
-			for(@i = 0, @i < 3, @i++) {
-				queue_delay(100, @player.'velocity');
-				queue_push(closure(){
-					make_effect(ploc(@player), 'MOBSPAWNER_FLAMES');
-				}, @player.'velocity');
-			}
-			if($double) {
-				set_timeout($double, closure() {
-					set_pvelocity(@player, $x, $y, $z)
-				});
+		
+		set_pvelocity(@player, $x, $y, $z);
+		play_sound(@loc, array('sound': 'GHAST_FIREBALL', 'volume': 2));
+		make_effect(@loc, 'MOBSPAWNER_FLAMES');
+		
+		@reapply = array(if($double, integer($double / 50), 0));
+		set_interval(50, closure(){
+			make_effect(ploc(@player), 'MOBSPAWNER_FLAMES');
+			if(@reapply[0]-- > 0) {
+				set_pvelocity(@player, $x, $y, $z);
+			} else {
+				clear_task();
 			}
 		});
 
@@ -188,21 +182,19 @@
 		} else {
 			die();
 		}
+		
 		@loc = entity_loc(@entity);
+		make_effect(@loc, 'MOBSPAWNER_FLAMES');
+		play_sound(@loc, array('sound': 'GHAST_FIREBALL', 'volume': 2));
+		set_entity_velocity(@entity, array($x, $y, $z));
+		
+		@reapply = array(if($double, integer($double / 50), 0));
 		set_timeout(50, closure(){
 			make_effect(@loc, 'MOBSPAWNER_FLAMES');
-			play_sound(@loc, array('sound': 'GHAST_FIREBALL', 'volume': 2));
-			set_entity_velocity(@entity, array($x, $y, $z));
-			for(@i = 0, @i < 3, @i++) {
-				queue_delay(100, @entity.'velocity');
-				queue_push(closure(){
-					make_effect(entity_loc(@entity), 'MOBSPAWNER_FLAMES');
-				}, @entity.'velocity');
-			}
-			if($double) {
-				set_timeout($double, closure() {
-					set_entity_velocity(@entity, array($x, $y, $z));
-				});
+			if(@reapply[0]-- > 0) {
+				set_entity_velocity(@entity, array($x, $y, $z));
+			} else {
+				clear_task();
 			}
 		});
 	}
