@@ -186,11 +186,12 @@ register_command('timer', array(
 						if(array_index_exists(@times, @i) && @times[@i][0] != @uuid) {
 							@rankup = true;
 						}
+						@place = @i + 1;
 						if(@i > 0 && @times[@i - 1][2] == @time) {
 							@tied = true;
+							@place--;
 						}
 						array_insert(@times, array(@uuid, @player, @time), @i);
-						@place = @i + 1;
 					}
 				} else {
 					if(array_index_exists(@times, @i) && @times[@i][0] == @uuid) {
