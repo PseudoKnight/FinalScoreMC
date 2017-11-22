@@ -1,5 +1,5 @@
 proc _get_categories() {
-	return(array('actions', 'animals', 'easy', 'food_and_cooking', 'food', 'hard', 'household_items', 'idioms', 'medium', 'movies', 'other', 'people_and_characters', 'places', 'travel', 'very_hard'));
+	return(array('actions', 'animals', 'easy', 'food_and_cooking', 'food', 'hard', 'household_items', 'idioms', 'medium', 'movies', 'other', 'people_and_characters', 'places', 'travel', 'very_hard', 'finalscoremc'));
 }
 
 proc _get_match(@one, @two) {
