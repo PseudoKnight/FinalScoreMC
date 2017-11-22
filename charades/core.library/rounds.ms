@@ -71,19 +71,17 @@ proc _start_round() {
 				consume();
 				cancel();
 				if(get_pteam(player(), 'charades')['name'] == 'guessers') {
-					_regionmsg('charades', color(8).simple_date('h:mm').' [Charades] '.color('yellow').player().color(8).': '.color('r').@event['message']);
-					switch(_get_match(@event['message'], @word)) {
-						case 2:
-							// Complete match
-							play_sound(ploc(), array('sound': 'LEVEL_UP'));
-							_end_round(player(), @word);
-						case 1:
-							// One word matches
-							play_sound(ploc(), array('sound': 'VILLAGER_YES'), player());
-							msg(color('yellow').'You\'re on the right track!');
-						case 0:
-							// No words match
-							play_sound(ploc(), array('sound': 'VILLAGER_NO'), player());
+					@message = @event['message'];
+					@timestamp = simple_date('h:mm');
+					@name = display_name();
+					if(_get_match(@message, @word)) {
+						play_sound(ploc(), array('sound': 'LEVEL_UP'));
+						_regionmsg('charades', colorize("&8@timestamp [Charades] @{name}&8: &r@message"));
+						_end_round(player(), @word);
+					} else {
+						_regionmsg('charades', colorize("&8@timestamp [Charades] @{name}&8: &r@message")), 'chat', player());
+						@message = _highlight_similarities(@message, @word);
+						msg(colorize("&8@timestamp [Charades] @{name}&8: &r@message"));
 					}
 				}
 			} catch(Exception @ex) {

@@ -1,26 +1,29 @@
 proc _get_categories() {
-	return(array('actions', 'animals', 'easy', 'food_and_cooking', 'food', 'hard', 'household_items', 'idioms', 'medium', 'movies', 'other', 'people_and_characters', 'places', 'travel', 'very_hard', 'finalscoremc'));
+	return(array('actions', 'animals', 'easy', 'food_and_cooking', 'hard', 'household_items', 'idioms', 'medium', 'movies', 'other', 'people_and_characters', 'travel', 'very_hard', 'finalscoremc'));
 }
 
-proc _get_match(@one, @two) {
+proc _get_match(@guess, @target) {
 	// ignore beginning articles
-	@one = reg_replace('^(a|the)\\s', '', to_lower(@one));
-	@two = reg_replace('^(a|the)\\s', '', to_lower(@two));
+	@guess = reg_replace('^(a|the)\\s', '', to_lower(@guess));
+	@target = reg_replace('^(a|the)\\s', '', to_lower(@target));
 	
-	// ignore single spelling errors
-	if(levenshtein(@one, @two) < 2) {
-		return(2);
+	// ignore small single spelling errors in targets larger than 4 characters
+	if(length(@target) < 5 && @guess == @target
+	|| length(@target) > 4 && levenshtein(@guess, @target) < 2) {
+		return(true);
 	}
-	
-	// it's not a match, but let's check if they got one word right
-	@words = parse_args(@one);
-	foreach(@word in @words) {
-		if(length(@word) > 3 && string_position(@two, @word) >= 0) {
-			return(1);
+}
+
+proc _highlight_similarities(@guess, @target) {
+	@words = parse_args(@guess);
+	foreach(@index: @word in @words) {
+		if(string_position(@target, @word) >= 0) {
+			@words[@index] = color('bold').@word;
+		} else {
+			@words[@index] = color('reset').@word;
 		}
 	}
-	
-	return(0);
+	return(array_implode(@words));
 }
 
 proc _get_word(@category) {
