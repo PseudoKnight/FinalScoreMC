@@ -115,6 +115,9 @@ case 'load':
 			cancel();
 		}
 	}
+	
+case 'powerup':
+	set_parrow_count(@player, 0);
 
 case 'unload':
 	unbind(@player.'ninja');
