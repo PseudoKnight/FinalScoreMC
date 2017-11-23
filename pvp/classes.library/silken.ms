@@ -11,7 +11,13 @@ case 'load':
 	}
 
 	bind(player_interact, array('id': @player.'web'), array('player': @player, 'button': 'right', 'item': 291), @e, @pvp) {
-		@loc = ptarget_space();
+		spawn_falling_block(_relative(ploc(), 'up', 2), 30, _get_vector(pfacing(), 2, 0));
+	}
+	
+	bind(entity_change_block, array('id': @player.'webhit'), array('from': 0, 'to': 30), @event, @pvp) {
+		cancel();
+		consume();
+		@loc = @event['location'];
 		foreach(@player in array_merge(array_keys(@pvp['players']), @pvp['spectators'])) {
 			psend_block_change(@player, @loc, 30);
 		}
@@ -20,5 +26,6 @@ case 'load':
 case 'unload':
 	unbind(@player.'damage');
 	unbind(@player.'web');
+	unbind(@player.'webhit');
 
 }
