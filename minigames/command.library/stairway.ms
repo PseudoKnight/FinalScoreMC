@@ -27,7 +27,7 @@ register_command('stairway', array(
 		}
 		if(array_size(@players) == 0) {
 			@players[@player] = 0;
-			runas('~console', '/jukebox music @stairway http://finalscoremc.com/media/stairway.mp3 {volume:30,fadeDuration:3}');
+			runas('~console', '/jukebox music @stairway http://finalscoremc.com/media/stairway.mp3 {volume:30,fadeDuration:2}');
 		} else {
 			@players[@player] = rand(16);
 		}
@@ -40,7 +40,7 @@ register_command('stairway', array(
 		@loc[1]++;
 		set_block_at(@loc, '95:'.@players[@player]);
 		set_pbed_location(@player, @loc, true);
-		@oldLoc = array();
+		@oldLocs = array();
 		export('stairway', @players);
 		
 		proc _stairway_end(@player, @height) {
@@ -49,7 +49,12 @@ register_command('stairway', array(
 			array_remove(@players, @player);
 			export('stairway', @players);
 			if(!@players) {
-				runas('~console', '/jukebox stop music @stairway {fadeDuration:6}');
+				if(@height == 256) {
+					runas('~console', '/jukebox stop music @stairway {fadeDuration:10}');
+				} else {
+					runas('~console', '/jukebox sound @stairway http://finalscoremc.com/media/record_scratch.ogg {volume:20}');
+					runas('~console', '/jukebox stop music @stairway');
+				}
 			}
 			@complete = get_value('stairway');
 			if(!@complete) {
@@ -74,54 +79,74 @@ register_command('stairway', array(
 			}
 		}
 		
+		proc _remove_old_blocks(@locations) {
+			foreach(@index: @loc in @locations) {
+				set_block_at(@loc, 0, false);
+				array_remove(@locations, @index);
+			}
+		}
+		
 		set_interval(500, closure(){
 			if(!ponline(@player) || !array_contains(sk_current_regions(@player), 'stairway')) {
-				if(@oldLoc) {
-					set_block_at(@oldLoc, 0);
-				}
+				_remove_old_blocks(@oldLocs);
 				set_block_at(@loc, 0);
 				_stairway_end(@player, @loc[1]);
 				die();
 			}
 			@ploc = ploc(@player);
 			if(split(':', get_block_at(@ploc))[0] == '95' && @ploc[1] >= @loc[1] && @loc[1] < 255) {
-				if(@oldLoc) {
-					set_block_at(@oldLoc, 0);
-				}
-				@oldLoc[0] = @loc[0];
-				@oldLoc[1] = @loc[1];
-				@oldLoc[2] = @loc[2];
-				@oldLoc[3] = @loc[3];
-				@attempts = 20;
-				@max = rand(3,5); // reduce chance of max jump length
+				_remove_old_blocks(@oldLocs);
+				@oldLocs[] = @loc[];
+				
+				// do small path
+				@maxLength = 10;
 				do {
 					@newLoc = @loc[];
-					@dist = rand(-@max, @max + 1);
-					@coord = rand(2) * 2;
-					@newLoc[@coord] += @dist;
-					@newLoc[1] += 1;
-					if(abs(@dist) < @max) {
-						@otherDist = (@max - abs(@dist)) * rand(-1, 2);
-						if(@coord == 0) {
-							@newLoc[2] += @otherDist;
-						} else {
-							@newLoc[0] += @otherDist;
-						}
+					@newLoc[rand(2) * 2] += rand(2) * 2 - 1;
+					if(array_contains(sk_regions_at(@newLoc), 'stairway')
+					&& get_block_at(@newLoc) == '0:0') {
+						set_block_at(@newLoc, '95:'.@players[@player], false);
+						@oldLocs[] = @newLoc[];
+						@loc[0] = @newLoc[0];
+						@loc[1] = @newLoc[1];
+						@loc[2] = @newLoc[2];
+					} else {
+						break();
 					}
-				} while(!array_contains(sk_regions_at(@newLoc), 'stairway') && @attempts-- > 0);
-				@loc[0] = @newLoc[0];
-				@loc[1] = @newLoc[1];
-				@loc[2] = @newLoc[2];
+				} while(@maxLength-- > 0);
+				
+				// do jump
+				@max = rand(3,5); // reduce chance of max jump length
+				@attempts = 20;
+				do {
+					@newLoc = @loc[];
+					@distA = rand(-@max, @max + 1);
+					@coord = rand(2) * 2;
+					@newLoc[@coord] += @distA;
+					@newLoc[1] += 1;
+					@distB = (4 - abs(@distA)) * rand(-1, 2);
+					if(@coord == 0) {
+						@newLoc[2] += @distB;
+					} else {
+						@newLoc[0] += @distB;
+					}
+					if(array_contains(sk_regions_at(@newLoc), 'stairway')) {
+						@loc[0] = @newLoc[0];
+						@loc[1] = @newLoc[1];
+						@loc[2] = @newLoc[2];
+						break();
+					}
+				} while(@attempts-- > 0);
 				set_block_at(@loc, '95:'.@players[@player]);
 				title(@player, '', integer(@loc[1]) - @startY);
-			} else if(@oldLoc && @ploc['y'] < @startY) {
-				set_block_at(@oldLoc, 0);
+			} else if(@oldLocs && @ploc['y'] < @startY) {
+				_remove_old_blocks(@oldLocs);
 				set_block_at(@loc, 0);
 				_stairway_end(@player, @loc[1]);
 			} else if(@ploc['y'] > 254) {
 				_stairway_end(@player, 256);
 				set_timeout(3000, closure(){
-					set_block_at(@oldLoc, 0);
+					_remove_old_blocks(@oldLocs);
 					set_block_at(@loc, 0);
 				});
 			}
