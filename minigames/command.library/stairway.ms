@@ -51,9 +51,11 @@ register_command('stairway', array(
 			if(!@players) {
 				if(@height == 256) {
 					runas('~console', '/jukebox stop music @stairway {fadeDuration:10}');
-				} else {
+				} else if(phealth(@player) == 0) {
 					runas('~console', '/jukebox sound @stairway http://finalscoremc.com/media/record_scratch.ogg {volume:20}');
 					runas('~console', '/jukebox stop music @stairway');
+				} else {
+					runas('~console', '/jukebox stop music @stairway {fadeDuration:3}');
 				}
 			}
 			@complete = get_value('stairway');
@@ -130,7 +132,7 @@ register_command('stairway', array(
 					} else {
 						@newLoc[0] += @distB;
 					}
-					if(array_contains(sk_regions_at(@newLoc), 'stairway')) {
+					if((@distA || @distB) && array_contains(sk_regions_at(@newLoc), 'stairway')) {
 						@loc[0] = @newLoc[0];
 						@loc[1] = @newLoc[1];
 						@loc[2] = @newLoc[2];
