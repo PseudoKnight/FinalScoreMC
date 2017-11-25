@@ -135,7 +135,7 @@ register_command('7', array(
 									}
 			
 									if(is_null(@p['block']) && entity_grounded(puuid(@player))) {
-										@p['block'] = array(@loc['x'], @loc['y'], @loc['z'], @world);
+										@p['block'] = array(@loc['x'], @loc['y'], @loc['z'], @7['world']);
 									}
 			
 									@int = ceil(@p['time'])
@@ -154,7 +154,7 @@ register_command('7', array(
 							if(array_size(@7['players']) <= 1) {
 								if(array_size(@7['players']) == 1) {
 									@winner = array_implode(array_keys(@7['players']));
-									foreach(@player in all_players(@world)) {
+									foreach(@player in all_players(@7['world'])) {
 										tmsg(@player, @winner.' wins with '.color('gold').round(@7['players'][@winner]['time'], 1).' Seconds to Live');
 									}
 									set_timeout(3000, closure(){
@@ -163,7 +163,7 @@ register_command('7', array(
 										}
 									})
 								} else {
-									foreach(@player in all_players(@world)) {
+									foreach(@player in all_players(@7['world'])) {
 										tmsg(@player, color(6).'Everybody dies.');
 									}
 								}
@@ -182,7 +182,7 @@ register_command('7', array(
 			
 			proc _7_remove_player(@player, @7) {
 				if(ponline(@player)) {
-					if(pworld(@player) === @world) {
+					if(pworld(@player) === @7['world']) {
 						if(array_contains(sk_current_regions(@player), '7')) {
 							if(phealth(@player) > 0) {
 								pkill(@player);
@@ -211,8 +211,8 @@ register_command('7', array(
 
 			@7 = import('7')
 			if(!@7) {
-				@7 = array('players': associative_array(), 'state': 0)
-				export('7', @7)
+				@7 = array('players': associative_array(), 'state': 0, 'world', @world);
+				export('7', @7);
 			}
 			
 			foreach(@player in all_players(@world)) {
