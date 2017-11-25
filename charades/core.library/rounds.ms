@@ -79,7 +79,7 @@ proc _start_round() {
 						_regionmsg('charades', colorize("&8@timestamp [Charades] @{name}&8: &r@message"));
 						_end_round(player(), @word);
 					} else {
-						_regionmsg('charades', colorize("&8@timestamp [Charades] @{name}&8: &r@message")), 'chat', player());
+						_regionmsg('charades', colorize("&8@timestamp [Charades] @{name}&8: &r@message"), 'chat', player());
 						@message = _highlight_similarities(@message, @word);
 						msg(colorize("&8@timestamp [Charades] @{name}&8: &r@message"));
 					}
