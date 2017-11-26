@@ -58,14 +58,16 @@ case 'load':
 			@dist = sqrt(((@loc2['x'] - @loc1['x']) ** 2) + ((@loc2['y'] - @loc1['y']) ** 2) + ((@loc2['z'] - @loc1['z']) ** 2))
 
 			damage_entity(puuid(@player), 1, puuid())
+			
+			@force = if(entity_grounded(puuid(@player)) && psneaking(@player), 0.7, 1.4);
 
 			# if we use a queue, velocity works more consistently with grounded entities
 			queue_push(closure(){
 				try {
 					set_pvelocity(@player,
-						1.4 * ((@loc2['x'] - @loc1['x']) / @dist), # vector normalization
-						clamp((@loc2['y'] - @loc1['y']) / @dist, 0.1, 1.4), # always bounce upwards
-						1.4 * ((@loc2['z'] - @loc1['z']) / @dist),
+						@force * ((@loc2['x'] - @loc1['x']) / @dist), # vector normalization
+						clamp((@loc2['y'] - @loc1['y']) / @dist, 0.1, @force), # always bounce upwards
+						@force * ((@loc2['z'] - @loc1['z']) / @dist),
 					);
 				} catch(PlayerOfflineException @ex) {
 					// they logged off, feather OP
