@@ -227,14 +227,14 @@ proc _shard_create(@rules){
 							@left = array();
 							foreach(@p in all_players()) {
 								if(pworld(@p) == 'shard' && pmode(@p) != 'SPECTATOR') {
-									@team = get_pteam(@p, 'shard')['name'];
-									if(@team) {
+									try {
+										@team = get_pteam(@p, 'shard')['name'];
 										if(!array_contains(@left, @team)) {
 											@left[] = @team;
 											@count++;
 											@last = 'Team '.@team;
 										}
-									} else {
+									} catch(CastException @ex) {
 										@last = @p;
 										@count++; // still count players not in a team
 									}
