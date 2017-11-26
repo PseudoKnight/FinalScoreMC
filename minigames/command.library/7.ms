@@ -187,7 +187,7 @@ register_command('7', array(
 							if(phealth(@player) > 0) {
 								pkill(@player);
 								@ploc = ploc(@player);
-								@ploc['y']++;
+								@ploc['y'] += 1.0;
 								explosion(@ploc, 4);
 							}
 							@timeleft = round(@7['players'][@player]['time'], 1);
@@ -211,7 +211,7 @@ register_command('7', array(
 
 			@7 = import('7')
 			if(!@7) {
-				@7 = array('players': associative_array(), 'state': 0, 'world', @world);
+				@7 = array('players': associative_array(), 'state': 0);
 				export('7', @7);
 			}
 			
@@ -222,6 +222,7 @@ register_command('7', array(
 			@timer = array(7);
 			@7['state'] = 1;
 			@7['lobby'] = get_value('warp.7');
+			@7['world'] = @world;
 			_add_activity('7', '7 Seconds to Live');
 			create_scoreboard('7');
 			create_objective('time', 'DUMMY', '7');
