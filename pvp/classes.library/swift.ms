@@ -37,9 +37,17 @@ case 'load':
 			set_entity_gliding(puuid(), false);
 		}
 	}
+	
+	bind(player_interact, array('id': @player.'boost'), array('player': @player, 'button': 'right', 'item': 271), @e) {
+		if(!pcooldown('WOOD_AXE')) {
+			set_pvelocity(player(), _get_vector(pfacing(), 0.5, 0));
+			set_pcooldown('WOOD_AXE', 4000 / 50);
+		}
+	}
 
 case 'unload':
 	unbind(@player.'sneak');
 	unbind(@player.'glide');
+	unbind(@player.'boost');
 
 }

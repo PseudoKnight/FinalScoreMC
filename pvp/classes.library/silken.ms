@@ -11,7 +11,7 @@ case 'load':
 	}
 
 	bind(player_interact, array('id': @player.'web'), array('player': @player, 'button': 'right', 'item': 291), @e, @pvp) {
-		spawn_falling_block(_relative(ploc(), 'up', 2), 30, _get_vector(pfacing(), 2, 0));
+		spawn_falling_block(_relative(ploc(), 'up', 2), 30, _get_vector(pfacing(), 1.5, 0));
 	}
 	
 	bind(entity_change_block, array('id': @player.'webhit'), array('from': 0, 'to': 30), @event, @pvp) {
@@ -22,10 +22,15 @@ case 'load':
 			psend_block_change(@player, @loc, 30);
 		}
 	}
+	
+	bind(item_pickup, array('id': @player.'webpickup'), array('item': 30), @event) {
+		set_peffect(player(), 2, 1, 3);
+	}
 
 case 'unload':
 	unbind(@player.'damage');
 	unbind(@player.'web');
 	unbind(@player.'webhit');
+	unbind(@player.'webpickup');
 
 }
