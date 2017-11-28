@@ -15,5 +15,6 @@ register_command('s', array(
 		if(function_exists('dm_broadcast_to_web')) {
 			dm_broadcast_to_web(@message, @name)
 		}
+		runas('~console', '/discord broadcast **'.@name.'**: '.@message);
 	}
 ));
