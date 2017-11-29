@@ -46,6 +46,9 @@ bind(player_join, null, null, @event) {
 					@hover = 'Last played: '.simple_date('MMM d, yyyy', @lastPlayed);
 				}
 				_tellraw(all_players(), array(array('colorize', @pre), array('hover', @name, @hover), @msg));
+				if(function_exists('discord_broadcast')) {
+					discord_broadcast('**\u00bb '.player().@msg.'**');
+				}
 			}
 
 		}, 'join');
@@ -139,6 +142,9 @@ bind(player_quit, null, null, @event) {
 		@msg .= 'left the game';
 	}
 	broadcast(colorize('&8'.simple_date('h:mm').' &4\u00ab &o'.@msg));
+	if(function_exists('discord_broadcast')) {
+		discord_broadcast('**\u00ab '.@msg.'**');
+	}
 	try {
 		@pdata['world'] = pworld();
 		_store_pdata(@event['player'], @pdata);

@@ -1,4 +1,4 @@
-proc _chat(@player, @message, @recipients) {
+proc _chat(@player, @message, @recipients, @sentFromDiscord = false) {
 	# PRIVATE MESSAGING
 	if(@message[0] === '@') {
 		@p = substr(parse_args(@message)[0], 1)
@@ -28,9 +28,13 @@ proc _chat(@player, @message, @recipients) {
 	@components = array();
 	@components[] = array('colorize', '&8'.simple_date('h:mm').' ');
 
-	@pdata = _pdata(@player);
-	if(array_index_exists(@pdata, 'support')) {
-		@components[] = array('hover', '&a\u2666', 'Server Supporter');
+	try {
+		@pdata = _pdata(@player, false);
+		if(array_index_exists(@pdata, 'support')) {
+			@components[] = array('hover', '&a\u2666', 'Server Supporter');
+		}
+	} catch(NotFoundException @ex) {
+		@pdata = associative_array();
 	}
 
 	if(ponline(@player)) {
@@ -71,8 +75,12 @@ proc _chat(@player, @message, @recipients) {
 		if(function_exists('dm_broadcast_to_web')) {
 			dm_broadcast_to_web(@filteredMessage, @player);
 		}
+		if(!@sentFromDiscord) {
+			if(function_exists('discord_broadcast')) {
+				discord_broadcast('**'.@player.'** '.@filteredMessage);
+			}
+		}
 	}
-	runas('~console', '/discord broadcast **'.@player.'**: '.@filteredMessage);
 }
 
 proc _pmsg(@from, @player, @message) {

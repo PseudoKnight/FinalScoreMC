@@ -18,9 +18,15 @@ if(!import('conv')) {
 	export('conv', @conv);
 }
 
-# PMs, ignores, and mutes
 bind(player_chat, null, null, @event) {
 	cancel();
 	include('includes.library/chat.ms');
 	_chat(@event['player'], @event['message'], @event['recipients']);
+}
+
+if(extension_exists('CHDiscord')) {
+	bind(discord_message_received, null, null, @event) {
+		include('includes.library/chat.ms');
+		_chat(@event['username'], @event['message'], all_players(), true);
+	}
 }
