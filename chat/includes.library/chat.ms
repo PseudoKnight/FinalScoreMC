@@ -46,7 +46,11 @@ proc _chat(@player, @message, @recipients, @sentFromDiscord = false) {
 		if(array_index_exists(@pdata, 'ban')) {
 			die(@player.' tried to speak in web chat');
 		}
-		@components[] = array('hover', '&2\u29E0', 'Chat from Web');
+		if(@sentFromDiscord) {
+			@components[] = array('hover', '&2\u2689', 'Chat from Discord');
+		} else {
+			@components[] = array('hover', '&2\u29E0', 'Chat from Web');
+		}
 	}
 
 	if(array_index_exists(@pdata, 'icon')) {
