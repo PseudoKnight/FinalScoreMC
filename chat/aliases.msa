@@ -1,12 +1,15 @@
 *:/me $ = >>>
-	@ignorelist = import('ignorelist')
+	@ignorelist = import('ignorelist');
 	if(array_index_exists(@ignorelist, player()) && array_contains(@ignorelist[player()], 'all')) {
-		msg('You have been muted.')
-		die()
+		msg('You have been muted.');
+		die();
 	}
-	broadcast('* '.player().' '.colorize($))
+	broadcast('* '.player().' '.colorize($));
 	if(function_exists('dm_broadcast_to_web')) {
-		dm_broadcast_to_web('* '.player().' '.$)
+		dm_broadcast_to_web('* '.player().' '.$);
+	}
+	if(function_exists('discord_broadcast')) {
+		discord_broadcast('**'.player().' '.$.'*');
 	}
 <<<
 
