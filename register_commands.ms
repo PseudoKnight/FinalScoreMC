@@ -1,17 +1,20 @@
 @recompile = import('recompile');
 foreach(@directory in list_files('.')) {
 	if(is_dir(@directory)) {
-		@base = @directory.'/command.library';
-		if(file_exists(@base)) {
-			@includeAllFiles = closure(){
-				foreach(@file in list_files(@base)) {
-					include(@base.'/'.@file);
+		foreach(@subdirectory in list_files(@directory)) {
+			@library = @directory.'/'.@subdirectory;
+			if(@subdirectory == 'command.library'
+			|| is_dir(@library) && file_exists(@library .= '/command.library')) {
+				@includeAllFiles = closure(){
+					foreach(@file in list_files(@library)) {
+						include(@library.'/'.@file);
+					}
 				}
-			}
-			if(@recompile) {
-				queue_push(@includeAllFiles);
-			} else {
-				execute(@includeAllFiles);
+				if(@recompile) {
+					queue_push(@includeAllFiles);
+				} else {
+					execute(@includeAllFiles);
+				}
 			}
 		}
 	}

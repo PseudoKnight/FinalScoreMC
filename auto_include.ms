@@ -12,17 +12,6 @@ set_uncaught_exception_handler(closure(@ex){
 });
 
 /*
-	Gets online player from truncated name in user input
-*/
-proc _find_player(@player) {
-	try {
-		return(player(@player));
-	} catch(PlayerOfflineException @ex) {
-		die(color('yellow').'Could not find player starting with "'.@player.'"');
-	}
-}
-
-/*
 	Gets the pitch for the given tone and octave
 */
 proc _get_pitch(@tone, @octave) {
@@ -196,56 +185,6 @@ proc _get_vector(@yaw, @pitch = 0, @magnitude = 1, @angle = 0) {
 }
 
 /*
-	Add an amount to a player's coin balance
-*/
-proc _acc_add(@player, @amount) {
-	try {
-		@pdata = _pdata(@player);
-	} catch(NotFoundException @ex) {
-		return(false);
-	}
-	if(!array_index_exists(@pdata, 'coins')) {
-		@pdata['coins'] = 100; // default
-	}
-	@pdata['coins'] += @amount;
-	_store_pdata(@player, @pdata);
-	return(true);
-}
-
-/*
-	Subtracts an amount from a player's coin balance
-*/
-proc _acc_subtract(@player, @amount) {
-	try {
-		@pdata = _pdata(@player);
-	} catch(NotFoundException @ex) {
-		return(false);
-	}
-	if(!array_index_exists(@pdata, 'coins')) {
-		@pdata['coins'] = 100;
-	}
-	@pdata['coins'] -= @amount;
-	_store_pdata(@player, @pdata);
-	return(true);
-}
-
-/*
-	Returns the amount of coins a player has
-*/
-proc _acc_balance(@player) {
-	try {
-		@pdata = _pdata(@player);
-	} catch(NotFoundException @ex) {
-		return(0);
-	}
-	if(!array_index_exists(@pdata, 'coins')) {
-		return(100);
-	} else {
-		return(@pdata['coins']);
-	}
-}
-
-/*
 	Returns an array of potion effect name:id pairs
 */
 proc _get_effects() {
@@ -330,19 +269,6 @@ proc _remove_region_entities(@region, @entities, @world = 'custom') {
 }
 
 /*
-	Remove all potion effects from a player
-*/
-proc _clear_peffects(@player) {
-	if(!@player) {
-		@player = player();
-	}
-	@effects = get_peffect(@player);
-	foreach(@e in @effects) {
-		set_peffect(@player, @e['id'], 0, 0);
-	}
-}
-
-/*
 	Returns the distance between two points
 	If @3d is false, returns the 2d distance with x,z
 */
@@ -360,71 +286,6 @@ proc _distance(@loc1, @loc2, @3d = true) {
 			return(sqrt(((@loc1[0] - @loc2[0]) ** 2) + ((@loc1[2] - @loc2[2]) ** 2)));
 		}
 	}
-}
-
-/*
-	Gets an offline player's UUID for db access
-*/
-proc _get_uuid(@player, @autocomplete = true, @dashless = true) {
-	if(ponline(@player)) {
-		return(puuid(@player, @dashless));
-	} else {
-		@uuidDashed = get_value('players', @player);
-		if(is_null(@uuidDashed)) {
-			if(@autocomplete) {
-				@uuids = get_values('players.'.@player);
-				if(array_size(@uuids) > 0) {
-					@uuidDashed = array_normalize(@uuids)[0];
-				} else {
-					throw('NotFoundException', 'Could not find player in database matching: '.@player);
-				}
-			} else {
-				throw('NotFoundException', 'Player name not stored in database: '.@player);
-			}
-		}
-		return(if(@dashless, replace(@uuidDashed, '-', ''), @uuidDashed));
-	}
-}
-
-/*
-	Gets stored data for account under given player name.
-	Will return cached data if available.
-*/
-proc _pdata(@player, @autocomplete = true) {
-	@player = to_lower(@player);
-	@pdata = import('pdata.'.@player);
-	if(is_null(@pdata)) {
-		@uuid = _get_uuid(@player, @autocomplete);
-		@pdata = _pdata_by_uuid(@uuid);
-		if(ponline(@player)) {
-			export('pdata.'.@player, @pdata);
-		}
-	}
-	return(@pdata);
-}
-
-/*
-	Gets stored data for account under given dashless UUID.
-	Always returns stored data, not cached.
-*/
-proc _pdata_by_uuid(@uuid) {
-	@pdata = get_value('uuids', @uuid);
-	if(is_null(@pdata)) {
-		throw('NotFoundException', 'User data not stored in database: '.@uuid);
-	}
-	return(@pdata);
-}
-
-/*
-	Sets player data
-*/
-proc _store_pdata(@player, @data) {
-	if(!is_array(@data), return());
-	@player = to_lower(@player);
-	@uuid = _get_uuid(@player);
-	x_new_thread('storePlayerData', closure(){
-		store_value('uuids', @uuid, @data);
-	});
 }
 
 /*
@@ -467,48 +328,4 @@ proc _remove_activity(@id) {
 		return(true);
 	}
 	return(false);
-}
-
-/*
-	Makes a call to the ban manager to store the player's UUID
-	@endpoint - String - The action to take in the ban manager.
-	@player - String - The player name making the call to the ban manager, or the UUID of the player.
-	This player must be an admin or moderator.
-	@params - Associative Array - The parameters to post to the ban manager.
-	@callback - Closure (Optional) - Executes on success of request
-	@error - Closure (Optional) - Closure to execute when the request returns an error.
-	The closure is passed the error message. Defaults to printing the error message to the user.\
-*/
-proc _bm_request(@endpoint, @player, @params, @callback = closure(noop()),
-	@error = closure(@error_msg, console('Error in remote Ban Manager: '.@error_msg, false))) {
-
-	# Add the authentication parameters
-	@params['accessor_token'] = 'final-score-minecraft-server';
-	@params['timestamp'] = simple_date('yyyy-MM-dd HH:mm:ss Z');
-	@params['nonce'] = rand();
-	@params['uuid'] = @player;
-
-	# Generate the HMAC
-	@hmac_key = comp_read('key.txt');
-	@msg = '';
-	foreach(@key in array_keys(@params)) {
-		@msg .= @key . @params[@key];
-	}
-	@params['hmac'] = hmac_sha1(@hmac_key, @msg);
-
-	http_request('http://finalscoremc.com/fsmcbm/ban-manager.php?action='.@endpoint, array(
-		'method': 'POST',
-		'params': @params,
-		'success': closure(@response){
-			@result = @response['body'];
-			if(@result) {
-				@result = json_decode(@result);
-				if(array_index_exists(@result, 'error') && @result['error'] !== 'Nothing found.') {
-					execute(@result['error'], @error);
-				} else {
-					execute(@result, @callback);
-				}
-			}
-		}
-	));
 }

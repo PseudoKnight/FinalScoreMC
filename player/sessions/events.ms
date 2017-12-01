@@ -32,7 +32,7 @@ bind(player_join, null, null, @event) {
 		// Join message
 		queue_push(closure(){
 			if(!(has_permission('group.admin') && get_value('silentjoin'))) {
-				include('../chat/includes.library/chat.ms');
+				include('../../chat/includes.library/chat.ms');
 				@pre = '&8'.simple_date('h:mm').' &2\u00bb ';
 				@name = _colorname().color('italic').player();
 				@msg = '&e&o ';

@@ -1,15 +1,3 @@
-# colorize signs
-bind(sign_changed, null, null, @event) {
-	if(pmode() === 'CREATIVE')  {
-		modify_event('text', array(
-			0: colorize(@event['text'][0]),
-			1: colorize(@event['text'][1]),
-			2: colorize(@event['text'][2]),
-			3: colorize(@event['text'][3]),
-		));
-	}
-}
-
 # Allow command block placement for builders
 proc _place_command_block(@loc, @face, @block) {
 	if(!pisop() && has_permission('group.builder')
@@ -91,22 +79,5 @@ bind(player_interact, null, associative_array('button': 'right', 'block': 137), 
 bind(player_interact, null, associative_array('button': 'right', 'block': 211), @event) {
 	if(!pisop() && !psneaking() && @event['hand'] == 'main_hand' && has_permission('group.builder')){
 		_msg_block_command(@event['location']);
-	}
-}
-
-# Don't instant-break noteblocks in creative mode if not sneaking
-bind(player_interact, null, array('block': 25, 'button': 'left'), @event) {
-	if(pmode() === 'CREATIVE' && !psneaking()) {
-		// It won't break if in survival, and it'll play the note if we don't cancel
-		set_pmode('SURVIVAL');
-		set_pflight(true);
-		set_pflying(true);
-		set_timeout(50, closure(){
-			// return the player to creative
-			set_pmode('CREATIVE');
-			// The block will appear as air due to the client-side block-break,
-			// so resend the noteblock
-			psend_block_change(@event['location'], 25);
-		});
 	}
 }
