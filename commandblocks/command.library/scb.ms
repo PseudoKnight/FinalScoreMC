@@ -2,7 +2,7 @@
 	'/setblock', '/tempcart', '/bedspawn', '/give', '/effect', '/warp', '/tellraw', '/time', '/stopsound', '/timer');
 register_command('scb', array(
 	'description': 'Set the command in the targeted command block.',
-	'usage': '/scb <command>',
+	'usage': '/scb <cmd>',
 	'permission': 'command.cb',
 	'tabcompleter': closure(@alias, @sender, @args, @info) {
 		if(array_size(@args) == 1) {

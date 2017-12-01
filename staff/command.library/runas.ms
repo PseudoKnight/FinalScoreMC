@@ -1,6 +1,6 @@
 register_command('runas', array(
 	'description': 'Runs a command for a player.',
-	'usage': '/runas <player> <command>',
+	'usage': '/runas <player> <cmd>',
 	'permission': 'command.runas',
 	'executor': closure(@alias, @sender, @args, @info) {
 		if(array_size(@args) < 2) {
