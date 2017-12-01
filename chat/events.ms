@@ -27,6 +27,6 @@ bind(player_chat, null, null, @event) {
 if(extension_exists('CHDiscord')) {
 	bind(discord_message_received, null, null, @event) {
 		include('includes.library/chat.ms');
-		_chat(@event['username'], @event['message'], all_players(), true);
+		_chat(@event['username'], @event['message'], all_players(), @event['channel']);
 	}
 }

@@ -1,4 +1,4 @@
-proc _chat(@player, @message, @recipients, @sentFromDiscord = false) {
+proc _chat(@player, @message, @recipients, @discordChannel = '') {
 	# PRIVATE MESSAGING
 	if(@message[0] === '@') {
 		@p = substr(parse_args(@message)[0], 1)
@@ -37,6 +37,7 @@ proc _chat(@player, @message, @recipients, @sentFromDiscord = false) {
 		@pdata = associative_array();
 	}
 
+	@nameColor = '';
 	if(ponline(@player)) {
 		@session = _psession(@player);
 		if(array_index_exists(@session, 'trophies')) {
@@ -46,10 +47,13 @@ proc _chat(@player, @message, @recipients, @sentFromDiscord = false) {
 		if(array_index_exists(@pdata, 'ban')) {
 			die(@player.' tried to speak in web chat');
 		}
-		if(@sentFromDiscord) {
-			@components[] = array('hover', '&2\u2689', 'Chat from Discord');
+		if(@discordChannel) {
+			@components[] = array('hover', '&2\u2689'.if(@discordChannel != 'chat', @discordChannel), 'Message from Discord');
 		} else {
 			@components[] = array('hover', '&2\u29E0', 'Chat from Web');
+		}
+		if(@pdata) {
+			@nameColor = _colorname(@player);
 		}
 	}
 
@@ -64,7 +68,7 @@ proc _chat(@player, @message, @recipients, @sentFromDiscord = false) {
 			.if(array_index_exists(@session, 'lastplayed'), '&8[last played] &r'.@session['lastplayed'].'\n')
 			.'&8[world] &r'._worldname(pworld(@player)));
 	} else {
-		@components[] = array('hover', ' '._colorname(@player).@player,
+		@components[] = array('hover', ' '.@nameColor.@player,
 			.if(array_index_exists(@pdata, 'names'), '&7'.array_implode(@pdata['names']).'\n')
 			.'&8[world] &rReal World');
 	}
@@ -79,7 +83,7 @@ proc _chat(@player, @message, @recipients, @sentFromDiscord = false) {
 		if(function_exists('dm_broadcast_to_web')) {
 			dm_broadcast_to_web(@filteredMessage, @player);
 		}
-		if(!@sentFromDiscord) {
+		if(!@discordChannel) {
 			if(function_exists('discord_broadcast')) {
 				discord_broadcast('**'.@player.'** '.@filteredMessage);
 			}
