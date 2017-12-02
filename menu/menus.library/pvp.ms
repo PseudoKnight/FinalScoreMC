@@ -2,7 +2,7 @@ proc _prepare_menu(@template) {
 	@menu = @template[];
 	@menu['id'] = 'pvp';
 	@menu['title'] = 'PVP Arenas';
-	@menu[29]['name'] = 'DIAMOND_SWORD';
+	@menu[56]['name'] = 'WOOL';
 	
 	@menuPvp = array(
 		'inv': array(),
@@ -10,6 +10,7 @@ proc _prepare_menu(@template) {
 		'menu': @menu
 	);
 	
+	@slot = 45;
 	@arenas = get_values('arena');
 	foreach(@name: @arena in @arenas) {
 		if(array_index_exists(@arena, 'parent'), continue());
@@ -30,7 +31,7 @@ proc _prepare_menu(@template) {
 		@lore[] = color('green').@min
 				.if(array_index_exists(@arena, 'max'), '-'.@arena['max'], '+').' players';
 		@lore[] = color('dark_gray').'Run: /warp '.@name;
-		@menuPvp['inv'][] = associative_array(
+		@menuPvp['inv'][@slot++] = associative_array(
 			'type': 306,
 			'qty': @min,
 			'meta': associative_array(
@@ -39,6 +40,9 @@ proc _prepare_menu(@template) {
 				'flags': array('HIDE_ATTRIBUTES'),
 			),
 		);
+		if(@slot % 9 == 0) {
+			@slot -= 18;
+		}
 	}
 	export('menu.pvp', @menuPvp);
 }
@@ -51,14 +55,12 @@ proc _refresh_menu() {
 	}
 	@menuPvp['lastCount'] = @count;
 	@menu = @menuPvp['menu'][];
-	@i = 0;
-	foreach(@item in @menuPvp['inv']) {
+	foreach(@slot: @item in @menuPvp['inv']) {
 		if(@item['qty'] > @count) {
 			@item = @item[];
 			@item['type'] = 166;
 		}
-		@menu[@i] = @item;
-		@i++;
+		@menu[@slot] = @item;
 	}
 	create_virtualchest(@menu);
 }

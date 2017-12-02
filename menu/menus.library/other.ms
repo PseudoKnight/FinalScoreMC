@@ -2,9 +2,9 @@ proc _prepare_menu(@template) {
 	@menu = @template[];
 	@menu['id'] = 'other';
 	@menu['title'] = 'Other Games';
-	@menu[30]['name'] = 'SLIME_BALL';
+	@menu[57]['name'] = 'WOOL';
 	
-	@menu[0] = array(
+	@menu[45] = array(
 		'name': 'SNOW_BLOCK',
 		'meta': array(
 			'display': color('yellow').'Spleef',
@@ -14,7 +14,7 @@ proc _prepare_menu(@template) {
 			),
 		),
 	);
-	@menu[1] = array(
+	@menu[46] = array(
 		'name': 'STAINED_CLAY',
 		'data': 2,
 		'meta': array(
@@ -27,7 +27,7 @@ proc _prepare_menu(@template) {
 			),
 		),
 	);
-	@menu[2] = array(
+	@menu[47] = array(
 		'name': 'EMERALD_ORE',
 		'meta': array(
 			'display': color('green').'Seven Seconds to Live',
@@ -40,7 +40,7 @@ proc _prepare_menu(@template) {
 			),
 		),
 	);
-	@menu[3] = array(
+	@menu[48] = array(
 		'name': 'EMERALD_BLOCK',
 		'meta': array(
 			'display': color('green').'FrogWare',
@@ -51,7 +51,7 @@ proc _prepare_menu(@template) {
 			),
 		),
 	);
-	@menu[4] = array(
+	@menu[49] = array(
 		'name': 'REDSTONE_BLOCK',
 		'meta': array(
 			'display': color('red').'Snake',
@@ -62,7 +62,7 @@ proc _prepare_menu(@template) {
 			),
 		),
 	);
-	@menu[5] = array(
+	@menu[50] = array(
 		'name': 'PACKED_ICE',
 		'meta': array(
 			'display': color('aqua').'Hockey',
@@ -72,7 +72,7 @@ proc _prepare_menu(@template) {
 			),
 		),
 	);
-	@menu[6] = array(
+	@menu[51] = array(
 		'name': 'ORANGE_GLAZED_TERRACOTTA',
 		'meta': array(
 			'display': color('aqua').'Charades',
@@ -86,7 +86,7 @@ proc _prepare_menu(@template) {
 			),
 		),
 	);
-	@menu[7] = array(
+	@menu[52] = array(
 		'name': 'SMOOTH_BRICK',
 		'data': 2,
 		'meta': array(
@@ -97,16 +97,7 @@ proc _prepare_menu(@template) {
 			),
 		),
 	);
-	@menu[8] = array(
-		'name': 'COAL_BLOCK',
-		'meta': array(
-			'display': color('white').'Lair',
-			'lore': array(
-				color('dark_gray').'Run: /warp lair',
-			),
-		),
-	);
-	@menu[9] = array(
+	@menu[36] = array(
 		'name': 'SLIME_BLOCK',
 		'meta': array(
 			'display': color('green').'Slimey Golf',
@@ -116,7 +107,7 @@ proc _prepare_menu(@template) {
 			),
 		),
 	);
-	@menu[10] = array(
+	@menu[37] = array(
 		'type': 168,
 		'meta': array(
 			'display': color('aqua').'Sunken City Golf',
@@ -126,7 +117,7 @@ proc _prepare_menu(@template) {
 			),
 		),
 	);
-	@menu[11] = array(
+	@menu[38] = array(
 		'name': 'LOG',
 		'data': 3,
 		'meta': array(
