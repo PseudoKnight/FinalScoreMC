@@ -48,9 +48,9 @@ proc _chat(@player, @message, @recipients, @discordChannel = '') {
 			die(@player.' tried to speak in web chat');
 		}
 		if(@discordChannel) {
-			@components[] = array('hover', '&2\u2689'.if(@discordChannel != 'chat', @discordChannel), 'Message from Discord');
+			@components[] = array('hover', '&9\u2689'.if(@discordChannel != 'chat', '#'.@discordChannel), 'Discord');
 		} else {
-			@components[] = array('hover', '&2\u29E0', 'Chat from Web');
+			@components[] = array('hover', '&2\u29E0', 'Live Map on Web');
 		}
 		if(@pdata) {
 			@nameColor = _colorname(@player);
