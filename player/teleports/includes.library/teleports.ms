@@ -16,15 +16,19 @@ proc _warmuptp(@player, @loc, @cleareffects = false, @force = false) {
 		if(@force) { // Teleporting crossworlds can be innaccurate, this forces an accurate location
 			set_ploc(@player, @loc);
 		}
-		set_peffect(@player, 15, 1, 2, true, false);
-		play_effect(_relative(@ploc, 'up', 2), 'CLOUD', array('particleCount': 25, 'speed': 0.01, 'offsetX': 0.3, 'offsetY': 0.6, 'offsetZ': 0.3));
-		play_effect(_relative(@loc, 'up', 2), 'CLOUD', array('particleCount': 25, 'speed': 0.01, 'offsetX': 0.3, 'offsetY': 0.6, 'offsetZ': 0.3));
-		play_sound(@ploc, array('sound': 'GHAST_FIREBALL', 'category': 'PLAYERS', 'volume': 2));
-		play_sound(@loc, array('sound': 'GHAST_FIREBALL', 'category': 'PLAYERS', 'volume': 2));
 		if(@cleareffects) {
 			_clear_peffects(@player);
 		}
-	})
+		set_peffect(@player, 25, -1, 1, true, false); // don't sink into ground on tp
+		set_peffect(@player, 24, 0, 1, true, false);
+		set_peffect(@player, 15, 1, 2, true, false); // expanding fog
+		@particle = array('particleCount': 25, 'speed': 0.05, 'offsetX': 0.34, 'offsetY': 0, 'offsetZ': 0.34);
+		play_effect(_relative(@ploc, 'up', 1.9), 'CLOUD', @particle);
+		play_effect(_relative(@loc, 'up', 2.7), 'CLOUD', @particle);
+		@sound = array('sound': 'GHAST_FIREBALL', 'category': 'PLAYERS', 'volume': 2);
+		play_sound(@ploc, @sound);
+		play_sound(@loc, @sound);
+	});
 }
 
 /*
