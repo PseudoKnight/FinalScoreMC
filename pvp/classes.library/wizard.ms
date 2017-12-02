@@ -13,6 +13,7 @@ case 'load':
 				@damager = player(), @pvp) {
 
 			if(!array_index_exists(@pvp['players'], @e['player']), die());
+			modify_event('amount', 4.0);
 			set_timeout(50, closure(){
 				@entity = import(@damager.'lightning');
 				if(@e['damager'] == import(@damager.'lightning')) {
@@ -59,7 +60,7 @@ case 'load':
 
 			damage_entity(puuid(@player), 1, puuid())
 			
-			@force = if(entity_grounded(puuid(@player)) && psneaking(@player), 0.7, 1.4);
+			@force = if(entity_grounded(puuid(@player)) && psneaking(@player), 0.5, 1.4);
 
 			# if we use a queue, velocity works more consistently with grounded entities
 			queue_push(closure(){
