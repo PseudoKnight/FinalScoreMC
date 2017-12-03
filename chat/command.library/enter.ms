@@ -20,7 +20,6 @@ register_command('enter', array(
 		msg(colorize('&7Set server enter message to: '));
 		@pre = '&8'.simple_date('h:mm').' &2\u00bb ';
 		@name = _colorname().color('italic').player();
-		include('../includes.library/chat.ms');
 		_tellraw(array(player()), array(array('colorize', @pre), array('hover', @name, 'Last played: Now'), '&e&o '.@escapedMessage));
 	}
 ));
