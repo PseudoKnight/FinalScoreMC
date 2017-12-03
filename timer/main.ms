@@ -31,6 +31,7 @@ register_command('timer', array(
 			set_phunger(@player, 20);
 			set_psaturation(@player, 5);
 			set_ponfire(@player, 0);
+			set_peffect(@player, 8, 0, 0);
 			@restartButton = array('type': 371, 'meta': array('display': color('green').color('bold').'Restart Button'));
 			set_pinv(@player, 0, @restartButton);
 		
