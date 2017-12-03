@@ -1,6 +1,5 @@
 proc _prepare_arena(@pvp) {
-	include('../../dungeon/core.library/generator.ms');
-	_generate_dungeon('static', 'custom', 'static', 0);
+	_generator_create('dungeon', 'static', 'static', 'custom', 0);
 }
 
 proc _load_events(@id) {

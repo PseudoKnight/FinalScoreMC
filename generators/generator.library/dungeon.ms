@@ -1,11 +1,11 @@
-proc _generate_dungeon(@region, @world, @genType, @seed) {
+proc _generate(@dungeonType, @region, @world, @seed) {
 	@level = 1;
 	@scale = 2;
 	@minRoomSize = 3;
 	@maxRoomSize = 11;
 	@maxRoomHeight = 3;
 	
-	include('../config.library/'.@genType.'.ms');
+	include('../dungeon.library/'.@dungeonType.'.ms');
 
 	if(!@seed) {
 		@seed = integer(time() / 100000);
@@ -38,7 +38,7 @@ proc _generate_dungeon(@region, @world, @genType, @seed) {
 	}
 
 	// Dungeon planning (off the server thread)
-	msg(color('yellow').'Generating '.@genType.' with seed "'.@seed.'" ...');
+	msg(color('yellow').'Generating '.@dungeonType.' with seed "'.@seed.'" ...');
 	_remove_region_entities(@region, array(), @world);
 	x_new_thread('dungeon', closure(){
 		@random = res_create_resource('RANDOM', @seed);
@@ -526,7 +526,7 @@ proc _generate_dungeon(@region, @world, @genType, @seed) {
 					array('x': @ex, 'y': @ey, 'z': @ez, 'world': @world), @spawns);
 			res_free_resource(@random);
 			_remove_region_entities(@region, array('DROPPED_ITEM'), @world);
-			msg(color('green').@genType.' generation complete!');
+			msg(color('green').@dungeonType.' generation complete!');
 		});
 
 	}); // End thread
