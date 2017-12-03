@@ -53,16 +53,13 @@ queue_push(closure(){
 
 	queue_push(closure(){
 		include('menus.library/other.ms');
-		_prepare_menu(@main);
 	});
 	
 	queue_push(closure(){
 		include('menus.library/courses.ms');
-		_prepare_menu(@main);
 	});
 
 	queue_push(closure(){
 		include('menus.library/pvp.ms');
-		_prepare_menu(@main);
 	});
 });
