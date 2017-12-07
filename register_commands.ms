@@ -7,8 +7,9 @@ foreach(@directory in list_files('.')) {
 			|| is_dir(@library) && file_exists(@library .= '/command.library')) {
 				@includeAllFiles = closure(){
 					foreach(@file in list_files(@library)) {
+						@file = @library.'/'.@file;
 						if(is_file(@file)) {
-							include(@library.'/'.@file);
+							include(@file);
 						}
 					}
 				}
