@@ -27,15 +27,24 @@
 	'other': array(),
 );
 
-@menu = @main[];
-@menu['id'] = 'courses';
-@menu['title'] = 'Solo Courses / Parkour';
-@menu[59]['name'] = 'WOOL';
+@solo = @main[];
+@solo['id'] = 'solo';
+@solo['title'] = 'Solo Courses / Parkour';
+@solo[59]['name'] = 'WOOL';
 
 @coop = @main[];
 @coop['id'] = 'coop';
 @coop['title'] = 'Coop Courses / Parkour';
 @coop[60]['name'] = 'WOOL';
+
+@soloMenu = array(
+	'menu': @solo,
+	'inv': associative_array(),
+);
+@coopMenu = array(
+	'menu': @coop,
+	'inv': associative_array(),
+);
 
 @cakes = get_value('cakeinfo');
 foreach(@name: @cake in @cakes) {
@@ -84,7 +93,7 @@ foreach(@name: @cake in @cakes) {
 				'name': 'STAINED_GLASS_PANE',
 				'data': @color[@difficulty]['data'],
 				'meta': array(
-					'display': color(7).'Coop: '.color('green').to_upper(@name),
+					'display': color('green').to_upper(@name),
 					'lore': @lore,
 				),
 			);
@@ -95,16 +104,33 @@ foreach(@i: @difficulty in @difficultyorder) {
 	// solo
 	@slot = @i * 9;
 	foreach(@item in @difficulties[@difficulty]) {
-		@menu[@slot] = @item;
+		@soloMenu['inv'][@slot] = @item;
 		@slot++;
 	}
 	// coop
 	@slot = @i * 9;
 	foreach(@item in @coopdifficulties[@difficulty]) {
-		@coop[@slot] = @item;
+		@coopMenu['inv'][@slot] = @item;
 		@slot++;
 	}
 }
 
-create_virtualchest(@menu);
-create_virtualchest(@coop);
+@loadMenu = iclosure(@import){
+	@uuid = puuid(player(), true);
+	@cakes = get_value('cakeinfo');
+	@menu = @import['menu'][];
+	foreach(@slot: @item in @import['inv']) {
+		@name = to_lower(substr(@item['meta']['display'], 2));
+		if(array_index_exists(@cakes[@name]['players'], @uuid)) {
+			@item = @item[];
+			@item['data'] = 0;
+		}
+		@menu[@slot] = @item;
+	}
+	create_virtualchest(@menu);
+}
+@soloMenu['loadMenu'] = @loadMenu;
+@coopMenu['loadMenu'] = @loadMenu;
+
+export('menu.solo', @soloMenu);
+export('menu.coop', @coopMenu);

@@ -4,16 +4,21 @@ bind(inventory_click, null, null, @event) {
 		@lore = _item_meta(@event['slotitem'], 'lore');
 		if(@lore) {
 			@action = split(': ', @lore[-1]);
+			@value = @action[1];
 			switch(substr(@action[0], 2)) {
 				case 'Open':
-					popen_virtualchest(@action[1]);
+					popen_virtualchest(@value);
 					play_sound(ploc(), array('sound': 'CLICK', 'pitch': 1.2), player());
 				case 'Load':
-					@menu = @action[1];
-					popen_virtualchest(@menu);
-					play_sound(ploc(), array('sound': 'CLICK', 'pitch': 1.2), player());
+					@menu = import('menu.'.@value);
+					if(@menu) {
+						@uuid = puuid(player(), true);
+						execute(@menu, @menu['loadMenu']);
+						popen_virtualchest(@value);
+						play_sound(ploc(), array('sound': 'CLICK', 'pitch': 1.2), player());
+					}
 				case 'Run':
-					run_cmd(@action[1]);
+					run_cmd(@value);
 					close_pinv();
 			}
 		}

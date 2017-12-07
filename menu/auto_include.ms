@@ -7,7 +7,7 @@ proc _menu_refresh_pvp() {
 		if(@min > @count) {
 			@item = @item[];
 			@item['name'] = 'BARRIER';
-		} else if(@pvp = import('pvp'.to_lower(substr(@item['meta']['display'], 2)))) {
+		} else if((@pvp = import('pvp'.to_lower(substr(@item['meta']['display'], 2)))) && @pvp['players']) {
 			@item = @item[];
 			@item['data'] = 10;
 			@item['qty'] = array_size(@pvp['players']);

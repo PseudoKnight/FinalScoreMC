@@ -19,7 +19,7 @@ queue_push(closure(){
 			'data': 14,
 			'meta': array(
 				'display': color('green').'PVP Arenas',
-				'lore': array(color('dark_gray').'Load: pvp'),
+				'lore': array(color('dark_gray').'Open: pvp'),
 				'flags': array('HIDE_ATTRIBUTES'),
 			),
 		),
@@ -37,7 +37,7 @@ queue_push(closure(){
 			'data': 3,
 			'meta': array(
 				'display': color('green').'Solo Courses / Parkour',
-				'lore': array(color('aqua').'Easy - Medium', color('dark_gray').'Open: courses'),
+				'lore': array(color('dark_gray').'Load: solo'),
 			),
 		),
 		60:array(
@@ -45,7 +45,7 @@ queue_push(closure(){
 			'data': 1,
 			'meta': array(
 				'display': color('green').'Coop Courses / Parkour',
-				'lore': array(color('dark_gray').'Open: coop'),
+				'lore': array(color('dark_gray').'Load: coop'),
 			),
 		),
 	);
