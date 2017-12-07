@@ -220,7 +220,7 @@ register_command('timer', array(
 		
 				// Recalculate average placement
 				@id = 'all';
-				include('commands.library/recalculate.ms');
+				include('subcommands/recalculate.ms');
 		
 			} else {
 				launch_firework(@loc, array(

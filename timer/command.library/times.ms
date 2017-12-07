@@ -29,7 +29,7 @@ register_command('times', array(
 		}
 
 		try {
-			include('../commands.library/'.@action.'.ms');
+			include('subcommands/'.@action.'.ms');
 		} catch(IOException @ex) {
 			return(false);
 		}
