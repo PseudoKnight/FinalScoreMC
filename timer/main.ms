@@ -31,7 +31,9 @@ register_command('timer', array(
 			set_phunger(@player, 20);
 			set_psaturation(@player, 5);
 			set_ponfire(@player, 0);
-			set_peffect(@player, 8, 0, 0);
+			set_plevel(@player, 0);
+			set_pexp(@player, 0);
+			
 			@restartButton = array('type': 371, 'meta': array('display': color('green').color('bold').'Restart Button'));
 			set_pinv(@player, 0, @restartButton);
 		
@@ -48,12 +50,9 @@ register_command('timer', array(
 				@ptime = 0;
 			}
 		
-			set_plevel(@player, 0);
-			set_pexp(@player, 0);
 			play_sound(ploc(@player), array('sound': 'FIREWORK_BLAST'), @player);
 		
 			@stop = false;
-		
 			@timers[@player][2] = set_interval(1000, closure(){
 				if(ponline(@player)) {
 					@ploc = ploc(@player);
