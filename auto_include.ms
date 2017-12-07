@@ -68,13 +68,13 @@ proc _get_vector(@yaw, @pitch = 0, @magnitude = 1, @angle = 0) {
 		@pitch = @yaw[1];
 		@yaw = @yaw[0];
 	}
-	@yaw = @yaw + 90;
-	@pitch = 0 - @pitch;
-	@vector = associative_array('x': 0, 'y': 0, 'z': 0);
-	@vector['x'] = @magnitude * (cos(to_radians(@yaw)) * cos(to_radians(@pitch)));
-	@vector['y'] = @magnitude * sin(to_radians(@pitch)) + @angle;
-	@vector['z'] = @magnitude * (sin(to_radians(@yaw)) * cos(to_radians(@pitch)));
-	return(@vector);
+	@yaw = to_radians(@yaw + 90);
+	@pitch = to_radians(0 - @pitch);
+	return(array(
+		'x': cos(@yaw) * cos(@pitch) * @magnitude,
+		'y': (sin(@pitch) + @angle) * @magnitude,
+		'z': sin(@yaw) * cos(@pitch) * @magnitude,
+	));
 }
 
 /*
@@ -121,26 +121,23 @@ proc _get_effects() {
 	@region: The WorldGuard region name. It will use the player or commandblock world.
 	@entities: An array of entity types to remove. (some entity types are automatically protected)
 */
-proc _remove_region_entities(@region, @entities, @world = 'custom') {
+proc _remove_region_entities(@region, @entities = array(), @world = 'custom') {
 	if(!sk_region_exists(@world, @region)) {
 		console('Can\'t remove entities because region doesn\'t exist: '.@region, false);
 		return(false);
 	}
-	@loc = sk_region_info(@region, @world)[0];
+	@loc = sk_region_info(@region, @world, 0);
 	if(array_size(@loc) > 2) {
 		return(false);
 	}
 	@xMax = floor(@loc[0][0] / 16);
 	@zMax = floor(@loc[0][2] / 16);
 	@excludeEntities = array('PLAYER', 'COMPLEX_PART', 'ITEM_FRAME', 'PAINTING', 'UNKNOWN');
-	if(!@entities) {
-		@entities = array();
-	}
 	for(@x = floor(@loc[1][0] / 16), @x <= @xMax, @x++) {
 		for(@z = floor(@loc[1][2] / 16), @z <= @zMax, @z++) {
 			foreach(@entity in all_entities(@world, @x, @z)) {
 				@type = entity_type(@entity);
-				if((!@entities && !array_contains(@excludeEntities, @type))
+				if(!@entities && !array_contains(@excludeEntities, @type)
 				|| array_contains(@entities, @type)) {
 					if(@type === 'ARMOR_STAND') {
 						if(entity_spec(@entity)['visible']

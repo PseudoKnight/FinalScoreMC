@@ -31,8 +31,7 @@ proc _colorname(@player) {
 */
 proc _regionmsg(@region, @msg) {
 	foreach(@player in all_players()) {
-		if(ponline(@player)
-		&& array_contains(sk_current_regions(@player), @region)) {
+		if(array_contains(sk_current_regions(@player), @region)) {
 			tmsg(@player, @msg);
 		}
 	}
