@@ -115,8 +115,8 @@ foreach(@i: @difficulty in @difficultyorder) {
 	}
 }
 
-@loadMenu = iclosure(@import){
-	@uuid = puuid(player(), true);
+@loadMenu = iclosure(@player, @import){
+	@uuid = puuid(@player, true);
 	@cakes = get_value('cakeinfo');
 	@menu = @import['menu'][];
 	foreach(@slot: @item in @import['inv']) {

@@ -12,8 +12,7 @@ bind(inventory_click, null, null, @event) {
 				case 'Load':
 					@menu = import('menu.'.@value);
 					if(@menu) {
-						@uuid = puuid(player(), true);
-						execute(@menu, @menu['loadMenu']);
+						execute(player(), @menu, @menu['loadMenu']);
 						popen_virtualchest(@value);
 						play_sound(ploc(), array('sound': 'CLICK', 'pitch': 1.2), player());
 					}
