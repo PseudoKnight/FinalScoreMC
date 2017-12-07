@@ -4,6 +4,9 @@ bind(inventory_click, null, null, @event) {
 		@lore = _item_meta(@event['slotitem'], 'lore');
 		if(@lore) {
 			@action = split(': ', @lore[-1]);
+			if(array_size(@action) != 2) {
+				die();
+			}
 			@value = @action[1];
 			switch(substr(@action[0], 2)) {
 				case 'Open':

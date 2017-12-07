@@ -170,7 +170,7 @@ proc _class_select(@id, @pvp) {
 
 	if(@size1 > 2 || @size2 > 2) {
 		array_push(@pvp['binds'], @id.'classselector')
-		bind(inventory_click, array('id': @id.'classselector'), null, @e, @id) {
+		bind(inventory_click, array('id': @id.'classselector', 'priority': 'HIGH'), null, @e, @id) {
 			@pvp = import('pvp'.@id);
 			if(!array_index_exists(@pvp['players'], player())
 			|| !pget_virtualchest()
@@ -212,8 +212,9 @@ proc _class_select(@id, @pvp) {
 					}
 				}
 			}
-			play_sound(ploc(), array('sound': 'CLICK'))
-			cancel()
+			play_sound(ploc(), array('sound': 'CLICK'));
+			consume();
+			cancel();
 
 			if(@class === 'random') {
 				@classes = @pvp['arena']['classes'];
