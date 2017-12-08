@@ -115,7 +115,13 @@ foreach(@i: @difficulty in @difficultyorder) {
 	}
 }
 
-@loadMenu = iclosure(@player, @import){
+// Clear environment
+@color = null;
+@difficultyorder = null;
+@difficulties = null;
+@coopdifficulties = null;
+
+@loadMenu = closure(@player, @import){
 	@uuid = puuid(@player, true);
 	@cakes = get_value('cakeinfo');
 	@menu = @import['menu'][];
