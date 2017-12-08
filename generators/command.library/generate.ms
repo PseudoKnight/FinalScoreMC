@@ -1,6 +1,6 @@
 register_command('generate', array(
 	'description': 'Generates something using a script.',
-	'usage': '/generate <type> <region> [config] [seed]',
+	'usage': '/generate <type> <config> <region> [seed]',
 	'permission': 'command.generate',
 	'tabcompleter': closure(@alias, @sender, @args, @info) {
 		return(array());
@@ -9,6 +9,10 @@ register_command('generate', array(
 		if(!@args) {
 			return(false);
 		}
-		_generator_create(@args[0], @args[1], pworld(), array_get(@args, 2, 'dungeon'), integer(array_get(@args, 3, 0)));
+		if(@args[0] == 'reload') {
+			_generator_reload();
+		} else {
+			_generator_create(@args[0], @args[1], @args[2], pworld(), integer(array_get(@args, 3, 0)));
+		}
 	}
 ));
