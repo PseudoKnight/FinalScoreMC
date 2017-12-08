@@ -360,20 +360,39 @@ proc _pvp_start(@pvp, @id){
 
 	# COUNTDOWN TO START
 	@timeleft = array(@arena['delay']);
+	if(has_bind(@id.'classselector')) {
+		create_bar(@id, array(
+			'title': color('yellow').'Choosing classes...',
+			'percent': 0.0,
+			'style': 'SOLID',
+			'color': 'YELLOW',
+		));
+	} else {
+		create_bar(@id, array(
+			'title': color('green').'Starting game...',
+			'percent': 0.0,
+			'style': 'SEGMENTED_6',
+			'color': 'GREEN',
+		));
+	}
+	foreach(@p in array_keys(@pvp['players'])) {
+		bar_add_player(@id, @p);
+	}
 	set_interval(1000, closure(){
 		@timeleft[0] -= 1;;
 		if(@timeleft[0] > 0) {
-			if(@timeleft[0] <= 4) {
+			if(@timeleft[0] <= 5) {
 				play_sound(@arena['lobby'], array('sound': 'NOTE_PLING', 'pitch': 1, 'volume': 3));
+				update_bar(@id, array('percent': (6 - @timeleft[0]) / 6));
 				foreach(@p in array_keys(@pvp['players'])) {
 					try {
-						title(@p, color('yellow').@timeleft[0], null, 0, @timeleft[0] * 20, 20);
+						title(@p, color('yellow').@timeleft[0], @title, 0, @timeleft[0] * 20, 20);
 					} catch(PlayerOfflineException @ex) {
 						// they quit during the countdown.
 						// performance anxiety.
 					}
 				}
-			} else if(@timeleft[0] > 5 && array_index_exists(@arena, 'classes') && array_size(@arena['classes']) > 1) {
+			} else if(@timeleft[0] > 6 && array_index_exists(@arena, 'classes') && array_size(@arena['classes']) > 1) {
 				@choosing = false;
 				foreach(@p in array_keys(@pvp['players'])) {
 					if(ponline(@p) && !is_null(pget_virtualchest(@p))) {
@@ -382,30 +401,14 @@ proc _pvp_start(@pvp, @id){
 					}
 				}
 				if(!@choosing) {
-					@timeleft[0] = 5;
-				}
-			} else if(@timeleft[0] > 4) {
-				if(extension_exists('CHNaughty')) {
-					foreach(@p in array_keys(@pvp['players'])) {
-						try {
-							action_msg(@p, 'Starting in '.@timeleft[0].'...');
-						} catch(PlayerOfflineException @ex) {
-							// they quickly left after someone started the game.
-							// forgot their dentist appointment.
-						}
-					}
-				}
-			}
-			if(@timeleft[0] == 4) {
-				foreach(@p in array_keys(@pvp['players'])) {
-					try {
-						title(@p, '', @title, 20, 60, 20);
-					} catch(PlayerOfflineException @ex) {
-						// ignore them until later
-					}
+					update_bar(@id, array('title': color('green').'Starting game...', 'style': 'SEGMENTED_6', 'percent': 0.0, 'color': 'GREEN'));
+					@timeleft[0] = 6;
+				} else {
+					update_bar(@id, array('percent': (@arena['delay'] - @timeleft[0]) / @arena['delay']));
 				}
 			}
 		} else {
+			remove_bar(@id);
 			foreach(@p in array_keys(@pvp['players'])) {
 				try {
 					title(@p, color('green').'GO!', null, 0, 0, 20);
