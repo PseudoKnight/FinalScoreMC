@@ -548,7 +548,15 @@ proc _fw_task(@task, @state, @secs) {
 					pgive_item(@p, '359:235', 1) # shears
 				}
 			}
-
+			if(!rand(6)) {
+				set_timeout(2000, closure(){
+					@loc = _fw_loc();
+					play_sound(@loc, array('sound': 'entity_witch_ambient', 'volume': 4, 'pitch': 1.2));
+					foreach(@e in entities_in_radius(@loc, 20, 'SHEEP')) {
+						set_mob_effect(@e, 25, 1, 10);
+					}
+				});
+			}
 
 		} else {
 			_remove_region_entities('frogware')
@@ -653,6 +661,20 @@ proc _fw_task(@task, @state, @secs) {
 					}
 				}
 			}
+			if(!rand(6)) {
+				set_timeout(2000, closure(){
+					foreach(@p in all_players('custom')) {
+						if(_fw_player(@p)) {
+							@item = pinv(@p, null);
+							if(@item) {
+								play_sound(ploc(@p), array('sound': 'entity_witch_ambient', 'volume': 4, 'pitch': 1.2), @p);
+								set_pinv(@p, null, null);
+								drop_item(@p, @item);
+							}
+						}
+					}
+				});
+			}
 
 		} else {
 			unbind('fwfish');
@@ -670,24 +692,33 @@ proc _fw_task(@task, @state, @secs) {
 				_fw_msg(color(@color).'What\'s your favorite color?');
 			}
 			export('panel', @colorindex);
-			@grid = array();
-			for(@i = 0, @i < 7, @i++) {
-				@grid[@i] = array();
-				for(@j = 0, @j < 7, @j++) {
-					@grid[@i][@j] = rand(16);
-				}
-			}
 			@region = sk_region_info('frogware', 'custom', 0);
 			@minX = @region[1][0];
 			@maxX = @region[0][0];
 			@y = @region[1][1] - 1;
 			@minZ = @region[1][2];
 			@maxZ = @region[0][2];
-			for(@x = @minX + 1, @x < @maxX, @x++) {
-				for(@z = @minZ + 1, @z < @maxZ, @z++) {
-					@c = @grid[min(6, integer((@x - @minX) / 5))][min(6, integer((@z - @minZ) / 5))];
-					set_block_at(@x, @y, @z, '251:'.@c, 'custom', false);
+			@paintfloor = closure(@task = true) {
+				if(@task) {
+					play_sound(array(@minX, @y, @minZ, 'custom'), array('sound': 'entity_witch_ambient', 'volume': 4, 'pitch': 1.2));
 				}
+				@grid = array();
+				for(@i = 0, @i < 7, @i++) {
+					@grid[@i] = array();
+					for(@j = 0, @j < 7, @j++) {
+						@grid[@i][@j] = rand(16);
+					}
+				}
+				for(@x = @minX + 1, @x < @maxX, @x++) {
+					for(@z = @minZ + 1, @z < @maxZ, @z++) {
+						@c = @grid[min(6, integer((@x - @minX) / 5))][min(6, integer((@z - @minZ) / 5))];
+						set_block_at(@x, @y, @z, '251:'.@c, 'custom', false);
+					}
+				}
+			}
+			execute(false, @paintfloor);
+			if(!rand(6)) {
+				set_timeout(3000, @paintfloor);
 			}
 
 		} else {
