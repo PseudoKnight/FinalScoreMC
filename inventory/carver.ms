@@ -5,7 +5,7 @@
 
 proc _axe_carve(@event) {
 	@block = split(':', @event['block']);
-    @type = @block[0];
+	@type = @block[0];
 	@data = array_get(@block, 1, 0);
 	if(@data > 7) {
 		die();

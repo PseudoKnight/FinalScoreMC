@@ -109,7 +109,7 @@ proc _pvp_start(@pvp, @id){
 	# Dynamically determine if it should be a team game
 	if(@arena['mode'] === 'ddm' || @arena['mode'] === 'koth') {
 		if(@arena['mode'] == 'ddm') {
-		    @arena['mode'] = 'dm';
+			@arena['mode'] = 'dm';
 		}
 		@size = array_size(@pvp['players']);
 		if(@size > 3 && @size % 2 == 0) {

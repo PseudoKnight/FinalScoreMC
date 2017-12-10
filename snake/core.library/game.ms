@@ -53,13 +53,13 @@ proc _snake_queue(@mode) {
 	}
 
 	// Create scoreboard
-    try {
-    	create_scoreboard('snake');
-    	create_objective('alive', 'DUMMY', 'snake');
-    	set_objective_display('alive', associative_array('displayname': 'SNAKE', 'slot': 'SIDEBAR'), 'snake');
-    } catch(ScoreboardException @ex) {
-        die(color('red').'Snake is still running.');
-    }
+	try {
+		create_scoreboard('snake');
+		create_objective('alive', 'DUMMY', 'snake');
+		set_objective_display('alive', associative_array('displayname': 'SNAKE', 'slot': 'SIDEBAR'), 'snake');
+	} catch(ScoreboardException @ex) {
+		die(color('red').'Snake is still running.');
+	}
 	
 	_snake_clean_surfaces(@game['arena'], @game['surfaces']);
 	

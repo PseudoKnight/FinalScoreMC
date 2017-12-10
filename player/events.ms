@@ -146,10 +146,10 @@ bind(player_enter_bed, null, null, @event) {
 	if(!_is_survival_world(pworld())) {
 		die();
 	}
-    if(get_world_time() > 13700 && get_world_time() < 22300) {
+	if(get_world_time() > 13700 && get_world_time() < 22300) {
 		set_world_time(22300);
 		msg(color('aqua').'You summoned the sun.');
-    } else if(get_world_time() < 13700 && get_world_time() > 11300) {
+	} else if(get_world_time() < 13700 && get_world_time() > 11300) {
 		@time = get_world_time() - 11300;
 		@time = 700 - @time;
 		if(@time < 0) {
@@ -157,7 +157,7 @@ bind(player_enter_bed, null, null, @event) {
 		}
 		set_world_time(@time);
 		msg(color('aqua').'You summoned the sun.');
-    }
+	}
 	if(has_storm()) {
 		storm(false);
 		msg(color('aqua').'You calmed the storm.');

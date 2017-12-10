@@ -12,7 +12,7 @@ proc _add_player(@player, @golf) {
 		swing: false,
 	);
 	pgive_item(@player, 341, 1);
-    set_collides_with_entities(@player, false);
+	set_collides_with_entities(@player, false);
 	set_pscoreboard(@player, @golf['name'].'1');
 	set_pscore('strokes', @player, 0, @golf['name'].'1');
 	@session['game'] = @golf['name'];
@@ -26,7 +26,7 @@ proc _remove_player(@player, @golf) {
 	@ball = @golf['players'][@player];
 	_remove_ball(@ball, @golf['name']);
 	if(ponline(@player)) {
-        set_collides_with_entities(@player, true);
+		set_collides_with_entities(@player, true);
 		set_pscoreboard(@player);
 	}
 	@hole = @ball['hole'];

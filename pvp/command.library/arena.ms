@@ -464,7 +464,7 @@ register_command('arena', array(
 
 					case 'effect':
 						if(array_size(@args) < 7) {
-						    die(color('gold').'Requires team#|all, effect, strength, and length.');
+							die(color('gold').'Requires team#|all, effect, strength, and length.');
 						}
 						@effects = _get_effects();
 						if(!array_contains(array_keys(@effects), @args[4])) {

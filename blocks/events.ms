@@ -55,7 +55,7 @@ bind(block_dispense, null, array('type': 'DISPENSER'), @event) {
 			}
 		}
 	}
-    if(@event['item'] && @event['item']['type'] == 416) { # armor stand
+	if(@event['item'] && @event['item']['type'] == 416) { # armor stand
 		try {
 			@inv = get_inventory(@event['location']);
 		} catch(CastException @ex) {

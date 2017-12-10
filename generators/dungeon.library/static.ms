@@ -3,7 +3,7 @@
 proc _set_locations(@start, @end, @spawns){
 	@pvp = import('pvpstatic');
 	if(@pvp) {
-    	@pvp['arena']['spawn'] = array(array(@end), array(@start));
+		@pvp['arena']['spawn'] = array(array(@end), array(@start));
 	}
 }
 

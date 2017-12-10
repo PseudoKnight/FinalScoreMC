@@ -86,7 +86,7 @@ bind(entity_explode, null, array('type': 'FIREBALL'), @event) {
 
 // Prevents chickens in chicken jockeys from spawning when mob-spawning is disabled
 bind(creature_spawn, null, array('type': 'CHICKEN', 'reason': 'MOUNT'), @event) {
-    @loc = @event['location'];
+	@loc = @event['location'];
 	if(_is_survival_world(@loc['world']) && array_contains(sk_region_check_flag(@loc, 'deny-spawn'), 'zombie')) {
 		cancel();
 	}

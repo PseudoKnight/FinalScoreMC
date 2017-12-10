@@ -127,9 +127,9 @@ proc _load_events(@id) {
 }
 
 proc _stats_table(){
-    return(array(
+	return(array(
 		array('kills', 2, '-------'),
-        array('deaths', 2, '--------'),
+		array('deaths', 2, '--------'),
 		array('pickups', 3, '-------'),
 		array('damage', 2, '----'),
 	));

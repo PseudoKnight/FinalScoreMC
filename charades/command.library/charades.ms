@@ -16,7 +16,7 @@ register_command('charades', array(
 		@categories = _get_categories();
 		@category = '';
 		if(@args) {
-		    @category = @args[0];
+			@category = @args[0];
 			if(!array_contains(@categories, @category)) {
 				die(color('yellow').'Available categories: '.array_implode(@categories, ', ').'.');
 			}
