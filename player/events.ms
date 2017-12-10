@@ -134,10 +134,26 @@ bind(player_interact, null, array('block': 122), @event) {
 	}
 }
 
-# prevent mobspawner changes with spawner eggs
-bind(player_interact, null, array('block': 52, 'item': 383), @event) {
+# spawner eggs
+bind(player_interact, null, array('item': 383, 'button': 'right'), @event) {
 	if(_is_survival_world(pworld())) {
+		if(@event['block'] == '52') {
+			cancel();
+		}
+	} else if(sk_can_build(@event['location'])) {
+		// this ignores mob spawning flags creative/game worlds
 		cancel();
+		@item = null;
+		if(@event['hand'] == 'main_hand') {
+			@item = pinv(player(), null);
+		} else {
+			@item = pinv(player(), -106);
+		}
+		@loc = _relative(@event['location'], @event['facing']);
+		@loc['x'] += 0.5;
+		@loc['z'] += 0.5;
+		@entity = spawn_entity(@item['meta']['spawntype'], 1, @loc)[0];
+		set_entity_persistence(@entity, true);
 	}
 }
 
