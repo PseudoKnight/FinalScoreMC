@@ -5,6 +5,13 @@ proc _find_player(@player) {
 	try {
 		return(player(@player));
 	} catch(PlayerOfflineException @ex) {
+		@players = import('players', array());
+		@player = to_lower(@player);
+		foreach(@name: @current in @players) {
+			if(string_starts_with(@name, @player)) {
+				return(@current);
+			}
+		}
 		die(color('yellow').'Could not find player starting with "'.@player.'"');
 	}
 }
