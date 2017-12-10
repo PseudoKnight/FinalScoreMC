@@ -37,6 +37,7 @@ bind(player_interact, null, array('button': 'right', 'block': 43), @event) {
 		'offsetZ': 0.3,
 	));
 	play_sound(@event['location'], array('sound': 'DIG_STONE', 'category': 'BLOCKS'));
+	pswing_hand();
 	
 	@unbreaking = 0;
 	@enchants = @item['enchants'];

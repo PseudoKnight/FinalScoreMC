@@ -38,6 +38,7 @@ proc _axe_carve(@event) {
 		'offsetZ': 0.3,
 	));
 	play_sound(@event['location'], array('sound': 'DIG_WOOD', 'category': 'BLOCKS'));
+	pswing_hand();
 	
 	@unbreaking = 0;
 	@enchants = @item['enchants'];
