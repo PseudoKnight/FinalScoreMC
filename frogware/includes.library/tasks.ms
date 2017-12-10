@@ -658,6 +658,49 @@ proc _fw_task(@task, @state, @secs) {
 			unbind('fwfish');
 			_fw_startround(@secs);
 		}
+		
+	case 'panel':
+		if(@state == 'start') {
+			@colors = array('WHITE', 'ORANGE', 'MAGENTA', 'LIGHT_BLUE', 'YELLOW', 'LIME', 'PINK', 'GRAY', 'SILVER', 'CYAN', 'PURPLE', 'BLUE', 'BROWN', 'GREEN', 'RED', 'BLACK')
+			@colorindex = rand(array_size(@colors))
+			@color = @colors[@colorindex];
+			_fw_msg(array(
+				'Stand on '.@color,
+			));
+			export('panel', @colorindex);
+			@grid = array();
+			for(@i = 0, @i < 7, @i++) {
+				@grid[@i] = array();
+				for(@j = 0, @j < 7, @j++) {
+					@grid[@i][@j] = rand(16);
+				}
+			}
+			@region = sk_region_info('frogware', 'custom', 0);
+			for(@x = @region[1][0] + 1, @x < @region[0][0], @x++) {
+				for(@z = @region[1][2] + 1, @z < @region[0][2], @z++) {
+					@c = @grid[min(6, integer((@x - @region[1][0]) / 5))][min(6, integer((@z - @region[1][2]) / 5))];
+					set_block_at(@x, @region[1][1], @z, '251:'.@c, 'custom', false);
+				}
+			}
+
+		} else {
+			foreach(@p in all_players('custom')) {
+				if(_fw_player(@p)) {
+					if(split(':', get_block_at(ploc(@p)), 1)[1] == import('panel')
+					&& _fw_changeteam(@p, 'winners')) {
+						play_sound(ploc(@p), array('sound': 'zombie_metal'), @p)
+					}
+				}
+			}
+			@region = sk_region_info('frogware', 'custom', 0);
+			for(@x = @region[1][0] + 1, @x < @region[0][0], @x++) {
+				for(@z = @region[1][2] + 1, @z < @region[0][2], @z++) {
+					set_block_at(@x, @region[1][1], @z, 0, 'custom');
+				}
+			}
+			export('panel', null);
+			_fw_startround(@secs);
+		}
 	}
 
 }

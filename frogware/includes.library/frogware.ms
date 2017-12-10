@@ -127,10 +127,10 @@ proc _fw_startround(@secs = 12) {
 			@tasks = array();
 			if((@highscore / @goal) < 0.33) {
 				@tasks = array('climb', 'keepaway', 'harvest', 'koth', 'cake', 'fall', 'cluck', 'frogegg', 'lavafall',
-						'shepherd', 'anvil', 'trade', 'fish');
+						'shepherd', 'anvil', 'trade', 'fish', 'panel');
 			} else if((@highscore / @goal) < 0.90 || @total == 1) {
 				@tasks = array('climb', 'keepaway', 'harvest', 'koth', 'cake', 'fall', 'cluck', 'frogegg', 'lavafall',
-						'shepherd', 'anvil', 'trade', 'fish');
+						'shepherd', 'anvil', 'trade', 'fish', 'panel');
 			} else {
 				@tasks = array('pvp');
 			}
