@@ -546,6 +546,7 @@ proc _pvp_end_match(@id, @winners) {
 			@pvp = array('players': associative_array(), 'running': 0, 'id': @pvp['id']);
 			export('pvp'.@id, @pvp);
 			_remove_activity('pvp'.@id);
+			_menu_refresh_pvp();
 		}, @id);
 
 	}, @id);
