@@ -46,7 +46,17 @@ proc _fw_task(@task, @state, @secs) {
 					'133:0', 3);
 				}, 'fw3');
 			}
-
+			if(!rand(5)) {
+				set_timeout(3000, closure(){
+					@velocity = array(rand(), rand(), rand());
+					foreach(@p in all_players('custom')) {
+						if(_fw_player(@p)) {
+							play_sound(ploc(@p), array('sound': 'entity_witch_ambient', 'volume': 4, 'pitch': 1.2), @p);
+							set_pvelocity(@p, @velocity);
+						}
+					}
+				});
+			}
 
 		} else {
 			foreach(@p in all_players('custom')) {
@@ -548,8 +558,8 @@ proc _fw_task(@task, @state, @secs) {
 					pgive_item(@p, '359:235', 1) # shears
 				}
 			}
-			if(!rand(6)) {
-				set_timeout(2000, closure(){
+			if(!rand(5)) {
+				set_timeout(1000, closure(){
 					@loc = _fw_loc();
 					play_sound(@loc, array('sound': 'entity_witch_ambient', 'volume': 4, 'pitch': 1.2));
 					foreach(@e in entities_in_radius(@loc, 20, 'SHEEP')) {
@@ -661,7 +671,7 @@ proc _fw_task(@task, @state, @secs) {
 					}
 				}
 			}
-			if(!rand(6)) {
+			if(!rand(5)) {
 				set_timeout(2000, closure(){
 					foreach(@p in all_players('custom')) {
 						if(_fw_player(@p)) {
@@ -683,11 +693,12 @@ proc _fw_task(@task, @state, @secs) {
 		
 	case 'panel':
 		if(@state == 'start') {
-			@colors = array('WHITE', 'ORANGE', 'MAGENTA', 'LIGHT_BLUE', 'YELLOW', 'LIME', 'PINK', 'GRAY', 'SILVER', 'CYAN', 'PURPLE', 'BLUE', 'BROWN', 'GREEN', 'RED', 'BLACK');
+			@colors = array('WHITE', 'GOLD', 'LIGHT_PURPLE', 'BLUE', 'YELLOW', 'GREEN', 'RED', 'DARK_GRAY', 'GRAY', 'DARK_AQUA', 'DARK_PURPLE', 'DARK_BLUE', 'k', 'DARK_GREEN', 'DARK_RED', 'BLACK');
 			@colorindex = rand(array_size(@colors));
 			@color = @colors[@colorindex];
-			if(rand(5)) {
-				_fw_msg('Stand on '.@color);
+			@name = data_name('251:'.@colorindex);
+			if(rand(4)) {
+				_fw_msg('Stand on '.@name);
 			} else {
 				_fw_msg(color(@color).'What\'s your favorite color?');
 			}
@@ -717,7 +728,7 @@ proc _fw_task(@task, @state, @secs) {
 				}
 			}
 			execute(false, @paintfloor);
-			if(!rand(6)) {
+			if(!rand(5)) {
 				set_timeout(3000, @paintfloor);
 			}
 
