@@ -140,7 +140,7 @@ bind(player_interact, null, array('item': 383, 'button': 'right'), @event) {
 		if(@event['block'] == '52') {
 			cancel();
 		}
-	} else if(sk_can_build(@event['location'])) {
+	} else if(array_index_exists(@event, 'location') && sk_can_build(@event['location'])) {
 		// this ignores mob spawning flags creative/game worlds
 		cancel();
 		@item = null;
@@ -149,11 +149,13 @@ bind(player_interact, null, array('item': 383, 'button': 'right'), @event) {
 		} else {
 			@item = pinv(player(), -106);
 		}
-		@loc = _relative(@event['location'], @event['facing']);
-		@loc['x'] += 0.5;
-		@loc['z'] += 0.5;
-		@entity = spawn_entity(@item['meta']['spawntype'], 1, @loc)[0];
-		set_entity_persistence(@entity, true);
+		if(@item['meta']['spawntype']) {
+			@loc = _relative(@event['location'], @event['facing']);
+			@loc['x'] += 0.5;
+			@loc['z'] += 0.5;
+			@entity = spawn_entity(@item['meta']['spawntype'], 1, @loc)[0];
+			set_entity_persistence(@entity, true);
+		}
 	}
 }
 
