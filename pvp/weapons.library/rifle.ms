@@ -15,20 +15,22 @@ bind(player_interact, array('id': @id.'riflereload'), array('item': 265), @event
 			break();
 		}
 	}
-	set_timeout(2000, closure(){
-		if(ponline(@event['player']) && phealth()) {
-			@inv = pinv();
-			if(!is_null(@inv[@ammoslot]) && @inv[@ammoslot]['type'] == 265) {
-				@inv[@ammoslot]['qty'] += @ammo['qty'];
-			} else {
-				@inv[@ammoslot] = @ammo;
+	if(@weapon) {
+		set_timeout(2000, closure(){
+			if(ponline(@event['player']) && phealth()) {
+				@inv = pinv();
+				if(!is_null(@inv[@ammoslot]) && @inv[@ammoslot]['type'] == 265) {
+					@inv[@ammoslot]['qty'] += @ammo['qty'];
+				} else {
+					@inv[@ammoslot] = @ammo;
+				}
+				@weapon['data'] = 10;
+				@inv[@weaponslot] = @weapon;
+				set_pinv(player(), @inv);
+				play_sound(ploc(), array('sound': 'DOOR_CLOSE', 'pitch': 2))
 			}
-			@weapon['data'] = 10;
-			@inv[@weaponslot] = @weapon;
-			set_pinv(player(), @inv);
-			play_sound(ploc(), array('sound': 'DOOR_CLOSE', 'pitch': 2))
-		}
-	});
+		});
+	}
 }
 
 @pvp['binds'][] = @id.'rifle';
