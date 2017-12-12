@@ -395,62 +395,62 @@ proc _pvp_end_match(@id, @winners) {
 		return();
 	}
 
-	try {
-
-		foreach(array_keys(@pvp['players']), @player) {
-			if(array_contains(@winners, @player)) {
-				@leader = @player;
-				if(ponline(@player) && @pvp['coins'] >= 1) {
-					_acc_add(@player, @pvp['coins']);
-				}
+	foreach(array_keys(@pvp['players']), @player) {
+		if(array_contains(@winners, @player)) {
+			@leader = @player;
+			if(ponline(@player) && @pvp['coins'] >= 1) {
+				_acc_add(@player, @pvp['coins']);
 			}
 		}
+	}
+	
+	queue_delay(100, @id); // timing ensures players are alive or in spec
+	queue_push(closure(){
+		if(array_index_exists(@pvp, 'stats')) {
+			@table = _stats_table();
+			@a = @table[0];
+			@b = @table[1];
+			@c = @table[2];
+			@d = @table[3];
+			_pvp_msg(@pvp, colorize('&7&m|------------------------------&7&l[ &f&lTHE FINAL SCORE&7&l ]&7&m--|'));
+			_pvp_msg(@pvp, colorize(replace('--&7'.to_upper(@a[0]).' &8:&7 '.to_upper(@b[0]).' &8:&7 '.to_upper(@c[0]).' &8:&7 '.to_upper(@d[0]), '-', ' ')));
+			_pvp_msg(@pvp, colorize('&7&m|----------------------------------------------------|'));
+			foreach(@player: @stats in @pvp['stats']) {
+				_pvp_msg(@pvp, replace('----'
+					._pad_stat(@stats[@a[0]], @a[1]).@a[2]
+					._pad_stat(@stats[@b[0]], @b[1]).@b[2]
+					._pad_stat(@stats[@c[0]], @c[1]).@c[2]
+					._pad_stat(integer(@stats[@d[0]]), @d[1]).@d[2]
+					.if(array_contains(@winners, @player),
+						color('gold').color('bold').@player.if(@pvp['coins'] > 0, ' +'.@pvp['coins']),
+						@player)
+					.'-', '-', ' '));
+			}
+			_pvp_msg(@pvp, colorize('&7&m|----------------------------------------------------|'));
+		} else if(array_index_exists(@pvp, 'team') && array_size(@winners) > 0) {
+			_worldmsg(@world, color('gray').'[PVP] '
+				.@pvp['players'][@leader]['color'].color('bold')
+				.@pvp['arena']['team'][@pvp['players'][@leader]['team']]['name'].' win!\n'
+				.@pvp['players'][@leader]['color'].array_implode(@winners, ' '));
+		} else if(array_size(@winners) > 0) {
+			_worldmsg(@world, color('gray').'[PVP] '.color('r').array_implode(@winners, ' and ').' wins!');
+
+		} else {
+			_worldmsg(@world, color('gray').'[PVP] '.color('r').'Nobody wins! Wait.. what?!');
+		}
+	}, @id);
 		
-		queue_delay(100, @id);
-		queue_push(closure(){
-			if(array_index_exists(@pvp, 'stats')) {
-				@table = _stats_table();
-				@a = @table[0];
-				@b = @table[1];
-				@c = @table[2];
-				@d = @table[3];
-				_pvp_msg(@pvp, colorize('&7&m|------------------------------&7&l[ &f&lTHE FINAL SCORE&7&l ]&7&m--|'));
-				_pvp_msg(@pvp, colorize(replace('--&7'.to_upper(@a[0]).' &8:&7 '.to_upper(@b[0]).' &8:&7 '.to_upper(@c[0]).' &8:&7 '.to_upper(@d[0]), '-', ' ')));
-				_pvp_msg(@pvp, colorize('&7&m|----------------------------------------------------|'));
-				foreach(@player: @stats in @pvp['stats']) {
-					_pvp_msg(@pvp, replace('----'
-						._pad_stat(@stats[@a[0]], @a[1]).@a[2]
-						._pad_stat(@stats[@b[0]], @b[1]).@b[2]
-						._pad_stat(@stats[@c[0]], @c[1]).@c[2]
-						._pad_stat(integer(@stats[@d[0]]), @d[1]).@d[2]
-						.if(array_contains(@winners, @player),
-							color('gold').color('bold').@player.if(@pvp['coins'] > 0, ' +'.@pvp['coins']),
-							@player)
-						.'-', '-', ' '));
-				}
-				_pvp_msg(@pvp, colorize('&7&m|----------------------------------------------------|'));
-			} else if(array_index_exists(@pvp, 'team') && array_size(@winners) > 0) {
-				_worldmsg(@world, color('gray').'[PVP] '
-					.@pvp['players'][@leader]['color'].color('bold')
-					.@pvp['arena']['team'][@pvp['players'][@leader]['team']]['name'].' win!\n'
-					.@pvp['players'][@leader]['color'].array_implode(@winners, ' '));
-			} else if(array_size(@winners) > 0) {
-				_worldmsg(@world, color('gray').'[PVP] '.color('r').array_implode(@winners, ' and ').' wins!');
-
-			} else {
-				_worldmsg(@world, color('gray').'[PVP] '.color('r').'Nobody wins! Wait.. what?!');
-			}
-		}, @id);
-
-		if(array_index_exists(@pvp['arena'], 'chestspawn')) {
-			for(@i = 0, @i < array_size(@pvp['arena']['chestspawn']), @i++) {
-				if(get_block_at(@pvp['arena']['chestspawn'][@i]['loc']) === '54:0',
-					set_block_at(@pvp['arena']['chestspawn'][@i]['loc'], '0:0'))
-			}
+	queue_push(closure(){
+		if(array_index_exists(@pvp, 'stats')) {
+			_store_stats(@winners, @pvp);
 		}
-
-	} catch(Exception @ex) {
-		console(@ex, false);
+	}, @id);
+		
+	if(array_index_exists(@pvp['arena'], 'chestspawn')) {
+		for(@i = 0, @i < array_size(@pvp['arena']['chestspawn']), @i++) {
+			if(get_block_at(@pvp['arena']['chestspawn'][@i]['loc']) === '54:0',
+				set_block_at(@pvp['arena']['chestspawn'][@i]['loc'], '0:0'))
+		}
 	}
 
 	try {

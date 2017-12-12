@@ -1,6 +1,6 @@
 register_command('pvp', array(
 	'description': 'Starting and managing active PVP games.',
-	'usage': '/pvp <join|start|vote|debug|spectate|addtime|end> <game_id> [value]',
+	'usage': '/pvp <join|start|vote|debug|spectate|addtime|end|stats|reload> <game_id> [value]',
 	'tabcompleter': closure(@alias, @sender, @args, @info) {
 		if(array_size(@args) == 1) {
 			return(_strings_start_with_ic(array('join', 'start', 'vote', 'debug', 'spectate', 'addtime', 'end'), @args[-1]));
@@ -122,6 +122,20 @@ register_command('pvp', array(
 					_pvp_end_match(@id, @pvp['team'][@args[2] - 1]['players']);
 				} else {
 					_pvp_end_match(@id, array());
+				}
+				
+			case 'stats':
+				@player = player();
+				if(@args[1] != 'me') {
+					@player = @args[1];
+				}
+				@uuid = _get_uuid(@player);
+				@pstats = get_value('pvp', @uuid);
+				if(@pstats) {
+					msg(color('bold').'KD Ratio: '.color('r').@pstats['kills'] / @pstats['deaths']);
+					msg(color('bold').'Win/Loss: '.color('r').@pstats['wins'].':'.@pstats['losses']);
+				} else {
+					msg(color('gold').'No stats for '.@player);
 				}
 				
 			case 'reload':

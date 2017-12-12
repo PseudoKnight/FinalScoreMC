@@ -1,80 +1,80 @@
-proc _class(@action, @player, @class, @pvp) {
-	if(array_index_exists(@pvp['arena']['classes'][@class], 'script')) {
-		include('../classes.library/'.@class.'.ms')
+proc _class(@action, @player, @classname, @pvp) {
+	@class = @pvp['arena']['classes'][@classname];
+	if(array_index_exists(@class, 'script')) {
+		include('../classes.library/'.@classname.'.ms');
 	}
 
 	switch(@action) {
-	case 'load':
-		if(array_index_exists(@pvp['arena']['classes'][@class], 'hunger')
-		&& !is_numeric(@pvp['arena']['classes'][@class]['hunger'][1])) {
-			bind(food_level_changed, array('id': @player.'food'), array(player: @player), @event) {
-				cancel()
-			}
-		}
-
-	case 'equip':
-		if(array_index_exists(@pvp['arena']['classes'][@class], 'hunger')) {
-			set_phunger(@player, @pvp['arena']['classes'][@class]['hunger'][0])
-			if(is_numeric(@pvp['arena']['classes'][@class]['hunger'][1])) {
-				set_psaturation(@player, @pvp['arena']['classes'][@class]['hunger'][1])
-			}
-		}
-		if(array_index_exists(@pvp['arena']['classes'][@class], 'kit')) {
-			set_pinv(@player, @pvp['arena']['classes'][@class]['kit'])
-		}
-		if(array_index_exists(@pvp['arena']['classes'][@class], 'speed')) {
-			set_pwalkspeed(@player, 0.2) # this workaround is required for after respawns
-			set_pwalkspeed(@player, @pvp['arena']['classes'][@class]['speed'])
-		}
-		if(array_index_exists(@pvp['arena']['classes'][@class], 'effect')) {
-			queue_push(closure(){
-				foreach(@eid: @e in @pvp['arena']['classes'][@class]['effect']) {
-					set_peffect(@player, @eid, @e['strength'], @e['length'], true)
+		case 'load':
+			if(array_index_exists(@class, 'hunger') && !is_numeric(@class['hunger'][1])) {
+				bind(food_level_changed, array('id': @player.'food'), array('player': @player), @event) {
+					cancel();
 				}
-			})
-		}
-		if(array_index_exists(@pvp['arena']['classes'][@class], 'xp')) {
-			set_pexp(@player, @pvp['arena']['classes'][@class]['xp'])
-		}
-
-	case 'powerup':
-		set_phunger(@player, min(20, phunger(@player) + 4));
-		set_ponfire(@player, false);
-		@flash = true;
-		foreach(@effect in get_peffect(@player)) {
-			if(@effect['id'] == 16) {
-				@flash = false
 			}
-		}
-		if(@flash) {
-			set_peffect(@player, 16, 0, 1, true)
-		}
-		set_peffect(@player, 10, 1, 5, true);
-		play_sound(ploc(@player), array('sound': 'enderman_teleport', 'pitch': 2), @player)
-		if(array_index_exists(@pvp['arena']['classes'][@class], 'ammo')) {
-			@inv = pinv(@player);
-			foreach(@slot: @item in @pvp['arena']['classes'][@class]['ammo']) {
-				@max = 64;
-				if(@item && array_index_exists(@pvp['arena']['classes'][@class], 'stacklimit')
-				&& array_index_exists(@pvp['arena']['classes'][@class]['stacklimit'], @item['name'])) {
-					@max = @pvp['arena']['classes'][@class]['stacklimit'][@item['name']];
+
+		case 'equip':
+			if(array_index_exists(@class, 'hunger')) {
+				set_phunger(@player, @class['hunger'][0]);
+				if(is_numeric(@class['hunger'][1])) {
+					set_psaturation(@player, @class['hunger'][1]);
 				}
-				@item = @item[];
-				if(!is_null(@inv[@slot])) {
-					@item['qty'] = min(@max, if(array_index_exists(@item, 'qty'), @item['qty'], 1) + @inv[@slot]['qty']);
-					if(@max == 1) {
-						@item['data'] = 0;
+			}
+			if(array_index_exists(@class, 'kit')) {
+				set_pinv(@player, @class['kit']);
+			}
+			if(array_index_exists(@class, 'speed')) {
+				set_pwalkspeed(@player, 0.2); # this workaround is required for after respawns
+				set_pwalkspeed(@player, @class['speed']);
+			}
+			if(array_index_exists(@class, 'effect')) {
+				set_timeout(50, closure(){
+					foreach(@eid: @e in @class['effect']) {
+						set_peffect(@player, @eid, @e['strength'], @e['length'], true);
 					}
-				}
-				@inv[@slot] = @item;
+				});
 			}
-			set_pinv(@player, @inv);
-		}
+			if(array_index_exists(@class, 'xp')) {
+				set_pexp(@player, @class['xp']);
+			}
 
-	case 'unload':
-		unbind(@player.'food');
-		set_pflight(@player, false);
-		set_pwalkspeed(@player, 0.2);
+		case 'powerup':
+			set_phunger(@player, min(20, phunger(@player) + 4));
+			set_ponfire(@player, false);
+			@flash = true;
+			foreach(@effect in get_peffect(@player)) {
+				if(@effect['id'] == 16) {
+					@flash = false;
+				}
+			}
+			if(@flash) {
+				set_peffect(@player, 16, 0, 1, true);
+			}
+			set_peffect(@player, 10, 1, 5, true);
+			play_sound(ploc(@player), array('sound': 'enderman_teleport', 'pitch': 2), @player)
+			if(array_index_exists(@class, 'ammo')) {
+				@inv = pinv(@player);
+				foreach(@slot: @item in @class['ammo']) {
+					@max = 64;
+					if(@item && array_index_exists(@class, 'stacklimit')
+					&& array_index_exists(@class['stacklimit'], @item['name'])) {
+						@max = @class['stacklimit'][@item['name']];
+					}
+					@item = @item[];
+					if(!is_null(@inv[@slot])) {
+						@item['qty'] = min(@max, if(array_index_exists(@item, 'qty'), @item['qty'], 1) + @inv[@slot]['qty']);
+						if(@max == 1) {
+							@item['data'] = 0;
+						}
+					}
+					@inv[@slot] = @item;
+				}
+				set_pinv(@player, @inv);
+			}
+
+		case 'unload':
+			unbind(@player.'food');
+			set_pflight(@player, false);
+			set_pwalkspeed(@player, 0.2);
 
 	}
 }

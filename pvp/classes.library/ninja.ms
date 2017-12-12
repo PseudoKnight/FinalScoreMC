@@ -18,10 +18,10 @@ case 'load':
 	}
 
 	@armor = array(
-		100: @pvp['arena']['classes'][@class]['kit'][100],
-		101: @pvp['arena']['classes'][@class]['kit'][101],
-		102: @pvp['arena']['classes'][@class]['kit'][102],
-		103: @pvp['arena']['classes'][@class]['kit'][103],
+		100: @pvp['arena']['classes'][@classname]['kit'][100],
+		101: @pvp['arena']['classes'][@classname]['kit'][101],
+		102: @pvp['arena']['classes'][@classname]['kit'][102],
+		103: @pvp['arena']['classes'][@classname]['kit'][103],
 	);
 	bind(player_toggle_sneak, array('id': @player.'ninja'), array('player': @player), @e, @gear = @armor) {
 		if(@e['sneaking']) {

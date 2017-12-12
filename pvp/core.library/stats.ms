@@ -33,3 +33,29 @@ proc _stats_table() {
 		array('damage', 3, '------')
 	));
 }
+
+proc _store_stats(@winners, @pvp) {
+	foreach(@player: @stats in @pvp['stats']) {
+		@uuid = puuid(@player, true);
+		@pstats = get_value('pvp', @uuid);
+		if(!@pstats) {
+			@pstats = associative_array(
+				'kills': 0,
+				'deaths': 0,
+				'games': 0,
+				'wins': 0,
+				'losses': 0,
+				'since': time(),
+			);
+		}
+		@pstats['games']++;
+		@pstats['kills'] += @stats['kills'];
+		@pstats['deaths'] += @stats['deaths'];
+		if(array_contains(@winners, @player)) {
+			@pstats['wins']++;
+		} else {
+			@pstats['losses']++;
+		}
+		store_value('pvp', @uuid, @pstats);
+	}
+}
