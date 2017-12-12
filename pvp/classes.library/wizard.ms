@@ -52,15 +52,23 @@ case 'load':
 			die();
 		}
 		@loc1 = ploc()
-		foreach(@player in players_in_radius(ploc(), 8)) {
-			if(@player == player() || phealth(@player) <= 0, continue())
+		foreach(@player in players_in_radius(ploc(), 9)) {
+			if(@player == player() || phealth(@player) <= 0) {
+				continue();
+			}
 			@loc2 = ploc(@player)
 			@loc2['y'] += 2
 			@dist = sqrt(((@loc2['x'] - @loc1['x']) ** 2) + ((@loc2['y'] - @loc1['y']) ** 2) + ((@loc2['z'] - @loc1['z']) ** 2))
 
 			damage_entity(puuid(@player), 1, puuid())
 			
-			@force = if(entity_grounded(puuid(@player)) && psneaking(@player), 0.5, 1.4);
+			@force = 1.4;
+			if(entity_grounded(puuid(@player)) && psneaking(@player)) {
+				@force *= 0.4;
+			}
+			if(!entity_can_see(puuid(@player), puuid())) {
+				@force *= 0.4;
+			}
 
 			# if we use a queue, velocity works more consistently with grounded entities
 			queue_push(closure(){
