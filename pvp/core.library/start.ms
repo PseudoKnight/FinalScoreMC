@@ -172,6 +172,12 @@ proc _pvp_start(@pvp, @id){
 		}
 	}
 	
+	if(@arena['mode'] == 'koth') {
+		if(!array_index_exists(@pvp, 'team') && array_size(@pvp['players']) > 4) {
+			@arena['score'] = integer(@arena['score'] / 2);
+		}
+	}
+	
 	if(array_index_exists(@arena, 'rounds')) {
 		@pvp['round'] = 1;
 	}
