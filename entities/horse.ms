@@ -39,7 +39,10 @@ bind(player_interact_entity, null, array('clicked': '/(DONKEY|HORSE|LLAMA|MULE|S
 				die('We have no records for the owner of this horse.'
 					.' If this is in error, contact an administrator.');
 			}
-			if(!array_index_exists(@pdata, 'shared')
+			if(@pdata['name'] == player()) {
+				// account change
+				tame_mob(@event['id']);
+			} else if(!array_index_exists(@pdata, 'shared')
 			|| !array_index_exists(@pdata['shared'], player())
 			|| !array_contains(@pdata['shared'][player()], 'horses')) {
 				cancel();
