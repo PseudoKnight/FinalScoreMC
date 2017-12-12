@@ -178,7 +178,7 @@ register_command('class', array(
 				}
 				if(array_size(@args) == 3) {
 					array_remove(@arena['classes'][@classid], @args[2]);
-					msg(color('green').@setting.' deleted from '.@classid);
+					msg(color('green').@args[2].' deleted from '.@classid);
 				} else {
 					array_remove(@arena['classes'], @classid);
 					msg(color('green').'Class deleted.');
