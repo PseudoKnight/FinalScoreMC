@@ -1,33 +1,33 @@
 # RECIPES
 
 # Player head recipes
-if(!get_recipe_for(array('name': 'SKULL_ITEM', 'data': 3))) {
-	add_recipe(array(
-		'type': 'SHAPED',
-		'result': array('name': 'SKULL_ITEM', 'data': 3),
-		'ingredients': array('S': '397:0', 'C': '337:0'),
-		'shape': array('CCC', 'CSC', 'CCC'),
-	));
+add_recipe(array(
+	'key': 'skeleton_to_player_skull',
+	'type': 'SHAPED',
+	'result': array('name': 'SKULL_ITEM', 'data': 3),
+	'ingredients': array('S': '397:0', 'C': '337:0'),
+	'shape': array('CCC', 'CSC', 'CCC'),
+));
 
-	add_recipe(array(
-		'type': 'SHAPED',
-		'result': array('name': 'SKULL_ITEM', 'data': 3),
-		'ingredients': array('S': '397:1', 'C': '337:0'),
-		'shape': array('CCC', 'CSC', 'CCC'),
-	));
-}
+add_recipe(array(
+	'key': 'wither_to_player_skull',
+	'type': 'SHAPED',
+	'result': array('name': 'SKULL_ITEM', 'data': 3),
+	'ingredients': array('S': '397:1', 'C': '337:0'),
+	'shape': array('CCC', 'CSC', 'CCC'),
+));
 
 # Skeleton skull recipe
-if(!get_recipe_for(array('name': 'SKULL_ITEM', 'data': 0))) {
-	add_recipe(array(
-		'type': 'SHAPELESS',
-		'result': array('name': 'SKULL_ITEM', 'data': 0),
-		'ingredients': array('397:2'),
-	));
-}
+add_recipe(array(
+	'key': 'skeleton_skull',
+	'type': 'SHAPELESS',
+	'result': array('name': 'SKULL_ITEM', 'data': 0),
+	'ingredients': array('397:2'),
+));
 
 # Enchanted lore books
 add_recipe(array(
+	'key': 'enchanted_lore_book',
 	'type': 'SHAPELESS',
 	'result': associative_array('name': 'ENCHANTED_BOOK', 'qty': 1, 'meta': associative_array(
 		'display': color('k').'Enchanted Lore Book',
@@ -38,6 +38,7 @@ add_recipe(array(
 
 # Bottle o' Enchanting experience storage
 add_recipe(array(
+	'key': 'exp_bottle',
 	'type': 'SHAPELESS',
 	'result': associative_array('name': 'EXP_BOTTLE', 'qty': 1),
 	'ingredients': array('374:0')
@@ -45,6 +46,7 @@ add_recipe(array(
 
 # Spawner egg ingredient
 add_recipe(array(
+	'key': 'spawner_egg_in_firework',
 	'type': 'SHAPELESS',
 	'result': associative_array('name': 'FIREWORK', 'qty': 1),
 	'ingredients': array('401:0', '383:0')
@@ -52,6 +54,7 @@ add_recipe(array(
 
 # Fix broken enchantment books
 add_recipe(array(
+	'key': 'fix_enchanted_book',
 	'type': 'SHAPELESS',
 	'result': array('name': 'ENCHANTED_BOOK', 'qty': 1, 'meta': array('display': 'Fix Enchanted Book')),
 	'ingredients': array('340:0')
@@ -59,6 +62,7 @@ add_recipe(array(
 
 # Faster bone -> bone-block recipe
 add_recipe(array(
+	'key': 'bone_to_bone_block',
 	'type': 'SHAPELESS',
 	'result': array('name': 'BONE_BLOCK', 'qty': 3),
 	'ingredients': array('352:0', '352:0', '352:0', '352:0', '352:0', '352:0', '352:0', '352:0', '352:0')
