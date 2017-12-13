@@ -4,7 +4,7 @@ bind(player_interact_entity, null, array('clicked': 'VILLAGER'), @event) {
 	}
 	@item = pinv(player(), null);
 	if(@item && @item['type'] == 420
-	&& get_player_from_entity_id(get_leashholder(@event['id'])) != player()) {
+	&& get_leashholder(@event['id']) != puuid()) {
 		cancel();
 		set_leashholder(@event['id'], puuid());
 		@item['qty']--;
