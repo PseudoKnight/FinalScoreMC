@@ -28,7 +28,7 @@ bind(projectile_launch, array('id': @id.'grapple'), array('type': 'FISHING_HOOK'
 
 	proc _reel(@loc2, @shooter, @slot, @hook, @target, @mover) {
 
-		@player = get_player_from_entity_id(@shooter);
+		@player = player(@shooter);
 		@loc1 = entity_loc(@shooter);
 		@startingHealth = max(1, get_entity_health(@shooter));
 
