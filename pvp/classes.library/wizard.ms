@@ -51,33 +51,45 @@ case 'load':
 		if(pinfo(player(), 6) != @e['item']) {
 			die();
 		}
-		@loc1 = ploc()
-		foreach(@player in players_in_radius(ploc(), 9)) {
-			if(@player == player() || phealth(@player) <= 0) {
+		@loc1 = ploc();
+		@excludeEntities = array('COMPLEX_PART', 'ITEM_FRAME', 'PAINTING', 'UNKNOWN');
+		foreach(@entity in entities_in_radius(ploc(), 9)) {
+			@force = 1.4;
+			@type = entity_type(@entity);
+			if(@type == 'PLAYER') {
+				@player = player(@entity);
+				if(@player == player() || phealth(@player) == 0) {
+					continue();
+				}
+				if(entity_grounded(@entity) && psneaking(@player)) {
+					@force *= 0.4;
+				}
+			} else if(@type == 'ARMOR_STAND') {
+				if(entity_spec(@type)['visible']) {
+					continue();
+				}
+			} else if(array_contains(@excludeEntities, @type)) {
 				continue();
 			}
-			@loc2 = ploc(@player)
-			@loc2['y'] += 2
-			@dist = sqrt(((@loc2['x'] - @loc1['x']) ** 2) + ((@loc2['y'] - @loc1['y']) ** 2) + ((@loc2['z'] - @loc1['z']) ** 2))
+			@loc2 = entity_loc(@entity);
+			@loc2['y'] += 1.0;
+			@dist = sqrt(((@loc2['x'] - @loc1['x']) ** 2) + ((@loc2['y'] - @loc1['y']) ** 2) + ((@loc2['z'] - @loc1['z']) ** 2));
 
-			damage_entity(puuid(@player), 1, puuid())
-			
-			@force = 1.4;
-			if(entity_grounded(puuid(@player)) && psneaking(@player)) {
-				@force *= 0.4;
-			}
-			if(!entity_can_see(puuid(@player), puuid())) {
-				@force *= 0.4;
+			if(is_entity_living(@entity)) {
+				damage_entity(@entity, 1, puuid());
+				if(!entity_can_see(@entity, puuid())) {
+					@force *= 0.4;
+				}
 			}
 
 			# if we use a queue, velocity works more consistently with grounded entities
 			queue_push(closure(){
 				try {
-					set_pvelocity(@player,
+					set_entity_velocity(@entity, array(
 						@force * ((@loc2['x'] - @loc1['x']) / @dist), # vector normalization
 						clamp((@loc2['y'] - @loc1['y']) / @dist, 0.1, @force), # always bounce upwards
 						@force * ((@loc2['z'] - @loc1['z']) / @dist),
-					);
+					));
 				} catch(PlayerOfflineException @ex) {
 					// they logged off, feather OP
 				}
