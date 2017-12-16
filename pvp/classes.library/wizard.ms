@@ -65,11 +65,13 @@ case 'load':
 					@force *= 0.4;
 				}
 			} else if(@type == 'ARMOR_STAND') {
-				if(entity_spec(@type)['visible']) {
+				if(entity_spec(@entity)['visible']) {
 					continue();
 				}
 			} else if(array_contains(@excludeEntities, @type)) {
 				continue();
+			} else {
+				@force *= 0.6;
 			}
 			@loc2 = entity_loc(@entity);
 			@loc2['y'] += 1.0;
@@ -77,9 +79,10 @@ case 'load':
 
 			if(is_entity_living(@entity)) {
 				damage_entity(@entity, 1, puuid());
-				if(!entity_can_see(@entity, puuid())) {
-					@force *= 0.4;
-				}
+			}
+			
+			if(!entity_can_see(puuid(), @entity)) {
+				@force *= 0.4;
 			}
 
 			# if we use a queue, velocity works more consistently with grounded entities
@@ -90,8 +93,8 @@ case 'load':
 						clamp((@loc2['y'] - @loc1['y']) / @dist, 0.1, @force), # always bounce upwards
 						@force * ((@loc2['z'] - @loc1['z']) / @dist),
 					));
-				} catch(PlayerOfflineException @ex) {
-					// they logged off, feather OP
+				} catch(BadEntityException @ex) {
+					// they logged off or entity dead; feather OP
 				}
 			});
 		}
