@@ -404,6 +404,15 @@ proc _pvp_end_match(@id, @winners) {
 		}
 	}
 	
+	// Make sure we don't assign them to the same solo team twice in a row
+	@lastSolo = '';
+	if(array_index_exists(@pvp['arena'], 'teamratio')) {
+		@team = array_index(@pvp['arena']['teamratio'], 1);
+		if(@team) {
+			@lastSolo = @pvp['teams'][@team]['players'][0];
+		}
+	}
+	
 	queue_delay(100, @id); // timing ensures players are alive or in spec
 	queue_push(closure(){
 		if(array_index_exists(@pvp, 'stats')) {
@@ -544,6 +553,9 @@ proc _pvp_end_match(@id, @winners) {
 
 			# Reset
 			@pvp = array('players': associative_array(), 'running': 0, 'id': @pvp['id']);
+			if(@lastSolo) {
+				@pvp['lastsolo'] = @lastSolo;
+			}
 			export('pvp'.@id, @pvp);
 			_remove_activity('pvp'.@id);
 			_menu_refresh_pvp();
