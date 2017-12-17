@@ -407,9 +407,10 @@ proc _pvp_end_match(@id, @winners) {
 	// Make sure we don't assign them to the same solo team twice in a row
 	@lastSolo = '';
 	if(array_index_exists(@pvp['arena'], 'teamratio')) {
-		@team = array_index(@pvp['arena']['teamratio'], 1);
-		if(@team) {
-			@lastSolo = @pvp['teams'][@team]['players'][0];
+		@teams = array_indexes(@pvp['arena']['teamratio'], 1);
+		if(array_size(@teams) == 1) {
+			@team = @teams[0];
+			@lastSolo = @pvp['team'][@team]['players'][0];
 		}
 	}
 	
