@@ -120,7 +120,7 @@ bind(player_join, null, null, @event) {
 			}
 			
 			if(array_index_exists(@pdata, 'names')) {
-				@players = import('players', array());
+				@players = import('players', associative_array());
 				foreach(@name in @pdata['names']) {
 					@players[to_lower(@name)] = @event['player'];
 				}
@@ -161,7 +161,7 @@ bind(player_quit, null, null, @event) {
 	export('pdata.'.to_lower(@event['player']), null); // clear player data cache
 	export('session.'.player(), null); // clear player state data
 	if(array_index_exists(@pdata, 'names')) {
-		@players = import('players', array());
+		@players = import('players', associative_array());
 		foreach(@name in @pdata['names']) {
 			array_remove(@players, to_lower(@name));
 		}
