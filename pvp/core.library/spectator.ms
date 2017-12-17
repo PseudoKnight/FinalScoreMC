@@ -1,4 +1,4 @@
-proc _set_spectator(@player, @pvp) {
+proc _spectator_add(@player, @pvp) {
 	if(!ponline(@player)) {
 		return();
 	}
@@ -60,7 +60,7 @@ proc _set_spectator(@player, @pvp) {
 	}
 }
 
-proc _remove_spectator(@player, @pvp) {
+proc _spectator_remove(@player, @pvp) {
 	try {
 		array_remove_values(@pvp['spectators'], @player);
 		if(ponline(@player)) {

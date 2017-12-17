@@ -1,4 +1,4 @@
-proc _quit_player(@player, @id) {
+proc _player_remove(@player, @id) {
 	@pvp = import('pvp'.@id);
 	if(@pvp['arena']['mode'] === 'ctf' && !is_null(@flag = _flag(pinv(@player, 103)))) {
 		_pvp_flag_spawn(@id, @flag);
@@ -29,7 +29,7 @@ proc _quit_player(@player, @id) {
 	_pvp_check_objectives(@id);
 }
 
-proc _switch_to_spectator(@player, @pvp) {
+proc _player_to_spectator(@player, @pvp) {
 	if(array_index_exists(@pvp['players'][player()], 'class')) {
 		_class('unload', player(), @pvp['players'][player()]['class'], @pvp)
 	}
@@ -39,7 +39,7 @@ proc _switch_to_spectator(@player, @pvp) {
 	# Delay spectator mode so that health amount is updated.
 	# Health can be above zero when pkill() or set_phealth() are used.
 	set_timeout(50, closure(){
-		_set_spectator(player(), @pvp);
+		_spectator_add(player(), @pvp);
 	});
 }
 
@@ -53,17 +53,21 @@ proc _pvp_initialize_players(@id, @players) {
 			array_remove(@pvp['players'], @player);
 			continue();
 		}
+		
+		@pArray = @pvp['players'][@player];
+		
 		if(array_contains(@pvp['arena']['flags'], 'build')) {
 			set_pmode(@player, 'SURVIVAL');
 		} else {
 			set_pmode(@player, 'ADVENTURE');
 		}
 		set_pscoreboard(@player, @id);
-		if(array_index_exists(@pvp['players'][@player], 'team')) {
-			team_add_player(@pvp['arena']['team'][@pvp['players'][@player]['team']]['name'], @player, @id);
-			@pvp['players'][@player]['color'] = @pvp['arena']['team'][@pvp['players'][@player]['team']]['color'];
+		if(array_index_exists(@pArray, 'team')) {
+			@team = @pArray['team'];
+			team_add_player(@pvp['arena']['team'][@team]['name'], @player, @id);
+			@pArray['color'] = @pvp['arena']['team'][@team]['team']]['color'];
 		} else {
-			@pvp['players'][@player]['color'] = color('f');
+			@pArray['color'] = color('f');
 		}
 		switch(@pvp['arena']['mode']) {
 			case 'koth':
@@ -84,11 +88,11 @@ proc _pvp_initialize_players(@id, @players) {
 		}
 
 		if(array_index_exists(@pvp['arena'], 'lives')) {
-			@pvp['players'][@player]['lives'] = @pvp['arena']['lives'];
+			@pArray['lives'] = @pvp['arena']['lives'];
 		}
 
 		if(array_index_exists(@pvp['arena'], 'respawntime')) {
-			@pvp['players'][@player]['respawn'] = 0;
+			@pArray['respawn'] = 0;
 		}
 
 		if(array_index_exists(@pvp, 'stats')) {
@@ -110,14 +114,14 @@ proc _pvp_initialize_players(@id, @players) {
 		_clear_pinv(@player);
 		_clear_peffects(@player);
 		if(array_index_exists(@pvp['arena'], 'classes')) {
-		 	if(!array_index_exists(@pvp['players'][@player], 'class')) {
+		 	if(!array_index_exists(@pArray, 'class')) {
 				_class_select_random(@player, @pvp);
 			}
-			if(array_index_exists(@pvp['players'][@player], 'class')) {
-				_class('load', @player, @pvp['players'][@player]['class'], @pvp);
+			if(array_index_exists(@pArray, 'class')) {
+				_class('load', @player, @pArray['class'], @pvp);
 			}
 			if(array_index_exists(@pvp['arena'], 'class_picks')) {
-				@pvp['players'][@player]['picks'] = @pvp['arena']['class_picks'];
+				@pArray['picks'] = @pvp['arena']['class_picks'];
 			}
 		}
 
@@ -126,11 +130,11 @@ proc _pvp_initialize_players(@id, @players) {
 		}
 		
 		set_phealth(@player, 20);
-		_pvp_equip(@id, @player);
+		_player_equip(@id, @player);
 
 		# Select spawn location
 		if(array_index_exists(@pvp, 'team')) {
-			@team = @pvp['players'][@player]['team'];
+			@team = @pArray['team'];
 			@loc = @pvp['arena']['spawn'][@team][@c[@team]];
 			if(@c[@team] == array_size(@pvp['arena']['spawn'][@team]) - 1) {
 				@c[@team] = 0;
@@ -161,7 +165,7 @@ proc _pvp_initialize_players(@id, @players) {
 	}
 }
 
-proc _pvp_equip(@id, @player) {
+proc _player_equip(@id, @player) {
 	if(_is_survival_world(pworld(@player))) {
 		return();
 	}
@@ -208,7 +212,7 @@ proc _pvp_equip(@id, @player) {
 	}
 }
 
-proc _assign_team(@player, @pvp) {
+proc _player_assign_team(@player, @pvp) {
 	// Make sure we don't assign them to the same solo team twice in a row
 	if(array_index_exists(@pvp, 'lastsolo') && @pvp['lastsolo'] == @player) {
 		@soloteam = array_index(@pvp['arena']['teamratio'], 1);

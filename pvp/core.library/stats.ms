@@ -14,7 +14,7 @@ proc _stats_damage(@damager, @player, @amount, @pvp) {
 	}
 }
 
-proc _pad_stat(@amount, @length) {
+proc _stat_pad(@amount, @length) {
 	@length -= length(@amount);
 	if(@length <= 0, return(@amount));
 	@pad = '';

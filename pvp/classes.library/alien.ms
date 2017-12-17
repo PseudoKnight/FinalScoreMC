@@ -46,7 +46,7 @@ case 'load':
 			die();
 		}
 		cancel();
-		@players = _hit_scan(player(), 96, 1, 'happy_villager', 'ender_signal', @pvp);
+		@players = _weapon_hit_scan(player(), 96, 1, 'happy_villager', 'ender_signal', @pvp);
 
 		if(@players) {
 			@player = @players[0];

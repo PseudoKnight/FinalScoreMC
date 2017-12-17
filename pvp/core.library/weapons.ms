@@ -31,7 +31,7 @@ proc _weapon_cooldown(@player, @time, @type, @onCooldown, @remove = 1) {
 	}
 }
 
-proc _hit_scan(@player, @range, @damage, @tracerParticle, @hitParticle, @pvp){
+proc _weapon_hit_scan(@player, @range, @damage, @tracerParticle, @hitParticle, @pvp){
 	@damager = puuid(@player);
 	@visibleRange = max(64, @range);
 	

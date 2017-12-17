@@ -159,7 +159,7 @@ proc _pvp_start_match(@id) {
 					if(array_index_exists(@arena, 'resourcepack')) {
 						send_resourcepack(@player, 'http://mc.finalscoremc.com:25966/resourcepacks/default.zip');
 					}
-					_quit_player(@player, @id);
+					_player_remove(@player, @id);
 				} else if(@p['respawn'] < time()) {
 					@loc = array();
 					if(array_index_exists(@arena, 'captain')) {
@@ -187,7 +187,7 @@ proc _pvp_start_match(@id) {
 					pfacing(@player, 0, 0);
 
 					preset_time(@player);
-					_pvp_equip(@id, @player);
+					_player_equip(@id, @player);
 					@p['respawn'] = 0;
 					close_pinv(@player);
 				} else {
@@ -223,7 +223,7 @@ proc _pvp_start_match(@id) {
 		foreach(@i: @p in @pvp['spectators']) {
 			try {
 				if(!array_contains(sk_current_regions(@p), @arena['region'])) {
-					_remove_spectator(@p, @pvp);
+					_spectator_remove(@p, @pvp);
 				}
 			} catch(PlayerOfflineException @ex) {
 				array_remove(@pvp['spectators'], @i);
@@ -427,10 +427,10 @@ proc _pvp_end_match(@id, @winners) {
 			_pvp_msg(@pvp, colorize('&7&m|----------------------------------------------------|'));
 			foreach(@player: @stats in @pvp['stats']) {
 				_pvp_msg(@pvp, replace('----'
-					._pad_stat(@stats[@a[0]], @a[1]).@a[2]
-					._pad_stat(@stats[@b[0]], @b[1]).@b[2]
-					._pad_stat(@stats[@c[0]], @c[1]).@c[2]
-					._pad_stat(integer(@stats[@d[0]]), @d[1]).@d[2]
+					._stat_pad(@stats[@a[0]], @a[1]).@a[2]
+					._stat_pad(@stats[@b[0]], @b[1]).@b[2]
+					._stat_pad(@stats[@c[0]], @c[1]).@c[2]
+					._stat_pad(integer(@stats[@d[0]]), @d[1]).@d[2]
 					.if(array_contains(@winners, @player),
 						color('gold').color('bold').@player.if(@pvp['coins'] > 0, ' +'.@pvp['coins']),
 						@player)
@@ -517,7 +517,7 @@ proc _pvp_end_match(@id, @winners) {
 								send_resourcepack(@player, 'http://mc.finalscoremc.com:25966/resourcepacks/default.zip');
 							}, @id);
 						}
-						_quit_player(@player, @id);
+						_player_remove(@player, @id);
 						if(array_index_exists(@pvp['arena'], 'podium') && array_contains(@winners, @player)) {
 							queue_push(closure(){
 								set_ploc(@player, @pvp['arena']['podium']);
@@ -539,7 +539,7 @@ proc _pvp_end_match(@id, @winners) {
 			unbind(@bind)
 		}
 		foreach(@p in @pvp['spectators']) {
-			_remove_spectator(@p, @pvp);
+			_spectator_remove(@p, @pvp);
 		}
 		_remove_region_entities(@pvp['arena']['region'], array(), @world);
 

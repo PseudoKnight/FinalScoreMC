@@ -53,10 +53,10 @@ proc _pvp_join(@id){
 		}
 		if(array_contains(@pvp['spectators'], player())) {
 			include('spectator.ms');
-			_remove_spectator(player(), @pvp);
+			_spectator_remove(player(), @pvp);
 		}
 		if(array_index_exists(@pvp['arena'], 'team')) {
-			_assign_team(player(), @pvp);
+			_player_assign_team(player(), @pvp);
 		}
 	}
 

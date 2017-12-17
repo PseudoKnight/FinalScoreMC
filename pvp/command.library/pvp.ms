@@ -65,7 +65,7 @@ register_command('pvp', array(
 				if(array_index_exists(@pvp['arena'], 'resourcepack')) {
 					send_resourcepack(player(), 'http://mc.finalscoremc.com:25966/resourcepacks/'.@pvp['arena']['resourcepack'].'.zip');
 				}
-				_set_spectator(player(), @pvp);
+				_spectator_add(player(), @pvp);
 
 			case 'addtime':
 				if(!get_command_block() && !has_permission('group.moderator')) {

@@ -294,7 +294,7 @@ proc _pvp_start(@pvp, @id){
 		for(@i = 0, @i < array_size(@pvp['players']), @i++) {
 			@index = rand(0, array_size(@players));
 			@player = @players[@index];
-			_assign_team(@player, @pvp);
+			_player_assign_team(@player, @pvp);
 			array_remove(@players, @index);
 		}
 	}

@@ -31,7 +31,7 @@ proc _load_events(@id) {
 		@loc = array_rand(@pvp['arena']['spawn'][@team], 1, false)[0];
 		set_ploc(@player, @loc);
 		play_named_sound(@loc, associative_array('sound': 'entity.llama.spit', 'pitch': 0.5), @player);
-		_pvp_equip(@id, @player);
+		_player_equip(@id, @player);
 	}
 
 	@pvp['binds'][] = @id.'snowmanhit';

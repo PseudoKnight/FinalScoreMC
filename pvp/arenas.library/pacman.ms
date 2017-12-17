@@ -48,7 +48,7 @@ proc _load_events(@id) {
 						if(@p != player()) {
 							@hat = pinv(@p, 103);
 							if(@hat) {
-								_pvp_equip(@id, @p);
+								_player_equip(@id, @p);
 							}
 						}
 					}
@@ -79,7 +79,7 @@ proc _load_events(@id) {
 						@regions = sk_current_regions();
 						if(array_contains(@regions, 'ghostspawn')) {
 							clear_task();
-							_pvp_equip(@id, player());
+							_player_equip(@id, player());
 							set_peffect(player(), 1, 0, 0, false, false);
 							play_sound(ploc(), array('sound': 'FIREWORK_LAUNCH', 'pitch': 1.3), player());
 						} else if(!array_contains(@regions, 'pacman')) {
@@ -106,7 +106,7 @@ proc _load_events(@id) {
 						_pvp_end_match(@id, @pvp['team'][1]['players']);
 					} else {
 						foreach(@p: @player in @pvp['players']) {
-							_pvp_equip(@id, @p);
+							_player_equip(@id, @p);
 							@team = @player['team'];
 							@loc = array_rand(@pvp['arena']['spawn'][@team], 1, false)[0];
 							set_ploc(@p, @loc);
