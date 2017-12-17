@@ -23,9 +23,6 @@ register_command('timer', array(
 			set_ponfire(@player, 0);
 			set_plevel(@player, 0);
 			set_pexp(@player, 0);
-			
-			@restartButton = array('type': 371, 'meta': array('display': color('green').color('bold').'Restart Button'));
-			set_pinv(@player, 0, @restartButton);
 		
 			if(array_index_exists(@timers, @player)) {
 				clear_task(@timers[@player][2]);
@@ -101,28 +98,33 @@ register_command('timer', array(
 				}
 			});
 		
-			if(!has_bind(@player.'reset')) {
-				bind(player_interact, array('id': @player.'reset'), array('player': @player, 'item': 371), @e, @startLoc) {
-					if(@e['action'] == 'right_click_block') {
-						@block = split(':', @e['block'])[0];
-						if(@block == '77' || @block == '143') {
-							die();
+			if(@ptime) {
+				@restartButton = array('type': 371, 'meta': array('display': color('green').color('bold').'Restart Button'));
+				set_pinv(@player, 0, @restartButton);
+			
+				if(!has_bind(@player.'reset')) {
+					bind(player_interact, array('id': @player.'reset'), array('player': @player, 'item': 371), @e, @startLoc) {
+						if(@e['action'] == 'right_click_block') {
+							@block = split(':', @e['block'])[0];
+							if(@block == '77' || @block == '143') {
+								die();
+							}
 						}
+						cancel();
+						set_ploc(@startLoc);
 					}
-					cancel();
-					set_ploc(@startLoc);
 				}
-			}
-			if(!has_bind(@player.'timerdeath')) {
-				bind(player_death, array('id': @player.'timerdeath'), array('player': @player), @e, @restartButton) {
-					if(!_is_survival_world(pworld())) {
-						modify_event('drops', array());
-						set_timeout(500, closure(){
-							respawn();
-							set_timeout(50, closure(){
-								set_pinv(player(), 0, @restartButton);
+				if(!has_bind(@player.'timerdeath')) {
+					bind(player_death, array('id': @player.'timerdeath'), array('player': @player), @e, @restartButton) {
+						if(!_is_survival_world(pworld())) {
+							modify_event('drops', array());
+							set_timeout(500, closure(){
+								respawn();
+								set_timeout(50, closure(){
+									set_pinv(player(), 0, @restartButton);
+								});
 							});
-						});
+						}
 					}
 				}
 			}
