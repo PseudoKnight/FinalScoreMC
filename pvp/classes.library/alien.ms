@@ -18,12 +18,13 @@ case 'load':
 					set_pexp(@xp);
 					if(@xp == 99) {
 						clear_task();
-					} else if(@xp == 20) {
-						try(entity_remove(@arrow));
 					}
 				} catch(Exception @ex) {
 					clear_task();
 				}
+			});
+			set_timeout(800, closure(){
+				try(entity_remove(@arrow));
 			});
 			if(extension_exists('CHSpigot')) {
 				@dmg = get_arrow_damage(@arrow);
