@@ -63,7 +63,9 @@ proc _bm_request(@endpoint, @player, @params, @callback = closure(noop()),
 			@result = @response['body'];
 			if(@result) {
 				@result = json_decode(@result);
-				if(array_index_exists(@result, 'error') && @result['error'] !== 'Nothing found.') {
+				if(!is_array(@result)) {
+					// result was a single value for some reason
+				} else if(array_index_exists(@result, 'error') && @result['error'] !== 'Nothing found.') {
 					execute(@result['error'], @error);
 				} else {
 					execute(@result, @callback);
