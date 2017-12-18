@@ -65,7 +65,7 @@ proc _pvp_initialize_players(@id, @players) {
 		if(array_index_exists(@pArray, 'team')) {
 			@team = @pArray['team'];
 			team_add_player(@pvp['arena']['team'][@team]['name'], @player, @id);
-			@pArray['color'] = @pvp['arena']['team'][@team]['team']]['color'];
+			@pArray['color'] = @pvp['arena']['team'][@team]['color'];
 		} else {
 			@pArray['color'] = color('f');
 		}
