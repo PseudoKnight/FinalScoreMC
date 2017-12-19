@@ -146,7 +146,7 @@ bind(player_interact, null, array('block': 68), @e) {
 }
 
 # Breaking signs
-bind(block_break, null, array('type': 68), @e) {
+bind(block_break, null, array('name': 'WALL_SIGN'), @e) {
 	include('includes.library/shops.ms');
 	if(@shop = _get_shop(@e['location'])) {
 		@shops = get_value('shop', @shop['key']);

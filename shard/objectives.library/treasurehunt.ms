@@ -56,7 +56,7 @@ create_objective('Distance', 'DUMMY', 'shard');
 _create_treasure(max(5, 60 * @rules['buffertime']), 0, @rules);
 
 @binds[] = 'shard-break';
-bind(block_break, array('id': 'shard-break'), array('type': 130), @event, @rules) {
+bind(block_break, array('id': 'shard-break'), array('name': 'ENDER_CHEST'), @event, @rules) {
 	if(has_metadata(@event['location'], 'treasure')) {
 		play_sound(@event['location'], array('sound': 'LEVEL_UP', 'pitch': 0.7));
 		set_objective_display('Treasures', array('slot': 'SIDEBAR'), 'shard');

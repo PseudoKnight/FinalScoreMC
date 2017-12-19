@@ -67,8 +67,8 @@ case 'load':
 			die();
 		}
 		# regular potato -> launch
-		switch(@item['type']) {
-			case 392: # potato -> launch
+		switch(@item['name']) {
+			case 'POTATO_ITEM': # launch
 				modify_event('amount', 3);
 				set_timeout(50, closure(){
 					@vector = entity_velocity(puuid(@damaged));
@@ -78,10 +78,10 @@ case 'load':
 					set_pvelocity(@damaged, @vector);
 				});
 
-			case 394: # poison potato -> poison effect
+			case 'POISONOUS_POTATO': # poison effect
 				set_peffect(@damaged, 19, 0, 10);
 
-			case 393: # cooked potato -> hot potato
+			case 'BAKED_POTATO': # hot potato
 				set_pinv(@damager, null, null);
 				_prime_hot_potato(@damager, @damaged, @item, @pvp);
 
@@ -100,7 +100,7 @@ case 'load':
 		}
 		@inv = pinv();
 		foreach(@slot in 0..8) {
-			if(@inv[@slot] && @inv[@slot]['type'] == 393 && @inv[@slot]['meta'] && is_integral(@inv[@slot]['meta']['display'])) {
+			if(@inv[@slot] && @inv[@slot]['name'] == 'BAKED_POTATO' && @inv[@slot]['meta'] && is_integral(@inv[@slot]['meta']['display'])) {
 				@droppedItem = drop_item(_relative(ploc(), 'up', 2), @inv[@slot], true);
 				set_entity_spec(@droppedItem, array('pickupdelay': 200));
 				set_timeout(1000 * @inv[@slot]['meta']['display'], closure(){

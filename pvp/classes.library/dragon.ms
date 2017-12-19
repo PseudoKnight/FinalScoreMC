@@ -23,7 +23,7 @@ case 'load':
 				} else {
 					set_interval(200, closure(){
 						try {
-							if(pinv(@player, 103)['type'] != 397) {
+							if(pinv(@player, 103)['name'] == 'SKULL_ITEM') {
 								clear_task();
 							} else if(entity_grounded(puuid(@player))) {
 								@xp = pexp(@player);

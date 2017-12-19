@@ -125,14 +125,12 @@ bind(player_interact, null, array('item': 401, 'button': 'right'), @event) {
 			}
 		}
 
-		@item['type'] = 402;
 		@item['name'] = 'FIREWORK_CHARGE';
 		set_pinv(player(), @slot, @item);
 		set_timeout(4000, closure(){
 			try {
 				@item = pinv(player(), @slot);
-				if(@item && @item['type'] == 402) {
-					@item['type'] = 401;
+				if(@item && @item['name'] = 'FIREWORK') {
 					@item['name'] = 'FIREWORK';
 					set_pinv(player(), @slot, @item);
 				}

@@ -144,14 +144,14 @@ proc _class_select(@id, @pvp) {
 		}
 	}
 	if(@chest[0]) {
-		@chest[0][@chestsize1 - 1] = array('type': 1, 'data': 7, 'meta': array(
+		@chest[0][@chestsize1 - 1] = array('name': 'STONE', 'data': 7, 'meta': array(
 			'display': 'RANDOM',
 			'lore': array('Randomly assign a class'),
 		));
 		update_virtualchest(@id.'0', @chest[0])
 	}
 	if(@chest[1]) {
-		@chest[1][@chestsize2 - 1] = array('type': 1, 'data': 7, 'meta': array(
+		@chest[1][@chestsize2 - 1] = array('name': 'STONE', 'data': 7, 'meta': array(
 			'display': 'RANDOM',
 			'lore': array('Randomly assign a class'),
 		));

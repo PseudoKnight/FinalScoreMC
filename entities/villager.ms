@@ -3,7 +3,7 @@ bind(player_interact_entity, null, array('clicked': 'VILLAGER'), @event) {
 		die();
 	}
 	@item = pinv(player(), null);
-	if(@item && @item['type'] == 420
+	if(@item && @item['name'] == 'LEASH'
 	&& get_leashholder(@event['id']) != puuid()) {
 		cancel();
 		set_leashholder(@event['id'], puuid());

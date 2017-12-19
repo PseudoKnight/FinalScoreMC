@@ -168,7 +168,7 @@ proc _start_game(@course, @loc) {
 						@ball['velocity'] = array('x': @x, 'y': 0, 'z': @z);
 						set_entity_velocity(@ball['id'], @ball['velocity']);
 					})
-					set_pinv(@player, 0, array('type': 341));
+					set_pinv(@player, 0, array('name': 'SLIME_BALL'));
 				}
 			}
 		}

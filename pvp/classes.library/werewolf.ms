@@ -20,15 +20,15 @@ case 'load':
 	}
 
 case 'equip':
-	@r = rand(0, 256)
-	@g = rand(0, 256)
-	@b = rand(0, 256)
+	@r = rand(0, 256);
+	@g = rand(0, 256);
+	@b = rand(0, 256);
 	set_pinv(@player, array(
-		100: array('type': 301, 'meta': array('color': array('r': @r, 'g': @g, 'b': @b))),
-		101: array('type': 300, 'meta': array('color': array('r': @r, 'g': @g, 'b': @b))),
-		102: array('type': 299, 'meta': array('color': array('r': @r, 'g': @g, 'b': @b))),
-	))
-	queue_clear(@player.'evolve')
+		100: array('name': 'LEATHER_BOOTS', 'meta': array('color': array('r': @r, 'g': @g, 'b': @b))),
+		101: array('name': 'LEATHER_LEGGINGS', 'meta': array('color': array('r': @r, 'g': @g, 'b': @b))),
+		102: array('name': 'LEATHER_CHESTPLATE', 'meta': array('color': array('r': @r, 'g': @g, 'b': @b))),
+	));
+	queue_clear(@player.'evolve');
 
 case 'powerup':
 	damage_entity(puuid(@player), 3);
@@ -42,15 +42,15 @@ case 'powerup':
 			// player logged off last tick, nice timing
 		}
 	});
-	play_sound(ploc(@player), array('sound': 'WOLF_HOWL', 'pitch': 0.9, 'volume': 3))
+	play_sound(ploc(@player), array('sound': 'WOLF_HOWL', 'pitch': 0.9, 'volume': 3));
 	set_pinv(@player, array(
-		100: array('type': 301, 'meta': array('color': array('r': 50, 'g': 50, 'b': 50)),
+		100: array('name': 'LEATHER_BOOTS', 'meta': array('color': array('r': 50, 'g': 50, 'b': 50)),
 			'enchants': array(array('elevel': 2, 'etype': 'DEPTH_STRIDER'))
 		),
-		101: array('type': 300, 'meta': array('color': array('r': 50, 'g': 50, 'b': 50))),
-		102: array('type': 299, 'meta': array('color': array('r': 50, 'g': 50, 'b': 50))),
-		103: array('type': 35, 'data': 7),
-	))
+		101: array('name': 'LEATHER_LEGGINGS', 'meta': array('color': array('r': 50, 'g': 50, 'b': 50))),
+		102: array('name': 'LEATHER_CHESTPLATE', 'meta': array('color': array('r': 50, 'g': 50, 'b': 50))),
+		103: array('name': 'WOOL', 'data': 7),
+	));
 	set_timeout(17000, closure(){
 		if(ponline(@player) && phealth(@player) > 0) {
 			foreach(@effect in get_peffect(@player)) {
@@ -60,9 +60,9 @@ case 'powerup':
 					@g = rand(0, 256);
 					@b = rand(0, 256);
 					set_pinv(@player, array(
-						100: array('type': 301, 'meta': array('color': array('r': @r, 'g': @g, 'b': @b))),
-						101: array('type': 300, 'meta': array('color': array('r': @r, 'g': @g, 'b': @b))),
-						102: array('type': 299, 'meta': array('color': array('r': @r, 'g': @g, 'b': @b))),
+						100: array('name': 'LEATHER_BOOTS', 'meta': array('color': array('r': @r, 'g': @g, 'b': @b))),
+						101: array('name': 'LEATHER_LEGGINGS', 'meta': array('color': array('r': @r, 'g': @g, 'b': @b))),
+						102: array('name': 'LEATHER_CHESTPLATE', 'meta': array('color': array('r': @r, 'g': @g, 'b': @b))),
 						103: null,
 					));
 					set_peffect(@player, 16, 0, 0);

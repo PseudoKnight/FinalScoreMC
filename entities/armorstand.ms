@@ -166,8 +166,8 @@ bind(player_interact_at_entity, null, array('clicked': 'ARMOR_STAND'), @event) {
 		}
 
 	} else {
-		switch(if(@item, @item['type'], null)) {
-			case 280: # 2 sticks attaches arms
+		switch(if(@item, @item['name'], null)) {
+			case 'STICK': # 2 sticks attaches arms
 				if(@item['qty'] >= 2 && !@armorstand['arms']) {
 					set_timeout(50, closure(){ // workaround client rendering issue in 1.12
 						set_entity_spec(@event['id'], array('arms': true));
@@ -177,7 +177,7 @@ bind(player_interact_at_entity, null, array('clicked': 'ARMOR_STAND'), @event) {
 					cancel();
 				}
 
-			case 288: # feather toggles gravity
+			case 'FEATHER': # toggles gravity
 				if(!_is_survival_world(pworld())) {
 					@gravity = if(@armorstand['gravity'], false, true);
 					title('', color(6).'Toggled gravity '.if(@gravity, 'on', 'off').' for armor stand.', 0, 40, 10);
@@ -185,7 +185,7 @@ bind(player_interact_at_entity, null, array('clicked': 'ARMOR_STAND'), @event) {
 					cancel();
 				}
 
-			case 375: # spider eye toggles visibility
+			case 'SPIDER_EYE': # toggles visibility
 				if(!_is_survival_world(pworld())) {
 					@gear = get_mob_equipment(@event['id'])
 					@visible = @armorstand['visible'];
@@ -198,7 +198,7 @@ bind(player_interact_at_entity, null, array('clicked': 'ARMOR_STAND'), @event) {
 					}
 				}
 
-			case 416: # armor stand toggles size
+			case 'ARMOR_STAND': # toggles size
 				if(!_is_survival_world(pworld())) {
 					@small = if(@armorstand['small'], false, true);
 					title('', color(6).if(@small, 'Shrunk', 'Embiggened').' armor stand.', 0, 40, 10);
@@ -208,7 +208,7 @@ bind(player_interact_at_entity, null, array('clicked': 'ARMOR_STAND'), @event) {
 					cancel();
 				}
 				
-			case 421: # name tag adds mob name
+			case 'NAME_TAG': # adds mob name
 				if(!_is_survival_world(pworld())) {
 					if(!@item['meta'] || !@item['meta']['display']) {
 						set_timeout(50, closure(){ // workaround client rendering issue in 1.12
@@ -224,7 +224,7 @@ bind(player_interact_at_entity, null, array('clicked': 'ARMOR_STAND'), @event) {
 					cancel();
 				}
 
-			case 420: # lead carries armor stand
+			case 'LEASH': # carries armor stand
 				if(!psneaking() && !get_entity_rider(puuid())) {
 					cancel();
 					title('', color(6).'Moving Armor Stand. Click to place.', 0, 40, 10);
@@ -327,7 +327,7 @@ bind(entity_damage, null, array('type': 'ARMOR_STAND'), @event) {
 				drop_item(@loc, @equipment['off_hand']);
 				set_mob_equipment(@event['id'], array('off_hand': null));
 			}
-			drop_item(@loc, array('type': 280, 'qty': 2));
+			drop_item(@loc, array('name': 'STICK', 'qty': 2));
 			set_entity_spec(@event['id'], array('arms': false));
 		} else if(@armorstand['baseplate'] && !array_index_exists(@event, 'shooter')) {
 			cancel();

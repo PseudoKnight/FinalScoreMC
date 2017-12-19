@@ -87,7 +87,7 @@ case 'load':
 				@helm = pinv(@p, 103);
 				@loc = ploc(@p);
 				if(is_null(@helm)) {
-					set_pinv(@p, 103, array('type': 86));
+					set_pinv(@p, 103, array('name': 'PUMPKIN'));
 					play_named_sound(@loc, associative_array('sound': 'entity.elder_guardian.death', 'pitch': 2), @p);
 					set_phunger(@player, min(20, phunger(@player) + 1));
 					set_phealth(@player, min(20, phealth(@player) + if(@dist < 2, 2, 1)));

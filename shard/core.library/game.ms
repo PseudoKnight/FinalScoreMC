@@ -340,12 +340,12 @@ proc _shard_create(@rules){
 				}
 				
 				@binds[] = 'shard-place1';
-				bind(block_place, array('id': 'shard-place1'), array('type': 54), @event) {
+				bind(block_place, array('id': 'shard-place1'), array('name': 'CHEST'), @event) {
 					_set_inventory_contents(@event['location'], 0);
 				}
 				
 				@binds[] = 'shard-place2';
-				bind(block_place, array('id': 'shard-place2'), array('type': 146), @event) {
+				bind(block_place, array('id': 'shard-place2'), array('name': 'TRAPPED_CHEST'), @event) {
 					_set_inventory_contents(@event['location'], 0);
 				}
 				

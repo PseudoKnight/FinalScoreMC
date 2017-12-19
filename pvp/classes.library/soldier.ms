@@ -7,7 +7,7 @@ case 'load':
 		@loc = _relative(ploc(), 'up', 2);
 		@armorStand = spawn_entity('ARMOR_STAND', 1, @loc)[0];
 		set_entity_spec(@armorStand, array('visible': false, 'small': true, 'arms': true));
-		set_mob_equipment(@armorStand, array('WEAPON': array('type': 273)));
+		set_mob_equipment(@armorStand, array('WEAPON': array('name': 'STONE_SPADE')));
 		@loc['yaw'] = @loc['yaw'] + 90;
 		@loc['pitch'] = 0 - @loc['pitch'];
 		@x = 1.40 * cos(to_radians(@loc['yaw'])) * cos(to_radians(@loc['pitch']));

@@ -3,7 +3,7 @@ case 'load':
 	bind(entity_damage, array('id': @player.'damage'), array('type': 'PLAYER', 'cause': 'ENTITY_ATTACK'), @e, @p = @player) {
 		if(@e['damager'] == @p) {
 			@weapon = pinv(@p, null);
-			if(@weapon && @weapon['type'] == 291) {
+			if(@weapon && @weapon['name'] == 'STONE_HOE') {
 				modify_event('amount', 2);
 				set_mob_effect(@e['id'], 20, 1, 7);
 			}

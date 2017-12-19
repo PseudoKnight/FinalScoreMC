@@ -99,7 +99,7 @@ register_command('timer', array(
 			});
 		
 			if(@ptime) {
-				@restartButton = array('type': 371, 'meta': array('display': color('green').color('bold').'Restart Button'));
+				@restartButton = array('name': 'GOLD_NUGGET', 'meta': array('display': color('green').color('bold').'Restart Button'));
 				set_pinv(@player, 0, @restartButton);
 			
 				if(!has_bind(@player.'reset')) {

@@ -15,17 +15,17 @@ register_command('acme', array(
 			}
 			set_pmode(@player, 'ADVENTURE');
 			set_pinv(@player, array( # guts
-				0: array('type': 331, 'meta': array('display': @player.'\'s Blood')),
-				1: array('type': 352, 'meta': array('display': @player.'\'s Funny Bone')),
-				2: array('type': 376, 'meta': array('display': @player.'\'s Heart')),
-				3: array('type': 351, 'data': 15, 'meta': array('display': @player.'\'s Bone Powder')),
-				4: array('type': 351, 'data': 1, 'meta': array('display': @player.'\'s Brain')),
-				5: array('type': 423, 'meta': array('display': @player.'\'s Lung')),
-				6: array('type': 375, 'meta': array('display': @player.'\'s Eyeball')),
-				7: array('type': 397, 'meta': array('display': @player.'\'s Skull')),
-				8: array('type': 434, 'meta': array('display': @player.'\'s Kidney')),
-				9: array('type': 452, 'meta': array('display': @player.'\'s Right Molar')),
-				10: array('type': 452, 'meta': array('display': @player.'\'s Muscle Fiber')),
+				0: array('name': 'REDSTONE', 'meta': array('display': @player.'\'s Blood')),
+				1: array('name': 'BONE', 'meta': array('display': @player.'\'s Funny Bone')),
+				2: array('name': 'FERMENTED_SPIDER_EYE', 'meta': array('display': @player.'\'s Heart')),
+				3: array('name': 'INK_SACK', 'data': 15, 'meta': array('display': @player.'\'s Bone Powder')),
+				4: array('name': 'INK_SACK', 'data': 1, 'meta': array('display': @player.'\'s Brain')),
+				5: array('name': 'MUTTON', 'meta': array('display': @player.'\'s Lung')),
+				6: array('name': 'SPIDER_EYE', 'meta': array('display': @player.'\'s Eyeball')),
+				7: array('name': 'SKULL_ITEM', 'meta': array('display': @player.'\'s Skull')),
+				8: array('name': 'BEETROOT', 'meta': array('display': @player.'\'s Kidney')),
+				9: array('name': 'IRON_NUGGET', 'meta': array('display': @player.'\'s Right Molar')),
+				10: array('name': 'IRON_NUGGET', 'meta': array('display': @player.'\'s Muscle Fiber')),
 			));
 			set_peffect(@player, 2, 20, 5, true);
 			pfacing(@player, pfacing(@player)[0], -90);

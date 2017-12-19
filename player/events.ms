@@ -77,7 +77,7 @@ bind(player_death, null, null, @event) {
 /*
 	Blocks spawning of the wither
 */
-bind(block_place, null, array('type': 144), @event) {
+bind(block_place, null, array('name': 'SKULL'), @event) {
 	if(!has_permission('build.wither')) {
 		foreach(@dir in array('north', 'south', 'east', 'west', 'up', 'down')) {
 			if(get_block_at(_relative(@event['location'], @dir)) == '88:0') {
@@ -192,7 +192,7 @@ bind(player_interact, null, array('block': 26, 'button': 'right'), @event) {
 }
 
 # Anti-xray helper
-bind(block_break, null, array('type': 56), @event) {
+bind(block_break, null, array('name': 'DIAMOND_ORE'), @event) {
 	if(!_is_survival_world(pworld())) {
 		die();
 	}

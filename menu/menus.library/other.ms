@@ -107,7 +107,7 @@
 	),
 );
 @menu[39] = array(
-	'type': 168,
+	'name': 'PRISMARINE',
 	'meta': array(
 		'display': color('aqua').'Sunken City Golf',
 		'lore': array(

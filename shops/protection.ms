@@ -55,7 +55,7 @@
 # }
 
 # Prevent hoppers under shop chests
-bind(block_place, null, array('type': 154), @event) {
+bind(block_place, null, array('name': 'HOPPER'), @event) {
 	include('includes.library/shops.ms');
 	@loc = _relative(@event['location'], 'up');
 	@type = split(':', get_block_at(@loc))[0];

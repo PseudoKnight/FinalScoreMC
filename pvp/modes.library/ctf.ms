@@ -5,17 +5,17 @@ proc _pvp_flag_spawn(@id, @team, @loc) {
 	}
 	try {
 		if(_horizontal_distance(entity_loc(@pvp['team'][@team]['flag']), @pvp['arena']['ctfflag'][@team]) > 3) {
-			@pvp['team'][@team]['flag'] = drop_item(@loc, array('type': 425, 'data': if(@team == 0, '1', '4')), 0)
+			@pvp['team'][@team]['flag'] = drop_item(@loc, array('name': 'BANNER', 'data': if(@team == 0, '1', '4')), 0)
 		}
 	} catch(Exception @ex) {
-		@pvp['team'][@team]['flag'] = drop_item(@loc, array('type': 425, 'data': if(@team == 0, '1', '4')), 0);
+		@pvp['team'][@team]['flag'] = drop_item(@loc, array('name': 'BANNER', 'data': if(@team == 0, '1', '4')), 0);
 	}
 	queue_delay('30000', @id.@team.'flag');
 	queue_push(closure(_pvp_flag_spawn(@id, @team)), @id.@team.'flag');
 }
 
 proc _flag(@item) {
-	if(!is_null(@item) && @item['type'] == 425) {
+	if(!is_null(@item) && @item['name'] == 'BANNER') {
 		if(@item['data'] == 4) {
 			return(1);
 		} else if(@item['data'] == 1) {
@@ -73,7 +73,7 @@ bind(item_pickup, array('id': @id.'flagpickup'), null, @e, @id) {
 	} else {
 		queue_clear(@id.@flag.'flag');
 		modify_event('item', null);
-		set_pinv(player(), 103, array('type': 425, 'data': if(@flag, 4, 1)));
+		set_pinv(player(), 103, array('name': 'BANNER', 'data': if(@flag, 4, 1)));
 		_pvp_msg(@pvp, color('gray').'[PVP] '
 			.@pvp['arena']['team'][if(@flag, 0, 1)]['color'].player().color('r').' picked up the '
 			.@pvp['arena']['team'][@flag]['color'].'flag');

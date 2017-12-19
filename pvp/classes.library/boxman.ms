@@ -110,7 +110,7 @@ case 'load':
 		}
 		if(@damager && @damager != @player) {
 			@weapon = get_mob_equipment(@e['id'])['weapon']
-			if(@weapon && @weapon['type'] == 44) {
+			if(@weapon && @weapon['name'] == 'STEP') {
 				@loc = entity_loc(@e['id']);
 				play_effect(@loc, 'EXPLOSION_LARGE');
 				play_named_sound(@loc, array('sound': 'block.enderchest.open'));

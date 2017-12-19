@@ -9,7 +9,7 @@ bind(player_interact, array('id': @id.'riflereload'), array('item': 265), @event
 	@ammoslot = pheld_slot();
 	play_sound(ploc(), array('sound': 'DOOR_OPEN', 'pitch': 2));
 	foreach(@weaponslot: @weapon in pinv()) {
-		if(@weapon && @weapon['type'] == 291) {
+		if(@weapon && @weapon['name'] == 'STONE_HOE') {
 			// Found weaponslot
 			set_pcooldown(@weapon['name'], 2000 / 50);
 			break();
@@ -19,7 +19,7 @@ bind(player_interact, array('id': @id.'riflereload'), array('item': 265), @event
 		set_timeout(2000, closure(){
 			if(ponline(@event['player']) && phealth()) {
 				@inv = pinv();
-				if(!is_null(@inv[@ammoslot]) && @inv[@ammoslot]['type'] == 265) {
+				if(!is_null(@inv[@ammoslot]) && @inv[@ammoslot]['name'] == 'IRON_INGOT') {
 					@inv[@ammoslot]['qty'] += @ammo['qty'];
 				} else {
 					@inv[@ammoslot] = @ammo;

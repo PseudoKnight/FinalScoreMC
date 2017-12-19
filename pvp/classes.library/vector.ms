@@ -28,7 +28,7 @@ case 'load':
 	bind(entity_damage, array('id': @player.'damage'), array('type': 'PLAYER', 'cause': 'ENTITY_ATTACK'), @e, @p = @player) {
 		if(@e['damager'] == @p) {
 			@helm = pinv(@e['player'], 103)
-			if(@helm && @helm['type'] == 20) {
+			if(@helm && @helm['name'] == 'GLASS') {
 				modify_event('amount', 13);
 			} else {
 				modify_event('amount', 4);

@@ -1,10 +1,10 @@
 bind('creature_spawn', null, array('type': 'ZOMBIE', 'reason': 'NATURAL'), @event) {
 	if(@event['location']['world'] === 'outworld') {
 		set_mob_equipment(@event['id'], associative_array(
-			'HELMET': array('type': 397, 'data': 3, 'meta': array('owner': 'rabbit2077')),
-			'CHESTPLATE': array('type': 299, 'meta': array('color': array('r': 180, 'g': 180, 'b': 180))),
-			'LEGGINGS': array('type': 300, 'meta': array('color': array('r': 180, 'g': 180, 'b': 180))),
-			'BOOTS': array('type': 309),
+			'HELMET': array('name': 'SKULL_ITEM', 'data': 3, 'meta': array('owner': 'rabbit2077')),
+			'CHESTPLATE': array('name': 'LEATHER_CHESTPLATE', 'meta': array('color': array('r': 180, 'g': 180, 'b': 180))),
+			'LEGGINGS': array('name': 'LEATHER_LEGGINGS', 'meta': array('color': array('r': 180, 'g': 180, 'b': 180))),
+			'BOOTS': array('name': 'IRON_BOOTS'),
 		));
 		set_equipment_droprates(@event['id'], associative_array(
 			'WEAPON': 1,
@@ -25,7 +25,7 @@ bind('entity_death', null, array('type': 'ZOMBIE'), @event) {
 	if(@event['location']['world'] === 'outworld') {
 		@inv = get_mob_equipment(@event['id']);
 		if(!is_null(@inv['helmet'])
-		&& @inv['helmet']['type'] == 397) {
+		&& @inv['helmet']['name'] == 'SKULL_ITEM') {
 			@loc = _relative(@event['location'], 'up');
 			if(function_exists('play_effect')) {
 				play_effect(@loc, 'COLOURED_DUST', array('particleCount': 15, 'offsetX': 1, 'offsetY': 1, 'offsetZ': 1));
@@ -39,7 +39,7 @@ bind('target_player', null, array('mobtype': 'ZOMBIE'), @event, @day) {
 		if(entity_loc(@event['id'])['world'] === 'outworld') {
 			@inv = get_mob_equipment(@event['id']);
 			if(!is_null(@inv['helmet'])
-			&& @inv['helmet']['type'] == 397
+			&& @inv['helmet']['name'] == 'SKULL_ITEM'
 			&& entity_can_see(@event['id'], puuid(@event['player']))) {
 				@mobs = array(
 					'BAT',
@@ -82,7 +82,7 @@ bind('target_player', null, array('mobtype': 'ZOMBIE'), @event, @day) {
 				);
 				@mob = @mobs[rand(array_size(@mobs))];
 				set_mob_equipment(@event['id'], associative_array(
-					'WEAPON': array('type': 383, 'meta': array('spawntype': @mob)),
+					'WEAPON': array('name': 'MONSTER_EGG', 'meta': array('spawntype': @mob)),
 				));
 				@e = shoot_projectile(@event['id'], 'EGG', @event['player'], rand() + 1);
 				if(@day == 1) {
@@ -100,7 +100,7 @@ bind('target_player', null, array('mobtype': 'ZOMBIE'), @event, @day) {
 					&& entity_can_see(@event['id'], puuid(@event['player']))) {
 						@mob = @mobs[rand(array_size(@mobs))];
 						set_mob_equipment(@event['id'], associative_array(
-							'OFF_HAND': array('type': 383, 'meta': array('spawntype': @mob)),
+							'OFF_HAND': array('name': 'MONSTER_EGG', 'meta': array('spawntype': @mob)),
 						));
 						@e = shoot_projectile(@event['id'], 'EGG', @event['player'], rand() + 1);
 						if(@day == 1) {

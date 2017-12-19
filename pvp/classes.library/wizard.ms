@@ -40,7 +40,7 @@ case 'load':
 				return();
 			}
 			@newitem = pinv(player(), @slot)
-			if(!is_null(@newitem) && @newitem['type'] == 280) {
+			if(!is_null(@newitem) && @newitem['name'] == 'STICK') {
 				set_pinv(player(), @slot, @item);
 				play_sound(ploc(), array('sound': 'FIZZ', 'volume': 4))
 			}

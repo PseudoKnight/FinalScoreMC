@@ -79,7 +79,7 @@ case 'load':
 		@loc['y'] += 2.5 + @y;
 		@loc['z'] += @z;
 		@star = spawn_entity('DROPPED_ITEM', 1, @loc)[0];
-		set_entity_spec(@star, array('itemstack': array('type': 399, 'meta': array('display': player(), 'lore': array(3))), 'pickupdelay': 1));
+		set_entity_spec(@star, array('itemstack': array('name': 'NETHER_STAR', 'meta': array('display': player(), 'lore': array(3))), 'pickupdelay': 1));
 		set_entity_velocity(@star, @v);
 		play_sound(@loc, array('sound': 'IRONGOLEM_THROW', 'pitch': 2));
 		set_interval(50, closure(){
@@ -90,7 +90,7 @@ case 'load':
 				if(get_block_at(@loc) != '0:0') {
 					play_sound(@loc, array('sound': 'ANVIL_LAND', 'pitch': 2, 'volume': 0.5));
 					play_effect(@loc, 'CRIT', array('particleCount', 5));
-					set_entity_spec(@star, array('itemstack': array('type': 399, 'meta': array('display': player(), 'lore': array(0)))));
+					set_entity_spec(@star, array('itemstack': array('name': 'NETHER_STAR', 'meta': array('display': player(), 'lore': array(0)))));
 					clear_task();
 				} else {
 					set_entity_loc(@star, @loc);

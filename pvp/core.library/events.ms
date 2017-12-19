@@ -532,8 +532,8 @@ if(array_contains(@pvp['arena']['flags'], 'stackedpickup')) {
 
 		foreach(@slot: @item in pinv()) {
 			if(!is_null(@item)
-			&& @e['item']['type'] == @item['type']
-			&& @e['item']['type'] != 373
+			&& @e['item']['name'] == @item['name']
+			&& @e['item']['name'] != 'POTION'
 			&& @e['item']['enchants'] == @item['enchants']) {
 				if(@item['data'] > @e['item']['data']) {
 					set_pinv(player(), @slot, @e['item']);

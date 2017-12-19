@@ -21,7 +21,7 @@ case 'load':
 		set_timeout(15000, closure(){
 			if(ponline(player())) {
 				@item = pinv(player(), @slot);
-				if(@item && @item['type'] == 290) {
+				if(@item && @item['name'] == 'WOOD_HOE') {
 					play_named_sound(ploc(), array('sound': 'block.enchantment_table.use'));
 				}
 			}
