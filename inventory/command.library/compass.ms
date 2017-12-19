@@ -43,8 +43,13 @@ register_command('compass', array(
 					set_compass_target(ploc(@player));
 					msg(color('green').'Compass is now pointing to '.@player.'\'s last location.');
 				} catch(PlayerOfflineException @ex) {
-					if(is_numeric(@target) && is_numeric(@args[1])) {
-						set_compass_target(array(double(@target), 0, double(@args[1]), pworld()));
+					@x = @args[0];
+					@z = @args[1];
+					if(array_size(@args) == 3) {
+						@z = @args[2];
+					}
+					if(is_numeric(@x) && is_numeric(@z)) {
+						set_compass_target(array(double(@x), 0, double(@z), pworld()));
 						msg(color('green').'Compass is now pointing to x:'.@target.' z:'.@args[1]);
 					}
 				}
