@@ -213,14 +213,8 @@ proc _player_equip(@id, @player) {
 }
 
 proc _player_assign_team(@player, @pvp) {
-	// Make sure we don't assign them to the same solo team twice in a row
-	if(array_index_exists(@pvp, 'lastsolo') && @pvp['lastsolo'] == @player) {
-		@soloteam = array_index(@pvp['arena']['teamratio'], 1);
-		@team = abs(@soloteam - 1);
-		@pvp['players'][@player]['team'] = @team;
-		@pvp['team'][@team]['players'][] = @player;
-		array_remove_values(@pvp['team'][@soloteam]['players'], @player)
-	} else if(array_size(@pvp['team'][0]['players']) * @pvp['arena']['teamratio'][1] <= array_size(@pvp['team'][1]['players']) * @pvp['arena']['teamratio'][0]) {
+	@ratio = @pvp['arena']['teamratio'];
+	if(array_size(@pvp['team'][0]['players']) * @ratio[1] <= array_size(@pvp['team'][1]['players']) * @ratio[0]) {
 		@pvp['players'][@player]['team'] = 0;
 		if(!array_contains(@pvp['team'][0]['players'], @player)) {
 			@pvp['team'][0]['players'][] = @player;

@@ -410,7 +410,7 @@ proc _pvp_end_match(@id, @winners) {
 		@teams = array_indexes(@pvp['arena']['teamratio'], 1);
 		if(array_size(@teams) == 1) {
 			@team = @teams[0];
-			@lastSolo = @pvp['team'][@team]['players'][0];
+			@lastSolo = array_implode(@pvp['team'][@team]['players']);
 		}
 	}
 	

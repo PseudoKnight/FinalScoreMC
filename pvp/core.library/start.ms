@@ -290,7 +290,15 @@ proc _pvp_start(@pvp, @id){
 		if(!array_index_exists(@arena, 'teamratio')) {
 			@arena['teamratio'] = array(1, 1);
 		}
-		@players = array_keys(@pvp['players'])
+		@players = array_keys(@pvp['players']);
+		// first make sure solo player doesn't end up on the same team as last game
+		if(array_index_exists(@pvp, 'lastsolo') && array_contains(@players, @pvp['lastsolo'])) {
+			@player = @pvp['lastsolo'];
+			@team = abs(array_index(@pvp['arena']['teamratio'], 1) - 1);
+			@pvp['players'][@player]['team'] = @team;
+			@pvp['team'][@team]['players'][] = @player;
+			array_remove_values(@players, @player);
+		}
 		for(@i = 0, @i < array_size(@pvp['players']), @i++) {
 			@index = rand(0, array_size(@players));
 			@player = @players[@index];
