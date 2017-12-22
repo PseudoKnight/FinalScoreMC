@@ -142,11 +142,11 @@ register_command('spleef', array(
 				#Given two blocks, iterates through all the blocks inside the cuboid, and calls the
 				#user defined function on them. The used defined procedure should accept 3 parameters,
 				#the x, y, and z coordinates of the block.
-				proc _iterate_cuboid(@b1, @b2, @proc_name, @mat) {
+				proc _iterate_cuboid(@b1, @b2, @proc_name, @mat, @world) {
 					for(@x = min(@b1[0], @b2[0]), @x <= max(@b1[0], @b2[0]), @x++) {
 						for(@y = min(@b1[1], @b2[1]), @y <= max(@b1[1], @b2[1]), @y++) {
 							for(@z = min(@b1[2], @b2[2]), @z <= max(@b1[2], @b2[2]), @z++) {
-								call_proc(@proc_name, @x, @y, @z, @mat);
+								call_proc(@proc_name, @x, @y, @z, @mat, @world);
 							}
 						}
 					}
@@ -155,7 +155,7 @@ register_command('spleef', array(
 				set_timeout(1000, closure(){
 					if(get_block_at(@cfg['option']['platforming']) === '124:0') {
 						#platforming
-						proc _setfloor(@x, @y, @z, @mat) {
+						proc _setfloor(@x, @y, @z, @mat, @world) {
 							if(rand(2)) {
 								set_block_at(@x, @y, @z, @mat, @world, false);
 							} else {
@@ -164,19 +164,19 @@ register_command('spleef', array(
 						}
 					} else {
 						#regular floor
-						proc _setfloor(@x, @y, @z, @mat) {
+						proc _setfloor(@x, @y, @z, @mat, @world) {
 							if(get_block_at(@x, @y, @z) != @mat) {
 								set_block_at(@x, @y, @z, @mat, @world, false);
 							}
 						}
 					}
-					_iterate_cuboid(@region[0], @region[1], '_setfloor', @mat);
+					_iterate_cuboid(@region[0], @region[1], '_setfloor', @mat, @world);
 				});
 		
 				set_timeout(2000, closure(){
 					#random obstacles
 					if(get_block_at(@cfg['option']['obstacles']) ==  '124:0') {
-						proc _setwalls(@x, @y, @z) {
+						proc _setwalls(@x, @y, @z, @world) {
 							if(assign(@rand, rand(100)) < 5) {
 								set_block_at(array(@x, @y, @z, @world), '98:0', false);
 								set_block_at(array(@x, @y + 1, @z, @world), '98:0', false);
@@ -193,14 +193,14 @@ register_command('spleef', array(
 						}
 						#clear walls if random obstacles is turned off
 					} else {
-						proc _setwalls(@x, @y, @z) {
+						proc _setwalls(@x, @y, @z, @world) {
 							if(get_block_at(@x, @y, @z)[0] !== '0') {
 								set_block_at(array(@x, @y, @z, @world), '0:0', false);
 								set_block_at(array(@x, @y + 1, @z, @world), '0:0', false);
 							}
 						}
 					}
-					_iterate_cuboid(array(@region[0][0], @region[0][1] + 1, @region[0][2]), array(@region[1][0], @region[1][1] + 1, @region[1][2]), '_setwalls');
+					_iterate_cuboid(array(@region[0][0], @region[0][1] + 1, @region[0][2]), array(@region[1][0], @region[1][1] + 1, @region[1][2]), '_setwalls', @world);
 		
 					foreach(@player in array_keys(@currentspleef)) {
 						set_pmode(@player, 'SURVIVAL');
