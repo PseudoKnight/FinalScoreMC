@@ -19,7 +19,7 @@ proc _warmuptp(@player, @loc, @cleareffects = false, @force = false) {
 		if(@cleareffects) {
 			_clear_peffects(@player);
 		}
-		set_peffect(@player, 25, -1, 1, true, false); // don't sink into ground on tp
+		set_peffect(@player, 25, -1, 0.05, true, false); // don't sink into ground on tp
 		set_peffect(@player, 24, 0, 1, true, false);
 		set_peffect(@player, 15, 1, 2, true, false); // expanding fog
 		@particle = array('particleCount': 25, 'speed': 0.05, 'offsetX': 0.34, 'offsetY': 0, 'offsetZ': 0.34);
