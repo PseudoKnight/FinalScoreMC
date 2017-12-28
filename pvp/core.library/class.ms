@@ -39,6 +39,7 @@ proc _class(@action, @player, @classname, @pvp) {
 
 		case 'powerup':
 			set_phunger(@player, min(20, phunger(@player) + 4));
+			set_phealth(@player, min(20, phealth(@player) + 1));
 			set_ponfire(@player, false);
 			@flash = true;
 			foreach(@effect in get_peffect(@player)) {
@@ -49,8 +50,8 @@ proc _class(@action, @player, @classname, @pvp) {
 			if(@flash) {
 				set_peffect(@player, 16, 0, 1, true);
 			}
-			set_peffect(@player, 10, 1, 5, true);
-			play_sound(ploc(@player), array('sound': 'enderman_teleport', 'pitch': 2), @player)
+			set_peffect(@player, 10, 0, 8, true);
+			play_sound(ploc(@player), array('sound': 'enderman_teleport', 'pitch': 2), @player);
 			if(array_index_exists(@class, 'ammo')) {
 				@inv = pinv(@player);
 				foreach(@slot: @item in @class['ammo']) {

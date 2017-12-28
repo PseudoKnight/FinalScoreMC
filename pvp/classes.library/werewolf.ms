@@ -31,7 +31,7 @@ case 'equip':
 	queue_clear(@player.'evolve');
 
 case 'powerup':
-	damage_entity(puuid(@player), 3);
+	damage_entity(puuid(@player), 5);
 	set_peffect(@player, 1, 3, 17);
 	set_peffect(@player, 5, 1, 17);
 	set_peffect(@player, 8, 1, 17);
