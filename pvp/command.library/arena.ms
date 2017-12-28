@@ -145,7 +145,6 @@ register_command('arena', array(
 					case 'rallycall':
 					case 'stackedpickup':
 					case 'heartsdisplay':
-					case 'script':
 					case 'exitrespawn':
 
 						switch(@args[3]) {
@@ -292,7 +291,6 @@ register_command('arena', array(
 							'ctf': 'Capture the Flag',
 							'koth': 'King of the Hill',
 							'infection': 'Zombie Infection',
-							'tntrun': 'TNT Run Survival',
 						);
 						if(!array_index_exists(@modes, to_lower(@args[3]))) {
 							die(color('yellow').'Available modes: ' . @modes);

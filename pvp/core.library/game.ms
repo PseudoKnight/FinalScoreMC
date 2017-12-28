@@ -6,8 +6,9 @@ include('stats.ms');
 include('weapons.ms');
 
 # ARENA
-if(array_contains(@pvp['arena']['flags'], 'script')){
-	include('../arenas.library/'.@id.'.ms');
+@arenaScript = '../arenas.library/'.@id.'.ms';
+if(file_exists(@arenaScript)){
+	include(@arenaScript);
 }
 
 # CLASSES
@@ -108,8 +109,9 @@ proc _pvp_start_match(@id) {
 	}
 
 	# MODES
-	if(@pvp['arena']['mode'] !== 'dm') {
-		include('../modes.library/'.@pvp['arena']['mode'].'.ms');
+	@modeScript = '../modes.library/'.@pvp['arena']['mode'].'.ms';
+	if(file_exists(@modeScript)) {
+		include(@modeScript);
 	}
 
 	# WEAPONS
