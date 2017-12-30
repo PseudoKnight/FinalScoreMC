@@ -69,6 +69,7 @@ register_command('mob', array(
 					case 'ai':
 					case 'tame':
 					case 'glowing':
+					case 'invulnerable':
 						if(array_size(@args) == 3) {
 							return(false);
 						}
@@ -148,7 +149,7 @@ register_command('mob', array(
 						}
 						@mob[@setting] = json_decode(array_implode(@args[3..-1]));
 						msg(color('green').'Set '.@setting.' to '.@mob[@setting]);
-
+						
 					case 'rider':
 						if(array_size(@args) == 3) {
 							return(false);

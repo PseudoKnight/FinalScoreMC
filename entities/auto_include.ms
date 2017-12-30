@@ -56,6 +56,9 @@ proc _spawn_mob(@mob, @loc, @owner, @teammates) {
 					set_max_health(@m, @value);
 					set_entity_health(@m, 100);
 					
+				case 'invulnerable':
+					set_entity_invulnerable(@m, @value);
+					
 				case 'rider':
 					if(@value === 'owner') {
 						set_entity_rider(@m, puuid(@owner));
