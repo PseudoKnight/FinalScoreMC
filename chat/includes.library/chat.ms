@@ -1,4 +1,7 @@
 proc _chat(@player, @message, @recipients, @discordChannel = '') {
+	if(length(@message) == 0) {
+		die();
+	}
 	# PRIVATE MESSAGING
 	if(@message[0] === '@') {
 		@p = substr(parse_args(@message)[0], 1)
