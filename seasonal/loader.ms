@@ -1,6 +1,8 @@
 @month = simple_date('MMM');
 @day = integer(simple_date('d'));
-if(@month == 'Feb' && @day > 9 && @day < 15) {
+if(@month == 'Dec' && @day == 31 || @month == 'Jan' && @day == 1) {
+	include('seasons.library/newyears.ms');
+} else if(@month == 'Feb' && @day > 9 && @day < 15) {
 	include('seasons.library/valentines.ms');
 } else if(@month == 'Mar' && @day > 21 || @month == 'Apr' && @day < 26) {
 	include('seasons.library/easter.ms');

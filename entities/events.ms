@@ -48,8 +48,8 @@ bind(entity_damage, null, array('type': 'ITEM_FRAME', 'cause': 'PROJECTILE'), @e
 	}
 }
 
-// Block firework damage in Park
-bind(entity_damage, null, array('cause': 'ENTITY_EXPLOSION', 'world': 'custom'), @event) {
+// Block firework damage
+bind(entity_damage, null, array('cause': 'ENTITY_EXPLOSION'), @event) {
 	if(entity_type(@event['damager']) == 'FIREWORK') {
 		cancel();
 	}
