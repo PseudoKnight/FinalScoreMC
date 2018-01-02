@@ -55,8 +55,12 @@ proc _snake_queue(@mode) {
 	// Create scoreboard
 	try {
 		create_scoreboard('snake');
-		create_objective('alive', 'DUMMY', 'snake');
-		set_objective_display('alive', associative_array('displayname': 'SNAKE', 'slot': 'SIDEBAR'), 'snake');
+		create_objective('score', 'DUMMY', 'snake');
+		@display = 'SNAKE';
+		if(@game['mode'] == 'versus' || @game['mode'] == 'elimination') {
+			@display = 'SNAKE: First to 3';
+		}
+		set_objective_display('score', associative_array('displayname': 'SNAKE', 'slot': 'SIDEBAR'), 'snake');
 	} catch(ScoreboardException @ex) {
 		die(color('red').'Snake is still running.');
 	}
@@ -101,6 +105,8 @@ proc _snake_queue(@mode) {
 		export('snake', null);
 		die(color('red').'Not enough players in region in adventure mode.');
 	}
+	
+	_add_activity('snake', 'Snake');
 
 	// Add bots to fill up slots
 	if(@game['mode'] != 'versus') {
@@ -134,20 +140,16 @@ proc _snake_queue(@mode) {
 				if(array_contains(all_virtualchests(), 'snake') && !pviewing_virtualchest('snake')) {
 					unbind();
 					unbind('snake-invclick');
-					queue_push(closure(){
-						_snake_set_colors(@game);
-						del_virtualchest('snake');
-						_snake_countdown(@game);
-					}, 'snake_cleanup');
+					_snake_set_colors(@game);
+					del_virtualchest('snake');
+					_snake_countdown(@game);
 				}
 			});
 		}
 	} else {
-		queue_push(closure(){
-			_snake_set_colors(@game);
-			del_virtualchest('snake');
-			_snake_countdown(@game);
-		}, 'snake_cleanup');
+		_snake_set_colors(@game);
+		del_virtualchest('snake');
+		_snake_countdown(@game);
 	}
 }
 
@@ -165,6 +167,7 @@ proc _snake_countdown(@game) {
 	);
 	@countdown = array(8);
 	set_interval(1000, closure(){
+		_snake_set_colors(@game);
 		foreach(@p in array_keys(@game['snakes'])) {
 			if(!ponline(@p)) {
 				continue();
@@ -180,13 +183,15 @@ proc _snake_countdown(@game) {
 			_snake_play_song(@game);
 		}
 		if(@countdown[0] == 0) {
-			clear_task();
-			_snake_bind_events(@game);
-			_snake_add_powerup(@game);
-			_snake_start_task(@game);
-			_add_activity('snake', 'Snake');
+			if(!queue_running('snake_cleanup')) {
+				clear_task();
+				_snake_bind_events(@game);
+				_snake_add_powerup(@game);
+				_snake_start_task(@game);
+			}
+		} else {
+			@countdown[0] -= 1;
 		}
-		@countdown[0] -= 1;
 	});
 }
 
@@ -239,12 +244,43 @@ proc _snake_start_task(@game) {
 }
 
 proc _snake_end(@winner, @game) {
-	if(@game['mode'] == 'endless') {
+	if(@game['mode'] == 'versus' || @game['mode'] == 'elimination') {
+		@endgame = false;
+		if(@winner) {
+			@title = @game['snakes'][@winner]['color'].@winner.' wins ';
+			set_pscore('score', @winner, get_pscore('score', @winner, 'snake') + 1, 'snake');
+			if(get_pscore('score', @winner, 'snake') == 3) {
+				@endgame = true;
+				@title .= 'the game!';
+			} else {
+				@title .= 'this round!';
+			}
+			foreach(@player in array_keys(@game['snakes'])) {
+				if(ponline(@player)) {
+					title(@player, '', @title, 40, 80, 40);
+				}
+			}
+		} else {
+			@endgame = true;
+		}
+		
+		if(@endgame) {
+			_snake_cleanup(@game);
+		} else {
+			_snake_clean_surfaces(@game['arena'], @game['surfaces']);
+			_snake_cleanup_round(@game);
+			foreach(@player: @snake in @game['snakes']) {
+				_snake_spawn(@player, @game);
+			}
+			_snake_countdown(@game);
+		}
+		
+	} else if(@game['mode'] == 'endless') {
 		// Sort player scores
 		@scores = array();
 		foreach(@p: @snake in @game['snakes']) {
 			if(ponline(@p)) {
-				@pscore = get_pscore('alive', @p, 'snake');
+				@pscore = get_pscore('score', @p, 'snake');
 				@array = array('name': @p, 'value': @pscore, 'highscore': false, 'topscore': false);
 				foreach(@i: @score in @scores) {
 					if(@pscore > @score['value']) {
@@ -328,22 +364,25 @@ proc _snake_end(@winner, @game) {
 				}
 			}
 		}
-		
-	} else if(@winner) {
-		@title = @game['snakes'][@winner]['color'].@winner.' wins!';
-		foreach(@player in array_keys(@game['snakes'])) {
-			if(ponline(@player)) {
-				title(@player, @title, '', 40, 80, 40);
-			}
-		}
+		_snake_cleanup(@game);
 	}
-	_snake_cleanup(@game);
+}
+
+proc _snake_cleanup_round(@game) {
+	@game['botsOnly'] = false;
+	@game['powerups'] = array();
+	@game['missiles'] = associative_array();
+	@game['tnt'] = array();
+	@game['nukes'] = array();
+	_snake_unbind_events();
+	_snake_stop_song();
+	if(array_index_exists(@game, 'interval')) {
+		clear_task(@game['interval']);
+	}
 }
 
 proc _snake_cleanup(@game) {
-	_snake_unbind_events();
-	_snake_stop_song();
-	clear_task(@game['interval']);
+	_snake_cleanup_round(@game);
 	del_virtualchest('snake');
 	set_timeout(7000, closure(){
 		foreach(@player: @snake in @game['snakes']) {
