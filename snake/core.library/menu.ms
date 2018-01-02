@@ -5,13 +5,17 @@ proc _snake_menu() {
 		'title': color('bold').'Choose a Mode',
 		'1': array('name': 'REDSTONE_BLOCK', 'meta': array(
 			'display': color('red').color('bold').'ELIMINATION MODE',
-			'lore': color('white').'Be the last snake slithering.',
+			'lore': array(
+				color('white').'Win a round by being the last snake slithering.',
+				color('white').'Win the game by winning three rounds.',
+			),
 		)),
 		'2': array('name': 'DIAMOND_SWORD', 'meta': array(
 			'display': color('aqua').color('bold').'VERSUS MODE',
 			'lore': array(
 				color('white').'Like elimination, but with no bots.',
-				color('white').'Be the last snake slithering.',
+				color('white').'Win a round by being the last snake slithering.',
+				color('white').'Win the game by winning three rounds.',
 			)
 		)),
 		'3': array('name': 'WATCH', 'meta': array(
