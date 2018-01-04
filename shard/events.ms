@@ -5,17 +5,21 @@ bind(player_interact, null, array('item': 264, 'hand': 'main_hand', 'block': 0),
 			action_msg('You can\'t go deeper!');
 		} else {
 			// Late join
+			@game = import('shard');
 			play_sound(ploc(), array('sound': 'GLASS', 'pitch': 0.5));
 			@loc = get_spawn('shard');
 			@loc['y'] -= 1;
 			set_ploc(_get_spawn_location());
-			_clear_pinv(player());
+			if(!@game || !array_index_exists(@game['rules'], 'keep') || !@game['rules']['keep']) {
+				_clear_pinv(player());
+			}
 			set_plevel(player(), 0);
 			set_peffect(player(), 11, 3, 30, true);
 			set_pscoreboard(player(), 'shard');
 			play_sound(@loc, array('sound': 'GLASS', 'pitch': 0.5), player());
-			if(get_world_border('shard')['width'] < 128) {
-				set_pmode('SPECTATOR');
+			@game = import('shard');
+			if(@game && !@game['lateJoin']) {
+				set_pmode(player(), 'SPECTATOR');
 			}
 		}
 		die();

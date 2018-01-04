@@ -135,6 +135,12 @@ proc _shard_create(@rules){
 						}
 					});
 				}
+				@game = array(
+					'respawnPlayers' = @respawnPlayers,
+					'rules' = @rules,
+					'lateJoin' = true,
+				);
+				export('shard', @game);
 				
 				// Start game
 				create_scoreboard('shard');
@@ -166,7 +172,7 @@ proc _shard_create(@rules){
 				
 				// Load objective and rule scripts
 				@binds = array();
-				export('shard.binds', @binds);
+				@game['binds'] = @binds;
 				foreach(@rule: @value in @rules) {
 					if(@rule == 'objective' && file_exists('../objectives.library/'.@value.'.ms')) {
 						include('../objectives.library/'.@value.'.ms');
@@ -291,6 +297,8 @@ proc _shard_create(@rules){
 								set_world_border('shard', array('width': 1, 'seconds': @rules['timelimit'] * 60));
 								_worldmsg('shard', color('red').color('bold').'Shard has started to collapse! ('.@rules['timelimit'].' minutes)');
 							}
+							@game = import('shard');
+							@game['lateJoin'] = false;
 						} else {
 							modify_event('death_message', null);
 							modify_event('keep_inventory', true);
