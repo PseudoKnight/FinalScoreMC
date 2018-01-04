@@ -31,10 +31,10 @@ x_new_thread('segmented_times', closure(){
 	@output = colorize('&e&m|-------------------&e&l[ TOP SEGMENTED TIMES ]&r');
 	foreach(@index: @value in @players) {
 		@time = '';
-		if(@value['total'] >= 60) {
-			@time = simple_date('m\u0027m\u0027 ss.S', integer(@value['total'] * 1000));
+		if(@value['total'] >= 3600) {
+			@time = simple_date('h\u0027h\u0027 m\u0027m\u0027 ss.S', integer(@value['total'] * 1000));
 		} else {
-			@time = simple_date('s.S', integer(@value['total'] * 1000));
+			@time = simple_date('m\u0027m\u0027 ss.S', integer(@value['total'] * 1000));
 		}
 		@time = substr(@time, 0, length(@time) - 2).'s';
 		@output .= '\n'.color('gray').(@index + 1).color('green').' [ '.@time.' ] '.color('reset').@value['name'];
