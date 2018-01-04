@@ -111,12 +111,6 @@ proc _snake_spawn(@player, @game) {
 	_snake_set_top(@snake);
 	
 	if(ponline(@player)) {
-		_clear_pinv(@player);
-		@block = split(':', @snake['tail']);
-		set_pinv(@player, array(
-			7: array('type': @block[0], 'data': @block[1]),
-			8: array('name': 'REDSTONE_TORCH_ON', 'meta': associative_array('display': 'JOYSTICK')),
-		));
 		runas('~console', '/jukebox show add '.@player.' @snake');
 	}
 }
@@ -166,6 +160,14 @@ proc _snake_set_colors(@game) {
 		}
 		set_block_at(@snake['loc'], @snake['head'], false);
 		set_block_at(@snake['blocks'][0], @snake['tail'], false);
+		if(ponline(@name)) {
+			_clear_pinv(@name);
+			@block = split(':', @snake['tail']);
+			set_pinv(@name, array(
+				7: array('type': @block[0], 'data': @block[1]),
+				8: array('name': 'REDSTONE_TORCH_ON', 'meta': associative_array('display': 'JOYSTICK')),
+			));
+		}
 	}
 }
 
