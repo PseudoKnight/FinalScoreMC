@@ -15,6 +15,7 @@ case 'load':
 			} else if(@glideState[0]) {
 				@glideState[0] = false;
 				set_entity_gliding(puuid(@player), false);
+				set_entity_fall_distance(puuid(), 0);
 			} else if(@xp < 99) {
 				set_pexp(@player, @xp + 1);
 			}
@@ -35,6 +36,7 @@ case 'load':
 		if(player() == @player) {
 			@glideState[0] = false;
 			set_entity_gliding(puuid(), false);
+			set_entity_fall_distance(puuid(), 0);
 		}
 	}
 	
