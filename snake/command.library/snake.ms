@@ -57,6 +57,17 @@ register_command('snake', array(
 				}
 				x_recompile_includes('../core.library');
 				msg(color('green').'Done!');
+				
+			case 'end':
+				if(!has_permission('group.moderator')) {
+					die(color('gold').'You do not have permission.');
+				}
+				if(queue_running('snake_cleanup')) {
+					die(color('gold').'The game is still resetting.');
+				}
+				include('../core.library/game.ms');
+				_snake_cleanup(import('snake'));
+				msg(color('green').'Done!');
 			
 			default:
 				return(false);

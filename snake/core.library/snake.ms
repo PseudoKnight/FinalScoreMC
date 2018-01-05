@@ -39,7 +39,14 @@ proc _snake_add(@player, @game) {
 		set_pscore('score', @player, 0, 'snake');
 	}
 	
-	if(ponline(@player)) {
+	if(@game['mode'] == 'capture') {
+		@team = 0;
+		if(array_size(@game['teams'][0]) > array_size(@game['teams'][1])) {
+			@team = 1;
+		}
+		@game['snakes'][@player]['team'] = @team;
+		@game['teams'][@team][] = @player;
+	} else if(ponline(@player)) {
 		@item = pinv(@player, 7);
 		if(@item && (@item['name'] == 'STAINED_CLAY' || @item['name'] == 'CONCRETE')) {
 			_snake_set_color(@player, @item['type'].':'.@item['data'], @game);
@@ -58,6 +65,7 @@ proc _snake_add(@player, @game) {
 		set_pflight(@player, true);
 		set_pflying(@player, true);
 		_set_pactivity(@player, 'SNAKE');
+		runas('~console', '/jukebox show add '.@player.' @snake');
 	} else {
 		@game['snakes'][@player]['bot'] = @player;
 	}
@@ -66,27 +74,32 @@ proc _snake_add(@player, @game) {
 }
 
 proc _snake_spawn(@player, @game) {
-	@num = 0;
 	@region = '';
-	while(@num++ < @game['surfaces']) {
-		@region = 'snake_'.@game['arena'].@num;
-		@found = false;
-		foreach(@snake in @game['snakes']) {
-			if(array_index_exists(@snake, 'region') && @snake['region'] == @region) {
-				@found = true;
+	if(@game['mode'] == 'capture') {
+		@region = 'snake_'.@game['arena'].(@game['snakes'][@player]['team'] * 2 + 2);
+		@startLoc = _snake_valid_location(@region, 8);
+	} else {
+		@num = 0;
+		while(@num++ < @game['surfaces']) {
+			@region = 'snake_'.@game['arena'].@num;
+			@found = false;
+			foreach(@snake in @game['snakes']) {
+				if(array_index_exists(@snake, 'region') && @snake['region'] == @region) {
+					@found = true;
+					break();
+				}
+			}
+			if(!@found) {
 				break();
 			}
 		}
-		if(!@found) {
-			break();
+		if(@num > @game['surfaces']) {
+			@region = 'snake_'.@game['arena'].rand(1, @game['surfaces'] + 1);
+		} else {
+			@region = 'snake_'.@game['arena'].@num;
 		}
+		@startLoc = _snake_valid_location(@region, 5);
 	}
-	if(@num > @game['surfaces']) {
-		@region = 'snake_'.@game['arena'].rand(1, @game['surfaces'] + 1);
-	} else {
-		@region = 'snake_'.@game['arena'].@num;
-	}
-	@startLoc = _snake_valid_location(@region, 5);
 	if(!@startLoc) {
 		return(false);
 	}
@@ -110,21 +123,26 @@ proc _snake_spawn(@player, @game) {
 	
 	_snake_set_top(@snake);
 	
-	if(ponline(@player)) {
-		runas('~console', '/jukebox show add '.@player.' @snake');
+	if(ponline(@player) && @game['mode'] == 'capture' && @snake['tail']) {
+		_clear_pinv(@player);
+		@block = split(':', @snake['tail']);
+		set_pinv(@player, array(
+			7: array('type': @block[0], 'data': @block[1]),
+			8: array('name': 'REDSTONE_TORCH_ON', 'meta': associative_array('display': 'JOYSTICK')),
+		));
 	}
 }
 
 proc _snake_set_color(@player, @color, @game,
 @colors = array(
 	array('159:11', '159:3', '9'), # blue
-	array('159:13', '159:5', '2'), # green
-	array('159:14', '159:6', 'c'), # red
-	array('159:10', '159:2', '5'), # purple
 	array('251:11', '251:3', 'b'), # neon blue
-	array('251:1', '251:4', 'e'), # neon yellow
+	array('159:13', '159:5', '2'), # green
 	array('251:13', '251:5', 'a'), # neon green
+	array('159:14', '159:6', 'c'), # red
 	array('251:14', '251:6', 'd'), # neon pink
+	array('159:10', '159:2', '5'), # purple
+	array('251:1', '251:4', 'e'), # neon yellow
 	array('251:8', '251:0', 'f'), # neon white
 )) {
 	@snake = @game['snakes'][@player];
@@ -150,8 +168,8 @@ proc _snake_set_colors(@game) {
 	foreach(@name: @snake in @game['snakes']) {
 		if(!@snake['head']) {
 			@inv = get_virtualchest('snake');
-			foreach(@slot in range(@game['numPlayers'])) {
-				if(@inv[@slot]) {
+			foreach(@slot in range(9)) {
+				if(@inv[@slot] && (!array_index_exists(@snake, 'team') || integer(@slot / 4) == @snake['team'])) {
 					@item = @inv[@slot]['type'].':'.@inv[@slot]['data'];
 					_snake_set_color(@name, @item, @game);
 					break();
@@ -221,7 +239,7 @@ proc _snake_kill(@player, @game) {
 						@block = @snake['blocks'][@i - @n];
 						@blockType = get_block_at(@block);
 						if(@blockType == @snake['tail']) {
-							set_block_at(@block, @snake['head'], false);
+							set_block_at(@block, if(@game['mode'] == 'capture', 0, @snake['head']), false);
 							play_effect(@block, 'PARTICLE_SMOKE', associative_array('particleCount': 8, 'speed': 0, 'offsetX': 1, 'offsetY': 1, 'offsetZ': 1, 'radius': 40));
 						}
 						@n++;
@@ -229,6 +247,15 @@ proc _snake_kill(@player, @game) {
 						break();
 					}
 				}
+			}, @player);
+		}
+		if(@game['mode'] == 'capture') {
+			@otherteam = abs(@snake['team'] - 1);
+			if(@game['flags'][@otherteam] == @player) {
+				_snake_spawn_flag(@otherteam, @game);
+			}
+			queue_push(closure(){
+				_snake_spawn(@player, @game);
 			}, @player);
 		}
 	}
@@ -257,12 +284,40 @@ proc _snake_move(@player, @game) {
 	@block = get_block_at(@snake['loc']);
 	@powerup = _snake_get_powerup_from(@block);
 	
-	// Air or powerup, move through
-	if(@block == '0:0' || (@powerup && _snake_remove_powerup(@snake['loc'], @game))) {
+	// Air or pickup, move through
+	if(@block == '0:0'
+	|| (@powerup && _snake_remove_powerup(@snake['loc'], @game))
+	|| (@game['mode'] == 'capture' && (@block == '246:0' || @block == '249:0'))) {
 		@snake['blocks'][] = @snake['loc'][];
 		set_block_at(@snake['loc'], @snake['head'], false);
 		if(_snake_powerup(@player, @powerup, @game)) {
 			@snake['target'] = null;
+		} else if(@game['mode'] == 'capture') {
+			@team = @snake['team'];
+			@otherteam = abs(@team - 1);
+			if(_snake_loc_equals(@game['flags'][@team], @snake['loc'])) {
+				if(@game['flags'][@otherteam] == @player) {
+					// flag returned
+					@score = get_pscore('score', @player, 'snake') + 1;
+					set_pscore('score', @player, @score, 'snake');
+					@teamname = if(@team, 'RED', 'BLUE');
+					@teamscore = get_pscore('teamscore', @teamname, 'snake') + 1;
+					set_pscore('teamscore', @teamname, @teamscore, 'snake');
+					set_objective_display('score',
+						color('red').get_pscore('teamscore', 'RED', 'snake').color('reset')
+						.' : '.color('blue').get_pscore('teamscore', 'BLUE', 'snake'), 'snake');
+					play_sound(@snake['loc'], array('sound': 'ZOMBIE_METAL', 'volume': 4));
+					if(@teamscore == 3) {
+						_snake_end(@player, @game);
+					} else {
+						_snake_spawn_flag(@otherteam, @game);
+					}
+				}
+				_snake_spawn_flag(@team, @game);
+			} else if(_snake_loc_equals(@game['flags'][@otherteam], @snake['loc'])) {
+				@game['flags'][@otherteam] = @player;
+				play_sound(@snake['loc'], array('sound': 'ENDERDRAGON_WINGS', 'pitch': 0, 'volume': 4));
+			}
 		}
 		return(true);
 		

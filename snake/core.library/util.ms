@@ -155,7 +155,10 @@ proc _snake_stop_song() {
 	runas('~console', '/jukebox stop music @snake {fadeDuration:6}');
 }
 
-proc _snake_clean_surfaces(@region, @count) {
+proc _snake_clean_surfaces(@game) {
+	@region = @game['arena'];
+	@count = @game['surfaces'];
+	@walls = @game['mode'] == 'capture';
 	while(@count) {
 		@area = sk_region_info('snake_'.@region.@count, 'custom', 0);
 		@minX = min(@area[1][0], @area[0][0]);
@@ -169,8 +172,12 @@ proc _snake_clean_surfaces(@region, @count) {
 				for(@y = @minY, @y <= @maxY, @y++) {
 					queue_push(closure(){
 						for(@z = @minZ, @z <= @maxZ, @z++) {
-							set_block_at(@x, @y, @z, 0, 'custom', false);
-							play_effect(array(@x, @y, @z, 'custom'), 'CRIT', array('speed': 0.01, 'radius': 48));
+							if(@walls && @count % 2 == 0 && (@z == @minZ || @z == @maxZ)) {
+								set_block_at(@x, @y, @z, 45, 'custom', false);
+							} else {
+								set_block_at(@x, @y, @z, 0, 'custom', false);
+								play_effect(array(@x, @y, @z, 'custom'), 'CRIT', array('speed': 0.01, 'radius': 48));
+							}
 						}
 					}, 'snake_cleanup');
 				}
@@ -179,9 +186,15 @@ proc _snake_clean_surfaces(@region, @count) {
 			for(@z = @minZ, @z <= @maxZ, @z++) {
 				for(@y = @minY, @y <= @maxY, @y++) {
 					queue_push(closure(){
+						@half = integer((@maxX - @minX) / 2 + @minX);
 						for(@x = @minX, @x <= @maxX, @x++) {
-							set_block_at(@x, @y, @z, 0, 'custom', false);
-							play_effect(array(@x, @y, @z, 'custom'), 'CRIT', array('speed': 0.01, 'radius': 48));
+							if(@walls && ((@count / 2 == 1 && (@x == @minX || @x == @maxX))
+							|| @count == 5 && @x == @half)) {
+								set_block_at(@x, @y, @z, 45, 'custom', false);
+							} else {
+								set_block_at(@x, @y, @z, 0, 'custom', false);
+								play_effect(array(@x, @y, @z, 'custom'), 'CRIT', array('speed': 0.01, 'radius': 48));
+							}
 						}
 					}, 'snake_cleanup');
 				}
@@ -189,4 +202,14 @@ proc _snake_clean_surfaces(@region, @count) {
 		}
 		@count--;
 	}
+}
+proc _snake_spawn_flag(@team, @game) {
+	@region = 'snake_'.@game['arena'].(@team * 2 + 2);
+	@loc = _snake_valid_location(@region, 13);
+	set_block_at(@loc, if(@team, 249, 246), false);
+	@game['flags'][@team] = @loc;
+}
+
+proc _snake_loc_equals(@a, @b) {
+	return(is_array(@a) && is_array(@b) && @a[0] == @b[0] && @a[1] == @b[1] && @a[2] == @b[2]);
 }

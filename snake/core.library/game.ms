@@ -34,6 +34,8 @@ proc _snake_queue(@mode) {
 	@game['tnt'] = array();
 	@game['mode'] = @mode;
 	@game['nukes'] = array();
+	@game['teams'] = array(array(), array());
+	@game['flags'] = array(null, null);
 	export('snake', @game);
 
 	// Get arena
@@ -56,16 +58,21 @@ proc _snake_queue(@mode) {
 	try {
 		create_scoreboard('snake');
 		create_objective('score', 'DUMMY', 'snake');
-		@display = 'SNAKE';
-		if(@game['mode'] == 'versus' || @game['mode'] == 'elimination') {
-			@display = 'SNAKE: First to 3';
+		@display = 'SNAKE: First to 3!';
+		if(@game['mode'] == 'endless') {
+			@display = 'SNAKE: Survive!';
+		} else if(@game['mode'] == 'capture') {
+			create_objective('teamscore', 'DUMMY', 'snake');
+			set_pscore('teamscore', 'BLUE', 0, 'snake');
+			set_pscore('teamscore', 'RED', 0, 'snake');
+			@display = color('red').'0'.color('reset').' : '.color('blue').'0';
 		}
-		set_objective_display('score', associative_array('displayname': 'SNAKE', 'slot': 'SIDEBAR'), 'snake');
+		set_objective_display('score', associative_array('displayname': @display, 'slot': 'SIDEBAR'), 'snake');
 	} catch(ScoreboardException @ex) {
 		die(color('red').'Snake is still running.');
 	}
 	
-	_snake_clean_surfaces(@game['arena'], @game['surfaces']);
+	_snake_clean_surfaces(@game);
 	
 	// Create color select menu
 	create_virtualchest(array(
@@ -73,17 +80,20 @@ proc _snake_queue(@mode) {
 		'size': 9,
 		'title': color('bold').'Choose Your Snake Color',
 		'0': array('name': 'STAINED_CLAY', 'data': 3, 'meta': array('display': 'Blue')),
-		'1': array('name': 'STAINED_CLAY', 'data': 5, 'meta': array('display': 'Green')),
-		'2': array('name': 'STAINED_CLAY', 'data': 6, 'meta': array('display': 'Red')),
-		'3': array('name': 'STAINED_CLAY', 'data': 2, 'meta': array('display': 'Purple')),
-		'4': array('name': 'CONCRETE', 'data': 3, 'meta': array('display': 'Neon Blue')),
-		'5': array('name': 'CONCRETE', 'data': 4, 'meta': array('display': 'Neon Yellow')),
-		'6': array('name': 'CONCRETE', 'data': 5, 'meta': array('display': 'Neon Green')),
-		'7': array('name': 'CONCRETE', 'data': 6, 'meta': array('display': 'Neon Pink')),
+		'1': array('name': 'CONCRETE', 'data': 3, 'meta': array('display': 'Neon Blue')),
+		'2': array('name': 'STAINED_CLAY', 'data': 5, 'meta': array('display': 'Green')),
+		'3': array('name': 'CONCRETE', 'data': 5, 'meta': array('display': 'Neon Green')),
+		'4': array('name': 'STAINED_CLAY', 'data': 6, 'meta': array('display': 'Red')),
+		'5': array('name': 'CONCRETE', 'data': 6, 'meta': array('display': 'Neon Pink')),
+		'6': array('name': 'STAINED_CLAY', 'data': 2, 'meta': array('display': 'Purple')),
+		'7': array('name': 'CONCRETE', 'data': 4, 'meta': array('display': 'Neon Yellow')),
 		'8': array('name': 'CONCRETE', 'data': 0, 'meta': array('display': 'Neon White')),
 	));
 
 	// Add players in region
+	if(@game['mode'] == 'capture') {
+		@game['numPlayers'] = 8; // max
+	}
 	@loadMenu = false;
 	foreach(@p in all_players()) {
 		if(array_contains(sk_current_regions(@p), 'snake_'.@game['arena']) && pmode(@p) == 'ADVENTURE') {
@@ -95,6 +105,10 @@ proc _snake_queue(@mode) {
 			break();
 		}
 	}
+	if(@game['mode'] == 'capture') {
+		@loadMenu = false;
+	}
+	
 	if(@game['mode'] == 'endless' && array_size(@game['snakes']) == 0
 	|| @game['mode'] == 'versus' && array_size(@game['snakes']) < 2) {
 		del_virtualchest('snake');
@@ -110,6 +124,9 @@ proc _snake_queue(@mode) {
 
 	// Add bots to fill up slots
 	if(@game['mode'] != 'versus') {
+		if(@game['mode'] == 'capture') {
+			@game['numPlayers'] = 4; // min
+		}
 		@bots = _snake_bots();
 		while(array_size(@game['snakes']) < @game['numPlayers'] && @bots) {
 			@index = array_rand(@bots)[0];
@@ -230,7 +247,14 @@ proc _snake_start_task(@game) {
 				}
 			}
 		}
-		if(!@playersAlive || !@alive) {
+		if(@game['mode'] == 'capture') {
+			foreach(@team: @flag in @game['flags']){
+				if(!@flag) {
+					_snake_spawn_flag(@team, @game);
+				}
+			}
+		}
+		if(@game['mode'] != 'capture' && (!@playersAlive || !@alive)) {
 			if(@game['mode'] == 'endless' || !@alive) {
 				_snake_end(null, @game);
 			} else {
@@ -244,7 +268,18 @@ proc _snake_start_task(@game) {
 }
 
 proc _snake_end(@winner, @game) {
-	if(@game['mode'] == 'versus' || @game['mode'] == 'elimination') {
+	if(@game['mode'] == 'capture') {
+		@team = @game['snakes'][@winner]['team'];
+		foreach(@player in array_keys(@game['snakes'])) {
+			if(ponline(@player)) {
+				title(@player, '', @winner.' won the game for team '.if(@team, color('red').'RED', color('blue').'BLUE'), 40, 80, 40);
+			}
+		}
+		_snake_cleanup(@game);
+	} else if(@game['mode'] == 'versus' || @game['mode'] == 'elimination') {
+		if(array_size(@game['snakes'][@winner]['blocks']) == 2) {
+			console(@game);
+		}
 		@endgame = false;
 		if(@winner) {
 			@title = @game['snakes'][@winner]['color'].@winner.' wins ';
@@ -267,7 +302,7 @@ proc _snake_end(@winner, @game) {
 		if(@endgame) {
 			_snake_cleanup(@game);
 		} else {
-			_snake_clean_surfaces(@game['arena'], @game['surfaces']);
+			_snake_clean_surfaces(@game);
 			_snake_cleanup_round(@game);
 			foreach(@player: @snake in @game['snakes']) {
 				_snake_spawn(@player, @game);

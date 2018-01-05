@@ -80,7 +80,7 @@ proc _snake_add_powerup(@game) {
 	@region = 'snake_'.@game['arena'].rand(1, @game['surfaces'] + 1);
 	@loc = _snake_valid_location(@region);
 	if(@loc) {
-		@r = rand(5) + 1;
+		@r = rand(if(@game['mode'] == 'capture', 4, 5)) + 1;
 		@block = _snake_get_block_from(@r);
 		@type = _snake_get_powerup_from(@r);
 		set_block_at(@loc, @block, false);
@@ -330,6 +330,10 @@ proc _snake_drop_nuke(@snake, @game) {
 			set_block_at(@target, 51, false);
 			play_sound(@target, array('sound': 'EXPLODE', 'pitch': 0.5, 'volume': 3));
 			set_interval(50, closure(){
+				if(!array_contains(@game['nukes'], @region)) {
+					clear_task()
+					die();
+				}
 				@side = @state['side'];
 				@radius = @state['radius'];
 				

@@ -3,14 +3,14 @@ proc _snake_menu() {
 		'id': 'snake',
 		'type': 'HOPPER',
 		'title': color('bold').'Choose a Mode',
-		'1': array('name': 'REDSTONE_BLOCK', 'meta': array(
+		'0': array('name': 'REDSTONE_BLOCK', 'meta': array(
 			'display': color('red').color('bold').'ELIMINATION MODE',
 			'lore': array(
 				color('white').'Win a round by being the last snake slithering.',
 				color('white').'Win the game by winning three rounds.',
 			),
 		)),
-		'2': array('name': 'DIAMOND_SWORD', 'meta': array(
+		'1': array('name': 'DIAMOND_SWORD', 'meta': array(
 			'display': color('aqua').color('bold').'VERSUS MODE',
 			'lore': array(
 				color('white').'Like elimination, but with no bots.',
@@ -18,11 +18,18 @@ proc _snake_menu() {
 				color('white').'Win the game by winning three rounds.',
 			)
 		)),
-		'3': array('name': 'WATCH', 'meta': array(
+		'2': array('name': 'WATCH', 'meta': array(
 			'display': color('yellow').color('bold').'ENDLESS MODE',
 			'lore': array(
 				color('white').'Bots respawn and retain powerups.',
 				color('white').'Survive as long as you can.',
+			)
+		)),
+		'3': array('name': 'BLUE_GLAZED_TERRACOTTA', 'meta': array(
+			'display': color('yellow').color('bold').'CAPTURE MODE',
+			'lore': array(
+				color('white').'Capture and return the enemy block.',
+				color('white').'First team to three captures wins.',
 			)
 		)),
 	));
@@ -35,9 +42,10 @@ proc _snake_menu() {
 				try {
 					include('game.ms');
 					@modes = array(
-						1: 'elimination',
-						2: 'versus',
-						3: 'endless',
+						0: 'elimination',
+						1: 'versus',
+						2: 'endless',
+						3: 'capture',
 					);
 					_snake_queue(array_get(@modes, @event['slot'], 'secret'));
 				} catch(Exception @ex) {
