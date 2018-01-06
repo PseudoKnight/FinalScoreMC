@@ -283,7 +283,7 @@ proc _snake_bot_target_powerup(@snake, @game, @type = 'all') {
 
 proc _snake_bot_target_snake(@snake, @game) {
 	@closest = 25;
-	if(is_string(@game['flags'][@snake['team']])) {
+	if(array_index_exists(@snake, 'team') && is_string(@game['flags'][@snake['team']])) {
 		@snake['target'] = array('type': 'snake', 'name': @game['flags'][@snake['team']], 'interest': 50);
 	} else {
 		foreach(@bot: @othersnake in @game['snakes']) {

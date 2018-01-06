@@ -34,9 +34,13 @@ proc _snake_add(@player, @game) {
 	);
 	
 	if(!get_pscore('score', @player, 'snake')) {
-		create_team(@player, 'snake');
-		team_add_player(@player, @player, 'snake');
-		set_pscore('score', @player, 0, 'snake');
+		try {
+			create_team(@player, 'snake');
+			team_add_player(@player, @player, 'snake');
+			set_pscore('score', @player, 0, 'snake');
+		} catch(ScoreboardException @ex) {
+			// team probably exists already, ignore
+		}
 	}
 	
 	if(@game['mode'] == 'capture') {
