@@ -40,9 +40,11 @@ proc _snake_add(@player, @game) {
 	}
 	
 	if(@game['mode'] == 'capture') {
-		@team = 0;
+		@team = rand(2);
 		if(array_size(@game['teams'][0]) > array_size(@game['teams'][1])) {
 			@team = 1;
+		} else if(array_size(@game['teams'][0]) < array_size(@game['teams'][1])) {
+			@team = 0;
 		}
 		@game['snakes'][@player]['team'] = @team;
 		@game['teams'][@team][] = @player;
