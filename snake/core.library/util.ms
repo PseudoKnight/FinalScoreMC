@@ -172,8 +172,12 @@ proc _snake_clean_surfaces(@game) {
 				for(@y = @minY, @y <= @maxY, @y++) {
 					queue_push(closure(){
 						for(@z = @minZ, @z <= @maxZ, @z++) {
-							if(@walls && @count % 2 == 0 && (@z == @minZ || @z == @maxZ)) {
-								set_block_at(@x, @y, @z, 45, 'custom', false);
+							if(@walls && (@z == @minZ || @z == @maxZ)) {
+								if(@count == 2) {
+									set_block_at(@x, @y, @z, '168:2', 'custom', false);
+								} else if(@count == 4) {
+									set_block_at(@x, @y, @z, '215', 'custom', false);
+								}
 							} else {
 								set_block_at(@x, @y, @z, 0, 'custom', false);
 								play_effect(array(@x, @y, @z, 'custom'), 'CRIT', array('speed': 0.01, 'radius': 48));
@@ -186,11 +190,17 @@ proc _snake_clean_surfaces(@game) {
 			for(@z = @minZ, @z <= @maxZ, @z++) {
 				for(@y = @minY, @y <= @maxY, @y++) {
 					queue_push(closure(){
-						@half = integer((@maxX - @minX) / 2 + @minX);
+						@halfX = integer((@maxX - @minX) / 2 + @minX);
+						@halfZ = integer((@maxZ - @minZ) / 2 + @minZ);
 						for(@x = @minX, @x <= @maxX, @x++) {
-							if(@walls && ((@count / 2 == 1 && (@x == @minX || @x == @maxX))
-							|| @count == 5 && @x == @half)) {
-								set_block_at(@x, @y, @z, 45, 'custom', false);
+							if(@walls && @count != 5 && (@x == @minX || @x == @maxX)) {
+								if(@x == @maxX) {
+									set_block_at(@x, @y, @z, '168:2', 'custom', false);
+								} else {
+									set_block_at(@x, @y, @z, '215', 'custom', false);
+								}
+							} else if(@walls && @count == 5 && @x == @halfX && @z != @halfZ) {
+								set_block_at(@x, @y, @z, 98, 'custom', false);
 							} else {
 								set_block_at(@x, @y, @z, 0, 'custom', false);
 								play_effect(array(@x, @y, @z, 'custom'), 'CRIT', array('speed': 0.01, 'radius': 48));
@@ -206,7 +216,9 @@ proc _snake_clean_surfaces(@game) {
 proc _snake_spawn_flag(@team, @game) {
 	@region = 'snake_'.@game['arena'].(@team * 2 + 2);
 	@loc = _snake_valid_location(@region, 13);
-	set_block_at(@loc, if(@team, 249, 246), false);
+	if(@loc) {
+		set_block_at(@loc, if(@team, 249, 244), false);
+	}
 	@game['flags'][@team] = @loc;
 }
 

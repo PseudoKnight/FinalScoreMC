@@ -287,7 +287,7 @@ proc _snake_move(@player, @game) {
 	// Air or pickup, move through
 	if(@block == '0:0'
 	|| (@powerup && _snake_remove_powerup(@snake['loc'], @game))
-	|| (@game['mode'] == 'capture' && (@block == '246:0' || @block == '249:0'))) {
+	|| (@game['mode'] == 'capture' && (@block == '244:0' || @block == '249:0'))) {
 		@snake['blocks'][] = @snake['loc'][];
 		set_block_at(@snake['loc'], @snake['head'], false);
 		if(_snake_powerup(@player, @powerup, @game)) {

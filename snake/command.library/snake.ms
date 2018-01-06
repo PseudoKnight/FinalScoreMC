@@ -59,7 +59,7 @@ register_command('snake', array(
 				msg(color('green').'Done!');
 				
 			case 'end':
-				if(!has_permission('group.moderator')) {
+				if(!has_permission('group.engineer')) {
 					die(color('gold').'You do not have permission.');
 				}
 				if(queue_running('snake_cleanup')) {

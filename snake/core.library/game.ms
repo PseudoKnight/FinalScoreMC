@@ -125,7 +125,7 @@ proc _snake_queue(@mode) {
 	// Add bots to fill up slots
 	if(@game['mode'] != 'versus') {
 		if(@game['mode'] == 'capture') {
-			@game['numPlayers'] = 4; // min
+			@game['numPlayers'] = array_size(@game['snakes']) + array_size(@game['snakes']) % 2; // min
 		}
 		@bots = _snake_bots();
 		while(array_size(@game['snakes']) < @game['numPlayers'] && @bots) {
