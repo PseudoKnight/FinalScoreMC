@@ -22,6 +22,9 @@ proc _player_remove(@player, @id) {
 		set_ploc(@player, @pvp['arena']['lobby']);
 		_clear_peffects(@player);
 		_set_pactivity(@player, null);
+		if(array_index_exists(@pvp['arena'], 'sky')) {
+			runas('~console', '/skychanger 0 '.@player);
+		}
 		set_timeout(50, closure(){
 			_equip_kit(@player); // helps clear maps after teleporting
 		});
@@ -172,6 +175,9 @@ proc _player_equip(@id, @player) {
 	@pvp = import('pvp'.@id)
 	if(!array_index_exists(@pvp['players'], @player)) {
 		return();
+	}
+	if(array_index_exists(@pvp['arena'], 'sky')) {
+		runas('~console', '/skychanger '.@pvp['arena']['sky'].' '.@player);
 	}
 	if(array_index_exists(@pvp['arena'], 'hunger')) {
 		set_phunger(@player, @pvp['arena']['hunger']);

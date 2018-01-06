@@ -71,6 +71,7 @@ register_command('arena', array(
 					case 'saturation':
 					case 'hunger':
 					case 'rounds':
+					case 'sky':
 
 						if(!is_integral(@args[3])) {
 							die(color('gold').@setting . ' requires an integer.');
