@@ -44,6 +44,12 @@ bind(player_interact, null, array('block': 118, 'button': 'right'), @event) {
 			default:
 				die();
 		}
+		@loc = @event['location'];
+		@loc['x'] += 0.5;
+		@loc['y'] += 1;
+		@loc['z'] += 0.5;
+		play_effect(@loc, 'SPLASH', array('particleCount': 10, 'offsetX': 0.15, 'offsetZ': 0.15));
+		play_sound(@loc, array('sound': 'SPLASH', 'pitch': 2, 'volume': 0.3));
 		cancel();
 		@item = pinv(player(), @slot);
 		if(@item['qty'] == 1) {
