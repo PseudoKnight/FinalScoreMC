@@ -7,7 +7,7 @@ case 'load':
 		set_pflight(@e['player'], false);
 		proc _flap(@player) {
 			queue_push(closure(){
-				if(phealth(@player) == 0) {
+				if(pmode() == 'SPECTATOR') {
 					queue_clear(@player.'flap');
 				} else if(pexp(@player) > 0 && !psneaking(@player)) {
 					@facing = pfacing(@player);

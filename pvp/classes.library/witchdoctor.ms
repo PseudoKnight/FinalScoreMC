@@ -8,7 +8,7 @@ case 'load':
 			die();
 		}
 		foreach(@player in players_in_radius(ploc(), 18)) {
-			if(@player != player() && raw_pcan_see(@player) && phealth(@player) > 0) {
+			if(@player != player() && pmode(@player) != 'SPECTATOR') {
 				set_peffect(@player, 15, 0, 7);
 				@cloud = spawn_entity('AREA_EFFECT_CLOUD', 1, ploc(@player))[0];
 				set_entity_spec(@cloud, array('particle': 'SMOKE_LARGE', 'radius': 1, 'duration': 7000 / 50));

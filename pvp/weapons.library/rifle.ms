@@ -17,7 +17,7 @@ bind(player_interact, array('id': @id.'riflereload'), array('item': 265), @event
 	}
 	if(@weapon) {
 		set_timeout(2000, closure(){
-			if(ponline(@event['player']) && phealth()) {
+			if(ponline(@event['player']) && pmode() != 'SPECTATOR') {
 				@inv = pinv();
 				if(!is_null(@inv[@ammoslot]) && @inv[@ammoslot]['name'] == 'IRON_INGOT') {
 					@inv[@ammoslot]['qty'] += @ammo['qty'];

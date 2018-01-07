@@ -55,7 +55,7 @@ case 'load':
 		
 		modify_event('amount', @damage * 0.2);
 		foreach(@p in players_in_radius(@target, 6)) {
-			if(@p != @player && array_index_exists(@pvp['players'], @p) && phealth(@p) > 0) {
+			if(@p != @player && array_index_exists(@pvp['players'], @p) && pmode(@p) != 'SPECTATOR') {
 				damage_entity(puuid(@p), @damage, puuid(@player));
 			}
 		}

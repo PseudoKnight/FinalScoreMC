@@ -14,7 +14,7 @@ bind(player_teleport, array('id': @id.'endernades', 'priority': 'highest'), arra
 	play_effect(@a, 'EXPLOSION_LARGE');
 	play_sound(@a, associative_array('sound': 'EXPLODE', 'volume': 3));
 	foreach(@p in players_in_radius(@a, 7)) {
-		if(phealth(@p) <= 0) {
+		if(pmode(@p) == 'SPECTATOR') {
 			continue();
 		}
 		# a delayed velocity works more consistently with grounded entities

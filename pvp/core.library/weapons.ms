@@ -47,7 +47,6 @@ proc _weapon_hit_scan(@player, @range, @damage, @tracerParticle, @hitParticle, @
 	if(@entities) {
 		foreach(@entity in @entities) {
 			if(is_entity_living(@entity['uuid'])
-			&& (!entity_type(@entity) != 'PLAYER' || raw_pcan_see(@player, player(@entity)))
 			&& array_contains(sk_regions_at(@entity['location']), @pvp['arena']['region'])) {
 				play_sound(@origin, array('sound': 'SUCCESSFUL_HIT'), player());
 				try {

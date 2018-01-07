@@ -10,7 +10,7 @@ case 'load':
 			play_sound(ploc(), array('sound': 'ENDERDRAGON_HIT', 'pitch': 2))
 			set_pexp(0);
 			set_timeout(450, closure(){
-				if(ponline(player()) && phealth() > 0) {
+				if(ponline(player()) && pmode() != 'SPECTATOR') {
 					set_pexp(99);
 				}
 			})

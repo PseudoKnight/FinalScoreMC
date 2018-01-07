@@ -2,7 +2,7 @@ switch(@action) {
 case 'load':
 	set_pflight(@player, true);
 	bind(player_toggle_flight, array('id': @player.'doublejump'), array('flying': true, 'player': @player), @e) {
-		if(phealth() == 0) {
+		if(pmode() == 'SPECTATOR') {
 			die();
 		}
 		cancel();
@@ -109,8 +109,8 @@ case 'load':
 		@player = @e['item']['meta']['display'];
 		if(ponline(@player) && @player != player()) {
 			modify_event('item', null);
-			damage_entity(puuid(), integer(@e['item']['meta']['lore'][0]), puuid(@player));
 			set_peffect(player(), 19, 0, 5);
+			damage_entity(puuid(), integer(@e['item']['meta']['lore'][0]), puuid(@player));
 		} else {
 			cancel();
 		}

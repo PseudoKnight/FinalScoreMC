@@ -29,7 +29,7 @@ case 'load':
 			});
 			@target = '';
 			foreach(@p in players_in_radius(@targetLoc, 4)){
-				if(@p != player() && raw_pcan_see(@p) && pmode(@p) != 'SPECTATOR') {
+				if(@p != player() && pmode(@p) != 'SPECTATOR') {
 					@target = puuid(@p);
 				}
 			}
@@ -60,11 +60,11 @@ case 'load':
 			));
 
 			@returnToSender = closure(){
-				if(ponline(player()) && phealth() > 0 && array_index_exists(@pvp['players'], player())) {
+				if(ponline(player()) && pmode() != 'SPECTATOR' && array_index_exists(@pvp['players'], player())) {
 					set_pwalkspeed(player(), 0.2);
 					set_pinv(player(), @slot, array('name': 'CONCRETE', 'data': 2));
 					set_timeout(1200, closure(){
-						if(ponline(player()) && phealth() > 0 && array_index_exists(@pvp['players'], player())) {
+						if(ponline(player()) && pmode() != 'SPECTATOR' && array_index_exists(@pvp['players'], player())) {
 							set_pinv(player(), @slot, @item);
 						}
 					});
@@ -80,7 +80,7 @@ case 'load':
 				try {
 					if(get_entity_health(@target) <= 0
 					|| !ponline(player())
-					|| phealth() == 0
+					|| pmode() == 'SPECTATOR'
 					|| !array_index_exists(@pvp['players'], player())) {
 						clear_task();
 						execute(@returnToSender);

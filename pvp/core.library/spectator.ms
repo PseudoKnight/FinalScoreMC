@@ -3,12 +3,8 @@ proc _spectator_add(@player, @pvp) {
 		return();
 	}
 	@pvp['spectators'][] = @player;
-	if(phealth(@player) > 0) {
-		foreach(@p in all_players()) {
-			if(ponline(@p) && pworld(@p) == pworld(@player)) {
-				raw_set_pvanish(@player, true, @p);
-			}
-		}
+	set_pmode(@player, 'SPECTATOR');
+	if(!array_contains(sk_current_regions(), @pvp['arena']['region'])) {
 		@spawn = false;
 		foreach(@p in array_keys(@pvp['players'])) {
 			if(ponline(@p) && array_contains(sk_current_regions(@p), @pvp['arena']['region'])) {
@@ -19,44 +15,6 @@ proc _spectator_add(@player, @pvp) {
 		if(!@spawn) {
 			set_ploc(@player, @pvp['arena']['spawn'][0][0]);
 		}
-		set_peffect(@player, 14, 0, 9999, true);
-		set_collides_with_entities(@player, false);
-		set_pflight(@player, true);
-	} else {
-		bind(player_spawn, associative_array('priority': 'HIGH'), associative_array('player': @player), @e, @pvp) {
-			unbind();
-			if(@pvp['running'] == 2) {
-				consume();
-				if(!array_contains(@pvp['spectators'], player())) {
-					@pvp['spectators'][] = player();
-				}
-				@spawn = false;
-				foreach(@p in array_keys(@pvp['players'])) {
-					if(ponline(@p) && array_contains(sk_current_regions(@p), @pvp['arena']['region'])) {
-						modify_event('location', ploc(@p));
-						@spawn = true;
-					}
-				}
-				if(!@spawn) {
-					modify_event('location', @pvp['arena']['spawn'][0][0]);
-				}
-				set_timeout(50, closure(){
-					if(ponline(player()) && @pvp['running'] == 2) {
-						foreach(@p in all_players()) {
-							if(ponline(@p) && pworld(@p) == pworld()) {
-								raw_set_pvanish(player(), true, @p);
-							}
-						}
-
-						set_peffect(player(), 14, 0, 9999, true);
-						set_collides_with_entities(false);
-						set_pflight(player(), true);
-					}
-				});
-			} else {
-				_set_pactivity(player(), null);
-			}
-		}
 	}
 }
 
@@ -65,22 +23,8 @@ proc _spectator_remove(@player, @pvp) {
 		array_remove_values(@pvp['spectators'], @player);
 		if(ponline(@player)) {
 			set_pmode(@player, 'ADVENTURE');
-			set_pflight(@player, false);
-			set_collides_with_entities(@player, true);
-			dm_set_pvisible(@player, true);
-
-			foreach(@p in all_players()) {
-				if(ponline(@p)) {
-					raw_set_pvanish(@player, false, @p);
-				}
-			}
-			if(phealth(@player) > 0) {
-				set_entity_fall_distance(puuid(@player), 0);
-				set_peffect(@player, 14, 0, 0);
-				set_ploc(@player, @pvp['arena']['lobby']);
-			} else {
-				respawn(@player);
-			}
+			set_entity_fall_distance(puuid(@player), 0);
+			set_ploc(@player, @pvp['arena']['lobby']);
 			if(array_index_exists(@pvp['arena'], 'resourcepack')) {
 				set_timeout(100, closure(){
 					send_resourcepack(@player, 'http://mc.finalscoremc.com:25966/resourcepacks/default.zip');

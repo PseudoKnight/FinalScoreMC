@@ -151,10 +151,6 @@ proc _pvp_start_match(@id) {
 		}
 		
 		foreach(@player: @p in @pvp['players']) {
-			if(phealth(@player) <= 0) {
-				// dead
-			 	continue();
-			}
 			if(array_index_exists(@arena, 'respawntime') && @p['respawn'] != 0) {
 				if(ploc(@player)['y'] < 256 && !array_contains(sk_current_regions(@player), @arena['region'])) {
 					_pvp_msg(@pvp, colorize('&7[PVP] '.@p['color'].@player.'&r left the arena.'));
@@ -211,7 +207,7 @@ proc _pvp_start_match(@id) {
 				} else {
 					tmsg(@player, color('gray').'[PVP] '.color('r').'You exited the combat region.')
 					set_timeout(50, closure(){
-						if(!_is_survival_world(pworld(@player)) && phealth(@player) > 0) {
+						if(!_is_survival_world(pworld(@player)) && pmode(@player) != 'SPECTATOR') {
 							pkill(@player);
 						}
 					});
@@ -512,25 +508,13 @@ proc _pvp_end_match(@id, @winners) {
 					array_remove(@pvp['players'][@player], 'class');
 				}
 				if(ponline(@player)) {
-					@closure = closure(){
-						close_pinv(@player);
-						if(array_index_exists(@pvp['arena'], 'resourcepack')) {
-							queue_push(closure(){
-								send_resourcepack(@player, 'http://mc.finalscoremc.com:25966/resourcepacks/default.zip');
-							}, @id);
-						}
-						_player_remove(@player, @id);
-						if(array_index_exists(@pvp['arena'], 'podium') && array_contains(@winners, @player)) {
-							queue_push(closure(){
-								set_ploc(@player, @pvp['arena']['podium']);
-							}, @id);
-						}
+					close_pinv(@player);
+					if(array_index_exists(@pvp['arena'], 'resourcepack')) {
+						send_resourcepack(@player, 'http://mc.finalscoremc.com:25966/resourcepacks/default.zip');
 					}
-					if(phealth(@player) == 0) {
-						respawn(@player);
-						queue_push(@closure, @id);
-					} else {
-						execute(@closure);
+					_player_remove(@player, @id);
+					if(array_index_exists(@pvp['arena'], 'podium') && array_contains(@winners, @player)) {
+						set_ploc(@player, @pvp['arena']['podium']);
 					}
 				}
 			} catch(Exception @ex) {

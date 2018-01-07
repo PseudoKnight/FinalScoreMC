@@ -114,8 +114,7 @@ proc _pvp_initialize_players(@id, @players) {
 
 		set_pbed_location(@player, @pvp['arena']['lobby']);
 
-		_clear_pinv(@player);
-		_clear_peffects(@player);
+		_player_reset(@player, @pvp);
 		if(array_index_exists(@pvp['arena'], 'classes')) {
 		 	if(!array_index_exists(@pArray, 'class')) {
 				_class_select_random(@player, @pvp);
@@ -127,12 +126,7 @@ proc _pvp_initialize_players(@id, @players) {
 				@pArray['picks'] = @pvp['arena']['class_picks'];
 			}
 		}
-
-		foreach(@p in @pvp['spectators']) {
-			raw_set_pvanish(@p, true, @player);
-		}
 		
-		set_phealth(@player, 20);
 		_player_equip(@id, @player);
 
 		# Select spawn location
@@ -168,6 +162,18 @@ proc _pvp_initialize_players(@id, @players) {
 	}
 }
 
+proc _player_reset(@player, @pvp) {
+	_clear_pinv(@player);
+	set_phealth(@player, 20);
+	set_phunger(@player, 20);
+	set_psaturation(@player, 0);
+	set_pexp(@player, 0);
+	_clear_peffects(@player);
+	set_entity_rider(puuid(@player), null);
+	set_entity_rider(null, puuid(@player));
+	set_entity_fall_distance(puuid(@player), 0);
+}
+
 proc _player_equip(@id, @player) {
 	if(_is_survival_world(pworld(@player))) {
 		return();
@@ -181,13 +187,9 @@ proc _player_equip(@id, @player) {
 	}
 	if(array_index_exists(@pvp['arena'], 'hunger')) {
 		set_phunger(@player, @pvp['arena']['hunger']);
-	} else {
-		set_phunger(@player, 20);
 	}
 	if(array_index_exists(@pvp['arena'], 'saturation')) {
 		set_psaturation(@player, @pvp['arena']['saturation']);
-	} else {
-		set_psaturation(@player, 0);
 	}
 	if(array_index_exists(@pvp['players'][@player], 'inv')) {
 		set_pinv(@player, @pvp['players'][@player]['inv']);

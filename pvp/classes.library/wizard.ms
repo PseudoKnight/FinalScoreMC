@@ -13,7 +13,7 @@ case 'load':
 				@damager = player(), @pvp) {
 
 			if(!array_index_exists(@pvp['players'], @e['player']), die());
-			modify_event('amount', 4.0);
+			modify_event('amount', 3.7);
 			set_timeout(50, closure(){
 				@entity = import(@damager.'lightning');
 				if(@e['damager'] == import(@damager.'lightning')) {
@@ -58,7 +58,7 @@ case 'load':
 			@type = entity_type(@entity);
 			if(@type == 'PLAYER') {
 				@player = player(@entity);
-				if(@player == player() || phealth(@player) == 0) {
+				if(@player == player() || pmode(@player) == 'SPECTATOR') {
 					continue();
 				}
 				if(entity_grounded(@entity) && psneaking(@player)) {

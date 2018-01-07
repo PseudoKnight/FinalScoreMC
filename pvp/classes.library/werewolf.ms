@@ -52,7 +52,7 @@ case 'powerup':
 		103: array('name': 'WOOL', 'data': 7),
 	));
 	set_timeout(17000, closure(){
-		if(ponline(@player) && phealth(@player) > 0) {
+		if(ponline(@player) && pmode(@player) != 'SPECTATOR') {
 			foreach(@effect in get_peffect(@player)) {
 				# if there's 6 seconds of night vision left, he hasn't gotten another powerup
 				if(@effect['id'] == 16 && @effect['seconds'] < 7) {
