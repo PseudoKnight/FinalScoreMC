@@ -39,6 +39,9 @@ proc _spawn_mob(@mob, @loc, @owner, @teammates) {
 				case 'ai':
 					set_entity_ai(@m, @value);
 					
+				case 'gravity':
+					set_entity_gravity(@m, @value);
+					
 				case 'lifetime':
 					set_timeout(@value * 1000, closure(){
 						try {

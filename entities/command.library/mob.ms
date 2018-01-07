@@ -70,6 +70,7 @@ register_command('mob', array(
 					case 'tame':
 					case 'glowing':
 					case 'invulnerable':
+					case 'gravity':
 						if(array_size(@args) == 3) {
 							return(false);
 						}
@@ -161,11 +162,11 @@ register_command('mob', array(
 						if(array_size(@args) < 5) {
 							die(color('gold').'Must give two numbers: seconds till explode, explosion strength')
 						}
-						@duration = @args[0];
+						@duration = @args[3];
 						if(!is_numeric(@duration)) {
 							die(color('gold').'Must give a number in seconds for the mob to explode.');
 						}
-						@strength = @args[1];
+						@strength = @args[4];
 						if(!is_numeric(@strength)) {
 							die(color('gold').'Must give a number for the strength of explosion.');
 						}
