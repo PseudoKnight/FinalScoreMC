@@ -184,6 +184,14 @@ proc _pvp_start_match(@id) {
 					set_ploc(@player, @loc);
 					pfacing(@player, 0, 0);
 
+					if(array_contains(@pvp['arena']['flags'], 'build')) {
+						set_pmode(@player, 'SURVIVAL');
+					} else {
+						set_pmode(@player, 'ADVENTURE');
+					}
+					if(array_index_exists(@pvp['players'][@player], 'class')) {
+						_class('load', @player, @pvp['players'][@player]['class'], @pvp);
+					}
 					preset_time(@player);
 					_player_equip(@id, @player);
 					@p['respawn'] = 0;

@@ -46,6 +46,9 @@ case 'load':
 			set_pcooldown('WOOD_AXE', 4000 / 50);
 		}
 	}
+	
+case 'powerup':
+	set_pexp(@player, min(99, pexp(@player) + 33));
 
 case 'unload':
 	unbind(@player.'sneak');

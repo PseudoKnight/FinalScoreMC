@@ -74,7 +74,9 @@ proc _class(@action, @player, @classname, @pvp) {
 
 		case 'unload':
 			unbind(@player.'food');
-			set_pflight(@player, false);
+			if(pmode(@player) != 'SPECTATOR') {
+				set_pflight(@player, false);
+			}
 			set_pwalkspeed(@player, 0.2);
 
 	}
@@ -253,12 +255,8 @@ proc _class_select(@id, @pvp) {
 					}
 				}
 			}
-			if(array_index_exists(@pvp['players'][player()], 'class')) {
-				_class('unload', player(), @pvp['players'][player()]['class'], @pvp);
-				_class('load', player(), @class, @pvp);
-			}
-			@pvp['players'][player()]['class'] = @class
-			close_pinv()
+			@pvp['players'][player()]['class'] = @class;
+			close_pinv();
 		}
 	}
 }
