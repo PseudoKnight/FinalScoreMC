@@ -269,10 +269,12 @@ proc _snake_start_task(@game) {
 
 proc _snake_end(@winner, @game) {
 	if(@game['mode'] == 'capture') {
-		@team = @game['snakes'][@winner]['team'];
-		foreach(@player in array_keys(@game['snakes'])) {
-			if(ponline(@player)) {
-				title(@player, '', @winner.' won the game for team '.if(@team, color('red').'RED', color('blue').'BLUE'), 40, 80, 40);
+		if(@winner != 'No one') {
+			@team = @game['snakes'][@winner]['team'];
+			foreach(@player in array_keys(@game['snakes'])) {
+				if(ponline(@player)) {
+					title(@player, '', @winner.' won the game for team '.if(@team, color('red').'RED', color('blue').'BLUE'), 40, 80, 40);
+				}
 			}
 		}
 		_snake_cleanup(@game);
@@ -281,7 +283,7 @@ proc _snake_end(@winner, @game) {
 			console(@game);
 		}
 		@endgame = false;
-		if(@winner) {
+		if(@winner && @winner != 'No one') {
 			@title = @game['snakes'][@winner]['color'].@winner.' wins ';
 			set_pscore('score', @winner, get_pscore('score', @winner, 'snake') + 1, 'snake');
 			if(get_pscore('score', @winner, 'snake') == 3) {
