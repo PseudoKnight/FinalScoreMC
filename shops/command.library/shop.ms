@@ -11,7 +11,7 @@ register_command('shop', array(
 		if(!@args) {
 			return(false);
 		}
-		include('../includes.library/shops.ms');
+		include('../core.library/shop.ms');
 		
 		if(@args[0] == 'list') {
 			if(array_size(@args) == 1) {

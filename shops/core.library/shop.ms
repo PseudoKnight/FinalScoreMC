@@ -1,4 +1,7 @@
 proc _get_shop(@loc) {
+	if(!is_sign_at(@loc)) {
+		return(null);
+	}
 	try {
 		@sign = get_sign_text(@loc);
 	} catch(RangeException @ex) {
