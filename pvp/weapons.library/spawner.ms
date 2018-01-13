@@ -4,13 +4,12 @@ bind(player_interact, array('id': @id.'spawner'), array('button': 'right', 'item
 	if(!array_index_exists(@pvp['players'], player()) || pinfo(player(), 6) != @e['item']) {
 		die();
 	}
-
+	cancel();
 	if(@e['action'] === 'right_click_block') {
-		cancel()
-		@item = pinv(player(), null)
+		@item = pinv(player(), null);
 		if(is_null(@item['meta'])
 		|| is_null(@item['meta']['display'])) {
-			die()
+			die();
 		}
 		
 		@loc = @e['location'];

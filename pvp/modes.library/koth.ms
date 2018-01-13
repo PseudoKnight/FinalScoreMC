@@ -4,7 +4,7 @@ proc _interval(@pvp, @id) {
 		@count = 0;
 		@players = array();
 		foreach(@p: @player in @pvp['players']) {
-			if(phealth(@p) > 0 && array_contains(sk_current_regions(@p), @pvp['arena']['kothregion'])) {
+			if(pmode(@p) != 'SPECTATOR' && array_contains(sk_current_regions(@p), @pvp['arena']['kothregion'])) {
 				if(@kingteam > -1 && @kingteam != @player['team']) {
 					// contested
 					@kingteam = -2;
@@ -45,7 +45,7 @@ proc _interval(@pvp, @id) {
 		@hillcount = 0;
 		@king = '';
 		foreach(@player in array_keys(@pvp['players'])) {
-			if(phealth(@player) > 0 && array_contains(sk_current_regions(@player), @pvp['arena']['kothregion'])) {
+			if(pmode(@player) != 'SPECTATOR' && array_contains(sk_current_regions(@player), @pvp['arena']['kothregion'])) {
 				@king = @player;
 				@hillcount++;
 			}

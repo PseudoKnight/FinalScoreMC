@@ -195,13 +195,13 @@ bind(player_death, array('priority': 'high', 'id': @id.'death'), null, @e, @id) 
 				}
 				if(!array_index_exists(@pvp['players'][player()], 'team') || @pvp['players'][player()]['team'] == 0) {
 					if(array_contains(all_virtualchests(), @id.'0')) {
-						set_timeout(200, closure(){
+						set_timeout(300, closure(){
 							popen_virtualchest(player(), @id.'0');
 						});
 					}
 				} else {
 					if(array_contains(all_virtualchests(), @id.'1')) {
-						set_timeout(200, closure(){
+						set_timeout(300, closure(){
 							popen_virtualchest(player(), @id.'1');
 						});
 					}
@@ -220,7 +220,7 @@ bind(player_death, array('priority': 'high', 'id': @id.'death'), null, @e, @id) 
 					@distance = 128;
 					@closest = '';
 					foreach(@p in array_keys(@pvp['players'])) {
-						if(@p == player()) {
+						if(@p == player() && array_contains(sk_current_regions(), @pvp['arena']['region'])) {
 							continue();
 						}
 						@pDistance = _distance(ploc(@p), @location);
@@ -267,9 +267,9 @@ bind(player_death, array('priority': 'high', 'id': @id.'death'), null, @e, @id) 
 	}
 	
 	// Death Effects
-	set_peffect(player(), 15, 0, 0.2);
-	set_peffect(player(), 16, 0, 0.2);
-	title(player(), 'You died.', '', 0, 4, 0);
+	set_peffect(player(), 15, 0, 0.3);
+	set_peffect(player(), 16, 0, 0.3);
+	title(player(), 'You died.', '', 0, 6, 0);
 	foreach(@item in @drops) {
 		drop_item(@location, @item);
 	}

@@ -51,7 +51,7 @@ proc _weapon_hit_scan(@player, @range, @damage, @tracerParticle, @hitParticle, @
 				play_sound(@origin, array('sound': 'SUCCESSFUL_HIT'), player());
 				try {
 					@player = player(@entity['uuid']);
-					if(!array_index_exists(@pvp['players'], @player)) {
+					if(!array_index_exists(@pvp['players'], @player) || pmode(@player) == 'SPECTATOR') {
 						continue();
 					}
 					@players[] = @player;
