@@ -177,11 +177,7 @@ proc _spawn_mob(@mob, @loc, @owner, @teammates) {
 proc _get_mob(@mob = null) {
 	@mobTypes = import('mobs');
 	if(is_null(@mobTypes)) {
-		@mobTypes = get_value('mobs');
-		if(is_null(@mobTypes)) {
-			@mobTypes = reflect_pull('enum', 'Mobs');
-			store_value('mobs', @mobTypes);
-		}
+		@mobTypes = reflect_pull('enum', 'Mobs');
 		export('mobs', @mobTypes);
 	}
 	if(is_null(@mob)) {
