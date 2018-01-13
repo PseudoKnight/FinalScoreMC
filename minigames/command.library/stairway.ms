@@ -51,12 +51,15 @@ register_command('stairway', array(
 			if(!@players) {
 				if(@height == 256) {
 					runas('~console', '/jukebox stop music @stairway {fadeDuration:10}');
-				} else if(phealth(@player) == 0) {
+				} else if(!ponline(@player) || phealth(@player) == 0) {
 					runas('~console', '/jukebox sound @stairway http://finalscoremc.com/media/record_scratch.ogg {volume:20}');
 					runas('~console', '/jukebox stop music @stairway');
 				} else {
 					runas('~console', '/jukebox stop music @stairway {fadeDuration:3}');
 				}
+			}
+			if(!ponline(@player)) {
+				return();
 			}
 			@complete = get_value('stairway');
 			if(!@complete) {
@@ -70,13 +73,11 @@ register_command('stairway', array(
 			if(@height > @oldHeight) {
 				@complete[@uuid] = @height;
 				store_value('stairway', @complete);
-				if(ponline(@player)) {
-					if(@height == 256) {
-						title(@player, color('gold').'+ 256 coins', '');
-						_acc_add(@player, 256);
-					} else {
-						title(@player, '', color('green').'Closer!');
-					}
+				if(@height == 256) {
+					title(@player, color('gold').'+ 256 coins', '');
+					_acc_add(@player, 256);
+				} else {
+					title(@player, '', color('green').'Closer!');
 				}
 			}
 		}
