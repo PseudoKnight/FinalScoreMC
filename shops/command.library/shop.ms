@@ -92,7 +92,7 @@ register_command('shop', array(
 		
 			@signText = get_sign_text(@loc);
 			@signText[@line] = if(@line == 1, 'Buy ', 'Sell ').@value;
-			@shop[@transaction] = _get_price(@signText[@line]);
+			@shop[@transaction] = _get_shop_price(@signText[@line]);
 			if(!@shop[@transaction]) {
 				die(color('gold').'[Shop] Usage Example: /shop edit buy 16 for 1g');
 			}

@@ -1,4 +1,4 @@
-_cache_shop(@shop, @location) {
+proc _cache_shop(@shop, @location) {
 	@shops = get_value('shop', @shop['key']);
 	if(!@shops) {
 		@shops = array(array(), array());

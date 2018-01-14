@@ -12,7 +12,7 @@ proc _get_shop(@loc) {
 	}
 	
 	# Get item
-	@itemMatch = reg_match('^\\[(.+)\\]$', @sign[0]);
+	@itemMatch = _get_shop_item(@sign[0]);
 	@item = '';
 	if(!@itemMatch) {
 		return(null);
@@ -23,8 +23,8 @@ proc _get_shop(@loc) {
 		}
 	}
 	
-	@buy = _get_price(@sign[1]);
-	@sell = _get_price(@sign[2]);
+	@buy = _get_shop_price(@sign[1]);
+	@sell = _get_shop_price(@sign[2]);
 	if(@buy || @sell) {
 		# Update owner player name, if changed
 		try {
@@ -62,10 +62,14 @@ proc _get_shop(@loc) {
 }
 
 proc _is_shop_sign(@sign) {
-	return(length(@sign[3]) > 2 && reg_match('^\\[(.+)\\]$', @sign[0]) && (_get_price(@sign[1]) || _get_price(@sign[2])));
+	return(length(@sign[3]) > 2 && _get_shop_item(@sign[0]) && (_get_shop_price(@sign[1]) || _get_shop_price(@sign[2])));
 }
 
-proc _get_price(@string) {
+proc _get_shop_item(@string) {
+	return(reg_match('^\\[(.+)\\]$', @string));
+}
+
+proc _get_shop_price(@string) {
 	return(reg_match('^(?:Buy|Sell) ((\\d{1,4}) for (\\d{1,4})([degi]))$', @string));
 }
 
