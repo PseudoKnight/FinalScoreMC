@@ -11,26 +11,37 @@ case 'load':
 	}
 
 	bind(player_interact, array('id': @player.'web'), array('player': @player, 'button': 'right', 'item': 291), @e, @pvp) {
-		spawn_falling_block(_relative(ploc(), 'up', 2), 30, _get_vector(pfacing(), 1.5, 0));
-	}
-	
-	bind(entity_change_block, array('id': @player.'webhit'), array('from': 0, 'to': 30), @event, @pvp) {
-		cancel();
-		consume();
-		@loc = @event['location'];
-		foreach(@player in array_merge(array_keys(@pvp['players']), @pvp['spectators'])) {
-			psend_block_change(@player, @loc, 30);
+		@item = pinv(player(), null);
+		if(@item && pcooldown(@item['name']) == 0) {
+			spawn_falling_block(_relative(ploc(), 'up', 2), 30, _get_vector(pfacing(), 1.5, 0));
+			set_pcooldown(@item['name'], 8);
 		}
 	}
 	
-	bind(item_pickup, array('id': @player.'webpickup'), array('item': 30), @event) {
-		set_peffect(player(), 2, 1, 3);
+	bind(entity_change_block, array('id': @player.'webhit'), array('to': 30), @event, @pvp) {
+		cancel();
+		consume();
+		if(@event['from'] == '0') {
+			@loc = @event['location'];
+			foreach(@player in array_merge(array_keys(@pvp['players']), @pvp['spectators'])) {
+				psend_block_change(@player, @loc, 30);
+			}
+		}
+	}
+	
+	bind(item_spawn, array('id': @player.'webdrop'), array('item': 30), @event, @pvp) {
+		cancel();
+		if(get_block_at(@event['location']) == '0:0') {
+			foreach(@player in array_merge(array_keys(@pvp['players']), @pvp['spectators'])) {
+				psend_block_change(@player, @event['location'], 30);
+			}
+		}
 	}
 
 case 'unload':
 	unbind(@player.'damage');
 	unbind(@player.'web');
 	unbind(@player.'webhit');
-	unbind(@player.'webpickup');
+	unbind(@player.'webdrop');
 
 }
