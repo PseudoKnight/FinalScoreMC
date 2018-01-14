@@ -529,16 +529,14 @@ register_command('arena', array(
 							.color(10).@args[5].color('r').' seconds'.if(@args[6] == 'true', ' and at '.color(10).'start.', '.'));
 
 					case 'weapons':
-						@weapons = array('endernades', 'skullrockets',  'shotgunballs', 'primedtnt', 'pistoltears', 'firefire',
-							'railgun', 'fireball', 'firebreath', 'spawner', 'grapple', 'tracker', 'mine', 'rifle');
 						if(@action === 'add' && array_index_exists(@arena, 'weapons')) {
 							@arena['weapons'] = array_merge(@arena['weapons'], split(',', @args[3]));
 						} else {
 							@arena['weapons'] = split(',', @args[3]);
 						}
 						foreach(@weapon in @arena['weapons']) {
-							if(!array_contains(@weapons, @weapon)) {
-								die(color('gold').'Unknown flag: '.@weapon);
+							if(!file_exists('../weapons.library/'.@weapon.'.ms')) {
+								die(color('gold').'Unknown weapon: '.@weapon);
 							}
 						}
 						msg('Weapons activated: '.color(10).@arena['weapons']);
