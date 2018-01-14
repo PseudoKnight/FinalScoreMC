@@ -220,13 +220,14 @@ register_command('class', array(
 				if(!array_index_exists(@arena['classes'], @classid)) {
 					die(color('gold').'No class by that name.');
 				}
-				@arena['classes'][@setting] = @arena['classes'][@classid];
-				if(array_index_exists(@arena['classes'][@setting], 'selector')) {
-					@arena['classes'][@setting]['selector']['meta']['display'] = to_upper(@setting);
+				@new = @args[2];
+				@arena['classes'][@new] = @arena['classes'][@classid];
+				if(array_index_exists(@arena['classes'][@new], 'selector')) {
+					@arena['classes'][@new]['selector']['meta']['display'] = to_upper(@new);
 				}
 				array_remove(@arena['classes'], @classid);
 				store_value('arena', @arenaid, @arena);
-				msg(color('green').'Changed '.@classid.' class name to '.to_lower(@setting));
+				msg(color('green').'Changed '.@classid.' class name to '.to_lower(@new));
 
 			case 'load':
 				if(array_size(@args) < 3) {
