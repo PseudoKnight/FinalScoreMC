@@ -35,6 +35,5 @@ register_command('scb', array(
 		}
 		set_block_command(@block, @cmd);
 		msg('Command set: '.color('green').@cmd);
-		msg(color('yellow').'You can add to this command with /acb');
 	}
 ));
