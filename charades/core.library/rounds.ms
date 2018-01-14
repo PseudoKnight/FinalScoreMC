@@ -37,6 +37,7 @@ proc _start_round() {
 							if(ponline(@p)) {
 								set_ploc(@p, get_value('warp.charades'));
 								_equip_kit(@p);
+								_set_pactivity(@p, null);
 							}
 						}
 					}
@@ -47,11 +48,9 @@ proc _start_round() {
 				if(ponline(@builder)) {
 					set_ploc(@builder, get_value('warp.charades'));
 					_equip_kit(@builder);
+					_set_pactivity(@builder, null);
 				}
 				_end_round(null, @word);
-			} else if(pmode(@builder) != 'CREATIVE') {
-				console('Builder\'s turn already ended.');
-				clear_task();
 			} else {
 				_msg_charades(integer(@timer[0]), 'action');
 				if(@timer[0] <= 0) {

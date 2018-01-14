@@ -53,6 +53,7 @@ register_command('charades', array(
 			set_ploc(@p, @spawn);
 			set_pmode(@p, 'SPECTATOR');
 			set_pscoreboard(@p, 'charades');
+			_set_pactivity(@p, 'charades');
 		}
 		
 		set_block_at(@spawn, 169);

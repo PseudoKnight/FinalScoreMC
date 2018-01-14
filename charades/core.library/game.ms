@@ -30,6 +30,7 @@ proc _end_game() {
 			if(ponline(@p)) {
 				set_ploc(@p, @warp);
 				_equip_kit(@p);
+				_set_pactivity(@p, null);
 			}
 		}
 	}
