@@ -405,6 +405,9 @@ proc _pvp_start(@pvp, @id){
 						// they quit during the countdown.
 						// performance anxiety.
 					}
+					if(phealth(@p) == 0) {
+						respawn(@p);
+					}
 				}
 			} else if(@timeleft[0] > 6 && array_index_exists(@arena, 'classes') && array_size(@arena['classes']) > 1) {
 				@choosing = false;
