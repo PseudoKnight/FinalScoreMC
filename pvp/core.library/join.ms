@@ -32,16 +32,12 @@ proc _pvp_join(@id){
 			array_remove(@pvp['players'], @player);
 		}
 	}
-	@msg = array(
-		'&7[PVP] &r'.player().' joined '
-		. to_upper(if(array_index_exists(@arena, 'parent'), @arena['parent'].': ').@id)
-		. '. ('.array_size(@pvp['players']).') ',
-		array('&b[JOIN]', '/pvp join '.@id)
-	);
+	@msg = array('&7[PVP] ', array('&b[JOIN] ', '/pvp join '.@id));
 	if(array_size(@pvp['players']) >= array_get(@arena, 'min', 2)) {
-		@msg[] = ' ';
-		@msg[] = array('&a[START]', '/pvp start '.@id);
+		@msg[] = array('&a[START] ', '/pvp start '.@id);
 	}
+	@msg[] = '&r'.player().' joined '. to_upper(if(array_index_exists(@arena, 'parent'), @arena['parent'].': ').@id)
+			. ' ('.array_size(@pvp['players']).') ';
 	_click_tell(all_players(pworld()), @msg);
 	console(player().' joined '.@id, false);
 	_menu_refresh_pvp();
