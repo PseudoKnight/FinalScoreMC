@@ -17,7 +17,7 @@ bind(player_interact, array('id': @id.'battlerifle'), array('item': 292), @event
 		action_msg(player(), @currentAmmo.' / '.@maxAmmo);
 	}
 	
-	_weapon_hit_scan(player(), 64, 1.29, 'VOID_FOG', 'LARGE_SMOKE', @pvp);
+	_weapon_hit_scan(player(), 84, 1.29, 'VOID_FOG', 'LARGE_SMOKE', @pvp);
 	play_sound(ploc(), array('sound': 'FIREWORK_BLAST', 'pitch': 0.8, 'volume': 4));
 	action_msg(player(), (--@currentAmmo).' / '.@maxAmmo);
 	set_pcooldown(@item['name'], 500 / 50);
@@ -25,7 +25,7 @@ bind(player_interact, array('id': @id.'battlerifle'), array('item': 292), @event
 	set_pinv(player(), @slot, @item);
 	set_timeout(50, closure(){
 		if(pheld_slot() == @slot) {
-			_weapon_hit_scan(player(), 64, 2.58, 'VOID_FOG', 'LARGE_SMOKE', @pvp);
+			_weapon_hit_scan(player(), 84, 2.58, 'VOID_FOG', 'LARGE_SMOKE', @pvp);
 			play_sound(ploc(), array('sound': 'FIREWORK_BLAST', 'pitch': 0.8, 'volume': 4));
 			action_msg(player(), (--@currentAmmo).' / '.@maxAmmo);
 			@newitem = pinv(player(), @slot);
@@ -35,7 +35,7 @@ bind(player_interact, array('id': @id.'battlerifle'), array('item': 292), @event
 			}
 			set_timeout(50, closure(){
 				if(pheld_slot() == @slot) {
-					_weapon_hit_scan(player(), 64, 3.87, 'VOID_FOG', 'LARGE_SMOKE', @pvp);
+					_weapon_hit_scan(player(), 84, 3.87, 'VOID_FOG', 'LARGE_SMOKE', @pvp);
 					play_sound(ploc(), array('sound': 'FIREWORK_BLAST', 'pitch': 0.8, 'volume': 4));
 					action_msg(player(), (--@currentAmmo).' / '.@maxAmmo);
 					@newitem = pinv(player(), @slot);

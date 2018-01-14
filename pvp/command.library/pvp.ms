@@ -150,7 +150,7 @@ register_command('pvp', array(
 				if(@args[1] == 'all') {
 					x_recompile_includes('..');
 				} else {
-					x_recompile_includes('../'.@args[1]);
+					x_recompile_includes('../'.@args[1].'.library');
 				}
 				msg(color('green').'Done recompiling '.@args[1].'!');
 
