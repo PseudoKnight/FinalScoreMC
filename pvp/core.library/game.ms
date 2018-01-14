@@ -152,12 +152,16 @@ proc _pvp_start_match(@id) {
 		
 		foreach(@player: @p in @pvp['players']) {
 			if(array_index_exists(@arena, 'respawntime') && @p['respawn'] != 0) {
-				if(ploc(@player)['y'] < 256 && !array_contains(sk_current_regions(@player), @arena['region'])) {
-					_pvp_msg(@pvp, colorize('&7[PVP] '.@p['color'].@player.'&r left the arena.'));
-					if(array_index_exists(@arena, 'resourcepack')) {
-						send_resourcepack(@player, 'http://mc.finalscoremc.com:25966/resourcepacks/default.zip');
+				if(!array_contains(sk_current_regions(@player), @arena['region'])) {
+					if(pmode(@player) != 'SPECTATOR') {
+						_pvp_msg(@pvp, colorize('&7[PVP] '.@p['color'].@player.'&r left the arena.'));
+						if(array_index_exists(@arena, 'resourcepack')) {
+							send_resourcepack(@player, 'http://mc.finalscoremc.com:25966/resourcepacks/default.zip');
+						}
+						_player_remove(@player, @id);
+					} else {
+						set_ploc(@player, @pvp['arena']['spawn'][0][0]);
 					}
-					_player_remove(@player, @id);
 				} else if(@p['respawn'] < time()) {
 					@loc = array();
 					if(array_index_exists(@arena, 'captain')) {
@@ -215,7 +219,7 @@ proc _pvp_start_match(@id) {
 				} else {
 					tmsg(@player, color('gray').'[PVP] '.color('r').'You exited the combat region.')
 					set_timeout(50, closure(){
-						if(!_is_survival_world(pworld(@player)) && pmode(@player) != 'SPECTATOR') {
+						if(!_is_survival_world(pworld(@player))) {
 							pkill(@player);
 						}
 					});
