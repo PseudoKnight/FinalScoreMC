@@ -107,6 +107,7 @@
 		msg('Special entityType groups: living, hostile, hologram');
 	}
 	@removenamed = false;
+	@spawnEggs = false;
 	@type = array('BLAZE', 'CAVE_SPIDER', 'CREEPER', 'ELDER_GUARDIAN', 'ENDER_DRAGON', 'ENDERMAN', 'ENDERMITE',
 			'EVOKER', 'GUARDIAN', 'GHAST', 'GIANT', 'HUSK', 'MAGMA_CUBE', 'PIG_ZOMBIE', 'SHULKER', 'SILVERFISH',
 			'SKELETON', 'SLIME', 'SPIDER', 'STRAY', 'WITCH', 'WITHER', 'WITHER_SKELETON', 'VEX', 'VINDICATOR', 'ZOMBIE',
@@ -122,6 +123,8 @@
 			@radius = min(@arg, 128);
 		} else if(@arg === '-n') {
 			@removenamed = true;
+		} else if(@arg === '-e') {
+			@spawnEggs = true;
 		} else {
 			switch(@arg) {
 				case 'living':
@@ -141,7 +144,11 @@
 	@entities = entities_in_radius(@loc, @radius, @type);
 	@count = 0;
 	foreach(@e in @entities) {
-		if(@removenamed || !is_entity_living(@e) || !get_mob_name(@e)) {
+		@living = is_entity_living(@e);
+		if(@removenamed || !@living || !get_mob_name(@e)) {
+			if(@spawnEggs && @living) {
+				pgive_item(array('name': 'MONSTER_EGG', 'meta': array('spawntype': entity_type(@e), 'display': get_mob_name(@e))));
+			}
 			entity_remove(@e);
 			@count++;
 		}
