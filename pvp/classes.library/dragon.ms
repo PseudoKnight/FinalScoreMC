@@ -20,30 +20,11 @@ case 'load':
 					play_sound(ploc(@player), array('sound': 'ENDERDRAGON_WINGS', 'pitch': 1.2));
 					set_entity_fall_distance(puuid(@player), 0);
 					_flap(@player);
-				} else {
-					set_interval(200, closure(){
-						try {
-							if(pinv(@player, 103)['name'] == 'SKULL_ITEM') {
-								clear_task();
-							} else if(entity_grounded(puuid(@player))) {
-								@xp = pexp(@player);
-								if(@xp > 98) {
-									clear_task();
-									set_pflight(@player, true);
-								} else {
-									set_pexp(@player, min(99, @xp + 2));
-								}
-							}
-
-						} catch(Exception @ex) {
-							clear_task();
-						}
-					})
 				}
 			}, @player.'flap');
 			queue_delay(500, @player.'flap');
 		}
-		if(pexp() == 99) {
+		if(pexp() > 0) {
 			_flap(player())
 		}
 	}
