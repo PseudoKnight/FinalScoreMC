@@ -68,21 +68,35 @@ proc _pvp_join(@id){
 		popen_virtualchest(@id.'options');
 
 	} else if(@pvp['running'] == 0 && array_index_exists(@arena, 'arenaselect') && @arena['arenaselect']['type'] == 'vote') {
-		@pages = array('["",{"color":"red","bold":true,"text":"Vote for arena:"}');
-		@line = 2;
+		@votes = array();
+		foreach(@p in @pvp['players']) {
+			if(array_index_exists(@p, 'arena')) {
+				@votes[] = @p['arena'];
+			}
+		}
+		@pages = array();
+		@line = 1;
 		@page = 0;
-		foreach(@arena in @arena['arenaselect']['arenas']) {
+		foreach(@index: @arena in @arena['arenaselect']['arenas']) {
+			if(@line == 1) {
+				@pages[@page] = '["",{"color":"red","bold":true,"text":"Vote for an Arena:"}';
+			}
+			@color = 'reset';
+			if(array_contains(@votes, @arena)) {
+				@color = 'dark_green';
+			}
+			@pages[@page] .= ',{"color":"'.@color.'","text":"'.'\n \u27a2 '.to_upper(@arena[0]).substr(@arena, 1)
+					.'","clickEvent":{"action":"run_command","value":"/pvp vote '.@id.' '.@arena.'"}}';
+			@line++;
 			if(@line == 15) {
 				@line = 1;
 				@pages[@page] .= ']';
 				@page++;
-				@pages[@page] = '["",{"color":"red","bold":true,"text":"Vote for arena:"}';
-			} else {
-				@pages[@page] .= ',{"text":"\n'.to_upper(@arena[0]).substr(@arena, 1).'","clickEvent":{"action":"run_command","value":"/pvp vote '.@id.' '.@arena.'"}}';
-				@line++;
 			}
 		}
-		@pages[@page] .= ']';
+		if(array_index_exists(@pages, @page) && !string_ends_with(@pages[@page], ']')) {
+			@pages[@page] .= ']';
+		}
 		open_book(@pages);
 
 	} else if(@pvp['running'] == 1) {
