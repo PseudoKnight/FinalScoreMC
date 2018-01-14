@@ -173,7 +173,7 @@ proc _fw_task(@task, @state, @secs) {
 				foreach(@p in all_players('custom')) {
 					if(_fw_player(@p)) {
 						# knockback mushroom
-						pgive_item(@p, 40, 1, array(array('etype': 'KNOCKBACK', 'elevel': 10)))
+						pgive_item(@p, 40, 1, array('enchants': array('etype': 'KNOCKBACK', 'elevel': 10)));
 					}
 				}
 			}
