@@ -4,27 +4,26 @@ case 'load':
 	@pvp['players'][@player]['task'] = set_interval(50, closure(){
 		try {
 			if(!entity_grounded(@uuid)) {
-				set_entity_fall_distance(@uuid, -2);
-				if(entity_velocity(@uuid)['magnitude'] < 0.51) {
-					@strength = -1;
+				set_entity_fall_distance(@uuid, -5);
+				@v = entity_velocity(@uuid);
+				if(@v['magnitude'] < 0.5) {
+					@strength = if(@v['y'] > 0, 0, -3);
 					foreach(@effect in get_peffect(@player)) {
 						if(@effect['id'] == 25) {
 							@strength = @effect['strength'] - 1;
 							break();
 						}
 					}
-					set_peffect(@player, 25, max(-11, @strength), 0.10, true);
+					set_peffect(@player, 25, max(-12, @strength), 0.15, true);
 				}
 			} else {
 				set_peffect(@player, 25, 0, 0);
 			}
 		} catch(Exception @ex) {
 			clear_task();
+			console(@ex);
 		}
 	});
-	bind(player_jump, array('id': @player.'moonjump'), array('player': @player), @event) {
-		set_peffect(player(), 25, 6, 0.10, true);
-	}
 	
 case 'powerup':
 	@item1 = pinv(@player, 0);
@@ -37,6 +36,5 @@ case 'powerup':
 	}
 	
 case 'unload':
-	unbind(@player.'moonjump');
 	clear_task(@pvp['players'][@player]['task']);
 }
