@@ -139,6 +139,7 @@
 	if(is_null(@loc) && !has_permission('group.builder')) {
 		die(color('gold').'You cannot run this command.');
 	}
+	@applicationtime = $double;
 	if(ponline($entity)) {
 		@player = $entity;
 		if(@loc && @loc['world'] != pworld(@player)) {
@@ -153,7 +154,7 @@
 		play_sound(@loc, array('sound': 'GHAST_FIREBALL', 'volume': 2));
 		make_effect(@loc, 'MOBSPAWNER_FLAMES');
 		
-		@reapply = array(if($double, integer($double / 50), 0));
+		@reapply = array(if(@applicationtime, integer(@applicationtime / 50), 0));
 		set_interval(50, closure(){
 			make_effect(ploc(@player), 'MOBSPAWNER_FLAMES');
 			if(@reapply[0]-- > 0) {
@@ -188,7 +189,7 @@
 		play_sound(@loc, array('sound': 'GHAST_FIREBALL', 'volume': 2));
 		set_entity_velocity(@entity, array($x, $y, $z));
 		
-		@reapply = array(if($double, integer($double / 50), 0));
+		@reapply = array(if(@applicationtime, integer(@applicationtime / 50), 0));
 		set_timeout(50, closure(){
 			make_effect(@loc, 'MOBSPAWNER_FLAMES');
 			if(@reapply[0]-- > 0) {
