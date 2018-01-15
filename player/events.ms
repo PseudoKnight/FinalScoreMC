@@ -306,3 +306,26 @@ bind(entity_damage_player, null, null, @event) {
 		}
 	}
 }
+
+# Elytra skipping
+bind(entity_toggle_glide, null, array('type': 'PLAYER'), @event) {
+	if(!@event['gliding'] && _is_survival_world(ploc()['world'])) {
+		@item = pinv(player(), null);
+		if(@item && @item['name'] == 'SLIME_BLOCK') {
+			cancel();
+			@skipping = import('skipping');
+			if(!@skipping) {
+				@skipping = associative_array();
+				export('skipping', @skipping);
+			}
+			if(!array_index_exists(@skipping, player()) || @skipping[player()] + 500 < time()) {
+				@skipping[player()] = time();
+				@loc = _relative(ploc(), 'up');
+				play_sound(@loc, array('sound': 'SLIME_WALK', 'pitch': 0.8, 'volume': 0.5));
+				play_effect(@loc, 'SLIME', array('particleCount': 8));
+			} else if(array_index_exists(@skipping, player()) && @skipping[player()] + 250 < time()) {
+				cancel(false);
+			}
+		}
+	}
+}
