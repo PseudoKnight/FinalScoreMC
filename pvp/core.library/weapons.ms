@@ -48,12 +48,12 @@ proc _weapon_hit_scan(@player, @range, @damage, @tracerParticle, @hitParticle, @
 		foreach(@entity in @entities) {
 			if(is_entity_living(@entity['uuid'])
 			&& array_contains(sk_regions_at(@entity['location']), @pvp['arena']['region'])) {
-				play_sound(@origin, array('sound': 'SUCCESSFUL_HIT'), player());
 				try {
 					@player = player(@entity['uuid']);
 					if(!array_index_exists(@pvp['players'], @player) || pmode(@player) == 'SPECTATOR') {
 						continue();
 					}
+					play_sound(@origin, array('sound': 'SUCCESSFUL_HIT'), player());
 					@players[] = @player;
 				} catch(PlayerOfflineException @ex) {
 					// not a player, but let's still kill it
