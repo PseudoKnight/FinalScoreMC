@@ -93,6 +93,11 @@ proc _pvp_join(@id){
 		if(array_index_exists(@pages, @page) && !string_ends_with(@pages[@page], ']')) {
 			@pages[@page] .= ']';
 		}
+		@page++;
+		@pages[@page] = '["",{"color":"red","bold":true,"text":"Vote for Teams:"}'
+				.',{"text":"'.'\n \u27a2 Solo","clickEvent":{"action":"run_command","value":"/pvp vote '.@id.' teamvote solo"}}'
+				.',{"text":"'.'\n \u27a2 Teams","clickEvent":{"action":"run_command","value":"/pvp vote '.@id.' teamvote teams"}}'
+				.']';
 		open_book(@pages);
 
 	} else if(@pvp['running'] == 1) {

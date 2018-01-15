@@ -8,11 +8,11 @@ proc _pvp_start(@pvp, @id){
 	@picked = '';
 	if(array_index_exists(@pvp['arena'], 'arenaselect') && @pvp['arena']['arenaselect']['type'] == 'vote') {
 		@voted = array_filter(@pvp['players'], closure(@key, @value){
-			return(array_index_exists(@value, 'arena'));
+			return(array_index_exists(@value, 'arenavote'));
 		});
 		@picked = array_get(array_rand(@voted), 0, '');
 		if(@picked) {
-			@childid = @pvp['players'][@picked]['arena'];
+			@childid = @pvp['players'][@picked]['arenavote'];
 		}
 
 		// Store total votes
@@ -87,7 +87,7 @@ proc _pvp_start(@pvp, @id){
 			array_remove(@pvp['players'], @p);
 		}
 	}
-	if(array_size(@pvp['players']) < if(array_index_exists(@arena, 'min'), @arena['min'], 2)) {
+	if(!has_permission('group.engineer') && array_size(@pvp['players']) < if(array_index_exists(@arena, 'min'), @arena['min'], 2)) {
 		die('There aren\'t enough players. ('.array_size(@pvp['players']).')');
 	}
 
@@ -107,12 +107,21 @@ proc _pvp_start(@pvp, @id){
 	}
 
 	# Dynamically determine if it should be a team game
+	@teampicked = '';
+	@teamvoteresult = '';
 	if(@arena['mode'] === 'ddm' || @arena['mode'] === 'koth') {
 		if(@arena['mode'] == 'ddm') {
 			@arena['mode'] = 'dm';
+			@voted = array_filter(@pvp['players'], closure(@key, @value){
+				return(array_index_exists(@value, 'teamvote'));
+			});
+			@teampicked = array_get(array_rand(@voted), 0, '');
+			if(@teampicked) {
+				@teamvoteresult = @pvp['players'][@teampicked]['teamvote'];
+			}
 		}
 		@size = array_size(@pvp['players']);
-		if(@size > 3 && @size % 2 == 0) {
+		if(@teamvoteresult == 'teams' || @teamvoteresult != 'solo' && @size > 3 && @size % 2 == 0) {
 			if(!array_index_exists(@arena, 'team')) {
 				@arena['team'] = array(
 					array('name': 'Red', 'color': 'c'),
@@ -365,6 +374,9 @@ proc _pvp_start(@pvp, @id){
 	}
 	if(@picked) {
 		_pvp_msg(@pvp, colorize('* &e&lArena picked by '.@picked));
+	}
+	if(@teampicked) {
+		_pvp_msg(@pvp, colorize('* &e&l'.to_upper(@teamvoteresult).' picked by '.@teampicked));
 	}
 	_worldmsg(@world, colorize('&7&m|----------------------------------------------------|'));
 
