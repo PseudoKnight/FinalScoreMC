@@ -47,7 +47,7 @@ case 'load':
 		}, player().'lightning')
 	}
 
-	bind(player_interact, array('id': @player.'woosh'), array('item': 288, 'button': 'right', 'player': @player), @e) {
+	bind(player_interact, array('id': @player.'woosh'), array('item': 288, 'button': 'right', 'player': @player), @e, @pvp) {
 		if(pinfo(player(), 6) != @e['item']) {
 			die();
 		}
@@ -62,6 +62,9 @@ case 'load':
 					continue();
 				}
 				if(entity_grounded(@entity) && psneaking(@player)) {
+					@force *= 0.4;
+				}
+				if(array_index_exists(@pvp, 'teams') && @pvp['players'][player()]['team'] == @pvp['players'][@player]['team']) {
 					@force *= 0.4;
 				}
 			} else if(@type == 'ARMOR_STAND') {

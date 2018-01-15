@@ -1,6 +1,6 @@
 switch(@action) {
 case 'load':
-	bind(player_interact, array('id': @player.'blind'), array('player': @player, 'item': 290, 'button': 'right'), @e) {
+	bind(player_interact, array('id': @player.'blind'), array('player': @player, 'item': 290, 'button': 'right'), @e, @pvp) {
 		if(pinfo(player(), 6) != @e['item']) {
 			die();
 		}
@@ -8,7 +8,8 @@ case 'load':
 			die();
 		}
 		foreach(@player in players_in_radius(ploc(), 18)) {
-			if(@player != player() && pmode(@player) != 'SPECTATOR') {
+			if(@player != player() && pmode(@player) != 'SPECTATOR'
+			&& (!array_index_exists(@pvp, 'teams') || @pvp['players'][player()]['team'] != @pvp['players'][@player]['team'])) {
 				set_peffect(@player, 15, 0, 7);
 				@cloud = spawn_entity('AREA_EFFECT_CLOUD', 1, ploc(@player))[0];
 				set_entity_spec(@cloud, array('particle': 'SMOKE_LARGE', 'radius': 1, 'duration': 7000 / 50));
