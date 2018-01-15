@@ -175,16 +175,15 @@ bind(player_death, array('priority': 'high', 'id': @id.'death'), null, @e, @id) 
 		_player_to_spectator(player(), @pvp);
 		
 	} else {
-		if(array_index_exists(@pvp['players'][player()], 'class')) {
-			_class('unload', player(), @pvp['players'][player()]['class'], @pvp);
-		}
-		
 		// Class Selection & Equip
 		if(!array_index_exists(@pvp['arena'], 'respawntime')) {
 			set_timeout(50, closure(){ // wait until after fake death to fix fake inventory
 				_player_equip(@id, player());
 			});
 		} else if(array_index_exists(@pvp['arena'], 'classes')) {
+			if(array_index_exists(@pvp['players'][player()], 'class')) {
+				_class('unload', player(), @pvp['players'][player()]['class'], @pvp);
+			}
 			if(@pvp['arena']['class_picking'] === 'random') {
 				_class_select_random(player(), @pvp);
 			} else if(!array_index_exists(@pvp['arena'], 'class_picks')
