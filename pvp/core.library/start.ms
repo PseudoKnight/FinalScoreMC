@@ -1,9 +1,16 @@
 proc _pvp_start(@pvp, @id){
+	foreach(@p in array_keys(@pvp['players'])) {
+		if(!ponline(@p) || _is_survival_world(pworld(@p)) || _psession(@p)['activity']) {
+			array_remove(@pvp['players'], @p);
+		}
+	}
+	
 	if(array_index_exists(@pvp['arena'], 'options')) {
 		del_virtualchest(@id.'options');
 		unbind(@id.'options');
 	}
 
+	// Select Arena by Votes
 	@childid = '';
 	@picked = '';
 	if(array_index_exists(@pvp['arena'], 'arenaselect') && @pvp['arena']['arenaselect']['type'] == 'vote') {
@@ -65,7 +72,8 @@ proc _pvp_start(@pvp, @id){
 	}
 
 	@arena = @pvp['arena'];
-
+	
+	// Check shared regions
 	if(array_index_exists(@arena, 'sharedarenas')) {
 		foreach(@arenaid in @arena['sharedarenas']) {
 			@otherpvp = import('pvp'.@arenaid);
@@ -81,12 +89,7 @@ proc _pvp_start(@pvp, @id){
 		die('This arena is still in testing and can only be started by Builders.');
 	}
 
-	# Check if enough players and teleport them to lobby
-	foreach(@p in array_keys(@pvp['players'])) {
-		if(!ponline(@p) || _is_survival_world(pworld(@p)) || _psession(@p)['activity']) {
-			array_remove(@pvp['players'], @p);
-		}
-	}
+	# Check if enough players
 	if(!has_permission('group.engineer') && array_size(@pvp['players']) < if(array_index_exists(@arena, 'min'), @arena['min'], 2)) {
 		die('There aren\'t enough players. ('.array_size(@pvp['players']).')');
 	}
@@ -172,6 +175,7 @@ proc _pvp_start(@pvp, @id){
 		}
 	}
 	
+	// Default scores
 	if(!array_index_exists(@arena, 'score')) {
 		switch(@arena['mode']) {
 			case 'ctf':
@@ -181,6 +185,7 @@ proc _pvp_start(@pvp, @id){
 		}
 	}
 	
+	// Adjust target scores for player counts
 	if(@arena['mode'] == 'koth') {
 		if(!array_index_exists(@pvp, 'team') && array_size(@pvp['players']) > 4) {
 			@arena['score'] = integer(@arena['score'] / 2);
@@ -379,6 +384,8 @@ proc _pvp_start(@pvp, @id){
 		_pvp_msg(@pvp, colorize('* &e&l'.to_upper(@teamvoteresult).' picked by '.@teampicked));
 	}
 	_worldmsg(@world, colorize('&7&m|----------------------------------------------------|'));
+	
+	_click_tell(all_players(pworld()), array('&7[PVP] ', array('&b[Click to Spectate '.@title.']', '/pvp spectate '.@id)));
 
 	play_sound(@arena['lobby'], array('sound': 'WITHER_SPAWN', 'pitch': 1.5, 'volume': 3, 'category': 'VOICE'));
 
