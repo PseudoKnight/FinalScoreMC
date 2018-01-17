@@ -64,6 +64,7 @@ proc _pvp_join(@id){
 		popen_virtualchest(@id.'options');
 
 	} else if(@pvp['running'] == 0 && array_index_exists(@arena, 'arenaselect') && @arena['arenaselect']['type'] == 'vote') {
+		// Display book with vote links
 		@votes = array();
 		foreach(@p in @pvp['players']) {
 			if(array_index_exists(@p, 'arena')) {
@@ -76,13 +77,14 @@ proc _pvp_join(@id){
 		foreach(@index: @arena in @arena['arenaselect']['arenas']) {
 			if(@line == 1) {
 				@pages[@page] = '["",{"color":"red","bold":true,"text":"Vote for an Arena:"}';
+				@line++;
 			}
 			@color = 'reset';
 			if(array_contains(@votes, @arena)) {
 				@color = 'dark_green';
 			}
 			@pages[@page] .= ',{"color":"'.@color.'","text":"'.'\n \u27a2 '.to_upper(@arena[0]).substr(@arena, 1)
-					.'","clickEvent":{"action":"run_command","value":"/pvp vote '.@id.' '.@arena.'"}}';
+					.'","clickEvent":{"action":"run_command","value":"/pvp vote '.@id.' arena '.@arena.'"}}';
 			@line++;
 			if(@line == 15) {
 				@line = 1;
@@ -92,11 +94,11 @@ proc _pvp_join(@id){
 		}
 		if(array_index_exists(@pages, @page) && !string_ends_with(@pages[@page], ']')) {
 			@pages[@page] .= ']';
+			@page++;
 		}
-		@page++;
 		@pages[@page] = '["",{"color":"red","bold":true,"text":"Vote for Teams:"}'
-				.',{"text":"'.'\n \u27a2 Solo","clickEvent":{"action":"run_command","value":"/pvp vote '.@id.' teamvote solo"}}'
-				.',{"text":"'.'\n \u27a2 Teams","clickEvent":{"action":"run_command","value":"/pvp vote '.@id.' teamvote teams"}}'
+				.',{"text":"'.'\n \u27a2 Solo","clickEvent":{"action":"run_command","value":"/pvp vote '.@id.' mode solo"}}'
+				.',{"text":"'.'\n \u27a2 Teams","clickEvent":{"action":"run_command","value":"/pvp vote '.@id.' mode teams"}}'
 				.']';
 		open_book(@pages);
 

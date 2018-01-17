@@ -15,11 +15,11 @@ proc _pvp_start(@pvp, @id){
 	@picked = '';
 	if(array_index_exists(@pvp['arena'], 'arenaselect') && @pvp['arena']['arenaselect']['type'] == 'vote') {
 		@voted = array_filter(@pvp['players'], closure(@key, @value){
-			return(array_index_exists(@value, 'arenavote'));
+			return(array_index_exists(@value, 'arena'));
 		});
 		@picked = array_get(array_rand(@voted), 0, '');
 		if(@picked) {
-			@childid = @pvp['players'][@picked]['arenavote'];
+			@childid = @pvp['players'][@picked]['arena'];
 		}
 
 		// Store total votes
@@ -110,21 +110,21 @@ proc _pvp_start(@pvp, @id){
 	}
 
 	# Dynamically determine if it should be a team game
-	@teampicked = '';
-	@teamvoteresult = '';
+	@modepicked = '';
+	@moderesult = '';
 	if(@arena['mode'] === 'ddm' || @arena['mode'] === 'koth') {
 		if(@arena['mode'] == 'ddm') {
 			@arena['mode'] = 'dm';
 			@voted = array_filter(@pvp['players'], closure(@key, @value){
-				return(array_index_exists(@value, 'teamvote'));
+				return(array_index_exists(@value, 'mode'));
 			});
-			@teampicked = array_get(array_rand(@voted), 0, '');
-			if(@teampicked) {
-				@teamvoteresult = @pvp['players'][@teampicked]['teamvote'];
+			@modepicked = array_get(array_rand(@voted), 0, '');
+			if(@modepicked) {
+				@moderesult = @pvp['players'][@modepicked]['mode'];
 			}
 		}
 		@size = array_size(@pvp['players']);
-		if(@teamvoteresult == 'teams' || @teamvoteresult != 'solo' && @size > 3 && @size % 2 == 0) {
+		if(@moderesult == 'teams' || @moderesult != 'solo' && @size > 3 && @size % 2 == 0) {
 			if(!array_index_exists(@arena, 'team')) {
 				@arena['team'] = array(
 					array('name': 'Red', 'color': 'c'),
@@ -380,12 +380,15 @@ proc _pvp_start(@pvp, @id){
 	if(@picked) {
 		_pvp_msg(@pvp, colorize('* &e&lArena picked by '.@picked));
 	}
-	if(@teampicked) {
-		_pvp_msg(@pvp, colorize('* &e&l'.to_upper(@teamvoteresult).' picked by '.@teampicked));
+	if(@modepicked) {
+		_pvp_msg(@pvp, colorize('* &e&l'.to_upper(@moderesult).' picked by '.@modepicked));
 	}
 	_worldmsg(@world, colorize('&7&m|----------------------------------------------------|'));
 	
-	_click_tell(all_players(pworld()), array('&7[PVP] ', array('&b[Click to Spectate '.@title.']', '/pvp spectate '.@id)));
+	@nonplayers = array_filter(all_players(pworld()), closure(@key, @value) {
+		return(!array_index_exists(@pvp['players'], @value));
+	});
+	_click_tell(@nonplayers, array('&7[PVP] ', array('&b[Click to Spectate '.@title.']', '/pvp spectate '.@id)));
 
 	play_sound(@arena['lobby'], array('sound': 'WITHER_SPAWN', 'pitch': 1.5, 'volume': 3, 'category': 'VOICE'));
 
