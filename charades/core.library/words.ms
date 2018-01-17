@@ -17,7 +17,7 @@ proc _get_match(@guess, @target) {
 proc _highlight_similarities(@guess, @target) {
 	@words = parse_args(@guess);
 	foreach(@index: @word in @words) {
-		if(length(@word) > 1 && string_position(@target, @word) >= 0) {
+		if(length(@word) > 1 && reg_match('(?i)'.@word, @target)) {
 			@words[@index] = color('bold').@word;
 		} else {
 			@words[@index] = color('reset').@word;
