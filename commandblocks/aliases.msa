@@ -21,7 +21,7 @@
 		}
 		@rider = puuid($player)
 		@cart = spawn_entity('minecart', 1, @loc)[0]
-		set_entity_max_speed(@cart, 0.5); // 0.4 default, 0.5 doesn't glitch, 0.53 glitches
+		set_entity_max_speed(@cart, 0.49); // 0.4 default, 0.5 doesn't glitch but can rarely derail, 0.53 glitches
 		set_entity_rider(@cart, @rider)
 		if(has_bind($player.'vehicle_leave')) {
 			die();
