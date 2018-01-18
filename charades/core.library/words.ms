@@ -12,6 +12,11 @@ proc _get_match(@guess, @target) {
 	|| length(@target) > 4 && levenshtein(@guess, @target) < 2) {
 		return(true);
 	}
+	
+	// accept the guess if it contains the entire target phrase
+	if(reg_match('(?i)'.@target, @guess)) {
+		return(true);
+	}
 }
 
 proc _highlight_similarities(@guess, @target) {
