@@ -786,20 +786,20 @@ register_command('arena', array(
 						@loc = array(round(@loc[0], 1), round(@loc[1], 1), round(@loc[2], 1), @loc[3]);
 						@found = false;
 						foreach(@index: @spawn in @arena['spawn'][0]) {
-							if(@spawn[0] < @loc[0] + 2 && @spawn[0] > @loc[0] + 2
-							&& @spawn[1] < @loc[1] + 2 && @spawn[1] > @loc[1] + 2
-							&& @spawn[2] < @loc[2] + 2 && @spawn[2] > @loc[2] + 2) {
+							if(@spawn[0] < @loc[0] + 2 && @spawn[0] > @loc[0] - 2
+							&& @spawn[1] < @loc[1] + 2 && @spawn[1] > @loc[1] - 2
+							&& @spawn[2] < @loc[2] + 2 && @spawn[2] > @loc[2] - 2) {
 								@found = true;
 								array_remove(@arena['spawn'][0], @index);
 								msg('Removed this spawn location'.if(array_index_exists(@arena, 'team'), ' for team 0.', '.'));
 								break();
 							}
 						}
-						if(!@found) {
+						if(!@found && array_index_exists(@arena['spawn'], 1)) {
 							foreach(@spawn in @arena['spawn'][1]) {
-								if(@spawn[0] < @loc[0] + 2 && @spawn[0] > @loc[0] + 2
-								&& @spawn[1] < @loc[1] + 2 && @spawn[1] > @loc[1] + 2
-								&& @spawn[2] < @loc[2] + 2 && @spawn[2] > @loc[2] + 2) {
+								if(@spawn[0] < @loc[0] + 2 && @spawn[0] > @loc[0] - 2
+								&& @spawn[1] < @loc[1] + 2 && @spawn[1] > @loc[1] - 2
+								&& @spawn[2] < @loc[2] + 2 && @spawn[2] > @loc[2] - 2) {
 									array_remove(@arena['spawn'][1], @index);
 									msg(color('green').'Removed this spawn location'.if(array_index_exists(@arena, 'team'), ' for team 1.', '.'));
 									break();
