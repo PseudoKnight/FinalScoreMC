@@ -99,7 +99,7 @@ case 'load':
 				clear_task();
 			}
 		});
-		ptake_item(399, 1);
+		ptake_item(array('name': 'NETHER_STAR'));
 	}
 	
 	bind(item_pickup, array('id': @player.'starpickup'), array('item': 399), @e, @pvp) {

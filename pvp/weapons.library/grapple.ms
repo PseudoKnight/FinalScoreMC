@@ -8,10 +8,10 @@ bind(projectile_launch, array('id': @id.'grapple'), array('type': 'FISHING_HOOK'
 		die();
 	}
 
-	if(!ptake_item(@player, 262, 1)) {
+	if(!ptake_item(@player, array('name': 'ARROW'))) {
 		cancel();
 		die();
-	} else if(!phas_item(@player, 262)) {
+	} else if(!phas_item(@player, array('name': 'ARROW'))) {
 		play_sound(ploc(), array('sound': 'ITEM_BREAK'));
 	}
 
@@ -87,7 +87,7 @@ bind(projectile_launch, array('id': @id.'grapple'), array('type': 'FISHING_HOOK'
 					} else if(!psneaking(@player)) {
 						if(entity_type(@target) == 'ARROW') {
 							entity_remove(@target);
-							pgive_item(@player, 262, 1);
+							pgive_item(@player, array('name': 'ARROW'));
 						}
 						if(@interval) {
 							clear_task();

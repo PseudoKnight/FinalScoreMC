@@ -555,7 +555,7 @@ bind(world_changed, array('id': 'shard-scavenger-worldchanged', 'priority': 'LOW
 			create_team(player(), 'shard');
 			team_add_player(player(), player(), 'shard');
 			set_team_display(player(), array('prefix': color(@colorMap[player()][1])), 'shard');
-			pgive_item(player(), 395, 1, array('display': 'Scavenger Hunt Card'));
+			pgive_item(player(), array('name': 'EMPTY_MAP', 'meta': array('display': 'Scavenger Hunt Card')));
 			if(@size) {
 				_refresh_card(true);
 			}

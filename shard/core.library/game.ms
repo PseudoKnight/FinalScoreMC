@@ -210,7 +210,7 @@ proc _shard_create(@rules){
 							_clear_pinv(@p);
 						}
 						if(@airDrop) {
-							pgive_item(@p, '443:402', 1);
+							pgive_item(@p, array('name': 'ELYTRA', 'data': 402));
 							set_peffect(@p, 25, -4, 15);
 							bind(entity_toggle_glide, null, array('type': 'PLAYER', 'player': @p), @event) {
 								set_peffect(player(), 25, 0, 0);

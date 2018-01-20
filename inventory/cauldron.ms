@@ -32,15 +32,15 @@ bind(player_interact, null, array('block': 118, 'button': 'right'), @event) {
 				if(@data < 3) {
 					die();
 				}
-				@result = 326; // water bucket
-			case '374': // bottle
-				@result = 373; // water bottle
+				@result = 'WATER_BUCKET';
+			case '374':
+				@result = 'WATER_BOTTLE';
 			case '159':
-				@result = 172; // hardened clay
+				@result = 'HARD_CLAY';
 			case '35':
-				@result = 35; // wool
+				@result = 'WOOL';
 			case '171':
-				@result = 171; // wool carpet
+				@result = 'CARPET';
 			default:
 				die();
 		}
@@ -53,13 +53,13 @@ bind(player_interact, null, array('block': 118, 'button': 'right'), @event) {
 		cancel();
 		@item = pinv(player(), @slot);
 		if(@item['qty'] == 1) {
-			set_pinv(player(), @slot, array('type': @result, 'qty': 1));
+			set_pinv(player(), @slot, array('name': @result));
 		} else {
 			@item['qty']--;
 			set_pinv(player(), @slot, @item);
-			@remaining = pgive_item(@result, 1);
+			@remaining = pgive_item(array('name': @result));
 			if(@remaining) {
-				drop_item(associative_array('type': @result));
+				drop_item(array('name': @result));
 			}
 		}
 

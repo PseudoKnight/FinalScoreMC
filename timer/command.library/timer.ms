@@ -91,7 +91,7 @@ register_command('timer', array(
 					if(ponline(@player) && pworld(@player) === 'custom') {
 						set_plevel(@player, 0);
 						set_pexp(@player, 0);
-						ptake_item(@player, 371, 1);
+						ptake_item(@player, array('name': 'GOLD_NUGGET'));
 					}
 					clear_task();
 					_remove_activity(@player.'timer');
@@ -137,7 +137,7 @@ register_command('timer', array(
 			@time = round((time() - @timers[@player][1]) / 1000, 1);
 			unbind(@player.'reset');
 			unbind(@player.'timerdeath');
-			ptake_item(@player, 371, 1);
+			ptake_item(@player, array('name': 'GOLD_NUGGET'));
 			clear_task(@timers[@player][2]);
 			array_remove(@timers, @player);
 			_remove_activity(@player.'timer');

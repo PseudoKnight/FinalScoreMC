@@ -582,7 +582,7 @@ if(array_contains(@pvp['arena']['flags'], 'nobottles')) {
 			die())
 
 		queue_push(closure(){
-			ptake_item(374, 1)
+			ptake_item(array('name': 'GLASS_BOTTLE'));
 		})
 	}
 }

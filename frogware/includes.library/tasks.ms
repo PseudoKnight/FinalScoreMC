@@ -139,8 +139,8 @@ proc _fw_task(@task, @state, @secs) {
 			'3:0', 2);
 			foreach(@p in all_players('custom')) {
 				if(_fw_player(@p)) {
-					pgive_item(@p, '291:130', 1); # stone hoe
-					pgive_item(@p, 295, 1); # seeds
+					pgive_item(@p, array('name': 'STONE_HOE', 'data': 130));
+					pgive_item(@p, array('name': 'SEEDS')); # seeds
 				}
 			}
 			bind(item_pickup, array('id': 'fwpickup'), array('item': 296), @e) {
@@ -173,7 +173,7 @@ proc _fw_task(@task, @state, @secs) {
 				foreach(@p in all_players('custom')) {
 					if(_fw_player(@p)) {
 						# knockback mushroom
-						pgive_item(@p, 40, 1, array('enchants': array('etype': 'KNOCKBACK', 'elevel': 10)));
+						pgive_item(@p, array('name': 'RED_MUSHROOM', 'meta': array('enchants': array('etype': 'KNOCKBACK', 'elevel': 10))));
 					}
 				}
 			}
@@ -339,8 +339,8 @@ proc _fw_task(@task, @state, @secs) {
 			));
 			foreach(@p in all_players('custom')) {
 				if(_fw_player(@p)) {
-					pgive_item(@p, '261:379', 1, array(array('elevel': 1, 'etype': 'ARROW_FIRE')));
-					pgive_item(@p, 262, 6);
+					pgive_item(@p, array('name': 'BOW', 'data': 379, 'meta': array('enchants': array('elevel': 1, 'etype': 'ARROW_FIRE'))));
+					pgive_item(@p, array('name': 'ARROW', 'qty': 6));
 					play_sound(ploc(@p), array('sound': if(@mob === 'BAT', 'BAT_LOOP', 'chicken_idle')), @p)
 					set_pexp(@p, 0)
 				}
@@ -428,25 +428,25 @@ proc _fw_task(@task, @state, @secs) {
 				'It\'s a free-for-all!',
 			));
 			_fw_randompotion(array('speed', 'jump', 'blind', 'invis'))
-			@weapon = '267:226'; # iron sword
+			@weapon = array('name': 'IRON_SWORD', 'data': 226);
 			switch(rand(3)) {
 				case 0:
-					@weapon = '261:379'; # bow
+					@weapon = array('name': 'BOW', 'data': 379);
 				case 1:
-					@weapon = '332:0';
+					@weapon = array('name': 'SNOW_BALL');
 			}
 			@meta = null;
 			if(!rand(4)) {
-				@meta = array(array(
+				@weapon['meta'] = array('enchants': array(array(
 					array('etype': 'KNOCKBACK', 'elevel': 8),
 					array('etype': 'PUNCH', 'elevel': 8)
-				))
+				)));
 			}
 			foreach(@p in all_players('custom')) {
 				if(_fw_player(@p)) {
-					pgive_item(@p, @weapon, 1, @meta);
-					if(@weapon == '261:379') {
-						pgive_item(@p, 262, 10);
+					pgive_item(@p, @weapon);
+					if(@weapon['name'] == 'BOW') {
+						pgive_item(@p, array('name': 'ARROW', 'qty': 10));
 					}
 				}
 			}
@@ -494,7 +494,7 @@ proc _fw_task(@task, @state, @secs) {
 			if(!rand(4)) {
 				foreach(@p in all_players('custom')) {
 					if(_fw_player(@p)) {
-						pgive_item(@p, 325, 1); # bucket
+						pgive_item(@p, array('name': 'BUCKET'));
 					}
 				}
 			}
@@ -555,7 +555,7 @@ proc _fw_task(@task, @state, @secs) {
 			}
 			foreach(@p in all_players('custom')) {
 				if(_fw_player(@p)) {
-					pgive_item(@p, '359:235', 1) # shears
+					pgive_item(@p, array('name': 'SHEARS'));
 				}
 			}
 			if(!rand(5)) {
@@ -659,7 +659,7 @@ proc _fw_task(@task, @state, @secs) {
 			));
 			foreach(@p in all_players('custom')) {
 				if(_fw_player(@p)) {
-					pgive_item(@p, '346:60', 1);
+					pgive_item(@p, array('name': 'FISHING_ROD', 'data': 60));
 				}
 			}
 			_fw_mobs('speedypig', 1);

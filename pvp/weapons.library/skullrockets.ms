@@ -10,6 +10,6 @@ bind(player_interact, array('id': @id.'skullrockets'), array('item': 397, 'butto
 	@dir = entity_spec(@entity)['direction'];
 	set_entity_spec(@entity, array(direction: array(@dir['x'], @dir['y'], @dir['z'])));
 
-	ptake_item('397:1', 1)
-	cancel()
+	ptake_item(array('name': 'SKULL_ITEM', 'data': 1));
+	cancel();
 }

@@ -11,7 +11,7 @@ proc _add_player(@player, @golf) {
 		velocity: array('x': 0, 'y': 0, 'z': 0),
 		swing: false,
 	);
-	pgive_item(@player, 341, 1);
+	pgive_item(@player, array('name': 'SLIME_BALL'));
 	set_collides_with_entities(@player, false);
 	set_pscoreboard(@player, @golf['name'].'1');
 	set_pscore('strokes', @player, 0, @golf['name'].'1');

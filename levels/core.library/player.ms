@@ -14,7 +14,7 @@ proc _level_add_player(@player, @level) {
 		set_pinv(@player, @c['gear']);
 	}
 	if(array_index_exists(@c, 'shop')) {
-		pgive_item(@player, 388, 1, array('display': 'Open Shop', 'lore': array(@player.'\'s Shop Token')));
+		pgive_item(@player, array('name': 'EMERALD', 'meta': array('display': 'Open Shop', 'lore': array(@player.'\'s Shop Token'))));
 	}
 	set_pbed_location(@player, @level['arena']['lobby']);
 	set_entity_health(puuid(@player), 100);

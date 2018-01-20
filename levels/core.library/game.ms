@@ -174,7 +174,7 @@ proc _level_start(@level) {
 					set_pmode(@p, 'ADVENTURE');
 					_level_add_player(@p, @level);
 					set_ploc(@p, ploc());
-					ptake_item(399, 1);
+					ptake_item(array('name': 'NETHER_STAR'));
 					die();
 				}
 			}
@@ -209,7 +209,7 @@ proc _level_start(@level) {
 						if(plevel() >= @cost) {
 							@meta = @item['meta'];
 							@meta['lore'] = array('Sell each for '.@level['shop'][@item['name']] / 2.' levels');
-							pgive_item(@item['type'], 1, @meta);
+							pgive_item(@item);
 							set_plevel(plevel() - @cost);
 							play_sound(ploc(), array('sound': 'ANVIL_LAND', 'pitch': 2, 'volume': 0.5), player());
 						}

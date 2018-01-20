@@ -81,7 +81,7 @@ register_command('cluck', array(
 						} else {
 							@cluck['score']++;
 							@cluck['hit']++;
-							pgive_item(@event['shooter'], 262, 1);
+							pgive_item(@event['shooter'], array('name': 'ARROW'));
 							set_plevel(@event['shooter'], @cluck['score']);
 							array_remove_values(@cluck['chickens'], @event['id']);
 						}
