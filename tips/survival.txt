@@ -22,6 +22,8 @@
 
 &7/here&r : Broadcasts to all players a clickable link to your location on the Live Map.
 
+&7/firstseen <player>&r : Gets the first time the player was on the server based on best information.
+
 &7/lastseen <player>&r : Gets the last time the player was on the server.
 
 &7/cake list&r : Lists all the cakes you have and haven’t found.
@@ -130,7 +132,7 @@ Right-clicking on logs with an axe will add bark on all sides.
 
 Cauldrons are an infinite water source, unless sneaking. You can incrementally fill cauldrons using water bottles.
 
-You can wash dyes from hardened clay and wool using a cauldron.
+You can wash dyes from hardened clay, wool, and carpet using a cauldron.
 
 Temporary mirror world "shards" can be created by right-clicking a diamond while in the location you want to mirror.
 
@@ -139,3 +141,9 @@ You can teleport with a horse you're riding (includes donkeys, llamas, etc)
 If holding a lead when teleporting, you may bring all leashed mobs with you.
 
 You can adjust the volume of notification sounds (eg. direct messages) via the Voice/Speech slider in Sound Options.
+
+You can craft bones directly to bone blocks.
+
+You can skulls into player skulls using clay, the naming it in an anvil applies that player's skin to the skull.
+
+Most custom commands now have tab completions built-in.
