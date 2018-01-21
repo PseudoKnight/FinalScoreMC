@@ -329,3 +329,25 @@ bind(entity_toggle_glide, null, array('type': 'PLAYER'), @event) {
 		}
 	}
 }
+
+# Minecart speed control (can cause derailment and other issues after around 5/ms)
+bind(vehicle_enter, null, array('vehicletype': 'MINECART', 'passengertype': 'PLAYER'), @event) {
+	if(!has_bind(player().'vehiclecontrol')) {
+		bind(player_interact, array('id': player().'vehiclecontrol'), array('item': 0, 'hand': 'main_hand', 'player': player()), @event) {
+			@vehicle = get_entity_vehicle(puuid());
+			if(@vehicle && entity_type(@vehicle) == 'MINECART') {
+				@speed = get_entity_max_speed(@vehicle) * 20;
+				if(@event['button'] == 'left') {
+					@speed -= 1.0;
+				} else {
+					@speed += 1.0;
+				}
+				@speed = clamp(@speed, 0, 24);
+				action_msg(integer(@speed).'m/s');
+				set_entity_max_speed(@vehicle, @speed / 20);
+			} else {
+				unbind();
+			}
+		}
+	}
+}
