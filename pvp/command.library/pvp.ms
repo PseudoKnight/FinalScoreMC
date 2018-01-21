@@ -148,12 +148,13 @@ register_command('pvp', array(
 						die(color('gold').'PVP is running.');
 					}
 				}
+				@count = 0;
 				if(@args[1] == 'all') {
-					x_recompile_includes('..');
+					@count = x_recompile_includes('..');
 				} else {
-					x_recompile_includes('../'.@args[1].'.library');
+					@count = x_recompile_includes('../'.@args[1].'.library');
 				}
-				msg(color('green').'Done recompiling '.@args[1].'!');
+				msg(color('green').'Done recompiling '.@args[1].'! ('.@count.')');
 
 			default:
 				return(false);
