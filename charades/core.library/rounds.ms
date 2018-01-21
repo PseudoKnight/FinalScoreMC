@@ -20,9 +20,13 @@ proc _start_round() {
 	@category = array_get(@charades, 'category', array_rand(_get_categories(), 1, false)[0]);
 	_msg_charades(color('yellow').color('bold').'Charades Category: '.color('yellow').@category);
 	
-	@word = _get_word(@category);
-	title(@builder, 'Your turn to build!', '"'.@word.'"', 20, 40, 20);
-	tmsg(@builder, 'You must build "'.color('green').color('bold').@word.color('reset').'"');
+	@charades['word'] = _get_word(@category);
+	@charades['reroll'] = true;
+	title(@builder, 'Your turn to build!', '"'.@charades['word'].'"', 20, 40, 20);
+	_click_tell(array(@builder), array(
+		'You must build "'.color('green').color('bold').@charades['word'].color('reset').'" ',
+		array(color('yellow').'[Re-roll]', '/charades reroll')
+	));
 		
 	@timer = array(150.0);
 	@charades['interval'] = set_interval(500, closure(){
@@ -50,21 +54,21 @@ proc _start_round() {
 					_equip_kit(@builder);
 					_set_pactivity(@builder, null);
 				}
-				_end_round(null, @word);
+				_end_round(null, @charades['word']);
 			} else {
 				_msg_charades(integer(@timer[0]), 'action');
 				if(@timer[0] <= 0) {
-					_end_round(null, @word);
+					_end_round(null, @charades['word']);
 				}
 			}
 		} catch(Exception @ex) {
 			clear_task();
 			console(@ex);
-			_end_round(null, @word);
+			_end_round();
 		}
 	});
 	
-	bind(player_chat, array('id': 'charades-guessing', 'priority': 'HIGH'), null, @event, @word) {
+	bind(player_chat, array('id': 'charades-guessing', 'priority': 'HIGH'), null, @event, @charades) {
 		if(get_pscoreboard(player()) == 'charades') {
 			try {
 				consume();
@@ -73,12 +77,12 @@ proc _start_round() {
 					@message = @event['message'];
 					@timestamp = simple_date('h:mm');
 					@name = display_name();
-					if(_get_match(@message, @word)) {
+					if(_get_match(@message, @charades['word'])) {
 						play_sound(ploc(), array('sound': 'LEVEL_UP'));
 						_regionmsg('charades', colorize("&8@timestamp [Charades] @{name}&8: &r@message"));
-						_end_round(player(), @word);
+						_end_round(player(), @charades['word']);
 					} else {
-						@message = _highlight_similarities(@message, @word);
+						@message = _highlight_similarities(@message, @charades['word']);
 						_regionmsg('charades', colorize("&8@timestamp [Charades] @{name}&8: &r@message"), 'chat', player());
 					}
 				}

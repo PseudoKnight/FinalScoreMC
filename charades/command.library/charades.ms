@@ -8,6 +8,35 @@ register_command('charades', array(
 		}
 	},
 	'executor': closure(@alias, @sender, @args, @info) {
+		if(@args && @args[0] == 'reroll') {
+			try {
+				foreach(@team in get_teams('charades')) {
+					if(@team['name'] == 'builder') {
+						if(@team['players'] && @team['players'][0] == player()) {
+							include('../core.library/words.ms');
+							include('../core.library/util.ms');
+							@charades = import('charades');
+							if(@charades['reroll']) {
+								_msg_charades(color('yellow').player().' re-rolled "'.@charades['word'].'"');
+								@category = array_get(@charades, 'category', array_rand(_get_categories(), 1, false)[0]);
+								@charades['word'] = _get_word(@category);
+								@charades['reroll'] = false;
+								_msg_charades(color('yellow').color('bold').'Charades Category: '.color('yellow').@category);
+								tmsg(@builder, 'You must now build "'.color('green').color('bold').@charades['word'].color('reset').'"');
+							} else {
+								msg('You cannot re-roll again.');
+							}
+						} else {
+							msg('You are not building.');
+						}
+					}
+				}
+			} catch(ScoreboardException @ex) {
+				msg('Game is not running.');
+			}
+			return(true);
+		}
+		
 		if(array_contains(get_scoreboards(), 'charades')) {
 			die(color('gold').'Already running.');
 		}
