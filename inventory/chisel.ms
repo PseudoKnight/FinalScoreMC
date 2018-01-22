@@ -3,8 +3,8 @@
 # 43:0 -> 43:8 - Smooth Stone Double Slab
 # 43:1 -> 43:9 - Smooth Sandstone Double Slab
 
-bind(player_interact, null, array('button': 'right', 'block': 43), @event) {
-	@block = split(':', @event['block']);
+proc _chisel(@location, @id) {
+	@block = split(':', @id);
 	@data = array_get(@block, 1, 0);
 	if(@data > 7) {
 		die();
@@ -20,23 +20,23 @@ bind(player_interact, null, array('button': 'right', 'block': 43), @event) {
 		die();
 	}
 	
-	if(!sk_can_build(@event['location'])) {
+	if(!sk_can_build(@location)) {
 		die('You are not allowed to chisel this.');
 	}
 		
-	set_block_at(@event['location'], @block[0].':'.(@data + 8));
-	@event['location']['x'] += 0.5;
-	@event['location']['y'] += 0.5;
-	@event['location']['z'] += 0.5;
-	play_effect(@event['location'], 'TILE_BREAK', array(
-		'id': 43,
+	set_block_at(@location, @block[0].':'.(@data + 8));
+	@location['x'] += 0.5;
+	@location['y'] += 0.5;
+	@location['z'] += 0.5;
+	play_effect(@location, 'TILE_BREAK', array(
+		'id': @block[0],
 		'data': @data,
 		'particleCount': 20,
 		'offsetX': 0.3,
 		'offsetY': 0.3,
 		'offsetZ': 0.3,
 	));
-	play_sound(@event['location'], array('sound': 'DIG_STONE', 'category': 'BLOCKS'));
+	play_sound(@location, array('sound': 'DIG_STONE', 'category': 'BLOCKS'));
 	pswing_hand();
 	
 	@unbreaking = 0;
@@ -66,4 +66,12 @@ bind(player_interact, null, array('button': 'right', 'block': 43), @event) {
 			set_pinv(player(), null, @item);
 		}
 	}
+}
+
+bind(player_interact, null, array('button': 'right', 'block': 43), @event) {
+	_chisel(@event['location'], @event['block']);
+}
+
+bind(player_interact, null, array('button': 'right', 'block': 181), @event) {
+	_chisel(@event['location'], @event['block']);
 }
