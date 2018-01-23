@@ -1,4 +1,4 @@
-proc _start_round() {
+proc _queue_next_builder() {
 	@charades = import('charades');
 	@builder = '';
 	do {
@@ -54,17 +54,17 @@ proc _start_round() {
 					_equip_kit(@builder);
 					_set_pactivity(@builder, null);
 				}
-				_end_round(null, @charades['word']);
+				_end_build(null, @charades['word']);
 			} else {
 				_msg_charades(integer(@timer[0]), 'action');
 				if(@timer[0] <= 0) {
-					_end_round(null, @charades['word']);
+					_end_build(null, @charades['word']);
 				}
 			}
 		} catch(Exception @ex) {
 			clear_task();
 			console(@ex);
-			_end_round();
+			_end_build();
 		}
 	});
 	
@@ -80,7 +80,7 @@ proc _start_round() {
 					if(_get_match(@message, @charades['word'])) {
 						play_sound(ploc(), array('sound': 'LEVEL_UP'));
 						_regionmsg('charades', colorize("&8@timestamp [Charades] @{name}&8: &r@message"));
-						_end_round(player(), @charades['word']);
+						_end_build(player(), @charades['word']);
 					} else {
 						@message = _highlight_similarities(@message, @charades['word']);
 						_regionmsg('charades', colorize("&8@timestamp [Charades] @{name}&8: &r@message"), 'chat', player());
@@ -93,7 +93,7 @@ proc _start_round() {
 	}
 }
 
-proc _end_round(@guesser, @word) {
+proc _end_build(@guesser, @word) {
 	unbind('charades-guessing');
 	
 	@charades = import('charades');
@@ -138,13 +138,42 @@ proc _end_round(@guesser, @word) {
 		
 		if(@charades['playersLeft'] && ponline(@charades['playersLeft'][0])) {
 			try {
-				_start_round();
+				_queue_next_builder();
 			} catch(Exception @ex) {
 				console(@ex);
 				_end_game();
 			}
 		} else {
-			_end_game();
+			@players = array();
+			@end = false;
+			foreach(@p in all_players('custom')) {
+				if(array_contains(sk_current_regions(@p), 'charades')) {
+					if(!array_contains(@charades['players'], @p)) {
+						@end = true;
+						break();
+					} else {
+						@players[] = @p;
+					}
+				}
+			}
+			if(array_size(@players) < 3) {
+				@end = true;
+			}
+			if(@end) {
+				_end_game();
+			} else {
+				@charades['players'] = @players;
+				@charades['playersLeft'] = @players[];
+				_msg_charades(color('yellow').color('bold').'Starting new round...');
+				set_timeout(5000, closure(){
+					try {
+						_queue_next_builder();
+					} catch(Exception @ex) {
+						console(@ex);
+						_end_game();
+					}
+				});
+			}
 		}
 	});
 }

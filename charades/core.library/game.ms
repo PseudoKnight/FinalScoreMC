@@ -1,6 +1,75 @@
+include('words.ms');
 include('rounds.ms');
 include('utils.ms');
 include('events.ms');
+
+proc _prepare_game(@args) {
+	@categories = _get_categories();
+	@category = '';
+	if(@args) {
+		@category = @args[0];
+		if(!array_contains(@categories, @category)) {
+			die(color('yellow').'Available categories: '.array_implode(@categories, ', ').'.');
+		}
+	}
+	
+	@players = array();
+	foreach(@p in all_players('custom')) {
+		if(array_contains(sk_current_regions(@p), 'charades')) {
+			@players[] = @p;
+		}
+	}
+	if(array_size(@players) < 3) {
+		die(color('gold').'Requires at least 3 players.');
+	}
+	
+	if(@category) {
+		export('charades', array(
+			'category': @category,
+			'players': @players,
+			'playersLeft': @players[],
+			'interval': 0
+		));
+	} else {
+		export('charades', array(
+			'players': @players,
+			'playersLeft': @players[],
+			'interval': 0
+		));
+	}
+	
+	create_scoreboard('charades');
+	create_objective('score', 'DUMMY', 'charades');
+	set_objective_display('score', array('displayname': 'Scores', 'slot': 'SIDEBAR'), 'charades');
+	create_team('guessers', 'charades');
+	create_team('builder', 'charades');
+	set_team_display('builder', array('prefix': color('green')), 'charades');
+	
+	@spawn = sk_region_info('charades-beacon', 'custom', 0)[0];
+	foreach(@p in @players) {
+		set_pscore('score', @p, 0, 'charades');
+		team_add_player('guessers', @p, 'charades');
+		title(@p, 'Charades', to_upper(@category), 20, 60, 40);
+		set_ploc(@p, @spawn);
+		set_pmode(@p, 'SPECTATOR');
+		set_pscoreboard(@p, 'charades');
+		_set_pactivity(@p, 'charades');
+	}
+	
+	set_block_at(@spawn, 169);
+	
+	_bind_charade_events();
+	try {
+		_queue_next_builder();
+	} catch(Exception @ex) {
+		console('Exception encountered in Charades.', false);
+		console(@ex['classType'].': '.@ex['message'], false);
+		foreach(@trace in @ex['stackTrace']) {
+			console(split('LocalPackages', @trace['file'])[-1].':'.@trace['line'].' '.@trace['id'], false);
+		}
+		_end_game();
+	}
+}
 
 proc _end_game() {
 	@charades = import('charades');
