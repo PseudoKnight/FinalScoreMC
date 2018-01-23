@@ -2,24 +2,28 @@ switch(@action) {
 case 'load':
 	set_pflight(@player, true)
 	bind(player_toggle_flight, array('id': @player.'dragonfly'), array('player': @player), @e) {
-		cancel()
+		cancel();
 		play_sound(ploc(), array('sound': 'ENDERDRAGON_WINGS', 'pitch': 1.2));
 		set_pflight(@e['player'], false);
 		proc _flap(@player) {
 			queue_push(closure(){
 				if(pmode() == 'SPECTATOR') {
 					queue_clear(@player.'flap');
-				} else if(pexp(@player) > 0 && !psneaking(@player)) {
-					@facing = pfacing(@player);
-					@facing[0] = @facing[0] + 90;
-					@facing[1] = 0 - @facing[1];
-					@x = cos(to_radians(@facing[0])) * cos(to_radians(@facing[1]));
-					@z = sin(to_radians(@facing[0])) * cos(to_radians(@facing[1]));
-					set_pexp(@player, max(0, pexp(@player) - 8));
-					set_pvelocity(@player, @x * 0.6, 0.47, @z * 0.6);
-					play_sound(ploc(@player), array('sound': 'ENDERDRAGON_WINGS', 'pitch': 1.2));
-					set_entity_fall_distance(puuid(@player), 0);
-					_flap(@player);
+				} else if(pexp(@player) > 0) {
+					if(psneaking(@player)) {
+						set_pflight(@e['player'], true);
+					} else {
+						@facing = pfacing(@player);
+						@facing[0] = @facing[0] + 90;
+						@facing[1] = 0 - @facing[1];
+						@x = cos(to_radians(@facing[0])) * cos(to_radians(@facing[1]));
+						@z = sin(to_radians(@facing[0])) * cos(to_radians(@facing[1]));
+						set_pexp(@player, max(0, pexp(@player) - 8));
+						set_pvelocity(@player, @x * 0.6, 0.47, @z * 0.6);
+						play_sound(ploc(@player), array('sound': 'ENDERDRAGON_WINGS', 'pitch': 1.2));
+						set_entity_fall_distance(puuid(@player), 0);
+						_flap(@player);
+					}
 				}
 			}, @player.'flap');
 			queue_delay(500, @player.'flap');
@@ -36,10 +40,10 @@ case 'load':
 	}
 
 
-	bind(projectile_hit, array('id': @player.'dragonsbreath'), array('type': 'FIREBALL'), @e, @player = puuid(@player)) {
-		if(@e['shooter'] == @player) {
-			@cloud = spawn_entity('AREA_EFFECT_CLOUD', 1, @e['location'])[0];
-			set_entity_spec(@cloud, associative_array('particle': 'FLAME', 'duration': 300, 'source': puuid(@player),
+	bind(projectile_hit, array('id': @player.'dragonsbreath'), array('type': 'FIREBALL'), @event, @region = @pvp['arena']['region']) {
+		if(array_contains(sk_regions_at(@event['location']), @region)) {
+			@cloud = spawn_entity('AREA_EFFECT_CLOUD', 1, @event['location'])[0];
+			set_entity_spec(@cloud, associative_array('particle': 'FLAME', 'duration': 300, 'source': @event['shooter'],
 				'potionmeta': associative_array('base': associative_array('type': 'INSTANT_DAMAGE'))
 			));
 		}
