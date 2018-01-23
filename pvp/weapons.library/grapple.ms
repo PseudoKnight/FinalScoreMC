@@ -1,6 +1,5 @@
 array_push(@pvp['binds'], @id.'grapple')
-bind(projectile_launch, array('id': @id.'grapple'), array('type': 'FISHING_HOOK'), @event, @id) {
-	@pvp = import('pvp'.@id);
+bind(projectile_launch, array('id': @id.'grapple'), array('type': 'FISHING_HOOK'), @event, @pvp) {
 	@player = @event['player'];
 	@hook = @event['id'];
 
@@ -45,7 +44,8 @@ bind(projectile_launch, array('id': @id.'grapple'), array('type': 'FISHING_HOOK'
 		play_sound(@loc1, array('sound': 'HORSE_BREATHE', 'pitch': 1.7));
 
 		@endtask = closure(){
-			if(!entity_grounded(@mover) && !get_entity_gliding(@mover)) {
+			if(!entity_grounded(@mover) && !get_entity_gliding(@mover)
+			&& entity_exists(@hook) && entity_loc(@mover)['y'] < entity_loc(@hook)['y'] - 0.35) {
 				set_entity_velocity(@mover, array(0, 0.4, 0));
 			}
 
@@ -81,20 +81,21 @@ bind(projectile_launch, array('id': @id.'grapple'), array('type': 'FISHING_HOOK'
 							@dist = @dist / 1.8;
 						}
 						@x = (@loc2['x'] - @loc1['x']) / @dist;
-						@y = (@loc2['y'] - @loc1['y']) / @dist * if(get_entity_gliding(@mover), 1, 1.1);
+						@y = (@loc2['y'] - @loc1['y']) / @dist * 1.078;
 						@z = (@loc2['z'] - @loc1['z']) / @dist;
 						set_entity_velocity(@mover, array(@x, @y, @z));
 					} else if(!psneaking(@player)) {
-						if(entity_type(@target) == 'ARROW') {
-							entity_remove(@target);
-							pgive_item(@player, array('name': 'ARROW'));
-						}
 						if(@interval) {
 							clear_task();
 						}
 						execute(@endtask);
+						if(entity_type(@target) == 'ARROW') {
+							entity_remove(@target);
+							pgive_item(@player, array('name': 'ARROW'));
+						}
 					} else {
-						set_entity_velocity(@mover, array(0, 0.08, 0));
+						set_entity_velocity(@mover, array(0, 0, 0));
+						set_mob_effect(@mover, 25, -1, 0.15);
 					}
 				}
 			} catch(BadEntityException @e) {
@@ -110,19 +111,17 @@ bind(projectile_launch, array('id': @id.'grapple'), array('type': 'FISHING_HOOK'
 
 	bind(projectile_hit, array('id': 'hit'.@arrow), array('id': @arrow), @event, @shooter, @slot, @hook) {
 		unbind();
-		_reel(@event['location'], @shooter, @slot, @hook, @event['id'], @shooter);
-	}
-
-	bind(entity_damage_player, array('id': 'damage'.@arrow), array('id': @arrow), @event, @shooter, @slot, @hook) {
-		unbind();
-		@hit = puuid(@event['player']);
-		try(set_entity_rider(@hit, @hook));
-		_reel(@event['location'], @shooter, @slot, @hit, @shooter, @hit);
+		if(@event['hittype'] == 'ENTITY') {
+			@hit = @event['hit'];
+			try(set_entity_rider(@hit, @hook));
+			_reel(@event['location'], @shooter, @slot, @hook, @shooter, @hit);
+		} else {
+			_reel(@event['location'], @shooter, @slot, @hook, @event['id'], @shooter);
+		}
 	}
 
 	set_timeout(800, closure(){
-		if(has_bind('hit'.@arrow)
-		&& has_bind('damage'.@arrow)) {
+		if(has_bind('hit'.@arrow)) {
 			try(entity_remove(@arrow));
 		}
 		unbind('hit'.@arrow);
@@ -131,18 +130,15 @@ bind(projectile_launch, array('id': @id.'grapple'), array('type': 'FISHING_HOOK'
 }
 
 array_push(@pvp['binds'], @id.'grappledamage');
-bind(entity_damage, array('id': @id.'grappledamage'), array('type': 'PLAYER', 'cause': 'FLY_INTO_WALL'), @event, @id) {
-	@pvp = import('pvp'.@id);
+bind(entity_damage, array('id': @id.'grappledamage'), array('type': 'PLAYER', 'cause': 'FLY_INTO_WALL'), @event, @pvp) {
 	if(array_index_exists(@pvp['players'], @event['player'])) {
 		cancel();
 	}
 }
 
 array_push(@pvp['binds'], @id.'grapplepickup');
-bind(item_pickup, array('id': @id.'grapplepickup'), array('item': 262), @event, @id) {
-	@pvp = import('pvp'.@id);
-	if(array_index_exists(@pvp['players'], player())
-	&& psneaking()) {
+bind(item_pickup, array('id': @id.'grapplepickup'), array('item': 262), @event, @pvp) {
+	if(array_index_exists(@pvp['players'], player()) && psneaking()) {
 		cancel();
 	}
 }
