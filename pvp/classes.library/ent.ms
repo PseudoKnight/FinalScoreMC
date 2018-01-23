@@ -19,9 +19,9 @@ case 'load':
 				foreach(@item in @kit) {
 					@item['enchants'] = @enchants;
 				}
-				set_peffect(@player, 5, 0, 0, true, false);
+				set_peffect(@player, 11, 0, 999);
 			} else {
-				set_peffect(@player, 5, 0, 999, true, false);
+				set_peffect(@player, 11, 0, 0);
 			}
 			set_mob_equipment(puuid(@player), @kit);
 		}
@@ -53,7 +53,7 @@ case 'load':
 		@target = entity_loc(@event['id']);
 		@world = @target['world'];
 		
-		modify_event('amount', @damage * 0.2);
+		modify_event('amount', @damage * 0.1);
 		foreach(@p in players_in_radius(@target, 6)) {
 			if(@p != @player && array_index_exists(@pvp['players'], @p) && pmode(@p) != 'SPECTATOR') {
 				damage_entity(puuid(@p), @damage, puuid(@player));
@@ -163,8 +163,35 @@ case 'load':
 		play_sound(@event['location'], array('sound': 'entity_husk_death', 'pitch': 0.5));
 	}
 	
-case 'powerup':
-	set_peffect(@player, 11, 0, 30);
+	bind(player_interact, array('id': @player.'entattack'), array('player': @player, 'item': 18, 'hand': 'main_hand', 'button': 'right'), @event) {
+		if(!pcooldown('LEAVES')) {
+			@loc = ptarget_space();
+			if(get_block_at(_relative(@loc, 'down')) != '0:0') {
+				set_pcooldown('LEAVES', 5);
+				@loc['x'] += 0.5;
+				@loc['z'] += 0.5;
+				play_sound(@loc, array('sound': 'entity_wither_break_block', 'pitch': 1.5, 'volume': 0.7));
+				play_sound(ploc(), array('sound': 'entity_player_attack_sweep', 'pitch': 2));
+				foreach(@p in all_players(pworld())) {
+					if(@p == player()) {
+						set_timeout(50, closure(){
+							psend_block_change(player(), @loc, 32);
+						});
+					} else {
+						psend_block_change(@p, @loc, 32);
+					}
+				}
+				foreach(@p in players_in_radius(@loc, 1)) {
+					damage_entity(puuid(@p), 3.5, puuid());
+				}
+				set_timeout(1000, closure(){
+					foreach(@p in all_players(pworld())) {
+						psend_block_change(@p, @loc, 0);
+					}
+				});
+			}
+		}
+	}
 	
 case 'unload':
 	unbind(@player.'entfall');
@@ -172,5 +199,6 @@ case 'unload':
 	unbind(@player.'entbark');
 	unbind(@player.'entdamage');
 	unbind(@player.'entdeath');
+	unbind(@player.'entattack');
 	try(set_attribute(puuid(@player), 'knockbackresistance', 0));
 }
