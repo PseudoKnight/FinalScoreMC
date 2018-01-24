@@ -21,7 +21,7 @@ register_command('charades', array(
 								@charades['word'] = _get_word(@category);
 								@charades['reroll'] = false;
 								_msg_charades(color('yellow').color('bold').'Charades Category: '.color('yellow').@category);
-								tmsg(@builder, 'You must now build "'.color('green').color('bold').@charades['word'].color('reset').'"');
+								msg('You must now build "'.color('green').color('bold').@charades['word'].color('reset').'"');
 							} else {
 								msg(color('gold').'You cannot re-roll again.');
 							}

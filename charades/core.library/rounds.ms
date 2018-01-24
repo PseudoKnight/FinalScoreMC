@@ -24,7 +24,7 @@ proc _queue_next_builder() {
 	@charades['reroll'] = true;
 	title(@builder, 'Your turn to build!', '"'.@charades['word'].'"', 20, 40, 20);
 	_click_tell(array(@builder), array(
-		'You must build "'.color('green').color('bold').@charades['word'].color('reset').'" ',
+		'You must build '.color('green').color('bold').@charades['word'].color('reset').' ',
 		array(color('yellow').'[Re-roll]', '/charades reroll')
 	));
 		
