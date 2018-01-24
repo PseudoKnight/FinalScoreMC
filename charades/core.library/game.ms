@@ -3,14 +3,14 @@ include('rounds.ms');
 include('utils.ms');
 include('events.ms');
 
-proc _prepare_game(@args) {
+proc _prepare_game(@category) {
 	@categories = _get_categories();
-	@category = '';
-	if(@args) {
-		@category = @args[0];
+	if(@category) {
 		if(!array_contains(@categories, @category)) {
 			die(color('yellow').'Available categories: '.array_implode(@categories, ', ').'.');
 		}
+	} else {
+		@category = array_rand(@categories, 1, false)[0];
 	}
 	
 	@players = array();
@@ -23,20 +23,13 @@ proc _prepare_game(@args) {
 		die(color('gold').'Requires at least 3 players.');
 	}
 	
-	if(@category) {
-		export('charades', array(
-			'category': @category,
-			'players': @players,
-			'playersLeft': @players[],
-			'interval': 0
-		));
-	} else {
-		export('charades', array(
-			'players': @players,
-			'playersLeft': @players[],
-			'interval': 0
-		));
-	}
+	export('charades', array(
+		'category': @category,
+		'players': @players,
+		'playersLeft': @players[],
+		'interval': 0,
+		'votes': associative_array(),
+	));
 	
 	create_scoreboard('charades');
 	create_objective('score', 'DUMMY', 'charades');

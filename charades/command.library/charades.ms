@@ -9,37 +9,47 @@ register_command('charades', array(
 	},
 	'executor': closure(@alias, @sender, @args, @info) {
 		include('../core.library/game.ms');
-		if(@args && @args[0] == 'reroll') {
-			try {
-				foreach(@team in get_teams('charades')) {
-					if(@team['name'] == 'builder') {
-						if(@team['players'] && @team['players'][0] == player()) {
-							@charades = import('charades');
-							if(@charades['reroll']) {
-								_msg_charades(color('yellow').player().' re-rolled "'.@charades['word'].'"');
-								@category = array_get(@charades, 'category', array_rand(_get_categories(), 1, false)[0]);
-								@charades['word'] = _get_word(@category);
-								@charades['reroll'] = false;
-								_msg_charades(color('yellow').color('bold').'Charades Category: '.color('yellow').@category);
-								msg('You must now build "'.color('green').color('bold').@charades['word'].color('reset').'"');
+		array_resize(@args, 1, '');
+		switch(@args[0]) {
+			case 'reroll':
+				try {
+					foreach(@team in get_teams('charades')) {
+						if(@team['name'] == 'builder') {
+							if(@team['players'] && @team['players'][0] == player()) {
+								@charades = import('charades');
+								if(@charades['reroll']) {
+									@charades['word'] = _get_word(@charades['category']);
+									@charades['reroll'] = false;
+									_msg_charades(color('yellow').player().' re-rolled "'.@charades['word'].'"');
+									msg('You must now build "'.color('green').color('bold').@charades['word'].color('reset').'"');
+								} else {
+									msg(color('gold').'You cannot re-roll again.');
+								}
 							} else {
-								msg(color('gold').'You cannot re-roll again.');
+								msg(color('gold').'You are not building.');
 							}
-						} else {
-							msg(color('gold').'You are not building.');
 						}
 					}
+				} catch(ScoreboardException @ex) {
+					msg(color('gold').'Game is not running.');
 				}
-			} catch(ScoreboardException @ex) {
-				msg(color('gold').'Game is not running.');
-			}
-			return(true);
+				
+			case 'vote':
+				if(array_size(@args) < 2) {
+					die(color('gold').'You must specify a category.');
+				}
+				@category = @args[1];
+				@charades = import('charades');
+				if(!@charades) {
+					die(color('gold').'Game is not running.');
+				}
+				@charades['votes'][player()] = @category;
+				
+			default:
+				if(array_contains(get_scoreboards(), 'charades')) {
+					die(color('gold').'Already running.');
+				}
+				_prepare_game(@args[0]);
 		}
-		
-		if(array_contains(get_scoreboards(), 'charades')) {
-			die(color('gold').'Already running.');
-		}
-		
-		_prepare_game(@args);
 	}
 ));

@@ -17,17 +17,15 @@ proc _queue_next_builder() {
 	
 	set_permission(@builder, 'command.skull', true);
 	
-	@category = array_get(@charades, 'category', array_rand(_get_categories(), 1, false)[0]);
-	_msg_charades(color('yellow').color('bold').'Charades Category: '.color('yellow').@category);
-	
-	@charades['word'] = _get_word(@category);
+	@charades['word'] = _get_word(@charades['category']);
 	@charades['reroll'] = true;
-	title(@builder, 'Your turn to build!', '"'.@charades['word'].'"', 20, 40, 20);
+	_msg_charades(color('yellow').color('bold').'Charades Category: '.color('yellow').replace(to_upper(@charades['category']), '_', ' '));
 	_click_tell(array(@builder), array(
 		'You must build '.color('green').color('bold').@charades['word'].color('reset').' ',
 		array(color('yellow').'[Re-roll]', '/charades reroll')
 	));
-		
+	title(@builder, 'Your turn to build!', '', 20, 40, 20);
+	
 	@timer = array(150.0);
 	@charades['interval'] = set_interval(500, closure(){
 		try {
@@ -164,14 +162,32 @@ proc _end_build(@guesser, @word) {
 			} else {
 				@charades['players'] = @players;
 				@charades['playersLeft'] = @players[];
-				_msg_charades(color('yellow').color('bold').'Starting new round...');
-				set_timeout(5000, closure(){
-					try {
-						_queue_next_builder();
-					} catch(Exception @ex) {
-						console(@ex);
-						_end_game();
+				@charades['votes'] = associative_array();
+				
+				@page = '';
+				@line = 1;
+				foreach(@category in array_rand(_get_categories())) {
+					if(@line == 1) {
+						@page] = '["",{"color":"red","bold":true,"text":"Vote for Next Category:"}';
+						@line++;
 					}
+					@page .= ',{"text":"'.'\n \u27a2 '.replace(to_upper(@category), '_', ' ')
+							.'","clickEvent":{"action":"run_command","value":"/charades vote '.@category.'"}}';
+					@line++;
+					if(@line == 15) {
+						break();
+					}
+				}
+				@page .= ']';
+				@pages = array(@page);
+				foreach(@p in @players) {
+					open_book(@p, @pages);
+				}
+				set_timeout(10000, closure(){
+					@player = array_rand(@charades['votes'], 1)[0];
+					@charades['category'] = @charades['votes'][@player];
+					_msg_charades(color('yellow').@player.' chose '.replace(to_upper(@charades['category']), '_', ' '));
+					_queue_next_builder();
 				});
 			}
 		}
