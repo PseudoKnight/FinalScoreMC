@@ -126,7 +126,7 @@ Players who contribute $10 or more to the server costs can launch random firewor
 
 Hovering your cursor over someone's name in chat allows you to see their group, current world, and former names.
 
-Right-clicking on double stone/sandstone slabs with a pickaxe will chisel them to smooth stone/sandstone.
+Right-clicking on double stone/sandstone/redsandstone slabs with a pickaxe will chisel them to smooth version.
 
 Right-clicking on logs with an axe will add bark on all sides.
 

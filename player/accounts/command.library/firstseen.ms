@@ -15,9 +15,10 @@ register_command('firstseen', array(
 		@minutes = (time() - @firstPlayed) / 60000;
 		@hours = @minutes / 60
 		@days = @hours / 24
+		@date = simple_date('YYYY-MM-dd', @firstPlayed);
 		msg('Bukkit says '.@pdata['name'].' was first seen '.
 			if(@days > 14) {
-				simple_date('MMMMM dd, YYYY', @firstPlayed)
+				@date
 			} else if(@days >= 3) {
 				'over '.floor(@days).' days ago'
 			} else if(@hours >= 2) {
@@ -26,7 +27,7 @@ register_command('firstseen', array(
 				floor(@minutes).' minutes ago'
 			}
 		);
-		if(array_index_exists(@pdata, 'joined')) {
+		if(array_index_exists(@pdata, 'joined') && @pdata['joined'] != @date) {
 			msg('However, my current data shows '.@pdata['joined'].' was when they first joined.');
 		}
 	}

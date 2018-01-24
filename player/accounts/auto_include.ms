@@ -73,7 +73,7 @@ proc _acc_balance(@player) {
 		return(0);
 	}
 	if(!array_index_exists(@pdata, 'coins')) {
-		return(100);
+		return(0);
 	} else {
 		return(@pdata['coins']);
 	}
@@ -89,7 +89,7 @@ proc _acc_add(@player, @amount) {
 		return(false);
 	}
 	if(!array_index_exists(@pdata, 'coins')) {
-		@pdata['coins'] = 100; // default
+		@pdata['coins'] = 0; // default
 	}
 	@pdata['coins'] += @amount;
 	_store_pdata(@player, @pdata);
@@ -106,7 +106,7 @@ proc _acc_subtract(@player, @amount) {
 		return(false);
 	}
 	if(!array_index_exists(@pdata, 'coins')) {
-		@pdata['coins'] = 100;
+		@pdata['coins'] = 0;
 	}
 	@pdata['coins'] -= @amount;
 	_store_pdata(@player, @pdata);
