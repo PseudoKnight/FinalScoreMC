@@ -29,6 +29,7 @@ proc _prepare_game(@category) {
 		'playersLeft': @players[],
 		'interval': 0,
 		'votes': associative_array(),
+		'seconds': 150.0,
 	));
 	
 	create_scoreboard('charades');

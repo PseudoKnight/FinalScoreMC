@@ -26,7 +26,7 @@ proc _queue_next_builder() {
 	));
 	title(@builder, 'Your turn to build!', '', 20, 40, 20);
 	
-	@timer = array(150.0);
+	@timer = array(@charades['seconds']);
 	@charades['interval'] = set_interval(500, closure(){
 		try {
 			@timer[0] -= 0.5;
@@ -187,6 +187,12 @@ proc _end_build(@guesser, @word) {
 					@player = array_rand(@charades['votes'], 1)[0];
 					@charades['category'] = @charades['votes'][@player];
 					_msg_charades(color('yellow').@player.' chose '.replace(to_upper(@charades['category']), '_', ' '));
+					if(rand(2)) {
+						@charades['seconds'] = 45.0;
+						_msg_charades(color('red').'SPEED ROUND!');
+					} else {
+						@charades['seconds'] = 150.0;
+					}
 					_queue_next_builder();
 				});
 			}
