@@ -11,7 +11,7 @@ case 'load':
 					queue_clear(@player.'flap');
 				} else if(pexp(@player) > 0) {
 					if(psneaking(@player)) {
-						set_pflight(@e['player'], true);
+						set_pflight(@player, true);
 					} else {
 						@facing = pfacing(@player);
 						@facing[0] = @facing[0] + 90;
