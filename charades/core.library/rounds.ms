@@ -166,9 +166,9 @@ proc _end_build(@guesser, @word) {
 				
 				@page = '';
 				@line = 1;
-				foreach(@category in array_rand(_get_categories())) {
+				foreach(@category in array_rand(_get_categories(), array_size(_get_categories()), false)) {
 					if(@line == 1) {
-						@page] = '["",{"color":"red","bold":true,"text":"Vote for Next Category:"}';
+						@page .= '["",{"color":"red","bold":true,"text":"Vote for Next Category:"}';
 						@line++;
 					}
 					@page .= ',{"text":"'.'\n \u27a2 '.replace(to_upper(@category), '_', ' ')
@@ -188,12 +188,16 @@ proc _end_build(@guesser, @word) {
 					@charades['category'] = @charades['votes'][@player];
 					_msg_charades(color('yellow').@player.' chose '.replace(to_upper(@charades['category']), '_', ' '));
 					if(rand(2)) {
-						@charades['seconds'] = 45.0;
+						@charades['seconds'] = 50.0;
 						_msg_charades(color('red').'SPEED ROUND!');
 					} else {
 						@charades['seconds'] = 150.0;
 					}
-					_queue_next_builder();
+					try {
+						_queue_next_builder();
+					} catch(Exception @ex) {
+						_end_game();
+					}
 				});
 			}
 		}
