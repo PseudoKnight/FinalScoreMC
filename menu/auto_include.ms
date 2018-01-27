@@ -7,10 +7,20 @@ proc _menu_refresh_pvp() {
 		if(@min > @count) {
 			@item = @item[];
 			@item['name'] = 'BARRIER';
-		} else if((@pvp = import('pvp'.to_lower(substr(@item['meta']['display'], 2)))) && @pvp['players']) {
-			@item = @item[];
-			@item['data'] = 10;
-			@item['qty'] = array_size(@pvp['players']);
+		} else {
+			@pvp = import('pvp'.to_lower(substr(@item['meta']['display'], 2)));
+			if(@pvp && @pvp['players']) {
+				foreach(@p: @v in @pvp['players']) {
+					if(!ponline(@p)) {
+						array_remove(@pvp['players'], @p);
+					}
+				}
+				if(@pvp['players']) {
+					@item = @item[];
+					@item['data'] = 10;
+					@item['qty'] = array_size(@pvp['players']);
+				}
+			}
 		}
 		@menu[@slot] = @item;
 	}
