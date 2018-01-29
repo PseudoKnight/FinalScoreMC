@@ -10,13 +10,20 @@ case 'load':
 
 	bind(player_death, array('id': @player.'kill'), null, @e, @player) {
 		if(@e['killer'] == @player && !is_null(pinv(@player, 103))) {
-			set_phealth(@player, min(20, phealth(@player) + 4))
-			play_sound(ploc(@player), array('sound': 'EAT', 'pitch': 0.5))
-			set_timeout(1000, closure(){
-				set_phealth(@player, min(20, phealth(@player) + 4))
-				play_sound(ploc(@player), array('sound': 'EAT', 'pitch': 0.5))
-			})
+			pgive_item(@player, array('name': 'FERMENTED_SPIDER_EYE', 'meta': array('display': player().'\'s Heart')));
 		}
+	}
+	
+	bind(player_interact, array('id': @player.'eat'), array('button': 'right', 'item': 376, 'player': player()), @event) {
+		ptake_item(array('name': 'FERMENTED_SPIDER_EYE'));
+		set_phealth(player(), min(20, phealth() + 4));
+		play_sound(ploc(), array('sound': 'EAT', 'pitch': 0.5));
+		play_effect(_relative(ploc(), 'up', 2), 'TILE_DUST', array('particleCount': 10, 'id': 214, 'speed': 0.1))
+		set_timeout(500, closure(){
+			set_phealth(player(), min(20, phealth() + 4));
+			play_sound(ploc(), array('sound': 'EAT', 'pitch': 0.5));
+			play_effect(_relative(ploc(), 'up', 2), 'TILE_DUST', array('particleCount': 10, 'id': 214, 'speed': 0.1))
+		});
 	}
 
 case 'equip':
@@ -72,7 +79,8 @@ case 'powerup':
 	});
 
 case 'unload':
-	unbind(@player.'werewolf')
-	unbind(@player.'kill')
+	unbind(@player.'werewolf');
+	unbind(@player.'kill');
+	unbind(@player.'eat');
 
 }
