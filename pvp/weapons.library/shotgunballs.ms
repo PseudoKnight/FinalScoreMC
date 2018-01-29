@@ -14,7 +14,7 @@ bind(player_interact, array('id': @id.'shotgunshoot'), array('item': 332, 'butto
 		@v['z'] = ((@v['z'] / @v['magnitude']) * 3.2) + ((rand() * 1.6) - 0.8);
 		set_entity_velocity(@entities[@i], @v);
 	}
-	set_timeout(300, closure(){
+	set_timeout(250, closure(){
 		foreach(@snowball in @entities) {
 			try {
 				entity_remove(@snowball);
@@ -25,7 +25,7 @@ bind(player_interact, array('id': @id.'shotgunshoot'), array('item': 332, 'butto
 	});
 	play_sound(ploc(), array('sound': 'ZOMBIE_WOOD', 'pitch': 1.5, 'volume': 2));
 	play_sound(ploc(), array('sound': 'EXPLODE', 'pitch': 2, 'volume': 2));
-	_weapon_cooldown(player(), 1000, 'SLIME_BALL', closure(){
+	_weapon_cooldown(player(), 1100, 'SLIME_BALL', closure(){
 		play_sound(ploc(), array('sound': 'PISTON_RETRACT', 'pitch': 1.5));
 	});
 }
