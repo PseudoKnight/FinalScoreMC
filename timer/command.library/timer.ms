@@ -146,6 +146,45 @@ register_command('timer', array(
 			tmsg(@player, color('yellow').'You achieved a time of '.color('bold').@time.color('yellow').' seconds.');
 			console(@player.' achieved a time of '.@time.' at '.@id, false);
 			set_plevel(@player, integer(@time));
+			
+			# MARATHON
+			@marathon = import('marathon');
+			if(@marathon && array_index_exists(@marathon['players'], @player)) {
+				if(@id != @marathon['players'][@player]) {
+					tmsg(@player, 'You skipped a course. Disqualified!');
+					remove_bar(@player);
+					_set_pactivity(@lastplayer, null);
+					array_remove(@marathon['players'], @player);
+				} else {
+					@first = false;
+					if(!@marathon['times'][@id]) {
+						@first = true;
+					}
+					@marathon['times'][@id] = time();
+					@index = array_index(@marathon['courses'], @id) + 1;
+					if(array_index_exists(@marathon['courses'], @index)) {
+						@marathon['players'][@player] = @marathon['courses'][@index];
+						@warp = get_value('warp', @marathon['courses'][@index]);
+						set_entity_fall_distance(puuid(@player), 0);
+						set_ploc(@player, @warp);
+						update_bar(@player, @player.': '.@marathon['courses'][@index].' ('.(@index + 1).'/'.array_size(@marathon['courses']).')');
+					} else {
+						if(@first) {
+							_worldmsg(pworld(@player), color('bold').@player.' won the Marathon!');
+						} else {
+							_worldmsg(pworld(@player), color('bold').@player.' completed the Marathon!');
+						}
+						array_remove(@marathon['players'], @player);
+						remove_bar(@player);
+						if(array_size(@marathon['players']) == 1) {
+							@lastplayer = array_keys(@marathon['players'])[0];
+							remove_bar(@lastplayer);
+							_set_pactivity(@lastplayer, null);
+							array_remove(@marathon['players'], @player);
+						}
+					}
+				}
+			}
 		
 			# PERSONAL TIME
 			@uuid = _get_uuid(to_lower(@player), false);
