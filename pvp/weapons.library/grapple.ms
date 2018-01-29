@@ -44,9 +44,13 @@ bind(projectile_launch, array('id': @id.'grapple'), array('type': 'FISHING_HOOK'
 		play_sound(@loc1, array('sound': 'HORSE_BREATHE', 'pitch': 1.7));
 
 		@endtask = closure(){
-			if(!entity_grounded(@mover) && !get_entity_gliding(@mover)
-			&& entity_exists(@hook) && entity_loc(@mover)['y'] < entity_loc(@hook)['y'] - 0.35) {
-				set_entity_velocity(@mover, array(0, 0.4, 0));
+			try {
+				if(!entity_grounded(@mover) && !get_entity_gliding(@mover)
+				&& entity_exists(@hook) && entity_loc(@mover)['y'] < entity_loc(@hook)['y'] - 0.35) {
+					set_entity_velocity(@mover, array(0, 0.4, 0));
+				}
+			} catch(BadEntityException @ex) {
+				// sometimes the mover dies
 			}
 
 			if(ponline(@player)) {
