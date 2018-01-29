@@ -126,7 +126,7 @@ proc _pvp_initialize_players(@id, @players) {
 			if(array_index_exists(@pArray, 'class')) {
 				_class('load', @player, @pArray['class'], @pvp);
 			}
-			if(array_index_exists(@pvp['arena'], 'class_picks')) {
+			if(array_index_exists(@pvp['arena'], 'class_picks') && !array_index_exists(@pArray, 'picks')) {
 				@pArray['picks'] = @pvp['arena']['class_picks'];
 			}
 		}
