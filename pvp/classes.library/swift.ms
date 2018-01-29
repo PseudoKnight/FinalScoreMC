@@ -37,13 +37,15 @@ case 'load':
 			@glideState[0] = false;
 			set_entity_gliding(puuid(), false);
 			set_entity_fall_distance(puuid(), 0);
+			play_sound(ploc(), array('sound': 'ENDERDRAGON_WINGS', 'category': 'PLAYERS', 'pitch': 1.3, 'volume': 0.4));
 		}
 	}
 	
 	bind(player_interact, array('id': @player.'boost'), array('player': @player, 'button': 'right', 'item': 271), @e) {
 		if(!pcooldown('WOOD_AXE')) {
-			set_pvelocity(player(), _get_vector(pfacing(), 0.5, 0));
+			set_pvelocity(player(), _get_vector(pfacing(), 0.6, 0));
 			set_pcooldown('WOOD_AXE', 4000 / 50);
+			play_sound(ploc(), array('sound': 'ENDERDRAGON_WINGS', 'category': 'PLAYERS', 'pitch': 1.3, 'volume': 0.4));
 		}
 	}
 	
