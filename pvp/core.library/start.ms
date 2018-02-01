@@ -368,14 +368,14 @@ proc _pvp_start(@pvp, @id){
 		_worldmsg(@world, color('gold').' '.array_implode(array_keys(@pvp['players']), colorize('&r vs &6')));
 	}
 	if(array_index_exists(@arena, 'lives')) {
-		_pvp_msg(@pvp, colorize('* &e&l'.@arena['lives'].if(@arena['lives'] > 1, ' LIVES', ' LIFE')));
+		_pvp_msg(@pvp, colorize('* &e&lLIVES: '.@arena['lives']));
 	}
 	if(array_index_exists(@arena, 'class_picking') && @arena['class_picking'] === 'random') {
 		_pvp_msg(@pvp, colorize('* &e&lALL RANDOM CLASSES'));
 	}
 	if(array_index_exists(@arena, 'class_picks') &&
 	(!array_index_exists(@arena, 'lives') || @arena['class_picks'] < @arena['lives'])) {
-		_pvp_msg(@pvp, colorize('* &e&l'.@arena['class_picks'].' CLASS PICKS'));
+		_pvp_msg(@pvp, colorize('* &e&lCLASS PICKS: '.@arena['class_picks']));
 	}
 	if(@picked) {
 		_pvp_msg(@pvp, colorize('* &e&lArena picked by '.@picked));
