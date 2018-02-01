@@ -152,6 +152,7 @@ builder:
       command.goto: true
       command.bring: true
       command.put: true
+      command.skull: true
       limitedworldedit: true
       worldguard.region.claim: true
       minecraft.command.stopsound: true
@@ -173,6 +174,7 @@ builder:
       command.goto: true
       command.bring: true
       command.put: true
+      command.skull: true
       worldedit.navigation.*: true
       worldguard.region.claim: true
       bl.getbanners: true

@@ -1,7 +1,7 @@
 register_command('skull', array(
 	'description': 'Generates a skull with a specific account name.',
 	'usage': '/skull <name>',
-	'permission': 'command.items',
+	'permission': 'command.skull',
 	'tabcompleter': closure(@alias, @sender, @args, @info) {
 		return(array());
 	},
