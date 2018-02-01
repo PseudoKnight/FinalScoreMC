@@ -5,7 +5,7 @@ bind(player_interact, array('id': @id.'railgun'), array('item': 175, 'button': '
 		die();
 	}
 
-	_weapon_hit_scan(player(), 112, 16, 'CRIT', 'lava_pop', @pvp);
+	_weapon_hit_scan(player(), 112, 16, array('tracerparticle': 'CRIT', 'hitparticle': 'LAVA_POP'), @pvp);
 
 	play_sound(ploc(), array('sound': 'ZOMBIE_REMEDY', 'pitch': 1.8, 'volume': 3));
 	@item = pinv(player(), null);

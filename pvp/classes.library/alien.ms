@@ -47,7 +47,7 @@ case 'load':
 			die();
 		}
 		cancel();
-		@players = _weapon_hit_scan(player(), 96, 1, 'happy_villager', 'ender_signal', @pvp);
+		@players = _weapon_hit_scan(player(), 96, 1, array('tracerparticle': 'happy_villager', 'hitparticle': 'ender_signal'), @pvp);
 
 		if(@players) {
 			@player = @players[0];

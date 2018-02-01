@@ -31,9 +31,14 @@ proc _weapon_cooldown(@player, @time, @type, @onCooldown, @remove = 1) {
 	}
 }
 
-proc _weapon_hit_scan(@player, @range, @damage, @tracerParticle, @hitParticle, @pvp){
+proc _weapon_hit_scan(@player, @range, @damage, @effects, @pvp){
 	@damager = puuid(@player);
 	@visibleRange = max(64, @range);
+	
+	@hitsound = 'SUCCESSFUL_HIT';
+	if(array_index_exists(@effects, 'hitsound')) {
+		@hitsound = @effects['hitsound'];
+	}
 	
 	@trace = ray_trace(@player, @range);
 	@origin = @trace['origin'];
@@ -41,8 +46,8 @@ proc _weapon_hit_scan(@player, @range, @damage, @tracerParticle, @hitParticle, @
 	@entities = @trace['entities'];
 	@players = array();
 	
-	if(@trace['hitblock']) {
-		play_effect(@location, @hitParticle, array('particleCount': 8, 'speed': 0.05, 'radius': @visibleRange));
+	if(@trace['hitblock'] && array_index_exists(@effects, 'hitparticle')) {
+		play_effect(@location, @effects['hitparticle'], array('particleCount': 8, 'speed': 0.05, 'radius': @visibleRange));
 	}
 	if(@entities) {
 		foreach(@entity in @entities) {
@@ -53,7 +58,9 @@ proc _weapon_hit_scan(@player, @range, @damage, @tracerParticle, @hitParticle, @
 					if(!array_index_exists(@pvp['players'], @player) || pmode(@player) == 'SPECTATOR') {
 						continue();
 					}
-					play_sound(@origin, array('sound': 'SUCCESSFUL_HIT'), player());
+					if(@hitsound) {
+						play_sound(@origin, array('sound': @hitsound), player());
+					}
 					@players[] = @player;
 				} catch(PlayerOfflineException @ex) {
 					// not a player, but let's still kill it
@@ -61,12 +68,14 @@ proc _weapon_hit_scan(@player, @range, @damage, @tracerParticle, @hitParticle, @
 				if(!is_null(@damage)) {
 					damage_entity(@entity['uuid'], @damage, @damager);
 				}
-				play_effect(@entity['location'], @hitParticle, array('particleCount': 4, 'speed': 0.05));
+				if(array_index_exists(@effects, 'hitparticle')) {
+					play_effect(@entity['location'], @effects['hitparticle'], array('particleCount': 4, 'speed': 0.05));
+				}
 			}
 		}
 	}
 	
-	if(@tracerParticle) {
+	if(array_index_exists(@effects, 'tracerparticle')) {
 		@distance = _distance(@origin, @location);
 		@maxParticles = min(ceil(@distance), 20);
 		@distance /= @maxParticles;
@@ -74,7 +83,7 @@ proc _weapon_hit_scan(@player, @range, @damage, @tracerParticle, @hitParticle, @
 		@particles = 0;
 		while(@particles++ <= @maxParticles) {
 			@origin = location_shift(@origin, @location, @distance);
-			play_effect(@origin, @tracerParticle, array('speed': 0, 'radius': @visibleRange));
+			play_effect(@origin, @effects['tracerparticle'], array('speed': 0, 'radius': @visibleRange));
 		}
 	}
 	
