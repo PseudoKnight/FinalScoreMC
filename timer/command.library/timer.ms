@@ -23,6 +23,7 @@ register_command('timer', array(
 			set_ponfire(@player, 0);
 			set_plevel(@player, 0);
 			set_pexp(@player, 0);
+			_clear_peffects(@player);
 		
 			if(array_index_exists(@timers, @player)) {
 				clear_task(@timers[@player][2]);
@@ -152,7 +153,7 @@ register_command('timer', array(
 			if(@marathon && array_index_exists(@marathon['players'], @player)) {
 				if(@id != @marathon['players'][@player]) {
 					tmsg(@player, 'You skipped a course. Disqualified!');
-					remove_bar(@player);
+					try(remove_bar(@player));
 					_set_pactivity(@lastplayer, null);
 					array_remove(@marathon['players'], @player);
 				} else {
@@ -180,7 +181,7 @@ register_command('timer', array(
 							@lastplayer = array_keys(@marathon['players'])[0];
 							remove_bar(@lastplayer);
 							_set_pactivity(@lastplayer, null);
-							array_remove(@marathon['players'], @player);
+							array_remove(@marathon['players'], @lastplayer);
 						}
 					}
 				}

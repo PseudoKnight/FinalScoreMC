@@ -11,13 +11,19 @@ register_command('marathon', array(
 			if(@marathon) {
 				if(!_psession(player())['activity']) {
 					@marathon['players'][player()] = @marathon['courses'][0];
-					msg(color('green').'Joined.');
+					_worldmsg(pworld(), color('green').color('bold').player().' joined the queued Marathon.');
 				} else {
 					msg(color('gold').'You appear to be playing another game.');
 				}
 			}
 			return(true);
 		}
+		
+		@marathon = import('marathon');
+		if(@marathon) {
+			die(color('gold').'Marathon already running!');
+		}
+		
 		// else queue up the marathon
 		// populate course list
 		@coursedata = get_values('times');
@@ -57,7 +63,7 @@ register_command('marathon', array(
 				die();
 			}
 			if(--@timer[0] > 0) {
-				foreach(@p in @players) {
+				foreach(@p in array_keys(@players)) {
 					try(title(@p, '', @timer[0]));
 				}
 				die();
@@ -67,8 +73,10 @@ register_command('marathon', array(
 			// setup players
 			@firstwarp = get_value('warp', @courses[0]);
 			foreach(@p: @course in @players) {
-				create_bar(@p, array('title': @p.': '.@course, 'color': 'GREEN'));
-				bar_add_player(@p, @p);
+				create_bar(@p, array('title': @p.': '.@course, 'color': 'GREEN', 'visible': false));
+				foreach(@p2 in array_keys(@players)) {
+					bar_add_player(@p, @p2);
+				}
 				_set_pactivity(@p, 'marathon');
 				set_ploc(@p, @firstwarp);
 			}
@@ -80,7 +88,7 @@ register_command('marathon', array(
 					if(array_size(@players) == 1) {
 						@lastplayer = array_keys(@players)[0];
 						title(@lastplayer, 'Too fast!', '');
-						_worldmsg(pworld(), color('bold').@lastplayer.' left all other players in their dust.');
+						_worldmsg(pworld(), color('green').color('bold').@lastplayer.' left all other players in their dust.');
 						remove_bar(@lastplayer);
 						_set_pactivity(@lastplayer, null);
 					}
@@ -93,16 +101,21 @@ register_command('marathon', array(
 							if(@time > @marathon['times'][@course] + 120000) {
 								if(ponline(@p)) {
 									title(@p, 'Too slow!', '');
+									_worldmsg(pworld(), color('yellow').color('bold').@p.' fell behind on '.@course);
 								}
 								array_remove(@marathon['players'], @p);
 								remove_bar(@p);
 								_set_pactivity(@p, null);
 							} else {
 								@percent = 1.0 - (@time - @marathon['times'][@course]) / 120000;
-								update_bar(@p, array('percent': @percent, 'color': if(@percent < 0.25, 'RED', 'YELLOW')));
+								update_bar(@p, array(
+									'percent': @percent,
+									'color': if(@percent < 0.25, 'RED', if(@percent < 0.5, 'YELLOW', 'GREEN')),
+									'visible': if(@percent < 0.75, true, false),
+								));
 							}
 						} else {
-							update_bar(@p, array('percent': @percent, 'color': 'GREEN'));
+							update_bar(@p, array('percent': 1.0, 'color': 'GREEN'));
 						}
 					} catch(NotFoundException @ex) {
 						remove_bar(@p);
