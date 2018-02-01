@@ -62,10 +62,11 @@ bind(projectile_launch, array('id': @id.'grapple'), array('type': 'FISHING_HOOK'
 		}
 		@task = closure(@interval = true){
 			try {
-				if(get_entity_health(@shooter) < @startingHealth
+				if(get_entity_health(@shooter) < @startingHealth - 0.5
 				|| get_entity_health(@mover) == 0
 				|| pheld_slot(@player) != @slot
 				|| !entity_exists(@hook)) {
+					play_sound(ploc(@shooter), array('sound': 'ENTITY_ARROW_HIT', 'pitch': 1.5));
 					if(@interval) {
 						clear_task();
 					}
