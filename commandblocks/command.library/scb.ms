@@ -1,5 +1,5 @@
 @allowedcmds = array('/velocity', '/tp', '/sayas', '/testfor', '/testforblock', '/testforblocks', '/playsound',
-	'/setblock', '/tempcart', '/bedspawn', '/give', '/effect', '/warp', '/tellraw', '/time', '/stopsound', '/timer');
+	'/setblock', '/tempcart', '/bedspawn', '/give', '/effect', '/warp', '/tellraw', '/time', '/stopsound', '/timer', '/tempboat');
 register_command('scb', array(
 	'description': 'Set the command in the targeted command block.',
 	'usage': '/scb <cmd>',
