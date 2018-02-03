@@ -190,8 +190,8 @@
 		set_entity_velocity(@entity, array($x, $y, $z));
 		
 		@reapply = array(if(@applicationtime, integer(@applicationtime / 50), 0));
-		set_timeout(50, closure(){
-			make_effect(@loc, 'MOBSPAWNER_FLAMES');
+		set_interval(50, closure(){
+			make_effect(entity_loc(@entity), 'MOBSPAWNER_FLAMES');
 			if(@reapply[0]-- > 0) {
 				set_entity_velocity(@entity, array($x, $y, $z));
 			} else {
