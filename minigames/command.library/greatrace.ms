@@ -7,9 +7,9 @@
 	- WorldBorder plugin to define a random location within the valid world space. The read() location is relative to the script!
 	- CHNaughty extension for action_msg()
 */
-register_command('race', array(
+register_command('greatrace', array(
 	'description': 'Creates a race in survival for all players in the area.',
-	'usage': '/race [x] [z]',
+	'usage': '/greatrace [x] [z]',
 	'tabcompleter': closure(@alias, @sender, @args, @info) {
 		return(array());
 	},
@@ -48,11 +48,11 @@ register_command('race', array(
 		}
 
 		# Setup scoreboard
-		create_scoreboard('race');
-		create_objective('distance', 'DUMMY', 'race');
-		set_objective_display('distance', array('slot': 'SIDEBAR', 'displayname': color('b').'Distance'), 'race');
+		create_scoreboard('greatrace');
+		create_objective('distance', 'DUMMY', 'greatrace');
+		set_objective_display('distance', array('slot': 'SIDEBAR', 'displayname': color('b').'Distance'), 'greatrace');
 		foreach(@p in @players) {
-			set_pscoreboard(@p, 'race');
+			set_pscoreboard(@p, 'greatrace');
 		}
 
 		# Main loop
@@ -67,7 +67,7 @@ register_command('race', array(
 			if(array_size(@players) <= 1) {
 				tmsg(array_get(@players, 0, '~console'), 'All players left the race.');
 				unbind('thegreatrace');
-				remove_scoreboard('race');
+				remove_scoreboard('greatrace');
 				clear_task();
 
 			} else if(@timer[0] > -1) {
@@ -104,7 +104,7 @@ register_command('race', array(
 					);
 					if(@dist > @radius) {
 						action_msg(@p, 'Distance to target: '.floor(@dist).'m');
-						set_pscore('distance', @p, integer(@dist), 'race');
+						set_pscore('distance', @p, integer(@dist), 'greatrace');
 						if(@dist < 96) {
 							foreach(@point in @circle) {
 								play_effect(@point, 'FIREWORKS_SPARK', array('speed': 0, 'radius': 96));
@@ -119,7 +119,7 @@ register_command('race', array(
 							tmsg(@player, @p.' won The Great Race!');
 						}
 						unbind('thegreatrace');
-						remove_scoreboard('race');
+						remove_scoreboard('greatrace');
 						clear_task();
 						break();
 					}
