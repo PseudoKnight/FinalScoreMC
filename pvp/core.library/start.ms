@@ -423,12 +423,12 @@ proc _pvp_start(@pvp, @id){
 				foreach(@p in array_keys(@pvp['players'])) {
 					try {
 						title(@p, color('yellow').@timeleft[0], @title, 0, @timeleft[0] * 20, 20);
+						if(phealth(@p) == 0) {
+							respawn(@p);
+						}
 					} catch(PlayerOfflineException @ex) {
 						// they quit during the countdown.
 						// performance anxiety.
-					}
-					if(phealth(@p) == 0) {
-						respawn(@p);
 					}
 				}
 			} else if(@timeleft[0] > 6 && array_index_exists(@arena, 'classes') && array_size(@arena['classes']) > 1) {
