@@ -350,7 +350,7 @@ if(array_index_exists(@pvp['arena'], 'mobprotect')) {
 			die();
 		}
 		foreach(@team: @data in @pvp['arena']['mobprotect']) {
-			if(@pvp['team'][@team]['mobprotect'] == @e['id']) {
+			if(array_get(@pvp['team'][@team], 'mobprotect', null) == @e['id']) {
 				@health = get_entity_health(@e['id'])
 				set_pscore('mobhealth', @pvp['arena']['team'][@team]['name'], ceil(@health), @id);
 				foreach(@p: @player in @pvp['players']) {
