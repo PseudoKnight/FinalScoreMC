@@ -4,14 +4,14 @@ proc _chat(@player, @message, @recipients, @discordChannel = '') {
 	}
 	# PRIVATE MESSAGING
 	if(@message[0] === '@') {
-		@p = substr(parse_args(@message)[0], 1)
-		if((length(@p) + 2) >= length(@message)) {
+		@parts = parse_args(@message);
+		@p = substr(@parts[0], 1);
+		if(length(@p) != 0 && array_size(@parts) > 1) {
+			@message = substr(@message, length(@p) + 2);
+			_pmsg(@player, @p, @message);
+			console(@player.' @ '.@p.': '.@message, false);
 			die();
 		}
-		@message = substr(@message, length(@p) + 2);
-		_pmsg(@player, @p, @message);
-		console(@player.' @ '.@p.': '.@message, false);
-		die();
 	}
 
 	# Remove players that are ignoring this player, or everyone if muted.
