@@ -115,7 +115,7 @@ register_command('marathon', array(
 								));
 							}
 						} else {
-							update_bar(@p, array('percent': 1.0, 'color': 'GREEN'));
+							update_bar(@p, array('percent': 1.0, 'color': 'GREEN', 'visible': false));
 						}
 					} catch(NotFoundException @ex) {
 						remove_bar(@p);
