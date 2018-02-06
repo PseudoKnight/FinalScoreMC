@@ -99,28 +99,47 @@ register_command('7', array(
 									|| @p['block'][1] != @loc['y'])) {
 										@pitch = 0;
 										switch(get_block_at(@p['block'])) {
+											case '173:0':
+												@p['time'] -= 0.20;
+												title(@player, '', color('red').'\u2639');
+												play_sound(@p['block'], array('sound': 'VILLAGER_NO'), @player);
 											case '16:0':
-												@p['time'] += 0.10;
-												@pitch = 0.62;
+												@p['time'] -= 0.10;
+												title(@player, '', color('red').'\u2639');
+												play_sound(@p['block'], array('sound': 'VILLAGER_NO'), @player);
 											case '15:0':
-												@p['time'] += 0.15;
-												@pitch = 0.7;
+												@p['time'] += 0.10;
+												@pitch = 0.5;
+											case '42:0':
+												@p['time'] += 0.20;
+												@pitch = 0.561231;
+											case '21:0':
 											case '73:0':
 											case '74:0':
-												@p['time'] += 0.20;
-												@pitch = 0.8;
-											case '21:0':
-												@p['time'] += 0.25;
-												@pitch = 0.95;
+												@p['time'] += 0.30;
+												@pitch = 0.629961;
+											case '22:0':
+											case '152:0':
+												@p['time'] += 0.40;
+												@pitch = 0.749154;
 											case '14:0':
-												@p['time'] += 0.35;
-												@pitch = 1.05;
-											case '56:0':
 												@p['time'] += 0.50;
-												@pitch = 1.25;
+												@pitch = 0.840896;
+											case '41:0':
+												@p['time'] += 0.60;
+												@pitch = 1.0;
+											case '56:0':
+												@p['time'] += 0.70;
+												@pitch = 1.22462;
+											case '57:0':
+												@p['time'] += 0.80;
+												@pitch = 1.259921;
 											case '129:0':
-												@p['time'] += 0.65;
-												@pitch = 1.4;
+												@p['time'] += 0.90;
+												@pitch = 1.498307;
+											case '133:0':
+												@p['time'] += 1.00;
+												@pitch = 1.681793;
 										}
 										set_block_at(@p['block'], '0:0', false);
 										if(@pitch) {
