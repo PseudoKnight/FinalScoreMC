@@ -108,10 +108,10 @@ register_command('7', array(
 												title(@player, '', color('red').'\u2639');
 												play_sound(@p['block'], array('sound': 'VILLAGER_NO'), @player);
 											case '15:0':
-												@p['time'] += 0.10;
+												@p['time'] += 0.20;
 												@pitch = 0.5;
 											case '42:0':
-												@p['time'] += 0.20;
+												@p['time'] += 0.25;
 												@pitch = 0.561231;
 											case '21:0':
 											case '73:0':
@@ -120,25 +120,25 @@ register_command('7', array(
 												@pitch = 0.629961;
 											case '22:0':
 											case '152:0':
-												@p['time'] += 0.40;
+												@p['time'] += 0.35;
 												@pitch = 0.749154;
 											case '14:0':
-												@p['time'] += 0.50;
+												@p['time'] += 0.40;
 												@pitch = 0.840896;
 											case '41:0':
-												@p['time'] += 0.60;
+												@p['time'] += 0.45;
 												@pitch = 1.0;
 											case '56:0':
-												@p['time'] += 0.70;
+												@p['time'] += 0.50;
 												@pitch = 1.22462;
 											case '57:0':
-												@p['time'] += 0.80;
+												@p['time'] += 0.55;
 												@pitch = 1.259921;
 											case '129:0':
-												@p['time'] += 0.90;
+												@p['time'] += 0.60;
 												@pitch = 1.498307;
 											case '133:0':
-												@p['time'] += 1.00;
+												@p['time'] += 0.65;
 												@pitch = 1.681793;
 										}
 										set_block_at(@p['block'], '0:0', false);
