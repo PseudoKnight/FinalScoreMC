@@ -1,22 +1,27 @@
 register_command('marathon', array(
 	'description': 'Creates a Marathon',
-	'usage': '/marathon',
+	'usage': '/marathon [#]',
 	'executor': closure(@alias, @sender, @args, @info) {
 		// marathon join subcommand
+		@num = 0;
+		@difficulty = null;
 		if(@args) {
-		 	if(@args[0] != 'join') {
+		 	if(@args[0] == 'join') {
+				@marathon = import('marathon');
+				if(@marathon) {
+					if(!_psession(player())['activity']) {
+						@marathon['players'][player()] = @marathon['courses'][0];
+						_worldmsg(pworld(), color('green').color('bold').player().' joined the queued Marathon.');
+					} else {
+						msg(color('gold').'You appear to be playing another game.');
+					}
+				}
+				return(true);
+			} else if(is_integral(@args[0])) {
+				@num = integer(@args[0]);
+			} else {
 				return(false);
 			}
-			@marathon = import('marathon');
-			if(@marathon) {
-				if(!_psession(player())['activity']) {
-					@marathon['players'][player()] = @marathon['courses'][0];
-					_worldmsg(pworld(), color('green').color('bold').player().' joined the queued Marathon.');
-				} else {
-					msg(color('gold').'You appear to be playing another game.');
-				}
-			}
-			return(true);
 		}
 		
 		@marathon = import('marathon');
@@ -30,7 +35,7 @@ register_command('marathon', array(
 		@courses = array_filter(@coursedata, closure(@key, @value){
 			return(is_array(@value) && @key != 'times');
 		});
-		@courses = array_rand(@courses, array_size(@courses));
+		@courses = array_rand(@courses, if(@num && @num < array_size(@courses), @num, array_size(@courses)));
 		@coursetimes = associative_array();
 		foreach(@index: @course in @courses) {
 			@name = split('.', @course)[1];
