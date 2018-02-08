@@ -1,14 +1,19 @@
 ## Race
-Creates and manages races with support for boats, horses, and elytra. Also features checkpoints, laps, and respawns.
+Creates and manages races with support for boats, horses, pigs, and elytra. Also features configuring multiple tracks
+with effects, checkpoints, laps, and respawns.
 
 ### Commands
 #### Track Creation
 Permission: *command.track*
-/track set <track> <setting> <value(s)>
-/track delete <track> [setting]
+- /track set \<track> \<setting> <value(s)>
+- /track delete \<track> [setting] [index]
+- /track info \<track>
 
 #### Races
-/race <start|join|end> <track>
+- /race start \<track>
+- /race join \<track>
+- /race end \<track> (forces the race to end)
+- /race reload core (recompiles all core.library scripts)
 
 ### Dependencies
 #### Java

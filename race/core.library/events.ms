@@ -57,10 +57,9 @@ proc _race_bind_events(@race) {
 				@cuboid = @race['checkpoint'][@checkpoint];
 				@p1 = @cuboid[0];
 				@p2 = @cuboid[1];
-				@pt = @event['to'];
-				if(@pt['x'] < @p1[0] && @pt['x'] > @p2[0]
-				&& @pt['y'] < @p1[1] && @pt['y'] > @p2[1]
-				&& @pt['z'] < @p1[2] && @pt['z'] > @p2[2]) {
+				if(@loc['x'] < @p1[0] && @loc['x'] > @p2[0]
+				&& @loc['y'] < @p1[1] && @loc['y'] > @p2[1]
+				&& @loc['z'] < @p1[2] && @loc['z'] > @p2[2]) {
 					// hit checkpoint
 					@checkpoint++;
 					@p['loc'] = @loc;
@@ -112,7 +111,7 @@ proc _race_bind_events(@race) {
 					} else {
 						set_pscore('time', player(), @race['times'][@lap][@checkpoint] - integer(time() / 1000), @id);
 					}
-				} else if(!array_contains(sk_current_regions(), @race['region'])) {
+				} else if(!array_contains(sk_regions_at(@loc), @race['region'])) {
 					@p['state'] = 'respawning';
 					@vehicle = get_entity_vehicle(puuid());
 					if(@vehicle) {

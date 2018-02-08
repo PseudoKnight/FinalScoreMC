@@ -47,7 +47,7 @@ proc _race_place_player(@race, @player, @loc) {
 		case 'pig':
 			@vehicle = spawn_entity('PIG', 1, @loc)[0];
 			set_entity_spec(@vehicle, array('saddled': true));
-			set_pinv(@player, 0, array('name': 'CARROT_STICK'));
+			set_pinv(@player, 0, array('name': 'CARROT_STICK', 'meta': array('unbreakable': true)));
 		case 'elytra':
 			set_pinv(@player, 102, array('name': 'ELYTRA'));
 	}
