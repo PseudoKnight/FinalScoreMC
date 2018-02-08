@@ -54,7 +54,8 @@ register_command('marathon', array(
 		@players[player()] = @courses[0];
 		export('marathon', @marathon);
 		
-		_click_tell(all_players(pworld()), array('&7[Marathon] ', array('&b[JOIN] ', '/marathon join'), player().' queued up a marathon.'));
+		_click_tell(all_players(pworld()), array('&7[Marathon] ', array('&b[JOIN] ', '/marathon join'),
+				player().' queued up a marathon ('.array_size(@courses).' courses)'));
 		
 		// start countdown
 		@timer = array(15);

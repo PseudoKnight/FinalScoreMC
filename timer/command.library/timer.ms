@@ -164,11 +164,15 @@ register_command('timer', array(
 					@marathon['times'][@id] = time();
 					@index = array_index(@marathon['courses'], @id) + 1;
 					if(array_index_exists(@marathon['courses'], @index)) {
-						@marathon['players'][@player] = @marathon['courses'][@index];
-						@warp = get_value('warp', @marathon['courses'][@index]);
+						@courseName = @marathon['courses'][@index];
+						@marathon['players'][@player] = @courseName;
+						@warp = get_value('warp', @courseName);
 						set_entity_fall_distance(puuid(@player), 0);
 						set_ploc(@player, @warp);
-						update_bar(@player, @player.': '.@marathon['courses'][@index].' ('.(@index + 1).'/'.array_size(@marathon['courses']).')');
+						@title = to_upper(@courseName);
+						@progress = '('.(@index + 1).'/'.array_size(@marathon['courses']).')';
+						update_bar(@player, @player.': '.@title.' '.@progress);
+						title(@player, @title, @progress);
 					} else {
 						if(@first) {
 							_worldmsg(pworld(@player), color('bold').@player.' won the Marathon!');
