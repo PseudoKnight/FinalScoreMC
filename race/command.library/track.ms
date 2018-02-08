@@ -121,9 +121,18 @@ register_command('track', array(
 			case 'delete':
 			case 'remove':
 				if(@setting) {
-					array_remove(@track, @setting);
+					if(@value) {
+						if(is_array(@track[@setting])) {
+							array_remove(@track[@setting], @value);
+							msg(colorize("&7[Track]&r Deleted &e@value&r in &e@setting&r array from &a@id&r track"));
+						} else {
+							die(color('gold').@setting.' is not an array.');
+						}
+					} else {
+						array_remove(@track, @setting);
+						msg(colorize("&7[Track]&r Deleted &e@setting&r from &a@id&r track"));
+					}
 					store_value('track', @id, @track);
-					msg(colorize("&7[Track]&r Deleted &e@setting&r from &a@id&r track"));
 				} else {
 					clear_value('track', @id);
 					msg(colorize("&7[Track]&r Deleted track &a@id"));

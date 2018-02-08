@@ -36,6 +36,8 @@ proc _race_create(@id) {
 	create_scoreboard(@id);
 	create_objective('time', 'DUMMY', @id);
 	set_objective_display('time', array('displayname': to_upper(@id).' RACE', 'slot': 'SIDEBAR'), @id);
+	create_team('collision', @id);
+	set_team_options('collision', array('collisionrule': 'NEVER'), @id);
 	
 	return(@race);
 }
@@ -87,7 +89,7 @@ proc _race_start(@race) {
 proc _race_check_players(@race) {
 	@racing = 0;
 	foreach(@p: @v in @race['players']) {
-		if(!@v['finished']) {
+		if(@v['state'] != 'finished') {
 			@racing++;
 		}
 	}

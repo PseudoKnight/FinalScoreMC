@@ -3,17 +3,18 @@ proc _race_add_player(@id, @player) {
 	@race['players'][@player] = array(
 		'lap': 0,
 		'checkpoint': 0,
-		'finished': false,
+		'state': 'racing',
 		'place': 0,
 		'loc': @race['spawn'][0],
 	);
 	set_pscoreboard(@player, @id);
 	set_pscore('time', @player, 0, @id);
+	team_add_player('collision', @player, @id);
 }
 
 proc _race_remove_player(@race, @player) {
 	array_remove(@race, @player);
-	if(pworld(@player) == @race['world']) {
+	if(ponline(@player) && pworld(@player) == @race['world']) {
 		if(array_index_exists(@race, 'sky')) {
 			runas('~console', '/skychanger 0 '.@player);
 		}
@@ -46,14 +47,13 @@ proc _race_place_player(@race, @player, @loc) {
 		case 'pig':
 			@vehicle = spawn_entity('PIG', 1, @loc)[0];
 			set_entity_spec(@vehicle, array('saddled': true));
-			pgive_item(@player, array('name': 'CARROT_STICK', 'qty': 9));
+			set_pinv(@player, 0, array('name': 'CARROT_STICK'));
 		case 'elytra':
 			set_pinv(@player, 102, array('name': 'ELYTRA'));
 	}
 	if(@vehicle) {
 		set_entity_rider(@stand, @vehicle);
 		set_entity_rider(@vehicle, puuid(@player));
-		set_entity_invulnerable(@vehicle, true);
 	} else {
 		set_entity_rider(@stand, puuid(@player));
 	}
@@ -87,6 +87,7 @@ proc _race_drop_player(@race, @player) {
 			}
 		}
 	}
+	play_sound(ploc(@player), array('sound': 'ENTITY_FIREWORK_BLAST'), @player);
 }
 
 proc _race_drop_players(@race) {
