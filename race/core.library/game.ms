@@ -7,8 +7,16 @@ proc _race_create_and_join(@id) {
 		@race = _race_create(@id);
 		_race_add_player(@id, player());
 		_click_tell(all_players(pworld()), array('&7[Race] ', array('&b[JOIN] ', '/race join '.@id), player().' queued up a race.'));
-	} else if(!array_index_exists(@race['players'], player())) {
+	} else if(!array_index_exists(@race['players'], player()) && @race['state'] != 'ending') {
 		_race_add_player(@id, player());
+		if(@race['state'] == 'countdown' || @race['state'] == 'running') {
+			_race_place_player(@race, player(), array_rand(@race['spawn'], 1, false)[0]);
+			if(@race['state'] == 'running') {
+				set_timeout(1000, closure(){
+					_race_drop_player(@race, player());
+				});
+			}
+		}
 		_click_tell(all_players(pworld()), array('&7[Race] ', array('&b[JOIN] ', '/race join '.@id), player().' joined the race.'));
 	}
 	return(@race);
@@ -21,15 +29,16 @@ proc _race_create(@id) {
 	}
 	
 	// game object
-	@race = array_merge(@track, array(
+	@race = array_merge(array(
 		'id': @id,
 		'players': associative_array(),
 		'state': 'queued',
 		'binds': array(),
 		'place': 1,
 		'world': pworld(),
-		'times': associative_array();
-	));
+		'times': associative_array(),
+		'laps': 1,
+	), @track);
 	export('race'.@id, @race);
 	
 	// scoreboard
@@ -44,36 +53,38 @@ proc _race_create(@id) {
 
 proc _race_countdown(@race) {
 	@race['state'] = 'countdown';
-	_race_place_players(@race);
-	_race_bind_events(@race);
-	@startTime = 15;
-	@timer = array(@startTime);
-	set_interval(1000, closure(){
-		foreach(@p: @v in @race['players']) {
-			if(!ponline(@p) || !array_contains(sk_current_regions(@p), @race['region'])) {
-				array_remove(@race['players'], @p);
-			}
-		}
-		if(!@race['players']) {
-			clear_task();
-			_race_end(@race);
-		} else if(@timer[0] == @startTime) {
-			if(array_size(@race['players']) > 0) {
-				_worldmsg(pworld(), color('green').'Race starting in '.@startTime.' seconds...');
-				@timer[0]--;
-			}
-		} else if(@timer[0] == 1) {
-			clear_task();
-			_race_start(@race);
-		} else {
-			@timer[0]--;
+	set_timeout(1000, closure(){ // delay to load chunks first
+		_race_place_players(@race);
+		_race_bind_events(@race);
+		@startTime = 15;
+		@timer = array(@startTime);
+		set_interval(1000, closure(){
 			foreach(@p: @v in @race['players']) {
-				title_msg(@p, '', @timer[0], 0, 30, 0);
+				if(!ponline(@p) || !array_contains(sk_current_regions(@p), @race['region'])) {
+					array_remove(@race['players'], @p);
+				}
 			}
-			if(@timer[0] < 4) {
-				play_sound(ploc(), array('sound': 'NOTE_PLING'));
+			if(!@race['players']) {
+				clear_task();
+				_race_end(@race);
+			} else if(@timer[0] == @startTime) {
+				if(array_size(@race['players']) > 0) {
+					_worldmsg(pworld(), color('gray').'[Race]'.color('green').' Starting in '.@startTime.' seconds...');
+					@timer[0]--;
+				}
+			} else if(@timer[0] == 1) {
+				clear_task();
+				_race_start(@race);
+			} else {
+				@timer[0]--;
+				foreach(@p: @v in @race['players']) {
+					title_msg(@p, '', @timer[0], 0, 30, 0);
+				}
+				if(@timer[0] < 4) {
+					play_sound(ploc(), array('sound': 'NOTE_PLING'));
+				}
 			}
-		}
+		});
 	});
 }
 

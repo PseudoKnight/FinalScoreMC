@@ -1,17 +1,17 @@
 proc _race_bind_events(@race) {
-	if(@race['type'] == 'boat' || @race['type'] == 'horse' || @race['type'] == 'pig') {
-		@race['binds'][] = bind(entity_dismount, null, array('type': 'PLAYER'), @event, @race) {
-			try {
-				@player = player(@event['id']);
-				if(array_index_exists(@race['players'], @player) && @race['players'][@player]['state'] != 'respawning') {
-					cancel();
-					play_sound(entity_loc(@event['id']), array('sound': 'ENTITY_VILLAGER_YES'));
-				}
-			} catch(PlayerOfflineException @ex) {
-				// entity was not a player
+	@race['binds'][] = bind(entity_dismount, null, array('type': 'PLAYER'), @event, @race) {
+		try {
+			@player = player(@event['id']);
+			if(array_index_exists(@race['players'], @player) && @race['players'][@player]['state'] != 'respawning') {
+				cancel();
+				play_sound(entity_loc(@event['id']), array('sound': 'ENTITY_VILLAGER_YES'));
 			}
+		} catch(PlayerOfflineException @ex) {
+			// entity was not a player
 		}
-		
+	}
+	
+	if(@race['type'] == 'boat' || @race['type'] == 'horse' || @race['type'] == 'pig') {
 		@race['binds'][] = bind(vehicle_destroy, null, array('vehicletype': to_upper(@race['type'])), @event, @race) {
 			@rider = get_entity_rider(@event['vehicle']);
 			if(@rider) {
@@ -120,7 +120,6 @@ proc _race_bind_events(@race) {
 					_race_place_player(@race, player(), @p['loc']);
 					set_timeout(1000, closure(){
 						_race_drop_player(@race, player());
-						@p['state'] = 'racing';
 					});
 				}
 			}

@@ -86,7 +86,7 @@ register_command('track', array(
 					
 					// string from set
 					case 'type':
-						@tracktypes = array('boat', 'elytra', 'horse', 'parkour' 'pig');
+						@tracktypes = array('boat', 'elytra', 'horse', 'parkour', 'pig');
 						if(!array_contains(@tracktypes, @value)) {
 							die(color('gold').'Expecting one of '.array_implode(@tracktypes));
 						}

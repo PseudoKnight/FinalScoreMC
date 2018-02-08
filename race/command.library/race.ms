@@ -14,6 +14,7 @@ register_command('race', array(
 		switch(@action) {
 			case 'start':
 				@race = _race_create_and_join(@id);
+				set_entity_loc(puuid(), @race['lobby']);
 				_race_countdown(@race);
 				
 			case 'join':
