@@ -96,7 +96,17 @@
 		),
 	),
 );
-@menu[38] = array(
+@menu[53] = array(
+	'name': 'ICE',
+	'meta': array(
+		'display': color('aqua').'Arctic Racing',
+		'lore': array(
+			color('r').'Race boats along treacherous icebergs. (2+ players)',
+			color('dark_gray').'Run: /warp arctic',
+		)
+	),
+);
+@menu[39] = array(
 	'name': 'SLIME_BLOCK',
 	'meta': array(
 		'display': color('green').'Slimey Golf',
@@ -106,7 +116,7 @@
 		),
 	),
 );
-@menu[39] = array(
+@menu[40] = array(
 	'name': 'PRISMARINE',
 	'meta': array(
 		'display': color('aqua').'Sunken City Golf',
@@ -116,7 +126,7 @@
 		),
 	),
 );
-@menu[40] = array(
+@menu[41] = array(
 	'name': 'LOG',
 	'data': 3,
 	'meta': array(
