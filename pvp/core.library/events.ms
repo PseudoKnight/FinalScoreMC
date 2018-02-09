@@ -316,13 +316,13 @@ if(array_index_exists(@pvp['arena'], 'chestspawn')) {
 	}
 }
 
-if(array_contains(@pvp['arena']['flags'], 'noxp')) {
-	array_push(@pvp['binds'], @id.'noxp')
-	bind(entity_death, array('id': @id.'noxp'), null, @e, @id) {
-		@pvp = import('pvp'.@id)
-		if(!_is_survival_world(@e['location']['world'])
-		&& array_contains(sk_regions_at(@e['location']), @pvp['arena']['region'])) {
-			modify_event('xp', 0)
+@pvp['binds'][] = bind(entity_death, null, null, @event, @pvp) {
+	if(!_is_survival_world(@event['location']['world'])
+	&& array_contains(sk_regions_at(@event['location']), @pvp['arena']['region'])) {
+		if(@event['type'] == 'SKELETON') {
+			modify_event('drops', null);
+		} else if(array_contains(@pvp['arena']['flags'], 'noxp')) {
+			modify_event('xp', 0);
 		}
 	}
 }
