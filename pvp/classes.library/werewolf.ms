@@ -14,7 +14,7 @@ case 'load':
 		}
 	}
 	
-	bind(player_interact, array('id': @player.'eat'), array('button': 'right', 'item': 376, 'player': player()), @event) {
+	bind(player_interact, array('id': @player.'eat'), array('button': 'right', 'item': 376, 'player': @player), @event) {
 		ptake_item(array('name': 'FERMENTED_SPIDER_EYE'));
 		set_phealth(player(), min(20, phealth() + 4));
 		play_sound(ploc(), array('sound': 'EAT', 'pitch': 0.5));
