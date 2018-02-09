@@ -99,7 +99,7 @@ proc _race_start(@race) {
 	play_sound(ploc(), array('sound': 'NOTE_PLING', 'pitch': 2));
 	_race_drop_players(@race);
 	
-	@race['binds'][] = bind(player_move, null, array('threshold': 2), @event, @race) {
+	@race['binds'][] = bind(player_move, null, null, @event, @race) {
 		if(array_index_exists(@race['players'], player())) {
 			@loc = _relative(@event['to'], 'up', 0.35);
 			play_effect(@loc, 'FIREWORKS_SPARK', array('speed': 0));

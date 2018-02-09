@@ -26,12 +26,6 @@ proc _race_bind_events(@race) {
 			}
 		}
 	}
-	
-	@race['binds'][] = bind(entity_damage, null, array('type': 'PLAYER', 'cause': 'FALL'), @event, @race) {
-		if(array_index_exists(@race['players'], player())) {
-			cancel();
-		}
-	}
 
 	@race['binds'][] = bind(player_quit, null, null, @event, @race) {
 		if(array_index_exists(@race['players'], player())) {
