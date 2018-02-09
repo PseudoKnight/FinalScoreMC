@@ -209,6 +209,7 @@ proc _level_start(@level) {
 						if(plevel() >= @cost) {
 							@meta = @item['meta'];
 							@meta['lore'] = array('Sell each for '.@level['shop'][@item['name']] / 2.' levels');
+							@item['qty'] = 1;
 							pgive_item(@item);
 							set_plevel(plevel() - @cost);
 							play_sound(ploc(), array('sound': 'ANVIL_LAND', 'pitch': 2, 'volume': 0.5), player());
