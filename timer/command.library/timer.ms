@@ -179,6 +179,7 @@ register_command('timer', array(
 						} else {
 							_worldmsg(pworld(@player), color('bold').@player.' completed the Marathon!');
 						}
+						_set_pactivity(@player, null);
 						array_remove(@marathon['players'], @player);
 						remove_bar(@player);
 						if(array_size(@marathon['players']) == 1) {
