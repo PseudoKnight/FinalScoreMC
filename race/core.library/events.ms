@@ -2,7 +2,7 @@ proc _race_bind_events(@race) {
 	@race['binds'][] = bind(entity_dismount, null, array('type': 'PLAYER'), @event, @race) {
 		try {
 			@player = player(@event['id']);
-			if(array_index_exists(@race['players'], @player) && @race['players'][@player]['state'] != 'respawning') {
+			if(array_index_exists(@race['players'], @player)) {
 				cancel();
 				play_sound(entity_loc(@event['id']), array('sound': 'ENTITY_VILLAGER_YES'));
 			}
@@ -35,13 +35,16 @@ proc _race_bind_events(@race) {
 
 	@race['binds'][] = bind(player_quit, null, null, @event, @race) {
 		if(array_index_exists(@race['players'], player())) {
+			array_remove(@race['players'], player());
 			@vehicle = get_entity_vehicle(puuid());
 			if(@vehicle) {
-				@stand = get_entity_vehicle(@vehicle);
-				if(@stand) {
-					entity_remove(@stand);
+				if(entity_type(@vehicle) == 'ARMOR_STAND') {
+					entity_remove(@vehicle);
+					@vehicle = get_entity_vehicle(puuid());
 				}
-				entity_remove(@vehicle);
+				if(@vehicle) {
+					entity_remove(@vehicle);
+				}
 			}
 			set_ploc(@race['lobby']);
 		}
@@ -109,13 +112,17 @@ proc _race_bind_events(@race) {
 						@race['times'][@lap][@checkpoint] = integer(time() / 1000);
 						set_pscore('time', player(), 0, @race['id']);
 					} else {
-						set_pscore('time', player(), @race['times'][@lap][@checkpoint] - integer(time() / 1000), @id);
+						set_pscore('time', player(), @race['times'][@lap][@checkpoint] - integer(time() / 1000), @race['id']);
 					}
 				} else if(!array_contains(sk_regions_at(@loc), @race['region'])) {
-					@p['state'] = 'respawning';
 					@vehicle = get_entity_vehicle(puuid());
 					if(@vehicle) {
+						@bind = bind(entity_dismount, array('priority': 'HIGH'), null, @event) {
+							consume();
+						}
+						set_entity_rider(null, puuid());
 						entity_remove(@vehicle);
+						unbind(@bind);
 					}
 					_race_place_player(@race, player(), @p['loc']);
 					set_timeout(1000, closure(){

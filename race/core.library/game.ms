@@ -52,6 +52,9 @@ proc _race_create(@id) {
 }
 
 proc _race_countdown(@race) {
+	if(@race['state'] != 'queued') {
+		return();
+	}
 	@race['state'] = 'countdown';
 	set_timeout(1000, closure(){ // delay to load chunks first
 		_race_place_players(@race);

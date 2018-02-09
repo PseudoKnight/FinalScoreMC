@@ -79,16 +79,12 @@ proc _race_drop_player(@race, @player) {
 	@vehicle = get_entity_vehicle(puuid(@player));
 	if(@vehicle) {
 		if(entity_type(@vehicle) == 'ARMOR_STAND') {
-			@race['players'][@player]['state'] = 'respawning';
-			entity_remove(@vehicle);
-			set_timeout(50, closure(){
-				@race['players'][@player]['state'] = 'racing';
-			});
-		} else {
-			@stand = get_entity_vehicle(@vehicle);
-			if(@stand) {
-				entity_remove(@stand);
+			@bind = bind(entity_dismount, array('priority': 'HIGH'), null, @event) {
+				consume();
 			}
+			set_entity_rider(@vehicle, null);
+			entity_remove(@vehicle);
+			unbind(@bind);
 		}
 	}
 	play_sound(ploc(@player), array('sound': 'ENTITY_FIREWORK_BLAST'), @player);
