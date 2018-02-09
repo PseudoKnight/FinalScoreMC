@@ -128,9 +128,9 @@ bind(projectile_launch, array('id': @id.'grapple'), array('type': 'FISHING_HOOK'
 	set_timeout(800, closure(){
 		if(has_bind('hit'.@arrow)) {
 			try(entity_remove(@arrow));
+			pgive_item(@player, array('name': 'ARROW'));
 		}
 		unbind('hit'.@arrow);
-		unbind('damage'.@arrow);
 	});
 }
 
