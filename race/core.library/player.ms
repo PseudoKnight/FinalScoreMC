@@ -15,6 +15,7 @@ proc _race_add_player(@id, @player) {
 
 proc _race_remove_player(@race, @player) {
 	array_remove(@race, @player);
+	_set_pactivity(@player, null);
 	if(ponline(@player) && pworld(@player) == @race['world']) {
 		if(array_index_exists(@race, 'sky')) {
 			runas('~console', '/skychanger 0 '.@player);
@@ -23,9 +24,10 @@ proc _race_remove_player(@race, @player) {
 		if(@vehicle) {
 			try(entity_remove(@vehicle));
 		}
-		set_entity_loc(puuid(@player), @race['lobby']);
+		if(array_contains(sk_current_regions(@player), @race['region'])) {
+			set_entity_loc(puuid(@player), @race['lobby']);
+		}
 		_clear_peffects(@player);
-		_set_pactivity(@player, null);
 		_equip_kit(@player);
 	}
 }

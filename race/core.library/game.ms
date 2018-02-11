@@ -191,6 +191,8 @@ proc _race_start(@race) {
 						_race_drop_player(@race, player());
 					});
 				}
+			} else if(!array_contains(sk_regions_at(@loc), @race['region'])) {
+				_race_remove_player(@race, player());
 			}
 		}
 	}
@@ -203,7 +205,7 @@ proc _race_check_players(@race) {
 			@racing++;
 		}
 	}
-	if(@racing == 0) {
+	if(@racing == 1) {
 		_race_end(@race);
 	}
 }
