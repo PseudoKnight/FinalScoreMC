@@ -28,8 +28,22 @@ proc _race_create(@id) {
 		throw('NotFoundException', 'That track does not exist.');
 	}
 	
+	// check track requirements
+	if(!array_index_exists(@track, 'spawn')) {
+		die(color('red').'Race spawn locations for '.@id.' are missing.');
+	}
+	if(!array_index_exists(@track, 'checkpoint')) {
+		die(color('red').'Race checkpoints for '.@id.' are missing.');
+	}
+	if(!array_index_exists(@track, 'region')) {
+		die(color('red').'Race region for '.@id.' is missing.');
+	}
+	
 	// game object
 	@race = array_merge(array(
+		'type': 'parkour', // default
+		'lobby': get_spawn(pworld()), // default
+		'laps': 1, // default
 		'id': @id,
 		'players': associative_array(),
 		'state': 'queued',
@@ -37,7 +51,6 @@ proc _race_create(@id) {
 		'place': 1,
 		'world': pworld(),
 		'times': associative_array(),
-		'laps': 1,
 	), @track);
 	export('race'.@id, @race);
 	

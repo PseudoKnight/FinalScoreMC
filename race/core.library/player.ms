@@ -60,10 +60,14 @@ proc _race_place_player(@race, @player, @loc) {
 }
 
 proc _race_place_players(@race) {
-	foreach(@i: @p in array_keys(@race['players'])) {
+	@index = 0;
+	foreach(@p in array_keys(@race['players'])) {
+		if(!array_index_exists(@race['spawn'], @index)) {
+			@index = 0;
+		}
 		_clear_peffects(@p);
 		_clear_pinv(@p);
-		_race_place_player(@race, @p, @race['spawn'][@i]);
+		_race_place_player(@race, @p, @race['spawn'][@index++]);
 		if(array_index_exists(@race, 'sky')) {
 			runas('~console', '/skychanger '.@race['sky'].' '.@p);
 		}
