@@ -3,8 +3,16 @@ proc _race_bind_events(@race) {
 		try {
 			@player = player(@event['id']);
 			if(array_index_exists(@race['players'], @player)) {
-				cancel();
-				play_sound(entity_loc(@event['id']), array('sound': 'ENTITY_VILLAGER_YES'));
+				@racer = @race['players'][@player];
+				if(@racer['state'] == 'finished') {
+					entity_remove(@event['mountid']);
+				} else {
+					cancel();
+					if(@racer['horn'] + 500 < time()) {
+						play_sound(entity_loc(@event['id']), array('sound': 'ENTITY_VILLAGER_YES'));
+						@racer['horn'] = time();
+					}
+				}
 			}
 		} catch(PlayerOfflineException @ex) {
 			// entity was not a player

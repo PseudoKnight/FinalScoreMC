@@ -6,6 +6,7 @@ proc _race_add_player(@id, @player) {
 		'state': 'racing',
 		'place': 0,
 		'loc': @race['spawn'][0],
+		'horn': time(),
 	);
 	set_pscoreboard(@player, @id);
 	set_pscore('time', @player, 0, @id);
