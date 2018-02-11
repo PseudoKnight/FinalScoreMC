@@ -23,15 +23,13 @@ proc _start_game(@course, @loc) {
 
 	_add_activity(@course, @course);
 
-	foreach(@player in array_keys(@golf['players'])) {
-		tmsg(@player, colorize(
-			'&a&lSLIMEY&6&lGOLF &a\u2308\u2328 \uFE52\u2328\u2309&r\n'
-			.'&6&l[ How to Play ]&r\n'
-			.'- Place slime ball on starting location.\n'
-			.'- Right-click Slimey to start swing.\n'
-			.'- Wait for desired strength and then hit Slimey into the hole.'
-		));
-	}
+	broadcast(colorize(
+		'&a&lSLIMEY&6&lGOLF &a\u2308\u2328 \uFE52\u2328\u2309&r\n'
+		.'&6&l[ How to Play ]&r\n'
+		.'- Place slime ball on starting location.\n'
+		.'- Right-click Slimey to start swing.\n'
+		.'- Wait for desired strength and then hit Slimey into the hole.'
+	), array_keys(@golf['players']));
 
 	# Place ball
 	bind(player_interact, array('id': @course), array('item': 341, 'button': 'right', 'block': 159), @event, @golf) {

@@ -20,11 +20,6 @@ register_command('roll', array(
 		} else {
 			@message = color('a').'[Dice] '.display_name().color('f').' rolled a '.color('a').(rand(@sides) + 1).' on a '.@sides.'-sided die.';
 		}
-		foreach(@p in all_players(pworld())) {
-			if(!ponline(@p)) {
-				continue();
-			}
-			tmsg(@p, @message);
-		}
+		broadcast(@message, all_players(pworld()));
 	}
 ));

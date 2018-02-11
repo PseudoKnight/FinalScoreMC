@@ -4,9 +4,7 @@ bind(creature_spawn, null, array('reason': 'BREEDING'), @event) {
 	&& array_size(entities_in_radius(@event['location'], 64)) > 300) {
 		cancel();
 		play_effect(@event['location'], 'SMOKE', array('id': 4));
-		foreach(@p in players_in_radius(@event['location'], 16)) {
-			tmsg(@p, color('gold').'Breeding failed due to overcrowding.');
-		}
+		broadcast(color('gold').'Breeding failed due to overcrowding.', players_in_radius(@event['location'], 16));
 	}
 }
 
@@ -14,9 +12,7 @@ bind(creature_spawn, null, array('reason': 'EGG'), @event) {
 	if(array_size(entities_in_radius(@event['location'], 8)) > 200) {
 		cancel();
 		play_effect(@event['location'], 'SMOKE', array('id': 4));
-		foreach(@p in players_in_radius(@event['location'], 16)) {
-			tmsg(@p, color('gold').'Chicken failed to hatch due to overcrowding.');
-		}
+		broadcast(color('gold').'Chicken failed to hatch due to overcrowding.', players_in_radius(@event['location'], 16));
 	}
 }
 

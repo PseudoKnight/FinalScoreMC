@@ -41,11 +41,7 @@ proc _regionmsg(@region, @msg) {
 	Messsages every player within a world
 */
 proc _worldmsg(@world, @msg) {
-	foreach(@player in all_players(@world)) {
-		if(ponline(@player)) { // sometimes player will be offline here
-			tmsg(@player, @msg);
-		}
-	}
+	broadcast(@msg, all_players(@world));
 }
 
 /*

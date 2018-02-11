@@ -115,9 +115,7 @@ register_command('greatrace', array(
 						# WINNER!
 						@l['y'] += 2;
 						launch_firework(@l);
-						foreach(@player in all_players(@world)) {
-							tmsg(@player, @p.' won The Great Race!');
-						}
+						broadcast(@p.' won The Great Race!', all_players(@world));
 						unbind('thegreatrace');
 						remove_scoreboard('greatrace');
 						clear_task();
@@ -137,9 +135,7 @@ register_command('greatrace', array(
 				if(@dist > 8) {
 					array_remove_values(@players, @e['player']);
 					msg('You\'ve been disqualified for teleporting.');
-					foreach(@p in @players) {
-						tmsg(@p, @e['player'].' has been disqualified for teleporting.');
-					}
+					broadcast(@e['player'].' has been disqualified for teleporting.', @players);
 				}
 			}
 		}

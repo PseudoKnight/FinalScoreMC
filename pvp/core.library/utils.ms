@@ -1,10 +1,6 @@
 proc _pvp_msg(@pvp, @message) {
-	foreach(@player in array_keys(@pvp['players'])) {
-		tmsg(@player, @message);
-	}
-	foreach(@spectator in @pvp['spectators']) {
-		tmsg(@spectator, @message);
-	}
+	broadcast(@message, array_keys(@pvp['players']));
+	broadcast(@message, @pvp['spectators']);
 }
 
 proc _squared_distance_to_segment(@p1, @p2a, @p2b) {

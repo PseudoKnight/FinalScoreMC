@@ -173,18 +173,15 @@ register_command('7', array(
 							if(array_size(@7['players']) <= 1) {
 								if(array_size(@7['players']) == 1) {
 									@winner = array_implode(array_keys(@7['players']));
-									foreach(@player in all_players(@7['world'])) {
-										tmsg(@player, @winner.' wins with '.color('gold').round(@7['players'][@winner]['time'], 1).' Seconds to Live');
-									}
+									@time = round(@7['players'][@winner]['time'], 1);
+									broadcast(@winner.' wins with '.color('gold').@time.' Seconds to Live', all_players(@7['world']));
 									set_timeout(3000, closure(){
 										if(ponline(@winner)) {
 											set_ploc(@winner, @7['lobby']);
 										}
 									})
 								} else {
-									foreach(@player in all_players(@7['world'])) {
-										tmsg(@player, color(6).'Everybody dies.');
-									}
+									broadcast(color(6).'Everybody dies.', all_players(@7['world']));
 								}
 								set_timeout(7000, closure(){
 									remove_scoreboard('7');
@@ -234,9 +231,7 @@ register_command('7', array(
 				export('7', @7);
 			}
 			
-			foreach(@player in all_players(@world)) {
-				tmsg(@player, colorize('&6&l7 Seconds to Live&r has been queued up by '.player().' /warp 7'));
-			}
+			broadcast(colorize('&6&l7 Seconds to Live&r has been queued up by '.player().' /warp 7'), all_players(@world));
 
 			@timer = array(7);
 			@7['state'] = 1;
@@ -293,9 +288,7 @@ register_command('7', array(
 					if(get_block_at(@startblock) !== '0:0') {
 						@7['state'] = 4;
 						set_block_at(@startblock, 0);
-						foreach(@player in all_players(@world)) {
-							tmsg(@player, colorize('&6&l7 Seconds to Live&r... /warp 7'));
-						}
+						broadcast(colorize('&6&l7 Seconds to Live&r... /warp 7'), all_players(@world));
 					}
 
 				} else if(@7['state'] == 4) {
@@ -303,9 +296,7 @@ register_command('7', array(
 
 					if(@num != array_size(@7['players'])) {
 						if(@num < 2) {
-							foreach(@player in all_players(@world)) {
-								tmsg(@player, colorize('&67 Seconds to Live&r game canceled.'));
-							}
+							broadcast(colorize('&67 Seconds to Live&r game canceled.'), all_players(@world));
 							clear_task();
 							@7['state'] = 0;
 							@7['players'] = associative_array();

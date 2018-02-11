@@ -68,11 +68,7 @@ proc _cc_start(@world = 'custom') {
 	@region = sk_region_info('cubeclimber_blocks', @world, 0);
 	@secondToStart = 15;
 
-	foreach(@p in all_players()) {
-		if(pworld(@p) == @world) {
-			tmsg(@p, colorize('&7[&6Cube&cClimber&7] &rStarting in ').@secondToStart.' seconds...');
-		}
-	}
+	broadcast(colorize('&7[&6Cube&cClimber&7] &rStarting in ').@secondToStart.' seconds...', all_players(@world));
 
 	for(@i = @secondToStart, @i > 0, @i--) {
 		queue_push(closure(){

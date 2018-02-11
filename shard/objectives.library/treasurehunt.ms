@@ -60,11 +60,7 @@ bind(block_break, array('id': 'shard-break'), array('name': 'ENDER_CHEST'), @eve
 	if(has_metadata(@event['location'], 'treasure')) {
 		play_sound(@event['location'], array('sound': 'LEVEL_UP', 'pitch': 0.7));
 		set_objective_display('Treasures', array('slot': 'SIDEBAR'), 'shard');
-		foreach(@p in all_players()) {
-			if(pworld(@p) == 'shard') {
-				tmsg(@p, player().' has found the treasure!');
-			}
-		}
+		broadcast(player().' has found the treasure!', all_players('shard'));
 		@score = 0;
 		if(@rules['teams']) {
 			@team = get_pteam(player(), 'shard')['name'];

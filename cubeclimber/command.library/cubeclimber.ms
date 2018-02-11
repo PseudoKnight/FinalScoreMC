@@ -41,12 +41,7 @@ register_command('cubeclimber', array(
 						'highest': 0,
 					);
 					export('cubeclimber', @cc);
-
-					foreach(@p in all_players()) {
-						if(pworld(@p) == pworld()) {
-							tmsg(@p, player().colorize(' queued up a game of &7[&6Cube&cClimber&7]'));
-						}
-					}
+					broadcast(player().colorize(' queued up a game of &7[&6Cube&cClimber&7]'), all_players(pworld()));
 				} else {
 					die(color('gold').'Already running.');
 				}

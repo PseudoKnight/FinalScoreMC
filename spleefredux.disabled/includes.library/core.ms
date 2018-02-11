@@ -138,17 +138,11 @@ proc _spl_queue_start(@id, @world = @pworld) {
 proc _spl_end(@id, @world = @pworld) {
 	@spl = import('spleef.'.@id)
 	if(array_size(@spl['players']) < 1) {
-		foreach(@player in all_players(@world)) {
-			if(!ponline(@player), continue())
-			tmsg(@player, color('gray').'[Spleef] '.color('r').'Nobody wins! ... ?')
-		}
+		broadcast(color('gray').'[Spleef] '.color('r').'Nobody wins! ... ?', all_players(@world));
 		_remove_activity('spleef.'.@id);
 	} else {
-		@winner = @spl['players'][0]
-		foreach(@player in all_players(@world)) {
-			if(!ponline(@player), continue())
-			tmsg(@player, color('gray').'[Spleef] '.color('r').@winner.' wins!')
-		}
+		@winner = @spl['players'][0];
+		broadcast(color('gray').'[Spleef] '.color('r').@winner.' wins!', all_players(@world));
 		_spl_reward(@winner)
 		set_timeout(3000, closure(
 			@arena = get_value('spleef', @id)

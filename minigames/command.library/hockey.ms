@@ -367,9 +367,7 @@ register_command('hockey', array(
 				}
 				@msg = @winners['displayname'].' won! '.color('bold').@score;
 			}
-			foreach(@p in @hockey['players']) {
-				tmsg(@p, @msg);
-			}
+			broadcast(@msg, @hockey['players']);
 			remove_scoreboard('hockey');
 			_remove_activity('hockey');
 			entity_remove(@hockey['puck']);
