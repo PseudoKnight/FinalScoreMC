@@ -386,7 +386,7 @@ proc _snake_drop_nuke(@snake, @game) {
 proc _snake_drop_tnt(@loc, @dir) {
 	play_sound(@loc, associative_array('sound': 'FUSE', 'volume': 4));
 	if(@dir) {
-		@loc = _relative(@loc, @dir);
+		@loc = location_shift(@loc, @dir);
 	}
 	@loc[0] += 0.5;
 	@loc[1] += 0.5;
@@ -427,7 +427,7 @@ proc _snake_launch_missile(@loc, @dir, @game) {
 				}
 				die();
 			}
-			@missile['loc'] = _relative(@missile['loc'], @missile['dir']);
+			@missile['loc'] = location_shift(@missile['loc'], @missile['dir']);
 			@block = get_block_at(@missile['loc']);
 			if(@block == '0:0') {
 				if(!@missile['skip']) {
@@ -439,7 +439,7 @@ proc _snake_launch_missile(@loc, @dir, @game) {
 				@dir = _snake_dir_of_surface(@missile['loc'], _snake_opposite_dir(@missile['dir']));
 				if(@dir) {
 					@missile['dir'] = @dir;
-					@missile['loc'] = _relative(@missile['loc'], @dir);
+					@missile['loc'] = location_shift(@missile['loc'], @dir);
 					if(!@missile['skip']) {
 						set_block_at(@missile['loc'], '152', false);
 					} else {
@@ -499,7 +499,7 @@ proc _snake_shoot_laser(@player, @loc, @dir, @game) {
 	@originalDir = @dir;
 	@blocks = array();
 	while(true){
-		@loc = _relative(@loc, @dir);
+		@loc = location_shift(@loc, @dir);
 		@block = get_block_at(@loc);
 		if(@block == '0:0') {
 			set_block_at(@loc, '95:14', false);

@@ -200,7 +200,7 @@ proc _start_game(@course, @loc) {
 				@loc = entity_loc(@ball['id']);
 				set_entity_loc(@ball['slime'], @loc);
 				@v = entity_velocity(@ball['id']);
-				@block = _get_block_below(_relative(@loc, 'down', 0.01), @v);
+				@block = _get_block_below(location_shift(@loc, 'down', 0.01), @v);
 				if(@block) {
 					@v['y'] = 0;
 					if(@block == '35:15') { # if ball dropped into the hole

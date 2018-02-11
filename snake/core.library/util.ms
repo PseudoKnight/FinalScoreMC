@@ -35,7 +35,7 @@ proc _snake_valid_location(@region, @padding = 0) {
 
 proc _snake_direction_of(@loc, @block) {
 	foreach(@dir in array('down', 'up', 'north', 'south', 'east', 'west')) {
-		if(get_block_at(_relative(@loc, @dir)) == @block) {
+		if(get_block_at(location_shift(@loc, @dir)) == @block) {
 			return(@dir);
 		}
 	}
@@ -45,7 +45,7 @@ proc _snake_direction_of(@loc, @block) {
 proc _snake_dir_of_surface(@loc, @notThisDir) {
 	foreach(@dir in array('down', 'up', 'north', 'south', 'east', 'west')) {
 		if(@dir != @notThisDir) {
-			@l = _relative(@loc, @dir);
+			@l = location_shift(@loc, @dir);
 			if(array_size(sk_regions_at(@l)) > 1) {
 				return(@dir);
 			}
@@ -54,14 +54,14 @@ proc _snake_dir_of_surface(@loc, @notThisDir) {
 }
 
 proc _snake_safe_dir(@snake) {
-	@loc = _relative(@snake['loc'], @snake['last-dir']);
+	@loc = location_shift(@snake['loc'], @snake['last-dir']);
 	if(_snake_safe_block(get_block_at(@loc), @loc)) {
 		return(@snake['last-dir']);
 	}
 	@turn = _snake_turn(@snake['top'], @snake['dir']);
 	if(is_array(@turn)) {
 		foreach(@t in @turn) {
-			@loc = _relative(@snake['loc'], @t);
+			@loc = location_shift(@snake['loc'], @t);
 			if(@t != @snake['last-dir'] && _snake_safe_block(get_block_at(@loc), @loc)) {
 				return(@t);
 			}
@@ -71,7 +71,7 @@ proc _snake_safe_dir(@snake) {
 }
 
 proc _snake_safe_path(@loc, @top, @dir, @missiles) {
-	@loc = _relative(@loc, @dir);
+	@loc = location_shift(@loc, @dir);
 	if(!_snake_safe_block(get_block_at(@loc), @loc)) {
 		return(false);
 	}
@@ -83,11 +83,11 @@ proc _snake_safe_path(@loc, @top, @dir, @missiles) {
 		}
 	}
 	@turn = _snake_turn(@top, @dir);
-	@block = get_block_at(_relative(@loc, @dir));
+	@block = get_block_at(location_shift(@loc, @dir));
 	if((_snake_safe_block(@block)
-	&& (@block == '169:0' || _snake_safe_block(get_block_at(_relative(@loc, @dir, 2)))))
-	|| _snake_safe_block(get_block_at(_relative(@loc, @turn[0])))
-	|| _snake_safe_block(get_block_at(_relative(@loc, @turn[1])))) {
+	&& (@block == '169:0' || _snake_safe_block(get_block_at(location_shift(@loc, @dir, 2)))))
+	|| _snake_safe_block(get_block_at(location_shift(@loc, @turn[0])))
+	|| _snake_safe_block(get_block_at(location_shift(@loc, @turn[1])))) {
 		return(true);
 	}
 	return(false);

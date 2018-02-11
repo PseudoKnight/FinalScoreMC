@@ -24,7 +24,7 @@ proc _snake_bot_update(@bot, @game) {
 				if(!array_index_exists(@game['snakes'], @target) || !@game['snakes'][@target]['alive']) {
 					@snake['target'] = null;
 				} else {
-					@targetLoc = _relative(@game['snakes'][@target]['loc'], @game['snakes'][@target]['dir']);
+					@targetLoc = location_shift(@game['snakes'][@target]['loc'], @game['snakes'][@target]['dir']);
 					if(_snake_bot_change_dir(@snake, @snake['loc'], @targetLoc)) {
 						if(_snake_opposite_dir(@snake['dir']) == @game['snakes'][@target]['dir']
 						|| (@snake['ability-count'][1] > 1 && @snake['dir'] != @game['snakes'][@target]['dir'])) {
@@ -85,7 +85,7 @@ proc _snake_bot_update(@bot, @game) {
 				if(!array_index_exists(@game['snakes'], @target) || !@game['snakes'][@target]['alive']) {
 					@snake['target'] = null;
 				} else {
-					@targetLoc = _relative(@game['snakes'][@target]['loc'], @game['snakes'][@target]['dir']);
+					@targetLoc = location_shift(@game['snakes'][@target]['loc'], @game['snakes'][@target]['dir']);
 					if(_snake_bot_change_dir(@snake, @snake['loc'], @targetLoc)) {
 						return();
 					}
@@ -130,7 +130,7 @@ proc _snake_bot_update(@bot, @game) {
 				if(!array_index_exists(@game['snakes'], @target) || !@game['snakes'][@target]['alive']) {
 					@snake['target'] = null;
 				} else {
-					@targetLoc = _relative(@game['snakes'][@target]['loc'], @game['snakes'][@target]['dir']);
+					@targetLoc = location_shift(@game['snakes'][@target]['loc'], @game['snakes'][@target]['dir']);
 					if(_snake_bot_change_dir(@snake, @snake['loc'], @targetLoc)) {
 						if(@snake['ability-count'][3] && @snake['dir'] != @game['snakes'][@target]['dir']) {
 							@aligned = false;
@@ -188,7 +188,7 @@ proc _snake_bot_update(@bot, @game) {
 				if(!array_index_exists(@game['snakes'], @target) || !@game['snakes'][@target]['alive']) {
 					@snake['target'] = null;
 				} else {
-					@targetLoc = _relative(@game['snakes'][@target]['loc'], @game['snakes'][@target]['dir']);
+					@targetLoc = location_shift(@game['snakes'][@target]['loc'], @game['snakes'][@target]['dir']);
 					if(_snake_bot_change_dir(@snake, @snake['loc'], @targetLoc)) {
 						if(@snake['top'] != 'up' && @snake['loc'][1] > @targetLoc[1]) {
 							_snake_ability(@bot, 0, @game);
@@ -246,7 +246,7 @@ proc _snake_bot_update(@bot, @game) {
 				if(!array_index_exists(@game['snakes'], @target) || !@game['snakes'][@target]['alive']) {
 					@snake['target'] = null;
 				} else {
-					@targetLoc = _relative(@game['snakes'][@target]['loc'], @game['snakes'][@target]['dir']);
+					@targetLoc = location_shift(@game['snakes'][@target]['loc'], @game['snakes'][@target]['dir']);
 					_snake_bot_change_dir(@snake, @snake['loc'], @targetLoc);
 				}
 			} else {
@@ -337,7 +337,7 @@ proc _snake_bot_change_dir(@snake, @loc1, @loc2) {
 		}
 		if(@dir && @dir != @snake['dir']
 		&& @dir != _snake_opposite_dir(@snake['dir'])
-		&& _snake_safe_block(get_block_at(_relative(@loc1, @dir)))) {
+		&& _snake_safe_block(get_block_at(location_shift(@loc1, @dir)))) {
 			@snake['last-dir'] = @snake['dir'];
 			@snake['dir'] = @dir;
 			@snake['turned'] = true;

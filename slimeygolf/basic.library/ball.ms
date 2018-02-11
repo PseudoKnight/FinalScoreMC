@@ -57,7 +57,7 @@ proc _get_block_below(@loc, @v) {
 	} else if(@rx > 0.79) {
 		@dirx = 'west';
 	}
-	if(@dirx && get_block_at(_relative(@loc, @dirx)) != '0:0') {
+	if(@dirx && get_block_at(location_shift(@loc, @dirx)) != '0:0') {
 		return(@block);
 	} else {
 		@rz = @loc['z'] - floor(@loc['z']);
@@ -67,7 +67,7 @@ proc _get_block_below(@loc, @v) {
 		} else if(@rz > 0.79) {
 			@dirz = 'north';
 		}
-		if(@dirz && get_block_at(_relative(@loc, @dirz)) != '0:0') {
+		if(@dirz && get_block_at(location_shift(@loc, @dirz)) != '0:0') {
 			return(@block);
 		}
 	}
