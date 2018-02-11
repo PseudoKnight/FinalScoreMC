@@ -51,7 +51,8 @@ proc _load_events(@id) {
 				set_entity_rider(null, @rider);
 				set_entity_loc(@rider, location_shift(ploc(), 'up', 3));
 				set_timeout(50, closure(){
-					@vector = _get_vector(pfacing(), 1, 0.1);
+					@vector = get_vector(ploc());
+					@vector['y'] += 0.1;
 					try {
 						set_entity_velocity(@rider, @vector);
 						play_sound(ploc(), array('sound': 'IRONGOLEM_THROW'));

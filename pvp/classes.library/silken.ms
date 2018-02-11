@@ -13,7 +13,7 @@ case 'load':
 	bind(player_interact, array('id': @player.'web'), array('player': @player, 'button': 'right', 'item': 291), @e, @pvp) {
 		@item = pinv(player(), null);
 		if(@item && pcooldown(@item['name']) == 0) {
-			spawn_falling_block(location_shift(ploc(), 'up', 2), 30, _get_vector(pfacing(), 1.5, 0));
+			spawn_falling_block(location_shift(ploc(), 'up', 2), 30, get_vector(ploc(), 1.5));
 			set_pcooldown(@item['name'], 8);
 		}
 	}

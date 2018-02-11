@@ -43,7 +43,7 @@ case 'load':
 	
 	bind(player_interact, array('id': @player.'boost'), array('player': @player, 'button': 'right', 'item': 271), @e) {
 		if(!pcooldown('WOOD_AXE')) {
-			set_pvelocity(player(), _get_vector(pfacing(), 0.6, 0));
+			set_pvelocity(player(), get_vector(ploc(), 0.6));
 			set_pcooldown('WOOD_AXE', 4000 / 50);
 			play_sound(ploc(), array('sound': 'ENDERDRAGON_WINGS', 'category': 'PLAYERS', 'pitch': 1.3, 'volume': 0.4));
 		}

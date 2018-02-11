@@ -40,7 +40,7 @@ bind(player_interact, null, array('item': 401, 'button': 'right'), @event) {
 					@loc['y'] += 0.5;
 					@loc['z'] += 0.5;
 					@horse = launch_firework(@loc, @item['meta']['firework']);
-					set_entity_velocity(@horse, _get_vector(pfacing(), 0.05, 0));
+					set_entity_velocity(@horse, get_vector(ploc(), 0.05));
 					foreach(@mob in @mobs) {
 						@rider = spawn_entity(@mob, 1, @loc)[0];
 						set_entity_rider(@horse, @rider);
@@ -57,7 +57,7 @@ bind(player_interact, null, array('item': 401, 'button': 'right'), @event) {
 						} else {
 							set_mob_equipment(@rider, array('chestplate': array('name': 'ELYTRA')));
 							set_equipment_droprates(@rider, null);
-							set_entity_velocity(@rider, _get_vector(pfacing(), 1.5, 0));
+							set_entity_velocity(@rider, get_vector(ploc(), 1.5));
 							set_entity_gliding(@rider, true);
 						}
 						@horse = @rider;
@@ -145,7 +145,9 @@ bind(firework_explode, null, null, @event){
 	if(has_metadata(@event['id'], 'mob')){
 		@mob = get_metadata(@event['id'], 'mob', 'CommandHelper');
 		@mobs = spawn_mob(@mob, 15, @event['location']);
-		@yaw = 0;
+		@loc = @event['location'];
+		@loc['yaw'] = 0;
+		@loc['pitch'] = 0;
 		@cookie = @mob == 'bat' && rand(2);
 		foreach(@m in @mobs){
 			set_entity_onfire(@m, 20);
@@ -154,13 +156,13 @@ bind(firework_explode, null, null, @event){
 				set_equipment_droprates(@m, null);
 				set_entity_gliding(@m, true);
 			} else if(@cookie) {
-				@cookie = spawn_entity('DROPPED_ITEM', 1, @event['location'])[0];
+				@cookie = spawn_entity('DROPPED_ITEM', 1, @loc)[0];
 				set_entity_spec(@cookie, array('itemstack': array('name': 'COOKIE')));
 				set_entity_rider(@m, @cookie);
 				set_entity_onfire(@m, 0);
 			}
-			set_entity_velocity(@m, _get_vector(@yaw, 0));
-			@yaw += 24;
+			set_entity_velocity(@m, get_vector(@loc));
+			@loc['yaw'] += 24;
 		}
 		set_timeout(50, closure(){
 			try {

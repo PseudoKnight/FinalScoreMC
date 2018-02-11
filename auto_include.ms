@@ -12,25 +12,6 @@ set_uncaught_exception_handler(closure(@ex){
 });
 
 /*
-	Gets a normalized vector when given a yaw and pitch
-*/
-proc _get_vector(@yaw, @pitch = 0, @magnitude = 1, @angle = 0) {
-	if(is_array(@yaw)) {
-		@angle = @magnitude;
-		@magnitude = @pitch;
-		@pitch = @yaw[1];
-		@yaw = @yaw[0];
-	}
-	@yaw = to_radians(@yaw + 90);
-	@pitch = to_radians(0 - @pitch);
-	return(array(
-		'x': cos(@yaw) * cos(@pitch) * @magnitude,
-		'y': (sin(@pitch) + @angle) * @magnitude,
-		'z': sin(@yaw) * cos(@pitch) * @magnitude,
-	));
-}
-
-/*
 	Returns an array of potion effect name:id pairs
 */
 proc _get_effects() {

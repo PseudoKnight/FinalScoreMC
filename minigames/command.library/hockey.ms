@@ -260,7 +260,7 @@ register_command('hockey', array(
 						} else {
 							set_pexp(@hockey['holder'], min(99, pexp(@hockey['holder']) + 2));
 						}
-						@vector = _get_vector(pfacing(@hockey['holder']), @hockey['distance'], 0);
+						@vector = get_vector(ploc(@hockey['holder']), @hockey['distance']);
 						@newloc['x'] += @vector['x'];
 						@newloc['y'] += 1;
 						@newloc['z'] += @vector['z'];

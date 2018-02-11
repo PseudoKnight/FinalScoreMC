@@ -70,13 +70,14 @@ case 'load':
 	}
 	
 	bind(player_interact, array('id': @player.'throwstar'), array('item': 399, 'player': @player), @e) {
-		@v = _get_vector(pfacing(), 1.5, 0.1);
+		@v = get_vector(ploc(), 1.5);
+		@v['y'] += 0.1;
 		@x = @v['x'];
 		@y = @v['y'];
 		@z = @v['z'];
 		@loc = ploc();
 		@loc['x'] += @x;
-		@loc['y'] += 2.5 + @y;
+		@loc['y'] += @y + 2.4;
 		@loc['z'] += @z;
 		@star = spawn_entity('DROPPED_ITEM', 1, @loc)[0];
 		set_entity_spec(@star, array('itemstack': array('name': 'NETHER_STAR', 'meta': array('display': player(), 'lore': array(3))), 'pickupdelay': 1));
