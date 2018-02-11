@@ -110,7 +110,7 @@ register_command('shop', array(
 			foreach(@i: @s in @shops[@t]) {
 				if(@s['location'] == @loc) {
 					if(@t == 0) {
-						@count = _get_inventory_count(_relative(@loc, 'down'), @shop['item']);
+						@count = _get_inventory_count(location_shift(@loc, 'down'), @shop['item']);
 						if(is_null(@count)) {
 							die(color(6).'[Shop] No container below this shop sign.');
 						}
@@ -137,7 +137,7 @@ register_command('shop', array(
 							default:
 								die(color(6).'[Shop] Unknown currency.');
 						}
-						@count = _get_inventory_count(_relative(@loc, 'down'), @currency.':0');
+						@count = _get_inventory_count(location_shift(@loc, 'down'), @currency.':0');
 						if(is_null(@count)) {
 							die(color(6).'[Shop] No container below this shop sign.');
 						}

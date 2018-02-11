@@ -97,7 +97,7 @@ bind(player_interact_at_entity, null, array('clicked': 'ARMOR_STAND'), @event) {
 
 			@eloc = entity_loc(@event['id']);
 			@originalYaw = @eloc['yaw'];
-			@dist = _distance(@eloc, _relative(ploc(), 'up'));
+			@dist = _distance(@eloc, location_shift(ploc(), 'up'));
 			set_entity_spec(@event['id'], array('gravity': false));
 
 			set_interval(50, closure(){
@@ -112,7 +112,7 @@ bind(player_interact_at_entity, null, array('clicked': 'ARMOR_STAND'), @event) {
 					return();
 				}
 
-				@eloc = _relative(ploc(), 'up', 1.3);
+				@eloc = location_shift(ploc(), 'up', 1.3);
 				@yaw = to_radians(@eloc['yaw'] + 90);
 				@pitch = to_radians(0 - @eloc['pitch']);
 				@eloc['x'] += @dist * cos(@yaw) * cos(@pitch);
@@ -235,7 +235,7 @@ bind(player_interact_at_entity, null, array('clicked': 'ARMOR_STAND'), @event) {
 							if(@loc['world'] != @world || !entity_exists(@stand)) {
 								die();
 							}
-							@loc = _relative(@loc, @event['facing']);
+							@loc = location_shift(@loc, @event['facing']);
 							@loc['x'] += 0.5;
 							@loc['z'] += 0.5;
 							set_entity_loc(@stand, @loc);

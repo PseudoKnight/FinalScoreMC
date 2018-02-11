@@ -8,7 +8,7 @@ register_command('horse', array(
 		if(pmode() !== 'CREATIVE' || get_entity_vehicle(puuid())) {
 			die(color('gold').'You are not in creative mode.');
 		}
-		@horse = spawn_entity('horse', 1, _relative(ploc(), 'up'))[0];
+		@horse = spawn_entity('horse', 1, location_shift(ploc(), 'up'))[0];
 		set_mob_age(@horse, 0);
 		tame_mob(@horse);
 		set_entity_spec(@horse, array('jump': 0.8, 'saddle': array('name': 'saddle')));

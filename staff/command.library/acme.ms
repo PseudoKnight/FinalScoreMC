@@ -9,7 +9,7 @@ register_command('acme', array(
 		@player = _find_player(@args[0]);
 		@message = color('b').'Lovely weather we\'re having today.';
 		if(!_is_survival_world(pworld(@player))) {
-			@loc = _relative(ploc(@player), 'up', 24)
+			@loc = location_shift(ploc(@player), 'up', 24)
 			if(get_block_at(@loc)[0] !== '0') {
 				die('Anvil blocked.');
 			}

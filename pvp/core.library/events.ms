@@ -124,7 +124,7 @@ bind(player_death, array('priority': 'high', 'id': @id.'death'), null, @e, @id) 
 				if(@e['cause']['cause'] === 'VOID' || @e['cause']['cause'] === 'LAVA') {
 					_pvp_flag_spawn(@id, @flag)
 				} else {
-					_pvp_flag_spawn(@id, @flag, _relative(ploc(), 'up'))
+					_pvp_flag_spawn(@id, @flag, location_shift(ploc(), 'up'))
 				}
 			} else if(array_index_exists(@pvp['arena'], 'captain')
 			&& @drop['type'] == @pvp['team'][@pvp['players'][player()]['team']]['captainhat']['type']
@@ -151,7 +151,7 @@ bind(player_death, array('priority': 'high', 'id': @id.'death'), null, @e, @id) 
 				if(@e['cause']['cause'] === 'VOID' || @e['cause']['cause'] === 'LAVA') {
 					_pvp_hat_spawn(@id, @pvp['players'][player()]['team'])
 				} else {
-					_pvp_hat_spawn(@id, @pvp['players'][player()]['team'], _relative(ploc(), 'up'))
+					_pvp_hat_spawn(@id, @pvp['players'][player()]['team'], location_shift(ploc(), 'up'))
 				}
 			} else if(!array_index_exists(@pvp['arena'], 'denydrop')
 			|| array_index_exists(@pvp['arena'], 'denydrop')
@@ -497,7 +497,7 @@ if(array_contains(@pvp['arena']['flags'], 'rallycall')) {
 
 		consume()
 		cancel()
-		if(!@loc = _relative(@e['location'], @e['facing']), die())
+		if(!@loc = location_shift(@e['location'], @e['facing']), die())
 		@loc = array(@loc[0] + 0.5, @loc[1], @loc[2] + 0.5, @loc[3])
 		launch_firework(@loc, array(
 			'strength': 3,

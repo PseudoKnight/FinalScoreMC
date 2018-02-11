@@ -5,7 +5,7 @@ proc _load_mob(@level) {
 		if(!array_contains(@level['players'], @player)) {
 			die();
 		}
-		@loc = _relative(ploc(@player), 'up', 2);
+		@loc = location_shift(ploc(@player), 'up', 2);
 		play_effect(@loc, 'SNOWBALL_BREAK', associative_array(
 			'particleCount': 20,
 			'offsetX': 0.5,

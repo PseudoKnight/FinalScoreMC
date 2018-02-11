@@ -161,7 +161,7 @@ proc _shard_create(@rules){
 					if(@size == 54) {
 						@type = get_block_at(@loc);
 						foreach(@dir in array('north', 'south', 'east', 'west')) {
-							@checkLoc = _relative(@loc, @dir);
+							@checkLoc = location_shift(@loc, @dir);
 							if(get_block_at(@checkLoc) == @type) {
 								set_metadata(@checkLoc, 'loot', 1);
 								break();
@@ -261,7 +261,7 @@ proc _shard_create(@rules){
 							_worldmsg('shard', color('green').@last.' wins!');
 							set_timeout(20000, closure(){
 								if(array_contains(get_worlds(), 'shard') && ponline(@last) && pworld(@last) == 'shard') {
-									explosion(_relative(ploc(@last), 'up', 2), 5);
+									explosion(location_shift(ploc(@last), 'up', 2), 5);
 								}
 							});
 						} else if(@count == 0) {

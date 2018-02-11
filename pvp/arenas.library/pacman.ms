@@ -29,7 +29,7 @@ proc _load_events(@id) {
 			} else if(@block == '148:0') {
 				play_named_sound(@event['location'], array('sound': 'entity.illusion_illager.prepare_blindness', 'pitch': 1.4, 'volume': 3));
 				set_peffect(player(), 16, 1, 15);
-				set_block_at(_relative(@event['location'], 'up', 27), 0);
+				set_block_at(location_shift(@event['location'], 'up', 27), 0);
 				@scaredyghost = array(
 					103: array('name': 'CONCRETE', 'data': 11),
 					102: array('name': 'LEATHER_CHESTPLATE', 'meta': array('color': array('r': 60, 'g': 68, 'b': 170))),

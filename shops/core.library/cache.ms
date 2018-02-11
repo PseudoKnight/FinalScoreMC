@@ -12,7 +12,7 @@ proc _cache_shop(@shop, @location) {
 	);
 
 	if(@shop['buy']) {
-		@count = _get_inventory_count(_relative(@location, 'down'), @shop['item']);
+		@count = _get_inventory_count(location_shift(@location, 'down'), @shop['item']);
 		if(is_null(@count)) {
 			return();
 		}
@@ -77,7 +77,7 @@ proc _cache_shop(@shop, @location) {
 			die();
 		}
 
-		@count = _get_inventory_count(_relative(@location, 'down'), @currency.':0');
+		@count = _get_inventory_count(location_shift(@location, 'down'), @currency.':0');
 		if(is_null(@count)) {
 			return();
 		}

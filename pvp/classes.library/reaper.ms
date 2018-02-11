@@ -17,7 +17,7 @@ case 'load':
 				clear_task();
 			} else {
 				@ploc = ploc(@player);
-				@loc = _relative(@ploc, 'up', 1.7);
+				@loc = location_shift(@ploc, 'up', 1.7);
 				play_effect(_offset(@loc, 0.25), 'COLOURED_DUST', @particle);
 				play_effect(_offset(@loc, 0.25), 'COLOURED_DUST', @particle);
 				play_effect(_offset(@loc, 0.25), 'COLOURED_DUST', @particle);
@@ -66,11 +66,11 @@ case 'load':
 								set_phealth(@player, max(0, phealth(@player) - 0.3));
 								set_phealth(player(), min(20, phealth() + 0.2));
 								_stats_damage(player(), @player, 0.3, @pvp);
-								@loc = _relative(ploc(), 'up', 2);
-								@loc2 = _relative(entity_loc(@target), 'up');
+								@loc = location_shift(ploc(), 'up', 2);
+								@loc2 = location_shift(entity_loc(@target), 'up');
 								if(!rand(3)) {
-									play_effect(_relative(@loc, 'up', 2), 'HEART');
-									play_effect(_relative(@loc2, 'up', 2), 'HEART');
+									play_effect(location_shift(@loc, 'up', 2), 'HEART');
+									play_effect(location_shift(@loc2, 'up', 2), 'HEART');
 								}
 								play_sound(@loc, @sound2, player());
 								@i = 3;

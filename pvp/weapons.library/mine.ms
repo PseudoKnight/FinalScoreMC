@@ -16,7 +16,7 @@ bind(item_spawn, array('id': @id.'minespawn'), array('item': 148), @event, @regi
 	set_timeout(2000, closure(){
 		try(
 			set_entity_age(@event['id'], 3600); # 2 minutes until despawn
-			@loc = _relative(entity_loc(@event['id']), 'up', 0.5);
+			@loc = location_shift(entity_loc(@event['id']), 'up', 0.5);
 			play_sound(@loc, array('sound': 'FIRE_IGNITE', 'pitch': 0.6));
 			play_effect(@loc, 'LARGE_SMOKE', array('speed': 0.01))
 		);
@@ -43,7 +43,7 @@ bind(item_pickup, array('id': @id.'minepickup'), array('item': 148), @event, @id
 		}
 		@power = @event['item']['qty'] * 7;
 		modify_event('item', null);
-		@loc = _relative(ploc(), 'up');
+		@loc = location_shift(ploc(), 'up');
 		play_sound(@loc, array('sound': 'NOTE_BASS', 'pitch': 2));
 		set_timeout(50, closure(){
 			play_sound(@loc, array('sound': 'NOTE_BASS', 'pitch': 2));

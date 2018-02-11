@@ -67,7 +67,7 @@ case 'load':
 			set_ploc(@player, @loc1);
 			play_sound(@loc2, array('sound': 'ENDERMAN_TELEPORT', 'pitch': 0.5));
 			play_sound(@loc1, array('sound': 'ENDERMAN_TELEPORT', 'pitch': 0.5));
-			make_effect(_relative(@loc1, 'up', 2), 'ENDER_SIGNAL');
+			make_effect(location_shift(@loc1, 'up', 2), 'ENDER_SIGNAL');
 		}
 
 		play_named_sound(ploc(), array('sound': 'entity.elder_guardian.hurt', 'pitch': 2));

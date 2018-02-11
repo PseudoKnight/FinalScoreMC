@@ -86,7 +86,7 @@ proc _set_inventory_contents(@loc, @count) {
 	if(@size == 54) {
 		@type = get_block_at(@loc);
 		foreach(@dir in array('north', 'south', 'east', 'west')) {
-			@checkLoc = _relative(@loc, @dir);
+			@checkLoc = location_shift(@loc, @dir);
 			if(get_block_at(@checkLoc) == @type) {
 				set_metadata(@checkLoc, 'loot', 1);
 				break();

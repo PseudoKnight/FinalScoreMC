@@ -643,22 +643,22 @@ register_command('arena', array(
 				@distance = integer(@args[3]);
 
 				if(array_index_exists(@arena, 'lobby')) {
-					@arena['lobby'] = _relative(@arena['lobby'], @dir, @distance);
+					@arena['lobby'] = location_shift(@arena['lobby'], @dir, @distance);
 				}
 
 				if(array_index_exists(@arena, 'spawn')) {
 					for(@i = 0, @i < array_size(@arena['spawn'][0]), @i++) {
-						@arena['spawn'][0][@i] = _relative(@arena['spawn'][0][@i], @dir, @distance);
+						@arena['spawn'][0][@i] = location_shift(@arena['spawn'][0][@i], @dir, @distance);
 					}
 					for(@i = 0, @i < array_size(@arena['spawn'][1]), @i++) {
-						@arena['spawn'][1][@i] = _relative(@arena['spawn'][1][@i], @dir, @distance);
+						@arena['spawn'][1][@i] = location_shift(@arena['spawn'][1][@i], @dir, @distance);
 					}
 				}
 
 				if(array_index_exists(@arena, 'region')) {
 					@region = sk_region_info(@arena['region'], pworld())[0]
 					for(@i = 0, @i < array_size(@region), @i++) {
-						@region[@i] = _relative(@region[@i], @dir, @distance);
+						@region[@i] = location_shift(@region[@i], @dir, @distance);
 						array_remove(@region[@i], 3);
 					}
 					sk_region_update(pworld(), @arena['region'], @region);
@@ -667,14 +667,14 @@ register_command('arena', array(
 				if(array_index_exists(@arena, 'kothregion')) {
 					@region = sk_region_info(@arena['kothregion'], pworld())[0];
 					for(@i = 0, @i < array_size(@region), @i++) {
-						@region[@i] = _relative(@region[@i], @dir, @distance);
+						@region[@i] = location_shift(@region[@i], @dir, @distance);
 					}
 					sk_region_update(pworld(), @arena['kothregion'], @region);
 				}
 
 				if(array_index_exists(@arena, 'mobprotect')) {
 					for(@i = 0, @i < array_size(@arena['mobprotect']), @i++) {
-						@arena['mobprotect'][@i]['loc'] = _relative(@arena['mobprotect'][@i]['loc'], @dir, @distance);
+						@arena['mobprotect'][@i]['loc'] = location_shift(@arena['mobprotect'][@i]['loc'], @dir, @distance);
 					}
 				}
 
@@ -685,29 +685,29 @@ register_command('arena', array(
 
 				if(array_index_exists(@arena, 'itemspawn')) {
 					for(@i = 0, @i < array_size(@arena['itemspawn']), @i++) {
-						@arena['itemspawn'][@i]['loc'] = _relative(@arena['itemspawn'][@i]['loc'], @dir, @distance);
+						@arena['itemspawn'][@i]['loc'] = location_shift(@arena['itemspawn'][@i]['loc'], @dir, @distance);
 					}
 				}
 
 				if(array_index_exists(@arena, 'chestspawn')) {
 					for(@i = 0, @i < array_size(@arena['chestspawn']), @i++) {
-						@arena['chestspawn'][@i]['loc'] = _relative(@arena['chestspawn'][@i]['loc'], @dir, @distance);
+						@arena['chestspawn'][@i]['loc'] = location_shift(@arena['chestspawn'][@i]['loc'], @dir, @distance);
 					}
 				}
 
 				if(array_index_exists(@arena, 'mobspawn')) {
 					for(@i = 0, @i < array_size(@arena['mobspawn']), @i++) {
-						@arena['mobspawn'][@i]['loc'] = _relative(@arena['mobspawn'][@i]['loc'], @dir, @distance);
+						@arena['mobspawn'][@i]['loc'] = location_shift(@arena['mobspawn'][@i]['loc'], @dir, @distance);
 					}
 				}
 
 				if(array_index_exists(@arena, 'rsoutput')) {
-					@arena['rsoutput'] = _relative(@arena['rsoutput'], @dir, @distance);
+					@arena['rsoutput'] = location_shift(@arena['rsoutput'], @dir, @distance);
 				}
 
 				if(array_index_exists(@arena, 'rsoutputscore')) {
-					@arena['rsoutputscore'][0] = _relative(@arena['rsoutputscore'][0], @dir, @distance);
-					@arena['rsoutputscore'][1] = _relative(@arena['rsoutputscore'][1], @dir, @distance);
+					@arena['rsoutputscore'][0] = location_shift(@arena['rsoutputscore'][0], @dir, @distance);
+					@arena['rsoutputscore'][1] = location_shift(@arena['rsoutputscore'][1], @dir, @distance);
 				}
 
 				store_value('arena', @id, @arena);

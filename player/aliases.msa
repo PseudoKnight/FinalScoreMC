@@ -88,7 +88,7 @@
 	if(pmode() != 'CREATIVE') {
 		die(color('gold').'You are not in CREATIVE mode.');
 	}
-	@loc = _relative(ploc(), 'up', integer($amount));
+	@loc = location_shift(ploc(), 'up', integer($amount));
 	set_ploc(@loc);
 	if(@loc['y'] > 255 || !sk_can_build(@loc)) {
 		set_pflying(true);

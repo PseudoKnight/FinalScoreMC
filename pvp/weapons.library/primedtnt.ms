@@ -5,7 +5,7 @@ bind(player_interact, array('id': @id.'primedtnt'), array('item': 46, 'button': 
 		die();
 	}
 	cancel();
-	if(@loc = _relative(@e['location'], @e['facing'])) {
+	if(@loc = location_shift(@e['location'], @e['facing'])) {
 		@loc = array(@loc[0] + 0.5, @loc[1] + 0.5, @loc[2] + 0.5, @loc[3]);
 		ptake_item(array('name': 'TNT'));
 		@tnt = spawn_entity('PRIMED_TNT', 1, @loc)[0];

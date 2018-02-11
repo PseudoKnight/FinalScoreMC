@@ -114,7 +114,7 @@ proc _race_start(@race) {
 	
 	@race['binds'][] = bind(player_move, null, null, @event, @race) {
 		if(array_index_exists(@race['players'], player())) {
-			@loc = _relative(@event['to'], 'up', 0.35);
+			@loc = location_shift(@event['to'], 'up', 0.35);
 			play_effect(@loc, 'FIREWORKS_SPARK', array('speed': 0));
 			@p = @race['players'][player()];
 			if(@p['state'] != 'finished') {

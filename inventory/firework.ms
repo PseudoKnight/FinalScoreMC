@@ -23,7 +23,7 @@ bind(player_interact, null, array('item': 401, 'button': 'right'), @event) {
 		}
 		if(@mobs) {
 			if(@gliding) {
-				@loc = _relative(ploc(), 'up');
+				@loc = location_shift(ploc(), 'up');
 				@horse = null;
 				foreach(@mob in @mobs) {
 					@rider = spawn_entity(@mob, 1, @loc)[0];
@@ -35,7 +35,7 @@ bind(player_interact, null, array('item': 401, 'button': 'right'), @event) {
 			} else {
 				cancel(); // handle manually
 				if(@event['block'] != '0') {
-					@loc = _relative(@event['location'], @event['facing']);
+					@loc = location_shift(@event['location'], @event['facing']);
 					@loc['x'] += 0.5;
 					@loc['y'] += 0.5;
 					@loc['z'] += 0.5;
@@ -47,7 +47,7 @@ bind(player_interact, null, array('item': 401, 'button': 'right'), @event) {
 						@horse = @rider;
 					}
 				} else {
-					@loc = _relative(ploc(), 'up', 2);
+					@loc = location_shift(ploc(), 'up', 2);
 					@firework = launch_firework(@loc, @item['meta']['firework']);
 					@horse = null;
 					foreach(@mob in @mobs) {
@@ -90,7 +90,7 @@ bind(player_interact, null, array('item': 401, 'button': 'right'), @event) {
 		
 		cancel();
 		if(@event['action'] === 'right_click_block') {
-			@loc = _relative(@event['location'], @event['facing']);
+			@loc = location_shift(@event['location'], @event['facing']);
 		} else {
 			@loc = ploc();
 		}

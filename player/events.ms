@@ -80,7 +80,7 @@ bind(player_death, null, null, @event) {
 bind(block_place, null, array('name': 'SKULL'), @event) {
 	if(!has_permission('build.wither')) {
 		foreach(@dir in array('north', 'south', 'east', 'west', 'up', 'down')) {
-			if(get_block_at(_relative(@event['location'], @dir)) == '88:0') {
+			if(get_block_at(location_shift(@event['location'], @dir)) == '88:0') {
 				@item = pinv(player(), null);
 				if(@item && @item['data'] == 1) {
 					cancel();
@@ -103,12 +103,12 @@ bind(player_interact, null, array('item': 259, 'button': 'right'), @event) {
 		die();
 	} else if(get_block_at(@loc) === '49:0' && @event['facing'] === 'up') {
 		queue_push(closure(){
-			if(reg_split('\\:', get_block_at(_relative(@loc, 'up')))[0] !== '90') {
-				set_block_at(_relative(@loc, 'up'), 0);
+			if(reg_split('\\:', get_block_at(location_shift(@loc, 'up')))[0] !== '90') {
+				set_block_at(location_shift(@loc, 'up'), 0);
 			}
 		});
 	} else {
-		if(!sk_regions_at(_relative(@loc, 'up')) || !sk_can_build(_relative(@loc, 'up'))) {
+		if(!sk_regions_at(location_shift(@loc, 'up')) || !sk_can_build(location_shift(@loc, 'up'))) {
 			cancel();
 			msg('Use of flint and steel is restricted here, except on nether portals and TNT.');
 		}
@@ -117,7 +117,7 @@ bind(player_interact, null, array('item': 259, 'button': 'right'), @event) {
 
 # Button commands
 bind(player_interact, null, array('block': 77, 'button': 'right'), @event) {
-	@sign = _relative(@event['location'], 'up');
+	@sign = location_shift(@event['location'], 'up');
 	if(is_sign_at(@sign)) {
 		@line = get_sign_text(@sign);
 		if(@type = reg_match('\u00A7[0-9a-f]{1}\\[(.+)\\]', @line[1])) {
@@ -149,7 +149,7 @@ bind(player_interact, null, array('item': 383, 'button': 'right'), @event) {
 			@item = pinv(player(), -106);
 		}
 		if(@item['meta']['spawntype']) {
-			@loc = _relative(@event['location'], @event['facing']);
+			@loc = location_shift(@event['location'], @event['facing']);
 			@loc['x'] += 0.5;
 			@loc['z'] += 0.5;
 			@entity = spawn_entity(@item['meta']['spawntype'], 1, @loc)[0];
@@ -185,7 +185,7 @@ bind(player_interact, null, array('block': 26, 'button': 'right'), @event) {
 	if(@event['location']['world'] == 'shard') {
 		cancel();
 	} else {
-		set_pbed_location(_relative(@event['location'], 'down'), false);
+		set_pbed_location(location_shift(@event['location'], 'down'), false);
 		msg(color('aqua').'Your spawn location has been set to this bed.');
 	}
 }
@@ -320,7 +320,7 @@ bind(entity_toggle_glide, null, array('type': 'PLAYER'), @event) {
 			}
 			if(!array_index_exists(@skipping, player()) || @skipping[player()] + 500 < time()) {
 				@skipping[player()] = time();
-				@loc = _relative(ploc(), 'up');
+				@loc = location_shift(ploc(), 'up');
 				play_sound(@loc, array('sound': 'SLIME_WALK', 'pitch': 0.8, 'volume': 0.5));
 				play_effect(@loc, 'SLIME', array('particleCount': 8));
 			} else if(array_index_exists(@skipping, player()) && @skipping[player()] + 250 < time()) {

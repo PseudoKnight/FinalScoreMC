@@ -15,7 +15,7 @@ bind(player_interact, array('id': @id.'spawner', 'priority': 'HIGH'), array('but
 		
 		@loc = @e['location'];
 		if(get_block_info(@loc)['solid']) {
-			@loc = _relative(@loc, @e['facing']);
+			@loc = location_shift(@loc, @e['facing']);
 		}
 		@loc['x'] += 0.5;
 		@loc['z'] += 0.5;
@@ -38,7 +38,7 @@ bind(player_interact, array('id': @id.'spawner', 'priority': 'HIGH'), array('but
 			_spawn_mob(@mob, @loc, player(), array(player()));
 		}
 		
-		@effectLoc = _relative(@loc, 'up');
+		@effectLoc = location_shift(@loc, 'up');
 		play_sound(@effectLoc, array('sound': 'ZOMBIE_INFECT', 'pitch': 1.5));
 		play_effect(@effectLoc, 'cloud', array('speed': 0, 'particleCount': 10, 'offsetX': 0.4, 'offsetZ': 0.4, 'offsetY': 0.4));
 		_weapon_cooldown(player(), 2000, 'PUMPKIN_SEEDS', false);

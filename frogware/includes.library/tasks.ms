@@ -313,7 +313,7 @@ proc _fw_task(@task, @state, @secs) {
 				unbind('fwfall');
 				foreach(@p in all_players('custom')) {
 					if(_fw_player(@p) && !array_contains(sk_current_regions(@p), 'frogware')) {
-						set_ploc(@p, _relative(ploc(@p), 'up'));
+						set_ploc(@p, location_shift(ploc(@p), 'up'));
 					}
 				}
 			} else {

@@ -19,8 +19,8 @@ register_command('swap', array(
 						@z = 50;
 						@loc['z'] += 50;
 					}
-					if(!get_block_info(_relative(@loc, 'up'), 'solid')
-					&& !get_block_info(_relative(@loc, 'up', 2), 'solid')) {
+					if(!get_block_info(location_shift(@loc, 'up'), 'solid')
+					&& !get_block_info(location_shift(@loc, 'up', 2), 'solid')) {
 						set_peffect(player(), 15, 0, 1, true, false);
 						set_peffect(player(), 16, 0, 1, true, false);
 						@item = pinv(player(), null);

@@ -40,7 +40,7 @@ proc _get_block_below(@loc, @v) {
 		return(@block);
 	}
 	# adjust ball velocity towards center of air block, if above black wool.
-	if(get_block_at(_relative(@loc, 'down')) == '35:15') {
+	if(get_block_at(location_shift(@loc, 'down')) == '35:15') {
 		@center = @loc[];
 		@center['x'] = floor(@center['x']) + 0.5;
 		@center['z'] = floor(@center['z']) + 0.5;

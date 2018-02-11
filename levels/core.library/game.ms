@@ -152,7 +152,7 @@ proc _level_start(@level) {
 			if(entity_spec(@event['id'])['visible']) {
 				cancel();
 				@equipment = get_mob_equipment(@event['id']);
-				@loc = _relative(entity_loc(@event['id']), 'up');
+				@loc = location_shift(entity_loc(@event['id']), 'up');
 				entity_remove(@event['id']);
 				foreach(@item in @equipment) {
 					drop_item(@loc, @item);

@@ -21,7 +21,7 @@ register_command('cloud', array(
 		
 		@loc = get_command_block();
 		if(!@loc) {
-			@loc = _relative(ploc(), 'up');
+			@loc = location_shift(ploc(), 'up');
 		}
 		@color = array(0, 0, 0);
 		@duration = 600;

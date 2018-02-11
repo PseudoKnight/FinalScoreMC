@@ -26,7 +26,7 @@ bind('entity_death', null, array('type': 'ZOMBIE'), @event) {
 		@inv = get_mob_equipment(@event['id']);
 		if(!is_null(@inv['helmet'])
 		&& @inv['helmet']['name'] == 'SKULL_ITEM') {
-			@loc = _relative(@event['location'], 'up');
+			@loc = location_shift(@event['location'], 'up');
 			if(function_exists('play_effect')) {
 				play_effect(@loc, 'COLOURED_DUST', array('particleCount': 15, 'offsetX': 1, 'offsetY': 1, 'offsetZ': 1));
 			}
@@ -123,7 +123,7 @@ bind('target_player', null, array('mobtype': 'ZOMBIE'), @event, @day) {
 bind('projectile_hit', null, array('type': 'EGG'), @event) {
 	if(has_metadata(@event['id'], 'spawn_egg')) {
 		@mob = get_metadata(@event['id'], 'spawn_egg', 'CommandHelper');
-		@loc = _relative(@event['location'], 'up');
+		@loc = location_shift(@event['location'], 'up');
 		@loc['x'] = floor(@loc['x']) + 0.5;
 		@loc['z'] = floor(@loc['z']) + 0.5;
 		@entity = spawn_entity(@mob, 1, @loc)[0];

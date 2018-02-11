@@ -15,7 +15,7 @@ register_command('note', array(
 		}
 	
 		@instrument = 'NOTE_PIANO';
-		switch(split(':', get_block_at(_relative(@l, 'down')))[0]) {
+		switch(split(':', get_block_at(location_shift(@l, 'down')))[0]) {
 			case '1':
 				@instrument = 'NOTE_BASS_DRUM';
 			case '5':

@@ -24,8 +24,8 @@ proc _load_events(@id) {
 			foreach(@block in @e['blocks']) {
 				if(get_block_at(@block) == '70:0') {
 					set_block_at(@block, 0);
-					set_block_at(_relative(@block, 'down'), 0);
-					set_block_at(_relative(@block, 'down', 2), 0);
+					set_block_at(location_shift(@block, 'down'), 0);
+					set_block_at(location_shift(@block, 'down', 2), 0);
 				}
 			}
 			array_remove(@tnt, @index);
@@ -49,7 +49,7 @@ proc _load_events(@id) {
 			@rider = get_entity_rider(puuid());
 			if(!is_null(@rider)) {
 				set_entity_rider(null, @rider);
-				set_entity_loc(@rider, _relative(ploc(), 'up', 3));
+				set_entity_loc(@rider, location_shift(ploc(), 'up', 3));
 				set_timeout(50, closure(){
 					@vector = _get_vector(pfacing(), 1, 0.1);
 					try {

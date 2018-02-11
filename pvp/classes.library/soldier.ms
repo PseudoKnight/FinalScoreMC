@@ -4,7 +4,7 @@ case 'load':
 		if(!ptake_item(player(), array('name': 'STONE_SPADE'))) {
 			die();
 		}
-		@loc = _relative(ploc(), 'up', 2);
+		@loc = location_shift(ploc(), 'up', 2);
 		@armorStand = spawn_entity('ARMOR_STAND', 1, @loc)[0];
 		set_entity_spec(@armorStand, array('visible': false, 'small': true, 'arms': true));
 		set_mob_equipment(@armorStand, array('WEAPON': array('name': 'STONE_SPADE')));
@@ -24,7 +24,7 @@ case 'load':
 					explosion(entity_loc(@armorStand), 3, true);
 					entity_remove(@armorStand);
 				} else {
-					play_effect(_relative(entity_loc(@armorStand), 'up', 0.5), 'LARGE_SMOKE', array('speed': 0));
+					play_effect(location_shift(entity_loc(@armorStand), 'up', 0.5), 'LARGE_SMOKE', array('speed': 0));
 				}
 			} catch(BadEntityException @ex) {
 				// grenade no longer exists

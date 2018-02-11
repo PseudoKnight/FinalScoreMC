@@ -16,7 +16,7 @@ proc _load_events(@id) {
 			@pvp['stats'][@damager]['kills']++;
 		}
 		@pvp['stats'][@player]['deaths']++;
-		@loc = _relative(ploc(@player), 'up', 2);
+		@loc = location_shift(ploc(@player), 'up', 2);
 		play_effect(@loc, 'SNOWBALL_BREAK', associative_array(
 			'particleCount': 20,
 			'offsetX': 0.5,

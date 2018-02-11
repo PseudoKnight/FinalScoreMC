@@ -20,7 +20,7 @@ case 'load':
 			set_pmode('SPECTATOR');
 			@loc = ploc();
 			play_sound(@loc, associative_array('sound': 'STEP_WOOL', 'pitch': 0.5));
-			play_effect(_relative(@loc, 'up', 2), 'CRIT', associative_array(
+			play_effect(location_shift(@loc, 'up', 2), 'CRIT', associative_array(
 				'speed': 0,
 				'particleCount': 10,
 				'offsetX': 0.5,

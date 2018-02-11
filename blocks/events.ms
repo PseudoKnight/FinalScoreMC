@@ -93,7 +93,7 @@ bind(block_dispense, null, array('type': 'DISPENSER'), @event, @ignored = array(
 bind(note_play, null, null, @event) {
 	cancel();
 	@sound = 'NOTE_'.@event['instrument'];
-	switch(split(':', get_block_at(_relative(@event['location'], 'down')))[0]) {
+	switch(split(':', get_block_at(location_shift(@event['location'], 'down')))[0]) {
 		case '79':
 		case '174':
 			@sound = 'ORB_PICKUP';
@@ -125,5 +125,5 @@ bind(note_play, null, null, @event) {
 	));
 	@event['location']['x'] += 0.5;
 	@event['location']['z'] += 0.5;
-	play_effect(_relative(@event['location'], 'up'), 'note');
+	play_effect(location_shift(@event['location'], 'up'), 'note');
 }

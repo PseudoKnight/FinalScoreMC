@@ -73,7 +73,7 @@ proc _start_game(@course, @loc) {
 						@event['location']['z'],
 						@event['location']['world'],
 					),
-					'par': integer(split(':', get_block_at(_relative(@event['location'], 'down', 1)))[1]),
+					'par': integer(split(':', get_block_at(location_shift(@event['location'], 'down')))[1]),
 					'strokes': associative_array(),
 					'total': associative_array(),
 				);

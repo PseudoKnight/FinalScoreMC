@@ -104,7 +104,7 @@ case 'load':
 
 		play_sound(@loc1, array('sound': 'ENDERDRAGON_WINGS', 'pitch': 0.5));
 		play_sound(@loc1, array('sound': 'GHAST_FIREBALL', 'pitch': 0.9));
-		play_effect(_relative(@loc1, 'up', 2), 'CLOUD', array(
+		play_effect(location_shift(@loc1, 'up', 2), 'CLOUD', array(
 			'particleCount': 60,
 			'speed': 0.5,
 		));

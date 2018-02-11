@@ -8,7 +8,7 @@ case 'load':
 		cancel();
 		@vel = entity_velocity(puuid());
 		set_pvelocity(@vel['x'] * 1.9, 0.9, @vel['z'] * 1.9);
-		play_effect(_relative(ploc(), 'up'), 'cloud', array('speed': 0, 'particleCount': 5, 'offsetX': 0.4, 'offsetZ': 0.4, 'offsetY': 0));
+		play_effect(location_shift(ploc(), 'up'), 'cloud', array('speed': 0, 'particleCount': 5, 'offsetX': 0.4, 'offsetZ': 0.4, 'offsetY': 0));
 		set_pflight(false);
 		set_entity_fall_distance(puuid(), 0);
 		queue_delay(2000, player().'doublejump');
@@ -34,13 +34,13 @@ case 'load':
 				));
 				set_peffect(player(), 16, 0, 25);
 				set_peffect(player(), 14, 0, 20);
-				play_effect(_relative(ploc(), 'up', 2), 'spell', array('speed': 0, 'particleCount': 10, 'offsetY': 0.4, 'offsetX': 0.2, 'offsetZ': 0.2));
+				play_effect(location_shift(ploc(), 'up', 2), 'spell', array('speed': 0, 'particleCount': 10, 'offsetY': 0.4, 'offsetX': 0.2, 'offsetZ': 0.2));
 			}
 		} else if(!pinv(player(), 100)){
 			set_pinv(@gear);
 			set_peffect(player(), 14, 0, 0);
 			set_peffect(player(), 16, 0, 0);
-			play_effect(_relative(ploc(), 'up', 2), 'spell', array('speed': 0, 'particleCount': 10, 'offsetY': 0.4, 'offsetX': 0.2, 'offsetZ': 0.2));
+			play_effect(location_shift(ploc(), 'up', 2), 'spell', array('speed': 0, 'particleCount': 10, 'offsetY': 0.4, 'offsetX': 0.2, 'offsetZ': 0.2));
 		}
 	}
 	

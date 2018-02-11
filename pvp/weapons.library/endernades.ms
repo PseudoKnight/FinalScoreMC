@@ -19,7 +19,7 @@ bind(player_teleport, array('id': @id.'endernades', 'priority': 'highest'), arra
 		}
 		# a delayed velocity works more consistently with grounded entities
 		set_timeout(50, closure(){
-			@b = _relative(ploc(@p), 'up', 2);
+			@b = location_shift(ploc(@p), 'up', 2);
 			@dist = sqrt(((@b['x'] - @a['x']) ** 2) + ((@b['y'] - @a['y']) ** 2) + ((@b['z'] - @a['z']) ** 2));
 			if(@p == player() && @a['y'] < @b['y']) {
 				damage_entity(puuid(@p), 1, puuid());

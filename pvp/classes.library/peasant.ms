@@ -36,7 +36,7 @@ case 'load':
 						if(!array_index_exists(@pvp['players'], @e['player']), die());
 						_stats_damage(@damager, @e['player'], @e['amount'], @pvp);
 					}
-					explosion(_relative(ploc(@damaged), 'up', 1.5), 2, true);
+					explosion(location_shift(ploc(@damaged), 'up', 1.5), 2, true);
 					unbind(@damaged.'hotpotatodmg');
 					clear_task();
 				} else {
@@ -101,7 +101,7 @@ case 'load':
 		@inv = pinv();
 		foreach(@slot in 0..8) {
 			if(@inv[@slot] && @inv[@slot]['name'] == 'BAKED_POTATO' && @inv[@slot]['meta'] && is_integral(@inv[@slot]['meta']['display'])) {
-				@droppedItem = drop_item(_relative(ploc(), 'up', 2), @inv[@slot], true);
+				@droppedItem = drop_item(location_shift(ploc(), 'up', 2), @inv[@slot], true);
 				set_entity_spec(@droppedItem, array('pickupdelay': 200));
 				set_timeout(1000 * @inv[@slot]['meta']['display'], closure(){
 					try {

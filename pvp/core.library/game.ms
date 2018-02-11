@@ -170,7 +170,7 @@ proc _pvp_start_match(@id) {
 						}
 						@loc = ploc(@pvp['team'][@p['team']]['captain']);
 						play_sound(ploc(@player), array('sound': 'GHAST_FIREBALL'));
-						make_effect(_relative(ploc(@player), 'up'), 'MOBSPAWNER_FLAMES');
+						make_effect(location_shift(ploc(@player), 'up'), 'MOBSPAWNER_FLAMES');
 					} else {
 						if(array_index_exists(@pvp, 'team')) {
 							@r = rand(0, array_size(@arena['spawn'][@p['team']]));
@@ -245,7 +245,7 @@ proc _pvp_start_match(@id) {
 				@itemspawn = @pvp['itemspawn'][@i];
 				if(@itemspawn[0]) {
 					try {
-						@loc = _relative(entity_loc(@itemspawn[0]), 'up', 0.4);
+						@loc = location_shift(entity_loc(@itemspawn[0]), 'up', 0.4);
 						@itemspawn[1] = time();
 						play_effect(@loc, 'FIREWORKS_SPARK', array('radius': 64, 'speed': 0));
 						continue();

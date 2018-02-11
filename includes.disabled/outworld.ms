@@ -23,7 +23,7 @@ bind(item_despawn, null, array('item': 6), @event) {
 		die();
 	}
 
-	@block = get_block_at(_relative(@event['location'], 'down'));
+	@block = get_block_at(location_shift(@event['location'], 'down'));
 	if((@block[0] == 2 || @block[0] == 3) && @block[1] === ':') {
 		set_block_at(@event['location'], @event['item']['type'].':'.@event['item']['data']);
 	}

@@ -32,19 +32,19 @@ bind(block_break, array('priority': 'MONITOR'), array('name': 'WALL_SIGN'), @eve
 // Shop Protections
 bind(block_place, null, array('name': 'HOPPER'), @event) {
 	if(sk_can_build(@event['location'])) {
-		@loc = _relative(@event['location'], 'up');
+		@loc = location_shift(@event['location'], 'up');
 		@type = split(':', get_block_at(@loc))[0];
 		if(@type === '54' || @type === '146') {
 			@signs = array();
-			if(split(':', get_block_at(_relative(@loc, 'up')))[0] === '68') {
-				@signs[0] = _relative(@loc, 'up');
+			if(split(':', get_block_at(location_shift(@loc, 'up')))[0] === '68') {
+				@signs[0] = location_shift(@loc, 'up');
 			}
 			if(get_inventory_size(@loc) == 54) {
 				foreach(@dir in array('north', 'south', 'east', 'west')) {
-					@rel = _relative(@loc, @dir);
+					@rel = location_shift(@loc, @dir);
 					if(split(':', get_block_at(@rel))[0] == @type) {
-						if(split(':', get_block_at(_relative(@rel, 'up')))[0] === '68') {
-							@signs[1] = _relative(@rel, 'up');
+						if(split(':', get_block_at(location_shift(@rel, 'up')))[0] === '68') {
+							@signs[1] = location_shift(@rel, 'up');
 						}
 						break();
 					}
@@ -67,7 +67,7 @@ bind(block_place, null, array('name': 'HOPPER'), @event) {
 bind(player_interact, array('priority': 'LOWEST'), array('block': 54, 'button': 'right'), @event) {
 	if(sk_can_build(@event['location'])) {
 		include('core.library/shop.ms');
-		if(@shop = _get_shop(_relative(@event['location'], 'up'))) {
+		if(@shop = _get_shop(location_shift(@event['location'], 'up'))) {
 			if(!_is_shop_owner(player(), @shop['owner'])) {
 				cancel();
 				msg(color('red').'[Shop] You do not own this shop.');
@@ -79,7 +79,7 @@ bind(player_interact, array('priority': 'LOWEST'), array('block': 54, 'button': 
 bind(player_interact, array('priority': 'LOWEST'), array('block': 146, 'button': 'right'), @event) {
 	if(sk_can_build(@event['location'])) {
 		include('core.library/shop.ms');
-		if(@shop = _get_shop(_relative(@event['location'], 'up'))) {
+		if(@shop = _get_shop(location_shift(@event['location'], 'up'))) {
 			if(!_is_shop_owner(player(), @shop['owner'])) {
 				cancel();
 				msg(color('red').'[Shop] You do not own this shop.');

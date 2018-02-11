@@ -20,7 +20,7 @@ case 'load':
 		}
 		@item = pinv(player(), @slot);
 		if(@item && @item['name'] == 'STEP') {
-			@loc = _relative(ploc(), 'up');
+			@loc = location_shift(ploc(), 'up');
 
 			@targetLoc = pcursor(array(0, 65, 66, 68, 70, 72, 77, 85, 143, 147, 148, 157, 171, 188, 189, 190, 191, 192));
 			psend_block_change(player(), @targetLoc, '35:2');
@@ -43,7 +43,7 @@ case 'load':
 				set_pwalkspeed(player(), 0.1);
 			}
 
-			@loc = _relative(ploc(), 'up');
+			@loc = location_shift(ploc(), 'up');
 			@box = spawn_entity('ARMOR_STAND', 1, @loc)[0];
 			set_mob_equipment(@box, array('WEAPON': @item));
 			set_entity_spec(@box, array(

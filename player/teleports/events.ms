@@ -17,10 +17,10 @@ bind(player_teleport, null, null, @event) {
 	
 	if(@event['type'] == 'END_GATEWAY') {
 		if(@fromWorld == 'world_the_end'
-		&& (get_block_at(_relative(@from, 'east')) == '209:0'
-		|| get_block_at(_relative(@from, 'west')) == '209:0'
-		|| get_block_at(_relative(@from, 'north')) == '209:0'
-		|| get_block_at(_relative(@from, 'south')) == '209:0')) {
+		&& (get_block_at(location_shift(@from, 'east')) == '209:0'
+		|| get_block_at(location_shift(@from, 'west')) == '209:0'
+		|| get_block_at(location_shift(@from, 'north')) == '209:0'
+		|| get_block_at(location_shift(@from, 'south')) == '209:0')) {
 			// this is probably a stargate in the end
 			cancel();
 			die();

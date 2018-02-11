@@ -12,53 +12,6 @@ set_uncaught_exception_handler(closure(@ex){
 });
 
 /*
-	Returns a new shifted location from origin based on a single direction and distance
-*/
-proc _relative(@loc, @dir, @amount = 1, @inPlace = false) {
-	if(!@inPlace) {
-		@loc = @loc[];
-	}
-	switch(@dir) {
-		case 'down':
-			if(is_associative(@loc)) {
-				@loc['y'] -= @amount;
-			}
-			@loc[1] -= @amount;
-
-		case 'up':
-			if(is_associative(@loc)) {
-				@loc['y'] += @amount;
-			}
-			@loc[1] += @amount;
-
-		case 'north':
-			if(is_associative(@loc)) {
-				@loc['z'] -= @amount;
-			}
-			@loc[2] -= @amount;
-
-		case 'south':
-			if(is_associative(@loc)) {
-				@loc['z'] += @amount;
-			}
-			@loc[2] += @amount;
-
-		case 'west':
-			if(is_associative(@loc)) {
-				@loc['x'] -= @amount;
-			}
-			@loc[0] -= @amount;
-
-		case 'east':
-			if(is_associative(@loc)) {
-				@loc['x'] += @amount;
-			}
-			@loc[0] += @amount;
-	}
-	return(@loc);
-}
-
-/*
 	Gets a normalized vector when given a yaw and pitch
 */
 proc _get_vector(@yaw, @pitch = 0, @magnitude = 1, @angle = 0) {

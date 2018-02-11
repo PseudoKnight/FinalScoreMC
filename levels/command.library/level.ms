@@ -41,7 +41,7 @@ register_command('level', array(
 				if(!array_index_exists(@arena, @group)) {
 					@arena[@group] = array();
 				}
-				@loc = array_normalize(_relative(ploc(), 'up'))[0..3];
+				@loc = array_normalize(location_shift(ploc(), 'up'))[0..3];
 				@arena[@group][] = @loc;
 				store_value('level', @name, @arena);
 				msg(color('green').'Added spawn location');

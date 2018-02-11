@@ -234,7 +234,7 @@ register_command('hockey', array(
 				}
 				
 				@l = entity_loc(@hockey['puck']);
-				@block = get_block_at(_relative(@l, 'down'));
+				@block = get_block_at(location_shift(@l, 'down'));
 				
 				if(@block == '35:14' || @block == '35:11') {
 					@team = if(@block == '35:11', @hockey['red'], @hockey['blue']);

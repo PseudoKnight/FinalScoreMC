@@ -23,8 +23,8 @@ proc _warmuptp(@player, @loc, @cleareffects = false, @force = false) {
 		set_peffect(@player, 24, 0, 1, true, false);
 		set_peffect(@player, 15, 1, 2, true, false); // expanding fog
 		@particle = array('particleCount': 25, 'speed': 0.05, 'offsetX': 0.34, 'offsetY': 0, 'offsetZ': 0.34);
-		play_effect(_relative(@ploc, 'up', 1.9), 'CLOUD', @particle);
-		play_effect(_relative(@loc, 'up', 2.7), 'CLOUD', @particle);
+		play_effect(location_shift(@ploc, 'up', 1.9), 'CLOUD', @particle);
+		play_effect(location_shift(@loc, 'up', 2.7), 'CLOUD', @particle);
 		@sound = array('sound': 'GHAST_FIREBALL', 'category': 'PLAYERS', 'volume': 2);
 		play_sound(@ploc, @sound);
 		play_sound(@loc, @sound);
@@ -35,14 +35,14 @@ proc _warmuptp(@player, @loc, @cleareffects = false, @force = false) {
 	Returns true if the location is (mostly) safe for a player
 */
 proc _is_safe_location(@loc) {
-	if(get_block_info(_relative(@loc, 'up', 2), 'occluding')) {
+	if(get_block_info(location_shift(@loc, 'up', 2), 'occluding')) {
 		return(false);
 	}
 	if(!get_block_info(@loc, 'solid')) {
-		if(get_block_info(_relative(@loc, 'up'), 'occluding')) {
+		if(get_block_info(location_shift(@loc, 'up'), 'occluding')) {
 			return(false);
 		}
-		if(!get_block_info(_relative(@loc, 'down'), 'solid')) {
+		if(!get_block_info(location_shift(@loc, 'down'), 'solid')) {
 			return(false);
 		}
 	}

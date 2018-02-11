@@ -495,13 +495,13 @@ proc _generate(@dungeonType, @region, @world, @seed) {
 						@loc[1]--;
 						set_block_at(@loc, @materials['ladder'], false);
 						if(@ladderHeight > 2) {
-							set_block_at(_relative(@loc, 'south'), array_rand(@materials['wall'], 1, false)[0], false);
-							set_block_at(_relative(@loc, 'east'), array_rand(@materials['wall'], 1, false)[0], false);
-							set_block_at(_relative(@loc, 'west'), array_rand(@materials['wall'], 1, false)[0], false);
+							set_block_at(location_shift(@loc, 'south'), array_rand(@materials['wall'], 1, false)[0], false);
+							set_block_at(location_shift(@loc, 'east'), array_rand(@materials['wall'], 1, false)[0], false);
+							set_block_at(location_shift(@loc, 'west'), array_rand(@materials['wall'], 1, false)[0], false);
 						} else {
-							set_block_at(_relative(@loc, 'south'), 0, false);
+							set_block_at(location_shift(@loc, 'south'), 0, false);
 						}
-						set_block_at(_relative(@loc, 'north'), array_rand(@materials['wall'], 1, false)[0], false);
+						set_block_at(location_shift(@loc, 'north'), array_rand(@materials['wall'], 1, false)[0], false);
 					}
 				});
 			}

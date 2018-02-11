@@ -26,7 +26,7 @@ register_command('hat', array(
 		}
 		@loc = ploc();
 		play_sound(@loc, array('sound': 'CHICKEN_EGG_POP', 'category': 'PLAYERS'));
-		play_effect(_relative(@loc, 'up', 2.7), 'CLOUD', array(
+		play_effect(location_shift(@loc, 'up', 2.7), 'CLOUD', array(
 			'particleCount': 10,
 			'offsetX': 0.5,
 			'offsetY': 0.5,

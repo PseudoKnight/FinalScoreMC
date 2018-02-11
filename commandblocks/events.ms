@@ -4,7 +4,7 @@ proc _place_command_block(@loc, @face, @block) {
 	&& !_is_survival_world(@loc['world'])) {
 		@clicked = split(':', get_block_at(@loc))[0];
 		if(psneaking() || (@clicked != '137' && @clicked != '210' && @clicked != '211')) {
-			@loc = _relative(@loc, @face);
+			@loc = location_shift(@loc, @face);
 			if(sk_can_build(@loc)) {
 				@data = 0;
 				switch(@face) {

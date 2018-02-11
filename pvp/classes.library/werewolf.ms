@@ -18,11 +18,11 @@ case 'load':
 		ptake_item(array('name': 'FERMENTED_SPIDER_EYE'));
 		set_phealth(player(), min(20, phealth() + 4));
 		play_sound(ploc(), array('sound': 'EAT', 'pitch': 0.5));
-		play_effect(_relative(ploc(), 'up', 2), 'TILE_DUST', array('particleCount': 10, 'id': 214, 'speed': 0.1))
+		play_effect(location_shift(ploc(), 'up', 2), 'TILE_DUST', array('particleCount': 10, 'id': 214, 'speed': 0.1))
 		set_timeout(500, closure(){
 			set_phealth(player(), min(20, phealth() + 4));
 			play_sound(ploc(), array('sound': 'EAT', 'pitch': 0.5));
-			play_effect(_relative(ploc(), 'up', 2), 'TILE_DUST', array('particleCount': 10, 'id': 214, 'speed': 0.1))
+			play_effect(location_shift(ploc(), 'up', 2), 'TILE_DUST', array('particleCount': 10, 'id': 214, 'speed': 0.1))
 		});
 	}
 

@@ -75,7 +75,7 @@ case 'load':
 		foreach(@point in @circle) {
 			if(get_block_at(@point) == '0:0') {
 				play_effect(@point, 'TILE_BREAK', array('id': 3, 'particleCount': 5));
-				if(get_block_at(_relative(@point, 'down')) != '0:0') {
+				if(get_block_at(location_shift(@point, 'down')) != '0:0') {
 					foreach(@p in all_players(@world)) {
 						psend_block_change(@p, @point, 32);
 					}
@@ -141,7 +141,7 @@ case 'load':
 									play_sound(@loc, array('sound': 'entity_player_attack_sweep', 'pitch': 1.4));
 									play_sound(@loc, array('sound': 'entity_snowball_throw', 'pitch': 0.52));
 								} else {
-									set_ploc(@p, _relative(ploc(), 'up', 2));
+									set_ploc(@p, location_shift(ploc(), 'up', 2));
 								}
 							} catch(PlayerOfflineException @ex) {
 								clear_task();
@@ -166,7 +166,7 @@ case 'load':
 	bind(player_interact, array('id': @player.'entattack'), array('player': @player, 'item': 18, 'hand': 'main_hand', 'button': 'right'), @event) {
 		if(!pcooldown('LEAVES')) {
 			@loc = ptarget_space();
-			if(get_block_at(_relative(@loc, 'down')) != '0:0') {
+			if(get_block_at(location_shift(@loc, 'down')) != '0:0') {
 				set_pcooldown('LEAVES', 5);
 				@loc['x'] += 0.5;
 				@loc['z'] += 0.5;
