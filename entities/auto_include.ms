@@ -5,7 +5,7 @@ proc _spawn_mob(@mob, @loc, @owner, @teammates) {
 	if(is_null(@mob)) {
 		return(null);
 	}
-	bind(creature_spawn, array('id': 'customspawn'), array('reason': 'CUSTOM'), @event, @mob, @loc, @owner, @teammates) {
+	@custom = bind(creature_spawn, null, array('reason': 'CUSTOM'), @event, @mob, @loc, @owner, @teammates) {
 		@m = @event['id'];
 		set_entity_persistence(@m, true);
 		foreach(@key: @value in @mob) {
@@ -169,8 +169,11 @@ proc _spawn_mob(@mob, @loc, @owner, @teammates) {
 			}
 		}
 	}
-	@m = spawn_mob(@mob['type'], 1, @loc)[0];
-	unbind('customspawn');
+	try {
+		@m = spawn_mob(@mob['type'], 1, @loc)[0];
+	} finally {
+		unbind(@custom);
+	}
 	return(@m);
 }
 

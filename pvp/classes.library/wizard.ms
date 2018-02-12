@@ -9,7 +9,7 @@ case 'load':
 		if(@trace['entities']) {
 			@loc = @trace['entities'][0]['location'];
 		}
-		bind(entity_damage, array('id': player().'lightningdmg'), array('type': 'PLAYER', 'cause': 'LIGHTNING'), @e,
+		@bind = bind(entity_damage, null, array('type': 'PLAYER', 'cause': 'LIGHTNING'), @e,
 				@damager = player(), @pvp) {
 
 			if(!array_index_exists(@pvp['players'], @e['player']), die());
@@ -31,7 +31,7 @@ case 'load':
 		queue_clear(player().'lightning');
 		queue_delay(1000, player().'lightning');
 		queue_push(closure(){
-			unbind(player().'lightningdmg');
+			unbind(@bind);
 			export(player().'lightning', null);
 		}, player().'lightning');
 		queue_delay(7000, player().'lightning');

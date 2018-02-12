@@ -216,7 +216,6 @@ register_command('mob', array(
 					return(false);
 				}
 				@id = @args[1];
-				@mobType = _get_mob(@id);
 				@mobCount = 1;
 				if(array_size(@args) == 3) {
 					@mobCount = integer(@args[2]);
@@ -226,7 +225,7 @@ register_command('mob', array(
 				@loc['y'] += 1;
 				@loc['z'] += 0.5;
 				while(@mobCount > 0) {
-					_spawn_mob(@mobType, @loc, player());
+					_spawn_mob(@id, @loc, player());
 					@mobCount--;
 				}
 
