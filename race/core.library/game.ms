@@ -6,7 +6,8 @@ proc _race_create_and_join(@id) {
 	if(!@race) {
 		@race = _race_create(@id);
 		_race_add_player(@id, player());
-		_click_tell(all_players(pworld()), array('&7[Race] ', array('&b[JOIN] ', '/race join '.@id), player().' queued up a race.'));
+		@msg = player().' queued up a race on the '.to_upper(@id[0]).substr(@id, 1).' track.';
+		_click_tell(all_players(pworld()), array('&7[Race] ', array('&b[JOIN] ', '/race join '.@id), @msg));
 	} else if(!array_index_exists(@race['players'], player()) && @race['state'] != 'ending') {
 		_race_add_player(@id, player());
 		if(@race['state'] == 'countdown' || @race['state'] == 'running') {
