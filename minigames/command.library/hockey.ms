@@ -4,7 +4,6 @@
 	DEPENDENCIES:
 	- WorldGuard plugin and SKCompat extension for regions.
 	- _add_activity() and _remove_activity() procedures to keep a list of all current activities on server.
-	- _distance() proc that returns the distance between two locations.
 */
 register_command('hockey', array(
 	'description': 'Starts a hockey game.',
@@ -138,7 +137,7 @@ register_command('hockey', array(
 				play_sound(entity_loc(@event['id']), array('sound': 'WOOD_CLICK', 'pitch': 2 - (1.3 / @xp)));
 				@ploc = entity_loc(puuid(@player));
 				@eloc = entity_loc(@hockey['puck']);
-				@dist = _distance(@ploc, @eloc);
+				@dist = distance(@ploc, @eloc);
 				@x = ((@eloc['x'] - @ploc['x']) / @dist) * (@xp / 50);
 				@z = ((@eloc['z'] - @ploc['z']) / @dist) * (@xp / 50);
 				@hockey['velocity'] = array('x': @x, 'y': 0, 'z': @z);
@@ -150,7 +149,7 @@ register_command('hockey', array(
 				@ploc = ploc();
 				@eloc = entity_loc(@hockey['puck']);
 				@ploc['y'] += 1;
-				@dist = _distance(@ploc, @eloc);
+				@dist = distance(@ploc, @eloc);
 				if(@dist < 3.5) {
 					@hockey['holder'] = player();
 					@hockey['last'] = player();

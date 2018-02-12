@@ -315,7 +315,7 @@ proc _snake_drop_nuke(@snake, @game) {
 	// now move it to the target location over time
 	play_sound(@loc, array('sound': 'ZOMBIE_UNFECT', 'volume': 4));
 	set_interval(50, closure(){
-		if(_distance(@loc, @target) > 0.3) {
+		if(distance(@loc, @target) > 0.3) {
 			@newLoc = location_shift(@loc, @target, 0.25);
 			@loc[0] = @newLoc[0];
 			@loc[1] = @newLoc[1];

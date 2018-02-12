@@ -76,7 +76,7 @@ proc _weapon_hit_scan(@player, @range, @damage, @effects, @pvp){
 	}
 	
 	if(array_index_exists(@effects, 'tracerparticle')) {
-		@distance = _distance(@origin, @location);
+		@distance = distance(@origin, @location);
 		@maxParticles = min(ceil(@distance), 20);
 		@distance /= @maxParticles;
 		@origin['y'] -= if(get_entity_gliding(@damager), 1.54, 0.30); // adjust to gun height for visibility

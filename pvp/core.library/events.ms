@@ -222,7 +222,7 @@ bind(player_death, array('priority': 'high', 'id': @id.'death'), null, @e, @id) 
 						if(@p == player() && array_contains(sk_current_regions(), @pvp['arena']['region'])) {
 							continue();
 						}
-						@pDistance = _distance(ploc(@p), @location);
+						@pDistance = distance(ploc(@p), @location);
 						if(@pDistance < @distance) {
 							@distance = @pDistance;
 							@closest = @p;

@@ -97,7 +97,7 @@ bind(player_interact_at_entity, null, array('clicked': 'ARMOR_STAND'), @event) {
 
 			@eloc = entity_loc(@event['id']);
 			@originalYaw = @eloc['yaw'];
-			@dist = _distance(@eloc, location_shift(ploc(), 'up'));
+			@dist = distance(@eloc, location_shift(ploc(), 'up'));
 			set_entity_spec(@event['id'], array('gravity': false));
 
 			set_interval(50, closure(){
@@ -127,7 +127,7 @@ bind(player_interact_at_entity, null, array('clicked': 'ARMOR_STAND'), @event) {
 
 			@dir = pfacing();
 			@eloc = entity_loc(@event['id']);
-			@dist = _distance(@eloc, ploc());
+			@dist = distance(@eloc, ploc());
 			@poseable = 'pose'.@poseable;
 			@newspec = associative_array('poses': array());
 			@newspec['poses'][@poseable] = @armorstand['poses'][@poseable][];
@@ -140,7 +140,7 @@ bind(player_interact_at_entity, null, array('clicked': 'ARMOR_STAND'), @event) {
 				}
 
 				@newdir = pfacing();
-				@newdist = _distance(@eloc, ploc());
+				@newdist = distance(@eloc, ploc());
 
 				@yawdiff = @newdir[0] - @dir[0];
 				if(@yawdiff > 180) {

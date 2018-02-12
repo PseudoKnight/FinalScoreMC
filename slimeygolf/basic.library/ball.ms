@@ -44,7 +44,7 @@ proc _get_block_below(@loc, @v) {
 		@center = @loc[];
 		@center['x'] = floor(@center['x']) + 0.5;
 		@center['z'] = floor(@center['z']) + 0.5;
-		@dist = _distance(@center, @loc);
+		@dist = distance(@center, @loc);
 		@v['x'] += ((@center['x'] - @loc['x']) / @dist) * 0.02;
 		@v['z'] += ((@center['z'] - @loc['z']) / @dist) * 0.02;
 	}

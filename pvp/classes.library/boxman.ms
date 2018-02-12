@@ -88,7 +88,7 @@ case 'load':
 						@loc = entity_loc(@box);
 						@targetLoc = entity_loc(@target);
 						set_entity_loc(@box, location_shift(@loc, @targetLoc, 0.3));
-						if(_distance(@loc, @targetLoc) < 1) {
+						if(distance(@loc, @targetLoc) < 1) {
 							damage_entity(@target, 1, puuid());
 						}
 						play_named_sound(@loc, array('sound': 'entity.guardian.attack'));

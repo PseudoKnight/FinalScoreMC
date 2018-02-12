@@ -39,13 +39,6 @@ proc _pvp_hat_spawn(@id, @team, @loc) {
 }
 
 /*
-	Returns the max distance on the x or z axis between two locations
-*/
-proc _horizontal_distance(@loc1, @loc2) {
-	return(max(sqrt((@loc1[0] - @loc2[0]) ** 2), sqrt((@loc1[2] - @loc2[2]) ** 2)))
-}
-
-/*
 	Core game interval (overrided by game modes)
 */
 proc _interval(@pvp, @id){

@@ -62,7 +62,7 @@ case 'load':
 							if(pmode() == 'SPECTATOR' || pmode(@player) == 'SPECTATOR') {
 								clear_task();
 								set_pexp(player(), 0);
-							} else if(entity_can_see(puuid(), @target) && _distance(entity_loc(@target), entity_loc(puuid())) < 12) {
+							} else if(entity_can_see(puuid(), @target) && distance(entity_loc(@target), entity_loc(puuid())) < 12) {
 								set_phealth(@player, max(0, phealth(@player) - 0.3));
 								set_phealth(player(), min(20, phealth() + 0.2));
 								_stats_damage(player(), @player, 0.3, @pvp);

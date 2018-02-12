@@ -93,26 +93,6 @@ proc _remove_region_entities(@region, @entities = array(), @world = 'custom') {
 }
 
 /*
-	Returns the distance between two points
-	If @3d is false, returns the 2d distance with x,z
-*/
-proc _distance(@loc1, @loc2, @3d = true) {
-	if(@3d) {
-		if(is_associative(@loc1)) {
-			return(sqrt(((@loc1['x'] - @loc2['x']) ** 2) + ((@loc1['y'] - @loc2['y']) ** 2) + ((@loc1['z'] - @loc2['z']) ** 2)));
-		} else {
-			return(sqrt(((@loc1[0] - @loc2[0]) ** 2) + ((@loc1[1] - @loc2[1]) ** 2) + ((@loc1[2] - @loc2[2]) ** 2)));
-		}
-	} else {
-		if(is_associative(@loc1)) {
-			return(sqrt(((@loc1['x'] - @loc2['x']) ** 2) + ((@loc1['z'] - @loc2['z']) ** 2)));
-		} else {
-			return(sqrt(((@loc1[0] - @loc2[0]) ** 2) + ((@loc1[2] - @loc2[2]) ** 2)));
-		}
-	}
-}
-
-/*
 	Adds an activity to the activities list.
 	This is used for checking which games are running.
 */

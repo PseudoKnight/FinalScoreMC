@@ -172,7 +172,7 @@
 		if(array_size(@entities) > 1) {
 			@closest = 3;
 			foreach(@e in @entities) {
-				@dist = _distance(entity_loc(@e), @loc);
+				@dist = distance(entity_loc(@e), @loc);
 				if(@dist < @closest) {
 					@closest = @dist;
 					@entity = @e;

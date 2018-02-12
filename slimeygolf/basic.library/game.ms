@@ -89,7 +89,7 @@ proc _start_game(@course, @loc) {
 					@loc = entity_loc(@ball['id']);
 					@ball['origin'] = ploc();
 					@ball['origin']['y'] = @loc['y'];
-					@dist = _distance(@ball['origin'], @loc);
+					@dist = distance(@ball['origin'], @loc);
 					@v = associative_array(
 						'x': (@loc['x'] - @ball['origin']['x']) / (@dist * 6),
 						'z': (@loc['z'] - @ball['origin']['z']) / (@dist * 6),
@@ -157,7 +157,7 @@ proc _start_game(@course, @loc) {
 					play_sound(entity_loc(@event['id']), array('sound': 'WOOD_CLICK', 'pitch': 2 - (1.3 / @xp)));
 					@ploc = entity_loc(puuid(@player));
 					@eloc = entity_loc(@ball['id']);
-					@dist = _distance(@ploc, @eloc);
+					@dist = distance(@ploc, @eloc);
 					@x = ((@eloc['x'] - @ploc['x']) / @dist) * (@xp / 90);
 					@z = ((@eloc['z'] - @ploc['z']) / @dist) * (@xp / 90);
 					@ball['velocity'] = array('x': @x, 'y': 0, 'z': @z);

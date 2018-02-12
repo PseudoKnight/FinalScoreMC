@@ -14,7 +14,7 @@ bind(item_held, array('id': @id.'tracker'), null, @event, @id) {
 						@loc1 = ploc();
 						@loc2 = ploc(@p);
 						set_compass_target(@loc2);
-						@dist = _distance(@loc1, @loc2);
+						@dist = distance(@loc1, @loc2);
 						if(@dist < 50) {
 							@pitch = 0.5 + (0.5 * ((50 - @dist) / 50));
 							play_sound(@loc1, array('sound': 'NOTE_PLING', 'pitch': @pitch), player());

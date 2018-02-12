@@ -4,7 +4,7 @@ proc _pvp_flag_spawn(@id, @team, @loc) {
 		@loc = @pvp['arena']['ctfflag'][@team];
 	}
 	try {
-		if(_horizontal_distance(entity_loc(@pvp['team'][@team]['flag']), @pvp['arena']['ctfflag'][@team]) > 3) {
+		if(distance(entity_loc(@pvp['team'][@team]['flag']), @pvp['arena']['ctfflag'][@team]) > 3) {
 			@pvp['team'][@team]['flag'] = drop_item(@loc, array('name': 'BANNER', 'data': if(@team == 0, '1', '4')), 0)
 		}
 	} catch(Exception @ex) {
@@ -41,7 +41,7 @@ bind(item_pickup, array('id': @id.'flagpickup'), null, @e, @id) {
 	}
 
 	if(@flag == @pvp['players'][player()]['team']) {
-		if(_horizontal_distance(ploc(), @pvp['arena']['ctfflag'][@flag]) > 3) {
+		if(distance(ploc(), @pvp['arena']['ctfflag'][@flag]) > 3) {
 			queue_clear(@id.@flag.'flag');
 			modify_event('item', null);
 			_pvp_flag_spawn(@id, @flag);

@@ -22,7 +22,7 @@ proc _create_treasure(@delay, @score, @rules) {
 			}
 			foreach(@p in all_players()) {
 				if(pworld(@p) == 'shard' && get_pscoreboard(@p) == 'shard') {
-					@dist = integer(_distance(@loc, ploc(@p)));
+					@dist = integer(distance(@loc, ploc(@p)));
 					set_pscore('Distance', @p, @dist, 'shard');
 				}
 			}

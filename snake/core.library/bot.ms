@@ -209,7 +209,7 @@ proc _snake_bot_update(@bot, @game) {
 			foreach(@i: @tnt in @game['tnt']) {
 				try {
 					@loc = entity_loc(@tnt);
-					if(_distance(@snake['loc'], @loc) < 6) {
+					if(distance(@snake['loc'], @loc) < 6) {
 						@targetLoc = @snake['loc'][];
 						@targetLoc[0] += @snake['loc'][0] - @loc[0];
 						@targetLoc[1] += @snake['loc'][1] - @loc[1];
@@ -271,7 +271,7 @@ proc _snake_bot_target_powerup(@snake, @game, @type = 'all') {
 	@closest = 25;
 	foreach(@powerup in @game['powerups']) {
 		if(!array_contains(@game['nukes'], @powerup['region']) && (@type == 'all' || @powerup['type'] == @type)) {
-			@dist = _distance(@powerup['loc'], @snake['loc']);
+			@dist = distance(@powerup['loc'], @snake['loc']);
 			if(@dist < @closest) {
 				@snake['target'] = associative_array('type': 'powerup', 'loc': @powerup['loc'], 'interest': 50);
 				@closest = @dist;
@@ -291,7 +291,7 @@ proc _snake_bot_target_snake(@snake, @game) {
 			&& @othersnake['alive']
 			&& ((@game['botsOnly'] && @snake['bot'] != @othersnake['bot'] || !@othersnake['bot'])
 			|| (!array_index_exists(@snake, 'team') || @snake['team'] != @othersnake['team']))) {
-				@dist = _distance(@othersnake['loc'], @snake['loc']);
+				@dist = distance(@othersnake['loc'], @snake['loc']);
 				if(@dist < @closest) {
 					@snake['target'] = array('type': 'snake', 'name': @bot, 'interest': 50);
 					@closest = @dist;
