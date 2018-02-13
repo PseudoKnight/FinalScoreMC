@@ -19,54 +19,57 @@ if(array_index_exists(@pvp['arena'], 'classes')) {
 # CORE
 proc _pvp_start_match(@id) {
 	@pvp = import('pvp'.@id)
-	if(array_index_exists(@pvp['arena'], 'rsoutput'),
-		set_block_at(@pvp['arena']['rsoutput'], '69:14'))
-	if(array_index_exists(@pvp['arena'], 'time'),
-		set_world_time(@pvp['arena']['lobby'][3], @pvp['arena']['time']))
+	if(array_index_exists(@pvp['arena'], 'rsoutput')) {
+		set_block_at(@pvp['arena']['rsoutput'], '69:14');
+	}
+	if(array_index_exists(@pvp['arena'], 'time')) {
+		set_world_time(@pvp['arena']['lobby'][3], @pvp['arena']['time']);
+	}
 
 	if(array_index_exists(@pvp['arena'], 'chestspawn')) {
-		@pvp['chestspawn'] = array()
+		@pvp['chestspawn'] = array();
 		for(@i = 0, @i < array_size(@pvp['arena']['chestspawn']), @i++) {
 			if(array_index_exists(@pvp['arena']['chestspawn'][@i], 'cooldown')) {
 				if(@pvp['arena']['chestspawn'][@i]['start'] === 'true') {
-					@pvp['chestspawn'][@i] = 0
+					@pvp['chestspawn'][@i] = 0;
 				} else {
-					@pvp['chestspawn'][@i] = time()
-					set_block_at(@pvp['arena']['chestspawn'][@i]['loc'], '0:0')
+					@pvp['chestspawn'][@i] = time();
+					set_block_at(@pvp['arena']['chestspawn'][@i]['loc'], '0:0');
 				}
 			} else if(array_index_exists(@pvp['arena'], 'chestgroup')) {
-				if(get_block_at(@pvp['arena']['chestspawn'][@i]['loc'])[0] === '0',
-					set_block_at(@pvp['arena']['chestspawn'][@i]['loc'], '54:0'))
-				@r = rand(array_size(@pvp['arena']['chestgroup'][@pvp['arena']['chestspawn'][@i]['group']]))
+				if(get_block_at(@pvp['arena']['chestspawn'][@i]['loc'])[0] === '0') {
+					set_block_at(@pvp['arena']['chestspawn'][@i]['loc'], '54:0');
+				}
+				@r = rand(array_size(@pvp['arena']['chestgroup'][@pvp['arena']['chestspawn'][@i]['group']]));
 				for(@y = 0, @y < 27, @y++) {
-					@item = get_inventory_item(@pvp['arena']['chestgroup'][@pvp['arena']['chestspawn'][@i]['group']][@r], @y)
-					set_inventory_item(@pvp['arena']['chestspawn'][@i]['loc'], @y, @item)
+					@item = get_inventory_item(@pvp['arena']['chestgroup'][@pvp['arena']['chestspawn'][@i]['group']][@r], @y);
+					set_inventory_item(@pvp['arena']['chestspawn'][@i]['loc'], @y, @item);
 				}
 			}
 		}
 	}
 
 	if(array_index_exists(@pvp['arena'], 'itemspawn')) {
-		@pvp['itemspawn'] = array()
+		@pvp['itemspawn'] = array();
 		for(@i = 0, @i < array_size(@pvp['arena']['itemspawn']), @i++) {
 			if(@pvp['arena']['itemspawn'][@i]['start']) {
-				@time = 0
+				@time = 0;
 			} else {
-				@time = time()
+				@time = time();
 			}
-			array_set(@pvp['itemspawn'], @i, array('', @time))
+			@pvp['itemspawn'][@i] = array('', @time);
 		}
 	}
 
 	if(array_index_exists(@pvp['arena'], 'mobspawn')) {
-		@pvp['mobspawn'] = array()
+		@pvp['mobspawn'] = array();
 		for(@i = 0, @i < array_size(@pvp['arena']['mobspawn']), @i++) {
 			if(@pvp['arena']['mobspawn'][@i]['start']) {
-				@time = 0
+				@time = 0;
 			} else {
-				@time = time()
+				@time = time();
 			}
-			array_set(@pvp['mobspawn'], @i, @time)
+			@pvp['mobspawn'][@i] = @time;
 		}
 	}
 
@@ -84,17 +87,17 @@ proc _pvp_start_match(@id) {
 	}
 
 	if(array_index_exists(@pvp['arena'], 'timer')) {
-		@pvp['starttime'] = time() / 1000
+		@pvp['starttime'] = time() / 1000;
 	}
 
-	_remove_region_entities(@pvp['arena']['region'], array('DROPPED_ITEM', 'EXPERIENCE_ORB'), @pvp['arena']['lobby'][3])
-	_pvp_initialize_players(@id, array_keys(@pvp['players']))
+	_remove_region_entities(@pvp['arena']['region'], array('DROPPED_ITEM', 'EXPERIENCE_ORB'), @pvp['arena']['lobby'][3]);
+	_pvp_initialize_players(@id, array_keys(@pvp['players']));
 
 	if(array_index_exists(@pvp['arena'], 'captain')) {
 		_pvp_msg(@pvp, color('gray').'[PVP] '.@pvp['arena']['team'][0]['color']
-			.@pvp['team'][0]['captain']. ' is the captain of '.@pvp['arena']['team'][0]['name'].'.')
+			.@pvp['team'][0]['captain']. ' is the captain of '.@pvp['arena']['team'][0]['name'].'.');
 		_pvp_msg(@pvp, color('gray').'[PVP] '.@pvp['arena']['team'][1]['color']
-			.@pvp['team'][1]['captain']. ' is the captain of '.@pvp['arena']['team'][1]['name'].'.')
+			.@pvp['team'][1]['captain']. ' is the captain of '.@pvp['arena']['team'][1]['name'].'.');
 	}
 
 	if(array_index_exists(@pvp['arena'], 'mobprotect')) {
@@ -105,7 +108,7 @@ proc _pvp_start_match(@id) {
 				set_mob_name(@entityid, @pvp['arena']['team'][@team]['color'].@pvp['arena']['team'][@team]['name']);
 				@pvp['team'][@team]['mobprotect'] = @entityid;
 			}
-		}, @id)
+		}, @id);
 	}
 
 	# MODES
@@ -302,7 +305,7 @@ proc _pvp_start_match(@id) {
 						set_pscore('blocks', @arena['team'][@team]['name'], @count, @id);
 						if(@count < 1) {
 							_pvp_end_match(@id, @pvp['team'][if(@team, 0, 1)]['players']);
-							die()
+							die();
 						}
 						play_sound(@loc, array('sound': 'ZOMBIE_UNFECT', 'volume': 5), @pvp['team'][@team]['players']);
 					}
