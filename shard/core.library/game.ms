@@ -136,9 +136,9 @@ proc _shard_create(@rules){
 					});
 				}
 				@game = array(
-					'respawnPlayers' = @respawnPlayers,
-					'rules' = @rules,
-					'lateJoin' = true,
+					'respawnPlayers': @respawnPlayers,
+					'rules': @rules,
+					'lateJoin': true,
 				);
 				export('shard', @game);
 				
