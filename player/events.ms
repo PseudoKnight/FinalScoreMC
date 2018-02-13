@@ -333,7 +333,7 @@ bind(entity_toggle_glide, null, array('type': 'PLAYER'), @event) {
 # Minecart speed control (can cause derailment and other issues after around 5/ms)
 bind(vehicle_enter, null, array('vehicletype': 'MINECART', 'passengertype': 'PLAYER'), @event) {
 	if(!has_bind(player().'vehiclecontrol')) {
-		bind(player_interact, array('id': player().'vehiclecontrol'), array('item': 0, 'hand': 'main_hand', 'player': player()), @event) {
+		bind(player_interact, array('id': player().'vehiclecontrol'), array('hand': 'main_hand', 'player': player()), @event) {
 			@vehicle = get_entity_vehicle(puuid());
 			if(@vehicle && entity_type(@vehicle) == 'MINECART') {
 				@speed = get_entity_max_speed(@vehicle) * 20;
@@ -342,7 +342,7 @@ bind(vehicle_enter, null, array('vehicletype': 'MINECART', 'passengertype': 'PLA
 				} else {
 					@speed += 1.0;
 				}
-				@speed = clamp(@speed, 0, 24);
+				@speed = clamp(@speed, 0, 40);
 				action_msg(integer(@speed).'m/s');
 				set_entity_max_speed(@vehicle, @speed / 20);
 			} else {
