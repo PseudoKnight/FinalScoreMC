@@ -173,7 +173,7 @@ proc _fw_task(@task, @state, @secs) {
 				foreach(@p in all_players('custom')) {
 					if(_fw_player(@p)) {
 						# knockback mushroom
-						pgive_item(@p, array('name': 'RED_MUSHROOM', 'meta': array('enchants': array('etype': 'KNOCKBACK', 'elevel': 10))));
+						pgive_item(@p, array('name': 'RED_MUSHROOM', 'meta': array('enchants': array(array('etype': 'KNOCKBACK', 'elevel': 10)))));
 					}
 				}
 			}
@@ -339,7 +339,7 @@ proc _fw_task(@task, @state, @secs) {
 			));
 			foreach(@p in all_players('custom')) {
 				if(_fw_player(@p)) {
-					pgive_item(@p, array('name': 'BOW', 'data': 379, 'meta': array('enchants': array('elevel': 1, 'etype': 'ARROW_FIRE'))));
+					pgive_item(@p, array('name': 'BOW', 'data': 379, 'meta': array('enchants': array(array('elevel': 1, 'etype': 'ARROW_FIRE')))));
 					pgive_item(@p, array('name': 'ARROW', 'qty': 6));
 					play_sound(ploc(@p), array('sound': if(@mob === 'BAT', 'BAT_LOOP', 'chicken_idle')), @p)
 					set_pexp(@p, 0)
@@ -437,10 +437,10 @@ proc _fw_task(@task, @state, @secs) {
 			}
 			@meta = null;
 			if(!rand(4)) {
-				@weapon['meta'] = array('enchants': array(array(
+				@weapon['meta'] = array('enchants': array(
 					array('etype': 'KNOCKBACK', 'elevel': 8),
 					array('etype': 'PUNCH', 'elevel': 8)
-				)));
+				));
 			}
 			foreach(@p in all_players('custom')) {
 				if(_fw_player(@p)) {
@@ -456,7 +456,7 @@ proc _fw_task(@task, @state, @secs) {
 					if(array_index_exists(@e, 'shooter')) {
 						@damager = @e['shooter'];
 					}
-					if(_fw_player(@damager) && (@weapon == '267:226' || array_index_exists(@e, 'shooter'))) {
+					if(_fw_player(@damager) && (@weapon['name'] == 'IRON_SWORD' || array_index_exists(@e, 'shooter'))) {
 						if(_fw_changeteam(@damager, 'winners')) {
 							play_sound(ploc(), array('sound': 'zombie_metal'), player())
 						}
