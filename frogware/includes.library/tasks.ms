@@ -61,7 +61,7 @@ proc _fw_task(@task, @state, @secs) {
 		} else {
 			foreach(@p in all_players('custom')) {
 				if(_fw_player(@p)) {
-					_clear_peffects(@p)
+					clear_peffects(@p)
 					if(get_block_at(ploc(@p)) === '133:0'
 					&& _fw_changeteam(@p, 'winners')) {
 						play_sound(ploc(@p), array('sound': 'zombie_metal'), @p)
@@ -113,7 +113,7 @@ proc _fw_task(@task, @state, @secs) {
 		} else {
 			foreach(@p in all_players('custom')) {
 				if(_fw_player(@p)) {
-					_clear_peffects(@p)
+					clear_peffects(@p)
 				}
 			}
 			_remove_region_entities('frogware')
@@ -222,7 +222,7 @@ proc _fw_task(@task, @state, @secs) {
 		} else {
 			foreach(@p in all_players('custom')) {
 				if(_fw_player(@p)) {
-					_clear_peffects(@p)
+					clear_peffects(@p)
 					if(get_block_at(ploc(@p)) === '133:0'
 					&& _fw_changeteam(@p, 'winners')) {
 						play_sound(ploc(@p), array('sound': 'zombie_metal'), @p)
@@ -264,7 +264,7 @@ proc _fw_task(@task, @state, @secs) {
 		} else {
 			foreach(@p in all_players('custom')) {
 				if(_fw_player(@p)) {
-					_clear_peffects(@p)
+					clear_peffects(@p)
 				}
 			}
 			unbind('fwcake')
@@ -470,7 +470,7 @@ proc _fw_task(@task, @state, @secs) {
 		} else {
 			foreach(@p in all_players('custom')) {
 				if(_fw_player(@p)) {
-					_clear_peffects(@p)
+					clear_peffects(@p)
 				}
 			}
 			unbind('fwdamage2')
@@ -515,7 +515,7 @@ proc _fw_task(@task, @state, @secs) {
 			_remove_region_entities('frogware')
 			foreach(@p in all_players('custom')) {
 				if(_fw_player(@p)) {
-					_clear_peffects(@p)
+					clear_peffects(@p)
 				}
 			}
 			unbind('fwdamage2');
@@ -619,7 +619,7 @@ proc _fw_task(@task, @state, @secs) {
 			_fw_clear_blocks(1);
 			foreach(@p in all_players('custom')) {
 				if(_fw_player(@p)) {
-					_clear_peffects(@p);
+					clear_peffects(@p);
 				}
 			}
 			_fw_startround(@secs);

@@ -27,7 +27,7 @@ proc _race_remove_player(@race, @player) {
 		if(array_contains(sk_current_regions(@player), @race['region'])) {
 			set_entity_loc(puuid(@player), @race['lobby']);
 		}
-		_clear_peffects(@player);
+		clear_peffects(@player);
 		_equip_kit(@player);
 	}
 }
@@ -68,7 +68,7 @@ proc _race_place_players(@race) {
 		if(!array_index_exists(@race['spawn'], @index)) {
 			@index = 0;
 		}
-		_clear_peffects(@p);
+		clear_peffects(@p);
 		_clear_pinv(@p);
 		_race_place_player(@race, @p, @race['spawn'][@index++]);
 		if(array_index_exists(@race, 'sky')) {

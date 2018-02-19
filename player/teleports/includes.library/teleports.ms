@@ -17,7 +17,7 @@ proc _warmuptp(@player, @loc, @cleareffects = false, @force = false) {
 			set_ploc(@player, @loc);
 		}
 		if(@cleareffects) {
-			_clear_peffects(@player);
+			clear_peffects(@player);
 		}
 		set_peffect(@player, 25, -1, 0.05, true, false); // don't sink into ground on tp
 		set_peffect(@player, 24, 0, 1, true, false);

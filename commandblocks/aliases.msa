@@ -124,7 +124,7 @@
 		@effects = _get_effects();
 		if(!array_index_exists(@effects, $effect)) {
 			if($effect == 'milk') {
-				_clear_peffects(@player);
+				clear_peffects(@player);
 			} else {
 				die('These are the available effect names: milk '.array_implode(array_keys(@effects), ' '));
 			}

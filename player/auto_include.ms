@@ -17,19 +17,6 @@ proc _find_player(@player) {
 }
 
 /*
-	Remove all potion effects from a player
-*/
-proc _clear_peffects(@player) {
-	if(!@player) {
-		@player = player();
-	}
-	@effects = get_peffect(@player);
-	foreach(@e in @effects) {
-		set_peffect(@player, @e['id'], 0, 0);
-	}
-}
-
-/*
 	Makes a call to the ban manager to store the player's UUID
 	@endpoint - String - The action to take in the ban manager.
 	@player - String - The player name making the call to the ban manager, or the UUID of the player.

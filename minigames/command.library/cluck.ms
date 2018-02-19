@@ -58,7 +58,7 @@ register_command('cluck', array(
 			
 			proc _cluck_start(@cluck) {
 				@cluck['state'] = 1;
-				_clear_pinv(@cluck['player']);
+				clear_pinv(@cluck['player']);
 				set_pinv(@cluck['player'], array(0: array('name': 'BOW'), 1: array('name': 'ARROW', 'qty': 10)));
 				set_plevel(@cluck['player'], 0);
 				_cluck_startround(@cluck);
@@ -136,7 +136,7 @@ register_command('cluck', array(
 					@cluck['gameover'] = @cluck['round'];
 					
 					if(ponline(@player) && pworld(@player) === @cluck['world']) {
-						_clear_pinv(@player);
+						clear_pinv(@player);
 					}
 			
 					/*

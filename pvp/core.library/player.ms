@@ -20,7 +20,7 @@ proc _player_remove(@player, @id) {
 			// player quitting, so no entity
 		}
 		set_ploc(@player, @pvp['arena']['lobby']);
-		_clear_peffects(@player);
+		clear_peffects(@player);
 		_set_pactivity(@player, null);
 		if(array_index_exists(@pvp['arena'], 'sky')) {
 			runas('~console', '/skychanger 0 '.@player);
@@ -172,7 +172,7 @@ proc _player_reset(@player, @pvp) {
 	set_phunger(@player, 20);
 	set_psaturation(@player, 0);
 	set_pexp(@player, 0);
-	_clear_peffects(@player);
+	clear_peffects(@player);
 	set_entity_rider(puuid(@player), null);
 	set_entity_rider(null, puuid(@player));
 	set_entity_fall_distance(puuid(@player), 0);

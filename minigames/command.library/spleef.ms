@@ -8,7 +8,6 @@
 	- WorldGuard plugin and SKCompat extension for regions
 	- _add_activity() and _remove_activity() procedures to keep a list of all current activities on server.
 	- _regionmsg() proc to broadcast to players only within a region.
-	- _clear_pinv() proc to remove all items from a player's inventory.
 	- _acc_add() proc to reward players with coins.
 */
 register_command('spleef', array(
@@ -313,14 +312,27 @@ register_command('spleef', array(
 						@reward = import('reward');
 						@spleefsettings['counter']++;
 		
+						foreach(@player in array_keys(@currentspleef)){
+							if(!ponline(@player) || pworld(@player) != @world || !array_contains(sk_current_regions(@player), @cfg['region']['arena'])) {
+								array_remove(@currentspleef, @player);
+								export('currentspleef', @currentspleef);
+								_regionmsg(@cfg['region']['wrapper'], color('green').'[Spleef] '.display_name(@player).color('r').' was knocked out.');
+								if(ponline(@player) && pworld() == @world) {
+									set_ploc(@player, @cfg['warp']['lobby']);
+									clear_peffects(@player);
+									clear_pinv(@player);
+									set_pmode(@player, 'ADVENTURE');
+								}
+							}
+						}
+						
 						if(array_size(@currentspleef) <= 1 && (!array_index_exists(@currentspleef, 'PseudoKnight') || psneaking('PseudoKnight') == true)) {
 							@winner = array_implode(array_keys(@currentspleef));
 							if(@winner !== '') {
 								_regionmsg(@cfg['region']['wrapper'], color('a').'[Spleef] '.display_name(@winner).color('r').' is the winner!');
 								set_ploc(@winner, @cfg['warp']['lobby']);
-								set_peffect(@winner, 1, 0, 0);
-								set_peffect(@winner, 8, 0, 0);
-								_clear_pinv(@winner);
+								clear_peffects(@winner);
+								clear_pinv(@winner);
 								set_pmode(@winner, 'ADVENTURE');
 								_acc_add(@winner, @reward);
 								tmsg(@winner, color('a').'[Spleef] '.color('r').@reward.' coins!');
@@ -336,21 +348,6 @@ register_command('spleef', array(
 							clear_task();
 							if(@worminterval) {
 								clear_task(@worminterval);
-							}
-						}
-		
-						foreach(@player in array_keys(@currentspleef)){
-							if(!ponline(@player) || pworld(@player) != @world || !array_contains(sk_current_regions(@player), @cfg['region']['arena'])) {
-								array_remove(@currentspleef, @player);
-								export('currentspleef', @currentspleef);
-								_regionmsg(@cfg['region']['wrapper'], color('green').'[Spleef] '.display_name(@player).color('r').' was knocked out.');
-								if(ponline(@player) && pworld() == @world) {
-									set_ploc(@player, @cfg['warp']['lobby']);
-									set_peffect(@player, 1, 0, 0);
-									set_peffect(@player, 8, 0, 0);
-									_clear_pinv(@player);
-									set_pmode(@player, 'ADVENTURE');
-								}
 							}
 						}
 		

@@ -23,7 +23,7 @@ register_command('timer', array(
 			set_ponfire(@player, 0);
 			set_plevel(@player, 0);
 			set_pexp(@player, 0);
-			_clear_peffects(@player);
+			clear_peffects(@player);
 		
 			if(array_index_exists(@timers, @player)) {
 				clear_task(@timers[@player][2]);

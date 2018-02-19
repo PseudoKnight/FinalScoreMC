@@ -590,46 +590,47 @@ if(array_contains(@pvp['arena']['flags'], 'nobottles')) {
 if(array_index_exists(@pvp['arena'], 'captain')) {
 	array_push(@pvp['binds'], @id.'hatpickup')
 	bind(item_pickup, array('id': @id.'hatpickup'), null, @e, @id) {
-		@pvp = import('pvp'.@id)
-		if(!array_index_exists(@pvp['players'], player()),
-			die())
+		@pvp = import('pvp'.@id);
+		if(!array_index_exists(@pvp['players'], player())) {
+			die();
+		}
 
 		if(@e['item']['type'] == @pvp['team'][0]['captainhat']['type']) {
-			consume()
+			consume();
 			if(@pvp['players'][player()]['team'] == 0) {
-				modify_event('item', null)
-				_class('unload', player(), @pvp['players'][player()]['class'], @pvp)
-				_clear_pinv()
-				_clear_peffects()
-				queue_clear(@id.'0hat')
-				@pvp['players'][player()]['class'] = @pvp['arena']['captain'][0]
-				@pvp['team'][0]['captain'] = player()
-				_class('load', player(), @pvp['players'][player()]['class'], @pvp)
-				_class('equip', player(), @pvp['players'][player()]['class'], @pvp)
+				modify_event('item', null);
+				_class('unload', player(), @pvp['players'][player()]['class'], @pvp);
+				_clear_pinv();
+				clear_peffects();
+				queue_clear(@id.'0hat');
+				@pvp['players'][player()]['class'] = @pvp['arena']['captain'][0];
+				@pvp['team'][0]['captain'] = player();
+				_class('load', player(), @pvp['players'][player()]['class'], @pvp);
+				_class('equip', player(), @pvp['players'][player()]['class'], @pvp);
 				_pvp_msg(@pvp, color('gray').'[PVP] '
-					.@pvp['arena']['team'][0]['color'].player().color('r').' became the new captain!')
-				clear_virtualchest(@id.'0', 0)
+					.@pvp['arena']['team'][0]['color'].player().color('r').' became the new captain!');
+				clear_virtualchest(@id.'0', 0);
 			} else {
-				cancel()
+				cancel();
 			}
 
 		} else if(@e['item']['type'] == @pvp['team'][1]['captainhat']['type']) {
-			consume()
+			consume();
 			if(@pvp['players'][player()]['team'] == 1) {
-				modify_event('item', null)
-				_class('unload', player(), @pvp['players'][player()]['class'], @pvp)
-				_clear_pinv()
-				_clear_peffects()
-				queue_clear(@id.'1hat')
-				@pvp['players'][player()]['class'] = @pvp['arena']['captain'][1]
-				@pvp['team'][1]['captain'] = player()
-				_class('load', player(), @pvp['players'][player()]['class'], @pvp)
-				_class('equip', player(), @pvp['players'][player()]['class'], @pvp)
+				modify_event('item', null);
+				_class('unload', player(), @pvp['players'][player()]['class'], @pvp);
+				_clear_pinv();
+				clear_peffects();
+				queue_clear(@id.'1hat');
+				@pvp['players'][player()]['class'] = @pvp['arena']['captain'][1];
+				@pvp['team'][1]['captain'] = player();
+				_class('load', player(), @pvp['players'][player()]['class'], @pvp);
+				_class('equip', player(), @pvp['players'][player()]['class'], @pvp);
 				_pvp_msg(@pvp, color('gray').'[PVP] '
-					.@pvp['arena']['team'][1]['color'].player().color('r').' became the new captain!')
-				clear_virtualchest(@id.'1', 0)
+					.@pvp['arena']['team'][1]['color'].player().color('r').' became the new captain!');
+				clear_virtualchest(@id.'1', 0);
 			} else {
-				cancel()
+				cancel();
 			}
 		}
 	}

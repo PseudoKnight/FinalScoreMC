@@ -110,5 +110,5 @@ proc _clear_pstate(@player, @state) {
 	set_phunger(@player, 20);
 	set_ptexp(@player, 0);
 	set_ponfire(@player, 0);
-	_clear_peffects(@player);
+	clear_peffects(@player);
 }

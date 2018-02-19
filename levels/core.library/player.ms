@@ -8,7 +8,7 @@ proc _level_add_player(@player, @level) {
 	@c = @level['config'];
 	@level['players'][] = @player;
 	set_pscoreboard(@player, 'level'.@level['region']);
-	_clear_peffects(@player);
+	clear_peffects(@player);
 	_clear_pinv(@player);
 	if(array_index_exists(@c, 'gear')) {
 		set_pinv(@player, @c['gear']);
@@ -31,7 +31,7 @@ proc _level_add_player(@player, @level) {
 
 proc _level_remove_player(@player, @level) {
 	array_remove_values(@level['players'], @player);
-	_clear_peffects(@player);
+	clear_peffects(@player);
 	_equip_kit(@player);
 	_set_pactivity(@player, null);
 }
@@ -45,6 +45,6 @@ proc _level_remove_spectator(@player, @level) {
 	array_remove_values(@level['spectators'], @player);
 	set_pmode(@player, 'ADVENTURE');
 	set_ploc(@player, @level['arena']['lobby']);
-	_clear_peffects(@player);
+	clear_peffects(@player);
 	_equip_kit(@player);
 }
