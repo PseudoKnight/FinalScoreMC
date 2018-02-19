@@ -38,15 +38,15 @@ proc _race_bind_events(@race) {
 	@race['binds'][] = bind(player_quit, null, null, @event, @race) {
 		if(array_index_exists(@race['players'], player())) {
 			array_remove(@race['players'], player());
-			@vehicle = get_entity_vehicle(puuid());
-			if(@vehicle) {
-				if(entity_type(@vehicle) == 'ARMOR_STAND') {
-					entity_remove(@vehicle);
-					@vehicle = get_entity_vehicle(puuid());
+			@vehicle1 = get_entity_vehicle(puuid());
+			if(@vehicle1) {
+				if(entity_type(@vehicle1) != 'ARMOR_STAND') {
+					@vehicle2 = get_entity_vehicle(@vehicle1);
+					if(@vehicle2) {
+						entity_remove(@vehicle2);
+					}
 				}
-				if(@vehicle) {
-					entity_remove(@vehicle);
-				}
+				entity_remove(@vehicle);
 			}
 			set_ploc(@race['lobby']);
 		}

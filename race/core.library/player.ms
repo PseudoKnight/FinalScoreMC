@@ -20,9 +20,15 @@ proc _race_remove_player(@race, @player) {
 		if(array_index_exists(@race, 'sky')) {
 			runas('~console', '/skychanger 0 '.@player);
 		}
-		@vehicle = get_entity_vehicle(puuid(@player));
-		if(@vehicle) {
-			try(entity_remove(@vehicle));
+		@vehicle1 = get_entity_vehicle(puuid(@player));
+		if(@vehicle1) {
+			if(entity_type(@vehicle1) != 'ARMOR_STAND') {
+				@vehicle2 = get_entity_vehicle(@vehicle1);
+				if(@vehicle2) {
+					entity_remove(@vehicle2);
+				}
+			}
+			entity_remove(@vehicle1);
 		}
 		if(array_contains(sk_current_regions(@player), @race['region'])) {
 			set_entity_loc(puuid(@player), @race['lobby']);
@@ -85,7 +91,10 @@ proc _race_place_players(@race) {
 proc _race_drop_player(@race, @player) {
 	@vehicle = get_entity_vehicle(puuid(@player));
 	if(@vehicle) {
-		if(entity_type(@vehicle) == 'ARMOR_STAND') {
+		if(entity_type(@vehicle) != 'ARMOR_STAND') {
+			@vehicle = get_entity_vehicle(@vehicle);
+		}
+		if(@vehicle) {
 			@bind = bind(entity_dismount, array('priority': 'HIGH'), null, @event) {
 				consume();
 			}
