@@ -320,7 +320,11 @@ proc _snake_drop_nuke(@snake, @game) {
 			@loc[0] = @newLoc[0];
 			@loc[1] = @newLoc[1];
 			@loc[2] = @newLoc[2];
-			set_entity_loc(@marker, @loc);
+			try {
+				set_entity_loc(@marker, @loc);
+			} catch(BadEntityException @ex) {
+				clear_task();
+			}
 		} else {
 			clear_task();
 			entity_remove(@marker);

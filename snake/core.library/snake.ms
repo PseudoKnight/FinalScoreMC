@@ -110,7 +110,7 @@ proc _snake_spawn(@player, @game) {
 		return(false);
 	}
 	@dir = _snake_direction_of(@startLoc, '0:0');
-	@headLoc = location_shift(@startLoc, @dir);
+	@headLoc = _snake_shift(@startLoc, @dir);
 
 	@snake = @game['snakes'][@player];
 	@snake['ability-count'] = array(0, 0, 0, 0, 0);
@@ -286,7 +286,7 @@ proc _snake_move(@player, @game) {
 	}
 	
 	set_block_at(@snake['loc'], @snake['tail'], false);
-	@snake['loc'] = location_shift(@snake['loc'], @snake['dir']);
+	@snake['loc'] = _snake_shift(@snake['loc'], @snake['dir']);
 	@block = get_block_at(@snake['loc']);
 	@powerup = _snake_get_powerup_from(@block);
 	
@@ -333,7 +333,7 @@ proc _snake_move(@player, @game) {
 		if(!@dir) {
 			return(false);
 		}
-		@loc = location_shift(@snake['loc'], @dir);
+		@loc = _snake_shift(@snake['loc'], @dir);
 		@block = get_block_at(@loc);
 		@powerup = _snake_get_powerup_from(@block);
 		if(@powerup && _snake_remove_powerup(@loc, @game) && _snake_powerup(@player, @powerup, @game)) {

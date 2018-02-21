@@ -225,3 +225,22 @@ proc _snake_spawn_flag(@team, @game) {
 proc _snake_loc_equals(@a, @b) {
 	return(is_array(@a) && is_array(@b) && @a[0] == @b[0] && @a[1] == @b[1] && @a[2] == @b[2]);
 }
+
+proc _snake_shift(@loc, @dir) {
+	@loc = @loc[];
+	switch(@dir) {
+		case 'down':
+			@loc[1]--;
+		case 'up':
+			@loc[1]++;
+		case 'north':
+			@loc[2]--;
+		case 'south':
+			@loc[2]++;
+		case 'west':
+			@loc[0]--;
+		case 'east':
+			@loc[0]++;
+	}
+	return(@loc);
+}
