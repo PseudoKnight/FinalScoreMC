@@ -33,12 +33,20 @@ register_command('track', array(
 						
 					// integer
 					case 'laps':
-					case 'sky':
 						if(!is_integral(@value)) {
 							die(color('gold').'Expecting an integer for '.@setting);
 						}
 						@track[@setting] = integer(@value);
 						msg(colorize("&7[Track]&r Set &e@setting&r to &a@value"));
+						
+					// two numbers
+					case 'sky':
+						if(!is_numeric(@value) || !@values || !is_numeric(@values[0])) {
+							die(color('gold').'Expecting two numbers for '.@setting);
+						}
+						@num = @values[0];
+						@track[@setting] = array(double(@value), double(@num));
+						msg(colorize("&7[Track]&r Set &e@setting&r to &a@value&r and &a@num"));
 						
 					// single location
 					case 'lobby':

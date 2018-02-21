@@ -18,7 +18,7 @@ proc _race_remove_player(@race, @player) {
 	_set_pactivity(@player, null);
 	if(ponline(@player) && pworld(@player) == @race['world']) {
 		if(array_index_exists(@race, 'sky')) {
-			runas('~console', '/skychanger 0 '.@player);
+			set_psky(@player, 0, 0);
 		}
 		@vehicle1 = get_entity_vehicle(puuid(@player));
 		if(@vehicle1) {
@@ -78,7 +78,7 @@ proc _race_place_players(@race) {
 		_clear_pinv(@p);
 		_race_place_player(@race, @p, @race['spawn'][@index++]);
 		if(array_index_exists(@race, 'sky')) {
-			runas('~console', '/skychanger '.@race['sky'].' '.@p);
+			set_psky(@p, @race['sky'], 0);
 		}
 		if(array_index_exists(@race, 'effect')) {
 			foreach(@id: @effect in @race['effect']) {

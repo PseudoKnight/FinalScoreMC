@@ -71,7 +71,6 @@ register_command('arena', array(
 					case 'saturation':
 					case 'hunger':
 					case 'rounds':
-					case 'sky':
 
 						if(!is_integral(@args[3])) {
 							die(color('gold').@setting . ' requires an integer.');
@@ -82,12 +81,13 @@ register_command('arena', array(
 					# 2 integer options
 					case 'timer':
 					case 'teamratio':
+					case 'sky':
 
 						if(array_size(@args) < 5 || !is_integral(@args[3]) || !is_integral(@args[4])) {
 							die(color('gold').@setting . ' requires two integers.');
 						}
 						@arena[@setting] = array(integer(@args[3]), integer(@args[4]));
-						msg(colorize('Set &a' . @setting . '&r to &a' . @args[3] . '&r : &a' . @args[4]));
+						msg(colorize('Set &a' . @setting . '&r to &a' . @args[3] . '&r and &a' . @args[4]));
 
 					# string options
 					case 'class_picking':
