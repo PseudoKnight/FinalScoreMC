@@ -439,7 +439,7 @@ proc _fw_task(@task, @state, @secs) {
 			if(!rand(4)) {
 				@weapon['meta'] = array('enchants': array(
 					array('etype': 'KNOCKBACK', 'elevel': 8),
-					array('etype': 'PUNCH', 'elevel': 8)
+					array('etype': 'ARROW_KNOCKBACK', 'elevel': 8)
 				));
 			}
 			foreach(@p in all_players('custom')) {
