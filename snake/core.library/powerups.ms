@@ -390,7 +390,7 @@ proc _snake_drop_nuke(@snake, @game) {
 proc _snake_drop_tnt(@loc, @dir) {
 	play_sound(@loc, associative_array('sound': 'FUSE', 'volume': 4));
 	if(@dir) {
-		@loc = location_shift(@loc, @dir);
+		@loc = _snake_shift(@loc, @dir);
 	}
 	@loc[0] += 0.5;
 	@loc[1] += 0.5;
@@ -480,9 +480,9 @@ proc _snake_launch_missile(@loc, @dir, @game) {
 				} else {
 					play_sound(@missile['loc'], associative_array('sound': 'FIZZ', 'volume': 4));
 				}
-				@missile['loc'][0] += 0.5;
-				@missile['loc'][1] += 0.5;
-				@missile['loc'][2] += 0.5;
+				@missile['loc']['x'] += 0.5;
+				@missile['loc']['y'] += 0.5;
+				@missile['loc']['z'] += 0.5;
 				play_effect(@missile['loc'], 'CLOUD', associative_array('speed': 0.08, 'particleCount': 8, 'radius': 40));
 			}
 		} catch(Exception @ex) {
@@ -533,9 +533,9 @@ proc _snake_shoot_laser(@player, @loc, @dir, @game) {
 			break();
 		}
 	}
-	@loc[0] += 0.5;
-	@loc[1] += 0.5;
-	@loc[2] += 0.5;
+	@loc['x'] += 0.5;
+	@loc['y'] += 0.5;
+	@loc['z'] += 0.5;
 	@blocks[] = @loc;
 	@game['snakes'][@player]['laser-blocks'] = @blocks;
 }
