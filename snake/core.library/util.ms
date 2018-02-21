@@ -54,9 +54,12 @@ proc _snake_dir_of_surface(@loc, @notThisDir) {
 }
 
 proc _snake_safe_dir(@snake) {
-	@loc = location_shift(@snake['loc'], @snake['last-dir']);
-	if(_snake_safe_block(get_block_at(@loc), @loc)) {
-		return(@snake['last-dir']);
+	@loc = @snake['loc'];
+	if(@snake['last-dir']) {
+		@loc = location_shift(@loc, @snake['last-dir']);
+		if(_snake_safe_block(get_block_at(@loc), @loc)) {
+			return(@snake['last-dir']);
+		}
 	}
 	@turn = _snake_turn(@snake['top'], @snake['dir']);
 	if(is_array(@turn)) {
