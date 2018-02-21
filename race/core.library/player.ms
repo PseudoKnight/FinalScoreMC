@@ -78,7 +78,7 @@ proc _race_place_players(@race) {
 		_clear_pinv(@p);
 		_race_place_player(@race, @p, @race['spawn'][@index++]);
 		if(array_index_exists(@race, 'sky')) {
-			set_psky(@p, @race['sky'], 0);
+			set_psky(@p, @race['sky'][0], @race['sky'][1]);
 		}
 		if(array_index_exists(@race, 'effect')) {
 			foreach(@id: @effect in @race['effect']) {
