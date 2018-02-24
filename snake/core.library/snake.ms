@@ -109,7 +109,7 @@ proc _snake_spawn(@player, @game) {
 	if(!@startLoc) {
 		return(false);
 	}
-	@dir = _snake_direction_of(@startLoc, '0:0');
+	@dir = _snake_direction_of(@startLoc, '0:0') ||| 'up';
 	@headLoc = _snake_shift(@startLoc, @dir);
 
 	@snake = @game['snakes'][@player];
