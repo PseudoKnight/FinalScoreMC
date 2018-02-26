@@ -266,8 +266,39 @@ register_command('timer', array(
 				store_value('times', @id, @times);
 		
 				// Recalculate average placement
-				@id = 'all';
-				include('subcommands.library/recalculate.ms');
+				@times = get_values('times');
+				x_new_thread('times', closure(){
+					@players = array();
+					foreach(@key: @time in @times) {
+						if(is_array(@time) && @key != 'times') {
+							@lastTime = 1.0;
+							@lastCount = 0;
+							foreach(@i: @t in @time) {
+								if(@t[2] == @lastTime){
+									@lastCount++;
+								} else {
+									@lastCount = 0;
+								}
+								if(!array_index_exists(@players, @t[0])) {
+									@players[@t[0]] = array(@t[1], array_size(@time) - @i + @lastCount);
+								} else {
+									@players[@t[0]][1] += array_size(@time) - @i + @lastCount;
+								}
+								@lastTime = @t[2];
+							}
+						}
+					}
+					@averages = array();
+					foreach(@uuid: @score in @players) {
+						@averages[] = array(@uuid, @score[0], @score[1]);
+					}
+					array_sort(@averages, closure(@left, @right){
+						return(@left[2] < @right[2]);
+					});
+					x_run_on_main_thread_later(closure(){
+						store_value('times', @averages[0..19]);
+					});
+				});
 		
 			} else {
 				launch_firework(@loc, array(
