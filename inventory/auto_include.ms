@@ -167,3 +167,26 @@ proc _get_inventory_count(@loc, @item) {
 	}
 	return(@count);
 }
+
+/*
+	Converts short-hand aliases to functional item formats.
+	This will need to be updated for 1.13.
+*/
+proc _data_values(@item) {
+	@itemMatch = reg_match('^([\\w\\s]+)(?::(\\d{1,5}))?$', @item);
+	if(!@itemMatch) {
+		return(null);
+	}
+	if(!is_numeric(@itemMatch[1])) {
+		@itemMatch[1] = data_values(@itemMatch[1]);
+		if(!@itemMatch[1]) {
+			return(null);
+		}
+		if(@itemMatch[2] && string_position(@itemMatch[1], ':') == -1) {
+			@item = @itemMatch[1].':'.@itemMatch[2];
+		} else {
+			@item = @itemMatch[1];
+		}
+	}
+	return(@item);
+}
