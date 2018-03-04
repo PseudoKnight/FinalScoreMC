@@ -150,11 +150,11 @@ register_command('pvp', array(
 				}
 				@count = 0;
 				if(@args[1] == 'all') {
-					@count = x_recompile_includes('..');
+					@count = x_recompile_includes('');
 				} else if(@args[1] == 'core') {
-					@count = x_recompile_includes('../core.library');
+					@count = x_recompile_includes('core.library');
 				} else {
-					@count = x_recompile_includes('../core.library/../'.@args[1].'.library');
+					@count = x_recompile_includes('core.library/../'.@args[1].'.library');
 				}
 				msg(color('green').'Done recompiling '.@args[1].'! ('.@count.')');
 

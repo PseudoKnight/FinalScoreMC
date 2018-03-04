@@ -17,8 +17,8 @@ register_command('level', array(
 				if(!has_permission('group.engineer')) {
 					die(color('gold').'No permission.');
 				}
-				x_recompile_includes('../core.library');
-				x_recompile_includes('../mobs.library');
+				x_recompile_includes('core.library');
+				x_recompile_includes('mobs.library');
 				msg(color('green').'Done!');
 			
 			case 'setspawn':

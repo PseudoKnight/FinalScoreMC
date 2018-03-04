@@ -55,7 +55,7 @@ register_command('snake', array(
 				|| array_contains(get_scoreboards(), 'snake')) {
 					die(color('gold').'Already running.');
 				}
-				x_recompile_includes('../core.library');
+				x_recompile_includes('core.library');
 				msg(color('green').'Done!');
 				
 			case 'end':

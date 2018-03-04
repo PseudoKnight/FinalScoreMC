@@ -31,7 +31,7 @@ register_command('race', array(
 				if(!has_permission('group.admin')) {
 					die(color('gold').'Do not have permission.');
 				}
-				@num = x_recompile_includes('../core.library');
+				@num = x_recompile_includes('core.library');
 				msg(color('green').'Recompiled '.@num.' files.');
 				
 			default:
