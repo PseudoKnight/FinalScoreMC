@@ -1,13 +1,13 @@
-proc _get_shop(@loc) {
+proc _sign_get_shop(@location) {
 	try {
-		@sign = get_sign_text(@loc);
+		@sign = get_sign_text(@location);
 	} catch(RangeException @ex) {
 		return(null);
 	}
 	
 	# Get owner
 	@owner = @sign[3];
-	if(length(@owner) < 2) {
+	if(length(@owner) < 3) {
 		return(null);
 	}
 	
@@ -19,6 +19,7 @@ proc _get_shop(@loc) {
 	} else {
 		@item = _data_values(@itemMatch[1]);
 		if(!@item) {
+			console('[Shop] Cannot find item value for '.@itemMatch[1], false);
 			return(null);
 		}
 	}
@@ -44,33 +45,33 @@ proc _get_shop(@loc) {
 			@owner = @pdata['name'];
 			if(length(@owner) < 16) {
 				@sign[3] = @pdata['name'];
-				set_sign_text(@loc, @sign);
+				set_sign_text(@location, @sign);
 			} else {
 				console('Cannot convert shop owner from '.@sign[3].' to '.@owner.' due to length.', false);
-				console('Location: '.@loc, false);
+				console('Location: '.@location, false);
 			}
 		}
 		
 		return(array(
 			'item': @item,
-			'key': replace(@item, ':', '.'),
 			'buy': @buy,
 			'sell': @sell,
 			'owner': @owner,
 		));
 	}
+	return(null);
 }
 
-proc _is_shop_sign(@sign) {
-	return(length(@sign[3]) > 2 && _get_shop_item(@sign[0]) && (_get_shop_price(@sign[1]) || _get_shop_price(@sign[2])));
+proc _is_shop_sign(@lines) {
+	return(length(@lines[3]) > 2 && _get_shop_item(@lines[0]) && (_get_shop_price(@lines[1]) || _get_shop_price(@lines[2])));
 }
 
-proc _get_shop_item(@string) {
-	return(reg_match('^\\[(.+)\\]$', @string));
+proc _get_shop_item(@line) {
+	return(reg_match('^\\[(.+)\\]$', @line));
 }
 
-proc _get_shop_price(@string) {
-	return(reg_match('^(?:Buy|Sell) ((\\d{1,4}) for (\\d{1,4})([degi]))$', @string));
+proc _get_shop_price(@line) {
+	return(reg_match('^(?:Buy|Sell) ((\\d{1,4}) for (\\d{1,4})([degi]))$', @line));
 }
 
 proc _is_shop_owner(@player, @shopOwner) {

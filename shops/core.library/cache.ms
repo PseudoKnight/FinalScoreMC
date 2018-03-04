@@ -1,5 +1,6 @@
 proc _cache_shop(@shop, @location) {
-	@shops = get_value('shop', @shop['key']);
+	@key = replace(@shop['item'], ':', '.');
+	@shops = get_value('shop', @key);
 	if(!@shops) {
 		@shops = array(array(), array());
 	}
@@ -129,14 +130,15 @@ proc _cache_shop(@shop, @location) {
 	}
 
 	if(!@shops[0] && !@shops[1]) {
-		clear_value('shop', @shop['key']);
+		clear_value('shop', @key);
 	} else {
-		store_value('shop', @shop['key'], @shops);
+		store_value('shop', @key, @shops);
 	}
 }
 
 proc _remove_cached_shop(@shop, @location) {
-	@shops = get_value('shop', @shop['key']);
+	@key = replace(@shop['item'], ':', '.');
+	@shops = get_value('shop', @key);
 	if(!@shops) {
 		die();
 	}
@@ -175,8 +177,8 @@ proc _remove_cached_shop(@shop, @location) {
 	}
 
 	if(!@shops[0] && !@shops[1]) {
-		clear_value('shop', @shop['key']);
+		clear_value('shop', @key);
 	} else {
-		store_value('shop', @shop['key'], @shops);
+		store_value('shop', @key, @shops);
 	}
 }

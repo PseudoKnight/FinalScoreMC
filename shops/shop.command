@@ -11,7 +11,7 @@ register_command('shop', array(
 		if(!@args) {
 			return(false);
 		}
-		include('core.library/shop.ms');
+		include('core.library/sign.ms');
 		
 		if(@args[0] == 'list') {
 			if(array_size(@args) == 1) {
@@ -36,7 +36,7 @@ register_command('shop', array(
 			}
 			@save = false;
 			foreach(@key: @shop in @shops[0]) {
-				if(@shop['location'][3] != 'shard' && (@shopsign = _get_shop(@shop['location'])) && @shopsign['item'] == @item) {
+				if(@shop['location'][3] != 'shard' && (@shopsign = _sign_get_shop(@shop['location'])) && @shopsign['item'] == @item) {
 					msg(colorize('Buy '.@shop['price'].'&7 ('.@shop['stock'].') &e'.@shop['owner'].'&7 '
 					.@shop['location'][0].','.@shop['location'][1].','.@shop['location'][2].' '._worldname(@shop['location'][3])));
 				} else {
@@ -47,7 +47,7 @@ register_command('shop', array(
 			msg(color('gray').'-----------------------------------------------------');
 			set_timeout(50, closure(){
 				foreach(@key: @shop in @shops[1]) {
-					if(@shop['location'][3] != 'shard' && (@shopsign = _get_shop(@shop['location'])) && @shopsign['item'] == @item) {
+					if(@shop['location'][3] != 'shard' && (@shopsign = _sign_get_shop(@shop['location'])) && @shopsign['item'] == @item) {
 						msg(colorize('Sell '.@shop['price'].'&7 ('.@shop['stock'].') &e'.@shop['owner'].'&7 '
 						.@shop['location'][0].','.@shop['location'][1].','.@shop['location'][2].' '._worldname(@shop['location'][3])));
 					} else {
@@ -82,7 +82,7 @@ register_command('shop', array(
 		
 			@loc = pcursor();
 		
-			if(!@shop = _get_shop(@loc)) {
+			if(!@shop = _sign_get_shop(@loc)) {
 				die(color('gold').'[Shop] There is no shop sign there.');
 			}
 		
@@ -99,7 +99,8 @@ register_command('shop', array(
 			set_sign_text(@loc, @signText);
 			msg(color('green').'[Shop] Modified');
 		
-			@shops = get_value('shop', @shop['key']);
+			@key = replace(@shop['item'], ':', '.');
+			@shops = get_value('shop', @key);
 			if(!@shops) {
 				die();
 			}
@@ -155,7 +156,7 @@ register_command('shop', array(
 					break();
 				}
 			}
-			store_value('shop', @shop['key'], @shops);
+			store_value('shop', @key, @shops);
 			
 		} else {
 			return(false);
