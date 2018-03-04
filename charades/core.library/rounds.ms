@@ -184,19 +184,23 @@ proc _end_build(@guesser, @word) {
 					open_book(@p, @pages);
 				}
 				set_timeout(10000, closure(){
-					@player = array_rand(@charades['votes'], 1)[0];
-					@charades['category'] = @charades['votes'][@player];
-					_msg_charades(color('yellow').@player.' chose '.replace(to_upper(@charades['category']), '_', ' '));
-					if(rand(2)) {
-						@charades['seconds'] = 50.0;
-						_msg_charades(color('red').'SPEED ROUND!');
-					} else {
-						@charades['seconds'] = 150.0;
-					}
-					try {
-						_queue_next_builder();
-					} catch(Exception @ex) {
+					if(array_size(@charades['players']) < 3) {
 						_end_game();
+					} else {
+						@player = array_rand(@charades['votes'], 1)[0];
+						@charades['category'] = @charades['votes'][@player];
+						_msg_charades(color('yellow').@player.' chose '.replace(to_upper(@charades['category']), '_', ' '));
+						if(!rand(3)) {
+							@charades['seconds'] = 50.0;
+							_msg_charades(color('red').'SPEED ROUND!');
+						} else {
+							@charades['seconds'] = 150.0;
+						}
+						try {
+							_queue_next_builder();
+						} catch(Exception @ex) {
+							_end_game();
+						}
 					}
 				});
 			}
