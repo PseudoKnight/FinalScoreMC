@@ -67,8 +67,12 @@ bind(player_teleport, null, null, @event) {
 				load_chunk(@to);
 				foreach(@e in @entities) {
 					set_entity_loc(@e, @to);
-					set_leashholder(@e, @uuid);
 				}
+				set_timeout(50, closure(){
+					foreach(@e in @entities) {
+						set_leashholder(@e, @uuid);
+					}
+				});
 			} catch(Exception @ex) {
 				msg('Failed to teleport some leashed mobs with you.');
 				console('Failed to teleport some leashed mobs.', false);
