@@ -81,7 +81,7 @@
 			@start = time();
 			run('/recompile -rf'.if(!@clearGlobal, 'g'));
 			@stop = time();
-			broadcast(color('yellow').'Recompiled scripts!'.if(@message, ' "'.@message.'"').' ('.round((@stop - @start) / 1000, 1).'s)');
+			broadcast(color('yellow').'Recompiled scripts!'.if(@message, ' "'.@message.'"').' ('.round((@stop - @start) / 1000, 2).'s)');
 			export('recompile', null);
 		});
 	});
@@ -120,7 +120,7 @@
 
 	foreach(@arg in parse_args($)) {
 		if(is_numeric(@arg)) {
-			@radius = min(@arg, 128);
+			@radius = min(@arg, 64);
 		} else if(@arg === '-n') {
 			@removenamed = true;
 		} else if(@arg === '-e') {
