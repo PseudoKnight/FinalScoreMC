@@ -85,7 +85,8 @@ register_command('shop', array(
 			if(!@shop = _sign_get_shop(@loc)) {
 				die(color('gold').'[Shop] There is no shop sign there.');
 			}
-		
+			
+			include('core.library/shop.ms');
 			if(!_is_shop_owner(player(), @shop['owner']) && !has_permission('shop.admin')) {
 				die(color('gold').'[Shop] You do not own this shop.');
 			}
@@ -104,6 +105,8 @@ register_command('shop', array(
 			if(!@shops) {
 				die();
 			}
+			
+			include('chest.ms');
 		
 			@loc = array(integer(@loc['x']), integer(@loc['y']), integer(@loc['z']), @loc['world']);
 		
@@ -111,7 +114,7 @@ register_command('shop', array(
 			foreach(@i: @s in @shops[@t]) {
 				if(@s['location'] == @loc) {
 					if(@t == 0) {
-						@count = _get_inventory_count(location_shift(@loc, 'down'), @shop['item']);
+						@count = _chest_item_count(location_shift(@loc, 'down'), @shop['item']);
 						if(is_null(@count)) {
 							die(color(6).'[Shop] No container below this shop sign.');
 						}
@@ -138,7 +141,7 @@ register_command('shop', array(
 							default:
 								die(color(6).'[Shop] Unknown currency.');
 						}
-						@count = _get_inventory_count(location_shift(@loc, 'down'), @currency.':0');
+						@count = _chest_item_count(location_shift(@loc, 'down'), @currency.':0');
 						if(is_null(@count)) {
 							die(color(6).'[Shop] No container below this shop sign.');
 						}

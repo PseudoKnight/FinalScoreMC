@@ -73,18 +73,3 @@ proc _get_shop_item(@line) {
 proc _get_shop_price(@line) {
 	return(reg_match('^(?:Buy|Sell) ((\\d{1,4}) for (\\d{1,4})([degi]))$', @line));
 }
-
-proc _is_shop_owner(@player, @shopOwner) {
-	if(length(@player) > 15) {
-		try {
-			if(substr(@shopOwner, 0, 13) == substr(@player, 0, 13)) {
-				return(true);
-			}
-		} catch(RangeException @ex) {
-			return(false);
-		}
-	} else if(@shopOwner == @player) {
-		return(true);
-	}
-	return(false);
-}

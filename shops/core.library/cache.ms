@@ -12,8 +12,9 @@ proc _cache_shop(@shop, @location) {
 		@location['world'],
 	);
 
+	include('chest.ms');
 	if(@shop['buy']) {
-		@count = _get_inventory_count(location_shift(@location, 'down'), @shop['item']);
+		@count = _chest_item_count(location_shift(@location, 'down'), @shop['item']);
 		if(is_null(@count)) {
 			return();
 		}
@@ -78,7 +79,7 @@ proc _cache_shop(@shop, @location) {
 			die();
 		}
 
-		@count = _get_inventory_count(location_shift(@location, 'down'), @currency.':0');
+		@count = _chest_item_count(location_shift(@location, 'down'), @currency.':0');
 		if(is_null(@count)) {
 			return();
 		}
@@ -149,14 +150,15 @@ proc _remove_cached_shop(@shop, @location) {
 		integer(@location['z']),
 		@location['world'],
 	);
-
+	
+	include('shop.ms');
 	if(@shop['buy'] && @shops[0]) {
 		foreach(@i: @s in @shops[0]) {
 			if(@s['location'][0] == @location[0]
 			&& @s['location'][1] == @location[1]
 			&& @s['location'][2] == @location[2]
 			&& @s['location'][3] == @location[3]
-			&& (_is_shop_owner(player(), @shop['owner']) || has_permission('shop.admin'))) {
+			&& (_is_shop_owner(@shop) || has_permission('shop.admin'))) {
 				array_remove(@shops[0], @i);
 				break();
 			}
@@ -169,7 +171,7 @@ proc _remove_cached_shop(@shop, @location) {
 			&& @s['location'][1] == @location[1]
 			&& @s['location'][2] == @location[2]
 			&& @s['location'][3] == @location[3]
-			&& (_is_shop_owner(player(), @shop['owner']) || has_permission('shop.admin'))) {
+			&& (_is_shop_owner(@shop) || has_permission('shop.admin'))) {
 				array_remove(@shops[1], @i);
 				break();
 			}

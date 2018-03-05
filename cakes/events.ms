@@ -86,7 +86,12 @@ bind(player_interact, null, array('block': 68), @event) {
 	@signtext = get_sign_text(@event['location'])
 	if(@cost = reg_match('(?:\\u00a7[0-9a-o])+\\-(\\d{1,3})\\sCoins', @signtext[3])) {
 		@chestloc = location_shift(@event['location'], 'down')
-		@count = _get_inventory_count(@chestloc, 'all')
+		@count = 0;
+		foreach(@item in get_inventory(@chestLoc)) {
+			if(@item) {
+				@count++;
+			}
+		}
 		@coins = _acc_balance(player())
 		if(@event['action'] === 'left_click_block') {
 			msg(color('yellow').'[Coin Shop] '.color(r).@count.if(@count == 1, ' item', ' items').' left. '
