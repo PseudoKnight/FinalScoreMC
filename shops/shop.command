@@ -87,7 +87,7 @@ register_command('shop', array(
 			}
 			
 			include('core.library/shop.ms');
-			if(!_is_shop_owner(player(), @shop['owner']) && !has_permission('shop.admin')) {
+			if(!_is_shop_owner(@shop) && !has_permission('shop.admin')) {
 				die(color('gold').'[Shop] You do not own this shop.');
 			}
 		

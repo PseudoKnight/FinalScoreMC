@@ -18,7 +18,7 @@ bind(block_break, array('priority': 'LOWEST'), array('name': 'WALL_SIGN'), @even
 		include('core.library/sign.ms');
 		if(@shop = _sign_get_shop(@event['location'])) {
 			include('core.library/shop.ms');
-			if(_is_shop_owner(player(), @shop['owner'])) {
+			if(_is_shop_owner(@shop)) {
 				if(@event['location']['world'] != 'shard') {
 					include('core.library/cache.ms');
 					_remove_cached_shop(@shop, @event['location']);
@@ -42,7 +42,7 @@ bind(block_place, null, array('name': 'HOPPER'), @event) {
 				include('core.library/sign.ms');
 				if(@shop = _sign_get_shop(@signLoc)) {
 					include('core.library/shop.ms');
-					if(!_is_shop_owner(player(), @shop['owner'])) {
+					if(!_is_shop_owner(@shop)) {
 						cancel();
 						msg(color('red').'[Shop] You cannot place a hopper below a shop you don\'t own.');
 					}
@@ -57,7 +57,7 @@ bind(player_interact, array('priority': 'LOWEST'), array('block': 54, 'button': 
 		include('core.library/sign.ms');
 		if(@shop = _sign_get_shop(location_shift(@event['location'], 'up'))) {
 			include('core.library/shop.ms');
-			if(!_is_shop_owner(player(), @shop['owner'])) {
+			if(!_is_shop_owner(@shop)) {
 				cancel();
 				msg(color('red').'[Shop] You do not own this shop.');
 			}
@@ -70,7 +70,7 @@ bind(player_interact, array('priority': 'LOWEST'), array('block': 146, 'button':
 		include('core.library/sign.ms');
 		if(@shop = _sign_get_shop(location_shift(@event['location'], 'up'))) {
 			include('core.library/shop.ms');
-			if(!_is_shop_owner(player(), @shop['owner'])) {
+			if(!_is_shop_owner(@shop)) {
 				cancel();
 				msg(color('red').'[Shop] You do not own this shop.');
 			}
