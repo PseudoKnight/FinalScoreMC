@@ -4,7 +4,7 @@
 	Also lets players incrementally fill cauldrons with water bottles.
 	
 	Undyeing More items
-	Stained clay, Wool, Carpet
+	Stained clay, Wool, Carpet, Shulker Boxes
 */
 bind(player_interact, null, array('block': 118, 'button': 'right'), @event) {
 	@slot = null;
@@ -26,52 +26,58 @@ bind(player_interact, null, array('block': 118, 'button': 'right'), @event) {
 		}
 	} else if(@data > 0) {
 		// There's some water
-		@result = null;
-		switch(split(':', @event['item'])[0]) {
-			case '325': // bucket
+		@item = pinv(player(), @slot);
+		@newItem = @item[];
+		switch(@item['name']) {
+			case 'BUCKET':
 				if(@data < 3) {
 					die();
 				}
-				@result = 'WATER_BUCKET';
-			case '374':
-				@result = 'WATER_BOTTLE';
-			case '159':
-				@result = 'HARD_CLAY';
-			case '35':
-				@result = 'WOOL';
-			case '171':
-				@result = 'CARPET';
+				@newItem['name'] = 'WATER_BUCKET';
+			case 'GLASS_BOTTLE':
+				@newItem['name'] = 'POTION';
+			case 'STAINED_CLAY':
+				@newItem['name'] = 'HARD_CLAY';
+			case 'WOOL':
+				@newItem['data'] = 0;
+			case 'CARPET':
+				@newItem['data'] = 0;
 			default:
-				die();
+				if(string_ends_with(@item['name'], '_SHULKER_BOX')) {
+					// 1.13
+					@newItem['name'] = 'PURPLE_SHULKER_BOX';
+				} else {
+					die();
+				}
 		}
-		@loc = @event['location'];
+		@loc = @event['location'][];
 		@loc['x'] += 0.5;
 		@loc['y'] += 1;
 		@loc['z'] += 0.5;
 		play_effect(@loc, 'SPLASH', array('particleCount': 10, 'offsetX': 0.15, 'offsetZ': 0.15));
 		play_sound(@loc, array('sound': 'SPLASH', 'pitch': 2, 'volume': 0.3));
 		cancel();
-		@item = pinv(player(), @slot);
 		if(@item['qty'] == 1) {
-			set_pinv(player(), @slot, array('name': @result));
+			set_pinv(player(), @slot, @newItem);
 		} else {
 			@item['qty']--;
 			set_pinv(player(), @slot, @item);
-			@remaining = pgive_item(array('name': @result));
+			@remaining = pgive_item(@newItem);
 			if(@remaining) {
-				drop_item(array('name': @result));
+				@newItem['qty'] = @remaining;
+				drop_item(@newItem);
 			}
 		}
 
 		// Remove some water from the cauldron if sneaking
 		if(psneaking()) {
-			if(@result == 373) {
+			if(@newItem['name'] == 'POTION') {
 				@data--;
 				set_block_at(@event['location'], '118:'.@data);
 			} else {
 				set_block_at(@event['location'], '118:0');
 			}
-		}
+		}1
 
 	}
 }
