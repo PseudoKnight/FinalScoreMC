@@ -44,7 +44,7 @@
 						if(!@value) {
 							sudo('/region flag '.@region.' deny-spawn');
 						} else if(@value === 'allow') {
-							sudo('/region flag '.@region.' deny-spawn GIANT');
+							sudo('/region flag '.@region.' deny-spawn -e');
 						} else if(@value === 'deny') {
 							sudo('/region flag '.@region.' deny-spawn CREEPER,ENDERMAN,HUSK,SKELETON,SLIME,SPIDER,STRAY,WITCH,ZOMBIE,ZOMBIE_VILLAGER');
 						}
