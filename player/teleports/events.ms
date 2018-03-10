@@ -35,9 +35,12 @@ bind(player_teleport, null, null, @event) {
 	
 	if(_is_survival_world(@fromWorld) && _is_survival_world(@toWorld)) {
 		@uuid = puuid();
-		
-		// Teleport living vehicle with player
-		@vehicle = get_entity_vehicle(@uuid);
+
+		try {
+			@vehicle = get_entity_vehicle(@uuid);
+		} catch(BadEntityException @ex) {
+			die();
+		}
 		@type = entity_type(@vehicle);
 		if(array_contains(array('DONKEY', 'HORSE', 'LLAMA', 'MULE', 'SKELETON_HORSE', 'ZOMBIE_HORSE'), @type)) {
 			set_timeout(50, closure(){
