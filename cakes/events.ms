@@ -85,7 +85,7 @@ bind(player_interact, null, array('block': 92), @event) {
 bind(player_interact, null, array('block': 68), @event) {
 	@signtext = get_sign_text(@event['location'])
 	if(@cost = reg_match('(?:\\u00a7[0-9a-o])+\\-(\\d{1,3})\\sCoins', @signtext[3])) {
-		@chestloc = location_shift(@event['location'], 'down')
+		@chestLoc = location_shift(@event['location'], 'down')
 		@count = 0;
 		foreach(@item in get_inventory(@chestLoc)) {
 			if(@item) {
@@ -101,7 +101,7 @@ bind(player_interact, null, array('block': 68), @event) {
 				die(color('yellow').'[Coin Shop] '.color('r').'There are no items left.')
 			}
 			if(@coins < @cost[1], die(color('yellow').'[Coin Shop] '.color(r).'You only have '.color('red').floor(@coins).color('r').' left.'))
-			@chest = get_inventory(@chestloc);
+			@chest = get_inventory(@chestLoc);
 			foreach(@c in 0..27) {
 				if(!is_null(@chest[@c])) {
 					@pinv = pinv();
@@ -114,7 +114,7 @@ bind(player_interact, null, array('block': 68), @event) {
 								@chest[@c]['qty'] += @pinv[@p]['qty'];
 							}
 							set_pinv(player(), @p, @chest[@c]);
-							set_inventory_item(@chestloc, @c, null);
+							set_inventory_item(@chestLoc, @c, null);
 							_acc_subtract(player(), @cost[1]);
 							msg(color('yellow').'[Coin Shop] '.color('r').'Transaction successful. Your coins: '.floor(@coins - @cost[1]).' (-'.@cost[1].')');
 							break(2);
