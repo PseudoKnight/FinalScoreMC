@@ -147,7 +147,7 @@ proc _pvp_start_match(@id) {
 			@timeleft = @minleft.':'.if(@secsleft < 10, '0').@secsleft;
 			// @percentage = round((@totalsecsleft / (@pvp['arena']['timer'][1] * 60)) * 100)
 			if(extension_exists('CHNaughty')) {
-				foreach(@p in array_keys(@pvp['players'])) {
+				foreach(@p in array_merge(array_keys(@pvp['players']), @pvp['spectators'])) {
 					action_msg(@p, @timeleft);
 				}
 			}
