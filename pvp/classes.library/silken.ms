@@ -1,5 +1,6 @@
 switch(@action) {
 case 'load':
+	set_pcooldown('WEB', 0);
 	bind(entity_damage, array('id': @player.'damage'), array('type': 'PLAYER', 'cause': 'ENTITY_ATTACK'), @e, @p = @player) {
 		if(@e['damager'] == @p) {
 			@weapon = pinv(@p, null);
@@ -10,38 +11,37 @@ case 'load':
 		}
 	}
 
-	bind(player_interact, array('id': @player.'web'), array('player': @player, 'button': 'right', 'item': 291), @e, @pvp) {
+	bind(player_interact, array('id': @player.'web'), array('player': @player, 'button': 'right', 'item': 30), @e, @pvp) {
 		@item = pinv(player(), null);
 		if(@item && pcooldown(@item['name']) == 0) {
-			spawn_falling_block(location_shift(ploc(), 'up', 2), 30, get_vector(ploc(), 1.5));
-			set_pcooldown(@item['name'], 8);
-		}
-	}
-	
-	bind(entity_change_block, array('id': @player.'webhit'), array('to': 30), @event, @pvp) {
-		cancel();
-		consume();
-		if(@event['from'] == '0') {
-			@loc = @event['location'];
-			foreach(@player in array_merge(array_keys(@pvp['players']), @pvp['spectators'])) {
-				psend_block_change(@player, @loc, 30);
+			@item['qty'] = 1;
+			ptake_item(@item);
+			set_pcooldown(@item['name'], 10000 / 20);
+			@loc = location_shift(ploc(), 'up', 2.5);
+			@v = get_vector(@loc);
+			@loc['x'] += @v['x'];
+			@loc['y'] += @v['y'];
+			@loc['z'] += @v['z'];
+			for(@i = 0, @i < 100, @i++) {
+				queue_push(closure(){
+					@loc['x'] += @v['x'];
+					@loc['y'] += @v['y'];
+					@loc['z'] += @v['z'];
+					if(get_block_at(@loc) == '0:0') {
+						foreach(@p in array_keys(@pvp['players'])) {
+							psend_block_change(@p, @loc, 30);
+						}
+						play_sound(@loc, array('sound': 'ENTITY_SPIDER_AMBIENT', 'pitch': 2));
+					} else {
+						queue_clear(player().'web');
+					}
+				}, player().'web');
 			}
 		}
 	}
 	
-	bind(item_spawn, array('id': @player.'webdrop'), array('item': 30), @event, @pvp) {
-		cancel();
-		if(get_block_at(@event['location']) == '0:0') {
-			foreach(@player in array_merge(array_keys(@pvp['players']), @pvp['spectators'])) {
-				psend_block_change(@player, @event['location'], 30);
-			}
-		}
-	}
-
 case 'unload':
 	unbind(@player.'damage');
 	unbind(@player.'web');
-	unbind(@player.'webhit');
-	unbind(@player.'webdrop');
 
 }

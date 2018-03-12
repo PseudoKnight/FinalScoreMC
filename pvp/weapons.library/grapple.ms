@@ -7,16 +7,9 @@ bind(projectile_launch, array('id': @id.'grapple'), array('type': 'FISHING_HOOK'
 		die();
 	}
 
-	if(!ptake_item(@player, array('name': 'ARROW'))) {
-		cancel();
-		die();
-	} else if(!phas_item(@player, array('name': 'ARROW'))) {
-		play_sound(ploc(), array('sound': 'ITEM_BREAK'));
-	}
-
 	@arrow = shoot_projectile(@player, 'arrow');
 	set_entity_spec(@arrow, array('critical': true));
-	set_arrow_damage(@arrow, 1);
+	set_arrow_damage(@arrow, 0.5);
 	play_sound(ploc(@player), array('sound': 'SHOOT_ARROW'));
 	@shooter = puuid(@player);
 	@slot = pheld_slot(@player);
@@ -96,7 +89,6 @@ bind(projectile_launch, array('id': @id.'grapple'), array('type': 'FISHING_HOOK'
 						execute(@endtask);
 						if(entity_type(@target) == 'ARROW') {
 							entity_remove(@target);
-							pgive_item(@player, array('name': 'ARROW'));
 						}
 					} else {
 						set_entity_velocity(@mover, array(0, 0, 0));
@@ -128,9 +120,8 @@ bind(projectile_launch, array('id': @id.'grapple'), array('type': 'FISHING_HOOK'
 	set_timeout(800, closure(){
 		if(has_bind('hit'.@arrow)) {
 			try(entity_remove(@arrow));
-			pgive_item(@player, array('name': 'ARROW'));
+			unbind('hit'.@arrow);
 		}
-		unbind('hit'.@arrow);
 	});
 }
 
