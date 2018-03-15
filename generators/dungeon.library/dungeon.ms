@@ -1,5 +1,9 @@
-@level = 9;
-@maxRoomHeight = 9;
+proc _get_options() {
+	return(array(
+		'level': 9,
+		'maxRoomHeight': 9,
+	));
+}
 
 proc _set_locations(@start, @end, @spawns){
 	set_ploc(@start);
@@ -198,49 +202,26 @@ proc _materials(@level) {
 proc _level_mobs(@level) {
 	switch(@level) {
 		case 0:
-			return(array(
-				'spawner': array(),
-			 	'single': array()
-			));
+			return(array());
 		case 1:
-			return(array(
-				'spawner': array('CAVE_SPIDER', 'SPIDER'),
-				'single': array()
-			));
+			return(array('CAVE_SPIDER', 'SPIDER'));
 		case 2:
-			return(array(
-				'spawner': array('ENDER_CRYSTAL', 'ZOMBIE_VILLAGER'),
-				'single': array('HUSK')
-			));
+			return(array('ENDER_CRYSTAL', 'ZOMBIE_VILLAGER'));
 		case 3:
-			return(array(
-				'spawner': array(),
-				'single': array('STRAY', 'POLAR_BEAR')
-			));
+			return(array());
 		case 4:
-			return(array(
-				'spawner': array('PIG_ZOMBIE', 'MAGMA_CUBE', 'BLAZE'),
-				'single': array()
-			));
+			return(array('PIG_ZOMBIE', 'MAGMA_CUBE', 'BLAZE'));
 		case 5:
-			return(array(
-				'spawner': array('ENDER_CRYSTAL', 'SKELETON', 'WITCH', 'CREEPER'),
-				'single': array('SILVERFISH')
-			));
+			return(array('ENDER_CRYSTAL', 'SKELETON', 'WITCH', 'CREEPER'));
 		case 6:
-			return(array(
-				'spawner': array('GUARDIAN'),
-				'single': array('SQUID')
-			));
+			return(array('GUARDIAN'));
 		case 7:
-			return(array(
-				'spawner': array('VINDICATOR'),
-				'single': array('EVOKER')
-			));
+			return(array('VINDICATOR'));
 		default:
-			return(array(
-				'spawner': array('ENDER_CRYSTAL', 'ENDERMITE', 'ENDERMAN', 'SHULKER'),
-				'single': array()
-			));
+			return(array('ENDER_CRYSTAL', 'ENDERMITE', 'ENDERMAN', 'SHULKER'));
 	}
+}
+
+proc _spawn_entity(@loc, @level) {
+	noop();
 }

@@ -1,4 +1,9 @@
-@maxRoomHeight = 8;
+proc _get_options() {
+	return(array(
+		'level': 1,
+		'maxRoomHeight': 8,
+	));
+}
 
 proc _set_locations(@start, @end, @spawns){
 	_start_game(@start, @end, @spawns);
@@ -112,5 +117,9 @@ proc _materials(@level) {
 }
 
 proc _level_mobs(@level) {
-	return(array('spawner': array(), 'single': array()));
+	return(array());
+}
+
+proc _spawn_entity(@loc, @level) {
+	noop();
 }
