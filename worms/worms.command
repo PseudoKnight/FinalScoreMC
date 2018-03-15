@@ -1,0 +1,29 @@
+register_command('worms', array(
+	'description': 'Creates a worms game.',
+	'usage': '/worms <region> <height>',
+	'permission': 'command.worms',
+	'tabcompleter': closure(@alias, @sender, @args, @info) {
+		return(array());
+	},
+	'executor': closure(@alias, @sender, @args, @info) {
+		if(@args[0] == 'reload') {
+			@count = x_recompile_includes('core.library');
+			die(color('green').'Recompiled '.@count.' scripts');
+		}
+		
+		@game = import('worms'.@args[0]);
+		if(@game) {
+			die(color('gold').'Worms is already running.');
+		}
+		
+		include('core.library/events.ms');
+		include('core.library/game.ms');
+		include('core.library/player.ms');
+		include('core.library/projectile.ms');
+		include('core.library/segment.ms');
+		@game = _worms_create(@args);
+		_generator_create('dungeon', 'dirt', @game['region'], @game['world'], time(), closure(){
+			_worms_start(@game);
+		});
+	}
+));

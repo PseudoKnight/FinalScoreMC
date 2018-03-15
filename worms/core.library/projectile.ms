@@ -1,0 +1,60 @@
+proc _worms_shoot_projectile(@player, @game) {
+	@loc = location_shift(entity_loc(@game['players'][@player]['segments'][0]), 'up', 1.5);
+	@loc['yaw'] = ploc(@player)['yaw'];
+	@loc['pitch'] = 0;
+	play_sound(@loc, array('sound': 'ENTITY_SHULKER_SHOOT', 'pitch': 2, 'volume': 3));
+	@count = array(64, 0);
+	set_interval(50, closure(){
+		@count[0]--;
+		@trace = ray_trace(@loc, 0.8 - @count[1] * 0.2);
+		if(@count[0] < 0) {
+			clear_task();
+			play_effect(@trace['location'], 'EXPLOSION_LARGE', array('particleCount': 0, 'offsetX': 1.1));
+			play_sound(@trace['location'], array('sound': 'ENTITY_SHULKER_BULLET_HIT', 'pitch': 2, 'volume': 3));
+		} else if(@trace['hitblock']) {
+			@count[1]++;
+			if(@trace['location']['x'] == round(@trace['location']['x'])) {
+				@loc['yaw'] = neg(@loc['yaw']);
+			} else if(@trace['location']['z'] == round(@trace['location']['z'])) {
+				if(@loc['yaw'] > 180) {
+					@loc['yaw'] += (270 - @loc['yaw']) * 2;
+				} else {
+					@loc['yaw'] += (90 - @loc['yaw']) * 2;
+				}
+			}
+			play_sound(@trace['location'], array('sound': 'BLOCK_END_PORTAL_FRAME_FILL', 'pitch': 2, 'volume': 3));
+		} else {
+			@loc['x'] = @trace['location']['x'];
+			@loc['z'] = @trace['location']['z'];
+			play_effect(@trace['location'], 'MAGIC_CRIT', array('speed': 0, 'radius': 64));
+			foreach(@e in @trace['entities']) {
+				if(entity_type(@e['uuid']) == 'ARMOR_STAND') {
+					foreach(@p: @worm in @game['players']) {
+						if(@count[1] == 0 && @p == player()) {
+							continue();
+						}
+						@index = array_index(@worm['segments'], @e['uuid']);
+						if(!is_null(@index)) {
+							clear_task();
+							@v = get_vector(@loc);
+							while(array_index_exists(@worm['segments'], @index)) {
+								@segment = @worm['segments'][@index];
+								array_remove(@worm['segments'], @index);
+								@l = entity_loc(@segment);
+								@l['x'] += rand() * 2 - 1 + @v['x'];
+								@l['z'] += rand() * 2 - 1 + @v['z'];
+								set_entity_loc(@segment, @l);
+								@game['segments'][] = @segment;
+							}
+							play_effect(@e['location'], 'EXPLOSION_LARGE', array('particleCount': 0, 'offsetX': 1.1));
+							play_sound(@e['location'], array('sound': 'ENTITY_SHULKER_BULLET_HIT', 'pitch': 2, 'volume': 3));
+							if(array_size(@worm['segments']) == 0) {
+								_worms_kill_player(@p, @game);
+							}
+						}
+					}
+				}
+			}
+		}
+	});
+}

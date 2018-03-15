@@ -146,7 +146,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 							'width': @roomWidth,
 							'length': @roomLength,
 							'connected': 0,
-							'height': if(@roomWidth == 1 || @roomLength == 1, 3, rand(3, @maxRoomHeight + 1)),
+							'height': if(@roomWidth == 1 || @roomLength == 1, min(@maxRoomHeight, 3), rand(2, @maxRoomHeight + 1)),
 						);
 
 						// Mask room
@@ -422,6 +422,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 			}
 			
 			// Populate rooms
+			@materials = @allmaterials[0];
 			foreach(@room in @rooms) {
 				sleep(0.05);
 				x_run_on_main_thread_later(closure(){

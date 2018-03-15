@@ -1,7 +1,7 @@
 proc _get_options() {
 	return(array(
 		'level': 1,
-		'maxRoomHeight': 3,
+		'maxRoomHeight': 2,
 		'roof': false,
 		'chestCount': -1,
 		'spawnChance': 0.15,
@@ -23,15 +23,15 @@ proc _materials(@level) {
 	return(array(
 		'empty': '0:0',
 		'wall': array('1:6'),
-		'room': '159:12',
-		'door': '159:12',
+		'room': '0:0',
+		'door': '0:0',
 		'column': '251:14',
-		'ladder': '159:12',
+		'ladder': '0:0',
 		'ceiling': array('0:0'),
-		'floor': array('1'),
+		'floor': array('159:12'),
 		'utility': array('251:14'),
 		'decor': array('251:14'),
-		'edge': array('159:12', '159:12', '159:12', '159:12'),
+		'edge': array('0:0', '0:0', '0:0', '0:0'),
 	));
 }
 
