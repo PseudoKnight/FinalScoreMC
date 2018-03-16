@@ -1,5 +1,11 @@
 proc _worms_shoot_projectile(@player, @game) {
-	@loc = location_shift(entity_loc(@game['players'][@player]['segments'][0]), 'up', 1.5);
+	if(array_size(@game['players'][@player]['segments']) < 1) {
+		return();
+	}
+	@segment = @game['players'][@player]['segments'][0];
+	array_remove(@game['players'][@player]['segments'], 0);
+	set_entity_spec(@segment, array('small': true));
+	@loc = location_shift(entity_loc(@segment), 'up', 1.5);
 	@loc['yaw'] = ploc(@player)['yaw'];
 	@loc['pitch'] = 0;
 	play_sound(@loc, array('sound': 'ENTITY_SHULKER_SHOOT', 'pitch': 2, 'volume': 3));
@@ -7,8 +13,11 @@ proc _worms_shoot_projectile(@player, @game) {
 	set_interval(50, closure(){
 		@count[0]--;
 		@trace = ray_trace(@loc, 0.8 - @count[1] * 0.2);
+		try(set_entity_loc(@segment, location_shift(@trace['location'], 'down', 1.5)));
 		if(@count[0] < 0) {
 			clear_task();
+			try(set_entity_spec(@segment, array('small': false)));
+			@game['segments'][] = @segment;
 			play_effect(@trace['location'], 'EXPLOSION_LARGE', array('particleCount': 0, 'offsetX': 1.1));
 			play_sound(@trace['location'], array('sound': 'ENTITY_SHULKER_BULLET_HIT', 'pitch': 2, 'volume': 3));
 		} else if(@trace['hitblock']) {
@@ -26,9 +35,8 @@ proc _worms_shoot_projectile(@player, @game) {
 		} else {
 			@loc['x'] = @trace['location']['x'];
 			@loc['z'] = @trace['location']['z'];
-			play_effect(@trace['location'], 'MAGIC_CRIT', array('speed': 0, 'radius': 64));
 			foreach(@e in @trace['entities']) {
-				if(entity_type(@e['uuid']) == 'ARMOR_STAND') {
+				if(entity_type(@e['uuid']) == 'ARMOR_STAND' && @e != @segment) {
 					foreach(@p: @worm in @game['players']) {
 						if(@count[1] == 0 && @p == player()) {
 							continue();
@@ -36,6 +44,7 @@ proc _worms_shoot_projectile(@player, @game) {
 						@index = array_index(@worm['segments'], @e['uuid']);
 						if(!is_null(@index)) {
 							clear_task();
+							try(set_entity_spec(@segment, array('small': false)));
 							@v = get_vector(@loc);
 							while(array_index_exists(@worm['segments'], @index)) {
 								@segment = @worm['segments'][@index];
@@ -50,6 +59,8 @@ proc _worms_shoot_projectile(@player, @game) {
 							play_sound(@e['location'], array('sound': 'ENTITY_SHULKER_BULLET_HIT', 'pitch': 2, 'volume': 3));
 							if(array_size(@worm['segments']) == 0) {
 								_worms_kill_player(@p, @game);
+							} else {
+								set_pscore('segments', @p, array_size(@worm['segments']), 'worms');
 							}
 						}
 					}

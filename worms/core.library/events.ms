@@ -26,12 +26,13 @@ proc _worms_bind_events(@game) {
 				@newLoc['yaw'] = @yaw;
 				@newLoc['pitch'] = 0.0;
 				
-				@trace = ray_trace(@newLoc, 0.8);
+				@trace = ray_trace(@newLoc, 0.5);
 				foreach(@e in @trace['entities']) {
 					@uuid = @e['uuid'];
 					if(entity_type(@uuid) == 'ARMOR_STAND' && !array_contains(@game['players'][player()]['segments'], @uuid)) {
 						@item = get_mob_equipment(@e['uuid'])['helmet'];
-						if(@item && @item['name'] == 'CONCRETE') {
+						@small = entity_spec(@uuid)['small'];
+						if(!@small && @item && @item['name'] == 'CONCRETE') {
 							@found = false;
 							foreach(@p: @worm in @game['players']) {
 								@index = array_index(@worm['segments'], @uuid);
@@ -47,29 +48,30 @@ proc _worms_bind_events(@game) {
 							if(!@found) {
 								array_remove_values(@game['segments'], @uuid);
 							}
-							@game['players'][player()]['segments'][] = @uuid;
-							set_pscore('segments', player(), array_size(@game['players'][player()]['segments']), 'worms');
-							set_entity_spec(@uuid, array('small': false));
+							 _worms_player_add_segments(player(), @uuid, @game)
 							play_sound(@e['location'], array('sound': 'EAT', 'volume': 2));
 						}
 					}
 				}
 				
-				if(@trace['hitblock']) {
-					@block = get_block_at(@newLoc);
-					if(@block == '251:14') {
-						set_block_at(@newLoc, '0:0');
-						set_block_at(location_shift(@newLoc, 'up'), '0:0');
-						set_block_at(location_shift(@newLoc, 'up', 2), '0:0');
-						_worms_create_segments(player(), 1, @game, 14);
-						play_sound(@trace['location'], array('sound': 'EAT', 'volume': 2));
+				if(array_index_exists(@game['players'], player())) {
+					if(@trace['hitblock']) {
+						@block = get_block_at(@newLoc);
+						if(@block == '251:14') {
+							set_block_at(@newLoc, '0:0');
+							set_block_at(location_shift(@newLoc, 'up'), '0:0');
+							set_block_at(location_shift(@newLoc, 'up', 2), '0:0');
+							@segments = _worms_create_segments(location_shift(ploc(), 'down', @game['height']), 1, 14, @game);
+							_worms_player_add_segments(player(), @segments, @game);
+							play_sound(@trace['location'], array('sound': 'EAT', 'volume': 2));
+						}
 					}
-				}
-				
-				foreach(@i: @segment in @game['players'][player()]['segments']) {
-					@loc = entity_loc(@segment);
-					set_entity_loc(@segment, @newLoc);
-					@newLoc = location_shift(@loc, 'down', 0.001);
+					
+					foreach(@i: @segment in @game['players'][player()]['segments']) {
+						@loc = entity_loc(@segment);
+						set_entity_loc(@segment, @newLoc);
+						@newLoc = location_shift(@loc, 'down', 0.001);
+					}
 				}
 			}
 		}
