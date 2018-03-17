@@ -1,10 +1,11 @@
 proc _worms_create(@region) {
 	@world = pworld();
 	@coords = sk_region_info(@region, @world, 0);
+	@height = @coords[0][1] - @coords[1][1] - 3;
 	
 	@game = array(
 		'world': @world,
-		'height': 12,
+		'height': @height,
 		'region': @region,
 		'x': array('highest': @coords[0][0], 'lowest': @coords[1][0]),
 		'y': array('highest': @coords[0][1], 'lowest': @coords[1][1]),
@@ -31,7 +32,7 @@ proc _worms_start(@game) {
 		die(color('gold').'Not enough players.');
 	}
 	foreach(@p: @worm in @game['players']) {
-		_worms_spawn_player(@p, @game);
+		_worms_spawn(@p, @game);
 	}
 	export('worms'.@game['region'], true);
 	_worms_bind_events(@game);

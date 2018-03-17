@@ -29,8 +29,8 @@ proc _materials(@level) {
 		'ladder': '0:0',
 		'ceiling': array('0:0'),
 		'floor': array('159:12'),
-		'utility': array('251:14'),
-		'decor': array('251:14'),
+		'utility': array('251:4', '251:5'),
+		'decor': array('251:4', '251:5'),
 		'edge': array('0:0', '0:0', '0:0', '0:0'),
 	));
 }

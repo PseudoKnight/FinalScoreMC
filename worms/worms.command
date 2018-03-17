@@ -21,6 +21,7 @@ register_command('worms', array(
 		include('core.library/player.ms');
 		include('core.library/projectile.ms');
 		include('core.library/segment.ms');
+		include('core.library/worm.ms');
 		@game = _worms_create(@args[0]);
 		_generator_create('dungeon', 'dirt', @game['region'], @game['world'], time(), closure(){
 			_worms_start(@game);

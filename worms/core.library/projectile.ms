@@ -1,5 +1,5 @@
 proc _worms_shoot_projectile(@player, @game) {
-	if(array_size(@game['players'][@player]['segments']) < 1) {
+	if(array_size(@game['players'][@player]['segments']) < 2) {
 		return();
 	}
 	@segment = @game['players'][@player]['segments'][0];
@@ -58,7 +58,7 @@ proc _worms_shoot_projectile(@player, @game) {
 							play_effect(@e['location'], 'EXPLOSION_LARGE', array('particleCount': 0, 'offsetX': 1.1));
 							play_sound(@e['location'], array('sound': 'ENTITY_SHULKER_BULLET_HIT', 'pitch': 2, 'volume': 3));
 							if(array_size(@worm['segments']) == 0) {
-								_worms_kill_player(@p, @game);
+								_worms_kill(@p, @game);
 							} else {
 								set_pscore('segments', @p, array_size(@worm['segments']), 'worms');
 							}

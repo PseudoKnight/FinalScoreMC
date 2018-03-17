@@ -48,7 +48,7 @@ proc _worms_bind_events(@game) {
 							if(!@found) {
 								array_remove_values(@game['segments'], @uuid);
 							}
-							 _worms_player_add_segments(player(), @uuid, @game)
+							 _worms_add_segments(player(), @uuid, @game)
 							play_sound(@e['location'], array('sound': 'EAT', 'volume': 2));
 						}
 					}
@@ -57,13 +57,16 @@ proc _worms_bind_events(@game) {
 				if(array_index_exists(@game['players'], player())) {
 					if(@trace['hitblock']) {
 						@block = get_block_at(@newLoc);
-						if(@block == '251:14') {
-							set_block_at(@newLoc, '0:0');
-							set_block_at(location_shift(@newLoc, 'up'), '0:0');
-							set_block_at(location_shift(@newLoc, 'up', 2), '0:0');
-							@segments = _worms_create_segments(location_shift(ploc(), 'down', @game['height']), 1, 14, @game);
-							_worms_player_add_segments(player(), @segments, @game);
-							play_sound(@trace['location'], array('sound': 'EAT', 'volume': 2));
+						if(@block != '0:0') {
+							@split = split(':', @block);
+							if(@split[0] == '251') {
+								set_block_at(@newLoc, '0:0');
+								set_block_at(location_shift(@newLoc, 'up'), '0:0');
+								set_block_at(location_shift(@newLoc, 'up', 2), '0:0');
+								@segments = _worms_create_segments(location_shift(ploc(), 'down', @game['height']), 1, @split[1], @game);
+								_worms_add_segments(player(), @segments, @game);
+								play_sound(@trace['location'], array('sound': 'EAT', 'volume': 2));
+							}
 						}
 					}
 					
