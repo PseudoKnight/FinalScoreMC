@@ -44,7 +44,7 @@
 	'meta': array(
 		'display': color('green').'FrogWare',
 		'lore': array(
-			color('r').'Players are given random tasks to complete in seconds.',
+			color('r').'Players are given random tasks to complete.',
 			color('r').'First to 25 points (1+ players)',
 			color('dark_gray').'Run: /warp frogware',
 		),
@@ -96,17 +96,7 @@
 		),
 	),
 );
-@menu[53] = array(
-	'name': 'ICE',
-	'meta': array(
-		'display': color('aqua').'Arctic Racing',
-		'lore': array(
-			color('r').'Race boats along treacherous icebergs. (2+ players)',
-			color('dark_gray').'Run: /warp arctic',
-		)
-	),
-);
-@menu[39] = array(
+@menu[30] = array(
 	'name': 'SLIME_BLOCK',
 	'meta': array(
 		'display': color('green').'Slimey Golf',
@@ -116,7 +106,7 @@
 		),
 	),
 );
-@menu[40] = array(
+@menu[31] = array(
 	'name': 'PRISMARINE',
 	'meta': array(
 		'display': color('aqua').'Sunken City Golf',
@@ -126,7 +116,7 @@
 		),
 	),
 );
-@menu[41] = array(
+@menu[32] = array(
 	'name': 'LOG',
 	'data': 3,
 	'meta': array(
@@ -135,6 +125,40 @@
 			color('r').'Minigolf (1 - 4 players)',
 			color('dark_gray').'Run: /warp islandgolf',
 		),
+	),
+);
+@menu[39] = array(
+	'name': 'ICE',
+	'meta': array(
+		'display': color('aqua').'Arctic Race',
+		'lore': array(
+			color('r').'Race boats along treacherous icebergs.',
+			color('r').'(2+ players)',
+			color('dark_gray').'Run: /warp arctic',
+		)
+	),
+);
+@menu[40] = array(
+	'name': 'HAY_BLOCK',
+	'meta': array(
+		'display': color('aqua').'Pig Race',
+		'lore': array(
+			color('r').'Race finnicky pigs around a pleasant course.',
+			color('r').'(2+ players)',
+			color('dark_gray').'Run: /warp thatlldo',
+		)
+	),
+);
+@menu[41] = array(
+	'name': 'STAINED_CLAY',
+	'data': 2,
+	'meta': array(
+		'display': color('aqua').'Gyro Race',
+		'lore': array(
+			color('r').'A foot race along a short course of obstacles',
+			color('r').'at dizzying heights. (2+ players)',
+			color('dark_gray').'Run: /warp gyro',
+		)
 	),
 );
 
