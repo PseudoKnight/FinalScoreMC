@@ -27,6 +27,9 @@ bind(player_interact, null, array('block': 118, 'button': 'right'), @event) {
 	} else if(@data > 0) {
 		// There's some water
 		@item = pinv(player(), @slot);
+		if(!@item) {
+			die();
+		}
 		@newItem = @item[];
 		switch(@item['name']) {
 			case 'BUCKET':
