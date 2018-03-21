@@ -31,6 +31,7 @@ bind(player_interact, null, array('block': 118, 'button': 'right'), @event) {
 			die();
 		}
 		@newItem = @item[];
+		@newItem['qty'] = 1;
 		switch(@item['name']) {
 			case 'BUCKET':
 				if(@data < 3) {
