@@ -52,12 +52,17 @@ proc _pdata_by_uuid(@uuid) {
 }
 
 /*
-	Sets player data
+	Sets player data.
+	Accepts UUID or player name.
 */
-proc _store_pdata(@player, @data) {
-	if(!is_array(@data), return());
-	@player = to_lower(@player);
-	@uuid = _get_uuid(@player);
+proc _store_pdata(@uuid, @data) {
+	if(!is_array(@data)) {
+		return();
+	}
+	if(length(@uuid) < 17) {
+		// must be player name
+		@uuid = _get_uuid(to_lower(@uuid));
+	}
 	x_new_thread('storePlayerData', closure(){
 		store_value('uuids', @uuid, @data);
 	});
