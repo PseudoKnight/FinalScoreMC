@@ -43,6 +43,10 @@ register_command('compass', array(
 					set_compass_target(ploc(@player));
 					msg(color('green').'Compass is now pointing to '.@player.'\'s last location.');
 				} catch(PlayerOfflineException @ex) {
+					if(array_size(@args) < 2) {
+						die(color('gold').'Unknown compass target: '.array_implode(@args).'. Available targets: '
+								.'spawn, home [PlayerName], here, PlayerName, x [y] z.');
+					}
 					@x = @args[0];
 					@z = @args[1];
 					if(array_size(@args) == 3) {
