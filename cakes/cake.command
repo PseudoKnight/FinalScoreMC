@@ -116,12 +116,10 @@ register_command('cake', array(
 
 				if(array_index_exists(@cake, 'coins') && @coins != @cake['coins']) {
 					foreach(@uuid in array_keys(@cake['players'])) {
-						@pdata = _pdata_by_uuid(@uuid);
-						if(ponline(@pdata['name'])) {
-							@pdata = _pdata(@pdata['name']);
-						}
-						@pdata['coins'] = array_get(@pdata, 'coins', 100) + (@coins - @cake['coins']);
-						_store_pdata(@pdata['name'], @pdata);
+						// get cached if available
+						@pdata = if(ponline(@uuid), _pdata(player(@uuid)), _pdata_by_uuid(@uuid));
+						@pdata['coins'] = array_get(@pdata, 'coins', 0) + (@coins - @cake['coins']);
+						_store_pdata(@uuid, @pdata);
 					}
 				}
 
