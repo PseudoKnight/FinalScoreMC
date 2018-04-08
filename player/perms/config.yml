@@ -46,6 +46,8 @@ member:
       livemap.markers: true
     omega:
       livemap.markers: true
+    world_the_end:
+      livemap.markers: true
     shard:
       stargate.create.personal: false
       stargate.create.network: false
@@ -131,6 +133,8 @@ donor:
     world4:
       livemap.tracers: true
     omega:
+      livemap.tracers: true
+    world_the_end:
       livemap.tracers: true
   inheritance: regular
 builder:
