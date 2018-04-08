@@ -1,3 +1,3 @@
-These are CommandHelper scripts, adding a variety of functionality, much of which is very specific to our server. For expediancy I hard-coded some things into the scripts, but some of it is flexible enough to be used elsewhere, especially if you make some minor modifications. Like some scripts have a basic world check for 'custom', which is our mini-game world. 
+This repository consists mainly of CommandHelper scripts for the FinalScoreMC Minecraft server. It contains extensive custom functionality and games.
 
-Visit http://wiki.sk89q.com/wiki/CommandHelper for details on mscript.
+Visit http://methodscript.com for details on mscript.
