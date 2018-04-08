@@ -3,3 +3,5 @@ key.txt
 .remote-sync.json
 secret
 charades/data
+chat/discord-token.txt
+save-commands.json
