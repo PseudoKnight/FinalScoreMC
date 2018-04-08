@@ -46,7 +46,8 @@ bind(player_join, null, null, @event) {
 				}
 				_tellraw(all_players(), array(array('colorize', @pre), array('hover', @name, @hover), @msg));
 				if(function_exists('discord_broadcast')) {
-					discord_broadcast('**\u00bb '.player().@msg.'**');
+					@msg = reg_replace('[&§][0-9a-fk-o]', '', @msg);
+					try(discord_broadcast('chat', '**\u00bb '.player().@msg.'**'));
 				}
 			}
 
@@ -150,7 +151,8 @@ bind(player_quit, null, null, @event) {
 	}
 	broadcast(colorize('&8'.simple_date('h:mm').' &4\u00ab &o'.@msg));
 	if(function_exists('discord_broadcast')) {
-		discord_broadcast('**\u00ab '.@msg.'**');
+		@msg = reg_replace('[&§][0-9a-fk-o]', '', @msg);
+		try(discord_broadcast('chat', '**\u00ab '.@msg.'**'));
 	}
 	try {
 		@pdata['world'] = pworld();

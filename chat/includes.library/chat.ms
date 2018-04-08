@@ -88,7 +88,7 @@ proc _chat(@player, @message, @recipients, @discordChannel = '') {
 		}
 		if(!@discordChannel) {
 			if(function_exists('discord_broadcast')) {
-				discord_broadcast('**'.@player.'** '.@filteredMessage);
+				try(discord_broadcast('chat', '**'.@player.'** '.@filteredMessage));
 			}
 		}
 	}
