@@ -135,6 +135,11 @@ bind(player_join, null, null, @event) {
 				_equip_kit();
 			}
 		}, 'join');
+		
+		// Discord topic
+		queue_push(closure(){
+			_update_discord_topic();
+		}, 'join');
 
 		_bm_request('set_user_uuid', 'a1634f37480a4bb9a0b2200266597ac0', array('username': player(), 'user_uuid': puuid()));
 	});
@@ -169,4 +174,5 @@ bind(player_quit, null, null, @event) {
 		}
 		export('players', @players);
 	}
+	_update_discord_topic();
 }
