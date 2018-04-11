@@ -19,7 +19,6 @@ bind(creature_spawn, null, array('type': 'ZOMBIE', 'reason': 'NATURAL'), @event)
 			'OFF_HAND': 1,
 		));
 		set_mob_effect(@id, 1, 0, 99999);
-		set_entity_persistence(@id, true);
 		set_entity_silent(@id, true);
 	}
 }
