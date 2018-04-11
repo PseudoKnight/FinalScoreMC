@@ -155,7 +155,7 @@ bind(player_quit, null, null, @event) {
 		@msg .= 'left the game';
 	}
 	broadcast(colorize('&8'.simple_date('h:mm').' &4\u00ab &o'.@msg));
-	if(function_exists('discord_broadcast')) {
+	if(extension_exists('CHDiscord')) {
 		@msg = reg_replace('[&§][0-9a-fk-o]', '', @msg);
 		try(discord_broadcast('chat', '**\u00ab '.@msg.'**'));
 	}
@@ -174,5 +174,7 @@ bind(player_quit, null, null, @event) {
 		}
 		export('players', @players);
 	}
-	_update_discord_topic();
+	set_timeout(50, closure(){
+		_update_discord_topic();
+	});
 }
