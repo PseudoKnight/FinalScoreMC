@@ -1,5 +1,5 @@
 bind(player_interact_entity, null, array('clicked': 'MINECART'), @event) {
-	if(!sk_can_build(entity_loc(@event['id'])) || pworld() == 'shard' || !psneaking()) {
+	if(!sk_can_build(entity_loc(@event['id'])) || !psneaking()) {
 		cancel();
 		die();
 	}
@@ -43,7 +43,7 @@ bind(player_interact_entity, null, array('clicked': 'MINECART'), @event) {
 }
 
 bind(vehicle_destroy, array('priority': 'MONITOR'), array('vehicletype': 'MINECART'), @event) {
-	if(!is_cancelled() && @event['location']['world'] != 'shard') {
+	if(!is_cancelled()) {
 		@minecart = entity_spec(@event['vehicle']);
 		if(@minecart['block'] != 'AIR') {
 			// make sure no plugin has cancelled this

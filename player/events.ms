@@ -182,12 +182,8 @@ bind(player_enter_bed, null, null, @event) {
 }
 
 bind(player_interact, null, array('block': 26, 'button': 'right'), @event) {
-	if(@event['location']['world'] == 'shard') {
-		cancel();
-	} else {
-		set_pbed_location(location_shift(@event['location'], 'down'), false);
-		msg(color('aqua').'Your spawn location has been set to this bed.');
-	}
+	set_pbed_location(location_shift(@event['location'], 'down'), false);
+	msg(color('aqua').'Your spawn location has been set to this bed.');
 }
 
 # Anti-xray helper
@@ -217,7 +213,7 @@ bind(block_break, null, array('name': 'DIAMOND_ORE'), @event) {
 
 # painting cycler
 bind(player_interact_entity, null, array('clicked': 'PAINTING','hand':'main_hand'), @event) {
-	if(pmode() != 'ADVENTURE' && pworld() != 'shard' && sk_can_build(entity_loc(@event['id']))) {
+	if(pmode() != 'ADVENTURE' && sk_can_build(entity_loc(@event['id']))) {
 		@paintings = get_value('paintings');
 		if(is_null(@paintings)) {
 			@paintings = reflect_pull('enum', 'Art');

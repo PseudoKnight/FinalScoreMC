@@ -43,9 +43,7 @@ bind(entity_portal_travel, null, null, @event) {
 	@to = @event['to'];
 	if(!_is_survival_world(@from['world'])) {
 		cancel();
-		if(@from['world'] != 'shard') {
-			entity_remove(@event['id']);
-		}
+		entity_remove(@event['id']);
 	} else if(@to['world'] == 'world_nether') {
 		@l = @from;
 		@l['x'] /= 8;

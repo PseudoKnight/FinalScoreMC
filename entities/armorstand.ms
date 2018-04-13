@@ -3,7 +3,7 @@ foreach(@p in all_players()) {
 }
 
 bind(player_interact_at_entity, null, array('clicked': 'ARMOR_STAND'), @event) {
-	if(!sk_can_build(entity_loc(@event['id'])) || pworld() == 'shard') {
+	if(!sk_can_build(entity_loc(@event['id']))) {
 		cancel();
 		die();
 	}
@@ -288,11 +288,6 @@ bind(player_interact_at_entity, null, array('clicked': 'ARMOR_STAND'), @event) {
 }
 
 bind(entity_damage, null, array('type': 'ARMOR_STAND'), @event) {
-	if(@event['world'] == 'shard') {
-		cancel();
-		die();
-	}
-	
 	@damager = '';
 	if(array_index_exists(@event, 'shooter')) {
 		@damager = @event['shooter'];
