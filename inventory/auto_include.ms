@@ -125,6 +125,9 @@ proc _minify_inv(@inv, @keepnulls = false) {
 			if(array_index_exists(@item['meta'], 'inventory')) {
 				_minify_inv(@item['meta']['inventory']);
 			}
+			if(@item['meta']['unbreakable'] == false) {
+				array_remove(@item['meta'], 'unbreakable');
+			}
 		}
 	}
 	if(!is_array(@inv)) {
