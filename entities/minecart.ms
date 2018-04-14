@@ -1,9 +1,8 @@
 bind(player_interact_entity, null, array('clicked': 'MINECART'), @event) {
 	if(!sk_can_build(entity_loc(@event['id'])) || !psneaking()) {
-		cancel();
 		die();
 	}
-
+	cancel();
 	@item = pinv(player(), null);
 	@minecart = entity_spec(@event['id']);
 	if(is_null(@item)) {
