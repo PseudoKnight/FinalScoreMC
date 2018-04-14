@@ -9,6 +9,7 @@ register_command('mem', array(
 		@barMem = round(@maxMem / 77);
 		@allocMem = get_server_info(15);
 		@freeMem = get_server_info(16);
+		@actuallyFree = @maxMem - @allocMem + @freeMem;
 		@bar = array();
 		array_resize(@bar, integer((@allocMem - @freeMem) / @barMem), '\u258D');
 		@bar[] = color(7);
@@ -16,9 +17,11 @@ register_command('mem', array(
 		@bar[] = color(8);
 		array_resize(@bar, array_size(@bar) + integer((@maxMem - @allocMem) / @barMem), '\u258D');
 		@color = 'green';
-		if(@allocMem == @maxMem && @freeMem < @maxMem / 10) {
+		if(@actuallyFree < @maxMem / 10) {
 			@color = 'red';
-		} else if(@allocMem - @freeMem > @maxMem / 2) {
+		} else if(@actuallyFree < @maxMem / 5) {
+			@color = 'gold';
+		} else if(@actuallyFree < @maxMem / 3) {
 			@color = 'yellow';
 		}
 		msg(floor((@allocMem - @freeMem) / 1000000).'MB Used - '
