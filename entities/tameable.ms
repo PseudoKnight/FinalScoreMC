@@ -19,7 +19,7 @@ bind(entity_damage, null, array('type': '/(DONKEY|HORSE|LLAMA|MULE|OCELOT|SKELET
 			}
 
 		case 'PROJECTILE':
-			if(length(@event['shooter']) < 17 || !get_entity_rider(@event['id'])) {
+			if(array_index_exists(@event, 'shooter') && length(@event['shooter']) < 17 || !get_entity_rider(@event['id'])) {
 				cancel();
 			}
 
