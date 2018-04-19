@@ -1,6 +1,6 @@
 register_command('times', array(
 	'description': 'Lists and manages time trial records.',
-	'usage': '/times <top|avg|segmented|reset|resetplayer|recalculate> [course_id] [player]',
+	'usage': '/times <top|avg|segmented|reset|resetplayer> [course_id] [player]',
 	'tabcompleter': closure(@alias, @sender, @args, @info) {
 		if(array_size(@args) == 1) {
 			return(_strings_start_with_ic(array('top', 'avg', 'segmented', 'reset', 'resetplayer', 'recalculate'), @args[-1]));
