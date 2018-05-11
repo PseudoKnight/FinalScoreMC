@@ -20,11 +20,16 @@ proc _worms_add_segments(@player, @segment, @game) {
 	}
 	@score = array_size(@worm['segments']);
 	set_pscore('segments', @player, @score, 'worms');
-	if(@score >= 50) {
-		foreach(@p in array_keys(@game['players'])) {
-			if(@p != @player) {
-				_worms_kill(@p, @game);
+	if(@score >= 35) {
+		team_add_player('leaders', @player, 'worms');
+		if(@score >= 50) {
+			foreach(@p in array_keys(@game['players'])) {
+				if(@p != @player) {
+					_worms_kill(@p, @game);
+				}
 			}
 		}
+	} else {
+		team_remove_player('leaders', @player, 'worms');
 	}
 }

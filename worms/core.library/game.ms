@@ -1,7 +1,7 @@
 proc _worms_create(@region) {
 	@world = pworld();
 	@coords = sk_region_info(@region, @world, 0);
-	@height = @coords[0][1] - @coords[1][1] - 3;
+	@height = @coords[0][1] - @coords[1][1] - 2;
 	
 	@game = array(
 		'world': @world,
@@ -17,6 +17,8 @@ proc _worms_create(@region) {
 	create_scoreboard('worms');
 	create_objective('segments', 'DUMMY', 'worms');
 	set_objective_display('segments', array('displayname': 'Segments (50)', 'slot': 'SIDEBAR'), 'worms');
+	create_team('leaders', 'worms');
+	set_team_display('leaders', array('prefix': color('red')), 'worms');
 	
 	return(@game);
 }

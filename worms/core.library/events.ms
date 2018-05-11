@@ -17,7 +17,7 @@ proc _worms_bind_events(@game) {
 			|| @newLoc['x'] < @game['x']['lowest']
 			|| @newLoc['z'] > @game['z']['highest']
 			|| @newLoc['z'] < @game['z']['lowest']) {
-				_worms_remove_player(player(), @game);
+				_worms_kill(player(), @game);
 			} else {
 				@yaw = get_yaw(@event['from'], @event['to']);
 				if(@yaw == 'NaN') {
@@ -40,7 +40,7 @@ proc _worms_bind_events(@game) {
 									array_remove(@worm['segments'], @index);
 									@found = true;
 									if(array_size(@worm['segments']) == 0) {
-										_worms_remove_player(@p, @game);
+										_worms_kill(@p, @game);
 									}
 									break();
 								}

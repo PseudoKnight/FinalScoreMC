@@ -4,7 +4,7 @@ proc _worms_shoot_projectile(@player, @game) {
 	}
 	@segment = @game['players'][@player]['segments'][0];
 	array_remove(@game['players'][@player]['segments'], 0);
-	set_entity_spec(@segment, array('small': true));
+	set_entity_spec(@segment, array('small': true, 'visible': false));
 	@loc = location_shift(entity_loc(@segment), 'up', 1.5);
 	@loc['yaw'] = ploc(@player)['yaw'];
 	@loc['pitch'] = 0;
@@ -57,10 +57,11 @@ proc _worms_shoot_projectile(@player, @game) {
 							}
 							play_effect(@e['location'], 'EXPLOSION_LARGE', array('particleCount': 0, 'offsetX': 1.1));
 							play_sound(@e['location'], array('sound': 'ENTITY_SHULKER_BULLET_HIT', 'pitch': 2, 'volume': 3));
+							set_pscore('segments', @p, array_size(@worm['segments']), 'worms');
 							if(array_size(@worm['segments']) == 0) {
 								_worms_kill(@p, @game);
-							} else {
-								set_pscore('segments', @p, array_size(@worm['segments']), 'worms');
+							} else if(array_size(@worm['segments']) < 35) {
+								team_remove_player('leaders', @p, 'worms');
 							}
 						}
 					}
