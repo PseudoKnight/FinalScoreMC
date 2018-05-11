@@ -1,4 +1,17 @@
 proc _interval(@pvp, @id) {
+	// let new players walk into the King of the Hill game
+	foreach(@p in all_players(@pvp['arena']['lobby'][3])) {
+		if(!array_index_exists(@pvp['players'], @p)
+		&& !array_contains(@pvp['spectators'], @p)
+		&& array_contains(sk_current_regions(@p), @pvp['arena']['region'])) {
+			@pvp['players'][@p] = associative_array();
+			if(array_index_exists(@pvp['arena'], 'team')) {
+				_player_assign_team(@p, @pvp);
+			}
+			_pvp_initialize_players(@id, array(@p));
+		}
+	}
+	
 	if(array_index_exists(@pvp, 'team')) {
 		@kingteam = -1;
 		@count = 0;
