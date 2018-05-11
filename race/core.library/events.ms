@@ -46,7 +46,7 @@ proc _race_bind_events(@race) {
 						entity_remove(@vehicle2);
 					}
 				}
-				entity_remove(@vehicle);
+				entity_remove(@vehicle1);
 			}
 			set_ploc(@race['lobby']);
 		}
