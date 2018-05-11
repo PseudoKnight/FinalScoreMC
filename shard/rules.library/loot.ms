@@ -29,7 +29,8 @@ proc _set_inventory_contents(@loc, @count) {
 		364: 8, // COOKED_BEEF
 		365: 16, // RAW_CHICKEN
 		366: 8, // COOKED_CHICKEN
-		373: 1, // POTION (meta)
+		368: 16, // ENDER_PEARL
+		373: 3, // POTION (meta)
 		380: 0, // CAULDRON
 		383: 16, // MONSTER_EGG (meta)
 		389: 0, // ITEM_FRAME
@@ -60,9 +61,9 @@ proc _set_inventory_contents(@loc, @count) {
 		433: 0, // CHORUS_FRUIT_POPPED
 		434: 16, // BEETROOT
 		435: 0, // BEETROOT_SEEDS
-		438: 1, // SPLASH_POTION (meta)
-		440: 16, // TIPPED_ARROW (meta)
-		441: 1, // LINGERING_POTION (meta)
+		438: 3, // SPLASH_POTION (meta)
+		440: 32, // TIPPED_ARROW (meta)
+		441: 3, // LINGERING_POTION (meta)
 	);
 
 	@size = get_inventory_size(@loc);
@@ -124,30 +125,18 @@ proc _random_item(@limits) {
 			case 438:
 			case 440:
 			case 441:
-				@state = rand(3);
 				if(rand(2)) {
+					@state = rand(3);
 					@meta = array('base': array('extended': (@state == 1), 'upgraded': (@state == 2), 'type':
 						array_rand(array('SPEED', 'SLOWNESS', 'STRENGTH', 'INSTANT_HEAL', 'INSTANT_DAMAGE', 'JUMP',
 						'REGEN', 'FIRE_RESISTANCE', 'WATER_BREATHING', 'INVISIBILITY', 'NIGHT_VISION', 'WEAKNESS',
 						'POISON', 'LUCK'), 1, false)[0]
 					));
 				} else {
-					@types = array(
-						array('id': 3, 'seconds': 300, 'strength': 0),
-						array('id': 4, 'seconds': 180, 'strength': 0),
-						array('id': 9, 'seconds': 30, 'strength': 0),
-						array('id': 11, 'seconds': 180, 'strength': 0),
-						array('id': 15, 'seconds': 30, 'strength': 0),
-						array('id': 17, 'seconds': 60, 'strength': 0),
-						array('id': 20, 'seconds': 15, 'strength': 0),
-						array('id': 21, 'seconds': 300, 'strength': 0),
-						array('id': 22, 'seconds': 300, 'strength': 0),
-						array('id': 23, 'seconds': 60, 'strength': 0),
-						array('id': 24, 'seconds': 60, 'strength': 0),
-						array('id': 25, 'seconds': 15, 'strength': 0),
-						array('id': 27, 'seconds': 180, 'strength': 0),
-					);
-					@meta = array('potions': array(array_rand(@types, 1, false)[0]));
+					@meta = array('potions': array());
+					do {
+						@meta['potions'][] = array('id': rand(28), 'seconds': rand(1, 480), 'strength': rand(3)),
+					} while(rand(2));
 				}
 		}
 	}
