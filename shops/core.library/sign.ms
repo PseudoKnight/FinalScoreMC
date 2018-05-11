@@ -19,7 +19,9 @@ proc _sign_get_shop(@location) {
 	} else {
 		@item = _data_values(@itemMatch[1]);
 		if(!@item) {
-			console('[Shop] Cannot find item value for '.@itemMatch[1], false);
+			if(!equals_ic(@sign[0], '[private]')) {
+				console('[Shop] Cannot find item value for '.@itemMatch[1], false);
+			}
 			return(null);
 		}
 	}

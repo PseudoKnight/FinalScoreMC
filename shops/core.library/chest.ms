@@ -8,12 +8,13 @@ proc _chest_item_count(@loc, @item) {
 	} catch(FormatException @ex) {
 		return(null);
 	}
-	if(is_numeric(@item)) {
-		@item .= ':0';
+	@checkData = true;
+	if(string_position(@item, ':') == -1) {
+		@checkData = false;
 	}
 	@count = 0;
 	foreach(@i in @inv) {
-		if(!is_null(@i) && @i['type'].':'.@i['data'] === @item) {
+		if(!is_null(@i) && @i['type'].if(@checkData, ':'.@i['data']) === @item) {
 			@count += @i['qty'];
 		}
 	}
