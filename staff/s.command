@@ -16,7 +16,7 @@ register_command('s', array(
 			dm_broadcast_to_web(@message, @name)
 		}
 		if(function_exists('discord_broadcast')) {
-			discord_broadcast('chat', '**'.@name.'**: '.$);
+			discord_broadcast('chat', '**'.@name.'**: '.@message);
 		}
 	}
 ));
