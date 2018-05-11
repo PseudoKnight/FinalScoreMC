@@ -18,6 +18,7 @@ bind('creature_spawn', null, array('type': 'ZOMBIE', 'reason': 'NATURAL'), @even
 			set_mob_effect(@event['id'], 1, 0, 9999, true);
 		}
 		set_mob_effect(@event['id'], 8, 1, 9999, true);
+		set_entity_silent(@event['id'], true);
 	}
 }
 
@@ -58,6 +59,7 @@ bind('target_player', null, array('mobtype': 'ZOMBIE'), @event, @day) {
 					'MULE',
 					'MUSHROOM_COW',
 					'OCELOT',
+					'PARROT',
 					'PIG',
 					'PIG_ZOMBIE',
 					'POLAR_BEAR',
