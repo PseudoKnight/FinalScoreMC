@@ -18,7 +18,26 @@ set_cron('*/5 * * * *', closure(){
 			.'---[ PLAYERS: '.array_size(all_players()).' ]'
 			.'---'.if(@activities, '[ Activities: '.@activities.' ]---'), false);
 	});
-})
+
+	// Check mumble user count
+	@previousCount = import('mumbleCount');
+	x_new_thread('mumbleQuery', closure(){
+		@ip = '192.227.136.164';
+		@port = 64758;
+		@count = mumble_count(@ip, @port);
+		if(@count != 0 && @count != @previousCount) {
+			@type = 'people';
+			if(@count == 1) {
+				@type = 'person';
+			}
+			@msg = colorize("&oCurrently &a&o@count&r&o @type on Mumble &7(@ip:@port)");
+			x_run_on_main_thread_later(closure(){
+				export('mumbleCount', @count);
+				broadcast(@msg);
+			});
+		}
+	});
+});
 
 bind(server_ping, null, null, @event) {
 	@activities = import('activities');
