@@ -20,21 +20,25 @@ proc _race_remove_player(@race, @player) {
 		if(array_index_exists(@race, 'sky')) {
 			set_psky(@player, 0, 0);
 		}
-		@vehicle1 = get_entity_vehicle(puuid(@player));
-		if(@vehicle1) {
-			if(entity_type(@vehicle1) != 'ARMOR_STAND') {
-				@vehicle2 = get_entity_vehicle(@vehicle1);
-				if(@vehicle2) {
-					entity_remove(@vehicle2);
-				}
-			}
-			entity_remove(@vehicle1);
-		}
-		if(array_contains(sk_current_regions(@player), @race['region'])) {
-			set_entity_loc(puuid(@player), @race['lobby']);
-		}
 		clear_peffects(@player);
 		_equip_kit(@player);
+		try {
+			@vehicle1 = get_entity_vehicle(puuid(@player));
+			if(@vehicle1) {
+				if(entity_type(@vehicle1) != 'ARMOR_STAND') {
+					@vehicle2 = get_entity_vehicle(@vehicle1);
+					if(@vehicle2) {
+						entity_remove(@vehicle2);
+					}
+				}
+				entity_remove(@vehicle1);
+			}
+			if(array_contains(sk_current_regions(@player), @race['region'])) {
+				set_entity_loc(puuid(@player), @race['lobby']);
+			}
+		} catch(BadEntityException @ex) {
+			// player entity doesn't exist in world for some reason
+		}
 	}
 }
 

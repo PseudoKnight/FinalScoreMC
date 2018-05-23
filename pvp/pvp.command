@@ -83,7 +83,7 @@ register_command('pvp', array(
 				@pvp['arena']['timer'][1] += @args[2];
 				foreach(@p in array_merge(array_keys(@pvp['players']), @pvp['spectators'])) {
 					try {
-						title(@p, 'Added '.@arg[2].' minutes', null, 20, 20, 20);
+						title(@p, 'Added '.@args[2].' minutes', null, 20, 20, 20);
 					} catch(PlayerOfflineException @ex) {
 						// we'll remove them elsewhere
 					}

@@ -535,7 +535,7 @@ register_command('arena', array(
 							@arena['weapons'] = split(',', @args[3]);
 						}
 						foreach(@weapon in @arena['weapons']) {
-							if(!file_exists('../weapons.library/'.@weapon.'.ms')) {
+							if(!file_exists('weapons.library/'.@weapon.'.ms')) {
 								die(color('gold').'Unknown weapon: '.@weapon);
 							}
 						}

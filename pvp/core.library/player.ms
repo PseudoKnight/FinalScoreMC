@@ -168,7 +168,6 @@ proc _pvp_initialize_players(@id, @players) {
 
 proc _player_reset(@player, @pvp) {
 	_clear_pinv(@player);
-	set_phealth(@player, 20);
 	set_phunger(@player, 20);
 	set_psaturation(@player, 0);
 	set_pexp(@player, 0);
@@ -176,6 +175,13 @@ proc _player_reset(@player, @pvp) {
 	set_entity_rider(puuid(@player), null);
 	set_entity_rider(null, puuid(@player));
 	set_entity_fall_distance(puuid(@player), 0);
+	try {
+		set_phealth(@player, 20);
+	} catch(RangeException @ex) {
+		console(@player.'\'s max health is lower than 20!', false);
+		set_max_health(puuid(@player), 20.0);
+		set_phealth(@player, 20);
+	}
 }
 
 proc _player_equip(@id, @player) {
