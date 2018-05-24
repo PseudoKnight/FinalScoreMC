@@ -37,6 +37,7 @@ member:
     worldguard.region.flag.flags.block-place.*: true
     worldguard.region.flag.flags.tnt.*: true
     bukkit.command.tps: true
+    command.ride: true
   worlds:
     world:
       livemap.markers: true
@@ -106,6 +107,7 @@ member:
       command.7: true
       advancement.all: false
       deadbolt.user.create.*: false
+      command.ride: false
   inheritance: default
 regular:
   permissions:
@@ -115,6 +117,7 @@ regular:
     item.lighter: true
     command.approve: true
     fawe.tips: true
+    command.entitycount: true
   worlds:
     dev:
       limitedworldedit: true
