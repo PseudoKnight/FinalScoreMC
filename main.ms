@@ -25,7 +25,7 @@ set_cron('*/5 * * * *', closure(){
 		@ip = '192.227.136.164';
 		@port = 64758;
 		@count = mumble_count(@ip, @port);
-		if(@count != 0 && @count != @previousCount) {
+		if(@count != @previousCount) {
 			@type = 'people';
 			if(@count == 1) {
 				@type = 'person';
@@ -33,7 +33,9 @@ set_cron('*/5 * * * *', closure(){
 			@msg = colorize("&oCurrently &a&o@count&r&o @type on Mumble &7(@ip:@port)");
 			x_run_on_main_thread_later(closure(){
 				export('mumbleCount', @count);
-				broadcast(@msg);
+				if(@count != 0) {
+					broadcast(@msg);
+				}
 			});
 		}
 	});
