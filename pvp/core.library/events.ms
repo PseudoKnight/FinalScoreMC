@@ -277,7 +277,10 @@ bind(player_death, array('priority': 'high', 'id': @id.'death'), null, @e, @id) 
 	
 	modify_event('drops', null);
 	modify_event('xp', null);
-	_pvp_check_objectives(@id);
+	set_timeout(1000, closure(){
+		// just in case of a tie
+		_pvp_check_objectives(@id);
+	});
 }
 
 array_push(@pvp['binds'], @id.'quit')
