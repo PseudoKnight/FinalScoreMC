@@ -184,11 +184,11 @@ proc _end_build(@guesser, @word) {
 					open_book(@p, @pages);
 				}
 				set_timeout(10000, closure(){
-					if(array_size(@charades['players']) < 3) {
+					if(array_size(@charades['players']) < 3 || array_size(@charades['votes']) == 0) {
 						_end_game();
 					} else {
-						@player = array_get(array_rand(@charades['votes'], 1), 0, null);
-						@charades['category'] = array_get(@charades['votes'], @player, array_rand(_get_categories(), 1, false)[0]);
+						@player = array_rand(@charades['votes'], 1)[0];
+						@charades['category'] = @charades['votes'][@player];
 						_msg_charades(color('yellow').@player.' chose '.replace(to_upper(@charades['category']), '_', ' '));
 						if(!rand(3)) {
 							@charades['seconds'] = 50.0;
