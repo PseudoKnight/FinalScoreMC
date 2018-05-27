@@ -187,8 +187,8 @@ proc _end_build(@guesser, @word) {
 					if(array_size(@charades['players']) < 3) {
 						_end_game();
 					} else {
-						@player = array_rand(@charades['votes'], 1)[0];
-						@charades['category'] = @charades['votes'][@player];
+						@player = array_get(array_rand(@charades['votes'], 1), 0, null);
+						@charades['category'] = array_get(@charades['votes'], @player, array_rand(_get_categories(), 1, false)[0]);
 						_msg_charades(color('yellow').@player.' chose '.replace(to_upper(@charades['category']), '_', ' '));
 						if(!rand(3)) {
 							@charades['seconds'] = 50.0;
