@@ -7,6 +7,9 @@ register_command('unshare', array(
 		}
 	},
 	'executor': closure(@alias, @sender, @args, @info) {
+		if(array_size(@args) < 2) {
+			return(false);
+		}
 		@shareables = array('horses');
 		@types = @args[1..-1];
 		foreach(@type in @types) {
