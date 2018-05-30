@@ -142,33 +142,17 @@ proc _end_build(@guesser, @word) {
 				_end_game();
 			}
 		} else {
-			@players = array();
-			@end = false;
-			foreach(@p in all_players('custom')) {
-				if(array_contains(sk_current_regions(@p), 'charades')) {
-					if(!array_contains(@charades['players'], @p)) {
-						@end = true;
-						break();
-					} else {
-						@players[] = @p;
-					}
-				}
-			}
-			if(array_size(@players) < 3) {
-				@end = true;
-			}
-			if(@end) {
+			if(!_check_players(@charades)) {
 				_end_game();
 			} else {
-				@charades['players'] = @players;
-				@charades['playersLeft'] = @players[];
+				@charades['playersLeft'] = @charades['players'][];
 				@charades['votes'] = associative_array();
 				
 				@page = '';
 				@line = 1;
-				foreach(@category in array_rand(_get_categories(), array_size(_get_categories()), false)) {
+				foreach(@category in array_rand(_get_categories(), 10, false)) {
 					if(@line == 1) {
-						@page .= '["",{"color":"red","bold":true,"text":"Vote for Next Category:"}';
+						@page .= '["",{"color":"red","bold":true,"text":"Vote for Next Category:\n"}';
 						@line++;
 					}
 					@page .= ',{"text":"'.'\n \u27a2 '.replace(to_upper(@category), '_', ' ')
@@ -184,7 +168,7 @@ proc _end_build(@guesser, @word) {
 					open_book(@p, @pages);
 				}
 				set_timeout(10000, closure(){
-					if(array_size(@charades['players']) < 3 || array_size(@charades['votes']) == 0) {
+					if(!_check_players(@charades) || array_size(@charades['votes']) == 0) {
 						_end_game();
 					} else {
 						@player = array_rand(@charades['votes'], 1)[0];
