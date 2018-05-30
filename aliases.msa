@@ -68,7 +68,7 @@
 		'mumble': 'voice',
 		'discord': 'voice',
 		'voice':
-			'Everyone is welcome to use our voice chat servers. Our mumble server is at mum.finalscoremc.com '.
+			'Everyone is welcome to use our voice chat servers. Our mumble server is at 192.227.136.164 '.
 			'with port 64758. You can get Mumble @ \n>>> http://mumble.info <<<\n Also, we have a Discord '.
 			'server @ \n>>> https://discordapp.com/invite/0aBtE3n1P6HlRm1h <<<',
 		'worldguard': 'regions',
