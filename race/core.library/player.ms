@@ -43,14 +43,14 @@ proc _race_remove_player(@race, @player) {
 }
 
 proc _race_prepare_player(@race, @player) {
-	clear_peffects(@p);
-	_clear_pinv(@p);
+	clear_peffects(@player);
+	_clear_pinv(@player);
 	if(array_index_exists(@race, 'sky')) {
-		set_psky(@p, @race['sky'][0], @race['sky'][1]);
+		set_psky(@player, @race['sky'][0], @race['sky'][1]);
 	}
 	if(array_index_exists(@race, 'effect')) {
 		foreach(@id: @effect in @race['effect']) {
-			set_peffect(@p, @id, @effect[0], @effect[1], true, false);
+			set_peffect(@player, @id, @effect[0], @effect[1], true, false);
 		}
 	}
 }
@@ -91,7 +91,7 @@ proc _race_place_players(@race) {
 		if(!array_index_exists(@race['spawn'], @index)) {
 			@index = 0;
 		}
-		_race_prepare_player(@race, @player);
+		_race_prepare_player(@race, @p);
 		_race_place_player(@race, @p, @race['spawn'][@index]);
 		@index++;
 	}
