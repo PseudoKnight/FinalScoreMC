@@ -1,6 +1,7 @@
 bind(player_interact, null, array('item': 401, 'button': 'right'), @event) {
 	@uuid = puuid();
 	@gliding = get_entity_gliding(@uuid);
+	@world = pworld();
 	if(@gliding || !entity_grounded(@uuid) && (@chestplate = pinv(player(), 102)) && @chestplate['name'] == 'ELYTRA') {
 		if(!@gliding) {
 			set_entity_gliding(@uuid, true);
@@ -73,7 +74,7 @@ bind(player_interact, null, array('item': 401, 'button': 'right'), @event) {
 		}
 		
 	}
-	if(!@gliding && (pworld() == 'custom' || pworld() == 'dev')) {
+	if(!@gliding && (@world == 'custom' || @world == 'dev')) {
 		@pdata = _pdata(player());
 		if(!array_index_exists(@pdata, 'support')) {
 			die();
@@ -129,10 +130,12 @@ bind(player_interact, null, array('item': 401, 'button': 'right'), @event) {
 		set_pinv(player(), @slot, @item);
 		set_timeout(4000, closure(){
 			try {
-				@item = pinv(player(), @slot);
-				if(@item && @item['name'] = 'FIREWORK') {
-					@item['name'] = 'FIREWORK';
-					set_pinv(player(), @slot, @item);
+				if(pworld() == @world) {
+					@item = pinv(player(), @slot);
+					if(@item && @item['name'] == 'FIREWORK_CHARGE') {
+						@item['name'] = 'FIREWORK';
+						set_pinv(player(), @slot, @item);
+					}
 				}
 			} catch(PlayerOfflineException @ex) {
 				// ignore
