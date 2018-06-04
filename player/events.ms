@@ -328,7 +328,7 @@ bind(entity_toggle_glide, null, array('type': 'PLAYER'), @event) {
 
 # Minecart speed control (can cause derailment and other issues after around 5/ms)
 bind(vehicle_enter, null, array('vehicletype': 'MINECART', 'passengertype': 'PLAYER'), @event) {
-	if(!has_bind(player().'vehiclecontrol')) {
+	if(_is_survival_world(pworld()) && !has_bind(player().'vehiclecontrol')) {
 		bind(player_interact, array('id': player().'vehiclecontrol'), array('hand': 'main_hand', 'player': player()), @event) {
 			@vehicle = get_entity_vehicle(puuid());
 			if(@vehicle && entity_type(@vehicle) == 'MINECART') {
