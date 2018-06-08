@@ -119,8 +119,17 @@
 
 # PLAYER LISTS #
 *:/who = >>>
-	@list = array(array('admin', 'b', ''), array('moderator', 'b', ''), array('engineer', '6', ''), array('builder', '6', ''), array('donor', 'a', ''), array('regular', 'e', ''), array('member', 'e', ''), array('default', 'f', ''))
-	@allplayers = all_players()
+	@list = array(
+		array('admin', 'b', ''),
+		array('moderator', 'b', ''),
+		array('engineer', '6', ''),
+		array('builder', '6', ''),
+		array('donor', 'a', ''),
+		array('regular', 'e', ''),
+		array('member', 'e', ''),
+		array('default', 'f', '')
+	);
+	@allplayers = all_players();
 	foreach(@player in @allplayers) {
 		for(@i = 0, @i < array_size(@list), @i++) {
 			if(array_contains_ic(pgroup(@player), @list[@i][0])) {
@@ -131,12 +140,12 @@
 	}
 	for(@i = 0, @i < array_size(@list), @i++) {
 		if(@list[@i][2] !== '') {
-			msg(color(@list[@i][1]).@list[@i][0].color(7).': '.@list[@i][2])
+			msg(color(@list[@i][1]).@list[@i][0].color(7).': '.@list[@i][2]);
 		}
 	}
 <<<
 *:/list = >>>
-	if(player() !== '~console') {
-		call_alias('/who')
+	if(player() !== '~console') { // MCMyAdmin spams this, so filter it
+		call_alias('/who');
 	}
 <<<

@@ -19,7 +19,7 @@ register_command('cluck', array(
 		if(!@args) {
 			@scores = get_value('cluck');
 			@top = @scores['top'];
-			msg(color('bold').'TOP '.array_size(@top).' CLUCK PLAYERS');
+			msg(color('bold').'TOP '.array_size(@top).' CLUCK PLAYERS (beta)');
 			msg(color('gray').'Since '.@scores['date']);
 			for(@i = 0, @i < array_size(@top), @i++) {
 				msg(if(length(@top[@i]['score']) < 2, '0').@top[@i]['score'].' - '.@top[@i]['name']);
@@ -29,11 +29,6 @@ register_command('cluck', array(
 				die();
 			}
 			@player = @args[1];
-			// TODO: remove when done with rewrite
-			if(!pisop(@player)) {
-				_regionmsg('cluck', 'Cluck is undergoing a rewrite. Come back another day.');
-				die();
-			}
 			
 			proc _cluck_defaults() {
 				@world = 'custom';
@@ -52,7 +47,7 @@ register_command('cluck', array(
 						'winround': array(-563, 58, -323, @world),
 						'startround': array(-563, 52, -323, @world),
 					),
-					'spawnloc': array(-575.5, 63, -336, @world),
+					'spawnloc': array(-573.5, 63, -331.5, @world),
 				));
 			}
 			
@@ -75,7 +70,7 @@ register_command('cluck', array(
 			proc _cluck_startround(@cluck) {;
 				_regionmsg('cluck', 'Round '.@cluck['round']);
 				bind(entity_damage, array('id': 'cluckdamage'), array('cause': 'PROJECTILE', 'type': 'CHICKEN', 'world': @cluck['world']), @event, @cluck) {
-					if(array_contains(@cluck['chickens'], @event['id'])) {
+					if(array_contains(@cluck['chickens'], @event['id']) && @event['finalamount'] > 0) {
 						if(@event['shooter'] != @cluck['player']) {
 							cancel();
 						} else {
@@ -118,6 +113,7 @@ register_command('cluck', array(
 			}
 			
 			proc _cluck_endround(@cluck) {
+				unbind('cluckdamage');
 				foreach(@chicken in @cluck['chickens']) {
 					try {
 						entity_remove(@chicken);
@@ -180,7 +176,7 @@ register_command('cluck', array(
 					set_timeout(100, closure(set_block_at(@cluck['sound']['winround'], '69:5')));
 				}
 			
-				_remove_region_entities('cluck', array('DROPPED_ITEM', 'EXPERIENCE_ORB', 'CHICKEN'));
+				_remove_region_entities('cluck', array('DROPPED_ITEM', 'EXPERIENCE_ORB'));
 				# Reset for the next round.
 				if(!@cluck['player'] || @cluck['gameover'] || @cluck['round'] == 10) {
 					@cluck = _cluck_defaults();
@@ -195,7 +191,6 @@ register_command('cluck', array(
 						}
 					}
 				}
-				unbind('cluckdamage');
 				export('cluck', @cluck);
 			}
 		

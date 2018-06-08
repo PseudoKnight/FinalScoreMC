@@ -1,5 +1,5 @@
 proc _generate(@dungeonType, @region, @world, @seed, @callback) {
-	include('../dungeon.library/'.@dungeonType.'.ms');
+	include('dungeon.library/'.@dungeonType.'.ms');
 	
 	@options = _get_options();
 	@level = array_get(@options, 'level', 1);

@@ -8,7 +8,7 @@ register_command('boats', array(
 	'executor': closure(@alias, @sender, @args, @info) {
 		@target = ploc();
 		@world = pworld();
-		if(array_size(@args) == 2 && @args[0] == 'tower') {
+		if(@args[0] == 'tower') {
 			@radius = 4;
 			@circle = array();
 			@height = integer(@args[1]);
@@ -41,7 +41,7 @@ register_command('boats', array(
 					clear_task();
 				}
 			});
-		} else {
+		} else if(@args[0] == 'spiral') {
 			@radius = 10;
 			@circle = array();
 			@height = 0;
@@ -87,6 +87,44 @@ register_command('boats', array(
 					@i[0] += 3;
 				} else {
 					clear_task();
+				}
+			});
+		} else if(@args[0] == 'spin') {
+			@loc = ptarget_space();
+			@previous = spawn_entity('BOAT', 1, @loc)[0];
+			@boats = array(@previous);
+			@stands = array();
+			@size = integer(@args[1]);
+			@i = @size;
+			while(@i > 0) {
+				@loc = location_shift(@loc, 'up');
+				@boat = spawn_entity('BOAT', 1, @loc)[0];
+				@stand = spawn_entity('ARMOR_STAND', 1, @loc)[0];
+				set_entity_spec(@stand, array('small': true, 'visible': false));
+				set_entity_rider(@previous, @boat);
+				set_entity_rider(@boat, @stand);
+				@boats[] = @boat;
+				@stands[] = @stand;
+				@previous = @stand;
+				@i--;
+			}
+			
+			set_interval(50, closure(){
+				try {
+					@add = 1;
+					foreach(@boat in @boats) {
+						if(@add == 1) {
+							@add = -1;
+						} else {
+							@add = 1;
+						}
+						set_entity_rotation(@boat, entity_loc(@boat)['yaw'] + @add, 0);
+					}
+				} catch(BadEntityException @ex) {
+					clear_task();
+					foreach(@e in array_merge(@boats, @stands)) {
+						try(entity_remove(@e));
+					}
 				}
 			});
 		}
