@@ -10,6 +10,10 @@ bind(player_interact, null, array('item': 401, 'button': 'right'), @event) {
 		set_timeout(150, closure(){
 			try(set_entity_gliding(@uuid, true));
 		});
+	} else if(@event['hand'] == 'off_hand' && string_starts_with(@event['block'], '71')) {
+		// ignore iron doors if we're not boosting; Deadbolt already cancels main hand
+		cancel();
+		die();
 	}
 	@slot = if(@event['hand'] == 'main_hand', null, -106);
 	@item = pinv(player(), @slot);
