@@ -104,15 +104,15 @@ proc _race_drop_player(@race, @player) {
 			@vehicle = get_entity_vehicle(@vehicle);
 		}
 		if(@vehicle) {
-			@bind = bind(entity_dismount, array('priority': 'HIGH'), null, @event) {
+			@bind = bind('entity_dismount', array('priority': 'HIGH'), null, @event) {
 				consume();
 			}
 			set_entity_rider(@vehicle, null);
 			entity_remove(@vehicle);
-			unbind(@bind);
+			unbind('@bind);
 		}
 	}
-	play_sound(ploc(@player), array('sound': 'ENTITY_FIREWORK_BLAST'), @player);
+	play_sound(ploc(@player)', array('sound': 'ENTITY_FIREWORK_BLAST'), @player);
 }
 
 proc _race_drop_players(@race) {

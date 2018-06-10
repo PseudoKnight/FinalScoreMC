@@ -1,7 +1,7 @@
 proc _load_events(@id) {
 	@pvp = import('pvp'.@id);
 	@pvp['binds'][] = @id.'snowballtp';
-	bind(entity_damage_player, array('id': @id.'snowballtp'), array('damager': 'SNOWBALL'), @e, @id) {
+	bind('entity_damage_player', array('id': @id.'snowballtp'), array('damager': 'SNOWBALL'), @e, @id) {
 		@pvp = import('pvp'.@id)
 		@player = @e['player'];
 		@damager = @e['data'];
@@ -35,7 +35,7 @@ proc _load_events(@id) {
 	}
 
 	@pvp['binds'][] = @id.'snowmanhit';
-	bind(entity_damage, array('id': @id.'snowmanhit'), array('type': 'SNOWMAN', 'cause': 'PROJECTILE', 'world': @pvp['arena']['lobby'][3]), @e, @id) {
+	bind('entity_damage', array('id': @id.'snowmanhit'), array('type': 'SNOWMAN', 'cause': 'PROJECTILE', 'world': @pvp['arena']['lobby'][3]), @e, @id) {
 		@loc = entity_loc(@e['id']);
 		@loc['y'] += 1;
 		play_sound(@loc, array('sound': 'ZOMBIE_INFECT'));
@@ -44,7 +44,7 @@ proc _load_events(@id) {
 	}
 
 	@pvp['binds'][] = @id.'snowballpickup';
-	bind(item_pickup, array('id': @id.'snowballpickup', 'priority': 'HIGHEST'), array('item': data_values('snowball')), @e, @id) {
+	bind('item_pickup', array('id': @id.'snowballpickup', 'priority': 'HIGHEST'), array('item': data_values('snowball')), @e, @id) {
 		@pvp = import('pvp'.@id)
 		if(!array_index_exists(@pvp['players'], player())) {
 			die();
@@ -66,7 +66,7 @@ proc _load_events(@id) {
 	}
 
 	@pvp['binds'][] = @id.'snowballshovel';
-	bind(player_interact, array('id': @id.'snowballshovel'), array('item': data_values('woodenshovel'), 'block': data_values('snow'), 'button': 'left'), @e, @id) {
+	bind('player_interact', array('id': @id.'snowballshovel'), array('item': data_values('woodenshovel'), 'block': data_values('snow'), 'button': 'left'), @e, @id) {
 		@pvp = import('pvp'.@id)
 		if(!array_index_exists(@pvp['players'], player())) {
 			die();
@@ -82,7 +82,7 @@ proc _load_events(@id) {
 	}
 
 	@pvp['binds'][] = @id.'shovelbreak';
-	bind(block_break, array('id': @id.'shovelbreak'), null, @e, @id) {
+	bind('block_break', array('id': @id.'shovelbreak'), null, @e, @id) {
 		@pvp = import('pvp'.@id)
 		if(!array_index_exists(@pvp['players'], player())) {
 			die();

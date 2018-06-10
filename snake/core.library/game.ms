@@ -142,7 +142,7 @@ proc _snake_queue(@mode) {
 				popen_virtualchest(@player, 'snake');
 			}
 		}
-		bind(inventory_click, array('id': 'snake-invclick'), null, @event, @game) {
+		bind('inventory_click', array('id': 'snake-invclick'), null, @event, @game) {
 			if(pget_virtualchest(player()) == 'snake' && array_index_exists(@game['snakes'], player())) {
 				@item = @event['slotitem'];
 				if(@item) {
@@ -152,7 +152,7 @@ proc _snake_queue(@mode) {
 				}
 			}
 		}
-		bind(inventory_close, null, null, @event, @game) {
+		bind('inventory_close', null, null, @event, @game) {
 			set_timeout(50, closure() {
 				if(array_contains(all_virtualchests(), 'snake') && !pviewing_virtualchest('snake')) {
 					unbind();

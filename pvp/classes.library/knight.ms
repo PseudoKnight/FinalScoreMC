@@ -1,6 +1,6 @@
 switch(@action) {
 case 'load':
-	bind(vehicle_leave, array('id': @player.'dismount'), array('vehicletype': 'HORSE'), @e, @player) {
+	bind('vehicle_leave', array('id': @player.'dismount'), array('vehicletype': 'HORSE'), @e, @player) {
 		if(@player == @e['player']) {
 			set_timeout(50, closure(){
 				try {

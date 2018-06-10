@@ -25,27 +25,27 @@ proc _place_command_block(@loc, @face, @block) {
 	}
 }
 
-bind(player_interact, null, associative_array('button': 'right', 'item': 137), @event) {
+bind('player_interact', null, associative_array('button': 'right', 'item': 137), @event) {
 	if(@event['action'] === 'right_click_block') {
 		_place_command_block(@event['location'], @event['facing'], @event['item']);
 	}
 }
 
-bind(player_interact, null, associative_array('button': 'right', 'item': 211), @event) {
+bind('player_interact', null, associative_array('button': 'right', 'item': 211), @event) {
 	if(@event['action'] === 'right_click_block') {
 		_place_command_block(@event['location'], @event['facing'], @event['item']);
 	}
 }
 
 # Allow breaking command blocks for builders
-bind(block_break, null, array('name': 'COMMAND'), @event) {
+bind('block_break', null, array('name': 'COMMAND'), @event) {
 	if(!pisop() && sk_can_build(@event['location'])) {
 		set_block_at(@event['location'], 0);
 		make_effect(@event['location'], 'STEP_SOUND:'.@event['block']['type']);
 	}
 }
 
-bind(block_break, null, array('name': 'COMMAND_CHAIN'), @event) {
+bind('block_break', null, array('name': 'COMMAND_CHAIN'), @event) {
 	if(!pisop() && sk_can_build(@event['location'])) {
 		set_block_at(@event['location'], 0);
 		make_effect(@event['location'], 'STEP_SOUND:'.@event['block']['type']);
@@ -70,13 +70,13 @@ proc _msg_block_command(@loc) {
 			.'{"text":"\n'.@cmd.'"}]');
 }
 
-bind(player_interact, null, associative_array('button': 'right', 'block': 137), @event) {
+bind('player_interact', null, associative_array('button': 'right', 'block': 137), @event) {
 	if(!pisop() && !psneaking() && @event['hand'] == 'main_hand' && has_permission('group.builder')){
 		_msg_block_command(@event['location']);
 	}
 }
 
-bind(player_interact, null, associative_array('button': 'right', 'block': 211), @event) {
+bind('player_interact', null, associative_array('button': 'right', 'block': 211), @event) {
 	if(!pisop() && !psneaking() && @event['hand'] == 'main_hand' && has_permission('group.builder')){
 		_msg_block_command(@event['location']);
 	}

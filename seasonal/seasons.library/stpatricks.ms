@@ -1,4 +1,4 @@
-bind(creature_spawn, null, array('type': 'ZOMBIE', 'reason': 'NATURAL'), @event) {
+bind('creature_spawn', null, array('type': 'ZOMBIE', 'reason': 'NATURAL'), @event) {
 	if(!rand(3)) {
 		@id = @event['id'];
 		set_entity_spec(@id, array('baby': true));
@@ -23,7 +23,7 @@ bind(creature_spawn, null, array('type': 'ZOMBIE', 'reason': 'NATURAL'), @event)
 	}
 }
 
-bind(target_player, null, array('mobtype': 'ZOMBIE'), @event) {
+bind('target_player', null, array('mobtype': 'ZOMBIE'), @event) {
 	if(get_entity_silent(@event['id'])) {
 		play_sound(entity_loc(@event['id']), array('sound': 'ENTITY_WITCH_AMBIENT', 'pitch': 2, 'volume': 3));
 	}

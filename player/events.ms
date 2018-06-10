@@ -1,4 +1,4 @@
-bind(player_command, null, null, @event) {
+bind('player_command', null, null, @event) {
 	try {
 		if(@event['command'] != '/we cui' && @event['command'][1] !== '/') {
 			console(@event['player'].' ran: '.@event['command'], false);
@@ -8,7 +8,7 @@ bind(player_command, null, null, @event) {
 	}
 }
 
-bind(player_death, null, null, @event) {
+bind('player_death', null, null, @event) {
 	if(_is_survival_world(@event['location']['world'])) {
 		@loc = floor(@event['location'][0]).','.floor(@event['location'][1]).','.floor(@event['location'][2]);
 		@log = @event['player'].' died @ '.@loc.' on '.@event['location'][3].': ';
@@ -77,7 +77,7 @@ bind(player_death, null, null, @event) {
 /*
 	Blocks spawning of the wither
 */
-bind(block_place, null, array('name': 'SKULL'), @event) {
+bind('block_place', null, array('name': 'SKULL'), @event) {
 	if(!has_permission('build.wither')) {
 		foreach(@dir in array('north', 'south', 'east', 'west', 'up', 'down')) {
 			if(get_block_at(location_shift(@event['location'], @dir)) == '88:0') {
@@ -93,7 +93,7 @@ bind(block_place, null, array('name': 'SKULL'), @event) {
 }
 
 # Block lighters
-bind(player_interact, null, array('item': 259, 'button': 'right'), @event) {
+bind('player_interact', null, array('item': 259, 'button': 'right'), @event) {
 	if(has_permission('item.lighter')
 	|| !array_index_exists(@event, 'location')) {
 		die();
@@ -116,7 +116,7 @@ bind(player_interact, null, array('item': 259, 'button': 'right'), @event) {
 }
 
 # Button commands
-bind(player_interact, null, array('block': 77, 'button': 'right'), @event) {
+bind('player_interact', null, array('block': 77, 'button': 'right'), @event) {
 	@sign = location_shift(@event['location'], 'up');
 	if(is_sign_at(@sign)) {
 		@line = get_sign_text(@sign);
@@ -127,14 +127,14 @@ bind(player_interact, null, array('block': 77, 'button': 'right'), @event) {
 }
 
 # prevent enderdragon egg teleportation
-bind(player_interact, null, array('block': 122), @event) {
+bind('player_interact', null, array('block': 122), @event) {
 	if(!_is_survival_world(@event['world']) && (@event['button'] == 'right' || pmode() != 'CREATIVE')) {
 		cancel();
 	}
 }
 
 # spawner eggs
-bind(player_interact, null, array('item': 383, 'button': 'right'), @event) {
+bind('player_interact', null, array('item': 383, 'button': 'right'), @event) {
 	if(_is_survival_world(pworld())) {
 		if(@event['block'] == '52') {
 			cancel();
@@ -159,7 +159,7 @@ bind(player_interact, null, array('item': 383, 'button': 'right'), @event) {
 }
 
 # Let one player in a world make the sun rise
-bind(player_enter_bed, null, null, @event) {
+bind('player_enter_bed', null, null, @event) {
 	if(!_is_survival_world(pworld())) {
 		die();
 	}
@@ -181,13 +181,13 @@ bind(player_enter_bed, null, null, @event) {
 	}
 }
 
-bind(player_interact, null, array('block': 26, 'button': 'right'), @event) {
+bind('player_interact', null, array('block': 26, 'button': 'right'), @event) {
 	set_pbed_location(location_shift(@event['location'], 'down'), false);
 	msg(color('aqua').'Your spawn location has been set to this bed.');
 }
 
 # Anti-xray helper
-bind(block_break, null, array('name': 'DIAMOND_ORE'), @event) {
+bind('block_break', null, array('name': 'DIAMOND_ORE'), @event) {
 	if(!_is_survival_world(pworld())) {
 		die();
 	}
@@ -212,7 +212,7 @@ bind(block_break, null, array('name': 'DIAMOND_ORE'), @event) {
 }
 
 # painting cycler
-bind(player_interact_entity, null, array('clicked': 'PAINTING','hand':'main_hand'), @event) {
+bind('player_interact_entity', null, array('clicked': 'PAINTING','hand':'main_hand'), @event) {
 	if(pmode() != 'ADVENTURE' && sk_can_build(entity_loc(@event['id']))) {
 		@paintings = get_value('paintings');
 		if(is_null(@paintings)) {
@@ -236,7 +236,7 @@ bind(player_interact_entity, null, array('clicked': 'PAINTING','hand':'main_hand
 }
 
 // Improve bow launching
-bind(entity_damage_player, null, array('damager': 'ARROW'), @event) {
+bind('entity_damage_player', null, array('damager': 'ARROW'), @event) {
 	if(player() == @event['data'] && !entity_grounded(puuid()) && !get_entity_gliding(puuid())) {
 		@item = pinv(player(), 102);
 		if(@item && @item['name'] == 'ELYTRA') {
@@ -247,7 +247,7 @@ bind(entity_damage_player, null, array('damager': 'ARROW'), @event) {
 }
 
 // Hand instruments
-bind(item_swap, null, null, @event,
+bind('item_swap', null, null, @event,
 	@instruments = array(
 		'IRON_NUGGET': array('note': 'flute', 'name': 'Ocarina'),
 		'GOLD_NUGGET': array('note': 'bell', 'name': 'Bell'),
@@ -264,7 +264,7 @@ bind(item_swap, null, null, @event,
 			if(has_bind(player().'instrument')) {
 				unbind(player().'instrument');
 			}
-			bind(item_held, array('id': player().'instrument'), null, @event,
+			bind('item_held', array('id': player().'instrument'), null, @event,
 				@material,
 				@player = player(),
 				@sound = 'block.note.'.@instrument['note'],
@@ -277,17 +277,17 @@ bind(item_swap, null, null, @event,
 						cancel();
 						play_named_sound(ploc(), array('sound': @sound, 'pitch': @notes[@num], 'category': 'VOICE'));
 					} else {
-						unbind();
+						unbind(');
 					}
 				}
 			}
-			set_timeout(50, closure(try(set_pheld_slot(8))));
+			set_timeout(50', closure(try(set_pheld_slot(8))));
 		}
 	}
 }
 
 // Survival PVP
-bind(entity_damage_player, null, null, @event) {
+bind('entity_damage_player', null, null, @event) {
 	if(!is_array(@event['data']) # is not dispenser
 	&& ponline(@event['data']) # is player
 	&& @event['data'] != @event['player'] # is not self-inflicted
@@ -304,7 +304,7 @@ bind(entity_damage_player, null, null, @event) {
 }
 
 # Elytra skipping
-bind(entity_toggle_glide, null, array('type': 'PLAYER'), @event) {
+bind('entity_toggle_glide', null, array('type': 'PLAYER'), @event) {
 	if(!@event['gliding'] && _is_survival_world(ploc()['world'])) {
 		@item = pinv(player(), null);
 		if(@item && @item['name'] == 'SLIME_BLOCK') {
@@ -327,9 +327,9 @@ bind(entity_toggle_glide, null, array('type': 'PLAYER'), @event) {
 }
 
 # Minecart speed control (can cause derailment and other issues after around 5/ms)
-bind(vehicle_enter, null, array('vehicletype': 'MINECART', 'passengertype': 'PLAYER'), @event) {
+bind('vehicle_enter', null, array('vehicletype': 'MINECART', 'passengertype': 'PLAYER'), @event) {
 	if(_is_survival_world(pworld()) && !has_bind(player().'vehiclecontrol')) {
-		bind(player_interact, array('id': player().'vehiclecontrol'), array('hand': 'main_hand', 'player': player()), @event) {
+		bind('player_interact', array('id': player().'vehiclecontrol'), array('hand': 'main_hand', 'player': player()), @event) {
 			@vehicle = get_entity_vehicle(puuid());
 			if(@vehicle && entity_type(@vehicle) == 'MINECART') {
 				@speed = get_entity_max_speed(@vehicle) * 20;

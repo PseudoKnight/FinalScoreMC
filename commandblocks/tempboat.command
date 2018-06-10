@@ -49,7 +49,7 @@ register_command('tempboat', array(
 		if(has_bind(@player.'vehicle_leave')) {
 			die();
 		}
-		bind(vehicle_leave, array('id': @player.'vehicle_leave'), array('vehicletype': 'BOAT', 'passengertype': 'PLAYER'), @e, @player) {
+		bind('vehicle_leave', array('id': @player.'vehicle_leave'), array('vehicletype': 'BOAT', 'passengertype': 'PLAYER'), @e, @player) {
 			if(@e['player'] == @player) {
 				unbind();
 				unbind(@player.'quit');
@@ -60,7 +60,7 @@ register_command('tempboat', array(
 				}
 			}
 		}
-		bind(player_quit, array(id: @player.'quit'), array('player': @player), @e, @boat) {
+		bind('player_quit', array(id: @player.'quit'), array('player': @player), @e, @boat) {
 			unbind();
 			unbind(player().'vehicle_leave');
 			try {

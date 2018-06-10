@@ -9,7 +9,7 @@ if(!import('requests')) {
 }
 
 # Main teleport handler
-bind(player_teleport, null, null, @event) {
+bind('player_teleport', null, null, @event) {
 	@from = @event['from'];
 	@to = @event['to'];
 	@fromWorld = @from['world'];

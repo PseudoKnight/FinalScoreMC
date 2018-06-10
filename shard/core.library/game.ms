@@ -212,12 +212,12 @@ proc _shard_create(@rules){
 						if(@airDrop) {
 							pgive_item(@p, array('name': 'ELYTRA', 'data': 402));
 							set_peffect(@p, 25, -4, 15);
-							bind(entity_toggle_glide, null, array('type': 'PLAYER', 'player': @p), @event) {
+							bind('entity_toggle_glide', null, array('type': 'PLAYER', 'player': @p), @event) {
 								set_peffect(player(), 25, 0, 0);
-								unbind();
+								unbind(');
 							}
 						}
-						set_plevel(@p, 0);
+						set_plevel(@p', 0);
 						set_peffect(@p, 11, 3, 60, true);
 						set_pscoreboard(@p, 'shard');
 						play_sound(@ploc, array('sound': 'GLASS', 'pitch': 0.5), @p);
@@ -272,7 +272,7 @@ proc _shard_create(@rules){
 				
 				// Events
 				@binds[] = 'shard-quit';
-				bind(player_quit, array('priority': 'HIGHEST', 'id': 'shard-quit'), null, @event) {
+				bind('player_quit', array('priority': 'HIGHEST', 'id': 'shard-quit'), null, @event) {
 					if(pworld() == 'shard') {
 						@loc = get_spawn('custom');
 						@loc['y'] -= 1;
@@ -282,7 +282,7 @@ proc _shard_create(@rules){
 				}
 				
 				@binds[] = 'shard-death';
-				bind(player_death, array('priority': 'HIGHEST', 'id': 'shard-death'), null, @event, @players, @rules, @respawnPlayers) {
+				bind('player_death', array('priority': 'HIGHEST', 'id': 'shard-death'), null, @event, @players, @rules, @respawnPlayers) {
 					if(@event['location']['world'] == 'shard') {
 						consume();
 						if(!@respawnPlayers) {
@@ -310,18 +310,18 @@ proc _shard_create(@rules){
 				}
 				
 				@binds[] = 'shard-spawn';
-				bind(player_spawn, array('id': 'shard-spawn', 'priority': 'LOWEST'), array('world': 'shard'), @event) {
+				bind('player_spawn', array('id': 'shard-spawn', 'priority': 'LOWEST'), array('world': 'shard'), @event) {
 					modify_event('location', import('playerspawn', _get_spawn_location()));
 					_check_shard();
 					export('playerspawn', null);
 				}
 				
-				bind(world_changed, array('id': 'shard-worldchanged'), array('from': 'shard'), @event) {
+				bind('world_changed', array('id': 'shard-worldchanged'), array('from': 'shard'), @event) {
 					_check_shard();
 				}
 				
 				@binds[] = 'shard-interact';
-				bind(player_interact, array('id': 'shard-interact'), null, @event) {
+				bind('player_interact', array('id': 'shard-interact'), null, @event) {
 					if(@event['block'] != 0 && pworld() == 'shard') {
 						switch(split(':', @event['block'], 1)[0]) {
 							case '23':
@@ -348,24 +348,24 @@ proc _shard_create(@rules){
 				}
 				
 				@binds[] = 'shard-place1';
-				bind(block_place, array('id': 'shard-place1'), array('name': 'CHEST'), @event) {
+				bind('block_place', array('id': 'shard-place1'), array('name': 'CHEST'), @event) {
 					_set_inventory_contents(@event['location'], 0);
 				}
 				
 				@binds[] = 'shard-place2';
-				bind(block_place, array('id': 'shard-place2'), array('name': 'TRAPPED_CHEST'), @event) {
+				bind('block_place', array('id': 'shard-place2'), array('name': 'TRAPPED_CHEST'), @event) {
 					_set_inventory_contents(@event['location'], 0);
 				}
 				
 				@binds[] = 'shard-itemframe';
-				bind(entity_damage, array('id': 'shard-itemframe'), array('type': 'ITEM_FRAME'), @event) {
+				bind('entity_damage', array('id': 'shard-itemframe'), array('type': 'ITEM_FRAME'), @event) {
 					if(@event['world'] == 'shard') {
 						cancel();
 					}
 				}
 				
 				@binds[] = 'shard-itemframe2';
-				bind(hanging_break, array('id': 'shard-itemframe2'), array('type': 'ITEM_FRAME', 'world': 'shard'), @event) {
+				bind('hanging_break', array('id': 'shard-itemframe2'), array('type': 'ITEM_FRAME', 'world': 'shard'), @event) {
 					cancel();
 					if(entity_loc(@event['id'])['world'] == 'shard') { // entities may share the same UUID
 						entity_remove(@event['id']);
@@ -373,7 +373,7 @@ proc _shard_create(@rules){
 				}
 				
 				@binds[] = 'shard-explosion';
-				bind(entity_explode, array('id': 'shard-explosion'), null, @event) {
+				bind('entity_explode', array('id': 'shard-explosion'), null, @event) {
 					if(@event['location']['world'] == 'shard') {
 						foreach(@block in @event['blocks']) {
 							switch(split(':', get_block_at(@block), 1)[0]) {

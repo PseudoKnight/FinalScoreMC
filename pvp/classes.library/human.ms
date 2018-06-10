@@ -1,6 +1,6 @@
 switch(@action) {
 case 'load':
-	bind(player_interact, array('id': @player.'interact'), array('player': @player, 'button': 'right', 'item': 399), @e) {
+	bind('player_interact', array('id': @player.'interact'), array('player': @player, 'button': 'right', 'item': 399), @e) {
 		if(split(':', @e['block'])[0] !== '77' && pexp() == 99) {
 			cancel()
 			@arrow = shoot_projectile(player(), 'ARROW')
@@ -16,15 +16,15 @@ case 'load':
 			})
 		}
 	}
-	bind(projectile_hit, array('id': @player.'hit'), array('type': 'ARROW'), @e, @shooter = puuid(@player)) {
+	bind('projectile_hit', array('id': @player.'hit'), array('type': 'ARROW'), @e, @shooter = puuid(@player)) {
 		if(@e['shooter'] == @shooter && entity_type(@e['id'])) {
 			entity_remove(@e['id']);
 		}
 	}
-	bind(entity_damage, array('id': @player.'damage'), array('cause': 'PROJECTILE'), @e, @p = @player) {
+	bind('entity_damage', array('id': @player.'damage'), array('cause': 'PROJECTILE'), @e, @p = @player) {
 		if(@e['shooter'] == @p, modify_event('amount', 28))
 	}
-	bind(player_death, array('id': @player.'death'), array('player': @player), @e) {
+	bind('player_death', array('id': @player.'death'), array('player': @player), @e) {
 		play_sound(ploc(), array('sound': 'ZOMBIE_UNFECT', 'pitch': 1, 'volume': 3))
 	}
 

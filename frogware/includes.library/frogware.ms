@@ -3,7 +3,7 @@ include('tasks.ms');
 
 proc _fw_startgame(@pts) {
 	_fw_startround()
-	bind(entity_damage, array('id': 'fwdamage'), array('type': 'PLAYER', 'world': 'custom'), @e) {
+	bind('entity_damage', array('id': 'fwdamage'), array('type': 'PLAYER', 'world': 'custom'), @e) {
 		if(_fw_player(@e['player'])) {
 			modify_event('amount', 0)
 		}

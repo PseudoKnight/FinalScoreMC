@@ -113,7 +113,7 @@ proc _cc_start(@world = 'custom') {
 		@cc['starttime'] = time();
 		export('cubeclimber', @cc);
 
-		bind(player_interact, array('id': 'cube-interact'), array('block': 159), @e) {
+		bind('player_interact', array('id': 'cube-interact'), array('block': 159), @e) {
 			@cc = import('cubeclimber');
 			if(array_index_exists(@cc['players'], player())) {
 				if((@e['block'] === '159:'.@cc['players'][player()]
@@ -138,7 +138,7 @@ proc _cc_start(@world = 'custom') {
 			}
 		}
 
-		bind(player_teleport, array('id': 'cube-teleport'), null, @e) {
+		bind('player_teleport', array('id': 'cube-teleport'), null, @e) {
 			@regions = sk_regions_at(array(@e['to'][0], @e['to'][1] - 1, @e['to'][2], @e['to'][3]));
 			if(array_contains(@regions, 'cubeclimber_blocks')
 			&& 2 < floor(sqrt(

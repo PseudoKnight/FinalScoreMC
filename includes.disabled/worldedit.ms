@@ -76,7 +76,7 @@ proc _redraw_selection() {
 	});
 }
 
-bind(player_interact, null, array('item': 286), @event) {
+bind('player_interact', null, array('item': 286), @event) {
 	if(!array_index_exists(@event, 'location') || @event['location']['world'] !== 'dev') {
 		die();
 	}
@@ -84,7 +84,7 @@ bind(player_interact, null, array('item': 286), @event) {
 	_redraw_selection();
 }
 
-bind(player_command, null, null, @event) {
+bind('player_command', null, null, @event) {
 	if(pworld() !== 'dev') {
 		die();
 	}

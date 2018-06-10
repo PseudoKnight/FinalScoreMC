@@ -1,16 +1,16 @@
-bind(creature_spawn, null, array('type': 'CREEPER', 'reason': 'NATURAL'), @e) {
+bind('creature_spawn', null, array('type': 'CREEPER', 'reason': 'NATURAL'), @e) {
 	if(@e['location']['world'] == 'outworld' && !rand(3)) {
 		set_entity_spec(@e['id'], array('powered': true));
 	}
 }
 
-bind(creature_spawn, null, array('type': 'PIG_ZOMBIE', 'reason': 'NATURAL'), @e) {
+bind('creature_spawn', null, array('type': 'PIG_ZOMBIE', 'reason': 'NATURAL'), @e) {
 	if(@e['location']['world'] == 'outworld_nether' && !rand(6)) {
 		set_entity_spec(@e['id'], array('baby': true));
 	}
 }
 
-bind(creature_spawn, null, array('type': 'ZOMBIE', 'reason': 'NATURAL'), @e) {
+bind('creature_spawn', null, array('type': 'ZOMBIE', 'reason': 'NATURAL'), @e) {
 	@rand = rand(5);
 	if(@rand == 4) {
 		set_mob_equipment(@e['id'], array('HELMET': array('name': 'JACK_O_LANTERN')));
@@ -39,7 +39,7 @@ bind(creature_spawn, null, array('type': 'ZOMBIE', 'reason': 'NATURAL'), @e) {
 	}
 }
 
-bind(entity_death, null, array('type': 'ZOMBIE'), @e) {
+bind('entity_death', null, array('type': 'ZOMBIE'), @e) {
 	@gear = get_mob_equipment(@e['id']);
 	if(@e['cause']['cause'] === 'ENTITY_ATTACK'
 	&& length(@e['cause']['damager']) < 17
@@ -49,7 +49,7 @@ bind(entity_death, null, array('type': 'ZOMBIE'), @e) {
 	}
 }
 
-bind(creature_spawn, null, array('type': 'SKELETON', 'reason': 'NATURAL'), @e) {
+bind('creature_spawn', null, array('type': 'SKELETON', 'reason': 'NATURAL'), @e) {
 	if(!rand(10)) {
 		set_entity_persistence(@e['id'], true);
 		if(rand(3)) {
@@ -72,7 +72,7 @@ bind(creature_spawn, null, array('type': 'SKELETON', 'reason': 'NATURAL'), @e) {
 	}
 }
 
-bind(entity_death, null, array('type': 'SKELETON'), @e) {
+bind('entity_death', null, array('type': 'SKELETON'), @e) {
 	if(@e['cause']['cause'] === 'ENTITY_ATTACK'
 	&& length(@e['cause']['damager']) < 17
 	&& !rand(10)
@@ -81,7 +81,7 @@ bind(entity_death, null, array('type': 'SKELETON'), @e) {
 	}
 }
 
-bind(creature_spawn, null, array('type': 'SPIDER', 'reason': 'NATURAL'), @e) {
+bind('creature_spawn', null, array('type': 'SPIDER', 'reason': 'NATURAL'), @e) {
 	if(!rand(2)) {
 		set_mob_effect(@e['id'], 14, 0, 99999);
 	}

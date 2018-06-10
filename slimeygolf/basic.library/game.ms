@@ -32,7 +32,7 @@ proc _start_game(@course, @loc) {
 	), array_keys(@golf['players']));
 
 	# Place ball
-	bind(player_interact, array('id': @course), array('item': 341, 'button': 'right', 'block': 159), @event, @golf) {
+	bind('player_interact', array('id': @course), array('item': 341, 'button': 'right', 'block': 159), @event, @golf) {
 		if(array_index_exists(@golf['players'], player())
 		&& @event['action'] === 'right_click_block'
 		&& @event['facing'] === 'up'
@@ -116,7 +116,7 @@ proc _start_game(@course, @loc) {
 				}
 			}
 
-			bind(player_interact_at_entity, array(id: 'golf_swing1_'.player()), array('clicked': @mobcheck), @event,
+			bind('player_interact_at_entity', array(id: 'golf_swing1_'.player()), array('clicked': @mobcheck), @event,
 					@player = player(), @golf) {
 
 				if(@player != player(), die());
@@ -127,7 +127,7 @@ proc _start_game(@course, @loc) {
 				}
 			}
 			
-			bind(player_interact_at_entity, array(id: 'golf_swing2_'.player()), array('clicked': 'ARMOR_STAND'), @event,
+			bind('player_interact_at_entity', array(id: 'golf_swing2_'.player()), array('clicked': 'ARMOR_STAND'), @event,
 					@player = player(), @golf) {
 
 				if(@player != player(), die());
@@ -138,7 +138,7 @@ proc _start_game(@course, @loc) {
 				}
 			}
 
-			bind(entity_damage, array(id: 'golf_hit_'.player()), array('id': '/('.@ball['id'].'|'.@ball['slime'].')/', 'cause': 'ENTITY_ATTACK'), @event, @golf) {
+			bind('entity_damage', array(id: 'golf_hit_'.player()), array('id': '/('.@ball['id'].'|'.@ball['slime'].')/', 'cause': 'ENTITY_ATTACK'), @event, @golf) {
 				cancel();
 				if(!array_index_exists(@golf['players'], @event['damager'])) {
 					die();

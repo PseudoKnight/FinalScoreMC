@@ -1,5 +1,5 @@
 array_push(@pvp['binds'], @id.'minedrop');
-bind(item_drop, array('id': @id.'minedrop'), array('item': 148), @event, @id) {
+bind('item_drop', array('id': @id.'minedrop'), array('item': 148), @event, @id) {
 	@pvp = import('pvp'.@id);
 	if(!array_index_exists(@pvp['players'], player()), die());
 
@@ -9,7 +9,7 @@ bind(item_drop, array('id': @id.'minedrop'), array('item': 148), @event, @id) {
 }
 
 array_push(@pvp['binds'], @id.'minespawn');
-bind(item_spawn, array('id': @id.'minespawn'), array('item': 148), @event, @region = @pvp['arena']['region']) {
+bind('item_spawn', array('id': @id.'minespawn'), array('item': 148), @event, @region = @pvp['arena']['region']) {
 	if(!array_contains(sk_regions_at(@event['location']), @region)) {
 		die();
 	}
@@ -24,7 +24,7 @@ bind(item_spawn, array('id': @id.'minespawn'), array('item': 148), @event, @regi
 }
 
 array_push(@pvp['binds'], @id.'minepickup');
-bind(item_pickup, array('id': @id.'minepickup'), array('item': 148), @event, @id) {
+bind('item_pickup', array('id': @id.'minepickup'), array('item': 148), @event, @id) {
 	@pvp = import('pvp'.@id);
 	if(!array_index_exists(@pvp['players'], player()), die());
 

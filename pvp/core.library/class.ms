@@ -7,7 +7,7 @@ proc _class(@action, @player, @classname, @pvp) {
 	switch(@action) {
 		case 'load':
 			if(array_index_exists(@class, 'hunger') && !is_numeric(@class['hunger'][1])) {
-				bind(food_level_changed, array('id': @player.'food'), array('player': @player), @event) {
+				bind('food_level_changed', array('id': @player.'food'), array('player': @player), @event) {
 					cancel();
 				}
 			}
@@ -176,7 +176,7 @@ proc _class_select(@id, @pvp) {
 
 	if(@size1 > 2 || @size2 > 2) {
 		array_push(@pvp['binds'], @id.'classselector')
-		bind(inventory_click, array('id': @id.'classselector', 'priority': 'HIGH'), null, @e, @id) {
+		bind('inventory_click', array('id': @id.'classselector', 'priority': 'HIGH'), null, @e, @id) {
 			@pvp = import('pvp'.@id);
 			if(!array_index_exists(@pvp['players'], player())
 			|| !pget_virtualchest()

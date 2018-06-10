@@ -1,17 +1,17 @@
 switch(@action) {
 case 'load':
 	set_pheld_slot(@player, 0);
-	bind(item_held, array('id': @player.'boxman'), null, @e, @player) {
+	bind('item_held', array('id': @player.'boxman'), null, @e, @player) {
 		if(@e['player'] == @player) {
 			cancel();
 		}
 	}
 
-	bind(inventory_click, array('id': @player.'boxmanclick'), array('player': @player), @e) {
+	bind('inventory_click', array('id': @player.'boxmanclick'), array('player': @player), @e) {
 		cancel();
 	}
 
-	bind(player_interact, array('id': @player.'boxmanattack'), array('player': @player), @e, @pvp) {
+	bind('player_interact', array('id': @player.'boxmanattack'), array('player': @player), @e, @pvp) {
 		@slot = 0;
 		@checkSlot = -106;
 		if(@e['button'] == 'left') {
@@ -101,7 +101,7 @@ case 'load':
 		}
 	}
 
-	bind(entity_damage, array('id': @player.'boxmanbox', 'priority': 'HIGH'), array('type': 'ARMOR_STAND'), @e, @pvp, @player) {
+	bind('entity_damage', array('id': @player.'boxmanbox', 'priority': 'HIGH'), array('type': 'ARMOR_STAND'), @e, @pvp, @player) {
 		@damager = null;
 		if(array_index_exists(@e, 'damager') && array_index_exists(@pvp['players'], @e['damager'])) {
 			@damager = @e['damager'];

@@ -86,7 +86,7 @@ register_command('spleef', array(
 			case 'floor':
 				set_ploc(@cfg['warp']['material']);
 				msg(color('yellow').'Pick a block.');
-				bind(player_interact, null, array('player': player()), @event, @cfg) {
+				bind('player_interact', null, array('player': player()), @event, @cfg) {
 					if(@event['block'] != 0 && array_contains(sk_regions_at(@event['location']), @cfg['region']['material'])) {
 						@blocktype = get_block_at(@event['location']);
 						set_block_at(@cfg['option']['material'], @blocktype);
@@ -363,7 +363,7 @@ register_command('spleef', array(
 						export('spleefsettings', @spleefsettings);
 					});
 		
-					bind(block_break, array('id': 'spleef_break'), null, @event, @cfg) {
+					bind('block_break', array('id': 'spleef_break'), null, @event, @cfg) {
 						@currentspleef = import('currentspleef');
 						if(array_index_exists(@currentspleef, player()) && !array_contains(sk_regions_at(@event['location']), @cfg['region']['floor'])) {
 							cancel();

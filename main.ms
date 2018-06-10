@@ -41,7 +41,7 @@ set_cron('*/5 * * * *', closure(){
 	});
 });
 
-bind(server_ping, null, null, @event) {
+bind('server_ping', null, null, @event) {
 	@activities = import('activities');
 	@currently = '';
 	if(@activities) {
@@ -52,7 +52,7 @@ bind(server_ping, null, null, @event) {
 }
 
 if(extension_exists('CHDiscord')) {
-	bind(discord_voice_joined, null, null, @event) {
+	bind('discord_voice_joined', null, null, @event) {
 		broadcast(@event['nickname'].' joined the "'.@event['channel'].'" Discord voice channel.');
 	}
 }

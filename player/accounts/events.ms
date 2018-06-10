@@ -1,4 +1,4 @@
-bind(player_login, null, null, @event) {
+bind('player_login', null, null, @event) {
 	if(@event['result'] !== 'ALLOWED') {
 		die();
 	}

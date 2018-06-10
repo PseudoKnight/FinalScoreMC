@@ -34,7 +34,7 @@ proc _snake_menu() {
 		)),
 	));
 	popen_virtualchest('snake');
-	bind(inventory_click, array('id': 'snake-invclick'), null, @event) {
+	bind('inventory_click', array('id': 'snake-invclick'), null, @event) {
 		if(pget_virtualchest() == 'snake') {
 			@item = @event['slotitem'];
 			if(@item) {
@@ -61,7 +61,7 @@ proc _snake_menu() {
 			}
 		}
 	}
-	bind(inventory_close, null, null, @event) {
+	bind('inventory_close', null, null, @event) {
 		if(pget_virtualchest() == 'snake') {
 			unbind();
 			unbind('snake-invclick');

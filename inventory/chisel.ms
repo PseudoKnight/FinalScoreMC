@@ -68,10 +68,10 @@ proc _chisel(@location, @id) {
 	}
 }
 
-bind(player_interact, null, array('button': 'right', 'block': 43), @event) {
+bind('player_interact', null, array('button': 'right', 'block': 43), @event) {
 	_chisel(@event['location'], @event['block']);
 }
 
-bind(player_interact, null, array('button': 'right', 'block': 181), @event) {
+bind('player_interact', null, array('button': 'right', 'block': 181), @event) {
 	_chisel(@event['location'], @event['block']);
 }

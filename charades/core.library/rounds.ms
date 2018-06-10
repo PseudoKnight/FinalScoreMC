@@ -66,7 +66,7 @@ proc _queue_next_builder() {
 		}
 	});
 	
-	bind(player_chat, array('id': 'charades-guessing', 'priority': 'HIGH'), null, @event, @charades) {
+	bind('player_chat', array('id': 'charades-guessing', 'priority': 'HIGH'), null, @event, @charades) {
 		if(get_pscoreboard(player()) == 'charades') {
 			try {
 				consume();

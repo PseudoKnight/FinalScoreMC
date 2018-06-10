@@ -1,5 +1,5 @@
 # Calculate trophies
-bind(player_join, null, null, @event) {
+bind('player_join', null, null, @event) {
 	queue_push(closure(){
 		try {
 			@uuid = puuid(player(), true);

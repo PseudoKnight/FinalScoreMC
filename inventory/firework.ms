@@ -1,4 +1,4 @@
-bind(player_interact, null, array('item': 401, 'button': 'right'), @event) {
+bind('player_interact', null, array('item': 401, 'button': 'right'), @event) {
 	@uuid = puuid();
 	@gliding = get_entity_gliding(@uuid);
 	@world = pworld();
@@ -148,7 +148,7 @@ bind(player_interact, null, array('item': 401, 'button': 'right'), @event) {
 	}
 }
 
-bind(firework_explode, null, null, @event){
+bind('firework_explode', null, null, @event){
 	if(has_metadata(@event['id'], 'mob')){
 		@mob = get_metadata(@event['id'], 'mob', 'CommandHelper');
 		@mobs = spawn_mob(@mob, 15, @event['location']);

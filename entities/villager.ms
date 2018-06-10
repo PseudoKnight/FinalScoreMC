@@ -1,4 +1,4 @@
-bind(player_interact_entity, null, array('clicked': 'VILLAGER'), @event) {
+bind('player_interact_entity', null, array('clicked': 'VILLAGER'), @event) {
 	@item = pinv(player(), null);
 	if(@item && @item['name'] == 'LEASH'
 	&& get_leashholder(@event['id']) != puuid()) {

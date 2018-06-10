@@ -48,7 +48,7 @@
 		});
 	}
 
-	bind(ctz_npc_navigation_complete, array('id': @npc.'nav'), array('world': pworld($player)), @e, @npc, @path) {
+	bind('ctz_npc_navigation_complete', array('id': @npc.'nav'), array('world': pworld($player)), @e, @npc, @path) {
 		if(@e['npc'] == @npc) {
 			if(get_entity_rider(ctz_npc_entity_id(@npc)) == null) {
 				_remove_npc(@npc);
@@ -64,7 +64,7 @@
 		}
 	}
 
-	bind(ctz_npc_despawn, array('id': @npc.'despawn'), array('world': pworld($player)), @e, @npc) {
+	bind('ctz_npc_despawn', array('id': @npc.'despawn'), array('world': pworld($player)), @e, @npc) {
 		if(@e['npc'] == @npc) {
 			_remove_npc(@npc);
 		}

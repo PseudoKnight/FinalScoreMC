@@ -2,7 +2,7 @@ foreach(@p in all_players()) {
 	export(@p.'posing', null);
 }
 
-bind(player_interact_at_entity, null, array('clicked': 'ARMOR_STAND'), @event) {
+bind('player_interact_at_entity', null, array('clicked': 'ARMOR_STAND'), @event) {
 	if(!sk_can_build(entity_loc(@event['id']))) {
 		cancel();
 		die();
@@ -228,7 +228,7 @@ bind(player_interact_at_entity, null, array('clicked': 'ARMOR_STAND'), @event) {
 				if(!psneaking() && !get_entity_rider(puuid())) {
 					cancel();
 					title('', color(6).'Moving Armor Stand. Click to place.', 0, 40, 10);
-					bind(player_interact, null, array('player': player()), @event, @world = pworld(), @stand = @event['id']) {
+					bind('player_interact', null, array('player': player()), @event, @world = pworld(), @stand = @event['id']) {
 						if(array_index_exists(@event, 'location')) {
 							unbind();
 							@loc = @event['location'];
@@ -287,7 +287,7 @@ bind(player_interact_at_entity, null, array('clicked': 'ARMOR_STAND'), @event) {
 	}
 }
 
-bind(entity_damage, null, array('type': 'ARMOR_STAND'), @event) {
+bind('entity_damage', null, array('type': 'ARMOR_STAND'), @event) {
 	@damager = '';
 	if(array_index_exists(@event, 'shooter')) {
 		@damager = @event['shooter'];

@@ -21,7 +21,7 @@ if(extension_exists('CHDynmap')) {
 		dm_set_markerset_hide_by_default('tracers', false);
 	}
 
-	bind(player_move, null, array('threshold': 10), @event) {
+	bind('player_move', null, array('threshold': 10), @event) {
 		if(pmode() == 'SPECTATOR' || !has_permission('livemap.tracers')) {
 			die();
 		}
@@ -58,7 +58,7 @@ if(extension_exists('CHDynmap')) {
 		}
 	}
 
-	bind(player_teleport, null, null, @event) {
+	bind('player_teleport', null, null, @event) {
 		if(has_permission('livemap.tracers')) {
 			set_timeout(50, closure(){
 				if(@event['from']['world'] != @event['to']['world']) {
@@ -80,7 +80,7 @@ if(extension_exists('CHDynmap')) {
 		}
 	}
 
-	bind(player_death, null, null, @event) {
+	bind('player_death', null, null, @event) {
 		if(has_permission('livemap.markers')) {
 			if(array_contains(dm_all_markers('tracers'), player())) {
 				dm_delete_marker('tracers', player());
@@ -94,7 +94,7 @@ if(extension_exists('CHDynmap')) {
 		}
 	}
 
-	bind(player_quit, array('priority': 'HIGHEST'), null, @event) {
+	bind('player_quit', array('priority': 'HIGHEST'), null, @event) {
 		if(has_permission('livemap.markers')) {
 			if(array_contains(dm_all_markers('tracers'), player())) {
 				dm_delete_marker('tracers', player());
@@ -109,7 +109,7 @@ if(extension_exists('CHDynmap')) {
 		}
 	}
 
-	bind(player_join, null, null, @event) {
+	bind('player_join', null, null, @event) {
 		set_timeout(50, closure(){
 			if(has_permission('livemap.markers')) {
 				try {

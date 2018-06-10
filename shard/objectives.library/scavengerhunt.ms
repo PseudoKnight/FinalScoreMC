@@ -546,7 +546,7 @@ if(@size) {
 
 // Events
 @binds[] = 'shard-scavenger-worldchanged';
-bind(world_changed, array('id': 'shard-scavenger-worldchanged', 'priority': 'LOW'), array('to': 'shard'), @event, @size, @colors, @colorMap) {
+bind('world_changed', array('id': 'shard-scavenger-worldchanged', 'priority': 'LOW'), array('to': 'shard'), @event, @size, @colors, @colorMap) {
 	queue_push(closure(){
 		try {
 			@index = array_rand(@colors, 1)[0];
@@ -566,7 +566,7 @@ bind(world_changed, array('id': 'shard-scavenger-worldchanged', 'priority': 'LOW
 }
 
 @binds[] = 'shard-scavenger-playerinteract';
-bind(player_interact, array('id': 'shard-scavenger-playerinteract'), array('item': 395, 'button': 'right'), @event, @size) {
+bind('player_interact', array('id': 'shard-scavenger-playerinteract'), array('item': 395, 'button': 'right'), @event, @size) {
 	if(pworld() == 'shard') {
 		cancel();
 		if(@size) {
@@ -578,7 +578,7 @@ bind(player_interact, array('id': 'shard-scavenger-playerinteract'), array('item
 }
 
 @binds[] = 'shard-scavenger-inventoryclick';
-bind(inventory_click, array('id': 'shard-scavenger-inventoryclick'), array('clicktype': 'LEFT'), @event, @card, @items, @width, @height) {
+bind('inventory_click', array('id': 'shard-scavenger-inventoryclick'), array('clicktype': 'LEFT'), @event, @card, @items, @width, @height) {
 	if(@event['slotitem'] && @event['rawslot'] < @event['inventorysize']) {
 		@menu = pget_virtualchest();
 		if(@menu == 'shardcard' || @menu == to_lower(player()).'card') {
@@ -608,7 +608,7 @@ bind(inventory_click, array('id': 'shard-scavenger-inventoryclick'), array('clic
 }
 
 @binds[] = 'shard-scavenger-itempickup';
-bind(item_pickup, array('id': 'shard-scavenger-itempickup'), null, @event, @card, @size, @width, @height) {
+bind('item_pickup', array('id': 'shard-scavenger-itempickup'), null, @event, @card, @size, @width, @height) {
 	if(pworld() == 'shard') {
 		@thisMaterial = @event['item']['name'];
 		if(@thisMaterial == 'STAINED_GLASS_PANE') {

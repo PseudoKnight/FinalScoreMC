@@ -34,7 +34,7 @@ proc _open_objective_menu() {
 	create_virtualchest(@menu);
 	popen_virtualchest('shard');
 	
-	bind(inventory_click, array('id': player().'click'), array('player': player()), @event, @objectives) {
+	bind('inventory_click', array('id': player().'click'), array('player': player()), @event, @objectives) {
 		if(is_null(pget_virtualchest())) {
 			cancel();
 			close_pinv();
@@ -51,7 +51,7 @@ proc _open_objective_menu() {
 		}
 	}
 	
-	bind(inventory_close, array('id': player().'open'), null, @event, @player = player()) {
+	bind('inventory_close', array('id': player().'open'), null, @event, @player = player()) {
 		if(player() == @player) {
 			unbind();
 			unbind(player().'click');
@@ -259,7 +259,7 @@ proc _open_rules_menu(@objective) {
 	create_virtualchest(@menu);
 	popen_virtualchest('shard');
 	
-	bind(inventory_click, array('id': player().'click'), array('player': player()), @event, @rules, @options) {
+	bind('inventory_click', array('id': player().'click'), array('player': player()), @event, @rules, @options) {
 		if(is_null(pget_virtualchest())) {
 			cancel();
 			close_pinv();
@@ -334,7 +334,7 @@ proc _open_rules_menu(@objective) {
 		}
 	}
 	
-	bind(inventory_close, array('id': player().'open'), null, @event, @player = player()) {
+	bind('inventory_close', array('id': player().'open'), null, @event, @player = player()) {
 		if(player() == @player) {
 			unbind();
 			unbind(player().'click');

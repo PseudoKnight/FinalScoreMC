@@ -193,7 +193,7 @@ register_command('level', array(
 				create_virtualchest(@menu);
 				popen_virtualchest('levelstart'.@region);
 				
-				bind(inventory_close, null, null, @e, @player = player(), @region) {
+				bind('inventory_close', null, null, @e, @player = player(), @region) {
 					if(player() == @player) {
 						unbind(player().'click');
 						unbind();
@@ -201,7 +201,7 @@ register_command('level', array(
 					}
 				}
 				
-				bind(inventory_click, array('id': player().'click'), array('player': player()), @e, @arena, @region, @world) {
+				bind('inventory_click', array('id': player().'click'), array('player': player()), @e, @arena, @region, @world) {
 					@item = @e['slotitem'];
 					if(@item && @item['meta'] && @item['meta']['display']) {
 						close_pinv(); // unbinds and deletes menu

@@ -1,6 +1,6 @@
 switch(@action) {
 case 'load':
-	bind(entity_damage_player, array('id': @player.'werewolf'), null, @e, @p = @player) {
+	bind('entity_damage_player', array('id': @player.'werewolf'), null, @e, @p = @player) {
 		if(@e['player'] == @p && !is_null(pinv(@p, 103))) {
 			play_sound(ploc(@p), array('sound': 'WOLF_HURT', 'pitch': 0.75))
 		} else if(@e['data'] == @p && !is_null(pinv(@p, 103)) && !rand(4)) {
@@ -8,13 +8,13 @@ case 'load':
 		}
 	}
 
-	bind(player_death, array('id': @player.'kill'), null, @e, @player) {
+	bind('player_death', array('id': @player.'kill'), null, @e, @player) {
 		if(@e['killer'] == @player && !is_null(pinv(@player, 103))) {
 			pgive_item(@player, array('name': 'FERMENTED_SPIDER_EYE', 'meta': array('display': player().'\'s Heart')));
 		}
 	}
 	
-	bind(player_interact, array('id': @player.'eat'), array('button': 'right', 'item': 376, 'player': @player), @event) {
+	bind('player_interact', array('id': @player.'eat'), array('button': 'right', 'item': 376, 'player': @player), @event) {
 		ptake_item(array('name': 'FERMENTED_SPIDER_EYE'));
 		set_phealth(player(), min(20, phealth() + 4));
 		play_sound(ploc(), array('sound': 'EAT', 'pitch': 0.5));

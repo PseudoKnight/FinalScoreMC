@@ -64,7 +64,7 @@ proc _level_start(@level) {
 	@entities = array();
 	sk_region_flag(@level['world'], @level['region'], 'mob-spawning', 'allow');
 	
-	bind(player_death, array('id': 'death'.@level['region']), null, @event, @level) {
+	bind('player_death', array('id': 'death'.@level['region']), null, @event, @level) {
 		if(array_contains(@level['players'], player())) {
 			@level['coins'] /= 2;
 			_level_remove_player(player(), @level);
@@ -77,7 +77,7 @@ proc _level_start(@level) {
 		}
 	}
 	
-	bind(player_spawn, array('id': 'spawn'.@level['region']), null, @event, @level) {
+	bind('player_spawn', array('id': 'spawn'.@level['region']), null, @event, @level) {
 		if(array_contains(@level['spectators'], player())) {
 			consume();
 			@loc = import(player().'spawn');
@@ -88,7 +88,7 @@ proc _level_start(@level) {
 		}
 	}
 	
-	bind(player_quit, array('id': 'quit'.@level['region']), null, @event, @level) {
+	bind('player_quit', array('id': 'quit'.@level['region']), null, @event, @level) {
 		if(array_contains(@level['players'], player())) {
 			set_ploc(@level['arena']['lobby']);
 			_level_remove_player(player(), @level);
@@ -97,7 +97,7 @@ proc _level_start(@level) {
 		}
 	}
 	
-	bind(player_teleport, array('id': 'teleport'.@level['region']), null, @event, @level) {
+	bind('player_teleport', array('id': 'teleport'.@level['region']), null, @event, @level) {
 		if(@event['type'] == 'PLUGIN' || @event['type'] == 'SPECTATE') {
 			@from = array_contains(sk_regions_at(@event['from']), @level['region']);
 			@to = array_contains(sk_regions_at(@event['to']), @level['region']);
@@ -122,17 +122,17 @@ proc _level_start(@level) {
 		}
 	}
 	
-	bind(creature_spawn, array('id': 'mobspawn'.@level['region']), null, @event, @world = @level['world'], @region = @level['region'], @entities) {
+	bind('creature_spawn', array('id': 'mobspawn'.@level['region']), null, @event, @world = @level['world'], @region = @level['region'], @entities) {
 		if(@event['type'] != 'ARMOR_STAND' && @event['location']['world'] == @world && array_contains(sk_regions_at(@event['location']), @region)) {
 			@entities[] = @event['id'];
 		}
 	}
 	
-	bind(entity_death, array('id': 'mobdeath'.@level['region']), null, @event, @entities) {
+	bind('entity_death', array('id': 'mobdeath'.@level['region']), null, @event, @entities) {
 		array_remove_values(@entities, @event['id']);
 	}
 	
-	bind(player_interact_entity, array('id': 'interact'.@level['region']), array('clicked': 'WOLF'), @event, @entities) {
+	bind('player_interact_entity', array('id': 'interact'.@level['region']), array('clicked': 'WOLF'), @event, @entities) {
 		if(get_mob_owner(@event['id'])) {
 			array_remove_values(@entities, @event['id']);
 		}
@@ -145,7 +145,7 @@ proc _level_start(@level) {
 		}
 	}
 	
-	bind(player_interact_at_entity, array('id': 'interactstand'.@level['region'], 'priority': 'HIGHEST'),
+	bind('player_interact_at_entity', array('id': 'interactstand'.@level['region'], 'priority': 'HIGHEST'),
 			array('clicked': 'ARMOR_STAND'), @event, @region = @level['region']) {
 				
 		if(array_contains(sk_regions_at(entity_loc(@event['id'])), @region)) {
@@ -162,13 +162,13 @@ proc _level_start(@level) {
 	}
 	
 	if(array_index_exists(@level['config'], 'shop')) {
-		bind(player_interact, array('id': 'openshop'.@level['region']), array('button': 'right', 'item': 388), @event, @level) {
+		bind('player_interact', array('id': 'openshop'.@level['region']), array('button': 'right', 'item': 388), @event, @level) {
 			if(array_contains(@level['players'], player()) && pworld() == @level['world']) {
 				popen_virtualchest('level'.@level['region']);
 			}
 		}
 		
-		bind(player_interact, array('id': 'resurrect'.@level['region']), array('button': 'right', 'item': 399), @event, @level) {
+		bind('player_interact', array('id': 'resurrect'.@level['region']), array('button': 'right', 'item': 399), @event, @level) {
 			foreach(@p in players_in_radius(ploc(), 16)) {
 				if(pmode(@p) == 'SPECTATOR') {
 					set_pmode(@p, 'ADVENTURE');
@@ -181,7 +181,7 @@ proc _level_start(@level) {
 			msg('Ghost player must be within 16 meters to resurrect!')
 		}
 		
-		bind(item_pickup, array('id': 'pickup'.@level['region']), null, @event, @level) {
+		bind('item_pickup', array('id': 'pickup'.@level['region']), null, @event, @level) {
 			if(array_contains(@level['players'], player())) {
 				@item = @event['item'];
 				if(!@item['meta'] || !@item['meta']['lore']) {
@@ -199,7 +199,7 @@ proc _level_start(@level) {
 			}
 		}
 		
-		bind(inventory_click, array('id': 'shop'.@level['region']), array('action': 'PICKUP_ALL'), @event, @level) {
+		bind('inventory_click', array('id': 'shop'.@level['region']), array('action': 'PICKUP_ALL'), @event, @level) {
 			if(pget_virtualchest() == 'level'.@level['region']) {
 				@item = @event['slotitem'];
 				if(@item && @item['meta'] && @item['meta']['lore']) {

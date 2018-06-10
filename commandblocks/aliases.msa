@@ -25,7 +25,7 @@
 		if(has_bind($player.'vehicle_leave')) {
 			die();
 		}
-		bind(vehicle_leave, array(id: $player.'vehicle_leave'), array('vehicletype': 'MINECART', 'passengertype': 'PLAYER'), @e, @player = $player) {
+		bind('vehicle_leave', array(id: $player.'vehicle_leave'), array('vehicletype': 'MINECART', 'passengertype': 'PLAYER'), @e, @player = $player) {
 			if(@e['player'] == @player) {
 				unbind()
 				unbind(@player.'quit')
@@ -36,7 +36,7 @@
 				}
 			}
 		}
-		bind(player_quit, array(id: $player.'quit'), array('player': $player), @e, @cart) {
+		bind('player_quit', array(id: $player.'quit'), array('player': $player), @e, @cart) {
 			unbind()
 			unbind(player().'vehicle_leave')
 			try {

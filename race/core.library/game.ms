@@ -114,7 +114,7 @@ proc _race_start(@race) {
 	play_sound(ploc(), array('sound': 'NOTE_PLING', 'pitch': 2));
 	_race_drop_players(@race);
 	
-	@race['binds'][] = bind(player_move, null, null, @event, @race) {
+	@race['binds'][] = bind('player_move', null, null, @event, @race) {
 		if(array_index_exists(@race['players'], player())) {
 			@loc = location_shift(@event['to'], 'up', 0.35);
 			play_effect(@loc, 'FIREWORKS_SPARK', array('speed': 0));
@@ -181,14 +181,14 @@ proc _race_start(@race) {
 				} else if(!array_contains(sk_regions_at(@loc), @race['region'])) {
 					@vehicle = get_entity_vehicle(puuid());
 					if(@vehicle) {
-						@bind = bind(entity_dismount, array('priority': 'HIGH'), null, @event) {
+						@bind = bind('entity_dismount', array('priority': 'HIGH'), null, @event) {
 							consume();
 						}
 						set_entity_rider(null, puuid());
 						entity_remove(@vehicle);
-						unbind(@bind);
+						unbind('@bind);
 					}
-					_race_place_player(@race, player(), @p['loc']);
+					_race_place_player(@race', player(), @p['loc']);
 					set_timeout(1000, closure(){
 						_race_drop_player(@race, player());
 					});

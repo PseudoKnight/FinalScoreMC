@@ -1,4 +1,4 @@
-bind(entity_death, null, null, @event) {
+bind('entity_death', null, null, @event) {
 	@loc = @event['location'];
 	@colors = array();
 	for(@i = 0, @i < 3, @i++) {

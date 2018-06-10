@@ -14,7 +14,7 @@ register_command('horse', array(
 		set_entity_spec(@horse, array('jump': 0.8, 'saddle': array('name': 'saddle')));
 		set_entity_rider(@horse, puuid());
 	
-		bind(vehicle_leave, array('id': player().'horse_leave'), array('vehicletype': 'HORSE', 'passengertype': 'PLAYER'),
+		bind('vehicle_leave', array('id': player().'horse_leave'), array('vehicletype': 'HORSE', 'passengertype': 'PLAYER'),
 				@e, @player = player()) {
 	
 			if(@e['player'] == @player) {
@@ -28,7 +28,7 @@ register_command('horse', array(
 			}
 		}
 	
-		bind(player_quit, array('id': player().'horse_quit'), array('player': player()), @e, @horse) {
+		bind('player_quit', array('id': player().'horse_quit'), array('player': player()), @e, @horse) {
 			unbind();
 			unbind(player().'horse_leave');
 			try {

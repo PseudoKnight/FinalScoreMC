@@ -21,7 +21,7 @@ proc _create_options_menu(@id, @arena) {
 	));
 	update_virtualchest(@id.'options', @inv);
 
-	bind(inventory_click, array('id': @id.'options', 'priority': 'HIGH'), array('slottype': 'CONTAINER', 'player': player()), @e, @id) {
+	bind('inventory_click', array('id': @id.'options', 'priority': 'HIGH'), array('slottype': 'CONTAINER', 'player': player()), @e, @id) {
 		if(pget_virtualchest() != @id.'options'
 		|| is_null(@e['slotitem'])
 		|| is_null(@e['slotitem']['meta'])

@@ -5,7 +5,7 @@ proc _spawn_mob(@mob, @loc, @owner, @teammates) {
 	if(is_null(@mob)) {
 		return(null);
 	}
-	@custom = bind(creature_spawn, null, array('reason': 'CUSTOM'), @event, @mob, @loc, @owner, @teammates) {
+	@custom = bind('creature_spawn', null, array('reason': 'CUSTOM'), @event, @mob, @loc, @owner, @teammates) {
 		@m = @event['id'];
 		set_entity_persistence(@m, true);
 		foreach(@key: @value in @mob) {

@@ -1,5 +1,5 @@
 # Limit breeding in high entity areas
-bind(creature_spawn, null, array('reason': 'BREEDING'), @event) {
+bind('creature_spawn', null, array('reason': 'BREEDING'), @event) {
 	if(!array_contains(array('DONKEY', 'HORSE', 'MULE'), @event['type'])
 	&& array_size(entities_in_radius(@event['location'], 64)) > 300) {
 		cancel();
@@ -8,7 +8,7 @@ bind(creature_spawn, null, array('reason': 'BREEDING'), @event) {
 	}
 }
 
-bind(creature_spawn, null, array('reason': 'EGG'), @event) {
+bind('creature_spawn', null, array('reason': 'EGG'), @event) {
 	if(array_size(entities_in_radius(@event['location'], 8)) > 200) {
 		cancel();
 		play_effect(@event['location'], 'SMOKE', array('id': 4));
@@ -17,7 +17,7 @@ bind(creature_spawn, null, array('reason': 'EGG'), @event) {
 }
 
 # Block creeper damage on the surface.
-bind(entity_explode, null, array('type': 'CREEPER'), @event) {
+bind('entity_explode', null, array('type': 'CREEPER'), @event) {
 	if(@event['location']['y'] > 62
 	&& array_contains(array('world', 'world3', 'world4', 'omega'), @event['location']['world'])) {
 		cancel();
@@ -26,33 +26,33 @@ bind(entity_explode, null, array('type': 'CREEPER'), @event) {
 }
 
 # prevent egg-spawned mobs from despawning
-bind(creature_spawn, null, array('reason': 'SPAWNER_EGG'), @event) {
+bind('creature_spawn', null, array('reason': 'SPAWNER_EGG'), @event) {
 	set_entity_persistence(@event['id'], true);
 }
 
 # block skeleton trap horses in regions
-bind(creature_spawn, null, array('reason': 'LIGHTNING', 'type': 'SKELETON_HORSE'), @event) {
+bind('creature_spawn', null, array('reason': 'LIGHTNING', 'type': 'SKELETON_HORSE'), @event) {
 	if(@event['location']['world'] != 'outworld') {
 		cancel();
 	}
 }
 
 # prevent enderpearls from damaging item frames and paintings
-bind(entity_damage, null, array('type': 'ITEM_FRAME', 'cause': 'PROJECTILE'), @event) {
+bind('entity_damage', null, array('type': 'ITEM_FRAME', 'cause': 'PROJECTILE'), @event) {
 	if(entity_type(@event['damager']) === 'ENDER_PEARL') {
 		cancel();
 	}
 }
 
 // Block firework damage
-bind(entity_damage, null, array('cause': 'ENTITY_EXPLOSION'), @event) {
+bind('entity_damage', null, array('cause': 'ENTITY_EXPLOSION'), @event) {
 	if(entity_type(@event['damager']) == 'FIREWORK') {
 		cancel();
 	}
 }
 
 // Always drop full enderdragon experience
-bind(entity_death, null, array('type': 'ENDER_DRAGON'), @event) {
+bind('entity_death', null, array('type': 'ENDER_DRAGON'), @event) {
 	if(@event['xp'] < 12000) {
 		modify_event('xp', 12000);
 		@loc = get_highest_block_at(0, 0, @event['location']['world']);
@@ -62,7 +62,7 @@ bind(entity_death, null, array('type': 'ENDER_DRAGON'), @event) {
 }
 
 // Block ghast fireball damage to all but natural nether blocks
-bind(entity_explode, null, array('type': 'FIREBALL'), @event) {
+bind('entity_explode', null, array('type': 'FIREBALL'), @event) {
 	@world = @event['location']['world'];
 	if(world_info(@world)['environment'] == 'NETHER' && @world != 'outworld_nether') {
 		@blocks = @event['blocks'];
@@ -81,7 +81,7 @@ bind(entity_explode, null, array('type': 'FIREBALL'), @event) {
 }
 
 // Prevents chickens in chicken jockeys from spawning when mob-spawning is disabled
-bind(creature_spawn, null, array('type': 'CHICKEN', 'reason': 'MOUNT'), @event) {
+bind('creature_spawn', null, array('type': 'CHICKEN', 'reason': 'MOUNT'), @event) {
 	@loc = @event['location'];
 	if(_is_survival_world(@loc['world']) && array_contains(sk_region_check_flag(@loc, 'deny-spawn'), 'zombie')) {
 		cancel();

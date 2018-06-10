@@ -1,5 +1,5 @@
 array_push(@pvp['binds'], @id.'shotgunshoot');
-bind(player_interact, array('id': @id.'shotgunshoot'), array('item': 332, 'button': 'right'), @e, @id) {
+bind('player_interact', array('id': @id.'shotgunshoot'), array('item': 332, 'button': 'right'), @e, @id) {
 	@pvp = import('pvp'.@id);
 	if(!array_index_exists(@pvp['players'], player()) || pinfo(player(), 6) != @e['item']) {
 		die();
@@ -30,7 +30,7 @@ bind(player_interact, array('id': @id.'shotgunshoot'), array('item': 332, 'butto
 	});
 }
 array_push(@pvp['binds'], @id.'shotgundamage');
-bind(entity_damage, array('id': @id.'shotgundamage'), array('type': 'PLAYER', 'cause': 'PROJECTILE'), @e, @id) {
+bind('entity_damage', array('id': @id.'shotgundamage'), array('type': 'PLAYER', 'cause': 'PROJECTILE'), @e, @id) {
 	if(array_index_exists(@e, 'shooter') // missing in special cases
 	&& length(@e['shooter']) < 17) {
 		@pvp = import('pvp'.@id);

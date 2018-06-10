@@ -24,7 +24,7 @@ case 'load':
 		}
 	});
 	
-	bind(entity_toggle_glide, array('id': @player.'glide'), array('type': 'PLAYER', 'player': @player), @e, @glideState) {
+	bind('entity_toggle_glide', array('id': @player.'glide'), array('type': 'PLAYER', 'player': @player), @e, @glideState) {
 		if(@e['gliding']) {
 			@glideState[0] = true;
 		} else if(@glideState[0]) {
@@ -32,7 +32,7 @@ case 'load':
 		}
 	}
 
-	bind(player_toggle_sneak, array('id': @player.'sneak'), array('sneaking': true), @e, @player, @glideState) {
+	bind('player_toggle_sneak', array('id': @player.'sneak'), array('sneaking': true), @e, @player, @glideState) {
 		if(player() == @player) {
 			@glideState[0] = false;
 			set_entity_gliding(puuid(), false);
@@ -41,7 +41,7 @@ case 'load':
 		}
 	}
 	
-	bind(player_interact, array('id': @player.'boost'), array('player': @player, 'button': 'right', 'item': 271), @e) {
+	bind('player_interact', array('id': @player.'boost'), array('player': @player, 'button': 'right', 'item': 271), @e) {
 		if(!pcooldown('WOOD_AXE')) {
 			set_pvelocity(player(), get_vector(ploc(), 0.6));
 			set_pcooldown('WOOD_AXE', 4000 / 50);

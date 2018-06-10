@@ -7,7 +7,7 @@ for(@i = 0, @i < @numTeams, @i++) {
 }
 
 @binds[] = 'shard-teams1';
-bind(world_changed, array('id': 'shard-teams1', 'priority': 'LOW'), array('to': 'shard'), @event, @numTeams, @teams) {
+bind('world_changed', array('id': 'shard-teams1', 'priority': 'LOW'), array('to': 'shard'), @event, @numTeams, @teams) {
 	queue_push(closure(){
 		for(@i = 0, @i < @numTeams, @i++) {
 			pgive_item(array('name': 'WOOL', 'data': @i + 3, 'meta': array('display': color(@teams[@i]).@teams[@i])));
@@ -16,7 +16,7 @@ bind(world_changed, array('id': 'shard-teams1', 'priority': 'LOW'), array('to': 
 }
 
 @binds[] = 'shard-teams2';
-bind(player_interact, array('id': 'shard-teams2'), array('item': 35, 'button': 'right'), @event, @numTeams, @teams) {
+bind('player_interact', array('id': 'shard-teams2'), array('item': 35, 'button': 'right'), @event, @numTeams, @teams) {
 	if(pworld() == 'shard') {
 		@team = integer(split(':', @event['item'])[1]) - 3;
 		if(@team > -1 && @team < @numTeams) {

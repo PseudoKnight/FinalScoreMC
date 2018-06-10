@@ -1,5 +1,5 @@
 # Clicking cakes
-bind(player_interact, null, array('block': 92), @event) {
+bind('player_interact', null, array('block': 92), @event) {
 	if(phas_flight() || pworld() !== 'custom') {
 		die();
 	}
@@ -82,7 +82,7 @@ bind(player_interact, null, array('block': 92), @event) {
 }
 
 # COIN SHOPS!
-bind(player_interact, null, array('block': 68), @event) {
+bind('player_interact', null, array('block': 68), @event) {
 	@signtext = get_sign_text(@event['location'])
 	if(@cost = reg_match('(?:\\u00a7[0-9a-o])+\\-(\\d{1,3})\\sCoins', @signtext[3])) {
 		@chestLoc = location_shift(@event['location'], 'down')
@@ -129,7 +129,7 @@ bind(player_interact, null, array('block': 68), @event) {
 }
 
 # Calculate trophies
-bind(player_join, null, null, @event) {
+bind('player_join', null, null, @event) {
 	queue_push(closure(){
 		try {
 			@uuid = puuid(player(), true);

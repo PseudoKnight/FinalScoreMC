@@ -1,7 +1,7 @@
 switch(@action) {
 case 'load':
 	set_pflight(@player, true);
-	bind(player_toggle_flight, array('id': @player.'doublejump'), array('flying': true, 'player': @player), @e) {
+	bind('player_toggle_flight', array('id': @player.'doublejump'), array('flying': true, 'player': @player), @e) {
 		if(pmode() == 'SPECTATOR') {
 			die();
 		}
@@ -23,7 +23,7 @@ case 'load':
 		102: @pvp['arena']['classes'][@classname]['kit'][102],
 		103: @pvp['arena']['classes'][@classname]['kit'][103],
 	);
-	bind(player_toggle_sneak, array('id': @player.'ninja'), array('player': @player), @e, @gear = @armor) {
+	bind('player_toggle_sneak', array('id': @player.'ninja'), array('player': @player), @e, @gear = @armor) {
 		if(@e['sneaking']) {
 			if(entity_grounded(puuid())) {
 				set_pinv(array(
@@ -44,7 +44,7 @@ case 'load':
 		}
 	}
 	
-	bind(entity_damage, array('id': @player.'falldamage'), array('cause': 'FALL', 'id': puuid(@player)), @e, @player) {
+	bind('entity_damage', array('id': @player.'falldamage'), array('cause': 'FALL', 'id': puuid(@player)), @e, @player) {
 		cancel();
 		@facing = pfacing(@player);
 		@facing[0] = @facing[0] + 90;
@@ -69,7 +69,7 @@ case 'load':
 		});
 	}
 	
-	bind(player_interact, array('id': @player.'throwstar'), array('item': 399, 'player': @player), @e) {
+	bind('player_interact', array('id': @player.'throwstar'), array('item': 399, 'player': @player), @e) {
 		@v = get_vector(ploc(), 1.5);
 		@v['y'] += 0.1;
 		@x = @v['x'];
@@ -103,7 +103,7 @@ case 'load':
 		ptake_item(array('name': 'NETHER_STAR'));
 	}
 	
-	bind(item_pickup, array('id': @player.'starpickup'), array('item': 399), @e, @pvp) {
+	bind('item_pickup', array('id': @player.'starpickup'), array('item': 399), @e, @pvp) {
 		if(!array_index_exists(@pvp['players'], player()) || !@e['item']['meta']) {
 			die();
 		}

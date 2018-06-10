@@ -27,7 +27,7 @@ case 'load':
 		}
 	});
 	
-	bind(player_interact, array('id': @player.'hover'), array('player': @player), @event, @pvp) {
+	bind('player_interact', array('id': @player.'hover'), array('player': @player), @event, @pvp) {
 		if(@event['button'] == 'right') {
 			set_peffect(player(), 25, -1, 0.3, true);
 			set_entity_fall_distance(puuid(), 0);

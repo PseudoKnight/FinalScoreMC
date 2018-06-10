@@ -1,4 +1,4 @@
-bind(world_changed, null, null, @event) {
+bind('world_changed', null, null, @event) {
 	@to = @event['to'];
 	@from = @event['from'];
 	@worlds = _worlds_config();
@@ -30,7 +30,7 @@ bind(world_changed, null, null, @event) {
 	}
 }
 
-bind(player_spawn, array('priority': 'LOW'), null, @event) {
+bind('player_spawn', array('priority': 'LOW'), null, @event) {
 	@world = pworld(); // This gets the world the player died in, which is not always the same as the respawn world.
 	if(!@event['bed_spawn']) {
 		@worlds = _worlds_config();
@@ -53,7 +53,7 @@ bind(player_spawn, array('priority': 'LOW'), null, @event) {
 	}
 }
 
-bind(player_teleport, array('priority': 'HIGH'), null, @event) {
+bind('player_teleport', array('priority': 'HIGH'), null, @event) {
 	@fromWorld = @event['from']['world'];
 	@toWorld = @event['to']['world'];
 	

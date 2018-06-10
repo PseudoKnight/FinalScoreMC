@@ -1,7 +1,7 @@
 switch(@action) {
 case 'load':
 	set_pcooldown('WEB', 0);
-	bind(entity_damage, array('id': @player.'damage'), array('type': 'PLAYER', 'cause': 'ENTITY_ATTACK'), @e, @p = @player) {
+	bind('entity_damage', array('id': @player.'damage'), array('type': 'PLAYER', 'cause': 'ENTITY_ATTACK'), @e, @p = @player) {
 		if(@e['damager'] == @p) {
 			@weapon = pinv(@p, null);
 			if(@weapon && @weapon['name'] == 'STONE_HOE') {
@@ -11,7 +11,7 @@ case 'load':
 		}
 	}
 
-	bind(player_interact, array('id': @player.'web'), array('player': @player, 'button': 'right', 'item': 30), @e, @pvp) {
+	bind('player_interact', array('id': @player.'web'), array('player': @player, 'button': 'right', 'item': 30), @e, @pvp) {
 		@item = pinv(player(), null);
 		if(@item && pcooldown(@item['name']) == 0) {
 			@item['qty'] = 1;

@@ -104,7 +104,7 @@ register_command('timer', array(
 				set_pinv(@player, 0, @restartButton);
 			
 				if(!has_bind(@player.'reset')) {
-					bind(player_interact, array('id': @player.'reset'), array('player': @player, 'item': 371), @e, @startLoc) {
+					bind('player_interact', array('id': @player.'reset'), array('player': @player, 'item': 371), @e, @startLoc) {
 						if(@e['action'] == 'right_click_block') {
 							@block = split(':', @e['block'])[0];
 							if(@block == '77' || @block == '143') {
@@ -116,7 +116,7 @@ register_command('timer', array(
 					}
 				}
 				if(!has_bind(@player.'timerdeath')) {
-					bind(player_death, array('id': @player.'timerdeath'), array('player': @player), @e, @restartButton) {
+					bind('player_death', array('id': @player.'timerdeath'), array('player': @player), @e, @restartButton) {
 						if(!_is_survival_world(pworld())) {
 							modify_event('drops', array());
 							set_timeout(500, closure(){

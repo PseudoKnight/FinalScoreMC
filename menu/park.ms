@@ -1,4 +1,4 @@
-bind(player_interact, null, array('item': data_values('book'), 'button': 'right', 'hand': 'main_hand'), @event) {
+bind('player_interact', null, array('item': data_values('book'), 'button': 'right', 'hand': 'main_hand'), @event) {
 	if(pworld() === 'custom') {
 		@display = _item_meta(pinv(player(), null), 'display');
 		if(@display === 'Park Directory') {

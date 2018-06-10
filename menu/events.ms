@@ -1,4 +1,4 @@
-bind(inventory_click, null, null, @event) {
+bind('inventory_click', null, null, @event) {
 	if(pget_virtualchest()) {
 		cancel();
 		@lore = _item_meta(@event['slotitem'], 'lore');
@@ -27,7 +27,7 @@ bind(inventory_click, null, null, @event) {
 	}
 }
 
-bind(player_interact_at_entity, array('priority': 'HIGH'), array('clicked': 'ARMOR_STAND'), @event) {
+bind('player_interact_at_entity', array('priority': 'HIGH'), array('clicked': 'ARMOR_STAND'), @event) {
 	if(pmode() != 'CREATIVE' && get_mob_name(@event['id']) == color('green').'Start') {
 		@equipment = get_mob_equipment(@event['id']);
 		if(@equipment['helmet'] && @equipment['helmet']['meta']) {

@@ -122,7 +122,7 @@ register_command('hockey', array(
 			_place_puck(@hockey);
 			
 			// bind events
-			bind(entity_damage, associative_array('id': 'hockey-damage'), associative_array('id': @hockey['puck']), @event, @hockey) {
+			bind('entity_damage', associative_array('id': 'hockey-damage'), associative_array('id': @hockey['puck']), @event, @hockey) {
 				if(!array_index_exists(@event, 'damager')) {
 					@hockey['holder'] = '';
 					set_entity_loc(@hockey['puck'], @hockey['lastloc']);
@@ -145,7 +145,7 @@ register_command('hockey', array(
 				@hockey['last'] = @player;
 				@hockey['holder'] = '';
 			}
-			bind(player_interact_entity, associative_array('id': 'hockey-interact'), associative_array('id': @hockey['puck']), @event, @hockey) {
+			bind('player_interact_entity', associative_array('id': 'hockey-interact'), associative_array('id': @hockey['puck']), @event, @hockey) {
 				@ploc = ploc();
 				@eloc = entity_loc(@hockey['puck']);
 				@ploc['y'] += 1;
@@ -160,13 +160,13 @@ register_command('hockey', array(
 					play_sound(@eloc, array('sound': 'WOOD_CLICK', 'pitch': 0.6));
 				}
 			}
-			bind(entity_damage_player, associative_array('id': 'hockey-damage-player'), associative_array('damager': 'PLAYER'), @event, @hockey) {
+			bind('entity_damage_player', associative_array('id': 'hockey-damage-player'), associative_array('damager': 'PLAYER'), @event, @hockey) {
 				if(@hockey['holder'] == player()) {
 					set_pexp(@hockey['holder'], 0);
 					@hockey['holder'] = '';
 				}
 			}
-			bind(player_quit, associative_array('id': 'hockey-quit'), null, @event, @hockey) {
+			bind('player_quit', associative_array('id': 'hockey-quit'), null, @event, @hockey) {
 				if(array_contains(@hockey['players'], player())) {
 					array_remove_values(@hockey['players'], player());
 					@team = get_pteam(player(), 'hockey');
@@ -179,7 +179,7 @@ register_command('hockey', array(
 					}
 				}
 			}
-			bind(target_player, associative_array('id': 'hockey-target'), associative_array('mobtype': 'SLIME'), @event, @hockey) {
+			bind('target_player', associative_array('id': 'hockey-target'), associative_array('mobtype': 'SLIME'), @event, @hockey) {
 				if(@event['id'] == @hockey['puck']) {
 					modify_event('player', null);
 				}

@@ -1,6 +1,6 @@
 switch(@action) {
 case 'load':
-	bind(player_interact, array('id': @player.'plasmagun'), array('item': 382, 'button': 'right', 'player': @player), @e) {
+	bind('player_interact', array('id': @player.'plasmagun'), array('item': 382, 'button': 'right', 'player': @player), @e) {
 		if(pinfo(player(), 6) != @e['item']) {
 			die();
 		}
@@ -33,7 +33,7 @@ case 'load':
 		}
 	}
 
-	bind(projectile_hit, array('id': @player.'hit'), array('type': 'ARROW'), @e, @shooter = puuid(@player)) {
+	bind('projectile_hit', array('id': @player.'hit'), array('type': 'ARROW'), @e, @shooter = puuid(@player)) {
 		if(@e['shooter'] == @shooter) {
 			play_effect(@e['location'], 'LAVA_POP', array('particleCount': 7, 'radius': 96));
 			play_sound(@e['location'], array('sound': 'NOTE_BASS_DRUM', 'pitch': 2, 'volume': 2));
@@ -42,7 +42,7 @@ case 'load':
 		}
 	}
 
-	bind(player_interact, array('id': @player.'teleport'), array('item': 381, 'player': @player, 'button': 'right'), @e, @pvp) {
+	bind('player_interact', array('id': @player.'teleport'), array('item': 381, 'player': @player, 'button': 'right'), @e, @pvp) {
 		if(pinfo(player(), 6) != @e['item']) {
 			die();
 		}

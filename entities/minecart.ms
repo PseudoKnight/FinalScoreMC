@@ -1,4 +1,4 @@
-bind(player_interact_entity, null, array('clicked': 'MINECART'), @event) {
+bind('player_interact_entity', null, array('clicked': 'MINECART'), @event) {
 	if(!sk_can_build(entity_loc(@event['id'])) || !psneaking()) {
 		die();
 	}
@@ -41,7 +41,7 @@ bind(player_interact_entity, null, array('clicked': 'MINECART'), @event) {
 	}
 }
 
-bind(vehicle_destroy, array('priority': 'MONITOR'), array('vehicletype': 'MINECART'), @event) {
+bind('vehicle_destroy', array('priority': 'MONITOR'), array('vehicletype': 'MINECART'), @event) {
 	if(!is_cancelled()) {
 		@minecart = entity_spec(@event['vehicle']);
 		if(@minecart['block'] != 'AIR') {

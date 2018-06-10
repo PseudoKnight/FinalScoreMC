@@ -9,7 +9,7 @@ register_command('swap', array(
 			unbind('timeswap');
 			msg('Disabled time swap.');
 		} else {
-			bind(player_interact, array('id': 'timeswap'), array('item': 347, 'button': 'right', 'hand': 'main_hand'), @event) {
+			bind('player_interact', array('id': 'timeswap'), array('item': 347, 'button': 'right', 'hand': 'main_hand'), @event) {
 				if(pworld() == 'dev' && !pcooldown('WATCH')) {
 					@loc = ploc();
 					if(@loc['z'] > -1000) {

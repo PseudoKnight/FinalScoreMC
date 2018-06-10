@@ -1,4 +1,4 @@
-bind(player_move, null, array('world': 'outworld'), @event) {
+bind('player_move', null, array('world': 'outworld'), @event) {
 	@loc = ploc();
 	@block = get_block_at(@loc);
 	switch(@block) {
@@ -18,7 +18,7 @@ bind(player_move, null, array('world': 'outworld'), @event) {
 
 }
 
-bind(item_despawn, null, array('item': 6), @event) {
+bind('item_despawn', null, array('item': 6), @event) {
 	if(@event['location']['world'] !== 'outworld') {
 		die();
 	}

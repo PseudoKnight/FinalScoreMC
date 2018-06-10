@@ -1,5 +1,5 @@
 proc _worms_bind_events(@game) {
-	bind(player_interact, array('id': 'wormsattack'.@game['region']), array('button': 'right', 'hand': 'main_hand'), @event, @game) {
+	bind('player_interact', array('id': 'wormsattack'.@game['region']), array('button': 'right', 'hand': 'main_hand'), @event, @game) {
 		if(array_index_exists(@game['players'], player())) {
 			if(psneaking()) { // temporary game ender
 				_worms_end(@game);
@@ -9,7 +9,7 @@ proc _worms_bind_events(@game) {
 		}
 	}
 	
-	bind(player_move, array('id': 'wormsmove'.@game['region']), array('threshold': 0), @event, @game) {
+	bind('player_move', array('id': 'wormsmove'.@game['region']), array('threshold': 0), @event, @game) {
 		if(array_index_exists(@game['players'], player())) {
 			@newLoc = location_shift(@event['to'], 'down', @game['height']);
 			if(@newLoc['world'] != @game['world']

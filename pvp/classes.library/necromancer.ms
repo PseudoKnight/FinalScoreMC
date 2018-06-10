@@ -1,9 +1,9 @@
 switch(@action) {
 case 'load':
-	bind(target_player, array('id': @player.'necrotarget'), array('player': @player), @e) {
+	bind('target_player', array('id': @player.'necrotarget'), array('player': @player), @e) {
 		cancel()
 	}
-	bind(entity_damage, array('id': @player.'necrodamage', 'priority': 'HIGH'), array('type': 'PLAYER'), @e, @p = @player) {
+	bind('entity_damage', array('id': @player.'necrodamage', 'priority': 'HIGH'), array('type': 'PLAYER'), @e, @p = @player) {
 		if(@e['player'] == @p
 		&& ((array_index_exists(@e, 'damager')
 		&& !ponline(@e['damager'])
@@ -15,7 +15,7 @@ case 'load':
 			consume()
 		}
 	}
-	bind(player_death, array('id': @player.'necrodeath'), null, @e, @player) {
+	bind('player_death', array('id': @player.'necrodeath'), null, @e, @player) {
 		if(@e['player'] == @player, die())
 		@a = ploc(@e['player'])
 		@b = ploc(@player)

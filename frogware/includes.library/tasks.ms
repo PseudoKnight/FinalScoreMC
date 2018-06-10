@@ -90,7 +90,7 @@ proc _fw_task(@task, @state, @secs) {
 			foreach(@p in all_players()) {
 				set_ponfire(@p, 0);
 			}
-			bind(entity_damage, array('id': 'fwtaskdamage'), array('type': 'PLAYER', 'world': 'custom'), @e) {
+			bind('entity_damage', array('id': 'fwtaskdamage'), array('type': 'PLAYER', 'world': 'custom'), @e) {
 				if(_fw_player(@e['player'])
 				&& (!array_index_exists(@e, 'damager') || !ponline(@e['damager']))) {
 					if(_fw_changeteam(@e['player'], 'losers')) {
@@ -99,7 +99,7 @@ proc _fw_task(@task, @state, @secs) {
 				}
 			}
 			if(rand(2)) {
-				bind(target_player, array('id': 'fwtargetplayer'), null, @e) {
+				bind('target_player', array('id': 'fwtargetplayer'), null, @e) {
 					if(rand(2)) {
 						@leader = _fw_leader();
 						if(@leader && _fw_player(@e['player']) && @e['player'] != @leader) {
@@ -143,7 +143,7 @@ proc _fw_task(@task, @state, @secs) {
 					pgive_item(@p, array('name': 'SEEDS')); # seeds
 				}
 			}
-			bind(item_pickup, array('id': 'fwpickup'), array('item': 296), @e) {
+			bind('item_pickup', array('id': 'fwpickup'), array('item': 296), @e) {
 				if(_fw_player(player())
 				&& _fw_changeteam(player(), 'winners')) {
 					modify_event('item', null);
@@ -254,7 +254,7 @@ proc _fw_task(@task, @state, @secs) {
 					set_block_at(_fw_loc(), '92:4')
 				}
 			}
-			bind(player_interact, array('id': 'fwcake'), array('block': 92), @e) {
+			bind('player_interact', array('id': 'fwcake'), array('block': 92), @e) {
 				if(_fw_player(player())
 				&& _fw_changeteam(player(), 'winners')) {
 					play_sound(ploc(), array('sound': 'zombie_metal'), player())
@@ -299,7 +299,7 @@ proc _fw_task(@task, @state, @secs) {
 					array(@region[1][0] + 1, @region[1][1] - 1, @region[1][2] + 1, 'custom'),
 					'8:0', 3);
 				}, 'fw3');
-				bind(entity_damage, array('id': 'fwfall'), array('type': 'PLAYER', 'cause': 'FALL'), @e) {
+				bind('entity_damage', array('id': 'fwfall'), array('type': 'PLAYER', 'cause': 'FALL'), @e) {
 					if(_fw_player(@e['player'])) {
 						if(_fw_changeteam(@e['player'], 'losers')) {
 							play_sound(ploc(@e['player']), array('sound': 'zombie_unfect'), @e['player']);
@@ -349,7 +349,7 @@ proc _fw_task(@task, @state, @secs) {
 			for(@i = 0, @i < (_fw_totalplayers() * 4), @i++) {
 				spawn_mob(@mob, 1, if(@mob === 'BAT', _fw_loc(8), _fw_loc(18)))
 			}
-			bind(entity_death, array('id': 'fwcluck'), array('type': @mob), @e, @mob) {
+			bind('entity_death', array('id': 'fwcluck'), array('type': @mob), @e, @mob) {
 				if(array_index_exists(@e['cause'], 'shooter')
 				&& ponline(@e['cause']['shooter'])
 				&& _fw_player(@e['cause']['shooter'])) {
@@ -401,7 +401,7 @@ proc _fw_task(@task, @state, @secs) {
 				export('frogware.blocks', @blocks);
 			}
 			play_sound(@loc, array('sound': 'CHICKEN_EGG_POP', 'volume': 3))
-			bind(player_interact, array('id': 'fwegg', 'priority': 'high'), array('block': 122), @e) {
+			bind('player_interact', array('id': 'fwegg', 'priority': 'high'), array('block': 122), @e) {
 				if(_fw_player(player())) {
 					play_sound(@e['location'], array('sound': 'CHICKEN_EGG_POP', 'volume': 3))
 					consume()
@@ -450,7 +450,7 @@ proc _fw_task(@task, @state, @secs) {
 					}
 				}
 			}
-			bind(entity_damage, array('id': 'fwdamage2'), array('type': 'PLAYER', 'world': 'custom'), @e, @weapon) {
+			bind('entity_damage', array('id': 'fwdamage2'), array('type': 'PLAYER', 'world': 'custom'), @e, @weapon) {
 				if(array_index_exists(@e, 'damager') && _fw_player(@e['player'])) {
 					@damager = @e['damager'];
 					if(array_index_exists(@e, 'shooter')) {
@@ -502,7 +502,7 @@ proc _fw_task(@task, @state, @secs) {
 			_iterate_cuboid(array(@region[0][0], @region[1][1] + 2, @region[0][2], 'custom'),
 				array(@region[1][0], @region[1][1] + 2, @region[1][2], 'custom'),
 				'10:0', 3)
-			bind(entity_damage, array('id': 'fwdamage2'), array('type': 'PLAYER', 'cause': 'LAVA', 'world': 'custom'), @e) {
+			bind('entity_damage', array('id': 'fwdamage2'), array('type': 'PLAYER', 'cause': 'LAVA', 'world': 'custom'), @e) {
 				if(_fw_player(@e['player'])) {
 					if(_fw_changeteam(@e['player'], 'losers')) {
 						play_sound(ploc(@e['player']), array('sound': 'zombie_unfect'), @e['player']);
@@ -541,7 +541,7 @@ proc _fw_task(@task, @state, @secs) {
 			if(!rand(4)) {
 				_fw_mobs('wolf:angry', 8);
 			}
-			bind(item_pickup, array('id': 'fwpickup'), array('item': 35), @e, @data = @colorindex) {
+			bind('item_pickup', array('id': 'fwpickup'), array('item': 35), @e, @data = @colorindex) {
 				if(_fw_player(@e['player'])) {
 					if(@e['item']['data'] == @data) {
 						if(_fw_changeteam(player(), 'winners')) {
@@ -589,7 +589,7 @@ proc _fw_task(@task, @state, @secs) {
 			if(!rand(4)) {
 				_fw_mobs()
 			}
-			bind(entity_damage, array('id': 'fwdamage2'), array('type': 'PLAYER', 'cause': 'FALLING_BLOCK', 'world': 'custom'), @e) {
+			bind('entity_damage', array('id': 'fwdamage2'), array('type': 'PLAYER', 'cause': 'FALLING_BLOCK', 'world': 'custom'), @e) {
 				if(_fw_player(@e['player'])) {
 					_fw_changeteam(@e['player'], 'losers')
 					play_sound(ploc(@e['player']), array('sound': 'zombie_unfect'), @e['player'])
@@ -636,7 +636,7 @@ proc _fw_task(@task, @state, @secs) {
 			for(@i = 0, @i < 100, @i++) {
 				drop_item(_fw_loc(), array('name': 'EMERALD', 'qty': 1));
 			}
-			bind(inventory_click, array('id': 'fwclick'), array('slottype': 'RESULT'), @e) {
+			bind('inventory_click', array('id': 'fwclick'), array('slottype': 'RESULT'), @e) {
 				if(_fw_player(@e['player']) && @e['slotitem']) {
 					if(_fw_changeteam(player(), 'winners')) {
 						play_sound(ploc(), array('sound': 'zombie_metal'), player())
@@ -664,7 +664,7 @@ proc _fw_task(@task, @state, @secs) {
 			}
 			_fw_mobs('speedypig', 1);
 			@region = sk_region_info('frogware', 'custom')[0];
-			bind(player_fish, array('id': 'fwfish'), array('state': '/(CAUGHT_ENTITY|CAUGHT_FISH)/'), @e) {
+			bind('player_fish', array('id': 'fwfish'), array('state': '/(CAUGHT_ENTITY|CAUGHT_FISH)/'), @e) {
 				if(_fw_player(@e['player'])) {
 					if(_fw_changeteam(player(), 'winners')) {
 						play_sound(ploc(), array('sound': 'zombie_metal'), player())

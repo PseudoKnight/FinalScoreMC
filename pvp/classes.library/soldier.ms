@@ -1,6 +1,6 @@
 switch(@action) {
 case 'load':
-	bind(player_interact, array('id': @player.'grenade'), array('player': @player, 'item': 273), @e) {
+	bind('player_interact', array('id': @player.'grenade'), array('player': @player, 'item': 273), @e) {
 		if(!ptake_item(player(), array('name': 'STONE_SPADE'))) {
 			die();
 		}

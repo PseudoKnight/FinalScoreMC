@@ -1,5 +1,5 @@
 proc _snake_bind_events(@game) {
-	bind(player_interact, array('id': 'snake-interact'), null, @event, @game) {
+	bind('player_interact', array('id': 'snake-interact'), null, @event, @game) {
 		if(array_index_exists(@game['snakes'], player())) {
 			@snake = @game['snakes'][player()];
 			if(!@snake['turned']) {
@@ -10,7 +10,7 @@ proc _snake_bind_events(@game) {
 		}
 	}
 
-	bind(item_held, array('id': 'snake-held'), null, @event, @game) {
+	bind('item_held', array('id': 'snake-held'), null, @event, @game) {
 		if(array_index_exists(@game['snakes'], player())) {
 			cancel();
 			if(@game['snakes'][player()]['alive']) {
@@ -22,7 +22,7 @@ proc _snake_bind_events(@game) {
 		}
 	}
 
-	bind(entity_explode, array('id': 'snake-explode'), array('type': 'PRIMED_TNT'), @event, @game) {
+	bind('entity_explode', array('id': 'snake-explode'), array('type': 'PRIMED_TNT'), @event, @game) {
 		if(array_contains(sk_regions_at(@event['location']), 'snake_'.@game['arena'])) {
 			array_remove_values(@game['tnt'], @event['id']);
 			foreach(@block in @event['blocks']) {
@@ -44,19 +44,19 @@ proc _snake_bind_events(@game) {
 		}
 	}
 	
-	bind(inventory_open, array('id': 'snake-inventory'), null, @event, @game) {
+	bind('inventory_open', array('id': 'snake-inventory'), null, @event, @game) {
 		if(array_index_exists(@game['snakes'], player())) {
 			cancel();
 		}
 	}
 	
-	bind(item_swap, array('id': 'snake-swap'), null, @event, @game) {
+	bind('item_swap', array('id': 'snake-swap'), null, @event, @game) {
 		if(array_index_exists(@game['snakes'], player())) {
 			cancel();
 		}
 	}
 	
-	bind(item_drop, array('id': 'snake-drop'), null, @event, @game) {
+	bind('item_drop', array('id': 'snake-drop'), null, @event, @game) {
 		if(array_index_exists(@game['snakes'], player())) {
 			cancel();
 		}

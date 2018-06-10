@@ -1,6 +1,6 @@
 switch(@action) {
 case 'load':
-	bind(player_interact, array('id': @player.'lightning'), array('item': 369, 'button': 'right', 'player': @player), @e, @pvp) {
+	bind('player_interact', array('id': @player.'lightning'), array('item': 369, 'button': 'right', 'player': @player), @e, @pvp) {
 		if(pinfo(player(), 6) != @e['item']) {
 			die();
 		}
@@ -9,7 +9,7 @@ case 'load':
 		if(@trace['entities']) {
 			@loc = @trace['entities'][0]['location'];
 		}
-		@bind = bind(entity_damage, null, array('type': 'PLAYER', 'cause': 'LIGHTNING'), @e,
+		@bind = bind('entity_damage', null, array('type': 'PLAYER', 'cause': 'LIGHTNING'), @e,
 				@damager = player(), @pvp) {
 
 			if(!array_index_exists(@pvp['players'], @e['player']), die());
@@ -47,7 +47,7 @@ case 'load':
 		}, player().'lightning')
 	}
 
-	bind(player_interact, array('id': @player.'woosh'), array('item': 288, 'button': 'right', 'player': @player), @e, @pvp) {
+	bind('player_interact', array('id': @player.'woosh'), array('item': 288, 'button': 'right', 'player': @player), @e, @pvp) {
 		if(pinfo(player(), 6) != @e['item']) {
 			die();
 		}

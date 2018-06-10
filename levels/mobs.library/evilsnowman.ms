@@ -1,5 +1,5 @@
 proc _load_mob(@level) {
-	bind(entity_damage_player, array('id': 'level'.@level['region'].'evilsnowman'), array('damager': 'SNOWBALL'), @e, @level) {
+	bind('entity_damage_player', array('id': 'level'.@level['region'].'evilsnowman'), array('damager': 'SNOWBALL'), @e, @level) {
 		@player = @e['player'];
 		@damager = @e['data'];
 		if(!array_contains(@level['players'], @player)) {

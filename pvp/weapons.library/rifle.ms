@@ -1,5 +1,5 @@
 @pvp['binds'][] = @id.'riflereload';
-bind(player_interact, array('id': @id.'riflereload'), array('item': 265), @event, @pvp) {
+bind('player_interact', array('id': @id.'riflereload'), array('item': 265), @event, @pvp) {
 	if(!array_index_exists(@pvp['players'], player()) || pinfo(player(), 6) != @event['item']){
 		die();
 	}
@@ -34,7 +34,7 @@ bind(player_interact, array('id': @id.'riflereload'), array('item': 265), @event
 }
 
 @pvp['binds'][] = @id.'rifle';
-bind(player_interact, array('id': @id.'rifle'), array('item': 291), @event, @pvp) {
+bind('player_interact', array('id': @id.'rifle'), array('item': 291), @event, @pvp) {
 	if(!array_index_exists(@pvp['players'], player()) || pinfo(player(), 6) != @event['item']){
 		die();
 	}

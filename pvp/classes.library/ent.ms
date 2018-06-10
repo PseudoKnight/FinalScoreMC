@@ -27,13 +27,13 @@ case 'load':
 		}
 	}
 
-	bind(item_held, array('id': @player.'entbark'), null, @event, @player, @pvp) {
+	bind('item_held', array('id': @player.'entbark'), null, @event, @player, @pvp) {
 		if(@player == player() && (@event['to'] == 1 && pinv(player(), 1) || @event['from'] == 1)) {
 			_set_equipment(player(), @event['to'] == 1, @pvp);
 		}
 	}
 	
-	bind(entity_damage, array('id': @player.'entdamage', 'priority': 'MONITOR'), array('id': puuid(@player)), @event, @player, @pvp) {
+	bind('entity_damage', array('id': @player.'entdamage', 'priority': 'MONITOR'), array('id': puuid(@player)), @event, @player, @pvp) {
 		if(pheld_slot(@player) == 1) {
 			@item = pinv(@player, 1);
 			if(@item) {
@@ -48,7 +48,7 @@ case 'load':
 		}
 	}
 
-	bind(entity_damage, array('id': @player.'entfall'), array('id': puuid(@player), 'cause': 'FALL'), @event, @player, @pvp) {
+	bind('entity_damage', array('id': @player.'entfall'), array('id': puuid(@player), 'cause': 'FALL'), @event, @player, @pvp) {
 		@damage = @event['amount'];
 		@target = entity_loc(@event['id']);
 		@world = @target['world'];
@@ -95,7 +95,7 @@ case 'load':
 		});
 	}
 	
-	bind(player_toggle_sneak, array('id': @player.'entsneak'), array('player': @player, 'sneaking': true), @event, @pvp) {
+	bind('player_toggle_sneak', array('id': @player.'entsneak'), array('player': @player, 'sneaking': true), @event, @pvp) {
 		if(pheld_slot() != 0) {
 			die();
 		}
@@ -158,12 +158,12 @@ case 'load':
 		});
 	}
 	
-	bind(player_death, array('id': @player.'entdeath'), array('player': @player), @event) {
+	bind('player_death', array('id': @player.'entdeath'), array('player': @player), @event) {
 		drop_item(@event['location'], array('name': 'APPLE'), true);
 		play_sound(@event['location'], array('sound': 'entity_husk_death', 'pitch': 0.5));
 	}
 	
-	bind(player_interact, array('id': @player.'entattack'), array('player': @player, 'item': 18, 'hand': 'main_hand', 'button': 'right'), @event) {
+	bind('player_interact', array('id': @player.'entattack'), array('player': @player, 'item': 18, 'hand': 'main_hand', 'button': 'right'), @event) {
 		if(!pcooldown('LEAVES')) {
 			@loc = ptarget_space();
 			if(get_block_at(location_shift(@loc, 'down')) != '0:0') {

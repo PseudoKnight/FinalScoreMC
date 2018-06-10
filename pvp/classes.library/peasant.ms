@@ -30,7 +30,7 @@ case 'load':
 			try {
 				@potato = pinv(@damaged, @slot);
 				if(@potato['meta']['display'] == '1') {
-					bind(entity_damage, array('id': @damaged.'hotpotatodmg'), array('type': 'PLAYER'), @e,
+					bind('entity_damage', array('id': @damaged.'hotpotatodmg'), array('type': 'PLAYER'), @e,
 							@damager, @pvp) {
 
 						if(!array_index_exists(@pvp['players'], @e['player']), die());
@@ -53,7 +53,7 @@ case 'load':
 		@item['meta']['lore'] = array(@task);
 		set_pinv(@damaged, @slot, @item);
 	}
-	bind(entity_damage, array('id': @player.'pot'), array('type': 'PLAYER', 'cause': 'ENTITY_ATTACK'), @e, @pvp, @player) {
+	bind('entity_damage', array('id': @player.'pot'), array('type': 'PLAYER', 'cause': 'ENTITY_ATTACK'), @e, @pvp, @player) {
 		if(!array_index_exists(@pvp['players'], @e['damager'])) {
 			die();
 		}
@@ -88,13 +88,13 @@ case 'load':
 		}
 	}
 
-	bind(item_drop, array('id': @player.'hotdrop'), array('item': 393), @e, @pvp) {
+	bind('item_drop', array('id': @player.'hotdrop'), array('item': 393), @e, @pvp) {
 		if(array_index_exists(@pvp['players'], player())) {
 			cancel();
 		}
 	}
 
-	bind(item_pickup, array('id': @player.'hotpickup', 'priority': 'HIGH'), array('item': 111), @e, @pvp) {
+	bind('item_pickup', array('id': @player.'hotpickup', 'priority': 'HIGH'), array('item': 111), @e, @pvp) {
 		if(!array_index_exists(@pvp['players'], @e['player'])) {
 			die();
 		}
@@ -115,7 +115,7 @@ case 'load':
 		}
 	}
 
-	bind(player_consume, array('id': @player.'hoteat'), array('item': 393), @e, @player, @pvp) {
+	bind('player_consume', array('id': @player.'hoteat'), array('item': 393), @e, @player, @pvp) {
 		if(@player == @e['player']) {
 			set_timeout(50, closure(){
 				_prime_hot_potato(player(), player(), @e['item'], @pvp);

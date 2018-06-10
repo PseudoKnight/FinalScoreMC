@@ -69,7 +69,7 @@ register_command('cluck', array(
 			
 			proc _cluck_startround(@cluck) {;
 				_regionmsg('cluck', 'Round '.@cluck['round']);
-				bind(entity_damage, array('id': 'cluckdamage'), array('cause': 'PROJECTILE', 'type': 'CHICKEN', 'world': @cluck['world']), @event, @cluck) {
+				bind('entity_damage', array('id': 'cluckdamage'), array('cause': 'PROJECTILE', 'type': 'CHICKEN', 'world': @cluck['world']), @event, @cluck) {
 					if(array_contains(@cluck['chickens'], @event['id']) && @event['finalamount'] > 0) {
 						if(@event['shooter'] != @cluck['player']) {
 							cancel();
@@ -184,7 +184,7 @@ register_command('cluck', array(
 					@cluck['round']++;
 					@cluck['chickens'] = array();
 					@cluck['hit'] = 0;
-					bind(projectile_hit, array('id': 'cluckstart'), array('type': 'ARROW'), @event, @cluck) {
+					bind('projectile_hit', array('id': 'cluckstart'), array('type': 'ARROW'), @event, @cluck) {
 						if(@event['shooter'] == puuid(@cluck['player'])) {
 							unbind();
 							_cluck_startround(@cluck);

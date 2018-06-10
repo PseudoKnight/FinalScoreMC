@@ -9,7 +9,7 @@ if(!import('timers')) {
 }
 
 // Calculate trophies
-bind(player_join, null, null, @event) {
+bind('player_join', null, null, @event) {
 	queue_push(closure(){
 		try {
 			@top = get_value('times');

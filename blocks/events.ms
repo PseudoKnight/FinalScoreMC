@@ -1,5 +1,5 @@
 # colorize signs
-bind(sign_changed, null, null, @event) {
+bind('sign_changed', null, null, @event) {
 	if(pmode() === 'CREATIVE')  {
 		modify_event('text', array(
 			0: colorize(@event['text'][0]),
@@ -11,7 +11,7 @@ bind(sign_changed, null, null, @event) {
 }
 
 # Don't instant-break noteblocks in creative mode if not sneaking
-bind(player_interact, null, array('block': 25, 'button': 'left'), @event) {
+bind('player_interact', null, array('block': 25, 'button': 'left'), @event) {
 	if(pmode() === 'CREATIVE' && !psneaking()) {
 		// It won't break if in survival, and it'll play the note if we don't cancel
 		set_pmode('SURVIVAL');
@@ -30,7 +30,7 @@ bind(player_interact, null, array('block': 25, 'button': 'left'), @event) {
 # Dispenser handling
 # Infinite dispensers on creative/game worlds
 # Special behavior for other items (eg. place armor stands)
-bind(block_dispense, null, array('type': 'DISPENSER'), @event, @ignored = array('BUCKET', 'WATER_BUCKET', 'LAVA_BUCKET')) {
+bind('block_dispense', null, array('type': 'DISPENSER'), @event, @ignored = array('BUCKET', 'WATER_BUCKET', 'LAVA_BUCKET')) {
 	if(@event['item'] && array_contains(@ignored, @event['item']['name'])) {
 		// Always ignore buckets
 	} else if(!_is_survival_world(@event['location']['world'])) {
@@ -90,7 +90,7 @@ bind(block_dispense, null, array('type': 'DISPENSER'), @event, @ignored = array(
 }
 
 // Custom noteblock sounds
-bind(note_play, null, null, @event) {
+bind('note_play', null, null, @event) {
 	cancel();
 	@sound = 'NOTE_'.@event['instrument'];
 	switch(split(':', get_block_at(location_shift(@event['location'], 'down')))[0]) {

@@ -69,10 +69,10 @@ proc _axe_carve(@event) {
 	}
 }
 
-bind(player_interact, null, array('button': 'right', 'block': 17), @event) {
+bind('player_interact', null, array('button': 'right', 'block': 17), @event) {
 	_axe_carve(@event);
 }
 
-bind(player_interact, null, array('button': 'right', 'block': 162), @event) {
+bind('player_interact', null, array('button': 'right', 'block': 162), @event) {
 	_axe_carve(@event);
 }

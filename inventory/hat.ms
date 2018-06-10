@@ -1,4 +1,4 @@
-bind(inventory_click, null, array('slottype': 'ARMOR'), @event) {
+bind('inventory_click', null, array('slottype': 'ARMOR'), @event) {
 	if(@event['slot'] == 39
 	&& @event['cursoritem']
 	&& !string_ends_with(@event['cursoritem']['name'], 'HELMET')) {

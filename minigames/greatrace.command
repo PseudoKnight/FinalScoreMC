@@ -125,7 +125,7 @@ register_command('greatrace', array(
 			}
 		});
 
-		bind(player_teleport, array('id': 'thegreatrace'), null, @e, @players) {
+		bind('player_teleport', array('id': 'thegreatrace'), null, @e, @players) {
 			if(array_contains(@players, @e['player'])) {
 				@dist = sqrt(
 					((@e['from']['x'] - @e['to']['x']) ** 2) +

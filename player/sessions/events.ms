@@ -1,5 +1,5 @@
 # Player join messages and tab list colors
-bind(player_join, null, null, @event) {
+bind('player_join', null, null, @event) {
 	modify_event('join_message', null);
 	@lastPlayed = if(!@event['first_login'], plast_played(), null);
 
@@ -148,7 +148,7 @@ bind(player_join, null, null, @event) {
 	});
 }
 
-bind(player_quit, null, null, @event) {
+bind('player_quit', null, null, @event) {
 	modify_event('message', null);
 	@pdata = _pdata(@event['player']);
 	@msg = _colorname().'&o'.player().'&e&o ';

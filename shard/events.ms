@@ -1,4 +1,4 @@
-bind(player_interact, null, array('item': 264, 'hand': 'main_hand', 'block': 0), @event) {
+bind('player_interact', null, array('item': 264, 'hand': 'main_hand', 'block': 0), @event) {
 	include('core.library/util.ms');
 	if(array_contains(get_worlds(), 'shard') && array_contains(get_scoreboards(), 'shard')) {
 		if(pworld() == 'shard') {

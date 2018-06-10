@@ -1,5 +1,5 @@
 array_push(@pvp['binds'], @id.'firefire')
-bind(player_interact, array('id': @id.'firefire'), array('item': 259), @e, @id) {
+bind('player_interact', array('id': @id.'firefire'), array('item': 259), @e, @id) {
 	@pvp = import('pvp'.@id)
 	if(!array_index_exists(@pvp['players'], player())
 	|| !array_index_exists(@e, 'location'), die())

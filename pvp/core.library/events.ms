@@ -1,7 +1,7 @@
 # The assign() functions in the event binds are required to keep the instances from interfering with each other
 # Just passing the variable (eg. ", @pvp['arena'], @id,") did not work last I tested
 array_push(@pvp['binds'], @id.'death')
-bind(player_death, array('priority': 'high', 'id': @id.'death'), null, @e, @id) {
+bind('player_death', array('priority': 'high', 'id': @id.'death'), null, @e, @id) {
 	@pvp = import('pvp'.@id)
 	if(!array_index_exists(@pvp['players'], player())) {
 		die();
@@ -284,7 +284,7 @@ bind(player_death, array('priority': 'high', 'id': @id.'death'), null, @e, @id) 
 }
 
 array_push(@pvp['binds'], @id.'quit')
-bind(player_quit, array('id': @id.'quit', 'priority': 'HIGH'), null, @e, @id) {
+bind('player_quit', array('id': @id.'quit', 'priority': 'HIGH'), null, @e, @id) {
 	@pvp = import('pvp'.@id)
 	if(array_index_exists(@pvp['players'], player())) {
 		modify_event('message', color('gray').'[PVP] '.@pvp['players'][player()]['color'].@e['message']);
@@ -296,7 +296,7 @@ bind(player_quit, array('id': @id.'quit', 'priority': 'HIGH'), null, @e, @id) {
 
 if(array_index_exists(@pvp['arena'], 'chestspawn')) {
 	array_push(@pvp['binds'], @id.'interactchest')
-	bind(player_interact, array('id': @id.'interactchest'), array('block': 54), @e, @id) {
+	bind('player_interact', array('id': @id.'interactchest'), array('block': 54), @e, @id) {
 		@pvp = import('pvp'.@id)
 		if(!array_index_exists(@pvp['players'], player()),
 			die())
@@ -319,7 +319,7 @@ if(array_index_exists(@pvp['arena'], 'chestspawn')) {
 	}
 }
 
-@pvp['binds'][] = bind(entity_death, null, null, @event, @pvp) {
+@pvp['binds'][] = bind('entity_death', null, null, @event, @pvp) {
 	if(!_is_survival_world(@event['location']['world'])
 	&& array_contains(sk_regions_at(@event['location']), @pvp['arena']['region'])) {
 		if(@event['type'] == 'SKELETON') {
@@ -332,7 +332,7 @@ if(array_index_exists(@pvp['arena'], 'chestspawn')) {
 
 if(array_index_exists(@pvp['arena'], 'mobprotect')) {
 	array_push(@pvp['binds'], @id.'mobprotectdeath');
-	bind(entity_death, array('id': @id.'mobprotectdeath'), null, @e, @id) {
+	bind('entity_death', array('id': @id.'mobprotectdeath'), null, @e, @id) {
 		@pvp = import('pvp'.@id)
 		foreach(@team: @data in @pvp['arena']['mobprotect']) {
 			if(@pvp['team'][@team]['mobprotect'] == @e['id']) {
@@ -346,7 +346,7 @@ if(array_index_exists(@pvp['arena'], 'mobprotect')) {
 	}
 
 	array_push(@pvp['binds'], @id.'mobprotectdamage');
-	bind(entity_damage, array('id': @id.'mobprotectdamage'), null, @e, @id) {
+	bind('entity_damage', array('id': @id.'mobprotectdamage'), null, @e, @id) {
 		@pvp = import('pvp'.@id);
 		if(!array_index_exists(@pvp['arena'], 'mobprotect')) {
 			// still initializing game
@@ -368,7 +368,7 @@ if(array_index_exists(@pvp['arena'], 'mobprotect')) {
 
 if(@pvp['arena']['respawnmode'] == 'mob') {
 	array_push(@pvp['binds'], @id.'mobrespawns');
-	bind(entity_death, array('id': @id.'mobrespawns'), array('type': 'VILLAGER'), @e, @id) {
+	bind('entity_death', array('id': @id.'mobrespawns'), array('type': 'VILLAGER'), @e, @id) {
 		@pvp = import('pvp'.@id)
 		foreach(@team: @data in @pvp['team']) {
 			@index = array_index(@data['respawns'], @e['id']);
@@ -382,7 +382,7 @@ if(@pvp['arena']['respawnmode'] == 'mob') {
 }
 
 array_push(@pvp['binds'], @id.'enderpearl')
-bind(player_teleport, array('id': @id.'enderpearl', 'priority': 'high'), array('type': 'ENDER_PEARL'), @e, @id) {
+bind('player_teleport', array('id': @id.'enderpearl', 'priority': 'high'), array('type': 'ENDER_PEARL'), @e, @id) {
 	@pvp = import('pvp'.@id);
 	if(!array_index_exists(@pvp['players'], player())) {
 		die();
@@ -395,7 +395,7 @@ bind(player_teleport, array('id': @id.'enderpearl', 'priority': 'high'), array('
 }
 
 array_push(@pvp['binds'], @id.'command')
-bind(player_command, array('id': @id.'command'), null, @e, @id) {
+bind('player_command', array('id': @id.'command'), null, @e, @id) {
 	@pvp = import('pvp'.@id);
 	if(!array_contains(array('/accept', '/warp', '/spawn', '/home', '/join', '/dev', '/park', '/survival'), @e['prefix'])) {
 		die();
@@ -414,7 +414,7 @@ bind(player_command, array('id': @id.'command'), null, @e, @id) {
 
 if(!array_contains(@pvp['arena']['flags'], 'build')) {
 	array_push(@pvp['binds'], @id.'break')
-	bind(block_break, array('id': @id.'break'), null, @e, @id) {
+	bind('block_break', array('id': @id.'break'), null, @e, @id) {
 		@pvp = import('pvp'.@id);
 		if(array_index_exists(@pvp['players'], player())) {
 			cancel();
@@ -422,7 +422,7 @@ if(!array_contains(@pvp['arena']['flags'], 'build')) {
 	}
 
 	array_push(@pvp['binds'], @id.'place')
-	bind(block_place, array('id': @id.'place'), null, @e, @id) {
+	bind('block_place', array('id': @id.'place'), null, @e, @id) {
 		@pvp = import('pvp'.@id);
 		if(array_index_exists(@pvp['players'], player())) {
 			cancel();
@@ -431,7 +431,7 @@ if(!array_contains(@pvp['arena']['flags'], 'build')) {
 }
 
 array_push(@pvp['binds'], @id.'EntityDamage')
-bind(entity_damage, array('id': @id.'EntityDamage', 'priority': 'LOWEST'), null, @e, @id) {
+bind('entity_damage', array('id': @id.'EntityDamage', 'priority': 'LOWEST'), null, @e, @id) {
 	@pvp = import('pvp'.@id)
 	if(@e['type'] === 'PLAYER' && array_index_exists(@pvp['players'], @e['player'])) {
 		@damager = '';
@@ -481,7 +481,7 @@ bind(entity_damage, array('id': @id.'EntityDamage', 'priority': 'LOWEST'), null,
 
 if(array_contains(@pvp['arena']['flags'], 'noinventory')) {
 	array_push(@pvp['binds'], @id.'noinventory')
-	bind(inventory_click, array('id': @id.'noinventory'), null, @e, @id) {
+	bind('inventory_click', array('id': @id.'noinventory'), null, @e, @id) {
 		@pvp = import('pvp'.@id)
 		if(!array_index_exists(@pvp['players'], player()),
 			die())
@@ -492,7 +492,7 @@ if(array_contains(@pvp['arena']['flags'], 'noinventory')) {
 
 if(array_contains(@pvp['arena']['flags'], 'rallycall')) {
 	array_push(@pvp['binds'], @id.'rallycall')
-	bind(player_interact, array('id': @id.'rallycall', 'priority': 'HIGH'), array('item': 401, 'button': 'right'), @e, @id) {
+	bind('player_interact', array('id': @id.'rallycall', 'priority': 'HIGH'), array('item': 401, 'button': 'right'), @e, @id) {
 		@pvp = import('pvp'.@id)
 		if(!array_index_exists(@pvp['players'], player())
 		|| @e['action'] !== 'right_click_block',
@@ -528,7 +528,7 @@ if(array_contains(@pvp['arena']['flags'], 'rallycall')) {
 
 if(array_contains(@pvp['arena']['flags'], 'stackedpickup')) {
 	array_push(@pvp['binds'], @id.'stackedpickup')
-	bind(item_pickup, array('id': @id.'stackedpickup', 'priority': 'LOW'), null, @e, @id) {
+	bind('item_pickup', array('id': @id.'stackedpickup', 'priority': 'LOW'), null, @e, @id) {
 		@pvp = import('pvp'.@id)
 		if(!array_index_exists(@pvp['players'], player()) || max_stack_size(@e['item']) != 1) {
 			die();
@@ -563,7 +563,7 @@ if(array_contains(@pvp['arena']['flags'], 'stackedpickup')) {
 
 if(array_index_exists(@pvp['arena'], 'powerup')) {
 	array_push(@pvp['binds'], @id.'powerup')
-	bind(item_pickup, array('id': @id.'powerup', 'priority': 'HIGH'), array('item': @pvp['arena']['powerup']), @e, @id) {
+	bind('item_pickup', array('id': @id.'powerup', 'priority': 'HIGH'), array('item': @pvp['arena']['powerup']), @e, @id) {
 		@pvp = import('pvp'.@id)
 		if(!array_index_exists(@pvp['players'], player()),
 			die())
@@ -579,7 +579,7 @@ if(array_index_exists(@pvp['arena'], 'powerup')) {
 
 if(array_contains(@pvp['arena']['flags'], 'nobottles')) {
 	array_push(@pvp['binds'], @id.'nobottles')
-	bind(player_consume, array('id': @id.'nobottles'), array('item': 373), @event, @id) {
+	bind('player_consume', array('id': @id.'nobottles'), array('item': 373), @event, @id) {
 		@pvp = import('pvp'.@id)
 		if(!array_index_exists(@pvp['players'], player()),
 			die())
@@ -592,7 +592,7 @@ if(array_contains(@pvp['arena']['flags'], 'nobottles')) {
 
 if(array_index_exists(@pvp['arena'], 'captain')) {
 	array_push(@pvp['binds'], @id.'hatpickup')
-	bind(item_pickup, array('id': @id.'hatpickup'), null, @e, @id) {
+	bind('item_pickup', array('id': @id.'hatpickup'), null, @e, @id) {
 		@pvp = import('pvp'.@id);
 		if(!array_index_exists(@pvp['players'], player())) {
 			die();
@@ -641,7 +641,7 @@ if(array_index_exists(@pvp['arena'], 'captain')) {
 
 if(array_index_exists(@pvp['arena'], 'captain')) {
 	array_push(@pvp['binds'], @id.'protectdrops')
-	bind(entity_damage, array('id': @id.'protectdrops'), array('type': 'DROPPED_ITEM'),
+	bind('entity_damage', array('id': @id.'protectdrops'), array('type': 'DROPPED_ITEM'),
 	@e, @region = @pvp['arena']['region']) {
 		if(array_contains(sk_regions_at(entity_loc(@e['id'])), @region)) {
 			cancel()
@@ -651,7 +651,7 @@ if(array_index_exists(@pvp['arena'], 'captain')) {
 
 if(array_contains(@pvp['arena']['flags'], 'infinitedispensers')) {
 	array_push(@pvp['binds'], @id.'infinitedispensers')
-	bind(projectile_hit, array('id': @id.'infinitedispensers'), array('type': 'ARROW'), @e) {
+	bind('projectile_hit', array('id': @id.'infinitedispensers'), array('type': 'ARROW'), @e) {
 		if(!_is_survival_world(@e['location']['world']) && is_array(@e['shooter'])) {
 			entity_remove(@e['id'])
 		}
@@ -661,7 +661,7 @@ if(array_contains(@pvp['arena']['flags'], 'infinitedispensers')) {
 if(array_index_exists(@pvp['arena'], 'blockbreak')) {
 	@pvp['blockcheck'] = false;
 	@pvp['binds'][] = @id.'blockbreakgoal';
-	bind(block_break, array('id': @id.'blockbreakgoal'), null, @event, @id) {
+	bind('block_break', array('id': @id.'blockbreakgoal'), null, @event, @id) {
 		@pvp = import('pvp'.@id);
 		if(!array_index_exists(@pvp['players'], player())) {
 			die();
@@ -670,7 +670,7 @@ if(array_index_exists(@pvp['arena'], 'blockbreak')) {
 	}
 	
 	@pvp['binds'][] = @id.'blockexplode';
-	bind(entity_explode, array('id': @id.'blockexplode'), array('type': 'PRIMED_TNT'), @event, @id) {
+	bind('entity_explode', array('id': @id.'blockexplode'), array('type': 'PRIMED_TNT'), @event, @id) {
 		if(_is_survival_world(@event['location']['world'])) {
 			die();
 		}

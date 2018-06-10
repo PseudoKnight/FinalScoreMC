@@ -1,6 +1,6 @@
 // Open inventories without having to place them.
 // While a convenience, this also helps players who are in protected regions where they can't place blocks.
-bind(inventory_click, null, array('clicktype': 'SHIFT_RIGHT'), @event) {
+bind('inventory_click', null, array('clicktype': 'SHIFT_RIGHT'), @event) {
 	if(!@event['slotitem'] || !_is_survival_world(pworld())) {
 		die();
 	}
@@ -29,14 +29,14 @@ bind(inventory_click, null, array('clicktype': 'SHIFT_RIGHT'), @event) {
 				@inv['type'] = 'SHULKER_BOX';
 				create_virtualchest(@inv);
 				popen_virtualchest(player().'shulkerbox');
-				bind(inventory_click, array('id': player().'shulkerbox', 'priority': 'HIGH'), array('player': player()), @event) {
+				bind('inventory_click', array('id': player().'shulkerbox', 'priority': 'HIGH'), array('player': player()), @event) {
 					consume();
 					if(@event['slotitem'] && string_ends_with(@event['slotitem']['name'], '_SHULKER_BOX')) {
 						cancel();
 					}
 				}
 
-				bind(virtualchest_closed, null,null, @event,
+				bind('virtualchest_closed', null,null, @event,
 					@player = player(),
 					@id = @inv['id'],
 					@slot = @event['slot'],

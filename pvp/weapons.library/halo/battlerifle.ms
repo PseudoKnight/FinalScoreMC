@@ -1,5 +1,5 @@
 @pvp['binds'][] = @id.'battlerifle';
-bind(player_interact, array('id': @id.'battlerifle'), array('item': 292), @event, @pvp) {
+bind('player_interact', array('id': @id.'battlerifle'), array('item': 292), @event, @pvp) {
 	if(!array_index_exists(@pvp['players'], player()) || pinfo(player(), 6) != @event['item']){
 		die();
 	}

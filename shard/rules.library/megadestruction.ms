@@ -30,7 +30,7 @@ proc _weapon_cooldown(@player, @time, @type, @onCooldown, @remove = 1) {
 }
 
 @binds[] = 'shard-mega';
-bind(world_changed, array('id': 'shard-mega', 'priority': 'LOW'), array('to': 'shard'), @event) {
+bind('world_changed', array('id': 'shard-mega', 'priority': 'LOW'), array('to': 'shard'), @event) {
 	queue_push(closure(){
 		pgive_item(player(), array('name': 'TNT', 'qty': 64));
 		pgive_item(player(), array('name': 'FIREBALL', 'qty': 64));
@@ -39,7 +39,7 @@ bind(world_changed, array('id': 'shard-mega', 'priority': 'LOW'), array('to': 's
 }
 
 @binds[] = 'shard-fireball';
-bind(player_interact, array('id': 'shard-fireball'), array('item': 385, 'block': 0), @event) {
+bind('player_interact', array('id': 'shard-fireball'), array('item': 385, 'block': 0), @event) {
 	if(pworld() == 'shard') {
 		cancel();
 		@entity = shoot_projectile(player(), 'FIREBALL');

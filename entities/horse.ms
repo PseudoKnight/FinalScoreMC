@@ -1,5 +1,5 @@
 # prevent non-owners from riding a horse, unless shared
-bind(player_interact_entity, null, array('clicked': '/(DONKEY|HORSE|LLAMA|MULE|SKELETON_HORSE|ZOMBIE_HORSE)/'), @event) {
+bind('player_interact_entity', null, array('clicked': '/(DONKEY|HORSE|LLAMA|MULE|SKELETON_HORSE|ZOMBIE_HORSE)/'), @event) {
 	if(!_is_survival_world(pworld())) {
 		die();
 	}

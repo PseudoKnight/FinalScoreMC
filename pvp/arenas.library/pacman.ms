@@ -8,7 +8,7 @@ proc _prepare_arena(@pvp) {
 proc _load_events(@id) {
 	@pvp = import('pvp'.@id);
 	@pvp['binds'][] = 'eatdots';
-	bind(pressure_plate_activated, array('id': 'eatdots'), null, @event, @pvp, @id) {
+	bind('pressure_plate_activated', array('id': 'eatdots'), null, @event, @pvp, @id) {
 		if(!array_index_exists(@pvp['players'], player())) {
 			die();
 		}
@@ -59,7 +59,7 @@ proc _load_events(@id) {
 	}
 	
 	@pvp['binds'][] = 'hitghosts';
-	bind(entity_damage_player, array('id': 'hitghosts'), null, @event, @pvp, @id) {
+	bind('entity_damage_player', array('id': 'hitghosts'), null, @event, @pvp, @id) {
 		if(!array_index_exists(@pvp['players'], player())) {
 			die();
 		}
@@ -119,7 +119,7 @@ proc _load_events(@id) {
 	}
 	
 	@pvp['binds'][] = 'ghosteyes';
-	bind(player_interact, array('id': 'ghosteyes'), array('item': 381, 'button': 'right'), @event, @pvp) {
+	bind('player_interact', array('id': 'ghosteyes'), array('item': 381, 'button': 'right'), @event, @pvp) {
 		if(array_index_exists(@pvp['players'], player())) {
 			cancel();
 		}

@@ -1,6 +1,6 @@
 switch(@action) {
 case 'load':
-	bind(player_interact, array('id': @player.'blind'), array('player': @player, 'item': 290, 'button': 'right'), @e, @pvp) {
+	bind('player_interact', array('id': @player.'blind'), array('player': @player, 'item': 290, 'button': 'right'), @e, @pvp) {
 		if(pinfo(player(), 6) != @e['item']) {
 			die();
 		}

@@ -1,5 +1,5 @@
 # Handle player portal travel between dimensions
-bind(player_portal_travel, null, null, @event) {
+bind('player_portal_travel', null, null, @event) {
 	if(!_is_survival_world(@event['from']['world'])) {
 		cancel();
 	} else if(@event['type'] == 'END_PORTAL') {
@@ -38,7 +38,7 @@ bind(player_portal_travel, null, null, @event) {
 }
 
 # Handle entity portal travel between dimensions
-bind(entity_portal_travel, null, null, @event) {
+bind('entity_portal_travel', null, null, @event) {
 	@from = @event['from'];
 	@to = @event['to'];
 	if(!_is_survival_world(@from['world'])) {

@@ -1,5 +1,5 @@
 proc _race_bind_events(@race) {
-	@race['binds'][] = bind(entity_dismount, null, array('type': 'PLAYER'), @event, @race) {
+	@race['binds'][] = bind('entity_dismount', null, array('type': 'PLAYER'), @event, @race) {
 		try {
 			@player = player(@event['id']);
 			if(array_index_exists(@race['players'], @player)) {
@@ -20,7 +20,7 @@ proc _race_bind_events(@race) {
 	}
 	
 	if(@race['type'] == 'boat' || @race['type'] == 'horse' || @race['type'] == 'pig') {
-		@race['binds'][] = bind(vehicle_destroy, null, array('vehicletype': to_upper(@race['type'])), @event, @race) {
+		@race['binds'][] = bind('vehicle_destroy', null, array('vehicletype': to_upper(@race['type'])), @event, @race) {
 			@rider = get_entity_rider(@event['vehicle']);
 			if(@rider) {
 				try {
@@ -35,7 +35,7 @@ proc _race_bind_events(@race) {
 		}
 	}
 
-	@race['binds'][] = bind(player_quit, null, null, @event, @race) {
+	@race['binds'][] = bind('player_quit', null, null, @event, @race) {
 		if(array_index_exists(@race['players'], player())) {
 			array_remove(@race['players'], player());
 			@vehicle1 = get_entity_vehicle(puuid());

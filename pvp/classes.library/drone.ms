@@ -1,6 +1,6 @@
 switch(@action) {
 case 'load':
-	bind(food_level_changed, array('id': @player.'noeat'), array('player': @player), @event) {
+	bind('food_level_changed', array('id': @player.'noeat'), array('player': @player), @event) {
 		cancel();
 	}
 	

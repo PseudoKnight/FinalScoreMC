@@ -1,5 +1,5 @@
 array_push(@pvp['binds'], @id.'pistoltears')
-bind(player_interact, array('id': @id.'pistoltears'), array('item': 370, 'button': 'right'), @e, @id) {
+bind('player_interact', array('id': @id.'pistoltears'), array('item': 370, 'button': 'right'), @e, @id) {
 	@pvp = import('pvp'.@id)
 	if(!array_index_exists(@pvp['players'], player()) || pinfo(player(), 6) != @e['item']) {
 		die();
@@ -12,7 +12,7 @@ bind(player_interact, array('id': @id.'pistoltears'), array('item': 370, 'button
 	set_entity_velocity(@entity, @v);
 	set_arrow_damage(@entity, 1.25);
 	play_sound(ploc(), array('sound': 'ZOMBIE_WOOD', 'pitch': 2, 'volume': 2));
-	@bind = bind(projectile_hit, null, associative_array('id': @entity), @event) {
+	@bind = bind('projectile_hit', null, associative_array('id': @entity), @event) {
 		try(entity_remove(@event['id']));
 	}
 	

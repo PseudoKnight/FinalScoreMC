@@ -1,5 +1,5 @@
 array_push(@pvp['binds'], @id.'grapple')
-bind(projectile_launch, array('id': @id.'grapple'), array('type': 'FISHING_HOOK'), @event, @pvp) {
+bind('projectile_launch', array('id': @id.'grapple'), array('type': 'FISHING_HOOK'), @event, @pvp) {
 	@player = @event['player'];
 	@hook = @event['id'];
 
@@ -106,7 +106,7 @@ bind(projectile_launch, array('id': @id.'grapple'), array('type': 'FISHING_HOOK'
 		set_interval(100, @task);
 	}
 
-	bind(projectile_hit, array('id': 'hit'.@arrow), array('id': @arrow), @event, @shooter, @slot, @hook) {
+	bind('projectile_hit', array('id': 'hit'.@arrow), array('id': @arrow), @event, @shooter, @slot, @hook) {
 		unbind();
 		if(@event['hittype'] == 'ENTITY') {
 			@hit = @event['hit'];
@@ -126,14 +126,14 @@ bind(projectile_launch, array('id': @id.'grapple'), array('type': 'FISHING_HOOK'
 }
 
 array_push(@pvp['binds'], @id.'grappledamage');
-bind(entity_damage, array('id': @id.'grappledamage'), array('type': 'PLAYER', 'cause': 'FLY_INTO_WALL'), @event, @pvp) {
+bind('entity_damage', array('id': @id.'grappledamage'), array('type': 'PLAYER', 'cause': 'FLY_INTO_WALL'), @event, @pvp) {
 	if(array_index_exists(@pvp['players'], @event['player'])) {
 		cancel();
 	}
 }
 
 array_push(@pvp['binds'], @id.'grapplepickup');
-bind(item_pickup, array('id': @id.'grapplepickup'), array('item': 262), @event, @pvp) {
+bind('item_pickup', array('id': @id.'grapplepickup'), array('item': 262), @event, @pvp) {
 	if(array_index_exists(@pvp['players'], player()) && psneaking()) {
 		cancel();
 	}

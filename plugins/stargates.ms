@@ -1,5 +1,5 @@
 if(extension_exists('CHStargate')) {
-	bind(stargate_access, null, null, @event) {
+	bind('stargate_access', null, null, @event) {
 		if(@event['player'] != @event['owner']) {
 			@pdata = _pdata(@event['player']);
 			if(array_index_exists(@pdata, 'names') && array_contains(@pdata['names'], @event['owner'])) {
@@ -8,7 +8,7 @@ if(extension_exists('CHStargate')) {
 		}
 	}
 
-	bind(stargate_destroy, null, array('deny': true), @event) {
+	bind('stargate_destroy', null, array('deny': true), @event) {
 		if(@event['player'] != @event['owner']) {
 			@pdata = _pdata(@event['player']);
 			if(array_index_exists(@pdata, 'names') && array_contains(@pdata['names'], @event['owner'])) {
@@ -18,7 +18,7 @@ if(extension_exists('CHStargate')) {
 		}
 	}
 	
-	bind(stargate_open, null, null, @event) {
+	bind('stargate_open', null, null, @event) {
 		if(array_index_exists(@event, 'player')) {
 			@loc = ploc(@event['player']);
 			play_named_sound(@loc, array('sound': 'entity.shulker.shoot', 'pitch': 1.3));

@@ -1,6 +1,6 @@
 # DeadboltHelper
 # Updates out-dated names on [private] signs
-bind(player_interact, null, array('block': data_values('wallsign')), @event) {
+bind('player_interact', null, array('block': data_values('wallsign')), @event) {
 	@sign = null;
 	try {
 		@sign = get_sign_text(@event['location']);
