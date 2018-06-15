@@ -12,6 +12,9 @@ proc _place_ball(@mobtype, @loc, @ball, @course) {
 	set_entity_ai(@ball['slime'], false);
 	set_entity_velocity(@ball['id'], array(0, 0, 0));
 	set_entity_spec(@ball['id'], associative_array('visible': false, 'small': true));
+	if(function_exists('set_entity_size')) {
+		set_entity_size(@ball['id'], 1.0, 1.0);
+	}
 	set_entity_loc(@ball['id'], @loc);
 	set_timeout(50, closure(){
 		set_mob_effect(@ball['slime'], 11, 4, 99999, true, false);
