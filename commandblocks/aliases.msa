@@ -154,10 +154,14 @@
 		
 		@reapply = array(if(@applicationtime, integer(@applicationtime / 50), 0));
 		set_interval(50, closure(){
-			make_effect(ploc(@player), 'MOBSPAWNER_FLAMES');
-			if(@reapply[0]-- > 0) {
-				set_pvelocity(@player, $x, $y, $z);
-			} else {
+			try {
+				make_effect(ploc(@player), 'MOBSPAWNER_FLAMES');
+				if(@reapply[0]-- > 0) {
+					set_pvelocity(@player, $x, $y, $z);
+				} else {
+					clear_task();
+				}
+			} catch(PlayerOfflineException @ex) {
 				clear_task();
 			}
 		});
@@ -189,10 +193,14 @@
 		
 		@reapply = array(if(@applicationtime, integer(@applicationtime / 50), 0));
 		set_interval(50, closure(){
-			make_effect(entity_loc(@entity), 'MOBSPAWNER_FLAMES');
-			if(@reapply[0]-- > 0) {
-				set_entity_velocity(@entity, array($x, $y, $z));
-			} else {
+			try {
+				make_effect(entity_loc(@entity), 'MOBSPAWNER_FLAMES');
+				if(@reapply[0]-- > 0) {
+					set_entity_velocity(@entity, array($x, $y, $z));
+				} else {
+					clear_task();
+				}
+			} catch(BadEntityException @ex) {
 				clear_task();
 			}
 		});
