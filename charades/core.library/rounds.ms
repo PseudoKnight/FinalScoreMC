@@ -164,7 +164,7 @@ proc _end_build(@guesser, @word) {
 				}
 				@page .= ']';
 				@pages = array(@page);
-				foreach(@p in @players) {
+				foreach(@p in @charades['players']) {
 					open_book(@p, @pages);
 				}
 				set_timeout(10000, closure(){
