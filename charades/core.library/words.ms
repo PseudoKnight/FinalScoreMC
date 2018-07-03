@@ -1,5 +1,5 @@
 proc _get_categories() {
-	return(array('actions', 'animals', 'easy', 'food_and_cooking', 'hard', 'household_items', 'idioms', 'medium', 'movies', 'other', 'person_or_character', 'travel', 'very_hard'));
+	return(array('actions', 'animals', 'easy', 'food_and_cooking', 'hard', 'household_items', 'idioms', 'medium', 'movies', 'other', 'person_or_character', 'travel', 'very_hard', 'songs'));
 }
 
 proc _get_match(@guess, @target) {
@@ -31,28 +31,41 @@ proc _highlight_similarities(@guess, @target) {
 	return(array_implode(@words));
 }
 
-proc _get_word(@category) {
-	@words = get_value('charades', @category);
-	if(!@words) {
-		@wordArray = json_decode(read('../data/'.@category.'.json'));
-		@words = associative_array();
-		foreach(@w in @wordArray) {
-			@words[@w] = 0; // number of times used
+proc _get_build(@category) {
+	@builds = get_value('charades', @category);
+	if(!@builds) {
+		@availableBuilds = json_decode(read('../data/'.@category.'.json'));
+		@builds = associative_array();
+		foreach(@b in @availableBuilds) {
+			if(is_array(@b)) {
+				@builds[@b[0]] = array('count': 0, 'hint': @b[1]);
+			} else {
+				@builds[@b] = 0; // number of times used
+			}
 		}
 	}
 	
-	// get 3 random words and pick the one least used
-	@randomWords = array_rand(@words, 3);
-	@word = '';
-	@wordCount = 999;
-	foreach(@w in @randomWords) {
-		if(@words[@w] < @wordCount) {
-			@word = @w;
-			@wordCount = @words[@w];
+	// get 3 random builds and pick the one least used
+	@randomBuilds = array_rand(@builds, 3);
+	@build = '';
+	@hint = '';
+	@buildCount = 999;
+	foreach(@b in @randomWords) {
+		if(is_array(@builds[@b]) && @builds[@b]['count'] < @buildCount) {
+			@build = @b;
+			@hint = @builds[@b]['hint'];
+			@buildCount = @builds[@b]['count'];
+		} else if(!is_array(@builds[@b]) && @builds[@b] < @buildCount) {
+			@build = @b;
+			@buildCount = @builds[@b];
 		}
 	}
 	
-	@words[@word]++;
-	store_value('charades', @category, @words);
-	return(@word);
+	if(is_array(@builds[@build])) {
+		@builds[@build]['count']++;
+	} else {
+		@builds[@build]++;
+	}
+	store_value('charades', @category, @builds);
+	return(array('build': @build, 'hint': @hint));
 }

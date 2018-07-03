@@ -30,6 +30,8 @@ proc _prepare_game(@category) {
 		'interval': 0,
 		'votes': associative_array(),
 		'seconds': 150.0,
+		'build': '',
+		'hint': '',
 	));
 	
 	create_scoreboard('charades');

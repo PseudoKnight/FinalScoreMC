@@ -17,11 +17,13 @@ proc _queue_next_builder() {
 	
 	set_permission(@builder, 'command.skull', true);
 	
-	@charades['word'] = _get_word(@charades['category']);
+	@new = _get_build(@charades['category']);
+	@charades['build'] = @new['build'];
+	@charades['hint'] = @new['hint'];
 	@charades['reroll'] = true;
 	_msg_charades(color('yellow').color('bold').'Charades Category: '.color('yellow').replace(to_upper(@charades['category']), '_', ' '));
 	_click_tell(array(@builder), array(
-		'You must build '.color('green').color('bold').@charades['word'].color('reset').' ',
+		'You must build '.color('green').color('bold').@charades['build'].color('reset').' ',
 		array(color('yellow').'[Re-roll]', '/charades reroll')
 	));
 	title(@builder, 'Your turn to build!', '', 20, 40, 20);
@@ -52,11 +54,15 @@ proc _queue_next_builder() {
 					_equip_kit(@builder);
 					_set_pactivity(@builder, null);
 				}
-				_end_build(null, @charades['word']);
+				_end_build(null, @charades['build']);
 			} else {
 				_msg_charades(integer(@timer[0]), 'action');
-				if(@timer[0] <= 0) {
-					_end_build(null, @charades['word']);
+				if(@timer[0] == 25) {
+					if(@charades['hint']) {
+						_msg_charades(color('bold').'Hint: '.@chardes['hint']);
+					}
+				} else if(@timer[0] <= 0) {
+					_end_build(null, @charades['build']);
 				}
 			}
 		} catch(Exception @ex) {
@@ -75,12 +81,12 @@ proc _queue_next_builder() {
 					@message = @event['message'];
 					@timestamp = simple_date('h:mm');
 					@name = display_name();
-					if(_get_match(@message, @charades['word'])) {
+					if(_get_match(@message, @charades['build'])) {
 						play_sound(ploc(), array('sound': 'LEVEL_UP'));
 						_regionmsg('charades', colorize("&8@timestamp [Charades] @{name}&8: &r@message"));
-						_end_build(player(), @charades['word']);
+						_end_build(player(), @charades['build']);
 					} else {
-						@message = _highlight_similarities(@message, @charades['word']);
+						@message = _highlight_similarities(@message, @charades['build']);
 						_regionmsg('charades', colorize("&8@timestamp [Charades] @{name}&8: &r@message"), 'chat', player());
 					}
 				}
@@ -130,9 +136,9 @@ proc _end_build(@guesser, @word) {
 	}
 	
 	set_timeout(7000, closure(){
+		_remove_region_entities('charades');
 		skcb_load('charades');
 		skcb_paste(array(0, 0, 0, 'custom'), array('origin': true));
-		_remove_region_entities('charades');
 		
 		if(@charades['playersLeft'] && ponline(@charades['playersLeft'][0])) {
 			try {
