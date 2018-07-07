@@ -32,7 +32,7 @@ register_command('hoops', array(
 			case 'start':
 				include('core.library/game.ms');
 				broadcast(player(). ' started Hoops!', all_players(pworld()));
-				_hoops_queue(10);
+				_hoops_queue(7);
 			
 			default:
 				return(false);

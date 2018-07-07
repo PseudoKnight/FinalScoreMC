@@ -145,7 +145,8 @@ proc _hoops_ball_create(@loc) {
 					make_effect(@loc, 'ENDER_SIGNAL');
 					play_sound(@loc, array('sound': 'ENTITY_ZOMBIE_VILLAGER_CONVERTED', 'pitch': 1.8, 'volume': 3));
 					if(array_index_exists(@game, 'teams')) {
-						@team = if(@game['players'][@game['lastholder']]['team'] == 'red', 'blue', 'red');
+						@holder = @game['holder'] ||| @game['lastholder'];
+						@team = if(@game['players'][@holder]['team'] == 'red', 'blue', 'red');
 						@game['possession'] = @team;
 						@location = @loc[];
 						@location['x'] = clamp(@location['x'], @game['coords'][1][0], @game['coords'][0][0]) + 0.5;

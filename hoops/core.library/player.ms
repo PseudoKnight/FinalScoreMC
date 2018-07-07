@@ -10,11 +10,21 @@ proc _hoops_player_add(@player) {
 	}
 }
 
-proc _hoops_player_set_team(@player) {
+proc _hoops_player_set_team(@player, @playersLeft) {
 	@game = import('hoops');
 	@team = 'red';
-	if(array_size(@game['teams']['red']['players']) > array_size(@game['teams']['blue']['players'])) {
+	@redCount = array_size(@game['teams']['red']['players']);
+	@blueCount = array_size(@game['teams']['blue']['players']);
+	if(@redCount > @blueCount + @playersLeft) {
 		@team = 'blue';
+	} else if(@redCount + @playersLeft < @blueCount) {
+		@team = 'red';
+	} else {
+		if(ploc(@player)['z'] > @game['center'][2]) {
+			@team = 'red';
+		} else {
+			@team = 'blue';
+		}
 	}
 	@game['teams'][@team]['players'][] = @player;
 	@game['players'][@player]['team'] = @team;
@@ -50,7 +60,7 @@ proc _hoops_player_equip(@player) {
 	bind('player_toggle_flight', array('id': @player.'jump'), array('flying': true, 'player': @player), @event) {
 		cancel();
 		@block = get_block_at(location_shift(ploc(), 'down'));
-		if(@block == '351:11' || @block == '351:14') {
+		if(@block == '251:11' || @block == '251:14') {
 			@vel = entity_velocity(puuid());
 			set_pvelocity(@vel['x'] * 1.5, 0.6, @vel['z'] * 1.5);
 			set_pflight(false);

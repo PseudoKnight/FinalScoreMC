@@ -96,6 +96,17 @@
 		),
 	),
 );
+@menu[53] = array(
+	'name': 'WOOD',
+	'data': 4,
+	'meta': array(
+		'display': color('gold').'Hoops!',
+		'lore': array(
+			color('r').'Basketball (1+ players)',
+			color('dark_gray').'Run: /warp hoops',
+		),
+	),
+);
 @menu[30] = array(
 	'name': 'SLIME_BLOCK',
 	'meta': array(

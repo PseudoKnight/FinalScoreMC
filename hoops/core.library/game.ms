@@ -43,9 +43,9 @@ proc _hoops_queue(@seconds) {
 	@game['state'] = 1;
 	create_bar('hoops', array('percent': 0.0, 'style': 'SEGMENTED_6'));
 	
-	foreach(@p in array_keys(@game['players'])) {
+	foreach(@i: @p in array_keys(@game['players'])) {
 		if(pworld(@p) == @game['world']) {
-			_hoops_player_set_team(@p);
+			_hoops_player_set_team(@p, array_size(@game['players']) - @i - 1);
 			_hoops_player_equip(@p);
 		} else {
 			_hoops_player_remove(@p);
@@ -70,7 +70,7 @@ proc _hoops_start() {
 	@game = import('hoops');
 	@game['state'] = 2;
 	
-	@startTime = integer(time() / 1000);
+	@startTime = time();
 
 	set_interval(1000, closure(){
 		if(@game['state'] == 3) {
@@ -93,11 +93,11 @@ proc _hoops_start() {
 			}
 		}
 		
-		@timeLeft = 180 - (integer(time() / 1000) - @startTime);
+		@timeLeft = 180 * 1000 - (time() - @startTime);
 		
 		update_bar('hoops', color('red').@game['teams']['red']['score'].color('reset')
 				.' | '
-				.integer(@timeLeft / 60).':'.integer(@timeLeft % 60)
+				.simple_date('m:ss', @timeLeft)
 				.' | '
 				.color('blue').@game['teams']['blue']['score']);
 		
@@ -117,9 +117,9 @@ proc _hoops_start() {
 		}
 
 		if(!@game['ball']) {
-			if(@game['teams']['red']['score'] >= 5) {
+			if(@game['teams']['red']['score'] >= 7) {
 				_hoops_end('Red');
-			} else if(@game['teams']['blue']['score'] >= 5) {
+			} else if(@game['teams']['blue']['score'] >= 7) {
 				_hoops_end('Blue');
 			} else {
 				if(@game['possession']) {
