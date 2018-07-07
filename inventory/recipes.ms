@@ -82,6 +82,14 @@ add_recipe(array(
 	'ingredients': array(array('name': 'BONE', 'qty': 9)),
 ));
 
+# Ice -> Packed Ice (1.13)
+add_recipe(array(
+	'key': 'ice_to_packed_ice',
+	'type': 'SHAPELESS',
+	'result': array('name': 'PACKED_ICE'),
+	'ingredients': array(array('name': 'ICE', 'qty': 9)),
+));
+
 # Special recipe handling (eg. enchanted lore books, exp bottles, player heads)
 bind('inventory_click', null, array('slottype': 'RESULT'), @event) {
 	@slotitem = @event['slotitem'];
