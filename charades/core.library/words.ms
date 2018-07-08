@@ -50,7 +50,7 @@ proc _get_build(@category) {
 	@build = '';
 	@hint = '';
 	@buildCount = 999;
-	foreach(@b in @randomWords) {
+	foreach(@b in @randomBuilds) {
 		if(is_array(@builds[@b]) && @builds[@b]['count'] < @buildCount) {
 			@build = @b;
 			@hint = @builds[@b]['hint'];
