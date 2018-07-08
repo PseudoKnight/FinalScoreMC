@@ -283,7 +283,12 @@
 			}
 		case 'timed':
 			@ms = integer($replaceid);
-			@block = get_block_at(@loc);
+			@block = @ms;
+			if($replacedata != '0') {
+				@ms = integer($replacedata);
+			} else {
+				@block = get_block_at(@loc);
+			}
 			set_block_at(@loc, @id.':'.$data, false);
 			set_timeout(@ms, closure(){
 				set_block_at(@loc, @block);

@@ -42,6 +42,7 @@ proc _hoops_ball_create(@loc) {
 					@game['holder'] = player(@trace['entities'][0]['uuid']);
 					_hoops_ball_add_player(@game['holder'], @binds, @game);
 					set_pinv(@game['holder'], -106, array('name': 'MAGMA_CREAM'));
+					set_pinv(player(), array(0: null, -106: null));
 					if(array_index_exists(@game, 'teams')) {
 						try(update_bar('hoops', array('color': to_upper(@game['players'][@game['holder']]['team']))));
 					}
@@ -51,9 +52,7 @@ proc _hoops_ball_create(@loc) {
 					@game['lastholder'] = player();
 					set_entity_spec(@stand, array('gravity': true));
 					set_entity_velocity(@stand, get_vector(ploc(), if(@charge[0], @charge[0] / 33, 1.5)));
-					if(@charge[0] > 60) {
-						@game['trail'] = true;
-					}
+					@game['trail'] = true;
 					@charge[0] = 0;
 					if(array_index_exists(@game, 'teams')) {
 						try(update_bar('hoops', array('color': 'WHITE')));
@@ -89,6 +88,7 @@ proc _hoops_ball_create(@loc) {
 			} else {
 				set_pinv(@game['holder'], array(-106: null, 0: null));
 				play_sound(ploc(), array('sound': 'ENTITY_GHAST_SHOOT', 'pitch': 2.0));
+				@game['trail'] = false;
 			}
 			@game['holder'] = player();
 			_hoops_ball_add_player(player(), @binds, @game);
@@ -104,7 +104,7 @@ proc _hoops_ball_create(@loc) {
 		}
 	}
 	
-	@verticalBounciness = 0.6;
+	@verticalBounciness = 0.65;
 	@bounciness = 0.6;
 	@friction = 1.11;
 	@rollingFriction = 1.54;
@@ -139,6 +139,7 @@ proc _hoops_ball_create(@loc) {
 						} else {
 							console('Detected '.@block.' when expecting red or blue concrete.');
 						}
+						_hoops_cheer();
 					}
 				} else if(!array_contains(sk_regions_at(@loc), 'hoops')) {
 					@end = true;
@@ -154,6 +155,7 @@ proc _hoops_ball_create(@loc) {
 						@location['z'] = clamp(@location['z'], @game['coords'][1][2], @game['coords'][0][2]) + 0.5;
 						@game['possessionLoc'] = @location;
 						@game['lastholder'] = '';
+						_hoops_boo();
 					}
 				}
 				if(@end || !array_contains(get_bars(), 'hoops')) {
@@ -209,15 +211,36 @@ proc _hoops_ball_create(@loc) {
 				if(!queue_running('balltrail')) {
 					queue_delay(350, 'balltrail');
 				}
-				queue_push(closure(){
-					play_effect(location_shift(@loc, 'up', 0.5), 'FLAME', array('speed': 0.0));
-				}, 'balltrail');
+				if(!array_index_exists(@game, 'teams')) {
+					queue_push(closure(){
+						play_effect(location_shift(@loc, 'up', 0.5), 'FLAME', array('speed': 0.0));
+					}, 'balltrail');
+				} else if(@game['state'] < 3 && @game['lastholder']) {
+					@effect = null;
+					if(@game['players'][@game['lastholder']]['team'] == 'blue') {
+						@effect = array('particleCount': 0, 'speed': 1.0, 'offsetX': 0.01, 'offsetY': 0.0, 'offsetZ': 1.0, 'distance': 32);
+					} else {
+						@effect = array('particleCount': 0, 'distance': 32);
+					}
+					queue_push(closure(){
+						play_effect(location_shift(@loc, 'up', 0.5), 'COLOURED_DUST', @effect);
+					}, 'balltrail');
+				}
 			}
 
 			@velocity['x'] = @v['x'];
 			@velocity['y'] = @v['y'];
 			@velocity['z'] = @v['z'];
 			set_entity_velocity(@stand, @v);
+			
+			if(array_index_exists(@game, 'teams')) {
+				foreach(@v in array_rand(@game['villagers'], 4, false)) {
+					@l = entity_loc(@v);
+					@l['yaw'] = get_yaw(@l, @loc);
+					@l['pitch'] = get_pitch(@l, @loc) + 10;
+					set_entity_loc(@v, @l);
+				}
+			}
 			
 		} catch(BadEntityException @ex) {
 			if(!array_index_exists(@game, 'state')) {

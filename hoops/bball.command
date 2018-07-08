@@ -7,7 +7,9 @@ register_command('bball', array(
 	},
 	'executor': closure(@alias, @sender, @args, @info) {
 		@loc = get_command_block();
-		if(!@loc || array_contains(get_bars(), 'hoops')) {
+		if(!@loc
+		|| array_contains(get_bars(), 'hoops')
+		|| import('hoops')) {
 			die()
 		}
 		@loc['x'] += 0.5;

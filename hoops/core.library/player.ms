@@ -36,7 +36,6 @@ proc _hoops_player_equip(@player) {
 	@data = if(@team == 'blue', 11, 14);
 	@color = if(@team == 'blue', array(0, 0, 255), array(255, 0, 0));
 	set_pmode(@player, 'SURVIVAL');
-	set_peffect(@player, 8, 0, 90, true, false);
 	@items = array(
 		0: null,
 		1: array('name': 'STAINED_GLASS_PANE', 'data': @data),
@@ -53,22 +52,22 @@ proc _hoops_player_equip(@player) {
 	);
 	set_pinv(@player, @items);
 	set_phunger(@player, 20);
+	set_psaturation(@player, 20);
 	bar_add_player('hoops', @player);
 	set_pheld_slot(@player, 0);
-	set_pflight(@player, true);
-	set_pflying(@player, false);
-	bind('player_toggle_flight', array('id': @player.'jump'), array('flying': true, 'player': @player), @event) {
-		cancel();
-		@block = get_block_at(location_shift(ploc(), 'down'));
-		if(@block == '251:11' || @block == '251:14') {
-			@vel = entity_velocity(puuid());
-			set_pvelocity(@vel['x'] * 1.5, 0.6, @vel['z'] * 1.5);
-			set_pflight(false);
-			@world = pworld();
-			set_timeout(2000, closure(){
-				if(@world == pworld()) {
-					set_pflight(true);
-				}
+	bind('player_jump', array('id': @player.'jump'), array('player': @player), @event) {
+		if(psneaking()) {
+			@block = get_block_at(ploc());
+			if(@block == '251:11' || @block == '251:14') {
+				set_timeout(50,closure(){
+					@vel = entity_velocity(puuid());
+					set_pvelocity(@vel['x'] * 1.4, 0.85, @vel['z'] * 1.4);
+				});
+			}
+		} else {
+			set_timeout(50,closure(){
+				@vel = entity_velocity(puuid());
+				set_pvelocity(0, 0.2, 0);
 			});
 		}
 	}
@@ -82,9 +81,7 @@ proc _hoops_player_remove(@player) {
 	}
 	if(ponline(@player)) {
 		unbind(@player.'jump');
-		set_pflight(@player, false);
 		set_pmode(@player, 'ADVENTURE');
-		set_peffect(@player, 8, 0, 0, true, false);
 		bar_remove_player('hoops', @player);
 		if(pworld(@player) == @game['world']) {
 			_equip_kit(@player);

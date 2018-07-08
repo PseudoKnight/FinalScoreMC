@@ -34,6 +34,7 @@ proc _hoops_create() {
 		'possession': '',
 		'possessionLoc': null,
 		'coords': @coords,
+		'villagers': array(),
 	);
 	export('hoops', @game);
 }
@@ -44,7 +45,7 @@ proc _hoops_queue(@seconds) {
 	create_bar('hoops', array('percent': 0.0, 'style': 'SEGMENTED_6'));
 	
 	foreach(@i: @p in array_keys(@game['players'])) {
-		if(pworld(@p) == @game['world']) {
+		if(ponline(@p) && pworld(@p) == @game['world']) {
 			_hoops_player_set_team(@p, array_size(@game['players']) - @i - 1);
 			_hoops_player_equip(@p);
 		} else {
@@ -54,13 +55,48 @@ proc _hoops_queue(@seconds) {
 	
 	@startTime = time();
 	set_interval(1000, closure() {
-		@countdown = 10 - integer((time() - @startTime) / 1000);
+		@countdown = @seconds - integer((time() - @startTime) / 1000);
 		if(@countdown <= 0) {
 			clear_task();
 			_hoops_start();
 		} else {
 			foreach(@p in array_keys(@game['players'])) {
 				title(@p, @countdown, null, 0, 20, 20);
+			}
+			@count = 10;
+			while(@count-- > 0) {
+				@randomLoc = array(
+					0.0,
+					@game['coords'][1][1],
+					0.0,
+					@game['world'],
+					0.0,
+					0.0,
+				);
+				switch(rand(4)) {
+					case 0:
+						@randomLoc[0] = @game['coords'][0][0] + 1;
+						@randomLoc[2] = rand(@game['coords'][1][2], @game['coords'][0][2]);
+					case 1:
+						@randomLoc[0] = @game['coords'][1][0] - 1;
+						@randomLoc[2] = rand(@game['coords'][1][2], @game['coords'][0][2]);
+					case 2:
+						@randomLoc[0] = rand(@game['coords'][1][0], @game['coords'][0][0]);
+						@randomLoc[2] = @game['coords'][0][2] + 1;
+					case 3:
+						@randomLoc[0] = rand(@game['coords'][1][0], @game['coords'][0][0]);
+						@randomLoc[2] = @game['coords'][1][2] - 1;
+				}
+				if(get_block_at(location_shift(@randomLoc, 'down')) != '0:0'
+				&& !entities_in_radius(@randomLoc, 1, 'VILLAGER')) {
+					@randomLoc[0] = floor(@randomLoc[0]) + 0.5;
+					@randomLoc[2] = floor(@randomLoc[2]) + 0.5;
+					@randomLoc[4] = get_yaw(@randomLoc, @game['center']);
+					@villager = spawn_entity('VILLAGER', 1, @randomLoc)[0];
+					set_entity_ai(@villager, false);
+					set_entity_silent(@villager, true);
+					@game['villagers'][] = @villager;
+				}
 			}
 		}
 	});
@@ -72,7 +108,7 @@ proc _hoops_start() {
 	
 	@startTime = time();
 
-	set_interval(1000, closure(){
+	set_interval(1000, 0, closure(){
 		if(@game['state'] == 3) {
 			clear_task();
 			die();
@@ -95,11 +131,11 @@ proc _hoops_start() {
 		
 		@timeLeft = 180 * 1000 - (time() - @startTime);
 		
-		update_bar('hoops', color('red').@game['teams']['red']['score'].color('reset')
-				.' | '
+		update_bar('hoops', color('red').color('bold').@game['teams']['red']['score'].color('reset')
+				.'   '
 				.simple_date('m:ss', @timeLeft)
-				.' | '
-				.color('blue').@game['teams']['blue']['score']);
+				.'   '
+				.color('blue').color('bold').@game['teams']['blue']['score']);
 		
 		if(!@game['teams']['red']['players']) {
 			_hoops_end('Blue');
@@ -124,6 +160,7 @@ proc _hoops_start() {
 			} else {
 				if(@game['possession']) {
 					_hoops_ball_create(@game['possessionLoc']);
+					set_entity_spec(@game['ball'], array('gravity': false));
 					@game['holder'] = array_rand(@game['teams'][@game['possession']]['players'], 1, false)[0];
 					@game['possessionLoc']['yaw'] = get_yaw(@game['possessionLoc'], @game['center']);
 					set_ploc(@game['holder'], location_shift(@game['possessionLoc'], 'down'));
@@ -143,6 +180,34 @@ proc _hoops_start() {
 	});
 }
 
+proc _hoops_boo() {
+	_hoops_cheer(5, false, array('VILLAGER_NO', 'ENTITY_VINDICATION_ILLAGER_AMBIENT'));
+}
+
+proc _hoops_cheer(@count = 15, @jump = true, @sound = array('VILLAGER_YES', 'ENTITY_ILLUSION_ILLAGER_AMBIENT')) {
+	@game = import('hoops');
+	@count = array(@count);
+	set_interval(150, closure() {
+		if(@count[0]-- <= 0) {
+			clear_task();
+		}
+		try {
+			@villager = array_rand(@game['villagers'], 1, false)[0];
+			@loc = entity_loc(@villager);
+			play_sound(@loc, array('sound': array_rand(@sound, 1, false)[0], 'volume': 3));
+			if(@jump) {
+				set_entity_loc(@villager, location_shift(@loc, 'up'));
+				set_timeout(800, closure(){
+					@loc['y'] = @game['center'][1];
+					try(set_entity_loc(@villager, @loc));
+				});
+			}
+		} catch(BadEntityException @ex) {
+			clear_task();
+		}
+	});
+}
+
 proc _hoops_end(@team) {
 	@game = import('hoops');
 	@game['state'] = 3;
@@ -152,7 +217,7 @@ proc _hoops_end(@team) {
 		@color = color('WHITE');
 		@team = 'No';
 	} else {
-		play_sound(@game['center'], array('sound': 'UI_TOAST_CHALLENGE_COMPLETE'));
+		play_sound(@game['center'], array('sound': 'UI_TOAST_CHALLENGE_COMPLETE', 'volume': 4));
 	}
 	broadcast(@color.@team.' team wins!', all_players(@game['world']));
 	
@@ -163,6 +228,9 @@ proc _hoops_delete() {
 	@game = import('hoops');
 	foreach(@p in array_keys(@game['players'])) {
 		_hoops_player_remove(@p);
+	}
+	foreach(@v in @game['villagers']) {
+		try(entity_remove(@v));
 	}
 	export('hoops', null);
 	remove_bar('hoops');
