@@ -51,10 +51,11 @@ proc _hoops_ball_create(@loc) {
 					@game['holder'] = '';
 					@game['lastholder'] = player();
 					set_entity_spec(@stand, array('gravity': true));
-					set_entity_velocity(@stand, get_vector(ploc(), if(@charge[0], @charge[0] / 33, 1.5)));
+					set_entity_velocity(@stand, get_vector(ploc(), @charge[0] / 40));
 					@game['trail'] = true;
 					@charge[0] = 0;
 					if(array_index_exists(@game, 'teams')) {
+						@game['shootLoc'] = ploc();
 						try(update_bar('hoops', array('color': 'WHITE')));
 					}
 				}
@@ -104,9 +105,9 @@ proc _hoops_ball_create(@loc) {
 		}
 	}
 	
-	@verticalBounciness = 0.65;
+	@verticalBounciness = 0.7;
 	@bounciness = 0.6;
-	@friction = 1.11;
+	@friction = 1.115;
 	@rollingFriction = 1.54;
 	@gravity = -0.0784000015258789;
 	@velocity = array('x': 0, 'y': 0, 'z': 0);
@@ -119,27 +120,36 @@ proc _hoops_ball_create(@loc) {
 			@loc = entity_loc(@stand);
 			if(get_entity_invulnerable(@bball)) {
 				@end = false;
-				if(@v['y'] < 0 && _hoops_ball_in_hoop(@loc)) {
-					@end = true;
-					play_sound(@loc, array('sound': 'ENTITY_LLAMA_SPIT', 'volume': 3));
-					play_sound(@loc, array('sound': 'ENTITY_GHAST_SHOOT', 'pitch': 0.5, 'volume': 3));
-					play_sound(@loc, array('sound': 'ENTITY_ILLUSION_ILLAGER_PREPARE_BLINDNESS', 'volume': 3));
-					@cloud = spawn_entity('AREA_EFFECT_CLOUD', 1, @loc)[0];
-					set_entity_spec(@cloud, array('particle': 'LAVA', 'radius': 0.1, 'duration': 100));
-					if(array_index_exists(@game, 'teams')) {
-						@y = 1;
-						@block = '';
-						do {
-							@block = get_block_at(location_shift(@loc, 'down', @y++));
-						} while(@block == '0:0');
-						if(@block == '251:11') {
-							@game['teams']['red']['score']++;
-						} else if(@block == '251:14') {
-							@game['teams']['blue']['score']++;
-						} else {
-							console('Detected '.@block.' when expecting red or blue concrete.');
+				if(_hoops_ball_in_hoop(@loc)) {
+					if(@v['y'] > @gravity) {
+						@end = true;
+						play_sound(@loc, array('sound': 'ENTITY_ZOMBIE_VILLAGER_CONVERTED', 'pitch': 1.8, 'volume': 3));
+						@game['holder'] = '';
+						@game['lastholder'] = '';
+					} else {
+						@end = true;
+						play_sound(@loc, array('sound': 'ENTITY_LLAMA_SPIT', 'volume': 3));
+						play_sound(@loc, array('sound': 'ENTITY_GHAST_SHOOT', 'pitch': 0.5, 'volume': 3));
+						play_sound(@loc, array('sound': 'ENTITY_ILLUSION_ILLAGER_PREPARE_BLINDNESS', 'volume': 3));
+						@cloud = spawn_entity('AREA_EFFECT_CLOUD', 1, @loc)[0];
+						set_entity_spec(@cloud, array('particle': 'LAVA', 'radius': 0.1, 'duration': 100));
+						if(array_index_exists(@game, 'teams')) {
+							@y = 1;
+							@block = '';
+							do {
+								@block = get_block_at(location_shift(@loc, 'down', @y++));
+							} while(@block == '0:0');
+							@points = if(distance(@loc, @game['shootLoc']) > 15 || get_block_at(@game['shootLoc']) == '5:2', 3, 2);
+							@game['players'][@game['lastholder']]['score'] += @points;
+							if(@block == '251:11') {
+								@game['teams']['red']['score'] += @points;
+							} else if(@block == '251:14') {
+								@game['teams']['blue']['score'] += @points;
+							} else {
+								console('Detected '.@block.' when expecting red or blue concrete.');
+							}
+							_hoops_cheer();
 						}
-						_hoops_cheer();
 					}
 				} else if(!array_contains(sk_regions_at(@loc), 'hoops')) {
 					@end = true;
@@ -189,19 +199,18 @@ proc _hoops_ball_create(@loc) {
 				}
 			}
 			
-			if(@v['magnitude'] < 0.875 && @v['magnitude'] > 0) {
-				if(@v['y'] == @gravity && @velocity['y'] > @gravity * 2) {
+			if(@v['magnitude'] < 0.9 && @v['magnitude'] > 0) {
+				if(@v['y'] == @gravity && @velocity['y'] > @gravity * 3.2) {
 					@v['x'] = (@v['x'] / @v['magnitude']) * (@rollingFriction * @v['magnitude']);
 					@v['z'] = (@v['z'] / @v['magnitude']) * (@rollingFriction * @v['magnitude']);
 				} else {
-					if(@v['y'] == @gravity && @velocity['y'] < @gravity * 3) {
+					if(@v['y'] == @gravity && @velocity['y'] < @gravity * 3.2) {
 						@v['y'] = 0 - @velocity['y'] * @verticalBounciness;
 						@bounce = true;
 						@game['trail'] = false;
-					} else {
-						@v['x'] = (@v['x'] / @v['magnitude']) * (@friction * @v['magnitude']);
-						@v['z'] = (@v['z'] / @v['magnitude']) * (@friction * @v['magnitude']);
 					}
+					@v['x'] = (@v['x'] / @v['magnitude']) * (@friction * @v['magnitude']);
+					@v['z'] = (@v['z'] / @v['magnitude']) * (@friction * @v['magnitude']);
 				}
 			}
 			

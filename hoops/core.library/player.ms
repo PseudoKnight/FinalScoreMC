@@ -10,7 +10,7 @@ proc _hoops_player_add(@player) {
 	}
 }
 
-proc _hoops_player_set_team(@player, @playersLeft) {
+proc _hoops_player_set_team(@player, @playersLeft = 0) {
 	@game = import('hoops');
 	@team = 'red';
 	@redCount = array_size(@game['teams']['red']['players']);
@@ -32,10 +32,10 @@ proc _hoops_player_set_team(@player, @playersLeft) {
 
 proc _hoops_player_equip(@player) {
 	@game = import('hoops');
+	
 	@team = @game['players'][@player]['team'];
 	@data = if(@team == 'blue', 11, 14);
 	@color = if(@team == 'blue', array(0, 0, 255), array(255, 0, 0));
-	set_pmode(@player, 'SURVIVAL');
 	@items = array(
 		0: null,
 		1: array('name': 'STAINED_GLASS_PANE', 'data': @data),
@@ -51,10 +51,14 @@ proc _hoops_player_equip(@player) {
 		102: array('name': 'LEATHER_CHESTPLATE', 'meta': array('color': @color)),
 	);
 	set_pinv(@player, @items);
+	set_pheld_slot(@player, 0);
+	
+	set_pmode(@player, 'SURVIVAL');
 	set_phunger(@player, 20);
 	set_psaturation(@player, 20);
+	
 	bar_add_player('hoops', @player);
-	set_pheld_slot(@player, 0);
+	
 	bind('player_jump', array('id': @player.'jump'), array('player': @player), @event) {
 		if(psneaking()) {
 			@block = get_block_at(ploc());
@@ -71,6 +75,10 @@ proc _hoops_player_equip(@player) {
 			});
 		}
 	}
+	
+	bind('block_break', array('id': @player.'break'), array('player': @player), @event) {
+		cancel();
+	}
 }
 
 proc _hoops_player_remove(@player) {
@@ -79,8 +87,9 @@ proc _hoops_player_remove(@player) {
 	foreach(@team in @game['teams']) {
 		array_remove_values(@team['players'], @player);
 	}
+	unbind(@player.'jump');
+	unbind(@player.'break');
 	if(ponline(@player)) {
-		unbind(@player.'jump');
 		set_pmode(@player, 'ADVENTURE');
 		bar_remove_player('hoops', @player);
 		if(pworld(@player) == @game['world']) {

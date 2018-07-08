@@ -35,6 +35,7 @@ proc _hoops_create() {
 		'possessionLoc': null,
 		'coords': @coords,
 		'villagers': array(),
+		'shootLoc': null,
 	);
 	export('hoops', @game);
 }
@@ -129,12 +130,10 @@ proc _hoops_start() {
 			}
 		}
 		
-		@timeLeft = 180 * 1000 - (time() - @startTime);
+		@timeLeft = 5 * 60 * 1000 - (time() - @startTime);
 		
 		update_bar('hoops', color('red').color('bold').@game['teams']['red']['score'].color('reset')
-				.'   '
-				.simple_date('m:ss', @timeLeft)
-				.'   '
+				.'   '.simple_date('m:ss', @timeLeft).'   '
 				.color('blue').color('bold').@game['teams']['blue']['score']);
 		
 		if(!@game['teams']['red']['players']) {
@@ -153,9 +152,9 @@ proc _hoops_start() {
 		}
 
 		if(!@game['ball']) {
-			if(@game['teams']['red']['score'] >= 7) {
+			if(@game['teams']['red']['score'] >= 10) {
 				_hoops_end('Red');
-			} else if(@game['teams']['blue']['score'] >= 7) {
+			} else if(@game['teams']['blue']['score'] >= 10) {
 				_hoops_end('Blue');
 			} else {
 				if(@game['possession']) {
@@ -219,7 +218,11 @@ proc _hoops_end(@team) {
 	} else {
 		play_sound(@game['center'], array('sound': 'UI_TOAST_CHALLENGE_COMPLETE', 'volume': 4));
 	}
-	broadcast(@color.@team.' team wins!', all_players(@game['world']));
+	@msg = @color.@team.' team wins!';
+	broadcast(@msg, all_players(@game['world']));
+	foreach(@p in array_keys(@game['players'])) {
+		title(@p, @msg, null, 0, 20, 20);
+	}
 	
 	_hoops_delete();
 }
