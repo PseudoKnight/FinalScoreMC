@@ -59,7 +59,7 @@ proc _queue_next_builder() {
 				_msg_charades(integer(@timer[0]), 'action');
 				if(@timer[0] == 25) {
 					if(@charades['hint']) {
-						_msg_charades(color('bold').'Hint: '.@chardes['hint']);
+						_msg_charades(color('bold').'Hint: '.@charades['hint']);
 					}
 				} else if(@timer[0] <= 0) {
 					_end_build(null, @charades['build']);

@@ -19,7 +19,7 @@ register_command('charades', array(
 								@charades = import('charades');
 								if(@charades['reroll']) {
 									_msg_charades(color('yellow').player().' re-rolled "'.@charades['build'].'"');
-									@new = _get_word(@charades['category']);
+									@new = _get_build(@charades['category']);
 									@charades['build'] = @new['build'];
 									@charades['hint'] = @new['hint'];
 									@charades['reroll'] = false;
