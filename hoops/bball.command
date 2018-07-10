@@ -17,6 +17,7 @@ register_command('bball', array(
 		@loc['z'] += 0.5;
 		
 		include('core.library/ball.ms');
+		include('core.library/player.ms');
 		_hoops_ball_create(@loc);
 	}
 ));

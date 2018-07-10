@@ -14,7 +14,7 @@ proc _hoops_ball_create(@loc) {
 	set_entity_spec(@bball, array('size': 1));
 	set_entity_silent(@bball, true);
 	set_entity_ai(@bball, false);
-	set_entity_invulnerable(@bball, true);
+	set_mob_effect(@bball, 11, 4, 9999, true, false);
 	
 	@stand = spawn_entity('ARMOR_STAND', 1, @loc)[0];
 	set_entity_spec(@stand, array('small': true, 'visible': false));
@@ -32,6 +32,7 @@ proc _hoops_ball_create(@loc) {
 	}
 	
 	@charge = array(0);
+	@ending = array(false);
 	
 	@binds = array();
 	@binds[] = bind('player_interact', null, null, @event, @game, @charge, @stand, @binds) {
@@ -46,12 +47,12 @@ proc _hoops_ball_create(@loc) {
 					if(array_index_exists(@game, 'teams')) {
 						try(update_bar('hoops', array('color': to_upper(@game['players'][@game['holder']]['team']))));
 					}
-				} else if(@charge[0] > 0) {
+				} else {
 					set_pinv(player(), 0, null);
 					@game['holder'] = '';
 					@game['lastholder'] = player();
 					set_entity_spec(@stand, array('gravity': true));
-					set_entity_velocity(@stand, get_vector(ploc(), @charge[0] / 40));
+					set_entity_velocity(@stand, get_vector(ploc(), if(@charge[0] > 0, @charge[0] / 40, if(!array_index_exists(@event, 'location') && ploc()['pitch'] > -10, 1.5, 0.2))));
 					@game['trail'] = true;
 					@charge[0] = 0;
 					if(array_index_exists(@game, 'teams')) {
@@ -104,6 +105,16 @@ proc _hoops_ball_create(@loc) {
 			});
 		}
 	}
+	@binds[] = bind('entity_damage', null, array('id': @bball), @event, @game, @stand, @charge) {
+		if(!array_index_exists(@event, 'damager')) {
+			die();
+		}
+		@game['lastholder'] = @event['damager'];
+		@game['holder'] = '';
+		set_entity_spec(@stand, array('gravity': true));
+		set_entity_velocity(@stand, get_vector(ploc(@event['damager']), 0.6));
+		@charge[0] = 0;
+	}
 	
 	@verticalBounciness = 0.7;
 	@bounciness = 0.6;
@@ -118,7 +129,7 @@ proc _hoops_ball_create(@loc) {
 			}
 			@v = entity_velocity(@stand);
 			@loc = entity_loc(@stand);
-			if(get_entity_invulnerable(@bball)) {
+			if(!@ending[0]) {
 				@end = false;
 				if(_hoops_ball_in_hoop(@loc)) {
 					if(@v['y'] > @gravity) {
@@ -169,7 +180,8 @@ proc _hoops_ball_create(@loc) {
 					}
 				}
 				if(@end || !array_contains(get_bars(), 'hoops')) {
-					set_entity_invulnerable(@bball, false);
+					@ending[0] = true;
+					set_mob_effect(@bball, 11, 0, 0, true, false);
 					set_mob_effect(@bball, 11, 2, 10, true, false);
 					set_mob_effect(@bball, 20, 1, 10, true, false);
 					set_timeout(4000, closure(){
@@ -254,6 +266,8 @@ proc _hoops_ball_create(@loc) {
 		} catch(BadEntityException @ex) {
 			if(!array_index_exists(@game, 'state')) {
 				foreach(@player in get_bar_players('hoops')) {
+					unbind(@player.'jump');
+					unbind(@player.'break');
 					set_pmode(@player, 'ADVENTURE');
 					set_peffect(@player, 8, 0, 0, true, false);
 				}
@@ -272,10 +286,7 @@ proc _hoops_ball_create(@loc) {
 
 proc _hoops_ball_add_player(@player, @binds, @game) {
 	if(!array_index_exists(@game, 'players') && !array_contains(get_bar_players('hoops'), @player)) {
-		bar_add_player('hoops', @player);
-		set_pmode(@player, 'SURVIVAL');
-		set_phunger(@player, 20);
-		set_peffect(@player, 8, 0, 9999, true, false);
+		_hoops_player_equip(@player);
 	}
 }
 

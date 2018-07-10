@@ -33,24 +33,26 @@ proc _hoops_player_set_team(@player, @playersLeft = 0) {
 proc _hoops_player_equip(@player) {
 	@game = import('hoops');
 	
-	@team = @game['players'][@player]['team'];
-	@data = if(@team == 'blue', 11, 14);
-	@color = if(@team == 'blue', array(0, 0, 255), array(255, 0, 0));
-	@items = array(
-		0: null,
-		1: array('name': 'STAINED_GLASS_PANE', 'data': @data),
-		2: array('name': 'STAINED_GLASS_PANE', 'data': @data),
-		3: array('name': 'STAINED_GLASS_PANE', 'data': @data),
-		4: array('name': 'STAINED_GLASS_PANE', 'data': @data),
-		5: array('name': 'STAINED_GLASS_PANE', 'data': @data),
-		6: array('name': 'STAINED_GLASS_PANE', 'data': @data),
-		7: array('name': 'STAINED_GLASS_PANE', 'data': @data),
-		8: array('name': 'STAINED_GLASS_PANE', 'data': @data),
-		100: array('name': 'LEATHER_BOOTS', 'meta': array('color': @color)),
-		101: array('name': 'LEATHER_LEGGINGS', 'meta': array('color': @color)),
-		102: array('name': 'LEATHER_CHESTPLATE', 'meta': array('color': @color)),
-	);
-	set_pinv(@player, @items);
+	if(@game) {
+		@team = @game['players'][@player]['team'];
+		@data = if(@team == 'blue', 11, 14);
+		@color = if(@team == 'blue', array(0, 0, 255), array(255, 0, 0));
+		@items = array(
+			0: null,
+			1: array('name': 'STAINED_GLASS_PANE', 'data': @data),
+			2: array('name': 'STAINED_GLASS_PANE', 'data': @data),
+			3: array('name': 'STAINED_GLASS_PANE', 'data': @data),
+			4: array('name': 'STAINED_GLASS_PANE', 'data': @data),
+			5: array('name': 'STAINED_GLASS_PANE', 'data': @data),
+			6: array('name': 'STAINED_GLASS_PANE', 'data': @data),
+			7: array('name': 'STAINED_GLASS_PANE', 'data': @data),
+			8: array('name': 'STAINED_GLASS_PANE', 'data': @data),
+			100: array('name': 'LEATHER_BOOTS', 'meta': array('color': @color)),
+			101: array('name': 'LEATHER_LEGGINGS', 'meta': array('color': @color)),
+			102: array('name': 'LEATHER_CHESTPLATE', 'meta': array('color': @color)),
+		);
+		set_pinv(@player, @items);
+	}
 	set_pheld_slot(@player, 0);
 	
 	set_pmode(@player, 'SURVIVAL');
