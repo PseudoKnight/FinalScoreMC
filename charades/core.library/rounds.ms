@@ -137,8 +137,11 @@ proc _end_build(@guesser, @word) {
 	
 	set_timeout(7000, closure(){
 		_remove_region_entities('charades');
-		skcb_load('charades');
-		skcb_paste(array(0, 0, 0, 'custom'), array('origin': true));
+		// delay before paste to prevent entity issues
+		set_timeout(50,closure(){
+			skcb_load('charades');
+			skcb_paste(array(0, 0, 0, 'custom'), array('origin': true));
+		});
 		
 		if(@charades['playersLeft'] && ponline(@charades['playersLeft'][0])) {
 			try {
