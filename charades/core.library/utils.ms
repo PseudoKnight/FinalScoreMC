@@ -1,7 +1,7 @@
 proc _msg_charades(@message, @type = 'chat', @ignored = '') {
 	foreach(@t in get_teams('charades')) {
 		foreach(@p in @t['players']) {
-			if(@p == @ignored) {
+			if(@p == @ignored || !ponline(@p)) {
 				continue();
 			}
 			if(@type == 'action') {
