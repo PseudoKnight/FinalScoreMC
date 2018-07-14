@@ -1,10 +1,12 @@
 // Protect tameable animals from damage by non-owners
-bind(entity_damage, null, array('type': '/(DONKEY|HORSE|LLAMA|MULE|OCELOT|SKELETON_HORSE|WOLF|ZOMBIE_HORSE|PARROT)/'), @event) {
-	if(!_is_survival_world(@event['world'])) {
+bind('entity_damage', null, array('type': '/(DONKEY|HORSE|LLAMA|MULE|OCELOT|SKELETON_HORSE|WOLF|ZOMBIE_HORSE|PARROT)/'), @event) {
+	@world = @event['world'];
+	@id = @event['id'];
+	if(!_is_survival_world(@world)) {
 		die();
 	}
 
-	@owner = get_mob_owner(@event['id']);
+	@owner = get_mob_owner(@id);
 	if(is_null(@owner)) {
 		 die();
 	}
@@ -12,26 +14,44 @@ bind(entity_damage, null, array('type': '/(DONKEY|HORSE|LLAMA|MULE|OCELOT|SKELET
 	switch(@event['cause']) {
 		case 'ENTITY_ATTACK':
 			@isplayer = length(@event['damager']) < 17;
+			@damager = @event['damager'];
 
-			if((@isplayer && @owner != @event['damager'])
-			|| (!@isplayer && !get_entity_rider(@event['id']))) {
+			if((@isplayer && @owner != @damager)
+			|| (!@isplayer && !get_entity_rider(@id))) {
 				cancel();
+				if(@isplayer) {
+					@spec = entity_spec(@id);
+					if(array_index_exists(@spec, 'sitting') && @spec['sitting']
+					&& array_contains(sk_region_owners(sk_regions_at(@event['location'])[-1], @world), @damager)) {
+						if(ponline(@owner) && _is_survival_world(pworld(@owner))) {
+							set_entity_loc(@id, location_shift(ploc(@owner), 'up'));
+							tmsg(@damager, color('yellow').'Teleported '.@event['type'].' to '.@owner.'.');
+						} else {
+							@ownerdata = _pdata(@owner);
+							if(array_index_exists(@ownerdata, 'homes') && array_index_exists(@ownerdata['homes'], @world)) {
+								load_chunk(@ownerdata['homes'][@world]);
+								set_entity_loc(@id, @ownerdata['homes'][@world]);
+								tmsg(@damager, color('yellow').'Teleported '.@event['type'].' to '.@owner.'\'s home.');
+							}
+						}
+					}
+				}
 			}
 
 		case 'PROJECTILE':
-			if(array_index_exists(@event, 'shooter') && length(@event['shooter']) < 17 || !get_entity_rider(@event['id'])) {
+			if(array_index_exists(@event, 'shooter') && length(@event['shooter']) < 17 || !get_entity_rider(@id)) {
 				cancel();
 			}
 
 		default:
-			if(!get_entity_rider(@event['id'])) {
+			if(!get_entity_rider(@id)) {
 				modify_event('amount', 0);
 			}
 	}
 }
 
 # animal sitter
-bind(player_interact_entity, null, array('clicked': '/(WOLF|OCELOT|PARROT)/'), @e) {
+bind('player_interact_entity', null, array('clicked': '/(WOLF|OCELOT|PARROT)/'), @e) {
 	@owner = get_mob_owner(@e['id']);
 	if(@owner) {
 		if(@owner != player()) {
