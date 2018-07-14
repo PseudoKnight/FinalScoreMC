@@ -24,7 +24,12 @@ set_cron('*/5 * * * *', closure(){
 	x_new_thread('mumbleQuery', closure(){
 		@ip = '192.227.136.164';
 		@port = 64758;
-		@count = mumble_count(@ip, @port);
+		@count = @previousCount;
+		try {
+			@count = mumble_count(@ip, @port);
+		} catch(Exception @ex) {
+			die();
+		}
 		if(@count != @previousCount) {
 			@type = 'people';
 			if(@count == 1) {
