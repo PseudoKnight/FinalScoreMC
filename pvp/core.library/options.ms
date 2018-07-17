@@ -14,15 +14,10 @@ proc _create_options_menu(@id, @arena) {
 		@i = 0;
 	}
 
-	create_virtualchest(array(
-		'id': @id.'options',
-		'size': array_size(@arena['options']) * 9,
-		'title': to_upper(@id).' OPTIONS',
-	));
-	update_virtualchest(@id.'options', @inv);
+	create_virtual_inventory(@id.'options', array_size(@arena['options']) * 9, to_upper(@id).' OPTIONS', @inv);
 
 	bind('inventory_click', array('id': @id.'options', 'priority': 'HIGH'), array('slottype': 'CONTAINER', 'player': player()), @e, @id) {
-		if(pget_virtualchest() != @id.'options'
+		if(pinventory_holder() != @id.'options'
 		|| is_null(@e['slotitem'])
 		|| is_null(@e['slotitem']['meta'])
 		|| is_null(@e['slotitem']['meta']['display'])) {
@@ -44,7 +39,7 @@ proc _create_options_menu(@id, @arena) {
 			}
 		}
 		play_sound(ploc(), array('sound': 'CLICK'), player());
-		update_virtualchest(@id.'options', @e['inventory']);
+		set_inventory(@id.'options', @e['inventory']);
 		@arena[@option] = @value;
 		store_value('arena', @id, @arena);
 	}

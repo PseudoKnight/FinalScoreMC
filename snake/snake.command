@@ -12,7 +12,7 @@ register_command('snake', array(
 			if(queue_running('snake_cleanup')) {
 				die(color('gold').'The game is still resetting.');
 			}
-			if(array_contains(all_virtualchests(), 'snake')
+			if(array_contains(get_virtual_inventories(), 'snake')
 			|| array_contains(get_scoreboards(), 'snake')) {
 				die(color('gold').'Already running.');
 			}
@@ -51,7 +51,7 @@ register_command('snake', array(
 				if(queue_running('snake_cleanup')) {
 					die(color('gold').'The game is still resetting.');
 				}
-				if(array_contains(all_virtualchests(), 'snake')
+				if(array_contains(get_virtual_inventories(), 'snake')
 				|| array_contains(get_scoreboards(), 'snake')) {
 					die(color('gold').'Already running.');
 				}

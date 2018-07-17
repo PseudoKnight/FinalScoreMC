@@ -193,15 +193,15 @@ bind('player_death', array('priority': 'high', 'id': @id.'death'), null, @e, @id
 					msg(color('gold').@pvp['players'][player()]['picks'].' class picks left.');
 				}
 				if(!array_index_exists(@pvp['players'][player()], 'team') || @pvp['players'][player()]['team'] == 0) {
-					if(array_contains(all_virtualchests(), @id.'0')) {
+					if(array_contains(get_virtual_inventories(), @id.'0')) {
 						set_timeout(300, closure(){
-							popen_virtualchest(player(), @id.'0');
+							popen_inventory(player(), @id.'0');
 						});
 					}
 				} else {
-					if(array_contains(all_virtualchests(), @id.'1')) {
+					if(array_contains(get_virtual_inventories(), @id.'1')) {
 						set_timeout(300, closure(){
-							popen_virtualchest(player(), @id.'1');
+							popen_inventory(player(), @id.'1');
 						});
 					}
 				}
@@ -612,7 +612,7 @@ if(array_index_exists(@pvp['arena'], 'captain')) {
 				_class('equip', player(), @pvp['players'][player()]['class'], @pvp);
 				_pvp_msg(@pvp, color('gray').'[PVP] '
 					.@pvp['arena']['team'][0]['color'].player().color('r').' became the new captain!');
-				clear_virtualchest(@id.'0', 0);
+				set_inventory_item(@id.'0', 0, null);
 			} else {
 				cancel();
 			}
@@ -631,7 +631,7 @@ if(array_index_exists(@pvp['arena'], 'captain')) {
 				_class('equip', player(), @pvp['players'][player()]['class'], @pvp);
 				_pvp_msg(@pvp, color('gray').'[PVP] '
 					.@pvp['arena']['team'][1]['color'].player().color('r').' became the new captain!');
-				clear_virtualchest(@id.'1', 0);
+				set_inventory_item(@id.'1', 0, null);
 			} else {
 				cancel();
 			}

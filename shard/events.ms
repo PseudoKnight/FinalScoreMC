@@ -26,7 +26,7 @@ bind('player_interact', null, array('item': 264, 'hand': 'main_hand', 'block': 0
 	}
 	if(!_is_survival_world(pworld())) {
 		action_msg('A shard can only be generated from a survival world.');
-	} else if(array_contains(all_virtualchests(), 'shard')) {
+	} else if(array_contains(get_virtual_inventories(), 'shard')) {
 		action_msg('Another player is generating a shard.');
 	} else {
 		include('core.library/menu.ms');

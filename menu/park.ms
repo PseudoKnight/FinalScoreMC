@@ -3,7 +3,7 @@ bind('player_interact', null, array('item': data_values('book'), 'button': 'righ
 		@display = _item_meta(pinv(player(), null), 'display');
 		if(@display === 'Park Directory') {
 			cancel();
-			popen_virtualchest('main');
+			popen_inventory('main');
 			play_sound(ploc(), array('sound': 'STEP_WOOL', 'pitch': 1.2), player());
 		}
 	}
@@ -11,9 +11,6 @@ bind('player_interact', null, array('item': data_values('book'), 'button': 'righ
 
 queue_push(closure(){
 	@main = array(
-		'id': 'main',
-		'title': 'Frog Park Directory',
-		'size': 63,
 		56: array(
 			'name': 'CARPET',
 			'data': 14,
@@ -49,7 +46,8 @@ queue_push(closure(){
 			),
 		),
 	);
-	create_virtualchest(@main);
+	delete_virtual_inventory('main');
+	create_virtual_inventory('main', 63, 'Frog Park Directory', @main);
 
 	queue_push(closure(){
 		include('menus.library/other.ms');

@@ -6,7 +6,7 @@ proc _pvp_start(@pvp, @id){
 	}
 	
 	if(array_index_exists(@pvp['arena'], 'options')) {
-		del_virtualchest(@id.'options');
+		delete_virtual_inventory(@id.'options');
 		unbind(@id.'options');
 	}
 
@@ -432,14 +432,7 @@ proc _pvp_start(@pvp, @id){
 					}
 				}
 			} else if(@timeleft[0] > 6 && array_index_exists(@arena, 'classes') && array_size(@arena['classes']) > 1) {
-				@choosing = false;
-				foreach(@p in array_keys(@pvp['players'])) {
-					if(ponline(@p) && !is_null(pget_virtualchest(@p))) {
-						@choosing = true;
-						break();
-					}
-				}
-				if(!@choosing) {
+				if(get_inventory_viewers(@id.'0') || get_inventory_viewers(@id.'1')) {
 					update_bar(@id, array('title': color('green').'Starting game...', 'style': 'SEGMENTED_6', 'percent': 0.0, 'color': 'GREEN'));
 					@timeleft[0] = 6;
 				} else {

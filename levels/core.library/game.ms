@@ -30,10 +30,7 @@ proc _level_prepare(@name, @arena, @region, @world) {
 	set_objective_display('health', array('slot': 'BELOW_NAME'), 'level'.@region);
 	
 	if(array_index_exists(@level['config'], 'shop')) {
-		@shop = array(
-			'id': 'level'.@region,
-			'title': 'BUY OR SELL',
-		);
+		@shop = associative_array();
 		@items = associative_array();
 		foreach(@index: @item in @level['config']['shop']) {
 			@meta = associative_array();
@@ -45,7 +42,7 @@ proc _level_prepare(@name, @arena, @region, @world) {
 			@items[@item['name']] = @item['cost'];
 		}
 		@level['shop'] = @items;
-		create_virtualchest(@shop);
+		create_virtual_inventory('level'.@region, array_size(@shop), 'BUY OR SELL', @shop);
 	}
 	
 	if(array_index_exists(@level['arena'], 'startblock')) {
@@ -164,7 +161,7 @@ proc _level_start(@level) {
 	if(array_index_exists(@level['config'], 'shop')) {
 		bind('player_interact', array('id': 'openshop'.@level['region']), array('button': 'right', 'item': 388), @event, @level) {
 			if(array_contains(@level['players'], player()) && pworld() == @level['world']) {
-				popen_virtualchest('level'.@level['region']);
+				popen_inventory('level'.@level['region']);
 			}
 		}
 		
@@ -199,8 +196,8 @@ proc _level_start(@level) {
 			}
 		}
 		
-		bind('inventory_click', array('id': 'shop'.@level['region']), array('action': 'PICKUP_ALL'), @event, @level) {
-			if(pget_virtualchest() == 'level'.@level['region']) {
+		bind('inventory_click', array('id': 'shop'.@level['region']), array('action': 'PICKUP_ALL', 'virtual': true), @event, @level) {
+			if(pinventory_holder() == 'level'.@level['region']) {
 				@item = @event['slotitem'];
 				if(@item && @item['meta'] && @item['meta']['lore']) {
 					@parts = parse_args(@item['meta']['lore'][0]);
@@ -253,7 +250,7 @@ proc _level_start(@level) {
 				}
 			}
 			
-			if(array_index_exists(@level['config'], 'shop') && pviewing_virtualchest('level'.@level['region'])) {
+			if(array_index_exists(@level['config'], 'shop') && get_inventory_viewers('level'.@level['region'])) {
 				die();
 			
 			} else if(@sleep[0] > 0) {
@@ -370,8 +367,8 @@ proc _level_start(@level) {
 
 proc _level_end(@level, @win) {
 	clear_task(@level['task']);
-	if(array_contains(all_virtualchests(), 'level'.@level['region'])) {
-		del_virtualchest('level'.@level['region']);
+	if(array_contains(get_virtual_inventories(), 'level'.@level['region'])) {
+		delete_virtual_inventory('level'.@level['region']);
 	}
 	sk_region_flag(@level['world'], @level['region'], 'mob-spawning', 'deny');
 	set_gamerule(@level['world'], 'doDaylightCycle', true);

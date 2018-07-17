@@ -491,13 +491,13 @@ proc _pvp_end_match(@id, @winners) {
 			queue_clear(@id.'1hat')
 		}
 
-		@chests = all_virtualchests();
+		@chests = get_virtual_inventories();
 		foreach(@chest in @chests) {
 			if(@chest === @id.'0'
 			|| @chest === @id.'1') {
-				del_virtualchest(@chest);
+				delete_virtual_inventory(@chest);
 			} else if(@chest === @id.'options') {
-				del_virtualchest(@chest);
+				delete_virtual_inventory(@chest);
 				unbind(@chest);
 			}
 		}

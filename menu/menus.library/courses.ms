@@ -28,21 +28,21 @@
 );
 
 @solo = @main[];
-@solo['id'] = 'solo';
-@solo['title'] = 'Solo Courses / Parkour';
 @solo[59]['name'] = 'WOOL';
 
 @coop = @main[];
-@coop['id'] = 'coop';
-@coop['title'] = 'Coop Courses / Parkour';
 @coop[60]['name'] = 'WOOL';
 
 @soloMenu = array(
 	'menu': @solo,
+	'id': 'solo',
+	'title': 'Solo Courses / Parkour',
 	'inv': associative_array(),
 );
 @coopMenu = array(
 	'menu': @coop,
+	'id': 'coop',
+	'title': 'Coop Courses / Parkour',
 	'inv': associative_array(),
 );
 
@@ -133,7 +133,8 @@ foreach(@i: @difficulty in @difficultyorder) {
 		}
 		@menu[@slot] = @item;
 	}
-	create_virtualchest(@menu);
+	delete_virtual_inventory(@import['id']);
+	create_virtual_inventory(@import['id'], 63, @import['title'], @menu);
 }
 @soloMenu['loadMenu'] = @loadMenu;
 @coopMenu['loadMenu'] = @loadMenu;

@@ -1,9 +1,6 @@
 proc _open_objective_menu() {
 	@objectives = array('treasurehunt', 'elimination', 'scavengerhunt');
 	@menu = array(
-		'id': 'shard',
-		'type': 'HOPPER',
-		'title': 'Choose an Objective',
 		'0': array(
 			'name': 'IRON_SWORD', 'meta': array(
 				'display': color('aqua').'Elimination',
@@ -31,31 +28,26 @@ proc _open_objective_menu() {
 			))
 		),
 	);
-	create_virtualchest(@menu);
-	popen_virtualchest('shard');
+	create_virtual_inventory('shard', 'HOPPER', 'Choose an Objective', @menu);
+	popen_inventory('shard');
 	
-	bind('inventory_click', array('id': player().'click'), array('player': player()), @event, @objectives) {
-		if(is_null(pget_virtualchest())) {
-			cancel();
-			close_pinv();
-			die();
-		}
+	bind('inventory_click', array('id': player().'click'), array('player': player(), 'virtual': true), @event, @objectives) {
 		@item = @event['slotitem'];
 		if(@item && @item['meta'] && @item['meta']['display']) {
 			@objective = replace(to_lower(substr(@item['meta']['display'], 2)), ' ', '');
 			if(array_contains(@objectives, @objective)) {
 				unbind();
-				unbind(player().'open');
+				unbind(player().'close');
 				_open_rules_menu(@objective);
 			}
 		}
 	}
 	
-	bind('inventory_close', array('id': player().'open'), null, @event, @player = player()) {
+	bind('inventory_close', array('id': player().'close'), null, @event, @player = player()) {
 		if(player() == @player) {
 			unbind();
 			unbind(player().'click');
-			del_virtualchest('shard');
+			delete_virtual_inventory('shard');
 		}
 	}
 }
@@ -213,9 +205,6 @@ proc _open_rules_menu(@objective) {
 		),
 	);
 	@menu = array(
-		'id': 'shard',
-		'size': 45,
-		'title': 'Rules',
 		44: array(
 			'name': 'DIAMOND_SWORD', 'meta': array(
 				'display': color('green').color('bold').'ENTER SHARD',
@@ -256,15 +245,11 @@ proc _open_rules_menu(@objective) {
 		}
 	}
 	@rules[] = array('name': 'objective', 'value': @objective);
-	create_virtualchest(@menu);
-	popen_virtualchest('shard');
+	delete_virtual_inventory('shard');
+	create_virtual_inventory('shard', 45, 'Rules', @menu);
+	popen_inventory('shard');
 	
-	bind('inventory_click', array('id': player().'click'), array('player': player()), @event, @rules, @options) {
-		if(is_null(pget_virtualchest())) {
-			cancel();
-			close_pinv();
-			die();
-		}
+	bind('inventory_click', array('id': player().'click'), array('player': player(), 'virtual': true), @event, @rules, @options) {
 		@item = @event['slotitem'];
 		if(!@item) {
 			die();
@@ -327,9 +312,7 @@ proc _open_rules_menu(@objective) {
 						@item['meta']['display'] = color('gray').'DEACTIVATED';
 					}
 				}
-				@inv = array();
-				@inv[@slot] = @item;
-				update_virtualchest('shard', @inv);
+				set_inventory_item('shard', @slot, @item);
 			}
 		}
 	}
@@ -338,7 +321,7 @@ proc _open_rules_menu(@objective) {
 		if(player() == @player) {
 			unbind();
 			unbind(player().'click');
-			del_virtualchest('shard');
+			delete_virtual_inventory('shard');
 		}
 	}
 }

@@ -1,10 +1,10 @@
 @menu = @main[];
-@menu['id'] = 'pvp';
-@menu['title'] = 'PVP Arenas';
 @menu[56]['name'] = 'WOOL';
 
 @menuPvp = array(
 	'inv': associative_array(),
+	'id': 'pvp',
+	'title': 'PVP Arenas',
 	'menu': @menu
 );
 

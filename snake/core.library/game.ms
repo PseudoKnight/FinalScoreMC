@@ -75,10 +75,7 @@ proc _snake_queue(@mode) {
 	_snake_clean_surfaces(@game);
 	
 	// Create color select menu
-	create_virtualchest(array(
-		'id': 'snake',
-		'size': 9,
-		'title': color('bold').'Choose Your Snake Color',
+	create_virtual_inventory('snake', 9, color('bold').'Choose Your Snake Color', array(
 		'0': array('name': 'STAINED_CLAY', 'data': 3, 'meta': array('display': 'Blue')),
 		'1': array('name': 'CONCRETE', 'data': 3, 'meta': array('display': 'Neon Blue')),
 		'2': array('name': 'STAINED_CLAY', 'data': 5, 'meta': array('display': 'Green')),
@@ -111,7 +108,7 @@ proc _snake_queue(@mode) {
 	
 	if(@game['mode'] == 'endless' && array_size(@game['snakes']) == 0
 	|| @game['mode'] == 'versus' && array_size(@game['snakes']) < 2) {
-		del_virtualchest('snake');
+		delete_virtual_inventory('snake');
 		remove_scoreboard('snake');
 		foreach(@player: @snake in @game['snakes']) {
 			_snake_remove(@player, @game);
@@ -139,33 +136,33 @@ proc _snake_queue(@mode) {
 	if(@loadMenu) {
 		foreach(@player: @snake in @game['snakes']) {
 			if(ponline(@player) && !@snake['head']) {
-				popen_virtualchest(@player, 'snake');
+				popen_inventory(@player, 'snake');
 			}
 		}
-		bind('inventory_click', array('id': 'snake-invclick'), null, @event, @game) {
-			if(pget_virtualchest(player()) == 'snake' && array_index_exists(@game['snakes'], player())) {
+		bind('inventory_click', array('id': 'snake-invclick'), array('virtual': true), @event, @game) {
+			if(pinventory_holder(player()) == 'snake' && array_index_exists(@game['snakes'], player())) {
 				@item = @event['slotitem'];
 				if(@item) {
 					_snake_set_color(player(), @item['type'].':'.@item['data'], @game);
-					clear_virtualchest('snake', @event['slot']);
+					set_inventory_item('snake', @event['slot'], null);
 					close_pinv();
 				}
 			}
 		}
 		bind('inventory_close', null, null, @event, @game) {
 			set_timeout(50, closure() {
-				if(array_contains(all_virtualchests(), 'snake') && !pviewing_virtualchest('snake')) {
+				if(array_contains(get_virtual_inventories(), 'snake') && !get_inventory_viewers('snake')) {
 					unbind();
 					unbind('snake-invclick');
 					_snake_set_colors(@game);
-					del_virtualchest('snake');
+					delete_virtual_inventory('snake');
 					_snake_countdown(@game);
 				}
 			});
 		}
 	} else {
 		_snake_set_colors(@game);
-		del_virtualchest('snake');
+		delete_virtual_inventory('snake');
 		_snake_countdown(@game);
 	}
 }
@@ -420,7 +417,7 @@ proc _snake_cleanup_round(@game) {
 
 proc _snake_cleanup(@game) {
 	_snake_cleanup_round(@game);
-	del_virtualchest('snake');
+	delete_virtual_inventory('snake');
 	set_timeout(7000, closure(){
 		foreach(@player: @snake in @game['snakes']) {
 			_snake_remove(@player, @game);

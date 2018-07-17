@@ -154,8 +154,8 @@ proc _snake_set_color(@player, @color, @game,
 	@snake = @game['snakes'][@player];
 	foreach(@slot: @colorArray in @colors) {
 		if(@colorArray[1] == @color) {
-			if(array_contains(all_virtualchests(), 'snake')) {
-				clear_virtualchest('snake', @slot);
+			if(array_contains(get_virtual_inventories(), 'snake')) {
+				set_inventory_item('snake', @slot, null);
 			}
 			@head = @colorArray[0];
 			@tail = @colorArray[1];
@@ -173,7 +173,7 @@ proc _snake_set_color(@player, @color, @game,
 proc _snake_set_colors(@game) {
 	foreach(@name: @snake in @game['snakes']) {
 		if(!@snake['head']) {
-			@inv = get_virtualchest('snake');
+			@inv = get_inventory('snake');
 			foreach(@slot in range(9)) {
 				if(@inv[@slot] && (!array_index_exists(@snake, 'team') || integer(@slot / 4) == @snake['team'])) {
 					@item = @inv[@slot]['type'].':'.@inv[@slot]['data'];

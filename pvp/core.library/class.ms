@@ -119,19 +119,11 @@ proc _class_select(@id, @pvp) {
 	}
 	if(@size1 > 2) {
 		@chestsize1 = ceil(@size1 / 9) * 9
-		create_virtualchest(array(
-			'id': @id.'0',
-			'size': @chestsize1,
-			'title': 'Choose a Class'
-		))
+		create_virtual_inventory(@id.'0', @chestsize1, 'Choose a Class');
 	}
 	if(@size2 > 2) {
 		@chestsize2 = ceil(@size2 / 9) * 9
-		create_virtualchest(array(
-			'id': @id.'1',
-			'size': @chestsize2,
-			'title': 'Choose a Class'
-		))
+		create_virtual_inventory(@id.'1', @chestsize2, 'Choose a Class');
 	}
 	@chest = array(array(), array())
 	foreach(@class in @pvp['arena']['classes']) {
@@ -151,35 +143,34 @@ proc _class_select(@id, @pvp) {
 			'display': 'RANDOM',
 			'lore': array('Randomly assign a class'),
 		));
-		update_virtualchest(@id.'0', @chest[0])
+		set_inventory(@id.'0', @chest[0])
 	}
 	if(@chest[1]) {
 		@chest[1][@chestsize2 - 1] = array('name': 'STONE', 'data': 7, 'meta': array(
 			'display': 'RANDOM',
 			'lore': array('Randomly assign a class'),
 		));
-		update_virtualchest(@id.'1', @chest[1])
+		set_inventory(@id.'1', @chest[1])
 	}
 	foreach(@p: @pdata in @pvp['players']) {
 		if(@size1 > 2 && (!array_index_exists(@pdata, 'team') || @pdata['team'] == 0)) {
 			if(array_index_exists(@pvp['arena'], 'class_picks')) {
 				@pvp['players'][@p]['picks'] = @pvp['arena']['class_picks'];
 			}
-			popen_virtualchest(@p, @id.'0');
+			popen_inventory(@p, @id.'0');
 		} else if(@size2 > 2 && @pdata['team'] == 1) {
 			if(array_index_exists(@pvp['arena'], 'class_picks')) {
 				@pvp['players'][@p]['picks'] = @pvp['arena']['class_picks'];
 			}
-			popen_virtualchest(@p, @id.'1');
+			popen_inventory(@p, @id.'1');
 		}
 	}
 
 	if(@size1 > 2 || @size2 > 2) {
 		array_push(@pvp['binds'], @id.'classselector')
-		bind('inventory_click', array('id': @id.'classselector', 'priority': 'HIGH'), null, @e, @id) {
+		bind('inventory_click', array('id': @id.'classselector', 'priority': 'HIGH'), array('virtual': true), @e, @id) {
 			@pvp = import('pvp'.@id);
 			if(!array_index_exists(@pvp['players'], player())
-			|| !pget_virtualchest()
 			|| is_null(@e['slotitem'])
 			|| is_null(@e['slotitem']['meta'])
 			|| is_null(@e['slotitem']['meta']['display'])) {
@@ -195,9 +186,9 @@ proc _class_select(@id, @pvp) {
 			if(array_index_exists(@pvp['arena'], 'captain')) {
 				@team = @pvp['players'][player()]['team'];
 				if(array_contains(@pvp['arena']['captain'], @class)) {
-					clear_virtualchest(@id.@team, @e['slot']);
+					set_inventory_item(@id.@team, @e['slot'], null);
 					@pvp['team'][@team]['captain'] = player();
-				} else if(@pvp['running'] < 2 && array_size(pviewing_virtualchest(@id.@team)) == 1) {
+				} else if(@pvp['running'] < 2 && array_size(get_inventory_viewers(@id.@team)) == 1) {
 					@captain = false;
 					foreach(@name: @player in @pvp['players']) {
 						if(@player['team'] == @team && array_index_exists(@player, 'class')
@@ -206,10 +197,10 @@ proc _class_select(@id, @pvp) {
 						}
 					}
 					if(!@captain) {
-						foreach(@slot: @item in get_virtualchest(@id.@team)) {
+						foreach(@slot: @item in get_inventory(@id.@team)) {
 							if(is_array(@item) && !is_null(@item['meta']) && !is_null(@item['meta']['display'])
 							&& @pvp['arena']['captain'][@team] == to_lower(strip_colors(@item['meta']['display']))) {
-								clear_virtualchest(@id.@team, integer(@slot));
+								set_inventory_item(@id.@team, integer(@slot), null);
 								@pvp['team'][@team]['captain'] = player();
 								@class = @pvp['arena']['captain'][@team];
 								break();
@@ -246,10 +237,10 @@ proc _class_select(@id, @pvp) {
 					}
 				}
 				if(@count >= @pvp['arena']['classes'][@class]['limit']) {
-					foreach(@slot: @item in get_virtualchest(@id.@team)) {
+					foreach(@slot: @item in get_inventory(@id.@team)) {
 						if(is_array(@item) && !is_null(@item['meta'])
 						&& @class == to_lower(strip_colors(@item['meta']['display']))) {
-							clear_virtualchest(@id.@team, integer(@slot));
+							set_inventory_item(@id.@team, integer(@slot), null);
 							break();
 						}
 					}

@@ -19,9 +19,9 @@ proc _unload_shard() {
 	// Scavenger Hunt clean-up
 	export('shard.card', null);
 	export('shard.colors', null);
-	foreach(@chest in all_virtualchests()) {
+	foreach(@chest in get_virtual_inventories()) {
 		if(string_ends_with(@chest, 'card')) {
-			del_virtualchest(@chest);
+			delete_virtual_inventory(@chest);
 		}
 	}
 	

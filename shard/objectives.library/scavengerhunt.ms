@@ -366,14 +366,15 @@ if(@size) {
 	proc _refresh_card(@create = false, @cardSize = @size) {
 		@card = import('shard.card');
 		@chest = associative_array();
+		@size = 54;
 		@offset = 2;
 		@chestWidth = 9;
 		if(@cardSize == 3) {
-			@chest['type'] = 'DROPPER';
+			@size = 'DROPPER';
 			@offset = 0;
 			@chestWidth = 3;
 		} else {
-			@chest['size'] = 9 * @cardSize;
+			@size = 9 * @cardSize;
 		}
 		// Personalize virtual chest per player
 		foreach(@p in all_players('shard')) {
@@ -391,12 +392,10 @@ if(@size) {
 					}
 				}
 			}
-			@chest['id'] = @p.'card';
-			@chest['title'] = @p.'\'s Card';
 			if(@create) {
-				create_virtualchest(@chest);
+				create_virtual_inventory(@p.'card', @size, @p.'\'s Card', @chest);
 			} else {
-				update_virtualchest(@chest);
+				set_inventory(@p.'card', @chest);
 			}
 		}
 	}
@@ -441,10 +440,7 @@ if(@size) {
 	proc _refresh_card(@create = false) {
 		@card = import('shard.card');
 		@colors = import('shard.colors');
-		@chest = array(
-			'id': 'shardcard',
-			'title': 'Get 4 In A Row',
-		);
+		@chest = associative_array();
 		@offset = 2;
 		@chestWidth = 9;
 		for(@i = 0, @i < 6, @i++) {
@@ -464,9 +460,9 @@ if(@size) {
 			}
 		}
 		if(@create) {
-			create_virtualchest(@chest);
+			create_virtual_inventory('shardcard', 54, 'Get 4 In A Row', @chest);
 		} else {
-			update_virtualchest(@chest);
+			set_inventory('shardcard', @chest);
 		}
 	}
 	_refresh_card(true);
@@ -570,17 +566,19 @@ bind('player_interact', array('id': 'shard-scavenger-playerinteract'), array('it
 	if(pworld() == 'shard') {
 		cancel();
 		if(@size) {
-			popen_virtualchest(player().'card');
+			popen_inventory(player().'card');
 		} else {
-			popen_virtualchest('shardcard');
+			popen_inventory('shardcard');
 		}
 	}
 }
 
 @binds[] = 'shard-scavenger-inventoryclick';
-bind('inventory_click', array('id': 'shard-scavenger-inventoryclick'), array('clicktype': 'LEFT'), @event, @card, @items, @width, @height) {
+bind('inventory_click', array('id': 'shard-scavenger-inventoryclick'), array('clicktype': 'LEFT', 'virtual': true), @event,
+	@card, @items, @width, @height) {
+		
 	if(@event['slotitem'] && @event['rawslot'] < @event['inventorysize']) {
-		@menu = pget_virtualchest();
+		@menu = pinventory_holder();
 		if(@menu == 'shardcard' || @menu == to_lower(player()).'card') {
 		 	if(get_pscore('reroll', player(), 'shard')) {
 				die('You\'ve re-rolled an item already.');

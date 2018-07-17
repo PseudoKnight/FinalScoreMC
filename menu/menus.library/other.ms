@@ -1,6 +1,4 @@
 @menu = @main[];
-@menu['id'] = 'other';
-@menu['title'] = 'Other Games';
 @menu[57]['name'] = 'WOOL';
 
 @menu[45] = array(
@@ -172,5 +170,5 @@
 		)
 	),
 );
-
-create_virtualchest(@menu);
+delete_virtual_inventory('other');
+create_virtual_inventory('other', 63, 'Other Games', @menu);

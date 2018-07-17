@@ -154,7 +154,7 @@ register_command('level', array(
 				if(@activities && array_index_exists(@activities, 'level'.@region)) {
 					die(color('gold').'Game is already running.');
 				}
-				if(array_contains(all_virtualchests(), 'levelstart'.@region)) {
+				if(array_contains(get_virtual_inventories(), 'levelstart'.@region)) {
 					die(color('gold').'Someone is already starting the game.');
 				}
 				
@@ -177,11 +177,7 @@ register_command('level', array(
 					return();
 				}
 				
-				@menu = array(
-					'id': 'levelstart'.@region,
-					'title': 'Pick a Script',
-					'size': 9,
-				);
+				@menu = associative_array();
 				@index = 0;
 				foreach(@id: @item in @scripts) {
 					@menu[@index] = array(
@@ -190,14 +186,14 @@ register_command('level', array(
 					);
 					@index++;
 				}
-				create_virtualchest(@menu);
-				popen_virtualchest('levelstart'.@region);
+				create_virtual_inventory('levelstart'.@region, 9, 'Pick a Script', @menu);
+				popen_inventory('levelstart'.@region);
 				
 				bind('inventory_close', null, null, @e, @player = player(), @region) {
 					if(player() == @player) {
 						unbind(player().'click');
 						unbind();
-						del_virtualchest('levelstart'.@region);
+						delete_virtual_inventory('levelstart'.@region);
 					}
 				}
 				

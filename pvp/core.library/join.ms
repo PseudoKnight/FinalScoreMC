@@ -57,11 +57,11 @@ proc _pvp_join(@id){
 	}
 
 	if(@pvp['running'] == 0 && array_size(@pvp['players']) == 1 && array_index_exists(@arena, 'options')) {
-		if(!array_contains(all_virtualchests(), @id.'options')) {
+		if(!array_contains(get_virtual_inventories(), @id.'options')) {
 			include('options.ms');
 			_create_options_menu(@id, @arena);
 		}
-		popen_virtualchest(@id.'options');
+		popen_inventory(@id.'options');
 
 	} else if(@pvp['running'] == 0 && array_index_exists(@arena, 'arenaselect') && @arena['arenaselect']['type'] == 'vote') {
 		// Display book with vote links
@@ -105,12 +105,12 @@ proc _pvp_join(@id){
 	} else if(@pvp['running'] == 1) {
 		if(array_index_exists(@pvp['arena'], 'classes')) {
 			if(!array_index_exists(@pvp['players'][player()], 'team') || @pvp['players'][player()]['team'] == 0) {
-				if(array_contains(all_virtualchests(), @id.'0')) {
-					popen_virtualchest(player(), @id.'0');
+				if(array_contains(get_virtual_inventories(), @id.'0')) {
+					popen_inventory(player(), @id.'0');
 				}
 			} else {
-				if(array_contains(all_virtualchests(), @id.'1')) {
-					popen_virtualchest(player(), @id.'1');
+				if(array_contains(get_virtual_inventories(), @id.'1')) {
+					popen_inventory(player(), @id.'1');
 				}
 			}
 		}

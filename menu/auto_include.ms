@@ -24,5 +24,6 @@ proc _menu_refresh_pvp() {
 		}
 		@menu[@slot] = @item;
 	}
-	create_virtualchest(@menu);
+	delete_virtual_inventory(@menuTemplate['id']);
+	create_virtual_inventory(@menuTemplate['id'], 63, @menuTemplate['title'], @menu);
 }

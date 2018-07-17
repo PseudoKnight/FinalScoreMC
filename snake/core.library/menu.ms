@@ -1,8 +1,5 @@
 proc _snake_menu() {
-	create_virtualchest(array(
-		'id': 'snake',
-		'type': 'HOPPER',
-		'title': color('bold').'Choose a Mode',
+	create_virtual_inventory('snake', 'HOPPER', color('bold').'Choose a Mode', array(
 		'0': array('name': 'REDSTONE_BLOCK', 'meta': array(
 			'display': color('red').color('bold').'ELIMINATION MODE',
 			'lore': array(
@@ -33,39 +30,37 @@ proc _snake_menu() {
 			)
 		)),
 	));
-	popen_virtualchest('snake');
-	bind('inventory_click', array('id': 'snake-invclick'), null, @event) {
-		if(pget_virtualchest() == 'snake') {
-			@item = @event['slotitem'];
-			if(@item) {
-				close_pinv();
-				try {
-					include('game.ms');
-					@modes = array(
-						0: 'elimination',
-						1: 'versus',
-						2: 'endless',
-						3: 'capture',
-					);
-					_snake_queue(array_get(@modes, @event['slot'], 'secret'));
-				} catch(Exception @ex) {
-					console(@ex['classType'].': '.@ex['message'], false);
-					foreach(@trace in @ex['stackTrace']) {
-						console(split('LocalPackages', @trace['file'])[-1].':'.@trace['line'].' '.@trace['id'], false);
-					}
-					msg(color('red').@ex['message']);
-					msg(color('yellow').'Cleaning up game...');
-					_snake_cleanup(import('snake'));
-					return(true);
+	popen_inventory('snake');
+	bind('inventory_click', array('id': 'snake-invclick'), array('player': player()), @event) {
+		@item = @event['slotitem'];
+		if(@item) {
+			close_pinv();
+			try {
+				include('game.ms');
+				@modes = array(
+					0: 'elimination',
+					1: 'versus',
+					2: 'endless',
+					3: 'capture',
+				);
+				_snake_queue(array_get(@modes, @event['slot'], 'secret'));
+			} catch(Exception @ex) {
+				console(@ex['classType'].': '.@ex['message'], false);
+				foreach(@trace in @ex['stackTrace']) {
+					console(split('LocalPackages', @trace['file'])[-1].':'.@trace['line'].' '.@trace['id'], false);
 				}
+				msg(color('red').@ex['message']);
+				msg(color('yellow').'Cleaning up game...');
+				_snake_cleanup(import('snake'));
+				return(true);
 			}
 		}
 	}
 	bind('inventory_close', null, null, @event) {
-		if(pget_virtualchest() == 'snake') {
+		if(@event['holder'] == 'snake') {
 			unbind();
 			unbind('snake-invclick');
-			del_virtualchest('snake');
+			delete_virtual_inventory('snake');
 		}
 	}
 }
