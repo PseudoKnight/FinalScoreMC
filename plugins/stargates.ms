@@ -14,6 +14,8 @@ if(extension_exists('CHStargate')) {
 			if(array_index_exists(@pdata, 'names') && array_contains(@pdata['names'], @event['owner'])) {
 				sg_set_owner(@event['portal'], @event['network'], @event['player']);
 				cancel(false);
+			} else {
+				msg('This Stargate belongs to '.@event['owner']);
 			}
 		}
 	}
