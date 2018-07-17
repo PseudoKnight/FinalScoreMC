@@ -62,18 +62,10 @@ proc _hoops_player_equip(@player) {
 	bar_add_player('hoops', @player);
 	
 	bind('player_jump', array('id': @player.'jump'), array('player': @player), @event) {
-		if(psneaking()) {
-			@block = get_block_at(ploc());
-			if(@block == '251:11' || @block == '251:14') {
-				set_timeout(50,closure(){
-					@vel = entity_velocity(puuid());
-					set_pvelocity(@vel['x'] * 1.4, 0.85, @vel['z'] * 1.4);
-				});
-			}
-		} else {
+		if(array_contains(sk_current_regions(), 'hoops')) {
 			set_timeout(50,closure(){
 				@vel = entity_velocity(puuid());
-				set_pvelocity(0, 0.2, 0);
+				set_pvelocity(@vel['x'] * 0.1, 0.85, @vel['z'] * 0.1);
 			});
 		}
 	}
