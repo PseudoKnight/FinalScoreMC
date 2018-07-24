@@ -13,7 +13,9 @@ proc _player_remove(@player, @id) {
 	if(ponline(@player)) {
 		preset_time(@player);
 		set_pstorm(@player, null);
-		dm_set_pvisible(@player, true);
+		if(function_exists('dm_set_pvisible')) {
+			dm_set_pvisible(@player, true);
+		}
 		try {
 			set_entity_fall_distance(puuid(@player), 0);
 		} catch(BadEntityException @ex) {
@@ -37,7 +39,9 @@ proc _player_to_spectator(@player, @pvp) {
 		_class('unload', player(), @pvp['players'][player()]['class'], @pvp)
 	}
 	array_remove(@pvp['players'], player());
-	dm_set_pvisible(@player, true);
+	if(function_exists('dm_set_pvisible')) {
+		dm_set_pvisible(@player, true);
+	}
 
 	# Delay spectator mode so that health amount is updated.
 	# Health can be above zero when pkill() or set_phealth() are used.
@@ -94,7 +98,9 @@ proc _pvp_initialize_players(@id, @players) {
 		}
 
 		if(array_contains(@pvp['arena']['flags'], 'hideplayers')) {
-			dm_set_pvisible(@player, false);
+			if(function_exists('dm_set_pvisible')) {
+				dm_set_pvisible(@player, false);
+			}
 		}
 
 		if(array_index_exists(@pvp['arena'], 'lives')) {
