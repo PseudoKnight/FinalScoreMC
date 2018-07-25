@@ -398,7 +398,7 @@ proc _pvp_start(@pvp, @id){
 	@timeleft = array(@arena['delay']);
 	if(has_bind(@id.'classselector')) {
 		create_bar(@id, array(
-			'title': color('yellow').'Choosing classes...',
+			'title': color('yellow').array_size(@pvp['players']).' players choosing classes...',
 			'percent': 0.0,
 			'style': 'SOLID',
 			'color': 'YELLOW',
@@ -415,7 +415,7 @@ proc _pvp_start(@pvp, @id){
 		bar_add_player(@id, @p);
 	}
 	set_interval(1000, closure(){
-		@timeleft[0] -= 1;;
+		@timeleft[0] -= 1;
 		if(@timeleft[0] > 0) {
 			if(@timeleft[0] <= 5) {
 				play_sound(@arena['lobby'], array('sound': 'NOTE_PLING', 'pitch': 1, 'volume': 3));
@@ -432,11 +432,16 @@ proc _pvp_start(@pvp, @id){
 					}
 				}
 			} else if(@timeleft[0] > 6 && array_index_exists(@arena, 'classes') && array_size(@arena['classes']) > 1) {
-				if(get_inventory_viewers(@id.'0') || get_inventory_viewers(@id.'1')) {
+				@choosing = if(array_contains(get_virtual_inventories(), @id.'0'), get_inventory_viewers(@id.'0'), 0);
+				@choosing += if(array_contains(get_virtual_inventories(), @id.'1'), get_inventory_viewers(@id.'1'), 0);
+				if(!@choosing) {
 					update_bar(@id, array('title': color('green').'Starting game...', 'style': 'SEGMENTED_6', 'percent': 0.0, 'color': 'GREEN'));
 					@timeleft[0] = 6;
 				} else {
-					update_bar(@id, array('percent': (@arena['delay'] - @timeleft[0]) / @arena['delay']));
+					update_bar(@id, array(
+						'percent': (@arena['delay'] - @timeleft[0]) / @arena['delay'],
+						'title': color('yellow').if(@choosing > 1, @choosing.' players choosing classes...', '1 player choosing a class...'),
+					));
 				}
 			}
 		} else {
