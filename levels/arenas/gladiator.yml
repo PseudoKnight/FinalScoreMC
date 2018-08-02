@@ -5,14 +5,14 @@ classic:
         - 'by rivergod'
         - 'No Upgrades. Endure the onslaught.'
 steplightly:
-    name: WOOD_SWORD
+    name: TOTEM
     display: 'Step Lightly'
     lore:
         - 'by gothem8'
         - 'Buy items with levels.'
         - 'Sell items to get more levels.'
 supernaturalhunt:
-    name: STONE_SWORD
+    name: EYE_OF_ENDER
     display: 'Supernatural Hunt'
     lore:
         - 'by NinjaKing1200'

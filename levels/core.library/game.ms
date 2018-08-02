@@ -42,7 +42,7 @@ proc _level_prepare(@name, @arena, @region, @world) {
 			@items[@item['name']] = @item['cost'];
 		}
 		@level['shop'] = @items;
-		create_virtual_inventory('level'.@region, array_size(@shop), 'BUY OR SELL', @shop);
+		create_virtual_inventory('level'.@region, 54, 'BUY OR SELL', @shop);
 	}
 	
 	if(array_index_exists(@level['arena'], 'startblock')) {
@@ -371,7 +371,7 @@ proc _level_end(@level, @win) {
 		delete_virtual_inventory('level'.@level['region']);
 	}
 	sk_region_flag(@level['world'], @level['region'], 'mob-spawning', 'deny');
-	set_gamerule(@level['world'], 'doDaylightCycle', true);
+	set_world_time(@level['world'], 'noon');
 	_remove_region_entities(@level['region']);
 	unbind('death'.@level['region']);
 	unbind('spawn'.@level['region']);
@@ -416,7 +416,9 @@ proc _level_end(@level, @win) {
 	}
 	remove_scoreboard('level'.@level['region']);
 	if(array_index_exists(@level['arena'], 'schematic')) {
-		skcb_load(@level['arena']['schematic']);
-		skcb_paste(array(0, 0, 0, @level['world']), array('origin': true));
+		set_timeout(50, closure(){
+			skcb_load(@level['arena']['schematic']);
+			skcb_paste(array(0, 0, 0, @level['world']), array('origin': true));
+		});
 	}
 }
