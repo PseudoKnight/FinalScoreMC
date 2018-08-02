@@ -1,15 +1,17 @@
 switch(@action) {
 	case 'load':
 		set_pexp(@player, 99);
-		set_pflight(@player, true);
-		set_pflyspeed(@player, 0.08);
-		bind('player_toggle_flight', array('id': @player.'bountyhunter'), array('player': @player, 'flying': true), @event,
-			@gasSound = array('sound': 'BLOCK_FIRE_EXTINGUISH', 'pitch': 1.1),
-			@hissSound = array('sound': 'ENTITY_CAT_HISS', 'volume': 0.3, 'pitch': 1.1),
+		bind('player_toggle_sneak', array('id': @player.'bountyhunter'), array('sneaking': true), @event,
+			@gasSound = array('sound': 'BLOCK_FIRE_EXTINGUISH', 'pitch': 1.1, 'volume': 0.5),
+			@hissSound = array('sound': 'ENTITY_CAT_HISS', 'volume': 0.3, 'pitch': 1.1, 'volume': 0.3),
 			@smokeEffect = array('speed': 0.02, 'particleCount': 10, 'offsetX': 0.25, 'offsetY': 0.25, 'offsetZ': 0.25, 'distance': 64),
 			@stallSound = array('sound': 'BLOCK_CHEST_CLOSE', 'pitch': 0.5),
-			@deathSound = array('sound': 'ENTITY_BLAZE_DEATH', 'pitch': 2.0)
+			@deathSound = array('sound': 'ENTITY_BLAZE_DEATH', 'pitch': 2.0),
+			@player,
 		) {
+			if(@player != player()) {
+				die();
+			}
 			if(pexp() == 0) {
 				play_sound(ploc(), @gasSound);
 				cancel();
@@ -22,13 +24,20 @@ switch(@action) {
 			play_sound(@loc, @hissSound);
 			play_effect(@loc, 'CLOUD', @smokeEffect);
 			
-			set_interval(100, 600, closure(){
+			@v = get_vector(ploc());
+			@v['x'] /= 1.7;
+			@v['z'] /= 1.7;
+			@v['y'] = 0.2;
+			set_pvelocity(player(), @v);
+			
+			set_pexp(max(0, pexp() - 3));
+			
+			set_interval(150, closure(){
 				try {
 					@loc = ploc();
 					@xp = pexp();
-					if(@xp == 0 || @loc['y'] <= @y[0] + 0.3) {
+					if(@xp == 0 || !pinfo(player(), 11)) {
 						clear_task();
-						try(set_pflying(false));
 						if(@xp == 0) {
 							play_sound(@loc, @stallSound);
 							play_sound(@loc, @deathSound);
@@ -37,14 +46,22 @@ switch(@action) {
 						@y[0] = @loc['y'];
 						@loc['y'] += 1.3;
 						play_sound(@loc, @gasSound);
-						play_sound(@loc, @hissSound);
 						play_effect(@loc, 'CLOUD', @smokeEffect);
 						set_pexp(max(0, @xp - 1));
+						@v = get_vector(@loc);
+						@v['x'] /= 2;
+						@v['z'] /= 2;
+						@v['y'] = 0.4;
+						set_pvelocity(player(), @v);
 					}
 				} catch(PlayerOfflineException @ex) {
 					clear_task();
 				}
 			});
+		}
+		
+		bind('entity_damage', array('id': @player.'falldamage'), array('cause': 'FALL', 'id': puuid(@player)), @event) {
+			cancel();
 		}
 		
 	case 'equip':
@@ -55,6 +72,6 @@ switch(@action) {
 	
 	case 'unload':
 		unbind(@player.'bountyhunter');
-		set_pflyspeed(@player, 0.1);
+		unbind(@player.'falldamage');
 
 }

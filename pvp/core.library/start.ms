@@ -432,8 +432,8 @@ proc _pvp_start(@pvp, @id){
 					}
 				}
 			} else if(@timeleft[0] > 6 && array_index_exists(@arena, 'classes') && array_size(@arena['classes']) > 1) {
-				@choosing = if(array_contains(get_virtual_inventories(), @id.'0'), get_inventory_viewers(@id.'0'), 0);
-				@choosing += if(array_contains(get_virtual_inventories(), @id.'1'), get_inventory_viewers(@id.'1'), 0);
+				@choosing = if(array_contains(get_virtual_inventories(), @id.'0'), array_size(get_inventory_viewers(@id.'0')), 0);
+				@choosing += if(array_contains(get_virtual_inventories(), @id.'1'), array_size(get_inventory_viewers(@id.'1')), 0);
 				if(!@choosing) {
 					update_bar(@id, array('title': color('green').'Starting game...', 'style': 'SEGMENTED_6', 'percent': 0.0, 'color': 'GREEN'));
 					@timeleft[0] = 6;

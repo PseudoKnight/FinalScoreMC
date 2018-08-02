@@ -26,7 +26,7 @@ bind('player_interact', array('id': @id.'flamethrower'), array('item': 379, 'but
 	@loc['y'] += 2;
 	@target = array('world': 'custom');
 	@id = time();
-	for(@range = 1, @range <= 9, @range++) {
+	for(@range = 1, @range <= 8, @range++) {
 		queue_push(closure(){
 			@target['x'] = @loc['x'] + (@x * @range);
 			@target['y'] = @loc['y'] + (@y * @range);
@@ -49,7 +49,7 @@ bind('player_interact', array('id': @id.'flamethrower'), array('item': 379, 'but
 				if(@dist < 1.4) { # 1.5 ^ 2
 					@uuid = puuid(@p);
 					if(entity_can_see(puuid(), @uuid)) {
-						damage_entity(@uuid, 2.2, puuid());
+						damage_entity(@uuid, 2, puuid());
 						set_entity_onfire(@uuid, 2);
 					} else {
 						damage_entity(@uuid, 1, puuid());
