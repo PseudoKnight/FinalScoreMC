@@ -224,7 +224,7 @@ bind('inventory_click', null, array('slottype': 'RESULT'), @event) {
 		&& !is_null(@slotitem['meta'])
 		&& !is_null(@slotitem['meta']['display'])) {
 			# named player head
-			@slotitem['meta']['owneruuid'] = puuid(@slotitem['meta']['display']);
+			@slotitem['meta']['owner'] = @slotitem['meta']['display'];
 			modify_event('slotitem', @slotitem);
 		}
 	}
