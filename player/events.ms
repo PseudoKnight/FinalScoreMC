@@ -277,11 +277,11 @@ bind('item_swap', null, null, @event,
 						cancel();
 						play_named_sound(ploc(), array('sound': @sound, 'pitch': @notes[@num], 'category': 'VOICE'));
 					} else {
-						unbind(');
+						unbind();
 					}
 				}
 			}
-			set_timeout(50', closure(try(set_pheld_slot(8))));
+			set_timeout(50, closure(try(set_pheld_slot(8))));
 		}
 	}
 }
