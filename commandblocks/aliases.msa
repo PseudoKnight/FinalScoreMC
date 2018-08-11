@@ -81,34 +81,6 @@
 	}
 <<<
 
-*:/give [$player=''] [$item=0] [$amount=1] = >>>
-	if(is_null(@loc = get_command_block()) && !has_permission('group.moderator')) {
-		die('You do not have permission to use this command.');
-	}
-	if($player === '') {
-		die('Usage: /give [player] [id:data] [quantity]');
-	}
-	@player = _find_player($player);
-	if(@loc && @loc['world'] != pworld(@player)) {
-		die('This commandblock cannot give to players in another world.');
-	}
-	if($item == 0) {
-		die('You need to specify an item id or name.');
-	}
-	@item = split(':', $item)
-	if(!is_numeric(@item[0])) {
-		@item[0] = data_values(@item[0]);
-	}
-	if(is_null(@item[0])) {
-		die('Unknown item name');
-	}
-	if(!array_index_exists(@item, 1)) {
-		@item[1] = 0;
-	}
-	pgive_item(@player, @item[0].':'.@item[1], $amount);
-	msg(color('yellow').'You gave '.@player.' '.$amount.' '.data_name(@item[0].':'.@item[1]).'.');
-<<<
-
 *:/effect $player $effect [$strength=0] [$length=30] = >>>
 	if((@loc = get_command_block()) || has_permission('command.effect')) {
 		try {
@@ -149,7 +121,7 @@
 		}
 		
 		set_pvelocity(@player, $x, $y, $z);
-		play_sound(@loc, array('sound': 'GHAST_FIREBALL', 'volume': 2));
+		play_sound(@loc, array('sound': 'ENTITY_GHAST_SHOOT', 'volume': 2));
 		make_effect(@loc, 'MOBSPAWNER_FLAMES');
 		
 		@reapply = array(if(@applicationtime, integer(@applicationtime / 50), 0));
@@ -188,7 +160,7 @@
 		
 		@loc = entity_loc(@entity);
 		make_effect(@loc, 'MOBSPAWNER_FLAMES');
-		play_sound(@loc, array('sound': 'GHAST_FIREBALL', 'volume': 2));
+		play_sound(@loc, array('sound': 'ENTITY_GHAST_SHOOT', 'volume': 2));
 		set_entity_velocity(@entity, array($x, $y, $z));
 		
 		@reapply = array(if(@applicationtime, integer(@applicationtime / 50), 0));
@@ -249,57 +221,59 @@
 
 /setblock $x $y $z $id [$data='0'] [$mode='replace'] [$replaceid=''] [$replacedata='0'] = >>>
 	if(@cmdblk = get_command_block()) {
-		@loc = _relative_coords(@cmdblk, $x, $y, $z)
+		@loc = _relative_coords(@cmdblk, $x, $y, $z);
 
-		if(!is_numeric(@id = $id) && is_null(@id = data_values($id))) {
+		if(!is_numeric(@id = $id)) {
 			die();
 		}
 
-		@id = split(':', @id)[0]
+		@type = data_name(@id.':'.$data);
 
 		switch($mode) {
-		case 'replace':
-			if($replaceid) {
-				if(get_block_at(@loc) == $replaceid.':'.$replacedata) {
-					set_block_at(@loc, @id.':'.$data, false);
+			case 'replace':
+				if($replaceid) {
+					@replace = data_name($replaceid.':'.$replacedata);
+					if(get_block(@loc) == @replace) {
+						set_block(@loc, @type, false);
+					}
+				} else {
+					set_block(@loc, @type, false);
 				}
-			} else {
-				set_block_at(@loc, @id.':'.$data, false);
-			}
-		case 'keep':
-			if(get_block_at(@loc)[0] === '0') {
-				set_block_at(@loc, @id.':'.$data, false)
-			}
-		case 'destroy':
-			if(get_block_at(@loc, @cmdblk[3])[0] !== '0') {
-				make_effect(@loc, 'STEP_SOUND:'.@id)
-			}
-			set_block_at(@loc, @id.':'.$data, true)
-		case 'fall':
-			@block = get_block_at(@loc)
-			if(@block[0] !== '0') {
-				set_block_at(@loc, '0:0')
-				spawn_falling_block(@loc, @block)
-			}
-		case 'timed':
-			@ms = integer($replaceid);
-			@block = @ms;
-			if($replacedata != '0') {
-				@ms = integer($replacedata);
-			} else {
-				@block = get_block_at(@loc);
-			}
-			set_block_at(@loc, @id.':'.$data, false);
-			set_timeout(@ms, closure(){
-				set_block_at(@loc, @block);
-			});
-		case 'toggle':
-			@block = get_block_at(@loc)
-			if(@block == $replaceid.':'.$replacedata) {
-				set_block_at(@loc, @id.':'.$data, false)
-			} else if(@block == @id.':'.$data) {
-				set_block_at(@loc, $replaceid.':'.$replacedata, false)
-			}
+			case 'keep':
+				if(get_block(@loc) === 'AIR') {
+					set_block(@loc, @type, false);
+				}
+			case 'destroy':
+				if(get_block(@loc) !== 'AIR') {
+					make_effect(@loc, 'STEP_SOUND:'.@type);
+				}
+				set_block(@loc, @type, true)
+			case 'fall':
+				@block = get_block(@loc)
+				if(@block !== 'AIR') {
+					set_block(@loc, 'AIR');
+					spawn_falling_block(@loc, @block);
+				}
+			case 'timed':
+				@ms = integer($replaceid);
+				@block = @ms;
+				if($replacedata != '0') {
+					@ms = integer($replacedata);
+				} else {
+					@block = get_block(@loc);
+				}
+				set_block(@loc, @type, false);
+				set_timeout(@ms, closure(){
+					set_block(@loc, @block);
+				});
+			case 'toggle':
+				@replace = data_name($replaceid.':'.$replacedata);
+				@block = get_block(@loc);
+				if(@block == @replace) {
+					set_block(@loc, @type, false);
+				} else if(@block == @id.':'.$data) {
+					set_block(@loc, @replace, false);
+				}
 		}
 	}
 <<<
@@ -309,41 +283,40 @@
 		@loc1 = _relative_coords(@cmdblk, $x1, $y1, $z1)
 		@loc2 = _relative_coords(@cmdblk, $x2, $y2, $z2)
 
-		if(!is_numeric(@id = $id)
-		&& is_null(@id = data_values($id))) {
+		if(!is_numeric(@id = $id)) {
 			die()
 		}
-		@id = split(':', @id)[0]
+		@type = data_name(@id.':'.$data);
 
 		if($replaceid !== '') {
-			if(!is_numeric(@replaceid = $replaceid)
-			&& is_null(@replaceid = data_values($replaceid))) {
+			if(!is_numeric(@replaceid = $replaceid)) {
 				die()
 			}
-			@replaceid = split(':', @replaceid)[0]
 		}
 
 		switch($mode) {
 		case 'replace':
+			@replace = data_name($replaceid.':'.$replacedata);
 			for(@x = min(@loc1['x'], @loc2['x']), @x <= max(@loc1['x'], @loc2['x']), @x++) {
 				for(@y = min(@loc1['y'], @loc2['y']), @y <= max(@loc1['y'], @loc2['y']), @y++) {
 					for(@z = min(@loc1['z'], @loc2['z']), @z <= max(@loc1['z'], @loc2['z']), @z++) {
-						if($replaceid === '' || get_block_at(@x, @y, @z, @cmdblk['world']) == @replaceid.':'.$replacedata) {
-							set_block_at(@x, @y, @z, @id.':'.$data, @cmdblk['world'], false)
+						if($replaceid === '' || get_block(array(@x, @y, @z, @cmdblk['world'])) == @replace) {
+							set_block(array(@x, @y, @z, @cmdblk['world']), @type, false);
 						}
 					}
 				}
 			}
 
 		case 'toggle':
+			@replace = data_name($replaceid.':'.$replacedata);
 			for(@x = min(@loc1['x'], @loc2['x']), @x <= max(@loc1['x'], @loc2['x']), @x++) {
 				for(@y = min(@loc1['y'], @loc2['y']), @y <= max(@loc1['y'], @loc2['y']), @y++) {
 					for(@z = min(@loc1['z'], @loc2['z']), @z <= max(@loc1['z'], @loc2['z']), @z++) {
-						@block = get_block_at(@x, @y, @z, @cmdblk['world'])
-						if(@block == @replaceid.':'.$replacedata) {
-							set_block_at(@x, @y, @z, @id.':'.$data, @cmdblk['world'], false)
-						} else if(@block == @id.':'.$data) {
-							set_block_at(@x, @y, @z, @replaceid.':'.$replacedata, @cmdblk['world'], false)
+						@block = get_block(array(@x, @y, @z, @cmdblk['world']));
+						if(@block == @replace) {
+							set_block(array(@x, @y, @z, @cmdblk['world']), @type, false)
+						} else if(@block == @type) {
+							set_block(array(@x, @y, @z, @cmdblk['world']), @replace , false)
 						}
 					}
 				}
@@ -353,8 +326,8 @@
 			for(@x = min(@loc1['x'], @loc2['x']), @x <= max(@loc1['x'], @loc2['x']), @x++) {
 				for(@y = min(@loc1['y'], @loc2['y']), @y <= max(@loc1['y'], @loc2['y']), @y++) {
 					for(@z = min(@loc1['z'], @loc2['z']), @z <= max(@loc1['z'], @loc2['z']), @z++) {
-						if(get_block_at(@x, @y, @z, @cmdblk['world'])[0] === '0') {
-							set_block_at(@x, @y, @z, @id.':'.$data, @cmdblk['world'], false)
+						if(get_block(array(@x, @y, @z, @cmdblk['world'])) === 'AIR') {
+							set_block(array(@x, @y, @z, @cmdblk['world']), @type, false)
 						}
 					}
 				}
@@ -364,10 +337,10 @@
 			for(@x = min(@loc1['x'], @loc2['x']), @x <= max(@loc1['x'], @loc2['x']), @x++) {
 				for(@y = min(@loc1['y'], @loc2['y']), @y <= max(@loc1['y'], @loc2['y']), @y++) {
 					for(@z = min(@loc1['z'], @loc2['z']), @z <= max(@loc1['z'], @loc2['z']), @z++) {
-						if(get_block_at(@x, @y, @z, @cmdblk['world'])[0] !== '0') {
-							make_effect(array(@x, @y, @z, @cmdblk['world']), 'STEP_SOUND:'.@id)
+						if(get_block(array(@x, @y, @z, @cmdblk['world'])) !== 'AIR') {
+							make_effect(array(@x, @y, @z, @cmdblk['world']), 'STEP_SOUND:'.@type)
 						}
-						set_block_at(@x, @y, @z, @id.':'.$data, @cmdblk['world'], true)
+						set_block(array(@x, @y, @z, @cmdblk['world']), @type, true)
 					}
 				}
 			}
@@ -376,9 +349,9 @@
 			for(@x = min(@loc1['x'], @loc2['x']) + 0.5, @x <= max(@loc1['x'], @loc2['x']) + 0.5, @x += 1.0) {
 				for(@y = min(@loc1['y'], @loc2['y']), @y <= max(@loc1['y'], @loc2['y']), @y++) {
 					for(@z = min(@loc1['z'], @loc2['z']) + 0.5, @z <= max(@loc1['z'], @loc2['z']) + 0.5, @z += 1.0) {
-						@block = get_block_at(@x, @y, @z, @cmdblk['world'])
-						if(@block[0] !== '0') {
-							set_block_at(@x, @y, @z, '0:0', @cmdblk['world'], false)
+						@block = get_block(array(@x, @y, @z, @cmdblk['world']));
+						if(@block !== 'AIR') {
+							set_block(array(@x, @y, @z, @cmdblk['world']), 'AIR', false);
 							spawn_falling_block(array(@x, @y, @z, @cmdblk['world']), @block)
 						}
 					}

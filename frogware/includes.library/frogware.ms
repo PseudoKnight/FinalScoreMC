@@ -73,9 +73,9 @@ proc _fw_startround(@secs = 12) {
 	if(!is_null(@blocks)) {
 		foreach(@index: @block in @blocks) {
 			if(@block[1] < @region[1][1]) {
-				set_block_at(@block, '251:0');
+				set_block(@block, 'WHITE_CONCRETE');
 			} else {
-				set_block_at(@block, 0);
+				set_block(@block, 'AIR');
 			}
 			array_remove(@blocks, @index);
 		}
@@ -101,7 +101,7 @@ proc _fw_startround(@secs = 12) {
 						set_pmode(@p, 'SURVIVAL');
 					}
 					if(get_pteam(@p, 'fw')['name'] == 'winners') {
-						play_sound(ploc(@p), associative_array('sound': 'VILLAGER_YES'), @p);
+						play_sound(ploc(@p), associative_array('sound': 'ENTITY_VILLAGER_YES'), @p);
 						set_pscore('score', @p, get_pscore('score', @p, 'fw') + 1, 'fw')
 						_fw_changeteam(@p, 'losers')
 						@count++

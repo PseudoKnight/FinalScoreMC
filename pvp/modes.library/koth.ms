@@ -38,7 +38,7 @@ proc _interval(@pvp, @id) {
 				@pvp['stats'][@p]['seconds']++;
 			}
 			if(array_index_exists(@pvp['arena'], 'kothbeacon')) {
-				set_block_at(@pvp['arena']['kothbeacon'], '95:'.if(@kingteam, '11', '14'));
+				set_block(@pvp['arena']['kothbeacon'], if(@kingteam, 'BLUE', 'RED').'_STAINED_GLASS');
 			}
 			if(@score >= -11) {
 				play_sound(@pvp['arena']['kothbeacon'], array('sound': 'NOTE_PLING', 'volume': 5));
@@ -48,9 +48,9 @@ proc _interval(@pvp, @id) {
 			}
 		} else if(array_index_exists(@pvp['arena'], 'kothbeacon')) {
 			if(@kingteam == -2) {
-				set_block_at(@pvp['arena']['kothbeacon'], 7);
+				set_block(@pvp['arena']['kothbeacon'], 'BEDROCK');
 			} else {
-				set_block_at(@pvp['arena']['kothbeacon'], '95:0');
+				set_block(@pvp['arena']['kothbeacon'], 'WHITE_STAINED_GLASS');
 			}
 		}
 		
@@ -75,8 +75,12 @@ proc _interval(@pvp, @id) {
 				}
 				team_add_player('king', @king, @id);
 			}
+
 			if(array_index_exists(@pvp['arena'], 'kothbeacon')) {
-				set_block_at(@pvp['arena']['kothbeacon'], '95:'.(array_index(array_keys(@pvp['players']), @king) + 1));
+				@colors = array('ORANGE', 'MAGENTA', 'LIGHT_BLUE', 'YELLOW', 'LIME', 'PINK',
+						'CYAN', 'PURPLE', 'BLUE', 'BROWN', 'GREEN', 'RED');
+				@color = @colors[array_index(array_keys(@pvp['players']), @king)];
+				set_block(@pvp['arena']['kothbeacon'], @color.'_STAINED_GLASS');
 			}
 			if(@score >= -11) {
 				play_sound(@pvp['arena']['kothbeacon'], array('sound': 'NOTE_PLING', 'volume': 5));
@@ -90,9 +94,9 @@ proc _interval(@pvp, @id) {
 			}
 			if(array_index_exists(@pvp['arena'], 'kothbeacon')) {
 				if(@hillcount > 1) {
-					set_block_at(@pvp['arena']['kothbeacon'], '95:0');
+					set_block(@pvp['arena']['kothbeacon'], 'WHITE_STAINED_GLASS');
 				} else {
-					set_block_at(@pvp['arena']['kothbeacon'], 7);
+					set_block(@pvp['arena']['kothbeacon'], 'BEDROCK');
 				}
 			}
 		}

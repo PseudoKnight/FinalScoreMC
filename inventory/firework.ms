@@ -1,5 +1,5 @@
-bind('player_interact', null, array('item': 401, 'button': 'right'), @event) {
-	if(@event['hand'] == 'off_hand' && string_starts_with(@event['block'], '71')) {
+bind('player_interact', null, array('itemname': 'FIREWORK_ROCKET', 'button': 'right'), @event) {
+	if(@event['hand'] == 'off_hand' && @event['block'] == 'IRON_DOOR') {
 		// ignore iron doors if we're not boosting; Deadbolt already cancels main hand
 		cancel();
 		die();
@@ -40,7 +40,7 @@ bind('player_interact', null, array('item': 401, 'button': 'right'), @event) {
 				}
 			} else {
 				cancel(); // handle manually
-				if(@event['block'] != '0') {
+				if(@event['block']) {
 					@loc = location_shift(@event['location'], @event['facing']);
 					@loc['x'] += 0.5;
 					@loc['y'] += 0.5;

@@ -20,7 +20,7 @@ if(array_index_exists(@pvp['arena'], 'classes')) {
 proc _pvp_start_match(@id) {
 	@pvp = import('pvp'.@id)
 	if(array_index_exists(@pvp['arena'], 'rsoutput')) {
-		set_block_at(@pvp['arena']['rsoutput'], '69:14');
+		set_block(@pvp['arena']['rsoutput'], 'REDSTONE_TORCH');
 	}
 	if(array_index_exists(@pvp['arena'], 'time')) {
 		set_world_time(@pvp['arena']['lobby'][3], @pvp['arena']['time']);
@@ -34,11 +34,11 @@ proc _pvp_start_match(@id) {
 					@pvp['chestspawn'][@i] = 0;
 				} else {
 					@pvp['chestspawn'][@i] = time();
-					set_block_at(@pvp['arena']['chestspawn'][@i]['loc'], '0:0');
+					set_block(@pvp['arena']['chestspawn'][@i]['loc'], 'AIR');
 				}
 			} else if(array_index_exists(@pvp['arena'], 'chestgroup')) {
-				if(get_block_at(@pvp['arena']['chestspawn'][@i]['loc'])[0] === '0') {
-					set_block_at(@pvp['arena']['chestspawn'][@i]['loc'], '54:0');
+				if(get_block(@pvp['arena']['chestspawn'][@i]['loc']) === 'AIR') {
+					set_block(@pvp['arena']['chestspawn'][@i]['loc'], 'CHEST');
 				}
 				@r = rand(array_size(@pvp['arena']['chestgroup'][@pvp['arena']['chestspawn'][@i]['group']]));
 				for(@y = 0, @y < 27, @y++) {
@@ -172,7 +172,7 @@ proc _pvp_start_match(@id) {
 							continue();
 						}
 						@loc = ploc(@pvp['team'][@p['team']]['captain']);
-						play_sound(ploc(@player), array('sound': 'GHAST_FIREBALL'));
+						play_sound(ploc(@player), array('sound': 'ENTITY_GHAST_SHOOT'));
 						make_effect(location_shift(ploc(@player), 'up'), 'MOBSPAWNER_FLAMES');
 					} else {
 						if(array_index_exists(@pvp, 'team')) {
@@ -285,8 +285,8 @@ proc _pvp_start_match(@id) {
 			foreach(@i: @chest in @arena['chestspawn']) {
 				if(array_index_exists(@pvp['chestspawn'], @i)
 				&& (@pvp['chestspawn'][@i] + (@chest['cooldown'] * 1000)) < time()) {
-					if(get_block_at(@chest['loc'])[0] === '0') {
-						set_block_at(@chest['loc'], '54:0');
+					if(get_block(@chest['loc']) === 'AIR') {
+						set_block(@chest['loc'], 'CHEST');
 						for(@y = 0, @y < array_size(@chest['items']), @y++) {
 							set_inventory_item(@chest['loc'], @y, @chest['items'][@y]);
 						}
@@ -299,7 +299,7 @@ proc _pvp_start_match(@id) {
 		if(array_index_exists(@arena, 'blockbreak') && @pvp['blockcheck']) {
 			foreach(@team in array(0, 1)) {
 				foreach(@index: @loc in @arena['blockbreak'][@team]) {
-					if(get_block_at(@loc) == '0:0') {
+					if(get_block(@loc) == 'AIR') {
 						array_remove(@arena['blockbreak'][@team], @index);
 						@count = array_size(@arena['blockbreak'][@team]);
 						set_pscore('blocks', @arena['team'][@team]['name'], @count, @id);
@@ -471,15 +471,17 @@ proc _pvp_end_match(@id, @winners) {
 		
 	if(array_index_exists(@pvp['arena'], 'chestspawn')) {
 		for(@i = 0, @i < array_size(@pvp['arena']['chestspawn']), @i++) {
-			if(get_block_at(@pvp['arena']['chestspawn'][@i]['loc']) === '54:0',
-				set_block_at(@pvp['arena']['chestspawn'][@i]['loc'], '0:0'))
+			if(get_block(@pvp['arena']['chestspawn'][@i]['loc']) === 'CHEST') {
+				set_block(@pvp['arena']['chestspawn'][@i]['loc'], 'AIR');
+			}
 		}
 	}
 
 	try {
 
-		if(array_index_exists(@pvp['arena'], 'rsoutput'),
-			set_block_at(@pvp['arena']['rsoutput'], '69:6'))
+		if(array_index_exists(@pvp['arena'], 'rsoutput')) {
+			set_block(@pvp['arena']['rsoutput'], 'TORCH');
+		}
 
 		if(@pvp['arena']['mode'] === 'ctf') {
 			queue_clear(@id.'0flag')

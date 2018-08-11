@@ -38,7 +38,7 @@ proc _create_options_menu(@id, @arena) {
 				@e['inventory'][@slot]['data'] = 8;
 			}
 		}
-		play_sound(ploc(), array('sound': 'CLICK'), player());
+		play_sound(ploc(), array('sound': 'UI_BUTTON_CLICK'), player());
 		set_inventory(@id.'options', @e['inventory']);
 		@arena[@option] = @value;
 		store_value('arena', @id, @arena);

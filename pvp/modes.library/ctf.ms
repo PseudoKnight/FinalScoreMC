@@ -61,9 +61,9 @@ bind('item_pickup', array('id': @id.'flagpickup'), null, @e, @id) {
 					.@pvp['arena']['team'][@flag]['color'].player().color('r').' secured the '
 					.@pvp['arena']['team'][@heldflag]['color'].'flag'.color('r').'!');
 				if(array_index_exists(@pvp['arena'], 'rsoutputscore')) {
-					set_block_at(@pvp['arena']['rsoutputscore'][@flag], '76:5');
+					set_block(@pvp['arena']['rsoutputscore'][@flag], 'REDSTONE_TORCH');
 					set_timeout(1000, closure(){
-						set_block_at(@pvp['arena']['rsoutputscore'][@flag], '50:5');
+						set_block(@pvp['arena']['rsoutputscore'][@flag], 'TORCH');
 					})
 				}
 				_pvp_flag_spawn(@id, @heldflag);

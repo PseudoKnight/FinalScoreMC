@@ -1,7 +1,7 @@
 bind('entity_toggle_glide', array('priority': 'MONITOR'), null, @event) {
 	if(@event['gliding'] && !is_cancelled()) {
 		play_sound(entity_loc(@event['id']),
-				array('sound': 'ENDERDRAGON_WINGS', 'category': 'PLAYERS', 'pitch': 1.3, 'volume': 0.4));
+				array('sound': 'ENTITY_ENDER_DRAGON_FLAP', 'category': 'PLAYERS', 'pitch': 1.3, 'volume': 0.4));
 	}
 }
 

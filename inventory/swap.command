@@ -9,8 +9,8 @@ register_command('swap', array(
 			unbind('timeswap');
 			msg('Disabled time swap.');
 		} else {
-			bind('player_interact', array('id': 'timeswap'), array('item': 347, 'button': 'right', 'hand': 'main_hand'), @event) {
-				if(pworld() == 'dev' && !pcooldown('WATCH')) {
+			bind('player_interact', array('id': 'timeswap'), array('itemname': 'CLOCK', 'button': 'right', 'hand': 'main_hand'), @event) {
+				if(pworld() == 'dev' && !pcooldown('CLOCK')) {
 					@loc = ploc();
 					if(@loc['z'] > -1000) {
 						@z = -50;
@@ -27,17 +27,17 @@ register_command('swap', array(
 						@slot = pheld_slot();
 						set_timeout(50, closure(){
 							if(ponline(player()) && pworld() == 'dev') {
-								set_pcooldown('WATCH', 2000 / 50);
+								set_pcooldown('CLOCK', 2000 / 50);
 								relative_teleport(array(0, 0, @z, @loc['world']));
 								set_peffect(player(), 25, 0, 0);
-								play_named_sound(@loc, array('sound': 'entity.illusion_illager.mirror_move', 'pitch': 1.2));
-								play_sound(@loc, array('sound': 'WITHER_SHOOT', 'pitch': 1.3, 'volume': 0.1));
+								play_sound(@loc, array('sound': 'entity_illusioner_mirror_move', 'pitch': 1.2));
+								play_sound(@loc, array('sound': 'ENTITY_WITHER_SHOOT', 'pitch': 1.3, 'volume': 0.1));
 							}
 						});
 					} else {
 						@loc = ploc();
 						play_sound(@loc, array('sound': 'ENTITY_ZOMBIE_ATTACK_IRON_DOOR', 'pitch': 2, 'volume': 0.6));
-						play_sound(@loc, array('sound': 'FIZZ', 'pitch': 2));
+						play_sound(@loc, array('sound': 'block_fire_extinguish', 'pitch': 2));
 					}
 				}
 			}

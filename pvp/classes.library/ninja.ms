@@ -69,7 +69,7 @@ case 'load':
 		});
 	}
 	
-	bind('player_interact', array('id': @player.'throwstar'), array('item': 399, 'player': @player), @e) {
+	bind('player_interact', array('id': @player.'throwstar'), array('itemname': 'NETHER_STAR', 'player': @player), @e) {
 		@v = get_vector(ploc(), 1.5);
 		@v['y'] += 0.1;
 		@x = @v['x'];
@@ -82,15 +82,15 @@ case 'load':
 		@star = spawn_entity('DROPPED_ITEM', 1, @loc)[0];
 		set_entity_spec(@star, array('itemstack': array('name': 'NETHER_STAR', 'meta': array('display': player(), 'lore': array(3))), 'pickupdelay': 1));
 		set_entity_velocity(@star, @v);
-		play_sound(@loc, array('sound': 'IRONGOLEM_THROW', 'pitch': 2));
+		play_sound(@loc, array('sound': 'ENTITY_IRONGOLEM_THROW', 'pitch': 2));
 		set_interval(50, closure(){
 			try {
 				@loc['x'] += @x;
 				@loc['y'] += @y;
 				@loc['z'] += @z;
-				if(get_block_at(@loc) != '0:0') {
-					play_sound(@loc, array('sound': 'ANVIL_LAND', 'pitch': 2, 'volume': 0.5));
-					play_effect(@loc, 'CRIT', array('particleCount', 5));
+				if(get_block(@loc) != 'AIR') {
+					play_sound(@loc, array('sound': 'BLOCK_ANVIL_LAND', 'pitch': 2, 'volume': 0.5));
+					spawn_particle(@loc, array('particle': 'CRIT', 'count', 5));
 					set_entity_spec(@star, array('itemstack': array('name': 'NETHER_STAR', 'meta': array('display': player(), 'lore': array(0)))));
 					clear_task();
 				} else {
@@ -103,7 +103,7 @@ case 'load':
 		ptake_item(array('name': 'NETHER_STAR'));
 	}
 	
-	bind('item_pickup', array('id': @player.'starpickup'), array('item': 399), @e, @pvp) {
+	bind('item_pickup', array('id': @player.'starpickup'), array('itemname': 'NETHER_STAR'), @e, @pvp) {
 		if(!array_index_exists(@pvp['players'], player()) || !@e['item']['meta']) {
 			die();
 		}

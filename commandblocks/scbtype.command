@@ -11,11 +11,13 @@ register_command('scbtype', array(
 		try {
 			@cmd = get_block_command(@block);
 		} catch(FormatException @ex) {
-			die(color('gold').'You are looking at '.data_name(get_block_at(@block)).'. That is not a command block.');
+			die(color('gold').'You are looking at '.get_block(@block).'. That is not a command block.');
 		}
-		@blockdata = split(':', get_block_at(@block), 1);
-		@type = if(@blockdata[0] == '137', 211, 137);
-		set_block_at(@block, @type.':'.@blockdata[1]);
+		@type = get_block(@block);
+		@type = if(@type == 'COMMAND_BLOCK', 'chain_command_block', 'command_block');
+		@data = get_blockdata_string(@block);
+		@data = reg_replace('^[^\\[]+', @type, @data);
+		set_blockdata_string(@block, @data);
 		set_block_command(@block, @cmd);
 	}
 ));

@@ -1,5 +1,5 @@
 array_push(@pvp['binds'], @id.'railgun');
-bind('player_interact', array('id': @id.'railgun'), array('item': 175, 'button': 'right'), @e, @id) {
+bind('player_interact', array('id': @id.'railgun'), array('itemname': 'SUNFLOWER', 'button': 'right'), @e, @id) {
 	@pvp = import('pvp'.@id);
 	if(!array_index_exists(@pvp['players'], player()) || pinfo(player(), 6) != @e['item']) {
 		die();
@@ -14,19 +14,17 @@ bind('player_interact', array('id': @id.'railgun'), array('item': 175, 'button':
 	if(@item['qty'] == 0) {
 		set_pinv(player(), null, null);
 	} else {
-		@item['type'] = 402;
-		@item['name'] = 'FIREWORK_CHARGE';
+		@item['name'] = 'FIREWORK_STAR';
 		set_pinv(player(), null, @item);
 		@slot = pheld_slot();
-		set_pcooldown('FIREWORK_CHARGE', 8000 / 50);
+		set_pcooldown('FIREWORK_STAR', 8000 / 50);
 		queue_delay(8000, player().'railgun');
 		queue_push(closure(){
 			if(ponline(player())) {
 				@item = pinv(player(), @slot);
-				if(!is_null(@item) && @item['type'] == 402) {
-					play_sound(ploc(), array('sound': 'FIZZ', 'pitch': 0));
-					@item['type'] = 175;
-					@item['name'] = 'DOUBLE_PLANT';
+				if(!is_null(@item) && @item['name'] == 'FIREWORK_STAR') {
+					play_sound(ploc(), array('sound': 'BLOCK_FIRE_EXTINGUISH', 'pitch': 0));
+					@item['name'] = 'SUNFLOWER';
 					set_pinv(player(), @slot, @item);
 				}
 			}

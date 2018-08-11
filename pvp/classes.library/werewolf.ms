@@ -2,9 +2,9 @@ switch(@action) {
 case 'load':
 	bind('entity_damage_player', array('id': @player.'werewolf'), null, @e, @p = @player) {
 		if(@e['player'] == @p && !is_null(pinv(@p, 103))) {
-			play_sound(ploc(@p), array('sound': 'WOLF_HURT', 'pitch': 0.75))
+			play_sound(ploc(@p), array('sound': 'ENTITY_WOLF_HURT', 'pitch': 0.75))
 		} else if(@e['data'] == @p && !is_null(pinv(@p, 103)) && !rand(4)) {
-			play_sound(ploc(@p), array('sound': 'WOLF_GROWL', 'pitch': 0.9))
+			play_sound(ploc(@p), array('sound': 'ENTITY_WOLF_GROWL', 'pitch': 0.9))
 		}
 	}
 
@@ -17,11 +17,11 @@ case 'load':
 	bind('player_interact', array('id': @player.'eat'), array('button': 'right', 'item': 376, 'player': @player), @event) {
 		ptake_item(array('name': 'FERMENTED_SPIDER_EYE'));
 		set_phealth(player(), min(20, phealth() + 4));
-		play_sound(ploc(), array('sound': 'EAT', 'pitch': 0.5));
+		play_sound(ploc(), array('sound': 'ENTITY_GENERIC_EAT', 'pitch': 0.5));
 		play_effect(location_shift(ploc(), 'up', 2), 'TILE_DUST', array('particleCount': 10, 'id': 214, 'speed': 0.1))
 		set_timeout(500, closure(){
 			set_phealth(player(), min(20, phealth() + 4));
-			play_sound(ploc(), array('sound': 'EAT', 'pitch': 0.5));
+			play_sound(ploc(), array('sound': 'ENTITY_GENERIC_EAT', 'pitch': 0.5));
 			play_effect(location_shift(ploc(), 'up', 2), 'TILE_DUST', array('particleCount': 10, 'id': 214, 'speed': 0.1))
 		});
 	}
@@ -49,7 +49,7 @@ case 'powerup':
 			// player logged off last tick, nice timing
 		}
 	});
-	play_sound(ploc(@player), array('sound': 'WOLF_HOWL', 'pitch': 0.9, 'volume': 3));
+	play_sound(ploc(@player), array('sound': 'ENTITY_WOLF_HOWL', 'pitch': 0.9, 'volume': 3));
 	set_pinv(@player, array(
 		100: array('name': 'LEATHER_BOOTS', 'meta': array('color': array('r': 50, 'g': 50, 'b': 50)),
 			'enchants': array(array('elevel': 2, 'etype': 'DEPTH_STRIDER'))

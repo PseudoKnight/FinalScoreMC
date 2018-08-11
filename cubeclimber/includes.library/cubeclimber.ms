@@ -17,9 +17,9 @@ proc _cc_generate(@world = 'custom') {
 			for(@x = min(@rg[0][0], @rg[1][0]), @x <= max(@rg[0][0], @rg[1][0]), @x++) {
 				for(@z = min(@rg[0][2], @rg[1][2]), @z <= max(@rg[0][2], @rg[1][2]), @z++) {
 					if(!rand(@density)) {
-						set_block_at(@x, @y, @z, '159:'.rand(16), @world, false);
+						set_block(array(@x, @y, @z, @world), array_rand(_cc_colors(), 1, false)[0].'_TERRACOTTA', false);
 					} else {
-						set_block_at(@x, @y, @z, '0:0', @world, false);
+						set_block(array(@x, @y, @z, @world), 'AIR', false);
 					}
 				}
 			}
@@ -27,6 +27,11 @@ proc _cc_generate(@world = 'custom') {
 		queue_delay(@delay, 'cc_gen');
 	}
 
+}
+
+proc _cc_colors() {
+	return(array('WHITE', 'GRAY', 'LIGHT_GRAY', 'ORANGE', 'PINK', 'RED', 'PURPLE', 'GREEN',
+			'BROWN', 'BLACK', 'BLUE', 'CYAN', 'MAGENTA', 'YELLOW', 'LIME', 'LIGHT_BLUE'));
 }
 
 proc _cc_spawn(@player, @world = 'custom') {
@@ -57,7 +62,7 @@ proc _cc_spawn(@player, @world = 'custom') {
 
 proc _cc_add_player(@player, @world = 'custom') {
 	@cc = import('cubeclimber');
-	@cc['players'][@player] = rand(16);
+	@cc['players'][@player] = array_rand(_cc_colors(), 1, false)[0];
 	set_pscoreboard(@player, 'cc');
 	set_pscore('height', @player, -1, 'cc');
 	export('cubeclimber', @cc);
@@ -79,7 +84,7 @@ proc _cc_start(@world = 'custom') {
 				if(@i == 3) {
 					_cc_generate();
 				}
-				play_sound(@region[1], array('sound': 'CLICK', 'volume': 2));
+				play_sound(@region[1], array('sound': 'UI_BUTTON_CLICK', 'volume': 2));
 			} else {
 				set_objective_display('height', color('green').@i, 'cc');
 			}
@@ -98,7 +103,7 @@ proc _cc_start(@world = 'custom') {
 
 	queue_push(closure(){
 
-		play_sound(@region[1], array('sound': 'ORB_PICKUP', 'volume': 2));
+		play_sound(@region[1], array('sound': 'ENTITY_EXPERIENCE_ORB_PICKUP', 'volume': 2));
 		set_objective_display('height', color(7).'['.color('gold').'Cube'.color('red').'Climber'.color(7).']', 'cc');
 
 		foreach(@p in all_players()) {
@@ -113,22 +118,21 @@ proc _cc_start(@world = 'custom') {
 		@cc['starttime'] = time();
 		export('cubeclimber', @cc);
 
-		bind('player_interact', array('id': 'cube-interact'), array('block': 159), @e) {
+		bind('player_interact', array('id': 'cube-interact'), null, @e) {
 			@cc = import('cubeclimber');
 			if(array_index_exists(@cc['players'], player())) {
-				if((@e['block'] === '159:'.@cc['players'][player()]
-				|| (@cc['players'][player()] == 0 && @e['block'] == 159))
+				if(@e['block'] === @cc['players'][player()].'_TERRACOTTA'
 				&& array_contains(sk_regions_at(@e['location']), 'cubeclimber_blocks')) {
 
-					set_block_at(@e['location'], '0:0', false);
-					play_sound(@e['location'], array('sound': 'CHICKEN_EGG_POP', 'pitch': 0.5));
+					set_block(@e['location'], 'AIR', false);
+					play_sound(@e['location'], array('sound': 'ENTITY_CHICKEN_EGG', 'pitch': 0.5));
 					make_effect(@e['location'], 'smoke:4');
 
 					for(@y = @e['location'][1] - 1, @y <= @e['location'][1] + 1, @y++) {
 						for(@x = @e['location'][0] - 1, @x <= @e['location'][0] + 1, @x++) {
 							for(@z = @e['location'][2] - 1, @z <= @e['location'][2] + 1, @z++) {
-								if(split(':', get_block_at(@x, @y, @z, @e['location'][3]))[0] === '159') {
-									set_block_at(@x, @y, @z, '172', @e['location'][3], false);
+								if(string_ends_with(get_block(array(@x, @y, @z, @e['location'][3])), '_TERRACOTTA')) {
+									set_block(array(@x, @y, @z, @e['location'][3]), 'TERRACOTTA', false);
 								}
 							}
 						}
@@ -189,8 +193,8 @@ proc _cc_start(@world = 'custom') {
 
 					if(array_contains(@pregions, 'cubeclimber_blocks')) {
 
-						if(split(':', get_block_at(@ploc))[0] === '159') {
-							set_block_at(@ploc, '159:'.@cc['players'][@p], false);
+						if(string_ends_with(get_block(@ploc), '_TERRACOTTA')) {
+							set_block(@ploc, @cc['players'][@p].'_TERRACOTTA', false);
 						}
 
 						@oldheight = get_pscore('height', @p, 'cc');

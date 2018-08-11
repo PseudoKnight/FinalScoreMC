@@ -18,7 +18,7 @@ register_command('scbauto', array(
 		try {
 			@cmd = get_block_command(@block);
 		} catch(FormatException @ex) {
-			die('You are looking at '.data_name(get_block_at(@block)).'. That is not a command block.');
+			die('You are looking at '.get_block(@block).'. That is not a command block.');
 		}
 		@x = @block['x'];
 		@y = @block['y'];

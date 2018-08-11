@@ -26,7 +26,7 @@ case 'load':
 		export(player().'lightning', @lightning);
 		@slot = pheld_slot();
 		@item = pinv(player(), null);
-		set_pinv(player(), null, array('type': 280));
+		set_pinv(player(), null, array('name': 'STICK'));
 		set_pcooldown('STICK', 8000 / 50);
 		queue_clear(player().'lightning');
 		queue_delay(1000, player().'lightning');
@@ -42,7 +42,7 @@ case 'load':
 			@newitem = pinv(player(), @slot)
 			if(!is_null(@newitem) && @newitem['name'] == 'STICK') {
 				set_pinv(player(), @slot, @item);
-				play_sound(ploc(), array('sound': 'FIZZ', 'volume': 4))
+				play_sound(ploc(), array('sound': 'BLOCK_FIRE_EXTINGUISH', 'volume': 4))
 			}
 		}, player().'lightning')
 	}
@@ -102,8 +102,8 @@ case 'load':
 			});
 		}
 
-		play_sound(@loc1, array('sound': 'ENDERDRAGON_WINGS', 'pitch': 0.5));
-		play_sound(@loc1, array('sound': 'GHAST_FIREBALL', 'pitch': 0.9));
+		play_sound(@loc1, array('sound': 'ENTITY_ENDER_DRAGON_FLAP', 'pitch': 0.5));
+		play_sound(@loc1, array('sound': 'ENTITY_GHAST_SHOOT', 'pitch': 0.9));
 		play_effect(location_shift(@loc1, 'up', 2), 'CLOUD', array(
 			'particleCount': 60,
 			'speed': 0.5,

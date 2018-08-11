@@ -10,13 +10,13 @@ bind('inventory_click', null, array('virtual': true), @event) {
 		switch(substr(@action[0], 2)) {
 			case 'Open':
 				popen_inventory(@value);
-				play_sound(ploc(), array('sound': 'CLICK', 'pitch': 1.2), player());
+				play_sound(ploc(), array('sound': 'UI_BUTTON_CLICK', 'pitch': 1.2), player());
 			case 'Load':
 				@menu = import('menu.'.@value);
 				if(@menu) {
 					execute(player(), @menu, @menu['loadMenu']);
 					popen_inventory(@value);
-					play_sound(ploc(), array('sound': 'CLICK', 'pitch': 1.2), player());
+					play_sound(ploc(), array('sound': 'UI_BUTTON_CLICK', 'pitch': 1.2), player());
 				}
 			case 'Run':
 				run_cmd(@value);

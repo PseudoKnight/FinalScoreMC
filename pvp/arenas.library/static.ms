@@ -27,7 +27,7 @@ proc _load_events(@id) {
 		}
 	}
 	
-	@heartsound = array('sound': 'NOTE_BASS_DRUM', 'pitch': 0.5);
+	@heartsound = array('sound': 'BLOCK_NOTE_BLOCK_BASSDRUM', 'pitch': 0.5);
 	@static = @pvp['team'][0]['players'][0];
 	set_interval(50, closure(){
 		try {

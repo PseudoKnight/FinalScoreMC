@@ -35,7 +35,7 @@ register_command('tempboat', array(
 							sudo('/tempboat '.@player);
 						);
 					});
-				} else if(get_block_at(@currentLoc) == '174:0') {
+				} else if(get_block(@currentLoc) == 'PACKED_ICE') {
 					@loc['x'] = @currentLoc['x'];
 					@loc['y'] = @currentLoc['y'];
 					@loc['z'] = @currentLoc['z'];

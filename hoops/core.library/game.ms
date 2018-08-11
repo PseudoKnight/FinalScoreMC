@@ -88,7 +88,7 @@ proc _hoops_queue(@seconds) {
 						@randomLoc[0] = rand(@game['coords'][1][0], @game['coords'][0][0]);
 						@randomLoc[2] = @game['coords'][1][2] - 1;
 				}
-				if(get_block_at(location_shift(@randomLoc, 'down')) != '0:0'
+				if(get_block(location_shift(@randomLoc, 'down')) != 'AIR'
 				&& !entities_in_radius(@randomLoc, 1, 'VILLAGER')) {
 					@randomLoc[0] = floor(@randomLoc[0]) + 0.5;
 					@randomLoc[2] = floor(@randomLoc[2]) + 0.5;
@@ -183,7 +183,7 @@ proc _hoops_boo() {
 	_hoops_cheer(5, false, array('VILLAGER_NO', 'ENTITY_VINDICATION_ILLAGER_AMBIENT'));
 }
 
-proc _hoops_cheer(@count = 15, @jump = true, @sound = array('VILLAGER_YES', 'ENTITY_ILLUSION_ILLAGER_AMBIENT')) {
+proc _hoops_cheer(@count = 15, @jump = true, @sound = array('ENTITY_VILLAGER_YES', 'ENTITY_ILLUSIONER_AMBIENT')) {
 	@game = import('hoops');
 	@count = array(@count);
 	set_interval(150, closure() {

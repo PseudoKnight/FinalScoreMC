@@ -93,7 +93,7 @@
 	if(@loc['y'] > 255 || !sk_can_build(@loc)) {
 		set_pflying(true);
 	} else {
-		set_block_at(@loc, '95:8');
+		set_block(@loc, 'GRAY_STAINED_GLASS');
 	}
 <<<
 

@@ -188,7 +188,7 @@ proc _level_start(@level) {
 					if(array_index_exists(@level['shop'], @item['name'])) {
 						@refund = @level['shop'][@item['name']] / 2;
 					} else {
-						@refund = round(1 / min(16, material_info(@item['type'])['maxStacksize']), 2);
+						@refund = round(1 / min(16, material_info(@item['name'])['maxStacksize']), 2);
 					}
 					@item['meta']['lore'] = array('Sell each for '.@refund.' levels');
 					modify_event('item', @item);
@@ -219,7 +219,7 @@ proc _level_start(@level) {
 					if(array_index_exists(@level['shop'], @item['name'])) {
 						@refund = @level['shop'][@item['name']] / 2;
 					} else {
-						@refund /= min(16, material_info(@item['type'])['maxStacksize']);
+						@refund /= min(16, material_info(@item['name'])['maxStacksize']);
 					}
 					@totalRefund = @item['qty'] * @refund;
 					@xp = (pexp() / 100) + @totalRefund;

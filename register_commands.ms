@@ -6,25 +6,35 @@
 */
 @recompile = import('recompile');
 foreach(@directory in list_files('.')) {
-	if(is_dir(@directory)) {
+	if(is_dir(@directory) && string_position(@directory, '.disabled') < 0) {
 		foreach(@file in list_files(@directory)) {
 			if(string_ends_with(@file, '.command')) {
-				if(@recompile) {
-					queue_push(closure(){
+				@closure = closure() {
+					try {
 						include(@directory.'/'.@file);
-					});
+					} catch(IncludeException @ex) {
+						console(@ex['message'], false);
+					}
+				}
+				if(@recompile) {
+					queue_push(@closure);
 				} else {
-					include(@directory.'/'.@file);
+					execute(@closure);
 				}
 			} else if(is_dir(@subdir = @directory.'/'.@file)) {
 				foreach(@f in list_files(@subdir)) {
 					if(string_ends_with(@f, '.command')) {
-						if(@recompile) {
-							queue_push(closure(){
+						@closure = closure() {
+							try {
 								include(@subdir.'/'.@f);
-							});
+							} catch(IncludeException @ex) {
+								console(@ex['message'], false);
+							}
+						}
+						if(@recompile) {
+							queue_push(@closure);
 						} else {
-							include(@subdir.'/'.@f);
+							execute(@closure);
 						}
 					}
 				}

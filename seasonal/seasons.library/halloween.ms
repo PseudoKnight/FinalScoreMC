@@ -54,7 +54,7 @@ bind('creature_spawn', null, array('type': 'SKELETON', 'reason': 'NATURAL'), @e)
 		set_entity_persistence(@e['id'], true);
 		if(rand(3)) {
 			set_mob_equipment(@e['id'], array(
-				'WEAPON': array('name': 'BOW', 'enchants': array(array('etype': 'ARROW_DAMAGE', 'elevel': 2))),
+				'WEAPON': array('name': 'BOW', 'meta': array('enchants': array(array('etype': 'ARROW_DAMAGE', 'elevel': 2)))),
 				'HELMET': array('name': 'JACK_O_LANTERN'),
 				'CHESTPLATE': array('name': 'IRON_CHESTPLATE'),
 				'LEGGINGS': array('name': 'LEATHER_LEGGINGS'),
@@ -62,7 +62,7 @@ bind('creature_spawn', null, array('type': 'SKELETON', 'reason': 'NATURAL'), @e)
 			));
 		} else {
 			set_mob_equipment(@e['id'], array(
-				'WEAPON': array('name': 'BOW', 'enchants': array(array('etype': 'ARROW_DAMAGE', 'elevel': 2), array('etype': 'ARROW_FIRE', 'elevel': 1))),
+				'WEAPON': array('name': 'BOW', 'meta': array('enchants': array(array('etype': 'ARROW_DAMAGE', 'elevel': 2), array('etype': 'ARROW_FIRE', 'elevel': 1)))),
 				'HELMET': array('name': 'JACK_O_LANTERN'),
 				'CHESTPLATE': array('name': 'DIAMOND_CHESTPLATE'),
 				'LEGGINGS': array('name': 'IRON_LEGGINGS'),

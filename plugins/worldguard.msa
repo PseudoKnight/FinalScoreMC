@@ -217,25 +217,23 @@
 			}
 
 			// add walls
-			@data = rand(0, 16);
-			if(@data == 5) {
-				@data == 14;
-			}
-			@block = '159:'.@data;
+			@colors = array('WHITE', 'ORANGE', 'MAGENTA', 'LIGHT_BLUE', 'YELLOW', 'LIME', 'PINK', 'GRAY', 'LIGHT_GRAY',
+					'CYAN', 'PURPLE', 'BLUE', 'BROWN', 'GREEN', 'RED', 'BLACK');
+			@block = array_rand(@colors, 1, false)[0].'_TERRACOTTA';
 			@minX = min(@p1['x'], @p2['x']);
 			@minZ = min(@p1['z'], @p2['z']);
 			@maxX = max(@p1['x'], @p2['x']);
 			@maxZ = max(@p1['z'], @p2['z']);
 			for(@x = @minX, @x <= @maxX, @x++) {
 				queue_push(closure(){
-					set_block_at(@x, 63, @minZ, @block, 'dev');
-					set_block_at(@x, 63, @maxZ, @block, 'dev');
+					set_block(array(@x, 63, @minZ, 'dev'), @block);
+					set_block(array(@x, 63, @maxZ, 'dev'), @block);
 				});
 			}
 			for(@z = @minZ, @z <= @maxZ, @z++) {
 				queue_push(closure(){
-					set_block_at(@minX, 63, @z, @block, 'dev');
-					set_block_at(@maxX, 63, @z, @block, 'dev');
+					set_block(array(@minX, 63, @z, 'dev'), @block);
+					set_block(array(@maxX, 63, @z, 'dev'), @block);
 				});
 			}
 

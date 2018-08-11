@@ -129,8 +129,8 @@ bind('inventory_click', null, array('slottype': 'RESULT'), @event) {
 				foreach(@item in @event['inventory']) {
 					if(@item) {
 						if(@item['name'] == 'BOOK') {
-							if(@item['enchants']) {
-								@stored = @item['enchants'];
+							if(@item['meta'] && @item['meta']['enchants']) {
+								@stored = @item['meta']['enchants'];
 								break();
 							} else {
 								die();

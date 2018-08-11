@@ -1,5 +1,5 @@
 array_push(@pvp['binds'], @id.'shotgunshoot');
-bind('player_interact', array('id': @id.'shotgunshoot'), array('item': 332, 'button': 'right'), @e, @id) {
+bind('player_interact', array('id': @id.'shotgunshoot'), array('itemname': 'SNOWBALL', 'button': 'right'), @e, @id) {
 	@pvp = import('pvp'.@id);
 	if(!array_index_exists(@pvp['players'], player()) || pinfo(player(), 6) != @e['item']) {
 		die();
@@ -36,7 +36,7 @@ bind('entity_damage', array('id': @id.'shotgundamage'), array('type': 'PLAYER', 
 		@pvp = import('pvp'.@id);
 		if(array_index_exists(@pvp['players'], @e['shooter'])) {
 			@weapon = pinv(@e['shooter'], null);
-			if(!is_null(@weapon) && @weapon['type'] == 341) {
+			if(!is_null(@weapon) && @weapon['name'] == 'SNOWBALL') {
 				modify_event('amount', 7);
 			}
 		}

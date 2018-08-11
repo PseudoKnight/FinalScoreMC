@@ -3,7 +3,7 @@ proc _fw_countdown(@c) {
 	if(@c < 4 && @c > 0) {
 		foreach(@p in all_players('custom')) {
 			if(_fw_player(@p)) {
-				play_sound(ploc(@p), array('sound': 'click', 'pitch': 2), @p)
+				play_sound(ploc(@p), array('sound': 'UI_BUTTON_CLICK', 'pitch': 2), @p)
 			}
 		}
 	} else if(@c == 0) {
@@ -207,7 +207,7 @@ proc _iterate_cuboid(@b1, @b2, @block, @percent) {
 		for(@y = @minY, @y <= @maxY, @y++) {
 			for(@z = @minZ, @z <= @maxZ, @z++) {
 				if(rand(100) < @percent) {
-					set_block_at(@x, @y, @z, @block, 'custom');
+					set_block(array(@x, @y, @z, 'custom'), @block);
 					@blocks[] = array(@x, @y, @z, 'custom');
 				}
 				if(@count++ > 3000) {
@@ -217,7 +217,7 @@ proc _iterate_cuboid(@b1, @b2, @block, @percent) {
 			}
 		}
 	}
-	if(@block != 0) {
+	if(@block != 'AIR') {
 		export('frogware.blocks', @blocks);
 	}
 }

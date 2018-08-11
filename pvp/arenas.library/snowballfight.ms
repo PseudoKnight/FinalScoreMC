@@ -38,13 +38,13 @@ proc _load_events(@id) {
 	bind('entity_damage', array('id': @id.'snowmanhit'), array('type': 'SNOWMAN', 'cause': 'PROJECTILE', 'world': @pvp['arena']['lobby'][3]), @e, @id) {
 		@loc = entity_loc(@e['id']);
 		@loc['y'] += 1;
-		play_sound(@loc, array('sound': 'ZOMBIE_INFECT'));
+		play_sound(@loc, array('sound': 'ENTITY_ZOMBIE_INFECT'));
 		play_effect(@loc, 'cloud', array('speed': 0, 'particleCount': 10, 'offsetX': 0.4, 'offsetZ': 0.4, 'offsetY': 0.4));
 		entity_remove(@e['id']);
 	}
 
 	@pvp['binds'][] = @id.'snowballpickup';
-	bind('item_pickup', array('id': @id.'snowballpickup', 'priority': 'HIGHEST'), array('item': data_values('snowball')), @e, @id) {
+	bind('item_pickup', array('id': @id.'snowballpickup', 'priority': 'HIGHEST'), array('itemname': 'SNOWBALL'), @e, @id) {
 		@pvp = import('pvp'.@id)
 		if(!array_index_exists(@pvp['players'], player())) {
 			die();
@@ -53,12 +53,12 @@ proc _load_events(@id) {
 		if(!pinv(player(), 0)) {
 			modify_event('item', null);
 			set_pinv(player(), 0, array('name': 'SNOW_BALL'));
-			play_sound(ploc(), array('sound': 'ITEM_PICKUP', 'pitch': 2, 'volume': 0.5), player());
+			play_sound(ploc(), array('sound': 'ENTITY_ITEM_PICKUP', 'pitch': 2, 'volume': 0.5), player());
 			@pvp['stats'][player()]['pickups']++;
 		} else if(!pinv(player(), -106)) {
 			modify_event('item', null);
 			set_pinv(player(), -106, array('name': 'SNOW_BALL'));
-			play_sound(ploc(), array('sound': 'ITEM_PICKUP', 'pitch': 2, 'volume': 0.5), player());
+			play_sound(ploc(), array('sound': 'ENTITY_ITEM_PICKUP', 'pitch': 2, 'volume': 0.5), player());
 			@pvp['stats'][player()]['pickups']++;
 		} else {
 			cancel();
@@ -66,7 +66,7 @@ proc _load_events(@id) {
 	}
 
 	@pvp['binds'][] = @id.'snowballshovel';
-	bind('player_interact', array('id': @id.'snowballshovel'), array('item': data_values('woodenshovel'), 'block': data_values('snow'), 'button': 'left'), @e, @id) {
+	bind('player_interact', array('id': @id.'snowballshovel'), array('itemname': 'WOODEN_SHOVEL', 'block': 'SNOW', 'button': 'left'), @e, @id) {
 		@pvp = import('pvp'.@id)
 		if(!array_index_exists(@pvp['players'], player())) {
 			die();
@@ -78,7 +78,7 @@ proc _load_events(@id) {
 		@loc['z'] += 0.5;
 		@snowball = spawn_entity('DROPPED_ITEM', 1, @loc)[0];
 		set_entity_spec(@snowball, associative_array('itemstack': associative_array('name': 'SNOW_BALL')));
-		play_sound(@loc, associative_array('sound': 'DIG_SNOW', 'pitch': 0.8));
+		play_sound(@loc, associative_array('sound': 'BLOCK_SNOW_BREAK', 'pitch': 0.8));
 	}
 
 	@pvp['binds'][] = @id.'shovelbreak';

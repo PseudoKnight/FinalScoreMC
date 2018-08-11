@@ -1,5 +1,5 @@
 # Clicking cakes
-bind('player_interact', null, array('block': 92), @event) {
+bind('player_interact', null, array('block': 'CAKE'), @event) {
 	if(phas_flight() || pworld() !== 'custom') {
 		die();
 	}
@@ -7,7 +7,7 @@ bind('player_interact', null, array('block': 92), @event) {
 
 	// fake cake special case
 	if(@location['x'] == -510 && @location['z'] == 162) {
-		set_block_at(array(-485, 62, 162, 'custom'), '152:0');
+		set_block(array(-485, 62, 162, 'custom'), 'REDSTONE_BLOCK');
 		die();
 	}
 
@@ -61,28 +61,23 @@ bind('player_interact', null, array('block': 92), @event) {
 			msg(color('gold').'+ '.@thiscake['coins'].' coins');
 			console(player().' got '.@thiscake['coins'].' coins at '.@id, false);
 		}
-
-		if(split(':', get_block_at(@event['location']))[1] > 0) {
-			set_block_at(@event['location'], '92:0');
-		}
-
 		make_effect(@event['location'], 'ENDER_SIGNAL');
-		make_effect(@event['location'], 'RECORD_PLAY:2263');
+		make_effect(@event['location'], 'RECORD_PLAY:2263'); // TODO
 		@loc = @event['location'][];
 		@loc['x'] += 0.5;
 		@loc['y'] += 0.5;
 		@loc['z'] += 0.5;
 		@cloud = spawn_entity('AREA_EFFECT_CLOUD', 1, @loc)[0];
-		set_entity_spec(@cloud, associative_array('particle': 'NOTE', 'radius': 1, 'duration': 160));
+		set_entity_spec(@cloud, array('particle': 'NOTE', 'radius': 1, 'duration': 160));
 		set_timeout(8800, closure(){
 			// turn off music
-			make_effect(@event['location'], 'RECORD_PLAY:0');
+			make_effect(@event['location'], 'RECORD_PLAY:0'); // TODO
 		});
 	});
 }
 
 # COIN SHOPS!
-bind('player_interact', null, array('block': 68), @event) {
+bind('player_interact', null, array('block': 'WALL_SIGN'), @event) {
 	@signtext = get_sign_text(@event['location'])
 	if(@cost = reg_match('(?:\\u00a7[0-9a-o])+\\-(\\d{1,3})\\sCoins', @signtext[3])) {
 		@chestLoc = location_shift(@event['location'], 'down')
@@ -107,8 +102,7 @@ bind('player_interact', null, array('block': 68), @event) {
 					@pinv = pinv();
 					foreach(@p in 0..35) {
 						if(is_null(@pinv[@p])
-						|| (@pinv[@p]['type'] == @chest[@c]['type']
-						&& @pinv[@p]['data'] == @chest[@c]['data']
+						|| (@pinv[@p]['name'] == @chest[@c]['name']
 						&& @pinv[@p]['qty'] + @chest[@c]['qty'] <= max_stack_size(@pinv[@p]))) {
 							if(!is_null(@pinv[@p])) {
 								@chest[@c]['qty'] += @pinv[@p]['qty'];

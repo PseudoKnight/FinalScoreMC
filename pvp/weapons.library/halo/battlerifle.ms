@@ -13,7 +13,7 @@ bind('player_interact', array('id': @id.'battlerifle'), array('item': 292), @eve
 	@maxAmmo = @item['meta']['lore'][1];
 	
 	if(@currentAmmo <= 0) {
-		play_sound(ploc(), array('sound': 'CLICK', 'pitch': 2));
+		play_sound(ploc(), array('sound': 'UI_BUTTON_CLICK', 'pitch': 2));
 		action_msg(player(), @currentAmmo.' / '.@maxAmmo);
 	}
 	

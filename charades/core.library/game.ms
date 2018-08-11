@@ -52,7 +52,7 @@ proc _prepare_game(@category) {
 		_set_pactivity(@p, 'charades');
 	}
 	
-	set_block_at(@spawn, 169);
+	set_block(@spawn, 'SEA_LANTERN');
 	
 	_bind_charade_events();
 	try {
@@ -74,7 +74,7 @@ proc _end_game() {
 	}
 	
 	@center = sk_region_info('charades-beacon', 'custom', 0)[0];
-	set_block_at(@center, '95:3');
+	set_block(@center, 'LIGHT_BLUE_STAINED_GLASS');
 	play_sound(@center, array('sound': 'UI_TOAST_CHALLENGE_COMPLETE', 'volume': 5));
 	
 	@top = 0;

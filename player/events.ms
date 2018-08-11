@@ -77,34 +77,32 @@ bind('player_death', null, null, @event) {
 /*
 	Blocks spawning of the wither
 */
-bind('block_place', null, array('name': 'SKULL'), @event) {
-	if(!has_permission('build.wither')) {
+bind('block_place', null, array('block': 'WITHER_SKELETON_SKULL'), @event) {
+	msg(@event['block']);
+	if(@event['block'] == 'WITHER_SKELETON_SKULL' && !has_permission('build.wither')) {
 		foreach(@dir in array('north', 'south', 'east', 'west', 'up', 'down')) {
-			if(get_block_at(location_shift(@event['location'], @dir)) == '88:0') {
-				@item = pinv(player(), null);
-				if(@item && @item['data'] == 1) {
-					cancel();
-					msg(color('yellow').'You can only spawn withers in the outworld.');
-					break();
-				}
+			if(get_block(location_shift(@event['location'], @dir)) == 'SOUL_SAND') {
+				cancel();
+				msg(color('yellow').'You can only spawn withers in the outworld.');
+				break();
 			}
 		}
 	}
 }
 
 # Block lighters
-bind('player_interact', null, array('item': 259, 'button': 'right'), @event) {
+bind('player_interact', null, array('itemname': 'FLINT_AND_STEEL', 'button': 'right'), @event) {
 	if(has_permission('item.lighter')
 	|| !array_index_exists(@event, 'location')) {
 		die();
 	}
 	@loc = @event['location'];
-	if(get_block_at(@loc) === '46:0') {
+	if(@event['block'] === 'TNT') {
 		die();
-	} else if(get_block_at(@loc) === '49:0' && @event['facing'] === 'up') {
+	} else if(@event['block'] === 'OBSIDIAN' && @event['facing'] === 'up') {
 		queue_push(closure(){
-			if(reg_split('\\:', get_block_at(location_shift(@loc, 'up')))[0] !== '90') {
-				set_block_at(location_shift(@loc, 'up'), 0);
+			if(get_block(location_shift(@loc, 'up')) !== 'NETHER_PORTAL') {
+				set_block(location_shift(@loc, 'up'), 'AIR');
 			}
 		});
 	} else {
@@ -116,7 +114,7 @@ bind('player_interact', null, array('item': 259, 'button': 'right'), @event) {
 }
 
 # Button commands
-bind('player_interact', null, array('block': 77, 'button': 'right'), @event) {
+bind('player_interact', null, array('block': 'STONE_BUTTON', 'button': 'right'), @event) {
 	@sign = location_shift(@event['location'], 'up');
 	if(is_sign_at(@sign)) {
 		@line = get_sign_text(@sign);
@@ -127,33 +125,36 @@ bind('player_interact', null, array('block': 77, 'button': 'right'), @event) {
 }
 
 # prevent enderdragon egg teleportation
-bind('player_interact', null, array('block': 122), @event) {
+bind('player_interact', null, array('block': 'DRAGON_EGG'), @event) {
 	if(!_is_survival_world(@event['world']) && (@event['button'] == 'right' || pmode() != 'CREATIVE')) {
 		cancel();
 	}
 }
 
 # spawner eggs
-bind('player_interact', null, array('item': 383, 'button': 'right'), @event) {
-	if(_is_survival_world(pworld())) {
-		if(@event['block'] == '52') {
+bind('player_interact', null, array('button': 'right'), @event) {
+	@item = @event['item'];
+	if(@item && string_ends_with(@item['name'], '_SPAWN_EGG')) {
+		if(_is_survival_world(pworld())) {
+			if(@event['block'] == 'SPAWNER') {
+				cancel();
+			}
+		} else if(array_index_exists(@event, 'location') && sk_can_build(@event['location'])) {
+			// this ignores mob spawning flags creative/game worlds
 			cancel();
-		}
-	} else if(array_index_exists(@event, 'location') && sk_can_build(@event['location'])) {
-		// this ignores mob spawning flags creative/game worlds
-		cancel();
-		@item = null;
-		if(@event['hand'] == 'main_hand') {
-			@item = pinv(player(), null);
-		} else {
-			@item = pinv(player(), -106);
-		}
-		if(@item['meta']['spawntype']) {
-			@loc = location_shift(@event['location'], @event['facing']);
-			@loc['x'] += 0.5;
-			@loc['z'] += 0.5;
-			@entity = spawn_entity(@item['meta']['spawntype'], 1, @loc)[0];
-			set_entity_persistence(@entity, true);
+			@item = null;
+			if(@event['hand'] == 'main_hand') {
+				@item = pinv(player(), null);
+			} else {
+				@item = pinv(player(), -106);
+			}
+			if(@item['meta']['spawntype']) {
+				@loc = location_shift(@event['location'], @event['facing']);
+				@loc['x'] += 0.5;
+				@loc['z'] += 0.5;
+				@entity = spawn_entity(@item['meta']['spawntype'], 1, @loc)[0];
+				set_entity_persistence(@entity, true);
+			}
 		}
 	}
 }
@@ -181,13 +182,15 @@ bind('player_enter_bed', null, null, @event) {
 	}
 }
 
-bind('player_interact', null, array('block': 26, 'button': 'right'), @event) {
-	set_pbed_location(location_shift(@event['location'], 'down'), false);
-	msg(color('aqua').'Your spawn location has been set to this bed.');
+bind('player_interact', null, array('button': 'right'), @event) {
+	if(@event['block'] && string_ends_with(@event['block'], '_BED')) {
+		set_pbed_location(location_shift(@event['location'], 'down'), false);
+		msg(color('aqua').'Your spawn location has been set to this bed.');
+	}
 }
 
 # Anti-xray helper
-bind('block_break', null, array('name': 'DIAMOND_ORE'), @event) {
+bind('block_break', null, array('block': 'DIAMOND_ORE'), @event) {
 	if(!_is_survival_world(pworld())) {
 		die();
 	}
@@ -196,7 +199,7 @@ bind('block_break', null, array('name': 'DIAMOND_ORE'), @event) {
 		for(@x = @event['location']['x'] - 1, @x <= @event['location']['x'] + 1, @x++) {
 			for(@y = @event['location']['y'] - 1, @y <= @event['location']['y'] + 1, @y++) {
 				for(@z = @event['location']['z'] - 1, @z <= @event['location']['z'] + 1, @z++) {
-					if(get_block_at(@x, @y, @z) === '56:0') {
+					if(get_block(array(@x, @y, @z, pworld())) === 'DIAMOND_ORE') {
 						@report = false;
 					}
 				}
@@ -241,7 +244,7 @@ bind('entity_damage_player', null, array('damager': 'ARROW'), @event) {
 		@item = pinv(player(), 102);
 		if(@item && @item['name'] == 'ELYTRA') {
 			set_entity_gliding(puuid(), true);
-			play_sound(ploc(), array('sound': 'ENDERDRAGON_WINGS', 'category': 'PLAYERS', 'pitch': 1.3, 'volume': 0.4));
+			play_sound(ploc(), array('sound': 'ENTITY_ENDER_DRAGON_FLAP', 'category': 'PLAYERS', 'pitch': 1.3, 'volume': 0.4));
 		}
 	}
 }
@@ -294,7 +297,7 @@ bind('entity_damage_player', null, null, @event) {
 	&& _is_survival_world(@event['location']['world'])) {
 		@vehicle = get_entity_vehicle(puuid(@event['player']));
 		@weapon = pinfo(@event['data'], 6);
-		if(@vehicle && @weapon == '280:0') { # stick is lance
+		if(@vehicle && @weapon == 'STICK') { # stick is lance
 			modify_event('amount', 0);
 			set_entity_rider(@vehicle, null);
 		} else {
@@ -317,7 +320,7 @@ bind('entity_toggle_glide', null, array('type': 'PLAYER'), @event) {
 			if(!array_index_exists(@skipping, player()) || @skipping[player()] + 500 < time()) {
 				@skipping[player()] = time();
 				@loc = location_shift(ploc(), 'up');
-				play_sound(@loc, array('sound': 'SLIME_WALK', 'pitch': 0.8, 'volume': 0.5));
+				play_sound(@loc, array('sound': 'ENTITY_SLIME_SQUISH', 'pitch': 0.8, 'volume': 0.5));
 				play_effect(@loc, 'SLIME', array('particleCount': 8));
 			} else if(array_index_exists(@skipping, player()) && @skipping[player()] + 250 < time()) {
 				cancel(false);

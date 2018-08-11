@@ -12,12 +12,11 @@ register_command('scbconditional', array(
 		try {
 			@cmd = get_block_command(@block);
 		} catch(FormatException @ex) {
-			die(color('gold').'You are looking at '.data_name(get_block_at(@block)).'. That is not a command block.');
+			die(color('gold').'You are looking at '.get_block(@block).'. That is not a command block.');
 		}
-		@blockdata = split(':', get_block_at(@block), 1);
-		@type = @blockdata[0];
-		@data = integer(@blockdata[1]);
-		@conditional = if(@data > 7, 0, 8);
-		set_block_at(@block, @type.':'.(@conditional + (@data % 8)));
+		@data = get_blockdata_string(@block);
+		@value = !(reg_match('conditional\\=([^,\\]]+)', @data)[1] == 'true');
+		@data = reg_replace('conditional\\=[^,\\]]+', 'conditional='.@value, @data);
+		set_blockdata_string(@block, @data);
 	}
 ));

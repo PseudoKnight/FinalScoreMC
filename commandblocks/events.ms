@@ -2,53 +2,40 @@
 proc _place_command_block(@loc, @face, @block) {
 	if(!pisop() && has_permission('group.builder')
 	&& !_is_survival_world(@loc['world'])) {
-		@clicked = split(':', get_block_at(@loc))[0];
-		if(psneaking() || (@clicked != '137' && @clicked != '210' && @clicked != '211')) {
+		@clicked = get_block(@loc);
+		if(psneaking() || (@clicked != 'COMMAND_BLOCK' && @clicked != 'CHAIN_COMMAND_BLOCK' && @clicked != 'REPEATING_COMMAND_BLOCK')) {
 			@loc = location_shift(@loc, @face);
 			if(sk_can_build(@loc)) {
-				@data = 0;
-				switch(@face) {
-					case 'up':
-						@data = 1;
-					case 'north':
-						@data = 2;
-					case 'south':
-						@data = 3;
-					case 'west':
-						@data = 4;
-					case 'east':
-						@data = 5;
-				}
-				set_block_at(@loc, split(':', @block)[0].':'.@data);
+				set_blockdata_string(@loc, to_lower(@block).'[facing='.to_lower(@face).',conditional=false]');
 			}
 		}
 	}
 }
 
-bind('player_interact', null, associative_array('button': 'right', 'item': 137), @event) {
+bind('player_interact', null, associative_array('button': 'right', 'itemname': 'COMMAND_BLOCK'), @event) {
 	if(@event['action'] === 'right_click_block') {
 		_place_command_block(@event['location'], @event['facing'], @event['item']);
 	}
 }
 
-bind('player_interact', null, associative_array('button': 'right', 'item': 211), @event) {
+bind('player_interact', null, associative_array('button': 'right', 'itemname': 'CHAIN_COMMAND_BLOCK'), @event) {
 	if(@event['action'] === 'right_click_block') {
 		_place_command_block(@event['location'], @event['facing'], @event['item']);
 	}
 }
 
 # Allow breaking command blocks for builders
-bind('block_break', null, array('name': 'COMMAND'), @event) {
+bind('block_break', null, array('block': 'COMMAND_BLOCK'), @event) {
 	if(!pisop() && sk_can_build(@event['location'])) {
-		set_block_at(@event['location'], 0);
-		make_effect(@event['location'], 'STEP_SOUND:'.@event['block']['type']);
+		set_block(@event['location'], 'AIR');
+		make_effect(@event['location'], 'STEP_SOUND:'.@event['block']);
 	}
 }
 
-bind('block_break', null, array('name': 'COMMAND_CHAIN'), @event) {
+bind('block_break', null, array('block': 'CHAIN_COMMAND_BLOCK'), @event) {
 	if(!pisop() && sk_can_build(@event['location'])) {
-		set_block_at(@event['location'], 0);
-		make_effect(@event['location'], 'STEP_SOUND:'.@event['block']['type']);
+		set_block(@event['location'], 'AIR');
+		make_effect(@event['location'], 'STEP_SOUND:'.@event['block']);
 	}
 }
 
@@ -70,13 +57,13 @@ proc _msg_block_command(@loc) {
 			.'{"text":"\n'.@cmd.'"}]');
 }
 
-bind('player_interact', null, associative_array('button': 'right', 'block': 137), @event) {
+bind('player_interact', null, associative_array('button': 'right', 'block': 'COMMAND_BLOCK'), @event) {
 	if(!pisop() && !psneaking() && @event['hand'] == 'main_hand' && has_permission('group.builder')){
 		_msg_block_command(@event['location']);
 	}
 }
 
-bind('player_interact', null, associative_array('button': 'right', 'block': 211), @event) {
+bind('player_interact', null, associative_array('button': 'right', 'block': 'CHAIN_COMMAND_BLOCK'), @event) {
 	if(!pisop() && !psneaking() && @event['hand'] == 'main_hand' && has_permission('group.builder')){
 		_msg_block_command(@event['location']);
 	}

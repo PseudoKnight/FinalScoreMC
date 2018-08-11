@@ -41,7 +41,7 @@ case 'load':
 					clear_task();
 				} else {
 					@potato['meta']['display'] = string(integer(@potato['meta']['display']) - 1);
-					play_sound(ploc(@damaged), array('sound': 'NOTE_STICKS'));
+					play_sound(ploc(@damaged), array('sound': 'BLOCK_NOTE_BLOCK_STICKS'));
 					set_pinv(@damaged, @slot, @potato);
 				}
 			} catch(Exception @e) {

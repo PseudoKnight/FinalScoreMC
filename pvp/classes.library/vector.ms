@@ -2,7 +2,7 @@ switch(@action) {
 case 'load':
 	bind('player_interact', array('id': @player.'interact'), array('player': @player, 'button': 'right', 'item': '292', 'hand': 'main_hand'), @e) {
 		cancel();
-		if(get_block_at(ploc())[0] === '0' || phunger() == 0) {
+		if(get_block(ploc()) === 'AIR' || phunger() == 0) {
 			die();
 		}
 		@facing = pfacing(player());
@@ -12,7 +12,7 @@ case 'load':
 		@y = max((1.40 * sin(to_radians(@facing[1]))) + 0.2, 0.2);
 		@z = 1.40 * sin(to_radians(@facing[0])) * cos(to_radians(@facing[1]));
 		set_pvelocity(player(), @x, @y, @z);
-		play_sound(ploc(), array('sound': 'GHAST_CHARGE', 'pitch': 2, 'volume': 2));
+		play_sound(ploc(), array('sound': 'ENTITY_GHAST_WARN', 'pitch': 2, 'volume': 2));
 		set_timeout(50, closure(){
 			set_pvelocity(player(), @x, @y, @z);
 			if(psaturation() >= 1) {
@@ -40,13 +40,13 @@ case 'load':
 		}
 	}
 	bind('player_death', array('id': @player.'death'), array('player': @player), @e) {
-		play_sound(ploc(), array('sound': 'GHAST_DEATH', 'pitch': 0))
+		play_sound(ploc(), array('sound': 'ENTITY_GHAST_DEATH', 'pitch': 0))
 	}
 
 	proc _manti_noise(@player) {
 		if(ponline(@player)) {
 			if(pmode(@player) != 'SPECTATOR') {
-				play_sound(ploc(@player), array('sound': 'CAT_PURREOW', 'pitch': 0, 'volume': 2))
+				play_sound(ploc(@player), array('sound': 'ENTITY_CAT_PURREOW', 'pitch': 0, 'volume': 2))
 			}
 			queue_delay(1000 * rand(6, 18), @player)
 			queue_push(closure(_manti_noise(@player)), @player)

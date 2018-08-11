@@ -22,9 +22,11 @@ register_command('shop', array(
 			}
 			
 			@value = array_implode(@args[1..-1]);
-			@item = _data_values(@value);
-			if(!@item) {
-				die(color('gold').'Unknown item');
+			@item = to_upper(@value);
+			try {
+				material_info(@item);
+			} catch(IllegalArgumentException @ex) {
+				die(color('gold').'Unknown item: '.@value);
 			}
 			@itemid = replace(@item, ':', '.');
 			@shops = get_value('shop', @itemid);
@@ -66,6 +68,8 @@ register_command('shop', array(
 				msg(color('gold').'[Shop] Edits a line on your shop that you\'re looking at.');
 				die('Example: '.color('gray').'"/shop edit buy 1 for 1g"');
 			}
+			
+			include('core.library/item.ms');
 			
 			@line = 0;
 			@transaction = @args[1];
@@ -129,19 +133,8 @@ register_command('shop', array(
 							);
 						}
 					} else {
-						switch(@shop['sell'][4]) {
-							case 'g':
-								@currency = '266';
-							case 'i':
-								@currency = '265';
-							case 'd':
-								@currency = '264';
-							case 'e':
-								@currency = '388';
-							default:
-								die(color(6).'[Shop] Unknown currency.');
-						}
-						@count = _chest_item_count(location_shift(@loc, 'down'), @currency.':0');
+						@currency = _item_get_currency(@shop['sell'][4]);
+						@count = _chest_item_count(location_shift(@loc, 'down'), @currency);
 						if(is_null(@count)) {
 							die(color(6).'[Shop] No container below this shop sign.');
 						}

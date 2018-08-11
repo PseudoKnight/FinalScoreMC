@@ -30,7 +30,7 @@ bind('player_interact_entity', null, array('clicked': '/(DONKEY|HORSE|LLAMA|MULE
 	if(@owner && @owner != player()) {
 		msg('This animal is owned by '.@owner);
 		if(!has_permission('group.moderator')
-		&& (!@item || (@item['type'] != 322	&& @item['type'] != 396))) {
+		&& (!@item || (@item['name'] != 'GOLDEN_APPLE' && @item['name'] != 'GOLDEN_CARROT'))) {
 			@pdata = null;
 			try {
 				@pdata = _pdata(@owner);
@@ -41,7 +41,7 @@ bind('player_interact_entity', null, array('clicked': '/(DONKEY|HORSE|LLAMA|MULE
 			}
 			if(@pdata['name'] == player()) {
 				// account change
-				tame_mob(@event['id']);
+				set_mob_owner(@event['id'], player());
 			} else if(!array_index_exists(@pdata, 'shared')
 			|| !array_index_exists(@pdata['shared'], player())
 			|| !array_contains(@pdata['shared'][player()], 'horses')) {
@@ -52,7 +52,7 @@ bind('player_interact_entity', null, array('clicked': '/(DONKEY|HORSE|LLAMA|MULE
 			}
 		}
 	} else if(is_null(@owner) && !is_null(entity_spec(@event['id'])['saddle'])) {
-		tame_mob(@event['id']);
+		set_mob_owner(@event['id'], player());
 		msg('You now own this animal.');
 	}
 
@@ -60,12 +60,12 @@ bind('player_interact_entity', null, array('clicked': '/(DONKEY|HORSE|LLAMA|MULE
 	if(!is_cancelled() && !psneaking()) {
 		if(@event['clicked'] === 'ZOMBIE_HORSE' || @event['clicked'] === 'SKELETON_HORSE') {
 			if(@item) {
-				switch(@item['type']) {
-					case 322: # gold apple
-					case 396: # gold carrot
-					case 420: # lead
+				switch(@item['name']) {
+					case 'GOLDEN_APPLE':
+					case 'GOLDEN_CARROT':
+					case 'LEAD': # lead
 						die();
-					case 367: # rotten flesh
+					case 'ROTTEN_FLESH': # rotten flesh
 						@heatlh = get_entity_health(@event['id']);
 						if(@health != 100) {
 							cancel();

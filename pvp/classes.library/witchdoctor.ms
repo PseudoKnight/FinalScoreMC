@@ -16,7 +16,7 @@ case 'load':
 				set_entity_rider(puuid(@player), @cloud);
 			}
 		}
-		play_sound(ploc(), array('sound': 'HORSE_SKELETON_DEATH', 'pitch': 0.5, 'volume': 2));
+		play_sound(ploc(), array('sound': 'ENTITY_SKELETON_HORSE_DEATH', 'pitch': 0.5, 'volume': 2));
 		@slot = pheld_slot();
 		set_pcooldown('WOOD_HOE', 15000 / 50);
 		set_timeout(15000, closure(){

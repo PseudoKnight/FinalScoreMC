@@ -3,7 +3,7 @@ case 'load':
 	set_pflight(@player, true)
 	bind('player_toggle_flight', array('id': @player.'dragonfly'), array('player': @player), @e) {
 		cancel();
-		play_sound(ploc(), array('sound': 'ENDERDRAGON_WINGS', 'pitch': 1.2));
+		play_sound(ploc(), array('sound': 'ENTITY_ENDER_DRAGON_FLAP', 'pitch': 1.2));
 		set_pflight(@e['player'], false);
 		proc _flap(@player) {
 			queue_push(closure(){
@@ -20,7 +20,7 @@ case 'load':
 						@z = sin(to_radians(@facing[0])) * cos(to_radians(@facing[1]));
 						set_pexp(@player, max(0, pexp(@player) - 8));
 						set_pvelocity(@player, @x * 0.6, 0.47, @z * 0.6);
-						play_sound(ploc(@player), array('sound': 'ENDERDRAGON_WINGS', 'pitch': 1.2));
+						play_sound(ploc(@player), array('sound': 'ENTITY_ENDER_DRAGON_FLAP', 'pitch': 1.2));
 						set_entity_fall_distance(puuid(@player), 0);
 						_flap(@player);
 					}

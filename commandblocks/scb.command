@@ -28,7 +28,7 @@ register_command('scb', array(
 		try {
 			get_block_command(@block);
 		} catch(FormatException @ex) {
-			die(color('gold').'You are looking at '.data_name(get_block_at(@block)).'. That is not a command block.');
+			die(color('gold').'You are looking at '.get_block(@block).'. That is not a command block.');
 		}
 		@cmd = array_implode(@args);
 		if(is_alias(@cmd)) {

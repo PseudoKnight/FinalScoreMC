@@ -19,7 +19,7 @@ case 'load':
 		if(@event['sprinting'] && @mode != 'SPECTATOR') {
 			set_pmode('SPECTATOR');
 			@loc = ploc();
-			play_sound(@loc, associative_array('sound': 'STEP_WOOL', 'pitch': 0.5));
+			play_sound(@loc, associative_array('sound': 'BLOCK_WOOL_STEP', 'pitch': 0.5));
 			play_effect(location_shift(@loc, 'up', 2), 'CRIT', associative_array(
 				'speed': 0,
 				'particleCount': 10,
@@ -38,7 +38,7 @@ case 'load':
 					}
 					@ploc = ploc();
 					@ploc['y'] = @pvp['arena']['spawn'][0][0]['y'] + 1;
-					if(get_block_at(@ploc) == '0:0') {
+					if(get_block(@ploc) == 'AIR') {
 						set_entity_loc(@armorstand, @ploc);
 						@seen = false;
 						@hunter = puuid();

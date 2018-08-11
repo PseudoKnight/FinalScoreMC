@@ -31,7 +31,7 @@ proc _spawn_mob(@mob, @loc, @owner, @teammates) {
 					}
 				
 				case 'tame':
-					tame_mob(@owner, @m);
+					set_mob_owner(@owner, @m);
 					
 				case 'age':
 					set_mob_age(@m, @value);
@@ -47,8 +47,8 @@ proc _spawn_mob(@mob, @loc, @owner, @teammates) {
 						try {
 							@loc = entity_loc(@m);
 							@loc['y'] += 1;
-							play_sound(@loc, array('sound': 'ZOMBIE_INFECT'));
-							play_effect(@loc, 'cloud', array('speed': 0, 'particleCount': 10, 'offsetX': 0.4, 'offsetZ': 0.4, 'offsetY': 0.4));
+							play_sound(@loc, array('sound': 'ENTITY_ZOMBIE_INFECT'));
+							spawn_particle(@loc, array('particle': 'CLOUD', 'speed': 0, 'count': 10, 'xoffset': 0.4, 'zoffset': 0.4, 'yoffset': 0.4));
 							entity_remove(@m);
 						} catch(BadEntityException @ex) {
 							// already dead
@@ -99,7 +99,7 @@ proc _spawn_mob(@mob, @loc, @owner, @teammates) {
 										@cleanup = true;
 										explosion(entity_loc(@m), @mob['explode'][1], true);
 									} else {
-										play_sound(entity_loc(@m), array('sound': 'NOTE_STICKS', 'pitch': 2, 'volume': 1));
+										play_sound(entity_loc(@m), array('sound': 'BLOCK_NOTE_BLOCK_HAT', 'pitch': 2, 'volume': 1));
 									}
 								}
 							} catch(BadEntityException @ex) {

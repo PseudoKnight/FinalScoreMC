@@ -374,7 +374,7 @@ register_command('arena', array(
 								'item': @item,
 							));
 							msg(color('green').'Set held item to spawn here '.if(@start, 'on start and '), 'every '.@cooldown.' seconds.');
-							psend_block_change(player(), ploc(), data_values('gold_block'));
+							psend_block_change(player(), ploc(), 'GOLD_BLOCK');
 						} else {
 							die(color('gold').'The first value must be an integer of the number of seconds in the cooldown (default: 30).'
 								.' The second can be true or false for if the item spawns at match start (default: true).');
@@ -385,7 +385,7 @@ register_command('arena', array(
 							@arena['chestgroup'] = associative_array();
 						}
 						@loc = pcursor();
-						if(split(':', get_block_at(@loc))[0] !== '54') {
+						if(get_block(@loc) !== 'CHEST') {
 							die(color('gold').'You must look at a chest you want to spawn.');
 						}
 						@group = @args[3];
@@ -408,7 +408,7 @@ register_command('arena', array(
 							@arena['chestspawn'] = array();
 						}
 						@loc = pcursor();
-						if(split(':', get_block_at(@loc))[0] !== '54') {
+						if(get_block(@loc) !== 'CHEST') {
 							die(color('gold').'You must look at a chest.');
 						}
 						foreach(@key: @chest in @arena['chestspawn']) {
@@ -438,7 +438,7 @@ register_command('arena', array(
 								'items': @items,
 							))
 							msg(color('green').'Set items in chest to respawn here.');
-							set_block_at(@loc, '54:0');
+							set_block(@loc, 'CHEST');
 						} else {
 							array_push(@arena['chestspawn'], array(
 								'loc': @loc,
@@ -449,11 +449,11 @@ register_command('arena', array(
 
 					case 'rsoutput':
 						@loc = pcursor();
-						if(get_block_at(@loc) === '69:6' || get_block_at(@loc) === '69:5') {
+						if(get_block(@loc) === 'TORCH') {
 							@arena['rsoutput'] = @loc;
-							msg(color('green').'Set arena\'s start/end lever. Do not use the block it\'s on to transmit power.');
+							msg(color('green').'Set arena\'s start/end torch. Do not use the block it\'s on to transmit power.');
 						} else {
-							die(color('gold').'You must be looking at a lever placed on top of a block.');
+							die(color('gold').'You must be looking at a torch placed on top of a block.');
 						}
 
 					case 'rsoutputscore':
@@ -584,7 +584,7 @@ register_command('arena', array(
 					case 'chestspawn':
 						@pcursor = pcursor();
 						@loc = array(integer(@pcursor[0]), integer(@pcursor[1]), integer(@pcursor[2]), @pcursor[3]);
-						if(split(':', get_block_at(@loc))[0] !== '54') {
+						if(get_block(@loc) !== 'CHEST') {
 							die(color('gold').'This is not a chest');
 						}
 						foreach(@chest in @arena['chestspawn']) {
@@ -823,14 +823,14 @@ register_command('arena', array(
 					case 'chestspawn':
 					case 'chestgroup':
 						@loc = pcursor();
-						if(split(':', get_block_at(@loc))[0] !== '54') {
+						if(get_block(@loc) !== 'CHEST') {
 							die(color('gold').'Please look at a chest to remove it.');
 						}
 						foreach(@key: @chest in @arena[@setting]) {
 							if(@chest['loc'][0] == @loc[0]
 							&& @chest['loc'][1] == @loc[1]
 							&& @chest['loc'][2] == @loc[2]) {
-								set_block_at(@loc, 0);
+								set_block(@loc, 'AIR');
 								array_remove(@arena[@setting], @key);
 								msg(color('green').'Removed this '.@setting.' location.');
 								break();

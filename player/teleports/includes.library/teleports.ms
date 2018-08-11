@@ -5,7 +5,7 @@ proc _warmuptp(@player, @loc, @cleareffects = false, @force = false) {
 		@length = 0.1;
 	} else {
 		set_peffect(@player, 9, 1, 7, true, false);
-		play_sound(ploc(@player), array('sound': 'PORTAL_TRIGGER', 'category': 'PLAYERS', 'volume': 1, 'pitch': 1));
+		play_sound(ploc(@player), array('sound': 'BLOCK_PORTAL_TRIGGER', 'category': 'PLAYERS', 'volume': 1, 'pitch': 1));
 	}
 	set_timeout(integer(@length * 1000), closure(){
 		if(!ponline(@player)) {
@@ -25,7 +25,7 @@ proc _warmuptp(@player, @loc, @cleareffects = false, @force = false) {
 		@particle = array('particleCount': 25, 'speed': 0.05, 'offsetX': 0.34, 'offsetY': 0, 'offsetZ': 0.34);
 		play_effect(location_shift(@ploc, 'up', 1.9), 'CLOUD', @particle);
 		play_effect(location_shift(@loc, 'up', 2.7), 'CLOUD', @particle);
-		@sound = array('sound': 'GHAST_FIREBALL', 'category': 'PLAYERS', 'volume': 2);
+		@sound = array('sound': 'ENTITY_GHAST_SHOOT', 'category': 'PLAYERS', 'volume': 2);
 		play_sound(@ploc, @sound);
 		play_sound(@loc, @sound);
 	});

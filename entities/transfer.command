@@ -19,7 +19,7 @@ register_command('transfer', array(
 			if(@owner != player() && !has_permission('group.moderator')) {
 				die(color('gold').'This '.entity_type(@e['id']).' belongs to '.@owner.'.');
 			}
-			tame_mob(@player, @e['id']);
+			set_mob_owner(@e['id'], @player);
 			msg(color('green').'This '.entity_type(@e['id']).' now belongs to '.@player.'.');
 			if(ponline(@player)) {
 				tmsg(@player, color('green').player().' gave a '.entity_type(@e['id']).' to you.');

@@ -307,7 +307,7 @@ if(array_index_exists(@pvp['arena'], 'chestspawn')) {
 			&& @pvp['arena']['chestspawn'][@i]['loc'][2] == @e['location'][2]
 			&& array_index_exists(@pvp['arena']['chestspawn'][@i], 'cooldown')) {
 				cancel();
-				set_block_at(@e['location'], 0);
+				set_block(@e['location'], 'AIR');
 				make_effect(@e['location'], 'STEP_SOUND:54');
 				@pvp['chestspawn'][@i] = time();
 				if(array_index_exists(@pvp, 'stats')) {
@@ -538,7 +538,7 @@ if(array_contains(@pvp['arena']['flags'], 'stackedpickup')) {
 			if(@item
 			&& @e['item']['name'] == @item['name']
 			&& @e['item']['name'] != 'POTION'
-			&& @e['item']['enchants'] == @item['enchants']) {
+			&& (!@e['item']['meta'] || @e['item']['meta']['enchants'] == @item['meta']['enchants'])) {
 				if(@item['data'] > @e['item']['data']) {
 					set_pinv(player(), @slot, @e['item']);
 				} else if(@item['meta'] && @item['meta']['lore'] && array_size(@item['meta']['lore']) == 3

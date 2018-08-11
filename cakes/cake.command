@@ -83,7 +83,7 @@ register_command('cake', array(
 				@cakes = get_value('cakes');
 				@id = @args[1];
 
-				if(!array_index_exists(@cakes, @id) && get_block_at(@loc) !== '92:0') {
+				if(!array_index_exists(@cakes, @id) && get_block(@loc) !== 'CAKE') {
 					die(color('gold').'That doesn\'t appear to be a cake. Is it obstructed by a sign or other partial block?');
 				}
 
@@ -142,7 +142,7 @@ register_command('cake', array(
 				}
 				@id = @args[1];
 				@loc = pcursor();
-				if(get_block_at(@loc) !== '92:0') {
+				if(get_block(@loc) !== 'CAKE') {
 					die(color('gold').'That doesn\'t appear to be a cake. Is it obstructed by a sign or other partial block?');
 				}
 

@@ -5,7 +5,7 @@ bind('player_interact', array('id': @id.'firebreath'), array('item': 377, 'butto
 		die();
 	}
 
-	play_sound(ploc(), array('sound': 'GHAST_FIREBALL', 'pitch': 0.5));
+	play_sound(ploc(), array('sound': 'ENTITY_GHAST_SHOOT', 'pitch': 0.5));
 	@facing = pfacing(player());
 	@facing[0] = @facing[0] + 90;
 	@facing[1] = 0 - @facing[1];
@@ -130,6 +130,6 @@ bind('player_interact', array('id': @id.'firebreath'), array('item': 377, 'butto
 		}
 	}
 	_weapon_cooldown(player(), 1200, 'FIREWORK_CHARGE', closure(){
-		play_sound(ploc(), array('sound': 'FIZZ', 'pitch': 2));
+		play_sound(ploc(), array('sound': 'BLOCK_FIRE_EXTINGUISH', 'pitch': 2));
 	});
 }

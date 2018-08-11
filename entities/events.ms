@@ -3,7 +3,7 @@ bind('creature_spawn', null, array('reason': 'BREEDING'), @event) {
 	if(!array_contains(array('DONKEY', 'HORSE', 'MULE'), @event['type'])
 	&& array_size(entities_in_radius(@event['location'], 64)) > 300) {
 		cancel();
-		play_effect(@event['location'], 'SMOKE', array('id': 4));
+		spawn_particle(@event['location'], 'SMOKE_NORMAL');
 		broadcast(color('gold').'Breeding failed due to overcrowding.', players_in_radius(@event['location'], 16));
 	}
 }
@@ -11,7 +11,7 @@ bind('creature_spawn', null, array('reason': 'BREEDING'), @event) {
 bind('creature_spawn', null, array('reason': 'EGG'), @event) {
 	if(array_size(entities_in_radius(@event['location'], 8)) > 200) {
 		cancel();
-		play_effect(@event['location'], 'SMOKE', array('id': 4));
+		spawn_particle(@event['location'], 'SMOKE_NORMAL');
 		broadcast(color('gold').'Chicken failed to hatch due to overcrowding.', players_in_radius(@event['location'], 16));
 	}
 }
@@ -21,7 +21,7 @@ bind('entity_explode', null, array('type': 'CREEPER'), @event) {
 	if(@event['location']['y'] > 62
 	&& array_contains(array('world', 'world3', 'world4', 'omega'), @event['location']['world'])) {
 		cancel();
-		play_effect(@event['location'], 'EXPLOSION_HUGE');
+		spawn_particle(@event['location'], 'EXPLOSION_HUGE');
 	}
 }
 
@@ -57,7 +57,7 @@ bind('entity_death', null, array('type': 'ENDER_DRAGON'), @event) {
 		modify_event('xp', 12000);
 		@loc = get_highest_block_at(0, 0, @event['location']['world']);
 		@loc['y'] += 1;
-		set_block_at(@loc, data_values('enderdragon_egg'));
+		set_block(@loc, 'DRAGON_EGG');
 	}
 }
 
@@ -66,10 +66,10 @@ bind('entity_explode', null, array('type': 'FIREBALL'), @event) {
 	@world = @event['location']['world'];
 	if(world_info(@world)['environment'] == 'NETHER' && @world != 'outworld_nether') {
 		@blocks = @event['blocks'];
-		@breakables = array('87:0', '88:0', '13:0', '213:0', '89:0', '153:0');
+		@breakables = array('NETHERRACK', 'SOUL_SAND', 'GRAVEL', 'MAGMA_BLOCK', 'GLOWSTONE', 'NETHER_QUARTZ_ORE');
 		@modify = false;
 		foreach(@index: @block in @blocks) {
-			if(!array_contains(@breakables, get_block_at(@block))) {
+			if(!array_contains(@breakables, get_block(@block))) {
 				array_remove(@blocks, @index);
 				@modify = true;
 			}

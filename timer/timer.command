@@ -38,7 +38,7 @@ register_command('timer', array(
 				@ptime = 0;
 			}
 		
-			play_sound(ploc(@player), array('sound': 'FIREWORK_BLAST'), @player);
+			play_sound(ploc(@player), array('sound': 'ENTITY_FIREWORK_ROCKET_BLAST'), @player);
 		
 			@stop = false;
 			@timers[@player][2] = set_interval(1000, closure(){
@@ -64,9 +64,9 @@ register_command('timer', array(
 		
 						if(@time + 5 > @ptime && @time <= @ptime + 0.5) {
 							if(@time == round(@ptime)) {
-								play_sound(@ploc, array('sound': 'VILLAGER_NO'), @player);
+								play_sound(@ploc, array('sound': 'ENTITY_VILLAGER_NO'), @player);
 							} else {
-								play_sound(@ploc, array('sound': 'CLICK', 'pitch': 2), @player);
+								play_sound(@ploc, array('sound': 'UI_BUTTON_CLICK', 'pitch': 2), @player);
 							}
 						}
 		
@@ -104,10 +104,10 @@ register_command('timer', array(
 				set_pinv(@player, 0, @restartButton);
 			
 				if(!has_bind(@player.'reset')) {
-					bind('player_interact', array('id': @player.'reset'), array('player': @player, 'item': 371), @e, @startLoc) {
+					bind('player_interact', array('id': @player.'reset'), array('player': @player, 'itemname': 'GOLD_NUGGET'), @e, @startLoc) {
 						if(@e['action'] == 'right_click_block') {
-							@block = split(':', @e['block'])[0];
-							if(@block == '77' || @block == '143') {
+							@block = @e['block'];
+							if(@block == 'STONE_BUTTON' || @block == 'OAK_BUTTON') {
 								die();
 							}
 						}
@@ -142,7 +142,7 @@ register_command('timer', array(
 			clear_task(@timers[@player][2]);
 			array_remove(@timers, @player);
 			_remove_activity(@player.'timer');
-			play_sound(ploc(@player), array('sound': 'ORB_PICKUP'), @player);
+			play_sound(ploc(@player), array('sound': 'ENTITY_EXPERIENCE_ORB_PICKUP'), @player);
 		
 			tmsg(@player, color('yellow').'You achieved a time of '.color('bold').@time.color('yellow').' seconds.');
 			console(@player.' achieved a time of '.@time.' at '.@id, false);

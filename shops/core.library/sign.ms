@@ -12,22 +12,11 @@ proc _sign_get_shop(@location) {
 	}
 	
 	# Get item
-	@itemMatch = _get_shop_item(@sign[0]);
-	@item = '';
-	if(!@itemMatch) {
-		return(null);
-	} else {
-		@item = _data_values(@itemMatch[1]);
-		if(!@item) {
-			if(!equals_ic(@sign[0], '[private]')) {
-				console('[Shop] Cannot find item value for '.@itemMatch[1], false);
-			}
-			return(null);
-		}
-	}
+	include('item.ms');
+	@item = _item_get_material(_sign_get_item_string(@sign));
 	
-	@buy = _get_shop_price(@sign[1]);
-	@sell = _get_shop_price(@sign[2]);
+	@buy = _sign_get_buy_price(@sign);
+	@sell = _sign_get_sell_price(@sign);
 	if(@buy || @sell) {
 		# Update owner player name, if changed
 		try {
@@ -37,6 +26,7 @@ proc _sign_get_shop(@location) {
 			}
 			@pdata = _pdata(@owner, @autocomplete);
 		} catch(NotFoundException @ex) {
+			console('Cannot find shop owner by the name "'.@owner.'"');
 			return(null);
 		}
 		@currentName = @pdata['name'];
@@ -64,14 +54,19 @@ proc _sign_get_shop(@location) {
 	return(null);
 }
 
-proc _is_shop_sign(@lines) {
-	return(length(@lines[3]) > 2 && _get_shop_item(@lines[0]) && (_get_shop_price(@lines[1]) || _get_shop_price(@lines[2])));
+proc _sign_get_item_string(@sign) {
+	@match = reg_match('^\\[(.+)\\]$', @sign[0])
+	if(@match) {
+		return(@match[1]);
+	} else {
+		return(null);
+	}
 }
 
-proc _get_shop_item(@line) {
-	return(reg_match('^\\[(.+)\\]$', @line));
+proc _sign_get_buy_price(@sign) {
+	return(reg_match('^(?:Buy) ((\\d{1,4}) for (\\d{1,4})([degi]))$', @sign[1]));
 }
 
-proc _get_shop_price(@line) {
-	return(reg_match('^(?:Buy|Sell) ((\\d{1,4}) for (\\d{1,4})([degi]))$', @line));
+proc _sign_get_sell_price(@sign) {
+	return(reg_match('^(?:Sell) ((\\d{1,4}) for (\\d{1,4})([degi]))$', @sign[2]));
 }

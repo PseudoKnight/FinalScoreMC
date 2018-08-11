@@ -129,7 +129,7 @@ bind('projectile_hit', null, array('type': 'EGG'), @event) {
 		@loc['x'] = floor(@loc['x']) + 0.5;
 		@loc['z'] = floor(@loc['z']) + 0.5;
 		@entity = spawn_entity(@mob, 1, @loc)[0];
-		play_sound(@loc, array('sound': 'CHICKEN_EGG_POP', 'pitch': 0.5));
+		play_sound(@loc, array('sound': 'ENTITY_CHICKEN_EGG', 'pitch': 0.5));
 		if(function_exists('play_effect')) {
 			play_effect(@loc, 'COLOURED_DUST', array('particleCount': 15, 'offsetX': 1, 'offsetY': 1, 'offsetZ': 1));
 		}

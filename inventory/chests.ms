@@ -10,7 +10,7 @@ bind('inventory_click', null, array('clicktype': 'SHIFT_RIGHT'), @event) {
 			pworkbench();
 		case 'ENDER_CHEST':
 			cancel();
-			play_sound(ploc(), array('sound': 'BLOCK_ENDERCHEST_OPEN'));
+			play_sound(ploc(), array('sound': 'BLOCK_ENDER_CHEST_OPEN'));
 			show_enderchest();
 		case 'ENCHANTMENT_TABLE':
 			cancel();

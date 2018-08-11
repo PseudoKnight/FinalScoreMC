@@ -6,7 +6,8 @@
 	Undyeing More items
 	Stained clay, Wool, Carpet, Shulker Boxes
 */
-bind('player_interact', null, array('block': 118, 'button': 'right'), @event) {
+/*
+bind('player_interact', null, array('block': 'CAULDRON', 'button': 'right'), @event) {
 	@slot = null;
 	if(@event['hand'] == 'off_hand') {
 		@slot = -106;
@@ -85,3 +86,4 @@ bind('player_interact', null, array('block': 118, 'button': 'right'), @event) {
 
 	}
 }
+*/

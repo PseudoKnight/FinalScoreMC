@@ -148,13 +148,13 @@ proc _hoops_ball_create(@loc) {
 							@y = 1;
 							@block = '';
 							do {
-								@block = get_block_at(location_shift(@loc, 'down', @y++));
-							} while(@block == '0:0');
-							@points = if(distance(@loc, @game['shootLoc']) > 15 || get_block_at(@game['shootLoc']) == '5:2', 3, 2);
+								@block = get_block(location_shift(@loc, 'down', @y++));
+							} while(@block == 'AIR');
+							@points = if(distance(@loc, @game['shootLoc']) > 15 || get_block(@game['shootLoc']) == 'BIRCH_PLANKS', 3, 2);
 							@game['players'][@game['lastholder']]['score'] += @points;
-							if(@block == '251:11') {
+							if(@block == 'RED_CONCRETE') {
 								@game['teams']['red']['score'] += @points;
-							} else if(@block == '251:14') {
+							} else if(@block == 'BLUE_CONCRETE') {
 								@game['teams']['blue']['score'] += @points;
 							} else {
 								console('Detected '.@block.' when expecting red or blue concrete.');
@@ -291,19 +291,19 @@ proc _hoops_ball_add_player(@player, @binds, @game) {
 }
 
 proc _hoops_ball_in_hoop(@location) {
-	@center = get_block_at(@location);
-	if(@center == '132:0') {
+	@center = get_block(@location);
+	if(@center == 'TRIPWIRE') {
 		// nothing but net
 		return(true);
 	}
-	if(@center == '101:0') {
+	if(@center == 'IRON_BARS') {
 		// found the rim, now find the net
 		for(@x = -1, @x <= 1, @x++) {
 			for(@z = -1, @z <= 1, @z++) {
 				@loc = @location[];
 				@loc['x'] += @x;
 				@loc['z'] += @z;
-				if(get_block_at(@loc) == '132:0') {
+				if(get_block(@loc) == 'TRIPWIRE') {
 					// check if it's within a meter of the center of the net in both directions
 					if(abs(floor(@loc['x']) + 0.5 - @location['x']) < 1
 					&& abs(floor(@loc['z']) + 0.5 - @location['z']) < 1) {

@@ -11,7 +11,7 @@ bind('sign_changed', null, null, @event) {
 }
 
 # Don't instant-break noteblocks in creative mode if not sneaking
-bind('player_interact', null, array('block': 25, 'button': 'left'), @event) {
+bind('player_interact', null, array('block': 'NOTE_BLOCK', 'button': 'left'), @event) {
 	if(pmode() === 'CREATIVE' && !psneaking()) {
 		// It won't break if in survival, and it'll play the note if we don't cancel
 		set_pmode('SURVIVAL');
@@ -22,7 +22,7 @@ bind('player_interact', null, array('block': 25, 'button': 'left'), @event) {
 			set_pmode('CREATIVE');
 			// The block will appear as air due to the client-side block-break,
 			// so resend the noteblock
-			psend_block_change(@event['location'], 25);
+			psend_block_change(@event['location'], 'NOTE_BLOCK');
 		});
 	}
 }
@@ -63,20 +63,21 @@ bind('block_dispense', null, array('type': 'DISPENSER'), @event, @ignored = arra
 		}
 		cancel();
 		@loc = @event['location'][];
-		switch(split(':', get_block_at(@loc))[1]) {
-			case '8':
+		@facing = reg_match('facing\\=([^,])\\,', get_blockdata_string(@loc))[1];
+		switch(@facing) {
+			case 'down':
 				@loc['y'] -= 1;
-			case '9':
+			case 'up':
 				@loc['y'] += 1;
-			case '10':
+			case 'north':
 				@loc['z'] -= 1;
 				@loc['yaw'] = 180;
-			case '11':
+			case 'south':
 				@loc['z'] += 1;
-			case '12':
+			case 'west':
 				@loc['x'] -= 1;
 				@loc['yaw'] = 90;
-			case '13':
+			case 'east':
 				@loc['x'] += 1;
 				@loc['yaw'] = 270;
 		}
@@ -92,29 +93,59 @@ bind('block_dispense', null, array('type': 'DISPENSER'), @event, @ignored = arra
 // Custom noteblock sounds
 bind('note_play', null, null, @event) {
 	cancel();
-	@sound = 'NOTE_'.@event['instrument'];
-	switch(split(':', get_block_at(location_shift(@event['location'], 'down')))[0]) {
-		case '79':
-		case '174':
+	@sound = 'BLOCK_NOTE_BLOCK_'.@event['instrument'];
+	switch(get_block(location_shift(@event['location'], 'down'))) {
+		case 'ICE':
+		case 'PACKED_ICE':
 			@sound = 'ORB_PICKUP';
-		case '145':
+		case 'ANVIL':
 			@sound = 'ANVIL_LAND';
-		case '159':
-		case '172':
+		case 'TERRACOTTA':
+		case 'WHITE_TERRACOTTA':
+		case 'ORANGE_TERRACOTTA':
+		case 'YELLOW_TERRACOTTA':
+		case 'RED_TERRACOTTA':
+		case 'PURPLE_TERRACOTTA':
+		case 'PINK_TERRACOTTA':
+		case 'MAGENTA_TERRACOTTA':
+		case 'LIME_TERRACOTTA':
+		case 'GREEN_TERRACOTTA':
+		case 'GRAY_TERRACOTTA':
+		case 'CYAN_TERRACOTTA':
+		case 'BROWN_TERRACOTTA':
+		case 'BLUE_TERRACOTTA':
+		case 'BLACK_TERRACOTTA':
+		case 'LIGHT_GRAY_TERRACOTTA':
+		case 'LIGHT_BLUE_TERRACOTTA':
 			@sound = 'NOTE_PLING';
-		case '165':
-			@sound = 'CHICKEN_EGG_POP';
-		case '173':
+		case 'SLIME_BLOCK':
+			@sound = 'ENTITY_CHICKEN_EGG';
+		case 'COAL_BLOCK':
 			@sound = 'FIREWORK_BLAST';
-		case '169':
+		case 'SEA_LANTERN':
 			@sound = 'BLOCK_NOTE_CHIME';
-		case '35':
+		case 'WHITE_WOOL':
+		case 'ORANGE_WOOL':
+		case 'YELLOW_WOOL':
+		case 'RED_WOOL':
+		case 'PURPLE_WOOL':
+		case 'PINK_WOOL':
+		case 'MAGENTA_WOOL':
+		case 'LIME_WOOL':
+		case 'GREEN_WOOL':
+		case 'GRAY_WOOL':
+		case 'CYAN_WOOL':
+		case 'BROWN_WOOL':
+		case 'BLUE_WOOL':
+		case 'BLACK_WOOL':
+		case 'LIGHT_GRAY_WOOL':
+		case 'LIGHT_BLUE_WOOL':
 			@sound = 'BLOCK_NOTE_GUITAR';
-		case '82':
+		case 'CLAY':
 			@sound = 'BLOCK_NOTE_FLUTE';
-		case '41':
+		case 'GOLD_BLOCK':
 			@sound = 'BLOCK_NOTE_BELL';
-		case '216':
+		case 'BONE_BLOCK':
 			@sound = 'BLOCK_NOTE_XYLOPHONE';
 	}
 	play_sound(@event['location'], array(

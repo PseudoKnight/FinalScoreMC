@@ -11,7 +11,7 @@ case 'load':
 		}
 	}
 
-	bind('player_interact', array('id': @player.'web'), array('player': @player, 'button': 'right', 'item': 30), @e, @pvp) {
+	bind('player_interact', array('id': @player.'web'), array('player': @player, 'button': 'right', 'itemname': 'COBWEB'), @e, @pvp) {
 		@item = pinv(player(), null);
 		if(@item && pcooldown(@item['name']) == 0) {
 			@item['qty'] = 1;
@@ -27,7 +27,7 @@ case 'load':
 					@loc['x'] += @v['x'];
 					@loc['y'] += @v['y'];
 					@loc['z'] += @v['z'];
-					if(get_block_at(@loc) == '0:0') {
+					if(get_block(@loc) == 'AIR') {
 						foreach(@p in array_keys(@pvp['players'])) {
 							psend_block_change(@p, @loc, 30);
 						}

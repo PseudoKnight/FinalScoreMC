@@ -14,7 +14,7 @@ proc _chest_item_count(@loc, @item) {
 	}
 	@count = 0;
 	foreach(@i in @inv) {
-		if(!is_null(@i) && @i['type'].if(@checkData, ':'.@i['data']) === @item) {
+		if(!is_null(@i) && @i['name'] === @item) {
 			@count += @i['qty'];
 		}
 	}

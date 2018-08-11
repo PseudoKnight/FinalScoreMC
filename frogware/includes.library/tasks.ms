@@ -18,32 +18,32 @@ proc _fw_task(@task, @state, @secs) {
 			queue_push(closure(){
 				_iterate_cuboid(array(@region[0][0], @region[1][1], @region[0][2], 'custom'),
 				array(@region[1][0], @region[1][1], @region[1][2], 'custom'),
-				'41:0', 5);
+				'GOLD_BLOCK', 5);
 			}, 'fw3');
 			queue_delay(500, 'fw3')
 			queue_push(closure(){
 				_iterate_cuboid(array(@region[0][0], @region[1][1] + 1, @region[0][2], 'custom'),
 				array(@region[1][0], @region[1][1] + 1, @region[1][2], 'custom'),
-				'57:0', 4);
+				'DIAMOND_BLOCK', 4);
 			}, 'fw3');
 			queue_delay(500, 'fw3')
 			if(rand(4)) {
 				queue_push(closure(){
 					_iterate_cuboid(array(@region[0][0], @region[1][1] + 2, @region[0][2], 'custom'),
 					array(@region[1][0], @region[1][1] + 2, @region[1][2], 'custom'),
-					'133:0', 3);
+					'EMERALD_BLOCK', 3);
 				}, 'fw3');
 			} else {
 				queue_push(closure(){
 					_iterate_cuboid(array(@region[0][0], @region[1][1] + 2, @region[0][2], 'custom'),
 					array(@region[1][0], @region[1][1] + 2, @region[1][2], 'custom'),
-					'57:0', 3);
+					'DIAMOND_BLOCK', 3);
 				}, 'fw3');
 
 				queue_push(closure(){
 					_iterate_cuboid(array(@region[0][0], @region[1][1] + 3, @region[0][2], 'custom'),
 					array(@region[1][0], @region[1][1] + 3, @region[1][2], 'custom'),
-					'133:0', 3);
+					'EMERALD_BLOCK', 3);
 				}, 'fw3');
 			}
 			if(!rand(5)) {
@@ -62,9 +62,9 @@ proc _fw_task(@task, @state, @secs) {
 			foreach(@p in all_players('custom')) {
 				if(_fw_player(@p)) {
 					clear_peffects(@p)
-					if(get_block_at(ploc(@p)) === '133:0'
+					if(get_block(ploc(@p)) === 'EMERALD_BLOCK'
 					&& _fw_changeteam(@p, 'winners')) {
-						play_sound(ploc(@p), array('sound': 'zombie_metal'), @p)
+						play_sound(ploc(@p), array('sound': 'ENTITY_ZOMBIE_ATTACK_IRON_DOOR'), @p)
 					}
 				}
 			}
@@ -94,7 +94,7 @@ proc _fw_task(@task, @state, @secs) {
 				if(_fw_player(@e['player'])
 				&& (!array_index_exists(@e, 'damager') || !ponline(@e['damager']))) {
 					if(_fw_changeteam(@e['player'], 'losers')) {
-						play_sound(ploc(@e['player']), array('sound': 'zombie_unfect'), @e['player']);
+						play_sound(ploc(@e['player']), array('sound': 'ENTITY_ZOMBIE_VILLAGER_CONVERTED'), @e['player']);
 					}
 				}
 			}
@@ -136,18 +136,18 @@ proc _fw_task(@task, @state, @secs) {
 			@region = sk_region_info('frogware', 'custom')[0]
 			_iterate_cuboid(array(@region[0][0], @region[1][1], @region[0][2], 'custom'),
 			array(@region[1][0], @region[1][1], @region[1][2], 'custom'),
-			'3:0', 2);
+			'DIRT', 2);
 			foreach(@p in all_players('custom')) {
 				if(_fw_player(@p)) {
 					pgive_item(@p, array('name': 'STONE_HOE', 'data': 130));
 					pgive_item(@p, array('name': 'SEEDS')); # seeds
 				}
 			}
-			bind('item_pickup', array('id': 'fwpickup'), array('item': 296), @e) {
+			bind('item_pickup', array('id': 'fwpickup'), array('itemname': 296), @e) {
 				if(_fw_player(player())
 				&& _fw_changeteam(player(), 'winners')) {
 					modify_event('item', null);
-					play_sound(ploc(), array('sound': 'zombie_metal'), player());
+					play_sound(ploc(), array('sound': 'ENTITY_ZOMBIE_ATTACK_IRON_DOOR'), player());
 				}
 			}
 
@@ -181,51 +181,32 @@ proc _fw_task(@task, @state, @secs) {
 				@region = sk_region_info('frogware', 'custom')[0];
 				_iterate_cuboid(array(@region[0][0], @region[1][1], @region[0][2], 'custom'),
 				array(@region[1][0], @region[1][1], @region[1][2], 'custom'),
-				'9:0', 100);
+				'WATER', 100);
 				@count = _fw_totalplayers() * 2;
 				for(@i = 0, @i < @count, @i++) {
-					drop_item(_fw_loc(), array('name': 'IRON_BOOTS', 'enchants': array(
+					drop_item(_fw_loc(), array('name': 'IRON_BOOTS', 'meta': array('enchants': array(
 						array('elevel': 3, 'etype': 'DEPTH_STRIDER'),
-					)));
+					))));
 				}
 			} else if(!rand(4)) {
 				_fw_randompotion(array('speed', 'jump'));
 			}
 			@loc = _fw_loc();
-			if(rand(4)) {
-				# platform
-				_iterate_cuboid(array(@loc[0] + 2, @loc[1], @loc[2] + 2, 'custom'),
-				array(@loc[0] - 2, @loc[1], @loc[2] - 2, 'custom'),
-				'155:0', 100);
-				_iterate_cuboid(array(@loc[0] + 1, @loc[1] + 1, @loc[2] + 1, 'custom'),
-				array(@loc[0] - 1, @loc[1] + 1, @loc[2] - 1, 'custom'),
-				'133:0', 100);
-			} else {
-				# pillar (king of the ladder)
-				_iterate_cuboid(array(@loc[0], @loc[1], @loc[2], 'custom'),
-				array(@loc[0], @loc[1] + 5, @loc[2], 'custom'),
-				'133:0', 100);
-				_iterate_cuboid(array(@loc[0], @loc[1], @loc[2] + 1, 'custom'),
-				array(@loc[0], @loc[1] + 5, @loc[2] + 1, 'custom'),
-				'65:3', 100);
-				_iterate_cuboid(array(@loc[0] - 1, @loc[1], @loc[2], 'custom'),
-				array(@loc[0] - 1, @loc[1] + 5, @loc[2], 'custom'),
-				'65:4', 100);
-				_iterate_cuboid(array(@loc[0], @loc[1], @loc[2] - 1, 'custom'),
-				array(@loc[0], @loc[1] + 5, @loc[2] - 1, 'custom'),
-				'65:0', 100);
-				_iterate_cuboid(array(@loc[0] + 1, @loc[1], @loc[2], 'custom'),
-				array(@loc[0] + 1, @loc[1] + 5, @loc[2], 'custom'),
-				'65:5', 100);
-			}
+			# platform
+			_iterate_cuboid(array(@loc[0] + 2, @loc[1], @loc[2] + 2, 'custom'),
+			array(@loc[0] - 2, @loc[1], @loc[2] - 2, 'custom'),
+			'QUARTZ_BLOCK', 100);
+			_iterate_cuboid(array(@loc[0] + 1, @loc[1] + 1, @loc[2] + 1, 'custom'),
+			array(@loc[0] - 1, @loc[1] + 1, @loc[2] - 1, 'custom'),
+			'EMERALD_BLOCK', 100);
 
 		} else {
 			foreach(@p in all_players('custom')) {
 				if(_fw_player(@p)) {
 					clear_peffects(@p)
-					if(get_block_at(ploc(@p)) === '133:0'
+					if(get_block(ploc(@p)) === 'EMERALD_BLOCK'
 					&& _fw_changeteam(@p, 'winners')) {
-						play_sound(ploc(@p), array('sound': 'zombie_metal'), @p)
+						play_sound(ploc(@p), array('sound': 'ENTITY_ZOMBIE_ATTACK_IRON_DOOR'), @p)
 					}
 				}
 			}
@@ -247,17 +228,17 @@ proc _fw_task(@task, @state, @secs) {
 			}
 			if(rand(4)) {
 				for(@i = 0, @i < max(1, floor(_fw_totalplayers() / 2)), @i++) {
-					set_block_at(_fw_loc(), '92:0');
+					set_block(_fw_loc(), 'CAKE');
 				}
 			} else {
 				for(@i = 0, @i <= _fw_totalplayers(), @i++) {
-					set_block_at(_fw_loc(), '92:4')
+					set_blockdata_string(_fw_loc(), 'minecraft:cake[bites=4]')
 				}
 			}
 			bind('player_interact', array('id': 'fwcake'), array('block': 92), @e) {
 				if(_fw_player(player())
 				&& _fw_changeteam(player(), 'winners')) {
-					play_sound(ploc(), array('sound': 'zombie_metal'), player())
+					play_sound(ploc(), array('sound': 'ENTITY_ZOMBIE_ATTACK_IRON_DOOR'), player())
 				}
 			}
 
@@ -281,7 +262,7 @@ proc _fw_task(@task, @state, @secs) {
 			foreach(@p in all_players('custom')) {
 				if(_fw_player(@p)) {
 					set_pvelocity(@p, rand(), 3, rand())
-					play_sound(ploc(@p), array('sound': 'ghast_fireball'), @p)
+					play_sound(ploc(@p), array('sound': 'ENTITY_GHAST_SHOOT'), @p)
 				}
 			}
 			@region = sk_region_info('frogware', 'custom')[0]
@@ -290,19 +271,19 @@ proc _fw_task(@task, @state, @secs) {
 				queue_push(closure(){
 					_iterate_cuboid(array(@region[0][0], @region[1][1] + 3, @region[0][2], 'custom'),
 					array(@region[1][0], @region[1][1] + 3, @region[1][2], 'custom'),
-					'133:0', 3);
+					'EMERALD_BLOCK', 3);
 				}, 'fw3');
 			} else {
 				_fw_set_winners();
 				queue_push(closure(){
 					_iterate_cuboid(array(@region[0][0] - 1, @region[1][1] - 1, @region[0][2] - 1, 'custom'),
 					array(@region[1][0] + 1, @region[1][1] - 1, @region[1][2] + 1, 'custom'),
-					'8:0', 3);
+					'WATER', 3);
 				}, 'fw3');
 				bind('entity_damage', array('id': 'fwfall'), array('type': 'PLAYER', 'cause': 'FALL'), @e) {
 					if(_fw_player(@e['player'])) {
 						if(_fw_changeteam(@e['player'], 'losers')) {
-							play_sound(ploc(@e['player']), array('sound': 'zombie_unfect'), @e['player']);
+							play_sound(ploc(@e['player']), array('sound': 'ENTITY_ZOMBIE_VILLAGER_CONVERTED'), @e['player']);
 						}
 					}
 				}
@@ -319,9 +300,9 @@ proc _fw_task(@task, @state, @secs) {
 			} else {
 				foreach(@p in all_players('custom')) {
 					if(_fw_player(@p)
-					&& get_block_at(ploc(@p)) === '133:0'
+					&& get_block(ploc(@p)) === 'EMERALD_BLOCK'
 					&& _fw_changeteam(@p, 'winners')) {
-						play_sound(ploc(@p), array('sound': 'zombie_metal'), @p)
+						play_sound(ploc(@p), array('sound': 'ENTITY_ZOMBIE_ATTACK_IRON_DOOR'), @p)
 					}
 				}
 			}
@@ -361,7 +342,7 @@ proc _fw_task(@task, @state, @secs) {
 					}
 					if(pexp(@e['cause']['shooter']) > 90
 					&& _fw_changeteam(@e['cause']['shooter'], 'winners')) {
-						play_sound(ploc(@e['cause']['shooter']), array('sound': 'zombie_metal'), @e['cause']['shooter'])
+						play_sound(ploc(@e['cause']['shooter']), array('sound': 'ENTITY_ZOMBIE_ATTACK_IRON_DOOR'), @e['cause']['shooter'])
 					}
 				}
 			}
@@ -386,7 +367,7 @@ proc _fw_task(@task, @state, @secs) {
 				'Let\'s make an omellete.',
 			))
 			@loc = _fw_loc()
-			set_block_at(@loc, '122:0')
+			set_block(@loc, 'DRAGON_EGG');
 			if(!rand(4)) {
 				_fw_mobs()
 			}
@@ -396,17 +377,17 @@ proc _fw_task(@task, @state, @secs) {
 					@blocks = array();
 				}
 				for(@i = 0, @i < 16, @i++) {
-					set_block_at(_fw_loc(), '49:0')
+					set_block(_fw_loc(), 'OBSIDIAN');
 				}
 				export('frogware.blocks', @blocks);
 			}
-			play_sound(@loc, array('sound': 'CHICKEN_EGG_POP', 'volume': 3))
+			play_sound(@loc, array('sound': 'ENTITY_CHICKEN_EGG', 'volume': 3))
 			bind('player_interact', array('id': 'fwegg', 'priority': 'high'), array('block': 122), @e) {
 				if(_fw_player(player())) {
-					play_sound(@e['location'], array('sound': 'CHICKEN_EGG_POP', 'volume': 3))
+					play_sound(@e['location'], array('sound': 'ENTITY_CHICKEN_EGG', 'volume': 3))
 					consume()
 					if(_fw_changeteam(player(), 'winners')) {
-						play_sound(ploc(), array('sound': 'zombie_metal'), player())
+						play_sound(ploc(), array('sound': 'ENTITY_ZOMBIE_ATTACK_IRON_DOOR'), player())
 					}
 				}
 			}
@@ -458,10 +439,10 @@ proc _fw_task(@task, @state, @secs) {
 					}
 					if(_fw_player(@damager) && (@weapon['name'] == 'IRON_SWORD' || array_index_exists(@e, 'shooter'))) {
 						if(_fw_changeteam(@damager, 'winners')) {
-							play_sound(ploc(), array('sound': 'zombie_metal'), player())
+							play_sound(ploc(), array('sound': 'ENTITY_ZOMBIE_ATTACK_IRON_DOOR'), player())
 						}
 						if(_fw_changeteam(@e['player'], 'losers')) {
-							play_sound(ploc(@e['player']), array('sound': 'zombie_unfect'), @e['player']);
+							play_sound(ploc(@e['player']), array('sound': 'ENTITY_ZOMBIE_VILLAGER_CONVERTED'), @e['player']);
 						}
 					}
 				}
@@ -501,11 +482,11 @@ proc _fw_task(@task, @state, @secs) {
 			@region = sk_region_info('frogware', 'custom')[0]
 			_iterate_cuboid(array(@region[0][0], @region[1][1] + 2, @region[0][2], 'custom'),
 				array(@region[1][0], @region[1][1] + 2, @region[1][2], 'custom'),
-				'10:0', 3)
+				'LAVA', 3)
 			bind('entity_damage', array('id': 'fwdamage2'), array('type': 'PLAYER', 'cause': 'LAVA', 'world': 'custom'), @e) {
 				if(_fw_player(@e['player'])) {
 					if(_fw_changeteam(@e['player'], 'losers')) {
-						play_sound(ploc(@e['player']), array('sound': 'zombie_unfect'), @e['player']);
+						play_sound(ploc(@e['player']), array('sound': 'ENTITY_ZOMBIE_VILLAGER_CONVERTED'), @e['player']);
 					}
 				}
 			}
@@ -524,7 +505,8 @@ proc _fw_task(@task, @state, @secs) {
 
 	case 'shepherd':
 		if(@state == 'start') {
-			@colors = array('WHITE', 'ORANGE', 'MAGENTA', 'LIGHT_BLUE', 'YELLOW', 'LIME', 'PINK', 'GRAY', 'SILVER', 'CYAN', 'PURPLE', 'BLUE', 'BROWN', 'GREEN', 'RED', 'BLACK')
+			@colors = array('WHITE', 'ORANGE', 'MAGENTA', 'LIGHT_BLUE', 'YELLOW', 'LIME', 'PINK', 'GRAY', 'LIGHT_GRAY',
+					'CYAN', 'PURPLE', 'BLUE', 'BROWN', 'GREEN', 'RED', 'BLACK')
 			@colorindex = rand(array_size(@colors))
 			@color = @colors[@colorindex];
 			_fw_msg(array(
@@ -545,11 +527,11 @@ proc _fw_task(@task, @state, @secs) {
 				if(_fw_player(@e['player'])) {
 					if(@e['item']['data'] == @data) {
 						if(_fw_changeteam(player(), 'winners')) {
-							play_sound(ploc(), array('sound': 'zombie_metal'), player());
+							play_sound(ploc(), array('sound': 'ENTITY_ZOMBIE_ATTACK_IRON_DOOR'), player());
 						}
 					} else {
 						modify_event('item', null);
-						play_sound(ploc(), array('sound': 'villager_no'), player());
+						play_sound(ploc(), array('sound': 'entity_villager_no'), player());
 					}
 				}
 			}
@@ -592,7 +574,7 @@ proc _fw_task(@task, @state, @secs) {
 			bind('entity_damage', array('id': 'fwdamage2'), array('type': 'PLAYER', 'cause': 'FALLING_BLOCK', 'world': 'custom'), @e) {
 				if(_fw_player(@e['player'])) {
 					_fw_changeteam(@e['player'], 'losers')
-					play_sound(ploc(@e['player']), array('sound': 'zombie_unfect'), @e['player'])
+					play_sound(ploc(@e['player']), array('sound': 'ENTITY_ZOMBIE_VILLAGER_CONVERTED'), @e['player'])
 				}
 			}
 			_fw_set_winners();
@@ -601,12 +583,12 @@ proc _fw_task(@task, @state, @secs) {
 				queue_push(closure(){
 					_iterate_cuboid(array(@region[0][0], @region[1][1] + 24, @region[0][2], 'custom'),
 						array(@region[1][0], @region[1][1] + 24, @region[1][2], 'custom'),
-						145, 3);
+						'ANVIL', 3);
 					foreach(@p in all_players('custom')) {
 						if(get_pscoreboard(@p) == 'fw') {
 							@loc = ploc(@p);
 							@loc['y'] += 25;
-							set_block_at(@loc, '145');
+							set_block(@loc, 'ANVIL');
 						}
 					}
 				}, 'fw3');
@@ -639,7 +621,7 @@ proc _fw_task(@task, @state, @secs) {
 			bind('inventory_click', array('id': 'fwclick'), array('slottype': 'RESULT'), @e) {
 				if(_fw_player(@e['player']) && @e['slotitem']) {
 					if(_fw_changeteam(player(), 'winners')) {
-						play_sound(ploc(), array('sound': 'zombie_metal'), player())
+						play_sound(ploc(), array('sound': 'ENTITY_ZOMBIE_ATTACK_IRON_DOOR'), player())
 					}
 				}
 			}
@@ -667,7 +649,7 @@ proc _fw_task(@task, @state, @secs) {
 			bind('player_fish', array('id': 'fwfish'), array('state': '/(CAUGHT_ENTITY|CAUGHT_FISH)/'), @e) {
 				if(_fw_player(@e['player'])) {
 					if(_fw_changeteam(player(), 'winners')) {
-						play_sound(ploc(), array('sound': 'zombie_metal'), player())
+						play_sound(ploc(), array('sound': 'ENTITY_ZOMBIE_ATTACK_IRON_DOOR'), player())
 					}
 				}
 			}
@@ -693,16 +675,32 @@ proc _fw_task(@task, @state, @secs) {
 		
 	case 'panel':
 		if(@state == 'start') {
-			@colors = array('WHITE', 'GOLD', 'LIGHT_PURPLE', 'BLUE', 'YELLOW', 'GREEN', 'RED', 'DARK_GRAY', 'GRAY', 'DARK_AQUA', 'DARK_PURPLE', 'DARK_BLUE', 'k', 'DARK_GREEN', 'DARK_RED', 'BLACK');
-			@colorindex = rand(array_size(@colors));
-			@color = @colors[@colorindex];
-			@name = data_name('251:'.@colorindex);
+			@colors = array( // block : chat
+				'WHITE': 'WHITE',
+				'ORANGE': 'GOLD',
+				'MAGENTA': 'LIGHT_PURPLE',
+				'BLUE': 'DARK_BLUE',
+				'YELLOW': 'YELLOW',
+				'LIME': 'GREEN',
+				'PINK': 'RED',
+				'GRAY': 'DARK_GRAY',
+				'LIGHT_GRAY': 'GRAY',
+				'CYAN': 'AQUA',
+				'PURPLE': 'DARK_PURPLE',
+				'LIGHT_BLUE': 'BLUE',
+				'GREEN': 'DARK_GREEN',
+				'RED': 'DARK_RED',
+				'BLACK': 'BLACK',
+				'BROWN': 'k',
+			);
+			@blockcolor = array_rand(@colors, 1)[0];
+			@chatcolor = @colors[@blockcolor];
 			if(rand(4)) {
-				_fw_msg('Stand on '.@name);
+				_fw_msg('Stand on '.@blockcolor);
 			} else {
-				_fw_msg(color(@color).'What\'s your favorite color?');
+				_fw_msg(color(@chatcolor).'What\'s your favorite color?');
 			}
-			export('panel', @colorindex);
+			export('panel', @blockcolor);
 			@region = sk_region_info('frogware', 'custom', 0);
 			@minX = @region[1][0];
 			@maxX = @region[0][0];
@@ -723,7 +721,7 @@ proc _fw_task(@task, @state, @secs) {
 				for(@x = @minX + 1, @x < @maxX, @x++) {
 					for(@z = @minZ + 1, @z < @maxZ, @z++) {
 						@c = @grid[min(6, integer((@x - @minX) / 5))][min(6, integer((@z - @minZ) / 5))];
-						set_block_at(@x, @y, @z, '251:'.@c, 'custom', false);
+						set_block(array(@x, @y, @z, 'custom'), @blockcolor.'_CONCRETE', false);
 					}
 				}
 			}
@@ -733,11 +731,12 @@ proc _fw_task(@task, @state, @secs) {
 			}
 
 		} else {
+			@target = import('panel');
 			foreach(@p in all_players('custom')) {
 				if(_fw_player(@p)) {
-					if(split(':', get_block_at(ploc(@p)), 1)[1] == import('panel')
+					if(string_starts_with(get_block(ploc(@p)), @target)
 					&& _fw_changeteam(@p, 'winners')) {
-						play_sound(ploc(@p), array('sound': 'zombie_metal'), @p);
+						play_sound(ploc(@p), array('sound': 'ENTITY_ZOMBIE_ATTACK_IRON_DOOR'), @p);
 					}
 				}
 			}
@@ -749,7 +748,7 @@ proc _fw_task(@task, @state, @secs) {
 			@maxZ = @region[0][2];
 			for(@x = @minX + 1, @x < @maxX, @x++) {
 				for(@z = @minZ + 1, @z < @maxZ, @z++) {
-					set_block_at(@x, @y, @z, '251:0', 'custom');
+					set_block(array(@x, @y, @z, 'custom'), 'WHITE_CONCRETE', false);
 				}
 			}
 			export('panel', null);

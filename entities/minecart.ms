@@ -27,8 +27,8 @@ bind('player_interact_entity', null, array('clicked': 'MINECART'), @event) {
 			set_entity_spec(@event['id'], array('offset': integer(@originalOffset - (@newPitch - @originalPitch))));
 		});
 		
-	} else if(@minecart['block'] == 'AIR' && material_info(@item['type'], 'isBlock')) {
-		if(!@item['meta'] && @item['data'] == 0) {
+	} else if(@minecart['block'] == 'AIR' && material_info(@item['name'], 'isBlock')) {
+		if(!@item['meta']) {
 			@item['qty'] -= 1;
 			set_entity_spec(@event['id'], array('block': @item['name']));
 			if(!@item['qty']) {
@@ -36,7 +36,7 @@ bind('player_interact_entity', null, array('clicked': 'MINECART'), @event) {
 			}
 			set_pinv(player(), null, @item);
 		} else {
-			play_effect(entity_loc(@event['id']), 'SMOKE', array('id': 4));
+			spawn_particle(entity_loc(@event['id']), 'SMOKE_NORMAL');
 		}
 	}
 }

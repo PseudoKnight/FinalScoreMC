@@ -13,6 +13,7 @@ proc _cache_shop(@shop, @location) {
 	);
 
 	include('chest.ms');
+	include('item.ms');
 	if(@shop['buy']) {
 		@count = _chest_item_count(location_shift(@location, 'down'), @shop['item']);
 		if(is_null(@count)) {
@@ -66,20 +67,9 @@ proc _cache_shop(@shop, @location) {
 	}
 
 	if(@shop['sell']) {
-		switch(@shop['sell'][4]) {
-		case 'g':
-			@currency = '266';
-		case 'i':
-			@currency = '265';
-		case 'd':
-			@currency = '264';
-		case 'e':
-			@currency = '388';
-		default:
-			die();
-		}
+		@currency = _item_get_currency(@shop['sell'][4]);
 
-		@count = _chest_item_count(location_shift(@location, 'down'), @currency.':0');
+		@count = _chest_item_count(location_shift(@location, 'down'), @currency);
 		if(is_null(@count)) {
 			return();
 		}

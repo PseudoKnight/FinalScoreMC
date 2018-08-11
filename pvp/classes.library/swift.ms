@@ -37,7 +37,7 @@ case 'load':
 			@glideState[0] = false;
 			set_entity_gliding(puuid(), false);
 			set_entity_fall_distance(puuid(), 0);
-			play_sound(ploc(), array('sound': 'ENDERDRAGON_WINGS', 'category': 'PLAYERS', 'pitch': 1.3, 'volume': 0.4));
+			play_sound(ploc(), array('sound': 'ENTITY_ENDER_DRAGON_FLAP', 'category': 'PLAYERS', 'pitch': 1.3, 'volume': 0.4));
 		}
 	}
 	
@@ -45,7 +45,7 @@ case 'load':
 		if(!pcooldown('WOOD_AXE')) {
 			set_pvelocity(player(), get_vector(ploc(), 0.6));
 			set_pcooldown('WOOD_AXE', 4000 / 50);
-			play_sound(ploc(), array('sound': 'ENDERDRAGON_WINGS', 'category': 'PLAYERS', 'pitch': 1.3, 'volume': 0.4));
+			play_sound(ploc(), array('sound': 'ENTITY_ENDER_DRAGON_FLAP', 'category': 'PLAYERS', 'pitch': 1.3, 'volume': 0.4));
 		}
 	}
 	

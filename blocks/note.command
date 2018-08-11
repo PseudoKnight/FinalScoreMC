@@ -10,42 +10,73 @@ register_command('note', array(
 		}
 		
 		@l = pcursor();
-		if(!sk_can_build(@l) || get_block_at(@l) != '25:0') {
+		if(!sk_can_build(@l) || get_block(@l) != 'NOTE_BLOCK') {
 			die();
 		}
 	
-		@instrument = 'NOTE_PIANO';
-		switch(split(':', get_block_at(location_shift(@l, 'down')))[0]) {
-			case '1':
-				@instrument = 'NOTE_BASS_DRUM';
-			case '5':
-			case '17':
-				@instrument = 'NOTE_BASS_GUITAR';
-			case '12':
-			case '13':
-				@instrument = 'NOTE_SNARE_DRUM';
-			case '20':
-				@instrument = 'NOTE_STICKS';
-			case '35':
-				@instrument = 'BLOCK_NOTE_GUITAR';
-			case '41':
-				@instrument = 'BLOCK_NOTE_BELL';
-			case '79':
-			case '174':
-				@instrument = 'ORB_PICKUP';
-			case '82':
-				@instrument = 'BLOCK_NOTE_FLUTE';
-			case '159':
-			case '172':
-				@instrument = 'NOTE_PLING';
-			case '165':
-				@instrument = 'CHICKEN_EGG_POP';
-			case '169':
-				@instrument = 'BLOCK_NOTE_CHIME';
-			case '173':
-				@instrument = 'FIREWORK_BLAST';
-			case '216':
-				@instrument = 'BLOCK_NOTE_XYLOPHONE';
+		@sound = 'BLOCK_NOTE_BLOCK_PIANO';
+		switch(get_block(location_shift(@l, 'down'))) {
+			case 'STONE':
+				@sound = 'BLOCK_NOTE_BLOCK_BASSDRUM';
+			case 'OAK_PLANKS':
+				@sound = 'BLOCK_NOTE_BLOCK_BASS';
+			case 'SAND':
+			case 'GRAVEL':
+				@sound = 'BLOCK_NOTE_BLOCK_SNARE';
+			case 'GLASS':
+				@sound = 'BLOCK_NOTE_BLOCK_STICKS';
+			case 'ICE':
+			case 'PACKED_ICE':
+				@sound = 'ENTITY_EXPERIENCE_ORB_PICKUP';
+			case 'ANVIL':
+				@sound = 'BLOCK_ANVIL_LAND';
+			case 'TERRACOTTA':
+			case 'WHITE_TERRACOTTA':
+			case 'ORANGE_TERRACOTTA':
+			case 'YELLOW_TERRACOTTA':
+			case 'RED_TERRACOTTA':
+			case 'PURPLE_TERRACOTTA':
+			case 'PINK_TERRACOTTA':
+			case 'MAGENTA_TERRACOTTA':
+			case 'LIME_TERRACOTTA':
+			case 'GREEN_TERRACOTTA':
+			case 'GRAY_TERRACOTTA':
+			case 'CYAN_TERRACOTTA':
+			case 'BROWN_TERRACOTTA':
+			case 'BLUE_TERRACOTTA':
+			case 'BLACK_TERRACOTTA':
+			case 'LIGHT_GRAY_TERRACOTTA':
+			case 'LIGHT_BLUE_TERRACOTTA':
+				@sound = 'BLOCK_NOTE_BLOCK_PLING';
+			case 'SLIME_BLOCK':
+				@sound = 'ENTITY_CHICKEN_EGG';
+			case 'COAL_BLOCK':
+				@sound = 'ENTITY_FIREWORK_ROCKET_BLAST';
+			case 'SEA_LANTERN':
+				@sound = 'BLOCK_NOTE_BLOCK_CHIME';
+			case 'WHITE_WOOL':
+			case 'ORANGE_WOOL':
+			case 'YELLOW_WOOL':
+			case 'RED_WOOL':
+			case 'PURPLE_WOOL':
+			case 'PINK_WOOL':
+			case 'MAGENTA_WOOL':
+			case 'LIME_WOOL':
+			case 'GREEN_WOOL':
+			case 'GRAY_WOOL':
+			case 'CYAN_WOOL':
+			case 'BROWN_WOOL':
+			case 'BLUE_WOOL':
+			case 'BLACK_WOOL':
+			case 'LIGHT_GRAY_WOOL':
+			case 'LIGHT_BLUE_WOOL':
+				@sound = 'BLOCK_NOTE_BLOCK_GUITAR';
+			case 'CLAY':
+				@sound = 'BLOCK_NOTE_BLOCK_FLUTE';
+			case 'GOLD_BLOCK':
+				@sound = 'BLOCK_NOTE_BLOCK_BELL';
+			case 'BONE_BLOCK':
+				@sound = 'BLOCK_NOTE_BLOCK_XYLOPHONE';
 		}
 	
 		@clicks = @args[0];
@@ -61,7 +92,7 @@ register_command('note', array(
 		} else {
 			@pitch = _get_pitch(@notes[@clicks % 12], floor(@clicks / 12));
 		}
-		play_sound(@l, array('sound': @instrument, 'category': 'RECORDS', 'pitch': @pitch));
+		play_sound(@l, array('sound': @sound, 'category': 'RECORDS', 'pitch': @pitch));
 		sudo('/blockdata '.@l[0].' '.@l[1].' '.@l[2].' {"note":'.@clicks.'b}');
 	}
 ));

@@ -44,7 +44,7 @@ proc _equip_kit(@player, @inv) {
 			);
 			if(array_index_exists(@pdata, 'support') && @pdata['support'] >= 10) {
 				@kit[4] = array(
-					'name': 'FIREWORK',
+					'name': 'FIREWORK_ROCKET',
 					'meta': array(
 						'display': colorize('&r&kX&a&l Random Firework &r&kX'),
 						'lore': array(
@@ -66,10 +66,10 @@ proc _equip_kit(@player, @inv) {
 		case 'dev':
 			_clear_pinv(@player);
 			set_pinv(@player, associative_array(
-				0: associative_array('name': 'COMPASS', 'meta': associative_array(
+				0: associative_array('name': 'COMPASS', 'meta': array(
 					'display': 'Teleporter',
 				)),
-				1: associative_array('name': 'GOLD_AXE', 'meta': associative_array(
+				1: associative_array('name': 'GOLDEN_AXE', 'meta': array(
 					'display': 'WorldEdit Selector',
 				)),
 			));
@@ -92,8 +92,6 @@ proc _item_meta(@item, @index) {
 */
 proc _minify_inv(@inv, @keepnulls = false) {
 	proc _minify_item(@item) {
-		array_remove(@item, 'type');
-		array_remove(@item, 'enchants');
 		if(@item['data'] == 0) {
 			array_remove(@item, 'data');
 		}
@@ -133,7 +131,7 @@ proc _minify_inv(@inv, @keepnulls = false) {
 	if(!is_array(@inv)) {
 		throw('FormatException', 'This must be an item!');
 	}
-	if(array_index_exists(@inv, 'type')) {
+	if(array_index_exists(@inv, 'name')) {
 		_minify_item(@inv);
 	} else {
 		foreach(@slot: @item in @inv) {
@@ -147,27 +145,4 @@ proc _minify_inv(@inv, @keepnulls = false) {
 		}
 	}
 	return(@inv);
-}
-
-/*
-	Converts short-hand aliases to functional item formats.
-	This will need to be updated for 1.13.
-*/
-proc _data_values(@item) {
-	@itemMatch = reg_match('^([\\w\\s]+)(?::(\\d{1,5}))?$', @item);
-	if(!@itemMatch) {
-		return(null);
-	}
-	if(!is_numeric(@itemMatch[1])) {
-		@itemMatch[1] = data_values(@itemMatch[1]);
-		if(!@itemMatch[1]) {
-			return(null);
-		}
-		if(@itemMatch[2] && string_position(@itemMatch[1], ':') == -1) {
-			@item = @itemMatch[1].':'.@itemMatch[2];
-		} else {
-			@item = @itemMatch[1];
-		}
-	}
-	return(@item);
 }

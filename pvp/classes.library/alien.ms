@@ -1,6 +1,6 @@
 switch(@action) {
 case 'load':
-	bind('player_interact', array('id': @player.'plasmagun'), array('item': 382, 'button': 'right', 'player': @player), @e) {
+	bind('player_interact', array('id': @player.'plasmagun'), array('itemname': 'GLISTERING_MELON_SLICE', 'button': 'right', 'player': @player), @e) {
 		if(pinfo(player(), 6) != @e['item']) {
 			die();
 		}
@@ -9,7 +9,7 @@ case 'load':
 			@arrow = shoot_projectile(player(), 'ARROW');
 			set_entity_onfire(@arrow, 1);
 			set_entity_gravity(@arrow, false);
-			play_sound(ploc(), array('sound': 'ENDERDRAGON_HIT', 'pitch': 2, 'volume': 2));
+			play_sound(ploc(), array('sound': 'ENTITY_ENDER_DRAGON_HIT', 'pitch': 2, 'volume': 2));
 			set_pexp(0);
 			set_interval(50, closure(){
 				try {
@@ -36,13 +36,13 @@ case 'load':
 	bind('projectile_hit', array('id': @player.'hit'), array('type': 'ARROW'), @e, @shooter = puuid(@player)) {
 		if(@e['shooter'] == @shooter) {
 			play_effect(@e['location'], 'LAVA_POP', array('particleCount': 7, 'radius': 96));
-			play_sound(@e['location'], array('sound': 'NOTE_BASS_DRUM', 'pitch': 2, 'volume': 2));
-			play_sound(@e['location'], array('sound': 'FIZZ', 'pitch': 2, 'volume': 2));
+			play_sound(@e['location'], array('sound': 'BLOCK_NOTE_BLOCK_BASSDRUM', 'pitch': 2, 'volume': 2));
+			play_sound(@e['location'], array('sound': 'BLOCK_FIRE_EXTINGUISH', 'pitch': 2, 'volume': 2));
 			try(entity_remove(@e['id']));
 		}
 	}
 
-	bind('player_interact', array('id': @player.'teleport'), array('item': 381, 'player': @player, 'button': 'right'), @e, @pvp) {
+	bind('player_interact', array('id': @player.'teleport'), array('itemname': 'ENDER_EYE', 'player': @player, 'button': 'right'), @e, @pvp) {
 		if(pinfo(player(), 6) != @e['item']) {
 			die();
 		}
@@ -65,8 +65,8 @@ case 'load':
 			set_ploc(@loc2);
 			damage_entity(puuid(), 1, puuid());
 			set_ploc(@player, @loc1);
-			play_sound(@loc2, array('sound': 'ENDERMAN_TELEPORT', 'pitch': 0.5));
-			play_sound(@loc1, array('sound': 'ENDERMAN_TELEPORT', 'pitch': 0.5));
+			play_sound(@loc2, array('sound': 'ENTITY_ENDERMAN_TELEPORT', 'pitch': 0.5));
+			play_sound(@loc1, array('sound': 'ENTITY_ENDERMAN_TELEPORT', 'pitch': 0.5));
 			make_effect(location_shift(@loc1, 'up', 2), 'ENDER_SIGNAL');
 		}
 

@@ -12,8 +12,8 @@ proc _load_events(@id) {
 		if(!array_index_exists(@pvp['players'], player())) {
 			die();
 		}
-		@block = get_block_at(@event['location']);
-		if(@block == '132:4') {
+		@block = get_block(@event['location']);
+		if(@block == 'TRIPWIRE') {
 			die();
 		}
 		cancel();
@@ -22,14 +22,14 @@ proc _load_events(@id) {
 				@dots = get_pscore('dots', 'PAC-MAN', @id) - 1;
 				set_pscore('dots', 'PAC-MAN', @dots, @id);
 				@pvp['stats'][player()]['pickups']++;
-				play_sound(@event['location'], array('sound': 'CHICKEN_EGG_POP', 'pitch': 2), player());
+				play_sound(@event['location'], array('sound': 'ENTITY_CHICKEN_EGG', 'pitch': 2), player());
 				if(@dots == 0) {
 					_pvp_end_match(@id, @pvp['team'][0]['players']);
 				}
 			} else if(@block == '148:0') {
 				play_named_sound(@event['location'], array('sound': 'entity.illusion_illager.prepare_blindness', 'pitch': 1.4, 'volume': 3));
 				set_peffect(player(), 16, 1, 15);
-				set_block_at(location_shift(@event['location'], 'up', 27), 0);
+				set_block(location_shift(@event['location'], 'up', 27), 'AIR');
 				@scaredyghost = array(
 					103: array('name': 'CONCRETE', 'data': 11),
 					102: array('name': 'LEATHER_CHESTPLATE', 'meta': array('color': array('r': 60, 'g': 68, 'b': 170))),
@@ -54,7 +54,7 @@ proc _load_events(@id) {
 					}
 				});
 			}
-			set_block_at(@event['location'], 0);
+			set_block(@event['location'], 'AIR');
 		}
 	}
 	
@@ -69,7 +69,7 @@ proc _load_events(@id) {
 		if(@damagerTeam == 'PAC-MAN') {
 			@hat = pinv(player(), 103);
 			if(@hat && @hat['data'] == 11) {
-				play_sound(ploc(), array('sound': 'WOLF_HOWL', 'pitch': 1.7, 'volume': 3));
+				play_sound(ploc(), array('sound': 'ENTITY_WOLF_HOWL', 'pitch': 1.7, 'volume': 3));
 				@pvp['stats'][player(@event['id'])]['kills']++;
 				@pvp['stats'][player()]['deaths']++;
 				@newInv = array(null: array('name': 'EYE_OF_ENDER'), -106: array('name': 'EYE_OF_ENDER'),102: null, 103: null);
@@ -81,7 +81,7 @@ proc _load_events(@id) {
 							clear_task();
 							_player_equip(@id, player());
 							set_peffect(player(), 1, 0, 0, false, false);
-							play_sound(ploc(), array('sound': 'FIREWORK_LAUNCH', 'pitch': 1.3), player());
+							play_sound(ploc(), array('sound': 'ENTITY_FIREWORK_ROCKET_LAUNCH', 'pitch': 1.3), player());
 						} else if(!array_contains(@regions, 'pacman')) {
 							clear_task();
 						} else {
@@ -98,7 +98,7 @@ proc _load_events(@id) {
 				@hat = pinv(player(), 103);
 				if(@hat) {
 					_clear_pinv(player());
-					play_sound(ploc(), array('sound': 'ZOMBIE_UNFECT', 'pitch': 2, 'volume': 3));
+					play_sound(ploc(), array('sound': 'ENTITY_ZOMBIE_UNFECT', 'pitch': 2, 'volume': 3));
 					@pvp['players'][player()]['lives']--;
 					@pvp['stats'][player()]['deaths']++;
 					@pvp['stats'][player(@event['id'])]['kills']++;
@@ -119,7 +119,7 @@ proc _load_events(@id) {
 	}
 	
 	@pvp['binds'][] = 'ghosteyes';
-	bind('player_interact', array('id': 'ghosteyes'), array('item': 381, 'button': 'right'), @event, @pvp) {
+	bind('player_interact', array('id': 'ghosteyes'), array('itemname': 'ENDER_EYE', 'button': 'right'), @event, @pvp) {
 		if(array_index_exists(@pvp['players'], player())) {
 			cancel();
 		}

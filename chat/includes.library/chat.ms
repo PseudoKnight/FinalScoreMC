@@ -21,7 +21,7 @@ proc _chat(@player, @message, @recipients, @discordChannel = '') {
 	}
 
 	# Basic hostile word filters
-	@filteredMessage = reg_replace('(?i)(fuck|shit|damn|nigg|cunt|fag)', '\u2639', @message);
+	@filteredMessage = reg_replace(comp_read('filter.txt'), '\u2639', @message);
 
 	# Chat escaping
 	@escapedMessage = replace(@filteredMessage, '\\', '\\\\');
@@ -44,7 +44,7 @@ proc _chat(@player, @message, @recipients, @discordChannel = '') {
 	if(ponline(@player)) {
 		@session = _psession(@player);
 		if(array_index_exists(@session, 'trophies')) {
-			@components[] = array('hover', '&6\u2660', '&6&lTrophies\n'.array_implode(@session['trophies'], '\n'));
+			@components[] = array('hover', '&6\u2660', '&6&lTrophies\\n'.array_implode(@session['trophies'], '\\n'));
 		}
 	} else {
 		if(array_index_exists(@pdata, 'ban')) {
@@ -66,13 +66,13 @@ proc _chat(@player, @message, @recipients, @discordChannel = '') {
 
 	if(ponline(@player)) {
 		@components[] = array('hover', ' '.display_name(@player),
-			if(has_permission(@player, 'group.moderator'), '&bSTAFF\n')
-			.if(array_index_exists(@pdata, 'names'), '&7'.array_implode(@pdata['names']).'\n')
-			.if(array_index_exists(@session, 'lastplayed'), '&8[last played] &r'.@session['lastplayed'].'\n')
+			if(has_permission(@player, 'group.moderator'), '&bSTAFF\\n')
+			.if(array_index_exists(@pdata, 'names'), '&7'.array_implode(@pdata['names']).'\\n')
+			.if(array_index_exists(@session, 'lastplayed'), '&8[last played] &r'.@session['lastplayed'].'\\n')
 			.'&8[world] &r'._worldname(pworld(@player)));
 	} else {
 		@components[] = array('hover', ' '.@nameColor.@player,
-			.if(array_index_exists(@pdata, 'names'), '&7'.array_implode(@pdata['names']).'\n')
+			.if(array_index_exists(@pdata, 'names'), '&7'.array_implode(@pdata['names']).'\\n')
 			.'&8[world] &rReal World');
 	}
 	@components[] = '&8: ';
@@ -104,7 +104,7 @@ proc _pmsg(@from, @player, @message) {
 			@message = colorize(@message);
 			tmsg(@player, color(7).'(From '.@from.if(!ponline(@from), ' on web').'): '.color('r').@message);
 			if(@player !== '~console') {
-				play_sound(ploc(@player), array('sound': 'CHICKEN_EGG_POP', 'pitch': 2, 'category': 'VOICE'), @player);
+				play_sound(ploc(@player), array('sound': 'ENTITY_CHICKEN_EGG', 'pitch': 2, 'category': 'VOICE'), @player);
 			}
 			msg(color(7).'(To '.@player.'): '.color('r').@message);
 			@conv = import('conv');

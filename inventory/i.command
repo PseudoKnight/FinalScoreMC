@@ -9,16 +9,6 @@ register_command('i', array(
 		if(!@args) {
 			return(false);
 		}
-		@item = split(':', @args[0]);
-		if(!is_numeric(@item[0])) {
-			@item[0] = data_values(@item[0]);
-		}
-		if(is_null(@item[0])) {
-			die(color('gold').'Unknown item name');
-		}
-		if(array_size(@item) == 1) {
-			@item[1] = 0;
-		}
 		@amount = 1;
 		if(array_size(@args) == 2) {
 			@amount = @args[1];
@@ -27,8 +17,8 @@ register_command('i', array(
 			}
 		}
 		try {
-			pgive_item(@item[0].':'.@item[1], @amount);
-			msg(color('yellow').'You\'ve been given '.@amount.' '.data_name(@item[0].':'.@item[1]).'.');
+			pgive_item(array('name': to_upper(@args[0]), 'qty': @amount));
+			msg(color('yellow').'You\'ve been given '.@amount.' of '.@args[0].'.');
 		} catch(Exception @ex) {
 			msg(color('red').'The item '.@args[0].' doesn\'t appear to exist.');
 		}

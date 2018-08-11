@@ -224,7 +224,7 @@ bind('player_interact_at_entity', null, array('clicked': 'ARMOR_STAND'), @event)
 					cancel();
 				}
 
-			case 'LEASH': # carries armor stand
+			case 'LEAD': # carries armor stand
 				if(!psneaking() && !get_entity_rider(puuid())) {
 					cancel();
 					title('', color(6).'Moving Armor Stand. Click to place.', 0, 40, 10);
