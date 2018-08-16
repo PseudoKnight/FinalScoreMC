@@ -10,7 +10,7 @@ bind('projectile_launch', array('id': @id.'grapple'), array('type': 'FISHING_HOO
 	@arrow = shoot_projectile(@player, 'arrow');
 	set_entity_spec(@arrow, array('critical': true));
 	set_arrow_damage(@arrow, 0.5);
-	play_sound(ploc(@player), array('sound': 'SHOOT_ARROW'));
+	play_sound(ploc(@player), array('sound': 'ENTITY_ARROW_SHOOT'));
 	@shooter = puuid(@player);
 	@slot = pheld_slot(@player);
 
@@ -32,9 +32,9 @@ bind('projectile_launch', array('id': @id.'grapple'), array('type': 'FISHING_HOO
 			die();
 		}
 
-		play_sound(@loc1, array('sound': 'IRONGOLEM_HIT', 'pitch': 2));
-		play_sound(@loc2, array('sound': 'IRONGOLEM_HIT', 'pitch': 2));
-		play_sound(@loc1, array('sound': 'HORSE_BREATHE', 'pitch': 1.7));
+		play_sound(@loc1, array('sound': 'ENTITY_IRON_GOLEM_HURT', 'pitch': 2));
+		play_sound(@loc2, array('sound': 'ENTITY_IRON_GOLEM_HURT', 'pitch': 2));
+		play_sound(@loc1, array('sound': 'ENTITY_HORSE_BREATHE', 'pitch': 1.7));
 
 		@endtask = closure(){
 			try {
@@ -73,7 +73,7 @@ bind('projectile_launch', array('id': @id.'grapple'), array('type': 'FISHING_HOO
 					if(@dist > 2.5) {
 						if(@dist > 10) {
 							@pitch = 1.4 + (0.6 * (@dist - 10) / 20);
-							play_sound(@loc1, array('sound': 'HORSE_BREATHE', 'pitch': @pitch));
+							play_sound(@loc1, array('sound': 'ENTITY_HORSE_BREATHE', 'pitch': @pitch));
 						}
 						if(get_entity_gliding(@mover)) {
 							@dist = @dist / 1.8;

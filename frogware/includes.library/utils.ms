@@ -9,7 +9,7 @@ proc _fw_countdown(@c) {
 	} else if(@c == 0) {
 		foreach(@p in all_players('custom')) {
 			if(_fw_player(@p)) {
-				play_sound(ploc(@p), array('sound': 'orb_pickup'), @p)
+				play_sound(ploc(@p), array('sound': 'ENTITY_EXPERIENCE_ORB_PICKUP'), @p)
 			}
 		}
 	}

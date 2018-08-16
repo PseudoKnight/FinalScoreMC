@@ -35,7 +35,7 @@ proc _weapon_hit_scan(@player, @range, @damage, @effects, @pvp){
 	@damager = puuid(@player);
 	@visibleRange = max(64, @range);
 	
-	@hitsound = 'SUCCESSFUL_HIT';
+	@hitsound = 'ENTITY_ARROW_HIT_PLAYER';
 	if(array_index_exists(@effects, 'hitsound')) {
 		@hitsound = @effects['hitsound'];
 	}

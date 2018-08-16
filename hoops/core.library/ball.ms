@@ -84,7 +84,7 @@ proc _hoops_ball_create(@loc) {
 		&& entity_exists(@stand)
 		&& (@event['clicked'] == 'ARMOR_STAND' && @event['id'] == @stand || @event['clicked'] == 'SLIME' && @event['id'] == @bball)) {
 			cancel();
-			play_sound(ploc(), array('sound': 'ENTITY_IRONGOLEM_STEP', 'pitch': 2.0));
+			play_sound(ploc(), array('sound': 'ENTITY_IRON_GOLEM_STEP', 'pitch': 2.0));
 			if(!@game['holder']) {
 				set_entity_spec(@stand, array('gravity': false));
 			} else {
@@ -141,7 +141,7 @@ proc _hoops_ball_create(@loc) {
 						@end = true;
 						play_sound(@loc, array('sound': 'ENTITY_LLAMA_SPIT', 'volume': 3));
 						play_sound(@loc, array('sound': 'ENTITY_GHAST_SHOOT', 'pitch': 0.5, 'volume': 3));
-						play_sound(@loc, array('sound': 'ENTITY_ILLUSION_ILLAGER_PREPARE_BLINDNESS', 'volume': 3));
+						play_sound(@loc, array('sound': 'ENTITY_ILLUSIONER_PREPARE_BLINDNESS', 'volume': 3));
 						@cloud = spawn_entity('AREA_EFFECT_CLOUD', 1, @loc)[0];
 						set_entity_spec(@cloud, array('particle': 'LAVA', 'radius': 0.1, 'duration': 100));
 						if(array_index_exists(@game, 'teams')) {
@@ -227,24 +227,19 @@ proc _hoops_ball_create(@loc) {
 			}
 			
 			if(@bounce) {
-				play_sound(@loc, array('sound': 'ENTITY_IRONGOLEM_STEP', 'pitch': 2.0));
+				play_sound(@loc, array('sound': 'ENTITY_IRON_GOLEM_STEP', 'pitch': 2.0));
 			} else if(@game['trail']) {
 				if(!queue_running('balltrail')) {
 					queue_delay(350, 'balltrail');
 				}
 				if(!array_index_exists(@game, 'teams')) {
 					queue_push(closure(){
-						play_effect(location_shift(@loc, 'up', 0.5), 'FLAME', array('speed': 0.0));
+						spawn_particle(location_shift(@loc, 'up', 0.5), 'FLAME');
 					}, 'balltrail');
 				} else if(@game['state'] < 3 && @game['lastholder']) {
-					@effect = null;
-					if(@game['players'][@game['lastholder']]['team'] == 'blue') {
-						@effect = array('particleCount': 0, 'speed': 1.0, 'offsetX': 0.01, 'offsetY': 0.0, 'offsetZ': 1.0, 'distance': 32);
-					} else {
-						@effect = array('particleCount': 0, 'distance': 32);
-					}
+					@effect = array('particle': 'REDSTONE', 'color': @game['players'][@game['lastholder']]['team']);
 					queue_push(closure(){
-						play_effect(location_shift(@loc, 'up', 0.5), 'COLOURED_DUST', @effect);
+						spawn_particle(location_shift(@loc, 'up', 0.5), @effect);
 					}, 'balltrail');
 				}
 			}
@@ -313,7 +308,7 @@ proc _hoops_ball_in_hoop(@location) {
 				}
 			}
 		}
-		play_sound(@location, array('sound': 'ARROW_HIT', 'pitch': 1.4, 'volume': 3));
+		play_sound(@location, array('sound': 'ENTITY_ARROW_HIT', 'pitch': 1.4, 'volume': 3));
 	}
 	return(false);
 }

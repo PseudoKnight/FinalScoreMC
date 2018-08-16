@@ -322,7 +322,7 @@ proc _fw_task(@task, @state, @secs) {
 				if(_fw_player(@p)) {
 					pgive_item(@p, array('name': 'BOW', 'data': 379, 'meta': array('enchants': array(array('elevel': 1, 'etype': 'ARROW_FIRE')))));
 					pgive_item(@p, array('name': 'ARROW', 'qty': 6));
-					play_sound(ploc(@p), array('sound': if(@mob === 'BAT', 'BAT_LOOP', 'chicken_idle')), @p)
+					play_sound(ploc(@p), array('sound': if(@mob === 'BAT', 'ENTITY_BAT_LOOP', 'ENTITY_CHICKEN_AMBIENT')), @p)
 					set_pexp(@p, 0)
 				}
 			}

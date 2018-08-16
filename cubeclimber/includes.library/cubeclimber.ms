@@ -213,7 +213,7 @@ proc _cc_start(@world = 'custom') {
 								@cc['highest'] = @newheight;
 
 								play_sound(@ploc, array(
-									'sound': 'note_piano',
+									'sound': 'BLOCK_NOTE_BLOCK_HARP',
 									'pitch': if(@newheight >= @basenote, @notes[@newheight - @basenote], 0.5),
 									'volume': 2,
 								));

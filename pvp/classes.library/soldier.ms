@@ -15,7 +15,7 @@ case 'load':
 		@y = max((1.40 * sin(to_radians(@loc['pitch']))) + 0.2, 0.2);
 		@z = 1.40 * sin(to_radians(@loc['yaw'])) * cos(to_radians(@loc['pitch']));
 		set_entity_velocity(@armorStand, array(@x, @y, @z));
-		play_sound(@loc, array('sound': 'ENTITY_IRONGOLEM_THROW'));
+		play_sound(@loc, array('sound': 'ENTITY_IRON_GOLEM_ATTACK'));
 		@timer = array(6);
 		set_interval(500, closure(){
 			try {

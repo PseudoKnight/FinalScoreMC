@@ -18,7 +18,7 @@ bind('player_interact', array('id': @id.'battlerifle'), array('item': 292), @eve
 	}
 	
 	_weapon_hit_scan(player(), 84, 1.29, array('tracerparticle': 'VOID_FOG', 'hitparticle': 'LARGE_SMOKE'), @pvp);
-	play_sound(ploc(), array('sound': 'FIREWORK_BLAST', 'pitch': 0.8, 'volume': 4));
+	play_sound(ploc(), array('sound': 'ENTITY_FIREWORK_ROCKET_BLAST', 'pitch': 0.8, 'volume': 4));
 	action_msg(player(), (--@currentAmmo).' / '.@maxAmmo);
 	set_pcooldown(@item['name'], 500 / 50);
 	@item['meta']['lore'] = array(@currentAmmo, @maxAmmo);
@@ -26,7 +26,7 @@ bind('player_interact', array('id': @id.'battlerifle'), array('item': 292), @eve
 	set_timeout(50, closure(){
 		if(pheld_slot() == @slot) {
 			_weapon_hit_scan(player(), 84, 2.58, array('tracerparticle': 'VOID_FOG', 'hitparticle': 'LARGE_SMOKE'), @pvp);
-			play_sound(ploc(), array('sound': 'FIREWORK_BLAST', 'pitch': 0.8, 'volume': 4));
+			play_sound(ploc(), array('sound': 'ENTITY_FIREWORK_ROCKET_BLAST', 'pitch': 0.8, 'volume': 4));
 			action_msg(player(), (--@currentAmmo).' / '.@maxAmmo);
 			@newitem = pinv(player(), @slot);
 			if(@newitem && @newitem['name'] == 'IRON_HOE') {
@@ -36,7 +36,7 @@ bind('player_interact', array('id': @id.'battlerifle'), array('item': 292), @eve
 			set_timeout(50, closure(){
 				if(pheld_slot() == @slot) {
 					_weapon_hit_scan(player(), 84, 3.87, array('tracerparticle': 'VOID_FOG', 'hitparticle': 'LARGE_SMOKE'), @pvp);
-					play_sound(ploc(), array('sound': 'FIREWORK_BLAST', 'pitch': 0.8, 'volume': 4));
+					play_sound(ploc(), array('sound': 'ENTITY_FIREWORK_ROCKET_BLAST', 'pitch': 0.8, 'volume': 4));
 					action_msg(player(), (--@currentAmmo).' / '.@maxAmmo);
 					@newitem = pinv(player(), @slot);
 					if(@newitem && @newitem['name'] == 'IRON_HOE') {
@@ -44,10 +44,10 @@ bind('player_interact', array('id': @id.'battlerifle'), array('item': 292), @eve
 						set_pinv(player(), @slot, @newitem);
 					}
 					if(@currentAmmo <= 0 && @maxAmmo > 0) {
-						play_sound(ploc(), array('sound': 'DOOR_OPEN', 'pitch': 2));
+						play_sound(ploc(), array('sound': 'BLOCK_WOODEN_DOOR_OPEN', 'pitch': 2));
 						set_pcooldown(@item['name'], 1900 / 50);
 						set_timeout(1900, closure(){
-							play_sound(ploc(), array('sound': 'DOOR_CLOSE', 'pitch': 2));
+							play_sound(ploc(), array('sound': 'BLOCK_WOODEN_DOOR_CLOSE', 'pitch': 2));
 							@amount = min(@maxAmmo, 36);
 							@currentAmmo = @amount;
 							@maxAmmo -= @amount;

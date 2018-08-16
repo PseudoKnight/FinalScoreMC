@@ -180,7 +180,7 @@ proc _hoops_start() {
 }
 
 proc _hoops_boo() {
-	_hoops_cheer(5, false, array('VILLAGER_NO', 'ENTITY_VINDICATION_ILLAGER_AMBIENT'));
+	_hoops_cheer(5, false, array('ENTITY_VILLAGER_NO', 'ENTITY_VINDICATOR_AMBIENT'));
 }
 
 proc _hoops_cheer(@count = 15, @jump = true, @sound = array('ENTITY_VILLAGER_YES', 'ENTITY_ILLUSIONER_AMBIENT')) {

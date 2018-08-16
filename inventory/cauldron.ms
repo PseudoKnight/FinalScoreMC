@@ -59,8 +59,8 @@ bind('player_interact', null, array('block': 'CAULDRON', 'button': 'right'), @ev
 		@loc['x'] += 0.5;
 		@loc['y'] += 1;
 		@loc['z'] += 0.5;
-		play_effect(@loc, 'SPLASH', array('particleCount': 10, 'offsetX': 0.15, 'offsetZ': 0.15));
-		play_sound(@loc, array('sound': 'SPLASH', 'pitch': 2, 'volume': 0.3));
+		spawn_particle(@loc, array('particle': 'WATER_SPLASH', 'count': 10, 'xoffset': 0.15, 'zoffset': 0.15));
+		play_sound(@loc, array('sound': 'ENTITY_GENERIC_SPLASH'', 'pitch': 2, 'volume': 0.3));
 		cancel();
 		if(@item['qty'] == 1) {
 			set_pinv(player(), @slot, @newItem);

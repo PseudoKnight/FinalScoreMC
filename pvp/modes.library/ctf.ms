@@ -48,12 +48,12 @@ bind('item_pickup', array('id': @id.'flagpickup'), null, @e, @id) {
 			_pvp_msg(@pvp, color('gray').'[PVP] '
 				.@pvp['arena']['team'][@flag]['color'].player().color('r').' returned the '
 				.@pvp['arena']['team'][@flag]['color'].'flag');
-			play_sound(ploc(), array('sound': 'ENDERDRAGON_WINGS', 'pitch': 0));
+			play_sound(ploc(), array('sound': 'ENTITY_ENDER_DRAGON_FLAP', 'pitch': 0));
 		} else {
 			cancel();
 			@heldflag = _flag(pinv(player(), 103));
 			if(!is_null(@heldflag)) {
-				play_sound(@pvp['arena']['ctfflag'][@flag], array('sound': 'ZOMBIE_METAL', 'volume': 3));
+				play_sound(@pvp['arena']['ctfflag'][@flag], array('sound': 'ENTITY_ZOMBIE_ATTACK_IRON_DOOR', 'volume': 3));
 				@pvp['team'][@flag]['score']++;
 				set_pscore('captures', @pvp['arena']['team'][@flag]['name'], @pvp['team'][@flag]['score'], @id)
 				set_pinv(player(), 103, null);
@@ -77,7 +77,7 @@ bind('item_pickup', array('id': @id.'flagpickup'), null, @e, @id) {
 		_pvp_msg(@pvp, color('gray').'[PVP] '
 			.@pvp['arena']['team'][if(@flag, 0, 1)]['color'].player().color('r').' picked up the '
 			.@pvp['arena']['team'][@flag]['color'].'flag');
-		play_sound(ploc(), array('sound': 'ENDERDRAGON_WINGS', 'volume': 3));
+		play_sound(ploc(), array('sound': 'ENTITY_ENDER_DRAGON_FLAP', 'volume': 3));
 	}
 }
 

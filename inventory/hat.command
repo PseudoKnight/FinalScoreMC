@@ -26,13 +26,14 @@ register_command('hat', array(
 		}
 		@loc = ploc();
 		play_sound(@loc, array('sound': 'ENTITY_CHICKEN_EGG', 'category': 'PLAYERS'));
-		play_effect(location_shift(@loc, 'up', 2.7), 'CLOUD', array(
-			'particleCount': 10,
-			'offsetX': 0.5,
-			'offsetY': 0.5,
-			'offsetZ': 0.5,
-			'speed': 0)
-		);
+		spawn_particle(location_shift(@loc, 'up', 2.7), array(
+			'particle': 'CLOUD',
+			'count': 10,
+			'xoffset': 0.5,
+			'yoffset': 0.5,
+			'zoffset': 0.5,
+			'speed': 0,
+		));
 		@messages = array('Fancy!', 'Stylin\'!', 'Groovy!', 'Lookin\' good!', 'Tasteful!', 'Awesome!', 'Rad!', 'Cool!');
 		title('', color(6).array_rand(@messages, 1, false)[0], 10, 40, 10);
 	}

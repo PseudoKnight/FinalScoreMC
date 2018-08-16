@@ -1,7 +1,7 @@
 switch(@action) {
 case 'load':
 	bind('player_move', array('id': @player.'move'), array('player': @player, 'threshold': 2), @event) {
-		play_sound(ploc(), array('sound': 'ENTITY_IRONGOLEM_STEP'));
+		play_sound(ploc(), array('sound': 'ENTITY_IRON_GOLEM_STEP'));
 	}
 	
 case 'powerup':

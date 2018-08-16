@@ -14,7 +14,7 @@ register_command('note', array(
 			die();
 		}
 	
-		@sound = 'BLOCK_NOTE_BLOCK_PIANO';
+		@sound = 'BLOCK_NOTE_BLOCK_HARP';
 		switch(get_block(location_shift(@l, 'down'))) {
 			case 'STONE':
 				@sound = 'BLOCK_NOTE_BLOCK_BASSDRUM';

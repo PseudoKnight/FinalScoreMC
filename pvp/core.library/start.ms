@@ -390,7 +390,7 @@ proc _pvp_start(@pvp, @id){
 	});
 	_click_tell(@nonplayers, array('&7[PVP] ', array('&b[Click to Spectate '.@title.']', '/pvp spectate '.@id)));
 
-	play_sound(@arena['lobby'], array('sound': 'WITHER_SPAWN', 'pitch': 1.5, 'volume': 3, 'category': 'VOICE'));
+	play_sound(@arena['lobby'], array('sound': 'ENTITY_WITHER_SPAWN', 'pitch': 1.5, 'volume': 3, 'category': 'VOICE'));
 
 	_add_activity('pvp'.@id, @title);
 
@@ -418,7 +418,7 @@ proc _pvp_start(@pvp, @id){
 		@timeleft[0] -= 1;
 		if(@timeleft[0] > 0) {
 			if(@timeleft[0] <= 5) {
-				play_sound(@arena['lobby'], array('sound': 'NOTE_PLING', 'pitch': 1, 'volume': 3));
+				play_sound(@arena['lobby'], array('sound': 'BLOCK_NOTE_BLOCK_PLING', 'pitch': 1, 'volume': 3));
 				update_bar(@id, array('percent': (6 - @timeleft[0]) / 6));
 				foreach(@p in array_keys(@pvp['players'])) {
 					try {

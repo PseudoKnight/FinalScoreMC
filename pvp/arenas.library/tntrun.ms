@@ -55,7 +55,7 @@ proc _load_events(@id) {
 					@vector['y'] += 0.1;
 					try {
 						set_entity_velocity(@rider, @vector);
-						play_sound(ploc(), array('sound': 'ENTITY_IRONGOLEM_THROW'));
+						play_sound(ploc(), array('sound': 'ENTITY_IRON_GOLEM_ATTACK'));
 					} catch(BadEntityException @ex) {
 						// it done blown up!
 					}

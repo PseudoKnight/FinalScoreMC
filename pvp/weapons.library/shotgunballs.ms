@@ -23,10 +23,10 @@ bind('player_interact', array('id': @id.'shotgunshoot'), array('itemname': 'SNOW
 			}
 		}
 	});
-	play_sound(ploc(), array('sound': 'ZOMBIE_WOOD', 'pitch': 1.5, 'volume': 2));
-	play_sound(ploc(), array('sound': 'EXPLODE', 'pitch': 2, 'volume': 2));
+	play_sound(ploc(), array('sound': 'ENTITY_ZOMBIE_ATTACK_WOODEN_DOOR', 'pitch': 1.5, 'volume': 2));
+	play_sound(ploc(), array('sound': 'ENTITY_GENERIC_EXPLODE', 'pitch': 2, 'volume': 2));
 	_weapon_cooldown(player(), 1100, 'SLIME_BALL', closure(){
-		play_sound(ploc(), array('sound': 'PISTON_RETRACT', 'pitch': 1.5));
+		play_sound(ploc(), array('sound': 'BLOCK_PISTON_CONTRACT', 'pitch': 1.5));
 	});
 }
 array_push(@pvp['binds'], @id.'shotgundamage');

@@ -51,7 +51,7 @@ proc _class(@action, @player, @classname, @pvp) {
 				set_peffect(@player, 16, 0, 1, true);
 			}
 			set_peffect(@player, 10, 0, 8, true);
-			play_sound(ploc(@player), array('sound': 'enderman_teleport', 'pitch': 2), @player);
+			play_sound(ploc(@player), array('sound': 'entity_enderman_teleport', 'pitch': 2), @player);
 			if(array_index_exists(@class, 'ammo')) {
 				@inv = pinv(@player);
 				foreach(@slot: @item in @class['ammo']) {
@@ -209,7 +209,7 @@ proc _class_select(@id, @pvp) {
 					}
 				}
 			}
-			play_sound(ploc(), array('sound': 'CLICK'));
+			play_sound(ploc(), array('sound': 'UI_BUTTON_CLICK'));
 			consume();
 			cancel();
 

@@ -358,7 +358,7 @@ if(array_index_exists(@pvp['arena'], 'mobprotect')) {
 				set_pscore('mobhealth', @pvp['arena']['team'][@team]['name'], ceil(@health), @id);
 				foreach(@p: @player in @pvp['players']) {
 					if(@player['team'] == @team) {
-						play_sound(ploc(@p), array('sound': 'NOTE_PLING', 'pitch': 0.5 + (1.5 * (@health / 100))), @p);
+						play_sound(ploc(@p), array('sound': 'BLOCK_NOTE_BLOCK_PLING', 'pitch': 0.5 + (1.5 * (@health / 100))), @p);
 					}
 				}
 			}

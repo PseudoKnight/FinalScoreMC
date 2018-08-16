@@ -12,7 +12,7 @@ bind('player_teleport', array('id': @id.'endernades', 'priority': 'highest'), ar
 	
 	@a = @e['to'];
 	play_effect(@a, 'EXPLOSION_LARGE');
-	play_sound(@a, associative_array('sound': 'EXPLODE', 'volume': 3));
+	play_sound(@a, associative_array('sound': 'ENTITY_GENERIC_EXPLODE', 'volume': 3));
 	foreach(@p in players_in_radius(@a, 7)) {
 		if(pmode(@p) == 'SPECTATOR') {
 			continue();
@@ -47,8 +47,8 @@ bind('player_interact', array('id': @id.'endernadesreload', 'priority': 'highest
 	}
 	cancel()
 	shoot_projectile(player(), 'ENDER_PEARL')
-	play_sound(ploc(), array('sound': 'SHOOT_ARROW', 'pitch': 0.5))
+	play_sound(ploc(), array('sound': 'ENTITY_ARROW_SHOOT', 'pitch': 0.5))
 	_weapon_cooldown(player(), 2500, 'MAGMA_CREAM', closure(){
-		play_sound(ploc(), array('sound': 'IRONGOLEM_THROW'));
+		play_sound(ploc(), array('sound': 'ENTITY_IRON_GOLEM_ATTACK'));
 	});
 }

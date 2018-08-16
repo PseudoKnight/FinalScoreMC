@@ -156,5 +156,5 @@ bind('note_play', null, null, @event) {
 	));
 	@event['location']['x'] += 0.5;
 	@event['location']['z'] += 0.5;
-	play_effect(location_shift(@event['location'], 'up'), 'note');
+	spawn_particle(location_shift(@event['location'], 'up'), 'NOTE');
 }

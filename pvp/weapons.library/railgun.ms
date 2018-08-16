@@ -7,7 +7,7 @@ bind('player_interact', array('id': @id.'railgun'), array('itemname': 'SUNFLOWER
 
 	_weapon_hit_scan(player(), 112, 16, array('tracerparticle': 'CRIT', 'hitparticle': 'LAVA_POP'), @pvp);
 
-	play_sound(ploc(), array('sound': 'ZOMBIE_REMEDY', 'pitch': 1.8, 'volume': 3));
+	play_sound(ploc(), array('sound': 'ENTITY_ZOMBIE_VILLAGER_CURE', 'pitch': 1.8, 'volume': 3));
 	@item = pinv(player(), null);
 	@item['qty'] -= 1;
 	queue_clear(player().'railgun');

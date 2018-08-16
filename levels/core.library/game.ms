@@ -209,7 +209,7 @@ proc _level_start(@level) {
 							@item['qty'] = 1;
 							pgive_item(@item);
 							set_plevel(plevel() - @cost);
-							play_sound(ploc(), array('sound': 'ANVIL_LAND', 'pitch': 2, 'volume': 0.5), player());
+							play_sound(ploc(), array('sound': 'BLOCK_ANVIL_LAND', 'pitch': 2, 'volume': 0.5), player());
 						}
 						die();
 					}
@@ -230,7 +230,7 @@ proc _level_start(@level) {
 					@xp -= @levels;
 					set_pexp(integer(@xp * 100));
 					set_pinv(player(), @event['slot'], null);
-					play_sound(ploc(), array('sound': 'LEVEL_UP', 'pitch': 2, 'volume': 0.5), player());
+					play_sound(ploc(), array('sound': 'ENTITY_PLAYER_LEVELUP', 'pitch': 2, 'volume': 0.5), player());
 				}
 			}
 		}

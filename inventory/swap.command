@@ -30,14 +30,14 @@ register_command('swap', array(
 								set_pcooldown('CLOCK', 2000 / 50);
 								relative_teleport(array(0, 0, @z, @loc['world']));
 								set_peffect(player(), 25, 0, 0);
-								play_sound(@loc, array('sound': 'entity_illusioner_mirror_move', 'pitch': 1.2));
+								play_sound(@loc, array('sound': 'ENTITY_ILLUSIONER_MIRROR_MOVE', 'pitch': 1.2));
 								play_sound(@loc, array('sound': 'ENTITY_WITHER_SHOOT', 'pitch': 1.3, 'volume': 0.1));
 							}
 						});
 					} else {
 						@loc = ploc();
 						play_sound(@loc, array('sound': 'ENTITY_ZOMBIE_ATTACK_IRON_DOOR', 'pitch': 2, 'volume': 0.6));
-						play_sound(@loc, array('sound': 'block_fire_extinguish', 'pitch': 2));
+						play_sound(@loc, array('sound': 'BLOCK_FIRE_EXTINGUISH', 'pitch': 2));
 					}
 				}
 			}

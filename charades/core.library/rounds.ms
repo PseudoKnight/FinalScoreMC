@@ -82,7 +82,7 @@ proc _queue_next_builder() {
 					@timestamp = simple_date('h:mm');
 					@name = display_name();
 					if(_get_match(@message, @charades['build'])) {
-						play_sound(ploc(), array('sound': 'LEVEL_UP'));
+						play_sound(ploc(), array('sound': 'ENTITY_PLAYER_LEVELUP'));
 						_regionmsg('charades', colorize("&8@timestamp [Charades] @{name}&8: &r@message"));
 						_end_build(player(), @charades['build']);
 					} else {

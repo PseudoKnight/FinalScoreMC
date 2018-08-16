@@ -260,7 +260,7 @@ proc _pvp_start_match(@id) {
 					@id = drop_item(@item['loc'], @item['item'], false);
 					try {
 						set_entity_velocity(@id, array(0, 0, 0));
-						play_sound(@item['loc'], array('sound': 'ENDERMAN_TELEPORT', 'pitch': 1.5));
+						play_sound(@item['loc'], array('sound': 'ENTITY_ENDERMAN_TELEPORT', 'pitch': 1.5));
 						make_effect(@item['loc'], 'ENDER_SIGNAL');
 						@itemspawn[0] = @id;
 						@itemspawn[1] = time();
@@ -307,7 +307,7 @@ proc _pvp_start_match(@id) {
 							_pvp_end_match(@id, @pvp['team'][if(@team, 0, 1)]['players']);
 							die();
 						}
-						play_sound(@loc, array('sound': 'ZOMBIE_UNFECT', 'volume': 5), @pvp['team'][@team]['players']);
+						play_sound(@loc, array('sound': 'ENTITY_ZOMBIE_VILLAGER_CONVERTED', 'volume': 5), @pvp['team'][@team]['players']);
 					}
 				}
 			}

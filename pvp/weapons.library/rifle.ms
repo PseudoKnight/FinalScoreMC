@@ -7,7 +7,7 @@ bind('player_interact', array('id': @id.'riflereload'), array('item': 265), @eve
 	@ammo['qty']--;
 	set_pinv(player(), null, null);
 	@ammoslot = pheld_slot();
-	play_sound(ploc(), array('sound': 'DOOR_OPEN', 'pitch': 2));
+	play_sound(ploc(), array('sound': 'BLOCK_WOODEN_DOOR_OPEN', 'pitch': 2));
 	foreach(@weaponslot: @weapon in pinv()) {
 		if(@weapon && @weapon['name'] == 'STONE_HOE') {
 			// Found weaponslot
@@ -27,7 +27,7 @@ bind('player_interact', array('id': @id.'riflereload'), array('item': 265), @eve
 				@weapon['data'] = 10;
 				@inv[@weaponslot] = @weapon;
 				set_pinv(player(), @inv);
-				play_sound(ploc(), array('sound': 'DOOR_CLOSE', 'pitch': 2))
+				play_sound(ploc(), array('sound': 'BLOCK_WOODEN_DOOR_CLOSE', 'pitch': 2))
 			}
 		});
 	}
@@ -47,9 +47,9 @@ bind('player_interact', array('id': @id.'rifle'), array('item': 291), @event, @p
 	set_pinv(player(), null, @item);
 	
 	_weapon_hit_scan(player(), 64, 1.7, array('tracerparticle': 'VOID_FOG', 'hitparticle': 'LARGE_SMOKE'), @pvp);
-	play_sound(ploc(), array('sound': 'FIREWORK_BLAST', 'pitch': 0.7, 'volume': 3));
+	play_sound(ploc(), array('sound': 'ENTITY_FIREWORK_ROCKET_BLAST', 'pitch': 0.7, 'volume': 3));
 	set_timeout(50, closure(){
 		_weapon_hit_scan(player(), 64, 3.4, array('tracerparticle': 'VOID_FOG', 'hitparticle': 'LARGE_SMOKE'), @pvp);
-		play_sound(ploc(), array('sound': 'FIREWORK_BLAST', 'pitch': 0.7, 'volume': 3));
+		play_sound(ploc(), array('sound': 'ENTITY_FIREWORK_ROCKET_BLAST', 'pitch': 0.7, 'volume': 3));
 	});
 }
