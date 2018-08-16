@@ -17,7 +17,7 @@ bind('player_interact', null, array('button': 'right'), @event) {
 		die('You are not allowed to chisel this.');
 	}
 	
-	@match = reg_match('\\[type\\=([^,]+)\\,', get_blockdata_string(@location));
+	@match = reg_match('type\\=([a-z]+)', get_blockdata_string(@location));
 	if(!@match || @match[1] != 'double') {
 		die();
 	}

@@ -40,6 +40,9 @@ set_cron('*/5 * * * *', closure(){
 				export('mumbleCount', @count);
 				if(@count != 0) {
 					broadcast(@msg);
+					if(extension_exists('CHDiscord')) {
+						discord_broadcast(@msg);
+					}
 				}
 			});
 		}

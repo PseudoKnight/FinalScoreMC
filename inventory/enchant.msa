@@ -44,7 +44,7 @@
 	}
 	@level = integer(clamp($level, 1, 99));
 	if(array_index_exists(@enchants, to_lower($type))) {
-		enchant_inv_unsafe(null, @enchants[to_lower($type)], @level);
+		enchant_item(null, @enchants[to_lower($type)], @level);
 	} else {
 		msg(color('red').'Available enchantments: '.array_keys(@enchants));
 	}

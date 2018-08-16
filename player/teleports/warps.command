@@ -53,7 +53,7 @@ register_command('warps', array(
 						msg(color(7).'['.to_upper(_worldname(@worldname)).'] '.color(15).@worldwarps);
 					}
 				}
-				/*
+
 			case 'resetmarkers':
 				if(!has_permission('group.admin')) {
 					die(color('gold').'You do not have permission to use this command.');
@@ -87,7 +87,6 @@ register_command('warps', array(
 				}
 		
 				msg(color('green').'Done.');
-				*/
 		
 			default:
 				return(false);

@@ -63,7 +63,7 @@ bind('block_dispense', null, array('type': 'DISPENSER'), @event, @ignored = arra
 		}
 		cancel();
 		@loc = @event['location'][];
-		@facing = reg_match('facing\\=([^,])\\,', get_blockdata_string(@loc))[1];
+		@facing = reg_match('facing\\=([a-z]+)', get_blockdata_string(@loc))[1];
 		switch(@facing) {
 			case 'down':
 				@loc['y'] -= 1;
