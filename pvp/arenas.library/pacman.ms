@@ -18,7 +18,7 @@ proc _load_events(@id) {
 		}
 		cancel();
 		if(get_pteam(player(), @id)['name'] == 'PAC-MAN') {
-			if(@block == '147:0') {
+			if(@block == 'LIGHT_WEIGHTED_PRESSURE_PLATE') {
 				@dots = get_pscore('dots', 'PAC-MAN', @id) - 1;
 				set_pscore('dots', 'PAC-MAN', @dots, @id);
 				@pvp['stats'][player()]['pickups']++;
@@ -26,7 +26,7 @@ proc _load_events(@id) {
 				if(@dots == 0) {
 					_pvp_end_match(@id, @pvp['team'][0]['players']);
 				}
-			} else if(@block == '148:0') {
+			} else if(@block == 'HEAVY_WEIGHTED_PRESSURE_PLATE') {
 				play_named_sound(@event['location'], array('sound': 'entity.illusion_illager.prepare_blindness', 'pitch': 1.4, 'volume': 3));
 				set_peffect(player(), 16, 1, 15);
 				set_block(location_shift(@event['location'], 'up', 27), 'AIR');

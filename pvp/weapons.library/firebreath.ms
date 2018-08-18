@@ -1,7 +1,7 @@
 array_push(@pvp['binds'], @id.'firebreath')
-bind('player_interact', array('id': @id.'firebreath'), array('item': 377, 'button': 'right'), @e, @id) {
+bind('player_interact', array('id': @id.'firebreath'), array('itemname': 'MAGMA_CREAM', 'button': 'right'), @e, @id) {
 	@pvp = import('pvp'.@id);
-	if(!array_index_exists(@pvp['players'], player()) || pinfo(player(), 6) != @e['item']) {
+	if(!array_index_exists(@pvp['players'], player()) || pinfo(player(), 6) != @e['item']['name']) {
 		die();
 	}
 

@@ -492,7 +492,7 @@ if(array_contains(@pvp['arena']['flags'], 'noinventory')) {
 
 if(array_contains(@pvp['arena']['flags'], 'rallycall')) {
 	array_push(@pvp['binds'], @id.'rallycall')
-	bind('player_interact', array('id': @id.'rallycall', 'priority': 'HIGH'), array('item': 401, 'button': 'right'), @e, @id) {
+	bind('player_interact', array('id': @id.'rallycall', 'priority': 'HIGH'), array('itemname': 'FIREWORK_ROCKET', 'button': 'right'), @e, @id) {
 		@pvp = import('pvp'.@id)
 		if(!array_index_exists(@pvp['players'], player())
 		|| @e['action'] !== 'right_click_block',
@@ -579,7 +579,7 @@ if(array_index_exists(@pvp['arena'], 'powerup')) {
 
 if(array_contains(@pvp['arena']['flags'], 'nobottles')) {
 	array_push(@pvp['binds'], @id.'nobottles')
-	bind('player_consume', array('id': @id.'nobottles'), array('item': 373), @event, @id) {
+	bind('player_consume', array('id': @id.'nobottles'), array('itemname': 'POTION'), @event, @id) {
 		@pvp = import('pvp'.@id)
 		if(!array_index_exists(@pvp['players'], player()),
 			die())

@@ -76,7 +76,7 @@ proc _redraw_selection() {
 	});
 }
 
-bind('player_interact', null, array('item': 286), @event) {
+bind('player_interact', null, array('itemname': 'GOLDEN_AXE'), @event) {
 	if(!array_index_exists(@event, 'location') || @event['location']['world'] !== 'dev') {
 		die();
 	}

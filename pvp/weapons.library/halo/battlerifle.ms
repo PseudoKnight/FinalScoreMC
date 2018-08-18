@@ -1,6 +1,6 @@
 @pvp['binds'][] = @id.'battlerifle';
-bind('player_interact', array('id': @id.'battlerifle'), array('item': 292), @event, @pvp) {
-	if(!array_index_exists(@pvp['players'], player()) || pinfo(player(), 6) != @event['item']){
+bind('player_interact', array('id': @id.'battlerifle'), array('itemname': 'IRON_HOE'), @event, @pvp) {
+	if(!array_index_exists(@pvp['players'], player()) || pinfo(player(), 6) != @event['item']['name']){
 		die();
 	}
 	@slot = pheld_slot();

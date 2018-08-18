@@ -1,7 +1,7 @@
 switch(@action) {
 case 'load':
-	bind('player_interact', array('id': @player.'blind'), array('player': @player, 'item': 290, 'button': 'right'), @e, @pvp) {
-		if(pinfo(player(), 6) != @e['item']) {
+	bind('player_interact', array('id': @player.'blind'), array('player': @player, 'itemname': 'WOODEN_HOE', 'button': 'right'), @e, @pvp) {
+		if(pinfo(player(), 6) != @e['item']['name']) {
 			die();
 		}
 		if(pcooldown('WOOD_HOE')) {

@@ -2,14 +2,21 @@ proc _load_events(@id) {
 	@pvp = import('pvp'.@id);
 	
 	array_push(@pvp['binds'], @id.'nodrops')
-	bind('item_spawn', array('id': @id.'nodrops'), array('item': 70), @e, @region = @pvp['arena']['region']) {
+	bind('item_spawn', array('id': @id.'nodrops'), array('itemname': 'STONE_PRESSURE_PLATE'), @e, @region = @pvp['arena']['region']) {
 		if(array_contains(sk_regions_at(@e['location']), @region)) {
 			cancel()
 		}
 	}
 
 	array_push(@pvp['binds'], @id.'limitentities')
-	bind('entity_change_block', array('id': @id.'limitentities'), array('from': 12), @e, @region = @pvp['arena']['region']) {
+	bind('entity_change_block', array('id': @id.'limitentities'), array('from': 'RED_SAND'), @e, @region = @pvp['arena']['region']) {
+		if(array_contains(sk_regions_at(@e['location']), @region)) {
+			entity_remove(@e['entity'])
+		}
+	}
+
+	array_push(@pvp['binds'], @id.'limitentities')
+	bind('entity_change_block', array('id': @id.'limitentities'), array('from': 'SAND'), @e, @region = @pvp['arena']['region']) {
 		if(array_contains(sk_regions_at(@e['location']), @region)) {
 			entity_remove(@e['entity'])
 		}

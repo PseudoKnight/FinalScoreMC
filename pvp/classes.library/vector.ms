@@ -1,6 +1,6 @@
 switch(@action) {
 case 'load':
-	bind('player_interact', array('id': @player.'interact'), array('player': @player, 'button': 'right', 'item': '292', 'hand': 'main_hand'), @e) {
+	bind('player_interact', array('id': @player.'interact'), array('player': @player, 'button': 'right', 'itemname': 'IRON_HOE', 'hand': 'main_hand'), @e) {
 		cancel();
 		if(get_block(ploc()) === 'AIR' || phunger() == 0) {
 			die();

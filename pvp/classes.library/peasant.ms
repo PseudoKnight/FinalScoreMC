@@ -88,13 +88,13 @@ case 'load':
 		}
 	}
 
-	bind('item_drop', array('id': @player.'hotdrop'), array('item': 393), @e, @pvp) {
+	bind('item_drop', array('id': @player.'hotdrop'), array('itemname': 'BAKED_POTATO'), @e, @pvp) {
 		if(array_index_exists(@pvp['players'], player())) {
 			cancel();
 		}
 	}
 
-	bind('item_pickup', array('id': @player.'hotpickup', 'priority': 'HIGH'), array('item': 111), @e, @pvp) {
+	bind('item_pickup', array('id': @player.'hotpickup', 'priority': 'HIGH'), array('itemname': 'LILY_PAD'), @e, @pvp) {
 		if(!array_index_exists(@pvp['players'], @e['player'])) {
 			die();
 		}
@@ -115,7 +115,7 @@ case 'load':
 		}
 	}
 
-	bind('player_consume', array('id': @player.'hoteat'), array('item': 393), @e, @player, @pvp) {
+	bind('player_consume', array('id': @player.'hoteat'), array('itemname': 'BAKED_POTATO'), @e, @player, @pvp) {
 		if(@player == @e['player']) {
 			set_timeout(50, closure(){
 				_prime_hot_potato(player(), player(), @e['item'], @pvp);

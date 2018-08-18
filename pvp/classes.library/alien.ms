@@ -1,7 +1,7 @@
 switch(@action) {
 case 'load':
 	bind('player_interact', array('id': @player.'plasmagun'), array('itemname': 'GLISTERING_MELON_SLICE', 'button': 'right', 'player': @player), @e) {
-		if(pinfo(player(), 6) != @e['item']) {
+		if(pinfo(player(), 6) != @e['item']['name']) {
 			die();
 		}
 		cancel();
@@ -35,7 +35,7 @@ case 'load':
 
 	bind('projectile_hit', array('id': @player.'hit'), array('type': 'ARROW'), @e, @shooter = puuid(@player)) {
 		if(@e['shooter'] == @shooter) {
-			play_effect(@e['location'], 'LAVA_POP', array('particleCount': 7, 'radius': 96));
+			spawn_particle(@e['location'], array('particle': 'LAVA', 'count': 7));
 			play_sound(@e['location'], array('sound': 'BLOCK_NOTE_BLOCK_BASSDRUM', 'pitch': 2, 'volume': 2));
 			play_sound(@e['location'], array('sound': 'BLOCK_FIRE_EXTINGUISH', 'pitch': 2, 'volume': 2));
 			try(entity_remove(@e['id']));
@@ -43,7 +43,7 @@ case 'load':
 	}
 
 	bind('player_interact', array('id': @player.'teleport'), array('itemname': 'ENDER_EYE', 'player': @player, 'button': 'right'), @e, @pvp) {
-		if(pinfo(player(), 6) != @e['item']) {
+		if(pinfo(player(), 6) != @e['item']['name']) {
 			die();
 		}
 		cancel();

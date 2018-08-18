@@ -159,13 +159,13 @@ proc _level_start(@level) {
 	}
 	
 	if(array_index_exists(@level['config'], 'shop')) {
-		bind('player_interact', array('id': 'openshop'.@level['region']), array('button': 'right', 'item': 388), @event, @level) {
+		bind('player_interact', array('id': 'openshop'.@level['region']), array('button': 'right', 'itemname': 'EMERALD'), @event, @level) {
 			if(array_contains(@level['players'], player()) && pworld() == @level['world']) {
 				popen_inventory('level'.@level['region']);
 			}
 		}
 		
-		bind('player_interact', array('id': 'resurrect'.@level['region']), array('button': 'right', 'item': 399), @event, @level) {
+		bind('player_interact', array('id': 'resurrect'.@level['region']), array('button': 'right', 'itemname': 'NETHER_STAR'), @event, @level) {
 			foreach(@p in players_in_radius(ploc(), 16)) {
 				if(pmode(@p) == 'SPECTATOR') {
 					set_pmode(@p, 'ADVENTURE');

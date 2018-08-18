@@ -523,15 +523,10 @@ proc _fw_task(@task, @state, @secs) {
 			if(!rand(4)) {
 				_fw_mobs('wolf:angry', 8);
 			}
-			bind('item_pickup', array('id': 'fwpickup'), array('item': 35), @e, @data = @colorindex) {
-				if(_fw_player(@e['player'])) {
-					if(@e['item']['data'] == @data) {
-						if(_fw_changeteam(player(), 'winners')) {
-							play_sound(ploc(), array('sound': 'ENTITY_ZOMBIE_ATTACK_IRON_DOOR'), player());
-						}
-					} else {
-						modify_event('item', null);
-						play_sound(ploc(), array('sound': 'entity_villager_no'), player());
+			bind('item_pickup', array('id': 'fwpickup'), null, @e, @color) {
+				if(_fw_player(@e['player']) && @e['item']['name'] == @color.'_WOOL') {
+					if(_fw_changeteam(player(), 'winners')) {
+						play_sound(ploc(), array('sound': 'ENTITY_ZOMBIE_ATTACK_IRON_DOOR'), player());
 					}
 				}
 			}

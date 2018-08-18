@@ -1,15 +1,15 @@
 array_push(@pvp['binds'], @id.'skullrockets')
-bind('player_interact', array('id': @id.'skullrockets'), array('item': 397, 'button': 'right'), @e, @id) {
+bind('player_interact', array('id': @id.'skullrockets'), array('itemname': 'WITHER_SKELETON_SKULL', 'button': 'right'), @e, @id) {
 	@pvp = import('pvp'.@id)
 	if(!array_index_exists(@pvp['players'], player())) {
 		die();
 	}
-	if(@e['item'] !== '397:1', die())
+	if(@e['item'] !== 'WITHER_SKELETON_SKULL', die())
 
 	@entity = shoot_projectile(player(), 'wither_skull');
 	@dir = entity_spec(@entity)['direction'];
 	set_entity_spec(@entity, array(direction: array(@dir['x'], @dir['y'], @dir['z'])));
 
-	ptake_item(array('name': 'SKULL_ITEM', 'data': 1));
+	ptake_item(array('name': 'WITHER_SKELETON_SKULL'));
 	cancel();
 }

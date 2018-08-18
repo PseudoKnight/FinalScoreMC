@@ -104,7 +104,7 @@ dev:
   teleports: true
   environment: NORMAL
   seed: 0
-  generator: 'CleanroomGenerator:14,air,1,sandstone:2,15,air,1,sandstone:2,15,air,1,sandstone:2,15,air,1,sandstone:2'
+  generator: 'CleanroomGenerator:14,air,1,smooth_sandstone,15,air,1,smooth_sandstone,15,air,1,smooth_sandstone,15,air,1,smooth_sandstone'
   spawning:
     ticks-per-monster-spawns: 0
     ticks-per-animal-spawns: 0

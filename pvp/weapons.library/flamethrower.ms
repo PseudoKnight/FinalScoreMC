@@ -1,7 +1,7 @@
 array_push(@pvp['binds'], @id.'flamethrower');
-bind('player_interact', array('id': @id.'flamethrower'), array('item': 379, 'button': 'right'), @e, @id) {
+bind('player_interact', array('id': @id.'flamethrower'), array('itemname': 'BREWING_STAND', 'button': 'right'), @e, @id) {
 	@pvp = import('pvp'.@id);
-	if(!array_index_exists(@pvp['players'], player()) || pinfo(player(), 6) != @e['item']) {
+	if(!array_index_exists(@pvp['players'], player()) || pinfo(player(), 6) != @e['item']['name']) {
 		die();
 	}
 	

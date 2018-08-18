@@ -1,6 +1,6 @@
 @pvp['binds'][] = @id.'riflereload';
-bind('player_interact', array('id': @id.'riflereload'), array('item': 265), @event, @pvp) {
-	if(!array_index_exists(@pvp['players'], player()) || pinfo(player(), 6) != @event['item']){
+bind('player_interact', array('id': @id.'riflereload'), array('itemname': 'IRON_INGOT'), @event, @pvp) {
+	if(!array_index_exists(@pvp['players'], player()) || pinfo(player(), 6) != @event['item']['name']){
 		die();
 	}
 	@ammo = pinv(player(), null);
@@ -34,8 +34,8 @@ bind('player_interact', array('id': @id.'riflereload'), array('item': 265), @eve
 }
 
 @pvp['binds'][] = @id.'rifle';
-bind('player_interact', array('id': @id.'rifle'), array('item': 291), @event, @pvp) {
-	if(!array_index_exists(@pvp['players'], player()) || pinfo(player(), 6) != @event['item']){
+bind('player_interact', array('id': @id.'rifle'), array('itemname': 'STONE_HOE'), @event, @pvp) {
+	if(!array_index_exists(@pvp['players'], player()) || pinfo(player(), 6) != @event['item']['name']){
 		die();
 	}
 	@item = pinv(player(), null);

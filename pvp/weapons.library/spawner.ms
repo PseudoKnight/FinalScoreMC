@@ -1,7 +1,10 @@
 array_push(@pvp['binds'], @id.'spawner')
-bind('player_interact', array('id': @id.'spawner', 'priority': 'HIGH'), array('button': 'right', 'item': 383), @e, @id) {
+bind('player_interact', array('id': @id.'spawner', 'priority': 'HIGH'), array('button': 'right'), @e, @id) {
 	@pvp = import('pvp'.@id);
-	if(!array_index_exists(@pvp['players'], player()) || pinfo(player(), 6) != @e['item']) {
+	if(!array_index_exists(@pvp['players'], player())
+	|| !@e['item']
+	|| !string_ends_with(@e['item']['name'], '_SPAWN_EGG')
+	|| pinfo(player(), 6) != @e['item']['name']) {
 		die();
 	}
 	cancel();

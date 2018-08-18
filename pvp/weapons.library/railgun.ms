@@ -1,7 +1,7 @@
 array_push(@pvp['binds'], @id.'railgun');
 bind('player_interact', array('id': @id.'railgun'), array('itemname': 'SUNFLOWER', 'button': 'right'), @e, @id) {
 	@pvp = import('pvp'.@id);
-	if(!array_index_exists(@pvp['players'], player()) || pinfo(player(), 6) != @e['item']) {
+	if(!array_index_exists(@pvp['players'], player()) || pinfo(player(), 6) != @e['item']['name']) {
 		die();
 	}
 

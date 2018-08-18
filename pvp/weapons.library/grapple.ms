@@ -133,7 +133,7 @@ bind('entity_damage', array('id': @id.'grappledamage'), array('type': 'PLAYER', 
 }
 
 array_push(@pvp['binds'], @id.'grapplepickup');
-bind('item_pickup', array('id': @id.'grapplepickup'), array('item': 262), @event, @pvp) {
+bind('item_pickup', array('id': @id.'grapplepickup'), array('itemname': 'ARROW'), @event, @pvp) {
 	if(array_index_exists(@pvp['players'], player()) && psneaking()) {
 		cancel();
 	}

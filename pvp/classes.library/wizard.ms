@@ -1,7 +1,7 @@
 switch(@action) {
 case 'load':
-	bind('player_interact', array('id': @player.'lightning'), array('item': 369, 'button': 'right', 'player': @player), @e, @pvp) {
-		if(pinfo(player(), 6) != @e['item']) {
+	bind('player_interact', array('id': @player.'lightning'), array('itemname': 'BLAZE_ROD', 'button': 'right', 'player': @player), @e, @pvp) {
+		if(pinfo(player(), 6) != @e['item']['name']) {
 			die();
 		}
 		@trace = ray_trace(player(), 96);
@@ -47,8 +47,8 @@ case 'load':
 		}, player().'lightning')
 	}
 
-	bind('player_interact', array('id': @player.'woosh'), array('item': 288, 'button': 'right', 'player': @player), @e, @pvp) {
-		if(pinfo(player(), 6) != @e['item']) {
+	bind('player_interact', array('id': @player.'woosh'), array('itemname': 'FEATHER', 'button': 'right', 'player': @player), @e, @pvp) {
+		if(pinfo(player(), 6) != @e['item']['name']) {
 			die();
 		}
 		@loc1 = ploc();

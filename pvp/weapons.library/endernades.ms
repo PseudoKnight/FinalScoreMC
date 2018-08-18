@@ -40,9 +40,9 @@ bind('player_teleport', array('id': @id.'endernades', 'priority': 'highest'), ar
 }
 
 array_push(@pvp['binds'], @id.'endernadesreload')
-bind('player_interact', array('id': @id.'endernadesreload', 'priority': 'highest'), array('item': 368, 'button': 'right'), @e, @id) {
+bind('player_interact', array('id': @id.'endernadesreload', 'priority': 'highest'), array('itemname': 'ENDER_PEARL', 'button': 'right'), @e, @id) {
 	@pvp = import('pvp'.@id)
-	if(!array_index_exists(@pvp['players'], player()) || pinfo(player(), 6) != @e['item']) {
+	if(!array_index_exists(@pvp['players'], player()) || pinfo(player(), 6) != @e['item']['name']) {
 		die();
 	}
 	cancel()

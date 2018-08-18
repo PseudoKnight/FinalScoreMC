@@ -8,7 +8,7 @@ bind('item_held', array('id': @id.'tracker'), null, @event, @id) {
 	@item = pinv(player(), @event['to']);
 	if(@item && @item['name'] == 'COMPASS') {
 		set_interval(1000, 50, closure(){
-			if(pinfo(player(), 6) === '345:0') {
+			if(pinfo(player(), 6) === 'COMPASS') {
 				foreach(@p: @player in @pvp['players']) {
 					if(@player['team'] != @pvp['players'][player()]['team']) {
 						@loc1 = ploc();

@@ -605,11 +605,11 @@ register_command('arena', array(
 						msg(color('yellow').'No chestspawn found for that location.');
 					
 					case 'spawn':
-						@block = '35:14';
+						@block = 'RED_WOOL';
 						foreach(@spawn in @arena['spawn'][0]) {
 							psend_block_change(@spawn, @block);
 						}
-						@block = '35:11';
+						@block = 'BLUE_WOOL';
 						foreach(@spawn in @arena['spawn'][1]) {
 							psend_block_change(@spawn, @block);
 						}
