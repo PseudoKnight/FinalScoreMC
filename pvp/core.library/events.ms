@@ -272,7 +272,7 @@ bind('player_death', array('priority': 'high', 'id': @id.'death'), null, @e, @id
 	foreach(@item in @drops) {
 		drop_item(@location, @item);
 	}
-	@deadplayer = _spawn_mob('deadplayer', @location);
+	@deadplayer = spawn_entity('SKELETON', 1, @location)[0];
 	set_entity_health(@deadplayer, 0);
 	
 	modify_event('drops', null);

@@ -521,7 +521,7 @@ proc _fw_task(@task, @state, @secs) {
 				spawn_mob('SHEEP:'.@colors[rand(16)], 1, _fw_loc())
 			}
 			if(!rand(4)) {
-				_fw_mobs('wolf:angry', 8);
+				_fw_mobs('wolf', 8);
 			}
 			bind('item_pickup', array('id': 'fwpickup'), null, @e, @color) {
 				if(_fw_player(@e['player']) && @e['item']['name'] == @color.'_WOOL') {
@@ -639,7 +639,6 @@ proc _fw_task(@task, @state, @secs) {
 					pgive_item(@p, array('name': 'FISHING_ROD', 'data': 60));
 				}
 			}
-			_fw_mobs('speedypig', 1);
 			@region = sk_region_info('frogware', 'custom')[0];
 			bind('player_fish', array('id': 'fwfish'), array('state': '/(CAUGHT_ENTITY|CAUGHT_FISH)/'), @e) {
 				if(_fw_player(@e['player'])) {

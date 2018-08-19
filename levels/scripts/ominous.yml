@@ -11,7 +11,7 @@ shop:
         name: DIAMOND_SWORD
         cost: 4
     3:
-        name: CARROT_ITEM
+        name: CARROT
         cost: 1
     4:
         name: GOLDEN_APPLE
@@ -100,16 +100,7 @@ waves:
               pos: center
             - type: ZOMBIE
               pos: door
-            - type: ZOMBIE
-              pos: door
-            - type: ZOMBIE
-              pos: door
-            - type: ZOMBIE
-              pos: door
-            - type: ZOMBIE
-              pos: door
-            - type: ZOMBIE
-              pos: door
+              count: 6
             - type: ZOMBIE
               pos: door
               effects:
@@ -128,100 +119,70 @@ waves:
         subtitle: 'Yes. I see it now. The terror.'
         mobs:
             - type: SPIDER
+              count: 7
               pos: spider
-            - type: SPIDER
-              pos: spider
-            - type: SPIDER
-              pos: spider
-            - type: SPIDER
-              pos: spider
-            - type: SPIDER
-              pos: spider
-            - type: SPIDER
-              pos: spider
-            - type: SPIDER
-              pos: spider
-            - type: CAVESPIDER
+            - type: CAVE_SPIDER
               pos: spider
     9:
         subtitle: 'Aha! Poison is what you fear!'
         duplicate: 5
         mobs:
-            - type: CAVESPIDER
+            - type: CAVE_SPIDER
               pos: spider
     10:
         title: 'Fine. I will be merciful.'
         subtitle: 'My butler will show you to the door.'
         mobs:
-            - type: 'SLIME:1'
+            - type: SLIME:
               name: 'GEORGE'
               pos: center
+              tags:
+                  size: 1
     11:
         music: 'music.nether'
         title: 'GEORGE!'
         subtitle: 'Now I must hire a new butler!'
         mobs:
-            - 'SLIME:4'
-            - 'SLIME:2'
-            - 'SLIME:2'
-            - 'SLIME:2'
-            - 'SLIME:2'
-            - 'SLIME:2'
-            - 'SLIME:2'
-            - 'SLIME:2'
-            - 'SLIME:2'
-            - 'SLIME:2'
-            - 'SLIME:2'
-            - 'SLIME:2'
-            - 'SLIME:2'
-            - 'SLIME:2'
-            - 'SLIME:2'
+            - type: SLIME
+              tags:
+                  size: 4
+            - type: SLIME
+              count: 14
+              tags:
+                  size: 2
     12:
         subtitle: 'Thanks for culling the less worthy.'
         mobs:
-            - 'MAGMACUBE:4'
-            - 'MAGMACUBE:2'
-            - 'MAGMACUBE:2'
-            - 'MAGMACUBE:2'
-            - 'MAGMACUBE:2'
-            - 'MAGMACUBE:2'
-            - 'MAGMACUBE:2'
-            - 'MAGMACUBE:2'
-            - 'MAGMACUBE:2'
-            - 'MAGMACUBE:2'
-            - 'MAGMACUBE:2'
-            - 'MAGMACUBE:2'
-            - 'MAGMACUBE:2'
-            - 'MAGMACUBE:2'
+            - type: MAGMA_CUBE
+              tags:
+                  size: 4
+            - type: MAGMA_CUBE
+              count: 14
+              tags:
+                  size: 2
     13:
         subtitle: 'George #2, release the houuuunds.'
         duplicate: 2
         mobs:
-            - type: 'WOLF:ANGRY'
+            - type: WOLF
+              count: 3
               pos: door
               targetnear: 12
-            - type: 'WOLF:ANGRY'
-              pos: door
+              tags:
+                  angry: true
+            - type: WOLF
+              count: 5
               targetnear: 12
-            - type: 'WOLF:ANGRY'
-              pos: door
-              targetnear: 12
-            - type: 'WOLF:ANGRY'
-              targetnear: 12
-            - type: 'WOLF:ANGRY'
-              targetnear: 12
-            - type: 'WOLF:ANGRY'
-              targetnear: 12
-            - type: 'WOLF:ANGRY'
-              targetnear: 12
-            - type: 'WOLF:ANGRY'
-              targetnear: 12
+              tags:
+                  angry: true
     14:
         subtitle: 'I said "good day, sir"!'
         mobs:
-            - type: 'MAGMACUBE:2'
+            - type: MAGMA_CUBE
               name: 'George #2'
               pos: center
+              tags:
+                  size: 2
               effects:
                   - id: 11
                     strength: 2

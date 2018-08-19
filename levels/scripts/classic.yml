@@ -3,9 +3,9 @@ author: 'rivergod'
 gear:
     0:
         name: DIAMOND_SWORD
-        enchants:
-            - elevel: 2
-              etype: LOOT_BONUS_MOBS
+        meta:
+            enchants:
+                looting: 2
     1:
         name: BOW
     2:
@@ -23,9 +23,11 @@ waves:
     1:
         title: 'Proving Grounds'
         subtitle: 'Slimelings'
+        duplicate: 2
         mobs:
-            - 'SLIME:2'
-            - 'SLIME:2'
+            - type: SLIME
+              tags:
+                  size: 2
     2:
         subtitle: 'Dual Pierce'
         mobs:
@@ -33,21 +35,20 @@ waves:
             - SKELETON
     3:
         subtitle: 'The Horde'
+        duplicate: 5
         mobs:
-            - ZOMBIE
-            - ZOMBIE
-            - ZOMBIE
-            - ZOMBIE
             - ZOMBIE
     4:
         subtitle: 'Silken Terrors'
         mobs:
             - SPIDER
-            - CAVESPIDER
+            - CAVE_SPIDER
     5:
         subtitle: 'Mama Slimer'
         mobs:
-            - 'SLIME:4'
+            - type: SLIME
+              tags:
+                  size: 4
     6:
         subtitle: 'Mob Bandits'
         mobs:
@@ -70,8 +71,12 @@ waves:
     9:
         subtitle: 'Cave Bandits'
         mobs:
-            - 'SLIME:2'
-            - 'SLIME:2'
+            - type: SLIME
+              tags:
+                  size: 2
+            - type: SLIME
+              tags:
+                  size: 2
             - SPIDER
             - SPIDER
             - CREEPER
@@ -86,7 +91,9 @@ waves:
     11:
         subtitle: 'BOSS: Papa Slimer'
         mobs:
-            - 'SLIME:8'
+            - type: SLIME
+              tags:
+                  size: 8
     12:
         title: 'Nether-Scape'
         subtitle: 'Bombos Bros.'
@@ -102,55 +109,60 @@ waves:
             - CREEPER
     14:
         subtitle: 'Betrayal?'
+        duplicate: 3
         mobs:
-            - 'WOLF:ANGRY'
-            - 'WOLF:ANGRY'
-            - 'WOLF:ANGRY'
+            - type: WOLF
+              tags:
+                  angry: true
     15:
         subtitle: 'The Juggernaut'
         mobs:
             - GHAST
     16:
         subtitle: 'Red Hot Marshmellows'
+        duplicate: 2
         mobs:
-            - 'MAGMACUBE:4'
-            - 'MAGMACUBE:4'
+            - type: MAGMA_CUBE
+              tags:
+                  size: 4
     17:
         subtitle: 'The Swarm'
+        duplicate: 8
         mobs:
-            - SILVERFISH
-            - SILVERFISH
-            - SILVERFISH
-            - SILVERFISH
-            - SILVERFISH
-            - SILVERFISH
-            - SILVERFISH
             - SILVERFISH
     18:
         subtitle: 'Two-Worlds'
         mobs:
-            - 'SLIME:2'
-            - 'MAGMACUBE:2'
+            - type: SLIME
+              tags:
+                  size: 2
+            - type: MAGMA_CUBE
+              tags:
+                  size: 2
             - SPIDER
-            - CAVESPIDER
+            - CAVE_SPIDER
             - ZOMBIE
-            - 'PIGZOMBIE:400'
+            - type: PIG_ZOMBIE
+              tags:
+                  angry: true
+                  anger: 400
     19:
         subtitle: 'Big Bang'
         mobs:
             - CREEPER
             - CREEPER
             - GHAST
-            - 'CREEPER:POWERED'
+            - type: CREEPER
+              tags:
+                  powered: true
     20:
         subtitle: 'Porkcopolypse'
+        duplicate: 6
         mobs:
-            - 'PIGZOMBIE:400'
-            - 'PIGZOMBIE:400'
-            - 'PIGZOMBIE:400'
-            - 'PIGZOMBIE:400'
-            - 'PIGZOMBIE:400'
-            - 'PIGZOMBIE:400'
+            - type: PIG_ZOMBIE
+              tags:
+                  angry: true
+                  anger: 400
     21:
         subtitle: 'Hidden Power'
         mobs:
@@ -164,86 +176,86 @@ waves:
     22:
         subtitle: 'BOSS: Mega Magma'
         mobs:
-            - 'MAGMACUBE:4'
-            - 'MAGMACUBE:8'
+            - type: MAGMA_CUBE
+              tags:
+                  size: 4
+            - type: MAGMA_CUBE
+              tags:
+                  size: 8
     23:
         title: 'Throwback Town'
         subtitle: '1 Hit Wonders'
         mobs:
-            - ZOMBIE
-            - ZOMBIE
-            - ZOMBIE
-            - ZOMBIE
-            - ZOMBIE
-            - 'SLIME:4'
-            - 'SLIME:4'
+            - type: ZOMBIE
+              count: 5
+            - type: SLIME
+              tags:
+                  size: 4
+            - type: SLIME
+              tags:
+                  size: 4
             - SKELETON
             - SKELETON
     24:
         subtitle: 'Electrifying'
         mobs:
-            - 'CREEPER:POWERED'
-            - 'CREEPER:POWERED'
-            - 'PIGZOMBIE:400'
-            - 'PIGZOMBIE:400'
-            - 'PIGZOMBIE:400'
+            - type: CREEPER
+              tags:
+                  powered: true
+            - type: CREEPER
+              tags:
+                  powered: true
+            - type: PIG_ZOMBIE
+              tags:
+                  angry: true
+                  anger: 400
+            - type: PIG_ZOMBIE
+              tags:
+                  angry: true
+                  anger: 400
+            - type: PIG_ZOMBIE
+              tags:
+                  angry: true
+                  anger: 400
     25:
         subtitle: 'Poison Punch'
         mobs:
-            - CAVESPIDER
-            - CAVESPIDER
-            - CAVESPIDER
+            - CAVE_SPIDER
+            - CAVE_SPIDER
+            - CAVE_SPIDER
             - SPIDER
             - SILVERFISH
             - SILVERFISH
     26:
         subtitle: 'Infection'
         mobs:
-            - ZOMBIE
-            - ZOMBIE
-            - ZOMBIE
-            - ZOMBIE
-            - ZOMBIE
-            - ZOMBIE
-            - ZOMBIE
-            - ZOMBIE
-            - ZOMBIE
-            - ZOMBIE
-            - 'PIGZOMBIE:400'
-            - 'PIGZOMBIE:400'
-            - 'PIGZOMBIE:400'
-            - 'PIGZOMBIE:400'
-            - 'PIGZOMBIE:400'
-            - CAVESPIDER
+            - type: ZOMBIE
+              count: 10
+            - type: PIG_ZOMBIE
+              count: 5
+              tags:
+                  angry: true
+                  anger: 400
+            - CAVE_SPIDER
     27:
         subtitle: 'Nostalgia'
         mobs:
-            - 'SLIME:1'
+            - type: SLIME
+              tags:
+                  size: 1
     28:
         subtitle: 'Slime Royalty'
         mobs:
-            - 'SLIME:8'
-            - 'MAGMACUBE:8'
-            - 'SLIME:2'
-            - 'SLIME:2'
-            - 'SLIME:2'
-            - 'SLIME:2'
-            - 'SLIME:2'
-            - 'SLIME:2'
-            - 'SLIME:2'
-            - 'SLIME:2'
-            - 'SLIME:2'
-            - 'SLIME:2'
-            - 'SLIME:2'
-            - 'SLIME:2'
-            - 'SLIME:2'
-            - 'SLIME:2'
-            - 'SLIME:2'
-            - 'SLIME:2'
-            - 'SLIME:2'
-            - 'SLIME:2'
-            - 'SLIME:2'
-            - 'SLIME:2'
+            - type: SLIME
+              tags:
+                  size: 8
+            - type: MAGMA_CUBE
+              tags:
+                  size: 8
+            - type: SLIME
+              count: 20
+              tags:
+                  size: 2
     29:
         subtitle: 'The Vanishing Thieves'
         mobs:
@@ -255,33 +267,38 @@ waves:
         mobs:
             - BLAZE
             - BLAZE
-            - SILVERFISH
-            - SILVERFISH
-            - SILVERFISH
-            - SILVERFISH
-            - SILVERFISH
-            - 'CREEPER:POWERED'
+            - type: SILVERFISH
+              count: 5
+            - type: CREEPER
+              tags:
+                  powered: true
     31:
         subtitle: 'The Thieves Guild'
         mobs:
-            - ENDERMAN
-            - ENDERMAN
-            - ENDERMAN
-            - ENDERMAN
-            - ENDERMAN
+            - type: ENDERMAN
+              count: 5
             - SILVERFISH
             - SILVERFISH
             - SILVERFISH
     32:
         subtitle: "I'll Take 'Em All On!"
         mobs:
-            - 'SLIME:4'
-            - 'MAGMACUBE:4'
-            - 'PIGZOMBIE:400'
-            - 'WOLF:ANGRY'
+            - type: SLIME
+              tags:
+                  size: 4
+            - type: MAGMA_CUBE
+              tags:
+                  size: 4
+            - type: PIG_ZOMBIE
+              tags:
+                  angry: true
+                  anger: 400
+            - type: WOLF
+              tags:
+                  angry: true
             - CREEPER
             - SPIDER
-            - CAVESPIDER
+            - CAVE_SPIDER
             - ZOMBIE
             - SKELETON
             - SILVERFISH
@@ -292,8 +309,5 @@ waves:
         subtitle: 'BOSS: Rotten Behemoth'
         mobs:
             - GIANT
-            - ZOMBIE
-            - ZOMBIE
-            - ZOMBIE
-            - ZOMBIE
-            - ZOMBIE
+            - type: ZOMBIE
+              count: 5

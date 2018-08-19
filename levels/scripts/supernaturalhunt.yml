@@ -24,7 +24,7 @@ shop:
         name: MILK_BUCKET
         cost: 1
     10:
-        name: CARROT_ITEM
+        name: CARROT
         cost: 1
     11:
         name: POTION
@@ -65,13 +65,13 @@ shop:
         name: LEATHER_LEGGINGS
         cost: 2
     21:
-        name: GOLD_HELMET
+        name: GOLDEN_HELMET
         cost: 2
     22:
-        name: GOLD_CHESTPLATE
+        name: GOLDEN_CHESTPLATE
         cost: 5
     23:
-        name: GOLD_LEGGINGS
+        name: GOLDEN_LEGGINGS
         cost: 3
     27:
         name: CHAINMAIL_HELMET
@@ -120,11 +120,10 @@ waves:
         title: 'An Odd Fight'
         subtitle: 'Slimey Slacks'
         mobs:
-            - 'SLIME:2'
-            - 'SLIME:2'
-            - 'SLIME:2'
-            - 'SLIME:2'
-            - 'SLIME:2'
+            - type: SLIME
+              count: 5
+              tags:
+                  size: 2
     2:
         subtitle: 'Smite'
         mobs:
@@ -158,7 +157,7 @@ waves:
         subtitle: 'BOSS: Stray Away!'
         duplicate: 3
         mobs:
-            - type: 'SKELETON:STRAY'
+            - type: STRAY
               effects:
                   - id: 1
                     strength: 0
@@ -171,8 +170,7 @@ waves:
             - type: ZOMBIE
               gear:
                   helmet:
-                      name: SKULL_ITEM
-                      data: 3
+                      name: PLAYER_HEAD
                       meta:
                           owner: TheFishDish
                   chestplate:
@@ -203,10 +201,9 @@ waves:
             - type: ZOMBIE
               gear:
                   weapon:
-                      name: WOOD_SWORD
+                      name: WOODEN_SWORD
                   helmet:
-                      name: SKULL_ITEM
-                      data: 3
+                      name: PLAYER_HEAD
                       meta:
                           owner: Noved17
                   chestplate:
@@ -239,8 +236,7 @@ waves:
                   weapon:
                       name: STONE_SWORD
                   helmet:
-                      name: SKULL_ITEM
-                      data: 3
+                      name: PLAYER_HEAD
                       meta:
                           owner: crazypixie216
                   chestplate:
@@ -273,8 +269,7 @@ waves:
                   weapon:
                       name: STONE_SWORD
                   helmet:
-                      name: SKULL_ITEM
-                      data: 3
+                      name: PLAYER_HEAD
                       meta:
                           owner: CommandHelper
                   chestplate:
@@ -285,8 +280,7 @@ waves:
                               g: 0
                               b: 0
                           enchants:
-                              - elevel: 3
-                                etype: PROTECTION_ENVIRONMENTAL
+                              protection: 3
                   leggings:
                       name: LEATHER_LEGGINGS
                       meta:
@@ -295,8 +289,7 @@ waves:
                               g: 0
                               b: 0
                           enchants:
-                              - elevel: 3
-                                etype: PROTECTION_ENVIRONMENTAL
+                              protection: 3
                   boots:
                       name: LEATHER_BOOTS
                       meta:
@@ -305,8 +298,7 @@ waves:
                               g: 0
                               b: 0
                           enchants:
-                              - elevel: 3
-                                etype: PROTECTION_ENVIRONMENTAL
+                              protection: 3
     11:
         subtitle: 'fredwaffles'
         duplicate: 4
@@ -323,8 +315,7 @@ waves:
                   weapon:
                       name: STONE_SWORD
                   helmet:
-                      name: SKULL_ITEM
-                      data: 3
+                      name: PLAYER_HEAD
                       meta:
                           owner: fredwaffles
                   chestplate:
@@ -361,8 +352,7 @@ waves:
                   weapon:
                       name: IRON_SWORD
                   helmet:
-                      name: SKULL_ITEM
-                      data: 3
+                      name: PLAYER_HEAD
                       meta:
                           owner: king_of_insanity
                   chestplate:
@@ -402,8 +392,7 @@ waves:
                   weapon:
                       name: DIAMOND_SWORD
                   helmet:
-                      name: SKULL_ITEM
-                      data: 3
+                      name: PLAYER_HEAD
                       meta:
                           owner: Nefyoni
                   chestplate:
@@ -439,12 +428,11 @@ waves:
               gear:
                   weapon:
                       name: STONE_SWORD
-                      enchants:
-                          - elevel: 1
-                            etype: DAMAGE_ALL
+                      meta:
+                          enchants:
+                              sharpness: 1
                   helmet:
-                      name: SKULL_ITEM
-                      data: 3
+                      name: PLAYER_HEAD
                       meta:
                           owner: Viletoad
                   chestplate:
@@ -465,12 +453,11 @@ waves:
               gear:
                   weapon:
                       name: IRON_SWORD
-                      enchants:
-                          - elevel: 1
-                            etype: DAMAGE_ALL
+                      meta:
+                          enchants:
+                              sharpness: 1
                   helmet:
-                      name: SKULL_ITEM
-                      data: 3
+                      name: PLAYER_HEAD
                       meta:
                           owner: rivergod
                   chestplate:
@@ -494,12 +481,11 @@ waves:
               gear:
                   weapon:
                       name: IRON_SWORD
-                      enchants:
-                          - elevel: 2
-                            etype: DAMAGE_ALL
+                      meta:
+                          enchants:
+                              sharpness: 2
                   helmet:
-                      name: SKULL_ITEM
-                      data: 3
+                      name: PLAYER_HEAD
                       meta:
                           owner: Infuryo
                   chestplate:
@@ -523,12 +509,11 @@ waves:
               gear:
                   weapon:
                       name: DIAMOND_SWORD
-                      enchants:
-                          - elevel: 1
-                            etype: DAMAGE_ALL
+                      meta:
+                          enchants:
+                              sharpness: 1
                   helmet:
-                      name: SKULL_ITEM
-                      data: 3
+                      name: PLAYER_HEAD
                       meta:
                           owner: PseudoKnight
                   chestplate:
@@ -546,37 +531,37 @@ waves:
               gear:
                   weapon:
                       name: DIAMOND_SWORD
-                      enchants:
-                          - elevel: 1
-                            etype: DAMAGE_ALL
+                      meta:
+                          enchants:
+                              sharpness: 1
                   helmet:
-                      name: SKULL_ITEM
-                      data: 3
+                      name: PLAYER_HEAD
                       meta:
                           owner: gothem8
     18:
         title: 'Ghost Stories'
         subtitle: 'Flight'
         mobs:
-            - 'ZOMBIE:BABY'
-            - 'ZOMBIE:BABY'
-            - 'ZOMBIE:BABY'
-            - 'ZOMBIE:HUSK'
-            - 'ZOMBIE:HUSK'
+            - type: ZOMBIE
+              count: 3
+              tags:
+                  baby: true
+            - HUSK
+            - HUSK
     19:
         subtitle: "Don't Blink"
         mobs:
             - GHAST
-            - 'SKELETON:STRAY'
-            - 'SKELETON:STRAY'
+            - STRAY
+            - STRAY
             - WITCH
             - WITCH
             - WITCH
     20:
         subtitle: 'Haunted'
         mobs:
-            - 'SKELETON:STRAY'
-            - 'SKELETON:STRAY'
+            - STRAY
+            - STRAY
             - VEX
             - VEX
             - VEX
@@ -610,9 +595,9 @@ waves:
         title: 'Unnatural Disasters'
         subtitle: 'Australia'
         mobs:
-            - CAVESPIDER
-            - CAVESPIDER
-            - CAVESPIDER
+            - CAVE_SPIDER
+            - CAVE_SPIDER
+            - CAVE_SPIDER
             - SILVERFISH
             - SILVERFISH
     25:
@@ -642,8 +627,8 @@ waves:
             - WITCH
             - WITCH
             - WITCH
-            - 'SKELETON:WITHER'
-            - 'SKELETON:WITHER'
+            - WITHER_SKELETON
+            - WITHER_SKELETON
     28:
         subtitle: 'BadScience'
         mobs:
@@ -658,10 +643,10 @@ waves:
             - GHAST
             - GHAST
             - GHAST
-            - 'SKELETON:WITHER'
-            - 'SKELETON:WITHER'
-            - 'SKELETON:WITHER'
-            - 'SKELETON:WITHER'
+            - WITHER_SKELETON
+            - WITHER_SKELETON
+            - WITHER_SKELETON
+            - WITHER_SKELETON
             - WITCH
             - WITCH
             - EVOKER

@@ -32,13 +32,13 @@ bind('player_interact', array('id': @id.'spawner', 'priority': 'HIGH'), array('b
 				|| array_index_exists(@pvp, 'team') && @pvp['players'][@player]['team'] == @pvp['players'][player()]['team']) {
 					continue();
 				}
-				_spawn_mob(@mob, @loc, @player);
+				_spawn_entity(@mob, @loc, @player);
 			}
 		} else if(array_index_exists(@pvp, 'team')) {
 			@team = @pvp['players'][player()]['team'];
-			_spawn_mob(@mob, @loc, player(), @pvp['team'][@team]['players']);
+			_spawn_entity(@mob, @loc, player(), @pvp['team'][@team]['players']);
 		} else {
-			_spawn_mob(@mob, @loc, player(), array(player()));
+			_spawn_entity(@mob, @loc, player(), array(player()));
 		}
 		
 		@effectLoc = location_shift(@loc, 'up');

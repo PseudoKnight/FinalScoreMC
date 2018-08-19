@@ -41,8 +41,8 @@ proc _fw_loc(@height = 0, @minrange = false) {
 
 proc _fw_mobs(@mob = 'random', @num = 'random') {
 	if(@mob == 'random') {
-		@mobs = array('creeper', 'zombie', 'silverfish', 'slime', 'magmacube', 'pigzombie:400', 'shulker', 'ghast',
-				'blaze', 'zombie:husk', 'polarbear', 'vindicator', 'evoker', 'vex');
+		@mobs = array('creeper', 'zombie', 'silverfish', 'slime', 'magma_cube', 'pig_zombie', 'shulker', 'ghast',
+				'blaze', 'husk', 'polar_bear', 'vindicator', 'evoker', 'vex');
 		@mob = @mobs[rand(array_size(@mobs))];
 	}
 	@height = 0;
@@ -62,12 +62,11 @@ proc _fw_mobs(@mob = 'random', @num = 'random') {
 	@entities = array()
 	for(@i = 0, @i < @num, @i++) {
 		if(@loc = _fw_loc(@height, true)) {
-			@m = _spawn_mob(@mob, @loc);
+			@m = _spawn_entity(@mob, @loc);
 			array_push(@entities, @m);
-			if(@mob == 'wolf:angry') {
-				if(function_exists('set_mob_target')) {
-					set_mob_target(@m, puuid(_fw_leader()));
-				}
+			if(@mob == 'wolf') {
+				set_entity_spec(@m, array('angry': true));
+				set_mob_target(@m, puuid(_fw_leader()));
 			} else if(@mob == 'polarbear' && !rand(8)) {
 				set_mob_age(@m, -3000);
 			}

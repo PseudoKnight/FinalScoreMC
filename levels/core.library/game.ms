@@ -291,11 +291,17 @@ proc _level_start(@level) {
 							if(array_index_exists(@mob, 'pos')) {
 								@spawns = @level['arena'][@mob['pos']];
 							}
-							@loc = @spawns[rand(array_size(@spawns))];
-							_spawn_mob(@mob, @loc, player(), @level['spectators']);
+							@count = 1;
+							if(array_index_exists(@mob, 'count')) {
+								@count = @mob['count'];
+							}
+							do {
+								@loc = @spawns[rand(array_size(@spawns))];
+								_spawn_entity(@mob, @loc, player(), @level['spectators']);
+							} while(--@count > 0);
 						} else {
 							@loc = @spawns[rand(array_size(@spawns))];
-							spawn_mob(@mob, 1, @loc);
+							spawn_entity(@mob, 1, @loc);
 						}
 					}
 				}

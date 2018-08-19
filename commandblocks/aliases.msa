@@ -384,5 +384,5 @@
 	@loc = _relative_coords(@cmdBlock, $x, $y, $z);
 	@loc['x'] += 0.5;
 	@loc['z'] += 0.5;
-	_spawn_mob($entity, @loc);
+	_spawn_entity($entity, @loc);
 <<<

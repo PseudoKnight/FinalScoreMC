@@ -5,7 +5,7 @@ mobs:
     - EVILSNOWMAN
 gear:
     0:
-        name: WOOD_SWORD
+        name: WOODEN_SWORD
 shop:
     0:
         name: STONE_SWORD
@@ -29,7 +29,7 @@ shop:
         name: MILK_BUCKET
         cost: 1
     10:
-        name: CARROT_ITEM
+        name: CARROT
         cost: 1
     11:
         name: POTION
@@ -70,13 +70,13 @@ shop:
         name: LEATHER_LEGGINGS
         cost: 2
     21:
-        name: GOLD_HELMET
+        name: GOLDEN_HELMET
         cost: 2
     22:
-        name: GOLD_CHESTPLATE
+        name: GOLDEN_CHESTPLATE
         cost: 5
     23:
-        name: GOLD_LEGGINGS
+        name: GOLDEN_LEGGINGS
         cost: 3
     27:
         name: CHAINMAIL_HELMET
@@ -122,11 +122,8 @@ waves:
         title: 'Baby Steps'
         subtitle: 'A Mitey Start'
         music: 'record.cat'
+        duplicate: 5
         mobs:
-            - ENDERMITE
-            - ENDERMITE
-            - ENDERMITE
-            - ENDERMITE
             - ENDERMITE
     2:
         subtitle: 'Parasites'
@@ -141,27 +138,36 @@ waves:
     3:
         subtitle: 'Zombaby'
         mobs:
-            - 'ZOMBIE:BABY'
-            - 'ZOMBIE:BABY'
+            - type: ZOMBIE
+              count: 2
+              tags:
+                  baby: true
     4:
         subtitle: 'Are you chicken?'
         duplicate: 3
         mobs:
             - type: CHICKEN
-              rider: 'ZOMBIE:BABY'
+              rider:
+                  type: ZOMBIE
+                  tags:
+                      baby: true
     5:
         subtitle: 'Silver Husks'
         mobs:
-            - 'ZOMBIE:HUSK-BABY'
-            - 'ZOMBIE:HUSK-BABY'
+            - type: HUSK
+              count: 2
+              tags:
+                  baby: true
             - SILVERFISH
             - SILVERFISH
             - SILVERFISH
     6:
         subtitle: 'BOSS: Mr. Jellybean'
         mobs:
-            - type: 'ZOMBIE:BABY'
+            - type: ZOMBIE
               pos: 'center'
+              tags:
+                  baby: true
               gear:
                   weapon:
                       name: DIAMOND_SWORD
@@ -184,30 +190,32 @@ waves:
         subtitle: 'Bear the Pain'
         music: 'record.far'
         mobs:
-            - type: POLARBEAR
+            - type: POLAR_BEAR
               age: -400
-            - POLARBEAR
-            - POLARBEAR
-            - POLARBEAR
-            - POLARBEAR
+            - POLAR_BEAR
+            - POLAR_BEAR
+            - POLAR_BEAR
+            - POLAR_BEAR
     8:
         subtitle: 'Whiteout'
         mobs:
             - SKELETON
             - SKELETON
-            - 'SKELETON:STRAY'
-            - 'SKELETON:STRAY'
+            - STRAY
+            - STRAY
     9:
         subtitle: 'Nice Snowing Ya'
         duplicate: 8
         mobs:
-            - type: SNOWGOLEM
+            - type: SNOWMAN
               targetnear: 16
     10:
         subtitle: 'The Pack'
         duplicate: 8
         mobs:
-            - type: 'WOLF:ANGRY'
+            - type: WOLF
+              tags:
+                  angry: true
               effects:
                   - id: 1
                     strength: 0
@@ -215,15 +223,15 @@ waves:
     11:
         subtitle: 'Stray Focused'
         mobs:
-            - 'SKELETON:STRAY'
-            - 'SKELETON:STRAY'
-            - 'SKELETON:STRAY'
-            - 'SKELETON:STRAY'
+            - STRAY
+            - STRAY
+            - STRAY
+            - STRAY
     12:
         subtitle: 'BOSS: Undead King'
         mobs:
-            - type: POLARBEAR
-              rider: 'SKELETON:STRAY'
+            - type: POLAR_BEAR
+              rider: STRAY
               pos: 'center'
               gear:
                   weapon:
@@ -242,31 +250,22 @@ waves:
         title: "This Ain't Right"
         subtitle: 'Turned'
         music: 'music.game'
+        duplicate: 8
         mobs:
-            - 'ZOMBIE:VILLAGER'
-            - 'ZOMBIE:VILLAGER'
-            - 'ZOMBIE:VILLAGER'
-            - 'ZOMBIE:VILLAGER'
-            - 'ZOMBIE:VILLAGER'
-            - 'ZOMBIE:VILLAGER'
-            - 'ZOMBIE:VILLAGER'
-            - 'ZOMBIE:VILLAGER'
+            - ZOMBIE_VILLAGER
     14:
         subtitle: 'ENDeavour'
         mobs:
             - ENDERMAN
             - ENDERMAN
             - ENDERMAN
-            - ENDERMITE
-            - ENDERMITE
-            - ENDERMITE
-            - ENDERMITE
-            - ENDERMITE
+            - type: ENDERMITE
+              count: 5
     15:
         subtitle: 'Arachnids'
         mobs:
-            - CAVESPIDER
-            - CAVESPIDER
+            - CAVE_SPIDER
+            - CAVE_SPIDER
             - SPIDER
             - SPIDER
             - SPIDER
@@ -274,16 +273,18 @@ waves:
     16:
         subtitle: 'Hot and Cold'
         mobs:
-            - 'ZOMBIE:HUSK'
-            - 'ZOMBIE:HUSK'
-            - 'ZOMBIE:HUSK'
-            - 'SKELETON:STRAY'
-            - 'SKELETON:STRAY'
-            - 'SKELETON:STRAY'
+            - HUSK
+            - HUSK
+            - HUSK
+            - STRAY
+            - STRAY
+            - STRAY
     17:
         subtitle: 'Atomic Creeper'
         mobs:
-            - type: 'CREEPER:POWERED'
+            - type: CREEPER
+              tags:
+                  powered: true
               pos: 'center'
               effects:
                   - id: 11
@@ -295,7 +296,7 @@ waves:
     18:
         subtitle: 'BOSS: Spike Lord'
         mobs:
-            - type: CAVESPIDER
+            - type: CAVE_SPIDER
               rider:
                   type: GUARDIAN
               pos: 'center'
@@ -303,12 +304,8 @@ waves:
         title: 'The Outcasts'
         subtitle: 'Axe Murderers'
         music: 'music.credits'
+        duplicate: 6
         mobs:
-            - VINDICATOR
-            - VINDICATOR
-            - VINDICATOR
-            - VINDICATOR
-            - VINDICATOR
             - VINDICATOR
     20:
         subtitle: 'Which is Witch?'
@@ -334,11 +331,8 @@ waves:
         subtitle: 'The Apprentice'
         mobs:
             - EVOKER
-            - SILVERFISH
-            - SILVERFISH
-            - SILVERFISH
-            - SILVERFISH
-            - SILVERFISH
+            - type: SILVERFISH
+              count: 5
     23:
         subtitle: 'Onslaught'
         mobs:
@@ -346,8 +340,8 @@ waves:
             - VINDICATOR
             - VINDICATOR
             - VINDICATOR
-            - IRONGOLEM
-            - IRONGOLEM
+            - IRON_GOLEM
+            - IRON_GOLEM
     24:
         subtitle: 'BOSS: Illusioner'
         mobs:
@@ -359,36 +353,32 @@ waves:
         title: 'Never Say Nether'
         subtitle: 'Pork Chops'
         music: 'music.nether'
+        duplicate: 10
         mobs:
-            - 'PIGZOMBIE:400'
-            - 'PIGZOMBIE:400'
-            - 'PIGZOMBIE:400'
-            - 'PIGZOMBIE:400'
-            - 'PIGZOMBIE:400'
-            - 'PIGZOMBIE:400'
-            - 'PIGZOMBIE:400'
-            - 'PIGZOMBIE:400'
-            - 'PIGZOMBIE:400'
-            - 'PIGZOMBIE:400'
+            - type: PIG_ZOMBIE
+              tags:
+                  angry: true
+                  anger: 400
     26:
         subtitle: 'Death From Above'
         mobs:
             - GHAST
             - GHAST
-            - 'PIGZOMBIE:400'
-            - 'PIGZOMBIE:400'
-            - 'PIGZOMBIE:400'
-            - 'PIGZOMBIE:400'
-            - 'PIGZOMBIE:400'
-            - 'PIGZOMBIE:400'
-            - 'PIGZOMBIE:400'
-            - 'PIGZOMBIE:400'
+            - type: PIG_ZOMBIE
+              count: 8
+              tags:
+                  angry: true
+                  anger: 400
     27:
         subtitle: 'Flamiliar?'
         duplicate: 8
         mobs:
             - type: CHICKEN
-              rider: 'PIGZOMBIE:400'
+              rider:
+                  type: PIG_ZOMBIE
+                  tags:
+                      angry: true
+                      anger: 400
     28:
         subtitle: 'Get Over Here'
         mobs:
@@ -404,26 +394,15 @@ waves:
               pos: 'center'
             - type: BLAZE
               pos: 'center'
-            - 'PIGZOMBIE:400'
-            - 'PIGZOMBIE:400'
-            - 'PIGZOMBIE:400'
-            - 'PIGZOMBIE:400'
-            - 'PIGZOMBIE:400'
-            - 'PIGZOMBIE:400'
-            - 'PIGZOMBIE:400'
-            - 'PIGZOMBIE:400'
-            - 'PIGZOMBIE:400'
-            - 'PIGZOMBIE:400'
-            - 'PIGZOMBIE:400'
-            - 'PIGZOMBIE:400'
-            - 'PIGZOMBIE:400'
-            - 'PIGZOMBIE:400'
-            - 'PIGZOMBIE:400'
-            - 'PIGZOMBIE:400'
+            - type: PIG_ZOMBIE
+              count: 16
+              tags:
+                  angry: true
+                  anger: 400
     30:
         subtitle: 'FINAL BOSS: 4 Horsemen & Apocalypse'
         mobs:
-            - type: 'HORSE:ZOMBIE'
+            - type: ZOMBIE_HORSE
               age: 0
               pos: 'center'
               tame: true
@@ -431,7 +410,7 @@ waves:
                   saddle:
                       name: SADDLE
               rider:
-                  type: 'SKELETON:STRAY'
+                  type: STRAY
                   gear:
                       helmet:
                           name: DIAMOND_HELMET
@@ -441,7 +420,7 @@ waves:
                           name: DIAMOND_LEGGINGS
                       boots:
                           name: DIAMOND_BOOTS
-            - type: 'HORSE:SKELETON'
+            - type: SKELETON_HORSE
               age: 0
               pos: 'center'
               tame: true
@@ -449,7 +428,7 @@ waves:
                   saddle:
                       name: SADDLE
               rider:
-                  type: 'SKELETON:STRAY'
+                  type: STRAY
                   gear:
                       helmet:
                           name: DIAMOND_HELMET
@@ -459,7 +438,7 @@ waves:
                           name: DIAMOND_LEGGINGS
                       boots:
                           name: DIAMOND_BOOTS
-            - type: 'HORSE:SKELETON'
+            - type: SKELETON_HORSE
               age: 0
               pos: 'center'
               tame: true
@@ -467,7 +446,7 @@ waves:
                   saddle:
                       name: SADDLE
               rider:
-                  type: 'SKELETON:STRAY'
+                  type: STRAY
                   gear:
                       helmet:
                           name: DIAMOND_HELMET
@@ -477,7 +456,7 @@ waves:
                           name: DIAMOND_LEGGINGS
                       boots:
                           name: DIAMOND_BOOTS
-            - type: 'HORSE:ZOMBIE'
+            - type: ZOMBIE_HORSE
               age: 0
               pos: 'center'
               tame: true
@@ -485,7 +464,7 @@ waves:
                   saddle:
                       name: SADDLE
               rider:
-                  type: 'SKELETON:STRAY'
+                  type: STRAY
                   gear:
                       helmet:
                           name: DIAMOND_HELMET
@@ -495,7 +474,7 @@ waves:
                           name: DIAMOND_LEGGINGS
                       boots:
                           name: DIAMOND_BOOTS
-            - type: 'SKELETON:WITHER'
+            - type: WITHER_SKELETON
               pos: 'center'
               effects:
                   - id: 11

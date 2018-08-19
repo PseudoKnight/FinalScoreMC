@@ -1,197 +1,185 @@
-proc _spawn_mob(@mob, @loc, @owner, @teammates) {
-	if(!is_array(@mob)) {
-		@mob = _get_mob(@mob);
+proc _spawn_entity(@entity, @loc, @owner, @teammates) {
+	if(!is_array(@entity)) {
+		@entity = _get_entity(@entity);
 	}
-	if(is_null(@mob)) {
+	if(is_null(@entity)) {
 		return(null);
 	}
-	@custom = bind('creature_spawn', null, array('reason': 'CUSTOM'), @event, @mob, @loc, @owner, @teammates) {
-		@m = @event['id'];
-		set_entity_persistence(@m, true);
-		foreach(@key: @value in @mob) {
-			switch(@key) {
-				case 'type':
-					continue();
-					
-				case 'name':
-					set_mob_name(@m, @value);
-					
-				case 'gear':
-					set_mob_equipment(@m, @value);
-					
-				case 'droprate':
-					set_equipment_droprates(@m, @value);
-				
-				case 'tags':
-					set_entity_spec(@m, @value);
-				
-				case 'attributes':
-					foreach(@k: @v in @value) {
-						set_attribute(@m, @k, @v);
-					}
-				
-				case 'tame':
-					set_mob_owner(@owner, @m);
-					
-				case 'age':
-					set_mob_age(@m, @value);
-				
-				case 'ai':
-					set_entity_ai(@m, @value);
-					
-				case 'gravity':
-					set_entity_gravity(@m, @value);
-					
-				case 'lifetime':
-					set_timeout(@value * 1000, closure(){
-						try {
-							@loc = entity_loc(@m);
-							@loc['y'] += 1;
-							play_sound(@loc, array('sound': 'ENTITY_ZOMBIE_INFECT'));
-							spawn_particle(@loc, array('particle': 'CLOUD', 'speed': 0, 'count': 10, 'xoffset': 0.4, 'zoffset': 0.4, 'yoffset': 0.4));
-							entity_remove(@m);
-						} catch(BadEntityException @ex) {
-							// already dead
-						}
-					});
-					
-				case 'health':
-					set_max_health(@m, @value);
-					set_entity_health(@m, 100);
-					
-				case 'invulnerable':
-					set_entity_invulnerable(@m, @value);
-					
-				case 'rider':
-					if(@value === 'owner') {
-						set_entity_rider(@m, puuid(@owner));
-					} else {
-						set_timeout(50, closure() {
-							@rider = _spawn_mob(@value, @loc);
-							set_entity_rider(@m, @rider);
-						});
-					}
-				
-				case 'onfire':
-					set_entity_onfire(@m, @value);
-				
-				case 'glowing':
-					set_entity_glowing(@m, @value);
-					
-				case 'explode':
-					set_timeout(50, closure(){
-						@display = spawn_entity('ARMOR_STAND', 1, @loc)[0];
-						set_entity_spec(@display, array('small': true, 'visible': false));
-						set_mob_name(@display, @mob['explode'][0]);
-						set_name_visible(@display, true);
-						set_entity_rider(@m, @display);
-						set_interval(1000, closure(){
-							@mob['explode'][0] -= 1;
-							@cleanup = false;
-							try {
-								if(get_entity_health(@m) > 0) {
-									if(@mob['explode'][0] <= 3) {
-										set_mob_name(@display, color('yellow').@mob['explode'][0]);
-									} else {
-										set_mob_name(@display, @mob['explode'][0]);
-									}
-									if(@mob['explode'][0] == 0) {
-										@cleanup = true;
-										explosion(entity_loc(@m), @mob['explode'][1], true);
-									} else {
-										play_sound(entity_loc(@m), array('sound': 'BLOCK_NOTE_BLOCK_HAT', 'pitch': 2, 'volume': 1));
-									}
-								}
-							} catch(BadEntityException @ex) {
+	@modify = closure(@e){
+		set_entity_persistence(@e, true);
+		if(array_index_exists(@entity, 'name')) {
+			set_mob_name(@e, @entity['name']);
+		}
+		if(array_index_exists(@entity, 'gear')) {
+			set_mob_equipment(@e, @entity['gear']);
+		}
+		if(array_index_exists(@entity, 'droprate')) {
+			set_equipment_droprates(@e, @entity['droprate']);
+		}
+		if(array_index_exists(@entity, 'tags')) {
+			set_entity_spec(@e, @entity['tags']);
+		}
+		if(array_index_exists(@entity, 'attributes')) {
+			foreach(@k: @v in @entity['attributes']) {
+				set_attribute(@e, @k, @v);
+			}
+		}
+		if(array_index_exists(@entity, 'tame')) {
+			set_mob_owner(@e, @owner);
+		}
+		if(array_index_exists(@entity, 'age')) {
+			set_mob_age(@e, @entity['age']);
+		}
+		if(array_index_exists(@entity, 'ai')) {
+			set_entity_ai(@e, @entity['ai']);
+		}
+		if(array_index_exists(@entity, 'gravity')) {
+			set_entity_gravity(@e, @entity['gravity']);
+		}
+		if(array_index_exists(@entity, 'lifetime')) {
+			set_timeout(@entity['lifetime'] * 1000, closure(){
+				try {
+					@loc = entity_loc(@e);
+					@loc['y'] += 1;
+					play_sound(@loc, array('sound': 'ENTITY_ZOMBIE_INFECT'));
+					spawn_particle(@loc, array('particle': 'CLOUD', 'speed': 0, 'count': 10, 'xoffset': 0.4, 'zoffset': 0.4, 'yoffset': 0.4));
+					entity_remove(@e);
+				} catch(BadEntityException @ex) {
+					// already dead
+				}
+			});
+		}
+		if(array_index_exists(@entity, 'health')) {
+			set_max_health(@e, @entity['health']);
+			set_entity_health(@e, 100);
+		}
+		if(array_index_exists(@entity, 'invulnerable')) {
+			set_entity_invulnerable(@e, @entity['invulnerable']);
+		}
+		if(array_index_exists(@entity, 'rider')) {
+			if(@entity['rider'] === 'owner') {
+				set_entity_rider(@e, puuid(@owner));
+			} else {
+				set_timeout(50, closure() {
+					@rider = _spawn_entity(@entity['rider'], @loc);
+					set_entity_rider(@e, @rider);
+				});
+			}
+		}
+		if(array_index_exists(@entity, 'onfire')) {
+			set_entity_onfire(@e, @entity['onfire']);
+		}
+		if(array_index_exists(@entity, 'glowing')) {
+			set_entity_glowing(@e, @entity['glowing']);
+		}
+		if(array_index_exists(@entity, 'explode')) {
+			@countdown = array(@entity['explode'][0]);
+			@size = @entity['explode'][1];
+			set_timeout(50, closure(){
+				@display = spawn_entity('ARMOR_STAND', 1, @loc)[0];
+				set_entity_spec(@display, array('small': true, 'visible': false));
+				set_mob_name(@display, @countdown[0]);
+				set_name_visible(@display, true);
+				set_entity_rider(@e, @display);
+				set_interval(1000, closure(){
+					@countdown[0] -= 1;
+					@cleanup = false;
+					try {
+						if(get_entity_health(@e) > 0) {
+							if(@countdown[0] <= 3) {
+								set_mob_name(@display, color('yellow').@countdown[0]);
+							} else {
+								set_mob_name(@display, @countdown[0]);
+							}
+							if(@countdown[0] == 0) {
 								@cleanup = true;
+								explosion(entity_loc(@e), @size, true);
+							} else {
+								play_sound(entity_loc(@e), array('sound': 'BLOCK_NOTE_BLOCK_HAT', 'pitch': 2, 'volume': 1));
 							}
-							if(@cleanup) {
-								try(entity_remove(@display));
-								try(damage_entity(@m, 50));
-								clear_task();
-							}
-						});
-					});
-					
-				case 'targetnear':
-					@range = @mob['targetnear'];
-					@projectile = '';
-					switch(to_upper(@mob['type'])) {
-						case 'SNOWGOLEM':
-							@projectile = 'SNOWBALL';
-						case 'CHICKEN':
-							@projectile = 'EGG';
+						}
+					} catch(BadEntityException @ex) {
+						@cleanup = true;
 					}
-					if(@projectile) {
-						set_interval(1500, closure() {
-							try {
-								if(get_entity_health(@m) == 0.0) {
-									clear_task();
-								} else {
-									@loc1 = entity_loc(@m);
-									foreach(@p in players_in_radius(@loc1, @range)) {
-										if(!array_contains(@teammates, @p)) {
-											@loc2 = ploc(@p);
-											@loc2['y'] += 2;
-											@loc1['yaw'] = get_yaw(@loc1, @loc2);
-											@loc1['pitch'] = get_pitch(@loc1, @loc2);
-											set_entity_loc(@m, @loc1);
-											shoot_projectile(@m, @projectile, @p);
-											break();
-										}
-									}
-								}
-							} catch(BadEntityException @ex) {
-								clear_task();
-							}
-						});
-					} else {
-						set_timeout(50, closure(){
-							foreach(@p in players_in_radius(entity_loc(@m), @range)) {
+					if(@cleanup) {
+						try(entity_remove(@display));
+						try(damage_entity(@e, 50));
+						clear_task();
+					}
+				});
+			});
+		}
+		if(array_index_exists(@entity, 'targetnear')) {
+			@range = @entity['targetnear'];
+			@projectile = '';
+			switch(to_upper(@entity['type'])) {
+				case 'SNOWGOLEM':
+					@projectile = 'SNOWBALL';
+				case 'CHICKEN':
+					@projectile = 'EGG';
+			}
+			if(@projectile) {
+				set_interval(1500, closure() {
+					try {
+						if(get_entity_health(@e) == 0.0) {
+							clear_task();
+						} else {
+							@loc1 = entity_loc(@e);
+							foreach(@p in players_in_radius(@loc1, @range)) {
 								if(!array_contains(@teammates, @p)) {
-									damage_entity(@m, 0, puuid(@p));
+									@loc2 = ploc(@p);
+									@loc2['y'] += 2;
+									@loc1['yaw'] = get_yaw(@loc1, @loc2);
+									@loc1['pitch'] = get_pitch(@loc1, @loc2);
+									set_entity_loc(@e, @loc1);
+									shoot_projectile(@e, @projectile, @p);
 									break();
 								}
 							}
-						});
-					}
-					
-				case 'effects':
-					queue_push(closure(){
-						try {
-							foreach(@e in @mob['effects']) {
-								set_mob_effect(@m, @e['id'], @e['strength'], @e['seconds'], true);
-							}
-						} catch(BadEntityException @ex) {
-							// mob is gone for some reason
 						}
-					})
+					} catch(BadEntityException @ex) {
+						clear_task();
+					}
+				});
+			} else {
+				set_timeout(50, closure(){
+					foreach(@p in players_in_radius(entity_loc(@e), @range)) {
+						if(!array_contains(@teammates, @p)) {
+							damage_entity(@e, 0, puuid(@p));
+							break();
+						}
+					}
+				});
+			}
+		}
+		if(array_index_exists(@entity, 'effects')) {
+			try {
+				foreach(@effect in @entity['effects']) {
+					set_mob_effect(@e, @effect['id'], @effect['strength'], @effect['seconds'], true);
+				}
+			} catch(BadEntityException @ex) {
+				// mob is gone for some reason
 			}
 		}
 	}
-	try {
-		@m = spawn_mob(@mob['type'], 1, @loc)[0];
-	} finally {
-		unbind(@custom);
-	}
-	return(@m);
+	return(spawn_entity(@entity['type'], 1, @loc, @modify)[0]);
 }
 
-proc _get_mob(@mob = null) {
-	@mobTypes = import('mobs');
-	if(is_null(@mobTypes)) {
-		@mobTypes = reflect_pull('enum', 'Mobs');
-		export('mobs', @mobTypes);
+proc _get_entity(@entity = null) {
+	@entityTypes = import('entitytypes');
+	if(is_null(@entityTypes)) {
+		// cache entity types
+		@entityTypes = reflect_pull('enum', 'EntityType');
+		export('entitytypes', @entityTypes);
 	}
-	if(is_null(@mob)) {
-		@mob = @mobTypes[rand(array_size(@mobTypes))];
+	if(is_null(@entity)) {
+		@entity = @entityTypes[rand(array_size(@entityTypes))];
 	} else {
-		@mobType = split(':', @mob)[0];
-		if(array_contains_ic(@mobTypes, @mobType)) {
-			@mob = array('type': @mob);
+		if(array_contains_ic(@entityTypes, @entity)) {
+			@entity = array('type': @entity);
 		} else {
-			@mob = get_value('mob', @mob);
+			@entity = get_value('entity', @entity);
 		}
 	}
-	return(@mob);
+	return(@entity);
 }
