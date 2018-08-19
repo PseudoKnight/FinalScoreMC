@@ -22,7 +22,7 @@ case 'load':
 		if(@item && @item['name'] == 'STEP') {
 			@loc = location_shift(ploc(), 'up');
 
-			@targetLoc = pcursor(array(0, 65, 66, 68, 70, 72, 77, 85, 143, 147, 148, 157, 171, 188, 189, 190, 191, 192));
+			@targetLoc = pcursor();
 			psend_block_change(player(), @targetLoc, 'MAGENTA_WOOL');
 			set_timeout(800, closure(){
 				psend_block_change(player(), @targetLoc, get_block(@targetLoc));

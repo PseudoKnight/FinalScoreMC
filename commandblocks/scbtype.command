@@ -6,8 +6,7 @@ register_command('scbtype', array(
 		return(array());
 	},
 	'executor': closure(@alias, @sender, @args, @info) {
-		@block = pcursor(array(0, 8, 9, 27, 28, 50, 55, 63, 64, 65, 66, 68, 69,
-			70, 71, 72, 75, 76, 77, 96, 131, 132, 143, 147, 148, 149, 150, 157));
+		@block = pcursor();
 		try {
 			@cmd = get_block_command(@block);
 		} catch(FormatException @ex) {
