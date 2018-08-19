@@ -1,4 +1,7 @@
 proc _item_get_material(@name) {
+	if(!@name) {
+		return(null);
+	}
 	@name = replace(to_upper(@name), ' ', '_');
 	try {
 		// get legacy first
