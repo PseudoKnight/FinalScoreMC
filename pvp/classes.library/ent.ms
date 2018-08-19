@@ -176,10 +176,10 @@ case 'load':
 				foreach(@p in all_players(pworld())) {
 					if(@p == player()) {
 						set_timeout(50, closure(){
-							psend_block_change(player(), @loc, 32);
+							psend_block_change(player(), @loc, 'DEAD_BUSH');
 						});
 					} else {
-						psend_block_change(@p, @loc, 32);
+						psend_block_change(@p, @loc, 'DEAD_BUSH');
 					}
 				}
 				foreach(@p in players_in_radius(@loc, 1)) {
@@ -187,7 +187,7 @@ case 'load':
 				}
 				set_timeout(1000, closure(){
 					foreach(@p in all_players(pworld())) {
-						psend_block_change(@p, @loc, 0);
+						psend_block_change(@p, @loc, 'AIR');
 					}
 				});
 			}

@@ -29,7 +29,7 @@ case 'load':
 					@loc['z'] += @v['z'];
 					if(get_block(@loc) == 'AIR') {
 						foreach(@p in array_keys(@pvp['players'])) {
-							psend_block_change(@p, @loc, 30);
+							psend_block_change(@p, @loc, 'COBWEB');
 						}
 						play_sound(@loc, array('sound': 'ENTITY_SPIDER_AMBIENT', 'pitch': 2));
 					} else {
