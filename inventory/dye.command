@@ -24,7 +24,7 @@ register_command('dye', array(
 			} catch(Exception @ex) {
 				die(color('gold').'Hold leather armor in your hand and type the command. eg. /dye 255 255 255');
 			}
-		} else if(@item['name'] == 'MAP') {
+		} else if(@item['name'] == 'FILLED_MAP') {
 			if(!@item['meta']) {
 				@item['meta'] = array('color': @color);
 			} else {

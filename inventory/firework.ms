@@ -138,7 +138,7 @@ bind('player_interact', null, array('itemname': 'FIREWORK_ROCKET', 'button': 'ri
 				if(pworld() == @world) {
 					@item = pinv(player(), @slot);
 					if(@item && @item['name'] == 'FIREWORK_CHARGE') {
-						@item['name'] = 'FIREWORK';
+						@item['name'] = 'FIREWORK_ROCKET';
 						set_pinv(player(), @slot, @item);
 					}
 				}
@@ -164,10 +164,11 @@ bind('firework_explode', null, null, @event){
 				set_equipment_droprates(@m, null);
 				set_entity_gliding(@m, true);
 			} else if(@cookie) {
-				@cookie = spawn_entity('DROPPED_ITEM', 1, @loc)[0];
-				set_entity_spec(@cookie, array('itemstack': array('name': 'COOKIE')));
-				set_entity_rider(@m, @cookie);
-				set_entity_onfire(@m, 0);
+				spawn_entity('DROPPED_ITEM', 1, @loc, closure(@cookie) {
+					set_entity_spec(@cookie, array('itemstack': array('name': 'COOKIE')));
+					set_entity_rider(@m, @cookie);
+					set_entity_onfire(@m, 0);
+				})
 			}
 			set_entity_velocity(@m, get_vector(@loc));
 			@loc['yaw'] += 24;

@@ -4,9 +4,9 @@
 add_recipe(array(
 	'key': 'skeleton_to_player_skull',
 	'type': 'SHAPED',
-	'result': array('name': 'SKULL_ITEM', 'data': 3),
+	'result': array('name': 'PLAYER_HEAD'),
 	'ingredients': array(
-		'S': array('name': 'SKULL_ITEM', 'data': 0),
+		'S': array('name': 'SKELETON_SKULL'),
 		'C': array('name': 'CLAY_BALL')
 	),
 	'shape': array(
@@ -19,9 +19,9 @@ add_recipe(array(
 add_recipe(array(
 	'key': 'wither_to_player_skull',
 	'type': 'SHAPED',
-	'result': array('name': 'SKULL_ITEM', 'data': 3),
+	'result': array('name': 'PLAYER_HEAD'),
 	'ingredients': array(
-		'S': array('name': 'SKULL_ITEM', 'data': 1),
+		'S': array('name': 'WITHER_SKELETON_SKULL'),
 		'C': array('name': 'CLAY_BALL')
 	),
 	'shape': array(
@@ -35,8 +35,8 @@ add_recipe(array(
 add_recipe(array(
 	'key': 'skeleton_skull',
 	'type': 'SHAPELESS',
-	'result': array('name': 'SKULL_ITEM', 'data': 0),
-	'ingredients': array(array('name': 'SKULL_ITEM', 'data': 2)),
+	'result': array('name': 'SKELETON_SKULL'),
+	'ingredients': array(array('name': 'ZOMBIE_HEAD')),
 ));
 
 # Enchanted lore books
@@ -54,17 +54,19 @@ add_recipe(array(
 add_recipe(array(
 	'key': 'exp_bottle',
 	'type': 'SHAPELESS',
-	'result': associative_array('name': 'EXP_BOTTLE', 'qty': 1),
+	'result': associative_array('name': 'EXPERIENCE_BOTTLE', 'qty': 1),
 	'ingredients': array(array('name': 'GLASS_BOTTLE')),
 ));
 
 # Spawner egg ingredient
+/* TODO: Figure this out without doing EVERY spawn egg
 add_recipe(array(
 	'key': 'spawner_egg_in_firework',
 	'type': 'SHAPELESS',
-	'result': associative_array('name': 'FIREWORK', 'qty': 1),
-	'ingredients': array(array('name': 'FIREWORK'), array('name': 'MONSTER_EGG')),
+	'result': associative_array('name': 'FIREWORK_ROCKET', 'qty': 1),
+	'ingredients': array(array('name': 'FIREWORK_ROCKET'), array('name': '?_SPAWN_EGG')),
 ));
+*/
 
 # Fix broken enchantment books
 add_recipe(array(
@@ -80,14 +82,6 @@ add_recipe(array(
 	'type': 'SHAPELESS',
 	'result': array('name': 'BONE_BLOCK', 'qty': 3),
 	'ingredients': array(array('name': 'BONE', 'qty': 9)),
-));
-
-# Ice -> Packed Ice (1.13)
-add_recipe(array(
-	'key': 'ice_to_packed_ice',
-	'type': 'SHAPELESS',
-	'result': array('name': 'PACKED_ICE'),
-	'ingredients': array(array('name': 'ICE', 'qty': 9)),
 ));
 
 # Special recipe handling (eg. enchanted lore books, exp bottles, player heads)
@@ -144,7 +138,7 @@ bind('inventory_click', null, array('slottype': 'RESULT'), @event) {
 				}
 			}
 
-		} else if(@slotitem['name'] == 'EXP_BOTTLE') {
+		} else if(@slotitem['name'] == 'EXPERIENCE_BOTTLE') {
 			@xp = ptexp();
 			@qty = 7;
 			if(@event['shiftclick']) {
@@ -161,21 +155,26 @@ bind('inventory_click', null, array('slottype': 'RESULT'), @event) {
 				cancel();
 			}
 			
-		} else if(@slotitem['name'] == 'FIREWORK') {
+		} else if(@slotitem['name'] == 'FIREWORK_ROCKET') {
 			@meta = null;
 			@type = null;
 			@count = array(0, 0);
 			foreach(@item in @event['inventory']) {
 				if(@item) {
-					if(@item['name'] == 'FIREWORK') {
+					if(@item['name'] == 'FIREWORK_ROCKET') {
 						@meta = @item['meta'];
 						if(@meta && @meta['lore'] && array_size(@meta['lore']) == 3) {
 							cancel();
 							die();
 						}
 						@count[0] = @item['qty'];
-					} else if(@item['name'] == 'MONSTER_EGG') {
-						@type = @item['meta']['spawntype'];
+					} else if(string_ends_with(@item['name'], '_SPAWN_EGG')) {
+						@type = reg_match('(.*)_SPAWN_EGG', @item['name'])[1];
+						if(@type == 'MOOSHROOM') {
+							@type = 'MUSHROOM_COW';
+						} else if(@type == 'ZOMBIE_PIGMAN') {
+							@type = 'PIG_ZOMBIE';
+						}
 						@count[1] = @item['qty'];
 					}
 				}
@@ -213,14 +212,13 @@ bind('inventory_click', null, array('slottype': 'RESULT'), @event) {
 			@slotitem['meta']['lore'] = @event['inventory'][1]['meta']['lore'];
 
 			if(array_size(@slotitem['meta']['enchants']) == 0) {
-				@slotitem['meta']['enchants'][] = array('elevel': 1, 'etype': 'DURABILITY');
+				@slotitem['meta']['enchants'] = array('unbreaking': 1);
 				@slotitem['meta']['flags'][] = 'HIDE_ENCHANTS';
 			}
 
 			modify_event('slotitem', @slotitem);
 
-		} else if(@slotitem['name'] == 'SKULL_ITEM'
-		&& @slotitem['data'] == 3
+		} else if(@slotitem['name'] == 'PLAYER_HEAD'
 		&& !is_null(@slotitem['meta'])
 		&& !is_null(@slotitem['meta']['display'])) {
 			# named player head

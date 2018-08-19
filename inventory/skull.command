@@ -7,7 +7,7 @@ register_command('skull', array(
 	},
 	'executor': closure(@alias, @sender, @args, @info) {
 		if(@args) {
-			pgive_item(array('name': 'SKULL_ITEM', 'data': 3, 'meta': array('owner': @args[0])));
+			pgive_item(array('name': 'PLAYER_HEAD', 'meta': array('owner': @args[0])));
 		} else {
 			return(false);
 		}
