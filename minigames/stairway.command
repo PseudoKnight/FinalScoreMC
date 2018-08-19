@@ -29,7 +29,7 @@ register_command('stairway', array(
 			@players[@player] = 0;
 			runas('~console', '/jukebox music @stairway http://finalscoremc.com/media/stairway.mp3 {volume:30,fadeDuration:2}');
 		} else {
-			@players[@player] = rand(16);
+			@players[@player] = array_rand(reflect_pull('enum', 'DyeColor'), 1, false)[0];
 		}
 		runas('~console', '/jukebox show add '.@player.' @stairway');
 		@ploc = ploc(@player);
@@ -38,7 +38,7 @@ register_command('stairway', array(
 		@startY = integer(@ploc[1] + 1);
 		@loc[0]++;
 		@loc[1]++;
-		set_block_at(@loc, '95:'.@players[@player]);
+		set_block(@loc, @players[@player].'_STAINED_GLASS', false);
 		set_pbed_location(@player, @loc, true);
 		@oldLocs = array();
 		export('stairway', @players);
@@ -84,7 +84,7 @@ register_command('stairway', array(
 		
 		proc _remove_old_blocks(@locations) {
 			foreach(@index: @loc in @locations) {
-				set_block_at(@loc, 0, false);
+				set_block(@loc, 'AIR', false);
 				array_remove(@locations, @index);
 			}
 		}
@@ -92,12 +92,12 @@ register_command('stairway', array(
 		set_interval(500, closure(){
 			if(!ponline(@player) || !array_contains(sk_current_regions(@player), 'stairway')) {
 				_remove_old_blocks(@oldLocs);
-				set_block_at(@loc, 0);
+				set_block(@loc, 'AIR');
 				_stairway_end(@player, @loc[1]);
 				die();
 			}
 			@ploc = ploc(@player);
-			if(split(':', get_block_at(@ploc))[0] == '95' && @ploc[1] >= @loc[1] && @loc[1] < 255) {
+			if(string_ends_with(get_block(@ploc), '_STAINED_GLASS') && @ploc[1] >= @loc[1] && @loc[1] < 255) {
 				_remove_old_blocks(@oldLocs);
 				@oldLocs[] = @loc[];
 				
@@ -107,8 +107,8 @@ register_command('stairway', array(
 					@newLoc = @loc[];
 					@newLoc[rand(2) * 2] += rand(2) * 2 - 1;
 					if(array_contains(sk_regions_at(@newLoc), 'stairway')
-					&& get_block_at(@newLoc) == '0:0') {
-						set_block_at(@newLoc, '95:'.@players[@player], false);
+					&& get_block(@newLoc) == 'AIR') {
+						set_block(@newLoc, @players[@player].'_STAINED_GLASS', false);
 						@oldLocs[] = @newLoc[];
 						@loc[0] = @newLoc[0];
 						@loc[1] = @newLoc[1];
@@ -140,17 +140,17 @@ register_command('stairway', array(
 						break();
 					}
 				} while(@attempts-- > 0);
-				set_block_at(@loc, '95:'.@players[@player]);
+				set_block(@loc, @players[@player].'_STAINED_GLASS', false);
 				title(@player, '', integer(@loc[1]) - @startY);
 			} else if(@oldLocs && @ploc['y'] < @startY) {
 				_remove_old_blocks(@oldLocs);
-				set_block_at(@loc, 0);
+				set_block(@loc, 'AIR');
 				_stairway_end(@player, @loc[1]);
 			} else if(@ploc['y'] > 254) {
 				_stairway_end(@player, 256);
 				set_timeout(3000, closure(){
 					_remove_old_blocks(@oldLocs);
-					set_block_at(@loc, 0);
+					set_block(@loc, 'AIR');
 				});
 			}
 		});

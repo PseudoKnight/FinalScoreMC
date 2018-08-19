@@ -30,8 +30,8 @@ register_command('hockey', array(
 		
 		proc _queue_game(@players) {
 			_add_activity('hockey', 'Ice Hockey');
-			@red = associative_array('name': 'STAINED_GLASS_PANE', 'data': 14);
-			@blue = associative_array('name': 'STAINED_GLASS_PANE', 'data': 11);
+			@red = associative_array('name': 'RED_STAINED_GLASS_PANE');
+			@blue = associative_array('name': 'BLUE_STAINED_GLASS_PANE');
 			@hockey = associative_array(
 				'players': @players,
 				'puck': '',
@@ -108,7 +108,7 @@ register_command('hockey', array(
 			
 			@countdown = array(5);
 			set_interval(1000, closure(){
-				play_sound(@hockey['loc'], associative_array('sound': 'NOTE_PLING', 'volume': 2, 'pitch': @countdown[0]));
+				play_sound(@hockey['loc'], associative_array('sound': 'BLOCK_NOTE_BLOCK_PLING', 'volume': 2, 'pitch': @countdown[0]));
 				if(@countdown[0] > 0) {
 					@countdown[0]--;
 				} else {
@@ -134,7 +134,7 @@ register_command('hockey', array(
 					@xp = max(1, (pexp(@event['damager']) / 2) ** 1.25);
 				}
 				@player = @event['damager'];
-				play_sound(entity_loc(@event['id']), array('sound': 'WOOD_CLICK', 'pitch': 2 - (1.3 / @xp)));
+				play_sound(entity_loc(@event['id']), array('sound': 'BLOCK_WOODEN_BUTTON_CLICK_ON', 'pitch': 2 - (1.3 / @xp)));
 				@ploc = entity_loc(puuid(@player));
 				@eloc = entity_loc(@hockey['puck']);
 				@dist = distance(@ploc, @eloc);
@@ -157,7 +157,7 @@ register_command('hockey', array(
 					@hockey['velocity'] = associative_array('x': 0, 'y': 0, 'z': 0);
 					@hockey['lastloc'] = entity_loc(@hockey['puck']);
 					set_pexp(0);
-					play_sound(@eloc, array('sound': 'WOOD_CLICK', 'pitch': 0.6));
+					play_sound(@eloc, array('sound': 'BLOCK_WOODEN_BUTTON_CLICK_ON', 'pitch': 0.6));
 				}
 			}
 			bind('entity_damage_player', associative_array('id': 'hockey-damage-player'), associative_array('damager': 'PLAYER'), @event, @hockey) {
@@ -305,7 +305,7 @@ register_command('hockey', array(
 					}
 					
 					if(@ricochetPitch > 1) {
-						play_sound(@l, array('sound': 'WOOD_CLICK', 'pitch': min(2, @ricochetPitch)));
+						play_sound(@l, array('sound': 'BLOCK_WOODEN_BUTTON_CLICK_ON', 'pitch': min(2, @ricochetPitch)));
 					}
 					
 					@v['y'] = 0;

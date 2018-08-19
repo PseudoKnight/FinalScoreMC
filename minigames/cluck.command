@@ -93,12 +93,12 @@ register_command('cluck', array(
 					@angle = rand(100);
 					@loc = @cluck['spawnloc'][];
 					@loc[2] += @offset;
-					@entityid = spawn_mob('CHICKEN', 1, @loc)[0];
+					@entityid = spawn_entity('CHICKEN', 1, @loc)[0];
 					if(@adult) {
-						play_sound(@loc, array('sound': 'CHICKEN_EGG_POP'));
+						play_sound(@loc, array('sound': 'ENTITY_CHICKEN_EGG'));
 					} else {
 						set_mob_age(@entityid, -24000);
-						play_sound(@loc, array('sound': 'CHICKEN_EGG_POP', 'pitch': 2));
+						play_sound(@loc, array('sound': 'ENTITY_CHICKEN_EGG', 'pitch': 2));
 					}
 					set_entity_velocity(@entityid, array(0, 1.1, (@angle - 12.5 * @offset) * (@cluck['round'] / 1000)));
 					set_entity_health(@entityid, 25);

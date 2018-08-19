@@ -88,8 +88,8 @@ register_command('spleef', array(
 				msg(color('yellow').'Pick a block.');
 				bind('player_interact', null, array('player': player()), @event, @cfg) {
 					if(@event['block'] != 0 && array_contains(sk_regions_at(@event['location']), @cfg['region']['material'])) {
-						@blocktype = get_block_at(@event['location']);
-						set_block_at(@cfg['option']['material'], @blocktype);
+						@blocktype = get_block(@event['location']);
+						set_block(@cfg['option']['material'], @blocktype);
 						msg(color('green').'[Spleef] '.color('r').'You have selected '.color('6').data_name(@blocktype).'.');
 						cancel();
 						unbind();
@@ -136,7 +136,7 @@ register_command('spleef', array(
 		
 				_regionmsg(@cfg['region']['wrapper'], color('green').'[Spleef] '.color('r').'Match starting in 3 seconds...');
 				@region = sk_region_info(@cfg['region']['floor'], @world)[0];
-				@mat = get_block_at(@cfg['option']['material']);
+				@mat = get_block(@cfg['option']['material']);
 		
 				#Given two blocks, iterates through all the blocks inside the cuboid, and calls the
 				#user defined function on them. The used defined procedure should accept 3 parameters,
@@ -152,20 +152,20 @@ register_command('spleef', array(
 				}
 		
 				set_timeout(1000, closure(){
-					if(get_block_at(@cfg['option']['platforming']) === '124:0') {
+					if(get_block(@cfg['option']['platforming']) === '124:0') {
 						#platforming
 						proc _setfloor(@x, @y, @z, @mat, @world) {
 							if(rand(2)) {
-								set_block_at(@x, @y, @z, @mat, @world, false);
+								set_block(array(@x, @y, @z, @world), @mat,  false);
 							} else {
-								set_block_at(@x, @y, @z, 0, @world, false);
+								set_block(array(@x, @y, @z, @world), 'AIR', false);
 							}
 						}
 					} else {
 						#regular floor
 						proc _setfloor(@x, @y, @z, @mat, @world) {
-							if(get_block_at(@x, @y, @z) != @mat) {
-								set_block_at(@x, @y, @z, @mat, @world, false);
+							if(get_block(array(@x, @y, @z, @world)) != @mat) {
+								set_block(array(@x, @y, @z, @world), @mat, false);
 							}
 						}
 					}
@@ -174,28 +174,28 @@ register_command('spleef', array(
 		
 				set_timeout(2000, closure(){
 					#random obstacles
-					if(get_block_at(@cfg['option']['obstacles']) ==  '124:0') {
+					if(reg_match('lit\\=true', get_blockdata_string(@cfg['option']['obstacles']))) {
 						proc _setwalls(@x, @y, @z, @world) {
 							if(assign(@rand, rand(100)) < 5) {
-								set_block_at(array(@x, @y, @z, @world), '98:0', false);
-								set_block_at(array(@x, @y + 1, @z, @world), '98:0', false);
+								set_block(array(@x, @y, @z, @world), 'STONE_BRICKS', false);
+								set_block(array(@x, @y + 1, @z, @world), 'STONE_BRICKS', false);
 							} else if(@rand < 6) {
-								set_block_at(array(@x, @y, @z, @world), '98:1', false);
-								set_block_at(array(@x, @y + 1, @z, @world), '98:1', false);
+								set_block(array(@x, @y, @z, @world), 'MOSSY_STONE_BRICKS', false);
+								set_block(array(@x, @y + 1, @z, @world), 'MOSSY_STONE_BRICKS', false);
 							} else if(@rand < 7) {
-								set_block_at(array(@x, @y, @z, @world), '98:2', false);
-								set_block_at(array(@x, @y + 1, @z, @world), '98:2', false);
-							} else if(get_block_at(@x, @y, @z)[0] !== '0') {
-								set_block_at(array(@x, @y, @z, @world), 0, false);
-								set_block_at(array(@x, @y + 1, @z, @world), 0, false);
+								set_block(array(@x, @y, @z, @world), 'CRACKED_STONE_BRICKS', false);
+								set_block(array(@x, @y + 1, @z, @world), 'CRACKED_STONE_BRICKS', false);
+							} else if(get_block(array(@x, @y, @z, @world)) !== 'AIR') {
+								set_block(array(@x, @y, @z, @world), 'AIR', false);
+								set_block(array(@x, @y + 1, @z, @world), 'AIR', false);
 							}
 						}
 						#clear walls if random obstacles is turned off
 					} else {
 						proc _setwalls(@x, @y, @z, @world) {
-							if(get_block_at(@x, @y, @z)[0] !== '0') {
-								set_block_at(array(@x, @y, @z, @world), '0:0', false);
-								set_block_at(array(@x, @y + 1, @z, @world), '0:0', false);
+							if(get_block(array(@x, @y, @z, @world)) !== 'AIR') {
+								set_block(array(@x, @y, @z, @world), 'AIR', false);
+								set_block(array(@x, @y + 1, @z, @world), 'AIR', false);
 							}
 						}
 					}
@@ -214,48 +214,51 @@ register_command('spleef', array(
 						}
 						@location = array(@region[0][0] - rand(sqrt((@region[0][0] - @region[1][0]) ** 2)), @region[0][1], @region[0][2] - rand(sqrt((@region[0][2] - @region[1][2]) ** 2)));
 						#check if they're spawning into a block
-						if(get_block_at(array(@location[0], @location[1] + 1, @location[2]))[0] !== '0') {
-							set_block_at(@location[0], @location[1] + 1, @location[2], 0, @world, false);
-							set_block_at(@location[0], @location[1] + 2, @location[2], 0, @world, false);
+						if(get_block(array(@location[0], @location[1] + 1, @location[2], @world)) !== 'AIR') {
+							set_block(array(@location[0], @location[1] + 1, @location[2], @world), 'AIR', false);
+							set_block(array(@location[0], @location[1] + 2, @location[2], @world), 'AIR', false);
 						}
 						#check if they're spawning over air
-						if(get_block_at(@location[0], @location[1], @location[2])[0] === '0') {
-							set_block_at(@location[0], @location[1], @location[2], @mat, @world, false);
+						if(get_block(array(@location[0], @location[1], @location[2], @world)) === 'AIR') {
+							set_block(array(@location[0], @location[1], @location[2], @world), @mat, false);
 						}
 						set_ploc(@player, array(@location[0] + 0.5, @location[1], @location[2] + 0.5, @world));
 						set_pinv(@player, 0,
-							array('name': 'DIAMOND_PICKAXE', 'qty': 1, 'enchants': array(array('etype': 'DIG_SPEED', 'elevel': 40)), 'meta': array('display': color('green').'SUPERPICK'))
+							array('name': 'DIAMOND_PICKAXE', 'qty': 1, 'meta': array(
+								'enchants': array(array('etype': 'DIG_SPEED', 'elevel': 40)),
+								 array('display': color('green').'SUPERPICK')
+							));
 						);
-						if(get_block_at(@cfg['option']['speed']) ==  '124:0') {
+						if(reg_match('lit\\=true', get_blockdata_string(@cfg['option']['speed']))) {
 							set_peffect(@player, 1, 1, 9999, true, false);
 						}
-						if(get_block_at(@cfg['option']['jump']) ==  '124:0') {
+						if(reg_match('lit\\=true', get_blockdata_string(@cfg['option']['jump']))) {
 							set_peffect(@player, 8, 3, 9999, true, false);
 						}
 					}
 		
-					if(get_block_at(@cfg['option']['knockback']) === '124:0') {
+					if(reg_match('lit\\=true', get_blockdata_string(@cfg['option']['knockback']))) {
 						sk_region_flag(@world, 'spleef-arena', 'pvp', 'allow');
 					} else {
 						sk_region_flag(@world, 'spleef-arena', 'pvp', 'deny');
 					}
 					
 					proc _fall_block(@loc) {
-						@block = get_block_at(@loc);
+						@block = get_block(@loc);
 						@entityLoc = @loc[];
 						@entityLoc[0] += 0.5;
 						@entityLoc[2] += 0.5;
-						if(@block != '0:0') {
-							set_block_at(@loc, 0);
+						if(@block != 'AIR') {
+							set_block(@loc, 'AIR');
 							spawn_falling_block(@entityLoc, @block);
 						}
 						@entityLoc[1] += 1;
-						play_effect(@entityLoc, 'CLOUD', array('particleCount': 4, 'speed': 0.01));
-						play_sound(@entityLoc, array('sound': 'FUSE', 'pitch': 2));
+						spawn_particle(@entityLoc, array('particle': 'CLOUD', 'count': 4, 'speed': 0.01));
+						play_sound(@entityLoc, array('sound': 'ENTITY_CREEPER_PRIMED', 'pitch': 2));
 					}
 					
 					@worminterval = '';
-					if(get_block_at(@cfg['option']['snake']) === '124:0') {
+					if(reg_match('lit\\=true', get_blockdata_string(@cfg['option']['snake']))) {
 						@wormLoc = @region[0][];
 						@wormLoc[0] -= 20;
 						@wormLoc[2] -= 20;
@@ -336,7 +339,7 @@ register_command('spleef', array(
 								set_pmode(@winner, 'ADVENTURE');
 								_acc_add(@winner, @reward);
 								tmsg(@winner, color('a').'[Spleef] '.color('r').@reward.' coins!');
-							} else if(get_block_at(@cfg['option']['snake']) === '124:0') {
+							} else if(reg_match('lit\\=true', get_blockdata_string(@cfg['option']['snake']))) {
 								_regionmsg(@cfg['region']['wrapper'], color('a').'[Spleef] '.color('r').'Snekey Sneke wins.');
 							} else {
 								_regionmsg(@cfg['region']['wrapper'], color('a').'[Spleef] '.color('r').'No one wins.');

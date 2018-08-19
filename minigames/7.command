@@ -62,17 +62,17 @@ register_command('7', array(
 					if(@countdown[0] > 0) {
 						foreach(@player in array_keys(@7['players'])) {
 							if(ponline(@player)) {
-								play_sound(ploc(@player), array('sound': 'NOTE_PIANO', 'pitch': 1, 'volume': 2), @player)
-								play_sound(ploc(@player), array('sound': 'NOTE_PIANO', 'pitch': 1.1, 'volume': 2), @player)
+								play_sound(ploc(@player), array('sound': 'BLOCK_NOTE_BLOCK_HARP', 'pitch': 1, 'volume': 2), @player)
+								play_sound(ploc(@player), array('sound': 'BLOCK_NOTE_BLOCK_HARP', 'pitch': 1.1, 'volume': 2), @player)
 							}
 						}
 						@countdown[0] -= 1
 					} else {
 						foreach(@player in array_keys(@7['players'])) {
 							if(ponline(@player)) {
-								play_sound(ploc(@player), array('sound': 'NOTE_PIANO', 'pitch': 1, 'volume': 2), @player);
-								play_sound(ploc(@player), array('sound': 'NOTE_PIANO', 'pitch': 1.5, 'volume': 2), @player);
-								play_sound(ploc(@player), array('sound': 'NOTE_PIANO', 'pitch': 2, 'volume': 2), @player);
+								play_sound(ploc(@player), array('sound': 'BLOCK_NOTE_BLOCK_HARP', 'pitch': 1, 'volume': 2), @player);
+								play_sound(ploc(@player), array('sound': 'BLOCK_NOTE_BLOCK_HARP', 'pitch': 1.5, 'volume': 2), @player);
+								play_sound(ploc(@player), array('sound': 'BLOCK_NOTE_BLOCK_HARP', 'pitch': 2, 'volume': 2), @player);
 								set_pwalkspeed(@player, 0.2);
 								set_peffect(@player, 8, 0, 0);
 							}
@@ -98,57 +98,56 @@ register_command('7', array(
 									|| @p['block'][2] != @loc['z']
 									|| @p['block'][1] != @loc['y'])) {
 										@pitch = 0;
-										switch(get_block_at(@p['block'])) {
-											case '173:0':
+										switch(get_block(@p['block'])) {
+											case 'COAL_BLOCK':
 												@p['time'] -= 0.20;
 												title(@player, '', color('red').'\u2639');
-												play_sound(@p['block'], array('sound': 'VILLAGER_NO'), @player);
-											case '16:0':
+												play_sound(@p['block'], array('sound': 'ENTITY_VILLAGER_NO'), @player);
+											case 'COAL_ORE':
 												@p['time'] -= 0.10;
 												title(@player, '', color('red').'\u2639');
-												play_sound(@p['block'], array('sound': 'VILLAGER_NO'), @player);
-											case '15:0':
+												play_sound(@p['block'], array('sound': 'ENTITY_VILLAGER_NO'), @player);
+											case 'IRON_ORE':
 												@p['time'] += 0.20;
 												@pitch = 0.5;
-											case '42:0':
+											case 'IRON_BLOCK':
 												@p['time'] += 0.25;
 												@pitch = 0.561231;
-											case '21:0':
-											case '73:0':
-											case '74:0':
+											case 'LAPIS_ORE':
+											case 'REDSTONE_ORE':
 												@p['time'] += 0.30;
 												@pitch = 0.629961;
-											case '22:0':
-											case '152:0':
+											case 'LAPIS_BLOCK':
+											case 'REDSTONE_BLOCK':
 												@p['time'] += 0.35;
 												@pitch = 0.749154;
-											case '14:0':
+											case 'GOLD_ORE':
 												@p['time'] += 0.40;
 												@pitch = 0.840896;
-											case '41:0':
+											case 'GOLD_BLOCK':
 												@p['time'] += 0.45;
 												@pitch = 1.0;
-											case '56:0':
+											case 'DIAMOND_ORE':
 												@p['time'] += 0.50;
 												@pitch = 1.22462;
-											case '57:0':
+											case 'DIAMOND_BLOCK':
 												@p['time'] += 0.55;
 												@pitch = 1.259921;
-											case '129:0':
+											case 'EMERALD_ORE':
 												@p['time'] += 0.60;
 												@pitch = 1.498307;
-											case '133:0':
+											case 'EMERALD_BLOCK':
 												@p['time'] += 0.65;
 												@pitch = 1.681793;
 										}
-										set_block_at(@p['block'], '0:0', false);
+										set_block(@p['block'], 'AIR', false);
 										if(@pitch) {
-											play_sound(@p['block'], array('sound': 'ORB_PICKUP', 'pitch': @pitch), @player);
+											play_sound(@p['block'], array('sound': 'ENTITY_EXPERIENCE_ORB_PICKUP', 'pitch': @pitch), @player);
 											@note = @p['block'][];
 											@note[0] += 0.5;
 											@note[1] += 0.5;
 											@note[2] += 0.5;
-											play_effect(@note, 'NOTE');
+											spawn_particle(@note, 'NOTE');
 										}
 										@p['block'] = null;
 									}
@@ -165,8 +164,8 @@ register_command('7', array(
 									if(@p['time'] <= 0) {
 										_7_remove_player(@player, @7);
 									} else if(@p['time'] < 2) {
-										play_sound(@loc, array('sound': 'NOTE_PIANO', 'pitch': 1.9), @player)
-										play_sound(@loc, array('sound': 'NOTE_PIANO', 'pitch': 2))
+										play_sound(@loc, array('sound': 'BLOCK_NOTE_BLOCK_HARP', 'pitch': 1.9), @player)
+										play_sound(@loc, array('sound': 'BLOCK_NOTE_BLOCK_HARP', 'pitch': 2))
 									}
 								}
 							}
@@ -275,7 +274,7 @@ register_command('7', array(
 					}
 					@7['spawns'] = @arenas[@7['arena']]['spawns'];
 					@skplayer = array_keys(@7['players'])[0];
-					set_block_at(@startblock, 0);
+					set_block(@startblock, 'AIR');
 					if(array_index_exists(@arenas[@7['arena']], 'author')) {
 						skcb_load(@arenas[@7['arena']]['author'][0].'/'.@7['arena']);
 					} else {
@@ -285,9 +284,9 @@ register_command('7', array(
 					@7['state'] = 3;
 
 				} else if(@7['state'] == 3) {
-					if(get_block_at(@startblock) !== '0:0') {
+					if(get_block(@startblock) !== 'AIR') {
 						@7['state'] = 4;
-						set_block_at(@startblock, 0);
+						set_block(@startblock, 'AIR');
 						broadcast(colorize('&6&l7 Seconds to Live&r... /warp 7'), all_players(@world));
 					}
 
@@ -347,7 +346,7 @@ register_command('7', array(
 					@arenas[@schematic] = array('spawns': array(), 'author': array(puuid(), player()));
 					store_value('seven', @arenas);
 					@startblock = sk_region_info('7_schematic', @world)[0][0];
-					set_block_at(@startblock, 169);
+					set_block(@startblock, 'SEA_LANTERN');
 					sudo('/rg select 7_schematic');
 					queue_push(closure(){sudo('//copy')}, '7');
 					queue_push(closure(){sudo('//schematic save '.@schematic)}, '7');
@@ -387,7 +386,7 @@ register_command('7', array(
 					}
 					
 					@startblock = sk_region_info('7_schematic', @world)[0][0];
-					set_block_at(@startblock, 169);
+					set_block(@startblock, 'SEA_LANTERN');
 					sudo('/rg select 7_schematic');
 					queue_push(closure(){sudo('//copy')}, '7');
 					queue_push(closure(){sudo('//schematic save '.@schematic)}, '7');

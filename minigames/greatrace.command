@@ -83,10 +83,10 @@ register_command('greatrace', array(
 						array_remove(@players, @index);
 					} else if(@timer[0]) {
 						title(@p, @timer[0], 'The Great Race', 0, 40, 0);
-						play_sound(@l, array('sound': 'NOTE_PLING'), @p);
+						play_sound(@l, array('sound': 'BLOCK_NOTE_BLOCK_PLING'), @p);
 					} else {
 						title(@p, 'GO!', 'The Great Race', 0, 40, 20);
-						play_sound(@l, array('sound': 'FIREWORK_BLAST2'), @p);
+						play_sound(@l, array('sound': 'ENTITY_FIREWORK_ROCKET_BLAST_FAR'), @p);
 						set_compass_target(@p, @target);
 						tmsg(@p, 'Target Location: '.@target['x'].' / '.@target['y'].' / '.@target['z']);
 					}
@@ -107,7 +107,7 @@ register_command('greatrace', array(
 						set_pscore('distance', @p, integer(@dist), 'greatrace');
 						if(@dist < 96) {
 							foreach(@point in @circle) {
-								play_effect(@point, 'FIREWORKS_SPARK', array('speed': 0, 'radius': 96));
+								spawn_particle(@point, 'FIREWORKS_SPARK', @players);
 							}
 						}
 
