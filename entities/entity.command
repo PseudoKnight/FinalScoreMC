@@ -1,7 +1,7 @@
-register_command('mob', array(
-	'description': 'Custom mob management commands',
-	'usage': '/mob <list|info|set|delete|spawn> [mob_name] [setting] [value(s)]',
-	'permission': 'command.mob',
+register_command('entity', array(
+	'description': 'Custom entity management commands',
+	'usage': '/entity <list|info|set|delete|spawn> [entity_name] [setting] [value(s)]',
+	'permission': 'command.entity',
 	'tabcompleter': closure(@alias, @sender, @args, @info) {
 		if(array_size(@args) == 1) {
 			return(_strings_start_with_ic(array('list', 'info', 'set', 'delete', 'spawn'), @args[-1]));
@@ -22,9 +22,9 @@ register_command('mob', array(
 				}
 				@id = @args[1];
 				@setting = @args[2];
-				@mob = get_value('mob.'.@id);
-				if(!@mob) {
-					@mob = array();
+				@entity = get_value('entity.'.@id);1
+				if(!@entity) {
+					@entity = array();
 				}
 				switch(@setting) {
 					case 'type':
@@ -32,10 +32,10 @@ register_command('mob', array(
 							return(false);
 						}
 						@type = @args[3];
-						if(!_get_mob(@type)) {
-							die(color('gold').'Unknown mob type.');
+						if(!_get_entity(@type)) {
+							die(color('gold').'Unknown entityb type.');
 						}
-						@mob['type'] = @type;
+						@entity['type'] = @type;
 						msg(color('green').'Type set to '.@type);
 
 					case 'name':
@@ -46,8 +46,8 @@ register_command('mob', array(
 						if(length(@name) > 64) {
 							die(color('gold').'Name is too long.');
 						}
-						@mob['name'] = colorize(@name);
-						msg(color('green').'Name set to '.@mob['name']);
+						@entity['name'] = colorize(@name);
+						msg(color('green').'Name set to '.@entity['name']);
 
 					// Single integer values
 					case 'age':
@@ -62,8 +62,8 @@ register_command('mob', array(
 						if(!is_integral(@int)) {
 							die(color('gold').'Must be an integer.');
 						}
-						@mob[@setting] = integer(@int);
-						msg(color('green').to_upper(@setting).' set to '.@mob[@setting]);
+						@entity[@setting] = integer(@int);
+						msg(color('green').to_upper(@setting).' set to '.@entity[@setting]);
 
 					// Single boolean
 					case 'ai':
@@ -75,11 +75,11 @@ register_command('mob', array(
 							return(false);
 						}
 						@boolean = @args[3];
-						@mob[@setting] = (@boolean == 'true');
-						msg(color('green').to_upper(@setting).' set to '.@mob[@setting]);
+						@entity[@setting] = (@boolean == 'true');
+						msg(color('green').to_upper(@setting).' set to '.@entity[@setting]);
 
 					case 'gear':
-						@mob['gear'] = array(
+						@entity['gear'] = array(
 							'WEAPON': pinv(player(), 0),
 							'OFF_HAND': pinv(player(), -106),
 							'HELMET': pinv(player(), 103),
@@ -91,7 +91,7 @@ register_command('mob', array(
 
 					case 'droprate':
 						if(array_size(@args) == 4) {
-							@mob['droprate'] = array(
+							@entity['droprate'] = array(
 								'WEAPON': @args[3],
 								'OFF_HAND': @args[3],
 								'BOOTS': @args[3],
@@ -100,7 +100,7 @@ register_command('mob', array(
 								'HELMET': @args[3]
 							);
 						} else if(array_size(@args) == 9) {
-							@mob['droprate'] = array(
+							@entity['droprate'] = array(
 								'WEAPON': @args[3],
 								'OFF_HAND': @args[4],
 								'BOOTS': @args[5],
@@ -121,20 +121,20 @@ register_command('mob', array(
 							die('Must be numeric');
 						}
 						@effectid = integer(@args[3]);
-						if(!array_index_exists(@mob, 'effects')) {
-							@mob['effects'] = array();
+						if(!array_index_exists(@entity, 'effects')) {
+							@entity['effects'] = array();
 						}
 						@duration = integer(@args[5]);
 						if(@duration == 0) {
-							foreach(@index: @effect in @mob['effects']) {
+							foreach(@index: @effect in @entity['effects']) {
 								if(@effect['id'] == @effectid) {
-									array_remove(@mob['effects'], @index);
+									array_remove(@entity['effects'], @index);
 									msg(color('green').'Effect removed');
 									break();
 								}
 							}
 						} else {
-							@mob['effects'][] = array(
+							@entity['effects'][] = array(
 								'id': @effectid,
 								'strength': @args[4] - 1,
 								'seconds': @duration
@@ -148,15 +148,15 @@ register_command('mob', array(
 						if(array_size(@args) == 3) {
 							return(false);
 						}
-						@mob[@setting] = json_decode(array_implode(@args[3..-1]));
-						msg(color('green').'Set '.@setting.' to '.@mob[@setting]);
+						@entity[@setting] = json_decode(array_implode(@args[3..-1]));
+						msg(color('green').'Set '.@setting.' to '.@entity[@setting]);
 						
 					case 'rider':
 						if(array_size(@args) == 3) {
 							return(false);
 						}
-						@mob['rider'] = @args[3];
-						msg(color('green').'Set mob rider to '.@mob['rider']);
+						@entity['rider'] = @args[3];
+						msg(color('green').'Set entity rider to '.@entity['rider']);
 
 					case 'explode':
 						if(array_size(@args) < 5) {
@@ -164,7 +164,7 @@ register_command('mob', array(
 						}
 						@duration = @args[3];
 						if(!is_numeric(@duration)) {
-							die(color('gold').'Must give a number in seconds for the mob to explode.');
+							die(color('gold').'Must give a number in seconds for the entity to explode.');
 						}
 						@strength = @args[4];
 						if(!is_numeric(@strength)) {
@@ -173,14 +173,14 @@ register_command('mob', array(
 						if(@strength > 8) {
 							die(color('gold').'That explosion is too big. Yes, that\'s a thing.');
 						}
-						@mob['explode'] = array(integer(@duration), integer(@strength));
-						msg('Set mob to explode after '.@duration.' seconds with strength of '.@strength);
+						@entity['explode'] = array(integer(@duration), integer(@strength));
+						msg('Set entity to explode after '.@duration.' seconds with strength of '.@strength);
 
 					default:
 						die(color('yellow').'Available settings: type, name, gear, droprate, effect, health, tame, tags, rider, explode, onfire,'
 								.' lifetime, targetnear');
 				}
-				store_value('mob.'.@id, @mob);
+				store_value('entity.'.@id, @entity);
 
 			case 'delete':
 				if(array_size(@args) < 2) {
@@ -189,16 +189,16 @@ register_command('mob', array(
 				@id = @args[1];
 				if(array_size(@args) > 2) {
 					@setting = @args[2];
-					@mob = get_value('mob.'.@id);
+					@entity = get_value('entity.'.@id);
 					if(@setting === 'effect') {
 						@setting = 'effects';
 					}
-					array_remove(@mob, @setting);
-					store_value('mob.'.@id, @mob);
+					array_remove(@entity, @setting);
+					store_value('entity.'.@id, @entity);
 					msg(color('green').@setting.' deleted from '.@id);
 				} else {
-					clear_value('mob.'.@id);
-					msg(color('green').'Custom mob deleted.');
+					clear_value('entity.'.@id);
+					msg(color('green').'Custom entity deleted.');
 				}
 
 			case 'info':
@@ -206,8 +206,8 @@ register_command('mob', array(
 					return(false);
 				}
 				@id = @args[1];
-				@mob = get_value('mob.'.@id);
-				foreach(@setting: @value in @mob) {
+				@entity = get_value('entity.'.@id);
+				foreach(@setting: @value in @entity) {
 					msg(color('gray').@setting.' '.color('r').@value);
 				}
 
@@ -216,33 +216,33 @@ register_command('mob', array(
 					return(false);
 				}
 				@id = @args[1];
-				@mobCount = 1;
+				@entityCount = 1;
 				if(array_size(@args) == 3) {
-					@mobCount = integer(@args[2]);
+					@entityCount = integer(@args[2]);
 				}
 				@loc = pcursor();
 				@loc['x'] += 0.5;
 				@loc['y'] += 1;
 				@loc['z'] += 0.5;
-				while(@mobCount > 0) {
-					_spawn_mob(@id, @loc, player());
-					@mobCount--;
+				while(@entityCount > 0) {
+					_spawn_entity(@id, @loc, player());
+					@entityCount--;
 				}
 
 			case 'list':
-				@mobs = get_values('mob');
+				@entities = get_values('entity');
 				@list = '';
-				foreach(@key in array_keys(@mobs)) {
+				foreach(@key in array_keys(@entities)) {
 					@list .= split('.', @key)[1].' ';
 				}
-				msg(color('gray').'CUSTOM MOBS: '.color('r').@list);
+				msg(color('gray').'CUSTOM ENTITIES: '.color('r').@list);
 				
 			default:
-				msg('/mob set <mob> <setting> <value> '.color('gray').'Sets a value to the custom mob');
-				msg('/mob delete <mob> [setting] '.color('gray').'Deletes mob or setting');
-				msg('/mob info <mob> '.color('gray').'Displays information about custom mob');
-				msg('/mob spawn <mob> '.color('gray').'Spawns mob where you\'re looking');
-				msg('/mob list '.color('gray').'Lists all custom mobs');
+				msg('/entity set <entity> <setting> <value> '.color('gray').'Sets a value to the custom entity');
+				msg('/entity delete <entity> [setting] '.color('gray').'Deletes entity or setting');
+				msg('/entity info <entity> '.color('gray').'Displays information about custom entity');
+				msg('/entity spawn <entity> '.color('gray').'Spawns entity where you\'re looking');
+				msg('/entity list '.color('gray').'Lists all custom entities');
 
 		}
 	}
