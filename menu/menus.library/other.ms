@@ -1,5 +1,5 @@
 @menu = @main[];
-@menu[57]['name'] = 'WOOL';
+@menu[57]['name'] = 'LIME_WOOL';
 
 @menu[45] = array(
 	'name': 'SNOW_BLOCK',
@@ -12,8 +12,7 @@
 	),
 );
 @menu[46] = array(
-	'name': 'STAINED_CLAY',
-	'data': 2,
+	'name': 'MAGENTA_TERRACOTTA',
 	'meta': array(
 		'display': color('gold').'Cube'.color('red').'Climber',
 		'lore': array(
@@ -84,8 +83,7 @@
 	),
 );
 @menu[52] = array(
-	'name': 'SMOOTH_BRICK',
-	'data': 2,
+	'name': 'CRACKED_STONE_BRICKS',
 	'meta': array(
 		'display': color('yellow').'Gladiator Arena',
 		'lore': array(
@@ -95,8 +93,7 @@
 	),
 );
 @menu[53] = array(
-	'name': 'WOOD',
-	'data': 4,
+	'name': 'ACACIA_PLANKS',
 	'meta': array(
 		'display': color('gold').'Hoops!',
 		'lore': array(
@@ -126,8 +123,7 @@
 	),
 );
 @menu[32] = array(
-	'name': 'LOG',
-	'data': 3,
+	'name': 'JUNGLE_LOG',
 	'meta': array(
 		'display': color('yellow').'Island Golf',
 		'lore': array(
@@ -159,8 +155,7 @@
 	),
 );
 @menu[41] = array(
-	'name': 'STAINED_CLAY',
-	'data': 2,
+	'name': 'MAGENTA_TERRACOTTA',
 	'meta': array(
 		'display': color('aqua').'Gyro Race',
 		'lore': array(

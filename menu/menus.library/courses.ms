@@ -1,11 +1,11 @@
 @color = array(
-	'easy': array('chat': 'aqua', 'data': 3),
-	'easy-medium': array('chat': 'green', 'data': 5),
-	'medium': array('chat': 'yellow', 'data': 4),
-	'medium-hard': array('chat': 'gold', 'data': 1),
-	'hard': array('chat': 'dark_red', 'data': 14),
-	'very-hard': array('chat': 'dark_purple', 'data': 10),
-	'other': array('chat': 'white', 'data': 0),
+	'easy': array('chat': 'aqua', 'dye': 'LIGHT_BLUE'),
+	'easy-medium': array('chat': 'green', 'dye': 'LIME'),
+	'medium': array('chat': 'yellow', 'dye': 'YELLOW'),
+	'medium-hard': array('chat': 'gold', 'dye': 'ORANGE'),
+	'hard': array('chat': 'dark_red', 'dye': 'RED'),
+	'very-hard': array('chat': 'dark_purple', 'dye': 'PURPLE'),
+	'other': array('chat': 'white', 'dye': 'WHITE'),
 );
 @difficultyorder = array('easy', 'easy-medium', 'medium', 'medium-hard', 'hard', 'very-hard', 'other');
 @difficulties = array(
@@ -28,10 +28,10 @@
 );
 
 @solo = @main[];
-@solo[59]['name'] = 'WOOL';
+@solo[59]['name'] = 'LIGHT_BLUE_WOOL';
 
 @coop = @main[];
-@coop[60]['name'] = 'WOOL';
+@coop[60]['name'] = 'ORANGE_WOOL';
 
 @soloMenu = array(
 	'menu': @solo,
@@ -77,8 +77,7 @@ foreach(@name: @cake in @cakes) {
 				@coins++
 			}
 			@difficulties[@difficulty][@coins] = array(
-				'name': 'STAINED_GLASS_PANE',
-				'data': @color[@difficulty]['data'],
+				'name': @color[@difficulty]['dye'].'_STAINED_GLASS_PANE',
 				'meta': array(
 					'display': color('green').to_upper(@name),
 					'lore': @lore,
@@ -90,8 +89,7 @@ foreach(@name: @cake in @cakes) {
 				@coins++
 			}
 			@coopdifficulties[@difficulty][@coins] =  array(
-				'name': 'STAINED_GLASS_PANE',
-				'data': @color[@difficulty]['data'],
+				'name': @color[@difficulty]['dye'].'_STAINED_GLASS_PANE',
 				'meta': array(
 					'display': color('green').to_upper(@name),
 					'lore': @lore,
@@ -129,7 +127,7 @@ foreach(@i: @difficulty in @difficultyorder) {
 		@name = to_lower(substr(@item['meta']['display'], 2));
 		if(array_index_exists(@cakes[@name]['players'], @uuid)) {
 			@item = @item[];
-			@item['data'] = 0;
+			@item['name'] = 'WHITE_STAINED_GLASS_PANE';
 		}
 		@menu[@slot] = @item;
 	}

@@ -17,7 +17,7 @@ proc _menu_refresh_pvp() {
 				}
 				if(@pvp['players']) {
 					@item = @item[];
-					@item['data'] = 10;
+					@item['name'] = 'LIME_DYE';
 					@item['qty'] = array_size(@pvp['players']);
 				}
 			}

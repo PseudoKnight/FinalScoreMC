@@ -1,5 +1,5 @@
 @menu = @main[];
-@menu[56]['name'] = 'WOOL';
+@menu[56]['name'] = 'RED_WOOL';
 
 @menuPvp = array(
 	'inv': associative_array(),
@@ -31,8 +31,7 @@ foreach(@name: @arena in @arenas) {
 	}
 	@lore[] = color('dark_gray').'Run: /warp '.@name;
 	@menuPvp['inv'][@slot++] = associative_array(
-		'name': 'INK_SACK',
-		'data': 8,
+		'name': 'GRAY_DYE',
 		'meta': associative_array(
 			'display': color('green').to_upper(@name),
 			'lore': @lore,

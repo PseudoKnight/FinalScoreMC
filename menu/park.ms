@@ -12,8 +12,7 @@ bind('player_interact', null, array('itemname': 'BOOK', 'button': 'right', 'hand
 queue_push(closure(){
 	@main = array(
 		56: array(
-			'name': 'CARPET',
-			'data': 14,
+			'name': 'RED_CARPET',
 			'meta': array(
 				'display': color('green').'PVP Arenas',
 				'lore': array(color('dark_gray').'Open: pvp'),
@@ -21,8 +20,7 @@ queue_push(closure(){
 			),
 		),
 		57: array(
-			'name': 'CARPET',
-			'data': 5,
+			'name': 'LIME_CARPET',
 			'meta': array(
 				'display': color('green').'Other Games',
 				'lore': array(color('dark_gray').'Open: other'),
@@ -30,16 +28,14 @@ queue_push(closure(){
 			),
 		),
 		59: array(
-			'name': 'CARPET',
-			'data': 3,
+			'name': 'LIGHT_BLUE_CARPET',
 			'meta': array(
 				'display': color('green').'Solo Courses / Parkour',
 				'lore': array(color('dark_gray').'Load: solo'),
 			),
 		),
 		60:array(
-			'name': 'CARPET',
-			'data': 1,
+			'name': 'ORANGE_CARPET',
 			'meta': array(
 				'display': color('green').'Coop Courses / Parkour',
 				'lore': array(color('dark_gray').'Load: coop'),
