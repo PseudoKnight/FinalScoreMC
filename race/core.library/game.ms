@@ -99,7 +99,7 @@ proc _race_countdown(@race) {
 					title_msg(@p, '', @timer[0], 0, 30, 0);
 				}
 				if(@timer[0] < 4) {
-					play_sound(ploc(), array('sound': 'NOTE_PLING'));
+					play_sound(ploc(), array('sound': 'BLOCK_NOTE_BLOCK_PLING'));
 				}
 			}
 		});
@@ -111,13 +111,13 @@ proc _race_start(@race) {
 	foreach(@p: @v in @race['players']) {
 		title_msg(@p, color('green')'Go!', '', 0, 40, 20);
 	}
-	play_sound(ploc(), array('sound': 'NOTE_PLING', 'pitch': 2));
+	play_sound(ploc(), array('sound': 'BLOCK_NOTE_BLOCK_PLING', 'pitch': 2));
 	_race_drop_players(@race);
 	
 	@race['binds'][] = bind('player_move', null, null, @event, @race) {
 		if(array_index_exists(@race['players'], player())) {
 			@loc = location_shift(@event['to'], 'up', 0.35);
-			play_effect(@loc, 'FIREWORKS_SPARK', array('speed': 0));
+			spawn_particle(@loc, 'FIREWORKS_SPARK');
 			@p = @race['players'][player()];
 			if(@p['state'] != 'finished') {
 				@checkpoint = @p['checkpoint'];
@@ -133,7 +133,7 @@ proc _race_start(@race) {
 					if(@checkpoint != array_size(@race['checkpoint'])) {
 						@p['checkpoint'] = @checkpoint;
 						action_msg(color('green').'Checkpoint!');
-						play_sound(@loc, array('sound': 'SUCCESSFUL_HIT'), player());
+						play_sound(@loc, array('sound': 'ENTITY_ARROW_HIT_PLAYER'), player());
 					} else {
 						// hit lap
 						@p['checkpoint'] = 0;

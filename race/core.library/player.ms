@@ -73,7 +73,7 @@ proc _race_place_player(@race, @player, @loc) {
 		case 'pig':
 			@vehicle = spawn_entity('PIG', 1, @loc)[0];
 			set_entity_spec(@vehicle, array('saddled': true));
-			set_pinv(@player, 0, array('name': 'CARROT_STICK', 'meta': array('unbreakable': true)));
+			set_pinv(@player, 0, array('name': 'CARROT_ON_A_STICK', 'meta': array('unbreakable': true)));
 		case 'elytra':
 			set_pinv(@player, 102, array('name': 'ELYTRA'));
 	}
@@ -109,10 +109,10 @@ proc _race_drop_player(@race, @player) {
 			}
 			set_entity_rider(@vehicle, null);
 			entity_remove(@vehicle);
-			unbind('@bind);
+			unbind(@bind);
 		}
 	}
-	play_sound(ploc(@player)', array('sound': 'ENTITY_FIREWORK_BLAST'), @player);
+	play_sound(ploc(@player), array('sound': 'ENTITY_FIREWORK_ROCKET_BLAST'), @player);
 }
 
 proc _race_drop_players(@race) {
