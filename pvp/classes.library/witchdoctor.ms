@@ -4,7 +4,7 @@ case 'load':
 		if(pinfo(player(), 6) != @e['item']['name']) {
 			die();
 		}
-		if(pcooldown('WOOD_HOE')) {
+		if(pcooldown('WOODEN_HOE')) {
 			die();
 		}
 		foreach(@player in players_in_radius(ploc(), 18)) {
@@ -18,19 +18,19 @@ case 'load':
 		}
 		play_sound(ploc(), array('sound': 'ENTITY_SKELETON_HORSE_DEATH', 'pitch': 0.5, 'volume': 2));
 		@slot = pheld_slot();
-		set_pcooldown('WOOD_HOE', 15000 / 50);
+		set_pcooldown('WOODEN_HOE', 15000 / 50);
 		set_timeout(15000, closure(){
 			if(ponline(player())) {
 				@item = pinv(player(), @slot);
-				if(@item && @item['name'] == 'WOOD_HOE') {
-					play_named_sound(ploc(), array('sound': 'block.enchantment_table.use'));
+				if(@item && @item['name'] == 'WOODEN_HOE') {
+					play_sound(ploc(), array('sound': 'BLOCK_ENCHANTMENT_TABLE_USE'));
 				}
 			}
 		});
 	}
 	
 case 'powerup':
-	set_pcooldown('WOOD_HOE', 0);
+	set_pcooldown('WOODEN_HOE', 0);
 
 case 'unload':
 	unbind(@player.'blind');

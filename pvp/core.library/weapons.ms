@@ -47,7 +47,7 @@ proc _weapon_hit_scan(@player, @range, @damage, @effects, @pvp){
 	@players = array();
 	
 	if(@trace['hitblock'] && array_index_exists(@effects, 'hitparticle')) {
-		play_effect(@location, @effects['hitparticle'], array('particleCount': 8, 'speed': 0.05, 'radius': @visibleRange));
+		spawn_particle(@location, array('particle': @effects['hitparticle'], 'count': 8, 'speed': 0.05));
 	}
 	if(@entities) {
 		foreach(@entity in @entities) {
@@ -69,7 +69,7 @@ proc _weapon_hit_scan(@player, @range, @damage, @effects, @pvp){
 					damage_entity(@entity['uuid'], @damage, @damager);
 				}
 				if(array_index_exists(@effects, 'hitparticle')) {
-					play_effect(@entity['location'], @effects['hitparticle'], array('particleCount': 4, 'speed': 0.05));
+					spawn_particle(@entity['location'], array('particle': @effects['hitparticle'], 'count': 4, 'speed': 0.05));
 				}
 			}
 		}
@@ -83,7 +83,7 @@ proc _weapon_hit_scan(@player, @range, @damage, @effects, @pvp){
 		@particles = 0;
 		while(@particles++ <= @maxParticles) {
 			@origin = location_shift(@origin, @location, @distance);
-			play_effect(@origin, @effects['tracerparticle'], array('speed': 0, 'radius': @visibleRange));
+			spawn_particle(@origin, @effects['hitparticle']);
 		}
 	}
 	

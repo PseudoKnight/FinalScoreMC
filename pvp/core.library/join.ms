@@ -83,7 +83,7 @@ proc _pvp_join(@id){
 			if(array_contains(@votes, @arena)) {
 				@color = 'dark_green';
 			}
-			@pages[@page] .= ',{"color":"'.@color.'","text":"'.'\n \u27a2 '.to_upper(@arena[0]).substr(@arena, 1)
+			@pages[@page] .= ',{"color":"'.@color.'","text":"'.'\\n \u27a2 '.to_upper(@arena[0]).substr(@arena, 1)
 					.'","clickEvent":{"action":"run_command","value":"/pvp vote '.@id.' arena '.@arena.'"}}';
 			@line++;
 			if(@line == 15) {
@@ -97,8 +97,8 @@ proc _pvp_join(@id){
 			@page++;
 		}
 		@pages[@page] = '["",{"color":"red","bold":true,"text":"Vote for Teams:"}'
-				.',{"text":"'.'\n \u27a2 Solo","clickEvent":{"action":"run_command","value":"/pvp vote '.@id.' mode solo"}}'
-				.',{"text":"'.'\n \u27a2 Teams","clickEvent":{"action":"run_command","value":"/pvp vote '.@id.' mode teams"}}'
+				.',{"text":"'.'\\n \u27a2 Solo","clickEvent":{"action":"run_command","value":"/pvp vote '.@id.' mode solo"}}'
+				.',{"text":"'.'\\n \u27a2 Teams","clickEvent":{"action":"run_command","value":"/pvp vote '.@id.' mode teams"}}'
 				.']';
 		open_book(@pages);
 

@@ -51,7 +51,7 @@ proc _class(@action, @player, @classname, @pvp) {
 				set_peffect(@player, 16, 0, 1, true);
 			}
 			set_peffect(@player, 10, 0, 8, true);
-			play_sound(ploc(@player), array('sound': 'entity_enderman_teleport', 'pitch': 2), @player);
+			play_sound(ploc(@player), array('sound': 'ENTITY_ENDERMAN_TELEPORT', 'pitch': 2), @player);
 			if(array_index_exists(@class, 'ammo')) {
 				@inv = pinv(@player);
 				foreach(@slot: @item in @class['ammo']) {
@@ -139,14 +139,14 @@ proc _class_select(@id, @pvp) {
 		}
 	}
 	if(@chest[0]) {
-		@chest[0][@chestsize1 - 1] = array('name': 'STONE', 'data': 7, 'meta': array(
+		@chest[0][@chestsize1 - 1] = array('name': 'COMMAND_BLOCK', 'meta': array(
 			'display': 'RANDOM',
 			'lore': array('Randomly assign a class'),
 		));
 		set_inventory(@id.'0', @chest[0])
 	}
 	if(@chest[1]) {
-		@chest[1][@chestsize2 - 1] = array('name': 'STONE', 'data': 7, 'meta': array(
+		@chest[1][@chestsize2 - 1] = array('name': 'COMMAND_BLOCK', 'meta': array(
 			'display': 'RANDOM',
 			'lore': array('Randomly assign a class'),
 		));

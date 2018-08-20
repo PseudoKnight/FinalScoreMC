@@ -8,7 +8,7 @@ case 'load':
 		cancel();
 		@vel = entity_velocity(puuid());
 		set_pvelocity(@vel['x'] * 1.9, 0.9, @vel['z'] * 1.9);
-		play_effect(location_shift(ploc(), 'up'), 'cloud', array('speed': 0, 'particleCount': 5, 'offsetX': 0.4, 'offsetZ': 0.4, 'offsetY': 0));
+		spawn_particle(location_shift(ploc(), 'up'), array('particle': 'CLOUD', 'speed': 0, 'count': 5, 'xoffset': 0.4, 'zoffset': 0.4, 'yoffset': 0));
 		set_pflight(false);
 		set_entity_fall_distance(puuid(), 0);
 		queue_delay(2000, player().'doublejump');
@@ -34,13 +34,13 @@ case 'load':
 				));
 				set_peffect(player(), 16, 0, 25);
 				set_peffect(player(), 14, 0, 20);
-				play_effect(location_shift(ploc(), 'up', 2), 'spell', array('speed': 0, 'particleCount': 10, 'offsetY': 0.4, 'offsetX': 0.2, 'offsetZ': 0.2));
+				spawn_particle(location_shift(ploc(), 'up', 2), array('particle': 'SPELL', 'speed': 0, 'count': 10, 'yoffset': 0.4, 'xoffset': 0.2, 'zoffset': 0.2));
 			}
 		} else if(!pinv(player(), 100)){
 			set_pinv(@gear);
 			set_peffect(player(), 14, 0, 0);
 			set_peffect(player(), 16, 0, 0);
-			play_effect(location_shift(ploc(), 'up', 2), 'spell', array('speed': 0, 'particleCount': 10, 'offsetY': 0.4, 'offsetX': 0.2, 'offsetZ': 0.2));
+			spawn_particle(location_shift(ploc(), 'up', 2) ,array('particle': 'SPELL', 'speed': 0, 'count': 10, 'yoffset': 0.4, 'xoffset': 0.2, 'zoffset': 0.2));
 		}
 	}
 	
@@ -53,7 +53,7 @@ case 'load':
 		@y = 0;
 		@z = sin(to_radians(@facing[0])) * cos(to_radians(@facing[1]));
 		set_pvelocity(@player, @x, @y, @z);
-		play_named_sound(ploc(@player), array('sound': 'item.armor.equip_leather'));
+		play_sound(ploc(@player), array('sound': 'ITEM_ARMOR_EQUIP_LEATHER'));
 		set_pinv(@player, 0, null);
 		set_timeout(100, closure(){
 			@facing = pfacing(@player);

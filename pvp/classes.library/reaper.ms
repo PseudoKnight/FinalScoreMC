@@ -10,7 +10,7 @@ case 'load':
 		return(@loc);
 	}
 	
-	@particle = array('speed': 1.0, 'particleCount': 0, 'offsetX': 0.1, 'offsetY': 0.1, 'offsetZ': 0.1);
+	@particle = array('particle': 'REDSTONE', 'speed': 1.0, 'count': 0, 'color': array('r': 25, 'g': 25, 'b': 25));
 	set_interval(50, closure(){
 		try {
 			if(!array_index_exists(@pvp['players'], @player) || @pvp['players'][@player]['class'] != 'reaper') {
@@ -18,9 +18,9 @@ case 'load':
 			} else {
 				@ploc = ploc(@player);
 				@loc = location_shift(@ploc, 'up', 1.7);
-				play_effect(_offset(@loc, 0.25), 'COLOURED_DUST', @particle);
-				play_effect(_offset(@loc, 0.25), 'COLOURED_DUST', @particle);
-				play_effect(_offset(@loc, 0.25), 'COLOURED_DUST', @particle);
+				spawn_particle(_offset(@loc, 0.25), @particle);
+				spawn_particle(_offset(@loc, 0.25), @particle);
+				spawn_particle(_offset(@loc, 0.25), @particle);
 			}
 		} catch(PlayerOfflineException @ex) {
 			clear_task();
@@ -31,9 +31,9 @@ case 'load':
 		if(@event['button'] == 'right') {
 			set_peffect(player(), 25, -1, 0.3, true);
 			set_entity_fall_distance(puuid(), 0);
-			play_sound(ploc(), array('sound': 'entity_horse_breathe', 'pitch': 0.5, 'volume': 0.10), player());
+			play_sound(ploc(), array('sound': 'ENTITY_HORSE_BREATHE', 'pitch': 0.5, 'volume': 0.10), player());
 			set_timeout(50, closure(){
-				play_sound(ploc(), array('sound': 'entity_horse_breathe', 'pitch': 0.7, 'volume': 0.10), player());
+				play_sound(ploc(), array('sound': 'ENTITY_HORSE_BREATHE', 'pitch': 0.7, 'volume': 0.10), player());
 			});
 		} else {
 			@trace = ray_trace(player(), 12);
@@ -49,8 +49,8 @@ case 'load':
 				}
 			}
 			if(@target) {
-				@sound1 = array('sound': 'entity_player_breath', 'pitch': 0.5, 'volume': 0.25);
-				@sound2 = array('sound': 'block_portal_ambient', 'pitch': 2, 'volume': 0.15);
+				@sound1 = array('sound': 'ENTITY_PLAYER_BREATH', 'pitch': 0.5, 'volume': 0.25);
+				@sound2 = array('sound': 'BLOCK_PORTAL_AMBIENT', 'pitch': 2, 'volume': 0.15);
 				@loc = ploc();
 				play_sound(@loc, @sound1, player());
 				set_phealth(@player, max(0, phealth(@player) - 0.3));
@@ -69,14 +69,14 @@ case 'load':
 								@loc = location_shift(ploc(), 'up', 2);
 								@loc2 = location_shift(entity_loc(@target), 'up');
 								if(!rand(3)) {
-									play_effect(location_shift(@loc, 'up', 2), 'HEART');
-									play_effect(location_shift(@loc2, 'up', 2), 'HEART');
+									spawn_particle(location_shift(@loc, 'up', 2), 'HEART');
+									spawn_particle(location_shift(@loc2, 'up', 2), 'HEART');
 								}
 								play_sound(@loc, @sound2, player());
 								@i = 3;
 								do {
 									@loc = location_shift(@loc, @loc2, 1);
-									play_effect(@loc, 'HAPPY_VILLAGER');
+									spawn_particle(@loc, 'VILLAGER_HAPPY');
 								} while(--@i > 0);
 							} else {
 								clear_task();

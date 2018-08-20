@@ -4,7 +4,7 @@ switch(@action) {
 		bind('player_toggle_sneak', array('id': @player.'bountyhunter'), array('sneaking': true), @event,
 			@gasSound = array('sound': 'BLOCK_FIRE_EXTINGUISH', 'pitch': 1.1, 'volume': 0.5),
 			@hissSound = array('sound': 'ENTITY_CAT_HISS', 'volume': 0.3, 'pitch': 1.1, 'volume': 0.3),
-			@smokeEffect = array('speed': 0.02, 'particleCount': 10, 'offsetX': 0.25, 'offsetY': 0.25, 'offsetZ': 0.25, 'distance': 64),
+			@smokeEffect = array('particle': 'CLOUD', 'speed': 0.02, 'count': 10, 'xoffset': 0.25, 'yoffset': 0.25, 'zoffset': 0.25),
 			@stallSound = array('sound': 'BLOCK_CHEST_CLOSE', 'pitch': 0.5),
 			@deathSound = array('sound': 'ENTITY_BLAZE_DEATH', 'pitch': 2.0),
 			@player,
@@ -22,7 +22,7 @@ switch(@action) {
 
 			play_sound(@loc, @gasSound);
 			play_sound(@loc, @hissSound);
-			play_effect(@loc, 'CLOUD', @smokeEffect);
+			spawn_particle(@loc, @smokeEffect);
 			
 			@v = get_vector(ploc());
 			@v['x'] /= 1.7;
@@ -46,7 +46,7 @@ switch(@action) {
 						@y[0] = @loc['y'];
 						@loc['y'] += 1.3;
 						play_sound(@loc, @gasSound);
-						play_effect(@loc, 'CLOUD', @smokeEffect);
+						spawn_particle(@loc, @smokeEffect);
 						set_pexp(max(0, @xp - 1));
 						@v = get_vector(@loc);
 						@v['x'] /= 2;
@@ -65,7 +65,7 @@ switch(@action) {
 		}
 		
 	case 'equip':
-		set_pinv(@player, array(103: array('name': 'SKULL_ITEM', 'data': 3, 'meta': array('owner': 'Rigzlii'))));
+		set_pinv(@player, array(103: array('name': 'PLAYER_HEAD', 'meta': array('owner': 'Rigzlii'))));
 		
 	case 'powerup':
 		set_pexp(@player, 99);

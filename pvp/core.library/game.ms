@@ -76,8 +76,13 @@ proc _pvp_start_match(@id) {
 	if(@pvp['arena']['respawnmode'] == 'mob') {
 		foreach(@team: @locations in @pvp['arena']['respawn']) {
 			@pvp['team'][@team]['respawns'] = array();
+			@type = null;
+			if(@team == 0) {
+				@type = array('type': 'VILLAGER', 'tags': array('profession': 'FARMER'));
+			} else {
+				@type = array('type': 'VILLAGER', 'tags': array('profession': 'BUTCHER'));
+			 }
 			foreach(@loc in @locations) {
-				@type = if(@team == 0, 'VILLAGER:FARMER', 'VILLAGER:BUTCHER');
 				@loc[1] += 1;
 				load_chunk(@loc);
 				@uuid = _spawn_entity(@type, @loc);
@@ -189,7 +194,6 @@ proc _pvp_start_match(@id) {
 						// this happened once... wat
 					}
 					set_ploc(@player, @loc);
-					pfacing(@player, 0, 0);
 
 					if(array_contains(@pvp['arena']['flags'], 'build')) {
 						set_pmode(@player, 'SURVIVAL');
@@ -250,7 +254,7 @@ proc _pvp_start_match(@id) {
 					try {
 						@loc = location_shift(entity_loc(@itemspawn[0]), 'up', 0.4);
 						@itemspawn[1] = time();
-						play_effect(@loc, 'FIREWORKS_SPARK', array('radius': 64, 'speed': 0));
+						spawn_particle(@loc, 'FIREWORKS_SPARK', array_keys(@pvp['players']));
 						continue();
 					} catch(BadEntityException @ex) {
 						// item drop was picked up or is unloaded

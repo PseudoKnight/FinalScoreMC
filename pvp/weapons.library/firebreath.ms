@@ -69,9 +69,9 @@ bind('player_interact', array('id': @id.'firebreath'), array('itemname': 'MAGMA_
 		@targetr['x'] = @loc['x'] + (@xr * @range);
 		@targetr['y'] = @loc['y'] + (@y * @range);
 		@targetr['z'] = @loc['z'] + (@zr * @range);
-		play_effect(@targetl, 'mobspawner_flames');
-		play_effect(@targetc, 'mobspawner_flames');
-		play_effect(@targetr, 'mobspawner_flames');
+		spawn_particle(@targetl, 'FLAME');
+		spawn_particle(@targetc, 'FLAME');
+		spawn_particle(@targetr, 'FLAME');
 	}
 
 	/*
@@ -129,7 +129,7 @@ bind('player_interact', array('id': @id.'firebreath'), array('itemname': 'MAGMA_
 			continue();
 		}
 	}
-	_weapon_cooldown(player(), 1200, 'FIREWORK_CHARGE', closure(){
+	_weapon_cooldown(player(), 1200, 'FIREWORK_STAR', closure(){
 		play_sound(ploc(), array('sound': 'BLOCK_FIRE_EXTINGUISH', 'pitch': 2));
 	});
 }

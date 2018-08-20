@@ -27,11 +27,11 @@ proc _load_events(@id) {
 					_pvp_end_match(@id, @pvp['team'][0]['players']);
 				}
 			} else if(@block == 'HEAVY_WEIGHTED_PRESSURE_PLATE') {
-				play_named_sound(@event['location'], array('sound': 'entity.illusion_illager.prepare_blindness', 'pitch': 1.4, 'volume': 3));
+				play_sound(@event['location'], array('sound': 'ENTITY_ILLUSIONER_PREPARE_BLINDNESS', 'pitch': 1.4, 'volume': 3));
 				set_peffect(player(), 16, 1, 15);
 				set_block(location_shift(@event['location'], 'up', 27), 'AIR');
 				@scaredyghost = array(
-					103: array('name': 'CONCRETE', 'data': 11),
+					103: array('name': 'BLUE_CONCRETE'),
 					102: array('name': 'LEATHER_CHESTPLATE', 'meta': array('color': array('r': 60, 'g': 68, 'b': 170))),
 				);
 				foreach(@p: @player in @pvp['players']) {
@@ -68,11 +68,11 @@ proc _load_events(@id) {
 		@damagerTeam = get_pteam(player(@event['id']), @id)['name'];
 		if(@damagerTeam == 'PAC-MAN') {
 			@hat = pinv(player(), 103);
-			if(@hat && @hat['data'] == 11) {
+			if(@hat && @hat['name'] == 'BLUE_CONCRETE') {
 				play_sound(ploc(), array('sound': 'ENTITY_WOLF_HOWL', 'pitch': 1.7, 'volume': 3));
 				@pvp['stats'][player(@event['id'])]['kills']++;
 				@pvp['stats'][player()]['deaths']++;
-				@newInv = array(null: array('name': 'EYE_OF_ENDER'), -106: array('name': 'EYE_OF_ENDER'),102: null, 103: null);
+				@newInv = array(null: array('name': 'ENDER_EYE'), -106: array('name': 'ENDER_EYE'), 102: null, 103: null);
 				set_pinv(@newInv);
 				set_interval(1000, closure(){
 					try {
@@ -94,11 +94,11 @@ proc _load_events(@id) {
 			}
 		} else if(@damagerTeam == 'GHOSTS' && @team != 'GHOSTS') {
 			@hat = pinv(player(@event['id']), 103);
-			if(@hat && @hat['data'] != 11) {
+			if(@hat && @hat['name'] != 'BLUE_CONCRETE') {
 				@hat = pinv(player(), 103);
 				if(@hat) {
 					_clear_pinv(player());
-					play_sound(ploc(), array('sound': 'ENTITY_ZOMBIE_UNFECT', 'pitch': 2, 'volume': 3));
+					play_sound(ploc(), array('sound': 'ENTITY_ZOMBIE_VILLAGER_CONVERTED', 'pitch': 2, 'volume': 3));
 					@pvp['players'][player()]['lives']--;
 					@pvp['stats'][player()]['deaths']++;
 					@pvp['stats'][player(@event['id'])]['kills']++;

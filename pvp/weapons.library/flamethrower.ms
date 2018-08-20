@@ -31,14 +31,15 @@ bind('player_interact', array('id': @id.'flamethrower'), array('itemname': 'BREW
 			@target['x'] = @loc['x'] + (@x * @range);
 			@target['y'] = @loc['y'] + (@y * @range);
 			@target['z'] = @loc['z'] + (@z * @range);
-			play_effect(@target, 'FLAME', array(
-				'particleCount': @range * 2,
+			spawn_particle(@target, array(
+				'particle': 'FLAME',
+				'count': @range * 2,
 				'speed': 0.02,
-				'offsetX': 0.028 * @range,
-				'offsetY': 0.028 * @range,
-				'offsetZ': 0.028 * @range,
+				'xoffset': 0.028 * @range,
+				'yoffset': 0.028 * @range,
+				'zoffset': 0.028 * @range,
 			));
-			play_effect(@target, 'CLOUD', array('speed': 0.03));
+			spawn_particle(@target, array('particle': 'CLOUD', 'speed': 0.03));
 			foreach(@p in array_keys(@pvp['players'])) {
 				if(@p == player() || phealth(@p) == 0) {
 					continue();

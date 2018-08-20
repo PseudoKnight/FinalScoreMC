@@ -43,8 +43,8 @@ case 'load':
 	bind('projectile_hit', array('id': @player.'dragonsbreath'), array('type': 'FIREBALL'), @event, @region = @pvp['arena']['region']) {
 		if(array_contains(sk_regions_at(@event['location']), @region)) {
 			@cloud = spawn_entity('AREA_EFFECT_CLOUD', 1, @event['location'])[0];
-			set_entity_spec(@cloud, associative_array('particle': 'FLAME', 'duration': 300, 'source': @event['shooter'],
-				'potionmeta': associative_array('base': associative_array('type': 'INSTANT_DAMAGE'))
+			set_entity_spec(@cloud, array('particle': 'FLAME', 'duration': 300, 'source': @event['shooter'],
+				'potionmeta': array('base': array('type': 'INSTANT_DAMAGE'))
 			));
 		}
 	}

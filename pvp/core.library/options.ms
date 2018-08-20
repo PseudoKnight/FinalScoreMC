@@ -4,7 +4,7 @@ proc _create_options_menu(@id, @arena) {
 	@o = 0;
 	foreach(@option: @values in @arena['options']) {
 		foreach(@data: @value in @values) {
-			@inv[(@o * 9) + @i] = array('name': 'INK_SACK', 'data': if(@arena[@option] == @value, 10, 8), 'meta': array(
+			@inv[(@o * 9) + @i] = array('name': if(@arena[@option] == @value, 'LIME_DYE', 'GRAY_DYE'), 'meta': array(
 					'display': color('bold').to_upper(@option),
 					'lore': array(color('green').color('bold').@value),
 			));
@@ -33,9 +33,9 @@ proc _create_options_menu(@id, @arena) {
 				break();
 			}
 			if(@slot == @e['slot']) {
-				@e['inventory'][@slot]['data'] = 10;
+				@e['inventory'][@slot]['name'] = 'LIME_DYE';
 			} else {
-				@e['inventory'][@slot]['data'] = 8;
+				@e['inventory'][@slot]['name'] = 'GRAY_DYE';
 			}
 		}
 		play_sound(ploc(), array('sound': 'UI_BUTTON_CLICK'), player());

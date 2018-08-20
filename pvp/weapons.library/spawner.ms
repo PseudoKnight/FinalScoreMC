@@ -43,7 +43,7 @@ bind('player_interact', array('id': @id.'spawner', 'priority': 'HIGH'), array('b
 		
 		@effectLoc = location_shift(@loc, 'up');
 		play_sound(@effectLoc, array('sound': 'ENTITY_ZOMBIE_INFECT', 'pitch': 1.5));
-		play_effect(@effectLoc, 'cloud', array('speed': 0, 'particleCount': 10, 'offsetX': 0.4, 'offsetZ': 0.4, 'offsetY': 0.4));
+		spawn_particle(@effectLoc, array('particle': 'CLOUD', 'count': 10, 'xoffset': 0.4, 'zoffset': 0.4, 'yoffset': 0.4));
 		_weapon_cooldown(player(), 2000, 'PUMPKIN_SEEDS', false);
 	}
 }

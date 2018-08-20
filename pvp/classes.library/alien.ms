@@ -9,7 +9,7 @@ case 'load':
 			@arrow = shoot_projectile(player(), 'ARROW');
 			set_entity_onfire(@arrow, 1);
 			set_entity_gravity(@arrow, false);
-			play_sound(ploc(), array('sound': 'ENTITY_ENDER_DRAGON_HIT', 'pitch': 2, 'volume': 2));
+			play_sound(ploc(), array('sound': 'ENTITY_ENDER_DRAGON_HURT', 'pitch': 2, 'volume': 2));
 			set_pexp(0);
 			set_interval(50, closure(){
 				try {
@@ -36,7 +36,7 @@ case 'load':
 	bind('projectile_hit', array('id': @player.'hit'), array('type': 'ARROW'), @e, @shooter = puuid(@player)) {
 		if(@e['shooter'] == @shooter) {
 			spawn_particle(@e['location'], array('particle': 'LAVA', 'count': 7));
-			play_sound(@e['location'], array('sound': 'BLOCK_NOTE_BLOCK_BASSDRUM', 'pitch': 2, 'volume': 2));
+			play_sound(@e['location'], array('sound': 'BLOCK_NOTE_BLOCK_BASEDRUM', 'pitch': 2, 'volume': 2));
 			play_sound(@e['location'], array('sound': 'BLOCK_FIRE_EXTINGUISH', 'pitch': 2, 'volume': 2));
 			try(entity_remove(@e['id']));
 		}
@@ -47,7 +47,7 @@ case 'load':
 			die();
 		}
 		cancel();
-		@players = _weapon_hit_scan(player(), 96, 1, array('tracerparticle': 'happy_villager', 'hitparticle': 'ender_signal'), @pvp);
+		@players = _weapon_hit_scan(player(), 96, 1, array('tracerparticle': 'VILLAGER_HAPPY'), @pvp);
 
 		if(@players) {
 			@player = @players[0];
@@ -70,7 +70,7 @@ case 'load':
 			make_effect(location_shift(@loc1, 'up', 2), 'ENDER_SIGNAL');
 		}
 
-		play_named_sound(ploc(), array('sound': 'entity.elder_guardian.hurt', 'pitch': 2));
+		play_named_sound(ploc(), array('sound': 'ENTITY_ELDER_GUARDIAN_HURT', 'pitch': 2));
 		try {
 			@item = pinv(player(), null);
 			@item['qty']--;

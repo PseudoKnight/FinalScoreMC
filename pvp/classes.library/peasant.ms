@@ -41,7 +41,7 @@ case 'load':
 					clear_task();
 				} else {
 					@potato['meta']['display'] = string(integer(@potato['meta']['display']) - 1);
-					play_sound(ploc(@damaged), array('sound': 'BLOCK_NOTE_BLOCK_STICKS'));
+					play_sound(ploc(@damaged), array('sound': 'BLOCK_NOTE_BLOCK_HAT'));
 					set_pinv(@damaged, @slot, @potato);
 				}
 			} catch(Exception @e) {
@@ -60,7 +60,7 @@ case 'load':
 		@damager = @e['damager'];
 		@damaged = @e['player'];
 		if(@damaged == @player) {
-			drop_item(@damager, array('name': 'POTATO_ITEM'));
+			drop_item(@damager, array('name': 'POTATO'));
 		}
 		@item = pinv(@damager, null);
 		if(is_null(@item)) {
@@ -68,7 +68,7 @@ case 'load':
 		}
 		# regular potato -> launch
 		switch(@item['name']) {
-			case 'POTATO_ITEM': # launch
+			case 'POTATO': # launch
 				modify_event('amount', 3);
 				set_timeout(50, closure(){
 					@vector = entity_velocity(puuid(@damaged));

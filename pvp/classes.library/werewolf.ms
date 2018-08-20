@@ -52,11 +52,11 @@ case 'powerup':
 	play_sound(ploc(@player), array('sound': 'ENTITY_WOLF_HOWL', 'pitch': 0.9, 'volume': 3));
 	set_pinv(@player, array(
 		100: array('name': 'LEATHER_BOOTS', 'meta': array('color': array('r': 50, 'g': 50, 'b': 50)),
-			'enchants': array(array('elevel': 2, 'etype': 'DEPTH_STRIDER'))
+			'enchants': array('depth_strider': 2)
 		),
 		101: array('name': 'LEATHER_LEGGINGS', 'meta': array('color': array('r': 50, 'g': 50, 'b': 50))),
 		102: array('name': 'LEATHER_CHESTPLATE', 'meta': array('color': array('r': 50, 'g': 50, 'b': 50))),
-		103: array('name': 'WOOL', 'data': 7),
+		103: array('name': 'GRAY_WOOL'),
 	));
 	set_timeout(17000, closure(){
 		if(ponline(@player) && pmode(@player) != 'SPECTATOR') {

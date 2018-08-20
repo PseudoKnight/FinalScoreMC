@@ -5,7 +5,7 @@ case 'load':
 			set_timeout(50, closure(){
 				try {
 					entity_remove(@e['vehicle']);
-					set_pinv(@player, 1, array('name': 'MONSTER_EGG', 'data': 100, 'meta': array('display': 'STEED')));
+					set_pinv(@player, 1, array('name': 'HORSE_SPAWN_EGG', 'meta': array('display': 'STEED')));
 				} catch(BadEntityException @e) {
 					# horse die?
 				}

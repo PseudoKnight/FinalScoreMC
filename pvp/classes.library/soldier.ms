@@ -24,7 +24,7 @@ case 'load':
 					explosion(entity_loc(@armorStand), 3, true);
 					entity_remove(@armorStand);
 				} else {
-					spawn_particle(location_shift(entity_loc(@armorStand), 'up', 0.5), array('particle': 'LARGE_SMOKE', 'speed': 0));
+					spawn_particle(location_shift(entity_loc(@armorStand), 'up', 0.5), 'LARGE_SMOKE');
 				}
 			} catch(BadEntityException @ex) {
 				// grenade no longer exists

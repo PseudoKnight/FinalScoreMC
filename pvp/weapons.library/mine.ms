@@ -17,8 +17,8 @@ bind('item_spawn', array('id': @id.'minespawn'), array('itemname': 'HEAVY_WEIGHT
 		try(
 			set_entity_age(@event['id'], 3600); # 2 minutes until despawn
 			@loc = location_shift(entity_loc(@event['id']), 'up', 0.5);
-			play_sound(@loc, array('sound': 'item_flintandsteel_use', 'pitch': 0.6));
-			play_effect(@loc, 'LARGE_SMOKE', array('speed': 0.01))
+			play_sound(@loc, array('sound': 'ITEM_FLINTANDSTEEL_USE', 'pitch': 0.6));
+			spawn_particle(@loc, array('particle': 'SMOKE_LARGE', 'speed': 0.01));
 		);
 	});
 }
@@ -49,7 +49,7 @@ bind('item_pickup', array('id': @id.'minepickup'), array('itemname': 'HEAVY_WEIG
 			play_sound(@loc, array('sound': 'BLOCK_NOTE_BLOCK_BASS', 'pitch': 2));
 			set_timeout(50, closure(){
 				play_sound(@loc, array('sound': 'ENTITY_GENERIC_EXPLODE', 'pitch': 1.6));
-				play_effect(@loc, 'EXPLOSION_LARGE', array('particleCount': 2, 'radius': 64));
+				spawn_particle(@loc, array('particle': 'EXPLOSION_LARGE', 'count': 2));
 				if(array_index_exists(@pvp['players'], @damager)
 				&& sk_region_check_flag(ploc(@damager), 'PVP', @damager)) {
 					try(damage_entity(puuid(), @power, puuid(@damager)));

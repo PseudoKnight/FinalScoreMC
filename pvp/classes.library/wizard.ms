@@ -21,7 +21,7 @@ case 'load':
 				}
 			});
 		}
-		play_effect(@loc, 'CRIT', array('particleCount': 10, 'radius': 96));
+		spawn_particle(@loc, array('particle': 'CRIT', 'count': 10));
 		@lightning = lightning(@loc);
 		export(player().'lightning', @lightning);
 		@slot = pheld_slot();
@@ -104,11 +104,12 @@ case 'load':
 
 		play_sound(@loc1, array('sound': 'ENTITY_ENDER_DRAGON_FLAP', 'pitch': 0.5));
 		play_sound(@loc1, array('sound': 'ENTITY_GHAST_SHOOT', 'pitch': 0.9));
-		play_effect(location_shift(@loc1, 'up', 2), 'CLOUD', array(
-			'particleCount': 60,
+		spawn_particle(location_shift(@loc1, 'up', 2), array(
+			'particle': 'CLOUD',
+			'count': 60,
 			'speed': 0.5,
 		));
-		_weapon_cooldown(player(), 6000, 'INK_SACK', false, 0);
+		_weapon_cooldown(player(), 6000, 'INK_SAC', false, 0);
 	}
 
 case 'unload':

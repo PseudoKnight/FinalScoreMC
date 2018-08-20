@@ -20,12 +20,12 @@ case 'load':
 			set_pmode('SPECTATOR');
 			@loc = ploc();
 			play_sound(@loc, associative_array('sound': 'BLOCK_WOOL_STEP', 'pitch': 0.5));
-			play_effect(location_shift(@loc, 'up', 2), 'CRIT', associative_array(
-				'speed': 0,
-				'particleCount': 10,
-				'offsetX': 0.5,
-				'offsetY': 1,
-				'offsetZ': 0.5,
+			spawn_particle(location_shift(@loc, 'up', 2), array(
+				'particle': 'CRIT',
+				'count': 10,
+				'xoffset': 0.5,
+				'yoffset': 1,
+				'zoffset': 0.5,
 			));
 		} else if(!@event['sprinting'] && @mode == 'SPECTATOR') {
 			@armorstand = spawn_entity('ARMOR_STAND', 1, ploc())[0];
@@ -87,8 +87,8 @@ case 'load':
 				@helm = pinv(@p, 103);
 				@loc = ploc(@p);
 				if(is_null(@helm)) {
-					set_pinv(@p, 103, array('name': 'PUMPKIN'));
-					play_named_sound(@loc, associative_array('sound': 'entity.elder_guardian.death', 'pitch': 2), @p);
+					set_pinv(@p, 103, array('name': 'CARVED_PUMPKIN'));
+					play_sound(@loc, associative_array('sound': 'ENTITY_ELDER_GUARDIAN_DEATH', 'pitch': 2), @p);
 					set_phunger(@player, min(20, phunger(@player) + 1));
 					set_phealth(@player, min(20, phealth(@player) + if(@dist < 2, 2, 1)));
 					set_peffect(@player, 5, 0, 2);
@@ -97,7 +97,7 @@ case 'load':
 				}
 				set_ptexp(@player, ptexp(@player) + 1);
 				set_peffect(@p, 9, 0, 4);
-				play_named_sound(@loc, array('sound': 'entity.guardian.attack', 'pitch': 1.5), @p);
+				play_sound(@loc, array('sound': 'ENTITY_GUARDIAN_ATTACK', 'pitch': 1.5), @p);
 			} else if(pinv(@p, 103)) {
 				set_pinv(@p, 103, null);
 			}

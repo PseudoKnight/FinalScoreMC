@@ -62,7 +62,7 @@ case 'load':
 			@returnToSender = closure(){
 				if(ponline(player()) && pmode() != 'SPECTATOR' && array_index_exists(@pvp['players'], player())) {
 					set_pwalkspeed(player(), 0.2);
-					set_pinv(player(), @slot, array('name': 'CONCRETE', 'data': 2));
+					set_pinv(player(), @slot, array('name': 'MAGENTA_CONCRETE'));
 					set_timeout(1200, closure(){
 						if(ponline(player()) && pmode() != 'SPECTATOR' && array_index_exists(@pvp['players'], player())) {
 							set_pinv(player(), @slot, @item);
@@ -91,7 +91,7 @@ case 'load':
 						if(distance(@loc, @targetLoc) < 1) {
 							damage_entity(@target, 1, puuid());
 						}
-						play_named_sound(@loc, array('sound': 'entity.guardian.attack'));
+						play_sound(@loc, array('sound': 'ENTITY_GUARDIAN_ATTACK'));
 					}
 				} catch(Exception @ex) {
 					clear_task();
@@ -112,8 +112,8 @@ case 'load':
 			@weapon = get_mob_equipment(@e['id'])['weapon']
 			if(@weapon && @weapon['name'] == 'STEP') {
 				@loc = entity_loc(@e['id']);
-				play_effect(@loc, 'EXPLOSION_LARGE');
-				play_named_sound(@loc, array('sound': 'block.enderchest.open'));
+				spawn_particlet(@loc, 'EXPLOSION_LARGE');
+				play_sound(@loc, array('sound': 'BLOCK_ENDER_CHEST_OPEN'));
 				entity_remove(@e['id']);
 				consume();
 			}

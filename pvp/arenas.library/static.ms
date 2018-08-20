@@ -8,7 +8,7 @@ proc _load_events(@id) {
 	bind('player_death', array('id': 'staticdeathnoise', 'priority': 'HIGHEST'), null, @event, @pvp) {
 		if(array_index_exists(@pvp['players'], player())) {
 			if(@pvp['players'][player()]['team'] == 1) {
-				play_named_sound(ploc(), array('sound': 'entity.wolf.howl', 'pitch': 1.7, 'volume': 3));
+				play_sound(ploc(), array('sound': 'ENTITY_WOLF_HOWL', 'pitch': 1.7, 'volume': 3));
 				@stand = spawn_entity('ARMOR_STAND', 1, @event['location'])[0];
 				set_entity_spec(@stand, array(
 					'arms': true,
@@ -22,12 +22,12 @@ proc _load_events(@id) {
 						)
 				));
 			} else {
-				play_named_sound(ploc(), array('sound': 'entity.vex.death', 'pitch': 0.5, 'volume': 3));
+				play_sound(ploc(), array('sound': 'ENTITY_VEX_DEATH', 'pitch': 0.5, 'volume': 3));
 			}
 		}
 	}
 	
-	@heartsound = array('sound': 'BLOCK_NOTE_BLOCK_BASSDRUM', 'pitch': 0.5);
+	@heartsound = array('sound': 'BLOCK_NOTE_BLOCK_BASEDRUM', 'pitch': 0.5);
 	@static = @pvp['team'][0]['players'][0];
 	set_interval(50, closure(){
 		try {
