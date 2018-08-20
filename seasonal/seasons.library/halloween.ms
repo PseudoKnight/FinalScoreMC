@@ -20,7 +20,7 @@ bind('creature_spawn', null, array('type': 'ZOMBIE', 'reason': 'NATURAL'), @e) {
 		set_entity_persistence(@e['id'], true);
 	} else if(@rand == 3) {
 		set_mob_equipment(@e['id'], array(
-			'WEAPON': array('name': 'SKULL_ITEM', 'data': 2),
+			'WEAPON': array('name': 'ZOMBIE_HEAD'),
 			'HELMET': null,
 			'CHESTPLATE': array('name': 'LEATHER_CHESTPLATE'),
 			'LEGGINGS': array('name': 'LEATHER_LEGGINGS'),
@@ -45,7 +45,7 @@ bind('entity_death', null, array('type': 'ZOMBIE'), @e) {
 	&& length(@e['cause']['damager']) < 17
 	&& !rand(10)
 	&& get_entity_persistence(@e['id'])) {
-		modify_event('drops', array(array('name': 'SKULL_ITEM', 'data': 2)));
+		modify_event('drops', array(array('name': 'ZOMBIE_HEAD')));
 	}
 }
 
@@ -54,7 +54,7 @@ bind('creature_spawn', null, array('type': 'SKELETON', 'reason': 'NATURAL'), @e)
 		set_entity_persistence(@e['id'], true);
 		if(rand(3)) {
 			set_mob_equipment(@e['id'], array(
-				'WEAPON': array('name': 'BOW', 'meta': array('enchants': array(array('etype': 'ARROW_DAMAGE', 'elevel': 2)))),
+				'WEAPON': array('name': 'BOW', 'meta': array('enchants': array('power': 2)),
 				'HELMET': array('name': 'JACK_O_LANTERN'),
 				'CHESTPLATE': array('name': 'IRON_CHESTPLATE'),
 				'LEGGINGS': array('name': 'LEATHER_LEGGINGS'),
@@ -62,7 +62,7 @@ bind('creature_spawn', null, array('type': 'SKELETON', 'reason': 'NATURAL'), @e)
 			));
 		} else {
 			set_mob_equipment(@e['id'], array(
-				'WEAPON': array('name': 'BOW', 'meta': array('enchants': array(array('etype': 'ARROW_DAMAGE', 'elevel': 2), array('etype': 'ARROW_FIRE', 'elevel': 1)))),
+				'WEAPON': array('name': 'BOW', 'meta': array('enchants': array('power': 2, 'flame': 1))),
 				'HELMET': array('name': 'JACK_O_LANTERN'),
 				'CHESTPLATE': array('name': 'DIAMOND_CHESTPLATE'),
 				'LEGGINGS': array('name': 'IRON_LEGGINGS'),
@@ -77,7 +77,7 @@ bind('entity_death', null, array('type': 'SKELETON'), @e) {
 	&& length(@e['cause']['damager']) < 17
 	&& !rand(10)
 	&& get_entity_persistence(@e['id'])) {
-		modify_event('drops', array(array('name': 'SKULL_ITEM')));
+		modify_event('drops', array(array('name': 'SKELETON_SKULL')));
 	}
 }
 

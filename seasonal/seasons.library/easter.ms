@@ -1,7 +1,7 @@
 bind('creature_spawn', null, array('type': 'ZOMBIE', 'reason': 'NATURAL'), @event) {
 	if(@event['location']['world'] === 'outworld') {
 		set_mob_equipment(@event['id'], associative_array(
-			'HELMET': array('name': 'SKULL_ITEM', 'data': 3, 'meta': array('owner': 'rabbit2077')),
+			'HELMET': array('name': 'PLAYER_HEAD', 'meta': array('owner': 'rabbit2077')),
 			'CHESTPLATE': array('name': 'LEATHER_CHESTPLATE', 'meta': array('color': array('r': 180, 'g': 180, 'b': 180))),
 			'LEGGINGS': array('name': 'LEATHER_LEGGINGS', 'meta': array('color': array('r': 180, 'g': 180, 'b': 180))),
 			'BOOTS': array('name': 'IRON_BOOTS'),
@@ -26,11 +26,16 @@ bind('entity_death', null, array('type': 'ZOMBIE'), @event) {
 	if(@event['location']['world'] === 'outworld') {
 		@inv = get_mob_equipment(@event['id']);
 		if(!is_null(@inv['helmet'])
-		&& @inv['helmet']['name'] == 'SKULL_ITEM') {
+		&& @inv['helmet']['name'] == 'PLAYER_HEAD') {
 			@loc = location_shift(@event['location'], 'up');
-			if(function_exists('play_effect')) {
-				play_effect(@loc, 'COLOURED_DUST', array('particleCount': 15, 'offsetX': 1, 'offsetY': 1, 'offsetZ': 1));
-			}
+			spawn_particle(@loc, array(
+				'particle': 'REDSTONE',
+				'count': 15,
+				'xoffset': 1,
+				'yoffset': 1,
+				'zoffset': 1,
+				'color': array(rand(256), rand(256), rand(256)),
+			));
 		}
 	}
 }
@@ -40,7 +45,7 @@ bind('target_player', null, array('mobtype': 'ZOMBIE'), @event, @day) {
 		if(entity_loc(@event['id'])['world'] === 'outworld') {
 			@inv = get_mob_equipment(@event['id']);
 			if(!is_null(@inv['helmet'])
-			&& @inv['helmet']['name'] == 'SKULL_ITEM'
+			&& @inv['helmet']['name'] == 'PLAYER_HEAD'
 			&& entity_can_see(@event['id'], puuid(@event['player']))) {
 				@mobs = array(
 					'BAT',
@@ -57,11 +62,11 @@ bind('target_player', null, array('mobtype': 'ZOMBIE'), @event, @day) {
 					'LLAMA',
 					'MAGMA_CUBE',
 					'MULE',
-					'MUSHROOM_COW',
+					'MOOSHROOM', //'MUSHROOM_COW'
 					'OCELOT',
 					'PARROT',
 					'PIG',
-					'PIG_ZOMBIE',
+					'ZOMBIE_PIGMAN', // 'PIG_ZOMBIE'
 					'POLAR_BEAR',
 					'RABBIT',
 					'SHEEP',
@@ -84,7 +89,7 @@ bind('target_player', null, array('mobtype': 'ZOMBIE'), @event, @day) {
 				);
 				@mob = @mobs[rand(array_size(@mobs))];
 				set_mob_equipment(@event['id'], associative_array(
-					'WEAPON': array('name': 'MONSTER_EGG', 'meta': array('spawntype': @mob)),
+					'WEAPON': array('name': @mob.'_SPAWN_EGG'),
 				));
 				@e = shoot_projectile(@event['id'], 'EGG', @event['player'], rand() + 1);
 				if(@day == 1) {
@@ -102,7 +107,7 @@ bind('target_player', null, array('mobtype': 'ZOMBIE'), @event, @day) {
 					&& entity_can_see(@event['id'], puuid(@event['player']))) {
 						@mob = @mobs[rand(array_size(@mobs))];
 						set_mob_equipment(@event['id'], associative_array(
-							'OFF_HAND': array('name': 'MONSTER_EGG', 'meta': array('spawntype': @mob)),
+							'OFF_HAND': array('name': @mob.'_SPAWN_EGG'),
 						));
 						@e = shoot_projectile(@event['id'], 'EGG', @event['player'], rand() + 1);
 						if(@day == 1) {
@@ -125,14 +130,24 @@ bind('target_player', null, array('mobtype': 'ZOMBIE'), @event, @day) {
 bind('projectile_hit', null, array('type': 'EGG'), @event) {
 	if(has_metadata(@event['id'], 'spawn_egg')) {
 		@mob = get_metadata(@event['id'], 'spawn_egg', 'CommandHelper');
+		if(@mob == 'MOOSHROOM') {
+			@mob = 'MUSHROOM_COW';
+		} else if(@mob == 'ZOMBIE_PIGMAN') {
+			@mob = 'PIG_ZOMBIE';
+		}
 		@loc = location_shift(@event['location'], 'up');
 		@loc['x'] = floor(@loc['x']) + 0.5;
 		@loc['z'] = floor(@loc['z']) + 0.5;
 		@entity = spawn_entity(@mob, 1, @loc)[0];
 		play_sound(@loc, array('sound': 'ENTITY_CHICKEN_EGG', 'pitch': 0.5));
-		if(function_exists('play_effect')) {
-			play_effect(@loc, 'COLOURED_DUST', array('particleCount': 15, 'offsetX': 1, 'offsetY': 1, 'offsetZ': 1));
-		}
+		spawn_particle(@loc, array(
+			'particle': 'REDSTONE',
+			'count': 15,
+			'xoffset': 1,
+			'yoffset': 1,
+			'zoffset': 1,
+			'color': array(rand(256), rand(256), rand(256)),
+		));
 		set_entity_persistence(@entity, false);
 	}
 }
