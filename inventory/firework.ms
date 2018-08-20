@@ -131,13 +131,13 @@ bind('player_interact', null, array('itemname': 'FIREWORK_ROCKET', 'button': 'ri
 			}
 		}
 
-		@item['name'] = 'FIREWORK_CHARGE';
+		@item['name'] = 'FIREWORK_STAR';
 		set_pinv(player(), @slot, @item);
 		set_timeout(4000, closure(){
 			try {
 				if(pworld() == @world) {
 					@item = pinv(player(), @slot);
-					if(@item && @item['name'] == 'FIREWORK_CHARGE') {
+					if(@item && @item['name'] == 'FIREWORK_STAR') {
 						@item['name'] = 'FIREWORK_ROCKET';
 						set_pinv(player(), @slot, @item);
 					}

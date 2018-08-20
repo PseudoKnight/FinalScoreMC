@@ -16,7 +16,7 @@ bind('entity_death', null, null, @event) {
 				set_world_border('outworld', array('width': @width, 'seconds': 1));
 				set_world_border('outworld_nether', array('width': @width / 8, 'seconds': 1));
 				action_msg(@player, color('green').'WorldBorder++ ('.@width.')');
-				play_sound(ploc(@player), array('sound': 'block_enchantment_table_use', 'pitch': 0.5))
+				play_sound(ploc(@player), array('sound': 'BLOCK_ENCHANTMENT_TABLE_USE', 'pitch': 0.5))
 			}
 		}
 	}

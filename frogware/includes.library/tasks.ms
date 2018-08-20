@@ -132,7 +132,7 @@ proc _fw_task(@task, @state, @secs) {
 				'Get what? Get wheat!',
 				'Plant seeds. Bonemeal them. Get wheat.',
 			));
-			_fw_items(array('name': 'INK_SACK', 'data': 15, 'qty': 1), 100);
+			_fw_items(array('name': 'BONE_MEAL', 'qty': 1), 100);
 			@region = sk_region_info('frogware', 'custom')[0]
 			_iterate_cuboid(array(@region[0][0], @region[1][1], @region[0][2], 'custom'),
 			array(@region[1][0], @region[1][1], @region[1][2], 'custom'),

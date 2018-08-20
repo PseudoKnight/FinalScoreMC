@@ -148,13 +148,17 @@ bind('player_interact', null, array('button': 'right'), @event) {
 			} else {
 				@item = pinv(player(), -106);
 			}
-			if(@item['meta']['spawntype']) {
-				@loc = location_shift(@event['location'], @event['facing']);
-				@loc['x'] += 0.5;
-				@loc['z'] += 0.5;
-				@entity = spawn_entity(@item['meta']['spawntype'], 1, @loc)[0];
-				set_entity_persistence(@entity, true);
+			@type = reg_match('(.*)_SPAWN_EGG', @item['name'])[1];
+			if(@type == 'MOOSHROOM') {
+				@type = 'MUSHROOM_COW';
+			} else if(@type == 'ZOMBIE_PIGMAN') {
+				@type = 'PIG_ZOMBIE';
 			}
+			@loc = location_shift(@event['location'], @event['facing']);
+			@loc['x'] += 0.5;
+			@loc['z'] += 0.5;
+			@entity = spawn_entity(@type, 1, @loc)[0];
+			set_entity_persistence(@entity, true);
 		}
 	}
 }
@@ -321,7 +325,7 @@ bind('entity_toggle_glide', null, array('type': 'PLAYER'), @event) {
 				@skipping[player()] = time();
 				@loc = location_shift(ploc(), 'up');
 				play_sound(@loc, array('sound': 'ENTITY_SLIME_SQUISH', 'pitch': 0.8, 'volume': 0.5));
-				play_effect(@loc, 'SLIME', array('particleCount': 8));
+				spawn_particle(@loc, array('particle': 'SLIME', 'count': 8));
 			} else if(array_index_exists(@skipping, player()) && @skipping[player()] + 250 < time()) {
 				cancel(false);
 			}

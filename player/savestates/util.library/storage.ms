@@ -7,7 +7,7 @@ proc _get_pstate(@player, @state) {
 	@pstate = @pdata[@state];
 
 	try {
-		deserialize_pinv(@player, array_get(@pstate, 'inv', ''));
+		deserialize_pinv(@player, array_get(@pstate, 'inv', '')); // TODO: maybe version this
 	} catch(Exception @ex) {
 		console('WARNING: Failed to load survival inventory for '.@player.'.', false);
 		console(@ex['message'], false);

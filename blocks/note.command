@@ -17,14 +17,14 @@ register_command('note', array(
 		@sound = 'BLOCK_NOTE_BLOCK_HARP';
 		switch(get_block(location_shift(@l, 'down'))) {
 			case 'STONE':
-				@sound = 'BLOCK_NOTE_BLOCK_BASSDRUM';
+				@sound = 'BLOCK_NOTE_BLOCK_BASEDRUM';
 			case 'OAK_PLANKS':
 				@sound = 'BLOCK_NOTE_BLOCK_BASS';
 			case 'SAND':
 			case 'GRAVEL':
 				@sound = 'BLOCK_NOTE_BLOCK_SNARE';
 			case 'GLASS':
-				@sound = 'BLOCK_NOTE_BLOCK_STICKS';
+				@sound = 'BLOCK_NOTE_BLOCK_HAT';
 			case 'ICE':
 			case 'PACKED_ICE':
 				@sound = 'ENTITY_EXPERIENCE_ORB_PICKUP';

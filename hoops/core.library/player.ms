@@ -35,18 +35,18 @@ proc _hoops_player_equip(@player) {
 	
 	if(@game) {
 		@team = @game['players'][@player]['team'];
-		@data = if(@team == 'blue', 11, 14);
+		@type = if(@team == 'blue', 'BLUE_STAINED_GLASS_PANE', 'RED_STAINED_GLASS_PANE');
 		@color = if(@team == 'blue', array(0, 0, 255), array(255, 0, 0));
 		@items = array(
 			0: null,
-			1: array('name': 'STAINED_GLASS_PANE', 'data': @data),
-			2: array('name': 'STAINED_GLASS_PANE', 'data': @data),
-			3: array('name': 'STAINED_GLASS_PANE', 'data': @data),
-			4: array('name': 'STAINED_GLASS_PANE', 'data': @data),
-			5: array('name': 'STAINED_GLASS_PANE', 'data': @data),
-			6: array('name': 'STAINED_GLASS_PANE', 'data': @data),
-			7: array('name': 'STAINED_GLASS_PANE', 'data': @data),
-			8: array('name': 'STAINED_GLASS_PANE', 'data': @data),
+			1: array('name': @type),
+			2: array('name': @type),
+			3: array('name': @type),
+			4: array('name': @type),
+			5: array('name': @type),
+			6: array('name': @type),
+			7: array('name': @type),
+			8: array('name': @type),
 			100: array('name': 'LEATHER_BOOTS', 'meta': array('color': @color)),
 			101: array('name': 'LEATHER_LEGGINGS', 'meta': array('color': @color)),
 			102: array('name': 'LEATHER_CHESTPLATE', 'meta': array('color': @color)),
