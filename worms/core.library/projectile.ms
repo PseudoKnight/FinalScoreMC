@@ -18,7 +18,7 @@ proc _worms_shoot_projectile(@player, @game) {
 			clear_task();
 			try(set_entity_spec(@segment, array('small': false)));
 			@game['segments'][] = @segment;
-			play_effect(@trace['location'], 'EXPLOSION_LARGE', array('particleCount': 0, 'offsetX': 1.1));
+			spawn_particle(@trace['location'], array('particle': 'EXPLOSION_LARGE', 'count': 0, 'xoffset': 1.1));
 			play_sound(@trace['location'], array('sound': 'ENTITY_SHULKER_BULLET_HIT', 'pitch': 2, 'volume': 3));
 		} else if(@trace['hitblock']) {
 			@count[1]++;
@@ -55,7 +55,7 @@ proc _worms_shoot_projectile(@player, @game) {
 								set_entity_loc(@segment, @l);
 								@game['segments'][] = @segment;
 							}
-							play_effect(@e['location'], 'EXPLOSION_LARGE', array('particleCount': 0, 'offsetX': 1.1));
+							spawn_particle(@e['location'], array('particle': 'EXPLOSION_LARGE', 'count': 0, 'xoffset': 1.1));
 							play_sound(@e['location'], array('sound': 'ENTITY_SHULKER_BULLET_HIT', 'pitch': 2, 'volume': 3));
 							set_pscore('segments', @p, array_size(@worm['segments']), 'worms');
 							if(array_size(@worm['segments']) == 0) {

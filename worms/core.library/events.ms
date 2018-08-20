@@ -32,7 +32,7 @@ proc _worms_bind_events(@game) {
 					if(entity_type(@uuid) == 'ARMOR_STAND' && !array_contains(@game['players'][player()]['segments'], @uuid)) {
 						@item = get_mob_equipment(@e['uuid'])['helmet'];
 						@small = entity_spec(@uuid)['small'];
-						if(!@small && @item && @item['name'] == 'CONCRETE') {
+						if(!@small && @item && string_ends_with(@item['name'], '_CONCRETE')) {
 							@found = false;
 							foreach(@p: @worm in @game['players']) {
 								@index = array_index(@worm['segments'], @uuid);
@@ -49,23 +49,23 @@ proc _worms_bind_events(@game) {
 								array_remove_values(@game['segments'], @uuid);
 							}
 							 _worms_add_segments(player(), @uuid, @game)
-							play_sound(@e['location'], array('sound': 'EAT', 'volume': 2));
+							play_sound(@e['location'], array('sound': 'ENTITY_GENERIC_EAT', 'volume': 2));
 						}
 					}
 				}
 				
 				if(array_index_exists(@game['players'], player())) {
 					if(@trace['hitblock']) {
-						@block = get_block_at(@newLoc);
-						if(@block != '0:0') {
-							@split = split(':', @block);
-							if(@split[0] == '251') {
-								set_block_at(@newLoc, '0:0');
-								set_block_at(location_shift(@newLoc, 'up'), '0:0');
-								set_block_at(location_shift(@newLoc, 'up', 2), '0:0');
-								@segments = _worms_create_segments(location_shift(ploc(), 'down', @game['height']), 1, @split[1], @game);
+						@block = get_block(@newLoc);
+						if(@block != 'AIR') {
+							@match = reg_match('(.+)_CONCRETE', @block);
+							if(@match) {
+								set_block(@newLoc, 'AIR');
+								set_block(location_shift(@newLoc, 'up'), 'AIR');
+								set_block(location_shift(@newLoc, 'up', 2), 'AIR');
+								@segments = _worms_create_segments(location_shift(ploc(), 'down', @game['height']), 1, @match[1], @game);
 								_worms_add_segments(player(), @segments, @game);
-								play_sound(@trace['location'], array('sound': 'EAT', 'volume': 2));
+								play_sound(@trace['location'], array('sound': 'ENTITY_GENERIC_EAT', 'volume': 2));
 							}
 						}
 					}
