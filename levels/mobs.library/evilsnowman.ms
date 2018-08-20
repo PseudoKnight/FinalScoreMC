@@ -6,13 +6,8 @@ proc _load_mob(@level) {
 			die();
 		}
 		@loc = location_shift(ploc(@player), 'up', 2);
-		play_effect(@loc, 'SNOWBALL_BREAK', associative_array(
-			'particleCount': 20,
-			'offsetX': 0.5,
-			'offsetY': 1,
-			'offsetZ': 0.5,
-		));
-		play_named_sound(@loc, associative_array('sound': 'entity.llama.spit', 'pitch': 0.5));
+		spawn_particle(@loc, array('particle': 'SNOWBALL', 'count': 20, 'xoffset': 0.5, 'yoffset': 1, 'zoffset': 0.5));
+		play_sound(@loc, array('sound': 'ENTITY_LLAMA_SPIT', 'pitch': 0.5));
 		damage_entity(puuid(@player), 2);
 	}
 }

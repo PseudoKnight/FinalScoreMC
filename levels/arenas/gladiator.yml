@@ -5,14 +5,14 @@ classic:
         - 'by rivergod'
         - 'No Upgrades. Endure the onslaught.'
 steplightly:
-    name: TOTEM
+    name: TOTEM_OF_UNDYING
     display: 'Step Lightly'
     lore:
         - 'by gothem8'
         - 'Buy items with levels.'
         - 'Sell items to get more levels.'
 supernaturalhunt:
-    name: EYE_OF_ENDER
+    name: ENDER_EYE
     display: 'Supernatural Hunt'
     lore:
         - 'by NinjaKing1200'

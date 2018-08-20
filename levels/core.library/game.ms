@@ -281,7 +281,7 @@ proc _level_start(@level) {
 			} else if(@level['mobs']) {
 				foreach(@p in @level['players']) {
 					if(ponline(@p)) {
-						play_named_sound(ploc(@p), array('sound': 'entity.evocation_illager.prepare_summon', 'volume': 0.4), @p);
+						play_sound(ploc(@p), array('sound': 'ENTITY_EVOKER_PREPARE_SUMMON', 'volume': 0.4), @p);
 					}
 				}
 				while(@level['duplicate']--) {
