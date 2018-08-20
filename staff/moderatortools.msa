@@ -108,8 +108,8 @@
 	}
 	@removenamed = false;
 	@spawnEggs = false;
-	@type = array('BLAZE', 'CAVE_SPIDER', 'CREEPER', 'ELDER_GUARDIAN', 'ENDER_DRAGON', 'ENDERMAN', 'ENDERMITE',
-			'EVOKER', 'GUARDIAN', 'GHAST', 'GIANT', 'HUSK', 'MAGMA_CUBE', 'PIG_ZOMBIE', 'SHULKER', 'SILVERFISH',
+	@type = array('BLAZE', 'CAVE_SPIDER', 'CREEPER', 'DROWNED', 'ELDER_GUARDIAN', 'ENDER_DRAGON', 'ENDERMAN', 'ENDERMITE',
+			'EVOKER', 'GUARDIAN', 'GHAST', 'GIANT', 'HUSK', 'MAGMA_CUBE', 'PHANTOM', 'PIG_ZOMBIE', 'SHULKER', 'SILVERFISH',
 			'SKELETON', 'SLIME', 'SPIDER', 'STRAY', 'WITCH', 'WITHER', 'WITHER_SKELETON', 'VEX', 'VINDICATOR', 'ZOMBIE',
 			'ZOMBIE_VILLAGER');
 	@radius = 64;
@@ -128,9 +128,9 @@
 		} else {
 			switch(@arg) {
 				case 'living':
-					@type = array_merge(@type, array('BAT', 'CHICKEN', 'COW', 'DONKEY', 'HORSE', 'IRON_GOLEM', 'LLAMA',
-							'MULE', 'MUSHROOM_COW', 'OCELOT', 'PIG', 'RABBIT', 'SHEEP', 'SKELETON_HORSE', 'SNOWMAN',
-							'SQUID', 'VILLAGER', 'WOLF', 'ZOMBIE_HORSE'));
+					@type = array_merge(@type, array('BAT', 'CHICKEN', 'COD', 'COW', 'DOLPHIN', 'DONKEY', 'HORSE', 'IRON_GOLEM', 'LLAMA',
+							'MULE', 'MUSHROOM_COW', 'OCELOT', 'PIG', 'PUFFERFISH', 'RABBIT', 'SALMON', 'SHEEP', 'SKELETON_HORSE', 'SNOWMAN',
+							'SQUID', 'TROPICAL_FISH', 'TURTLE', 'VILLAGER', 'WOLF', 'ZOMBIE_HORSE'));
 				case 'hostile':
 					continue();
 				case 'hologram':
@@ -147,7 +147,13 @@
 		@living = is_entity_living(@e);
 		if(@removenamed || !@living || !get_mob_name(@e)) {
 			if(@spawnEggs && @living) {
-				pgive_item(array('name': 'MONSTER_EGG', 'meta': array('spawntype': entity_type(@e), 'display': get_mob_name(@e))));
+				@entitytype = entity_type(@e);
+				if(@entitytype == 'PIG_ZOMBIE') {
+					@entitytype = 'ZOMBIE_PIGMAN';
+				} else if(@entitytype == 'MUSHROOM_COW') {
+					@entitytype = 'MOOSHROOM';
+				}
+				pgive_item(array('name': entity_type(@e).'_SPAWN_EGG', 'meta': array('display': get_mob_name(@e))));
 			}
 			entity_remove(@e);
 			@count++;

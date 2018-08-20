@@ -6,21 +6,21 @@ register_command('entitycount', array(
 		return(array());
 	},
 	'executor': closure(@alias, @sender, @args, @info) {
-		@MONSTERS = array('BLAZE', 'CAVE_SPIDER', 'CREEPER', 'ELDER_GUARDIAN', 'ENDER_DRAGON', 'ENDERMAN', 'ENDERMITE',
-				'EVOKER', 'GHAST', 'GUARDIAN', 'HUSK', 'MAGMA_CUBE', 'PIG_ZOMBIE', 'SHULKER', 'SILVERFISH', 'SKELETON',
-				'SPIDER', 'STRAY', 'VEX', 'VINDICATOR', 'WITCH', 'WITHER', 'WITHER_SKELETON', 'ZOMBIE',
-				'ZOMBIE_VILLAGER');
-		@ANIMALS = array('CHICKEN', 'COW', 'DONKEY', 'HORSE', 'IRON_GOLEM', 'LLAMA', 'MULE', 'MUSHROOM_COW', 'OCELOT',
-				'PARROT', 'PIG', 'POLAR_BEAR', 'RABBIT', 'SHEEP', 'SKELETON_HORSE', 'SNOWMAN', 'VILLAGER', 'WOLF',
-				'ZOMBIE_HORSE');
-		@WATERANIMALS = array('SQUID');
+		@MONSTERS = array('BLAZE', 'CAVE_SPIDER', 'CREEPER', 'DROWNED', 'ELDER_GUARDIAN', 'ENDER_DRAGON', 'ENDERMAN',
+				'ENDERMITE', 'EVOKER', 'GHAST', 'GUARDIAN', 'HUSK', 'MAGMA_CUBE', 'PHANTOM', 'PIG_ZOMBIE', 'SHULKER',
+				'SILVERFISH', 'SKELETON', 'SPIDER', 'STRAY', 'VEX', 'VINDICATOR', 'WITCH', 'WITHER', 'WITHER_SKELETON',
+				'ZOMBIE', 'ZOMBIE_VILLAGER');
+		@ANIMALS = array('CHICKEN', 'COW', 'DONKEY', 'HORSE', 'IRON_GOLEM', 'LLAMA', 'MULE',
+				'MUSHROOM_COW', 'OCELOT', 'PARROT', 'PIG', 'POLAR_BEAR', 'RABBIT', 'SHEEP',
+				'SKELETON_HORSE', 'SNOWMAN', 'TURTLE', 'VILLAGER', 'WOLF', 'ZOMBIE_HORSE');
+		@WATERANIMALS = array('COD', 'DOLPHIN', 'SQUID', 'PUFFERFISH', 'SALMON', 'TROPICAL_FISH' );
 		@AMBIENT = array('BAT');
 		
 		@playerCount = array_size(all_players(pworld()));
 		@caps = array(
 			'MONSTERS': 23 * @playerCount,
 			'ANIMALS': 4 * @playerCount,
-			'WATERANIMALS': 2 * @playerCount,
+			'WATERANIMALS': 6 * @playerCount,
 			'AMBIENT': 1 * @playerCount,
 		);
 		
