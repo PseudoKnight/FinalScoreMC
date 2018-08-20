@@ -23,8 +23,8 @@ if(extension_exists('CHStargate')) {
 	bind('stargate_open', null, null, @event) {
 		if(array_index_exists(@event, 'player')) {
 			@loc = ploc(@event['player']);
-			play_named_sound(@loc, array('sound': 'entity.shulker.shoot', 'pitch': 1.3));
-			play_named_sound(@loc, array('sound': 'entity.evocation_illager.cast_spell', 'pitch': 0.6));
+			play_sound(@loc, array('sound': 'ENTITY_SHULKER_SHOOT', 'pitch': 1.3));
+			play_sound(@loc, array('sound': 'ENTITY_EVOKER_CAST_SPELL', 'pitch': 0.6));
 		}
 	}
 }

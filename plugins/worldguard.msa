@@ -46,7 +46,7 @@
 						} else if(@value === 'allow') {
 							sudo('/region flag '.@region.' deny-spawn -e');
 						} else if(@value === 'deny') {
-							sudo('/region flag '.@region.' deny-spawn CREEPER,ENDERMAN,HUSK,SKELETON,SLIME,SPIDER,STRAY,WITCH,ZOMBIE,ZOMBIE_VILLAGER');
+							sudo('/region flag '.@region.' deny-spawn CREEPER,ENDERMAN,HUSK,SKELETON,SLIME,SPIDER,STRAY,WITCH,ZOMBIE,ZOMBIE_VILLAGER,DROWNED');
 						}
 					
 					case 'infdisp':
@@ -106,7 +106,7 @@
 				 die(color('GOLD').'A region by that name already exists.');
 			}
 			sk_region_rename(pworld(), @from, @to);
-			msg('Renamed '.@from.' to '.@to.'.');
+			msg(color('green').'Renamed '.@from.' to '.@to.'.');
 
 		case 'clear':
 			if(pworld() != 'dev') {
@@ -124,13 +124,14 @@
 			if(!array_contains(sk_regions_at(@info[0][0]), 'plots')) {
 				die(color('GOLD').'You can only use this in dev plots');
 			}
-			sk_pos1(@info[0][0][0..2]);
-			sk_pos2(@info[0][1][0..2]);
-			msg('Clearing plot...');
-			sudo('//schematic load plots-column');
-			set_timeout(1000, closure(){
-				sudo('//set #clipboard');
-			});
+			@pos1 = @info[0][0][0..2];
+			@pos2 = @info[0][1][0..2];
+			@pos2[1] = 64;
+			sk_pos1(@pos1);
+			sk_pos2(@pos2);
+			msg(color('yellow').'Clearing plot...');
+			sk_setblock('air');
+			msg(color('green').'Done!');
 
 		case 'redefine':
 		case 'update':
