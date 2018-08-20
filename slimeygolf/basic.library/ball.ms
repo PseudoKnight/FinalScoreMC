@@ -6,7 +6,7 @@ proc _place_ball(@mobtype, @loc, @ball, @course) {
 
 	@ball['id'] = spawn_entity('ARMOR_STAND', 1, @loc)[0];
 	@loc['y'] += 2;
-	@ball['slime'] = spawn_mob(@mobtype.':1', 1, @loc)[0];
+	@ball['slime'] = spawn_entity(@mobtype, 1, @loc, closure(@id, set_entity_spec(@e, array('size': 1))))[0];
 	@ball['velocity'] = array('x': 0, 'y': 0, 'z': 0);
 
 	set_entity_ai(@ball['slime'], false);
@@ -35,15 +35,15 @@ proc _remove_ball(@ball, @course) {
 }
 
 proc _get_block_below(@loc, @v) {
-	@block = get_block_at(@loc);
-	if(@block != '0:0') {
-		if(@block == '35:15') {
-			play_sound(@loc, array('sound': 'WOOD_CLICK', 'pitch': 0.5));
+	@block = get_block(@loc);
+	if(@block != 'AIR') {
+		if(@block == 'BLACK_WOOL') {
+			play_sound(@loc, array('sound': 'BLOCK_WOODEN_BUTTON_CLICK_ON', 'pitch': 0.5));
 		}
 		return(@block);
 	}
 	# adjust ball velocity towards center of air block, if above black wool.
-	if(get_block_at(location_shift(@loc, 'down')) == '35:15') {
+	if(get_block(location_shift(@loc, 'down')) == 'BLACK_WOOL') {
 		@center = @loc[];
 		@center['x'] = floor(@center['x']) + 0.5;
 		@center['z'] = floor(@center['z']) + 0.5;
@@ -60,7 +60,7 @@ proc _get_block_below(@loc, @v) {
 	} else if(@rx > 0.79) {
 		@dirx = 'west';
 	}
-	if(@dirx && get_block_at(location_shift(@loc, @dirx)) != '0:0') {
+	if(@dirx && get_block(location_shift(@loc, @dirx)) != 'AIR') {
 		return(@block);
 	} else {
 		@rz = @loc['z'] - floor(@loc['z']);
@@ -70,7 +70,7 @@ proc _get_block_below(@loc, @v) {
 		} else if(@rz > 0.79) {
 			@dirz = 'north';
 		}
-		if(@dirz && get_block_at(location_shift(@loc, @dirz)) != '0:0') {
+		if(@dirz && get_block(location_shift(@loc, @dirz)) != 'AIR') {
 			return(@block);
 		}
 	}

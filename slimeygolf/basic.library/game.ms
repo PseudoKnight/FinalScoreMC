@@ -10,6 +10,8 @@ proc _start_game(@course, @loc) {
 		'players': associative_array(),
 		'spectators': array(),
 		'lowestHole': 1,
+		'holecolors': array('PINK', 'GRAY', 'LIGHT_GRAY', 'CYAN', 'PURPLE', 'BLUE', 'BROWN', 'GREEN', 'RED'),
+		'parcolors': array('WHITE', 'ORANGE', 'MAGENTA', 'LIGHT', 'YELLOW', 'LIME', 'PINK', 'GRAY'),
 	);
 
 	_create_scoreboards(@golf);
@@ -32,11 +34,12 @@ proc _start_game(@course, @loc) {
 	), array_keys(@golf['players']));
 
 	# Place ball
-	bind('player_interact', array('id': @course), array('item': 341, 'button': 'right', 'block': 159), @event, @golf) {
+	bind('player_interact', array('id': @course), array('itemname': 'SLIME_BALL', 'button': 'right'), @event, @golf) {
 		if(array_index_exists(@golf['players'], player())
 		&& @event['action'] === 'right_click_block'
 		&& @event['facing'] === 'up'
-		&& split(':', get_block_at(@event['location']))[1] == @golf['players'][player()]['hole'] + 5) {
+		&& string_ends_with(@event['block'], '_TERRACOTTA')
+		&& string_starts_with(@event['block'], @golf['colorholes'][@golf['players'][player()]['hole'] - 1])) {
 
 			@ball = @golf['players'][player()];
 
@@ -54,10 +57,8 @@ proc _start_game(@course, @loc) {
 
 			if(@ball['type'] == 0 || @ball['type'] == 2) {
 				@mobtype = 'SLIME';
-				@mobcheck = 'SLIME';
 			} else {
-				@mobtype = 'MAGMACUBE';
-				@mobcheck = 'MAGMA_CUBE';
+				@mobtype = 'MAGMA_CUBE';
 			}
 
 			_place_ball(@mobtype, @event['location'], @ball, @golf['name']);
@@ -71,12 +72,12 @@ proc _start_game(@course, @loc) {
 						@event['location']['z'],
 						@event['location']['world'],
 					),
-					'par': integer(split(':', get_block_at(location_shift(@event['location'], 'down')))[1]),
+					'par': array_index(@golf['parcolors'], split('_', get_block(location_shift(@event['location'], 'down')), 1)[0]),
 					'strokes': associative_array(),
 					'total': associative_array(),
 				);
 				set_pscore('strokes', '--Par-------', @golf[@hole]['par'], @golf['name'].@hole);
-				set_block_at(@golf[@hole]['loc'], 152);
+				set_block(@golf[@hole]['loc'], 'REDSTONE_BLOCK');
 			}
 
 			if(!array_index_exists(@golf[@hole]['strokes'], player())) {
@@ -111,12 +112,12 @@ proc _start_game(@course, @loc) {
 						@v['z'] *= 1.15
 						@loc['x'] += @v['x'];
 						@loc['z'] += @v['z'];
-						play_effect(@loc, 'TILE_DUST', associative_array('id': 80, 'speed': 0));
+						spawn_particle(@loc, array('particle': 'BLOCK_DUST', 'block': 'SNOW_BLOCK', 'speed': 0));
 					});
 				}
 			}
 
-			bind('player_interact_at_entity', array(id: 'golf_swing1_'.player()), array('clicked': @mobcheck), @event,
+			bind('player_interact_at_entity', array(id: 'golf_swing1_'.player()), array('clicked': @mobtype), @event,
 					@player = player(), @golf) {
 
 				if(@player != player(), die());
@@ -154,7 +155,7 @@ proc _start_game(@course, @loc) {
 					set_pexp(@player, @xp);
 					@golf[@hole]['strokes'][@player] += 1;
 					set_pscore('strokes', @player, @golf[@hole]['strokes'][@player], @golf['name'].@hole);
-					play_sound(entity_loc(@event['id']), array('sound': 'WOOD_CLICK', 'pitch': 2 - (1.3 / @xp)));
+					play_sound(entity_loc(@event['id']), array('sound': 'BLOCK_WOODEN_BUTTON_CLICK_ON', 'pitch': 2 - (1.3 / @xp)));
 					@ploc = entity_loc(puuid(@player));
 					@eloc = entity_loc(@ball['id']);
 					@dist = distance(@ploc, @eloc);
@@ -203,7 +204,7 @@ proc _start_game(@course, @loc) {
 				@block = _get_block_below(location_shift(@loc, 'down', 0.01), @v);
 				if(@block) {
 					@v['y'] = 0;
-					if(@block == '35:15') { # if ball dropped into the hole
+					if(@block == 'BLACK_WOOL') { # if ball dropped into the hole
 						# check for birdie/eagle
 						@hole = @ball['hole'];
 						@hits = plevel(@player);
@@ -212,20 +213,20 @@ proc _start_game(@course, @loc) {
 						if(@hits == @par - 1) {
 							@type = 'Birdie';
 							launch_firework(@loc,
-								array(strength: 0, trail: true, type: 'BURST'));
-							play_sound(ploc(@player), array(sound: 'VILLAGER_YES'));
+								array('strength': 0, 'trail': true, 'type': 'BURST'));
+							play_sound(ploc(@player), array('sound': 'ENTITY_VILLAGER_YES'));
 						} else if(@hits == @par - 2) {
 							@type = 'Eagle!';
 							launch_firework(@loc,
 								array(strength: 0, trail: true, type: 'BALL_LARGE'));
-							play_sound(ploc(@player), array(sound: 'VILLAGER_YES'));
+							play_sound(ploc(@player), array(sound: 'ENTITY_VILLAGER_YES'));
 						} else if(@hits == @par - 3) {
 							@type = 'Albatross!!';
 							launch_firework(@loc,
 								array(strength: 0, trail: true, type: 'BALL_LARGE'));
 							launch_firework(@loc,
 								array(strength: 1, trail: true, type: 'BALL_LARGE'));
-							play_sound(ploc(@player), array(sound: 'VILLAGER_YES'));
+							play_sound(ploc(@player), array(sound: 'ENTITY_VILLAGER_YES'));
 						} else if(@hits == @par - 3) {
 							@type = 'Condor!!!';
 							launch_firework(@loc,
@@ -234,9 +235,9 @@ proc _start_game(@course, @loc) {
 								array(strength: 1, trail: true, type: 'BALL_LARGE'));
 							launch_firework(@loc,
 								array(strength: 2, trail: true, type: 'BALL_LARGE'));
-							play_sound(ploc(@player), array(sound: 'VILLAGER_YES'));
+							play_sound(ploc(@player), array(sound: 'ENTITY_VILLAGER_YES'));
 						} else if(@hits > @par) {
-							play_sound(ploc(@player), array(sound: 'VILLAGER_NO'));
+							play_sound(ploc(@player), array(sound: 'ENTITY_VILLAGER_NO'));
 							switch(@hits - @par) {
 								case 1:
 									@type = 'Bogey';
@@ -271,7 +272,7 @@ proc _start_game(@course, @loc) {
 							}
 						}
 						if(@lastplayer) {
-							set_block_at(@golf[@hole]['loc'], 0);
+							set_block(@golf[@hole]['loc'], 'AIR');
 							@golf['lowestHole'] = min(9, @hole + 1);
 							@golf['par'] += @golf[@hole]['par'];
 
@@ -350,7 +351,7 @@ proc _start_game(@course, @loc) {
 						@ball['hole'] += 1;
 						@ball['id'] = 0;
 						continue();
-					} else if(@block == '88:0') {
+					} else if(@block == 'SOUL_SAND') {
 						@friction = 0.9
 					}
 				}
@@ -387,11 +388,11 @@ proc _start_game(@course, @loc) {
 				if(@v['magnitude'] < 0.875 && @v['magnitude'] > 0.125) {
 					@v['x'] = (@v['x'] / @v['magnitude']) * (@friction * @v['magnitude']);
 					@v['z'] = (@v['z'] / @v['magnitude']) * (@friction * @v['magnitude']);
-					play_effect(@loc, 'SLIME');
+					spawn_particle(@loc, 'SLIME');
 				}
 				
 				if(@ricochetPitch > 1) {
-					play_sound(@loc, array('sound': 'WOOD_CLICK', 'pitch': min(2, @ricochetPitch)));
+					play_sound(@loc, array('sound': 'BLOCK_WOODEN_BUTTON_CLICK_ON', 'pitch': min(2, @ricochetPitch)));
 				}
 
 				@ball['velocity'] = array('x': @v['x'], 'y': @v['y'], 'z': @v['z']);
