@@ -121,7 +121,6 @@ regular:
     command.entitycount: true
   worlds:
     dev:
-      limitedworldedit: true
       fawe.worldguard: true
       command.time: true
       command.playsound: true
@@ -153,7 +152,7 @@ builder:
       command.velocity: true
       command.explosion: true
       command.heal.others: true
-      command.mob: true
+      command.entity: true
       command.cb: true
       command.cloud: true
       command.acme: true
@@ -175,7 +174,7 @@ builder:
       command.time: true
       command.heal: true
       command.heal.others: true
-      command.mob: true
+      command.entity: true
       command.cb: true
       command.items: true
       command.vanish: true
@@ -265,7 +264,7 @@ moderator:
     command.explosion: true
     command.time: true
     command.endercrystal: true
-    command.mob: true
+    command.entity: true
     command.sethome.others: true
     command.setwarp: true
     nocheat.admin: true
