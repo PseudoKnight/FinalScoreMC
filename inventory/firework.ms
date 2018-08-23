@@ -152,7 +152,7 @@ bind('player_interact', null, array('itemname': 'FIREWORK_ROCKET', 'button': 'ri
 bind('firework_explode', null, null, @event){
 	if(has_metadata(@event['id'], 'mob')){
 		@mob = get_metadata(@event['id'], 'mob', 'CommandHelper');
-		@mobs = spawn_mob(@mob, 15, @event['location']);
+		@mobs = spawn_entity(@mob, 15, @event['location']);
 		@loc = @event['location'];
 		@loc['yaw'] = 0;
 		@loc['pitch'] = 0;

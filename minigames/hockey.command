@@ -233,19 +233,19 @@ register_command('hockey', array(
 				}
 				
 				@l = entity_loc(@hockey['puck']);
-				@block = get_block_at(location_shift(@l, 'down'));
+				@block = get_block(location_shift(@l, 'down'));
 				
-				if(@block == '35:14' || @block == '35:11') {
-					@team = if(@block == '35:11', @hockey['red'], @hockey['blue']);
+				if(@block == 'REW_WOOL' || @block == 'BLUE_WOOL') {
+					@team = if(@block == 'BLUE_WOOL', @hockey['red'], @hockey['blue']);
 					set_pscore('score', @team, get_pscore('score', @team, 'hockey') + 1, 'hockey');
 					launch_firework(@l, associative_array('strength': 0));
 					_place_puck(@hockey);
 					
-				} else if(@block == '44:15') {
+				} else if(@block == 'STONE_SLAB') {
 					@hockey['holder'] = '';
 					set_entity_loc(@hockey['puck'], @hockey['lastloc']);
 					
-				} else if(@hockey['holder'] && (@block == '79:0' || @block == '174:0')) {
+				} else if(@hockey['holder'] && (@block == 'ICE' || @block == 'PACKED_ICE')) {
 					@newloc = ploc(@hockey['holder']);
 					if(@newloc['world'] != @world) {
 						_place_puck(@hockey);
@@ -320,7 +320,7 @@ register_command('hockey', array(
 			@loc = @hockey['loc'][];
 			@loc[@hockey['width']] += rand(5) - 2;
 			if(!@hockey['puck']) {
-				@hockey['puck'] = spawn_mob('SLIME:1', 1, @loc)[0];
+				@hockey['puck'] = spawn_entity('SLIME', 1, @loc, closure(@e, set_entity_spec(@e, array('size': 1))))[0];
 				set_timeout(50, closure(){
 					set_mob_effect(@hockey['puck'], 11, 4, 99999, true, false);
 					set_mob_effect(@hockey['puck'], 25, -1, 99999, true, false);

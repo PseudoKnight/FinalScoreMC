@@ -1,5 +1,5 @@
 proc _prepare_arena(@pvp) {
-	_generator_create('dungeon', 'static', 'static', 'custom', 0);
+	//_generator_create('dungeon', 'static', 'static', 'custom', 0);
 }
 
 proc _load_events(@id) {

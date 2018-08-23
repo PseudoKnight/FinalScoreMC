@@ -328,7 +328,7 @@ proc _fw_task(@task, @state, @secs) {
 			}
 
 			for(@i = 0, @i < (_fw_totalplayers() * 4), @i++) {
-				spawn_mob(@mob, 1, if(@mob === 'BAT', _fw_loc(8), _fw_loc(18)))
+				spawn_entity(@mob, 1, if(@mob === 'BAT', _fw_loc(8), _fw_loc(18)))
 			}
 			bind('entity_death', array('id': 'fwcluck'), array('type': @mob), @e, @mob) {
 				if(array_index_exists(@e['cause'], 'shooter')
@@ -505,10 +505,8 @@ proc _fw_task(@task, @state, @secs) {
 
 	case 'shepherd':
 		if(@state == 'start') {
-			@colors = array('WHITE', 'ORANGE', 'MAGENTA', 'LIGHT_BLUE', 'YELLOW', 'LIME', 'PINK', 'GRAY', 'LIGHT_GRAY',
-					'CYAN', 'PURPLE', 'BLUE', 'BROWN', 'GREEN', 'RED', 'BLACK')
-			@colorindex = rand(array_size(@colors))
-			@color = @colors[@colorindex];
+			@colors = reflect_pull('enum', 'DyeColor');
+			@color = array_rand(@colors, 1, false)[0];
 			_fw_msg(array(
 				@color.color('r').' is the new black',
 				'Shear the '.@color.color('r').' ones!',
@@ -518,7 +516,9 @@ proc _fw_task(@task, @state, @secs) {
 			@count = min(_fw_totalplayers() * 24, 200)
 			@region = sk_region_info('frogware', 'custom')[0]
 			for(@i = 0, @i < @count, @i++) {
-				spawn_mob('SHEEP:'.@colors[rand(16)], 1, _fw_loc())
+				spawn_entity('SHEEP', 1, _fw_loc(), closure(@entity) {
+					set_entity_spec(@entity, array('color': array_rand(@colors, 1, false)[0]));
+				});
 			}
 			if(!rand(4)) {
 				_fw_mobs('wolf', 8);

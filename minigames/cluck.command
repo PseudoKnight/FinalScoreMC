@@ -83,8 +83,8 @@ register_command('cluck', array(
 					}
 				}
 			
-				set_block_at(@cluck['sound']['startround'], '69:13');
-				set_timeout(100, closure(set_block_at(@cluck['sound']['startround'], '69:5')));
+				set_block(@cluck['sound']['startround'], 'REDSTONE_TORCH');
+				set_timeout(100, closure(set_block(@cluck['sound']['startround'], 'TORCH')));
 			
 				queue_delay(2000, 'cluck');
 				@spawn = closure(){
@@ -168,12 +168,12 @@ register_command('cluck', array(
 					}
 					// END STATS
 			
-					set_block_at(@cluck['sound']['gameover'], '69:13');
-					set_timeout(100, closure(set_block_at(@cluck['sound']['gameover'], '69:5')));
+					set_block(@cluck['sound']['gameover'], 'REDSTONE_TORCH');
+					set_timeout(100, closure(set_block(@cluck['sound']['gameover'], 'TORCH')));
 			
 				} else {
-					set_block_at(@cluck['sound']['winround'], '69:13');
-					set_timeout(100, closure(set_block_at(@cluck['sound']['winround'], '69:5')));
+					set_block(@cluck['sound']['winround'], 'REDSTONE_TORCH');
+					set_timeout(100, closure(set_block(@cluck['sound']['winround'], 'TORCH')));
 				}
 			
 				_remove_region_entities('cluck', array('DROPPED_ITEM', 'EXPERIENCE_ORB'));

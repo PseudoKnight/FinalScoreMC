@@ -90,7 +90,7 @@ Horses are protected from all damage unless they are being ridden, and even they
 
 Undead horses can be fed rotten flesh.
 
-There are also noteblock sounds with these blocks: ICE, ANVIL, STAINED_CLAY, COAL_BLOCK, SLIME_BLOCK, and SEA_LANTERN.
+There are also noteblock sounds with these blocks: ICE, ANVIL, TERRACOTTA, COAL_BLOCK, SLIME_BLOCK, and SEA_LANTERN.
 
 If powered by redstone, noteblocks can be heard up to 8 chunks away. (128 meters)
 
@@ -128,11 +128,9 @@ Hovering your cursor over someone's name in chat allows you to see their group, 
 
 Right-clicking on double stone/sandstone/redsandstone slabs with a pickaxe will chisel them to smooth version.
 
-Right-clicking on logs with an axe will add bark on all sides.
-
 Cauldrons are an infinite water source, unless sneaking. You can incrementally fill cauldrons using water bottles.
 
-You can wash dyes from hardened clay, wool, and carpet using a cauldron.
+You can wash dyes from terracotta, wool, shulker boxes, and carpet using a cauldron.
 
 Temporary mirror world "shards" can be created by right-clicking a diamond while in the location you want to mirror.
 
@@ -144,6 +142,6 @@ You can adjust the volume of notification sounds (eg. direct messages) via the V
 
 You can craft bones directly to bone blocks.
 
-You can skulls into player skulls using clay, the naming it in an anvil applies that player's skin to the skull.
+You can skulls into player skulls using clay balls, the naming it in an anvil applies that player's skin to the skull.
 
 Most custom commands now have tab completions built-in.
