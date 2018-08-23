@@ -97,9 +97,9 @@ bind('note_play', null, null, @event) {
 	switch(get_block(location_shift(@event['location'], 'down'))) {
 		case 'ICE':
 		case 'PACKED_ICE':
-			@sound = 'ORB_PICKUP';
+			@sound = 'ENTITY_EXPERIENCE_ORB_PICKUP';
 		case 'ANVIL':
-			@sound = 'ANVIL_LAND';
+			@sound = 'BLOCK_ANVIL_LAND';
 		case 'TERRACOTTA':
 		case 'WHITE_TERRACOTTA':
 		case 'ORANGE_TERRACOTTA':
@@ -117,13 +117,13 @@ bind('note_play', null, null, @event) {
 		case 'BLACK_TERRACOTTA':
 		case 'LIGHT_GRAY_TERRACOTTA':
 		case 'LIGHT_BLUE_TERRACOTTA':
-			@sound = 'NOTE_PLING';
+			@sound = 'BLOCK_NOTE_BLOCK_PLING';
 		case 'SLIME_BLOCK':
 			@sound = 'ENTITY_CHICKEN_EGG';
 		case 'COAL_BLOCK':
 			@sound = 'FIREWORK_BLAST';
 		case 'SEA_LANTERN':
-			@sound = 'BLOCK_NOTE_CHIME';
+			@sound = 'BLOCK_NOTE_BLOCK_CHIME';
 		case 'WHITE_WOOL':
 		case 'ORANGE_WOOL':
 		case 'YELLOW_WOOL':
@@ -140,13 +140,13 @@ bind('note_play', null, null, @event) {
 		case 'BLACK_WOOL':
 		case 'LIGHT_GRAY_WOOL':
 		case 'LIGHT_BLUE_WOOL':
-			@sound = 'BLOCK_NOTE_GUITAR';
+			@sound = 'BLOCK_NOTE_BLOCK_GUITAR';
 		case 'CLAY':
-			@sound = 'BLOCK_NOTE_FLUTE';
+			@sound = 'BLOCK_NOTE_BLOCK_FLUTE';
 		case 'GOLD_BLOCK':
-			@sound = 'BLOCK_NOTE_BELL';
+			@sound = 'BLOCK_NOTE_BLOCK_BELL';
 		case 'BONE_BLOCK':
-			@sound = 'BLOCK_NOTE_XYLOPHONE';
+			@sound = 'BLOCK_NOTE_BLOCK_XYLOPHONE';
 	}
 	play_sound(@event['location'], array(
 		'sound': @sound,
