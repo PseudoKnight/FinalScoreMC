@@ -6,8 +6,11 @@ register_command('tempboat', array(
 		return(array());
 	},
 	'executor': closure(@alias, @sender, @args, @info) {
-		@player = @args[0];
 		@loc = get_command_block();
+		@players = _get_nearby_player(@loc, 3);
+		if(!@player) {
+			die();
+		}
 		if(is_null(@loc)) {
 			@loc = entity_loc(puuid(@player));
 			@loc['y'] += 1;

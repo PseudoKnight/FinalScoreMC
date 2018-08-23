@@ -3,29 +3,31 @@
 	Usage Example: runalias /sayas Server @p Welcome to the server.
 */
 /sayas $from $to $ = >>>
-	if(is_array(@loc = get_command_block()) && @loc['world'] == pworld($to)) {
-		tmsg($to, colorize('&7'.$from.': &r'.$));
-	}
+	_execute_on($to, closure(@uuid) {
+		tmsg(@uuid, colorize('&7'.$from.': &r'.$));
+	});
 <<<
 
 /*
 	Spawns a temporary minecart that gets removed when the player exits or quits
 	Usage Example: runalias /tempcart @p
 */
-/tempcart $player [$timer] [$offset] = >>>
-	if(is_null(@loc = get_command_block()), die())
-	@loc = array(@loc[0] + 0.5, @loc[1] + 2, @loc[2] + 0.5, @loc[3])
-	if(ponline($player)) {
-		if(@loc[3] != pworld($player)) {
-			die('This commandblock cannot set a player into a tempcart across worlds.');
-		}
-		@rider = puuid($player)
-		@cart = spawn_entity('minecart', 1, @loc)[0]
-		set_entity_rider(@cart, @rider)
-		if(has_bind($player.'vehicle_leave')) {
+/tempcart $target [$timer] [$offset] = >>>
+	@loc = get_command_block();
+	if(!@loc) {
+		die();
+	}
+	@loc = array(@loc[0] + 0.5, @loc[1] + 2, @loc[2] + 0.5, @loc[3]);
+	@target = $target;
+	if(@target[0] == '@') {
+		@player = _get_nearby_player(@loc, 3);
+		@uuid = puuid(@player);
+		@cart = spawn_entity('minecart', 1, @loc)[0];
+		set_entity_rider(@cart, @uuid)
+		if(has_bind(@player.'vehicle_leave')) {
 			die();
 		}
-		bind('vehicle_leave', array(id: $player.'vehicle_leave'), array('vehicletype': 'MINECART', 'passengertype': 'PLAYER'), @e, @player = $player) {
+		bind('vehicle_leave', array(id: @player.'vehicle_leave'), array('vehicletype': 'MINECART', 'passengertype': 'PLAYER'), @e, @player) {
 			if(@e['player'] == @player) {
 				unbind()
 				unbind(@player.'quit')
@@ -36,9 +38,9 @@
 				}
 			}
 		}
-		bind('player_quit', array(id: $player.'quit'), array('player': $player), @e, @cart) {
+		bind('player_quit', array(id: @player.'quit'), array('player': @player), @e, @cart) {
 			unbind()
-			unbind(player().'vehicle_leave')
+			unbind(@player.'vehicle_leave')
 			try {
 				entity_remove(@cart);
 			} catch(BadEntityException @ex) {
@@ -46,12 +48,11 @@
 			}
 		}
 	} else {
-		@material = $player;
 		@cart = spawn_entity('minecart', 1, @loc)[0];
 		@stand = spawn_entity('armor_stand', 1, @loc)[0];
 		set_entity_rider(@cart, @stand);
 		set_entity_spec(@stand, associative_array('visible': false));
-		set_entity_spec(@cart, associative_array('block': @material, 'offset': if($offset, integer($offset), 0)));
+		set_entity_spec(@cart, associative_array('block': @target, 'offset': if($offset, integer($offset), 0)));
 		if($timer) {
 			set_timeout(integer($timer), closure(){
 				try {
@@ -69,67 +70,45 @@
 	Sets the players respawn location. Similar to the now /spawnpoint command.
 	Usage Example: runalias /bedspawn @p ~-1 ~ ~1
 */
-/bedspawn $player [$x] [$y] [$z] = >>>
-	@cmdblk = get_command_block();
-	if(@cmdblk['world'] != pworld($player)) {
-		die('This commandblock cannot set spawn for players in another world.');
-	}
-	if($x === '') {
-		set_pbed_location($player, ploc($player))
-	} else {
-		set_pbed_location($player, _relative_coords(@cmdblk, $x, $y, $z))
-	}
+/bedspawn $target [$x] [$y] [$z] = >>>
+	_execute_on($target, closure(@uuid) {
+		if($x === '') {
+			set_pbed_location(@uuid, ploc(@uuid))
+		} else {
+			set_pbed_location(@uuid, _relative_coords(@cmdblk, $x, $y, $z))
+		}
+	});
 <<<
 
-*:/effect $player $effect [$strength=0] [$length=30] = >>>
-	if((@loc = get_command_block()) || has_permission('command.effect')) {
-		try {
-			@player = player($player);
-		} catch(PlayerOfflineException @e) {
-			die('Who is that? Are they online?');
-		}
-		if(@loc && @loc['world'] != pworld(@player)) {
-			die('This commandblock cannot apply an effect to players in another world.');
-		}
-		@effects = _get_effects();
+/effect $target $effect [$strength=0] [$length=30] = >>>
+	@effects = _get_effects();
+	_execute_on($target, closure(@uuid) {
 		if(!array_index_exists(@effects, $effect)) {
 			if($effect == 'milk') {
-				clear_peffects(@player);
+				clear_peffects(@uuid);
 			} else {
 				die('These are the available effect names: milk '.array_implode(array_keys(@effects), ' '));
 			}
 		} else {
-			set_peffect(@player, @effects[$effect], $strength, $length);
+			set_peffect(@uuid, @effects[$effect], $strength, $length);
 		}
-	}
+	});
 <<<
 
-*:/velocity $entity $x $y $z [$double] = >>>
-	@loc = get_command_block();
-	if(is_null(@loc) && !has_permission('group.builder')) {
-		die(color('gold').'You cannot run this command.');
-	}
+/velocity $target $x $y $z [$double] = >>>
 	@applicationtime = $double;
-	if(ponline($entity)) {
-		@player = $entity;
-		if(@loc && @loc['world'] != pworld(@player)) {
-			die('This commandblock cannot apply a velocity to players in another world.');
-		}
-		@loc = ploc(@player);
-		if(_is_survival_world(@loc['world'])) {
-			die(color('gold').'You cannot set a velocity on players in survival worlds.');
-		}
-		
-		set_pvelocity(@player, $x, $y, $z);
+	@closure = closure(@uuid) {
+		@loc = ploc(@uuid);
+		set_pvelocity(@uuid, $x, $y, $z);
 		play_sound(@loc, array('sound': 'ENTITY_GHAST_SHOOT', 'volume': 2));
 		make_effect(@loc, 'MOBSPAWNER_FLAMES');
 		
 		@reapply = array(if(@applicationtime, integer(@applicationtime / 50), 0));
 		set_interval(50, closure(){
 			try {
-				make_effect(ploc(@player), 'MOBSPAWNER_FLAMES');
+				make_effect(ploc(@uuid), 'MOBSPAWNER_FLAMES');
 				if(@reapply[0]-- > 0) {
-					set_pvelocity(@player, $x, $y, $z);
+					set_pvelocity(@uuid, $x, $y, $z);
 				} else {
 					clear_task();
 				}
@@ -137,11 +116,12 @@
 				clear_task();
 			}
 		});
-
-	} else {
+	}
+	
+	if(!_execute_on($target, @closure)) {
 		# entity is not a player
-
-		@entities = entities_in_radius(@loc, 3, $entity);
+		@loc = get_command_block();
+		@entities = entities_in_radius(@loc, 3, $target);
 		@entity = '';
 		if(array_size(@entities) > 1) {
 			@closest = 3;
@@ -158,24 +138,7 @@
 			die();
 		}
 		
-		@loc = entity_loc(@entity);
-		make_effect(@loc, 'MOBSPAWNER_FLAMES');
-		play_sound(@loc, array('sound': 'ENTITY_GHAST_SHOOT', 'volume': 2));
-		set_entity_velocity(@entity, array($x, $y, $z));
-		
-		@reapply = array(if(@applicationtime, integer(@applicationtime / 50), 0));
-		set_interval(50, closure(){
-			try {
-				make_effect(entity_loc(@entity), 'MOBSPAWNER_FLAMES');
-				if(@reapply[0]-- > 0) {
-					set_entity_velocity(@entity, array($x, $y, $z));
-				} else {
-					clear_task();
-				}
-			} catch(BadEntityException @ex) {
-				clear_task();
-			}
-		});
+		execute(@entity, @closure);
 	}
 <<<
 
@@ -366,21 +329,15 @@
 <<<
 
 /tp $player $x $y $z = >>>
-	if((@cmdblk = get_command_block()) && ponline($player)) {
-		if(@cmdblk['world'] != pworld($player)) {
-			die('This commandblock cannot teleport players in other worlds.');
-		}
-		@loc = _relative_coords(ploc($player), $x, $y, $z);
-		set_ploc($player, @loc);
-	} else {
+	if(!_execute_on($player, closure(@uuid) {
+		@loc = _relative_coords(ploc(@uuid), $x, $y, $z);
+		set_ploc(@uuid, @loc);
+	})) {
 		run('/tp' $player $x $y $z);
 	}
 <<<
 
 /summon $entity $x $y $z = >>>
-	if(!@cmdBlock = get_command_block()) {
-		die('This is for commandblocks only.');
-	}
 	@loc = _relative_coords(@cmdBlock, $x, $y, $z);
 	@loc['x'] += 0.5;
 	@loc['z'] += 0.5;

@@ -3,16 +3,17 @@ register_command('timer', array(
 	'usage': '/timer <start|stop> <id> <player>',
 	'permission': 'command.timer',
 	'executor': closure(@alias, @sender, @args, @info) {
-		if(array_size(@args) != 3
-		|| phas_flight(@args[2])
-		|| pmode(@args[2]) != 'ADVENTURE') {
+		if(array_size(@args) != 3) {
 			die();
 		}
 		
-		@id = @args[1];
-		@player = @args[2];
-		@startLoc = ploc(@player);
+		@player = _get_nearby_player(get_command_block(), 3);
+		if(!@player || phas_flight(@player)) {
+			return();
+		}
 		
+		@id = @args[1];
+		@startLoc = ploc(@player);
 		@timers = import('timers');
 		
 		if(@args[0] === 'start') {

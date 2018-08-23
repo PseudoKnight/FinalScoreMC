@@ -25,10 +25,14 @@ register_command('cluck', array(
 				msg(if(length(@top[@i]['score']) < 2, '0').@top[@i]['score'].' - '.@top[@i]['name']);
 			}
 		} else if(@args[0] == 'start') {
-			if(!get_command_block()) {
+			@loc = get_command_block();
+			if(!@loc) {
 				die();
 			}
-			@player = @args[1];
+			@player = _get_nearby_player(@loc, 3);
+			if(!@player) {
+				die();
+			}
 			
 			proc _cluck_defaults() {
 				@world = 'custom';
