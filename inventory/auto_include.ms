@@ -91,43 +91,6 @@ proc _item_meta(@item, @index) {
 	Compacts all an inventory array by removing unnecessary keys in item arrays
 */
 proc _minify_inv(@inv, @keepnulls = false) {
-	proc _minify_item(@item) {
-		if(@item['data'] == 0) {
-			array_remove(@item, 'data');
-		}
-		if(@item['qty'] == 1) {
-			array_remove(@item, 'qty');
-		}
-		if(is_null(@item['meta'])) {
-			array_remove(@item, 'meta');
-		} else {
-			if(array_size(@item['meta']['enchants']) == 0) {
-				array_remove(@item['meta'], 'enchants');
-			}
-			if(is_null(@item['meta']['display'])) {
-				array_remove(@item['meta'], 'display');
-			}
-			if(is_null(@item['meta']['lore'])) {
-				array_remove(@item['meta'], 'lore');
-			}
-			if(array_index_exists(@item['meta'], 'firework')
-			&& is_null(@item['meta']['firework'])) {
-				array_remove(@item['meta'], 'firework');
-			}
-			if(@item['meta']['repair'] == 0) {
-				array_remove(@item['meta'], 'repair');
-			}
-			if(array_size(@item['meta']['flags']) == 0) {
-				array_remove(@item['meta'], 'flags');
-			}
-			if(array_index_exists(@item['meta'], 'inventory')) {
-				_minify_inv(@item['meta']['inventory']);
-			}
-			if(@item['meta']['unbreakable'] == false) {
-				array_remove(@item['meta'], 'unbreakable');
-			}
-		}
-	}
 	if(!is_array(@inv)) {
 		throw('FormatException', 'This must be an item!');
 	}
@@ -145,4 +108,42 @@ proc _minify_inv(@inv, @keepnulls = false) {
 		}
 	}
 	return(@inv);
+}
+
+proc _minify_item(@item) {
+	if(@item['data'] == 0) {
+		array_remove(@item, 'data');
+	}
+	if(@item['qty'] == 1) {
+		array_remove(@item, 'qty');
+	}
+	if(is_null(@item['meta'])) {
+		array_remove(@item, 'meta');
+	} else {
+		if(array_size(@item['meta']['enchants']) == 0) {
+			array_remove(@item['meta'], 'enchants');
+		}
+		if(is_null(@item['meta']['display'])) {
+			array_remove(@item['meta'], 'display');
+		}
+		if(is_null(@item['meta']['lore'])) {
+			array_remove(@item['meta'], 'lore');
+		}
+		if(array_index_exists(@item['meta'], 'firework')
+		&& is_null(@item['meta']['firework'])) {
+			array_remove(@item['meta'], 'firework');
+		}
+		if(@item['meta']['repair'] == 0) {
+			array_remove(@item['meta'], 'repair');
+		}
+		if(array_size(@item['meta']['flags']) == 0) {
+			array_remove(@item['meta'], 'flags');
+		}
+		if(array_index_exists(@item['meta'], 'inventory')) {
+			_minify_inv(@item['meta']['inventory']);
+		}
+		if(@item['meta']['unbreakable'] == false) {
+			array_remove(@item['meta'], 'unbreakable');
+		}
+	}
 }
