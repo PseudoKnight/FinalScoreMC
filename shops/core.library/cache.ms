@@ -14,8 +14,16 @@ proc _cache_shop(@shop, @location) {
 
 	include('chest.ms');
 	include('item.ms');
+	
+	@chestLoc = location_shift(@location, 'down');
+	try {
+		@chestInv = get_inventory(@chestLoc);
+	} catch(FormatException @ex) {
+		die(color('red').'This shop doesn\'t have a chest.');
+	}
+	
 	if(@shop['buy']) {
-		@count = _chest_item_count(location_shift(@location, 'down'), @shop['item']);
+		@count = _chest_item_count(@chestInv, @shop['item']);
 		if(is_null(@count)) {
 			return();
 		}
@@ -68,8 +76,7 @@ proc _cache_shop(@shop, @location) {
 
 	if(@shop['sell']) {
 		@currency = _item_get_currency(@shop['sell'][4]);
-
-		@count = _chest_item_count(location_shift(@location, 'down'), @currency);
+		@count = _chest_item_count(@chestInv, @currency);
 		if(is_null(@count)) {
 			return();
 		}

@@ -118,10 +118,13 @@ register_command('shop', array(
 			foreach(@i: @s in @shops[@t]) {
 				if(@s['location'] == @loc) {
 					if(@t == 0) {
-						@count = _chest_item_count(location_shift(@loc, 'down'), @shop['item']);
-						if(is_null(@count)) {
+						try {
+							@chestInv = get_inventory(location_shift(@loc, 'down'));
+						} catch(FormatException @ex) {
 							die(color(6).'[Shop] No container below this shop sign.');
 						}
+						@count = _chest_item_count(@chestInv, @shop['item']);
+
 						if(@count < @shop['buy'][2]) {
 							array_remove(@shops[@t], @i);
 						} else {
@@ -134,10 +137,12 @@ register_command('shop', array(
 						}
 					} else {
 						@currency = _item_get_currency(@shop['sell'][4]);
-						@count = _chest_item_count(location_shift(@loc, 'down'), @currency);
-						if(is_null(@count)) {
+						try {
+							@chestInv = get_inventory(location_shift(@loc, 'down'));
+						} catch(FormatException @ex) {
 							die(color(6).'[Shop] No container below this shop sign.');
 						}
+						@count = _chest_item_count(@chestInv, @shop['item']);
 						if(@count < @shop['sell'][3]) {
 							array_remove(@shops[@t], @i);
 						} else {

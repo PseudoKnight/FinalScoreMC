@@ -12,11 +12,19 @@ bind('player_interact', null, array('block': 'WALL_SIGN'), @event) {
 		include('core.library/chest.ms');
 
 		cancel();
+		
+		@chestLoc = location_shift(@signLoc, 'down');
+		try {
+			@chestInv = get_inventory(@chestLoc);
+		} catch(FormatException @ex) {
+			die(color('red').'This shop doesn\'t have a chest.');
+		}
+		
 		if(@event['button'] == 'left') {
 			// info
 			@chestLoc = location_shift(@signLoc, 'down');
 			if(@shop['buy']) {
-				@itemCount = _chest_item_count(@chestLoc, @shop['item']);
+				@itemCount = _chest_item_count(@chestInv, @shop['item']);
 				if(@itemCount >= @shop['buy'][2]) {
 					msg(colorize("&aShop has &l@itemCount&a &l"._item_display(@shop['item'])."&a left."));
 				} else {
@@ -25,7 +33,7 @@ bind('player_interact', null, array('block': 'WALL_SIGN'), @event) {
 			}
 			if(@shop['sell']) {
 				@currency = _item_get_currency(@shop['sell'][4]);
-				@currencyCount = _chest_item_count(@chestLoc, @currency);
+				@currencyCount = _chest_item_count(@chestInv, @currency);
 				if(@currencyCount >= @shop['sell'][3]) {
 					msg(colorize("&aShop has &l@currencyCount&a &l"._item_display(@currency)."&a left."));
 				} else {
@@ -35,14 +43,6 @@ bind('player_interact', null, array('block': 'WALL_SIGN'), @event) {
 			
 		} else {
 			// transaction
-			@chestLoc = location_shift(@signLoc, 'down');
-			@chestInv = null;
-			try {
-				@chestInv = get_inventory(@chestLoc);
-			} catch(FormatException @ex) {
-				die(color('red').'This shop doesn\'t have a chest.');
-			}
-			
 			@pInv = pinv();
 			@slotItem = @pInv[pheld_slot()];
 			
@@ -57,17 +57,13 @@ bind('player_interact', null, array('block': 'WALL_SIGN'), @event) {
 			
 			@currency = _item_get_currency(@shop[@transaction][4]);
 			
-			@takeType = @currency;
-			@takeData = null;
 			if(@transaction == 'buy') {
 				if(@slotItem['name'] != @currency || @slotItem['qty'] < @shop[@transaction][3]) {
-					die(color('gold').'You need to hold '.@shop[@transaction][3].' '.data_name(@currency)
-							.if(@shop[@transaction][3] > 1, 's').' in your hand.');
+					die(colorize('&6You need to hold at least &l'.@shop[@transaction][3].'&6 of '.@currency.' in your hand.'));
 				}
-				@split = split(':', @shop['item'], 1);
-				@takeType = @split[0];
-				if(array_size(@split) == 2) {
-					@takeData = @split[1];
+			} else if(@transaction == 'sell') {
+				if(@slotItem['qty'] < @shop[@transaction][2]) {
+					die(colorize('&6You need to hold at least &l'.@shop[@transaction][2].'&6 of '.@shop['item'].' in your hand.'));
 				}
 			}
 
@@ -75,7 +71,7 @@ bind('player_interact', null, array('block': 'WALL_SIGN'), @event) {
 			@itemsLeft = integer(@shop[@transaction][2]);
 			@currencyLeft = integer(@shop[@transaction][3]);
 			foreach(@index: @invItem in @chestInv) {
-				if(@invItem && @invItem['name'] == @takeType && (is_null(@takeData) || @invItem['data'] == @takeData)) {
+				if(@invItem && @invItem['name'] == @slotItem['name']) {
 					if(@invItem['qty'] > @itemsLeft) {
 						// take some from this stack
 						@invItem['qty'] -= @itemsLeft;
