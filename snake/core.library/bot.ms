@@ -44,7 +44,7 @@ proc _snake_bot_update(@bot, @game) {
 				}
 			} else {
 				// go to target
-				if(_is_snake_tail(get_block_at(@snake['target']['loc']))) {
+				if(_is_snake_tail(get_block(@snake['target']['loc']))) {
 					@snake['target'] = null;
 				} else if(_snake_bot_change_dir(@snake, @snake['loc'], @snake['target']['loc'])) {
 					return();
@@ -92,7 +92,7 @@ proc _snake_bot_update(@bot, @game) {
 				}
 			} else {
 				// go to target
-				if(_is_snake_tail(get_block_at(@snake['target']['loc']))) {
+				if(_is_snake_tail(get_block(@snake['target']['loc']))) {
 					@snake['target'] = null;
 				} else if(_snake_bot_change_dir(@snake, @snake['loc'], @snake['target']['loc'])) {
 					return();
@@ -151,7 +151,7 @@ proc _snake_bot_update(@bot, @game) {
 				}
 			} else {
 				// go to target
-				if(_is_snake_tail(get_block_at(@snake['target']['loc']))) {
+				if(_is_snake_tail(get_block(@snake['target']['loc']))) {
 					@snake['target'] = null;
 				} else if(_snake_bot_change_dir(@snake, @snake['loc'], @snake['target']['loc'])) {
 					return();
@@ -198,7 +198,7 @@ proc _snake_bot_update(@bot, @game) {
 				}
 			} else {
 				// go to target
-				if(_is_snake_tail(get_block_at(@snake['target']['loc']))) {
+				if(_is_snake_tail(get_block(@snake['target']['loc']))) {
 					@snake['target'] = null;
 				} else if(_snake_bot_change_dir(@snake, @snake['loc'], @snake['target']['loc'])) {
 					return();
@@ -251,7 +251,7 @@ proc _snake_bot_update(@bot, @game) {
 				}
 			} else {
 				// go to target
-				if(_is_snake_tail(get_block_at(@snake['target']['loc']))) {
+				if(_is_snake_tail(get_block(@snake['target']['loc']))) {
 					@snake['target'] = null;
 				} else if(_snake_bot_change_dir(@snake, @snake['loc'], @snake['target']['loc'])) {
 					return();
@@ -337,7 +337,7 @@ proc _snake_bot_change_dir(@snake, @loc1, @loc2) {
 		}
 		if(@dir && @dir != @snake['dir']
 		&& @dir != _snake_opposite_dir(@snake['dir'])
-		&& _snake_safe_block(get_block_at(location_shift(@loc1, @dir)))) {
+		&& _snake_safe_block(get_block(location_shift(@loc1, @dir)))) {
 			@snake['last-dir'] = @snake['dir'];
 			@snake['dir'] = @dir;
 			@snake['turned'] = true;

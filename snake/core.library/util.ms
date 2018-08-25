@@ -1,6 +1,5 @@
 proc _is_snake_tail(@block) {
-	@split = split(':', @block);
-	return(@split[0] == '159' || @split[0] == '251' && @split[1] != '15');
+	return(reg_match('(TERRACOTTA|(BLACK_){0}CONCRETE)', @block));
 }
 
 proc _snake_valid_location(@region, @padding = 0) {
@@ -26,8 +25,9 @@ proc _snake_valid_location(@region, @padding = 0) {
 		} else {
 			@z = (@coords[1][2] + @padding) + rand(1 + @coords[0][2] - @coords[1][2] - (@padding * 2));
 		}
-		if(get_block_at(@x, @y, @z, 'custom') == '0:0') {
-			return(array(@x, @y, @z, 'custom'));
+		@loc = array(@x, @y, @z, 'custom');
+		if(get_block(@loc) == 'AIR') {
+			return(@loc);
 		}
 	}
 	return(null);
@@ -35,7 +35,7 @@ proc _snake_valid_location(@region, @padding = 0) {
 
 proc _snake_direction_of(@loc, @block) {
 	foreach(@dir in array('down', 'up', 'north', 'south', 'east', 'west')) {
-		if(get_block_at(location_shift(@loc, @dir)) == @block) {
+		if(get_block(location_shift(@loc, @dir)) == @block) {
 			return(@dir);
 		}
 	}
@@ -57,7 +57,7 @@ proc _snake_safe_dir(@snake) {
 	@loc = @snake['loc'];
 	if(@snake['last-dir']) {
 		@loc = location_shift(@loc, @snake['last-dir']);
-		if(_snake_safe_block(get_block_at(@loc), @loc)) {
+		if(_snake_safe_block(get_block(@loc), @loc)) {
 			return(@snake['last-dir']);
 		}
 	}
@@ -65,7 +65,7 @@ proc _snake_safe_dir(@snake) {
 	if(is_array(@turn)) {
 		foreach(@t in @turn) {
 			@loc = location_shift(@snake['loc'], @t);
-			if(@t != @snake['last-dir'] && _snake_safe_block(get_block_at(@loc), @loc)) {
+			if(@t != @snake['last-dir'] && _snake_safe_block(get_block(@loc), @loc)) {
 				return(@t);
 			}
 		}
@@ -75,7 +75,7 @@ proc _snake_safe_dir(@snake) {
 
 proc _snake_safe_path(@loc, @top, @dir, @missiles) {
 	@loc = location_shift(@loc, @dir);
-	if(!_snake_safe_block(get_block_at(@loc), @loc)) {
+	if(!_snake_safe_block(get_block(@loc), @loc)) {
 		return(false);
 	}
 	foreach(@missile in @missiles) {
@@ -86,11 +86,11 @@ proc _snake_safe_path(@loc, @top, @dir, @missiles) {
 		}
 	}
 	@turn = _snake_turn(@top, @dir);
-	@block = get_block_at(location_shift(@loc, @dir));
+	@block = get_block(location_shift(@loc, @dir));
 	if((_snake_safe_block(@block)
-	&& (@block == '169:0' || _snake_safe_block(get_block_at(location_shift(@loc, @dir, 2)))))
-	|| _snake_safe_block(get_block_at(location_shift(@loc, @turn[0])))
-	|| _snake_safe_block(get_block_at(location_shift(@loc, @turn[1])))) {
+	&& (@block == 'SEA_LANTERN' || _snake_safe_block(get_block(location_shift(@loc, @dir, 2)))))
+	|| _snake_safe_block(get_block(location_shift(@loc, @turn[0])))
+	|| _snake_safe_block(get_block(location_shift(@loc, @turn[1])))) {
 		return(true);
 	}
 	return(false);
@@ -98,7 +98,7 @@ proc _snake_safe_path(@loc, @top, @dir, @missiles) {
 
 proc _snake_safe_block(@block, @loc) {
 	// special case for lasers, as the powerup block is the same as the deadly laser
-	if(@loc && @block == '95:14') {
+	if(@loc && @block == 'RED_STAINED_GLASS') {
 		@game = import('snake');
 		foreach(@powerup in @game['powerups']){
 			if(@powerup['loc'][0] == @loc[0]
@@ -109,7 +109,7 @@ proc _snake_safe_block(@block, @loc) {
 		}
 		return(false);
 	}
-	return(@block == '0:0' || @block == '169:0' || _snake_get_powerup_from(@block));
+	return(@block == 'AIR' || @block == 'SEA_LANTERN' || _snake_get_powerup_from(@block));
 }
 
 proc _snake_opposite_dir(@dir) {
@@ -177,13 +177,13 @@ proc _snake_clean_surfaces(@game) {
 						for(@z = @minZ, @z <= @maxZ, @z++) {
 							if(@walls && (@z == @minZ || @z == @maxZ)) {
 								if(@count == 2) {
-									set_block_at(@x, @y, @z, '168:2', 'custom', false);
+									set_block(array(@x, @y, @z, 'custom'), 'DARK_PRISMARINE', false);
 								} else if(@count == 4) {
-									set_block_at(@x, @y, @z, '215', 'custom', false);
+									set_block(array(@x, @y, @z, 'custom'), 'RED_NETHER_BRICK', false);
 								}
 							} else {
-								set_block_at(@x, @y, @z, 0, 'custom', false);
-								play_effect(array(@x, @y, @z, 'custom'), 'CRIT', array('speed': 0.01, 'radius': 48));
+								set_block(array(@x, @y, @z,, 'custom'), 'AIR', false);
+								spawn_particle(array(@x, @y, @z, 'custom'), array('particle': 'CRIT', 'speed': 0.01));
 							}
 						}
 					}, 'snake_cleanup');
@@ -198,15 +198,15 @@ proc _snake_clean_surfaces(@game) {
 						for(@x = @minX, @x <= @maxX, @x++) {
 							if(@walls && @count != 5 && (@x == @minX || @x == @maxX)) {
 								if(@x == @maxX) {
-									set_block_at(@x, @y, @z, '168:2', 'custom', false);
+									set_block(array(@x, @y, @z, 'custom'), 'DARK_PRISMARINE', false);
 								} else {
-									set_block_at(@x, @y, @z, '215', 'custom', false);
+									set_block(array(@x, @y, @z, 'custom'), 'RED_NETHER_BRICK', false);
 								}
 							} else if(@walls && @count == 5 && @x == @halfX && @z != @halfZ) {
-								set_block_at(@x, @y, @z, 98, 'custom', false);
+								set_block(array(@x, @y, @z, 'custom'), 'STONE_BRICKS', false);
 							} else {
-								set_block_at(@x, @y, @z, 0, 'custom', false);
-								play_effect(array(@x, @y, @z, 'custom'), 'CRIT', array('speed': 0.01, 'radius': 48));
+								set_block(array(@x, @y, @z, 'custom'), 'AIR', false);
+								spawn_particle(array(@x, @y, @z, 'custom'), array('particle': 'CRIT', 'speed': 0.01));
 							}
 						}
 					}, 'snake_cleanup');
@@ -220,7 +220,7 @@ proc _snake_spawn_flag(@team, @game) {
 	@region = 'snake_'.@game['arena'].(@team * 2 + 2);
 	@loc = _snake_valid_location(@region, 13);
 	if(@loc) {
-		set_block_at(@loc, if(@team, 249, 244), false);
+		set_block(@loc, if(@team, 'RED_GLAZED_TERRACOTTA', 'CYAN_GLAZED_TERRACOTTA'), false);
 	}
 	@game['flags'][@team] = @loc;
 }

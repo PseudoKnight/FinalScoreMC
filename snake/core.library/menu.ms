@@ -15,7 +15,7 @@ proc _snake_menu() {
 				color('white').'Win the game by winning three rounds.',
 			)
 		)),
-		'2': array('name': 'WATCH', 'meta': array(
+		'2': array('name': 'CLOCK', 'meta': array(
 			'display': color('yellow').color('bold').'ENDLESS MODE',
 			'lore': array(
 				color('white').'Bots respawn and retain powerups.',

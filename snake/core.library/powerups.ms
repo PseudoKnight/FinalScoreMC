@@ -1,24 +1,19 @@
 proc _snake_get_powerup_from(@id) {
 	switch(@id) {
 		case 1:
-		case 133:
-		case '133:0':
+		case 'EMERALD_BLOCK':
 			return('boost');
 		case 2:
-		case 152:
-		case '152:0':
+		case 'REDSTONE_BLOCK':
 			return('missile');
 		case 3:
-		case 46:
-		case '46:0':
+		case 'TNT':
 			return('tnt');
 		case 4:
-		case 95:
-		case '95:14':
+		case 'RED_STAINED_GLASS':
 			return('laser');
 		case 5:
-		case 255:
-		case '255:0':
+		case 'STRUCTURE_BLOCK':
 			return('nuke');
 	}
 	return(null);
@@ -28,19 +23,19 @@ proc _snake_get_block_from(@powerup) {
 	switch(@powerup) {
 		case 1:
 		case 'boost':
-			return(133);
+			return('EMERALD_BLOCK');
 		case 2:
 		case 'missile':
-			return(152);
+			return('REDSTONE_BLOCK');
 		case 3:
 		case 'tnt':
-			return(46);
+			return('TNT');
 		case 4:
 		case 'laser':
-			return('95:14');
+			return('RED_STAINED_GLASS');
 		case 5:
 		case 'nuke':
-			return(255);
+			return('STRUCTURE_BLOCK');
 	}
 	return(null);
 }
@@ -83,7 +78,7 @@ proc _snake_add_powerup(@game) {
 		@r = rand(if(@game['mode'] == 'capture', 4, 5)) + 1;
 		@block = _snake_get_block_from(@r);
 		@type = _snake_get_powerup_from(@r);
-		set_block_at(@loc, @block, false);
+		set_block(@loc, @block, false);
 		@game['powerups'][] = associative_array(
 			'block': @block,
 			'loc': @loc,
@@ -105,15 +100,15 @@ proc _snake_remove_powerup(@loc, @game) {
 
 proc _snake_remove_all_powerups(@game) {
 	foreach(@pu in @game['powerups']) {
-		set_block_at(@pu['loc'], '0:0', false);
+		set_block(@pu['loc'], 'AIR', false);
 	}
 	@game['powerups'] = array();
 }
 
 proc _snake_check_powerups(@game) {
 	foreach(@key: @pu in @game['powerups']) {
-		if(!_snake_get_powerup_from(get_block_at(@pu['loc']))) {
-			set_block_at(@pu['loc'], '0:0', false);
+		if(!_snake_get_powerup_from(get_block(@pu['loc']))) {
+			set_block(@pu['loc'], 'AIR', false);
 			array_remove(@game['powerups'], @key);
 		}
 	}
@@ -129,7 +124,7 @@ proc _snake_powerup(@player, @powerup, @game) {
 	if(!@snake['bot']) {
 		@item = pinv(@player, @slot);
 		@inv = associative_array();
-		if(@item && @item['type'] == split(':', _snake_get_block_from(@powerup))[0]) {
+		if(@item && @item['name'] == _snake_get_block_from(@powerup)) {
 			@item['qty'] += 1;
 			@inv[@slot] = @item;
 		} else {
@@ -141,7 +136,7 @@ proc _snake_powerup(@player, @powerup, @game) {
 		set_pinv(@player, @inv);
 		title(@player, '', color('dark_gray').'+'.@powerup, 2, 0, 40);
 	}
-	play_sound(@snake['loc'], associative_array('sound': 'ENDERMAN_TELEPORT', 'pitch': 2, 'volume': 4));
+	play_sound(@snake['loc'], associative_array('sound': 'ENTITY_ENDERMAN_TELEPORT', 'pitch': 2, 'volume': 4));
 	return(true);
 }
 
@@ -231,9 +226,9 @@ proc _snake_ability(@player, @slot, @game) {
 			} else if(!@snake['laser']) {
 				@item = pinv(@player, @slot);
 				@world = pworld(@player);
-				if(@item && pcooldown(@player, 'STAINED_GLASS') == 0) {
+				if(@item && pcooldown(@player, 'RED_STAINED_GLASS') == 0) {
 					@snake['laser'] = time() + (@item['qty'] * 500);
-					set_pcooldown(@player, 'STAINED_GLASS', 7000 / 50);
+					set_pcooldown(@player, 'RED_STAINED_GLASS', 7000 / 50);
 					play_named_sound(@snake['loc'], array('sound': 'entity.guardian.death', 'volume': 4, 'pitch': 2));
 					play_named_sound(@snake['loc'], array('sound': 'entity.guardian.attack', 'volume': 4));
 					_snake_shoot_laser(@player, @snake['loc'][], @snake['dir'], @game);
@@ -242,7 +237,7 @@ proc _snake_ability(@player, @slot, @game) {
 		case 'boost':
 			if(@snake['bot']) {
 				if(@snake['ability-count'][@slot]) {
-					play_sound(@snake['loc'], associative_array('sound': 'GHAST_FIREBALL', 'volume': 4));
+					play_sound(@snake['loc'], associative_array('sound': 'ENTITY_GHAST_SHOOT', 'volume': 4));
 					@count = @snake['ability-count'][@slot];
 					@snake['boost'] = @count;
 					@snake['ability-count'][@slot] = 0;
@@ -257,7 +252,7 @@ proc _snake_ability(@player, @slot, @game) {
 				@item = pinv(@player, @slot);
 				@world = pworld(@player);
 				if(@item && pcooldown(@player, 'EMERALD_BLOCK') == 0) {
-					play_sound(@snake['loc'], associative_array('sound': 'GHAST_FIREBALL', 'volume': 4));
+					play_sound(@snake['loc'], associative_array('sound': 'ENTITY_GHAST_SHOOT', 'volume': 4));
 					@snake['boost'] = @item['qty'];
 					set_pcooldown(@player, 'EMERALD_BLOCK', 7000 / 50);
 					set_timeout(5000, closure(){
@@ -313,7 +308,7 @@ proc _snake_drop_nuke(@snake, @game) {
 	set_mob_equipment(@marker, array('helmet': array('name': 'DIAMOND_BLOCK')));
 	
 	// now move it to the target location over time
-	play_sound(@loc, array('sound': 'ZOMBIE_UNFECT', 'volume': 4));
+	play_sound(@loc, array('sound': 'ENTITY_ZOMBIE_VILLAGER_CONVERTED', 'volume': 4));
 	set_interval(50, closure(){
 		if(distance(@loc, @target) > 0.3) {
 			@newLoc = location_shift(@loc, @target, 0.25);
@@ -331,8 +326,8 @@ proc _snake_drop_nuke(@snake, @game) {
 			
 			// trigger nuke
 			@state = array('radius': 1, 'side': 0);
-			set_block_at(@target, 51, false);
-			play_sound(@target, array('sound': 'EXPLODE', 'pitch': 0.5, 'volume': 3));
+			set_blockt(@target, 'FIRE', false);
+			play_sound(@target, array('sound': 'ENTITY_GENERIC_EXPLODE', 'pitch': 0.5, 'volume': 3));
 			set_interval(50, closure(){
 				if(!array_contains(@game['nukes'], @region)) {
 					clear_task()
@@ -353,9 +348,9 @@ proc _snake_drop_nuke(@snake, @game) {
 						@loc[@coord] = @target[@coord] + @i;
 						if(@loc[@coord] > @coords[1][@coord]
 						&& @loc[@coord] < @coords[0][@coord] + 1) {
-							@block = get_block_at(@loc);
-							if(@block != '0:0') {
-								set_block_at(@loc, 51, false);
+							@block = get_block(@loc);
+							if(@block != 'AIR') {
+								set_block(@loc, 'FIRE', false);
 								if(_is_snake_tail(@block)) {
 									foreach(@player: @snake in @game['snakes']) {
 										if(@snake['head'] == @block) {
@@ -366,7 +361,7 @@ proc _snake_drop_nuke(@snake, @game) {
 								}
 							}
 							if(!rand(3)) {
-								play_effect(@loc, 'EXPLOSION_LARGE', array('radius': 48));
+								spawn_particle(@loc, 'EXPLOSION_LARGE');
 							}
 						}
 					}
@@ -388,7 +383,7 @@ proc _snake_drop_nuke(@snake, @game) {
 }
 
 proc _snake_drop_tnt(@loc, @dir) {
-	play_sound(@loc, associative_array('sound': 'FUSE', 'volume': 4));
+	play_sound(@loc, associative_array('sound': 'ENTITY_TNT_PRIMED', 'volume': 4));
 	if(@dir) {
 		@loc = _snake_shift(@loc, @dir);
 	}
@@ -422,7 +417,7 @@ proc _snake_launch_missile(@loc, @dir, @game) {
 	@move = closure(@clear = true){
 		try {
 			if(!@missile['skip']) {
-				set_block_at(@missile['loc'], 0, false);
+				set_block(@missile['loc'], 'AIR', false);
 			}
 			if(array_size(@game['snakes']) < 2) {
 				array_remove(@game['missiles'], @key);
@@ -432,20 +427,20 @@ proc _snake_launch_missile(@loc, @dir, @game) {
 				die();
 			}
 			@missile['loc'] = location_shift(@missile['loc'], @missile['dir']);
-			@block = get_block_at(@missile['loc']);
-			if(@block == '0:0') {
+			@block = get_block(@missile['loc']);
+			if(@block == 'AIR') {
 				if(!@missile['skip']) {
-					set_block_at(@missile['loc'], '152', false);
+					set_block(@missile['loc'], 'REDSTONE_BLOCK', false);
 				} else {
 					@missile['skip'] = false;
 				}
-			} else if(@block == '169:0') {
+			} else if(@block == 'SEA_LANTERN') {
 				@dir = _snake_dir_of_surface(@missile['loc'], _snake_opposite_dir(@missile['dir']));
 				if(@dir) {
 					@missile['dir'] = @dir;
 					@missile['loc'] = location_shift(@missile['loc'], @dir);
 					if(!@missile['skip']) {
-						set_block_at(@missile['loc'], '152', false);
+						set_block(@missile['loc'], 'REDSTONE_BLOCK', false);
 					} else {
 						@missile['skip'] = false;
 					}
@@ -453,12 +448,12 @@ proc _snake_launch_missile(@loc, @dir, @game) {
 					array_remove(@game['missiles'], @key);
 					clear_task();
 				}
-			} else if(@block == '152:0') {
+			} else if(@block == 'REDSTONE_BLOCK') {
 				_snake_remove_powerup(@missile['loc'], @game);
-				@dir = _snake_direction_of(@missile['loc'], '0:0', @missile['dir']);
+				@dir = _snake_direction_of(@missile['loc'], 'AIR', @missile['dir']);
 				if(@dir) {
 					@missile['dir'] = @dir;
-					play_sound(@missile['loc'], associative_array('sound': 'IRONGOLEM_HIT', 'pitch': 1.5, 'volume': 4));
+					play_sound(@missile['loc'], associative_array('sound': 'ENTITY_IRON_GOLEM_HURT', 'pitch': 1.5, 'volume': 4));
 				}
 			} else {
 				array_remove(@game['missiles'], @key);
@@ -467,29 +462,29 @@ proc _snake_launch_missile(@loc, @dir, @game) {
 				}
 				play_named_sound(@missile['loc'], associative_array('sound': 'entity.shulker_bullet.hit', 'volume': 4, 'pitch': 1.5));
 				if(_is_snake_tail(@block)) {
-					set_block_at(@missile['loc'], 0, false);
+					set_block(@missile['loc'], 'AIR', false);
 					foreach(@player: @snake in @game['snakes']) {
 						if(@snake['loc'][0] == @missile['loc'][0] && @snake['loc'][1] == @missile['loc'][1] && @snake['loc'][2] == @missile['loc'][2]) {
 							_snake_kill(@player, @game);
 						}
 					}
-				} else if(@block == '46:0') {
+				} else if(@block == 'TNT') {
 					_snake_remove_powerup(@missile['loc'], @game);
-					set_block_at(@missile['loc'], 0, false);
+					set_block(@missile['loc'], 'AIR', false);
 					_snake_drop_tnt(@missile['loc']);
 				} else {
-					play_sound(@missile['loc'], associative_array('sound': 'FIZZ', 'volume': 4));
+					play_sound(@missile['loc'], associative_array('sound': 'BLOCK_FIRE_EXTINGUISH', 'volume': 4));
 				}
 				@missile['loc']['x'] += 0.5;
 				@missile['loc']['y'] += 0.5;
 				@missile['loc']['z'] += 0.5;
-				play_effect(@missile['loc'], 'CLOUD', associative_array('speed': 0.08, 'particleCount': 8, 'radius': 40));
+				spawn_particle(@missile['loc'], array('particle': 'CLOUD', 'speed': 0.08, 'count': 8));
 			}
 		} catch(Exception @ex) {
 			if(@clear) {
 				clear_task();
 			}
-			set_block_at(@missile['loc'], 0, false);
+			set_block(@missile['loc'], 'AIR', false);
 			array_remove(@game['missiles'], @key);
 		}
 	}
@@ -504,22 +499,22 @@ proc _snake_shoot_laser(@player, @loc, @dir, @game) {
 	@blocks = array();
 	while(true){
 		@loc = location_shift(@loc, @dir);
-		@block = get_block_at(@loc);
-		if(@block == '0:0') {
-			set_block_at(@loc, '95:14', false);
+		@block = get_block(@loc);
+		if(@block == 'AIR') {
+			set_block(@loc, 'RED_STAINED_GLASS', false);
 			@blocks[] = @loc;
-		} else if(@block == '169:0' || @block == '152:0') {
+		} else if(@block == 'SEA_LANTERN' || @block == 'REDSTONE_BLOCK') {
 			@newDir = _snake_dir_of_surface(@loc, _snake_opposite_dir(@dir));
 			if(@newDir) {
 				@dir = @newDir;
 			} else {
 				break();
 			}
-		} else if(@block == '95:14') {
+		} else if(@block == 'RED_STAINED_GLASS') {
 			break();
-		} else if(@block == '46:0') {
+		} else if(@block == 'TNT') {
 			_snake_remove_powerup(@loc, @game);
-			set_block_at(@loc, '95:14', false);
+			set_block(@loc, 'RED_STAINED_GLASS', false);
 			@blocks[] = @loc;
 			_snake_drop_tnt(@loc);
 		} else {
@@ -542,13 +537,12 @@ proc _snake_shoot_laser(@player, @loc, @dir, @game) {
 
 proc _snake_update_laser(@player, @game) {
 	@snake = @game['snakes'][@player];
-	play_effect(@snake['laser-blocks'][-1], 'LAVA_POP', array(
-		'speed': 0,
-		'particleCount': 8,
-		'offsetX': 0.5,
-		'offsetY': 0.5,
-		'offsetZ': 0.5,
-		'radius': 40
+	spawn_particle(@snake['laser-blocks'][-1], array(
+		'particle': 'LAVA',
+		'count': 8,
+		'xoffset': 0.5,
+		'yoffset': 0.5,
+		'zoffset': 0.5,
 	));
 	if(time() > @snake['laser']) {
 		_snake_clear_laser(@player, @game);
@@ -562,8 +556,8 @@ proc _snake_update_laser(@player, @game) {
 proc _snake_clear_laser(@player, @game) {
 	@snake = @game['snakes'][@player];
 	foreach(@l in @snake['laser-blocks']) {
-		if(get_block_at(@l) == '95:14') {
-			set_block_at(@l, 0, false);
+		if(get_block(@l) == 'RED_STAINED_GLASS') {
+			set_block(@l, 'AIR', false);
 		}
 	}
 	@snake['laser-blocks'] = null;

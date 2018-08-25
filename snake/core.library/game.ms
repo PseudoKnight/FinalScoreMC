@@ -76,15 +76,15 @@ proc _snake_queue(@mode) {
 	
 	// Create color select menu
 	create_virtual_inventory('snake', 9, color('bold').'Choose Your Snake Color', array(
-		'0': array('name': 'STAINED_CLAY', 'data': 3, 'meta': array('display': 'Blue')),
-		'1': array('name': 'CONCRETE', 'data': 3, 'meta': array('display': 'Neon Blue')),
-		'2': array('name': 'STAINED_CLAY', 'data': 5, 'meta': array('display': 'Green')),
-		'3': array('name': 'CONCRETE', 'data': 5, 'meta': array('display': 'Neon Green')),
-		'4': array('name': 'STAINED_CLAY', 'data': 6, 'meta': array('display': 'Red')),
-		'5': array('name': 'CONCRETE', 'data': 6, 'meta': array('display': 'Neon Pink')),
-		'6': array('name': 'STAINED_CLAY', 'data': 2, 'meta': array('display': 'Purple')),
-		'7': array('name': 'CONCRETE', 'data': 4, 'meta': array('display': 'Neon Yellow')),
-		'8': array('name': 'CONCRETE', 'data': 0, 'meta': array('display': 'Neon White')),
+		'0': array('name': 'LIGHT_BLUE_TERRACOTTA', 'meta': array('display': 'Blue')),
+		'1': array('name': 'LIGHT_BLUE_CONCRETE', 'data': 3, 'meta': array('display': 'Neon Blue')),
+		'2': array('name': 'LIME_TERRACOTTA', 'meta': array('display': 'Green')),
+		'3': array('name': 'LIME_CONCRETE', 'meta': array('display': 'Neon Green')),
+		'4': array('name': 'PINK_TERRACOTTA', 'meta': array('display': 'Red')),
+		'5': array('name': 'PINK_CONCRETE', 'meta': array('display': 'Neon Pink')),
+		'6': array('name': 'PURPLE_TERRACOTTA', 'meta': array('display': 'Purple')),
+		'7': array('name': 'YELLOW_CONCRETE', 'meta': array('display': 'Neon Yellow')),
+		'8': array('name': 'WHITE_CONCRETE', 'meta': array('display': 'Neon White')),
 	));
 
 	// Add players in region
@@ -143,7 +143,7 @@ proc _snake_queue(@mode) {
 			if(pinventory_holder(player()) == 'snake' && array_index_exists(@game['snakes'], player())) {
 				@item = @event['slotitem'];
 				if(@item) {
-					_snake_set_color(player(), @item['type'].':'.@item['data'], @game);
+					_snake_set_color(player(), @item['name'], @game);
 					set_inventory_item('snake', @event['slot'], null);
 					close_pinv();
 				}
