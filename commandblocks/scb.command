@@ -1,6 +1,6 @@
 @allowedcmds = array('/velocity', '/tp', '/sayas', '/testfor', '/testforblock', '/testforblocks', '/playsound',
-	'/setblock', '/tempcart', '/bedspawn', '/give', '/effect', '/warp', '/tellraw', '/time', '/stopsound', '/timer',
-	'/tempboat', '/platform');
+	'/setblock', '/fill', '/tempcart', '/bedspawn', '/give', '/effect', '/warp', '/tellraw', '/time', '/stopsound',
+	'/timer', '/tempboat', '/platform');
 register_command('scb', array(
 	'description': 'Set the command in the targeted command block.',
 	'usage': '/scb <cmd>',
@@ -30,7 +30,19 @@ register_command('scb', array(
 			die(color('gold').'You are looking at '.get_block(@block).'. That is not a command block.');
 		}
 		@cmd = array_implode(@args);
-		if(is_alias(@cmd)) {
+		if(@match = reg_match('^\\/(?:minecraft\\:)?(setblock.*)', @cmd)) {
+			if(array_contains(array('replace', 'keep', 'destroy'), @args[5])) {
+				@cmd = '/minecraft:'.@match[1];
+			} else {
+				@cmd = '/'.@match[1];
+			}
+		} else if(@match = reg_match('^\\/(?:minecraft\\:)?(fill.*)', @cmd)) {
+			if(array_contains(array('replace', 'keep', 'destroy', 'hollow', 'outline'), @args[8])) {
+				@cmd = '/minecraft:'.@match[1];
+			} else {
+				@cmd = '/'.@match[1];
+			}
+		} else if(is_alias(@cmd)) {
 			@cmd = '/runalias '.@cmd;
 		}
 		set_block_command(@block, @cmd);

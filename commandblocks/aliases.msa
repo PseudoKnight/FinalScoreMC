@@ -21,6 +21,9 @@
 	@target = $target;
 	if(@target[0] == '@') {
 		@player = _get_nearby_player(@loc, 3);
+		if(!@player) {
+			die();
+		}
 		@uuid = puuid(@player);
 		@cart = spawn_entity('minecart', 1, @loc)[0];
 		set_entity_rider(@cart, @uuid)
@@ -183,148 +186,92 @@
 <<<
 
 /setblock $x $y $z $id [$data='0'] [$mode='replace'] [$replaceid=''] [$replacedata='0'] = >>>
-	if(@cmdblk = get_command_block()) {
-		@loc = _relative_coords(@cmdblk, $x, $y, $z);
-
-		if(!is_numeric(@id = $id)) {
-			die();
+	if(!(@cmdblk = get_command_block())) {
+		die();
+	}
+	@id = $id;
+	@data = $data;
+	if(is_numeric(@id)) {
+		@type = to_lower(data_name(@id.':'.@data));
+	} else {
+		@id = data_values(@id);
+		@type = to_lower(data_name(split(':', @id)[0].':'.@data));
+	}
+	
+	if($mode == 'replace' || $mode == 'keep' || $mode == 'destroy') {
+		@cmd = '/minecraft:setblock '.$x.' '.$y.' '.$z.' '.@type.if($mode != 'replace', ' '.$mode);
+		set_block_command(@cmdblk, @cmd);
+		run(@cmd);
+	} else if($mode == 'timed') {
+		@arg1 = $replaceid;
+		@arg2 = '';
+		if($replacedata != '0') {
+			@arg1 = $replacedata;
+			@arg2 = $replaceid;
+			if(!is_numeric(@arg2)) {
+				@arg2 = data_values(@arg2);
+			}
+			@arg2 = to_lower(data_name(@arg2));
 		}
-
-		@type = data_name(@id.':'.$data);
-
-		switch($mode) {
-			case 'replace':
-				if($replaceid) {
-					@replace = data_name($replaceid.':'.$replacedata);
-					if(get_block(@loc) == @replace) {
-						set_block(@loc, @type, false);
-					}
-				} else {
-					set_block(@loc, @type, false);
-				}
-			case 'keep':
-				if(get_block(@loc) === 'AIR') {
-					set_block(@loc, @type, false);
-				}
-			case 'destroy':
-				if(get_block(@loc) !== 'AIR') {
-					make_effect(@loc, 'STEP_SOUND:'.@type);
-				}
-				set_block(@loc, @type, true)
-			case 'fall':
-				@block = get_block(@loc)
-				if(@block !== 'AIR') {
-					set_block(@loc, 'AIR');
-					spawn_falling_block(@loc, @block);
-				}
-			case 'timed':
-				@ms = integer($replaceid);
-				@block = @ms;
-				if($replacedata != '0') {
-					@ms = integer($replacedata);
-				} else {
-					@block = get_block(@loc);
-				}
-				set_block(@loc, @type, false);
-				set_timeout(@ms, closure(){
-					set_block(@loc, @block);
-				});
-			case 'toggle':
-				@replace = data_name($replaceid.':'.$replacedata);
-				@block = get_block(@loc);
-				if(@block == @replace) {
-					set_block(@loc, @type, false);
-				} else if(@block == @id.':'.$data) {
-					set_block(@loc, @replace, false);
-				}
-		}
+		@cmd = '/setblock '.$x.' '.$y.' '.$z.' '.@type.' timed '.@arg1.' '.@arg2;
+		set_block_command(@cmdblk, @cmd);
+		run(@cmd);
+	} else if($mode == 'toggle') {
+		@replaceblock = to_lower(data_name($replaceid.':'.$replacedata));
+		@cmd = '/setblock '.$x.' '.$y.' '.$z.' '.@type.' toggle '.@replaceblock;
+		set_block_command(@cmdblk, @cmd);
+		run(@cmd);
+	} else if($mode == 'fall') {
+		@cmd = '/setblock '.$x.' '.$y.' '.$z.' '.@type.' fall';
+		set_block_command(@cmdblk, @cmd);
+		run(@cmd);
 	}
 <<<
 
 /fill $x1 $y1 $z1 $x2 $y2 $z2 $id [$data=0] [$mode='keep'] [$replaceid=''] [$replacedata='0'] = >>>
-	if(@cmdblk = get_command_block()) {
-		@loc1 = _relative_coords(@cmdblk, $x1, $y1, $z1)
-		@loc2 = _relative_coords(@cmdblk, $x2, $y2, $z2)
-
-		if(!is_numeric(@id = $id)) {
-			die()
+	if(!(@cmdblk = get_command_block()) {
+		die();
+	}
+	@id = $id;
+	@data = $data;
+	if(is_numeric(@id)) {
+		@type = to_lower(data_name(@id.':'.@data));
+	} else {
+		@id = data_values(@id);
+		@type = to_lower(data_name(split(':', @id)[0].':'.@data));
+	}
+	
+	if($mode == 'replace' || $mode == 'keep' || $mode == 'destroy') {
+		if($replaceid != '') {
+			@replaceblock = to_lower(data_name($replaceid.':'.$replacedata));
 		}
-		@type = data_name(@id.':'.$data);
-
-		if($replaceid !== '') {
-			if(!is_numeric(@replaceid = $replaceid)) {
-				die()
+		@cmd = '/minecraft:fill '.$x1.' '.$y1.' '.$z1.' '.$x2.' '.$y2.' '.$z2.' '.@type
+				.if($mode == 'replace', if($replaceid != '', ' '.$mode.' '.@replaceblock, ''), ' '.$mode);
+		set_block_command(@cmdblk, @cmd);
+		run(@cmd);
+	} else if($mode == 'timed') {
+		@arg1 = $replaceid;
+		@arg2 = '';
+		if($replacedata != '0') {
+			@arg1 = $replacedata;
+			@arg2 = $replaceid;
+			if(!is_numeric(@arg2)) {
+				@arg2 = data_values(@arg2);
 			}
+			@arg2 = to_lower(data_name(@arg2));
 		}
-
-		switch($mode) {
-		case 'replace':
-			@replace = data_name($replaceid.':'.$replacedata);
-			for(@x = min(@loc1['x'], @loc2['x']), @x <= max(@loc1['x'], @loc2['x']), @x++) {
-				for(@y = min(@loc1['y'], @loc2['y']), @y <= max(@loc1['y'], @loc2['y']), @y++) {
-					for(@z = min(@loc1['z'], @loc2['z']), @z <= max(@loc1['z'], @loc2['z']), @z++) {
-						if($replaceid === '' || get_block(array(@x, @y, @z, @cmdblk['world'])) == @replace) {
-							set_block(array(@x, @y, @z, @cmdblk['world']), @type, false);
-						}
-					}
-				}
-			}
-
-		case 'toggle':
-			@replace = data_name($replaceid.':'.$replacedata);
-			for(@x = min(@loc1['x'], @loc2['x']), @x <= max(@loc1['x'], @loc2['x']), @x++) {
-				for(@y = min(@loc1['y'], @loc2['y']), @y <= max(@loc1['y'], @loc2['y']), @y++) {
-					for(@z = min(@loc1['z'], @loc2['z']), @z <= max(@loc1['z'], @loc2['z']), @z++) {
-						@block = get_block(array(@x, @y, @z, @cmdblk['world']));
-						if(@block == @replace) {
-							set_block(array(@x, @y, @z, @cmdblk['world']), @type, false)
-						} else if(@block == @type) {
-							set_block(array(@x, @y, @z, @cmdblk['world']), @replace , false)
-						}
-					}
-				}
-			}
-
-		case 'keep':
-			for(@x = min(@loc1['x'], @loc2['x']), @x <= max(@loc1['x'], @loc2['x']), @x++) {
-				for(@y = min(@loc1['y'], @loc2['y']), @y <= max(@loc1['y'], @loc2['y']), @y++) {
-					for(@z = min(@loc1['z'], @loc2['z']), @z <= max(@loc1['z'], @loc2['z']), @z++) {
-						if(get_block(array(@x, @y, @z, @cmdblk['world'])) === 'AIR') {
-							set_block(array(@x, @y, @z, @cmdblk['world']), @type, false)
-						}
-					}
-				}
-			}
-
-		case 'destroy':
-			for(@x = min(@loc1['x'], @loc2['x']), @x <= max(@loc1['x'], @loc2['x']), @x++) {
-				for(@y = min(@loc1['y'], @loc2['y']), @y <= max(@loc1['y'], @loc2['y']), @y++) {
-					for(@z = min(@loc1['z'], @loc2['z']), @z <= max(@loc1['z'], @loc2['z']), @z++) {
-						if(get_block(array(@x, @y, @z, @cmdblk['world'])) !== 'AIR') {
-							make_effect(array(@x, @y, @z, @cmdblk['world']), 'STEP_SOUND:'.@type)
-						}
-						set_block(array(@x, @y, @z, @cmdblk['world']), @type, true)
-					}
-				}
-			}
-
-		case 'fall':
-			for(@x = min(@loc1['x'], @loc2['x']) + 0.5, @x <= max(@loc1['x'], @loc2['x']) + 0.5, @x += 1.0) {
-				for(@y = min(@loc1['y'], @loc2['y']), @y <= max(@loc1['y'], @loc2['y']), @y++) {
-					for(@z = min(@loc1['z'], @loc2['z']) + 0.5, @z <= max(@loc1['z'], @loc2['z']) + 0.5, @z += 1.0) {
-						@block = get_block(array(@x, @y, @z, @cmdblk['world']));
-						if(@block !== 'AIR') {
-							set_block(array(@x, @y, @z, @cmdblk['world']), 'AIR', false);
-							spawn_falling_block(array(@x, @y, @z, @cmdblk['world']), @block)
-						}
-					}
-				}
-			}
-
-		case 'hollow':
-		case 'outline':
-			console('Hollow and outline modes for /fill are not yet supported.', false);
-		}
+		@cmd = '/fill '.$x1.' '.$y1.' '.$z1.' '.$x2.' '.$y2.' '.$z2.' '.@type.' timed '.@arg1.' '.@arg2;
+		set_block_command(@cmdblk, @cmd);
+		run(@cmd);
+	} else if($mode == 'toggle') {
+		@replaceblock = to_lower(data_name($replaceid.':'.$replacedata));
+		@cmd = '/fill '.$x1.' '.$y1.' '.$z1.' '.$x2.' '.$y2.' '.$z2.' '.@type.' toggle '.@replaceblock;
+		set_block_command(@cmdblk, @cmd);
+		run(@cmd);
+	} else if($mode == 'fall') {
+		@cmd = '/fill '.$x1.' '.$y1.' '.$z1.' '.$x2.' '.$y2.' '.$z2.' '.@type.' fall';
+		set_block_command(@cmdblk, @cmd);
+		run(@cmd);
 	}
 <<<
 
@@ -333,7 +280,7 @@
 		@loc = _relative_coords(ploc(@uuid), $x, $y, $z);
 		set_ploc(@uuid, @loc);
 	})) {
-		run('/tp' $player $x $y $z);
+		run('/tp '.$player.' '.$x.' '.$y.' '.$z);
 	}
 <<<
 

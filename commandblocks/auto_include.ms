@@ -37,7 +37,7 @@ proc _relative_coords(@originloc, @x, @y, @z) {
 	Returns the nearest player or null if not within range.
 */
 proc _get_nearby_player(@loc, @maxRange) {
-	@players = all_players(@loc['world']);
+	@players = all_players(@loc[3]);
 	@player = null;
 	foreach(@p in @players) {
 		if(pmode(@p) == 'ADVENTURE') {
