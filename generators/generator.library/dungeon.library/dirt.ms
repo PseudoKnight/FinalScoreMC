@@ -21,33 +21,33 @@ proc _get_loot(@level, @random, @loot = array()) {
 
 proc _materials(@level) {
 	return(array(
-		'empty': '0:0',
-		'wall': array('1:6'),
-		'room': '0:0',
-		'door': '0:0',
-		'column': '251:14',
-		'ladder': '0:0',
-		'ceiling': array('0:0'),
-		'floor': array('159:12'),
-		'utility': array('251:4', '251:5'),
-		'decor': array('251:4', '251:5'),
-		'edge': array('0:0', '0:0', '0:0', '0:0'),
+		'empty': 'AIR',
+		'wall': array('POLISHED_ANDESITE'),
+		'room': 'AIR',
+		'door': 'AIR',
+		'column': 'YELLOW_CONCRETE',
+		'ladder': 'AIR',
+		'ceiling': array('AIR'),
+		'floor': array('BROWN_TERRACOTTA'),
+		'utility': array('YELLOW_CONCRETE', 'LIMTE_CONCRETE'),
+		'decor': array('YELLOW_CONCRETE', 'LIMTE_CONCRETE'),
+		'edge': array('AIR', 'AIR', 'AIR', 'AIR'),
 	));
 }
 
 proc _duplicate_materials(@level) {
 	return(array(
-		'empty': '0:0',
-		'wall': array('166'),
-		'room': '0:0',
-		'door': '0:0',
-		'column': '0:0',
-		'ladder': '0:0',
-		'ceiling': array('0:0'),
-		'floor': array('166'),
-		'utility': array('0:0'),
-		'decor': array('0:0'),
-		'edge': array('0:0', '0:0', '0:0', '0:0'),
+		'empty': 'AIR',
+		'wall': array('BARRIER'),
+		'room': 'AIR',
+		'door': 'AIR',
+		'column': 'AIR',
+		'ladder': 'AIR',
+		'ceiling': array('AIR'),
+		'floor': array('BARRIER'),
+		'utility': array('AIR'),
+		'decor': array('AIR'),
+		'edge': array('AIR', 'AIR', 'AIR', 'AIR'),
 	));
 }
 

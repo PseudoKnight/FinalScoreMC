@@ -435,7 +435,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 							foreach(@chunk in @chunks) {
 								queue_push(closure(){
 									foreach(@block in @chunk) {
-										set_block_at(@block['loc'], @block['mat'], false);
+										set_block(@block['loc'], @block['mat'], false);
 									}
 								}, 'generator');
 							}
@@ -447,7 +447,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 					foreach(@chunk in @chunks) {
 						queue_push(closure(){
 							foreach(@block in @chunk) {
-								set_block_at(@block['loc'], @block['mat'], false);
+								set_block(@block['loc'], @block['mat'], false);
 							}
 						}, 'generator');
 					}
@@ -474,8 +474,8 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 							@regionMinZ + @room['r1'] * @scale + 1 + integer(srand(@random) * (@room['length'] - 1)) * @scale,
 							@world
 						);
-						if(get_block_at(@loc) == @materials['room']) {
-							set_block_at(@loc, '52:0', false);
+						if(get_block(@loc) == @materials['room']) {
+							set_block(@loc, 'SPAWNER', false);
 							@rand = integer(srand(@random) * array_size(@mobTypes));
 							@mob = array_get(@mobTypes, @rand, 'ZOMBIE');
 							set_spawner_type(@loc, @mob);
@@ -490,8 +490,8 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 							@regionMinZ + @room['r1'] * @scale + 1 + integer(srand(@random) * (@room['length'] - 1)) * @scale,
 							@world
 						);
-						if(get_block_at(@loc) == @materials['room']) {
-							set_block_at(@loc, 54, false);
+						if(get_block(@loc) == @materials['room']) {
+							set_block(@loc, 'CHEST', false);
 							set_inventory(@loc, _get_loot(@level, @random));
 						}
 					}
@@ -504,8 +504,8 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 							@regionMinZ + @room['r1'] * @scale + 1 + integer(srand(@random) * (@room['length'] - 1) * @scale),
 							@world
 						);
-						if(get_block_at(@loc) == @materials['room']) {
-							set_block_at(@loc, @materials['utility'][integer(srand(@random) * array_size(@materials['utility']))], false);
+						if(get_block(@loc) == @materials['room']) {
+							set_block(@loc, @materials['utility'][integer(srand(@random) * array_size(@materials['utility']))], false);
 						}
 					}
 					
@@ -517,8 +517,8 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 							@regionMinZ + @room['r1'] * @scale + 1 + integer(srand(@random) * (@room['length'] - 1) * @scale),
 							@world
 						);
-						if(get_block_at(@loc) == @materials['room']) {
-							set_block_at(@loc, @materials['decor'][integer(srand(@random) * array_size(@materials['decor']))], false);
+						if(get_block(@loc) == @materials['room']) {
+							set_block(@loc, @materials['decor'][integer(srand(@random) * array_size(@materials['decor']))], false);
 						}
 					}
 				}, 'generator');
@@ -533,19 +533,19 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 						@regionMinZ + @exitRoom['r1'] * @scale,
 						@world,
 					);
-					set_block_at(@loc, 96, false);
+					set_block(@loc, 'OAK_TRAP_DOOR', false);
 					@ladderHeight = @maxRoomHeight + 3;
 					while(@ladderHeight-- > 0) {
 						@loc[1]--;
-						set_block_at(@loc, @materials['ladder'], false);
+						set_block(@loc, @materials['ladder'], false);
 						if(@ladderHeight > 2) {
-							set_block_at(location_shift(@loc, 'south'), array_rand(@materials['wall'], 1, false)[0], false);
-							set_block_at(location_shift(@loc, 'east'), array_rand(@materials['wall'], 1, false)[0], false);
-							set_block_at(location_shift(@loc, 'west'), array_rand(@materials['wall'], 1, false)[0], false);
+							set_block(location_shift(@loc, 'south'), array_rand(@materials['wall'], 1, false)[0], false);
+							set_block(location_shift(@loc, 'east'), array_rand(@materials['wall'], 1, false)[0], false);
+							set_block(location_shift(@loc, 'west'), array_rand(@materials['wall'], 1, false)[0], false);
 						} else {
-							set_block_at(location_shift(@loc, 'south'), 0, false);
+							set_block(location_shift(@loc, 'south'), 'AIR', false);
 						}
-						set_block_at(location_shift(@loc, 'north'), array_rand(@materials['wall'], 1, false)[0], false);
+						set_block(location_shift(@loc, 'north'), array_rand(@materials['wall'], 1, false)[0], false);
 					}
 				}, 'generator');
 			}
