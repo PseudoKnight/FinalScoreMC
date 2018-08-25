@@ -1,8 +1,6 @@
 proc _worms_create_segments(@loc, @num, @color, @game) {
 	if(!@color) {
-		@colors = array('WHITE', 'GRAY', 'LIGHT_GRAY', 'ORANGE', 'PINK', 'RED', 'PURPLE', 'GREEN',
-				'BROWN', 'BLACK', 'BLUE', 'CYAN', 'MAGENTA', 'YELLOW', 'LIME', 'LIGHT_BLUE');
-		@color = array_rand(@colors, 1, false)[0];
+		@color = array_rand(reflect_pull('enum', 'DyeColor'), 1, false)[0];
 	}
 	@segments = spawn_entity('ARMOR_STAND', @num, @loc);
 	foreach(@segment in @segments) {
