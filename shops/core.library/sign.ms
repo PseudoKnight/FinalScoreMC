@@ -49,6 +49,7 @@ proc _sign_get_shop(@location) {
 			'buy': @buy,
 			'sell': @sell,
 			'owner': @owner,
+			'loc': @location,
 		));
 	}
 	return(null);

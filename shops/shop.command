@@ -71,16 +71,7 @@ register_command('shop', array(
 			
 			include('core.library/item.ms');
 			
-			@line = 0;
 			@transaction = @args[1];
-			if(@transaction === 'buy') {
-				@line = 1;
-			} else if(@transaction === 'sell') {
-				@line = 2;
-			} else {
-				die(color('gold').'[Shop] You need to specify "buy" or "sell".');
-			}
-			
 			
 			@value = array_implode(@args[2..-1]);
 		
@@ -96,8 +87,15 @@ register_command('shop', array(
 			}
 		
 			@signText = get_sign_text(@loc);
-			@signText[@line] = if(@line == 1, 'Buy ', 'Sell ').@value;
-			@shop[@transaction] = _get_shop_price(@signText[@line]);
+			if(@transaction == 'buy') {
+				@signText[1] = 'Buy '.@value;
+				@shop[@transaction] = _sign_get_buy_price(@signText);
+			} else if(@transaction == 'sell') {
+				@signText[1] = 'Sell '.@value;
+				@shop[@transaction] = _sign_get_sell_price(@signText);
+			} else {
+				die(color('gold').'[Shop] You need to specify "buy" or "sell".');
+			}
 			if(!@shop[@transaction]) {
 				die(color('gold').'[Shop] Usage Example: /shop edit buy 16 for 1g');
 			}
@@ -109,12 +107,10 @@ register_command('shop', array(
 			if(!@shops) {
 				die();
 			}
-			
-			include('chest.ms');
 		
 			@loc = array(integer(@loc['x']), integer(@loc['y']), integer(@loc['z']), @loc['world']);
 		
-			@t = @line - 1;
+			@t = if(@transaction == 'buy', 0, 1);
 			foreach(@i: @s in @shops[@t]) {
 				if(@s['location'] == @loc) {
 					if(@t == 0) {

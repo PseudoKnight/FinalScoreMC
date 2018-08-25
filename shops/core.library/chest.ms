@@ -11,3 +11,12 @@ proc _chest_item_count(@inv, @itemName) {
 	}
 	return(@count);
 }
+
+proc _chest_has_space(@inv) {
+	foreach(@item in @inv) {
+		if(is_null(@item)) {
+			return(true);
+		}
+	}
+	return(false);
+}

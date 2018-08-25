@@ -4,23 +4,23 @@ proc _item_get_material(@name) {
 	}
 	@name = replace(to_upper(@name), ' ', '_');
 	try {
-		// get legacy first
-		@split = split(':', @name);
-		if(array_size(@split) == 2) {
-			if(is_integral(@split[0])) {
+		material_info(@name, 'isBlock'); // continues if material name is valid
+		return(@name);
+	} catch(IllegalArgumentException @ex) {
+		// try legacy
+		try {
+			@split = split(':', @name);
+			if(array_size(@split) == 2) {
+				if(is_integral(@split[0])) {
+					return(data_name(@name));
+				}
+				return(data_name(array('name': @split[0], 'data': @split[1])));
+			}
+			if(is_integral(@name)) {
 				return(data_name(@name));
 			}
-			return(data_name(array('name': @split[0], 'data': @split[1])));
-		}
-		if(is_integral(@name)) {
-			return(data_name(@name));
-		}
-		return(data_name(array('name': @name)));
-	} catch(FormatException @ex) {
-		try {
-			material_info(@name, 'isBlock'); // continues if material name is valid
-			return(@name);
-		} catch(IllegalArgumentException @ex) {
+			return(data_name(array('name': @name)));
+		} catch(FormatException @ex) {
 			return(_item_get_from_alias(@name));
 		}
 	}
