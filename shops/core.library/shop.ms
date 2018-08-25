@@ -94,7 +94,7 @@ proc _shop_process_transaction(@shop) {
 	@maxChestItem = max_stack_size(@chestItem);
 	
 	@availableSlots = array_filter(pitem_slot(null), closure(@key, @value) {
-		return(@value < 36);
+		return(@value >= 0 && @value <= 35);
 	});
 	if(array_size(@availableSlots) < @chestItem['qty'] / @maxChestItem) {
 		die(colorize('&6Not enough space in your inventory.'));

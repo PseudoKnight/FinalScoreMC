@@ -1,3 +1,6 @@
+/*
+	Get material name from aliases
+*/
 proc _item_get_material(@name) {
 	if(!@name) {
 		return(null);
@@ -26,6 +29,9 @@ proc _item_get_material(@name) {
 	}
 }
 
+/*
+	Get current item type from currency notation
+*/
 proc _item_get_currency(@id) {
 	switch(@id) {
 		case 'd':
@@ -41,6 +47,9 @@ proc _item_get_currency(@id) {
 	}
 }
 
+/*
+	Fancy display name for materials
+*/
 proc _item_display(@name) {
 	@split = split('_', @name);
 	@newName = '';
@@ -50,6 +59,9 @@ proc _item_display(@name) {
 	return(@newName);
 }
 
+/*
+	Returns a modern material name from an old alias
+*/
 proc _item_get_from_alias(@name) {
 	// old aliases
 	switch(@name) {

@@ -12,6 +12,9 @@ proc _chest_item_count(@inv, @itemName) {
 	return(@count);
 }
 
+/*
+	Returns whether or not this inventory has an empty slot
+*/
 proc _chest_has_space(@inv) {
 	foreach(@item in @inv) {
 		if(is_null(@item)) {
