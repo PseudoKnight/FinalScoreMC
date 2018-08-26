@@ -63,9 +63,6 @@ proc _class(@action, @player, @classname, @pvp) {
 					@item = @item[];
 					if(!is_null(@inv[@slot])) {
 						@item['qty'] = min(@max, if(array_index_exists(@item, 'qty'), @item['qty'], 1) + @inv[@slot]['qty']);
-						if(@max == 1) {
-							@item['data'] = 0;
-						}
 					}
 					@inv[@slot] = @item;
 				}

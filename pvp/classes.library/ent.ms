@@ -15,7 +15,7 @@ case 'load':
 				)),
 			);
 			if(@thorns) {
-				@enchants = array(array('elevel': 13, 'etype': 'THORNS'));
+				@enchants = array('thorns': 13);
 				foreach(@item in @kit) {
 					@item['meta']['enchants'] = @enchants;
 				}

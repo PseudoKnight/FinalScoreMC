@@ -24,7 +24,7 @@ bind('player_interact', array('id': @id.'riflereload'), array('itemname': 'IRON_
 				} else {
 					@inv[@ammoslot] = @ammo;
 				}
-				@weapon['data'] = 10;
+				@weapon['meta']['damage'] = 10;
 				@inv[@weaponslot] = @weapon;
 				set_pinv(player(), @inv);
 				play_sound(ploc(), array('sound': 'BLOCK_WOODEN_DOOR_CLOSE', 'pitch': 2))
@@ -39,11 +39,11 @@ bind('player_interact', array('id': @id.'rifle'), array('itemname': 'STONE_HOE')
 		die();
 	}
 	@item = pinv(player(), null);
-	if(!@item['meta'] || @item['meta']['display'] != 'Rifle' || @item['data'] >= 130 || pcooldown(@item['name'])) {
+	if(!@item['meta'] || @item['meta']['display'] != 'Rifle' || @item['meta']['damage'] >= 130 || pcooldown(@item['name'])) {
 		die();
 	}
 	
-	@item['data'] += 8;
+	@item['meta']['damage'] += 8;
 	set_pinv(player(), null, @item);
 	
 	_weapon_hit_scan(player(), 64, 1.7, array('tracerparticle': 'SUSPENDED_DEPTH', 'hitparticle': 'LARGE_SMOKE'), @pvp);

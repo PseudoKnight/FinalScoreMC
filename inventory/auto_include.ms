@@ -111,9 +111,6 @@ proc _minify_inv(@inv, @keepnulls = false) {
 }
 
 proc _minify_item(@item) {
-	if(@item['data'] == 0) {
-		array_remove(@item, 'data');
-	}
 	if(@item['qty'] == 1) {
 		array_remove(@item, 'qty');
 	}

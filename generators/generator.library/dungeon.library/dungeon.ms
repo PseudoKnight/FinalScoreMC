@@ -60,7 +60,7 @@ proc _get_loot(@level, @random, @loot = array(
 				@item['qty'] = integer(srand(@random) * (@item['qty'][1] - @item['qty'][0]) + @item['qty'][0]);
 			}
 			if(array_index_exists(@weightedLoot, 'data')) {
-				@item['data'] = integer(srand(@random) * @weightedLoot['data']);
+				@item['meta'] = array('damage': integer(srand(@random) * @weightedLoot['data']));
 			}
 			@inv[] = @item;
 		}

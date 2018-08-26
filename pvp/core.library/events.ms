@@ -537,8 +537,9 @@ if(array_contains(@pvp['arena']['flags'], 'stackedpickup')) {
 			if(@item
 			&& @e['item']['name'] == @item['name']
 			&& @e['item']['name'] != 'POTION'
-			&& (!@e['item']['meta'] || @e['item']['meta']['enchants'] == @item['meta']['enchants'])) {
-				if(@item['data'] > @e['item']['data']) {
+			&& @e['item']['meta'] && @item['meta']
+			&& @e['item']['meta']['enchants'] == @item['meta']['enchants']) {
+				if(@item['meta']['damage'] > @e['item']['meta']['damage']) {
 					set_pinv(player(), @slot, @e['item']);
 				} else if(@item['meta'] && @item['meta']['lore'] && array_size(@item['meta']['lore']) == 3
 				&& @e['item']['meta'] && @e['item']['meta']['lore'] && array_size(@e['item']['meta']['lore']) == 3) {

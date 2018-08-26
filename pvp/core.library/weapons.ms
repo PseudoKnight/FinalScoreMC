@@ -9,7 +9,9 @@ proc _weapon_cooldown(@player, @time, @type, @onCooldown, @remove = 1) {
 		} else {
 			@newItem = @item[];
 			@newItem['name'] = @type;
-			@newItem['data'] = 0;
+			if(@newItem['meta']) {
+				@newItem['meta']['damage'] = 0;
+			}
 			set_pinv(@player, null, @newItem);
 			set_pcooldown(@player, @type, @time / 50);
 		}

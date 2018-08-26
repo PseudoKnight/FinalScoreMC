@@ -77,7 +77,7 @@ proc _snake_queue(@mode) {
 	// Create color select menu
 	create_virtual_inventory('snake', 9, color('bold').'Choose Your Snake Color', array(
 		'0': array('name': 'LIGHT_BLUE_TERRACOTTA', 'meta': array('display': 'Blue')),
-		'1': array('name': 'LIGHT_BLUE_CONCRETE', 'data': 3, 'meta': array('display': 'Neon Blue')),
+		'1': array('name': 'LIGHT_BLUE_CONCRETE', 'meta': array('display': 'Neon Blue')),
 		'2': array('name': 'LIME_TERRACOTTA', 'meta': array('display': 'Green')),
 		'3': array('name': 'LIME_CONCRETE', 'meta': array('display': 'Neon Green')),
 		'4': array('name': 'PINK_TERRACOTTA', 'meta': array('display': 'Red')),

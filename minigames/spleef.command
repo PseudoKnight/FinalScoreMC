@@ -225,7 +225,7 @@ register_command('spleef', array(
 						set_ploc(@player, array(@location[0] + 0.5, @location[1], @location[2] + 0.5, @world));
 						set_pinv(@player, 0,
 							array('name': 'DIAMOND_PICKAXE', 'qty': 1, 'meta': array(
-								'enchants': array(array('etype': 'DIG_SPEED', 'elevel': 40)),
+								'enchants': array('efficiency': 40),
 								 array('display': color('green').'SUPERPICK')
 							));
 						);

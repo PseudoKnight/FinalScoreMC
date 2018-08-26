@@ -38,21 +38,20 @@ bind('player_interact', null, array('button': 'right'), @event) {
 	
 	@unbreaking = 0;
 	if(@item['meta']) {
-		foreach(@enchant in @item['meta']['enchants']) {
-			if(@enchant['etype'] === 'DURABILITY') {
-				@unbreaking = @enchant['elevel'];
-				break();
-			}
+		if(array_index_exists(@item['meta']['enchants'], 'unbreaking')) {
+			@unbreaking = @item['meta']['enchants']['unbreaking'];
 		}
+	} else {
+		@item['meta'] = associative_array('damage': 0);
 	}
 	
 	if(1 / (@unbreaking + 1) > rand()) {
-		@item['data'] += 1;
+		@item['meta']['damage'] += 1;
 		@maxDamage = 1561; # diamond pickaxe
 		if(@item['name'] == 'IRON_PICKAXE') {
 				@maxDamage = 250;
 		}
-		if(@item['data'] > @maxDamage) {
+		if(@item['meta']['damage'] > @maxDamage) {
 			set_pinv(player(), null, null);
 			play_sound(ploc(), array('sound': 'ENTITY_ITEM_BREAK', 'category': 'PLAYERS'));
 		} else {

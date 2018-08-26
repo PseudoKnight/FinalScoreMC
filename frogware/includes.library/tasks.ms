@@ -139,7 +139,7 @@ proc _fw_task(@task, @state, @secs) {
 			'DIRT', 2);
 			foreach(@p in all_players('custom')) {
 				if(_fw_player(@p)) {
-					pgive_item(@p, array('name': 'STONE_HOE', 'data': 130));
+					pgive_item(@p, array('name': 'STONE_HOE', 'meta': array('damage': 130)));
 					pgive_item(@p, array('name': 'SEEDS')); # seeds
 				}
 			}
@@ -173,7 +173,7 @@ proc _fw_task(@task, @state, @secs) {
 				foreach(@p in all_players('custom')) {
 					if(_fw_player(@p)) {
 						# knockback mushroom
-						pgive_item(@p, array('name': 'RED_MUSHROOM', 'meta': array('enchants': array(array('etype': 'KNOCKBACK', 'elevel': 10)))));
+						pgive_item(@p, array('name': 'RED_MUSHROOM', 'meta': array('enchants': array('knockback': 10))));
 					}
 				}
 			}
@@ -184,9 +184,7 @@ proc _fw_task(@task, @state, @secs) {
 				'WATER', 100);
 				@count = _fw_totalplayers() * 2;
 				for(@i = 0, @i < @count, @i++) {
-					drop_item(_fw_loc(), array('name': 'IRON_BOOTS', 'meta': array('enchants': array(
-						array('elevel': 3, 'etype': 'DEPTH_STRIDER'),
-					))));
+					drop_item(_fw_loc(), array('name': 'IRON_BOOTS', 'meta': array('enchants': array('depth_strider': 3))));
 				}
 			} else if(!rand(4)) {
 				_fw_randompotion(array('speed', 'jump'));
@@ -320,7 +318,7 @@ proc _fw_task(@task, @state, @secs) {
 			));
 			foreach(@p in all_players('custom')) {
 				if(_fw_player(@p)) {
-					pgive_item(@p, array('name': 'BOW', 'data': 379, 'meta': array('enchants': array(array('elevel': 1, 'etype': 'ARROW_FIRE')))));
+					pgive_item(@p, array('name': 'BOW', 'meta': array('damage': 379, 'enchants': array('flame': 1))));
 					pgive_item(@p, array('name': 'ARROW', 'qty': 6));
 					play_sound(ploc(@p), array('sound': if(@mob === 'BAT', 'ENTITY_BAT_LOOP', 'ENTITY_CHICKEN_AMBIENT')), @p)
 					set_pexp(@p, 0)
@@ -409,19 +407,16 @@ proc _fw_task(@task, @state, @secs) {
 				'It\'s a free-for-all!',
 			));
 			_fw_randompotion(array('speed', 'jump', 'blind', 'invis'))
-			@weapon = array('name': 'IRON_SWORD', 'data': 226);
+			@weapon = array('name': 'IRON_SWORD', 'meta': array('damage': 226));
 			switch(rand(3)) {
 				case 0:
-					@weapon = array('name': 'BOW', 'data': 379);
+					@weapon = array('name': 'BOW', 'meta': array('damage': 379));
 				case 1:
 					@weapon = array('name': 'SNOW_BALL');
 			}
 			@meta = null;
 			if(!rand(4)) {
-				@weapon['meta'] = array('enchants': array(
-					array('etype': 'KNOCKBACK', 'elevel': 8),
-					array('etype': 'ARROW_KNOCKBACK', 'elevel': 8)
-				));
+				@weapon['meta'] = array('enchants': array('knockback': 8, 'punch': 8));
 			}
 			foreach(@p in all_players('custom')) {
 				if(_fw_player(@p)) {
@@ -636,7 +631,7 @@ proc _fw_task(@task, @state, @secs) {
 			));
 			foreach(@p in all_players('custom')) {
 				if(_fw_player(@p)) {
-					pgive_item(@p, array('name': 'FISHING_ROD', 'data': 60));
+					pgive_item(@p, array('name': 'FISHING_ROD', 'meta': array('damage': 60)));
 				}
 			}
 			@region = sk_region_info('frogware', 'custom')[0];
