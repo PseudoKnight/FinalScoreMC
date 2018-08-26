@@ -1,6 +1,10 @@
-proc _cache_shop(@shop, @location) {
-	@key = replace(@shop['item'], ':', '.');
-	@shops = get_value('shop', @key);
+proc _cache_shop(@shop) {
+	if(!@shop['item']) {
+		return();
+	}
+	@location = @shop['loc'];
+	@item = @shop['item'];
+	@shops = get_value('shops', @item);
 	if(!@shops) {
 		@shops = array(array(), array());
 	}
@@ -23,7 +27,7 @@ proc _cache_shop(@shop, @location) {
 	}
 	
 	if(@shop['buy']) {
-		@count = _chest_item_count(@chestInv, @shop['item']);
+		@count = _chest_item_count(@chestInv, @item);
 		if(is_null(@count)) {
 			return();
 		}
@@ -35,7 +39,7 @@ proc _cache_shop(@shop, @location) {
 			&& @s['location'][2] == @location[2]
 			&& @s['location'][3] == @location[3]) {
 				if(@count < @shop['buy'][2]) {
-					@msg = color('gold').'[OUT OF STOCK] '.color('r').data_name(@shop['item']).color(7)
+					@msg = color('gold').'[OUT OF STOCK] '.color('r')._item_display(@item).color(7)
 						.' @ '.@location[0].','.@location[1].','.@location[2].' '._worldname(@location[3]);
 					if(ponline(@shop['owner'])) {
 						tmsg(@shop['owner'], @msg);
@@ -128,17 +132,21 @@ proc _cache_shop(@shop, @location) {
 	}
 
 	if(!@shops[0] && !@shops[1]) {
-		clear_value('shop', @key);
+		clear_value('shops', @item);
 	} else {
-		store_value('shop', @key, @shops);
+		store_value('shops', @item, @shops);
 	}
 }
 
-proc _remove_cached_shop(@shop, @location) {
-	@key = replace(@shop['item'], ':', '.');
-	@shops = get_value('shop', @key);
+proc _remove_cached_shop(@shop) {
+	if(!@shop['item']) {
+		return();
+	}
+	@location = @shop['loc'];
+	@item = @shop['item'];
+	@shops = get_value('shops', @item);
 	if(!@shops) {
-		die();
+		return();
 	}
 	
 	@location = array(
@@ -176,8 +184,8 @@ proc _remove_cached_shop(@shop, @location) {
 	}
 
 	if(!@shops[0] && !@shops[1]) {
-		clear_value('shop', @key);
+		clear_value('shops', @item);
 	} else {
-		store_value('shop', @key, @shops);
+		store_value('shops', @item, @shops);
 	}
 }

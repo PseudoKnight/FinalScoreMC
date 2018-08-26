@@ -21,19 +21,17 @@ register_command('shop', array(
 				die('You can see your current coordinates by pressing F3.');
 			}
 			
-			@value = array_implode(@args[1..-1]);
-			@item = to_upper(@value);
+			@item = to_upper(array_implode(@args[1..-1], '_'));
 			try {
 				material_info(@item);
 			} catch(IllegalArgumentException @ex) {
-				die(color('gold').'Unknown item: '.@value);
+				die(color('gold').'Unknown item: '.@item);
 			}
-			@itemid = replace(@item, ':', '.');
-			@shops = get_value('shop', @itemid);
+			@shops = get_value('shops', @item);
 			if(!@shops) {
-				die(color('gold').'No stocked shops found for '.color('o').'"'.@value.'" ('.@item.')');
+				die(color('gold').'No stocked shops found for '.color('o').'"'.@item.'"');
 			} else {
-				msg(color('gold').'Shops you can buy or sell '.color('o').'"'.@value.'"');
+				msg(color('gold').'Shops you can buy or sell '.color('o').'"'.@item.'"');
 				msg(color('gray').'-----------------------------------------------------');
 			}
 			@save = false;
@@ -59,7 +57,7 @@ register_command('shop', array(
 				}
 				msg(color('gray').'-----------------------------------------------------');
 				if(@save) {
-					store_value('shop', @itemid, @shops);
+					store_value('shops', @item, @shops);
 				}
 			});
 			
@@ -102,8 +100,7 @@ register_command('shop', array(
 			set_sign_text(@loc, @signText);
 			msg(color('green').'[Shop] Modified');
 		
-			@key = replace(@shop['item'], ':', '.');
-			@shops = get_value('shop', @key);
+			@shops = get_value('shops', @shop['item']);
 			if(!@shops) {
 				die();
 			}
@@ -153,7 +150,7 @@ register_command('shop', array(
 					break();
 				}
 			}
-			store_value('shop', @key, @shops);
+			store_value('shops', @shop['item'], @shops);
 			
 		} else {
 			return(false);

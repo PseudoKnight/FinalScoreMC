@@ -18,7 +18,7 @@ bind('player_interact', null, array('block': 'WALL_SIGN'), @event) {
 		if(@signLoc['world'] != 'shard') {
 			set_timeout(50, closure(){ // do this after a transaction
 				include('core.library/cache.ms');
-				_cache_shop(@shop, @signLoc);
+				_cache_shop(@shop);
 			});
 		}
 	}
@@ -32,7 +32,7 @@ bind('block_break', array('priority': 'LOWEST'), array('block': 'WALL_SIGN'), @e
 			if(_is_shop_owner(@shop)) {
 				if(@shop['world'] != 'shard') {
 					include('core.library/cache.ms');
-					_remove_cached_shop(@shop, @shop['loc']);
+					_remove_cached_shop(@shop);
 				}
 			} else {
 				cancel();
@@ -50,7 +50,7 @@ bind('block_break', array('priority': 'LOWEST'), array('block': 'CHEST'), @event
 			if(!_is_shop_owner(@shop) && !pisop()) {
 				if(@shop['world'] != 'shard') {
 					include('core.library/cache.ms');
-					_remove_cached_shop(@shop, @shop['loc']);
+					_remove_cached_shop(@shop);
 				}
 			} else {
 				cancel();
