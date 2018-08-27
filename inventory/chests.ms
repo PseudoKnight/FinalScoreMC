@@ -16,7 +16,7 @@ bind('inventory_click', null, array('clicktype': 'SHIFT_RIGHT'), @event) {
 			cancel();
 			penchanting();
 		default:
-			if(@event['inventorytype'] == 'CRAFTING' && string_ends_with(@event['slotitem']['name'], '_SHULKER_BOX')) {
+			if(@event['inventorytype'] == 'CRAFTING' && string_ends_with(@event['slotitem']['name'], 'SHULKER_BOX')) {
 				if(!pisop()) {
 					die(); // in testing
 				}
@@ -30,7 +30,7 @@ bind('inventory_click', null, array('clicktype': 'SHIFT_RIGHT'), @event) {
 				popen_inventory(player().'shulkerbox');
 				bind('inventory_click', array('id': player().'shulkerbox', 'priority': 'HIGH'), array('player': player()), @event) {
 					consume();
-					if(@event['slotitem'] && string_ends_with(@event['slotitem']['name'], '_SHULKER_BOX')) {
+					if(@event['slotitem'] && string_ends_with(@event['slotitem']['name'], 'SHULKER_BOX')) {
 						cancel();
 					}
 				}
