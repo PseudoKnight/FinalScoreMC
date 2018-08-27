@@ -17,7 +17,7 @@ proc _shard_create(@rules){
 		}
 	}
 	if(array_size(@players) < 2 && !pisop()) {
-		play_sound(ploc(), array('sound': 'FIZZ', 'pitch': 0.7));
+		play_sound(ploc(), array('sound': 'BLOCK_FIRE_EXTINGUISH', 'pitch': 0.7));
 		action_msg('Not enough players to generate a shard!');
 		die();
 	}
@@ -154,20 +154,22 @@ proc _shard_create(@rules){
 					}
 				
 					@size = get_inventory_size(@loc);
-					@inv = array();
-					array_resize(@inv, @size);
-					set_inventory(@loc, @inv);
-					set_metadata(@loc, 'loot', 1);
 					if(@size == 54) {
-						@type = get_block_at(@loc);
+						@inv = get_inventory(@loc);
+						@type = get_block(@loc);
 						foreach(@dir in array('north', 'south', 'east', 'west')) {
 							@checkLoc = location_shift(@loc, @dir);
-							if(get_block_at(@checkLoc) == @type) {
+							if(get_block(@checkLoc) == @type && get_inventory_size(@checkLoc) == 54
+							&& @inv == get_inventory(@checkLoc)) {
 								set_metadata(@checkLoc, 'loot', 1);
 								break();
 							}
 						}
 					}
+					@inv = array();
+					array_resize(@inv, @size);
+					set_inventory(@loc, @inv);
+					set_metadata(@loc, 'loot', 1);
 				}
 				
 				// Load objective and rule scripts
@@ -189,7 +191,7 @@ proc _shard_create(@rules){
 							return();
 						}
 						@ploc = ploc(@p);
-						play_sound(@ploc, array('sound': 'GLASS', 'pitch': 0.5));
+						play_sound(@ploc, array('sound': 'BLOCK_GLASS_BREAK', 'pitch': 0.5));
 						@ploc['world'] = 'shard';
 						@airDrop = false;
 						if(@rules['randomspawn']
@@ -210,18 +212,18 @@ proc _shard_create(@rules){
 							_clear_pinv(@p);
 						}
 						if(@airDrop) {
-							pgive_item(@p, array('name': 'ELYTRA', 'data': 402));
-							set_peffect(@p, 25, -4, 15);
+							pgive_item(@p, array('name': 'ELYTRA', 'meta': array('damage': 402)));
+							set_peffect(@p, 'LEVITATION', -4, 15);
 							bind('entity_toggle_glide', null, array('type': 'PLAYER', 'player': @p), @event) {
-								set_peffect(player(), 25, 0, 0);
-								unbind(');
+								set_peffect(player(), 'LEVITATION', 0, 0);
+								unbind();
 							}
 						}
-						set_plevel(@p', 0);
-						set_peffect(@p, 11, 3, 60, true);
+						set_plevel(@p, 0);
+						set_peffect(@p, 'RESISTANCE', 3, 60, true);
 						set_pscoreboard(@p, 'shard');
-						play_sound(@ploc, array('sound': 'GLASS', 'pitch': 0.5), @p);
-						play_sound(@ploc, array('sound': 'WITHER_SPAWN', 'pitch': 0.7), @p);
+						play_sound(@ploc, array('sound': 'BLOCK_GLASS_BREAK', 'pitch': 0.5), @p);
+						play_sound(@ploc, array('sound': 'ENTITY_WITHER_SPAWN', 'pitch': 0.7), @p);
 					}, 'shard');
 				}
 				
@@ -322,25 +324,23 @@ proc _shard_create(@rules){
 				
 				@binds[] = 'shard-interact';
 				bind('player_interact', array('id': 'shard-interact'), null, @event) {
-					if(@event['block'] != 0 && pworld() == 'shard') {
-						switch(split(':', @event['block'], 1)[0]) {
-							case '23':
-							case '61':
-							case '117':
-							case '154':
-							case '158':
+					if(@event['block'] && pworld() == 'shard') {
+						switch(@event['block']) {
+							case 'DISPENSER':
+							case 'FURNACE':
+							case 'BREWING_STAND':
+							case 'HOPPER':
+							case 'DROPPER':
 								_set_inventory_contents(@event['location'], 0);
-							case '54':
-							case '146':
+							case 'CHEST':
+							case 'TRAPPED_CHEST':
 								@luck = 0;
-								foreach(@effect in get_peffect()) {
-									if(@effect['id'] == 26) {
-										@luck += @effect['strength'] + 1;
-										break();
-									} else if(@effect['id'] == 27) {
-										@luck -= @effect['strength'] + 1;
-										break();
-									}
+								@effects = get_peffect();
+								if(array_index_exists(@effects, 'luck')) {
+									@luck += @effect['luck']['strength'] + 1;
+								}
+								if(array_index_exists(@effects, 'bad_luck')) {
+									@luck -= @effect['bad_luck']['strength'] + 1;
 								}
 								_set_inventory_contents(@event['location'], 3 + @luck);
 						}
@@ -348,12 +348,12 @@ proc _shard_create(@rules){
 				}
 				
 				@binds[] = 'shard-place1';
-				bind('block_place', array('id': 'shard-place1'), array('name': 'CHEST'), @event) {
+				bind('block_place', array('id': 'shard-place1'), array('block': 'CHEST'), @event) {
 					_set_inventory_contents(@event['location'], 0);
 				}
 				
 				@binds[] = 'shard-place2';
-				bind('block_place', array('id': 'shard-place2'), array('name': 'TRAPPED_CHEST'), @event) {
+				bind('block_place', array('id': 'shard-place2'), array('block': 'TRAPPED_CHEST'), @event) {
 					_set_inventory_contents(@event['location'], 0);
 				}
 				
@@ -376,17 +376,17 @@ proc _shard_create(@rules){
 				bind('entity_explode', array('id': 'shard-explosion'), null, @event) {
 					if(@event['location']['world'] == 'shard') {
 						foreach(@block in @event['blocks']) {
-							switch(split(':', get_block_at(@block), 1)[0]) {
-								case '23':
-								case '61':
-								case '117':
-								case '154':
-								case '158':
+							switch(get_block(@block)) {
+								case 'DISPENSER':
+								case 'FURNACE':
+								case 'BREWING_STAND':
+								case 'HOPPER':
+								case 'DROPPER':
 									@inv = array();
 									array_resize(@inv, get_inventory_size(@block));
 									set_inventory(@block, @inv);
-								case '54':
-								case '146':
+								case 'CHEST':
+								case 'TRAPPED_CHEST':
 									_set_inventory_contents(@block, 3);
 							}
 						}

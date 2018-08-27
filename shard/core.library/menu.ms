@@ -20,7 +20,7 @@ proc _open_objective_menu() {
 			))
 		),
 		'2': array(
-			'name': 'EMPTY_MAP', 'meta': array(
+			'name': 'MAP', 'meta': array(
 				'display': color('aqua').'Scavenger Hunt',
 				'lore': array(
 					color('white').'Find and collect items to complete your card.',
@@ -53,8 +53,8 @@ proc _open_objective_menu() {
 }
 
 proc _open_rules_menu(@objective) {
-	@activated = array('name': 'INK_SACK', 'data': 10, 'meta': array('display': color('green').'ACTIVATED'));
-	@deactivated = array('name': 'INK_SACK', 'data': 8, 'meta': array('display': color('gray').'DEACTIVATED'));
+	@activated = array('name': 'LIME_DYE', 'meta': array('display': color('green').'ACTIVATED'));
+	@deactivated = array('name': 'GRAY_DYE', 'meta': array('display': color('gray').'DEACTIVATED'));
 	@options = array(
 		'loot': array(
 			'objective': array('elimination', 'treasurehunt'),
@@ -123,7 +123,7 @@ proc _open_rules_menu(@objective) {
 			'shown': true,
 			'values': array(0, 2, 3, 4),
 			'item': array(
-				'name': 'SKULL_ITEM', 'data': 3, 'meta': array(
+				'name': 'PLAYER_HEAD', 'meta': array(
 					'display': color('aqua').color('bold').'TEAMS',
 					'lore': array(
 						color('white').'Number of teams'
@@ -146,7 +146,7 @@ proc _open_rules_menu(@objective) {
 			'shown': true,
 			'values': array(0, 10, 15, 20, 25, 30, 45, 60),
 			'item': array(
-				'name': 'WATCH', 'meta': array(
+				'name': 'CLOCK', 'meta': array(
 					'display': color('aqua').color('bold').'TIME LIMIT',
 					'lore': array(
 						color('white').'How much time for the worldborder to collapse',
@@ -160,9 +160,9 @@ proc _open_rules_menu(@objective) {
 			'shown': true,
 			'values': array(0, 1, 3, 5, 10, 15, 20),
 			'item': array(
-				'name': 'WATCH', 'meta': array(
+				'name': 'CLOCK', 'meta': array(
 					'display': color('aqua').color('bold').'BUFFER TIME',
-					'enchants': array(array('etype': 'DURABILITY', 'elevel': 1)),
+					'enchants': array('unbreaking': 1),
 					'flags': array('HIDE_ENCHANTS'),
 					'lore': if(@objective == 'elimination',
 						array(
@@ -208,7 +208,7 @@ proc _open_rules_menu(@objective) {
 		44: array(
 			'name': 'DIAMOND_SWORD', 'meta': array(
 				'display': color('green').color('bold').'ENTER SHARD',
-				'enchants': array(array('elevel': 1, 'etype': 'DURABILITY')),
+				'enchants': array('unbreaking': 1),
 				'flags': array('HIDE_ENCHANTS', 'HIDE_ATTRIBUTES')
 			)
 		),
@@ -266,7 +266,7 @@ proc _open_rules_menu(@objective) {
 			_shard_create(@associative_rules);
 		} else {
 			@rule = null;
-			if(@item['name'] == 'INK_SACK') {
+			if(string_ends_with(@item['name'], '_DYE')) {
 				@rule = array_get(@rules, @slot, null);
 			} else {
 				@slot -= 9;
@@ -279,11 +279,11 @@ proc _open_rules_menu(@objective) {
 			if(@rule) {
 				if(is_boolean(@rule['value'])) {
 					if(@rule['value']) {
-						@item['data'] = 8;
+						@item['name'] = 'GRAY_DYE';
 						@item['meta']['display'] = color('gray').'DEACTIVATED';
 						@rule['value'] = false;
 					} else {
-						@item['data'] = 10;
+						@item['name'] = 'LIME_DYE';
 						@item['meta']['display'] = color('green').'ACTIVATED';
 						@rule['value'] = true;
 					}
@@ -305,10 +305,10 @@ proc _open_rules_menu(@objective) {
 							@item['meta']['display'] = color('green').'ACTIVATED';
 							@item['qty'] = @rule['value'];
 						}
-						@item['data'] = 10;
+						@item['name'] = 'LIME_DYE';
 					} else {
 						@item['qty'] = 1;
-						@item['data'] = 8;
+						@item['name'] = 'GRAY_DYE';
 						@item['meta']['display'] = color('gray').'DEACTIVATED';
 					}
 				}

@@ -9,7 +9,6 @@ proc _weapon_cooldown(@player, @time, @type, @onCooldown, @remove = 1) {
 		} else {
 			@newItem = @item[];
 			@newItem['name'] = @type;
-			@newItem['data'] = 0;
 			set_pinv(@player, null, @newItem);
 		}
 		@slot = pheld_slot(@player);
@@ -33,19 +32,19 @@ proc _weapon_cooldown(@player, @time, @type, @onCooldown, @remove = 1) {
 bind('world_changed', array('id': 'shard-mega', 'priority': 'LOW'), array('to': 'shard'), @event) {
 	queue_push(closure(){
 		pgive_item(player(), array('name': 'TNT', 'qty': 64));
-		pgive_item(player(), array('name': 'FIREBALL', 'qty': 64));
+		pgive_item(player(), array('name': 'FIRE_CHARGE', 'qty': 64));
 		pgive_item(player(), array('name': 'FLINT_AND_STEEL'));
 	}, 'shard');
 }
 
 @binds[] = 'shard-fireball';
-bind('player_interact', array('id': 'shard-fireball'), array('item': 385, 'block': 0), @event) {
+bind('player_interact', array('id': 'shard-fireball'), array('itemname': 'FIRE_CHARGE', 'block': 0), @event) {
 	if(pworld() == 'shard') {
 		cancel();
-		@entity = shoot_projectile(player(), 'FIREBALL');
-		play_sound(ploc(), array('sound': 'GHAST_FIREBALL', 'volume': 2));
-		_weapon_cooldown(player(), 1000, 'FIREWORK_CHARGE', closure(){
-			play_sound(ploc(), array('sound': 'FIZZ', 'pitch': 1.5));
+		@entity = shoot_projectile(player(), 'FIRE_CHARGE');
+		play_sound(ploc(), array('sound': 'ENTITY_GHAST_SHOOT', 'volume': 2));
+		_weapon_cooldown(player(), 1000, 'FIREWORK_STAR', closure(){
+			play_sound(ploc(), array('sound': 'BLOCK_FIRE_EXTINGUISH', 'pitch': 1.5));
 		});
 	}
 }
