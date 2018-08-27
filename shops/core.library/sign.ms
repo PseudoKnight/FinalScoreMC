@@ -30,18 +30,10 @@ proc _sign_get_shop(@location) {
 			return(null);
 		}
 		@currentName = @pdata['name'];
-		if(@autocomplete) {
-			@currentName = substr(@currentName, 0, 13);
-		}
 		if(@currentName != @owner) {
 			@owner = @pdata['name'];
-			if(length(@owner) < 16) {
-				@sign[3] = @pdata['name'];
-				set_sign_text(@location, @sign);
-			} else {
-				console('Cannot convert shop owner from '.@sign[3].' to '.@owner.' due to length.', false);
-				console('Location: '.@location, false);
-			}
+			@sign[3] = @owner;
+			set_sign_text(@location, @sign);
 		}
 		
 		return(array(

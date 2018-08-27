@@ -152,6 +152,48 @@ register_command('shop', array(
 			}
 			store_value('shops', @shop['item'], @shops);
 			
+		} else if(@args[0] == 'updatedb') {
+			if(!pisop()) {
+				die(color('gold').'No permission.');
+			}
+			@invalidWorlds = array('dev', 'custom', 'shard', 'outworld', 'outworld_nether', 'outworld_the_end');
+			@allShops = get_values('shop');
+			foreach(@key: @itemShops in @allShops) {
+				foreach(@t in array(0, 1)) {
+					foreach(@i: @shopEntry in @itemShops[@t]) {
+						if(array_contains(@invalidWorlds, @shopEntry['location'][3])) {
+							msg('Invalid world: '.@shopEntry['location'][3]);
+							array_remove(@itemShops[@t], @i);
+							continue();
+						}
+						@shop = _sign_get_shop(@shopEntry['location']);
+						if(!@shop) {
+							if(!is_sign_at(@shopEntry['location'])) {
+								msg('No sign at '.@shopEntry['location'].' for '.@key);
+							} else {
+								@text = get_sign_text(@shopEntry['location']);
+								msg('Unable to process shop from: '.@text.' for '.@key);
+							}
+							continue();
+						}
+						if(!@shop['item']) {
+							@text = get_sign_text(@shopEntry['location']);
+							msg('Unable to get material from '.@text[0].' for '.@key);
+							continue();
+						}
+						msg('Found '.@shop['item'].' for '.@key);
+						@newShops = get_value('shops', @shop['item']);
+						if(!@newShops) {
+							@newShops = array(array(), array());
+						}
+						@newShops[@t][] = @shopEntry;
+						store_value('shops', @shop['item'], @newShops);
+						array_remove(@itemShops[@t], @i);
+					}
+				}
+				store_value(@key, @itemShops);
+			}
+			
 		} else {
 			return(false);
 		}
