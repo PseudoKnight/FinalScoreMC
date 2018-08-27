@@ -220,7 +220,7 @@
 <<<
 
 /fill $x1 $y1 $z1 $x2 $y2 $z2 $id [$data=0] [$mode='keep'] [$replaceid=''] [$replacedata='0'] = >>>
-	if(!(@cmdblk = get_command_block()) {
+	if(!(@cmdblk = get_command_block())) {
 		die();
 	}
 	@id = $id;

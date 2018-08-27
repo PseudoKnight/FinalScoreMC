@@ -40,7 +40,7 @@ register_command('setblock', array(
 					set_blockdata_string(@loc, @args[5], false);
 				}
 			default:
-				run(@alias.' '.array_imploe(@args));
+				run(@alias.' '.array_implode(@args));
 		}
 	}
 ));

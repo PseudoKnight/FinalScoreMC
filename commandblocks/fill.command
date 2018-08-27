@@ -46,7 +46,7 @@ register_command('fill', array(
 					}
 				}
 			default:
-				run(@alias.' '.array_imploe(@args));
+				run(@alias.' '.array_implode(@args));
 		}
 	}
 ));
