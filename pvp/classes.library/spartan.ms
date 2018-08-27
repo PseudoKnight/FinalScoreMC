@@ -14,10 +14,10 @@ case 'load':
 							break();
 						}
 					}
-					set_peffect(@player, 25, max(-12, @strength), 0.15, true);
+					set_peffect(@player, 'LEVITATION', max(-12, @strength), 0.15, true);
 				}
 			} else {
-				set_peffect(@player, 25, 0, 0);
+				set_peffect(@player, 'LEVITATION', 0, 0);
 			}
 		} catch(Exception @ex) {
 			clear_task();

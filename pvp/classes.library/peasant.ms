@@ -79,7 +79,7 @@ case 'load':
 				});
 
 			case 'POISONOUS_POTATO': # poison effect
-				set_peffect(@damaged, 19, 0, 10);
+				set_peffect(@damaged, 'POISON', 0, 10);
 
 			case 'BAKED_POTATO': # hot potato
 				set_pinv(@damager, null, null);

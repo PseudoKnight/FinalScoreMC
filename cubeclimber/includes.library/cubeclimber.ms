@@ -3,7 +3,7 @@ proc _cc_reward(@player) {
 	@amount = array_size(@cc['players']);
 	_acc_add(@player, @amount);
 	tmsg(@player, color('gold').'+'.@amount.' coin'.if(@amount > 1, 's'));
-	set_peffect(@player, 8, 5, 10);
+	set_peffect(@player, 'JUMP_BOOST', 5, 10);
 }
 
 proc _cc_generate(@world = 'custom') {

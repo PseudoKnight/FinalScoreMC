@@ -4,7 +4,7 @@ proc _warmuptp(@player, @loc, @cleareffects = false, @force = false) {
 	if(!_is_survival_world(pworld(@player))) {
 		@length = 0.1;
 	} else {
-		set_peffect(@player, 9, 1, 7, true, false);
+		set_peffect(@player, 'NAUSEA', 1, 7, true, false);
 		play_sound(ploc(@player), array('sound': 'BLOCK_PORTAL_TRIGGER', 'category': 'PLAYERS', 'volume': 1, 'pitch': 1));
 	}
 	set_timeout(integer(@length * 1000), closure(){
@@ -19,9 +19,9 @@ proc _warmuptp(@player, @loc, @cleareffects = false, @force = false) {
 		if(@cleareffects) {
 			clear_peffects(@player);
 		}
-		set_peffect(@player, 25, -1, 0.05, true, false); // don't sink into ground on tp
-		set_peffect(@player, 24, 0, 1, true, false);
-		set_peffect(@player, 15, 1, 2, true, false); // expanding fog
+		set_peffect(@player, 'LEVITATION', -1, 0.05, true, false); // don't sink into ground on tp
+		set_peffect(@player, 'GLOWING', 0, 1, true, false);
+		set_peffect(@player, 'BLINDNDESS', 1, 2, true, false); // expanding fog
 		@particle = array('particle': 'CLOUD', 'count': 25, 'speed': 0.05, 'xoffset': 0.34, 'yoffset': 0, 'zoffset': 0.34);
 		spawn_particle(location_shift(@ploc, 'up', 1.9), @particle);
 		spawn_particle(location_shift(@loc, 'up', 2.7), @particle);

@@ -264,7 +264,7 @@ proc _hoops_ball_create(@loc) {
 					unbind(@player.'jump');
 					unbind(@player.'break');
 					set_pmode(@player, 'ADVENTURE');
-					set_peffect(@player, 8, 0, 0, true, false);
+					set_peffect(@player, 'JUMP_BOOST', 0, 0, true, false);
 				}
 				remove_bar('hoops'); // standalone
 			}

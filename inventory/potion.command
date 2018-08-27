@@ -6,7 +6,7 @@ register_command('potion', array(
 		if(array_size(@args) == 1) {
 			return(_strings_start_with_ic(array('potion', 'splash_potion', 'lingering_potion', 'tipped_arrow'), @args[-1]));
 		} else if(array_size(@args) == 2) {
-			return(_strings_start_with_ic(array_keys(_get_effects()), @args[-1]));
+			return(_strings_start_with_ic(reflect_pull('enum', 'PotionEffectType'), @args[-1]));
 		}
 		return(array());
 	},
@@ -20,12 +20,9 @@ register_command('potion', array(
 		}
 		
 		@id = @args[1];
-		@effects = _get_effects();
-		if(!is_numeric(@id)) {
-			if(!array_index_exists(@effects, @id)) {
-				die(color('yellow').'Available potion effects: '.@effects);
-			}
-			@id = @effects[@id];
+		@effects = reflect_pull('enum', 'PotionEffectType');
+		if(!array_contains(@effects, @id)) {
+			die(color('yellow').'Available potion effects: '.@effects);
 		}
 		
 		@seconds = 30;
@@ -43,9 +40,9 @@ register_command('potion', array(
 				@item['meta'] = associative_array();
 			}
 			if(!array_index_exists(@item['meta'], 'potions')) {
-				@item['meta']['potions'] = array();
+				@item['meta']['potions'] = associative_array();
 			}
-			@item['meta']['potions'][] = array('id': @id, 'strength': min(99, @strength - 1), 'seconds': @seconds);
+			@item['meta']['potions'][@id] = array('strength': min(99, @strength - 1), 'seconds': @seconds);
 			set_pinv(player(), null, @item);
 
 		} else { # create new potion
@@ -92,7 +89,8 @@ register_command('potion', array(
 					'upgraded': (@upgraded == 'true'),
 				);
 			} else {
-				@item['meta']['potions'] = array(array('id': @id, 'strength': @strength - 1, 'seconds': @seconds));
+				@item['meta']['potions'] = associative_array();
+				@item['meta']['potions'][@id] = array('strength': @strength - 1, 'seconds': @seconds);
 			}
 			set_pinv(player(), null, @item);
 		}

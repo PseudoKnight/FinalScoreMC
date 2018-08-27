@@ -28,7 +28,7 @@ register_command('acme', array(
 					9: array('name': 'IRON_NUGGET', 'meta': array('display': @player.'\'s Right Molar')),
 					10: array('name': 'IRON_NUGGET', 'meta': array('display': @player.'\'s Muscle Fiber')),
 				));
-				set_peffect(@player, 2, 20, 5, true);
+				set_peffect(@player, 'SLOWNESS', 20, 5, true);
 				pfacing(@player, pfacing(@player)[0], -90);
 				tmsg(@player, @message);
 				play_sound(@loc, array('sound': 'ENTITY_CHICKEN_EGG', 'volume': 3));

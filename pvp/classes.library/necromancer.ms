@@ -22,11 +22,11 @@ case 'load':
 		if((((@a['x'] - @b['x']) ** 2) + ((@a['y'] - @b['y']) ** 2) + ((@a['z'] - @b['z']) ** 2)) < 576) {
 			foreach(@e in get_peffect(@player)) {
 				if(@e['id'] == 22) {
-					set_peffect(@player, 22, @e['strength'] + 1, 20)
+					set_peffect(@player, 'ABSORPTION', @e['strength'] + 1, 20)
 					die()
 				}
 			}
-			set_peffect(@player, 22, 0, 999)
+			set_peffect(@player, 'ABSORPTION', 0, 999)
 		}
 	}
 

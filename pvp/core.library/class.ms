@@ -48,9 +48,9 @@ proc _class(@action, @player, @classname, @pvp) {
 				}
 			}
 			if(@flash) {
-				set_peffect(@player, 16, 0, 1, true);
+				set_peffect(@player, 'NIGHT_VISION', 0, 1, true);
 			}
-			set_peffect(@player, 10, 0, 8, true);
+			set_peffect(@player, 'REGENERATION', 0, 8, true);
 			play_sound(ploc(@player), array('sound': 'ENTITY_ENDERMAN_TELEPORT', 'pitch': 2), @player);
 			if(array_index_exists(@class, 'ammo')) {
 				@inv = pinv(@player);

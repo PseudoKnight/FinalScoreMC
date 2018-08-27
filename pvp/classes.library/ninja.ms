@@ -32,14 +32,14 @@ case 'load':
 					102: null,
 					103: null,
 				));
-				set_peffect(player(), 16, 0, 25);
-				set_peffect(player(), 14, 0, 20);
+				set_peffect(player(), 'NIGHT_VISION', 0, 25);
+				set_peffect(player(), 'INVISIBILITY', 0, 20);
 				spawn_particle(location_shift(ploc(), 'up', 2), array('particle': 'SPELL', 'speed': 0, 'count': 10, 'yoffset': 0.4, 'xoffset': 0.2, 'zoffset': 0.2));
 			}
 		} else if(!pinv(player(), 100)){
 			set_pinv(@gear);
-			set_peffect(player(), 14, 0, 0);
-			set_peffect(player(), 16, 0, 0);
+			set_peffect(player(), 'INVISIBILITY', 0, 0);
+			set_peffect(player(), 'NIGHT_VISION', 0, 0);
 			spawn_particle(location_shift(ploc(), 'up', 2) ,array('particle': 'SPELL', 'speed': 0, 'count': 10, 'yoffset': 0.4, 'xoffset': 0.2, 'zoffset': 0.2));
 		}
 	}
@@ -110,7 +110,7 @@ case 'load':
 		@player = @e['item']['meta']['display'];
 		if(ponline(@player) && @player != player()) {
 			modify_event('item', null);
-			set_peffect(player(), 19, 0, 5);
+			set_peffect(player(), 'POISON', 0, 5);
 			damage_entity(puuid(), integer(@e['item']['meta']['lore'][0]), puuid(@player));
 		} else {
 			cancel();

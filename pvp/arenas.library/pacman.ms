@@ -28,7 +28,7 @@ proc _load_events(@id) {
 				}
 			} else if(@block == 'HEAVY_WEIGHTED_PRESSURE_PLATE') {
 				play_sound(@event['location'], array('sound': 'ENTITY_ILLUSIONER_PREPARE_BLINDNESS', 'pitch': 1.4, 'volume': 3));
-				set_peffect(player(), 16, 1, 15);
+				set_peffect(player(), 'NIGHT_VISION', 1, 15);
 				set_block(location_shift(@event['location'], 'up', 27), 'AIR');
 				@scaredyghost = array(
 					103: array('name': 'BLUE_CONCRETE'),
@@ -39,7 +39,7 @@ proc _load_events(@id) {
 						@hat = pinv(@p, 103);
 						if(@hat) {
 							set_pinv(@p, @scaredyghost);
-							set_peffect(@p, 1, -3, 15);
+							set_peffect(@p, 'SPEED', -3, 15);
 						}
 					}
 				}
@@ -80,7 +80,7 @@ proc _load_events(@id) {
 						if(array_contains(@regions, 'ghostspawn')) {
 							clear_task();
 							_player_equip(@id, player());
-							set_peffect(player(), 1, 0, 0, false, false);
+							set_peffect(player(), 'SPEED', 0, 0, false, false);
 							play_sound(ploc(), array('sound': 'ENTITY_FIREWORK_ROCKET_LAUNCH', 'pitch': 1.3), player());
 						} else if(!array_contains(@regions, 'pacman')) {
 							clear_task();
@@ -110,7 +110,7 @@ proc _load_events(@id) {
 							@team = @player['team'];
 							@loc = array_rand(@pvp['arena']['spawn'][@team], 1, false)[0];
 							set_ploc(@p, @loc);
-							set_peffect(@p, 2, 10, 3);
+							set_peffect(@p, 'SLOWNESS', 10, 3);
 						}
 					}
 				}

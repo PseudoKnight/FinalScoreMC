@@ -264,8 +264,8 @@ bind('player_death', array('priority': 'high', 'id': @id.'death'), null, @e, @id
 	}
 	
 	// Death Effects
-	set_peffect(player(), 15, 0, 0.3);
-	set_peffect(player(), 16, 0, 0.3);
+	set_peffect(player(), 'BLINDNESS', 0, 0.3);
+	set_peffect(player(), 'NIGHT_VISION', 0, 0.3);
 	title(player(), 'You died.', '', 0, 6, 0);
 	foreach(@item in @drops) {
 		drop_item(@location, @item);

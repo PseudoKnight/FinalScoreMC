@@ -21,15 +21,15 @@ register_command('swap', array(
 					}
 					if(!get_block_info(location_shift(@loc, 'up'), 'solid')
 					&& !get_block_info(location_shift(@loc, 'up', 2), 'solid')) {
-						set_peffect(player(), 15, 0, 1, true, false);
-						set_peffect(player(), 16, 0, 1, true, false);
+						set_peffect(player(), 'BLINDNESS', 0, 1, true, false);
+						set_peffect(player(), 'NIGHT_VISION', 0, 1, true, false);
 						@item = pinv(player(), null);
 						@slot = pheld_slot();
 						set_timeout(50, closure(){
 							if(ponline(player()) && pworld() == 'dev') {
 								set_pcooldown('CLOCK', 2000 / 50);
 								relative_teleport(array(0, 0, @z, @loc['world']));
-								set_peffect(player(), 25, 0, 0);
+								set_peffect(player(), 'LEVITATION', 0, 0);
 								play_sound(@loc, array('sound': 'ENTITY_ILLUSIONER_MIRROR_MOVE', 'pitch': 1.2));
 								play_sound(@loc, array('sound': 'ENTITY_WITHER_SHOOT', 'pitch': 1.3, 'volume': 0.1));
 							}

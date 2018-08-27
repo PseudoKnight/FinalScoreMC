@@ -74,7 +74,7 @@ register_command('7', array(
 								play_sound(ploc(@player), array('sound': 'BLOCK_NOTE_BLOCK_HARP', 'pitch': 1.5, 'volume': 2), @player);
 								play_sound(ploc(@player), array('sound': 'BLOCK_NOTE_BLOCK_HARP', 'pitch': 2, 'volume': 2), @player);
 								set_pwalkspeed(@player, 0.2);
-								set_peffect(@player, 8, 0, 0);
+								set_peffect(@player, 'JUMP_BOOST', 0, 0);
 							}
 						}
 						clear_task()
@@ -318,7 +318,7 @@ register_command('7', array(
 						foreach(@player in array_keys(@7['players'])) {
 							set_pvelocity(@player, array(0, 0, 0));
 							set_pwalkspeed(@player, 0);
-							set_peffect(@player, 8, -10, 10);
+							set_peffect(@player, 'JUMP_BOOST', -10, 10);
 						}
 					} else if(@timer[0] == 0) {
 						clear_task();

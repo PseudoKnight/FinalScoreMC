@@ -1,6 +1,6 @@
 proc _worms_add_player(@player, @game) {
-	set_peffect(@player, 1, 4, 9999, true, false);
-	set_peffect(@player, 14, 0, 9999, true, false);
+	set_peffect(@player, 'SPEED', 4, 9999, true, false);
+	set_peffect(@player, 'INVISIBILITY', 0, 9999, true, false);
 	
 	@game['players'][@player] = array(
 		'segments': array(),
@@ -20,7 +20,7 @@ proc _worms_remove_player(@player, @game) {
 	}
 	array_remove(@game['players'], @player);
 	if(pworld(@player) == @game['world']) {
-		set_peffect(@player, 14, 0, 0);
-		set_peffect(@player, 1, 0, 0);
+		set_peffect(@player, 'INVISIBILITY', 0, 0);
+		set_peffect(@player, 'SPEED', 0, 0);
 	}
 }

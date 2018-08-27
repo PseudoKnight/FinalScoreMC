@@ -91,12 +91,12 @@ case 'load':
 					play_sound(@loc, associative_array('sound': 'ENTITY_ELDER_GUARDIAN_DEATH', 'pitch': 2), @p);
 					set_phunger(@player, min(20, phunger(@player) + 1));
 					set_phealth(@player, min(20, phealth(@player) + if(@dist < 2, 2, 1)));
-					set_peffect(@player, 5, 0, 2);
+					set_peffect(@player, 'STRENGTH', 0, 2);
 					@data['heartrate'] = max(300, @data['heartrate'] - 200);
 					@data['lastscare'] = time();
 				}
 				set_ptexp(@player, ptexp(@player) + 1);
-				set_peffect(@p, 9, 0, 4);
+				set_peffect(@p, 'NAUSEA', 0, 4);
 				play_sound(@loc, array('sound': 'ENTITY_GUARDIAN_ATTACK', 'pitch': 1.5), @p);
 			} else if(pinv(@p, 103)) {
 				set_pinv(@p, 103, null);

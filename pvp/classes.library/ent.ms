@@ -19,9 +19,9 @@ case 'load':
 				foreach(@item in @kit) {
 					@item['meta']['enchants'] = @enchants;
 				}
-				set_peffect(@player, 11, 0, 999);
+				set_peffect(@player, 'RESISTANCE', 0, 999);
 			} else {
-				set_peffect(@player, 11, 0, 0);
+				set_peffect(@player, 'RESISTANCE', 0, 0);
 			}
 			set_mob_equipment(puuid(@player), @kit);
 		}

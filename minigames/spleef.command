@@ -230,10 +230,10 @@ register_command('spleef', array(
 							));
 						);
 						if(reg_match('lit\\=true', get_blockdata_string(@cfg['option']['speed']))) {
-							set_peffect(@player, 1, 1, 9999, true, false);
+							set_peffect(@player, 'SPEED', 1, 9999, true, false);
 						}
 						if(reg_match('lit\\=true', get_blockdata_string(@cfg['option']['jump']))) {
-							set_peffect(@player, 8, 3, 9999, true, false);
+							set_peffect(@player, 'JUMP_BOOST', 3, 9999, true, false);
 						}
 					}
 		

@@ -39,12 +39,12 @@ case 'equip':
 
 case 'powerup':
 	damage_entity(puuid(@player), min(phealth(@player) - 1, 5));
-	set_peffect(@player, 1, 3, 17);
-	set_peffect(@player, 5, 1, 17);
-	set_peffect(@player, 8, 1, 17);
+	set_peffect(@player, 'SPEED', 3, 17);
+	set_peffect(@player, 'STRENGTH', 1, 17);
+	set_peffect(@player, 'JUMP_BOOST', 1, 17);
 	set_timeout(50, closure(){ # powerups flash night vision, so we have to delay here
 		try {
-			set_peffect(@player, 16, 0, 23);
+			set_peffect(@player, 'NIGHT_VISION', 0, 23);
 		} catch(PlayerOfflineException @ex) {
 			// player logged off last tick, nice timing
 		}
@@ -72,7 +72,7 @@ case 'powerup':
 						102: array('name': 'LEATHER_CHESTPLATE', 'meta': array('color': array('r': @r, 'g': @g, 'b': @b))),
 						103: null,
 					));
-					set_peffect(@player, 16, 0, 0);
+					set_peffect(@player, 'NIGHT_VISION', 0, 0);
 				}
 			}
 		}

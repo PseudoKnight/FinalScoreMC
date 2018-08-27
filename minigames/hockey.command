@@ -210,7 +210,7 @@ register_command('hockey', array(
 								set_pscoreboard(@p, 'hockey');
 							}
 							action_msg(@p, @time);
-							set_peffect(@p, 8, -6, 2, false, false);
+							set_peffect(@p, 'JUMP_BOOST', -6, 2, false, false);
 						} else if(array_contains(@hockey['players'], @p)) {
 							array_remove_values(@hockey['players'], @p);
 							@team = get_pteam(@p, 'hockey');

@@ -6,7 +6,7 @@ case 'load':
 	
 case 'powerup':
 	set_phunger(@player, 2)
-	set_peffect(@player, 22, 0, 15);
+	set_peffect(@player, 'ABSORPTION', 0, 15);
 	
 case 'unload':
 	unbind(@player.'move');
