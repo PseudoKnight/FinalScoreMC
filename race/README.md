@@ -26,5 +26,4 @@ Permission: *command.track*
 - _worldmsg() messages all players within the specified world
 - _set_pactivity() sets the players current activity for the server
 - _equip_kit() resets the player's inventory
-- _get_effects() returns an array of effect names and aliases mapped to numerical ids
 - _acc_add() gives a coin award to winners

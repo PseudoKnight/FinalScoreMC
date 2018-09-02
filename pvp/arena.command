@@ -562,11 +562,10 @@ register_command('arena', array(
 						if(array_size(@args) < 7) {
 							die(color('gold').'Requires team#|all, effect, strength, and length.');
 						}
-						@effects = _get_effects();
-						if(!array_contains(array_keys(@effects), @args[4])) {
-							die(color('gold').'Unknown potion effect. '.array_keys(@effects));
+						@effect = to_upper(@args[4]);
+						if(!array_contains(reflect_pull('enum', 'PotionEffectType'), @effect)) {
+							die(color('gold').'Unknown potion effect. '.reflect_pull('enum', 'PotionEffectType'));
 						}
-						@effect = @effects[@args[4]];
 						if(!array_index_exists(@arena, 'effect')) {
 							@arena['effect'] = array(associative_array(), associative_array(), associative_array());
 						}

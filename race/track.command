@@ -103,14 +103,13 @@ register_command('track', array(
 					
 					// effect name, strength integer, seconds integer
 					case 'effect':
-						@effects = _get_effects();
-						if(!array_index_exists(@effects, @value)) {
-							die(color('gold').'Expecting one of '.array_implode(array_keys(@effects)));
+						if(!array_index_exists(reflect_pull('enum', 'PotionEffectType'), @value)) {
+							die(color('gold').'Expecting one of '.array_implode(reflect_pull('enum', 'PotionEffectType')));
 						}
 						if(array_size(@values) < 2) {
 							die(color('gold').'Expecting a strength and time in seconds after the effect name.');
 						}
-						@potionid = @effects[@value];
+						@potionid = to_upper(@value);
 						@strength = @values[0];
 						@seconds = @values[1];
 						if(!array_index_exists(@track, @setting)) {

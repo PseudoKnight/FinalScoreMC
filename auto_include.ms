@@ -12,44 +12,6 @@ set_uncaught_exception_handler(closure(@ex){
 });
 
 /*
-	Returns an array of potion effect name:id pairs
-*/
-proc _get_effects() {
-	return(array(
-		'speed': 1,
-		'slowness': 2,
-		'haste': 3,
-		'fatigue': 4,
-		'strength': 5,
-		'health': 6,
-		'damage': 7,
-		'jump': 8,
-		'leaping': 8,
-		'nausea': 9,
-		'regen': 10,
-		'resistance': 11,
-		'fireresistance': 12,
-		'waterbreathing': 13,
-		'invis': 14,
-		'invisibility': 14,
-		'blindness': 15,
-		'nightvision': 16,
-		'hunger': 17,
-		'weakness': 18,
-		'poison': 19,
-		'wither': 20,
-		'boost': 21,
-		'healthboost': 21,
-		'absorption': 22,
-		'saturation': 23,
-		'glowing': 24,
-		'levitation': 25,
-		'luck': 26,
-		'badluck': 27,
-	));
-}
-
-/*
 	Removes certain entities from inside (and near) region.
 	Since it select entities by chunk, it may remove some entities that are just outside the region.
 	@region: The WorldGuard region name. It will use the player or commandblock world.
@@ -132,24 +94,4 @@ proc _remove_activity(@id) {
 		return(true);
 	}
 	return(false);
-}
-
-/*
-	Updates the channel topic for the discord chat channel
-*/
-proc _update_discord_topic() {
-	@activities = '';
-	@activitiesArray = import('activities');
-	if(@activitiesArray) {
-		@activities = array_implode(array_normalize(@activitiesArray), ', ');
-	}
-	@allocMem = get_server_info(15);
-	@freeMem = get_server_info(16);
-	if(extension_exists('CHDiscord')) {
-		discord_set_channel_topic('chat', '---[ FinalScoreMC Server ]---[ TPS: '.round(tps()[0], 1).' ]'
-			.'---[ Memory: '.floor((@allocMem - @freeMem) / 1000000).' MB / 3 GB ]'
-			.'---[ Players: '.array_size(all_players()).' ]'
-			.'---'.if(@activities, '[ Activities: '.@activities.' ]---')
-		);
-	}
 }

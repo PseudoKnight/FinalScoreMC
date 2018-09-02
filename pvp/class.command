@@ -98,14 +98,12 @@ register_command('class', array(
 						if(array_size(@args) < 6) {
 							die(color('gold').'Requies a potion effect, strength, and seconds.');
 						}
-						@effect = @args[3];
+						@effect = to_upper(@args[3]);
 						@strength = @args[4];
 						@seconds = @args[5];
-						@effects = _get_effects();
-						if(!array_contains(array_keys(@effects), @effect)) {
-							die(color('gold').'Unknown potion effect. '.array_keys(@effects));
+						if(!array_contains(reflect_pull('enum', 'PotionEffectType'), @effect)) {
+							die(color('gold').'Unknown potion effect. '.reflect_pull('enum', 'PotionEffectType'));
 						}
-						@effect = @effects[@effect];
 						if(!array_index_exists(@arena['classes'][@classid], 'effect')) {
 							@arena['classes'][@classid]['effect'] = associative_array();
 						}
