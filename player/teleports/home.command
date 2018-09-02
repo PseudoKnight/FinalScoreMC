@@ -48,13 +48,17 @@ register_command('home', array(
 		}
 		@loc = @pdata['homes'][@world];
 		if(_is_survival_world(@world) && !_is_safe_location(@loc)) {
-			@overrides = import('tp.overrides');
-			if(!@overrides) {
-				@overrides = associative_array();
+			if(@world == 'world_the_end') {
+				die(color('red') . 'That teleport location does not appear to be safe!');
+			} else {
+				@overrides = import('tp.overrides');
+				if(!@overrides) {
+					@overrides = associative_array();
+				}
+				@overrides[player()] = @loc;
+				export('tp.overrides', @overrides);
+				die(color('yellow') . 'That teleport location does not appear to be safe! /override');
 			}
-			@overrides[player()] = @loc;
-			export('tp.overrides', @overrides);
-			die(color('yellow') . 'That teleport location does not appear to be safe. /override');
 		}
 		_warmuptp(player(), @loc);
 	}
