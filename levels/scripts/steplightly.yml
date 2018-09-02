@@ -121,7 +121,7 @@ waves:
     1:
         title: 'Baby Steps'
         subtitle: 'A Mitey Start'
-        music: 'record.cat'
+        music: 'music_disc.cat'
         duplicate: 5
         mobs:
             - ENDERMITE
@@ -188,7 +188,7 @@ waves:
     7:
         title: "That's Cold"
         subtitle: 'Bear the Pain'
-        music: 'record.far'
+        music: 'music_disc.far'
         mobs:
             - type: POLAR_BEAR
               age: -400
