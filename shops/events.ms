@@ -60,6 +60,23 @@ bind('block_break', array('priority': 'LOWEST'), array('block': 'CHEST'), @event
 	}
 }
 
+bind('block_break', array('priority': 'LOWEST'), array('block': 'TRAPPED_CHEST'), @event) {
+	if(sk_can_build(@event['location'])) {
+		include('core.library/shop.ms');
+		if(@shop = _sign_get_shop(location_shift(@event['location'], 'up'))) {
+			if(!_is_shop_owner(@shop) && !pisop()) {
+				if(@shop['world'] != 'shard') {
+					include('core.library/cache.ms');
+					_remove_cached_shop(@shop);
+				}
+			} else {
+				cancel();
+				msg(color('red').'[Shop] You do not own this shop.');
+			}
+		}
+	}
+}
+
 bind('block_place', null, array('block': 'HOPPER'), @event) {
 	if(sk_can_build(@event['location'])) {
 		@loc = location_shift(@event['location'], 'up');
@@ -72,6 +89,42 @@ bind('block_place', null, array('block': 'HOPPER'), @event) {
 					if(!_is_shop_owner(@shop)) {
 						cancel();
 						msg(color('red').'[Shop] You cannot place a hopper below a shop you don\'t own.');
+					}
+				}
+			}
+		}
+	}
+}
+
+bind('block_place', null, array('block': 'CHEST'), @event) {
+	if(!psneaking() && sk_can_build(@event['location'])) {
+		foreach(@dir in array('south', 'north', 'east', 'west')) {
+			@loc = location_shift(@event['location'], @dir);
+			if(get_block(@loc) == @event['block']) {
+				@signLoc = location_shift(@loc, 'up');
+				if(get_block(@signLoc) == 'WALL_SIGN') {
+					include('core.library/shop.ms');
+					if(_sign_get_shop(@signLoc)) {
+						cancel();
+						die(color('red').'[Shop] You cannot connect a chest to a shop.');
+					}
+				}
+			}
+		}
+	}
+}
+
+bind('block_place', null, array('block': 'TRAPPED_CHEST'), @event) {
+	if(!psneaking() && sk_can_build(@event['location'])) {
+		foreach(@dir in array('south', 'north', 'east', 'west')) {
+			@loc = location_shift(@event['location'], @dir);
+			if(get_block(@loc) == @event['block']) {
+				@signLoc = location_shift(@loc, 'up');
+				if(get_block(@signLoc) == 'WALL_SIGN') {
+					include('core.library/shop.ms');
+					if(_sign_get_shop(@signLoc)) {
+						cancel();
+						die(color('red').'[Shop] You cannot connect a chest to a shop.');
 					}
 				}
 			}
