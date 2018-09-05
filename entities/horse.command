@@ -11,7 +11,7 @@ register_command('horse', array(
 		@horse = spawn_entity('horse', 1, location_shift(ploc(), 'up'))[0];
 		set_mob_age(@horse, 0);
 		set_mob_owner(@horse, player());
-		set_entity_spec(@horse, array('jump': 0.8, 'saddle': array('name': 'saddle')));
+		set_entity_spec(@horse, array('jump': 0.8, 'saddle': array('name': 'SADDLE')));
 		set_entity_rider(@horse, puuid());
 	
 		bind('vehicle_leave', array('id': player().'horse_leave'), array('vehicletype': 'HORSE', 'passengertype': 'PLAYER'),

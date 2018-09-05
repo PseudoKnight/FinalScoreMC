@@ -343,6 +343,10 @@ proc _shard_create(@rules){
 									@luck -= @effect['bad_luck']['strength'] + 1;
 								}
 								_set_inventory_contents(@event['location'], 3 + @luck);
+							default:
+								if(string_ends_with(@event['block'], 'SHULKER_BOX')) {
+									_set_inventory_contents(@event['location'], 0);
+								}
 						}
 					}
 				}

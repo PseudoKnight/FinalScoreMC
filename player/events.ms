@@ -221,12 +221,7 @@ bind('block_break', null, array('block': 'DIAMOND_ORE'), @event) {
 # painting cycler
 bind('player_interact_entity', null, array('clicked': 'PAINTING','hand': 'main_hand'), @event) {
 	if(pmode() != 'ADVENTURE' && sk_can_build(entity_loc(@event['id']))) {
-		@paintings = get_value('paintings');
-		if(is_null(@paintings)) {
-			@paintings = reflect_pull('enum', 'Art');
-			# this can take over 20ms, so let's save this for later
-			store_value('paintings', @paintings);
-		}
+		@paintings = reflect_pull('enum', 'Art');
 		@current = entity_spec(@event['id'])['type'];
 		@index = array_index(@paintings, @current);
 		@tries = 0;
@@ -274,7 +269,7 @@ bind('item_swap', null, null, @event,
 			bind('item_held', array('id': player().'instrument'), null, @event,
 				@material,
 				@player = player(),
-				@sound = 'block.note.'.@instrument['note'],
+				@sound = 'block.note_block.'.@instrument['note'],
 				@notes = array(0.62, 0.7, 0.8, 0.95, 1.05, 1.25, 1.4, 1.59),
 			) {
 				@num = @event['to'];

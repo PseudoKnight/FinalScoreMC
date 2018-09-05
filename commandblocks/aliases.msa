@@ -74,11 +74,11 @@
 	Usage Example: runalias /bedspawn @p ~-1 ~ ~1
 */
 /bedspawn $target [$x] [$y] [$z] = >>>
-	_execute_on($target, closure(@uuid) {
+	_execute_on($target, closure(@player) {
 		if($x === '') {
-			set_pbed_location(@uuid, ploc(@uuid))
+			set_pbed_location(@player, ploc(@player))
 		} else {
-			set_pbed_location(@uuid, _relative_coords(@cmdblk, $x, $y, $z))
+			set_pbed_location(@player, _relative_coords(@cmdblk, $x, $y, $z))
 		}
 	});
 <<<
@@ -92,17 +92,20 @@
 /velocity $target $x $y $z [$double] = >>>
 	@applicationtime = $double;
 	@closure = closure(@uuid) {
-		@loc = ploc(@uuid);
-		set_pvelocity(@uuid, $x, $y, $z);
+		if(length(@uuid) <= 16) {
+			@uuid = puuid(@uuid);
+		}
+		@loc = entity_loc(@uuid);
+		set_entity_velocity(@uuid, array($x, $y, $z));
 		play_sound(@loc, array('sound': 'ENTITY_GHAST_SHOOT', 'volume': 2));
 		make_effect(@loc, 'MOBSPAWNER_FLAMES');
 		
 		@reapply = array(if(@applicationtime, integer(@applicationtime / 50), 0));
 		set_interval(50, closure(){
 			try {
-				make_effect(ploc(@uuid), 'MOBSPAWNER_FLAMES');
+				make_effect(entity_loc(@uuid), 'MOBSPAWNER_FLAMES');
 				if(@reapply[0]-- > 0) {
-					set_pvelocity(@uuid, $x, $y, $z);
+					set_entity_velocity(@uuid, array($x, $y, $z));
 				} else {
 					clear_task();
 				}
@@ -267,9 +270,9 @@
 <<<
 
 /tp $player $x $y $z = >>>
-	if(!_execute_on($player, closure(@uuid) {
-		@loc = _relative_coords(ploc(@uuid), $x, $y, $z);
-		set_ploc(@uuid, @loc);
+	if(!_execute_on($player, closure(@player) {
+		@loc = _relative_coords(ploc(@player), $x, $y, $z);
+		set_ploc(@player, @loc);
 	})) {
 		run('/tp '.$player.' '.$x.' '.$y.' '.$z);
 	}

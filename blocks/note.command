@@ -13,18 +13,10 @@ register_command('note', array(
 		if(!sk_can_build(@l) || get_block(@l) != 'NOTE_BLOCK') {
 			die();
 		}
-	
-		@sound = 'BLOCK_NOTE_BLOCK_HARP';
+
+		@instrument = reg_match('instrument\\=([a-z]+)', get_blockdata_string(@l))[1];
+		@sound = 'BLOCK_NOTE_BLOCK_'.@instrument;
 		switch(get_block(location_shift(@l, 'down'))) {
-			case 'STONE':
-				@sound = 'BLOCK_NOTE_BLOCK_BASEDRUM';
-			case 'OAK_PLANKS':
-				@sound = 'BLOCK_NOTE_BLOCK_BASS';
-			case 'SAND':
-			case 'GRAVEL':
-				@sound = 'BLOCK_NOTE_BLOCK_SNARE';
-			case 'GLASS':
-				@sound = 'BLOCK_NOTE_BLOCK_HAT';
 			case 'ICE':
 			case 'PACKED_ICE':
 				@sound = 'ENTITY_EXPERIENCE_ORB_PICKUP';
@@ -53,31 +45,10 @@ register_command('note', array(
 			case 'COAL_BLOCK':
 				@sound = 'ENTITY_FIREWORK_ROCKET_BLAST';
 			case 'SEA_LANTERN':
-				@sound = 'BLOCK_NOTE_BLOCK_CHIME';
-			case 'WHITE_WOOL':
-			case 'ORANGE_WOOL':
-			case 'YELLOW_WOOL':
-			case 'RED_WOOL':
-			case 'PURPLE_WOOL':
-			case 'PINK_WOOL':
-			case 'MAGENTA_WOOL':
-			case 'LIME_WOOL':
-			case 'GREEN_WOOL':
-			case 'GRAY_WOOL':
-			case 'CYAN_WOOL':
-			case 'BROWN_WOOL':
-			case 'BLUE_WOOL':
-			case 'BLACK_WOOL':
-			case 'LIGHT_GRAY_WOOL':
-			case 'LIGHT_BLUE_WOOL':
-				@sound = 'BLOCK_NOTE_BLOCK_GUITAR';
-			case 'CLAY':
-				@sound = 'BLOCK_NOTE_BLOCK_FLUTE';
-			case 'GOLD_BLOCK':
-				@sound = 'BLOCK_NOTE_BLOCK_BELL';
-			case 'BONE_BLOCK':
-				@sound = 'BLOCK_NOTE_BLOCK_XYLOPHONE';
+				@instrument = 'chime';
+				@sound = 'BLOCK_NOTE_BLOCK_'.@instrument;
 		}
+		
 	
 		@clicks = @args[0];
 		@octave = 0;
@@ -93,6 +64,6 @@ register_command('note', array(
 			@pitch = _get_pitch(@notes[@clicks % 12], floor(@clicks / 12));
 		}
 		play_sound(@l, array('sound': @sound, 'category': 'RECORDS', 'pitch': @pitch));
-		sudo('/blockdata '.@l[0].' '.@l[1].' '.@l[2].' {"note":'.@clicks.'b}');
+		set_blockdata_string(@l, 'note_block[note='.@clicks.',instrument='.@instrument.']');
 	}
 ));

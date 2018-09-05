@@ -15,7 +15,7 @@ register_command('stairway', array(
 		if(!@args) {
 			return(false);
 		}
-		@player = @args[0];
+		@player = _get_nearby_player(get_command_block(), 3);
 		if(!array_contains(sk_current_regions(@player), 'stairway')) {
 			die();
 		}
@@ -26,7 +26,7 @@ register_command('stairway', array(
 			die();
 		}
 		if(array_size(@players) == 0) {
-			@players[@player] = 0;
+			@players[@player] = 'WHITE';
 			runas('~console', '/jukebox music @stairway http://finalscoremc.com/media/stairway.mp3 {volume:30,fadeDuration:2}');
 		} else {
 			@players[@player] = array_rand(reflect_pull('enum', 'DyeColor'), 1, false)[0];

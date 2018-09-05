@@ -323,7 +323,6 @@
     LADDER,
     LAPIS_BLOCK,
     LAPIS_LAZULI,
-    LARGE_FERN,
     LAVA_BUCKET,
     LEAD,
     LEATHER,
@@ -908,7 +907,7 @@ bind('inventory_click', array('id': 'shard-scavenger-inventoryclick'), array('cl
 		
 	if(@event['slotitem'] && @event['rawslot'] < @event['inventorysize']) {
 		@menu = pinventory_holder();
-		if(@menu == 'shardcard' || @menu == to_lower(player()).'card') {
+		if(@menu == 'shardcard' || @menu == player().'card') {
 		 	if(get_pscore('reroll', player(), 'shard')) {
 				die('You\'ve re-rolled an item already.');
 			}

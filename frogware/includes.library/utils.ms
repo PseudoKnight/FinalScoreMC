@@ -225,5 +225,5 @@ proc _fw_clear_blocks(@height = 1) {
 	@region = sk_region_info('frogware', 'custom')[0];
 	_iterate_cuboid(array(@region[0][0], @region[1][1], @region[0][2], 'custom'),
 		array(@region[1][0], @region[1][1] + @height - 1, @region[1][2], 'custom'),
-		0, 100);
+		'AIR', 100);
 }

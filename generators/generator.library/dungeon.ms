@@ -416,7 +416,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 							if(@layoutMap[@c][@r] === 'room') {
 								@blocks = _queue_block(@blocks, @loc, array_rand(@materials['ceiling'], 1, false)[0]);
 							} else {
-								@blocks = _queue_block(@blocks, @loc, 7);
+								@blocks = _queue_block(@blocks, @loc, 'BEDROCK');
 							}
 
 							// Bedrock level divider
@@ -425,7 +425,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 								if(@layoutMap[@c][@r] === 'room') {
 									@blocks = _queue_block(@blocks, @loc, @materials['empty']);
 								} else {
-									@blocks = _queue_block(@blocks, @loc, 7);
+									@blocks = _queue_block(@blocks, @loc, 'BEDROCK');
 								}
 							}
 						}

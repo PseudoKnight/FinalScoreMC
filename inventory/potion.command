@@ -80,7 +80,7 @@ register_command('potion', array(
 				''
 			);
 			// verify valid regular potion
-			if(@potionTypes[@id]
+			if(array_contains(@potionTypes, @id)
 			&& (@extended == 'true' || @extended == 'false')
 			&& (@upgraded == 'true' || @upgraded == 'false')) {
 				@item['meta']['base'] = associative_array(

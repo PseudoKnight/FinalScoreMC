@@ -6,6 +6,7 @@ proc _place_command_block(@loc, @face, @block) {
 		if(psneaking() || (@clicked != 'COMMAND_BLOCK' && @clicked != 'CHAIN_COMMAND_BLOCK' && @clicked != 'REPEATING_COMMAND_BLOCK')) {
 			@loc = location_shift(@loc, @face);
 			if(sk_can_build(@loc)) {
+				play_sound(@loc, array('sound': 'BLOCK_STONE_PLACE'));
 				set_blockdata_string(@loc, to_lower(@block).'[facing='.to_lower(@face).',conditional=false]');
 			}
 		}
@@ -14,13 +15,13 @@ proc _place_command_block(@loc, @face, @block) {
 
 bind('player_interact', null, associative_array('button': 'right', 'itemname': 'COMMAND_BLOCK'), @event) {
 	if(@event['action'] === 'right_click_block') {
-		_place_command_block(@event['location'], @event['facing'], @event['item']);
+		_place_command_block(@event['location'], @event['facing'], @event['item']['name']);
 	}
 }
 
 bind('player_interact', null, associative_array('button': 'right', 'itemname': 'CHAIN_COMMAND_BLOCK'), @event) {
 	if(@event['action'] === 'right_click_block') {
-		_place_command_block(@event['location'], @event['facing'], @event['item']);
+		_place_command_block(@event['location'], @event['facing'], @event['item']['name']);
 	}
 }
 
@@ -28,14 +29,16 @@ bind('player_interact', null, associative_array('button': 'right', 'itemname': '
 bind('block_break', null, array('block': 'COMMAND_BLOCK'), @event) {
 	if(!pisop() && sk_can_build(@event['location'])) {
 		set_block(@event['location'], 'AIR');
-		make_effect(@event['location'], 'STEP_SOUND:'.@event['block']);
+		play_sound(@event['location'], array('sound': 'BLOCK_STONE_BREAK'));
+		spawn_particle(@event['location'], array('particle': 'BLOCK_CRACK', 'block': @event['block']));
 	}
 }
 
 bind('block_break', null, array('block': 'CHAIN_COMMAND_BLOCK'), @event) {
 	if(!pisop() && sk_can_build(@event['location'])) {
 		set_block(@event['location'], 'AIR');
-		make_effect(@event['location'], 'STEP_SOUND:'.@event['block']);
+		play_sound(@event['location'], array('sound': 'BLOCK_STONE_BREAK'));
+		spawn_particle(@event['location'], array('particle': 'BLOCK_CRACK', 'block': @event['block']));
 	}
 }
 
@@ -54,7 +57,7 @@ proc _msg_block_command(@loc) {
 			'{"text":" [CONDITIONAL]","clickEvent":{"action":"run_command","value":"/scbconditional"}},'
 			.'{"text":" [TYPE]","clickEvent":{"action":"run_command","value":"/scbtype"}},'
 			.'{"text":" [COPY]","clickEvent":{"action":"suggest_command","value":"/scb '.@cmd.'"}},'
-			.'{"text":"\n'.@cmd.'"}]');
+			.'{"text":"\\n'.@cmd.'"}]');
 }
 
 bind('player_interact', null, associative_array('button': 'right', 'block': 'COMMAND_BLOCK'), @event) {

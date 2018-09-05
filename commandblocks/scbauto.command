@@ -19,9 +19,9 @@ register_command('scbauto', array(
 		} catch(FormatException @ex) {
 			die('You are looking at '.get_block(@block).'. That is not a command block.');
 		}
-		@x = @block['x'];
-		@y = @block['y'];
-		@z = @block['z'];
-		sudo("/blockdata @x @y @z {auto:@auto}");
+		@x = integer(@block['x']);
+		@y = integer(@block['y']);
+		@z = integer(@block['z']);
+		sudo("/data merge block @x @y @z {auto:@auto}");
 	}
 ));

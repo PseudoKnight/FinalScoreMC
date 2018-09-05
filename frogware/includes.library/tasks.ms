@@ -380,7 +380,7 @@ proc _fw_task(@task, @state, @secs) {
 				export('frogware.blocks', @blocks);
 			}
 			play_sound(@loc, array('sound': 'ENTITY_CHICKEN_EGG', 'volume': 3))
-			bind('player_interact', array('id': 'fwegg', 'priority': 'high'), array('block': 122), @e) {
+			bind('player_interact', array('id': 'fwegg', 'priority': 'high'), array('block': 'DRAGON_EGG'), @e) {
 				if(_fw_player(player())) {
 					play_sound(@e['location'], array('sound': 'ENTITY_CHICKEN_EGG', 'volume': 3))
 					consume()
@@ -704,13 +704,13 @@ proc _fw_task(@task, @state, @secs) {
 				for(@i = 0, @i < 7, @i++) {
 					@grid[@i] = array();
 					for(@j = 0, @j < 7, @j++) {
-						@grid[@i][@j] = rand(16);
+						@grid[@i][@j] = array_rand(@colors, 1)[0];
 					}
 				}
 				for(@x = @minX + 1, @x < @maxX, @x++) {
 					for(@z = @minZ + 1, @z < @maxZ, @z++) {
 						@c = @grid[min(6, integer((@x - @minX) / 5))][min(6, integer((@z - @minZ) / 5))];
-						set_block(array(@x, @y, @z, 'custom'), @blockcolor.'_CONCRETE', false);
+						set_block(array(@x, @y, @z, 'custom'), @c.'_CONCRETE', false);
 					}
 				}
 			}

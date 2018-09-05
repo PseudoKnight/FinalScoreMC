@@ -93,7 +93,7 @@ bind('block_dispense', null, array('type': 'DISPENSER'), @event, @ignored = arra
 // Custom noteblock sounds
 bind('note_play', null, null, @event) {
 	cancel();
-	@sound = 'BLOCK_NOTE_BLOCK_'.@event['instrument'];
+	@sound = '';
 	switch(get_block(location_shift(@event['location'], 'down'))) {
 		case 'ICE':
 		case 'PACKED_ICE':
@@ -124,29 +124,9 @@ bind('note_play', null, null, @event) {
 			@sound = 'FIREWORK_BLAST';
 		case 'SEA_LANTERN':
 			@sound = 'BLOCK_NOTE_BLOCK_CHIME';
-		case 'WHITE_WOOL':
-		case 'ORANGE_WOOL':
-		case 'YELLOW_WOOL':
-		case 'RED_WOOL':
-		case 'PURPLE_WOOL':
-		case 'PINK_WOOL':
-		case 'MAGENTA_WOOL':
-		case 'LIME_WOOL':
-		case 'GREEN_WOOL':
-		case 'GRAY_WOOL':
-		case 'CYAN_WOOL':
-		case 'BROWN_WOOL':
-		case 'BLUE_WOOL':
-		case 'BLACK_WOOL':
-		case 'LIGHT_GRAY_WOOL':
-		case 'LIGHT_BLUE_WOOL':
-			@sound = 'BLOCK_NOTE_BLOCK_GUITAR';
-		case 'CLAY':
-			@sound = 'BLOCK_NOTE_BLOCK_FLUTE';
-		case 'GOLD_BLOCK':
-			@sound = 'BLOCK_NOTE_BLOCK_BELL';
-		case 'BONE_BLOCK':
-			@sound = 'BLOCK_NOTE_BLOCK_XYLOPHONE';
+		default:
+			@data = reg_match('instrument\\=([a-z]+)', get_blockdata_string(@event['location']));
+			@sound = 'BLOCK_NOTE_BLOCK_'.@data[1];
 	}
 	play_sound(@event['location'], array(
 		'sound': @sound,
