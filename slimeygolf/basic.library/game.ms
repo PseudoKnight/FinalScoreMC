@@ -39,7 +39,7 @@ proc _start_game(@course, @loc) {
 		&& @event['action'] === 'right_click_block'
 		&& @event['facing'] === 'up'
 		&& string_ends_with(@event['block'], '_TERRACOTTA')
-		&& string_starts_with(@event['block'], @golf['colorholes'][@golf['players'][player()]['hole'] - 1])) {
+		&& string_starts_with(@event['block'], @golf['holecolors'][@golf['players'][player()]['hole'] - 1])) {
 
 			@ball = @golf['players'][player()];
 
@@ -97,6 +97,7 @@ proc _start_game(@course, @loc) {
 					);
 					set_pexp(0);
 					@ball['swing'] = true;
+					@tracer = array('particle': 'END_ROD');
 					set_interval(50, closure(){
 						@xp = pexp();
 						if(@xp < 99 && @ball['swing']) {
@@ -112,7 +113,7 @@ proc _start_game(@course, @loc) {
 						@v['z'] *= 1.15
 						@loc['x'] += @v['x'];
 						@loc['z'] += @v['z'];
-						spawn_particle(@loc, array('particle': 'BLOCK_DUST', 'block': 'SNOW_BLOCK', 'speed': 0));
+						spawn_particle(@loc, @tracer);
 					});
 				}
 			}
@@ -185,11 +186,9 @@ proc _start_game(@course, @loc) {
 					if(@golf['lowestHole'] == 1 && array_size(@golf['players']) < 4 && _add_player(@player, @golf)) {
 						@count++;
 					} else if(!array_contains(@golf['spectators'], @player)) {
-						set_collides_with_entities(@player, false);
 						@golf['spectators'][] = @player;
 					}
 				} else if(array_contains(@golf['spectators'], @player)) {
-					set_collides_with_entities(@player, true);
 					array_remove_values(@golf['spectators'], @player);
 				}
 				continue();
@@ -227,7 +226,7 @@ proc _start_game(@course, @loc) {
 							launch_firework(@loc,
 								array(strength: 1, trail: true, type: 'BALL_LARGE'));
 							play_sound(ploc(@player), array(sound: 'ENTITY_VILLAGER_YES'));
-						} else if(@hits == @par - 3) {
+						} else if(@hits == @par - 4) {
 							@type = 'Condor!!!';
 							launch_firework(@loc,
 								array(strength: 0, trail: true, type: 'BALL_LARGE'));
@@ -422,9 +421,6 @@ proc _start_game(@course, @loc) {
 proc _golf_cleanup(@golf) {
 	foreach(@player in array_keys(@golf['players'])) {
 		_remove_player(@player, @golf);
-	}
-	foreach(@p in @golf['spectators']) {
-		set_collides_with_entities(@p, true);
 	}
 	unbind(@golf['name']);
 	_remove_activity(@golf['name']);

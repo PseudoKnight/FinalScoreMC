@@ -267,7 +267,7 @@ proc _snake_kill(@player, @game) {
 }
 
 proc _snake_set_top(@snake) {
-	@snake['top'] = _snake_direction_of(@snake['loc'], '166:0');
+	@snake['top'] = _snake_direction_of(@snake['loc'], 'BARRIER');
 }
 
 proc _snake_move(@player, @game) {

@@ -36,7 +36,7 @@ register_command('acme', array(
 			set_block(@loc, 'ANVIL');
 			set_timeout(5000, closure(){
 				for(@i = @loc[1], @i > 0, @i--) {
-					if(get_block(array(@loc[0], @i, @loc[2], @loc[3])) == 'ANVIL') {
+					if(string_ends_with(get_block(array(@loc[0], @i, @loc[2], @loc[3])), 'ANVIL')) {
 						set_block(array(@loc[0], @i, @loc[2], @loc[3]), 'AIR');
 						make_effect(array(@loc[0], @i, @loc[2], @loc[3]), 'SMOKE:4');
 						break();

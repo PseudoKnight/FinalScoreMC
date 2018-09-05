@@ -128,8 +128,8 @@ proc _snake_powerup(@player, @powerup, @game) {
 			@item['qty'] += 1;
 			@inv[@slot] = @item;
 		} else {
-			@inv[@slot] = associative_array(
-				'type': _snake_get_block_from(@powerup),
+			@inv[@slot] = array(
+				'name': _snake_get_block_from(@powerup),
 				'meta': associative_array('display': _snake_get_name_from(@powerup)),
 			);
 		}
@@ -326,7 +326,7 @@ proc _snake_drop_nuke(@snake, @game) {
 			
 			// trigger nuke
 			@state = array('radius': 1, 'side': 0);
-			set_blockt(@target, 'FIRE', false);
+			set_block(@target, 'FIRE', false);
 			play_sound(@target, array('sound': 'ENTITY_GENERIC_EXPLODE', 'pitch': 0.5, 'volume': 3));
 			set_interval(50, closure(){
 				if(!array_contains(@game['nukes'], @region)) {

@@ -6,7 +6,7 @@ proc _place_ball(@mobtype, @loc, @ball, @course) {
 
 	@ball['id'] = spawn_entity('ARMOR_STAND', 1, @loc)[0];
 	@loc['y'] += 2;
-	@ball['slime'] = spawn_entity(@mobtype, 1, @loc, closure(@id, set_entity_spec(@e, array('size': 1))))[0];
+	@ball['slime'] = spawn_entity(@mobtype, 1, @loc, closure(@id, set_entity_spec(@id, array('size': 1))))[0];
 	@ball['velocity'] = array('x': 0, 'y': 0, 'z': 0);
 
 	set_entity_ai(@ball['slime'], false);
