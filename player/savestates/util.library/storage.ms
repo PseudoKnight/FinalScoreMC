@@ -49,7 +49,6 @@ proc _get_pstate(@player, @state) {
 	}
 
 	try {
-		// TODO: Figure out how this didn't clear some golden hearts from custom potions
 		foreach(@effect in get_peffect(@player)) {
 			set_peffect(@player, @effect['id'], 0, 0);
 		}
@@ -108,6 +107,7 @@ proc _clear_pstate(@player, @state) {
 	set_pbed_location(@player, get_spawn(pworld(@player)));
 	set_phealth(@player, 20);
 	set_phunger(@player, 20);
+	set_psaturation(@player, 5);
 	set_ptexp(@player, 0);
 	set_ponfire(@player, 0);
 	clear_peffects(@player);
