@@ -15,7 +15,7 @@ bind('player_interact', null, array('block': 'WALL_SIGN'), @event) {
 		}
 		
 		// cache current stock
-		if(@signLoc['world'] != 'shard') {
+		if(_is_survival_world(@signLoc['world'])) {
 			set_timeout(50, closure(){ // do this after a transaction
 				include('core.library/cache.ms');
 				_cache_shop(@shop);
@@ -30,7 +30,7 @@ bind('block_break', array('priority': 'LOWEST'), array('block': 'WALL_SIGN'), @e
 		include('core.library/shop.ms');
 		if(@shop = _sign_get_shop(@event['location'])) {
 			if(_is_shop_owner(@shop)) {
-				if(@shop['world'] != 'shard') {
+				if(_is_survival_world(@shop['world'])) {
 					include('core.library/cache.ms');
 					_remove_cached_shop(@shop);
 				}
@@ -48,7 +48,7 @@ bind('block_break', array('priority': 'LOWEST'), array('block': 'CHEST'), @event
 		include('core.library/shop.ms');
 		if(@shop = _sign_get_shop(location_shift(@event['location'], 'up'))) {
 			if(!_is_shop_owner(@shop) && !pisop()) {
-				if(@shop['world'] != 'shard') {
+				if(_is_survival_world(@shop['world'])) {
 					include('core.library/cache.ms');
 					_remove_cached_shop(@shop);
 				}
@@ -65,7 +65,7 @@ bind('block_break', array('priority': 'LOWEST'), array('block': 'TRAPPED_CHEST')
 		include('core.library/shop.ms');
 		if(@shop = _sign_get_shop(location_shift(@event['location'], 'up'))) {
 			if(!_is_shop_owner(@shop) && !pisop()) {
-				if(@shop['world'] != 'shard') {
+				if(_is_survival_world(@shop['world'])) {
 					include('core.library/cache.ms');
 					_remove_cached_shop(@shop);
 				}
