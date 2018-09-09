@@ -62,7 +62,7 @@ bind('player_interact', null, array('block': 'CAKE'), @event) {
 			console(player().' got '.@thiscake['coins'].' coins at '.@id, false);
 		}
 		make_effect(@event['location'], 'ENDER_SIGNAL');
-		make_effect(@event['location'], 'RECORD_PLAY:2263'); // TODO
+		play_sound(@event['location'], array('sound': 'MUSIC_DISC_STAL'));
 		@loc = @event['location'][];
 		@loc['x'] += 0.5;
 		@loc['y'] += 0.5;
@@ -71,7 +71,9 @@ bind('player_interact', null, array('block': 'CAKE'), @event) {
 		set_entity_spec(@cloud, array('particle': 'NOTE', 'radius': 1, 'duration': 160));
 		set_timeout(8800, closure(){
 			// turn off music
-			make_effect(@event['location'], 'RECORD_PLAY:0'); // TODO
+			foreach(@p in players_in_radius(@event['location'], 32)) {
+				stop_sound(@event['location'], 'MUSIC_DISC_STAL');
+			}
 		});
 	});
 }
