@@ -306,8 +306,20 @@ if(array_index_exists(@pvp['arena'], 'chestspawn')) {
 			&& @pvp['arena']['chestspawn'][@i]['loc'][2] == @e['location'][2]
 			&& array_index_exists(@pvp['arena']['chestspawn'][@i], 'cooldown')) {
 				cancel();
-				set_block(@e['location'], 'AIR');
-				make_effect(@e['location'], 'STEP_SOUND:54');
+				@loc = @e['location'];
+				set_block(@loc, 'AIR');
+				@loc = @e['location'];
+				@loc['x'] += 0.5;
+				@loc['y'] += 0.5;
+				@loc['z'] += 0.5;
+				spawn_particle(@loc, array(
+					'particle': 'BLOCK_CRACK',
+					'count': 10,
+					'xoffset': 0.5,
+					'yoffset': 0.5,
+					'zoffset': 0.5
+				));
+				play_sound(@loc, array('sound': 'BLOCK_WOOD_BREAK'));
 				@pvp['chestspawn'][@i] = time();
 				if(array_index_exists(@pvp, 'stats')) {
 					@pvp['stats'][player()]['pickups']++;
