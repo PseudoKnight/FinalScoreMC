@@ -147,7 +147,7 @@ proc _shard_create(@rules){
 				_add_activity('shard', @worldname.'//Shard');
 				
 				// Default procedures (overrideable)
-				proc _set_inventory_contents(@loc, @count) {
+				proc _set_inventory_contents(@loc, @count, @player) {
 					// Clear all inventory
 					if(has_metadata(@loc, 'loot')) {
 						return();
@@ -159,10 +159,8 @@ proc _shard_create(@rules){
 						@type = get_block(@loc);
 						foreach(@dir in array('north', 'south', 'east', 'west')) {
 							@checkLoc = location_shift(@loc, @dir);
-							if(get_block(@checkLoc) == @type && get_inventory_size(@checkLoc) == 54
-							&& @inv == get_inventory(@checkLoc)) {
-								set_metadata(@checkLoc, 'loot', 1);
-								break();
+							if(!has_metadata(@checkLoc, 'loot') && get_block(@checkLoc) == @type && get_inventory_size(@checkLoc) == 54) {
+								_set_inventory_contents(@loc, 0, @player);
 							}
 						}
 					}
