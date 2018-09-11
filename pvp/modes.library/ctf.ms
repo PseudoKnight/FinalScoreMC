@@ -1,5 +1,8 @@
 proc _pvp_flag_spawn(@id, @team, @loc) {
 	@pvp = import('pvp'.@id);
+	if(!@pvp['running']) {
+		return();
+	}
 	if(!is_array(@loc)) {
 		@loc = @pvp['arena']['ctfflag'][@team];
 	}
