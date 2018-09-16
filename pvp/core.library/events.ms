@@ -191,17 +191,17 @@ bind('player_death', array('priority': 'high', 'id': @id.'death'), null, @e, @id
 					msg(color('gold').@pvp['players'][player()]['picks'].' class picks left.');
 				}
 				if(!array_index_exists(@pvp['players'][player()], 'team') || @pvp['players'][player()]['team'] == 0) {
-					if(array_contains(get_virtual_inventories(), @id.'0')) {
-						set_timeout(300, closure(){
+					set_timeout(300, closure(){
+						if(array_contains(get_virtual_inventories(), @id.'0')) {
 							popen_inventory(player(), @id.'0');
-						});
-					}
+						}
+					});
 				} else {
-					if(array_contains(get_virtual_inventories(), @id.'1')) {
-						set_timeout(300, closure(){
+					set_timeout(300, closure(){
+						if(array_contains(get_virtual_inventories(), @id.'1')) {
 							popen_inventory(player(), @id.'1');
-						});
-					}
+						}
+					});
 				}
 			}
 		}
