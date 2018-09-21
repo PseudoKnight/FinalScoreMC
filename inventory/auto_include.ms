@@ -139,8 +139,11 @@ proc _minify_item(@item) {
 		if(array_index_exists(@item['meta'], 'inventory')) {
 			_minify_inv(@item['meta']['inventory']);
 		}
-		if(@item['meta']['unbreakable'] == false) {
+		if(array_index_exists(@item['meta'], 'unbreakable') && @item['meta']['unbreakable'] == false) {
 			array_remove(@item['meta'], 'unbreakable');
+		}
+		if(array_index_exists(@item['meta'], 'damage') && @item['meta']['damage'] == 0) {
+			array_remove(@item['meta'], 'damage');
 		}
 	}
 }
