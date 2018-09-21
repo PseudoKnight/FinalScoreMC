@@ -26,6 +26,15 @@ bind('player_join', null, null, @event) {
 
 	set_timeout(50, closure(){
 		@pdata = _pdata(player());
+		
+		if(array_index_exists(@pdata, 'world') && pworld() != @pdata['world']) {
+			@thisGroup = _world_group(pworld());
+			@previousGroup = _world_group(@pdata['world']);
+			if(@thisGroup != @previousGroup) {
+				console("Wrong world group! Expected @previousGroup but got @thisGroup");
+			}
+		}
+		
 		@title = colorize('&6&l\u1260 &d&l\u1260 &b&l\u1260 &4&l\u1260 &6&lFINALSCORE&e&lMC \u00AB &r\u25AA \u25AA \u25AA');
 		set_display_name(_colorname().player());
 		

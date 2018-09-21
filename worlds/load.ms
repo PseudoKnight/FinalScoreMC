@@ -5,7 +5,7 @@ if(!@worlds) {
 }
 @loadedWorlds = get_worlds();
 foreach(@id: @world in @worlds) {
-	if(!is_array(@world)) {
+	if(!is_array(@world) || array_index_exists(@world, 'enabled') && !@world['enabled']) {
 		continue();
 	}
 	if(!array_contains(@loadedWorlds, @id)) {
