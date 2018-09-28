@@ -5,7 +5,7 @@ bind('inventory_click', null, array('clicktype': 'SHIFT_RIGHT'), @event) {
 		die();
 	}
 	switch(@event['slotitem']['name']) {
-		case 'WORKBENCH':
+		case 'CRAFTING_TABLE':
 			cancel();
 			pworkbench();
 		case 'ENDER_CHEST':
