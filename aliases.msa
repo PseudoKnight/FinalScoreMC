@@ -68,23 +68,9 @@
 		export('recompile', true);
 	}
 
-	run('/save-off');
-	foreach(@world in get_worlds()) {
-		if(all_players(@world)) {
-			queue_push(closure(){
-				save_world(@world);
-			});
-		}
-	}
-	queue_push(closure(){
-		save_players();
-		set_timeout(100, closure(){
-			@start = time();
-			run('/recompile -rf'.if(!@clearGlobal, 'g'));
-			@stop = time();
-			broadcast(color('yellow').'Recompiled scripts!'.if(@message, ' "'.@message.'"').' ('.round((@stop - @start) / 1000, 2).'s)');
-			export('recompile', null);
-			run('/save-on');
-		});
-	});
+	@start = time();
+	run('/recompile -rf'.if(!@clearGlobal, 'g'));
+	@stop = time();
+	broadcast(color('yellow').'Recompiled scripts!'.if(@message, ' "'.@message.'"').' ('.round((@stop - @start) / 1000, 2).'s)');
+	export('recompile', null);
 <<<
