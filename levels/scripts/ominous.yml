@@ -133,7 +133,7 @@ waves:
         title: 'Fine. I will be merciful.'
         subtitle: 'My butler will show you to the door.'
         mobs:
-            - type: SLIME:
+            - type: SLIME
               name: 'GEORGE'
               pos: center
               tags:
