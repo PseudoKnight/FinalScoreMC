@@ -12,7 +12,7 @@ bind('entity_death', null, null, @event) {
 		if(@player) {
 			@width = get_world_border('outworld')['width'];
 			if(@width < 8192) {
-				@width = ceil(@width + 2);
+				@width = ceil(@width + @event['xp']);
 				set_world_border('outworld', array('width': @width, 'seconds': 1));
 				set_world_border('outworld_nether', array('width': @width / 8, 'seconds': 1));
 				action_msg(@player, color('green').'WorldBorder++ ('.@width.')');
