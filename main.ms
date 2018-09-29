@@ -34,7 +34,7 @@ set_cron('*/5 * * * *', closure(){
 				if(@count != 0) {
 					broadcast(@msg);
 					if(extension_exists('CHDiscord')) {
-						discord_broadcast(@msg);
+						discord_broadcast('chat', strip_colors(@msg));
 					}
 				}
 			});
