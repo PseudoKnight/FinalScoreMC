@@ -1,7 +1,7 @@
-register_command('setblock', array(
+register_command('setblockx', array(
 	'description': 'An extended setblock command with additional modes: timed, fall, toggle.',
-	'usage': '/setblock <x> <y> <z> <blockdata> [mode] [extra]',
-	'permission': 'command.setblock',
+	'usage': '/setblockx <x> <y> <z> <blockdata> [mode] [extra]',
+	'permission': 'command.setblockx',
 	'executor': closure(@alias, @sender, @args, @info) {
 		if(array_size(@args) < 4) {
 			return(false);

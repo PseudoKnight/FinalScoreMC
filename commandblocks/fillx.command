@@ -1,7 +1,7 @@
-register_command('fill', array(
+register_command('fillx', array(
 	'description': 'An extended fill command with additional modes: fall, toggle.',
-	'usage': '/fill <x1> <y1> <z1> <x2> <y2> <z2> <blockdata> [mode] [extra]',
-	'permission': 'command.setblock',
+	'usage': '/fillx <x1> <y1> <z1> <x2> <y2> <z2> <blockdata> [mode] [extra]',
+	'permission': 'command.setblockx',
 	'executor': closure(@alias, @sender, @args, @info) {
 		if(array_size(@args) < 4) {
 			return(false);

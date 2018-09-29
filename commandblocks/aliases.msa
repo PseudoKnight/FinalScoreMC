@@ -3,8 +3,22 @@
 	Usage Example: runalias /sayas Server @p Welcome to the server.
 */
 /sayas $from $to $ = >>>
-	_execute_on($to, closure(@uuid) {
-		tmsg(@uuid, colorize('&7'.$from.': &r'.$));
+	@loc = get_command_block();
+	@args = parse_args($);
+	foreach(@index: @arg in @args) {
+		if(string_position(@arg, '@p') == 0) {
+			@args[@index] = _get_nearby_player(@loc, 32);
+		}
+	}
+	@msg = array_implode(@args);
+	_execute_on($to, closure(@player) {
+		tmsg(@player, colorize('&7'.$from.': &r'.@msg));
+	});
+<<<
+
+/kill $selector = >>>
+	_execute_on($selector, closure(@player) {
+		damage_entity(puuid(@player), 40);
 	});
 <<<
 
@@ -74,6 +88,7 @@
 	Usage Example: runalias /bedspawn @p ~-1 ~ ~1
 */
 /bedspawn $target [$x] [$y] [$z] = >>>
+	@cmdblk = get_command_block();
 	_execute_on($target, closure(@player) {
 		if($x === '') {
 			set_pbed_location(@player, ploc(@player))
@@ -207,16 +222,16 @@
 			}
 			@arg2 = to_lower(data_name(@arg2));
 		}
-		@cmd = '/setblock '.$x.' '.$y.' '.$z.' '.@type.' timed '.@arg1.' '.@arg2;
+		@cmd = '/setblockx '.$x.' '.$y.' '.$z.' '.@type.' timed '.@arg1.' '.@arg2;
 		set_block_command(@cmdblk, @cmd);
 		run(@cmd);
 	} else if($mode == 'toggle') {
 		@replaceblock = to_lower(data_name($replaceid.':'.$replacedata));
-		@cmd = '/setblock '.$x.' '.$y.' '.$z.' '.@type.' toggle '.@replaceblock;
+		@cmd = '/setblockx '.$x.' '.$y.' '.$z.' '.@type.' toggle '.@replaceblock;
 		set_block_command(@cmdblk, @cmd);
 		run(@cmd);
 	} else if($mode == 'fall') {
-		@cmd = '/setblock '.$x.' '.$y.' '.$z.' '.@type.' fall';
+		@cmd = '/setblockx '.$x.' '.$y.' '.$z.' '.@type.' fall';
 		set_block_command(@cmdblk, @cmd);
 		run(@cmd);
 	}
@@ -254,16 +269,16 @@
 			}
 			@arg2 = to_lower(data_name(@arg2));
 		}
-		@cmd = '/fill '.$x1.' '.$y1.' '.$z1.' '.$x2.' '.$y2.' '.$z2.' '.@type.' timed '.@arg1.' '.@arg2;
+		@cmd = '/fillx '.$x1.' '.$y1.' '.$z1.' '.$x2.' '.$y2.' '.$z2.' '.@type.' timed '.@arg1.' '.@arg2;
 		set_block_command(@cmdblk, @cmd);
 		run(@cmd);
 	} else if($mode == 'toggle') {
 		@replaceblock = to_lower(data_name($replaceid.':'.$replacedata));
-		@cmd = '/fill '.$x1.' '.$y1.' '.$z1.' '.$x2.' '.$y2.' '.$z2.' '.@type.' toggle '.@replaceblock;
+		@cmd = '/fillx '.$x1.' '.$y1.' '.$z1.' '.$x2.' '.$y2.' '.$z2.' '.@type.' toggle '.@replaceblock;
 		set_block_command(@cmdblk, @cmd);
 		run(@cmd);
 	} else if($mode == 'fall') {
-		@cmd = '/fill '.$x1.' '.$y1.' '.$z1.' '.$x2.' '.$y2.' '.$z2.' '.@type.' fall';
+		@cmd = '/fillx '.$x1.' '.$y1.' '.$z1.' '.$x2.' '.$y2.' '.$z2.' '.@type.' fall';
 		set_block_command(@cmdblk, @cmd);
 		run(@cmd);
 	}
