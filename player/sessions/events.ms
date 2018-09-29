@@ -54,7 +54,7 @@ bind('player_join', null, null, @event) {
 					@hover = 'Last played: '.simple_date('MMM d, yyyy', @lastPlayed);
 				}
 				if(array_index_exists(@pdata, 'names')) {
-					@hover .= '\n&7'.array_implode(@pdata['names']);
+					@hover .= '\\n&7'.array_implode(@pdata['names']);
 				}
 				_tellraw(all_players(), array(array('colorize', @pre), array('hover', @name, @hover), @msg));
 				if(function_exists('discord_broadcast')) {
