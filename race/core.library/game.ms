@@ -186,9 +186,9 @@ proc _race_start(@race) {
 						}
 						set_entity_rider(null, puuid());
 						entity_remove(@vehicle);
-						unbind('@bind);
+						unbind(@bind);
 					}
-					_race_place_player(@race', player(), @p['loc']);
+					_race_place_player(@race, player(), @p['loc']);
 					set_timeout(1000, closure(){
 						_race_drop_player(@race, player());
 					});
