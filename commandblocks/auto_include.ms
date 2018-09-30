@@ -40,7 +40,7 @@ proc _get_nearby_player(@loc, @maxRange) {
 	@players = all_players(@loc[3]);
 	@player = null;
 	foreach(@p in @players) {
-		if(pmode(@p) == 'ADVENTURE') {
+		if(pmode(@p) != 'SPECTATOR') {
 			@dist = distance(ploc(@p), @loc);
 			if(@dist < @maxRange) {
 				@player = @p;
