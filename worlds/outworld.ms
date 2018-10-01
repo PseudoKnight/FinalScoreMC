@@ -11,11 +11,11 @@ bind('entity_death', null, null, @event) {
 		}
 		if(@player) {
 			@width = get_world_border('outworld')['width'];
-			if(@width < 8192) {
-				@width = ceil(@width + @event['xp']);
+			if(@event['xp'] - @width / 1000 > 0) {
+				@width += @event['xp'] - @width / 1000;
 				set_world_border('outworld', array('width': @width, 'seconds': 1));
 				set_world_border('outworld_nether', array('width': @width / 8, 'seconds': 1));
-				action_msg(@player, color('green').'WorldBorder++ ('.@width.')');
+				action_msg(@player, color('green').'WorldBorder++ ('.integer(@width).')');
 				play_sound(ploc(@player), array('sound': 'BLOCK_ENCHANTMENT_TABLE_USE', 'pitch': 0.5))
 			}
 		}
