@@ -121,7 +121,7 @@ bind('note_play', null, null, @event) {
 		case 'SLIME_BLOCK':
 			@sound = 'ENTITY_CHICKEN_EGG';
 		case 'COAL_BLOCK':
-			@sound = 'FIREWORK_BLAST';
+			@sound = 'ENTITY_FIREWORK_ROCKET_BLAST';
 		case 'SEA_LANTERN':
 			@sound = 'BLOCK_NOTE_BLOCK_CHIME';
 		default:
