@@ -44,16 +44,16 @@ bind('player_death', null, null, @event) {
 					http_request('http://www.wordgenerator.net/application/p.php?type=1&id=fake_words', array(
 						'method': 'GET',
 						'success': closure(@response){
-							if(!@response['error']) {
-								@names = split(',', @response['body']);
-								try {
+							try {
+								if(!@response['error']) {
+									@names = split(',', @response['body']);
 									set_mob_name(@damager, @names[0]);
 									set_entity_persistence(@damager, true);
 									array_remove(@names, 0);
 									store_value('mobnames', @names);
-								} catch(BadEntityException @ex) {
-									// ignore
 								}
+							} catch(Exception @ex) {
+								// ignore
 							}
 						}
 					));
