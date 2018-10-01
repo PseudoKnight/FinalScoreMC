@@ -82,7 +82,7 @@ proc _snake_queue(@mode) {
 		'3': array('name': 'LIME_CONCRETE', 'meta': array('display': 'Neon Green')),
 		'4': array('name': 'PINK_TERRACOTTA', 'meta': array('display': 'Red')),
 		'5': array('name': 'PINK_CONCRETE', 'meta': array('display': 'Neon Pink')),
-		'6': array('name': 'PURPLE_TERRACOTTA', 'meta': array('display': 'Purple')),
+		'6': array('name': 'MAGENTA_TERRACOTTA', 'meta': array('display': 'Purple')),
 		'7': array('name': 'YELLOW_CONCRETE', 'meta': array('display': 'Neon Yellow')),
 		'8': array('name': 'WHITE_CONCRETE', 'meta': array('display': 'Neon White')),
 	));
