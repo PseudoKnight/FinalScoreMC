@@ -7,7 +7,7 @@ register_command('tempboat', array(
 	},
 	'executor': closure(@alias, @sender, @args, @info) {
 		@loc = get_command_block();
-		@players = _get_nearby_player(@loc, 3);
+		@player = _get_nearby_player(@loc, 3);
 		if(!@player) {
 			die();
 		}
