@@ -12,7 +12,7 @@ bind('player_interact', null, array('block': 'CAULDRON', 'button': 'right'), @ev
 		@slot = -106;
 	}
 	@level = reg_match('level\\=(\\d)', get_blockdata_string(@event['location']))[1];
-	if(@level < 3 && @event['item']['name'] == 'POTION'){
+	if(@level < 3 && @event['item'] && @event['item']['name'] == 'POTION'){
 		@item = pinv(player(), @slot);
 		if(@item['meta']['base']['type'] == 'WATER') {
 			cancel();
@@ -79,7 +79,7 @@ bind('player_interact', null, array('block': 'CAULDRON', 'button': 'right'), @ev
 			} else {
 				set_blockdata_string(@event['location'], 'cauldron[level=0]');
 			}
-		}1
+		}
 
 	}
 }
