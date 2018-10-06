@@ -2,6 +2,8 @@ proc _player_remove(@player, @id) {
 	@pvp = import('pvp'.@id);
 	if(@pvp['arena']['mode'] === 'ctf' && !is_null(@flag = _flag(pinv(@player, 103)))) {
 		_pvp_flag_spawn(@id, @flag);
+	} else if(@pvp['arena']['mode'] == 'bombingrun' && phas_item(@player, @pvp['arena']['bomb'])) {
+		_pvp_bomb_spawn(@id);
 	}
 	if(array_index_exists(@pvp['players'][@player], 'class')) {
 		_class('unload', @player, @pvp['players'][@player]['class'], @pvp);

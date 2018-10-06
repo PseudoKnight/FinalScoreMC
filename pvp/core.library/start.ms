@@ -289,6 +289,13 @@ proc _pvp_start(@pvp, @id){
 			set_pscore('captures', @arena['team'][0]['name'], 0, @id);
 			team_add_player(@arena['team'][1]['name'], @arena['team'][1]['name'], @id);
 			set_pscore('captures', @arena['team'][1]['name'], 0, @id);
+		case 'bombingrun':
+			create_objective('bombs', 'DUMMY', @id);
+			set_objective_display('bombs', array('displayname': colorize(array_get(@arena, 'goalname', '&aBombs ('.@arena['score'].')')), 'slot': 'SIDEBAR'), @id);
+			team_add_player(@arena['team'][0]['name'], @arena['team'][0]['name'], @id);
+			set_pscore('bombs', @arena['team'][0]['name'], 0, @id);
+			team_add_player(@arena['team'][1]['name'], @arena['team'][1]['name'], @id);
+			set_pscore('bombs', @arena['team'][1]['name'], 0, @id);
 	}
 
 	include('game.ms');

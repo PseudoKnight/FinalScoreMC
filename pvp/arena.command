@@ -98,6 +98,7 @@ register_command('arena', array(
 					case 'resourcepack':
 					case 'respawnmode':
 					case 'goalname':
+					case 'bomb':
 
 						@arena[@setting] = @args[3];
 						msg(colorize('Set &a' . @setting . '&r to &a' . @args[3]));
@@ -105,6 +106,7 @@ register_command('arena', array(
 					# 2 string options
 					case 'captain':
 					case 'nametags':
+					case 'bombtarget':
 
 						@arena[@setting][0] = array(@args[3], @args[4]);
 						msg(colorize('Set &a' . @setting . '&r to &a' . @args[3] . '&r and &a' . @args[4] . '&r.'));
@@ -183,6 +185,7 @@ register_command('arena', array(
 					case 'lobby':
 					case 'podium':
 					case 'kothbeacon':
+					case 'bombloc':
 
 						if(_is_survival_world(pworld())) {
 							die(color('gold').'You can\'t set location in survival world.');
@@ -292,6 +295,7 @@ register_command('arena', array(
 							'ctf': 'Capture the Flag',
 							'koth': 'King of the Hill',
 							'infection': 'Zombie Infection',
+							'bombingrun': 'Bombing Run',
 						);
 						if(!array_index_exists(@modes, to_lower(@args[3]))) {
 							die(color('yellow').'Available modes: ' . @modes);

@@ -27,6 +27,8 @@ foreach(@name: @arena in @arenas) {
 			@lore[] = color('green').'King of the Hill';
 		} else if(@arena['mode'] == 'ctf') {
 			@lore[] = color('green').'Capture the Flag';
+		} else if(@arena['mode'] == 'bombingrun') {
+			@lore[] = color('green').'Bombing Run';
 		}
 	}
 	@lore[] = color('dark_gray').'Run: /warp '.@name;

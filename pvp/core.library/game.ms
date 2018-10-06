@@ -382,7 +382,7 @@ proc _pvp_check_objectives(@id) {
 	}
 
 	#check team scores
-	if(@pvp['arena']['mode'] === 'ctf'
+	if(@pvp['arena']['mode'] === 'ctf' || @pvp['arena']['mode'] === 'bombingrun'
 	&& (@pvp['team'][0]['score'] >= @pvp['arena']['score'] || @pvp['team'][1]['score'] >= @pvp['arena']['score'])) {
 		if(@pvp['team'][0]['score'] >= @pvp['arena']['score']) {
 			@topteam = 0
@@ -490,6 +490,8 @@ proc _pvp_end_match(@id, @winners) {
 		if(@pvp['arena']['mode'] === 'ctf') {
 			queue_clear(@id.'0flag')
 			queue_clear(@id.'1flag')
+		} else if(@pvp['arena']['mode'] === 'bombingrun') {
+			queue_clear(@id.'bomb');
 		}
 
 		if(array_index_exists(@pvp['arena'], 'captain')) {
