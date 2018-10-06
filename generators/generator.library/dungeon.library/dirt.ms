@@ -29,8 +29,8 @@ proc _materials(@level) {
 		'ladder': 'AIR',
 		'ceiling': array('AIR'),
 		'floor': array('BROWN_TERRACOTTA'),
-		'utility': array('YELLOW_CONCRETE', 'LIMTE_CONCRETE'),
-		'decor': array('YELLOW_CONCRETE', 'LIMTE_CONCRETE'),
+		'utility': array('YELLOW_CONCRETE', 'LIME_CONCRETE'),
+		'decor': array('YELLOW_CONCRETE', 'LIME_CONCRETE'),
 		'edge': array('AIR', 'AIR', 'AIR', 'AIR'),
 	));
 }

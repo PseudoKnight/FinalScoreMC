@@ -41,6 +41,7 @@ proc _worms_shoot_projectile(@player, @game) {
 						if(@count[1] == 0 && @p == player()) {
 							continue();
 						}
+						@game['segments'][] = @segment;
 						@index = array_index(@worm['segments'], @e['uuid']);
 						if(!is_null(@index)) {
 							clear_task();
