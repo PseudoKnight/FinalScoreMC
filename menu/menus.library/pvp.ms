@@ -46,3 +46,7 @@ bind('world_changed', null, null, @event) {
 		set_timeout(250, closure(_menu_refresh_pvp()));
 	}
 }
+
+bind('player_join', null, array('world': 'custom'), @event) {
+	set_timeout(250, closure(_menu_refresh_pvp()));
+}
