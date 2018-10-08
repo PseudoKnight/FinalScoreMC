@@ -25,9 +25,17 @@ register_command('greatrace', array(
 
 		# Get target location
 		if(!@args) {
-			@border = yml_decode(read('../../../WorldBorder/config.yml'))['worlds'][@world];
-			@x = @border['x'] - @border['radiusX'] + rand(@border['radiusX'] * 2);
-			@z = @border['z'] - @border['radiusZ'] + rand(@border['radiusZ'] * 2);
+			@worlds = yml_decode(read('../../../WorldBorder/config.yml'))['worlds'];
+			@x = 0;
+			@z = 0;
+			if(array_index_exists(@worlds, @world)) {
+				@border = @worlds[@world];
+				@x = @border['x'] - @border['radiusX'] + rand(@border['radiusX'] * 2);
+				@z = @border['z'] - @border['radiusZ'] + rand(@border['radiusZ'] * 2);
+			} else {
+				@x += rand(4096 * 2) - 4096;
+				@z += rand(4096 * 2) - 4096;
+			}
 			@target = get_highest_block_at(@x, @z, @world);
 		} else if(array_size(@args) == 2) {
 			@target = get_highest_block_at(@args[0], @args[1], @world);
