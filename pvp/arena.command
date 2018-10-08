@@ -521,8 +521,12 @@ register_command('arena', array(
 						if(!is_numeric(@args[5])) {
 							die(color('gold').'Respawn time must be a number in seconds.');
 						}
+						@loc = location_shift(ploc(), 'up');
+						@loc = array_normalize(@loc)[0..3];
+						@loc[0] = round(@loc[0], 1);
+						@loc[2] = round(@loc[2], 1);
 						@arena['mobspawn'][] = array(
-							'loc': array(round(ploc()[0], 1), ploc()[1] + 1, round(ploc()[2], 1)),
+							'loc': @loc,
 							'type': @args[3],
 							'qty': @args[4],
 							'respawn': @args[5],
