@@ -64,7 +64,7 @@ proc _interval(@pvp, @id) {
 			}
 		}
 		
-		@team = get_teams(@id)[0];
+		@team = get_teams(@id)['king'];
 		if(@hillcount == 1) {
 			@score = get_pscore('seconds', @king, @id);
 			set_pscore('seconds', @king, @score + 1, @id);
