@@ -133,7 +133,12 @@
 	if(!_execute_on($target, @closure)) {
 		# entity is not a player
 		@loc = get_command_block();
-		@entities = entities_in_radius(@loc, 3, $target);
+		try {
+			@entities = entities_in_radius(@loc, 3, $target);
+		} catch(BadEntityException @ex) {
+			// not an entity type
+			die();
+		}
 		@entity = '';
 		if(array_size(@entities) > 1) {
 			@closest = 3;
