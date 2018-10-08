@@ -85,7 +85,7 @@ proc _weapon_hit_scan(@player, @range, @damage, @effects, @pvp){
 		@particles = 0;
 		while(@particles++ <= @maxParticles) {
 			@origin = location_shift(@origin, @location, @distance);
-			spawn_particle(@origin, @effects['hitparticle']);
+			spawn_particle(@origin, @effects['tracerparticle']);
 		}
 	}
 	
