@@ -199,12 +199,12 @@ register_command('hockey', array(
 							if(!array_contains(@hockey['players'], @p)) {
 								@hockey['players'][] = @p;
 								@teams = get_teams('hockey');
-								if(array_size(@teams[0]['players']) > array_size(@teams[1]['players'])) {
-									team_add_player(@teams[1]['name'], @p, 'hockey');
-									if(@teams[1]['name'] == 'red', set_pinv(@p, @hockey['redgear']), set_pinv(@p, @hockey['bluegear']));
+								if(array_size(@teams['red']['players']) > array_size(@teams['blue']['players'])) {
+									team_add_player('blue', @p, 'hockey');
+									set_pinv(@p, @hockey['bluegear']);
 								} else {
-									team_add_player(@teams[0]['name'], @p, 'hockey');
-									if(@teams[0]['name'] == 'red', set_pinv(@p, @hockey['redgear']), set_pinv(@p, @hockey['bluegear']));
+									team_add_player('red', @p, 'hockey');
+									set_pinv(@p, @hockey['redgear']);
 								}
 								set_pheld_slot(@p, 0);
 								set_pscoreboard(@p, 'hockey');
@@ -342,7 +342,6 @@ register_command('hockey', array(
 			unbind('hockey-interact');
 			unbind('hockey-quit');
 			unbind('hockey-target');
-			@teams = get_teams('hockey');
 			@winner = null;
 			@redscore = get_pscore('score', @hockey['red'], 'hockey');
 			@bluescore = get_pscore('score', @hockey['blue'], 'hockey');
@@ -358,13 +357,8 @@ register_command('hockey', array(
 			}
 			@msg = 'Tied game!';
 			if(@winner) {
-				@winners = associative_array();
-				foreach(@t in @teams) {
-					if(@t['name'] == @winner) {
-						@winners = @t;
-					}
-				}
-				@msg = @winners['displayname'].' won! '.color('bold').@score;
+				@teams = get_teams('hockey');
+				@msg = @teams[@winner]['displayname'].' won! '.color('bold').@score;
 			}
 			broadcast(@msg, @hockey['players']);
 			remove_scoreboard('hockey');
