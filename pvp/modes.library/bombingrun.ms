@@ -27,6 +27,7 @@ proc _is_bomb(@id, @item) {
 }
 
 _pvp_bomb_spawn(@id);
+@pvp['bombholder'] = null;
 
 @pvp['binds'][] = @id.'bombpickup';
 bind('item_pickup', array('id': @id.'bombpickup'), null, @event, @id, @pvp) {
@@ -34,28 +35,29 @@ bind('item_pickup', array('id': @id.'bombpickup'), null, @event, @id, @pvp) {
 	&& _is_bomb(@id, @event['item'])) {
 		queue_clear(@id.'bomb');
 		@pvp['bombholder'] = player();
-		set_pinv(player(), 102, array('name': 'GOLDEN_CHESTPLATE'));
+		set_pinv(player(), array(-106: @event['item'], 102: array('name': 'GOLDEN_CHESTPLATE')));
+		modify_event('item', null);
 	}
 }
 
 @pvp['binds'][] = @id.'protectdrops';
-bind('entity_damage', array('id': @id.'protectdrops'), array('type': 'DROPPED_ITEM'), @event,
-@region = @pvp['arena']['region']) {
-	if(array_contains(sk_regions_at(entity_loc(@event['id'])), @region)) {
+bind('entity_damage', array('id': @id.'protectdrops'), array('type': 'DROPPED_ITEM'), @event, @pvp) {
+	if(array_contains(sk_regions_at(entity_loc(@event['id'])), @pvp['arena']['region'])
+	&& entity_spec(@event['id'])['itemstack']['name'] == @pvp['arena']['bomb']) {
 		cancel();
 	}
 }
 
 @pvp['binds'][] = @id.'bombdrop';
 bind('item_drop', array('id': @id.'bombdrop'), array('itemname': @pvp['arena']['bomb']), @event, @pvp) {
-	if(array_contains(sk_regions_at(entity_loc(@event['id'])), @region)) {
+	if(array_contains(sk_current_regions(), @region)) {
 		@pvp['bomb'] = @event['id'];
 		@pvp['bombholder'] = null;
 	}
 }
 
 @pvp['binds'][] = @id.'firedancer';
-bind('player_move', array('id': @id.'firedancer'), null, @event, @pvp) {
+bind('player_move', array('id': @id.'firedancer'), null, @event, @pvp, @id) {
 	if(@pvp['bombholder'] == @event['player']) {
 		@regions = sk_current_regions(@event['player']);
 		@team = null;
@@ -65,10 +67,12 @@ bind('player_move', array('id': @id.'firedancer'), null, @event, @pvp) {
 			@team = 0;
 		}
 		if(!is_null(@team)) {
-			if(ptake_item(array('name': @pvp['arena']['bomb']))) {
+			@item = pinv(player(), -106);
+			if(@item && @item['name'] == @pvp['arena']['bomb'] || ptake_item(array('name': @pvp['arena']['bomb']))) {
+				set_pinv(player(), -106, null);
 				explosion(location_shift(@event['to'], 'up'), 3, true);
 				@pvp['team'][@team]['score']++;
-				set_pscore('bombs', @pvp['arena']['team'][@team]['name'], @pvp['team'][@team]['score'], @id)
+				set_pscore('bombs', @pvp['arena']['team'][@team]['name'], @pvp['team'][@team]['score'], @id);
 				_pvp_msg(@pvp, color('gray').'[PVP] '
 					.@pvp['arena']['team'][@team]['color'].player().color('r').' blew up the target!');
 				if(array_index_exists(@pvp['arena'], 'rsoutputscore')) {

@@ -2,7 +2,7 @@ proc _player_remove(@player, @id) {
 	@pvp = import('pvp'.@id);
 	if(@pvp['arena']['mode'] === 'ctf' && !is_null(@flag = _flag(pinv(@player, 103)))) {
 		_pvp_flag_spawn(@id, @flag);
-	} else if(@pvp['arena']['mode'] == 'bombingrun' && phas_item(@player, @pvp['arena']['bomb'])) {
+	} else if(@pvp['arena']['mode'] == 'bombingrun' && phas_item(@player, array('name': @pvp['arena']['bomb']))) {
 		_pvp_bomb_spawn(@id);
 	}
 	if(array_index_exists(@pvp['players'][@player], 'class')) {
@@ -183,9 +183,13 @@ proc _player_reset(@player, @pvp) {
 	set_psaturation(@player, 0);
 	set_pexp(@player, 0);
 	clear_peffects(@player);
-	set_entity_rider(puuid(@player), null);
-	set_entity_rider(null, puuid(@player));
-	set_entity_fall_distance(puuid(@player), 0);
+	try {
+		set_entity_rider(puuid(@player), null);
+		set_entity_rider(null, puuid(@player));
+		set_entity_fall_distance(puuid(@player), 0);
+	} catch(BadEntityException @ex) {
+		// ignore
+	}
 	try {
 		set_phealth(@player, 20);
 	} catch(RangeException @ex) {
