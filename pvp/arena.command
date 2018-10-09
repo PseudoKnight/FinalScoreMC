@@ -106,9 +106,11 @@ register_command('arena', array(
 					# 2 string options
 					case 'captain':
 					case 'nametags':
-					case 'bombtarget':
-
 						@arena[@setting][0] = array(@args[3], @args[4]);
+						msg(colorize('Set &a' . @setting . '&r to &a' . @args[3] . '&r and &a' . @args[4] . '&r.'));
+						
+					case 'bombtarget':
+						@arena[@setting] = array(@args[3], @args[4]);
 						msg(colorize('Set &a' . @setting . '&r to &a' . @args[3] . '&r and &a' . @args[4] . '&r.'));
 
 					# boolean option (true default)
