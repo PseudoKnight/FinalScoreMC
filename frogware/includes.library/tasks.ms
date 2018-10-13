@@ -233,7 +233,7 @@ proc _fw_task(@task, @state, @secs) {
 					set_blockdata_string(_fw_loc(), 'minecraft:cake[bites=4]')
 				}
 			}
-			bind('player_interact', array('id': 'fwcake'), array('block': 92), @e) {
+			bind('player_interact', array('id': 'fwcake'), array('block': 'CAKE'), @e) {
 				if(_fw_player(player())
 				&& _fw_changeteam(player(), 'winners')) {
 					play_sound(ploc(), array('sound': 'ENTITY_ZOMBIE_ATTACK_IRON_DOOR'), player())
