@@ -87,7 +87,7 @@ register_command('spleef', array(
 				set_ploc(@cfg['warp']['material']);
 				msg(color('yellow').'Pick a block.');
 				bind('player_interact', null, array('player': player()), @event, @cfg) {
-					if(@event['block'] != 0 && array_contains(sk_regions_at(@event['location']), @cfg['region']['material'])) {
+					if(@event['block'] && array_contains(sk_regions_at(@event['location']), @cfg['region']['material'])) {
 						@blocktype = get_block(@event['location']);
 						set_block(@cfg['option']['material'], @blocktype);
 						msg(color('green').'[Spleef] '.color('r').'You have selected '.color('6').data_name(@blocktype).'.');
