@@ -50,10 +50,10 @@ register_command('entitycount', array(
 				}
 			}
 		}
-		msg(color('green').'Totals by Entity Type '.color('gray').'(at least 10)');
+		msg(color('green').'Totals by Entity Type '.color('gray').'(at least 5)');
 		@other = 0;
 		foreach(@type: @count in @specificTypes) {
-			if(@count > 9) {
+			if(@count > 5) {
 				msg(@type.': '.@count);
 			} else {
 				@other += @count;
