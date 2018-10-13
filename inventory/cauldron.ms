@@ -14,7 +14,7 @@ bind('player_interact', null, array('block': 'CAULDRON', 'button': 'right'), @ev
 	@level = reg_match('level\\=(\\d)', get_blockdata_string(@event['location']))[1];
 	if(@level < 3 && @event['item'] && @event['item']['name'] == 'POTION'){
 		@item = pinv(player(), @slot);
-		if(@item['meta']['base']['type'] == 'WATER') {
+		if(@item['meta'] && @item['meta']['base']['type'] == 'WATER') {
 			cancel();
 
 			// Fill cauldron with some water
