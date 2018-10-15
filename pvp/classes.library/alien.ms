@@ -70,7 +70,7 @@ case 'load':
 			make_effect(location_shift(@loc1, 'up', 2), 'ENDER_SIGNAL');
 		}
 
-		play_named_sound(ploc(), array('sound': 'ENTITY_ELDER_GUARDIAN_HURT', 'pitch': 2));
+		play_sound(ploc(), array('sound': 'ENTITY_ELDER_GUARDIAN_HURT', 'pitch': 2));
 		try {
 			@item = pinv(player(), null);
 			@item['qty']--;
