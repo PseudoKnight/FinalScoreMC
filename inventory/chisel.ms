@@ -39,7 +39,7 @@ bind('player_interact', null, array('button': 'right'), @event) {
 	@unbreaking = 0;
 	if(@item['meta']) {
 		if(array_index_exists(@item['meta']['enchants'], 'unbreaking')) {
-			@unbreaking = @item['meta']['enchants']['unbreaking'];
+			@unbreaking = @item['meta']['enchants']['unbreaking']['elevel'];
 		}
 	} else {
 		@item['meta'] = associative_array('damage': 0);

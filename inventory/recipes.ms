@@ -212,7 +212,7 @@ bind('inventory_click', null, array('slottype': 'RESULT'), @event) {
 			@slotitem['meta']['lore'] = @event['inventory'][1]['meta']['lore'];
 
 			if(array_size(@slotitem['meta']['enchants']) == 0) {
-				@slotitem['meta']['enchants'] = array('unbreaking': 1);
+				@slotitem['meta']['enchants'] = array('unbreaking': array('elevel': 1));
 				@slotitem['meta']['flags'][] = 'HIDE_ENCHANTS';
 			}
 
