@@ -1,17 +1,3 @@
-proc _get_options() {
-	return(array(
-		'level': 1,
-		'maxRoomHeight': 16,
-	));
-}
-
-proc _set_locations(@start, @end, @spawns){
-	@pvp = import('pvpstatic');
-	if(@pvp) {
-		@pvp['arena']['spawn'] = array(array(@end), array(@start));
-	}
-}
-
 proc _get_loot(@level, @random, @loot = array(
 	array(0.25, associative_array('name': 'HEAVY_WEIGHTED_PRESSURE_PLATE', 'meta': associative_array('display': 'MINE'))),
 	array(0.25, associative_array('name': 'BREAD')),
@@ -58,28 +44,4 @@ proc _get_loot(@level, @random, @loot = array(
 		}
 	}
 	return(@inv);
-}
-
-proc _materials(@level) {
-	return(associative_array(
-		'empty': 'WATER',
-		'wall': array('BEDROCK'),
-		'room': 'AIR',
-		'door': 'AIR',
-		'column': 'BEDROCK',
-		'ladder': 'LADDER',
-		'ceiling': array('BEDROCK'),
-		'floor': array('REDSTONE_ORE', 'MYCELIUM'),
-		'utility': array('BEDROCK'),
-		'decor': array('BEDROCK'),
-		'edge': array('BEDROCK', 'BEDROCK', 'BEDROCK', 'BEDROCK'),
-	));
-}
-
-proc _level_mobs(@level) {
-	return(array());
-}
-
-proc _spawn_entity(@loc, @level) {
-	noop();
 }

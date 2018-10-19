@@ -1,0 +1,12 @@
+maxRoomHeight: 16
+levels:
+    0:
+        spawner: []
+        empty: WATER
+        wall: BEDROCK
+        column: BEDROCK
+        ceiling: BEDROCK
+        floor: ['REDSTONE_ORE', 'MYCELIUM']
+        utility: BEDROCK
+        decor: BEDROCK
+        edge: BEDROCK

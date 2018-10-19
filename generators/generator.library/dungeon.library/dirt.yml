@@ -1,0 +1,27 @@
+maxRoomHeight: 2
+roof: false
+chestCount: -1
+spawnChance: 0.15
+extraDoors: 0.1
+levels:
+    0:
+        spawner: []
+        wall: POLISHED_ANDESITE
+        column: YELLOW_CONCRETE
+        ceiling: AIR
+        floor: BROWN_TERRACOTTA
+        utility: ['YELLOW_CONCRETE', 'LIME_CONCRETE']
+        decor: ['YELLOW_CONCRETE', 'LIME_CONCRETE']
+        edge: AIR
+duplicateOffset: 12
+duplicateDir: up
+duplicateLevels:
+    0:
+        spawner: []
+        wall: BARRIER
+        column: AIR
+        ceiling: AIR
+        floor: BARRIER
+        utility: AIR
+        decor: AIR
+        edge: AIR

@@ -12,7 +12,10 @@ register_command('generate', array(
 		if(@args[0] == 'reload') {
 			_generator_reload();
 		} else {
-			_generator_create(@args[0], @args[1], @args[2], pworld(), integer(array_get(@args, 3, 0)));
+			_generator_create(@args[0], @args[1], @args[2], pworld(), integer(array_get(@args, 3, 0)), closure(@start, @end, @spawns) {
+				set_ploc(@start);
+				set_block(@end, 'BEACON', false);
+			});
 		}
 	}
 ));

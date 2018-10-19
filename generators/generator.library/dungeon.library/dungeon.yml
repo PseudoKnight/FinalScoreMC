@@ -1,0 +1,109 @@
+maxRoomHeight: 9
+levels:
+    0:
+        spawner: []
+        wall: ['STONE', 'STONE', 'STONE', 'STONE', 'STONE', 'STONE', 'STONE', 'STONE', 'ANDESITE', 'ANDESITE', 'ANDESITE', 'IRON_ORE']
+        column: STONE
+        ceiling: ['STONE', 'STONE', 'STONE', 'STONE', 'STONE', 'STONE', 'STONE', 'STONE', 'ANDESITE', 'ANDESITE', 'ANDESITE', 'IRON_ORE']
+        floor: ['STONE', 'STONE', 'STONE', 'STONE', 'STONE', 'STONE', 'STONE', 'STONE', 'ANDESITE', 'ANDESITE', 'ANDESITE', 'IRON_ORE']
+        utility: GOLD_ORE
+        decor: STONE
+        edge: STONE
+    1:
+        spawner: ['CAVE_SPIDER', 'SPIDER']
+        wall: ACACIA_LOG
+        column: DARK_OAK_LOG
+        ceiling: ['BIRCH_LEAVES', 'DARK_OAK_LEAVES']
+        floor: ['GRASS_BLOCK', 'PODZOL']
+        utility: CRAFTING_TABLE
+        decor: ['BIRCH_LEAVES', 'COBWEB']
+        edge: ACACIA_LEAVES
+    2:
+        spawner: ['ENDER_CRYSTAL', 'ZOMBIE_VILLAGER']
+        wall: ['SANDSTONE', 'SMOOTH_SANDSTONE']
+        column: CHISELED_SANDSTONE
+        ceiling: SANDSTONE
+        floor: TERRACOTTA
+        utility: CRAFTING_TABLE
+        decor: DEAD_BUSH
+        edge:
+            north: 'sandstone_stairs[half=top,facing=north]'
+            east: 'sandstone_stairs[half=top,facing=east]'
+            south: 'sandstone_stairs[half=top,facing=south]'
+            west: 'sandstone_stairs[half=top,facing=west]'
+    3:
+        spawner: []
+        wall: ['SNOW_BLOCK', 'PACKED_ICE']
+        column: PACKED_ICE
+        ceiling: ['SNOW_BLOCK', 'PACKED_ICE']
+        floor: ['SNOW_BLOCK', 'PACKED_ICE']
+        utility: CRAFTING_TABLE
+        decor: PACKED_ICE
+        edge: SNOW_BLOCK
+    4:
+        spawner: ['PIG_ZOMBIE', 'MAGMA_CUBE', 'BLAZE']
+        wall: NETHER_BRICKS
+        column: NETHER_BRICK_FENCE
+        ceiling: NETHER_BRICKS
+        floor: ['NETHER_BRICKS', 'NETHER_BRICKS', 'NETHER_BRICKS', 'NETHER_BRICKS', 'NETHER_BRICKS', 'NETHER_BRICKS', 'MAGMA_BLOCK', 'SOUL_SAND']
+        utility: ['FURNACE', 'DAMAGED_ANVIL']
+        decor: CAULDRON
+        edge:
+            north: 'nether_brick_stairs[half=top,facing=north]'
+            east: 'nether_brick_stairs[half=top,facing=east]'
+            south: 'nether_brick_stairs[half=top,facing=south]'
+            west: 'nether_brick_stairs[half=top,facing=west]'
+    5:
+        spawner: ['ENDER_CRYSTAL', 'SKELETON', 'WITCH', 'CREEPER']
+        wall: ['POLISHED_ANDESITE', 'STONE_BRICKS', 'MOSSY_STONE_BRICKS', 'CRACKED_STONE_BRICKS', 'INFESTED_CRACKED_STONE_BRICKS']
+        column: BOOKSHELF
+        ceiling: STONE_BRICKS
+        floor: ['MOSSY_STONE_BRICKS', 'MOSSY_STONE_BRICKS', 'MOSSY_STONE_BRICKS', 'MOSSY_STONE_BRICKS', 'MOSSY_STONE_BRICKS', 'MOSSY_STONE_BRICKS', 'CRACKED_STONE_BRICKS', 'CRACKED_STONE_BRICKS', 'WATER']
+        utility: ['CRAFTING_TABLE', 'ENCHANTING_TABLE', 'BREWING_STAND', 'CAULDRON']
+        decor: RAIL
+        edge:
+            north: 'stone_brick_stairs[half=top,facing=north]'
+            east: 'stone_brick_stairs[half=top,facing=east]'
+            south: 'stone_brick_stairs[half=top,facing=south]'
+            west: 'stone_brick_stairs[half=top,facing=west]'
+    6:
+        spawner: ['GUARDIAN']
+        wall: PRISMARINE_BRICKS
+        room: WATER
+        door: WATER
+        column: PRISMARINE_BRICKS
+        ceiling: PRISMARINE
+        floor: DARK_PRISMARINE
+        utility: SEA_LANTERN
+        decor: SEA_LANTERN
+        edge:
+            north: 'dark_prismarine_stairs[half=top,facing=north]'
+            east: 'dark_prismarine_stairs[half=top,facing=east]'
+            south: 'dark_prismarine_stairs[half=top,facing=south]'
+            west: 'dark_prismarine_stairs[half=top,facing=west]'
+    7:
+        spawner: ['VINDICATOR']
+        wall: DARK_OAK_PLANKS
+        column: COBBLESTONE_WALL
+        ceiling: BIRCH_PLANKS
+        floor: BIRCH_PLANKS
+        utility: ENCHANTING_TABLE
+        decor: BOOKSHELF
+        edge:
+            north: 'birch_stairs[half=top,facing=north]'
+            east: 'birch_stairs[half=top,facing=east]'
+            south: 'birch_stairs[half=top,facing=south]'
+            west: 'birch_stairs[half=top,facing=west]'
+    8:
+        spawner: ['ENDER_CRYSTAL', 'ENDERMITE', 'ENDERMAN', 'SHULKER']
+        wall: PURPUR_BLOCK
+        column: PURPUR_PILLAR
+        ceiling: PURPUR_BLOCK
+        floor: END_STONE
+        utility: ENCHANTING_TABLE
+        decor: CHORUS_PLANT
+        edge:
+            north: 'purpur_stairs[half=top,facing=north]'
+            east: 'purpur_stairs[half=top,facing=east]'
+            south: 'purpur_stairs[half=top,facing=south]'
+            west: 'purpur_stairs[half=top,facing=west]'

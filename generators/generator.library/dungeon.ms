@@ -1,8 +1,19 @@
 proc _generate(@dungeonType, @region, @world, @seed, @callback) {
-	include('dungeon.library/'.@dungeonType.'.ms');
+	// default procs
+	proc _set_locations(@start, @end, @spawns) {
+		noop();
+	}
 	
-	@options = _get_options();
-	@level = array_get(@options, 'level', 1);
+	proc _get_loot(@level, @random, @loot = array()) {
+		return(@loot);
+	}
+	
+	try {
+		include('dungeon.library/'.@dungeonType.'.ms');
+	} catch(IncludeException @ex) {
+		// doesn't exist, but that's okay
+	}
+	@options = yml_decode(read('/dungeon.library/'.@dungeonType.'.yml'));
 	@scale = array_get(@options, 'scale', 2);
 	@minRoomSize = array_get(@options, 'minRoomSize', 3);
 	@maxRoomSize = array_get(@options, 'maxRoomSize', 11);
@@ -13,6 +24,29 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 	@extraDoors = array_get(@options, 'extraDoors', 0.0);
 	@duplicateOffset = array_get(@options, 'duplicateOffset', 0);
 	@duplicateDir = array_get(@options, 'duplicateDir', '');
+	
+	// process levels config to standard format
+	foreach(@level in @options['levels']) {
+		foreach(@key: @value in @level) {
+			if(is_string(@value)) {
+				if(@key == 'edge') {
+					@level[@key] = array('north': @value, 'east': @value, 'south': @value, 'west': @value);
+				} else {
+					@level[@key] = array(@value);
+				}
+			}
+		}
+		// populate with defaults
+		if(!array_index_exists(@level, 'empty')) {
+			@level['empty'] = 'BEDROCK';
+		}
+		if(!array_index_exists(@level, 'room')) {
+			@level['room'] = 'AIR';
+		}
+		if(!array_index_exists(@level, 'door')) {
+			@level['door'] = 'AIR';
+		}
+	}
 
 	if(!@seed) {
 		@seed = integer(time() / 100000);
@@ -66,7 +100,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 			'height': 4,
 		);
 
-		foreach(@level in range(@level)) {
+		foreach(@level in range(array_size(@options['levels']))) {
 			@spawns[@level] = array();
 			// Define grid
 			@layoutMap = array();
@@ -295,7 +329,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 				}
 			}
 
-			@mobTypes = _level_mobs(@level);
+			@mobTypes = @options['levels'][@level]['spawner'];
 			
 			// queue blocks in chunks
 			proc _queue_block(@blocks, @loc, @material) {
@@ -312,9 +346,9 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 			}
 
 			// Build dungeon level
-			@allmaterials = array(_materials(@level));
+			@allmaterials = @options['levels'][@level];
 			if(@duplicateOffset) {
-				@allmaterials[] = _duplicate_materials(@level);
+				@allmaterials[] = @options['duplicateLevels'][@level];
 			}
 			@blocks = associative_array();
 			foreach(@duplicate: @materials in @allmaterials) {
@@ -533,11 +567,11 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 						@regionMinZ + @exitRoom['r1'] * @scale,
 						@world,
 					);
-					set_block(@loc, 'OAK_TRAP_DOOR', false);
+					set_block(@loc, 'OAK_TRAPDOOR', false);
 					@ladderHeight = @maxRoomHeight + 3;
 					while(@ladderHeight-- > 0) {
 						@loc[1]--;
-						set_block(@loc, @materials['ladder'], false);
+						set_blockdata_string(@loc, 'ladder[facing=south]', false);
 						if(@ladderHeight > 2) {
 							set_block(location_shift(@loc, 'south'), array_rand(@materials['wall'], 1, false)[0], false);
 							set_block(location_shift(@loc, 'east'), array_rand(@materials['wall'], 1, false)[0], false);
@@ -565,13 +599,14 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 			@sx = @entranceRoom['c1'] * @scale + @regionMinX + 0.5;
 			@sy = @regionMinY;
 			@sz = @entranceRoom['r1'] * @scale + @regionMinZ + 0.5;
-			_set_locations(array('x': @sx, 'y': @sy, 'z': @sz, 'world': @world),
-					array('x': @ex, 'y': @ey, 'z': @ez, 'world': @world), @spawns);
+			
+			@start = array('x': @sx, 'y': @sy, 'z': @sz, 'world': @world);
+			@end = array('x': @ex, 'y': @ey, 'z': @ez, 'world': @world);
 			res_free_resource(@random);
 			_remove_region_entities(@region, array('DROPPED_ITEM'), @world);
 			msg(color('green').@dungeonType.' generation complete!');
 			if(is_closure(@callback)) {
-				execute(@callback);
+				execute(@start, @end, @spawns, @callback);
 			}
 		}, 'generator');
 
