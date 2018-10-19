@@ -38,11 +38,11 @@ bind('creature_spawn', null, array('type': 'ZOMBIE', 'reason': 'NATURAL'), @e) {
 		cancel();
 		@vindicator = spawn_entity('VINDICATOR', 1, @e['location'])[0];
 		set_mob_name(@vindicator, 'Johnny');
-	}/* else if(@e['location']['world'] == 'outworld') {
+	} else if(@e['location']['world'] == 'outworld' && !entities_in_radius(@e['location'], 64, 'RABBIT')) {
 		cancel();
 		@rabbit = spawn_entity('RABBIT', 1, @e['location'])[0];
 		set_entity_spec(@rabbit, array('type': 'THE_KILLER_BUNNY'));
-	}*/
+	}
 }
 
 bind('entity_death', null, array('type': 'ZOMBIE'), @e) {
@@ -57,10 +57,10 @@ bind('entity_death', null, array('type': 'ZOMBIE'), @e) {
 
 bind('creature_spawn', null, array('type': 'SKELETON', 'reason': 'NATURAL'), @e) {
 	if(!rand(10)) {
-		set_entity_persistence(@e['id'], true);
+		add_scoreboard_tag(@e['id'], 'halloween');
 		if(rand(3)) {
 			set_mob_equipment(@e['id'], array(
-				'WEAPON': array('name': 'BOW', 'meta': array('enchants': array('power': 2))),
+				'WEAPON': array('name': 'BOW', 'meta': array('enchants': array('power': 2, 'punch': 1))),
 				'HELMET': array('name': 'JACK_O_LANTERN'),
 				'CHESTPLATE': array('name': 'IRON_CHESTPLATE'),
 				'LEGGINGS': array('name': 'LEATHER_LEGGINGS'),
@@ -79,7 +79,7 @@ bind('creature_spawn', null, array('type': 'SKELETON', 'reason': 'NATURAL'), @e)
 }
 
 bind('entity_death', null, array('type': 'SKELETON'), @e) {
-	if(@e['cause']['cause'] === 'ENTITY_ATTACK'
+	if(array_index_exists(@e['cause'], 'cause') && @e['cause']['cause'] === 'ENTITY_ATTACK'
 	&& length(@e['cause']['damager']) < 17
 	&& !rand(10)
 	&& (get_entity_persistence(@e['id']) || array_contains(get_scoreboard_tags(@e['id']), 'halloween'))) {
