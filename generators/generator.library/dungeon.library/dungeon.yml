@@ -32,6 +32,7 @@ levels:
             south: 'sandstone_stairs[half=top,facing=south]'
             west: 'sandstone_stairs[half=top,facing=west]'
     3:
+        bed: true
         spawner: []
         wall: ['SNOW_BLOCK', 'PACKED_ICE']
         column: PACKED_ICE
