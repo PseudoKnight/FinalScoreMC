@@ -18,13 +18,24 @@ bind('creature_spawn', null, array('type': 'PIG_ZOMBIE', 'reason': 'NATURAL'), @
 
 bind('creature_spawn', null, array('type': 'ZOMBIE', 'reason': 'NATURAL'), @e) {
 	@rand = rand(5);
-	if(@rand == 4) {
-		set_mob_equipment(@e['id'], array('HELMET': array('name': 'JACK_O_LANTERN')));
-		if(rand(2)) {
-			set_mob_effect(@e['id'], 14, 0, 99999);
+	if(@rand == 4 && @e['location']['world'] == 'outworld' && !entities_in_radius(@e['location'], 64, 'RABBIT')) {
+		cancel();
+		@rabbit = spawn_entity('RABBIT', 1, @e['location'])[0];
+		set_entity_spec(@rabbit, array('type': 'THE_KILLER_BUNNY'));
+	} else if(@rand == 3 && @e['location']['world'] == 'outworld'){
+		cancel();
+		switch(rand(3)) {
+			case 0:
+				@vindicator = spawn_entity('VINDICATOR', 1, @e['location'])[0];
+				if(rand(2)) {
+					set_mob_name(@vindicator, 'Johnny');
+				}
+			case 1:
+				spawn_entity('EVOKER', 1, @e['location']);
+			case 2:
+				spawn_entity('ILLUSIONER', 1, @e['location']);
 		}
-		add_scoreboard_tag(@e['id'], 'halloween');
-	} else if(@rand == 3) {
+	} else if(@rand == 2) {
 		set_mob_equipment(@e['id'], array(
 			'WEAPON': array('name': 'ZOMBIE_HEAD'),
 			'HELMET': null,
@@ -34,14 +45,12 @@ bind('creature_spawn', null, array('type': 'ZOMBIE', 'reason': 'NATURAL'), @e) {
 		));
 		set_mob_effect(@e['id'], 14, 0, 99999);
 		add_scoreboard_tag(@e['id'], 'halloween');
-	} else if(@rand == 2 && @e['location']['world'] == 'outworld'){
-		cancel();
-		@vindicator = spawn_entity('VINDICATOR', 1, @e['location'])[0];
-		set_mob_name(@vindicator, 'Johnny');
-	} else if(@e['location']['world'] == 'outworld' && !entities_in_radius(@e['location'], 64, 'RABBIT')) {
-		cancel();
-		@rabbit = spawn_entity('RABBIT', 1, @e['location'])[0];
-		set_entity_spec(@rabbit, array('type': 'THE_KILLER_BUNNY'));
+	} else {
+		set_mob_equipment(@e['id'], array('HELMET': array('name': 'JACK_O_LANTERN')));
+		if(rand(2)) {
+			set_mob_effect(@e['id'], 14, 0, 99999);
+		}
+		add_scoreboard_tag(@e['id'], 'halloween');
 	}
 }
 
