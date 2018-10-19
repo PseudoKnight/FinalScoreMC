@@ -4,8 +4,12 @@ bind('player_interact', array('id': @id.'firebreath'), array('itemname': 'BLAZE_
 	if(!array_index_exists(@pvp['players'], player()) || pinfo(player(), 6) != @e['item']['name']) {
 		die();
 	}
-
-	play_sound(ploc(), array('sound': 'ENTITY_GHAST_SHOOT', 'pitch': 0.5));
+	
+	@loc = ploc();
+	@loc['y'] += 1.9;
+	@world = @loc['world'];
+	
+	play_sound(@loc, array('sound': 'ENTITY_GHAST_SHOOT', 'pitch': 0.5));
 	@facing = pfacing(player());
 	@facing[0] = @facing[0] + 90;
 	@facing[1] = 0 - @facing[1];
@@ -16,18 +20,16 @@ bind('player_interact', array('id': @id.'firebreath'), array('itemname': 'BLAZE_
 	@zl = sin(to_radians(@facing[0] - 40)) * cos(to_radians(@facing[1]));
 	@xr = cos(to_radians(@facing[0] + 40)) * cos(to_radians(@facing[1]));
 	@zr = sin(to_radians(@facing[0] + 40)) * cos(to_radians(@facing[1]));
-
-	@loc = ploc();
-	@loc['y'] += 1.9;
+	
 	#@entities = array()
-	@targetl = array('world': 'custom');
-	@targetc = array('world': 'custom');
-	@targetr = array('world': 'custom');
+	@targetl = array('world': @world);
+	@targetc = array('world': @world);
+	@targetr = array('world': @world);
 	for(@range = 1, @range <= 4, @range++) {
 		/*
 		if(@range == 1) {
 			@chunkc = array(floor(@loc['x'] / 16), floor(@loc['z'] / 16))
-			@es = all_entities('custom', @chunkc[0], @chunkc[1])
+			@es = all_entities(@world, @chunkc[0], @chunkc[1])
 			foreach(@e in @es) {
 				if(is_entity_living(@e)
 				&& (entity_type(@e) !== 'PLAYER'
@@ -38,7 +40,7 @@ bind('player_interact', array('id': @id.'firebreath'), array('itemname': 'BLAZE_
 		} else if(@range == 4) {
 			@chunkl = array(floor((@loc['x'] + (@xl * @range)) / 16), floor((@loc['z'] + (@zl * @range)) / 16))
 			if(@chunkl != @chunkc) {
-				@es = all_entities('custom', @chunkl[0], @chunkl[1])
+				@es = all_entities(@world, @chunkl[0], @chunkl[1])
 				foreach(@e in @es) {
 					if(is_entity_living(@e)
 					&& (entity_type(@e) !== 'PLAYER'
@@ -49,7 +51,7 @@ bind('player_interact', array('id': @id.'firebreath'), array('itemname': 'BLAZE_
 			}
 			@chunkr = array(floor((@loc['x'] + (@xr * @range)) / 16), floor((@loc['z'] + (@zr * @range)) / 16))
 			if(@chunkr != @chunkl && @chunkr != @chunkc) {
-				@es = all_entities('custom', @chunkr[0], @chunkr[1])
+				@es = all_entities(@world, @chunkr[0], @chunkr[1])
 				foreach(@e in @es) {
 					if(is_entity_living(@e)
 					&& (entity_type(@e) !== 'PLAYER'

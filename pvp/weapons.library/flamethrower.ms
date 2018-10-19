@@ -24,7 +24,7 @@ bind('player_interact', array('id': @id.'flamethrower'), array('itemname': 'BREW
 	@z = sin(to_radians(@facing[0])) * cos(to_radians(@facing[1]));
 
 	@loc['y'] += 2;
-	@target = array('world': 'custom');
+	@target = array('world': @loc['world']);
 	@id = time();
 	for(@range = 1, @range <= 7, @range++) {
 		queue_push(closure(){
