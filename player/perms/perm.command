@@ -7,7 +7,9 @@ register_command('perm', array(
 			return(_strings_start_with_ic(array('reload', 'setgroup', 'ingroup', 'havegroup'), @args[-1]));
 		} else if(array_size(@args) == 3) {
 			@groups = array_keys(import('perms'));
-			array_remove(@groups, 'limitedworldedit');
+			if(array_index_exists(@groups, 'limitedworldedit')) {
+				array_remove(@groups, 'limitedworldedit');
+			}
 			return(_strings_start_with_ic(@groups, @args[-1]));
 		}
 		return(array());
