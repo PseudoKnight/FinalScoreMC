@@ -6,22 +6,22 @@ extraDoors: 0.1
 levels:
     0:
         spawner: []
-        wall: POLISHED_ANDESITE
-        column: YELLOW_CONCRETE
-        ceiling: AIR
-        floor: BROWN_TERRACOTTA
-        utility: ['YELLOW_CONCRETE', 'LIME_CONCRETE']
-        decor: ['YELLOW_CONCRETE', 'LIME_CONCRETE']
-        edge: AIR
-duplicateOffset: 12
-duplicateDir: up
-duplicateLevels:
+        wall: polished_andesite
+        column: yellow_concrete
+        ceiling: air
+        floor: brown_terracotta
+        utility: [yellow_concrete, lime_concrete]
+        decor: [yellow_concrete, lime_concrete]
+        edge: air
+duplicateoffset: 12
+duplicatedir: up
+duplicatelevels:
     0:
         spawner: []
-        wall: BARRIER
-        column: AIR
-        ceiling: AIR
-        floor: BARRIER
-        utility: AIR
-        decor: AIR
-        edge: AIR
+        wall: barrier
+        column: air
+        ceiling: air
+        floor: barrier
+        utility: air
+        decor: air
+        edge: air

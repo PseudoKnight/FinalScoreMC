@@ -1,10 +1,10 @@
 maxRoomHeight: 8
 levels:
     0:
-        wall: ['STONE', 'STONE', 'STONE', 'STONE', 'STONE', 'STONE', 'STONE', 'STONE', 'ANDESITE', 'ANDESITE', 'ANDESITE', 'IRON_ORE']
-        column: STONE
-        ceiling: ['STONE', 'STONE', 'STONE', 'STONE', 'STONE', 'STONE', 'STONE', 'STONE', 'ANDESITE', 'ANDESITE', 'ANDESITE', 'IRON_ORE']
-        floor: ['STONE', 'STONE', 'STONE', 'STONE', 'STONE', 'STONE', 'STONE', 'STONE', 'ANDESITE', 'ANDESITE', 'ANDESITE', 'IRON_ORE']
-        utility: GOLD_ORE
-        decor: STONE
-        edge: STONE
+        wall: [stone, stone, stone, stone, stone, stone, stone, stone, andesite, andesite, andesite, iron_ore]
+        column: stone
+        ceiling: [stone, stone, stone, stone, stone, stone, stone, stone, andesite, andesite, andesite, iron_ore]
+        floor: [stone, stone, stone, stone, stone, stone, stone, stone, andesite, andesite, andesite, iron_ore]
+        utility: gold_ore
+        decor: stone
+        edge: stone
