@@ -113,7 +113,7 @@ proc _spawn_entity(@entity, @loc, @owner, @teammates) {
 			@range = @entity['targetnear'];
 			@projectile = '';
 			switch(to_upper(@entity['type'])) {
-				case 'SNOWGOLEM':
+				case 'SNOWMAN':
 					@projectile = 'SNOWBALL';
 				case 'CHICKEN':
 					@projectile = 'EGG';
