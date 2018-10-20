@@ -1,4 +1,5 @@
 maxRoomHeight: 2
+minRoomHeight: 2
 roof: false
 chestCount: -1
 spawnChance: 0.15
@@ -13,9 +14,9 @@ levels:
         utility: [yellow_concrete, lime_concrete]
         decor: [yellow_concrete, lime_concrete]
         edge: air
-duplicateoffset: 12
-duplicatedir: up
-duplicatelevels:
+duplicateOffset: 12
+duplicateDir: up
+duplicateLevels:
     0:
         spawner: []
         wall: barrier
