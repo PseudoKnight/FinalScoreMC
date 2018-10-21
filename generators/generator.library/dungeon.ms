@@ -82,8 +82,10 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 	@chunkMaxZ = floor(@regionMaxZ / 16);
 	@chunkWidth = @chunkMaxX - @chunkMinX + 1;
 	@chunkLength = @chunkMaxZ - @chunkMinZ + 1;
-	@chunkOffsetX = abs(@regionMinX % 16 + if(@regionMinX < 0, 16, 0));
-	@chunkOffsetZ = abs(@regionMinZ % 16 + if(@regionMinZ < 0, 16, 0));
+	@chunkOffsetX = @regionMinX % 16;
+	@chunkOffsetZ = @regionMinZ % 16;
+	@chunkOffsetX = abs(@chunkOffsetX + if(@chunkOffsetX && @regionMinX < 0, 16, 0));
+	@chunkOffsetZ = abs(@chunkOffsetZ + if(@chunkOffsetZ && @regionMinZ < 0, 16, 0));
 	@width = ceil(@regionWidth / @scale);
 	@length = ceil(@regionLength / @scale);
 	
@@ -99,8 +101,6 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 	if(@width < 21 || @length < 21) {
 		die('Region too small!');
 	}
-	
-	@excludeEntities = array('PLAYER', 'COMPLEX_PART', 'ITEM_FRAME', 'PAINTING', 'UNKNOWN', 'ARMOR_STAND');
 
 	// Dungeon planning (off the server thread)
 	create_bar(@region, array('title': 'Generating '.@dungeonType.if(array_size(@options['levels']) > 1, ' Level 1'), 'percent': 0.0));
