@@ -29,6 +29,8 @@ proc _level_prepare(@name, @arena, @region, @world) {
 	create_objective('health', 'HEALTH', 'level'.@region);
 	set_objective_display('health', array('slot': 'BELOW_NAME'), 'level'.@region);
 	
+	create_bar('level'.@region, array('percent': 0.0, 'style': 'SEGMENTED_6', 'visible': false));
+	
 	if(array_index_exists(@level['config'], 'shop')) {
 		@shop = associative_array();
 		@items = associative_array();
@@ -255,6 +257,7 @@ proc _level_start(@level) {
 			
 			} else if(@sleep[0] > 0) {
 				@sleep[0]--;
+				update_bar('level'.@level['region'], array('percent': (6 - @sleep[0]) / 6));
 				
 			} else if(@level['trigger']) {
 				set_block(@level['trigger'], 'AIR');
@@ -267,6 +270,7 @@ proc _level_start(@level) {
 					}
 				}
 				@sleep[0] = 3;
+				update_bar('level'.@level['region'], array('percent': (6 - @sleep[0]) / 6));
 				@level['title'] = '';
 
 			} else if(@level['subtitle']) {
@@ -276,9 +280,11 @@ proc _level_start(@level) {
 					}
 				}
 				@sleep[0] = 3;
+				update_bar('level'.@level['region'], array('percent': (6 - @sleep[0]) / 6));
 				@level['subtitle'] = '';
 				
 			} else if(@level['mobs']) {
+				update_bar('level'.@level['region'], array('visible': false));
 				foreach(@p in @level['players']) {
 					if(ponline(@p)) {
 						play_sound(ploc(@p), array('sound': 'ENTITY_EVOKER_PREPARE_SUMMON', 'volume': 0.4), @p);
@@ -355,6 +361,9 @@ proc _level_start(@level) {
 						@level['trigger'] = @trigger;
 					}
 					@level['mobs'] = @wave['mobs'];
+					
+					@sleep[0] = 6;
+					update_bar('level'.@level['region'], array('percent': 0.0, 'visible': true));
 				} catch(IndexOverflowException @ex) {
 					_level_end(@level, true);
 				}
@@ -421,6 +430,7 @@ proc _level_end(@level, @win) {
 		die(); // just in case this fires twice
 	}
 	remove_scoreboard('level'.@level['region']);
+	remove_bar('level'.@level['region']);
 	if(array_index_exists(@level['arena'], 'schematic')) {
 		set_timeout(50, closure(){
 			skcb_load(@level['arena']['schematic'].'.schem');

@@ -8,6 +8,7 @@ proc _level_add_player(@player, @level) {
 	@c = @level['config'];
 	@level['players'][] = @player;
 	set_pscoreboard(@player, 'level'.@level['region']);
+	bar_add_player('level'.@level['region'], @player);
 	clear_peffects(@player);
 	_clear_pinv(@player);
 	if(array_index_exists(@c, 'gear')) {
@@ -30,6 +31,7 @@ proc _level_add_player(@player, @level) {
 }
 
 proc _level_remove_player(@player, @level) {
+	bar_remove_player('level'.@level['region'], @player);
 	array_remove_values(@level['players'], @player);
 	clear_peffects(@player);
 	_equip_kit(@player);
