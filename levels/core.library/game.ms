@@ -46,7 +46,7 @@ proc _level_prepare(@name, @arena, @region, @world) {
 	}
 	
 	if(array_index_exists(@level['arena'], 'startblock')) {
-		set_block_at(@level['arena']['startblock']['loc'], @level['arena']['startblock']['type']);
+		set_block(@level['arena']['startblock']['loc'], @level['arena']['startblock']['type']);
 	}
 	
 	foreach(@p in all_players(@level['world'])) {
@@ -257,7 +257,7 @@ proc _level_start(@level) {
 				@sleep[0]--;
 				
 			} else if(@level['trigger']) {
-				set_block_at(@level['trigger'], 0);
+				set_block(@level['trigger'], 'AIR');
 				@level['trigger'] = null;
 				
 			} else if(@level['title']) {
@@ -351,7 +351,7 @@ proc _level_start(@level) {
 					if(array_index_exists(@wave, 'trigger')
 					&& array_index_exists(@arena['triggers'], @wave['trigger'])) {
 						@trigger = @arena['triggers'][@wave['trigger']];
-						set_block_at(@trigger, 152);
+						set_block(@trigger, 'REDSTONE_BLOCK');
 						@level['trigger'] = @trigger;
 					}
 					@level['mobs'] = @wave['mobs'];
@@ -423,7 +423,7 @@ proc _level_end(@level, @win) {
 	remove_scoreboard('level'.@level['region']);
 	if(array_index_exists(@level['arena'], 'schematic')) {
 		set_timeout(50, closure(){
-			skcb_load(@level['arena']['schematic']);
+			skcb_load(@level['arena']['schematic'].'.schem');
 			skcb_paste(array(0, 0, 0, @level['world']), array('origin': true));
 		});
 	}
