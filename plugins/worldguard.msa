@@ -35,6 +35,10 @@
 					case 'mob-spawns':
 					case 'mobspawns':
 					case 'mobspawning':
+						if(!_is_survival_world(pworld())) {
+							run('/region '.$);
+							die();
+						}
 						foreach(@flagname in @flags) {
 							if(@flagname[0] === 'mob-spawning') {
 								sudo('/region flag '.@region.' mob-spawning');
