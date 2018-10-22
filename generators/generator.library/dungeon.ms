@@ -69,10 +69,10 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 	}
 
 	@coords = sk_region_info(@region, @world, 0);
-	@regionMinX = @coords[1][0];
+	@regionMinX = ceil(@coords[1][0] / 2) * 2; // align to scale
 	@regionMaxX = @coords[0][0];
 	@regionMinY = @coords[1][1];
-	@regionMinZ = @coords[1][2];
+	@regionMinZ = ceil(@coords[1][2] / 2) * 2;
 	@regionMaxZ = @coords[0][2];
 	@regionWidth = @coords[0][0] - @coords[1][0];
 	@regionLength = @coords[0][2] - @coords[1][2];
@@ -103,8 +103,8 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 	}
 
 	// Dungeon planning (off the server thread)
-	create_bar(@region, array('title': 'Generating '.@dungeonType.if(array_size(@options['levels']) > 1, ' Level 1'), 'percent': 0.0));
-	bar_add_player(@region, player());
+	create_bar('gen'.@region, array('title': 'Generating '.@dungeonType.if(array_size(@options['levels']) > 1, ' Level 1'), 'percent': 0.0));
+	bar_add_player('gen'.@region, player());
 	_remove_region_entities(@region, array(), @world);
 	x_new_thread('dungeon', closure(){
 		@random = res_create_resource('RANDOM', @seed);
@@ -554,7 +554,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 									try(entity_remove(@id));
 								}
 							}
-							update_bar(@region,  double(++@chunkCount[0] / @maxChunks));
+							update_bar('gen'.@region,  double(++@chunkCount[0] / @maxChunks));
 						}
 					}, 'generator');
 					@chunk = array();
@@ -569,7 +569,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 						die();
 					}
 					
-					update_bar(@region, 'Decorating '.@dungeonType);
+					update_bar('gen'.@region, 'Decorating '.@dungeonType);
 					
 					@yFloor = @regionMinY + (@level * (@maxRoomHeight + 3));
 					@roomHeight = @room['height'];
@@ -665,13 +665,13 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 					}
 					
 					if(@level + 1 < array_size(@options['levels'])) {
-						update_bar(@region, 'Generating '.@dungeonType.' Level '.(@level + 2));
+						update_bar('gen'.@region, 'Generating '.@dungeonType.' Level '.(@level + 2));
 					}
 					
 				}, 'generator');
 			} else if(@level + 1 < array_size(@options['levels'])) {
 				queue_push(closure(){
-					update_bar(@region, 'Generating '.@dungeonType.' Level '.(@level + 2));
+					update_bar('gen'.@region, 'Generating '.@dungeonType.' Level '.(@level + 2));
 				}, 'generator');
 			}
 			@exitRoom = @rooms[@farthestRoom];
@@ -694,7 +694,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 			@start = array('x': @sx, 'y': @sy, 'z': @sz, 'world': @world);
 			@end = array('x': @ex, 'y': @ey, 'z': @ez, 'world': @world);
 			res_free_resource(@random);
-			remove_bar(@region);
+			remove_bar('gen'.@region);
 			if(is_closure(@callback)) {
 				execute(@start, @end, @spawns, @callback);
 			}
