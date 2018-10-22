@@ -1,5 +1,5 @@
 proc _prepare_arena(@pvp) {
-	_generator_create('dungeon', 'static', 'static', @pvp['arena']['lobby']['world'], 0, closure(@start, @end, @spawns) {
+	_generator_create('dungeon', 'static', 'static', @pvp['arena']['lobby'][3], 0, closure(@start, @end, @spawns) {
 		@pvp['arena']['spawn'] = array(array(@end), array(@start));
 	});
 }
