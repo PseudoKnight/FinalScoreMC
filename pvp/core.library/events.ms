@@ -522,7 +522,6 @@ if(array_contains(@pvp['arena']['flags'], 'rallycall')) {
 		launch_firework(@loc, array(
 			'strength': 3,
 			'flicker': true,
-			'trail': true,
 			'colors': array('RED'),
 			'type': 'BURST')
 		)

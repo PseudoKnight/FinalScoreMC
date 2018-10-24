@@ -119,7 +119,6 @@ bind('player_interact', null, array('itemname': 'FIREWORK_ROCKET', 'button': 'ri
 				});
 				@meta['effects'][] = associative_array(
 					'flicker': rand(2),
-					'trail': if(@num == 1, rand(2), 0),
 					'colors': @startcolors,
 					'fade': @endcolors,
 					'type': @type,

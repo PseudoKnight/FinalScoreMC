@@ -352,7 +352,6 @@ proc _cc_end(@winners, @world = 'custom') {
 						array(
 							'strength': @y,
 							'flicker': true,
-							'trail': true,
 							'colors': array(array(rand(256), rand(256), rand(256))),
 							'fade': array(array(rand(256), rand(256), rand(256))),
 							'type': 'BALL_LARGE',

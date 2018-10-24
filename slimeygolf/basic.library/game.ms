@@ -212,28 +212,28 @@ proc _start_game(@course, @loc) {
 						if(@hits == @par - 1) {
 							@type = 'Birdie';
 							launch_firework(@loc,
-								array('strength': 0, 'trail': true, 'type': 'BURST'));
+								array('strength': 0, 'type': 'BURST'));
 							play_sound(ploc(@player), array('sound': 'ENTITY_VILLAGER_YES'));
 						} else if(@hits == @par - 2) {
 							@type = 'Eagle!';
 							launch_firework(@loc,
-								array(strength: 0, trail: true, type: 'BALL_LARGE'));
+								array(strength: 0, type: 'BALL_LARGE'));
 							play_sound(ploc(@player), array(sound: 'ENTITY_VILLAGER_YES'));
 						} else if(@hits == @par - 3) {
 							@type = 'Albatross!!';
 							launch_firework(@loc,
-								array(strength: 0, trail: true, type: 'BALL_LARGE'));
+								array(strength: 0, type: 'BALL_LARGE'));
 							launch_firework(@loc,
-								array(strength: 1, trail: true, type: 'BALL_LARGE'));
+								array(strength: 1, type: 'BALL_LARGE'));
 							play_sound(ploc(@player), array(sound: 'ENTITY_VILLAGER_YES'));
 						} else if(@hits == @par - 4) {
 							@type = 'Condor!!!';
 							launch_firework(@loc,
-								array(strength: 0, trail: true, type: 'BALL_LARGE'));
+								array(strength: 0, type: 'BALL_LARGE'));
 							launch_firework(@loc,
-								array(strength: 1, trail: true, type: 'BALL_LARGE'));
+								array(strength: 1, type: 'BALL_LARGE'));
 							launch_firework(@loc,
-								array(strength: 2, trail: true, type: 'BALL_LARGE'));
+								array(strength: 2, type: 'BALL_LARGE'));
 							play_sound(ploc(@player), array(sound: 'ENTITY_VILLAGER_YES'));
 						} else if(@hits > @par) {
 							play_sound(ploc(@player), array(sound: 'ENTITY_VILLAGER_NO'));

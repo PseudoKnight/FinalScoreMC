@@ -255,8 +255,6 @@ register_command('timer', array(
 				}
 				launch_firework(@loc, array(
 					'strength': 1,
-					'flicker': true,
-					'trail': true,
 					'colors': array(array(rand(256), rand(256), rand(256))),
 					'fade': array(array(rand(256), rand(256), rand(256))),
 					'type': 'BALL_LARGE',
@@ -304,7 +302,6 @@ register_command('timer', array(
 			} else {
 				launch_firework(@loc, array(
 					'strength': 0,
-					'trail': false,
 					'colors': array(array(rand(256), rand(256), rand(256))),
 					'fade': array(array(rand(256), rand(256), rand(256))),
 				));
