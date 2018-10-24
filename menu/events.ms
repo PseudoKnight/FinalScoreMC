@@ -15,7 +15,6 @@ bind('inventory_click', null, array('virtual': true), @event) {
 				@menu = import('menu.'.@value);
 				if(@menu) {
 					execute(player(), @menu, @menu['loadMenu']);
-					popen_inventory(@value);
 					play_sound(ploc(), array('sound': 'UI_BUTTON_CLICK', 'pitch': 1.2), player());
 				}
 			case 'Run':

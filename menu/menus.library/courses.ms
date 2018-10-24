@@ -131,8 +131,9 @@ foreach(@i: @difficulty in @difficultyorder) {
 		}
 		@menu[@slot] = @item;
 	}
-	delete_virtual_inventory(@import['id']);
-	create_virtual_inventory(@import['id'], 63, @import['title'], @menu);
+	delete_virtual_inventory(@player.@import['id']);
+	create_virtual_inventory(@player.@import['id'], 63, @import['title'], @menu);
+	popen_inventory(@player, @player.@import['id']);
 }
 @soloMenu['loadMenu'] = @loadMenu;
 @coopMenu['loadMenu'] = @loadMenu;
