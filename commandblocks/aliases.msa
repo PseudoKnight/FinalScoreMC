@@ -295,6 +295,7 @@
 <<<
 
 /summon $entity $x $y $z = >>>
+	@cmdBlock = get_command_block();
 	@loc = _relative_coords(@cmdBlock, $x, $y, $z);
 	@loc['x'] += 0.5;
 	@loc['z'] += 0.5;
