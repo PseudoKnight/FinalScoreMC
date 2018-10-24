@@ -72,7 +72,7 @@ bind('player_interact', null, array('block': 'CAKE'), @event) {
 		set_timeout(8800, closure(){
 			// turn off music
 			foreach(@p in players_in_radius(@event['location'], 32)) {
-				stop_sound(@event['location'], 'MUSIC_DISC_STAL');
+				stop_sound(@p, 'MUSIC_DISC_STAL');
 			}
 		});
 	});
