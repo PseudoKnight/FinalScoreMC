@@ -33,12 +33,14 @@
 			foreach(@activity in array_keys(@activities)) {
 				export(string(@activity), null);
 			}
-			# if forcing a recompiles despite games running, we have to clear scoreboards
-			@scoreboards = get_scoreboards();
-			foreach(@scoreboard in @scoreboards) {
+			# if forcing a recompiles despite games running, we have to clear scoreboards and boss bars
+			foreach(@scoreboard in get_scoreboards()) {
 				if(@scoreboard !== 'main') {
 					remove_scoreboard(@scoreboard);
 				}
+			}
+			foreach(@bar in get_bars()) {
+				remove_bar(@bar);
 			}
 		}
 	}
