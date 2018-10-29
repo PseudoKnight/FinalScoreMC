@@ -140,7 +140,7 @@ bind('inventory_click', null, array('slottype': 'RESULT'), @event) {
 
 		} else if(@slotitem['name'] == 'EXPERIENCE_BOTTLE') {
 			@xp = ptexp();
-			@qty = 7;
+			@qty = 8;
 			if(@event['shiftclick']) {
 				foreach(@item in @event['inventory']) {
 					if(@item && @item['name'] == 'GLASS_BOTTLE') {
