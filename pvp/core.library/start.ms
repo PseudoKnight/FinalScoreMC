@@ -127,8 +127,8 @@ proc _pvp_start(@pvp, @id){
 		if(@moderesult == 'teams' || @moderesult != 'solo' && @size > 3 && @size % 2 == 0) {
 			if(!array_index_exists(@arena, 'team')) {
 				@arena['team'] = array(
-					array('name': 'Red', 'color': 'c'),
-					array('name': 'Blue', 'color': '3')
+					array('name': 'Red', 'color': 'RED'),
+					array('name': 'Blue', 'color': 'BLUE')
 				);
 			}
 			
@@ -142,9 +142,6 @@ proc _pvp_start(@pvp, @id){
 	}
 
 	if(array_index_exists(@arena, 'team')) {
-		@arena['team'][0]['color'] = color(@arena['team'][0]['color']);
-		@arena['team'][1]['color'] = color(@arena['team'][1]['color']);
-		
 		// Alternate spawns
 		if(array_size(@arena['spawn']) == 1 || !@arena['spawn'][1]) {
 			@oldspawns = @arena['spawn'][0][];
@@ -224,8 +221,12 @@ proc _pvp_start(@pvp, @id){
 		}
 		create_team(@arena['team'][0]['name'], @id);
 		create_team(@arena['team'][1]['name'], @id);
-		set_team_display(@arena['team'][0]['name'], array('prefix': @arena['team'][0]['color']), @id);
-		set_team_display(@arena['team'][1]['name'], array('prefix': @arena['team'][1]['color']), @id);
+		try {
+			set_team_display(@arena['team'][0]['name'], array('color': @arena['team'][0]['color']), @id);
+			set_team_display(@arena['team'][1]['name'], array('color': @arena['team'][1]['color']), @id);
+		} catch(IllegalArgumentException @ex) {
+			console('Invalid colors stored in arena: '.@id);
+		}
 		set_team_options(@arena['team'][0]['name'], array(
 			'friendlyinvisibles': true,
 			'nametagvisibility': if(array_index_exists(@arena, 'nametags'), @arena['nametags'][0], 'ALWAYS')
@@ -247,7 +248,7 @@ proc _pvp_start(@pvp, @id){
 				set_pscore('seconds', @arena['team'][1]['name'], neg(@arena['score']), @id);
 			} else {
 				create_team('king', @id);
-				set_team_display('king', array('prefix': color('green')), @id);
+				set_team_display('king', array('color': 'GREEN'), @id);
 			}
 		case 'dm':
 			if(array_index_exists(@arena, 'lives') && @arena['lives'] > 1) {
@@ -301,6 +302,9 @@ proc _pvp_start(@pvp, @id){
 	include('game.ms');
 
 	if(array_index_exists(@arena, 'team')) {
+		@arena['team'][0]['color'] = color(@arena['team'][0]['color']);
+		@arena['team'][1]['color'] = color(@arena['team'][1]['color']);
+		
 		if(!array_index_exists(@pvp, 'team')) {
 			@pvp['team'] = array(associative_array(), associative_array());
 		}

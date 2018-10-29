@@ -18,7 +18,7 @@ proc _worms_create(@region) {
 	create_objective('segments', 'DUMMY', 'worms');
 	set_objective_display('segments', array('displayname': 'Segments (50)', 'slot': 'SIDEBAR'), 'worms');
 	create_team('leaders', 'worms');
-	set_team_display('leaders', array('prefix': color('red')), 'worms');
+	set_team_display('leaders', array('color': 'RED'), 'worms');
 	
 	return(@game);
 }

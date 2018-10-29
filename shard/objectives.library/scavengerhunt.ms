@@ -667,16 +667,16 @@ if(@size) {
 
 // Player colors
 @colors = array(
-	array('ORNAGE_STAINED_GLASS_PANE', 6),
-	array('MAGENTA_STAINED_GLASS_PANE', 13),
-	array('LIGHT_BLUE_STAINED_GLASS_PANE', 11),
-	array('YELLOW_STAINED_GLASS_PANE', 14),
-	array('LIME_STAINED_GLASS_PANE', 10),
-	array('PINK_STAINED_GLASS_PANE', 12),
-	array('CYAN_STAINED_GLASS_PANE', 3),
-	array('BLUE_STAINED_GLASS_PANE', 9),
-	array('GREEN_STAINED_GLASS_PANE', 2),
-	array('RED_STAINED_GLASS_PANE', 4),
+	array('ORANGE_STAINED_GLASS_PANE', 'GOLD'),
+	array('MAGENTA_STAINED_GLASS_PANE', 'LIGHT_PURPLE'),
+	array('LIGHT_BLUE_STAINED_GLASS_PANE', 'BLUE'),
+	array('YELLOW_STAINED_GLASS_PANE', 'YELLOW'),
+	array('LIME_STAINED_GLASS_PANE', 'GREEN'),
+	array('PINK_STAINED_GLASS_PANE', 'RED'),
+	array('CYAN_STAINED_GLASS_PANE', 'AQUA'),
+	array('BLUE_STAINED_GLASS_PANE', 'DARK_BLUE'),
+	array('GREEN_STAINED_GLASS_PANE', 'DARK_GREEN'),
+	array('RED_STAINED_GLASS_PANE', 'DARK_RED'),
 );
 @colorMap = associative_array();
 export('shard.colors', @colorMap);
@@ -878,7 +878,7 @@ bind('world_changed', array('id': 'shard-scavenger-worldchanged', 'priority': 'L
 			array_remove(@colors, @index);
 			create_team(player(), 'shard');
 			team_add_player(player(), player(), 'shard');
-			set_team_display(player(), array('prefix': color(@colorMap[player()][1])), 'shard');
+			set_team_display(player(), array('color': @colorMap[player()][1]), 'shard');
 			pgive_item(player(), array('name': 'MAP', 'meta': array('display': 'Scavenger Hunt Card')));
 			if(@size) {
 				_refresh_card(true);

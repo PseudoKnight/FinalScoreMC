@@ -69,12 +69,12 @@ register_command('hockey', array(
 			
 			@hockey['red'] = color('red').array_rand(array('StoneRiver Toads', 'Utah Waffles', 'Jaksonville Slashers', 'Oakdale Furies'), 1, false)[0];
 			create_team('red', 'hockey');
-			set_team_display('red', array('displayname': @hockey['red'], 'prefix': color('red')), 'hockey');
+			set_team_display('red', array('displayname': @hockey['red'], 'color': 'RED'), 'hockey');
 			set_pscore('score', @hockey['red'], 0, 'hockey');
 			
 			@hockey['blue'] = color('blue').array_rand(array('Gothem Knights', 'Stirling Kings', 'PantsCo Pixies', 'Canada Wizards'), 1, false)[0];
 			create_team('blue', 'hockey');
-			set_team_display('blue', array('displayname': @hockey['blue'], 'prefix': color('blue')), 'hockey');
+			set_team_display('blue', array('displayname': @hockey['blue'], 'color': 'BLUE'), 'hockey');
 			set_pscore('score', @hockey['blue'], 0, 'hockey');
 			
 			@t = 0;

@@ -318,18 +318,18 @@ register_command('arena', array(
 						msg(colorize('Set &a' . @args[4] . '&r to spawn at start for team &a' . @args[3]));
 
 					case 'team':
-						if(array_size(@args) < 5) {
-							die(color('gold').'Usage: /arena set <arena> team &4Team1 &cTeam2');
+						if(array_size(@args) < 7) {
+							die(color('gold').'Usage: /arena set <arena> team BLUE Team1 RED Team2');
 						}
-						@arena['team'][0]['name'] = substr(@args[3], 2);
-						@arena['team'][0]['color'] = @args[3][1];
-						@arena['team'][1]['name'] = substr(@args[4], 2);
-						@arena['team'][1]['color'] = @args[4][1];
+						@arena['team'][0]['color'] = @args[3];
+						@arena['team'][0]['name'] = @args[4];
+						@arena['team'][1]['color'] = @args[5];
+						@arena['team'][1]['name'] = @args[6];
 						if(length(@arena['team'][0]['name']) > 16
 						|| length(@arena['team'][1]['name']) > 16) {
 							die(color('gold').'Name too long. (16 character limit)');
 						}
-						msg(color('green').'Set team names to '.colorize(@args[3]).' vs '.colorize(@args[4]));
+						msg(color('green').'Set team names to '.color(@args[3]).@args[4].color('reset').' vs '.color(@args[5]).@args[6]);
 
 					case 'kit':
 						if(!array_index_exists(@arena, 'kit')) {

@@ -39,7 +39,7 @@ proc _prepare_game(@category) {
 	set_objective_display('score', array('displayname': 'Scores', 'slot': 'SIDEBAR'), 'charades');
 	create_team('guessers', 'charades');
 	create_team('builder', 'charades');
-	set_team_display('builder', array('prefix': color('green')), 'charades');
+	set_team_display('builder', array('color': 'GREEN'), 'charades');
 	
 	@spawn = sk_region_info('charades-beacon', 'custom', 0)[0];
 	foreach(@p in @players) {

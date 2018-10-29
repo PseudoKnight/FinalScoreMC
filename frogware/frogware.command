@@ -22,8 +22,8 @@ register_command('frogware', array(
 					create_team('losers', 'fw');
 					create_team('winners', 'fw');
 					set_objective_display('score', array('slot': 'SIDEBAR', 'displayname': color('a').color('l').'Get Ready!'), 'fw');
-					set_team_display('winners', array('prefix': color(10)), 'fw');
-					set_team_display('losers', array('prefix': color(15)), 'fw');
+					set_team_display('winners', array('color': 'GREEN'), 'fw');
+					set_team_display('losers', array('color': 'YELLOW'), 'fw');
 				}
 				set_pscoreboard(player(), 'fw');
 				team_add_player('losers', player(), 'fw');

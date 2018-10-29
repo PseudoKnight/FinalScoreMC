@@ -2,7 +2,7 @@
 @teams = array('Blue', 'Yellow', 'Green', 'Red')[cslice(0, @numTeams - 1)];
 for(@i = 0, @i < @numTeams, @i++) {
 	create_team(@teams[@i], 'shard');
-	set_team_display(@teams[@i], array('prefix': color(@teams[@i])), 'shard');
+	set_team_display(@teams[@i], array('color': @teams[@i]), 'shard');
 	set_team_options(@teams[@i], array('friendlyinvisibles': true, 'friendlyfire': false), 'shard');
 }
 

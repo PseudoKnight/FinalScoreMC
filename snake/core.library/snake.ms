@@ -140,15 +140,15 @@ proc _snake_spawn(@player, @game) {
 
 proc _snake_set_color(@player, @color, @game,
 @colors = array(
-	array('BLUE_TERRACOTTA', 'LIGHT_BLUE_TERRACOTTA', '9'), # blue
-	array('BLUE_CONCRETE', 'LIGHT_BLUE_CONCRETE', 'b'), # neon blue
-	array('GREEN_TERRACOTTA', 'LIME_TERRACOTTA', '2'), # green
-	array('GREEN_CONCRETE', 'LIME_CONCRETE', 'a'), # neon green
-	array('RED_TERRACOTTA', 'PINK_TERRACOTTA', 'c'), # red
-	array('RED_CONCRETE', 'PINK_CONCRETE', 'd'), # neon pink
-	array('PURPLE_TERRACOTTA', 'MAGENTA_TERRACOTTA', '5'), # purple
-	array('ORANGE_CONCRETE', 'YELLOW_CONCRETE', 'e'), # neon yellow
-	array('LIGHT_GRAY_CONCRETE', 'WHITE_CONCRETE', 'f'), # neon white
+	array('BLUE_TERRACOTTA', 'LIGHT_BLUE_TERRACOTTA', 'DARK_BLUE'), # blue
+	array('BLUE_CONCRETE', 'LIGHT_BLUE_CONCRETE', 'BLUE'), # neon blue
+	array('GREEN_TERRACOTTA', 'LIME_TERRACOTTA', 'DARK_GREEN'), # green
+	array('GREEN_CONCRETE', 'LIME_CONCRETE', 'GREEN'), # neon green
+	array('RED_TERRACOTTA', 'PINK_TERRACOTTA', 'DARK_RED'), # red
+	array('RED_CONCRETE', 'PINK_CONCRETE', 'RED'), # neon pink
+	array('PURPLE_TERRACOTTA', 'MAGENTA_TERRACOTTA', 'DARK_PURPLE'), # purple
+	array('ORANGE_CONCRETE', 'YELLOW_CONCRETE', 'YELLOW'), # neon yellow
+	array('LIGHT_GRAY_CONCRETE', 'WHITE_CONCRETE', 'WHITE'), # neon white
 )) {
 	@snake = @game['snakes'][@player];
 	foreach(@slot: @colorArray in @colors) {
@@ -158,11 +158,11 @@ proc _snake_set_color(@player, @color, @game,
 			}
 			@head = @colorArray[0];
 			@tail = @colorArray[1];
-			@text = color(@colorArray[2]);
+			@text = @colorArray[2];
 			@snake['head'] = @head;
 			@snake['tail'] = @tail;
 			@snake['color'] = @text;
-			set_team_display(@player, associative_array('prefix': @text), 'snake');
+			set_team_display(@player, array('color': @text), 'snake');
 			break();
 		}
 	}
