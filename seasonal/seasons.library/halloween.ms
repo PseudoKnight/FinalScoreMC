@@ -5,7 +5,7 @@ bind('creature_spawn', null, null, @e) {
 }
 
 bind('creature_spawn', null, array('type': 'CREEPER', 'reason': 'NATURAL'), @e) {
-	if(@e['location']['world'] == 'outworld' && !rand(3)) {
+	if(@e['location']['world'] == 'outworld' && !rand(4)) {
 		set_entity_spec(@e['id'], array('powered': true));
 	}
 }
@@ -65,7 +65,7 @@ bind('entity_death', null, array('type': 'ZOMBIE'), @e) {
 }
 
 bind('creature_spawn', null, array('type': 'SKELETON', 'reason': 'NATURAL'), @e) {
-	if(!rand(10)) {
+	if(@e['location']['world'] == 'outworld' && !rand(4)) {
 		add_scoreboard_tag(@e['id'], 'halloween');
 		if(rand(3)) {
 			set_mob_equipment(@e['id'], array(
