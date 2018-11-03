@@ -162,7 +162,8 @@ waves:
             - SILVERFISH
             - SILVERFISH
     6:
-        subtitle: 'BOSS: Mr. Jellybean'
+        subtitle: 'Mr. Jellybean'
+        boss: true
         mobs:
             - type: ZOMBIE
               pos: 'center'
@@ -228,24 +229,26 @@ waves:
             - STRAY
             - STRAY
     12:
-        subtitle: 'BOSS: Undead King'
+        subtitle: 'Undead King'
+        boss: true
         mobs:
             - type: POLAR_BEAR
-              rider: STRAY
+              rider:
+                  type: STRAY
+                  gear:
+                      weapon:
+                          name: BOW
+                      boots:
+                          name: DIAMOND_BOOTS
+                      leggings:
+                          name: DIAMOND_LEGGINGS
+                      chestplate:
+                          name: DIAMOND_CHESTPLATE
+                      helmet:
+                          name: DIAMOND_HELMET
+                  droprate:
+                      weapon: 1
               pos: 'center'
-              gear:
-                  weapon:
-                      name: BOW
-                  boots:
-                      name: CHAINMAIL_BOOTS
-                  leggings:
-                      name: CHAINMAIL_LEGGINGS
-                  chestplate:
-                      name: CHAINMAIL_CHESTPLATE
-                  helmet:
-                      name: CHAINMAIL_HELMET
-              droprate:
-                  weapon: 1
     13:
         title: "This Ain't Right"
         subtitle: 'Turned'
@@ -294,12 +297,20 @@ waves:
                     strength: 0
                     seconds: 300
     18:
-        subtitle: 'BOSS: Spike Lord'
+        subtitle: 'Spike Lord'
+        boss: true
         mobs:
             - type: CAVE_SPIDER
               rider:
                   type: GUARDIAN
               pos: 'center'
+              effects:
+                  speed:
+                      strength: 0
+                      seconds: 600
+                  resistance:
+                      strength: 1
+                      seconds: 600
     19:
         title: 'The Outcasts'
         subtitle: 'Axe Murderers'
@@ -343,10 +354,18 @@ waves:
             - IRON_GOLEM
             - IRON_GOLEM
     24:
-        subtitle: 'BOSS: Illusioner'
+        subtitle: 'Illusioner'
+        boss: true
         mobs:
             - type: ILLUSIONER
               pos: 'center'
+              effects:
+                  invisibility:
+                      strength: 0
+                      seconds: 3
+                  resistance:
+                      strength: 1
+                      seconds: 600
             - SILVERFISH
             - SILVERFISH
     25:
@@ -401,6 +420,7 @@ waves:
                   anger: 400
     30:
         subtitle: 'FINAL BOSS: 4 Horsemen & Apocalypse'
+        boss: true
         mobs:
             - type: ZOMBIE_HORSE
               age: 0

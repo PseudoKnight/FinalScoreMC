@@ -154,8 +154,12 @@ proc _spawn_entity(@entity, @loc, @owner, @teammates) {
 		}
 		if(array_index_exists(@entity, 'effects')) {
 			try {
-				foreach(@effect in @entity['effects']) {
-					set_mob_effect(@e, @effect['id'], @effect['strength'], @effect['seconds'], true);
+				foreach(@name: @effect in @entity['effects']) {
+					if(array_index_exists(@effect, 'id')) {
+						set_mob_effect(@e, @effect['id'], @effect['strength'], @effect['seconds'], true);
+					} else {
+						set_mob_effect(@e, @name, @effect['strength'], @effect['seconds'], true);
+					}
 				}
 			} catch(BadEntityException @ex) {
 				// mob is gone for some reason

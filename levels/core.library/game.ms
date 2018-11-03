@@ -16,6 +16,7 @@ proc _level_prepare(@name, @arena, @region, @world) {
 		'config': yml_decode(read('../scripts/'.@name.'.yml')),
 		'trigger': null,
 		'coins': 20,
+		'boss': false,
 	);
 	if(array_index_exists(@level['config'], 'coins')) {
 		@level['coins'] = @level['config']['coins'];
@@ -257,7 +258,9 @@ proc _level_start(@level) {
 			
 			} else if(@sleep[0] > 0) {
 				@sleep[0]--;
-				update_bar('level'.@level['region'], array('percent': (6 - @sleep[0]) / 6));
+				if(!@level['boss'] || !@entities) {
+					update_bar('level'.@level['region'], array('percent': (6 - @sleep[0]) / 6));
+				}
 				
 			} else if(@level['trigger']) {
 				set_block(@level['trigger'], 'AIR');
@@ -270,7 +273,7 @@ proc _level_start(@level) {
 					}
 				}
 				@sleep[0] = 3;
-				update_bar('level'.@level['region'], array('percent': (6 - @sleep[0]) / 6));
+				update_bar('level'.@level['region'], array('visible': false));
 				@level['title'] = '';
 
 			} else if(@level['subtitle']) {
@@ -280,11 +283,21 @@ proc _level_start(@level) {
 					}
 				}
 				@sleep[0] = 3;
-				update_bar('level'.@level['region'], array('percent': (6 - @sleep[0]) / 6));
+				update_bar('level'.@level['region'], array('visible': false));
 				@level['subtitle'] = '';
 				
 			} else if(@level['mobs']) {
-				update_bar('level'.@level['region'], array('visible': false));
+				if(@level['boss']) {
+					update_bar('level'.@level['region'], array(
+						'percent': 1.0,
+						'visible': true,
+						'title': color('red').color('bold').'BOSS',
+						'color': 'RED',
+						'style': 'SOLID',
+					));
+				} else {
+					update_bar('level'.@level['region'], array('visible': false));
+				}
 				foreach(@p in @level['players']) {
 					if(ponline(@p)) {
 						play_sound(ploc(@p), array('sound': 'ENTITY_EVOKER_PREPARE_SUMMON', 'volume': 0.4), @p);
@@ -360,14 +373,34 @@ proc _level_start(@level) {
 						set_block(@trigger, 'REDSTONE_BLOCK');
 						@level['trigger'] = @trigger;
 					}
+					if(array_index_exists(@wave, 'boss')) {
+						@level['boss'] = true;
+					} else {
+						@level['boss'] = false;
+					}
 					@level['mobs'] = @wave['mobs'];
 					
 					@sleep[0] = 6;
-					update_bar('level'.@level['region'], array('percent': 0.0, 'visible': true));
+					update_bar('level'.@level['region'], 0.0);
+					update_bar('level'.@level['region'], array(
+						'visible': true,
+						'title': '',
+						'color': 'WHITE',
+						'style': 'SEGMENTED_6',
+					));
 				} catch(IndexOverflowException @ex) {
 					_level_end(@level, true);
 				}
 			} else {
+				if(@level['boss']) {
+					@health = 0.0;
+					foreach(@e in @entities) {
+						@health += get_entity_health(@e);
+					}
+					@health /= array_size(@entities);
+					@health /= 100;
+					update_bar('level'.@level['region'], double(@health));
+				}
 				// Check random entity if it's still in region
 				@r = array_rand(@entities)[0];
 				if(!entity_exists(@entities[@r]) || !array_contains(sk_regions_at(entity_loc(@entities[@r])), @level['region'])) {
