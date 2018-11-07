@@ -17,7 +17,7 @@ bind('world_changed', array('id': 'shard-teams1', 'priority': 'LOW'), array('to'
 
 @binds[] = 'shard-teams2';
 bind('player_interact', array('id': 'shard-teams2'), array('button': 'right'), @event, @numTeams, @teams) {
-	if(pworld() == 'shard' && string_ends_with(@event['item']['name'], '_WOOL')) {
+	if(pworld() == 'shard' && @event['item'] && string_ends_with(@event['item']['name'], '_WOOL')) {
 		@team = replace(@event['item']['name'], '_WOOL', '');
 		if(array_contains_ic(@teams, @team)) {
 			@count = 0;

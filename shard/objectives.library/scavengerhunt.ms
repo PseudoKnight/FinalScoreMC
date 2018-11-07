@@ -662,7 +662,7 @@ create_objective('total', 'DUMMY', 'shard');
 if(@size) {
 	set_objective_display('inarow', array('slot': 'SIDEBAR', 'displayname': 'In a Row ('.@size.')'), 'shard');
 } else {
-	set_objective_display('total', array('slot': 'SIDEBAR', 'displayname': 'Total'), 'shard');
+	set_objective_display('total', array('slot': 'SIDEBAR', 'displayname': 'In a Row (4)'), 'shard');
 }
 
 // Player colors
@@ -720,7 +720,7 @@ if(@size) {
 					}
 				}
 			}
-			if(@create) {
+			if(@create && player() == @p) {
 				create_virtual_inventory(@p.'card', @size, @p.'\'s Card', @chest);
 			} else {
 				set_inventory(@p.'card', @chest);

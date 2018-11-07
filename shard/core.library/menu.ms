@@ -33,7 +33,7 @@ proc _open_objective_menu() {
 	
 	bind('inventory_click', array('id': player().'click'), array('player': player(), 'virtual': true), @event, @objectives) {
 		@item = @event['slotitem'];
-		if(@item && @item['meta'] && @item['meta']['display']) {
+		if(@item && @item['meta'] && @item['meta']['display'] && length(@item['meta']['display']) >= 2) {
 			@objective = replace(to_lower(substr(@item['meta']['display'], 2)), ' ', '');
 			if(array_contains(@objectives, @objective)) {
 				unbind();

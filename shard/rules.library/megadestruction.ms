@@ -38,7 +38,7 @@ bind('world_changed', array('id': 'shard-mega', 'priority': 'LOW'), array('to': 
 }
 
 @binds[] = 'shard-fireball';
-bind('player_interact', array('id': 'shard-fireball'), array('itemname': 'FIRE_CHARGE', 'block': 0), @event) {
+bind('player_interact', array('id': 'shard-fireball'), array('itemname': 'FIRE_CHARGE', 'block': null), @event) {
 	if(pworld() == 'shard') {
 		cancel();
 		@entity = shoot_projectile(player(), 'FIRE_CHARGE');
