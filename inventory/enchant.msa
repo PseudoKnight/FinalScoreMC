@@ -14,7 +14,7 @@
 	if(!is_integral($level)) {
 		die('Enchantment level must be an integer.');
 	}
-	@level = integer(clamp($level, 1, 99));
+	@level = integer(clamp($level, 1, 10));
 	try {
 		enchant_item(null, $type, @level);
 	} catch (Exception @ex) {
