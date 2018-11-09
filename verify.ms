@@ -2,16 +2,21 @@
 	This is a script that can be used in your script editor to verify the files for errors.
 	It uses the CommandHelper "verify" commandline mode.
 */
-if(array_size(@arguments) == 0 || string_ends_with(@arguments[0], 'verify.ms')) {
+if(array_size(@arguments) == 0) {
 	die();
 }
-try {
-	include(@arguments[0]);
-} catch(Exception @ex) {
-	@lines = split('\n', @ex['message'])[1..-1];
-	foreach(@line in @lines) {
-		if(!string_contains(@line, 'does not exist in the Java Interpreter')) {
-			msg(@line);
+@file = @arguments[0];
+if(string_ends_with(@file, 'verify.ms')) {
+	die();
+}
+
+@file = replace(@arguments[0], '\\', '\\\\');
+@result = shell('java -jar C:/commandhelper/commandhelper-3.3.3-SNAPSHOT-full.jar verify '.@file);
+if(@result) {
+	@errors = json_decode(@result);
+	foreach(@error in @errors) {
+		if(!string_starts_with(@error['msg'], 'The function "')) {
+			msg(@error['msg'].' : line '.@error['line']);
 		}
 	}
 }
