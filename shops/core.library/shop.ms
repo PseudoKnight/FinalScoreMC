@@ -27,6 +27,10 @@ proc _shop_show_info(@shop) {
 	} catch(FormatException @ex) {
 		die(color('red').'This shop doesn\'t have a chest.');
 	}
+	
+	if(array_size(@chestInv) > 35) {
+		die(color('red').'Shops do not support double chests at this time.');
+	}
 
 	if(@shop['buy']) {
 		@itemCount = _chest_item_count(@chestInv, @shop['item']);
@@ -53,6 +57,10 @@ proc _shop_process_transaction(@shop) {
 		@chestInv = get_inventory(@chestLoc);
 	} catch(FormatException @ex) {
 		die(color('red').'This shop doesn\'t have a chest.');
+	}
+	
+	if(array_size(@chestInv) > 35) {
+		die(color('red').'Shops do not support double chests at this time.');
 	}
 	
 	@slotItem = pinv(player(), null);
