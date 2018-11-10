@@ -54,6 +54,9 @@ bind('entity_portal_travel', null, null, @event) {
 		@l = @from;
 		@l['x'] *= 8;
 		@l['z'] *= 8;
+		if(@l['x'] > 4096 || @l['z'] > 4096) {
+			console('Entity portal traveled to '.@l);
+		}
 		@l['world'] = @match[1];
 		modify_event('to', @l);
 	} else if(@to['world'] == 'world_the_end') {
