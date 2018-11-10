@@ -49,7 +49,7 @@ levels:
     4:
         entranceDoor: true
         bed: true
-        spawner: [stray, polar_bear]
+        spawner: [stray]
         wall: [snow_block, packed_ice]
         column: packed_ice
         ceiling: [snow_block, packed_ice]
@@ -81,7 +81,6 @@ levels:
         decor: rail
         edge: stone_brick_stairs
     7:
-        entranceDoor: true
         spawner: [guardian, pufferfish, drowned]
         wall: prismarine_bricks
         room: water
@@ -106,7 +105,7 @@ levels:
     9:
         entranceDoor: true
         bed: true
-        spawner: [vindicator, illusioner, evoker]
+        spawner: [vindicator, vindicator, vindicator, vindicator, illusioner, evoker]
         trap: poison
         wall: dark_oak_planks
         column: cobblestone_wall
