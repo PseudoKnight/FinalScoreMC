@@ -505,6 +505,15 @@ if(array_contains(@pvp['arena']['flags'], 'noinventory')) {
 
 		cancel()
 	}
+	
+	array_push(@pvp['binds'], @id.'noinventoryswap')
+	bind('item_swap', array('id': @id.'noinventoryswap'), null, @e, @id) {
+		@pvp = import('pvp'.@id)
+		if(!array_index_exists(@pvp['players'], player()),
+			die())
+
+		cancel()
+	}
 }
 
 if(array_contains(@pvp['arena']['flags'], 'rallycall')) {
