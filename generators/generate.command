@@ -10,7 +10,8 @@ register_command('generate', array(
 			return(false);
 		}
 		if(@args[0] == 'reload') {
-			_generator_reload();
+			@count = _generator_reload();
+			msg(color('green').'Done recompiling '.@count.' scripts.');
 		} else {
 			_generator_create(@args[0], @args[1], @args[2], pworld(), integer(array_get(@args, 3, 0)), closure(@start, @end, @spawns) {
 				set_ploc(@start);
