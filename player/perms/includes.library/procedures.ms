@@ -5,6 +5,9 @@ proc _perm_player(@player, @clear = true) {
 		@group = @pdata['group'];
 	}
 	_add_group_perms(@player, @group, false);
+	if(pisop(@player) && @group != 'admin') {
+		psetop(@player, false);
+	}
 }
 
 proc _add_group_perms(@player, @group, @return = true) {
