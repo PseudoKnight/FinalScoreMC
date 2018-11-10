@@ -70,10 +70,12 @@ proc _worms_bind_events(@game) {
 						}
 					}
 					
-					foreach(@i: @segment in @game['players'][player()]['segments']) {
-						@loc = entity_loc(@segment);
-						set_entity_loc(@segment, @newLoc);
-						@newLoc = location_shift(@loc, 'down', 0.001);
+					if(array_index_exists(@game['players'], player())) {
+						foreach(@i: @segment in @game['players'][player()]['segments']) {
+							@loc = entity_loc(@segment);
+							set_entity_loc(@segment, @newLoc);
+							@newLoc = location_shift(@loc, 'down', 0.001);
+						}
 					}
 				}
 			}
