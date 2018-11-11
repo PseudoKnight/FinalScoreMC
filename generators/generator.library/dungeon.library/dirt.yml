@@ -1,9 +1,10 @@
-maxRoomHeight: 2
-minRoomHeight: 2
-roof: false
-chestCount: -1
-spawnChance: 0.15
-extraDoors: 0.1
+default:
+    maxRoomHeight: 2
+    minRoomHeight: 2
+    roof: false
+    chestCount: 0
+    spawnChance: 0.15
+    extraDoors: 0.1
 levels:
     0:
         spawner: []

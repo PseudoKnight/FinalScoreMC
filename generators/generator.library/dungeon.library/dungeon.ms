@@ -45,6 +45,7 @@ proc _get_loot(@level, @random, @loot = array(
 	array('chance': 0.03, 'item': 'DIAMOND'),
 	array('chance': 0.04, 'item': 'POTION'),
 	array('chance': 0.04, 'item': 'SPLASH_POTION'),
+	array('chance': 0.04, 'item': 'MILK_BUCKET'),
 )) {
 	@inv = array();
 	foreach(@weightedLoot in @loot){

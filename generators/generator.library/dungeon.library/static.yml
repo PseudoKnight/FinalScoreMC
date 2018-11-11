@@ -1,4 +1,5 @@
-maxRoomHeight: 16
+default:
+    maxRoomHeight: 16
 levels:
     0:
         spawner: []

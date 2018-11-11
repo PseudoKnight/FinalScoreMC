@@ -1,8 +1,9 @@
-maxRoomHeight: 9
+default:
+    maxRoomHeight: 9
 levels:
     0:
         entranceDoor: true
-        spawner: [silverfish, bat]
+        spawner: [silverfish]
         trap: tnt
         wall: [stone, stone, stone, stone, stone, stone, stone, stone, andesite, andesite, andesite, iron_ore]
         column: stone
@@ -38,7 +39,7 @@ levels:
     3:
         entranceDoor: true
         bed: true
-        spawner: [husk, phantom]
+        spawner: [husk, husk, husk, husk, phantom]
         wall: [sandstone, smooth_sandstone]
         column: chiseled_sandstone
         ceiling: sandstone
@@ -115,9 +116,9 @@ levels:
         decor: bookshelf
         edge: birch_stairs
     10:
-        entranceDoor: true
+        scale: 1
         bed: true
-        spawner: [primed_tnt, ender_crystal, creeper]
+        spawner: [primed_tnt, ender_crystal, creeper, creeper, creeper]
         trap: tnt
         wall: bedrock
         column: bedrock
@@ -125,4 +126,6 @@ levels:
         floor: bedrock
         utility: bedrock
         decor: bedrock
-        edge: bedrock
+        edge: air
+        minRoomHeight: 4
+        chestCount: 0

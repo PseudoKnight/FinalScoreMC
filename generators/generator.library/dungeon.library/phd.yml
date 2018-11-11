@@ -1,4 +1,5 @@
-maxRoomHeight: 8
+default:
+    maxRoomHeight: 8
 levels:
     0:
         wall: [stone, stone, stone, stone, stone, stone, stone, stone, andesite, andesite, andesite, iron_ore]
