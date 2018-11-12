@@ -5,7 +5,7 @@ default:
     chestCount: 0
     spawnChance: 0.15
     extraDoors: 0.1
-levels:
+floors:
     0:
         spawner: []
         wall: polished_andesite
@@ -17,7 +17,7 @@ levels:
         edge: air
 duplicateOffset: 12
 duplicateDir: up
-duplicateLevels:
+duplicateFloors:
     0:
         spawner: []
         wall: barrier

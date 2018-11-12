@@ -1,6 +1,6 @@
 default:
     maxRoomHeight: 9
-levels:
+floors:
     0:
         entranceDoor: true
         spawner: [silverfish]

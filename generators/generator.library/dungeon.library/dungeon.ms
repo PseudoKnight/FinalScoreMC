@@ -1,4 +1,4 @@
-proc _get_loot(@level, @random, @loot = array(
+proc _get_loot(@floor, @random, @loot = array(
 	array('chance': 0.50, 'item': 'TORCH', 'qty': array(1, 16)),
 	array('chance': 0.08, 'item': 'APPLE', 'qty': array(1, 16)),
 	array('chance': 0.04, 'item': 'BREAD', 'qty': array(1, 16)),
@@ -49,7 +49,7 @@ proc _get_loot(@level, @random, @loot = array(
 )) {
 	@inv = array();
 	foreach(@weightedLoot in @loot){
-		if(srand(@random) < @weightedLoot['chance'] + @level * 0.01){
+		if(srand(@random) < @weightedLoot['chance'] + @floor * 0.01){
 			@item = array('name': @weightedLoot['item']);
 			if(array_index_exists(@weightedLoot, 'qty') && is_array(@weightedLoot['qty'])) {
 				@item['qty'] = integer(srand(@random) * (@weightedLoot['qty'][1] - @weightedLoot['qty'][0]) + @weightedLoot['qty'][0]);

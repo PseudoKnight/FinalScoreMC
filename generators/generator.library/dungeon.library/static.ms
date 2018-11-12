@@ -1,4 +1,4 @@
-proc _get_loot(@level, @random, @loot = array(
+proc _get_loot(@floor, @random, @loot = array(
 	array(0.25, associative_array('name': 'HEAVY_WEIGHTED_PRESSURE_PLATE', 'meta': associative_array('display': 'MINE'))),
 	array(0.25, associative_array('name': 'BREAD')),
 	array(0.20, associative_array('name': 'COMPASS')),
