@@ -1,5 +1,7 @@
 default:
     maxRoomHeight: 9
+    lavaPit: true
+    chestCount: 1.2
 floors:
     0:
         entranceDoor: true

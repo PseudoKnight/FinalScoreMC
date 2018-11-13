@@ -15,9 +15,9 @@ floors:
         utility: [yellow_concrete, lime_concrete]
         decor: [yellow_concrete, lime_concrete]
         edge: air
-duplicateOffset: 12
-duplicateDir: up
-duplicateFloors:
+cloneOffset: 12
+cloneDir: up
+cloneFloors:
     0:
         spawner: []
         wall: barrier

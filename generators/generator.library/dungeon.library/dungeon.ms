@@ -1,10 +1,10 @@
 proc _get_loot(@floor, @random, @loot = array(
 	array('chance': 0.50, 'item': 'TORCH', 'qty': array(1, 16)),
-	array('chance': 0.08, 'item': 'APPLE', 'qty': array(1, 16)),
-	array('chance': 0.04, 'item': 'BREAD', 'qty': array(1, 16)),
-	array('chance': 0.02, 'item': 'COOKED_MUTTON', 'qty': array(1, 16)),
-	array('chance': 0.01, 'item': 'GOLDEN_CARROT', 'qty': array(1, 16)),
-	array('chance': 0.30, 'item': 'GOLDEN_APPLE'),
+	array('chance': 0.08, 'item': 'APPLE', 'qty': array(1, 10)),
+	array('chance': 0.04, 'item': 'BREAD', 'qty': array(1, 10)),
+	array('chance': 0.02, 'item': 'COOKED_MUTTON', 'qty': array(1, 10)),
+	array('chance': 0.01, 'item': 'GOLDEN_CARROT', 'qty': array(1, 10)),
+	array('chance': 0.25, 'item': 'GOLDEN_APPLE'),
 	array('chance': 0.15, 'item': 'ARROW', 'qty': array(1, 6)),
 	array('chance': 0.07, 'item': 'WOODEN_SWORD'),
 	array('chance': 0.05, 'item': 'STONE_SWORD', 'damage': 132),
@@ -46,6 +46,7 @@ proc _get_loot(@floor, @random, @loot = array(
 	array('chance': 0.04, 'item': 'POTION'),
 	array('chance': 0.04, 'item': 'SPLASH_POTION'),
 	array('chance': 0.04, 'item': 'MILK_BUCKET'),
+	array('chance': 0.01, 'item': 'ENDER_PEARL'),
 )) {
 	@inv = array();
 	foreach(@weightedLoot in @loot){
