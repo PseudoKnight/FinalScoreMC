@@ -15,8 +15,8 @@ proc _load_events(@id) {
 		}
 	}
 
-	array_push(@pvp['binds'], @id.'limitentities')
-	bind('entity_change_block', array('id': @id.'limitentities'), array('from': 'SAND'), @e, @region = @pvp['arena']['region']) {
+	array_push(@pvp['binds'], @id.'limitentities2')
+	bind('entity_change_block', array('id': @id.'limitentities2'), array('from': 'SAND'), @e, @region = @pvp['arena']['region']) {
 		if(array_contains(sk_regions_at(@e['location']), @region)) {
 			entity_remove(@e['entity'])
 		}
