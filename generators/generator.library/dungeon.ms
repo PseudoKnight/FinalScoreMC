@@ -88,7 +88,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 					@floorData['trap'] = array(@floorData['trap']);
 				}
 			} else {
-				@floorData['trap'] = array('air');
+				@floorData['trap'] = null;
 			}
 			
 			@options[@type][@floor] = @floorData;
@@ -677,23 +677,28 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 							}
 						}
 					}
-					queue_push(closure(){
-						foreach(@block in @chunk) {
-							if(is_array(@block['mat'])) {
-								set_blockdata_string(@block['loc'], array_rand(@block['mat'], 1, false)[0], false);
-							} else {
-								set_blockdata_string(@block['loc'], @block['mat'], false);
-							}
-						}
-						if(@chunk) {
-							foreach(@id in all_entities(@chunk[0]['loc'])) {
-								if(entity_type(@id) == 'DROPPED_ITEM') {
-									try(entity_remove(@id));
+					if(@chunk) {
+						queue_push(closure(){
+							// removing chests drops items, so we need to make sure those don't drop
+							@bind = bind('item_spawn', null, null, @event, @world) {
+								if(@event['location']['world'] == @world) {
+									cancel();
 								}
 							}
+							try {
+								foreach(@block in @chunk) {
+									if(is_array(@block['mat'])) {
+										set_blockdata_string(@block['loc'], array_rand(@block['mat'], 1, false)[0], false);
+									} else {
+										set_blockdata_string(@block['loc'], @block['mat'], false);
+									}
+								}
+							} finally {
+								unbind(@bind);
+							}
 							update_bar('gen'.@region,  double(++@chunkCount[0] / @maxChunks));
-						}
-					}, 'generator');
+						}, 'generator');
+					}
 				}
 			}
 			@chunk = null;
@@ -774,36 +779,89 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 						}
 					}
 					
-					@traps = integer(srand(@random) * max(@room['length'], @room['width']));
-					while(@traps-- > 0) {
-						@loc = array(
-							@regionMinX + @room['c1'] * @scale + 1 + integer(srand(@random) * (@room['width'] - 1) * @scale),
-							@yFloor + 1,
-							@regionMinZ + @room['r1'] * @scale + 1 + integer(srand(@random) * (@room['length'] - 1) * @scale),
-							@world
-						);
-						if(equals_ic(@materials['room'], get_block(@loc))) {
-							@type = @materials['trap'][integer(srand(@random) * array_size(@materials['trap']))];
-							switch(@type) {
-								case 'tnt':
-									if(srand(@random) > 0.5) {
-										set_block(@loc, 'STONE_PRESSURE_PLATE', false);
-									} else {
+					if(@floorData['trap']) {
+						@traps = integer(srand(@random) * max(@room['length'], @room['width']));
+						while(@traps-- > 0) {
+							@loc = array(
+								@regionMinX + @room['c1'] * @scale + 1 + integer(srand(@random) * (@room['width'] - 1) * @scale),
+								@yFloor + 1,
+								@regionMinZ + @room['r1'] * @scale + 1 + integer(srand(@random) * (@room['length'] - 1) * @scale),
+								@world
+							);
+							if(equals_ic(@materials['room'], get_block(@loc))) {
+								@type = split('_', @materials['trap'][integer(srand(@random) * array_size(@materials['trap']))]);
+								@trigger = @type[0];
+								@effect = @type[1];
+								@data = if(array_size(@type) == 3, @type[2], null);
+								@facing = 'up';
+								switch(@trigger) {
+									case 'plate':
+										// must set pressure plate after dispenser underneath it
+										@loc = location_shift(@loc, 'down');
+									case 'chest':
 										set_block(@loc, 'TRAPPED_CHEST', false);
-									}
-									set_block(location_shift(@loc, 'down'), 'TNT', false);
-								case 'poison':
-									set_blockdata_string(location_shift(@loc, 'down'), 'dispenser[facing=up]', false);
-									set_inventory(location_shift(@loc, 'down'), array(0: array(
-											'name': 'SPLASH_POTION',
-											'qty': 2,
-											'meta': array('base': array('extended': false, 'type': 'POISON', 'upgraded': true))
-									)));
-									if(srand(@random) > 0.5) {
-										set_block(@loc, 'STONE_PRESSURE_PLATE', false);
-									} else {
-										set_block(@loc, 'TRAPPED_CHEST', false);
-									}
+										@loc = location_shift(@loc, 'down');
+									case 'tripwire':
+										@positive = null;
+										@negative = null;
+										if(@room['width'] > 1 && @room['width'] < 6) {
+											@positive = 'east';
+											@negative = 'west';
+										} else if(@room['length'] > 1 && @room['length'] < 6) {
+											@positive = 'south';
+											@negative = 'morth';
+										}
+										if(@positive) {
+											@tripwire = array(@loc);
+											@dist = 1;
+											while(!array_contains_ic(@materials['wall'], get_block(location_shift(@loc, @negative, @dist))) && @dist < 12) {
+												array_insert(@tripwire, location_shift(@loc, @negative, @dist), 0);
+												@dist++;
+											}
+											if(@dist == 12) {
+												continue();
+											}
+											@dist = 1;
+											while(!array_contains_ic(@materials['wall'], get_block(location_shift(@loc, @positive, @dist))) && @dist < 12) {
+												@tripwire[] = location_shift(@loc, @positive, @dist);
+												@dist++;
+											}
+											if(@dist == 12) {
+												continue();
+											}
+											set_blockdata_string(@tripwire[0], 'tripwire_hook[facing='.@positive',attached=true]', false);
+											foreach(@t in @tripwire[1..-2]) {
+												set_blockdata_string(@t, 'tripwire['.@positive.'=true,'.@negative.'=true,attached=true]', false);
+											}
+											set_blockdata_string(@tripwire[-1], 'tripwire_hook[facing='.@negative.',attached=true]', false);
+											if(srand(@random) > 0.5) {
+												@facing = @negative;
+												@loc = location_shift(location_shift(@tripwire[-1], @positive), 'up');
+											} else {
+												@facing = @positive;
+												@loc = location_shift(location_shift(@tripwire[0], @negative), 'up');
+											}
+										}
+								}
+								switch(@effect) {
+									case 'tnt':
+										set_blockdata_string(@loc, 'dispenser[facing='.@facing.']', false);
+										set_inventory(@loc, array(0: array('name': 'TNT', 'qty': 2)));
+									case 'potion':
+										set_blockdata_string(@loc, 'dispenser[facing='.@facing.']', false);
+										set_inventory(@loc, array(0: array(
+											'name': if(material_info(get_block(location_shift(@loc, @facing)), 'isSolid'), 'LINGERING_POTION', 'SPLASH_POTION'),
+											'qty': 3,
+											'meta': array('base': array('extended': false, 'type': to_upper(@data), 'upgraded': true))
+										)));
+									case 'arrow':
+										set_blockdata_string(@loc, 'dispenser[facing='.@facing.']', false);
+										set_inventory(@loc, array(0: array('name': 'TIPPED_ARROW', 'qty': 3, 'meta': array('base': array('type': 'INSTANT_DAMAGE', 'upgraded': true, 'extended': false)))));
+								}
+								if(@triger == 'plate') {
+									// needs to be after dispenser
+									set_block(location_shift(@loc, 'up'), 'STONE_PRESSURE_PLATE', false);
+								}
 							}
 						}
 					}

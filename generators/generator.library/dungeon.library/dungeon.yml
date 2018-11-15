@@ -1,12 +1,11 @@
 default:
-    maxRoomHeight: 9
-    lavaPit: true
+    maxRoomHeight: 14
     chestCount: 1.2
 floors:
     0:
         entranceDoor: true
         spawner: [silverfish]
-        trap: tnt
+        trap: plate_tnt
         wall: [stone, stone, stone, stone, stone, stone, stone, stone, andesite, andesite, andesite, iron_ore]
         column: stone
         ceiling: [stone, stone, stone, stone, stone, stone, stone, stone, andesite, andesite, andesite, iron_ore]
@@ -29,7 +28,7 @@ floors:
         entranceDoor: true
         bed: true
         spawner: [zombie_villager, iron_golem]
-        trap: poison
+        trap: [plate_potion_poison, tripwire_arrow]
         wall: oak_planks
         column: oak_log
         ceiling: oak_planks
@@ -40,6 +39,7 @@ floors:
         window: glass
     3:
         entranceDoor: true
+        lavaPit: true
         bed: true
         spawner: [husk, husk, husk, husk, phantom]
         wall: [sandstone, smooth_sandstone]
@@ -62,6 +62,7 @@ floors:
         edge: snow_block
     5:
         entranceDoor: true
+        lavaPit: true
         bed: true
         spawner: [pig_zombie, magma_cube, blaze]
         wall: nether_bricks
@@ -73,9 +74,10 @@ floors:
         edge: nether_brick_stairs
     6:
         entranceDoor: true
+        lavaPit: true
         bed: true
         spawner: [skeleton, witch, creeper]
-        trap: [tnt, poison]
+        trap: [chest_tnt, plate_potion_poison]
         wall: [polished_andesite, stone_bricks, mossy_stone_bricks, cracked_stone_bricks, infested_cracked_stone_bricks]
         column: bookshelf
         ceiling: stone_bricks
@@ -90,7 +92,7 @@ floors:
         door: water
         column: prismarine_bricks
         ceiling: prismarine
-        floor: [dark_prismarine,dark_prismarine,dark_prismarine,dark_prismarine,dark_prismarine,dark_prismarine,dark_prismarine,dark_prismarine,dark_prismarine,soul_sand,magma_block]
+        floor: [dark_prismarine,dark_prismarine,dark_prismarine,dark_prismarine,dark_prismarine,dark_prismarine,dark_prismarine,dark_prismarine,dark_prismarine,dark_prismarine,dark_prismarine,soul_sand,magma_block]
         utility: sea_lantern
         decor: gold_block
         edge: dark_prismarine_stairs
@@ -109,7 +111,7 @@ floors:
         entranceDoor: true
         bed: true
         spawner: [vindicator, vindicator, vindicator, vindicator, illusioner, evoker]
-        trap: poison
+        trap: chest_potion_poison
         wall: dark_oak_planks
         column: cobblestone_wall
         ceiling: birch_planks
@@ -120,8 +122,9 @@ floors:
     10:
         scale: 1
         bed: true
+        lavaPit: true
         spawner: [primed_tnt, ender_crystal, creeper, creeper, creeper]
-        trap: tnt
+        trap: plate_tnt
         wall: bedrock
         column: bedrock
         ceiling: bedrock
