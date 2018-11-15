@@ -100,7 +100,11 @@
 
 /effect $target $effect [$strength=0] [$length=30] = >>>
 	_execute_on($target, closure(@uuid) {
-		set_peffect(@uuid, $effect, $strength, $length);
+		if($effect == 'milk') {
+			clear_peffects(@uuid);
+		} else {
+			set_peffect(@uuid, $effect, $strength, $length);
+		}
 	});
 <<<
 
