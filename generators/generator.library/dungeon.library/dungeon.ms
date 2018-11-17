@@ -47,6 +47,7 @@ proc _get_loot(@floor, @random, @loot = array(
 	array('chance': 0.04, 'item': 'SPLASH_POTION'),
 	array('chance': 0.04, 'item': 'MILK_BUCKET'),
 	array('chance': 0.01, 'item': 'ENDER_PEARL'),
+	array('chance': 0.01, 'item': 'ENCHANTED_BOOK'),
 )) {
 	@inv = array();
 	foreach(@weightedLoot in @loot){
@@ -57,21 +58,41 @@ proc _get_loot(@floor, @random, @loot = array(
 			}
 			if(array_index_exists(@weightedLoot, 'damage')) {
 				@item['meta'] = array('damage': integer(srand(@random) * @weightedLoot['damage']));
+			} else if(string_starts_with(@item['name'], 'DIAMOND_')) {
+				if(srand(@random) > 0.8) {
+					@item['meta'] = array('enchants': array('curse_of_binding': 1));
+				} else {
+					@item['meta'] = array('enchants': array('curse_of_vanishing': 1));
+				}
+			} else if(@item['name'] == 'ENCHANTED_BOOK') {
+				@enchants = array(
+					'POWER', 'FLAME', 'INFINITY', 'PUNCH', 'SHARPNESS', 'BANE_OF_ARTHROPODS', 'SMITE',
+					'UNBREAKING', 'FIRE_ASPECT', 'KNOCKBACK', 'LOOTING', 'RESPIRATION', 'PROTECTION',
+					'BLAST_PROTECTION', 'FEATHER_FALLING', 'FIRE_PROTECTION', 'PROJECTILE_PROTECTION',
+					'THORNS', 'DEPTH_STRIDER', 'MENDING', 'SWEEPING_EDGE', 'IMPALING', 'RIPTIDE', 'LOYALTY'
+				);
+				@meta = array('stored': associative_array());
+				@id = integer(srand(@random) * array_size(@enchants));
+				@enchant = @enchants[@id];
+				@meta['stored'][@enchant] = array('elevel': 1);
+				@item['meta'] = @meta;
 			} else if(string_ends_with(@item['name'], 'POTION')) {
 				@meta = array('display': 'Mystery Potion', 'flags': array('HIDE_POTION_EFFECTS'));
 				if(srand(@random) > 0.5) {
-					@state = rand(3);
-					@potionType = array_rand(array('SPEED', 'SLOWNESS', 'STRENGTH', 'INSTANT_HEAL', 'INSTANT_DAMAGE', 'JUMP',
+					@state = integer(srand(@random) * 3);
+					@potionTypes = array('SPEED', 'SLOWNESS', 'STRENGTH', 'INSTANT_HEAL', 'INSTANT_DAMAGE', 'JUMP',
 					'REGEN', 'FIRE_RESISTANCE', 'WATER_BREATHING', 'INVISIBILITY', 'NIGHT_VISION', 'WEAKNESS',
-					'POISON', 'LUCK'), 1, false)[0];
-					@meta['base'] = array('extended': (@state == 1), 'upgraded': (@state == 2), 'type': @potionType);
+					'POISON', 'LUCK');
+					@id = integer(srand(@random) * array_size(@potionTypes));
+					@meta['base'] = array('extended': (@state == 1), 'upgraded': (@state == 2), 'type': @potionTypes[@id]);
 				} else {
 					@meta['potions'] = array();
 					@effects = reflect_pull('enum', 'PotionEffectType');
 					do {
-						@effect = array_rand(@effects, 1, false)[0];
+						@id = integer(srand(@random) * array_size(@effects));
+						@effect = @effects[@id];
 						@meta['potions'][@effect] = array('seconds': rand(1, 480), 'strength': rand(3)),
-					} while(rand(2));
+					} while(srand(@random) > 0.6);
 				}
 				@item['meta'] = @meta;
 			}

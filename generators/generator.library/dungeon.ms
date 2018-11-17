@@ -36,6 +36,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 		'entranceDoor': false,
 		'lavaPit': false,
 		'pit': false,
+		'staggeredWall': false,
 		
 		// default materials
 		'empty': 'bedrock',
@@ -430,6 +431,9 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 			
 			// queue blocks in chunks
 			proc _queue_block(@chunk, @loc, @material) {
+				if(is_array(@material)) {
+					@material = array_rand(@material, 1, false)[0];
+				}
 				@chunk[] = array('loc': @loc[], 'mat': @material);
 				return(@chunk);
 			}
@@ -444,10 +448,6 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 				}
 			}
 			
-			queue_push(closure(){
-				update_bar('gen'.@region, 'Placing '.@dungeonType.' floor '.(@floor + 1));
-			}, 'generator');
-			
 			for(@chunkZ = 0, @chunkZ < @chunkLength, @chunkZ++) {
 				for(@chunkX = 0, @chunkX < @chunkWidth, @chunkX++) {
 					@chunk = array();
@@ -460,11 +460,11 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 									continue();
 								}
 								
-								@y = @regionMinY + @floor * (@maxRoomHeight + 3) + if(@cloneDir == 'up', @clone * @cloneOffset, 0);
+								@groundY = @regionMinY + @floor * (@maxRoomHeight + 3) + if(@cloneDir == 'up', @clone * @cloneOffset, 0);
 								@roomHeight = @heightMap[@c][@r];
 								@loc = array(
 									(@chunkMinX + @chunkX) * 16 + @x + if(@cloneDir == 'east', @clone * @cloneOffset, 0),
-									@y,
+									@groundY,
 									(@chunkMinZ + @chunkZ) * 16 + @z + if(@cloneDir == 'south', @clone * @cloneOffset, 0),
 									@world
 								);
@@ -490,8 +490,8 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 								}
 
 								// Walls
-								@ceilingY = @y + @roomHeight + 1;
-								for(@y = @y + 1, @y < @ceilingY, @y++) {
+								@ceilingY = @groundY + @roomHeight + 1;
+								for(@y = @groundY + 1, @y < @ceilingY, @y++) {
 									@loc[1] = @y;
 									switch(@layoutMap[@c][@r]) {
 										case 'window':
@@ -502,7 +502,17 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 											}
 										
 										case 'wall':
-											@chunk = _queue_block(@chunk, @loc, @materials['wall']);
+											if(@materials['staggeredWall']) {
+												if((@x + @z) % 2 == 0 || (@x + @z) % 3 == 0) {
+													@chunk = _queue_block(@chunk, @loc, @materials['wall'][(@x + @z) % array_size(@materials['wall'])]);
+												} else if(@y == @groundY + _get_adjacent_height(@heightMap, @maxRoomHeight, @c, @r, @x, @z)) {
+													@chunk = _queue_block(@chunk, @loc, @materials['edge']);
+												} else {
+													@chunk = _queue_block(@chunk, @loc, 'air');
+												}
+											} else {
+												@chunk = _queue_block(@chunk, @loc, @materials['wall']);
+											}
 											
 										case 'room':
 											if(@materials['edge'] != 'air' && @roomHeight > 2 && @y == @ceilingY - 1) {
@@ -643,6 +653,8 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 													@state = @materials['wall'];
 												}
 												@chunk = _queue_block(@chunk, @loc, @state);
+											} else if(@materials['staggeredWall']) {
+												@chunk = _queue_block(@chunk, @loc, @materials['wall'][0]);
 											} else {
 												@chunk = _queue_block(@chunk, @loc, @materials['wall']);
 											}
@@ -679,6 +691,12 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 					}
 					if(@chunk) {
 						queue_push(closure(){
+							update_bar('gen'.@region, array(
+								'title':'Placing '.@dungeonType.' floor '.(@floor + 1),
+								'percent': double(++@chunkCount[0] / @maxChunks),
+							));
+						}, 'generator');
+						queue_push(closure(){
 							// removing chests drops items, so we need to make sure those don't drop
 							@bind = bind('item_spawn', null, null, @event, @world) {
 								if(@event['location']['world'] == @world) {
@@ -687,16 +705,11 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 							}
 							try {
 								foreach(@block in @chunk) {
-									if(is_array(@block['mat'])) {
-										set_blockdata_string(@block['loc'], array_rand(@block['mat'], 1, false)[0], false);
-									} else {
-										set_blockdata_string(@block['loc'], @block['mat'], false);
-									}
+									set_blockdata_string(@block['loc'], @block['mat'], false);
 								}
 							} finally {
 								unbind(@bind);
 							}
-							update_bar('gen'.@region,  double(++@chunkCount[0] / @maxChunks));
 						}, 'generator');
 					}
 				}
@@ -719,6 +732,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 					@roomHeight = @room['height'];
 					
 					// spawner
+					@spawner = false;
 					if(@room['connected'] > 1 && @mobTypes && srand(@random) < 0.7) {
 						@loc = array(
 							@regionMinX + @room['c1'] * @scale + 1 + integer(srand(@random) * (@room['width'] - 1)) * @scale,
@@ -727,6 +741,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 							@world
 						);
 						if(equals_ic(@materials['room'], get_block(@loc))) {
+							@spawner = true;
 							set_block(@loc, 'SPAWNER', false);
 							@rand = integer(srand(@random) * array_size(@mobTypes));
 							@mob = array_get(@mobTypes, @rand, 'ZOMBIE');
@@ -747,7 +762,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 								@world
 							);
 							if(equals_ic(@materials['room'], get_block(@loc))) {
-								set_block(@loc, 'CHEST', false);
+								set_blockdata_string(@loc, 'chest[facing='._get_direction(@random).']', false);
 								try(set_inventory(@loc, _get_loot(@floor, @random)));
 							}
 						}
@@ -780,7 +795,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 					}
 					
 					if(@floorData['trap']) {
-						@traps = integer(srand(@random) * max(@room['length'], @room['width']));
+						@traps = integer(srand(@random) * (@room['length'] + @room['width']));
 						while(@traps-- > 0) {
 							@loc = array(
 								@regionMinX + @room['c1'] * @scale + 1 + integer(srand(@random) * (@room['width'] - 1) * @scale),
@@ -798,10 +813,16 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 									case 'plate':
 										// must set pressure plate after dispenser underneath it
 										@loc = location_shift(@loc, 'down');
+										if(@spawner) {
+											continue();
+										}
 									case 'chest':
 										set_block(@loc, 'TRAPPED_CHEST', false);
 										@loc = location_shift(@loc, 'down');
 									case 'tripwire':
+										if(@spawner) {
+											continue();
+										}
 										@positive = null;
 										@negative = null;
 										if(@room['width'] > 1 && @room['width'] < 6) {
@@ -809,48 +830,77 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 											@negative = 'west';
 										} else if(@room['length'] > 1 && @room['length'] < 6) {
 											@positive = 'south';
-											@negative = 'morth';
+											@negative = 'north';
 										}
-										if(@positive) {
-											@tripwire = array(@loc);
-											@dist = 1;
-											while(!array_contains_ic(@materials['wall'], get_block(location_shift(@loc, @negative, @dist))) && @dist < 12) {
-												array_insert(@tripwire, location_shift(@loc, @negative, @dist), 0);
-												@dist++;
-											}
-											if(@dist == 12) {
-												continue();
-											}
-											@dist = 1;
-											while(!array_contains_ic(@materials['wall'], get_block(location_shift(@loc, @positive, @dist))) && @dist < 12) {
-												@tripwire[] = location_shift(@loc, @positive, @dist);
-												@dist++;
-											}
-											if(@dist == 12) {
-												continue();
-											}
-											set_blockdata_string(@tripwire[0], 'tripwire_hook[facing='.@positive',attached=true]', false);
-											foreach(@t in @tripwire[1..-2]) {
-												set_blockdata_string(@t, 'tripwire['.@positive.'=true,'.@negative.'=true,attached=true]', false);
-											}
-											set_blockdata_string(@tripwire[-1], 'tripwire_hook[facing='.@negative.',attached=true]', false);
-											if(srand(@random) > 0.5) {
-												@facing = @negative;
-												@loc = location_shift(location_shift(@tripwire[-1], @positive), 'up');
-											} else {
-												@facing = @positive;
-												@loc = location_shift(location_shift(@tripwire[0], @negative), 'up');
-											}
+										if(!@positive) {
+											continue();
+										}
+										@tripwire = array(@loc);
+										@dist = 1;
+										while(!array_contains_ic(@materials['wall'], get_block(location_shift(@loc, @negative, @dist))) && @dist < 12) {
+											array_insert(@tripwire, location_shift(@loc, @negative, @dist), 0);
+											@dist++;
+										}
+										if(@dist == 12) {
+											continue();
+										}
+										@dist = 1;
+										while(!array_contains_ic(@materials['wall'], get_block(location_shift(@loc, @positive, @dist))) && @dist < 12) {
+											@tripwire[] = location_shift(@loc, @positive, @dist);
+											@dist++;
+										}
+										if(@dist == 12) {
+											continue();
+										}
+										set_blockdata_string(@tripwire[0], 'tripwire_hook[facing='.@positive',attached=true]', false);
+										foreach(@t in @tripwire[1..-2]) {
+											set_blockdata_string(@t, 'tripwire['.@positive.'=true,'.@negative.'=true,attached=true]', false);
+										}
+										set_blockdata_string(@tripwire[-1], 'tripwire_hook[facing='.@negative.',attached=true]', false);
+										if(srand(@random) > 0.5) {
+											@facing = @negative;
+											@loc = location_shift(location_shift(@tripwire[-1], @positive), 'up');
+										} else {
+											@facing = @positive;
+											@loc = location_shift(location_shift(@tripwire[0], @negative), 'up');
 										}
 								}
 								switch(@effect) {
+									case 'fire':
+										foreach(@dir in array('north', 'south', 'east', 'west')) {
+											set_blockdata_string(location_shift(@loc, @dir), 'dispenser[facing=up]', false);
+											set_inventory(location_shift(@loc, @dir), array(0: array(
+												'name': 'FLINT_AND_STEEL', 'qty': 3, 'meta': array('damage': 61)
+											)));
+										}
+									case 'cactus':
+										set_block(location_shift(@loc, 'down'), 'SAND', false);
+										set_block(@loc, 'CACTUS', false);
+										set_block(location_shift(@loc, 'up'), 'CACTUS', false);
+									case 'web':
+										set_block(@loc, 'COBWEB', false);
+										@dir = _get_direction(@random);
+										@count = 0;
+										while(@count++ < @maxRoomHeight) {
+											@loc = location_shift(location_shift(@loc, 'up'), @dir);
+											if(equals_ic(@materials['room'], get_block(@loc))) {
+												set_block(@loc, 'COBWEB', false);
+											} else {
+												break();
+											}
+										}
 									case 'tnt':
 										set_blockdata_string(@loc, 'dispenser[facing='.@facing.']', false);
 										set_inventory(@loc, array(0: array('name': 'TNT', 'qty': 2)));
 									case 'potion':
-										set_blockdata_string(@loc, 'dispenser[facing='.@facing.']', false);
+										@solid = material_info(get_block(location_shift(@loc, @facing)), 'isSolid');
+										if(@solid) {
+											set_blockdata_string(@loc, 'dispenser[facing='.@facing.']', false);
+										} else {
+											set_blockdata_string(@loc, 'dispenser[facing=north]', false);
+										}
 										set_inventory(@loc, array(0: array(
-											'name': if(material_info(get_block(location_shift(@loc, @facing)), 'isSolid'), 'LINGERING_POTION', 'SPLASH_POTION'),
+											'name': if(@solid, 'LINGERING_POTION', 'SPLASH_POTION'),
 											'qty': 3,
 											'meta': array('base': array('extended': false, 'type': to_upper(@data), 'upgraded': true))
 										)));
@@ -858,7 +908,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 										set_blockdata_string(@loc, 'dispenser[facing='.@facing.']', false);
 										set_inventory(@loc, array(0: array('name': 'TIPPED_ARROW', 'qty': 3, 'meta': array('base': array('type': 'INSTANT_DAMAGE', 'upgraded': true, 'extended': false)))));
 								}
-								if(@triger == 'plate') {
+								if(@trigger == 'plate') {
 									// needs to be after dispenser
 									set_block(location_shift(@loc, 'up'), 'STONE_PRESSURE_PLATE', false);
 								}
@@ -891,13 +941,13 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 						@loc[1]--;
 						set_blockdata_string(@loc, 'ladder[facing=south]', false);
 						if(@ladderHeight > 2) {
-							set_block(location_shift(@loc, 'south'), array_rand(@materials['wall'], 1, false)[0], false);
-							set_block(location_shift(@loc, 'east'), array_rand(@materials['wall'], 1, false)[0], false);
-							set_block(location_shift(@loc, 'west'), array_rand(@materials['wall'], 1, false)[0], false);
+							set_block(location_shift(@loc, 'south'), @materials['wall'][0], false);
+							set_block(location_shift(@loc, 'east'), @materials['wall'][0], false);
+							set_block(location_shift(@loc, 'west'), @materials['wall'][0], false);
 						} else {
 							set_block(location_shift(@loc, 'south'), 'AIR', false);
 						}
-						set_block(location_shift(@loc, 'north'), array_rand(@materials['wall'], 1, false)[0], false);
+						set_block(location_shift(@loc, 'north'), @materials['wall'][0], false);
 					}
 				}, 'generator');
 			}

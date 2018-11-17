@@ -1,13 +1,16 @@
 default:
     maxRoomHeight: 16
+    chestCount: 1.2
+    staggeredWall: true
 floors:
     0:
         spawner: []
+        trap: [chest_tnt]
         empty: water
         wall: bedrock
         column: bedrock
         ceiling: bedrock
-        floor: [redstone_ore, mycelium]
+        floor: [bedrock]
         utility: bedrock
         decor: bedrock
         edge: bedrock

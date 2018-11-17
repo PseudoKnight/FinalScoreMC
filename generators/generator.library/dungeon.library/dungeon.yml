@@ -15,9 +15,10 @@ floors:
         edge: stone
     1:
         entranceDoor: true
-        bed: true
-        spawner: [cave_spider, spider, wolf]
-        wall: acacia_log
+        staggeredWall: true
+        spawner: [cave_spider, spider]
+        trap: [static_web]
+        wall: [acacia_log, acacia_log, dark_oak_log]
         column: dark_oak_log
         ceiling: [birch_leaves, dark_oak_leaves]
         floor: [grass_block, podzol]
@@ -26,13 +27,12 @@ floors:
         edge: acacia_leaves
     2:
         entranceDoor: true
-        bed: true
-        spawner: [zombie_villager, iron_golem]
+        spawner: [zombie_villager]
         trap: [plate_potion_poison, tripwire_arrow]
         wall: oak_planks
         column: oak_log
         ceiling: oak_planks
-        floor: cobblestone
+        floor: [cobblestone, stone]
         utility: [crafting_table, damaged_anvil]
         decor: [oak_stairs, bookshelf, cake]
         edge: bookshelf
@@ -40,8 +40,8 @@ floors:
     3:
         entranceDoor: true
         lavaPit: true
-        bed: true
-        spawner: [husk, husk, husk, husk, phantom]
+        spawner: [husk, husk, husk, husk, creeper]
+        trap: [static_cactus]
         wall: [sandstone, smooth_sandstone]
         column: chiseled_sandstone
         ceiling: sandstone
@@ -51,7 +51,6 @@ floors:
         edge: sandstone_stairs
     4:
         entranceDoor: true
-        bed: true
         spawner: [stray]
         wall: [snow_block, packed_ice]
         column: packed_ice
@@ -63,8 +62,8 @@ floors:
     5:
         entranceDoor: true
         lavaPit: true
-        bed: true
         spawner: [pig_zombie, magma_cube, blaze]
+        trap: [plate_fire]
         wall: nether_bricks
         column: nether_brick_fence
         ceiling: nether_bricks
@@ -72,12 +71,12 @@ floors:
         utility: [furnace, damaged_anvil]
         decor: cauldron
         edge: nether_brick_stairs
+        window: 'nether_brick_fence[north=true,south=true,east=true,west=true]'
     6:
         entranceDoor: true
         lavaPit: true
-        bed: true
         spawner: [skeleton, witch, creeper]
-        trap: [chest_tnt, plate_potion_poison]
+        trap: [chest_tnt, plate_potion_poison, plate_fire]
         wall: [polished_andesite, stone_bricks, mossy_stone_bricks, cracked_stone_bricks, infested_cracked_stone_bricks]
         column: bookshelf
         ceiling: stone_bricks
@@ -85,6 +84,7 @@ floors:
         utility: [crafting_table, enchanting_table, brewing_stand, cauldron]
         decor: rail
         edge: stone_brick_stairs
+        window: cobblestone_wall
     7:
         spawner: [guardian, pufferfish, drowned]
         wall: prismarine_bricks
@@ -98,7 +98,6 @@ floors:
         edge: dark_prismarine_stairs
     8:
         entranceDoor: true
-        bed: true
         spawner: [ender_crystal, endermite, enderman, shulker]
         wall: purpur_block
         column: purpur_pillar
@@ -109,7 +108,6 @@ floors:
         edge: purpur_stairs
     9:
         entranceDoor: true
-        bed: true
         spawner: [vindicator, vindicator, vindicator, vindicator, illusioner, evoker]
         trap: chest_potion_poison
         wall: dark_oak_planks
@@ -119,9 +117,9 @@ floors:
         utility: [enchanting_table, damaged_anvil]
         decor: bookshelf
         edge: birch_stairs
+        window: light_gray_stained_glass
     10:
         scale: 1
-        bed: true
         lavaPit: true
         spawner: [primed_tnt, ender_crystal, creeper, creeper, creeper]
         trap: plate_tnt

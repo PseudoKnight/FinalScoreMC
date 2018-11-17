@@ -28,3 +28,25 @@ proc _direction_of_solid(@layoutMap, @c, @r) {
 	}
 	return(null);
 }
+
+proc _get_direction(@random, @dirs = array('north', 'south', 'east', 'west')) {
+	return(@dirs[integer(srand(@random) * array_size(@dirs))]);
+}
+
+proc _get_adjacent_height(@heightMap, @maxRoomHeight, @c, @r, @x, @z) {
+	@height = -1;
+	if(@x % 2 == 1) {
+		try(@height = @heightMap[@c + 1][@r]);
+	} else {
+		try(@height = @heightMap[@c - 1][@r]);
+	}
+	if(@height != @maxRoomHeight) {
+		return(@height);
+	};
+	if(@z % 2 == 1) {
+		try(@height = @heightMap[@c][@r + 1]);
+	} else {
+		try(@height = @heightMap[@c][@r - 1]);
+	}
+	return(@height);
+}
