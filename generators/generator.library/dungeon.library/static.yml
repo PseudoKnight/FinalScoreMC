@@ -1,5 +1,5 @@
 default:
-    maxRoomHeight: 16
+    maxRoomHeight: 8
     chestCount: 1.2
     staggeredWall: true
 floors:

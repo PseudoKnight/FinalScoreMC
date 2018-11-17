@@ -1,6 +1,6 @@
 default:
-    maxRoomHeight: 14
-    chestCount: 1.2
+    maxRoomHeight: 12
+    chestCount: 1.1
 floors:
     0:
         entranceDoor: true
