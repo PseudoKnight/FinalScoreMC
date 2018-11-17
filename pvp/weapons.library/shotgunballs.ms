@@ -36,7 +36,7 @@ bind('entity_damage', array('id': @id.'shotgundamage'), array('type': 'PLAYER', 
 		@pvp = import('pvp'.@id);
 		if(array_index_exists(@pvp['players'], @e['shooter'])) {
 			@weapon = pinv(@e['shooter'], null);
-			if(!is_null(@weapon) && @weapon['name'] == 'SNOWBALL') {
+			if(!is_null(@weapon) && (@weapon['name'] == 'SNOWBALL' || @weapon['name'] == 'SLIME_BALL')) {
 				modify_event('amount', 7);
 			}
 		}
