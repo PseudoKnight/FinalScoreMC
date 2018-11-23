@@ -1,9 +1,10 @@
 default:
-    maxRoomHeight: 12
+    maxRoomHeight: 11
     chestCount: 1.1
 floors:
     0:
         entranceDoor: true
+        fireFloor: true
         spawner: [silverfish]
         trap: plate_tnt
         wall: [stone, stone, stone, stone, stone, stone, stone, stone, andesite, andesite, andesite, iron_ore]
@@ -51,6 +52,7 @@ floors:
         edge: sandstone_stairs
     4:
         entranceDoor: true
+        lavaPit: true
         spawner: [stray]
         wall: [snow_block, packed_ice]
         column: packed_ice
@@ -62,6 +64,7 @@ floors:
     5:
         entranceDoor: true
         lavaPit: true
+        fireFloor: true
         spawner: [pig_zombie, magma_cube, blaze]
         trap: [plate_fire]
         wall: nether_bricks

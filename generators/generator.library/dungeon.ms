@@ -36,6 +36,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 		'entranceDoor': false,
 		'lavaPit': false,
 		'pit': false,
+		'fireFloor': false,
 		'staggeredWall': false,
 		
 		// default materials
@@ -156,7 +157,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 			'type': 'NORMAL',
 		);
 
-		foreach(@floor in range(2)) { //array_size(@options['floors']))) {
+		foreach(@floor in range(array_size(@options['floors']))) {
 			queue_push(closure(){
 				update_bar('gen'.@region, 'Planning '.@dungeonType.' floor '.(@floor + 1));
 			}, 'generator');
@@ -269,6 +270,8 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 								},
 							'type': if(@floorData['lavaPit'] && @roomWidth > 1 && @roomLength > 1 && srand(@random) > 0.95) {
 									'LAVA_PIT';
+								} else if(@floorData['fireFloor'] && @roomWidth > 1 && @roomLength > 1 && srand(@random) > 0.95) {
+									'FIRE_FLOOR';
 								} else if(@floorData['pit'] && @floor > 0 && srand(@random) > 0.95) {
 									'PIT';
 								} else {
@@ -476,7 +479,9 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 
 								// Floor
 								@loc[1] += 1;
-								if(@roomMap[@c][@r] != -1 && @rooms[@roomMap[@c][@r]]['type'] == 'LAVA_PIT') {
+								if(@roomMap[@c][@r] != -1 && @rooms[@roomMap[@c][@r]]['type'] == 'FIRE_FLOOR') {
+									@chunk = _queue_block(@chunk, @loc, 'dispenser[facing=up]');
+								} else if(@roomMap[@c][@r] != -1 && @rooms[@roomMap[@c][@r]]['type'] == 'LAVA_PIT') {
 									if(!_direction_of_solid(@layoutMap, @c, @r) || srand(@random) > 0.4) {
 										@chunk = _queue_block(@chunk, @loc, 'lava');
 									} else {
@@ -521,7 +526,10 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 											}
 											
 										case 'room':
-											if(@materials['edge'] != 'air' && @roomHeight > 2 && @y == @ceilingY - 1) {
+											if(@roomMap[@c][@r] != -1 && @rooms[@roomMap[@c][@r]]['type'] == 'FIRE_FLOOR'
+											&& @y == @groundY + 2 && (@x + @z) % 2 && srand(@random) > 0.2) {
+												@chunk = _queue_block(@chunk, @loc, 'stone_pressure_plate');
+											} else if(@materials['edge'] != 'air' && @roomHeight > 2 && @y == @ceilingY - 1) {
 												@stairs = string_ends_with(@materials['edge'], 'stairs');
 												@north = @layoutMap[@c][@r - 1];
 												@south = @layoutMap[@c][@r + 1];
@@ -683,7 +691,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 									}
 
 									// Bedrock floor divider
-									while(@loc[1] < @y + @maxRoomHeight - @roomHeight) {
+									while(@loc[1] < @y + @maxRoomHeight - @roomHeight + 1) {
 										@loc[1] += 1;
 										if(@layoutMap[@c][@r] === 'room') {
 											@chunk = _queue_block(@chunk, @loc, @materials['empty']);
@@ -737,21 +745,32 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 					@yFloor = @regionMinY + (@floor * (@maxRoomHeight + 4)) + 2;
 					@roomHeight = @room['height'];
 					
-					// spawner
 					@spawner = false;
-					if(@room['connected'] > 1 && @mobTypes && srand(@random) < 0.7) {
-						@loc = array(
-							@regionMinX + @room['c1'] * @scale + 1 + integer(srand(@random) * (@room['width'] - 1)) * @scale,
-							@yFloor,
-							@regionMinZ + @room['r1'] * @scale + 1 + integer(srand(@random) * (@room['length'] - 1)) * @scale,
-							@world
-						);
-						if(equals_ic(@materials['room'], get_block(@loc))) {
-							@spawner = true;
-							set_block(@loc, 'SPAWNER', false);
-							@rand = integer(srand(@random) * array_size(@mobTypes));
-							@mob = array_get(@mobTypes, @rand, 'ZOMBIE');
-							set_spawner_type(@loc, @mob);
+					if(@room['type'] == 'FIRE_FLOOR') {
+						@y = @yFloor - 1;
+						for(@x = @regionMinX + @room['c1'] * @scale, @x < @regionMinX + @room['c1'] * @scale + @room['width'] * @scale, @x++) {
+							for(@z = @regionMinZ + @room['r1'] * @scale, @z < @regionMinZ + @room['r1'] * @scale + @room['length'] * @scale, @z++) {
+								try(set_inventory(array(@x, @y, @z, @world), array(0: array(
+									'name': 'FLINT_AND_STEEL'
+								))));
+							}
+						}
+					} else {
+						// spawner
+						if(@room['connected'] > 1 && @mobTypes && srand(@random) < 0.7) {
+							@loc = array(
+								@regionMinX + @room['c1'] * @scale + 1 + integer(srand(@random) * (@room['width'] - 1)) * @scale,
+								@yFloor,
+								@regionMinZ + @room['r1'] * @scale + 1 + integer(srand(@random) * (@room['length'] - 1)) * @scale,
+								@world
+							);
+							if(equals_ic(@materials['room'], get_block(@loc))) {
+								@spawner = true;
+								set_block(@loc, 'SPAWNER', false);
+								@rand = integer(srand(@random) * array_size(@mobTypes));
+								@mob = array_get(@mobTypes, @rand, 'ZOMBIE');
+								set_spawner_type(@loc, @mob);
+							}
 						}
 					}
 					
@@ -800,7 +819,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 						}
 					}
 					
-					if(@floorData['trap']) {
+					if(@floorData['trap'] && @room['type'] != 'FIRE_FLOOR') {
 						@traps = integer(srand(@random) * (@room['length'] + @room['width']));
 						while(@traps-- > 0) {
 							@loc = array(
@@ -878,7 +897,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 										foreach(@dir in array('north', 'south', 'east', 'west')) {
 											set_blockdata_string(location_shift(@loc, @dir), 'dispenser[facing=up]', false);
 											set_inventory(location_shift(@loc, @dir), array(0: array(
-												'name': 'FLINT_AND_STEEL', 'qty': 3, 'meta': array('damage': 61)
+												'name': 'FLINT_AND_STEEL', 'meta': array('damage': 61)
 											)));
 										}
 									case 'cactus':
