@@ -5,9 +5,16 @@ register_command('roll', array(
 		return(array());
 	},
 	'executor': closure(@alias, @sender, @args, @info) {
+		@num = 1;
 		@sides = 6;
 		if(@args) {
-			@sides = integer(@args[0]);
+			@split = split('d', @args[0]);
+			if(array_size(@split) == 2) {
+				@num = integer(@split[0]);
+				@sides = integer(@split[1]);
+			} else {
+				@sides = integer(@args[0]);
+			}
 		}
 		if(@sides > 100) {
 			die(color('a').'[Dice] '.color('f').'There\'s a limit of 100 sides.');
@@ -18,7 +25,11 @@ register_command('roll', array(
 		if(@sides == 2) {
 			@message = color('a').'[Coin] '.display_name().color('f').' flipped a coin and got '.if(rand(2) == 0, 'heads.', 'tails.');
 		} else {
-			@message = color('a').'[Dice] '.display_name().color('f').' rolled a '.color('a').(rand(@sides) + 1).' on a '.@sides.'-sided die.';
+			@rolls = array();
+			while(@num-- > 0) {
+				@rolls[] = rand(@sides) + 1;
+			}
+			@message = colorize('&a[Dice] '.display_name().'&r rolled &a'.array_implode(@rolls, ' and ').'&r on '.@sides.'-sided die.');
 		}
 		broadcast(@message, all_players(pworld()));
 	}
