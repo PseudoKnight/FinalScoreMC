@@ -41,7 +41,7 @@ bind('world_changed', array('id': 'shard-mega', 'priority': 'LOW'), array('to': 
 bind('player_interact', array('id': 'shard-fireball'), array('itemname': 'FIRE_CHARGE', 'block': null), @event) {
 	if(pworld() == 'shard') {
 		cancel();
-		@entity = shoot_projectile(player(), 'FIRE_CHARGE');
+		@entity = shoot_projectile(player(), 'SMALL_FIREBALL');
 		play_sound(ploc(), array('sound': 'ENTITY_GHAST_SHOOT', 'volume': 2));
 		_weapon_cooldown(player(), 1000, 'FIREWORK_STAR', closure(){
 			play_sound(ploc(), array('sound': 'BLOCK_FIRE_EXTINGUISH', 'pitch': 1.5));
