@@ -3,11 +3,12 @@ if(extension_exists('CHDiscord')) {
 	bind('discord_message_received', null, null, @event) {
 		if(@event['channel'] == 'chat') {
 			include('../includes.library/chat.ms');
-			_chat(@event['username'], @event['message'], all_players(), @event['channel']);
+			_chat(@event['nickname'], @event['message'], all_players(), @event['channel']);
 		}
 	}
 	
 	bind('discord_voice_joined', null, null, @event) {
-		broadcast(@event['nickname'].' joined the "'.@event['channel'].'" Discord voice channel.');
+		@player = if(ponline(@event['nickname']), display_name(@event['nickname']), @event['nickname']);
+		broadcast(color('yellow').@player.color('yellow').' joined the "'.@event['channel'].'" Discord voice channel.');
 	}
 }

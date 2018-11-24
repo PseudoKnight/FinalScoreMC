@@ -13,9 +13,6 @@ set_cron('*/5 * * * *', closure(){
 		
 	foreach(@p in all_players()) {
 		if(!entity_exists(puuid(@p))) {
-			tmsg(@p, 'PK: You don\'t appear to have an entity in this world.'
-					.' This is a server bug, sometimes caused by logging into the server while you\'re already logged in.'
-					.' If you\'re experiencing any issues you can fix this by changing worlds or rejoining the server.');
 			console('Warning, '.@p.' does not have an entity in world '.pworld(@p));
 		}
 	}
