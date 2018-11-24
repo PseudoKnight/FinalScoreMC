@@ -99,38 +99,36 @@ register_command('timer', array(
 					_remove_activity(@player.'timer');
 				}
 			});
-		
-			if(@ptime) {
-				@restartButton = array('name': 'GOLD_NUGGET', 'meta': array('display': color('green').color('bold').'Restart Button'));
-				set_pinv(@player, 0, @restartButton);
 			
-				if(!has_bind(@player.'reset')) {
-					bind('player_interact', array('id': @player.'reset'), array('player': @player, 'itemname': 'GOLD_NUGGET'), @e, @startLoc) {
-						if(@e['action'] == 'right_click_block') {
-							@block = @e['block'];
-							if(@block == 'STONE_BUTTON' || @block == 'OAK_BUTTON') {
-								die();
-							}
+			@restartButton = array('name': 'GOLD_NUGGET', 'meta': array('display': color('green').color('bold').'Restart Button'));
+			set_pinv(@player, 1, @restartButton);
+			set_pheld_slot(@player, 0);
+		
+			if(!has_bind(@player.'reset')) {
+				bind('player_interact', array('id': @player.'reset'), array('player': @player, 'itemname': 'GOLD_NUGGET'), @e, @startLoc) {
+					if(@e['action'] == 'right_click_block') {
+						@block = @e['block'];
+						if(@block == 'STONE_BUTTON' || @block == 'OAK_BUTTON') {
+							die();
 						}
-						cancel();
-						set_ploc(@startLoc);
 					}
+					cancel();
+					set_ploc(@startLoc);
 				}
-				if(!has_bind(@player.'timerdeath')) {
-					bind('player_death', array('id': @player.'timerdeath'), array('player': @player), @e, @restartButton) {
-						if(!_is_survival_world(pworld())) {
-							modify_event('drops', array());
-							set_timeout(500, closure(){
-								respawn();
-								set_timeout(50, closure(){
-									set_pinv(player(), 0, @restartButton);
-								});
+			}
+			if(!has_bind(@player.'timerdeath')) {
+				bind('player_death', array('id': @player.'timerdeath'), array('player': @player), @e, @restartButton) {
+					if(!_is_survival_world(pworld())) {
+						modify_event('drops', array());
+						set_timeout(500, closure(){
+							respawn();
+							set_timeout(50, closure(){
+								set_pinv(player(), 1, @restartButton);
 							});
-						}
+						});
 					}
 				}
 			}
-		
 		
 		} else if(@args[0] === 'stop'
 		&& array_index_exists(@timers, @player)
