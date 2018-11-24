@@ -1,6 +1,12 @@
 register_command('marathon', array(
 	'description': 'Creates a Marathon',
-	'usage': '/marathon [#]',
+	'usage': '/marathon <difficulty|number>',
+	'tabcompleter': closure(@alias, @sender, @args, @info) {
+		if(array_size(@args) == 1) {
+			return(_strings_start_with_ic(array('easy', 'easy-medium', 'medium', 'medium-hard', 'hard', 'very-hard'), @args[-1]));
+		}
+		return(array());
+	},
 	'executor': closure(@alias, @sender, @args, @info) {
 		// marathon join subcommand
 		@num = 0;
@@ -19,9 +25,13 @@ register_command('marathon', array(
 				return(true);
 			} else if(is_integral(@args[0])) {
 				@num = integer(@args[0]);
+			} else if(array_contains(array('easy', 'easy-medium', 'medium', 'medium-hard', 'hard', 'very-hard'), @args[0])) {
+				@difficulty = @args[0];
 			} else {
 				return(false);
 			}
+		} else {
+			return(false);
 		}
 		
 		@marathon = import('marathon');
@@ -36,11 +46,27 @@ register_command('marathon', array(
 			return(is_array(@value) && @key != 'times');
 		});
 		@courses = array_rand(@courses, if(@num && @num < array_size(@courses), @num, array_size(@courses)));
-		@coursetimes = associative_array();
+		
+		// remove namespace from course name
 		foreach(@index: @course in @courses) {
 			@name = split('.', @course)[1];
 			@courses[@index] = @name;
-			@coursetimes[@name] = null;
+		}
+		
+		// filter courses
+		if(@difficulty) {
+			@cakes = get_value('cakeinfo');
+			foreach(@index: @course in @courses) {
+				if(@cakes[@course]['difficulty'] != @difficulty) {
+					array_remove(@courses, @index);
+				}
+			}
+		}
+
+		// populate coursetimes array
+		@coursetimes = associative_array();
+		foreach(@course in @courses) {
+			@coursetimes[@course] = null;
 		}
 		
 		// create game object
