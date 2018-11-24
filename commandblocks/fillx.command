@@ -7,7 +7,7 @@ register_command('fillx', array(
 			return(false);
 		}
 		@cmdblk = get_command_block();
-		@world = @cmdblk;
+		@world = @cmdblk['world'];
 		@l1 = _relative_coords(@cmdblk, @args[0], @args[1], @args[2]);
 		@l2 = _relative_coords(@cmdblk, @args[3], @args[4], @args[5]);
 		@blockdata = @args[6];
@@ -38,9 +38,9 @@ register_command('fillx', array(
 							@loc = array(@x, @y, @z, @world);
 							@block = get_blockdata_string(@loc);
 							if(string_position(@block, @args[8]) >= 0) {
-								set_blockdata_string(@loc, @blockdata, false);
+								set_blockdata_string(@loc, @blockdata);
 							} else if(string_position(@block, @blockdata) >= 0) {
-								set_blockdata_string(@loc, @args[8], false);
+								set_blockdata_string(@loc, @args[8]);
 							}
 						}
 					}

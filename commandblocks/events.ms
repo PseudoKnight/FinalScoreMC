@@ -1,6 +1,6 @@
 # Allow command block placement for builders
 proc _place_command_block(@loc, @face, @block) {
-	if(!pisop() && has_permission('group.builder')
+	if(!pisop() && has_permission('command.cb')
 	&& !_is_survival_world(@loc['world'])) {
 		@clicked = get_block(@loc);
 		if(psneaking() || (@clicked != 'COMMAND_BLOCK' && @clicked != 'CHAIN_COMMAND_BLOCK' && @clicked != 'REPEATING_COMMAND_BLOCK')) {
@@ -63,13 +63,13 @@ proc _msg_block_command(@loc) {
 }
 
 bind('player_interact', null, associative_array('button': 'right', 'block': 'COMMAND_BLOCK'), @event) {
-	if(!pisop() && !psneaking() && @event['hand'] == 'main_hand' && has_permission('group.builder')){
+	if(!pisop() && !psneaking() && @event['hand'] == 'main_hand' && has_permission('command.cb')){
 		_msg_block_command(@event['location']);
 	}
 }
 
 bind('player_interact', null, associative_array('button': 'right', 'block': 'CHAIN_COMMAND_BLOCK'), @event) {
-	if(!pisop() && !psneaking() && @event['hand'] == 'main_hand' && has_permission('group.builder')){
+	if(!pisop() && !psneaking() && @event['hand'] == 'main_hand' && has_permission('command.cb')){
 		_msg_block_command(@event['location']);
 	}
 }
