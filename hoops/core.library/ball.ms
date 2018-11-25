@@ -109,6 +109,7 @@ proc _hoops_ball_create(@loc) {
 		if(!array_index_exists(@event, 'damager')) {
 			die();
 		}
+		set_pinv(@game['holder'], array(0: null, -106: null));
 		@game['lastholder'] = @event['damager'];
 		@game['holder'] = '';
 		set_entity_spec(@stand, array('gravity': true));
@@ -153,9 +154,9 @@ proc _hoops_ball_create(@loc) {
 							@points = if(distance(@loc, @game['shootLoc']) > 15 || get_block(@game['shootLoc']) == 'BIRCH_PLANKS', 3, 2);
 							@game['players'][@game['lastholder']]['score'] += @points;
 							if(@block == 'RED_CONCRETE') {
-								@game['teams']['red']['score'] += @points;
-							} else if(@block == 'BLUE_CONCRETE') {
 								@game['teams']['blue']['score'] += @points;
+							} else if(@block == 'BLUE_CONCRETE') {
+								@game['teams']['red']['score'] += @points;
 							} else {
 								console('Detected '.@block.' when expecting red or blue concrete.');
 							}
