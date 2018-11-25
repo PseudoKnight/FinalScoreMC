@@ -143,7 +143,7 @@ proc _fw_task(@task, @state, @secs) {
 					pgive_item(@p, array('name': 'SEEDS')); # seeds
 				}
 			}
-			bind('item_pickup', array('id': 'fwpickup'), array('itemname': 296), @e) {
+			bind('item_pickup', array('id': 'fwpickup'), array('itemname': 'WHEAT'), @e) {
 				if(_fw_player(player())
 				&& _fw_changeteam(player(), 'winners')) {
 					modify_event('item', null);
