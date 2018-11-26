@@ -51,7 +51,7 @@ proc _chat(@player, @message, @recipients, @discordChannel = '') {
 			die(@player.' tried to speak in web chat');
 		}
 		if(@discordChannel) {
-			@components[] = array('hover', '&9\u2689'.if(@discordChannel != 'chat', '#'.@discordChannel), 'Discord');
+			@components[] = array('hover', '&9\u2689'.if(@discordChannel != 'minecraft_chat', '#'.@discordChannel), 'Discord');
 		} else {
 			@components[] = array('hover', '&2\u29E0', 'Live Map on Web');
 		}
@@ -88,7 +88,7 @@ proc _chat(@player, @message, @recipients, @discordChannel = '') {
 		}
 		if(!@discordChannel) {
 			if(function_exists('discord_broadcast')) {
-				discord_broadcast('chat', '**'.@player.'** '.@filteredMessage);
+				discord_broadcast('minecraft_chat', '**'.@player.'** '.@filteredMessage);
 			}
 		}
 	}
