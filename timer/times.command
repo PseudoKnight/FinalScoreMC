@@ -124,11 +124,11 @@ register_command('times', array(
 						}
 					}
 					@filtered = array_filter(@players, closure(@key, @value) {
-						return(@value['count'] == array_size(@courses));
+						return(@value['count'] >= array_size(@courses) - 10);
 					});
 					@players = array();
 					foreach(@uuid: @value in @filtered) {
-						@players[] = array('name': _pdata_by_uuid(@uuid)['name'], 'total': @value['total']);
+						@players[] = array('name': _pdata_by_uuid(@uuid)['name'], 'total': @value['total'], 'count': @value['count']);
 					}
 					array_sort(@players, closure(@left, @right){
 						return(@left['total'] > @right['total']);
@@ -137,12 +137,13 @@ register_command('times', array(
 					foreach(@index: @value in @players) {
 						@time = '';
 						if(@value['total'] >= 3600) {
-							@time = simple_date('h\u0027h\u0027 m\u0027m\u0027 ss.S', integer(@value['total'] * 1000));
+							@time = simple_date('h\u0027h\u0027 m\u0027m\u0027 ss.S', integer(@value['total'] * 1000), 'Etc/UTC');
 						} else {
 							@time = simple_date('m\u0027m\u0027 ss.S', integer(@value['total'] * 1000));
 						}
 						@time = substr(@time, 0, length(@time) - 2).'s';
-						@output .= '\n'.color('gray').(@index + 1).color('green').' [ '.@time.' ] '.color('reset').@value['name'];
+						@output .= '\n'.color('gray').(@index + 1).color('green').' [ '.@time.' ] '.color('reset').@value['name']
+								.color(if(@value['count'] == array_size(@courses), 'green', 'gray')).' ('.@value['count'].'/'.array_size(@courses).')';
 					}
 					msg(@output);
 				});
