@@ -153,7 +153,8 @@ register_command('times', array(
 				
 					@top = get_value('times');
 					msg(colorize('&e&m|------------------&e&l[ TOP SCORE TOTALS ]'));
-					for(@i = 0, @i < array_size(@top), @i++) {
+					@max = min(20, array_size(@top));
+					for(@i = 0, @i < @max, @i++) {
 						msg(colorize(' '.if(@i < 9, '&80').'&7'.(@i + 1).'&a [ '.@top[@i][2].' ] &r'.@top[@i][1]));
 					}
 				

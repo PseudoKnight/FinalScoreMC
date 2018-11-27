@@ -286,14 +286,43 @@ register_command('timer', array(
 						}
 					}
 					@averages = array();
-					foreach(@uuid: @score in @players) {
-						@averages[] = array(@uuid, @score[0], @score[1]);
+					foreach(@uuid2: @score in @players) {
+						@averages[] = array(@uuid2, @score[0], @score[1]);
 					}
 					array_sort(@averages, closure(@left, @right){
 						return(@left[2] < @right[2]);
 					});
 					x_run_on_main_thread_later(closure(){
-						store_value('times', @averages[0..19]);
+						store_value('times', @averages);
+						@overallPlace = 0;
+						foreach(@index: @time in @times['times']) {
+							if(@time[0] == @uuid) {
+								@overallPlace = @index + 1;
+								break();
+							}
+						}
+						if(@overallPlace) {
+							foreach(@index: @time in @averages) {
+								if(@time[0] == @uuid) {
+									if(@index + 1 < @overallPlace) {
+										@place = @index + 1;
+										@suffix = 'th';
+										if(@place > 20 || @place < 4) { // special cases for 11, 12, and 13
+											switch(@place % 10) {
+												case 1:
+													@suffix = 'st';
+												case 2:
+													@suffix = 'nd';
+												case 3:
+													@suffix = 'rd';
+											}
+										}
+										broadcast(color('green').'... and moved to '.@place.@suffix.' place overall!');
+									}
+									break();
+								}
+							}
+						}
 					});
 				});
 		
