@@ -19,7 +19,7 @@ proc _hoops_ball_create(@loc) {
 	@stand = spawn_entity('ARMOR_STAND', 1, @loc)[0];
 	set_entity_spec(@stand, array('small': true, 'visible': false));
 	if(function_exists('set_entity_size')) {
-		set_entity_size(@stand, 1.0, 1.0);
+		set_entity_size(@stand, 0.88, 1.0);
 	}
 	
 	set_entity_velocity(@stand, array(0, 1, 0));
@@ -48,7 +48,7 @@ proc _hoops_ball_create(@loc) {
 						try(update_bar('hoops', array('color': to_upper(@game['players'][@game['holder']]['team']))));
 					}
 				} else {
-					set_pinv(player(), 0, null);
+					set_pinv(player(), array(0: null, -106: null));
 					@game['holder'] = '';
 					@game['lastholder'] = player();
 					set_entity_spec(@stand, array('gravity': true));
