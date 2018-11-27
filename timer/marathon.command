@@ -102,18 +102,9 @@ register_command('marathon', array(
 			}
 			clear_task();
 			
-			// setup players
 			@firstwarp = get_value('warp', @courses[0]);
-			foreach(@p: @course in @players) {
-				create_bar(@p, array('title': @p.': '.@course, 'color': 'GREEN', 'visible': false));
-				foreach(@p2 in array_keys(@players)) {
-					bar_add_player(@p, @p2);
-				}
-				_set_pactivity(@p, 'marathon');
-				set_ploc(@p, @firstwarp);
-			}
 			
-			set_interval(1000, closure(){
+			set_interval(1000, 0, closure(){
 				@time = time();
 				if(array_size(@players) < 2) {
 					clear_task();
@@ -128,29 +119,35 @@ register_command('marathon', array(
 					die();
 				}
 				foreach(@p: @course in @players) {
-					try {
-						if(@marathon['times'][@course]) {
-							if(@time > @marathon['times'][@course] + 120000) {
-								if(ponline(@p)) {
-									title(@p, 'Too slow!', '');
-									_worldmsg(pworld(), color('yellow').color('bold').@p.' fell behind on '.@course);
-								}
-								array_remove(@marathon['players'], @p);
-								remove_bar(@p);
-								_set_pactivity(@p, null);
-							} else {
-								@percent = 1.0 - (@time - @marathon['times'][@course]) / 120000;
-								update_bar(@p, array(
-									'percent': @percent,
-									'color': if(@percent < 0.25, 'RED', if(@percent < 0.5, 'YELLOW', 'GREEN')),
-									'visible': if(@percent < 0.75, true, false),
-								));
-							}
-						} else {
-							update_bar(@p, array('percent': 1.0, 'color': 'GREEN', 'visible': false));
+					// handle marathon joiners
+					if(!array_contains(get_bars(), @p)) {
+						create_bar(@p, array('title': @p.': '.@course, 'color': 'GREEN', 'visible': false));
+						foreach(@p2 in array_keys(@players)) {
+							bar_add_player(@p, @p2);
 						}
-					} catch(NotFoundException @ex) {
-						remove_bar(@p);
+						_set_pactivity(@p, 'marathon');
+						set_ploc(@p, @firstwarp);
+					}
+
+					if(@marathon['times'][@course]) {
+						if(@time > @marathon['times'][@course] + 120000) {
+							if(ponline(@p)) {
+								title(@p, 'Too slow!', '');
+								_worldmsg(pworld(), color('yellow').color('bold').@p.' fell behind on '.@course);
+							}
+							array_remove(@marathon['players'], @p);
+							remove_bar(@p);
+							_set_pactivity(@p, null);
+						} else {
+							@percent = 1.0 - (@time - @marathon['times'][@course]) / 120000;
+							update_bar(@p, array(
+								'percent': @percent,
+								'color': if(@percent < 0.25, 'RED', if(@percent < 0.5, 'YELLOW', 'GREEN')),
+								'visible': if(@percent < 0.75, true, false),
+							));
+						}
+					} else {
+						update_bar(@p, array('percent': 1.0, 'color': 'GREEN', 'visible': false));
 					}
 				}
 			});
