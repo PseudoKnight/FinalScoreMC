@@ -109,7 +109,9 @@ proc _hoops_ball_create(@loc) {
 		if(!array_index_exists(@event, 'damager')) {
 			die();
 		}
-		set_pinv(@game['holder'], array(0: null, -106: null));
+		if(@game['holder']) {
+			set_pinv(@game['holder'], array(0: null, -106: null));
+		}
 		@game['lastholder'] = @event['damager'];
 		@game['holder'] = '';
 		set_entity_spec(@stand, array('gravity': true));
