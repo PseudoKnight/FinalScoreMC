@@ -47,14 +47,11 @@ bind('block_break', null, array('block': 'CHAIN_COMMAND_BLOCK'), @event) {
 # Display command to builders
 proc _msg_block_command(@loc) {
 	@cmd = get_block_command(@loc);
-	@args = parse_args(@cmd);
-	if(array_size(@args) > 1 && (@args[0] == '/runalias' || @args[0] == 'runalias')) {
-		@cmd = array_implode(@args[cslice(1, array_size(@args) - 1)], ' ');
-	}
 	@cmd = replace(@cmd, '\\', '\\\\');
 	@cmd = replace(@cmd, '"', '\\u0022');
 	runas('~console', '/tellraw '.player().' ["",'
-			.'{"text":"[REDSTONE |","clickEvent":{"action":"run_command","value":"/scbauto false"}},'
+			'{"text":"[EDIT]","clickEvent":{"action":"run_command","value":"/scb"}},'
+			.'{"text":" [REDSTONE |","clickEvent":{"action":"run_command","value":"/scbauto false"}},'
 			.'{"text":" ALWAYS]","clickEvent":{"action":"run_command","value":"/scbauto true"}},'
 			'{"text":" [CONDITIONAL]","clickEvent":{"action":"run_command","value":"/scbconditional"}},'
 			.'{"text":" [TYPE]","clickEvent":{"action":"run_command","value":"/scbtype"}},'

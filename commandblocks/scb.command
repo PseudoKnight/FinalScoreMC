@@ -1,41 +1,62 @@
-@allowedcmds = array('/velocity', '/tp', '/sayas', '/testfor', '/testforblock', '/testforblocks', '/playsound',
-	'/setblock', '/setblockx', '/fill', '/fillx', '/tempcart', '/bedspawn', '/give', '/effect', '/warp', '/tellraw', '/time', '/stopsound',
-	'/timer', '/tempboat', '/platform');
+@allowedCommands = array('/effect', '/fill', '/fillx', '/give', 'particle', '/platform', '/playsound', '/sayas', '/setblock',
+	'/setblockx', '/stopsound', '/teleport', '/tempboat', '/tempcart', '/time', '/timer', '/tp', '/velocity', '/warp');
 register_command('scb', array(
 	'description': 'Set the command in the targeted command block.',
-	'usage': '/scb <cmd>',
+	'usage': '/scb [cmd]',
 	'permission': 'command.cb',
 	'tabcompleter': closure(@alias, @sender, @args, @info) {
 		if(array_size(@args) == 1) {
-			return(_strings_start_with_ic(@allowedcmds, @args[-1]));
+			return(_strings_start_with_ic(@allowedCommands, @args[-1]));
 		}
 		return(array());
 	},
 	'executor': closure(@alias, @sender, @args, @info) {
-		if(!@args) {
-			return(false);
-		}
-		if(!array_contains_ic(@allowedcmds, @args[0])) {
-			die(color('gold').'Allowed commands: '.array_implode(@allowedcmds));
-		}
-		foreach(@arg in @args) {
-			if(reg_match('@[ae]\\[[^r]', @arg)) {
-				die(color('gold').'Cannot use unlimited @a or @e selectors. Please use ranges. eg. @a[r=8]');
-			}
-		}
 		@block = pcursor();
 		try {
 			get_block_command(@block);
 		} catch(FormatException @ex) {
-			die(color('gold').'You are looking at '.get_block(@block).'. That is not a command block.');
+			die(color('red').'You are looking at '.get_block(@block).'. That is not a command block.');
 		}
-		@cmd = array_implode(@args);
-		if(@match = reg_match('^\\/(?:minecraft\\:)?(setblock\\s.*|fill\\s.*)', @cmd)) {
-			@cmd = '/minecraft:'.@match[1];
-		} else if(is_alias(@cmd)) {
-			@cmd = '/runalias '.@cmd;
+		if(!@args) {
+			msg(color('yellow').'Type the desired command in chat:');
+			psetop(true);
+			@binds = array();
+			@binds[] = bind('player_quit', null, array('player': player()), @event, @binds) {
+				psetop(false);
+				foreach(@bind in @binds) {
+					unbind(@bind);
+				}
+			}
+			@binds[] = bind('player_command', null, array('player': player()), @event, @binds, @block, @allowedCommands) {
+				cancel();
+				psetop(false);
+				foreach(@bind in @binds) {
+					unbind(@bind);
+				}
+				@args = parse_args(@event['command']);
+				if(!array_contains_ic(@allowedCommands, @args[0])) {
+					die(color('gold').'Cannot use the command '.@args[0].' in a commandblock. Must be one of: '.array_implode(@allowedCommands));
+				}
+				foreach(@arg in @args) {
+					if(reg_match('^@[ae]', @arg) && !string_contains(@arg, 'distance=')) {
+						die(color('gold').'Do not use unlimited @a or @e selectors. Please use ranges. eg. @a[distance=..8]');
+					}
+				}
+				set_block_command(@block, @event['command']);
+				msg('Command set: ' .color('green').@event['command']);
+			}
+		} else {
+			if(!array_contains_ic(@allowedCommands, @args[0])) {
+				die(color('gold').'Cannot use the command '.@args[0].' in a commandblock. Must be one of: '.array_implode(@allowedCommands));
+			}
+			foreach(@arg in @args) {
+				if(reg_match('^@[ae]', @arg) && !string_contains(@arg, 'distance=')) {
+					die(color('gold').'Do not use unlimited @a or @e selectors. Please use ranges. eg. @a[distance=..8]');
+				}
+			}
+			@cmd = array_implode(@args);
+			set_block_command(@block, @cmd);
+			msg('Command set: '.color('green').@cmd);
 		}
-		set_block_command(@block, @cmd);
-		msg('Command set: '.color('green').@cmd);
 	}
 ));
