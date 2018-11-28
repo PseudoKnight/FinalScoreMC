@@ -4,7 +4,6 @@
 	NO teleports. Horses/Minecarts/Potions are allowed.
 
 	DEPENDENCIES:
-	- WorldBorder plugin to define a random location within the valid world space. The read() location is relative to the script!
 	- CHNaughty extension for action_msg()
 */
 register_command('greatrace', array(
@@ -25,16 +24,22 @@ register_command('greatrace', array(
 
 		# Get target location
 		if(!@args) {
-			@worlds = yml_decode(read('../../../WorldBorder/config.yml'))['worlds'];
+			@worlds = null;
+			try {
+				@worlds = yml_decode(read('../../../WorldBorder/config.yml'))['worlds'];
+			} catch(IOException @ex) {
+				// WorldBorder plugin doesn't exist
+			}
 			@x = 0;
 			@z = 0;
-			if(array_index_exists(@worlds, @world)) {
+			if(@worlds && array_index_exists(@worlds, @world)) {
 				@border = @worlds[@world];
 				@x = @border['x'] - @border['radiusX'] + rand(@border['radiusX'] * 2);
 				@z = @border['z'] - @border['radiusZ'] + rand(@border['radiusZ'] * 2);
 			} else {
-				@x += rand(4096 * 2) - 4096;
-				@z += rand(4096 * 2) - 4096;
+				@width = min(8192, integer(get_world_border(@world)['width']));
+				@x += rand(@width) - @width / 2;
+				@z += rand(@width) - @width / 2;
 			}
 			@target = get_highest_block_at(@x, @z, @world);
 		} else if(array_size(@args) == 2) {
