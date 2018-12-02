@@ -9,7 +9,7 @@
 		dm_broadcast_to_web('* '.player().' '.$);
 	}
 	if(function_exists('discord_broadcast')) {
-		discord_broadcast('chat', '**'.player().' '.$.'*');
+		discord_broadcast('minecraft_chat', '**'.player().' '.$.'*');
 	}
 <<<
 
