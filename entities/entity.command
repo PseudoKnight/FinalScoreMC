@@ -33,7 +33,7 @@ register_command('entity', array(
 						}
 						@type = @args[3];
 						if(!_get_entity(@type)) {
-							die(color('gold').'Unknown entityb type.');
+							die(color('gold').'Unknown entity type.');
 						}
 						@entity['type'] = @type;
 						msg(color('green').'Type set to '.@type);
