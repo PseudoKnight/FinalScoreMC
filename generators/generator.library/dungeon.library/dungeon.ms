@@ -37,8 +37,8 @@ proc _get_loot(@floor, @random, @loot = array(
 	array('chance': -0.02, 'item': 'DIAMOND_CHESTPLATE', 'damage': 529),
 	array('chance': -0.02, 'item': 'DIAMOND_LEGGINGS', 'damage': 496),
 	array('chance': -0.02, 'item': 'DIAMOND_BOOTS', 'damage': 430),
-	array('chance': -0.01, 'item': 'TURTLE_HELMET'),
-	array('chance': -0.01, 'item': 'TOTEM_OF_UNDYING'),
+	array('chance': -0.02, 'item': 'TURTLE_HELMET'),
+	array('chance': -0.02, 'item': 'TOTEM_OF_UNDYING'),
 	array('chance': 0.01, 'item': 'SHIELD', 'damage': 336),
 	array('chance': 0.03, 'item': 'LAPIS_LAZULI'),
 	array('chance': 0.04, 'item': 'IRON_INGOT'),
@@ -77,7 +77,7 @@ proc _get_loot(@floor, @random, @loot = array(
 				@meta['stored'][@enchant] = array('elevel': 1);
 				@item['meta'] = @meta;
 			} else if(string_ends_with(@item['name'], 'POTION')) {
-				@meta = array('display': 'Mystery Potion', 'flags': array('HIDE_POTION_EFFECTS'));
+				@meta = associative_array();
 				if(srand(@random) > 0.5) {
 					@state = integer(srand(@random) * 3);
 					@potionTypes = array('SPEED', 'SLOWNESS', 'STRENGTH', 'INSTANT_HEAL', 'INSTANT_DAMAGE', 'JUMP',
@@ -93,6 +93,8 @@ proc _get_loot(@floor, @random, @loot = array(
 						@effect = @effects[@id];
 						@meta['potions'][@effect] = array('seconds': rand(1, 480), 'strength': rand(3)),
 					} while(srand(@random) > 0.6);
+					@meta['display'] = 'Mystery Potion';
+					@meta['flags'] = array('HIDE_POTION_EFFECTS');
 				}
 				@item['meta'] = @meta;
 			}

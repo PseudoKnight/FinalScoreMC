@@ -1,11 +1,12 @@
+dungeonEntrance: true
 default:
     maxRoomHeight: 11
     chestCount: 1.1
 floors:
     0:
         entranceDoor: true
-        fireFloor: true
-        spawner: [silverfish]
+        waterPit: true
+        spawner: [silverfish, bat]
         trap: plate_tnt
         wall: [stone, stone, stone, stone, stone, stone, stone, stone, andesite, andesite, andesite, iron_ore]
         column: stone
@@ -14,6 +15,7 @@ floors:
         utility: gold_ore
         decor: stone
         edge: stone
+        boss: CREEPER
     1:
         entranceDoor: true
         staggeredWall: true
@@ -23,9 +25,12 @@ floors:
         column: dark_oak_log
         ceiling: [birch_leaves, dark_oak_leaves]
         floor: [grass_block, podzol]
-        utility: [crafting_table, damaged_anvil]
+        utility: [damaged_anvil]
         decor: [birch_leaves, cobweb]
         edge: acacia_leaves
+        boss:
+            type: CAVE_SPIDER
+            rider: GUARDIAN
     2:
         entranceDoor: true
         spawner: [zombie_villager]
@@ -34,10 +39,25 @@ floors:
         column: oak_log
         ceiling: oak_planks
         floor: [cobblestone, stone]
-        utility: [crafting_table, damaged_anvil]
+        utility: [damaged_anvil]
         decor: [oak_stairs, bookshelf, cake]
         edge: bookshelf
         window: glass
+        boss:
+            type: ZOMBIE_VILLAGER
+            tags:
+                baby: true
+            gear:
+                weapon:
+                    name: IRON_SWORD
+                boots:
+                    name: IRON_BOOTS
+                leggings:
+                    name: IRON_LEGGINGS
+                chestplate:
+                    name: IRON_CHESTPLATE
+                helmet:
+                    name: IRON_HELMET
     3:
         entranceDoor: true
         lavaPit: true
@@ -47,20 +67,50 @@ floors:
         column: chiseled_sandstone
         ceiling: sandstone
         floor: terracotta
-        utility: [crafting_table, damaged_anvil]
+        utility: [damaged_anvil]
         decor: dead_bush
         edge: sandstone_stairs
+        boss:
+            type: HUSK
+            tags:
+                baby: true
+            gear:
+                weapon:
+                    name: DIAMOND_SWORD
+                boots:
+                    name: DIAMOND_BOOTS
+                leggings:
+                    name: DIAMOND_LEGGINGS
+                chestplate:
+                    name: DIAMOND_CHESTPLATE
+                helmet:
+                    name: DIAMOND_HELMET
     4:
         entranceDoor: true
-        lavaPit: true
+        waterPit: true
         spawner: [stray]
         wall: [snow_block, packed_ice]
         column: packed_ice
         ceiling: [snow_block, packed_ice]
         floor: [snow_block, packed_ice]
-        utility: [enchanting_table, crafting_table, damaged_anvil]
+        utility: [enchanting_table, damaged_anvil]
         decor: blue_ice
         edge: snow_block
+        boss:
+            type: POLAR_BEAR
+            rider:
+                type: STRAY
+                gear:
+                    weapon:
+                        name: BOW
+                    boots:
+                        name: DIAMOND_BOOTS
+                    leggings:
+                        name: DIAMOND_LEGGINGS
+                    chestplate:
+                        name: DIAMOND_CHESTPLATE
+                    helmet:
+                        name: DIAMOND_HELMET
     5:
         entranceDoor: true
         lavaPit: true
@@ -75,30 +125,48 @@ floors:
         decor: cauldron
         edge: nether_brick_stairs
         window: 'nether_brick_fence[north=true,south=true,east=true,west=true]'
+        boss: WITHER_SKELETON
     6:
         entranceDoor: true
         lavaPit: true
         spawner: [skeleton, witch, creeper]
-        trap: [chest_tnt, plate_potion_poison, plate_fire]
+        trap: [chest_tnt, plate_potion_poison]
         wall: [polished_andesite, stone_bricks, mossy_stone_bricks, cracked_stone_bricks, infested_cracked_stone_bricks]
         column: bookshelf
         ceiling: stone_bricks
         floor: [mossy_stone_bricks, mossy_stone_bricks, mossy_stone_bricks, mossy_stone_bricks, mossy_stone_bricks, mossy_stone_bricks, cracked_stone_bricks, cracked_stone_bricks, water]
-        utility: [crafting_table, enchanting_table, brewing_stand, cauldron]
+        utility: [enchanting_table, brewing_stand, cauldron]
         decor: rail
         edge: stone_brick_stairs
         window: cobblestone_wall
+        boss:
+            type: RABBIT
+            tags:
+                type: THE_KILLER_BUNNY
     7:
-        spawner: [guardian, pufferfish, drowned]
+        spawner: [guardian, pufferfish]
         wall: prismarine_bricks
         room: water
         door: water
         column: prismarine_bricks
         ceiling: prismarine
-        floor: [dark_prismarine,dark_prismarine,dark_prismarine,dark_prismarine,dark_prismarine,dark_prismarine,dark_prismarine,dark_prismarine,dark_prismarine,dark_prismarine,dark_prismarine,soul_sand,magma_block]
+        floor: dark_prismarine
         utility: sea_lantern
-        decor: gold_block
+        decor: soul_sand
         edge: dark_prismarine_stairs
+        boss:
+            type: DROWNED
+            gear:
+                weapon:
+                    name: TRIDENT
+                boots:
+                    name: DIAMOND_BOOTS
+                leggings:
+                    name: DIAMOND_LEGGINGS
+                chestplate:
+                    name: DIAMOND_CHESTPLATE
+                helmet:
+                    name: DIAMOND_HELMET
     8:
         entranceDoor: true
         spawner: [ender_crystal, endermite, enderman, shulker]
@@ -109,9 +177,10 @@ floors:
         utility: enchanting_table
         decor: chorus_plant
         edge: purpur_stairs
+        boss: ENDER_CRYSTAL
     9:
         entranceDoor: true
-        spawner: [vindicator, vindicator, vindicator, vindicator, illusioner, evoker]
+        spawner: [vindicator, vindicator, vindicator, vindicator, vindicator, illusioner]
         trap: chest_potion_poison
         wall: dark_oak_planks
         column: cobblestone_wall
@@ -121,6 +190,7 @@ floors:
         decor: bookshelf
         edge: birch_stairs
         window: light_gray_stained_glass
+        boss: EVOKER
     10:
         scale: 1
         lavaPit: true
@@ -135,3 +205,7 @@ floors:
         edge: air
         minRoomHeight: 4
         chestCount: 0
+        boss:
+            type: CREEPER
+            tags:
+                powered: true

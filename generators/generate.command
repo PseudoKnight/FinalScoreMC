@@ -14,7 +14,8 @@ register_command('generate', array(
 			msg(color('green').'Done recompiling '.@count.' scripts.');
 		} else {
 			_generator_create(@args[0], @args[1], @args[2], pworld(), integer(array_get(@args, 3, 0)), closure(@start, @end, @spawns) {
-				set_block(location_shift(@end, 'up'), 'BEACON', false);
+				set_block(location_shift(@end, 'up'), 'QUARTZ_PILLAR', false);
+				set_block(location_shift(@end, 'up', 2), 'CAKE', false);
 			});
 		}
 	}
