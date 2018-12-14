@@ -20,7 +20,7 @@ register_command('fillx', array(
 					for(@y = min(@l1['y'], @l2['y']), @y <= @yMax, @y++) {
 						for(@z = min(@l1['z'], @l2['z']) + 0.5, @z <= @zMax, @z += 1.0) {
 							@loc = array(@x, @y, @z, @world);
-							@blockdata = get_blockdata_string(@world);
+							@blockdata = get_blockdata_string(@loc);
 							if(@blockdata != 'minecraft:air') {
 								set_block(@loc, 'AIR', false);
 								spawn_falling_block(@loc, @blockdata);
