@@ -6,14 +6,16 @@ register_command('display', array(
 		return(array());
 	},
 	'executor': closure(@alias, @sender, @args, @info) {
-		if(!@args) {
-			return(false);
-		}
+		@name = array_implode(@args);
 		@meta = get_itemmeta(null);
 		if(is_null(@meta)) {
 			@meta = associative_array();
 		}
-		@meta['display'] = colorize(array_implode(@args));
+		if(@name) {
+			@meta['display'] = colorize(@name);
+		} else {
+			array_remove(@meta, 'display');
+		}
 		set_itemmeta(null, @meta);
 	}
 ));
