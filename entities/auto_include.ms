@@ -1,4 +1,4 @@
-proc _spawn_entity(@entity, @loc, @owner, @teammates) {
+proc _spawn_entity(@entity, @loc, @owner, @teammates, @consumer) {
 	if(!is_array(@entity)) {
 		@entity = _get_entity(@entity);
 	}
@@ -164,6 +164,9 @@ proc _spawn_entity(@entity, @loc, @owner, @teammates) {
 			} catch(BadEntityException @ex) {
 				// mob is gone for some reason
 			}
+		}
+		if(@consumer) {
+			execute(@e, @consumer);
 		}
 	}
 	return(spawn_entity(@entity['type'], 1, @loc, @modify)[0]);
