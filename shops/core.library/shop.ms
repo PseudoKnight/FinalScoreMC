@@ -108,7 +108,7 @@ proc _shop_process_transaction(@shop) {
 		die(colorize('&6Not enough space in your inventory.'));
 	}
 	
-	if(!_chest_has_space(@chestInv)) {
+	if(@chestItem['qty'] < @maxChestItem && !_chest_has_space(@chestInv)) {
 		die(colorize('&6Not enough space in this shop.'));
 	}
 	
