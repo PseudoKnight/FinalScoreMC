@@ -58,7 +58,7 @@ bind('player_teleport', null, null, @event) {
 		
 		// Teleport leashed entities with player
 		@item = pinv(player(), null);
-		if(@item && @item['name'] = 'LEASH') {
+		if(@item && @item['name'] == 'LEAD') {
 			@entities = array();
 			foreach(@e in entities_in_radius(@from, 7)) {
 				if(is_entity_living(@e) && get_leashholder(@e) == @uuid) {
@@ -67,7 +67,7 @@ bind('player_teleport', null, null, @event) {
 				}
 			}
 			try {
-				load_chunk(@to);
+				load_chunk(get_chunk_loc(@to));
 				foreach(@e in @entities) {
 					set_entity_loc(@e, @to);
 				}
