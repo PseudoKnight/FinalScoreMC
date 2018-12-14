@@ -9,6 +9,6 @@ if(extension_exists('CHDiscord')) {
 	
 	bind('discord_voice_joined', null, null, @event) {
 		@player = if(ponline(@event['nickname']), display_name(@event['nickname']), @event['nickname']);
-		broadcast(color('yellow').@player.color('yellow').' joined the "'.@event['channel'].'" Discord voice channel.');
+		broadcast(color('yellow').@player.color('yellow').' joined the Discord voice chat.');
 	}
 }
