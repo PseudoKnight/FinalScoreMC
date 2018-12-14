@@ -6,7 +6,7 @@ proc _get_spawn_location(@retries = 3) {
 	@loc['x'] += rand() * @width - @width / 2;
 	@loc['z'] += rand() * @width - @width / 2;
 	@loc = get_highest_block_at(@loc);
-	if(@retries && (@loc['y'] == 0 || get_block(@loc) == 'WATER')) {
+	if(@retries && (@loc['y'] == 0)) {
 		@loc = _get_spawn_location(--@retries);
 	}
 	return(@loc);
