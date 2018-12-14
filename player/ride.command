@@ -3,6 +3,9 @@ register_command('ride', array(
 	'usage': '/ride <player>',
 	'permission': 'command.ride',
 	'executor': closure(@alias, @sender, @args, @info) {
+		if(!@args) {
+			return(false);
+		}
 		@player = _find_player(@args[0]);
 		tmsg(@player, color('yellow').player().' wants you to pick them up!');
 		msg(color('yellow').'Asked '.@player.' to pick you up!');
