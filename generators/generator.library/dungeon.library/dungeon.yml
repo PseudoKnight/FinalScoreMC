@@ -112,6 +112,7 @@ floors:
                     helmet:
                         name: DIAMOND_HELMET
     5:
+        minRoomHeight: 4
         entranceDoor: true
         lavaPit: true
         fireFloor: true
@@ -127,23 +128,6 @@ floors:
         window: 'nether_brick_fence[north=true,south=true,east=true,west=true]'
         boss: WITHER_SKELETON
     6:
-        entranceDoor: true
-        lavaPit: true
-        spawner: [skeleton, witch, creeper]
-        trap: [chest_tnt, plate_potion_poison]
-        wall: [polished_andesite, stone_bricks, mossy_stone_bricks, cracked_stone_bricks, infested_cracked_stone_bricks]
-        column: bookshelf
-        ceiling: stone_bricks
-        floor: [mossy_stone_bricks, mossy_stone_bricks, mossy_stone_bricks, mossy_stone_bricks, mossy_stone_bricks, mossy_stone_bricks, cracked_stone_bricks, cracked_stone_bricks, water]
-        utility: [enchanting_table, brewing_stand, cauldron]
-        decor: rail
-        edge: stone_brick_stairs
-        window: cobblestone_wall
-        boss:
-            type: RABBIT
-            tags:
-                type: THE_KILLER_BUNNY
-    7:
         spawner: [guardian, pufferfish]
         wall: prismarine_bricks
         room: water
@@ -167,9 +151,26 @@ floors:
                     name: DIAMOND_CHESTPLATE
                 helmet:
                     name: DIAMOND_HELMET
+    7:
+        entranceDoor: true
+        lavaPit: true
+        spawner: [skeleton, witch, creeper]
+        trap: [chest_tnt, plate_potion_poison]
+        wall: [polished_andesite, stone_bricks, mossy_stone_bricks, cracked_stone_bricks, infested_cracked_stone_bricks]
+        column: bookshelf
+        ceiling: stone_bricks
+        floor: [mossy_stone_bricks, mossy_stone_bricks, mossy_stone_bricks, mossy_stone_bricks, mossy_stone_bricks, mossy_stone_bricks, cracked_stone_bricks, cracked_stone_bricks, water]
+        utility: [enchanting_table, brewing_stand, cauldron]
+        decor: rail
+        edge: stone_brick_stairs
+        window: cobblestone_wall
+        boss:
+            type: RABBIT
+            tags:
+                type: THE_KILLER_BUNNY
     8:
         entranceDoor: true
-        spawner: [ender_crystal, endermite, enderman, shulker]
+        spawner: [ender_crystal, endermite, shulker]
         wall: purpur_block
         column: purpur_pillar
         ceiling: purpur_block

@@ -281,7 +281,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 							'length': @roomLength,
 							'connected': 0,
 							'height': if(@roomWidth == 1 || @roomLength == 1) {
-									min(@maxRoomHeight, 3);
+									@minRoomHeight;
 								} else {
 									rand(@minRoomHeight, @maxRoomHeight + 1);
 								},
@@ -641,19 +641,19 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 															@hinge = if(@x % 2 == 1, 'hinge=left', 'hinge=right');
 															@chunk = _queue_block(@chunk, @loc, 'spruce_door[facing=south,'.@half.@hinge.']');
 														}
-													} else if(@north % 7 == 0) {
+													} else if(@south % 7 == 0) {
 														if(@z % 2 == 0) {
 															@half = if(@lower, 'half=lower,', 'half=upper,');
 															@hinge = if(@x % 2 == 0, 'hinge=left', 'hinge=right');
 															@chunk = _queue_block(@chunk, @loc, 'spruce_door[facing=north,'.@half.@hinge.']');
 														}
-													} else if(@north % 7 == 0) {
+													} else if(@west % 7 == 0) {
 														if(@x % 2 == 1) {
 															@half = if(@lower, 'half=lower,', 'half=upper,');
 															@hinge = if(@z % 2 == 0, 'hinge=left', 'hinge=right');
 															@chunk = _queue_block(@chunk, @loc, 'spruce_door[facing=east,'.@half.@hinge.']');
 														}
-													} else if(@north % 7 == 0) {
+													} else if(@east % 7 == 0) {
 														if(@x % 2 == 0) {
 															@half = if(@lower, 'half=lower,', 'half=upper,');
 															@hinge = if(@z % 2 == 1, 'hinge=left', 'hinge=right');
@@ -771,16 +771,6 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 					@yFloor = @regionMinY + (@floor * (@maxRoomHeight + 4)) + 2;
 					@roomHeight = @room['height'];
 					
-					if(@room['connected'] == 1) {
-						@loc = array(
-							@regionMinX + @room['c1'] * @scale + integer(srand(@random) * @room['width']) * @scale,
-							@yFloor,
-							@regionMinZ + @room['r1'] * @scale + integer(srand(@random) * @room['length']) * @scale,
-							@world
-						);
-						set_block(@loc, 'WHITE_BANNER');
-					}
-					
 					@spawner = false;
 					if(@room['type'] == 'FIRE_FLOOR') {
 						@y = @yFloor - 1;
@@ -865,7 +855,10 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 								@world
 							);
 							if(equals_ic(@materials['room'], get_block(@loc))) {
-								add_scoreboard_tag(_spawn_entity(@floorData['boss'], @loc), 'floor'.@floor.'boss');
+								_spawn_entity(@floorData['boss'], @loc, null, null, closure(@entity) {
+									add_scoreboard_tag(@entity, 'floor'.@floor.'boss');
+									set_mob_name(@entity, 'BOSS');
+								});
 								die();
 							}
 						}

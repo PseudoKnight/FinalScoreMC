@@ -48,6 +48,8 @@ proc _get_loot(@floor, @random, @loot = array(
 	array('chance': 0.04, 'item': 'MILK_BUCKET'),
 	array('chance': 0.01, 'item': 'ENDER_PEARL'),
 	array('chance': 0.01, 'item': 'ENCHANTED_BOOK'),
+	array('chance': 0.01, 'item': 'WOLF_SPAWN_EGG'),
+	array('chance': 0.01, 'item': 'VILLAGER_SPAWN_EGG'),
 )) {
 	@inv = array();
 	foreach(@weightedLoot in @loot){
