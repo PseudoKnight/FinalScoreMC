@@ -40,6 +40,7 @@ bind('player_interact', null, array('block': 'CAULDRON', 'button': 'right'), @ev
 			@newItem['name'] = 'WATER_BUCKET';
 		} else if(@item['name'] == 'GLASS_BOTTLE') {
 			@newItem['name'] = 'POTION';
+			@newItem['meta'] = array('base': array('type': 'WATER'));
 		} else if(string_ends_with(@item['name'], '_SHULKER_BOX')) {
 			@newItem['name'] = 'SHULKER_BOX';
 		} else if(string_ends_with(@item['name'], '_TERRACOTTA')) {
