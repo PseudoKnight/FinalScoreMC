@@ -46,7 +46,7 @@ bind('block_dispense', null, array('type': 'DISPENSER'), @event, @ignored = arra
 					queue_push(closure(){
 						try {
 							set_inventory_item(@event['location'], @i, @item);
-						} catch(CastException @ex) {
+						} catch(IllegalArgumentException @ex) {
 							console('Could not refill dispenser at '. @event['location'], false);
 						}
 					});
