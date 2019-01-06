@@ -23,7 +23,7 @@ proc _level_prepare(@name, @arena, @region, @world) {
 	}
 	_add_activity('level'.@region, to_upper(@region).': '.@level['config']['title']);
 	set_world_time(@level['world'], 'sunset');
-	set_gamerule(@level['world'], 'doDaylightCycle', false);
+	set_gamerule(@level['world'], 'DODAYLIGHTCYCLE', false);
 	_remove_region_entities(@level['region']);
 	
 	create_scoreboard('level'.@region);
