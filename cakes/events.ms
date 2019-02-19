@@ -97,7 +97,9 @@ bind('player_interact', null, array('block': 'WALL_SIGN'), @event) {
 			if(@count < 1) {
 				die(color('yellow').'[Coin Shop] '.color('r').'There are no items left.')
 			}
-			if(@coins < @cost[1], die(color('yellow').'[Coin Shop] '.color(r).'You only have '.color('red').floor(@coins).color('r').' left.'))
+			if(@coins < @cost[1]) {
+				die(color('yellow').'[Coin Shop] '.color(r).'You only have '.color('red').floor(@coins).color('r').' left.');
+			}
 			@chest = get_inventory(@chestLoc);
 			foreach(@c in 0..27) {
 				if(!is_null(@chest[@c])) {
@@ -112,12 +114,11 @@ bind('player_interact', null, array('block': 'WALL_SIGN'), @event) {
 							set_pinv(player(), @p, @chest[@c]);
 							set_inventory_item(@chestLoc, @c, null);
 							_acc_subtract(player(), @cost[1]);
-							msg(color('yellow').'[Coin Shop] '.color('r').'Transaction successful. Your coins: '.floor(@coins - @cost[1]).' (-'.@cost[1].')');
-							break(2);
+							die(color('yellow').'[Coin Shop] '.color('r').'Transaction successful. Your coins: '
+									.floor(@coins - @cost[1]).' (-'.@cost[1].')');
 						}
 					}
-					msg(color('yellow').'[Coin Shop] '.color('r').'You have no room in your inventory.');
-					break();
+					die(color('yellow').'[Coin Shop] '.color('r').'You have no room in your inventory.');
 				}
 			}
 		}
