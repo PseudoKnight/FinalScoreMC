@@ -14,7 +14,7 @@ proc _race_add_player(@id, @player) {
 }
 
 proc _race_remove_player(@race, @player) {
-	array_remove(@race, @player);
+	array_remove(@race['players'], @player);
 	_set_pactivity(@player, null);
 	if(ponline(@player) && pworld(@player) == @race['world']) {
 		if(array_index_exists(@race, 'sky')) {
@@ -57,10 +57,10 @@ proc _race_prepare_player(@race, @player) {
 
 proc _race_place_player(@race, @player, @loc) {
 	set_entity_loc(puuid(@player), @loc);
-	
+
 	@stand = spawn_entity('ARMOR_STAND', 1, @loc)[0];
 	set_entity_spec(@stand, array('small': true, 'visible': false, 'gravity': false));
-	
+
 	@vehicle = null;
 	switch(@race['type']) {
 		case 'boat':

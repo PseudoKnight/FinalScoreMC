@@ -4,7 +4,7 @@ proc _race_bind_events(@race) {
 			@player = player(@event['id']);
 			if(array_index_exists(@race['players'], @player)) {
 				@racer = @race['players'][@player];
-				if(@racer['state'] == 'finished') {
+				if(@racer['state'] == 'finished' || @racer['state'] == 'dismounting') {
 					entity_remove(@event['mountid']);
 				} else {
 					cancel();
@@ -18,7 +18,7 @@ proc _race_bind_events(@race) {
 			// entity was not a player
 		}
 	}
-	
+
 	if(@race['type'] == 'boat' || @race['type'] == 'horse' || @race['type'] == 'pig') {
 		@race['binds'][] = bind('vehicle_destroy', null, array('vehicletype': to_upper(@race['type'])), @event, @race) {
 			@rider = get_entity_rider(@event['vehicle']);

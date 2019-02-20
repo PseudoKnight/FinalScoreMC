@@ -29,7 +29,7 @@ proc _race_create(@id) {
 	if(!@track) {
 		throw('NotFoundException', 'That track does not exist.');
 	}
-	
+
 	// check track requirements
 	if(!array_index_exists(@track, 'spawn')) {
 		die(color('red').'Race spawn locations for '.@id.' are missing.');
@@ -40,7 +40,7 @@ proc _race_create(@id) {
 	if(!array_index_exists(@track, 'region')) {
 		die(color('red').'Race region for '.@id.' is missing.');
 	}
-	
+
 	// game object
 	@race = array_merge(array(
 		'type': 'parkour', // default
@@ -55,14 +55,14 @@ proc _race_create(@id) {
 		'times': associative_array(),
 	), @track);
 	export('race'.@id, @race);
-	
+
 	// scoreboard
 	create_scoreboard(@id);
 	create_objective('time', 'DUMMY', @id);
 	set_objective_display('time', array('displayname': to_upper(@id).' RACE', 'slot': 'SIDEBAR'), @id);
 	create_team('collision', @id);
 	set_team_options('collision', array('collisionrule': 'NEVER'), @id);
-	
+
 	return(@race);
 }
 
@@ -113,7 +113,7 @@ proc _race_start(@race) {
 	}
 	play_sound(ploc(), array('sound': 'BLOCK_NOTE_BLOCK_PLING', 'pitch': 2));
 	_race_drop_players(@race);
-	
+
 	@race['binds'][] = bind('player_move', null, null, @event, @race) {
 		if(array_index_exists(@race['players'], player())) {
 			@loc = location_shift(@event['to'], 'up', 0.35);
@@ -181,12 +181,9 @@ proc _race_start(@race) {
 				} else if(!array_contains(sk_regions_at(@loc), @race['region'])) {
 					@vehicle = get_entity_vehicle(puuid());
 					if(@vehicle) {
-						@bind = bind('entity_dismount', array('priority': 'HIGH'), null, @event) {
-							consume();
-						}
+						@p['state'] = 'dismounting';
 						set_entity_rider(null, puuid());
-						entity_remove(@vehicle);
-						unbind(@bind);
+						@p['state'] = 'racing';
 					}
 					_race_place_player(@race, player(), @p['loc']);
 					set_timeout(1000, closure(){
