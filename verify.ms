@@ -11,7 +11,7 @@ if(string_ends_with(@file, 'verify.ms')) {
 }
 
 @file = replace(@arguments[0], '\\', '\\\\');
-@result = shell('java -jar C:/commandhelper/commandhelper-3.3.3-SNAPSHOT-full.jar verify '.@file);
+@result = shell('java -jar C:/commandhelper/commandhelper-3.3.4-SNAPSHOT-full.jar verify '.@file);
 if(@result) {
 	@errors = json_decode(@result);
 	foreach(@error in @errors) {
