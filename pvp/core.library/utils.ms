@@ -42,7 +42,7 @@ proc _pvp_hat_spawn(@id, @team, @loc) {
 	Core game interval (overrided by game modes)
 */
 proc _interval(@pvp, @id){
-	return(false);
+	noop();
 }
 
 /*

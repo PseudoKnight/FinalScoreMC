@@ -128,7 +128,7 @@ proc _pvp_start_match(@id) {
 			include('../weapons.library/'.@weapon.'.ms');
 		}
 	}
-	
+
 	# ARENA
 	if(array_contains(@pvp['arena']['flags'], 'script')){
 		_load_events(@id);
@@ -157,7 +157,7 @@ proc _pvp_start_match(@id) {
 				}
 			}
 		}
-		
+
 		foreach(@player: @p in @pvp['players']) {
 			if(array_index_exists(@arena, 'respawntime') && @p['respawn'] != 0) {
 				if(!array_contains(sk_current_regions(@player), @arena['region'])) {
@@ -299,7 +299,7 @@ proc _pvp_start_match(@id) {
 				}
 			}
 		}
-		
+
 		if(array_index_exists(@arena, 'blockbreak') && @pvp['blockcheck']) {
 			foreach(@team in array(0, 1)) {
 				foreach(@index: @loc in @arena['blockbreak'][@team]) {
@@ -317,11 +317,9 @@ proc _pvp_start_match(@id) {
 			}
 			@pvp['blockcheck'] = false;
 		}
-		
+
 		// Mode specific code
-		if(_interval(@pvp, @id)) {
-			@check = true;
-		}
+		_interval(@pvp, @id);
 
 		if(@check) {
 			_pvp_check_objectives(@id);
@@ -332,7 +330,7 @@ proc _pvp_start_match(@id) {
 
 proc _pvp_check_objectives(@id) {
 	@pvp = import('pvp'.@id)
-	
+
 	if(@pvp['running'] != 2) {
 		return();
 	}
@@ -361,7 +359,7 @@ proc _pvp_check_objectives(@id) {
 		_pvp_end_match(@id, array_keys(@pvp['players']));
 		die();
 	}
-	
+
 	#check scores
 	if(@pvp['arena']['mode'] == 'dm' && array_index_exists(@pvp['arena'], 'score')) {
 		@scoreTarget = @pvp['arena']['score'];
@@ -420,7 +418,7 @@ proc _pvp_end_match(@id, @winners) {
 			}
 		}
 	}
-	
+
 	// Make sure we don't assign them to the same solo team twice in a row
 	@lastSolo = '';
 	if(array_index_exists(@pvp['arena'], 'teamratio')) {
@@ -430,7 +428,7 @@ proc _pvp_end_match(@id, @winners) {
 			@lastSolo = array_implode(@pvp['team'][@team]['players']);
 		}
 	}
-	
+
 	queue_delay(100, @id); // timing ensures players are alive or in spec
 	queue_push(closure(){
 		if(array_index_exists(@pvp, 'stats')) {
@@ -466,13 +464,13 @@ proc _pvp_end_match(@id, @winners) {
 			_worldmsg(@world, color('gray').'[PVP] '.color('r').'Nobody wins! Wait.. what?!');
 		}
 	}, @id);
-		
+
 	queue_push(closure(){
 		if(array_index_exists(@pvp, 'stats')) {
 			_store_stats(@winners, @pvp);
 		}
 	}, @id);
-		
+
 	if(array_index_exists(@pvp['arena'], 'chestspawn')) {
 		for(@i = 0, @i < array_size(@pvp['arena']['chestspawn']), @i++) {
 			if(get_block(@pvp['arena']['chestspawn'][@i]['loc']) === 'CHEST') {
@@ -509,7 +507,7 @@ proc _pvp_end_match(@id, @winners) {
 				unbind(@chest);
 			}
 		}
-		
+
 		if(array_index_exists(@pvp, 'interval')) {
 			clear_task(@pvp['interval']);
 		}
