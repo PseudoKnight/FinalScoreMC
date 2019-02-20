@@ -11,6 +11,23 @@ set_uncaught_exception_handler(closure(@ex){
 	return(true);
 });
 
+proc _multi_array_get(@value) {
+	@size = array_size(@arguments);
+	for(@i = 1, @i < @size, @i++) {
+		if(is_array(@value)) {
+			@key = @arguments[@i];
+			if(array_index_exists(@value, @key)) {
+				@value = @value[@key];
+			} else {
+				return(null);
+			}
+		} else {
+			return(null);
+		}
+	}
+	return(@value);
+}
+
 /*
 	Removes certain entities from inside (and near) region.
 	Since it select entities by chunk, it may remove some entities that are just outside the region.
@@ -65,7 +82,7 @@ proc _add_activity(@id, @title) {
 	}
 	@activities[@id] = @title;
 	export('activities', @activities);
-	
+
 	@serverTitle = colorize('&6&lFINALSCORE&e&lMC');
 	@footer = color('gray').'Activities:\n'.color('reset').array_implode(array_normalize(@activities), '\n');
 	foreach(@p in all_players()) {
@@ -81,7 +98,7 @@ proc _remove_activity(@id) {
 	if(!is_null(@activities) && array_index_exists(@activities, @id)) {
 		array_remove(@activities, @id);
 		export('activities', @activities);
-		
+
 		@serverTitle = colorize('&6&lFINALSCORE&e&lMC');
 		if(@activities) {
 			@footer = color('gray').'Activities:\n'.color('reset').array_implode(array_normalize(@activities), '\n');
