@@ -37,6 +37,7 @@ proc _fw_loc(@height = 0, @minrange = false) {
 	if(@return == 1) {
 		return(@loc)
 	}
+	return(null);
 }
 
 proc _fw_mobs(@mob = 'random', @num = 'random') {
