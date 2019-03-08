@@ -3,7 +3,7 @@
 	Players can get additional time added to their clock by running on ores -- the higher value the ores, the more
 	time is added to their clock. The last player to have not blown up or fallen out of the map wins.
 	The command features several subcommands to create and edit multiple arenas for players to play on.
-	
+
 	DEPENDENCIES:
 	- WorldGuard plugin and SKCompat extension for regions and arena schematics.
 	- _add_activity() and _remove_activity() procedures to keep a list of all current activities on server.
@@ -44,7 +44,7 @@ register_command('7', array(
 			if(array_contains(get_scoreboards(), '7')) {
 				die(colorize('&67 Seconds to Live&r is in a running state already.'))
 			}
-			
+
 			proc _7_start(@7) {
 				@i = 0
 				foreach(@player in array_keys(@7['players'])) {
@@ -56,7 +56,7 @@ register_command('7', array(
 					set_pbed_location(@player, @7['lobby'])
 					@i++
 				}
-			
+
 				@countdown = array(3)
 				@7['task'] = set_interval(1000, closure(){
 					if(@countdown[0] > 0) {
@@ -78,7 +78,7 @@ register_command('7', array(
 							}
 						}
 						clear_task()
-			
+
 						@7['task'] = set_interval(100, closure(){
 							foreach(@player: @p in @7['players']) {
 								if(!ponline(@player)
@@ -87,12 +87,12 @@ register_command('7', array(
 									_7_remove_player(@player, @7);
 								} else {
 									@p['time'] -= 0.10;
-			
+
 									@loc = ploc(@player);
 									@loc['x'] = floor(@loc['x']);
 									@loc['y'] = floor(@loc['y']);
 									@loc['z'] = floor(@loc['z']);
-			
+
 									if(!is_null(@p['block'])
 									&& (@p['block'][0] != @loc['x']
 									|| @p['block'][2] != @loc['z']
@@ -151,16 +151,16 @@ register_command('7', array(
 										}
 										@p['block'] = null;
 									}
-			
+
 									if(is_null(@p['block']) && entity_grounded(puuid(@player))) {
 										@p['block'] = array(@loc['x'], @loc['y'], @loc['z'], @7['world']);
 									}
-			
+
 									@int = ceil(@p['time'])
 									set_pscore('time', @player, @int, '7')
 									set_pexp(@player, integer(clamp(100 * (@p['time'] / 7), 0, 99)));
 									set_plevel(@player, @int)
-			
+
 									if(@p['time'] <= 0) {
 										_7_remove_player(@player, @7);
 									} else if(@p['time'] < 2) {
@@ -194,7 +194,7 @@ register_command('7', array(
 					}
 				})
 			}
-			
+
 			proc _7_remove_player(@player, @7) {
 				if(ponline(@player)) {
 					if(pworld(@player) === @7['world']) {
@@ -215,7 +215,7 @@ register_command('7', array(
 						} else {
 							_regionmsg('7', @player.' left the game.');
 						}
-			
+
 					} else {
 						_regionmsg('7', @player.' left the game.');
 						set_pscoreboard(@player);
@@ -229,7 +229,7 @@ register_command('7', array(
 				@7 = array('players': associative_array(), 'state': 0);
 				export('7', @7);
 			}
-			
+
 			broadcast(colorize('&6&l7 Seconds to Live&r has been queued up by '.player().' /warp 7'), all_players(@world));
 
 			@timer = array(7);
@@ -275,11 +275,7 @@ register_command('7', array(
 					@7['spawns'] = @arenas[@7['arena']]['spawns'];
 					@skplayer = array_keys(@7['players'])[0];
 					set_block(@startblock, 'AIR');
-					if(array_index_exists(@arenas[@7['arena']], 'author')) {
-						skcb_load(@arenas[@7['arena']]['author'][0].'/'.@7['arena']);
-					} else {
-						skcb_load(@7['arena']);
-					}
+					skcb_load(@7['arena']);
 					skcb_paste(array(0, 0, 0, @world), array('origin': true));
 					@7['state'] = 3;
 
@@ -360,11 +356,7 @@ register_command('7', array(
 					if(!array_index_exists(@arenas, @schematic)) {
 						die(color('gold').'No arena by that name.')
 					}
-					if(array_index_exists(@arenas[@schematic], 'author')) {
-						skcb_load(@arenas[@schematic]['author'][0].'/'.@schematic);
-					} else {
-						skcb_load(@schematic);
-					}
+					skcb_load(@schematic);
 					skcb_paste(array(0, 0, 0, @world), array('origin': true));
 					msg('If done editing, you may use /7 save '.@schematic)
 					msg('Then set the spawn points with /7 spawn '.@schematic)
@@ -373,7 +365,7 @@ register_command('7', array(
 					if(!@schematic) {
 						die(color('gold').'Please specify a schematic filename.')
 					}
-					
+
 					@arenas = get_value('seven');
 					if(!array_index_exists(@arenas, @schematic)) {
 						die(color('gold').'Arena doesn\'t exist by that name.');
@@ -384,7 +376,7 @@ register_command('7', array(
 					} else if(@arenas[@schematic]['author'][0] != puuid()) {
 						die(color('gold').'You are not the author');
 					}
-					
+
 					@startblock = sk_region_info('7_schematic', @world)[0][0];
 					set_block(@startblock, 'SEA_LANTERN');
 					sudo('/rg select 7_schematic');
