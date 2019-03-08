@@ -117,6 +117,7 @@ bind('note_play', null, null, @event) {
 		case 'BLACK_TERRACOTTA':
 		case 'LIGHT_GRAY_TERRACOTTA':
 		case 'LIGHT_BLUE_TERRACOTTA':
+		case 'GLOWSTONE':
 			@sound = 'BLOCK_NOTE_BLOCK_PLING';
 		case 'SLIME_BLOCK':
 			@sound = 'ENTITY_CHICKEN_EGG';
