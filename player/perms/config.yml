@@ -99,6 +99,7 @@ member:
       advancement.all: false
       command.heal: true
       command.skipper: true
+      minecraft.debugstick: true
     custom:
       stargate.create.personal: false
       stargate.create.network: false
@@ -189,6 +190,7 @@ builder:
       bl.getbanners: true
       deadbolt.user.create.*: true
       minecraft.command.stopsound: true
+      minecraft.debugstick: true
     world:
       livemap.tracers: true
     world3:
