@@ -84,7 +84,7 @@ bind('player_death', array('priority': 'high', 'id': @id.'death'), null, @e, @id
 			}
 		});
 	}
-	
+
 	// Inventory and Drops
 	@drops = array();
 	if(array_contains(@pvp['arena']['flags'], 'keepinventory')) {
@@ -165,7 +165,7 @@ bind('player_death', array('priority': 'high', 'id': @id.'death'), null, @e, @id
 			}
 		}
 	}
-	
+
 	// Don't actually die
 	_player_reset(player());
 
@@ -177,7 +177,7 @@ bind('player_death', array('priority': 'high', 'id': @id.'death'), null, @e, @id
 	} else if(array_index_exists(@pvp['arena'], 'lives')
 	&& !@pvp['players'][player()]['lives']) {
 		_player_to_spectator(player(), @pvp);
-		
+
 	} else {
 		// Class Selection & Equip
 		if(!array_index_exists(@pvp['arena'], 'respawntime')) {
@@ -211,7 +211,7 @@ bind('player_death', array('priority': 'high', 'id': @id.'death'), null, @e, @id
 				}
 			}
 		}
-		
+
 		// Teleport
 		if(array_index_exists(@pvp['arena'], 'respawntime') && @pvp['running'] == 2) {
 			@pvp['players'][player()]['respawn'] = time() + (@pvp['arena']['respawntime'] * 1000);
@@ -268,7 +268,7 @@ bind('player_death', array('priority': 'high', 'id': @id.'death'), null, @e, @id
 			set_ploc(@pvp['arena']['spawn'][0][@r]);
 		}
 	}
-	
+
 	// Death Effects
 	set_peffect(player(), 'BLINDNESS', 0, 0.3);
 	set_peffect(player(), 'NIGHT_VISION', 0, 0.3);
@@ -278,7 +278,7 @@ bind('player_death', array('priority': 'high', 'id': @id.'death'), null, @e, @id
 	}
 	@deadplayer = spawn_entity('SKELETON', 1, @location)[0];
 	set_entity_health(@deadplayer, 0);
-	
+
 	modify_event('drops', null);
 	modify_event('xp', null);
 	set_timeout(1000, closure(){
@@ -323,7 +323,8 @@ if(array_index_exists(@pvp['arena'], 'chestspawn')) {
 					'count': 10,
 					'xoffset': 0.5,
 					'yoffset': 0.5,
-					'zoffset': 0.5
+					'zoffset': 0.5,
+					'block': 'CHEST'
 				));
 				play_sound(@loc, array('sound': 'BLOCK_WOOD_BREAK'));
 				@pvp['chestspawn'][@i] = time();
@@ -473,7 +474,7 @@ bind('entity_damage', array('id': @id.'EntityDamage', 'priority': 'LOWEST'), nul
 				}
 			}
 		}
-		
+
 		if(!@damager) {
 			die();
 		}
@@ -505,7 +506,7 @@ if(array_contains(@pvp['arena']['flags'], 'noinventory')) {
 
 		cancel()
 	}
-	
+
 	array_push(@pvp['binds'], @id.'noinventoryswap')
 	bind('item_swap', array('id': @id.'noinventoryswap'), null, @e, @id) {
 		@pvp = import('pvp'.@id)
@@ -694,7 +695,7 @@ if(array_index_exists(@pvp['arena'], 'blockbreak')) {
 		}
 		@pvp['blockcheck'] = true;
 	}
-	
+
 	@pvp['binds'][] = @id.'blockexplode';
 	bind('entity_explode', array('id': @id.'blockexplode'), array('type': 'PRIMED_TNT'), @event, @id) {
 		if(_is_survival_world(@event['location']['world'])) {

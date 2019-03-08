@@ -37,7 +37,7 @@ proc _pvp_start_match(@id) {
 					set_block(@pvp['arena']['chestspawn'][@i]['loc'], 'AIR');
 				}
 			} else if(array_index_exists(@pvp['arena'], 'chestgroup')) {
-				if(get_block(@pvp['arena']['chestspawn'][@i]['loc']) === 'AIR') {
+				if(get_block(@pvp['arena']['chestspawn'][@i]['loc']) != 'CHEST') {
 					set_block(@pvp['arena']['chestspawn'][@i]['loc'], 'CHEST');
 				}
 				@r = rand(array_size(@pvp['arena']['chestgroup'][@pvp['arena']['chestspawn'][@i]['group']]));
