@@ -5,7 +5,7 @@ register_command('mem', array(
 		return(array());
 	},
 	'executor': closure(@alias, @sender, @args, @info) {
-		@maxMem = get_server_info(14);;
+		@maxMem = get_server_info(14);
 		@barMem = round(@maxMem / 77);
 		@allocMem = get_server_info(15);
 		@freeMem = get_server_info(16);

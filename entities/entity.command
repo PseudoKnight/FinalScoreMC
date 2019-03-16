@@ -22,7 +22,7 @@ register_command('entity', array(
 				}
 				@id = @args[1];
 				@setting = @args[2];
-				@entity = get_value('entity.'.@id);1
+				@entity = get_value('entity.'.@id);
 				if(!@entity) {
 					@entity = array();
 				}
@@ -150,7 +150,7 @@ register_command('entity', array(
 						}
 						@entity[@setting] = json_decode(array_implode(@args[3..-1]));
 						msg(color('green').'Set '.@setting.' to '.@entity[@setting]);
-						
+
 					case 'rider':
 						if(array_size(@args) == 3) {
 							return(false);
@@ -236,7 +236,7 @@ register_command('entity', array(
 					@list .= split('.', @key)[1].' ';
 				}
 				msg(color('gray').'CUSTOM ENTITIES: '.color('r').@list);
-				
+
 			default:
 				msg('/entity set <entity> <setting> <value> '.color('gray').'Sets a value to the custom entity');
 				msg('/entity delete <entity> [setting] '.color('gray').'Deletes entity or setting');
