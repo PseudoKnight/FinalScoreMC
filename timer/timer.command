@@ -6,18 +6,18 @@ register_command('timer', array(
 		if(array_size(@args) != 3) {
 			die();
 		}
-		
+
 		@player = _get_nearby_player(get_command_block(), 3);
 		if(!@player || phas_flight(@player)) {
 			return();
 		}
-		
+
 		@id = @args[1];
 		@startLoc = ploc(@player);
 		@timers = import('timers');
-		
+
 		if(@args[0] === 'start') {
-		
+
 			set_phealth(@player, 20);
 			set_phunger(@player, 20);
 			set_psaturation(@player, 5);
@@ -25,22 +25,22 @@ register_command('timer', array(
 			set_plevel(@player, 0);
 			set_pexp(@player, 0);
 			clear_peffects(@player);
-		
+
 			if(array_index_exists(@timers, @player)) {
 				clear_task(@timers[@player][2]);
 			} else {
 				_add_activity(@player.'timer', @player.' on '.to_upper(@id));
 			}
-		
+
 			@timers[@player] = array(@id, time(), 0);
 			@uuid = _get_uuid(to_lower(@player), false);
 			@ptime = get_value('times.'.@id, @uuid);
 			if(is_null(@ptime)) {
 				@ptime = 0;
 			}
-		
+
 			play_sound(ploc(@player), array('sound': 'ENTITY_FIREWORK_ROCKET_BLAST'), @player);
-		
+
 			@stop = false;
 			@timers[@player][2] = set_interval(1000, closure(){
 				if(ponline(@player)) {
@@ -57,12 +57,12 @@ register_command('timer', array(
 						} else {
 							set_plevel(@player, @time);
 						}
-		
+
 						if(@time < @ptime) {
 							@percent = integer((@time / @ptime) * 100);
 							set_pexp(@player, min(99, @percent));
 						}
-		
+
 						if(@time + 5 > @ptime && @time <= @ptime + 0.5) {
 							if(@time == round(@ptime)) {
 								play_sound(@ploc, array('sound': 'ENTITY_VILLAGER_NO'), @player);
@@ -70,10 +70,10 @@ register_command('timer', array(
 								play_sound(@ploc, array('sound': 'UI_BUTTON_CLICK', 'pitch': 2), @player);
 							}
 						}
-		
+
 					} else if(@ploc['y'] < 0) {
 						pkill(@player);
-		
+
 					} else {
 						if(extension_exists('CHNaughty')) {
 							action_msg(@player, 'X');
@@ -85,7 +85,7 @@ register_command('timer', array(
 				} else {
 					@stop = true;
 				}
-		
+
 				if(@stop) {
 					array_remove(@timers, @player);
 					unbind(@player.'reset');
@@ -99,11 +99,11 @@ register_command('timer', array(
 					_remove_activity(@player.'timer');
 				}
 			});
-			
+
 			@restartButton = array('name': 'GOLD_NUGGET', 'meta': array('display': color('green').color('bold').'Restart Button'));
 			set_pinv(@player, 1, @restartButton);
 			set_pheld_slot(@player, 0);
-		
+
 			if(!has_bind(@player.'reset')) {
 				bind('player_interact', array('id': @player.'reset'), array('player': @player, 'itemname': 'GOLD_NUGGET'), @e, @startLoc) {
 					if(@e['action'] == 'right_click_block') {
@@ -129,11 +129,11 @@ register_command('timer', array(
 					}
 				}
 			}
-		
+
 		} else if(@args[0] === 'stop'
 		&& array_index_exists(@timers, @player)
 		&& @timers[@player][0] == @id) {
-		
+
 			@time = round((time() - @timers[@player][1]) / 1000, 1);
 			unbind(@player.'reset');
 			unbind(@player.'timerdeath');
@@ -142,11 +142,11 @@ register_command('timer', array(
 			array_remove(@timers, @player);
 			_remove_activity(@player.'timer');
 			play_sound(ploc(@player), array('sound': 'ENTITY_EXPERIENCE_ORB_PICKUP'), @player);
-		
+
 			tmsg(@player, color('yellow').'You achieved a time of '.color('bold').@time.color('yellow').' seconds.');
 			console(@player.' achieved a time of '.@time.' at '.@id, false);
 			set_plevel(@player, integer(@time));
-			
+
 			# MARATHON
 			@marathon = import('marathon');
 			if(@marathon && array_index_exists(@marathon['players'], @player)) {
@@ -190,21 +190,21 @@ register_command('timer', array(
 					}
 				}
 			}
-		
+
 			# PERSONAL TIME
 			@uuid = _get_uuid(to_lower(@player), false);
 			@ptime = get_value('times.'.@id, @uuid);
 			if(@ptime && @time >= @ptime) {
 				die();
 			}
-		
+
 			if(@ptime) {
 				tmsg(@player, color('green').'You beat your personal best time of '.color('bold').@ptime.color('green').' seconds.');
 			}
 			@loc = ploc(@player);
 			@loc['y'] += 3;
 			store_value('times.'.@id, @uuid, @time);
-		
+
 			# TOP TIMES
 			@times = get_value('times', @id);
 			if(!@times) {
@@ -212,7 +212,7 @@ register_command('timer', array(
 				store_value('times', @id, @times);
 				die();
 			}
-		
+
 			@place = 0;
 			@rankup = false;
 			@tied = false;
@@ -261,7 +261,7 @@ register_command('timer', array(
 					array_remove(@times, 20);
 				}
 				store_value('times', @id, @times);
-		
+
 				// Recalculate average placement
 				@times = get_values('times');
 				x_new_thread('times', closure(){
@@ -294,38 +294,40 @@ register_command('timer', array(
 					});
 					x_run_on_main_thread_later(closure(){
 						store_value('times', @averages);
-						@overallPlace = 0;
-						foreach(@index: @time in @times['times']) {
-							if(@time[0] == @uuid) {
-								@overallPlace = @index + 1;
-								break();
-							}
-						}
-						if(@overallPlace) {
-							foreach(@index: @time in @averages) {
+						if(@rankup || @tied) {
+							@overallPlace = 0;
+							foreach(@index: @time in @times['times']) {
 								if(@time[0] == @uuid) {
-									if(@index + 1 < @overallPlace) {
-										@place = @index + 1;
-										@suffix = 'th';
-										if(@place > 20 || @place < 4) { // special cases for 11, 12, and 13
-											switch(@place % 10) {
-												case 1:
-													@suffix = 'st';
-												case 2:
-													@suffix = 'nd';
-												case 3:
-													@suffix = 'rd';
-											}
-										}
-										broadcast(color('green').'... and moved to '.@place.@suffix.' place overall!');
-									}
+									@overallPlace = @index + 1;
 									break();
+								}
+							}
+							if(@overallPlace) {
+								foreach(@index: @time in @averages) {
+									if(@time[0] == @uuid) {
+										if(@index + 1 < @overallPlace) {
+											@place = @index + 1;
+											@suffix = 'th';
+											if(@place > 20 || @place < 4) { // special cases for 11, 12, and 13
+												switch(@place % 10) {
+													case 1:
+														@suffix = 'st';
+													case 2:
+														@suffix = 'nd';
+													case 3:
+														@suffix = 'rd';
+												}
+											}
+											broadcast(color('green').'... and moved to '.@place.@suffix.' place overall!');
+										}
+										break();
+									}
 								}
 							}
 						}
 					});
 				});
-		
+
 			} else {
 				launch_firework(@loc, array(
 					'strength': 0,
