@@ -6,17 +6,17 @@ proc _queue_next_builder() {
 		@builder = @charades['playersLeft'][@index];
 		array_remove(@charades['playersLeft'], @index);
 	} while(!ponline(@builder) || !array_contains(sk_current_regions(@builder), 'charades'));
-	
+
 	if(!@charades['playersLeft']) {
 		_msg_charades(color('yellow').color('bold').'Last turn!');
 	}
-	
+
 	team_add_player('builder', @builder, 'charades');
 	set_pmode(@builder, 'CREATIVE');
 	_clear_pinv(@builder);
-	
+
 	set_permission(@builder, 'command.skull', true);
-	
+
 	@new = _get_build(@charades['category']);
 	@charades['build'] = @new['build'];
 	@charades['hint'] = @new['hint'];
@@ -27,7 +27,7 @@ proc _queue_next_builder() {
 		array(color('yellow').'[Re-roll]', '/charades reroll')
 	));
 	title(@builder, 'Your turn to build!', '', 20, 40, 20);
-	
+
 	@timer = array(@charades['seconds']);
 	@charades['interval'] = set_interval(500, closure(){
 		try {
@@ -71,27 +71,23 @@ proc _queue_next_builder() {
 			_end_build();
 		}
 	});
-	
+
 	bind('player_chat', array('id': 'charades-guessing', 'priority': 'HIGH'), null, @event, @charades) {
 		if(get_pscoreboard(player()) == 'charades') {
-			try {
-				consume();
-				cancel();
-				if(get_pteam(player(), 'charades')['name'] == 'guessers') {
-					@message = @event['message'];
-					@timestamp = simple_date('h:mm');
-					@name = display_name();
-					if(_get_match(@message, @charades['build'])) {
-						play_sound(ploc(), array('sound': 'ENTITY_PLAYER_LEVELUP'));
-						_regionmsg('charades', colorize("&8@timestamp [Charades] @{name}&8: &r@message"));
-						_end_build(player(), @charades['build']);
-					} else {
-						@message = _highlight_similarities(@message, @charades['build']);
-						_regionmsg('charades', colorize("&8@timestamp [Charades] @{name}&8: &r@message"), 'chat', player());
-					}
+			consume();
+			cancel();
+			if(get_pteam(player(), 'charades')['name'] == 'guessers') {
+				@message = @event['message'];
+				@timestamp = simple_date('h:mm');
+				@name = display_name();
+				if(_get_match(@message, @charades['build'])) {
+					play_sound(ploc(), array('sound': 'ENTITY_PLAYER_LEVELUP'));
+					_regionmsg('charades', colorize("&8@timestamp [Charades] @{name}&8: &r@message"));
+					_end_build(player(), @charades['build']);
+				} else {
+					@message = _highlight_similarities(@message, @charades['build']);
+					_regionmsg('charades', colorize("&8@timestamp [Charades] @{name}&8: &r@message"));
 				}
-			} catch(Exception @ex) {
-				// they left the game, ignore
 			}
 		}
 	}
@@ -99,7 +95,7 @@ proc _queue_next_builder() {
 
 proc _end_build(@guesser, @word) {
 	unbind('charades-guessing');
-	
+
 	@charades = import('charades');
 	if(!@charades) {
 		console('Charades ended already.');
@@ -109,7 +105,7 @@ proc _end_build(@guesser, @word) {
 		clear_task(@charades['interval']);
 		@charades['interval'] = 0;
 	}
-	
+
 	if(@guesser) {
 		_regionmsg('charades', color('green').color('bold').@guesser.color('green').' correctly guessed "'.color('bold').@word.color('green').'"!');
 		set_pscore('score', @guesser, get_pscore('score', @guesser, 'charades') + 1, 'charades');
@@ -118,7 +114,7 @@ proc _end_build(@guesser, @word) {
 	} else {
 		_regionmsg('charades', color('gold').'The game was called on account of rain.');
 	}
-	
+
 	foreach(@t in get_teams('charades')) {
 		if(@t['name'] == 'builder') {
 			if(@t['players']) {
@@ -129,12 +125,12 @@ proc _end_build(@guesser, @word) {
 				team_add_player('guessers', @builder, 'charades');
 				_equip_kit(@builder);
 				set_pmode(@builder, 'SPECTATOR');
-				
+
 				set_permission(@builder, 'command.skull', false);
 			}
 		}
 	}
-	
+
 	set_timeout(7000, closure(){
 		_remove_region_entities('charades');
 		// delay before paste to prevent entity issues
@@ -142,7 +138,7 @@ proc _end_build(@guesser, @word) {
 			skcb_load('charades');
 			skcb_paste(array(0, 0, 0, 'custom'), array('origin': true));
 		});
-		
+
 		if(@charades['playersLeft'] && ponline(@charades['playersLeft'][0])) {
 			try {
 				_queue_next_builder();
@@ -156,7 +152,7 @@ proc _end_build(@guesser, @word) {
 			} else {
 				@charades['playersLeft'] = @charades['players'][];
 				@charades['votes'] = associative_array();
-				
+
 				@page = '';
 				@line = 1;
 				foreach(@category in array_rand(_get_categories(), 10, false)) {
