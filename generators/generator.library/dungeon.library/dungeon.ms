@@ -88,7 +88,7 @@ proc _get_loot(@floor, @random, @loot = array(
 					@id = integer(srand(@random) * array_size(@potionTypes));
 					@meta['base'] = array('extended': (@state == 1), 'upgraded': (@state == 2), 'type': @potionTypes[@id]);
 				} else {
-					@meta['potions'] = array();
+					@meta['potions'] = associative_array();
 					@effects = reflect_pull('enum', 'PotionEffectType');
 					do {
 						@id = integer(srand(@random) * array_size(@effects));
