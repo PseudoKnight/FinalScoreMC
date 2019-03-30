@@ -86,13 +86,21 @@ bind('target_player', null, array('mobtype': 'ZOMBIE'), @event, @day) {
 					'ZOMBIE',
 					'ZOMBIE_HORSE',
 					'ZOMBIE_VILLAGER',
+					'PHANTOM',
+					'DOLPHIN',
+					'TURTLE',
+					'DROWNED',
+					'COD',
+					'SALMON',
+					'PUFFERFISH',
+					'TROPICAL_FISH'
 				);
 				@mob = @mobs[rand(array_size(@mobs))];
 				set_mob_equipment(@event['id'], associative_array(
 					'WEAPON': array('name': @mob.'_SPAWN_EGG'),
 				));
 				@e = shoot_projectile(@event['id'], 'EGG', @event['player'], rand() + 1);
-				if(@day == 1) {
+				if(@day == 1 || @day == 2 || @day == 31) {
 					if(get_mob_name(@event['id']) == 'Dinnerbone') {
 						set_mob_name(@event['id'], 'Dinnerbun');
 					} else {
@@ -110,7 +118,7 @@ bind('target_player', null, array('mobtype': 'ZOMBIE'), @event, @day) {
 							'OFF_HAND': array('name': @mob.'_SPAWN_EGG'),
 						));
 						@e = shoot_projectile(@event['id'], 'EGG', @event['player'], rand() + 1);
-						if(@day == 1) {
+						if(@day == 1 || @day == 2 || @day == 31) {
 							if(get_mob_name(@event['id']) == 'Dinnerbone') {
 								set_mob_name(@event['id'], 'Dinnerbun');
 							} else {
