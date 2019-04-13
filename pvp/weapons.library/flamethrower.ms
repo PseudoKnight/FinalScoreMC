@@ -4,7 +4,7 @@ bind('player_interact', array('id': @id.'flamethrower'), array('itemname': 'BREW
 	if(!array_index_exists(@pvp['players'], player()) || pinfo(player(), 6) != @e['item']['name']) {
 		die();
 	}
-	
+
 	@xp = pexp();
 	if(@xp == 0) {
 		play_sound(ploc(), array('sound': 'ITEM_FLINTANDSTEEL_USE'));
@@ -15,7 +15,7 @@ bind('player_interact', array('id': @id.'flamethrower'), array('itemname': 'BREW
 	play_sound(@loc, array('sound': 'BLOCK_FIRE_EXTINGUISH', 'pitch': 0.7));
 	play_sound(@loc, array('sound': 'ENTITY_CAT_HISS', 'volume': 0.2, 'pitch': 0.7));
 	play_sound(@loc, array('sound': 'BLOCK_FIRE_AMBIENT', 'volume': 2));
-	
+
 	@facing = pfacing(player());
 	@facing[0] = @facing[0] + 90;
 	@facing[1] = 0 - @facing[1];
@@ -26,7 +26,7 @@ bind('player_interact', array('id': @id.'flamethrower'), array('itemname': 'BREW
 	@loc['y'] += 2;
 	@target = array('world': @loc['world']);
 	@id = time();
-	for(@range = 1, @range <= 7, @range++) {
+	for(@range = 1, @range <= 6, @range++) {
 		queue_push(closure(){
 			@target['x'] = @loc['x'] + (@x * @range);
 			@target['y'] = @loc['y'] + (@y * @range);
@@ -47,7 +47,7 @@ bind('player_interact', array('id': @id.'flamethrower'), array('itemname': 'BREW
 				@ploc = ploc(@p);
 				@ploc['y'] += 1.9;
 				@dist = distance(@ploc, @target);
-				if(@dist < 1.4) { # 1.5 ^ 2
+				if(@dist < 1.4) {
 					@uuid = puuid(@p);
 					if(entity_can_see(puuid(), @uuid)) {
 						damage_entity(@uuid, 1.5, puuid());
