@@ -25,13 +25,13 @@ proc _level_prepare(@name, @arena, @region, @world) {
 	set_world_time(@level['world'], 'sunset');
 	set_gamerule(@level['world'], 'DODAYLIGHTCYCLE', false);
 	_remove_region_entities(@level['region']);
-	
+
 	create_scoreboard('level'.@region);
 	create_objective('health', 'HEALTH', 'level'.@region);
 	set_objective_display('health', array('slot': 'BELOW_NAME'), 'level'.@region);
-	
+
 	create_bar('level'.@region, array('percent': 0.0, 'style': 'SEGMENTED_6', 'visible': false));
-	
+
 	if(array_index_exists(@level['config'], 'shop')) {
 		@shop = associative_array();
 		@items = associative_array();
@@ -47,11 +47,11 @@ proc _level_prepare(@name, @arena, @region, @world) {
 		@level['shop'] = @items;
 		create_virtual_inventory('level'.@region, 54, 'BUY OR SELL', @shop);
 	}
-	
+
 	if(array_index_exists(@level['arena'], 'startblock')) {
 		set_block(@level['arena']['startblock']['loc'], @level['arena']['startblock']['type']);
 	}
-	
+
 	foreach(@p in all_players(@level['world'])) {
 		if(array_contains(sk_current_regions(@p), @level['region'])) {
 			_level_add_player(@p, @level);
@@ -63,7 +63,7 @@ proc _level_prepare(@name, @arena, @region, @world) {
 proc _level_start(@level) {
 	@entities = array();
 	sk_region_flag(@level['world'], @level['region'], 'mob-spawning', 'allow');
-	
+
 	bind('player_death', array('id': 'death'.@level['region']), null, @event, @level) {
 		if(array_contains(@level['players'], player())) {
 			@level['coins'] /= 2;
@@ -76,7 +76,7 @@ proc _level_start(@level) {
 			export(player().'spawn', @loc);
 		}
 	}
-	
+
 	bind('player_spawn', array('id': 'spawn'.@level['region']), null, @event, @level) {
 		if(array_contains(@level['spectators'], player())) {
 			consume();
@@ -87,7 +87,7 @@ proc _level_start(@level) {
 			}
 		}
 	}
-	
+
 	bind('player_quit', array('id': 'quit'.@level['region']), null, @event, @level) {
 		if(array_contains(@level['players'], player())) {
 			set_ploc(@level['arena']['lobby']);
@@ -96,7 +96,7 @@ proc _level_start(@level) {
 			_level_remove_spectator(player(), @level);
 		}
 	}
-	
+
 	bind('player_teleport', array('id': 'teleport'.@level['region']), null, @event, @level) {
 		if(@event['type'] == 'PLUGIN' || @event['type'] == 'SPECTATE') {
 			@from = array_contains(sk_regions_at(@event['from']), @level['region']);
@@ -121,33 +121,33 @@ proc _level_start(@level) {
 			}
 		}
 	}
-	
+
 	bind('creature_spawn', array('id': 'mobspawn'.@level['region']), null, @event, @world = @level['world'], @region = @level['region'], @entities) {
 		if(@event['type'] != 'ARMOR_STAND' && @event['location']['world'] == @world && array_contains(sk_regions_at(@event['location']), @region)) {
 			@entities[] = @event['id'];
 		}
 	}
-	
+
 	bind('entity_death', array('id': 'mobdeath'.@level['region']), null, @event, @entities) {
 		array_remove_values(@entities, @event['id']);
 	}
-	
+
 	bind('player_interact_entity', array('id': 'interact'.@level['region']), array('clicked': 'WOLF'), @event, @entities) {
 		if(get_mob_owner(@event['id'])) {
 			array_remove_values(@entities, @event['id']);
 		}
 	}
-	
+
 	if(array_index_exists(@level['config'], 'mobs')) {
 		foreach(@mob in @level['config']['mobs']) {
 			include('../mobs.library/'.to_lower(@mob).'.ms');
 			_load_mob(@level);
 		}
 	}
-	
+
 	bind('player_interact_at_entity', array('id': 'interactstand'.@level['region'], 'priority': 'HIGHEST'),
 			array('clicked': 'ARMOR_STAND'), @event, @region = @level['region']) {
-				
+
 		if(array_contains(sk_regions_at(entity_loc(@event['id'])), @region)) {
 			if(entity_spec(@event['id'])['visible']) {
 				cancel();
@@ -160,14 +160,14 @@ proc _level_start(@level) {
 			}
 		}
 	}
-	
+
 	if(array_index_exists(@level['config'], 'shop')) {
 		bind('player_interact', array('id': 'openshop'.@level['region']), array('button': 'right', 'itemname': 'EMERALD'), @event, @level) {
 			if(array_contains(@level['players'], player()) && pworld() == @level['world']) {
 				popen_inventory('level'.@level['region']);
 			}
 		}
-		
+
 		bind('player_interact', array('id': 'resurrect'.@level['region']), array('button': 'right', 'itemname': 'NETHER_STAR'), @event, @level) {
 			foreach(@p in players_in_radius(ploc(), 16)) {
 				if(pmode(@p) == 'SPECTATOR') {
@@ -180,7 +180,7 @@ proc _level_start(@level) {
 			}
 			msg('Ghost player must be within 16 meters to resurrect!')
 		}
-		
+
 		bind('item_pickup', array('id': 'pickup'.@level['region']), null, @event, @level) {
 			if(array_contains(@level['players'], player())) {
 				@item = @event['item'];
@@ -198,7 +198,7 @@ proc _level_start(@level) {
 				}
 			}
 		}
-		
+
 		bind('inventory_click', array('id': 'shop'.@level['region']), array('action': 'PICKUP_ALL', 'virtual': true), @event, @level) {
 			if(pinventory_holder() == 'level'.@level['region']) {
 				@item = @event['slotitem'];
@@ -238,7 +238,7 @@ proc _level_start(@level) {
 			}
 		}
 	}
-	
+
 	@sleep = array(3);
 	@level['task'] = set_interval(1000, closure(){
 		try {
@@ -252,20 +252,20 @@ proc _level_start(@level) {
 					_level_remove_spectator(@p, @level);
 				}
 			}
-			
+
 			if(array_index_exists(@level['config'], 'shop') && get_inventory_viewers('level'.@level['region'])) {
 				die();
-			
+
 			} else if(@sleep[0] > 0) {
 				@sleep[0]--;
 				if(!@level['boss'] || !@entities) {
 					update_bar('level'.@level['region'], array('percent': (6 - @sleep[0]) / 6));
 				}
-				
+
 			} else if(@level['trigger']) {
 				set_block(@level['trigger'], 'AIR');
 				@level['trigger'] = null;
-				
+
 			} else if(@level['title']) {
 				foreach(@p in @level['players']) {
 					if(ponline(@p)) {
@@ -285,7 +285,7 @@ proc _level_start(@level) {
 				@sleep[0] = 3;
 				update_bar('level'.@level['region'], array('visible': false));
 				@level['subtitle'] = '';
-				
+
 			} else if(@level['mobs']) {
 				if(@level['boss']) {
 					update_bar('level'.@level['region'], array(
@@ -326,7 +326,7 @@ proc _level_start(@level) {
 				}
 				@level['mobs'] = array();
 				@sleep[0] = 5;
-				
+
 			} else if(!@entities) {
 				foreach(@p in @level['players']) {
 					if(ponline(@p)) {
@@ -379,7 +379,7 @@ proc _level_start(@level) {
 						@level['boss'] = false;
 					}
 					@level['mobs'] = @wave['mobs'];
-					
+
 					@sleep[0] = 6;
 					update_bar('level'.@level['region'], 0.0);
 					update_bar('level'.@level['region'], array(
@@ -466,7 +466,7 @@ proc _level_end(@level, @win) {
 	remove_bar('level'.@level['region']);
 	if(array_index_exists(@level['arena'], 'schematic')) {
 		set_timeout(50, closure(){
-			skcb_load(@level['arena']['schematic'].'.schem');
+			skcb_load(@level['arena']['schematic']);
 			skcb_paste(array(0, 0, 0, @level['world']), array('origin': true));
 		});
 	}
