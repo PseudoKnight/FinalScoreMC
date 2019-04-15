@@ -3,7 +3,7 @@
 	Players are given pickaxes to dig out blocks underneath other players to win.
 	Features player-configurable floor blocks and various player-toggleable options.
 	Relevant locations are hard-coded in the @cfg.
-	
+
 	DEPENDENCIES:
 	- WorldGuard plugin and SKCompat extension for regions
 	- _add_activity() and _remove_activity() procedures to keep a list of all current activities on server.
@@ -26,7 +26,7 @@ register_command('spleef', array(
 		if(!@args) {
 			return(false);
 		}
-		
+
 		@world = 'custom';
 		@cfg = array(
 			'region': array(
@@ -53,14 +53,15 @@ register_command('spleef', array(
 				'jump': array(-488, 56, -660, @world),
 				'material': array(-488, 54, -642, @world),
 				'snake': array(-488, 56, -662, @world),
+				'creepers': array(-488, 56, -664, @world)
 			)
 		);
-	
-	
+
+
 		if(pworld() != @world){
 			die(color('gold').'You can only run this on '.@world.'.');
 		}
-	
+
 		switch(@args[0]) {
 			case 'join':
 				@nextspleef = import('nextspleef');
@@ -82,7 +83,7 @@ register_command('spleef', array(
 				if(array_size(@nextspleef) > 12) {
 					set_sign_text(@cfg['sign'][3], array_keys(@nextspleef)[cslice(12, array_size(@nextspleef) - 1)]);
 				}
-		
+
 			case 'floor':
 				set_ploc(@cfg['warp']['material']);
 				msg(color('yellow').'Pick a block.');
@@ -96,7 +97,7 @@ register_command('spleef', array(
 						set_ploc(@cfg['warp']['lobby']);
 					}
 				}
-		
+
 			case 'start':
 				@nextspleef = import('nextspleef');
 				@currentspleef = import('currentspleef');
@@ -108,18 +109,18 @@ register_command('spleef', array(
 				} else {
 					die(color('green').'[Spleef] '.color('r').'Match currently in progress.');
 				}
-		
+
 				foreach(@player in array_keys(@nextspleef)) {
 					if(!ponline(@player) || !array_contains(sk_current_regions(@player), @cfg['region']['wrapper'])) {
 						array_remove(@nextspleef, @player);
 					}
 				}
-		
+
 				if(array_size(@nextspleef) < 2 && player() !== 'PseudoKnight') {
 					die(color('green').'[Spleef] '.color('r').'There are not enough players in this match!');
 				}
-		
-		
+
+
 				@reward = array_size(@nextspleef) - 1;
 				@currentspleef = @nextspleef;
 				@nextspleef = array();
@@ -133,11 +134,11 @@ register_command('spleef', array(
 				set_sign_text(@cfg['sign'][1], array());
 				set_sign_text(@cfg['sign'][2], array());
 				set_sign_text(@cfg['sign'][3], array());
-		
+
 				_regionmsg(@cfg['region']['wrapper'], color('green').'[Spleef] '.color('r').'Match starting in 3 seconds...');
 				@region = sk_region_info(@cfg['region']['floor'], @world)[0];
 				@mat = get_block(@cfg['option']['material']);
-		
+
 				#Given two blocks, iterates through all the blocks inside the cuboid, and calls the
 				#user defined function on them. The used defined procedure should accept 3 parameters,
 				#the x, y, and z coordinates of the block.
@@ -150,9 +151,9 @@ register_command('spleef', array(
 						}
 					}
 				}
-		
+
 				set_timeout(1000, closure(){
-					if(get_block(@cfg['option']['platforming']) === '124:0') {
+					if(reg_match('lit\\=true', get_blockdata_string(@cfg['option']['platforming']))) {
 						#platforming
 						proc _setfloor(@x, @y, @z, @mat, @world) {
 							if(rand(2)) {
@@ -171,7 +172,7 @@ register_command('spleef', array(
 					}
 					_iterate_cuboid(@region[0], @region[1], '_setfloor', @mat, @world);
 				});
-		
+
 				set_timeout(2000, closure(){
 					#random obstacles
 					if(reg_match('lit\\=true', get_blockdata_string(@cfg['option']['obstacles']))) {
@@ -200,12 +201,12 @@ register_command('spleef', array(
 						}
 					}
 					_iterate_cuboid(array(@region[0][0], @region[0][1] + 1, @region[0][2]), array(@region[1][0], @region[1][1] + 1, @region[1][2]), '_setwalls', @world);
-		
+
 					foreach(@player in array_keys(@currentspleef)) {
 						set_pmode(@player, 'SURVIVAL');
 					}
 				});
-		
+
 				set_timeout(3000, closure(){
 					foreach(@player in array_keys(@currentspleef)){
 						if(!ponline(@player) || !array_contains(sk_current_regions(@player), @cfg['region']['wrapper'])) {
@@ -236,13 +237,23 @@ register_command('spleef', array(
 							set_peffect(@player, 'JUMP_BOOST', 3, 9999, true, false);
 						}
 					}
-		
+
+					if(reg_match('lit\\=true', get_blockdata_string(@cfg['option']['creepers']))) {
+						@creeperLoc = @region[0][];
+						@creeperLoc[0] -= 20;
+						@creeperLoc[1] += 3;
+						@creeperLoc[2] -= 20;
+						foreach(@i in range(24)) {
+							_spawn_entity('speedycreeper', @creeperLoc)
+						}
+					}
+
 					if(reg_match('lit\\=true', get_blockdata_string(@cfg['option']['knockback']))) {
 						sk_region_flag(@world, 'spleef-arena', 'pvp', 'allow');
 					} else {
 						sk_region_flag(@world, 'spleef-arena', 'pvp', 'deny');
 					}
-					
+
 					proc _fall_block(@loc) {
 						@block = get_block(@loc);
 						@entityLoc = @loc[];
@@ -256,7 +267,7 @@ register_command('spleef', array(
 						spawn_particle(@entityLoc, array('particle': 'CLOUD', 'count': 4, 'speed': 0.01));
 						play_sound(@entityLoc, array('sound': 'ENTITY_CREEPER_PRIMED', 'pitch': 2));
 					}
-					
+
 					@worminterval = '';
 					if(reg_match('lit\\=true', get_blockdata_string(@cfg['option']['snake']))) {
 						@wormLoc = @region[0][];
@@ -308,13 +319,13 @@ register_command('spleef', array(
 							}
 						});
 					}
-					
+
 					@spleefinterval = set_interval(500, closure(){
 						@spleefsettings = import('spleefsettings');
 						@currentspleef = import('currentspleef');
 						@reward = import('reward');
 						@spleefsettings['counter']++;
-		
+
 						foreach(@player in array_keys(@currentspleef)){
 							if(!ponline(@player) || pworld(@player) != @world || !array_contains(sk_current_regions(@player), @cfg['region']['arena'])) {
 								array_remove(@currentspleef, @player);
@@ -328,7 +339,7 @@ register_command('spleef', array(
 								}
 							}
 						}
-						
+
 						if(array_size(@currentspleef) <= 1 && (!array_index_exists(@currentspleef, 'PseudoKnight') || psneaking('PseudoKnight') == true)) {
 							@winner = array_implode(array_keys(@currentspleef));
 							if(@winner !== '') {
@@ -353,7 +364,7 @@ register_command('spleef', array(
 								clear_task(@worminterval);
 							}
 						}
-		
+
 						foreach(@player in all_players(@world)){
 							if(array_index_exists(@currentspleef, @player)) {
 								continue();
@@ -365,16 +376,16 @@ register_command('spleef', array(
 						}
 						export('spleefsettings', @spleefsettings);
 					});
-		
+
 					bind('block_break', array('id': 'spleef_break'), null, @event, @cfg) {
 						@currentspleef = import('currentspleef');
 						if(array_index_exists(@currentspleef, player()) && !array_contains(sk_regions_at(@event['location']), @cfg['region']['floor'])) {
 							cancel();
 						}
 					}
-		
+
 				});
-		
+
 			default:
 				msg(color('green').'[Spleef] Spleef is a game where you break blocks underneath other players so that they fall out of the arena. Last man standing wins.')
 				msg(color('green').'[Spleef] '.color('r').'/spleef join '.color('gray').'Join the next match')
