@@ -6,17 +6,18 @@ proc _get_match(@guess, @target) {
 	// ignore beginning articles
 	@guess = reg_replace('^(a|the)\\s', '', to_lower(@guess));
 	@target = reg_replace('^(a|the)\\s', '', to_lower(@target));
-	
+
 	// ignore small single spelling errors in targets larger than 4 characters
 	if(length(@target) < 5 && @guess == @target
 	|| length(@target) > 4 && levenshtein(@guess, @target) < 2) {
 		return(true);
 	}
-	
+
 	// accept the guess if it contains the entire target phrase
 	if(reg_match('(?i)'.@target, @guess)) {
 		return(true);
 	}
+	return(false);
 }
 
 proc _highlight_similarities(@guess, @target) {
@@ -44,7 +45,7 @@ proc _get_build(@category) {
 			}
 		}
 	}
-	
+
 	// get 3 random builds and pick the one least used
 	@randomBuilds = array_rand(@builds, 3);
 	@build = '';
@@ -60,7 +61,7 @@ proc _get_build(@category) {
 			@buildCount = @builds[@b];
 		}
 	}
-	
+
 	if(is_array(@builds[@build])) {
 		@builds[@build]['count']++;
 	} else {
