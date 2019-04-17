@@ -1,5 +1,10 @@
 bind('entity_death', null, null, @event) {
 	if(string_starts_with(@event['location']['world'], 'outworld')) {
+		@width = get_world_border('outworld')['width'];
+		if(@width >= 5888) { // ~3000 radius
+			die(); // limits to 144 region files (six radius)
+		}
+
 		@cause = @event['cause'];
 		@player = null;
 		if(@cause['cause'] == 'ENTITY_ATTACK') {
@@ -16,7 +21,6 @@ bind('entity_death', null, null, @event) {
 			} else if(@event['type'] == 'ENDER_DRAGON') {
 				@exp = 1000;
 			}
-			@width = get_world_border('outworld')['width'];
 			@cost = @width / 1000;
 			@amount = @exp - @cost;
 			if(@amount > 0) {
