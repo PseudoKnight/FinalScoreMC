@@ -5,9 +5,14 @@ bind('player_interact', null, array('itemname': 'FIREWORK_ROCKET', 'button': 'ri
 		die();
 	}
 	@uuid = puuid();
-	@gliding = get_entity_gliding(@uuid);
+	@gliding = false;
+	@grounded = true;
+	try {
+		@gliding = get_entity_gliding(@uuid);
+		@grounded = entity_grounded(@uuid);
+	} catch(BadEntityException @ex) {}
 	@world = pworld();
-	if(@gliding || !entity_grounded(@uuid) && (@chestplate = pinv(player(), 102)) && @chestplate['name'] == 'ELYTRA') {
+	if(@gliding || !@grounded && (@chestplate = pinv(player(), 102)) && @chestplate['name'] == 'ELYTRA') {
 		if(!@gliding) {
 			set_entity_gliding(@uuid, true);
 			@gliding = true;
@@ -77,14 +82,14 @@ bind('player_interact', null, array('itemname': 'FIREWORK_ROCKET', 'button': 'ri
 			}
 			die();
 		}
-		
+
 	}
 	if(!@gliding && (@world == 'custom' || @world == 'dev')) {
 		@pdata = _pdata(player());
 		if(!array_index_exists(@pdata, 'support')) {
 			die();
 		}
-		
+
 		@slot = -106;
 		if(@event['hand'] == 'main_hand') {
 			@slot = pheld_slot();
@@ -93,7 +98,7 @@ bind('player_interact', null, array('itemname': 'FIREWORK_ROCKET', 'button': 'ri
 		if(@item['meta'] && @item['meta']['firework']['effects']) {
 			die();
 		}
-		
+
 		cancel();
 		if(@event['action'] === 'right_click_block') {
 			@loc = location_shift(@event['location'], @event['facing']);
