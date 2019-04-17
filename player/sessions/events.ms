@@ -26,7 +26,7 @@ bind('player_join', null, null, @event) {
 
 	set_timeout(50, closure(){
 		@pdata = _pdata(player());
-		
+
 		if(array_index_exists(@pdata, 'world') && pworld() != @pdata['world']) {
 			@thisGroup = _world_group(pworld());
 			@previousGroup = _world_group(@pdata['world']);
@@ -34,10 +34,10 @@ bind('player_join', null, null, @event) {
 				console("Wrong world group! Expected @previousGroup but got @thisGroup");
 			}
 		}
-		
+
 		@title = colorize('&6&l\u1260 &d&l\u1260 &b&l\u1260 &4&l\u1260 &6&lFINALSCORE&e&lMC \u00AB &r\u25AA \u25AA \u25AA');
 		set_display_name(_colorname().player());
-		
+
 		// Join message
 		queue_push(closure(){
 			if(!(has_permission('group.admin') && get_value('silentjoin'))) {
@@ -64,7 +64,7 @@ bind('player_join', null, null, @event) {
 			}
 
 		}, 'join');
-		
+
 		// Tab list
 		queue_push(closure(){
 			foreach(@p in all_players()) {
@@ -79,7 +79,7 @@ bind('player_join', null, null, @event) {
 				psend_list_header_footer(@title, null);
 			}
 		}, 'join');
-		
+
 		// Welcome messages
 		queue_push(closure(){
 			#Welcome messages
@@ -99,7 +99,7 @@ bind('player_join', null, null, @event) {
 				}
 			}
 		}, 'join');
-		
+
 		// Mail
 		queue_push(closure(){
 			if(array_index_exists(@pdata, 'mail')) {
@@ -110,7 +110,7 @@ bind('player_join', null, null, @event) {
 				_store_pdata(player(), @pdata);
 			}
 		}, 'join');
-		
+
 		// Teleport misplaced players
 		queue_push(closure(){
 			if(array_index_exists(@pdata, 'homeless')) {
@@ -124,14 +124,18 @@ bind('player_join', null, null, @event) {
 				set_ploc(@warp);
 			}
 		}, 'join');
-		
+
 		// Populate session
 		queue_push(closure(){
+			if(!entity_exists(puuid())) {
+				console('Warning, '.player().' does not have an entity in this world.');
+			}
+
 			if(@lastPlayed) {
 				@session = _psession(player());
 				@session['lastplayed'] = simple_date('MMM d, yyyy', @lastPlayed);
 			}
-			
+
 			if(array_index_exists(@pdata, 'names')) {
 				@players = import('players', associative_array());
 				foreach(@name in @pdata['names']) {
@@ -140,14 +144,14 @@ bind('player_join', null, null, @event) {
 				export('players', @players);
 			}
 		}, 'join');
-		
+
 		// Park inventory
 		queue_push(closure(){
 			if(pworld() === 'custom') {
 				_equip_kit();
 			}
 		}, 'join');
-		
+
 		// Discord topic
 		queue_push(closure(){
 			_update_discord_topic();
