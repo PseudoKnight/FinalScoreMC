@@ -6,17 +6,22 @@ bind('player_interact', null, array('button': 'right'), @event) {
 	if(is_null(@item) || (@item['name'] != 'DIAMOND_PICKAXE' && @item['name'] != 'IRON_PICKAXE')) {
 		die();
 	}
-	
-	if(@event['block'] != 'SANDSTONE_SLAB' && @event['block'] != 'QUARTZ_SLAB' && @event['block'] != 'STONE_SLAB') {
+
+	@block = @event['block']
+	if(@block != 'SANDSTONE_SLAB' && @block != 'QUARTZ_SLAB' && @block != 'STONE_SLAB' && @block != 'RED_SANDSTONE_SLAB') {
 		die();
 	}
+
 	@type = split('_', @event['block'])[0];
-	
+	if(@type == 'RED') {
+		@type = 'RED_SANDSTONE';
+	}
+
 	@location = @event['location'];
 	if(!sk_can_build(@location)) {
 		die('You are not allowed to chisel this.');
 	}
-	
+
 	@match = reg_match('type\\=([a-z]+)', get_blockdata_string(@location));
 	if(!@match || @match[1] != 'double') {
 		die();
@@ -35,7 +40,7 @@ bind('player_interact', null, array('button': 'right'), @event) {
 	));
 	play_sound(@location, array('sound': 'BLOCK_STONE_BREAK', 'category': 'BLOCKS'));
 	pswing_hand();
-	
+
 	@unbreaking = 0;
 	if(@item['meta']) {
 		if(array_index_exists(@item['meta']['enchants'], 'unbreaking')) {
@@ -44,7 +49,7 @@ bind('player_interact', null, array('button': 'right'), @event) {
 	} else {
 		@item['meta'] = associative_array('damage': 0);
 	}
-	
+
 	if(1 / (@unbreaking + 1) > rand()) {
 		@item['meta']['damage'] += 1;
 		@maxDamage = 1561; # diamond pickaxe
