@@ -37,9 +37,13 @@ register_command('scb', array(
 				if(!array_contains_ic(@allowedCommands, @args[0])) {
 					die(color('gold').'Cannot use the command '.@args[0].' in a commandblock. Must be one of: '.array_implode(@allowedCommands));
 				}
+				@isAlias = is_alias(array_implode(@args));
 				foreach(@arg in @args) {
-					if(reg_match('^@[ae]', @arg) && !string_contains(@arg, 'distance=')) {
-						die(color('gold').'Do not use unlimited @a or @e selectors. Please use ranges. eg. @a[distance=..8]');
+					if(reg_match('^@[ae]', @arg) &&
+					((@isAlias && !string_contains(@arg, 'r='))
+					|| !@isAlias && !string_contains(@arg, 'distance='))) {
+						die(color('gold').'Do not use unlimited @a or @e selectors. Please use ranges.'
+						 		.' eg. @a['.if(@isAlias, 'r=8]', 'distance=..8]'));
 					}
 				}
 				set_block_command(@block, @event['command']);
@@ -49,9 +53,13 @@ register_command('scb', array(
 			if(!array_contains_ic(@allowedCommands, @args[0])) {
 				die(color('gold').'Cannot use the command '.@args[0].' in a commandblock. Must be one of: '.array_implode(@allowedCommands));
 			}
+			@isAlias = is_alias(array_implode(@args));
 			foreach(@arg in @args) {
-				if(reg_match('^@[ae]', @arg) && !string_contains(@arg, 'distance=')) {
-					die(color('gold').'Do not use unlimited @a or @e selectors. Please use ranges. eg. @a[distance=..8]');
+				if(reg_match('^@[ae]', @arg) &&
+				((@isAlias && !string_contains(@arg, 'r='))
+				|| !@isAlias && !string_contains(@arg, 'distance='))) {
+					die(color('gold').'Do not use unlimited @a or @e selectors. Please use ranges.'
+					 		.' eg. @a['.if(@isAlias, 'r=8]', 'distance=..8]'));
 				}
 			}
 			@cmd = array_implode(@args);
