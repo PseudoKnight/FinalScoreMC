@@ -19,6 +19,7 @@ register_command('doc', array(
 					return(@ext);
 				}
 			}
+			return(null);
 		}
 
 		proc _desc_func(@func) {
