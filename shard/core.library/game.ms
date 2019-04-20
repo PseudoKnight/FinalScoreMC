@@ -37,7 +37,7 @@ proc _shard_create(@rules){
 	} catch(IOException @ex) {
 		// world does not exist yet
 	}
-	
+
 	// Setup region files
 	@environment = world_info(@world)['environment'];
 	@chunk = get_chunk_loc();
@@ -53,7 +53,7 @@ proc _shard_create(@rules){
 	}
 	@stop = time();
 	console('Shard setup completed ('.(@stop - @start).'ms)', false);
-	
+
 	set_timeout(50, closure(){
 		// Copy region files
 		@start = time();
@@ -68,7 +68,7 @@ proc _shard_create(@rules){
 		}
 		@stop = time();
 		console('Copy region files ('.(@stop - @start).'ms)', false);
-		
+
 		set_timeout(50, closure(){
 			// Create shard
 			@start = time();
@@ -84,12 +84,12 @@ proc _shard_create(@rules){
 			));
 			@stop = time();
 			console('Created shard ('.(@stop - @start).'ms)', false);
-			
+
 			set_timeout(150, closure(){
 				if(extension_exists('CHDynmap')) {
 					dm_set_update_renders_paused(false);
 				}
-				
+
 				// Calculate center
 				if(@rules['width'] <= 512) { // use player location if possible
 					@ploc = ploc();
@@ -98,28 +98,28 @@ proc _shard_create(@rules){
 				} else { // otherwise use center of entire shard
 					@centerX = min(@x, @x2) * 512 + 512;
 					@centerZ = min(@z, @z2) * 512 + 512;
-					
+
 					// Randomize center slightly
 					@randX = rand(0, 65) - 32;
 					@centerX += @randX;
 					@randZ = rand(0, 65) - 32;
 					@centerZ += @randZ;
 				}
-				
+
 				// Calculate worldborder region
 				@radius = @rules['width'] / 2;
 				@minX = @centerX - @radius;
 				@maxX = @centerX + @radius;
 				@minZ = @centerZ - @radius;
 				@maxZ = @centerZ + @radius;
-				
+
 				@loc = get_highest_block_at(@centerX, @centerZ, 'shard');
-				
+
 				// Set dynmap marker
 				if(extension_exists('CHDynmap')) {
 					include('../util.library/dynmap.ms');
 				}
-				
+
 				// Set world settings
 				set_spawn(@loc);
 				set_world_time('shard', get_world_time(@world));
@@ -139,20 +139,21 @@ proc _shard_create(@rules){
 					'respawnPlayers': @respawnPlayers,
 					'rules': @rules,
 					'lateJoin': true,
+					'inv': if(array_index_exists(@rules, 'mirrored') && @rules['mirrored'], pinv(), null),
 				);
 				export('shard', @game);
-				
+
 				// Start game
 				create_scoreboard('shard');
 				_add_activity('shard', @worldname.'//Shard');
-				
+
 				// Default procedures (overrideable)
 				proc _set_inventory_contents(@loc, @count, @player) {
 					// Clear all inventory
 					if(has_metadata(@loc, 'loot')) {
 						return();
 					}
-				
+
 					@size = get_inventory_size(@loc);
 					if(@size == 54) {
 						@inv = get_inventory(@loc);
@@ -169,7 +170,7 @@ proc _shard_create(@rules){
 					set_inventory(@loc, @inv);
 					set_metadata(@loc, 'loot', 1);
 				}
-				
+
 				// Load objective and rule scripts
 				@binds = array();
 				@game['binds'] = @binds;
@@ -180,7 +181,7 @@ proc _shard_create(@rules){
 						include('../rules.library/'.@rule.'.ms');
 					}
 				}
-				
+
 				// Teleport players
 				@loc['y'] -= 1;
 				foreach(@p in @players) {
@@ -205,26 +206,29 @@ proc _shard_create(@rules){
 								@ploc = _get_spawn_location();
 							}
 						}
-						set_ploc(@p, @ploc);
-						if(!array_index_exists(@rules, 'keep') || !@rules['keep']) {
-							_clear_pinv(@p);
-						}
-						if(@airDrop) {
-							pgive_item(@p, array('name': 'ELYTRA', 'meta': array('damage': 402)));
-							set_peffect(@p, 'LEVITATION', -4, 15);
-							bind('entity_toggle_glide', null, array('type': 'PLAYER', 'player': @p), @event) {
-								set_peffect(player(), 'LEVITATION', 0, 0);
-								unbind();
+						if(set_ploc(@p, @ploc)) {
+							if(@game['inv']) {
+								set_pinv(@p, @game['inv']);
+							} else if(!array_index_exists(@rules, 'keep') || !@rules['keep']) {
+								_clear_pinv(@p);
 							}
+							if(@airDrop) {
+								pgive_item(@p, array('name': 'ELYTRA', 'meta': array('damage': 402)));
+								set_peffect(@p, 'LEVITATION', -4, 15);
+								bind('entity_toggle_glide', null, array('type': 'PLAYER', 'player': @p), @event) {
+									set_peffect(player(), 'LEVITATION', 0, 0);
+									unbind();
+								}
+							}
+							set_plevel(@p, 0);
+							set_peffect(@p, 'RESISTANCE', 3, 30, true);
+							set_pscoreboard(@p, 'shard');
+							play_sound(@ploc, array('sound': 'BLOCK_GLASS_BREAK', 'pitch': 0.5), @p);
+							play_sound(@ploc, array('sound': 'ENTITY_WITHER_SPAWN', 'pitch': 0.7), @p);
 						}
-						set_plevel(@p, 0);
-						set_peffect(@p, 'RESISTANCE', 3, 60, true);
-						set_pscoreboard(@p, 'shard');
-						play_sound(@ploc, array('sound': 'BLOCK_GLASS_BREAK', 'pitch': 0.5), @p);
-						play_sound(@ploc, array('sound': 'ENTITY_WITHER_SPAWN', 'pitch': 0.7), @p);
 					}, 'shard');
 				}
-				
+
 				proc _check_shard(@willRespawnPlayers = @respawnPlayers) {
 					queue_push(closure(){
 						@count = 0;
@@ -269,7 +273,7 @@ proc _shard_create(@rules){
 						}
 					}, 'shard');
 				}
-				
+
 				// Events
 				@binds[] = 'shard-quit';
 				bind('player_quit', array('priority': 'HIGHEST', 'id': 'shard-quit'), null, @event) {
@@ -280,7 +284,7 @@ proc _shard_create(@rules){
 						_check_shard();
 					}
 				}
-				
+
 				@binds[] = 'shard-death';
 				bind('player_death', array('priority': 'HIGHEST', 'id': 'shard-death'), null, @event, @players, @rules, @respawnPlayers) {
 					if(@event['location']['world'] == 'shard') {
@@ -308,18 +312,18 @@ proc _shard_create(@rules){
 						});
 					}
 				}
-				
+
 				@binds[] = 'shard-spawn';
 				bind('player_spawn', array('id': 'shard-spawn', 'priority': 'LOWEST'), array('world': 'shard'), @event) {
 					modify_event('location', import('playerspawn', _get_spawn_location()));
 					_check_shard();
 					export('playerspawn', null);
 				}
-				
+
 				bind('world_changed', array('id': 'shard-worldchanged'), array('from': 'shard'), @event) {
 					_check_shard();
 				}
-				
+
 				@binds[] = 'shard-interact';
 				bind('player_interact', array('id': 'shard-interact'), null, @event) {
 					if(@event['block'] && pworld() == 'shard') {
@@ -348,24 +352,24 @@ proc _shard_create(@rules){
 						}
 					}
 				}
-				
+
 				@binds[] = 'shard-place1';
 				bind('block_place', array('id': 'shard-place1'), array('block': 'CHEST'), @event) {
 					_set_inventory_contents(@event['location'], 0);
 				}
-				
+
 				@binds[] = 'shard-place2';
 				bind('block_place', array('id': 'shard-place2'), array('block': 'TRAPPED_CHEST'), @event) {
 					_set_inventory_contents(@event['location'], 0);
 				}
-				
+
 				@binds[] = 'shard-itemframe';
 				bind('entity_damage', array('id': 'shard-itemframe'), array('type': 'ITEM_FRAME'), @event) {
 					if(@event['world'] == 'shard') {
 						cancel();
 					}
 				}
-				
+
 				@binds[] = 'shard-itemframe2';
 				bind('hanging_break', array('id': 'shard-itemframe2'), array('type': 'ITEM_FRAME', 'world': 'shard'), @event) {
 					cancel();
@@ -373,7 +377,7 @@ proc _shard_create(@rules){
 						entity_remove(@event['id']);
 					}
 				}
-				
+
 				@binds[] = 'shard-explosion';
 				bind('entity_explode', array('id': 'shard-explosion'), null, @event) {
 					if(@event['location']['world'] == 'shard') {
@@ -394,7 +398,7 @@ proc _shard_create(@rules){
 						}
 					}
 				}
-				
+
 			});
 		});
 	});

@@ -30,7 +30,7 @@ proc _open_objective_menu() {
 	);
 	create_virtual_inventory('shard', 'HOPPER', 'Choose an Objective', @menu);
 	popen_inventory('shard');
-	
+
 	bind('inventory_click', array('id': player().'click'), array('player': player(), 'virtual': true), @event, @objectives) {
 		@item = @event['slotitem'];
 		if(@item && @item['meta'] && @item['meta']['display'] && length(@item['meta']['display']) >= 2) {
@@ -42,7 +42,7 @@ proc _open_objective_menu() {
 			}
 		}
 	}
-	
+
 	bind('inventory_close', array('id': player().'close'), null, @event, @player = player()) {
 		if(player() == @player) {
 			unbind();
@@ -79,6 +79,22 @@ proc _open_rules_menu(@objective) {
 					'lore': array(
 						color('white').'Players keep their current inventory.',
 						color('red').'VERY UNFAIR!'
+			))),
+			'show': 'mirrored',
+		),
+		'mirrored': array(
+			'objective': array('elimination', 'treasurehunt'),
+			'default': false,
+			'shown': true,
+			'item': array(
+				'name': 'GLASS_PANE', 'meta': array(
+					'display': color('aqua').color('bold').'MIRRORED INVENTORY',
+					'flags': array('HIDE_ATTRIBUTES'),
+					'lore': array(
+						color('white').'All players start with the same inventory.',
+						color('white').'The shard creator\'s inventory is used.',
+						color('white').'Overrides KEEP INVENTORY.',
+						color('green').'VERY FAIR!'
 			)))
 		),
 		'megadestruction': array(
@@ -142,7 +158,7 @@ proc _open_rules_menu(@objective) {
 		),
 		'timelimit': array(
 			'objective': array('elimination'),
-			'default': 20,
+			'default': 15,
 			'shown': true,
 			'values': array(0, 10, 15, 20, 25, 30, 45, 60),
 			'item': array(
@@ -156,7 +172,7 @@ proc _open_rules_menu(@objective) {
 		),
 		'buffertime': array(
 			'objective': array('elimination', 'treasurehunt'),
-			'default': 0,
+			'default': 1,
 			'shown': true,
 			'values': array(0, 1, 3, 5, 10, 15, 20),
 			'item': array(
@@ -213,7 +229,7 @@ proc _open_rules_menu(@objective) {
 			)
 		),
 	)
-	
+
 	// Populate rules and menu with provided options
 	@index = 0;
 	@rules = array();
@@ -221,24 +237,26 @@ proc _open_rules_menu(@objective) {
 		if(array_index_exists(@option, 'objective') && !array_contains(@option['objective'], @objective)) {
 			continue();
 		}
-		if(@option['default']) {
-			if(is_integral(@option['default'])) {
-				if(@option['default'] > 127) {
-					@menu[@index] = @activated[];
-					@menu[@index]['meta']['display'] = color('green').@option['default'];
-					@menu[@index]['qty'] = array_index(@option['values'], @option['default']);
+		if(@option['shown']) {
+			if(@option['default']) {
+				if(is_integral(@option['default'])) {
+					if(@option['default'] > 127) {
+						@menu[@index] = @activated[];
+						@menu[@index]['meta']['display'] = color('green').@option['default'];
+						@menu[@index]['qty'] = array_index(@option['values'], @option['default']);
+					} else {
+						@menu[@index] = @activated[];
+						@menu[@index]['qty'] = @option['default'];
+					}
 				} else {
-					@menu[@index] = @activated[];
-					@menu[@index]['qty'] = @option['default'];
+					@menu[@index] = @activated;
 				}
 			} else {
-				@menu[@index] = @activated;
+				@menu[@index] = @deactivated;
 			}
-		} else {
-			@menu[@index] = @deactivated;
+			@menu[@index + 9] = @option['item'];
 		}
-		@menu[@index + 9] = @option['item'];
-		@rules[] = array('name': @name, 'value': @option['default']);
+		@rules[] = array('name': @name, 'value': @option['default'], 'slot': @index + 9);
 		@index++;
 		if(@index % 9 == 0) {
 			@index += 9;
@@ -248,7 +266,7 @@ proc _open_rules_menu(@objective) {
 	delete_virtual_inventory('shard');
 	create_virtual_inventory('shard', 45, 'Rules', @menu);
 	popen_inventory('shard');
-	
+
 	bind('inventory_click', array('id': player().'click'), array('player': player(), 'virtual': true), @event, @rules, @options) {
 		@item = @event['slotitem'];
 		if(!@item) {
@@ -261,7 +279,8 @@ proc _open_rules_menu(@objective) {
 			include('game.ms');
 			@associative_rules = associative_array();
 			foreach(@rule in @rules) {
-				@associative_rules[@rule['name']] = @rule['value'];
+				@key = @rule['name'];
+				@associative_rules[@key] = @rule['value'];
 			}
 			_shard_create(@associative_rules);
 		} else {
@@ -277,6 +296,7 @@ proc _open_rules_menu(@objective) {
 				@rule = array_get(@rules, @slot, null);
 			}
 			if(@rule) {
+				@option = @options[@rule['name']];
 				if(is_boolean(@rule['value'])) {
 					if(@rule['value']) {
 						@item['name'] = 'GRAY_DYE';
@@ -288,7 +308,7 @@ proc _open_rules_menu(@objective) {
 						@rule['value'] = true;
 					}
 				} else if(is_integer(@rule['value'])) {
-					@values = @options[@rule['name']]['values'];
+					@values = @option['values'];
 					@index = array_index(@values, @rule['value']);
 					@index++;
 					if(@index == array_size(@values)) {
@@ -316,7 +336,7 @@ proc _open_rules_menu(@objective) {
 			}
 		}
 	}
-	
+
 	bind('inventory_close', array('id': player().'open'), null, @event, @player = player()) {
 		if(player() == @player) {
 			unbind();
