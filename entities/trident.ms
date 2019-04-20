@@ -4,7 +4,9 @@ bind('projectile_hit', null, array('type': 'TRIDENT'), @event) {
         @loc = @event['location'];
         @loc['yaw'] = get_yaw(@loc, @eloc);
         @loc['pitch'] = get_pitch(@loc, @eloc);
-        @vector = get_vector(@loc, 0.5);
-        try(set_entity_velocity(@event['id'], @vector));
+        if(@loc['yaw'] != NaN) {
+            @vector = get_vector(@loc, 0.5);
+            try(set_entity_velocity(@event['id'], @vector));
+        }
     });
 }
