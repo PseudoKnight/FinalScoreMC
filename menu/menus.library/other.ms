@@ -1,7 +1,7 @@
 @menu = @main[];
-@menu[57]['name'] = 'LIME_WOOL';
+@menu[28]['name'] = 'LIME_WOOL';
 
-@menu[45] = array(
+@menu[18] = array(
 	'name': 'SNOW_BLOCK',
 	'meta': array(
 		'display': color('yellow').'Spleef',
@@ -11,7 +11,7 @@
 		),
 	),
 );
-@menu[46] = array(
+@menu[19] = array(
 	'name': 'MAGENTA_TERRACOTTA',
 	'meta': array(
 		'display': color('gold').'Cube'.color('red').'Climber',
@@ -23,7 +23,7 @@
 		),
 	),
 );
-@menu[47] = array(
+@menu[20] = array(
 	'name': 'EMERALD_ORE',
 	'meta': array(
 		'display': color('green').'Seven Seconds to Live',
@@ -36,7 +36,7 @@
 		),
 	),
 );
-@menu[48] = array(
+@menu[21] = array(
 	'name': 'EMERALD_BLOCK',
 	'meta': array(
 		'display': color('green').'FrogWare',
@@ -47,7 +47,7 @@
 		),
 	),
 );
-@menu[49] = array(
+@menu[22] = array(
 	'name': 'REDSTONE_BLOCK',
 	'meta': array(
 		'display': color('red').'Snake',
@@ -58,7 +58,7 @@
 		),
 	),
 );
-@menu[50] = array(
+@menu[23] = array(
 	'name': 'PACKED_ICE',
 	'meta': array(
 		'display': color('aqua').'Hockey',
@@ -68,7 +68,7 @@
 		),
 	),
 );
-@menu[51] = array(
+@menu[24] = array(
 	'name': 'ORANGE_GLAZED_TERRACOTTA',
 	'meta': array(
 		'display': color('aqua').'Charades',
@@ -82,7 +82,7 @@
 		),
 	),
 );
-@menu[52] = array(
+@menu[25] = array(
 	'name': 'CRACKED_STONE_BRICKS',
 	'meta': array(
 		'display': color('yellow').'Gladiator Arena',
@@ -92,7 +92,7 @@
 		),
 	),
 );
-@menu[53] = array(
+@menu[26] = array(
 	'name': 'ACACIA_PLANKS',
 	'meta': array(
 		'display': color('gold').'Hoops!',
@@ -102,7 +102,7 @@
 		),
 	),
 );
-@menu[30] = array(
+@menu[0] = array(
 	'name': 'SLIME_BLOCK',
 	'meta': array(
 		'display': color('green').'Slimey Golf',
@@ -112,7 +112,7 @@
 		),
 	),
 );
-@menu[31] = array(
+@menu[1] = array(
 	'name': 'PRISMARINE',
 	'meta': array(
 		'display': color('aqua').'Sunken City Golf',
@@ -122,7 +122,7 @@
 		),
 	),
 );
-@menu[32] = array(
+@menu[2] = array(
 	'name': 'JUNGLE_LOG',
 	'meta': array(
 		'display': color('yellow').'Island Golf',
@@ -132,7 +132,7 @@
 		),
 	),
 );
-@menu[39] = array(
+@menu[9] = array(
 	'name': 'ICE',
 	'meta': array(
 		'display': color('aqua').'Arctic Race',
@@ -143,7 +143,7 @@
 		)
 	),
 );
-@menu[40] = array(
+@menu[10] = array(
 	'name': 'HAY_BLOCK',
 	'meta': array(
 		'display': color('aqua').'Pig Race',
@@ -154,7 +154,7 @@
 		)
 	),
 );
-@menu[41] = array(
+@menu[11] = array(
 	'name': 'MAGENTA_TERRACOTTA',
 	'meta': array(
 		'display': color('aqua').'Gyro Race',
@@ -166,4 +166,4 @@
 	),
 );
 delete_virtual_inventory('other');
-create_virtual_inventory('other', 63, 'Other Games', @menu);
+create_virtual_inventory('other', 36, 'Other Games', @menu);

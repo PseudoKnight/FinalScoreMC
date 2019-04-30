@@ -11,7 +11,7 @@ bind('player_interact', null, array('itemname': 'BOOK', 'button': 'right', 'hand
 
 queue_push(closure(){
 	@main = array(
-		56: array(
+		27: array(
 			'name': 'RED_CARPET',
 			'meta': array(
 				'display': color('green').'PVP Arenas',
@@ -19,7 +19,7 @@ queue_push(closure(){
 				'flags': array('HIDE_ATTRIBUTES'),
 			),
 		),
-		57: array(
+		28: array(
 			'name': 'LIME_CARPET',
 			'meta': array(
 				'display': color('green').'Other Games',
@@ -27,28 +27,35 @@ queue_push(closure(){
 				'flags': array('HIDE_ATTRIBUTES'),
 			),
 		),
-		59: array(
+		29: array(
 			'name': 'LIGHT_BLUE_CARPET',
 			'meta': array(
-				'display': color('green').'Solo Courses / Parkour',
-				'lore': array(color('dark_gray').'Load: solo'),
+				'display': color('green').'Easier Solo Courses',
+				'lore': array(color('dark_gray').'Load: solo1'),
 			),
 		),
-		60:array(
+		30: array(
+			'name': 'PURPLE_CARPET',
+			'meta': array(
+				'display': color('green').'Harder Solo Courses',
+				'lore': array(color('dark_gray').'Load: solo2'),
+			),
+		),
+		31:array(
 			'name': 'ORANGE_CARPET',
 			'meta': array(
-				'display': color('green').'Coop Courses / Parkour',
+				'display': color('green').'Coop Courses',
 				'lore': array(color('dark_gray').'Load: coop'),
 			),
 		),
 	);
 	delete_virtual_inventory('main');
-	create_virtual_inventory('main', 63, 'Frog Park Directory', @main);
+	create_virtual_inventory('main', 36, 'Frog Park Directory', @main);
 
 	queue_push(closure(){
 		include('menus.library/other.ms');
 	});
-	
+
 	queue_push(closure(){
 		include('menus.library/courses.ms');
 	});

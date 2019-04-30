@@ -1,5 +1,5 @@
 @menu = @main[];
-@menu[56]['name'] = 'RED_WOOL';
+@menu[27]['name'] = 'RED_WOOL';
 
 @menuPvp = array(
 	'inv': associative_array(),
@@ -11,7 +11,7 @@
 @arenas = array_filter(get_values('arena'), closure(@key, @value){
 	return(!array_index_exists(@value, 'parent'));
 });
-@slot = floor((54 - array_size(@arenas)) / 9) * 9;
+@slot = floor((27 - array_size(@arenas)) / 9) * 9;
 foreach(@name: @arena in @arenas) {
 	@name = split('.', @name)[1];
 	@lore = array();

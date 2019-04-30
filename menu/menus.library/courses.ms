@@ -27,22 +27,31 @@
 	'other': array(),
 );
 
-@solo = @main[];
-@solo[59]['name'] = 'LIGHT_BLUE_WOOL';
+@solo1 = @main[];
+@solo1[29]['name'] = 'LIGHT_BLUE_WOOL';
+
+@solo2 = @main[];
+@solo2[30]['name'] = 'PURPLE_WOOL';
 
 @coop = @main[];
-@coop[60]['name'] = 'ORANGE_WOOL';
+@coop[31]['name'] = 'ORANGE_WOOL';
 
-@soloMenu = array(
-	'menu': @solo,
-	'id': 'solo',
-	'title': 'Solo Courses / Parkour',
+@soloMenu1 = array(
+	'menu': @solo1,
+	'id': 'solo1',
+	'title': 'Easier Solo Courses',
+	'inv': associative_array(),
+);
+@soloMenu2 = array(
+	'menu': @solo2,
+	'id': 'solo2',
+	'title': 'Harder Solo Courses',
 	'inv': associative_array(),
 );
 @coopMenu = array(
 	'menu': @coop,
 	'id': 'coop',
-	'title': 'Coop Courses / Parkour',
+	'title': 'Coop Courses',
 	'inv': associative_array(),
 );
 
@@ -98,18 +107,25 @@ foreach(@name: @cake in @cakes) {
 		}
 	}
 }
+@coopSlot = 0;
 foreach(@i: @difficulty in @difficultyorder) {
 	// solo
 	@slot = @i * 9;
-	foreach(@item in @difficulties[@difficulty]) {
-		@soloMenu['inv'][@slot] = @item;
-		@slot++;
+	if(@slot < 27) {
+		foreach(@item in @difficulties[@difficulty]) {
+			@soloMenu1['inv'][@slot] = @item;
+			@slot++;
+		}
+	} else {
+		foreach(@item in @difficulties[@difficulty]) {
+			@soloMenu2['inv'][@slot - 27] = @item;
+			@slot++;
+		}
 	}
+
 	// coop
-	@slot = @i * 9;
 	foreach(@item in @coopdifficulties[@difficulty]) {
-		@coopMenu['inv'][@slot] = @item;
-		@slot++;
+		@coopMenu['inv'][@coopSlot++] = @item;
 	}
 }
 
@@ -132,11 +148,13 @@ foreach(@i: @difficulty in @difficultyorder) {
 		@menu[@slot] = @item;
 	}
 	delete_virtual_inventory(@player.@import['id']);
-	create_virtual_inventory(@player.@import['id'], 63, @import['title'], @menu);
+	create_virtual_inventory(@player.@import['id'], 36, @import['title'], @menu);
 	popen_inventory(@player, @player.@import['id']);
 }
-@soloMenu['loadMenu'] = @loadMenu;
+@soloMenu1['loadMenu'] = @loadMenu;
+@soloMenu2['loadMenu'] = @loadMenu;
 @coopMenu['loadMenu'] = @loadMenu;
 
-export('menu.solo', @soloMenu);
+export('menu.solo1', @soloMenu1);
+export('menu.solo2', @soloMenu2)
 export('menu.coop', @coopMenu);
