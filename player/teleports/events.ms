@@ -14,7 +14,7 @@ bind('player_teleport', null, null, @event) {
 	@to = @event['to'];
 	@fromWorld = @from['world'];
 	@toWorld = @to['world'];
-	
+
 	if(@event['type'] == 'END_GATEWAY') {
 		if(@fromWorld == 'world_the_end'
 		&& (get_block(location_shift(@from, 'east')) == 'END_GATEWAY'
@@ -32,7 +32,7 @@ bind('player_teleport', null, null, @event) {
 	} else if(@event['type'] == 'ENDER_PEARL' && @fromWorld == 'custom') {
 		cancel();
 	}
-	
+
 	if(_is_survival_world(@fromWorld) && _is_survival_world(@toWorld)) {
 		@uuid = puuid();
 
@@ -55,7 +55,7 @@ bind('player_teleport', null, null, @event) {
 				}
 			});
 		}
-		
+
 		// Teleport leashed entities with player
 		@item = pinv(player(), null);
 		if(@item && @item['name'] == 'LEAD') {
@@ -67,15 +67,16 @@ bind('player_teleport', null, null, @event) {
 				}
 			}
 			try {
-				load_chunk(get_chunk_loc(@to));
-				foreach(@e in @entities) {
-					set_entity_loc(@e, @to);
-				}
-				set_timeout(50, closure(){
+				if(!get_block_info(@to, 'solid')) {
 					foreach(@e in @entities) {
-						set_leashholder(@e, @uuid);
+						set_entity_loc(@e, @to);
 					}
-				});
+					set_timeout(50, closure(){
+						foreach(@e in @entities) {
+							set_leashholder(@e, @uuid);
+						}
+					});
+				};
 			} catch(Exception @ex) {
 				msg('Failed to teleport some leashed mobs with you.');
 				console('Failed to teleport some leashed mobs.', false);

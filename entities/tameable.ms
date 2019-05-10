@@ -29,9 +29,10 @@ bind('entity_damage', null, array('type': '/(DONKEY|HORSE|LLAMA|MULE|OCELOT|SKEL
 						} else {
 							@ownerdata = _pdata(@owner);
 							if(array_index_exists(@ownerdata, 'homes') && array_index_exists(@ownerdata['homes'], @world)) {
-								load_chunk(@ownerdata['homes'][@world]);
-								set_entity_loc(@id, @ownerdata['homes'][@world]);
-								tmsg(@damager, color('yellow').'Teleported '.@event['type'].' to '.@owner.'\'s home.');
+								if(!get_block_info(@ownerdata['homes'][@world], 'solid')) {
+									set_entity_loc(@id, @ownerdata['homes'][@world]);
+									tmsg(@damager, color('yellow').'Teleported '.@event['type'].' to '.@owner.'\'s home.');
+								}
 							}
 						}
 					}

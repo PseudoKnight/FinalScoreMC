@@ -84,9 +84,10 @@ proc _pvp_start_match(@id) {
 			 }
 			foreach(@loc in @locations) {
 				@loc[1] += 1;
-				load_chunk(@loc);
-				@uuid = _spawn_entity(@type, @loc);
-				@pvp['team'][@team]['respawns'][] = @uuid;
+				if(!get_block_info(@loc, 'solid')) {
+					@uuid = _spawn_entity(@type, @loc);
+					@pvp['team'][@team]['respawns'][] = @uuid;
+				}
 			}
 		}
 	}
@@ -108,7 +109,7 @@ proc _pvp_start_match(@id) {
 	if(array_index_exists(@pvp['arena'], 'mobprotect')) {
 		queue_push(closure(){
 			foreach(@team: @mob in @pvp['arena']['mobprotect']) {
-				load_chunk(@mob['loc']);
+				get_block(@mob['loc']); // loads chunk
 				@entityid = _spawn_entity(@mob['type'], @mob['loc']);
 				set_mob_name(@entityid, @pvp['arena']['team'][@team]['color'].@pvp['arena']['team'][@team]['name']);
 				@pvp['team'][@team]['mobprotect'] = @entityid;
