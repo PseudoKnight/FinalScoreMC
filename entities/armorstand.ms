@@ -169,9 +169,7 @@ bind('player_interact_at_entity', null, array('clicked': 'ARMOR_STAND'), @event)
 		switch(if(@item, @item['name'], null)) {
 			case 'STICK': # 2 sticks attaches arms
 				if(@item['qty'] >= 2 && !@armorstand['arms']) {
-					set_timeout(50, closure(){ // workaround client rendering issue in 1.12
-						set_entity_spec(@event['id'], array('arms': true));
-					});
+					set_entity_spec(@event['id'], array('arms': true));
 					@item['qty'] -= 2;
 					set_pinv(player(), null, @item);
 					cancel();
@@ -191,9 +189,7 @@ bind('player_interact_at_entity', null, array('clicked': 'ARMOR_STAND'), @event)
 					@visible = @armorstand['visible'];
 					if(!@visible || @gear['weapon'] || @gear['off_hand'] || @gear['helmet'] || @gear['chestplate'] || @gear['leggings'] || @gear['boots']) {
 						title('', color(6).'Toggled visibility '.if(@visible, 'off', 'on').' for armor stand.', 0, 40, 10);
-						set_timeout(50, closure(){ // workaround client rendering issue in 1.12
-							set_entity_spec(@event['id'], array('visible': !@visible));
-						});
+						set_entity_spec(@event['id'], array('visible': !@visible));
 						cancel();
 					}
 				}
@@ -202,24 +198,18 @@ bind('player_interact_at_entity', null, array('clicked': 'ARMOR_STAND'), @event)
 				if(!_is_survival_world(pworld())) {
 					@small = if(@armorstand['small'], false, true);
 					title('', color(6).if(@small, 'Shrunk', 'Embiggened').' armor stand.', 0, 40, 10);
-					set_timeout(50, closure(){ // workaround client rendering issue in 1.12
-						set_entity_spec(@event['id'], array('small': @small));
-					});
+					set_entity_spec(@event['id'], array('small': @small));
 					cancel();
 				}
-				
+
 			case 'NAME_TAG': # adds mob name
 				if(!_is_survival_world(pworld())) {
 					if(!@item['meta'] || !@item['meta']['display']) {
-						set_timeout(50, closure(){ // workaround client rendering issue in 1.12
-							set_mob_name(@event['id'], '');
-							set_name_visible(@event['id'], false);
-						});
+						set_mob_name(@event['id'], '');
+						set_name_visible(@event['id'], false);
 					} else {
-						set_timeout(50, closure(){ // workaround client rendering issue in 1.12
-							set_mob_name(@event['id'], @item['meta']['display']);
-							set_name_visible(@event['id'], true);
-						});
+						set_mob_name(@event['id'], @item['meta']['display']);
+						set_name_visible(@event['id'], true);
 					}
 					cancel();
 				}
@@ -294,7 +284,7 @@ bind('entity_damage', null, array('type': 'ARMOR_STAND'), @event) {
 	} else if(array_index_exists(@event, 'damager')) {
 		@damager = @event['damager'];
 	}
-	
+
 	if(@damager && ponline(@damager) && sk_can_build(@damager, @event['location'])) {
 		@armorstand = entity_spec(@event['id']);
 		if(!@armorstand['visible']) {
