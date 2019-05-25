@@ -47,21 +47,23 @@ proc _bm_request(@endpoint, @player, @params, @callback = closure(noop()),
 	}
 	@params['hmac'] = hmac_sha1(@hmac_key, @msg);
 
-	http_request('http://finalscoremc.com/fsmcbm/ban-manager.php?action='.@endpoint, array(
-		'method': 'POST',
-		'params': @params,
-		'success': closure(@response){
-			@result = @response['body'];
-			if(@result) {
-				@result = json_decode(@result);
-				if(!is_array(@result)) {
-					// result was a single value for some reason
-				} else if(array_index_exists(@result, 'error') && @result['error'] !== 'Nothing found.') {
-					execute(@result['error'], @error);
-				} else {
-					execute(@result, @callback);
+	try {
+		http_request('http://finalscoremc.com/fsmcbm/ban-manager.php?action='.@endpoint, array(
+			'method': 'POST',
+			'params': @params,
+			'success': closure(@response){
+				@result = @response['body'];
+				if(@result) {
+					@result = json_decode(@result);
+					if(!is_array(@result)) {
+						// result was a single value for some reason
+					} else if(array_index_exists(@result, 'error') && @result['error'] !== 'Nothing found.') {
+						execute(@result['error'], @error);
+					} else {
+						execute(@result, @callback);
+					}
 				}
 			}
-		}
-	));
+		));
+	} catch(IOException @ex) {} // website might be down.
 }
