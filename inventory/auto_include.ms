@@ -19,7 +19,7 @@ proc _equip_kit(@player, @inv) {
 	if(!@player) {
 		@player = player();
 	}
-	
+
 	if(!ponline(@player)) {
 		return();
 	}
@@ -122,6 +122,10 @@ proc _minify_item(@item) {
 	} else {
 		if(array_size(@item['meta']['enchants']) == 0) {
 			array_remove(@item['meta'], 'enchants');
+		} else {
+			foreach(@enchantArray in @item['meta']['enchants']) {
+				array_remove(@enchantArray, 'etype');
+			}
 		}
 		if(is_null(@item['meta']['display'])) {
 			array_remove(@item['meta'], 'display');
