@@ -1,3 +1,7 @@
+/*
+	Format all exception messages according to the sender and receiver.
+	Only displays technical details to console/log, not to player.
+*/
 set_uncaught_exception_handler(closure(@ex){
 	if(@loc = get_command_block()) {
 		console('Exception occurred in CommandBlock at '.array_normalize(@loc)[0..3], false);
@@ -11,6 +15,11 @@ set_uncaught_exception_handler(closure(@ex){
 	return(true);
 });
 
+/*
+	Gets a value from any number of nested arrays using multiple keys.
+	Returns null if expected arrays or keys don't exist.
+	Example: @value = _multi_array_get(@nestedArrays, 'key_for_parent_array', 'key_for_nested_array');
+*/
 proc _multi_array_get(@value) {
 	@size = array_size(@arguments);
 	for(@i = 1, @i < @size, @i++) {

@@ -1,3 +1,11 @@
+/*
+	Spawns an entity and applies specific attributes to it.
+	@entity : REQUIRED : The entity type, saved entity type, or array defining a custom entity that's not saved.
+	@loc : REQUIRED : The spawning location.
+	@owner : The owner if the entity is tameable, also rider if the "rider" key is set to exactly "owner".
+	@teammates : Players to ignore if the entity is doing custom targeting.
+	@consumer : An additional closure to run on the entity during spawning.
+*/
 proc _spawn_entity(@entity, @loc, @owner, @teammates, @consumer) {
 	if(!is_array(@entity)) {
 		@entity = _get_entity(@entity);
@@ -172,6 +180,9 @@ proc _spawn_entity(@entity, @loc, @owner, @teammates, @consumer) {
 	return(spawn_entity(@entity['type'], 1, @loc, @modify)[0]);
 }
 
+/*
+	Gets a vanilla entity type or saved custom entity array by the given name. (see /entity command)
+*/
 proc _get_entity(@entity = null) {
 	@entityTypes = import('entitytypes');
 	if(is_null(@entityTypes)) {

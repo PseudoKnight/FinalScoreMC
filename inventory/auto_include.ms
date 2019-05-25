@@ -88,7 +88,7 @@ proc _item_meta(@item, @index) {
 }
 
 /*
-	Compacts all an inventory array by removing unnecessary keys in item arrays
+	Compacts all of an inventory array by removing unnecessary keys in item arrays
 */
 proc _minify_inv(@inv, @keepnulls = false) {
 	if(!is_array(@inv)) {
@@ -110,6 +110,9 @@ proc _minify_inv(@inv, @keepnulls = false) {
 	return(@inv);
 }
 
+/*
+	Reduces an item array down to their necessary components to recreate the item.
+*/
 proc _minify_item(@item) {
 	if(@item['qty'] == 1) {
 		array_remove(@item, 'qty');
