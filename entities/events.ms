@@ -1,3 +1,8 @@
+# 100% drop rate for all explosions, unless overriden
+bind('entity_explode', array('priority': 'HIGH'), null, @event) {
+	modify_event('yield', 1.0);
+}
+
 # Limit breeding in high entity areas
 bind('creature_spawn', null, array('reason': 'BREEDING'), @event) {
 	if(!array_contains(array('DONKEY', 'HORSE', 'MULE'), @event['type'])
