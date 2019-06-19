@@ -161,7 +161,7 @@ proc _snake_set_color(@player, @color, @game,
 			@text = @colorArray[2];
 			@snake['head'] = @head;
 			@snake['tail'] = @tail;
-			@snake['color'] = @text;
+			@snake['color'] = color(@text);
 			set_team_display(@player, array('color': @text), 'snake');
 			break();
 		}
