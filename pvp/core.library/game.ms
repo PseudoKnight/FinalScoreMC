@@ -332,7 +332,7 @@ proc _pvp_start_match(@id) {
 proc _pvp_check_objectives(@id) {
 	@pvp = import('pvp'.@id)
 
-	if(@pvp['running'] != 2) {
+	if(!@pvp || @pvp['running'] != 2) {
 		return();
 	}
 
