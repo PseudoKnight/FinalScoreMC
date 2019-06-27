@@ -120,37 +120,38 @@ proc _minify_item(@item) {
 	if(is_null(@item['meta'])) {
 		array_remove(@item, 'meta');
 	} else {
-		if(array_size(@item['meta']['enchants']) == 0) {
-			array_remove(@item['meta'], 'enchants');
+		@meta = @item['meta'];
+		if(array_size(@meta['enchants']) == 0) {
+			array_remove(@meta, 'enchants');
 		} else {
-			foreach(@enchantArray in @item['meta']['enchants']) {
-				array_remove(@enchantArray, 'etype');
+			foreach(@enchant: @enchantArray in @meta['enchants']) {
+				@meta['enchants'][@enchant] = @enchantArray['elevel'];
 			}
 		}
-		if(is_null(@item['meta']['display'])) {
-			array_remove(@item['meta'], 'display');
+		if(is_null(@meta['display'])) {
+			array_remove(@meta, 'display');
 		}
-		if(is_null(@item['meta']['lore'])) {
-			array_remove(@item['meta'], 'lore');
+		if(is_null(@meta['lore'])) {
+			array_remove(@meta, 'lore');
 		}
-		if(array_index_exists(@item['meta'], 'firework')
-		&& is_null(@item['meta']['firework'])) {
-			array_remove(@item['meta'], 'firework');
+		if(array_index_exists(@meta, 'firework')
+		&& is_null(@meta['firework'])) {
+			array_remove(@meta, 'firework');
 		}
-		if(@item['meta']['repair'] == 0) {
-			array_remove(@item['meta'], 'repair');
+		if(@meta['repair'] == 0) {
+			array_remove(@meta, 'repair');
 		}
-		if(array_size(@item['meta']['flags']) == 0) {
-			array_remove(@item['meta'], 'flags');
+		if(array_size(@meta['flags']) == 0) {
+			array_remove(@meta, 'flags');
 		}
-		if(array_index_exists(@item['meta'], 'inventory')) {
-			_minify_inv(@item['meta']['inventory']);
+		if(array_index_exists(@meta, 'inventory')) {
+			_minify_inv(@meta['inventory']);
 		}
-		if(array_index_exists(@item['meta'], 'unbreakable') && @item['meta']['unbreakable'] == false) {
-			array_remove(@item['meta'], 'unbreakable');
+		if(array_index_exists(@meta, 'unbreakable') && @meta['unbreakable'] == false) {
+			array_remove(@meta, 'unbreakable');
 		}
-		if(array_index_exists(@item['meta'], 'damage') && @item['meta']['damage'] == 0) {
-			array_remove(@item['meta'], 'damage');
+		if(array_index_exists(@meta, 'damage') && @meta['damage'] == 0) {
+			array_remove(@meta, 'damage');
 		}
 	}
 }
