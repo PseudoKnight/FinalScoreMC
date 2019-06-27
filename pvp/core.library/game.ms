@@ -255,7 +255,8 @@ proc _pvp_start_match(@id) {
 					try {
 						@loc = location_shift(entity_loc(@itemspawn[0]), 'up', 0.4);
 						@itemspawn[1] = time();
-						spawn_particle(@loc, 'FIREWORKS_SPARK', array_keys(@pvp['players']));
+						@players = array_merge(@pvp['spectators'], array_keys(@pvp['players']));
+						spawn_particle(@loc, 'FIREWORKS_SPARK', @players);
 						continue();
 					} catch(BadEntityException @ex) {
 						// item drop was picked up or is unloaded
