@@ -36,7 +36,7 @@ register_command('warps', array(
 					// ignore
 				}
 				msg(color('green').'Deleted warp.');
-		
+
 			case 'list':
 				@warps = get_values('warp');
 				@worlds = get_worlds();
@@ -59,7 +59,7 @@ register_command('warps', array(
 					die(color('gold').'You do not have permission to use this command.');
 				}
 				if(!function_exists('dm_all_markersets')) {
-					die(color('gold').'Uneditable at this time.')
+					msg(color('gold').'Uneditable at this time.');
 				}
 				@markersets = array();
 				if(function_exists('dm_all_markersets')) {
@@ -77,17 +77,17 @@ register_command('warps', array(
 				if(function_exists('dm_set_markerset_hide_by_default')) {
 					dm_set_markerset_hide_by_default('warps', true);
 				}
-		
+
 				@warps = get_values('warp');
-		
+
 				foreach(@name: @warp in @warps) {
 					if(function_exists('dm_create_marker')) {
 						dm_create_marker('warps', array('id': @name, 'label': to_upper(@name), 'location': @warp, 'world': @warp[3], 'icon': 'star', 'persistent': true));
 					}
 				}
-		
+
 				msg(color('green').'Done.');
-		
+
 			default:
 				return(false);
 		}
