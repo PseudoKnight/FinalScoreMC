@@ -93,7 +93,14 @@ bind('target_player', null, array('mobtype': 'ZOMBIE'), @event, @day) {
 					'COD',
 					'SALMON',
 					'PUFFERFISH',
-					'TROPICAL_FISH'
+					'TROPICAL_FISH',
+					'CAT',
+					'PILLAGER',
+					'FOX',
+					'PANDA',
+					'RAVAGER',
+					'TRADER_LLAMA',
+					'WANDERING_TRADER',
 				);
 				@mob = @mobs[rand(array_size(@mobs))];
 				set_mob_equipment(@event['id'], associative_array(

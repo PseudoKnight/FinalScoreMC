@@ -84,35 +84,6 @@ add_recipe(array(
 	'ingredients': array(array('name': 'BONE', 'qty': 9)),
 ));
 
-# 1.14 recipes
-add_recipe(array(
-	'key': 'smooth_quartz',
-	'type': 'FURNACE',
-	'result': array('name': 'SMOOTH_QUARTZ'),
-	'input': array('name': 'QUARTZ_BLOCK')
-));
-
-add_recipe(array(
-	'key': 'smooth_sandstone',
-	'type': 'FURNACE',
-	'result': array('name': 'SMOOTH_SANDSTONE'),
-	'input': array('name': 'SANDSTONE')
-));
-
-add_recipe(array(
-	'key': 'smooth_red_sandstone',
-	'type': 'FURNACE',
-	'result': array('name': 'SMOOTH_RED_SANDSTONE'),
-	'input': array('name': 'RED_SANDSTONE')
-));
-
-add_recipe(array(
-	'key': 'smooth_stone',
-	'type': 'FURNACE',
-	'result': array('name': 'SMOOTH_STONE'),
-	'input': array('name': 'STONE')
-));
-
 # Special recipe handling (eg. enchanted lore books, exp bottles, player heads)
 bind('inventory_click', null, array('slottype': 'RESULT'), @event) {
 	@slotitem = @event['slotitem'];

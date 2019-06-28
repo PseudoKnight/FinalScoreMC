@@ -57,7 +57,7 @@ bind('block_dispense', null, array('type': 'DISPENSER'), @event, @ignored = arra
 		}
 	}
 	@type = @event['item']['name']
-	if(@type == 'ARMOR_STAND' || @type == 'SHEARS') {
+	if(@type == 'ARMOR_STAND') {
 		try {
 			@inv = get_inventory(@event['location']);
 		} catch(CastException @ex) {
@@ -85,43 +85,10 @@ bind('block_dispense', null, array('type': 'DISPENSER'), @event, @ignored = arra
 		}
 		@loc['x'] += 0.5;
 		@loc['z'] += 0.5;
-		if(@type == 'ARMOR_STAND') {
-			spawn_entity('ARMOR_STAND', 1, @loc);
-			set_timeout(50, closure(){
-				set_inventory(@event['location'], @inv);
-			});
-		} else if(@type == 'SHEARS') {
-			@loc['y'] += 0.5;
-			foreach(@e in entities_in_radius(@loc, 1, 'SHEEP')) {
-				@spec = entity_spec(@e);
-				if(@spec['sheared'] == false && get_entity_age(@e) >= 0) {
-					set_entity_spec(@e, array('sheared': true));
-					drop_item(@loc, array('name': @spec['color'].'_WOOL'));
-					play_sound(@loc, array('sound': 'ENTITY_SHEEP_SHEAR'));
-					set_timeout(50, closure(){
-						try {
-							@inv = get_inventory(@event['location']);
-						} catch(CastException @ex) {
-							die();
-						}
-						foreach(@slot: @item in @inv) {
-							if(@item && @item['name'] == 'SHEARS') {
-								if(!@item['meta']) {
-									@item['meta'] = array('damage': 0);
-								} else if(@item['meta']['damage'] == 237) {
-									@inv[@slot] == null;
-									break();
-								}
-								@item['meta']['damage']++;
-								break();
-							}
-						}
-						set_inventory(@event['location'], @inv);
-					});
-					break();
-				}
-			}
-		}
+		spawn_entity('ARMOR_STAND', 1, @loc);
+		set_timeout(50, closure(){
+			set_inventory(@event['location'], @inv);
+		});
 	}
 }
 

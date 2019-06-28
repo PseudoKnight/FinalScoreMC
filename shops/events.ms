@@ -1,5 +1,8 @@
 // Shop Sign Interaction
-bind('player_interact', null, array('block': 'WALL_SIGN'), @event) {
+bind('player_interact', null, null, @event) {
+	if(!@event['block'] || !string_ends_with(@event['block'], 'WALL_SIGN')) {
+		die();
+	}
 	@signLoc = @event['location'];
 	include('core.library/shop.ms');
 	if(@shop = _sign_get_shop(@signLoc)) {
@@ -25,8 +28,8 @@ bind('player_interact', null, array('block': 'WALL_SIGN'), @event) {
 }
 
 // Shop Sign Break
-bind('block_break', array('priority': 'LOWEST'), array('block': 'WALL_SIGN'), @event) {
-	if(sk_can_build(@event['location'])) {
+bind('block_break', array('priority': 'LOWEST'), null, @event) {
+	if(sk_can_build(@event['location']) && string_ends_with(@event['block'], 'WALL_SIGN')) {
 		include('core.library/shop.ms');
 		if(@shop = _sign_get_shop(@event['location'])) {
 			if(_is_shop_owner(@shop)) {
@@ -83,7 +86,7 @@ bind('block_place', null, array('block': 'HOPPER'), @event) {
 		@type = get_block(@loc);
 		if(@type === 'CHEST' || @type === 'TRAPPED_CHEST') {
 			@signLoc = location_shift(@loc, 'up');
-			if(get_block(@signLoc) == 'WALL_SIGN') {
+			if(string_ends_with(get_block(@signLoc), 'WALL_SIGN')) {
 				include('core.library/shop.ms');
 				if(@shop = _sign_get_shop(@signLoc)) {
 					if(!_is_shop_owner(@shop)) {
@@ -102,7 +105,7 @@ bind('block_place', null, array('block': 'CHEST'), @event) {
 			@loc = location_shift(@event['location'], @dir);
 			if(get_block(@loc) == @event['block']) {
 				@signLoc = location_shift(@loc, 'up');
-				if(get_block(@signLoc) == 'WALL_SIGN') {
+				if(string_ends_with(get_block(@signLoc), 'WALL_SIGN')) {
 					include('core.library/shop.ms');
 					if(_sign_get_shop(@signLoc)) {
 						cancel();
@@ -120,7 +123,7 @@ bind('block_place', null, array('block': 'TRAPPED_CHEST'), @event) {
 			@loc = location_shift(@event['location'], @dir);
 			if(get_block(@loc) == @event['block']) {
 				@signLoc = location_shift(@loc, 'up');
-				if(get_block(@signLoc) == 'WALL_SIGN') {
+				if(string_ends_with(get_block(@signLoc), 'WALL_SIGN')) {
 					include('core.library/shop.ms');
 					if(_sign_get_shop(@signLoc)) {
 						cancel();

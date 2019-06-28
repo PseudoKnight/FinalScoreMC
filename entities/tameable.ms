@@ -1,5 +1,5 @@
 // Protect tameable animals from damage by non-owners
-bind('entity_damage', null, array('type': '/(DONKEY|HORSE|LLAMA|MULE|OCELOT|SKELETON_HORSE|WOLF|ZOMBIE_HORSE|PARROT)/'), @event) {
+bind('entity_damage', null, array('type': '/(DONKEY|HORSE|LLAMA|MULE|CAT|SKELETON_HORSE|WOLF|ZOMBIE_HORSE|PARROT)/'), @event) {
 	@world = @event['world'];
 	@id = @event['id'];
 	if(!_is_survival_world(@world)) {
