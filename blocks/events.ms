@@ -119,7 +119,6 @@ bind('note_play', null, null, @event) {
 		case 'BLACK_TERRACOTTA':
 		case 'LIGHT_GRAY_TERRACOTTA':
 		case 'LIGHT_BLUE_TERRACOTTA':
-		case 'GLOWSTONE':
 			@sound = 'BLOCK_NOTE_BLOCK_PLING';
 		case 'SLIME_BLOCK':
 			@sound = 'ENTITY_CHICKEN_EGG';
@@ -127,6 +126,10 @@ bind('note_play', null, null, @event) {
 			@sound = 'ENTITY_FIREWORK_ROCKET_BLAST';
 		case 'SEA_LANTERN':
 			@sound = 'BLOCK_NOTE_BLOCK_CHIME';
+		case 'SOUL_SAND':
+			@sound = 'BLOCK_NOTE_BLOCK_COW_BELL';
+		case 'IRON_BLOCK':
+			@sound = 'BLOCK_NOTE_BLOCK_IRON_XYLOPHONE';
 		default:
 			@data = reg_match('instrument\\=([a-z]+)', get_blockdata_string(@event['location']));
 			@sound = 'BLOCK_NOTE_BLOCK_'.@data[1];
