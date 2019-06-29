@@ -148,6 +148,7 @@ proc _snake_spawn(@player, @game) {
 			8: array('name': 'REDSTONE_TORCH', 'meta': associative_array('display': 'JOYSTICK')),
 		));
 	}
+	return(true);
 }
 
 proc _snake_set_color(@player, @color, @game,
