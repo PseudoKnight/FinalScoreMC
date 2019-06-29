@@ -48,7 +48,7 @@ proc _snake_queue(@mode) {
 	if(!@game['arena']) {
 		die(color('red').'Not in a snake region.');
 	}
-	
+
 	// Get region count
 	while(sk_region_exists('custom', 'snake_'.@game['arena'].(@game['surfaces'] + 1))) {
 		@game['surfaces']++;
@@ -71,9 +71,9 @@ proc _snake_queue(@mode) {
 	} catch(ScoreboardException @ex) {
 		die(color('red').'Snake is still running.');
 	}
-	
+
 	_snake_clean_surfaces(@game);
-	
+
 	// Create color select menu
 	create_virtual_inventory('snake', 9, color('bold').'Choose Your Snake Color', array(
 		'0': array('name': 'LIGHT_BLUE_TERRACOTTA', 'meta': array('display': 'Blue')),
@@ -105,7 +105,7 @@ proc _snake_queue(@mode) {
 	if(@game['mode'] == 'capture') {
 		@loadMenu = false;
 	}
-	
+
 	if(@game['mode'] == 'endless' && array_size(@game['snakes']) == 0
 	|| @game['mode'] == 'versus' && array_size(@game['snakes']) < 2) {
 		delete_virtual_inventory('snake');
@@ -116,7 +116,7 @@ proc _snake_queue(@mode) {
 		export('snake', null);
 		die(color('red').'Not enough players in region in adventure mode.');
 	}
-	
+
 	_add_activity('snake', 'Snake');
 
 	// Add bots to fill up slots
@@ -218,30 +218,35 @@ proc _snake_start_task(@game) {
 			_snake_add_powerup(@game);
 		}
 		foreach(@player: @snake in @game['snakes']) {
-			if(!@snake['bot'] && (!ponline(@player) || !array_contains(sk_current_regions(@player), 'snake_'.@game['arena']))) {
-				_snake_remove(@player, @game);
-			} else if(@snake['alive']) {
-				if(!@snake['bot']) {
-					@playersAlive++;
-				}
-				if(!(@snake['sleep']--)) {
-					if(@snake['bot']) {
-						_snake_bot_update(@player, @game);
+			try {
+				if(!@snake['bot'] && (!ponline(@player) || !array_contains(sk_current_regions(@player), 'snake_'.@game['arena']))) {
+					_snake_remove(@player, @game);
+				} else if(@snake['alive']) {
+					if(!@snake['bot']) {
+						@playersAlive++;
 					}
-					if(_snake_move(@player, @game)) {
-						if(@snake['laser']) {
-							_snake_update_laser(@player, @game);
+					if(!(@snake['sleep']--)) {
+						if(@snake['bot']) {
+							_snake_bot_update(@player, @game);
 						}
-						@snake['turned'] = false;
+						if(_snake_move(@player, @game)) {
+							if(@snake['laser']) {
+								_snake_update_laser(@player, @game);
+							}
+							@snake['turned'] = false;
+							@alive++;
+							@active = @player;
+						} else {
+							_snake_kill(@player, @game);
+						}
+					} else {
 						@alive++;
 						@active = @player;
-					} else {
-						_snake_kill(@player, @game);
 					}
-				} else {
-					@alive++;
-					@active = @player;
 				}
+			} catch (IndexOverflowException @ex) {
+				console(@ex);
+				_snake_remove(@player, @game);
 			}
 		}
 		if(@game['mode'] == 'capture') {
@@ -297,7 +302,7 @@ proc _snake_end(@winner, @game) {
 		} else {
 			@endgame = true;
 		}
-		
+
 		if(@endgame) {
 			_snake_cleanup(@game);
 		} else {
@@ -308,7 +313,7 @@ proc _snake_end(@winner, @game) {
 			}
 			_snake_countdown(@game);
 		}
-		
+
 	} else if(@game['mode'] == 'endless') {
 		// Sort player scores
 		@scores = array();
@@ -328,7 +333,7 @@ proc _snake_end(@winner, @game) {
 				}
 			}
 		}
-		
+
 		// Store and set highscores and topscores
 		@topscores = get_value('snake.endless.top');
 		if(!@topscores) {
@@ -341,11 +346,11 @@ proc _snake_end(@winner, @game) {
 			if(!@pscore || @score['value'] > @pscore) {
 				store_value('snake.endless', @uuid, @score['value']);
 				@score['highscore'] = true;
-				
+
 				@coins = @score['value'] - @pscore;
 				_acc_add(@score['name'], @coins);
 				tmsg(@score['name'], color('gold').'+'.@coins.' coins');
-				
+
 				@array = array('uuid': @uuid, 'value': @score['value']);
 				@remove = false;
 				foreach(@i: @topscore in @topscores) {
@@ -380,7 +385,7 @@ proc _snake_end(@winner, @game) {
 		if(@updateTopScores) {
 			store_value('snake.endless.top', @topscores);
 		}
-		
+
 		// Display scores
 		if(@scores) {
 			@topPlayer = @scores[0]['name'];

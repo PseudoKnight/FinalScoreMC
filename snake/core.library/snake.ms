@@ -25,14 +25,14 @@ proc _snake_add(@player, @game) {
 	if(ponline(@player) && !_set_pactivity(@player, 'SNAKE')) {
 		return(false);
 	}
-	
+
 	@game['snakes'][@player] = array(
 		'head': '',
 		'tail': '',
 		'color': color('white'),
 		'bot': '',
 	);
-	
+
 	if(!get_pscore('score', @player, 'snake')) {
 		try {
 			create_team(@player, 'snake');
@@ -42,7 +42,7 @@ proc _snake_add(@player, @game) {
 			// team probably exists already, ignore
 		}
 	}
-	
+
 	if(@game['mode'] == 'capture') {
 		@team = rand(2);
 		if(array_size(@game['teams'][0]) > array_size(@game['teams'][1])) {
@@ -58,7 +58,19 @@ proc _snake_add(@player, @game) {
 			_snake_set_color(@player, @item['name'], @game);
 		}
 	}
-	_snake_spawn(@player, @game);
+
+	@i = 20;
+	while(!_snake_spawn(@player, @game)) {
+		if(--@i <= 0) {
+			array_remove(@game['snakes'], @player);
+			remove_team(@player, 'snake');
+			if(@game['mode'] == 'capture') {
+				array_remove_values(@game['teams'][@team], @player);
+			}
+			return(false);
+		}
+	}
+
 	if(ponline(@player)) {
 		@snake = @game['snakes'][@player];
 		set_ploc(@player, location_shift(@snake['loc'], @snake['top'], 20));
@@ -75,7 +87,7 @@ proc _snake_add(@player, @game) {
 	} else {
 		@game['snakes'][@player]['bot'] = @player;
 	}
-	
+
 	return(true);
 }
 
@@ -126,9 +138,9 @@ proc _snake_spawn(@player, @game) {
 	@snake['last-dir'] = '';
 	@snake['sleep'] = 5;
 	@snake['boost'] = 0;
-	
+
 	_snake_set_top(@snake);
-	
+
 	if(ponline(@player) && @game['mode'] == 'capture' && @snake['tail']) {
 		_clear_pinv(@player);
 		set_pinv(@player, array(
@@ -272,7 +284,7 @@ proc _snake_set_top(@snake) {
 
 proc _snake_move(@player, @game) {
 	@snake = @game['snakes'][@player];
-	
+
 	// Boost
 	@snake['sleep'] = if(@game['botsOnly'], if(@snake['boost'], 1, 2), max(1, 5 - @snake['boost']));
 	if(@snake['boost']) {
@@ -282,12 +294,12 @@ proc _snake_move(@player, @game) {
 		@loc[2] += 0.5;
 		spawn_particle(@loc, array('particle': 'VILLAGER_HAPPY', 'count': 8, 'xoffset': 0.6, 'yoffset': 0.6, 'zoffset': 0.6,));
 	}
-	
+
 	set_block(@snake['loc'], @snake['tail'], false);
 	@snake['loc'] = _snake_shift(@snake['loc'], @snake['dir']);
 	@block = get_block(@snake['loc']);
 	@powerup = _snake_get_powerup_from(@block);
-	
+
 	// Air or pickup, move through
 	if(@block == 'AIR'
 	|| (@powerup && _snake_remove_powerup(@snake['loc'], @game))
@@ -324,7 +336,7 @@ proc _snake_move(@player, @game) {
 			}
 		}
 		return(true);
-		
+
 	// Sea lantern, check for adjacent surface to move to
 	} else if(@block == 'SEA_LANTERN') {
 		@dir = _snake_dir_of_surface(@snake['loc'], _snake_opposite_dir(@snake['dir']));
@@ -347,7 +359,7 @@ proc _snake_move(@player, @game) {
 		@snake['region'] = sk_regions_at(@snake['loc'])[1];
 		_snake_set_top(@snake);
 		return(true);
-		
+
 	// Laser, move through if snake is also shooting laser
 	} else if(@block == 'RED_STAINED_GLASS' && @snake['laser']) {
 		@snake['blocks'][] = @snake['loc'][];
@@ -355,7 +367,7 @@ proc _snake_move(@player, @game) {
 		@snake['turned'] = false;
 		return(true);
 	}
-	
+
 	// Hit non-traversable block, dead
 	return(false);
 }
