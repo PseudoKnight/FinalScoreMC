@@ -38,24 +38,24 @@ proc _snake_bind_events(@game) {
 				} else if(@id == 'TNT') {
 					set_block(@block, 'AIR', false);
 					_snake_remove_powerup(@block, @game);
-					_snake_drop_tnt(@block);
+					_snake_drop_tnt(array_normalize(@block)[0..3], 'down');
 				}
 			}
 		}
 	}
-	
+
 	bind('inventory_open', array('id': 'snake-inventory'), null, @event, @game) {
 		if(array_index_exists(@game['snakes'], player())) {
 			cancel();
 		}
 	}
-	
+
 	bind('item_swap', array('id': 'snake-swap'), null, @event, @game) {
 		if(array_index_exists(@game['snakes'], player())) {
 			cancel();
 		}
 	}
-	
+
 	bind('item_drop', array('id': 'snake-drop'), null, @event, @game) {
 		if(array_index_exists(@game['snakes'], player())) {
 			cancel();

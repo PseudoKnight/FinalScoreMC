@@ -286,7 +286,7 @@ proc _snake_drop_nuke(@snake, @game) {
 	@y = floor(@coords[0][1] - (@coords[0][1] - @coords[1][1]) / 2) + 0.5;
 	@z = floor(@coords[0][2] - (@coords[0][2] - @coords[1][2]) / 2) + 0.5;
 	@target = array(@x, @y, @z, 'custom');
-	
+
 	// determine sides of blast plane (coord to side, direction from target to side, coord of side)
 	@sides = array(array(0, 1, 2), array(2, 1, 0), array(0, -1, 2), array(2, -1, 0));
 	if(@coords[0][0] == @coords[1][0]) {
@@ -294,10 +294,10 @@ proc _snake_drop_nuke(@snake, @game) {
 	} else if(@coords[0][2] == @coords[1][2]) {
 		@sides = array(array(0, 1, 1), array(1, 1, 0), array(0, -1, 1), array(1, -1, 0));
 	}
-	
+
 	// get max radius of region
 	@maxradius = ceil(max(@coords[0][0] - @coords[1][0], @coords[0][1] - @coords[1][1], @coords[0][2] - @coords[1][2]) / 2);
-	
+
 	// create nuke marker
 	@loc = @snake['loc'][];
 	@loc[0] += 0.5;
@@ -306,7 +306,7 @@ proc _snake_drop_nuke(@snake, @game) {
 	@marker = spawn_entity('ARMOR_STAND', 1, @loc)[0];
 	set_entity_spec(@marker, array('marker': true, 'visible': false, 'gravity': false, 'small': true));
 	set_mob_equipment(@marker, array('helmet': array('name': 'DIAMOND_BLOCK')));
-	
+
 	// now move it to the target location over time
 	play_sound(@loc, array('sound': 'ENTITY_ZOMBIE_VILLAGER_CONVERTED', 'volume': 4));
 	set_interval(50, closure(){
@@ -323,7 +323,7 @@ proc _snake_drop_nuke(@snake, @game) {
 		} else {
 			clear_task();
 			entity_remove(@marker);
-			
+
 			// trigger nuke
 			@state = array('radius': 1, 'side': 0);
 			set_block(@target, 'FIRE', false);
@@ -335,7 +335,7 @@ proc _snake_drop_nuke(@snake, @game) {
 				}
 				@side = @state['side'];
 				@radius = @state['radius'];
-				
+
 				// set new wall
 				@coord = @sides[@side][0];
 				@dir = @sides[@side][1];
@@ -366,7 +366,7 @@ proc _snake_drop_nuke(@snake, @game) {
 						}
 					}
 				}
-				
+
 				// go to the new side
 				if(++@state['side'] > 3) {
 					@state['radius']++;
@@ -390,22 +390,23 @@ proc _snake_drop_tnt(@loc, @dir) {
 	@loc[0] += 0.5;
 	@loc[1] += 0.5;
 	@loc[2] += 0.5;
-	@tnt = spawn_entity('PRIMED_TNT', 1, @loc)[0];
-	set_entity_spec(@tnt, associative_array('fuseticks': if(@dir, 32, 1)));
-	switch(@dir) {
-		case 'north':
-			set_entity_velocity(@tnt, associative_array('z': -1.2));
-		case 'south':
-			set_entity_velocity(@tnt, associative_array('z': 1.2));
-		case 'east':
-			set_entity_velocity(@tnt, associative_array('x': 1.2));
-		case 'west':
-			set_entity_velocity(@tnt, associative_array('x': -1.2));
-		case 'up':
-			set_entity_velocity(@tnt, associative_array('y': 1.2));
-		case 'down':
-			set_entity_velocity(@tnt, associative_array('y': -1.2));
-	}
+	@tnt = spawn_entity('PRIMED_TNT', 1, @loc, closure(@tnt) {
+		set_entity_spec(@tnt, associative_array('fuseticks': if(@dir, 32, 1)));
+		switch(@dir) {
+			case 'north':
+				set_entity_velocity(@tnt, associative_array('z': -1.2));
+			case 'south':
+				set_entity_velocity(@tnt, associative_array('z': 1.2));
+			case 'east':
+				set_entity_velocity(@tnt, associative_array('x': 1.2));
+			case 'west':
+				set_entity_velocity(@tnt, associative_array('x': -1.2));
+			case 'up':
+				set_entity_velocity(@tnt, associative_array('y': 1.2));
+			case 'down':
+				set_entity_velocity(@tnt, associative_array('y': -1.2));
+		}
+	})[0];
 	return(@tnt);
 }
 
