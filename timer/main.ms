@@ -14,7 +14,7 @@ bind('player_join', null, null, @event) {
 		try {
 			@top = get_value('times');
 			@uuid = puuid(player(), true);
-			for(@i = 0, @i < array_size(@top), @i++) {
+			for(@i = 0, @i < 20, @i++) {
 				if(@top[@i][0] == @uuid) {
 					@session = _psession(player());
 					@rank = '&e\u278A';
