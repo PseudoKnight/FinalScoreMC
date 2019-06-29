@@ -8,7 +8,7 @@ register_command('note', array(
 		if(!@args) {
 			return(false);
 		}
-		
+
 		@l = pcursor();
 		if(!sk_can_build(@l) || get_block(@l) != 'NOTE_BLOCK') {
 			die();
@@ -47,9 +47,15 @@ register_command('note', array(
 			case 'SEA_LANTERN':
 				@instrument = 'chime';
 				@sound = 'BLOCK_NOTE_BLOCK_'.@instrument;
+			case 'SOUL_SAND':
+				@instrument = 'cow_bell';
+				@sound = 'BLOCK_NOTE_BLOCK_COW_BELL';
+			case 'IRON_BLOCK':
+				@instrument = 'iron_xylophone';
+				@sound = 'BLOCK_NOTE_BLOCK_IRON_XYLOPHONE';
 		}
-		
-	
+
+
 		@clicks = @args[0];
 		@octave = 0;
 		if(array_size(@args) == 2) {

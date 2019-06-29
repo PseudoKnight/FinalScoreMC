@@ -20,7 +20,7 @@ register_command('acme', array(
 					1: array('name': 'BONE', 'meta': array('display': @player.'\'s Funny Bone')),
 					2: array('name': 'FERMENTED_SPIDER_EYE', 'meta': array('display': @player.'\'s Heart')),
 					3: array('name': 'BONE_MEAL', 'meta': array('display': @player.'\'s Bone Powder')),
-					4: array('name': 'ROSE_RED', 'meta': array('display': @player.'\'s Brain')),
+					4: array('name': 'RED_DYE', 'meta': array('display': @player.'\'s Brain')),
 					5: array('name': 'MUTTON', 'meta': array('display': @player.'\'s Lung')),
 					6: array('name': 'SPIDER_EYE', 'meta': array('display': @player.'\'s Eyeball')),
 					7: array('name': 'SKELETON_SKULL', 'meta': array('display': @player.'\'s Skull')),
