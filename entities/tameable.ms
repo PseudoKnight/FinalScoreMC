@@ -52,7 +52,7 @@ bind('entity_damage', null, array('type': '/(DONKEY|HORSE|LLAMA|MULE|CAT|SKELETO
 }
 
 # animal sitter
-bind('player_interact_entity', null, array('clicked': '/(WOLF|OCELOT|PARROT)/'), @e) {
+bind('player_interact_entity', null, array('clicked': '/(WOLF|CAT|PARROT)/'), @e) {
 	@owner = get_mob_owner(@e['id']);
 	if(@owner) {
 		if(@owner != player()) {
