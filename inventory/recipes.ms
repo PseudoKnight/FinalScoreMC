@@ -68,14 +68,6 @@ add_recipe(array(
 ));
 */
 
-# Fix broken enchantment books
-add_recipe(array(
-	'key': 'fix_enchanted_book',
-	'type': 'SHAPELESS',
-	'result': array('name': 'ENCHANTED_BOOK', 'qty': 1, 'meta': array('display': 'Fix Enchanted Book')),
-	'ingredients': array(array('name': 'BOOK')),
-));
-
 # Faster bone -> bone-block recipe
 add_recipe(array(
 	'key': 'bone_to_bone_block',
@@ -117,25 +109,6 @@ bind('inventory_click', null, array('slottype': 'RESULT'), @event) {
 				}
 				modify_event('slotitem', @slotitem);
 
-			} else {
-				# Fix broken enchantment books
-				@stored = null;
-				foreach(@item in @event['inventory']) {
-					if(@item) {
-						if(@item['name'] == 'BOOK') {
-							if(@item['meta'] && @item['meta']['enchants']) {
-								@stored = @item['meta']['enchants'];
-								break();
-							} else {
-								die();
-							}
-						}
-					}
-				}
-				if(@stored) {
-					@slotitem['meta'] = array('stored': @stored, 'display': null);
-					modify_event('slotitem', @slotitem);
-				}
 			}
 
 		} else if(@slotitem['name'] == 'EXPERIENCE_BOTTLE') {
