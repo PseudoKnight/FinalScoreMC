@@ -173,7 +173,7 @@ proc _spawn_entity(@entity, @loc, @owner, @teammates, @consumer) {
 				// mob is gone for some reason
 			}
 		}
-		if(@consumer) {
+		if(is_closure(@consumer)) {
 			execute(@e, @consumer);
 		}
 	}
