@@ -276,8 +276,9 @@ bind('player_death', array('priority': 'high', 'id': @id.'death'), null, @e, @id
 	foreach(@item in @drops) {
 		drop_item(@location, @item);
 	}
-	@deadplayer = spawn_entity('SKELETON', 1, @location)[0];
-	set_entity_health(@deadplayer, 0);
+	spawn_entity('SKELETON', 1, @location, closure(@deadplayer) {;
+		set_entity_health(@deadplayer, 0);
+	});
 
 	modify_event('drops', null);
 	modify_event('xp', null);
