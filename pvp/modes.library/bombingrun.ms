@@ -50,7 +50,7 @@ bind('entity_damage', array('id': @id.'protectdrops'), array('type': 'DROPPED_IT
 
 @pvp['binds'][] = @id.'bombdrop';
 bind('item_drop', array('id': @id.'bombdrop'), array('itemname': @pvp['arena']['bomb']), @event, @pvp) {
-	if(array_contains(sk_current_regions(), @region)) {
+	if(array_contains(sk_current_regions(), @pvp['arena']['region'])) {
 		@pvp['bomb'] = @event['id'];
 		@pvp['bombholder'] = null;
 	}
