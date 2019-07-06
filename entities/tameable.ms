@@ -21,8 +21,9 @@ bind('entity_damage', null, array('type': '/(DONKEY|HORSE|LLAMA|MULE|CAT|SKELETO
 				cancel();
 				if(@isplayer) {
 					@spec = entity_spec(@id);
-					if(array_index_exists(@spec, 'sitting') && @spec['sitting']
-					&& array_contains(sk_region_owners(sk_regions_at(@event['location'])[-1], @world), @damager)) {
+					@regions = sk_regions_at(@event['location']);
+					if(@regions && array_index_exists(@spec, 'sitting') && @spec['sitting']
+					&& array_contains(sk_region_owners(@regions[-1], @world), @damager)) {
 						if(ponline(@owner) && _is_survival_world(pworld(@owner))) {
 							set_entity_loc(@id, location_shift(ploc(@owner), 'up'));
 							tmsg(@damager, color('yellow').'Teleported '.@event['type'].' to '.@owner.'.');
