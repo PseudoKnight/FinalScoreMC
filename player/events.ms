@@ -256,6 +256,8 @@ bind('item_swap', null, null, @event,
 		'GOLD_NUGGET': array('note': 'bell', 'name': 'Bell'),
 		'STRING': array('note': 'guitar', 'name': 'Lute'),
 		'BONE': array('note': 'xylophone', 'name': 'Bones'),
+		'IRON_INGOT': array('note': 'iron_xylophone', 'name': 'Iron Xylophone'),
+		'BAMBOO': array('note': 'didgeridoo', 'name': 'Didgeridoo'),
 	)
 ) {
 	@offhand = @event['off_hand'];
