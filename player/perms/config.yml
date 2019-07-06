@@ -229,6 +229,7 @@ limitedworldedit:
     worldedit.schematic.*: true
     worldedit.tool.*: true
     worldedit.light.*: true
+    worldedit.setnbt: true
 moderator:
   permissions:
     group.moderator: true
