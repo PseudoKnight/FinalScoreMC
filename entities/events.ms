@@ -54,7 +54,11 @@ bind('entity_damage', null, array('type': 'ITEM_FRAME', 'cause': 'PROJECTILE'), 
 // Block firework damage
 bind('entity_damage', null, array('cause': 'ENTITY_EXPLOSION'), @event) {
 	if(entity_type(@event['damager']) == 'FIREWORK') {
-		if(is_tameable(@event['id']) && get_mob_owner(@event['id']) != null) {
+		// Crossbows currently do not set the firework's shooter.
+		// This is an imperfect solution but captures more cases where we want to cancel damage.
+		if(!is_null(get_firework_shooter(@event['damager']))) {
+			cancel();
+		} else if(is_tameable(@event['id']) && get_mob_owner(@event['id']) != null) {
 			cancel();
 		} else {
 			@type = entity_type(@event['id']);
