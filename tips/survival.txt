@@ -9,7 +9,7 @@
 
 &7/shop list <item name>&r : List all shops where you can buy or sell a particular item.
 
-&7/hat&r : Put whatever you have in your hand onto your head.
+&7/hat&r : Put whatever you have in your hand onto your head. (or place the item in your helmet slot)
 
 &7/compass <target>&r : Sets compass to point to target: spawn, home [player], here, player, or x z coordinates.
 
@@ -90,11 +90,11 @@ Horses are protected from all damage unless they are being ridden, and even they
 
 Undead horses can be fed rotten flesh.
 
-There are also noteblock sounds with these blocks: ICE, ANVIL, TERRACOTTA, COAL_BLOCK, SLIME_BLOCK, and SEA_LANTERN.
+There are additional noteblock sounds with these blocks: ANVIL, COAL_BLOCK, SLIME_BLOCK.
 
 If powered by redstone, noteblocks can be heard up to 8 chunks away. (128 meters)
 
-Right-clicking paintings will cycle through them.
+Right-clicking paintings will cycle through them, if they fit.
 
 When minecarts collide with unpowered dispensers, they get added to the dispenser inventory.
 
@@ -110,11 +110,9 @@ Get a list and description of useful commands @ http://finalscoremc.com/commands
 
 You can have one /home per world, excluding the outworld.
 
-Our mumble server is at 192.227.136.164 with port 64758. You can get Mumble @ http://mumble.info
+We have a Discord server @ &bhttps://discord.gg/GHgfWp4
 
-We have a Discord server @ &bhttps://discordapp.com/invite/0aBtE3n1P6GixDwO
-
-There are four primary worlds: Alpha, Delta, Gamma, and Omega.
+There are four primary survival worlds: Alpha, Delta, Gamma, and Omega.
 
 If you changed your name, you can update [private] and shop signs to your new name by clicking the sign.
 
@@ -126,11 +124,9 @@ Players who contribute $10 or more to the server costs can launch random firewor
 
 Hovering your cursor over someone's name in chat allows you to see their group, current world, and former names.
 
-Right-clicking on double stone/sandstone/redsandstone slabs with a pickaxe will chisel them to smooth version.
-
 Cauldrons are an infinite water source, unless sneaking. You can incrementally fill cauldrons using water bottles.
 
-You can wash dyes from terracotta, wool, shulker boxes, and carpet using a cauldron.
+You can also wash dyes from terracotta, wool, and carpet using a cauldron.
 
 Temporary mirror world "shards" can be created by right-clicking a diamond while in the location you want to mirror.
 
@@ -143,5 +139,3 @@ You can adjust the volume of notification sounds (eg. direct messages) via the V
 You can craft bones directly to bone blocks.
 
 You can skulls into player skulls using clay balls, the naming it in an anvil applies that player's skin to the skull.
-
-Most custom commands now have tab completions built-in.
