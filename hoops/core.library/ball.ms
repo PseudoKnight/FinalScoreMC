@@ -9,31 +9,31 @@ proc _hoops_ball_create(@loc) {
 			'trail': false,
 		);
 	}
-	
+
 	@bball = spawn_entity('SLIME', 1, @loc)[0];
 	set_entity_spec(@bball, array('size': 1));
 	set_entity_silent(@bball, true);
 	set_entity_ai(@bball, false);
 	set_mob_effect(@bball, 11, 4, 9999, true, false);
-	
+
 	@stand = spawn_entity('ARMOR_STAND', 1, @loc)[0];
 	set_entity_spec(@stand, array('small': true, 'visible': false));
 	if(function_exists('set_entity_size')) {
 		set_entity_size(@stand, 0.88, 1.0);
 	}
-	
+
 	set_entity_velocity(@stand, array(0, 1, 0));
-	
+
 	@game['ball'] = @stand;
 	@game['slime'] = @bball;
-	
+
 	if(!array_contains(get_bars(), 'hoops')) {
 		create_bar('hoops', array('percent': 0.0, 'style': 'SEGMENTED_6')); //standalone
 	}
-	
+
 	@charge = array(0);
 	@ending = array(false);
-	
+
 	@binds = array();
 	@binds[] = bind('player_interact', null, null, @event, @game, @charge, @stand, @binds) {
 		if(@game['holder'] == player()) {
@@ -118,7 +118,7 @@ proc _hoops_ball_create(@loc) {
 		set_entity_velocity(@stand, get_vector(ploc(@event['damager']), 0.6));
 		@charge[0] = 0;
 	}
-	
+
 	@verticalBounciness = 0.7;
 	@bounciness = 0.6;
 	@friction = 1.115;
@@ -198,9 +198,9 @@ proc _hoops_ball_create(@loc) {
 				play_entity_effect(@bball, 'HURT');
 			}
 			set_entity_loc(@bball, @loc);
-			
+
 			@bounce = false;
-			
+
 			if(@v['x'] == 0.0) {
 				if(abs(@velocity['x']) > 0.01) {
 					@v['x'] = 0 - @velocity['x'] * @bounciness;
@@ -213,7 +213,7 @@ proc _hoops_ball_create(@loc) {
 					@bounce = true;
 				}
 			}
-			
+
 			if(@v['magnitude'] < 0.9 && @v['magnitude'] > 0) {
 				if(@v['y'] == @gravity && @velocity['y'] > @gravity * 3.2) {
 					@v['x'] = (@v['x'] / @v['magnitude']) * (@rollingFriction * @v['magnitude']);
@@ -228,7 +228,7 @@ proc _hoops_ball_create(@loc) {
 					@v['z'] = (@v['z'] / @v['magnitude']) * (@friction * @v['magnitude']);
 				}
 			}
-			
+
 			if(@bounce) {
 				play_sound(@loc, array('sound': 'ENTITY_IRON_GOLEM_STEP', 'pitch': 2.0));
 			} else if(@game['trail']) {
@@ -251,16 +251,20 @@ proc _hoops_ball_create(@loc) {
 			@velocity['y'] = @v['y'];
 			@velocity['z'] = @v['z'];
 			set_entity_velocity(@stand, @v);
-			
+
 			if(array_index_exists(@game, 'teams')) {
-				foreach(@v in array_rand(@game['villagers'], 4, false)) {
-					@l = entity_loc(@v);
-					@l['yaw'] = get_yaw(@l, @loc);
-					@l['pitch'] = get_pitch(@l, @loc) + 10;
-					set_entity_loc(@v, @l);
+				foreach(@index: @v in array_rand(@game['villagers'], 4, false)) {
+					try {
+						@l = entity_loc(@v);
+						@l['yaw'] = get_yaw(@l, @loc);
+						@l['pitch'] = get_pitch(@l, @loc) + 10;
+						set_entity_loc(@v, @l);
+					} catch(BadEntityException @ex) {
+						array_remove(@game['villagers'], @index);
+					}
 				}
 			}
-			
+
 		} catch(BadEntityException @ex) {
 			if(!array_index_exists(@game, 'state')) {
 				foreach(@player in get_bar_players('hoops')) {
