@@ -113,6 +113,11 @@ proc _race_drop_player(@race, @player) {
 		}
 	}
 	play_sound(ploc(@player), array('sound': 'ENTITY_FIREWORK_ROCKET_BLAST'), @player);
+	if(array_index_exists(@race, 'health')) {
+		set_phealth(@player, @race['health']);
+		set_phunger(@player, 16.0);
+		set_psaturation(@player, 0.0);
+	}
 }
 
 proc _race_drop_players(@race) {

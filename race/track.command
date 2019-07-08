@@ -17,7 +17,7 @@ register_command('track', array(
 		if(array_size(@args) > 4) {
 			@values = @args[4..];
 		}
-		
+
 		@track = get_value('track', @id);
 		if(!@track) {
 			@track = associative_array();
@@ -30,7 +30,7 @@ register_command('track', array(
 					case 'region':
 						@track[@setting] = @value;
 						msg(colorize("&7[Track]&r Set &e@setting&r to &a@value"));
-						
+
 					// integer
 					case 'laps':
 						if(!is_integral(@value)) {
@@ -38,7 +38,16 @@ register_command('track', array(
 						}
 						@track[@setting] = integer(@value);
 						msg(colorize("&7[Track]&r Set &e@setting&r to &a@value"));
-						
+
+					// single number
+					case 'health':
+						if(!is_numeric(@value)) {
+							die(color('gold').'Expecting a number for '.@setting);
+						}
+						@num = @values[0];
+						@track[@setting] = double(@value);
+						msg(colorize("&7[Track]&r Set &e@setting&r to &a@value"));
+
 					// two numbers
 					case 'sky':
 						if(!is_numeric(@value) || !@values || !is_numeric(@values[0])) {
@@ -47,13 +56,13 @@ register_command('track', array(
 						@num = @values[0];
 						@track[@setting] = array(double(@value), double(@num));
 						msg(colorize("&7[Track]&r Set &e@setting&r to &a@value&r and &a@num"));
-						
+
 					// single location
 					case 'lobby':
 						@loc = entity_loc(puuid());
 						@track[@setting] = @loc;
 						msg(colorize("&7[Track]&r Set &e@setting&r to this location"));
-					
+
 					// multiple locations
 					case 'spawn':
 						if(!array_index_exists(@track, @setting)) {
@@ -62,7 +71,7 @@ register_command('track', array(
 						@loc = array_normalize(entity_loc(puuid()))[0..3];
 						@track[@setting][] = @loc;
 						msg(colorize("&7[Track]&r Set &e@setting&r to this location"));
-						
+
 					// selection with optional integer
 					case 'checkpoint':
 						@pos1 = sk_pos1();
@@ -91,7 +100,7 @@ register_command('track', array(
 						}
 						@track[@setting][@num] = @cuboid;
 						msg(colorize("&7[Track]&r Set &e@setting &a@num&r to the current selection."));
-					
+
 					// string from set
 					case 'type':
 						@tracktypes = array('boat', 'elytra', 'horse', 'parkour', 'pig');
@@ -100,7 +109,7 @@ register_command('track', array(
 						}
 						@track[@setting] = @value;
 						msg(colorize("&7[Track]&r Set &e@setting&r to &a@value"));
-					
+
 					// effect name, strength integer, seconds integer
 					case 'effect':
 						if(!array_index_exists(reflect_pull('enum', 'PotionEffectType'), @value)) {
@@ -119,12 +128,12 @@ register_command('track', array(
 						msg(colorize("&7[Track]&r Set &a@value&r &e@setting&r with a strength of &a@strength&r and a length of &a@seconds&r seconds."));
 				}
 				store_value('track', @id, @track);
-				
+
 			case 'info':
 				foreach(@setting: @value in @track) {
 					msg(color('yellow').@setting.color('r').': '.@value);
 				}
-				
+
 			case 'delete':
 			case 'remove':
 				if(@setting) {
@@ -144,7 +153,7 @@ register_command('track', array(
 					clear_value('track', @id);
 					msg(colorize("&7[Track]&r Deleted track &a@id"));
 				}
-				
+
 			default:
 				return(false);
 		}
