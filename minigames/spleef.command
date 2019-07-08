@@ -330,8 +330,8 @@ register_command('spleef', array(
 							if(!ponline(@player) || pworld(@player) != @world || !array_contains(sk_current_regions(@player), @cfg['region']['arena'])) {
 								array_remove(@currentspleef, @player);
 								export('currentspleef', @currentspleef);
-								_regionmsg(@cfg['region']['wrapper'], color('green').'[Spleef] '.display_name(@player).color('r').' was knocked out.');
 								if(ponline(@player) && pworld() == @world) {
+									_regionmsg(@cfg['region']['wrapper'], color('green').'[Spleef] '.display_name(@player).color('r').' was knocked out.');
 									set_ploc(@player, @cfg['warp']['lobby']);
 									clear_peffects(@player);
 									clear_pinv(@player);
