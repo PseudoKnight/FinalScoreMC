@@ -2,7 +2,7 @@
 	Infinite Cauldrons
 	Refills buckets and water bottles without reducing water levels, unless sneaking.
 	Also lets players incrementally fill cauldrons with water bottles.
-	
+
 	Undyeing More items
 	Stained clay, Wool, Carpet, Shulker Boxes
 */
@@ -30,9 +30,17 @@ bind('player_interact', null, array('block': 'CAULDRON', 'button': 'right'), @ev
 		if(!@item) {
 			die();
 		}
+
+		@loc = @event['location'][];
+		@loc['x'] += 0.5;
+		@loc['y'] += 1;
+		@loc['z'] += 0.5;
+		spawn_particle(@loc, array('particle': 'WATER_SPLASH', 'count': 10, 'xoffset': 0.15, 'zoffset': 0.15));
+		play_sound(@loc, array('sound': 'ENTITY_GENERIC_SPLASH', 'pitch': 2, 'volume': 0.3));
+
 		@newItem = @item[];
 		@newItem['qty'] = 1;
-		
+
 		if(@item['name'] == 'BUCKET') {
 			if(@level < 3) {
 				die();
@@ -41,8 +49,6 @@ bind('player_interact', null, array('block': 'CAULDRON', 'button': 'right'), @ev
 		} else if(@item['name'] == 'GLASS_BOTTLE') {
 			@newItem['name'] = 'POTION';
 			@newItem['meta'] = array('base': array('type': 'WATER'));
-		} else if(string_ends_with(@item['name'], '_SHULKER_BOX')) {
-			@newItem['name'] = 'SHULKER_BOX';
 		} else if(string_ends_with(@item['name'], '_TERRACOTTA')) {
 			@newItem['name'] = 'TERRACOTTA';
 		} else if(string_ends_with(@item['name'], '_WOOL')) {
@@ -52,13 +58,7 @@ bind('player_interact', null, array('block': 'CAULDRON', 'button': 'right'), @ev
 		} else {
 			die();
 		}
-		
-		@loc = @event['location'][];
-		@loc['x'] += 0.5;
-		@loc['y'] += 1;
-		@loc['z'] += 0.5;
-		spawn_particle(@loc, array('particle': 'WATER_SPLASH', 'count': 10, 'xoffset': 0.15, 'zoffset': 0.15));
-		play_sound(@loc, array('sound': 'ENTITY_GENERIC_SPLASH', 'pitch': 2, 'volume': 0.3));
+
 		cancel();
 		if(@item['qty'] == 1) {
 			set_pinv(player(), @slot, @newItem);
