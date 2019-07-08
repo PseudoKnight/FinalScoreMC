@@ -114,23 +114,25 @@
 		if(length(@uuid) <= 16) {
 			@uuid = puuid(@uuid);
 		}
-		@loc = entity_loc(@uuid);
-		set_entity_velocity(@uuid, array($x, $y, $z));
-		play_sound(@loc, array('sound': 'ENTITY_GHAST_SHOOT', 'volume': 2));
-		make_effect(@loc, 'MOBSPAWNER_FLAMES');
-		
-		@reapply = array(if(@applicationtime, integer(@applicationtime / 50), 0));
-		set_interval(50, closure(){
-			try {
-				make_effect(entity_loc(@uuid), 'MOBSPAWNER_FLAMES');
-				if(@reapply[0]-- > 0) {
-					set_entity_velocity(@uuid, array($x, $y, $z));
-				} else {
+		set_timeout(50, closure(){
+			@loc = entity_loc(@uuid);
+			set_entity_velocity(@uuid, array($x, $y, $z));
+			play_sound(@loc, array('sound': 'ENTITY_GHAST_SHOOT', 'volume': 2));
+			make_effect(@loc, 'MOBSPAWNER_FLAMES');
+
+			@reapply = array(if(@applicationtime, integer(@applicationtime / 50), 0));
+			set_interval(50, closure(){
+				try {
+					make_effect(entity_loc(@uuid), 'MOBSPAWNER_FLAMES');
+					if(@reapply[0]-- > 0) {
+						set_entity_velocity(@uuid, array($x, $y, $z));
+					} else {
+						clear_task();
+					}
+				} catch(PlayerOfflineException @ex) {
 					clear_task();
 				}
-			} catch(PlayerOfflineException @ex) {
-				clear_task();
-			}
+			});
 		});
 	}
 	
@@ -158,7 +160,7 @@
 		} else {
 			die();
 		}
-		
+
 		execute(@entity, @closure);
 	}
 <<<

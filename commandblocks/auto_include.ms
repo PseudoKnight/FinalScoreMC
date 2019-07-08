@@ -3,29 +3,23 @@
 */
 proc _relative_coords(@originloc, @x, @y, @z) {
 	@loc = @originloc[]
-	if(@x[0] === '~') {
-		if(@x === '~') {
-			@loc['x'] = @originloc['x'];
-		} else {
-			@loc['x'] = @originloc['x'] + substr(@x, 1);
+	if(@x[0] == '~') {
+		if(@x != '~') {
+			@loc['x'] = @originloc['x'] + double(substr(@x, 1));
 		}
 	} else {
 		@loc['x'] = @x;
 	}
-	if(@y[0] === '~') {
-		if(@y === '~') {
-			@loc['y'] = @originloc['y'];
-		} else {
-			@loc['y'] = @originloc['y'] + substr(@y, 1);
+	if(@y[0] == '~') {
+		if(@y != '~') {
+			@loc['y'] = @originloc['y'] + double(substr(@y, 1));
 		}
 	} else {
 		@loc['y'] = @y;
 	}
-	if(@z[0] === '~') {
-		if(@z === '~') {
-			@loc['z'] = @originloc['z'];
-		} else {
-			@loc['z'] = @originloc['z'] + substr(@z, 1);
+	if(@z[0] == '~') {
+		if(@z != '~') {
+			@loc['z'] = @originloc['z'] + double(substr(@z, 1));
 		}
 	} else {
 		@loc['z'] = @z;
@@ -63,7 +57,7 @@ proc _get_target(@target)  {
 		if(!@loc) {
 			return(false);
 		}
-		
+
 		@maxRange = 128;
 		if(length(@target) > 4) {
 			@filters = split(',', substr(@target, 3, length(@target) - 1));
@@ -74,7 +68,7 @@ proc _get_target(@target)  {
 				}
 			}
 		}
-		
+
 		if(@target[1] == 'p') {
 			// single player selector
 			@player = _get_nearby_player(@loc, @maxRange);
