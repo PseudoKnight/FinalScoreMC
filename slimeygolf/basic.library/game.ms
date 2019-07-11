@@ -84,7 +84,7 @@ proc _start_game(@course, @loc) {
 				@golf[@hole]['strokes'][player()] = 0;
 				set_pscore('strokes', player(), 0, @golf['name'].@hole);
 			}
-			
+
 			proc _charge_swing(@ball) {
 				if(!@ball['swing']) {
 					@loc = entity_loc(@ball['id']);
@@ -128,7 +128,7 @@ proc _start_game(@course, @loc) {
 					_charge_swing(@ball);
 				}
 			}
-			
+
 			bind('player_interact_at_entity', array(id: 'golf_swing2_'.player()), array('clicked': 'ARMOR_STAND'), @event,
 					@player = player(), @golf) {
 
@@ -166,7 +166,7 @@ proc _start_game(@course, @loc) {
 					set_entity_velocity(@ball['id'], @ball['velocity']);
 					set_timeout(50, closure(){
 						@ball['velocity'] = array('x': @x, 'y': 0, 'z': @z);
-						set_entity_velocity(@ball['id'], @ball['velocity']);
+						try(set_entity_velocity(@ball['id'], @ball['velocity']));
 					})
 					set_pinv(@player, 0, array('name': 'SLIME_BALL'));
 				}
@@ -178,7 +178,7 @@ proc _start_game(@course, @loc) {
 		# Physics defaults
 		@bounciness = 0.8;
 		@friction = 1.07;
-		
+
 		@count = 0;
 		foreach(@player in all_players(@golf['world'])) {
 			if(!array_index_exists(@golf['players'], @player)) {
@@ -389,7 +389,7 @@ proc _start_game(@course, @loc) {
 					@v['z'] = (@v['z'] / @v['magnitude']) * (@friction * @v['magnitude']);
 					spawn_particle(@loc, 'SLIME');
 				}
-				
+
 				if(@ricochetPitch > 1) {
 					play_sound(@loc, array('sound': 'BLOCK_WOODEN_BUTTON_CLICK_ON', 'pitch': min(2, @ricochetPitch)));
 				}
