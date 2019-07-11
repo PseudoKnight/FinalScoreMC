@@ -59,9 +59,7 @@ proc _equip_kit(@player, @inv) {
 			} else {
 				set_pinv(@player, @kit);
 			}
-			if(@mode != 'CREATIVE') {
-				set_pflight(@player, false);
-			}
+			set_pflight(@player, false);
 
 		case 'dev':
 			_clear_pinv(@player);
