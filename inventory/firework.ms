@@ -156,12 +156,11 @@ bind('player_interact', null, array('itemname': 'FIREWORK_ROCKET', 'button': 'ri
 bind('firework_explode', null, null, @event){
 	if(has_metadata(@event['id'], 'mob')){
 		@mob = get_metadata(@event['id'], 'mob', 'CommandHelper');
-		@mobs = spawn_entity(@mob, 15, @event['location']);
 		@loc = @event['location'];
 		@loc['yaw'] = 0;
 		@loc['pitch'] = 0;
 		@cookie = @mob == 'bat' && rand(2);
-		foreach(@m in @mobs){
+		@mobs = spawn_entity(@mob, 15, @event['location'], closure(@m) {
 			set_entity_onfire(@m, 20);
 			if(@mob == 'pig'){
 				set_mob_equipment(@m, associative_array('CHESTPLATE': associative_array('name': 'ELYTRA')));
@@ -176,7 +175,7 @@ bind('firework_explode', null, null, @event){
 			}
 			set_entity_velocity(@m, get_vector(@loc));
 			@loc['yaw'] += 24;
-		}
+		});
 		set_timeout(50, closure(){
 			try {
 				foreach(@m in @mobs){
