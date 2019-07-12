@@ -9,9 +9,9 @@ proc _hazards_create() {
         'world': pworld(),
         'players': associative_array(),
         'round': 0,
-        'targetScore': 100,
+        'targetScore': 50,
         'maxRounds': 15,
-        'timer': 60,
+        'timer': 50,
         'buildTimer': 15,
         'running': false,
         'entities': array(),
@@ -107,7 +107,11 @@ proc _hazards_end(@game) {
     _hazards_unbind(@game);
     @winner = _hazards_get_winner(@game);
     if(@winner) {
-        broadcast(color('bold').display_name(@winner).color('reset').' won Hazards!', all_players(@game['world']));
+        if(array_size(@winner) > 1) {
+            broadcast(color('bold').array_implode(@winner, ', ').' won Hazards!', all_players(@game['world']));
+        } else {
+            broadcast(color('bold').display_name(@winner[0]).color('reset').' won Hazards!', all_players(@game['world']));
+        }
     }
     foreach(@player in array_keys(@game['players'])) {
         _hazards_remove_player(@player, @game);

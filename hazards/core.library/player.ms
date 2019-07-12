@@ -69,11 +69,16 @@ proc _hazards_did_player_win(@game) {
 
 proc _hazards_get_winner(@game) {
     @highestScore = 0;
-    @winner = '';
+    @winner = array();
     foreach(@player: @data in @game['players']) {
-        if(ponline(@player) && @data['score'] >= @highestScore) {
+        if(!ponline(@player)) {
+            continue();
+        }
+        if(@data['score'] > @highestScore) {
             @highestScore = @data['score'];
-            @winner = @player;
+            @winner = array(@player);
+        } else if(@data['score'] == @highestScore) {
+            @winner[] = @player;
         }
     }
     return(@winner);
