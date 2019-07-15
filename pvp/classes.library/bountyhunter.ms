@@ -23,15 +23,15 @@ switch(@action) {
 			play_sound(@loc, @gasSound);
 			play_sound(@loc, @hissSound);
 			spawn_particle(@loc, @smokeEffect);
-			
+
 			@v = get_vector(ploc());
-			@v['x'] /= 1.7;
-			@v['z'] /= 1.7;
+			@v['x'] /= 3;
+			@v['z'] /= 3;
 			@v['y'] = 0.2;
 			set_pvelocity(player(), @v);
-			
+
 			set_pexp(max(0, pexp() - 3));
-			
+
 			set_interval(150, closure(){
 				try {
 					@loc = ploc();
@@ -49,9 +49,9 @@ switch(@action) {
 						spawn_particle(@loc, @smokeEffect);
 						set_pexp(max(0, @xp - 1));
 						@v = get_vector(@loc);
-						@v['x'] /= 2;
-						@v['z'] /= 2;
-						@v['y'] = 0.4;
+						@v['x'] /= 2.7;
+						@v['z'] /= 2.7;
+						@v['y'] = 0.3;
 						set_pvelocity(player(), @v);
 					}
 				} catch(PlayerOfflineException @ex) {
@@ -59,17 +59,17 @@ switch(@action) {
 				}
 			});
 		}
-		
+
 		bind('entity_damage', array('id': @player.'falldamage'), array('cause': 'FALL', 'id': puuid(@player)), @event) {
 			cancel();
 		}
-		
+
 	case 'equip':
 		set_pinv(@player, array(103: array('name': 'PLAYER_HEAD', 'meta': array('owner': 'Rigzlii'))));
-		
+
 	case 'powerup':
 		set_pexp(@player, 99);
-	
+
 	case 'unload':
 		unbind(@player.'bountyhunter');
 		unbind(@player.'falldamage');
