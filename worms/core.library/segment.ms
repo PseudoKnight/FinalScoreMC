@@ -1,5 +1,5 @@
 proc _worms_create_segments(@loc, @num, @color, @game) {
-	if(!@color) {
+	if(length(@color) == 0) {
 		@color = array_rand(reflect_pull('enum', 'DyeColor'), 1, false)[0];
 	}
 	@segments = spawn_entity('ARMOR_STAND', @num, @loc);
