@@ -29,6 +29,7 @@ member:
     worldguard.region.flag.flags.mob-spawning.*: true
     worldguard.region.flag.flags.snow-fall.*: true
     worldguard.region.flag.flags.snow-melt.*: true
+    worldguard.region.flag.flags.frosted-ice-form.*: true
     worldguard.region.flag.flags.ice-form.*: true
     worldguard.region.flag.flags.ice-melt.*: true
     worldguard.region.flag.flags.use.*: true
