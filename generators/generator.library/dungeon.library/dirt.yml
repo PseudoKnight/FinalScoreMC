@@ -27,3 +27,4 @@ cloneFloors:
         utility: air
         decor: air
         edge: air
+        divider: air
