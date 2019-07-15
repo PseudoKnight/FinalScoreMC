@@ -1,5 +1,5 @@
-proc _hazards_bind(@game) {
-    bind('player_interact', array('id': 'hazards_interact', 'priority': 'HIGHEST'), array('button': 'right'), @event, @game) {
+proc _hazard_bind(@game) {
+    bind('player_interact', array('id': 'hazard_interact', 'priority': 'HIGHEST'), array('button': 'right'), @event, @game) {
         if(array_index_exists(@game['players'], player())) {
             if(@event['item'] && string_ends_with(@event['item']['name'], '_SPAWN_EGG')) {
                 cancel();
@@ -17,7 +17,7 @@ proc _hazards_bind(@game) {
                     } else if(@type == 'ZOMBIE_PIGMAN') {
                         @type = 'PIG_ZOMBIE';
                     }
-                    _hazards_create_entity(@game, @type, @loc);
+                    _hazard_create_entity(@game, @type, @loc);
                 }
             } else if(pmode() == 'CREATIVE' && @event['action'] == 'right_click_air'
             && @event['item'] && material_info(@event['item']['name'], 'isBlock')) {
@@ -38,13 +38,13 @@ proc _hazards_bind(@game) {
         }
     }
 
-    bind('entity_damage', array('id': 'hazards_damage'), array('cause': 'ENTITY_ATTACK', 'world': @game['world']), @event, @game) {
+    bind('entity_damage', array('id': 'hazard_damage'), array('cause': 'ENTITY_ATTACK', 'world': @game['world']), @event, @game) {
         if(array_index_exists(@game['players'], @event['damager']) && pmode(@event['damager']) == 'CREATIVE') {
-            _hazards_remove_entity(@event['id'], @game);
+            _hazard_remove_entity(@event['id'], @game);
         }
     }
 
-    bind('player_death', array('id': 'hazards_death'), null, @event, @game) {
+    bind('player_death', array('id': 'hazard_death'), null, @event, @game) {
         if(array_index_exists(@game['players'], player())) {
             set_pmode(player(), 'SPECTATOR');
             play_sound(ploc(), array('sound': 'ENTITY_EVOKER_DEATH'));
@@ -58,7 +58,7 @@ proc _hazards_bind(@game) {
         }
     }
 
-    bind('player_spawn', array('id': 'hazards_spawn', 'priority': 'HIGHEST'), null, @event, @game) {
+    bind('player_spawn', array('id': 'hazard_spawn', 'priority': 'HIGHEST'), null, @event, @game) {
         if(array_index_exists(@game['players'], player())) {
             @loc = import(player().'spawn');
             if(@loc) {
@@ -70,9 +70,9 @@ proc _hazards_bind(@game) {
     }
 }
 
-proc _hazards_unbind(@game) {
-    unbind('hazards_interact');
-    unbind('hazards_damage');
-    unbind('hazards_death');
-    unbind('hazards_spawn');
+proc _hazard_unbind(@game) {
+    unbind('hazard_interact');
+    unbind('hazard_damage');
+    unbind('hazard_death');
+    unbind('hazard_spawn');
 }

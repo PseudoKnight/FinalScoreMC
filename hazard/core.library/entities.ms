@@ -1,4 +1,4 @@
-proc _hazards_create_entity(@game, @type, @loc) {
+proc _hazard_create_entity(@game, @type, @loc) {
     spawn_entity(@type, 1, @loc, closure(@entity) {
         set_entity_ai(@entity, false);
         @game['entities'][] = array(
@@ -9,7 +9,7 @@ proc _hazards_create_entity(@game, @type, @loc) {
     });
 }
 
-proc _hazards_remove_entity(@uuid, @game) {
+proc _hazard_remove_entity(@uuid, @game) {
     foreach(@index: @entity in @game['entities']) {
         if(@uuid == @entity['uuid']) {
             if(entity_exists(@uuid)) {
@@ -21,7 +21,7 @@ proc _hazards_remove_entity(@uuid, @game) {
     }
 }
 
-proc _hazards_activate_entities(@game) {
+proc _hazard_activate_entities(@game) {
     foreach(@index: @entity in @game['entities']) {
         if(entity_exists(@entity['uuid'])) {
             set_entity_ai(@entity['uuid'], true);
@@ -32,7 +32,7 @@ proc _hazards_activate_entities(@game) {
     }
 }
 
-proc _hazards_respawn_entities(@game) {
+proc _hazard_respawn_entities(@game) {
     foreach(@index: @entity in @game['entities']) {
         if(entity_exists(@entity['uuid'])) {
             entity_remove(@entity['uuid']);
@@ -44,7 +44,7 @@ proc _hazards_respawn_entities(@game) {
     }
 }
 
-proc _hazards_remove_entities(@game) {
+proc _hazard_remove_entities(@game) {
     foreach(@index: @entity in @game['entities']) {
         if(entity_exists(@entity['uuid'])) {
             entity_remove(@entity['uuid']);

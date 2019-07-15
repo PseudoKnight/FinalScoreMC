@@ -1,9 +1,9 @@
-proc _hazards_create() {
-    if(!sk_region_exists('hazards')) {
-        throw('NotFoundException', 'Hazards region does not exist!');
+proc _hazard_create() {
+    if(!sk_region_exists('hazard')) {
+        throw('NotFoundException', 'hazard region does not exist!');
     }
-    if(is_null(get_value('warp.hazards'))) {
-        throw('NotFoundException', 'Hazards warp does not exist!');
+    if(is_null(get_value('warp.hazard'))) {
+        throw('NotFoundException', 'hazard warp does not exist!');
     }
     @game = array(
         'world': pworld(),
@@ -17,51 +17,51 @@ proc _hazards_create() {
         'entities': array(),
     );
 
-    if(array_contains(get_scoreboards(), 'hazards')) {
-        remove_scoreboard('hazards');
+    if(array_contains(get_scoreboards(), 'hazard')) {
+        remove_scoreboard('hazard');
     }
-    create_scoreboard('hazards');
-    create_objective('score', 'DUMMY', 'hazards');
-    set_objective_display('score', array('slot': 'SIDEBAR', 'displayname': color('bold').'Score (target: 100)'), 'hazards');
+    create_scoreboard('hazard');
+    create_objective('score', 'DUMMY', 'hazard');
+    set_objective_display('score', array('slot': 'SIDEBAR', 'displayname': color('bold').'Score (target: 100)'), 'hazard');
 
-    if(array_contains(get_bars(), 'hazards')) {
-        remove_bar('hazards');
+    if(array_contains(get_bars(), 'hazard')) {
+        remove_bar('hazard');
     }
-    create_bar('hazards', array('style': 'SEGMENTED_12', 'visible': false));
+    create_bar('hazard', array('style': 'SEGMENTED_12', 'visible': false));
 
-    export('hazards', @game);
+    export('hazard', @game);
     return(@game);
 }
 
-proc _hazards_start(@game) {
+proc _hazard_start(@game) {
     include('events.ms');
     include('entities.ms');
 
-    _hazards_clean_region(@game);
-    _hazards_define_regions(@game);
-    _hazards_bind(@game);
+    _hazard_clean_region(@game);
+    _hazard_define_regions(@game);
+    _hazard_bind(@game);
     @game['running'] = true;
     @timer = mutable_primitive(neg(@game['timer']));
     set_interval(1000, closure() {
         if(@game['round'] > 0) {
             foreach(@player: @data in @game['players']) {
                 if(!ponline(@player)) {
-                    _hazards_remove_player(@player, @game);
+                    _hazard_remove_player(@player, @game);
                     continue();
                 }
                 @regions = sk_current_regions(@player);
-                if(pmode(@player) == 'ADVENTURE' && array_contains(@regions, 'hazards_end')) {
+                if(pmode(@player) == 'ADVENTURE' && array_contains(@regions, 'hazard_end')) {
                     @data['score'] += 10;
-                    set_pscore('score', @player, @data['score'], 'hazards');
+                    set_pscore('score', @player, @data['score'], 'hazard');
                     set_pmode(@player, 'SPECTATOR');
                     play_sound(ploc(@player), array('sound': 'ENTITY_VINDICATOR_CELEBRATE', 'pitch': 1.5));
-                } else if(!array_contains(@regions, 'hazards')) {
-                    _hazards_remove_player(@player, @game);
+                } else if(!array_contains(@regions, 'hazard')) {
+                    _hazard_remove_player(@player, @game);
                 }
             }
             if(array_size(@game['players']) == 0) {
                 clear_task();
-                _hazards_end(@game);
+                _hazard_end(@game);
                 die();
             }
         }
@@ -69,60 +69,60 @@ proc _hazards_start(@game) {
         @timer--;
         if(@timer > 0) {
             if(@game['countdown']) {
-                _hazards_msg(@game, color('bold').@timer);
+                _hazard_msg(@game, color('bold').@timer);
                 if(@timer < 12) {
-                    update_bar('hazards', double(@timer / 12));
+                    update_bar('hazard', double(@timer / 12));
                 }
             } else {
                 @timer++; // keep waiting for the first block placement
             }
         } else if(@timer == 0) {
-            _hazards_set_mode(@game, 'ADVENTURE');
-            _hazards_spawn_players(@game);
-            _hazards_activate_entities(@game);
-            update_bar('hazards', array('visible': false));
+            _hazard_set_mode(@game, 'ADVENTURE');
+            _hazard_spawn_players(@game);
+            _hazard_activate_entities(@game);
+            update_bar('hazard', array('visible': false));
         } else if(@timer > neg(@game['timer'])) {
-            if(!_hazards_are_players_alive(@game)) {
+            if(!_hazard_are_players_alive(@game)) {
                 @timer[] = neg(@game['timer']);
             }
-            _hazards_msg(@game, color('bold').(@timer + @game['timer']));
+            _hazard_msg(@game, color('bold').(@timer + @game['timer']));
         } else {
-            if(@game['round'] == @game['maxRounds'] || _hazards_did_player_win(@game)) {
-                _hazards_end(@game);
+            if(@game['round'] == @game['maxRounds'] || _hazard_did_player_win(@game)) {
+                _hazard_end(@game);
                 clear_task();
             } else {
                 @game['round']++;
-                _hazards_set_mode(@game, 'CREATIVE');
-                _hazards_spawn_players(@game);
-                _hazards_respawn_entities(@game);
+                _hazard_set_mode(@game, 'CREATIVE');
+                _hazard_spawn_players(@game);
+                _hazard_respawn_entities(@game);
                 @timer[] = @game['buildTimer'];
                 @game['countdown'] = false;
-                update_bar('hazards', array('visible': true, 'percent': 1.0));
+                update_bar('hazard', array('visible': true, 'percent': 1.0));
             }
         }
     });
 }
 
-proc _hazards_end(@game) {
-    _hazards_unbind(@game);
-    @winner = _hazards_get_winner(@game);
+proc _hazard_end(@game) {
+    _hazard_unbind(@game);
+    @winner = _hazard_get_winner(@game);
     if(@winner) {
         if(array_size(@winner) > 1) {
-            broadcast(color('bold').array_implode(@winner, ', ').' won Hazards!', all_players(@game['world']));
+            broadcast(color('bold').array_implode(@winner, ', ').' won hazard!', all_players(@game['world']));
         } else {
-            broadcast(color('bold').display_name(@winner[0]).color('reset').' won Hazards!', all_players(@game['world']));
+            broadcast(color('bold').display_name(@winner[0]).color('reset').' won hazard!', all_players(@game['world']));
         }
     }
     foreach(@player in array_keys(@game['players'])) {
-        _hazards_remove_player(@player, @game);
+        _hazard_remove_player(@player, @game);
     }
-    _hazards_remove_entities(@game);
-    export('hazards', null);
-    remove_scoreboard('hazards');
+    _hazard_remove_entities(@game);
+    export('hazard', null);
+    remove_scoreboard('hazard');
 }
 
-proc _hazards_clean_region(@game) {
-    @coords = sk_region_info('hazards', @game['world'], 0);
+proc _hazard_clean_region(@game) {
+    @coords = sk_region_info('hazard', @game['world'], 0);
     sk_pos1('~console', @coords[0]);
     sk_pos2('~console', @coords[1]);
     sk_setblock('~console', 'air');
@@ -130,8 +130,8 @@ proc _hazards_clean_region(@game) {
     sk_pos2('~console', null);
 }
 
-proc _hazards_define_regions(@game) {
-    @coords = sk_region_info('hazards', @game['world'], 0);
+proc _hazard_define_regions(@game) {
+    @coords = sk_region_info('hazard', @game['world'], 0);
     @size = array_size(@game['players']) + 1;
 
     // define start region
@@ -142,10 +142,10 @@ proc _hazards_define_regions(@game) {
         array(@startX + @size, @startY + 3, @startZ + @size),
         array(@startX, @startY, @startZ);
     );
-    if(!sk_region_exists('hazards_start')) {
-        sk_region_create(@game['world'], 'hazards_start', @start);
+    if(!sk_region_exists('hazard_start')) {
+        sk_region_create(@game['world'], 'hazard_start', @start);
     } else {
-        sk_region_update(@game['world'], 'hazards_start', @start);
+        sk_region_update(@game['world'], 'hazard_start', @start);
     }
 
     //set start platform
@@ -165,10 +165,10 @@ proc _hazards_define_regions(@game) {
         array(@endX + @size, @endY + 3, @endZ + @size),
         array(@endX, @endY, @endZ);
     );
-    if(!sk_region_exists('hazards_end')) {
-        sk_region_create(@game['world'], 'hazards_end', @end);
+    if(!sk_region_exists('hazard_end')) {
+        sk_region_create(@game['world'], 'hazard_end', @end);
     } else {
-        sk_region_update(@game['world'], 'hazards_end', @end);
+        sk_region_update(@game['world'], 'hazard_end', @end);
     }
 
     //set end platform
