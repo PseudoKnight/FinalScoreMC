@@ -449,4 +449,5 @@ proc _snake_turn(@top, @dir) {
 			}
 
 	}
+	return(array('up', 'down'));
 }
