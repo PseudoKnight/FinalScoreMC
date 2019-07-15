@@ -253,14 +253,14 @@ proc _hoops_ball_create(@loc) {
 			set_entity_velocity(@stand, @v);
 
 			if(array_index_exists(@game, 'teams')) {
-				foreach(@index: @v in array_rand(@game['villagers'], 4, false)) {
+				foreach(@index: @v in array_rand(@game['villagers'], min(4, array_size(@game['villagers'])), false)) {
 					try {
 						@l = entity_loc(@v);
 						@l['yaw'] = get_yaw(@l, @loc);
 						@l['pitch'] = get_pitch(@l, @loc) + 10;
 						set_entity_loc(@v, @l);
 					} catch(BadEntityException @ex) {
-						array_remove(@game['villagers'], @index);
+						array_remove_values(@game['villagers'], @v);
 					}
 				}
 			}
