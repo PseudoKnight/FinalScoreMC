@@ -20,6 +20,7 @@ proc _player_remove(@player, @id) {
 		}
 		try {
 			set_entity_fall_distance(puuid(@player), 0);
+			set_entity_onfire(puuid(@player), 0);
 		} catch(BadEntityException @ex) {
 			// player quitting, so no entity
 		}
@@ -62,13 +63,13 @@ proc _pvp_initialize_players(@id, @players) {
 			array_remove(@pvp['players'], @player);
 			continue();
 		}
-		
+
 		if(phealth(@player) == 0) {
 			respawn(@player);
 		}
-		
+
 		@pArray = @pvp['players'][@player];
-		
+
 		if(array_contains(@pvp['arena']['flags'], 'build')) {
 			set_pmode(@player, 'SURVIVAL');
 		} else {
@@ -141,7 +142,7 @@ proc _pvp_initialize_players(@id, @players) {
 				@pArray['picks'] = @pvp['arena']['class_picks'];
 			}
 		}
-		
+
 		_player_equip(@id, @player);
 
 		# Select spawn location
@@ -177,6 +178,11 @@ proc _pvp_initialize_players(@id, @players) {
 	}
 }
 
+/*
+	Resets player as if they had died and respawned.
+	Does not teleport player.
+	Unlike vanilla, does not give any saturation.
+*/
 proc _player_reset(@player, @pvp) {
 	_clear_pinv(@player);
 	set_phunger(@player, 20);
@@ -184,6 +190,7 @@ proc _player_reset(@player, @pvp) {
 	set_pexp(@player, 0);
 	clear_peffects(@player);
 	try {
+		set_entity_onfire(puuid(@player), 0);
 		set_entity_rider(puuid(@player), null);
 		set_entity_rider(null, puuid(@player));
 		set_entity_fall_distance(puuid(@player), 0);
