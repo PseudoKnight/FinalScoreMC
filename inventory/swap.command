@@ -28,8 +28,8 @@ register_command('swap', array(
 						set_timeout(50, closure(){
 							if(ponline(player()) && pworld() == 'dev') {
 								set_pcooldown('CLOCK', 2000 / 50);
-								//relative_teleport(array(0, 0, @z, @loc['world'])); add back in 1.14 / fix in extension?
-								set_ploc(@loc);
+								@loc['y']++;
+								relative_teleport(@loc);
 								set_peffect(player(), 'LEVITATION', 0, 0);
 								play_sound(@loc, array('sound': 'ENTITY_ILLUSIONER_MIRROR_MOVE', 'pitch': 1.2));
 								play_sound(@loc, array('sound': 'ENTITY_WITHER_SHOOT', 'pitch': 1.3, 'volume': 0.1));
