@@ -71,6 +71,7 @@ register_command('entity', array(
 					case 'glowing':
 					case 'invulnerable':
 					case 'gravity':
+					case 'silent':
 						if(array_size(@args) == 3) {
 							return(false);
 						}

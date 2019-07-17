@@ -41,6 +41,9 @@ proc _spawn_entity(@entity, @loc, @owner, @teammates, @consumer) {
 		if(array_index_exists(@entity, 'ai')) {
 			set_entity_ai(@e, @entity['ai']);
 		}
+		if(array_index_exists(@entity, 'silent')) {
+			set_entity_silent(@e, @entity['silent']);
+		}
 		if(array_index_exists(@entity, 'gravity')) {
 			set_entity_gravity(@e, @entity['gravity']);
 		}
