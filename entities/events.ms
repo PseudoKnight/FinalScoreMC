@@ -70,6 +70,19 @@ bind('entity_damage', null, array('cause': 'ENTITY_EXPLOSION'), @event) {
 	}
 }
 
+// temporary script to stop pig zombies dropping non-stackables when tps is bad
+bind('entity_death', null, array('type': 'PIG_ZOMBIE'), @event) {
+	if(tps()[0] < 19.0 && can_pickup_items(@event['id'])) {
+		@items = @event['drops'];
+		foreach(@index: @item in @items) {
+			if(!@item || @item['name'] == 'GOLDEN_SWORD') {
+				array_remove(@items, @index);
+			}
+		}
+		modify_event('drops', @items);
+	}
+}
+
 // Always drop full enderdragon experience
 bind('entity_death', null, array('type': 'ENDER_DRAGON'), @event) {
 	if(@event['xp'] < 12000) {
