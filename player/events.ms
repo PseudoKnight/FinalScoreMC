@@ -10,12 +10,18 @@ bind('player_command', null, null, @event) {
 
 bind('player_death', null, null, @event) {
 	if(_is_survival_world(@event['location']['world'])) {
-		@loc = floor(@event['location'][0]).','.floor(@event['location'][1]).','.floor(@event['location'][2]);
-		@log = @event['player'].' died @ '.@loc.' on '.@event['location'][3].': ';
+		@loc = @event['location'];
+		@stringLoc = floor(@loc['x']).','.floor(@loc['y']).','.floor(@loc['z']).' '._worldname(@loc['world']);
+		@log = @event['player'].' died @ '.@stringLoc.': ';
 		_minify_inv(@event['drops']);
 		@log .= json_encode(@event['drops']);
 		console(@log, false);
-		msg('You died @ '.@loc);
+		msg(color('yellow').'You died @ '.@stringLoc);
+		foreach(@player in all_players()) {
+			if(@player != player() && has_permission(@player, 'group.regular')) {
+				tmsg(color('gray').@player.' died @ '.@stringLoc);
+			}
+		}
 		@time = array(60);
 		set_interval(1000, closure(){
 			if(!ponline(player()) || phealth() > 0) {
@@ -25,7 +31,7 @@ bind('player_death', null, null, @event) {
 				if(@time[0] < 30) {
 					if(@time[0] == 0) {
 						clear_task();
-						pkick(player(), 'You died while AFK @ '.@loc);
+						pkick(player(), 'You died while AFK @ '.@stringLoc);
 					} else {
 						action_msg(@time[0]);
 					}
