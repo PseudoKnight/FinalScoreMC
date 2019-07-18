@@ -4,7 +4,7 @@ proc _pvp_start(@pvp, @id){
 			array_remove(@pvp['players'], @p);
 		}
 	}
-	
+
 	if(array_index_exists(@pvp['arena'], 'options')) {
 		delete_virtual_inventory(@id.'options');
 		unbind(@id.'options');
@@ -72,7 +72,7 @@ proc _pvp_start(@pvp, @id){
 	}
 
 	@arena = @pvp['arena'];
-	
+
 	// Check shared regions
 	if(array_index_exists(@arena, 'sharedarenas')) {
 		foreach(@arenaid in @arena['sharedarenas']) {
@@ -131,7 +131,7 @@ proc _pvp_start(@pvp, @id){
 					array('name': 'Blue', 'color': 'BLUE')
 				);
 			}
-			
+
 			if(array_index_exists(@arena, 'kit')) {
 				@arena['kit'][1] = @arena['kit'][0];
 			}
@@ -171,7 +171,7 @@ proc _pvp_start(@pvp, @id){
 			@arena['spawn'][0] = @newSpawns;
 		}
 	}
-	
+
 	// Default scores
 	if(!array_index_exists(@arena, 'score')) {
 		switch(@arena['mode']) {
@@ -181,14 +181,14 @@ proc _pvp_start(@pvp, @id){
 				@arena['score'] = 60;
 		}
 	}
-	
+
 	// Adjust target scores for player counts
 	if(@arena['mode'] == 'koth') {
 		if(!array_index_exists(@pvp, 'team') && array_size(@pvp['players']) > 4) {
 			@arena['score'] = integer(@arena['score'] / 2);
 		}
 	}
-	
+
 	if(array_index_exists(@arena, 'rounds')) {
 		@pvp['round'] = 1;
 	}
@@ -304,7 +304,7 @@ proc _pvp_start(@pvp, @id){
 	if(array_index_exists(@arena, 'team')) {
 		@arena['team'][0]['color'] = color(@arena['team'][0]['color']);
 		@arena['team'][1]['color'] = color(@arena['team'][1]['color']);
-		
+
 		if(!array_index_exists(@pvp, 'team')) {
 			@pvp['team'] = array(associative_array(), associative_array());
 		}
@@ -357,7 +357,7 @@ proc _pvp_start(@pvp, @id){
 	if(array_index_exists(@arena, 'classes')) {
 		_class_select(@id, @pvp);
 	}
-	
+
 	# ARENA
 	if(array_contains(@pvp['arena']['flags'], 'script')){
 		_prepare_arena(@pvp);
@@ -395,15 +395,15 @@ proc _pvp_start(@pvp, @id){
 		_pvp_msg(@pvp, colorize('* &e&l'.to_upper(@moderesult).' picked by '.@modepicked));
 	}
 	_worldmsg(@world, colorize('&7&m|----------------------------------------------------|'));
-	
-	@nonplayers = array_filter(all_players(pworld()), closure(@key, @value) {
+
+	@nonplayers = array_filter(all_players(@world), closure(@key, @value) {
 		return(!array_index_exists(@pvp['players'], @value));
 	});
 	_click_tell(@nonplayers, array('&7[PVP] ', array('&b[Click to Spectate '.@title.']', '/pvp spectate '.@id)));
 
 	play_sound(@arena['lobby'], array('sound': 'ENTITY_WITHER_SPAWN', 'pitch': 1.5, 'volume': 3, 'category': 'VOICE'));
 
-	_add_activity('pvp'.@id, @title);
+	_add_activity('pvp'.@id, @title, @arena['region'], @world);
 
 	# COUNTDOWN TO START
 	@timeleft = array(@arena['delay']);

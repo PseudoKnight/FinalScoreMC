@@ -84,18 +84,57 @@ proc _remove_region_entities(@region, @entities = array(), @world = 'custom') {
 	Adds an activity to the activities list.
 	This is used for checking which games are running.
 */
-proc _add_activity(@id, @title) {
+proc _add_activity(@id, @title, @region, @world) {
 	@activities = import('activities');
 	if(is_null(@activities)) {
 		@activities = associative_array();
 	}
-	@activities[@id] = @title;
+	@activities[@id] = array('title': @title, 'region': @region, 'world': @world);
 	export('activities', @activities);
 
 	@serverTitle = colorize('&6&lFINALSCORE&e&lMC');
-	@footer = color('gray').'Activities:\n'.color('reset').array_implode(array_normalize(@activities), '\n');
+	@footer = color('gray').'Current Activity:\n'.color('reset').@title;
 	foreach(@p in all_players()) {
 		psend_list_header_footer(@p, @serverTitle, @footer);
+	}
+
+	if(function_exists('discord_broadcast')) {
+		discord_broadcast('minecraft_chat', '**Game of '.@title.' started...**');
+	}
+
+	if(@region && @world) {
+		if(extension_exists('CHDynmap')) {
+			try {
+				@regionInfo = sk_region_info(@region, @world);
+				@minX = @regionInfo[0][1][0];
+				@minZ = @regionInfo[0][1][2];
+				@maxX = @regionInfo[0][0][0];
+				@maxZ = @regionInfo[0][0][2];
+				dm_create_marker('markers', array(
+					'type': 'AREA',
+					'world': @world,
+					'label': @title,
+					'id': @id,
+					'corners': array(
+						array(@minX, 0, @minZ, @world),
+						array(@maxX, 0, @minZ, @world),
+						array(@maxX, 0, @maxZ, @world),
+						array(@minX, 0, @maxZ, @world),
+					),
+				));
+				dm_set_marker_line_style('markers', @id, array(
+					'color': array('r': 255, 'g': 0, 'b': 0),
+					'opacity': 1,
+					'weight': 1,
+				));
+				dm_set_marker_fill_style('markers', @id, array(
+					'color': array('r': 255, 'g': 0, 'b': 0),
+					'opacity': 0.1,
+				));
+			} catch (Exception @ex) {
+				console('Failed to create region marker for activity: '.@title);
+			}
+		}
 	}
 }
 
@@ -105,18 +144,25 @@ proc _add_activity(@id, @title) {
 proc _remove_activity(@id) {
 	@activities = import('activities');
 	if(!is_null(@activities) && array_index_exists(@activities, @id)) {
-		array_remove(@activities, @id);
+		@activity = array_remove(@activities, @id);
 		export('activities', @activities);
 
 		@serverTitle = colorize('&6&lFINALSCORE&e&lMC');
 		if(@activities) {
-			@footer = color('gray').'Activities:\n'.color('reset').array_implode(array_normalize(@activities), '\n');
+			@footer = color('gray').'Current Activity:\n'.color('reset').array_rand(@activities, 1, false)[0]['title'];
 		} else {
 			@footer = null;
 		}
 		foreach(@p in all_players()) {
 			psend_list_header_footer(@p, @serverTitle, @footer);
 		}
+
+		if(@activity['region']) {
+			if(extension_exists('CHDynmap')) {
+				try(dm_delete_marker('markers', @id));
+			}
+		}
+
 		return(true);
 	}
 	return(false);
