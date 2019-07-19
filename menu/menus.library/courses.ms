@@ -135,7 +135,7 @@ foreach(@i: @difficulty in @difficultyorder) {
 @difficulties = null;
 @coopdifficulties = null;
 
-@loadMenu = closure(@player, @import){
+@loadMenu = iclosure(@player, @import){
 	@uuid = puuid(@player, true);
 	@cakes = get_value('cakeinfo');
 	@menu = @import['menu'][];
