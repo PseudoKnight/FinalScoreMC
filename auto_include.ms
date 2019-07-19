@@ -98,11 +98,10 @@ proc _add_activity(@id, @title, @region, @world) {
 		psend_list_header_footer(@p, @serverTitle, @footer);
 	}
 
-	if(function_exists('discord_broadcast')) {
-		discord_broadcast('minecraft_chat', '**Game of '.@title.' started...**');
-	}
-
 	if(@region && @world) {
+		if(function_exists('discord_broadcast')) {
+			discord_broadcast('minecraft_chat', '**'.@title.' started...**');
+		}
 		if(extension_exists('CHDynmap')) {
 			try {
 				@regionInfo = sk_region_info(@region, @world);
