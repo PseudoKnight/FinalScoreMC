@@ -15,7 +15,7 @@ proc _msg_charades(@message, @type = 'chat', @ignored = '') {
 
 proc _check_players(@charades) {
 	@players = array();
-	foreach(@p in all_players('custom')) {
+	foreach(@p in all_players(@charades['world'])) {
 		if(array_contains(sk_current_regions(@p), 'charades')) {
 			if(!array_contains(@charades['players'], @p) && get_pscore('score', @p, 'charades') == 0) {
 				return(false);

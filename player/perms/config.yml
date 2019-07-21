@@ -111,6 +111,7 @@ member:
       deadbolt.user.create.*: false
       command.ride: false
       command.hoops: true
+      command.charades: true
   inheritance: default
 regular:
   permissions:

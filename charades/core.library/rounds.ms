@@ -135,8 +135,12 @@ proc _end_build(@guesser, @word) {
 		_remove_region_entities('charades');
 		// delay before paste to prevent entity issues
 		set_timeout(50,closure(){
-			skcb_load('charades');
-			skcb_paste(array(0, 0, 0, 'custom'), array('origin': true));
+			try {
+				skcb_load('charades-'.@charades['world']);
+				skcb_paste(array(0, 0, 0, @charades['world']), array('origin': true));
+			} catch(IOException @ex) {
+				console('Could not load charades schematic for world: '.@charades['world']);
+			}
 		});
 
 		if(@charades['playersLeft'] && ponline(@charades['playersLeft'][0])) {

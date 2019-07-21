@@ -12,9 +12,9 @@ proc _prepare_game(@category) {
 	} else {
 		@category = array_rand(@categories, 1, false)[0];
 	}
-	
+
 	@players = array();
-	foreach(@p in all_players('custom')) {
+	foreach(@p in all_players(pworld())) {
 		if(array_contains(sk_current_regions(@p), 'charades')) {
 			@players[] = @p;
 		}
@@ -22,7 +22,7 @@ proc _prepare_game(@category) {
 	if(array_size(@players) < 3) {
 		die(color('gold').'Requires at least 3 players.');
 	}
-	
+
 	export('charades', array(
 		'category': @category,
 		'players': @players,
@@ -32,16 +32,17 @@ proc _prepare_game(@category) {
 		'seconds': 150.0,
 		'build': '',
 		'hint': '',
+		'world': pworld(),
 	));
-	
+
 	create_scoreboard('charades');
 	create_objective('score', 'DUMMY', 'charades');
 	set_objective_display('score', array('displayname': 'Scores', 'slot': 'SIDEBAR'), 'charades');
 	create_team('guessers', 'charades');
 	create_team('builder', 'charades');
 	set_team_display('builder', array('color': 'GREEN'), 'charades');
-	
-	@spawn = sk_region_info('charades-beacon', 'custom', 0)[0];
+
+	@spawn = sk_region_info('charades-beacon', pworld(), 0)[0];
 	foreach(@p in @players) {
 		set_pscore('score', @p, 0, 'charades');
 		team_add_player('guessers', @p, 'charades');
@@ -51,9 +52,9 @@ proc _prepare_game(@category) {
 		set_pscoreboard(@p, 'charades');
 		_set_pactivity(@p, 'charades');
 	}
-	
+
 	set_block(@spawn, 'SEA_LANTERN');
-	
+
 	_bind_charade_events();
 	try {
 		_queue_next_builder();
@@ -72,11 +73,11 @@ proc _end_game() {
 	if(@charades['interval']) {
 		clear_task(@charades['interval']);
 	}
-	
-	@center = sk_region_info('charades-beacon', 'custom', 0)[0];
+
+	@center = sk_region_info('charades-beacon', @charades['world'], 0)[0];
 	set_block(@center, 'LIGHT_BLUE_STAINED_GLASS');
 	play_sound(@center, array('sound': 'UI_TOAST_CHALLENGE_COMPLETE', 'volume': 5));
-	
+
 	@top = 0;
 	@topPlayers = array();
 	@warp = get_value('warp.charades');
@@ -99,7 +100,7 @@ proc _end_game() {
 			}
 		}
 	}
-	
+
 	if(array_size(@topPlayers) == 1) {
 		_regionmsg('charades', color('green').@topPlayers[0].' wins!');
 	} else if(array_size(@topPlayers) > 1) {

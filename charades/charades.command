@@ -1,6 +1,7 @@
 register_command('charades', array(
 	'description': 'A visual game of charades in Minecraft',
 	'usage': '/charades [category]',
+	'permission': 'command.charades',
 	'tabcompleter': closure(@alias, @sender, @args, @info) {
 		if(array_size(@args) == 1) {
 			include('core.library/words.ms');
@@ -35,7 +36,7 @@ register_command('charades', array(
 				} catch(ScoreboardException @ex) {
 					msg(color('gold').'Game is not running.');
 				}
-				
+
 			case 'vote':
 				if(array_size(@args) < 2) {
 					die(color('gold').'You must specify a category.');
@@ -46,7 +47,7 @@ register_command('charades', array(
 					die(color('gold').'Game is not running.');
 				}
 				@charades['votes'][player()] = @category;
-				
+
 			default:
 				if(array_contains(get_scoreboards(), 'charades')) {
 					die(color('gold').'Already running.');
