@@ -19,7 +19,7 @@ bind('player_death', null, null, @event) {
 		msg(color('yellow').'You died @ '.@stringLoc);
 		foreach(@player in all_players()) {
 			if(@player != player() && has_permission(@player, 'group.regular')) {
-				tmsg(color('gray').@player.' died @ '.@stringLoc);
+				tmsg(@player, color('gray').@player.' died @ '.@stringLoc);
 			}
 		}
 		@time = array(60);
