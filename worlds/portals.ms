@@ -61,12 +61,13 @@ bind('entity_portal_travel', null, null, @event) {
 		modify_event('to', @l);
 	} else if(@to['world'] == 'world_the_end') {
 		cancel();
-		if(@match = reg_match('^(.*)_the_end$', @from['world'])) {
-			set_entity_loc(@event['id'], get_spawn(@match[1]));
-		} else if(@from['world'] == 'outworld'){
+		if(@from['world'] == 'outworld'){
 			set_entity_loc(@event['id'], get_spawn('outworld_the_end'));
 		} else {
 			set_entity_loc(@event['id'], get_spawn('world_the_end'));
 		}
+	} else if(@match = reg_match('^(.*)_the_end$', @from['world'])) {
+		cancel();
+		set_entity_loc(@event['id'], get_spawn(@match[1]));
 	}
 }
