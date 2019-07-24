@@ -17,7 +17,7 @@ try {
 		@errors = json_decode(@result);
 		foreach(@error in @errors) {
 			if(!string_starts_with(@error['msg'], 'The function ')) {
-				msg(@error['msg'].' : line '.@error['line']);
+				msg(@error['msg'].' @ '.@error['file'].':'.@error['line']);
 			}
 		}
 	}
