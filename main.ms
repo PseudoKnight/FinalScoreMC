@@ -1,16 +1,12 @@
 set_cron('*/5 * * * *', closure(){
-	@activities = '';
-	@activitiesArray = import('activities');
-	if(@activitiesArray) {
-		@activities = array_implode(array_normalize(@activitiesArray), ', ');
-	}
+	@activities = _get_activities_string();
 	@allocMem = get_server_info(15);
 	@freeMem = get_server_info(16);
 	console('---[ TPS: '.round(tps()[0], 1).' ]'
 		.'---[ MEM: '.floor((@allocMem - @freeMem) / 1000000).' / '.floor(@allocMem / 1000000).' / 2863 MB ]'
 		.'---[ PLAYERS: '.array_size(all_players()).' ]'
 		.'---'.if(@activities, '[ Activities: '.@activities.' ]---'), false);
-		
+
 	foreach(@p in all_players()) {
 		if(!entity_exists(puuid(@p))) {
 			console('Warning, '.@p.' does not have an entity in world '.pworld(@p));
@@ -49,11 +45,7 @@ set_cron('*/5 * * * *', closure(){
 });
 
 bind('server_ping', null, null, @event) {
-	@activities = import('activities');
-	@currently = '';
-	if(@activities) {
-		@currently = array_implode(array_normalize(@activities), ', ');
-	}
+	@currently = _get_activities_string();
 	@motd = colorize('&6&l\u1260&d&l\u1260&b&l\u1260&4&l\u1260 &6&lFINALSCORE&e&lMC \u00AB &f\u25AA \u25AA \u25AA');
 	modify_event('motd', @motd.if(@currently, colorize('\n&aActivities&f: ').@currently));
 }

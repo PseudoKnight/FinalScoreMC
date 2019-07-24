@@ -2,11 +2,7 @@
 	Updates the channel topic for the discord chat channel
 */
 proc _update_discord_topic() {
-	@activities = '';
-	@activitiesArray = import('activities');
-	if(@activitiesArray) {
-		@activities = array_implode(array_normalize(@activitiesArray), ', ');
-	}
+	@activities = _get_activities_string();
 	@allocMem = get_server_info(15);
 	@freeMem = get_server_info(16);
 	if(extension_exists('CHDiscord')) {

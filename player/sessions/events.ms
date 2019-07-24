@@ -49,14 +49,7 @@ bind('player_join', null, null, @event) {
 			foreach(@p in all_players()) {
 				set_list_name(@p, display_name(@p));
 			}
-			@title = colorize('&6&lFINALSCORE&e&lMC');
-			@activities = import('activities');
-			if(@activities) {
-				@currently = array_implode(array_normalize(@activities), '\n');
-				psend_list_header_footer(@title, color('gray').'Activities:\n'.color('reset').@currently);
-			} else {
-				psend_list_header_footer(@title, null);
-			}
+			_update_activities();
 		}, 'join');
 
 		// Welcome messages

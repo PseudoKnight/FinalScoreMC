@@ -88,16 +88,10 @@ proc _add_activity(@id, @title, @region, @world) {
 	@activities = import('activities');
 	if(is_null(@activities)) {
 		@activities = associative_array();
+		export('activities', @activities);
 	}
 	@activities[@id] = array('title': @title, 'region': @region, 'world': @world);
-	export('activities', @activities);
-
-	@serverTitle = colorize('&6&lFINALSCORE&e&lMC');
-	@footer = color('gray').'Current Activity:\n'.color('reset').@title;
-	foreach(@p in all_players()) {
-		psend_list_header_footer(@p, @serverTitle, @footer);
-	}
-
+	_update_activities();
 	if(@region && @world) {
 		if(function_exists('discord_broadcast')) {
 			discord_broadcast('minecraft_chat', '**'.@title.' started...**');
@@ -144,25 +138,38 @@ proc _remove_activity(@id) {
 	@activities = import('activities');
 	if(!is_null(@activities) && array_index_exists(@activities, @id)) {
 		@activity = array_remove(@activities, @id);
-		export('activities', @activities);
-
-		@serverTitle = colorize('&6&lFINALSCORE&e&lMC');
-		if(@activities) {
-			@footer = color('gray').'Current Activity:\n'.color('reset').array_rand(@activities, 1, false)[0]['title'];
-		} else {
-			@footer = null;
-		}
-		foreach(@p in all_players()) {
-			psend_list_header_footer(@p, @serverTitle, @footer);
-		}
-
+		_update_activities();
 		if(@activity['region']) {
 			if(extension_exists('CHDynmap')) {
 				try(dm_delete_marker('markers', @id));
 			}
 		}
-
 		return(true);
 	}
 	return(false);
+}
+
+proc _get_activities_string() {
+	@activities = import('activities');
+	if(!@activities) {
+		return('');
+	}
+	@string = '';
+	foreach(@id: @activity in @activities) {
+		@string .= if(@string, ', ').@activity['title'];
+	}
+	return(@string);
+}
+
+proc _update_activities() {
+	@activities = _get_activities_string();
+	@serverTitle = colorize('&6&lFINALSCORE&e&lMC');
+	if(@activities) {
+		@footer = color('gray').'Current Activities:\n'.color('reset').@activities;
+	} else {
+		@footer = null;
+	}
+	foreach(@p in all_players()) {
+		psend_list_header_footer(@p, @serverTitle, @footer);
+	}
 }
