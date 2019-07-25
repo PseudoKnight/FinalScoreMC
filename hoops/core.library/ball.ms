@@ -14,7 +14,7 @@ proc _hoops_ball_create(@loc) {
 	set_entity_spec(@bball, array('size': 1));
 	set_entity_silent(@bball, true);
 	set_entity_ai(@bball, false);
-	set_mob_effect(@bball, 11, 4, 9999, true, false);
+	set_mob_effect(@bball, 'resistance', 4, 9999, true, false);
 
 	@stand = spawn_entity('ARMOR_STAND', 1, @loc)[0];
 	set_entity_spec(@stand, array('small': true, 'visible': false));
@@ -184,9 +184,9 @@ proc _hoops_ball_create(@loc) {
 				}
 				if(@end || !array_contains(get_bars(), 'hoops')) {
 					@ending[0] = true;
-					set_mob_effect(@bball, 11, 0, 0, true, false);
-					set_mob_effect(@bball, 11, 2, 10, true, false);
-					set_mob_effect(@bball, 20, 1, 10, true, false);
+					set_mob_effect(@bball, 'resistance', 0, 0, true, false);
+					set_mob_effect(@bball, 'resistance', 2, 10, true, false);
+					set_mob_effect(@bball, 'wither', 1, 10, true, false);
 					set_timeout(4000, closure(){
 						try(entity_remove(@stand));
 					});

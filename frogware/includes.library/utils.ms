@@ -76,7 +76,7 @@ proc _fw_mobs(@mob = 'random', @num = 'random') {
 	if(!rand(4)) {
 		queue_push(closure(){
 			foreach(@entity in @entities) {
-				set_mob_effect(@entity, 1, rand(2), 15, true)
+				set_mob_effect(@entity, 'speed', rand(2), 15, true)
 			}
 		})
 	}

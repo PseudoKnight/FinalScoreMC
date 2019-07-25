@@ -1,6 +1,6 @@
 bind('creature_spawn', null, null, @e) {
 	if(array_contains(array('SPIDER', 'PHANTOM', 'WITCH', 'ENDERMAN'), @e['type']) && !rand(3)) {
-		set_mob_effect(@e['id'], 'invisibility', 0, 99999);
+		set_mob_effect(@e['id'], 'invisibility', 0, 107374182);
 	}
 }
 
@@ -43,12 +43,12 @@ bind('creature_spawn', null, array('type': 'ZOMBIE', 'reason': 'NATURAL'), @e) {
 			'LEGGINGS': array('name': 'LEATHER_LEGGINGS'),
 			'BOOTS': array('name': 'LEATHER_BOOTS'),
 		));
-		set_mob_effect(@e['id'], 14, 0, 99999);
+		set_mob_effect(@e['id'], 'invisibility', 0, 107374182);
 		add_scoreboard_tag(@e['id'], 'halloween');
 	} else {
 		set_mob_equipment(@e['id'], array('HELMET': array('name': 'JACK_O_LANTERN')));
 		if(rand(2)) {
-			set_mob_effect(@e['id'], 14, 0, 99999);
+			set_mob_effect(@e['id'], 'invisibility', 0, 107374182);
 		}
 		add_scoreboard_tag(@e['id'], 'halloween');
 	}

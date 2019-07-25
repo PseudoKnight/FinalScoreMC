@@ -17,7 +17,7 @@ proc _place_ball(@mobtype, @loc, @ball, @course) {
 	}
 	set_entity_loc(@ball['id'], @loc);
 	set_timeout(50, closure(){
-		set_mob_effect(@ball['slime'], 11, 4, 99999, true, false);
+		set_mob_effect(@ball['slime'], 'resistance', 4, 99999, true, false);
 	});
 }
 

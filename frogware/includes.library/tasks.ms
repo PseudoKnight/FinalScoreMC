@@ -535,7 +535,7 @@ proc _fw_task(@task, @state, @secs) {
 					@loc = _fw_loc();
 					play_sound(@loc, array('sound': 'entity_witch_ambient', 'volume': 4, 'pitch': 1.2));
 					foreach(@e in entities_in_radius(@loc, 20, 'SHEEP')) {
-						set_mob_effect(@e, 25, 1, 10);
+						set_mob_effect(@e, 'levitation', 1, 10);
 					}
 				});
 			}
@@ -661,7 +661,7 @@ proc _fw_task(@task, @state, @secs) {
 			unbind('fwfish');
 			_fw_startround(@secs);
 		}
-		
+
 	case 'panel':
 		if(@state == 'start') {
 			@colors = array( // block : chat

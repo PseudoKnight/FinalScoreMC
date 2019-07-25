@@ -92,7 +92,7 @@ bind('projectile_launch', array('id': @id.'grapple'), array('type': 'FISHING_HOO
 						}
 					} else {
 						set_entity_velocity(@mover, array(0, 0, 0));
-						set_mob_effect(@mover, 25, -1, 0.15);
+						set_mob_effect(@mover, 'levitation', -1, 0.15);
 					}
 				}
 			} catch(BadEntityException @e) {

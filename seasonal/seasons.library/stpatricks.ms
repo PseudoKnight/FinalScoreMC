@@ -52,7 +52,7 @@ bind('creature_spawn', null, array('type': 'ZOMBIE', 'reason': 'NATURAL'), @even
 			'WEAPON': 1,
 			'OFF_HAND': 1,
 		));
-		set_mob_effect(@id, 1, 0, 99999);
+		set_mob_effect(@id, 'speed', 0, 107374182);
 		set_entity_silent(@id, true);
 	}
 }

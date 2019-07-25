@@ -15,9 +15,9 @@ bind('creature_spawn', null, array('type': 'ZOMBIE', 'reason': 'NATURAL'), @even
 			'BOOTS': 0,
 		));
 		if(!entity_spec(@event['id'])['baby']){
-			set_mob_effect(@event['id'], 1, 0, 9999, true);
+			set_mob_effect(@event['id'], 'speed', 0, 107374182, true);
 		}
-		set_mob_effect(@event['id'], 8, 1, 9999, true);
+		set_mob_effect(@event['id'], 'jump_boost', 1, 107374182, true);
 		set_entity_silent(@event['id'], true);
 	}
 }

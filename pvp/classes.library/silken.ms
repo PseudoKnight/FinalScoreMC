@@ -6,7 +6,7 @@ case 'load':
 			@weapon = pinv(@p, null);
 			if(@weapon && @weapon['name'] == 'STONE_HOE') {
 				modify_event('amount', 2);
-				set_mob_effect(@e['id'], 20, 1, 7);
+				set_mob_effect(@e['id'], 'wither', 1, 7);
 			}
 		}
 	}
@@ -39,7 +39,7 @@ case 'load':
 			}
 		}
 	}
-	
+
 case 'unload':
 	unbind(@player.'damage');
 	unbind(@player.'web');
