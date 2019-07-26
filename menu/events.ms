@@ -25,7 +25,7 @@ bind('inventory_click', null, array('virtual': true), @event) {
 }
 
 bind('player_interact_at_entity', array('priority': 'HIGH'), array('clicked': 'ARMOR_STAND'), @event) {
-	if(pmode() != 'CREATIVE' && get_mob_name(@event['id']) == color('green').'Start') {
+	if(pmode() == 'ADVENTURE' && string_starts_with(get_mob_name(@event['id']), color('green'))) {
 		@equipment = get_mob_equipment(@event['id']);
 		if(@equipment['helmet'] && @equipment['helmet']['meta']) {
 			run_cmd(@equipment['helmet']['meta']['display']);
