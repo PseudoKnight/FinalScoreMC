@@ -10,6 +10,7 @@ proc _level_prepare(@name, @arena, @region, @world) {
 		'subtitle': '',
 		'music': '',
 		'mobs': array(),
+		'spawns': array(),
 		'world': @world,
 		'arena': @arena,
 		'region': @region,
@@ -239,7 +240,7 @@ proc _level_start(@level) {
 		}
 	}
 
-	@sleep = array(3);
+	@sleep = mutable_primitive(3);
 	@level['task'] = set_interval(1000, closure(){
 		try {
 			// Check if players are still in play
@@ -253,13 +254,13 @@ proc _level_start(@level) {
 				}
 			}
 
-			if(array_index_exists(@level['config'], 'shop') && get_inventory_viewers('level'.@level['region'])) {
-				die();
+			if(array_index_exists(@level['config'], 'shop') && (@viewers = get_inventory_viewers('level'.@level['region']))) {
+				update_bar('level'.@level['region'], array('color': 'YELLOW', 'title': array_implode(@viewers, ', ').' viewing shop'));
 
-			} else if(@sleep[0] > 0) {
-				@sleep[0]--;
+			} else if(@sleep > 0) {
+				@sleep--;
 				if(!@level['boss'] || !@entities) {
-					update_bar('level'.@level['region'], array('percent': (6 - @sleep[0]) / 6));
+					update_bar('level'.@level['region'], array('color': 'WHITE', 'title': '', 'percent': (6 - @sleep[0]) / 6));
 				}
 
 			} else if(@level['trigger']) {
@@ -272,7 +273,7 @@ proc _level_start(@level) {
 						title(@p, @level['title'], null, 20, 40, 20);
 					}
 				}
-				@sleep[0] = 3;
+				@sleep[] = 2;
 				update_bar('level'.@level['region'], array('visible': false));
 				@level['title'] = '';
 
@@ -282,10 +283,38 @@ proc _level_start(@level) {
 						title(@p, '', @level['subtitle'], 20, 40, 20);
 					}
 				}
-				@sleep[0] = 3;
+				@sleep[] = 2;
 				update_bar('level'.@level['region'], array('visible': false));
 				@level['subtitle'] = '';
-
+			} else if(@level['mobs'] && !@level['spawns']) {
+				@spawnGroups = associative_array();
+				foreach(@mob in @level['mobs']) {
+					@spawnGroup = 'spawns';
+					if(is_array(@mob) && array_index_exists(@mob, 'pos')) {
+						@spawnGroup = @mob['pos'];
+					}
+					if(!array_index_exists(@spawnGroups, @spawnGroup)) {
+						@spawnGroups[@spawnGroup] = 0;
+					}
+					if(is_array(@mob) && array_index_exists(@mob, 'count')) {
+						@spawnGroups[@spawnGroup] += @mob['count'];
+					} else {
+						@spawnGroups[@spawnGroup]++;
+					}
+				}
+				@spawns = associative_array();
+				foreach(@spawnGroup: @count in @spawnGroups) {
+					@spawns[@spawnGroup] = array_rand(@level['arena'][@spawnGroup], min(@level['duplicate'] * @count, array_size(@level['arena'][@spawnGroup])), false);
+				}
+				foreach(@spawnGroup in @spawns) {
+					foreach(@spawn in @spawnGroup) {
+						spawn_entity('AREA_EFFECT_CLOUD', 1, @spawn, closure(@cloud) {
+							set_entity_spec(@cloud, array('radius': 0.1, 'particle': 'LAVA', 'duration': 30));
+						});
+					}
+				}
+				@level['spawns'] = @spawns;
+				@sleep[] = 1;
 			} else if(@level['mobs']) {
 				if(@level['boss']) {
 					update_bar('level'.@level['region'], array(
@@ -303,29 +332,30 @@ proc _level_start(@level) {
 						play_sound(ploc(@p), array('sound': 'ENTITY_EVOKER_PREPARE_SUMMON', 'volume': 0.4), @p);
 					}
 				}
-				while(@level['duplicate']--) {
-					foreach(@mob in @level['mobs']) {
-						@spawns = @level['arena']['spawns'];
+				@spawns = @level['spawns'];
+				do {
+					foreach(@i: @mob in @level['mobs']) {
 						if(is_array(@mob)) {
+							@spawnGroup = 'spawns';
 							if(array_index_exists(@mob, 'pos')) {
-								@spawns = @level['arena'][@mob['pos']];
+								@spawnGroup = @mob['pos'];
 							}
 							@count = 1;
 							if(array_index_exists(@mob, 'count')) {
 								@count = @mob['count'];
 							}
 							do {
-								@loc = @spawns[rand(array_size(@spawns))];
+								@loc = @spawns[@spawnGroup][(@level['duplicate'] * (@i + 1) * @count) % array_size(@spawns[@spawnGroup])];
 								_spawn_entity(@mob, @loc, player(), @level['spectators']);
 							} while(--@count > 0);
 						} else {
-							@loc = @spawns[rand(array_size(@spawns))];
+							@loc = @spawns['spawns'][(@level['duplicate'] * (@i + 1)) % array_size(@spawns['spawns'])];
 							spawn_entity(@mob, 1, @loc);
 						}
 					}
-				}
+				} while(--@level['duplicate']);
 				@level['mobs'] = array();
-				@sleep[0] = 5;
+				@sleep[] = 5;
 
 			} else if(!@entities) {
 				foreach(@p in @level['players']) {
@@ -378,9 +408,11 @@ proc _level_start(@level) {
 					} else {
 						@level['boss'] = false;
 					}
-					@level['mobs'] = @wave['mobs'];
 
-					@sleep[0] = 6;
+					@level['mobs'] = @wave['mobs'];
+					@level['spawns'] = null;
+
+					@sleep[] = 6;
 					update_bar('level'.@level['region'], 0.0);
 					update_bar('level'.@level['region'], array(
 						'visible': true,
@@ -408,6 +440,7 @@ proc _level_start(@level) {
 				}
 			}
 		} catch(Exception @ex) {
+			console(@ex);
 			_level_end(@level, false);
 		}
 	});
@@ -467,7 +500,7 @@ proc _level_end(@level, @win) {
 	if(array_index_exists(@level['arena'], 'schematic')) {
 		set_timeout(50, closure(){
 			skcb_load(@level['arena']['schematic']);
-			skcb_paste(array(0, 0, 0, @level['world']), array('origin': true));
+			skcb_paste(array(0, 0, 0, @level['world']), array('origin': true, 'entities': true));
 		});
 	}
 }

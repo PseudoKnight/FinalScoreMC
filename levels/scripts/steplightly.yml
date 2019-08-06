@@ -215,6 +215,7 @@ waves:
         duplicate: 8
         mobs:
             - type: WOLF
+              targetnear: 16
               tags:
                   angry: true
               effects:

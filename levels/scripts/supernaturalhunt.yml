@@ -27,30 +27,33 @@ shop:
         name: CARROT
         cost: 1
     11:
+        name: COOKED_BEEF
+        cost: 2
+    12:
         name: POTION
         cost: 1
         meta:
             base:
                 extended: true
                 type: SPEED
-    12:
+    13:
         name: POTION
         cost: 1
         meta:
             base:
                 extended: true
                 type: STRENGTH
-    12:
+    14:
         name: GOLDEN_APPLE
         cost: 3
-    13:
+    15:
         name: TIPPED_ARROW
         cost: 1
         meta:
             base:
                 upgraded: true
                 type: INSTANT_HEAL
-    15:
+    16:
         name: NETHER_STAR
         cost: 8
         meta:
@@ -123,7 +126,7 @@ waves:
             - type: SLIME
               count: 5
               tags:
-                  size: 2
+                  size: 3
     2:
         subtitle: 'Smite'
         mobs:
@@ -141,27 +144,29 @@ waves:
             - SPIDER
             - SPIDER
     4:
-        subtitle: 'Bone Chill'
+        subtitle: 'Scobby Doo!'
         mobs:
-            - SKELETON
-            - SKELETON
+            - ZOMBIE
+            - ZOMBIE
+            - ZOMBIE
+            - ZOMBIE
+            - type: WOLF
+              targetnear: 16
+              tags:
+                  angry: true
     5:
-        subtitle: 'Dead End'
+        subtitle: 'Scobby Dew 2: ELectric (etc.)'
         mobs:
-            - SKELETON
-            - SKELETON
             - ZOMBIE
-            - ZOMBIE
-            - ZOMBIE
+            - WOLF
+            - VEX
     6:
-        subtitle: 'BOSS: Stray Away!'
-        duplicate: 3
+        subtitle: 'Rain Fire!'
+        boss: true
         mobs:
-            - type: STRAY
-              effects:
-                  - id: 1
-                    strength: 0
-                    seconds: 600
+            - type: VEX
+              rider: 
+                  type: SKELETON
     7:
         title: 'The Final Score'
         subtitle: 'TheFishDish'
