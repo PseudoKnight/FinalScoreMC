@@ -164,7 +164,18 @@ builder:
       command.put: true
       command.skull: true
       command.track: true
-      limitedworldedit: true
+      worldedit.analysis.*: true
+      worldedit.brush.*: true
+      worldedit.clipboard.*: true
+      worldedit.fast: true
+      worldedit.generation.*: true
+      worldedit.global-mask: true
+      worldedit.history.*: true
+      worldedit.region.*: true
+      worldedit.schematic.*: true
+      worldedit.tool.*: true
+      worldedit.light.*: true
+      worldedit.setnbt: true
       worldguard.region.claim: true
       minecraft.command.stopsound: true
     custom:
@@ -214,24 +225,21 @@ engineer:
       command.class: true
     custom:
       worldguard.region.*: true
-      limitedworldedit: true
+      worldedit.analysis.*: true
+      worldedit.brush.*: true
+      worldedit.clipboard.*: true
+      worldedit.fast: true
+      worldedit.generation.*: true
+      worldedit.global-mask: true
+      worldedit.history.*: true
+      worldedit.region.*: true
+      worldedit.schematic.*: true
+      worldedit.tool.*: true
+      worldedit.light.*: true
+      worldedit.setnbt: true
       command.setwarp: true
       command.class: true
   inheritance: builder
-limitedworldedit:
-  permissions:
-    worldedit.analysis.*: true
-    worldedit.brush.*: true
-    worldedit.clipboard.*: true
-    worldedit.fast: true
-    worldedit.generation.*: true
-    worldedit.global-mask: true
-    worldedit.history.*: true
-    worldedit.region.*: true
-    worldedit.schematic.*: true
-    worldedit.tool.*: true
-    worldedit.light.*: true
-    worldedit.setnbt: true
 moderator:
   permissions:
     group.moderator: true
