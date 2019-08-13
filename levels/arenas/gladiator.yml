@@ -1,21 +1,7 @@
-classic:
-    name: DIAMOND_SWORD
-    display: 'Classic'
-    lore:
-        - 'by rivergod'
-        - 'No Upgrades. Endure the onslaught.'
 steplightly:
     name: TOTEM_OF_UNDYING
     display: 'Step Lightly'
     lore:
         - 'by gothem8'
-        - 'Buy items with levels.'
-        - 'Sell items to get more levels.'
-supernaturalhunt:
-    name: ENDER_EYE
-    display: 'Supernatural Hunt'
-    lore:
-        - 'by NinjaKing1200'
-        - '[Incomplete]'
         - 'Buy items with levels.'
         - 'Sell items to get more levels.'
