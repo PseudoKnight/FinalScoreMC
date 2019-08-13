@@ -71,7 +71,7 @@
 	}
 
 	@start = time();
-	run('/recompile -rf'.if(!@clearGlobal, 'g'));
+	run('/recompile -rfx'.if(!@clearGlobal, 'g'));
 	@stop = time();
 	broadcast(color('yellow').'Recompiled scripts!'.if(@message, ' "'.@message.'"').' ('.round((@stop - @start) / 1000, 2).'s)');
 	export('recompile', null);
