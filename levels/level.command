@@ -174,7 +174,7 @@ register_command('level', array(
 						msg(color('yellow').'Cleaning up game...');
 						_level_end(@level, false);
 					}
-					return();
+					return(true);
 				}
 				
 				@menu = associative_array();
