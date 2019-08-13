@@ -1,7 +1,7 @@
 register_command('unshare', array(
 	'description': 'Unshare horses (and other things) with friends.',
 	'usage': '/unshare <player> <sharable[s]>',
-	'settabcompleter': closure(@alias, @sender, @args, @info) {
+	'tabcompleter': closure(@alias, @sender, @args, @info) {
 		if(array_size(@args) > 1) {
 			return(_strings_start_with_ic(array('horses'), @args[-1]));
 		}

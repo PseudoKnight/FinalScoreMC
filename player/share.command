@@ -1,7 +1,7 @@
 register_command('share', array(
 	'description': 'Share horses (and other things) with friends you trust.',
 	'usage': '/share <player> <sharable[s]>',
-	'settabcompleter': closure(@alias, @sender, @args, @info) {
+	'tabcompleter': closure(@alias, @sender, @args, @info) {
 		if(array_size(@args) > 1) {
 			return(_strings_start_with_ic(array('horses'), @args[-1]));
 		}

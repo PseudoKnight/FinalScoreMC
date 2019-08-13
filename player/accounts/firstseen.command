@@ -1,7 +1,7 @@
 register_command('firstseen', array(
 	'description': 'Returns the first time this player joined the server.',
 	'usage': '/firstseen <player>',
-	'settabcompleter': closure(@alias, @sender, @args, @info) {
+	'tabcompleter': closure(@alias, @sender, @args, @info) {
 		return(array());
 	},
 	'executor': closure(@alias, @sender, @args, @info) {

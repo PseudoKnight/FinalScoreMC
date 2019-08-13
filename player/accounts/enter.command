@@ -1,7 +1,7 @@
 register_command('enter', array(
 	'description': 'Sets an player\'s server enter message.',
 	'usage': '/enter <message>',
-	'settabcompleter': closure(@alias, @sender, @args, @info) {
+	'tabcompleter': closure(@alias, @sender, @args, @info) {
 		return(array());
 	},
 	'executor': closure(@alias, @sender, @args, @info) {

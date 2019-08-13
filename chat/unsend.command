@@ -1,7 +1,7 @@
 register_command('unsend', array(
 	'description': 'Unsends the last offline message you sent.',
 	'usage': '/unsend',
-	'settabcompleter': closure(@alias, @sender, @args, @info) {
+	'tabcompleter': closure(@alias, @sender, @args, @info) {
 		return(array());
 	},
 	'executor': closure(@alias, @sender, @args, @info) {

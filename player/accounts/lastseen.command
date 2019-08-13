@@ -1,7 +1,7 @@
 register_command('lastseen', array(
 	'description': 'Returns the last time this player exited the server.',
 	'usage': '/lastseen <player>',
-	'settabcompleter': closure(@alias, @sender, @args, @info) {
+	'tabcompleter': closure(@alias, @sender, @args, @info) {
 		return(array());
 	},
 	'executor': closure(@alias, @sender, @args, @info) {

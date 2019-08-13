@@ -1,7 +1,7 @@
 register_command('exit', array(
 	'description': 'Sets an player\'s server exit message.',
 	'usage': '/exit <message>',
-	'settabcompleter': closure(@alias, @sender, @args, @info) {
+	'tabcompleter': closure(@alias, @sender, @args, @info) {
 		return(array());
 	},
 	'executor': closure(@alias, @sender, @args, @info) {

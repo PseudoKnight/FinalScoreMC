@@ -1,7 +1,7 @@
 register_command('roll', array(
 	'description': 'Rolls a random number up to the value given.',
 	'usage': '/roll [sides]',
-	'settabcompleter': closure(@alias, @sender, @args, @info) {
+	'tabcompleter': closure(@alias, @sender, @args, @info) {
 		return(array());
 	},
 	'executor': closure(@alias, @sender, @args, @info) {

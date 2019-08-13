@@ -2,7 +2,7 @@ register_command('colors', array(
 	'description': 'Displays available colors and their corresponding code.',
 	'usage': '/colors',
 	'aliases': array('colours'),
-	'settabcompleter': closure(@alias, @sender, @args, @info) {
+	'tabcompleter': closure(@alias, @sender, @args, @info) {
 		return(array());
 	},
 	'executor': closure(@alias, @sender, @args, @info) {

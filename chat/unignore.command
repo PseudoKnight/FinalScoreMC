@@ -1,7 +1,7 @@
 register_command('unignore', array(
 	'description': 'Unsets a player as ignored, allowing you to see messages from them.',
 	'usage': '/unignore <player|all>',
-	'settabcompleter': closure(@alias, @sender, @args, @info) {
+	'tabcompleter': closure(@alias, @sender, @args, @info) {
 		if(array_size(@args) == 1) {
 			@players = all_players();
 			@players[] = 'all';
