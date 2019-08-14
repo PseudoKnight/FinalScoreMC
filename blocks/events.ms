@@ -151,7 +151,7 @@ bind('block_place', array('priority': 'LOW'), array('block': 'DRAGON_EGG'), @eve
 	@loc['x'] += 0.5;
 	@loc['y'] -= 1.5;
 	@loc['z'] += 0.5;
-	foreach(@e in entities_in_radius(@event['location'], 16, 'ENDER_CRYSTAL')) {
+	foreach(@e in entities_in_radius(@event['location'], 32, 'ENDER_CRYSTAL')) {
 		@target = entity_spec(@e)['beamtarget'];
 		if(!@target || get_block(location_shift(@target, 'up', 2)) != 'DRAGON_EGG') {
 			set_entity_spec(@e, array('beamtarget': @loc));
