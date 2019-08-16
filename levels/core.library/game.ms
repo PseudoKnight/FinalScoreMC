@@ -497,6 +497,9 @@ proc _level_end(@level, @win) {
 	}
 	remove_scoreboard('level'.@level['region']);
 	remove_bar('level'.@level['region']);
+	if(array_index_exists(@level['arena'], 'startblock')) {
+		set_block(@level['arena']['startblock']['loc'], 'AIR');
+	}
 	if(array_index_exists(@level['arena'], 'schematic')) {
 		set_timeout(50, closure(){
 			skcb_load(@level['arena']['schematic']);
