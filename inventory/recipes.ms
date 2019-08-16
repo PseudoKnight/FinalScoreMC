@@ -1,80 +1,84 @@
 # RECIPES
+if(!import('recompile')) {
+	# Player head recipes
+	add_recipe(array(
+		'key': 'skeleton_to_player_skull',
+		'type': 'SHAPED',
+		'result': array('name': 'PLAYER_HEAD'),
+		'ingredients': array(
+			'S': 'SKELETON_SKULL',
+			'C': 'CLAY_BALL'
+		),
+		'shape': array(
+			'CCC',
+			'CSC',
+			'CCC'
+		)
+	));
 
-# Player head recipes
-add_recipe(array(
-	'key': 'skeleton_to_player_skull',
-	'type': 'SHAPED',
-	'result': array('name': 'PLAYER_HEAD'),
-	'ingredients': array(
-		'S': array('name': 'SKELETON_SKULL'),
-		'C': array('name': 'CLAY_BALL')
-	),
-	'shape': array(
-		'CCC',
-		'CSC',
-		'CCC'
-	),
-));
+	add_recipe(array(
+		'key': 'wither_to_player_skull',
+		'type': 'SHAPED',
+		'result': array('name': 'PLAYER_HEAD'),
+		'ingredients': array(
+			'S': 'WITHER_SKELETON_SKULL',
+			'C': 'CLAY_BALL'
+		),
+		'shape': array(
+			'CCC',
+			'CSC',
+			'CCC'
+		)
+	));
 
-add_recipe(array(
-	'key': 'wither_to_player_skull',
-	'type': 'SHAPED',
-	'result': array('name': 'PLAYER_HEAD'),
-	'ingredients': array(
-		'S': array('name': 'WITHER_SKELETON_SKULL'),
-		'C': array('name': 'CLAY_BALL')
-	),
-	'shape': array(
-		'CCC',
-		'CSC',
-		'CCC'
-	),
-));
+	# Skeleton skull recipe
+	add_recipe(array(
+		'key': 'skeleton_skull',
+		'type': 'SHAPELESS',
+		'result': array('name': 'SKELETON_SKULL'),
+		'ingredients': array('ZOMBIE_HEAD')
+	));
 
-# Skeleton skull recipe
-add_recipe(array(
-	'key': 'skeleton_skull',
-	'type': 'SHAPELESS',
-	'result': array('name': 'SKELETON_SKULL'),
-	'ingredients': array(array('name': 'ZOMBIE_HEAD')),
-));
+	# Enchanted lore books
+	add_recipe(array(
+		'key': 'enchanted_lore_book',
+		'type': 'SHAPELESS',
+		'result': array('name': 'ENCHANTED_BOOK', 'qty': 1, 'meta': array(
+			'display': color('k').'Enchanted Lore Book',
+			'lore': array(color('k').'This is random text.', color('k').'More random text.')
+		)),
+		'ingredients': array('WRITTEN_BOOK', 'ENCHANTED_BOOK')
+	));
 
-# Enchanted lore books
-add_recipe(array(
-	'key': 'enchanted_lore_book',
-	'type': 'SHAPELESS',
-	'result': array('name': 'ENCHANTED_BOOK', 'qty': 1, 'meta': array(
-		'display': color('k').'Enchanted Lore Book',
-		'lore': array(color('k').'This is random text.', color('k').'More random text.'),
-	)),
-	'ingredients': array(array('name': 'WRITTEN_BOOK'), array('name': 'ENCHANTED_BOOK')),
-));
+	# Bottle o' Enchanting experience storage
+	add_recipe(array(
+		'key': 'exp_bottle',
+		'type': 'SHAPELESS',
+		'result': associative_array('name': 'EXPERIENCE_BOTTLE', 'qty': 1),
+		'ingredients': array('GLASS_BOTTLE')
+	));
 
-# Bottle o' Enchanting experience storage
-add_recipe(array(
-	'key': 'exp_bottle',
-	'type': 'SHAPELESS',
-	'result': associative_array('name': 'EXPERIENCE_BOTTLE', 'qty': 1),
-	'ingredients': array(array('name': 'GLASS_BOTTLE')),
-));
+	# Spawner egg ingredient
+	add_recipe(array(
+		'key': 'spawner_egg_in_firework',
+		'type': 'SHAPELESS',
+		'result': array('name': 'FIREWORK_ROCKET', 'qty': 1),
+		'ingredients': array(
+			'FIREWORK_ROCKET', 
+			array_filter(all_materials(), closure(@key, @value) {
+				return(string_ends_with(@value, '_SPAWN_EGG'));
+			})
+		)
+	));
 
-# Spawner egg ingredient
-/* TODO: Figure this out without doing EVERY spawn egg
-add_recipe(array(
-	'key': 'spawner_egg_in_firework',
-	'type': 'SHAPELESS',
-	'result': associative_array('name': 'FIREWORK_ROCKET', 'qty': 1),
-	'ingredients': array(array('name': 'FIREWORK_ROCKET'), array('name': '?_SPAWN_EGG')),
-));
-*/
-
-# Faster bone -> bone-block recipe
-add_recipe(array(
-	'key': 'bone_to_bone_block',
-	'type': 'SHAPELESS',
-	'result': array('name': 'BONE_BLOCK', 'qty': 3),
-	'ingredients': array(array('name': 'BONE', 'qty': 9)),
-));
+	# Faster bone -> bone-block recipe
+	add_recipe(array(
+		'key': 'bone_to_bone_block',
+		'type': 'SHAPELESS',
+		'result': array('name': 'BONE_BLOCK', 'qty': 3),
+		'ingredients': array(array('name': 'BONE', 'qty': 9))
+	));
+}
 
 # Special recipe handling (eg. enchanted lore books, exp bottles, player heads)
 bind('inventory_click', null, array('slottype': 'RESULT'), @event) {
