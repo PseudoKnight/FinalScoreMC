@@ -45,8 +45,10 @@ proc _level_add_spectator(@player, @level) {
 
 proc _level_remove_spectator(@player, @level) {
 	array_remove_values(@level['spectators'], @player);
-	set_pmode(@player, 'ADVENTURE');
-	set_ploc(@player, @level['arena']['lobby']);
+	if(pmode(@player) != 'ADVENTURE' || get_block(location_shift(ploc(@player), 'up')) != 'AIR') {
+		set_pmode(@player, 'ADVENTURE');
+		set_ploc(@player, @level['arena']['lobby']);
+	}
 	clear_peffects(@player);
 	_equip_kit(@player);
 }

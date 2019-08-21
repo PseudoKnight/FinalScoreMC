@@ -472,6 +472,18 @@ proc _level_end(@level, @win) {
 			_unload_mob(@level);
 		}
 	}
+	if(!_remove_activity('level'.@level['region'])){
+		die(); // just in case this fires twice
+	}
+	remove_scoreboard('level'.@level['region']);
+	remove_bar('level'.@level['region']);
+	if(array_index_exists(@level['arena'], 'startblock')) {
+		set_block(@level['arena']['startblock']['loc'], 'AIR');
+	}
+	if(array_index_exists(@level['arena'], 'schematic')) {
+		skcb_load(@level['arena']['schematic']);
+		skcb_paste(array(0, 0, 0, @level['world']), array('origin': true, 'entities': true));
+	}
 	@coins = ceil(@level['coins']);
 	foreach(@p in @level['players']) {
 		if(ponline(@p)) {
@@ -491,19 +503,5 @@ proc _level_end(@level, @win) {
 			stop_named_sound(@p, @level['music'], 'RECORDS');
 			_level_remove_spectator(@p, @level);
 		}
-	}
-	if(!_remove_activity('level'.@level['region'])){
-		die(); // just in case this fires twice
-	}
-	remove_scoreboard('level'.@level['region']);
-	remove_bar('level'.@level['region']);
-	if(array_index_exists(@level['arena'], 'startblock')) {
-		set_block(@level['arena']['startblock']['loc'], 'AIR');
-	}
-	if(array_index_exists(@level['arena'], 'schematic')) {
-		set_timeout(50, closure(){
-			skcb_load(@level['arena']['schematic']);
-			skcb_paste(array(0, 0, 0, @level['world']), array('origin': true, 'entities': true));
-		});
 	}
 }
