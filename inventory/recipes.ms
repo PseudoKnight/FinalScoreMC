@@ -30,6 +30,21 @@ if(!import('recompile')) {
 			'CCC'
 		)
 	));
+	
+	add_recipe(array(
+		'key': 'red_sand',
+		'type': 'SHAPED',
+		'result': array('name': 'RED_SAND', 'qty': 8),
+		'ingredients': array(
+			'S': 'RED_DYE',
+			'C': 'SAND'
+		),
+		'shape': array(
+			'CCC',
+			'CSC',
+			'CCC'
+		)
+	));
 
 	# Skeleton skull recipe
 	add_recipe(array(
