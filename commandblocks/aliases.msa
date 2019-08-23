@@ -55,7 +55,7 @@
 				}
 			}
 		}
-		bind('player_quit', array(id: @player.'quit'), array('player': @player), @e, @cart) {
+		bind('player_quit', array(id: @player.'quit'), array('player': @player), @e, @cart, @player) {
 			unbind()
 			unbind(@player.'vehicle_leave')
 			try {
