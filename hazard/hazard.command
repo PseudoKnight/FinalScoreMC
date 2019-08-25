@@ -1,6 +1,6 @@
 register_command('hazard', array(
 	'description': 'Creates, joins and starts a half-hazard game.',
-	'usage': '/hazard <join|start>',
+	'usage': '/hazard start',
 	'tabcompleter': closure(@alias, @sender, @args, @info) {
 		if(array_size(@args) == 1) {
 			return(_strings_start_with_ic(array('join', 'start'), @args[-1]));
@@ -11,22 +11,14 @@ register_command('hazard', array(
 		include('core.library/game.ms');
 		include('core.library/player.ms');
 		switch(array_get(@args, 0, null)) {
-			case 'join':
+			case 'start':
 				@game = import('hazard');
 				if(!@game) {
 					@game = _hazard_create();
-				}
-				_hazard_add_player(@sender, @game);
-				broadcast(display_name(@sender).color('reset').' joined hazard.', all_players(@game['world']));
-
-			case 'start':
-				@game = import('hazard');
-				if(!@game || array_size(@game['players']) < 1) {
-					die(color('gold').'Not enough players!');
-				}
-				if(@game['running']) {
+				} else {
 					die(color('gold').'Already running!');
 				}
+				_hazard_add_player(@sender, @game);
 				msg('Preparing hazard map...');
 				_hazard_start(@game);
 

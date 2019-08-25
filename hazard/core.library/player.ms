@@ -1,15 +1,25 @@
 proc _hazard_add_player(@player, @game) {
-	@game['players'][@player] = array(
-		'score': 0,
-	);
+	if(array_index_exists(@game['inactivePlayers'], @player)) {
+		@game['players'][@player] = array_remove(@game['inactivePlayers'], @player);
+	} else {
+		@game['players'][@player] = array(
+			'score': 0,
+		);
+	}
 	set_pscoreboard(@player, 'hazard');
 	bar_add_player('hazard', @player);
+	if(@game['state'] == 'RUN') {
+		@coords = sk_region_info('hazard_start', @game['world'], 0);
+		@loc = array(rand(@coords[1][0] + 1, @coords[0][0]) + 0.5, @coords[1][1], rand(@coords[1][2] + 1, @coords[0][2]) + 0.5, @game['world']);
+		set_ploc(@player, @loc);
+	} else if(@game['state'] == 'BUILD') {
+		set_pmode(@player, 'CREATIVE');
+	}
 }
 
 proc _hazard_remove_player(@player, @game) {
-	array_remove(@game['players'], @player);
+	@game['inactivePlayers'][@player] = array_remove(@game['players'], @player);
 	if(ponline(@player)) {
-		set_ploc(@player, get_value('warp.hazard'));
 		bar_remove_player('hazard', @player);
 		set_pscoreboard(@player);
 		_equip_kit(@player);

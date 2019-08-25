@@ -6,14 +6,15 @@ proc _hazard_create() {
 		throw('NotFoundException', 'hazard warp does not exist!');
 	}
 	@game = array(
+		'state': 'STARTING',
 		'world': pworld(),
 		'players': associative_array(),
+		'inactivePlayers': associative_array(),
 		'round': 0,
 		'targetScore': 50,
 		'maxRounds': 15,
 		'timer': 50,
 		'buildTimer': 15,
-		'running': false,
 		'entities': array(),
 	);
 
@@ -40,7 +41,6 @@ proc _hazard_start(@game) {
 	_hazard_clean_region(@game);
 	_hazard_define_regions(@game);
 	_hazard_bind(@game);
-	@game['running'] = true;
 	@timer = mutable_primitive(neg(@game['timer']));
 	set_interval(1000, closure() {
 		if(@game['round'] > 0) {
@@ -57,6 +57,11 @@ proc _hazard_start(@game) {
 					play_sound(ploc(@player), array('sound': 'ENTITY_VINDICATOR_CELEBRATE', 'pitch': 1.5));
 				} else if(!array_contains(@regions, 'hazard')) {
 					_hazard_remove_player(@player, @game);
+				}
+			}
+			foreach(@player in all_players(@game['world'])) {
+				if(!array_index_exists(@game['players'], @player) && array_contains(sk_current_regions(@player), 'hazard')) {
+					_hazard_add_player(@player, @game);
 				}
 			}
 			if(array_size(@game['players']) == 0) {
@@ -77,6 +82,7 @@ proc _hazard_start(@game) {
 				@timer++; // keep waiting for the first block placement
 			}
 		} else if(@timer == 0) {
+			@game['state'] = 'RUN';
 			_hazard_set_mode(@game, 'ADVENTURE');
 			_hazard_spawn_players(@game);
 			_hazard_activate_entities(@game);
@@ -91,6 +97,7 @@ proc _hazard_start(@game) {
 				_hazard_end(@game);
 				clear_task();
 			} else {
+				@game['state'] = 'BUILD';
 				@game['round']++;
 				_hazard_set_mode(@game, 'CREATIVE');
 				_hazard_spawn_players(@game);
