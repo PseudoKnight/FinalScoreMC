@@ -103,7 +103,11 @@ bind('player_interact_at_entity', null, array('clicked': 'ARMOR_STAND'), @event)
 			set_interval(50, closure(){
 				if(!ponline(player()) || !psneaking() || !entity_exists(@event['id'])) {
 					try {
-						set_entity_spec(@event['id'], array('gravity': @armorstand['gravity']));
+						if(pmode() == 'CREATIVE') {
+							set_entity_spec(@event['id'], array('gravity': @armorstand['gravity']));
+						} else {
+							set_entity_spec(@event['id'], array('gravity': !get_block_info(entity_loc(@event['id']), 'solid')));
+						}
 					} catch(BadEntityException @ex) {
 						// no longer exists
 					}
