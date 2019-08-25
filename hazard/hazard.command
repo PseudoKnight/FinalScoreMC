@@ -8,12 +8,9 @@ register_command('hazard', array(
         return(array());
     },
     'executor': closure(@alias, @sender, @args, @info) {
-        if(!@args) {
-            return(false);
-        }
         include('core.library/game.ms');
         include('core.library/player.ms');
-        switch(@args[0]) {
+        switch(array_get(@args, 0, null)) {
             case 'join':
                 @game = import('hazard');
                 if(!@game) {
