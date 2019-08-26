@@ -2,9 +2,6 @@ proc _hazard_create() {
 	if(!sk_region_exists('hazard')) {
 		throw('NotFoundException', 'hazard region does not exist!');
 	}
-	if(is_null(get_value('warp.hazard'))) {
-		throw('NotFoundException', 'hazard warp does not exist!');
-	}
 	@game = array(
 		'state': 'STARTING',
 		'world': pworld(),
