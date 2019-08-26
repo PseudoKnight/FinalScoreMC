@@ -136,4 +136,14 @@ You can adjust the volume of notification sounds (eg. direct messages) via the V
 
 You can craft bones directly to bone blocks.
 
-You can skulls into player skulls using clay balls, the naming it in an anvil applies that player's skin to the skull.
+Skulls can be crafted into player skulls using clay balls, the naming it in an anvil applies that player's skin to the skull.
+
+Blast furnaces can turn bones into bone meal, though it's less efficient.
+
+Red sand can be crafted by surrounding sand around red dye in the crafting table.
+
+The beam target can be set for an end crystal by placing a dragon egg within 32 meters of it.
+
+Hats can be put on villagers by right clicking on their head with an item in hand.
+
+You can play an instrument by swapping one of the following to your offhand: iron_nugget, gold_nugget, string, bone, iron_ingot, or bamboo.
