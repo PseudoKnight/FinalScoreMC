@@ -93,6 +93,14 @@ if(!import('recompile')) {
 		'result': array('name': 'BONE_BLOCK', 'qty': 3),
 		'ingredients': array(array('name': 'BONE', 'qty': 9))
 	));
+
+	# bone -> bone_meal automation recipe
+	add_recipe(array(
+		'key': 'blasting_bone_to_bone_meal',
+		'type': 'BLASTING',
+		'result': array('name': 'BONE_MEAL'),
+		'input': 'BONE'
+	));
 }
 
 # Special recipe handling (eg. enchanted lore books, exp bottles, player heads)
