@@ -96,7 +96,7 @@ proc _race_countdown(@race) {
 			} else {
 				@timer[0]--;
 				foreach(@p: @v in @race['players']) {
-					title_msg(@p, '', @timer[0], 0, 30, 0);
+					title(@p, null, @timer[0], 0, 30, 0);
 				}
 				if(@timer[0] < 4) {
 					play_sound(ploc(), array('sound': 'BLOCK_NOTE_BLOCK_PLING'));
@@ -109,7 +109,7 @@ proc _race_countdown(@race) {
 proc _race_start(@race) {
 	@race['state'] = 'running';
 	foreach(@p: @v in @race['players']) {
-		title_msg(@p, color('green')'Go!', '', 0, 40, 20);
+		title(@p, color('green')'Go!', null, 0, 40, 20);
 	}
 	play_sound(ploc(), array('sound': 'BLOCK_NOTE_BLOCK_PLING', 'pitch': 2));
 	_race_drop_players(@race);
