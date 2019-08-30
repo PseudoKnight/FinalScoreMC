@@ -112,7 +112,7 @@ case 'load':
 			@weapon = get_mob_equipment(@e['id'])['weapon']
 			if(@weapon && @weapon['name'] == 'STEP') {
 				@loc = entity_loc(@e['id']);
-				spawn_particlet(@loc, 'EXPLOSION_LARGE');
+				spawn_particle(@loc, 'EXPLOSION_LARGE');
 				play_sound(@loc, array('sound': 'BLOCK_ENDER_CHEST_OPEN'));
 				entity_remove(@e['id']);
 				consume();
