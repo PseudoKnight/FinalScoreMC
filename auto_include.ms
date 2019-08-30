@@ -163,13 +163,12 @@ proc _get_activities_string() {
 
 proc _update_activities() {
 	@activities = _get_activities_string();
-	@serverTitle = colorize('&6&lFINALSCORE&e&lMC');
 	if(@activities) {
 		@footer = color('gray').'Current Activities:\n'.color('reset').@activities;
 	} else {
 		@footer = null;
 	}
 	foreach(@p in all_players()) {
-		psend_list_header_footer(@p, @serverTitle, @footer);
+		set_plist_footer(@p, @footer);
 	}
 }
