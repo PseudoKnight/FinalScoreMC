@@ -79,8 +79,8 @@ case 'load':
 		@loc['x'] += @x;
 		@loc['y'] += @y + 2.4;
 		@loc['z'] += @z;
-		@star = spawn_entity('DROPPED_ITEM', 1, @loc)[0];
-		set_entity_spec(@star, array('itemstack': array('name': 'NETHER_STAR', 'meta': array('display': player(), 'lore': array(3))), 'pickupdelay': 1));
+		@star = drop_item(@loc, array('name': 'NETHER_STAR', 'meta': array('display': player(), 'lore': array(3))), false);
+		set_entity_spec(@star, array('pickupdelay': 1));
 		set_entity_velocity(@star, @v);
 		play_sound(@loc, array('sound': 'ENTITY_IRON_GOLEM_ATTACK', 'pitch': 2));
 		set_interval(50, closure(){
