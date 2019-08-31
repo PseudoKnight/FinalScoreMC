@@ -163,10 +163,9 @@ proc _get_activities_string() {
 
 proc _update_activities() {
 	@activities = _get_activities_string();
+	@footer = '';
 	if(@activities) {
 		@footer = color('gray').'Current Activities:\n'.color('reset').@activities;
-	} else {
-		@footer = null;
 	}
 	foreach(@p in all_players()) {
 		set_plist_footer(@p, @footer);
