@@ -1,30 +1,30 @@
 bind('player_move', null, array('world': 'outworld'), @event) {
 	@loc = ploc();
-	@block = get_block_at(@loc);
+	@block = get_block(@loc);
 	switch(@block) {
-		case '2:0': #grass
-			set_block_at(@loc, '3:0');
-		case '3:0':
-			set_block_at(@loc, '3:1');
-		case '3:1':
-			set_block_at(@loc, '13:0');
-		case '13:0':
-			set_block_at(@loc, '4:0');
-		case '4:0':
-			set_block_at(@loc, '1:5');
-		case '1:5':
-			set_block_at(@loc, '1:0');
+		case 'GRASS_BLOCK':
+			set_block(@loc, 'DIRT');
+		case 'DIRT':
+			set_block(@loc, 'COARSE_DIRT');
+		case 'COARSE_DIRT':
+			set_block(@loc, 'GRAVEL');
+		case 'GRAVEL':
+			set_block(@loc, 'COBBLESTONE');
+		case 'COBBLESTONE':
+			set_block(@loc, 'ANDESITE');
+		case 'ANDESITE':
+			set_block(@loc, 'STONE');
 	}
 
 }
 
-bind('item_despawn', null, array('item': 6), @event) {
-	if(@event['location']['world'] !== 'outworld') {
+bind('item_despawn', null, null, @event) {
+	if(@event['location']['world'] !== 'outworld' || !string_ends_with(@event['item']['name'], '_SAPLING')) {
 		die();
 	}
 
-	@block = get_block_at(location_shift(@event['location'], 'down'));
-	if((@block[0] == 2 || @block[0] == 3) && @block[1] === ':') {
-		set_block_at(@event['location'], @event['item']['type'].':'.@event['item']['data']);
+	@block = get_block(location_shift(@event['location'], 'down'));
+	if(@block == 'GRASS_BLOCK' || @block == 'DIRT') {
+		set_block(@event['location'], @event['item']['name']);
 	}
 }
