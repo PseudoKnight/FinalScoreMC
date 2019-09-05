@@ -15,15 +15,15 @@ proc _draw_selection(@clear = false) {
 	@players = players_in_radius(112);
 
 	if(!is_null(@1)) {
-		_send_block_changes(@players, @1, if(@clear, get_block_at(@1), '95:11'));
+		_send_block_changes(@players, @1, if(@clear, get_blockdata_string(@1), 'BLUE_STAINED_GLASS'));
 	}
 	if(!is_null(@2)) {
-		_send_block_changes(@players, @2, if(@clear, get_block_at(@2), '95:1'));
+		_send_block_changes(@players, @2, if(@clear, get_blockdata_string(@2), 'ORANGE_STAINED_GLASS'));
 	}
 
 	if(!is_null(@1) && !is_null(@2)) {
-		@1block = '95:3';
-		@2block = '95:4';
+		@1block = 'LIGHT_BLUE_STAINED_GLASS';
+		@2block = 'YELLOW_STAINED_GLASS';
 
 		if(@1['x'] != @2['x']) {
 			@1x = @1[];
@@ -35,8 +35,8 @@ proc _draw_selection(@clear = false) {
 				@1x['x'] += 1;
 				@2x['x'] -= 1;
 			}
-			_send_block_changes(@players, @1x, if(@clear, get_block_at(@1x), @1block));
-			_send_block_changes(@players, @2x, if(@clear, get_block_at(@2x), @2block));
+			_send_block_changes(@players, @1x, if(@clear, get_blockdata_string(@1x), @1block));
+			_send_block_changes(@players, @2x, if(@clear, get_blockdata_string(@2x), @2block));
 		}
 
 		if(@1['y'] != @2['y']) {
@@ -49,8 +49,8 @@ proc _draw_selection(@clear = false) {
 				@1y['y'] += 1;
 				@2y['y'] -= 1;
 			}
-			_send_block_changes(@players, @1y, if(@clear, get_block_at(@1y), @1block));
-			_send_block_changes(@players, @2y, if(@clear, get_block_at(@2y), @2block));
+			_send_block_changes(@players, @1y, if(@clear, get_blockdata_string(@1y), @1block));
+			_send_block_changes(@players, @2y, if(@clear, get_blockdata_string(@2y), @2block));
 		}
 
 		if(@1['z'] != @2['z']) {
@@ -63,8 +63,8 @@ proc _draw_selection(@clear = false) {
 				@1z['z'] += 1;
 				@2z['z'] -= 1;
 			}
-			_send_block_changes(@players, @1z, if(@clear, get_block_at(@1z), @1block));
-			_send_block_changes(@players, @2z, if(@clear, get_block_at(@2z), @2block));
+			_send_block_changes(@players, @1z, if(@clear, get_blockdata_string(@1z), @1block));
+			_send_block_changes(@players, @2z, if(@clear, get_blockdata_string(@2z), @2block));
 		}
 	}
 }
