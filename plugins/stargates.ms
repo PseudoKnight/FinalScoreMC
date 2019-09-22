@@ -1,21 +1,23 @@
 if(extension_exists('CHStargate')) {
 	bind('stargate_access', null, null, @event) {
-		if(@event['player'] != @event['owner']) {
+		@ownerName = sg_get_owner_name(@event['portal'], @event['network']);
+		if(sg_get_owner_uuid(@event['portal'], @event['network']) != null && @event['player'] != @ownerName) {
 			@pdata = _pdata(@event['player']);
-			if(array_index_exists(@pdata, 'names') && array_contains(@pdata['names'], @event['owner'])) {
-				sg_set_owner(@event['portal'], @event['network'], @event['player']);
+			if(array_index_exists(@pdata, 'names') && array_contains(@pdata['names'], @ownerName)) {
+				sg_set_owner(@event['portal'], @event['network'], puuid(@event['player']));
 			}
 		}
 	}
 
 	bind('stargate_destroy', null, array('deny': true), @event) {
-		if(@event['player'] != @event['owner']) {
+		@ownerName = sg_get_owner_name(@event['portal'], @event['network']);
+		if(sg_get_owner_uuid(@event['portal'], @event['network']) != null && @event['player'] != @ownerName) {
 			@pdata = _pdata(@event['player']);
-			if(array_index_exists(@pdata, 'names') && array_contains(@pdata['names'], @event['owner'])) {
-				sg_set_owner(@event['portal'], @event['network'], @event['player']);
+			if(array_index_exists(@pdata, 'names') && array_contains(@pdata['names'], @ownerName)) {
+				sg_set_owner(@event['portal'], @event['network'], puuid(@event['player']));
 				cancel(false);
 			} else {
-				msg('This Stargate belongs to '.@event['owner']);
+				msg('This Stargate belongs to '.@ownerName);
 			}
 		}
 	}
