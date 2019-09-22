@@ -217,6 +217,9 @@ register_command('entity', array(
 					return(false);
 				}
 				@id = @args[1];
+				if(string_starts_with(@id, '{')) {
+					@id = json_decode(@id);
+				}
 				@entityCount = 1;
 				if(array_size(@args) == 3) {
 					@entityCount = integer(@args[2]);
