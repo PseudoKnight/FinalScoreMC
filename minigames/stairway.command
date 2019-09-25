@@ -29,7 +29,7 @@ register_command('stairway', array(
 			@players[@player] = 'WHITE';
 			runas('~console', '/jukebox music @stairway http://finalscoremc.com/media/stairway.mp3 {volume:30,fadeDuration:2}');
 		} else {
-			@players[@player] = array_rand(reflect_pull('enum', 'DyeColor'), 1, false)[0];
+			@players[@player] = array_get_rand(reflect_pull('enum', 'DyeColor'));
 		}
 		runas('~console', '/jukebox show add '.@player.' @stairway');
 		@ploc = ploc(@player);

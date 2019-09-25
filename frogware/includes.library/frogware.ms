@@ -27,7 +27,7 @@ proc _fw_endgame(@winners) {
 		'Achievement get: Beaten by ',
 		'Most hoppity: ',
 	)
-	_fw_msg(color('green').array_rand(@messages, 1, false)[0].array_implode(@winners, ' & '));
+	_fw_msg(color('green').array_get_rand(@messages).array_implode(@winners, ' & '));
 	foreach(@p in all_players('custom')) {
 		if(_fw_player(@p)) {
 			if(array_contains(@winners, @p)) {
@@ -134,8 +134,8 @@ proc _fw_startround(@secs = 12) {
 			} else {
 				@tasks = array('pvp');
 			}
-			@task = @tasks[rand(array_size(@tasks))]
-			if(@total == 1 && @task === 'pvp', @task = @tasks[rand(array_size(@tasks))])
+			@task = array_get_rand(@tasks);
+			if(@total == 1 && @task === 'pvp', @task = array_get_rand(@tasks))
 			queue_delay(1000, 'fw2')
 			queue_push(closure(){
 				play_named_sound(@loc, array('sound': 'record.stal', 'pitch': 10 / @secs, 'category': 'RECORDS', 'volume': 3));

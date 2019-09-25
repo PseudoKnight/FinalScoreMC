@@ -29,7 +29,7 @@ proc _load_events(@id) {
 		if(array_index_exists(@pvp, 'team')) {
 			@team = @pvp['players'][@player]['team'];
 		}
-		@loc = array_rand(@pvp['arena']['spawn'][@team], 1, false)[0];
+		@loc = array_get_rand(@pvp['arena']['spawn'][@team]);
 		set_ploc(@player, @loc);
 		play_sound(@loc, associative_array('sound': 'ENTITY_LLAMA_SPIT', 'pitch': 0.5), @player);
 		_player_equip(@id, @player);

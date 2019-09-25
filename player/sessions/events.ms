@@ -66,7 +66,7 @@ bind('player_join', null, null, @event) {
 			} else {
 				@tips = import(_world_group(pworld()).'-tips');
 				if(@tips) {
-					@tip = @tips[rand(array_size(@tips))];
+					@tip = array_get_rand(@tips);
 					msg('\n '.colorize(@tip));
 					msg(color('1').color('m').'\n\u2575'.@line.color('1').'\u2575');
 				}

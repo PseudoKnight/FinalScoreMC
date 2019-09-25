@@ -102,7 +102,7 @@ bind('target_player', null, array('mobtype': 'ZOMBIE'), @event, @day) {
 					'TRADER_LLAMA',
 					'WANDERING_TRADER',
 				);
-				@mob = @mobs[rand(array_size(@mobs))];
+				@mob = array_get_rand(@mobs);
 				set_mob_equipment(@event['id'], associative_array(
 					'WEAPON': array('name': @mob.'_SPAWN_EGG'),
 				));
@@ -120,7 +120,7 @@ bind('target_player', null, array('mobtype': 'ZOMBIE'), @event, @day) {
 					&& ponline(@event['player'])
 					&& phealth(@event['player']) > 10
 					&& entity_can_see(@event['id'], puuid(@event['player']))) {
-						@mob = @mobs[rand(array_size(@mobs))];
+						@mob = array_get_rand(@mobs);
 						set_mob_equipment(@event['id'], associative_array(
 							'OFF_HAND': array('name': @mob.'_SPAWN_EGG'),
 						));

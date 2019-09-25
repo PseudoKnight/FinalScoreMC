@@ -999,7 +999,7 @@ bind('inventory_click', array('id': 'shard-scavenger-inventoryclick'), array('cl
 				for(@j = 0, @j < @width, @j++) {
 					@item = @card[@i][@j];
 					if(@item['material'] == @material && !@item['players']) {
-						@newmaterial = array_rand(@items, 1, false)[0];
+						@newmaterial = array_get_rand(@items);
 						@card[@i][@j] = array('players': array(), 'material': @newmaterial);
 						set_pscore('reroll', player(), 1, 'shard');
 						_refresh_card();

@@ -15,7 +15,7 @@ bind('creature_spawn', null, array('type': 'ZOMBIE', 'reason': 'NATURAL'), @even
 			));
 			@effects = reflect_pull('enum', 'PotionEffectType');
 			do {
-				@effect = to_lower(string(array_rand(@effects, 1, false)[0]));
+				@effect = to_lower(string(array_get_rand(@effects)));
 				@bottle['meta']['potions'][@effect] = array('seconds': rand(1, 480), 'strength': rand(3)),
 			} while(rand() > 0.67);
 		} else {

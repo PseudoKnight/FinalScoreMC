@@ -17,7 +17,7 @@ proc _cc_generate(@world = 'custom') {
 			for(@x = min(@rg[0][0], @rg[1][0]), @x <= max(@rg[0][0], @rg[1][0]), @x++) {
 				for(@z = min(@rg[0][2], @rg[1][2]), @z <= max(@rg[0][2], @rg[1][2]), @z++) {
 					if(!rand(@density)) {
-						set_block(array(@x, @y, @z, @world), array_rand(reflect_pull('enum', 'DyeColor'), 1, false)[0].'_TERRACOTTA', false);
+						set_block(array(@x, @y, @z, @world), array_get_rand(reflect_pull('enum', 'DyeColor')).'_TERRACOTTA', false);
 					} else {
 						set_block(array(@x, @y, @z, @world), 'AIR', false);
 					}
@@ -65,7 +65,7 @@ proc _cc_spawn(@player, @world = 'custom') {
 
 proc _cc_add_player(@player, @world = 'custom') {
 	@cc = import('cubeclimber');
-	@cc['players'][@player] = array_rand(reflect_pull('enum', 'DyeColor'), 1, false)[0];
+	@cc['players'][@player] = array_get_rand(reflect_pull('enum', 'DyeColor'));
 	set_pscoreboard(@player, 'cc');
 	set_pscore('height', @player, -1, 'cc');
 	export('cubeclimber', @cc);

@@ -222,7 +222,7 @@
 			}
 
 			// add walls
-			@block = array_rand(reflect_pull('enum', 'DyeColor'), 1, false)[0].'_TERRACOTTA';
+			@block = array_get_rand(reflect_pull('enum', 'DyeColor')).'_TERRACOTTA';
 			@minX = min(@p1['x'], @p2['x']);
 			@minZ = min(@p1['z'], @p2['z']);
 			@maxX = max(@p1['x'], @p2['x']);

@@ -117,7 +117,7 @@ bind('player_interact', null, array('itemname': 'FIREWORK_ROCKET', 'button': 'ri
 			@meta = associative_array('strength': @f, 'effects': array());
 			@num = rand(1, 3);
 			foreach(@m in range(@num)) {
-				@type = array_rand(array('BALL', 'BALL_LARGE', 'STAR', 'BURST', 'CREEPER'), 1, false)[0];
+				@type = array_get_rand(array('BALL', 'BALL_LARGE', 'STAR', 'BURST', 'CREEPER'));
 				@startcolors = array_rand(@colors, rand(1, 3), false);
 				@endcolors = array_filter(@colors, closure(@key, @value){
 					return(!array_contains(@startcolors, @value));
@@ -131,7 +131,7 @@ bind('player_interact', null, array('itemname': 'FIREWORK_ROCKET', 'button': 'ri
 			}
 			@firework = launch_firework(@loc, @meta);
 			if(@f > 1 && !rand(4)) {
-				set_metadata(@firework, 'mob', array_rand(array('chicken', 'bat', 'pig'), 1, false)[0]);
+				set_metadata(@firework, 'mob', array_get_rand(array('chicken', 'bat', 'pig')));
 			}
 		}
 

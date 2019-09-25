@@ -501,7 +501,7 @@ proc _fw_task(@task, @state, @secs) {
 	case 'shepherd':
 		if(@state == 'start') {
 			@colors = reflect_pull('enum', 'DyeColor');
-			@color = array_rand(@colors, 1, false)[0];
+			@color = array_get_rand(@colors);
 			_fw_msg(array(
 				@color.color('r').' is the new black',
 				'Shear the '.@color.color('r').' ones!',
@@ -512,7 +512,7 @@ proc _fw_task(@task, @state, @secs) {
 			@region = sk_region_info('frogware', 'custom')[0]
 			for(@i = 0, @i < @count, @i++) {
 				spawn_entity('SHEEP', 1, _fw_loc(), closure(@entity) {
-					set_entity_spec(@entity, array('color': array_rand(@colors, 1, false)[0]));
+					set_entity_spec(@entity, array('color': array_get_rand(@colors)));
 				});
 			}
 			if(!rand(4)) {

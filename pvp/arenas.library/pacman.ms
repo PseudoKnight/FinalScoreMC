@@ -108,7 +108,7 @@ proc _load_events(@id) {
 						foreach(@p: @player in @pvp['players']) {
 							_player_equip(@id, @p);
 							@team = @player['team'];
-							@loc = array_rand(@pvp['arena']['spawn'][@team], 1, false)[0];
+							@loc = array_get_rand(@pvp['arena']['spawn'][@team]);
 							set_ploc(@p, @loc);
 							set_peffect(@p, 'SLOWNESS', 10, 3);
 						}

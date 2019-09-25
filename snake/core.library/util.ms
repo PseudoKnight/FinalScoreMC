@@ -146,7 +146,7 @@ proc _snake_change_speed(@value, @game) {
 
 proc _snake_play_song(@game) {
 	@songs = array('security_robots', 'so_long', 'neon_transit', 'flying_me_softly', 'epic_fall', 'zigzag');
-	@song = @songs[rand(array_size(@songs))];
+	@song = array_get_rand(@songs);
 	foreach(@p in all_players()) {
 		if(array_contains(sk_current_regions(@p), 'snake_'.@game['arena'])) {
 			action_msg(@p, color('aqua').@song.' by Alexandr Zhelanov');

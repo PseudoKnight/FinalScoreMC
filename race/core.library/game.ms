@@ -11,7 +11,7 @@ proc _race_create_and_join(@id) {
 	} else if(!array_index_exists(@race['players'], player()) && @race['state'] != 'ending') {
 		if(@race['state'] == 'countdown' || @race['state'] == 'running') {
 			_race_prepare_player(@race, player());
-			_race_place_player(@race, player(), array_rand(@race['spawn'], 1, false)[0]);
+			_race_place_player(@race, player(), array_get_rand(@race['spawn']));
 			if(@race['state'] == 'running') {
 				set_timeout(1000, closure(){
 					_race_drop_player(@race, player());

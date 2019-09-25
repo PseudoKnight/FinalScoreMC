@@ -180,7 +180,7 @@
 	} else {
 		if($sound === 'random') {
 			@sounds = reflect_pull('enum', 'Sound');
-			@sound = @sounds[rand(array_size(@sounds))];
+			@sound = array_get_rand(@sounds);
 			@range = rand();
 			@pitch = 2 - (1.5 * @range);
 		} else {

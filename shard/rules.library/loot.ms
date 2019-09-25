@@ -98,7 +98,7 @@ proc _random_item(@baseItems) {
 			);
 			@meta = array('stored': array());
 			do {
-				@enchant = array_rand(@enchants, 1, false)[0];
+				@enchant = array_get_rand(@enchants);
 				@meta['stored'][@enchant] = array('elevel': rand(1, 3));
 			} while(rand(2));
 		case 'POTION':
@@ -107,15 +107,15 @@ proc _random_item(@baseItems) {
 		case 'LINGERING_POTION':
 			if(rand(2)) {
 				@state = rand(3);
-				@potionType = array_rand(array('SPEED', 'SLOWNESS', 'STRENGTH', 'INSTANT_HEAL', 'INSTANT_DAMAGE', 'JUMP',
+				@potionType = array_get_rand(array('SPEED', 'SLOWNESS', 'STRENGTH', 'INSTANT_HEAL', 'INSTANT_DAMAGE', 'JUMP',
 				'REGEN', 'FIRE_RESISTANCE', 'WATER_BREATHING', 'INVISIBILITY', 'NIGHT_VISION', 'WEAKNESS',
-				'POISON', 'LUCK'), 1, false)[0];
+				'POISON', 'LUCK'));
 				@meta = array('base': array('extended': (@state == 1), 'upgraded': (@state == 2), 'type': @potionType));
 			} else {
 				@meta = array('potions': array());
 				@effects = reflect_pull('enum', 'PotionEffectType');
 				do {
-					@effect = array_rand(@effects, 1, false)[0];
+					@effect = array_get_rand(@effects);
 					@meta['potions'][@effect] = array('seconds': rand(1, 480), 'strength': rand(3)),
 				} while(rand(2));
 			}

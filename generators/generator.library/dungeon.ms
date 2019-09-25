@@ -457,7 +457,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 			// queue blocks in chunks
 			proc _queue_block(@chunk, @loc, @material) {
 				if(is_array(@material)) {
-					@material = array_rand(@material, 1, false)[0];
+					@material = array_get_rand(@material);
 				}
 				@chunk[] = array('loc': @loc[], 'mat': @material);
 				return(@chunk);

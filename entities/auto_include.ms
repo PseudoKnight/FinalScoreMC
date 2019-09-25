@@ -194,7 +194,7 @@ proc _get_entity(@entity = null) {
 		export('entitytypes', @entityTypes);
 	}
 	if(is_null(@entity)) {
-		@entity = @entityTypes[rand(array_size(@entityTypes))];
+		@entity = array_get_rand(@entityTypes);
 	} else {
 		if(array_contains_ic(@entityTypes, @entity)) {
 			@entity = array('type': @entity);

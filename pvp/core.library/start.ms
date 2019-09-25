@@ -57,7 +57,7 @@ proc _pvp_start(@pvp, @id){
 		@pvp['arena'] = array_merge(@parent, @pvp['arena']);
 	} else if(array_index_exists(@pvp['arena'], 'arenaselect')) {
 		if(!@childid) {
-			@childid = array_rand(@pvp['arena']['arenaselect']['arenas'], 1, false)[0];
+			@childid = array_get_rand(@pvp['arena']['arenaselect']['arenas']);
 		}
 		@child = get_value('arena', @childid);
 		if(!@child) {

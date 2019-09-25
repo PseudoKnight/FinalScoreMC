@@ -44,7 +44,7 @@ proc _fw_mobs(@mob = 'random', @num = 'random') {
 	if(@mob == 'random') {
 		@mobs = array('creeper', 'zombie', 'silverfish', 'slime', 'magma_cube', 'pig_zombie', 'shulker', 'ghast',
 				'blaze', 'husk', 'polar_bear', 'vindicator', 'evoker', 'vex');
-		@mob = @mobs[rand(array_size(@mobs))];
+		@mob = array_get_rand(@mobs);
 	}
 	@height = 0;
 	if(@num == 'random') {
@@ -160,7 +160,7 @@ proc _fw_randompotion(@potentials, @secs = 20) {
 		'invis': array(14, 1),
 		'blind': array(15, 1)
 	)
-	@potion = array_rand(@potentials, 1, false)[0];
+	@potion = array_get_rand(@potentials);
 	if(@potion == 'blind') {
 		@region = sk_region_info('frogware', 'custom')[0];
 		@loc = @region[1];
@@ -176,7 +176,7 @@ proc _fw_randompotion(@potentials, @secs = 20) {
 
 proc _fw_msg(@msg) {
 	if(is_array(@msg)) {
-		@msg = array_rand(@msg, 1, false)[0];
+		@msg = array_get_rand(@msg);
 	}
 	foreach(@p in all_players('custom')) {
 		if(_fw_player(@p)) {

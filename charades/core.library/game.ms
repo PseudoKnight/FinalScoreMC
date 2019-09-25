@@ -10,7 +10,7 @@ proc _prepare_game(@category) {
 			die(color('yellow').'Available categories: '.array_implode(@categories, ', ').'.');
 		}
 	} else {
-		@category = array_rand(@categories, 1, false)[0];
+		@category = array_get_rand(@categories);
 	}
 
 	@players = array();

@@ -6,7 +6,7 @@ bind('entity_death', null, null, @event) {
 	}
 
 	@meta = associative_array('strength': 0, 'effects': array());
-	@type = array_rand(array('BALL', 'BALL_LARGE', 'STAR', 'BURST', 'CREEPER'), 1, false)[0];
+	@type = array_get_rand(array('BALL', 'BALL_LARGE', 'STAR', 'BURST', 'CREEPER'));
 	@startcolors = array_rand(@colors, rand(1, 3), false);
 	@endcolors = array_filter(@colors, closure(@key, @value){
 		return(!array_contains(@startcolors, @value));

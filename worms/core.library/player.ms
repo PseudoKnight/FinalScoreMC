@@ -4,7 +4,7 @@ proc _worms_add_player(@player, @game) {
 	
 	@game['players'][@player] = array(
 		'segments': array(),
-		'color': array_rand(reflect_pull('enum', 'DyeColor'), 1, false)[0],
+		'color': array_get_rand(reflect_pull('enum', 'DyeColor')),
 	);
 	
 	@loc = ploc(@player);

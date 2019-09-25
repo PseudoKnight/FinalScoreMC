@@ -160,7 +160,7 @@ proc _hoops_start() {
 				if(@game['possession']) {
 					_hoops_ball_create(@game['possessionLoc']);
 					set_entity_spec(@game['ball'], array('gravity': false));
-					@game['holder'] = array_rand(@game['teams'][@game['possession']]['players'], 1, false)[0];
+					@game['holder'] = array_get_rand(@game['teams'][@game['possession']]['players']);
 					@game['possessionLoc']['yaw'] = get_yaw(@game['possessionLoc'], @game['center']);
 					set_ploc(@game['holder'], location_shift(@game['possessionLoc'], 'down'));
 					@game['possession'] = '';
@@ -191,9 +191,9 @@ proc _hoops_cheer(@count = 15, @jump = true, @sound = array('ENTITY_VILLAGER_YES
 			clear_task();
 		}
 		try {
-			@villager = array_rand(@game['villagers'], 1, false)[0];
+			@villager = array_get_rand(@game['villagers']);
 			@loc = entity_loc(@villager);
-			play_sound(@loc, array('sound': array_rand(@sound, 1, false)[0], 'volume': 3));
+			play_sound(@loc, array('sound': array_get_rand(@sound), 'volume': 3));
 			if(@jump) {
 				set_entity_loc(@villager, location_shift(@loc, 'up'));
 				set_timeout(800, closure(){
