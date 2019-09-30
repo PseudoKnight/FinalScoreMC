@@ -6,6 +6,11 @@ register_command('eval', array(
 		return(array());
 	},
 	'executor': closure(@alias, @sender, @args, @info) {
-		msg(eval(array_implode(@args)));
+		@script = array_implode(@args);
+		@output = eval(
+			'<! suppressWarnings: UseBareStrings >'
+			. @script
+		);
+		msg(@output);
 	}
 ));
