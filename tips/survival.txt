@@ -138,7 +138,7 @@ You can craft bones directly to bone blocks.
 
 Skulls can be crafted into player skulls using clay balls, the naming it in an anvil applies that player's skin to the skull.
 
-Blast furnaces can turn bones into bone meal, though it's less efficient.
+Furnaces can turn bones into bone meal, though it's less efficient.
 
 Red sand can be crafted by surrounding sand around red dye in the crafting table.
 

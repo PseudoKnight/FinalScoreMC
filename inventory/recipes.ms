@@ -96,10 +96,28 @@ if(!import('recompile')) {
 
 	# bone -> bone_meal automation recipe
 	add_recipe(array(
-		'key': 'blasting_bone_to_bone_meal',
-		'type': 'BLASTING',
+		'key': 'furnace_bone_to_bone_meal',
+		'type': 'FURNACE',
 		'result': array('name': 'BONE_MEAL'),
 		'input': 'BONE'
+	));
+
+	add_recipe(array(
+		'key': 'recycle_glass',
+		'type': 'FURNACE',
+		'result': array('name': 'GLASS'),
+		'input': array_filter(all_materials(), closure(@key, @value) {
+			return(string_ends_with(@value, '_STAINED_GLASS'));
+		})
+	));
+
+	add_recipe(array(
+		'key': 'recycle_glass_pane',
+		'type': 'FURNACE',
+		'result': array('name': 'GLASS_PANE'),
+		'input': array_filter(all_materials(), closure(@key, @value) {
+			return(string_ends_with(@value, '_STAINED_GLASS_PANE'));
+		})
 	));
 }
 
