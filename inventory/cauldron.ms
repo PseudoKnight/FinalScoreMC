@@ -39,16 +39,17 @@ bind('player_interact', null, array('block': 'CAULDRON', 'button': 'right'), @ev
 		play_sound(@loc, array('sound': 'ENTITY_GENERIC_SPLASH', 'pitch': 2, 'volume': 0.3));
 
 		@newItem = @item[];
-		@newItem['qty'] = 1;
 
 		if(@item['name'] == 'BUCKET') {
 			if(@level < 3) {
 				die();
 			}
 			@newItem['name'] = 'WATER_BUCKET';
+			@newItem['qty'] = 1;
 		} else if(@item['name'] == 'GLASS_BOTTLE') {
 			@newItem['name'] = 'POTION';
 			@newItem['meta'] = array('base': array('type': 'WATER'));
+			@newItem['qty'] = 1;
 		} else if(string_ends_with(@item['name'], '_TERRACOTTA')) {
 			@newItem['name'] = 'TERRACOTTA';
 		} else if(string_ends_with(@item['name'], '_WOOL')) {
@@ -60,10 +61,10 @@ bind('player_interact', null, array('block': 'CAULDRON', 'button': 'right'), @ev
 		}
 
 		cancel();
-		if(@item['qty'] == 1) {
+		if(@item['qty'] == @newItem['qty']) {
 			set_pinv(player(), @slot, @newItem);
 		} else {
-			@item['qty']--;
+			@item['qty'] -= @newItem['qty'];
 			set_pinv(player(), @slot, @item);
 			@remaining = pgive_item(@newItem);
 			if(@remaining) {
