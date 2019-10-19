@@ -1,6 +1,6 @@
 bind('player_command', null, null, @event) {
 	try {
-		if(@event['command'] != '/we cui' && @event['command'][1] !== '/') {
+		if(@event['command'][1] !== '/') {
 			console(@event['player'].' ran: '.@event['command'], false);
 		}
 	} catch(RangeException @ex) {
