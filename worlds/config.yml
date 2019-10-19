@@ -78,7 +78,6 @@ outworld:
   group: 'survival'
   teleports: false
   environment: NORMAL
-  difficulty: HARD
 outworldnether: outworld_nether
 outworld_nether:
   name: 'Outworld Nether'
@@ -87,7 +86,6 @@ outworld_nether:
   teleports: false
   environment: NETHER
   respawn: outworld
-  difficulty: HARD
 outworldend: outworld_the_end
 outworld_the_end:
   name: 'Outworld End'
@@ -96,7 +94,6 @@ outworld_the_end:
   teleports: false
   environment: THE_END
   respawn: outworld
-  difficulty: HARD
 dev:
   name: 'Dev'
   mode: CREATIVE

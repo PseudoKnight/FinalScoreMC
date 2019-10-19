@@ -11,6 +11,8 @@ foreach(@id: @world in @worlds) {
 	if(!array_contains(@loadedWorlds, @id)) {
 		if(array_index_exists(@world, 'generator')) {
 			create_world(@id, 'NORMAL', @world['environment'], @world['seed'], @world['generator']);
+		} else if(array_index_exists(@world, 'seed')) {
+			create_world(@id, 'NORMAL', @world['environment'], @world['seed']);
 		} else {
 			create_world(@id, 'NORMAL', @world['environment']);
 		}
@@ -22,7 +24,7 @@ foreach(@id: @world in @worlds) {
 	}
 	
 	// Since difficulty isn't currently loaded from level.dat
-	@difficulty = 'NORMAL';
+	@difficulty = 'HARD';
 	if(array_index_exists(@world, 'difficulty')) {
 		@difficulty = @world['difficulty'];
 	}
