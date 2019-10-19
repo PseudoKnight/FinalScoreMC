@@ -10,12 +10,6 @@ bind('creature_spawn', null, array('type': 'CREEPER', 'reason': 'NATURAL'), @e) 
 	}
 }
 
-bind('creature_spawn', null, array('type': 'PIG_ZOMBIE', 'reason': 'NATURAL'), @e) {
-	if(@e['location']['world'] == 'outworld_nether' && !rand(6)) {
-		set_entity_spec(@e['id'], array('baby': true));
-	}
-}
-
 bind('creature_spawn', null, array('type': 'ZOMBIE', 'reason': 'NATURAL'), @e) {
 	@rand = rand(5);
 	if(@rand == 4 && @e['location']['world'] == 'outworld' && !entities_in_radius(@e['location'], 64, 'RABBIT')) {
