@@ -29,10 +29,10 @@ register_command('doc', array(
 				@returns = reflect_docs(@func, 'type');
 				@args = reflect_docs(@func, 'args');
 
-				msg(color(YELLOW) . @func . ':' color(GREEN) . 'Returns' @returns .
-				'.' color(BLUE) . 'Expects' @args . '.' color(YELLOW) . @desc);
+				msg(color('YELLOW') . @func . ':' color('GREEN') . 'Returns' @returns .
+				'.' color('BLUE') . 'Expects' @args . '.' color('YELLOW') . @desc);
 			} catch(FormatException @ex) {
-				msg(color(RED) . 'Could not show information for' @func);
+				msg(color('RED') . 'Could not show information for' @func);
 			}
 		}
 
@@ -40,12 +40,12 @@ register_command('doc', array(
 			# List known extensions.
 			@extensions = array_keys(extension_info());
 			if (@extensions) {
-				msg(color(BLUE) . 'Installed extensions:');
+				msg(color('BLUE') . 'Installed extensions:');
 				foreach (@extension in @extensions) {
-					msg(color(RED) . ' - ' . color(GREEN) . @extension);
+					msg(color('RED') . ' - ' . color('GREEN') . @extension);
 				}
 			} else {
-				msg(color(RED) . 'No extensions installed!');
+				msg(color('RED') . 'No extensions installed!');
 			}
 		} else {
 			# Show functions in a given extension.
