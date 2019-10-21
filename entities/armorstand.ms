@@ -50,6 +50,7 @@ bind('player_interact_at_entity', null, array('clicked': 'ARMOR_STAND'), @event)
 	@armorstand = entity_spec(@event['id']);
 	if(is_null(@item) && psneaking()) {
 		if(!@armorstand['visible']) {
+			cancel();
 			die();
 		}
 
@@ -294,7 +295,24 @@ bind('entity_damage', null, array('type': 'ARMOR_STAND'), @event) {
 		if(!@armorstand['visible']) {
 			die();
 		}
-		if(@armorstand['arms']) {
+		@trace = ray_trace(@damager, 4);
+		try {
+			@loc = @trace['entities'][0]['location'];
+		} catch (IndexOverflowException @ex) {
+			die();
+		}
+		@loc['y'] -= @event['location']['y'];
+		@scale = if(@armorstand['small'], 2, 1);
+		@poseable = 'Feet';
+		if(@loc['y'] >= 1.6 / @scale) {
+			@poseable = 'Head';
+		} else if(@loc['y'] >= 0.9 / @scale) {
+			@poseable = 'Torso';
+		} else if(@loc['y'] >= 0.45 / @scale) {
+			@poseable = 'Legs';
+		}
+
+		if(@poseable == 'Torso' && @armorstand['arms']) {
 			if(!array_index_exists(@event, 'shooter')) {
 				cancel();
 			}
@@ -310,7 +328,7 @@ bind('entity_damage', null, array('type': 'ARMOR_STAND'), @event) {
 			}
 			drop_item(@loc, array('name': 'STICK', 'qty': 2));
 			set_entity_spec(@event['id'], array('arms': false));
-		} else if(@armorstand['baseplate'] && !array_index_exists(@event, 'shooter')) {
+		} else if(@poseable == 'Feet' && @armorstand['baseplate'] && !array_index_exists(@event, 'shooter')) {
 			cancel();
 			set_entity_spec(@event['id'], array('baseplate': false));
 		}
