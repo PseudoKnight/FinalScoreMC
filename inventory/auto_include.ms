@@ -132,6 +132,12 @@ proc _minify_item(@item) {
 		if(is_null(@meta['lore'])) {
 			array_remove(@meta, 'lore');
 		}
+		if(is_null(@meta['model'])) {
+			array_remove(@meta, 'model');
+		}
+		if(is_null(@meta['modifiers'])) {
+			array_remove(@meta, 'modifiers');
+		}
 		if(array_index_exists(@meta, 'firework')
 		&& is_null(@meta['firework'])) {
 			array_remove(@meta, 'firework');
