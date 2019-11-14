@@ -26,29 +26,6 @@ register_command('tempboat', array(
 		@boat = spawn_entity('boat', 1, @loc)[0];
 		set_entity_silent(@boat, true);
 		set_entity_rider(@boat, @rider);
-		@loc = ploc(@player);
-		set_interval(1000, closure(){
-			if(ponline(@player) && entity_exists(@boat)) {
-				@currentLoc = ploc(@player);
-				if(@currentLoc['y'] < 61) {
-					set_entity_rider(null, puuid(@player));
-					set_timeout(200, closure(){
-						set_ploc(@player, @loc);
-						scriptas(@player,
-							sudo('/tempboat '.@player);
-						);
-					});
-				} else if(get_block(@currentLoc) == 'PACKED_ICE') {
-					@loc['x'] = @currentLoc['x'];
-					@loc['y'] = @currentLoc['y'];
-					@loc['z'] = @currentLoc['z'];
-					@loc['yaw'] = @currentLoc['yaw'];
-					@loc['pitch'] = @currentLoc['pitch'];
-				}
-			} else {
-				clear_task();
-			}
-		});
 		if(has_bind(@player.'vehicle_leave')) {
 			die();
 		}
