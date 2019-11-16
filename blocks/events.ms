@@ -56,7 +56,7 @@ bind('block_dispense', null, array('type': 'DISPENSER'), @event, @ignored = arra
 			}
 		}
 	}
-	@type = @event['item']['name']
+	@type = @event['item']['name'];
 	if(@type == 'ARMOR_STAND') {
 		try {
 			@inv = get_inventory(@event['location']);
@@ -65,8 +65,7 @@ bind('block_dispense', null, array('type': 'DISPENSER'), @event, @ignored = arra
 		}
 		cancel();
 		@loc = @event['location'][];
-		@facing = reg_match('facing\\=([a-z]+)', get_blockdata_string(@loc))[1];
-		switch(@facing) {
+		switch(get_blockdata(@loc)['facing']) {
 			case 'down':
 				@loc['y'] -= 1;
 			case 'up':
@@ -86,7 +85,7 @@ bind('block_dispense', null, array('type': 'DISPENSER'), @event, @ignored = arra
 		@loc['x'] += 0.5;
 		@loc['z'] += 0.5;
 		spawn_entity('ARMOR_STAND', 1, @loc);
-		set_timeout(50, closure(){
+		set_timeout(0, closure(){
 			set_inventory(@event['location'], @inv);
 		});
 	}
