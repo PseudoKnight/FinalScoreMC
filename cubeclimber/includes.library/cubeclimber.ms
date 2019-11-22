@@ -148,11 +148,7 @@ proc _cc_start(@world = 'custom') {
 		bind('player_teleport', array('id': 'cube-teleport'), null, @e) {
 			@regions = sk_regions_at(array(@e['to'][0], @e['to'][1] - 1, @e['to'][2], @e['to'][3]));
 			if(array_contains(@regions, 'cubeclimber_blocks')
-			&& 2 < floor(sqrt(
-			((@e['to'][0] - @e['from'][0]) ** 2) +
-			((@e['to'][1] - @e['from'][1]) ** 2) +
-			((@e['to'][2] - @e['from'][2]) ** 2)
-			))) {
+			&& 2 < floor(distance(@e['to'], @e['from']))) {
 				cancel();
 			}
 		}

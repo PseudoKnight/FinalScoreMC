@@ -24,7 +24,7 @@ bind('projectile_launch', array('id': @id.'grapple'), array('type': 'FISHING_HOO
 		@loc1 = entity_loc(@shooter);
 		@startingHealth = max(1, get_entity_health(@shooter));
 
-		@dist = sqrt(((@loc2['x'] - @loc1['x']) ** 2) + ((@loc2['y'] - @loc1['y']) ** 2) + ((@loc2['z'] - @loc1['z']) ** 2));
+		@dist = distance(@loc1, @loc2);
 		if(@dist >= 32) {
 			if(@target != @shooter) {
 				try(entity_remove(@target));
@@ -67,7 +67,7 @@ bind('projectile_launch', array('id': @id.'grapple'), array('type': 'FISHING_HOO
 				} else {
 					@loc2 = entity_loc(@target);
 					@loc1 = entity_loc(@mover);
-					@dist = sqrt(((@loc2['x'] - @loc1['x']) ** 2) + ((@loc2['y'] - @loc1['y']) ** 2) + ((@loc2['z'] - @loc1['z']) ** 2));
+					@dist = distance(@loc1, @loc2);
 					@dist = clamp(@dist, 0.1, 20);
 					set_entity_fall_distance(@mover, 0);
 					if(@dist > 2.5) {

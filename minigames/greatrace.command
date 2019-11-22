@@ -87,11 +87,7 @@ register_command('greatrace', array(
 				# COUNTDOWN
 				foreach(@index: @p in @players) {
 					@l = ploc(@p);
-					@dist = sqrt(
-						((@l['x'] - @start['x']) ** 2) +
-						((@l['y'] - @start['y']) ** 2) +
-						((@l['z'] - @start['z']) ** 2)
-					);
+					@dist = distance(@l, @start);
 					if(@dist > 32) {
 						array_remove(@players, @index);
 					} else if(@timer[0]) {
@@ -110,11 +106,7 @@ register_command('greatrace', array(
 				#RACE
 				foreach(@p in @players) {
 					@l = ploc(@p);
-					@dist = sqrt(
-						((@l['x'] - @target['x']) ** 2) +
-						((@l['y'] - @target['y']) ** 2) +
-						((@l['z'] - @target['z']) ** 2)
-					);
+					@dist = distance(@l, @target);
 					if(@dist > @radius) {
 						action_msg(@p, 'Distance to target: '.floor(@dist).'m');
 						set_pscore('distance', @p, integer(@dist), 'greatrace');
@@ -140,11 +132,7 @@ register_command('greatrace', array(
 
 		bind('player_teleport', array('id': 'thegreatrace'), null, @e, @players) {
 			if(array_contains(@players, @e['player'])) {
-				@dist = sqrt(
-					((@e['from']['x'] - @e['to']['x']) ** 2) +
-					((@e['from']['y'] - @e['to']['y']) ** 2) +
-					((@e['from']['z'] - @e['to']['z']) ** 2)
-				);
+				@dist = distance(@e['from'], @e['to']);
 				if(@dist > 8) {
 					array_remove_values(@players, @e['player']);
 					msg('You\'ve been disqualified for teleporting.');

@@ -78,7 +78,7 @@ case 'load':
 			}
 			@loc2 = entity_loc(@entity);
 			@loc2['y'] += 1.0;
-			@dist = sqrt(((@loc2['x'] - @loc1['x']) ** 2) + ((@loc2['y'] - @loc1['y']) ** 2) + ((@loc2['z'] - @loc1['z']) ** 2));
+			@dist = distance(@loc1, @loc2);
 
 			if(is_entity_living(@entity)) {
 				damage_entity(@entity, 1, puuid());

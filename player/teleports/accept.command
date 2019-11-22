@@ -24,7 +24,7 @@ register_command('accept', array(
 				@loc = ploc(@requests[player()][1]);
 				foreach(@warp in @warps) {
 					if(@warp[3] == @loc['world']) {
-						@dist = sqrt(((@warp[0] - @loc[0]) ** 2) + ((@warp[2] - @loc[2]) ** 2));
+						@dist = distance(@warp, @loc);
 						if(@dist < @closestDistance) {
 							@closest = @warp;
 							@closestDistance = @dist;
