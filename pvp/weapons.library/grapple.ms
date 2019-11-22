@@ -9,7 +9,7 @@ bind('projectile_launch', array('id': @id.'grapple'), array('type': 'FISHING_HOO
 
 	@arrow = shoot_projectile(@player, 'arrow');
 	set_entity_spec(@arrow, array('critical': true));
-	set_arrow_damage(@arrow, 0.5);
+	set_arrow_damage(@arrow, 0.1);
 	play_sound(ploc(@player), array('sound': 'ENTITY_ARROW_SHOOT'));
 	@shooter = puuid(@player);
 	@slot = pheld_slot(@player);
