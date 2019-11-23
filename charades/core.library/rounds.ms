@@ -32,28 +32,22 @@ proc _queue_next_builder() {
 	@charades['interval'] = set_interval(500, closure(){
 		try {
 			@timer[0] -= 0.5;
-			foreach(@t in get_teams('charades')) {
-				if(@t['name'] == 'guessers') {
-					foreach(@p in @t['players']) {
-						if(!ponline(@p) || !array_contains(sk_current_regions(@p), 'charades')) {
-							team_remove_player('guessers', @p, 'charades');
-							array_remove_values(@charades['playersLeft'], @p);
-							if(ponline(@p)) {
-								set_ploc(@p, get_value('warp.charades'));
-								_equip_kit(@p);
-								_set_pactivity(@p, null);
-							}
-						}
-					}
+			@guessers = get_teams('charades')['guessers']['players'];
+			foreach(@p in @guessers) {
+				if(!ponline(@p) || !array_contains(sk_current_regions(@p), 'charades')) {
+					_charades_remove_player(@p);
+					array_remove_values(@charades['playersLeft'], @p);
+				}
+			}
+			foreach(@p in all_players(@charades['world'])) {
+				if(@p != @builder && !array_contains(@guessers, @p)
+				&& array_contains(sk_current_regions(@p), 'charades')) {
+					_charades_add_player(@p);
 				}
 			}
 			if(!ponline(@builder) || !array_contains(sk_current_regions(@builder), 'charades')) {
 				team_remove_player('builder', @builder, 'charades');
-				if(ponline(@builder)) {
-					set_ploc(@builder, get_value('warp.charades'));
-					_equip_kit(@builder);
-					_set_pactivity(@builder, null);
-				}
+				_charades_remove_player(@builder);
 				_end_build(null, @charades['build']);
 			} else {
 				_msg_charades(integer(@timer[0]), 'action');

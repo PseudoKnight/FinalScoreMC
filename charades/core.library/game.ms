@@ -2,6 +2,7 @@ include('words.ms');
 include('rounds.ms');
 include('utils.ms');
 include('events.ms');
+include('players.ms');
 
 proc _prepare_game(@category) {
 	@categories = _get_categories();
@@ -42,15 +43,9 @@ proc _prepare_game(@category) {
 	create_team('builder', 'charades');
 	set_team_display('builder', array('color': 'GREEN'), 'charades');
 
-	@spawn = sk_region_info('charades-beacon', pworld(), 0)[0];
 	foreach(@p in @players) {
-		set_pscore('score', @p, 0, 'charades');
-		team_add_player('guessers', @p, 'charades');
+		_charades_add_player(@p);
 		title(@p, 'Charades', to_upper(@category), 20, 60, 40);
-		set_ploc(@p, @spawn);
-		set_pmode(@p, 'SPECTATOR');
-		set_pscoreboard(@p, 'charades');
-		_set_pactivity(@p, 'charades');
 	}
 
 	set_block(@spawn, 'SEA_LANTERN');
