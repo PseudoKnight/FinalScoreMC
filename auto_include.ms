@@ -43,7 +43,7 @@ proc _multi_array_get(@value) {
 	@region: The WorldGuard region name. It will use the player or commandblock world.
 	@entities: An array of entity types to remove. (some entity types are automatically protected)
 */
-proc _remove_region_entities(@region, @entities = array(), @world = 'custom') {
+proc _remove_region_entities(@region, @entityTypes = array(), @world = 'custom', @removeProtected = false) {
 	if(!sk_region_exists(@world, @region)) {
 		console('Can\'t remove entities because region doesn\'t exist: '.@region, false);
 		return(false);
@@ -59,9 +59,9 @@ proc _remove_region_entities(@region, @entities = array(), @world = 'custom') {
 		for(@z = floor(@loc[1][2] / 16), @z <= @zMax, @z++) {
 			foreach(@entity in all_entities(@world, @x, @z)) {
 				@type = entity_type(@entity);
-				if(!@entities && !array_contains(@excludeEntities, @type)
-				|| array_contains(@entities, @type)) {
-					if(@type === 'ARMOR_STAND') {
+				if(!@entityTypes && !array_contains(@excludeEntities, @type)
+				|| array_contains(@entityTypes, @type)) {
+					if(@type === 'ARMOR_STAND' && !@removeProtected) {
 						if(entity_spec(@entity)['visible']
 						|| !array_contains(sk_regions_at(entity_loc(@entity)), @region)) {
 							continue();
