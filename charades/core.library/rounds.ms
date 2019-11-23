@@ -76,7 +76,7 @@ proc _queue_next_builder() {
 		if(get_pscoreboard(player()) == 'charades') {
 			consume();
 			cancel();
-			if(get_pteam(player(), 'charades')['name'] == 'guessers') {
+			if(array_get(get_pteam(player(), 'charades'), 'name', null) == 'guessers') {
 				@message = @event['message'];
 				@timestamp = simple_date('h:mm');
 				@name = display_name();
