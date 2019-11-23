@@ -14,7 +14,7 @@ proc _get_match(@guess, @target) {
 	}
 
 	// accept the guess if it contains the entire target phrase
-	if(reg_match('(?i)'.@target, @guess)) {
+	if(equals_ic(@target, @guess)) {
 		return(true);
 	}
 	return(false);
