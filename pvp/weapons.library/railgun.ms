@@ -5,7 +5,7 @@ bind('player_interact', array('id': @id.'railgun'), array('itemname': 'SUNFLOWER
 		die();
 	}
 
-	_weapon_hit_scan(player(), 112, 16, array('tracerparticle': 'CRIT', 'hitparticle': 'LAVA'), @pvp);
+	_weapon_hit_scan(player(), 112, 0.1, 16, array('tracerparticle': 'CRIT', 'hitparticle': 'LAVA'), @pvp);
 
 	play_sound(ploc(), array('sound': 'ENTITY_ZOMBIE_VILLAGER_CURE', 'pitch': 1.8, 'volume': 3));
 	@item = pinv(player(), null);

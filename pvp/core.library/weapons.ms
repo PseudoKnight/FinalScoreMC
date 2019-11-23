@@ -33,7 +33,7 @@ proc _weapon_cooldown(@player, @time, @type, @onCooldown, @remove = 1) {
 	}
 }
 
-proc _weapon_hit_scan(@player, @range, @damage, @effects, @pvp){
+proc _weapon_hit_scan(@player, @range, @raySize, @damage, @effects, @pvp){
 	@damager = puuid(@player);
 	@visibleRange = max(64, @range);
 	
@@ -42,7 +42,7 @@ proc _weapon_hit_scan(@player, @range, @damage, @effects, @pvp){
 		@hitsound = @effects['hitsound'];
 	}
 	
-	@trace = ray_trace(@player, @range);
+	@trace = ray_trace(@player, @range, @raySize);
 	@origin = @trace['origin'];
 	@location = @trace['location'];
 	@entities = @trace['entities'];

@@ -120,7 +120,7 @@ case 'load':
 					clear_task();
 					set_pexp(0);
 					try(set_attribute(puuid(), 'knockbackresistance', 0));
-					@players = _weapon_hit_scan(player(), 13, 2, array('tracerparticle': 'VILLAGER_HAPPY'), @pvp);
+					@players = _weapon_hit_scan(player(), 13, 0.2, 2, array('tracerparticle': 'VILLAGER_HAPPY'), @pvp);
 					@loc = ploc();
 					if(@players) {
 						@p = @players[0];

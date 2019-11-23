@@ -26,7 +26,7 @@ proc _worms_bind_events(@game) {
 				@newLoc['yaw'] = @yaw;
 				@newLoc['pitch'] = 0.0;
 				
-				@trace = ray_trace(@newLoc, 0.5);
+				@trace = ray_trace(@newLoc, 0.5, 0.4);
 				foreach(@e in @trace['entities']) {
 					@uuid = @e['uuid'];
 					if(entity_type(@uuid) == 'ARMOR_STAND' && !array_contains(@game['players'][player()]['segments'], @uuid)) {

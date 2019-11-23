@@ -12,7 +12,7 @@ proc _worms_shoot_projectile(@player, @game) {
 	@count = array(64, 0);
 	set_interval(50, closure(){
 		@count[0]--;
-		@trace = ray_trace(@loc, 0.8 - @count[1] * 0.2);
+		@trace = ray_trace(@loc, 0.8 - @count[1] * 0.2, 0.1);
 		try(set_entity_loc(@segment, location_shift(@trace['location'], 'down', 1.5)));
 		if(@count[0] < 0 || @trace['hitblock'] && @count[1] == 3) {
 			clear_task();

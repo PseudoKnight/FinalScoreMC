@@ -38,7 +38,7 @@ proc _hoops_ball_create(@loc) {
 	@binds[] = bind('player_interact', null, null, @event, @game, @charge, @stand, @binds) {
 		if(@game['holder'] == player()) {
 			if(@event['button'] == 'left') {
-				@trace = ray_trace(player(), 20);
+				@trace = ray_trace(player(), 20, 0.5);
 				if(@trace['entities'] && entity_type(@trace['entities'][0]['uuid']) == 'PLAYER') {
 					@game['holder'] = player(@trace['entities'][0]['uuid']);
 					_hoops_ball_add_player(@game['holder'], @binds, @game);

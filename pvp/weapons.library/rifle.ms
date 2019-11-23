@@ -46,10 +46,10 @@ bind('player_interact', array('id': @id.'rifle'), array('itemname': 'STONE_HOE')
 	@item['meta']['damage'] += 8;
 	set_pinv(player(), null, @item);
 	
-	_weapon_hit_scan(player(), 64, 1.7, array('tracerparticle': 'SUSPENDED_DEPTH', 'hitparticle': 'SMOKE_LARGE'), @pvp);
+	_weapon_hit_scan(player(), 64, 0.0, 1.7, array('tracerparticle': 'SUSPENDED_DEPTH', 'hitparticle': 'SMOKE_LARGE'), @pvp);
 	play_sound(ploc(), array('sound': 'ENTITY_FIREWORK_ROCKET_BLAST', 'pitch': 0.7, 'volume': 3));
 	set_timeout(50, closure(){
-		_weapon_hit_scan(player(), 64, 3.4, array('tracerparticle': 'SUSPENDED_DEPTH', 'hitparticle': 'SMOKE_LARGE'), @pvp);
+		_weapon_hit_scan(player(), 64, 0.0, 3.4, array('tracerparticle': 'SUSPENDED_DEPTH', 'hitparticle': 'SMOKE_LARGE'), @pvp);
 		play_sound(ploc(), array('sound': 'ENTITY_FIREWORK_ROCKET_BLAST', 'pitch': 0.7, 'volume': 3));
 	});
 }
