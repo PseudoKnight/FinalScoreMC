@@ -83,8 +83,9 @@ proc _class_select_random(@player, @pvp) {
 	@rand = array_rand(@pvp['arena']['classes'], array_size(@pvp['arena']['classes']));
 	@class = '';
 	foreach(@c in @rand) {
-		if(!array_index_exists(@pvp['arena']['classes'][@c], 'team')
-		|| @pvp['players'][@player]['team'] == @pvp['arena']['classes'][@c]['team']) {
+		if(!array_index_exists(@pvp['arena']['classes'][@c], 'disabled')
+		&& (!array_index_exists(@pvp['arena']['classes'][@c], 'team')
+		|| @pvp['players'][@player]['team'] == @pvp['arena']['classes'][@c]['team'])) {
 			@class = @c;
 			break();
 		}
@@ -126,11 +127,13 @@ proc _class_select(@id, @pvp) {
 	foreach(@class in @pvp['arena']['classes']) {
 		if((!array_index_exists(@class, 'team') || @class['team'] == 0)
 		&& @size1 > 2
+		&& !array_index_exists(@class, 'disabled')
 		&& array_index_exists(@class, 'selector')) {
 			@chest[0][] = @class['selector']
 		}
 		if((!array_index_exists(@class, 'team') || @class['team'] == 1)
 		&& @size2 > 2
+		&& !array_index_exists(@class, 'disabled')
 		&& array_index_exists(@class, 'selector')) {
 			@chest[1][] = @class['selector']
 		}
@@ -214,11 +217,14 @@ proc _class_select(@id, @pvp) {
 				@classes = @pvp['arena']['classes'];
 				if(array_index_exists(@pvp['players'][player()], 'team')) {
 					@classes = array_filter(@pvp['arena']['classes'], closure(@key, @value){
-						return(!array_index_exists(@value, 'team') || @value['team'] == @pvp['players'][player()]['team']);
+						return(!array_index_exists(@value, 'disabled')
+						&& (!array_index_exists(@value, 'team') || @value['team'] == @pvp['players'][player()]['team']));
 					});
 				}
 				if(@classes) {
-					@class = array_rand(@classes, 1, true)[0];
+					do {
+						@class = array_rand(@classes, 1, true)[0];
+					} while(array_index_exists(@pvp['arena']['classes'][@class], 'disabled'));
 				} else {
 					@class = array_rand(@pvp['arena']['classes'], 1, true)[0];
 				}

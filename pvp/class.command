@@ -9,7 +9,7 @@ register_command('class', array(
 			@action = @args[0];
 			if(@action == 'set' || @action == 'delete') {
 				@completions = array('selector', 'kit', 'ammo', 'stacklimit', 'speed', 'hunger', 'effect', 'script',
-						'team', 'xp', 'limit');
+						'team', 'xp', 'limit', 'disabled');
 			} else if(@action == 'load') {
 				@completions = array('kit', 'selector', 'ammo');
 			}
@@ -154,6 +154,19 @@ register_command('class', array(
 						}
 						@arena['classes'][@classid]['limit'] = integer(@args[3]);
 						msg(color('green').'Set limit to '.@args[3]);
+
+					case 'disabled':
+						if(array_size(@args) < 4) {
+							return(false);
+						}
+						@disabled = (@args[3] == 'true' || @args[3] == 'on');
+						if(@disabled) {
+							@arena['classes'][@classid]['disabled'] = @disabled;
+							msg(color('green').'Disabled class');
+						} else {
+							array_remove(@arena['classes'][@classid], 'disabled');
+							msg(color('green').'Enabled class');
+						}
 
 					default:
 						return(false);

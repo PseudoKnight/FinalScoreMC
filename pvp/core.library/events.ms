@@ -76,7 +76,8 @@ bind('player_death', array('priority': 'high', 'id': @id.'death'), null, @e, @id
 					array_remove(@pvp['players'][player()], 'class');
 				}
 				foreach(@classname: @class in @pvp['arena']['classes']) {
-					if(!array_index_exists(@class, 'team') || @class['team'] == @pvp['players'][player()]['team']) {
+					if(!array_index_exists(@class, 'disabled')
+					&& (!array_index_exists(@class, 'team') || @class['team'] == @pvp['players'][player()]['team'])) {
 						@pvp['players'][player()]['class'] = @classname;
 						_class('load', player(), @pvp['players'][player()]['class'], @pvp);
 					}
@@ -138,6 +139,7 @@ bind('player_death', array('priority': 'high', 'id': @id.'death'), null, @e, @id
 				_class('unload', player(), @pvp['players'][player()]['class'], @pvp)
 				foreach(@classname: @class in @pvp['arena']['classes']) {
 					if(@classname != @pvp['players'][player()]['class']
+					&& !array_index_exists(@class, 'disabled')
 					&& (!array_index_exists(@class, 'team') || @class['team'] == @pvp['players'][player()]['team'])) {
 						@pvp['players'][player()]['class'] = @classname
 						break()
