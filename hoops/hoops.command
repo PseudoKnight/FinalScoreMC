@@ -1,6 +1,6 @@
 register_command('hoops', array(
 	'description': 'Creates, joins and manages a game of basketball.',
-	'usage': '/hoops <start|join|reload>',
+	'usage': '/hoops',
 	'permission': 'command.hoops',
 	'tabcompleter': closure(@alias, @sender, @args, @info) {
 		return(array());
@@ -24,25 +24,25 @@ register_command('hoops', array(
 					_hoops_delete();
 				}
 				x_recompile_includes('core.library');
-
-			case 'join':
-				include('core.library/game.ms');
-				if(array_contains(get_bars(), 'hoops')) {
-					die('Already running or in practice mode.');
-				}
-				if(!import('hoops')) {
-					_hoops_create();
-				}
-				_hoops_player_add(player());
-				broadcast(player(). ' joined Hoops!', all_players(pworld()));
 				
 			case 'start':
 				include('core.library/game.ms');
-				@game = import('hoops');
-				if(!@game || array_size(@game['players']) < 2) {
+				if(!import('hoops')) {
+					_hoops_create();
+				}
+				@players = array();
+				foreach(@p in all_players(pworld())) {
+					if(array_contains(sk_current_regions(@p), 'hoops')) {
+						@players[] = @p;
+					}
+				}
+				if(array_size(@players) < 2) {
 					die('Not enough players.');
 				} else if(array_contains(get_bars(), 'hoops')) {
 					die('Already running.');
+				}
+				foreach(@p in @players) {
+					_hoops_player_add(@p);
 				}
 				broadcast(player(). ' started Hoops!', all_players(pworld()));
 				_hoops_queue(5);
