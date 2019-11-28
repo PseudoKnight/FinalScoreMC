@@ -48,6 +48,7 @@ proc _prepare_game(@category) {
 		title(@p, 'Charades', to_upper(@category), 20, 60, 40);
 	}
 
+	@spawn = sk_region_info('charades-beacon', pworld(), 0)[0];
 	set_block(@spawn, 'SEA_LANTERN');
 
 	_bind_charade_events();
