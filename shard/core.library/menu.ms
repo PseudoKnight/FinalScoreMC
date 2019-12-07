@@ -284,17 +284,15 @@ proc _open_rules_menu(@objective) {
 			}
 			_shard_create(@associative_rules);
 		} else {
-			@rule = null;
-			if(string_ends_with(@item['name'], '_DYE')) {
-				@rule = array_get(@rules, @slot, null);
-			} else {
+			if(!string_ends_with(@item['name'], '_DYE')) {
 				@slot -= 9;
 				if(@slot < 0) {
 					die();
 				}
-				@item = @event['inventory'][@slot];
-				@rule = array_get(@rules, @slot, null);
 			}
+			@ruleSlot = @slot - floor(@slot / 9) * 9;
+			@item = @event['inventory'][@slot];
+			@rule = array_get(@rules, @ruleSlot, null);
 			if(@rule) {
 				@option = @options[@rule['name']];
 				if(is_boolean(@rule['value'])) {
