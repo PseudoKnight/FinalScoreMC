@@ -160,23 +160,23 @@ bind('firework_explode', null, null, @event){
 		@loc['yaw'] = 0;
 		@loc['pitch'] = 0;
 		@cookie = @mob == 'bat' && rand(2);
-		@mobs = spawn_entity(@mob, 15, @event['location'], closure(@m) {
-			set_entity_onfire(@m, 20);
-			if(@mob == 'pig'){
-				set_mob_equipment(@m, associative_array('CHESTPLATE': associative_array('name': 'ELYTRA')));
-				set_equipment_droprates(@m, null);
-				set_entity_gliding(@m, true);
-			} else if(@cookie) {
-				spawn_entity('DROPPED_ITEM', 1, @loc, closure(@cookie) {
-					set_entity_spec(@cookie, array('itemstack': array('name': 'COOKIE')));
-					set_entity_rider(@m, @cookie);
-					set_entity_onfire(@m, 0);
-				})
-			}
-			set_entity_velocity(@m, get_vector(@loc));
-			@loc['yaw'] += 24;
-		});
-		set_timeout(50, closure(){
+		set_timeout(0, closure(){
+			@mobs = spawn_entity(@mob, 15, @event['location'], closure(@m) {
+				set_entity_onfire(@m, 20);
+				if(@mob == 'pig'){
+					set_mob_equipment(@m, associative_array('CHESTPLATE': associative_array('name': 'ELYTRA')));
+					set_equipment_droprates(@m, null);
+					set_entity_gliding(@m, true);
+				} else if(@cookie) {
+					spawn_entity('DROPPED_ITEM', 1, @loc, closure(@cookie) {
+						set_entity_spec(@cookie, array('itemstack': array('name': 'COOKIE')));
+						set_entity_rider(@m, @cookie);
+						set_entity_onfire(@m, 0);
+					})
+				}
+				set_entity_velocity(@m, get_vector(@loc));
+				@loc['yaw'] += 24;
+			});
 			try {
 				foreach(@m in @mobs){
 					if(@cookie) {
