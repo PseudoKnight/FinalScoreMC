@@ -82,7 +82,14 @@ register_command('warps', array(
 
 				foreach(@name: @warp in @warps) {
 					if(function_exists('dm_create_marker')) {
-						dm_create_marker('warps', array('id': @name, 'label': to_upper(@name), 'location': @warp, 'world': @warp[3], 'icon': 'star', 'persistent': true));
+						dm_create_marker('warps', array(
+							'id': @name,
+							'label': to_upper(@name),
+							'location': @warp,
+							'world': @warp[3],
+							'icon': 'star',
+							'persistent': true
+						));
 					}
 				}
 

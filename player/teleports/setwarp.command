@@ -27,7 +27,13 @@ register_command('setwarp', array(
 		}
 		store_value('warp.'.@warp, @loc);
 		if(function_exists('dm_create_marker')) {
-			dm_create_marker('warps', array('id': 'warp.'.@warp, 'label': 'WARP.'.to_upper(@warp), 'location': @loc, 'world': @loc[3], 'icon': 'star', 'persistent': true)); # radius is workaround for a bug
+			dm_create_marker('warps', array(
+				'id': 'warp.'.@warp, 
+				'label': 'WARP.'.to_upper(@warp), 
+				'location': @loc, 'world': @loc[3], 
+				'icon': 'star', 
+				'persistent': true
+			));
 		}
 		msg('Warp created.');
 	}
