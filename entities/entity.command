@@ -1,10 +1,10 @@
 register_command('entity', array(
 	'description': 'Custom entity management commands',
-	'usage': '/entity <list|info|set|delete|spawn> [entity_name] [setting] [value(s)]',
+	'usage': '/entity <list|info|set|delete|spawn|reload> [entity_name] [setting] [value(s)]',
 	'permission': 'command.entity',
 	'tabcompleter': closure(@alias, @sender, @args, @info) {
 		if(array_size(@args) == 1) {
-			return(_strings_start_with_ic(array('list', 'info', 'set', 'delete', 'spawn'), @args[-1]));
+			return(_strings_start_with_ic(array('list', 'info', 'set', 'delete', 'spawn', 'reload'), @args[-1]));
 		} else if(array_size(@args) == 3) {
 			return(_strings_start_with_ic(array('type', 'name', 'age', 'health', 'lifetime', 'onfire', 'targetnear',
 					'ai', 'tame', 'gear', 'droprate', 'effect', 'tags', 'rider', 'explode'), @args[-1]));
@@ -22,10 +22,11 @@ register_command('entity', array(
 				}
 				@id = @args[1];
 				@setting = @args[2];
-				@entity = get_value('entity.'.@id);
-				if(!@entity) {
-					@entity = array();
+				@custom = _get_custom_entities();
+				if(!array_index_exists(@custom, @id)) {
+					@custom[@id] = associative_array();
 				}
+				@entity = @custom[@id];
 				switch(@setting) {
 					case 'type':
 						if(array_size(@args) == 3) {
@@ -93,21 +94,21 @@ register_command('entity', array(
 					case 'droprate':
 						if(array_size(@args) == 4) {
 							@entity['droprate'] = array(
-								'WEAPON': @args[3],
-								'OFF_HAND': @args[3],
-								'BOOTS': @args[3],
-								'LEGGINGS': @args[3],
-								'CHESTPLATE': @args[3],
-								'HELMET': @args[3]
+								'WEAPON': double(@args[3]),
+								'OFF_HAND': double(@args[3]),
+								'BOOTS': double(@args[3]),
+								'LEGGINGS': double(@args[3]),
+								'CHESTPLATE': double(@args[3]),
+								'HELMET': double(@args[3])
 							);
 						} else if(array_size(@args) == 9) {
 							@entity['droprate'] = array(
-								'WEAPON': @args[3],
-								'OFF_HAND': @args[4],
-								'BOOTS': @args[5],
-								'LEGGINGS': @args[6],
-								'CHESTPLATE': @args[7],
-								'HELMET': @args[8],
+								'WEAPON': double(@args[3]),
+								'OFF_HAND': double(@args[4]),
+								'BOOTS': double(@args[5]),
+								'LEGGINGS': double(@args[6]),
+								'CHESTPLATE': double(@args[7]),
+								'HELMET': double(@args[8]),
 							);
 						} else {
 							return(false);
@@ -175,13 +176,20 @@ register_command('entity', array(
 							die(color('gold').'That explosion is too big. Yes, that\'s a thing.');
 						}
 						@entity['explode'] = array(integer(@duration), integer(@strength));
-						msg('Set entity to explode after '.@duration.' seconds with strength of '.@strength);
+						msg(color('green').'Set entity to explode after '.@duration.' seconds with strength of '.@strength);
+
+					case 'scripts':
+						if(array_size(@args) == 3) {
+							return(false);
+						}
+						@entity['scripts'] = split(',', @args[3]);
+						msg(color('green').'Set entity scripts to '. @entity['scripts']);
 
 					default:
 						die(color('yellow').'Available settings: type, name, gear, droprate, effect, health, tame, tags, rider, explode, onfire,'
 								.' lifetime, targetnear');
 				}
-				store_value('entity.'.@id, @entity);
+				write_file('custom.yml', yml_encode(@custom, true), 'OVERWRITE');
 
 			case 'delete':
 				if(array_size(@args) < 2) {
@@ -190,15 +198,23 @@ register_command('entity', array(
 				@id = @args[1];
 				if(array_size(@args) > 2) {
 					@setting = @args[2];
-					@entity = get_value('entity.'.@id);
+					@custom = _get_custom_entities();
+					if(!array_index_exists(@custom, @id)) {
+						@custom[@id] = associative_array();
+					}
+					@entity = @custom[@id];
 					if(@setting === 'effect') {
 						@setting = 'effects';
 					}
 					array_remove(@entity, @setting);
-					store_value('entity.'.@id, @entity);
+					write_file('custom.yml', yml_encode(@custom, true), 'OVERWRITE');
 					msg(color('green').@setting.' deleted from '.@id);
 				} else {
-					clear_value('entity.'.@id);
+					@custom = _get_custom_entities();
+					if(array_index_exists(@custom, @id)) {
+						array_remove(@custom, @id);
+					}
+					write_file('custom.yml', yml_encode(@custom, true), 'OVERWRITE');
 					msg(color('green').'Custom entity deleted.');
 				}
 
@@ -207,7 +223,11 @@ register_command('entity', array(
 					return(false);
 				}
 				@id = @args[1];
-				@entity = get_value('entity.'.@id);
+				@custom = _get_custom_entities();
+				if(!array_index_exists(@custom, @id)) {
+					die(color('red').'Entity does not exist.');
+				}
+				@entity = @custom[@id];
 				foreach(@setting: @value in @entity) {
 					msg(color('gray').@setting.' '.color('r').@value);
 				}
@@ -234,12 +254,12 @@ register_command('entity', array(
 				}
 
 			case 'list':
-				@entities = get_values('entity');
-				@list = '';
-				foreach(@key in array_keys(@entities)) {
-					@list .= split('.', @key)[1].' ';
-				}
-				msg(color('gray').'CUSTOM ENTITIES: '.color('r').@list);
+				@custom = _get_custom_entities();
+				msg(color('gray').'CUSTOM ENTITIES: '.color('r').array_implode(array_keys(@custom)));
+
+			case 'reload':
+				export('customEntities', null);
+				msg(color('green').'Reloaded custom entities from YML configuration.');
 
 			default:
 				msg('/entity set <entity> <setting> <value> '.color('gray').'Sets a value to the custom entity');

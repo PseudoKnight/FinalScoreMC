@@ -1,0 +1,380 @@
+antfarmqueen:
+  effects:
+  - id: 11
+    seconds: 7200
+    strength: 2
+  health: 100
+  tags:
+    profession: LIBRARIAN
+  type: VILLAGER
+babybear:
+  age: -3000
+  type: POLAR_BEAR
+babysteed:
+  age: -24000
+  tags:
+    armor:
+      type: 417
+    saddle:
+      type: 329
+  type: horse
+babyvector:
+  droprate:
+    BOOTS: 0
+    CHESTPLATE: 0
+    HELMET: 0
+    LEGGINGS: 0
+    WEAPON: 0
+  effects:
+  - id: 1
+    seconds: 999
+    strength: 0
+  - id: 8
+    seconds: 999
+    strength: 1
+  - id: 14
+    seconds: 999
+    strength: 0
+  gear:
+    BOOTS:
+      meta:
+        color:
+          b: 170
+          g: 255
+          r: 255
+      name: LEATHER_BOOTS
+    CHESTPLATE:
+      meta:
+        color:
+          b: 170
+          g: 255
+          r: 255
+      name: LEATHER_CHESTPLATE
+    HELMET:
+      meta:
+        color:
+          b: 180
+          g: 255
+          r: 255
+      name: LEATHER_HELMET
+    LEGGINGS:
+      meta:
+        color:
+          b: 170
+          g: 255
+          r: 255
+      name: LEATHER_LEGGINGS
+    WEAPON:
+      name: IRON_HOE
+  health: 1
+  tags:
+    baby: true
+  type: ZOMBIE
+badsnowman:
+  ai: false
+  lifetime: 15
+  targetnear: 16
+  type: SNOWMAN
+catbomb:
+  explode:
+  - 6
+  - 3
+  tame: true
+  type: CAT
+deadplayer:
+  gear:
+    BOOTS: null
+    CHESTPLATE: null
+    HELMET: null
+    LEGGINGS: null
+    OFF_HAND: null
+    WEAPON: null
+  type: skeleton
+dinnerbunny:
+  gear:
+    BOOTS: null
+    CHESTPLATE: null
+    HELMET:
+      meta:
+        display: Stone
+        owner: Robbydeezle
+      name: PLAYER_HEAD
+    LEGGINGS: null
+    WEAPON: null
+  name: Dinnerbone
+  type: Skeleton
+explovex:
+  explode:
+  - 20
+  - 4
+  type: vex
+firebat:
+  effects:
+  - id: 12
+    seconds: 9999
+    strength: -1
+  onfire: 80
+  type: bat
+gianthead:
+  ai: false
+  effects:
+  - id: 14
+    seconds: 10000
+    strength: -1
+  gear:
+    BOOTS: null
+    CHESTPLATE: null
+    HELMET:
+      meta: null
+      name: DRAGON_HEAD
+      qty: 1
+    LEGGINGS: null
+    OFF_HAND: null
+    WEAPON: null
+  type: giant
+giantstatue:
+  ai: false
+  gear:
+    BOOTS:
+      meta:
+        color:
+          b: 0
+          g: 0
+          r: 0
+      name: LEATHER_BOOTS
+    CHESTPLATE:
+      meta:
+        color:
+          b: 90
+          g: 30
+          r: 30
+      name: LEATHER_CHESTPLATE
+    HELMET: null
+    LEGGINGS:
+      meta:
+        color:
+          b: 160
+          g: 180
+          r: 200
+      name: LEATHER_LEGGINGS
+    WEAPON:
+      name: IRON_HOE
+  type: giant
+gothemboss:
+  gear:
+    BOOTS:
+      meta:
+        color:
+          b: 25
+          g: 25
+          r: 25
+      name: LEATHER_BOOTS
+    CHESTPLATE:
+      meta:
+        color:
+          b: 25
+          g: 25
+          r: 25
+      name: LEATHER_CHESTPLATE
+    HELMET:
+      meta:
+        owner: gothem8
+      name: PLAYER_HEAD
+    LEGGINGS:
+      meta:
+        color:
+          b: 50
+          g: 50
+          r: 50
+      name: LEATHER_LEGGINGS
+    OFF_HAND:
+      meta:
+        enchants:
+          sharpness:
+            elevel: 10
+            etype: DAMAGE_ALL
+      name: DIAMOND_SWORD
+    WEAPON:
+      meta:
+        enchants:
+          sharpness:
+            elevel: 10
+            etype: DAMAGE_ALL
+      name: DIAMOND_SWORD
+  type: vex
+invishulker:
+  effects:
+  - id: 14
+    seconds: 1
+    strength: 9998
+  - id: 14
+    seconds: 9999
+    strength: 0
+  - id: 14
+    seconds: 9999
+    strength: 8
+  type: shulker
+jeb:
+  effects:
+  - id: 11
+    seconds: 99999
+    strength: 4
+  name: jeb_
+  type: sheep
+johnny:
+  name: Johnny
+  type: vindicator
+killerbunny:
+  tags:
+    type: THE_KILLER_BUNNY
+  type: RABBIT
+leprechaun:
+  gear:
+    BOOTS:
+      meta:
+        color:
+          b: 0
+          g: 255
+          r: 0
+      name: LEATHER_BOOTS
+      qty: 1
+    CHESTPLATE:
+      meta:
+        color:
+          b: 0
+          g: 255
+          r: 0
+      name: LEATHER_CHESTPLATE
+      qty: 1
+    HELMET:
+      meta:
+        color:
+          b: 0
+          g: 255
+          r: 0
+      name: LEATHER_HELMET
+      qty: 1
+    LEGGINGS:
+      meta:
+        color:
+          b: 0
+          g: 255
+          r: 0
+      name: LEATHER_LEGGINGS
+      qty: 1
+    OFF_HAND: null
+    WEAPON:
+      meta: null
+      name: GOLD_INGOT
+      qty: 1
+  tags:
+    baby: true
+  type: zombie
+pony:
+  age: -24000
+  rider: owner
+  tags:
+    saddle:
+      type: 329
+  tame: true
+  type: horse
+racehorse:
+  tags:
+    saddle:
+      type: 329
+  tame: true
+  type: horse
+saddledpig:
+  tags:
+    saddled: true
+  type: pig
+shulkerelevator:
+  ai: false
+  invulnerable: true
+  type: shulker
+skeletonminion:
+  gear:
+    BOOTS: null
+    CHESTPLATE: null
+    HELMET: null
+    LEGGINGS: null
+    WEAPON:
+      name: BOW
+  health: 4
+  type: skeleton
+skeletonrider:
+  age: 0
+  rider: skeleton
+  tame: true
+  type: SKELETON_HORSE
+speedycreeper:
+  effects:
+  - id: 1
+    seconds: 9999
+    strength: 1
+  type: creeper
+speedypig:
+  effects:
+  - id: 1
+    seconds: 300
+    strength: 3
+  health: 20
+  type: pig
+steed:
+  age: 0
+  attributes:
+    movementspeed: 0.2
+  health: 16
+  rider: owner
+  tags:
+    armor:
+      name: IRON_HORSE_ARMOR
+    saddle:
+      name: SADDLE
+  tame: true
+  type: horse
+zombievector:
+  droprate:
+    BOOTS: 0
+    CHESTPLATE: 0
+    HELMET: 0
+    LEGGINGS: 0
+    WEAPON: 0
+  effects:
+  - id: 1
+    seconds: 999
+    strength: 3
+  - id: 14
+    seconds: 999
+    strength: 0
+  - id: 8
+    seconds: 999
+    strength: 1
+  gear:
+    BOOTS:
+      meta:
+        color:
+          b: 170
+          g: 255
+          r: 255
+      name: LEATHER_BOOTS
+    CHESTPLATE:
+      meta:
+        color:
+          b: 170
+          g: 255
+          r: 255
+      name: LEATHER_CHESTPLATE
+    HELMET:
+      name: END_PORTAL_FRAME
+    LEGGINGS:
+      meta:
+        color:
+          b: 170
+          g: 255
+          r: 255
+      name: LEATHER_LEGGINGS
+    WEAPON:
+      name: IRON_HOE
+  health: 1
+  type: zombie

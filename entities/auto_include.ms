@@ -176,6 +176,11 @@ proc _spawn_entity(@entity, @loc, @owner, @teammates, @consumer) {
 				// mob is gone for some reason
 			}
 		}
+		if(array_index_exists(@entity, 'scripts')) {
+			foreach(@s in @entity['scripts']) {
+				try(include('custom/script.library/'.@s.'.ms'));
+			}
+		}
 		if(is_closure(@consumer)) {
 			execute(@e, @consumer);
 		}
@@ -186,21 +191,31 @@ proc _spawn_entity(@entity, @loc, @owner, @teammates, @consumer) {
 /*
 	Gets a vanilla entity type or saved custom entity array by the given name. (see /entity command)
 */
-proc _get_entity(@entity = null) {
-	@entityTypes = import('entitytypes');
+proc _get_entity(@type = null) {
+	@entityTypes = import('entityTypes');
 	if(is_null(@entityTypes)) {
 		// cache entity types
 		@entityTypes = reflect_pull('enum', 'EntityType');
-		export('entitytypes', @entityTypes);
+		export('entityTypes', @entityTypes);
 	}
-	if(is_null(@entity)) {
-		@entity = array_get_rand(@entityTypes);
-	} else {
-		if(array_contains_ic(@entityTypes, @entity)) {
-			@entity = array('type': @entity);
-		} else {
-			@entity = get_value('entity', @entity);
-		}
+	if(is_null(@type)) {
+		return(array_get_rand(@entityTypes));
 	}
-	return(@entity);
+	if(array_contains_ic(@entityTypes, @type)) {
+		return(array('type': @type));
+	}
+	@custom = _get_custom_entities();
+	return(array_get(@custom, @type, null));
+}
+
+/*
+	Gets all custom entity definitions
+*/
+proc _get_custom_entities() {
+	@custom = import('customEntities');
+	if(is_null(@custom)) {
+		@custom = yml_decode(read('custom.yml'));
+		export('customEntities', @custom);
+	}
+	return(@custom);
 }
