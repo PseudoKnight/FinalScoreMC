@@ -193,13 +193,6 @@ bind('player_enter_bed', null, null, @event) {
 	}
 }
 
-bind('player_interact', null, array('button': 'right'), @event) {
-	if(@event['block'] && string_ends_with(@event['block'], '_BED')) {
-		set_pbed_location(location_shift(@event['location'], 'down'), false);
-		msg(color('aqua').'Your spawn location has been set to this bed.');
-	}
-}
-
 # Anti-xray helper
 bind('block_break', null, array('block': 'DIAMOND_ORE'), @event) {
 	if(!_is_survival_world(pworld())) {

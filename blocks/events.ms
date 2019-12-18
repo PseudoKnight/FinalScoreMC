@@ -56,39 +56,6 @@ bind('block_dispense', null, array('type': 'DISPENSER'), @event, @ignored = arra
 			}
 		}
 	}
-	@type = @event['item']['name'];
-	if(@type == 'ARMOR_STAND') {
-		try {
-			@inv = get_inventory(@event['location']);
-		} catch(CastException @ex) {
-			die();
-		}
-		cancel();
-		@loc = @event['location'][];
-		switch(get_blockdata(@loc)['facing']) {
-			case 'down':
-				@loc['y'] -= 1;
-			case 'up':
-				@loc['y'] += 1;
-			case 'north':
-				@loc['z'] -= 1;
-				@loc['yaw'] = 180;
-			case 'south':
-				@loc['z'] += 1;
-			case 'west':
-				@loc['x'] -= 1;
-				@loc['yaw'] = 90;
-			case 'east':
-				@loc['x'] += 1;
-				@loc['yaw'] = 270;
-		}
-		@loc['x'] += 0.5;
-		@loc['z'] += 0.5;
-		spawn_entity('ARMOR_STAND', 1, @loc);
-		set_timeout(0, closure(){
-			set_inventory(@event['location'], @inv);
-		});
-	}
 }
 
 // Custom noteblock sounds
