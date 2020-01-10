@@ -10,10 +10,6 @@ register_command('hoops', array(
 			@args[0] = 'start';
 		}
 		
-		if(!sk_region_exists('hoops')) {
-			die(color('red').'Hoops doesn\'t exist in this world.');
-		}
-		
 		switch(@args[0]) {
 			case 'reload':
 				if(!has_permission('command.hoops.reload')) {
@@ -26,9 +22,14 @@ register_command('hoops', array(
 				x_recompile_includes('core.library');
 				
 			case 'start':
+				if(!sk_region_exists('hoops')) {
+					die(color('red').'Hoops doesn\'t exist in this world.');
+				}
 				include('core.library/game.ms');
 				if(!import('hoops')) {
 					_hoops_create();
+				} else {
+					die(color('red').'Already running.');
 				}
 				@players = array();
 				foreach(@p in all_players(pworld())) {

@@ -33,7 +33,7 @@ proc _hoops_player_set_team(@player, @playersLeft = 0) {
 proc _hoops_player_equip(@player) {
 	@game = import('hoops');
 	
-	if(@game) {
+	if(@game && array_index_exists(@game, 'teams')) {
 		@team = @game['players'][@player]['team'];
 		@type = if(@team == 'blue', 'BLUE_STAINED_GLASS_PANE', 'RED_STAINED_GLASS_PANE');
 		@color = if(@team == 'blue', array(0, 0, 255), array(255, 0, 0));
