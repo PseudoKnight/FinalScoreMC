@@ -19,7 +19,7 @@ bind('player_join', null, null, @event) {
 
 		// Join message
 		queue_push(closure(){
-			if(!(has_permission('group.admin') && get_value('silentjoin'))) {
+			if(!string_starts_with(pinfo(player(), 12), 'silent')) {
 				@pre = '&8'.simple_date('h:mm').' &2\u00bb ';
 				@name = _colorname().color('italic').player();
 				@msg = '&e&o ';
