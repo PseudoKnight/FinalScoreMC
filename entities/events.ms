@@ -8,7 +8,7 @@ bind('entity_explode', array('priority': 'HIGH'), null, @event) {
 # Limit breeding in high entity areas
 bind('creature_spawn', null, array('reason': 'BREEDING'), @event) {
 	if(!array_contains(array('DONKEY', 'HORSE', 'MULE'), @event['type'])
-	&& array_size(entities_in_radius(@event['location'], 64)) > 300) {
+	&& array_size(entities_in_radius(@event['location'], 48)) > 300) {
 		cancel();
 		spawn_particle(@event['location'], 'SMOKE_NORMAL');
 		broadcast(color('gold').'Breeding failed due to overcrowding.', players_in_radius(@event['location'], 16));
@@ -77,19 +77,6 @@ bind('entity_damage', null, array('cause': 'ENTITY_EXPLOSION'), @event) {
 				cancel();
 			}
 		}
-	}
-}
-
-// temporary script to stop pig zombies dropping non-stackables when tps is bad
-bind('entity_death', null, array('type': 'PIG_ZOMBIE'), @event) {
-	if(tps()[0] < 19.0 && can_pickup_items(@event['id'])) {
-		@items = @event['drops'];
-		foreach(@index: @item in @items) {
-			if(!@item || @item['name'] == 'GOLDEN_SWORD') {
-				array_remove(@items, @index);
-			}
-		}
-		modify_event('drops', @items);
 	}
 }
 
