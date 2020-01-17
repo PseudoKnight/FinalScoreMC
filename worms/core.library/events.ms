@@ -17,14 +17,14 @@ proc _worms_bind_events(@game) {
 			|| @newLoc['x'] < @game['x']['lowest']
 			|| @newLoc['z'] > @game['z']['highest']
 			|| @newLoc['z'] < @game['z']['lowest']) {
-				_worms_kill(player(), @game);
+				set_timeout(0, closure(_worms_kill(player(), @game)));
 			} else {
 				@yaw = get_yaw(@event['from'], @event['to']);
 				if(@yaw == 'NaN') {
 					@yaw = entity_loc(@game['players'][player()]['segments'][0])['yaw'];
 				}
 				@newLoc['yaw'] = @yaw;
-				@newLoc['pitch'] = 0.0;
+				@newLoc['pitch'] = 0.0001;
 				
 				@trace = ray_trace(player(), @newLoc, 0.5, 0.4);
 				foreach(@e in @trace['entities']) {

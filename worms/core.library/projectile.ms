@@ -7,7 +7,7 @@ proc _worms_shoot_projectile(@player, @game) {
 	set_entity_spec(@segment, array('small': true, 'visible': false));
 	@loc = location_shift(entity_loc(@segment), 'up', 1.5);
 	@loc['yaw'] = ploc(@player)['yaw'];
-	@loc['pitch'] = 0;
+	@loc['pitch'] = 0.0001;
 	play_sound(@loc, array('sound': 'ENTITY_SHULKER_SHOOT', 'pitch': 2, 'volume': 3));
 	@count = array(64, 0);
 	set_interval(50, closure(){
@@ -36,7 +36,7 @@ proc _worms_shoot_projectile(@player, @game) {
 			@loc['x'] = @trace['location']['x'];
 			@loc['z'] = @trace['location']['z'];
 			foreach(@e in @trace['entities']) {
-				if(entity_type(@e['uuid']) == 'ARMOR_STAND' && @e != @segment) {
+				if(entity_type(@e['uuid']) == 'ARMOR_STAND' && @e['uuid'] != @segment) {
 					foreach(@p: @worm in @game['players']) {
 						if(@count[1] == 0 && @p == player()) {
 							continue();

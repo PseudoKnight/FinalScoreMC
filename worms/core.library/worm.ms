@@ -1,7 +1,7 @@
 proc _worms_spawn(@player, @game) {
 	@worm = @game['players'][@player];
 	@count = integer(20 / array_size(@game['players']));
-	@worm['segments'] = _worms_create_segments(location_shift(ploc(@player), 'down'), @count, @worm['color'], @game);
+	@worm['segments'] = _worms_create_segments(location_shift(ploc(@player), 'down', @game['height']), @count, @worm['color'], @game);
 }
 
 proc _worms_kill(@player, @game) {
