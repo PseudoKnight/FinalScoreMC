@@ -274,3 +274,5 @@
 		msg(color('green').'Healed!');
 	}
 <<<
+
+*:/hub [$] = run('/warp hub');
