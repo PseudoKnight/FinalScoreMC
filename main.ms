@@ -46,6 +46,6 @@ set_cron('*/5 * * * *', closure(){
 
 bind('server_ping', null, null, @event) {
 	@currently = _get_activities_string();
-	@motd = colorize('&6&l\u1260&d&l\u1260&b&l\u1260&4&l\u1260 &6&lFINALSCORE&e&lMC \u00AB &f\u25AA \u25AA \u25AA');
+	@motd = colorize('&6&l\u1260&d&l\u1260&b&l\u1260&4&l\u1260 &6&lFINALSCORE&e&lMC \u00AB &f\u25AA \u25AA \u25AA  &7[1.15.2]');
 	modify_event('motd', @motd.if(@currently, colorize('\n&aActivities&f: ').@currently));
 }
