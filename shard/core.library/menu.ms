@@ -1,5 +1,5 @@
 proc _open_objective_menu() {
-	@objectives = array('treasurehunt', 'elimination', 'scavengerhunt');
+	@objectives = array('treasurehunt', 'elimination', 'scavengerhunt', 'creative');
 	@menu = array(
 		'0': array(
 			'name': 'IRON_SWORD', 'meta': array(
@@ -24,9 +24,18 @@ proc _open_objective_menu() {
 				'display': color('aqua').'Scavenger Hunt',
 				'lore': array(
 					color('white').'Find and collect items to complete your card.',
-					color('white').'Five across, down, or diagonal wins the game.',
+					color('white').'Can be played like BINGO where',
+					color('white').'across, down, or diagonal wins the game.',
 			))
 		),
+		'3': array(
+			'name': 'GRASS_BLOCK', 'meta': array(
+				'display': color('aqua').'Creative',
+				'lore': array(
+					color('white').'Creative mode in shard.',
+					color('white').'Ends when all players exit the world.',
+			))
+		)
 	);
 	create_virtual_inventory('shard', 'HOPPER', 'Choose an Objective', @menu);
 	popen_inventory('shard');
@@ -69,7 +78,7 @@ proc _open_rules_menu(@objective) {
 			)))
 		),
 		'keep': array(
-			'objective': array('elimination', 'treasurehunt'),
+			'objective': array('elimination', 'treasurehunt', 'creative'),
 			'default': false,
 			'shown': true,
 			'item': array(
@@ -122,6 +131,7 @@ proc _open_rules_menu(@objective) {
 			)))
 		),
 		'randomspawn': array(
+			'objective': array('elimination', 'treasurehunt', 'scavengerhunt'),
 			'default': true,
 			'shown': true,
 			'item': array(

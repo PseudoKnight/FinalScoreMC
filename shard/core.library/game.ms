@@ -126,7 +126,7 @@ proc _shard_create(@rules){
 				storm(false, 'shard');
 				set_world_border('shard', array('width': @rules['width'], 'center': @loc));
 				set_gamerule('shard', 'NATURALREGENERATION', !array_index_exists(@rules, 'regen') || !@rules['noregen']);
-				@respawnPlayers = (@rules['objective'] == 'treasurehunt' || @rules['objective'] == 'scavengerhunt');
+				@respawnPlayers = (@rules['objective'] == 'treasurehunt' || @rules['objective'] == 'scavengerhunt' || @rules['objective'] == 'creative');
 				if(!@respawnPlayers && @rules['buffertime'] && @rules['timelimit']) {
 					set_timeout(@rules['buffertime'] * 60000, closure(){
 						if(array_contains(get_worlds(), 'shard')) {
@@ -155,16 +155,6 @@ proc _shard_create(@rules){
 					}
 
 					@size = get_inventory_size(@loc);
-					if(@size == 54) {
-						@inv = get_inventory(@loc);
-						@type = get_block(@loc);
-						foreach(@dir in array('north', 'south', 'east', 'west')) {
-							@checkLoc = location_shift(@loc, @dir);
-							if(!has_metadata(@checkLoc, 'loot') && get_block(@checkLoc) == @type && get_inventory_size(@checkLoc) == 54) {
-								_set_inventory_contents(@loc, 0, @player);
-							}
-						}
-					}
 					@inv = array();
 					array_resize(@inv, @size);
 					set_inventory(@loc, @inv);
@@ -193,7 +183,7 @@ proc _shard_create(@rules){
 						play_sound(@ploc, array('sound': 'BLOCK_GLASS_BREAK', 'pitch': 0.5));
 						@ploc['world'] = 'shard';
 						@airDrop = false;
-						if(@rules['randomspawn']
+						if(array_index_exists(@rules, 'randomspawn') && @rules['randomspawn']
 						|| @ploc['x'] < @minX
 						|| @ploc['x'] > @maxX
 						|| @ploc['z'] < @minZ
@@ -207,6 +197,9 @@ proc _shard_create(@rules){
 							}
 						}
 						if(set_ploc(@p, @ploc)) {
+							if(@rules['objective'] == 'creative') {
+								set_pmode(@p, 'CREATIVE');
+							}
 							if(@game['inv']) {
 								set_pinv(@p, @game['inv']);
 							} else if(!array_index_exists(@rules, 'keep') || !@rules['keep']) {
