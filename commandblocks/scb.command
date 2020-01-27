@@ -1,5 +1,5 @@
-@allowedCommands = array('/effect', '/fill', '/fillx', '/give', 'particle', '/platform', '/playsound', '/sayas', '/setblock',
-	'/setblockx', '/stopsound', '/teleport', '/tempboat', '/tempcart', '/time', '/timer', '/tp', '/velocity', '/warp');
+@allowedCommands = array('/effect', '/entity', '/fill', '/fillx', '/give', 'particle', '/platform', '/playsound', '/sayas', '/setblock',
+	'/setblockx', '/spawnpoint', '/stopsound', '/teleport', '/tempboat', '/tempcart', '/time', '/timer', '/tp', '/velocity', '/warp');
 register_command('scb', array(
 	'description': 'Set the command in the targeted command block.',
 	'usage': '/scb [cmd]',
