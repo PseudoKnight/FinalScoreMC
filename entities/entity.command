@@ -241,12 +241,16 @@ register_command('entity', array(
 					@id = json_decode(@id);
 				}
 				@entityCount = 1;
-				if(array_size(@args) == 3) {
+				if(array_size(@args) > 2) {
 					@entityCount = integer(@args[2]);
 				}
-				@loc = pcursor();
+				@loc = get_command_block();
+				if(@loc == null) {
+					@loc = ptarget_space();
+				} else {
+					@loc = _relative_coords(@loc, @args[3], @args[4], @args[5]);
+				}
 				@loc['x'] += 0.5;
-				@loc['y'] += 1;
 				@loc['z'] += 0.5;
 				while(@entityCount > 0) {
 					_spawn_entity(@id, @loc, player());

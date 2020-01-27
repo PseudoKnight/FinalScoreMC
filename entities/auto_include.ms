@@ -48,11 +48,10 @@ proc _spawn_entity(@entity, @loc, @owner, @teammates, @consumer) {
 			set_entity_gravity(@e, @entity['gravity']);
 		}
 		if(array_index_exists(@entity, 'lifetime')) {
-			set_timeout(@entity['lifetime'] * 1000, closure(){
+			set_timeout(integer(@entity['lifetime'] * 1000), closure(){
 				try {
 					@loc = entity_loc(@e);
 					@loc['y'] += 1;
-					play_sound(@loc, array('sound': 'ENTITY_ZOMBIE_INFECT'));
 					spawn_particle(@loc, array('particle': 'CLOUD', 'speed': 0, 'count': 10, 'xoffset': 0.4, 'zoffset': 0.4, 'yoffset': 0.4));
 					entity_remove(@e);
 				} catch(BadEntityException @ex) {
