@@ -54,6 +54,7 @@ proc _worms_shoot_projectile(@player, @game) {
 								@l['x'] += rand() * 2 - 1 + @v['x'];
 								@l['z'] += rand() * 2 - 1 + @v['z'];
 								set_entity_loc(@segment, @l);
+								set_entity_spec(@segment, array('visible': false));
 								@game['segments'][] = @segment;
 							}
 							spawn_particle(@e['location'], array('particle': 'EXPLOSION_LARGE', 'count': 0, 'xoffset': 1.1));

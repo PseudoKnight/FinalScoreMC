@@ -48,7 +48,8 @@ proc _worms_bind_events(@game) {
 							if(!@found) {
 								array_remove_values(@game['segments'], @uuid);
 							}
-							 _worms_add_segments(player(), @uuid, @game)
+							_worms_add_segments(player(), @uuid, @game);
+							set_entity_spec(@uuid, array('visible': true));
 							play_sound(@e['location'], array('sound': 'ENTITY_GENERIC_EAT', 'volume': 2));
 						}
 					}
