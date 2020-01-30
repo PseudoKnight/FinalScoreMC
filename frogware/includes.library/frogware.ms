@@ -65,7 +65,7 @@ proc _fw_startround(@secs = 12) {
 	@loc[2] += 18;
 	foreach(@p in all_players('custom')) {
 		if(_fw_player(@p)) {
-			stop_named_sound(@p, 'record.stal', 'RECORDS');
+			stop_named_sound(@p, 'music_disc.stal', 'RECORDS');
 		}
 	}
 
@@ -138,7 +138,7 @@ proc _fw_startround(@secs = 12) {
 			if(@total == 1 && @task === 'pvp', @task = array_get_rand(@tasks))
 			queue_delay(1000, 'fw2')
 			queue_push(closure(){
-				play_named_sound(@loc, array('sound': 'record.stal', 'pitch': 10 / @secs, 'category': 'RECORDS', 'volume': 3));
+				play_named_sound(@loc, array('sound': 'music_disc.stal', 'pitch': 10 / @secs, 'category': 'RECORDS', 'volume': 3));
 				_fw_task(@task, 'start', @secs)
 			}, 'fw2')
 			for(@i = @secs, @i >= 0, @i--) {
