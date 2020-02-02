@@ -145,6 +145,19 @@ proc _shard_create(@rules){
 
 				// Start game
 				create_scoreboard('shard');
+				create_objective('rules', 'DUMMY', 'shard');
+				foreach(@rule: @value in @rules) {
+					if(@rule != 'objective' && @value) {
+						set_pscore('rules', to_upper(@rule[0]).@rule[1..], integer(@value), 'shard');
+					}
+				}
+				set_objective_display('rules', array(
+					displayname: color('bold').color('aqua').to_upper(@rules['objective'][0]).@rules['objective'][1..],
+					slot: 'SIDEBAR'
+				), 'shard');
+				set_timeout(60 * 1000, closure() {
+					set_objective_display('rules', array(slot: null), 'shard');
+				});
 				_add_activity('shard', @worldname.'//Shard');
 
 				// Default procedures (overrideable)

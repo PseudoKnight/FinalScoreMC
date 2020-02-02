@@ -168,7 +168,7 @@ proc _open_rules_menu(@objective) {
 		),
 		'timelimit': array(
 			'objective': array('elimination'),
-			'default': 15,
+			'default': 10,
 			'shown': true,
 			'values': array(0, 10, 15, 20, 25, 30, 45, 60),
 			'item': array(
@@ -182,7 +182,7 @@ proc _open_rules_menu(@objective) {
 		),
 		'buffertime': array(
 			'objective': array('elimination', 'treasurehunt'),
-			'default': 1,
+			'default': 0,
 			'shown': true,
 			'values': array(0, 1, 3, 5, 10, 15, 20),
 			'item': array(
