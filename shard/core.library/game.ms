@@ -126,6 +126,10 @@ proc _shard_create(@rules){
 				storm(false, 'shard');
 				set_world_border('shard', array('width': @rules['width'], 'center': @loc));
 				set_gamerule('shard', 'NATURALREGENERATION', !array_index_exists(@rules, 'regen') || !@rules['noregen']);
+				set_spawning('shard', array(
+					'animal-spawn-limit': 20,
+					'ticks-per-animal-spawns': 20,
+				));
 				@respawnPlayers = (@rules['objective'] == 'treasurehunt' || @rules['objective'] == 'scavengerhunt' || @rules['objective'] == 'creative');
 				if(!@respawnPlayers && @rules['buffertime'] && @rules['timelimit']) {
 					set_timeout(@rules['buffertime'] * 60000, closure(){
