@@ -346,6 +346,7 @@ proc _shard_create(@rules){
 								_set_inventory_contents(@event['location'], 0);
 							case 'CHEST':
 							case 'TRAPPED_CHEST':
+							case 'BARREL':
 								@luck = 0;
 								@effects = get_peffect();
 								if(array_index_exists(@effects, 'luck')) {
@@ -403,6 +404,7 @@ proc _shard_create(@rules){
 									set_inventory(@block, @inv);
 								case 'CHEST':
 								case 'TRAPPED_CHEST':
+								case 'BARREL':
 									_set_inventory_contents(@block, 3);
 							}
 						}
