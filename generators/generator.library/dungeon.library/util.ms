@@ -50,3 +50,15 @@ proc _get_adjacent_height(@heightMap, @maxRoomHeight, @c, @r, @x, @z) {
 	}
 	return(@height);
 }
+
+// Add block to chunk batch.
+// To minimize memory use, the chunk array alternates between location and material.
+// Therefore these chunk batches should always be processed sequentially.
+proc _add_to_chunk(@chunk, @loc, @material) {
+	@chunk[] = @loc[];
+	if(is_array(@material)) {
+		@chunk[] = array_get_rand(@material);
+	} else {
+		@chunk[] = @material;
+	}
+}
