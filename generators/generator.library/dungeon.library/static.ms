@@ -30,7 +30,7 @@ proc _get_loot(@floor, @random, @loot = array(
 	array(0.04, associative_array('name': 'SNOWBALL', 'qty': 2, 'meta': associative_array('display': 'SHOTGUN'))),
 	array(0.02, associative_array('name': 'GHAST_TEAR', 'qty': array(1, 7), 'meta': associative_array('display': 'PISTOL')));
 )) {
-	@inv = array();
+	@inv = associative_array();
 	foreach(@weightedLoot in @loot){
 		if(srand(@random) < @weightedLoot[0]){
 			if(array_index_exists(@weightedLoot[1], 'qty')
@@ -40,7 +40,7 @@ proc _get_loot(@floor, @random, @loot = array(
 			} else {
 				@item = @weightedLoot[1];
 			}
-			@inv[] = @item;
+			@inv[rand(27)] = @item;
 		}
 	}
 	return(@inv);

@@ -51,7 +51,7 @@ proc _get_loot(@floor, @random, @loot = array(
 	array('chance': 0.01, 'item': 'WOLF_SPAWN_EGG'),
 	array('chance': 0.01, 'item': 'VILLAGER_SPAWN_EGG'),
 )) {
-	@inv = array();
+	@inv = associative_array();
 	foreach(@weightedLoot in @loot){
 		if(srand(@random) < @weightedLoot['chance'] + @floor * 0.01){
 			@item = array('name': @weightedLoot['item']);
@@ -100,7 +100,7 @@ proc _get_loot(@floor, @random, @loot = array(
 				}
 				@item['meta'] = @meta;
 			}
-			@inv[] = @item;
+			@inv[rand(27)] = @item;
 		}
 	}
 	return(@inv);
