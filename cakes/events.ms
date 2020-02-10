@@ -1,5 +1,5 @@
 # Clicking cakes
-bind('player_interact', null, array('block': 'CAKE'), @event) {
+bind('player_interact', null, array('block': 'CAKE', 'button': 'right', 'hand': 'main_hand'), @event) {
 	if(phas_flight() || pworld() !== 'custom') {
 		die();
 	}
