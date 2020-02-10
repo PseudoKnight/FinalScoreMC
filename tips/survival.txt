@@ -110,7 +110,7 @@ You can have one /home per world, excluding the outworld.
 
 We have a Discord server @ &bhttps://discord.gg/GHgfWp4
 
-There are four primary survival worlds: Alpha, Delta, Gamma, and Omega.
+There are five primary survival worlds: Alpha, Delta, Gamma, Omega, and Psi.
 
 If you changed your name, you can update [private] and shop signs to your new name by clicking the sign.
 

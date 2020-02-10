@@ -72,6 +72,21 @@ omega_nether:
   teleports: true
   environment: NETHER
   respawn: omega
+psi:
+  name: 'Psi'
+  mode: SURVIVAL
+  group: 'survival'
+  teleports: true
+  environment: NORMAL
+  seed: -22023021593178743
+psinether: psi_nether
+psi_nether:
+  name: 'Psi Nether'
+  mode: SURVIVAL
+  group: 'survival'
+  teleports: true
+  environment: NETHER
+  respawn: psi
 outworld:
   name: 'Outworld'
   mode: SURVIVAL

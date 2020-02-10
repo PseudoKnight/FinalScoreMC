@@ -14,7 +14,7 @@ register_command('survival', array(
 		&& array_index_exists(@pdata['survival'], 'loc')) {
 			_warmuptp(player(), @pdata['survival']['loc']);
 		} else {
-			@loc = get_spawn('omega');
+			@loc = get_spawn('psi');
 			@loc = array(@loc[0] + 0.5, @loc[1] - 1, @loc[2] + 0.5, @loc[3]);
 			_warmuptp(player(), @loc);
 		}

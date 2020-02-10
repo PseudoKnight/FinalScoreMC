@@ -79,13 +79,13 @@
 			'"/approve playername" command.',
 		'survival': 'worlds',
 		'worlds':
-			'There are four primary worlds: Alpha (Plaza at spawn), Delta (Final City at spawn), Gamma (Gamma City '.
-			'at spawn), and Omega. In addition, there are four respective nether dimensions and one End dimension. '.
+			'There are five primary worlds: Alpha (Plaza at spawn), Delta (Final City at spawn), Gamma (Gamma City '.
+			'at spawn), Omega, and Psi. In addition, there are four respective nether dimensions and one End dimension. '.
 			'You can type "/where" to see which worlds players are on.',
 		'seeds': 'worldseeds',
 		'worldseeds':
-			'These are the seeds for the four main worlds -- Alpha: -621778714517541268, Delta: '.
-			'-8443156782283251243, Gamma: -754633420005903009, Omega: 950483747. Outworld seeds are not provided.'
+			'Alpha: -621778714517541268, Delta: -8443156782283251243, Gamma: -754633420005903009, Omega: 950483747. '.
+			'Other seeds are not provided.'
 	);
 	if($selection === 'help') {
 		msg(color('a').'Get help on any of these topics:');

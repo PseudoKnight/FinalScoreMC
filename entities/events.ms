@@ -26,7 +26,7 @@ bind('creature_spawn', null, array('reason': 'EGG'), @event) {
 # Block creeper damage on the surface.
 bind('entity_explode', null, array('type': 'CREEPER'), @event) {
 	if(@event['location']['y'] > 62
-	&& array_contains(array('world', 'world3', 'world4', 'omega'), @event['location']['world'])) {
+	&& array_contains(array('world', 'world3', 'world4', 'omega', 'psi'), @event['location']['world'])) {
 		cancel();
 		spawn_particle(@event['location'], 'EXPLOSION_HUGE');
 	}

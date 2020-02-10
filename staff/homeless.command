@@ -17,7 +17,7 @@ register_command('homeless', array(
 				if(array_index_exists(@pdata, 'world')
 				&& (@pdata['world'] == 'outworld' || @pdata['world'] == 'outworld_nether' || @pdata['world'] == 'outworld_the_end')) {
 					@pdata['homeless'] = true;
-					@pdata['world'] = 'omega';
+					@pdata['world'] = 'psi';
 					store_value(@key, @pdata);
 					msg('Set '.@pdata['name'].' to "homeless".');
 				}

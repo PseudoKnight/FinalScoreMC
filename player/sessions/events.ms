@@ -88,7 +88,7 @@ bind('player_join', null, null, @event) {
 		queue_push(closure(){
 			if(array_index_exists(@pdata, 'homeless')) {
 				# homeless players are players left on deleted worlds
-				@loc = get_spawn('omega');
+				@loc = get_spawn('psi');
 				set_ploc(@loc);
 				array_remove(@pdata, 'homeless');
 				_store_pdata(player(), @pdata);
