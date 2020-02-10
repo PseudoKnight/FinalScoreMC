@@ -46,7 +46,7 @@ bind('projectile_launch', array('id': @id.'grapple'), array('type': 'FISHING_HOO
 				// sometimes the mover dies
 			}
 
-			if(ponline(@player)) {
+			if(ponline(@player) && phealth(@player) > 0 && pmode(@player) != 'SPECTATOR') {
 				set_pinv(@player, @slot, null);
 				set_timeout(50, closure(){
 					set_pinv(@player, @slot, array('name': 'FISHING_ROD'));
