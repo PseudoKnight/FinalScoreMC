@@ -570,7 +570,7 @@ register_command('arena', array(
 				if(_is_survival_world(pworld()) || !has_permission('group.builder')) {
 					die(color('gold').'You do not have permission.');
 				}
-				if(array_size(@args) < 4) {
+				if(array_size(@args) < 3) {
 					return(false);
 				}
 				@id = @args[1];
@@ -578,6 +578,9 @@ register_command('arena', array(
 				@arena = get_value('arena.'.@id);
 				switch(@setting) {
 					case 'kit':
+						if(array_size(@args) < 4) {
+							die(color('gold').'Requires team # to load.');
+						}
 						_clear_pinv();
 						@team = @args[3];
 						if(@team) {
