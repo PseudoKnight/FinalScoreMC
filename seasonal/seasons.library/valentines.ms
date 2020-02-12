@@ -1,3 +1,11 @@
-bind('player_move', null, array('threshold': 2), @event) {
-	spawn_particle(@event['from'], 'HEART');
+bind('entity_damage', null, null, @event) {
+	if(is_entity_living(@event['id'])) {
+		spawn_particle(location_shift(@event['location'], 'up'), array(
+			'particle': 'HEART', 
+			'count': ceil(@event['finalamount']), 
+			'xoffset': 0.5, 
+			'zoffset': 0.5,
+			'yoffset': 1,
+		));
+	}
 }
