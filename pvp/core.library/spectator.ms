@@ -22,7 +22,7 @@ proc _spectator_remove(@player, @pvp) {
 	try {
 		array_remove_values(@pvp['spectators'], @player);
 		if(ponline(@player)) {
-			set_pmode(@player, 'ADVENTURE');
+			_equip_kit(@player);
 			set_entity_fall_distance(puuid(@player), 0);
 			set_ploc(@player, @pvp['arena']['lobby']);
 			if(array_index_exists(@pvp['arena'], 'resourcepack')) {
