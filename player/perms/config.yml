@@ -176,6 +176,7 @@ builder:
       worldedit.tool.*: true
       worldedit.light.*: true
       worldedit.setnbt: true
+      worldedit.drawsel: true
       worldguard.region.claim: true
       minecraft.command.stopsound: true
     custom:
@@ -237,6 +238,7 @@ engineer:
       worldedit.tool.*: true
       worldedit.light.*: true
       worldedit.setnbt: true
+      worldedit.drawsel: true
       command.setwarp: true
       command.class: true
   inheritance: builder
@@ -267,6 +269,7 @@ moderator:
     worldedit.extinguish: true
     worldedit.navigation.*: true
     worldedit.analysis.*: true
+    worldedit.drawsel: true
     command.fly: true
     command.gm: true
     command.gm.others: true
