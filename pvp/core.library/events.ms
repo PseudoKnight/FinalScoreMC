@@ -127,11 +127,16 @@ bind('player_death', array('priority': 'high', 'id': @id.'death'), null, @e, @id
 					_pvp_flag_spawn(@id, @flag, location_shift(ploc(), 'up'))
 				}
 			} else if(@arena['mode'] == 'bombingrun' && _is_bomb(@id, @drop)) {
-				if(@e['cause']['cause'] === 'VOID' || @e['cause']['cause'] === 'LAVA') {
-					_pvp_bomb_spawn(@id)
-				} else {
-					_pvp_bomb_spawn(@id, location_shift(ploc(), 'up'));
+				switch(@e['cause']['cause']) {
+					case 'VOID':
+					case 'LAVA':
+					case 'FIRE':
+					case 'FIRE_TICK':
+						_pvp_bomb_spawn(@id);
+					default:
+						_pvp_bomb_spawn(@id, location_shift(ploc(), 'up'));
 				}
+				@pvp['bombholder'] = null;
 			} else if(array_index_exists(@arena, 'captain')
 			&& @drop['name'] == @pvp['team'][@pvp['players'][player()]['team']]['captainhat']['name']) {
 				@pvp['team'][@pvp['players'][player()]['team']]['captain'] = ''
