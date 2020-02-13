@@ -49,7 +49,7 @@ bind('player_join', null, null, @event) {
 			foreach(@p in all_players()) {
 				set_list_name(@p, display_name(@p));
 			}
-			set_plist_header(@p, colorize('&6&lFINALSCORE&e&lMC'));
+			set_plist_header(colorize('&6&lFINALSCORE&e&lMC'));
 			_update_activities();
 		}, 'join');
 

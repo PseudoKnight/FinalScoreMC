@@ -58,6 +58,8 @@ proc _set_group(@player, @group, @checkInheritance = false) {
 	_store_pdata(@player, @pdata);
 	if(ponline(@player)) {
 		_perm_player(@player);
+		set_display_name(@player, _colorname(@player).@player);
+		set_list_name(@player, display_name(@player));
 	}
 	return(@oldGroup);
 }
