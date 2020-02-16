@@ -1,4 +1,4 @@
-proc _chat(@player, @message, @recipients, @discordChannel = '') {
+proc _chat(@player, @message, @recipients, @source = '', @channel = '') {
 	if(length(@message) == 0) {
 		die();
 	}
@@ -16,9 +16,6 @@ proc _chat(@player, @message, @recipients, @discordChannel = '') {
 
 	# Remove players that are ignoring this player, or everyone if muted.
 	@recipients = _remove_ignored(@player, @recipients);
-	if(array_size(@recipients) == 1 && array_size(all_players()) > 1) {
-		die('No players can receive your chat.');
-	}
 
 	# Basic hostile word filters
 	@filteredMessage = reg_replace(comp_read('filter.txt'), '\u2639', @message);
@@ -30,6 +27,14 @@ proc _chat(@player, @message, @recipients, @discordChannel = '') {
 	# Construct chat components
 	@components = array();
 	@components[] = array('colorize', '&8'.simple_date('h:mm').' ');
+
+	if(@source) {
+		if(@source == 'dynmap') {
+			@components[] = array('hover', '&2\u29E0', 'Live Map on Web');
+		} else {
+			@components[] = array('hover', '&9\u2689'.if(@channel != 'minecraft_chat', '#'.@channel), 'Discord');
+		}
+	}
 
 	try {
 		@pdata = _pdata(@player, false);
@@ -48,12 +53,8 @@ proc _chat(@player, @message, @recipients, @discordChannel = '') {
 		}
 	} else {
 		if(array_index_exists(@pdata, 'ban')) {
-			die(@player.' tried to speak in web chat');
-		}
-		if(@discordChannel) {
-			@components[] = array('hover', '&9\u2689'.if(@discordChannel != 'minecraft_chat', '#'.@discordChannel), 'Discord');
-		} else {
-			@components[] = array('hover', '&2\u29E0', 'Live Map on Web');
+			console(@player.' tried to speak in web chat', false);
+			die();
 		}
 		if(@pdata) {
 			@nameColor = _colorname(@player);
@@ -80,13 +81,15 @@ proc _chat(@player, @message, @recipients, @discordChannel = '') {
 	@components[] = '&r'.@escapedMessage;
 
 	# Send chat message
+	@muted = array_size(@recipients) != array_size(all_players())
+			&& array_size(@recipients) == integer(ponline(@player));
+	console(if(@muted, '[MUTED] ').@player.': '.@message, false);
 	_tellraw(@recipients, @components);
-	console(if(!@recipients, '[MUTED] ').@player.': '.@message, false);
-	if(@recipients) {
+	if(!@muted) {
 		if(function_exists('dm_broadcast_to_web')) {
 			dm_broadcast_to_web(@filteredMessage, @player);
 		}
-		if(!@discordChannel) {
+		if(@source != 'discord') {
 			if(function_exists('discord_broadcast')) {
 				discord_broadcast('minecraft_chat', '**'.@player.'** '.@filteredMessage);
 			}
