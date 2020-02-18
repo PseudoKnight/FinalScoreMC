@@ -12,19 +12,20 @@ register_command('swap', array(
 			bind('player_interact', array('id': 'timeswap'), array('itemname': 'CLOCK', 'button': 'right', 'hand': 'main_hand'), @event) {
 				if(pworld() == 'dev' && !pcooldown('CLOCK')) {
 					@loc = ploc();
+					@time = 'Present';
 					if(@loc['z'] > -1000) {
 						@z = -50;
 						@loc['z'] -= 50;
 					} else {
 						@z = 50;
 						@loc['z'] += 50;
+						@time = 'Past';
 					}
 					if(!get_block_info(location_shift(@loc, 'up'), 'solid')
 					&& !get_block_info(location_shift(@loc, 'up', 2), 'solid')) {
 						set_peffect(player(), 'BLINDNESS', 0, 1, true, false);
-						set_peffect(player(), 'NIGHT_VISION', 0, 1, true, false);
-						@item = pinv(player(), null);
-						@slot = pheld_slot();
+						set_peffect(player(), 'NIGHT_VISION', 0, 0.5, true, false);
+						set_pinv(player(), null, array('name': 'CLOCK', 'meta': array('display': color('bold').@time)));
 						set_timeout(50, closure(){
 							if(ponline(player()) && pworld() == 'dev') {
 								set_pcooldown('CLOCK', 2000 / 50);
