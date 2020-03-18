@@ -67,7 +67,7 @@ bind('player_join', null, null, @event) {
 				@tips = import(_world_group(pworld()).'-tips');
 				if(@tips) {
 					@tip = array_get_rand(@tips);
-					msg('\n '.colorize(@tip));
+					msg('\n '.colorize('&e \u2139 &f'.@tip));
 					msg(color('1').color('m').'\n\u2575'.@line.color('1').'\u2575');
 				}
 			}
@@ -129,6 +129,16 @@ bind('player_join', null, null, @event) {
 		queue_push(closure(){
 			_update_discord_topic();
 		}, 'join');
+
+		// Enter effect
+		if(array_index_exists(@pdata, 'entereffect')) {
+			queue_push(closure(){
+				switch(@pdata['entereffect']) {
+					case 'lightning':
+						lightning(ploc(), true);
+				}
+			}, 'join');
+		}
 
 		_bm_request('set_user_uuid', 'a1634f37480a4bb9a0b2200266597ac0', array('username': player(), 'user_uuid': puuid()));
 	});
