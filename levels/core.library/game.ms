@@ -398,8 +398,8 @@ proc _level_start(@level) {
 						@level['duplicate'] = 1;
 					}
 					if(array_index_exists(@wave, 'trigger')
-					&& array_index_exists(@arena['triggers'], @wave['trigger'])) {
-						@trigger = @arena['triggers'][@wave['trigger']];
+					&& array_index_exists(@level['arena']['triggers'], @wave['trigger'])) {
+						@trigger = @level['arena']['triggers'][@wave['trigger']];
 						set_block(@trigger, 'REDSTONE_BLOCK');
 						@level['trigger'] = @trigger;
 					}
