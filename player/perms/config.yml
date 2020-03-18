@@ -100,6 +100,7 @@ member:
       advancement.all: false
       command.heal: true
       command.skipper: true
+      command.skull: true
       minecraft.debugstick: true
     custom:
       stargate.create.personal: false
