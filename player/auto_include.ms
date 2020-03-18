@@ -57,10 +57,14 @@ proc _bm_request(@endpoint, @player, @params, @callback, @error) {
 					if(!is_array(@result)) {
 						// result was a single value for some reason
 					} else if(array_index_exists(@result, 'error') && @result['error'] !== 'Nothing found.') {
-						execute(@result['error'], @error ||| closure(@error_msg) {
-							console('Error in remote Ban Manager: '.@error_msg, false);
-						});
-					} else {
+						if(is_closure(@error)) {
+							execute(@result['error'], @error);
+						} else {
+							execute(@result['error'], closure(@error_msg) {
+								console('Error in remote Ban Manager: '.@error_msg, false);
+							});
+						}
+					} else if(is_closure(@callback)) {
 						execute(@result, @callback ||| closure());
 					}
 				}
