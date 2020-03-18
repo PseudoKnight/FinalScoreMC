@@ -338,22 +338,24 @@ proc _shard_create(@rules){
 				bind('player_interact', array('id': 'shard-interact'), null, @event) {
 					if(@event['block'] && pworld() == 'shard') {
 						switch(@event['block']) {
+							case 'BLAST_FURANCE':
+							case 'COOKER':
 							case 'DISPENSER':
 							case 'FURNACE':
 							case 'BREWING_STAND':
 							case 'HOPPER':
 							case 'DROPPER':
 								_set_inventory_contents(@event['location'], 0);
+							case 'BARREL':
 							case 'CHEST':
 							case 'TRAPPED_CHEST':
-							case 'BARREL':
 								@luck = 0;
 								@effects = get_peffect();
 								if(array_index_exists(@effects, 'luck')) {
-									@luck += @effect['luck']['strength'] + 1;
+									@luck += @effects['luck']['strength'] + 1;
 								}
 								if(array_index_exists(@effects, 'bad_luck')) {
-									@luck -= @effect['bad_luck']['strength'] + 1;
+									@luck -= @effects['bad_luck']['strength'] + 1;
 								}
 								_set_inventory_contents(@event['location'], 3 + @luck);
 							default:
@@ -394,6 +396,8 @@ proc _shard_create(@rules){
 					if(@event['location']['world'] == 'shard') {
 						foreach(@block in @event['blocks']) {
 							switch(get_block(@block)) {
+								case 'BLAST_FURNACE':
+								case 'COOKER':
 								case 'DISPENSER':
 								case 'FURNACE':
 								case 'BREWING_STAND':
@@ -402,9 +406,9 @@ proc _shard_create(@rules){
 									@inv = array();
 									array_resize(@inv, get_inventory_size(@block));
 									set_inventory(@block, @inv);
+								case 'BARREL':
 								case 'CHEST':
 								case 'TRAPPED_CHEST':
-								case 'BARREL':
 									_set_inventory_contents(@block, 3);
 							}
 						}
