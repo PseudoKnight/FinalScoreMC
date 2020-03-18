@@ -45,7 +45,7 @@ proc _item_get_currency(@id) {
 		case 'i':
 			return('IRON_INGOT');
 		default:
-			throw('FormatException', 'Shop has unhandled currency: '.@shop['sell'][4]);
+			throw('FormatException', 'Shop has unhandled currency: '.@id);
 	}
 }
 
