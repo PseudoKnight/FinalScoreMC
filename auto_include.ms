@@ -2,7 +2,7 @@
 	Format all exception messages according to the sender and receiver.
 	Only displays technical details to console/log, not to player.
 */
-set_uncaught_exception_handler(closure(@ex){
+set_uncaught_exception_handler(iclosure(@ex){
 	if(@loc = get_command_block()) {
 		console('Exception occurred in CommandBlock at '.array_normalize(@loc)[0..3], false);
 	} else if(ponline(player())) {

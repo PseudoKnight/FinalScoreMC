@@ -30,8 +30,7 @@ proc _find_player(@player) {
 	@error - Closure (Optional) - Closure to execute when the request returns an error.
 	The closure is passed the error message. Defaults to printing the error message to the user.\
 */
-proc _bm_request(@endpoint, @player, @params, @callback = closure(noop()),
-	@error = closure(@error_msg, console('Error in remote Ban Manager: '.@error_msg, false))) {
+proc _bm_request(@endpoint, @player, @params, @callback, @error) {
 
 	# Add the authentication parameters
 	@params['accessor_token'] = 'final-score-minecraft-server';
@@ -58,9 +57,11 @@ proc _bm_request(@endpoint, @player, @params, @callback = closure(noop()),
 					if(!is_array(@result)) {
 						// result was a single value for some reason
 					} else if(array_index_exists(@result, 'error') && @result['error'] !== 'Nothing found.') {
-						execute(@result['error'], @error);
+						execute(@result['error'], @error ||| closure(@error_msg) {
+							console('Error in remote Ban Manager: '.@error_msg, false);
+						});
 					} else {
-						execute(@result, @callback);
+						execute(@result, @callback ||| closure());
 					}
 				}
 			}

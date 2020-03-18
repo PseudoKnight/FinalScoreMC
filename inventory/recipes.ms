@@ -80,7 +80,7 @@ if(!import('recompile')) {
 		'result': array('name': 'FIREWORK_ROCKET', 'qty': 1),
 		'ingredients': array(
 			'FIREWORK_ROCKET', 
-			array_filter(all_materials(), closure(@key, @value) {
+			array_filter(all_materials(), iclosure(@key, @value) {
 				return(string_ends_with(@value, '_SPAWN_EGG'));
 			})
 		)
@@ -106,7 +106,7 @@ if(!import('recompile')) {
 		'key': 'recycle_glass',
 		'type': 'FURNACE',
 		'result': array('name': 'GLASS'),
-		'input': array_filter(all_materials(), closure(@key, @value) {
+		'input': array_filter(all_materials(), iclosure(@key, @value) {
 			return(string_ends_with(@value, '_STAINED_GLASS'));
 		})
 	));
@@ -115,7 +115,7 @@ if(!import('recompile')) {
 		'key': 'recycle_glass_pane',
 		'type': 'FURNACE',
 		'result': array('name': 'GLASS_PANE'),
-		'input': array_filter(all_materials(), closure(@key, @value) {
+		'input': array_filter(all_materials(), iclosure(@key, @value) {
 			return(string_ends_with(@value, '_STAINED_GLASS_PANE'));
 		})
 	));

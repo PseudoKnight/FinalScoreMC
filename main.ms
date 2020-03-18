@@ -1,4 +1,4 @@
-set_cron('*/5 * * * *', closure(){
+set_cron('*/5 * * * *', iclosure(){
 	@activities = _get_activities_string();
 	@allocMem = get_server_info(15);
 	@freeMem = get_server_info(16);

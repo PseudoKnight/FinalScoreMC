@@ -9,7 +9,7 @@ bind('player_interact', null, array('itemname': 'BOOK', 'button': 'right', 'hand
 	}
 }
 
-queue_push(closure(){
+queue_push(iclosure(){
 	@main = array(
 		27: array(
 			'name': 'RED_CARPET',
