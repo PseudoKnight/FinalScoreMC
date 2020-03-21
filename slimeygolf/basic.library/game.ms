@@ -198,7 +198,7 @@ proc _start_game(@course, @loc) {
 			@ball = @golf['players'][@player];
 			if(_ball_exists(@ball['id'])) {
 				@loc = entity_loc(@ball['id']);
-				set_entity_loc(@ball['slime'], @loc);
+				try(set_entity_loc(@ball['slime'], @loc));
 				@v = entity_velocity(@ball['id']);
 				@block = _get_block_below(location_shift(@loc, 'down', 0.01), @v);
 				if(@block) {
