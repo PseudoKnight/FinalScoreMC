@@ -80,16 +80,6 @@ bind('entity_damage', null, array('cause': 'ENTITY_EXPLOSION'), @event) {
 	}
 }
 
-// Always drop full enderdragon experience
-bind('entity_death', null, array('type': 'ENDER_DRAGON'), @event) {
-	if(@event['xp'] < 12000) {
-		modify_event('xp', 12000);
-		@loc = get_highest_block_at(0, 0, @event['location']['world']);
-		@loc['y'] += 1;
-		set_block(@loc, 'DRAGON_EGG');
-	}
-}
-
 // Block ghast fireball damage to all but natural nether blocks
 bind('entity_explode', null, array('type': 'FIREBALL'), @event) {
 	@world = @event['location']['world'];
