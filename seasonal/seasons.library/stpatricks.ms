@@ -58,8 +58,10 @@ bind('creature_spawn', null, array('type': 'ZOMBIE', 'reason': 'NATURAL'), @even
 }
 
 bind('target_player', null, array('mobtype': 'ZOMBIE'), @event) {
-	if(get_entity_silent(@event['id'])) {
-		play_sound(entity_loc(@event['id']), array('sound': 'ENTITY_WITCH_AMBIENT', 'pitch': 2, 'volume': 3));
-		set_entity_velocity(@event['id'], array(0, 0.3, 0));
-	}
+	try {
+		if(get_entity_silent(@event['id'])) {
+			play_sound(entity_loc(@event['id']), array('sound': 'ENTITY_WITCH_AMBIENT', 'pitch': 2, 'volume': 3));
+			set_entity_velocity(@event['id'], array(0, 0.3, 0));
+		}
+	} catch (BadEntityException @ex) {}
 }
