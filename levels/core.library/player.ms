@@ -31,7 +31,7 @@ proc _level_add_player(@player, @level) {
 }
 
 proc _level_remove_player(@player, @level) {
-	bar_remove_player('level'.@level['region'], @player);
+	try(bar_remove_player('level'.@level['region'], @player));
 	array_remove_values(@level['players'], @player);
 	clear_peffects(@player);
 	_equip_kit(@player);

@@ -246,6 +246,7 @@ proc _level_start(@level) {
 			// Check if players are still in play
 			if(!@level['players']) {
 				_level_end(@level, false);
+				console('No players left in game.');
 				die();
 			}
 			foreach(@p in @level['spectators']) {
