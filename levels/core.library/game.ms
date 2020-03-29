@@ -264,30 +264,29 @@ proc _level_start(@level) {
 					update_bar('level'.@level['region'], array('color': 'WHITE', 'title': '', 'percent': (6 - @sleep[0]) / 6));
 				}
 
+				if(@sleep == 5 && @level['title']) {
+					foreach(@p in @level['players']) {
+						if(ponline(@p)) {
+							title(@p, @level['title'], null, 20, 40, 20);
+						}
+					}
+					@level['title'] = '';
+
+				} else if(@sleep == 3 && @level['subtitle']) {
+					foreach(@i: @p in @level['players']) {
+						if(ponline(@p)) {
+							title(@p, '', @level['subtitle'], 20, 40, 20);
+						}
+					}
+					@level['subtitle'] = '';
+				}
+
 			} else if(@level['trigger']) {
 				set_block(@level['trigger'], 'AIR');
 				@level['trigger'] = null;
 
-			} else if(@level['title']) {
-				foreach(@p in @level['players']) {
-					if(ponline(@p)) {
-						title(@p, @level['title'], null, 20, 40, 20);
-					}
-				}
-				@sleep[] = 2;
-				update_bar('level'.@level['region'], array('visible': false));
-				@level['title'] = '';
-
-			} else if(@level['subtitle']) {
-				foreach(@i: @p in @level['players']) {
-					if(ponline(@p)) {
-						title(@p, '', @level['subtitle'], 20, 40, 20);
-					}
-				}
-				@sleep[] = 2;
-				update_bar('level'.@level['region'], array('visible': false));
-				@level['subtitle'] = '';
 			} else if(@level['mobs'] && !@level['spawns']) {
+				update_bar('level'.@level['region'], array('visible': false));
 				@spawnGroups = associative_array();
 				foreach(@mob in @level['mobs']) {
 					@spawnGroup = 'spawns';
