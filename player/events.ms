@@ -213,7 +213,6 @@ bind('block_break', null, array('block': 'DIAMOND_ORE'), @event) {
 		if(@report) {
 			@msg = color('c').'[!] '.display_name().color('r').' found diamonds';
 			broadcast(@msg, 'group.moderator');
-			console(@msg, false);
 		}
 	});
 }
