@@ -49,6 +49,7 @@ bind('target_player', null, array('mobtype': 'ZOMBIE'), @event, @day) {
 			&& entity_can_see(@event['id'], puuid(@event['player']))) {
 				@mobs = array(
 					'BAT',
+					'BEE',
 					'CAVE_SPIDER',
 					'CHICKEN',
 					'COW',
@@ -114,7 +115,7 @@ bind('target_player', null, array('mobtype': 'ZOMBIE'), @event, @day) {
 						set_mob_name(@event['id'], 'Dinnerbone');
 					}
 				}
-				set_metadata(@e, 'spawn_egg', @mob);
+				set_timeout(0, closure(try(set_metadata(@e, 'spawn_egg', @mob))));
 				set_timeout((1 + rand(3)) * 1000, closure() {
 					if(entity_exists(@event['id'])
 					&& ponline(@event['player'])
@@ -132,7 +133,7 @@ bind('target_player', null, array('mobtype': 'ZOMBIE'), @event, @day) {
 								set_mob_name(@event['id'], 'Dinnerbone');
 							}
 						}
-						set_metadata(@e, 'spawn_egg', @mob);
+						set_timeout(0, closure(try(set_metadata(@e, 'spawn_egg', @mob))));
 					}
 				});
 			}
@@ -153,7 +154,9 @@ bind('projectile_hit', null, array('type': 'EGG'), @event) {
 		@loc = location_shift(@event['location'], 'up');
 		@loc['x'] = floor(@loc['x']) + 0.5;
 		@loc['z'] = floor(@loc['z']) + 0.5;
-		@entity = spawn_entity(@mob, 1, @loc)[0];
+		spawn_entity(@mob, 1, @loc, closure(@e) {
+			set_entity_persistence(@e, false)
+		});
 		play_sound(@loc, array('sound': 'ENTITY_CHICKEN_EGG', 'pitch': 0.5));
 		spawn_particle(@loc, array(
 			'particle': 'REDSTONE',
@@ -163,7 +166,6 @@ bind('projectile_hit', null, array('type': 'EGG'), @event) {
 			'zoffset': 1,
 			'color': array(rand(256), rand(256), rand(256)),
 		));
-		set_entity_persistence(@entity, false);
 	}
 }
 
