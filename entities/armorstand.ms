@@ -282,6 +282,12 @@ bind('player_interact_at_entity', null, array('clicked': 'ARMOR_STAND'), @event)
 	}
 }
 
+bind('player_interact', null, array('itemname': 'ARMOR_STAND', 'button': 'right'), @event) {
+	if(@event['action'] == 'right_click_block') {
+		title('', color(6).'Use an open hand whilst sneaking to pose');
+	}
+}
+
 bind('entity_damage', null, array('type': 'ARMOR_STAND'), @event) {
 	@damager = '';
 	if(array_index_exists(@event, 'shooter')) {
