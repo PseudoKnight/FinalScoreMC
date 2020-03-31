@@ -119,7 +119,7 @@ shop:
         cost: 5
 waves:
     1:
-        title: 'Baby Steps'
+        title: 'Chapter 1: Baby Steps'
         subtitle: 'A Mitey Start'
         music: 'music_disc.cat'
         duplicate: 5
@@ -251,7 +251,7 @@ waves:
                       weapon: 1
               pos: 'center'
     13:
-        title: "This Ain't Right"
+        title: "Chapter 2: This Ain't Right"
         subtitle: 'Turned'
         music: 'music.game'
         duplicate: 8
@@ -313,7 +313,7 @@ waves:
                       strength: 1
                       seconds: 600
     19:
-        title: 'The Outcasts'
+        title: 'Chapter 3: The Outcasts'
         subtitle: 'Axe Murderers'
         music: 'music.credits'
         duplicate: 6
@@ -370,7 +370,7 @@ waves:
             - SILVERFISH
             - SILVERFISH
     25:
-        title: 'Never Say Nether'
+        title: 'Final Chapter: Never Say Nether'
         subtitle: 'Pork Chops'
         music: 'music.nether'
         duplicate: 10
