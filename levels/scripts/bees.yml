@@ -1,0 +1,132 @@
+title: 'Bees'
+author: 'PseudoKnight'
+levels: 5
+gear:
+    0:
+        name: WOODEN_SWORD
+    1:
+        name: SHIELD
+shop:
+    0:
+        name: STONE_SWORD
+        cost: 2
+    1:
+        name: IRON_SWORD
+        cost: 3
+    2:
+        name: DIAMOND_SWORD
+        cost: 4
+    3:
+        name: IRON_AXE
+        cost: 2
+    4:
+        name: DIAMOND_AXE
+        cost: 3
+    10:
+        name: CARROT
+        cost: 1
+    11:
+        name: GOLDEN_APPLE
+        cost: 3
+    12:
+        name: NETHER_STAR
+        cost: 8
+        meta:
+            display: 'Resurrection Star'
+    18:
+        name: LEATHER_HELMET
+        cost: 1
+    19:
+        name: LEATHER_CHESTPLATE
+        cost: 3
+    20:
+        name: LEATHER_LEGGINGS
+        cost: 2
+    21:
+        name: GOLDEN_HELMET
+        cost: 2
+    22:
+        name: GOLDEN_CHESTPLATE
+        cost: 5
+    23:
+        name: GOLDEN_LEGGINGS
+        cost: 3
+    27:
+        name: CHAINMAIL_HELMET
+        cost: 2
+    28:
+        name: CHAINMAIL_CHESTPLATE
+        cost: 5
+    29:
+        name: CHAINMAIL_LEGGINGS
+        cost: 4
+    30:
+        name: CHAINMAIL_BOOTS
+        cost: 1
+    31:
+        name: IRON_HELMET
+        cost: 2
+    32:
+        name: IRON_CHESTPLATE
+        cost: 6
+    33:
+        name: IRON_LEGGINGS
+        cost: 5
+    34:
+        name: IRON_BOOTS
+        cost: 2
+    36:
+        name: DIAMOND_HELMET
+        cost: 3
+    37:
+        name: DIAMOND_CHESTPLATE
+        cost: 8
+    38:
+        name: DIAMOND_LEGGINGS
+        cost: 6
+    39:
+        name: DIAMOND_BOOTS
+        cost: 3
+    40:
+        name: SHIELD
+        cost: 5
+waves:
+    1:
+        subtitle: 'Wave 1 of 3'
+        duplicate: 10
+        mobs:
+          - type: BEE
+            tags:
+                anger: 9001
+            rider:
+                type: CREEPER
+                effects:
+                    speed:
+                        strength: 3
+                        seconds: 300
+    2:
+        subtitle: 'Wave 2 of 3'
+        duplicate: 25
+        mobs:
+          - type: BEE
+            tags:
+                anger: 9001
+            rider:
+                type: CREEPER
+                effects:
+                    speed:
+                        strength: 3
+                        seconds: 300
+    3:
+        subtitle: 'Wave 3 of 3'
+        duplicate: 50
+        mobs:
+          - type: BEE
+            tags:
+                anger: 9001
+            rider:
+                type: CREEPER
+                effects:
+                    speed:
+                        strength: 3
+                        seconds: 300

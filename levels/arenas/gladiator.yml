@@ -5,3 +5,8 @@ steplightly:
         - 'by gothem8'
         - 'Buy items with levels.'
         - 'Sell items to get more levels.'
+bees:
+    name: TNT
+    display: 'Bees'
+    lore:
+        - 'by PseudoKnight'
