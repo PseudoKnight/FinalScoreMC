@@ -10,6 +10,7 @@ proc _level_prepare(@name, @arena, @region, @world) {
 		'subtitle': '',
 		'music': '',
 		'mobs': array(),
+		'mobCount': 1,
 		'spawns': array(),
 		'world': @world,
 		'arena': @arena,
@@ -18,6 +19,7 @@ proc _level_prepare(@name, @arena, @region, @world) {
 		'trigger': null,
 		'coins': 20,
 		'boss': false,
+		'teamDamage': true,
 	);
 	if(array_index_exists(@level['config'], 'coins')) {
 		@level['coins'] = @level['config']['coins'];
@@ -123,9 +125,32 @@ proc _level_start(@level) {
 		}
 	}
 
-	bind('creature_spawn', array('id': 'mobspawn'.@level['region']), null, @event, @world = @level['world'], @region = @level['region'], @entities) {
-		if(@event['type'] != 'ARMOR_STAND' && @event['location']['world'] == @world && array_contains(sk_regions_at(@event['location']), @region)) {
+	bind('creature_spawn', array('id': 'mobspawn'.@level['region']), null, @event, @level, @entities) {
+		if(@event['type'] != 'ARMOR_STAND' && @event['location']['world'] == @level['world'] && array_contains(sk_regions_at(@event['location']), @level['region'])) {
 			@entities[] = @event['id'];
+			@level['mobCount']++;
+		}
+	}
+
+	bind('entity_damage', array('id': 'mobdamage'.@level['region']), null, @event, @entities, @level) {
+		if(array_contains(@entities, @event['id'])) {
+			if(!@level['teamDamage'] && array_index_exists(@event, 'damager') && array_contains(@entities, @event['damager'])) {
+				modify_event('amount', 0.0);
+			} else {
+				set_timeout(0, closure(){
+					@health = 0.0;
+					foreach(@i: @e in @entities) {
+						try {
+							@health += get_entity_health(@e);
+						} catch (BadEntityException @ex) {
+							array_remove(@entities, @i);
+						}
+					}
+					@health /= @level['mobCount'];
+					@health /= 100;
+					try(update_bar('level'.@level['region'], double(@health)));
+				});
+			}
 		}
 	}
 
@@ -246,7 +271,6 @@ proc _level_start(@level) {
 			// Check if players are still in play
 			if(!@level['players']) {
 				_level_end(@level, false);
-				console('No players left in game.');
 				die();
 			}
 			foreach(@p in @level['spectators']) {
@@ -255,29 +279,39 @@ proc _level_start(@level) {
 				}
 			}
 
-			if(array_index_exists(@level['config'], 'shop') && (@viewers = get_inventory_viewers('level'.@level['region']))) {
+			if(!@entities && array_index_exists(@level['config'], 'shop') && (@viewers = get_inventory_viewers('level'.@level['region']))) {
 				update_bar('level'.@level['region'], array('color': 'YELLOW', 'title': array_implode(@viewers, ', ').' viewing shop'));
 
 			} else if(@sleep > 0) {
 				@sleep--;
-				if(!@level['boss'] || !@entities) {
+				if(!@entities) {
 					update_bar('level'.@level['region'], array('color': 'WHITE', 'title': '', 'percent': (6 - @sleep[0]) / 6));
 				}
 
-				if(@sleep == 5 && @level['title']) {
-					foreach(@p in @level['players']) {
+				if(@sleep == 5) {
+					if(@level['title']) {
+						foreach(@p in @level['players']) {
+							if(ponline(@p)) {
+								title(@p, @level['title'], null, 10, 70, 20);
+							}
+						}
+						if(!@level['subtitle']) {
+							@level['title'] = '';
+						}
+					} else if(@level['subtitle']) {
+						foreach(@p in @level['players']) {
+							if(ponline(@p)) {
+								title(@p, '', @level['subtitle'], 10, 70, 20);
+							}
+						}
+					}
+				} else if(@sleep == 3 && @level['title'] && @level['subtitle']) {
+					foreach(@i: @p in @level['players']) {
 						if(ponline(@p)) {
-							title(@p, @level['title'], null, 20, 40, 20);
+							title(@p, @level['title'], @level['subtitle'], 0, 40, 20);
 						}
 					}
 					@level['title'] = '';
-
-				} else if(@sleep == 3 && @level['subtitle']) {
-					foreach(@i: @p in @level['players']) {
-						if(ponline(@p)) {
-							title(@p, '', @level['subtitle'], 20, 40, 20);
-						}
-					}
 					@level['subtitle'] = '';
 				}
 
@@ -309,29 +343,26 @@ proc _level_start(@level) {
 				foreach(@spawnGroup in @spawns) {
 					foreach(@spawn in @spawnGroup) {
 						spawn_entity('AREA_EFFECT_CLOUD', 1, @spawn, closure(@cloud) {
-							set_entity_spec(@cloud, array('radius': 0.1, 'particle': 'LAVA', 'duration': 30));
+							set_entity_spec(@cloud, array('radius': 0.1, 'particle': 'LAVA', 'duration': 20));
 						});
 					}
 				}
 				@level['spawns'] = @spawns;
 				@sleep[] = 1;
 			} else if(@level['mobs']) {
-				if(@level['boss']) {
-					update_bar('level'.@level['region'], array(
-						'percent': 1.0,
-						'visible': true,
-						'title': color('red').color('bold').'BOSS',
-						'color': 'RED',
-						'style': 'SOLID',
-					));
-				} else {
-					update_bar('level'.@level['region'], array('visible': false));
-				}
+				update_bar('level'.@level['region'], array(
+					'percent': 1.0,
+					'visible': true,
+					'title': if(@level['boss'], color('red').color('bold').'BOSS', ''),
+					'color': 'RED',
+					'style': 'SOLID',
+				));
 				foreach(@p in @level['players']) {
 					if(ponline(@p)) {
 						play_sound(ploc(@p), array('sound': 'ENTITY_EVOKER_PREPARE_SUMMON', 'volume': 0.4), @p);
 					}
 				}
+				@level['mobCount'] = 0;
 				@spawns = @level['spawns'];
 				do {
 					foreach(@i: @mob in @level['mobs']) {
@@ -417,22 +448,12 @@ proc _level_start(@level) {
 					update_bar('level'.@level['region'], array(
 						'visible': true,
 						'title': '',
-						'color': 'WHITE',
 						'style': 'SEGMENTED_6',
 					));
 				} catch(IndexOverflowException @ex) {
 					_level_end(@level, true);
 				}
 			} else {
-				if(@level['boss']) {
-					@health = 0.0;
-					foreach(@e in @entities) {
-						@health += get_entity_health(@e);
-					}
-					@health /= array_size(@entities);
-					@health /= 100;
-					update_bar('level'.@level['region'], double(@health));
-				}
 				// Check random entity if it's still in region
 				@r = array_rand(@entities)[0];
 				if(!entity_exists(@entities[@r]) || !array_contains(sk_regions_at(entity_loc(@entities[@r])), @level['region'])) {
@@ -459,6 +480,7 @@ proc _level_end(@level, @win) {
 	unbind('quit'.@level['region']);
 	unbind('teleport'.@level['region']);
 	unbind('mobspawn'.@level['region']);
+	unbind('mobdamage'.@level['region']);
 	unbind('mobdeath'.@level['region']);
 	unbind('interact'.@level['region']);
 	unbind('interactstand'.@level['region']);
