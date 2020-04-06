@@ -18,6 +18,7 @@ bind('inventory_click', null, array('virtual': true), @event) {
 					play_sound(ploc(), array('sound': 'UI_BUTTON_CLICK', 'pitch': 1.2), player());
 				}
 			case 'Run':
+				console(@event['player'].' clicked: '.@value, false);
 				run_cmd(@value);
 				close_pinv();
 		}
