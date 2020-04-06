@@ -22,6 +22,9 @@ shop:
     4:
         name: DIAMOND_AXE
         cost: 3
+    9:
+        name: MILK_BUCKET
+        cost: 1
     10:
         name: CARROT
         cost: 1
