@@ -3,30 +3,42 @@
 	provided that pillager is not holding a crossbow.
 	Features region protections for these pillagers now that they're not hostile.
  */
-bind('player_interact_entity', null, array('clicked': 'PILLAGER', 'hand': 'main_hand'), @event) {
+bind('player_interact_at_entity', null, array('clicked': 'PILLAGER', 'hand': 'main_hand'), @event) {
 	@loc = entity_loc(@event['id']);
 	if(sk_can_build(@loc)) {
-		@weapon = get_mob_equipment(@event['id'])['weapon'];
-		if(!@weapon || @weapon['name'] != 'CROSSBOW') {
+		@held = get_mob_equipment(@event['id'])['weapon'];
+		if(!@held || @held['name'] != 'CROSSBOW') {
+			// It's passive
 			cancel();
+			@slot = 'weapon';
+			if(@event['position']['y'] > 1.7) {
+				@slot = 'helmet';
+				@held = get_mob_equipment(@event['id'])['helmet'];;
+			}
 			@item = pinv(player(), null);
 			if(@item) {		
 				@item['qty']--;
 				if(@item['qty']) {
 					set_pinv(player(), null, @item);
-					if(@weapon && pgive_item(@weapon) > 0) {
-						drop_item(@weapon);
+					if(@held && pgive_item(@held) > 0) {
+						drop_item(@held);
 					}
 				} else {
-					set_pinv(player(), null, @weapon);
+					set_pinv(player(), null, @held);
 				}
 				@item['qty'] = 1;
-				set_mob_equipment(@event['id'], array('WEAPON': @item));
-				set_equipment_droprates(@event['id'], array('WEAPON': 1.0));
+				@gear = associative_array();
+				@drops = associative_array();
+				@gear[@slot] = @item;
+				@drops[@slot] = 1.0;
+				set_mob_equipment(@event['id'], @gear);
+				set_equipment_droprates(@event['id'], @drops);
 				play_sound(@loc, array('sound': 'ITEM_ARMOR_EQUIP_LEATHER', 'volume': 0.2));
-			} else if(@weapon) {
-				set_pinv(player(), null, @weapon);
-				set_mob_equipment(@event['id'], array('WEAPON': null));
+			} else if(@held) {
+				set_pinv(player(), null, @held);
+				@gear = associative_array();
+				@gear[@slot] = null;
+				set_mob_equipment(@event['id'], @gear);
 				play_sound(@loc, array('sound': 'ITEM_ARMOR_EQUIP_LEATHER', 'volume': 0.2));
 			}
 		}
