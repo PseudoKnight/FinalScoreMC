@@ -207,7 +207,10 @@ proc _snake_set_colors(@game) {
 }
 
 proc _snake_remove(@player, @game) {
-	array_remove(@game['snakes'], @player);
+	@snake = array_remove(@game['snakes'], @player);
+	if(is_array(@snake)) {
+		@snake['alive'] = false;
+	}
 	if(ponline(@player)) {
 		set_pflight(@player, false);
 		runas('~console', '/jukebox show remove '.@player.' @snake');
