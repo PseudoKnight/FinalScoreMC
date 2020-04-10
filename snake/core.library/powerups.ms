@@ -303,9 +303,10 @@ proc _snake_drop_nuke(@snake, @game) {
 	@loc[0] += 0.5;
 	@loc[1] -= 0.5;
 	@loc[2] += 0.5;
-	@marker = spawn_entity('ARMOR_STAND', 1, @loc)[0];
-	set_entity_spec(@marker, array('marker': true, 'visible': false, 'gravity': false, 'small': true));
-	set_mob_equipment(@marker, array('helmet': array('name': 'DIAMOND_BLOCK')));
+	@marker = spawn_entity('ARMOR_STAND', 1, @loc, closure(@entity) {
+		set_entity_spec(@entity, array('marker': true, 'visible': false, 'gravity': false, 'small': true));
+		set_mob_equipment(@entity, array('helmet': array('name': 'DIAMOND_BLOCK')));
+	})[0];
 
 	// now move it to the target location over time
 	play_sound(@loc, array('sound': 'ENTITY_ZOMBIE_VILLAGER_CONVERTED', 'volume': 4));
@@ -319,6 +320,9 @@ proc _snake_drop_nuke(@snake, @game) {
 				set_entity_loc(@marker, @loc);
 			} catch(BadEntityException @ex) {
 				clear_task();
+				// load chunk just in case players left
+				get_block(@loc);
+				try(entity_remove(@marker));
 			}
 		} else {
 			clear_task();
