@@ -83,7 +83,7 @@ bind('entity_damage', null, array('cause': 'ENTITY_EXPLOSION'), @event) {
 // Block ghast fireball damage to all but natural nether blocks
 bind('entity_explode', null, array('type': 'FIREBALL'), @event) {
 	@world = @event['location']['world'];
-	if(world_info(@world)['environment'] == 'NETHER' && @world != 'outworld_nether') {
+	if(_is_survival_world(@world) && @world != 'outworld_nether') {
 		@blocks = @event['blocks'];
 		@breakables = array('NETHERRACK', 'SOUL_SAND', 'GRAVEL', 'MAGMA_BLOCK', 'GLOWSTONE', 'NETHER_QUARTZ_ORE');
 		@modify = false;
