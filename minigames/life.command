@@ -91,19 +91,19 @@ register_command('life', array(
 						@current = @grid[@x][@z];
 						if(@current) { // if current cell has life
 							if(@count[@current] < 2) { // underpopulation of current type
-								@gridChanges[] = array(@x, @z, 0);
+								@gridChanges[] = array(@x, @z, 0, array('particle': 'FALLING_DUST', 'block': @colors[@current]));
 							} else {
 								@total = array_reduce(@count[1..], closure(@this, @next) {
 									return(@this + @next);
 								});
 								if(@total > 3) { // overpopulation of any type
-									@gridChanges[] = array(@x, @z, 0);
+									@gridChanges[] = array(@x, @z, 0, if(@count[@current] < 4, 'EXPLOSION_LARGE', null));
 								}
 							}
 						} else { // no life here
 							@index = array_index(@count, 3); // get first life type that has 3 neighbors
 							if(@index) { // birth
-								@gridChanges[] = array(@x, @z, @index);
+								@gridChanges[] = array(@x, @z, @index, null);
 							}
 						}
 					}
@@ -120,14 +120,27 @@ register_command('life', array(
 						'y': @y, 
 						'z': @zMin + @z,
 						'world': @world, 
-						'type': if(@value, @colors[@value], @colors[0])
+						'type': @colors[@value],
+						'particle': @change[3]
 					);
 				}
 
 				x_run_on_main_thread_later(iclosure(@blocks = @blockChanges) {
+					array @block;
 					foreach(@block in @blocks) {
 						set_block(@block, @block['type']);
+						if(@block['particle']) {
+							@block['x'] += 0.5;
+							@block['y'] += 0.5;
+							@block['z'] += 0.5;
+							spawn_particle(@block, @block['particle']);
+						}
 					}
+					play_sound(@block, array(
+						'sound': 'ENTITY_CHICKEN_EGG',
+						'pitch': clamp(0.5 + 1.5 * (array_size(@blocks) / 100), 0.5, 2.0),
+						'volume': 2
+					));
 				});
 
 				@delta = (time() - @start) / 1000;
