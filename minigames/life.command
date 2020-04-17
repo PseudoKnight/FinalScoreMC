@@ -32,11 +32,7 @@ register_command('life', array(
 			die(color('red').'The region is too large.');
 		}
 
-		// Define the background block type and the block type representing life
-		@emptyCell = 'AIR';
-		@lifeCell = '_CONCRETE';
-
-		/* TODO: Multiple types of life
+		// Define the background block type and the block types representing life
 		@colors = array(
 			'AIR', // it's dead, jim
 			'BLACK_CONCRETE',
@@ -56,7 +52,6 @@ register_command('life', array(
 			'BROWN_CONCRETE',
 			'RED_CONCRETE'
 		);
-		*/
 
 		// Define our grid using existing blocks
 		@grid = array();
@@ -67,8 +62,7 @@ register_command('life', array(
 			@readLoc[0] = @xMin + @x;
 			for(@z = 0, @z < @zWidth, @z++) {
 				@readLoc[2] = @zMin + @z;
-				@subArray[] = string_ends_with(get_block(@readLoc), @lifeCell);
-				// TODO: @subArray[] = array_index(@blocks, get_block(@readLoc)) ||| 0;
+				@subArray[] = array_index(@colors, get_block(@readLoc)) ||| 0;
 			}
 		}
 
@@ -79,25 +73,38 @@ register_command('life', array(
 				for(@x = 0, @x < @xWidth, @x++) {
 					for(@z = 0, @z < @zWidth, @z++) {
 						// Use negative indices and width checks for grid wrapping
-						@modX = if(@x == @xWidth - 1, 0, @x + 1);
-						@modZ = if(@z == @zWidth - 1, 0, @z + 1);
-						@count = @grid[@x - 1][@z - 1]
-						+ @grid[@x][@z - 1]
-						+ @grid[@modX][@z - 1]
-						+ @grid[@x - 1][@z]
-						+ @grid[@modX][@z]
-						+ @grid[@x - 1][@modZ]
-						+ @grid[@x][@modZ]
-						+ @grid[@modX][@modZ];
+						@xPlusOne = if(@x == @xWidth - 1, 0, @x + 1);
+						@zPlusOne = if(@z == @zWidth - 1, 0, @z + 1);
 
-						if(@grid[@x][@z]) { // if alive
-							if(@count < 2 || @count > 3) { // under or overpopulation
-								// death
-								@gridChanges[] = array(@x, @z, false);
+						// Count different types of life separately
+						@count = array_resize(array(), array_size(@colors), 0);
+						
+						@count[@grid[@x - 1][@z - 1]]++;
+						@count[@grid[@x][@z - 1]]++;
+						@count[@grid[@xPlusOne][@z - 1]]++;
+						@count[@grid[@x - 1][@z]]++;
+						@count[@grid[@xPlusOne][@z]]++;
+						@count[@grid[@x - 1][@zPlusOne]]++;
+						@count[@grid[@x][@zPlusOne]]++;
+						@count[@grid[@xPlusOne][@zPlusOne]]++;
+
+						@current = @grid[@x][@z];
+						if(@current) { // if current cell has life
+							if(@count[@current] < 2) { // underpopulation of current type
+								@gridChanges[] = array(@x, @z, 0);
+							} else {
+								@total = array_reduce(@count[1..], closure(@this, @next) {
+									return(@this + @next);
+								});
+								if(@total > 3) { // overpopulation of any type
+									@gridChanges[] = array(@x, @z, 0);
+								}
 							}
-						} else if(@count == 3) { // else not alive but should be
-							// birth
-							@gridChanges[] = array(@x, @z, true);
+						} else { // no life here
+							@index = array_index(@count, 3); // get first life type that has 3 neighbors
+							if(@index) { // birth
+								@gridChanges[] = array(@x, @z, @index);
+							}
 						}
 					}
 				}
@@ -113,7 +120,7 @@ register_command('life', array(
 						'y': @y, 
 						'z': @zMin + @z,
 						'world': @world, 
-						'type': if(@value, 'WHITE'.@lifeCell, @emptyCell)
+						'type': if(@value, @colors[@value], @colors[0])
 					);
 				}
 
