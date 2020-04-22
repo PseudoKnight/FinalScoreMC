@@ -20,7 +20,7 @@ register_command('lastseen', array(
 		@days = @hours / 24
 		msg(@pdata['name'].' was last seen '.
 			if(@days > 14) {
-				simple_date('MMMMM dd, YYYY', @lastPlayed)
+				simple_date('MMMMM dd, yyyy', @lastPlayed);
 			} else if(@days >= 3) {
 				'over '.floor(@days).' days ago'
 			} else if(@hours >= 2) {
