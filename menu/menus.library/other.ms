@@ -154,16 +154,5 @@
 		)
 	),
 );
-@menu[11] = array(
-	'name': 'MAGENTA_TERRACOTTA',
-	'meta': array(
-		'display': color('aqua').'Gyro Race',
-		'lore': array(
-			color('r').'A foot race along a short course of obstacles',
-			color('r').'at dizzying heights. (2+ players)',
-			color('dark_gray').'Run: /warp gyro',
-		)
-	),
-);
 delete_virtual_inventory('other');
 create_virtual_inventory('other', 36, 'Other Games', @menu);
