@@ -1,15 +1,16 @@
 register_command('life', array(
 	'description': 'Starts a game of life in the "life" region',
-	'usage': '/life <iterations> [period_ms]',
+	'usage': '/life <iterations> [sleep_ticks]',
 	'permission': 'command.life',
 	'tabcompleter': closure(@alias, @sender, @args, @info) {
 		return(array());
 	},
 	'executor': closure(@alias, @sender, @args, @info) {
-		if(!sk_region_exists('life')) {
+		@commandBlock = get_command_block();
+		@world = if(@commandBlock, @commandBlock['world'], pworld());
+		if(!sk_region_exists(@world, 'life')) {
 			die(color('red').'Define a flat region by the name "life" to play the game on.');
 		}
-		@world = pworld();
 		@coords = sk_region_info('life', @world, 0);
 
 		// Define arguments
@@ -17,7 +18,7 @@ register_command('life', array(
 			return(false);
 		}
 		@iterations = integer(@args[0]);
-		@sleep = integer(array_get(@args, 1, 500)) / 1000;
+		@sleepMS = integer(array_get(@args, 1, 10)) * 50;
 
 		// Define the lowest corner of the region, except use the highest y
 		@xMin = @coords[1][0];
@@ -29,13 +30,15 @@ register_command('life', array(
 		@zWidth = @coords[0][2] - @coords[1][2] + 1;
 
 		if(@xWidth > 128 || @zWidth > 128) {
-			die(color('red').'The region is too large.');
+			die(color('red').'The region is too large. (max width: 128)');
+		}
+		if(@xWidth < 3 || @zWidth < 3) {
+			die(color('red').'The region is too small. (min width: 3)');
 		}
 
-		// Define the background block type and the block types representing life
-		@colors = array(
+		// Define the possible block types
+		@blockTypes = array(
 			'AIR', // it's dead, jim
-			'BLACK_CONCRETE',
 			'WHITE_CONCRETE',
 			'ORANGE_CONCRETE',
 			'MAGENTA_CONCRETE',
@@ -43,8 +46,6 @@ register_command('life', array(
 			'YELLOW_CONCRETE',
 			'LIME_CONCRETE',
 			'PINK_CONCRETE',
-			'GRAY_CONCRETE',
-			'LIGHT_GRAY_CONCRETE',
 			'CYAN_CONCRETE',
 			'BLUE_CONCRETE',
 			'PURPLE_CONCRETE',
@@ -62,13 +63,13 @@ register_command('life', array(
 			@readLoc[0] = @xMin + @x;
 			for(@z = 0, @z < @zWidth, @z++) {
 				@readLoc[2] = @zMin + @z;
-				@subArray[] = array_index(@colors, get_block(@readLoc)) ||| 0;
+				@subArray[] = array_index(@blockTypes, get_block(@readLoc)) ||| 0;
 			}
 		}
 
 		x_new_thread('life', closure() {
 			while(@iterations-- > 0) {
-				@start = time();
+				@startTime = time();
 				@gridChanges = array();
 				for(@x = 0, @x < @xWidth, @x++) {
 					for(@z = 0, @z < @zWidth, @z++) {
@@ -77,7 +78,7 @@ register_command('life', array(
 						@zPlusOne = if(@z == @zWidth - 1, 0, @z + 1);
 
 						// Count different types of life separately
-						@count = array_resize(array(), array_size(@colors), 0);
+						@count = array_resize(array(), array_size(@blockTypes), 0);
 						
 						@count[@grid[@x - 1][@z - 1]]++;
 						@count[@grid[@x][@z - 1]]++;
@@ -91,11 +92,12 @@ register_command('life', array(
 						@current = @grid[@x][@z];
 						if(@current) { // if current cell has life
 							if(@count[@current] < 2) { // underpopulation of current type
-								@gridChanges[] = array(@x, @z, 0, array('particle': 'FALLING_DUST', 'block': @colors[@current]));
+								@gridChanges[] = array(@x, @z, 0, array('particle': 'FALLING_DUST', 'block': @blockTypes[@current]));
 							} else {
-								@total = array_reduce(@count[1..], closure(@this, @next) {
+								@total = array_reduce(@count, closure(@this, @next) {
 									return(@this + @next);
 								});
+								@total -= @count[0]; // don't count empty cells
 								if(@total > 3) { // overpopulation of any type
 									@gridChanges[] = array(@x, @z, 0, if(@count[@current] < 4, 'EXPLOSION_LARGE', null));
 								}
@@ -120,7 +122,7 @@ register_command('life', array(
 						'y': @y, 
 						'z': @zMin + @z,
 						'world': @world, 
-						'type': @colors[@value],
+						'type': @blockTypes[@value],
 						'particle': @change[3]
 					);
 				}
@@ -143,9 +145,9 @@ register_command('life', array(
 					));
 				});
 
-				@delta = (time() - @start) / 1000;
-				if(@delta < @sleep) {
-					sleep(@sleep - @delta);
+				@deltaMS = time() - @startTime;
+				if(@deltaMS < @sleepMS) {
+					sleep((@sleepMS - @deltaMS) / 1000);
 				}
 			}
 		});
