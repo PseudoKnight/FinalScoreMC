@@ -109,14 +109,17 @@
 <<<
 
 /velocity $target $x $y $z [$double] = >>>
+	@target = $target;
+	@vector = array($x, $y, $z);
 	@applicationtime = $double;
+
 	@closure = closure(@uuid) {
 		if(length(@uuid) <= 16) {
 			@uuid = puuid(@uuid);
 		}
 		set_timeout(50, closure(){
 			@loc = entity_loc(@uuid);
-			set_entity_velocity(@uuid, array($x, $y, $z));
+			set_entity_velocity(@uuid, @vector);
 			play_sound(@loc, array('sound': 'ENTITY_GHAST_SHOOT', 'volume': 2));
 			make_effect(@loc, 'MOBSPAWNER_FLAMES');
 
@@ -125,7 +128,7 @@
 				try {
 					make_effect(entity_loc(@uuid), 'MOBSPAWNER_FLAMES');
 					if(@reapply[0]-- > 0) {
-						set_entity_velocity(@uuid, array($x, $y, $z));
+						set_entity_velocity(@uuid, @vector);
 					} else {
 						clear_task();
 					}
@@ -140,7 +143,7 @@
 		# entity is not a player
 		@loc = get_command_block();
 		try {
-			@entities = entities_in_radius(@loc, 3, $target);
+			@entities = entities_in_radius(@loc, 3, @target);
 		} catch(BadEntityException @ex) {
 			// not an entity type
 			die();
