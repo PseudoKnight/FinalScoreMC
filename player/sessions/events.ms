@@ -4,6 +4,10 @@ bind('player_join', null, null, @event) {
 	@lastPlayed = if(!@event['first_login'], plast_played(), null);
 
 	set_timeout(50, closure(){
+		if(!ponline(player())) {
+			die();
+		}
+
 		@pdata = _pdata(player());
 
 		if(array_index_exists(@pdata, 'world') && pworld() != @pdata['world']) {
@@ -19,6 +23,11 @@ bind('player_join', null, null, @event) {
 
 		// Join message
 		queue_push(closure(){
+			if(!ponline(player())) {
+				queue_clear(player().'join');
+				die();
+			}
+
 			if(!string_starts_with(pinfo(player(), 12), 'silent')) {
 				@pre = '&8'.simple_date('h:mm').' &2\u00bb ';
 				@name = _colorname().color('italic').player();
@@ -42,20 +51,29 @@ bind('player_join', null, null, @event) {
 				}
 			}
 
-		}, 'join');
+		}, player().'join');
 
 		// Tab list
 		queue_push(closure(){
+			if(!ponline(player())) {
+				queue_clear(player().'join');
+				die();
+			}
+
 			foreach(@p in all_players()) {
 				set_list_name(@p, display_name(@p));
 			}
 			set_plist_header(colorize('&6&lFINALSCORE&e&lMC'));
 			_update_activities();
-		}, 'join');
+		}, player().'join');
 
 		// Welcome messages
 		queue_push(closure(){
-			#Welcome messages
+			if(!ponline(player())) {
+				queue_clear(player().'join');
+				die();
+			}
+
 			@line = string_multiply('-', 53);
 			msg(color('1').color('m').'\u2575'.@line.color('1').'\u2575');
 			msg(string_multiply(' ', 18).colorize('&6&l\u1260 &d&l\u1260 &b&l\u1260 &4&l\u1260 &6&lFINALSCORE&e&lMC \u00AB &r\u25AA \u25AA \u25AA'));
@@ -71,10 +89,15 @@ bind('player_join', null, null, @event) {
 					msg(color('1').color('m').'\n\u2575'.@line.color('1').'\u2575');
 				}
 			}
-		}, 'join');
+		}, player().'join');
 
 		// Mail
 		queue_push(closure(){
+			if(!ponline(player())) {
+				queue_clear(player().'join');
+				die();
+			}
+
 			if(array_index_exists(@pdata, 'mail')) {
 				foreach(@mail in @pdata['mail']) {
 					msg(color('gray').@mail[0].' (From '.@mail[1].'): '.color('r').@mail[2]);
@@ -82,10 +105,15 @@ bind('player_join', null, null, @event) {
 				array_remove(@pdata, 'mail');
 				_store_pdata(player(), @pdata);
 			}
-		}, 'join');
+		}, player().'join');
 
 		// Teleport misplaced players
 		queue_push(closure(){
+			if(!ponline(player())) {
+				queue_clear(player().'join');
+				die();
+			}
+
 			if(array_index_exists(@pdata, 'homeless')) {
 				# homeless players are players left on deleted worlds
 				@loc = get_spawn('psi');
@@ -96,12 +124,13 @@ bind('player_join', null, null, @event) {
 				@warp = get_value('warp.intro');
 				set_ploc(@warp);
 			}
-		}, 'join');
+		}, player().'join');
 
 		// Populate session
 		queue_push(closure(){
-			if(!entity_exists(puuid())) {
-				console('Warning, '.player().' does not have an entity in this world.');
+			if(!ponline(player())) {
+				queue_clear(player().'join');
+				die();
 			}
 
 			if(@lastPlayed) {
@@ -116,28 +145,35 @@ bind('player_join', null, null, @event) {
 				}
 				export('players', @players);
 			}
-		}, 'join');
+		}, player().'join');
 
 		// Park inventory
 		queue_push(closure(){
+			if(!ponline(player())) {
+				queue_clear(player().'join');
+				die();
+			}
+
 			if(pworld() === 'custom') {
 				_equip_kit();
 			}
-		}, 'join');
+		}, player().'join');
 
 		// Discord topic
 		queue_push(closure(){
 			_update_discord_topic();
-		}, 'join');
+		}, player().'join');
 
 		// Enter effect
 		if(array_index_exists(@pdata, 'entereffect')) {
 			queue_push(closure(){
-				switch(@pdata['entereffect']) {
-					case 'lightning':
-						lightning(ploc(), true);
+				if(ponline(player())) {
+					switch(@pdata['entereffect']) {
+						case 'lightning':
+							lightning(ploc(), true);
+					}
 				}
-			}, 'join');
+			}, player().'join');
 		}
 
 		_bm_request('set_user_uuid', 'a1634f37480a4bb9a0b2200266597ac0', array('username': player(), 'user_uuid': puuid()));
