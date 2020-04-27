@@ -18,7 +18,7 @@ register_command('life', array(
 			return(false);
 		}
 		@iterations = integer(@args[0]);
-		@sleepMS = integer(array_get(@args, 1, 10)) * 50;
+		@sleepMS = integer(array_get(@args, 1, 10)) * 50 - 50; // convert to ms minus 1 tick
 
 		// Define the lowest corner of the region, except use the highest y
 		@xMin = @coords[1][0];
@@ -51,7 +51,8 @@ register_command('life', array(
 			'PURPLE_CONCRETE',
 			'GREEN_CONCRETE',
 			'BROWN_CONCRETE',
-			'RED_CONCRETE'
+			'RED_CONCRETE',
+			'SLIME_BLOCK' // non-player gaia
 		);
 
 		// Define our grid using existing blocks
@@ -127,7 +128,10 @@ register_command('life', array(
 					);
 				}
 
-				x_run_on_main_thread_later(iclosure(@blocks = @blockChanges) {
+				if(!@blockChanges) {
+					die();
+				}
+				queue_push(iclosure(@blocks = @blockChanges) {
 					array @block;
 					foreach(@block in @blocks) {
 						set_block(@block, @block['type']);
@@ -143,11 +147,9 @@ register_command('life', array(
 						'pitch': clamp(0.5 + 1.5 * (array_size(@blocks) / 100), 0.5, 2.0),
 						'volume': 2
 					));
-				});
-
-				@deltaMS = time() - @startTime;
-				if(@deltaMS < @sleepMS) {
-					sleep((@sleepMS - @deltaMS) / 1000);
+				}, 'life');
+				if(@sleepMS) {
+					queue_delay(@sleepMS, 'life');
 				}
 			}
 		});
