@@ -27,6 +27,26 @@ bind('player_interact', null, array('block': 'NOTE_BLOCK', 'button': 'left'), @e
 	}
 }
 
+# Player head effects
+bind('player_interact', null, array('block': 'PLAYER_HEAD', 'button': 'right'), @event) {
+	@owner = get_skull_owner(@event['location']);
+	if(@owner && @owner['uuid'] == '8e3d7b63-2a47-4c09-86c4-780e672b7af5') {
+		// Burger_guy
+		@loc = @event['location'];
+		@loc['x'] += 0.5;
+		@loc['y'] += 0.2;
+		@loc['z'] += 0.5;
+		spawn_particle(@event['location'], array(
+			'particle': 'ITEM_CRACK',
+			'item': 'ROSE_BUSH',
+			'count': 3,
+			'xoffset': 0.75,
+			'zoffset': 0.75,
+		));
+		play_sound(@event['location'], array('sound': 'ENTITY_GENERIC_EAT'));
+	}
+}
+
 # Dispenser handling
 # Infinite dispensers on creative/game worlds
 # Special behavior for other items (eg. place armor stands)
