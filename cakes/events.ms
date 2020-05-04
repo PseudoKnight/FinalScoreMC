@@ -25,6 +25,14 @@ bind('player_interact', null, array('block': 'CAKE', 'button': 'right', 'hand': 
 		die();
 	}
 	cancel();
+
+	// special case for welcome cake 
+	if(@id == 'welcome') {
+		msg('Secret cakes like this can be found all over the park.');
+		msg('Find enough of them and get a '.color('gold').'trophy'.color('r').' next to your name!');
+		msg('Track your progress for all cakes with '.color('a').'/cake list');
+	}
+
 	@cakeinfo = get_value('cakeinfo');
 	if(!array_index_exists(@cakeinfo, @id)) {
 		// this shouldn't happen
