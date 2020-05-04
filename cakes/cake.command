@@ -28,11 +28,16 @@ register_command('cake', array(
 				}
 				foreach(@id: @cake in @cakes) {
 					@total[@cake['type']] += 1;
+					@splitName = split('_', @id);
+					foreach(@i: @section in @splitName) {
+						@splitName[@i] = to_upper(@section[0]).@section[1..];
+					}
+					@name = array_implode(@splitName, '_');
 					if(array_index_exists(@cake['players'], @player)) {
 						@count[@cake['type']] += 1;
-						@names[@cake['type']] .= color('gray').@id.' ';
+						@names[@cake['type']] .= ' '.color('dark_gray').@name;
 					} else {
-						@names[@cake['type']] .= color('r').@id.' ';
+						@names[@cake['type']] .= ' '.color('r').@name;
 					}
 				}
 				if(array_size(@args) > 1) {
@@ -40,9 +45,9 @@ register_command('cake', array(
 				} else {
 					msg(color('yellow').'CAKES YOU\'VE ACHIEVED');
 				}
-				msg(color('green').color('l').'Challenge'.color('green').'('.@count['challenge'].'/'.@total['challenge'].') '.color('r').@names['challenge']);
-				msg(color('green').color('l').'Coop'.color('green').'('.@count['coop'].'/'.@total['coop'].') '.color('r').@names['coop'])
-				msg(color('green').color('l').'Secret'.color('green').'('.@count['secret'].'/'.@total['secret'].') '.color('r').@names['secret']);
+				msg(color('green').color('l').'Challenge'.color('green').'('.@count['challenge'].' of '.@total['challenge'].')'.color('r').@names['challenge']);
+				msg(color('green').color('l').'Coop'.color('green').'('.@count['coop'].' of '.@total['coop'].')'.color('r').@names['coop'])
+				msg(color('green').color('l').'Secret'.color('green').'('.@count['secret'].' of '.@total['secret'].')'.color('r').@names['secret']);
 
 			case 'find':
 				@cakeInfo = get_value('cakeinfo');
