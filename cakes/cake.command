@@ -18,26 +18,32 @@ register_command('cake', array(
 		switch(@args[0]) {
 			case 'list':
 				@cakes = get_value('cakeinfo');
-				@names = array('challenge': '', 'coop': '', 'secret': '');
-				@count = array('challenge': 0, 'coop': 0, 'secret': 0);
-				@total = array('challenge': 0, 'coop': 0, 'secret': 0);
-				if(array_size(@args) > 1) {
-					@player = puuid(@args[1], true);
-				} else {
-					@player = puuid(player(), true);
+				@names = '';
+				@count = 0;
+				@total = 0;
+				@player = @player = puuid(player(), true);
+				@type = 'secret';
+				foreach(@arg in @args[1..]) {
+					if(array_contains(array('challenge', 'secret', 'coop'), @arg)) {
+						@type = @arg;
+					} else {
+						@player = puuid(@arg, true);
+					}
 				}
 				foreach(@id: @cake in @cakes) {
-					@total[@cake['type']] += 1;
-					@splitName = split('_', @id);
-					foreach(@i: @section in @splitName) {
-						@splitName[@i] = to_upper(@section[0]).@section[1..];
-					}
-					@name = array_implode(@splitName, '_');
-					if(array_index_exists(@cake['players'], @player)) {
-						@count[@cake['type']] += 1;
-						@names[@cake['type']] .= ' '.color('dark_gray').@name;
-					} else {
-						@names[@cake['type']] .= ' '.color('r').@name;
+					if(@cake['type'] == @type) {
+						@total += 1;
+						@splitName = split('_', @id);
+						foreach(@i: @section in @splitName) {
+							@splitName[@i] = to_upper(@section[0]).@section[1..];
+						}
+						@name = array_implode(@splitName, '_');
+						if(array_index_exists(@cake['players'], @player)) {
+							@count += 1;
+							@names .= ' '.color('dark_gray').@name;
+						} else {
+							@names .= ' '.color('r').@name;
+						}
 					}
 				}
 				if(array_size(@args) > 1) {
@@ -45,9 +51,7 @@ register_command('cake', array(
 				} else {
 					msg(color('yellow').'CAKES YOU\'VE ACHIEVED');
 				}
-				msg(color('green').color('l').'Challenge'.color('green').'('.@count['challenge'].' of '.@total['challenge'].')'.color('r').@names['challenge']);
-				msg(color('green').color('l').'Coop'.color('green').'('.@count['coop'].' of '.@total['coop'].')'.color('r').@names['coop'])
-				msg(color('green').color('l').'Secret'.color('green').'('.@count['secret'].' of '.@total['secret'].')'.color('r').@names['secret']);
+				msg(color('green').color('l').to_upper(@type[0]).@type[1..].' Cakes'.color('green').' ('.@count.' of '.@total.')'.color('r').@names);
 
 			case 'find':
 				@cakeInfo = get_value('cakeinfo');
