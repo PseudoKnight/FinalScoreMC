@@ -1,9 +1,9 @@
 register_command('cake', array(
 	'description': 'Lists and manages cake prizes',
-	'usage': '/cake <list|info|set|move|delete|rename|tp|resetplayer|stats> [cake_id] [coins] [type] [difficulty]',
+	'usage': '/cake <list|info|find|set|move|delete|rename|tp|resetplayer|stats> [cake_id] [coins] [type] [difficulty]',
 	'tabcompleter': closure(@alias, @sender, @args, @info) {
 		if(array_size(@args) == 1) {
-			return(_strings_start_with_ic(array('list', 'info', 'set', 'move', 'delete', 'rename', 'tp', 'resetplayer', 'stats'), @args[-1]));
+			return(_strings_start_with_ic(array('list', 'info', 'find', 'set', 'move', 'delete', 'rename', 'tp', 'resetplayer', 'stats'), @args[-1]));
 		} else if(array_size(@args) == 4) {
 			return(_strings_start_with_ic(array('challenge', 'secret', 'coop'), @args[-1]));
 		} else if(array_size(@args) == 5) {
@@ -43,6 +43,32 @@ register_command('cake', array(
 				msg(color('green').color('l').'Challenge'.color('green').'('.@count['challenge'].'/'.@total['challenge'].') '.color('r').@names['challenge']);
 				msg(color('green').color('l').'Coop'.color('green').'('.@count['coop'].'/'.@total['coop'].') '.color('r').@names['coop'])
 				msg(color('green').color('l').'Secret'.color('green').'('.@count['secret'].'/'.@total['secret'].') '.color('r').@names['secret']);
+
+			case 'find':
+				@cakeInfo = get_value('cakeinfo');
+				@cakeLoc = get_value('cakes');
+				@range = 4096;
+				if(array_size(@args) > 1 && is_integral(@args[1])) {
+					@range = integer(@args[1]);
+				}
+
+				@loc = ploc();
+				@distance = @range;
+				@found = null;
+				foreach(@id: @cake in @cakeInfo) {
+					if(@cake['type'] == 'secret') {
+						@d = distance(@loc, @cakeLoc[@id]);
+						if(@d < @distance) {
+							@found = @id;
+							@distance = @d;
+						}
+					}
+				}
+				if(is_null(@found)) {
+					die(color('gold').'Cake not found within '. @range .' blocks.');
+				}
+				msg(color('green').'Found '.@found.' cake.');
+				set_ploc(@cakeLoc[@found]);
 
 			case 'info':
 				@id = '';
