@@ -1,11 +1,9 @@
-/*
-	The Great Race
-	Players sprint and/or ride to the target location. First there wins.
-	NO teleports. Horses/Minecarts/Potions are allowed.
+<!
+	description: Players sprint and/or ride to the target location. First there wins.
+	NO teleports. Horses/Minecarts/Potions are allowed.;
 
-	DEPENDENCIES:
-	- CHNaughty extension for action_msg()
-*/
+	requiredExtensions: CHNaughty;
+>
 register_command('greatrace', array(
 	'description': 'Creates a race in survival for all players in the area.',
 	'usage': '/greatrace [x] [z]',

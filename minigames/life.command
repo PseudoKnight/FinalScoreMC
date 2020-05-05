@@ -1,5 +1,10 @@
+<!
+	description: An implementation of John Conway's Game of Life. Supports multiple types of competing life.;
+	requiredExtensions: SKCompat;
+	author: PseudoKnight;
+>
 register_command('life', array(
-	'description': 'Starts a game of life in the "life" region',
+	'description': 'Starts a Game of Life in the "life" region',
 	'usage': '/life <iterations> [sleep_ticks]',
 	'permission': 'command.life',
 	'tabcompleter': closure(@alias, @sender, @args, @info) {

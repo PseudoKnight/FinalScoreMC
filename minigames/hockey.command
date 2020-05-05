@@ -1,10 +1,9 @@
-/*
-	A game of hockey where two teams fight to knock a slime into the opponent's goal.
+<!
+	description: A game of hockey where two teams fight to knock a slime into the opponent's goal.;
 
-	DEPENDENCIES:
-	- WorldGuard plugin and SKCompat extension for regions.
-	- _add_activity() and _remove_activity() procedures to keep a list of all current activities on server.
-*/
+	requiredExtensions: SKCompat;
+	requiredProcs: _add_activity() and _remove_activity() procedures to keep a list of all current activities on server.
+>
 register_command('hockey', array(
 	'description': 'Starts a hockey game.',
 	'usage': '/hockey',

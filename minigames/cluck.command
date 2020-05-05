@@ -1,14 +1,13 @@
-/*
-	A chicken shooting arcade game.
-	
-	REQUIREMENTS:
-	- WorldGuard plugin and SKCompat extension for regions.
-	- _regionmsg() proc for messaging players within regions.
-	- _clear_pinv() proc for clearing the inventory of a player.
-	- _equip_kit() proc for resetting player inventory after they're done with the game.
-	- _acc_add() proc for rewarding players with coins.
-	- _remove_region_entities() proc for removing all entities within the given region.
-*/
+<!
+	description: A chicken shooting arcade game.;
+
+	requiredExtensions: SKCompat;
+	requiredProcs: _regionmsg() proc for messaging players within regions.
+		_clear_pinv() proc for clearing the inventory of a player.
+		_equip_kit() proc for resetting player inventory after they're done with the game.
+		_acc_add() proc for rewarding players with coins.
+		_remove_region_entities() proc for removing all entities within the given region.
+>
 register_command('cluck', array(
 	'description': 'A game of shooting chickens.',
 	'usage': '/cluck [start] [player]',

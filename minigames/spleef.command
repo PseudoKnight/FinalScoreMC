@@ -1,15 +1,14 @@
-/*
-	Spleef is a game where players must be the last player standing above the floor to win.
+<!
+	description: Spleef is a game where players must be the last player standing above the floor to win.
 	Players are given pickaxes to dig out blocks underneath other players to win.
 	Features player-configurable floor blocks and various player-toggleable options.
-	Relevant locations are hard-coded in the @cfg.
+	Relevant locations are hard-coded in the @cfg.;
 
-	DEPENDENCIES:
-	- WorldGuard plugin and SKCompat extension for regions
-	- _add_activity() and _remove_activity() procedures to keep a list of all current activities on server.
-	- _regionmsg() proc to broadcast to players only within a region.
-	- _acc_add() proc to reward players with coins.
-*/
+	requiredExtensions: SKCompat;
+	requiredProcs: _add_activity() and _remove_activity() procedures to keep a list of all current activities on server.
+		_regionmsg() proc to broadcast to players only within a region.
+		_acc_add() proc to reward players with coins.;
+>
 register_command('spleef', array(
 	'description': 'Starts, joins, or sets the floor of a Spleef game.',
 	'usage': '/spleef <join|start|floor>',

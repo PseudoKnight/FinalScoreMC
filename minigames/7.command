@@ -1,14 +1,12 @@
-/*
-	Seven Seconds to Live is a game where players are given seven seconds on a clock before they blow up.
+<!
+	description: Seven Seconds to Live is a game where players are given seven seconds on a clock before they blow up.
 	Players can get additional time added to their clock by running on ores -- the higher value the ores, the more
 	time is added to their clock. The last player to have not blown up or fallen out of the map wins.
-	The command features several subcommands to create and edit multiple arenas for players to play on.
-
-	DEPENDENCIES:
-	- WorldGuard plugin and SKCompat extension for regions and arena schematics.
-	- _add_activity() and _remove_activity() procedures to keep a list of all current activities on server.
-	- _regionmsg() proc to broadcast to players only within a region.
-*/
+	The command features several subcommands to create and edit multiple arenas for players to play on.;
+	requiredExtensions: SKCompat;
+	requiredProcs: _add_activity() and _remove_activity() procedures to keep a list of all current activities on server.
+		_regionmsg() proc to broadcast to players only within a region.
+>
 register_command('7', array(
 	'description': 'Starts and manages "Seven Seconds to Live" minigame.',
 	'usage': '/7 [start|list|create|edit|save|delete|reset|setspawn|resetspawns] [map_id]',
