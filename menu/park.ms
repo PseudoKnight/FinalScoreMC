@@ -41,11 +41,19 @@ queue_push(iclosure(){
 				'lore': array(color('dark_gray').'Load: solo2'),
 			),
 		),
-		31:array(
+		31: array(
 			'name': 'ORANGE_CARPET',
 			'meta': array(
 				'display': color('green').'Coop Courses',
 				'lore': array(color('dark_gray').'Load: coop'),
+			),
+		),
+		35: array(
+			'name': 'DIAMOND_PICKAXE',
+			'meta': array(
+				'display': color('green').'Go to Survival Worlds',
+				'lore': array(color('dark_gray').'Run: /survival'),
+				'flags': array('HIDE_ATTRIBUTES')
 			),
 		),
 	);
