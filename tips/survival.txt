@@ -100,7 +100,7 @@ When minecarts collide with unpowered dispensers, they get added to the dispense
 
 Beds will set your bed location, make the sun rise, and halt precipitation regardless of other players in the world.
 
-Creepers do not do block damage above sea level (y > 62) with the exception of the outworlds.
+Creepers do not do block damage with the exception of the outworlds.
 
 You can get help from anyone with a blue name. Orange players are Frog Park staff and can help there.
 
