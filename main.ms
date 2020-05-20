@@ -3,45 +3,9 @@ set_cron('*/5 * * * *', iclosure(){
 	@allocMem = get_server_info(15);
 	@freeMem = get_server_info(16);
 	console('---[ TPS: '.round(tps()[0], 1).' ]'
-		.'---[ MEM: '.floor((@allocMem - @freeMem) / 1000000).' / '.floor(@allocMem / 1000000).' / 2863 MB ]'
+		.'---[ MEM: '.floor((@allocMem - @freeMem) / 1000000).'MB ]'
 		.'---[ PLAYERS: '.array_size(all_players()).' ]'
 		.'---'.if(@activities, '[ Activities: '.@activities.' ]---'), false);
-
-	foreach(@p in all_players()) {
-		if(!entity_exists(puuid(@p))) {
-			console('Warning, '.@p.' does not have an entity in world '.pworld(@p));
-		}
-	}
-
-	// Check mumble user count
-	@previousCount = import('mumbleCount');
-	x_new_thread('mumbleQuery', closure(){
-		@ip = '192.227.136.164';
-		@port = 64758;
-		@count = @previousCount;
-		try {
-			// this is blocking
-			@count = mumble_count(@ip, @port);
-		} catch(Exception @ex) {
-			die();
-		}
-		if(@count != @previousCount) {
-			@type = 'people';
-			if(@count == 1) {
-				@type = 'person';
-			}
-			@msg = colorize("&oCurrently &a&o@count&r&o @type on Mumble &7(@ip:@port)");
-			x_run_on_main_thread_later(closure(){
-				export('mumbleCount', @count);
-				if(@count != 0) {
-					broadcast(@msg);
-					if(extension_exists('CHDiscord')) {
-						discord_broadcast('minecraft_chat', strip_colors(@msg));
-					}
-				}
-			});
-		}
-	});
 });
 
 bind('server_ping', null, null, @event) {
