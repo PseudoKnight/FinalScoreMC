@@ -28,7 +28,7 @@ floors:
         ceiling: [birch_leaves, dark_oak_leaves]
         floor: [grass_block, podzol]
         utility: [damaged_anvil]
-        decor: [birch_leaves, cobweb]
+        decor: [birch_leaves, cobweb, wither_rose, sweet_berry_bush]
         edge: acacia_leaves
         boss:
             type: CAVE_SPIDER
@@ -184,13 +184,13 @@ floors:
         boss: ENDER_CRYSTAL
     9:
         entranceDoor: true
-        spawner: [vindicator, vindicator, vindicator, vindicator, vindicator, illusioner]
+        spawner: [vindicator, vindicator, vindicator, pillager, pillager, illusioner]
         trap: chest_potion_poison
         wall: dark_oak_planks
         column: cobblestone_wall
         ceiling: birch_planks
         floor: birch_planks
-        utility: [enchanting_table, damaged_anvil]
+        utility: [enchanting_table, damaged_anvil, bell]
         decor: bookshelf
         edge: birch_stairs
         window: light_gray_stained_glass
