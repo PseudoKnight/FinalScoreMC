@@ -28,23 +28,19 @@ register_command('wild', array(
 		@xMax = integer(@worldBorder['center']['x'] + @width / 2);
 		@zMax = integer(@worldBorder['center']['z'] + @width / 2);
 
-		try {
-			// Make sure it's within WorldBorder plugin's border too
-			@worlds = yml_decode(read('../../../../WorldBorder/config.yml'))['worlds'];
-			if(array_index_exists(@worlds, @world)) {
-				@xCenter = @worlds[@world]['x'];
-				@zCenter = @worlds[@world]['z'];
-				@xRadius = @worlds[@world]['radiusX'];
-				@zRadius = @worlds[@world]['radiusZ'];
+		// Make sure it's within WorldBorder plugin's border too
+		@border = _get_worldborder(@world);
+		if(@border) {
+			@xCenter = @border['x'];
+			@zCenter = @border['z'];
+			@xRadius = @border['radiusX'];
+			@zRadius = @border['radiusZ'];
 
-				// limit to within both world borders
-				@xMin = max(@xMin, @xCenter - @xRadius);
-				@xMax = min(@xMax, @xCenter + @xRadius);
-				@zMin = max(@zMin, @zCenter - @zRadius);
-				@zMax = min(@zMax, @zCenter + @zRadius);
-			}
-		} catch(IOException @ex) {
-			// WorldBorder plugin doesn't exist
+			// limit to within both world borders
+			@xMin = max(@xMin, @xCenter - @xRadius);
+			@xMax = min(@xMax, @xCenter + @xRadius);
+			@zMin = max(@zMin, @zCenter - @zRadius);
+			@zMax = min(@zMax, @zCenter + @zRadius);
 		}
 
 		// border buffer

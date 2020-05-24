@@ -106,3 +106,17 @@ proc _create_world(@name, @world) {
 	}
 	set_difficulty(@name, @difficulty);
 }
+
+/*
+	Gets the WorldBorder plugin's border for the given world.
+*/
+proc _get_worldborder(@world) {
+	try {
+		@worlds = yml_decode(read('../../../WorldBorder/config.yml'))['worlds'];
+		return(array_get(@worlds, @world, null));
+	} catch(IOException @ex) {
+		// WorldBorder plugin doesn't exist
+		console('WorldBorder plugin is missing.');
+		return(null);
+	}
+}

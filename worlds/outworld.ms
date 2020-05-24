@@ -1,8 +1,8 @@
-bind('entity_death', null, null, @event) {
-	if(string_starts_with(@event['location']['world'], 'outworld')) {
+bind('entity_death', null, null, @event, @border = _get_worldborder('outworld')) {
+	if(@border && string_starts_with(@event['location']['world'], 'outworld')) {
 		@width = get_world_border('outworld')['width'];
-		if(@width >= 5888) { // ~3000 radius
-			die(); // limits to 144 region files (six radius)
+		if(@width >= @border['radiusX'] * 2) {
+			die();
 		}
 
 		@cause = @event['cause'];
