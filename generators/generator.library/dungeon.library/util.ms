@@ -1,28 +1,41 @@
-proc _get_cell(@layoutMap, @c, @r, @dir) {
+proc _get_cell(@map, @c, @r, @dir) {
 	try {
 		switch(@dir) {
 			case 'north':
-				return(@layoutMap[@c][@r - 1]);
+				return(@map[@c][@r - 1]);
 			case 'south':
-				return(@layoutMap[@c][@r + 1]);
+				return(@map[@c][@r + 1]);
 			case 'west':
-				return(@layoutMap[@c - 1][@r]);
+				return(@map[@c - 1][@r]);
 			case 'east':
-				return(@layoutMap[@c + 1][@r]);
+				return(@map[@c + 1][@r]);
 		}
 	} catch(IndexOverflowException @ex) {
 		// outside the map
 	}
-	return(@layoutMap[@c][@r]);
+	return(@map[@c][@r]);
 }
 
 proc _is_solid(@cell) {
 	return(@cell == 'wall' || @cell == 'window' || @cell == 'column');
 }
 
+proc _is_room_border(@cell) {
+	return(@cell == 'wall' || @cell == 'window' || @cell == 'door');
+}
+
 proc _direction_of_solid(@layoutMap, @c, @r) {
 	foreach(@dir in array('north', 'south', 'east', 'west')) {
 		if(_is_solid(_get_cell(@layoutMap, @c, @r, @dir))) {
+			return(@dir);
+		}
+	}
+	return(null);
+}
+
+proc _direction_of_border(@layoutMap, @c, @r) {
+	foreach(@dir in array('north', 'south', 'east', 'west')) {
+		if(_is_room_border(_get_cell(@layoutMap, @c, @r, @dir))) {
 			return(@dir);
 		}
 	}

@@ -14,7 +14,9 @@ proc _spawn_entity(@entity, @loc, @owner, @teammates, @consumer) {
 		return(null);
 	}
 	@modify = closure(@e){
-		set_entity_persistence(@e, true);
+		if(is_entity_living(@e)) {
+			set_entity_persistence(@e, true);
+		}
 		if(array_index_exists(@entity, 'name')) {
 			set_mob_name(@e, @entity['name']);
 		}

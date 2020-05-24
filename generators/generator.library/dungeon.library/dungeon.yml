@@ -1,7 +1,9 @@
 dungeonEntrance: true
 default:
-    maxRoomHeight: 11
+    maxRoomHeight: 12
     chestCount: 1.1
+    attic: true
+    balcony: true
 floors:
     0:
         entranceDoor: true
@@ -178,6 +180,7 @@ floors:
         utility: enchanting_table
         decor: chorus_plant
         edge: purpur_stairs
+        attic: false
         boss: ENDER_CRYSTAL
     9:
         entranceDoor: true
@@ -206,6 +209,8 @@ floors:
         edge: air
         minRoomHeight: 4
         chestCount: 0
+        attic: false
+        balcony: false
         boss:
             type: CREEPER
             tags:
