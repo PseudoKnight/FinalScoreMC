@@ -4,10 +4,12 @@ default:
     chestCount: 1.1
     attic: true
     balcony: true
+    campfireChance: 0.1
 floors:
     0:
         entranceDoor: true
         waterPit: true
+        campfireChance: 0.5
         spawner: [silverfish, bat]
         trap: plate_tnt
         wall: [stone, stone, stone, stone, stone, stone, stone, stone, andesite, andesite, andesite, iron_ore]
@@ -21,6 +23,7 @@ floors:
     1:
         entranceDoor: true
         staggeredWall: true
+        campfireChance: 0.5
         spawner: [cave_spider, spider]
         trap: [static_web]
         wall: [acacia_log, acacia_log, dark_oak_log]
@@ -63,6 +66,7 @@ floors:
     3:
         entranceDoor: true
         lavaPit: true
+        campfireChance: 0.5
         spawner: [husk, husk, husk, husk, creeper]
         trap: [static_cactus]
         wall: [sandstone, smooth_sandstone]
@@ -90,6 +94,7 @@ floors:
     4:
         entranceDoor: true
         waterPit: true
+        campfireChance: 0.5
         spawner: [stray]
         wall: [snow_block, packed_ice]
         column: packed_ice
@@ -130,6 +135,7 @@ floors:
         window: 'nether_brick_fence[north=true,south=true,east=true,west=true]'
         boss: WITHER_SKELETON
     6:
+        campfireChance: 0.0
         spawner: [guardian, pufferfish]
         wall: prismarine_bricks
         room: water
@@ -198,6 +204,7 @@ floors:
     10:
         scale: 1
         lavaPit: true
+        campfireChance: 0.0
         spawner: [primed_tnt, ender_crystal, creeper, creeper, creeper]
         trap: plate_tnt
         wall: bedrock

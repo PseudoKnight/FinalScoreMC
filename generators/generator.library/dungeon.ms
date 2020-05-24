@@ -30,6 +30,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 		'spawnChance': 0.001,
 		'spawnerChance': 0.7,
 		'extraDoors': 0.0,
+		'campfireChance': 0.0,
 
 		// toggleable features on floors
 		'roof': true,
@@ -822,6 +823,16 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 								@mob = array_get(@mobTypes, @rand, 'ZOMBIE');
 								set_spawner_type(@loc, @mob);
 							}
+						} else if(@floorData['campfireChance'] && srand(@random) < @floorData['campfireChance']) {
+							@loc = array(
+								@regionMinX + @room['c1'] * @scale + 1 + integer(srand(@random) * (@room['width'] - 1)) * @scale,
+								@yFloor + if(@room['type'] == 'ATTIC' && srand(@random) > 0.67, @room['midheight'] + 1, 0),
+								@regionMinZ + @room['r1'] * @scale + 1 + integer(srand(@random) * (@room['length'] - 1)) * @scale,
+								@world
+							);
+							if(equals_ic(@materials['room'], get_block(@loc))) {
+								set_block(@loc, 'CAMPFIRE', false);
+							}
 						}
 					}
 
@@ -892,7 +903,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 								@loc[1]--;
 								set_blockdata(@loc, @block);
 							}
-						} while(srand(@random) > 0.5);
+						} while(srand(@random) > 0.45);
 					}
 
 					if(@i == @farthestRoom && @floorData['boss']) {
