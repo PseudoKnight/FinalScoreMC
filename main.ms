@@ -3,7 +3,7 @@ set_cron('*/5 * * * *', iclosure(){
 	@allocMem = get_server_info(15);
 	@freeMem = get_server_info(16);
 	console('---[ TPS: '.round(tps()[0], 1).' ]'
-		.'---[ MEM: '.floor((@allocMem - @freeMem) / 1000000).'MB ]'
+		.'---[ MEM: '.floor((@allocMem - @freeMem) / 1000000).' MB ]'
 		.'---[ PLAYERS: '.array_size(all_players()).' ]'
 		.'---'.if(@activities, '[ Activities: '.@activities.' ]---'), false);
 });
