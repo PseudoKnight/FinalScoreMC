@@ -1,10 +1,11 @@
 dungeonEntrance: true
 default:
     maxRoomHeight: 12
-    chestCount: 1.1
+    chestCount: 0.9
     attic: true
     balcony: true
     campfireChance: 0.1
+    treasureRoom: true
 floors:
     0:
         entranceDoor: true
