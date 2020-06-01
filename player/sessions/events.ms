@@ -159,11 +159,6 @@ bind('player_join', null, null, @event) {
 			}
 		}, player().'join');
 
-		// Discord topic
-		queue_push(closure(){
-			_update_discord_topic();
-		}, player().'join');
-
 		// Enter effect
 		if(array_index_exists(@pdata, 'entereffect')) {
 			queue_push(closure(){
@@ -209,7 +204,4 @@ bind('player_quit', null, null, @event) {
 		}
 		export('players', @players);
 	}
-	set_timeout(50, closure(){
-		_update_discord_topic();
-	});
 }
