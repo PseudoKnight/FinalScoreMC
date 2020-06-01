@@ -73,7 +73,7 @@ proc _chat(@player, @message, @recipients, @source = '', @channel = '') {
 			.'&8[world] &r'._worldname(pworld(@player)));
 	} else {
 		@components[] = array('hover', ' '.@nameColor.@player,
-			.if(array_index_exists(@pdata, 'names'), '&7'.array_implode(@pdata['names']).'\\n')
+			if(array_index_exists(@pdata, 'names'), '&7'.array_implode(@pdata['names']).'\\n')
 			.'&8[world] &rReal World');
 	}
 	@components[] = '&8: ';
