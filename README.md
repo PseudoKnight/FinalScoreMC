@@ -7,7 +7,6 @@ The following CommandHelper extensions are used:
 - [CHDiscord](https://github.com/PseudoKnight/CHDiscord/)
 - [CHDynmap](https://github.com/PseudoKnight/CHDynmap/)
 - [CHFiles](https://github.com/PseudoKnight/CHFiles/)
-- CHMumble
 - [CHNaughty](https://github.com/PseudoKnight/CHNaughty/)
 - [CHPaper](https://github.com/PseudoKnight/CHPaper)
 - [CHPerms](https://github.com/jb-aero/CHPerms/)
