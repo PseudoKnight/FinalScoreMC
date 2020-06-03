@@ -1,5 +1,6 @@
 register_command('wild', array(
 	'description': 'Teleports a player to a random location within a survival world.',
+	'aliases': array('rtp'),
 	'usage': '/wild [player]',
 	'tabcompleter': closure(@alias, @sender, @args, @info) {
 		return(array());
