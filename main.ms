@@ -6,13 +6,6 @@ set_cron('*/5 * * * *', iclosure(){
 		.'---[ MEM: '.floor((@allocMem - @freeMem) / 1000000).' MB ]'
 		.'---[ PLAYERS: '.array_size(all_players()).' ]'
 		.'---'.if(@activities, '[ Activities: '.@activities.' ]---'), false);
-	if(extension_exists('CHDiscord')) {
-		discord_set_channel_topic('minecraft_chat', '---[ FinalScoreMC Server ]---[ TPS: '.round(tps()[0], 1).' ]'
-			.'---[ Memory: '.floor((@allocMem - @freeMem) / 1000000).' MB ]'
-			.'---[ Players: '.array_size(all_players()).' ]'
-			.'---'.if(@activities, '[ Activities: '.@activities.' ]---')
-		);
-	}
 });
 
 bind('server_ping', null, null, @event) {
