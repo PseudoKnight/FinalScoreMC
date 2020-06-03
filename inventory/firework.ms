@@ -188,5 +188,13 @@ bind('firework_explode', null, null, @event){
 				// firework may have exploded right before chunk unloaded
 			}
 		});
+	} else if(!has_metadata(@event['id'], 'extended')) {
+		@v = entity_velocity(@event['id']);
+		if(@v['y'] < 0.45 && @v['magnitude'] < 0.7) {
+			// velocity characteristic of a horizontal dispenser, but not player
+			cancel();
+			set_metadata(@event['id'], 'extended', true);
+			set_entity_spec(@event['id'], array('strength': entity_spec(@event['id'])['strength'] * 3));
+		}
 	}
 }
