@@ -5,8 +5,9 @@ bind('player_interact', null, null, @event) {
 		die();
 	}
 	@sign = null;
+	@loc = @event['location'];
 	try {
-		@sign = get_sign_text(@event['location']);
+		@sign = get_sign_text(@loc);
 	} catch(RangeException @ex) {
 		die(); // wallsign isn't a sign
 	}
@@ -23,7 +24,12 @@ bind('player_interact', null, null, @event) {
 			if(@pdata['name'] != @sign[@i]) {
 				@newplayer = @pdata['name'];
 				@sign[@i] = substr(@newplayer, 0, if(length(@newplayer) > 15, 15, length(@newplayer)));
-				set_sign_text(@event['location'], @sign);
+				set_sign_text(@loc, @sign);
+				play_sound(@loc, array('sound': 'BLOCK_WOOD_PLACE'));
+				play_sound(@loc, array('sound': 'BLOCK_FIRE_EXTINGUISH', 'pitch': 2));
+				@facing = get_blockdata(@loc)['facing'];
+				@loc['y'] += 0.5;
+				spawn_particle(location_shift(@loc, @facing, -1), 'LAVA');
 			}
 		}
 	}
