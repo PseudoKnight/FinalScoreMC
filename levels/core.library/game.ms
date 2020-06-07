@@ -214,6 +214,7 @@ proc _level_start(@level) {
 					if(!@item['meta']) {
 						@item['meta'] = associative_array();
 					}
+					@refund = null;
 					if(array_index_exists(@level['shop'], @item['name'])) {
 						@refund = @level['shop'][@item['name']] / 2;
 					} else {
@@ -279,6 +280,7 @@ proc _level_start(@level) {
 				}
 			}
 
+			@viewers = null;
 			if(!@entities && array_index_exists(@level['config'], 'shop') && (@viewers = get_inventory_viewers('level'.@level['region']))) {
 				update_bar('level'.@level['region'], array('color': 'YELLOW', 'title': array_implode(@viewers, ', ').' viewing shop'));
 
@@ -401,6 +403,7 @@ proc _level_start(@level) {
 						@level['title'] = @wave['title'];
 					}
 					if(array_index_exists(@wave, 'music')) {
+						@p = null;
 						if(@level['music']) {
 							foreach(@p in @level['players']) {
 								if(ponline(@p)) {

@@ -73,10 +73,9 @@ register_command('cubeclimber', array(
 
 			case 'mystats':
 			case 'stats':
+				@player = player();
 				if(array_size(@args) > 1) {
 					@player = @args[1];
-				} else {
-					@player = player();
 				}
 				@pstats = get_value('cubeclimber.player', @player);
 				if(!@pstats) {

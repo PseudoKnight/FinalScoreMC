@@ -20,6 +20,7 @@
 					run('/region '.$);
 					die();
 				}
+				@flags = null;
 				try {
 					@flags = sk_region_info(@region, pworld(), 3);
 				} catch(PluginInternalException @ex) {
@@ -145,6 +146,7 @@
 				die();
 			}
 			@region = @args[1];
+			@owners = null;
 			try {
 				@owners = sk_region_owners(@region, pworld());
 			} catch(PluginInternalException @ex) {

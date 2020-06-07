@@ -142,6 +142,7 @@ register_command('cake', array(
 				}
 
 				@cakeinfo = get_value('cakeinfo');
+				@cake = null;
 				if(array_index_exists(@cakeinfo, @id)) {
 					@cake = @cakeinfo[@id];
 				} else {
@@ -227,6 +228,8 @@ register_command('cake', array(
 					die(color('gold').'You do not have permission to use this cake command.');
 				}
 				@cakes = get_value('cakes');
+				@old = null;
+				@new = null;
 				if(array_size(@args) == 2) {
 					@cursorloc = pcursor();
 					foreach(@key: @loc in @cakes) {

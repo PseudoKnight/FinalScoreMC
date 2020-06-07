@@ -9,7 +9,9 @@ register_command('warp', array(
 			run('/warps list');
 			die();
 		}
-	
+
+		@target = null;
+		@warpid = null;
 		if(array_size(@args) == 2) {
 			if(!get_command_block()) {
 				die(color('gold').'You cannot teleport others.');

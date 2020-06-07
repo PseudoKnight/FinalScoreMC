@@ -43,6 +43,7 @@ proc _snake_add(@player, @game) {
 		}
 	}
 
+	@team = null;
 	if(@game['mode'] == 'capture') {
 		@team = rand(2);
 		if(array_size(@game['teams'][0]) > array_size(@game['teams'][1])) {
@@ -93,6 +94,7 @@ proc _snake_add(@player, @game) {
 
 proc _snake_spawn(@player, @game) {
 	@region = '';
+	@startLoc = null;
 	if(@game['mode'] == 'capture') {
 		@region = 'snake_'.@game['arena'].(@game['snakes'][@player]['team'] * 2 + 2);
 		@startLoc = _snake_valid_location(@region, 8);

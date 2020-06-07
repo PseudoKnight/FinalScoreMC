@@ -87,6 +87,7 @@ register_command('times', array(
 							}
 						}
 					} else {
+						@uuid = null;
 						try {
 							@uuid = split('.', @key)[2];
 						} catch(IndexOverflowException @ex) {

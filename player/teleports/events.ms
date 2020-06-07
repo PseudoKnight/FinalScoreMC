@@ -36,6 +36,7 @@ bind('player_teleport', null, null, @event) {
 	if(_is_survival_world(@fromWorld) && _is_survival_world(@toWorld)) {
 		@uuid = puuid();
 
+		@vehicle = null;
 		try {
 			@vehicle = get_entity_vehicle(@uuid);
 		} catch(BadEntityException @ex) {

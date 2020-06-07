@@ -7,6 +7,7 @@ register_command('runas', array(
 			return(false);
 		}
 		@player = _find_player(@args[0]);
+		@cmd = null;
 		if(@args[1] === '-s') {
 			@cmd = array_implode(@args[2..-1]);
 		} else {

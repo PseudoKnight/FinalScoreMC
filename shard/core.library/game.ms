@@ -91,6 +91,8 @@ proc _shard_create(@rules){
 				}
 
 				// Calculate center
+				@centerX = 0;
+				@centerZ = 0;
 				if(@rules['width'] <= 512) { // use player location if possible
 					@ploc = ploc();
 					@centerX = @ploc['x'];

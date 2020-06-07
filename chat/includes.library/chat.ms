@@ -36,6 +36,7 @@ proc _chat(@player, @message, @recipients, @source = '', @channel = '') {
 		}
 	}
 
+	@pdata = null;
 	try {
 		@pdata = _pdata(@player, false);
 		if(array_index_exists(@pdata, 'support')) {
@@ -46,6 +47,7 @@ proc _chat(@player, @message, @recipients, @source = '', @channel = '') {
 	}
 
 	@nameColor = '';
+	@session = null;
 	if(ponline(@player)) {
 		@session = _psession(@player);
 		if(array_index_exists(@session, 'trophies')) {
@@ -121,6 +123,7 @@ proc _pmsg(@from, @player, @message) {
 		if(length(@player) < 4) {
 			die(color('gold').'You must provide at least the first 4 characters of a player\'s name for offline messages.');
 		}
+		@pdata = null;
 		try {
 			@pdata = _pdata(@player);
 		} catch(NotFoundException @ex) {

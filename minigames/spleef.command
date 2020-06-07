@@ -176,7 +176,8 @@ register_command('spleef', array(
 					#random obstacles
 					if(reg_match('lit\\=true', get_blockdata_string(@cfg['option']['obstacles']))) {
 						proc _setwalls(@x, @y, @z, @world) {
-							if(assign(@rand, rand(100)) < 5) {
+							@rand = rand(100);
+							if(@rand < 5) {
 								set_block(array(@x, @y, @z, @world), 'STONE_BRICKS', false);
 								set_block(array(@x, @y + 1, @z, @world), 'STONE_BRICKS', false);
 							} else if(@rand < 6) {

@@ -29,6 +29,8 @@ register_command('class', array(
 					return(false);
 				}
 				@setting = @args[2];
+				@arenaid = null;
+				@classid = null;
 				try {
 					@arenaid = split(':', @id)[0];
 					@classid = split(':', @id)[1];
@@ -174,6 +176,8 @@ register_command('class', array(
 				store_value('arena', @arenaid, @arena);
 
 			case 'delete':
+				@arenaid = null;
+				@classid = null;
 				try {
 					@arenaid = split(':', @id)[0];
 					@classid = split(':', @id)[1];
@@ -197,6 +201,8 @@ register_command('class', array(
 				store_value('arena', @arenaid, @arena);
 
 			case 'info':
+				@arenaid = null;
+				@classid = null;
 				try {
 					@arenaid = split(':', @id)[0];
 					@classid = split(':', @id)[1];
@@ -218,6 +224,8 @@ register_command('class', array(
 				if(array_size(@args) < 3) {
 					die(color('gold').'You must specify a new name.');
 				}
+				@arenaid = null;
+				@classid = null;
 				try {
 					@arenaid = split(':', @id)[0];
 					@classid = split(':', @id)[1];
@@ -244,6 +252,8 @@ register_command('class', array(
 				if(array_size(@args) < 3) {
 					die(color('gold').'You must specify a setting.');
 				}
+				@arenaid = null;
+				@classid = null;
 				try {
 					@arenaid = split(':', @id)[0];
 					@classid = split(':', @id)[1];

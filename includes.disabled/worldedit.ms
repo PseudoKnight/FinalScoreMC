@@ -5,6 +5,8 @@ proc _send_block_changes(@players, @loc, @block) {
 }
 
 proc _draw_selection(@clear = false) {
+	@1 = null;
+	@2 = null;
 	try(
 		@1 = sk_pos1();
 		@2 = sk_pos2();

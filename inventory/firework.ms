@@ -100,6 +100,7 @@ bind('player_interact', null, array('itemname': 'FIREWORK_ROCKET', 'button': 'ri
 		}
 
 		cancel();
+		@loc = null;
 		if(@event['action'] === 'right_click_block') {
 			@loc = location_shift(@event['location'], @event['facing']);
 		} else {

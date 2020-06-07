@@ -224,6 +224,7 @@ bind('player_interact_entity', null, array('clicked': 'PAINTING','hand': 'main_h
 		@current = entity_spec(@event['id'])['type'];
 		@index = array_index(@paintings, @current);
 		@tries = 0;
+		@next = null;
 		do {
 			@next = @paintings[(@index = (@index + 1) % array_size(@paintings))];
 			set_entity_spec(@event['id'], array('type': @next));

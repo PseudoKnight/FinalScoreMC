@@ -55,10 +55,9 @@ proc _start_game(@course, @loc) {
 				set_plevel(player(), 0);
 			}
 
+			@mobtype = 'MAGMA_CUBE';
 			if(@ball['type'] == 0 || @ball['type'] == 2) {
 				@mobtype = 'SLIME';
-			} else {
-				@mobtype = 'MAGMA_CUBE';
 			}
 
 			_place_ball(@mobtype, @event['location'], @ball, @golf['name']);

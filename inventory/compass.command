@@ -18,6 +18,7 @@ register_command('compass', array(
 				msg(color('green').'Compass is now pointing to '._worldname(pworld()).'\'s spawn.');
 	
 			case 'home':
+				@pdata = null;
 				if(array_size(@args) > 1) {
 					@pdata = _pdata(@arg[1]);
 				} else {

@@ -115,10 +115,12 @@ proc _class_select(@id, @pvp) {
 			@size2 += 1
 		}
 	}
+	@chestsize1 = 0;
 	if(@size1 > 2) {
 		@chestsize1 = ceil(@size1 / 9) * 9
 		create_virtual_inventory(@id.'0', @chestsize1, 'Choose a Class');
 	}
+	@chestsize2 = 0;
 	if(@size2 > 2) {
 		@chestsize2 = ceil(@size2 / 9) * 9
 		create_virtual_inventory(@id.'1', @chestsize2, 'Choose a Class');

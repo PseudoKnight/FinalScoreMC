@@ -7,6 +7,7 @@ register_command('relcoords', array(
 	},
 	'executor': closure(@alias, @sender, @args, @info) {
 		@block = pcursor();
+		@cmd = null;
 		try {
 			@cmd = get_block_command(@block);
 		} catch(FormatException @ex) {

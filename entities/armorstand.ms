@@ -302,6 +302,7 @@ bind('entity_damage', null, array('type': 'ARMOR_STAND'), @event) {
 			die();
 		}
 		@trace = ray_trace(@damager, 4);
+		@loc = null;
 		try {
 			@loc = @trace['entities'][0]['location'];
 		} catch (IndexOverflowException @ex) {

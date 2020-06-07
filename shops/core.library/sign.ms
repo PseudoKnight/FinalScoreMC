@@ -1,4 +1,5 @@
 proc _sign_get_shop(@location) {
+	@sign = null;
 	try {
 		@sign = get_sign_text(@location);
 	} catch(RangeException @ex) {
@@ -19,6 +20,7 @@ proc _sign_get_shop(@location) {
 	@sell = _sign_get_sell_price(@sign);
 	if(@buy || @sell) {
 		# Update owner player name, if changed
+		@pdata = null;
 		try {
 			@autocomplete = (length(@owner) == 15 && @owner[13] === '~');
 			if(@autocomplete) {

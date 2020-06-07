@@ -72,6 +72,7 @@ proc _store_pdata(@uuid, @data) {
 	Returns the amount of coins a player has
 */
 proc _acc_balance(@player) {
+	@pdata = null;
 	try {
 		@pdata = _pdata(@player);
 	} catch(NotFoundException @ex) {
@@ -88,6 +89,7 @@ proc _acc_balance(@player) {
 	Add an amount to a player's coin balance
 */
 proc _acc_add(@player, @amount) {
+	@pdata = null;
 	try {
 		@pdata = _pdata(@player);
 	} catch(NotFoundException @ex) {
@@ -105,6 +107,7 @@ proc _acc_add(@player, @amount) {
 	Subtracts an amount from a player's coin balance
 */
 proc _acc_subtract(@player, @amount) {
+	@pdata = null;
 	try {
 		@pdata = _pdata(@player);
 	} catch(NotFoundException @ex) {

@@ -22,6 +22,7 @@ proc _is_shop_owner(@shop, @player) {
 
 proc _shop_show_info(@shop) {
 	@chestLoc = location_shift(@shop['loc'], 'down');
+	@chestInv = null;
 	try {
 		@chestInv = get_inventory(@chestLoc);
 	} catch(FormatException @ex) {
@@ -53,6 +54,7 @@ proc _shop_show_info(@shop) {
 
 proc _shop_process_transaction(@shop) {
 	@chestLoc = location_shift(@shop['loc'], 'down');
+	@chestInv = null;
 	try {
 		@chestInv = get_inventory(@chestLoc);
 	} catch(FormatException @ex) {

@@ -22,6 +22,7 @@ register_command('roll', array(
 		if(@sides < 2) {
 			die(color('a').'[Dice] '.color('f').'There\'s a minimum of 2 sides.');
 		}
+		@message = '';
 		if(@sides == 2) {
 			@message = color('a').'[Coin] '.display_name().color('f').' flipped a coin and got '.if(rand(2) == 0, 'heads.', 'tails.');
 		} else {

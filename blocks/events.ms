@@ -76,6 +76,7 @@ bind('block_dispense', null, array('type': 'DISPENSER'), @event, @ignored = arra
 	}
 	if(!_is_survival_world(@event['location']['world'])) {
 		if(!array_contains(sk_region_check_flag(@event['location'], 'blocked-cmds'), '/finitedispensers')) {
+			@inv = null;
 			try {
 				@inv = get_inventory(@event['location']);
 			} catch(CastException @ex) {

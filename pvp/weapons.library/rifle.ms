@@ -8,6 +8,8 @@ bind('player_interact', array('id': @id.'riflereload'), array('itemname': 'IRON_
 	set_pinv(player(), null, null);
 	@ammoslot = pheld_slot();
 	play_sound(ploc(), array('sound': 'BLOCK_WOODEN_DOOR_OPEN', 'pitch': 2));
+	@weaponslot = null;
+	@weapon = null;
 	foreach(@weaponslot: @weapon in pinv()) {
 		if(@weapon && @weapon['name'] == 'STONE_HOE') {
 			// Found weaponslot

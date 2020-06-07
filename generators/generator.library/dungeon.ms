@@ -177,6 +177,11 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 			'type': 'NORMAL',
 		);
 
+		// Need these outside the foreach scope
+		@floor = null;
+		@maxRoomHeight = null;
+		@layoutMap = null;
+
 		foreach(@floor in range(array_size(@options['floors']))) {
 			queue_push(iclosure(
 				@bar = 'gen'.@region,
@@ -364,6 +369,10 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 					@dir = integer(srand(@random) * array_size(@dirs));
 					array_remove_values(@dirs, @dir);
 					try {
+						@c2 = 0;
+						@r2 = 0;
+						@c3 = 0;
+						@r3 = 0;
 						switch(@dir){
 							case 0:
 								@r2 = @r - 2;
@@ -564,6 +573,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 
 								// Walls
 								@ceilingY = @groundY + @roomHeight + 2;
+								@y = 0;
 								for(@y = @groundY + 2, @y < @ceilingY, @y++) {
 									@loc[1] = @y;
 									switch(@layoutMap[@c][@r]) {
@@ -978,6 +988,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 							@effect = @type[1];
 							@data = if(array_size(@type) == 3, @type[2], null);
 							@facing = 'up';
+							@loc = null;
 							if(@trigger == 'chest' || @effect == 'cactus') {
 								@loc = array(
 									@regionMinX + @room['c1'] * @scale + 1 + integer(srand(@random) * (@room['width'] - 1)) * @scale,

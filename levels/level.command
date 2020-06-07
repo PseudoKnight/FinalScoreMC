@@ -126,6 +126,7 @@ register_command('level', array(
 				msg(color('green').'Set trigger location for '.@args[2]);
 				
 			case 'start':
+				@region = null;
 				if(@block = get_command_block()) {
 					@region = sk_regions_at(@block);
 					@world = @block['world'];

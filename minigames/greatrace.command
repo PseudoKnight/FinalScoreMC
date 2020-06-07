@@ -21,6 +21,7 @@ register_command('greatrace', array(
 		}
 
 		# Get target location
+		@target = null;
 		if(!@args) {
 			@border = _get_worldborder(@world);
 			@x = 0;

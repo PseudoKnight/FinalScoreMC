@@ -310,7 +310,7 @@ proc _fw_task(@task, @state, @secs) {
 
 	case 'cluck':
 		if(@state == 'start') {
-			if(!rand(4), @mob = 'BAT', @mob = 'CHICKEN')
+			@mob = if(!rand(4), 'BAT', 'CHICKEN');
 			@count = if(@mob === 'BAT', '1', '3');
 			_fw_msg(array(
 				'Shoot '.@count.'!',

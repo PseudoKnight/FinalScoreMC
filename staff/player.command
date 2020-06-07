@@ -11,6 +11,7 @@ register_command('player', array(
 		}
 		@player = @args[0];
 		@uuid = '';
+		@pdata = null;
 		try {
 			# ONLINE INFO
 			@player = player(@player);

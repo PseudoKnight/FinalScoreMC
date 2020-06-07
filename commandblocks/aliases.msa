@@ -142,6 +142,7 @@
 	if(!_execute_on($target, @closure)) {
 		# entity is not a player
 		@loc = get_command_block();
+		@entities = null;
 		try {
 			@entities = entities_in_radius(@loc, 3, @target);
 		} catch(BadEntityException @ex) {
@@ -171,30 +172,27 @@
 *:/playsound [$sound='random'] [$pitch=1] [$volume=1] [$x] [$y] [$z] = >>>
 	if(string_position($sound, '.') >= 0) {
 		if(@cmdblk = get_command_block()) {
+			@loc = @cmdblk;
 			if($z) {
 				@loc = _relative_coords(@cmdblk, $x, $y, $z);
-			} else {
-				@loc = @cmdblk;
 			}
 			play_named_sound(@loc, array('sound': $sound, 'pitch': $pitch, 'volume': $volume));
 		} else if(has_permission('group.builder') || pworld() === 'dev') {
 			play_named_sound(ploc(), array('sound': $sound, 'pitch': $pitch, 'volume': $volume));
 		}
 	} else {
+		@sound = $sound;
+		@pitch = $pitch;
 		if($sound === 'random') {
 			@sounds = reflect_pull('enum', 'Sound');
 			@sound = array_get_rand(@sounds);
 			@range = rand();
 			@pitch = 2 - (1.5 * @range);
-		} else {
-			@sound = $sound;
-			@pitch = $pitch;
 		}
 		if(@cmdblk = get_command_block()) {
+			@loc = @cmdblk;
 			if($z) {
 				@loc = _relative_coords(@cmdblk, $x, $y, $z);
-			} else {
-				@loc = @cmdblk;
 			}
 			play_sound(@loc, array('sound': @sound, 'pitch': @pitch, 'volume': $volume));
 		} else if(has_permission('group.builder') || pworld() === 'dev') {

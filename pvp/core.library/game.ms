@@ -53,10 +53,9 @@ proc _pvp_start_match(@id) {
 	if(array_index_exists(@arena, 'itemspawn')) {
 		@pvp['itemspawn'] = array();
 		for(@i = 0, @i < array_size(@arena['itemspawn']), @i++) {
+			@time = time();
 			if(@arena['itemspawn'][@i]['start']) {
 				@time = 0;
-			} else {
-				@time = time();
 			}
 			@pvp['itemspawn'][@i] = array('', @time);
 		}
@@ -65,10 +64,9 @@ proc _pvp_start_match(@id) {
 	if(array_index_exists(@arena, 'mobspawn')) {
 		@pvp['mobspawn'] = array();
 		for(@i = 0, @i < array_size(@arena['mobspawn']), @i++) {
+			@time = time();
 			if(@arena['mobspawn'][@i]['start']) {
 				@time = 0;
-			} else {
-				@time = time();
 			}
 			@pvp['mobspawn'][@i] = @time;
 		}

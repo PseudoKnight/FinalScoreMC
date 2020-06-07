@@ -33,12 +33,11 @@ proc _get_loot(@floor, @random, @bonus, @loot = array(
 	@inv = associative_array();
 	foreach(@weightedLoot in @loot){
 		if(srand(@random) < @weightedLoot[0]){
+			@item = @weightedLoot[1];
 			if(array_index_exists(@weightedLoot[1], 'qty')
 			&& is_array(@weightedLoot[1]['qty'])) {
 				@item = @weightedLoot[1][];
 				@item['qty'] = integer(srand(@random) * (@item['qty'][1] - @item['qty'][0]) + @item['qty'][0]);
-			} else {
-				@item = @weightedLoot[1];
 			}
 			@inv[rand(27)] = @item;
 		}

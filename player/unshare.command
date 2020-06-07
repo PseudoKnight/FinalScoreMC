@@ -17,6 +17,7 @@ register_command('unshare', array(
 				die(color('red').'Unknown type: '.@type.'\nShareable: '.@shareables);
 			}
 		}
+		@player = null;
 		try {
 			@player = player(@args[0]);
 		} catch(PlayerOfflineException @ex) {

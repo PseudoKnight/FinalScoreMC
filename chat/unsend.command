@@ -24,7 +24,7 @@ register_command('unsend', array(
 		if(is_null(@letter)) {
 			die(color('yellow').'Cannot find last sent mail to '.@player.'.');
 		}
-		array_remove(@pdata['mail'], @i);
+		array_remove(@pdata['mail'], @id);
 		if(!@pdata['mail']) {
 			array_remove(@pdata, 'mail');
 		}

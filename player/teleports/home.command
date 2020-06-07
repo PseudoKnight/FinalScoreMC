@@ -34,6 +34,7 @@ register_command('home', array(
 				}
 			}
 		}
+		@pdata = null;
 		try {
 			@pdata = _pdata(@player);
 		} catch(NotFoundException @ex) {

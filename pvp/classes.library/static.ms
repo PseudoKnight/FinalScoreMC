@@ -83,6 +83,7 @@ case 'load':
 		@hunter = puuid(@player);
 		foreach(@p: @data in @pvp['players']) {
 			if(@p == @player, continue());
+			@dist = 0;
 			if(entity_can_see(@hunter, puuid(@p)) && (@dist = distance(ploc(@p), ploc(@player))) < 6) {
 				@helm = pinv(@p, 103);
 				@loc = ploc(@p);

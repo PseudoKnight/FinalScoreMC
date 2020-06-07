@@ -16,6 +16,7 @@ bind('player_interact', null, null, @event) {
 			if(@sign[@i] === '' || @sign[@i][0] === '[' || @sign[@i] == player()) {
 				continue();
 			}
+			@pdata = null;
 			try {
 				@pdata = _pdata(@sign[@i], (length(@sign[@i]) == 15));
 			} catch(NotFoundException @ex) {
