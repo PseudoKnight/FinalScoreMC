@@ -173,6 +173,7 @@ register_command('arena', array(
 
 					# message option
 					case 'description':
+						@string = @args[3..];
 						if(@action == 'add') {
 							@arena[@setting][] = colorize(@string);
 						} else {
@@ -805,7 +806,7 @@ register_command('arena', array(
 							}
 						}
 						if(!@found && array_index_exists(@arena['spawn'], 1)) {
-							foreach(@spawn in @arena['spawn'][1]) {
+							foreach(@index: @spawn in @arena['spawn'][1]) {
 								if(@spawn[0] < @loc[0] + 2 && @spawn[0] > @loc[0] - 2
 								&& @spawn[1] < @loc[1] + 2 && @spawn[1] > @loc[1] - 2
 								&& @spawn[2] < @loc[2] + 2 && @spawn[2] > @loc[2] - 2) {

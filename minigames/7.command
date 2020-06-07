@@ -428,6 +428,7 @@ register_command('7', array(
 					msg(array_implode(array_keys(@arenas)))
 
 				case 'reset':
+					@7 = import('7');
 					clear_task(@7['task']);
 					export('7', null);
 					remove_scoreboard('7');

@@ -31,7 +31,7 @@ register_command('compass', array(
 					die(color('gold').'No home in this world to target.');
 				}
 				set_compass_target(@pdata['homes'][pworld()]);
-				msg(color('green').'Compass is now pointing to '.if(array_size(@args) > 1, @arg[1].'\'s', 'your').' home.');
+				msg(color('green').'Compass is now pointing to '.if(array_size(@args) > 1, @args[1].'\'s', 'your').' home.');
 	
 			case 'here':
 				set_compass_target(ploc());
