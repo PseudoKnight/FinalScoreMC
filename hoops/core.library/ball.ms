@@ -79,7 +79,7 @@ proc _hoops_ball_create(@loc) {
 			}
 		}
 	}
-	@binds[] = bind('player_interact_entity', null, array('hand': 'main_hand'), @event, @game, @bball, @charge, @stand, @binds) {
+	@binds[] = bind('player_interact_at_entity', null, array('hand': 'main_hand'), @event, @game, @bball, @charge, @stand, @binds) {
 		if(@game['holder'] != player()
 		&& entity_exists(@stand)
 		&& (@event['clicked'] == 'ARMOR_STAND' && @event['id'] == @stand || @event['clicked'] == 'SLIME' && @event['id'] == @bball)) {
