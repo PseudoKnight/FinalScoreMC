@@ -46,8 +46,9 @@ bind('player_join', null, null, @event) {
 				}
 				_tellraw(all_players(), array(array('colorize', @pre), array('hover', @name, @hover), @msg));
 				if(function_exists('discord_broadcast')) {
+					@count = array_size(all_players());
 					@msg = reg_replace('[&§][0-9a-fk-o]', '', @msg);
-					try(discord_broadcast('minecraft_chat', '**\u00bb '.player().@msg.'**'));
+					try(discord_broadcast('minecraft_chat', '**\u00bb '.player().@msg.'** ('.@count.' player'.if(@count != 1, 's').' online)'));
 				}
 			}
 
@@ -186,8 +187,9 @@ bind('player_quit', null, null, @event) {
 	}
 	broadcast(colorize('&8'.simple_date('h:mm').' &4\u00ab &o'.@msg));
 	if(extension_exists('CHDiscord')) {
+		@count = array_size(all_players()) - 1;
 		@msg = reg_replace('[&§][0-9a-fk-o]', '', @msg);
-		try(discord_broadcast('minecraft_chat', '**\u00ab '.@msg.'**'));
+		try(discord_broadcast('minecraft_chat', '**\u00ab '.@msg.'** ('.@count.' player'.if(@count != 1, 's').' online)'));
 	}
 	try {
 		@pdata['world'] = pworld();
