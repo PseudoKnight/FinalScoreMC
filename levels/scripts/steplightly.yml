@@ -375,7 +375,7 @@ waves:
         music: 'music.nether'
         duplicate: 10
         mobs:
-            - type: PIG_ZOMBIE
+            - type: ZOMBIFIED_PIGLIN
               tags:
                   angry: true
                   anger: 400
@@ -384,7 +384,7 @@ waves:
         mobs:
             - GHAST
             - GHAST
-            - type: PIG_ZOMBIE
+            - type: ZOMBIFIED_PIGLIN
               count: 8
               tags:
                   angry: true
@@ -395,7 +395,7 @@ waves:
         mobs:
             - type: CHICKEN
               rider:
-                  type: PIG_ZOMBIE
+                  type: ZOMBIFIED_PIGLIN
                   tags:
                       angry: true
                       anger: 400
@@ -414,7 +414,7 @@ waves:
               pos: 'center'
             - type: BLAZE
               pos: 'center'
-            - type: PIG_ZOMBIE
+            - type: ZOMBIFIED_PIGLIN
               count: 16
               tags:
                   angry: true

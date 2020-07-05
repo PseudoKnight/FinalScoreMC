@@ -7,7 +7,7 @@ register_command('entitycount', array(
 	},
 	'executor': closure(@alias, @sender, @args, @info) {
 		@MONSTERS = array('BLAZE', 'CAVE_SPIDER', 'CREEPER', 'DROWNED', 'ELDER_GUARDIAN', 'ENDER_DRAGON', 'ENDERMAN',
-				'ENDERMITE', 'EVOKER', 'GHAST', 'GUARDIAN', 'HUSK', 'MAGMA_CUBE', 'PHANTOM', 'PIG_ZOMBIE', 'SHULKER',
+				'ENDERMITE', 'EVOKER', 'GHAST', 'GUARDIAN', 'HUSK', 'MAGMA_CUBE', 'PHANTOM', 'ZOMBIFIED_PIGLIN', 'SHULKER',
 				'SILVERFISH', 'SKELETON', 'SPIDER', 'STRAY', 'VEX', 'VINDICATOR', 'WITCH', 'WITHER', 'WITHER_SKELETON',
 				'ZOMBIE', 'ZOMBIE_VILLAGER');
 		@ANIMALS = array('CHICKEN', 'COW', 'DONKEY', 'HORSE', 'IRON_GOLEM', 'LLAMA', 'MULE',

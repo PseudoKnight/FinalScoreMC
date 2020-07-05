@@ -69,7 +69,7 @@ bind('target_player', null, array('mobtype': 'ZOMBIE'), @event, @day) {
 					'OCELOT',
 					'PARROT',
 					'PIG',
-					'ZOMBIE_PIGMAN', // 'PIG_ZOMBIE'
+					'ZOMBIFIED_PIGLIN'
 					'POLAR_BEAR',
 					'RABBIT',
 					'SHEEP',
@@ -150,8 +150,6 @@ bind('projectile_hit', null, array('type': 'EGG'), @event) {
 		@mob = get_metadata(@event['id'], 'spawn_egg', 'CommandHelper');
 		if(@mob == 'MOOSHROOM') {
 			@mob = 'MUSHROOM_COW';
-		} else if(@mob == 'ZOMBIE_PIGMAN') {
-			@mob = 'PIG_ZOMBIE';
 		}
 		@loc = location_shift(@event['location'], 'up');
 		@loc['x'] = floor(@loc['x']) + 0.5;

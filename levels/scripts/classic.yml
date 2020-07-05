@@ -142,7 +142,7 @@ waves:
             - SPIDER
             - CAVE_SPIDER
             - ZOMBIE
-            - type: PIG_ZOMBIE
+            - type: ZOMBIFIED_PIGLIN
               tags:
                   angry: true
                   anger: 400
@@ -159,7 +159,7 @@ waves:
         subtitle: 'Porkcopolypse'
         duplicate: 6
         mobs:
-            - type: PIG_ZOMBIE
+            - type: ZOMBIFIED_PIGLIN
               tags:
                   angry: true
                   anger: 400
@@ -205,15 +205,15 @@ waves:
             - type: CREEPER
               tags:
                   powered: true
-            - type: PIG_ZOMBIE
+            - type: ZOMBIFIED_PIGLIN
               tags:
                   angry: true
                   anger: 400
-            - type: PIG_ZOMBIE
+            - type: ZOMBIFIED_PIGLIN
               tags:
                   angry: true
                   anger: 400
-            - type: PIG_ZOMBIE
+            - type: ZOMBIFIED_PIGLIN
               tags:
                   angry: true
                   anger: 400
@@ -231,7 +231,7 @@ waves:
         mobs:
             - type: ZOMBIE
               count: 10
-            - type: PIG_ZOMBIE
+            - type: ZOMBIFIED_PIGLIN
               count: 5
               tags:
                   angry: true
@@ -289,7 +289,7 @@ waves:
             - type: MAGMA_CUBE
               tags:
                   size: 4
-            - type: PIG_ZOMBIE
+            - type: ZOMBIFIED_PIGLIN
               tags:
                   angry: true
                   anger: 400

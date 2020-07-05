@@ -190,8 +190,6 @@ bind('inventory_click', null, array('slottype': 'RESULT'), @event) {
 						@type = reg_match('(.*)_SPAWN_EGG', @item['name'])[1];
 						if(@type == 'MOOSHROOM') {
 							@type = 'MUSHROOM_COW';
-						} else if(@type == 'ZOMBIE_PIGMAN') {
-							@type = 'PIG_ZOMBIE';
 						}
 						@count[1] = @item['qty'];
 					}

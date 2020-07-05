@@ -42,7 +42,7 @@ proc _fw_loc(@height = 0, @minrange = false) {
 
 proc _fw_mobs(@mob = 'random', @num = 'random') {
 	if(@mob == 'random') {
-		@mobs = array('creeper', 'zombie', 'silverfish', 'slime', 'magma_cube', 'pig_zombie', 'shulker', 'ghast',
+		@mobs = array('creeper', 'zombie', 'silverfish', 'slime', 'magma_cube', 'zombified_piglin', 'shulker', 'ghast',
 				'blaze', 'husk', 'polar_bear', 'vindicator', 'evoker', 'vex');
 		@mob = array_get_rand(@mobs);
 	}

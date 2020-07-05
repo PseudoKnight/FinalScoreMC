@@ -14,8 +14,6 @@ proc _hazard_bind(@game) {
 					@type = reg_match('(.*)_SPAWN_EGG', @event['item']['name'])[1];
 					if(@type == 'MOOSHROOM') {
 						@type = 'MUSHROOM_COW';
-					} else if(@type == 'ZOMBIE_PIGMAN') {
-						@type = 'PIG_ZOMBIE';
 					}
 					_hazard_create_entity(@game, @type, @loc);
 				}

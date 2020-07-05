@@ -158,8 +158,6 @@ bind('player_interact', null, array('button': 'right'), @event) {
 			@type = reg_match('(.*)_SPAWN_EGG', @item['name'])[1];
 			if(@type == 'MOOSHROOM') {
 				@type = 'MUSHROOM_COW';
-			} else if(@type == 'ZOMBIE_PIGMAN') {
-				@type = 'PIG_ZOMBIE';
 			}
 			@loc = location_shift(@event['location'], @event['facing']);
 			@loc['x'] += 0.5;

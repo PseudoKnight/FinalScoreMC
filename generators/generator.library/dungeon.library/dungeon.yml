@@ -124,7 +124,7 @@ floors:
         entranceDoor: true
         lavaPit: true
         fireFloor: true
-        spawner: [pig_zombie, magma_cube, blaze]
+        spawner: [zombified_piglin, magma_cube, blaze]
         trap: [plate_fire]
         wall: nether_bricks
         column: nether_brick_fence

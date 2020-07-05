@@ -20,7 +20,7 @@
 	@removenamed = false;
 	@spawnEggs = false;
 	@type = array('BLAZE', 'CAVE_SPIDER', 'CREEPER', 'DROWNED', 'ELDER_GUARDIAN', 'ENDER_DRAGON', 'ENDERMAN', 'ENDERMITE',
-			'EVOKER', 'GUARDIAN', 'GHAST', 'GIANT', 'HUSK', 'MAGMA_CUBE', 'PHANTOM', 'PIG_ZOMBIE', 'SHULKER', 'SILVERFISH',
+			'EVOKER', 'GUARDIAN', 'GHAST', 'GIANT', 'HUSK', 'MAGMA_CUBE', 'PHANTOM', 'ZOMBIFIED_PIGLIN', 'SHULKER', 'SILVERFISH',
 			'SKELETON', 'SLIME', 'SPIDER', 'STRAY', 'WITCH', 'WITHER', 'WITHER_SKELETON', 'VEX', 'VINDICATOR', 'ZOMBIE',
 			'ZOMBIE_VILLAGER');
 	@radius = 64;
@@ -59,9 +59,7 @@
 		if(@removenamed || !@living || !get_mob_name(@e)) {
 			if(@spawnEggs && @living) {
 				@entitytype = entity_type(@e);
-				if(@entitytype == 'PIG_ZOMBIE') {
-					@entitytype = 'ZOMBIE_PIGMAN';
-				} else if(@entitytype == 'MUSHROOM_COW') {
+				if(@entitytype == 'MUSHROOM_COW') {
 					@entitytype = 'MOOSHROOM';
 				}
 				pgive_item(array('name': entity_type(@e).'_SPAWN_EGG', 'meta': array('display': get_mob_name(@e))));
