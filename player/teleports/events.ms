@@ -43,7 +43,7 @@ bind('player_teleport', null, null, @event) {
 			die();
 		}
 		@type = entity_type(@vehicle);
-		if(array_contains(array('DONKEY', 'HORSE', 'LLAMA', 'MULE', 'SKELETON_HORSE', 'ZOMBIE_HORSE'), @type)) {
+		if(array_contains(array('DONKEY', 'HORSE', 'LLAMA', 'MULE', 'SKELETON_HORSE', 'ZOMBIE_HORSE', 'STRIDER'), @type)) {
 			set_timeout(50, closure(){
 				try {
 					set_entity_loc(@vehicle, @to);
