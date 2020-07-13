@@ -1,9 +1,13 @@
 register_command('times', array(
 	'description': 'Lists and manages time trial records.',
-	'usage': '/times <top|avg|segmented|reset|resetplayer> [course_id] [player]',
+	'usage': '/times <top|avg|segmented|worst> [course_id] [player]',
 	'tabcompleter': closure(@alias, @sender, @args, @info) {
 		if(array_size(@args) == 1) {
-			return(_strings_start_with_ic(array('top', 'avg', 'segmented', 'reset', 'resetplayer', 'recalculate'), @args[-1]));
+			if(pisop(@sender)) {
+				return(_strings_start_with_ic(array('top', 'avg', 'segmented', 'worst', 'reset', 'resetplayer'), @args[-1]));
+			} else {
+				return(_strings_start_with_ic(array('top', 'avg', 'segmented', 'worst'), @args[-1]));
+			}
 		}
 		return(array());
 	},
@@ -148,6 +152,46 @@ register_command('times', array(
 					}
 					msg(@output);
 				});
+
+			case 'worst':
+				@courses = get_values('times');
+				@puuid = puuid(player(), true);
+				if(@player) {
+					@puuid = _get_uuid(to_lower(@player));
+				}
+				@worst = 0;
+				@worstCourse = '';
+				foreach(@key: @time in @courses) {
+					if(is_array(@time) && @key != 'times') {
+						@found = false;
+						foreach(@i: @t in @time) {
+							if(@t[0] == @puuid) {
+								if(@i + 1 > @worst) {
+									// address ties now
+									@this = @i;
+									while(@this > 0 && @time[@this - 1][2] == @t[2]) {
+										@this--;
+									}
+									if(@this + 1 > @worst) {
+										@worst = @this + 1;
+										@worstCourse = split('.', @key)[-1];
+									}
+								}
+								@found = true;
+								break();
+							}
+						}
+						if(!@found) {
+							@worst = 0;
+							@worstCourse = split('.', @key)[-1];
+							break();
+						}
+					}
+				}
+				if(!@worst) {
+					die(color('gold').'There\'s an unranked course: '.color('bold').@worstCourse);
+				}
+				msg(color('yellow').'Worst course is '.color('bold').@worstCourse.color('yellow').' with a rank of '.color('bold').@worst);
 				
 			case 'top':
 				if(@id == 'all') {
