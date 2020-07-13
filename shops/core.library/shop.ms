@@ -25,7 +25,7 @@ proc _shop_show_info(@shop) {
 	@chestInv = null;
 	try {
 		@chestInv = get_inventory(@chestLoc);
-	} catch(FormatException @ex) {
+	} catch(Exception @ex) {
 		die(color('red').'This shop doesn\'t have a chest.');
 	}
 	
@@ -57,7 +57,7 @@ proc _shop_process_transaction(@shop) {
 	@chestInv = null;
 	try {
 		@chestInv = get_inventory(@chestLoc);
-	} catch(FormatException @ex) {
+	} catch(Exception @ex) {
 		die(color('red').'This shop doesn\'t have a chest.');
 	}
 	
