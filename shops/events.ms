@@ -33,7 +33,7 @@ bind('block_break', array('priority': 'LOWEST'), null, @event) {
 		include('core.library/shop.ms');
 		if(@shop = _sign_get_shop(@event['location'])) {
 			if(_is_shop_owner(@shop)) {
-				if(_is_survival_world(@shop['world'])) {
+				if(_is_survival_world(@shop['loc']['world'])) {
 					include('core.library/cache.ms');
 					_remove_cached_shop(@shop);
 				}
@@ -51,7 +51,7 @@ bind('block_break', array('priority': 'LOWEST'), array('block': 'CHEST'), @event
 		include('core.library/shop.ms');
 		if(@shop = _sign_get_shop(location_shift(@event['location'], 'up'))) {
 			if(_is_shop_owner(@shop) || pisop()) {
-				if(_is_survival_world(@shop['world'])) {
+				if(_is_survival_world(@shop['loc']['world'])) {
 					include('core.library/cache.ms');
 					_remove_cached_shop(@shop);
 				}
@@ -68,7 +68,7 @@ bind('block_break', array('priority': 'LOWEST'), array('block': 'TRAPPED_CHEST')
 		include('core.library/shop.ms');
 		if(@shop = _sign_get_shop(location_shift(@event['location'], 'up'))) {
 			if(_is_shop_owner(@shop) || pisop()) {
-				if(_is_survival_world(@shop['world'])) {
+				if(_is_survival_world(@shop['loc']['world'])) {
 					include('core.library/cache.ms');
 					_remove_cached_shop(@shop);
 				}
