@@ -223,7 +223,7 @@ register_command('timer', array(
 							@rankup = true;
 						}
 						@place = @i + 1;
-						if(@i > 0 && @times[@i - 1][2] == @time) {
+						while(@place > 1 && @times[@place - 2][2] == @time) {
 							@tied = true;
 							@place--;
 						}
