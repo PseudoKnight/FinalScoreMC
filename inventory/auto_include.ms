@@ -63,14 +63,6 @@ proc _equip_kit(@player, @inv) {
 
 		case 'dev':
 			_clear_pinv(@player);
-			set_pinv(@player, associative_array(
-				0: associative_array('name': 'COMPASS', 'meta': array(
-					'display': 'Teleporter',
-				)),
-				1: associative_array('name': 'GOLDEN_AXE', 'meta': array(
-					'display': 'WorldEdit Selector',
-				)),
-			));
 	}
 }
 
