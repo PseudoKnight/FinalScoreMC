@@ -31,6 +31,7 @@ register_command('times', array(
 			}
 			@id = @regions[-1];
 		}
+		@title = _to_upper_camel_case(@id);
 
 		switch(@action) {
 			case 'avg':
@@ -59,13 +60,13 @@ register_command('times', array(
 					die('You do not have permission to reset stats for this course.');
 				}
 				if(!has_value('times', @id)) {
-					die('There are no stats to reset for '.to_upper(@id).'.');
+					die('There are no stats to reset for '.@title.'.');
 				}
 				@times = get_values('times', @id);
 				foreach(@key: @time in @times) {
 					clear_value(@key);
 				}
-				msg('Reset stats for '.to_upper(@id).'.');
+				msg('Reset stats for '.@title.'.');
 				
 			case 'resetplayer':
 				if(!has_permission('command.resettimes')) {
@@ -209,15 +210,15 @@ register_command('times', array(
 					if(!@time) {
 						die('No time for '.@player.' on '.@id.'.')
 					}
-					msg(color('yellow').@player.'\'s best time for '.color('gold').to_upper(@id).color('r').' is '.color('green').@time.' seconds.')
+					msg(color('yellow').@player.'\'s best time for '.color('gold').@title.color('r').' is '.color('green').@time.' seconds.')
 					
 				} else {
 					
 					@times = get_value('times', @id);
 					if(!@times) {
-						die('No top times for '.to_upper(@id).'.');
+						die('No top times for '.@title.'.');
 					}
-					msg(colorize('&e&m|-------------------&e&l[ TOP TIMES: '.to_upper(@id).' ]'));
+					msg(colorize('&e&m|-------------------&e&l[ TOP TIMES: '.@title.' ]'));
 					@lastTime = 1.0;
 					@lastCount = 0;
 					for(@i = 0, @i < array_size(@times), @i++) {

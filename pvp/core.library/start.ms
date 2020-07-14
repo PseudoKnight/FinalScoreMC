@@ -47,15 +47,15 @@ proc _pvp_start(@pvp, @id){
 	@pvp['arena'] = array_merge(@defaults, @pvp['arena']);
 
 	# Get child or parent arena settings
-	@primaryName = to_upper(@id);
+	@primaryName = _to_upper_camel_case(@id);
 	@secondaryName = null;
 	if(array_index_exists(@pvp['arena'], 'parent')) {
 		@parent = get_value('arena.'.@pvp['arena']['parent']);
 		if(!@parent) {
 			die('Can\'t find parent arena.');
 		}
-		@primaryName = to_upper(@pvp['arena']['parent']);
-		@secondaryName = to_upper(@id);
+		@primaryName = _to_upper_camel_case(@pvp['arena']['parent']);
+		@secondaryName = _to_upper_camel_case(@id);
 		@pvp['arena'] = array_merge(@parent, @pvp['arena']);
 	} else if(array_index_exists(@pvp['arena'], 'arenaselect')) {
 		if(!@childid) {
@@ -65,7 +65,7 @@ proc _pvp_start(@pvp, @id){
 		if(!@child) {
 			die('Can\'t find child arena.');
 		}
-		@secondaryName = to_upper(@childid);
+		@secondaryName = _to_upper_camel_case(@childid);
 		@pvp['arena'] = array_merge(@pvp['arena'], @child);
 	}
 

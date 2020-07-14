@@ -231,7 +231,7 @@ proc _class_select(@id, @pvp) {
 					@class = array_rand(@pvp['arena']['classes'], 1, true)[0];
 				}
 			}
-			msg(color('green').to_upper(@class).color('r').' has been selected.');
+			msg(color('green')._to_upper_camel_case(@class).color('r').' has been selected.');
 			if(array_index_exists(@pvp['arena']['classes'][@class], 'limit')) {
 				@team = @pvp['players'][player()]['team'];
 				@count = 1;

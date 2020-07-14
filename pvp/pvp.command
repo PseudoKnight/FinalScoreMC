@@ -40,7 +40,7 @@ register_command('pvp', array(
 				}
 				@type = @args[2];
 				@pvp['players'][player()][@args[2]] = @args[3];
-				msg(color('green').'You voted for '.to_upper(@args[3]).'.');
+				msg(color('green').'You voted for '._to_upper_camel_case(@args[3]).'.');
 
 			case 'spectate':
 				if(_is_survival_world(pworld())) {
@@ -57,7 +57,7 @@ register_command('pvp', array(
 				if(!array_contains(get_scoreboards(), @id)) {
 					die(color('gold').'The arena isn\'t running.');
 				}
-				if(!_set_pactivity(player(), to_upper(@id))) {
+				if(!_set_pactivity(player(), _to_upper_camel_case(@id))) {
 					die(color('gold').'You\'re in another game.');
 				}
 				include('core.library/spectator.ms');

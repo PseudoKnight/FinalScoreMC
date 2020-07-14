@@ -23,7 +23,7 @@ proc _start_game(@course, @loc) {
 		}
 	}
 
-	_add_activity(@course, @course);
+	_add_activity(@course, _to_upper_camel_case(@course));
 
 	broadcast(colorize(
 		'&a&lSLIMEY&6&lGOLF &a\u2308\u2328 \uFE52\u2328\u2309&r\n'

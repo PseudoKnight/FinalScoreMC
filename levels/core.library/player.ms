@@ -2,7 +2,7 @@ proc _level_add_player(@player, @level) {
 	if(phealth(@player) == 0) {
 		return(false);
 	}
-	if(!_set_pactivity(@player, to_upper(@level['region']))) {
+	if(!_set_pactivity(@player, _to_upper_camel_case(@level['region']))) {
 		return(false);
 	}
 	@c = @level['config'];

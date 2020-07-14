@@ -22,7 +22,7 @@
 */
 
 proc _snake_add(@player, @game) {
-	if(ponline(@player) && !_set_pactivity(@player, 'SNAKE')) {
+	if(ponline(@player) && !_set_pactivity(@player, 'Snake')) {
 		return(false);
 	}
 
@@ -83,7 +83,7 @@ proc _snake_add(@player, @game) {
 		set_pmode(@player, 'SURVIVAL');
 		set_pflight(@player, true);
 		set_pflying(@player, true);
-		_set_pactivity(@player, 'SNAKE');
+		_set_pactivity(@player, 'Snake');
 		runas('~console', '/jukebox show add '.@player.' @snake');
 	} else {
 		@game['snakes'][@player]['bot'] = @player;

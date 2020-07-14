@@ -2,7 +2,7 @@ proc _charades_add_player(@p) {
 	team_add_player('guessers', @p, 'charades');
 	set_pmode(@p, 'SPECTATOR');
 	set_pscoreboard(@p, 'charades');
-	_set_pactivity(@p, 'charades');
+	_set_pactivity(@p, 'Charades');
 	@spawn = sk_region_info('charades-beacon', pworld(@p), 0)[0];
 	set_ploc(@p, @spawn);
 }

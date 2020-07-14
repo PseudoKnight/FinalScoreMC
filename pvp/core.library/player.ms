@@ -59,7 +59,7 @@ proc _pvp_initialize_players(@id, @players) {
 	@loc = array();
 	foreach(@player in @players) {
 		if(!ponline(@player) || _is_survival_world(pworld(@player)) ||
-		!_set_pactivity(@player, to_upper(@id))) {
+		!_set_pactivity(@player, _to_upper_camel_case(@id))) {
 			array_remove(@pvp['players'], @player);
 			continue();
 		}

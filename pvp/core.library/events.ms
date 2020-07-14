@@ -151,7 +151,7 @@ bind('player_death', array('priority': 'high', 'id': @id.'death'), null, @e, @id
 				}
 				_class('load', player(), @pvp['players'][player()]['class'], @pvp)
 				_pvp_msg(@pvp, color('gray').'[PVP] '.@pvp['players'][player()]['color']
-					.to_upper(@arena['team'][@pvp['players'][player()]['team']]['name']).color('r').' - Captain has died and dropped his hat!')
+					._to_upper_camel_case(@arena['team'][@pvp['players'][player()]['team']]['name']).color('r').' - Captain has died and dropped his hat!')
 				foreach(@p: @player in @pvp['players']) {
 					if(@player['team'] == @pvp['players'][player()]['team']) {
 						set_compass_target(@p, ploc())

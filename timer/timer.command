@@ -29,7 +29,7 @@ register_command('timer', array(
 			if(array_index_exists(@timers, @player)) {
 				clear_task(@timers[@player][2]);
 			} else {
-				_add_activity(@player.'timer', @player.' on '.to_upper(@id));
+				_add_activity(@player.'timer', @player.' on '._to_upper_camel_case(@id));
 			}
 
 			@timers[@player] = array(@id, time(), 0);
@@ -168,7 +168,7 @@ register_command('timer', array(
 						@warp = get_value('warp', @courseName);
 						set_entity_fall_distance(puuid(@player), 0);
 						set_ploc(@player, @warp);
-						@title = to_upper(@courseName);
+						@title = _to_upper_camel_case(@courseName);
 						@progress = '('.(@index + 1).'/'.array_size(@marathon['courses']).')';
 						update_bar(@player, @player.': '.@title.' '.@progress);
 						title(@player, @title, @progress);
@@ -247,9 +247,9 @@ register_command('timer', array(
 						@place = @place.'th';
 				}
 				if(@rankup) {
-					broadcast(color('green').@player.' got a '.color('bold').@place.color('green').' place time for '.to_upper(@id).'!');
+					broadcast(color('green').@player.' got a '.color('bold').@place.color('green').' place time for '._to_upper_camel_case(@id).'!');
 				} else if(@tied) {
-					broadcast(color('green').@player.' tied the '.color('bold').@place.color('green').' place time for '.to_upper(@id).'!');
+					broadcast(color('green').@player.' tied the '.color('bold').@place.color('green').' place time for '._to_upper_camel_case(@id).'!');
 				}
 				launch_firework(@loc, array(
 					'strength': 1,

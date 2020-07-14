@@ -36,7 +36,7 @@ proc _pvp_join(@id){
 	if(array_size(@pvp['players']) >= array_get(@arena, 'min', 2)) {
 		@msg[] = array('&a[START] ', '/pvp start '.@id);
 	}
-	@msg[] = '&r'.player().' joined '. to_upper(if(array_index_exists(@arena, 'parent'), @arena['parent'].': ').@id)
+	@msg[] = '&r'.player().' joined '. _to_upper_camel_case(if(array_index_exists(@arena, 'parent'), @arena['parent'].': ').@id)
 			. ' ('.array_size(@pvp['players']).') ';
 	_click_tell(all_players(pworld()), @msg);
 	console(player().' joined '.@id, false);

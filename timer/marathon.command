@@ -125,7 +125,7 @@ register_command('marathon', array(
 						foreach(@p2 in array_keys(@players)) {
 							bar_add_player(@p, @p2);
 						}
-						_set_pactivity(@p, 'marathon');
+						_set_pactivity(@p, 'Marathon');
 						set_ploc(@p, @firstwarp);
 					}
 
