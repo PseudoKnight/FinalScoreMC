@@ -18,6 +18,12 @@ if(extension_exists('CHDiscord')) {
 					die();
 				}
 				@name = @pdata['name'];
+			} else {
+				// remove 
+				@name = trim(reg_replace('[^a-zA-Z0-9_-]', '', @name));
+				if(!@name) {
+					@name = color('magic').'[unknown]';
+				}
 			}
 			include('../includes.library/chat.ms');
 			_chat(@name, @event['message'], all_players(), 'discord', @event['channel']);
