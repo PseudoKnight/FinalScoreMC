@@ -292,38 +292,43 @@ register_command('timer', array(
 					array_sort(@averages, closure(@left, @right){
 						return(@left[2] < @right[2]);
 					});
-					x_run_on_main_thread_later(closure(){
-						store_value('times', @averages);
-						if(@rankup || @tied) {
-							@overallPlace = 0;
-							foreach(@index: @time in @times['times']) {
+					@overallRankup = false;
+					@suffix = 'th';
+					if(@rankup || @tied) {
+						@overallPlace = 0;
+						foreach(@index: @time in @times['times']) {
+							if(@time[0] == @uuid) {
+								@overallPlace = @index + 1;
+								break();
+							}
+						}
+						if(@overallPlace) {
+							foreach(@index: @time in @averages) {
 								if(@time[0] == @uuid) {
-									@overallPlace = @index + 1;
+									if(@index + 1 < @overallPlace) {
+										@place = @index + 1;
+										if(@place > 20 || @place < 4) { // special cases for 11, 12, and 13
+											switch(@place % 10) {
+												case 1:
+													@suffix = 'st';
+												case 2:
+													@suffix = 'nd';
+												case 3:
+													@suffix = 'rd';
+											}
+										}
+										@overallRankup = true;
+									}
 									break();
 								}
 							}
-							if(@overallPlace) {
-								foreach(@index: @time in @averages) {
-									if(@time[0] == @uuid) {
-										if(@index + 1 < @overallPlace) {
-											@place = @index + 1;
-											@suffix = 'th';
-											if(@place > 20 || @place < 4) { // special cases for 11, 12, and 13
-												switch(@place % 10) {
-													case 1:
-														@suffix = 'st';
-													case 2:
-														@suffix = 'nd';
-													case 3:
-														@suffix = 'rd';
-												}
-											}
-											broadcast(color('green').'... and moved to '.@place.@suffix.' place overall!');
-										}
-										break();
-									}
-								}
-							}
+						}
+					}
+					x_run_on_main_thread_later(closure(){
+						store_value('times', @averages);
+						if(@overallRankup) {
+							broadcast(color('green').'... and moved to '.@place.@suffix.' place overall!');
+							play_sound(@loc, array('sound': 'UI_TOAST_CHALLENGE_COMPLETE'));
 						}
 					});
 				});
