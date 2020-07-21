@@ -16,7 +16,7 @@ register_command('times', array(
 		if(@args) {
 			@action = @args[0];
 		}
-		
+
 		@id = '';
 		@player = '';
 		if(array_size(@args) > 1) {
@@ -25,16 +25,25 @@ register_command('times', array(
 				@player = @args[2];
 			}
 		} else {
-			@regions = sk_current_regions();
-			if(!@regions) {
-				die(color('gold').'You are not standing in a course.');
+			@regions = null;
+			try {
+				@regions = sk_current_regions();
+			} catch(PlayerOfflineException @ex) {
+				// probably console
 			}
-			@id = @regions[-1];
+			if(@regions) {
+				@id = @regions[-1];
+			} else {
+				@id = 'all';
+			}
 		}
 		@title = _to_upper_camel_case(@id);
 
 		switch(@action) {
 			case 'avg':
+				if(@id == 'all') {
+					die(color('gold').'Cannot get the average of all courses at this time.');
+				}
 				@times = get_values('times', @id);
 				@total = 0;
 				@alltimes = array();
@@ -54,10 +63,13 @@ register_command('times', array(
 				}
 				@avg = round(@total / (array_size(@times) - 1), 1);
 				msg('Median time: '.color('green').@median.color('r').' | Average time: '.color('green').@avg);
-			
+
 			case 'reset':
 				if(!has_permission('command.resettimes')) {
 					die('You do not have permission to reset stats for this course.');
+				}
+				if(@id == 'all') {
+					die(color('gold').'Cannot reset times for all courses.');
 				}
 				if(!has_value('times', @id)) {
 					die('There are no stats to reset for '.@title.'.');
@@ -67,7 +79,7 @@ register_command('times', array(
 					clear_value(@key);
 				}
 				msg('Reset stats for '.@title.'.');
-				
+
 			case 'resetplayer':
 				if(!has_permission('command.resettimes')) {
 					die('You do not have permission to reset stats for this course.')
@@ -156,54 +168,69 @@ register_command('times', array(
 
 			case 'worst':
 				@courses = get_values('times');
-				@puuid = puuid(player(), true);
+				@puuid = null;
 				if(@player) {
 					@puuid = _get_uuid(to_lower(@player));
+				} else if(ponline(@sender)) {
+					@puuid = puuid(@sender, true);
+				}
+				if(@puuid == null) {
+					die('No player specified.');
 				}
 				@worst = 0;
-				@worstCourse = '';
+				@worstCourses = array();
 				foreach(@key: @time in @courses) {
 					if(is_array(@time) && @key != 'times') {
 						@found = false;
 						foreach(@i: @t in @time) {
 							if(@t[0] == @puuid) {
-								if(@i + 1 > @worst) {
+								if(@i >= @worst) {
 									// address ties now
-									@this = @i;
-									while(@this > 0 && @time[@this - 1][2] == @t[2]) {
-										@this--;
+									while(@i > 0 && @time[@i - 1][2] == @t[2]) {
+										@i--;
 									}
-									if(@this + 1 > @worst) {
-										@worst = @this + 1;
-										@worstCourse = split('.', @key)[-1];
-									}
+								}
+								if(@i > @worst) {
+									@worst = @i;
+									@worstCourses = array(split('.', @key)[-1]);
+								} else if(@i == @worst) {
+									@worstCourses[] = split('.', @key)[-1];
 								}
 								@found = true;
 								break();
 							}
 						}
 						if(!@found) {
-							@worst = 0;
-							@worstCourse = split('.', @key)[-1];
-							break();
+							if(@worst == 9001) {
+								@worstCourses[] = split('.', @key)[-1];
+							} else {
+								@worst = 9001; // always use the best magic numbers
+								@worstCourses = array(split('.', @key)[-1]);
+							}
 						}
 					}
 				}
-				if(!@worst) {
-					die(color('gold').'There\'s an unranked course: '.color('bold').@worstCourse);
+				if(@worst == 9001) {
+					die(color('gold').'There\'s unranked courses: '.color('bold').array_implode(@worstCourses, ', '));
 				}
-				msg(color('yellow').'Worst course is '.color('bold').@worstCourse.color('yellow').' with a rank of '.color('bold').@worst);
-				
+				if(@worst == 0) {
+					die(color('green').'You are somehow first on every course!');
+				}
+				msg(color('yellow').'Worst courses are '.color('bold').array_implode(@worstCourses, ', ').color('yellow').' with a rank of '.color('bold').(@worst + 1));
+
 			case 'top':
 				if(@id == 'all') {
-				
 					@top = get_value('times');
-					msg(colorize('&e&m|------------------&e&l[ TOP SCORE TOTALS ]'));
+					msg(colorize('&e&m|------------------&e&l[ TOTAL COURSE RANKINGS ]'));
 					@max = min(20, array_size(@top));
 					for(@i = 0, @i < @max, @i++) {
-						msg(colorize(' '.if(@i < 9, '&80').'&7'.(@i + 1).'&a [ '.@top[@i][2].' ] &r'.@top[@i][1]));
+						if(@top[@i][1] == @sender) {
+							msg(colorize(' '.if(@i < 9, '&80').'&e'.(@i + 1).' [ '.@top[@i][2].' ] &l'.@top[@i][1]));
+						} else {
+							msg(colorize(' '.if(@i < 9, '&80').'&7'.(@i + 1).'&a [ '.@top[@i][2].' ] &r'.@top[@i][1]));
+						}
 					}
-				
+
 				} else if(@player) {
 					@uuid = _get_uuid(to_lower(@player));
 					@time = get_value('times.'.@id, @uuid);
@@ -211,9 +238,8 @@ register_command('times', array(
 						die('No time for '.@player.' on '.@id.'.')
 					}
 					msg(color('yellow').@player.'\'s best time for '.color('gold').@title.color('r').' is '.color('green').@time.' seconds.')
-					
+
 				} else {
-					
 					@times = get_value('times', @id);
 					if(!@times) {
 						die('No top times for '.@title.'.');
@@ -234,14 +260,17 @@ register_command('times', array(
 						} else {
 							@time = simple_date('s.S', integer(@thisTime * 1000));
 						}
-						@time = substr(@time, 0, length(@time) - 2).'s';
+						@timeSplit = split('.', @time, 1);
+						@time = @timeSplit[0].'.'.@timeSplit[1][0].'s';
 						@place = @i + 1 - @lastCount;
-						msg(colorize(' '.if(@place < 10, '&80').'&7'.@place.'&a [ '.@time.' ] &r'.@times[@i][1]));
+						if(@times[@i][1] == @sender) {
+							msg(colorize(' '.if(@place < 10, '&80').'&e'.@place.' [ '.@time.' ] &l'.@times[@i][1]));
+						} else {
+							msg(colorize(' '.if(@place < 10, '&80').'&7'.@place.'&a [ '.@time.' ] &r'.@times[@i][1]));
+						}
 						@lastTime = @thisTime;
 					}
-				
 				}
-
 		}
 	}
 ));
