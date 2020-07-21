@@ -391,6 +391,7 @@ proc _level_start(@level) {
 				@sleep[] = 5;
 
 			} else if(!@entities) {
+				@p = null;
 				foreach(@p in @level['players']) {
 					if(ponline(@p)) {
 						play_sound(ploc(@p), array('sound': 'BLOCK_ENCHANTMENT_TABLE_USE', 'pitch': 0.5), @p);
@@ -403,7 +404,6 @@ proc _level_start(@level) {
 						@level['title'] = @wave['title'];
 					}
 					if(array_index_exists(@wave, 'music')) {
-						@p = null;
 						if(@level['music']) {
 							foreach(@p in @level['players']) {
 								if(ponline(@p)) {
