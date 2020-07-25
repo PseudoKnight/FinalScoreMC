@@ -6,6 +6,10 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 		die('Region doesn\'t exist.');
 	}
 
+	@split = split(':', @dungeonType, 1);
+	@dungeonType = @split[0];
+	@testFloor = if(array_size(@split) == 1, -1, integer(@split[1]));
+
 	// load dungeon type specific procedures
 	include('dungeon.library/util.ms');
 	include('dungeon.library/default.ms');
@@ -25,9 +29,11 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 		'minRoomHeight': 3,
 		'maxRoomHeight': 3,
 
+		// variability on floor features
+		'spawnChance': 0.001,
+
 		// variability on room features
 		'chestCount': 0,
-		'spawnChance': 0.001,
 		'spawnerChance': 0.7,
 		'extraDoors': 0.0,
 		'campfireChance': 0.0,
@@ -182,7 +188,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 		@maxRoomHeight = null;
 		@layoutMap = null;
 
-		foreach(@floor in range(array_size(@options['floors']))) {
+		foreach(@floor in range(if(@testFloor > -1, @testFloor, 0), if(@testFloor > -1, @testFloor + 1, array_size(@options['floors'])))) {
 			queue_push(iclosure(
 				@bar = 'gen'.@region,
 				@title = 'Planning '.@dungeonType.' floor '.(@floor + 1)
@@ -243,7 +249,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 				@r = @entranceRoom['r1'];
 				@c = @entranceRoom['c1'];
 				@rooms[] = @entranceRoom;
-			} else {
+			} else if(@exitRoom != null) {
 				@r = @exitRoom['r1'];
 				@c = @exitRoom['c1'];
 				@rooms[] = array(
@@ -257,10 +263,12 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 					'type': 'NORMAL',
 				);
 			}
-			for(@r2 = @r, @r2 < @rooms[0]['length'] + @r, @r2++) {
-				for(@c2 = @c, @c2 < @rooms[0]['width'] + @c, @c2++) {
-					@layoutMap[@c2][@r2] = 'room';
-					@roomMap[@c2][@r2] = 0;
+			if(@rooms) {
+				for(@r2 = @r, @r2 < @rooms[0]['length'] + @r, @r2++) {
+					for(@c2 = @c, @c2 < @rooms[0]['width'] + @c, @c2++) {
+						@layoutMap[@c2][@r2] = 'room';
+						@roomMap[@c2][@r2] = 0;
+					}
 				}
 			}
 
