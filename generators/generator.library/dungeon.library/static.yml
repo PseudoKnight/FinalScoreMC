@@ -7,10 +7,10 @@ floors:
         spawner: []
         trap: [chest_tnt]
         empty: water
-        wall: bedrock
-        column: bedrock
-        ceiling: bedrock
-        floor: [bedrock]
-        utility: bedrock
-        decor: bedrock
-        edge: bedrock
+        wall: polished_blackstone_bricks
+        column: polished_blackstone
+        ceiling: polished_blackstone
+        floor: [blackstone]
+        utility: chiseled_polished_blackstone
+        decor: soul_torch
+        edge: polished_blackstone_stairs
