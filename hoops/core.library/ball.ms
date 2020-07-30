@@ -31,6 +31,8 @@ proc _hoops_ball_create(@loc) {
 		create_bar('hoops', array('percent': 0.0, 'style': 'SEGMENTED_6')); //standalone
 	}
 
+	_add_activity('hoops', 'Hoops');
+
 	@charge = array(0);
 	@ending = array(false);
 
@@ -281,6 +283,7 @@ proc _hoops_ball_create(@loc) {
 			try(entity_remove(@stand));
 			@game['ball'] = '';
 			@game['slime'] = '';
+			_remove_activity('hoops');
 			clear_task();
 		}
 	});

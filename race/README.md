@@ -1,27 +1,36 @@
-## Race
+# Race
+
 Creates and manages races with support for boats, horses, pigs, and elytra. Also features configuring multiple tracks
 with effects, checkpoints, laps, and respawns.
 
-### Commands
-#### Track Creation
+## Commands
+
+### Track Creation
+
 Permission: *command.track*
+
 - /track set \<track> \<setting> <value(s)>
 - /track delete \<track> [setting] [index]
 - /track info \<track>
 
-#### Races
+### Races
+
 - /race start \<track>
 - /race join \<track>
 - /race end \<track> (forces the race to end)
 - /race reload core (recompiles all core.library scripts)
 
-### Dependencies
-#### Java
+## Dependencies
+
+### Java
+
 - WorldEdit plugin
 - WorldGuard plugin
 - SKCompat extension
 
-#### Procedures
+### Procedures
+
+- _add_activity() and _remove_activity() procedures to keep a list of all current activities on server
 - _click_tell() creates a mojangson chat string with a clickable link (chat/auto_include.ms)
 - _worldmsg() messages all players within the specified world
 - _set_pactivity() sets the players current activity for the server

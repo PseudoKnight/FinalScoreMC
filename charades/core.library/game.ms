@@ -24,6 +24,8 @@ proc _prepare_game(@category) {
 		die(color('gold').'Requires at least 3 players.');
 	}
 
+	_add_activity('charades', 'Charades');
+
 	export('charades', array(
 		'category': @category,
 		'players': @players,
@@ -65,6 +67,8 @@ proc _prepare_game(@category) {
 }
 
 proc _end_game() {
+	_remove_activity('charades');
+
 	@charades = import('charades');
 	if(@charades['interval']) {
 		clear_task(@charades['interval']);

@@ -3,6 +3,7 @@
 	NO teleports. Horses/Minecarts/Potions are allowed.;
 
 	requiredExtensions: CHNaughty;
+	requiredProcs: _add_activity() and _remove_activity() procedures to keep a list of all current activities on server.
 >
 register_command('greatrace', array(
 	'description': 'Creates a race in survival for all players in the area.',
@@ -61,6 +62,8 @@ register_command('greatrace', array(
 			set_pscoreboard(@p, 'greatrace');
 		}
 
+		_add_activity('greatrace', 'The Great Race');
+
 		# Main loop
 		@timer = array(3);
 		set_interval(1000, closure(){
@@ -72,6 +75,7 @@ register_command('greatrace', array(
 
 			if(array_size(@players) <= 1) {
 				tmsg(array_get(@players, 0, '~console'), 'All players left the race.');
+				_remove_activity('greatrace');
 				unbind('thegreatrace');
 				remove_scoreboard('greatrace');
 				clear_task();
@@ -114,6 +118,7 @@ register_command('greatrace', array(
 						@l['y'] += 2;
 						launch_firework(@l);
 						broadcast(@p.' won The Great Race!', all_players(@world));
+						_remove_activity('greatrace');
 						unbind('thegreatrace');
 						remove_scoreboard('greatrace');
 						clear_task();

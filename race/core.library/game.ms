@@ -71,6 +71,9 @@ proc _race_countdown(@race) {
 		return();
 	}
 	@race['state'] = 'countdown';
+
+	_add_activity('race'.@race['id'], 'Race: '._to_upper_camel_case(@race['id']));
+
 	set_timeout(1000, closure(){ // delay to load chunks first
 		_race_place_players(@race);
 		_race_bind_events(@race);
@@ -217,6 +220,7 @@ proc _race_end(@race) {
 	}
 	@race['state'] = 'ending';
 	set_timeout(7000, closure(){
+		_remove_activity('race'.@race['id']);
 		_race_unbind_events(@race);
 		_race_remove_players(@race);
 		remove_scoreboard(@race['id']);

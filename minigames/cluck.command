@@ -3,6 +3,7 @@
 
 	requiredExtensions: SKCompat;
 	requiredProcs: _regionmsg() proc for messaging players within regions.
+		_add_activity() and _remove_activity() procedures to keep a list of all current activities on server.
 		_clear_pinv() proc for clearing the inventory of a player.
 		_equip_kit() proc for resetting player inventory after they're done with the game.
 		_acc_add() proc for rewarding players with coins.
@@ -55,6 +56,7 @@ register_command('cluck', array(
 			}
 			
 			proc _cluck_start(@cluck) {
+				_add_activity('cluck', 'Cluck');
 				@cluck['state'] = 1;
 				clear_pinv(@cluck['player']);
 				set_pinv(@cluck['player'], array(0: array('name': 'BOW'), 1: array('name': 'ARROW', 'qty': 10)));
@@ -63,6 +65,7 @@ register_command('cluck', array(
 			}
 			
 			proc _cluck_end(@cluck) {
+				_remove_activity('cluck');
 				queue_clear('cluck');
 				_equip_kit(@cluck['player']);
 				export('cluck', _cluck_defaults());
