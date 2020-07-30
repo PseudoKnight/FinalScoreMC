@@ -40,6 +40,9 @@ bind('player_interact', null, array('block': 'CAKE', 'button': 'right', 'hand': 
 	}
 	@thiscake = @cakeinfo[@id];
 
+	set_phunger(20);
+	set_psaturation(5.0);
+
 	@uuid = puuid(player(), true);
 	if(array_index_exists(@thiscake['players'], @uuid)) {
 		die('You\'ve already got this cake.');
@@ -58,8 +61,6 @@ bind('player_interact', null, array('block': 'CAKE', 'button': 'right', 'hand': 
 				}
 			}
 		}
-		set_phunger(20);
-		set_psaturation(5.0);
 
 		broadcast(display_name().color('r').if(@thiscake['type'] == 'secret', ' found ', ' achieved ')
 				.color('a').'['.to_upper(@id).'] '.color('r').@thiscake['type'].' cake! '.color('a').@count.'/'.@total);
