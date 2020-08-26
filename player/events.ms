@@ -12,16 +12,28 @@ bind('player_death', null, null, @event) {
 	if(_is_survival_world(@event['location']['world'])) {
 		@loc = @event['location'];
 		@stringLoc = floor(@loc['x']).','.floor(@loc['y']).','.floor(@loc['z']).' '._worldname(@loc['world']);
+
+		// Log to console
 		@log = @event['player'].' died @ '.@stringLoc.': ';
 		_minify_inv(@event['drops']);
 		@log .= json_encode(@event['drops']);
 		console(@log, false);
+
+		// Broadcast to players
 		msg(color('yellow').'You died @ '.@stringLoc);
 		foreach(@player in all_players()) {
 			if(@player != player() && has_permission(@player, 'group.regular')) {
 				tmsg(@player, color('gray').@event['player'].' died @ '.@stringLoc);
 			}
 		}
+
+		// Discord
+		if(function_exists('discord_broadcast')) {
+			discord_broadcast('minecraft_chat', '*'.@event['player'].' died @ '.@stringLoc.'*');
+		}
+
+		// Check if the player hasn't respawned in 60 seconds. 
+		// This way we can prevent their items from despawning if they're AFK.
 		@time = array(60);
 		set_interval(1000, closure(){
 			if(!ponline(player()) || phealth() > 0) {
