@@ -36,6 +36,7 @@ proc _prepare_game(@category) {
 		'build': '',
 		'hint': '',
 		'world': pworld(),
+		'finalRound': false,
 	));
 
 	create_scoreboard('charades');

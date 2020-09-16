@@ -100,9 +100,11 @@ proc _end_build(@guesser, @word) {
 		@charades['interval'] = 0;
 	}
 
+	@points = if(@charades['finalRound'], 2, 1);
+
 	if(@guesser) {
 		_regionmsg('charades', color('green').color('bold').@guesser.color('green').' correctly guessed "'.color('bold').@word.color('green').'"!');
-		set_pscore('score', @guesser, get_pscore('score', @guesser, 'charades') + 1, 'charades');
+		set_pscore('score', @guesser, get_pscore('score', @guesser, 'charades') + @points, 'charades');
 	} else if(@word) {
 		_regionmsg('charades', color('yellow').'The answer you were looking for was "'.color('bold').@word.color('yellow').'"!');
 	} else {
@@ -114,7 +116,7 @@ proc _end_build(@guesser, @word) {
 			if(@t['players']) {
 				@builder = @t['players'][0];
 				if(@guesser) {
-					set_pscore('score', @builder, get_pscore('score', @builder, 'charades') + 1, 'charades');
+					set_pscore('score', @builder, get_pscore('score', @builder, 'charades') + @points, 'charades');
 				}
 				team_add_player('guessers', @builder, 'charades');
 				_equip_kit(@builder);
@@ -145,7 +147,7 @@ proc _end_build(@guesser, @word) {
 				_end_game();
 			}
 		} else {
-			if(!_check_players(@charades)) {
+			if(@charades['finalRound'] || !_check_players(@charades)) {
 				_end_game();
 			} else {
 				@charades['playersLeft'] = @charades['players'][];
@@ -153,7 +155,7 @@ proc _end_build(@guesser, @word) {
 
 				@page = '';
 				@line = 1;
-				foreach(@category in array_rand(_get_categories(), 10, false)) {
+				foreach(@category in array_rand(_get_categories(), 9, false)) {
 					if(@line == 1) {
 						@page .= '["",{"color":"red","bold":true,"text":"Vote for Next Category:\n"}';
 						@line++;
@@ -165,6 +167,7 @@ proc _end_build(@guesser, @word) {
 						break();
 					}
 				}
+				@page .= ',{"text":"'.'\n \u27a2 Final Round","clickEvent":{"action":"run_command","value":"/charades vote final_round"}}';
 				@page .= ']';
 				@pages = array(@page);
 				foreach(@p in @charades['players']) {
@@ -177,7 +180,13 @@ proc _end_build(@guesser, @word) {
 						@player = array_rand(@charades['votes'], 1)[0];
 						@charades['category'] = @charades['votes'][@player];
 						_msg_charades(color('yellow').@player.' chose '.replace(to_upper(@charades['category']), '_', ' '));
-						if(!rand(3)) {
+
+						if(@charades['category'] == 'final_round') {
+							_msg_charades(color('red').color('bold').'FINAL ROUND! '.color('red').'RANDOM CATEGORY! DOUBLE POINTS! SHORTER CLOCK!');
+							@charades['category'] = array_get_rand(_get_categories());
+							@charades['seconds'] = 100.0;
+							@charades['finalRound'] = true;
+						} else if(!rand(3)) {
 							@charades['seconds'] = 50.0;
 							_msg_charades(color('red').'SPEED ROUND!');
 						} else {
