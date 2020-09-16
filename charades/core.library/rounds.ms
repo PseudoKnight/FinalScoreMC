@@ -17,9 +17,15 @@ proc _queue_next_builder() {
 
 	set_permission(@builder, 'command.skull', true);
 
-	@new = _get_build(@charades['category']);
-	@charades['build'] = @new['build'];
-	@charades['hint'] = @new['hint'];
+	if(@charades['category'] == 'person_or_character' && !rand(10)) {
+		// occasionally get player name instead for this category
+		@charades['build'] = array_get_rand(get_teams('charades')['guessers']['players']);
+		@charades['hint'] = '';
+	} else {
+		@new = _get_build(@charades['category']);
+		@charades['build'] = @new['build'];
+		@charades['hint'] = @new['hint'];
+	}
 	@charades['reroll'] = true;
 	_msg_charades(color('yellow').color('bold').'Charades Category: '.color('yellow').replace(to_upper(@charades['category']), '_', ' '));
 	_click_tell(array(@builder), array(
