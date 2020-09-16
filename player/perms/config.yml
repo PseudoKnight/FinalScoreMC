@@ -1,3 +1,27 @@
+default:
+  permissions:
+    group.default: true
+    permissions.build: false
+    command.join.to: true
+    command.join.from: true
+    advancement.all: true
+    minecraft.autocraft: true
+  worlds:
+    custom:
+      permissions.build: true
+      command.join.to: false
+    outworld:
+      command.join.to: false
+      command.join.from: false
+    outworld_nether:
+      command.join.to: false
+      command.join.from: false
+    outworld_the_end:
+      command.join.to: false
+      command.join.from: false
+    shard:
+      permissions.build: true
+      command.join.to: false
 member:
   permissions:
     group.member: true
@@ -87,6 +111,7 @@ member:
       stargate.create.network: false
       worldedit.navigation.jumpto.*: true
       worldedit.navigation.thru.*: true
+      worldedit.setwand: true
       command.gm: true
       worldguard.region.flag.flags.other-explosion.*: true
       worldguard.region.flag.flags.ghast-fireball.*: true
@@ -113,6 +138,8 @@ member:
       command.ride: false
       command.hoops: true
       command.charades: true
+    parkdev:
+      advancement.all: false
   inheritance: default
 regular:
   permissions:
@@ -128,6 +155,7 @@ regular:
       fawe.worldguard: true
       command.time: true
       command.playsound: true
+      worldguard.region.claim: true
   inheritance: member
 donor:
   permissions:
@@ -149,6 +177,37 @@ builder:
     group.builder: true
     command.sign: true
   worlds:
+    parkdev:
+      command.fly: true
+      command.gm.others: true
+      command.effect: true
+      command.velocity: true
+      command.explosion: true
+      command.heal.others: true
+      command.entity: true
+      command.cb: true
+      command.cloud: true
+      command.acme: true
+      command.goto: true
+      command.bring: true
+      command.put: true
+      command.skull: true
+      command.track: true
+      worldedit.analysis.*: true
+      worldedit.brush.*: true
+      worldedit.clipboard.*: true
+      worldedit.fast: true
+      worldedit.generation.*: true
+      worldedit.global-mask: true
+      worldedit.history.*: true
+      worldedit.region.*: true
+      worldedit.schematic.*: true
+      worldedit.tool.*: true
+      worldedit.light.*: true
+      worldedit.setnbt: true
+      worldedit.drawsel: true
+      worldguard.region.claim: true
+      minecraft.command.stopsound: true
     dev:
       command.fly: true
       command.gm.others: true
@@ -306,27 +365,3 @@ admin:
     commandhelper.interpreter: true
     command.resettimes: true
   inheritance: moderator
-default:
-  permissions:
-    group.default: true
-    permissions.build: false
-    command.join.to: true
-    command.join.from: true
-    advancement.all: true
-    minecraft.autocraft: true
-  worlds:
-    custom:
-      permissions.build: true
-      command.join.to: false
-    outworld:
-      command.join.to: false
-      command.join.from: false
-    outworld_nether:
-      command.join.to: false
-      command.join.from: false
-    outworld_the_end:
-      command.join.to: false
-      command.join.from: false
-    shard:
-      permissions.build: true
-      command.join.to: false
