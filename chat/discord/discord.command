@@ -11,7 +11,7 @@ register_command('discord', array(
 		@id = @args[0];
 		if(is_integral(@id)) {
 			@pdata = _pdata(player());
-			@pdata['discord'] = integer(@id);
+			@pdata['discord'] = @id;
 			store_value('discord', @id, puuid(player(), true));
 			msg(color('green').'Account linked.');
 		} else {
