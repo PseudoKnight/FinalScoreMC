@@ -1,0 +1,17 @@
+*:/shootprojectile $num = >>>
+	@eyeLocation = location_shift(ploc(), 'up', 2.5);
+	@world = @eyeLocation['world'];
+	@vector = get_vector(@eyeLocation);
+	@y = @eyeLocation['y'] + @vector['y'];
+	@radians = to_radians(@eyeLocation['yaw'] + 90);
+	@inc = 6.28 / integer($num);
+	@points = array();
+	for(@r = @radians, @r < @radians + 6.28, @r += @inc) {
+		shoot_projectile(player(), 'ARROW', array(
+			'x': cos(@r) + @eyeLocation['x'],
+			'y': @y,
+			'z': sin(@r) + @eyeLocation['z'],
+			'world': @world,
+		), 3);
+	}
+<<<
