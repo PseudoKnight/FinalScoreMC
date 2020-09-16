@@ -311,6 +311,7 @@ proc _pvp_start_match(@id) {
 							die();
 						}
 						play_sound(@loc, array('sound': 'ENTITY_ZOMBIE_VILLAGER_CONVERTED', 'volume': 5), @pvp['team'][@team]['players']);
+						play_sound(@loc, array('sound': 'ENTITY_ARROW_HIT_PLAYER', 'pitch': 1.5));
 					}
 				}
 			}
