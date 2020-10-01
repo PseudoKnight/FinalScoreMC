@@ -11,7 +11,7 @@
 		case 'f':
 			try {
 				@region = @args[1];
-				@setting = @args[2];
+				@setting = to_lower(@args[2]);
 				@value = '';
 				if(array_size(@args) > 3) {
 					@value = @args[3];
@@ -31,7 +31,7 @@
 				} catch(PluginInternalException @ex) {
 					die(color('GOLD').'That region doesn\'t exist.');
 				}
-				switch(to_lower(@setting)) {
+				switch(@setting) {
 					case 'mob-spawning':
 					case 'mob-spawns':
 					case 'mobspawns':
@@ -48,9 +48,9 @@
 						}
 						if(!@value) {
 							sudo('/region flag '.@region.' deny-spawn');
-						} else if(@value === 'allow') {
+						} else if(equals_ic(@value, 'allow')) {
 							sudo('/region flag '.@region.' deny-spawn -e');
-						} else if(@value === 'deny') {
+						} else if(equals_ic(@value, 'deny')) {
 							sudo('/region flag '.@region.' deny-spawn CREEPER,ENDERMAN,HUSK,SKELETON,SLIME,SPIDER,STRAY,WITCH,ZOMBIE,ZOMBIE_VILLAGER,DROWNED,PILLAGER,PHANTOM');
 						}
 
@@ -67,14 +67,14 @@
 							}
 						}
 						@commandArray = split(', ', substr(@commands, 1, length(@commands) - 1));
-						if(!@value || @value == 'allow') {
+						if(!@value || equals_ic(@value, 'allow')) {
 							if(array_contains(@commandArray, '/finitedispensers')) {
 								array_remove_values(@commandArray, '/finitedispensers');
 								msg('Set dispensers to infinite.');
 							} else {
 								die();
 							}
-						} else if(@value == 'deny') {
+						} else if(equals_ic(@value, 'deny')) {
 							if(!array_contains(@commandArray, '/finitedispensers')) {
 								@commandArray[] = '/finitedispensers';
 								msg('Set dispensers to finite.');
