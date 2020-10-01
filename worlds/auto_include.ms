@@ -81,7 +81,19 @@ proc _allows_teleports(@world) {
 }
 
 /*
-	Creates and adds a world to config temporarily
+	Creates and adds a world to config temporarily.
+
+	@world keys:
+	name: The display title for the world.
+	mode: The default gamemode for players entering the world.
+	group: The world group name. Used for separating inventories, among other things.
+	teleports: Whether or not a player can use teleport commands to enter/exit this world. (default: true)
+	seed: The world seed used to generate terrain. Random if not provided.
+	environment: The world dimension. (NORMAL, NETHER, THE_END)
+	generator: The name of a custom world generator.
+	difficulty: The difficulty mode. (default: HARD)
+	spawning: An associative array of spawning behavior defined in bukkit.yml. (eg. ticks-per-monster-spawns)
+
 */
 proc _create_world(@name, @world) {
 	@worlds = _worlds_config();
@@ -100,11 +112,16 @@ proc _create_world(@name, @world) {
 		set_metadata(@name, 'survival', true);
 	}
 	// Since difficulty isn't currently loaded from level.dat
-	@difficulty = 'NORMAL';
+	@difficulty = 'HARD';
 	if(array_index_exists(@world, 'difficulty')) {
 		@difficulty = @world['difficulty'];
 	}
 	set_difficulty(@name, @difficulty);
+	if(array_index_exists(@world, 'spawning')) {
+		if(extension_exists('CHPaper')) {
+			set_spawning(@name, @world['spawning']);
+		}
+	}
 }
 
 /*
