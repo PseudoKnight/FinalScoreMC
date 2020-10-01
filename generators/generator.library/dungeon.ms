@@ -280,7 +280,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 						@roomWidth = integer(srand(@random) * ((@maxRoomSize - @minRoomSize) / 2 + 1)) * 2 + @minRoomSize;
 						@roomLength = integer(srand(@random) * ((@maxRoomSize - @minRoomSize) / 2 + 1)) * 2 + @minRoomSize;
 
-						// Check placement
+						// Check placement and shrink if necessary to avoid room collisions.
 						for(@r2 = @r, @r2 < @r + @roomLength, @r2 += 2) {
 							@c2 = @c;
 							if(@r2 >= @length || @roomMap[@c2][@r2] != -1) {
@@ -295,10 +295,27 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 							}
 						}
 
-						@height = if(@roomWidth == 1 || @roomLength == 1) {
-							@minRoomHeight;
-						} else {
+						// Now that we have the width and length, the height can be determined to match.
+						// This allows for good looking hallways at minRoomHeight.
+						@height = @minRoomHeight;
+						if(@roomWidth != 1 && @roomLength != 1) {
 							@minRoomHeight + integer(srand(@random) * (@maxRoomHeight - @minRoomHeight + 1));
+						}
+
+						// Room types determine generation shape
+						@type = 'NORMAL';
+						if(@floorData['attic'] && @height >= 7 && srand(@random) > 0.70) {
+							@type = 'ATTIC';
+						} else if(@floorData['balcony'] && @roomWidth > 2 && @roomLength > 2 && @height >= 7 && srand(@random) > 0.70) {
+							@type = 'BALCONY';
+						} else if(@floorData['lavaPit'] && @roomWidth > 1 && @roomLength > 1 && srand(@random) > 0.94) {
+							@type = 'LAVA_PIT';
+						} else if(@floorData['waterPit'] && @roomWidth > 1 && @roomLength > 1 && srand(@random) > 0.94) {
+							@type = 'WATER_PIT';
+						} else if(@floorData['fireFloor'] && @roomWidth > 1 && @roomLength > 1 && srand(@random) > 0.94) {
+							@type = 'FIRE_FLOOR';
+						} else if(@floorData['pit'] && @floor > 0 && srand(@random) > 0.94) {
+							@type = 'PIT';
 						}
 
 						// Save room
@@ -312,21 +329,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 							'doors': 0,
 							'height': @height,
 							'midheight': 3 + integer(srand(@random) * (@height - 7)),
-							'type': if(@floorData['attic'] && @height >= 7 && srand(@random) > 0.70) {
-									'ATTIC';
-								} else if(@floorData['balcony'] && @roomWidth > 2 && @roomLength > 2 && @height >= 7 && srand(@random) > 0.70) {
-									'BALCONY';
-								} else if(@floorData['lavaPit'] && @roomWidth > 1 && @roomLength > 1 && srand(@random) > 0.94) {
-									'LAVA_PIT';
-								} else if(@floorData['waterPit'] && @roomWidth > 1 && @roomLength > 1 && srand(@random) > 0.94) {
-									'WATER_PIT';
-								} else if(@floorData['fireFloor'] && @roomWidth > 1 && @roomLength > 1 && srand(@random) > 0.94) {
-									'FIRE_FLOOR';
-								} else if(@floorData['pit'] && @floor > 0 && srand(@random) > 0.94) {
-									'PIT';
-								} else {
-									'NORMAL';
-								}
+							'type': @type
 						);
 
 						// Mask room
@@ -336,6 +339,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 							}
 						}
 
+						// Move the column var to the end of the room, before incrementation.
 						@c = @c + @roomWidth - 1;
 					}
 				}

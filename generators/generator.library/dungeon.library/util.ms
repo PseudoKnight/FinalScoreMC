@@ -1,3 +1,7 @@
+/*
+ * Gets the cell data from a map in the direction specified.
+ * Returns null if outside of the map or invalid direction.
+ */
 proc _get_cell(@map, @c, @r, @dir) {
 	try {
 		switch(@dir) {
@@ -13,7 +17,7 @@ proc _get_cell(@map, @c, @r, @dir) {
 	} catch(IndexOverflowException @ex) {
 		// outside the map
 	}
-	return(@map[@c][@r]);
+	return(null);
 }
 
 proc _is_solid(@cell) {
@@ -46,27 +50,42 @@ proc _get_direction(@random, @dirs = array('north', 'south', 'east', 'west')) {
 	return(@dirs[integer(srand(@random) * array_size(@dirs))]);
 }
 
+/*
+ * Gets the cell height of the nearest adjacent cell to this coordinate.
+ */
 proc _get_adjacent_height(@heightMap, @maxRoomHeight, @c, @r, @x, @z) {
 	@height = -1;
-	if(@x % 2 == 1) {
-		try(@height = @heightMap[@c + 1][@r]);
-	} else {
-		try(@height = @heightMap[@c - 1][@r]);
+	try {
+		if(@x % 2 == 1) {
+			@height = @heightMap[@c + 1][@r];
+		} else {
+			@height = @heightMap[@c - 1][@r];
+		}
+		// Will be max room height if not inside a room.
+		// This is not desirable.
+		if(@height != @maxRoomHeight) {
+			return(@height);
+		};
+	} catch (IndexOverflowException @ex) {
+		// outside map
 	}
-	if(@height != @maxRoomHeight) {
-		return(@height);
-	};
-	if(@z % 2 == 1) {
-		try(@height = @heightMap[@c][@r + 1]);
-	} else {
-		try(@height = @heightMap[@c][@r - 1]);
+	try {
+		if(@z % 2 == 1) {
+			@height = @heightMap[@c][@r + 1];
+		} else {
+			@height = @heightMap[@c][@r - 1];
+		}
+	} catch (IndexOverflowException @ex) {
+		// outside map
 	}
 	return(@height);
 }
 
-// Add block to chunk batch.
-// To minimize memory use, the chunk array alternates between location and material.
-// Therefore these chunk batches should always be processed sequentially.
+/*
+ * Add block to chunk batch.
+ * To minimize memory use, the chunk array alternates between location and material.
+ * Therefore these chunk batches should always be processed sequentially.
+ */
 proc _add_to_chunk(@chunk, @loc, @material) {
 	@chunk[] = @loc[];
 	if(is_array(@material)) {
