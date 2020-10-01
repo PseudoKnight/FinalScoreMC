@@ -1,6 +1,7 @@
 register_command('approve', array(
 	'description': 'Approves a player so that they can build in survival.',
-	'usage': '/approve',
+	'usage': '/approve <player>',
+	'aliases': array('whitelist'),
 	'permission': 'command.approve',
 	'executor': closure(@alias, @sender, @args, @info) {
 		if(!@args) {
