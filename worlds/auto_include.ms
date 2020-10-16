@@ -81,7 +81,8 @@ proc _allows_teleports(@world) {
 }
 
 /*
-	Creates and adds a world to config temporarily.
+	Creates and adds a world to config transiently.
+	Throws InvalidWorldException if the world already exists by that name or display name.
 
 	@world keys:
 	name: The display title for the world.
@@ -97,7 +98,11 @@ proc _allows_teleports(@world) {
 */
 proc _create_world(@name, @world) {
 	@worlds = _worlds_config();
+	if(array_contains(@worlds, @name) || array_contains(@worlds, @world['name'])) {
+		throw(InvalidWorldException, "World already exists.");
+	}
 	@worlds[@name] = @world;
+	@worlds[@world['name']] = @name; // alias display name
 	if(array_index_exists(@world, 'seed')) {
 		if(array_index_exists(@world, 'generator')) {
 			create_world(@name, 'NORMAL', @world['environment'], @world['seed'], @world['generator']);
