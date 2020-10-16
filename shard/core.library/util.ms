@@ -49,9 +49,8 @@ proc _unload_shard() {
 		if(!array_contains(get_worlds(), 'shard')) {
 			die();
 		}
-		if(array_size(all_players('shard')) == 0 && unload_world('shard')) {
+		if(array_size(all_players('shard')) == 0 && _unload_world('shard', false)) {
 			remove_scoreboard('shard');
-			array_remove(_worlds_config(), 'shard');
 			_remove_activity('shard');
 			foreach(@bind in @game['binds']) {
 				unbind(@bind);

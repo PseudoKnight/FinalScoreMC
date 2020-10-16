@@ -125,6 +125,63 @@ proc _create_world(@name, @world) {
 }
 
 /*
+ * Unloads world from server and worlds config.
+ * Teleports existing players to another world in the same world group.
+ * Throws InvalidWorldException if something goes wrong.
+ */
+proc _unload_world(@name, @save = true) {
+	@worlds = _worlds_config();
+	if(!array_index_exists(@worlds, @name)) {
+		throw(InvalidWorldException, "World does not exist in config and may not be loaded.");
+	}
+
+	// get the world array for this name
+	@world = @worlds[@name];
+	if(is_string(@world)) {
+		@name = @world;
+		@world = @worlds[@name];
+	}
+
+	if(!array_contains(get_worlds(), @name)) {
+		throw(InvalidWorldException, "World is not loaded.");
+	}
+
+	// find the another world in the same group to put players
+	@alternateWorld = '';
+	foreach(@n: @w in @worlds) {
+		if(is_array(@w) && @w['group'] == @world['group'] && @w['name'] != @world['name']) {
+			@alternateWorld = @n;
+			break();
+		}
+	}
+
+	// Teleport all existing players in world to another world
+	@players = all_players(@name);
+	if(@players) {
+		if(!@alternateWorld) {
+			throw(InvalidWorldException, "No other world in world group.");
+		}
+		@loc = get_spawn(@alternateWorld);
+		@loc['y']--;
+		foreach(@player in @players) {
+			set_ploc(@player, @loc);
+		}
+	}
+
+	if(!unload_world(@name, @save)) {
+		throw(InvalidWorldException, "World could not be unloaded.");
+	}
+
+	// remove entries from world config
+	array_remove(@worlds, @name);
+	foreach(@n: @w in @worlds) {
+		if(is_string(@w) && equals_ic(@w, @name)) {
+			array_remove(@worlds, @n);
+		}
+	}
+}
+
+/*
 	Gets the WorldBorder plugin's border for the given world.
 */
 proc _get_worldborder(@world) {

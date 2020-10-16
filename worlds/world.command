@@ -49,37 +49,22 @@ register_command('world', array(
 				_create_world(@name, @world);
 				@stop = time();
 				msg(color('green').'Created world "'.@name.'" ('.(@stop - @start).'ms)');
-				
+
 			case 'unload':
 				if(array_size(@args) < 2) {
 					return(false);
 				}
 				@name = @args[1];
-				if(!array_contains(get_worlds(), @name)) {
-					die(color('gold').'Requires a valid world name.');
-				}
-				@newLoc = get_spawn('custom');
-				@newLoc['y'] -= 1;
-				foreach(@p in all_players(@name)) {
-					set_ploc(@p, @newLoc);
-				}
-				set_timeout(100, closure(){
-					@start = time();
-					if(unload_world(@name, false)) {
-						@worlds = _worlds_config();
-						array_remove(@worlds, @name);
-						@stop = time();
-						msg(color('green').'Unloaded world "'.@name.'" ('.(@stop - @start).'ms)');
-					} else {
-						msg(color('red').'Failed to unload world "'.@name.'"');
-					}
-				});
-				
+				@start = time();
+				_unload_world(@name);
+				@stop = time();
+				msg(color('green').'Unloaded world "'.@name.'" ('.(@stop - @start).'ms)');
+
 			case 'reload':
 				@worlds = yml_decode(read('config.yml'));
 				export('worlds', @worlds);
 				include('load.ms');
-				
+
 			case 'list':
 				@loadedworlds = get_worlds();
 				@worlds = _worlds_config();
