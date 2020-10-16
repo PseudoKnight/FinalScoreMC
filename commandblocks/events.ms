@@ -27,7 +27,7 @@ bind('player_interact', null, associative_array('button': 'right', 'itemname': '
 
 # Allow breaking command blocks for builders
 bind('block_break', null, array('block': 'COMMAND_BLOCK'), @event) {
-	console('CommandBlock @ '.array_implode(array_normalize(@event['location'])[0..3]).' : '.get_block_command(@event['location']));
+	console('CommandBlock broken @ '.array_implode(array_normalize(@event['location'])[0..3]).' : '.get_block_command(@event['location']));
 	if(!pisop() && sk_can_build(@event['location'])) {
 		set_block(@event['location'], 'AIR');
 		play_sound(@event['location'], array('sound': 'BLOCK_STONE_BREAK'));
@@ -36,7 +36,16 @@ bind('block_break', null, array('block': 'COMMAND_BLOCK'), @event) {
 }
 
 bind('block_break', null, array('block': 'CHAIN_COMMAND_BLOCK'), @event) {
-	console('CommandBlock @ '.array_implode(array_normalize(@event['location'])[0..3]).' : '.get_block_command(@event['location']));
+	console('Chain CommandBlock broken @ '.array_implode(array_normalize(@event['location'])[0..3]).' : '.get_block_command(@event['location']));
+	if(!pisop() && sk_can_build(@event['location'])) {
+		set_block(@event['location'], 'AIR');
+		play_sound(@event['location'], array('sound': 'BLOCK_STONE_BREAK'));
+		spawn_particle(@event['location'], array('particle': 'BLOCK_CRACK', 'block': @event['block']));
+	}
+}
+
+bind('block_break', null, array('block': 'REPEATING_COMMAND_BLOCK'), @event) {
+	console('Repeating CommandBlock broken @ '.array_implode(array_normalize(@event['location'])[0..3]).' : '.get_block_command(@event['location']));
 	if(!pisop() && sk_can_build(@event['location'])) {
 		set_block(@event['location'], 'AIR');
 		play_sound(@event['location'], array('sound': 'BLOCK_STONE_BREAK'));
