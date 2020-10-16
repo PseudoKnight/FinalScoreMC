@@ -185,7 +185,7 @@ register_command('cluck', array(
 				_remove_region_entities('cluck', array('DROPPED_ITEM', 'EXPERIENCE_ORB'));
 				# Reset for the next round.
 				if(!@cluck['player'] || @cluck['gameover'] || @cluck['round'] == 10) {
-					@cluck = _cluck_defaults();
+					_cluck_end(@cluck);
 				} else {
 					@cluck['round']++;
 					@cluck['chickens'] = array();
