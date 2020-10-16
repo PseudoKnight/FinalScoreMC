@@ -4,7 +4,7 @@ proc _snake_menu() {
 			'display': color('red').color('bold').'ELIMINATION MODE',
 			'lore': array(
 				color('white').'Win a round by being the last snake slithering.',
-				color('white').'Win the game by winning three rounds.',
+				color('white').'Win the game by winning two rounds.',
 			),
 		)),
 		'1': array('name': 'DIAMOND_SWORD', 'meta': array(

@@ -288,7 +288,7 @@ proc _snake_end(@winner, @game) {
 		if(@winner && @winner != 'No one') {
 			@title = @game['snakes'][@winner]['color'].@winner.' wins ';
 			set_pscore('score', @winner, get_pscore('score', @winner, 'snake') + 1, 'snake');
-			if(get_pscore('score', @winner, 'snake') == 3) {
+			if(get_pscore('score', @winner, 'snake') == 2) {
 				@endgame = true;
 				@title .= 'the game!';
 			} else {
