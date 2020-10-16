@@ -237,18 +237,28 @@ register_command('entity', array(
 					return(false);
 				}
 				@id = @args[1];
+				@data = array_get(@args, 2, null);
+				@offset = 0;
 				if(string_starts_with(@id, '{')) {
 					@id = json_decode(@id);
+				} else if(@data && string_starts_with(@data, '{'))  {
+					@data = json_decode(@data);
+					@data['type'] = @id;
+					@id = @data;
+					@offset = 1;
 				}
 				@entityCount = 1;
-				if(array_size(@args) > 2) {
-					@entityCount = integer(@args[2]);
+				if(array_size(@args) > 2 + @offset) {
+					@entityCount = integer(@args[2 + @offset]);
 				}
 				@loc = get_command_block();
 				if(@loc == null) {
 					@loc = ptarget_space();
 				} else {
-					@loc = _relative_coords(@loc, @args[3], @args[4], @args[5]);
+					@loc = _relative_coords(@loc, @args[3 + @offset], @args[4 + @offset], @args[5 + @offset]);
+					if(array_size(@args) > 6 + @offset) {
+						@loc['yaw'] = @args[6 + @offset];
+					}
 				}
 				@loc['x'] += 0.5;
 				@loc['z'] += 0.5;
