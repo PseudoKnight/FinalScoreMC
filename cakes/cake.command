@@ -3,7 +3,11 @@ register_command('cake', array(
 	'usage': '/cake <list|info|find|set|move|delete|rename|tp|resetplayer|stats> [cake_id] [coins] [type] [difficulty]',
 	'tabcompleter': closure(@alias, @sender, @args, @info) {
 		if(array_size(@args) == 1) {
-			return(_strings_start_with_ic(array('list', 'info', 'find', 'set', 'move', 'delete', 'rename', 'tp', 'resetplayer', 'stats'), @args[-1]));
+			if(has_permission('group.engineer')) {
+				return(_strings_start_with_ic(array('list', 'info', 'find', 'set', 'move', 'delete', 'rename', 'tp', 'resetplayer', 'stats'), @args[-1]));
+			} else {
+				return(_strings_start_with_ic(array('list', 'info', 'stats'), @args[-1]));
+			}
 		} else if(array_size(@args) == 4) {
 			return(_strings_start_with_ic(array('challenge', 'secret', 'coop'), @args[-1]));
 		} else if(array_size(@args) == 5) {
@@ -54,6 +58,9 @@ register_command('cake', array(
 				msg(color('green').color('l').to_upper(@type[0]).@type[1..].' Cakes'.color('green').' ('.@count.' of '.@total.')'.color('r').@names);
 
 			case 'find':
+				if(!has_permission('group.engineer')) {
+					die(color('gold').'You do not have permission to use this cake command.');
+				}
 				@cakeInfo = get_value('cakeinfo');
 				@cakeLoc = get_value('cakes');
 				@range = 4096;
