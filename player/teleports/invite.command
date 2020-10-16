@@ -1,6 +1,7 @@
 register_command('invite', array(
 	'description': 'Sends a teleport invite to another player.',
 	'usage': '/invite <player>',
+	'aliases': array('tpahere'),
 	'executor': closure(@alias, @sender, @args, @info) {
 		if(!@args) {
 			return(false);
