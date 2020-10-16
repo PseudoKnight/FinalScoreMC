@@ -1,5 +1,5 @@
-@allowedCommands = array('/effect', '/entity', '/fill', '/fillx', '/give', 'particle', '/platform', '/playsound', '/sayas', '/setblock',
-	'/setblockx', '/spawnpoint', '/stopsound', '/teleport', '/tempboat', '/tempcart', '/time', '/timer', '/tp', '/velocity', '/warp');
+@allowedCommands = array('/clear', '/effect', '/entity', '/fill', '/fillx', '/give', '/particle', '/platform', '/minecraft:playsound', '/playsound', '/sayas', '/setblock',
+	'/setblockx', '/spawnpoint', '/stopsound', '/teleport', '/tempboat', '/tempcart', '/time', '/timer', '/title', '/tp', '/velocity', '/warp');
 register_command('scb', array(
 	'description': 'Set the command in the targeted command block.',
 	'usage': '/scb [cmd]',
@@ -37,7 +37,7 @@ register_command('scb', array(
 				if(!array_contains_ic(@allowedCommands, @args[0])) {
 					die(color('gold').'Cannot use the command '.@args[0].' in a commandblock. Must be one of: '.array_implode(@allowedCommands));
 				}
-				@isAlias = is_alias(array_implode(@args));
+				@isAlias = is_alias(@event['command']);
 				foreach(@arg in @args) {
 					if(reg_match('^@[ae]', @arg) &&
 					((@isAlias && !string_contains(@arg, 'r='))
