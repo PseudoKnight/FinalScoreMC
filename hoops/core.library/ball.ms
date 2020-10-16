@@ -1,7 +1,18 @@
 proc _hoops_ball_create(@loc) {
 	@game = import('hoops');
-	if(!@game) {
-		@game = array( // standalone
+	if(!@loc) {
+		// practice mode
+		if(@game) {
+			die('Already running.');
+		}
+		@loc = get_command_block();
+		if(!@loc) {
+			die('Not run from a commandblock.');
+		}
+		@loc['x'] += 0.5;
+		@loc['y'] += 2.0;
+		@loc['z'] += 0.5;
+		@game = array(
 			'ball': '',
 			'slime': '',
 			'holder': '',
@@ -28,7 +39,7 @@ proc _hoops_ball_create(@loc) {
 	@game['slime'] = @bball;
 
 	if(!array_contains(get_bars(), 'hoops')) {
-		create_bar('hoops', array('percent': 0.0, 'style': 'SEGMENTED_6')); //standalone
+		create_bar('hoops', array('percent': 0.0, 'style': 'SEGMENTED_6'));
 	}
 
 	_add_activity('hoops', 'Hoops');

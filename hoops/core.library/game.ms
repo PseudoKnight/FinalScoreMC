@@ -38,13 +38,22 @@ proc _hoops_create() {
 		'shootLoc': null,
 	);
 	export('hoops', @game);
+	create_bar('hoops', array('percent': 0.0, 'style': 'SEGMENTED_6'));
 }
 
-proc _hoops_queue(@seconds) {
+proc _hoops_add_players() {
+	@count = 0;
+	foreach(@p in all_players(pworld())) {
+		if(array_contains(sk_current_regions(@p), 'hoops')) {
+			_hoops_player_add(@p);
+			@count++;
+		}
+	}
+	return(@count);
+}
+
+proc _hoops_equip_players() {
 	@game = import('hoops');
-	@game['state'] = 1;
-	create_bar('hoops', array('percent': 0.0, 'style': 'SEGMENTED_6'));
-	
 	foreach(@i: @p in array_keys(@game['players'])) {
 		if(ponline(@p) && pworld(@p) == @game['world']) {
 			_hoops_player_set_team(@p, array_size(@game['players']) - @i - 1);
@@ -53,7 +62,12 @@ proc _hoops_queue(@seconds) {
 			_hoops_player_remove(@p);
 		}
 	}
-	
+}
+
+proc _hoops_queue(@seconds) {
+	@game = import('hoops');
+	@game['state'] = 1;
+
 	@startTime = time();
 	set_interval(1000, closure() {
 		@countdown = @seconds - integer((time() - @startTime) / 1000);
