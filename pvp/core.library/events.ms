@@ -283,6 +283,7 @@ bind('player_death', array('priority': 'high', 'id': @id.'death'), null, @e, @id
 		drop_item(@location, @item);
 	}
 	spawn_entity('SKELETON', 1, @location, closure(@deadplayer) {
+		set_mob_equipment(@deadplayer, array('WEAPON': null));
 		set_entity_health(@deadplayer, 0);
 	});
 
