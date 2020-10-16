@@ -40,8 +40,18 @@ register_command('world', array(
 						@split = split(':', @arg);
 						@key = to_lower(@split[0]);
 						@value = @split[1];
-						if(@key != 'generator') {
-							@value = to_upper(@value);
+						switch(@key) {
+							// ints
+							case 'seed':
+								@value = if(is_integral(@value), integer(@value), @value);
+							// booleans
+							case 'teleports':
+								@value = if(@value == 'true', @value = true, @value = false);
+							// do nothing
+							case 'generator':
+								noop();
+							default:
+								@value = to_upper(@value);
 						}
 						@world[@key] = @value;
 					}
