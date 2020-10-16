@@ -1,26 +1,62 @@
 proc _load_events(@id) {
 	@pvp = import('pvp'.@id);
-	
-	array_push(@pvp['binds'], @id.'nodrops')
-	bind('item_spawn', array('id': @id.'nodrops'), array('itemname': 'STONE_PRESSURE_PLATE'), @e, @region = @pvp['arena']['region']) {
-		if(array_contains(sk_regions_at(@e['location']), @region)) {
-			cancel()
-		}
-	}
+	@region = @pvp['arena']['region'];
 
-	array_push(@pvp['binds'], @id.'limitentities')
-	bind('entity_change_block', array('id': @id.'limitentities'), array('from': 'RED_SAND'), @e, @region = @pvp['arena']['region']) {
-		if(array_contains(sk_regions_at(@e['location']), @region)) {
-			entity_remove(@e['entity'])
-		}
-	}
+	set_interval(50, closure() {
+		try {
+			if(@pvp['running'] != 2) {
+				clear_task();
+				die();
+			}
+			foreach(@p: @data in @pvp['players']) {
+				@loc = ploc(@p);
+				@type = get_block(@loc);
+				if((@type == 'ORANGE_TERRACOTTA' || @type == 'WHITE_TERRACOTTA')
+					&& array_contains(sk_regions_at(@loc), @region)) {
 
-	array_push(@pvp['binds'], @id.'limitentities2')
-	bind('entity_change_block', array('id': @id.'limitentities2'), array('from': 'SAND'), @e, @region = @pvp['arena']['region']) {
-		if(array_contains(sk_regions_at(@e['location']), @region)) {
-			entity_remove(@e['entity'])
+					@rx = @loc['x'] - floor(@loc['x']);
+					@sx = -1;
+					if(@rx > 0.5) {
+						@sx = 0;
+					}
+					@rz = @loc['z'] - floor(@loc['z']);
+					@sz = -1;
+					if(@rz > 0.5) {
+						@sz = 0;
+					}
+					for(@x = @sx, @x < 2 + @sx, @x++) {
+						for(@z = @sz, @z < 2 + @sz, @z++) {
+							@l = array(@loc['x'] + @x, @loc['y'], @loc['z'] + @z, @loc['world']);
+							@type = get_block(@l);
+							if(@type == 'ORANGE_TERRACOTTA' || @type == 'WHITE_TERRACOTTA') {
+								set_block(@l, 'RED_TERRACOTTA');
+							}
+						}
+					}
+
+					set_timeout(500, closure() {
+						for(@x = @sx, @x < 2 + @sx, @x++) {
+							for(@z = @sz, @z < 2 + @sz, @z++) {
+								@l = array(@loc['x'] + @x, @loc['y'], @loc['z'] + @z, @loc['world']);
+								if(get_block(@l) == 'RED_TERRACOTTA') {
+									set_block(@l, 'AIR');
+								}
+							}
+						}
+						@loc['x'] = floor(@loc['x']) + 0.5;
+						@loc['y'] = floor(@loc['y']) - 1;
+						@loc['z'] = floor(@loc['z']) + 0.5;
+						spawn_entity('PRIMED_TNT', 1, @loc, closure(@tnt) {
+							set_entity_spec(@tnt, array(fuseticks: 40));
+						});
+					});
+				}
+			}
+		} catch (Exception @ex) {
+			console(@ex);
+			clear_task();
 		}
-	}
+	});
 
 	@tnt = array();
 
@@ -29,13 +65,17 @@ proc _load_events(@id) {
 		@index = array_index(@tnt, @e['id']);
 		if(!is_null(@index)) {
 			foreach(@block in @e['blocks']) {
-				if(get_block(@block) == 'STONE_PRESSURE_PLATE') {
+				@type = get_block(@block);
+				if(@type == 'ORANGE_TERRACOTTA' || @type == 'WHITE_TERRACOTTA' || @type == 'RED_TERRACOTTA') {
 					set_block(@block, 'AIR');
-					set_block(location_shift(@block, 'down'), 'AIR');
-					set_block(location_shift(@block, 'down', 2), 'AIR');
 				}
 			}
 			array_remove(@tnt, @index);
+		} else {
+			@type = get_block(location_shift(@e['location'], 'down'));
+			if(@type == 'ORANGE_TERRACOTTA' || @type == 'WHITE_TERRACOTTA' || @type == 'RED_TERRACOTTA') {
+				set_block(location_shift(@e['location'], 'down'), 'AIR');
+			}
 		}
 	}
 
@@ -43,6 +83,7 @@ proc _load_events(@id) {
 	bind('player_interact_entity', array('id': @id.'tntpickup'), array('clicked': 'PRIMED_TNT'), @e, @pvp, @tnt) {
 		if(array_index_exists(@pvp['players'], player()) && is_null(get_entity_rider(puuid()))) {
 			set_entity_rider(puuid(player()), @e['id']);
+			set_entity_spec(@e['id'], array(fuseticks: 60));
 			set_pinv(player(), null, array('name': 'TNT'));
 			play_sound(ploc(), array('sound': 'ENTITY_CHICKEN_EGG', 'pitch': 0.5));
 			@tnt[] = @e['id'];
@@ -62,6 +103,7 @@ proc _load_events(@id) {
 					@vector['y'] += 0.1;
 					try {
 						set_entity_velocity(@rider, @vector);
+						set_entity_spec(@rider, array(fuseticks: 20));
 						play_sound(ploc(), array('sound': 'ENTITY_IRON_GOLEM_ATTACK'));
 					} catch(BadEntityException @ex) {
 						// it done blown up!
