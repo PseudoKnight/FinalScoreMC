@@ -97,7 +97,6 @@ bind('player_death', null, null, @event) {
 	Blocks spawning of the wither
 */
 bind('block_place', null, array('block': 'WITHER_SKELETON_SKULL'), @event) {
-	msg(@event['block']);
 	if(@event['block'] == 'WITHER_SKELETON_SKULL' && !has_permission('build.wither')) {
 		foreach(@dir in array('north', 'south', 'east', 'west', 'up', 'down')) {
 			if(get_block(location_shift(@event['location'], @dir)) == 'SOUL_SAND') {
