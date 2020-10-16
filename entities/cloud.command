@@ -41,12 +41,13 @@ register_command('cloud', array(
 			}
 		}
 		
-		@cloud = spawn_entity('AREA_EFFECT_CLOUD', 1, @loc)[0];
-		set_entity_spec(@cloud, array(
-			'duration': if(@duration == -20, math_const('INTEGER_MAX') - 20, @duration),
-			'particle': @args[@offset],
-			'radius': min(16, double(@args[@offset + 1])),
-			'color': @color,
-		));
+		spawn_entity('AREA_EFFECT_CLOUD', 1, @loc, closure(@cloud) {
+			set_entity_spec(@cloud, array(
+				'duration': if(@duration == -20, math_const('INTEGER_MAX') - 20, @duration),
+				'particle': @args[@offset],
+				'radius': min(16, double(@args[@offset + 1])),
+				'color': @color,
+			));
+		});
 	}
 ));
