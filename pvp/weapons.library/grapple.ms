@@ -1,11 +1,12 @@
-array_push(@pvp['binds'], @id.'grapple')
-bind('projectile_launch', array('id': @id.'grapple'), array('type': 'FISHING_HOOK'), @event, @pvp) {
+@pvp['binds'][] = bind('projectile_launch', array('id': @id.'grapple'), array('type': 'FISHING_HOOK'), @event, @pvp) {
 	@player = @event['player'];
 	@hook = @event['id'];
 
-	if(!array_index_exists(@pvp['players'], player())) {
+	if(!array_index_exists(@pvp['players'], player()) || pcooldown('FISHING_ROD')) {
 		die();
 	}
+
+	set_pcooldown('FISHING_ROD', 20);
 
 	@arrow = shoot_projectile(@player, 'arrow');
 	set_entity_spec(@arrow, array('critical': true));
@@ -125,8 +126,7 @@ bind('projectile_launch', array('id': @id.'grapple'), array('type': 'FISHING_HOO
 	});
 }
 
-array_push(@pvp['binds'], @id.'grappledamage');
-bind('entity_damage', array('id': @id.'grappledamage'), array('type': 'PLAYER', 'cause': 'FLY_INTO_WALL'), @event, @pvp) {
+@pvp['binds'][] = bind('entity_damage', array('id': @id.'grappledamage'), array('type': 'PLAYER', 'cause': 'FLY_INTO_WALL'), @event, @pvp) {
 	if(array_index_exists(@pvp['players'], @event['player'])) {
 		cancel();
 	}
