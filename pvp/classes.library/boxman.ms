@@ -1,13 +1,7 @@
 switch(@action) {
 case 'load':
 	set_pheld_slot(@player, 0);
-	bind('item_held', array('id': @player.'boxman'), null, @e, @player) {
-		if(@e['player'] == @player) {
-			cancel();
-		}
-	}
-
-	bind('inventory_click', array('id': @player.'boxmanclick'), array('player': @player), @e) {
+	bind('item_held', array('id': @player.'boxman'), array(player: @player), @e) {
 		cancel();
 	}
 
@@ -122,7 +116,6 @@ case 'load':
 
 case 'unload':
 	unbind(@player.'boxman');
-	unbind(@player.'boxmanclick');
 	unbind(@player.'boxmanattack');
 	unbind(@player.'boxmanbox');
 	set_pwalkspeed(player(), 0.2);
