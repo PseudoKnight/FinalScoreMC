@@ -1,6 +1,6 @@
 register_command('cake', array(
 	'description': 'Lists and manages cake prizes',
-	'usage': '/cake <list|info|find|set|move|delete|rename|tp|resetplayer|stats> [cake_id] [coins] [type] [difficulty]',
+	'usage': '/cake <list|info|stats|?> [cake_id]',
 	'tabcompleter': closure(@alias, @sender, @args, @info) {
 		if(array_size(@args) == 1) {
 			if(has_permission('group.engineer')) {
@@ -396,15 +396,18 @@ register_command('cake', array(
 				msg(color('green').'[CAKE] Commands to create, change and remove cake prizes.');
 				msg('/cake list '.color('gray').'List the names of all cake prizes.');
 				msg('/cake info [id] '.color('gray').'Shows cake info and the players who have it.');
-				msg('/cake set [id] <coins> [type] [difficulty]'.color('gray').'Sets the data for the specified cake.'
-				 	' Type can be "secret", "challenge", or "coop". Difficulty can be "easy", "easy-medium", "medium",'
-					.' "medium-hard", "hard", or "very-hard".');
-				msg('/cake move <id> '.color('gray').'Moves the prize cake to a new location.');
-				msg('/cake tp <id> '.color('gray').'Teleports you to a cake.');
-				msg('/cake rename <old> <new> '.color('gray').'Renames a cake.');
-				msg('/cake delete [id] '.color('gray').'Deletes the prize for the cake you\'re looking at.');
-				msg('/cake resetplayer [id] <player> '.color('gray').'Deletes player from cake.');
 				msg('/cake stats <type> '.color('gray').'Shows the completion frequency for all cakes of this type.');
+				if(has_permission('group.engineer')) {
+					msg('/cake set [id] <coins> [type] [difficulty]'.color('gray').'Sets the data for the specified cake.'
+						' Type can be "secret", "challenge", or "coop". Difficulty can be "easy", "easy-medium", "medium",'
+						.' "medium-hard", "hard", or "very-hard".');
+					msg('/cake move <id> '.color('gray').'Moves the prize cake to a new location.');
+					msg('/cake tp <id> '.color('gray').'Teleports you to a cake.');
+					msg('/cake rename <old> <new> '.color('gray').'Renames a cake.');
+					msg('/cake delete [id] '.color('gray').'Deletes the prize for the cake you\'re looking at.');
+					msg('/cake resetplayer [id] <player> '.color('gray').'Deletes player from cake.');
+					msg('/cake find [range] '.color('gray').'Finds and teleports to the nearest cake.');
+				}
 		}
 	}
 ));
