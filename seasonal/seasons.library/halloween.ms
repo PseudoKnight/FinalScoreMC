@@ -1,5 +1,7 @@
 bind('creature_spawn', null, null, @e) {
-	if(array_contains(array('SPIDER', 'PHANTOM', 'WITCH', 'ENDERMAN'), @e['type']) && !rand(3)) {
+	if(@e['location']['world'] == 'outworld'
+	&& array_contains(array('SPIDER', 'PHANTOM', 'WITCH', 'ENDERMAN'), @e['type'])
+	&& !rand(3)) {
 		set_mob_effect(@e['id'], 'invisibility', 0, 107374182);
 	}
 }
@@ -11,14 +13,10 @@ bind('creature_spawn', null, array('type': 'CREEPER', 'reason': 'NATURAL'), @e) 
 }
 
 bind('creature_spawn', null, array('type': 'ZOMBIE', 'reason': 'NATURAL'), @e) {
-	@rand = rand(5);
-	if(@rand == 4 && @e['location']['world'] == 'outworld' && !entities_in_radius(@e['location'], 64, 'RABBIT')) {
+	@rand = rand(4);
+	if(@rand == 3 && @e['location']['world'] == 'outworld'){
 		cancel();
-		@rabbit = spawn_entity('RABBIT', 1, @e['location'])[0];
-		set_entity_spec(@rabbit, array('type': 'THE_KILLER_BUNNY'));
-	} else if(@rand == 3 && @e['location']['world'] == 'outworld'){
-		cancel();
-		switch(rand(3)) {
+		switch(rand(4)) {
 			case 0:
 				@vindicator = spawn_entity('VINDICATOR', 1, @e['location'])[0];
 				if(rand(2)) {
@@ -28,6 +26,9 @@ bind('creature_spawn', null, array('type': 'ZOMBIE', 'reason': 'NATURAL'), @e) {
 				spawn_entity('EVOKER', 1, @e['location']);
 			case 2:
 				spawn_entity('ILLUSIONER', 1, @e['location']);
+			case 3:
+				@rabbit = spawn_entity('RABBIT', 1, @e['location'])[0];
+				set_entity_spec(@rabbit, array('type': 'THE_KILLER_BUNNY'));
 		}
 	} else if(@rand == 2) {
 		set_mob_equipment(@e['id'], array(
