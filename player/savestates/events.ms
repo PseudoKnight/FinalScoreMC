@@ -81,13 +81,6 @@ bind('player_teleport', array('priority': 'HIGH'), null, @event) {
 				set_timeout(50, closure(){
 					if(!array_index_exists(@pdata, @fromGroup)) {
 						@pdata[@fromGroup] = associative_array();
-						if(@fromGroup == 'survival') {
-							// initialize survival to newest world spawn
-							@loc = get_spawn('psi');
-							@pdata[@fromGroup]['loc'] = array(@loc[0] + 0.5, @loc[1] - 1, @loc[2] + 0.5, @loc[3]);
-							_store_pdata(player(), @pdata);
-							die();
-						}
 					}
 					@pdata[@fromGroup]['loc'] = array(
 						round(@event['from']['x'], 3),
