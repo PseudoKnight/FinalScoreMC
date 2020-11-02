@@ -63,6 +63,7 @@ member:
     worldguard.region.flag.flags.tnt.*: true
     bukkit.command.tps: true
     command.ride: true
+    command.disguise: true
   worlds:
     world:
       livemap.markers: true
@@ -82,7 +83,6 @@ member:
       deadbolt.admin.bypass: true
       deadbolt.admin.snoop: true
       build.wither: true
-      PhysicalShop.admin: true
       build.wither: true
       item.lighter: true
       advancement.all: false
@@ -121,7 +121,6 @@ member:
       worldguard.region.claim: false
       command.items: true
       command.vanish: true
-      bl.getbanners: true
       advancement.all: false
       command.heal: true
       command.skipper: true
@@ -138,6 +137,7 @@ member:
       command.ride: false
       command.hoops: true
       command.charades: true
+      command.disguise: false
     parkdev:
       advancement.all: false
   inheritance: default
@@ -148,11 +148,9 @@ regular:
     worldguard.region.unlimited: true
     item.lighter: true
     command.approve: true
-    fawe.tips: true
     command.entitycount: true
   worlds:
     dev:
-      fawe.worldguard: true
       command.time: true
       command.playsound: true
       worldguard.region.claim: true
@@ -182,7 +180,6 @@ builder:
       command.gm.others: true
       command.effect: true
       command.velocity: true
-      command.explosion: true
       command.heal.others: true
       command.entity: true
       command.cb: true
@@ -213,7 +210,6 @@ builder:
       command.gm.others: true
       command.effect: true
       command.velocity: true
-      command.explosion: true
       command.heal.others: true
       command.entity: true
       command.cb: true
@@ -245,7 +241,6 @@ builder:
       command.effect: true
       command.velocity: true
       command.playsound: true
-      command.explosion: true
       command.time: true
       command.heal: true
       command.heal.others: true
@@ -261,7 +256,6 @@ builder:
       command.track: true
       worldedit.navigation.*: true
       worldguard.region.claim: true
-      bl.getbanners: true
       deadbolt.user.create.*: true
       minecraft.command.stopsound: true
       minecraft.debugstick: true
@@ -278,8 +272,6 @@ engineer:
   permissions:
     group.engineer: true
     worldedit.clipboard.copy: true
-    fawe.admin: true
-    fawe.bypass: true
   worlds:
     dev:
       worldguard.region.*: true
@@ -306,12 +298,12 @@ moderator:
   permissions:
     group.moderator: true
     deadbolt.*: true
+    deadbolt.broadcast.break: false
+    deadbolt.broadcast.snoop: false
     worldguard.*: true
     logblock.lookup: true
     logblock.tp: true
     logblock.tools.toolblock: true
-    deadbolt.broadcast.break: false
-    deadbolt.broadcast.snoop: false
     OpenInv.openinv: true
     OpenInv.crossworld: true
     OpenInv.anychest: true
@@ -321,8 +313,6 @@ moderator:
     OpenInv.silent: true
     stargate.admin: true
     stargate.destroy: true
-    redstoneclockdetector.*: true
-    PhysicalShop.admin: true
     worldedit.history.*: true
     worldedit.butcher: true
     worldedit.remove: true
@@ -330,6 +320,8 @@ moderator:
     worldedit.navigation.*: true
     worldedit.analysis.*: true
     worldedit.drawsel: true
+    minecraft.command.toggledownfall: true
+    minecraft.command.kick: true
     command.fly: true
     command.gm: true
     command.gm.others: true
@@ -337,14 +329,10 @@ moderator:
     command.effect: true
     command.velocity: true
     command.playsound: true
-    command.explosion: true
     command.time: true
-    command.endercrystal: true
     command.entity: true
     command.sethome.others: true
     command.setwarp: true
-    nocheat.admin: true
-    minecraft.command.toggledownfall: true
     command.items: true
     command.vanish: true
     command.goto: true
