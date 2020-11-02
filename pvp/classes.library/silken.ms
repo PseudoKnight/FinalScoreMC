@@ -1,12 +1,13 @@
 switch(@action) {
 case 'load':
-	set_pcooldown('WEB', 0);
+	set_peffect(@player, 'MINING_FATIGUE', 1, 9999, true, false);
+	set_pcooldown(@player, 'WEB', 0);
 	bind('entity_damage', array('id': @player.'damage'), array('type': 'PLAYER', 'cause': 'ENTITY_ATTACK'), @e, @p = @player) {
 		if(@e['damager'] == @p) {
 			@weapon = pinv(@p, null);
 			if(@weapon && @weapon['name'] == 'STONE_HOE') {
-				modify_event('amount', 2);
-				set_mob_effect(@e['id'], 'wither', 1, 7);
+				modify_event('amount', pattack_cooldown(@p) * 2);
+				set_mob_effect(@e['id'], 'wither', 1, pattack_cooldown(@p) * 7);
 			}
 		}
 	}
