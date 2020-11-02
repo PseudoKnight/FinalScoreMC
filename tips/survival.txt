@@ -147,3 +147,5 @@ The beam target can be set for an end crystal by placing a dragon egg within 32 
 Hats can be put on villagers by right clicking on their head with an item in hand.
 
 You can play an instrument by swapping one of the following to your offhand: iron_nugget, gold_nugget, string, bone, iron_ingot, or bamboo.
+
+Channeling tridents striking a lodestone will summon a storm.
