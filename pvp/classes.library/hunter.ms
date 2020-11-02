@@ -3,12 +3,17 @@ case 'load':
 	bind('projectile_launch', array(id: @player.'huntershoot'), array(type: 'ARROW', shootertype: 'PLAYER'), @event, @player) {
 		if(@event['player'] == @player) {
 			set_arrow_damage(@event['id'], 0.7);
-			set_timeout(800, closure() {
-				if(entity_exists(@event['id'])) {
-					set_pcooldown(@player, 'CROSSBOW', 20);
-					play_sound(ploc(@player), array('sound': 'ENTITY_ITEM_BREAK'));
-				}
-			})
+		}
+	}
+
+	bind('projectile_hit', array('id': @player.'hunterhit'), array(type: 'ARROW', hittype: 'ENTITY'), @event, @pvp, @uuid = puuid(@player), @player) {
+		if(@uuid == @event['shooter']) {
+			@crossbow = pinv(@player, 0);
+			if(!@crossbow['meta']['projectiles']) {
+				@crossbow['meta']['projectiles'] = array(array(name: 'ARROW'));
+				set_pinv(@player, 0, @crossbow);
+				play_sound(ploc(@player), array(sound: 'ITEM_CROSSBOW_LOADING_END'));
+			}
 		}
 	}
 
@@ -27,6 +32,7 @@ case 'load':
 
 case 'unload':
 	unbind(@player.'huntershoot');
+	unbind(@player.'hunterhit');
 	unbind(@player.'hunterswap');
 	unbind(@player.'hunterblast');
 
