@@ -61,7 +61,11 @@ proc _weapon_hit_scan(@player, @range, @raySize, @damage, @effects, @pvp){
 						continue();
 					}
 					if(@hitsound) {
-						play_sound(@origin, array('sound': @hitsound), player());
+						if(is_array(@hitsound)) {
+							play_sound(@origin, @hitsound, player());
+						} else {
+							play_sound(@origin, array('sound': @hitsound), player());
+						}
 					}
 					@players[] = @player;
 				} catch(PlayerOfflineException @ex) {
