@@ -10,7 +10,7 @@ bind('player_interact', null, null, @event) {
 			// handle null items
 			die('Cannot determine the item type for this shop.');
 		}
-		cancel();
+
 		if(@event['button'] == 'left') {
 			_shop_show_info(@shop);
 		} else {
