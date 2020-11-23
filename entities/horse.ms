@@ -18,7 +18,7 @@ bind('player_interact_entity', null, array('clicked': '/(DONKEY|HORSE|LLAMA|MULE
 		// llama
 	}
 	@health = round(get_max_health(@event['id']) / 2, 1);
-	@speed = round(get_attribute(@event['id'], 'movementspeed') * 43, 2);
+	@speed = round(entity_attribute_base(@event['id'], 'GENERIC_MOVEMENT_SPEED') * 43, 2);
 	if(function_exists('action_msg')) {
 		set_timeout(50, closure(){
 			action_msg(colorize('&c'.@health.' \u2764 &e'.@jump.' \u279A &a'.@speed.' \u279F'));

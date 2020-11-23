@@ -31,7 +31,7 @@ proc _spawn_entity(@entity, @loc, @owner, @teammates, @consumer) {
 		}
 		if(array_index_exists(@entity, 'attributes')) {
 			foreach(@k: @v in @entity['attributes']) {
-				set_attribute(@e, @k, @v);
+				set_entity_attribute_base(@e, @k, @v);
 			}
 		}
 		if(array_index_exists(@entity, 'tame')) {

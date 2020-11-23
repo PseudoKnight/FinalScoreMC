@@ -323,7 +323,7 @@ speedypig:
 steed:
   age: 0
   attributes:
-    movementspeed: 0.2
+    GENERIC_MOVEMENT_SPEED: 0.2
   health: 16
   rider: owner
   tags:
