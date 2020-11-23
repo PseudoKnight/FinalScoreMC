@@ -29,7 +29,7 @@ bind('player_death', null, null, @event) {
 
 		// Discord
 		if(function_exists('discord_broadcast')) {
-			discord_broadcast('minecraft_chat', '*'.@event['player'].' died @ '.@stringLoc.'*');
+			discord_broadcast('minecraft_chat', '*'.@event['death_message'].' @ '.@stringLoc.'*');
 		}
 
 		// Check if the player hasn't respawned in 60 seconds. 
