@@ -10,7 +10,7 @@ register_command('livemap', array(
 		@x = @loc['x'];
 		@z = @loc['z'];
 		@world = @loc['world'];
-		@url = "http://mc.finalscoremc.com:25966/?worldname=@{world}&mapname=detailed&zoom=2&x=@{x}&y=64&z=@{z}";
+		@url = "http://66.151.255.15:25966/?worldname=@{world}&mapname=detailed&zoom=2&x=@{x}&y=64&z=@{z}";
 		@msg = '["",{"text":"'.color('b').'[\u21D6 Go to Live Map]'.color('r').'","clickEvent":{"action":"open_url","value":"'.@url.'"}}]';
 		runas('~console', '/tellraw '.player().' '.@msg);
 	}
