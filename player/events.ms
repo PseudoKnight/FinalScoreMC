@@ -50,6 +50,24 @@ bind('player_death', null, null, @event) {
 				}
 			}
 		});
+
+		// Extend death drop despawn time for another 5 minutes
+		// First tag drops over the next tick
+		@bind = bind('item_spawn', null, null, @event) {
+			add_scoreboard_tag(@event['id'], 'deathdrop');
+		}
+		set_timeout(50, closure(unbind(@bind)));
+
+		// Finally cancel despawns for those item entities once (sets their age to 0)
+		if(!has_bind('deathdrops')) {
+			bind('item_despawn', array('id': 'deathdrops'), null, @event) {
+				if(array_contains(get_scoreboard_tags(@event['id']), 'deathdrop')) {
+					remove_scoreboard_tag(@event['id'], 'deathdrop');
+					cancel();
+				}
+			}
+		}
+
 		/*
 		if(array_index_exists(@event['cause'], 'damager')) {
 			@damager = @event['cause']['damager'];
