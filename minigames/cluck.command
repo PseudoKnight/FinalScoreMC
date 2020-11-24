@@ -1,7 +1,7 @@
 <!
 	description: A chicken shooting arcade game.;
 
-	requiredExtensions: SKCompat;
+	requiredExtensions: SKCompat, CHRegionChange;
 	requiredProcs: _regionmsg() proc for messaging players within regions.
 		_add_activity() and _remove_activity() procedures to keep a list of all current activities on server.
 		_clear_pinv() proc for clearing the inventory of a player.
@@ -24,6 +24,7 @@ register_command('cluck', array(
 			for(@i = 0, @i < array_size(@top), @i++) {
 				msg(if(length(@top[@i]['score']) < 2, '0').@top[@i]['score'].' - '.@top[@i]['name']);
 			}
+
 		} else if(@args[0] == 'start') {
 			@loc = get_command_block();
 			if(!@loc) {
@@ -52,6 +53,7 @@ register_command('cluck', array(
 						'startround': array(-563, 52, -323, @world),
 					),
 					'spawnloc': array(-573.5, 63, -331.5, @world),
+					'targetloc': array(-574, 66, -328, @world),
 				));
 			}
 			
@@ -61,6 +63,13 @@ register_command('cluck', array(
 				clear_pinv(@cluck['player']);
 				set_pinv(@cluck['player'], array(0: array('name': 'BOW'), 1: array('name': 'ARROW', 'qty': 10)));
 				set_plevel(@cluck['player'], 0);
+
+				bind('region_change', array(id: 'cluckregion'), null, @event, @cluck) {
+					if(@event['player'] == @cluck['player'] && array_contains(@event['fromRegions'], 'cluck')) {
+						_cluck_end(@cluck);
+					}
+				}
+
 				_cluck_startround(@cluck);
 			}
 			
@@ -70,7 +79,8 @@ register_command('cluck', array(
 				_equip_kit(@cluck['player']);
 				export('cluck', _cluck_defaults());
 				unbind('cluckdamage');
-				unbind('cluckclose');
+				unbind('cluckstart');
+				unbind('cluckregion');
 			}
 			
 			proc _cluck_startround(@cluck) {;
@@ -184,16 +194,26 @@ register_command('cluck', array(
 			
 				_remove_region_entities('cluck', array('DROPPED_ITEM', 'EXPERIENCE_ORB'));
 				# Reset for the next round.
-				if(!@cluck['player'] || @cluck['gameover'] || @cluck['round'] == 10) {
+				if(@cluck['gameover'] || @cluck['round'] == 10) {
 					_cluck_end(@cluck);
 				} else {
 					@cluck['round']++;
 					@cluck['chickens'] = array();
 					@cluck['hit'] = 0;
-					bind('projectile_hit', array('id': 'cluckstart'), array('type': 'ARROW'), @event, @cluck) {
+					@loc = @cluck['spawnloc'][];
+					@loc[1] += 4 + rand(3);
+					@loc[2] += rand(10);
+					set_block(@loc, 'TARGET');
+					bind('projectile_hit', array('id': 'cluckstart'), array(type: 'ARROW', hittype: 'BLOCK'), @event, @cluck, @loc) {
 						if(@event['shooter'] == puuid(@cluck['player'])) {
 							unbind();
-							_cluck_startround(@cluck);
+							if(get_block(@event['hit']) == 'TARGET') {
+								_cluck_startround(@cluck);
+							} else {
+								_cluck_end(@cluck);
+							}
+							set_block(@loc, 'AIR');
+							try(entity_remove(@event['id']));
 						}
 					}
 				}
@@ -210,6 +230,7 @@ register_command('cluck', array(
 			
 			@cluck['player'] = @player;
 			_cluck_start(@cluck);
+
 		} else if(@args[0] == 'reset') {
 			if(!has_permission('group.moderator')) {
 				die(color('gold').'No permission.');
@@ -218,6 +239,7 @@ register_command('cluck', array(
 				'top': array(),
 				'date': simple_date('MMM d'),
 			));
+
 		} else {
 			return(false);
 		}
