@@ -7,6 +7,7 @@ proc _race_add_player(@id, @player) {
 		'place': 0,
 		'loc': @race['spawn'][0],
 		'horn': time(),
+		'stands': array(),
 	);
 	set_pscoreboard(@player, @id);
 	set_pscore('time', @player, 0, @id);
@@ -60,6 +61,7 @@ proc _race_place_player(@race, @player, @loc) {
 
 	@stand = spawn_entity('ARMOR_STAND', 1, @loc)[0];
 	set_entity_spec(@stand, array('small': true, 'visible': false, 'gravity': false));
+	@race['players'][@player]['stands'][] = @stand;
 
 	@vehicle = null;
 	switch(@race['type']) {
@@ -98,19 +100,8 @@ proc _race_place_players(@race) {
 }
 
 proc _race_drop_player(@race, @player) {
-	@vehicle = get_entity_vehicle(puuid(@player));
-	if(@vehicle) {
-		if(entity_type(@vehicle) != 'ARMOR_STAND') {
-			@vehicle = get_entity_vehicle(@vehicle);
-		}
-		if(@vehicle) {
-			@bind = bind('entity_dismount', array('priority': 'HIGH'), null, @event) {
-				consume();
-			}
-			set_entity_rider(@vehicle, null);
-			entity_remove(@vehicle);
-			unbind(@bind);
-		}
+	foreach(@stand in @race['players'][@player]['stands']) {
+		try(entity_remove(@stand));
 	}
 	play_sound(ploc(@player), array('sound': 'ENTITY_FIREWORK_ROCKET_BLAST'), @player);
 	if(array_index_exists(@race, 'health')) {

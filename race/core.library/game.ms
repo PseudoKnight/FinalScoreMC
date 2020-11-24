@@ -184,9 +184,7 @@ proc _race_start(@race) {
 				} else if(!array_contains(sk_regions_at(@loc), @race['region'])) {
 					@vehicle = get_entity_vehicle(puuid());
 					if(@vehicle) {
-						@p['state'] = 'dismounting';
 						set_entity_rider(null, puuid());
-						@p['state'] = 'racing';
 					}
 					_race_place_player(@race, player(), @p['loc']);
 					set_timeout(1000, closure(){

@@ -1,21 +1,23 @@
 proc _race_bind_events(@race) {
-	@race['binds'][] = bind('entity_dismount', null, array('type': 'PLAYER'), @event, @race) {
+	@race['binds'][] = bind('entity_dismount', null, array(type: 'PLAYER'), @event, @race) {
 		try {
 			@player = player(@event['id']);
-			if(array_index_exists(@race['players'], @player)) {
-				@racer = @race['players'][@player];
-				if(@racer['state'] == 'finished' || @racer['state'] == 'dismounting') {
-					entity_remove(@event['mountid']);
-				} else {
-					cancel();
-					if(@racer['horn'] + 500 < time()) {
-						play_sound(entity_loc(@event['id']), array('sound': 'ENTITY_VILLAGER_YES'));
-						@racer['horn'] = time();
-					}
-				}
+			if(array_index_exists(@race['players'], @player) && entity_exists(@event['mountid'])) {
+				set_timeout(50, closure(entity_remove(@event['mountid'])));
 			}
 		} catch(PlayerOfflineException @ex) {
 			// entity was not a player
+		}
+	}
+
+	@race['binds'][] = bind('player_toggle_sneak', null, array(sneaking: false, world: @race['world']), @event, @race) {
+		if(array_index_exists(@race['players'], player())) {
+			_race_place_player(@race, player(), @race['players'][player()]['loc']);
+			if(@race['state'] == 'running') {
+				set_timeout(1000, closure(){
+					_race_drop_player(@race, player());
+				});
+			}
 		}
 	}
 
