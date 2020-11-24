@@ -11,7 +11,8 @@ register_command('survival', array(
 		include('includes.library/teleports.ms');
 		@pdata = _pdata(player());
 		if(array_index_exists(@pdata, 'survival')
-		&& array_index_exists(@pdata['survival'], 'loc')) {
+		&& array_index_exists(@pdata['survival'], 'loc')
+		&& (has_permission('group.member') || @pdata['survival']['loc'][3] != 'world')) {
 			_warmuptp(player(), @pdata['survival']['loc']);
 		} else {
 			@loc = get_spawn('psi');
