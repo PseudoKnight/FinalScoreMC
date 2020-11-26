@@ -51,9 +51,9 @@ case 'load':
 		if(pinfo(player(), 6) != @e['item']['name']) {
 			die();
 		}
-		@loc1 = ploc();
+		@loc1 = location_shift(ploc(), 'up');
 		@excludeEntities = array('COMPLEX_PART', 'ITEM_FRAME', 'PAINTING', 'UNKNOWN');
-		foreach(@entity in entities_in_radius(ploc(), 9)) {
+		foreach(@entity in entities_in_radius(@loc1, 10)) {
 			@force = 1.4;
 			@type = entity_type(@entity);
 			if(@type == 'PLAYER') {
@@ -62,10 +62,10 @@ case 'load':
 					continue();
 				}
 				if(entity_grounded(@entity) && psneaking(@player)) {
-					@force *= 0.4;
+					@force *= 0.5;
 				}
 				if(array_index_exists(@pvp, 'teams') && @pvp['players'][player()]['team'] == @pvp['players'][@player]['team']) {
-					@force *= 0.4;
+					@force *= 0.5;
 				}
 			} else if(@type == 'ARMOR_STAND') {
 				if(entity_spec(@entity)['visible']) {
@@ -81,11 +81,11 @@ case 'load':
 			@dist = distance(@loc1, @loc2);
 
 			if(is_entity_living(@entity)) {
-				damage_entity(@entity, 1, puuid());
+				damage_entity(@entity, 1.2, puuid());
 			}
 			
 			if(!entity_can_see(puuid(), @entity)) {
-				@force *= 0.4;
+				@force *= 0.5;
 			}
 
 			# if we use a queue, velocity works more consistently with grounded entities
@@ -93,7 +93,7 @@ case 'load':
 				try {
 					set_entity_velocity(@entity, array(
 						@force * ((@loc2['x'] - @loc1['x']) / @dist), # vector normalization
-						clamp((@loc2['y'] - @loc1['y']) / @dist, 0.1, @force), # always bounce upwards
+						clamp((@loc2['y'] - @loc1['y']) / @dist, 0.15, @force), # always bounce upwards
 						@force * ((@loc2['z'] - @loc1['z']) / @dist),
 					));
 				} catch(BadEntityException @ex) {
@@ -104,7 +104,7 @@ case 'load':
 
 		play_sound(@loc1, array('sound': 'ENTITY_ENDER_DRAGON_FLAP', 'pitch': 0.5));
 		play_sound(@loc1, array('sound': 'ENTITY_GHAST_SHOOT', 'pitch': 0.9));
-		spawn_particle(location_shift(@loc1, 'up', 2), array(
+		spawn_particle(location_shift(@loc1, 'up'), array(
 			'particle': 'CLOUD',
 			'count': 60,
 			'speed': 0.5,

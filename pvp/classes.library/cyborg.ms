@@ -46,7 +46,7 @@ case 'load':
 
 			@explode = closure(@loc) {
 				foreach(@p in players_in_radius(@loc, 4)) {
-					damage_entity(puuid(@p), 8 - distance(location_shift(ploc(@p), 'up', 2), @loc), puuid())
+					damage_entity(puuid(@p), 7 - distance(location_shift(ploc(@p), 'up', 2), @loc), puuid())
 				}
 				spawn_particle(@loc, 'EXPLOSION_LARGE');
 				play_sound(@loc, array(sound: 'ENTITY_GENERIC_EXPLODE'));
@@ -71,7 +71,7 @@ case 'load':
 						if(get_block_info(location_shift(@newLoc, 'up', 0.5), 'solid') || distance(@newLoc, @targetLoc) < 1) {
 							clear_task();
 							set_entity_loc(@box, @newLoc);
-							execute(@returnToSender);
+							set_timeout(500, @returnToSender);
 							execute(@newLoc, @explode);
 						} else {
 							set_entity_loc(@box, @newLoc);
@@ -80,7 +80,7 @@ case 'load':
 					}
 				} catch(Exception @ex) {
 					clear_task();
-					execute(@returnToSender);
+					set_timeout(500, @returnToSender);
 				}
 			});
 		}
