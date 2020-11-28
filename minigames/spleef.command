@@ -344,7 +344,7 @@ register_command('spleef', array(
 							@winner = array_implode(array_keys(@currentspleef));
 							if(@winner !== '') {
 								_regionmsg(@cfg['region']['wrapper'], color('a').'[Spleef] '.display_name(@winner).color('r').' is the winner!');
-								set_ploc(@winner, @cfg['warp']['lobby']);
+								set_timeout(3000, closure(set_ploc(@winner, @cfg['warp']['lobby'])));
 								clear_peffects(@winner);
 								clear_pinv(@winner);
 								set_pmode(@winner, 'ADVENTURE');
