@@ -11,7 +11,7 @@
 >
 register_command('cluck', array(
 	'description': 'A game of shooting chickens.',
-	'usage': '/cluck [start] [player]',
+	'usage': '/cluck [start]',
 	'tabcompleter': closure(@alias, @sender, @args, @info) {
 		return(array());
 	},
@@ -54,6 +54,11 @@ register_command('cluck', array(
 					),
 					'spawnloc': array(-573.5, 63, -331.5, @world),
 					'targetloc': array(-574, 66, -328, @world),
+					'dispensers': array(
+						array(-573.5, 70.5, -323.5, @world, -180, 0),
+						array(-573.5, 70.5, -330.5, @world, 0, 0)
+					),
+					'target': null,
 				));
 			}
 			
@@ -77,6 +82,9 @@ register_command('cluck', array(
 				_remove_activity('cluck');
 				queue_clear('cluck');
 				_equip_kit(@cluck['player']);
+				if(@cluck['target']) {
+					set_block(@cluck['target'], 'AIR');
+				}
 				export('cluck', _cluck_defaults());
 				unbind('cluckdamage');
 				unbind('cluckstart');
@@ -104,11 +112,20 @@ register_command('cluck', array(
 			
 				queue_delay(2000, 'cluck');
 				@spawn = closure(){
-					@offset =  rand(10);
 					@adult = rand(10);
-					@angle = rand(100);
-					@loc = @cluck['spawnloc'][];
-					@loc[2] += @offset;
+					@loc = null;
+					@angle = null;
+					@offset = null;
+					@dispensed = false;
+					if(rand() < 0.1) {
+						@loc = array_get_rand(@cluck['dispensers']);
+						@dispensed = true;
+					} else {
+						@offset =  rand(10);
+						@angle = rand(100);
+						@loc = @cluck['spawnloc'][];
+						@loc[2] += @offset;
+					}
 					@entityid = spawn_entity('CHICKEN', 1, @loc)[0];
 					if(@adult) {
 						play_sound(@loc, array('sound': 'ENTITY_CHICKEN_EGG'));
@@ -116,7 +133,11 @@ register_command('cluck', array(
 						set_mob_age(@entityid, -24000);
 						play_sound(@loc, array('sound': 'ENTITY_CHICKEN_EGG', 'pitch': 2));
 					}
-					set_entity_velocity(@entityid, array(0, 1.1, (@angle - 12.5 * @offset) * (@cluck['round'] / 1000)));
+					if(@dispensed) {
+						set_entity_velocity(@entityid, get_vector(@loc, 0.5));
+					} else {
+						set_entity_velocity(@entityid, array(0, 1.1, (@angle - 12.5 * @offset) * (@cluck['round'] / 1000)));
+					}
 					set_entity_health(@entityid, 25);
 					@cluck['chickens'][] = @entityid;
 				}
@@ -201,11 +222,13 @@ register_command('cluck', array(
 					@cluck['chickens'] = array();
 					@cluck['hit'] = 0;
 					@loc = @cluck['spawnloc'][];
-					@loc[1] += 4 + rand(3);
+					@loc[1] += 3 + rand(3);
 					@loc[2] += rand(10);
 					set_block(@loc, 'TARGET');
+					@cluck['target'] = @loc;
 					bind('projectile_hit', array('id': 'cluckstart'), array(type: 'ARROW', hittype: 'BLOCK'), @event, @cluck, @loc) {
 						if(@event['shooter'] == puuid(@cluck['player'])) {
+							cancel();
 							unbind();
 							if(get_block(@event['hit']) == 'TARGET') {
 								_cluck_startround(@cluck);
@@ -213,11 +236,12 @@ register_command('cluck', array(
 								_cluck_end(@cluck);
 							}
 							set_block(@loc, 'AIR');
+							spawn_particle(_center(@loc), 'EXPLOSION_LARGE');
+							play_sound(@loc, array(sound: 'ENTITY_CHICKEN_EGG', pitch: 0.5));
 							try(entity_remove(@event['id']));
 						}
 					}
 				}
-				export('cluck', @cluck);
 			}
 		
 			@cluck = import('cluck');
