@@ -50,10 +50,7 @@ case 'load':
 						}
 						if(!@seen) {
 							set_pmode('ADVENTURE');
-							@ploc['x'] = floor(@ploc['x']) + 0.5;
-							@ploc['y'] -= 1;
-							@ploc['z'] = floor(@ploc['z']) + 0.5;
-							set_ploc(@ploc);
+							set_ploc(_center(@ploc, -1));
 							clear_task();
 							entity_remove(@armorstand);
 						}

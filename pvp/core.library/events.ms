@@ -537,8 +537,7 @@ if(array_contains(@pvp['arena']['flags'], 'rallycall')) {
 		if(!@loc = location_shift(@e['location'], @e['facing'])) {
 			die();
 		}
-		@loc = array(@loc[0] + 0.5, @loc[1], @loc[2] + 0.5, @loc[3]);
-		launch_firework(@loc, array(
+		launch_firework(_center(@loc, 0), array(
 			'strength': 3,
 			'flicker': true,
 			'colors': array('RED'),

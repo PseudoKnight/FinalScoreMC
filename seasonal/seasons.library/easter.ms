@@ -155,9 +155,7 @@ bind('projectile_hit', null, array('type': 'EGG'), @event) {
 		if(@mob == 'MOOSHROOM') {
 			@mob = 'MUSHROOM_COW';
 		}
-		@loc = location_shift(@event['location'], 'up');
-		@loc['x'] = floor(@loc['x']) + 0.5;
-		@loc['z'] = floor(@loc['z']) + 0.5;
+		@loc = _center(@event['location'], 1);
 		spawn_entity(@mob, 1, @loc, closure(@e) {
 			set_entity_persistence(@e, false)
 		});

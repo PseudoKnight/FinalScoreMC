@@ -43,10 +43,7 @@ proc _load_events(@id) {
 								}
 							}
 						}
-						@loc['x'] = floor(@loc['x']) + 0.5;
-						@loc['y'] = floor(@loc['y']) - 1;
-						@loc['z'] = floor(@loc['z']) + 0.5;
-						spawn_entity('PRIMED_TNT', 1, @loc, closure(@tnt) {
+						spawn_entity('PRIMED_TNT', 1, _center(@loc, -1), closure(@tnt) {
 							set_entity_spec(@tnt, array(fuseticks: 40));
 						});
 					});

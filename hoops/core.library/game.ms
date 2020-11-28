@@ -104,8 +104,7 @@ proc _hoops_queue(@seconds) {
 				}
 				if(get_block(location_shift(@randomLoc, 'down')) != 'AIR'
 				&& !entities_in_radius(@randomLoc, 1, 'VILLAGER')) {
-					@randomLoc[0] = floor(@randomLoc[0]) + 0.5;
-					@randomLoc[2] = floor(@randomLoc[2]) + 0.5;
+					@randomLoc = _center(@randomLoc, 0);
 					@randomLoc[4] = get_yaw(@randomLoc, @game['center']);
 					@villager = spawn_entity('VILLAGER', 1, @randomLoc)[0];
 					set_entity_ai(@villager, false);

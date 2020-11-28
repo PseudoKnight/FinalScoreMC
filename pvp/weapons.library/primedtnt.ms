@@ -6,9 +6,8 @@ bind('player_interact', array('id': @id.'primedtnt'), array('itemname': 'TNT', '
 	}
 	cancel();
 	if(@loc = location_shift(@e['location'], @e['facing'])) {
-		@loc = array(@loc[0] + 0.5, @loc[1] + 0.5, @loc[2] + 0.5, @loc[3]);
 		ptake_item(array('name': 'TNT'));
-		@tnt = spawn_entity('PRIMED_TNT', 1, @loc)[0];
+		@tnt = spawn_entity('PRIMED_TNT', 1, _center(@loc))[0];
 		set_entity_spec(@tnt, array('fuseticks': 80));
 	}
 }
