@@ -33,7 +33,8 @@ foreach(@name: @arena in @arenas) {
 	}
 	@lore[] = color('dark_gray').'Run: /warp '.@name;
 	@menuPvp['inv'][@slot++] = associative_array(
-		'name': 'GRAY_DYE',
+		'name': 'IRON_SWORD',
+		'qty': @min,
 		'meta': associative_array(
 			'display': color('green').to_upper(@name),
 			'lore': @lore,
