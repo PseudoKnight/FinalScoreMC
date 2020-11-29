@@ -48,8 +48,7 @@ proc _equip_kit(@player, @inv) {
 					'meta': array(
 						'display': colorize('&r&kX&a&l Random Firework &r&kX'),
 						'lore': array(
-							color('f').'Available to ',
-							color('f').'server supporters',
+							color('f').'A dynamic donor detonation!',
 						)
 					)
 				);
