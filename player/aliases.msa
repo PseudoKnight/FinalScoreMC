@@ -274,3 +274,29 @@
 <<<
 
 *:/hub [$] = run('/warp hub');
+
+*:/d [$] = call_alias('/disguise '.$);
+*:/dis [$] = call_alias('/disguise '.$);
+*:/disguise [$type] [$data] = >>>
+		if(!$type) {
+			die('/disguise <type>');
+		}
+		@types = reflect_pull('enum', 'EntityType');
+		@type = to_upper($type);
+		if(!array_contains(@types, @type)) {
+			die(color('red').'Invalid entity type.');
+		}
+		if($data) {
+			disguise_entity(puuid(), @type, $data);
+		} else {
+			disguise_entity(puuid(), @type);
+		}
+		msg('You are now disguised as a '.@type);
+<<<
+
+*:/u [$] = call_alias('/undisguise');
+*:/undis [$] = call_alias('/undisguise');
+*:/undisguise [$] = >>>
+	disguise_entity(puuid(), null);
+	msg('You are now undisguised');
+<<<
