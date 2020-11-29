@@ -49,9 +49,7 @@ proc _get_pstate(@player, @state) {
 	}
 
 	try {
-		foreach(@effect in get_peffect(@player)) {
-			set_peffect(@player, @effect['id'], 0, 0);
-		}
+		clear_peffects(@player);
 		foreach(@effect in array_get(@pstate, 'effects', array())) {
 			set_peffect(@player, @effect['id'], @effect['strength'], @effect['seconds'], @effect['ambient']);
 		}

@@ -264,9 +264,7 @@
 	set_phunger(@player, 20);
 	set_psaturation(@player, 5.0);
 	set_phealth(@player, 20);
-	foreach(@effect in get_peffect(@player)) {
-		set_peffect(@player, @effect['id'], 0, 0);
-	}
+	clear_peffects(@player);
 	tmsg(@player, color('green').'Healed!');
 	if(@player != player()) {
 		msg(color('green').'Healed!');

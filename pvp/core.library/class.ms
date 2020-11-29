@@ -41,13 +41,7 @@ proc _class(@action, @player, @classname, @pvp) {
 			set_phunger(@player, min(20, phunger(@player) + 4));
 			set_phealth(@player, min(20, phealth(@player) + 1));
 			set_ponfire(@player, false);
-			@flash = true;
-			foreach(@effect in get_peffect(@player)) {
-				if(@effect['id'] == 16) {
-					@flash = false;
-				}
-			}
-			if(@flash) {
+			if(!array_index_exists(get_peffect(@player), 'night_vision')) {
 				set_peffect(@player, 'NIGHT_VISION', 0, 1, true);
 			}
 			set_peffect(@player, 'REGENERATION', 0, 8, true);

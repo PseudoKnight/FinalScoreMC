@@ -8,11 +8,9 @@ case 'load':
 				@v = entity_velocity(@uuid);
 				if(@v['magnitude'] < 0.5) {
 					@strength = if(@v['y'] > 0, 0, -3);
-					foreach(@effect in get_peffect(@player)) {
-						if(@effect['id'] == 25) {
-							@strength = @effect['strength'] - 1;
-							break();
-						}
+					@effects = get_peffect(@player);
+					if(array_index_exists(@effects, 'levitation')) {
+						@strength = @effects['levitation']['strength'] - 1;
 					}
 					set_peffect(@player, 'LEVITATION', max(-12, @strength), 0.15, true);
 				}

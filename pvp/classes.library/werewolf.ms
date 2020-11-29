@@ -60,20 +60,19 @@ case 'powerup':
 	));
 	set_timeout(17000, closure(){
 		if(ponline(@player) && pmode(@player) != 'SPECTATOR') {
-			foreach(@effect in get_peffect(@player)) {
+			@effects = get_peffect(@player);
+			if(array_index_exists(@effects, 'night_vision') && @effects['night_vision']['seconds'] < 7) {
 				# if there's 6 seconds of night vision left, he hasn't gotten another powerup
-				if(@effect['id'] == 16 && @effect['seconds'] < 7) {
-					@r = rand(0, 256);
-					@g = rand(0, 256);
-					@b = rand(0, 256);
-					set_pinv(@player, array(
-						100: array('name': 'LEATHER_BOOTS', 'meta': array('color': array('r': @r, 'g': @g, 'b': @b))),
-						101: array('name': 'LEATHER_LEGGINGS', 'meta': array('color': array('r': @r, 'g': @g, 'b': @b))),
-						102: array('name': 'LEATHER_CHESTPLATE', 'meta': array('color': array('r': @r, 'g': @g, 'b': @b))),
-						103: null,
-					));
-					set_peffect(@player, 'NIGHT_VISION', 0, 0);
-				}
+				@r = rand(0, 256);
+				@g = rand(0, 256);
+				@b = rand(0, 256);
+				set_pinv(@player, array(
+					100: array('name': 'LEATHER_BOOTS', 'meta': array('color': array('r': @r, 'g': @g, 'b': @b))),
+					101: array('name': 'LEATHER_LEGGINGS', 'meta': array('color': array('r': @r, 'g': @g, 'b': @b))),
+					102: array('name': 'LEATHER_CHESTPLATE', 'meta': array('color': array('r': @r, 'g': @g, 'b': @b))),
+					103: null,
+				));
+				set_peffect(@player, 'NIGHT_VISION', 0, 0);
 			}
 		}
 	});

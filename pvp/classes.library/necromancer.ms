@@ -21,13 +21,12 @@ case 'load':
 		@b = ploc(@player);
 		@dist = distance(@a, @b);
 		if(@dist < 24) {
-			foreach(@e in get_peffect(@player)) {
-				if(@e['id'] == 22) {
-					set_peffect(@player, 'ABSORPTION', @e['strength'] + 1, 20);
-					die();
-				}
+			@effects = get_peffect(@player);
+			if(array_index_exists(@effects, 'absorption')) {
+				set_peffect(@player, 'ABSORPTION', @effects['absorption']['strength'] + 1, 20);
+			} else {
+				set_peffect(@player, 'ABSORPTION', 0, 999);
 			}
-			set_peffect(@player, 'ABSORPTION', 0, 999);
 		}
 	}
 

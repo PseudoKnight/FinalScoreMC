@@ -184,9 +184,7 @@ proc _cc_start(@world = 'custom') {
 						continue();
 					}
 
-					foreach(get_peffect(@p), @effect) {
-						set_peffect(@p, @effect['id'], 0, 0);
-					}
+					clear_peffects(@p);
 
 					@newheight = (@ploc[1] + 1) - @region[1][1];
 
