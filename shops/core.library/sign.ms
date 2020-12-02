@@ -28,7 +28,7 @@ proc _sign_get_shop(@location) {
 			}
 			@pdata = _pdata(@owner, @autocomplete);
 		} catch(NotFoundException @ex) {
-			console('Cannot find shop owner by the name "'.@owner.'"');
+			console('Cannot find shop owner by the name "'.@owner.'" @ '.@location);
 			return(null);
 		}
 		@currentName = @pdata['name'];
