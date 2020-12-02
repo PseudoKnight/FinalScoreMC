@@ -4,7 +4,6 @@ default:
     permissions.build: false
     command.join.to: true
     command.join.from: true
-    advancement.all: true
     minecraft.autocraft: true
   worlds:
     custom:
@@ -26,6 +25,7 @@ member:
   permissions:
     group.member: true
     permissions.build: true
+    advancement.all: true
     command.sethome: true
     stargate.create.personal: true
     stargate.create.network: true
