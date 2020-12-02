@@ -6,7 +6,7 @@ proc _menu_refresh_pvp() {
 		@pvp = import('pvp'.to_lower(substr(@item['meta']['display'], 2)));
 		if(@pvp && @pvp['players']) {
 			foreach(@p: @v in @pvp['players']) {
-				if(!ponline(@p) || pworld(@p) != @pvp['arena']['lobby'][3]) {
+				if(!ponline(@p) || _world_group(pworld(@p)) != 'minigames') {
 					array_remove(@pvp['players'], @p);
 				}
 			}
