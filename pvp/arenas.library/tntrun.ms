@@ -57,7 +57,7 @@ proc _load_events(@id) {
 
 	@tnt = array();
 
-	array_push(@pvp['binds'], @id.'tntexplode');
+	@pvp['binds'][] = @id.'tntexplode';
 	bind('entity_explode', array('id': @id.'tntexplode'), array('type': 'PRIMED_TNT'), @e, @tnt) {
 		@index = array_index(@tnt, @e['id']);
 		if(!is_null(@index)) {
@@ -76,7 +76,7 @@ proc _load_events(@id) {
 		}
 	}
 
-	array_push(@pvp['binds'], @id.'tntpickup');
+	@pvp['binds'][] = @id.'tntpickup';
 	bind('player_interact_entity', array('id': @id.'tntpickup'), array('clicked': 'PRIMED_TNT'), @e, @pvp, @tnt) {
 		if(array_index_exists(@pvp['players'], player()) && is_null(get_entity_rider(puuid()))) {
 			set_entity_rider(puuid(player()), @e['id']);
@@ -87,7 +87,7 @@ proc _load_events(@id) {
 		}
 	}
 
-	array_push(@pvp['binds'], @id.'tntthrow');
+	@pvp['binds'][] = @id.'tntthrow';
 	bind('player_interact', array('id': @id.'tntthrow'), array('button': 'left', 'itemname': 'TNT'), @e, @pvp) {
 		if(array_index_exists(@pvp['players'], player())) {
 			set_pinv(player(), null, null);

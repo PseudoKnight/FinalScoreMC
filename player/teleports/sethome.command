@@ -16,14 +16,14 @@ register_command('sethome', array(
 		}
 		@loc = ploc();
 		@facing = pfacing();
-		array_set(@pdata['homes'], pworld(), array(
+		@pdata['homes'][pworld()] = array(
 			floor(@loc[0]) + 0.5,
 			@loc[1],
 			floor(@loc[2]) + 0.5,
 			pworld(),
 			round(@facing[0], 2),
 			round(@facing[1], 2),
-		));
+		);
 		_store_pdata(@player, @pdata);
 		msg(color('green').'Set home to this location.');
 	}

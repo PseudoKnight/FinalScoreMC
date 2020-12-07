@@ -48,11 +48,11 @@ proc _cache_shop(@shop) {
 						if(!array_index_exists(@pdata, 'mail')) {
 							 @pdata['mail'] = array();
 						}
-						array_push(@pdata['mail'], array(
+						@pdata['mail'][] = array(
 							simple_date('MMM d h:mm a', time(), 'CST'),
 							player(),
 							@msg,
-						));
+						);
 						_store_pdata(@shop['owner'], @pdata);
 					}
 					array_remove(@shops[0], @i);
@@ -101,11 +101,11 @@ proc _cache_shop(@shop) {
 						if(!array_index_exists(@pdata, 'mail')) {
 							 @pdata['mail'] = array();
 						}
-						array_push(@pdata['mail'], array(
+						@pdata['mail'][] = array(
 							simple_date('MMM d h:mm a', time(), 'CST'),
 							player(),
 							@msg,
-						));
+						);
 						_store_pdata(@shop['owner'], @pdata);
 					}
 					array_remove(@shops[1], @i);

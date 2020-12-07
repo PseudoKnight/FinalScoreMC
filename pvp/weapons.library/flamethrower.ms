@@ -1,4 +1,4 @@
-array_push(@pvp['binds'], @id.'flamethrower');
+@pvp['binds'][] = @id.'flamethrower';
 bind('player_interact', array('id': @id.'flamethrower'), array('itemname': 'BREWING_STAND', 'button': 'right'), @e, @id) {
 	@pvp = import('pvp'.@id);
 	if(!array_index_exists(@pvp['players'], player()) || pinfo(player(), 6) != @e['item']['name']) {

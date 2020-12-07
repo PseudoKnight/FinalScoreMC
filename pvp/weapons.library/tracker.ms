@@ -1,4 +1,4 @@
-array_push(@pvp['binds'], @id.'tracker');
+@pvp['binds'][] = @id.'tracker';
 bind('item_held', array('id': @id.'tracker'), null, @event, @id) {
 	@pvp = import('pvp'.@id);
 	if(!array_index_exists(@pvp['players'], player())) {

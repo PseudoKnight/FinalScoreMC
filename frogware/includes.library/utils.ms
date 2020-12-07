@@ -64,7 +64,7 @@ proc _fw_mobs(@mob = 'random', @num = 'random') {
 	for(@i = 0, @i < @num, @i++) {
 		if(@loc = _fw_loc(@height, true)) {
 			@m = _spawn_entity(@mob, @loc);
-			array_push(@entities, @m);
+			@entities[] = @m;
 			if(@mob == 'wolf') {
 				set_entity_spec(@m, array('angry': true));
 				set_mob_target(@m, puuid(_fw_leader()));

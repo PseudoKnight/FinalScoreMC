@@ -32,7 +32,7 @@ register_command('frogware', array(
 				@scores = array();
 				foreach(@p in all_players('custom')) {
 					if(_fw_player(@p)) {
-						array_push(@scores, get_pscore('score', @p, 'fw'));
+						@scores[] = get_pscore('score', @p, 'fw');
 					}
 				}
 				set_pscore('score', player(), if(@scores, min(@scores), 0), 'fw');

@@ -1,4 +1,4 @@
-array_push(@pvp['binds'], @id.'spawner')
+@pvp['binds'][] = @id.'spawner';
 bind('player_interact', array('id': @id.'spawner', 'priority': 'HIGH'), array('button': 'right'), @e, @id) {
 	@pvp = import('pvp'.@id);
 	if(!array_index_exists(@pvp['players'], player())

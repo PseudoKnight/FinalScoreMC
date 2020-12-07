@@ -132,11 +132,11 @@ proc _pmsg(@from, @player, @message) {
 		if(!array_index_exists(@pdata, 'mail')) {
 			@pdata['mail'] = array();
 		}
-		array_push(@pdata['mail'], array(
+		@pdata['mail'][] = array(
 			simple_date('MMM d h:mm a', time(), 'CST'),
 			@from.if(!ponline(@from), ' on web'),
 			@message
-		));
+		);
 		_store_pdata(@player, @pdata);
 		msg(color(7).'(To '.@player.'): '.color('r').@message);
 		msg(color('yellow').'Type /unsend if you wish to remove this offline message.');

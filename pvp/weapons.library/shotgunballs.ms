@@ -1,4 +1,4 @@
-array_push(@pvp['binds'], @id.'shotgunshoot');
+@pvp['binds'][] = @id.'shotgunshoot';
 bind('player_interact', array('id': @id.'shotgunshoot'), array('itemname': 'SNOWBALL', 'button': 'right'), @e, @id) {
 	@pvp = import('pvp'.@id);
 	if(!array_index_exists(@pvp['players'], player()) || pinfo(player(), 6) != @e['item']['name']) {
@@ -29,7 +29,7 @@ bind('player_interact', array('id': @id.'shotgunshoot'), array('itemname': 'SNOW
 		play_sound(ploc(), array('sound': 'BLOCK_PISTON_CONTRACT', 'pitch': 1.5));
 	});
 }
-array_push(@pvp['binds'], @id.'shotgundamage');
+@pvp['binds'][] = @id.'shotgundamage';
 bind('entity_damage', array('id': @id.'shotgundamage'), array('type': 'PLAYER', 'cause': 'PROJECTILE'), @e, @id) {
 	if(array_index_exists(@e, 'shooter') // missing in special cases
 	&& length(@e['shooter']) < 17) {

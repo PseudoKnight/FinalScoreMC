@@ -371,12 +371,12 @@ register_command('arena', array(
 							}
 							@item = pinv(player(), null);
 							_minify_inv(@item);
-							array_push(@arena['itemspawn'], array(
+							@arena['itemspawn'][] = array(
 								'start': @start,
 								'cooldown': @cooldown,
 								'loc': array(round(ploc()[0], 1), ploc()[1] + 1.5, round(ploc()[2], 1), ploc()[3]),
 								'item': @item,
-							));
+							);
 							msg(color('green').'Set held item to spawn here '.if(@start, 'on start and '), 'every '.@cooldown.' seconds.');
 							psend_block_change(player(), ploc(), 'GOLD_BLOCK');
 						} else {
@@ -435,19 +435,19 @@ register_command('arena', array(
 								}
 								@items[] = get_inventory_item(@loc, @i);
 							}
-							array_push(@arena['chestspawn'], array(
+							@arena['chestspawn'][] = array(
 								'start': @start,
 								'cooldown': @args[3],
 								'loc': @loc,
 								'items': @items,
-							))
+							);
 							msg(color('green').'Set items in chest to respawn here.');
 							set_block(@loc, 'CHEST');
 						} else {
-							array_push(@arena['chestspawn'], array(
+							@arena['chestspawn'][] = array(
 								'loc': @loc,
 								'group': @args[3],
-							));
+							);
 							msg(color('green').'Set items in that chest group to spawn here at start.');
 						}
 

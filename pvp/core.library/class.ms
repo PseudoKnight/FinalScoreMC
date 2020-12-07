@@ -163,7 +163,7 @@ proc _class_select(@id, @pvp) {
 	}
 
 	if(@size1 > 2 || @size2 > 2) {
-		array_push(@pvp['binds'], @id.'classselector')
+		@pvp['binds'][] = @id.'classselector';
 		bind('inventory_click', array('id': @id.'classselector', 'priority': 'HIGH'), array('virtual': true), @e, @id) {
 			@pvp = import('pvp'.@id);
 			if(!array_index_exists(@pvp['players'], player())

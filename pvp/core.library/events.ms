@@ -167,7 +167,7 @@ bind('player_death', array('priority': 'high', 'id': @id.'death'), null, @e, @id
 			|| array_index_exists(@arena, 'denydrop')
 			&& is_array(@arena['denydrop'])
 			&& !array_contains(@arena['denydrop'], @drop['name'])) {
-				array_push(@drops, @drop)
+				@drops[] = @drop;
 			}
 		}
 	}

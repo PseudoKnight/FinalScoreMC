@@ -1,4 +1,4 @@
-array_push(@pvp['binds'], @id.'skullrockets')
+@pvp['binds'][] = @id.'skullrockets';
 bind('player_interact', array('id': @id.'skullrockets'), array('itemname': 'WITHER_SKELETON_SKULL', 'button': 'right'), @e, @id) {
 	@pvp = import('pvp'.@id)
 	if(!array_index_exists(@pvp['players'], player())) {

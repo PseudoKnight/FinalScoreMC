@@ -1,4 +1,4 @@
-array_push(@pvp['binds'], @id.'pistoltears')
+@pvp['binds'][] = @id.'pistoltears';
 bind('player_interact', array('id': @id.'pistoltears'), array('itemname': 'GHAST_TEAR', 'button': 'right'), @e, @id) {
 	@pvp = import('pvp'.@id)
 	if(!array_index_exists(@pvp['players'], player()) || pinfo(player(), 6) != @e['item']['name']) {

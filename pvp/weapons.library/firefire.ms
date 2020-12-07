@@ -1,4 +1,4 @@
-array_push(@pvp['binds'], @id.'firefire')
+@pvp['binds'][] = @id.'firefire';
 bind('player_interact', array('id': @id.'firefire'), array('itemname': 'FLINT_AND_STEEL'), @e, @id) {
 	@pvp = import('pvp'.@id)
 	if(!array_index_exists(@pvp['players'], player())

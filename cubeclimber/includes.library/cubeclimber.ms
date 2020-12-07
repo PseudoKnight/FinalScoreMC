@@ -216,7 +216,7 @@ proc _cc_start(@world = 'custom') {
 								));
 
 								if(@ploc[1] >= @region[0][1]) {
-									array_push(@winners, @p);
+									@winners[] = @p;
 								}
 							}
 						}

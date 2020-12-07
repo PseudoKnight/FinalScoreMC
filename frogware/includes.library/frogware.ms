@@ -108,7 +108,7 @@ proc _fw_startround(@secs = 12) {
 					}
 					@score = get_pscore('score', @p, 'fw')
 					if(@score == @goal) {
-						array_push(@winners, @p)
+						@winners[] = @p;
 					} else if(@score > @highscore) {
 						@highscore = @score
 					}

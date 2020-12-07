@@ -31,7 +31,7 @@ proc _flag(@item) {
 _pvp_flag_spawn(@id, 0);
 _pvp_flag_spawn(@id, 1);
 
-array_push(@pvp['binds'], @id.'flagpickup')
+@pvp['binds'][] = @id.'flagpickup';
 bind('item_pickup', array('id': @id.'flagpickup'), null, @e, @id) {
 	@pvp = import('pvp'.@id)
 	if(!array_index_exists(@pvp['players'], player())) {
@@ -84,7 +84,7 @@ bind('item_pickup', array('id': @id.'flagpickup'), null, @e, @id) {
 	}
 }
 
-array_push(@pvp['binds'], @id.'protectdrops')
+@pvp['binds'][] = @id.'protectdrops';
 bind('entity_damage', array('id': @id.'protectdrops'), array('type': 'DROPPED_ITEM'),
 @e, @region = @pvp['arena']['region']) {
 	if(array_contains(sk_regions_at(entity_loc(@e['id'])), @region)) {
@@ -93,7 +93,7 @@ bind('entity_damage', array('id': @id.'protectdrops'), array('type': 'DROPPED_IT
 }
 
 if(!array_contains(@pvp['arena']['flags'], 'noinventory')) {
-	array_push(@pvp['binds'], @id.'flagclick')
+	@pvp['binds'][] = @id.'flagclick';
 	bind('inventory_click', array('id': @id.'flagclick'), array('slottype': 'ARMOR'), @e, @id) {
 		@pvp = import('pvp'.@id)
 		if(!array_index_exists(@pvp['players'], player()), die())
