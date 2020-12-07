@@ -44,12 +44,6 @@ foreach(@name: @arena in @arenas) {
 }
 export('menu.pvp', @menuPvp);
 
-bind('world_changed', null, null, @event) {
-	if(@event['from'] == 'custom' || @event['to'] == 'custom') {
-		set_timeout(250, closure(_menu_refresh_pvp()));
-	}
-}
-
-bind('player_join', null, array('world': 'custom'), @event) {
-	set_timeout(250, closure(_menu_refresh_pvp()));
+bind('world_changed', null, array(from: 'custom'), @event) {
+	set_timeout(50, closure(_menu_refresh_pvp()));
 }
