@@ -512,7 +512,7 @@ register_command('arena', array(
 						if(!array_index_exists(@arena, 'mobspawn')) {
 							@arena['mobspawn'] = array();
 						}
-						if(!_get_mob(@args[3])) {
+						if(!_get_entity(@args[3])) {
 							die(color('gold').'Unknown mob type.');
 						}
 						if(!is_numeric(@args[4])) {
