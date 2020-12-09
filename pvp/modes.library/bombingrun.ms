@@ -38,7 +38,9 @@ bind('item_pickup', array('id': @id.'bombpickup'), null, @event, @id, @pvp) {
 		@pvp['bombholder'] = player();
 		set_pinv(player(), array(-106: @event['item'], 102: array('name': 'GOLDEN_CHESTPLATE')));
 		modify_event('item', null);
-		play_sound(ploc(player()), array('sound': 'ENTITY_ENDERMAN_TELEPORT', 'pitch': 2));
+		play_sound(ploc(player()), array('sound': 'ENTITY_ENDERMAN_TELEPORT', 'pitch': 2), player());
+		set_peffect(player(), 'GLOWING', 0, 9999, true, false);
+		title('', 'Take the bomb to the enemy base!', 0, 20, 20);
 	}
 }
 
@@ -56,6 +58,13 @@ bind('item_drop', array('id': @id.'bombdrop'), array('itemname': @pvp['arena']['
 	if(array_contains(sk_current_regions(), @pvp['arena']['region'])) {
 		@pvp['bomb'] = @event['id'];
 		@pvp['bombholder'] = null;
+	}
+}
+
+@pvp['binds'][] = @id.'bombspawn';
+bind('item_spawn', array('id': @id.'bombspawn'), array('itemname': @pvp['arena']['bomb']), @event, @pvp) {
+	if(array_contains(sk_regions_at(@event['location']), @pvp['arena']['region'])) {
+		set_entity_glowing(@event['id'], true);
 	}
 }
 
@@ -90,7 +99,7 @@ bind('player_move', array('id': @id.'firedancer'), null, @event, @pvp, @id) {
 			@pvp['bombholder'] = null;
 			set_pinv(player(), 102, array('name': 'IRON_CHESTPLATE', 'meta': array('enchants': array('fire_protection': array('elevel': 1)))));
 		} else {
-			spawn_particle(location_shift(@event['to'], 'up'), array('particle': 'FLAME', 'speed': 0.1));
+			spawn_particle(location_shift(@event['to'], 'up'),'CAMPFIRE_COSY_SMOKE');
 		}
 	}
 }
