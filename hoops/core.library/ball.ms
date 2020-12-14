@@ -22,19 +22,20 @@ proc _hoops_ball_create(@loc) {
 		export('hoops', @game);
 	}
 
-	@bball = spawn_entity('SLIME', 1, @loc)[0];
-	set_entity_spec(@bball, array('size': 1));
-	set_entity_silent(@bball, true);
-	set_entity_ai(@bball, false);
-	set_mob_effect(@bball, 'resistance', 4, 9999, true, false);
+	@bball = spawn_entity('SLIME', 1, @loc, closure(@entity) {
+		set_entity_spec(@entity, array('size': 1));
+		set_entity_silent(@entity, true);
+		set_entity_ai(@entity, false);
+		set_mob_effect(@entity, 'resistance', 4, 9999, true, false);
+	})[0];
 
-	@stand = spawn_entity('ARMOR_STAND', 1, @loc)[0];
-	set_entity_spec(@stand, array('small': true, 'visible': false));
-	if(function_exists('set_entity_size')) {
-		set_entity_size(@stand, 0.88, 1.0);
-	}
-
-	set_entity_velocity(@stand, array(0, 1, 0));
+	@stand = spawn_entity('ARMOR_STAND', 1, @loc, closure(@entity) {
+		set_entity_spec(@entity, array('small': true, 'visible': false));
+		if(function_exists('set_entity_size')) {
+			set_entity_size(@entity, 0.88, 1.0);
+		}
+		set_entity_velocity(@entity, array(0, 1, 0));
+	})[0];
 
 	@game['ball'] = @stand;
 	@game['slime'] = @bball;
