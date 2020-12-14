@@ -19,6 +19,7 @@ proc _hoops_ball_create(@loc) {
 			'lastholder': '',
 			'trail': false,
 		);
+		export('hoops', @game);
 	}
 
 	@bball = spawn_entity('SLIME', 1, @loc)[0];
