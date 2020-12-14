@@ -10,4 +10,6 @@ if(@month == 'Dec' && @day == 31 || @month == 'Jan' && @day == 1) {
 	include('seasons.library/easter.ms');
 } else if(@month == 'Oct' && @day > 10) { // three weeks
 	include('seasons.library/halloween.ms');
+} else if(@month == 'Dec') { // three weeks
+	include('seasons.library/winter.ms');
 }
