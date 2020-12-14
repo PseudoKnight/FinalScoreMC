@@ -142,11 +142,18 @@ proc _hoops_ball_create(@loc) {
 	@velocity = array('x': 0, 'y': 0, 'z': 0);
 	set_interval(50, closure(){
 		try {
-			if(@game['holder']) {
-				set_entity_loc(@stand, location_shift(ploc(@game['holder']), 'up', 3.3));
-			}
 			@v = entity_velocity(@stand);
 			@loc = entity_loc(@stand);
+			if(@game['holder']) {
+				@ploc = ploc(@game['holder']);
+				if(@ploc['world'] == @loc['world']) {
+					@loc = location_shift(@ploc, 'up', 3.3);
+					set_entity_loc(@stand, @loc);
+				} else {
+					@game['holder'] = null;
+				}
+			}
+
 			if(!@ending[0]) {
 				@end = false;
 				if(_hoops_ball_in_hoop(@loc)) {
