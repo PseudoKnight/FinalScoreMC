@@ -25,10 +25,12 @@ register_command('hoops', array(
 					die(color('red').'Hoops doesn\'t exist in this world.');
 				}
 				@game = import('hoops');
-				if(array_index_exists(@game, 'teams')) {
-					die(color('red').'Already running.');
-				} else {
-					try(entity_remove(@game['slime']));
+				if(@game) {
+					if(array_index_exists(@game, 'teams')) {
+						die(color('red').'Already running.');
+					} else {
+						try(entity_remove(@game['slime']));
+					}
 				}
 				// Wait for task cleanup.
 				// May want to change this later with a proper cleanup proc.
