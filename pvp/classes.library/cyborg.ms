@@ -14,28 +14,48 @@ case 'load':
 		if(@item && @item['name'] == 'DIAMOND_BLOCK' && !pcooldown('DIAMOND_BLOCK')) {
 			set_pcooldown('DIAMOND_BLOCK', 20);
 
-			@hitplayers = _weapon_hit_scan(player(), 90, 0.6, null, array(
-				tracerparticle: 'REDSTONE',
-				hitsound: array(sound: 'ENTITY_PUFFER_FISH_BLOW_OUT', pitch: 0.5)
-			), @pvp);
-			if(!@hitplayers) {
+			@trace = ray_trace(player(), 90, 0.5);
+			@target = @trace['location'];
+			if(!array_contains(sk_regions_at(@target), @pvp['arena']['region'])) {
 				die();
 			}
-			@target = puuid(@hitplayers[0]);
+			if(@trace['entities']) {
+				foreach(@entity in @trace['entities']) {
+					if(ponline(@entity['uuid'])) {
+						@target = @entity['uuid'];
+						@targetedSound = array(sound: 'ENTITY_ZOMBIE_VILLAGER_CONVERTED', pitch: 2.0, volume: 0.5);
+						play_sound(@loc, @targetedSound, player(@target));
+						set_timeout(500, closure(play_sound(@loc, @targetedSound, player(@target))));
+						break();
+					}
+				}
+			}
 
 			set_pinv(player(), @slot, null);
-			@loc = location_shift(ploc(), 'up', 1.55);
+			@loc = location_shift(ploc(), 'up', 1.25);
+			@tempLoc = @loc[];
+			if(@event['button'] == 'left') {
+				@tempLoc['yaw'] -= 90;
+			} else {
+				@tempLoc['yaw'] += 90;
+			}
+			@v = get_vector(@tempLoc, 0.35);
+			@loc['x'] += @v['x'];
+			@loc['y'] += @v['y'];
+			@loc['z'] += @v['z'];
+			
+
 			@box = spawn_entity('ARMOR_STAND', 1, @loc, closure(@e) {
 				set_mob_equipment(@e, array(HELMET: @item));
 				set_entity_spec(@e, array(
 					gravity: false,
 					visible: false,
 					small: true,
-					poses: array(
-						poseHead: array(3.14159, 0, 0)
-					)
 				));
 			})[0];
+
+			// launch sound
+			play_sound(@loc, array(sound: 'ENTITY_PUFFER_FISH_BLOW_OUT', pitch: 0.5), player());
 
 			@returnToSender = closure(){
 				if(ponline(player()) && pmode() != 'SPECTATOR' && array_index_exists(@pvp['players'], player())) {
@@ -46,16 +66,19 @@ case 'load':
 
 			@explode = closure(@loc) {
 				foreach(@p in players_in_radius(@loc, 4)) {
-					damage_entity(puuid(@p), 7 - distance(location_shift(ploc(@p), 'up', 2), @loc), puuid())
+					damage_entity(puuid(@p), 8 - distance(location_shift(ploc(@p), 'up', 2), @loc), puuid());
+					if(@p != player()) {
+						play_sound(ploc(), array(sound: 'ENTITY_ARROW_HIT_PLAYER'), player());
+					}
 				}
 				spawn_particle(@loc, 'EXPLOSION_LARGE');
-				play_sound(@loc, array(sound: 'ENTITY_GENERIC_EXPLODE'));
+				play_sound(@loc, array(sound: 'ENTITY_GENERIC_EXPLODE', pitch: 1.3, volume: 4));
 				entity_remove(@box);
 			}
 
 			set_interval(50, closure(){
 				try {
-					if(get_entity_health(@target) <= 0
+					if(is_string(@target) && (!entity_exists(@target) || get_entity_health(@target) <= 0)
 					|| !ponline(player())
 					|| pmode() == 'SPECTATOR'
 					|| !array_index_exists(@pvp['players'], player())) {
@@ -65,17 +88,68 @@ case 'load':
 						try(execute(entity_loc(@box), @explode));
 					} else {
 						@loc = entity_loc(@box);
-						spawn_particle(location_shift(@loc, 'up', 0.35), 'CAMPFIRE_COSY_SMOKE');
-						@targetLoc = location_shift(entity_loc(@target), 'up');
-						@newLoc = location_shift(@loc, @targetLoc, 0.5);
-						if(get_block_info(location_shift(@newLoc, 'up', 0.5), 'solid') || distance(@newLoc, @targetLoc) < 1) {
+
+						@targetLoc = @target;
+						if(!is_array(@targetLoc)) {
+							@targetLoc = location_shift(entity_loc(@target), 'up');
+						}
+						@newLoc = location_shift(@targetLoc, 'down');
+						@yaw = get_yaw(@loc, @newLoc);
+						@pitch = get_pitch(@loc, @newLoc);
+
+						if(@yaw == 'NaN') {
+							clear_task();
+							execute(@loc, @explode);
+							set_timeout(500, @returnToSender);
+							die();
+						}
+
+						// clamp turning radius
+						@diffYaw = @loc['yaw'] - @yaw;
+						if(abs(@diffYaw) > 180) {
+							if(@diffYaw < 0) {
+								@diffYaw += 360;
+							} else {
+								@diffYaw -= 360;
+							}
+						}
+						if(@diffYaw < -5) {
+							@yaw = @loc['yaw'] + 5;
+						} else if(@diffYaw > 5) {
+							@yaw = @loc['yaw'] - 5;
+						}
+
+						@diffPitch = @loc['pitch'] - @pitch;
+						if(@diffPitch < -5) {
+							@pitch = min(90, @loc['pitch'] + 5);
+						} else if(@diffPitch > 5) {
+							@pitch = max(-90, @loc['pitch'] - 5);
+						}
+
+						@loc['yaw'] = @yaw;
+						@loc['pitch'] = @pitch;
+						@v = get_vector(@loc, 0.5);
+						@newLoc['x'] = @loc['x'] + @v['x'];
+						@newLoc['y'] = @loc['y'] + @v['y'];
+						@newLoc['z'] = @loc['z'] + @v['z'];
+						@newLoc['yaw'] = @yaw;
+						@newLoc['pitch'] = @pitch;
+
+						@back = @loc[];
+						@back['x'] += neg(@v['x']) * 2;
+						@back['y'] += neg(@v['y']) * 2;
+						@back['z'] += neg(@v['z']) * 2;
+						spawn_particle(location_shift(@back, 'up', 0.75), 'CAMPFIRE_COSY_SMOKE');
+
+						if(get_block_info(location_shift(@newLoc, 'up', 0.75), 'solid') || distance(@newLoc, @targetLoc) < 1) {
 							clear_task();
 							set_entity_loc(@box, @newLoc);
 							set_timeout(500, @returnToSender);
-							execute(@newLoc, @explode);
+							execute(@loc, @explode);
 						} else {
 							set_entity_loc(@box, @newLoc);
-							play_sound(@loc, array('sound': 'ENTITY_GUARDIAN_ATTACK', 'pitch': 2.0));
+							set_entity_spec(@box, array(poses: array(poseHead: array(to_radians(@pitch), 0, 0))));
+							play_sound(@loc, array(sound: 'ENTITY_GUARDIAN_ATTACK', pitch: 0.5 + rand() * 1.5));
 						}
 					}
 				} catch(Exception @ex) {
