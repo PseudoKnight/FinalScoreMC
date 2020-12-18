@@ -77,7 +77,7 @@ proc _race_countdown(@race) {
 	set_timeout(1000, closure(){ // delay to load chunks first
 		_race_place_players(@race);
 		_race_bind_events(@race);
-		@startTime = 15;
+		@startTime = 10;
 		@timer = array(@startTime);
 		set_interval(1000, closure(){
 			foreach(@p: @v in @race['players']) {

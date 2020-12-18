@@ -76,6 +76,7 @@ proc _race_place_player(@race, @player, @loc) {
 			@vehicle = spawn_entity('PIG', 1, @loc)[0];
 			set_entity_spec(@vehicle, array('saddled': true));
 			set_pinv(@player, 0, array('name': 'CARROT_ON_A_STICK', 'meta': array('unbreakable': true)));
+			set_mob_effect(@vehicle, 'SPEED', 3, 9999, true, false);
 		case 'elytra':
 			set_pinv(@player, 102, array('name': 'ELYTRA'));
 	}
