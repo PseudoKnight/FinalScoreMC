@@ -24,8 +24,8 @@ case 'load':
 					if(ponline(@entity['uuid'])) {
 						@target = @entity['uuid'];
 						@targetedSound = array(sound: 'ENTITY_ZOMBIE_VILLAGER_CONVERTED', pitch: 2.0, volume: 0.5);
-						play_sound(@loc, @targetedSound, player(@target));
-						set_timeout(500, closure(play_sound(@loc, @targetedSound, player(@target))));
+						play_sound(entity_loc(@target), @targetedSound, player(@target));
+						set_timeout(500, closure(play_sound(entity_loc(@target), @targetedSound, player(@target))));
 						break();
 					}
 				}
