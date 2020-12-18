@@ -24,8 +24,11 @@ case 'load':
 					if(ponline(@entity['uuid'])) {
 						@target = @entity['uuid'];
 						@targetedSound = array(sound: 'ENTITY_ZOMBIE_VILLAGER_CONVERTED', pitch: 2.0, volume: 0.5);
-						play_sound(entity_loc(@target), @targetedSound, player(@target));
-						set_timeout(500, closure(play_sound(entity_loc(@target), @targetedSound, player(@target))));
+						@targetSound = array(sound: 'BLOCK_NOTE_BLOCK_BIT', pitch: 2.0);
+						play_sound(ploc(), @targetSound, player());
+						set_timeout(500, closure(play_sound(ploc(), @targetSound, player())));
+						play_sound(@trace['location'], @targetSound, player(@target));
+						set_timeout(500, closure(play_sound(@trace['location'], @targetedSound, player(@target))));
 						break();
 					}
 				}
