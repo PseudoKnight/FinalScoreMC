@@ -35,7 +35,7 @@ case 'load':
 			}
 
 			set_pinv(player(), @slot, null);
-			@loc = location_shift(ploc(), 'up', 1.25);
+			@loc = location_shift(ploc(), 'up', 2.25);
 			@tempLoc = @loc[];
 			if(@event['button'] == 'left') {
 				@tempLoc['yaw'] -= 90;
@@ -46,14 +46,24 @@ case 'load':
 			@loc['x'] += @v['x'];
 			@loc['y'] += @v['y'];
 			@loc['z'] += @v['z'];
-			
 
-			@box = spawn_entity('ARMOR_STAND', 1, @loc, closure(@e) {
+			proc _get_entity_location(@loc) {
+				return(location_shift(@loc, 'down', 0.9));
+			}
+
+			proc _get_missile_location(@loc) {
+				return(location_shift(@loc, 'up', 0.9));
+			}
+
+			@box = spawn_entity('ARMOR_STAND', 1, _get_entity_location(@loc), closure(@e) {
 				set_mob_equipment(@e, array(HELMET: @item));
 				set_entity_spec(@e, array(
 					gravity: false,
 					visible: false,
 					small: true,
+					poses: array(
+						poseHead: array(3.14159, 0, 0)
+					)
 				));
 			})[0];
 
@@ -88,15 +98,15 @@ case 'load':
 						clear_task();
 						execute(@returnToSender);
 						// Self-detonate missile
-						try(execute(entity_loc(@box), @explode));
+						try(execute(_get_missile_location(entity_loc(@box)), @explode));
 					} else {
-						@loc = entity_loc(@box);
+						@loc = _get_missile_location(entity_loc(@box));
 
 						@targetLoc = @target;
 						if(!is_array(@targetLoc)) {
-							@targetLoc = location_shift(entity_loc(@target), 'up');
+							@targetLoc = _get_missile_location(entity_loc(@target));
 						}
-						@newLoc = location_shift(@targetLoc, 'down');
+						@newLoc = @targetLoc[];
 						@yaw = get_yaw(@loc, @newLoc);
 						@pitch = get_pitch(@loc, @newLoc);
 
@@ -142,17 +152,20 @@ case 'load':
 						@back['x'] += neg(@v['x']) * 2;
 						@back['y'] += neg(@v['y']) * 2;
 						@back['z'] += neg(@v['z']) * 2;
-						spawn_particle(location_shift(@back, 'up', 0.75), 'CAMPFIRE_COSY_SMOKE');
+						spawn_particle(@back, 'CAMPFIRE_COSY_SMOKE');
 
-						if(get_block_info(location_shift(@newLoc, 'up', 0.75), 'solid') || distance(@newLoc, @targetLoc) < 1) {
+						// needs to be changed to a ray trace
+						if(get_block_info(@newLoc, 'solid') || distance(@newLoc, @targetLoc) < 1) {
 							clear_task();
-							set_entity_loc(@box, @newLoc);
+							set_entity_loc(@box, _get_entity_location(@newLoc));
 							set_timeout(500, @returnToSender);
 							execute(@loc, @explode);
 						} else {
-							set_entity_loc(@box, @newLoc);
+							set_entity_loc(@box, _get_entity_location(@newLoc));
 							set_entity_spec(@box, array(poses: array(poseHead: array(to_radians(@pitch), 0, 0))));
-							play_sound(@loc, array(sound: 'ENTITY_GUARDIAN_ATTACK', pitch: 0.5 + rand() * 1.5));
+							if(!rand(3)) {
+								play_sound(@loc, array(sound: 'ENTITY_GUARDIAN_ATTACK', pitch: 0.5 + rand() * 1.5));
+							}
 						}
 					}
 				} catch(Exception @ex) {
