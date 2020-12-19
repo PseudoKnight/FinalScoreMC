@@ -61,9 +61,6 @@ case 'load':
 					gravity: false,
 					visible: false,
 					small: true,
-					poses: array(
-						poseHead: array(3.14159, 0, 0)
-					)
 				));
 			})[0];
 
@@ -148,12 +145,6 @@ case 'load':
 						@newLoc['yaw'] = @yaw;
 						@newLoc['pitch'] = @pitch;
 
-						@back = @loc[];
-						@back['x'] += neg(@v['x']) * 2;
-						@back['y'] += neg(@v['y']) * 2;
-						@back['z'] += neg(@v['z']) * 2;
-						spawn_particle(@back, 'CAMPFIRE_COSY_SMOKE');
-
 						// needs to be changed to a ray trace
 						if(get_block_info(@newLoc, 'solid') || distance(@newLoc, @targetLoc) < 1) {
 							clear_task();
@@ -164,6 +155,11 @@ case 'load':
 							set_entity_loc(@box, _get_entity_location(@newLoc));
 							set_entity_spec(@box, array(poses: array(poseHead: array(to_radians(@pitch), 0, 0))));
 							if(!rand(3)) {
+								@back = @loc[];
+								@back['x'] += neg(@v['x']) * 2;
+								@back['y'] += neg(@v['y']) * 2;
+								@back['z'] += neg(@v['z']) * 2;
+								spawn_particle(@back, 'CAMPFIRE_COSY_SMOKE');
 								play_sound(@loc, array(sound: 'ENTITY_GUARDIAN_ATTACK', pitch: 0.5 + rand() * 1.5));
 							}
 						}
