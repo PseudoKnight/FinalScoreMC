@@ -68,7 +68,7 @@ register_command('track', array(
 						if(!array_index_exists(@track, @setting)) {
 							@track[@setting] = array();
 						}
-						@loc = array_normalize(entity_loc(puuid()))[0..3];
+						@loc = array_normalize(entity_loc(puuid()))[0..5];
 						@track[@setting][] = @loc;
 						msg(colorize("&7[Track]&r Set &e@setting&r to this location"));
 
