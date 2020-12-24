@@ -7,7 +7,7 @@
 	@args = parse_args($);
 	foreach(@index: @arg in @args) {
 		if(string_position(@arg, '@p') == 0) {
-			@args[@index] = _get_nearby_player(@loc, 32);
+			@args[@index] = _get_nearby_player(@loc, 64);
 		}
 	}
 	@msg = array_implode(@args);
