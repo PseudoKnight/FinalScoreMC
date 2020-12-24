@@ -22,10 +22,15 @@ register_command('cake', array(
 		switch(@args[0]) {
 			case 'list':
 				@cakes = get_value('cakeinfo');
-				@names = '';
-				@count = 0;
+				@achieved = '';
+				@remaining = '';
+				@achievedCount = 0;
+				@remainingCount = 0;
 				@total = 0;
-				@player = @player = puuid(player(), true);
+				@player = '';
+				if(player() != '~console') {
+					@player = puuid(player(), true);
+				}
 				@type = 'secret';
 				foreach(@arg in @args[1..]) {
 					if(array_contains(array('challenge', 'secret', 'coop'), @arg)) {
@@ -33,6 +38,9 @@ register_command('cake', array(
 					} else {
 						@player = puuid(@arg, true);
 					}
+				}
+				if(!@player) {
+					die('Player not specified.');
 				}
 				foreach(@id: @cake in @cakes) {
 					if(@cake['type'] == @type) {
@@ -43,19 +51,17 @@ register_command('cake', array(
 						}
 						@name = array_implode(@splitName, '_');
 						if(array_index_exists(@cake['players'], @player)) {
-							@count += 1;
-							@names .= ' '.color('dark_gray').@name;
+							@achievedCount += 1;
+							@achieved .= ' '.@name;
 						} else {
-							@names .= ' '.color('r').@name;
+							@remainingCount += 1;
+							@remaining .= ' '.color('r').@name;
 						}
 					}
 				}
-				if(array_size(@args) > 1) {
-					msg(color('yellow').'CAKES ACHIEVED BY '.to_upper(@args[1]));
-				} else {
-					msg(color('yellow').'CAKES YOU\'VE ACHIEVED');
-				}
-				msg(color('green').color('l').to_upper(@type[0]).@type[1..].' Cakes'.color('green').' ('.@count.' of '.@total.')'.color('r').@names);
+				@type = to_upper(@type[0]).@type[1..];
+				msg(color('green').color('l').@type.' Cakes Achieved'.color('green').' ('.@achievedCount.' of '.@total.')'.color('r').@achieved);
+				msg(color('yellow').color('l').@type.' Cakes Remaining'.color('yellow').' ('.@remainingCount.' of '.@total.')'.color('r').@remaining);
 
 			case 'find':
 				if(!has_permission('group.engineer')) {
