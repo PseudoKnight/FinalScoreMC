@@ -144,7 +144,10 @@ register_command('hockey', array(
 				@hockey['last'] = @player;
 				@hockey['holder'] = '';
 			}
-			bind('player_interact_entity', associative_array('id': 'hockey-interact'), associative_array('id': @hockey['puck']), @event, @hockey) {
+			bind('player_interact_entity', associative_array('id': 'hockey-interact'), null, @event, @hockey) {
+				if(@event['id'] != @hockey['puck']) {
+					die();
+				}
 				@ploc = ploc();
 				@eloc = entity_loc(@hockey['puck']);
 				@ploc['y'] += 1;
@@ -234,7 +237,7 @@ register_command('hockey', array(
 				@l = entity_loc(@hockey['puck']);
 				@block = get_block(location_shift(@l, 'down'));
 
-				if(@block == 'REW_WOOL' || @block == 'BLUE_WOOL') {
+				if(@block == 'RED_WOOL' || @block == 'BLUE_WOOL') {
 					@team = if(@block == 'BLUE_WOOL', @hockey['red'], @hockey['blue']);
 					set_pscore('score', @team, get_pscore('score', @team, 'hockey') + 1, 'hockey');
 					launch_firework(@l, associative_array('strength': 0));
