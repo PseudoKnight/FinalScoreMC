@@ -2,7 +2,7 @@ proc _hoops_ball_create(@loc) {
 	@game = import('hoops');
 	if(!@loc) {
 		// practice mode
-		if(@game) {
+		if(@game && entity_exists(@game['ball'])) {
 			die('Already running.');
 		}
 		@loc = get_command_block();
