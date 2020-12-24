@@ -334,8 +334,7 @@ register_command('spleef', array(
 									_regionmsg(@cfg['region']['wrapper'], color('green').'[Spleef] '.display_name(@player).color('r').' was knocked out.');
 									set_ploc(@player, @cfg['warp']['lobby']);
 									clear_peffects(@player);
-									clear_pinv(@player);
-									set_pmode(@player, 'ADVENTURE');
+									_equip_kit(@player);
 								}
 							}
 						}
