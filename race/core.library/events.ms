@@ -51,6 +51,15 @@ proc _race_bind_events(@race) {
 				entity_remove(@vehicle1);
 			}
 			set_ploc(@race['lobby']);
+			_race_check_players(@race);
+		}
+	}
+
+	@race['binds'][] = bind('player_command', null, null, @event, @race) {
+		if(array_index_exists(@race['players'], player())
+		&& array_contains(array('/accept', '/warp', '/spawn', '/home', '/join', '/dev', '/park', '/survival', '/tpa'), @event['prefix'])) {
+			_race_remove_player(@race, player());
+			_race_check_players(@race);
 		}
 	}
 }

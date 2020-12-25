@@ -9,6 +9,7 @@ proc _race_create_and_join(@id) {
 		@msg = player().' queued up a race on the '.to_upper(@id[0]).substr(@id, 1).' track.';
 		_click_tell(all_players(pworld()), array('&7[Race] ', array('&b[JOIN] ', '/race join '.@id), @msg));
 	} else if(!array_index_exists(@race['players'], player()) && @race['state'] != 'ending') {
+		_race_add_player(@id, player());
 		if(@race['state'] == 'countdown' || @race['state'] == 'running') {
 			_race_prepare_player(@race, player());
 			_race_place_player(@race, player(), array_get_rand(@race['spawn']));
@@ -18,7 +19,6 @@ proc _race_create_and_join(@id) {
 				});
 			}
 		}
-		_race_add_player(@id, player());
 		_click_tell(all_players(pworld()), array('&7[Race] ', array('&b[JOIN] ', '/race join '.@id), player().' joined the race.'));
 	}
 	return(@race);
@@ -120,7 +120,7 @@ proc _race_start(@race) {
 	@race['binds'][] = bind('player_move', null, null, @event, @race) {
 		if(array_index_exists(@race['players'], player())) {
 			@loc = location_shift(@event['to'], 'up', 0.35);
-			spawn_particle(@loc, 'FIREWORKS_SPARK');
+			spawn_particle(location_shift(@event['from'], 'up', 0.35), 'FIREWORKS_SPARK');
 			@p = @race['players'][player()];
 			if(@p['state'] != 'finished') {
 				@checkpoint = @p['checkpoint'];
@@ -205,7 +205,7 @@ proc _race_check_players(@race) {
 			@racing++;
 		}
 	}
-	if(@racing == 1) {
+	if(@racing <= 1) {
 		_race_end(@race);
 	}
 }
@@ -217,7 +217,7 @@ proc _race_end(@race) {
 		return();
 	}
 	@race['state'] = 'ending';
-	set_timeout(7000, closure(){
+	set_timeout(5000, closure(){
 		_remove_activity('race'.@race['id']);
 		_race_unbind_events(@race);
 		_race_remove_players(@race);
