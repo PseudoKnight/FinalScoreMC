@@ -435,6 +435,7 @@ proc _pvp_end_match(@id, @winners) {
 	queue_delay(100, @id); // timing ensures players are alive or in spec
 	queue_push(closure(){
 		if(array_index_exists(@pvp, 'stats')) {
+			@winnersString = array_implode(@winners, ' and ').' wins!';
 			@table = _stats_table();
 			@a = @table[0];
 			@b = @table[1];
@@ -453,16 +454,24 @@ proc _pvp_end_match(@id, @winners) {
 						color('gold').color('bold').@player.if(@pvp['coins'] > 0, ' +'.@pvp['coins']),
 						@player)
 					.'-', '-', ' '));
+				title(@player, @winnersString, '', 20, 60, 20);
 			}
 			_pvp_msg(@pvp, colorize('&7&m|----------------------------------------------------|'));
 		} else if(array_index_exists(@pvp, 'team') && array_size(@winners) > 0) {
-			_worldmsg(@world, color('gray').'[PVP] '
-				.@pvp['players'][@leader]['color'].color('bold')
-				.@arena['team'][@pvp['players'][@leader]['team']]['name'].' win!\n'
-				.@pvp['players'][@leader]['color'].array_implode(@winners, ' '));
+			@winningTeam = @pvp['players'][@leader]['color'].color('bold')
+				.@arena['team'][@pvp['players'][@leader]['team']]['name'].' win!';
+			@winnersString = array_implode(@winners, ' ');
+			_worldmsg(@world, color('gray').'[PVP] '.@winningTeam.'\n'
+				.@pvp['players'][@leader]['color'].@winnersString);
+			foreach(@p in array_keys(@pvp['players'])) {
+				title(@p, @winningTeam, @winnersString, 20, 60, 20);
+			}
 		} else if(array_size(@winners) > 0) {
-			_worldmsg(@world, color('gray').'[PVP] '.color('r').array_implode(@winners, ' and ').' wins!');
-
+			@winnersString = array_implode(@winners, ' and ').' wins!';
+			_worldmsg(@world, color('gray').'[PVP] '.color('r').@winnersString);
+			foreach(@p in array_keys(@pvp['players'])) {
+				title(@p, @winnersString, '', 20, 60, 20);
+			}
 		} else {
 			_worldmsg(@world, color('gray').'[PVP] '.color('r').'Nobody wins! Wait.. what?!');
 		}
