@@ -1,9 +1,9 @@
 register_command('timer', array(
-	'description': 'Handles time trials for speed runs. (CommandBlocks Only)',
-	'usage': '/timer <start|stop> <id> <player>',
-	'permission': 'command.timer',
-	'executor': closure(@alias, @sender, @args, @info) {
-		if(array_size(@args) != 3) {
+	description: 'Handles time trials for speed runs. (CommandBlocks Only)',
+	usage: '/timer <start|stop|checkpoint> <id> [x y z]',
+	permission: 'command.timer',
+	executor: closure(@alias, @sender, @args, @info) {
+		if(array_size(@args) == 1 || array_size(@args) == 4) {
 			die();
 		}
 
@@ -13,10 +13,18 @@ register_command('timer', array(
 		}
 
 		@id = @args[1];
-		@startLoc = ploc(@player);
 		@timers = import('timers');
 
-		if(@args[0] === 'start') {
+		if(@args[0] == 'start') {
+
+			@startLoc = ploc(@player);
+			if(array_size(@args) == 5) {
+				@yaw = @startLoc['yaw'];
+				@pitch = @startLoc['pitch'];
+				@startLoc = _center(_relative_coords(get_command_block(), @args[2], @args[3], @args[4]), 0);
+				@startLoc['yaw'] = @yaw;
+				@startLoc['pitch'] = @pitch;
+			}
 
 			set_phealth(@player, 20);
 			set_phunger(@player, 20);
@@ -25,6 +33,7 @@ register_command('timer', array(
 			set_plevel(@player, 0);
 			set_pexp(@player, 0);
 			clear_peffects(@player);
+			set_pbed_location(@player, @startLoc);
 
 			if(array_index_exists(@timers, @player)) {
 				clear_task(@timers[@player][2]);
@@ -39,7 +48,7 @@ register_command('timer', array(
 				@ptime = 0;
 			}
 
-			play_sound(ploc(@player), array('sound': 'ENTITY_FIREWORK_ROCKET_BLAST'), @player);
+			play_sound(ploc(@player), array(sound: 'ENTITY_FIREWORK_ROCKET_BLAST'), @player);
 
 			@stop = false;
 			@timers[@player][2] = set_interval(1000, closure(){
@@ -65,9 +74,9 @@ register_command('timer', array(
 
 						if(@time + 5 > @ptime && @time <= @ptime + 0.5) {
 							if(@time == round(@ptime)) {
-								play_sound(@ploc, array('sound': 'ENTITY_VILLAGER_NO'), @player);
+								play_sound(@ploc, array(sound: 'ENTITY_VILLAGER_NO'), @player);
 							} else {
-								play_sound(@ploc, array('sound': 'UI_BUTTON_CLICK', 'pitch': 2), @player);
+								play_sound(@ploc, array(sound: 'UI_BUTTON_CLICK', pitch: 2), @player);
 							}
 						}
 
@@ -90,58 +99,91 @@ register_command('timer', array(
 					array_remove(@timers, @player);
 					unbind(@player.'reset');
 					unbind(@player.'timerdeath');
+					unbind(@player.'checkpoint');
 					if(ponline(@player) && pworld(@player) === 'custom') {
 						set_plevel(@player, 0);
 						set_pexp(@player, 0);
-						ptake_item(@player, array('name': 'GOLD_NUGGET'));
+						ptake_item(@player, array(name: 'GOLD_NUGGET'));
+						ptake_item(@player, array(name: 'IRON_NUGGET'));
 					}
 					clear_task();
 					_remove_activity(@player.'timer');
 				}
 			});
 
-			@restartButton = array('name': 'GOLD_NUGGET', 'meta': array('display': color('green').color('bold').'Restart Button'));
+			@restartButton = array(name: 'IRON_NUGGET', meta: array(display: color('green').color('bold').'Restart Button'));
+			@checkpointButton = array(name: 'GOLD_NUGGET', meta: array(display: color('green').color('bold').'Checkpoint Button'));
 			set_pinv(@player, 1, @restartButton);
 			set_pheld_slot(@player, 0);
 
-			if(!has_bind(@player.'reset')) {
-				bind('player_interact', array('id': @player.'reset'), array('player': @player, 'itemname': 'GOLD_NUGGET'), @e, @startLoc) {
-					if(@e['action'] == 'right_click_block') {
-						@block = @e['block'];
-						if(@block == 'STONE_BUTTON' || @block == 'OAK_BUTTON') {
-							die();
-						}
-					}
+			unbind(@player.'reset');
+			bind('player_interact', array(id: @player.'reset'), array(player: @player, itemname: 'IRON_NUGGET'), @event, @startLoc) {
+				if(@event['action'] != 'right_click_block' || !string_ends_with(@event['block'], 'BUTTON')) {
 					cancel();
 					set_ploc(@startLoc);
+					play_sound(@startLoc, array(sound: 'ENTITY_ENDERMAN_TELEPORT'), player());
 				}
 			}
+
 			if(!has_bind(@player.'timerdeath')) {
-				bind('player_death', array('id': @player.'timerdeath'), array('player': @player), @e, @restartButton) {
+				bind('player_death', array(id: @player.'timerdeath'), array(player: @player), @event, @restartButton, @checkpointButton) {
 					if(!_is_survival_world(pworld())) {
 						modify_event('drops', array());
-						set_timeout(500, closure(){
+						set_timeout(400, closure(){
 							respawn();
 							set_timeout(50, closure(){
 								set_pinv(player(), 1, @restartButton);
+								if(has_bind(player().'checkpoint')) {
+									set_pinv(player(), 2, @checkpointButton);
+								}
 							});
 						});
+					} else {
+						unbind();
 					}
 				}
 			}
 
-		} else if(@args[0] === 'stop'
+		} else if(@args[0] == 'checkpoint'
+		&& array_index_exists(@timers, @player)
+		&& @timers[@player][0] == @id) {
+			@loc = ploc(@player);
+			if(array_size(@args) == 5) {
+				@yaw = @loc['yaw'];
+				@pitch = @loc['pitch'];
+				@loc = _center(_relative_coords(get_command_block(), @args[2], @args[3], @args[4]), 0);
+				@loc['yaw'] = @yaw;
+				@loc['pitch'] = @pitch;
+			}
+			set_pbed_location(@player, @loc);
+			@checkpointButton = array(name: 'GOLD_NUGGET', meta: array(display: color('green').color('bold').'Checkpoint Button'));
+			set_pinv(@player, 2, @checkpointButton);
+			unbind(@player.'checkpoint');
+			bind('player_interact', array(id: @player.'checkpoint'), array(player: @player, itemname: 'GOLD_NUGGET'), @event, @loc) {
+				if(@event['action'] != 'right_click_block' || !string_ends_with(@event['block'], 'BUTTON')) {
+					cancel();
+					set_ploc(@loc);
+					play_sound(@loc, array(sound: 'ENTITY_ENDERMAN_TELEPORT'), player());
+					set_phealth(20);
+					set_phunger(20);
+					set_psaturation(5);
+					set_ponfire(0);
+					set_entity_fall_distance(puuid(), 0);
+				}
+			}
+
+		} else if(@args[0] == 'stop'
 		&& array_index_exists(@timers, @player)
 		&& @timers[@player][0] == @id) {
 
 			@time = round((time() - @timers[@player][1]) / 1000, 1);
-			unbind(@player.'reset');
 			unbind(@player.'timerdeath');
+			unbind(@player.'checkpoint');
 			ptake_item(@player, array('name': 'GOLD_NUGGET'));
 			clear_task(@timers[@player][2]);
 			array_remove(@timers, @player);
 			_remove_activity(@player.'timer');
-			play_sound(ploc(@player), array('sound': 'ENTITY_EXPERIENCE_ORB_PICKUP'), @player);
+			play_sound(ploc(@player), array(sound: 'ENTITY_EXPERIENCE_ORB_PICKUP'), @player);
 
 			tmsg(@player, color('yellow').'You achieved a time of '.color('bold').@time.color('yellow').' seconds.');
 			console(@player.' achieved a time of '.@time.' at '.@id, false);
@@ -150,6 +192,11 @@ register_command('timer', array(
 			# MARATHON
 			@marathon = import('marathon');
 			if(@marathon && array_index_exists(@marathon['players'], @player)) {
+
+				// we don't want to wait to remove reset button
+				unbind(@player.'reset');
+				ptake_item(@player, array(name: 'IRON_NUGGET'));
+
 				if(@id != @marathon['players'][@player]) {
 					tmsg(@player, 'You skipped a course. Disqualified!');
 					try(remove_bar(@player));
@@ -189,6 +236,13 @@ register_command('timer', array(
 						}
 					}
 				}
+			} else {
+				set_timeout(7000, closure() {
+					if(!has_bind(@player.'timerdeath')) {
+						ptake_item(@player, array(name: 'IRON_NUGGET'));
+						unbind(@player.'reset');
+					}
+				});
 			}
 
 			# PERSONAL TIME
@@ -252,10 +306,10 @@ register_command('timer', array(
 					broadcast(color('green').@player.' tied the '.color('bold').@place.color('green').' place time for '._to_upper_camel_case(@id).'!');
 				}
 				launch_firework(@loc, array(
-					'strength': 1,
-					'colors': array(array(rand(256), rand(256), rand(256))),
-					'fade': array(array(rand(256), rand(256), rand(256))),
-					'type': 'BALL_LARGE',
+					strength: 1,
+					colors: array(array(rand(256), rand(256), rand(256))),
+					fade: array(array(rand(256), rand(256), rand(256))),
+					type: 'BALL_LARGE',
 				));
 				if(array_size(@times) > 20) {
 					array_remove(@times, 20);
@@ -328,16 +382,16 @@ register_command('timer', array(
 						store_value('times', @averages);
 						if(@overallRankup) {
 							broadcast(color('green').'... and moved to '.@place.@suffix.' place overall!');
-							play_sound(@loc, array('sound': 'UI_TOAST_CHALLENGE_COMPLETE'));
+							play_sound(@loc, array(sound: 'UI_TOAST_CHALLENGE_COMPLETE'));
 						}
 					});
 				});
 
 			} else {
 				launch_firework(@loc, array(
-					'strength': 0,
-					'colors': array(array(rand(256), rand(256), rand(256))),
-					'fade': array(array(rand(256), rand(256), rand(256))),
+					strength: 0,
+					colors: array(array(rand(256), rand(256), rand(256))),
+					fade: array(array(rand(256), rand(256), rand(256))),
 				));
 			}
 		}

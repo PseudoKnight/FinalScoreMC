@@ -34,7 +34,7 @@ proc _equip_kit(@player, @inv) {
 			_clear_pinv(@player);
 			@pdata = _pdata(@player);
 			@kit = array(
-				2: array('name': 'BOOK', 'meta': array(
+				4: array('name': 'BOOK', 'meta': array(
 					'display': 'Park Directory',
 				)),
 				3: array('name': 'COOKED_MUTTON', 'qty': 32, 'meta': array(
@@ -43,7 +43,7 @@ proc _equip_kit(@player, @inv) {
 				)),
 			);
 			if(array_index_exists(@pdata, 'support') && @pdata['support'] >= 10) {
-				@kit[4] = array(
+				@kit[5] = array(
 					'name': 'FIREWORK_ROCKET',
 					'meta': array(
 						'display': colorize('&r&kX&a&l Random Firework &r&kX'),
