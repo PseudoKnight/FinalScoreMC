@@ -101,6 +101,9 @@ proc _race_place_players(@race) {
 }
 
 proc _race_drop_player(@race, @player) {
+	if(!array_index_exists(@race['players'], @player)) {
+		return();
+	}
 	foreach(@stand in @race['players'][@player]['stands']) {
 		try(entity_remove(@stand));
 	}
