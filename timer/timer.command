@@ -242,8 +242,10 @@ register_command('timer', array(
 			} else {
 				set_timeout(7000, closure() {
 					if(!has_bind(@player.'timerdeath')) {
-						ptake_item(@player, array(name: 'IRON_NUGGET'));
 						unbind(@player.'reset');
+						if(ponline(@player) && !_is_survival_world(pworld(@player))) {
+							ptake_item(@player, array(name: 'IRON_NUGGET'));
+						}
 					}
 				});
 			}
