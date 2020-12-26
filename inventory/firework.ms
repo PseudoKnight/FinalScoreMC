@@ -103,8 +103,11 @@ bind('player_interact', null, array('itemname': 'FIREWORK_ROCKET', 'button': 'ri
 		@loc = null;
 		if(@event['action'] === 'right_click_block') {
 			@loc = location_shift(@event['location'], @event['facing']);
+			@ploc = ploc();
+			@loc['yaw'] = @ploc['yaw'];
+			@loc['pitch'] = @ploc['pitch'];
 		} else {
-			@loc = ploc();
+			@loc = location_shift(ploc(), 'up');
 		}
 		@loc['x'] += 0.5;
 		@loc['z'] += 0.5;
@@ -134,6 +137,20 @@ bind('player_interact', null, array('itemname': 'FIREWORK_ROCKET', 'button': 'ri
 			if(@f > 1 && !rand(4)) {
 				set_metadata(@firework, 'mob', array_get_rand(array('chicken', 'bat', 'pig')));
 			}
+			if(@f == 2) {
+				set_metadata(@firework, 'spec', player());
+				set_metadata(@firework, 'loc', ploc());
+				@stand = spawn_entity('ARMOR_STAND', 1, @loc, closure(@e){
+					set_entity_spec(@e, array(visible: false, gravity: false));
+				})[0];
+				set_entity_rider(@firework, @stand);
+				set_pmode(player(), 'SPECTATOR');
+				set_pspectator_target(player(), @stand);
+				unbind(player().'firework');
+				bind('player_toggle_sneak', array(id: player().'firework'), array(player: player()), @event) {
+					cancel();
+				}
+			}
 		}
 
 		@item['name'] = 'FIREWORK_STAR';
@@ -155,6 +172,19 @@ bind('player_interact', null, array('itemname': 'FIREWORK_ROCKET', 'button': 'ri
 }
 
 bind('firework_explode', null, null, @event){
+	if(has_metadata(@event['id'], 'spec')) {
+		@player = get_metadata(@event['id'], 'spec', 'CommandHelper');
+		@returnLoc = get_metadata(@event['id'], 'loc', 'CommandHelper');
+		@stand = get_entity_rider(@event['id']);
+		set_timeout(1500, closure(){
+			try(entity_remove(@stand));
+			unbind(@player.'firework');
+			if(ponline(@player)) {
+				set_ploc(@player, @returnLoc);
+				set_pmode(@player, 'ADVENTURE');
+			}
+		});
+	}
 	if(has_metadata(@event['id'], 'mob')){
 		@mob = get_metadata(@event['id'], 'mob', 'CommandHelper');
 		@loc = @event['location'];
@@ -169,11 +199,10 @@ bind('firework_explode', null, null, @event){
 					set_equipment_droprates(@m, null);
 					set_entity_gliding(@m, true);
 				} else if(@cookie) {
-					spawn_entity('DROPPED_ITEM', 1, @loc, closure(@cookie) {
-						set_entity_spec(@cookie, array('itemstack': array('name': 'COOKIE')));
-						set_entity_rider(@m, @cookie);
-						set_entity_onfire(@m, 0);
-					})
+					@item = spawn_entity('DROPPED_ITEM', 1, @loc)[0];
+					set_entity_rider(@m, @item);
+					set_entity_onfire(@m, 0);
+					set_entity_spec(@item, array('itemstack': array('name': 'COOKIE')));
 				}
 				set_entity_velocity(@m, get_vector(@loc));
 				@loc['yaw'] += 24;
