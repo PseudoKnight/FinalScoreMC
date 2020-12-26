@@ -116,6 +116,9 @@ register_command('timer', array(
 			set_pinv(@player, 1, @restartButton);
 			set_pheld_slot(@player, 0);
 
+			unbind(@player.'checkpoint'); // in case they restarted from after a checkpoint
+			ptake_item(@player, @checkpointButton);
+
 			unbind(@player.'reset');
 			bind('player_interact', array(id: @player.'reset'), array(player: @player, itemname: 'IRON_NUGGET'), @event, @startLoc) {
 				if(@event['action'] != 'right_click_block' || !string_ends_with(@event['block'], 'BUTTON')) {
