@@ -68,6 +68,10 @@ bind('player_death', null, null, @event) {
 			}
 		}
 
+		// Remove 100xp cap from dropped experience.
+		// Why does this even exist?
+		modify_event('xp', plevel() * 7);
+
 		/*
 		if(array_index_exists(@event['cause'], 'damager')) {
 			@damager = @event['cause']['damager'];
