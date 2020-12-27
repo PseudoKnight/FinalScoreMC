@@ -1,0 +1,5 @@
+root = true
+
+[*.{ms,msa,command}]
+indent_style = tab
+tab_width = 4
