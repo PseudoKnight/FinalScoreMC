@@ -27,6 +27,7 @@ bind('inventory_click', null, array('clicktype': 'SHIFT_RIGHT'), @event) {
 				@title = @event['slotitem']['meta']['display'] ||| 'Shulker Box';
 				@id = player().'shulkerbox';
 				create_virtual_inventory(@id, 'SHULKER_BOX', @title, @inv);
+				cancel();
 				popen_inventory(player().'shulkerbox');
 				bind('inventory_click', array('id': player().'shulkerbox', 'priority': 'HIGH'), array('player': player()), @event) {
 					consume();
