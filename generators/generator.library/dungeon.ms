@@ -299,7 +299,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 						// This allows for good looking hallways at minRoomHeight.
 						@height = @minRoomHeight;
 						if(@roomWidth != 1 && @roomLength != 1) {
-							@minRoomHeight + integer(srand(@random) * (@maxRoomHeight - @minRoomHeight + 1));
+							@height = @minRoomHeight + integer(srand(@random) * (@maxRoomHeight - @minRoomHeight + 1));
 						}
 
 						// Room types determine generation shape
