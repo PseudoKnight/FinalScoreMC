@@ -7,7 +7,7 @@ register_command('timer', array(
 			die();
 		}
 
-		@player = _get_nearby_player(get_command_block(), 3);
+		@player = _get_nearby_player(get_command_block(), 5);
 		if(!@player || phas_flight(@player)) {
 			return();
 		}
