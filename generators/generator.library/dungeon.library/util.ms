@@ -53,7 +53,7 @@ proc _get_direction(@random, @dirs = array('north', 'south', 'east', 'west')) {
 /*
  * Gets the cell height of the nearest adjacent cell to this coordinate.
  */
-proc _get_adjacent_height(@heightMap, @maxRoomHeight, @c, @r, @x, @z) {
+proc _get_nearest_height(@heightMap, @maxRoomHeight, @c, @r, @x, @z) {
 	@height = -1;
 	try {
 		if(@x % 2 == 1) {

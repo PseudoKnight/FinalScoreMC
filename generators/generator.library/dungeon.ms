@@ -600,7 +600,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 											if(@materials['staggeredWall']) {
 												if((@x + @z) % 2 == 0 || (@x + @z) % 3 == 0) {
 													_add_to_chunk(@chunk, @loc, @materials['wall'][(@x + @z) % array_size(@materials['wall'])]);
-												} else if(@y == @groundY + 1 + _get_adjacent_height(@heightMap, @maxRoomHeight, @c, @r, @x, @z)) {
+												} else if(@y == @groundY + 1 + _get_nearest_height(@heightMap, @maxRoomHeight, @c, @r, @x, @z)) {
 													_add_to_chunk(@chunk, @loc, @materials['edge']);
 												} else {
 													_add_to_chunk(@chunk, @loc, 'air');
