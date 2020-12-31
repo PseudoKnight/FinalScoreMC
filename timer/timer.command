@@ -306,10 +306,10 @@ register_command('timer', array(
 					default:
 						@place = @place.'th';
 				}
-				if(@rankup) {
-					broadcast(color('green').@player.' got a '.color('bold').@place.color('green').' place time for '._to_upper_camel_case(@id).'!');
-				} else if(@tied) {
+				if(@tied) {
 					broadcast(color('green').@player.' tied the '.color('bold').@place.color('green').' place time for '._to_upper_camel_case(@id).'!');
+				} else if(@rankup) {
+					broadcast(color('green').@player.' got a '.color('bold').@place.color('green').' place time for '._to_upper_camel_case(@id).'!');
 				}
 				launch_firework(@loc, array(
 					strength: 1,
