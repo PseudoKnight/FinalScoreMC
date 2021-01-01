@@ -51,7 +51,7 @@ proc _get_loot(@floor, @random, @bonus = 1.0, @loot = array(
 	array('chance': 0.01, 'item': 'WOLF_SPAWN_EGG'),
 	array('chance': 0.01, 'item': 'VILLAGER_SPAWN_EGG'),
 )) {
-	@inv = associative_array();
+	@inv = array();
 	foreach(@weightedLoot in @loot){
 		@r = srand(@random);
 		if(@r < @weightedLoot['chance'] + @bonus / 100 + @bonus * @floor * 0.01){
