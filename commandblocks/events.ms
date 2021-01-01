@@ -59,10 +59,10 @@ proc _msg_block_command(@loc) {
 	@cmd = replace(@cmd, '\\', '\\\\');
 	@cmd = replace(@cmd, '"', '\\u0022');
 	runas('~console', '/tellraw '.player().' ["",'
-			'{"text":"[EDIT]","clickEvent":{"action":"run_command","value":"/scb"}},'
+			.'{"text":"[EDIT]","clickEvent":{"action":"run_command","value":"/scb"}},'
 			.'{"text":" [REDSTONE |","clickEvent":{"action":"run_command","value":"/scbauto false"}},'
 			.'{"text":" ALWAYS]","clickEvent":{"action":"run_command","value":"/scbauto true"}},'
-			'{"text":" [CONDITIONAL]","clickEvent":{"action":"run_command","value":"/scbconditional"}},'
+			.'{"text":" [CONDITIONAL]","clickEvent":{"action":"run_command","value":"/scbconditional"}},'
 			.'{"text":" [TYPE]","clickEvent":{"action":"run_command","value":"/scbtype"}},'
 			.'{"text":" [COPY]","clickEvent":{"action":"suggest_command","value":"/scb '.@cmd.'"}},'
 			.'{"text":"\\n'.@cmd.'"}]');

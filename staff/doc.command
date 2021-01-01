@@ -29,10 +29,10 @@ register_command('doc', array(
 				@returns = reflect_docs(@func, 'type');
 				@args = reflect_docs(@func, 'args');
 
-				msg(color('YELLOW') . @func . ':' color('GREEN') . 'Returns' @returns .
-				'.' color('BLUE') . 'Expects' @args . '.' color('YELLOW') . @desc);
+				msg(color('YELLOW') . @func . ': ' . color('GREEN') . 'Returns ' . @returns .
+				'. ' . color('BLUE') . 'Expects ' . @args . '. '. color('YELLOW') . @desc);
 			} catch(FormatException @ex) {
-				msg(color('RED') . 'Could not show information for' @func);
+				msg(color('RED') . 'Could not show information for ' . @func);
 			}
 		}
 

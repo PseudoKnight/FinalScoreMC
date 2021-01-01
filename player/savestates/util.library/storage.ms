@@ -54,7 +54,7 @@ proc _get_pstate(@player, @state) {
 			set_peffect(@player, @effect['id'], @effect['strength'], @effect['seconds'], @effect['ambient']);
 		}
 	} catch(Exception @ex) {
-		console('WARNING: Failed to load effects for '.@player'.', false);
+		console('WARNING: Failed to load effects for '.@player.'.', false);
 		console(@ex['message'], false);
 	}
 

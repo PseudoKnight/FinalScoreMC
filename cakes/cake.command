@@ -405,7 +405,7 @@ register_command('cake', array(
 				msg('/cake stats <type> '.color('gray').'Shows the completion frequency for all cakes of this type.');
 				if(has_permission('group.engineer')) {
 					msg('/cake set [id] <coins> [type] [difficulty]'.color('gray').'Sets the data for the specified cake.'
-						' Type can be "secret", "challenge", or "coop". Difficulty can be "easy", "easy-medium", "medium",'
+						.' Type can be "secret", "challenge", or "coop". Difficulty can be "easy", "easy-medium", "medium",'
 						.' "medium-hard", "hard", or "very-hard".');
 					msg('/cake move <id> '.color('gray').'Moves the prize cake to a new location.');
 					msg('/cake tp <id> '.color('gray').'Teleports you to a cake.');
