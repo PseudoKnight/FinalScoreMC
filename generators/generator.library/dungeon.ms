@@ -475,10 +475,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 							@heightMap[@c2][@r2] = @room['height'];
 							if(@roomLength == 1
 							|| @roomWidth == 1
-							|| @layoutMap[@c2 + 1][@r2] == 'door'
-							|| @layoutMap[@c2 - 1][@r2] == 'door'
-							|| @layoutMap[@c2][@r2 + 1] == 'door'
-							|| @layoutMap[@c2][@r2 - 1] == 'door'
+							|| _adjacent_equals(@layoutMap, @c2, @r2, 'door')
 							|| (!is_null(@rowOdd) && (@rowOdd != @r2 % 2 || @columnOdd != @c2 % 2))
 							|| integer(srand(@random) * 100) < 90) {
 								@layoutMap[@c2][@r2] = 'room';
@@ -500,10 +497,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 						} else if(@layoutMap[@c2][@r2] !== 'door') {
 							if(@floorData['window'] && srand(@random) > 0.9 &&
 							!(@c2 == 0 || @r2 == 0 || @c2 == @width - 1 || @r2 == @length - 1
-							|| @layoutMap[@c2 + 1][@r2] == 'door'
-							|| @layoutMap[@c2 - 1][@r2] == 'door'
-							|| @layoutMap[@c2][@r2 + 1] == 'door'
-							|| @layoutMap[@c2][@r2 - 1] == 'door')) {
+							|| _adjacent_equals(@layoutMap, @c2, @r2, 'door'))) {
 								@layoutMap[@c2][@r2] = 'window';
 							} else {
 								@layoutMap[@c2][@r2] = 'wall';
