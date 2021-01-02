@@ -599,6 +599,34 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 												} else {
 													_add_to_chunk(@chunk, @loc, 'air');
 												}
+											} else if(@scale == 3) {
+												if(@northEdge) {
+													if(!@eastEdge && !@westEdge && @layoutMap[@c][@r - 1] == 'wall') {
+														_add_to_chunk(@chunk, @loc, @materials['divider']);
+													} else {
+														_add_to_chunk(@chunk, @loc, @materials['wall']);
+													}
+												} else if(@southEdge) {
+													if(!@eastEdge && !@westEdge && array_get(@layoutMap[@c], @r + 1, null) == 'wall') {
+														_add_to_chunk(@chunk, @loc, @materials['divider']);
+													} else {
+														_add_to_chunk(@chunk, @loc, @materials['wall']);
+													}
+												} else if(@eastEdge) {
+													if(!@northEdge && !@southEdge && array_get(array_get(@layoutMap, @c + 1, array()), @r, null) == 'wall') {
+														_add_to_chunk(@chunk, @loc, @materials['divider']);
+													} else {
+														_add_to_chunk(@chunk, @loc, @materials['wall']);
+													}
+												} else if(@westEdge) {
+													if(!@northEdge && !@southEdge && @layoutMap[@c - 1][@r] == 'wall') {
+														_add_to_chunk(@chunk, @loc, @materials['divider']);
+													} else {
+														_add_to_chunk(@chunk, @loc, @materials['wall']);
+													}
+												} else {
+													_add_to_chunk(@chunk, @loc, @materials['divider']);
+												}
 											} else {
 												_add_to_chunk(@chunk, @loc, @materials['wall']);
 											}
@@ -689,39 +717,61 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 										case 'door':
 											if(@y < @ceilingY - @roomHeight + 2) {
 												if(@materials['entranceDoor']) {
+													@lower = @y < @ceilingY - @roomHeight + 1;
 													@north = @roomMap[@c][@r - 1];
 													@south = array_get(@roomMap[@c], @r + 1, 0); // special case for dungeon entrance
 													@west = @roomMap[@c - 1][@r];
 													@east = @roomMap[@c + 1][@r];
-													@lower = @y < @ceilingY - @roomHeight + 1;
 													@count = array_size(@chunk);
-													if(@north % 7 == 0) {
-														if(@southEdge) {
-															@half = if(@lower, 'half=lower,', 'half=upper,');
-															@hinge = if(@eastEdge, 'hinge=left', 'hinge=right');
-															_add_to_chunk(@chunk, @loc, 'spruce_door[facing=south,'.@half.@hinge.']');
+													if(@scale > 2) {
+														if(@north % 7 == 0 || @south % 7 == 0) {
+															if(!@westEdge && !@eastEdge) {
+																if(!@southEdge && !@northEdge) {
+																	@half = if(@lower, 'half=lower', 'half=upper');
+																	_add_to_chunk(@chunk, @loc, @materials['door'].'[facing=south,'.@half.']');
+																}
+															} else {
+																_add_to_chunk(@chunk, @loc, @materials['wall']);
+															}
+														} else if(@west % 7 == 0 || @east % 7 == 0) {
+															if(!@southEdge && !@northEdge) {
+																if(!@westEdge && !@eastEdge) {
+																	@half = if(@lower, 'half=lower', 'half=upper');
+																	_add_to_chunk(@chunk, @loc, @materials['door'].'[facing=east,'.@half.']');
+																}
+															} else {
+																_add_to_chunk(@chunk, @loc, @materials['wall']);
+															}
 														}
-													} else if(@south % 7 == 0) {
-														if(@northEdge) {
-															@half = if(@lower, 'half=lower,', 'half=upper,');
-															@hinge = if(@westEdge, 'hinge=left', 'hinge=right');
-															_add_to_chunk(@chunk, @loc, 'spruce_door[facing=north,'.@half.@hinge.']');
-														}
-													} else if(@west % 7 == 0) {
-														if(@eastEdge) {
-															@half = if(@lower, 'half=lower,', 'half=upper,');
-															@hinge = if(@northEdge, 'hinge=left', 'hinge=right');
-															_add_to_chunk(@chunk, @loc, 'spruce_door[facing=east,'.@half.@hinge.']');
-														}
-													} else if(@east % 7 == 0) {
-														if(@westEdge) {
-															@half = if(@lower, 'half=lower,', 'half=upper,');
-															@hinge = if(@southEdge, 'hinge=left', 'hinge=right');
-															_add_to_chunk(@chunk, @loc, 'spruce_door[facing=west,'.@half.@hinge.']');
+													} else {
+														if(@north % 7 == 0) {
+															if(@southEdge) {
+																@half = if(@lower, 'half=lower,', 'half=upper,');
+																@hinge = if(@eastEdge, 'hinge=left', 'hinge=right');
+																_add_to_chunk(@chunk, @loc, @materials['door'].'[facing=south,'.@half.@hinge.']');
+															}
+														} else if(@south % 7 == 0) {
+															if(@northEdge) {
+																@half = if(@lower, 'half=lower,', 'half=upper,');
+																@hinge = if(@westEdge, 'hinge=left', 'hinge=right');
+																_add_to_chunk(@chunk, @loc, @materials['door'].'[facing=north,'.@half.@hinge.']');
+															}
+														} else if(@west % 7 == 0) {
+															if(@eastEdge) {
+																@half = if(@lower, 'half=lower,', 'half=upper,');
+																@hinge = if(@northEdge, 'hinge=left', 'hinge=right');
+																_add_to_chunk(@chunk, @loc, @materials['door'].'[facing=east,'.@half.@hinge.']');
+															}
+														} else if(@east % 7 == 0) {
+															if(@westEdge) {
+																@half = if(@lower, 'half=lower,', 'half=upper,');
+																@hinge = if(@southEdge, 'hinge=left', 'hinge=right');
+																_add_to_chunk(@chunk, @loc, @materials['door'].'[facing=west,'.@half.@hinge.']');
+															}
 														}
 													}
 													if(@count == array_size(@chunk)) {
-														_add_to_chunk(@chunk, @loc, @materials['door']);
+														_add_to_chunk(@chunk, @loc, @materials['room']);
 													}
 												} else {
 													_add_to_chunk(@chunk, @loc, @materials['door']);
