@@ -1,0 +1,25 @@
+dungeonEntrance: true
+default:
+    scale: 3
+    maxRoomHeight: 9
+    attic: true
+    balcony: true
+    lavaPit: true
+    pit: true
+    extraDoors: 0.2
+    minRoomSize: 3
+    maxRoomSize: 5
+    spawnerChance: 0.8
+floors:
+    0:
+        entranceDoor: true
+        spawner: [skeleton, zombie, spider, silverfish]
+        trap: [plate_potion_poison, plate_tnt, tripwire_arrow, static_web]
+        wall: [stone_bricks, stone_bricks, stone_bricks, mossy_stone_bricks, cracked_stone_bricks, infested_cracked_stone_bricks]
+        column: chiseled_stone_bricks
+        ceiling: stone_bricks
+        floor: [mossy_stone_bricks, mossy_stone_bricks, mossy_stone_bricks, stone_bricks, cracked_stone_bricks, infested_cracked_stone_bricks]
+        utility: gravel
+        decor: gravel
+        edge: stone_bricks
+        door: oak_door
