@@ -454,7 +454,9 @@ proc _pvp_end_match(@id, @winners) {
 						color('gold').color('bold').@player.if(@pvp['coins'] > 0, ' +'.@pvp['coins']),
 						@player)
 					.'-', '-', ' '));
-				title(@player, @winnersString, '', 20, 60, 20);
+				if(ponline(@player)) {
+					title(@player, @winnersString, '', 20, 60, 20);
+				}
 			}
 			_pvp_msg(@pvp, colorize('&7&m|----------------------------------------------------|'));
 		} else if(array_index_exists(@pvp, 'team') && array_size(@winners) > 0) {
