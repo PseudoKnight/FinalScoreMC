@@ -29,8 +29,6 @@ bind('entity_death', null, null, @event, @border = _get_worldborder('outworld'))
 				set_world_border('outworld_nether', array('width': @width / 8, 'seconds': 1));
 				action_msg(@player, color('green').'WorldBorder ++ '.round(@amount, 1).' (width: '.integer(@width).')');
 				play_sound(ploc(@player), array('sound': 'BLOCK_ENCHANTMENT_TABLE_USE', 'pitch': 0.5))
-			} else if(!rand(10)) { // display this only occasionally
-				action_msg(@player, color('red').'Not enough exp from mob to expand worldborder (cost: '.round(@cost, 1).')');
 			}
 		}
 	}
