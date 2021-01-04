@@ -32,6 +32,6 @@ register_command('roll', array(
 			}
 			@message = colorize('&a[Dice] '.display_name().'&r rolled &a'.array_implode(@rolls, ' and ').'&r on '.@sides.'-sided die.');
 		}
-		broadcast(@message, all_players(pworld()));
+		_broadcast(@message);
 	}
 ));

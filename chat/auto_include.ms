@@ -255,3 +255,18 @@ proc _to_upper_camel_case(@string) {
 	}
 	return(array_implode(@split));
 }
+
+/*
+	Broadcast to all places.
+	Broadcasts as-is to chat, but will be formatted for other outputs like actions.
+ */
+proc _broadcast(@msg) {
+	broadcast(@msg);
+	@msg = strip_colors(@msg);
+	if(function_exists('discord_broadcast')) {
+		discord_broadcast('minecraft_chat', '*'.@msg.'*');
+	}
+	if(function_exists('dm_broadcast_to_web')) {
+		dm_broadcast_to_web('* '.@msg);
+	}
+}

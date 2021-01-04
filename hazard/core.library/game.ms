@@ -112,9 +112,9 @@ proc _hazard_end(@game) {
 	@winner = _hazard_get_winner(@game);
 	if(@winner) {
 		if(array_size(@winner) > 1) {
-			broadcast(color('bold').array_implode(@winner, ', ').' won hazard!', all_players(@game['world']));
+			_broadcast(color('bold').array_implode(@winner, ' and ').' won Hazard!');
 		} else {
-			broadcast(color('bold').display_name(@winner[0]).color('reset').' won hazard!', all_players(@game['world']));
+			_broadcast(color('bold').display_name(@winner[0]).color('reset').' won Hazard!');
 		}
 	}
 	foreach(@player in array_keys(@game['players'])) {

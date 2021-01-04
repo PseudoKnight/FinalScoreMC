@@ -307,9 +307,9 @@ register_command('timer', array(
 						@place = @place.'th';
 				}
 				if(@tied) {
-					broadcast(color('green').@player.' tied the '.color('bold').@place.color('green').' place time for '._to_upper_camel_case(@id).'!');
+					_broadcast(color('green').@player.' tied the '.color('bold').@place.color('green').' place time for '._to_upper_camel_case(@id).'!');
 				} else if(@rankup) {
-					broadcast(color('green').@player.' got a '.color('bold').@place.color('green').' place time for '._to_upper_camel_case(@id).'!');
+					_broadcast(color('green').@player.' got a '.color('bold').@place.color('green').' place time for '._to_upper_camel_case(@id).'!');
 				}
 				launch_firework(@loc, array(
 					strength: 1,
@@ -387,7 +387,7 @@ register_command('timer', array(
 					x_run_on_main_thread_later(closure(){
 						store_value('times', @averages);
 						if(@overallRankup) {
-							broadcast(color('green').'... and moved to '.@place.@suffix.' place overall!');
+							_broadcast(color('green').@player.' moved to '.@place.@suffix.' place overall!');
 							play_sound(@loc, array(sound: 'UI_TOAST_CHALLENGE_COMPLETE'));
 						}
 					});

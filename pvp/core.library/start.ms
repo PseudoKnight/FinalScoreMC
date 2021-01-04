@@ -362,9 +362,9 @@ proc _pvp_start(@pvp, @id){
 	}
 
 	# ANNOUNCE
-	@title = @primaryName.if(@secondaryName, ': '.@secondaryName);
+	@pvp['title'] = @primaryName.if(@secondaryName, ': '.@secondaryName);
 	@world = @arena['lobby'][3];
-	_worldmsg(@world, _fill_string('*', '-', colorize('&7&m|--&7&l[ &r&l'.@title.' &7&l]&7&m*|')));
+	_worldmsg(@world, _fill_string('*', '-', colorize('&7&m|--&7&l[ &r&l'.@pvp['title'].' &7&l]&7&m*|')));
 
 	if(array_index_exists(@pvp, 'team')) {
 		_worldmsg(@world,
@@ -397,11 +397,11 @@ proc _pvp_start(@pvp, @id){
 	@nonplayers = array_filter(all_players(@world), closure(@key, @value) {
 		return(!array_index_exists(@pvp['players'], @value));
 	});
-	_click_tell(@nonplayers, array('&7[PVP] ', array('&b[Click to Spectate '.@title.']', '/pvp spectate '.@id)));
+	_click_tell(@nonplayers, array('&7[PVP] ', array('&b[Click to Spectate '.@pvp['title'].']', '/pvp spectate '.@id)));
 
 	play_sound(@arena['lobby'], array('sound': 'ENTITY_WITHER_SPAWN', 'pitch': 1.5, 'volume': 3, 'category': 'VOICE'));
 
-	_add_activity('pvp'.@id, @title, @arena['region'], @world);
+	_add_activity('pvp'.@id, @pvp['title'], @arena['region'], @world);
 
 	# COUNTDOWN TO START
 	@timeleft = array(@arena['delay']);
@@ -431,7 +431,7 @@ proc _pvp_start(@pvp, @id){
 				update_bar(@id, array('percent': (6 - @timeleft[0]) / 6));
 				foreach(@p in array_keys(@pvp['players'])) {
 					try {
-						title(@p, color('yellow').@timeleft[0], @title, 0, @timeleft[0] * 20, 20);
+						title(@p, color('yellow').@timeleft[0], @pvp['title'], 0, @timeleft[0] * 20, 20);
 						if(phealth(@p) == 0) {
 							respawn(@p);
 						}

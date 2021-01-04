@@ -413,6 +413,7 @@ proc _pvp_end_match(@id, @winners) {
 		return();
 	}
 
+	@leader = '';
 	foreach(array_keys(@pvp['players']), @player) {
 		if(array_contains(@winners, @player)) {
 			@leader = @player;
@@ -435,7 +436,15 @@ proc _pvp_end_match(@id, @winners) {
 	queue_delay(100, @id); // timing ensures players are alive or in spec
 	queue_push(closure(){
 		if(array_index_exists(@pvp, 'stats')) {
-			@winnersString = array_implode(@winners, ' and ').' wins!';
+			@title = '';
+			@subtitle = '';
+			if(array_index_exists(@pvp, 'team')) {
+				@title = @pvp['players'][@leader]['color'].color('bold')
+						.@arena['team'][@pvp['players'][@leader]['team']]['name'].' wins '.@pvp['title'].'!';
+				@subtitle = @pvp['players'][@leader]['color'].array_implode(@winners, ' ');
+			} else {
+				@title = array_implode(@winners, ' and ').' wins '.@pvp['title'].'!';
+			}
 			@table = _stats_table();
 			@a = @table[0];
 			@b = @table[1];
@@ -455,27 +464,31 @@ proc _pvp_end_match(@id, @winners) {
 						@player)
 					.'-', '-', ' '));
 				if(ponline(@player)) {
-					title(@player, @winnersString, '', 20, 60, 20);
+					title(@player, @title, @subtitle, 20, 60, 20);
 				}
 			}
 			_pvp_msg(@pvp, colorize('&7&m|----------------------------------------------------|'));
+			discord_broadcast('minecraft_chat', '*'.strip_colors(@title).' ('.strip_colors(@subtitle).')*');
+
 		} else if(array_index_exists(@pvp, 'team') && array_size(@winners) > 0) {
-			@winningTeam = @pvp['players'][@leader]['color'].color('bold')
-				.@arena['team'][@pvp['players'][@leader]['team']]['name'].' win!';
-			@winnersString = array_implode(@winners, ' ');
-			_worldmsg(@world, color('gray').'[PVP] '.@winningTeam.'\n'
-				.@pvp['players'][@leader]['color'].@winnersString);
+			@title = @pvp['players'][@leader]['color'].color('bold')
+				.@arena['team'][@pvp['players'][@leader]['team']]['name'].' wins '.@pvp['title'].'!';
+			@subtitle = @pvp['players'][@leader]['color'].array_implode(@winners, ' ');
+			_worldmsg(@world, color('gray').'[PVP] '.@title.'\n'.@subtitle);
 			foreach(@p in array_keys(@pvp['players'])) {
-				title(@p, @winningTeam, @winnersString, 20, 60, 20);
+				title(@p, @title, @subtitle, 20, 60, 20);
 			}
+			discord_broadcast('minecraft_chat', '*'.strip_colors(@title).' ('.strip_colors(@subtitle).')*');
 		} else if(array_size(@winners) > 0) {
-			@winnersString = array_implode(@winners, ' and ').' wins!';
+			@winnersString = array_implode(@winners, ' and ').' wins '.@pvp['title'].'!';
 			_worldmsg(@world, color('gray').'[PVP] '.color('r').@winnersString);
 			foreach(@p in array_keys(@pvp['players'])) {
-				title(@p, @winnersString, '', 20, 60, 20);
+				title(@p, '', @winnersString, 20, 60, 20);
 			}
+			discord_broadcast('minecraft_chat', '*'.@winnersString.'*');
 		} else {
 			_worldmsg(@world, color('gray').'[PVP] '.color('r').'Nobody wins! Wait.. what?!');
+			discord_broadcast('minecraft_chat', '*'.@pvp['title'].' is a draw*');
 		}
 	}, @id);
 

@@ -62,7 +62,7 @@ bind('player_interact', null, array('block': 'CAKE', 'button': 'right', 'hand': 
 			}
 		}
 
-		broadcast(display_name().color('r').if(@thiscake['type'] == 'secret', ' found ', ' achieved ')
+		_broadcast(display_name().color('r').if(@thiscake['type'] == 'secret', ' found ', ' achieved ')
 				.color('a').'['.to_upper(@id).'] '.color('r').@thiscake['type'].' cake! '.color('a').@count.'/'.@total);
 
 		if(!has_permission('group.builder')) {
