@@ -94,21 +94,21 @@ proc _add_activity(@id, @title, @region, @world) {
 	_update_activities();
 	if(@region && @world) {
 		if(function_exists('discord_broadcast')) {
-			discord_broadcast('minecraft_chat', '**'.@title.' started...**');
+			discord_broadcast('minecraft_chat', '*'.@title.' started...*');
 		}
 		if(extension_exists('CHDynmap')) {
 			try {
-				@regionInfo = sk_region_info(@region, @world);
-				@minX = @regionInfo[0][1][0];
-				@minZ = @regionInfo[0][1][2];
-				@maxX = @regionInfo[0][0][0];
-				@maxZ = @regionInfo[0][0][2];
+				@regionCoords = sk_region_info(@region, @world, 0);
+				@minX = @regionCoords[1][0];
+				@minZ = @regionCoords[1][2];
+				@maxX = @regionCoords[0][0];
+				@maxZ = @regionCoords[0][2];
 				dm_create_marker('markers', array(
-					'type': 'AREA',
-					'world': @world,
-					'label': @title,
-					'id': @id,
-					'corners': array(
+					type: 'AREA',
+					world: @world,
+					label: @title,
+					id: @id,
+					corners: array(
 						array(@minX, 0, @minZ, @world),
 						array(@maxX, 0, @minZ, @world),
 						array(@maxX, 0, @maxZ, @world),
@@ -116,13 +116,13 @@ proc _add_activity(@id, @title, @region, @world) {
 					),
 				));
 				dm_set_marker_line_style('markers', @id, array(
-					'color': array('r': 255, 'g': 0, 'b': 0),
-					'opacity': 1,
-					'weight': 1,
+					color: array(r: 255, g: 0, b: 0),
+					opacity: 1,
+					weight: 1,
 				));
 				dm_set_marker_fill_style('markers', @id, array(
-					'color': array('r': 255, 'g': 0, 'b': 0),
-					'opacity': 0.1,
+					color: array(r: 255, g: 0, b: 0),
+					opacity: 0.1,
 				));
 			} catch (Exception @ex) {
 				console('Failed to create region marker for activity: '.@title);

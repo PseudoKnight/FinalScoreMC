@@ -72,7 +72,7 @@ proc _race_countdown(@race) {
 	}
 	@race['state'] = 'countdown';
 
-	_add_activity('race'.@race['id'], 'Race: '._to_upper_camel_case(@race['id']));
+	_add_activity('race'.@race['id'], 'Race: '._to_upper_camel_case(@race['id']), @race['region'], @race['world']);
 
 	set_timeout(1000, closure(){ // delay to load chunks first
 		_race_place_players(@race);

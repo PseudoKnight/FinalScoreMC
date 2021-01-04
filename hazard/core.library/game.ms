@@ -35,6 +35,7 @@ proc _hazard_start(@game) {
 	include('events.ms');
 	include('entities.ms');
 
+	_add_activity('hazard', 'Hazard', 'hazard', @game['world']);
 	_hazard_clean_region(@game);
 	_hazard_define_regions(@game);
 	_hazard_bind(@game);
@@ -108,6 +109,7 @@ proc _hazard_start(@game) {
 }
 
 proc _hazard_end(@game) {
+	_remove_activity('hazard');
 	_hazard_unbind(@game);
 	@winner = _hazard_get_winner(@game);
 	if(@winner) {

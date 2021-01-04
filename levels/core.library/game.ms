@@ -24,7 +24,7 @@ proc _level_prepare(@name, @arena, @region, @world) {
 	if(array_index_exists(@level['config'], 'coins')) {
 		@level['coins'] = @level['config']['coins'];
 	}
-	_add_activity('level'.@region, _to_upper_camel_case(@region).': '.@level['config']['title']);
+	_add_activity('level'.@region, _to_upper_camel_case(@region).': '.@level['config']['title'], @region, @world);
 	set_world_time(@level['world'], 'sunset');
 	set_gamerule(@level['world'], 'DODAYLIGHTCYCLE', false);
 	_remove_region_entities(@level['region']);

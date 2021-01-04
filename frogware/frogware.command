@@ -54,7 +54,7 @@ register_command('frogware', array(
 				if(queue_running('fw') || queue_running('fw2')) {
 					die(color('gold').'Already running.');
 				}
-				_add_activity('frogware', 'FrogWare');
+				_add_activity('frogware', 'FrogWare', 'frogware', 'custom');
 				include('includes.library/frogware.ms');
 				foreach(@p in all_players('custom')) {
 					if(_fw_player(@p)) {
