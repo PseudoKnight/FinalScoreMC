@@ -442,8 +442,10 @@ proc _pvp_end_match(@id, @winners) {
 				@title = @pvp['players'][@leader]['color'].color('bold')
 						.@arena['team'][@pvp['players'][@leader]['team']]['name'].' wins '.@pvp['title'].'!';
 				@subtitle = @pvp['players'][@leader]['color'].array_implode(@winners, ' ');
-			} else {
+			} else if(@winners) {
 				@title = array_implode(@winners, ' and ').' wins '.@pvp['title'].'!';
+			} else {
+				@title = 'No one won '.@pvp['title'].'.';
 			}
 			@table = _stats_table();
 			@a = @table[0];
@@ -468,7 +470,7 @@ proc _pvp_end_match(@id, @winners) {
 				}
 			}
 			_pvp_msg(@pvp, colorize('&7&m|----------------------------------------------------|'));
-			discord_broadcast('minecraft_chat', '*'.strip_colors(@title).' ('.strip_colors(@subtitle).')*');
+			discord_broadcast('minecraft_chat', '*'.strip_colors(@title).if(@subtitle, ' ('.strip_colors(@subtitle).')').'*');
 
 		} else if(array_index_exists(@pvp, 'team') && array_size(@winners) > 0) {
 			@title = @pvp['players'][@leader]['color'].color('bold')
