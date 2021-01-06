@@ -45,10 +45,10 @@ shop:
             base:
                 extended: true
                 type: STRENGTH
-    12:
+    13:
         name: GOLDEN_APPLE
         cost: 3
-    13:
+    14:
         name: TIPPED_ARROW
         cost: 1
         meta:
