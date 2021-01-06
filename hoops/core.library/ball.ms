@@ -289,13 +289,20 @@ proc _hoops_ball_create(@loc) {
 
 		} catch(BadEntityException @ex) {
 			if(!array_index_exists(@game, 'state')) {
-				foreach(@player in get_bar_players('hoops')) {
+				@players = array();
+				try {
+					@players = get_bar_players('hoops');
+				} catch (NotFoundException @ex) {
+					console('Failed to get bar for hoops, resetting all players in world instead.');
+					@players = all_players(@game['world']);
+				}
+				foreach(@player in @players) {
 					unbind(@player.'jump');
 					unbind(@player.'break');
 					set_pmode(@player, 'ADVENTURE');
 					set_peffect(@player, 'JUMP_BOOST', 0, 0, true, false);
 				}
-				remove_bar('hoops'); // standalone
+				try(remove_bar('hoops')); // standalone
 			}
 			foreach(@bind in @binds) {
 				unbind(@bind);
