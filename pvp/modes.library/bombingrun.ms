@@ -27,9 +27,6 @@ proc _is_bomb(@id, @item) {
 	return(false);
 }
 
-_pvp_bomb_spawn(@id);
-@pvp['bombholder'] = null;
-
 @pvp['binds'][] = @id.'bombpickup';
 bind('item_pickup', array('id': @id.'bombpickup'), null, @event, @id, @pvp) {
 	if(array_index_exists(@pvp['players'], player())
@@ -103,3 +100,5 @@ bind('player_move', array('id': @id.'firedancer'), null, @event, @pvp, @id) {
 		}
 	}
 }
+_pvp_bomb_spawn(@id);
+@pvp['bombholder'] = null;
