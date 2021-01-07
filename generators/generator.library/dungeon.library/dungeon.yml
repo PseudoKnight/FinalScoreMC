@@ -6,9 +6,9 @@ default:
     balcony: true
     campfireChance: 0.1
     treasureRoom: true
+    door: spruce_door
 floors:
     0:
-        entranceDoor: true
         waterPit: true
         campfireChance: 0.5
         spawner: [silverfish, bat]
@@ -22,7 +22,6 @@ floors:
         edge: stone
         boss: CREEPER
     1:
-        entranceDoor: true
         staggeredWall: true
         campfireChance: 0.5
         spawner: [cave_spider, spider]
@@ -38,7 +37,6 @@ floors:
             type: CAVE_SPIDER
             rider: GUARDIAN
     2:
-        entranceDoor: true
         spawner: [zombie_villager]
         trap: [plate_potion_poison, tripwire_arrow]
         wall: oak_planks
@@ -65,7 +63,6 @@ floors:
                 helmet:
                     name: IRON_HELMET
     3:
-        entranceDoor: true
         lavaPit: true
         campfireChance: 0.5
         spawner: [husk, husk, husk, husk, creeper]
@@ -93,7 +90,6 @@ floors:
                 helmet:
                     name: DIAMOND_HELMET
     4:
-        entranceDoor: true
         waterPit: true
         campfireChance: 0.5
         spawner: [stray]
@@ -121,7 +117,6 @@ floors:
                         name: DIAMOND_HELMET
     5:
         minRoomHeight: 4
-        entranceDoor: true
         lavaPit: true
         fireFloor: true
         spawner: [zombified_piglin, magma_cube, blaze]
@@ -161,7 +156,6 @@ floors:
                 helmet:
                     name: DIAMOND_HELMET
     7:
-        entranceDoor: true
         lavaPit: true
         spawner: [skeleton, witch, creeper]
         trap: [chest_tnt, plate_potion_poison]
@@ -178,7 +172,6 @@ floors:
             tags:
                 type: THE_KILLER_BUNNY
     8:
-        entranceDoor: true
         spawner: [ender_crystal, endermite, shulker]
         wall: purpur_block
         column: purpur_pillar
@@ -190,7 +183,6 @@ floors:
         attic: false
         boss: ENDER_CRYSTAL
     9:
-        entranceDoor: true
         spawner: [vindicator, vindicator, vindicator, pillager, pillager, illusioner]
         trap: chest_potion_poison
         wall: dark_oak_planks
@@ -215,6 +207,7 @@ floors:
         utility: bedrock
         decor: bedrock
         edge: air
+        door: air
         minRoomHeight: 4
         chestCount: 0
         attic: false

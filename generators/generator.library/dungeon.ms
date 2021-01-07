@@ -716,7 +716,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 
 										case 'door':
 											if(@y < @ceilingY - @roomHeight + 2) {
-												if(@materials['entranceDoor']) {
+												if(string_ends_with(@materials['door'], 'door')) {
 													@lower = @y < @ceilingY - @roomHeight + 1;
 													@north = @roomMap[@c][@r - 1];
 													@south = array_get(@roomMap[@c], @r + 1, 0); // special case for dungeon entrance
