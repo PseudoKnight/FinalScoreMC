@@ -169,6 +169,8 @@ donor:
       livemap.tracers: true
     world_the_end:
       livemap.tracers: true
+    psi:
+      livemap.tracers: true
   inheritance: regular
 builder:
   permissions:
@@ -200,7 +202,6 @@ builder:
       worldedit.region.*: true
       worldedit.schematic.*: true
       worldedit.tool.*: true
-      worldedit.light.*: true
       worldedit.setnbt: true
       worldedit.drawsel: true
       worldguard.region.claim: true
@@ -230,12 +231,12 @@ builder:
       worldedit.region.*: true
       worldedit.schematic.*: true
       worldedit.tool.*: true
-      worldedit.light.*: true
       worldedit.setnbt: true
       worldedit.drawsel: true
       worldguard.region.claim: true
       minecraft.command.stopsound: true
     custom:
+      command.acme: true
       command.fly: true
       command.gm: true
       command.effect: true
