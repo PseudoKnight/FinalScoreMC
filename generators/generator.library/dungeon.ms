@@ -988,7 +988,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 							@world
 						);
 						if(equals_ic(@materials['room'], get_block(@loc))) {
-							set_block(@loc, @materials['utility'][integer(srand(@random) * array_size(@materials['utility']))], false);
+							set_blockdata_string(@loc, @materials['utility'][integer(srand(@random) * array_size(@materials['utility']))], false);
 						}
 					}
 
@@ -1001,7 +1001,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 							@world
 						);
 						if(equals_ic(@materials['room'], get_block(@loc))) {
-							set_block(@loc, @materials['decor'][integer(srand(@random) * array_size(@materials['decor']))], false);
+							set_blockdata_string(@loc, @materials['decor'][integer(srand(@random) * array_size(@materials['decor']))], false);
 						}
 					}
 
