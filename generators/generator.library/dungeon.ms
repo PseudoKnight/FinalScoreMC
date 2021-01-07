@@ -109,6 +109,13 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 			} else {
 				@floorData['trap'] = null;
 			}
+			if(array_index_exists(@floorData, 'spawner')) {
+				if(is_string(@floorData['spawner'])) {
+					@floorData['spawner'] = array(@floorData['spawner']);
+				}
+			} else {
+				@floorData['spawner'] = null;
+			}
 
 			@options[@type][@floor] = @floorData;
 		}
