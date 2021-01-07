@@ -415,17 +415,21 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 								@r3 = @r2;
 						}
 						@room = @roomMap[@c2][@r2];
-						if(@room != -1
-						&& @room != @previous
-						&& (!@rooms[@room]['connected'] || srand(@random) < @extraDoors)) {
-							@layoutMap[@c3][@r3] = 'door';
-							@rooms[@room]['doors']++;
-							@rooms[@next]['doors']++;
-							@previous = @next;
-							@next = @room;
-							@success = true;
-							@try = array();
-							break();
+						if(@room != -1 && @room != @previous) {
+							if(!@rooms[@room]['connected']) {
+								@layoutMap[@c3][@r3] = 'door';
+								@rooms[@room]['doors']++;
+								@rooms[@next]['doors']++;
+								@previous = @next;
+								@next = @room;
+								@success = true;
+								@try = array();
+								break();
+							} else if(srand(@random) < @extraDoors) {
+								@layoutMap[@c3][@r3] = 'door';
+								@rooms[@room]['doors']++;
+								@rooms[@next]['doors']++;
+							}
 						}
 					} catch(Exception @ex){
 						// no room here
