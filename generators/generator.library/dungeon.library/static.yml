@@ -6,7 +6,7 @@ floors:
     0:
         spawner: []
         trap: [chest_tnt]
-        empty: water
+        empty: lava
         wall: polished_blackstone_bricks
         column: polished_blackstone
         ceiling: polished_blackstone

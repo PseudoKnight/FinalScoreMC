@@ -584,6 +584,8 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 									} else {
 										_add_to_chunk(@chunk, @loc, @materials['floor']);
 									}
+								} else if(@layoutMap[@c][@r] == 'wall') {
+									_add_to_chunk(@chunk, @loc, @materials['wall']);
 								} else {
 									_add_to_chunk(@chunk, @loc, @materials['floor']);
 								}
@@ -834,7 +836,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 									if(@layoutMap[@c][@r] === 'room') {
 										_add_to_chunk(@chunk, @loc, @materials['ceiling']);
 									} else {
-										_add_to_chunk(@chunk, @loc, 'bedrock');
+										_add_to_chunk(@chunk, @loc, @materials['divider']);
 									}
 
 									// Bedrock floor divider
@@ -843,7 +845,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 										if(@layoutMap[@c][@r] === 'room') {
 											_add_to_chunk(@chunk, @loc, @materials['empty']);
 										} else {
-											_add_to_chunk(@chunk, @loc, 'bedrock');
+											_add_to_chunk(@chunk, @loc, @materials['divider']);
 										}
 									}
 								}
