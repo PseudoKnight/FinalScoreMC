@@ -70,12 +70,15 @@ foreach(@name: @cake in @cakes) {
 			@times = get_value('times', @name);
 			if(@times) {
 				@time = @times[-1][2];
-				if(@time >= 60) {
+				if(@time > 3600) {
+					@time = '1 hour';
+				} else if(@time >= 60) {
 					@time = simple_date('m\u0027m\u0027 s.S', integer(@time * 1000));
+					@time = substr(@time, 0, length(@time) - 2).'s';
 				} else {
 					@time = simple_date('s.S', integer(@time * 1000));
+					@time = substr(@time, 0, length(@time) - 2).'s';
 				}
-				@time = substr(@time, 0, length(@time) - 2).'s';
 				@lore[] = color('green').'Time to beat: ' . @time;
 			}
 		}

@@ -255,13 +255,17 @@ register_command('times', array(
 							@lastCount = 0;
 						}
 						@time = '';
-						if(@thisTime >= 60) {
+						if(@thisTime >= 3600) {
+							@time = '>1hour'
+						} else if(@thisTime >= 60) {
 							@time = simple_date('m\u0027m\u0027 ss.S', integer(@thisTime * 1000));
 						} else {
 							@time = simple_date('s.S', integer(@thisTime * 1000));
 						}
 						@timeSplit = split('.', @time, 1);
-						@time = @timeSplit[0].'.'.@timeSplit[1][0].'s';
+						if(array_size(@timeSplit) > 1) {
+							@time = @timeSplit[0].'.'.@timeSplit[1][0].'s';
+						}
 						@place = @i + 1 - @lastCount;
 						if(@times[@i][1] == @sender) {
 							msg(colorize(' '.if(@place < 10, '&80').'&e'.@place.' [ '.@time.' ] &l'.@times[@i][1]));
