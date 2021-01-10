@@ -62,7 +62,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 		'boss': '',
 	), @options['default']);
 
-	// process floors config to standard format
+	// process floors config to a useful format and verify values
 	@dungeonEntrance = array_get(@options, 'dungeonEntrance', false);
 	@cloneOffset = array_get(@options, 'cloneOffset', 0);
 	@cloneDir = array_get(@options, 'cloneDir', '');
@@ -73,48 +73,43 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 		foreach(@floor: @floorData in @options[@type]) {
 			@floorData = array_merge(@defaults, @floorData);
 
+			// For now we can check if all numbers are positive, but this may change in the future.
+			foreach(@key: @value in @floorData) {
+				if(is_number(@value) && @value < 0) {
+					console(@dungeonType.'.yml '.@key.' must be positive.');
+					return();
+				}
+			}
+
+			if(@floorData['minRoomSize'] % 2 != 1) {
+				console(@dungeonType.'.yml maxRoomSize must be an odd number.');
+				return();
+			}
+			if(@floorData['maxRoomSize'] % 2 != 1) {
+				console(@dungeonType.'.yml maxRoomSize must be an odd number.');
+				return();
+			}
+
 			// ensure certain values are arrays
-			if(array_index_exists(@floorData, 'utility')) {
-				if(is_string(@floorData['utility'])) {
-					@floorData['utility'] = array(@floorData['utility']);
+			// these default to an array with air
+			foreach(@key in array('utilty', 'decor', 'wall', 'floor')) {
+				if(array_index_exists(@floorData, @key)) {
+					if(is_string(@floorData[@key])) {
+						@floorData[@key] = array(@floorData[@key]);
+					}
+				} else {
+					@floorData[@key] = array('air');
 				}
-			} else {
-				@floorData['utility'] = array('air');
 			}
-			if(array_index_exists(@floorData, 'decor')) {
-				if(is_string(@floorData['decor'])) {
-					@floorData['decor'] = array(@floorData['decor']);
+			// these default to falsey
+			foreach(@key in array('trap', 'spawner')) {
+				if(array_index_exists(@floorData, @key)) {
+					if(is_string(@floorData[@key])) {
+						@floorData[@key] = array(@floorData[@key]);
+					}
+				} else {
+					@floorData[@key] = null;
 				}
-			} else {
-				@floorData['decor'] = array('air');
-			}
-			if(array_index_exists(@floorData, 'wall')) {
-				if(is_string(@floorData['wall'])) {
-					@floorData['wall'] = array(@floorData['wall']);
-				}
-			} else {
-				@floorData['wall'] = array('air');
-			}
-			if(array_index_exists(@floorData, 'floor')) {
-				if(is_string(@floorData['floor'])) {
-					@floorData['floor'] = array(@floorData['floor']);
-				}
-			} else {
-				@floorData['floor'] = array('air');
-			}
-			if(array_index_exists(@floorData, 'trap')) {
-				if(is_string(@floorData['trap'])) {
-					@floorData['trap'] = array(@floorData['trap']);
-				}
-			} else {
-				@floorData['trap'] = null;
-			}
-			if(array_index_exists(@floorData, 'spawner')) {
-				if(is_string(@floorData['spawner'])) {
-					@floorData['spawner'] = array(@floorData['spawner']);
-				}
-			} else {
-				@floorData['spawner'] = null;
 			}
 
 			@options[@type][@floor] = @floorData;
