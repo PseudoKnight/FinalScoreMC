@@ -15,7 +15,7 @@ register_command('marathon', array(
 		 	if(@args[0] == 'join') {
 				@marathon = import('marathon');
 				if(@marathon) {
-					if(!_psession(player())['activity']) {
+					if(!_pbusy()) {
 						@marathon['players'][player()] = @marathon['courses'][0];
 						_worldmsg(pworld(), color('green').color('bold').player().' joined the queued Marathon.');
 					} else {

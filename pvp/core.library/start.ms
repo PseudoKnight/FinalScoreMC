@@ -1,6 +1,6 @@
 proc _pvp_start(@pvp, @id){
 	foreach(@p in array_keys(@pvp['players'])) {
-		if(!ponline(@p) || _is_survival_world(pworld(@p)) || _psession(@p)['activity']) {
+		if(!ponline(@p) || _is_survival_world(pworld(@p)) || _pbusy(@p)) {
 			array_remove(@pvp['players'], @p);
 		}
 	}

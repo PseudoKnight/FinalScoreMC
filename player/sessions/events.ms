@@ -65,7 +65,6 @@ bind('player_join', null, null, @event) {
 				set_list_name(@p, display_name(@p));
 			}
 			set_plist_header(colorize('&6&lFINALSCORE&e&lMC'));
-			_update_activities();
 		}, player().'join');
 
 		// Welcome messages

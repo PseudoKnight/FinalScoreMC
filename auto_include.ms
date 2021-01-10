@@ -91,7 +91,6 @@ proc _add_activity(@id, @title, @region, @world) {
 		export('activities', @activities);
 	}
 	@activities[@id] = array('title': @title, 'region': @region, 'world': @world);
-	_update_activities();
 	if(@region && @world) {
 		if(function_exists('discord_broadcast')) {
 			discord_broadcast('minecraft_chat', '*'.@title.' started...*');
@@ -138,7 +137,6 @@ proc _remove_activity(@id) {
 	@activities = import('activities');
 	if(!is_null(@activities) && array_index_exists(@activities, @id)) {
 		@activity = array_remove(@activities, @id);
-		_update_activities();
 		if(@activity['region']) {
 			if(extension_exists('CHDynmap')) {
 				try(dm_delete_marker('markers', @id));
@@ -159,15 +157,4 @@ proc _get_activities_string() {
 		@string .= if(@string, ', ').@activity['title'];
 	}
 	return(@string);
-}
-
-proc _update_activities() {
-	@activities = _get_activities_string();
-	@footer = '';
-	if(@activities) {
-		@footer = color('gray').'Current Activities:\n'.color('reset').@activities;
-	}
-	foreach(@p in all_players()) {
-		set_plist_footer(@p, @footer);
-	}
 }

@@ -38,7 +38,9 @@ register_command('timer', array(
 			if(array_index_exists(@timers, @player)) {
 				clear_task(@timers[@player][2]);
 			} else {
-				_add_activity(@player.'timer', @player.' on '._to_upper_camel_case(@id));
+				@title = _to_upper_camel_case(@id);
+				_add_activity(@player.'timer', @player.' on '.@title);
+				_set_pactivity(@player, @title, true); // overrideable
 			}
 
 			@timers[@player] = array(@id, time(), 0);
@@ -108,6 +110,9 @@ register_command('timer', array(
 					}
 					clear_task();
 					_remove_activity(@player.'timer');
+					if(!_psession(@player)['activity'] != 'marathon') {
+						_set_pactivity(@player, null);
+					}
 				}
 			});
 
@@ -241,6 +246,7 @@ register_command('timer', array(
 					}
 				}
 			} else {
+				_set_pactivity(@player, null);
 				set_timeout(7000, closure() {
 					if(!has_bind(@player.'timerdeath')) {
 						unbind(@player.'reset');

@@ -1,6 +1,5 @@
 proc _add_player(@player, @golf) {
-	@session = _psession(@player);
-	if(pmode(@player) === 'CREATIVE' || array_get(@session, 'game', null)) {
+	if(pmode(@player) === 'CREATIVE' || !_set_pactivity(@player, @golf['name'])) {
 		return(false);
 	}
 	@golf['players'][@player] = array(
@@ -14,7 +13,6 @@ proc _add_player(@player, @golf) {
 	pgive_item(@player, array('name': 'SLIME_BALL'));
 	set_pscoreboard(@player, @golf['name'].'1');
 	set_pscore('strokes', @player, 0, @golf['name'].'1');
-	@session['game'] = @golf['name'];
 	return(true);
 }
 
@@ -43,7 +41,6 @@ proc _remove_player(@player, @golf) {
 			// nothing to reset
 		}
 	}
-	@session = _psession(@player);
-	@session['game'] = null;
+	_set_pactivity(@player, null);
 	array_remove(@golf['players'], @player);
 }

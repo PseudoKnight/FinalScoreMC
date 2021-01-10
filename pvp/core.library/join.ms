@@ -7,8 +7,8 @@ proc _pvp_join(@id){
 	if(_is_survival_world(pworld()) && array_index_exists(@arena, 'lobby')) {
 		set_ploc(@arena['lobby']);
 	}
-	if(_psession(player())['activity']) {
-		die('You are already playing "'._psession(player())['activity'].'".');
+	if(_pbusy()) {
+		die('You are already playing "'._psession()['activity'].'".');
 	}
 	if(!@pvp) {
 		@pvp = array('players': associative_array(), 'running': 0, 'id': @id);
