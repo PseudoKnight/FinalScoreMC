@@ -7,7 +7,8 @@ register_command('entity', array(
 			return(_strings_start_with_ic(array('list', 'info', 'set', 'delete', 'spawn', 'reload'), @args[-1]));
 		} else if(array_size(@args) == 3) {
 			return(_strings_start_with_ic(array('type', 'name', 'age', 'health', 'lifetime', 'onfire', 'targetnear',
-					'ai', 'tame', 'gear', 'droprate', 'effect', 'tags', 'rider', 'explode'), @args[-1]));
+					'ai', 'tame', 'glowing', 'invulnerable', 'gravity', 'silent', 'gear', 'droprate', 'effect', 'tags',
+					'attributes', 'rider', 'explode', 'scripts'), @args[-1]));
 		}
 		return(array());
 	},
@@ -186,8 +187,7 @@ register_command('entity', array(
 						msg(color('green').'Set entity scripts to '. @entity['scripts']);
 
 					default:
-						die(color('yellow').'Available settings: type, name, gear, droprate, effect, health, tame, tags, rider, explode, onfire,'
-								.' lifetime, targetnear');
+						die(color('yellow').'Invalid setting.');
 				}
 				write_file('custom.yml', yml_encode(@custom, true), 'OVERWRITE');
 
@@ -281,6 +281,7 @@ register_command('entity', array(
 				msg('/entity info <entity> '.color('gray').'Displays information about custom entity');
 				msg('/entity spawn <entity> '.color('gray').'Spawns entity where you\'re looking');
 				msg('/entity list '.color('gray').'Lists all custom entities');
+				msg('/entity reload '.color('gray').'Reloads custom entities from YML configuration.');
 
 		}
 	}
