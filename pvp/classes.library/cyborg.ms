@@ -21,7 +21,7 @@ case 'load':
 			}
 			if(@trace['entities']) {
 				foreach(@entity in @trace['entities']) {
-					if(ponline(@entity['uuid'])) {
+					if(ponline(@entity['uuid']) && pmode(@entity['uuid']) != 'SPECTATOR') {
 						@target = @entity['uuid'];
 						@targetedSound = array(sound: 'ENTITY_ZOMBIE_VILLAGER_CONVERTED', pitch: 2.0, volume: 0.5);
 						@targetSound = array(sound: 'BLOCK_NOTE_BLOCK_BIT', pitch: 2.0);
