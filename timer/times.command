@@ -13,18 +13,23 @@ register_command('times', array(
 	},
 	'executor': closure(@alias, @sender, @args, @info) {
 		@action = 'top';
-		if(@args) {
-			@action = @args[0];
-		}
-
 		@id = '';
 		@player = '';
-		if(array_size(@args) > 1) {
-			@id = @args[1];
-			if(array_size(@args) > 2) {
-				@player = @args[2];
+
+		if(@args) {
+			if(array_contains(array('top', 'avg', 'segmented', 'worst', 'reset', 'resetplayer'), @args[0])) {
+				@action = @args[0];
+				if(array_size(@args) > 1) {
+					@id = @args[1];
+					if(array_size(@args) > 2) {
+						@player = @args[2];
+					}
+				}
+			} else {
+				@id = @args[0];
 			}
-		} else {
+		}
+		if(!@id) {
 			@regions = null;
 			try {
 				@regions = sk_current_regions();
