@@ -81,7 +81,6 @@ register_command('arena', array(
 					# 2 integer options
 					case 'timer':
 					case 'teamratio':
-					case 'sky':
 
 						if(array_size(@args) < 5 || !is_integral(@args[3]) || !is_integral(@args[4])) {
 							die(color('gold').@setting . ' requires two integers.');

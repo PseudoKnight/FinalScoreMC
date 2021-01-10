@@ -18,9 +18,6 @@ proc _race_remove_player(@race, @player) {
 	array_remove(@race['players'], @player);
 	_set_pactivity(@player, null);
 	if(ponline(@player) && pworld(@player) == @race['world']) {
-		if(array_index_exists(@race, 'sky')) {
-			set_psky(@player, 0, 0);
-		}
 		clear_peffects(@player);
 		_equip_kit(@player);
 		try {
@@ -46,9 +43,6 @@ proc _race_remove_player(@race, @player) {
 proc _race_prepare_player(@race, @player) {
 	clear_peffects(@player);
 	_clear_pinv(@player);
-	if(array_index_exists(@race, 'sky')) {
-		set_psky(@player, @race['sky'][0], @race['sky'][1]);
-	}
 	if(array_index_exists(@race, 'effect')) {
 		foreach(@id: @effect in @race['effect']) {
 			set_peffect(@player, @id, @effect[0], @effect[1], true, false);
