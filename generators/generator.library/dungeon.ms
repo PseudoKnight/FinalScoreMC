@@ -41,7 +41,6 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 		// toggleable features on floors
 		'roof': true,
 		'bed': false,
-		'entranceDoor': false,
 		'lavaPit': false,
 		'waterPit': false,
 		'pit': false,
