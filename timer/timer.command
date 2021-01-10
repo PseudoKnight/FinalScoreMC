@@ -285,7 +285,7 @@ register_command('timer', array(
 			for(@i = 0, @i < 20, @i++) {
 				if(!@place) {
 					if(!array_index_exists(@times, @i) || @time < @times[@i][2]) {
-						if(array_index_exists(@times, @i) && @times[@i][0] != @uuid) {
+						if(array_index_exists(@times, @i) && (@times[@i][0] != @uuid || @i == 0)) {
 							@rankup = true;
 						}
 						@place = @i + 1;
