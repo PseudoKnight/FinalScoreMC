@@ -10,18 +10,8 @@ case 'load':
 		consume();
 	}
 
-	bind('entity_damage', array(id: @player.'hunterblast', priority: 'HIGHEST'), array(cause: 'ENTITY_EXPLOSION'), @event, @player, @pvp) {
-		if(entity_type(@event['damager']) == 'FIREWORK' && get_firework_shooter(@event['damager']) == puuid(@player)) {
-			consume();
-			if(array_index_exists(@event, 'player')) {
-				_stats_damage(@player, @event['player'], @event['amount'], @pvp);
-			}
-		}
-	}
-
 case 'unload':
 	unbind(@player.'huntershoot');
 	unbind(@player.'hunterswap');
-	unbind(@player.'hunterblast');
 
 }

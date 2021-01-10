@@ -716,3 +716,18 @@ if(array_index_exists(@pvp['arena'], 'blockbreak')) {
 		}
 	}
 }
+
+@pvp['binds'][] = @id.'fireworkdamage';
+bind('entity_damage', array(id: @id.'fireworkdamage', priority: 'HIGHEST'), array(cause: 'ENTITY_EXPLOSION'), @event, @pvp) {
+	if(entity_type(@event['damager']) == 'FIREWORK') {
+		foreach(@player in array_keys(@pvp['players'])) {
+			if(get_firework_shooter(@event['damager']) == puuid(@player)) {
+				consume();
+				if(array_index_exists(@event, 'player')) {
+					_stats_damage(@player, @event['player'], @event['amount'], @pvp);
+				}
+				break();
+			}
+		}
+	}
+}
