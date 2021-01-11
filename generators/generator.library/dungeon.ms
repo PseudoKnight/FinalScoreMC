@@ -940,7 +940,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 						if(@room['type'] == 'TREASURE') {
 							@chests = 1;
 						} else if(is_double(@chests)) {
-							@chests = integer(srand(@random) * min(@room['length'], @room['width']) / @chests);
+							@chests = integer(srand(@random) * min(@room['length'], @room['width']) * @chests);
 						}
 						@bonus = if(@room['type'] == 'TREASURE', 3, 1);
 						@chestHeight = if(@room['type'] == 'ATTIC' && srand(@random) > 0.33){
