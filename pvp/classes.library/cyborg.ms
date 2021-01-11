@@ -239,7 +239,13 @@ case 'load':
 							@vector = get_vector(@hitLoc, rand() * 5);
 							@hitLoc['x'] += @vector['x'];
 							@hitLoc['z'] += @vector['z'];
+							@bind = bind('entity_damage', null, array(type: 'PLAYER'), @event, @damager = player(), @pvp) {
+								if(array_index_exists(@pvp['players'], @event['player'])) {
+									_stats_damage(@damager, @event['player'], @event['amount'], @pvp);
+								}
+							}
 							explosion(@hitLoc, 2, true);
+							unbind(@bind);
 							@particle = array(particle: 'REDSTONE', color: 'WHITE');
 							while(@hitLoc['y'] < @loc['y'] + 40) {
 								@hitLoc['y'] += 0.2 + (@hitLoc['y'] - @loc['y']) * 0.1;

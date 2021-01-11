@@ -67,8 +67,8 @@ bind('item_spawn', array('id': @id.'bombspawn'), array('itemname': @pvp['arena']
 
 @pvp['binds'][] = @id.'firedancer';
 bind('player_move', array('id': @id.'firedancer'), null, @event, @pvp, @id) {
-	if(@pvp['bombholder'] == @event['player']) {
-		@regions = sk_current_regions(@event['player']);
+	if(@pvp['bombholder'] == player()) {
+		@regions = sk_current_regions();
 		@team = null;
 		if(array_contains(@regions, @pvp['arena']['bombtarget'][0])) {
 			@team = 1;
@@ -79,7 +79,13 @@ bind('player_move', array('id': @id.'firedancer'), null, @event, @pvp, @id) {
 			@item = pinv(player(), -106);
 			if(@item && @item['name'] == @pvp['arena']['bomb'] || ptake_item(array('name': @pvp['arena']['bomb']))) {
 				set_pinv(player(), -106, null);
+				@bind = bind('entity_damage', null, array(type: 'PLAYER'), @event, @damager = player(), @pvp) {
+					if(array_index_exists(@pvp['players'], @event['player'])) {
+						_stats_damage(@damager, @event['player'], @event['amount'], @pvp);
+					}
+				}
 				explosion(location_shift(@event['to'], 'up'), 3, true);
+				unbind(@bind);
 				@pvp['team'][@team]['score']++;
 				set_pscore('bombs', @pvp['arena']['team'][@team]['name'], @pvp['team'][@team]['score'], @id);
 				_pvp_msg(@pvp, color('gray').'[PVP] '

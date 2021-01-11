@@ -1,6 +1,6 @@
 switch(@action) {
 case 'load':
-	bind('player_interact', array('id': @player.'grenade'), array('player': @player, 'itemname': 'STONE_SHOVEL'), @e) {
+	bind('player_interact', array('id': @player.'grenade'), array('player': @player, 'itemname': 'STONE_SHOVEL'), @e, @pvp) {
 		if(!ptake_item(player(), array('name': 'STONE_SHOVEL'))) {
 			die();
 		}
@@ -21,7 +21,13 @@ case 'load':
 			try {
 				if(--@timer[0] <= 0) {
 					clear_task();
+					@bind = bind('entity_damage', null, array(type: 'PLAYER'), @event, @damager = player(), @pvp) {
+						if(array_index_exists(@pvp['players'], @event['player'])) {
+							_stats_damage(@damager, @event['player'], @event['amount'], @pvp);
+						}
+					}
 					explosion(entity_loc(@armorStand), 3, true);
+					unbind(@bind);
 					entity_remove(@armorStand);
 				} else {
 					spawn_particle(location_shift(entity_loc(@armorStand), 'up', 0.5), 'SMOKE_LARGE');
