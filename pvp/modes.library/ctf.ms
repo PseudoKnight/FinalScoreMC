@@ -58,7 +58,8 @@ bind('item_pickup', array('id': @id.'flagpickup'), null, @e, @id) {
 			if(!is_null(@heldflag)) {
 				play_sound(@pvp['arena']['ctfflag'][@flag], array('sound': 'ENTITY_ZOMBIE_ATTACK_IRON_DOOR', 'volume': 3));
 				@pvp['team'][@flag]['score']++;
-				set_pscore('captures', @pvp['arena']['team'][@flag]['name'], @pvp['team'][@flag]['score'], @id)
+				@pvp['stats'][player()]['scores']++;
+				set_pscore('captures', @pvp['arena']['team'][@flag]['name'], @pvp['team'][@flag]['score'], @id);
 				set_pinv(player(), 103, null);
 				_pvp_msg(@pvp, color('gray').'[PVP] '
 					.@pvp['arena']['team'][@flag]['color'].player().color('r').' secured the '
@@ -102,4 +103,13 @@ if(!array_contains(@pvp['arena']['flags'], 'noinventory')) {
 			cancel();
 		}
 	}
+}
+
+proc _stats_table() {
+	return(array(
+		array('kills', 2, '-------'),
+		array('deaths', 2, '---------'),
+		array('scores', 2, '--------'),
+		array('damage', 3, '------')
+	));
 }

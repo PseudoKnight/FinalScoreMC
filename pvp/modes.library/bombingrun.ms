@@ -88,6 +88,7 @@ bind('player_move', array('id': @id.'firedancer'), null, @event, @pvp, @id) {
 				unbind(@bind);
 				@pvp['team'][@team]['score']++;
 				set_pscore('bombs', @pvp['arena']['team'][@team]['name'], @pvp['team'][@team]['score'], @id);
+				@pvp['stats'][player()]['scores']++;
 				_pvp_msg(@pvp, color('gray').'[PVP] '
 					.@pvp['arena']['team'][@team]['color'].player().color('r').' blew up the target!');
 				if(array_index_exists(@pvp['arena'], 'rsoutputscore')) {
@@ -106,5 +107,15 @@ bind('player_move', array('id': @id.'firedancer'), null, @event, @pvp, @id) {
 		}
 	}
 }
+
+proc _stats_table() {
+	return(array(
+		array('kills', 2, '-------'),
+		array('deaths', 2, '---------'),
+		array('scores', 2, '--------'),
+		array('damage', 3, '------')
+	));
+}
+
 _pvp_bomb_spawn(@id);
 @pvp['bombholder'] = null;

@@ -122,6 +122,7 @@ proc _pvp_initialize_players(@id, @players) {
 				'deaths': 0,
 				'pickups': 0,
 				'seconds': 0,
+				'scores': 0,
 			);
 		}
 
