@@ -23,7 +23,8 @@ register_command('worms', array(
 		include('core.library/segment.ms');
 		include('core.library/worm.ms');
 		@game = _worms_create(@args[0]);
-		_generator_create('dungeon', 'dirt', @game['region'], @game['world'], time(), closure(){
+		_generator_create('dungeon', 'dirt', @game['region'], @game['world'], time(), closure(@start, @end, @spawns){
+			@game['spawns'] = @spawns;
 			_worms_start(@game);
 		});
 	}

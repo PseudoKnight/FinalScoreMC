@@ -19,6 +19,9 @@ proc _worms_create(@region) {
 	set_objective_display('segments', array('displayname': 'Segments (50)', 'slot': 'SIDEBAR'), 'worms');
 	create_team('leaders', 'worms');
 	set_team_display('leaders', array('color': 'RED'), 'worms');
+
+	// clear region just in case previous armor stands failed to clean up
+	_remove_region_entities(@region, array('ARMOR_STAND'), @world, true);
 	
 	return(@game);
 }

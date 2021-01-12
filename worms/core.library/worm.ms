@@ -22,8 +22,10 @@ proc _worms_add_segments(@player, @segment, @game) {
 	set_pscore('segments', @player, @score, 'worms');
 	if(@score >= 35) {
 		team_add_player('leaders', @player, 'worms');
+		play_sound(ploc(@player), array(sound: 'BLOCK_NOTE_BLOCK_BIT', pitch: 0.5 + (@score - 35) / 10));
 		if(@score >= 50) {
 			foreach(@p in array_keys(@game['players'])) {
+				title(@p, @player.' achieved 50 segments!', '');
 				if(@p != @player) {
 					_worms_kill(@p, @game);
 				}
