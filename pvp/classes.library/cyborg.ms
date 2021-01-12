@@ -17,6 +17,7 @@ case 'load':
 			@trace = ray_trace(player(), 90, 0.5);
 			@target = @trace['location'];
 			if(!array_contains(sk_regions_at(@target), @pvp['arena']['region'])) {
+				title(player(), '', color('red').'[no_target_found]', 0, 10, 10);
 				die();
 			}
 			if(@trace['entities']) {
@@ -29,6 +30,7 @@ case 'load':
 						set_timeout(500, closure(play_sound(ploc(), @targetSound, player())));
 						play_sound(@trace['location'], @targetSound, player(@target));
 						set_timeout(500, closure(play_sound(@trace['location'], @targetedSound, player(@target))));
+						title(player(), '', color('green').'[target_locked]', 0, 10, 10);
 						break();
 					}
 				}
@@ -211,6 +213,7 @@ case 'load':
 					set_pexp(@xp);
 					play_sound(@loc, array(sound: 'BLOCK_NOTE_BLOCK_BIT', volume: 0.4, pitch: 0.52 + 1.48 * (@xp / 99)), player());
 				} else {
+					title(player(), '', color('yellow').'[launching_orbital_strike]', 0, 10, 10);
 					clear_task();
 					set_pexp(0);
 					@loc = location_shift(ploc(), 'up', 1.5);
