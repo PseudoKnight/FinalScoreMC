@@ -50,7 +50,7 @@ register_command('cubeclimber', array(
 					create_scoreboard('cc');
 					create_objective('height', 'DUMMY', 'cc');
 					set_objective_display('height', array('slot': 'SIDEBAR', 'displayname': 'Starting...'), 'cc');
-					_add_activity('cubeclimber', 'CubeClimber');
+					_add_activity('cubeclimber', 'CubeClimber', 'cubeclimber', pworld());
 				}
 
 				include('includes.library/cubeclimber.ms');
