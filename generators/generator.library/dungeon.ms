@@ -347,8 +347,8 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 			}
 
 			// Connect rooms
-			@next = 0;
-			@previous = @next;
+			@current = 0;
+			@previous = @current;
 			@try = array();
 			@limit = 3000;
 			@connected = associative_array();
@@ -361,20 +361,20 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 					die('Hit room connector limits! Rooms left: '.array_size(@unconnected).'/'.array_size(@rooms).'!');
 				}
 
-				array_remove_values(@unconnected, @next);
-				@connected[@next] = null;
-				if(@rooms[@next]['connected'] == 0){
-					@rooms[@next]['connected'] = @rooms[@previous]['connected'] + 1;
-					if(@rooms[@next]['connected'] > @maxRoomDistance) {
-						@maxRoomDistance = @rooms[@next]['connected'];
-						@farthestRoom = @next;
+				array_remove_values(@unconnected, @current);
+				@connected[@current] = null;
+				if(@rooms[@current]['connected'] == 0){
+					@rooms[@current]['connected'] = @rooms[@previous]['connected'] + 1;
+					if(@rooms[@current]['connected'] > @maxRoomDistance) {
+						@maxRoomDistance = @rooms[@current]['connected'];
+						@farthestRoom = @current;
 					}
 				}
 
-				@r = @rooms[@next]['r1'];
-				@c = @rooms[@next]['c1'];
-				@roomWidth = @rooms[@next]['width'];
-				@roomLength = @rooms[@next]['length'];
+				@r = @rooms[@current]['r1'];
+				@c = @rooms[@current]['c1'];
+				@roomWidth = @rooms[@current]['width'];
+				@roomLength = @rooms[@current]['length'];
 
 				@success = false;
 				@dirs = array(0, 1, 2, 3);
@@ -408,21 +408,21 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 								@c3 = @c2 - 1;
 								@r3 = @r2;
 						}
-						@room = @roomMap[@c2][@r2];
-						if(@room != -1 && @room != @previous) {
-							if(!@rooms[@room]['connected']) {
+						@next = @roomMap[@c2][@r2];
+						if(@next != -1 && @next != @previous) {
+							if(!@rooms[@next]['connected']) {
 								@layoutMap[@c3][@r3] = 'door';
-								@rooms[@room]['doors']++;
 								@rooms[@next]['doors']++;
-								@previous = @next;
-								@next = @room;
+								@rooms[@current]['doors']++;
+								@previous = @current;
+								@current = @next;
 								@success = true;
 								@try = array();
 								break();
-							} else if(srand(@random) < @extraDoors) {
+							} else if((@rooms[@next]['doors'] == 2 || @rooms[@current]['doors'] == 2) && srand(@random) < @extraDoors) {
 								@layoutMap[@c3][@r3] = 'door';
-								@rooms[@room]['doors']++;
 								@rooms[@next]['doors']++;
+								@rooms[@current]['doors']++;
 							}
 						}
 					} catch(Exception @ex){
@@ -430,17 +430,17 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 					}
 				}
 				if(!@success) {
-					@possibleDeadEnds[@next] = array_get(@possibleDeadEnds, @next, 0) + 1;
-					if(@previous == @next) {
+					@possibleDeadEnds[@current] = array_get(@possibleDeadEnds, @current, 0) + 1;
+					if(@previous == @current) {
 						@limit2 = array_size(@rooms) * 2;
 						do {
-							@next = array_keys(@connected)[integer(srand(@random) * array_size(@connected))];
+							@current = array_keys(@connected)[integer(srand(@random) * array_size(@connected))];
 							@limit2--;
-						} while(@limit2 > 0 && (@next == @previous || array_contains(@try, @next)));
-						@try[] = @next;
+						} while(@limit2 > 0 && (@current == @previous || array_contains(@try, @current)));
+						@try[] = @current;
 					} else {
 						// go back one if we haven't already
-						@next = @previous;
+						@current = @previous;
 					}
 				}
 			}
