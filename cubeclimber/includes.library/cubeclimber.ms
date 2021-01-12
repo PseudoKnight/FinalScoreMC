@@ -65,7 +65,9 @@ proc _cc_spawn(@player, @world = 'custom') {
 
 proc _cc_add_player(@player, @world = 'custom') {
 	@cc = import('cubeclimber');
-	@cc['players'][@player] = array_get_rand(reflect_pull('enum', 'DyeColor'));
+	@color = array_get_rand(reflect_pull('enum', 'DyeColor'));
+	@cc['players'][@player] = @color;
+	title(@player, 'You are '.@color, 'You can destroy blocks of this color');
 	set_pscoreboard(@player, 'cc');
 	set_pscore('height', @player, -1, 'cc');
 	export('cubeclimber', @cc);
