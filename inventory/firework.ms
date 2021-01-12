@@ -179,7 +179,7 @@ bind('firework_explode', null, null, @event){
 		set_timeout(1500, closure(){
 			try(entity_remove(@stand));
 			unbind(@player.'firework');
-			if(ponline(@player)) {
+			if(ponline(@player) && pmode(@player) == 'SPECTATOR') {
 				set_ploc(@player, @returnLoc);
 				set_pmode(@player, 'ADVENTURE');
 			}
