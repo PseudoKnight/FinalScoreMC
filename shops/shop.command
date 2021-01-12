@@ -62,16 +62,12 @@ register_command('shop', array(
 			});
 			
 		} else if(@args[0] == 'edit') {
-			if(array_size(@args) < 5) {
+			if(array_size(@args) < 2) {
 				msg(color('gold').'[Shop] Edits a line on your shop that you\'re looking at.');
 				die('Example: '.color('gray').'"/shop edit buy 1 for 1g"');
 			}
 			
 			include('core.library/item.ms');
-			
-			@transaction = @args[1];
-			
-			@value = array_implode(@args[2..-1]);
 		
 			@loc = pcursor();
 		
@@ -85,6 +81,25 @@ register_command('shop', array(
 			}
 		
 			@signText = get_sign_text(@loc);
+
+			// Check first for item name change
+			if(string_starts_with(@args[1], '[') && string_ends_with(@args[-1], ']')) {
+				@signText[0] = array_implode(@args[1..-1], ' ');
+				// Remove and create new cache when changing item name
+				_remove_cached_shop(@shop);
+				set_sign_text(@loc, @signText);
+				@shop = _sign_get_shop(@loc);
+				if(!@shop['item']) {
+					die(color('red').'Cannot determine the item type.');
+				}
+				_cache_shop(@shop);
+				msg(color('green').'[Shop] Modified');
+				die();
+			}
+
+			// Now check for price changes
+			@transaction = @args[1];	
+			@value = array_implode(@args[2..-1]);
 			if(@transaction == 'buy') {
 				@signText[1] = 'Buy '.@value;
 				@shop[@transaction] = _sign_get_buy_price(@signText);
