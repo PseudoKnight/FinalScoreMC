@@ -2,14 +2,14 @@ dungeonEntrance: true
 default:
     maxRoomHeight: 12
     chestCount: 0.9
-    attic: true
-    balcony: true
+    attic: 0.3
+    balcony: 0.3
     campfireChance: 0.1
     treasureRoom: true
     door: spruce_door
 floors:
     0:
-        waterPit: true
+        waterPit: 0.06
         campfireChance: 0.5
         spawner: [silverfish, bat]
         trap: plate_tnt
@@ -63,7 +63,7 @@ floors:
                 helmet:
                     name: IRON_HELMET
     3:
-        lavaPit: true
+        lavaPit: 0.06
         campfireChance: 0.5
         spawner: [husk, husk, husk, husk, creeper]
         trap: [static_cactus]
@@ -90,7 +90,7 @@ floors:
                 helmet:
                     name: DIAMOND_HELMET
     4:
-        waterPit: true
+        waterPit: 0.06
         campfireChance: 0.5
         spawner: [stray]
         wall: [snow_block, packed_ice]
@@ -117,8 +117,8 @@ floors:
                         name: DIAMOND_HELMET
     5:
         minRoomHeight: 4
-        lavaPit: true
-        fireFloor: true
+        lavaPit: 0.06
+        fireFloor: 0.06
         spawner: [zombified_piglin, magma_cube, blaze]
         trap: [plate_fire]
         wall: nether_bricks
@@ -156,7 +156,7 @@ floors:
                 helmet:
                     name: DIAMOND_HELMET
     7:
-        lavaPit: true
+        lavaPit: 0.06
         spawner: [skeleton, witch, creeper]
         trap: [chest_tnt, plate_potion_poison]
         wall: [polished_andesite, stone_bricks, mossy_stone_bricks, cracked_stone_bricks, infested_cracked_stone_bricks]
@@ -180,7 +180,7 @@ floors:
         utility: enchanting_table
         decor: chorus_plant
         edge: purpur_stairs
-        attic: false
+        attic: 0.0
         boss: ENDER_CRYSTAL
     9:
         spawner: [vindicator, vindicator, vindicator, pillager, pillager, illusioner]
@@ -196,7 +196,7 @@ floors:
         boss: EVOKER
     10:
         scale: 1
-        lavaPit: true
+        lavaPit: 0.06
         campfireChance: 0.0
         spawner: [primed_tnt, ender_crystal, creeper, creeper, creeper]
         trap: plate_tnt
@@ -210,8 +210,8 @@ floors:
         door: air
         minRoomHeight: 4
         chestCount: 0
-        attic: false
-        balcony: false
+        attic: 0.0
+        balcony: 0.0
         boss:
             type: CREEPER
             tags:

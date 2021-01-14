@@ -2,10 +2,9 @@ dungeonEntrance: true
 default:
     scale: 3
     maxRoomHeight: 9
-    attic: true
-    balcony: true
-    lavaPit: true
-    pit: true
+    attic: 0.3
+    balcony: 0.3
+    lavaPit: 0.06
     extraDoors: 0.2
     minRoomSize: 3
     maxRoomSize: 5

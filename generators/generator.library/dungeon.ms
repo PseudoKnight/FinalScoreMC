@@ -37,17 +37,17 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 		'spawnerChance': 0.7,
 		'extraDoors': 0.0,
 		'campfireChance': 0.0,
+		'attic': 0.0, // 0.3
+		'balcony': 0.0, // 0.3
+		'lavaPit': 0.0, // 0.06
+		'waterPit': 0.0, // 0.06
+		'pit': 0.0, // 0.06
+		'fireFloor': 0.0, // 0.06
 
 		// toggleable features on floors
 		'roof': true,
 		'bed': false,
-		'lavaPit': false,
-		'waterPit': false,
-		'pit': false,
-		'fireFloor': false,
 		'staggeredWall': false,
-		'attic': false,
-		'balcony': false,
 		'treasureRoom': false,
 
 		// default materials
@@ -305,17 +305,17 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 
 						// Room types determine generation shape
 						@type = 'NORMAL';
-						if(@floorData['attic'] && @height >= 7 && srand(@random) > 0.70) {
+						if(@floorData['attic'] && @height >= 7 && srand(@random) < @floorData['attic']) {
 							@type = 'ATTIC';
-						} else if(@floorData['balcony'] && @roomWidth > 2 && @roomLength > 2 && @height >= 7 && srand(@random) > 0.70) {
+						} else if(@floorData['balcony'] && @roomWidth > 2 && @roomLength > 2 && @height >= 7 && srand(@random) < @floorData['balcony']) {
 							@type = 'BALCONY';
-						} else if(@floorData['lavaPit'] && @roomWidth > 1 && @roomLength > 1 && srand(@random) > 0.94) {
+						} else if(@floorData['lavaPit'] && @roomWidth > 1 && @roomLength > 1 && srand(@random) < @floorData['lavaPit']) {
 							@type = 'LAVA_PIT';
-						} else if(@floorData['waterPit'] && @roomWidth > 1 && @roomLength > 1 && srand(@random) > 0.94) {
+						} else if(@floorData['waterPit'] && @roomWidth > 1 && @roomLength > 1 && srand(@random) < @floorData['waterPit']) {
 							@type = 'WATER_PIT';
-						} else if(@floorData['fireFloor'] && @roomWidth > 1 && @roomLength > 1 && srand(@random) > 0.94) {
+						} else if(@floorData['fireFloor'] && @roomWidth > 1 && @roomLength > 1 && srand(@random) < @floorData['fireFloor']) {
 							@type = 'FIRE_FLOOR';
-						} else if(@floorData['pit'] && @floor > 0 && srand(@random) > 0.94) {
+						} else if(@floorData['pit'] && @floor > 0 && srand(@random) < @floorData['pit']) {
 							@type = 'PIT';
 						}
 
