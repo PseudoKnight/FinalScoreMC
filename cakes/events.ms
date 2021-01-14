@@ -45,7 +45,7 @@ bind('player_interact', null, array('block': 'CAKE', 'button': 'right', 'hand': 
 
 	@uuid = puuid(player(), true);
 	if(array_index_exists(@thiscake['players'], @uuid)) {
-		die('You\'ve already got this cake.');
+		die('You\'ve already got the '.to_upper(@id).' cake.');
 	}
 	@thiscake['players'][@uuid] = time();
 	store_value('cakeinfo', @cakeinfo);
