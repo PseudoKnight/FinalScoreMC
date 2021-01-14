@@ -659,8 +659,10 @@ register_command('arena', array(
 					for(@i = 0, @i < array_size(@arena['spawn'][0]), @i++) {
 						@arena['spawn'][0][@i] = location_shift(@arena['spawn'][0][@i], @dir, @distance);
 					}
-					for(@i = 0, @i < array_size(@arena['spawn'][1]), @i++) {
-						@arena['spawn'][1][@i] = location_shift(@arena['spawn'][1][@i], @dir, @distance);
+					if(array_index_exists(@arena['spawn'], 1)) {
+						for(@i = 0, @i < array_size(@arena['spawn'][1]), @i++) {
+							@arena['spawn'][1][@i] = location_shift(@arena['spawn'][1][@i], @dir, @distance);
+						}
 					}
 				}
 
