@@ -84,6 +84,7 @@ register_command('shop', array(
 
 			// Check first for item name change
 			if(string_starts_with(@args[1], '[') && string_ends_with(@args[-1], ']')) {
+				include('core.library/cache.ms');
 				@signText[0] = array_implode(@args[1..-1], ' ');
 				// Remove and create new cache when changing item name
 				_remove_cached_shop(@shop);
@@ -104,7 +105,7 @@ register_command('shop', array(
 				@signText[1] = 'Buy '.@value;
 				@shop[@transaction] = _sign_get_buy_price(@signText);
 			} else if(@transaction == 'sell') {
-				@signText[1] = 'Sell '.@value;
+				@signText[2] = 'Sell '.@value;
 				@shop[@transaction] = _sign_get_sell_price(@signText);
 			} else {
 				die(color('gold').'[Shop] You need to specify "buy" or "sell".');
