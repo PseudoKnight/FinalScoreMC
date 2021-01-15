@@ -147,6 +147,7 @@ register_command('arena', array(
 					case 'stackedpickup':
 					case 'heartsdisplay':
 					case 'exitrespawn':
+					case 'script':
 
 						switch(@args[3]) {
 							case 'true':

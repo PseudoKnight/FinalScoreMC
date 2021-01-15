@@ -29,9 +29,6 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 		'minRoomHeight': 3,
 		'maxRoomHeight': 3,
 
-		// variability on floor features
-		'spawnChance': 0.001,
-
 		// variability on room features
 		'chestCount': 0,
 		'spawnerChance': 0.7,
@@ -45,6 +42,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 		'fireFloor': 0.0, // 0.06
 		'pillars': 0.0,
 		'tables': 0.0,
+		'spawnCount': 1,
 
 		// toggleable features on floors
 		'roof': true,
@@ -207,7 +205,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 			@minRoomHeight = @floorData['minRoomHeight'];
 			@roof = @floorData['roof'];
 			@chestCount = @floorData['chestCount'];
-			@spawnChance = @floorData['spawnChance'];
+			@spawnCount = @floorData['spawnCount'];
 			@extraDoors = @floorData['extraDoors'];
 			@mobTypes = @floorData['spawner'];
 			@noise = math_const('INTEGER_MAX') + 1 + integer(srand(@random) * math_const('INTEGER_MAX'));
@@ -494,14 +492,6 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 							|| (!is_null(@rowOdd) && (@rowOdd != @r2 % 2 || @columnOdd != @c2 % 2))
 							|| integer(srand(@random) * 100) < 90) {
 								@layoutMap[@c2][@r2] = 'room';
-								if(srand(@random) < @spawnChance) {
-									@spawns[@floor][] = array(
-										'x': @regionMinX + @c2 * @scale + 0.5,
-										'y': @regionMinY + @floor * (@maxRoomHeight + 3) + 1,
-										'z': @regionMinZ + @r2 * @scale + 0.5,
-										'world': @world,
-									);
-								}
 							} else {
 								@layoutMap[@c2][@r2] = 'column';
 								if(is_null(@rowOdd)) {
@@ -1196,6 +1186,26 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 							}
 						}
 					}
+
+					if(@spawnCount > 0 && @room['type'] != 'LAVA_PIT') {
+						@count = @spawnCount;
+						while(@count > 0) {
+							@loc = array(
+								@regionMinX + @room['c1'] * @scale + 2 + integer(srand(@random) * (@room['width'] - 2)) * @scale + 0.5,
+								@yFloor,
+								@regionMinZ + @room['r1'] * @scale + 2 + integer(srand(@random) * (@room['length'] - 2)) * @scale + 0.5,
+								@world,
+								@room['doors'], // a location array is technically yaw here, but we don't use it
+								0 // pitch parallel to horizon
+							);
+							if(equals_ic(@materials['room'], get_block(@loc))) {
+								@count--;
+								@spawns[@floor][] = @loc;
+							} else if(srand(@random) < 0.2) { // re-attempt spawns 4/5 of the time
+								@count--;
+							}
+						}
+					}
 				}, 'generator');
 			}
 
@@ -1272,6 +1282,11 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 					'z': @entranceRoom['r1'] * @options['floors'][0]['scale'] + @regionMinZ + 0.5,
 					'world': @world,
 				);
+				foreach(@floor: @spawnSet in @spawns) {
+					array_sort(@spawnSet, closure(@left, @right) {
+						return(@left[4] > @right[4]); // sort by door count
+					});
+				}
 				execute(@start, @end, @spawns, @callback);
 			}
 		}, 'generator');
