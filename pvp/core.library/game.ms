@@ -438,7 +438,7 @@ proc _pvp_end_match(@id, @winners) {
 		if(array_index_exists(@pvp, 'stats')) {
 			@title = '';
 			@subtitle = '';
-			if(array_index_exists(@pvp, 'team')) {
+			if(array_index_exists(@pvp, 'team') && @leader) {
 				@title = @pvp['players'][@leader]['color'].color('bold')
 						.@arena['team'][@pvp['players'][@leader]['team']]['name'].' wins '.@pvp['title'].'!';
 				@subtitle = @pvp['players'][@leader]['color'].array_implode(@winners, ' ');
