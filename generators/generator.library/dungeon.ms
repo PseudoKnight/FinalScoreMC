@@ -43,6 +43,8 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 		'waterPit': 0.0, // 0.06
 		'pit': 0.0, // 0.06
 		'fireFloor': 0.0, // 0.06
+		'pillars': 0.0,
+		'tables': 0.0,
 
 		// toggleable features on floors
 		'roof': true,
@@ -91,7 +93,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 
 			// ensure certain values are arrays
 			// these default to an array with air
-			foreach(@key in array('utilty', 'decor', 'wall', 'floor')) {
+			foreach(@key in array('utility', 'decor', 'wall', 'floor')) {
 				if(array_index_exists(@floorData, @key)) {
 					if(is_string(@floorData[@key])) {
 						@floorData[@key] = array(@floorData[@key]);
@@ -208,6 +210,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 			@spawnChance = @floorData['spawnChance'];
 			@extraDoors = @floorData['extraDoors'];
 			@mobTypes = @floorData['spawner'];
+			@noise = math_const('INTEGER_MAX') + 1 + integer(srand(@random) * math_const('INTEGER_MAX'));
 
 			@width = ceil(@regionWidth / @scale);
 			@length = ceil(@regionLength / @scale);
@@ -305,9 +308,14 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 
 						// Room types determine generation shape
 						@type = 'NORMAL';
-						if(@floorData['attic'] && @height >= 7 && srand(@random) < @floorData['attic']) {
+						if(@floorData['tables'] && (@roomWidth == 3 && @roomLength == 3 || @roomWidth == 5 && @roomLength == 5)
+						&& @height >= 4 && srand(@random) < @floorData['tables']) {
+							@type = 'TABLE';
+						} else if(@floorData['pillars'] && @roomWidth > 1 && @roomLength > 1 && srand(@random) < @floorData['pillars']) {
+							@type = 'PILLARS';
+						} else if(@floorData['attic'] && @height >= 7 && srand(@random) < @floorData['attic']) {
 							@type = 'ATTIC';
-						} else if(@floorData['balcony'] && @roomWidth > 2 && @roomLength > 2 && @height >= 7 && srand(@random) < @floorData['balcony']) {
+						} else if(@floorData['balcony'] && @roomWidth > 1 && @roomLength > 1 && @height >= 7 && srand(@random) < @floorData['balcony']) {
 							@type = 'BALCONY';
 						} else if(@floorData['lavaPit'] && @roomWidth > 1 && @roomLength > 1 && srand(@random) < @floorData['lavaPit']) {
 							@type = 'LAVA_PIT';
@@ -478,7 +486,9 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 						if(@r2 >= @r && @r2 < @roomLength + @r
 						&& @c2 >= @c && @c2 < @roomWidth + @c) {
 							@heightMap[@c2][@r2] = @room['height'];
-							if(@roomLength == 1
+							if(@room['type'] == 'PILLARS'
+							|| @room['type'] == 'TABLE'
+							|| @roomLength == 1
 							|| @roomWidth == 1
 							|| _adjacent_equals(@layoutMap, @c2, @r2, 'door')
 							|| (!is_null(@rowOdd) && (@rowOdd != @r2 % 2 || @columnOdd != @c2 % 2))
@@ -639,7 +649,15 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 											}
 
 										case 'room':
-											if(@roomType == 'FIRE_FLOOR' && @y == @groundY + 2 && (@x + @z) % 2 && srand(@random) > 0.2) {
+											if(@roomType == 'TABLE' && @y == @groundY + 2 && !_direction_of_border(@layoutMap, @c, @r)) {
+												_add_to_chunk(@chunk, @loc, @materials['table']);
+
+											} else if(@roomType == 'PILLARS' && !_adjacent_equals(@layoutMap, @c, @r, 'door') 
+											&& !bit_and(@noise, integer(2 ** (abs(@x) + abs(@z))))
+											&& integer(@x ** abs(@z)) % 5 == 1 && integer(@z ** abs(@x)) % 5 == 1) {
+												_add_to_chunk(@chunk, @loc, @materials['column']);
+
+											} else if(@roomType == 'FIRE_FLOOR' && @y == @groundY + 2 && (@x + @z) % 2 && srand(@random) > 0.2) {
 												_add_to_chunk(@chunk, @loc, 'stone_pressure_plate');
 
 											} else if(@roomType == 'ATTIC' && @y == @ceilingY - @roomHeight + @room['midheight']) {
