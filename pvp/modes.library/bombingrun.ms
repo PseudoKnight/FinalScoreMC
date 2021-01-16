@@ -27,6 +27,15 @@ proc _is_bomb(@id, @item) {
 	return(false);
 }
 
+proc _stats_table() {
+	return(array(
+		array('kills', 2, '-------'),
+		array('deaths', 2, '---------'),
+		array('scores', 2, '--------'),
+		array('damage', 3, '------')
+	));
+}
+
 @pvp['binds'][] = @id.'bombpickup';
 bind('item_pickup', array('id': @id.'bombpickup'), null, @event, @id, @pvp) {
 	if(array_index_exists(@pvp['players'], player())
@@ -106,15 +115,6 @@ bind('player_move', array('id': @id.'firedancer'), null, @event, @pvp, @id) {
 			spawn_particle(location_shift(@event['to'], 'up'),'CAMPFIRE_COSY_SMOKE');
 		}
 	}
-}
-
-proc _stats_table() {
-	return(array(
-		array('kills', 2, '-------'),
-		array('deaths', 2, '---------'),
-		array('scores', 2, '--------'),
-		array('damage', 3, '------')
-	));
 }
 
 _pvp_bomb_spawn(@id);

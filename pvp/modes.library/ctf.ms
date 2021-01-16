@@ -28,6 +28,15 @@ proc _flag(@item) {
 	return(null);
 }
 
+proc _stats_table() {
+	return(array(
+		array('kills', 2, '-------'),
+		array('deaths', 2, '---------'),
+		array('scores', 2, '--------'),
+		array('damage', 3, '------')
+	));
+}
+
 _pvp_flag_spawn(@id, 0);
 _pvp_flag_spawn(@id, 1);
 
@@ -88,8 +97,8 @@ bind('item_pickup', array('id': @id.'flagpickup'), null, @e, @id) {
 @pvp['binds'][] = @id.'protectdrops';
 bind('entity_damage', array('id': @id.'protectdrops'), array('type': 'DROPPED_ITEM'),
 @e, @region = @pvp['arena']['region']) {
-	if(array_contains(sk_regions_at(entity_loc(@e['id'])), @region)) {
-		cancel()
+	if(entity_exists(@e['id']) && array_contains(sk_regions_at(entity_loc(@e['id'])), @region)) {
+		cancel();
 	}
 }
 
@@ -103,13 +112,4 @@ if(!array_contains(@pvp['arena']['flags'], 'noinventory')) {
 			cancel();
 		}
 	}
-}
-
-proc _stats_table() {
-	return(array(
-		array('kills', 2, '-------'),
-		array('deaths', 2, '---------'),
-		array('scores', 2, '--------'),
-		array('damage', 3, '------')
-	));
 }
