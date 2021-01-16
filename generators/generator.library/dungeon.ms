@@ -664,7 +664,10 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 												@west = @layoutMap[@c - 1][@r];
 												@east = @layoutMap[@c + 1][@r];
 												@state = @materials['edge'].if(@stairs, '[half=top'.if(@materials['room'] == 'water', ',waterlogged=true'));
-												if((@east == 'wall' || @east == 'door' || @east == 'window' && @roomHeight > 3) && @eastEdge) {
+												if(@roomHeight < 4 && (@east == 'window' && @eastEdge || @west == 'window' && @westEdge
+												|| @north == 'window' && @northEdge || @south == 'window' && @southEdge)) {
+													@state = @materials['room'];
+												} else if(@eastEdge && (@east == 'wall' || @east == 'door' || @east == 'window')) {
 													if(@stairs) {
 														@state .= ',facing=east'
 														if(@roomHeight == 3 && @east == 'door') {
@@ -680,7 +683,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 														}
 														@state .= ']';
 													}
-												} else if((@west == 'wall' || @west == 'door' || @west == 'window' && @roomHeight > 3) && @westEdge) {
+												} else if(@westEdge && (@west == 'wall' || @west == 'door' || @west == 'window')) {
 													if(@stairs) {
 														@state .= ',facing=west'
 														if(@roomHeight == 3 && @west == 'door') {
@@ -696,7 +699,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 														}
 														@state .= ']';
 													}
-												} else if((@south == 'wall' || @south == 'door' || @south == 'window' && @roomHeight > 3) && @southEdge) {
+												} else if(@southEdge && (@south == 'wall' || @south == 'door' || @south == 'window')) {
 													if(@stairs) {
 														@state .= ',facing=south';
 														if(@roomHeight == 3 && @south == 'door') {
@@ -708,7 +711,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 														}
 														@state .= ']';
 													}
-												} else if((@north == 'wall' || @north == 'door' || @north == 'window' && @roomHeight > 3) && @northEdge) {
+												} else if(@northEdge && (@north == 'wall' || @north == 'door' || @north == 'window')) {
 													if(@stairs) {
 														@state .= ',facing=north'
 														if(@roomHeight == 3 && @north == 'door') {
