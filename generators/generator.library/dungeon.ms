@@ -969,14 +969,18 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 							}
 						} else if(@room['width'] > 2 && @room['length'] > 2
 								&& @floorData['campfireChance'] && srand(@random) < @floorData['campfireChance']) {
-							@loc = array(
-								@regionMinX + @room['c1'] * @scale + 2 + integer(srand(@random) * (@room['width'] - 2)) * @scale,
-								@yFloor + if(@room['type'] == 'ATTIC' && srand(@random) > 0.67, @room['midheight'] + 1, 0),
-								@regionMinZ + @room['r1'] * @scale + 2 + integer(srand(@random) * (@room['length'] - 2)) * @scale,
-								@world
-							);
-							if(equals_ic(@materials['room'], get_block(@loc))) {
-								set_block(@loc, 'CAMPFIRE', false);
+							@attempts = 10;
+							while(@attempts-- > 0) {
+								@loc = array(
+									@regionMinX + @room['c1'] * @scale + 2 + integer(srand(@random) * (@room['width'] - 2)) * @scale,
+									@yFloor + if(@room['type'] == 'ATTIC' && srand(@random) > 0.67, @room['midheight'] + 1, 0),
+									@regionMinZ + @room['r1'] * @scale + 2 + integer(srand(@random) * (@room['length'] - 2)) * @scale,
+									@world
+								);
+								if(equals_ic(@materials['room'], get_block(@loc))) {
+									set_block(@loc, 'CAMPFIRE', false);
+									break();
+								}
 							}
 						}
 					}

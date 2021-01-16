@@ -10,7 +10,7 @@ default:
     minRoomSize: 3
     maxRoomSize: 11
     spawnerChance: 0.0
-    campfireChance: 0.9
+    campfireChance: 1.0
     spawnCount: 1
 floors:
     0:
