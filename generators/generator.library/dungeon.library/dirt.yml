@@ -4,7 +4,7 @@ default:
     roof: false
     chestCount: 0
     spawnChance: 0.15
-    extraDoors: 0.1
+    extraDoors: 0.5
 floors:
     0:
         spawner: []
