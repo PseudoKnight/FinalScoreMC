@@ -894,6 +894,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 
 			// Populate rooms
 			@materials = @allmaterials[0];
+			@chestArray = array();
 			foreach(@i: @room in @rooms) {
 				queue_push(closure(){
 					if(@room['length'] == 1 || @room['width'] == 1 || string_ends_with(@room['type'], 'PIT')) {
@@ -950,7 +951,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 						} else if(is_double(@chests)) {
 							@chests = integer(srand(@random) * min(@room['length'], @room['width']) * @chests);
 						}
-						@bonus = if(@room['type'] == 'TREASURE', 3, 1);
+						@bonus = if(@room['type'] == 'TREASURE', 4, 1);
 						@chestHeight = if(@room['type'] == 'ATTIC' && srand(@random) > 0.33){
 							@room['midheight'] + 1
 						} else if(@room['type'] == 'TREASURE') {
@@ -972,6 +973,11 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 								try(set_inventory(@loc, _get_loot(@floor, @random, @bonus)));
 								if(@room['type'] == 'TREASURE') {
 									set_blockdata_string(location_shift(@loc, 'down'), 'diamond_block');
+									set_block_lock(@loc, 'Key'.(@floor + 1));
+									add_to_inventory(@chestArray[integer(srand(@random) * array_size(@chestArray))],
+											array(name: 'TRIPWIRE_HOOK', meta: array(display: 'Key'.(@floor + 1))));
+								} else {
+									@chestArray[] = @loc;
 								}
 							}
 						}
