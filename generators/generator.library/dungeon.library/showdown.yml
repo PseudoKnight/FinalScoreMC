@@ -22,4 +22,4 @@ floors:
         decor: [gravel, gravel, lantern]
         edge: stone_brick_stairs
         window: air
-        divider: cracked_stone_bricks
+        divider: crying_obsidian

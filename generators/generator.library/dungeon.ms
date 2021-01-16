@@ -317,12 +317,18 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 							@type = 'BALCONY';
 						} else if(@floorData['lavaPit'] && @roomWidth > 1 && @roomLength > 1 && srand(@random) < @floorData['lavaPit']) {
 							@type = 'LAVA_PIT';
+							if(@height < 4) {
+								@height = 4;
+							}
 						} else if(@floorData['waterPit'] && srand(@random) < @floorData['waterPit']) {
 							@type = 'WATER_PIT';
 						} else if(@floorData['fireFloor'] && @roomWidth > 1 && @roomLength > 1 && srand(@random) < @floorData['fireFloor']) {
 							@type = 'FIRE_FLOOR';
 						} else if(@floorData['pit'] && srand(@random) < @floorData['pit']) {
 							@type = 'PIT';
+							if(@height < 4) {
+								@height = 4;
+							}
 						}
 
 						// Save room
@@ -555,21 +561,21 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 								// Floor
 								@loc[1] += 1;
 								@roomType = if(@room, @room['type'], null);
-								if(@roomType == 'FIRE_FLOOR') {
+								if(@roomType == 'FIRE_FLOOR' && @layoutMap[@c][@r] != 'column') {
 									_add_to_chunk(@chunk, @loc, 'dispenser[facing=up]');
-								} else if(@roomType == 'LAVA_PIT') {
+								} else if(@roomType == 'LAVA_PIT' && @layoutMap[@c][@r] != 'column') {
 									if(!_direction_of_solid(@layoutMap, @c, @r) || srand(@random) < 0.6) {
 										_add_to_chunk(@chunk, @loc, 'lava');
 									} else {
 										_add_to_chunk(@chunk, @loc, @materials['floor']);
 									}
-								} else if(@roomType == 'WATER_PIT') {
+								} else if(@roomType == 'WATER_PIT' && @layoutMap[@c][@r] != 'column') {
 									if(!_direction_of_solid(@layoutMap, @c, @r) || srand(@random) < 0.7) {
 										_add_to_chunk(@chunk, @loc, 'water');
 									} else {
 										_add_to_chunk(@chunk, @loc, @materials['floor']);
 									}
-								} else if(@roomType == 'PIT') {
+								} else if(@roomType == 'PIT' && @layoutMap[@c][@r] != 'column') {
 									if(!_direction_of_solid(@layoutMap, @c, @r) || srand(@random) > 0.4) {
 										@holeDepth = @maxRoomHeight;
 										while(@holeDepth-- > 0) {
