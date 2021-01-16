@@ -2,14 +2,15 @@ default:
     maxRoomHeight: 11
     attic: 0.3
     balcony: 0.3
-    lavaPit: 0.06
-    waterpit: 0.06
+    pillars: 0.2
+    lavaPit: 0.07
+    waterPit: 0.07
+    pit: 0.07
     extraDoors: 0.3
     minRoomSize: 3
     maxRoomSize: 11
     spawnerChance: 0.0
-    campfireChance: 0.8
-    pillars: 0.2
+    campfireChance: 0.9
     spawnCount: 1
 floors:
     0:
@@ -21,3 +22,4 @@ floors:
         decor: [gravel, gravel, lantern]
         edge: stone_brick_stairs
         window: air
+        divider: cracked_stone_bricks

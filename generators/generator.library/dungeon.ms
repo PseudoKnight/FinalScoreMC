@@ -317,11 +317,11 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 							@type = 'BALCONY';
 						} else if(@floorData['lavaPit'] && @roomWidth > 1 && @roomLength > 1 && srand(@random) < @floorData['lavaPit']) {
 							@type = 'LAVA_PIT';
-						} else if(@floorData['waterPit'] && @roomWidth > 1 && @roomLength > 1 && srand(@random) < @floorData['waterPit']) {
+						} else if(@floorData['waterPit'] && srand(@random) < @floorData['waterPit']) {
 							@type = 'WATER_PIT';
 						} else if(@floorData['fireFloor'] && @roomWidth > 1 && @roomLength > 1 && srand(@random) < @floorData['fireFloor']) {
 							@type = 'FIRE_FLOOR';
-						} else if(@floorData['pit'] && @floor > 0 && srand(@random) < @floorData['pit']) {
+						} else if(@floorData['pit'] && srand(@random) < @floorData['pit']) {
 							@type = 'PIT';
 						}
 
