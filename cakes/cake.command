@@ -387,7 +387,8 @@ register_command('cake', array(
 					@list[] = array(
 						'name': @id,
 						'prefix': @prefix,
-						'rate': round((time() - @time) / 604800000 / (array_size(@cake['players']) - @min), 2)
+						'rate': round((time() - @time) / 604800000 / (array_size(@cake['players']) - @min), 2),
+						'players': array_size(@cake['players']),
 					);
 				}
 				array_sort(@list, closure(@left, @right){
@@ -395,7 +396,7 @@ register_command('cake', array(
 				});
 				msg(color('yellow').color('bold').'Frequency of completion:');
 				foreach(@cake in @list) {
-					msg(@cake['prefix'].@cake['name'].': '.@cake['rate'].' weeks');
+					msg(@cake['prefix'].@cake['name'].' : '.@cake['rate'].' weeks : '.@cake['players'].' players');
 				}
 
 			default:
