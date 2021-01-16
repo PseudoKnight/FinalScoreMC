@@ -1051,6 +1051,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 					}
 
 					if(@room['type'] == 'ATTIC') {
+						@vines = min(@room['width'], @room['length']);
 						do {
 							@loc = null;
 							@attempts = 5;
@@ -1072,7 +1073,8 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 								@loc[1]--;
 								set_blockdata(@loc, @block);
 							}
-						} while(srand(@random) > 0.45);
+							@vines--;
+						} while(@vines > 0 || srand(@random) > 0.45);
 					}
 
 					if(@i == @farthestRoom && @floorData['boss']) {
@@ -1122,6 +1124,8 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 								continue();
 							}
 							switch(@trigger) {
+								case 'static':
+									noop(); // no trigger
 								case 'plate':
 									if(@spawner) {
 										// ignore rooms that already have spawners
