@@ -1193,18 +1193,21 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 						}
 					}
 
-					if(@spawnCount > 0 && @room['type'] != 'LAVA_PIT') {
+					if(@spawnCount > 0) {
 						@count = @spawnCount;
 						while(@count > 0) {
 							@loc = array(
 								@regionMinX + @room['c1'] * @scale + 2 + integer(srand(@random) * (@room['width'] - 2)) * @scale + 0.5,
-								@yFloor,
+								@yFloor + if(@room['type'] == 'ATTIC', @room['midheight'] + 1, 0),
 								@regionMinZ + @room['r1'] * @scale + 2 + integer(srand(@random) * (@room['length'] - 2)) * @scale + 0.5,
 								@world,
-								@room['doors'], // a location array is technically yaw here, but we don't use it
+								if(@room['type'] == 'ATTIC', 0, @room['doors']), // use this for sorting, lower being more isolated a room
 								0 // pitch parallel to horizon
 							);
 							if(equals_ic(@materials['room'], get_block(@loc))) {
+								if(@room['type'] == 'LAVA_PIT') {
+									set_blockdata_string(location_shift(@loc, 'down'), array_get_rand(@materials['floor']), false);
+								}
 								@count--;
 								@spawns[@floor][] = @loc;
 							} else if(srand(@random) < 0.2) { // re-attempt spawns 4/5 of the time
@@ -1290,7 +1293,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 				);
 				foreach(@floor: @spawnSet in @spawns) {
 					array_sort(@spawnSet, closure(@left, @right) {
-						return(@left[4] > @right[4]); // sort by door count
+						return(@left[4] > @right[4]); // sort by door count (more isolated is lower)
 					});
 				}
 				execute(@start, @end, @spawns, @callback);
