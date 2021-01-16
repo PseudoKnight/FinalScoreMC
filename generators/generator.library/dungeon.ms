@@ -896,14 +896,48 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 			@materials = @allmaterials[0];
 			@chestArray = array();
 			foreach(@i: @room in @rooms) {
-				queue_push(closure(){
-					if(@room['length'] == 1 || @room['width'] == 1 || string_ends_with(@room['type'], 'PIT')) {
-						die();
+				@yFloor = @regionMinY + (@floor * (@maxRoomHeight + 4)) + 2;
+				@roomHeight = @room['height'];
+
+				// We need to create spawns after all blocks are set to ensure clearance.
+				@createSpawns = closure(){
+					if(@spawnCount > 0) {
+						@count = @spawnCount;
+						while(@count > 0) {
+							@loc = array(
+								@regionMinX + @room['c1'] * @scale + integer(srand(@random) * (@room['width'])) * @scale + 0.5,
+								@yFloor + if(@room['type'] == 'ATTIC', @room['midheight'] + 1, 0),
+								@regionMinZ + @room['r1'] * @scale + integer(srand(@random) * (@room['length'])) * @scale + 0.5,
+								@world,
+								if(@room['type'] == 'ATTIC', 0, @room['doors']), // use this for sorting, lower being more isolated a room
+								0 // pitch parallel to horizon
+							);
+							if(equals_ic(@materials['room'], get_block(@loc))) {
+								if(string_ends_with(@room['type'], 'PIT')) {
+									set_blockdata_string(location_shift(@loc, 'down'), array_get_rand(@materials['floor']), false);
+								}
+								@count--;
+								@spawns[@floor][] = @loc;
+							} else if(srand(@random) < 0.2) { // re-attempt spawns 4/5 of the time
+								@count--;
+							}
+						}
 					}
+				}
 
-					@yFloor = @regionMinY + (@floor * (@maxRoomHeight + 4)) + 2;
-					@roomHeight = @room['height'];
+				if(@room['length'] == 1 || @room['width'] == 1) {
+					if(@room['doors'] == 1) {
+						// only create spawns if it's a dead end hallway
+						queue_push(@createSpawns, 'generator');
+					}
+					continue();
+				} else if(string_ends_with(@room['type'], 'PIT')) {
+					// Still want to create spawns, but conditions are poor for other blocks and traps
+					queue_push(@createSpawns, 'generator');
+					continue();
+				}
 
+				queue_push(closure(){
 					@spawner = false;
 					if(@room['type'] == 'FIRE_FLOOR') {
 						@y = @yFloor - 1;
@@ -1193,28 +1227,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 						}
 					}
 
-					if(@spawnCount > 0) {
-						@count = @spawnCount;
-						while(@count > 0) {
-							@loc = array(
-								@regionMinX + @room['c1'] * @scale + 2 + integer(srand(@random) * (@room['width'] - 2)) * @scale + 0.5,
-								@yFloor + if(@room['type'] == 'ATTIC', @room['midheight'] + 1, 0),
-								@regionMinZ + @room['r1'] * @scale + 2 + integer(srand(@random) * (@room['length'] - 2)) * @scale + 0.5,
-								@world,
-								if(@room['type'] == 'ATTIC', 0, @room['doors']), // use this for sorting, lower being more isolated a room
-								0 // pitch parallel to horizon
-							);
-							if(equals_ic(@materials['room'], get_block(@loc))) {
-								if(@room['type'] == 'LAVA_PIT') {
-									set_blockdata_string(location_shift(@loc, 'down'), array_get_rand(@materials['floor']), false);
-								}
-								@count--;
-								@spawns[@floor][] = @loc;
-							} else if(srand(@random) < 0.2) { // re-attempt spawns 4/5 of the time
-								@count--;
-							}
-						}
-					}
+					execute(@createSpawns);
 				}, 'generator');
 			}
 
