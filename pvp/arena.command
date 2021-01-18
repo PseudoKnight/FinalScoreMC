@@ -173,7 +173,7 @@ register_command('arena', array(
 
 					# message option
 					case 'description':
-						@string = @args[3..];
+						@string = array_implode(@args[3..]);
 						if(@action == 'add') {
 							@arena[@setting][] = colorize(@string);
 						} else {
