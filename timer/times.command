@@ -4,9 +4,9 @@ register_command('times', array(
 	'tabcompleter': closure(@alias, @sender, @args, @info) {
 		if(array_size(@args) == 1) {
 			if(pisop(@sender)) {
-				return(_strings_start_with_ic(array('top', 'avg', 'segmented', 'worst', 'reset', 'resetplayer'), @args[-1]));
+				return(_strings_start_with_ic(array('top', 'avg', 'segmented', 'best', 'worst', 'reset', 'resetplayer'), @args[-1]));
 			} else {
-				return(_strings_start_with_ic(array('top', 'avg', 'segmented', 'worst'), @args[-1]));
+				return(_strings_start_with_ic(array('top', 'avg', 'segmented', 'best', 'worst'), @args[-1]));
 			}
 		}
 		return(array());
@@ -17,7 +17,7 @@ register_command('times', array(
 		@player = '';
 
 		if(@args) {
-			if(array_contains(array('top', 'avg', 'segmented', 'worst', 'reset', 'resetplayer'), @args[0])) {
+			if(array_contains(array('top', 'avg', 'segmented', 'best', 'worst', 'reset', 'resetplayer'), @args[0])) {
 				@action = @args[0];
 				if(array_size(@args) > 1) {
 					@id = @args[1];
@@ -171,6 +171,7 @@ register_command('times', array(
 					msg(@output);
 				});
 
+			case 'best':
 			case 'worst':
 				@courses = get_values('times');
 				@puuid = null;
@@ -182,52 +183,69 @@ register_command('times', array(
 				if(@puuid == null) {
 					die('No player specified.');
 				}
-				@worst = 0;
-				@worstCourses = array();
-				foreach(@key: @time in @courses) {
-					if(is_array(@time) && @key != 'times') {
-						@found = false;
-						foreach(@i: @t in @time) {
-							if(@t[0] == @puuid) {
-								if(@i >= @worst) {
+				x_new_thread('times-ranks', closure(){
+					@courseMap = associative_array();
+					foreach(@key: @topTimes in @courses) {
+						if(is_array(@topTimes) && @key != 'times') {
+							@course = split('.', @key)[1];
+							@place = 9000.1; // always use the best magic numbers
+							foreach(@i: @entry in @topTimes) {
+								if(@entry[0] == @puuid) {
 									// address ties now
-									while(@i > 0 && @time[@i - 1][2] == @t[2]) {
+									@tie = 0.0;
+									while(@i > 0 && @topTimes[@i - 1][2] == @entry[2]) {
 										@i--;
+										@tie = @tie + 0.1;
 									}
+									@place = @i + 1.0 + @tie;
+									break();
 								}
-								if(@i > @worst) {
-									@worst = @i;
-									@worstCourses = array(split('.', @key)[-1]);
-								} else if(@i == @worst) {
-									@worstCourses[] = split('.', @key)[-1];
-								}
-								@found = true;
-								break();
 							}
-						}
-						if(!@found) {
-							if(@worst == 9001) {
-								@worstCourses[] = split('.', @key)[-1];
-							} else {
-								@worst = 9001; // always use the best magic numbers
-								@worstCourses = array(split('.', @key)[-1]);
-							}
+							@courseMap[@course] = @place;
 						}
 					}
-				}
-				if(@worst == 9001) {
-					die(color('gold').'There\'s unranked courses: '.color('bold').array_implode(@worstCourses, ', '));
-				}
-				if(@worst == 0) {
-					die(color('green').'You are somehow first on every course!');
-				}
-				msg(color('yellow').'Worst courses are '.color('bold').array_implode(@worstCourses, ', ').color('yellow').' with a rank of '.color('bold').(@worst + 1));
+					@courseList = array();
+					foreach(@key: @value in @courseMap) {
+						@courseList[] = array(name: @key, rank: @value);
+					}
+					if(@action == 'best') {
+						array_sort(@courseList, closure(@left, @right){
+							return(@left['rank'] > @right['rank']);
+						});
+					} else { // worst
+						array_sort(@courseList, closure(@left, @right){
+							return(@left['rank'] < @right['rank']);
+						});
+					}
+
+					msg(color('yellow').color('bold').'Your '.@action.' ranked courses:');
+					@top = null;
+					for(@i = 0, @i < 19, @i++) {
+						@course = @courseList[@i];
+						@title = _to_upper_camel_case(@course['name']);
+						@rank = integer(@course['rank']);
+						if(is_null(@top)) {
+							@top = @rank;
+						}
+						@prefix = color('white');
+						if(@top == @rank) {
+							@prefix = color('white').color('bold');
+						}
+						if(@rank == 9001) {
+							msg(color('gray').'Unranked - '.@prefix.@title);
+						} else if(@course['rank'] != @rank) {
+							msg(color('gray').@rank.' - '.@prefix.@title.color('gray').' (tie)');
+						} else {
+							msg(color('gray').@rank.' - '.@prefix.@title);
+						}
+					}
+				});
 
 			case 'top':
 				if(@id == 'all') {
 					@top = get_value('times');
 					msg(colorize('&e&m|------------------&e&l[ TOTAL COURSE RANKINGS ]'));
-					@max = min(20, array_size(@top));
+					@max = min(19, array_size(@top));
 					for(@i = 0, @i < @max, @i++) {
 						if(@top[@i][1] == @sender) {
 							msg(colorize(' '.if(@i < 9, '&80').'&e'.(@i + 1).' [ '.@top[@i][2].' ] &l'.@top[@i][1]));
@@ -252,7 +270,8 @@ register_command('times', array(
 					msg(colorize('&e&m|-------------------&e&l[ TOP TIMES: '.@title.' ]'));
 					@lastTime = 1.0;
 					@lastCount = 0;
-					for(@i = 0, @i < array_size(@times), @i++) {
+					@lines = 1;
+					for(@i = 0, @i < array_size(@times) && @lines < 20, @i++) {
 						@thisTime = @times[@i][2];
 						if(@thisTime == @lastTime){
 							@lastCount++;
@@ -261,7 +280,7 @@ register_command('times', array(
 						}
 						@time = '';
 						if(@thisTime >= 3600) {
-							@time = '>1hour'
+							@time = '>1 hour'
 						} else if(@thisTime >= 60) {
 							@time = simple_date('m\u0027m\u0027 ss.S', integer(@thisTime * 1000));
 						} else {
@@ -278,6 +297,7 @@ register_command('times', array(
 							msg(colorize(' '.if(@place < 10, '&80').'&7'.@place.'&a [ '.@time.' ] &r'.@times[@i][1]));
 						}
 						@lastTime = @thisTime;
+						@lines++;
 					}
 				}
 		}
