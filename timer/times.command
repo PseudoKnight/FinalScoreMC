@@ -101,12 +101,13 @@ register_command('times', array(
 				foreach(@key: @time in @courses) {
 					if(is_array(@time) && @key != 'times') {
 						foreach(@i: @t in @time) {
-							if(@t[0] == @puuid) {
-								msg('Removing '.@player.' from top ten in '.split('.', @key)[1]);
-								array_remove(@time, @i);
-								store_value(@key, @time);
-								break();
+							if(@t[0] != @puuid) {
+								continue();
 							}
+							msg('Removing '.@player.' from top ten in '.split('.', @key)[1]);
+							array_remove(@time, @i);
+							store_value(@key, @time);
+							break();
 						}
 					} else {
 						@uuid = null;
@@ -129,33 +130,73 @@ register_command('times', array(
 				@times = get_values('times');
 				x_new_thread('segmented_times', closure(){
 					@players = associative_array();
-					@courses = array();
+					@courses = associative_array();
 					foreach(@key: @time in @times) {
-						if(!is_array(@time)) {
-							@split = split('.', @key);
-							@course = @split[1];
-							if(!array_contains(@courses, @course)) {
-								@courses[] = @course;
-							}
-							@uuid = @split[2];
-							if(!array_index_exists(@players, @uuid)) {
-								@players[@uuid] = array('total': @time, 'count': 1);
-							} else {
-								@players[@uuid]['total'] += @time;
-								@players[@uuid]['count']++;
-							}
+						if(is_array(@time)) {
+							// Only looking for player times
+							continue();
+						}
+						@split = split('.', @key);
+						@course = @split[1];
+						@uuid = @split[2];
+						if(!array_index_exists(@courses, @course)) {
+							@courses[@course] = array(
+								alltimes: array(@time),
+								players: array(@uuid),
+							);
+						} else {
+							@courses[@course]['alltimes'][] = @time;
+							@courses[@course]['players'][] = @uuid;
+						}
+						if(!array_index_exists(@players, @uuid)) {
+							@players[@uuid] = array(
+								total: @time,
+								count: 1
+							);
+						} else {
+							@players[@uuid]['total'] += @time;
+							@players[@uuid]['count']++;
 						}
 					}
 					@filtered = array_filter(@players, closure(@key, @value) {
-						return(@value['count'] >= array_size(@courses) - 10);
+						return(@value['count'] >= array_size(@courses) / 2);
 					});
+
+					foreach(@course: @data in @courses) {
+						array_sort(@data['alltimes'], 'NUMERIC');
+						@median = array_size(@data['alltimes']) / 2;
+						if(array_size(@data['alltimes']) % 2 > 0) {
+							@median = (@data['alltimes'][floor(@median)] + @data['alltimes'][ceil(@median)]) / 2;
+						} else {
+							@median = @data['alltimes'][@median];
+						}
+						@data['median'] = @median;
+					}
+
 					@players = array();
 					foreach(@uuid: @value in @filtered) {
-						@players[] = array('name': _pdata_by_uuid(@uuid)['name'], 'total': @value['total'], 'count': @value['count']);
+						if(@value['count'] < array_size(@courses)) {
+							foreach(@course: @data in @courses) {
+								if(!array_contains(@data['players'], @uuid)) {
+									@value['total'] += @data['median'];
+								}
+							}
+						}
+						@players[] = array(
+							uuid: @uuid,
+							total: @value['total'], 
+							count: @value['count']
+						);
 					}
 					array_sort(@players, closure(@left, @right){
 						return(@left['total'] > @right['total']);
 					});
+
+					@players = @players[cslice(0, min(18, array_size(@players) - 1))];
+					foreach(@pdata in @players) {
+						@pdata['name'] = _pdata_by_uuid(@pdata['uuid'])['name'];
+					}
+
 					@output = colorize('&e&m|-------------------&e&l[ TOP SEGMENTED TIMES ]&r');
 					foreach(@index: @value in @players) {
 						@time = '';
@@ -186,23 +227,26 @@ register_command('times', array(
 				x_new_thread('times-ranks', closure(){
 					@courseMap = associative_array();
 					foreach(@key: @topTimes in @courses) {
-						if(is_array(@topTimes) && @key != 'times') {
-							@course = split('.', @key)[1];
-							@place = 9000.1; // always use the best magic numbers
-							foreach(@i: @entry in @topTimes) {
-								if(@entry[0] == @puuid) {
-									// address ties now
-									@tie = 0.0;
-									while(@i > 0 && @topTimes[@i - 1][2] == @entry[2]) {
-										@i--;
-										@tie = @tie + 0.1;
-									}
-									@place = @i + 1.0 + @tie;
-									break();
-								}
-							}
-							@courseMap[@course] = @place;
+						if(!is_array(@topTimes) || @key == 'times') {
+							// Only looking for the top times for each course
+							continue();
 						}
+						@course = split('.', @key)[1];
+						@place = 9000.1; // always use the best magic numbers
+						foreach(@i: @entry in @topTimes) {
+							if(@entry[0] != @puuid) {
+								continue();
+							}
+							// address ties now
+							@tie = 0;
+							while(@i > 0 && @topTimes[@i - 1][2] == @entry[2]) {
+								@i--;
+								@tie++;
+							}
+							@place = @i + 1.0 + @tie / 10;
+							break();
+						}
+						@courseMap[@course] = @place;
 					}
 					@courseList = array();
 					foreach(@key: @value in @courseMap) {
@@ -231,7 +275,7 @@ register_command('times', array(
 						if(@top == @rank) {
 							@prefix = color('white').color('bold');
 						}
-						if(@rank == 9001) {
+						if(@rank >= 9000) {
 							msg(color('gray').'Unranked - '.@prefix.@title);
 						} else if(@course['rank'] != @rank) {
 							msg(color('gray').@rank.' - '.@prefix.@title.color('gray').' (tie)');
