@@ -5,57 +5,74 @@ execute(iclosure(){
 		}
 		if(!has_bind('portalgun'.player())) {
 
-			proc _rotate_yaw(@portals, @color, @yaw) {
+			proc _rotate_exit(@portals, @color, @yaw, @pitch) {
 				@entrance = @portals[@color]['exit'];
 				@exit = @portals[if(@color == 'blue', 'orange', 'blue')]['exit'];
-				if(@entrance['face'] == @exit['face']) {
-					return(array(@exit['x'], @exit['y'], @exit['z'], @exit['world'], @yaw + 180, 0));
+				if(!is_null(@entrance['yaw']) && !is_null(@exit['yaw'])) {
+					@yaw += @exit['yaw'] - @entrance['yaw'] + 180;
 				}
-				return(array(@exit['x'], @exit['y'], @exit['z'], @exit['world'], @yaw, 0));
+				if(!is_null(@entrance['pitch']) && @entrance['pitch'] == @exit['pitch']) {
+					@pitch = neg(@pitch);
+				}
+				return(array(@exit['x'], @exit['y'], @exit['z'], @exit['world'], @yaw, @pitch));
 			}
 
-			bind('player_move', array('id': 'portalgun'.player()), array('player': player(), 'threshold': 0), @event, @portals) {
+			bind('player_move', array(id: 'portalgun'.player()), array(player: player(), threshold: 0), @event, @portals) {
 				@from = @event['from'];
 				@to = @event['to'];
-				if(@to['world'] != 'dev') {
-					unbind();
-					die();
-				}
-				@dist = distance(@from, @to);
-				if(@dist > 1) {
-					die();
-				}
-				@to['yaw'] = get_yaw(@from, @to);
-				@to['pitch'] = get_pitch(@from, @to);
-				if(@to['yaw'] == math_const('NaN')) {
-					@to['yaw'] = @to[4];
-				}
-				@trace = ray_trace(@to, @dist + 0.4);
-				if(@trace['hitblock']) {
-					@block = @trace['block'];
-					if(@portals['orange']) {
-						foreach(@b in @portals['orange']['blocks']) {
-							if(is_array(@b) && array_subset_of(@block, @b)) {
-								@newLoc = _rotate_yaw(@portals, 'orange', @to['yaw']);
-								relative_teleport(@newLoc);
-								//set_pvelocity(get_vector(@newLoc));
+				if(@to['world'] != 'dev' || pmode() != 'ADVENTURE') {
+					set_timeout(1, closure(unbind())); // syncs to work around concurrency exception
+					foreach(@color in array('orange', 'blue')) {
+						if(is_null(@portals[@color])) {
+							continue();
+						}
+						foreach(@p in players_in_radius(@from, 48)) {
+							foreach(@b in @portals[@color]['blocks']) {
+								if(is_array(@b)) {
+									psend_block_change(@p, @b, get_blockdata_string(@b));
+								}
 							}
 						}
 					}
-					if(@portals['blue']) {
-						foreach(@b in @portals['blue']['blocks']) {
-							if(is_array(@b) && array_subset_of(@block, @b)) {
-								@newLoc = _rotate_yaw(@portals, 'blue', @to['yaw']);
-								relative_teleport(@newLoc);
-								//set_pvelocity(get_vector(@newLoc));
-							}
-						}
+					die();
+				}
+				if(!@portals['orange'] || !@portals['blue']) {
+					die();
+				}
+				@dist = distance(@from, @to);
+				if(@dist > 2) {
+					// Problem: I think a player_move event is called when teleporting.
+					// Die here to avoid loops.
+					// Could use better detection to allow higher velocities.
+					die();
+				}
+				@loc = @to[];
+				@loc['yaw'] = get_yaw(@from, @to);
+				@loc['pitch'] = get_pitch(@from, @to);
+				if(@loc['yaw'] == math_const('NaN')) {
+					@loc['yaw'] = @to['yaw']; // fallback to old yaw
+				}
+				@trace = ray_trace(@loc, @dist * 2 + 0.5);
+				if(!@trace['hitblock']) {
+					die();
+				}
+				@block = @trace['block'];
+				foreach(@color in array('orange', 'blue')) {
+					@b = @portals[@color]['blocks'][0];
+					if(is_array(@b) && array_subset_of(@block, @b)) {
+						@newLoc = _rotate_exit(@portals, @color, @to['yaw'], @to['pitch']);
+						relative_teleport(@newLoc);
+						play_sound(@newLoc, array(sound: 'ENTITY_ENDERMAN_TELEPORT', volume: 0.2));
+						@v = get_vector(@portals[if(@color == 'orange', 'blue', 'orange')]['exit'], @dist);
+						set_pvelocity(@v);
+						set_timeout(50, closure(set_pvelocity(@v)));
+						die();
 					}
 				}
 			}
 		}
 
-		@trace = ray_trace(32);
+		@trace = ray_trace(48);
 
 		if(!@trace['hitblock']) {
 			die();
@@ -63,7 +80,7 @@ execute(iclosure(){
 
 		@block = @trace['block'];
 		if(get_block(@block) != 'WHITE_CONCRETE') {
-			play_sound(ploc(), array('sound': 'ENTITY_SHULKER_CLOSE'));
+			play_sound(ploc(), array(sound: 'ENTITY_SHULKER_CLOSE'));
 			die();
 		}
 
@@ -91,38 +108,58 @@ execute(iclosure(){
 			@portal['y'] -= 2;
 		}
 
-		@portal['face'] = @face;
+		switch(@face) {
+			case 'NORTH':
+				@portal['yaw'] = 180;
+				@portal['pitch'] = null;
+			case 'SOUTH':
+				@portal['yaw'] = 0;
+				@portal['pitch'] = null;
+			case 'EAST':
+				@portal['yaw'] = 270;
+				@portal['pitch'] = null;
+			case 'WEST':
+				@portal['yaw'] = 90;
+				@portal['pitch'] = null;
+			case 'UP':
+				@portal['yaw'] = null;
+				@portal['pitch'] = -90;
+			case 'DOWN':
+				@portal['yaw'] = null;
+				@portal['pitch'] = 90;
+		}
 
 		// clean up old portal blocks before modifying the portals array
 		if(@portals[@color]) {
 			@oldLocs = @portals[@color]['blocks'];
-			if(!is_null(@oldLocs)) {
-				foreach(@p in players_in_radius(@block, 48)) {
-					foreach(@b in @oldLocs) {
-						if(is_array(@b)) {
-							psend_block_change(@p, @b, get_blockdata_string(@b));
-						}
+			if(is_null(@oldLocs)) {
+				continue();
+			}
+			foreach(@p in players_in_radius(@block, 48)) {
+				foreach(@b in @oldLocs) {
+					if(is_array(@b)) {
+						psend_block_change(@p, @b, get_blockdata_string(@b));
 					}
 				}
 			}
 		}
 
-		@portals[@color] = array('exit': @portal, 'blocks': array(@block, @extension));
+		@portals[@color] = array(exit: @portal, blocks: array(@block, @extension));
 
 		// play effects
-		play_sound(@loc, array('sound': 'ENTITY_SHULKER_SHOOT', 'pitch': 1.3, 'volume': 3));
-		play_sound(@loc, array('sound': 'ENTITY_EVOKER_CAST_SPELL', 'pitch': 0.6, 'volume': 3));
-		@particleLoc = location_shift(@block[], @face, 0.55);
+		play_sound(@loc, array(sound: 'ENTITY_SHULKER_SHOOT', pitch: 1.3, volume: 3));
+		play_sound(@loc, array(sound: 'ENTITY_EVOKER_CAST_SPELL', pitch: 0.6, volume: 3));
+		@particleLoc = location_shift(@block, @face, 0.55);
 		@particleLoc['x'] += 0.5;
 		@particleLoc['y'] += 0.5;
 		@particleLoc['z'] += 0.5;
 		spawn_particle(@particleLoc, array(
-			'particle': 'BLOCK_DUST', 
-			'count': 20, 
-			'xoffset': if(@face != 'EAST' && @face != 'WEST', 0.7, 0.0),
-			'zoffset': if(@face != 'NORTH' && @face != 'SOUTH', 0.7, 0.0),
-			'yoffset': if(@face != 'UP' && @face != 'DOWN', 0.7, 0.0),
-			'block': @color.'_concrete'
+			particle: 'BLOCK_DUST', 
+			count: 20, 
+			xoffset: if(@face != 'EAST' && @face != 'WEST', 0.7, 0.0),
+			zoffset: if(@face != 'NORTH' && @face != 'SOUTH', 0.7, 0.0),
+			yoffset: if(@face != 'UP' && @face != 'DOWN', 0.7, 0.0),
+			block: @color.'_concrete'
 		));
 
 		// render particle trail
@@ -132,7 +169,7 @@ execute(iclosure(){
 		@particles = 0;
 		while(@particles++ <= @maxParticles) {
 			@origin = location_shift(@origin, @loc, @distance);
-			spawn_particle(@origin, array('particle': 'FALLING_DUST', 'block': @color.'_concrete'));
+			spawn_particle(@origin, array(particle: 'FALLING_DUST', block: @color.'_concrete'));
 		}
 
 		// set new portal blocks
@@ -151,12 +188,20 @@ execute(iclosure(){
 		'blue': null,
 	);
 
-	bind('player_interact', array('priority': 'LOW'), array('itemname': 'LANTERN'), @event, @portals) {
-		_portal('orange', @portals);
+	unbind('orangeportalgun');
+	bind('player_interact', array(priority: 'LOW', id: 'orangeportalgun'), array(itemname: 'LANTERN'), @event, @portals) {
+		if(!pcooldown('LANTERN')) {
+			_portal('orange', @portals);
+			set_pcooldown('LANTERN', 4)
+		}
 	}
 
-	bind('player_interact', array('priority': 'LOW'), array('itemname': 'SOUL_LANTERN'), @event, @portals) {
-		_portal('blue', @portals);
+	unbind('blueportalgun');
+	bind('player_interact', array(priority: 'LOW', id: 'blueportalgun'), array(itemname: 'SOUL_LANTERN'), @event, @portals) {
+		if(!pcooldown('SOUL_LANTERN')) {
+			_portal('blue', @portals);
+			set_pcooldown('SOUL_LANTERN', 4)
+		}
 	}
 
 });
