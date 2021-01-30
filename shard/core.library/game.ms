@@ -150,6 +150,11 @@ proc _shard_create(@rules){
 				export('shard', @game);
 
 				// Start game
+				if(array_contains(get_scoreboards(), 'shard')) {
+					// Leftover junk. Probably caused by a bug.
+					console('Cleaning up old scoreboard for shard.', false);
+					remove_scoreboard('shard');
+				}
 				create_scoreboard('shard');
 				create_objective('rules', 'DUMMY', 'shard');
 				foreach(@rule: @value in @rules) {
