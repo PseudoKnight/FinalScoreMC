@@ -302,15 +302,19 @@ register_command('timer', array(
 				}
 			}
 			if(@place) {
-				switch(@place) {
-					case 1:
-						@place = '1st';
-					case 2:
-						@place = '2nd';
-					case 3:
-						@place = '3rd';
-					default:
-						@place = @place.'th';
+				if(@place < 4 || @place > 20) {
+					switch(@place % 10) {
+						case 1:
+							@place = @place.'st';
+						case 2:
+							@place = @place.'nd';
+						case 3:
+							@place = @place.'rd';
+						default:
+							@place = @place.'th';
+					}
+				} else {
+					@place = @place.'th';
 				}
 				if(@tied) {
 					_broadcast(color('green').@player.' tied the '.color('bold').@place.color('green').' place time for '._to_upper_camel_case(@id).'!');
