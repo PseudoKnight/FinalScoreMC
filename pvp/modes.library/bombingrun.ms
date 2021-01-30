@@ -46,7 +46,7 @@ bind('item_pickup', array('id': @id.'bombpickup'), null, @event, @id, @pvp) {
 		modify_event('item', null);
 		play_sound(ploc(player()), array('sound': 'ENTITY_ENDERMAN_TELEPORT', 'pitch': 2), player());
 		set_peffect(player(), 'GLOWING', 0, 9999, true, false);
-		title('', 'Take the bomb to the enemy base!', 0, 20, 20);
+		title('', 'Take the bomb to the enemy target!', 0, 20, 20);
 	}
 }
 
@@ -54,8 +54,13 @@ bind('item_pickup', array('id': @id.'bombpickup'), null, @event, @id, @pvp) {
 bind('entity_damage', array('id': @id.'itemdamage'), array('type': 'DROPPED_ITEM'), @event, @pvp) {
 	if(array_index_exists(@pvp, 'bomb')
 	&& @event['id'] == @pvp['bomb']) {
-		array_remove(@pvp, 'bomb');
-		_pvp_bomb_spawn(@pvp['id']);
+		// ensure it's destroyed before spawning a new one
+		set_timeout(50, closure() {
+			if(!entity_exists(@event['id'])) {
+				array_remove(@pvp, 'bomb');
+				_pvp_bomb_spawn(@pvp['id']);
+			}
+		});
 	}
 }
 
