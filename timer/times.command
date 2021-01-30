@@ -141,11 +141,13 @@ register_command('times', array(
 						@uuid = @split[2];
 						if(!array_index_exists(@courses, @course)) {
 							@courses[@course] = array(
-								alltimes: array(@time),
+								count: 1,
+								total: @time,
 								players: array(@uuid),
 							);
 						} else {
-							@courses[@course]['alltimes'][] = @time;
+							@courses[@course]['count']++;
+							@courses[@course]['total'] += @time;
 							@courses[@course]['players'][] = @uuid;
 						}
 						if(!array_index_exists(@players, @uuid)) {
@@ -163,14 +165,7 @@ register_command('times', array(
 					});
 
 					foreach(@course: @data in @courses) {
-						array_sort(@data['alltimes'], 'NUMERIC');
-						@median = array_size(@data['alltimes']) / 2;
-						if(array_size(@data['alltimes']) % 2 > 0) {
-							@median = (@data['alltimes'][floor(@median)] + @data['alltimes'][ceil(@median)]) / 2;
-						} else {
-							@median = @data['alltimes'][@median];
-						}
-						@data['median'] = @median;
+						@data['avg'] = round(@data['total'] / @data['count'], 1);
 					}
 
 					@players = array();
@@ -178,7 +173,7 @@ register_command('times', array(
 						if(@value['count'] < array_size(@courses)) {
 							foreach(@course: @data in @courses) {
 								if(!array_contains(@data['players'], @uuid)) {
-									@value['total'] += @data['median'];
+									@value['total'] += @data['avg'];
 								}
 							}
 						}
@@ -197,7 +192,7 @@ register_command('times', array(
 						@pdata['name'] = _pdata_by_uuid(@pdata['uuid'])['name'];
 					}
 
-					@output = colorize('&e&m|-------------------&e&l[ TOP SEGMENTED TIMES ]&r');
+					@output = colorize('&e&m|---------------------------&e&l[ TOP SEGMENTED TIMES ]&r');
 					foreach(@index: @value in @players) {
 						@time = '';
 						if(@value['total'] >= 3600) {
