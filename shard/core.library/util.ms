@@ -47,17 +47,23 @@ proc _unload_shard() {
 	}
 	queue_push(closure(){
 		if(!array_contains(get_worlds(), 'shard')) {
+			console('Failed to unload shard: world doesn\'t exist.', false);
 			die();
 		}
-		if(array_size(all_players('shard')) == 0 && _unload_world('shard', false)) {
+		if(array_size(all_players('shard')) == 0) {
+			console('Failed to unload shard: players still exist in world.', false);
+			die();
+		}
+		try {
+			_unload_world('shard', false);
 			remove_scoreboard('shard');
 			_remove_activity('shard');
 			foreach(@bind in @game['binds']) {
 				unbind(@bind);
 			}
 			export('shard', null);
-		} else {
-			console('Failed to unload shard world!', false);
+		} catch(InvalidWorldException @ex) {
+			console('Failed to unload shard: '.@ex['message'], false);
 		}
 	}, 'shard');
 }
