@@ -580,7 +580,7 @@ proc _pvp_end_match(@id, @winners) {
 		_remove_region_entities(@arena['region'], array(), @world);
 
 		if(array_index_exists(@arena, 'restore')) {
-			broadcast(color('YELLOW').'Restoring PVP arena...');
+			broadcast(color('YELLOW').'Restoring arena for '.@pvp['title'].' ...');
 			foreach(@region in @arena['restore']) {
 				skcb_load(@region);
 				skcb_paste(array(0, 0, 0, @world), array('origin': true));
