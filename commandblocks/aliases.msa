@@ -98,7 +98,10 @@
 	});
 <<<
 
-/effect $target $effect [$strength=0] [$length=30] = >>>
+*:/effect $target $effect [$strength=0] [$length=30] = >>>
+	if(!has_permission('command.effect')) {
+		die();
+	}
 	_execute_on($target, closure(@uuid) {
 		if($effect == 'milk') {
 			clear_peffects(@uuid);
