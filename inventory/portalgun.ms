@@ -3,20 +3,20 @@ execute(iclosure(){
 		if(pworld() != 'dev' || pmode() != 'ADVENTURE') {
 			return();
 		}
-		if(!has_bind('portalgun'.player())) {
 
-			proc _rotate_exit(@portals, @color, @yaw, @pitch) {
-				@entrance = @portals[@color]['exit'];
-				@exit = @portals[if(@color == 'blue', 'orange', 'blue')]['exit'];
-				if(!is_null(@entrance['yaw']) && !is_null(@exit['yaw'])) {
-					@yaw += @exit['yaw'] - @entrance['yaw'] + 180;
-				}
-				if(!is_null(@entrance['pitch']) && @entrance['pitch'] == @exit['pitch']) {
-					@pitch = neg(@pitch);
-				}
-				return(array(@exit['x'], @exit['y'], @exit['z'], @exit['world'], @yaw, @pitch));
+		proc _rotate_exit(@portals, @color, @yaw, @pitch) {
+			@entrance = @portals[@color]['exit'];
+			@exit = @portals[if(@color == 'blue', 'orange', 'blue')]['exit'];
+			if(!is_null(@entrance['yaw']) && !is_null(@exit['yaw'])) {
+				@yaw += @exit['yaw'] - @entrance['yaw'] + 180;
 			}
+			if(!is_null(@entrance['pitch']) && @entrance['pitch'] == @exit['pitch']) {
+				@pitch = neg(@pitch);
+			}
+			return(array(@exit['x'], @exit['y'], @exit['z'], @exit['world'], @yaw, @pitch));
+		}
 
+		if(!has_bind('portalgun'.player())) {
 			bind('player_move', array(id: 'portalgun'.player()), array(player: player(), threshold: 0), @event, @portals) {
 				@from = @event['from'];
 				@to = @event['to'];
@@ -62,7 +62,8 @@ execute(iclosure(){
 					if(is_array(@b) && array_subset_of(@block, @b)) {
 						@newLoc = _rotate_exit(@portals, @color, @to['yaw'], @to['pitch']);
 						relative_teleport(@newLoc);
-						play_sound(@newLoc, array(sound: 'ENTITY_ENDERMAN_TELEPORT', volume: 0.2));
+						play_sound(@newLoc, array(sound: 'ENTITY_ILLUSIONER_MIRROR_MOVE', volume: 0.3));
+						play_sound(@newLoc, array(sound: 'ENTITY_ILLUSIONER_CAST_SPELL', volume: 0.3));
 						@v = get_vector(@portals[if(@color == 'orange', 'blue', 'orange')]['exit'], @dist);
 						set_pvelocity(@v);
 						set_timeout(50, closure(set_pvelocity(@v)));
@@ -97,7 +98,8 @@ execute(iclosure(){
 		if(@face != 'UP' && @face != 'DOWN') {
 			@portal = location_shift(@portal, @face);
 			if(round(@loc['y']) == floor(@loc['y'])) {
-				@extension = location_shift(@block, 'down');
+				@extension = @block;
+				@block = location_shift(@block, 'down');
 				@portal['y'] -= 1;
 			} else {
 				@extension = location_shift(@block, 'up');
@@ -148,7 +150,6 @@ execute(iclosure(){
 
 		// play effects
 		play_sound(@loc, array(sound: 'ENTITY_SHULKER_SHOOT', pitch: 1.3, volume: 3));
-		play_sound(@loc, array(sound: 'ENTITY_EVOKER_CAST_SPELL', pitch: 0.6, volume: 3));
 		@particleLoc = location_shift(@block, @face, 0.55);
 		@particleLoc['x'] += 0.5;
 		@particleLoc['y'] += 0.5;
@@ -172,6 +173,24 @@ execute(iclosure(){
 			spawn_particle(@origin, array(particle: 'FALLING_DUST', block: @color.'_concrete'));
 		}
 
+		@otherColor = if(@color == 'orange', 'blue', 'orange');
+		if(@portals[@otherColor]) {
+			foreach(@p in players_in_radius(@portal, 0.7)) {
+				@b = @portals[@color]['blocks'][0];
+				if(is_array(@b) && array_subset_of(@block, @b)) {
+					@ploc = ploc();
+					@newLoc = _rotate_exit(@portals, @color, @ploc['yaw'], @ploc['pitch']);
+					relative_teleport(@newLoc);
+					play_sound(@newLoc, array(sound: 'ENTITY_ILLUSIONER_MIRROR_MOVE', volume: 0.3));
+					play_sound(@newLoc, array(sound: 'ENTITY_ILLUSIONER_CAST_SPELL', volume: 0.3));
+					@v = get_vector(@portals[@otherColor]['exit'], 0.15);
+					set_pvelocity(@v);
+					set_timeout(50, closure(set_pvelocity(@v)));
+					break();
+				}
+			}
+		}
+
 		// set new portal blocks
 		set_timeout(50, closure(){
 			foreach(@p in players_in_radius(@block, 48)) {
@@ -192,7 +211,7 @@ execute(iclosure(){
 	bind('player_interact', array(priority: 'LOW', id: 'orangeportalgun'), array(itemname: 'LANTERN'), @event, @portals) {
 		if(!pcooldown('LANTERN')) {
 			_portal('orange', @portals);
-			set_pcooldown('LANTERN', 4)
+			set_pcooldown('LANTERN', 5);
 		}
 	}
 
@@ -200,7 +219,7 @@ execute(iclosure(){
 	bind('player_interact', array(priority: 'LOW', id: 'blueportalgun'), array(itemname: 'SOUL_LANTERN'), @event, @portals) {
 		if(!pcooldown('SOUL_LANTERN')) {
 			_portal('blue', @portals);
-			set_pcooldown('SOUL_LANTERN', 4)
+			set_pcooldown('SOUL_LANTERN', 5);
 		}
 	}
 
