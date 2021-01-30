@@ -1,12 +1,12 @@
 @menu = @main[];
-@menu[28]['name'] = 'LIME_WOOL';
+@menu[@rows * 9 + 1]['name'] = 'LIME_WOOL';
 
 @menu[18] = array(
 	'name': 'SNOW_BLOCK',
 	'meta': array(
 		'display': color('yellow').'Spleef',
 		'lore': array(
-			color('r').'Last man standing (2+ players)',
+			color('white').'Last man standing (2+ players)',
 			color('dark_gray').'Run: /warp spleef',
 		),
 	),
@@ -16,9 +16,9 @@
 	'meta': array(
 		'display': color('gold').'Cube'.color('red').'Climber',
 		'lore': array(
-			color('r').'Players race to the top of randomly placed cubes',
-			color('r').'and click certain color blocks to remove them.',
-			color('r').'First player to the top wins. (2+ players)',
+			color('white').'Players race to the top of randomly placed cubes',
+			color('white').'and click certain color blocks to remove them.',
+			color('white').'First player to the top wins. (2+ players)',
 			color('dark_gray').'Run: /warp cubeclimber',
 		),
 	),
@@ -28,10 +28,10 @@
 	'meta': array(
 		'display': color('green').'Seven Seconds to Live',
 		'lore': array(
-			color('r').'Players have seven seconds to live...',
-			color('r').'but they can add time by collecting ores!',
-			color('r').'The rarer the ore, the more time added.',
-			color('r').'Last man not blown up wins. (2 - 8 players)',
+			color('white').'Players have seven seconds to live...',
+			color('white').'but they can add time by collecting ores!',
+			color('white').'The rarer the ore, the more time added.',
+			color('white').'Last man not blown up wins. (2 - 8 players)',
 			color('dark_gray').'Run: /warp 7',
 		),
 	),
@@ -41,8 +41,8 @@
 	'meta': array(
 		'display': color('green').'FrogWare',
 		'lore': array(
-			color('r').'Players are given random tasks to complete.',
-			color('r').'First to 25 points (1+ players)',
+			color('white').'Players are given random tasks to complete.',
+			color('white').'First to 25 points (1+ players)',
 			color('dark_gray').'Run: /warp frogware',
 		),
 	),
@@ -52,8 +52,8 @@
 	'meta': array(
 		'display': color('red').'Snake',
 		'lore': array(
-			color('r').'Last snake slithering (1 - 9 players)',
-			color('r').'Collect powerups. Obliterate other snakes.',
+			color('white').'Last snake slithering (1 - 9 players)',
+			color('white').'Collect powerups. Obliterate other snakes.',
 			color('dark_gray').'Run: /warp snake',
 		),
 	),
@@ -63,7 +63,7 @@
 	'meta': array(
 		'display': color('aqua').'Hockey',
 		'lore': array(
-			color('r').'Team slime hockey (4 - 8 players)',
+			color('white').'Team slime hockey (4 - 8 players)',
 			color('dark_gray').'Run: /warp hockey',
 		),
 	),
@@ -73,11 +73,11 @@
 	'meta': array(
 		'display': color('aqua').'Charades',
 		'lore': array(
-			color('r').'Builders are given something random to build.',
-			color('r').'Others guess the answer within the alloted time.',
-			color('r').'Points are awarded for guessing and being guessed.',
-			color('r').'It continues until everyone has had a turn building.',
-			color('r').'(3+ Players)',
+			color('white').'Builders are given something random to build.',
+			color('white').'Others guess the answer within the alloted time.',
+			color('white').'Points are awarded for guessing and being guessed.',
+			color('white').'It continues until everyone has had a turn building.',
+			color('white').'(3+ Players)',
 			color('dark_gray').'Run: /warp charades',
 		),
 	),
@@ -87,7 +87,7 @@
 	'meta': array(
 		'display': color('yellow').'Gladiator Arena',
 		'lore': array(
-			color('r').'Survive waves of mobs (1+ players)',
+			color('white').'Survive waves of mobs (1+ players)',
 			color('dark_gray').'Run: /warp gladiator',
 		),
 	),
@@ -97,7 +97,7 @@
 	'meta': array(
 		'display': color('gold').'Hoops!',
 		'lore': array(
-			color('r').'Basketball (1+ players)',
+			color('white').'Basketball (1+ players)',
 			color('dark_gray').'Run: /warp hoops',
 		),
 	),
@@ -107,7 +107,7 @@
 	'meta': array(
 		'display': color('green').'Slimey Golf',
 		'lore': array(
-			color('r').'Minigolf (1 - 4 players)',
+			color('white').'Minigolf (1 - 4 players)',
 			color('dark_gray').'Run: /warp slimeygolf',
 		),
 	),
@@ -117,7 +117,7 @@
 	'meta': array(
 		'display': color('aqua').'Sunken City Golf',
 		'lore': array(
-			color('r').'Minigolf (1 - 4 players)',
+			color('white').'Minigolf (1 - 4 players)',
 			color('dark_gray').'Run: /warp sunkencitygolf',
 		),
 	),
@@ -127,7 +127,7 @@
 	'meta': array(
 		'display': color('yellow').'Island Golf',
 		'lore': array(
-			color('r').'Minigolf (1 - 4 players)',
+			color('white').'Minigolf (1 - 4 players)',
 			color('dark_gray').'Run: /warp islandgolf',
 		),
 	),
@@ -137,8 +137,8 @@
 	'meta': array(
 		'display': color('aqua').'Arctic Race',
 		'lore': array(
-			color('r').'Race boats along treacherous icebergs.',
-			color('r').'(2+ players)',
+			color('white').'Race boats along treacherous icebergs.',
+			color('white').'(2+ players)',
 			color('dark_gray').'Run: /warp arctic',
 		)
 	),
@@ -148,11 +148,11 @@
 	'meta': array(
 		'display': color('aqua').'Pig Race',
 		'lore': array(
-			color('r').'Race finnicky pigs around a pleasant course.',
-			color('r').'(2+ players)',
+			color('white').'Race finnicky pigs around a pleasant course.',
+			color('white').'(2+ players)',
 			color('dark_gray').'Run: /warp thatlldo',
 		)
 	),
 );
 delete_virtual_inventory('other');
-create_virtual_inventory('other', 36, 'Other Games', @menu);
+create_virtual_inventory('other', @rows * 9 + 9, 'Other Games', @menu);

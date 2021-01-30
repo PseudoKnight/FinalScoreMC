@@ -1,44 +1,58 @@
 @menu = @main[];
-@menu[27]['name'] = 'RED_WOOL';
+@menu[@rows * 9]['name'] = 'RED_WOOL';
 
 @menuPvp = array(
 	'inv': associative_array(),
 	'id': 'pvp',
 	'title': 'PVP Arenas',
+	'size': @rows * 9 + 9,
 	'menu': @menu
 );
 
+@arenas = get_values('arena');
 @arenas = array_filter(get_values('arena'), closure(@key, @value){
-	return(!array_index_exists(@value, 'parent'));
+	return(!array_index_exists(@value, 'parent')
+	|| !array_index_exists(@arenas['arena.'.@value['parent']], 'arenaselect')
+	|| !array_contains(@arenas['arena.'.@value['parent']]['arenaselect']['arenas'], split('.', @key)[1]));
 });
-@slot = floor((27 - array_size(@arenas)) / 9) * 9;
+@slot = floor((@rows * 9 - array_size(@arenas)) / 9) * 9;
 foreach(@name: @arena in @arenas) {
 	@name = split('.', @name)[1];
+	@item = 'IRON_SWORD';
+	@qty = 1;
 	@lore = array();
+	if(array_index_exists(@arena, 'mode')) {
+		if(@arena['mode'] == 'koth') {
+			@lore[] = color('green').'King of the Hill';
+			@item = 'IRON_HELMET';
+		} else if(@arena['mode'] == 'ctf') {
+			@lore[] = color('green').'Capture the Flag';
+			@item = 'WHITE_BANNER';
+		} else if(@arena['mode'] == 'bombingrun') {
+			@lore[] = color('green').'Bombing Run';
+			@item = 'FIRE_CHARGE';
+		}
+	}
+	if(array_index_exists(@arena, 'arenaselect')) {
+		@qty = array_size(@arena['arenaselect']['arenas']);
+		@lore[] = color('yellow').@qty.' arenas to '.if(@arena['arenaselect']['type'] == 'vote', 'choose from', 'play on');
+	}
 	@min = if(array_index_exists(@arena, 'min'), @arena['min'], 2);
 	@max = if(array_index_exists(@arena, 'max'), '-'.@arena['max'], '+');
 	@lore[] = color('green').@min.@max.' players';
 	if(array_index_exists(@arena, 'description')) {
 		foreach(@line in @arena['description']) {
-			@lore[] = @line;
-		}
-	} else if(array_index_exists(@arena, 'mode')) {
-		if(@arena['mode'] == 'koth') {
-			@lore[] = color('green').'King of the Hill';
-		} else if(@arena['mode'] == 'ctf') {
-			@lore[] = color('green').'Capture the Flag';
-		} else if(@arena['mode'] == 'bombingrun') {
-			@lore[] = color('green').'Bombing Run';
+			@lore[] = color('white').@line;
 		}
 	}
 	@lore[] = color('dark_gray').'Run: /warp '.@name;
 	@menuPvp['inv'][@slot++] = associative_array(
-		'name': 'IRON_SWORD',
-		'qty': @min,
+		'name': @item,
+		'qty': @qty,
 		'meta': associative_array(
-			'display': color('green').to_upper(@name),
+			'display': color('green')._to_upper_camel_case(@name),
 			'lore': @lore,
-			'flags': array('HIDE_ATTRIBUTES'),
+			'flags': array('HIDE_ATTRIBUTES', 'HIDE_ENCHANTS'),
 		),
 	);
 }

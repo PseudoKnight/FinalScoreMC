@@ -12,11 +12,19 @@ proc _menu_refresh_pvp() {
 			}
 			if(@pvp['players']) {
 				@item = @item[];
-				@item['name'] = 'DIAMOND_SWORD';
+				if(@item['name'] == 'IRON_SWORD') {
+					@item['name'] = 'DIAMOND_SWORD';
+				} else if(@item['name'] == 'IRON_HELMET') {
+					@item['name'] = 'DIAMOND_HELMET';
+				} else if(@item['name'] == 'WHITE_BANNER') {
+					@item['name'] = 'LIGHT_BLUE_BANNER';
+				} else {
+					@item['meta']['enchants'] = array(unbreaking: 1);
+				}
 			}
 		}
 		@menu[@slot++] = @item;
 	}
 	delete_virtual_inventory(@menuTemplate['id']);
-	create_virtual_inventory(@menuTemplate['id'], 36, @menuTemplate['title'], @menu);
+	create_virtual_inventory(@menuTemplate['id'], @menuTemplate['size'], @menuTemplate['title'], @menu);
 }

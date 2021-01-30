@@ -1,40 +1,53 @@
-@color = array(
-	'easy': array('chat': 'aqua', 'dye': 'LIGHT_BLUE'),
-	'easy-medium': array('chat': 'green', 'dye': 'LIME'),
-	'medium': array('chat': 'yellow', 'dye': 'YELLOW'),
-	'medium-hard': array('chat': 'gold', 'dye': 'ORANGE'),
-	'hard': array('chat': 'dark_red', 'dye': 'RED'),
-	'very-hard': array('chat': 'dark_purple', 'dye': 'PURPLE'),
-	'other': array('chat': 'white', 'dye': 'WHITE'),
+@tiers = array(
+	array(
+		'name': 'easy',
+		'chatcolor': color('aqua'),
+		'dyecolor': 'LIGHT_BLUE',
+	),
+	array(
+		'name': 'easy-medium',
+		'chatcolor': color('green'),
+		'dyecolor': 'LIME',
+	),
+	array(
+		'name': 'medium',
+		'chatcolor':color('yellow'),
+		'dyecolor': 'YELLOW',
+	),
+	array(
+		'name': 'medium-hard',
+		'chatcolor': color('gold'),
+		'dyecolor': 'ORANGE',
+	),
+	array(
+		'name': 'hard',
+		'chatcolor': color('dark_red'),
+		'dyecolor': 'RED',
+	),
+	array(
+		'name': 'very-hard',
+		'chatcolor': color('dark_purple'),
+		'dyecolor': 'PURPLE',
+	),
+	array(
+		'name': 'other',
+		'chatcolor': color('white'),
+		'dyecolor': 'WHITE',
+	),
 );
-@difficultyorder = array('easy', 'easy-medium', 'medium', 'medium-hard', 'hard', 'very-hard', 'other');
-@difficulties = array(
-	'easy': array(),
-	'easy-medium': array(),
-	'medium': array(),
-	'medium-hard': array(),
-	'hard': array(),
-	'very-hard': array(),
-	'other': array(),
-);
-@coopdifficulties = array(
-	'easy': array(),
-	'easy-medium': array(),
-	'medium': array(),
-	'medium-hard': array(),
-	'hard': array(),
-	'very-hard': array(),
-	'other': array(),
-);
+foreach(@tier in @tiers) {
+	@tier['coop'] = array();
+	@tier['parkour'] = array();
+}
 
 @solo1 = @main[];
-@solo1[29]['name'] = 'LIGHT_BLUE_WOOL';
+@solo1[@rows * 9 + 2]['name'] = 'LIGHT_BLUE_WOOL';
 
 @solo2 = @main[];
-@solo2[30]['name'] = 'PURPLE_WOOL';
+@solo2[@rows * 9 + 3]['name'] = 'PURPLE_WOOL';
 
 @coop = @main[];
-@coop[31]['name'] = 'ORANGE_WOOL';
+@coop[@rows * 9 + 4]['name'] = 'ORANGE_WOOL';
 
 @soloMenu1 = array(
 	'menu': @solo1,
@@ -51,7 +64,7 @@
 @coopMenu = array(
 	'menu': @coop,
 	'id': 'coop',
-	'title': 'Coop Courses',
+	'title': 'Cooperative Courses',
 	'inv': associative_array(),
 );
 
@@ -59,10 +72,14 @@
 foreach(@name: @cake in @cakes) {
 	if(@cake['type'] === 'challenge' || @cake['type'] == 'coop') {
 		@lore = array();
-		@difficulty = 'other';
+		@t = -1;
 		if(array_index_exists(@cake, 'difficulty')) {
-			@difficulty = @cake['difficulty'];
-			@lore[] = color(@color[@difficulty]['chat']).color('l').to_upper(@cake['difficulty']);
+			foreach(@t: @this in @tiers) {
+				if(@this['name'] == @cake['difficulty']) {
+					@lore[] = @tiers[@t]['chatcolor'].color('l').to_upper(@cake['difficulty']);
+					break();
+				}
+			}
 		}
 		@lore[] = color('gold').@cake['coins'].' coins';
 		@lore[] = color('green').'Achieved by '.array_size(@cake['players']).' players';
@@ -79,17 +96,17 @@ foreach(@name: @cake in @cakes) {
 					@time = simple_date('s.S', integer(@time * 1000));
 					@time = substr(@time, 0, length(@time) - 2).'s';
 				}
-				@lore[] = color('green').'Time to beat: ' . @time;
+				@lore[] = color('green').'Top 20 time: ' . @time;
 			}
 		}
 		@lore[] = color('dark_gray').'Run: /warp '.@name;
 		if(@cake['type'] == 'challenge') {
 			@coins = @cake['coins'];
-			if(array_index_exists(@difficulties[@difficulty], @coins)) {
+			if(array_index_exists(@tiers[@t]['parkour'], @coins)) {
 				@coins++
 			}
-			@difficulties[@difficulty][@coins] = array(
-				'name': @color[@difficulty]['dye'].'_STAINED_GLASS_PANE',
+			@tiers[@t]['parkour'][@coins] = array(
+				'name': @tiers[@t]['dyecolor'].'_STAINED_GLASS_PANE',
 				'meta': array(
 					'display': color('green').to_upper(@name),
 					'lore': @lore,
@@ -97,11 +114,11 @@ foreach(@name: @cake in @cakes) {
 			);
 		} else {
 			@coins = @cake['coins'];
-			if(array_index_exists(@coopdifficulties[@difficulty], @coins)) {
+			if(array_index_exists(@tiers[@t]['coop'], @coins)) {
 				@coins++
 			}
-			@coopdifficulties[@difficulty][@coins] =  array(
-				'name': @color[@difficulty]['dye'].'_STAINED_GLASS_PANE',
+			@tiers[@t]['coop'][@coins] =  array(
+				'name': @tiers[@t]['dyecolor'].'_STAINED_GLASS_PANE',
 				'meta': array(
 					'display': color('green').to_upper(@name),
 					'lore': @lore,
@@ -111,32 +128,29 @@ foreach(@name: @cake in @cakes) {
 	}
 }
 @coopSlot = 0;
-foreach(@i: @difficulty in @difficultyorder) {
+foreach(@t: @tier in @tiers) {
 	// solo
-	@slot = @i * 9;
-	if(@slot < 27) {
-		foreach(@item in @difficulties[@difficulty]) {
+	@slot = @t * 9;
+	if(@slot < floor(array_size(@tiers) / 2) * 9) {
+		foreach(@item in @tier['parkour']) {
 			@soloMenu1['inv'][@slot] = @item;
 			@slot++;
 		}
 	} else {
-		foreach(@item in @difficulties[@difficulty]) {
-			@soloMenu2['inv'][@slot - 27] = @item;
+		foreach(@item in @tier['parkour']) {
+			@soloMenu2['inv'][@slot - floor(array_size(@tiers) / 2) * 9] = @item;
 			@slot++;
 		}
 	}
 
 	// coop
-	foreach(@item in @coopdifficulties[@difficulty]) {
+	foreach(@item in @tier['coop']) {
 		@coopMenu['inv'][@coopSlot++] = @item;
 	}
 }
 
 // Clear environment
-@color = null;
-@difficultyorder = null;
-@difficulties = null;
-@coopdifficulties = null;
+@tiers = null;
 
 @loadMenu = iclosure(@player, @import){
 	@uuid = puuid(@player, true);
@@ -151,7 +165,7 @@ foreach(@i: @difficulty in @difficultyorder) {
 		@menu[@slot] = @item;
 	}
 	delete_virtual_inventory(@player.@import['id']);
-	create_virtual_inventory(@player.@import['id'], 36, @import['title'], @menu);
+	create_virtual_inventory(@player.@import['id'], 4 * 9 + 9, @import['title'], @menu);
 	popen_inventory(@player, @player.@import['id']);
 }
 @soloMenu1['loadMenu'] = @loadMenu;
