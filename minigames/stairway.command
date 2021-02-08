@@ -30,12 +30,9 @@ register_command('stairway', array(
 			@players[@player] = array_get_rand(reflect_pull('enum', 'DyeColor'));
 		}
 		runas('~console', '/jukebox show add '.@player.' @stairway');
-		@ploc = ploc(@player);
-		@startY = @ploc['y'] + 1;
-		@loc = array(floor(@ploc[0]), floor(@ploc[1]), floor(@ploc[2]), @ploc[3]);
-		@startY = integer(@ploc[1] + 1);
-		@loc[0]++;
-		@loc[1]++;
+		@loc = get_command_block();
+		@startY = integer(@loc['y'] + 2);
+		@loc = array(floor(@loc[0] + 1), floor(@loc[1] + 2), floor(@loc[2]), @loc[3]);
 		set_block(@loc, @players[@player].'_STAINED_GLASS', false);
 		set_pbed_location(@player, @loc, true);
 		@oldLocs = array();
@@ -86,7 +83,16 @@ register_command('stairway', array(
 				array_remove(@locations, @index);
 			}
 		}
-		
+
+		@records = get_value('stairway') ||| associative_array();
+		@stairs = associative_array();
+		foreach(@uuid: @record in @records) {
+			if(!array_index_exists(@stairs, @record)) {
+				@stairs[@record] = array();
+			}
+			@stairs[@record][] = @uuid;
+		}
+
 		set_interval(500, closure(){
 			if(!ponline(@player) || !array_contains(sk_current_regions(@player), 'stairway')) {
 				_remove_old_blocks(@oldLocs);
@@ -98,9 +104,13 @@ register_command('stairway', array(
 			if(string_ends_with(get_block(@ploc), '_STAINED_GLASS') && @ploc[1] >= @loc[1] && @loc[1] < 255) {
 				_remove_old_blocks(@oldLocs);
 				@oldLocs[] = @loc[];
-				
+
+				@passing = '';
+				@passingUUID = '';
+
 				// do small path
 				@maxLength = 10;
+				@skull = false;
 				do {
 					@newLoc = @loc[];
 					@newLoc[rand(2) * 2] += rand(2) * 2 - 1;
@@ -111,6 +121,23 @@ register_command('stairway', array(
 						@loc[0] = @newLoc[0];
 						@loc[1] = @newLoc[1];
 						@loc[2] = @newLoc[2];
+						if(!@skull && array_index_exists(@stairs, @loc[1])) {
+							@skull = true;
+							try {
+								@passingUUID = array_get_rand(@stairs[@loc[1]]);
+								@pdata = _pdata_by_uuid(replace(@passingUUID, '-', ''));
+								if(!array_index_exists(@pdata, 'noskull')) {
+									@passing = @pdata['name'];
+									@skullLoc = location_shift(@newLoc, 'up');
+									@rotation = integer(get_yaw(@ploc, @newLoc) / 22.5);
+									set_blockdata(@skullLoc, array('block': 'player_head', 'rotation': @rotation), false);
+									set_skull_owner(@skullLoc, @passingUUID);
+									@oldLocs[] = @skullLoc;
+								}
+							} catch (NotFoundException @ex) {
+								console(@ex['message']);
+							}
+						}
 					} else {
 						break();
 					}
@@ -139,7 +166,7 @@ register_command('stairway', array(
 					}
 				} while(@attempts-- > 0);
 				set_block(@loc, @players[@player].'_STAINED_GLASS', false);
-				title(@player, '', integer(@loc[1]) - @startY);
+				title(@player, integer(@loc[1]) - @startY, if(@passing, 'Passing '.@passing));
 			} else if(@oldLocs && @ploc['y'] < @startY) {
 				_remove_old_blocks(@oldLocs);
 				set_block(@loc, 'AIR');
