@@ -223,15 +223,15 @@ register_command('arena', array(
 							@arena[@setting] = array();
 						}
 						@team = 0;
-						if(@args[3]) {
+						if(array_size(@args) > 3) {
 							@team = integer(@args[3]);
 						}
 						if(!array_index_exists(@arena[@setting], @team)) {
 							@arena[@setting][@team] = array();
 						}
 						@loc = ploc();
-						if(@args[4] == 'there') {
-							@loc = pcursor();
+						if(array_size(@args) > 4 && @args[4] == 'there') {
+							@loc = _center(pcursor(), 0);
 							@loc = array_normalize(@loc)[0..3];
 						} else {
 							@loc = array(round(@loc['x'], 1), round(@loc['y'], 1), round(@loc['z'], 1), @loc['world'],
@@ -619,9 +619,11 @@ register_command('arena', array(
 						foreach(@spawn in @arena['spawn'][0]) {
 							psend_block_change(@spawn, @block);
 						}
-						@block = 'BLUE_WOOL';
-						foreach(@spawn in @arena['spawn'][1]) {
-							psend_block_change(@spawn, @block);
+						if(array_index_exists(@arena['spawn'], 1)) {
+							@block = 'BLUE_WOOL';
+							foreach(@spawn in @arena['spawn'][1]) {
+								psend_block_change(@spawn, @block);
+							}
 						}
 
 					default:
