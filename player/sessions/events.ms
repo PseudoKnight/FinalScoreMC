@@ -3,7 +3,7 @@ bind('player_join', null, null, @event) {
 	modify_event('join_message', null);
 	@lastPlayed = if(!@event['first_login'], plast_played(), null);
 
-	set_timeout(50, closure(){
+	set_timeout(1, closure(){
 		if(!ponline(player())) {
 			die();
 		}

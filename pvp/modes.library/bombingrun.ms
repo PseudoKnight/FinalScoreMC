@@ -8,7 +8,7 @@ proc _pvp_bomb_spawn(@id, @loc) {
 	}
 	if(!array_index_exists(@pvp, 'bomb') || !entity_exists(@pvp['bomb'])) {
 		@pvp['bomb'] = drop_item(@loc, array('name': @pvp['arena']['bomb']), false);
-		set_timeout(50, closure(set_entity_velocity(@pvp['bomb'], null)));
+		set_timeout(1, closure(set_entity_velocity(@pvp['bomb'], null)));
 	}
 	queue_delay('15000', @id.'bomb');
 	queue_push(closure(_pvp_bomb_spawn(@id)), @id.'bomb');
@@ -55,7 +55,7 @@ bind('entity_damage', array('id': @id.'itemdamage'), array('type': 'DROPPED_ITEM
 	if(array_index_exists(@pvp, 'bomb')
 	&& @event['id'] == @pvp['bomb']) {
 		// ensure it's destroyed before spawning a new one
-		set_timeout(50, closure() {
+		set_timeout(1, closure() {
 			if(!entity_exists(@event['id'])) {
 				array_remove(@pvp, 'bomb');
 				_pvp_bomb_spawn(@pvp['id']);

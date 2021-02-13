@@ -14,10 +14,10 @@ case 'load':
 
 			if(!array_index_exists(@pvp['players'], @e['player']), die());
 			modify_event('amount', 3.7);
-			set_timeout(50, closure(){
+			set_timeout(1, closure(){
 				@entity = import(@damager.'lightning');
 				if(@e['damager'] == import(@damager.'lightning')) {
-					_stats_damage(@damager, @e['player'], @e['amount'], @pvp);
+					_stats_damage(@damager, @e['player'], 3.7, @pvp);
 				}
 			});
 		}

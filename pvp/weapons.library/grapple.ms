@@ -15,7 +15,7 @@
 	@shooter = puuid(@player);
 	@slot = pheld_slot(@player);
 
-	set_timeout(50, closure(){
+	set_timeout(1, closure(){
 		try(set_entity_rider(@arrow, @hook));
 	});
 
@@ -49,7 +49,7 @@
 
 			if(ponline(@player) && phealth(@player) > 0 && pmode(@player) != 'SPECTATOR') {
 				set_pinv(@player, @slot, null);
-				set_timeout(50, closure(){
+				set_timeout(1, closure(){
 					set_pinv(@player, @slot, array('name': 'FISHING_ROD'));
 				});
 			}

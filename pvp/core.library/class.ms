@@ -27,7 +27,7 @@ proc _class(@action, @player, @classname, @pvp) {
 				set_pwalkspeed(@player, @class['speed']);
 			}
 			if(array_index_exists(@class, 'effect')) {
-				set_timeout(50, closure(){
+				set_timeout(1, closure(){
 					foreach(@eid: @e in @class['effect']) {
 						set_peffect(@player, @eid, @e['strength'], @e['length'], true);
 					}

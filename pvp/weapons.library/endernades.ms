@@ -18,7 +18,7 @@ bind('player_teleport', array('id': @id.'endernades', 'priority': 'highest'), ar
 			continue();
 		}
 		# a delayed velocity works more consistently with grounded entities
-		set_timeout(50, closure(){
+		set_timeout(1, closure(){
 			@b = location_shift(ploc(@p), 'up', 2);
 			@dist = distance(@a, @b);
 			if(@p == player() && @a['y'] < @b['y']) {

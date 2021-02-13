@@ -175,7 +175,7 @@ case 'load':
 				play_sound(ploc(), array('sound': 'ENTITY_PLAYER_ATTACK_SWEEP', 'pitch': 2));
 				foreach(@p in all_players(pworld())) {
 					if(@p == player()) {
-						set_timeout(50, closure(){
+						set_timeout(1, closure(){
 							psend_block_change(player(), @loc, 'DEAD_BUSH');
 						});
 					} else {

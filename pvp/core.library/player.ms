@@ -27,7 +27,7 @@ proc _player_remove(@player, @id) {
 		set_ploc(@player, @pvp['arena']['lobby']);
 		clear_peffects(@player);
 		_set_pactivity(@player, null);
-		set_timeout(50, closure(){
+		set_timeout(1, closure(){
 			_equip_kit(@player); // helps clear maps after teleporting
 		});
 	}
@@ -45,7 +45,7 @@ proc _player_to_spectator(@player, @pvp) {
 
 	# Delay spectator mode so that health amount is updated.
 	# Health can be above zero when pkill() or set_phealth() are used.
-	set_timeout(50, closure(){
+	set_timeout(1, closure(){
 		_spectator_add(player(), @pvp);
 	});
 }

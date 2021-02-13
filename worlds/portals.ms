@@ -6,12 +6,12 @@ bind('player_portal_travel', null, null, @event) {
 	} else if(@event['type'] == 'END_PORTAL') {
 		if(@from['world'] == 'outworld') {
 			cancel();
-			set_timeout(50, closure(){
+			set_timeout(1, closure(){
 				set_ploc(location_shift(get_spawn('outworld_the_end'), 'down'));
 			});
 		} else if(@from['world'] == 'outworld_the_end') {
 			cancel();
-			set_timeout(50, closure(){
+			set_timeout(1, closure(){
 				set_ploc(location_shift(get_spawn('outworld'), 'down'));
 			});
 		} else if(!string_ends_with(@from['world'], '_the_end')) {

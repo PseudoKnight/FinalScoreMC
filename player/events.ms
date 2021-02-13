@@ -316,7 +316,7 @@ bind('item_swap', null, null, @event,
 					}
 				}
 			}
-			set_timeout(50, closure(try(set_pheld_slot(8))));
+			set_timeout(1, closure(try(set_pheld_slot(8))));
 		}
 	}
 }

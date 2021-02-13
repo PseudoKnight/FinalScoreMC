@@ -42,7 +42,7 @@ case 'powerup':
 	set_peffect(@player, 'SPEED', 3, 17);
 	set_peffect(@player, 'STRENGTH', 1, 17);
 	set_peffect(@player, 'JUMP_BOOST', 1, 17);
-	set_timeout(50, closure(){ # powerups flash night vision, so we have to delay here
+	set_timeout(1, closure(){ # powerups flash night vision, so we have to delay here
 		try {
 			set_peffect(@player, 'NIGHT_VISION', 0, 23);
 		} catch(PlayerOfflineException @ex) {

@@ -163,7 +163,7 @@ proc _start_game(@course, @loc) {
 					@z = ((@eloc['z'] - @ploc['z']) / @dist) * (@xp / 90);
 					@ball['velocity'] = array('x': @x, 'y': 0, 'z': @z);
 					set_entity_velocity(@ball['id'], @ball['velocity']);
-					set_timeout(50, closure(){
+					set_timeout(1, closure(){
 						@ball['velocity'] = array('x': @x, 'y': 0, 'z': @z);
 						try(set_entity_velocity(@ball['id'], @ball['velocity']));
 					})

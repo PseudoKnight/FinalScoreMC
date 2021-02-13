@@ -26,7 +26,7 @@ register_command('swap', array(
 						set_peffect(player(), 'BLINDNESS', 0, 1, true, false);
 						set_peffect(player(), 'NIGHT_VISION', 0, 0.5, true, false);
 						set_pinv(player(), null, array('name': 'CLOCK', 'meta': array('display': color('bold').@time)));
-						set_timeout(50, closure(){
+						set_timeout(1, closure(){
 							if(ponline(player()) && pworld() == 'dev') {
 								set_pcooldown('CLOCK', 2000 / 50);
 								@loc['y']++;

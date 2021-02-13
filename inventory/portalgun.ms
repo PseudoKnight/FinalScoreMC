@@ -66,7 +66,7 @@ execute(iclosure(){
 						play_sound(@newLoc, array(sound: 'ENTITY_ILLUSIONER_CAST_SPELL', volume: 0.3));
 						@v = get_vector(@portals[if(@color == 'orange', 'blue', 'orange')]['exit'], @dist);
 						set_pvelocity(@v);
-						set_timeout(50, closure(set_pvelocity(@v)));
+						set_timeout(1, closure(set_pvelocity(@v)));
 						die();
 					}
 				}
@@ -185,14 +185,14 @@ execute(iclosure(){
 					play_sound(@newLoc, array(sound: 'ENTITY_ILLUSIONER_CAST_SPELL', volume: 0.3));
 					@v = get_vector(@portals[@otherColor]['exit'], 0.15);
 					set_pvelocity(@v);
-					set_timeout(50, closure(set_pvelocity(@v)));
+					set_timeout(1, closure(set_pvelocity(@v)));
 					break();
 				}
 			}
 		}
 
 		// set new portal blocks
-		set_timeout(50, closure(){
+		set_timeout(1, closure(){
 			foreach(@p in players_in_radius(@block, 48)) {
 				psend_block_change(@p, @block, @color.'_concrete');
 				if(@extension) {

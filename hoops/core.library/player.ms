@@ -63,7 +63,7 @@ proc _hoops_player_equip(@player) {
 	
 	bind('player_jump', array('id': @player.'jump'), array('player': @player), @event) {
 		if(array_contains(sk_current_regions(), 'hoops')) {
-			set_timeout(50,closure(){
+			set_timeout(1,closure(){
 				@vel = entity_velocity(puuid());
 				set_pvelocity(@vel['x'] * 0.1, 0.85, @vel['z'] * 0.1);
 			});

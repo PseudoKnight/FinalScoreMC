@@ -95,7 +95,7 @@ proc _load_events(@id) {
 			if(!is_null(@rider)) {
 				set_entity_rider(null, @rider);
 				set_entity_loc(@rider, location_shift(ploc(), 'up', 3));
-				set_timeout(50, closure(){
+				set_timeout(1, closure(){
 					@vector = get_vector(ploc());
 					@vector['y'] += 0.1;
 					try {

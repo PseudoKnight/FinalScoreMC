@@ -17,7 +17,7 @@ bind('player_interact', null, array('block': 'NOTE_BLOCK', 'button': 'left'), @e
 		set_pmode('SURVIVAL');
 		set_pflight(true);
 		set_pflying(true);
-		set_timeout(50, closure(){
+		set_timeout(1, closure(){
 			// return the player to creative
 			set_pmode('CREATIVE');
 			// The block will appear as air due to the client-side block-break,

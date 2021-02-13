@@ -46,7 +46,7 @@ bind('vehicle_destroy', array('priority': 'MONITOR'), array('vehicletype': 'MINE
 		@minecart = entity_spec(@event['vehicle']);
 		if(@minecart['block'] != 'AIR') {
 			// make sure no plugin has cancelled this
-			set_timeout(50, closure(){
+			set_timeout(1, closure(){
 				if(!entity_exists(@event['vehicle'])) {
 					drop_item(location_shift(@event['location'], 'up', @minecart['offset'] / 20), array('name': @minecart['block']));
 				}

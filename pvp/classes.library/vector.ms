@@ -13,7 +13,7 @@ case 'load':
 		@z = 1.40 * sin(to_radians(@facing[0])) * cos(to_radians(@facing[1]));
 		set_pvelocity(player(), @x, @y, @z);
 		play_sound(ploc(), array('sound': 'ENTITY_GHAST_WARN', 'pitch': 2, 'volume': 2));
-		set_timeout(50, closure(){
+		set_timeout(1, closure(){
 			set_pvelocity(player(), @x, @y, @z);
 			if(psaturation() >= 1) {
 				set_psaturation(psaturation() - 1);

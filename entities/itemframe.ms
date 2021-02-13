@@ -3,7 +3,7 @@ bind('player_interact_entity', null, array('clicked': 'ITEM_FRAME'), @event) {
 		cancel();
 		@item = pinv(player(), null);
 		if(@item && @item['name'] == 'SPIDER_EYE') {
-			set_timeout(50, closure() {
+			set_timeout(1, closure() {
 				@itemframe = entity_spec(@event['id']);
 				set_entity_spec(@event['id'], array('visible': !@itemframe['visible']));
 			});

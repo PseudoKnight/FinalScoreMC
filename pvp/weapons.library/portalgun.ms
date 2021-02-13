@@ -109,7 +109,7 @@ execute(iclosure(){
 		@portalgun[player()][@index] = array(@block, @extension);
 		play_sound(@loc, array('sound': 'ENTITY_SHULKER_SHOOT', 'pitch': 1.3, 'volume': 3));
 		play_sound(@loc, array('sound': 'ENTITY_EVOKER_CAST_SPELL', 'pitch': 0.6, 'volume': 3));
-		set_timeout(50, closure(){
+		set_timeout(1, closure(){
 			foreach(@p in players_in_radius(@block, 48)) {
 				psend_block_change(@p, @block, if(@index, 
 					if(@color == 'ORANGE', 'orange_concrete', 'blue_concrete'),

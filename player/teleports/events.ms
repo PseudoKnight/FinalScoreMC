@@ -44,10 +44,10 @@ bind('player_teleport', null, null, @event) {
 		}
 		@type = entity_type(@vehicle);
 		if(array_contains(array('DONKEY', 'HORSE', 'LLAMA', 'MULE', 'SKELETON_HORSE', 'ZOMBIE_HORSE', 'STRIDER'), @type)) {
-			set_timeout(50, closure(){
+			set_timeout(1, closure(){
 				try {
 					set_entity_loc(@vehicle, @to);
-					set_timeout(50, closure(){
+					set_timeout(1, closure(){
 						set_entity_rider(@vehicle, @uuid);
 					});
 				} catch(Exception @ex) {
