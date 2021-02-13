@@ -26,7 +26,7 @@ proc _queue_next_builder() {
 		@charades['build'] = @new['build'];
 		@charades['hint'] = @new['hint'];
 	}
-	@charades['reroll'] = true;
+	@charades['reroll'] = 2;
 	_msg_charades(color('yellow').color('bold').'Charades Category: '.color('yellow').replace(to_upper(@charades['category']), '_', ' '));
 	_click_tell(array(@builder), array(
 		'You must build '.color('green').color('bold').@charades['build'].color('reset').' ',

@@ -19,11 +19,11 @@ register_command('charades', array(
 							if(@team['players'] && @team['players'][0] == player()) {
 								@charades = import('charades');
 								if(@charades['reroll']) {
-									_msg_charades(color('yellow').player().' re-rolled "'.@charades['build'].'"');
+									@charades['reroll']--;
+									_msg_charades(color('yellow').player().' re-rolled "'.@charades['build'].'" ('.@charades['reroll'].' left)');
 									@new = _get_build(@charades['category']);
 									@charades['build'] = @new['build'];
 									@charades['hint'] = @new['hint'];
-									@charades['reroll'] = false;
 									msg('You must now build "'.color('green').color('bold').@charades['build'].color('reset').'"');
 								} else {
 									msg(color('gold').'You cannot re-roll again.');
