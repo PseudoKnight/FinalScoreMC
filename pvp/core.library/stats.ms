@@ -35,6 +35,9 @@ proc _stats_table() {
 }
 
 proc _store_stats(@winners, @pvp) {
+	if(array_size(@pvp['stats']) < 2) {
+		return();
+	}
 	foreach(@player: @stats in @pvp['stats']) {
 		@uuid = puuid(@player, true);
 		@pstats = get_value('pvp', @uuid);

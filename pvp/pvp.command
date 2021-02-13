@@ -69,7 +69,7 @@ register_command('pvp', array(
 				_spectator_add(player(), @pvp);
 
 			case 'addtime':
-				if(!get_command_block() && !has_permission('group.moderator')) {
+				if(!get_command_block() && !has_permission('group.builder')) {
 					die();
 				}
 				@id = to_lower(@args[1]);
