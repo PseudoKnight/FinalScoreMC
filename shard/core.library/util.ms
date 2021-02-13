@@ -50,9 +50,11 @@ proc _unload_shard() {
 			console('Failed to unload shard: world doesn\'t exist.', false);
 			die();
 		}
-		if(array_size(all_players('shard')) == 0) {
-			console('Failed to unload shard: players still exist in world.', false);
-			die();
+		foreach(@p in all_players()) {
+			if(pworld(@p) == 'shard') {
+				console('Failed to unload shard: players still exist in world: '.@p, false);
+				die();
+			}
 		}
 		try {
 			_unload_world('shard', false);
