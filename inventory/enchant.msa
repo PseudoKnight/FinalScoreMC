@@ -1,5 +1,5 @@
 # Enchant tool in hand with specified enchantment
-*:/enchant [$type='list'] [$level=1] = >>>
+*:/enchant $type [$level=1] = >>>
 	if(!has_permission('command.items')) {
 		die('You are not allowed to create custom items here.');
 	}
