@@ -16,12 +16,7 @@ register_command('worms', array(
 			die(color('gold').'Worms is already running.');
 		}
 		
-		include('core.library/events.ms');
-		include('core.library/game.ms');
-		include('core.library/player.ms');
-		include('core.library/projectile.ms');
-		include('core.library/segment.ms');
-		include('core.library/worm.ms');
+		include_dir('core.library');
 		@game = _worms_create(@args[0]);
 		_generator_create('dungeon', 'dirt', @game['region'], @game['world'], time(), closure(@start, @end, @spawns){
 			@game['spawns'] = @spawns;
