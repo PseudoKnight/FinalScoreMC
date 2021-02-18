@@ -40,24 +40,24 @@ bind('entity_portal_travel', null, null, @event) {
 	if(!_is_survival_world(@from['world'])) {
 		cancel();
 		entity_remove(@event['id']);
-	} else if(@to['world'] == 'world_nether') { // through nether portal
-		if(@match = reg_match('^(.*)_nether$', @from['world'])) { // from nether
-			@l = @from;
-			@l['x'] *= 8;
-			@l['z'] *= 8;
-			@l['world'] = @match[1];
-			modify_event('to', @l);
-		} else { // to nether
-			@l = @from;
-			@l['x'] /= 8;
-			@l['z'] /= 8;
-			@l['world'] = @from['world'].'_nether';
-			modify_event('to', @l);
+	} else if(@to['world'] == 'world_nether') { // to nether
+		@l = @from;
+		@l['x'] /= 8;
+		@l['z'] /= 8;
+		@l['world'] = @from['world'].'_nether';
+		modify_event('to', @l);
+	} else if(@match = reg_match('^(.*)_nether$', @from['world'])) { // from nether
+		@l = @from;
+		@l['x'] *= 8;
+		@l['z'] *= 8;
+		@l['world'] = @match[1];
+		modify_event('to', @l);
+		if(abs(@l['x']) > 8192 || abs(@l['z']) > 8192) {
+			console('WARNING: Entity portal traveled beyond worldborder: '.@l);
 		}
 	} else if(@to['world'] == 'world_the_end') { // through end portal
 		cancel();
 		if(@match = reg_match('^(.*)_the_end$', @from['world'])) { // from end
-			cancel();
 			set_entity_loc(@event['id'], get_spawn(@match[1]));
 		} else { // to end
 			if(@from['world'] == 'outworld'){
