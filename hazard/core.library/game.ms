@@ -40,7 +40,7 @@ proc _hazard_start(@game) {
 	_hazard_define_regions(@game);
 	_hazard_bind(@game);
 	@timer = mutable_primitive(neg(@game['timer']));
-	set_interval(1000, closure() {
+	set_interval(1000, 0, closure() {
 		if(@game['round'] > 0) {
 			foreach(@player: @data in @game['players']) {
 				if(!ponline(@player)) {
