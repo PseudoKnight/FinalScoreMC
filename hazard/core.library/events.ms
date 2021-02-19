@@ -1,5 +1,5 @@
 proc _hazard_bind(@game) {
-	bind('player_interact', array('id': 'hazard_interact', 'priority': 'HIGHEST'), array('button': 'right'), @event, @game) {
+	bind('player_interact', array(id: 'hazard_interact', priority: 'HIGHEST'), array(button: 'right'), @event, @game) {
 		if(array_index_exists(@game['players'], player())) {
 			if(@event['item'] && string_ends_with(@event['item']['name'], '_SPAWN_EGG')) {
 				cancel();
@@ -27,7 +27,7 @@ proc _hazard_bind(@game) {
 				@loc['z'] += @v['z'] * 3;
 				if(sk_can_build(@loc)) {
 					try(set_block(@loc, @event['item']['name']));
-					play_sound(@loc, array('sound': 'BLOCK_STONE_PLACE'));
+					play_sound(@loc, array(sound: 'BLOCK_STONE_PLACE'));
 				}
 			}
 			if(pmode() == 'CREATIVE') {
@@ -36,16 +36,16 @@ proc _hazard_bind(@game) {
 		}
 	}
 
-	bind('entity_damage', array('id': 'hazard_damage'), array('cause': 'ENTITY_ATTACK', 'world': @game['world']), @event, @game) {
+	bind('entity_damage', array(id: 'hazard_damage'), array(cause: 'ENTITY_ATTACK', world: @game['world']), @event, @game) {
 		if(array_index_exists(@game['players'], @event['damager']) && pmode(@event['damager']) == 'CREATIVE') {
 			_hazard_remove_entity(@event['id'], @game);
 		}
 	}
 
-	bind('player_death', array('id': 'hazard_death'), null, @event, @game) {
+	bind('player_death', array(id: 'hazard_death'), null, @event, @game) {
 		if(array_index_exists(@game['players'], player())) {
 			set_pmode(player(), 'SPECTATOR');
-			play_sound(ploc(), array('sound': 'ENTITY_EVOKER_DEATH'));
+			play_sound(ploc(), array(sound: 'ENTITY_EVOKER_DEATH'));
 			modify_event('drops', null);
 			modify_event('xp', null);
 			modify_event('keep_inventory', true);
@@ -56,7 +56,7 @@ proc _hazard_bind(@game) {
 		}
 	}
 
-	bind('player_spawn', array('id': 'hazard_spawn', 'priority': 'HIGHEST'), null, @event, @game) {
+	bind('player_spawn', array(id: 'hazard_spawn', priority: 'HIGHEST'), null, @event, @game) {
 		if(array_index_exists(@game['players'], player())) {
 			@loc = import(player().'spawn');
 			if(@loc) {
@@ -66,6 +66,12 @@ proc _hazard_bind(@game) {
 			consume();
 		}
 	}
+	
+	bind('creature_spawn', array(id: 'hazard_creature_spawn'), null, @event, @game) {
+		if(@event['reason'] != 'CUSTOM' && array_contains(sk_regions_at(@event['location']), 'hazard')) {
+			@game['entities'][] = array(uuid: @event['id']);
+		}
+	}
 }
 
 proc _hazard_unbind(@game) {
@@ -73,4 +79,5 @@ proc _hazard_unbind(@game) {
 	unbind('hazard_damage');
 	unbind('hazard_death');
 	unbind('hazard_spawn');
+	unbind('hazard_creature_spawn');
 }

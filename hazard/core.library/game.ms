@@ -3,16 +3,16 @@ proc _hazard_create() {
 		throw('NotFoundException', 'hazard region does not exist!');
 	}
 	@game = array(
-		'state': 'STARTING',
-		'world': pworld(),
-		'players': associative_array(),
-		'inactivePlayers': associative_array(),
-		'round': 0,
-		'targetScore': 50,
-		'maxRounds': 15,
-		'timer': 50,
-		'buildTimer': 15,
-		'entities': array(),
+		state: 'STARTING',
+		world: pworld(),
+		players: associative_array(),
+		inactivePlayers: associative_array(),
+		round: 0,
+		targetScore: 50,
+		maxRounds: 15,
+		timer: 50,
+		buildTimer: 15,
+		entities: array(),
 	);
 
 	if(array_contains(get_scoreboards(), 'hazard')) {
@@ -20,12 +20,12 @@ proc _hazard_create() {
 	}
 	create_scoreboard('hazard');
 	create_objective('score', 'DUMMY', 'hazard');
-	set_objective_display('score', array('slot': 'SIDEBAR', 'displayname': color('bold').'Score (target: 100)'), 'hazard');
+	set_objective_display('score', array(slot: 'SIDEBAR', displayname: color('bold').'Score (target: 100)'), 'hazard');
 
 	if(array_contains(get_bars(), 'hazard')) {
 		remove_bar('hazard');
 	}
-	create_bar('hazard', array('style': 'SEGMENTED_12', 'visible': false));
+	create_bar('hazard', array(style: 'SEGMENTED_12', visible: false));
 
 	export('hazard', @game);
 	return(@game);
@@ -52,7 +52,7 @@ proc _hazard_start(@game) {
 					@data['score'] += 10;
 					set_pscore('score', @player, @data['score'], 'hazard');
 					set_pmode(@player, 'SPECTATOR');
-					play_sound(ploc(@player), array('sound': 'ENTITY_VINDICATOR_CELEBRATE', 'pitch': 1.5));
+					play_sound(ploc(@player), array(sound: 'ENTITY_VINDICATOR_CELEBRATE', pitch: 1.5));
 				} else if(!array_contains(@regions, 'hazard')) {
 					_hazard_remove_player(@player, @game);
 				}
@@ -84,7 +84,7 @@ proc _hazard_start(@game) {
 			_hazard_set_mode(@game, 'ADVENTURE');
 			_hazard_spawn_players(@game);
 			_hazard_activate_entities(@game);
-			update_bar('hazard', array('visible': false));
+			update_bar('hazard', array(visible: false));
 		} else if(@timer > neg(@game['timer'])) {
 			if(!_hazard_are_players_alive(@game)) {
 				@timer[] = neg(@game['timer']);
@@ -102,7 +102,7 @@ proc _hazard_start(@game) {
 				_hazard_respawn_entities(@game);
 				@timer[] = @game['buildTimer'];
 				@game['countdown'] = false;
-				update_bar('hazard', array('visible': true, 'percent': 1.0));
+				update_bar('hazard', array(visible: true, percent: 1.0));
 			}
 		}
 	});
@@ -160,7 +160,7 @@ proc _hazard_define_regions(@game) {
 	@start[1][3] = @game['world'];
 	sk_pos1('~console', @start[0]);
 	sk_pos2('~console', @start[1]);
-	sk_setblock('~console', 'iron_block');
+	sk_setblock('~console', 'smooth_stone');
 
 	// define end region
 	@size = 3;

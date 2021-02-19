@@ -3,7 +3,7 @@ proc _hazard_add_player(@player, @game) {
 		@game['players'][@player] = array_remove(@game['inactivePlayers'], @player);
 	} else {
 		@game['players'][@player] = array(
-			'score': 0,
+			score: 0,
 		);
 	}
 	set_pscoreboard(@player, 'hazard');
@@ -37,7 +37,7 @@ proc _hazard_spawn_players(@game) {
 			set_phunger(@player, 16);
 			set_psaturation(@player, 0);
 			if(pmode(@player) == 'ADVENTURE') {
-				play_sound(@loc, array('sound': 'ENTITY_FIREWORK_ROCKET_BLAST'), @player);
+				play_sound(@loc, array(sound: 'ENTITY_FIREWORK_ROCKET_BLAST'), @player);
 			}
 		}
 	}

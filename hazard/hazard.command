@@ -1,13 +1,13 @@
 register_command('hazard', array(
-	'description': 'Creates, joins and starts a half-hazard game.',
-	'usage': '/hazard start',
-	'tabcompleter': closure(@alias, @sender, @args, @info) {
+	description: 'Creates, joins and starts a half-hazard game.',
+	usage: '/hazard start',
+	tabcompleter: closure(@alias, @sender, @args, @info) {
 		if(array_size(@args) == 1) {
-			return(_strings_start_with_ic(array('join', 'start'), @args[-1]));
+			return(_strings_start_with_ic(array('start'), @args[-1]));
 		}
 		return(array());
 	},
-	'executor': closure(@alias, @sender, @args, @info) {
+	executor: closure(@alias, @sender, @args, @info) {
 		include('core.library/game.ms');
 		include('core.library/player.ms');
 		switch(array_get(@args, 0, null)) {
