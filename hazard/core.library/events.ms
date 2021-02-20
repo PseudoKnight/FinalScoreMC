@@ -95,6 +95,21 @@ proc _hazard_bind(@game) {
 			@game['entities'][] = array(uuid: @event['id']);
 		}
 	}
+
+	bind('item_pickup', array(id: 'hazard_pickup'), null, @event, @game) {
+		if(!array_index_exists(@game['players'], player()) && array_contains(sk_current_regions(), 'hazard')) {
+			cancel();
+		}
+	}
+
+	bind('item_spawn', array(id: 'hazard_item_spawn'), null, @event, @game) {
+		if(array_contains(sk_regions_at(@event['location']), 'hazard')) {
+			cancel();
+			if(@game['state'] == 'BUILD') {
+				_hazard_create_entity(@game, 'DROPPED_ITEM', @event['location'], @event['item']);
+			}
+		};
+	}
 }
 
 proc _hazard_unbind(@game) {
@@ -104,4 +119,6 @@ proc _hazard_unbind(@game) {
 	unbind('hazard_death');
 	unbind('hazard_spawn');
 	unbind('hazard_creature_spawn');
+	unbind('hazard_pickup');
+	unbind('hazard_item_spawn');
 }
