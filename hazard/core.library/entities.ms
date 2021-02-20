@@ -1,6 +1,6 @@
 proc _hazard_create_entity(@game, @type, @loc) {
 	spawn_entity(@type, 1, @loc, closure(@entity) {
-		set_entity_ai(@entity, false);
+		try(set_entity_ai(@entity, false));
 		@game['entities'][] = array(
 			loc: @loc,
 			type: @type,
@@ -24,7 +24,7 @@ proc _hazard_remove_entity(@uuid, @game) {
 proc _hazard_activate_entities(@game) {
 	foreach(@index: @entity in @game['entities']) {
 		if(entity_exists(@entity['uuid'])) {
-			set_entity_ai(@entity['uuid'], true);
+			try(set_entity_ai(@entity['uuid'], true));
 		} else {
 			console('Entity doesn\'t exist when trying to activate it.');
 			array_remove(@game['entities'], @index);
@@ -42,7 +42,7 @@ proc _hazard_respawn_entities(@game) {
 			continue();
 		}
 		spawn_entity(@entity['type'], 1, @entity['loc'], closure(@uuid) {
-			set_entity_ai(@uuid, false);
+			try(set_entity_ai(@uuid, false));
 			@entity['uuid'] = @uuid;
 		});
 	}
