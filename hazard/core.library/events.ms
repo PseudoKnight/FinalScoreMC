@@ -70,7 +70,7 @@ proc _hazard_bind(@game) {
 			if(array_index_exists(@event['cause'], 'damager') && length(@event['cause']['damager']) > 17) {
 				// damaged by an entity, see if it was spawned by another player
 				@spawner = _hazard_entity_spawner(@game, @event['cause']['damager']);
-				if(@spawner && @spawner != player()) {
+				if(@spawner && @spawner != player() && array_index_exists(@game['players'], @spawner)) {
 					@data = @game['players'][@spawner];
 					@data['score']++;
 					set_pscore('score', @spawner, @data['score'], 'hazard');
