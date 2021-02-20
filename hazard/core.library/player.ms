@@ -51,14 +51,6 @@ proc _hazard_set_mode(@game, @mode) {
 	}
 }
 
-proc _hazard_msg(@game, @msg) {
-	foreach(@player: @data in @game['players']) {
-		if(ponline(@player)) {
-			action_msg(@player, @msg);
-		}
-	}
-}
-
 proc _hazard_are_players_alive(@game) {
 	foreach(@player: @data in @game['players']) {
 		if(pmode(@player) == 'ADVENTURE') {

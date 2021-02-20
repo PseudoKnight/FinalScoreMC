@@ -8,8 +8,7 @@ register_command('hazard', array(
 		return(array());
 	},
 	executor: closure(@alias, @sender, @args, @info) {
-		include('core.library/game.ms');
-		include('core.library/player.ms');
+		include_dir('core.library');
 		switch(array_get(@args, 0, null)) {
 			case 'start':
 				@game = import('hazard');

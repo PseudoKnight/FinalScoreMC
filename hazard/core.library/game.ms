@@ -11,7 +11,7 @@ proc _hazard_create() {
 		targetScore: 50,
 		maxRounds: 15,
 		timer: 50,
-		buildTimer: 15,
+		buildTimer: 20,
 		entities: array(),
 	);
 
@@ -25,16 +25,13 @@ proc _hazard_create() {
 	if(array_contains(get_bars(), 'hazard')) {
 		remove_bar('hazard');
 	}
-	create_bar('hazard', array(style: 'SEGMENTED_12', visible: false));
+	create_bar('hazard', array(style: 'SEGMENTED_12'));
 
 	export('hazard', @game);
 	return(@game);
 }
 
 proc _hazard_start(@game) {
-	include('events.ms');
-	include('entities.ms');
-
 	_add_activity('hazard', 'Hazard', 'hazard', @game['world']);
 	_hazard_clean_region(@game);
 	_hazard_define_regions(@game);
@@ -72,8 +69,10 @@ proc _hazard_start(@game) {
 		@timer--;
 		if(@timer > 0) {
 			if(@game['countdown']) {
-				_hazard_msg(@game, color('bold').@timer);
-				if(@timer < 12) {
+				update_bar('hazard', string(@timer));
+				if(@timer == 12) {
+					update_bar('hazard', array(color: 'RED'));
+				} else if(@timer < 12) {
 					update_bar('hazard', double(@timer / 12));
 				}
 			} else {
@@ -84,12 +83,24 @@ proc _hazard_start(@game) {
 			_hazard_set_mode(@game, 'ADVENTURE');
 			_hazard_spawn_players(@game);
 			_hazard_activate_entities(@game);
-			update_bar('hazard', array(visible: false));
+			update_bar('hazard', array(
+				percent: 1.0,
+				title: color('bold').'RUNNING PHASE:'.color('reset').' Get to the target alive!',
+				color: 'WHITE')
+			);
 		} else if(@timer > neg(@game['timer'])) {
 			if(!_hazard_are_players_alive(@game)) {
 				@timer[] = neg(@game['timer']);
 			}
-			_hazard_msg(@game, color('bold').(@timer + @game['timer']));
+			@timeLeft = @timer + @game['timer'];
+			if(@timeLeft == 12) {
+				update_bar('hazard', array(color: 'RED'));
+			} else if(@timeLeft < 12) {
+				update_bar('hazard', double(@timeLeft / 12));
+			}
+			if(@timeLeft < @game['timer'] - 10) {
+				update_bar('hazard', string(@timeLeft));
+			}
 		} else {
 			if(@game['round'] == @game['maxRounds'] || _hazard_did_player_win(@game)) {
 				_hazard_end(@game);
@@ -102,7 +113,11 @@ proc _hazard_start(@game) {
 				_hazard_respawn_entities(@game);
 				@timer[] = @game['buildTimer'];
 				@game['countdown'] = false;
-				update_bar('hazard', array(visible: true, percent: 1.0));
+				update_bar('hazard', array(
+					percent: 1.0,
+					title: color('bold').'CREATIVE PHASE:'.color('reset').' Build to the target!',
+					color: 'WHITE')
+				);
 			}
 		}
 	});
