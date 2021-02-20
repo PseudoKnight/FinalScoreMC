@@ -18,7 +18,6 @@ register_command('hazard', array(
 					die(color('gold').'Already running!');
 				}
 				_hazard_add_player(@sender, @game);
-				msg('Preparing hazard map...');
 				_hazard_start(@game);
 
 			case 'reload':

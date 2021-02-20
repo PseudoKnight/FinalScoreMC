@@ -1,5 +1,5 @@
-bind('creature_spawn', null, array('type': 'PHANTOM'), @event) {
-	if(@event['location']['world'] != 'outworld' && @event['location']['world'] != 'custom') {
+bind('creature_spawn', null, array(type: 'PHANTOM', reason: 'NATURAL'), @event) {
+	if(@event['location']['world'] != 'outworld') {
 		cancel();
 	}
 }

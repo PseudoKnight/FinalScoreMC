@@ -1,20 +1,38 @@
 proc _hazard_create_entity(@game, @type, @loc, @data = null) {
-	spawn_entity(@type, 1, @loc, closure(@entity) {
-		@game['entities'][] = array(
-			loc: @loc,
-			type: @type,
-			uuid: @entity,
-			data: @data,
-		);
-		if(@type == 'DROPPED_ITEM') {
-			set_entity_spec(@uuid, array(itemstack: @data));
-		} else if(is_entity_living(@entity)) {
-			set_entity_ai(@entity, false);
-		}
-	});
+	@uuid = _hazard_spawn_entity(@type, @loc, @data);
+	_hazard_add_entity(@game, @uuid, @type, @loc, @data);
 }
 
-proc _hazard_remove_entity(@uuid, @game) {
+proc _hazard_spawn_entity(@type, @loc, @data) {
+	@entity = null;
+	if(@type == 'DROPPED_ITEM') {
+		@entity = drop_item(@loc, @data, false);
+		set_entity_velocity(@entity, null);
+	} else {
+		@entity = spawn_entity(@type, 1, @loc, closure(@e) {
+			if(is_entity_living(@e)) {
+				set_entity_ai(@e, false);
+			}
+			if(array_contains(array('DROWNED', 'SKELETON', 'STRAY', 'ZOMBIE', 'ZOMBIE_VILLAGER'), @type)) {
+				set_mob_equipment(@e, array(helmet: array(name: 'LEATHER_HELMET')));
+			} else if(@type == 'PHANTOM') {
+				set_mob_effect(@e, 'FIRE_RESISTANCE', 1, 9999, true, false);
+			}
+		})[0];
+	}
+	return(@entity);
+}
+
+proc _hazard_add_entity(@game, @uuid, @type, @loc, @data = null) {
+	@game['entities'][] = array(
+		uuid: @uuid,
+		type: @type,
+		loc: @loc,
+		data: @data,
+	);
+}
+
+proc _hazard_remove_entity(@game, @uuid) {
 	foreach(@index: @entity in @game['entities']) {
 		if(@uuid == @entity['uuid']) {
 			if(entity_exists(@uuid)) {
@@ -29,11 +47,13 @@ proc _hazard_remove_entity(@uuid, @game) {
 proc _hazard_activate_entities(@game) {
 	foreach(@index: @entity in @game['entities']) {
 		if(entity_exists(@entity['uuid'])) {
-			if(is_entity_living(@entity)) {
-				set_entity_ai(@entity, true);
+			if(is_entity_living(@entity['uuid'])) {
+				set_entity_ai(@entity['uuid'], true);
 			}
 		} else {
-			console('Entity doesn\'t exist when trying to activate it.');
+			if(@entity['type'] != 'DROPPED_ITEM') {
+				console('Entity doesn\'t exist when trying to activate it.');
+			}
 			array_remove(@game['entities'], @index);
 		}
 	}
@@ -48,14 +68,7 @@ proc _hazard_respawn_entities(@game) {
 			array_remove(@game['entities'], @index);
 			continue();
 		}
-		spawn_entity(@entity['type'], 1, @entity['loc'], closure(@uuid) {
-			@entity['uuid'] = @uuid;
-			if(@entity['type'] == 'DROPPED_ITEM') {
-				set_entity_spec(@uuid, array(itemstack: @entity['data']));
-			} else if(is_entity_living(@uuid)) {
-				set_entity_ai(@uuid, false);
-			}
-		});
+		@entity['uuid'] = _hazard_spawn_entity(@entity['type'], @entity['loc'], @entity['data']);
 	}
 }
 
