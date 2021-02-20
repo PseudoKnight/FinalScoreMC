@@ -140,6 +140,17 @@ proc _hazard_end(@game) {
 	_hazard_remove_entities(@game);
 	export('hazard', null);
 	remove_scoreboard('hazard');
+
+	// clean up noisy pistons
+	@bind = bind('piston_extend', null, null, @event) {
+		if(array_contains(sk_regions_at(@event['location']), 'hazard')) {
+			cancel();
+			set_block(@event['location'], 'AIR');
+		}
+	}
+	set_timeout(5000, closure(){
+		unbind(@bind);
+	});
 }
 
 proc _hazard_clean_region(@game) {
