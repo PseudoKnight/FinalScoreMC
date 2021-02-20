@@ -20,7 +20,7 @@ proc _hazard_create() {
 	}
 	create_scoreboard('hazard');
 	create_objective('score', 'DUMMY', 'hazard');
-	set_objective_display('score', array(slot: 'SIDEBAR', displayname: color('bold').'Score (target: 100)'), 'hazard');
+	set_objective_display('score', array(slot: 'SIDEBAR', displayname: color('bold').'Score (target: '.@game['targetScore'].')'), 'hazard');
 
 	if(array_contains(get_bars(), 'hazard')) {
 		remove_bar('hazard');
