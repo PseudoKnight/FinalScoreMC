@@ -19,7 +19,7 @@ proc _hazard_bind(@game) {
 					if(@type == 'MOOSHROOM') {
 						@type = 'MUSHROOM_COW';
 					}
-					_hazard_create_entity(@game, @type, @loc);
+					_hazard_create_entity(@game, @type, @loc, player());
 				}
 			} else if(string_contains(@item['name'], 'MINECART')) {
 				cancel();
@@ -67,6 +67,16 @@ proc _hazard_bind(@game) {
 
 	bind('player_death', array(id: 'hazard_death'), null, @event, @game) {
 		if(array_index_exists(@game['players'], player())) {
+			if(array_index_exists(@event['cause'], 'damager') && length(@event['cause']['damager']) > 17) {
+				// damaged by an entity, see if it was spawned by another player
+				@spawner = _hazard_entity_spawner(@game, @event['cause']['damager']);
+				if(@spawner && @spawner != player()) {
+					@data = @game['players'][@spawner];
+					@data['score']++;
+					set_pscore('score', @spawner, @data['score'], 'hazard');
+					play_sound(ploc(@spawner), array(sound: 'ENTITY_ARROW_HIT_PLAYER'), @spawner);
+				}
+			}
 			set_pmode(player(), 'SPECTATOR');
 			play_sound(ploc(), array(sound: 'ENTITY_EVOKER_DEATH'));
 			modify_event('drops', null);
@@ -110,13 +120,13 @@ proc _hazard_bind(@game) {
 
 	bind('item_drop', array(id: 'hazard_item_drop'), null, @event, @game) {
 		if(@game['state'] == 'BUILD' && array_contains(sk_current_regions(), 'hazard')) {
-			bind('item_spawn', array(priority: 'HIGHEST'), null, @event, @game) {
+			bind('item_spawn', array(priority: 'HIGHEST'), null, @event, @game, @player = player()) {
 				if(array_contains(sk_regions_at(@event['location']), 'hazard')) {
 					consume();
 					unbind();
 					// delay to get accurate drop location
 					set_timeout(1000, closure() {
-						_hazard_add_entity(@game, @event['id'], 'DROPPED_ITEM', entity_loc(@event['id']), @event['item']);
+						_hazard_add_entity(@game, @event['id'], 'DROPPED_ITEM', entity_loc(@event['id']), @player, @event['item']);
 					});
 				};
 			}

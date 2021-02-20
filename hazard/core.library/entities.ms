@@ -1,6 +1,6 @@
-proc _hazard_create_entity(@game, @type, @loc, @data = null) {
+proc _hazard_create_entity(@game, @type, @loc, @spawner = null, @data = null) {
 	@uuid = _hazard_spawn_entity(@type, @loc, @data);
-	_hazard_add_entity(@game, @uuid, @type, @loc, @data);
+	_hazard_add_entity(@game, @uuid, @type, @loc, @spawner, @data);
 }
 
 proc _hazard_spawn_entity(@type, @loc, @data) {
@@ -23,11 +23,12 @@ proc _hazard_spawn_entity(@type, @loc, @data) {
 	return(@entity);
 }
 
-proc _hazard_add_entity(@game, @uuid, @type, @loc, @data = null) {
+proc _hazard_add_entity(@game, @uuid, @type, @loc, @spawner = null, @data = null) {
 	@game['entities'][] = array(
 		uuid: @uuid,
 		type: @type,
 		loc: @loc,
+		spawner: @spawner,
 		data: @data,
 	);
 }
@@ -40,6 +41,14 @@ proc _hazard_remove_entity(@game, @uuid) {
 			}
 			array_remove(@game['entities'], @index);
 			break();
+		}
+	}
+}
+
+proc _hazard_entity_spawner(@game, @uuid) {
+	foreach(@index: @entity in @game['entities']) {
+		if(@uuid == @entity['uuid']) {
+			return(@entity['spawner']);
 		}
 	}
 }
