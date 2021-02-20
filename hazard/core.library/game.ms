@@ -9,7 +9,7 @@ proc _hazard_create() {
 		inactivePlayers: associative_array(),
 		round: 0,
 		targetScore: 50,
-		maxRounds: 15,
+		maxRounds: 20,
 		timer: 50,
 		buildTimer: 20,
 		entities: array(),
@@ -67,7 +67,7 @@ proc _hazard_start(@game) {
 		}
 
 		@timer--;
-		if(@timer > 0) {
+		if(@timer > 0) { // BUILD PHASE
 			if(@game['countdown']) {
 				update_bar('hazard', string(@timer));
 				if(@timer == 12) {
@@ -78,17 +78,17 @@ proc _hazard_start(@game) {
 			} else {
 				@timer++; // keep waiting for the first block placement
 			}
-		} else if(@timer == 0) {
+		} else if(@timer == 0) { // START RUN PHASE
 			@game['state'] = 'RUN';
 			_hazard_set_mode(@game, 'ADVENTURE');
 			_hazard_spawn_players(@game);
 			_hazard_activate_entities(@game);
 			update_bar('hazard', array(
 				percent: 1.0,
-				title: color('bold').'RUNNING PHASE:'.color('reset').' Get to the target alive!',
-				color: 'WHITE')
-			);
-		} else if(@timer > neg(@game['timer'])) {
+				title: color('bold').'RUN PHASE '.@game['round'].':'.color('reset').' Get to the target alive!',
+				color: 'WHITE'
+			));
+		} else if(@timer > neg(@game['timer'])) { // RUN PHASE
 			if(!_hazard_are_players_alive(@game)) {
 				@timer[] = neg(@game['timer']);
 			}
@@ -105,7 +105,7 @@ proc _hazard_start(@game) {
 			if(@game['round'] == @game['maxRounds'] || _hazard_did_player_win(@game)) {
 				_hazard_end(@game);
 				clear_task();
-			} else {
+			} else { // START BUILD PHASE
 				@game['state'] = 'BUILD';
 				@game['round']++;
 				_hazard_set_mode(@game, 'CREATIVE');
@@ -115,9 +115,9 @@ proc _hazard_start(@game) {
 				@game['countdown'] = false;
 				update_bar('hazard', array(
 					percent: 1.0,
-					title: color('bold').'CREATIVE PHASE:'.color('reset').' Build to the target!',
-					color: 'WHITE')
-				);
+					title: color('bold').'BUILD PHASE '.@game['round'].':'.color('reset').' Build to the target!',
+					color: 'WHITE'
+				));
 			}
 		}
 	});
