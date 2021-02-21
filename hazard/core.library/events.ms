@@ -1,5 +1,5 @@
 proc _hazard_bind(@game) {
-	bind('player_interact', array(id: 'hazard_interact', priority: 'HIGHEST'), array(button: 'right'), @event, @game) {
+	@game['binds'][] = bind('player_interact', array(priority: 'HIGHEST'), array(button: 'right'), @event, @game) {
 		if(array_index_exists(@game['players'], player())) {
 			@item = @event['item'];
 			if(!@item) {
@@ -53,19 +53,19 @@ proc _hazard_bind(@game) {
 		}
 	}
 
-	bind('entity_damage', array(id: 'hazard_damage'), array(cause: 'ENTITY_ATTACK', world: @game['world']), @event, @game) {
+	@game['binds'][] = bind('entity_damage', null, array(cause: 'ENTITY_ATTACK', world: @game['world']), @event, @game) {
 		if(array_index_exists(@game['players'], @event['damager']) && pmode(@event['damager']) == 'CREATIVE') {
 			_hazard_remove_entity(@game, @event['id']);
 		}
 	}
 
-	bind('vehicle_destroy', array(id: 'hazard_vehicle_damage'), null, @event, @game) {
+	@game['binds'][] = bind('vehicle_destroy', null, null, @event, @game) {
 		if(array_index_exists(@game['players'], @event['damager']) && pmode(@event['damager']) == 'CREATIVE') {
 			_hazard_remove_entity(@game, @event['vehicle']);
 		}
 	}
 
-	bind('player_death', array(id: 'hazard_death'), null, @event, @game) {
+	@game['binds'][] = bind('player_death', null, null, @event, @game) {
 		if(array_index_exists(@game['players'], player())) {
 			if(array_index_exists(@event['cause'], 'damager') && length(@event['cause']['damager']) > 17) {
 				// damaged by an entity, see if it was spawned by another player
@@ -89,7 +89,7 @@ proc _hazard_bind(@game) {
 		}
 	}
 
-	bind('player_spawn', array(id: 'hazard_spawn', priority: 'HIGHEST'), null, @event, @game) {
+	@game['binds'][] = bind('player_spawn', array(priority: 'HIGHEST'), null, @event, @game) {
 		if(array_index_exists(@game['players'], player())) {
 			@loc = import(player().'spawn');
 			if(@loc) {
@@ -100,25 +100,25 @@ proc _hazard_bind(@game) {
 		}
 	}
 	
-	bind('creature_spawn', array(id: 'hazard_creature_spawn'), null, @event, @game) {
+	@game['binds'][] = bind('creature_spawn', null, null, @event, @game) {
 		if(@event['reason'] != 'CUSTOM' && array_contains(sk_regions_at(@event['location']), 'hazard')) {
 			_hazard_add_entity(@game, @event['id']);
 		}
 	}
 
-	bind('item_pickup', array(id: 'hazard_pickup'), null, @event, @game) {
+	@game['binds'][] = bind('item_pickup', null, null, @event, @game) {
 		if(!array_index_exists(@game['players'], player()) && array_contains(sk_current_regions(), 'hazard')) {
 			cancel();
 		}
 	}
 
-	bind('item_spawn', array(id: 'hazard_item_spawn'), null, @event, @game) {
+	@game['binds'][] = bind('item_spawn', null, null, @event, @game) {
 		if(@game['state'] == 'RUN' && array_contains(sk_regions_at(@event['location']), 'hazard')) {
 			cancel();
 		};
 	}
 
-	bind('item_drop', array(id: 'hazard_item_drop'), null, @event, @game) {
+	@game['binds'][] = bind('item_drop', null, null, @event, @game) {
 		if(@game['state'] == 'BUILD' && array_contains(sk_current_regions(), 'hazard')) {
 			bind('item_spawn', array(priority: 'HIGHEST'), null, @event, @game, @player = player()) {
 				if(array_contains(sk_regions_at(@event['location']), 'hazard')) {
@@ -132,16 +132,32 @@ proc _hazard_bind(@game) {
 			}
 		};
 	}
+
+	@game['binds'][] = bind('region_change', null, null, @event, @game) {
+		if(array_index_exists(@game['players'], player())) {
+			if(pmode() == 'ADVENTURE' && array_contains(@event['toRegions'], 'hazard_end')) {
+				@data = @game['players'][player()];
+				@data['score'] += 10;
+				set_pscore('score', player(), @data['score'], 'hazard');
+				set_pmode('SPECTATOR');
+				play_sound(ploc(), array(sound: 'ENTITY_VINDICATOR_CELEBRATE', pitch: 1.5));
+			} else if(array_contains(@event['fromRegions'], 'hazard')) {
+				_hazard_remove_player(player(), @game);
+			}
+		} else if(array_contains(@event['toRegions'], 'hazard')) {
+			_hazard_add_player(player(), @game);
+		}
+	}
+
+	@game['binds'][] = bind('player_quit', null, null, @event, @game) {
+		if(array_index_exists(@game['players'], player())) {
+			_hazard_remove_player(player(), @game);
+		}
+	}
 }
 
 proc _hazard_unbind(@game) {
-	unbind('hazard_interact');
-	unbind('hazard_damage');
-	unbind('hazard_vehicle_damage');
-	unbind('hazard_death');
-	unbind('hazard_spawn');
-	unbind('hazard_creature_spawn');
-	unbind('hazard_pickup');
-	unbind('hazard_item_spawn');
-	unbind('hazard_item_drop');
+	foreach(@bind in @game['binds']) {
+		unbind(@bind);
+	}
 }

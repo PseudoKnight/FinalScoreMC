@@ -13,6 +13,7 @@ proc _hazard_create() {
 		timer: 50,
 		buildTimer: 20,
 		entities: array(),
+		binds: array(),
 	);
 
 	if(array_contains(get_scoreboards(), 'hazard')) {
@@ -38,34 +39,6 @@ proc _hazard_start(@game) {
 	_hazard_bind(@game);
 	@timer = mutable_primitive(neg(@game['timer']));
 	set_interval(1000, 0, closure() {
-		if(@game['round'] > 0) {
-			foreach(@player: @data in @game['players']) {
-				if(!ponline(@player)) {
-					_hazard_remove_player(@player, @game);
-					continue();
-				}
-				@regions = sk_current_regions(@player);
-				if(pmode(@player) == 'ADVENTURE' && array_contains(@regions, 'hazard_end')) {
-					@data['score'] += 10;
-					set_pscore('score', @player, @data['score'], 'hazard');
-					set_pmode(@player, 'SPECTATOR');
-					play_sound(ploc(@player), array(sound: 'ENTITY_VINDICATOR_CELEBRATE', pitch: 1.5));
-				} else if(!array_contains(@regions, 'hazard')) {
-					_hazard_remove_player(@player, @game);
-				}
-			}
-			foreach(@player in all_players(@game['world'])) {
-				if(!array_index_exists(@game['players'], @player) && array_contains(sk_current_regions(@player), 'hazard')) {
-					_hazard_add_player(@player, @game);
-				}
-			}
-			if(array_size(@game['players']) == 0) {
-				clear_task();
-				_hazard_end(@game);
-				die();
-			}
-		}
-
 		@timer--;
 		if(@timer > 0) { // BUILD PHASE
 			if(@game['countdown']) {
@@ -117,6 +90,10 @@ proc _hazard_start(@game) {
 					color: 'WHITE'
 				));
 			}
+		}
+		if(array_size(@game['players']) == 0) {
+			clear_task();
+			_hazard_end(@game);
 		}
 	});
 }
