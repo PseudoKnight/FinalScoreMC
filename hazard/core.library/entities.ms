@@ -23,7 +23,7 @@ proc _hazard_spawn_entity(@type, @loc, @data) {
 	return(@entity);
 }
 
-proc _hazard_add_entity(@game, @uuid, @type, @loc, @spawner = null, @data = null) {
+proc _hazard_add_entity(@game, @uuid, @type = null, @loc = null, @spawner = null, @data = null) {
 	@game['entities'][] = array(
 		uuid: @uuid,
 		type: @type,
@@ -73,7 +73,7 @@ proc _hazard_respawn_entities(@game) {
 		if(entity_exists(@entity['uuid'])) {
 			entity_remove(@entity['uuid']);
 		}
-		if(!array_index_exists(@entity, 'type')) {
+		if(!@entity['type']) {
 			array_remove(@game['entities'], @index);
 			continue();
 		}

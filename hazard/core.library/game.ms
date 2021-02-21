@@ -80,7 +80,6 @@ proc _hazard_start(@game) {
 			}
 		} else if(@timer == 0) { // START RUN PHASE
 			@game['state'] = 'RUN';
-			_hazard_set_mode(@game, 'ADVENTURE');
 			_hazard_spawn_players(@game);
 			_hazard_activate_entities(@game);
 			update_bar('hazard', array(
@@ -108,7 +107,6 @@ proc _hazard_start(@game) {
 			} else { // START BUILD PHASE
 				@game['state'] = 'BUILD';
 				@game['round']++;
-				_hazard_set_mode(@game, 'CREATIVE');
 				_hazard_spawn_players(@game);
 				_hazard_respawn_entities(@game);
 				@timer[] = @game['buildTimer'];

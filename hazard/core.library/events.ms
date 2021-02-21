@@ -102,7 +102,7 @@ proc _hazard_bind(@game) {
 	
 	bind('creature_spawn', array(id: 'hazard_creature_spawn'), null, @event, @game) {
 		if(@event['reason'] != 'CUSTOM' && array_contains(sk_regions_at(@event['location']), 'hazard')) {
-			@game['entities'][] = array(uuid: @event['id']);
+			_hazard_add_entity(@game, @event['id']);
 		}
 	}
 

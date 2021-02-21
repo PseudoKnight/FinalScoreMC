@@ -4,6 +4,7 @@ proc _hazard_add_player(@player, @game) {
 	} else {
 		@game['players'][@player] = array(
 			score: 0,
+			inv: array(),
 		);
 	}
 	set_pscoreboard(@player, 'hazard');
@@ -28,25 +29,23 @@ proc _hazard_remove_player(@player, @game) {
 
 proc _hazard_spawn_players(@game) {
 	@coords = sk_region_info('hazard_start', @game['world'], 0);
+	@mode = if(@game['state'] == 'RUN', 'ADVENTURE', 'CREATIVE');
 	foreach(@player: @data in @game['players']) {
 		if(ponline(@player)) {
 			@loc = array(rand(@coords[1][0] + 1, @coords[0][0]) + 0.5, @coords[1][1], rand(@coords[1][2] + 1, @coords[0][2]) + 0.5, @game['world']);
 			set_ploc(@player, @loc);
+			set_pmode(@player, @mode);
 			set_pbed_location(@player, @loc);
-			set_phealth(@player, 1);
+			set_phealth(@player, 2);
 			set_phunger(@player, 16);
 			set_psaturation(@player, 0);
 			if(pmode(@player) == 'ADVENTURE') {
 				play_sound(@loc, array(sound: 'ENTITY_FIREWORK_ROCKET_BLAST'), @player);
+				@data['inv'] = pinv(@player);
+				clear_pinv(@player);
+			} else {
+				set_pinv(@player, @data['inv']);
 			}
-		}
-	}
-}
-
-proc _hazard_set_mode(@game, @mode) {
-	foreach(@player: @data in @game['players']) {
-		if(ponline(@player)) {
-			set_pmode(@player, @mode);
 		}
 	}
 }
