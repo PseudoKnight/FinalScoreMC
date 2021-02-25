@@ -12,6 +12,7 @@ proc _hazard_spawn_entity(@type, @loc, @data) {
 		@entity = spawn_entity(@type, 1, @loc, closure(@e) {
 			if(is_entity_living(@e)) {
 				set_entity_ai(@e, false);
+				set_entity_silent(@e, true);
 			}
 			if(array_contains(array('DROWNED', 'SKELETON', 'STRAY', 'ZOMBIE', 'ZOMBIE_VILLAGER'), @type)) {
 				set_mob_equipment(@e, array(helmet: array(name: 'LEATHER_HELMET')));
@@ -58,6 +59,7 @@ proc _hazard_activate_entities(@game) {
 		if(entity_exists(@entity['uuid'])) {
 			if(is_entity_living(@entity['uuid'])) {
 				set_entity_ai(@entity['uuid'], true);
+				set_entity_silent(@entity['uuid'], false);
 			}
 		} else {
 			if(@entity['type'] != 'DROPPED_ITEM') {
