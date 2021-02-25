@@ -126,7 +126,11 @@ proc _hazard_bind(@game) {
 					unbind();
 					// delay to get accurate drop location
 					set_timeout(1000, closure() {
-						_hazard_add_entity(@game, @event['id'], 'DROPPED_ITEM', entity_loc(@event['id']), @player, @event['item']);
+						try {
+							_hazard_add_entity(@game, @event['id'], 'DROPPED_ITEM', entity_loc(@event['id']), @player, @event['item']);
+						} catch (BadEntityException @ex) {
+							// possibly picked up already
+						}
 					});
 				};
 			}
