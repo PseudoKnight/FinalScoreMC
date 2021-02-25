@@ -14,6 +14,7 @@ proc _hazard_create() {
 		buildTimer: 20,
 		entities: array(),
 		binds: array(),
+		randomStart: false,
 	);
 
 	if(array_contains(get_scoreboards(), 'hazard')) {
@@ -142,17 +143,22 @@ proc _hazard_define_regions(@game) {
 	@size = array_size(@game['players']) + 1;
 
 	// define start region
-	@startX = rand(@coords[1][0] + 1, @coords[1][0] + integer((@coords[0][0] - @coords[1][0]) / 3) - @size);
-	@startY = rand(@coords[1][1] + 1, @coords[0][1] - 2);
-	@startZ = rand(@coords[1][2] + 1, @coords[0][2] - @size);
-	@start = array(
-		array(@startX + @size, @startY + 3, @startZ + @size),
-		array(@startX, @startY, @startZ);
-	);
-	if(!sk_region_exists('hazard_start')) {
-		sk_region_create(@game['world'], 'hazard_start', @start);
+	@start = null;
+	if(@game['randomStart'] || !sk_region_exists('hazard_start')) {
+		@startX = rand(@coords[1][0] + 1, @coords[1][0] + integer((@coords[0][0] - @coords[1][0]) / 3) - @size);
+		@startY = rand(@coords[1][1] + 1, @coords[0][1] - 2);
+		@startZ = rand(@coords[1][2] + 1, @coords[0][2] - @size);
+		@start = array(
+			array(@startX + @size, @startY + 3, @startZ + @size),
+			array(@startX, @startY, @startZ);
+		);
+		if(!sk_region_exists('hazard_start')) {
+			sk_region_create(@game['world'], 'hazard_start', @start);
+		} else {
+			sk_region_update(@game['world'], 'hazard_start', @start);
+		}
 	} else {
-		sk_region_update(@game['world'], 'hazard_start', @start);
+		@start = sk_region_info('hazard_start', @game['world'], 0);
 	}
 
 	//set start platform
