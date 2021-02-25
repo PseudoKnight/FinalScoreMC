@@ -39,9 +39,9 @@ proc _hazard_bind(@game) {
 				@loc = ploc();
 				@loc['y'] += 2.5;
 				@v = get_vector(@loc);
-				@loc['y'] += @v['y'] * 3;
-				@loc['x'] += @v['x'] * 3;
-				@loc['z'] += @v['z'] * 3;
+				@loc['y'] += @v['y'] * 4;
+				@loc['x'] += @v['x'] * 4;
+				@loc['z'] += @v['z'] * 4;
 				if(sk_can_build(@loc)) {
 					try(set_block(@loc, @item['name']));
 					play_sound(@loc, array(sound: 'BLOCK_STONE_PLACE'));
