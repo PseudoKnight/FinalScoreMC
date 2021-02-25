@@ -52,6 +52,7 @@ proc _hazard_entity_spawner(@game, @uuid) {
 			return(@entity['spawner']);
 		}
 	}
+	return(null);
 }
 
 proc _hazard_activate_entities(@game) {
