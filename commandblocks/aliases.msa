@@ -120,7 +120,7 @@
 		if(length(@uuid) <= 16) {
 			@uuid = puuid(@uuid);
 		}
-		set_timeout(1, closure(){
+		set_timeout(50, closure(){
 			@loc = entity_loc(@uuid);
 			set_entity_velocity(@uuid, @vector);
 			play_sound(@loc, array('sound': 'ENTITY_GHAST_SHOOT', 'volume': 2));
