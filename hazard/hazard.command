@@ -17,7 +17,6 @@ register_command('hazard', array(
 				} else {
 					die(color('gold').'Already running!');
 				}
-				_hazard_add_player(@sender, @game);
 				_hazard_start(@game);
 
 			case 'reload':

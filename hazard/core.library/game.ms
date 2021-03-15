@@ -10,7 +10,7 @@ proc _hazard_create() {
 		round: 0,
 		targetScore: 50,
 		maxRounds: 20,
-		timer: 50,
+		timer: 60,
 		buildTimer: 20,
 		entities: array(),
 		binds: array(),
@@ -38,6 +38,13 @@ proc _hazard_start(@game) {
 	_hazard_clean_region(@game);
 	_hazard_define_regions(@game);
 	_hazard_bind(@game);
+
+	foreach(@player in all_players(@game['world'])) {
+		if(array_contains(sk_current_regions(@player), 'hazard')) {
+			_hazard_add_player(@player, @game);
+		}
+	}
+
 	@timer = mutable_primitive(neg(@game['timer']));
 	set_interval(1000, 0, closure() {
 		@timer--;
