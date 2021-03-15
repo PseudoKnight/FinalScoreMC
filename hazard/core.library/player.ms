@@ -24,6 +24,9 @@ proc _hazard_remove_player(@player, @game) {
 		bar_remove_player('hazard', @player);
 		set_pscoreboard(@player);
 		_equip_kit(@player);
+		if(pworld(@player) == @game['world']) {
+			set_ploc(@player, get_value('warp.hazard'));
+		}
 	}
 }
 
