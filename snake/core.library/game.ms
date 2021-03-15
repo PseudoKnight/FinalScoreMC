@@ -58,7 +58,7 @@ proc _snake_queue(@mode) {
 	try {
 		create_scoreboard('snake');
 		create_objective('score', 'DUMMY', 'snake');
-		@display = 'SNAKE: First to 3!';
+		@display = 'SNAKE: First to 2 wins!';
 		if(@game['mode'] == 'endless') {
 			@display = 'SNAKE: Survive!';
 		} else if(@game['mode'] == 'capture') {
