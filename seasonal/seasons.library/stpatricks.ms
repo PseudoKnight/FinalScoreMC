@@ -27,7 +27,7 @@ bind('creature_spawn', null, array('type': 'ZOMBIE', 'reason': 'NATURAL'), @even
 		set_mob_equipment(@id, array(
 			'HELMET': array('name': 'LEATHER_HELMET', 'meta': array(
 				'color': array(0, 255, 0),
-				'enchants': array('fire_protection': 1),
+				'enchants': array('protection': 1),
 			)),
 			'CHESTPLATE': array('name': 'LEATHER_CHESTPLATE', 'meta': array(
 				'color': array(0, 255, 0),
@@ -39,16 +39,16 @@ bind('creature_spawn', null, array('type': 'ZOMBIE', 'reason': 'NATURAL'), @even
 			)),
 			'BOOTS': array('name': 'LEATHER_BOOTS', 'meta': array(
 				'color': array(0, 255, 0),
-				'enchants': array('protection': 1),
+				'enchants': array('feather_falling': 3),
 			)),
 			'WEAPON': @bottle,
 			'OFF_HAND': array('name': 'GOLD_INGOT', 'qty': rand(1, 4)),
 		));
 		set_equipment_droprates(@id, array(
-			'HELMET': 0.1,
-			'CHESTPLATE': 0.1,
-			'LEGGINGS': 0.1,
-			'BOOTS': 0.1,
+			'HELMET': 0.05,
+			'CHESTPLATE': 0.05,
+			'LEGGINGS': 0.05,
+			'BOOTS': 0.05,
 			'WEAPON': 1,
 			'OFF_HAND': 1,
 		));
@@ -58,10 +58,25 @@ bind('creature_spawn', null, array('type': 'ZOMBIE', 'reason': 'NATURAL'), @even
 }
 
 bind('target_player', null, array('mobtype': 'ZOMBIE'), @event) {
+	@id = @event['id'];
 	try {
-		if(get_entity_silent(@event['id'])) {
-			play_sound(entity_loc(@event['id']), array('sound': 'ENTITY_WITCH_AMBIENT', 'pitch': 2, 'volume': 3));
-			set_entity_velocity(@event['id'], array(0, 0.3, 0));
+		if(get_entity_silent(@id)) {
+			@loc = entity_loc(@id);
+			play_sound(@loc, array('sound': 'ENTITY_WITCH_AMBIENT', 'pitch': 2, 'volume': 3));
+			@loc['pitch'] = -60.0;
+			@v = get_vector(@loc, 0.6);
+			set_entity_velocity(@id, @v);
 		}
 	} catch (BadEntityException @ex) {}
+	set_timeout(rand(1000, 5000), closure(){
+		try {
+			if(get_entity_silent(@id)) {
+				@loc = entity_loc(@id);
+				play_sound(@loc, array('sound': 'ENTITY_WITCH_AMBIENT', 'pitch': 2, 'volume': 3));
+				@loc['pitch'] = -60.0;
+				@v = get_vector(@loc, 0.6);
+				set_entity_velocity(@id, @v);
+			}
+		} catch (BadEntityException @ex) {}
+	});
 }
