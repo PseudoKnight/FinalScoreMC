@@ -201,19 +201,6 @@ proc _open_rules_menu(@objective) {
 					),
 			))
 		),
-		'treasures': array(
-			'objective': array('treasurehunt'),
-			'default': 3,
-			'shown': true,
-			'values': array(3, 5, 7, 10),
-			'item': array(
-				'name': 'ENDER_CHEST', 'meta': array(
-					'display': color('aqua').color('bold').'NUMBER OF TREASURES',
-					'lore': array(
-						color('white').'How many treasures a player or team must',
-						color('white').'find to win the shard.',
-			)))
-		),
 		'cardsize': array(
 			'objective': array('scavengerhunt'),
 			'default': 5,

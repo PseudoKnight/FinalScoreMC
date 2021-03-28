@@ -2,7 +2,7 @@ proc _create_treasure(@delay, @score, @rules) {
 	set_timeout(@delay * 1000, closure(){
 		set_objective_display('Distance', array('slot': 'SIDEBAR'), 'shard');
 		@worldborder = get_world_border('shard');
-		@width = max(32, @worldborder['width'] - @rules['width'] / (@rules['treasures'] - @score + 1));
+		@width = max(32, @worldborder['width'] - @rules['width'] / (4 - @score));
 		@loc = @worldborder['center'];
 		@loc['x'] += rand() * @width - @width / 2;
 		@loc['y'] = rand(4, 62);
@@ -51,7 +51,7 @@ proc _end_treasurehunt(@winner) {
 }
 
 create_objective('Treasures', 'DUMMY', 'shard');
-set_objective_display('Treasures', array('slot': 'SIDEBAR', 'displayname': 'Treasures ('.@rules['treasures'].')'), 'shard');
+set_objective_display('Treasures', array('slot': 'SIDEBAR', 'displayname': 'Treasures (3)'), 'shard');
 create_objective('Distance', 'DUMMY', 'shard');
 _create_treasure(max(5, 60 * @rules['buffertime']), 0, @rules);
 
@@ -66,14 +66,14 @@ bind('block_break', array('id': 'shard-break'), array('block': 'ENDER_CHEST'), @
 			@team = get_pteam(player(), 'shard')['name'];
 			@score = get_pscore('Treasures', @team, 'shard') + 1;
 			set_pscore('Treasures', @team, @score, 'shard');
-			if(@score == @rules['treasures']) {
+			if(@score == 3) {
 				_end_treasurehunt(@team);
 				die();
 			}
 		} else {
 			@score = get_pscore('Treasures', player(), 'shard') + 1;
 			set_pscore('Treasures', player(), @score, 'shard');
-			if(@score == @rules['treasures']) {
+			if(@score == 3) {
 				_end_treasurehunt(player());
 				die();
 			}
