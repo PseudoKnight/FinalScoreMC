@@ -112,7 +112,7 @@ proc _race_countdown(@race) {
 proc _race_start(@race) {
 	@race['state'] = 'running';
 	foreach(@p: @v in @race['players']) {
-		title(@p, color('green')'Go!', null, 0, 40, 20);
+		title(@p, color('green').'Go!', null, 0, 40, 20);
 	}
 	play_sound(ploc(), array('sound': 'BLOCK_NOTE_BLOCK_PLING', 'pitch': 2));
 	_race_drop_players(@race);

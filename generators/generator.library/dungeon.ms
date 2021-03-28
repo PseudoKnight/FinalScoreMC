@@ -1181,7 +1181,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 									if(@dist == 12) {
 										continue();
 									}
-									set_blockdata_string(@tripwire[0], 'tripwire_hook[facing='.@positive',attached=true]', false);
+									set_blockdata_string(@tripwire[0], 'tripwire_hook[facing='.@positive.',attached=true]', false);
 									foreach(@t in @tripwire[1..-2]) {
 										set_blockdata_string(@t, 'tripwire['.@positive.'=true,'.@negative.'=true,attached=true]', false);
 									}

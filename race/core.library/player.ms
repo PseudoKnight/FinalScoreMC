@@ -62,7 +62,7 @@ proc _race_place_player(@race, @player, @loc) {
 		case 'boat':
 			@vehicle = spawn_entity('BOAT', 1, @loc)[0];
 		case 'horse':
-			@vehicle = spawn_entity('HORSE' 1, @loc)[0];
+			@vehicle = spawn_entity('HORSE', 1, @loc)[0];
 			set_mob_age(@vehicle, 0);
 			set_mob_owner(@vehicle, @player);
 			set_entity_spec(@vehicle, array('saddle': array('name': 'SADDLE', 'jump': 0.8)));
