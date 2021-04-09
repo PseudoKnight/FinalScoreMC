@@ -86,6 +86,7 @@ proc _hazard_start(@game) {
 			if(@game['round'] == @game['maxRounds'] || _hazard_did_player_win(@game)) {
 				_hazard_end(@game);
 				clear_task();
+				die();
 			} else { // START BUILD PHASE
 				@game['state'] = 'BUILD';
 				@game['round']++;
@@ -127,14 +128,25 @@ proc _hazard_end(@game) {
 	remove_scoreboard('hazard');
 
 	// clean up noisy pistons
-	@bind = bind('piston_extend', null, null, @event) {
+	@noisyEvents = array();
+	@noisyEvents[] = bind('piston_extend', null, null, @event) {
 		if(array_contains(sk_regions_at(@event['location']), 'hazard')) {
 			cancel();
 			set_block(@event['location'], 'AIR');
 		}
 	}
+	@noisyEvents[] = bind('block_dispense', null, null, @event) {
+		if(array_contains(sk_regions_at(@event['location']), 'hazard')) {
+			cancel();
+			@inv = array_resize(array(), 27);
+			set_inventory(@event['location'], @inv);
+			set_block(@event['location'], 'AIR');
+		}
+	}
 	set_timeout(5000, closure(){
-		unbind(@bind);
+		foreach(@bind in @noisyEvents) {
+			unbind(@bind);
+		}
 	});
 }
 
