@@ -77,13 +77,12 @@ proc _hazard_bind(@game) {
 					play_sound(ploc(@spawner), array(sound: 'ENTITY_ARROW_HIT_PLAYER'), @spawner);
 				}
 			}
-			set_pmode(player(), 'SPECTATOR');
 			play_sound(ploc(), array(sound: 'ENTITY_EVOKER_DEATH'));
 			modify_event('drops', null);
 			modify_event('xp', null);
 			modify_event('keep_inventory', true);
-			export(player().'spawn', ploc());
-			set_timeout(150, closure() {
+			export(player().'spawn', location_shift(ploc(), 'up', 2));
+			set_timeout(1000, closure() {
 				respawn(player());
 			});
 		}
@@ -91,6 +90,7 @@ proc _hazard_bind(@game) {
 
 	@game['binds'][] = bind('player_spawn', array(priority: 'HIGHEST'), null, @event, @game) {
 		if(array_index_exists(@game['players'], player())) {
+			set_pmode(player(), 'SPECTATOR');
 			@loc = import(player().'spawn');
 			if(@loc) {
 				modify_event('location', @loc);
