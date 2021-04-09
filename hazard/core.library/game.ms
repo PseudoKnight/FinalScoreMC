@@ -13,6 +13,7 @@ proc _hazard_create() {
 		timer: 60,
 		buildTimer: 20,
 		entities: array(),
+		blocks: array(),
 		binds: array(),
 		randomStart: true,
 	);
@@ -90,6 +91,7 @@ proc _hazard_start(@game) {
 				@game['round']++;
 				_hazard_spawn_players(@game);
 				_hazard_respawn_entities(@game);
+				_hazard_respawn_blocks(@game);
 				@timer[] = @game['buildTimer'];
 				@game['countdown'] = false;
 				update_bar('hazard', array(

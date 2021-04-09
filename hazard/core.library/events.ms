@@ -160,6 +160,25 @@ proc _hazard_bind(@game) {
 			_hazard_remove_player(player(), @game);
 		}
 	}
+
+	@game['binds'][] = bind('entity_explode', null, null, @event, @game) {
+		if(array_contains(sk_regions_at(@event['location']), 'hazard')) {
+			@modified = false;
+			foreach(@index: @block in @event['blocks']) {
+				@regions = sk_regions_at(@block);
+				if(!array_contains(sk_regions_at(@block), 'hazard')
+				|| array_contains(sk_regions_at(@block), 'hazard_start')) {
+					array_remove(@event['blocks'], @index);
+					@modified = true;
+				} else {
+					_hazard_add_block(@game, @block);
+				}
+			}
+			if(@modified) {
+				modify_event('blocks', @event['blocks']);
+			}
+		}
+	}
 }
 
 proc _hazard_unbind(@game) {
