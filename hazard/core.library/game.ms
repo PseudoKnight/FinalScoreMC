@@ -129,21 +129,21 @@ proc _hazard_end(@game) {
 
 	// clean up noisy pistons
 	@noisyEvents = array();
-	@noisyEvents[] = bind('piston_extend', null, null, @event) {
-		if(array_contains(sk_regions_at(@event['location']), 'hazard')) {
+	@noisyEvents[] = bind('piston_extend', null, null, @event, @game) {
+		if(@game['world'] == @event['location']['world'] && array_contains(sk_regions_at(@event['location']), 'hazard')) {
 			cancel();
 			set_block(@event['location'], 'AIR');
 		}
 	}
-	@noisyEvents[] = bind('block_dispense', null, null, @event) {
-		if(array_contains(sk_regions_at(@event['location']), 'hazard')) {
+	@noisyEvents[] = bind('block_dispense', null, null, @event, @game) {
+		if(@game['world'] == @event['location']['world'] && array_contains(sk_regions_at(@event['location']), 'hazard')) {
 			cancel();
 			@inv = array_resize(array(), 27);
 			set_inventory(@event['location'], @inv);
 			set_block(@event['location'], 'AIR');
 		}
 	}
-	set_timeout(5000, closure(){
+	set_timeout(3000, closure(){
 		foreach(@bind in @noisyEvents) {
 			unbind(@bind);
 		}

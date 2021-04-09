@@ -103,7 +103,7 @@ proc _hazard_bind(@game) {
 	}
 	
 	@game['binds'][] = bind('creature_spawn', null, null, @event, @game) {
-		if(@event['reason'] != 'CUSTOM' && array_contains(sk_regions_at(@event['location']), 'hazard')) {
+		if(@event['reason'] != 'CUSTOM' && @game['world'] == @event['location']['world'] && array_contains(sk_regions_at(@event['location']), 'hazard')) {
 			_hazard_add_entity(@game, @event['id']);
 		}
 	}
@@ -115,13 +115,13 @@ proc _hazard_bind(@game) {
 	}
 
 	@game['binds'][] = bind('item_spawn', null, null, @event, @game) {
-		if(@game['state'] == 'RUN' && array_contains(sk_regions_at(@event['location']), 'hazard')) {
+		if(@game['state'] == 'RUN' && @game['world'] == @event['location']['world'] && array_contains(sk_regions_at(@event['location']), 'hazard')) {
 			cancel();
 		};
 	}
 
 	@game['binds'][] = bind('item_drop', null, null, @event, @game) {
-		if(@game['state'] == 'BUILD' && array_contains(sk_current_regions(), 'hazard')) {
+		if(@game['state'] == 'BUILD' && @game['world'] == pworld() && array_contains(sk_current_regions(), 'hazard')) {
 			bind('item_spawn', array(priority: 'HIGHEST'), null, @event, @game, @player = player()) {
 				if(array_contains(sk_regions_at(@event['location']), 'hazard')) {
 					consume();
@@ -162,7 +162,7 @@ proc _hazard_bind(@game) {
 	}
 
 	@game['binds'][] = bind('entity_explode', null, null, @event, @game) {
-		if(array_contains(sk_regions_at(@event['location']), 'hazard')) {
+		if(@game['world'] == @event['location']['world'] && array_contains(sk_regions_at(@event['location']), 'hazard')) {
 			@modified = false;
 			foreach(@index: @block in @event['blocks']) {
 				@regions = sk_regions_at(@block);
