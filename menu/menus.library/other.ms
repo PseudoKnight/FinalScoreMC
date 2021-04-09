@@ -1,7 +1,7 @@
 @menu = @main[];
 @menu[@rows * 9 + 1]['name'] = 'LIME_WOOL';
 
-@menu[18] = array(
+@menu[0] = array(
 	'name': 'SNOW_BLOCK',
 	'meta': array(
 		'display': color('yellow').'Spleef',
@@ -11,7 +11,7 @@
 		),
 	),
 );
-@menu[19] = array(
+@menu[1] = array(
 	'name': 'MAGENTA_TERRACOTTA',
 	'meta': array(
 		'display': color('gold').'Cube'.color('red').'Climber',
@@ -23,7 +23,7 @@
 		),
 	),
 );
-@menu[20] = array(
+@menu[2] = array(
 	'name': 'EMERALD_ORE',
 	'meta': array(
 		'display': color('green').'Seven Seconds to Live',
@@ -36,7 +36,7 @@
 		),
 	),
 );
-@menu[21] = array(
+@menu[3] = array(
 	'name': 'EMERALD_BLOCK',
 	'meta': array(
 		'display': color('green').'FrogWare',
@@ -47,7 +47,7 @@
 		),
 	),
 );
-@menu[22] = array(
+@menu[4] = array(
 	'name': 'REDSTONE_BLOCK',
 	'meta': array(
 		'display': color('red').'Snake',
@@ -58,7 +58,7 @@
 		),
 	),
 );
-@menu[23] = array(
+@menu[5] = array(
 	'name': 'PACKED_ICE',
 	'meta': array(
 		'display': color('aqua').'Hockey',
@@ -68,7 +68,7 @@
 		),
 	),
 );
-@menu[24] = array(
+@menu[6] = array(
 	'name': 'ORANGE_GLAZED_TERRACOTTA',
 	'meta': array(
 		'display': color('aqua').'Charades',
@@ -82,17 +82,7 @@
 		),
 	),
 );
-@menu[25] = array(
-	'name': 'CRACKED_STONE_BRICKS',
-	'meta': array(
-		'display': color('yellow').'Gladiator Arena',
-		'lore': array(
-			color('white').'Survive waves of mobs (1+ players)',
-			color('dark_gray').'Run: /warp gladiator',
-		),
-	),
-);
-@menu[26] = array(
+@menu[7] = array(
 	'name': 'ACACIA_PLANKS',
 	'meta': array(
 		'display': color('gold').'Hoops!',
@@ -102,7 +92,18 @@
 		),
 	),
 );
-@menu[0] = array(
+@menu[8] = array(
+	'name': 'SCAFFOLDING',
+	'meta': array(
+		'display': color('gold').'Hazard!',
+		'lore': array(
+			color('white').'Alternating course building and running phases.',
+			color('white').'Get to the end but prevent others from doing so.',
+			color('dark_gray').'Run: /warp hazard',
+		),
+	),
+);
+@menu[9] = array(
 	'name': 'SLIME_BLOCK',
 	'meta': array(
 		'display': color('green').'Slimey Golf',
@@ -112,7 +113,7 @@
 		),
 	),
 );
-@menu[1] = array(
+@menu[10] = array(
 	'name': 'PRISMARINE',
 	'meta': array(
 		'display': color('aqua').'Sunken City Golf',
@@ -122,7 +123,7 @@
 		),
 	),
 );
-@menu[2] = array(
+@menu[11] = array(
 	'name': 'JUNGLE_LOG',
 	'meta': array(
 		'display': color('yellow').'Island Golf',
@@ -132,7 +133,7 @@
 		),
 	),
 );
-@menu[9] = array(
+@menu[18] = array(
 	'name': 'ICE',
 	'meta': array(
 		'display': color('aqua').'Arctic Race',
@@ -143,7 +144,7 @@
 		)
 	),
 );
-@menu[10] = array(
+@menu[19] = array(
 	'name': 'HAY_BLOCK',
 	'meta': array(
 		'display': color('aqua').'Pig Race',
@@ -152,6 +153,16 @@
 			color('white').'(2+ players)',
 			color('dark_gray').'Run: /warp thatlldo',
 		)
+	),
+);
+@menu[27] = array(
+	'name': 'CRACKED_STONE_BRICKS',
+	'meta': array(
+		'display': color('yellow').'Gladiator Arena',
+		'lore': array(
+			color('white').'Survive waves of mobs (1+ players)',
+			color('dark_gray').'Run: /warp gladiator',
+		),
 	),
 );
 delete_virtual_inventory('other');
