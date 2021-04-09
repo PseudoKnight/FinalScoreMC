@@ -14,7 +14,7 @@ proc _hazard_create() {
 		buildTimer: 20,
 		entities: array(),
 		binds: array(),
-		randomStart: false,
+		randomStart: true,
 	);
 
 	if(array_contains(get_scoreboards(), 'hazard')) {
@@ -147,7 +147,7 @@ proc _hazard_clean_region(@game) {
 
 proc _hazard_define_regions(@game) {
 	@coords = sk_region_info('hazard', @game['world'], 0);
-	@size = array_size(@game['players']) + 1;
+	@size = array_size(@game['players']) + 2;
 
 	// define start region
 	@start = null;
