@@ -60,7 +60,9 @@ proc _hazard_bind(@game) {
 	}
 
 	@game['binds'][] = bind('vehicle_destroy', null, null, @event, @game) {
-		if(array_index_exists(@game['players'], @event['damager']) && pmode(@event['damager']) == 'CREATIVE') {
+		if(array_index_exists(@event, 'damager')
+		&& array_index_exists(@game['players'], @event['damager'])
+		&& pmode(@event['damager']) == 'CREATIVE') {
 			_hazard_remove_entity(@game, @event['vehicle']);
 		}
 	}
