@@ -1,5 +1,5 @@
 proc _create_treasure(@delay, @score, @rules) {
-	set_timeout(@delay * 1000, closure(){
+	set_timeout(@delay, closure(){
 		set_objective_display('Distance', array('slot': 'SIDEBAR'), 'shard');
 		@worldborder = get_world_border('shard');
 		@width = max(32, @worldborder['width'] - @rules['width'] / (4 - @score));
@@ -53,7 +53,7 @@ proc _end_treasurehunt(@winner) {
 create_objective('Treasures', 'DUMMY', 'shard');
 set_objective_display('Treasures', array('slot': 'SIDEBAR', 'displayname': 'Treasures (3)'), 'shard');
 create_objective('Distance', 'DUMMY', 'shard');
-_create_treasure(max(5, 60 * @rules['buffertime']), 0, @rules);
+_create_treasure(max(5, @rules['buffertime']), 0, @rules);
 
 @binds[] = 'shard-break';
 bind('block_break', array('id': 'shard-break'), array('block': 'ENDER_CHEST'), @event, @rules) {

@@ -134,7 +134,7 @@ proc _shard_create(@rules){
 				));
 				@respawnPlayers = (@rules['objective'] == 'treasurehunt' || @rules['objective'] == 'scavengerhunt' || @rules['objective'] == 'creative');
 				if(!@respawnPlayers && @rules['buffertime'] && @rules['timelimit']) {
-					set_timeout(@rules['buffertime'] * 60000, closure(){
+					set_timeout(@rules['buffertime'], closure(){
 						if(array_contains(get_worlds(), 'shard')) {
 							set_world_border('shard', array('width': 1, 'seconds': @rules['timelimit'] * 60));
 							_worldmsg('shard', color('red').color('bold').'Shard has started to collapse! ('.@rules['timelimit'].' minutes)');

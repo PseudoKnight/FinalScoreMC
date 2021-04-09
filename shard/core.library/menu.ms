@@ -156,15 +156,19 @@ proc _open_rules_menu(@objective) {
 			)))
 		),
 		'width': array(
-			'default': 1024,
+			'default': 64,
 			'shown': true,
-			'values': array(256, 384, 512, 768, 1024),
+			'values': array(16, 24, 32, 48, 64),
 			'item': array(
 				'name': 'END_CRYSTAL', 'meta': array(
-					'display': color('aqua').color('bold').'WORLDBORDER WIDTH',
+					'display': color('aqua').color('bold').'WORLDBORDER CHUNK WIDTH',
 					'lore': array(
-						color('white').'Width of shard world border'
-			)))
+						color('white').'Width of shard world border in chunks',
+						color('white').'Max (64) is equal to 1024 meters wide',
+			))),
+			'result': iclosure(@value) {
+				return(@value * 16);
+			}
 		),
 		'timelimit': array(
 			'objective': array('elimination'),
@@ -199,7 +203,10 @@ proc _open_rules_menu(@objective) {
 							color('white').'How much time before the first treasure is spawned.',
 						),
 					),
-			))
+			)),
+			result: iclosure(@value) {
+				return(@value * 60000);
+			}
 		),
 		'cardsize': array(
 			'objective': array('scavengerhunt'),
@@ -277,7 +284,11 @@ proc _open_rules_menu(@objective) {
 			@associative_rules = associative_array();
 			foreach(@rule in @rules) {
 				@key = @rule['name'];
-				@associative_rules[@key] = @rule['value'];
+				if(@key != 'objective' && array_index_exists(@options[@key], 'result')) {
+					@associative_rules[@key] = execute(@rule['value'], @options[@key]['result']);
+				} else {
+					@associative_rules[@key] = @rule['value'];
+				}
 			}
 			_shard_create(@associative_rules);
 		} else {
