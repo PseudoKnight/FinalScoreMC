@@ -55,7 +55,7 @@ bind('entity_damage', array('id': @id.'itemdamage'), array('type': 'DROPPED_ITEM
 	if(array_index_exists(@pvp, 'bomb')
 	&& @event['id'] == @pvp['bomb']) {
 		// ensure it's destroyed before spawning a new one
-		set_timeout(1, closure() {
+		set_timeout(100, closure() {
 			if(!entity_exists(@event['id'])) {
 				array_remove(@pvp, 'bomb');
 				_pvp_bomb_spawn(@pvp['id']);
