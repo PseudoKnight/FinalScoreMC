@@ -61,7 +61,7 @@ proc _fw_startround(@secs = 12) {
 	@loc[0] += 18;
 	@loc[2] += 18;
 	foreach(@p in all_players('custom')) {
-		if(_fw_player(@p)) {
+		if(array_contains(sk_current_regions(@p), 'frogware')) {
 			stop_named_sound(@p, 'music_disc.stal', 'RECORDS');
 		}
 	}
