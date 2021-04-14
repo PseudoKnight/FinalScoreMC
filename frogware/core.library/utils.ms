@@ -1,20 +1,3 @@
-proc _fw_countdown(@c) {
-	set_objective_display('score', color(10).color('l').@c, 'fw');
-	if(@c < 4 && @c > 0) {
-		foreach(@p in all_players('custom')) {
-			if(_fw_player(@p)) {
-				play_sound(ploc(@p), array('sound': 'UI_BUTTON_CLICK', 'pitch': 2), @p);
-			}
-		}
-	} else if(@c == 0) {
-		foreach(@p in all_players('custom')) {
-			if(_fw_player(@p)) {
-				play_sound(ploc(@p), array('sound': 'ENTITY_EXPERIENCE_ORB_PICKUP'), @p);
-			}
-		}
-	}
-}
-
 proc _fw_loc(@height = 0, @minrange = false) {
 	@region = sk_region_info('frogware', 'custom', 0);
 	@return = 1;
@@ -73,7 +56,7 @@ proc _fw_mobs(@mob = 'random', @num = 'random') {
 			@m = _spawn_entity(@mob, @loc);
 			@entities[] = @m;
 			if(@mob == 'wolf') {
-				set_entity_spec(@m, array('angry': true));
+				set_entity_spec(@m, array(angry: true));
 				set_mob_target(@m, puuid(_fw_leader()));
 			} else if(@mob == 'polarbear' && !rand(8)) {
 				set_mob_age(@m, -3000);
@@ -96,104 +79,10 @@ proc _fw_mobs(@mob = 'random', @num = 'random') {
 	}
 }
 
-proc _fw_leader() {
-	@top = 0;
-	@leader = '';
-	foreach(@p in all_players('custom')) {
-		if(get_pscoreboard(@p) == 'fw') {
-			@score = get_pscore('score', @p, 'fw')
-			if(@score > @top) {
-				@leader = @p;
-				@top = @score;
-			}
-		}
-	}
-	return(@leader);
-}
-
 proc _fw_items(@item, @num) {
 	for(@i = 0, @i < @num, @i++) {
 		if(@loc = _fw_loc()) {
 			drop_item(@loc, @item);
-		}
-	}
-}
-
-proc _fw_player(@player) {
-	if(ponline(@player)
-	&& pworld(@player) === 'custom'
-	&& get_pscoreboard(@player) === 'fw') {
-		return(true);
-	} else {
-		return(false);
-	}
-}
-
-proc _fw_totalplayers() {
-	@count = 0;
-	foreach(@p in all_players('custom')) {
-		if(_fw_player(@p)) {
-			@count++;
-		}
-	}
-	return(@count);
-}
-
-proc _fw_changeteam(@player, @team) {
-	switch(@team) {
-		case 'losers':
-			if(team_remove_player('winners', @player, 'fw')) {
-				team_add_player('losers', @player, 'fw');
-				return(true);
-			} else {
-				return(false);
-			}
-		case 'winners':
-			if(team_remove_player('losers', @player, 'fw')) {
-				team_add_player('winners', @player, 'fw');
-				return(true);
-			} else {
-				return(false);
-			}
-	}
-}
-
-proc _fw_set_winners() {
-	foreach(@p in all_players('custom')) {
-		if(_fw_player(@p)) {
-			_fw_changeteam(@p, 'winners');
-		}
-	}
-}
-
-proc _fw_randompotion(@potentials, @secs = 20) {
-	@potions = array(
-		'speed': array(1, 17),
-		'jump': array(8, 12),
-		'invis': array(14, 1),
-		'blind': array(15, 1)
-	);
-	@potion = array_get_rand(@potentials);
-	if(@potion == 'blind') {
-		@region = sk_region_info('frogware', 'custom', 0);
-		@loc = @region[1];
-		@loc[0] += 18;
-		@loc[2] += 18;
-	}
-	foreach(@p in all_players('custom')) {
-		if(_fw_player(@p)) {
-			set_peffect(@p, @potions[@potion][0], @potions[@potion][1], @secs);
-		}
-	}
-}
-
-proc _fw_msg(@msg) {
-	if(is_array(@msg)) {
-		@msg = array_get_rand(@msg);
-	}
-	foreach(@p in all_players('custom')) {
-		if(_fw_player(@p)) {
-			title(@p, '', @msg, 0, 40, 20);
 		}
 	}
 }

@@ -1,7 +1,7 @@
 register_command('frogware', array(
-	'description': 'Joins and starts FrogWare.',
-	'usage': '/frogware <join|start> [points]',
-	'tabcompleter': closure(@alias, @sender, @args, @info) {
+	description: 'Joins and starts FrogWare.',
+	usage: '/frogware <join|start> [points]',
+	tabcompleter: closure(@alias, @sender, @args, @info) {
 		if(array_size(@args) == 1) {
 			if(has_permission('group.engineer')) {
 				return(_strings_start_with_ic(array('join', 'start', 'stop'), @args[-1]));
@@ -11,41 +11,17 @@ register_command('frogware', array(
 		}
 		return(array());
 	},
-	'executor': closure(@alias, @sender, @args, @info) {
+	executor: closure(@alias, @sender, @args, @info) {
 		if(!@args) {
 			return(false);
 		}
+		include_dir('core.library');
 		switch(@args[0]) {
 			case 'join':
 				if(!sk_region_exists('custom', 'frogware')) {
 					die(color('gold').'Define the frogware region first.');
 				}
-				if(!array_contains(get_scoreboards(), 'fw')) {
-					create_scoreboard('fw');
-					create_objective('score', 'DUMMY', 'fw');
-					create_team('losers', 'fw');
-					create_team('winners', 'fw');
-					set_objective_display('score', array('slot': 'SIDEBAR', 'displayname': color('a').color('l').'Get Ready!'), 'fw');
-					set_team_display('winners', array('color': 'GREEN'), 'fw');
-					set_team_display('losers', array('color': 'YELLOW'), 'fw');
-				}
-				set_pscoreboard(player(), 'fw');
-				team_add_player('losers', player(), 'fw');
-				include('includes.library/frogware.ms');
-
-				@scores = array();
-				foreach(@p in all_players('custom')) {
-					if(_fw_player(@p)) {
-						@scores[] = get_pscore('score', @p, 'fw');
-					}
-				}
-				set_pscore('score', player(), if(@scores, min(@scores), 0), 'fw');
-
-				set_ploc(_fw_loc(-1));
-				set_phunger(20);
-				set_psaturation(5);
-				set_phealth(20);
-				_clear_pinv(player());
+				_fw_add_player(player());
 
 			case 'start':
 				if(get_pscoreboard(player()) !== 'fw') {
@@ -58,17 +34,7 @@ register_command('frogware', array(
 				if(queue_running('fw') || queue_running('fw2')) {
 					die(color('gold').'Already running.');
 				}
-				_add_activity('frogware', 'FrogWare', 'frogware', 'custom');
-				include('includes.library/frogware.ms');
-				foreach(@p in all_players('custom')) {
-					if(_fw_player(@p)) {
-						set_pmode(@p, 'SURVIVAL');
-						set_phunger(@p, 20);
-						set_psaturation(@p, 5);
-						set_phealth(@p, 20);
-						_clear_pinv(@p);
-					}
-				}
+				include_dir('tasks.library');
 				_fw_startgame(@points);
 
 			case 'stop':
@@ -77,7 +43,9 @@ register_command('frogware', array(
 				queue_clear('fw3');
 				remove_scoreboard('fw');
 				unbind('fwdamage');
+				unbind('fwtask');
 				_remove_activity('frogware');
+				msg('Stopped.');
 
 			default:
 				msg(color('bold').'FROGWARE --------------');
