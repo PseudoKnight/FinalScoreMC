@@ -1,9 +1,13 @@
 register_command('frogware', array(
 	'description': 'Joins and starts FrogWare.',
-	'usage': '/frogware <join|start|forcestop> [points]',
+	'usage': '/frogware <join|start> [points]',
 	'tabcompleter': closure(@alias, @sender, @args, @info) {
 		if(array_size(@args) == 1) {
-			return(_strings_start_with_ic(array('join', 'start', 'forcestop'), @args[-1]));
+			if(has_permission('group.engineer')) {
+				return(_strings_start_with_ic(array('join', 'start', 'stop'), @args[-1]));
+			} else {
+				return(_strings_start_with_ic(array('join', 'start'), @args[-1]));
+			}
 		}
 		return(array());
 	},
@@ -67,7 +71,7 @@ register_command('frogware', array(
 				}
 				_fw_startgame(@points);
 
-			case 'forcestop':
+			case 'stop':
 				queue_clear('fw');
 				queue_clear('fw2');
 				queue_clear('fw3');
@@ -86,7 +90,6 @@ register_command('frogware', array(
 				msg(color('bold').'FROGWARE COMMANDS -----');
 				msg('/frogware join '.color('gray').'Joins the game');
 				msg('/frogware start '.color('gray').'Starts the game');
-				msg('/frogware forcestop '.color('gray').'(restricted) Stops the game');
 		}
 	}
 ));

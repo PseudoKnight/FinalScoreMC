@@ -1,41 +1,43 @@
 proc _fw_countdown(@c) {
-	set_objective_display('score', color(10).color('l').@c, 'fw')
+	set_objective_display('score', color(10).color('l').@c, 'fw');
 	if(@c < 4 && @c > 0) {
 		foreach(@p in all_players('custom')) {
 			if(_fw_player(@p)) {
-				play_sound(ploc(@p), array('sound': 'UI_BUTTON_CLICK', 'pitch': 2), @p)
+				play_sound(ploc(@p), array('sound': 'UI_BUTTON_CLICK', 'pitch': 2), @p);
 			}
 		}
 	} else if(@c == 0) {
 		foreach(@p in all_players('custom')) {
 			if(_fw_player(@p)) {
-				play_sound(ploc(@p), array('sound': 'ENTITY_EXPERIENCE_ORB_PICKUP'), @p)
+				play_sound(ploc(@p), array('sound': 'ENTITY_EXPERIENCE_ORB_PICKUP'), @p);
 			}
 		}
 	}
 }
 
 proc _fw_loc(@height = 0, @minrange = false) {
-	@region = sk_region_info('frogware', 'custom')[0]
-	@return = 1
+	@region = sk_region_info('frogware', 'custom', 0);
+	@return = 1;
 	@loc = array(
 		@region[0][0] - rand(sqrt((@region[0][0] - @region[1][0]) ** 2)) + 0.5,
 		@region[1][1] + @height,
 		@region[0][2] - rand(sqrt((@region[0][2] - @region[1][2]) ** 2)) + 0.5,
 		'custom'
-	)
+	);
 	if(@minrange) {
 		foreach(@p in all_players('custom')) {
-			if(!ponline(@p), continue())
+			if(!ponline(@p)) {
+				continue();
+			}
 			if(get_pscoreboard(@p) === 'fw'
 			&& distance(ploc(@p), @loc) < 6) {
-				@return = 0
-				break()
+				@return = 0;
+				break();
 			}
 		}
 	}
 	if(@return == 1) {
-		return(@loc)
+		return(@loc);
 	}
 	return(null);
 }
@@ -88,7 +90,7 @@ proc _fw_mobs(@mob = 'random', @num = 'random') {
 	if(!rand(4)) {
 		queue_push(closure(){
 			foreach(@entity in @entities) {
-				set_mob_effect(@entity, 'speed', rand(2), 15, true)
+				set_mob_effect(@entity, 'speed', rand(2), 15, true);
 			}
 		})
 	}
@@ -121,46 +123,45 @@ proc _fw_player(@player) {
 	if(ponline(@player)
 	&& pworld(@player) === 'custom'
 	&& get_pscoreboard(@player) === 'fw') {
-		return(true)
+		return(true);
 	} else {
-		return(false)
+		return(false);
 	}
 }
 
 proc _fw_totalplayers() {
-	@count = 0
+	@count = 0;
 	foreach(@p in all_players('custom')) {
-		if(!ponline(@p), continue())
-		if(get_pscoreboard(@p) === 'fw') {
-			@count++
+		if(_fw_player(@p)) {
+			@count++;
 		}
 	}
-	return(@count)
+	return(@count);
 }
 
 proc _fw_changeteam(@player, @team) {
 	switch(@team) {
-	case 'losers':
-		if(team_remove_player('winners', @player, 'fw')) {
-			team_add_player('losers', @player, 'fw')
-			return(true)
-		} else {
-			return(false)
-		}
-	case 'winners':
-		if(team_remove_player('losers', @player, 'fw')) {
-			team_add_player('winners', @player, 'fw')
-			return(true)
-		} else {
-			return(false)
-		}
+		case 'losers':
+			if(team_remove_player('winners', @player, 'fw')) {
+				team_add_player('losers', @player, 'fw');
+				return(true);
+			} else {
+				return(false);
+			}
+		case 'winners':
+			if(team_remove_player('losers', @player, 'fw')) {
+				team_add_player('winners', @player, 'fw');
+				return(true);
+			} else {
+				return(false);
+			}
 	}
 }
 
 proc _fw_set_winners() {
 	foreach(@p in all_players('custom')) {
 		if(_fw_player(@p)) {
-			_fw_changeteam(@p, 'winners')
+			_fw_changeteam(@p, 'winners');
 		}
 	}
 }
@@ -171,17 +172,17 @@ proc _fw_randompotion(@potentials, @secs = 20) {
 		'jump': array(8, 12),
 		'invis': array(14, 1),
 		'blind': array(15, 1)
-	)
+	);
 	@potion = array_get_rand(@potentials);
 	if(@potion == 'blind') {
-		@region = sk_region_info('frogware', 'custom')[0];
+		@region = sk_region_info('frogware', 'custom', 0);
 		@loc = @region[1];
 		@loc[0] += 18;
 		@loc[2] += 18;
 	}
 	foreach(@p in all_players('custom')) {
 		if(_fw_player(@p)) {
-			set_peffect(@p, @potions[@potion][0], @potions[@potion][1], @secs)
+			set_peffect(@p, @potions[@potion][0], @potions[@potion][1], @secs);
 		}
 	}
 }
@@ -206,7 +207,7 @@ proc _iterate_cuboid(@b1, @b2, @block, @percent) {
 		@blocks = array();
 	}
 
-	@region = sk_region_info('frogware', 'custom')[0];
+	@region = sk_region_info('frogware', 'custom', 0);
 	@minX = max(@region[1][0], min(@b1[0], @b2[0]));
 	@maxX = min(@region[0][0], max(@b1[0], @b2[0]));
 	@minY = min(@b1[1], @b2[1]);
@@ -235,7 +236,7 @@ proc _iterate_cuboid(@b1, @b2, @block, @percent) {
 }
 
 proc _fw_clear_blocks(@height = 1) {
-	@region = sk_region_info('frogware', 'custom')[0];
+	@region = sk_region_info('frogware', 'custom', 0);
 	_iterate_cuboid(array(@region[0][0], @region[1][1], @region[0][2], 'custom'),
 		array(@region[1][0], @region[1][1] + @height - 1, @region[1][2], 'custom'),
 		'AIR', 100);

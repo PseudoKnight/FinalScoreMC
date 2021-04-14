@@ -2,31 +2,28 @@ include('utils.ms');
 include('tasks.ms');
 
 proc _fw_startgame(@pts) {
-	_fw_startround()
+	_fw_startround();
 	bind('entity_damage', array('id': 'fwdamage'), array('type': 'PLAYER', 'world': 'custom'), @e) {
 		if(_fw_player(@e['player'])) {
-			modify_event('amount', 0)
+			modify_event('amount', 0);
 		}
 	}
-	_fw_msg('Game started. First to '.@pts.' points wins!')
-	set_pscore('score', 'GOAL', @pts, 'fw')
+	_fw_msg('Game started. First to '.@pts.' points wins!');
+	set_pscore('score', 'GOAL', @pts, 'fw');
 	sk_region_flag('custom', 'frogware', 'pvp', 'allow');
 }
 
 proc _fw_endgame(@winners) {
-	unbind('fwdamage')
+	unbind('fwdamage');
 	sk_region_flag('custom', 'frogware', 'pvp', 'deny');
 	@messages = array(
 		'Best frog in the house: ',
-		'Best in show: ',
 		'BeWare this frog: ',
-		'All your base are belong to ',
-		'Be jelly of ',
-		'All hail, king of the frogs, ',
-		'Viletoad honors ',
-		'Achievement get: Beaten by ',
+		'All hail, king of the frogs: ',
+		'Viletoad honors: ',
+		'Beaten by: ',
 		'Most hoppity: ',
-	)
+	);
 	_fw_msg(color('green').array_get_rand(@messages).array_implode(@winners, ' & '));
 	foreach(@p in all_players('custom')) {
 		if(_fw_player(@p)) {
@@ -59,7 +56,7 @@ proc _fw_endgame(@winners) {
 }
 
 proc _fw_startround(@secs = 12) {
-	@region = sk_region_info('frogware', 'custom')[0];
+	@region = sk_region_info('frogware', 'custom', 0);
 	@loc = @region[1];
 	@loc[0] += 18;
 	@loc[2] += 18;
@@ -82,48 +79,48 @@ proc _fw_startround(@secs = 12) {
 	}
 
 	if(pworld() !== 'custom') {
-		_fw_endgame(array())
-		_fw_msg('Host left the game.')
+		_fw_endgame(array());
+		_fw_msg('Host left the game.');
 		return();
 	}
 	queue_delay(1000, 'fw')
 	queue_push(closure(){
-		@winners = array()
-		@count = 0
-		@total = 0
-		@highscore = 0
-		@goal = get_pscore('score', 'GOAL', 'fw')
+		@winners = array();
+		@count = 0;
+		@total = 0;
+		@highscore = 0;
+		@goal = get_pscore('score', 'GOAL', 'fw');
 		foreach(@p in all_players('custom')) {
 			if(_fw_player(@p)) {
-				@total++
+				@total++;
 				if(array_contains(sk_current_regions(@p), 'frogware')) {
 					if(pmode(@p) == 'ADVENTURE') {
 						set_pmode(@p, 'SURVIVAL');
 					}
 					if(get_pteam(@p, 'fw')['name'] == 'winners') {
 						play_sound(ploc(@p), associative_array('sound': 'ENTITY_VILLAGER_YES'), @p);
-						set_pscore('score', @p, get_pscore('score', @p, 'fw') + 1, 'fw')
-						_fw_changeteam(@p, 'losers')
-						@count++
+						set_pscore('score', @p, get_pscore('score', @p, 'fw') + 1, 'fw');
+						_fw_changeteam(@p, 'losers');
+						@count++;
 					}
-					@score = get_pscore('score', @p, 'fw')
+					@score = get_pscore('score', @p, 'fw');
 					if(@score == @goal) {
 						@winners[] = @p;
 					} else if(@score > @highscore) {
-						@highscore = @score
+						@highscore = @score;
 					}
 					_clear_pinv(@p);
 				} else {
-					set_pscoreboard(@p)
-					reset_all_pscores(@p, 'fw')
+					set_pscoreboard(@p);
+					reset_all_pscores(@p, 'fw');
 					_equip_kit(@p);
 				}
 			}
 		}
 		if(array_size(@winners) > 0 || @total == 0) {
-			_fw_endgame(@winners)
+			_fw_endgame(@winners);
 		} else {
-			@secs = 13 - integer(round(8 * (@highscore / @goal)))
+			@secs = 13 - integer(round(8 * (@highscore / @goal)));
 			@tasks = array();
 			if((@highscore / @goal) < 0.33) {
 				@tasks = array('climb', 'keepaway', 'harvest', 'koth', 'cake', 'fall', 'cluck', 'frogegg', 'lavafall',
@@ -135,23 +132,23 @@ proc _fw_startround(@secs = 12) {
 				@tasks = array('pvp');
 			}
 			@task = array_get_rand(@tasks);
-			if(@total == 1 && @task === 'pvp', @task = array_get_rand(@tasks))
-			queue_delay(1000, 'fw2')
+			if(@total == 1 && @task === 'pvp', @task = array_get_rand(@tasks));
+			queue_delay(1000, 'fw2');
 			queue_push(closure(){
 				play_named_sound(@loc, array('sound': 'music_disc.stal', 'pitch': 10 / @secs, 'category': 'RECORDS', 'volume': 3));
-				_fw_task(@task, 'start', @secs)
-			}, 'fw2')
+				_fw_task(@task, 'start', @secs);
+			}, 'fw2');
 			for(@i = @secs, @i >= 0, @i--) {
 				if(@i > 0) {
 					queue_push(closure(){
-						_fw_countdown(@i)
-					}, 'fw2')
-					queue_delay(1000, 'fw2')
+						_fw_countdown(@i);
+					}, 'fw2');
+					queue_delay(1000, 'fw2');
 				} else {
 					queue_push(closure(){
-						_fw_countdown(@i)
-						_fw_task(@task, 'end', @secs)
-					}, 'fw2')
+						_fw_countdown(@i);
+						_fw_task(@task, 'end', @secs);
+					}, 'fw2');
 				}
 			}
 		}
