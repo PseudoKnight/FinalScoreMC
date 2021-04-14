@@ -5,7 +5,7 @@ proc _fw_start_task(@secs) {
 		'PVP round!',
 		'It\'s a free-for-all!',
 	));
-	_fw_randompotion(array('speed', 'jump', 'blind', 'invis'));
+	_fw_randompotion(array('speed', 'jump_boost', 'blindness', 'invisibility'));
 	@weapon = array(name: 'IRON_SWORD', meta: array(damage: 226));
 	switch(rand(3)) {
 		case 0:

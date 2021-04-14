@@ -22,7 +22,6 @@ proc _fw_reset_player(@player) {
 	_clear_pinv(player());
 }
 
-
 proc _fw_player(@player) {
 	if(ponline(@player)
 	&& pworld(@player) === 'custom'
@@ -115,21 +114,15 @@ proc _fw_countdown(@c) {
 
 proc _fw_randompotion(@potentials, @secs = 20) {
 	@potions = array(
-		speed: array(1, 17),
-		jump: array(8, 12),
-		invis: array(14, 1),
-		blind: array(15, 1)
+		speed: 17,
+		jump_boost: 12,
+		invisibility: 1,
+		blindness: 1
 	);
 	@potion = array_get_rand(@potentials);
-	if(@potion == 'blind') {
-		@region = sk_region_info('frogware', 'custom', 0);
-		@loc = @region[1];
-		@loc[0] += 18;
-		@loc[2] += 18;
-	}
 	foreach(@p in all_players('custom')) {
 		if(_fw_player(@p)) {
-			set_peffect(@p, @potions[@potion][0], @potions[@potion][1], @secs);
+			set_peffect(@p, @potion, @potions[@potion], @secs);
 		}
 	}
 }

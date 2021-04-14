@@ -6,7 +6,7 @@ proc _fw_start_task(@secs) {
 		'It\'s a bird! It\'s a plane! No! It\'s ** SPLAT **',
 	));
 	if(!rand(4)) {
-		_fw_randompotion(array('speed', 'blind'));
+		_fw_randompotion(array('speed', 'blindness'));
 	}
 	if(!rand(4)) {
 		_fw_mobs();

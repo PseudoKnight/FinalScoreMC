@@ -5,7 +5,7 @@ proc _fw_start_task(@secs) {
 		'Frogs don\'t like lava. Just sayin\'.',
 	));
 	if(!rand(4)) {
-		_fw_randompotion(array('speed', 'blind'));
+		_fw_randompotion(array('speed', 'blindness'));
 	}
 	if(!rand(4)) {
 		_fw_mobs();

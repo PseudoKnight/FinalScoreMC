@@ -54,7 +54,7 @@ register_command('frogware', array(
 				.'| Players get a random task every round that\n'
 				.'| they have to complete in several seconds.\n'
 				.'| They get a point for completing a task.\n'
-				.'| First player to reach 25 points wins.');
+				.'| First player to reach 20 points wins.');
 				msg(color('bold').'FROGWARE COMMANDS -----');
 				msg('/frogware join '.color('gray').'Joins the game');
 				msg('/frogware start '.color('gray').'Starts the game');

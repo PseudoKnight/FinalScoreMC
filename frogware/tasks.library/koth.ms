@@ -26,7 +26,7 @@ proc _fw_start_task(@secs) {
 			drop_item(_fw_loc(), array(name: 'IRON_BOOTS', meta: array(enchants: array(depth_strider: 3))));
 		}
 	} else if(!rand(4)) {
-		_fw_randompotion(array('speed', 'jump'));
+		_fw_randompotion(array('speed', 'jump_boost'));
 	}
 	@loc = _fw_loc();
 	# platform

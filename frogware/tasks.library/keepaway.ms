@@ -6,7 +6,7 @@ proc _fw_start_task(@secs) {
 		'Be safe.',
 	));
 	if(!rand(4)) {
-		_fw_randompotion(array('speed', 'jump', 'blind'));
+		_fw_randompotion(array('speed', 'jump_boost', 'blindness'));
 	}
 	_fw_mobs();
 	if(!rand(4)) {
