@@ -33,6 +33,23 @@ proc _fw_start_task(@secs) {
 			}
 		}
 	}
+	if(!rand(5)) {
+		set_timeout(3000, closure(){
+			@loc = _fw_loc(8);
+			if(!@loc) {
+				die();
+			}
+			foreach(@p in all_players('custom')) {
+				if(_fw_player(@p)) {
+					play_sound(ploc(@p), array(sound: 'entity_witch_ambient', volume: 4, pitch: 1.2), @p);
+				}
+			}
+			@chickens = entities_in_radius(@loc, 32, 'CHICKEN');
+			foreach(@chicken in @chickens) {
+				set_entity_velocity(@chicken, array(rand(), rand(), rand()));
+			}
+		});
+	}
 }
 
 proc _fw_end_task(@secs) {
