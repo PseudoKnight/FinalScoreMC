@@ -112,7 +112,7 @@ proc _iterate_cuboid(@b1, @b2, @block, @percent) {
 					set_block(array(@x, @y, @z, 'custom'), @block);
 					@blocks[] = array(@x, @y, @z, 'custom');
 				}
-				if(@count++ > 3000) {
+				if(@count++ > 5000) {
 					console('Warning: _iterate_cuboid logic potentially caused infinite loop.');
 					break(3);
 				}

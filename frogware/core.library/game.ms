@@ -78,7 +78,6 @@ proc _fw_startround(@secs = 12) {
 					} else if(@score > @highscore) {
 						@highscore = @score;
 					}
-					_clear_pinv(@p);
 				} else {
 					set_pscoreboard(@p);
 					reset_all_pscores(@p, 'fw');
@@ -92,10 +91,10 @@ proc _fw_startround(@secs = 12) {
 			@secs = 13 - integer(round(8 * (@highscore / @goal)));
 			@tasks = if((@highscore / @goal) < 0.33) {
 				array('climb', 'keepaway', 'harvest', 'koth', 'cake', 'fall', 'cluck', 'frogegg', 'lavafall',
-					'shepherd', 'anvil', 'trade', 'fish', 'panel');
+					'shepherd', 'anvil', 'trade', 'fish', 'panel', 'mine');
 			} else if((@highscore / @goal) < 0.90 || @total == 1) {
 				array('climb', 'keepaway', 'harvest', 'koth', 'cake', 'fall', 'cluck', 'frogegg', 'lavafall',
-					'shepherd', 'anvil', 'trade', 'fish', 'panel');
+					'shepherd', 'anvil', 'trade', 'fish', 'panel', 'mine');
 			} else {
 				array('pvp');
 			}
@@ -116,6 +115,11 @@ proc _fw_startround(@secs = 12) {
 					queue_push(closure(){
 						_fw_countdown(@i);
 						_fw_end_task(@secs);
+						foreach(@p in all_players('custom')) {
+							if(_fw_player(@p)) {
+								_clear_pinv(@p);
+							}
+						}
 						unbind('fwtask');
 						_fw_startround(@secs);
 					}, 'fw2');
