@@ -16,10 +16,10 @@ proc _fw_add_player(@player) {
 }
 
 proc _fw_reset_player(@player) {
-	set_phunger(20);
-	set_psaturation(5);
-	set_phealth(20);
-	_clear_pinv(player());
+	set_phunger(@player, 20);
+	set_psaturation(@player, 5);
+	set_phealth(@player, 20);
+	_clear_pinv(@player);
 }
 
 proc _fw_player(@player) {
