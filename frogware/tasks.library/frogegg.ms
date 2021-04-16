@@ -11,14 +11,9 @@ proc _fw_start_task(@secs) {
 		_fw_mobs();
 	}
 	if(!rand(4)) {
-		@blocks = import('frogware.blocks');
-		if(is_null(@blocks)) {
-			@blocks = array();
-		}
 		for(@i = 0, @i < 16, @i++) {
 			set_block(_fw_loc(), 'OBSIDIAN');
 		}
-		export('frogware.blocks', @blocks);
 	}
 	play_sound(@loc, array(sound: 'ENTITY_CHICKEN_EGG', volume: 3));
 	bind('player_interact', array(id: 'fwtask', priority: 'high'), array(block: 'DRAGON_EGG'), @e) {
