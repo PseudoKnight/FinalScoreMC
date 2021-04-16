@@ -57,7 +57,8 @@ proc _fw_startround(@secs = 12) {
 		@winners = array();
 		@count = 0;
 		@total = 0;
-		@highscore = 0;
+		@firstplace = 0;
+		@secondplace = 0;
 		@goal = get_pscore('score', 'GOAL', 'fw');
 		foreach(@p in all_players('custom')) {
 			if(_fw_player(@p)) {
@@ -75,8 +76,9 @@ proc _fw_startround(@secs = 12) {
 					@score = get_pscore('score', @p, 'fw');
 					if(@score == @goal) {
 						@winners[] = @p;
-					} else if(@score > @highscore) {
-						@highscore = @score;
+					} else if(@score > @firstplace) {
+						@secondplace = @firstplace;
+						@firstplace = @score;
 					}
 				} else {
 					set_pscoreboard(@p);
@@ -88,11 +90,13 @@ proc _fw_startround(@secs = 12) {
 		if(array_size(@winners) > 0 || @total == 0) {
 			_fw_endgame(@winners);
 		} else {
-			@secs = 13 - integer(round(8 * (@highscore / @goal)));
-			@tasks = if((@highscore / @goal) < 0.33) {
+			@secs = 13 - integer(round(8 * (@firstplace / @goal)));
+			@tasks = if(@firstplace >= @secondplace + @goal * 0.2) { // first place is 20% ahead
+				array('explosive');
+			} if((@firstplace / @goal) < 0.33) { // first place is 33% towards the goal
 				array('climb', 'keepaway', 'harvest', 'koth', 'cake', 'fall', 'cluck', 'frogegg', 'lavafall',
 					'shepherd', 'anvil', 'trade', 'fish', 'panel', 'mine', 'enderpearl');
-			} else if((@highscore / @goal) < 0.90 || @total == 1) {
+			} else if((@firstplace / @goal) < 0.90 || @total == 1) { // first place is 90% towards the goal (or only one player)
 				array('climb', 'keepaway', 'harvest', 'koth', 'cake', 'fall', 'cluck', 'frogegg', 'lavafall',
 					'shepherd', 'anvil', 'trade', 'fish', 'panel', 'mine', 'enderpearl');
 			} else {

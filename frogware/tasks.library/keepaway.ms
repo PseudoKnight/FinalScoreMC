@@ -13,7 +13,9 @@ proc _fw_start_task(@secs) {
 		_fw_mobs('random', 25);
 	}
 	foreach(@p in all_players()) {
-		set_ponfire(@p, 0);
+		if(_fw_player(@p)) {
+			set_ponfire(@p, 0);
+		}
 	}
 	bind('entity_damage', array(id: 'fwtask'), array(type: 'PLAYER', world: 'custom'), @e) {
 		if(_fw_player(@e['player'])
@@ -27,7 +29,7 @@ proc _fw_start_task(@secs) {
 		bind('target_player', array(id: 'fwtargetplayer'), null, @e) {
 			if(rand(2)) {
 				@leader = _fw_leader();
-				if(@leader && _fw_player(@e['player']) && @e['player'] != @leader) {
+				if(_fw_player(@e['player']) && @e['player'] != @leader) {
 					modify_event('player', @leader);
 				}
 			}

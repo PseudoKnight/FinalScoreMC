@@ -70,7 +70,7 @@ proc _fw_set_winners() {
 }
 
 proc _fw_leader() {
-	@top = 0;
+	@top = -1; // ensure we always have a leader, even if they're not actually leading
 	@leader = '';
 	foreach(@p in all_players('custom')) {
 		if(get_pscoreboard(@p) == 'fw') {

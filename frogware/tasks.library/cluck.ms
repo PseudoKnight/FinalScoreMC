@@ -33,7 +33,7 @@ proc _fw_start_task(@secs) {
 			}
 		}
 	}
-	if(!rand(5)) {
+	if(@mob == 'CHICKEN' && !rand(5)) {
 		set_timeout(3000, closure(){
 			@loc = _fw_loc(8);
 			if(!@loc) {
