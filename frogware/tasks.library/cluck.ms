@@ -58,7 +58,7 @@ proc _fw_start_task(@secs) {
 			}
 			@chickens = entities_in_radius(@loc, 32, 'CHICKEN');
 			foreach(@chicken in @chickens) {
-				set_entity_velocity(@chicken, array(rand(), rand(), rand()));
+				set_entity_velocity(@chicken, array(rand() * 2 - 1, 0, rand() * 2 - 1));
 			}
 		});
 	}
