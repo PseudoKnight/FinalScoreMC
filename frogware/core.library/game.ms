@@ -95,7 +95,8 @@ proc _fw_startround(@secs = 12) {
 				array('explosive');
 			} else if((@firstplace / @goal) < 0.90 || @total == 1) { // first place is less than 90% towards the goal (or only one player)
 				array('climb', 'keepaway', 'harvest', 'koth', 'cake', 'fall', 'cluck', 'frogegg', 'lavafall',
-					'shepherd', 'anvil', 'trade', 'fish', 'panel', 'mine', 'enderpearl', 'explosive', 'extinguish');
+					'shepherd', 'anvil', 'trade', 'fish', 'panel', 'mine', 'enderpearl', 'explosive', 'extinguish',
+					'hotpotato');
 			} else {
 				array('pvp');
 			}
