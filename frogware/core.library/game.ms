@@ -35,9 +35,7 @@ proc _fw_startround(@secs = 12) {
 	@loc[0] += 18;
 	@loc[2] += 18;
 	foreach(@p in all_players('custom')) {
-		if(array_contains(sk_current_regions(@p), 'frogware')) {
-			stop_named_sound(@p, 'music_disc.stal', 'RECORDS');
-		}
+		stop_named_sound(@p, 'music_disc.stal', 'RECORDS');
 	}
 
 	@blocks = import('frogware.blocks');
@@ -96,7 +94,7 @@ proc _fw_startround(@secs = 12) {
 			} else if((@firstplace / @goal) < 0.90 || @total == 1) { // first place is less than 90% towards the goal (or only one player)
 				array('climb', 'keepaway', 'harvest', 'koth', 'cake', 'fall', 'cluck', 'frogegg', 'lavafall',
 					'shepherd', 'anvil', 'trade', 'fish', 'panel', 'mine', 'enderpearl', 'extinguish', 'hotpotato',
-					'parking');
+					'parking', 'musicalchairs');
 			} else {
 				array('pvp');
 			}
