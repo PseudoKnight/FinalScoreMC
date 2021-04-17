@@ -31,7 +31,7 @@ proc _fw_start_task(@secs) {
 			@loc['z'] += 0.5;
 			@minecart = spawn_entity('MINECART', 1, @loc)[0];
 			set_metadata(@minecart, 'player', player());
-			_fw_changeteam(player(), 'winners');
+			_fw_change_team(player(), 'winners');
 		}
 	}
 	bind('vehicle_destroy', array(id: 'fw_vehicle_destroy'), array(vehicletype: 'MINECART'), @e) {
@@ -46,7 +46,7 @@ proc _fw_end_task(@secs) {
 	foreach(@e in all_entities('custom')) {
 		if(entity_type(@e) == 'MINECART') {
 			@player = get_metadata(@e, 'player', 'CommandHelper');
-			if(@player && _fw_changeteam(@player, 'losers')) {
+			if(@player && _fw_change_team(@player, 'losers')) {
 				play_sound(ploc(@player), array(sound: 'ENTITY_ZOMBIE_VILLAGER_CONVERTED'), @player);
 				spawn_particle(entity_loc(@e), 'SMOKE_LARGE');
 				entity_remove(@e);

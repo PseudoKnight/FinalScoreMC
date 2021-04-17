@@ -12,7 +12,7 @@ proc _fw_start_task(@secs) {
 	@region = sk_region_info('frogware', 'custom', 0);
 	bind('player_fish', array(id: 'fwtask'), array(state: '/(CAUGHT_ENTITY|CAUGHT_FISH)/'), @e) {
 		if(_fw_player(@e['player'])) {
-			if(_fw_changeteam(player(), 'winners')) {
+			if(_fw_change_team(player(), 'winners')) {
 				play_sound(ploc(), array(sound: 'ENTITY_ZOMBIE_ATTACK_IRON_DOOR'), player());
 			}
 		}

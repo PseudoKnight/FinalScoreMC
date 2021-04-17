@@ -11,7 +11,7 @@ proc _fw_start_task(@secs) {
 		@blocks = array();
 		export('frogware.blocks', @blocks);
 	}
-	@count = _fw_totalplayers() + 1;
+	@count = _fw_total_players() + 1;
 	for(@i = 0, @i < @count, @i++) {
 		@loc = _fw_loc();
 		@blocks[] = @loc;
@@ -26,7 +26,7 @@ proc _fw_start_task(@secs) {
 
 proc _fw_end_task(@secs) {
 	foreach(@p in all_players('custom')) {
-		if(_fw_player(@p) && ponfire(@p) <= 0 && _fw_changeteam(@p, 'winners')) {
+		if(_fw_player(@p) && ponfire(@p) <= 0 && _fw_change_team(@p, 'winners')) {
 			play_sound(ploc(@p), array(sound: 'ENTITY_ZOMBIE_ATTACK_IRON_DOOR'), @p);
 		}
 	}

@@ -19,7 +19,7 @@ proc _fw_start_task(@secs) {
 		}
 	}
 
-	for(@i = 0, @i < (_fw_totalplayers() * (@count + 1)), @i++) {
+	for(@i = 0, @i < (_fw_total_players() * (@count + 1)), @i++) {
 		spawn_entity(@mob, 1, if(@mob === 'BAT', _fw_loc(8), _fw_loc(18)));
 	}
 	bind('entity_death', array(id: 'fwtask'), array(type: @mob), @e, @count) {
@@ -30,7 +30,7 @@ proc _fw_start_task(@secs) {
 		if(_fw_player(@shooter)) {
 			modify_event('xp', 0);
 			set_pexp(@shooter, min(99, round(pexp(@shooter) + 99 / @count)));
-			if(pexp(@shooter) == 99 && _fw_changeteam(@shooter, 'winners')) {
+			if(pexp(@shooter) == 99 && _fw_change_team(@shooter, 'winners')) {
 				play_sound(ploc(@shooter), array(sound: 'ENTITY_ZOMBIE_ATTACK_IRON_DOOR'), @shooter);
 			}
 		}

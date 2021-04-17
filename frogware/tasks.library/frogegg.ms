@@ -20,7 +20,7 @@ proc _fw_start_task(@secs) {
 		if(_fw_player(player())) {
 			play_sound(@e['location'], array(sound: 'ENTITY_CHICKEN_EGG', volume: 3));
 			consume();
-			if(_fw_changeteam(player(), 'winners')) {
+			if(_fw_change_team(player(), 'winners')) {
 				play_sound(ploc(), array(sound: 'ENTITY_ZOMBIE_ATTACK_IRON_DOOR'), player());
 			}
 		}

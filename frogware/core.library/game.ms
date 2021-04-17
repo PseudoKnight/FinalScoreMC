@@ -10,7 +10,7 @@ proc _fw_create_scoreboard() {
 	}
 }
 
-proc _fw_startgame(@pts) {
+proc _fw_start_game(@pts) {
 	_add_activity('frogware', 'FrogWare', 'frogware', 'custom');
 	foreach(@p in all_players('custom')) {
 		if(_fw_player(@p)) {
@@ -26,10 +26,10 @@ proc _fw_startgame(@pts) {
 	_fw_msg('Game started. First to '.@pts.' points wins!');
 	set_pscore('score', 'GOAL', @pts, 'fw');
 	sk_region_flag('custom', 'frogware', 'pvp', 'allow');
-	_fw_startround();
+	_fw_start_round();
 }
 
-proc _fw_startround(@secs = 12) {
+proc _fw_start_round(@secs = 12) {
 	@region = sk_region_info('frogware', 'custom', 0);
 	@loc = @region[1];
 	@loc[0] += 18;
@@ -68,7 +68,7 @@ proc _fw_startround(@secs = 12) {
 					if(get_pteam(@p, 'fw')['name'] == 'winners') {
 						play_sound(ploc(@p), associative_array(sound: 'ENTITY_VILLAGER_YES'), @p);
 						set_pscore('score', @p, get_pscore('score', @p, 'fw') + 1, 'fw');
-						_fw_changeteam(@p, 'losers');
+						_fw_change_team(@p, 'losers');
 						@count++;
 					}
 					@score = get_pscore('score', @p, 'fw');
@@ -86,7 +86,7 @@ proc _fw_startround(@secs = 12) {
 			}
 		}
 		if(array_size(@winners) > 0 || @total == 0) {
-			_fw_endgame(@winners);
+			_fw_end_game(@winners);
 		} else {
 			@secs = 13 - integer(round(8 * (@firstplace / @goal)));
 			@tasks = if(@total != 1 && rand(2) && @firstplace >= @secondplace + @goal * 0.2) { // first place is 20% ahead and coinflip
@@ -121,7 +121,7 @@ proc _fw_startround(@secs = 12) {
 							}
 						}
 						unbind('fwtask');
-						_fw_startround(@secs);
+						_fw_start_round(@secs);
 					}, 'fw2');
 				}
 			}
@@ -130,7 +130,7 @@ proc _fw_startround(@secs = 12) {
 
 }
 
-proc _fw_endgame(@winners) {
+proc _fw_end_game(@winners) {
 	unbind('fwdamage');
 	sk_region_flag('custom', 'frogware', 'pvp', 'deny');
 	@messages = array(
@@ -145,7 +145,7 @@ proc _fw_endgame(@winners) {
 	foreach(@p in all_players('custom')) {
 		if(_fw_player(@p)) {
 			if(array_contains(@winners, @p)) {
-				@coins = _fw_totalplayers();
+				@coins = _fw_total_players();
 				if(@coins > 3) {
 					_acc_add(@p, @coins - 2);
 					tmsg(@p, color('6').'+'.@coins.' coins');
@@ -155,9 +155,9 @@ proc _fw_endgame(@winners) {
 					}
 					@session['trophies'][] = color('yellow').'Best Frog in the House!';
 				}
-				_fw_changeteam(@p, 'winners');
+				_fw_change_team(@p, 'winners');
 			} else {
-				_fw_changeteam(@p, 'losers');
+				_fw_change_team(@p, 'losers');
 			}
 			_equip_kit(@p);
 			set_pmode(@p, 'ADVENTURE');

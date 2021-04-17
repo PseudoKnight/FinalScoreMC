@@ -35,7 +35,7 @@ register_command('frogware', array(
 					die(color('gold').'Already running.');
 				}
 				include_dir('tasks.library');
-				_fw_startgame(@points);
+				_fw_start_game(@points);
 
 			case 'stop':
 				queue_clear('fw');

@@ -6,7 +6,7 @@ proc _fw_start_task(@secs) {
 		'JUMP JUMP JUMP',
 	));
 	if(!rand(4)) {
-		_fw_randompotion(array('speed', 'jump_boost', 'blindness'));
+		_fw_random_potion(array('speed', 'jump_boost', 'blindness'));
 	}
 	if(!rand(4)) {
 		_fw_mobs();
@@ -61,7 +61,7 @@ proc _fw_end_task(@secs) {
 		if(_fw_player(@p)) {
 			clear_peffects(@p);
 			if(get_block(ploc(@p)) === 'EMERALD_BLOCK'
-			&& _fw_changeteam(@p, 'winners')) {
+			&& _fw_change_team(@p, 'winners')) {
 				play_sound(ploc(@p), array(sound: 'ENTITY_ZOMBIE_ATTACK_IRON_DOOR'), @p);
 			}
 		}

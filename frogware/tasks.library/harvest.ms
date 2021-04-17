@@ -19,7 +19,7 @@ proc _fw_start_task(@secs) {
 	}
 	bind('item_pickup', array(id: 'fwtask'), array(itemname: 'WHEAT'), @e) {
 		if(_fw_player(player())
-		&& _fw_changeteam(player(), 'winners')) {
+		&& _fw_change_team(player(), 'winners')) {
 			modify_event('item', null);
 			play_sound(ploc(), array(sound: 'ENTITY_ZOMBIE_ATTACK_IRON_DOOR'), player());
 		}

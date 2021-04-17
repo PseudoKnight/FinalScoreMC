@@ -27,7 +27,7 @@ proc _fw_start_task(@secs) {
 		}, 'fw3');
 		bind('entity_damage', array(id: 'fwtask'), array(type: 'PLAYER', cause: 'FALL'), @e) {
 			if(_fw_player(@e['player'])) {
-				if(_fw_changeteam(@e['player'], 'losers')) {
+				if(_fw_change_team(@e['player'], 'losers')) {
 					play_sound(ploc(@e['player']), array(sound: 'ENTITY_ZOMBIE_VILLAGER_CONVERTED'), @e['player']);
 				}
 			}
@@ -46,7 +46,7 @@ proc _fw_end_task(@secs) {
 		foreach(@p in all_players('custom')) {
 			if(_fw_player(@p)
 			&& get_block(ploc(@p)) === 'EMERALD_BLOCK'
-			&& _fw_changeteam(@p, 'winners')) {
+			&& _fw_change_team(@p, 'winners')) {
 				play_sound(ploc(@p), array(sound: 'ENTITY_ZOMBIE_ATTACK_IRON_DOOR'), @p);
 			}
 		}

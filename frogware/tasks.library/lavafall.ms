@@ -5,7 +5,7 @@ proc _fw_start_task(@secs) {
 		'Frogs don\'t like lava. Just sayin\'.',
 	));
 	if(!rand(4)) {
-		_fw_randompotion(array('speed', 'blindness'));
+		_fw_random_potion(array('speed', 'blindness'));
 	}
 	if(!rand(4)) {
 		_fw_mobs();
@@ -23,7 +23,7 @@ proc _fw_start_task(@secs) {
 		'LAVA', 3);
 	bind('entity_damage', array(id: 'fwtask'), array(type: 'PLAYER', cause: 'LAVA', world: 'custom'), @e) {
 		if(_fw_player(@e['player'])) {
-			if(_fw_changeteam(@e['player'], 'losers')) {
+			if(_fw_change_team(@e['player'], 'losers')) {
 				play_sound(ploc(@e['player']), array(sound: 'ENTITY_ZOMBIE_VILLAGER_CONVERTED'), @e['player']);
 			}
 		}

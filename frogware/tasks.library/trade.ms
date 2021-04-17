@@ -10,7 +10,7 @@ proc _fw_start_task(@secs) {
 	}
 	bind('inventory_click', array(id: 'fwtask'), array(slottype: 'RESULT'), @e) {
 		if(_fw_player(@e['player']) && @e['slotitem']) {
-			if(_fw_changeteam(player(), 'winners')) {
+			if(_fw_change_team(player(), 'winners')) {
 				play_sound(ploc(), array(sound: 'ENTITY_ZOMBIE_ATTACK_IRON_DOOR'), player());
 			}
 		}

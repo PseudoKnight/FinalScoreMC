@@ -32,7 +32,7 @@ proc _fw_player(@player) {
 	}
 }
 
-proc _fw_totalplayers() {
+proc _fw_total_players() {
 	@count = 0;
 	foreach(@p in all_players('custom')) {
 		if(_fw_player(@p)) {
@@ -42,7 +42,7 @@ proc _fw_totalplayers() {
 	return(@count);
 }
 
-proc _fw_changeteam(@player, @team) {
+proc _fw_change_team(@player, @team) {
 	switch(@team) {
 		case 'losers':
 			if(team_remove_player('winners', @player, 'fw')) {
@@ -64,7 +64,7 @@ proc _fw_changeteam(@player, @team) {
 proc _fw_set_winners() {
 	foreach(@p in all_players('custom')) {
 		if(_fw_player(@p)) {
-			_fw_changeteam(@p, 'winners');
+			_fw_change_team(@p, 'winners');
 		}
 	}
 }
@@ -112,7 +112,7 @@ proc _fw_countdown(@c) {
 	}
 }
 
-proc _fw_randompotion(@potentials, @secs = 20) {
+proc _fw_random_potion(@potentials, @secs = 20) {
 	@potions = array(
 		speed: 17,
 		jump_boost: 12,

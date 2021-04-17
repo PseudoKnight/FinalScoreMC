@@ -23,7 +23,7 @@ proc _fw_end_task(@secs) {
 	foreach(@p in all_players('custom')) {
 		if(_fw_player(@p)
 		&& get_block(ploc(@p)) === 'EMERALD_BLOCK'
-		&& _fw_changeteam(@p, 'winners')) {
+		&& _fw_change_team(@p, 'winners')) {
 			play_sound(ploc(@p), array(sound: 'ENTITY_ZOMBIE_ATTACK_IRON_DOOR'), @p);
 		}
 	}

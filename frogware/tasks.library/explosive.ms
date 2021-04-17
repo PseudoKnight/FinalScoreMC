@@ -19,16 +19,16 @@ proc _fw_start_task(@secs) {
 			@player = @e['player'];
 			if(@player == @leader && array_index_exists(@explosives, @damager)) {
 				@attacker = @explosives[@damager];
-				if(_fw_changeteam(@attacker, 'winners')) {
+				if(_fw_change_team(@attacker, 'winners')) {
 					play_sound(ploc(@attacker), array(sound: 'ENTITY_ZOMBIE_ATTACK_IRON_DOOR'), @attacker);
 				}
-				if(_fw_changeteam(@leader, 'losers')) {
+				if(_fw_change_team(@leader, 'losers')) {
 					play_sound(ploc(@leader), array(sound: 'ENTITY_ZOMBIE_VILLAGER_CONVERTED'), @leader);
 				}
 			}
 		}
 	}
-	_fw_changeteam(@leader, 'winners');
+	_fw_change_team(@leader, 'winners');
 }
 
 proc _fw_end_task(@secs) {

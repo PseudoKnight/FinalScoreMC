@@ -16,7 +16,7 @@ proc _fw_start_task(@secs) {
 		}
 	}
 	bind('player_consume', array(id: 'fwtask'), array(itemname: 'BAKED_POTATO'), @e) {
-		if(_fw_player(player()) && _fw_changeteam(player(), 'losers')) {
+		if(_fw_player(player()) && _fw_change_team(player(), 'losers')) {
 			explosion(location_shift(ploc(), 'up', 2), 1, true);
 			play_sound(ploc(), array(sound: 'ENTITY_ZOMBIE_VILLAGER_CONVERTED'), player());
 		}
@@ -28,7 +28,7 @@ proc _fw_end_task(@secs) {
 	foreach(@p in all_players('custom')) {
 		if(_fw_player(@p)) {
 			@count = ptake_item(@p, array(name: 'BAKED_POTATO'));
-			if(@count && _fw_changeteam(@p, 'losers')) {
+			if(@count && _fw_change_team(@p, 'losers')) {
 				explosion(location_shift(ploc(@p), 'up', 2), @count, true);
 				play_sound(ploc(@p), array(sound: 'ENTITY_ZOMBIE_VILLAGER_CONVERTED'), @p);
 			}

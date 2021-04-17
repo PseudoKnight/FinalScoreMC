@@ -45,7 +45,7 @@ proc _fw_start_task(@secs) {
 		if(_fw_player(player())) {
 			if(@e['block'] == @ore) {
 				@count[player()] = array_get(@count, player(), 0) + 1;
-				if(@count[player()] == 3 && _fw_changeteam(player(), 'winners')) {
+				if(@count[player()] == 3 && _fw_change_team(player(), 'winners')) {
 					play_sound(ploc(), array(sound: 'ENTITY_ZOMBIE_ATTACK_IRON_DOOR'), player());
 				}
 			} else if(!array_contains(sk_regions_at(@e['location']), 'frogware')) {

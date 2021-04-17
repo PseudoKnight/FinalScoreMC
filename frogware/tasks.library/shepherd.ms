@@ -7,7 +7,7 @@ proc _fw_start_task(@secs) {
 		'I could use a new '.@color.color('r').' wool coat.',
 		'Farmer bob needs your help. Get the '.@color.color('r').' wool.',
 	));
-	@count = min(_fw_totalplayers() * 24, 200);
+	@count = min(_fw_total_players() * 24, 200);
 	@region = sk_region_info('frogware', 'custom', 0);
 	for(@i = 0, @i < @count, @i++) {
 		spawn_entity('SHEEP', 1, _fw_loc(), closure(@entity) {
@@ -19,7 +19,7 @@ proc _fw_start_task(@secs) {
 	}
 	bind('item_pickup', array(id: 'fwtask'), null, @e, @color) {
 		if(_fw_player(@e['player']) && @e['item']['name'] == @color.'_WOOL') {
-			if(_fw_changeteam(player(), 'winners')) {
+			if(_fw_change_team(player(), 'winners')) {
 				play_sound(ploc(), array(sound: 'ENTITY_ZOMBIE_ATTACK_IRON_DOOR'), player());
 			}
 		}

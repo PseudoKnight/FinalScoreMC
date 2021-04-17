@@ -6,7 +6,7 @@ proc _fw_start_task(@secs) {
 		'Be safe.',
 	));
 	if(!rand(4)) {
-		_fw_randompotion(array('speed', 'jump_boost', 'blindness'));
+		_fw_random_potion(array('speed', 'jump_boost', 'blindness'));
 	}
 	_fw_mobs();
 	if(!rand(4)) {
@@ -20,7 +20,7 @@ proc _fw_start_task(@secs) {
 	bind('entity_damage', array(id: 'fwtask'), array(type: 'PLAYER', world: 'custom'), @e) {
 		if(_fw_player(@e['player'])
 		&& (!array_index_exists(@e, 'damager') || !ponline(@e['damager']))) {
-			if(_fw_changeteam(@e['player'], 'losers')) {
+			if(_fw_change_team(@e['player'], 'losers')) {
 				play_sound(ploc(@e['player']), array(sound: 'ENTITY_ZOMBIE_VILLAGER_CONVERTED'), @e['player']);
 			}
 		}

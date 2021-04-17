@@ -6,14 +6,14 @@ proc _fw_start_task(@secs) {
 		'It\'s a bird! It\'s a plane! No! It\'s ** SPLAT **',
 	));
 	if(!rand(4)) {
-		_fw_randompotion(array('speed', 'blindness'));
+		_fw_random_potion(array('speed', 'blindness'));
 	}
 	if(!rand(4)) {
 		_fw_mobs();
 	}
 	bind('entity_damage', array(id: 'fwtask'), array(type: 'PLAYER', cause: 'FALLING_BLOCK', world: 'custom'), @e) {
 		if(_fw_player(@e['player'])) {
-			_fw_changeteam(@e['player'], 'losers');
+			_fw_change_team(@e['player'], 'losers');
 			play_sound(ploc(@e['player']), array(sound: 'ENTITY_ZOMBIE_VILLAGER_CONVERTED'), @e['player']);
 		}
 	}
