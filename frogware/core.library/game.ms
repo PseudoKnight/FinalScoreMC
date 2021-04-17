@@ -156,6 +156,14 @@ proc _fw_end_game(@winners) {
 					@session['trophies'][] = color('yellow').'Best Frog in the House!';
 				}
 				_fw_change_team(@p, 'winners');
+				launch_firework(location_shift(ploc(@p), 'up'), array(strength: 0, type: 'BALL_LARGE'));
+				set_timeout(1000, closure(){
+					launch_firework(location_shift(ploc(@p), 'up'), array(strength: 0, type: 'BALL_LARGE'));
+					set_timeout(1000, closure(){
+						launch_firework(location_shift(ploc(@p), 'up'), array(strength: 0, type: 'BALL_LARGE', flicker: true));
+					});
+				});
+				discord_broadcast('minecraft_chat', '*'.@p.' wins FrogWare!*');
 			} else {
 				_fw_change_team(@p, 'losers');
 			}
