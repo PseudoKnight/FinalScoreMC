@@ -91,11 +91,12 @@ proc _fw_startround(@secs = 12) {
 			_fw_endgame(@winners);
 		} else {
 			@secs = 13 - integer(round(8 * (@firstplace / @goal)));
-			@tasks = if(rand(2) && @firstplace >= @secondplace + @goal * 0.2) { // first place is 20% ahead and coinflip
+			@tasks = if(@total != 1 && rand(2) && @firstplace >= @secondplace + @goal * 0.2) { // first place is 20% ahead and coinflip
 				array('explosive');
 			} else if((@firstplace / @goal) < 0.90 || @total == 1) { // first place is less than 90% towards the goal (or only one player)
 				array('climb', 'keepaway', 'harvest', 'koth', 'cake', 'fall', 'cluck', 'frogegg', 'lavafall',
-					'shepherd', 'anvil', 'trade', 'fish', 'panel', 'mine', 'enderpearl', 'extinguish', 'hotpotato');
+					'shepherd', 'anvil', 'trade', 'fish', 'panel', 'mine', 'enderpearl', 'extinguish', 'hotpotato',
+					'parking');
 			} else {
 				array('pvp');
 			}
