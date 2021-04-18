@@ -83,6 +83,13 @@ proc _hoops_ball_create(@loc) {
 				set_interval(50, closure(){
 					if(@charge[0] == 0 || !ponline(player())) {
 						clear_task();
+						@game['holder'] = '';
+						set_entity_spec(@stand, array('gravity': true));
+						try(update_bar('hoops', 0.0));
+						if(ponline(player())) {
+							set_pinv(player(), array(0: null, -106: null));
+							@charge[0] = 0;
+						}
 					} else {
 						@charge[0] += 3;
 						if(@charge[0] > 100) {
@@ -97,7 +104,8 @@ proc _hoops_ball_create(@loc) {
 	@binds[] = bind('player_interact_at_entity', null, array('hand': 'main_hand'), @event, @game, @bball, @charge, @stand, @binds) {
 		if(@game['holder'] != player()
 		&& entity_exists(@stand)
-		&& (@event['clicked'] == 'ARMOR_STAND' && @event['id'] == @stand || @event['clicked'] == 'SLIME' && @event['id'] == @bball)) {
+		&& (@event['clicked'] == 'ARMOR_STAND' && @event['id'] == @stand || @event['clicked'] == 'SLIME' && @event['id'] == @bball)
+		&& @charge[0] <= 0) {
 			cancel();
 			play_sound(ploc(), array('sound': 'ENTITY_IRON_GOLEM_STEP', 'pitch': 2.0));
 			if(!@game['holder']) {
