@@ -70,6 +70,7 @@ proc _hoops_ball_create(@loc) {
 					set_entity_velocity(@stand, get_vector(ploc(), if(@charge[0] > 0, @charge[0] / 40, if(!array_index_exists(@event, 'location') && ploc()['pitch'] > -10, 1.5, 0.2))));
 					@game['trail'] = true;
 					@charge[0] = 0;
+					try(set_entity_glowing(@game['slime'], false));
 					if(array_index_exists(@game, 'teams')) {
 						@game['shootLoc'] = ploc();
 						try(update_bar('hoops', array('color': 'WHITE')));
@@ -80,20 +81,26 @@ proc _hoops_ball_create(@loc) {
 				set_pinv(player(), 0, array('name': 'MAGMA_CREAM'));
 				set_pheld_slot(player(), 0);
 				@charge[0] = 1;
+				try(set_entity_glowing(@game['slime'], true));
 				set_interval(50, closure(){
-					if(@charge[0] == 0 || !ponline(player())) {
+					if(@game['holder'] != player()) {
 						clear_task();
+					} else if(@charge[0] == 0 || !ponline(player())) {
 						@game['holder'] = '';
+						@game['lastholder'] = player();
 						set_entity_spec(@stand, array('gravity': true));
+						set_entity_velocity(@stand, array(rand() * 0.2, rand() * 0.2, rand() * 0.2));
 						try(update_bar('hoops', 0.0));
 						if(ponline(player())) {
 							set_pinv(player(), array(0: null, -106: null));
-							@charge[0] = 0;
 						}
+						@charge[0] = 0;
+						try(set_entity_glowing(@game['slime'], false));
 					} else {
 						@charge[0] += 3;
 						if(@charge[0] > 100) {
 							@charge[0] = 0;
+							try(set_entity_glowing(@game['slime'], false));
 						}
 						try(update_bar('hoops', double(@charge[0] / 100)));
 					}
@@ -105,7 +112,7 @@ proc _hoops_ball_create(@loc) {
 		if(@game['holder'] != player()
 		&& entity_exists(@stand)
 		&& (@event['clicked'] == 'ARMOR_STAND' && @event['id'] == @stand || @event['clicked'] == 'SLIME' && @event['id'] == @bball)
-		&& @charge[0] <= 0) {
+		&& @charge[0] == 0) {
 			cancel();
 			play_sound(ploc(), array('sound': 'ENTITY_IRON_GOLEM_STEP', 'pitch': 2.0));
 			if(!@game['holder']) {
@@ -140,12 +147,13 @@ proc _hoops_ball_create(@loc) {
 		set_entity_spec(@stand, array('gravity': true));
 		set_entity_velocity(@stand, get_vector(ploc(@event['damager']), 0.6));
 		@charge[0] = 0;
+		try(set_entity_glowing(@game['slime'], false));
 	}
 
 	@verticalBounciness = 0.7;
 	@bounciness = 0.6;
-	@friction = 1.115;
-	@rollingFriction = 1.54;
+	@dragModifier = 1.115;
+	@frictionModifier = 1.54; // higher makes the ball roll faster/longer
 	@gravity = -0.0784000015258789;
 	@velocity = array('x': 0, 'y': 0, 'z': 0);
 	set_interval(50, closure(){
@@ -246,16 +254,16 @@ proc _hoops_ball_create(@loc) {
 
 			if(@v['magnitude'] < 0.9 && @v['magnitude'] > 0) {
 				if(@v['y'] == @gravity && @velocity['y'] > @gravity * 3.2) {
-					@v['x'] = (@v['x'] / @v['magnitude']) * (@rollingFriction * @v['magnitude']);
-					@v['z'] = (@v['z'] / @v['magnitude']) * (@rollingFriction * @v['magnitude']);
+					@v['x'] = (@v['x'] / @v['magnitude']) * (@frictionModifier * @v['magnitude']);
+					@v['z'] = (@v['z'] / @v['magnitude']) * (@frictionModifier * @v['magnitude']);
 				} else {
 					if(@v['y'] == @gravity && @velocity['y'] < @gravity * 3.2) {
 						@v['y'] = 0 - @velocity['y'] * @verticalBounciness;
 						@bounce = true;
 						@game['trail'] = false;
 					}
-					@v['x'] = (@v['x'] / @v['magnitude']) * (@friction * @v['magnitude']);
-					@v['z'] = (@v['z'] / @v['magnitude']) * (@friction * @v['magnitude']);
+					@v['x'] = (@v['x'] / @v['magnitude']) * (@dragModifier * @v['magnitude']);
+					@v['z'] = (@v['z'] / @v['magnitude']) * (@dragModifier * @v['magnitude']);
 				}
 			}
 
