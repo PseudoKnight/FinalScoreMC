@@ -11,6 +11,11 @@ proc _fw_start_task(@secs) {
 			spawn_entity('MINECART', 1, @loc);
 		}
 	}
+	bind('vehicle_destroy', array(id: 'fwtask'), array(vehicletype: 'MINECART'), @e) {
+		if(get_metadata(@e['vehicle'], 'player', 'CommandHelper')) {
+			cancel();
+		}
+	}
 }
 
 proc _fw_end_task(@secs) {
