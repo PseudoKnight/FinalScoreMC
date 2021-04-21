@@ -8,11 +8,12 @@ proc _fw_start_task(@secs) {
 	for(@i = 0, @i < @total, @i++) {
 		@loc = _fw_loc(32);
 		if(@loc) {
-			spawn_entity('MINECART', 1, @loc);
+			@minecart = spawn_entity('MINECART', 1, @loc)[0];
+			set_metadata(@minecart, 'chair', true);
 		}
 	}
 	bind('vehicle_destroy', array(id: 'fwtask'), array(vehicletype: 'MINECART'), @e) {
-		if(get_metadata(@e['vehicle'], 'player', 'CommandHelper')) {
+		if(get_metadata(@e['vehicle'], 'chair', 'CommandHelper')) {
 			cancel();
 		}
 	}
