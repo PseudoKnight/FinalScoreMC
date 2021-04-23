@@ -61,7 +61,6 @@ register_command('pvp', array(
 					die(color('gold').'You\'re in another game.');
 				}
 				include('core.library/spectator.ms');
-				set_pscoreboard(player(), @id);
 				@pvp = import('pvp'.@id);
 				if(array_index_exists(@pvp['arena'], 'resourcepack')) {
 					send_resourcepack(player(), 'http://mc.finalscoremc.com:25966/resourcepacks/'.@pvp['arena']['resourcepack'].'.zip');

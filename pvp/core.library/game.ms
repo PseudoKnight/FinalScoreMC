@@ -163,9 +163,6 @@ proc _pvp_start_match(@id) {
 				if(!array_contains(sk_current_regions(@player), @arena['region'])) {
 					if(pmode(@player) != 'SPECTATOR') {
 						_pvp_msg(@pvp, colorize('&7[PVP] '.@p['color'].@player.'&r left the arena.'));
-						if(array_index_exists(@arena, 'resourcepack')) {
-							send_resourcepack(@player, 'http://mc.finalscoremc.com:25966/resourcepacks/default.zip');
-						}
 						_player_remove(@player, @id);
 					} else {
 						set_ploc(@player, @arena['spawn'][0][0]);
@@ -566,9 +563,6 @@ proc _pvp_end_match(@id, @winners) {
 				}
 				if(ponline(@player)) {
 					close_pinv(@player);
-					if(array_index_exists(@arena, 'resourcepack')) {
-						send_resourcepack(@player, 'http://mc.finalscoremc.com:25966/resourcepacks/default.zip');
-					}
 					_player_remove(@player, @id);
 					if(array_index_exists(@arena, 'podium') && array_contains(@winners, @player)) {
 						set_ploc(@player, @arena['podium']);

@@ -13,6 +13,9 @@ proc _player_remove(@player, @id) {
 		set_pscore('lives', @player, 0, @id);
 	}
 	if(ponline(@player)) {
+		if(array_index_exists(@pvp['arena'], 'resourcepack')) {
+			send_resourcepack(@player, 'http://mc.finalscoremc.com:25966/resourcepacks/default.zip');
+		}
 		preset_time(@player);
 		set_pstorm(@player, null);
 		if(function_exists('dm_set_pvisible')) {

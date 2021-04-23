@@ -426,9 +426,6 @@ bind('player_command', array('id': @id.'command'), null, @e, @id) {
 
 	if(array_index_exists(@pvp['players'], player())) {
 		_pvp_msg(@pvp, color('gray').'[PVP] '.@pvp['players'][player()]['color'].player().color('r').' left the arena.');
-		if(array_index_exists(@pvp['arena'], 'resourcepack')) {
-			send_resourcepack(player(), 'http://mc.finalscoremc.com:25966/resourcepacks/default.zip');
-		}
 		_player_remove(player(), @id);
 	} else if(array_contains(@pvp['spectators'], player())) {
 		_spectator_remove(player(), @pvp);
