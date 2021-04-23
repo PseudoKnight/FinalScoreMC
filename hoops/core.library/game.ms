@@ -149,10 +149,8 @@ proc _hoops_start() {
 				.'   '.simple_date('m:ss', @timeLeft).'   '
 				.color('blue').color('bold').@game['teams']['blue']['score']);
 		
-		if(!@game['teams']['red']['players']) {
-			_hoops_end('Blue');
-		} else if(!@game['teams']['blue']['players']) {
-			_hoops_end('Red');
+		if(!@game['teams']['red']['players'] && !@game['teams']['blue']['players']) {
+			_hoops_end();
 		} else if(@timeLeft <= 0) {
 			if(@game['teams']['red']['score'] > @game['teams']['blue']['score']) {
 				_hoops_end('Red');
@@ -172,15 +170,16 @@ proc _hoops_start() {
 			} else {
 				if(@game['possession']) {
 					_hoops_ball_create(@game['possessionLoc']);
-					set_entity_spec(@game['ball'], array('gravity': false));
-					@game['holder'] = array_get_rand(@game['teams'][@game['possession']]['players']);
-					@game['possessionLoc']['yaw'] = get_yaw(@game['possessionLoc'], @game['center']);
-					set_ploc(@game['holder'], location_shift(@game['possessionLoc'], 'down'));
-					@game['possession'] = '';
-					@game['possessionLoc'] = null;
-					set_pinv(@game['holder'], -106, array('name': 'MAGMA_CREAM'));
-					update_bar('hoops', 0.0);
-					update_bar('hoops', array('color': to_upper(@game['players'][@game['holder']]['team'])));
+					if(!@game['teams'][@game['possession']]['players']) {
+						set_entity_spec(@game['ball'], array('gravity': false));
+						@game['holder'] = array_get_rand(@game['teams'][@game['possession']]['players']);
+						@game['possessionLoc']['yaw'] = get_yaw(@game['possessionLoc'], @game['center']);
+						set_ploc(@game['holder'], location_shift(@game['possessionLoc'], 'down'));
+						@game['possession'] = '';
+						@game['possessionLoc'] = null;
+						set_pinv(@game['holder'], -106, array('name': 'MAGMA_CREAM'));
+						update_bar('hoops', array('color': to_upper(@game['players'][@game['holder']]['team'])));
+					}
 				} else {
 					_hoops_ball_create(@game['center']);
 					foreach(@p in array_keys(@game['players'])) {
@@ -224,17 +223,14 @@ proc _hoops_end(@team) {
 	@game = import('hoops');
 	@game['state'] = 3;
 	
-	@color = color(@team);
-	if(!@team) {
-		@color = color('WHITE');
-		@team = 'No';
-	} else {
+	if(@team) {
+		@color = color(@team);
 		play_sound(@game['center'], array('sound': 'UI_TOAST_CHALLENGE_COMPLETE', 'volume': 4));
-	}
-	@msg = @color.@team.' team wins!';
-	broadcast(@msg, all_players(@game['world']));
-	foreach(@p in array_keys(@game['players'])) {
-		title(@p, @msg, null, 0, 20, 20);
+		@msg = @color.@team.' team wins!';
+		broadcast(@msg, all_players(@game['world']));
+		foreach(@p in array_keys(@game['players'])) {
+			title(@p, @msg, null, 0, 20, 20);
+		}
 	}
 	
 	_hoops_delete();

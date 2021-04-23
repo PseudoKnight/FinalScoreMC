@@ -24,30 +24,22 @@ register_command('hoops', array(
 				if(!sk_region_exists('hoops')) {
 					die(color('red').'Hoops doesn\'t exist in this world.');
 				}
-				@game = import('hoops');
-				if(@game) {
-					if(array_index_exists(@game, 'teams')) {
-						die(color('red').'Already running.');
-					} else {
-						try(entity_remove(@game['slime']));
-					}
+				if(import('hoops')) {
+					die(color('red').'Already running.');
 				}
 				// Wait for task cleanup.
 				// May want to change this later with a proper cleanup proc.
 				set_timeout(100, closure(){
 					_hoops_create();
 					@count = _hoops_add_players();
-					if(@count < 2) {
+					if(@count < 1) {
 						_hoops_delete();
-						die(color('red').'Not enough players.');
+						die(color('red').'You must be in the hoops region.');
 					}
 					_hoops_equip_players();
 					broadcast(player(). ' started Hoops!', all_players(pworld()));
 					_hoops_queue(5);
 				});
-
-			case 'practice':
-				_hoops_ball_create();
 
 			default:
 				return(false);

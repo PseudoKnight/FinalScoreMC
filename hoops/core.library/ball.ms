@@ -1,26 +1,5 @@
 proc _hoops_ball_create(@loc) {
 	@game = import('hoops');
-	if(!@loc) {
-		// practice mode
-		if(@game && entity_exists(@game['ball'])) {
-			die('Already running.');
-		}
-		@loc = get_command_block();
-		if(!@loc) {
-			die('Not run from a commandblock.');
-		}
-		@loc['x'] += 0.5;
-		@loc['y'] += 2.0;
-		@loc['z'] += 0.5;
-		@game = array(
-			'ball': '',
-			'slime': '',
-			'holder': '',
-			'lastholder': '',
-			'trail': false,
-		);
-		export('hoops', @game);
-	}
 
 	@bball = spawn_entity('SLIME', 1, @loc, closure(@entity) {
 		set_entity_spec(@entity, array('size': 1));
@@ -56,12 +35,9 @@ proc _hoops_ball_create(@loc) {
 				@trace = ray_trace(player(), 20, 0.5);
 				if(@trace['entities'] && entity_type(@trace['entities'][0]['uuid']) == 'PLAYER') {
 					@game['holder'] = player(@trace['entities'][0]['uuid']);
-					_hoops_ball_add_player(@game['holder'], @binds, @game);
 					set_pinv(@game['holder'], -106, array('name': 'MAGMA_CREAM'));
 					set_pinv(player(), array(0: null, -106: null));
-					if(array_index_exists(@game, 'teams')) {
-						try(update_bar('hoops', array('color': to_upper(@game['players'][@game['holder']]['team']))));
-					}
+					try(update_bar('hoops', array('color': to_upper(@game['players'][@game['holder']]['team']))));
 				} else {
 					set_pinv(player(), array(0: null, -106: null));
 					@game['holder'] = '';
@@ -71,10 +47,8 @@ proc _hoops_ball_create(@loc) {
 					@game['trail'] = true;
 					@charge[0] = 0;
 					try(set_entity_glowing(@game['slime'], false));
-					if(array_index_exists(@game, 'teams')) {
-						@game['shootLoc'] = ploc();
-						try(update_bar('hoops', array('color': 'WHITE')));
-					}
+					@game['shootLoc'] = ploc();
+					try(update_bar('hoops', array('color': 'WHITE')));
 				}
 			} else if(@charge[0] == 0){
 				set_pinv(player(), -106, null);
@@ -110,6 +84,7 @@ proc _hoops_ball_create(@loc) {
 	}
 	@binds[] = bind('player_interact_at_entity', null, array('hand': 'main_hand'), @event, @game, @bball, @charge, @stand, @binds) {
 		if(@game['holder'] != player()
+		&& array_index_exists(@game['players'], player())
 		&& entity_exists(@stand)
 		&& (@event['clicked'] == 'ARMOR_STAND' && @event['id'] == @stand || @event['clicked'] == 'SLIME' && @event['id'] == @bball)
 		&& @charge[0] == 0) {
@@ -123,12 +98,9 @@ proc _hoops_ball_create(@loc) {
 				@game['trail'] = false;
 			}
 			@game['holder'] = player();
-			_hoops_ball_add_player(player(), @binds, @game);
 			set_pinv(player(), -106, array('name': 'MAGMA_CREAM'));
 			update_bar('hoops', 0.0);
-			if(array_index_exists(@game, 'teams')) {
-				try(update_bar('hoops', array('color': to_upper(@game['players'][@game['holder']]['team']))));
-			}
+			try(update_bar('hoops', array('color': to_upper(@game['players'][@game['holder']]['team']))));
 			@charge[0] = -1;
 			set_timeout(250, closure(){
 				@charge[0] = 0;
@@ -185,29 +157,34 @@ proc _hoops_ball_create(@loc) {
 						play_sound(@loc, array('sound': 'ENTITY_ILLUSIONER_PREPARE_BLINDNESS', 'volume': 3));
 						@cloud = spawn_entity('AREA_EFFECT_CLOUD', 1, @loc)[0];
 						set_entity_spec(@cloud, array('particle': 'LAVA', 'radius': 0.1, 'duration': 100));
-						if(array_index_exists(@game, 'teams')) {
-							@y = 1;
-							@block = '';
-							do {
-								@block = get_block(location_shift(@loc, 'down', @y++));
-							} while(@block == 'AIR');
-							@points = if(distance(@loc, @game['shootLoc']) > 15 || get_block(@game['shootLoc']) == 'BIRCH_PLANKS', 3, 2);
-							@game['players'][@game['lastholder']]['score'] += @points;
-							if(@block == 'RED_CONCRETE') {
-								@game['teams']['blue']['score'] += @points;
-							} else if(@block == 'BLUE_CONCRETE') {
-								@game['teams']['red']['score'] += @points;
-							} else {
-								console('Detected '.@block.' when expecting red or blue concrete.');
-							}
-							_hoops_cheer();
+						@y = 1;
+						@block = '';
+						do {
+							@block = get_block(location_shift(@loc, 'down', @y++));
+						} while(@block == 'AIR');
+						@points = if(distance(@loc, @game['shootLoc']) > 15 || get_block(@game['shootLoc']) == 'BIRCH_PLANKS', 3, 2);
+						@game['players'][@game['lastholder']]['score'] += @points;
+						if(@block == 'RED_CONCRETE') {
+							@game['teams']['blue']['score'] += @points;
+						} else if(@block == 'BLUE_CONCRETE') {
+							@game['teams']['red']['score'] += @points;
+						} else {
+							console('Detected '.@block.' when expecting red or blue concrete.');
 						}
+						_hoops_cheer();
 					}
 				} else if(!array_contains(sk_regions_at(@loc), 'hoops')) {
-					@end = true;
 					make_effect(@loc, 'ENDER_SIGNAL');
 					play_sound(@loc, array('sound': 'ENTITY_ZOMBIE_VILLAGER_CONVERTED', 'pitch': 1.8, 'volume': 3));
-					if(array_index_exists(@game, 'teams')) {
+					try(update_bar('hoops', 0.0));
+					if(array_size(@game['players']) == 1 && !@game['holder']) {
+						@game['lastholder'] = '';
+						@game['holder'] = array_keys(@game['players'])[0];
+						set_entity_spec(@stand, array('gravity': false));
+						set_pinv(@game['holder'], -106, array('name': 'MAGMA_CREAM'));
+						update_bar('hoops', array('color': to_upper(@game['players'][@game['holder']]['team'])));
+					} else if(array_size(@game['players']) >= 2) {
+						@end = true;
 						@holder = @game['holder'] ||| @game['lastholder'];
 						@team = if(@game['players'][@holder]['team'] == 'red', 'blue', 'red');
 						@game['possession'] = @team;
@@ -218,6 +195,8 @@ proc _hoops_ball_create(@loc) {
 						@game['possessionLoc'] = @location;
 						@game['lastholder'] = '';
 						_hoops_boo();
+					} else {
+						@end = true;
 					}
 				}
 				if(@end || !array_contains(get_bars(), 'hoops')) {
@@ -273,11 +252,7 @@ proc _hoops_ball_create(@loc) {
 				if(!queue_running('balltrail')) {
 					queue_delay(350, 'balltrail');
 				}
-				if(!array_index_exists(@game, 'teams')) {
-					queue_push(closure(){
-						spawn_particle(location_shift(@loc, 'up', 0.5), 'FLAME');
-					}, 'balltrail');
-				} else if(@game['state'] < 3 && @game['lastholder']) {
+				if(@game['state'] < 3 && @game['lastholder']) {
 					@effect = array('particle': 'REDSTONE', 'color': @game['players'][@game['lastholder']]['team']);
 					queue_push(closure(){
 						spawn_particle(location_shift(@loc, 'up', 0.5), @effect);
@@ -290,36 +265,18 @@ proc _hoops_ball_create(@loc) {
 			@velocity['z'] = @v['z'];
 			set_entity_velocity(@stand, @v);
 
-			if(array_index_exists(@game, 'teams')) {
-				foreach(@index: @v in array_rand(@game['villagers'], min(4, array_size(@game['villagers'])), false)) {
-					try {
-						@l = entity_loc(@v);
-						@l['yaw'] = get_yaw(@l, @loc);
-						@l['pitch'] = get_pitch(@l, @loc) + 10;
-						set_entity_loc(@v, @l);
-					} catch(BadEntityException @ex) {
-						array_remove_values(@game['villagers'], @v);
-					}
+			foreach(@index: @v in array_rand(@game['villagers'], min(4, array_size(@game['villagers'])), false)) {
+				try {
+					@l = entity_loc(@v);
+					@l['yaw'] = get_yaw(@l, @loc);
+					@l['pitch'] = get_pitch(@l, @loc) + 10;
+					set_entity_loc(@v, @l);
+				} catch(BadEntityException @ex) {
+					array_remove_values(@game['villagers'], @v);
 				}
 			}
 
 		} catch(BadEntityException @ex) {
-			if(!array_index_exists(@game, 'state')) {
-				@players = array();
-				try {
-					@players = get_bar_players('hoops');
-				} catch (NotFoundException @ex) {
-					console('Failed to get bar for hoops, resetting all players in world instead.');
-					@players = all_players(@game['world']);
-				}
-				foreach(@player in @players) {
-					unbind(@player.'jump');
-					unbind(@player.'break');
-					set_pmode(@player, 'ADVENTURE');
-					set_peffect(@player, 'JUMP_BOOST', 0, 0, true, false);
-				}
-				try(remove_bar('hoops')); // standalone
-			}
 			foreach(@bind in @binds) {
 				unbind(@bind);
 			}
@@ -330,12 +287,6 @@ proc _hoops_ball_create(@loc) {
 			clear_task();
 		}
 	});
-}
-
-proc _hoops_ball_add_player(@player, @binds, @game) {
-	if(!array_index_exists(@game, 'players') && !array_contains(get_bar_players('hoops'), @player)) {
-		_hoops_player_equip(@player);
-	}
 }
 
 proc _hoops_ball_in_hoop(@location) {
