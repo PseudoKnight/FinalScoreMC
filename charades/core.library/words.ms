@@ -39,7 +39,9 @@ proc _get_build(@category) {
 		@builds = associative_array();
 		foreach(@b in @availableBuilds) {
 			if(is_array(@b)) {
-				@builds[@b[0]] = array('count': 0, 'hint': @b[1]);
+				@build = @b[0];
+				@hint = @b[1];
+				@builds[@build] = array('count': 0, 'hint': @hint);
 			} else {
 				@builds[@b] = 0; // number of times used
 			}

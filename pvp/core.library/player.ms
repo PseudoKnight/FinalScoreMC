@@ -146,15 +146,17 @@ proc _pvp_initialize_players(@id, @players) {
 		# Select spawn location
 		if(array_index_exists(@pvp, 'team')) {
 			@team = @pArray['team'];
-			@loc = @pvp['arena']['spawn'][@team][@c[@team]];
-			if(@c[@team] == array_size(@pvp['arena']['spawn'][@team]) - 1) {
+			@teamCount = @c[@team];
+			@loc = @pvp['arena']['spawn'][@team][@teamCount];
+			if(@teamCount == array_size(@pvp['arena']['spawn'][@team]) - 1) {
 				@c[@team] = 0;
 			} else {
 				@c[@team]++;
 			}
 		} else {
-			@loc = @pvp['arena']['spawn'][0][@c[0]];
-			if(@c[0] == array_size(@pvp['arena']['spawn'][0]) - 1) {
+			@count = @c[0];
+			@loc = @pvp['arena']['spawn'][0][@count];
+			if(@count == array_size(@pvp['arena']['spawn'][0]) - 1) {
 				@c[0] = 0;
 			} else {
 				@c[0]++;
@@ -223,7 +225,8 @@ proc _player_equip(@id, @player) {
 	} else {
 		if(array_index_exists(@pvp['arena'], 'kit')) {
 			if(array_index_exists(@pvp, 'team')) {
-				set_pinv(@player, @pvp['arena']['kit'][@pvp['players'][@player]['team']]);
+				@team = @pvp['players'][@player]['team'];
+				set_pinv(@player, @pvp['arena']['kit'][@team]);
 			} else {
 				set_pinv(@player, @pvp['arena']['kit'][0]);
 			}

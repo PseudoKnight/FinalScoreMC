@@ -294,7 +294,7 @@ bind('item_swap', null, null, @event,
 	if(@offhand) {
 		@material = @offhand['name'];
 		if(array_index_exists(@instruments, @material)) {
-			@instrument = @instruments[@offhand['name']];
+			@instrument = @instruments[@material];
 			action_msg('Playing '.@instrument['name'].'...');
 			if(has_bind(player().'instrument')) {
 				unbind(player().'instrument');

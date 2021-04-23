@@ -542,7 +542,8 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 
 								@groundY = @regionMinY + @floor * (@maxRoomHeight + 4) + if(@cloneDir == 'up', @clone * @cloneOffset, 0);
 								@roomHeight = @heightMap[@c][@r];
-								@room = if(@roomMap[@c][@r] != -1, @rooms[@roomMap[@c][@r]], null);
+								@roomId = @roomMap[@c][@r];
+								@room = if(@roomMap[@c][@r] != -1, @rooms[@roomId], null);
 								@loc = array(
 									(@chunkMinX + @chunkX) * 16 + @x + if(@cloneDir == 'east', @clone * @cloneOffset, 0),
 									@groundY,
@@ -1304,7 +1305,10 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 				// find an end col and row that isn't in a column
 				for(@c = 0, @c < @exitRoom['width'], @c++) {
 					for(@r = 0, @r < @exitRoom['length'], @r++) {
-						if(@layoutMap[@c + @exitRoom['c1']][@r + @exitRoom['r1']] != 'column') {
+						@exitRoomC = @exitRoom['c1'] + @c;
+						@exitRoomR = @exitRoom['r1'] + @r;
+						if(@layoutMap[@exitRoomC][@exitRoomR] != 'column') {
+							// we have the desired @c and @r now
 							break(2);
 						}
 					}

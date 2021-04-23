@@ -380,7 +380,8 @@ register_command('cake', array(
 					}
 					@prefix = '';
 					if(array_index_exists(@cake, 'difficulty')) {
-						@prefix = color(@chatcolor[@cake['difficulty']]);
+						@difficulty = @cake['difficulty'];
+						@prefix = color(@chatcolor[@difficulty]);
 					} else {
 						@prefix = @cake['coins'].' ';
 					}

@@ -302,7 +302,8 @@ proc _open_rules_menu(@objective) {
 			@item = @event['inventory'][@slot];
 			@rule = array_get(@rules, @ruleSlot, null);
 			if(@rule) {
-				@option = @options[@rule['name']];
+				@name = @rule['name'];
+				@option = @options[@name];
 				if(is_boolean(@rule['value'])) {
 					if(@rule['value']) {
 						@item['name'] = 'GRAY_DYE';

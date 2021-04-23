@@ -27,10 +27,11 @@ proc _pvp_start(@pvp, @id){
 			@pvp['arena']['arenavotes'] = associative_array();
 		}
 		foreach(@vote in @voted) {
-			if(!array_index_exists(@pvp['arena']['arenavotes'], @vote['arena'])) {
-				@pvp['arena']['arenavotes'][@vote['arena']] = 1;
+			@arenaID = @vote['arena'];
+			if(!array_index_exists(@pvp['arena']['arenavotes'], @arenaID)) {
+				@pvp['arena']['arenavotes'][@arenaID] = 1;
 			} else {
-				@pvp['arena']['arenavotes'][@vote['arena']] += 1;
+				@pvp['arena']['arenavotes'][@arenaID]++;
 			}
 		}
 		store_value('arena', @id, @pvp['arena']);
@@ -331,8 +332,10 @@ proc _pvp_start(@pvp, @id){
 	}
 
 	if(array_index_exists(@arena, 'captain')) {
-		@pvp['team'][0]['captainhat'] = @arena['classes'][@arena['captain'][0]]['kit'][103];
-		@pvp['team'][1]['captainhat'] = @arena['classes'][@arena['captain'][1]]['kit'][103];
+		@captainClass1 = @arena['captain'][0];
+		@captainClass2 = @arena['captain'][1];
+		@pvp['team'][0]['captainhat'] = @arena['classes'][@captainClass1]['kit'][103];
+		@pvp['team'][1]['captainhat'] = @arena['classes'][@captainClass2]['kit'][103];
 	}
 
 	if(array_index_exists(@arena, 'resourcepack')) {

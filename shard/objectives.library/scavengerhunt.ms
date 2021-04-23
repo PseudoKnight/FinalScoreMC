@@ -852,7 +852,7 @@ if(@size) {
 } else {
 	proc _refresh_card(@create = false) {
 		@card = import('shard.card');
-		@colors = import('shard.colors');
+		@colorMap = import('shard.colors');
 		@chest = associative_array();
 		@offset = 2;
 		@chestWidth = 9;
@@ -863,8 +863,9 @@ if(@size) {
 					continue();
 				}
 				if(@item['players']) {
-					@chest[@j + @i * @chestWidth] = array('name': @colors[@item['players'][0]][0],
-							'meta': array('display': @item['players'][0]));
+					@firstPlayer = @item['players'][0];
+					@chest[@j + @i * @chestWidth] = array('name': @colorMap[@firstPlayer][0],
+							'meta': array('display': @firstPlayer));
 					@item['material'] = 'WHITE_STAINED_GLASS_PANE';
 				} else {
 					@chest[@j + @i * @chestWidth] = array('name': @item['material'], 'meta': array('lore':

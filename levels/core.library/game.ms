@@ -39,13 +39,14 @@ proc _level_prepare(@name, @arena, @region, @world) {
 		@shop = associative_array();
 		@items = associative_array();
 		foreach(@index: @item in @level['config']['shop']) {
+			@name = @item['name'];
 			@meta = associative_array();
 			if(array_index_exists(@item, 'meta')) {
 				@meta = @item['meta'];
 			}
 			@meta['lore'] = array('Buy for '.@item['cost'].' level'.if(@item['cost'] > 1, 's'));
-			@shop[@index] = array('name': @item['name'], 'qty': @item['cost'], 'meta': @meta);
-			@items[@item['name']] = @item['cost'];
+			@shop[@index] = array('name': @name, 'qty': @item['cost'], 'meta': @meta);
+			@items[@name] = @item['cost'];
 		}
 		@level['shop'] = @items;
 		create_virtual_inventory('level'.@region, 54, 'BUY OR SELL', @shop);
@@ -211,14 +212,15 @@ proc _level_start(@level) {
 			if(array_contains(@level['players'], player())) {
 				@item = @event['item'];
 				if(!@item['meta'] || !@item['meta']['lore']) {
+					@name = @item['name'];
 					if(!@item['meta']) {
 						@item['meta'] = associative_array();
 					}
 					@refund = null;
-					if(array_index_exists(@level['shop'], @item['name'])) {
-						@refund = @level['shop'][@item['name']] / 2;
+					if(array_index_exists(@level['shop'], @name)) {
+						@refund = @level['shop'][@name] / 2;
 					} else {
-						@refund = round(1 / min(16, material_info(@item['name'])['maxStacksize']), 2);
+						@refund = round(1 / min(16, material_info(@name)['maxStacksize']), 2);
 					}
 					@item['meta']['lore'] = array('Sell each for '.@refund.' levels');
 					modify_event('item', @item);
@@ -234,8 +236,9 @@ proc _level_start(@level) {
 					if(array_size(@parts) > 2 && @parts[0] == 'Buy' && is_integral(@parts[2])) {
 						@cost = integer(@parts[2]);
 						if(plevel() >= @cost) {
+							@name = @item['name'];
 							@meta = @item['meta'];
-							@meta['lore'] = array('Sell each for '.@level['shop'][@item['name']] / 2.' levels');
+							@meta['lore'] = array('Sell each for '.@level['shop'][@name] / 2.' levels');
 							@item['qty'] = 1;
 							pgive_item(@item);
 							set_plevel(plevel() - @cost);
@@ -246,10 +249,11 @@ proc _level_start(@level) {
 				}
 				if(@item) {
 					@refund = 0.5
-					if(array_index_exists(@level['shop'], @item['name'])) {
-						@refund = @level['shop'][@item['name']] / 2;
+					@name = @item['name'];
+					if(array_index_exists(@level['shop'], @name)) {
+						@refund = @level['shop'][@name] / 2;
 					} else {
-						@refund /= min(16, material_info(@item['name'])['maxStacksize']);
+						@refund /= min(16, material_info(@name)['maxStacksize']);
 					}
 					@totalRefund = @item['qty'] * @refund;
 					@xp = (pexp() / 100) + @totalRefund;
@@ -398,8 +402,9 @@ proc _level_start(@level) {
 					}
 				}
 				@level['wave']++;
+				@waveNum = @level['wave'];
 				try {
-					@wave = @level['config']['waves'][@level['wave']];
+					@wave = @level['config']['waves'][@waveNum];
 					if(array_index_exists(@wave, 'title')) {
 						@level['title'] = @wave['title'];
 					}
@@ -433,7 +438,8 @@ proc _level_start(@level) {
 					}
 					if(array_index_exists(@wave, 'trigger')
 					&& array_index_exists(@level['arena']['triggers'], @wave['trigger'])) {
-						@trigger = @level['arena']['triggers'][@wave['trigger']];
+						@triggerId = @wave['trigger'];
+						@trigger = @level['arena']['triggers'][@triggerId];
 						set_block(@trigger, 'REDSTONE_BLOCK');
 						@level['trigger'] = @trigger;
 					}

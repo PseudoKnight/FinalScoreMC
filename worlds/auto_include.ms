@@ -97,12 +97,13 @@ proc _allows_teleports(@world) {
 
 */
 proc _create_world(@name, @world) {
+	@title = @world['name'];
 	@worlds = _worlds_config();
-	if(array_contains(@worlds, @name) || array_contains(@worlds, @world['name'])) {
+	if(array_contains(@worlds, @name) || array_contains(@worlds, @title)) {
 		throw(InvalidWorldException, "World already exists.");
 	}
 	@worlds[@name] = @world;
-	@worlds[@world['name']] = @name; // alias display name
+	@worlds[@title] = @name; // alias display name
 	if(array_index_exists(@world, 'seed')) {
 		if(array_index_exists(@world, 'generator')) {
 			create_world(@name, 'NORMAL', @world['environment'], @world['seed'], @world['generator']);

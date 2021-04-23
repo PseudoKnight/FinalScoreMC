@@ -41,9 +41,10 @@ proc _pvp_start_match(@id) {
 				if(get_block(@arena['chestspawn'][@i]['loc']) != 'CHEST') {
 					set_block(@arena['chestspawn'][@i]['loc'], 'CHEST');
 				}
-				@r = rand(array_size(@arena['chestgroup'][@arena['chestspawn'][@i]['group']]));
+				@group = @arena['chestspawn'][@i]['group'];
+				@r = rand(array_size(@arena['chestgroup'][@group]));
 				for(@y = 0, @y < 27, @y++) {
-					@item = get_inventory_item(@arena['chestgroup'][@arena['chestspawn'][@i]['group']][@r], @y);
+					@item = get_inventory_item(@arena['chestgroup'][@group][@r], @y);
 					set_inventory_item(@arena['chestspawn'][@i]['loc'], @y, @item);
 				}
 			}
@@ -142,7 +143,8 @@ proc _pvp_start_match(@id) {
 		if(array_index_exists(@arena, 'timer')) {
 			@totalsecsleft = ceil((@arena['timer'][1] * 60) - ((time() / 1000) - @pvp['starttime']));
 			if(@totalsecsleft < 0) {
-				_pvp_end_match(@id, @pvp['team'][@arena['timer'][0]]['players']);
+				@team = @arena['timer'][0];
+				_pvp_end_match(@id, @pvp['team'][@team]['players']);
 				die();
 			}
 			@minleft = floor(@totalsecsleft / 60);
@@ -171,16 +173,18 @@ proc _pvp_start_match(@id) {
 				} else if(@p['respawn'] < time()) {
 					@loc = array();
 					if(array_index_exists(@arena, 'captain')) {
-						if(@pvp['team'][@p['team']]['captain'] === '') {
+						@team = @p['team'];
+						if(@pvp['team'][@team]['captain'] === '') {
 							continue();
 						}
-						@loc = ploc(@pvp['team'][@p['team']]['captain']);
+						@loc = ploc(@pvp['team'][@team]['captain']);
 						play_sound(ploc(@player), array('sound': 'ENTITY_GHAST_SHOOT'));
 						make_effect(location_shift(ploc(@player), 'up'), 'MOBSPAWNER_FLAMES');
 					} else {
 						if(array_index_exists(@pvp, 'team')) {
-							@r = rand(0, array_size(@arena['spawn'][@p['team']]));
-							@loc = @arena['spawn'][@p['team']][@r];
+							@team = @p['team'];
+							@r = rand(0, array_size(@arena['spawn'][@team]));
+							@loc = @arena['spawn'][@team][@r];
 						} else {
 							@r = rand(0, array_size(@arena['spawn'][0]));
 							@loc = @arena['spawn'][0][@r];
@@ -345,8 +349,9 @@ proc _pvp_check_objectives(@id) {
 			if(!array_index_exists(@arena, 'captain')
 			|| !array_index_exists(@arena, 'respawntime')
 			|| @player['respawn'] == 0) {
-				@teamcount[@player['team']]++;
-				@winner = @player['team'];
+				@team = @player['team'];
+				@teamcount[@team]++;
+				@winner = @team;
 			}
 		}
 		if(@teamcount[0] == 0 || @teamcount[1] == 0) {
@@ -439,8 +444,9 @@ proc _pvp_end_match(@id, @winners) {
 			@title = '';
 			@subtitle = '';
 			if(array_index_exists(@pvp, 'team') && @leader) {
+				@team = @pvp['players'][@leader]['team'];
 				@title = @pvp['players'][@leader]['color'].color('bold')
-						.@arena['team'][@pvp['players'][@leader]['team']]['name'].' wins '.@pvp['title'].'!';
+						.@arena['team'][@team]['name'].' wins '.@pvp['title'].'!';
 				@subtitle = @pvp['players'][@leader]['color'].array_implode(@winners, ' ');
 			} else if(@winners) {
 				@title = array_implode(@winners, ' and ').' wins '.@pvp['title'].'!';
@@ -473,8 +479,9 @@ proc _pvp_end_match(@id, @winners) {
 			discord_broadcast('minecraft_chat', '*'.strip_colors(@title).if(@subtitle, ' ('.strip_colors(@subtitle).')').'*');
 
 		} else if(array_index_exists(@pvp, 'team') && array_size(@winners) > 0) {
+			@team = @pvp['players'][@leader]['team'];
 			@title = @pvp['players'][@leader]['color'].color('bold')
-				.@arena['team'][@pvp['players'][@leader]['team']]['name'].' wins '.@pvp['title'].'!';
+				.@arena['team'][@team]['name'].' wins '.@pvp['title'].'!';
 			@subtitle = @pvp['players'][@leader]['color'].array_implode(@winners, ' ');
 			_worldmsg(@world, color('gray').'[PVP] '.@title.'\n'.@subtitle);
 			foreach(@p in array_keys(@pvp['players'])) {

@@ -52,7 +52,8 @@ proc _class(@action, @player, @classname, @pvp) {
 					@max = 64;
 					if(@item && array_index_exists(@class, 'stacklimit')
 					&& array_index_exists(@class['stacklimit'], @item['name'])) {
-						@max = @class['stacklimit'][@item['name']];
+						@name = @item['name'];
+						@max = @class['stacklimit'][@name];
 					}
 					@item = @item[];
 					if(!is_null(@inv[@slot])) {
@@ -187,8 +188,9 @@ proc _class_select(@id, @pvp) {
 				} else if(@pvp['running'] < 2 && array_size(get_inventory_viewers(@id.@team)) == 1) {
 					@captain = false;
 					foreach(@name: @player in @pvp['players']) {
-						if(@player['team'] == @team && array_index_exists(@player, 'class')
-						&& @player['class'] == @pvp['arena']['captain'][@player['team']]) {
+						@playerTeam = @player['team'];
+						if(@playerTeam == @team && array_index_exists(@player, 'class')
+						&& @player['class'] == @pvp['arena']['captain'][@playerTeam]) {
 							@captain = true;
 						}
 					}

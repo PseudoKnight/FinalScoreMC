@@ -34,10 +34,11 @@ proc _hoops_ball_create(@loc) {
 			if(@event['button'] == 'left') {
 				@trace = ray_trace(player(), 20, 0.5);
 				if(@trace['entities'] && entity_type(@trace['entities'][0]['uuid']) == 'PLAYER') {
-					@game['holder'] = player(@trace['entities'][0]['uuid']);
-					set_pinv(@game['holder'], -106, array('name': 'MAGMA_CREAM'));
+					@holder = player(@trace['entities'][0]['uuid']);
+					@game['holder'] = @holder;
+					set_pinv(@holder, -106, array('name': 'MAGMA_CREAM'));
 					set_pinv(player(), array(0: null, -106: null));
-					try(update_bar('hoops', array('color': to_upper(@game['players'][@game['holder']]['team']))));
+					try(update_bar('hoops', array('color': to_upper(@game['players'][@holder]['team']))));
 				} else {
 					set_pinv(player(), array(0: null, -106: null));
 					@game['holder'] = '';
@@ -97,10 +98,11 @@ proc _hoops_ball_create(@loc) {
 				play_sound(ploc(), array('sound': 'ENTITY_GHAST_SHOOT', 'pitch': 2.0));
 				@game['trail'] = false;
 			}
-			@game['holder'] = player();
-			set_pinv(player(), -106, array('name': 'MAGMA_CREAM'));
+			@holder = player();
+			@game['holder'] = @holder;
+			set_pinv(@holder, -106, array('name': 'MAGMA_CREAM'));
 			update_bar('hoops', 0.0);
-			try(update_bar('hoops', array('color': to_upper(@game['players'][@game['holder']]['team']))));
+			try(update_bar('hoops', array('color': to_upper(@game['players'][@holder]['team']))));
 			@charge[0] = -1;
 			set_timeout(250, closure(){
 				@charge[0] = 0;
@@ -163,7 +165,8 @@ proc _hoops_ball_create(@loc) {
 							@block = get_block(location_shift(@loc, 'down', @y++));
 						} while(@block == 'AIR');
 						@points = if(distance(@loc, @game['shootLoc']) > 15 || get_block(@game['shootLoc']) == 'BIRCH_PLANKS', 3, 2);
-						@game['players'][@game['lastholder']]['score'] += @points;
+						@lastHolder = @game['lastholder'];
+						@game['players'][@lastHolder]['score'] += @points;
 						if(@block == 'RED_CONCRETE') {
 							@game['teams']['blue']['score'] += @points;
 						} else if(@block == 'BLUE_CONCRETE') {
@@ -178,11 +181,12 @@ proc _hoops_ball_create(@loc) {
 					play_sound(@loc, array('sound': 'ENTITY_ZOMBIE_VILLAGER_CONVERTED', 'pitch': 1.8, 'volume': 3));
 					try(update_bar('hoops', 0.0));
 					if(array_size(@game['players']) == 1 && !@game['holder']) {
+						@holder = array_keys(@game['players'])[0];
 						@game['lastholder'] = '';
-						@game['holder'] = array_keys(@game['players'])[0];
+						@game['holder'] = @holder;
 						set_entity_spec(@stand, array('gravity': false));
-						set_pinv(@game['holder'], -106, array('name': 'MAGMA_CREAM'));
-						update_bar('hoops', array('color': to_upper(@game['players'][@game['holder']]['team'])));
+						set_pinv(@holder, -106, array('name': 'MAGMA_CREAM'));
+						update_bar('hoops', array('color': to_upper(@game['players'][@holder]['team'])));
 					} else if(array_size(@game['players']) >= 2) {
 						@end = true;
 						@holder = @game['holder'] ||| @game['lastholder'];
@@ -253,7 +257,8 @@ proc _hoops_ball_create(@loc) {
 					queue_delay(350, 'balltrail');
 				}
 				if(@game['state'] < 3 && @game['lastholder']) {
-					@effect = array('particle': 'REDSTONE', 'color': @game['players'][@game['lastholder']]['team']);
+					@lastHolder = @game['lastholder'];
+					@effect = array('particle': 'REDSTONE', 'color': @game['players'][@lastHolder]['team']);
 					queue_push(closure(){
 						spawn_particle(location_shift(@loc, 'up', 0.5), @effect);
 					}, 'balltrail');

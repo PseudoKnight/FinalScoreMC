@@ -170,15 +170,17 @@ proc _hoops_start() {
 			} else {
 				if(@game['possession']) {
 					_hoops_ball_create(@game['possessionLoc']);
-					if(!@game['teams'][@game['possession']]['players']) {
+					@possession = @game['possession'];
+					if(!@game['teams'][@possession]['players']) {
 						set_entity_spec(@game['ball'], array('gravity': false));
-						@game['holder'] = array_get_rand(@game['teams'][@game['possession']]['players']);
+						@holder = array_get_rand(@game['teams'][@possession]['players']);
+						@game['holder'] = @holder;
 						@game['possessionLoc']['yaw'] = get_yaw(@game['possessionLoc'], @game['center']);
-						set_ploc(@game['holder'], location_shift(@game['possessionLoc'], 'down'));
+						set_ploc(@holder, location_shift(@game['possessionLoc'], 'down'));
 						@game['possession'] = '';
 						@game['possessionLoc'] = null;
-						set_pinv(@game['holder'], -106, array('name': 'MAGMA_CREAM'));
-						update_bar('hoops', array('color': to_upper(@game['players'][@game['holder']]['team'])));
+						set_pinv(@holder, -106, array('name': 'MAGMA_CREAM'));
+						update_bar('hoops', array('color': to_upper(@game['players'][@holder]['team'])));
 					}
 				} else {
 					_hoops_ball_create(@game['center']);

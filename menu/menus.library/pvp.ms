@@ -11,9 +11,12 @@
 
 @arenas = get_values('arena');
 @arenas = array_filter(get_values('arena'), closure(@key, @value){
-	return(!array_index_exists(@value, 'parent')
-	|| !array_index_exists(@arenas['arena.'.@value['parent']], 'arenaselect')
-	|| !array_contains(@arenas['arena.'.@value['parent']]['arenaselect']['arenas'], split('.', @key)[1]));
+	if(!array_index_exists(@value, 'parent')) {
+		return(true);
+	}
+	@parentKey = 'arena.'.@value['parent'];
+	return(!array_index_exists(@arenas[@parentKey], 'arenaselect')
+	|| !array_contains(@arenas[@parentKey]['arenaselect']['arenas'], split('.', @key)[1]));
 });
 @slot = floor((@rows * 9 - array_size(@arenas)) / 9) * 9;
 foreach(@name: @arena in @arenas) {
