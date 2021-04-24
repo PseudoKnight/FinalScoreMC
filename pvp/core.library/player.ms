@@ -107,7 +107,7 @@ proc _pvp_initialize_players(@id, @players) {
 		}
 
 		if(array_index_exists(@pvp['arena'], 'lives')) {
-			@pArray['lives'] = @pvp['arena']['lives'];
+			@pArray['lives'] = integer(@pvp['arena']['lives']);
 		}
 
 		if(array_index_exists(@pvp['arena'], 'respawntime')) {
