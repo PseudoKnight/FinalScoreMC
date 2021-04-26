@@ -7,7 +7,7 @@ proc _class(@action, @player, @classname, @pvp) {
 	switch(@action) {
 		case 'load':
 			if(array_index_exists(@class, 'hunger') && !is_numeric(@class['hunger'][1])) {
-				bind('food_level_changed', array('id': @player.'food'), array('player': @player), @event) {
+				bind('food_level_changed', array(id: @player.'food'), array(player: @player), @event) {
 					cancel();
 				}
 			}
@@ -45,13 +45,12 @@ proc _class(@action, @player, @classname, @pvp) {
 				set_peffect(@player, 'NIGHT_VISION', 0, 1, true);
 			}
 			set_peffect(@player, 'REGENERATION', 0, 8, true);
-			play_sound(ploc(@player), array('sound': 'ENTITY_ENDERMAN_TELEPORT', 'pitch': 2), @player);
+			play_sound(ploc(@player), array(sound: 'ENTITY_ENDERMAN_TELEPORT', pitch: 2), @player);
 			if(array_index_exists(@class, 'ammo')) {
 				@inv = pinv(@player);
 				foreach(@slot: @item in @class['ammo']) {
 					@max = 64;
-					if(@item && array_index_exists(@class, 'stacklimit')
-					&& array_index_exists(@class['stacklimit'], @item['name'])) {
+					if(@item && array_index_exists(@class, 'stacklimit', @item['name'])) {
 						@name = @item['name'];
 						@max = @class['stacklimit'][@name];
 					}
@@ -136,18 +135,18 @@ proc _class_select(@id, @pvp) {
 		}
 	}
 	if(@chest[0]) {
-		@chest[0][@chestsize1 - 1] = array('name': 'COMMAND_BLOCK', 'meta': array(
-			'display': 'RANDOM',
-			'lore': array('Randomly assign a class'),
+		@chest[0][@chestsize1 - 1] = array(name: 'COMMAND_BLOCK', meta: array(
+			display: 'RANDOM',
+			lore: array('Randomly assign a class'),
 		));
-		set_inventory(@id.'0', @chest[0])
+		set_inventory(@id.'0', @chest[0]);
 	}
 	if(@chest[1]) {
-		@chest[1][@chestsize2 - 1] = array('name': 'COMMAND_BLOCK', 'meta': array(
-			'display': 'RANDOM',
-			'lore': array('Randomly assign a class'),
+		@chest[1][@chestsize2 - 1] = array(name: 'COMMAND_BLOCK', meta: array(
+			display: 'RANDOM',
+			lore: array('Randomly assign a class'),
 		));
-		set_inventory(@id.'1', @chest[1])
+		set_inventory(@id.'1', @chest[1]);
 	}
 	foreach(@p: @pdata in @pvp['players']) {
 		if(@size1 > 2 && (!array_index_exists(@pdata, 'team') || @pdata['team'] == 0)) {
@@ -165,7 +164,7 @@ proc _class_select(@id, @pvp) {
 
 	if(@size1 > 2 || @size2 > 2) {
 		@pvp['binds'][] = @id.'classselector';
-		bind('inventory_click', array('id': @id.'classselector', 'priority': 'HIGH'), array('virtual': true), @e, @id) {
+		bind('inventory_click', array(id: @id.'classselector', priority: 'HIGH'), array(virtual: true), @e, @id) {
 			@pvp = import('pvp'.@id);
 			if(!array_index_exists(@pvp['players'], player())
 			|| is_null(@e['slotitem'])
@@ -207,7 +206,7 @@ proc _class_select(@id, @pvp) {
 					}
 				}
 			}
-			play_sound(ploc(), array('sound': 'UI_BUTTON_CLICK'));
+			play_sound(ploc(), array(sound: 'UI_BUTTON_CLICK'));
 			consume();
 			cancel();
 

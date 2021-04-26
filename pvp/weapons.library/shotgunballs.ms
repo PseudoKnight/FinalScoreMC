@@ -1,6 +1,4 @@
-@pvp['binds'][] = @id.'shotgunshoot';
-bind('player_interact', array('id': @id.'shotgunshoot'), array('itemname': 'SNOWBALL', 'button': 'right'), @e, @id) {
-	@pvp = import('pvp'.@id);
+@pvp['binds'][] = bind('player_interact', null, array(itemname: 'SNOWBALL', button: 'right'), @e, @pvp) {
 	if(!array_index_exists(@pvp['players'], player()) || pinfo(player(), 6) != @e['item']['name']) {
 		die();
 	}
@@ -23,17 +21,15 @@ bind('player_interact', array('id': @id.'shotgunshoot'), array('itemname': 'SNOW
 			}
 		}
 	});
-	play_sound(ploc(), array('sound': 'ENTITY_ZOMBIE_ATTACK_WOODEN_DOOR', 'pitch': 1.5, 'volume': 2));
-	play_sound(ploc(), array('sound': 'ENTITY_GENERIC_EXPLODE', 'pitch': 2, 'volume': 2));
+	play_sound(ploc(), array(sound: 'ENTITY_ZOMBIE_ATTACK_WOODEN_DOOR', pitch: 1.5, volume: 2));
+	play_sound(ploc(), array(sound: 'ENTITY_GENERIC_EXPLODE', pitch: 2, volume: 2));
 	_weapon_cooldown(player(), 1100, 'SLIME_BALL', closure(){
-		play_sound(ploc(), array('sound': 'BLOCK_PISTON_CONTRACT', 'pitch': 1.5));
+		play_sound(ploc(), array(sound: 'BLOCK_PISTON_CONTRACT', pitch: 1.5));
 	});
 }
-@pvp['binds'][] = @id.'shotgundamage';
-bind('entity_damage', array('id': @id.'shotgundamage'), array('type': 'PLAYER', 'cause': 'PROJECTILE'), @e, @id) {
+@pvp['binds'][] = bind('entity_damage', null, array(type: 'PLAYER', cause: 'PROJECTILE'), @e, @pvp) {
 	if(array_index_exists(@e, 'shooter') // missing in special cases
 	&& length(@e['shooter']) < 17) {
-		@pvp = import('pvp'.@id);
 		if(array_index_exists(@pvp['players'], @e['shooter'])) {
 			@weapon = pinv(@e['shooter'], null);
 			if(!is_null(@weapon) && (@weapon['name'] == 'SNOWBALL' || @weapon['name'] == 'SLIME_BALL')) {

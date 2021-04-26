@@ -1,4 +1,4 @@
-proc _load_events(@id) {
+proc _arena_bind_events(@id) {
 	@pvp = import('pvp'.@id);
 	@region = @pvp['arena']['region'];
 
@@ -57,8 +57,7 @@ proc _load_events(@id) {
 
 	@tnt = array();
 
-	@pvp['binds'][] = @id.'tntexplode';
-	bind('entity_explode', array('id': @id.'tntexplode'), array('type': 'PRIMED_TNT'), @e, @tnt) {
+	@pvp['binds'][] = bind('entity_explode', null, array(type: 'PRIMED_TNT'), @e, @tnt) {
 		@index = array_index(@tnt, @e['id']);
 		if(!is_null(@index)) {
 			foreach(@block in @e['blocks']) {
@@ -76,19 +75,17 @@ proc _load_events(@id) {
 		}
 	}
 
-	@pvp['binds'][] = @id.'tntpickup';
-	bind('player_interact_entity', array('id': @id.'tntpickup'), array('clicked': 'PRIMED_TNT'), @e, @pvp, @tnt) {
+	@pvp['binds'][] = bind('player_interact_entity', null, array(clicked: 'PRIMED_TNT'), @e, @pvp, @tnt) {
 		if(array_index_exists(@pvp['players'], player()) && is_null(get_entity_rider(puuid()))) {
 			set_entity_rider(puuid(player()), @e['id']);
 			set_entity_spec(@e['id'], array(fuseticks: 60));
-			set_pinv(player(), null, array('name': 'TNT'));
-			play_sound(ploc(), array('sound': 'ENTITY_CHICKEN_EGG', 'pitch': 0.5));
+			set_pinv(player(), null, array(name: 'TNT'));
+			play_sound(ploc(), array(sound: 'ENTITY_CHICKEN_EGG', pitch: 0.5));
 			@tnt[] = @e['id'];
 		}
 	}
 
-	@pvp['binds'][] = @id.'tntthrow';
-	bind('player_interact', array('id': @id.'tntthrow'), array('button': 'left', 'itemname': 'TNT'), @e, @pvp) {
+	@pvp['binds'][] = bind('player_interact', null, array(button: 'left', itemname: 'TNT'), @e, @pvp) {
 		if(array_index_exists(@pvp['players'], player())) {
 			set_pinv(player(), null, null);
 			@rider = get_entity_rider(puuid());
@@ -101,7 +98,7 @@ proc _load_events(@id) {
 					try {
 						set_entity_velocity(@rider, @vector);
 						set_entity_spec(@rider, array(fuseticks: 20));
-						play_sound(ploc(), array('sound': 'ENTITY_IRON_GOLEM_ATTACK'));
+						play_sound(ploc(), array(sound: 'ENTITY_IRON_GOLEM_ATTACK'));
 					} catch(BadEntityException @ex) {
 						// it done blown up!
 					}

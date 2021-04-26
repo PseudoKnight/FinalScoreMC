@@ -1,9 +1,9 @@
 switch(@action) {
 case 'load':
-	set_pflight(@player, true)
-	bind('player_toggle_flight', array('id': @player.'dragonfly'), array('player': @player), @e) {
+	set_pflight(@player, true);
+	bind('player_toggle_flight', array(id: @player.'dragonfly'), array(player: @player), @e) {
 		cancel();
-		play_sound(ploc(), array('sound': 'ENTITY_ENDER_DRAGON_FLAP', 'pitch': 1.2));
+		play_sound(ploc(), array(sound: 'ENTITY_ENDER_DRAGON_FLAP', pitch: 1.2));
 		set_pflight(@e['player'], false);
 		proc _flap(@player) {
 			queue_push(closure(){
@@ -20,7 +20,7 @@ case 'load':
 						@z = sin(to_radians(@facing[0])) * cos(to_radians(@facing[1]));
 						set_pexp(@player, max(0, pexp(@player) - 8));
 						set_pvelocity(@player, @x * 0.6, 0.47, @z * 0.6);
-						play_sound(ploc(@player), array('sound': 'ENTITY_ENDER_DRAGON_FLAP', 'pitch': 1.2));
+						play_sound(ploc(@player), array(sound: 'ENTITY_ENDER_DRAGON_FLAP', pitch: 1.2));
 						set_entity_fall_distance(puuid(@player), 0);
 						_flap(@player);
 					}
@@ -29,23 +29,24 @@ case 'load':
 			queue_delay(500, @player.'flap');
 		}
 		if(pexp() > 0) {
-			_flap(player())
+			_flap(player());
 		}
 	}
 
-	bind('entity_damage', array('id': @player.'dragonfall'), array('type': 'PLAYER', 'cause': 'FALL'), @e, @player) {
+	bind('entity_damage', array(id: @player.'dragonfall'), array(type: 'PLAYER', cause: 'FALL'), @e, @player) {
 		if(@e['player'] == @player) {
 			modify_event('amount', 1);
 		}
 	}
 
 
-	bind('projectile_hit', array('id': @player.'dragonsbreath'), array('type': 'FIREBALL'), @event, @region = @pvp['arena']['region']) {
+	bind('projectile_hit', array(id: @player.'dragonsbreath'), array(type: 'FIREBALL'), @event, @region = @pvp['arena']['region']) {
 		if(array_contains(sk_regions_at(@event['location']), @region)) {
 			spawn_entity('AREA_EFFECT_CLOUD', 1, @event['location'], closure(@cloud) {
-				set_entity_spec(@cloud, array('particle': 'FLAME', 'duration': 300, 'source': @event['shooter'],
-					'potionmeta': array('base': array('type': 'INSTANT_DAMAGE'))
-			))});
+				set_entity_spec(@cloud, array(particle: 'FLAME', duration: 300, source: @event['shooter'],
+					potionmeta: array(base: array(type: 'INSTANT_DAMAGE'))
+				));
+			});
 		}
 	}
 

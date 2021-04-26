@@ -1,5 +1,4 @@
-@pvp['binds'][] = @id.'riflereload';
-bind('player_interact', array('id': @id.'riflereload'), array('itemname': 'IRON_INGOT'), @event, @pvp) {
+@pvp['binds'][] = bind('player_interact', null, array(itemname: 'IRON_INGOT'), @event, @pvp) {
 	if(!array_index_exists(@pvp['players'], player()) || pinfo(player(), 6) != @event['item']['name']){
 		die();
 	}
@@ -7,7 +6,7 @@ bind('player_interact', array('id': @id.'riflereload'), array('itemname': 'IRON_
 	@ammo['qty']--;
 	set_pinv(player(), null, null);
 	@ammoslot = pheld_slot();
-	play_sound(ploc(), array('sound': 'BLOCK_WOODEN_DOOR_OPEN', 'pitch': 2));
+	play_sound(ploc(), array(sound: 'BLOCK_WOODEN_DOOR_OPEN', pitch: 2));
 	@weaponslot = null;
 	@weapon = null;
 	foreach(@weaponslot: @weapon in pinv()) {
@@ -29,14 +28,13 @@ bind('player_interact', array('id': @id.'riflereload'), array('itemname': 'IRON_
 				@weapon['meta']['damage'] = 10;
 				@inv[@weaponslot] = @weapon;
 				set_pinv(player(), @inv);
-				play_sound(ploc(), array('sound': 'BLOCK_WOODEN_DOOR_CLOSE', 'pitch': 2))
+				play_sound(ploc(), array(sound: 'BLOCK_WOODEN_DOOR_CLOSE', pitch: 2));
 			}
 		});
 	}
 }
 
-@pvp['binds'][] = @id.'rifle';
-bind('player_interact', array('id': @id.'rifle'), array('itemname': 'STONE_HOE'), @event, @pvp) {
+@pvp['binds'][] = bind('player_interact', null, array(itemname: 'STONE_HOE'), @event, @pvp) {
 	if(!array_index_exists(@pvp['players'], player()) || pinfo(player(), 6) != @event['item']['name']){
 		die();
 	}
@@ -48,10 +46,10 @@ bind('player_interact', array('id': @id.'rifle'), array('itemname': 'STONE_HOE')
 	@item['meta']['damage'] += 8;
 	set_pinv(player(), null, @item);
 	
-	_weapon_hit_scan(player(), 64, 0.0, 1.7, array('tracerparticle': 'SUSPENDED_DEPTH', 'hitparticle': 'SMOKE_LARGE'), @pvp);
-	play_sound(ploc(), array('sound': 'ENTITY_FIREWORK_ROCKET_BLAST', 'pitch': 0.7, 'volume': 3));
+	_weapon_hit_scan(player(), 64, 0.0, 1.7, array(tracerparticle: 'SUSPENDED_DEPTH', hitparticle: 'SMOKE_LARGE'), @pvp);
+	play_sound(ploc(), array(sound: 'ENTITY_FIREWORK_ROCKET_BLAST', pitch: 0.7, volume: 3));
 	set_timeout(50, closure(){
-		_weapon_hit_scan(player(), 64, 0.0, 3.4, array('tracerparticle': 'SUSPENDED_DEPTH', 'hitparticle': 'SMOKE_LARGE'), @pvp);
-		play_sound(ploc(), array('sound': 'ENTITY_FIREWORK_ROCKET_BLAST', 'pitch': 0.7, 'volume': 3));
+		_weapon_hit_scan(player(), 64, 0.0, 3.4, array(tracerparticle: 'SUSPENDED_DEPTH', hitparticle: 'SMOKE_LARGE'), @pvp);
+		play_sound(ploc(), array(sound: 'ENTITY_FIREWORK_ROCKET_BLAST', pitch: 0.7, volume: 3));
 	});
 }

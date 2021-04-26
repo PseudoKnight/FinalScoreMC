@@ -1,8 +1,8 @@
 register_command('class', array(
-	'description': 'Manages pvp class configurations.',
-	'usage': '/class <set|load|delete|info|list|rename> <arena_id:class_id> <setting> <value(s)>',
-	'permission': 'command.class',
-	'tabcompleter': closure(@alias, @sender, @args, @info) {
+	description: 'Manages pvp class configurations.',
+	usage: '/class <set|load|delete|info|list|rename> <arena_id:class_id> <setting> <value(s)>',
+	permission: 'command.class',
+	tabcompleter: closure(@alias, @sender, @args, @info) {
 		if(array_size(@args) == 1) {
 			return(_strings_start_with_ic(array('set', 'load', 'delete', 'info', 'list', 'rename'), @args[-1]));
 		} else if(array_size(@args) == 3) {
@@ -17,7 +17,7 @@ register_command('class', array(
 		}
 		return(array());
 	},
-	'executor': closure(@alias, @sender, @args, @info) {
+	executor: closure(@alias, @sender, @args, @info) {
 		if(array_size(@args) < 2) {
 			return(false);
 		}
@@ -94,7 +94,8 @@ register_command('class', array(
 							}
 						}
 						@arena['classes'][@classid]['hunger'] =	array(@args[3], @saturation);
-						msg(color('green').'Set hunger to '.@args[3].' hunger '.if(@saturation === '~', 'statically.', 'and '.@saturation.' saturation.'));
+						msg(color('green').'Set hunger to '.@args[3].' hunger '
+								.if(@saturation === '~', 'statically.', 'and '.@saturation.' saturation.'));
 
 					case 'effect':
 						if(array_size(@args) < 6) {
@@ -116,8 +117,8 @@ register_command('class', array(
 							}
 							msg(color('green').'Removed potion effect '.@effect.'.');
 						} else {
-							@arena['classes'][@classid]['effect'][@effect] = associative_array('strength': @strength - 1, 'length': @seconds);
-							msg(color('green').'Set a potion effect for this class: '.@effect.' with a strength of '.@strength.' and a length of '.@seconds.' seconds.');
+							@arena['classes'][@classid]['effect'][@effect] = array(strength: @strength - 1, length: @seconds);
+							msg(color('green').'Set potion effect for class: '.@effect.' '.@strength.' for '.@seconds.' seconds.');
 						}
 
 					case 'script':
@@ -145,7 +146,7 @@ register_command('class', array(
 						}
 						if(is_numeric(@args[3]) && @args[3] <= 100 && @args[3] >= 0) {
 							@arena['classes'][@classid]['xp'] = @args[3]
-							msg(color('green').'Set class to start with '.@args[3].'% of their experience bar.')
+							msg(color('green').'Set class to start with '.@args[3].'% of their experience bar.');
 						} else {
 							die(color('gold').'It needs to be a number from 0 to 100');
 						}
@@ -268,7 +269,7 @@ register_command('class', array(
 					case 'kit':
 						@pvp = associative_array();
 						@pvp['arena'] = @arena;
-						include('core.library/class.ms');
+						include('core.library/classes.ms');
 						_class('equip', player(), @classid, @pvp);
 						
 					case 'selector':

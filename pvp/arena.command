@@ -1,7 +1,7 @@
 register_command('arena', array(
-	'description': 'Manages pvp arena configurations.',
-	'usage': '/arena <list|set|add|load|move|delete|info|stats|resetstats> [arena_id] [setting] [value(s)]',
-	'tabcompleter': closure(@alias, @sender, @args, @info) {
+	description: 'Manages pvp arena configurations.',
+	usage: '/arena <list|set|add|load|move|delete|info|stats|resetstats> [arena_id] [setting] [value(s)]',
+	tabcompleter: closure(@alias, @sender, @args, @info) {
 		if(array_size(@args) == 1) {
 			return(_strings_start_with_ic(array('list', 'set', 'add', 'load', 'move', 'delete', 'info',
 					'stats', 'resetstats'), @args[-1]));
@@ -30,7 +30,7 @@ register_command('arena', array(
 		}
 		return(array());
 	},
-	'executor': closure(@alias, @sender, @args, @info) {
+	executor: closure(@alias, @sender, @args, @info) {
 		if(!@args) {
 			return(false);
 		}
@@ -274,13 +274,13 @@ register_command('arena', array(
 
 					case 'arenaselect':
 						if(array_size(@args) == 5) {
-							@arena['arenaselect'] = array('type': @args[3], 'arenas': split(',', @args[4]));
-							msg(color('green').'Set arena to select '.@args[3].'ly from these child arenas: '.@arena['arenaselect']['arenas']);
+							@arena['arenaselect'] = array(type: @args[3], arenas: split(',', @args[4]));
+							msg(color('green').'Set arena to select '.@args[3].'ly from these arenas: '.@arena['arenaselect']['arenas']);
 						} else if(@action == 'add') {
 							@arena['arenaselect']['arenas'][] = @args[3];
-							msg(color('green').'Added arena to these child arenas: '.@arena['arenaselect']['arenas']);
+							msg(color('green').'Added arena to these arenas: '.@arena['arenaselect']['arenas']);
 						} else {
-							die(color('gold').'Requires an arena select type (eg. random) and then a comma separated list of child arenas.');
+							die(color('gold').'Requires an arena select type and then a comma separated list of arenas.');
 						}
 						array_sort(@arena['arenaselect']['arenas']);
 
@@ -290,12 +290,12 @@ register_command('arena', array(
 
 					case 'mode':
 						@modes = array(
-							'dm': 'Death Match',
-							'ddm': 'Dynamic Teams DM',
-							'ctf': 'Capture the Flag',
-							'koth': 'King of the Hill',
-							'infection': 'Zombie Infection',
-							'bombingrun': 'Bombing Run',
+							dm: 'Death Match',
+							ddm: 'Dynamic Teams DM',
+							ctf: 'Capture the Flag',
+							koth: 'King of the Hill',
+							infection: 'Zombie Infection',
+							bombingrun: 'Bombing Run',
 						);
 						if(!array_index_exists(@modes, to_lower(@args[3]))) {
 							die(color('yellow').'Available modes: ' . @modes);
@@ -313,8 +313,8 @@ register_command('arena', array(
 						@loc = ploc();
 						@loc = array(floor(@loc['x']) + 0.5, @loc['y'] + 1, floor(@loc['z']) + 0.5, @loc['world']);
 						@arena['mobprotect'][@args[3]] = array(
-							'loc': @loc,
-							'type': @args[4],
+							loc: @loc,
+							type: @args[4],
 						);
 						msg(colorize('Set &a' . @args[4] . '&r to spawn at start for team &a' . @args[3]));
 
@@ -372,10 +372,10 @@ register_command('arena', array(
 							@item = pinv(player(), null);
 							_minify_inv(@item);
 							@arena['itemspawn'][] = array(
-								'start': @start,
-								'cooldown': @cooldown,
-								'loc': array(round(ploc()[0], 1), ploc()[1] + 1.5, round(ploc()[2], 1), ploc()[3]),
-								'item': @item,
+								start: @start,
+								cooldown: @cooldown,
+								loc: array(round(ploc()[0], 1), ploc()[1] + 1.5, round(ploc()[2], 1), ploc()[3]),
+								item: @item,
 							);
 							msg(color('green').'Set held item to spawn here '.if(@start, 'on start and '), 'every '.@cooldown.' seconds.');
 							psend_block_change(player(), ploc(), 'GOLD_BLOCK');
@@ -436,17 +436,17 @@ register_command('arena', array(
 								@items[] = get_inventory_item(@loc, @i);
 							}
 							@arena['chestspawn'][] = array(
-								'start': @start,
-								'cooldown': @args[3],
-								'loc': @loc,
-								'items': @items,
+								start: @start,
+								cooldown: @args[3],
+								loc: @loc,
+								items: @items,
 							);
 							msg(color('green').'Set items in chest to respawn here.');
 							set_block(@loc, 'CHEST');
 						} else {
 							@arena['chestspawn'][] = array(
-								'loc': @loc,
-								'group': @args[3],
+								loc: @loc,
+								group: @args[3],
 							);
 							msg(color('green').'Set items in that chest group to spawn here at start.');
 						}
@@ -463,7 +463,7 @@ register_command('arena', array(
 					case 'rsoutputscore':
 						@team = @args[3];
 						@arena['rsoutputscore'][@team] = pcursor();
-						msg(color('green').'Set this block to turn into a redstone torch when team '.color(10).@team.color('r').' scores.');
+						msg(color('green').'Set this block to a redstone torch when team '.color(10).@team.color('r').' scores.');
 
 					case 'effect':
 						if(array_size(@args) < 7) {
@@ -483,7 +483,7 @@ register_command('arena', array(
 							@index = integer(@index) + 1;
 						}
 						if(@args[5] == 0 || @args[6] == 0) {
-							array_remove(@arena['effect'][@index], @effect)
+							array_remove(@arena['effect'][@index], @effect);
 							if(array_size(@arena['effect'][0]) == 0
 							&& array_size(@arena['effect'][1]) == 0
 							&& array_size(@arena['effect'][2]) == 0) {
@@ -491,7 +491,7 @@ register_command('arena', array(
 							}
 							msg('Removed potion effect '.@args[4].'.');
 						} else {
-							@arena['effect'][@index][@effect] = array('strength': @args[5] - 1, 'length': @args[6]);
+							@arena['effect'][@index][@effect] = array(strength: @args[5] - 1, length: @args[6]);
 							msg('Set '.color(10).@args[4].color('r').' with a strength of '.color(10).@args[5].color('r')
 								.' and a length of '.color(10).@args[6].color('r').' seconds'
 								.' for '.color(10).if(@args[3] != 'all', 'team ').@args[3]);
@@ -526,11 +526,11 @@ register_command('arena', array(
 						@loc[0] = round(@loc[0], 1);
 						@loc[2] = round(@loc[2], 1);
 						@arena['mobspawn'][] = array(
-							'loc': @loc,
-							'type': @args[3],
-							'qty': @args[4],
-							'respawn': @args[5],
-							'start': @args[6] == 'true',
+							loc: @loc,
+							type: @args[3],
+							qty: @args[4],
+							respawn: @args[5],
+							start: @args[6] == 'true',
 						);
 						msg('Set '.color(10).@args[4].' '.@args[3].color('r').' to spawn here every '
 							.color(10).@args[5].color('r').' seconds'.if(@args[6] == 'true', ' and at '.color(10).'start.', '.'));
@@ -741,7 +741,7 @@ register_command('arena', array(
 					die(color('gold').'This command requires a new arena ID.');
 				}
 				if(reg_count('^[a-z0-9_]+$', @id) < 1) {
-					die(color('gold').'You can only use lowercase alphanumeric characters for the arena ID')
+					die(color('gold').'You can only use lowercase alphanumeric characters for the arena ID');
 				}
 				@arena = get_value('arena', @id);
 				if(!@arena) {
@@ -880,7 +880,7 @@ register_command('arena', array(
 					return(false);
 				}
 				@id = @args[1];
-				@arena = get_value('arena.'.@id)
+				@arena = get_value('arena.'.@id);
 				if(!@arena) {
 					die(color('gold').'There is no defined arena by that name.');
 				}
@@ -893,7 +893,7 @@ register_command('arena', array(
 				} else {
 					msg(color('l').':: '.to_upper(@id).' :: '.if(array_index_exists(@arena, 'team'),
 						color(@arena['team'][0]['color']).@arena['team'][0]['name'].color('gray').' vs '
-						.color(@arena['team'][1]['color']).@arena['team'][1]['name']))
+						.color(@arena['team'][1]['color']).@arena['team'][1]['name']));
 					if(!array_index_exists(@arena, 'parent')) {
 						# dependent settings
 						if(array_index_exists(@arena, 'captain') && !array_index_exists(@arena, 'classes'),

@@ -41,7 +41,7 @@ proc _interval(@pvp, @id) {
 				set_block(@pvp['arena']['kothbeacon'], if(@kingteam, 'BLUE', 'RED').'_STAINED_GLASS');
 			}
 			if(@score >= -11) {
-				play_sound(@pvp['arena']['kothbeacon'], array('sound': 'BLOCK_NOTE_BLOCK_PLING', 'volume': 5));
+				play_sound(@pvp['arena']['kothbeacon'], array(sound: 'BLOCK_NOTE_BLOCK_PLING', volume: 5));
 				if(@score >= -1) {
 					_pvp_end_match(@id, @pvp['team'][@kingteam]['players']);
 				}
@@ -83,7 +83,7 @@ proc _interval(@pvp, @id) {
 				set_block(@pvp['arena']['kothbeacon'], @color.'_STAINED_GLASS');
 			}
 			if(@score >= -11) {
-				play_sound(@pvp['arena']['kothbeacon'], array('sound': 'BLOCK_NOTE_BLOCK_PLING', 'volume': 5));
+				play_sound(@pvp['arena']['kothbeacon'], array(sound: 'BLOCK_NOTE_BLOCK_PLING', volume: 5));
 				if(@score >= -1) {
 					_pvp_end_match(@id, array(@king));
 				}

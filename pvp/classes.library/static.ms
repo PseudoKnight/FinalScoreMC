@@ -5,31 +5,31 @@ case 'load':
 	tmsg(@player, color('e').'Sprint to "ghost" through walls and rematerialize out of sight.');
 	tmsg(@player, color('e').'Scare them, hit them, and then ghost away to safety.');
 
-	bind('inventory_click', array('id': @player.'invclick'), array('player': @player), @event) {
+	bind('inventory_click', array(id: @player.'invclick'), array(player: @player), @event) {
 		cancel();
 	}
 	
-	bind('item_pickup', array('id': @player.'pickup'), array('player': @player), @event) {
+	bind('item_pickup', array(id: @player.'pickup'), array(player: @player), @event) {
 		cancel();
 	}
 	
 	set_pflyspeed(@player, 0.08);
-	bind('player_toggle_sprint', array('id': @player.'sprint'), array('player': @player), @event, @pvp) {
+	bind('player_toggle_sprint', array(id: @player.'sprint'), array(player: @player), @event, @pvp) {
 		@mode = pmode();
 		if(@event['sprinting'] && @mode != 'SPECTATOR') {
 			set_pmode('SPECTATOR');
 			@loc = ploc();
-			play_sound(@loc, associative_array('sound': 'BLOCK_WOOL_STEP', 'pitch': 0.5));
+			play_sound(@loc, associative_array(sound: 'BLOCK_WOOL_STEP', pitch: 0.5));
 			spawn_particle(location_shift(@loc, 'up', 2), array(
-				'particle': 'CRIT',
-				'count': 10,
-				'xoffset': 0.5,
-				'yoffset': 1,
-				'zoffset': 0.5,
+				particle: 'CRIT',
+				count: 10,
+				xoffset: 0.5,
+				yoffset: 1,
+				zoffset: 0.5,
 			));
 		} else if(!@event['sprinting'] && @mode == 'SPECTATOR') {
 			@armorstand = spawn_entity('ARMOR_STAND', 1, ploc())[0];
-			set_entity_spec(@armorstand, associative_array('visible': false));
+			set_entity_spec(@armorstand, associative_array(visible: false));
 			set_interval(50, closure(){
 				try {
 					if(pmode() != 'SPECTATOR' || pinfo(player(), 19)) {
@@ -85,8 +85,8 @@ case 'load':
 				@helm = pinv(@p, 103);
 				@loc = ploc(@p);
 				if(is_null(@helm)) {
-					set_pinv(@p, 103, array('name': 'CARVED_PUMPKIN'));
-					play_sound(@loc, associative_array('sound': 'ENTITY_ELDER_GUARDIAN_DEATH', 'pitch': 2), @p);
+					set_pinv(@p, 103, array(name: 'CARVED_PUMPKIN'));
+					play_sound(@loc, associative_array(sound: 'ENTITY_ELDER_GUARDIAN_DEATH', pitch: 2), @p);
 					set_phunger(@player, min(20, phunger(@player) + 1));
 					set_phealth(@player, min(20, phealth(@player) + if(@dist < 2, 2, 1)));
 					set_peffect(@player, 'STRENGTH', 0, 2);
@@ -95,7 +95,7 @@ case 'load':
 				}
 				set_ptexp(@player, ptexp(@player) + 1);
 				set_peffect(@p, 'NAUSEA', 0, 4);
-				play_sound(@loc, array('sound': 'ENTITY_GUARDIAN_ATTACK', 'pitch': 1.5), @p);
+				play_sound(@loc, array(sound: 'ENTITY_GUARDIAN_ATTACK', pitch: 1.5), @p);
 			} else if(pinv(@p, 103)) {
 				set_pinv(@p, 103, null);
 			}

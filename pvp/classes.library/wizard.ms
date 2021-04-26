@@ -1,6 +1,6 @@
 switch(@action) {
 case 'load':
-	bind('player_interact', array('id': @player.'lightning'), array('itemname': 'BLAZE_ROD', 'button': 'right', 'player': @player), @e, @pvp) {
+	bind('player_interact', array(id: @player.'lightning'), array(itemname: 'BLAZE_ROD', button: 'right', player: @player), @e, @pvp) {
 		if(pinfo(player(), 6) != @e['item']['name']) {
 			die();
 		}
@@ -9,7 +9,7 @@ case 'load':
 		if(@trace['entities']) {
 			@loc = @trace['entities'][0]['location'];
 		}
-		@bind = bind('entity_damage', null, array('type': 'PLAYER', 'cause': 'LIGHTNING'), @e,
+		@bind = bind('entity_damage', null, array(type: 'PLAYER', cause: 'LIGHTNING'), @e,
 				@damager = player(), @pvp) {
 
 			if(!array_index_exists(@pvp['players'], @e['player']), die());
@@ -21,12 +21,12 @@ case 'load':
 				}
 			});
 		}
-		spawn_particle(@loc, array('particle': 'CRIT', 'count': 10));
+		spawn_particle(@loc, array(particle: 'CRIT', count: 10));
 		@lightning = lightning(@loc);
 		export(player().'lightning', @lightning);
 		@slot = pheld_slot();
 		@item = pinv(player(), null);
-		set_pinv(player(), null, array('name': 'STICK'));
+		set_pinv(player(), null, array(name: 'STICK'));
 		set_pcooldown('STICK', 8000 / 50);
 		queue_clear(player().'lightning');
 		queue_delay(1000, player().'lightning');
@@ -39,15 +39,15 @@ case 'load':
 			if(!ponline(@e['player'])) {
 				return();
 			}
-			@newitem = pinv(player(), @slot)
+			@newitem = pinv(player(), @slot);
 			if(!is_null(@newitem) && @newitem['name'] == 'STICK') {
 				set_pinv(player(), @slot, @item);
-				play_sound(ploc(), array('sound': 'BLOCK_FIRE_EXTINGUISH', 'volume': 4))
+				play_sound(ploc(), array(sound: 'BLOCK_FIRE_EXTINGUISH', volume: 4));
 			}
-		}, player().'lightning')
+		}, player().'lightning');
 	}
 
-	bind('player_interact', array('id': @player.'woosh'), array('itemname': 'FEATHER', 'button': 'right', 'player': @player), @e, @pvp) {
+	bind('player_interact', array(id: @player.'woosh'), array(itemname: 'FEATHER', button: 'right', player: @player), @e, @pvp) {
 		if(pinfo(player(), 6) != @e['item']['name']) {
 			die();
 		}
@@ -102,18 +102,18 @@ case 'load':
 			});
 		}
 
-		play_sound(@loc1, array('sound': 'ENTITY_ENDER_DRAGON_FLAP', 'pitch': 0.5));
-		play_sound(@loc1, array('sound': 'ENTITY_GHAST_SHOOT', 'pitch': 0.9));
+		play_sound(@loc1, array(sound: 'ENTITY_ENDER_DRAGON_FLAP', pitch: 0.5));
+		play_sound(@loc1, array(sound: 'ENTITY_GHAST_SHOOT', pitch: 0.9));
 		spawn_particle(location_shift(@loc1, 'up'), array(
-			'particle': 'CLOUD',
-			'count': 60,
-			'speed': 0.5,
+			particle: 'CLOUD',
+			count: 60,
+			speed: 0.5,
 		));
 		_weapon_cooldown(player(), 6000, 'INK_SAC', false, 0);
 	}
 
 case 'unload':
-	unbind(@player.'lightning')
-	unbind(@player.'woosh')
+	unbind(@player.'lightning');
+	unbind(@player.'woosh');
 
 }

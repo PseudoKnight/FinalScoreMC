@@ -223,10 +223,10 @@ case 'load':
 					@circle = array();
 					for(@angle = 0, @angle < 6.28, @angle += 0.3) {
 						@circle[] = array(
-							'x': @radius * cos(@angle) + @loc['x'],
-							'y': @loc['y'],
-							'z': @radius * sin(@angle) + @loc['z'],
-							'world': @loc['world'],
+							x: @radius * cos(@angle) + @loc['x'],
+							y: @loc['y'],
+							z: @radius * sin(@angle) + @loc['z'],
+							world: @loc['world'],
 						);
 					}
 

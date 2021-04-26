@@ -30,24 +30,17 @@ proc _squared_distance_to_segment(@p1, @p2a, @p2b) {
 }
 
 proc _pvp_hat_spawn(@id, @team, @loc) {
-	@pvp = import('pvp'.@id)
+	@pvp = import('pvp'.@id);
 	if(is_null(@loc)) {
 		@loc = @pvp['spawn'][@team][0];
 	}
-	@hat = drop_item(@loc, @pvp['team'][@team]['captainhat'])
-	set_entity_velocity(@hat, array(0, 0, 0))
+	@hat = drop_item(@loc, @pvp['team'][@team]['captainhat']);
+	set_entity_velocity(@hat, array(0, 0, 0));
 }
 
 /*
 	Core game interval (overrided by game modes)
 */
 proc _interval(@pvp, @id){
-	noop();
-}
-
-/*
-	Core arena preparation (overrided by arena code)
-*/
-proc _prepare_arena(@pvp) {
 	noop();
 }

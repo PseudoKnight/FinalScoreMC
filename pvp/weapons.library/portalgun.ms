@@ -12,7 +12,7 @@ execute(iclosure(){
 				return(array(@portalExits[@to]['x'], @portalExits[@to]['y'], @portalExits[@to]['z'], @portalExits[@to]['world'], @yaw, 0));
 			}
 
-			bind('player_move', array('id': 'portalgun'.player().@color), array('player': player(), 'threshold': 0), @event, @color, @portalgun, @portalExits) {
+			bind('player_move', array(id: 'portalgun'.player().@color), array(player: player(), threshold: 0), @event, @color, @portalgun, @portalExits) {
 				@from = @event['from'];
 				@to = @event['to'];
 				if(@to['world'] != 'dev') {
@@ -62,7 +62,7 @@ execute(iclosure(){
 
 		@block = @trace['block'];
 		if(!get_block_info(@block, 'occluding')) {
-			play_sound(ploc(), array('sound': 'ENTITY_SHULKER_CLOSE'));
+			play_sound(ploc(), array(sound: 'ENTITY_SHULKER_CLOSE'));
 			die();
 		}
 
@@ -107,8 +107,8 @@ execute(iclosure(){
 			}
 		}
 		@portalgun[player()][@index] = array(@block, @extension);
-		play_sound(@loc, array('sound': 'ENTITY_SHULKER_SHOOT', 'pitch': 1.3, 'volume': 3));
-		play_sound(@loc, array('sound': 'ENTITY_EVOKER_CAST_SPELL', 'pitch': 0.6, 'volume': 3));
+		play_sound(@loc, array(sound: 'ENTITY_SHULKER_SHOOT', pitch: 1.3, volume: 3));
+		play_sound(@loc, array(sound: 'ENTITY_EVOKER_CAST_SPELL', pitch: 0.6, volume: 3));
 		set_timeout(1, closure(){
 			foreach(@p in players_in_radius(@block, 48)) {
 				psend_block_change(@p, @block, if(@index, 
@@ -128,12 +128,12 @@ execute(iclosure(){
 		@particleLoc['y'] += 0.5;
 		@particleLoc['z'] += 0.5;
 		spawn_particle(@particleLoc, array(
-			'particle': 'BLOCK_DUST', 
-			'count': 20, 
-			'xoffset': if(@face != 'EAST' && @face != 'WEST', 0.7, 0.0),
-			'zoffset': if(@face != 'NORTH' && @face != 'SOUTH', 0.7, 0.0),
-			'yoffset': if(@face != 'UP' && @face != 'DOWN', 0.7, 0.0),
-			'block': if(@index,
+			particle: 'BLOCK_DUST', 
+			count: 20, 
+			xoffset: if(@face != 'EAST' && @face != 'WEST', 0.7, 0.0),
+			zoffset: if(@face != 'NORTH' && @face != 'SOUTH', 0.7, 0.0),
+			yoffset: if(@face != 'UP' && @face != 'DOWN', 0.7, 0.0),
+			block: if(@index,
 				if(@color == 'ORANGE', 'orange_concrete', 'blue_concrete'),
 				if(@color == 'ORANGE', 'yellow_concrete', 'light_blue_concrete')
 		)));
@@ -144,7 +144,7 @@ execute(iclosure(){
 		@particles = 0;
 		while(@particles++ <= @maxParticles) {
 			@origin = location_shift(@origin, @loc, @distance);
-			spawn_particle(@origin, array('particle': 'FALLING_DUST', 'block': if(@index,
+			spawn_particle(@origin, array(particle: 'FALLING_DUST', block: if(@index,
 				if(@color == 'ORANGE', 'orange_concrete', 'blue_concrete'),
 				if(@color == 'ORANGE', 'yellow_concrete', 'light_blue_concrete')
 			)));
@@ -152,15 +152,15 @@ execute(iclosure(){
 	}
 
 	@portalExits = array(
-		'ORANGE': array(null, null),
-		'BLUE': array(null, null),
+		ORANGE: array(null, null),
+		BLUE: array(null, null),
 	);
 
-	bind('player_interact', array('priority': 'LOW'), array('itemname': 'LANTERN'), @event, @portalExits, @portalgun = associative_array()) {
+	bind('player_interact', array(priority: 'LOW'), array(itemname: 'LANTERN'), @event, @portalExits, @portalgun = associative_array()) {
 		_portal('ORANGE', @event['button'], @portalgun, @portalExits);
 	}
 
-	bind('player_interact', array('priority': 'LOW'), array('itemname': 'SOUL_LANTERN'), @event, @portalExits, @portalgun = associative_array()) {
+	bind('player_interact', array(priority: 'LOW'), array(itemname: 'SOUL_LANTERN'), @event, @portalExits, @portalgun = associative_array()) {
 		_portal('BLUE', @event['button'], @portalgun, @portalExits);
 	}
 

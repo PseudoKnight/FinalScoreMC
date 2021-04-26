@@ -4,9 +4,9 @@ proc _create_options_menu(@id, @arena) {
 	@o = 0;
 	foreach(@option: @values in @arena['options']) {
 		foreach(@data: @value in @values) {
-			@inv[(@o * 9) + @i] = array('name': if(@arena[@option] == @value, 'LIME_DYE', 'GRAY_DYE'), 'meta': array(
-					'display': color('bold').to_upper(@option),
-					'lore': array(color('green').color('bold').@value),
+			@inv[(@o * 9) + @i] = array(name: if(@arena[@option] == @value, 'LIME_DYE', 'GRAY_DYE'), meta: array(
+					display: color('bold').to_upper(@option),
+					lore: array(color('green').color('bold').@value),
 			));
 			@i++;
 		}
@@ -16,7 +16,7 @@ proc _create_options_menu(@id, @arena) {
 
 	create_virtual_inventory(@id.'options', array_size(@arena['options']) * 9, to_upper(@id).' OPTIONS', @inv);
 
-	bind('inventory_click', array('id': @id.'options', 'priority': 'HIGH'), array('slottype': 'CONTAINER', 'player': player()), @e, @id) {
+	bind('inventory_click', array(id: @id.'options', priority: 'HIGH'), array(slottype: 'CONTAINER', player: player()), @e, @id) {
 		if(pinventory_holder() != @id.'options'
 		|| is_null(@e['slotitem'])
 		|| is_null(@e['slotitem']['meta'])
@@ -38,7 +38,7 @@ proc _create_options_menu(@id, @arena) {
 				@e['inventory'][@slot]['name'] = 'GRAY_DYE';
 			}
 		}
-		play_sound(ploc(), array('sound': 'UI_BUTTON_CLICK'), player());
+		play_sound(ploc(), array(sound: 'UI_BUTTON_CLICK'), player());
 		set_inventory(@id.'options', @e['inventory']);
 		@arena[@option] = @value;
 		store_value('arena', @id, @arena);

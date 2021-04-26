@@ -10,7 +10,7 @@ case 'load':
 		return(@loc);
 	}
 	
-	@particle = array('particle': 'REDSTONE', 'speed': 1.0, 'count': 0, 'color': array('r': 25, 'g': 25, 'b': 25));
+	@particle = array(particle: 'REDSTONE', speed: 1.0, count: 0, color: array(r: 25, g: 25, b: 25));
 	set_interval(50, closure(){
 		try {
 			if(!array_index_exists(@pvp['players'], @player) || @pvp['players'][@player]['class'] != 'reaper') {
@@ -27,13 +27,13 @@ case 'load':
 		}
 	});
 	
-	bind('player_interact', array('id': @player.'hover'), array('player': @player), @event, @pvp) {
+	bind('player_interact', array(id: @player.'hover'), array(player: @player), @event, @pvp) {
 		if(@event['button'] == 'right') {
 			set_peffect(player(), 'LEVITATION', -1, 0.3, true);
 			set_entity_fall_distance(puuid(), 0);
-			play_sound(ploc(), array('sound': 'ENTITY_HORSE_BREATHE', 'pitch': 0.5, 'volume': 0.10), player());
+			play_sound(ploc(), array(sound: 'ENTITY_HORSE_BREATHE', pitch: 0.5, volume: 0.10), player());
 			set_timeout(50, closure(){
-				play_sound(ploc(), array('sound': 'ENTITY_HORSE_BREATHE', 'pitch': 0.7, 'volume': 0.10), player());
+				play_sound(ploc(), array(sound: 'ENTITY_HORSE_BREATHE', pitch: 0.7, volume: 0.10), player());
 			});
 		} else {
 			@trace = ray_trace(player(), 12);
@@ -49,8 +49,8 @@ case 'load':
 				}
 			}
 			if(@target) {
-				@sound1 = array('sound': 'ENTITY_PLAYER_BREATH', 'pitch': 0.5, 'volume': 0.25);
-				@sound2 = array('sound': 'BLOCK_PORTAL_AMBIENT', 'pitch': 2, 'volume': 0.15);
+				@sound1 = array(sound: 'ENTITY_PLAYER_BREATH', pitch: 0.5, volume: 0.25);
+				@sound2 = array(sound: 'BLOCK_PORTAL_AMBIENT', pitch: 2, volume: 0.15);
 				@loc = ploc();
 				play_sound(@loc, @sound1, player());
 				set_phealth(@player, max(0, phealth(@player) - 0.3));

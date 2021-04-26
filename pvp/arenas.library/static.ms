@@ -1,35 +1,34 @@
-proc _prepare_arena(@pvp) {
+proc _arena_prepare(@pvp) {
 	_generator_create('dungeon', 'static', 'static', @pvp['arena']['lobby'][3], 0, closure(@start, @end, @spawns) {
 		@pvp['arena']['spawn'] = array(array(@end), array(@start));
 	});
 }
 
-proc _load_events(@id) {
+proc _arena_bind_events(@id) {
 	@pvp = import('pvp'.@id);
-	@pvp['binds'][] = 'staticdeathnoise';
-	bind('player_death', array('id': 'staticdeathnoise', 'priority': 'HIGHEST'), null, @event, @pvp) {
+	@pvp['binds'][] = bind('player_death', array(priority: 'HIGHEST'), null, @event, @pvp) {
 		if(array_index_exists(@pvp['players'], player())) {
 			if(@pvp['players'][player()]['team'] == 1) {
-				play_sound(ploc(), array('sound': 'ENTITY_WOLF_HOWL', 'pitch': 1.7, 'volume': 3));
+				play_sound(ploc(), array(sound: 'ENTITY_WOLF_HOWL', pitch: 1.7, volume: 3));
 				@stand = spawn_entity('ARMOR_STAND', 1, @event['location'])[0];
 				set_entity_spec(@stand, array(
-					'arms': true,
-					'baseplate': false,
-					'poses': array(
-							'poseArmLeft': array(rand() - 0.5, rand() - 0.5, rand() - 0.5),
-							'poseArmRight': array(rand() - 0.5, rand() - 0.5, rand() - 0.5),
-							'poseHead': array(rand() - 0.5, rand() - 0.5, rand() - 0.5),
-							'poseLegLeft': array(rand() - 0.5, rand() - 0.5, rand() - 0.5),
-							'poseLegRight': array(rand() - 0.5, rand() - 0.5, rand() - 0.5),
+					arms: true,
+					baseplate: false,
+					poses: array(
+							poseArmLeft: array(rand() - 0.5, rand() - 0.5, rand() - 0.5),
+							poseArmRight: array(rand() - 0.5, rand() - 0.5, rand() - 0.5),
+							poseHead: array(rand() - 0.5, rand() - 0.5, rand() - 0.5),
+							poseLegLeft: array(rand() - 0.5, rand() - 0.5, rand() - 0.5),
+							poseLegRight: array(rand() - 0.5, rand() - 0.5, rand() - 0.5),
 						)
 				));
 			} else {
-				play_sound(ploc(), array('sound': 'ENTITY_VEX_DEATH', 'pitch': 0.5, 'volume': 3));
+				play_sound(ploc(), array(sound: 'ENTITY_VEX_DEATH', pitch: 0.5, volume: 3));
 			}
 		}
 	}
 	
-	@heartsound = array('sound': 'BLOCK_NOTE_BLOCK_BASEDRUM', 'pitch': 0.5);
+	@heartsound = array(sound: 'BLOCK_NOTE_BLOCK_BASEDRUM', pitch: 0.5);
 	@static = @pvp['team'][0]['players'][0];
 	set_interval(50, closure(){
 		try {

@@ -1,4 +1,4 @@
-@pvp['binds'][] = bind('projectile_launch', array('id': @id.'grapple'), array('type': 'FISHING_HOOK'), @event, @pvp) {
+@pvp['binds'][] = bind('projectile_launch', null, array(type: 'FISHING_HOOK'), @event, @pvp) {
 	@player = @event['player'];
 	@hook = @event['id'];
 
@@ -9,9 +9,9 @@
 	set_pcooldown('FISHING_ROD', 20);
 
 	@arrow = shoot_projectile(@player, 'arrow');
-	set_entity_spec(@arrow, array('critical': true));
+	set_entity_spec(@arrow, array(critical: true));
 	set_arrow_damage(@arrow, 0.1);
-	play_sound(ploc(@player), array('sound': 'ENTITY_ARROW_SHOOT'));
+	play_sound(ploc(@player), array(sound: 'ENTITY_ARROW_SHOOT'));
 	@shooter = puuid(@player);
 	@slot = pheld_slot(@player);
 
@@ -33,9 +33,9 @@
 			die();
 		}
 
-		play_sound(@loc1, array('sound': 'ENTITY_IRON_GOLEM_HURT', 'pitch': 2));
-		play_sound(@loc2, array('sound': 'ENTITY_IRON_GOLEM_HURT', 'pitch': 2));
-		play_sound(@loc1, array('sound': 'ENTITY_HORSE_BREATHE', 'pitch': 1.7));
+		play_sound(@loc1, array(sound: 'ENTITY_IRON_GOLEM_HURT', pitch: 2));
+		play_sound(@loc2, array(sound: 'ENTITY_IRON_GOLEM_HURT', pitch: 2));
+		play_sound(@loc1, array(sound: 'ENTITY_HORSE_BREATHE', pitch: 1.7));
 
 		@endtask = closure(){
 			try {
@@ -50,7 +50,7 @@
 			if(ponline(@player) && phealth(@player) > 0 && pmode(@player) != 'SPECTATOR') {
 				set_pinv(@player, @slot, null);
 				set_timeout(1, closure(){
-					set_pinv(@player, @slot, array('name': 'FISHING_ROD'));
+					set_pinv(@player, @slot, array(name: 'FISHING_ROD'));
 				});
 			}
 		}
@@ -60,7 +60,7 @@
 				|| get_entity_health(@mover) == 0
 				|| pheld_slot(@player) != @slot
 				|| !entity_exists(@hook)) {
-					play_sound(ploc(@shooter), array('sound': 'ENTITY_ARROW_HIT', 'pitch': 1.5));
+					play_sound(ploc(@shooter), array(sound: 'ENTITY_ARROW_HIT', pitch: 1.5));
 					if(@interval) {
 						clear_task();
 					}
@@ -74,7 +74,7 @@
 					if(@dist > 2.5) {
 						if(@dist > 10) {
 							@pitch = 1.4 + (0.6 * (@dist - 10) / 20);
-							play_sound(@loc1, array('sound': 'ENTITY_HORSE_BREATHE', 'pitch': @pitch));
+							play_sound(@loc1, array(sound: 'ENTITY_HORSE_BREATHE', pitch: @pitch));
 						}
 						if(get_entity_gliding(@mover)) {
 							@dist = @dist / 1.8;
@@ -107,7 +107,7 @@
 		set_interval(100, @task);
 	}
 
-	bind('projectile_hit', array('id': 'hit'.@arrow), array('id': @arrow), @event, @shooter, @slot, @hook) {
+	bind('projectile_hit', array(id: 'hit'.@arrow), array(id: @arrow), @event, @shooter, @slot, @hook) {
 		unbind();
 		if(@event['hittype'] == 'ENTITY') {
 			@hit = @event['hit'];
@@ -126,7 +126,7 @@
 	});
 }
 
-@pvp['binds'][] = bind('entity_damage', array('id': @id.'grappledamage'), array('type': 'PLAYER', 'cause': 'FLY_INTO_WALL'), @event, @pvp) {
+@pvp['binds'][] = bind('entity_damage', null, array(type: 'PLAYER', cause: 'FLY_INTO_WALL'), @event, @pvp) {
 	if(array_index_exists(@pvp['players'], @event['player'])) {
 		cancel();
 	}

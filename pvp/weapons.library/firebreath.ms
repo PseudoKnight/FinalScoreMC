@@ -1,6 +1,4 @@
-@pvp['binds'][] = @id.'firebreath';
-bind('player_interact', array('id': @id.'firebreath'), array('itemname': 'BLAZE_POWDER', 'button': 'right'), @e, @id) {
-	@pvp = import('pvp'.@id);
+@pvp['binds'][] = bind('player_interact', null, array(itemname: 'BLAZE_POWDER', button: 'right'), @e, @pvp) {
 	if(!array_index_exists(@pvp['players'], player()) || pinfo(player(), 6) != @e['item']['name']) {
 		die();
 	}
@@ -9,7 +7,7 @@ bind('player_interact', array('id': @id.'firebreath'), array('itemname': 'BLAZE_
 	@loc['y'] += 1.9;
 	@world = @loc['world'];
 	
-	play_sound(@loc, array('sound': 'ENTITY_GHAST_SHOOT', 'pitch': 0.5));
+	play_sound(@loc, array(sound: 'ENTITY_GHAST_SHOOT', pitch: 0.5));
 	@facing = pfacing(player());
 	@facing[0] = @facing[0] + 90;
 	@facing[1] = 0 - @facing[1];
@@ -22,9 +20,9 @@ bind('player_interact', array('id': @id.'firebreath'), array('itemname': 'BLAZE_
 	@zr = sin(to_radians(@facing[0] + 40)) * cos(to_radians(@facing[1]));
 	
 	#@entities = array()
-	@targetl = array('world': @world);
-	@targetc = array('world': @world);
-	@targetr = array('world': @world);
+	@targetl = array(world: @world);
+	@targetc = array(world: @world);
+	@targetr = array(world: @world);
 	for(@range = 1, @range <= 4, @range++) {
 		/*
 		if(@range == 1) {
@@ -114,7 +112,7 @@ bind('player_interact', array('id': @id.'firebreath'), array('itemname': 'BLAZE_
 			set_entity_onfire(@uuid, 1);
 			continue();
 		}
-		@dist = _squared_distance_to_segment(@ploc, @loc, @targetl)
+		@dist = _squared_distance_to_segment(@ploc, @loc, @targetl);
 		if(@dist < 2.25) { # 1.5 ^ 2
 			@uuid = puuid(@p);
 			@damage = if(entity_can_see(puuid(), @uuid), 5, 3);
@@ -122,7 +120,7 @@ bind('player_interact', array('id': @id.'firebreath'), array('itemname': 'BLAZE_
 			set_entity_onfire(@uuid, 1);
 			continue();
 		}
-		@dist = _squared_distance_to_segment(@ploc, @loc, @targetr)
+		@dist = _squared_distance_to_segment(@ploc, @loc, @targetr);
 		if(@dist < 2.25) { # 1.5 ^ 2
 			@uuid = puuid(@p);
 			@damage = if(entity_can_see(puuid(), @uuid), 5, 3);
@@ -132,6 +130,6 @@ bind('player_interact', array('id': @id.'firebreath'), array('itemname': 'BLAZE_
 		}
 	}
 	_weapon_cooldown(player(), 1200, 'FIREWORK_STAR', closure(){
-		play_sound(ploc(), array('sound': 'BLOCK_FIRE_EXTINGUISH', 'pitch': 2));
+		play_sound(ploc(), array(sound: 'BLOCK_FIRE_EXTINGUISH', pitch: 2));
 	});
 }

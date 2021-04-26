@@ -1,6 +1,4 @@
-@pvp['binds'][] = @id.'pistoltears';
-bind('player_interact', array('id': @id.'pistoltears'), array('itemname': 'GHAST_TEAR', 'button': 'right'), @e, @id) {
-	@pvp = import('pvp'.@id)
+@pvp['binds'][] = bind('player_interact', null, array(itemname: 'GHAST_TEAR', button: 'right'), @e, @pvp) {
 	if(!array_index_exists(@pvp['players'], player()) || pinfo(player(), 6) != @e['item']['name']) {
 		die();
 	}
@@ -11,13 +9,13 @@ bind('player_interact', array('id': @id.'pistoltears'), array('itemname': 'GHAST
 	@v['z'] = (@v['z'] / @v['magnitude']) * 4;
 	set_entity_velocity(@entity, @v);
 	set_arrow_damage(@entity, 1.25);
-	play_sound(ploc(), array('sound': 'ENTITY_ZOMBIE_ATTACK_WOODEN_DOOR', 'pitch': 2, 'volume': 2));
-	@bind = bind('projectile_hit', null, associative_array('id': @entity), @event) {
+	play_sound(ploc(), array(sound: 'ENTITY_ZOMBIE_ATTACK_WOODEN_DOOR', pitch: 2, volume: 2));
+	@bind = bind('projectile_hit', null, array(id: @entity), @event) {
 		try(entity_remove(@event['id']));
 	}
 	
 	_weapon_cooldown(player(), 2000, 'GOLD_NUGGET', closure(){
-		play_sound(ploc(), array('sound': 'BLOCK_WOODEN_DOOR_OPEN', 'pitch': 2));
+		play_sound(ploc(), array(sound: 'BLOCK_WOODEN_DOOR_OPEN', pitch: 2));
 		unbind(@bind);
 	});
 }

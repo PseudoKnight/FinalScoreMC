@@ -1,11 +1,11 @@
 switch(@action) {
 case 'load':
 	set_pheld_slot(@player, 0);
-	bind('item_held', array('id': @player.'boxman'), array(player: @player), @e) {
+	bind('item_held', array(id: @player.'boxman'), array(player: @player), @e) {
 		cancel();
 	}
 
-	bind('player_interact', array('id': @player.'boxmanattack'), array('player': @player), @e, @pvp) {
+	bind('player_interact', array(id: @player.'boxmanattack'), array(player: @player), @e, @pvp) {
 		@slot = 0;
 		@checkSlot = -106;
 		if(@e['button'] == 'left') {
@@ -39,16 +39,16 @@ case 'load':
 
 			@loc = location_shift(ploc(), 'up');
 			@box = spawn_entity('ARMOR_STAND', 1, @loc)[0];
-			set_mob_equipment(@box, array('WEAPON': @item));
+			set_mob_equipment(@box, array(WEAPON: @item));
 			set_entity_spec(@box, array(
-				'gravity': false,
-				'visible': false,
-				'arms': true,
-				'poses': array(
-					'poseArmRight': array(
-						'x': 0.8,
-						'y': 0.6,
-						'z': -0.8,
+				gravity: false,
+				visible: false,
+				arms: true,
+				poses: array(
+					poseArmRight: array(
+						x: 0.8,
+						y: 0.6,
+						z: -0.8,
 					),
 				),
 			));
@@ -56,7 +56,7 @@ case 'load':
 			@returnToSender = closure(){
 				if(ponline(player()) && pmode() != 'SPECTATOR' && array_index_exists(@pvp['players'], player())) {
 					set_pwalkspeed(player(), 0.2);
-					set_pinv(player(), @slot, array('name': 'MAGENTA_CONCRETE'));
+					set_pinv(player(), @slot, array(name: 'MAGENTA_CONCRETE'));
 					set_timeout(1200, closure(){
 						if(ponline(player()) && pmode() != 'SPECTATOR' && array_index_exists(@pvp['players'], player())) {
 							set_pinv(player(), @slot, @item);
@@ -85,7 +85,7 @@ case 'load':
 						if(distance(@loc, @targetLoc) < 1) {
 							damage_entity(@target, 1, puuid());
 						}
-						play_sound(@loc, array('sound': 'ENTITY_GUARDIAN_ATTACK'));
+						play_sound(@loc, array(sound: 'ENTITY_GUARDIAN_ATTACK'));
 					}
 				} catch(Exception @ex) {
 					clear_task();
@@ -95,7 +95,7 @@ case 'load':
 		}
 	}
 
-	bind('entity_damage', array('id': @player.'boxmanbox', 'priority': 'HIGH'), array('type': 'ARMOR_STAND'), @e, @pvp, @player) {
+	bind('entity_damage', array(id: @player.'boxmanbox', priority: 'HIGH'), array(type: 'ARMOR_STAND'), @e, @pvp, @player) {
 		@damager = null;
 		if(array_index_exists(@e, 'damager') && array_index_exists(@pvp['players'], @e['damager'])) {
 			@damager = @e['damager'];
@@ -107,7 +107,7 @@ case 'load':
 			if(@weapon && @weapon['name'] == 'STEP') {
 				@loc = entity_loc(@e['id']);
 				spawn_particle(@loc, 'EXPLOSION_LARGE');
-				play_sound(@loc, array('sound': 'BLOCK_ENDER_CHEST_OPEN'));
+				play_sound(@loc, array(sound: 'BLOCK_ENDER_CHEST_OPEN'));
 				entity_remove(@e['id']);
 				consume();
 			}

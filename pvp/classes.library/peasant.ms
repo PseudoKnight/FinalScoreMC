@@ -30,7 +30,7 @@ case 'load':
 			try {
 				@potato = pinv(@damaged, @slot);
 				if(@potato['meta']['display'] == '1') {
-					bind('entity_damage', array('id': @damaged.'hotpotatodmg'), array('type': 'PLAYER'), @e,
+					bind('entity_damage', array(id: @damaged.'hotpotatodmg'), array(type: 'PLAYER'), @e,
 							@damager, @pvp) {
 
 						if(!array_index_exists(@pvp['players'], @e['player']), die());
@@ -41,7 +41,7 @@ case 'load':
 					clear_task();
 				} else {
 					@potato['meta']['display'] = string(integer(@potato['meta']['display']) - 1);
-					play_sound(ploc(@damaged), array('sound': 'BLOCK_NOTE_BLOCK_HAT'));
+					play_sound(ploc(@damaged), array(sound: 'BLOCK_NOTE_BLOCK_HAT'));
 					set_pinv(@damaged, @slot, @potato);
 				}
 			} catch(Exception @e) {
@@ -53,14 +53,14 @@ case 'load':
 		@item['meta']['lore'] = array(@task);
 		set_pinv(@damaged, @slot, @item);
 	}
-	bind('entity_damage', array('id': @player.'pot'), array('type': 'PLAYER', 'cause': 'ENTITY_ATTACK'), @e, @pvp, @player) {
+	bind('entity_damage', array(id: @player.'pot'), array(type: 'PLAYER', cause: 'ENTITY_ATTACK'), @e, @pvp, @player) {
 		if(!array_index_exists(@pvp['players'], @e['damager'])) {
 			die();
 		}
 		@damager = @e['damager'];
 		@damaged = @e['player'];
 		if(@damaged == @player) {
-			drop_item(@damager, array('name': 'POTATO'));
+			drop_item(@damager, array(name: 'POTATO'));
 		}
 		@item = pinv(@damager, null);
 		if(is_null(@item)) {
@@ -88,13 +88,13 @@ case 'load':
 		}
 	}
 
-	bind('item_drop', array('id': @player.'hotdrop'), array('itemname': 'BAKED_POTATO'), @e, @pvp) {
+	bind('item_drop', array(id: @player.'hotdrop'), array(itemname: 'BAKED_POTATO'), @e, @pvp) {
 		if(array_index_exists(@pvp['players'], player())) {
 			cancel();
 		}
 	}
 
-	bind('item_pickup', array('id': @player.'hotpickup', 'priority': 'HIGH'), array('itemname': 'LILY_PAD'), @e, @pvp) {
+	bind('item_pickup', array(id: @player.'hotpickup', priority: 'HIGH'), array(itemname: 'LILY_PAD'), @e, @pvp) {
 		if(!array_index_exists(@pvp['players'], @e['player'])) {
 			die();
 		}
@@ -102,7 +102,7 @@ case 'load':
 		foreach(@slot in 0..8) {
 			if(@inv[@slot] && @inv[@slot]['name'] == 'BAKED_POTATO' && @inv[@slot]['meta'] && is_integral(@inv[@slot]['meta']['display'])) {
 				@droppedItem = drop_item(location_shift(ploc(), 'up', 2), @inv[@slot], true);
-				set_entity_spec(@droppedItem, array('pickupdelay': 200));
+				set_entity_spec(@droppedItem, array(pickupdelay: 200));
 				set_timeout(1000 * @inv[@slot]['meta']['display'], closure(){
 					try {
 						explosion(entity_loc(@droppedItem), 3, true);
@@ -115,7 +115,7 @@ case 'load':
 		}
 	}
 
-	bind('player_consume', array('id': @player.'hoteat'), array('itemname': 'BAKED_POTATO'), @e, @player, @pvp) {
+	bind('player_consume', array(id: @player.'hoteat'), array(itemname: 'BAKED_POTATO'), @e, @player, @pvp) {
 		if(@player == @e['player']) {
 			set_timeout(50, closure(){
 				_prime_hot_potato(player(), player(), @e['item'], @pvp);

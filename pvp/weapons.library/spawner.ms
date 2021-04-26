@@ -1,6 +1,4 @@
-@pvp['binds'][] = @id.'spawner';
-bind('player_interact', array('id': @id.'spawner', 'priority': 'HIGH'), array('button': 'right'), @e, @id) {
-	@pvp = import('pvp'.@id);
+@pvp['binds'][] = bind('player_interact', array(priority: 'HIGH'), array(button: 'right'), @e, @pvp) {
 	if(!array_index_exists(@pvp['players'], player())
 	|| !@e['item']
 	|| !string_ends_with(@e['item']['name'], '_SPAWN_EGG')
@@ -42,8 +40,8 @@ bind('player_interact', array('id': @id.'spawner', 'priority': 'HIGH'), array('b
 		}
 		
 		@effectLoc = location_shift(@loc, 'up');
-		play_sound(@effectLoc, array('sound': 'ENTITY_ZOMBIE_INFECT', 'pitch': 1.5));
-		spawn_particle(@effectLoc, array('particle': 'CLOUD', 'count': 10, 'xoffset': 0.4, 'zoffset': 0.4, 'yoffset': 0.4));
+		play_sound(@effectLoc, array(sound: 'ENTITY_ZOMBIE_INFECT', pitch: 1.5));
+		spawn_particle(@effectLoc, array(particle: 'CLOUD', count: 10, xoffset: 0.4, zoffset: 0.4, yoffset: 0.4));
 		_weapon_cooldown(player(), 2000, 'PUMPKIN_SEEDS', false);
 	}
 }

@@ -1,6 +1,4 @@
-@pvp['binds'][] = @id.'tracker';
-bind('item_held', array('id': @id.'tracker'), null, @event, @id) {
-	@pvp = import('pvp'.@id);
+@pvp['binds'][] = bind('item_held', null, null, @event, @pvp) {
 	if(!array_index_exists(@pvp['players'], player())) {
 		die();
 	}
@@ -17,7 +15,7 @@ bind('item_held', array('id': @id.'tracker'), null, @event, @id) {
 						@dist = distance(@loc1, @loc2);
 						if(@dist < 50) {
 							@pitch = 0.5 + (0.5 * ((50 - @dist) / 50));
-							play_sound(@loc1, array('sound': 'BLOCK_NOTE_BLOCK_PLING', 'pitch': @pitch), player());
+							play_sound(@loc1, array(sound: 'BLOCK_NOTE_BLOCK_PLING', pitch: @pitch), player());
 							break();
 						}
 					}

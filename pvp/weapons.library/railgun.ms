@@ -1,13 +1,11 @@
-@pvp['binds'][] = @id.'railgun';
-bind('player_interact', array('id': @id.'railgun'), array('itemname': 'SUNFLOWER', 'button': 'right'), @e, @id) {
-	@pvp = import('pvp'.@id);
+@pvp['binds'][] = bind('player_interact', null, array(itemname: 'SUNFLOWER', button: 'right'), @e, @pvp) {
 	if(!array_index_exists(@pvp['players'], player()) || pinfo(player(), 6) != @e['item']['name']) {
 		die();
 	}
 
-	_weapon_hit_scan(player(), 112, 0.1, 16, array('tracerparticle': 'CRIT', 'hitparticle': 'LAVA'), @pvp);
+	_weapon_hit_scan(player(), 112, 0.1, 16, array(tracerparticle: 'CRIT', hitparticle: 'LAVA'), @pvp);
 
-	play_sound(ploc(), array('sound': 'ENTITY_ZOMBIE_VILLAGER_CURE', 'pitch': 1.8, 'volume': 3));
+	play_sound(ploc(), array(sound: 'ENTITY_ZOMBIE_VILLAGER_CURE', pitch: 1.8, volume: 3));
 	@item = pinv(player(), null);
 	@item['qty'] -= 1;
 	queue_clear(player().'railgun');
@@ -23,7 +21,7 @@ bind('player_interact', array('id': @id.'railgun'), array('itemname': 'SUNFLOWER
 			if(ponline(player())) {
 				@item = pinv(player(), @slot);
 				if(!is_null(@item) && @item['name'] == 'FIREWORK_STAR') {
-					play_sound(ploc(), array('sound': 'BLOCK_FIRE_EXTINGUISH', 'pitch': 0));
+					play_sound(ploc(), array(sound: 'BLOCK_FIRE_EXTINGUISH', pitch: 0));
 					@item['name'] = 'SUNFLOWER';
 					set_pinv(player(), @slot, @item);
 				}

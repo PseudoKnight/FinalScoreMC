@@ -3,19 +3,19 @@ case 'load':
 	proc _set_equipment(@player, @thorns, @pvp) {
 		if(array_index_exists(@pvp['players'], @player) && @pvp['players'][@player]['class'] == 'ent') {
 			@kit = array(
-				'helmet': array('name': 'SPRUCE_LOG'),
-				'chestplate': array('name': 'LEATHER_CHESTPLATE', 'meta': array(
-					'color': array('r': 0, 'g': 50, 'b': 0),
+				helmet: array(name: 'SPRUCE_LOG'),
+				chestplate: array(name: 'LEATHER_CHESTPLATE', meta: array(
+					color: array(r: 0, g: 50, b: 0),
 				)),
-				'leggings': array('name': 'LEATHER_LEGGINGS', 'meta': array(
-					'color': array('r': 58, 'g': 28, 'b': 1),
+				leggings: array(name: 'LEATHER_LEGGINGS', meta: array(
+					color: array(r: 58, g: 28, b: 1),
 				)),
-				'boots': array('name': 'LEATHER_BOOTS', 'meta': array(
-					'color': array('r': 58, 'g': 28, 'b': 1),
+				boots: array(name: 'LEATHER_BOOTS', meta: array(
+					color: array(r: 58, g: 28, b: 1),
 				)),
 			);
 			if(@thorns) {
-				@enchants = array('thorns': array('elevel': 13));
+				@enchants = array(thorns: array(elevel: 13));
 				foreach(@item in @kit) {
 					@item['meta']['enchants'] = @enchants;
 				}
@@ -27,13 +27,13 @@ case 'load':
 		}
 	}
 
-	bind('item_held', array('id': @player.'entbark'), null, @event, @player, @pvp) {
+	bind('item_held', array(id: @player.'entbark'), null, @event, @player, @pvp) {
 		if(@player == player() && (@event['to'] == 1 && pinv(player(), 1) || @event['from'] == 1)) {
 			_set_equipment(player(), @event['to'] == 1, @pvp);
 		}
 	}
 	
-	bind('entity_damage', array('id': @player.'entdamage', 'priority': 'MONITOR'), array('id': puuid(@player)), @event, @player, @pvp) {
+	bind('entity_damage', array(id: @player.'entdamage', priority: 'MONITOR'), array(id: puuid(@player)), @event, @player, @pvp) {
 		if(pheld_slot(@player) == 1) {
 			@item = pinv(@player, 1);
 			if(@item) {
@@ -48,7 +48,7 @@ case 'load':
 		}
 	}
 
-	bind('entity_damage', array('id': @player.'entfall'), array('id': puuid(@player), 'cause': 'FALL'), @event, @player, @pvp) {
+	bind('entity_damage', array(id: @player.'entfall'), array(id: puuid(@player), cause: 'FALL'), @event, @player, @pvp) {
 		@damage = @event['amount'];
 		@target = entity_loc(@event['id']);
 		@world = @target['world'];
@@ -59,7 +59,7 @@ case 'load':
 				damage_entity(puuid(@p), @damage, puuid(@player));
 			}
 		}
-		play_sound(@target, array('sound': 'ENTITY_WITHER_BREAK_BLOCK', 'pitch': 0.7));
+		play_sound(@target, array(sound: 'ENTITY_WITHER_BREAK_BLOCK', pitch: 0.7));
 		
 		@radius = 6;
 		@circle = array();
@@ -74,9 +74,9 @@ case 'load':
 		
 		foreach(@point in @circle) {
 			if(get_block(@point) == 'AIR') {
-				@block = get_block(location_shift(@point, 'down'))
+				@block = get_block(location_shift(@point, 'down'));
 				if(@block != 'AIR') {
-					spawn_particle(@point, array('particle': 'BLOCK_CRACK', 'block': @block, 'count': 5));
+					spawn_particle(@point, array(particle: 'BLOCK_CRACK', block: @block, count: 5));
 					foreach(@p in all_players(@world)) {
 						psend_block_change(@p, @point, 'DEAD_BUSH');
 					}
@@ -96,14 +96,14 @@ case 'load':
 		});
 	}
 	
-	bind('player_toggle_sneak', array('id': @player.'entsneak'), array('player': @player, 'sneaking': true), @event, @pvp) {
+	bind('player_toggle_sneak', array(id: @player.'entsneak'), array(player: @player, sneaking: true), @event, @pvp) {
 		if(pheld_slot() != 0) {
 			die();
 		}
 		set_pexp(0);
 		@loc = ploc();
-		play_sound(@loc, array('sound': 'ENTITY_ILLUSIONER_PREPARE_BLINDNESS', 'pitch': 0.7));
-		play_sound(@loc, array('sound': 'ENTITY_HUSK_AMBIENT', 'pitch': 0.8));
+		play_sound(@loc, array(sound: 'ENTITY_ILLUSIONER_PREPARE_BLINDNESS', pitch: 0.7));
+		play_sound(@loc, array(sound: 'ENTITY_HUSK_AMBIENT', pitch: 0.8));
 		try(set_attribute(puuid(), 'knockbackresistance', 1));
 		set_interval(100, closure(){
 			try {
@@ -120,11 +120,11 @@ case 'load':
 					clear_task();
 					set_pexp(0);
 					try(set_attribute(puuid(), 'knockbackresistance', 0));
-					@players = _weapon_hit_scan(player(), 13, 0.2, 2, array('tracerparticle': 'VILLAGER_HAPPY'), @pvp);
+					@players = _weapon_hit_scan(player(), 13, 0.2, 2, array(tracerparticle: 'VILLAGER_HAPPY'), @pvp);
 					@loc = ploc();
 					if(@players) {
 						@p = @players[0];
-						play_sound(@loc, array('sound': 'BLOCK_CHEST_OPEN', 'pitch': 0.6));
+						play_sound(@loc, array(sound: 'BLOCK_CHEST_OPEN', pitch: 0.6));
 						@timer = array(20);
 						set_interval(50, closure(){
 							@timer[0]--;
@@ -139,8 +139,8 @@ case 'load':
 									@z = 1.60 * sin(to_radians(@facing[0])) * cos(to_radians(@facing[1]));
 									set_pvelocity(@p, @x, @y, @z);
 									@loc = ploc();
-									play_sound(@loc, array('sound': 'entity_player_attack_sweep', 'pitch': 1.4));
-									play_sound(@loc, array('sound': 'entity_snowball_throw', 'pitch': 0.52));
+									play_sound(@loc, array(sound: 'entity_player_attack_sweep', pitch: 1.4));
+									play_sound(@loc, array(sound: 'entity_snowball_throw', pitch: 0.52));
 								} else {
 									set_ploc(@p, location_shift(ploc(), 'up', 2));
 								}
@@ -149,8 +149,8 @@ case 'load':
 							}
 						});
 					} else {
-						play_sound(@loc, array('sound': 'entity_player_attack_sweep', 'pitch': 1.4));
-						play_sound(@loc, array('sound': 'entity_snowball_throw', 'pitch': 0.52));
+						play_sound(@loc, array(sound: 'entity_player_attack_sweep', pitch: 1.4));
+						play_sound(@loc, array(sound: 'entity_snowball_throw', pitch: 0.52));
 					}
 				}
 			} catch(PlayerOfflineException @ex) {
@@ -159,20 +159,20 @@ case 'load':
 		});
 	}
 	
-	bind('player_death', array('id': @player.'entdeath'), array('player': @player), @event) {
-		drop_item(@event['location'], array('name': 'APPLE'), true);
-		play_sound(@event['location'], array('sound': 'ENTITY_HUSK_DEATH', 'pitch': 0.5));
+	bind('player_death', array(id: @player.'entdeath'), array(player: @player), @event) {
+		drop_item(@event['location'], array(name: 'APPLE'), true);
+		play_sound(@event['location'], array(sound: 'ENTITY_HUSK_DEATH', pitch: 0.5));
 	}
 	
-	bind('player_interact', array('id': @player.'entattack'), array('player': @player, 'itemname': 'OAK_LEAVES', 'hand': 'main_hand', 'button': 'right'), @event) {
+	bind('player_interact', array(id: @player.'entattack'), array(player: @player, itemname: 'OAK_LEAVES', hand: 'main_hand', button: 'right'), @event) {
 		if(!pcooldown('LEAVES')) {
 			@loc = ptarget_space();
 			if(get_block(location_shift(@loc, 'down')) != 'AIR') {
 				set_pcooldown('OAK_LEAVES', 5);
 				@loc['x'] += 0.5;
 				@loc['z'] += 0.5;
-				play_sound(@loc, array('sound': 'ENTITY_WITHER_BREAK_BLOCK', 'pitch': 1.5, 'volume': 0.7));
-				play_sound(ploc(), array('sound': 'ENTITY_PLAYER_ATTACK_SWEEP', 'pitch': 2));
+				play_sound(@loc, array(sound: 'ENTITY_WITHER_BREAK_BLOCK', pitch: 1.5, volume: 0.7));
+				play_sound(ploc(), array(sound: 'ENTITY_PLAYER_ATTACK_SWEEP', pitch: 2));
 				foreach(@p in all_players(pworld())) {
 					if(@p == player()) {
 						set_timeout(1, closure(){

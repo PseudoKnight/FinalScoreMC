@@ -7,7 +7,7 @@ proc _pvp_bomb_spawn(@id, @loc) {
 		@loc = @pvp['arena']['bombloc'];
 	}
 	if(!array_index_exists(@pvp, 'bomb') || !entity_exists(@pvp['bomb'])) {
-		@pvp['bomb'] = drop_item(@loc, array('name': @pvp['arena']['bomb']), false);
+		@pvp['bomb'] = drop_item(@loc, array(name: @pvp['arena']['bomb']), false);
 		set_timeout(1, closure(set_entity_velocity(@pvp['bomb'], null)));
 	}
 	queue_delay('15000', @id.'bomb');
@@ -36,22 +36,20 @@ proc _stats_table() {
 	));
 }
 
-@pvp['binds'][] = @id.'bombpickup';
-bind('item_pickup', array('id': @id.'bombpickup'), null, @event, @id, @pvp) {
+@pvp['binds'][] = bind('item_pickup', null, null, @event, @id, @pvp) {
 	if(array_index_exists(@pvp['players'], player())
 	&& _is_bomb(@id, @event['item'])) {
 		queue_clear(@id.'bomb');
 		@pvp['bombholder'] = player();
-		set_pinv(player(), array(-106: @event['item'], 102: array('name': 'GOLDEN_CHESTPLATE')));
+		set_pinv(player(), array(-106: @event['item'], 102: array(name: 'GOLDEN_CHESTPLATE')));
 		modify_event('item', null);
-		play_sound(ploc(player()), array('sound': 'ENTITY_ENDERMAN_TELEPORT', 'pitch': 2), player());
+		play_sound(ploc(player()), array(sound: 'ENTITY_ENDERMAN_TELEPORT', pitch: 2), player());
 		set_peffect(player(), 'GLOWING', 0, 9999, true, false);
 		title('', 'Take the bomb to the enemy target!', 0, 20, 20);
 	}
 }
 
-@pvp['binds'][] = @id.'itemdamage';
-bind('entity_damage', array('id': @id.'itemdamage'), array('type': 'DROPPED_ITEM'), @event, @pvp) {
+@pvp['binds'][] = bind('entity_damage', null, array(type: 'DROPPED_ITEM'), @event, @pvp) {
 	if(array_index_exists(@pvp, 'bomb')
 	&& @event['id'] == @pvp['bomb']) {
 		// ensure it's destroyed before spawning a new one
@@ -64,23 +62,20 @@ bind('entity_damage', array('id': @id.'itemdamage'), array('type': 'DROPPED_ITEM
 	}
 }
 
-@pvp['binds'][] = @id.'bombdrop';
-bind('item_drop', array('id': @id.'bombdrop'), array('itemname': @pvp['arena']['bomb']), @event, @pvp) {
+@pvp['binds'][] = bind('item_drop', null, array(itemname: @pvp['arena']['bomb']), @event, @pvp) {
 	if(array_contains(sk_current_regions(), @pvp['arena']['region'])) {
 		@pvp['bomb'] = @event['id'];
 		@pvp['bombholder'] = null;
 	}
 }
 
-@pvp['binds'][] = @id.'bombspawn';
-bind('item_spawn', array('id': @id.'bombspawn'), array('itemname': @pvp['arena']['bomb']), @event, @pvp) {
+@pvp['binds'][] = bind('item_spawn', null, array(itemname: @pvp['arena']['bomb']), @event, @pvp) {
 	if(array_contains(sk_regions_at(@event['location']), @pvp['arena']['region'])) {
 		set_entity_glowing(@event['id'], true);
 	}
 }
 
-@pvp['binds'][] = @id.'firedancer';
-bind('player_move', array('id': @id.'firedancer'), null, @event, @pvp, @id) {
+@pvp['binds'][] = bind('player_move', null, null, @event, @pvp, @id) {
 	if(@pvp['bombholder'] == player()) {
 		@regions = sk_current_regions();
 		@team = null;
@@ -91,7 +86,7 @@ bind('player_move', array('id': @id.'firedancer'), null, @event, @pvp, @id) {
 		}
 		if(!is_null(@team)) {
 			@item = pinv(player(), -106);
-			if(@item && @item['name'] == @pvp['arena']['bomb'] || ptake_item(array('name': @pvp['arena']['bomb']))) {
+			if(@item && @item['name'] == @pvp['arena']['bomb'] || ptake_item(array(name: @pvp['arena']['bomb']))) {
 				set_pinv(player(), -106, null);
 				@bind = bind('entity_damage', null, array(type: 'PLAYER'), @event, @damager = player(), @pvp) {
 					if(array_index_exists(@pvp['players'], @event['player'])) {
@@ -109,13 +104,13 @@ bind('player_move', array('id': @id.'firedancer'), null, @event, @pvp, @id) {
 					set_block(@pvp['arena']['rsoutputscore'][@team], 'REDSTONE_TORCH');
 					set_timeout(1000, closure(){
 						set_block(@pvp['arena']['rsoutputscore'][@team], 'TORCH');
-					})
+					});
 				}
 				_pvp_bomb_spawn(@id);
 				_pvp_check_objectives(@id);
 			}
 			@pvp['bombholder'] = null;
-			set_pinv(player(), 102, array('name': 'IRON_CHESTPLATE', 'meta': array('enchants': array('fire_protection': array('elevel': 1)))));
+			set_pinv(player(), 102, array(name: 'IRON_CHESTPLATE', meta: array(enchants: array(fire_protection: array(elevel: 1)))));
 		} else {
 			spawn_particle(location_shift(@event['to'], 'up'),'CAMPFIRE_COSY_SMOKE');
 		}

@@ -49,7 +49,7 @@ proc _weapon_hit_scan(@player, @range, @raySize, @damage, @effects, @pvp){
 	@players = array();
 	
 	if(@trace['hitblock'] && array_index_exists(@effects, 'hitparticle')) {
-		spawn_particle(@location, array('particle': @effects['hitparticle'], 'count': 8, 'speed': 0.05));
+		spawn_particle(@location, array(particle: @effects['hitparticle'], count: 8, speed: 0.05));
 	}
 	if(@entities) {
 		foreach(@entity in @entities) {
@@ -64,7 +64,7 @@ proc _weapon_hit_scan(@player, @range, @raySize, @damage, @effects, @pvp){
 						if(is_array(@hitsound)) {
 							play_sound(@origin, @hitsound, player());
 						} else {
-							play_sound(@origin, array('sound': @hitsound), player());
+							play_sound(@origin, array(sound: @hitsound), player());
 						}
 					}
 					@players[] = @player;
@@ -75,7 +75,7 @@ proc _weapon_hit_scan(@player, @range, @raySize, @damage, @effects, @pvp){
 					damage_entity(@entity['uuid'], @damage, @damager);
 				}
 				if(array_index_exists(@effects, 'hitparticle')) {
-					spawn_particle(@entity['location'], array('particle': @effects['hitparticle'], 'count': 4, 'speed': 0.05));
+					spawn_particle(@entity['location'], array(particle: @effects['hitparticle'], count: 4, speed: 0.05));
 				}
 			}
 		}

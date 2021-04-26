@@ -2,7 +2,7 @@ switch(@action) {
 case 'load':
 	set_peffect(@player, 'MINING_FATIGUE', 1, 9999, true, false);
 	set_pcooldown(@player, 'WEB', 0);
-	bind('entity_damage', array('id': @player.'damage'), array('type': 'PLAYER', 'cause': 'ENTITY_ATTACK'), @e, @p = @player) {
+	bind('entity_damage', array(id: @player.'damage'), array(type: 'PLAYER', cause: 'ENTITY_ATTACK'), @e, @p = @player) {
 		if(@e['damager'] == @p) {
 			@weapon = pinv(@p, null);
 			if(@weapon && @weapon['name'] == 'STONE_HOE') {
@@ -12,7 +12,7 @@ case 'load':
 		}
 	}
 
-	bind('player_interact', array('id': @player.'web'), array('player': @player, 'button': 'right', 'itemname': 'COBWEB'), @e, @pvp) {
+	bind('player_interact', array(id: @player.'web'), array(player: @player, button: 'right', itemname: 'COBWEB'), @e, @pvp) {
 		@item = pinv(player(), null);
 		if(@item && pcooldown(@item['name']) == 0) {
 			@item['qty'] = 1;
@@ -32,7 +32,7 @@ case 'load':
 						foreach(@p in array_keys(@pvp['players'])) {
 							psend_block_change(@p, @loc, 'COBWEB');
 						}
-						play_sound(@loc, array('sound': 'ENTITY_SPIDER_AMBIENT', 'pitch': 2));
+						play_sound(@loc, array(sound: 'ENTITY_SPIDER_AMBIENT', pitch: 2));
 					} else {
 						queue_clear(player().'web');
 					}

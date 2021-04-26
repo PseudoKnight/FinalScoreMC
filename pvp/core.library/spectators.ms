@@ -4,7 +4,7 @@ proc _spectator_add(@player, @pvp) {
 	}
 	@pvp['spectators'][] = @player;
 	set_pmode(@player, 'SPECTATOR');
-	set_pscoreboard(@player, @id);
+	set_pscoreboard(@player, @pvp['id']);
 	if(!array_contains(sk_current_regions(), @pvp['arena']['region'])) {
 		@spawn = false;
 		foreach(@p in array_keys(@pvp['players'])) {

@@ -1,5 +1,4 @@
-@pvp['binds'][] = @id.'battlerifle';
-bind('player_interact', array('id': @id.'battlerifle'), array('itemname': 'IRON_HOE'), @event, @pvp) {
+@pvp['binds'][] = bind('player_interact', null, array(itemname: 'IRON_HOE'), @event, @pvp) {
 	if(!array_index_exists(@pvp['players'], player()) || pinfo(player(), 6) != @event['item']['name']){
 		die();
 	}
@@ -13,20 +12,20 @@ bind('player_interact', array('id': @id.'battlerifle'), array('itemname': 'IRON_
 	@maxAmmo = @item['meta']['lore'][1];
 	
 	if(@currentAmmo <= 0) {
-		play_sound(ploc(), array('sound': 'UI_BUTTON_CLICK', 'pitch': 2));
+		play_sound(ploc(), array(sound: 'UI_BUTTON_CLICK', pitch: 2));
 		action_msg(player(), @currentAmmo.' / '.@maxAmmo);
 	}
 	
-	_weapon_hit_scan(player(), 84, 0.0, 1.29, array('tracerparticle': 'SUSPENDED_DEPTH', 'hitparticle': 'SMOKE_LARGE'), @pvp);
-	play_sound(ploc(), array('sound': 'ENTITY_FIREWORK_ROCKET_BLAST', 'pitch': 0.8, 'volume': 4));
+	_weapon_hit_scan(player(), 84, 0.0, 1.29, array(tracerparticle: 'SUSPENDED_DEPTH', hitparticle: 'SMOKE_LARGE'), @pvp);
+	play_sound(ploc(), array(sound: 'ENTITY_FIREWORK_ROCKET_BLAST', pitch: 0.8, volume: 4));
 	action_msg(player(), (--@currentAmmo).' / '.@maxAmmo);
 	set_pcooldown(@item['name'], 500 / 50);
 	@item['meta']['lore'] = array(@currentAmmo, @maxAmmo);
 	set_pinv(player(), @slot, @item);
 	set_timeout(50, closure(){
 		if(pheld_slot() == @slot) {
-			_weapon_hit_scan(player(), 84, 0.0, 2.58, array('tracerparticle': 'SUSPENDED_DEPTH', 'hitparticle': 'SMOKE_LARGE'), @pvp);
-			play_sound(ploc(), array('sound': 'ENTITY_FIREWORK_ROCKET_BLAST', 'pitch': 0.8, 'volume': 4));
+			_weapon_hit_scan(player(), 84, 0.0, 2.58, array(tracerparticle: 'SUSPENDED_DEPTH', hitparticle: 'SMOKE_LARGE'), @pvp);
+			play_sound(ploc(), array(sound: 'ENTITY_FIREWORK_ROCKET_BLAST', pitch: 0.8, volume: 4));
 			action_msg(player(), (--@currentAmmo).' / '.@maxAmmo);
 			@newitem = pinv(player(), @slot);
 			if(@newitem && @newitem['name'] == 'IRON_HOE') {
@@ -35,8 +34,8 @@ bind('player_interact', array('id': @id.'battlerifle'), array('itemname': 'IRON_
 			}
 			set_timeout(50, closure(){
 				if(pheld_slot() == @slot) {
-					_weapon_hit_scan(player(), 84, 0.0, 3.87, array('tracerparticle': 'SUSPENDED_DEPTH', 'hitparticle': 'SMOKE_LARGE'), @pvp);
-					play_sound(ploc(), array('sound': 'ENTITY_FIREWORK_ROCKET_BLAST', 'pitch': 0.8, 'volume': 4));
+					_weapon_hit_scan(player(), 84, 0.0, 3.87, array(tracerparticle: 'SUSPENDED_DEPTH', hitparticle: 'SMOKE_LARGE'), @pvp);
+					play_sound(ploc(), array(sound: 'ENTITY_FIREWORK_ROCKET_BLAST', pitch: 0.8, volume: 4));
 					action_msg(player(), (--@currentAmmo).' / '.@maxAmmo);
 					@newitem = pinv(player(), @slot);
 					if(@newitem && @newitem['name'] == 'IRON_HOE') {
@@ -44,10 +43,10 @@ bind('player_interact', array('id': @id.'battlerifle'), array('itemname': 'IRON_
 						set_pinv(player(), @slot, @newitem);
 					}
 					if(@currentAmmo <= 0 && @maxAmmo > 0) {
-						play_sound(ploc(), array('sound': 'BLOCK_WOODEN_DOOR_OPEN', 'pitch': 2));
+						play_sound(ploc(), array(sound: 'BLOCK_WOODEN_DOOR_OPEN', pitch: 2));
 						set_pcooldown(@item['name'], 1900 / 50);
 						set_timeout(1900, closure(){
-							play_sound(ploc(), array('sound': 'BLOCK_WOODEN_DOOR_CLOSE', 'pitch': 2));
+							play_sound(ploc(), array(sound: 'BLOCK_WOODEN_DOOR_CLOSE', pitch: 2));
 							@amount = min(@maxAmmo, 36);
 							@currentAmmo = @amount;
 							@maxAmmo -= @amount;

@@ -24,7 +24,7 @@ case 'load':
 		}
 	});
 	
-	bind('entity_toggle_glide', array('id': @player.'glide'), array('type': 'PLAYER', 'player': @player), @e, @glideState) {
+	bind('entity_toggle_glide', array(id: @player.'glide'), array(type: 'PLAYER', player: @player), @e, @glideState) {
 		if(@e['gliding']) {
 			@glideState[0] = true;
 		} else if(@glideState[0]) {
@@ -32,20 +32,20 @@ case 'load':
 		}
 	}
 
-	bind('player_toggle_sneak', array('id': @player.'sneak'), array('sneaking': true), @e, @player, @glideState) {
+	bind('player_toggle_sneak', array(id: @player.'sneak'), array(sneaking: true), @e, @player, @glideState) {
 		if(player() == @player) {
 			@glideState[0] = false;
 			set_entity_gliding(puuid(), false);
 			set_entity_fall_distance(puuid(), 0);
-			play_sound(ploc(), array('sound': 'ENTITY_ENDER_DRAGON_FLAP', 'category': 'PLAYERS', 'pitch': 1.3, 'volume': 0.4));
+			play_sound(ploc(), array(sound: 'ENTITY_ENDER_DRAGON_FLAP', category: 'PLAYERS', pitch: 1.3, volume: 0.4));
 		}
 	}
 	
-	bind('player_interact', array('id': @player.'boost'), array('player': @player, 'button': 'right', 'itemname': 'WOODEN_AXE'), @e) {
+	bind('player_interact', array(id: @player.'boost'), array(player: @player, button: 'right', itemname: 'WOODEN_AXE'), @e) {
 		if(!pcooldown('WOOD_AXE')) {
 			set_pvelocity(player(), get_vector(ploc(), 0.6));
 			set_pcooldown('WOODEN_AXE', 4000 / 50);
-			play_sound(ploc(), array('sound': 'ENTITY_ENDER_DRAGON_FLAP', 'category': 'PLAYERS', 'pitch': 1.3, 'volume': 0.4));
+			play_sound(ploc(), array(sound: 'ENTITY_ENDER_DRAGON_FLAP', category: 'PLAYERS', pitch: 1.3, volume: 0.4));
 		}
 	}
 	

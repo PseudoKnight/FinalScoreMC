@@ -1,6 +1,6 @@
 switch(@action) {
 case 'load':
-	bind('player_interact', array('id': @player.'interact'), array('player': @player, 'button': 'right', 'itemname': 'IRON_HOE', 'hand': 'main_hand'), @e) {
+	bind('player_interact', array(id: @player.'interact'), array(player: @player, button: 'right', itemname: 'IRON_HOE', hand: 'main_hand'), @e) {
 		cancel();
 		if(get_block(ploc()) === 'AIR' || phunger() == 0) {
 			die();
@@ -12,7 +12,7 @@ case 'load':
 		@y = max((1.40 * sin(to_radians(@facing[1]))) + 0.2, 0.2);
 		@z = 1.40 * sin(to_radians(@facing[0])) * cos(to_radians(@facing[1]));
 		set_pvelocity(player(), @x, @y, @z);
-		play_sound(ploc(), array('sound': 'ENTITY_GHAST_WARN', 'pitch': 2, 'volume': 2));
+		play_sound(ploc(), array(sound: 'ENTITY_GHAST_WARN', pitch: 2, volume: 2));
 		set_timeout(1, closure(){
 			set_pvelocity(player(), @x, @y, @z);
 			if(psaturation() >= 1) {
@@ -22,12 +22,14 @@ case 'load':
 			}
 		});
 	}
-	bind('entity_damage', array('id': @player.'falldamage'), array('type': 'PLAYER', 'cause': 'FALL'), @e, @p = @player) {
-		if(@e['player'] == @p, cancel())
+	bind('entity_damage', array(id: @player.'falldamage'), array(type: 'PLAYER', cause: 'FALL'), @e, @p = @player) {
+		if(@e['player'] == @p) {
+			cancel();	
+		}
 	}
-	bind('entity_damage', array('id': @player.'damage'), array('type': 'PLAYER', 'cause': 'ENTITY_ATTACK'), @e, @p = @player) {
+	bind('entity_damage', array(id: @player.'damage'), array(type: 'PLAYER', cause: 'ENTITY_ATTACK'), @e, @p = @player) {
 		if(@e['damager'] == @p) {
-			@helm = pinv(@e['player'], 103)
+			@helm = pinv(@e['player'], 103);
 			if(@helm && @helm['name'] == 'GLASS') {
 				modify_event('amount', 13);
 			} else {
@@ -36,32 +38,32 @@ case 'load':
 		} else if(@e['player'] == @p
 		&& length(@e['damager']) > 16
 		&& entity_type(@e['damager']) === 'ZOMBIE') {
-			cancel()
+			cancel();
 		}
 	}
-	bind('player_death', array('id': @player.'death'), array('player': @player), @e) {
-		play_sound(ploc(), array('sound': 'ENTITY_GHAST_DEATH', 'pitch': 0))
+	bind('player_death', array(id: @player.'death'), array(player: @player), @e) {
+		play_sound(ploc(), array(sound: 'ENTITY_GHAST_DEATH', pitch: 0));
 	}
 
 	proc _manti_noise(@player) {
 		if(ponline(@player)) {
 			if(pmode(@player) != 'SPECTATOR') {
-				play_sound(ploc(@player), array('sound': 'ENTITY_CAT_PURREOW', 'pitch': 0, 'volume': 2))
+				play_sound(ploc(@player), array(sound: 'ENTITY_CAT_PURREOW', pitch: 0, volume: 2));
 			}
-			queue_delay(1000 * rand(6, 18), @player)
-			queue_push(closure(_manti_noise(@player)), @player)
+			queue_delay(1000 * rand(6, 18), @player);
+			queue_push(closure(_manti_noise(@player)), @player);
 		}
 	}
-	_manti_noise(@player)
+	_manti_noise(@player);
 
 case 'powerup':
 	set_phunger(@player, min(20, phunger(@player) + 4));
 
 case 'unload':
-	unbind(@player.'interact')
-	unbind(@player.'falldamage')
-	unbind(@player.'damage')
-	unbind(@player.'death')
-	queue_clear(@player)
+	unbind(@player.'interact');
+	unbind(@player.'falldamage');
+	unbind(@player.'damage');
+	unbind(@player.'death');
+	queue_clear(@player);
 
 }

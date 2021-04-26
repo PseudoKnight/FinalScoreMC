@@ -1,6 +1,4 @@
-@pvp['binds'][] = @id.'endernades';
-bind('player_teleport', array('id': @id.'endernades', 'priority': 'highest'), array('type': 'ENDER_PEARL'), @e, @id) {
-	@pvp = import('pvp'.@id);
+@pvp['binds'][] = bind('player_teleport', array(priority: 'highest'), array(type: 'ENDER_PEARL'), @e, @pvp) {
 	if(!array_index_exists(@pvp['players'], player())) {
 		die();
 	}
@@ -12,7 +10,7 @@ bind('player_teleport', array('id': @id.'endernades', 'priority': 'highest'), ar
 	
 	@a = @e['to'];
 	spawn_particle(@a, 'EXPLOSION_LARGE');
-	play_sound(@a, associative_array('sound': 'ENTITY_GENERIC_EXPLODE', 'volume': 3));
+	play_sound(@a, associative_array(sound: 'ENTITY_GENERIC_EXPLODE', volume: 3));
 	foreach(@p in players_in_radius(@a, 7)) {
 		if(pmode(@p) == 'SPECTATOR') {
 			continue();
@@ -39,16 +37,14 @@ bind('player_teleport', array('id': @id.'endernades', 'priority': 'highest'), ar
 	}
 }
 
-@pvp['binds'][] = @id.'endernadesreload';
-bind('player_interact', array('id': @id.'endernadesreload', 'priority': 'highest'), array('itemname': 'ENDER_PEARL', 'button': 'right'), @e, @id) {
-	@pvp = import('pvp'.@id)
+@pvp['binds'][] = bind('player_interact', array(priority: 'highest'), array(itemname: 'ENDER_PEARL', button: 'right'), @e, @pvp) {
 	if(!array_index_exists(@pvp['players'], player()) || pinfo(player(), 6) != @e['item']['name']) {
 		die();
 	}
-	cancel()
-	shoot_projectile(player(), 'ENDER_PEARL')
-	play_sound(ploc(), array('sound': 'ENTITY_ARROW_SHOOT', 'pitch': 0.5))
+	cancel();
+	shoot_projectile(player(), 'ENDER_PEARL');
+	play_sound(ploc(), array(sound: 'ENTITY_ARROW_SHOOT', pitch: 0.5));
 	_weapon_cooldown(player(), 2500, 'MAGMA_CREAM', closure(){
-		play_sound(ploc(), array('sound': 'ENTITY_IRON_GOLEM_ATTACK'));
+		play_sound(ploc(), array(sound: 'ENTITY_IRON_GOLEM_ATTACK'));
 	});
 }
