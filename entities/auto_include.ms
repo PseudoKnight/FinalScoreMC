@@ -220,3 +220,50 @@ proc _get_custom_entities() {
 	}
 	return(@custom);
 }
+
+/*
+	Removes entities that are inside a region.
+
+	@region: The WorldGuard region name.
+	@types: Array of entity types to remove. Defaults to all but excluded types. Can override excluded types.
+	@world: The world to remove the entities from. Defaults to 'custom'.
+	@removeProtected: If true, will also remove excluded entity types. Defaults to false.
+	@excludeTypes: An array of excluded entity types. (visible armor stands are also protected)
+
+	Returns: Number of entities removed.
+*/
+proc _remove_region_entities(
+	@region,
+	@types = array(),
+	@world = 'custom',
+	@removeProtected = false,
+	@excludeTypes = array('PLAYER', 'COMPLEX_PART', 'ITEM_FRAME', 'PAINTING', 'UNKNOWN')
+) {
+	if(!sk_region_exists(@world, @region)) {
+		console('Can\'t remove entities because region doesn\'t exist: '.@region, false);
+		return(0);
+	}
+	@count = 0;
+	foreach(@entity in all_entities(@world)) {
+		@type = entity_type(@entity);
+		if(!@types && !array_contains(@excludeTypes, @type) || array_contains(@types, @type)) {
+			@loc = entity_loc(@entity);
+			if(!array_contains(sk_regions_at(@loc), @region)) {
+				continue();
+			}
+			if(@type == 'ARMOR_STAND' && !@removeProtected) {
+				if(entity_spec(@entity)['visible']) {
+					continue();
+				}
+			}
+			try {
+				entity_remove(@entity);
+				@count++;
+			} catch(BadEntityException @ex) {
+				console('Entity not found when trying to remove from region.', false);
+				console('Region: '.@region.', EntityID: '.@entity, false);
+			}
+		}
+	}
+	return(@count);
+}
