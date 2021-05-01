@@ -1,21 +1,18 @@
-proc _pvp_bomb_spawn(@id, @loc) {
-	@pvp = import('pvp'.@id);
-	if(!@pvp['running']) {
-		return();
-	}
-	if(!is_array(@loc)) {
+proc _interval(@pvp, @id) {
+	_pvp_bomb_spawn(@pvp);
+}
+
+proc _pvp_bomb_spawn(@pvp, @loc) {
+	if(!@loc) {
 		@loc = @pvp['arena']['bombloc'];
 	}
-	if(!array_index_exists(@pvp, 'bomb') || !entity_exists(@pvp['bomb'])) {
+	if(!@pvp['bombholder'] && (!array_index_exists(@pvp, 'bomb') || !entity_exists(@pvp['bomb']))) {
 		@pvp['bomb'] = drop_item(@loc, array(name: @pvp['arena']['bomb']), false);
 		set_timeout(1, closure(set_entity_velocity(@pvp['bomb'], null)));
 	}
-	queue_delay('15000', @id.'bomb');
-	queue_push(closure(_pvp_bomb_spawn(@id)), @id.'bomb');
 }
 
-proc _is_bomb(@id, @item) {
-	@pvp = import('pvp'.@id);
+proc _is_bomb(@pvp, @item) {
 	if(!@pvp['running']) {
 		return(false);
 	}
@@ -36,10 +33,9 @@ proc _stats_table() {
 	));
 }
 
-@pvp['binds'][] = bind('item_pickup', null, null, @event, @id, @pvp) {
+@pvp['binds'][] = bind('item_pickup', null, null, @event, @pvp) {
 	if(array_index_exists(@pvp['players'], player())
-	&& _is_bomb(@id, @event['item'])) {
-		queue_clear(@id.'bomb');
+	&& _is_bomb(@pvp, @event['item'])) {
 		@pvp['bombholder'] = player();
 		set_pinv(player(), array(-106: @event['item'], 102: array(name: 'GOLDEN_CHESTPLATE')));
 		modify_event('item', null);
@@ -56,7 +52,6 @@ proc _stats_table() {
 		set_timeout(100, closure() {
 			if(!entity_exists(@event['id'])) {
 				array_remove(@pvp, 'bomb');
-				_pvp_bomb_spawn(@pvp['id']);
 			}
 		});
 	}
@@ -106,7 +101,6 @@ proc _stats_table() {
 						set_block(@pvp['arena']['rsoutputscore'][@team], 'TORCH');
 					});
 				}
-				_pvp_bomb_spawn(@id);
 				_pvp_check_objectives(@id);
 			}
 			@pvp['bombholder'] = null;
@@ -117,5 +111,4 @@ proc _stats_table() {
 	}
 }
 
-_pvp_bomb_spawn(@id);
 @pvp['bombholder'] = null;

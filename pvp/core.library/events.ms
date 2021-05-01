@@ -168,17 +168,17 @@ proc _bind_events(@pvp) {
 					} else {
 						_pvp_flag_spawn(@id, @flag, location_shift(ploc(), 'up'));
 					}
-				} else if(@arena['mode'] == 'bombingrun' && _is_bomb(@id, @drop)) {
+				} else if(@arena['mode'] == 'bombingrun' && _is_bomb(@pvp, @drop)) {
+					@pvp['bombholder'] = null;
 					switch(@e['cause']['cause']) {
 						case 'VOID':
 						case 'LAVA':
 						case 'FIRE':
 						case 'FIRE_TICK':
-							_pvp_bomb_spawn(@id);
+							_pvp_bomb_spawn(@pvp);
 						default:
-							_pvp_bomb_spawn(@id, location_shift(ploc(), 'up'));
+							_pvp_bomb_spawn(@pvp, location_shift(ploc(), 'up'));
 					}
-					@pvp['bombholder'] = null;
 				} else if(array_index_exists(@arena, 'captain')
 				&& @drop['name'] == @pvp['team'][@team]['captainhat']['name']) {
 					@pvp['team'][@team]['captain'] = '';
