@@ -776,7 +776,7 @@ proc _scavengerhunt_win(@player) {
 }
 
 if(@size) {
-	proc _refresh_card(@create = false, @cardSize = @size) {
+	proc _refresh_card(@cardSize = @size) {
 		@card = import('shard.card');
 		@chest = associative_array();
 		@size = 54;
@@ -805,10 +805,10 @@ if(@size) {
 					}
 				}
 			}
-			if(@create && player() == @p) {
-				create_virtual_inventory(@p.'card', @size, @p.'\'s Card', @chest);
-			} else {
+			if(array_contains(get_virtual_inventories(), @p.'card')) {
 				set_inventory(@p.'card', @chest);
+			} else {
+				create_virtual_inventory(@p.'card', @size, @p.'\'s Card', @chest);
 			}
 		}
 	}
@@ -850,7 +850,7 @@ if(@size) {
 	}
 
 } else {
-	proc _refresh_card(@create = false) {
+	proc _refresh_card() {
 		@card = import('shard.card');
 		@colorMap = import('shard.colors');
 		@chest = associative_array();
@@ -873,13 +873,13 @@ if(@size) {
 				}
 			}
 		}
-		if(@create) {
-			create_virtual_inventory('shardcard', 54, 'Get 4 In A Row', @chest);
-		} else {
+		if(array_contains(get_virtual_inventories(), 'shardcard')) {
 			set_inventory('shardcard', @chest);
+		} else {
+			create_virtual_inventory('shardcard', 54, 'Get 4 In A Row', @chest);
 		}
 	}
-	_refresh_card(true);
+	_refresh_card();
 
 	proc _check_card(@player, @row, @column) {
 		@card = import('shard.card');
@@ -967,7 +967,7 @@ bind('world_changed', array('id': 'shard-scavenger-worldchanged', 'priority': 'L
 			set_team_display(player(), array('color': @colorMap[player()][1]), 'shard');
 			pgive_item(player(), array('name': 'MAP', 'meta': array('display': 'Scavenger Hunt Card')));
 			if(@size) {
-				_refresh_card(true);
+				_refresh_card();
 			}
 		} catch(IndexOverflowException @ex) {
 			set_pmode('SPECTATOR');
