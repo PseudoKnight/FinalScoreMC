@@ -186,9 +186,11 @@ bind('player_quit', null, null, @event) {
 	}
 	broadcast(colorize('&8'.simple_date('h:mm').' &4\u00ab &o'.@msg));
 	if(extension_exists('CHDiscord')) {
-		@count = array_size(all_players()) - 1;
-		@msg = reg_replace('[&§][0-9a-fk-o]', '', @msg);
-		try(discord_broadcast('minecraft_chat', '**\u00ab '.@msg.'** ('.@count.' player'.if(@count != 1, 's').' online)'));
+		set_timeout(1, closure(){
+			@count = array_size(all_players());
+			@msg = reg_replace('[&§][0-9a-fk-o]', '', @msg);
+			discord_broadcast('minecraft_chat', '**\u00ab '.@msg.'** ('.@count.' player'.if(@count != 1, 's').' online)');
+		});
 	}
 	try {
 		@pdata['world'] = pworld();
@@ -198,6 +200,7 @@ bind('player_quit', null, null, @event) {
 	}
 	export('pdata.'.to_lower(@event['player']), null); // clear player data cache
 	export('session.'.player(), null); // clear player state data
+	// clear aliases used for autocompletion
 	if(array_index_exists(@pdata, 'names')) {
 		@players = import('players', associative_array());
 		foreach(@name in @pdata['names']) {
