@@ -4,6 +4,7 @@
 
 	requiredExtensions: CHNaughty;
 	requiredProcs: _add_activity() and _remove_activity() procedures to keep a list of all current activities on server.
+	As well as _get_worldborder() to get the limits of the world.
 >
 register_command('greatrace', array(
 	'description': 'Creates a race in survival for all players in the area.',
