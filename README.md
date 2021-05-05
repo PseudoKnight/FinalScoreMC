@@ -5,12 +5,15 @@ Visit http://methodscript.com for details on CommandHelper itself and the Method
 The following CommandHelper extensions are used:
 
 - [CHDiscord](https://github.com/PseudoKnight/CHDiscord/)
+- [CHDisguises](https://github.com/PseudoKnight/CHDisguises/)
 - [CHDynmap](https://github.com/PseudoKnight/CHDynmap/)
 - [CHFiles](https://github.com/PseudoKnight/CHFiles/)
 - [CHNaughty](https://github.com/PseudoKnight/CHNaughty/)
 - [CHPaper](https://github.com/PseudoKnight/CHPaper)
 - [CHPerms](https://github.com/jb-aero/CHPerms/)
+- [CHRegionChange](https://github.com/PseudoKnight/CHRegionChange)
 - CHSerialize
 - [CHSpigot](https://github.com/PseudoKnight/CHSpigot/)
 - [CHStargate](https://github.com/PseudoKnight/CHStargate/)
+- CHWorldBorderAPI
 - [SKCompat](https://github.com/jb-aero/SKCompat/)
