@@ -2,21 +2,14 @@ register_command('class', array(
 	description: 'Manages pvp class configurations.',
 	usage: '/class <set|load|delete|info|list|rename> <arena_id:class_id> <setting> <value(s)>',
 	permission: 'command.class',
-	tabcompleter: closure(@alias, @sender, @args, @info) {
-		if(array_size(@args) == 1) {
-			return(_strings_start_with_ic(array('set', 'load', 'delete', 'info', 'list', 'rename'), @args[-1]));
-		} else if(array_size(@args) == 3) {
-			@action = @args[0];
-			if(@action == 'set' || @action == 'delete') {
-				@completions = array('selector', 'kit', 'ammo', 'stacklimit', 'speed', 'hunger', 'effect', 'script',
-						'team', 'xp', 'limit', 'disabled');
-			} else if(@action == 'load') {
-				@completions = array('kit', 'selector', 'ammo');
-			}
-			return(_strings_start_with_ic(@completions, @args[-1]));
-		}
-		return(array());
-	},
+	tabcompleter: _create_tabcompleter(
+		array('set', 'load', 'delete', 'info', 'list', 'rename'),
+		null,
+		array(
+			'<<set|delete': array('selector', 'kit', 'ammo', 'stacklimit', 'speed', 'hunger', 'effect', 'script',
+					'team', 'xp', 'limit', 'disabled'),
+			'<<load': array('kit', 'selector', 'ammo')),
+	),
 	executor: closure(@alias, @sender, @args, @info) {
 		if(array_size(@args) < 2) {
 			return(false);

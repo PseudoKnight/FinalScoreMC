@@ -5,20 +5,12 @@ foreach(@i: @key in @arenaList) {
 register_command('pvp', array(
 	description: 'Starting and managing active PVP games.',
 	usage: '/pvp <join|start|vote|spectate> <arena>',
-	tabcompleter: closure(@alias, @sender, @args, @info) {
-		if(array_size(@args) == 1) {
-			if(has_permission('group.builder')) {
-				return(_strings_start_with_ic(array('join', 'start', 'vote', 'spectate', 'debug', 'addtime',
-						'end', 'stats', 'reload'), @args[-1]));
-			} else {
-				return(_strings_start_with_ic(array('join', 'start', 'vote', 'spectate'), @args[-1]));
-			}
-		}
-		if(array_size(@args) == 2) {
-			return(_strings_start_with_ic(@arenaList, @args[-1]));
-		}
-		return(array());
-	},
+	tabcompleter: _create_tabcompleter(
+		array(
+			'group.builder': array('join', 'start', 'vote', 'spectate', 'debug', 'addtime', 'end', 'stats', 'reload'),
+			null: array('join', 'start', 'vote', 'spectate')),
+		@arenaList
+	),
 	executor: closure(@alias, @sender, @args, @info) {
 		if(array_size(@args) < 2) {
 			return(false);

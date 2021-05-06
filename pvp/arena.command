@@ -1,35 +1,24 @@
 register_command('arena', array(
 	description: 'Manages pvp arena configurations.',
 	usage: '/arena <list|set|add|load|move|delete|info|stats|resetstats> [arena_id] [setting] [value(s)]',
-	tabcompleter: closure(@alias, @sender, @args, @info) {
-		if(array_size(@args) == 1) {
-			return(_strings_start_with_ic(array('list', 'set', 'add', 'load', 'move', 'delete', 'info',
-					'stats', 'resetstats'), @args[-1]));
-		} else if(array_size(@args) == 3) {
-			@action = @args[0];
-			@completions = array();
-			if(@action == 'set' || @action == 'delete') {
-				@completions = array('class_picks', 'delay', 'lives', 'max', 'min', 'respawntime', 'score', 'time',
-						'dropchance', 'saturation', 'hunger', 'rounds', 'timer', 'teamratio', 'class_picking',
-						'kothregion', 'parent', 'powerup', 'region', 'resourcepack', 'respawnmode', 'goalname',
-						'captain', 'nametags', 'stats', 'build', 'debug', 'hideplayers', 'infinitedispensers',
-						'keepinventory', 'nobottles', 'noinventory', 'noxp', 'rallycall', 'stackedpickup',
-						'heartsdisplay', 'script', 'exitrespawn', 'description', 'lobby', 'podium', 'kothbeacon',
-						'ctfflag', 'respawn', 'spawn','blockbreak', 'ff', 'arenaselect', 'sharedarenas', 'mode',
-						'mobprotect', 'team', 'kit', 'restore','itemspawn', 'chestgroup', 'chestspawn', 'rsoutput',
-						'rsoutputscore', 'effect', 'denydrop', 'mobspawn', 'weapons', 'options');
-				if(!@args[2]) {
-					return(@completions);
-				}
-			} else if(@action == 'add') {
-				@completions = array('description', 'arenaselect', 'weapons', 'options');
-			} else if(@action == 'load') {
-				@completions = array('kit', 'chestspawn', 'spawn');
-			}
-			return(_strings_start_with_ic(@completions, @args[-1]));
-		}
-		return(array());
-	},
+	tabcompleter: _create_tabcompleter(
+		array(
+			'group.builder': array('list', 'set', 'add', 'load', 'move', 'delete', 'info', 'stats', 'resetstats'),
+			null: array('list', 'info', 'stats'))
+		null,
+		array(
+			'<<set|delete': array('class_picks', 'delay', 'lives', 'max', 'min', 'respawntime', 'score', 'time',
+					'dropchance', 'saturation', 'hunger', 'rounds', 'timer', 'teamratio', 'class_picking',
+					'kothregion', 'parent', 'powerup', 'region', 'resourcepack', 'respawnmode', 'goalname',
+					'captain', 'nametags', 'stats', 'build', 'debug', 'hideplayers', 'infinitedispensers',
+					'keepinventory', 'nobottles', 'noinventory', 'noxp', 'rallycall', 'stackedpickup',
+					'heartsdisplay', 'script', 'exitrespawn', 'description', 'lobby', 'podium', 'kothbeacon',
+					'ctfflag', 'respawn', 'spawn','blockbreak', 'ff', 'arenaselect', 'sharedarenas', 'mode',
+					'mobprotect', 'team', 'kit', 'restore','itemspawn', 'chestgroup', 'chestspawn', 'rsoutput',
+					'rsoutputscore', 'effect', 'denydrop', 'mobspawn', 'weapons', 'options'),
+			'<<add': array('description', 'arenaselect', 'weapons', 'options'),
+			'<<load': array('kit', 'chestspawn', 'spawn'))
+	),
 	executor: closure(@alias, @sender, @args, @info) {
 		if(!@args) {
 			return(false);
