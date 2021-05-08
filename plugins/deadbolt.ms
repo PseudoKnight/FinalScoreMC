@@ -29,8 +29,7 @@ bind('player_interact', null, null, @event) {
 				play_sound(@loc, array('sound': 'BLOCK_WOOD_PLACE'));
 				play_sound(@loc, array('sound': 'BLOCK_FIRE_EXTINGUISH', 'pitch': 2));
 				@facing = get_blockdata(@loc)['facing'];
-				@loc['y'] += 0.5;
-				spawn_particle(location_shift(@loc, @facing, -1), 'LAVA');
+				spawn_particle(location_shift(location_shift(@loc, @facing, -1), 'up', 0.5), 'LAVA');
 			}
 		}
 	}
