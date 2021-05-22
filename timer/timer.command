@@ -171,7 +171,7 @@ register_command('timer', array(
 			set_pinv(@player, 2, @checkpointButton);
 			unbind(@player.'checkpoint');
 			bind('player_interact', array(id: @player.'checkpoint'), array(player: @player, itemname: 'GOLD_NUGGET'), @event, @loc) {
-				if(!pcooldown('IRON_NUGGET') && (@event['action'] != 'right_click_block' || !string_ends_with(@event['block'], 'BUTTON'))) {
+				if(!pcooldown('IRON_NUGGET') && (!@event['block'] || !string_ends_with(@event['block'], 'BUTTON'))) {
 					cancel();
 					set_entity_fall_distance(puuid(), 0);
 					set_ploc(@loc);
