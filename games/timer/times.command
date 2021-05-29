@@ -17,7 +17,7 @@ register_command('times', array(
 		@player = '';
 
 		if(@args) {
-			if(array_contains(array('top', 'avg', 'segmented', 'best', 'worst', 'reset', 'resetplayer'), @args[0])) {
+			if(array_contains(array('top', 'avg', 'segmented', 'best', 'worst', 'reset', 'resetplayer', 'recalculate'), @args[0])) {
 				@action = @args[0];
 				if(array_size(@args) > 1) {
 					@id = @args[1];
@@ -339,6 +339,91 @@ register_command('times', array(
 						@lines++;
 					}
 				}
+
+			case 'recalculate':
+				@allcourses = get_values('times');
+				x_new_thread('times', closure(){
+					// Add all players to course lists
+					foreach(@key: @time in @allcourses) {
+						if(is_array(@time)) {
+							// This is a list. We're only interested in player times.
+							continue();
+						}
+						@split = split('.', @key, 2);
+						@course = @split[1];
+						@uuid = @split[2];
+						@player = _pdata_by_uuid(@uuid)['name'];
+						@times = @allcourses['times.'.@course];
+						for(@i = 0, @i <= array_size(@times), @i++) {
+							if(!array_index_exists(@times, @i)) {
+								// end of list
+								@times[] = array(@uuid, @player, @time);
+								break();
+							} else if(@times[@i][0] == @uuid) {
+								// already exists in the list
+								break();
+							} else if(@time < @times[@i][2]) {
+								// can insert the player into the list here
+								array_insert(@times, array(@uuid, @player, @time), @i);
+								break();
+							}
+						}
+					}
+
+					// Recalculate totals based on the new lists
+					@players = array();
+					foreach(@key: @topTimes in @allcourses) {
+						if(is_array(@topTimes) && @key != 'times') {
+							@lastTime = 1.0;
+							@lastCount = 0;
+							foreach(@i: @entry in @topTimes) {
+								@uuid = @entry[0];
+								@player = @entry[1];
+								@time = @entry[2];
+
+								// Give full points for ties
+								if(@time == @lastTime){
+									@lastCount++;
+								} else {
+									@lastCount = 0;
+								}
+
+								// Increment scores based on how many players they beat
+								if(!array_index_exists(@players, @uuid)) {
+									@players[@uuid] = array(@player, array_size(@topTimes) - @i + @lastCount);
+								} else {
+									@players[@uuid][1] += array_size(@topTimes) - @i + @lastCount;
+								}
+								@lastTime = @time;
+							}
+						}
+					}
+					// Convert to normal array for sorting
+					@averages = array();
+					foreach(@uuid: @entry in @players) {
+						@averages[] = array(@uuid, @entry[0], @entry[1]);
+					}
+					array_sort(@averages, closure(@left, @right){
+						return(@left[2] < @right[2]);
+					});
+
+					@max = min(19, array_size(@averages));
+					for(@i = 0, @i < @max, @i++) {
+						console(' '.if(@i < 9, '0').(@i + 1).' [ '.@averages[@i][2].' ] '.@averages[@i][1], false);
+					}
+
+					// Store the new lists on the main thread to avoid issues.
+					/*
+					x_run_on_main_thread_later(closure(){
+						store_value('times', @averages);
+						foreach(@key: @value in @allcourses) {
+							if(is_array(@value)) {
+								store_value(@key, @value);
+							}
+						}
+					});
+					*/
+				});
 		}
 	}
 ));
