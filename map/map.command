@@ -1,13 +1,12 @@
 register_command('map', array(
 	'description': 'Manages custom maps players can create.',
-	'usage': '/map <create|load> <id>',
+	'usage': '/map <create|load|delete> <id> [dimension]',
 	'permission': 'command.map',
-	'tabcompleter': closure(@alias, @sender, @args, @info) {
-		if(array_size(@args) == 1) {
-			return(_strings_start_with_ic(array('create'), @args[-1]));
-		}
-		return(array());
-	},
+	'tabcompleter': _create_tabcompleter(
+		array('create', 'load', 'delete'),
+		null,
+		array('<<create': array('normal', 'nether', 'the_end'))
+	),
 	'executor': closure(@alias, @sender, @args, @info) {
 		if(!@args) {
 			return(false);
@@ -20,21 +19,38 @@ register_command('map', array(
 		switch(@action) {
 			case 'create':
 				if(is_null(@id)) {
-					throw(InsufficientArgumentsException, 'A map id was not given.');
+					throw(InsufficientArgumentsException, 'A map ID was not given.');
 				}
 				if(_map_exists(@id)) {
-					throw(NotFoundException, 'A map by that id already exists.');
+					throw(IllegalArgumentException, 'Map file by that ID already exists.');
 				}
+				if(get_value('map', @id)) {
+					throw(IllegalArgumentException, 'Map data by that ID already exists.');
+				}
+				@dimension = to_upper(array_get(@args, 2, 'NORMAL'));
+				msg('Creating map...');
+				_map_create(@id, @dimension);
 				_map_load(@id);
 
 			case 'load':
 				if(is_null(@id)) {
-					throw(InsufficientArgumentsException, 'A map id was not given.');
+					throw(InsufficientArgumentsException, 'A map ID was not given.');
 				}
 				if(!_map_exists(@id)) {
-					throw(NotFoundException, 'A map by that id does not exist.');
+					throw(NotFoundException, 'A map by that ID does not exist.');
 				}
+				msg('Loading map...');
 				_map_load(@id);
+
+			case 'delete':
+				if(is_null(@id)) {
+					throw(InsufficientArgumentsException, 'A map ID was not given.');
+				}
+				if(!_map_exists(@id)) {
+					throw(NotFoundException, 'A map by that ID does not exist.');
+				}
+				_map_delete(@id);
+				msg('Deleted map.');
 
 			default:
 				return(false);

@@ -1,18 +1,36 @@
 proc _base_directory() {
+	//plugins/CommandHelper/LocalPackages/map/.library
 	return('../../../../..');
 }
 
 proc _map_exists(@id) {
-	return(file_exists(_base_directory().'/maps/'.@id.'.mca'));
+	@base = _base_directory();
+	return(file_exists("@base/maps/@id.mca"));
 }
 
-proc _map_load(@id, @world) {
+proc _map_create(@id, @dimension) {
+	store_value('map', @id, array(
+		owner: puuid(),
+		dimension: @dimension,
+	));
+}
+
+proc _map_load(@id) {
+	@exists = _map_exists(@id);
+
+	// load map data
+	@map = get_value('map', @id);
+	if(!@map) {
+		throw(NotFoundException, 'Map data by that ID doesn\'t exist.');
+	}
+
 	// reserve a scratch world
 	@world = '';
 	@worlds = get_worlds();
 	for(@i = 0, @i < 10, @i++) {
 		if(!array_contains(@worlds, 'dev'.@i)) {
 			@world = 'dev'.@i;
+			break();
 		}
 	}
 	if(!@world) {
@@ -20,15 +38,17 @@ proc _map_load(@id, @world) {
 	}
 
 	// copy map to scratch world directory
-	@base = _base_directory();
-	copy_file("@base/maps/@id.mca", "@base/@world/region/r.0.0.mca");
+	if(@exists) {
+		@base = _base_directory();
+		copy_file("@base/maps/@id.mca", "@base/@world/region/r.0.0.mca");
+	}
 
 	// load scratch world with id alias
-	_create_world(@worldName, array(
+	_create_world(@world, array(
 		name: @id,
 		mode: 'CREATIVE',
 		group: 'dev',
-		environment: 'NORMAL',
+		environment: @map['dimension'],
 		seed: 0,
 		generator: 'CleanroomGenerator:.',
 		spawning: array(
@@ -36,9 +56,30 @@ proc _map_load(@id, @world) {
 			'ticks-per-animal-spawns': 0
 		)
 	));
+
+	// set map settings
+	if(!@exists) {
+		@center = array(256, 64, 256, @world);
+		set_world_border(@world, array(
+			center: @center,
+			width: 512,
+		));
+		set_spawn(@center);
+		set_block(location_shift(@center, 'down'), 'BEDROCK');
+	}
+
+	// teleport caller to world spawn
+	set_timeout(250, closure(){
+		set_ploc(location_shift(get_spawn(@world), 'down'));
+	});
 }
 
 proc _map_save(@id, @world) {
 	@base = _base_directory();
 	copy_file("@base/@world/region/r.0.0.mca", "@base/maps/@id.mca");
+}
+
+proc _map_delete(@id) {
+	@base = _base_directory();
+	delete_file("@base/maps/@id.mca");
 }
