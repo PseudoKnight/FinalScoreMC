@@ -4,7 +4,7 @@ register_command('arena', array(
 	tabcompleter: _create_tabcompleter(
 		array(
 			'group.builder': array('list', 'set', 'add', 'load', 'move', 'delete', 'info', 'stats', 'resetstats'),
-			null: array('list', 'info', 'stats'))
+			null: array('list', 'info', 'stats')),
 		null,
 		array(
 			'<<set|delete': array('class_picks', 'delay', 'lives', 'max', 'min', 'respawntime', 'score', 'time',
