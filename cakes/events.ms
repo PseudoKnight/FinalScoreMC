@@ -70,6 +70,7 @@ bind('player_interact', null, array('block': 'CAKE', 'button': 'right', 'hand': 
 			msg(color('gold').'+ '.@thiscake['coins'].' coins');
 			console(player().' got '.@thiscake['coins'].' coins at '.@id, false);
 		}
+		psend_block_change(@event['location'], 'magenta_candle_cake[lit=true]');
 		make_effect(@event['location'], 'ENDER_SIGNAL');
 		play_sound(@event['location'], array('sound': 'MUSIC_DISC_STAL'));
 		@loc = @event['location'][];
