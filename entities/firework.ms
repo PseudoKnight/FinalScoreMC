@@ -19,8 +19,8 @@ bind('entity_damage', null, array('cause': 'ENTITY_EXPLOSION'), @event) {
 			cancel();
 		} else {
 			@type = entity_type(@event['id']);
-			if(@type == 'ITEM_FRAME' || @type == 'ARMOR_STAND' || @type == 'PAINTING'
-			|| @type == 'PLAYER' && _is_survival_world(@event['location']['world'])) {
+			if(@type == 'ITEM_FRAME' || @type == 'GLOW_ITEM_FRAME' || @type == 'ARMOR_STAND'
+			|| @type == 'PAINTING' || @type == 'PLAYER' && _is_survival_world(@event['location']['world'])) {
 				cancel();
 			}
 		}

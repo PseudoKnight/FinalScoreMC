@@ -276,6 +276,7 @@
 *:/d [$] = call_alias('/disguise '.$);
 *:/dis [$] = call_alias('/disguise '.$);
 *:/disguise [$type] [$data] = >>>
+	if(extension_exists('CHDisguises')) {
 		if(!$type) {
 			die('/disguise <type>');
 		}
@@ -290,11 +291,14 @@
 			disguise_entity(puuid(), @type);
 		}
 		msg('You are now disguised as a '.@type);
+	}
 <<<
 
 *:/u [$] = call_alias('/undisguise');
 *:/undis [$] = call_alias('/undisguise');
 *:/undisguise [$] = >>>
-	disguise_entity(puuid(), null);
-	msg('You are now undisguised');
+	if(extension_exists('CHDisguises')) {
+		disguise_entity(puuid(), null);
+		msg('You are now undisguised');
+	}
 <<<

@@ -52,7 +52,7 @@ case 'load':
 			die();
 		}
 		@loc1 = location_shift(ploc(), 'up');
-		@excludeEntities = array('COMPLEX_PART', 'ITEM_FRAME', 'PAINTING', 'UNKNOWN');
+		@excludeEntities = array('COMPLEX_PART', 'GLOW_ITEM_FRAME', 'ITEM_FRAME', 'PAINTING', 'UNKNOWN');
 		foreach(@entity in entities_in_radius(@loc1, 10)) {
 			@force = 1.4;
 			@type = entity_type(@entity);

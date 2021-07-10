@@ -237,7 +237,7 @@ proc _remove_region_entities(
 	@types = array(),
 	@world = 'custom',
 	@removeProtected = false,
-	@excludeTypes = array('PLAYER', 'COMPLEX_PART', 'ITEM_FRAME', 'PAINTING', 'UNKNOWN')
+	@excludeTypes = array('PLAYER', 'COMPLEX_PART', 'GLOW_ITEM_FRAME', 'ITEM_FRAME', 'PAINTING', 'UNKNOWN')
 ) {
 	if(!sk_region_exists(@world, @region)) {
 		console('Can\'t remove entities because region doesn\'t exist: '.@region, false);

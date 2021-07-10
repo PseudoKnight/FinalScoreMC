@@ -383,21 +383,6 @@ proc _shard_create(@rules){
 					_set_inventory_contents(@event['location'], 0);
 				}
 
-				@binds[] = 'shard-itemframe';
-				bind('entity_damage', array('id': 'shard-itemframe'), array('type': 'ITEM_FRAME'), @event) {
-					if(@event['world'] == 'shard') {
-						cancel();
-					}
-				}
-
-				@binds[] = 'shard-itemframe2';
-				bind('hanging_break', array('id': 'shard-itemframe2'), array('type': 'ITEM_FRAME', 'world': 'shard'), @event) {
-					cancel();
-					if(entity_loc(@event['id'])['world'] == 'shard') { // entities may share the same UUID
-						entity_remove(@event['id']);
-					}
-				}
-
 				@binds[] = 'shard-explosion';
 				bind('entity_explode', array('id': 'shard-explosion'), null, @event) {
 					if(@event['location']['world'] == 'shard') {

@@ -102,17 +102,21 @@ register_command('7', array(
 												title(@player, '', color('red').'\u2639');
 												play_sound(@p['block'], array('sound': 'ENTITY_VILLAGER_NO'), @player);
 											case 'COAL_ORE':
+											case 'DEEPSLATE_COAL_ORE':
 												@p['time'] -= 0.10;
 												title(@player, '', color('red').'\u2639');
 												play_sound(@p['block'], array('sound': 'ENTITY_VILLAGER_NO'), @player);
 											case 'IRON_ORE':
+											case 'DEEPSLATE_IRON_ORE':
 												@p['time'] += 0.20;
 												@pitch = 0.5;
 											case 'IRON_BLOCK':
 												@p['time'] += 0.25;
 												@pitch = 0.561231;
 											case 'LAPIS_ORE':
+											case 'DEEPSLATE_LAPIS_ORE':
 											case 'REDSTONE_ORE':
+											case 'DEEPSLATE_REDSTONE_ORE':
 												@p['time'] += 0.30;
 												@pitch = 0.629961;
 											case 'LAPIS_BLOCK':
@@ -120,18 +124,21 @@ register_command('7', array(
 												@p['time'] += 0.35;
 												@pitch = 0.749154;
 											case 'GOLD_ORE':
+											case 'DEEPSLATE_GOLD_ORE':
 												@p['time'] += 0.40;
 												@pitch = 0.840896;
 											case 'GOLD_BLOCK':
 												@p['time'] += 0.45;
 												@pitch = 1.0;
 											case 'DIAMOND_ORE':
+											case 'DEEPSLATE_DIAMOND_ORE':
 												@p['time'] += 0.50;
 												@pitch = 1.22462;
 											case 'DIAMOND_BLOCK':
 												@p['time'] += 0.55;
 												@pitch = 1.259921;
 											case 'EMERALD_ORE':
+											case 'DEEPSLATE_EMERALD_ORE':
 												@p['time'] += 0.60;
 												@pitch = 1.498307;
 											case 'EMERALD_BLOCK':

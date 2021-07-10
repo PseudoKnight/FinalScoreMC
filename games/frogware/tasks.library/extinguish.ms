@@ -15,7 +15,12 @@ proc _fw_start_task(@secs) {
 	for(@i = 0, @i < @count, @i++) {
 		@loc = _fw_loc();
 		@blocks[] = @loc;
-		set_blockdata(@loc, array(block: 'cauldron', level: rand(3)));
+		@level = rand(3);
+		if(@level) {
+			set_blockdata(@loc, array(block: 'water_cauldron', level: rand(3)));
+		} else {
+			set_block(@loc, 'CAULDRON');
+		}
 	}
 	foreach(@p in all_players('custom')) {
 		if(_fw_player(@p)) {

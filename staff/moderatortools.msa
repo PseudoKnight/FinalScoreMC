@@ -39,9 +39,9 @@
 		} else {
 			switch(@arg) {
 				case 'living':
-					@type = array_merge(@type, array('BAT', 'CHICKEN', 'COD', 'COW', 'DOLPHIN', 'DONKEY', 'HORSE', 'IRON_GOLEM', 'LLAMA',
-							'MULE', 'MUSHROOM_COW', 'OCELOT', 'PIG', 'PUFFERFISH', 'RABBIT', 'SALMON', 'SHEEP', 'SKELETON_HORSE', 'SNOWMAN',
-							'SQUID', 'TROPICAL_FISH', 'TURTLE', 'VILLAGER', 'WOLF', 'ZOMBIE_HORSE'));
+					@type = array_merge(@type, array('AXOLOTL', 'BAT', 'CHICKEN', 'COD', 'COW', 'DOLPHIN', 'DONKEY', 'GLOW_SQUID', 'GOAT',
+							'HORSE', 'IRON_GOLEM', 'LLAMA', 'MULE', 'MUSHROOM_COW', 'OCELOT', 'PIG', 'PUFFERFISH', 'RABBIT', 'SALMON',
+							'SHEEP', 'SKELETON_HORSE', 'SNOWMAN', 'SQUID', 'TROPICAL_FISH', 'TURTLE', 'VILLAGER', 'WOLF', 'ZOMBIE_HORSE'));
 				case 'hostile':
 					continue();
 				case 'hologram':

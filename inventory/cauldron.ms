@@ -11,6 +11,20 @@ bind('player_interact', null, array('block': 'CAULDRON', 'button': 'right'), @ev
 	if(@event['hand'] == 'off_hand') {
 		@slot = -106;
 	}
+	if(@event['item'] && @event['item']['name'] == 'POTION'){
+		@item = pinv(player(), @slot);
+		if(@item['meta'] && @item['meta']['base']['type'] == 'WATER') {
+			cancel();
+			set_blockdata_string(@event['location'], 'water_cauldron[level=1]');
+			set_pinv(player(), @slot, array('name': 'GLASS_BOTTLE'));
+		}
+	}
+}
+bind('player_interact', null, array('block': 'WATER_CAULDRON', 'button': 'right'), @event) {
+	@slot = null;
+	if(@event['hand'] == 'off_hand') {
+		@slot = -106;
+	}
 	@level = reg_match('level\\=(\\d)', get_blockdata_string(@event['location']))[1];
 	if(@level < 3 && @event['item'] && @event['item']['name'] == 'POTION'){
 		@item = pinv(player(), @slot);
@@ -19,7 +33,7 @@ bind('player_interact', null, array('block': 'CAULDRON', 'button': 'right'), @ev
 
 			// Fill cauldron with some water
 			@level++;
-			set_blockdata_string(@event['location'], 'cauldron[level='.@level.']');
+			set_blockdata_string(@event['location'], 'water_cauldron[level='.@level.']');
 
 			// Give empty bottle
 			set_pinv(player(), @slot, array('name': 'GLASS_BOTTLE'));
@@ -77,9 +91,14 @@ bind('player_interact', null, array('block': 'CAULDRON', 'button': 'right'), @ev
 		if(psneaking()) {
 			if(@newItem['name'] == 'POTION') {
 				@level--;
-				set_blockdata_string(@event['location'], 'cauldron[level='.@level.']');
+				if(@level) {
+					set_blockdata_string(@event['location'], 'water_cauldron[level='.@level.']');
+				} else {
+					set_block(@event['location'], 'CAULDRON');
+				}
+				
 			} else {
-				set_blockdata_string(@event['location'], 'cauldron[level=0]');
+				set_blockdata_string(@event['location'], 'cauldron');
 			}
 		}
 

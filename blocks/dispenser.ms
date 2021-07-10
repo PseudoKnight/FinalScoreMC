@@ -1,7 +1,9 @@
 # Dispenser handling
 # Infinite dispensers on creative/game worlds
 # Special behavior for other items (eg. place armor stands)
-bind('block_dispense', null, array('type': 'DISPENSER'), @event, @ignored = array('BUCKET', 'WATER_BUCKET', 'LAVA_BUCKET')) {
+bind('block_dispense', null, array('type': 'DISPENSER'), @event,
+		@ignored = array('BUCKET', 'WATER_BUCKET', 'LAVA_BUCKET', 'POWDER_SNOW_BUCKET')) {
+
 	if(!@event['item'] || array_contains(@ignored, @event['item']['name'])) {
 		die();
 	}
