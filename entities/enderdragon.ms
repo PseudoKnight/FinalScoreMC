@@ -13,12 +13,6 @@ bind('player_join', null, null, @event) {
 }
 
 bind('entity_death', null, array('type': 'ENDER_DRAGON'), @event) {
-	if(@event['xp'] < 12000) {
-		modify_event('xp', 12000);
-		@loc = get_highest_block_at(0, 0, @event['location']['world']);
-		@loc['y'] += 1;
-		set_block(@loc, 'DRAGON_EGG');
-	}
 	if(@event['location']['world'] == 'outworld') {
 		clear_value('enderdragon');
 	}
