@@ -19,3 +19,22 @@ bind('creature_spawn', null, array('reason': 'BREEDING'), @event) {
 bind('creature_spawn', null, array('reason': 'SPAWNER_EGG'), @event) {
 	set_entity_persistence(@event['id'], true);
 }
+
+# enforce 1.18 light level requirement
+bind('creature_spawn', null, array(reason: 'NATURAL'), @event) {
+	if(get_block_light_at(@event['location'])) {
+		@lightAffected = array('CREEPER', 'ENDERMAN', 'HUSK', 'SKELETON', 'SPIDER', 'STRAY', 'WITCH', 'ZOMBIE', 'ZOMBIE_VILLAGER');
+		if(array_contains(@lightAffected, @event['type'])) {
+			cancel();
+		}
+	}
+}
+
+bind('creature_spawn', null, array(reason: 'SPAWNER'), @event) {
+	if(get_block_light_at(@event['location'])) {
+		@lightAffected = array('CAVE_SPIDER', 'SKELETON', 'SPIDER', 'ZOMBIE');
+		if(array_contains(@lightAffected, @event['type'])) {
+			cancel();
+		}
+	}
+}
