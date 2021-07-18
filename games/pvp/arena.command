@@ -28,7 +28,7 @@ register_command('arena', array(
 			case 'set':
 			case 's':
 			case 'add':
-				if(array_size(@args) < 4) {
+				if(array_size(@args) < 3) {
 					return(false);
 				}
 				if(!has_permission('group.builder')) {
