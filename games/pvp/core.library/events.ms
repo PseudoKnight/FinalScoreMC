@@ -432,4 +432,12 @@ proc _bind_events(@pvp) {
 			}
 		}
 	}
+
+	// barrier eat projectiles
+	@pvp['binds'][] = bind('projectile_hit', array(priority: 'HIGHEST'), array(hittype: 'BLOCK'), @event, @pvp) {
+		if(get_block(@event['hit']) == 'BARRIER') {
+			consume();
+			try(entity_remove(@event['id']));
+		}
+	}
 }
