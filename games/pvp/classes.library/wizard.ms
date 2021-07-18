@@ -1,7 +1,7 @@
 switch(@action) {
 case 'load':
-	bind('player_interact', array(id: @player.'lightning'), array(itemname: 'BLAZE_ROD', button: 'right', player: @player), @e, @pvp) {
-		if(pinfo(player(), 6) != @e['item']['name']) {
+	bind('player_interact', array(id: @player.'lightning'), array(itemname: 'LIGHTNING_ROD', button: 'right', player: @player), @e, @pvp) {
+		if(pinfo(player(), 6) != @e['item']['name'] || pcooldown('LIGHTNING_ROD')) {
 			die();
 		}
 		@trace = ray_trace(player(), 96);
@@ -26,8 +26,8 @@ case 'load':
 		export(player().'lightning', @lightning);
 		@slot = pheld_slot();
 		@item = pinv(player(), null);
-		set_pinv(player(), null, array(name: 'STICK'));
-		set_pcooldown('STICK', 8000 / 50);
+		set_pinv(player(), null, array(name: 'LIGHTNING_ROD'));
+		set_pcooldown('LIGHTNING_ROD', 8000 / 50);
 		queue_clear(player().'lightning');
 		queue_delay(1000, player().'lightning');
 		queue_push(closure(){
@@ -40,7 +40,7 @@ case 'load':
 				return();
 			}
 			@newitem = pinv(player(), @slot);
-			if(!is_null(@newitem) && @newitem['name'] == 'STICK') {
+			if(!is_null(@newitem) && !@newitem['meta']) {
 				set_pinv(player(), @slot, @item);
 				play_sound(ploc(), array(sound: 'BLOCK_FIRE_EXTINGUISH', volume: 4));
 			}
