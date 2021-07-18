@@ -126,7 +126,7 @@ Cauldrons are an infinite water source, unless sneaking. You can incrementally f
 
 You can also wash dyes from terracotta, wool, and carpet using a cauldron.
 
-Temporary mirror world "shards" can be created by right-clicking a diamond while in the location you want to mirror.
+Temporary mirror world "shards" can be created by right-clicking an amethyst shard while in the location you want to mirror.
 
 You can teleport with a horse you're riding (includes donkeys, llamas, etc)
 

@@ -1,4 +1,4 @@
-bind('player_interact', null, array('itemname': 'DIAMOND', 'hand': 'main_hand', 'block': null), @event) {
+bind('player_interact', null, array('itemname': 'AMETHYST_SHARD', 'hand': 'main_hand', 'block': null), @event) {
 	include('core.library/util.ms');
 	if(array_contains(get_worlds(), 'shard') && array_contains(get_scoreboards(), 'shard')) {
 		if(pworld() == 'shard') {
@@ -6,7 +6,7 @@ bind('player_interact', null, array('itemname': 'DIAMOND', 'hand': 'main_hand', 
 		} else {
 			// Late join
 			@game = import('shard');
-			play_sound(ploc(), array('sound': 'BLOCK_GLASS_BREAK', 'pitch': 0.5));
+			play_sound(ploc(), array('sound': 'BLOCK_AMETHYST_CLUSTER_BREAK', 'pitch': 0.5));
 			@loc = get_spawn('shard');
 			@loc['y'] -= 1;
 			if(set_ploc(_get_spawn_location())) {
@@ -18,7 +18,7 @@ bind('player_interact', null, array('itemname': 'DIAMOND', 'hand': 'main_hand', 
 				set_plevel(player(), 0);
 				set_peffect(player(), 'RESISTANCE', 3, 30, true);
 				set_pscoreboard(player(), 'shard');
-				play_sound(@loc, array('sound': 'BLOCK_GLASS_BREAK', 'pitch': 0.5), player());
+				play_sound(@loc, array('sound': 'BLOCK_AMETHYST_CLUSTER_BREAK', 'pitch': 0.5), player());
 				@game = import('shard');
 				if(@game && !@game['lateJoin']) {
 					set_pmode(player(), 'SPECTATOR');

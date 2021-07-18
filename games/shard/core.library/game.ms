@@ -10,7 +10,7 @@ proc _shard_create(@rules){
 			continue();
 		}
 		@item = pinv(@p, null);
-		if(@item && @item['name'] == 'DIAMOND') {
+		if(@item && @item['name'] == 'AMETHYST_SHARD') {
 			@players[] = @p;
 			@ploc = ploc(@p);
 			play_named_sound(@ploc, array('sound': 'entity.guardian.attack', 'volume': 2));
@@ -167,7 +167,7 @@ proc _shard_create(@rules){
 					slot: 'SIDEBAR'
 				), 'shard');
 				set_timeout(60 * 1000, closure() {
-					set_objective_display('rules', array(slot: null), 'shard');
+					try(set_objective_display('rules', array(slot: null), 'shard'));
 				});
 				_add_activity('shard', @worldname.'//Shard');
 
@@ -204,7 +204,7 @@ proc _shard_create(@rules){
 							return();
 						}
 						@ploc = ploc(@p);
-						play_sound(@ploc, array('sound': 'BLOCK_GLASS_BREAK', 'pitch': 0.5));
+						play_sound(@ploc, array('sound': 'BLOCK_AMETHYST_CLUSTER_BREAK', 'pitch': 0.5));
 						@ploc['world'] = 'shard';
 						@airDrop = false;
 						if(array_index_exists(@rules, 'randomspawn') && @rules['randomspawn']
@@ -240,7 +240,7 @@ proc _shard_create(@rules){
 							set_plevel(@p, 0);
 							set_peffect(@p, 'RESISTANCE', 3, 30, true);
 							set_pscoreboard(@p, 'shard');
-							play_sound(@ploc, array('sound': 'BLOCK_GLASS_BREAK', 'pitch': 0.5), @p);
+							play_sound(@ploc, array('sound': 'BLOCK_AMETHYST_CLUSTER_BREAK', 'pitch': 0.5), @p);
 							play_sound(@ploc, array('sound': 'ENTITY_WITHER_SPAWN', 'pitch': 0.7), @p);
 						}
 					}, 'shard');

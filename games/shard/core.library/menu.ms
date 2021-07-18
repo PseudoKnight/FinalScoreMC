@@ -39,6 +39,7 @@ proc _open_objective_menu() {
 	);
 	create_virtual_inventory('shard', 'HOPPER', 'Choose an Objective', @menu);
 	popen_inventory('shard');
+	play_sound(ploc(), array(sound: 'BLOCK_AMETHYST_BLOCK_CHIME'));
 
 	bind('inventory_click', array('id': player().'click'), array('player': player(), 'virtual': true), @event, @objectives) {
 		@item = @event['slotitem'];
@@ -270,6 +271,7 @@ proc _open_rules_menu(@objective) {
 	delete_virtual_inventory('shard');
 	create_virtual_inventory('shard', 45, 'Rules', @menu);
 	popen_inventory('shard');
+	play_sound(ploc(), array(sound: 'BLOCK_AMETHYST_BLOCK_HIT'));
 
 	bind('inventory_click', array('id': player().'click'), array('player': player(), 'virtual': true), @event, @rules, @options) {
 		@item = @event['slotitem'];
@@ -290,6 +292,7 @@ proc _open_rules_menu(@objective) {
 					@associative_rules[@key] = @rule['value'];
 				}
 			}
+			play_sound(ploc(), array(sound: 'BLOCK_AMETHYST_BLOCK_HIT'));
 			_shard_create(@associative_rules);
 		} else {
 			if(!string_ends_with(@item['name'], '_DYE')) {
