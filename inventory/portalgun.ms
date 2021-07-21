@@ -1,7 +1,7 @@
 execute(iclosure(){
 	proc _portal(@color, @portals) {
 		if(pworld() != 'dev' || pmode() != 'ADVENTURE') {
-			return();
+			return(false);
 		}
 
 		proc _rotate_exit(@portals, @color, @yaw, @pitch) {
@@ -76,13 +76,13 @@ execute(iclosure(){
 		@trace = ray_trace(48);
 
 		if(!@trace['hitblock']) {
-			die();
+			return(true);
 		}
 
 		@block = @trace['block'];
 		if(get_block(@block) != 'WHITE_CONCRETE') {
 			play_sound(ploc(), array(sound: 'ENTITY_SHULKER_CLOSE'));
-			die();
+			return(true);
 		}
 
 		@origin = location_shift(@trace['origin'], 'down', 0.3);
@@ -200,6 +200,8 @@ execute(iclosure(){
 				}
 			}
 		});
+
+		return(true);
 	}
 
 	@portals = array(
@@ -207,19 +209,19 @@ execute(iclosure(){
 		'blue': null,
 	);
 
-	unbind('orangeportalgun');
-	bind('player_interact', array(priority: 'LOW', id: 'orangeportalgun'), array(itemname: 'LANTERN'), @event, @portals) {
+	bind('player_interact', array(priority: 'LOW'), array(itemname: 'LANTERN'), @event, @portals) {
 		if(!pcooldown('LANTERN')) {
-			_portal('orange', @portals);
-			set_pcooldown('LANTERN', 5);
+			if(_portal('orange', @portals)) {
+				set_pcooldown('LANTERN', 5);
+			}
 		}
 	}
 
-	unbind('blueportalgun');
-	bind('player_interact', array(priority: 'LOW', id: 'blueportalgun'), array(itemname: 'SOUL_LANTERN'), @event, @portals) {
+	bind('player_interact', array(priority: 'LOW'), array(itemname: 'SOUL_LANTERN'), @event, @portals) {
 		if(!pcooldown('SOUL_LANTERN')) {
-			_portal('blue', @portals);
-			set_pcooldown('SOUL_LANTERN', 5);
+			if(_portal('blue', @portals)) {
+				set_pcooldown('SOUL_LANTERN', 5);
+			}
 		}
 	}
 
