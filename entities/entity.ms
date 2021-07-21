@@ -29,12 +29,3 @@ bind('creature_spawn', null, array(reason: 'NATURAL'), @event) {
 		}
 	}
 }
-
-bind('creature_spawn', null, array(reason: 'SPAWNER'), @event) {
-	if(get_block_light_at(@event['location'])) {
-		@lightAffected = array('CAVE_SPIDER', 'SKELETON', 'SPIDER', 'ZOMBIE');
-		if(array_contains(@lightAffected, @event['type'])) {
-			cancel();
-		}
-	}
-}
