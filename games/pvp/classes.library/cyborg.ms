@@ -187,7 +187,7 @@ case 'load':
 				consume();
 				@loc = entity_loc(@event['id']);
 				foreach(@p in players_in_radius(@loc, 4)) {
-					damage_entity(puuid(@p), 8 - distance(location_shift(ploc(@p), 'up', 2), @loc), puuid());
+					damage_entity(puuid(@p), 8 - distance(location_shift(ploc(@p), 'up', 2), @loc), puuid(@player));
 				}
 				spawn_particle(@loc, 'EXPLOSION_LARGE');
 				play_sound(@loc, array(sound: 'ENTITY_GENERIC_EXPLODE'));
