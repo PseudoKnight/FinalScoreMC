@@ -18,7 +18,7 @@ case 'load':
 						@facing[1] = 0 - @facing[1];
 						@x = cos(to_radians(@facing[0])) * cos(to_radians(@facing[1]));
 						@z = sin(to_radians(@facing[0])) * cos(to_radians(@facing[1]));
-						set_pexp(@player, max(0, pexp(@player) - 8));
+						set_pexp(@player, max(0, pexp(@player) - 9));
 						set_pvelocity(@player, @x * 0.6, 0.47, @z * 0.6);
 						play_sound(ploc(@player), array(sound: 'ENTITY_ENDER_DRAGON_FLAP', pitch: 1.2));
 						set_entity_fall_distance(puuid(@player), 0);
@@ -32,13 +32,6 @@ case 'load':
 			_flap(player());
 		}
 	}
-
-	bind('entity_damage', array(id: @player.'dragonfall'), array(type: 'PLAYER', cause: 'FALL'), @e, @player) {
-		if(@e['player'] == @player) {
-			modify_event('amount', 1);
-		}
-	}
-
 
 	bind('projectile_hit', array(id: @player.'dragonsbreath'), array(type: 'FIREBALL'), @event, @region = @pvp['arena']['region']) {
 		if(array_contains(sk_regions_at(@event['location']), @region)) {
@@ -57,7 +50,6 @@ case 'powerup':
 
 case 'unload':
 	unbind(@player.'dragonfly');
-	unbind(@player.'dragonfall');
 	unbind(@player.'dragonsbreath');
 	set_pexp(@player, 0);
 	set_pflight(@player, false);

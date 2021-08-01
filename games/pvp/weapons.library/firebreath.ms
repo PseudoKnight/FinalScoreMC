@@ -8,6 +8,7 @@
 	@world = @loc['world'];
 	
 	play_sound(@loc, array(sound: 'ENTITY_GHAST_SHOOT', pitch: 0.5));
+	play_sound(@loc, array(sound: 'ENTITY_GHAST_SHOOT', pitch: 0.6));
 	@facing = pfacing(player());
 	@facing[0] = @facing[0] + 90;
 	@facing[1] = 0 - @facing[1];
@@ -69,9 +70,17 @@
 		@targetr['x'] = @loc['x'] + (@xr * @range);
 		@targetr['y'] = @loc['y'] + (@y * @range);
 		@targetr['z'] = @loc['z'] + (@zr * @range);
-		spawn_particle(@targetl, 'FLAME');
-		spawn_particle(@targetc, 'FLAME');
-		spawn_particle(@targetr, 'FLAME');
+		@particle = array(
+			'particle': 'FLAME',
+			'count': @range * 2,
+			'speed': 0.01,
+			'xoffset': 0.25 * @range,
+			'yoffset': 0.25 * @range,
+			'zoffset': 0.25 * @range,
+		);
+		spawn_particle(@targetl, @particle);
+		spawn_particle(@targetc, @particle);
+		spawn_particle(@targetr, @particle);
 	}
 
 	/*
@@ -99,7 +108,7 @@
 	}
 	*/
 	foreach(@p in array_keys(@pvp['players'])) {
-		if(@p == player() || phealth(@p) == 0) {
+		if(@p == player() || phealth(@p) == 0 || pmode(@p) == 'SPECTATOR') {
 			continue();
 		}
 		@ploc = ploc(@p);
@@ -107,7 +116,8 @@
 		@dist = _squared_distance_to_segment(@ploc, @loc, @targetc);
 		if(@dist < 2.25) { # 1.5 ^ 2
 			@uuid = puuid(@p);
-			@damage = if(entity_can_see(puuid(), @uuid), 6, 3.5);
+			@range = distance(ploc(), ploc(@p));
+			@damage = if(entity_can_see(puuid(), @uuid), max(12 / @range, 6), 6 / @range);
 			damage_entity(@uuid, @damage, puuid());
 			set_entity_onfire(@uuid, 1);
 			continue();
@@ -115,7 +125,8 @@
 		@dist = _squared_distance_to_segment(@ploc, @loc, @targetl);
 		if(@dist < 2.25) { # 1.5 ^ 2
 			@uuid = puuid(@p);
-			@damage = if(entity_can_see(puuid(), @uuid), 5, 3);
+			@range = distance(ploc(), ploc(@p));
+			@damage = if(entity_can_see(puuid(), @uuid),  max(10 / @range, 5), 5 / @range);
 			damage_entity(@uuid, @damage, puuid());
 			set_entity_onfire(@uuid, 1);
 			continue();
@@ -123,7 +134,8 @@
 		@dist = _squared_distance_to_segment(@ploc, @loc, @targetr);
 		if(@dist < 2.25) { # 1.5 ^ 2
 			@uuid = puuid(@p);
-			@damage = if(entity_can_see(puuid(), @uuid), 5, 3);
+			@range = distance(ploc(), ploc(@p));
+			@damage = if(entity_can_see(puuid(), @uuid),  max(10 / @range, 5), 5 / @range);
 			damage_entity(@uuid, @damage, puuid());
 			set_entity_onfire(@uuid, 1);
 			continue();
