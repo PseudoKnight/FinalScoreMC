@@ -26,10 +26,8 @@ case 'load':
 			set_timeout(800, closure(){
 				try(entity_remove(@arrow));
 			});
-			if(extension_exists('CHSpigot')) {
-				@dmg = get_arrow_damage(@arrow);
-				set_arrow_damage(@arrow, @dmg * 0.55);
-			}
+			@dmg = entity_spec(@arrow)['damage'];
+			set_entity_spec(@arrow, array(damage: @dmg * 0.55));
 		}
 	}
 

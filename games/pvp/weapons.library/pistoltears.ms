@@ -8,7 +8,7 @@
 	@v['y'] = (@v['y'] / @v['magnitude']) * 4;
 	@v['z'] = (@v['z'] / @v['magnitude']) * 4;
 	set_entity_velocity(@entity, @v);
-	set_arrow_damage(@entity, 1.25);
+	set_entity_spec(@entity, array(damage: 1.25));
 	play_sound(ploc(), array(sound: 'ENTITY_ZOMBIE_ATTACK_WOODEN_DOOR', pitch: 2, volume: 2));
 	@bind = bind('projectile_hit', null, array(id: @entity), @event) {
 		try(entity_remove(@event['id']));

@@ -9,8 +9,7 @@
 	set_pcooldown('FISHING_ROD', 20);
 
 	@arrow = shoot_projectile(@player, 'arrow');
-	set_entity_spec(@arrow, array(critical: true));
-	set_arrow_damage(@arrow, 0.1);
+	set_entity_spec(@arrow, array(critical: true, damage: 0.1));
 	play_sound(ploc(@player), array(sound: 'ENTITY_ARROW_SHOOT'));
 	@shooter = puuid(@player);
 	@slot = pheld_slot(@player);
