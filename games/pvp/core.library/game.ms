@@ -534,11 +534,9 @@ proc _pvp_start_match(@id) {
 					}
 				} else {
 					tmsg(@player, color('gray').'[PVP] '.color('r').'You exited the combat region.');
-					set_timeout(50, closure(){
-						if(!_is_survival_world(pworld(@player))) {
-							pkill(@player);
-						}
-					});
+					if(!_is_survival_world(pworld(@player))) {
+						pkill(@player);
+					}
 				}
 			}
 
