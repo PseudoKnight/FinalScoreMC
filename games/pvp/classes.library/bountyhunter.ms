@@ -36,7 +36,7 @@ switch(@action) {
 				try {
 					@loc = ploc();
 					@xp = pexp();
-					if(@xp == 0 || !pinfo(player(), 11)) {
+					if(@xp == 0 || !psneaking()) {
 						clear_task();
 						if(@xp == 0) {
 							play_sound(@loc, @stallSound);

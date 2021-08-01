@@ -32,7 +32,7 @@ case 'load':
 			set_entity_spec(@armorstand, associative_array(visible: false));
 			set_interval(50, closure(){
 				try {
-					if(pmode() != 'SPECTATOR' || pinfo(player(), 19)) {
+					if(pmode() != 'SPECTATOR' || psprinting()) {
 						clear_task();
 						die();
 					}

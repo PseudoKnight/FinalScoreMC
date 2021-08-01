@@ -44,7 +44,7 @@ register_command('tornado', array(
 					@pull = -0.1;
 				}
 				play_sound(@eLoc, array('sound': 'ENTITY_HORSE_BREATHE', 'pitch': 2.0, 'volume': 0.05), @e);
-				if(pinfo(@e, 18) || psneaking(@e)) {
+				if(pflying(@e) || psneaking(@e)) {
 					if(entity_grounded(@e) || @dist > @radius - 2) {
 						stop_sound(@e, 'ITEM_ELYTRA_FLYING');
 					}
