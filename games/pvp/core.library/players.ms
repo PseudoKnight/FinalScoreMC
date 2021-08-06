@@ -47,7 +47,7 @@ proc _player_join(@id) {
 	_click_tell(all_players(pworld()), @msg);
 	console(player().' joined '.@id, false);
 
-	_menu_refresh_pvp();
+	_menu_refresh('pvp');
 
 	if(@pvp['running'] == 1 || @pvp['running'] == 2) {
 		if(array_index_exists(@pvp['arena'], 'resourcepack')) {

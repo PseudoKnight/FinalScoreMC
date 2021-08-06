@@ -9,7 +9,12 @@ bind('inventory_click', null, array('virtual': true), @event) {
 		@value = @action[1];
 		switch(substr(@action[0], 2)) {
 			case 'Open':
-				popen_inventory(@value);
+				try {
+					popen_inventory(@value);
+				} catch(IllegalArgumentException @ex) {
+					_menu_refresh(@value);
+					popen_inventory(@value);
+				}
 				play_sound(ploc(), array('sound': 'UI_BUTTON_CLICK', 'pitch': 1.2), player());
 			case 'Load':
 				@menu = import('menu.'.@value);

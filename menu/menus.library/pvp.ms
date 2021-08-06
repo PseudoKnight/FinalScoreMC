@@ -62,5 +62,5 @@ foreach(@name: @arena in @arenas) {
 export('menu.pvp', @menuPvp);
 
 bind('world_changed', null, array(from: 'custom'), @event) {
-	set_timeout(50, closure(_menu_refresh_pvp()));
+	set_timeout(50, closure(_menu_refresh('pvp')));
 }
