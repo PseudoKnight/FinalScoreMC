@@ -8,7 +8,7 @@ set_uncaught_exception_handler(iclosure(@ex){
 	} else if(ponline(player())) {
 		msg(color('red').@ex['message']);
 	}
-	console(@ex['classType'].': '.@ex['message'], false);
+	console(split('.', @ex['classType'])[-1].': '.@ex['message'], false);
 	foreach(@trace in @ex['stackTrace']) {
 		console(split('LocalPackages', @trace['file'])[-1].':'.@trace['line'].' '.@trace['id'], false);
 	}
