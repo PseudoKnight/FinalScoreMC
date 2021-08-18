@@ -17,7 +17,13 @@ register_command('arena', array(
 					'mobprotect', 'team', 'kit', 'restore','itemspawn', 'chestgroup', 'chestspawn', 'rsoutput',
 					'rsoutputscore', 'effect', 'denydrop', 'mobspawn', 'weapons', 'options'),
 			'<<add': array('description', 'arenaselect', 'weapons', 'options'),
-			'<<load': array('kit', 'chestspawn', 'spawn'))
+			'<<load': array('kit', 'chestspawn', 'spawn')),
+		array(
+			'<weapons': array('endernades', 'fireball', 'firebreath', 'firefire', 'flamethrower', 'grapple',
+				'halo/battlerifle', 'knockout', 'mine', 'pistoltears', 'primedtnt', 'railgun', 'rifle', 'shotgunballs',
+				'skullrockets', 'snipeglass', 'spawner', 'tracker'),
+			'<options': array('lives', 'score', 'class_picks', 'class_picking'),
+		)
 	),
 	executor: closure(@alias, @sender, @args, @info) {
 		if(!@args) {
