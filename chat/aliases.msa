@@ -1,3 +1,8 @@
+/**
+	Replaces vanilla action messages.
+	@command
+	@usage /me <message>
+ */
 *:/me $ = >>>
 	@ignorelist = import('ignorelist');
 	if(array_index_exists(@ignorelist, player()) && array_contains(@ignorelist[player()], 'all')) {
@@ -13,16 +18,16 @@
 	}
 <<<
 
-# MESSAGING #
+/**
+ * Replaces vanilla direct messaging. Supports offline messages.
+ * @command
+ * @usage /msg <player> <message>
+ * @alias tell
+ * @alias w
+ */
 *:/msg $player $ = >>>
 	include('includes.library/chat.ms');
 	_pmsg(player(), $player, $);
 <<<
-*:/tell $player $ = >>>
-	include('includes.library/chat.ms');
-	_pmsg(player(), $player, $);
-<<<
-*:/w $player $ = >>>
-	include('includes.library/chat.ms');
-	_pmsg(player(), $player, $);
-<<<
+*:/tell [$] = call_alias('/msg '.$);
+*:/w [$] = call_alias('/msg '.$);

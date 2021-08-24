@@ -1,4 +1,8 @@
-#Runs the help procedure to list or display entries
+/**
+ * Gets information from a list of help entries.
+ * @command
+ * @usage /help [topic]
+ */
 *:/help [$selection='help'] = >>>
 	@help = array(
 		'rules':
@@ -110,12 +114,21 @@
 		}
 	}
 <<<
+
+/**
+ * Prints all the rules for the server.
+ * @command
+ */
 *:/rules = >>>
 	broadcast(player().' read the rules.', 'group.moderator');
 	call_alias('/help rules');
 <<<
 
-# PLAYER LISTS #
+/**
+ * Gets a list of all players on the server and their group.
+ * @command
+ * @alias list
+ */
 *:/who = >>>
 	@list = array(
 		array('admin', 'b', ''),
@@ -148,19 +161,20 @@
 	}
 <<<
 
-# Set game mode for players
-*:/gamemode [$] = call_alias('/gm '.$)
-*:/gm [$] = >>>
-	if(!has_permission('command.gm')) {
-		die('You do not have permission.');
-	}
-
+/**
+ * Sets the gamemode for yourself or another player. Toggles mode if not specified.
+ * @command
+ * @usage /gamemode [mode], /gamemode <player> [mode]
+ * @alias gm
+ * @permission command.gm
+ */
+*:/gamemode [$] = >>>
 	@player = player();
 	@mode = 'toggle';
 	if($) {
 		@args = parse_args($);
 		try {
-			@player = player(@args[0])
+			@player = player(@args[0]);
 			if(@player != player() && !has_permission('command.gm.others')) {
 				die('You do not have permission to set another\'s game mode.');
 			} else if(pworld(@player) != pworld()) {
@@ -207,7 +221,7 @@
 			}
 
 		default:
-			die('Usage: /gm <player> [mode] OR /gm [mode]');
+			die('Accepted modes: survival (0, s), creative (1, c), adventure (2, a), spectator (3), toggle (default)');
 	}
 
 	set_pmode(@player, @mode);
@@ -215,8 +229,13 @@
 		msg('Set '.@player.'\'s game mode to '.@mode);
 	}
 <<<
+*:/gm [$] = call_alias('/gamemode '.$);
 
-# Set the time of day for this world
+/**
+ * Sets the time of day for the current world.
+ * @command
+ * @usage /time <day|night|sunrise|sunset|0-24000>
+ */
 *:/time set $time = call_alias('/time '.$time);
 *:/time $time = >>>
 	try {
@@ -234,6 +253,11 @@
 	}
 <<<
 
+/**
+ * Moves you up the specified distance in meters and places a glass block below you. (requires creative mode)
+ * @command
+ * @usage /up <#num>
+ */
 *:/up [$amount=0] = >>>
 	if(pmode() != 'CREATIVE') {
 		die(color('gold').'You are not in CREATIVE mode.');
@@ -247,10 +271,14 @@
 	}
 <<<
 
+/**
+ * Fully heals another player or self.
+ * @command
+ * @usage /heal [player]
+ * @permission command.heal
+ * @noPermMsg You do not have permission to heal.
+ */
 *:/heal [$player] = >>>
-	if(!has_permission('command.heal')) {
-		die(color('gold').'You do not have permission to heal.');
-	}
 	@player = player();
 	if($player) {
 		if(!has_permission('command.heal.others')) {
@@ -271,10 +299,19 @@
 	}
 <<<
 
+/**
+ * Teleports the player to the hub warp.
+ * @command
+ */
 *:/hub [$] = run('/warp hub');
 
-*:/d [$] = call_alias('/disguise '.$);
-*:/dis [$] = call_alias('/disguise '.$);
+/**
+ * Disguises yourself as another entity. (if plugin is installed)
+ * @command
+ * @usage /disguise <ENTITY_TYPE>
+ * @alias d
+ * @alias dis
+ */
 *:/disguise [$type] [$data] = >>>
 	if(extension_exists('CHDisguises')) {
 		if(!$type) {
@@ -293,12 +330,20 @@
 		msg('You are now disguised as a '.@type);
 	}
 <<<
+*:/d [$] = call_alias('/disguise '.$);
+*:/dis [$] = call_alias('/disguise '.$);
 
-*:/u [$] = call_alias('/undisguise');
-*:/undis [$] = call_alias('/undisguise');
+/**
+ * Removes your disguise, if you have one.
+ * @command
+ * @alias u
+ * @alias undis
+ */
 *:/undisguise [$] = >>>
 	if(extension_exists('CHDisguises')) {
 		disguise_entity(puuid(), null);
 		msg('You are now undisguised');
 	}
 <<<
+*:/u [$] = call_alias('/undisguise');
+*:/undis [$] = call_alias('/undisguise');
