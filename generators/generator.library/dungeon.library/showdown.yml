@@ -7,8 +7,7 @@ default:
     waterPit: 0.07
     pit: 0.07
     extraDoors: 0.3
-    minRoomSize: 3
-    maxRoomSize: 11
+    maxRoomSize: 13
     spawnerChance: 0.0
     campfireChance: 1.0
     spawnCount: 1

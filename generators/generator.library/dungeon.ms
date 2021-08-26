@@ -22,10 +22,9 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 	// load dungeon type configuration
 	@options = yml_decode(read('/dungeon.library/'.@dungeonType.'.yml'));
 	@defaults = array_merge(array(
-		// size and scale
-		scale: 2,
-		minRoomSize: 3,
-		maxRoomSize: 11,
+		// size
+		minRoomSize: 5,
+		maxRoomSize: 21,
 		minRoomHeight: 3,
 		maxRoomHeight: 3,
 
@@ -47,7 +46,6 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 		// toggleable features on floors
 		roof: true,
 		bed: false,
-		staggeredWall: false,
 		treasureRoom: false,
 
 		// default materials
@@ -81,7 +79,11 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 			}
 
 			if(@floorData['minRoomSize'] % 2 != 1) {
-				console(@dungeonType.'.yml maxRoomSize must be an odd number.');
+				console(@dungeonType.'.yml minRoomSize must be an odd number.');
+				return();
+			}
+			if(@floorData['minRoomSize'] < 5) {
+				console(@dungeonType.'.yml minRoomSize must be 5 or larger');
 				return();
 			}
 			if(@floorData['maxRoomSize'] % 2 != 1) {
@@ -118,13 +120,13 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 	// define constants
 	@seed = @seed ||| integer(time() / 100000);
 	@coords = sk_region_info(@region, @world, 0);
-	@regionMinX = ceil(@coords[1][0] / @defaults['scale']) * @defaults['scale']; // align to default scale
+	@regionMinX = @coords[1][0];
 	@regionMaxX = @coords[0][0];
 	@regionMinY = @coords[1][1];
-	@regionMinZ = ceil(@coords[1][2] / @defaults['scale']) * @defaults['scale']; // align to default scale
+	@regionMinZ = @coords[1][2];
 	@regionMaxZ = @coords[0][2];
-	@regionWidth = @coords[0][0] - @coords[1][0];
-	@regionLength = @coords[0][2] - @coords[1][2];
+	@regionWidth = @coords[0][0] - @coords[1][0] + 1;
+	@regionLength = @coords[0][2] - @coords[1][2] + 1;
 	@chunkMinX = floor(@regionMinX / 16);
 	@chunkMaxX = floor(@regionMaxX / 16);
 	@chunkMinZ = floor(@regionMinZ / 16);
@@ -154,9 +156,8 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 		@spawns = array();
 
 		// Place entrance room
-		@scale = @options['floors'][0]['scale'];
-		@width = ceil(@regionWidth / @scale);
-		@length = ceil(@regionLength / @scale);
+		@width = @regionWidth;
+		@length = @regionLength;
 		if(@width % 2 == 0) {
 			@width -= 1;
 		}
@@ -198,7 +199,6 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 			}, 'generator');
 
 			@floorData = @options['floors'][@floor];
-			@scale = @floorData['scale'];
 			@minRoomSize = @floorData['minRoomSize'];
 			@maxRoomSize = @floorData['maxRoomSize'];
 			@maxRoomHeight = @floorData['maxRoomHeight'];
@@ -210,8 +210,8 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 			@mobTypes = @floorData['spawner'];
 			@noise = math_const('INTEGER_MAX') + 1 + integer(srand(@random) * math_const('INTEGER_MAX'));
 
-			@width = ceil(@regionWidth / @scale);
-			@length = ceil(@regionLength / @scale);
+			@width = @regionWidth;
+			@length = @regionLength;
 			if(@width % 2 == 0) {
 				@width -= 1;
 			}
@@ -534,8 +534,8 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 					for(@z = 0, @z < 16, @z++) {
 						for(@x = 0, @x < 16, @x++) {
 							foreach(@clone: @materials in @allmaterials) {
-								@r = floor((@chunkZ * 16 + @z - @chunkOffsetZ) / @scale);
-								@c = floor((@chunkX * 16 + @x - @chunkOffsetX) / @scale);
+								@r = (@chunkZ * 16 + @z - @chunkOffsetZ);
+								@c = (@chunkX * 16 + @x - @chunkOffsetX);
 								if(@r < 0 || @c < 0 || @r >= @length || @c >= @width) {
 									continue();
 								}
@@ -550,11 +550,6 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 									(@chunkMinZ + @chunkZ) * 16 + @z + if(@cloneDir == 'south', @clone * @cloneOffset, 0),
 									@world
 								);
-
-								@northEdge = if(@scale == 1, true, (@loc[2] - @regionMinZ) % @scale == 0);
-								@southEdge = if(@scale == 1, true, (@loc[2] - @regionMinZ) % @scale == @scale - 1);
-								@eastEdge = if(@scale == 1, true, (@loc[0] - @regionMinX) % @scale == @scale - 1);
-								@westEdge = if(@scale == 1, true, (@loc[0] - @regionMinX) % @scale == 0);
 
 								// Bedrock divider
 								_add_to_chunk(@chunk, @loc, @materials['divider']);
@@ -605,45 +600,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 											}
 
 										case 'wall':
-											if(@materials['staggeredWall']) {
-												if((@x + @z) % 2 == 0 || (@x + @z) % 3 == 0) {
-													_add_to_chunk(@chunk, @loc, @materials['wall'][(@x + @z) % array_size(@materials['wall'])]);
-												} else if(@y == @groundY + 1 + _get_nearest_height(@heightMap, @maxRoomHeight, @c, @r, @x, @z)) {
-													_add_to_chunk(@chunk, @loc, @materials['edge']);
-												} else {
-													_add_to_chunk(@chunk, @loc, 'air');
-												}
-											} else if(@scale == 3) {
-												if(@northEdge) {
-													if(!@eastEdge && !@westEdge && @layoutMap[@c][@r - 1] == 'wall') {
-														_add_to_chunk(@chunk, @loc, @materials['divider']);
-													} else {
-														_add_to_chunk(@chunk, @loc, @materials['wall']);
-													}
-												} else if(@southEdge) {
-													if(!@eastEdge && !@westEdge && array_get(@layoutMap[@c], @r + 1, null) == 'wall') {
-														_add_to_chunk(@chunk, @loc, @materials['divider']);
-													} else {
-														_add_to_chunk(@chunk, @loc, @materials['wall']);
-													}
-												} else if(@eastEdge) {
-													if(!@northEdge && !@southEdge && array_get(array_get(@layoutMap, @c + 1, array()), @r, null) == 'wall') {
-														_add_to_chunk(@chunk, @loc, @materials['divider']);
-													} else {
-														_add_to_chunk(@chunk, @loc, @materials['wall']);
-													}
-												} else if(@westEdge) {
-													if(!@northEdge && !@southEdge && @layoutMap[@c - 1][@r] == 'wall') {
-														_add_to_chunk(@chunk, @loc, @materials['divider']);
-													} else {
-														_add_to_chunk(@chunk, @loc, @materials['wall']);
-													}
-												} else {
-													_add_to_chunk(@chunk, @loc, @materials['divider']);
-												}
-											} else {
-												_add_to_chunk(@chunk, @loc, @materials['wall']);
-											}
+											_add_to_chunk(@chunk, @loc, @materials['wall']);
 
 										case 'room':
 											if(@roomType == 'TABLE' && @y == @groundY + 2 && !_direction_of_border(@layoutMap, @c, @r)) {
@@ -664,69 +621,53 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 													&& _direction_of_border(@layoutMap, @c, @r)) {
 												_add_to_chunk(@chunk, @loc, @materials['floor'][0]);
 
-											} else if(@materials['edge'] != 'air' && @roomHeight > 2 && @y == @ceilingY - 1) {
+											} else if(@materials['edge'] != 'air' && @room['width'] > 1 && @room['length'] > 1 && @roomHeight > 3 && @y == @ceilingY - 1) {
 												@stairs = string_ends_with(@materials['edge'], 'stairs');
 												@north = @layoutMap[@c][@r - 1];
 												@south = @layoutMap[@c][@r + 1];
 												@west = @layoutMap[@c - 1][@r];
 												@east = @layoutMap[@c + 1][@r];
 												@state = @materials['edge'].if(@stairs, '[half=top'.if(@materials['room'] == 'water', ',waterlogged=true'));
-												if(@roomHeight < 4 && (@east == 'window' && @eastEdge || @west == 'window' && @westEdge
-												|| @north == 'window' && @northEdge || @south == 'window' && @southEdge)) {
+												if(@roomHeight < 4 && (@east == 'window' || @west == 'window'
+												|| @north == 'window' || @south == 'window')) {
 													@state = @materials['room'];
-												} else if(@eastEdge && (@east == 'wall' || @east == 'door' || @east == 'window')) {
+												} else if(@east == 'wall' || @east == 'door' || @east == 'window') {
 													if(@stairs) {
 														@state .= ',facing=east'
 														if(@roomHeight == 3 && @east == 'door') {
-															if(@northEdge) {
-																@state .= ',shape=outer_left';
-															} else {
-																@state .= ',shape=outer_right';
-															}
-														} else if((@north == 'wall' || @north == 'door' && @roomHeight > 3) && @northEdge) {
+															@state .= ',shape=outer_left';
+														} else if(@north == 'wall' || @north == 'door' && @roomHeight > 3) {
 															@state .= ',shape=inner_left';
-														} else if((@south == 'wall' || @south == 'door' && @roomHeight > 3) && @southEdge) {
+														} else if(@south == 'wall' || @south == 'door' && @roomHeight > 3) {
 															@state .= ',shape=inner_right';
 														}
 														@state .= ']';
 													}
-												} else if(@westEdge && (@west == 'wall' || @west == 'door' || @west == 'window')) {
+												} else if(@west == 'wall' || @west == 'door' || @west == 'window') {
 													if(@stairs) {
 														@state .= ',facing=west'
 														if(@roomHeight == 3 && @west == 'door') {
-															if(@southEdge) {
-																@state .= ',shape=outer_left';
-															} else {
-																@state .= ',shape=outer_right';
-															}
-														} else if((@north == 'wall' || @north == 'door' && @roomHeight > 3) && @northEdge) {
+															@state .= ',shape=outer_left';
+														} else if(@north == 'wall' || @north == 'door' && @roomHeight > 3) {
 															@state .= ',shape=inner_right';
-														} else if((@south == 'wall' || @south == 'door' && @roomHeight > 3) && @southEdge) {
+														} else if(@south == 'wall' || @south == 'door' && @roomHeight > 3) {
 															@state .= ',shape=inner_left';
 														}
 														@state .= ']';
 													}
-												} else if(@southEdge && (@south == 'wall' || @south == 'door' || @south == 'window')) {
+												} else if(@south == 'wall' || @south == 'door' || @south == 'window') {
 													if(@stairs) {
 														@state .= ',facing=south';
 														if(@roomHeight == 3 && @south == 'door') {
-															if(@eastEdge) {
-																@state .= ',shape=outer_left';
-															} else {
-																@state .= ',shape=outer_right';
-															}
+															@state .= ',shape=outer_left';
 														}
 														@state .= ']';
 													}
-												} else if(@northEdge && (@north == 'wall' || @north == 'door' || @north == 'window')) {
+												} else if(@north == 'wall' || @north == 'door' || @north == 'window') {
 													if(@stairs) {
 														@state .= ',facing=north'
 														if(@roomHeight == 3 && @north == 'door') {
-															if(@westEdge) {
-																@state .= ',shape=outer_left';
-															} else {
-																@state .= ',shape=outer_right';
-															}
+															@state .= ',shape=outer_left';
 														}
 														@state .= ']';
 													}
@@ -748,52 +689,18 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 													@west = @roomMap[@c - 1][@r];
 													@east = @roomMap[@c + 1][@r];
 													@count = array_size(@chunk);
-													if(@scale > 2) {
-														if(@north % 7 == 0 || @south % 7 == 0) {
-															if(!@westEdge && !@eastEdge) {
-																if(!@southEdge && !@northEdge) {
-																	@half = if(@lower, 'half=lower', 'half=upper');
-																	_add_to_chunk(@chunk, @loc, @materials['door'].'[facing=south,'.@half.']');
-																}
-															} else {
-																_add_to_chunk(@chunk, @loc, @materials['wall']);
-															}
-														} else if(@west % 7 == 0 || @east % 7 == 0) {
-															if(!@southEdge && !@northEdge) {
-																if(!@westEdge && !@eastEdge) {
-																	@half = if(@lower, 'half=lower', 'half=upper');
-																	_add_to_chunk(@chunk, @loc, @materials['door'].'[facing=east,'.@half.']');
-																}
-															} else {
-																_add_to_chunk(@chunk, @loc, @materials['wall']);
-															}
-														}
-													} else {
-														if(@north % 7 == 0) {
-															if(@southEdge) {
-																@half = if(@lower, 'half=lower,', 'half=upper,');
-																@hinge = if(@eastEdge, 'hinge=left', 'hinge=right');
-																_add_to_chunk(@chunk, @loc, @materials['door'].'[facing=south,'.@half.@hinge.']');
-															}
-														} else if(@south % 7 == 0) {
-															if(@northEdge) {
-																@half = if(@lower, 'half=lower,', 'half=upper,');
-																@hinge = if(@westEdge, 'hinge=left', 'hinge=right');
-																_add_to_chunk(@chunk, @loc, @materials['door'].'[facing=north,'.@half.@hinge.']');
-															}
-														} else if(@west % 7 == 0) {
-															if(@eastEdge) {
-																@half = if(@lower, 'half=lower,', 'half=upper,');
-																@hinge = if(@northEdge, 'hinge=left', 'hinge=right');
-																_add_to_chunk(@chunk, @loc, @materials['door'].'[facing=east,'.@half.@hinge.']');
-															}
-														} else if(@east % 7 == 0) {
-															if(@westEdge) {
-																@half = if(@lower, 'half=lower,', 'half=upper,');
-																@hinge = if(@southEdge, 'hinge=left', 'hinge=right');
-																_add_to_chunk(@chunk, @loc, @materials['door'].'[facing=west,'.@half.@hinge.']');
-															}
-														}
+													if(@north % 7 == 0) {
+														@half = if(@lower, 'half=lower,', 'half=upper,');
+														_add_to_chunk(@chunk, @loc, @materials['door'].'[facing=south,'.@half.'hinge=left]');
+													} else if(@south % 7 == 0) {
+														@half = if(@lower, 'half=lower,', 'half=upper,');
+														_add_to_chunk(@chunk, @loc, @materials['door'].'[facing=north,'.@half.'hinge=left]');
+													} else if(@west % 7 == 0) {
+														@half = if(@lower, 'half=lower,', 'half=upper,');
+														_add_to_chunk(@chunk, @loc, @materials['door'].'[facing=east,'.@half.'hinge=left]');
+													} else if(@east % 7 == 0) {
+														@half = if(@lower, 'half=lower,', 'half=upper,');
+														_add_to_chunk(@chunk, @loc, @materials['door'].'[facing=west,'.@half.'hinge=left]');
 													}
 													if(@count == array_size(@chunk)) {
 														_add_to_chunk(@chunk, @loc, @materials['room']);
@@ -801,35 +708,8 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 												} else {
 													_add_to_chunk(@chunk, @loc, @materials['door']);
 												}
-											} else if(@y < @ceilingY - @roomHeight + 3) {
-												@stairs = string_ends_with(@materials['edge'], 'stairs');
-												@north = @layoutMap[@c][@r - 1];
-												@south = array_get(@layoutMap[@c], @r + 1, 'room'); // special case for dungeon entrance
-												@west = @layoutMap[@c - 1][@r];
-												@east = @layoutMap[@c + 1][@r];
-												@state = @materials['edge'].if(@stairs, '[half=top'.if(@materials['room'] == 'water', ',waterlogged=true'));
-												if(@east == 'wall' && @eastEdge) {
-													if(@stairs) {
-														@state .= ',facing=east]';
-													}
-												} else if(@west == 'wall' && @westEdge) {
-													if(@stairs) {
-														@state .= ',facing=west]';
-													}
-												} else if(@south == 'wall' && @southEdge) {
-													if(@stairs) {
-														@state .= ',facing=south]';
-													}
-												} else if(@north == 'wall' && @northEdge) {
-													if(@stairs) {
-														@state .= ',facing=north]';
-													}
-												} else {
-													@state = @materials['wall'];
-												}
-												_add_to_chunk(@chunk, @loc, @state);
-											} else if(@materials['staggeredWall']) {
-												_add_to_chunk(@chunk, @loc, @materials['wall'][0]);
+											} else if(@y == @ceilingY - @roomHeight + 2 && !string_ends_with(@materials['door'], 'door')) {
+												_add_to_chunk(@chunk, @loc, @materials['room']);
 											} else {
 												_add_to_chunk(@chunk, @loc, @materials['wall']);
 											}
@@ -915,9 +795,9 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 						@count = @spawnCount;
 						while(@count > 0) {
 							@loc = array(
-								@regionMinX + @room['c1'] * @scale + integer(srand(@random) * (@room['width'])) * @scale + 0.5,
+								@regionMinX + @room['c1'] + integer(srand(@random) * (@room['width'])) + 0.5,
 								@yFloor + if(@room['type'] == 'ATTIC', @room['midheight'] + 1, 0),
-								@regionMinZ + @room['r1'] * @scale + integer(srand(@random) * (@room['length'])) * @scale + 0.5,
+								@regionMinZ + @room['r1'] + integer(srand(@random) * (@room['length'])) + 0.5,
 								@world,
 								if(@room['type'] == 'ATTIC', 0, @room['doors']), // use this for sorting, lower being more isolated a room
 								0 // pitch parallel to horizon
@@ -951,8 +831,8 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 					@spawner = false;
 					if(@room['type'] == 'FIRE_FLOOR') {
 						@y = @yFloor - 1;
-						for(@x = @regionMinX + @room['c1'] * @scale, @x < @regionMinX + @room['c1'] * @scale + @room['width'] * @scale, @x++) {
-							for(@z = @regionMinZ + @room['r1'] * @scale, @z < @regionMinZ + @room['r1'] * @scale + @room['length'] * @scale, @z++) {
+						for(@x = @regionMinX + @room['c1'], @x < @regionMinX + @room['c1'] + @room['width'], @x++) {
+							for(@z = @regionMinZ + @room['r1'], @z < @regionMinZ + @room['r1'] + @room['length'], @z++) {
 								try(set_inventory(array(@x, @y, @z, @world), array(0: array(
 									name: 'FLINT_AND_STEEL'
 								))));
@@ -962,9 +842,9 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 						// spawner
 						if(@room['connected'] > 1 && @mobTypes && srand(@random) < @floorData['spawnerChance']) {
 							@loc = array(
-								@regionMinX + @room['c1'] * @scale + 1 + integer(srand(@random) * (@room['width'] - 1)) * @scale,
+								@regionMinX + @room['c1'] + 1 + integer(srand(@random) * (@room['width'] - 2)),
 								@yFloor + if(@room['type'] == 'ATTIC' && srand(@random) > 0.67, @room['midheight'] + 1, 0),
-								@regionMinZ + @room['r1'] * @scale + 1 + integer(srand(@random) * (@room['length'] - 1)) * @scale,
+								@regionMinZ + @room['r1'] + 1 + integer(srand(@random) * (@room['length'] - 2)),
 								@world
 							);
 							if(equals_ic(@materials['room'], get_block(@loc))) {
@@ -979,9 +859,9 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 							@attempts = 10;
 							while(@attempts-- > 0) {
 								@loc = array(
-									@regionMinX + @room['c1'] * @scale + 2 + integer(srand(@random) * (@room['width'] - 2)) * @scale,
+									@regionMinX + @room['c1'] + 1 + integer(srand(@random) * (@room['width'] - 2)),
 									@yFloor + if(@room['type'] == 'ATTIC' && srand(@random) > 0.67, @room['midheight'] + 1, 0),
-									@regionMinZ + @room['r1'] * @scale + 2 + integer(srand(@random) * (@room['length'] - 2)) * @scale,
+									@regionMinZ + @room['r1'] + 1 + integer(srand(@random) * (@room['length'] - 2)),
 									@world
 								);
 								if(equals_ic(@materials['room'], get_block(@loc))) {
@@ -1010,9 +890,9 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 						@attempts = 10;
 						while(@attempts-- > 0 && @chests > 0) {
 							@loc = array(
-								@regionMinX + @room['c1'] * @scale + 1 + integer(srand(@random) * (@room['width'] - 1)) * @scale,
+								@regionMinX + @room['c1'] + 1 + integer(srand(@random) * (@room['width'] - 2)),
 								@yFloor + @chestHeight,
-								@regionMinZ + @room['r1'] * @scale + 1 + integer(srand(@random) * (@room['length'] - 1)) * @scale,
+								@regionMinZ + @room['r1']  + 1 + integer(srand(@random) * (@room['length'] - 2)),
 								@world
 							);
 							if(equals_ic(@materials['room'], get_block(@loc))) {
@@ -1038,9 +918,9 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 					@utilities = integer(srand(@random) * 2);
 					while(@utilities-- > 0) {
 						@loc = array(
-							@regionMinX + @room['c1'] * @scale + 1 + integer(srand(@random) * (@room['width'] - 1) * @scale),
+							@regionMinX + @room['c1'] + 1 + integer(srand(@random) * (@room['width'] - 2)),
 							@yFloor + if(@room['type'] == 'ATTIC' && srand(@random) > 0.5, @room['midheight'] + 1, 0),
-							@regionMinZ + @room['r1'] * @scale + 1 + integer(srand(@random) * (@room['length'] - 1) * @scale),
+							@regionMinZ + @room['r1'] + 1 + integer(srand(@random) * (@room['length'] - 2)),
 							@world
 						);
 						if(equals_ic(@materials['room'], get_block(@loc))) {
@@ -1051,9 +931,9 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 					@decorations = integer(srand(@random) * max(@room['length'], @room['width']));
 					while(@decorations-- > 0) {
 						@loc = array(
-							@regionMinX + @room['c1'] * @scale + 1 + integer(srand(@random) * (@room['width'] - 1) * @scale),
+							@regionMinX + @room['c1'] + 1 + integer(srand(@random) * (@room['width'] - 2)),
 							@yFloor + if(@room['type'] == 'ATTIC' && srand(@random) > 0.5, @room['midheight'] + 1, 0),
-							@regionMinZ + @room['r1'] * @scale + 1 + integer(srand(@random) * (@room['length'] - 1) * @scale),
+							@regionMinZ + @room['r1'] + 1 + integer(srand(@random) * (@room['length'] - 2)),
 							@world
 						);
 						if(equals_ic(@materials['room'], get_block(@loc))) {
@@ -1068,9 +948,9 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 							@attempts = 5;
 							do {
 								@loc = array(
-									@regionMinX + @room['c1'] * @scale + integer(srand(@random) * @room['width']) * @scale,
+									@regionMinX + @room['c1'] + integer(srand(@random) * @room['width']),
 									@yFloor + @room['midheight'] + 1,
-									@regionMinZ + @room['r1'] * @scale + integer(srand(@random) * @room['length']) * @scale,
+									@regionMinZ + @room['r1'] + integer(srand(@random) * @room['length']),
 									@world
 								);
 							} while(!equals_ic(@materials['room'], get_block(@loc)) && --@attempts > 0);
@@ -1092,9 +972,9 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 						@tries = 10;
 						while(@tries-- > 0) {
 							@loc = array(
-								@regionMinX + @room['c1'] * @scale + integer(srand(@random) * @room['width']) * @scale + 0.5,
+								@regionMinX + @room['c1'] + integer(srand(@random) * @room['width']) + 0.5,
 								@yFloor,
-								@regionMinZ + @room['r1'] * @scale + integer(srand(@random) * @room['length']) * @scale + 0.5,
+								@regionMinZ + @room['r1'] + integer(srand(@random) * @room['length']) + 0.5,
 								@world
 							);
 							if(equals_ic(@materials['room'], get_block(@loc))) {
@@ -1118,16 +998,16 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 							@loc = null;
 							if(@trigger == 'chest' || @effect == 'cactus') {
 								@loc = array(
-									@regionMinX + @room['c1'] * @scale + 1 + integer(srand(@random) * (@room['width'] - 1)) * @scale,
+									@regionMinX + @room['c1'] + 1 + integer(srand(@random) * (@room['width'] - 2)),
 									@yFloor,
-									@regionMinZ + @room['r1'] * @scale + 1 + integer(srand(@random) * (@room['length'] - 1)) * @scale,
+									@regionMinZ + @room['r1'] + 1 + integer(srand(@random) * (@room['length'] - 2)),
 									@world
 								);
 							} else {
 								@loc = array(
-									@regionMinX + @room['c1'] * @scale + integer(srand(@random) * @room['width']) * @scale,
+									@regionMinX + @room['c1'] + integer(srand(@random) * @room['width']),
 									@yFloor,
-									@regionMinZ + @room['r1'] * @scale + integer(srand(@random) * @room['length']) * @scale,
+									@regionMinZ + @room['r1'] + integer(srand(@random) * @room['length']),
 									@world
 								);
 							}
@@ -1254,9 +1134,9 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 				queue_push(closure(){
 
 					@loc = array(
-						@regionMinX + @exitRoom['c1'] * @scale,
+						@regionMinX + @exitRoom['c1'],
 						@regionMinY + @floor * (@maxRoomHeight + 4) + 2,
-						@regionMinZ + @exitRoom['r1'] * @scale,
+						@regionMinZ + @exitRoom['r1'],
 						@world,
 					);
 					set_blockdata_string(@loc, 'spruce_trapdoor[facing=south,half=bottom]', false);
@@ -1314,15 +1194,15 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 					}
 				}
 				@end = array(
-					x: (@exitRoom['c1'] + @c) * @options['floors'][array_size(@options['floors']) - 1]['scale'] + @regionMinX + 0.5,
+					x: (@exitRoom['c1'] + @c) + @regionMinX + 0.5,
 					y: @regionMinY + @floor * (@maxRoomHeight + 4) + 1,
-					z: (@exitRoom['r1'] + @r) * @options['floors'][array_size(@options['floors']) - 1]['scale'] + @regionMinZ + 0.5,
+					z: (@exitRoom['r1'] + @r) + @regionMinZ + 0.5,
 					world: @world,
 				);
 				@start = array(
-					x: @entranceRoom['c1'] * @options['floors'][0]['scale'] + @regionMinX + 0.5,
+					x: @entranceRoom['c1'] + @regionMinX + 0.5,
 					y: @sy = @regionMinY + 1,
-					z: @entranceRoom['r1'] * @options['floors'][0]['scale'] + @regionMinZ + 0.5,
+					z: @entranceRoom['r1'] + @regionMinZ + 0.5,
 					world: @world,
 				);
 				foreach(@floor: @spawnSet in @spawns) {
