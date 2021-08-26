@@ -23,42 +23,42 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 	@options = yml_decode(read('/dungeon.library/'.@dungeonType.'.yml'));
 	@defaults = array_merge(array(
 		// size and scale
-		'scale': 2,
-		'minRoomSize': 3,
-		'maxRoomSize': 11,
-		'minRoomHeight': 3,
-		'maxRoomHeight': 3,
+		scale: 2,
+		minRoomSize: 3,
+		maxRoomSize: 11,
+		minRoomHeight: 3,
+		maxRoomHeight: 3,
 
 		// variability on room features
-		'chestCount': 0,
-		'spawnerChance': 0.7,
-		'extraDoors': 0.0,
-		'campfireChance': 0.0,
-		'attic': 0.0, // 0.3
-		'balcony': 0.0, // 0.3
-		'lavaPit': 0.0, // 0.06
-		'waterPit': 0.0, // 0.06
-		'pit': 0.0, // 0.06
-		'fireFloor': 0.0, // 0.06
-		'pillars': 0.0,
-		'tables': 0.0,
-		'spawnCount': 1,
+		chestCount: 0,
+		spawnerChance: 0.7,
+		extraDoors: 0.0,
+		campfireChance: 0.0,
+		attic: 0.0, // 0.3
+		balcony: 0.0, // 0.3
+		lavaPit: 0.0, // 0.06
+		waterPit: 0.0, // 0.06
+		pit: 0.0, // 0.06
+		fireFloor: 0.0, // 0.06
+		pillars: 0.0,
+		tables: 0.0,
+		spawnCount: 1,
 
 		// toggleable features on floors
-		'roof': true,
-		'bed': false,
-		'staggeredWall': false,
-		'treasureRoom': false,
+		roof: true,
+		bed: false,
+		staggeredWall: false,
+		treasureRoom: false,
 
 		// default materials
-		'divider': 'bedrock',
-		'empty': 'bedrock',
-		'room': 'air',
-		'door': 'air',
-		'window': '', // optional
+		divider: 'bedrock',
+		empty: 'bedrock',
+		room: 'air',
+		door: 'air',
+		window: '', // optional
 
 		// special spawns
-		'boss': '',
+		boss: '',
 	), @options['default']);
 
 	// process floors config to a useful format and verify values
@@ -139,7 +139,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 
 	// prepare to thread
 	@chunkCount = array(0);
-	create_bar('gen'.@region, array('title': 'Generating '.@dungeonType.if(array_size(@options['floors']) > 1, ' floor 1'), 'percent': 0.0));
+	create_bar('gen'.@region, array(title: 'Generating '.@dungeonType.if(array_size(@options['floors']) > 1, ' floor 1'), percent: 0.0));
 	foreach(@p in all_players(@world)) {
 		bar_add_player('gen'.@region, @p);
 	}
@@ -174,14 +174,14 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 			integer(srand(@random) * (@length / 2 - 3)) * 2 + 3;
 		}
 		@entranceRoom = array(
-			'r1': @r,
-			'c1': @c,
-			'width': 5,
-			'length': 3,
-			'connected': 0,
-			'doors': 0,
-			'height': 4,
-			'type': 'NORMAL',
+			r1: @r,
+			c1: @c,
+			width: 5,
+			length: 3,
+			connected: 0,
+			doors: 0,
+			height: 4,
+			type: 'NORMAL',
 		);
 
 		// Need these outside the foreach scope
@@ -255,14 +255,14 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 				@r = @exitRoom['r1'];
 				@c = @exitRoom['c1'];
 				@rooms[] = array(
-					'r1': @r,
-					'c1': @c,
-					'width': min(@exitRoom['width'], 3),
-					'length': min(@exitRoom['length'], 3),
-					'connected': 0,
-					'doors': 0,
-					'height': 4,
-					'type': 'NORMAL',
+					r1: @r,
+					c1: @c,
+					width: min(@exitRoom['width'], 3),
+					length: min(@exitRoom['length'], 3),
+					connected: 0,
+					doors: 0,
+					height: 4,
+					type: 'NORMAL',
 				);
 			}
 			if(@rooms) {
@@ -334,15 +334,15 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 						// Save room
 						@unconnected[] = array_size(@rooms);
 						@rooms[] = array(
-							'r1': @r,
-							'c1': @c,
-							'width': @roomWidth,
-							'length': @roomLength,
-							'connected': 0,
-							'doors': 0,
-							'height': @height,
-							'midheight': 3 + integer(srand(@random) * (@height - 7)),
-							'type': @type
+							r1: @r,
+							c1: @c,
+							width: @roomWidth,
+							length: @roomLength,
+							connected: 0,
+							doors: 0,
+							height: @height,
+							midheight: 3 + integer(srand(@random) * (@height - 7)),
+							type: @type
 						);
 
 						// Mask room
@@ -870,7 +870,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 							@title = 'Placing '.@dungeonType.' floor '.(@floor + 1),
 							@percent = double(++@chunkCount[0] / @maxChunks)
 						){
-							update_bar(@bar, array('title': @title, 'percent': @percent));
+							update_bar(@bar, array(title: @title, percent: @percent));
 						}, 'generator');
 						queue_push(iclosure(
 							@thisChunk = @chunk,
@@ -954,7 +954,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 						for(@x = @regionMinX + @room['c1'] * @scale, @x < @regionMinX + @room['c1'] * @scale + @room['width'] * @scale, @x++) {
 							for(@z = @regionMinZ + @room['r1'] * @scale, @z < @regionMinZ + @room['r1'] * @scale + @room['length'] * @scale, @z++) {
 								try(set_inventory(array(@x, @y, @z, @world), array(0: array(
-									'name': 'FLINT_AND_STEEL'
+									name: 'FLINT_AND_STEEL'
 								))));
 							}
 						}
@@ -1075,7 +1075,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 								);
 							} while(!equals_ic(@materials['room'], get_block(@loc)) && --@attempts > 0);
 							@dirs = array_rand(array('east', 'west', 'north', 'south'), rand(1, 4), false);
-							@block = array('block': 'vine');
+							@block = array(block: 'vine');
 							foreach(@dir in @dirs) {
 								@block[@dir] = true;
 							}
@@ -1200,7 +1200,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 									foreach(@dir in array('north', 'south', 'east', 'west')) {
 										set_blockdata_string(location_shift(@loc, @dir), 'dispenser[facing=up]', false);
 										set_inventory(location_shift(@loc, @dir), array(0: array(
-											'name': 'FLINT_AND_STEEL', 'meta': array('damage': 61)
+											name: 'FLINT_AND_STEEL', meta: array(damage: 61)
 										)));
 									}
 								case 'cactus':
@@ -1221,7 +1221,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 									}
 								case 'tnt':
 									set_blockdata_string(@loc, 'dispenser[facing='.@facing.']', false);
-									set_inventory(@loc, array(0: array('name': 'TNT', 'qty': 2)));
+									set_inventory(@loc, array(0: array(name: 'TNT', qty: 2)));
 								case 'potion':
 									@solid = material_info(get_block(location_shift(@loc, @facing)), 'isSolid');
 									if(@solid) {
@@ -1230,13 +1230,13 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 										set_blockdata_string(@loc, 'dispenser[facing=north]', false);
 									}
 									set_inventory(@loc, array(0: array(
-										'name': if(@solid, 'LINGERING_POTION', 'SPLASH_POTION'),
-										'qty': 3,
-										'meta': array('base': array('extended': false, 'type': to_upper(@data), 'upgraded': true))
+										name: if(@solid, 'LINGERING_POTION', 'SPLASH_POTION'),
+										qty: 3,
+										meta: array(base: array(extended: false, type: to_upper(@data), upgraded: true))
 									)));
 								case 'arrow':
 									set_blockdata_string(@loc, 'dispenser[facing='.@facing.']', false);
-									set_inventory(@loc, array(0: array('name': 'TIPPED_ARROW', 'qty': 3, 'meta': array('base': array('type': 'INSTANT_DAMAGE', 'upgraded': true, 'extended': false)))));
+									set_inventory(@loc, array(0: array(name: 'TIPPED_ARROW', qty: 3, meta: array(base: array(type: 'INSTANT_DAMAGE', upgraded: true, extended: false)))));
 							}
 							if(@trigger == 'plate') {
 								// needs to be after dispenser
@@ -1314,16 +1314,16 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 					}
 				}
 				@end = array(
-					'x': (@exitRoom['c1'] + @c) * @options['floors'][array_size(@options['floors']) - 1]['scale'] + @regionMinX + 0.5,
-					'y': @regionMinY + @floor * (@maxRoomHeight + 4) + 1,
-					'z': (@exitRoom['r1'] + @r) * @options['floors'][array_size(@options['floors']) - 1]['scale'] + @regionMinZ + 0.5,
-					'world': @world,
+					x: (@exitRoom['c1'] + @c) * @options['floors'][array_size(@options['floors']) - 1]['scale'] + @regionMinX + 0.5,
+					y: @regionMinY + @floor * (@maxRoomHeight + 4) + 1,
+					z: (@exitRoom['r1'] + @r) * @options['floors'][array_size(@options['floors']) - 1]['scale'] + @regionMinZ + 0.5,
+					world: @world,
 				);
 				@start = array(
-					'x': @entranceRoom['c1'] * @options['floors'][0]['scale'] + @regionMinX + 0.5,
-					'y': @sy = @regionMinY + 1,
-					'z': @entranceRoom['r1'] * @options['floors'][0]['scale'] + @regionMinZ + 0.5,
-					'world': @world,
+					x: @entranceRoom['c1'] * @options['floors'][0]['scale'] + @regionMinX + 0.5,
+					y: @sy = @regionMinY + 1,
+					z: @entranceRoom['r1'] * @options['floors'][0]['scale'] + @regionMinZ + 0.5,
+					world: @world,
 				);
 				foreach(@floor: @spawnSet in @spawns) {
 					array_sort(@spawnSet, closure(@left, @right) {
