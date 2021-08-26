@@ -18,7 +18,7 @@ register_command('worms', array(
 		
 		include_dir('core.library');
 		@game = _worms_create(@args[0]);
-		_generator_create('dungeon', 'dirt', @game['region'], @game['world'], time(), closure(@start, @end, @spawns){
+		_generator_create('dungeon_v1', 'dirt', @game['region'], @game['world'], time(), closure(@start, @end, @spawns){
 			@game['spawns'] = @spawns;
 			_worms_start(@game);
 		});

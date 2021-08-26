@@ -1,6 +1,6 @@
 proc _arena_prepare(@pvp) {
 	@world = @pvp['arena']['lobby'][3];
-	_generator_create('dungeon', 'showdown', 'showdowndungeon', @world, 0, closure(@start, @end, @spawns) {
+	_generator_create('dungeon_v1', 'showdown', 'showdowndungeon', @world, 0, closure(@start, @end, @spawns) {
 		@spawns = @spawns[0]; // we only want one floor
 		@playerSpawns = @spawns[cslice(0, integer(length(@spawns) / 2) - 1)];
 		@itemSpawns = @spawns[cslice(integer(length(@spawns) / 2), -1)]
