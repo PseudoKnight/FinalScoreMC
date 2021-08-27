@@ -876,18 +876,8 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 							@thisChunk = @chunk,
 							@thisWorld = @world
 						){
-							// removing chests drops items, so we need to make sure those don't drop
-							@bind = bind('item_spawn', null, null, @event, @thisWorld) {
-								if(@event['location']['world'] == @thisWorld) {
-									cancel();
-								}
-							}
-							try {
-								for(@i = 0, @i < array_size(@thisChunk), @i += 2) {
-									set_blockdata_string(@thisChunk[@i], @thisChunk[@i + 1], false);
-								}
-							} finally {
-								unbind(@bind);
+							for(@i = 0, @i < array_size(@thisChunk), @i += 2) {
+								set_blockdata_string(@thisChunk[@i], @thisChunk[@i + 1], false);
 							}
 						}, 'generator');
 					}
