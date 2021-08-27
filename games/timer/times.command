@@ -257,7 +257,7 @@ register_command('times', array(
 						});
 					}
 
-					msg(color('yellow').color('bold').'Your '.@action.' ranked courses:');
+					msg(color('yellow').color('bold')._to_upper_camel_case(@action).' ranked courses:');
 					@top = null;
 					for(@i = 0, @i < 19, @i++) {
 						@course = @courseList[@i];
