@@ -126,14 +126,12 @@ register_command('stairway', array(
 							try {
 								@passingUUID = array_get_rand(@stairs[@loc[1]]);
 								@pdata = _pdata_by_uuid(replace(@passingUUID, '-', ''));
-								if(!array_index_exists(@pdata, 'noskull')) {
-									@passing = @pdata['name'];
-									@skullLoc = location_shift(@newLoc, 'up');
-									@rotation = integer(get_yaw(@ploc, @newLoc) / 22.5);
-									set_blockdata(@skullLoc, array('block': 'player_head', 'rotation': @rotation), false);
-									set_skull_owner(@skullLoc, @passingUUID);
-									@oldLocs[] = @skullLoc;
-								}
+								@passing = @pdata['name'];
+								@skullLoc = location_shift(@newLoc, 'up');
+								@rotation = integer(get_yaw(@ploc, @newLoc) / 22.5);
+								set_blockdata(@skullLoc, array('block': 'player_head', 'rotation': @rotation), false);
+								set_skull_owner(@skullLoc, @passingUUID);
+								@oldLocs[] = @skullLoc;
 							} catch (NotFoundException @ex) {
 								console(@ex['message']);
 							}
