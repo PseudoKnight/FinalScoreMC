@@ -762,7 +762,7 @@ proc _pvp_end_match(@id, @winners) {
 			foreach(@p in array_keys(@pvp['players'])) {
 				title(@p, @title, @subtitle, 20, 60, 20);
 			}
-			discord_broadcast('minecraft_chat', '*'.strip_colors(@title).if(@subtitle, ' ('.strip_colors(@subtitle).')').'*');
+			discord_broadcast('minecraft_chat', array(embed: array(title: strip_colors(@title).if(@subtitle, ' ('.strip_colors(@subtitle).')'))));
 
 		} else if(array_index_exists(@pvp, 'team') && array_size(@winners) > 0) {
 			@team = @pvp['players'][@leader]['team'];
@@ -773,17 +773,17 @@ proc _pvp_end_match(@id, @winners) {
 			foreach(@p in array_keys(@pvp['players'])) {
 				title(@p, @title, @subtitle, 20, 60, 20);
 			}
-			discord_broadcast('minecraft_chat', '*'.strip_colors(@title).' ('.strip_colors(@subtitle).')*');
+			discord_broadcast('minecraft_chat', array(embed: array(title: strip_colors(@title).' ('.strip_colors(@subtitle).')')));
 		} else if(array_size(@winners) > 0) {
 			@winnersString = array_implode(@winners, ' and ').' wins '.@pvp['title'].'!';
 			_worldmsg(@world, color('gray').'[PVP] '.color('r').@winnersString);
 			foreach(@p in array_keys(@pvp['players'])) {
 				title(@p, '', @winnersString, 20, 60, 20);
 			}
-			discord_broadcast('minecraft_chat', '*'.@winnersString.'*');
+			discord_broadcast('minecraft_chat', array(embed: array(title: @winnersString)));
 		} else {
 			_worldmsg(@world, color('gray').'[PVP] '.color('r').'Nobody wins! Wait.. what?!');
-			discord_broadcast('minecraft_chat', '*'.@pvp['title'].' is a draw*');
+			discord_broadcast('minecraft_chat', array(embed: array(title: @pvp['title'].' is a draw')));
 		}
 	}, @id);
 

@@ -50,7 +50,7 @@ proc _add_activity(@id, @title, @region, @world) {
 	@activities[@id] = array('title': @title, 'region': @region, 'world': @world);
 	if(@region && @world) {
 		if(function_exists('discord_broadcast')) {
-			discord_broadcast('minecraft_chat', '*'.@title.' started...*');
+			discord_broadcast('minecraft_chat', array(embed: array(title: @title.' started...')));
 		}
 		if(extension_exists('CHDynmap')) {
 			try {

@@ -163,7 +163,7 @@ proc _fw_end_game(@winners) {
 						launch_firework(location_shift(ploc(@p), 'up'), array(strength: 0, type: 'BALL_LARGE', flicker: true));
 					});
 				});
-				discord_broadcast('minecraft_chat', '*'.@p.' wins FrogWare!*');
+				discord_broadcast('minecraft_chat', array(embed: array(title: @p.' wins FrogWare!')));
 			} else {
 				_fw_change_team(@p, 'losers');
 			}
