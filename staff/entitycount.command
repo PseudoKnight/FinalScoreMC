@@ -1,68 +1,31 @@
 register_command('entitycount', array(
-	'description': 'Returns the number of entities of each type in this world.',
-	'usage': '/entitycount',
-	'permission': 'command.entitycount',
-	'tabcompleter': closure(@alias, @sender, @args, @info) {
+	description: 'Returns the number of entities of each type in this world.',
+	usage: '/entitycount',
+	tabcompleter: closure(@alias, @sender, @args, @info) {
 		return(array());
 	},
-	'executor': closure(@alias, @sender, @args, @info) {
-		@MONSTERS = array('BLAZE', 'CAVE_SPIDER', 'CREEPER', 'DROWNED', 'ELDER_GUARDIAN', 'ENDER_DRAGON', 'ENDERMAN',
-				'ENDERMITE', 'EVOKER', 'GHAST', 'GUARDIAN', 'HOGLIN', 'HUSK', 'MAGMA_CUBE', 'PHANTOM', 'PIGLIN', 'PIGLIN_BRUTE', 'SHULKER',
-				'SILVERFISH', 'SKELETON', 'SPIDER', 'STRAY', 'VEX', 'VINDICATOR', 'WITCH', 'WITHER', 'WITHER_SKELETON',
-				'ZOGLIN', 'ZOMBIE', 'ZOMBIE_VILLAGER', 'ZOMBIFIED_PIGLIN');
-		@ANIMALS = array('AXOLOTL', 'CHICKEN', 'COW', 'DONKEY', 'GLOW_SQUID', 'GOAT', 'HORSE', 'IRON_GOLEM', 'LLAMA', 'MULE',
-				'MUSHROOM_COW', 'OCELOT', 'PARROT', 'PIG', 'POLAR_BEAR', 'RABBIT', 'SHEEP',
-				'SKELETON_HORSE', 'SNOWMAN', 'TURTLE', 'VILLAGER', 'WOLF', 'ZOMBIE_HORSE');
-		@WATERANIMALS = array('COD', 'DOLPHIN', 'SQUID', 'PUFFERFISH', 'SALMON', 'TROPICAL_FISH' );
-		@AMBIENT = array('BAT');
-		
-		@playerCount = array_size(all_players(pworld()));
-		@caps = array(
-			'MONSTERS': 23 * @playerCount,
-			'ANIMALS': 4 * @playerCount,
-			'WATERANIMALS': 6 * @playerCount,
-			'AMBIENT': 1 * @playerCount,
-		);
-		
+	executor: closure(@alias, @sender, @args, @info) {
+		sudo('/paper mobcaps');
 		@entities = all_entities(pworld());
 		@specificTypes = associative_array();
-		@classTypes = array('MONSTERS': 0, 'ANIMALS': 0, 'WATERANIMALS': 0, 'AMBIENT': 0);
 		foreach(@e in @entities) {
 			@type = entity_type(@e);
 			if(!array_index_exists(@specificTypes, @type)) {
 				@specificTypes[@type] = 0;
 			}
 			@specificTypes[@type]++;
-			
-			if(array_contains(@MONSTERS, @type)) {
-				if(!get_entity_persistence(@e)) {
-					@classTypes['MONSTERS']++;
-				}
-			} else if(array_contains(@ANIMALS, @type)) {
-				@classTypes['ANIMALS']++;
-			} else if(array_contains(@WATERANIMALS, @type)) {
-				if(!get_entity_persistence(@e)) {
-					@classTypes['WATERANIMALS']++;
-				}
-			} else if(array_contains(@AMBIENT, @type)) {
-				if(!get_entity_persistence(@e)) {
-					@classTypes['AMBIENT']++;
-				}
-			}
 		}
-		msg(color('green').'Totals by Entity Type '.color('gray').'(at least 5)');
-		@other = 0;
+		@sortedTypes = array();
 		foreach(@type: @count in @specificTypes) {
-			if(@count > 5) {
-				msg(@type.': '.@count);
-			} else {
-				@other += @count;
-			}
+			@sortedTypes[] = array(name: @type, count: @count);
 		}
-		msg('OTHER: '.@other);
-		msg(color('green').'Type: EntityCount / MaxEstimatedCap '.color('gray').'(discludes persistent)');
-		foreach(@classType: @count in @classTypes) {
-			msg(@classType.': '.@count.' / '.@caps[@classType]);
+		@sortedTypes = array_sort(@sortedTypes, closure(@left, @right) {
+			return(@left['count'] < @right['count']);
+		});
+		@sortedTypes = @sortedTypes[cslice(0, min(10, array_size(@sortedTypes) - 1))]
+		msg('Top entity counts:');
+		foreach(@type in @sortedTypes) {
+			msg('  '.color('GRAY').to_lower(@type['name']).color('RESET').': '.@type['count']);
 		}
 	}
 ));

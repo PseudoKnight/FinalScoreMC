@@ -148,7 +148,6 @@ regular:
     worldguard.region.unlimited: true
     item.lighter: true
     command.approve: true
-    command.entitycount: true
   worlds:
     dev:
       command.time: true
