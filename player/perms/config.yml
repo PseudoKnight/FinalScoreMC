@@ -82,8 +82,6 @@ member:
       command.sethome: false
       deadbolt.admin.bypass: true
       deadbolt.admin.snoop: true
-      build.wither: true
-      build.wither: true
       item.lighter: true
       advancement.all: false
     outworld:
@@ -91,14 +89,12 @@ member:
       stargate.create.network: false
       worldguard.region.claim: false
       command.sethome: false
-      build.wither: true
       item.lighter: true
     outworld_nether:
       stargate.create.personal: false
       stargate.create.network: false
       worldguard.region.claim: false
       command.sethome: false
-      build.wither: true
       item.lighter: true
     outworld_the_end:
       stargate.create.personal: false

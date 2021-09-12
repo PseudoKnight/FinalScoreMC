@@ -116,14 +116,17 @@ bind('player_death', null, null, @event) {
 }
 
 /*
-	Blocks spawning of the wither
+	Logs spawning of a wither
 */
-bind('block_place', null, array('block': 'WITHER_SKELETON_SKULL'), @event) {
-	if(@event['block'] == 'WITHER_SKELETON_SKULL' && !has_permission('build.wither')) {
+bind('block_place', null, array(block: 'WITHER_SKELETON_SKULL'), @event) {
+	if(@event['block'] == 'WITHER_SKELETON_SKULL') {
+		@loc = @event['location'];
 		foreach(@dir in array('north', 'south', 'east', 'west', 'up', 'down')) {
-			if(get_block(location_shift(@event['location'], @dir)) == 'SOUL_SAND') {
-				cancel();
-				msg(color('yellow').'You can only spawn withers in the outworld.');
+			@block = get_block(location_shift(@loc, @dir));
+			if(@block == 'SOUL_SAND' || @block == 'SOUL_SOIL') {
+				@player = player();
+				@stringLoc = floor(@loc['x']).','.floor(@loc['y']).','.floor(@loc['z']).' '._worldname(@loc['world']);
+				console("@player spawning a wither at @stringLoc!", false);
 				break();
 			}
 		}
