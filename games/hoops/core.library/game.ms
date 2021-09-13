@@ -171,7 +171,7 @@ proc _hoops_start() {
 				if(@game['possession']) {
 					_hoops_ball_create(@game['possessionLoc']);
 					@possession = @game['possession'];
-					if(!@game['teams'][@possession]['players']) {
+					if(@game['teams'][@possession]['players']) {
 						set_entity_spec(@game['ball'], array('gravity': false));
 						@holder = array_get_rand(@game['teams'][@possession]['players']);
 						@game['holder'] = @holder;
