@@ -11,8 +11,8 @@ case 'load':
 			@slot = -106;
 		}
 		@item = pinv(player(), @slot);
-		if(@item && @item['name'] == 'DIAMOND_BLOCK' && !pcooldown('DIAMOND_BLOCK')) {
-			set_pcooldown('DIAMOND_BLOCK', 20);
+		if(@item && @item['name'] == 'PLAYER_HEAD' && !pcooldown('PLAYER_HEAD')) {
+			set_pcooldown('PLAYER_HEAD', 20);
 
 			@trace = ray_trace(player(), 90, 0.5);
 			@target = @trace['location'];
@@ -183,7 +183,7 @@ case 'load':
 		}
 		if(@damager && @damager != @player) {
 			@helmet = get_mob_equipment(@event['id'])['helmet'];
-			if(@helmet && @helmet['name'] == 'DIAMOND_BLOCK') {
+			if(@helmet && @helmet['name'] == 'PLAYER_HEAD') {
 				consume();
 				@loc = entity_loc(@event['id']);
 				foreach(@p in players_in_radius(@loc, 4)) {
