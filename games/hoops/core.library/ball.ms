@@ -147,7 +147,7 @@ proc _hoops_ball_create(@loc) {
 			if(!@ending[0]) {
 				@end = false;
 				if(_hoops_ball_in_hoop(@loc)) {
-					if(@v['y'] > @gravity) {
+					if(@game['holder'] || @v['y'] > @gravity) {
 						@end = true;
 						play_sound(@loc, array('sound': 'ENTITY_ZOMBIE_VILLAGER_CONVERTED', 'pitch': 1.8, 'volume': 3));
 						@game['holder'] = '';
