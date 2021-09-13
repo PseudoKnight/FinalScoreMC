@@ -21,7 +21,7 @@ register_command('arena', array(
 		array(
 			'<weapons': array('endernades', 'fireball', 'firebreath', 'firefire', 'flamethrower', 'grapple',
 				'halo/battlerifle', 'knockout', 'mine', 'pistoltears', 'primedtnt', 'railgun', 'rifle', 'shotgunballs',
-				'skullrockets', 'snipeglass', 'spawner', 'tracker'),
+				'skullrockets', 'snipeglass', 'spawner', 'tracker', 'dynamitestick'),
 			'<options': array('lives', 'score', 'class_picks', 'class_picking'),
 		)
 	),
