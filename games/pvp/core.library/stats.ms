@@ -49,14 +49,49 @@ proc _stats_table() {
 }
 
 proc _stats_print(@winners, @pvp) {
+	@title = '';
+	@subtitle = '';
+	if(array_index_exists(@pvp, 'team') && @winners) {
+		@leader = @winners[0];
+		@team = @pvp['players'][@leader]['team'];
+		@title = @pvp['players'][@leader]['color'].color('bold')
+				.@arena['team'][@team]['name'].' wins '.@pvp['title'].'!';
+		@subtitle = @pvp['players'][@leader]['color'].array_implode(@winners, ' ');
+	} else if(@winners) {
+		@title = array_implode(@winners, ' and ').' wins '.@pvp['title'].'!';
+	} else {
+		@title = 'No one won '.@pvp['title'].'.';
+	}
+
 	@table = _stats_table();
 	@a = @table[0];
 	@b = @table[1];
 	@c = @table[2];
 	@d = @table[3];
+
+	@embed = array(
+		author: array(
+			name: strip_colors(@title),
+		),
+		fields: array()
+	);
+	if(array_size(@winners) == 1) {
+		@embed['author']['icon_url'] = 'https://crafatar.com/avatars/'.puuid(@winners[0], true).'?overlay';
+	}
+	if(@a[0] == 'kills' && @b[0] == 'deaths') {
+		@embed['fields'][] = array(name: 'K : D', value: '', inline: true);
+		@embed['fields'][] = array(name: to_upper(@c[0]), value: '', inline: true);
+	} else {
+		@embed['fields'][] = array(name: to_upper(@a[0]), value: '', inline: true);
+		@embed['fields'][] = array(name: to_upper(@b[0]), value: '', inline: true);
+	}
+	@embed['fields'][] = array(name: '', value: '', inline: true); // player names
+
 	_pvp_msg(@pvp, colorize('&7&m|------------------------------&7&l[ &f&lTHE FINAL SCORE&7&l ]&7&m--|'));
 	_pvp_msg(@pvp, colorize(replace('--&7'.to_upper(@a[0]).' &8:&7 '.to_upper(@b[0]).' &8:&7 '.to_upper(@c[0]).' &8:&7 '.to_upper(@d[0]), '-', ' ')));
 	_pvp_msg(@pvp, colorize('&7&m|----------------------------------------------------|'));
+
+	@firstline = true;
 	foreach(@player: @stats in @pvp['stats']) {
 		_pvp_msg(@pvp, replace('----'
 			._stat_pad(@stats[@a[0]], @a[1]).@a[2]
@@ -67,8 +102,25 @@ proc _stats_print(@winners, @pvp) {
 				color('gold').color('bold').@player.if(@pvp['coins'] > 0, ' +'.@pvp['coins']),
 				@player)
 			.'-', '-', ' '));
+		
+		if(@a[0] == 'kills' && @b[0] == 'deaths') {
+			@embed['fields'][0]['value'] .= if(!@firstline, '\n').@stats[@a[0]].' : '.@stats[@b[0]];
+			@embed['fields'][1]['value'] .= if(!@firstline, '\n').@stats[@c[0]];
+		} else {
+			@embed['fields'][0]['value'] .= if(!@firstline, '\n').@stats[@a[0]];
+			@embed['fields'][1]['value'] .= if(!@firstline, '\n').@stats[@b[0]];
+		}
+		@embed['fields'][2]['value'] .= if(!@firstline, '\n').if(array_contains(@winners, @player), '**'.@player.'**', @player);
+
+		@firstline = false;
 	}
+
 	_pvp_msg(@pvp, colorize('&7&m|----------------------------------------------------|'));
+	foreach(@p in array_keys(@pvp['players'])) {
+		title(@p, @title, @subtitle, 20, 60, 20);
+	}
+
+	discord_broadcast('minecraft_chat', array(embed: @embed));
 }
 
 proc _stats_store(@winners, @pvp) {

@@ -723,10 +723,8 @@ proc _pvp_end_match(@id, @winners) {
 		return();
 	}
 
-	@leader = '';
 	foreach(array_keys(@pvp['players']), @player) {
 		if(array_contains(@winners, @player)) {
-			@leader = @player;
 			if(ponline(@player) && @pvp['coins'] >= 1) {
 				_acc_add(@player, @pvp['coins']);
 			}
@@ -746,25 +744,9 @@ proc _pvp_end_match(@id, @winners) {
 	queue_delay(100, @id); // timing ensures players are alive or in spec
 	queue_push(closure(){
 		if(array_index_exists(@pvp, 'stats')) {
-			@title = '';
-			@subtitle = '';
-			if(array_index_exists(@pvp, 'team') && @leader) {
-				@team = @pvp['players'][@leader]['team'];
-				@title = @pvp['players'][@leader]['color'].color('bold')
-						.@arena['team'][@team]['name'].' wins '.@pvp['title'].'!';
-				@subtitle = @pvp['players'][@leader]['color'].array_implode(@winners, ' ');
-			} else if(@winners) {
-				@title = array_implode(@winners, ' and ').' wins '.@pvp['title'].'!';
-			} else {
-				@title = 'No one won '.@pvp['title'].'.';
-			}
 			_stats_print(@winners, @pvp);
-			foreach(@p in array_keys(@pvp['players'])) {
-				title(@p, @title, @subtitle, 20, 60, 20);
-			}
-			discord_broadcast('minecraft_chat', array(embed: array(title: strip_colors(@title).if(@subtitle, ' ('.strip_colors(@subtitle).')'))));
-
 		} else if(array_index_exists(@pvp, 'team') && array_size(@winners) > 0) {
+			@leader = @winners[0];
 			@team = @pvp['players'][@leader]['team'];
 			@title = @pvp['players'][@leader]['color'].color('bold')
 				.@arena['team'][@team]['name'].' wins '.@pvp['title'].'!';
