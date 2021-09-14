@@ -55,7 +55,7 @@ proc _stats_print(@winners, @pvp) {
 		@leader = @winners[0];
 		@team = @pvp['players'][@leader]['team'];
 		@title = @pvp['players'][@leader]['color'].color('bold')
-				.@arena['team'][@team]['name'].' wins '.@pvp['title'].'!';
+				.@pvp['arena']['team'][@team]['name'].' wins '.@pvp['title'].'!';
 		@subtitle = @pvp['players'][@leader]['color'].array_implode(@winners, ' ');
 	} else if(@winners) {
 		@title = array_implode(@winners, ' and ').' wins '.@pvp['title'].'!';
