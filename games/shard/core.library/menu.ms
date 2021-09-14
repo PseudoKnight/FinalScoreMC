@@ -71,12 +71,15 @@ proc _open_rules_menu(@objective) {
 			'default': true,
 			'shown': true,
 			'item': array(
-				'name': 'CHEST', 'meta': array(
+				'name': 'PLAYER_HEAD', 'meta': array(
 					'display': color('aqua').color('bold').'RANDOM LOOT',
 					'lore': array(
 						color('white').'Existing chests have randomized loot in them.',
 						color('yellow').'RANDOM, BUT FAIR!'
-			)))
+					),
+					'owneruuid': '9b0146a5-2305-4675-ba3e-e5a3524ebb69',
+					'texture': 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYzgzMTEzOGMyMDYxMWQzMDJjNDIzZmEzMjM3MWE3NDNkMTc0MzdhMTg5NzNjMzUxOTczNDQ3MGE3YWJiNCJ9fX0=',
+			))
 		),
 		'keep': array(
 			'objective': array('elimination', 'treasurehunt', 'creative'),
