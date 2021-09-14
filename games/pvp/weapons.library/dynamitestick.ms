@@ -1,5 +1,5 @@
 @pvp['binds'][] = bind('projectile_hit', null, array(type: 'SNOWBALL'), @event, @pvp) {
-	if(!array_index_exists(@pvp['players'], player()) || get_projectile_item(@event['id'])['name'] != 'RED_CANDLE') {
+	if(get_projectile_item(@event['id'])['name'] != 'RED_CANDLE') {
 		die();
 	}
 	cancel();
