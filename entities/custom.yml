@@ -1,8 +1,8 @@
 antfarmqueen:
   effects:
   - id: 11
-    seconds: 7200
-    strength: 2
+    seconds: 99999
+    strength: 3
   health: 100
   tags:
     profession: LIBRARIAN
@@ -131,6 +131,30 @@ gianthead:
     LEGGINGS: null
     OFF_HAND: null
     WEAPON: null
+  type: giant
+giantman:
+  gear:
+    BOOTS:
+      meta: null
+      name: NETHERITE_BOOTS
+      qty: 1
+    CHESTPLATE:
+      meta: null
+      name: NETHERITE_CHESTPLATE
+      qty: 1
+    HELMET:
+      meta: null
+      name: NETHERITE_HELMET
+      qty: 1
+    LEGGINGS:
+      meta: null
+      name: NETHERITE_LEGGINGS
+      qty: 1
+    OFF_HAND: null
+    WEAPON:
+      meta: null
+      name: NETHERITE_HOE
+      qty: 1
   type: giant
 giantstatue:
   ai: false
@@ -270,6 +294,19 @@ leprechaun:
   tags:
     baby: true
   type: zombie
+parrotbomb:
+  droprate:
+    BOOTS: 0.0
+    CHESTPLATE: 0.0
+    HELMET: 0.0
+    LEGGINGS: 0.0
+    OFF_HAND: 0.0
+    WEAPON: 0.0
+  explode:
+  - 4
+  - 3
+  tame: true
+  type: PARROT
 pony:
   age: -24000
   rider: owner
@@ -333,6 +370,31 @@ steed:
       name: SADDLE
   tame: true
   type: horse
+turret:
+  effects:
+  - id: 11
+    seconds: 99999
+    strength: -1
+  - id: 11
+    seconds: 99999
+    strength: -1
+  - id: 11
+    seconds: 99999
+    strength: 3
+  - id: 14
+    seconds: 99999
+    strength: -1
+  - id: 11
+    seconds: 99999
+    strength: 4
+  silent: true
+  type: guardian
+turretstand:
+  rider: turret
+  tags:
+    small: true
+    visible: false
+  type: armor_stand
 zombievector:
   droprate:
     BOOTS: 0
