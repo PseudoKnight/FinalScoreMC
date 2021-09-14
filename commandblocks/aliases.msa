@@ -46,13 +46,15 @@
 		}
 		bind('vehicle_leave', array(id: @player.'vehicle_leave'), array('vehicletype': 'MINECART', 'passengertype': 'PLAYER'), @e, @player) {
 			if(@e['player'] == @player) {
-				unbind()
-				unbind(@player.'quit')
-				try {
-					entity_remove(@e['vehicle']);
-				} catch(BadEntityException @ex) {
-					// already removed or unloaded
-				}
+				unbind();
+				unbind(@player.'quit');
+				set_timeout(10, closure(){
+					try {
+						entity_remove(@e['vehicle']);
+					} catch(BadEntityException @ex) {
+						// already removed or unloaded
+					}
+				});
 			}
 		}
 		bind('player_quit', array(id: @player.'quit'), array('player': @player), @e, @cart, @player) {
