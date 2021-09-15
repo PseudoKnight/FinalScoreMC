@@ -166,8 +166,8 @@ proc _hazard_bind(@game) {
 			@modified = false;
 			foreach(@index: @block in @event['blocks']) {
 				@regions = sk_regions_at(@block);
-				if(!array_contains(sk_regions_at(@block), 'hazard')
-				|| array_contains(sk_regions_at(@block), 'hazard_start')) {
+				if(!array_contains(@regions, 'hazard')
+				|| array_contains(@regions, 'hazard_start')) {
 					array_remove(@event['blocks'], @index);
 					@modified = true;
 				} else {
