@@ -3,8 +3,10 @@
 		cancel();
 		if(@loc = location_shift(@e['location'], @e['facing'])) {
 			ptake_item(array(name: 'TNT'));
-			@tnt = spawn_entity('PRIMED_TNT', 1, _center(@loc))[0];
-			set_entity_spec(@tnt, array(fuseticks: 80));
+			spawn_entity('PRIMED_TNT', 1, _center(@loc), closure(@tnt) {
+				set_entity_spec(@tnt, array(fuseticks: 80, source: puuid()));
+				add_scoreboard_tag(@tnt, 'nodamage');
+			});
 		}
 	}
 }

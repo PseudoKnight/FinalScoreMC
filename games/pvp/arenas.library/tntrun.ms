@@ -78,7 +78,8 @@ proc _arena_bind_events(@id) {
 	@pvp['binds'][] = bind('player_interact_entity', null, array(clicked: 'PRIMED_TNT'), @e, @pvp, @tnt) {
 		if(array_index_exists(@pvp['players'], player()) && is_null(get_entity_rider(puuid()))) {
 			set_entity_rider(puuid(player()), @e['id']);
-			set_entity_spec(@e['id'], array(fuseticks: 60));
+			set_entity_spec(@e['id'], array(fuseticks: 60, source: puuid()));
+			add_scoreboard_tag(@e['id'], 'nodamage');
 			set_pinv(player(), null, array(name: 'TNT'));
 			play_sound(ploc(), array(sound: 'ENTITY_CHICKEN_EGG', pitch: 0.5));
 			@tnt[] = @e['id'];
