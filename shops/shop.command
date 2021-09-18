@@ -69,11 +69,7 @@ register_command('shop', array(
 			
 			include('core.library/item.ms');
 		
-			@loc = ray_trace(8)['block'];
-
-			if(!@loc) {
-				die(color('gold').'[Shop] Sign out of range.');
-			}
+			@loc = pcursor();
 		
 			if(!@shop = _sign_get_shop(@loc)) {
 				die(color('gold').'[Shop] There is no shop sign there.');

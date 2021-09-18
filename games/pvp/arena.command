@@ -447,7 +447,7 @@ register_command('arena', array(
 						}
 
 					case 'rsoutput':
-						@loc = ray_trace(64)['block'];
+						@loc = pcursor();
 						if(get_block(@loc) === 'TORCH') {
 							@arena['rsoutput'] = @loc;
 							msg(color('green').'Set arena\'s start/end torch. Do not use the block it\'s on to transmit power.');
@@ -457,7 +457,7 @@ register_command('arena', array(
 
 					case 'rsoutputscore':
 						@team = @args[3];
-						@arena['rsoutputscore'][@team] = ray_trace(64)['block'];
+						@arena['rsoutputscore'][@team] = pcursor();
 						msg(color('green').'Set this block to a redstone torch when team '.color(10).@team.color('r').' scores.');
 
 					case 'effect':

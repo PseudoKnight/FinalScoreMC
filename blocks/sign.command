@@ -4,10 +4,7 @@ register_command('sign', array(
 	permission: 'command.sign',
 	tabcompleter: closure(return(array())),
 	executor: closure(@alias, @sender, @args, @info) {
-		@sign = ray_trace(8)['block'];
-		if(@sign == null) {
-			die(color('gold').'No sign in range.');
-		}
+		@sign = pcursor();
 		if(!sk_can_build(@sign)) {
 			die(color('gold').'You cannot build here.');
 		}
