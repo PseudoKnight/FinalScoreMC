@@ -78,7 +78,7 @@ bind('player_interact', null, array('block': 'CAKE', 'button': 'right', 'hand': 
 		@loc['y'] += 0.5;
 		@loc['z'] += 0.5;
 		@cloud = spawn_entity('AREA_EFFECT_CLOUD', 1, @loc)[0];
-		set_entity_spec(@cloud, array('particle': 'NOTE', 'radius': 1, 'duration': 160));
+		set_entity_spec(@cloud, array(particle: 'NOTE', radius: 1, duration: 160));
 		set_timeout(8800, closure(){
 			// turn off music
 			foreach(@p in players_in_radius(@event['location'], 32)) {
@@ -145,8 +145,8 @@ bind('player_join', null, null, @event) {
 			return();
 		}
 		@cakeinfo = get_value('cakeinfo');
-		@count = associative_array('challenge': 0, 'coop': 0, 'secret': 0);
-		@total = associative_array('challenge': 0, 'coop': 0, 'secret': 0);
+		@count = associative_array(challenge: 0, coop: 0, secret: 0);
+		@total = associative_array(challenge: 0, coop: 0, secret: 0);
 		foreach(@cake in @cakeinfo) {
 			@type = @cake['type'];
 			@total[@type]++;
@@ -155,34 +155,32 @@ bind('player_join', null, null, @event) {
 			}
 		}
 		@percent = associative_array(
-			'challenge': @count['challenge'] / @total['challenge'],
-			'secret': @count['secret'] / @total['secret'],
+			challenge: @count['challenge'] / @total['challenge'],
+			coop: @count['coop'] / @total['coop'],
+			secret: @count['secret'] / @total['secret'],
 		);
 
 		@session = _psession(player());
-		if(@percent['challenge'] > 0.75) {
+		if(@percent['challenge'] > 0.5) {
 			if(!array_index_exists(@session, 'trophies')) {
 				@session['trophies'] = array();
 			}
-			if(@percent['challenge'] == 1.0) {
-				@session['trophies'][] = color('yellow').'100% Challenge Cakes';
-			} else if(@percent['challenge'] > 0.9) {
-				@session['trophies'][] = color('white').'>90% Challenge Cakes';
-			} else {
-				@session['trophies'][] = color('gray').'>75% Challenge Cakes';
-			}
+			@pct = integer(@percent['challenge'] * 100);
+			@session['trophies'][] = if(@pct == '100', color('yellow'), color('gray')).@pct.'% Parkour Cakes';
 		}
-		if(@percent['secret'] > 0.75) {
+		if(@percent['secret'] > 0.5) {
 			if(!array_index_exists(@session, 'trophies')) {
 				@session['trophies'] = array();
 			}
-			if(@percent['secret'] == 1.0) {
-				@session['trophies'][] = color('yellow').'100% Secret Cakes';
-			} else if(@percent['secret'] > 0.9) {
-				@session['trophies'][] = color('white').'>90% Secret Cakes';
-			} else {
-				@session['trophies'][] = color('gray').'>75% Secret Cakes';
+			@pct = integer(@percent['secret'] * 100);
+			@session['trophies'][] = if(@pct == '100', color('yellow'), color('gray')).@pct.'% Secret Cakes';
+		}
+		if(@percent['coop'] > 0.5) {
+			if(!array_index_exists(@session, 'trophies')) {
+				@session['trophies'] = array();
 			}
+			@pct = integer(@percent['coop'] * 100);
+			@session['trophies'][] = if(@pct == '100', color('yellow'), color('gray')).@pct.'% Coop Cakes';
 		}
 	}, 'trophies');
 }
