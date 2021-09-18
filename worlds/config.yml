@@ -133,14 +133,3 @@ custom:
   spawning:
     ticks-per-monster-spawns: 0
     ticks-per-animal-spawns: 0
-parkdev:
-  name: 'FrogParkDev'
-  mode: CREATIVE
-  group: 'dev'
-  teleports: true
-  environment: NORMAL
-  seed: 0
-  generator: 'CleanroomGenerator:61,dirt,1,grass_block'
-  spawning:
-    ticks-per-monster-spawns: 0
-    ticks-per-animal-spawns: 0
