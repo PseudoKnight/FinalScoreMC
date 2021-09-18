@@ -1,8 +1,8 @@
-To open a teleport menu, right-click while holding the book titled "Park Directory".
+Right-click while holding the book titled "Park Directory" to get a navigable menu.
 
 The park is filled with cakes that reward coins, some are challenges, while secret cakes are often hidden around landmarks or puzzles. Use "/cake list" to track your progress.
 
-When you get 75% or more of the challenge or secret cakes, you get a special trophy next to your name in chat.
+When you get more than half of the cakes in a category, you get a special trophy next to your name in chat showing your progress.
 
 A few park activities offer chat badge trophies, including parkour completion percentages, secret cake discovery percentages, FrogWare, Snake, and CubeClimber.
 
@@ -10,10 +10,12 @@ You can use "/warp" to teleport directly to activities for which you know the na
 
 Coin rewards can be redeemed in survival at "/warp coinshop", where park staff have generously donated items.
 
-Some donors can launch random fireworks in the park.
+Some donors can launch random fireworks in the park. Don't panic.
 
 Your inventory here is separate from your survival inventory.
 
-At any time you can type "/survival" to go back to where you were last in the survival worlds.
+At any time you can type "/survival" to go back to where you were last in the survival worlds, including the outworld. The reverse is possible with "/park".
 
 If anything breaks in the park, contact park staff (orange names) or directly to PseudoKnight with "/msg PseudoKnight halp..." with details to help us track down the problem.
+
+Use "/marathon" to have a race against other players across several parkour courses.

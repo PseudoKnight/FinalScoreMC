@@ -9,8 +9,6 @@
 
 &7/shop list <item name>&r : List all shops where you can buy or sell a particular item.
 
-&7/hat&r : Put whatever you have in your hand onto your head. (or place the item in your helmet slot)
-
 &7/compass <target>&r : Sets compass to point to target: spawn, home [player], here, player, or x z coordinates.
 
 &7/transfer <player>&r : Transfers ownership of a tamed mob to another online player.
@@ -86,6 +84,8 @@ Any item can be placed in the helmet slot of an armor stand.
 
 Dispensers can place armor stands.
 
+Place any item in your helmet slot.
+
 Horses are protected from all damage unless they are being ridden, and even they are still protected from other players.
 
 Undead horses can be fed rotten flesh.
@@ -103,8 +103,6 @@ Beds will set your bed location, make the sun rise, and halt precipitation regar
 Creepers do not do block damage with the exception of the outworlds.
 
 You can get help from anyone with a blue name. Orange players are Frog Park staff and can help there.
-
-Get a list and description of useful commands @ http://finalscoremc.com/commands
 
 You can have one /home per world, excluding the outworld.
 
@@ -142,12 +140,12 @@ Furnaces can turn bones into bone meal, though it's less efficient.
 
 Red sand can be crafted by surrounding sand around red dye in the crafting table.
 
-The beam target can be set for an end crystal by placing a dragon egg within 32 meters of it.
+The end crystal beam target can be set by placing a dragon egg within 32 meters of it.
 
 Hats can be put on villagers by right clicking on their head with an item in hand.
 
 You can play an instrument by swapping one of the following to your offhand: iron_nugget, gold_nugget, string, bone, iron_ingot, or bamboo.
 
-Channeling tridents striking a lodestone will summon a storm.
+Channeling tridents striking a lodestone will summon a thunder storm.
 
 Using a feather you can push mobs without damaging them.

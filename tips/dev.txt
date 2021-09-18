@@ -2,21 +2,29 @@ The SouthEast quadrant of the Dev world let's you "/rg claim YourRegionName" in 
 
 "/v" can be used to quickly toggle Spectator mode. Otherwise "/gm" can change your gamemode.
 
-The provided compass teleports you to where you're looking on left-click. Right-click teleports you through walls.
-
 The provided golden axe allows you to select areas to either claim regions, measure, or sometimes use limited WorldEdit.
 
-Spawn items with the "/i" command. (eg. "/i granite 64")
+Spawn special items with the "/i" command. (eg. "/i light")
+
+Change itemtype of item with meta using "/itemtype" command. Keeps display names and lore.
+
+Set the display name for an item with "/display". (eg. "/display Super Sword")
+
+Set lore on an item using "/lore". (eg. "/lore 1 This is the first line.")
+
+Use "/skull" to spawn an player head, with optional custom texture value. (eg. "/skull gothem8")
+
+&7/hat&r : Put whatever you have in your hand onto your head.
 
 Enchant items with the "/enchant" command. (eg. "/enchant power 5")
 
-Use "/heal" when testing in Survial/Adventure mode.
+Use "/heal" when testing in survival/adventure mode.
 
 Use "/horse" to spawn a temporary race horse for testing.
 
 You can use "/note" as another way to change the note of noteblocks. (eg. "/note F# 1" where 1 is the octave)
 
-With Armor Stands, you can right-click to toggle gravity when holding a Feather, visibility with a Spider Eye, and size with an Armor Stand item.
+With armor stands, you can right-click to toggle gravity when holding a feather, visibility with a spider eye, and size with an armor stand item.
 
 Your inventory here is separate from your survival inventory.
 
