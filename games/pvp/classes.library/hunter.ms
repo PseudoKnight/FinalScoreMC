@@ -10,6 +10,22 @@ case 'load':
 		consume();
 	}
 
+case 'powerup':
+	@newDog = true;
+	@wolves = entities_in_radius(ploc(@player), 24, 'WOLF');
+	foreach(@wolf in @wolves) {
+		if(get_mob_owner(@wolf) == @player) {
+			@newDog = false;
+			break();
+		}
+	}
+	if(@newDog) {
+		spawn_entity('WOLF', 1, entity_loc(puuid(@player)), closure(@wolf) {
+			set_mob_owner(@wolf, @player);
+			set_entity_spec(@wolf, array(color: array_get_rand(reflect_pull('enum', 'DyeColor'))));
+		});
+	}
+
 case 'unload':
 	unbind(@player.'huntershoot');
 	unbind(@player.'hunterswap');
