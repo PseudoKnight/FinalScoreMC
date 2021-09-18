@@ -1,13 +1,13 @@
 register_command('shop', array(
-	'description': 'List cached item shops or edit owned item shops.',
-	'usage': '/shop list <item_name> | /shop edit <buy|sell> <#qty> for <#currency>',
-	'tabcompleter': closure(@alias, @sender, @args, @info) {
+	description: 'List cached item shops or edit owned item shops.',
+	usage: '/shop list <item_name> | /shop edit <buy|sell> <#qty> for <#currency>',
+	tabcompleter: closure(@alias, @sender, @args, @info) {
 		if(array_size(@args) == 1) {
 			return(_strings_start_with_ic(array('list', 'edit'), @args[-1]));
 		}
 		return(array());
 	},
-	'executor': closure(@alias, @sender, @args, @info) {
+	executor: closure(@alias, @sender, @args, @info) {
 		if(!@args) {
 			return(false);
 		}
@@ -69,7 +69,11 @@ register_command('shop', array(
 			
 			include('core.library/item.ms');
 		
-			@loc = pcursor();
+			@loc = ray_trace(8)['block'];
+
+			if(!@loc) {
+				die(color('gold').'[Shop] Sign out of range.');
+			}
 		
 			if(!@shop = _sign_get_shop(@loc)) {
 				die(color('gold').'[Shop] There is no shop sign there.');
@@ -138,10 +142,10 @@ register_command('shop', array(
 							array_remove(@shops[@t], @i);
 						} else {
 							@shops[@t][@i] = array(
-								'location': @loc,
-								'price': @shop['buy'][1],
-								'owner': @shop['owner'],
-								'stock': @count,
+								location: @loc,
+								price: @shop['buy'][1],
+								owner: @shop['owner'],
+								stock: @count,
 							);
 						}
 					} else {
@@ -156,10 +160,10 @@ register_command('shop', array(
 							array_remove(@shops[@t], @i);
 						} else {
 							@shops[@t][@i] = array(
-								'location': @loc,
-								'price': @shop['sell'][1],
-								'owner': @shop['owner'],
-								'stock': @count
+								location: @loc,
+								price: @shop['sell'][1],
+								owner: @shop['owner'],
+								stock: @count
 							);
 						}
 					}

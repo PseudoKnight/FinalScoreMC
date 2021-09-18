@@ -1,9 +1,13 @@
 register_command('sign', array(
-	'description': 'Sets the text on existing signs.',
-	'usage': '/sign [line#] <text>',
-	'permission': 'command.sign',
-	'executor': closure(@alias, @sender, @args, @info) {
-		@sign = pcursor();
+	description: 'Sets the text on existing signs.',
+	usage: '/sign [line#] <text>',
+	permission: 'command.sign',
+	tabcompleter: closure(return(array())),
+	executor: closure(@alias, @sender, @args, @info) {
+		@sign = ray_trace(8)['block'];
+		if(@sign == null) {
+			die(color('gold').'No sign in range.');
+		}
 		if(!sk_can_build(@sign)) {
 			die(color('gold').'You cannot build here.');
 		}

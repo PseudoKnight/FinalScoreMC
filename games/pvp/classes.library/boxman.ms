@@ -16,7 +16,10 @@ case 'load':
 		if(@item && @item['name'] == 'STEP') {
 			@loc = location_shift(ploc(), 'up');
 
-			@targetLoc = pcursor();
+			@targetLoc = ray_trace(80)['block'];
+			if(!@targetLoc) {
+				die();
+			}
 			psend_block_change(player(), @targetLoc, 'MAGENTA_WOOL');
 			set_timeout(800, closure(){
 				psend_block_change(player(), @targetLoc, get_block(@targetLoc));

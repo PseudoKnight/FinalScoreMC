@@ -1,17 +1,20 @@
 @allowedCommands = array('/clear', '/effect', '/entity', '/fill', '/fillx', '/give', '/particle', '/platform', '/minecraft:playsound', '/playsound', '/sayas', '/setblock',
 	'/setblockx', '/spawnpoint', '/stopsound', '/teleport', '/tempboat', '/tempcart', '/time', '/timer', '/title', '/tp', '/velocity', '/warp');
 register_command('scb', array(
-	'description': 'Set the command in the targeted command block.',
-	'usage': '/scb [cmd]',
-	'permission': 'command.cb',
-	'tabcompleter': closure(@alias, @sender, @args, @info) {
+	description: 'Set the command in the targeted command block.',
+	usage: '/scb [cmd]',
+	permission: 'command.cb',
+	tabcompleter: closure(@alias, @sender, @args, @info) {
 		if(array_size(@args) == 1) {
 			return(_strings_start_with_ic(@allowedCommands, @args[-1]));
 		}
 		return(array());
 	},
-	'executor': closure(@alias, @sender, @args, @info) {
-		@block = pcursor();
+	executor: closure(@alias, @sender, @args, @info) {
+		@block = ray_trace(8)['block'];
+		if(@block == null) {
+			die(color('gold').'No command block in range.');
+		}
 		try {
 			get_block_command(@block);
 		} catch(FormatException @ex) {
@@ -21,13 +24,13 @@ register_command('scb', array(
 			msg(color('yellow').'Type the desired command in chat:');
 			psetop(true);
 			@binds = array();
-			@binds[] = bind('player_quit', null, array('player': player()), @event, @binds) {
+			@binds[] = bind('player_quit', null, array(player: player()), @event, @binds) {
 				psetop(false);
 				foreach(@bind in @binds) {
 					unbind(@bind);
 				}
 			}
-			@binds[] = bind('player_command', null, array('player': player()), @event, @binds, @block, @allowedCommands) {
+			@binds[] = bind('player_command', null, array(player: player()), @event, @binds, @block, @allowedCommands) {
 				cancel();
 				psetop(false);
 				foreach(@bind in @binds) {

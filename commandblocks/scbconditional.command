@@ -1,13 +1,13 @@
 register_command('scbconditional', array(
-	'description': 'Toggles conditional mode.',
-	'usage': '/scbconditional',
-	'permission': 'command.cb',
-	'tabcompleter': closure(@alias, @sender, @args, @info) {
-		return(array());
-	},
-	'executor': closure(@alias, @sender, @args, @info) {
-		@block = pcursor();
-		
+	description: 'Toggles conditional mode.',
+	usage: '/scbconditional',
+	permission: 'command.cb',
+	tabcompleter: closure(return(array())),
+	executor: closure(@alias, @sender, @args, @info) {
+		@block = ray_trace(8)['block'];
+		if(@block == null) {
+			die(color('gold').'No command block in range.');
+		}
 		try {
 			@cmd = get_block_command(@block);
 		} catch(FormatException @ex) {

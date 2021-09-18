@@ -1,17 +1,19 @@
 register_command('note', array(
-	'description': 'Sets the exact note of a noteblock.',
-	'usage': '/note <note> [octave]',
-	'tabcompleter': closure(@alias, @sender, @args, @info) {
-		return(array());
-	},
-	'executor': closure(@alias, @sender, @args, @info) {
+	description: 'Sets the exact note of a noteblock.',
+	usage: '/note <note> [octave]',
+	tabcompleter: closure(return(array())),
+	executor: closure(@alias, @sender, @args, @info) {
 		if(!@args) {
 			return(false);
 		}
 
-		@l = pcursor();
-		if(!sk_can_build(@l) || get_block(@l) != 'NOTE_BLOCK') {
-			die();
+		@l = ray_trace(10)['block'];
+		if(@l == null) {
+			die(color('gold').'No noteblock in range.');
+		} else if(!sk_can_build(@l)){
+			die(color('gold').'You cannot build there.');
+		} else if(get_block(@l) != 'NOTE_BLOCK') {
+			die(color('gold').'That is not a noteblock. Found: '.get_block(@l));
 		}
 
 		@instrument = reg_match('instrument\\=([a-z]+)', get_blockdata_string(@l))[1];
@@ -69,7 +71,7 @@ register_command('note', array(
 		} else {
 			@pitch = _get_pitch(@notes[@clicks % 12], floor(@clicks / 12));
 		}
-		play_sound(@l, array('sound': @sound, 'category': 'RECORDS', 'pitch': @pitch));
+		play_sound(@l, array(sound: @sound, category: 'RECORDS', pitch: @pitch));
 		set_blockdata_string(@l, 'note_block[note='.@clicks.',instrument='.@instrument.']');
 	}
 ));

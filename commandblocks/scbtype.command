@@ -1,12 +1,13 @@
 register_command('scbtype', array(
-	'description': 'Toggles commandblock type between impulse and chain.',
-	'usage': '/scbtype',
-	'permission': 'command.cb',
-	'tabcompleter': closure(@alias, @sender, @args, @info) {
-		return(array());
-	},
-	'executor': closure(@alias, @sender, @args, @info) {
-		@block = pcursor();
+	description: 'Toggles commandblock type between impulse and chain.',
+	usage: '/scbtype',
+	permission: 'command.cb',
+	tabcompleter: closure(return(array())),
+	executor: closure(@alias, @sender, @args, @info) {
+		@block = ray_trace(8)['block'];
+		if(@block == null) {
+			die(color('gold').'No command block in range.');
+		}
 		@cmd = null;
 		try {
 			@cmd = get_block_command(@block);

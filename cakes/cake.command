@@ -1,7 +1,7 @@
 register_command('cake', array(
-	'description': 'Lists and manages cake prizes',
-	'usage': '/cake <list|info|stats|?> [cake_id]',
-	'tabcompleter': closure(@alias, @sender, @args, @info) {
+	description: 'Lists and manages cake prizes',
+	usage: '/cake <list|info|stats|?> [cake_id]',
+	tabcompleter: closure(@alias, @sender, @args, @info) {
 		if(array_size(@args) == 1) {
 			if(has_permission('group.engineer')) {
 				return(_strings_start_with_ic(array('list', 'info', 'find', 'set', 'move', 'delete', 'rename', 'tp', 'resetplayer', 'stats'), @args[-1]));
@@ -15,7 +15,7 @@ register_command('cake', array(
 		}
 		return(array());
 	},
-	'executor': closure(@alias, @sender, @args, @info) {
+	executor: closure(@alias, @sender, @args, @info) {
 		if(!@args) {
 			return(false);
 		}
@@ -96,7 +96,10 @@ register_command('cake', array(
 				@id = '';
 				if(array_size(@args) < 2) {
 					@cakes = get_value('cakes');
-					@cursorloc = pcursor();
+					@cursorloc = ray_trace(8)['block'];
+					if(!@cursorloc) {
+						die('No cake in range');
+					}
 					foreach(@key: @loc in @cakes) {
 						if(@loc[0] == @cursorloc[0]
 						&& @loc[1] == @cursorloc[1]
@@ -127,7 +130,10 @@ register_command('cake', array(
 				if(array_size(@args) < 3) {
 					return(false);
 				}
-				@loc = pcursor();
+				@loc = ray_trace(8)['block'];
+				if(!@loc) {
+					die('No cake in range.');
+				}
 				@cakes = get_value('cakes');
 				@id = @args[1];
 
@@ -190,7 +196,10 @@ register_command('cake', array(
 					die(color('gold').'This needs a cake id.');
 				}
 				@id = @args[1];
-				@loc = pcursor();
+				@loc = ray_trace(8)['block'];
+				if(!@loc) {
+					die('No cake in range.');
+				}
 				if(get_block(@loc) !== 'CAKE') {
 					die(color('gold').'That doesn\'t appear to be a cake. Is it obstructed by a sign or other partial block?');
 				}
@@ -211,7 +220,10 @@ register_command('cake', array(
 				@cakes = get_value('cakes');
 				@id = '';
 				if(array_size(@args) < 2) {
-					@cursorloc = pcursor();
+					@cursorloc = ray_trace(8)['block'];
+					if(!@cursorloc) {
+						die('No cake in range');
+					}
 					foreach(@key: @loc in @cakes) {
 						if(@loc[0] == @cursorloc[0]
 						&& @loc[1] == @cursorloc[1]
@@ -244,7 +256,10 @@ register_command('cake', array(
 				@old = null;
 				@new = null;
 				if(array_size(@args) == 2) {
-					@cursorloc = pcursor();
+					@cursorloc = ray_trace(8)['block'];
+					if(!@cursorloc) {
+						die('No cake in range');
+					}
 					foreach(@key: @loc in @cakes) {
 						if(@loc[0] == @cursorloc[0]
 						&& @loc[1] == @cursorloc[1]
@@ -386,10 +401,10 @@ register_command('cake', array(
 						@prefix = @cake['coins'].' ';
 					}
 					@list[] = array(
-						'name': @id,
-						'prefix': @prefix,
-						'rate': round((time() - @time) / 604800000 / (array_size(@cake['players']) - @min), 2),
-						'players': array_size(@cake['players']),
+						name: @id,
+						prefix: @prefix,
+						rate: round((time() - @time) / 604800000 / (array_size(@cake['players']) - @min), 2),
+						players: array_size(@cake['players']),
 					);
 				}
 				array_sort(@list, closure(@left, @right){
