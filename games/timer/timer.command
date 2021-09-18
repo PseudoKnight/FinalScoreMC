@@ -185,6 +185,12 @@ register_command('timer', array(
 				}
 			}
 
+			@marathon = import('marathon');
+			if(@marathon && array_index_exists(@marathon['players'], @player)) {
+				@numCourses = array_size(@marathon['courses']);
+				update_bar(@player, @marathon['players'][@player] / @numCourses + (1 / @numCourses / 2));
+			}
+
 		} else if(@args[0] == 'stop'
 		&& array_index_exists(@timers, @player)
 		&& @timers[@player][0] == @id) {
@@ -210,37 +216,56 @@ register_command('timer', array(
 				unbind(@player.'reset');
 				ptake_item(@player, array(name: 'IRON_NUGGET'));
 
-				if(@id != @marathon['players'][@player]) {
+				@currentIndex = @marathon['players'][@player];
+
+				if(@id != @marathon['courses'][@currentIndex]) {
 					tmsg(@player, 'You skipped a course. Disqualified!');
 					try(remove_bar(@player));
 					_set_pactivity(@lastplayer, null);
 					array_remove(@marathon['players'], @player);
 				} else {
-					@first = false;
-					if(!@marathon['times'][@id]) {
-						@first = true;
-					}
-					@marathon['times'][@id] = time();
-					@index = array_index(@marathon['courses'], @id) + 1;
+					@index = @currentIndex + 1;
 					if(array_index_exists(@marathon['courses'], @index)) {
 						@courseName = @marathon['courses'][@index];
-						@marathon['players'][@player] = @courseName;
+						@marathon['players'][@player] = @index;
 						@warp = get_value('warp', @courseName);
 						set_entity_fall_distance(puuid(@player), 0);
 						set_ploc(@player, @warp);
 						@title = _to_upper_camel_case(@courseName);
-						@progress = '('.(@index + 1).'/'.array_size(@marathon['courses']).')';
-						update_bar(@player, @player.': '.@title.' '.@progress);
-						title(@player, @title, @progress);
-					} else {
-						if(@first) {
-							_worldmsg(pworld(@player), color('bold').@player.' won the Marathon!');
-						} else {
-							_worldmsg(pworld(@player), color('bold').@player.' completed the Marathon!');
+						update_bar(@player, array(title: @player.': '.@title, percent: @index / array_size(@marathon['courses'])));
+						title(@player, @title, '');
+
+						// update progress of all players
+						@highest = @index;
+						foreach(@p: @i in @marathon['players']) {
+							if(@i > @highest) {
+								@highest = @i;
+							}
 						}
+						@ranks = array('WHITE', 'YELLOW', 'RED');
+						foreach(@p: @i in @marathon['players']) {
+							@coursesBehind = @highest - @i;
+							if(@coursesBehind >= array_size(@ranks)) {
+								if(ponline(@p)) {
+									title(@p, 'Too slow!', '');
+									_worldmsg(pworld(@p), color('yellow').color('bold').@p.' fell behind');
+								}
+								array_remove(@marathon['players'], @p);
+								remove_bar(@p);
+								_set_pactivity(@p, null);
+							} else {
+								update_bar(@p, array(color: @ranks[@coursesBehind]));
+							}
+						}
+
+					} else {
+						_worldmsg(pworld(@player), color('bold').@player.' completed the Marathon!');
 						_set_pactivity(@player, null);
 						array_remove(@marathon['players'], @player);
-						remove_bar(@player);
+						update_bar(@player, array(color: 'GREEN', percent: 1.0));
+						set_timeout(7000, closure(){
+							remove_bar(@player);
+						});
 						if(array_size(@marathon['players']) == 1) {
 							@lastplayer = array_keys(@marathon['players'])[0];
 							remove_bar(@lastplayer);

@@ -1,22 +1,22 @@
 register_command('marathon', array(
-	'description': 'Creates a Marathon',
-	'usage': '/marathon <difficulty|number>',
-	'tabcompleter': closure(@alias, @sender, @args, @info) {
+	description: 'Creates a Marathon',
+	usage: '/marathon <difficulty | numCourses:6,10,12,20>',
+	tabcompleter: closure(@alias, @sender, @args, @info) {
 		if(array_size(@args) == 1) {
 			return(_strings_start_with_ic(array('easy', 'easy-medium', 'medium', 'medium-hard', 'hard', 'very-hard'), @args[-1]));
 		}
 		return(array());
 	},
-	'executor': closure(@alias, @sender, @args, @info) {
+	executor: closure(@alias, @sender, @args, @info) {
 		// marathon join subcommand
-		@num = 0;
+		@num = 6;
 		@difficulty = null;
 		if(@args) {
 		 	if(@args[0] == 'join') {
 				@marathon = import('marathon');
 				if(@marathon) {
 					if(!_pbusy()) {
-						@marathon['players'][player()] = @marathon['courses'][0];
+						@marathon['players'][player()] = 0;
 						_worldmsg(pworld(), color('green').color('bold').player().' joined the queued Marathon.');
 					} else {
 						msg(color('gold').'You appear to be playing another game.');
@@ -25,6 +25,9 @@ register_command('marathon', array(
 				return(true);
 			} else if(is_integral(@args[0])) {
 				@num = integer(@args[0]);
+				if(array_contains(array(6, 10, 12, 20), @num)) {
+					die(color('gold').'Can only play 6, 10, 12, or 20 random courses. You gave: '.@num);
+				}
 			} else if(array_contains(array('easy', 'easy-medium', 'medium', 'medium-hard', 'hard', 'very-hard'), @args[0])) {
 				@difficulty = @args[0];
 			} else {
@@ -38,47 +41,47 @@ register_command('marathon', array(
 		if(@marathon) {
 			die(color('gold').'Marathon already running!');
 		}
-		
-		// else queue up the marathon
-		// populate course list
-		@coursedata = get_values('times');
-		@courses = array_filter(@coursedata, closure(@key, @value){
-			return(is_array(@value) && @key != 'times');
-		});
-		@courses = array_rand(@courses, if(@num && @num < array_size(@courses), @num, array_size(@courses)));
-		
-		// remove namespace from course name
-		foreach(@index: @course in @courses) {
-			@name = split('.', @course)[1];
-			@courses[@index] = @name;
-		}
-		
-		// filter courses
+
+		// we need cake info to filter by difficulty
+		@cakes = null;
 		if(@difficulty) {
 			@cakes = get_value('cakeinfo');
-			foreach(@index: @course in @courses) {
-				if(@cakes[@course]['difficulty'] != @difficulty) {
-					array_remove(@courses, @index);
+		}
+
+		// populate course list
+		@coursedata = get_values('times');
+		@courses = array();
+		foreach(@key: @value in @coursedata) {
+			if(is_array(@value) && @key != 'times') { // make sure we're getting an actual course
+				@course = split('.', @key)[1]; // grab the name by removing the namespace
+				if(!@difficulty || @cakes[@course]['difficulty'] == @difficulty) {
+					@courses[] = @course;
 				}
 			}
 		}
 
-		// populate coursetimes array
-		@coursetimes = associative_array();
-		foreach(@course in @courses) {
-			@coursetimes[@course] = null;
+		// release data
+		@coursedata = null;
+		@cakes = null;
+
+		// randomize and limit to number selected
+		try {
+			@courses = array_rand(@courses, @num, false);
+		} catch(RangeException @ex) {
+			die(color('red').'Insufficient courses. Required: '.@num.', Found: '.array_size(@courses));
 		}
 		
 		// create game object
 		@players = associative_array();
 		@marathon = array(
-			'players': @players,
-			'time': time(),
-			'times': @coursetimes,
-			'courses': @courses,
+			players: @players,
+			time: time(),
+			courses: @courses,
 		);
-		@players[player()] = @courses[0];
+		@players[player()] = 0;
 		export('marathon', @marathon);
+
+		@warp = get_value('warp', @courses[0]);
 		
 		_click_tell(all_players(pworld()), array('&7[Marathon] ', array('&b[JOIN] ', '/marathon join'),
 				player().' queued up a marathon ('.array_size(@courses).' courses)'));
@@ -102,11 +105,25 @@ register_command('marathon', array(
 			}
 			clear_task();
 			
-			@firstwarp = get_value('warp', @courses[0]);
-			
 			set_interval(1000, 0, closure(){
 				@time = time();
-				if(array_size(@players) < 2) {
+				if(array_size(@players) >= 2) {
+					foreach(@p: @course in @players) {
+						// handle marathon joiners
+						if(!array_contains(get_bars(), @p)) {
+							create_bar(@p, array(title: @p.': '.@course, style: 'SEGMENTED_'.@num, percent: 0.0));
+							foreach(@p2 in array_keys(@players)) {
+								bar_add_player(@p, @p2);
+							}
+							_set_pactivity(@p, 'Marathon');
+							set_ploc(@p, @warp);
+						// handle marathon leavers
+						} else if(!ponline(@p) || pworld(@p) != @world) {
+							remove_bar(@p);
+							array_remove(@players, @p);
+						}
+					}
+				} else {
 					clear_task();
 					if(array_size(@players) == 1) {
 						@lastplayer = array_keys(@players)[0];
@@ -116,39 +133,6 @@ register_command('marathon', array(
 						_set_pactivity(@lastplayer, null);
 					}
 					export('marathon', null);
-					die();
-				}
-				foreach(@p: @course in @players) {
-					// handle marathon joiners
-					if(!array_contains(get_bars(), @p)) {
-						create_bar(@p, array('title': @p.': '.@course, 'color': 'GREEN', 'visible': false));
-						foreach(@p2 in array_keys(@players)) {
-							bar_add_player(@p, @p2);
-						}
-						_set_pactivity(@p, 'Marathon');
-						set_ploc(@p, @firstwarp);
-					}
-
-					if(@marathon['times'][@course]) {
-						if(@time > @marathon['times'][@course] + 120000) {
-							if(ponline(@p)) {
-								title(@p, 'Too slow!', '');
-								_worldmsg(pworld(), color('yellow').color('bold').@p.' fell behind on '.@course);
-							}
-							array_remove(@marathon['players'], @p);
-							remove_bar(@p);
-							_set_pactivity(@p, null);
-						} else {
-							@percent = 1.0 - (@time - @marathon['times'][@course]) / 120000;
-							update_bar(@p, array(
-								'percent': @percent,
-								'color': if(@percent < 0.25, 'RED', if(@percent < 0.5, 'YELLOW', 'GREEN')),
-								'visible': if(@percent < 0.75, true, false),
-							));
-						}
-					} else {
-						update_bar(@p, array('percent': 1.0, 'color': 'GREEN', 'visible': false));
-					}
 				}
 			});
 		});
