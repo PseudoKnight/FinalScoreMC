@@ -1,6 +1,6 @@
 bind('projectile_launch', null, array('type': 'TRIDENT', 'shootertype': 'PLAYER'), @event) {
     @item = pinv(player(), null);
-    if(@item['meta'] && array_index_exists(@item['meta']['enchants'], 'channeling')) {
+    if(@item && @item['meta'] && array_index_exists(@item['meta']['enchants'], 'channeling')) {
         add_scoreboard_tag(@event['id'], 'channeling');
     }
 }
