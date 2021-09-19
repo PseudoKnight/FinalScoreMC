@@ -17,8 +17,11 @@ bind('inventory_click', null, array('clicktype': 'SHIFT_RIGHT'), @event) {
 			penchanting();
 		default:
 			if(@event['inventorytype'] == 'CRAFTING' && string_ends_with(@event['slotitem']['name'], 'SHULKER_BOX')) {
-				if(!pisop()) {
-					die(); // in testing
+				if(!import('test_shulker_box')) {
+					// In testing.
+					// Currently there's a bug where chests with meta will cause an NPE.
+					// This would need to be fixed in Spigot or worked around in CH before we can re-enabled this.
+					die();
 				}
 				if(!@event['slotitem']['meta']) {
 					@event['slotitem']['meta'] = array('inventory': associative_array(), 'display': null);
