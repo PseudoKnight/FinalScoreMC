@@ -49,6 +49,10 @@ proc _stats_table() {
 }
 
 proc _stats_print(@winners, @pvp) {
+	if(array_size(@pvp['stats']) < 2) {
+		return();
+	}
+
 	@title = '';
 	@subtitle = '';
 	if(array_index_exists(@pvp, 'team') && @winners) {
