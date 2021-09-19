@@ -60,7 +60,7 @@ switch(@action) {
 		}
 
 		bind('entity_damage', array(id: @player.'flightdamage'), array(id: puuid(@player)), @event) {
-			set_pexp(@player, 0);
+			set_pexp(@event['player'], 0);
 		}
 
 	case 'powerup':
@@ -68,5 +68,6 @@ switch(@action) {
 
 	case 'unload':
 		unbind(@player.'bountyhunter');
+		unbind(@player.'flightdamage');
 
 }
