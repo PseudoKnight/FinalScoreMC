@@ -33,6 +33,6 @@ Permission: *command.track*
 - _add_activity() and _remove_activity() procedures to keep a list of all current activities on server
 - _click_tell() creates a mojangson chat string with a clickable link (chat/auto_include.ms)
 - _worldmsg() messages all players within the specified world
-- _set_pactivity() sets the players current activity for the server
+- _psession() gets the current session data of a player, including player's current activity
 - _equip_kit() resets the player's inventory
 - _acc_add() gives a coin award to winners

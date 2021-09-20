@@ -16,7 +16,6 @@ proc _race_add_player(@id, @player) {
 
 proc _race_remove_player(@race, @player) {
 	array_remove(@race['players'], @player);
-	_set_pactivity(@player, null);
 	if(ponline(@player) && pworld(@player) == @race['world']) {
 		clear_peffects(@player);
 		_equip_kit(@player);

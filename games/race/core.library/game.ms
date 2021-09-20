@@ -186,10 +186,16 @@ proc _race_start(@race) {
 					if(@vehicle) {
 						set_entity_rider(null, puuid());
 					}
-					_race_place_player(@race, player(), @p['loc']);
-					set_timeout(1000, closure(){
-						_race_drop_player(@race, player());
-					});
+					if(!_psession()['activity']) {
+						_race_place_player(@race, player(), @p['loc']);
+						set_timeout(1000, closure(){
+							_race_drop_player(@race, player());
+						});
+					} else {
+						// they probably joined some other game, prioritize the other game
+						array_remove(@race['players'], player());
+						_race_check_players(@race);
+					}
 				}
 			} else if(!array_contains(sk_regions_at(@loc), @race['region'])) {
 				_race_remove_player(@race, player());
