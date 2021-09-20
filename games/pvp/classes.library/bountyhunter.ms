@@ -60,7 +60,11 @@ switch(@action) {
 		}
 
 		bind('entity_damage', array(id: @player.'flightdamage'), array(id: puuid(@player)), @event) {
-			set_pexp(@event['player'], 0);
+			@xp = pexp(@event['player']);
+			if(@xp > 0) {
+				set_pexp(@event['player'], max(0, pexp(@event['player']) - 50));
+				play_sound(@event['location'], array(sound: 'ENTITY_CAT_HISS', volume: 0.3, pitch: 1.1, volume: 0.3));
+			}
 		}
 
 	case 'powerup':
