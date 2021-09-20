@@ -7,9 +7,9 @@
 		@entity = shoot_projectile(player(), 'SNOWBALL');
 		set_projectile_item(@entity, array(name: 'SLIME_BALL'));
 		@v = entity_velocity(@entity);
-		@v['x'] = (@v['x'] / @v['magnitude']) * 4;
-		@v['y'] = (@v['y'] / @v['magnitude']) * 4;
-		@v['z'] = (@v['z'] / @v['magnitude']) * 4;
+		@v['x'] = (@v['x'] / @v['magnitude']) * 3;
+		@v['y'] = (@v['y'] / @v['magnitude']) * 3;
+		@v['z'] = (@v['z'] / @v['magnitude']) * 3;
 		set_entity_velocity(@entity, @v);
 		play_sound(ploc(), array(sound: 'BLOCK_SLIME_BLOCK_HIT', volume: 2));
 		play_sound(ploc(), array(sound: 'BLOCK_BONE_BLOCK_PLACE', pitch: 0.5, volume: 2));
@@ -37,7 +37,7 @@
 						_stats_damage(@damager, @event['player'], @event['amount'], @pvp);
 					}
 				}
-				explosion(@hit, 1, true);
+				explosion(@loc, 2, true);
 				unbind(@bind);
 			} catch (BadEntityException @ex) {
 				// doesn't exist, don't explode
