@@ -23,6 +23,7 @@
 
 		@mob = to_lower(@item['meta']['display']);
 		
+		@entity = null;
 		if(!is_null(@item['meta']['lore'])
 		&& @item['meta']['lore'][0] === 'Target Near') {
 			foreach(@player in players_in_radius(@loc, 20)) {
@@ -30,15 +31,19 @@
 				|| array_index_exists(@pvp, 'team') && @pvp['players'][@player]['team'] == @pvp['players'][player()]['team']) {
 					continue();
 				}
-				_spawn_entity(@mob, @loc, @player);
+				@entity = _spawn_entity(@mob, @loc, @player);
 			}
 		} else if(array_index_exists(@pvp, 'team')) {
 			@team = @pvp['players'][player()]['team'];
-			_spawn_entity(@mob, @loc, player(), @pvp['team'][@team]['players']);
+			@entity = _spawn_entity(@mob, @loc, player(), @pvp['team'][@team]['players']);
 		} else {
-			_spawn_entity(@mob, @loc, player(), array(player()));
+			@entity = _spawn_entity(@mob, @loc, player(), array(player()));
 		}
-		
+
+		if(@entity) {
+			add_scoreboard_tag(@entity, 'nodrops');
+		}
+
 		@effectLoc = location_shift(@loc, 'up');
 		play_sound(@effectLoc, array(sound: 'ENTITY_ZOMBIE_INFECT', pitch: 1.5));
 		spawn_particle(@effectLoc, array(particle: 'CLOUD', count: 10, xoffset: 0.4, zoffset: 0.4, yoffset: 0.4));

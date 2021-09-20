@@ -319,6 +319,7 @@ proc _bind_events(@pvp) {
 			drop_item(@location, @item);
 		}
 		spawn_entity('SKELETON', 1, @location, closure(@deadplayer) {
+			add_scoreboard_tag(@deadplayer, 'nodrops');
 			set_mob_equipment(@deadplayer, array(WEAPON: null));
 			set_entity_health(@deadplayer, 0);
 		});
@@ -343,9 +344,10 @@ proc _bind_events(@pvp) {
 	@pvp['binds'][] = bind('entity_death', null, null, @event, @pvp) {
 		if(!_is_survival_world(@event['location']['world'])
 		&& array_contains(sk_regions_at(@event['location']), @pvp['arena']['region'])) {
-			if(@event['type'] == 'SKELETON') {
+			if(array_contains(get_scoreboard_tags(@event['id']), 'nodrops')) {
 				modify_event('drops', null);
-			} else if(array_contains(@pvp['arena']['flags'], 'noxp')) {
+			}
+			if(array_contains(@pvp['arena']['flags'], 'noxp')) {
 				modify_event('xp', 0);
 			}
 		}
