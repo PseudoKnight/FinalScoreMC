@@ -83,6 +83,8 @@ proc _arena_load(@pvp) {
 			@pvp['arenascripts'][] = @id;
 			@pvp['arenascripts'][] = @childid;
 		}
+	} else if(array_contains(@pvp['arena']['flags'], 'script')){
+		@pvp['arenascripts'][] = @id;
 	}
 	@pvp['title'] = @primaryName.if(@secondaryName, ': '.@secondaryName);
 	@arena = @pvp['arena'];
