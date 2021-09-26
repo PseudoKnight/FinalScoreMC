@@ -29,5 +29,10 @@ case 'powerup':
 case 'unload':
 	unbind(@player.'huntershoot');
 	unbind(@player.'hunterswap');
+	foreach(@wolf in entities_in_radius(ploc(@player), 64, 'WOLF')) {
+		if(get_mob_owner(@wolf) == @player) {
+			entity_remove(@wolf);
+		}
+	}
 
 }
