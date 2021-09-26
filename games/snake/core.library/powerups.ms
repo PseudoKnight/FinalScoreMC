@@ -331,6 +331,7 @@ proc _snake_drop_nuke(@snake, @game) {
 			// trigger nuke
 			@state = array('radius': 1, 'side': 0);
 			set_block(@target, 'FIRE', false);
+			@game['fire'][] = @target[];
 			play_sound(@target, array('sound': 'ENTITY_GENERIC_EXPLODE', 'pitch': 0.5, 'volume': 3));
 			set_interval(50, closure(){
 				if(!array_contains(@game['nukes'], @region)) {
@@ -355,6 +356,7 @@ proc _snake_drop_nuke(@snake, @game) {
 							@block = get_block(@loc);
 							if(@block != 'AIR') {
 								set_block(@loc, 'FIRE', false);
+								@game['fire'][] = @loc[];
 								if(_is_snake_tail(@block)) {
 									foreach(@player: @snake in @game['snakes']) {
 										if(@snake['head'] == @block) {

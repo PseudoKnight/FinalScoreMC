@@ -36,6 +36,7 @@ proc _snake_queue(@mode) {
 	@game['nukes'] = array();
 	@game['teams'] = array(array(), array());
 	@game['flags'] = array(null, null);
+	@game['fire'] = array();
 	export('snake', @game);
 
 	// Get arena
@@ -262,6 +263,11 @@ proc _snake_start_task(@game) {
 			} else {
 				@game['botsOnly'] = true;
 			}
+		}
+		if(@game['fire']) {
+			@r = rand(0, array_size(@game['fire']));
+			set_block(@game['fire'][@r], 'AIR', false);
+			array_remove(@game['fire'], @r);
 		}
 		if(@alive < 2) {
 			_snake_end(@active, @game);
