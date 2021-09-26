@@ -78,7 +78,7 @@ case 'load':
 
 			@explode = closure(@loc) {
 				foreach(@p in players_in_radius(@loc, 4)) {
-					damage_entity(puuid(@p), 8 - distance(location_shift(ploc(@p), 'up', 2), @loc), puuid());
+					damage_entity(puuid(@p), 7 - distance(location_shift(ploc(@p), 'up', 2), @loc), puuid());
 					if(@p != player()) {
 						play_sound(ploc(), array(sound: 'ENTITY_ARROW_HIT_PLAYER'), player());
 					}
