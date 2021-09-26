@@ -18,8 +18,15 @@ proc _bind_events(@pvp) {
 		}
 	}
 
-	foreach(@flag in array('build', 'infinitedispensers', 'nobottles', 'noinventory', 'rallycall', 'stackedpickup')) {
+	foreach(@flag in array('infinitedispensers', 'nobottles', 'noinventory', 'rallycall', 'stackedpickup')) {
 		if(array_contains(@pvp['arena']['flags'], @flag)) {
+			include("../events.library/@flag.ms");
+			_bind(@pvp);
+		}
+	}
+
+	foreach(@flag in array('build')) {
+		if(!array_contains(@pvp['arena']['flags'], @flag)) {
 			include("../events.library/@flag.ms");
 			_bind(@pvp);
 		}
