@@ -56,7 +56,13 @@ proc _stats_print(@winners, @pvp) {
 	@title = '';
 	@subtitle = '';
 	if(array_index_exists(@pvp, 'team') && @winners) {
-		@leader = @winners[0];
+		@leader = null;
+		foreach(@p in @winners) {
+			if(array_index_exists(@pvp['players'], @p)) {
+				@leader = @p;
+				break();
+			}
+		}
 		@team = @pvp['players'][@leader]['team'];
 		@title = @pvp['players'][@leader]['color'].color('bold')
 				.@pvp['arena']['team'][@team]['name'].' wins '.@pvp['title'].'!';
