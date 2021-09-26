@@ -65,6 +65,10 @@ proc _arena_load(@pvp) {
 		@primaryName = _to_upper_camel_case(@pvp['arena']['parent']);
 		@secondaryName = _to_upper_camel_case(@id);
 		@pvp['arena'] = array_merge(@parent, @pvp['arena']);
+		if(array_contains(@pvp['arena']['flags'], 'script')){
+			@pvp['arenascripts'][] = @pvp['arena']['parent'];
+			@pvp['arenascripts'][] = @id;
+		}
 	} else if(array_index_exists(@pvp['arena'], 'arenaselect')) {
 		if(!@childid) {
 			@childid = array_get_rand(@pvp['arena']['arenaselect']['arenas']);
@@ -75,6 +79,10 @@ proc _arena_load(@pvp) {
 		}
 		@secondaryName = _to_upper_camel_case(@childid);
 		@pvp['arena'] = array_merge(@pvp['arena'], @child);
+		if(array_contains(@pvp['arena']['flags'], 'script')){
+			@pvp['arenascripts'][] = @id;
+			@pvp['arenascripts'][] = @childid;
+		}
 	}
 	@pvp['title'] = @primaryName.if(@secondaryName, ': '.@secondaryName);
 	@arena = @pvp['arena'];

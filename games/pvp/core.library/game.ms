@@ -6,6 +6,7 @@ proc _pvp_create(@id) {
 		id: @id,
 		binds: array(),
 		coins: 0,
+		arenascripts: array(),
 	);
 	export('pvp'.@id, @pvp);
 	return(@pvp);
@@ -217,12 +218,12 @@ proc _pvp_start(@pvp){
 	}
 
 	# ARENA
-	if(array_contains(@pvp['arena']['flags'], 'script')){
-		@arenaScript = "../arenas.library/@id.ms";
+	foreach(@arenaId in @pvp['arenascripts']) {
+		@arenaScript = "../arenas.library/@arenaId.ms";
 		if(file_exists(@arenaScript)){
 			include(@arenaScript);
+			_arena_prepare(@pvp);
 		}
-		_arena_prepare(@pvp);
 	}
 
 	# ANNOUNCE
