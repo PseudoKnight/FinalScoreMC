@@ -31,12 +31,13 @@
 		@item['meta']['display'] = 'MINE';
 		modify_event('item', @item);
 	} else {
-		if(array_index_exists(@pvp, 'team')
-		&& array_index_exists(@pvp['players'], @damager)
-		&& @pvp['players'][@damager]['team'] == @pvp['players'][player()]['team']) {
-			// no teammate damage
-			cancel();
-			die();
+		if(array_index_exists(@pvp, 'team')) {
+			// check for teammates
+			@team = @pvp['players'][player()]['team'];
+			if(array_contains(@pvp['team'][@team]['players'], @damager)) {
+				cancel();
+				die();
+			}
 		}
 		@power = @event['item']['qty'] * 7;
 		modify_event('item', null);
