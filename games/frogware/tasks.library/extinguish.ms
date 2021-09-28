@@ -17,7 +17,7 @@ proc _fw_start_task(@secs) {
 		@blocks[] = @loc;
 		@level = rand(3);
 		if(@level) {
-			set_blockdata(@loc, array(block: 'water_cauldron', level: rand(3)));
+			set_blockdata(@loc, array(block: 'water_cauldron', level: @level));
 		} else {
 			set_block(@loc, 'CAULDRON');
 		}
