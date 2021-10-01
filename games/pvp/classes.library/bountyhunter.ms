@@ -12,7 +12,6 @@ switch(@action) {
 				die();
 			}
 			if(pexp() == 0) {
-				play_sound(ploc(), @gasSound);
 				cancel();
 				die();
 			}
@@ -28,30 +27,34 @@ switch(@action) {
 			@v['z'] /= 3;
 			@v['y'] = 0.2;
 			set_pvelocity(player(), @v);
+			set_entity_fall_distance(puuid(), 0);
 
-			set_pexp(max(0, pexp() - 3));
+			set_pexp(max(0, pexp() - 5));
 
-			set_interval(150, closure(){
+			@startHealth = phealth();
+			set_interval(100, closure(){
 				try {
+					@currentHealth = phealth();
 					@loc = ploc();
 					@xp = pexp();
-					if(@xp == 0 || !psneaking()) {
+					if(@xp == 0 || !psneaking() || @currentHealth < @startHealth) {
+						set_entity_fall_distance(puuid(), 0);
 						clear_task();
 						if(@xp == 0) {
 							play_sound(@loc, @deathSound);
 						}
 					} else {
+						set_entity_fall_distance(puuid(), 0);
 						@y[0] = @loc['y'];
 						@loc['y'] += 1.3;
 						play_sound(@loc, @gasSound);
 						spawn_particle(@loc, @smokeEffect);
 						set_pexp(max(0, @xp - 1));
 						@v = get_vector(@loc);
-						@v['x'] /= 2.7;
-						@v['z'] /= 2.7;
+						@v['x'] /= 2.6;
+						@v['z'] /= 2.6;
 						@v['y'] = 0.3;
 						set_pvelocity(player(), @v);
-						set_entity_fall_distance(puuid(), 0);
 					}
 				} catch(PlayerOfflineException @ex) {
 					clear_task();
@@ -59,19 +62,10 @@ switch(@action) {
 			});
 		}
 
-		bind('entity_damage', array(id: @player.'flightdamage'), array(id: puuid(@player)), @event) {
-			@xp = pexp(@event['player']);
-			if(@xp > 0) {
-				set_pexp(@event['player'], max(0, pexp(@event['player']) - 50));
-				play_sound(@event['location'], array(sound: 'ENTITY_CAT_HISS', volume: 0.3, pitch: 1.1, volume: 0.3));
-			}
-		}
-
 	case 'powerup':
 		set_pexp(@player, 99);
 
 	case 'unload':
 		unbind(@player.'bountyhunter');
-		unbind(@player.'flightdamage');
 
 }
