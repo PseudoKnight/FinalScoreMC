@@ -1,16 +1,12 @@
 switch(@action) {
 	case 'load':
 		set_pexp(@player, 99);
-		bind('player_toggle_sneak', array(id: @player.'bountyhunter'), array(sneaking: true), @event,
+		bind('player_toggle_sneak', array(id: @player.'bountyhunter'), array(sneaking: true, player: @player), @event,
 			@gasSound = array(sound: 'BLOCK_FIRE_EXTINGUISH', pitch: 1.1, volume: 0.5),
 			@hissSound = array(sound: 'ENTITY_CAT_HISS', volume: 0.3, pitch: 1.1, volume: 0.3),
 			@smokeEffect = array(particle: 'CLOUD', speed: 0.02, count: 10, xoffset: 0.25, yoffset: 0.25, zoffset: 0.25),
-			@deathSound = array(sound: 'ENTITY_BLAZE_DEATH', pitch: 2.0),
-			@player,
+			@deathSound = array(sound: 'ENTITY_BLAZE_DEATH', pitch: 2.0)
 		) {
-			if(@player != player()) {
-				die();
-			}
 			if(pexp() == 0) {
 				cancel();
 				die();
