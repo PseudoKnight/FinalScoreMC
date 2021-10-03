@@ -1,5 +1,5 @@
 @pvp['binds'][] = bind('player_interact', null, array(itemname: 'ANVIL', button: 'right'), @event, @pvp) {
-	if(!array_index_exists(@pvp['players'], player())) {
+	if(!array_index_exists(@pvp['players'], player()) || pcooldown('ANVIL')) {
 		die();
 	}
 	@taken = ptake_item(array(name: 'SLIME_BALL', qty: 1));
@@ -13,6 +13,7 @@
 		set_entity_velocity(@entity, @v);
 		play_sound(ploc(), array(sound: 'BLOCK_SLIME_BLOCK_HIT', volume: 2));
 		play_sound(ploc(), array(sound: 'BLOCK_BONE_BLOCK_PLACE', pitch: 0.5, volume: 2));
+		set_pcooldown('ANVIL', 10);
 	}
 }
 
@@ -62,9 +63,9 @@
 					damage_entity(puuid(@p), 7 / max(1, @dist - 1), puuid(@event['shooter']));
 					try {
 						set_pvelocity(@p,
-							min(2.2, (@ploc['x'] - @hit['x']) / (@dist ** 1.5)),
-							min(2.2, (@ploc['y'] - @hit['y']) / (@dist ** 1.5)),
-							min(2.2, (@ploc['z'] - @hit['z']) / (@dist ** 1.5))
+							min(2.2, (@ploc['x'] - @hit['x']) / (@dist ** 2)),
+							min(2.2, (@ploc['y'] - @hit['y']) / (@dist ** 2)),
+							min(2.2, (@ploc['z'] - @hit['z']) / (@dist ** 2))
 						);
 					} catch(PlayerOfflineException @ex) {
 						// blew completely off server
