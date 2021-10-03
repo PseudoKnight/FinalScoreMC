@@ -112,8 +112,62 @@ case 'load':
 		_weapon_cooldown(player(), 6000, 'INK_SAC', false, 0);
 	}
 
+	bind('player_interact', array(id: @player.'freeze'), array(itemname: 'SOUL_TORCH', button: 'right', player: @player), @e, @pvp) {
+		if(pinfo(player(), 6) != @e['item']['name'] || pcooldown('SOUL_TORCH')) {
+			die();
+		}
+		set_pcooldown('SOUL_TORCH', 7000 / 50);
+		
+
+		@radius = 5;
+		@trace = ray_trace(player(), 96);
+		@origin = @trace['origin'];
+		@loc = @trace['location'];
+		play_sound(@origin, array(sound: 'ENTITY_EVOKER_CAST_SPELL'));
+		@count = array(96);
+		set_interval(50, closure() {
+			@count[0]--;
+			@trace = ray_trace(location_shift(@origin, @loc), 0.8);
+			@origin['x'] = @trace['origin']['x'];
+			@origin['y'] = @trace['origin']['y'];
+			@origin['z'] = @trace['origin']['z'];
+			@loc['x'] = @trace['location']['x'];
+			@loc['y'] = @trace['location']['y'];
+			@loc['z'] = @trace['location']['z'];
+			spawn_particle(@loc, array(particle: 'SNOWFLAKE', count: 5, xoffset: 0.3, yoffset: 0.3, zoffset: 0.3));
+			@hit = false;
+			if(@trace['entities']) {
+				foreach(@entity in @trace['entities']) {
+					if(@entity['uuid'] != puuid()) {
+						@hit = true;
+						@loc = @entity['location'];
+					}
+				}
+			}
+			if(!@hit && !@trace['hitblock']) {
+				if(@count[0] <= 0) {
+					clear_task();
+				}
+				return();
+			}
+			spawn_particle(@loc, array(particle: 'SNOWFLAKE', count: integer(@radius ** 3), xoffset: @radius, yoffset: @radius, zoffset: @radius, speed: 0.01));
+			play_sound(@loc, array(sound: 'ENTITY_ZOMBIE_VILLAGER_CURE', volume: 2));
+			foreach(@p in players_in_radius(@loc, @radius)) {
+				if(pmode(@p) != 'SPECTATOR') {
+					set_peffect(@p, 'WEAKNESS', 0, 5);
+					set_peffect(@p, 'MINING_FATIGUE', 0, 5);
+					set_peffect(@p, 'GLOWING', 0, 5);
+					set_entity_freezing(puuid(@p), 140);
+					damage_entity(puuid(@p), 1, puuid());
+				}
+			}
+			clear_task();
+		});
+	}
+
 case 'unload':
 	unbind(@player.'lightning');
 	unbind(@player.'woosh');
+	unbind(@player.'freeze');
 
 }
