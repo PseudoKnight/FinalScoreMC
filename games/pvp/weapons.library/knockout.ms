@@ -11,7 +11,6 @@
 				return();
 			}
 			@modifier = (entity_attribute_base(puuid(), 'GENERIC_MAX_HEALTH') + 5 - @health) / 10;
-			@sprint = false;
 			if(@sprint) {
 				@modifier *= 2.5;
 			}
