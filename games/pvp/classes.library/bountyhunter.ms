@@ -51,8 +51,8 @@ switch(@action) {
 						spawn_particle(@loc, @smokeEffect);
 						set_pexp(max(0, @xp - 1));
 						@v = get_vector(@loc);
-						@v['x'] /= 2.6;
-						@v['z'] /= 2.6;
+						@v['x'] /= 2.7;
+						@v['z'] /= 2.7;
 						@v['y'] = 0.3;
 						set_pvelocity(player(), @v);
 					}
