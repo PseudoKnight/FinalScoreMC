@@ -172,6 +172,10 @@ bind('player_interact', null, array('itemname': 'FIREWORK_ROCKET', 'button': 'ri
 }
 
 bind('firework_explode', null, null, @event){
+	if(!entity_exists(@event['id'])) {
+		// rare cases this will happen
+		die();
+	}
 	if(has_metadata(@event['id'], 'spec')) {
 		@player = get_metadata(@event['id'], 'spec', 'CommandHelper');
 		@returnLoc = get_metadata(@event['id'], 'loc', 'CommandHelper');
