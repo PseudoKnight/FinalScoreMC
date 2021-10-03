@@ -27,8 +27,7 @@ proc _fw_loc(@height = 0, @minrange = false) {
 
 proc _fw_mobs(@mob = 'random', @num = 'random') {
 	if(@mob == 'random') {
-		@mobs = array('creeper', 'zombie', 'silverfish', 'slime', 'magma_cube', 'zombified_piglin', 'shulker', 'ghast',
-				'blaze', 'husk', 'polar_bear', 'vindicator', 'evoker', 'vex', 'ravager', 'bee', 'zoglin');
+		@mobs = array('zombified_piglin', 'bee');
 		@mob = array_get_rand(@mobs);
 	}
 	@height = 0;
@@ -65,8 +64,12 @@ proc _fw_mobs(@mob = 'random', @num = 'random') {
 					@types = reflect_pull('enum', 'Profession');
 				}
 				set_entity_spec(@m, array(profession: array_get_rand(@types), level: 2));
-			} else if(@mob == 'bee') {
+			} else if(@mob == 'bee' || @mob == 'zombified_piglin') {
 				set_entity_spec(@m, array(anger: 9999));
+				@players = players_in_radius(@loc, 16);
+				if(@players) {
+					set_mob_target(@m, puuid(array_get_rand(@p)));
+				}
 			}
 		}
 	}
