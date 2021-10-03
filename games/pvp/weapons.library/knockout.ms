@@ -1,14 +1,31 @@
 @pvp['binds'][] = bind('entity_damage_player', null, null, @event, @pvp) {
 	if(array_index_exists(@pvp['players'], player())) {
 		@health = phealth();
+		@v = get_vector(ploc(@event['id']));
 		set_timeout(10, closure(){
-			@modifier = (entity_attribute_base(puuid(), 'GENERIC_MAX_HEALTH') + 5 - @health) / 5;
-			@v = pvelocity();
+			@modifier = (entity_attribute_base(puuid(), 'GENERIC_MAX_HEALTH') + 5 - @health) / 10;
+			@sprint = false;
+			if(psprinting(@event['id'])) {
+				@modifier *= 2.5;
+				@sprint = true;
+			}
 			@v['x'] *= @modifier;
 			@v['y'] *= @modifier;
 			@v['z'] *= @modifier;
+			@crit = false;
+			if(@event['finalamount'] > 1) {
+				play_sound(@event['location'], array(sound: 'ENTITY_PIG_DEATH'));
+				@v['x'] = 0;
+				@v['y'] = 1;
+				@v['z'] = 0;
+				@crit = true;
+			} else {
+				@v['y'] += 0.3;
+			}
 			set_pvelocity(@v);
-			if(@v['y'] > 0.1 && @modifier > 3) {
+			if(@sprint || @crit) {
+				play_sound(@event['location'], array(sound: 'BLOCK_NOTE_BLOCK_BASEDRUM'));
+				play_sound(@event['location'], array(sound: 'ENTITY_ENDER_DRAGON_SHOOT'));
 				@particle = array(
 					particle: 'FLAME',
 					count: 5,
