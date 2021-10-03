@@ -80,12 +80,12 @@ case 'load':
 			@loc2['y'] += 1.0;
 			@dist = distance(@loc1, @loc2);
 
-			if(is_entity_living(@entity)) {
-				damage_entity(@entity, 1.2, puuid());
-			}
-			
 			if(!entity_can_see(puuid(), @entity)) {
 				@force *= 0.5;
+			}
+
+			if(is_entity_living(@entity)) {
+				damage_entity(@entity, 1.2, puuid());
 			}
 
 			# if we use a queue, velocity works more consistently with grounded entities
