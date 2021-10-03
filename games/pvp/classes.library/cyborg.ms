@@ -90,7 +90,7 @@ case 'load':
 
 			set_interval(50, closure(){
 				try {
-					if(is_string(@target) && (!entity_exists(@target) || get_entity_health(@target) <= 0)
+					if(is_string(@target) && (!entity_exists(@target) || pmode(player(@target)) == 'SPECTATOR')
 					|| !ponline(player())
 					|| pmode() == 'SPECTATOR'
 					|| !array_index_exists(@pvp['players'], player())) {
