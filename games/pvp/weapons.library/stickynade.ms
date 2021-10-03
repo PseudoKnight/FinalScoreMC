@@ -63,9 +63,9 @@
 					damage_entity(puuid(@p), 7 / max(1, @dist - 1), puuid(@event['shooter']));
 					try {
 						set_pvelocity(@p,
-							min(2.2, (@ploc['x'] - @hit['x']) / (@dist ** 2)),
-							min(2.2, (@ploc['y'] - @hit['y']) / (@dist ** 2)),
-							min(2.2, (@ploc['z'] - @hit['z']) / (@dist ** 2))
+							(@ploc['x'] - @hit['x']) / max(1, @dist ** 2),
+							(@ploc['y'] - @hit['y']) / max(1, @dist ** 2),
+							(@ploc['z'] - @hit['z']) / max(1, @dist ** 2)
 						);
 					} catch(PlayerOfflineException @ex) {
 						// blew completely off server
