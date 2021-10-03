@@ -2,12 +2,15 @@
 	if(array_index_exists(@pvp['players'], player())) {
 		@health = phealth();
 		@v = get_vector(ploc(@event['id']));
+		@sprint = false;
+		if(psprinting(@event['id'])) {
+			@sprint = true;
+		}
 		set_timeout(10, closure(){
 			@modifier = (entity_attribute_base(puuid(), 'GENERIC_MAX_HEALTH') + 5 - @health) / 10;
 			@sprint = false;
-			if(psprinting(@event['id'])) {
+			if(@sprinting) {
 				@modifier *= 2.5;
-				@sprint = true;
 			}
 			@v['x'] *= @modifier;
 			@v['y'] *= @modifier;
