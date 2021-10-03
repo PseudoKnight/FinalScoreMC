@@ -4,7 +4,8 @@
 proc _fw_start_task(@secs) {
 	_fw_msg(array(
 		'Hot potato!',
-		'Do you smell something burning?'
+		'Do you smell something burning?',
+		'That spud is too hot to eat!'
 	));
 	@inv = associative_array();
 	do {
