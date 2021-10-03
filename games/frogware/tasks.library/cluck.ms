@@ -32,6 +32,8 @@ proc _fw_start_task(@secs) {
 			set_pexp(@shooter, min(99, round(pexp(@shooter) + 99 / @count)));
 			if(pexp(@shooter) == 99 && _fw_change_team(@shooter, 'winners')) {
 				play_sound(ploc(@shooter), array(sound: 'ENTITY_ZOMBIE_ATTACK_IRON_DOOR'), @shooter);
+			} else {
+				play_sound(ploc(@shooter), array(sound: 'ENTITY_CHICKEN_DEATH'), @shooter);
 			}
 		}
 	}
