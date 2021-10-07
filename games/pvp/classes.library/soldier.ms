@@ -15,22 +15,16 @@ case 'load':
 		@y = max((1.40 * sin(to_radians(@loc['pitch']))) + 0.2, 0.2);
 		@z = 1.40 * sin(to_radians(@loc['yaw'])) * cos(to_radians(@loc['pitch']));
 		set_entity_velocity(@armorStand, array(@x, @y, @z));
-		play_sound(@loc, array(sound: 'ENTITY_IRON_GOLEM_ATTACK'));
-		@timer = array(6);
-		set_interval(500, closure(){
+		play_sound(@loc, array(sound: 'ENTITY_IRON_GOLEM_ATTACK', volume: 2));
+		@timer = array(12);
+		set_interval(250, closure(){
 			try {
 				if(--@timer[0] <= 0) {
 					clear_task();
-					@bind = bind('entity_damage', null, array(type: 'PLAYER'), @event, @damager = player(), @pvp) {
-						if(array_index_exists(@pvp['players'], @event['player'])) {
-							_stats_damage(@damager, @event['player'], @event['amount'], @pvp);
-						}
-					}
-					explosion(entity_loc(@armorStand), 3, true);
-					unbind(@bind);
+					explosion(entity_loc(@armorStand), 3, true, false, puuid());
 					entity_remove(@armorStand);
 				} else {
-					spawn_particle(location_shift(entity_loc(@armorStand), 'up', 0.5), 'SMOKE_LARGE');
+					spawn_particle(location_shift(entity_loc(@armorStand), 'up', 0.6), 'SMOKE_LARGE');
 				}
 			} catch(BadEntityException @ex) {
 				// grenade no longer exists
