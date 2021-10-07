@@ -1,5 +1,5 @@
 @pvp['binds'][] = bind('player_interact', null, array(itemname: 'ANVIL', button: 'right'), @event, @pvp) {
-	if(!array_index_exists(@pvp['players'], player()) || pcooldown('ANVIL')) {
+	if(!array_index_exists(@pvp['players'], player())) {
 		die();
 	}
 	@taken = ptake_item(array(name: 'SLIME_BALL', qty: 1));
@@ -13,7 +13,6 @@
 		set_entity_velocity(@entity, @v);
 		play_sound(ploc(), array(sound: 'BLOCK_SLIME_BLOCK_HIT', volume: 2));
 		play_sound(ploc(), array(sound: 'BLOCK_BONE_BLOCK_PLACE', pitch: 0.5, volume: 2));
-		set_pcooldown('ANVIL', 10);
 	}
 }
 
