@@ -201,6 +201,8 @@ proc _pvp_initialize_players(@id, @players) {
 
 		@pArray = @pvp['players'][@player];
 
+		@pArray['blocks'] = array(); // used for cleaning up placed blocks
+
 		if(array_contains(@pvp['arena']['flags'], 'build')) {
 			set_pmode(@player, 'SURVIVAL');
 		} else {
