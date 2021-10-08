@@ -21,7 +21,7 @@ case 'load':
 				}
 			});
 		}
-		spawn_particle(@loc, array(particle: 'CRIT', count: 10));
+		spawn_particle(@loc, array(particle: 'ELECTRIC_SPARK', count: 30, xoffset: 5, yoffset: 5, zoffset: 5));
 		@lightning = lightning(@loc);
 		export(player().'lightning', @lightning);
 		@slot = pheld_slot();
@@ -150,7 +150,7 @@ case 'load':
 				}
 				return();
 			}
-			spawn_particle(@loc, array(particle: 'SNOWFLAKE', count: integer(@radius ** 3), xoffset: @radius, yoffset: @radius, zoffset: @radius, speed: 0.01));
+			spawn_particle(@loc, array(particle: 'SNOWFLAKE', count: integer(@radius ** 3), xoffset: @radius * 1.5, yoffset: @radius * 1.5, zoffset: @radius * 1.5, speed: 0.01));
 			play_sound(@loc, array(sound: 'ENTITY_ZOMBIE_VILLAGER_CURE', volume: 2));
 			foreach(@p in players_in_radius(@loc, @radius)) {
 				if(pmode(@p) != 'SPECTATOR') {
