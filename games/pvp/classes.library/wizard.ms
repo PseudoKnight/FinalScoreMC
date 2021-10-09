@@ -135,6 +135,7 @@ case 'load':
 			@loc['y'] = @trace['location']['y'];
 			@loc['z'] = @trace['location']['z'];
 			spawn_particle(@loc, array(particle: 'SNOWFLAKE', count: 5, xoffset: 0.3, yoffset: 0.3, zoffset: 0.3));
+			spawn_particle(@loc, array(particle: 'SOUL_FIRE_FLAME'));
 			@hit = false;
 			if(@trace['entities']) {
 				foreach(@entity in @trace['entities']) {
@@ -151,6 +152,7 @@ case 'load':
 				return();
 			}
 			spawn_particle(@loc, array(particle: 'SNOWFLAKE', count: integer(@radius ** 3), xoffset: @radius * 1.5, yoffset: @radius * 1.5, zoffset: @radius * 1.5, speed: 0.01));
+			spawn_particle(@loc, array(particle: 'SOUL_FIRE_FLAME', count: integer(@radius ** 2), xoffset: @radius, yoffset: @radius, zoffset: @radius));
 			play_sound(@loc, array(sound: 'ENTITY_ZOMBIE_VILLAGER_CURE', volume: 2));
 			foreach(@p in players_in_radius(@loc, @radius)) {
 				if(pmode(@p) != 'SPECTATOR') {
