@@ -1,7 +1,6 @@
 switch(@action) {
 case 'load':
 	set_peffect(@player, 'MINING_FATIGUE', 1, 9999, true, false);
-	set_pcooldown(@player, 'WEB', 0);
 	bind('entity_damage', array(id: @player.'damage'), array(type: 'PLAYER', cause: 'ENTITY_ATTACK'), @event, @p = @player) {
 		if(@event['damager'] == @p) {
 			@weapon = pinv(@p, null);
