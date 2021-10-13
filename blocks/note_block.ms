@@ -10,7 +10,7 @@ bind('player_interact', null, array('block': 'NOTE_BLOCK', 'button': 'left'), @e
 			set_pmode('CREATIVE');
 			// The block will appear as air due to the client-side block-break,
 			// so resend the noteblock
-			psend_block_change(@event['location'], 'NOTE_BLOCK');
+			psend_block_change(@event['location'], get_blockdata_string(@event['location']));
 		});
 	}
 }
