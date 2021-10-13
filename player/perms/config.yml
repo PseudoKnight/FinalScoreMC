@@ -297,6 +297,7 @@ moderator:
     deadbolt.broadcast.break: false
     deadbolt.broadcast.snoop: false
     worldguard.*: true
+    worldguard.region.*: true
     logblock.lookup: true
     logblock.tp: true
     logblock.tools.toolblock: true
