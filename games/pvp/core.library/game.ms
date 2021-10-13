@@ -471,14 +471,8 @@ proc _pvp_start_match(@id) {
 
 		foreach(@player: @p in @pvp['players']) {
 			if(array_index_exists(@arena, 'respawntime') && @p['respawn'] != 0) {
-				if(!array_contains(sk_current_regions(@player), @arena['region'])) {
-					if(pmode(@player) != 'SPECTATOR') {
-						_pvp_msg(@pvp, colorize('&7[PVP] '.@p['color'].@player.'&r left the arena.'));
-						_player_remove(@player, @id);
-					} else {
-						set_ploc(@player, @arena['spawn'][0][0]);
-					}
-				} else if(@p['respawn'] < time()) {
+				@time = time();
+				if(@p['respawn'] < @time) {
 					@loc = array();
 					if(array_index_exists(@arena, 'captain')) {
 						@team = @p['team'];
@@ -517,8 +511,15 @@ proc _pvp_start_match(@id) {
 					_player_equip(@id, @player);
 					@p['respawn'] = 0;
 					close_pinv(@player);
+				} else if(!array_contains(sk_current_regions(@player), @arena['region'])) {
+					if(pmode(@player) != 'SPECTATOR') {
+						_pvp_msg(@pvp, colorize('&7[PVP] '.@p['color'].@player.'&r left the arena.'));
+						_player_remove(@player, @id);
+					} else {
+						set_ploc(@player, @arena['spawn'][0][0]);
+					}
 				} else {
-					@timeleft = ceil((@p['respawn'] - time()) / 1000);
+					@timeleft = ceil((@p['respawn'] - @time) / 1000);
 					title(@player, @timeleft, null, 0, 20, 0);
 					if(@timeleft == 3) {
 						set_pstorm(@player, false);
