@@ -1,35 +1,48 @@
 register_command('dye', array(
-	'description': 'Dyes leather armor or maps.',
-	'usage': '/dye <r#> <g#> <b#> (0-255)',
-	'permission': 'command.items',
-	'tabcompleter': closure(@alias, @sender, @args, @info) {
+	description: 'Dyes leather armor or maps using hex or rgb (0-255).',
+	usage: '/dye <#rrggbb> | /dye <r> <g> <b>',
+	permission: 'command.items',
+	tabcompleter: closure(@alias, @sender, @args, @info) {
 		return(array());
 	},
 	'executor': closure(@alias, @sender, @args, @info) {
-		if(array_size(@args) < 3) {
+		if(!@args) {
 			return(false);
 		}
 		@item = pinv(player(), null);
 		if(!@item) {
 			die(color('gold').'You must be holding an item in your hand.');
 		}
-		@color = array(
-			integer(clamp(@args[0], 0, 255)),
-			integer(clamp(@args[1], 0, 255)),
-			integer(clamp(@args[2], 0, 255))
-		);
+		@r = 255;
+		@g = 255;
+		@b = 255;
+		if(array_size(@args) == 3) {
+			@r = integer(clamp(@args[0], 0, 255));
+			@g = integer(clamp(@args[1], 0, 255));
+			@b = integer(clamp(@args[2], 0, 255));
+		} else if(array_size(@args) == 1) {
+			if(@args[0][0] == '#' && length(@args[0]) == 7) {
+				@r = parse_int(substr(@args[0], 1, 3), 16);
+				@g = parse_int(substr(@args[0], 3, 5), 16);
+				@b = parse_int(substr(@args[0], 5, 7), 16);
+			} else {
+				return(false);
+			}
+		} else {
+			return(false);
+		}
+		@color = array(@r, @g, @b);
 		if(string_starts_with(@item['name'], 'LEATHER_')) {
 			try {
 				set_armor_color(pheld_slot(), @color);
 			} catch(Exception @ex) {
 				die(color('gold').'Hold leather armor in your hand and type the command. eg. /dye 255 255 255');
 			}
-		} else if(@item['name'] == 'FILLED_MAP') {
+		} else if(@item['name'] == 'FILLED_MAP' || string_ends_with(@item['name'], 'POTION')) {
 			if(!@item['meta']) {
-				@item['meta'] = array('color': @color);
-			} else {
-				@item['meta']['color'] = @color;
+				@item['meta'] = associative_array();
 			}
+			@item['meta']['color'] = @color;
 			set_pinv(player(), null, @item);
 		} else {
 			die(color('gold').'You must be holding leather armor or a map in your hand.');
