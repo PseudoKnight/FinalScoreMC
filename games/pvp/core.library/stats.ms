@@ -65,10 +65,10 @@ proc _stats_print(@winners, @pvp) {
 		}
 		@team = @pvp['players'][@leader]['team'];
 		@title = @pvp['players'][@leader]['color'].color('bold')
-				.@pvp['arena']['team'][@team]['name'].' wins '.@pvp['title'].'!';
+				.@pvp['arena']['team'][@team]['name'].' win '.@pvp['title'].'!';
 		@subtitle = @pvp['players'][@leader]['color'].array_implode(@winners, ' ');
 	} else if(@winners) {
-		@title = array_implode(@winners, ' and ').' wins '.@pvp['title'].'!';
+		@title = array_implode(@winners, ' and ').' win'.if(array_size(@winners) == 1, 's ', ' ').@pvp['title'].'!';
 	} else {
 		@title = 'No one won '.@pvp['title'].'.';
 	}

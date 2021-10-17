@@ -751,7 +751,7 @@ proc _pvp_end_match(@id, @winners) {
 			@leader = @winners[0];
 			@team = @pvp['players'][@leader]['team'];
 			@title = @pvp['players'][@leader]['color'].color('bold')
-				.@arena['team'][@team]['name'].' wins '.@pvp['title'].'!';
+				.@arena['team'][@team]['name'].' win '.@pvp['title'].'!';
 			@subtitle = @pvp['players'][@leader]['color'].array_implode(@winners, ' ');
 			_worldmsg(@world, color('gray').'[PVP] '.@title.'\n'.@subtitle);
 			foreach(@p in array_keys(@pvp['players'])) {
@@ -759,7 +759,7 @@ proc _pvp_end_match(@id, @winners) {
 			}
 			discord_broadcast('minecraft_chat', array(embed: array(title: strip_colors(@title).' ('.strip_colors(@subtitle).')')));
 		} else if(array_size(@winners) > 0) {
-			@winnersString = array_implode(@winners, ' and ').' wins '.@pvp['title'].'!';
+			@winnersString = array_implode(@winners, ' and ').' win'.if(array_size(@winners) == 1, 's ', ' ').@pvp['title'].'!';
 			_worldmsg(@world, color('gray').'[PVP] '.color('r').@winnersString);
 			foreach(@p in array_keys(@pvp['players'])) {
 				title(@p, '', @winnersString, 20, 60, 20);
