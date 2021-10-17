@@ -80,12 +80,16 @@
 			@ticks = array(40);
 			set_interval(50, closure(){
 				try {
-					@entityPos = entity_loc(@hitEntity);
-					if(@entityPos['world'] == @loc['world']) {
-						@hit['x'] = @entityPos['x'] + @relativePos['x'];
-						@hit['y'] = @entityPos['y'] + @relativePos['y'];
-						@hit['z'] = @entityPos['z'] + @relativePos['z'];
-						set_entity_loc(@slime, @hit);
+					if(@ticks[0] > 20) {
+						@entityPos = entity_loc(@hitEntity);
+						if(@entityPos['world'] == @loc['world']) {
+							@hit['x'] = @entityPos['x'] + @relativePos['x'];
+							@hit['y'] = @entityPos['y'] + @relativePos['y'];
+							@hit['z'] = @entityPos['z'] + @relativePos['z'];
+							set_entity_loc(@slime, @hit);
+						}
+					} else if(@ticks[0] == 20) {
+						set_entity_spec(@slime, array(gravity: true));
 					}
 					if(--@ticks[0] <= 0) {
 						clear_task();
