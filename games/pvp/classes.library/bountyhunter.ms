@@ -8,7 +8,6 @@ switch(@action) {
 			@deathSound = array(sound: 'ENTITY_BLAZE_DEATH', pitch: 2.0)
 		) {
 			if(pexp() == 0) {
-				cancel();
 				die();
 			}
 			@loc = ploc();
@@ -18,12 +17,9 @@ switch(@action) {
 			play_sound(@loc, @hissSound);
 			spawn_particle(@loc, @smokeEffect);
 
-			@v = get_vector(ploc());
-			@v['x'] /= 3;
-			@v['z'] /= 3;
-			@v['y'] = 0.2;
-			set_pvelocity(player(), @v);
+			set_pvelocity(player(), array(0, if(entity_grounded(puuid()), 0.4, 0.1), 0));
 			set_entity_fall_distance(puuid(), 0);
+			set_peffect(player(), 'LEVITATION', 0, 1, true, false);
 
 			set_pexp(max(0, pexp() - 5));
 
@@ -39,18 +35,20 @@ switch(@action) {
 						if(@xp == 0) {
 							play_sound(@loc, @deathSound);
 						}
+						set_peffect(player(), 'LEVITATION', 0, 0, true, false);
 					} else {
 						set_entity_fall_distance(puuid(), 0);
 						@y[0] = @loc['y'];
 						@loc['y'] += 1.3;
-						play_sound(@loc, @gasSound);
+						if(rand() < @xp / 100, play_sound(@loc, @gasSound));
 						spawn_particle(@loc, @smokeEffect);
 						set_pexp(max(0, @xp - 1));
 						@v = get_vector(@loc);
-						@v['x'] /= 2.7;
-						@v['z'] /= 2.7;
-						@v['y'] = 0.3;
+						@v['x'] /= 3;
+						@v['z'] /= 3;
+						@v['y'] = 0.1;
 						set_pvelocity(player(), @v);
+						set_peffect(player(), 'LEVITATION', 0, 1, true, false);
 					}
 				} catch(PlayerOfflineException @ex) {
 					clear_task();
