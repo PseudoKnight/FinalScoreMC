@@ -71,6 +71,11 @@ case 'load':
 
 			@returnToSender = closure(){
 				if(ponline(player()) && pmode() != 'SPECTATOR' && array_index_exists(@pvp['players'], player())) {
+					@item['qty']--;
+					@newItem = pinv(player(), @slot);
+					if(@newItem && @newItem['name'] == 'PLAYER_HEAD') {
+						@item['qty'] += @newItem['qty'];
+					}
 					set_pinv(player(), @slot, @item);
 				}
 				play_sound(ploc(), array(sound: 'ENTITY_PUFFER_FISH_BLOW_UP', pitch: 0.5), player());
