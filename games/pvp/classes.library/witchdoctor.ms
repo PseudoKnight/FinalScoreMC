@@ -9,7 +9,7 @@ case 'load':
 		}
 		foreach(@player in players_in_radius(ploc(), 18)) {
 			if(@player != player() && pmode(@player) != 'SPECTATOR'
-			&& (!array_index_exists(@pvp, 'teams') || @pvp['players'][player()]['team'] != @pvp['players'][@player]['team'])) {
+			&& (!array_index_exists(@pvp, 'team') || @pvp['players'][player()]['team'] != @pvp['players'][@player]['team'])) {
 				set_peffect(@player, 'BLINDNESS', 0, 7);
 				@cloud = spawn_entity('AREA_EFFECT_CLOUD', 1, ploc(@player), closure(@cloud) {
 					set_entity_spec(@cloud, array(particle: 'SMOKE_LARGE', radius: 1, duration: 7000 / 50));
