@@ -11,15 +11,17 @@ case 'load':
 	}
 
 case 'powerup':
-	@newDog = true;
 	@wolves = entities_in_radius(ploc(@player), 24, 'WOLF');
+	@existingWolf = null;
 	foreach(@wolf in @wolves) {
 		if(get_mob_owner(@wolf) == @player) {
-			@newDog = false;
+			@existingWolf = @wolf;
 			break();
 		}
 	}
-	if(@newDog) {
+	if(@existingWolf) {
+		set_entity_health(@existingWolf, 100);
+	} else {
 		spawn_entity('WOLF', 1, entity_loc(puuid(@player)), closure(@wolf) {
 			set_mob_owner(@wolf, @player);
 			set_entity_spec(@wolf, array(color: array_get_rand(reflect_pull('enum', 'DyeColor'))));
