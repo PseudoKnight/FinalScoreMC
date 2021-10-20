@@ -119,16 +119,14 @@ bind('player_death', null, null, @event) {
 	Logs spawning of a wither
 */
 bind('block_place', null, array(block: 'WITHER_SKELETON_SKULL'), @event) {
-	if(@event['block'] == 'WITHER_SKELETON_SKULL') {
-		@loc = @event['location'];
-		foreach(@dir in array('north', 'south', 'east', 'west', 'up', 'down')) {
-			@block = get_block(location_shift(@loc, @dir));
-			if(@block == 'SOUL_SAND' || @block == 'SOUL_SOIL') {
-				@player = player();
-				@stringLoc = floor(@loc['x']).','.floor(@loc['y']).','.floor(@loc['z']).' '._worldname(@loc['world']);
-				console("@player spawning a wither at @stringLoc!", false);
-				break();
-			}
+	@loc = @event['location'];
+	foreach(@dir in array('north', 'south', 'east', 'west', 'up', 'down')) {
+		@block = get_block(location_shift(@loc, @dir));
+		if(@block == 'SOUL_SAND' || @block == 'SOUL_SOIL') {
+			@player = player();
+			@stringLoc = floor(@loc['x']).','.floor(@loc['y']).','.floor(@loc['z']).' '._worldname(@loc['world']);
+			console("@player spawning a wither at @stringLoc!", false);
+			break();
 		}
 	}
 }
@@ -271,17 +269,6 @@ bind('player_interact_entity', null, array('clicked': 'PAINTING','hand': 'main_h
 	}
 }
 
-// Improve bow launching
-bind('entity_damage_player', null, array('damager': 'ARROW'), @event) {
-	if(player() == @event['data'] && !entity_grounded(puuid()) && !get_entity_gliding(puuid())) {
-		@item = pinv(player(), 102);
-		if(@item && @item['name'] == 'ELYTRA') {
-			set_entity_gliding(puuid(), true);
-			play_sound(ploc(), array('sound': 'ENTITY_ENDER_DRAGON_FLAP', 'category': 'PLAYERS', 'pitch': 1.3, 'volume': 0.4));
-		}
-	}
-}
-
 // Hand instruments
 bind('item_swap', null, null, @event,
 	@instruments = array(
@@ -325,7 +312,7 @@ bind('item_swap', null, null, @event,
 }
 
 // Survival PVP
-bind('entity_damage_player', null, null, @event) {
+bind('entity_damage_player', null, array(damager: 'PLAYER'), @event) {
 	if(!is_array(@event['data']) # is not dispenser
 	&& ponline(@event['data']) # is player
 	&& @event['data'] != @event['player'] # is not self-inflicted
