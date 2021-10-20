@@ -69,7 +69,7 @@ proc _fw_mobs(@mob = 'random', @num = 'random') {
 				set_entity_spec(@m, array(anger: 9999));
 				@players = players_in_radius(@loc, 16);
 				if(@players) {
-					set_mob_target(@m, puuid(array_get_rand(@p)));
+					set_mob_target(@m, puuid(array_get_rand(@players)));
 				}
 			}
 		}
