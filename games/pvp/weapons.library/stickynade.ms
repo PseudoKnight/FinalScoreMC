@@ -80,7 +80,7 @@
 			@ticks = array(40);
 			set_interval(50, closure(){
 				try {
-					if(@ticks[0] > 20) {
+					if(@ticks[0] > 10) {
 						@entityPos = entity_loc(@hitEntity);
 						if(@entityPos['world'] == @loc['world']) {
 							@hit['x'] = @entityPos['x'] + @relativePos['x'];
@@ -88,7 +88,7 @@
 							@hit['z'] = @entityPos['z'] + @relativePos['z'];
 							set_entity_loc(@slime, @hit);
 						}
-					} else if(@ticks[0] == 20) {
+					} else if(@ticks[0] == 10) {
 						set_entity_spec(@slime, array(gravity: true));
 					}
 					if(--@ticks[0] <= 0) {
