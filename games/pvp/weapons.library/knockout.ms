@@ -1,5 +1,5 @@
 @pvp['binds'][] = bind('entity_damage_player', null, null, @event, @pvp) {
-	if(array_index_exists(@pvp['players'], player())) {
+	if(array_index_exists(@pvp['players'], player()) && ponline(@event['id'])) {
 		@health = phealth();
 		@v = get_vector(ploc(@event['id']));
 		@sprint = false;
