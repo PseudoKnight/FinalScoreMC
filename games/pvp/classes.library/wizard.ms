@@ -9,21 +9,16 @@ case 'load':
 		if(@trace['entities']) {
 			@loc = @trace['entities'][0]['location'];
 		}
-		@bind = bind('entity_damage', null, array(type: 'PLAYER', cause: 'LIGHTNING'), @e,
-				@damager = player(), @pvp) {
-
-			if(!array_index_exists(@pvp['players'], @e['player']), die());
-			modify_event('amount', 3.7);
-			set_timeout(1, closure(){
-				@entity = import(@damager.'lightning');
-				if(@e['damager'] == import(@damager.'lightning')) {
-					_stats_damage(@damager, @e['player'], 3.7, @pvp);
-				}
-			});
+		@lightning = lightning(@loc);
+		@bind = bind('entity_damage', null, array(type: 'PLAYER', cause: 'LIGHTNING'), @event,
+				@damager = player(), @thisLightning = @lightning, @pvp) {
+			if(array_index_exists(@pvp['players'], @event['player']) && @thisLightning == @event['damager']) {
+				modify_event('amount', 3.7);
+				set_mob_killer(@event['id'], @damager);
+				_stats_damage(@damager, @event['player'], 3.7, @pvp);
+			}
 		}
 		spawn_particle(@loc, array(particle: 'ELECTRIC_SPARK', count: 30, xoffset: 5, yoffset: 5, zoffset: 5));
-		@lightning = lightning(@loc);
-		export(player().'lightning', @lightning);
 		@slot = pheld_slot();
 		@item = pinv(player(), null);
 		set_pinv(player(), null, array(name: 'LIGHTNING_ROD'));
@@ -32,7 +27,6 @@ case 'load':
 		queue_delay(1000, player().'lightning');
 		queue_push(closure(){
 			unbind(@bind);
-			export(player().'lightning', null);
 		}, player().'lightning');
 		queue_delay(7000, player().'lightning');
 		queue_push(closure(){
