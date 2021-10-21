@@ -82,15 +82,17 @@ case 'load':
 			}
 
 			@explode = closure(@loc) {
-				foreach(@p in players_in_radius(@loc, 4)) {
-					damage_entity(puuid(@p), 7 - distance(location_shift(ploc(@p), 'up', 2), @loc), puuid());
-					if(@p != player()) {
-						play_sound(ploc(), array(sound: 'ENTITY_ARROW_HIT_PLAYER'), player());
-					}
-				}
 				spawn_particle(@loc, 'EXPLOSION_LARGE');
 				play_sound(@loc, array(sound: 'ENTITY_GENERIC_EXPLODE', pitch: 1.3, volume: 4));
 				entity_remove(@box);
+				foreach(@e in entities_in_radius(@loc, 4)) {
+					if(is_entity_living(@e)) {
+						damage_entity(@e, 7 - distance(location_shift(entity_loc(@e), 'up'), @loc), puuid());
+						if(@e != puuid()) {
+							play_sound(ploc(), array(sound: 'ENTITY_ARROW_HIT_PLAYER'), player());
+						}
+					}
+				}
 			}
 
 			set_interval(50, closure(){
@@ -191,12 +193,14 @@ case 'load':
 			if(@helmet && @helmet['name'] == 'PLAYER_HEAD') {
 				consume();
 				@loc = entity_loc(@event['id']);
-				foreach(@p in players_in_radius(@loc, 4)) {
-					damage_entity(puuid(@p), 8 - distance(location_shift(ploc(@p), 'up', 2), @loc), puuid(@player));
-				}
 				spawn_particle(@loc, 'EXPLOSION_LARGE');
 				play_sound(@loc, array(sound: 'ENTITY_GENERIC_EXPLODE'));
 				entity_remove(@event['id']);
+				foreach(@e in entities_in_radius(@loc, 4)) {
+					if(is_entity_living(@e)) {
+						damage_entity(@e, 8 - distance(location_shift(entity_loc(@e), 'up'), @loc), puuid(@player));
+					}
+				}
 			}
 		}
 	}

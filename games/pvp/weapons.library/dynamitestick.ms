@@ -2,7 +2,6 @@
 	if(get_projectile_item(@event['id'])['name'] != 'RED_CANDLE') {
 		die();
 	}
-	cancel();
 
 	@loc = @event['location'];
 	if(!array_contains(sk_regions_at(@loc), @pvp['arena']['region'])) {
@@ -11,25 +10,27 @@
 	
 	spawn_particle(@loc, 'EXPLOSION_LARGE');
 	play_sound(@loc, associative_array(sound: 'ENTITY_GENERIC_EXPLODE', volume: 3));
-	foreach(@p in players_in_radius(@loc, 7)) {
-		if(pmode(@p) == 'SPECTATOR') {
+	foreach(@e in entities_in_radius(@loc, 7)) {
+		if(@e == @event['id'] || entity_type(@e) == 'PLAYER' && pmode(@e) == 'SPECTATOR') {
 			continue();
 		}
 		# a delayed velocity works more consistently with grounded entities
 		set_timeout(1, closure(){
-			@target = location_shift(ploc(@p), 'up', 2);
+			@target = location_shift(entity_loc(@e), 'up');
 			@dist = distance(@loc, @target);
-			if(@p == player() && @loc['y'] < @target['y']) {
-				damage_entity(puuid(@p), 1, @event['shooter']);
-			} else {
-				damage_entity(puuid(@p), 8 / max(1, @dist - 1), @event['shooter']);
+			if(is_entity_living(@e)) {
+				if(@e == puuid() && @loc['y'] < @target['y']) {
+					damage_entity(@e, 1, @event['shooter']);
+				} else {
+					damage_entity(@e, 8 / max(1, @dist - 1), @event['shooter']);
+				}
 			}
 			try {
-				set_pvelocity(@p,
+				set_entity_velocity(@e, array(
 					min(2.2, (@target['x'] - @loc['x']) / (@dist ** 2)),
 					min(2.2, (@target['y'] - @loc['y']) / (@dist ** 2)),
 					min(2.2, (@target['z'] - @loc['z']) / (@dist ** 2))
-				);
+				));
 			} catch(PlayerOfflineException @ex) {
 				// blew completely off server
 			}

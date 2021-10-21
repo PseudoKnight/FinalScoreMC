@@ -53,19 +53,21 @@
 				spawn_particle(@hit, 'EXPLOSION_LARGE');
 				play_sound(@hit, associative_array(sound: 'ENTITY_GENERIC_EXPLODE', volume: 3));
 
-				foreach(@p in players_in_radius(@hit, 5)) {
-					if(pmode(@p) == 'SPECTATOR') {
+				foreach(@e in entities_in_radius(@hit, 5)) {
+					if(entity_type(@e) == 'PLAYER' && pmode(@e) == 'SPECTATOR') {
 						continue();
 					}
-					@ploc = location_shift(ploc(@p), 'up', 2);
-					@dist = distance(@hit, @ploc);
-					damage_entity(puuid(@p), 7 / max(1, @dist - 1), puuid(@event['shooter']));
+					@eloc = location_shift(entity_loc(@e), 'up');
+					@dist = distance(@hit, @eloc);
+					if(is_entity_living(@e)) {
+						damage_entity(@e, 7 / max(1, @dist - 1), puuid(@event['shooter']));
+					}
 					try {
-						set_pvelocity(@p,
-							(@ploc['x'] - @hit['x']) / max(1, @dist ** 2),
-							(@ploc['y'] - @hit['y']) / max(1, @dist ** 2),
-							(@ploc['z'] - @hit['z']) / max(1, @dist ** 2)
-						);
+						set_entity_velocity(@e, array(
+							(@eloc['x'] - @hit['x']) / max(1, @dist ** 2),
+							(@eloc['y'] - @hit['y']) / max(1, @dist ** 2),
+							(@eloc['z'] - @hit['z']) / max(1, @dist ** 2)
+						));
 					} catch(PlayerOfflineException @ex) {
 						// blew completely off server
 					}
