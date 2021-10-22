@@ -9,7 +9,7 @@
 			@vine['age'] = 25;
 			set_blockdata(@event['location'], @vine);
 			pswing_hand(@event['hand']);
-			play_sound(@event['location'], array(sound: 'BLOCK_VINE_HIT'));
+			play_sound(@event['location'], array(sound: 'ENTITY_SHEEP_SHEAR'));
 			spawn_particle(@event['location'], array(particle: 'BLOCK_CRACK', block: @event['block']));
 		 }
 	 }
