@@ -158,7 +158,11 @@ register_command('entity', array(
 						if(array_size(@args) == 3) {
 							return(false);
 						}
-						@entity['rider'] = @args[3];
+						if(@args[3][0] == '{') {
+							@entity['rider'] = json_decode(@args[3]);
+						} else {
+							@entity['rider'] = @args[3];
+						}
 						msg(color('green').'Set entity rider to '.@entity['rider']);
 
 					case 'explode':
