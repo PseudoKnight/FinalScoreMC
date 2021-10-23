@@ -12,7 +12,7 @@ case 'load':
 					if(array_index_exists(@effects, 'levitation')) {
 						@strength = @effects['levitation']['strength'] - 1;
 					}
-					set_peffect(@player, 'LEVITATION', max(-12, @strength), 0.15, true);
+					set_peffect(@player, 'LEVITATION', max(-12, @strength), 0.15, true, false, false);
 				}
 			} else {
 				set_peffect(@player, 'LEVITATION', 0, 0);
