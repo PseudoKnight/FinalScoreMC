@@ -11,6 +11,12 @@ proc _bind(@pvp) {
 			&& array_index_exists(@arena['chestspawn'][@i], 'cooldown')) {
 				cancel();
 				@loc = @e['location'];
+				@inv = get_inventory(@loc);
+				foreach(@item in @inv) {
+					if(@item) {
+						drop_item(@loc, @item, true);
+					}
+				}
 				set_block(@loc, 'AIR');
 				@loc = @e['location'];
 				@loc['x'] += 0.5;
