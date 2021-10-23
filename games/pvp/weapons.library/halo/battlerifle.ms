@@ -13,7 +13,8 @@
 	
 	if(@currentAmmo <= 0) {
 		play_sound(ploc(), array(sound: 'UI_BUTTON_CLICK', pitch: 2));
-		action_msg(player(), @currentAmmo.' / '.@maxAmmo);
+		action_msg(player(), '0 / '.@maxAmmo);
+		die();
 	}
 	
 	_weapon_hit_scan(player(), 84, 0.0, 1.29, array(tracerparticle: 'SUSPENDED_DEPTH', hitparticle: 'SMOKE_LARGE'), @pvp);
@@ -45,7 +46,7 @@
 					if(@currentAmmo <= 0 && @maxAmmo > 0) {
 						play_sound(ploc(), array(sound: 'BLOCK_WOODEN_DOOR_OPEN', pitch: 2));
 						set_pcooldown(@item['name'], 1900 / 50);
-						set_timeout(1900, closure(){
+						set_timeout(1850, closure(){
 							play_sound(ploc(), array(sound: 'BLOCK_WOODEN_DOOR_CLOSE', pitch: 2));
 							@amount = min(@maxAmmo, 36);
 							@currentAmmo = @amount;
