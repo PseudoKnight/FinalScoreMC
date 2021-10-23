@@ -12,7 +12,7 @@
 	spawn_particle(@a, 'EXPLOSION_LARGE');
 	play_sound(@a, associative_array(sound: 'ENTITY_GENERIC_EXPLODE', volume: 3));
 	foreach(@e in entities_in_radius(@a, 7)) {
-		if(@e == @event['id'] || entity_type(@e) == 'PLAYER' && pmode(@e) == 'SPECTATOR') {
+		if(entity_type(@e) == 'PLAYER' && pmode(@e) == 'SPECTATOR') {
 			continue();
 		}
 		# a delayed velocity works more consistently with grounded entities
