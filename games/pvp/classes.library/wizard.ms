@@ -110,7 +110,7 @@ case 'load':
 		if(pinfo(player(), 6) != @e['item']['name'] || pcooldown('SOUL_TORCH')) {
 			die();
 		}
-		set_pcooldown('SOUL_TORCH', 7000 / 50);
+		set_pcooldown('SOUL_TORCH', 8000 / 50);
 		
 
 		@radius = 5;
@@ -148,13 +148,17 @@ case 'load':
 			spawn_particle(@loc, array(particle: 'SNOWFLAKE', count: integer(@radius ** 3), xoffset: @radius * 1.5, yoffset: @radius * 1.5, zoffset: @radius * 1.5, speed: 0.01));
 			spawn_particle(@loc, array(particle: 'SOUL_FIRE_FLAME', count: integer(@radius ** 2), xoffset: @radius, yoffset: @radius, zoffset: @radius));
 			play_sound(@loc, array(sound: 'ENTITY_ZOMBIE_VILLAGER_CURE', volume: 2));
-			foreach(@p in players_in_radius(@loc, @radius)) {
+			foreach(@p in array_keys(@pvp['players'])) {
 				if(pmode(@p) != 'SPECTATOR') {
-					set_peffect(@p, 'WEAKNESS', 0, 5);
-					set_peffect(@p, 'MINING_FATIGUE', 0, 5);
-					set_peffect(@p, 'GLOWING', 0, 5);
-					set_entity_freezing(puuid(@p), 140);
-					damage_entity(puuid(@p), 1, puuid());
+					@ploc = location_shift(ploc(), 'up', 2);
+					@dist = distance(@loc, @ploc);
+					if(@dist < @radius) {
+						set_peffect(@p, 'WEAKNESS', 0, 7.5 / max(1, @dist));
+						set_peffect(@p, 'MINING_FATIGUE', 0, 7.5 / max(1, @dist));
+						set_peffect(@p, 'GLOWING', 0, 7.5 / max(1, @dist));
+						damage_entity(puuid(@p), 1, puuid());
+						set_entity_freezing(puuid(@p), integer(300 / max(1, @dist)));
+					}
 				}
 			}
 			clear_task();
