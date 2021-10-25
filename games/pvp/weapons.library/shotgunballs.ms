@@ -1,11 +1,12 @@
-@pvp['binds'][] = bind('player_interact', null, array(itemname: 'SNOWBALL', button: 'right'), @e, @pvp) {
-	if(!array_index_exists(@pvp['players'], player()) || pinfo(player(), 6) != @e['item']['name']) {
+@pvp['binds'][] = bind('player_interact', null, array(itemname: 'SNOWBALL', button: 'right'), @event, @pvp) {
+	if(!array_index_exists(@pvp['players'], player()) || pinfo(player(), 6) != @event['item']['name']) {
 		die();
 	}
 	cancel();
 	@entities = array();
 	for(@i = 0, @i < 8, @i++) {
 		@entities[@i] = shoot_projectile(player(), 'SNOWBALL');
+		set_projectile_item(@entities[@i], array(name: 'POLISHED_BLACKSTONE_BUTTON'));
 		@v = entity_velocity(@entities[@i]);
 		@v['x'] = ((@v['x'] / @v['magnitude']) * 3.2) + ((rand() * 1.6) - 0.8);
 		@v['y'] = ((@v['y'] / @v['magnitude']) * 3.2) + ((rand() * 1.6) - 0.8);
@@ -27,14 +28,13 @@
 		play_sound(ploc(), array(sound: 'BLOCK_PISTON_CONTRACT', pitch: 1.5));
 	});
 }
-@pvp['binds'][] = bind('entity_damage', null, array(type: 'PLAYER', cause: 'PROJECTILE'), @e, @pvp) {
-	if(array_index_exists(@e, 'shooter') // missing in special cases
-	&& length(@e['shooter']) < 17) {
-		if(array_index_exists(@pvp['players'], @e['shooter'])) {
-			@weapon = pinv(@e['shooter'], null);
-			if(!is_null(@weapon) && (@weapon['name'] == 'SNOWBALL' || @weapon['name'] == 'SLIME_BALL')) {
-				modify_event('amount', 7);
-			}
+
+@pvp['binds'][] = bind('entity_damage', null, array(type: 'PLAYER', cause: 'PROJECTILE'), @event, @pvp) {
+	if(array_index_exists(@event, 'shooter') // missing in special cases
+	&& array_index_exists(@pvp['players'], @event['shooter'])) {
+		if(get_projectile_item(@event['damager'])['name'] == 'POLISHED_BLACKSTONE_BUTTON') {
+			modify_event('amount', 6);
+			play_sound(ploc(@event['shooter']), array(sound: 'ENTITY_ARROW_HIT_PLAYER'), @event['shooter']);
 		}
 	}
 }
