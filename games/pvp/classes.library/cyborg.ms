@@ -124,6 +124,7 @@ case 'load':
 						}
 
 						// clamp turning radius
+						@degreeClamp = 4;
 						@diffYaw = @loc['yaw'] - @yaw;
 						if(abs(@diffYaw) > 180) {
 							if(@diffYaw < 0) {
@@ -132,17 +133,17 @@ case 'load':
 								@diffYaw -= 360;
 							}
 						}
-						if(@diffYaw < -5) {
-							@yaw = @loc['yaw'] + 5;
-						} else if(@diffYaw > 5) {
-							@yaw = @loc['yaw'] - 5;
+						if(@diffYaw < -@degreeClamp) {
+							@yaw = @loc['yaw'] + @degreeClamp;
+						} else if(@diffYaw > @degreeClamp) {
+							@yaw = @loc['yaw'] - @degreeClamp;
 						}
 
 						@diffPitch = @loc['pitch'] - @pitch;
-						if(@diffPitch < -5) {
-							@pitch = min(90, @loc['pitch'] + 5);
-						} else if(@diffPitch > 5) {
-							@pitch = max(-90, @loc['pitch'] - 5);
+						if(@diffPitch < -@degreeClamp) {
+							@pitch = min(90, @loc['pitch'] + @degreeClamp);
+						} else if(@diffPitch > @degreeClamp) {
+							@pitch = max(-90, @loc['pitch'] - @degreeClamp);
 						}
 
 						@loc['yaw'] = @yaw;
