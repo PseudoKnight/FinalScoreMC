@@ -135,7 +135,7 @@
 		if(@dist < 2.25) { # 1.5 ^ 2
 			@uuid = puuid(@p);
 			@range = distance(ploc(), ploc(@p));
-			@damage = if(entity_can_see(puuid(), @uuid),  max(10 / @range, 5), 5 / @range);
+			@damage = if(entity_can_see(puuid(), @uuid),  min(10 / @range, 5), 5 / @range);
 			damage_entity(@uuid, @damage, puuid());
 			set_entity_onfire(@uuid, 1);
 			continue();
