@@ -269,7 +269,7 @@ proc _bind_events(@pvp) {
 
 			// Teleport
 			if(array_index_exists(@arena, 'respawntime') && @pvp['running'] == 2) {
-				@playerData['respawn'] = time() + (@arena['respawntime'] * 1000);
+				@playerData['respawn'] = time() + (@arena['respawntime'] * 1000) - 50; // 50ms tick precision
 				set_pmode('SPECTATOR');
 				if(!array_contains(sk_current_regions(), @arena['region'])) {
 					if(ponline(@killer)) {

@@ -519,7 +519,7 @@ proc _pvp_start_match(@id) {
 						set_ploc(@player, @arena['spawn'][0][0]);
 					}
 				} else {
-					@timeleft = ceil((@p['respawn'] - @time) / 1000);
+					@timeleft = integer(round((@p['respawn'] - @time) / 1000));
 					title(@player, @timeleft, null, 0, 20, 0);
 					if(@timeleft == 3) {
 						set_pstorm(@player, false);
