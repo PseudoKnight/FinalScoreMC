@@ -26,8 +26,7 @@ case 'load':
 			set_timeout(800, closure(){
 				try(entity_remove(@arrow));
 			});
-			@dmg = entity_spec(@arrow)['damage'];
-			set_entity_spec(@arrow, array(damage: @dmg * 0.55));
+			set_entity_spec(@arrow, array(damage: 1.0));
 		}
 	}
 
