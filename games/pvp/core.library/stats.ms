@@ -43,8 +43,8 @@ proc _stats_table() {
 	return(array(
 		array('kills', 2, '-------'),
 		array('deaths', 2, '---------'),
-		array('pickups', 2, '--------'),
-		array('damage', 3, '------')
+		array('damage', 3, '------'),
+		array('pickups', 2, '--------')
 	));
 }
 
