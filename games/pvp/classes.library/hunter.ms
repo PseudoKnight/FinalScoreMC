@@ -2,7 +2,7 @@ switch(@action) {
 case 'load':
 	bind('projectile_launch', array(id: @player.'huntershoot'), array(type: 'ARROW', shootertype: 'PLAYER'), @event, @player) {
 		if(@event['player'] == @player) {
-			set_entity_spec(@event['id'], array(damage: 0.7));
+			set_entity_spec(@event['id'], array(damage: 1.0, critical: false));
 		}
 	}
 
