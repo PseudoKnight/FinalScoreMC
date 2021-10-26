@@ -16,6 +16,9 @@
 		}
 		# a delayed velocity works more consistently with grounded entities
 		set_timeout(1, closure(){
+			if(!entity_exists(@e)) {
+				die();
+			}
 			@target = location_shift(entity_loc(@e), 'up');
 			@dist = distance(@loc, @target);
 			if(is_entity_living(@e)) {
