@@ -150,7 +150,7 @@ case 'load':
 			play_sound(@loc, array(sound: 'ENTITY_ZOMBIE_VILLAGER_CURE', volume: 2));
 			foreach(@p in array_keys(@pvp['players'])) {
 				if(pmode(@p) != 'SPECTATOR') {
-					@ploc = location_shift(ploc(), 'up', 2);
+					@ploc = location_shift(ploc(@p), 'up', 2);
 					@dist = distance(@loc, @ploc);
 					if(@dist < @radius) {
 						set_peffect(@p, 'WEAKNESS', 0, 7.5 / max(1, @dist));
