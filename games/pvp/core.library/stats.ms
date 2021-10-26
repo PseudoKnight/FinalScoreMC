@@ -42,9 +42,9 @@ proc _stat_pad(@amount, @length) {
 proc _stats_table() {
 	return(array(
 		array('kills', 2, '-------'),
-		array('deaths', 2, '---------'),
-		array('damage', 3, '------'),
-		array('pickups', 2, '--------')
+		array('deaths', 2, '--------'),
+		array('damage', 3, '--------'),
+		array('pickups', 2, '-------')
 	));
 }
 
@@ -104,9 +104,9 @@ proc _stats_print(@winners, @pvp) {
 	@firstline = true;
 	foreach(@player: @stats in @pvp['stats']) {
 		_pvp_msg(@pvp, replace('----'
-			._stat_pad(@stats[@a[0]], @a[1]).@a[2]
-			._stat_pad(@stats[@b[0]], @b[1]).@b[2]
-			._stat_pad(@stats[@c[0]], @c[1]).@c[2]
+			._stat_pad(integer(@stats[@a[0]]), @a[1]).@a[2]
+			._stat_pad(integer(@stats[@b[0]]), @b[1]).@b[2]
+			._stat_pad(integer(@stats[@c[0]]), @c[1]).@c[2]
 			._stat_pad(integer(@stats[@d[0]]), @d[1]).@d[2]
 			.if(array_contains(@winners, @player),
 				color('gold').color('bold').@player.if(@pvp['coins'] > 0, ' +'.@pvp['coins']),
@@ -115,10 +115,10 @@ proc _stats_print(@winners, @pvp) {
 		
 		if(@a[0] == 'kills' && @b[0] == 'deaths') {
 			@embed['fields'][0]['value'] .= if(!@firstline, '\n').@stats[@a[0]].' : '.@stats[@b[0]];
-			@embed['fields'][1]['value'] .= if(!@firstline, '\n').@stats[@c[0]];
+			@embed['fields'][1]['value'] .= if(!@firstline, '\n').integer(@stats[@c[0]]);
 		} else {
-			@embed['fields'][0]['value'] .= if(!@firstline, '\n').@stats[@a[0]];
-			@embed['fields'][1]['value'] .= if(!@firstline, '\n').@stats[@b[0]];
+			@embed['fields'][0]['value'] .= if(!@firstline, '\n').integer(@stats[@a[0]]);
+			@embed['fields'][1]['value'] .= if(!@firstline, '\n').integer(@stats[@b[0]]);
 		}
 		@embed['fields'][2]['value'] .= if(!@firstline, '\n').if(array_contains(@winners, @player), '**'.@player.'**', @player);
 
