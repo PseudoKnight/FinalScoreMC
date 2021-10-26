@@ -32,7 +32,7 @@
 @pvp['binds'][] = bind('entity_damage', null, array(type: 'PLAYER', cause: 'PROJECTILE'), @event, @pvp) {
 	if(array_index_exists(@event, 'shooter') // missing in special cases
 	&& array_index_exists(@pvp['players'], @event['shooter'])) {
-		if(get_projectile_item(@event['damager'])['name'] == 'POLISHED_BLACKSTONE_BUTTON') {
+		if(entity_type(@event['damager']) == 'SNOWBALL' && get_projectile_item(@event['damager'])['name'] == 'POLISHED_BLACKSTONE_BUTTON') {
 			modify_event('amount', 6);
 			play_sound(ploc(@event['shooter']), array(sound: 'ENTITY_ARROW_HIT_PLAYER'), @event['shooter']);
 		}
