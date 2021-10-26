@@ -90,7 +90,7 @@ register_command('spleef', array(
 					if(@event['block'] && array_contains(sk_regions_at(@event['location']), @cfg['region']['material'])) {
 						@blocktype = get_block(@event['location']);
 						set_block(@cfg['option']['material'], @blocktype);
-						msg(color('green').'[Spleef] '.color('r').'You have selected '.color('6').data_name(@blocktype).'.');
+						msg(color('green').'[Spleef] '.color('r').'You have selected '.color('6').@blocktype.'.');
 						cancel();
 						unbind();
 						set_ploc(@cfg['warp']['lobby']);
@@ -141,11 +141,11 @@ register_command('spleef', array(
 				#Given two blocks, iterates through all the blocks inside the cuboid, and calls the
 				#user defined function on them. The used defined procedure should accept 3 parameters,
 				#the x, y, and z coordinates of the block.
-				proc _iterate_cuboid(@b1, @b2, @proc_name, @mat, @world) {
+				proc _iterate_cuboid(@b1, @b2, @proc_name, @world, @mat) {
 					for(@x = min(@b1[0], @b2[0]), @x <= max(@b1[0], @b2[0]), @x++) {
 						for(@y = min(@b1[1], @b2[1]), @y <= max(@b1[1], @b2[1]), @y++) {
 							for(@z = min(@b1[2], @b2[2]), @z <= max(@b1[2], @b2[2]), @z++) {
-								call_proc(@proc_name, @x, @y, @z, @mat, @world);
+								call_proc(@proc_name, @x, @y, @z, @world, @mat);
 							}
 						}
 					}
@@ -154,7 +154,7 @@ register_command('spleef', array(
 				set_timeout(1000, closure(){
 					if(reg_match('lit\\=true', get_blockdata_string(@cfg['option']['platforming']))) {
 						#platforming
-						proc _setfloor(@x, @y, @z, @mat, @world) {
+						proc _setfloor(@x, @y, @z, @world, @mat) {
 							if(rand(2)) {
 								set_block(array(@x, @y, @z, @world), @mat,  false);
 							} else {
@@ -163,7 +163,7 @@ register_command('spleef', array(
 						}
 					} else {
 						#regular floor
-						proc _setfloor(@x, @y, @z, @mat, @world) {
+						proc _setfloor(@x, @y, @z, @world, @mat) {
 							if(get_block(array(@x, @y, @z, @world)) != @mat) {
 								set_block(array(@x, @y, @z, @world), @mat, false);
 							}
@@ -200,6 +200,7 @@ register_command('spleef', array(
 							}
 						}
 					}
+					// uh this might not be the right variable order... where's @mat
 					_iterate_cuboid(array(@region[0][0], @region[0][1] + 1, @region[0][2]), array(@region[1][0], @region[1][1] + 1, @region[1][2]), '_setwalls', @world);
 
 					foreach(@player in array_keys(@currentspleef)) {
