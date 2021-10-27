@@ -267,7 +267,7 @@ register_command('entity', array(
 				@loc['x'] += 0.5;
 				@loc['z'] += 0.5;
 				while(@entityCount > 0) {
-					_spawn_entity(@id, @loc, player());
+					_spawn_entity(@id, @loc);
 					@entityCount--;
 				}
 

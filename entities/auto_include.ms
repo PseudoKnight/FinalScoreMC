@@ -2,11 +2,13 @@
 	Spawns an entity and applies specific attributes to it.
 	@entity : REQUIRED : The entity type, saved entity type, or array defining a custom entity that's not saved.
 	@loc : REQUIRED : The spawning location.
-	@owner : The owner if the entity is tameable, also rider if the "rider" key is set to exactly "owner".
-	@teammates : Players to ignore if the entity is doing custom targeting.
+	@spawnData : An associative array of extra data that can be used by entity options
+		owner : Player owner if tameable entity, and rider if the "rider" set to "owner". (defaults to current player)
+		ignore : Players to ignore if the entity is doing custom targeting.
+		source : The source entity of this spawn action, like for explosions.
 	@consumer : An additional closure to run on the entity during spawning.
 */
-proc _spawn_entity(@entity, @loc, @owner, @teammates, @consumer) {
+proc _spawn_entity(@entity, @loc, @spawnData, @teammates, @consumer) {
 	if(!is_array(@entity)) {
 		@entity = _get_entity(@entity);
 	}
@@ -35,7 +37,11 @@ proc _spawn_entity(@entity, @loc, @owner, @teammates, @consumer) {
 			}
 		}
 		if(array_index_exists(@entity, 'tame')) {
-			set_mob_owner(@e, @owner);
+			if(@spawnData && array_index_exists(@spawnData, 'owner')) {
+				set_mob_owner(@e, @spawnData['owner']);
+			} else {
+				set_mob_owner(@e, player());
+			}
 		}
 		if(array_index_exists(@entity, 'age')) {
 			set_mob_age(@e, @entity['age']);
@@ -70,7 +76,11 @@ proc _spawn_entity(@entity, @loc, @owner, @teammates, @consumer) {
 		}
 		if(array_index_exists(@entity, 'rider')) {
 			if(@entity['rider'] === 'owner') {
-				set_entity_rider(@e, puuid(@owner));
+				if(@spawnData && array_index_exists(@spawnData, 'owner')) {
+					set_entity_rider(@e, puuid(@spawnData['owner']));
+				} else {
+					set_entity_rider(@e, puuid());
+				}
 			} else {
 				set_timeout(50, closure() {
 					@rider = _spawn_entity(@entity['rider'], @loc);
@@ -105,7 +115,11 @@ proc _spawn_entity(@entity, @loc, @owner, @teammates, @consumer) {
 							}
 							if(@countdown[0] == 0) {
 								@cleanup = true;
-								explosion(entity_loc(@e), @size, true);
+								if(@spawnData && array_index_exists(@spawnData, 'source')) {
+									explosion(entity_loc(@e), @size, true, false, @spawnData['source']);
+								} else {
+									explosion(entity_loc(@e), @size, true);
+								}
 							} else {
 								play_sound(entity_loc(@e), array('sound': 'BLOCK_NOTE_BLOCK_HAT', 'pitch': 2, 'volume': 1));
 							}
@@ -130,6 +144,10 @@ proc _spawn_entity(@entity, @loc, @owner, @teammates, @consumer) {
 				case 'CHICKEN':
 					@projectile = 'EGG';
 			}
+			@ignore = array();
+			if(@spawnData && array_index_exists(@spawnData, 'ignore')) {
+				@ignore = @spawnData['ignore'];
+			}
 			if(@projectile) {
 				set_interval(1500, closure() {
 					try {
@@ -138,7 +156,7 @@ proc _spawn_entity(@entity, @loc, @owner, @teammates, @consumer) {
 						} else {
 							@loc1 = entity_loc(@e);
 							foreach(@p in players_in_radius(@loc1, @range)) {
-								if(!array_contains(@teammates, @p)) {
+								if(!array_contains(@ignore, @p)) {
 									@loc2 = ploc(@p);
 									@loc2['y'] += 2;
 									@loc1['yaw'] = get_yaw(@loc1, @loc2);
@@ -156,7 +174,7 @@ proc _spawn_entity(@entity, @loc, @owner, @teammates, @consumer) {
 			} else {
 				set_timeout(50, closure(){
 					foreach(@p in players_in_radius(entity_loc(@e), @range)) {
-						if(!array_contains(@teammates, @p)) {
+						if(!array_contains(@ignore, @p)) {
 							damage_entity(@e, 0, puuid(@p));
 							break();
 						}

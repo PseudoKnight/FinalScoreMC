@@ -968,7 +968,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 								@world
 							);
 							if(equals_ic(@materials['room'], get_block(@loc))) {
-								_spawn_entity(@floorData['boss'], @loc, null, null, closure(@entity) {
+								_spawn_entity(@floorData['boss'], @loc, null, closure(@entity) {
 									add_scoreboard_tag(@entity, 'floor'.@floor.'boss');
 									set_mob_name(@entity, 'BOSS');
 								});

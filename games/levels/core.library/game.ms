@@ -383,7 +383,7 @@ proc _level_start(@level) {
 							}
 							do {
 								@loc = @spawns[@spawnGroup][(@level['duplicate'] * (@i + 1) * @count) % array_size(@spawns[@spawnGroup])];
-								_spawn_entity(@mob, @loc, player(), @level['spectators']);
+								_spawn_entity(@mob, @loc, array(ignore: @level['spectators']));
 							} while(--@count > 0);
 						} else {
 							@loc = @spawns['spawns'][(@level['duplicate'] * (@i + 1)) % array_size(@spawns['spawns'])];

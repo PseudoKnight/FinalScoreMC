@@ -31,13 +31,13 @@
 				|| array_index_exists(@pvp, 'team') && @pvp['players'][@player]['team'] == @pvp['players'][player()]['team']) {
 					continue();
 				}
-				@entity = _spawn_entity(@mob, @loc, @player);
+				@entity = _spawn_entity(@mob, @loc, array(owner: @player));
 			}
 		} else if(array_index_exists(@pvp, 'team')) {
 			@team = @pvp['players'][player()]['team'];
-			@entity = _spawn_entity(@mob, @loc, player(), @pvp['team'][@team]['players']);
+			@entity = _spawn_entity(@mob, @loc, array(ignore: @pvp['team'][@team]['players']));
 		} else {
-			@entity = _spawn_entity(@mob, @loc, player(), array(player()));
+			@entity = _spawn_entity(@mob, @loc, array(ignore: array(player())));
 		}
 
 		if(@entity) {
