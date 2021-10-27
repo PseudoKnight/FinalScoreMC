@@ -12,7 +12,7 @@ case 'load':
 			&& (!array_index_exists(@pvp, 'team') || @pvp['players'][player()]['team'] != @pvp['players'][@player]['team'])) {
 				set_peffect(@player, 'BLINDNESS', 0, 7);
 				@cloud = spawn_entity('AREA_EFFECT_CLOUD', 1, ploc(@player), closure(@cloud) {
-					set_entity_spec(@cloud, array(particle: 'SMOKE_LARGE', radius: 1, duration: 7000 / 50));
+					set_entity_spec(@cloud, array(particle: 'SMOKE_LARGE', radius: 1, duration: 6000 / 50));
 				})[0];
 				set_entity_rider(puuid(@player), @cloud);
 			}
