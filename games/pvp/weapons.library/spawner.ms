@@ -7,7 +7,7 @@
 	}
 	cancel();
 	consume();
-	if(@e['action'] === 'right_click_block') {
+	if(@e['action'] === 'right_click_block' && !pcooldown(@e['item']['name'])) {
 		@item = pinv(player(), null);
 		if(is_null(@item['meta'])
 		|| is_null(@item['meta']['display'])) {
