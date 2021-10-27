@@ -5,12 +5,13 @@ case 'load':
 		cancel();
 		play_sound(ploc(), array(sound: 'ENTITY_ENDER_DRAGON_FLAP', pitch: 1.2));
 		set_pflight(@e['player'], false);
-		proc _flap(@player) {
+		@health = phealth();
+		proc _flap(@player, @health) {
 			queue_push(closure(){
 				if(pmode() == 'SPECTATOR') {
 					queue_clear(@player.'flap');
 				} else if(pexp(@player) > 0) {
-					if(psneaking(@player)) {
+					if(psneaking(@player) || phealth(@player) < @health) {
 						set_pflight(@player, true);
 					} else {
 						@facing = pfacing(@player);
@@ -22,14 +23,14 @@ case 'load':
 						set_pvelocity(@player, @x * 0.6, 0.47, @z * 0.6);
 						play_sound(ploc(@player), array(sound: 'ENTITY_ENDER_DRAGON_FLAP', pitch: 1.2));
 						set_entity_fall_distance(puuid(@player), 0);
-						_flap(@player);
+						_flap(@player, @health);
 					}
 				}
 			}, @player.'flap');
 			queue_delay(500, @player.'flap');
 		}
 		if(pexp() > 0) {
-			_flap(player());
+			_flap(player(), @health);
 		}
 	}
 
