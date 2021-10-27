@@ -8,7 +8,7 @@
 		source : The source entity of this spawn action, like for explosions.
 	@consumer : An additional closure to run on the entity during spawning.
 */
-proc _spawn_entity(@entity, @loc, @spawnData, @teammates, @consumer) {
+proc _spawn_entity(@entity, @loc, @spawnData, @consumer) {
 	if(!is_array(@entity)) {
 		@entity = _get_entity(@entity);
 	}
