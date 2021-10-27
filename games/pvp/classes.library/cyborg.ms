@@ -210,7 +210,7 @@ case 'load':
 		set_pexp(0);
 		@loc = ploc();
 		play_sound(@loc, array(sound: 'BLOCK_NOTE_BLOCK_BIT', volume: 0.5, pitch: 0.5), player());
-		set_interval(100, closure(){
+		set_interval(50, closure(){
 			try {
 				if(!psneaking()) {
 					clear_task();
@@ -219,7 +219,7 @@ case 'load':
 				}
 				@xp = pexp();
 				if(@xp < 99) {
-					@xp = min(99, @xp + 6);
+					@xp = min(99, @xp + 3);
 					set_pexp(@xp);
 					play_sound(@loc, array(sound: 'BLOCK_NOTE_BLOCK_BIT', volume: 0.4, pitch: 0.52 + 1.48 * (@xp / 99)), player());
 				} else {
