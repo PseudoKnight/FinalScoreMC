@@ -161,6 +161,12 @@ proc _hazard_bind(@game) {
 		}
 	}
 
+	@game['binds'][] = bind('block_from_to', null, array(world: @game['world']), @event, @game) {
+		if(array_contains(sk_regions_at(@event['location']), 'hazard')) {
+			cancel();
+		}
+	}
+
 	@game['binds'][] = bind('entity_explode', null, null, @event, @game) {
 		if(@game['world'] == @event['location']['world'] && array_contains(sk_regions_at(@event['location']), 'hazard')) {
 			@modified = false;
