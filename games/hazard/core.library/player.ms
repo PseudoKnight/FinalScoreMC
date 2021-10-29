@@ -5,10 +5,13 @@ proc _hazard_add_player(@player, @game) {
 		@game['players'][@player] = array(
 			score: 0,
 			inv: array(),
+			buildCount: 0,
 		);
 	}
 	set_pscoreboard(@player, 'hazard');
 	bar_add_player('hazard', @player);
+	create_bar('hazard'.@player, array(visible: false, style: 'SEGMENTED_'.@game['buildCount'], percent: 0.0));
+	bar_add_player('hazard'.@player, @player);
 	if(@game['state'] == 'RUN') {
 		@coords = sk_region_info('hazard_start', @game['world'], 0);
 		@loc = array(rand(@coords[1][0] + 1, @coords[0][0]) + 0.5, @coords[1][1], rand(@coords[1][2] + 1, @coords[0][2]) + 0.5, @game['world']);
@@ -28,12 +31,14 @@ proc _hazard_remove_player(@player, @game) {
 			set_ploc(@player, get_value('warp.hazard'));
 		}
 	}
+	remove_bar('hazard'.@player);
 }
 
 proc _hazard_spawn_players(@game) {
 	@coords = sk_region_info('hazard_start', @game['world'], 0);
 	@mode = if(@game['state'] == 'RUN', 'ADVENTURE', 'CREATIVE');
 	foreach(@player: @data in @game['players']) {
+		@data['buildCount'] = 0;
 		if(ponline(@player)) {
 			@loc = array(rand(@coords[1][0] + 1, @coords[0][0]) + 0.5, @coords[1][1], rand(@coords[1][2] + 1, @coords[0][2]) + 0.5, @game['world']);
 			set_ploc(@player, @loc);
@@ -48,6 +53,11 @@ proc _hazard_spawn_players(@game) {
 				clear_pinv(@player);
 			} else {
 				set_pinv(@player, @data['inv']);
+			}
+			if(@game['state'] == 'BUILD') {
+				update_bar('hazard'.@player, array(visible: true, percent: 0.0));
+			} else {
+				update_bar('hazard'.@player, array(visible: false, percent: 0.0));
 			}
 		}
 	}
@@ -69,6 +79,22 @@ proc _hazard_did_player_win(@game) {
 		}
 	}
 	return(false);
+}
+
+proc _hazard_players_finished_building(@game) {
+	@numPlayersFinished = 0;
+	foreach(@player: @data in @game['players']) {
+		if(@data['buildCount'] >= @game['buildCount']) {
+			@numPlayersFinished++;
+		}
+	}
+	return(@numPlayersFinished == array_size(@game['players']));
+}
+
+proc _hazard_set_bar_segments(@game, @segments) {
+	foreach(@player: @data in @game['players']) {
+		update_bar('hazard'.@player, array(style: 'SEGMENTED_'.@segments));
+	}
 }
 
 proc _hazard_get_winner(@game) {

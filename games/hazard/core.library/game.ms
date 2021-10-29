@@ -11,7 +11,8 @@ proc _hazard_create() {
 		targetScore: 50,
 		maxRounds: 20,
 		timer: 60,
-		buildTimer: 20,
+		buildTimer: 60,
+		buildCount: 12, // can be 6, 10, 12, or 20
 		entities: array(),
 		blocks: array(),
 		binds: array(),
@@ -28,7 +29,7 @@ proc _hazard_create() {
 	if(array_contains(get_bars(), 'hazard')) {
 		remove_bar('hazard');
 	}
-	create_bar('hazard', array(style: 'SEGMENTED_12'));
+	create_bar('hazard');
 
 	export('hazard', @game);
 	return(@game);
@@ -50,15 +51,16 @@ proc _hazard_start(@game) {
 	set_interval(1000, 0, closure() {
 		@timer--;
 		if(@timer > 0) { // BUILD PHASE
-			if(@game['countdown']) {
-				update_bar('hazard', string(@timer));
-				if(@timer == 12) {
-					update_bar('hazard', array(color: 'RED'));
-				} else if(@timer < 12) {
-					update_bar('hazard', double(@timer / 12));
-				}
+			if(@timer == 10) {
+				update_bar('hazard', array(color: 'RED'));
 			} else {
-				@timer++; // keep waiting for the first block placement
+				update_bar('hazard', double(@timer / @game['buildTimer']));
+			}
+			if(@timer <= 10) {
+				update_bar('hazard', string(@timer));
+			}
+			if(_hazard_players_finished_building(@game)) {
+				@timer[] = 1; // go to run phase
 			}
 		} else if(@timer == 0) { // START RUN PHASE
 			@game['state'] = 'RUN';
@@ -71,15 +73,15 @@ proc _hazard_start(@game) {
 			));
 		} else if(@timer > neg(@game['timer'])) { // RUN PHASE
 			if(!_hazard_are_players_alive(@game)) {
-				@timer[] = neg(@game['timer']);
+				@timer[] = neg(@game['timer']); // end run phase
 			}
 			@timeLeft = @timer + @game['timer'];
-			if(@timeLeft == 12) {
+			if(@timeLeft == 10) {
 				update_bar('hazard', array(color: 'RED'));
-			} else if(@timeLeft < 12) {
-				update_bar('hazard', double(@timeLeft / 12));
+			} else {
+				update_bar('hazard', double(@timeLeft / @game['timer']));
 			}
-			if(@timeLeft < @game['timer'] - 10) {
+			if(@timeLeft <= 10) {
 				update_bar('hazard', string(@timeLeft));
 			}
 		} else {
@@ -94,7 +96,6 @@ proc _hazard_start(@game) {
 				_hazard_respawn_entities(@game);
 				_hazard_respawn_blocks(@game);
 				@timer[] = @game['buildTimer'];
-				@game['countdown'] = false;
 				update_bar('hazard', array(
 					percent: 1.0,
 					title: color('bold').'BUILD PHASE '.@game['round'].':'.color('reset').' Build to the target!',

@@ -5,6 +5,11 @@ proc _hazard_bind(@game) {
 			if(!@item) {
 				die();
 			}
+			if(@game['players'][player()]['buildCount'] == @game['buildCount']) {
+				cancel();
+				action_msg('Reached build limit for this round.');
+				die();
+			}
 			if(string_ends_with(@item['name'], '_SPAWN_EGG')) {
 				cancel();
 				consume();
@@ -48,7 +53,8 @@ proc _hazard_bind(@game) {
 				}
 			}
 			if(pmode() == 'CREATIVE') {
-				@game['countdown'] = true;
+				@game['players'][player()]['buildCount']++;
+				update_bar('hazard'.player(), double(@game['players'][player()]['buildCount'] / @game['buildCount']));
 			}
 		}
 	}
