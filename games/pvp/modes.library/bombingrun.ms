@@ -24,12 +24,13 @@ proc _is_bomb(@pvp, @item) {
 	return(false);
 }
 
+// Override
 proc _stats_table() {
 	return(array(
-		array('kills', 2, '-------'),
-		array('deaths', 2, '---------'),
-		array('scores', 2, '--------'),
-		array('damage', 3, '------')
+		array('kills', 2, '-------', 'K'),
+		array('deaths', 2, '---------', 'D'),
+		array('scores', 2, '--------', 'SCR'),
+		array('damage', 3, '------', 'DMG')
 	));
 }
 

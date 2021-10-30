@@ -124,11 +124,12 @@ proc _arena_bind_events(@id) {
 	}
 }
 
+// Override
 proc _stats_table(){
 	return(array(
-		array('kills', 2, '-------'),
-		array('deaths', 2, '--------'),
-		array('pickups', 3, '-------'),
-		array('damage', 2, '----'),
+		array('kills', 2, '-------', 'K'),
+		array('deaths', 2, '--------', 'D'),
+		array('pickups', 3, '-------', 'PKS'),
+		array('damage', 2, '----', 'DMG'),
 	));
 }

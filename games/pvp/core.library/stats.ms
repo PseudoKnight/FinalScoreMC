@@ -39,12 +39,17 @@ proc _stat_pad(@amount, @length) {
 	return(color(8).@pad.color('r').@amount);
 }
 
+/*
+	An array defining the columns and formatting for the stats display at the end of a match.
+	Each element in the array is a column. 
+	Each column array contains the elements for column key, value width, character padding, and abbreviation.
+ */
 proc _stats_table() {
 	return(array(
-		array('kills', 2, '-------'),
-		array('deaths', 2, '--------'),
-		array('damage', 3, '--------'),
-		array('pickups', 2, '-------')
+		array('kills', 2, '-------', 'K'),
+		array('deaths', 2, '--------', 'D'),
+		array('damage', 3, '--------', 'DMG'),
+		array('pickups', 2, '-------', 'PKS')
 	));
 }
 
@@ -88,13 +93,8 @@ proc _stats_print(@winners, @pvp) {
 	if(array_size(@winners) == 1) {
 		@embed['author']['icon_url'] = 'https://crafatar.com/avatars/'.puuid(@winners[0], true).'?overlay';
 	}
-	if(@a[0] == 'kills' && @b[0] == 'deaths') {
-		@embed['fields'][] = array(name: 'K : D', value: '', inline: true);
-		@embed['fields'][] = array(name: to_upper(@c[0]), value: '', inline: true);
-	} else {
-		@embed['fields'][] = array(name: to_upper(@a[0]), value: '', inline: true);
-		@embed['fields'][] = array(name: to_upper(@b[0]), value: '', inline: true);
-	}
+	@embed['fields'][] = array(name: @a[3].' : '.@b[3], value: '', inline: true);
+	@embed['fields'][] = array(name: @c[3].' : '.@d[3], value: '', inline: true);
 	@embed['fields'][] = array(name: '', value: '', inline: true); // player names
 
 	_pvp_msg(@pvp, colorize('&7&m|------------------------------&7&l[ &f&lTHE FINAL SCORE&7&l ]&7&m--|'));
@@ -113,13 +113,8 @@ proc _stats_print(@winners, @pvp) {
 				@player)
 			.'-', '-', ' '));
 		
-		if(@a[0] == 'kills' && @b[0] == 'deaths') {
-			@embed['fields'][0]['value'] .= if(!@firstline, '\n').@stats[@a[0]].' : '.@stats[@b[0]];
-			@embed['fields'][1]['value'] .= if(!@firstline, '\n').integer(@stats[@c[0]]);
-		} else {
-			@embed['fields'][0]['value'] .= if(!@firstline, '\n').integer(@stats[@a[0]]);
-			@embed['fields'][1]['value'] .= if(!@firstline, '\n').integer(@stats[@b[0]]);
-		}
+		@embed['fields'][0]['value'] .= if(!@firstline, '\n').integer(@stats[@a[0]]).' : '.integer(@stats[@b[0]]);
+		@embed['fields'][1]['value'] .= if(!@firstline, '\n').integer(@stats[@c[0]]).' : '.integer(@stats[@d[0]]);
 		@embed['fields'][2]['value'] .= if(!@firstline, '\n').if(array_contains(@winners, @player), '**'.@player.'**', @player);
 
 		@firstline = false;

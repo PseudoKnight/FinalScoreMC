@@ -103,11 +103,12 @@ proc _interval(@pvp, @id) {
 	}
 }
 
+// Override
 proc _stats_table(){
 	return(array(
-		array('kills', 2, '-------'),
-		array('deaths', 2, '--------'),
-		array('seconds', 3, '--------'),
-		array('pickups', 3, '-------')
+		array('kills', 2, '-------', 'K'),
+		array('deaths', 2, '--------', 'D'),
+		array('seconds', 3, '--------', 'SEC'),
+		array('pickups', 3, '-------', 'PKS')
 	));
 }
