@@ -27,19 +27,22 @@ proc _arena_load(@pvp) {
 		if(@picked) {
 			@childid = @pvp['players'][@picked]['arena'];
 			@pvp['arenapicked'] = @picked;
+
 			// Store total votes
-			if(!array_index_exists(@pvp['arena'], 'arenavotes')) {
-				@pvp['arena']['arenavotes'] = associative_array();
-			}
-			foreach(@vote in @voted) {
-				@arenaID = @vote['arena'];
-				if(!array_index_exists(@pvp['arena']['arenavotes'], @arenaID)) {
-					@pvp['arena']['arenavotes'][@arenaID] = 1;
-				} else {
-					@pvp['arena']['arenavotes'][@arenaID]++;
+			if(array_size(@pvp['players']) > 1) { // don't store if testing with one player
+				if(!array_index_exists(@pvp['arena'], 'arenavotes')) {
+					@pvp['arena']['arenavotes'] = associative_array();
 				}
+				foreach(@vote in @voted) {
+					@arenaID = @vote['arena'];
+					if(!array_index_exists(@pvp['arena']['arenavotes'], @arenaID)) {
+						@pvp['arena']['arenavotes'][@arenaID] = 1;
+					} else {
+						@pvp['arena']['arenavotes'][@arenaID]++;
+					}
+				}
+				store_value('arena', @id, @pvp['arena']);
 			}
-			store_value('arena', @id, @pvp['arena']);
 		}
 	}
 
