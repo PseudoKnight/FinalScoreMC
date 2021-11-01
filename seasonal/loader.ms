@@ -8,6 +8,6 @@ if(@month == 'Dec' && @day > 29 || @month == 'Jan' && @day == 1) {
 	include('seasons.library/stpatricks.ms');
 } else if(@month == 'Mar' && @day > 21 || @month == 'Apr' && @day < 26) {
 	include('seasons.library/easter.ms');
-} else if(@month == 'Oct' && @day > 10) { // three weeks
+} else if(@month == 'Oct') {
 	include('seasons.library/halloween.ms');
 }

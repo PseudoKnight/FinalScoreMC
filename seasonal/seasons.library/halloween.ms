@@ -1,92 +1,139 @@
-bind('creature_spawn', null, null, @e) {
-	if(@e['location']['world'] == 'outworld'
-	&& array_contains(array('SPIDER', 'PHANTOM', 'WITCH', 'ENDERMAN'), @e['type'])
+bind('creature_spawn', null, null, @event) {
+	if(@event['location']['world'] == 'outworld'
+	&& array_contains(array('SPIDER', 'PHANTOM', 'ENDERMAN'), @event['type'])
 	&& !rand(3)) {
-		set_mob_effect(@e['id'], 'invisibility', 0, 107374182);
+		set_mob_effect(@event['id'], 'invisibility', 0, 107374182);
 	}
 }
 
-bind('creature_spawn', null, array('type': 'CREEPER', 'reason': 'NATURAL'), @e) {
-	if(@e['location']['world'] == 'outworld' && !rand(4)) {
-		set_entity_spec(@e['id'], array('powered': true));
+bind('creature_spawn', null, array(type: 'ZOMBIE', reason: 'NATURAL'), @event) {
+	if(sk_region_check_flag(@event['location'], 'deny-spawn')) {
+		die();
 	}
-}
-
-bind('creature_spawn', null, array('type': 'ZOMBIE', 'reason': 'NATURAL'), @e) {
-	@rand = rand(4);
-	if(@rand == 3 && @e['location']['world'] == 'outworld'){
+	@rand = rand(5);
+	if(@rand == 0 && @event['location']['world'] == 'outworld'){
 		cancel();
-		switch(rand(4)) {
+		switch(rand(3)) {
 			case 0:
-				@vindicator = spawn_entity('VINDICATOR', 1, @e['location'])[0];
-				if(rand(2)) {
-					set_mob_name(@vindicator, 'Johnny');
-				}
+				spawn_entity('VINDICATOR', 1, @event['location'], closure(@vindicator) {
+					if(rand(2)) {
+						set_mob_name(@vindicator, 'Johnny');
+						set_entity_persistence(@vindicator, false);
+					}
+				});
 			case 1:
-				spawn_entity('EVOKER', 1, @e['location']);
+				spawn_entity('EVOKER', 1, @event['location']);
 			case 2:
-				spawn_entity('ILLUSIONER', 1, @e['location']);
-			case 3:
-				@rabbit = spawn_entity('RABBIT', 1, @e['location'])[0];
-				set_entity_spec(@rabbit, array('type': 'THE_KILLER_BUNNY'));
+				spawn_entity('RABBIT', 1, @event['location'], closure(@rabbit) {
+					set_entity_spec(@rabbit, array(type: 'THE_KILLER_BUNNY'));
+					set_entity_persistence(@rabbit, false);
+				});
+		}
+	} else if(@rand == 1) {
+		cancel();
+		switch(rand(3)) {
+			case 0:
+				spawn_entity('ILLUSIONER', 1, @event['location']);
+			case 1:
+				spawn_entity('VEX', 1, @event['location'], closure(@vex) {
+					set_mob_equipment(@vex, array(WEAPON: null));
+				});
+			case 2:
+				spawn_entity('VINDICATOR', 1, @event['location'], closure(@vindicator) {
+					set_mob_equipment(@vindicator, array(WEAPON: null));
+				});
 		}
 	} else if(@rand == 2) {
-		set_mob_equipment(@e['id'], array(
-			'WEAPON': array('name': 'ZOMBIE_HEAD'),
-			'HELMET': null,
-			'CHESTPLATE': array('name': 'LEATHER_CHESTPLATE'),
-			'LEGGINGS': array('name': 'LEATHER_LEGGINGS'),
-			'BOOTS': array('name': 'LEATHER_BOOTS'),
+		set_mob_equipment(@event['id'], array(
+			WEAPON: array(name: 'ZOMBIE_HEAD'),
+			HELMET: null,
+			CHESTPLATE: array(name: 'LEATHER_CHESTPLATE'),
+			LEGGINGS: array(name: 'LEATHER_LEGGINGS'),
+			BOOTS: array(name: 'LEATHER_BOOTS'),
 		));
-		set_mob_effect(@e['id'], 'invisibility', 0, 107374182);
-		add_scoreboard_tag(@e['id'], 'halloween');
+		set_mob_effect(@event['id'], 'invisibility', 0, 107374182);
+	} else if(@rand == 3) {
+		set_mob_equipment(@event['id'], array(
+			HELMET: array(name: 'PLAYER_HEAD', meta: array(
+				owneruuid: '617a67e5-7988-4645-af56-42c770a6dda5',
+				texture: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOThiN2NhM2M3ZDMxNGE2MWFiZWQ4ZmMxOGQ3OTdmYzMwYjZlZmM4NDQ1NDI1YzRlMjUwOTk3ZTUyZTZjYiJ9fX0='
+			)),
+			CHESTPLATE: array(name: 'LEATHER_CHESTPLATE', meta: array(color: array(50, 230, 255))),
+			LEGGINGS: array(name: 'LEATHER_LEGGINGS', meta: array(color: array(70, 60, 222))),
+			BOOTS: null,
+			WEAPON: null,
+		));
+		set_equipment_droprates(@event['id'], array(
+			HELMET: null,
+			CHESTPLATE: null,
+			LEGGINGS: null,
+		));
+		add_scoreboard_tag(@event['id'], 'Herobrine');
+		set_mob_effect(@event['id'], 'SPEED', 7, 99999, true, false);
+		set_entity_silent(@event['id'], true);
 	} else {
-		set_mob_equipment(@e['id'], array('HELMET': array('name': 'JACK_O_LANTERN')));
+		set_mob_equipment(@event['id'], array(HELMET: array(name: 'JACK_O_LANTERN')));
 		if(rand(2)) {
-			set_mob_effect(@e['id'], 'invisibility', 0, 107374182);
-		}
-		add_scoreboard_tag(@e['id'], 'halloween');
-	}
-}
-
-bind('entity_death', null, array('type': 'ZOMBIE'), @e) {
-	@gear = get_mob_equipment(@e['id']);
-	if(@e['cause']['cause'] === 'ENTITY_ATTACK'
-	&& length(@e['cause']['damager']) < 17
-	&& !rand(10)
-	&& (get_entity_persistence(@e['id']) || array_contains(get_scoreboard_tags(@e['id']), 'halloween'))) {
-		modify_event('drops', array(array('name': 'ZOMBIE_HEAD')));
-	}
-}
-
-bind('creature_spawn', null, array('type': 'SKELETON', 'reason': 'NATURAL'), @e) {
-	if(@e['location']['world'] == 'outworld' && !rand(4)) {
-		add_scoreboard_tag(@e['id'], 'halloween');
-		if(rand(3)) {
-			set_mob_equipment(@e['id'], array(
-				'WEAPON': array('name': 'BOW', 'meta': array('enchants': array('power': 2, 'punch': 1))),
-				'HELMET': array('name': 'JACK_O_LANTERN'),
-				'CHESTPLATE': array('name': 'IRON_CHESTPLATE'),
-				'LEGGINGS': array('name': 'LEATHER_LEGGINGS'),
-				'BOOTS': array('name': 'LEATHER_BOOTS'),
-			));
-		} else {
-			set_mob_equipment(@e['id'], array(
-				'WEAPON': array('name': 'BOW', 'meta': array('enchants': array('power': 2, 'flame': 1))),
-				'HELMET': array('name': 'JACK_O_LANTERN'),
-				'CHESTPLATE': array('name': 'DIAMOND_CHESTPLATE'),
-				'LEGGINGS': array('name': 'IRON_LEGGINGS'),
-				'BOOTS': array('name': 'IRON_BOOTS'),
-			));
+			set_mob_effect(@event['id'], 'invisibility', 0, 107374182);
 		}
 	}
 }
 
-bind('entity_death', null, array('type': 'SKELETON'), @e) {
-	if(array_index_exists(@e['cause'], 'cause') && @e['cause']['cause'] === 'ENTITY_ATTACK'
-	&& length(@e['cause']['damager']) < 17
-	&& !rand(10)
-	&& (get_entity_persistence(@e['id']) || array_contains(get_scoreboard_tags(@e['id']), 'halloween'))) {
-		modify_event('drops', array(array('name': 'SKELETON_SKULL')));
+bind('creature_spawn', null, array(type: 'SKELETON', reason: 'NATURAL'), @event) {
+	set_mob_equipment(@event['id'], array(HELMET: array(name: 'JACK_O_LANTERN')));
+}
+
+bind('entity_damage', null, array(type: 'ZOMBIE', cause: 'ENTITY_ATTACK'), @event) {
+	if(array_contains(get_scoreboard_tags(@event['id']), 'Herobrine')) {
+		try(entity_remove(@event['id']));
+		play_sound(@event['location'], array(sound: 'ENTITY_EVOKER_PREPARE_ATTACK', pitch: 0.7));
+		spawn_particle(location_shift(@event['location'], 'up'), array(particle: 'CAMPFIRE_COSY_SMOKE', count: 3, yoffset: 1));
+	}
+}
+
+bind('entity_damage_player', null, array(damager: 'ZOMBIE'), @event) {
+	if(array_contains(get_scoreboard_tags(@event['id']), 'Herobrine')) {
+		try(entity_remove(@event['id']));
+		play_sound(@event['location'], array(sound: 'ENTITY_EVOKER_PREPARE_ATTACK', pitch: 0.7));
+		spawn_particle(location_shift(@event['location'], 'up'), array(particle: 'CAMPFIRE_COSY_SMOKE', count: 3, yoffset: 1));
+	}
+}
+
+bind('target_player', null, array(mobtype: 'ZOMBIE'), @event) {
+	if(entity_exists(@event['id']) && array_contains(get_scoreboard_tags(@event['id']), 'Herobrine')) {
+		@loc = entity_loc(@event['id']);
+		@timer = array(160);
+		set_interval(50, closure(){
+			@timer[0]--;
+			if(!entity_exists(@event['id']) || !ponline(@event['player']) || pworld(@event['player']) != @loc['world'] || @timer[0] < 0) {
+				clear_task();
+				try(entity_remove(@event['id']));
+			} else {
+				@newLoc = entity_loc(@event['id']);
+				@dist = distance(ploc(@event['player']), @newLoc);
+				if(@dist > 14) {
+					play_sound(@newLoc, array(sound: 'ENTITY_EVOKER_PREPARE_ATTACK', pitch: 0.5 + rand() * 1.5, volume: 2));
+				} else if(@dist > 8) {
+					set_mob_effect(@event['id'], 'invisibility', 1, 9999, true, false);
+					set_mob_equipment(@event['id'], array(
+						HELMET: null,
+						CHESTPLATE: null,
+						LEGGINGS: null,
+					));
+					stop_sound(@event['player'], 'ENTITY_EVOKER_PREPARE_ATTACK');
+				} else {
+					set_mob_effect(@event['id'], 'invisibility', 0, 0, true, false);
+					set_mob_equipment(@event['id'], array(
+						HELMET: array(name: 'PLAYER_HEAD', meta: array(
+							owneruuid: '617a67e5-7988-4645-af56-42c770a6dda5',
+							texture: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOThiN2NhM2M3ZDMxNGE2MWFiZWQ4ZmMxOGQ3OTdmYzMwYjZlZmM4NDQ1NDI1YzRlMjUwOTk3ZTUyZTZjYiJ9fX0='
+						)),
+						CHESTPLATE: array(name: 'LEATHER_CHESTPLATE', meta: array(color: array(50, 230, 255))),
+						LEGGINGS: array(name: 'LEATHER_LEGGINGS', meta: array(color: array(70, 60, 222))),
+					));
+					play_sound(@newLoc, array(sound: 'ENTITY_EVOKER_PREPARE_ATTACK', pitch: 0.5 + rand() * 1.5, volume: 2));
+				}
+			}
+		});
 	}
 }
