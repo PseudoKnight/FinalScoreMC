@@ -89,8 +89,6 @@ proc _item_get_from_alias(@name) {
 			return('GLOWSTONE_DUST');
 		case 'LIGHTGRAYDYE':
 			return('LIGHT_GRAY_DYE');
-		case 'YELLOW_DYE':
-			return('DANDELION_YELLOW');
 		case 'LIGHTBLUEDYE':
 			return('LIGHT_BLUE_DYE');
 		case 'STEAK':
