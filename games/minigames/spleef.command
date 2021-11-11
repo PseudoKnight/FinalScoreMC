@@ -169,7 +169,7 @@ register_command('spleef', array(
 							}
 						}
 					}
-					_iterate_cuboid(@region[0], @region[1], '_setfloor', @mat, @world);
+					_iterate_cuboid(@region[0], @region[1], '_setfloor', @world, @mat);
 				});
 
 				set_timeout(2000, closure(){
