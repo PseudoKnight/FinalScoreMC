@@ -1,5 +1,5 @@
 // Shop Sign Interaction
-bind('player_interact', null, array(hand: 'MAIN_HAND'), @event) {
+bind('player_interact', null, array(hand: 'main_hand'), @event) {
 	if(!@event['block'] || !string_ends_with(@event['block'], 'WALL_SIGN')) {
 		die();
 	}
