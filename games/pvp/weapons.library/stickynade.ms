@@ -68,7 +68,7 @@
 							(@eloc['y'] - @hit['y']) / max(1, @dist ** 2),
 							(@eloc['z'] - @hit['z']) / max(1, @dist ** 2)
 						));
-					} catch(PlayerOfflineException @ex) {
+					} catch(BadEntityException @ex) {
 						// blew completely off server
 					}
 				}

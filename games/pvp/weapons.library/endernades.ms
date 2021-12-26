@@ -35,7 +35,7 @@
 					min(2.2, (@b['y'] - @a['y']) / (@dist ** 2)),
 					min(2.2, (@b['z'] - @a['z']) / (@dist ** 2))
 				));
-			} catch(PlayerOfflineException @ex) {
+			} catch(BadEntityException @ex) {
 				// blew completely off server
 			}
 		});
