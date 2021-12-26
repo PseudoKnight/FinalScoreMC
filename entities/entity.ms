@@ -15,6 +15,16 @@ bind('creature_spawn', null, array('reason': 'BREEDING'), @event) {
 	}
 }
 
+# Limit dispensing entities
+bind('creature_spawn', null, array('reason': 'DISPENSE_EGG'), @event) {
+	if(!_is_survival_world(@event['location']['world'])) {
+		if(array_size(entities_in_radius(@event['location'], 48)) > 300) {
+			cancel();
+			spawn_particle(@event['location'], 'SMOKE_NORMAL');
+		}
+	}
+}
+
 # prevent egg-spawned mobs from despawning
 bind('creature_spawn', null, array('reason': 'SPAWNER_EGG'), @event) {
 	set_entity_persistence(@event['id'], true);
