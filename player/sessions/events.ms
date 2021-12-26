@@ -178,19 +178,21 @@ bind('player_join', null, null, @event) {
 bind('player_quit', null, null, @event) {
 	modify_event('message', null);
 	@pdata = _pdata(@event['player']);
-	@msg = _colorname().'&o'.player().'&e&o ';
-	if(array_index_exists(@pdata, 'exit')) {
-		@msg .= @pdata['exit'];
-	} else {
-		@msg .= 'left the game';
-	}
-	broadcast(colorize('&8'.simple_date('h:mm').' &4\u00ab &o'.@msg));
-	if(extension_exists('CHDiscord')) {
-		set_timeout(1, closure(){
-			@count = array_size(all_players());
-			@msg = reg_replace('[&§][0-9a-fk-o]', '', @msg);
-			discord_broadcast('minecraft_chat', '**\u00ab '.@msg.'** ('.@count.' player'.if(@count != 1, 's').' online)');
-		});
+	if(!string_starts_with(pinfo(player(), 12), 'silent')) {
+		@msg = _colorname().'&o'.player().'&e&o ';
+		if(array_index_exists(@pdata, 'exit')) {
+			@msg .= @pdata['exit'];
+		} else {
+			@msg .= 'left the game';
+		}
+		broadcast(colorize('&8'.simple_date('h:mm').' &4\u00ab &o'.@msg));
+		if(extension_exists('CHDiscord')) {
+			set_timeout(1, closure(){
+				@count = array_size(all_players());
+				@msg = reg_replace('[&§][0-9a-fk-o]', '', @msg);
+				discord_broadcast('minecraft_chat', '**\u00ab '.@msg.'** ('.@count.' player'.if(@count != 1, 's').' online)');
+			});
+		}
 	}
 	try {
 		@pdata['world'] = pworld();
