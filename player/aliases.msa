@@ -169,6 +169,9 @@
  * @permission command.gm
  */
 *:/gamemode [$] = >>>
+	if(!has_permission('command.gm')) {
+		die(color('gold').'You do not have permission to change your gamemode here.');
+	}
 	@player = player();
 	@mode = 'toggle';
 	if($) {
@@ -279,6 +282,9 @@
  * @noPermMsg You do not have permission to heal.
  */
 *:/heal [$player] = >>>
+	if(!has_permission('command.heal')) {
+		die(color('gold').'You do not have permission to heal here.');
+	}
 	@player = player();
 	if($player) {
 		if(!has_permission('command.heal.others')) {
