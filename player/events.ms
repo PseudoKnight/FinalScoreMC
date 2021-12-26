@@ -312,7 +312,7 @@ bind('item_swap', null, null, @event,
 }
 
 // Survival PVP
-bind('entity_damage_player', null, array(damager: 'PLAYER'), @event) {
+bind('entity_damage_player', null, null, @event) {
 	if(!is_array(@event['data']) # is not dispenser
 	&& ponline(@event['data']) # is player
 	&& @event['data'] != @event['player'] # is not self-inflicted
