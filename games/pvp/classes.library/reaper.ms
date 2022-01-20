@@ -15,22 +15,25 @@ case 'load':
 		}
 	});
 	
-	bind('player_interact', array(id: @player.'hover'), array(player: @player), @event, @pvp, @previousHealth = array(20.0)) {
+	bind('player_interact', array(id: @player.'hover'), array(player: @player), @event, @pvp, @previousHealth = array(20.0), @ticks = array(0)) {
 		@health = phealth();
 		if(@event['button'] == 'right') {
-			if(array_index_exists(get_peffect(), 'levitation') && @health < @previousHealth[0]) {
+			@ticks[0]++;
+			if(!array_index_exists(get_peffect(), 'levitation')) {
+				@previousHealth[0] = @health;
+				@ticks[0] = 0;
+				set_peffect(player(), 'LEVITATION', -1, 0.3, true);
+			} else if(@health < @previousHealth[0]) {
 				set_peffect(player(), 'LEVITATION', 0, 0); // clear previous effect
 				set_peffect(player(), 'LEVITATION', -5, 0.3, true);
-			} else if(@health < 20) {
-				@previousHealth[0] = @health;
+			} else if(@ticks[0] > 100) { // 20 second limit on full hover
 				set_peffect(player(), 'LEVITATION', 0, 0); // clear previous effect
 				set_peffect(player(), 'LEVITATION', -2, 0.3, true);
-				set_entity_fall_distance(puuid(), 0);
 			} else {
-				@previousHealth[0] = @health;
+				set_peffect(player(), 'LEVITATION', 0, 0); // clear previous effect
 				set_peffect(player(), 'LEVITATION', -1, 0.3, true);
-				set_entity_fall_distance(puuid(), 0);
 			}
+			set_entity_fall_distance(puuid(), 0);
 			play_sound(ploc(), array(sound: 'ENTITY_HORSE_BREATHE', pitch: 0.5 + rand() * 0.2, volume: 0.15), player());
 		} else {
 			@trace = ray_trace(player(), 10);
