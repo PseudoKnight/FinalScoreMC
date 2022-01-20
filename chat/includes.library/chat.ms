@@ -93,7 +93,7 @@ proc _chat(@player, @message, @recipients, @source = '', @channel = '') {
 		}
 		if(@source != 'discord') {
 			if(function_exists('discord_broadcast')) {
-				discord_broadcast('minecraft_chat', '**'.@player.'** '.@filteredMessage);
+				discord_broadcast('minecraft_chat', '**'.@player.'**  '.@filteredMessage);
 			}
 		}
 	}
