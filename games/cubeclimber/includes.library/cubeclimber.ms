@@ -260,7 +260,8 @@ proc _cc_end(@winners, @world = 'custom') {
 	}
 
 	foreach(@p in array_keys(@cc['players'])) {
-		@pstats = get_value('cubeclimber.player', @p);
+		@uuid = puuid(@p, true);
+		@pstats = get_value('cubeclimber.player', @uuid);
 		if(!@pstats) {
 			@pstats = array(0, 0, 0, 0);
 		}
@@ -312,7 +313,7 @@ proc _cc_end(@winners, @world = 'custom') {
 			}
 		}
 
-		store_value('cubeclimber.player', @p, @pstats);
+		store_value('cubeclimber.player', @uuid, @pstats);
 
 	}
 

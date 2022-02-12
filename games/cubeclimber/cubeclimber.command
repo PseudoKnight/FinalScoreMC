@@ -77,7 +77,7 @@ register_command('cubeclimber', array(
 				if(array_size(@args) > 1) {
 					@player = @args[1];
 				}
-				@pstats = get_value('cubeclimber.player', @player);
+				@pstats = get_value('cubeclimber.player', _get_uuid(to_lower(@player)));
 				if(!@pstats) {
 					die(color('gold').'No statistics recorded for player '.@player);
 				}
@@ -138,14 +138,16 @@ register_command('cubeclimber', array(
 				@allstats = get_values('cubeclimber');
 				@toptimes = array();
 				foreach(@key: @value in @allstats) {
-					if(substr(@key, 12) == 'toptimes' || !array_index_exists(@value, 4)) {
+					if(@key == 'cubeclimber.toptimes' || !array_index_exists(@value, 4)) {
 						continue();
 					}
-					@player = substr(@key, 19);
+					@uuid = split('.', @key)[2];
+					@pdata = _pdata_by_uuid(@uuid);
+					@player = @pdata['name'];
 					@time = @value[4];
 					@top = false;
 					foreach(@i: @toptime in @toptimes) {
-						if(@i > 20) {
+						if(@i > 19) {
 							break();
 						}
 						if(@toptime[1] > @time) {
@@ -154,14 +156,43 @@ register_command('cubeclimber', array(
 							break();
 						}
 					}
-					if(!@top && array_size(@toptimes) < 20) {
+					if(!@top && array_size(@toptimes) < 19) {
 						@toptimes[] = array(@player, @time);
-					} else if(array_size(@toptimes) > 20) {
-						array_remove(@toptimes, 20);
+					} else if(array_size(@toptimes) > 19) {
+						array_remove(@toptimes, 19);
 					}
 				}
 				store_value('cubeclimber', 'toptimes', @toptimes);
 				msg(color('green').'CubeClimber times recalculated.');
+
+			case 'convert2uuid':
+				if(!has_permission('cubeclimber.resetstats')) {
+					die(color('gold').'You do not have permission.');
+				}
+				@values = get_values('cubeclimber.player');
+				foreach(@key: @value in @values){
+					@name = split('.', @key)[2];
+					if(length(@name) > 17) {
+						continue();
+					}
+					@uuid = _get_uuid(to_lower(@name));
+					if(has_value('cubeclimber.player.'.@uuid)) {
+						@previous = get_value('cubeclimber.player.'.@uuid);
+						@previous[0] += @value[0];
+						@previous[1] += @value[1];
+						@previous[2] += @value[2];
+						@previous[3] += @value[3];
+						if(array_index_exists(@previous, 4) || array_index_exists(@value, 4)) {
+							@previous[4] = min(array_get(@value, 4, math_const('INTEGER_MAX')), array_get(@previous, 4, math_const('INTEGER_MAX')));
+						}
+						store_value('cubeclimber.player.'.@uuid, @previous);
+						console('Combined '.@name.' into '.@uuid);
+					} else {
+						store_value('cubeclimber.player.'.@uuid, @value);
+						console('Saved '.@name.' into '.@uuid);
+					}
+					clear_value(@key);
+				}
 
 			default:
 				msg(colorize('&7[&6Cube&cClimber&7] '
