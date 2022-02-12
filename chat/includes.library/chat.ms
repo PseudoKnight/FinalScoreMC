@@ -46,20 +46,21 @@ proc _chat(@player, @message, @recipients, @source = '', @channel = '') {
 		@pdata = associative_array();
 	}
 
-	@nameColor = '';
+	@displayName = @player;
 	@session = null;
 	if(ponline(@player)) {
 		@session = _psession(@player);
 		if(array_index_exists(@session, 'trophies')) {
 			@components[] = array('hover', '&6\u2660', '&6&lTrophies\\n'.array_implode(@session['trophies'], '\\n'));
 		}
+		@displayName = display_name(@player);
 	} else {
 		if(array_index_exists(@pdata, 'ban')) {
 			console(@player.' tried to speak in web chat', false);
 			die();
 		}
 		if(@pdata) {
-			@nameColor = _colorname(@player);
+			@displayName = _colorname(@player).@player;
 		}
 	}
 
@@ -68,13 +69,13 @@ proc _chat(@player, @message, @recipients, @source = '', @channel = '') {
 	}
 
 	if(ponline(@player)) {
-		@components[] = array('hover', ' '.display_name(@player),
+		@components[] = array('hover', ' '.@displayName,
 			if(has_permission(@player, 'group.moderator'), '&bSTAFF\\n')
 			.if(array_index_exists(@pdata, 'names'), '&7'.array_implode(@pdata['names']).'\\n')
 			.if(array_index_exists(@session, 'lastplayed'), '&8[last played] &r'.@session['lastplayed'].'\\n')
 			.'&8[world] &r'._worldname(pworld(@player)));
 	} else {
-		@components[] = array('hover', ' '.@nameColor.@player,
+		@components[] = array('hover', ' '.@displayName,
 			if(array_index_exists(@pdata, 'names'), '&7'.array_implode(@pdata['names']).'\\n')
 			.'&8[world] &rReal World');
 	}
