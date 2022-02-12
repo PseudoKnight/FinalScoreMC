@@ -81,6 +81,9 @@ proc _hoops_player_remove(@player) {
 	}
 	unbind(@player.'jump');
 	unbind(@player.'break');
+	if(@game['lastholder'] == @player) {
+		@game['lastholder'] = '';
+	}
 	if(ponline(@player)) {
 		set_pmode(@player, 'ADVENTURE');
 		bar_remove_player('hoops', @player);
