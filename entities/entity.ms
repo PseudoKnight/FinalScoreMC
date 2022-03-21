@@ -8,7 +8,7 @@ bind('entity_explode', array('priority': 'HIGH'), null, @event) {
 # Limit breeding in high entity areas
 bind('creature_spawn', null, array('reason': 'BREEDING'), @event) {
 	if(!array_contains(array('DONKEY', 'HORSE', 'MULE'), @event['type'])
-	&& array_size(entities_in_radius(@event['location'], 48)) > 300) {
+	&& array_size(entities_in_radius(@event['location'], 48)) > 320) {
 		cancel();
 		spawn_particle(@event['location'], 'SMOKE_NORMAL');
 		broadcast(color('gold').'Breeding failed due to overcrowding.', players_in_radius(@event['location'], 16));
