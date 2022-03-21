@@ -46,7 +46,7 @@ proc _bind_events(@pvp) {
 	}
 
 	# Main events
-	@pvp['binds'][] = bind('player_death', array(priority: 'high'), null, @e, @pvp, @id) {
+	@pvp['binds'][] = bind('player_death', array(priority: 'HIGH'), null, @e, @pvp, @id) {
 		@pvp = import('pvp'.@id);
 		@arena = @pvp['arena'];
 		if(!array_index_exists(@pvp['players'], player())) {
@@ -360,7 +360,7 @@ proc _bind_events(@pvp) {
 		}
 	}
 
-	@pvp['binds'][] = bind('player_teleport', array(priority: 'high'), array(type: 'ENDER_PEARL'), @e, @pvp) {
+	@pvp['binds'][] = bind('player_teleport', array(priority: 'HIGH'), array(type: 'ENDER_PEARL'), @e, @pvp) {
 		if(array_index_exists(@pvp['players'], player())) {
 			consume();
 			if(!array_contains(sk_regions_at(@e['to']), @pvp['arena']['region'])) {

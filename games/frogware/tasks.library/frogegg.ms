@@ -16,7 +16,7 @@ proc _fw_start_task(@secs) {
 		}
 	}
 	play_sound(@loc, array(sound: 'ENTITY_CHICKEN_EGG', volume: 3));
-	bind('player_interact', array(id: 'fwtask', priority: 'high'), array(block: 'DRAGON_EGG'), @e) {
+	bind('player_interact', array(id: 'fwtask', priority: 'HIGH'), array(block: 'DRAGON_EGG'), @e) {
 		if(_fw_player(player())) {
 			play_sound(@e['location'], array(sound: 'ENTITY_CHICKEN_EGG', volume: 3));
 			consume();

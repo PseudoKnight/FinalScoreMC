@@ -1,4 +1,4 @@
-@pvp['binds'][] = bind('player_teleport', array(priority: 'highest'), array(type: 'ENDER_PEARL'), @event, @pvp) {
+@pvp['binds'][] = bind('player_teleport', array(priority: 'HIGHEST'), array(type: 'ENDER_PEARL'), @event, @pvp) {
 	if(!array_index_exists(@pvp['players'], player())) {
 		die();
 	}
@@ -42,7 +42,7 @@
 	}
 }
 
-@pvp['binds'][] = bind('player_interact', array(priority: 'highest'), array(itemname: 'ENDER_PEARL', button: 'right'), @e, @pvp) {
+@pvp['binds'][] = bind('player_interact', array(priority: 'HIGHEST'), array(itemname: 'ENDER_PEARL', button: 'right'), @e, @pvp) {
 	if(!array_index_exists(@pvp['players'], player()) || pinfo(player(), 6) != @e['item']['name']) {
 		die();
 	}

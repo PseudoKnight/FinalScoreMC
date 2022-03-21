@@ -459,7 +459,7 @@ proc _pvp_start_match(@id) {
 				die();
 			}
 			@minleft = floor(@totalsecsleft / 60);
-			@secsleft = mod(@totalsecsleft, 60);
+			@secsleft = @totalsecsleft % 60;
 			@timeleft = @minleft.':'.if(@secsleft < 10, '0').@secsleft;
 			// @percentage = round((@totalsecsleft / (@arena['timer'][1] * 60)) * 100);
 			if(extension_exists('CHNaughty')) {

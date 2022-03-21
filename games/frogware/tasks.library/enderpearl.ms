@@ -12,7 +12,7 @@ proc _fw_start_task(@secs) {
 	_iterate_cuboid(array(@region[0][0] - 1, @region[1][1] + 20, @region[0][2] - 1, 'custom'),
 		array(@region[1][0] + 1, @region[1][1] + 20, @region[1][2] + 1, 'custom'),
 		'EMERALD_BLOCK', 5);
-	bind('player_teleport', array(id: 'fwtask', priority: 'high'), array(type: 'ENDER_PEARL'), @e) {
+	bind('player_teleport', array(id: 'fwtask', priority: 'HIGH'), array(type: 'ENDER_PEARL'), @e) {
 		if(_fw_player(player())) {
 			consume();
 		}
