@@ -238,7 +238,11 @@ bind('inventory_click', null, array('slottype': 'RESULT'), @event) {
 		&& !is_null(@slotitem['meta'])
 		&& !is_null(@slotitem['meta']['display'])) {
 			# named player head
-			@slotitem['meta']['owner'] = @slotitem['meta']['display'];
+			@name = @slotitem['meta']['display'];
+			@slotitem['meta']['owner'] = @name;
+			if(@name == 'Burger_guy') {
+				@slotitem['meta']['texture'] = 'e3RleHR1cmVzOntTS0lOOnt1cmw6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNzRlODMzOTUwNWM4YWQ0NjIyYmIwMmViZjBlM2I0MmJlMzNiNjlkOGEyNmUwMTg1ZTRjODQwODlhNmJmZDJlOSJ9fX0='
+			}
 			modify_event('slotitem', @slotitem);
 		}
 	}
