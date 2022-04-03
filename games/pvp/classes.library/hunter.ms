@@ -1,5 +1,4 @@
-switch(@action) {
-case 'load':
+proc _class_load(@player, @pvp) {
 	bind('projectile_launch', array(id: @player.'huntershoot'), array(type: 'ARROW', shootertype: 'PLAYER'), @event, @player) {
 		if(@event['player'] == @player) {
 			set_entity_spec(@event['id'], array(damage: 1.0, critical: false));
@@ -9,8 +8,9 @@ case 'load':
 	bind('item_swap', array(id: @player.'hunterswap', priority: 'HIGHEST'), array(off_hand: 'FIREWORK_ROCKET', player: @player), @event) {
 		consume();
 	}
+}
 
-case 'powerup':
+proc _class_powerup(@player) {
 	@wolves = entities_in_radius(ploc(@player), 24, 'WOLF');
 	@existingWolf = null;
 	foreach(@wolf in @wolves) {
@@ -28,8 +28,9 @@ case 'powerup':
 			set_mob_effect(@wolf, 'SPEED', 0, 9999, true, false);
 		});
 	}
+}
 
-case 'unload':
+proc _class_unload(@player, @pvp) {
 	unbind(@player.'huntershoot');
 	unbind(@player.'hunterswap');
 	foreach(@wolf in entities_in_radius(ploc(@player), 64, 'WOLF')) {
@@ -37,5 +38,4 @@ case 'unload':
 			entity_remove(@wolf);
 		}
 	}
-
 }

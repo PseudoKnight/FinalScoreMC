@@ -1,5 +1,4 @@
-switch(@action) {
-case 'load':
+proc _class_load(@player, @pvp) {
 	proc _set_equipment(@player, @thorns, @pvp) {
 		if(array_index_exists(@pvp['players'], @player) && @pvp['players'][@player]['class'] == 'ent') {
 			@kit = array(
@@ -193,8 +192,9 @@ case 'load':
 			}
 		}
 	}
-	
-case 'unload':
+}
+
+proc _class_unload(@player, @pvp) {
 	unbind(@player.'entfall');
 	unbind(@player.'entsneak');
 	unbind(@player.'entbark');

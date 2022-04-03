@@ -1,5 +1,4 @@
-switch(@action) {
-case 'load':
+proc _class_load(@player, @pvp) {
 	set_pexp(@player, 0);
 	
 	@particle = array(particle: 'REDSTONE', count: 4, color: array(r: 25, g: 25, b: 25), xoffset: 0.6, yoffset: 0.6, zoffset: 0.6);
@@ -93,8 +92,8 @@ case 'load':
 			}
 		}
 	}
+}
 
-case 'unload':
+proc _class_unload(@player, @pvp) {
 	unbind(@player.'hover');
-
 }

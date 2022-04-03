@@ -1,5 +1,4 @@
-switch(@action) {
-case 'load':
+proc _class_load(@player, @pvp) {
 	set_pheld_slot(@player, 0);
 	bind('item_held', array(id: @player.'cyborghand'), array(player: @player), @e) {
 		cancel();
@@ -282,12 +281,11 @@ case 'load':
 			}
 		});
 	}
+}
 
-	
-case 'unload':
+proc _class_unload(@player, @pvp) {
 	unbind(@player.'cyborghand');
 	unbind(@player.'cyborgmissile');
 	unbind(@player.'cyborgshoot');
 	unbind(@player.'cyborgsneak');
-	
 }

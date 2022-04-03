@@ -1,5 +1,4 @@
-switch(@action) {
-	case 'load':
+proc _class_load(@player, @pvp) {
 		set_pexp(@player, 99);
 		bind('player_toggle_sneak', array(id: @player.'bountyhunter'), array(sneaking: true, player: @player), @event,
 			@gasSound = array(sound: 'BLOCK_FIRE_EXTINGUISH', pitch: 1.1, volume: 0.5),
@@ -55,11 +54,12 @@ switch(@action) {
 				}
 			});
 		}
+}
 
-	case 'powerup':
+proc _class_powerup(@player) {
 		set_pexp(@player, 99);
+}
 
-	case 'unload':
+proc _class_unload(@player, @pvp) {
 		unbind(@player.'bountyhunter');
-
 }

@@ -1,5 +1,4 @@
-switch(@action) {
-case 'load':
+proc _class_load(@player, @pvp) {
 	bind('vehicle_leave', array(id: @player.'dismount'), array(vehicletype: 'HORSE'), @e, @player) {
 		if(@player == @e['player']) {
 			set_timeout(1, closure(){
@@ -13,8 +12,8 @@ case 'load':
 			});
 		}
 	}
+}
 
-case 'unload':
+proc _class_unload(@player, @pvp) {
 	unbind(@player.'dismount');
-
 }

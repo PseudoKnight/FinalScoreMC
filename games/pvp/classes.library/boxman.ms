@@ -1,5 +1,4 @@
-switch(@action) {
-case 'load':
+proc _class_load(@player, @pvp) {
 	set_pheld_slot(@player, 0);
 	bind('item_held', array(id: @player.'boxman'), array(player: @player), @e) {
 		cancel();
@@ -116,11 +115,11 @@ case 'load':
 			}
 		}
 	}
+}
 
-case 'unload':
+proc _class_unload(@player, @pvp) {
 	unbind(@player.'boxman');
 	unbind(@player.'boxmanattack');
 	unbind(@player.'boxmanbox');
 	set_pwalkspeed(player(), 0.2);
-
 }

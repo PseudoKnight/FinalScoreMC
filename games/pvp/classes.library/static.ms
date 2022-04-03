@@ -1,5 +1,4 @@
-switch(@action) {
-case 'load':
+proc _class_load(@player, @pvp) {
 	tmsg(@player, color('e').'Hunt the other players!');
 	tmsg(@player, color('e').'When you\'re spotted, you regain health and hunger.');
 	tmsg(@player, color('e').'Sprint to "ghost" through walls and rematerialize out of sight.');
@@ -101,8 +100,9 @@ case 'load':
 			}
 		}
 	});
+}
 
-case 'unload':
+proc _class_unload(@player, @pvp) {
 	unbind(@player.'invclick');
 	unbind(@player.'sprint');
 	unbind(@player.'pickup');

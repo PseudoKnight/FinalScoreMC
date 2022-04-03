@@ -1,79 +1,99 @@
-proc _class(@action, @player, @classname, @pvp) {
+include_dir('../classes.library');
+
+proc _classes_load(@player, @classname, @pvp) {
 	@class = @pvp['arena']['classes'][@classname];
 	if(array_index_exists(@class, 'script')) {
 		include('../classes.library/'.@classname.'.ms');
+		_class_load(@player, @pvp);
 	}
 
-	switch(@action) {
-		case 'load':
-			if(array_index_exists(@class, 'hunger') && !is_numeric(@class['hunger'][1])) {
-				bind('food_level_changed', array(id: @player.'food'), array(player: @player), @event) {
-					cancel();
-				}
-			}
-
-		case 'equip':
-			if(array_index_exists(@class, 'hunger')) {
-				set_phunger(@player, @class['hunger'][0]);
-				if(is_numeric(@class['hunger'][1])) {
-					set_psaturation(@player, @class['hunger'][1]);
-				}
-			}
-			if(array_index_exists(@class, 'kit')) {
-				set_pinv(@player, @class['kit']);
-			}
-			if(array_index_exists(@class, 'speed')) {
-				set_pwalkspeed(@player, 0.2); # this workaround is required for after respawns
-				set_pwalkspeed(@player, @class['speed']);
-			}
-			if(array_index_exists(@class, 'effect')) {
-				set_timeout(1, closure(){
-					foreach(@eid: @e in @class['effect']) {
-						set_peffect(@player, @eid, @e['strength'], @e['length'], true);
-					}
-				});
-			}
-			if(array_index_exists(@class, 'xp')) {
-				set_pexp(@player, @class['xp']);
-			}
-
-		case 'powerup':
-			set_phunger(@player, min(20, phunger(@player) + 4));
-			set_phealth(@player, min(20, phealth(@player) + 1));
-			set_ponfire(@player, false);
-			if(!array_index_exists(get_peffect(@player), 'night_vision')) {
-				set_peffect(@player, 'NIGHT_VISION', 0, 1, true);
-			}
-			set_peffect(@player, 'REGENERATION', 0, 8, true);
-			play_sound(ploc(@player), array(sound: 'ENTITY_ENDERMAN_TELEPORT', pitch: 2), @player);
-			if(array_index_exists(@class, 'ammo')) {
-				@inv = pinv(@player);
-				foreach(@slot: @item in @class['ammo']) {
-					@max = 64;
-					if(@item && array_index_exists(@class, 'stacklimit', @item['name'])) {
-						@name = @item['name'];
-						@max = @class['stacklimit'][@name];
-					}
-					@item = @item[];
-					if(!is_null(@inv[@slot])) {
-						@item['qty'] = min(@max, if(array_index_exists(@item, 'qty'), @item['qty'], 1) + @inv[@slot]['qty']);
-					}
-					@inv[@slot] = @item;
-				}
-				set_pinv(@player, @inv);
-			}
-
-		case 'unload':
-			unbind(@player.'food');
-			if(pmode(@player) != 'SPECTATOR') {
-				set_pflight(@player, false);
-			}
-			set_pwalkspeed(@player, 0.2);
-
+	if(array_index_exists(@class, 'hunger') && !is_numeric(@class['hunger'][1])) {
+		bind('food_level_changed', array(id: @player.'food'), array(player: @player), @event) {
+			cancel();
+		}
 	}
 }
 
-proc _class_select_random(@player, @pvp) {
+proc _classes_equip(@player, @classname, @pvp) {
+	@class = @pvp['arena']['classes'][@classname];
+	if(array_index_exists(@class, 'script')) {
+		include('../classes.library/'.@classname.'.ms');
+		_class_equip(@player);
+	}
+
+	if(array_index_exists(@class, 'hunger')) {
+		set_phunger(@player, @class['hunger'][0]);
+		if(is_numeric(@class['hunger'][1])) {
+			set_psaturation(@player, @class['hunger'][1]);
+		}
+	}
+	if(array_index_exists(@class, 'kit')) {
+		set_pinv(@player, @class['kit']);
+	}
+	if(array_index_exists(@class, 'speed')) {
+		set_pwalkspeed(@player, 0.2); # this workaround is required for after respawns
+		set_pwalkspeed(@player, @class['speed']);
+	}
+	if(array_index_exists(@class, 'effect')) {
+		set_timeout(1, closure(){
+			foreach(@eid: @e in @class['effect']) {
+				set_peffect(@player, @eid, @e['strength'], @e['length'], true);
+			}
+		});
+	}
+	if(array_index_exists(@class, 'xp')) {
+		set_pexp(@player, @class['xp']);
+	}
+}
+
+proc _classes_powerup(@player, @classname, @pvp) {
+	@class = @pvp['arena']['classes'][@classname];
+	if(array_index_exists(@class, 'script')) {
+		include('../classes.library/'.@classname.'.ms');
+		_class_powerup(@player);
+	}
+
+	set_phunger(@player, min(20, phunger(@player) + 4));
+	set_phealth(@player, min(20, phealth(@player) + 1));
+	set_ponfire(@player, false);
+	if(!array_index_exists(get_peffect(@player), 'night_vision')) {
+		set_peffect(@player, 'NIGHT_VISION', 0, 1, true);
+	}
+	set_peffect(@player, 'REGENERATION', 0, 8, true);
+	play_sound(ploc(@player), array(sound: 'ENTITY_ENDERMAN_TELEPORT', pitch: 2), @player);
+	if(array_index_exists(@class, 'ammo')) {
+		@inv = pinv(@player);
+		foreach(@slot: @item in @class['ammo']) {
+			@max = 64;
+			if(@item && array_index_exists(@class, 'stacklimit', @item['name'])) {
+				@name = @item['name'];
+				@max = @class['stacklimit'][@name];
+			}
+			@item = @item[];
+			if(!is_null(@inv[@slot])) {
+				@item['qty'] = min(@max, if(array_index_exists(@item, 'qty'), @item['qty'], 1) + @inv[@slot]['qty']);
+			}
+			@inv[@slot] = @item;
+		}
+		set_pinv(@player, @inv);
+	}
+}
+
+proc _classes_unload(@player, @classname, @pvp) {
+	@class = @pvp['arena']['classes'][@classname];
+	if(array_index_exists(@class, 'script')) {
+		include('../classes.library/'.@classname.'.ms');
+		_class_unload(@player, @pvp);
+	}
+
+	unbind(@player.'food');
+	if(pmode(@player) != 'SPECTATOR') {
+		set_pflight(@player, false);
+	}
+	set_pwalkspeed(@player, 0.2);
+}
+
+proc _classes_select_random(@player, @pvp) {
 	@rand = array_rand(@pvp['arena']['classes'], array_size(@pvp['arena']['classes']));
 	@class = '';
 	foreach(@c in @rand) {
@@ -86,14 +106,14 @@ proc _class_select_random(@player, @pvp) {
 	}
 	if(@class) {
 		if(array_index_exists(@pvp['players'][@player], 'class')) {
-			_class('unload', @player, @pvp['players'][@player]['class'], @pvp);
-			_class('load', @player, @class, @pvp);
+			_classes_unload(@player, @pvp['players'][@player]['class'], @pvp);
+			_classes_load(@player, @class, @pvp);
 		}
 		@pvp['players'][@player]['class'] = @class;
 	}
 }
 
-proc _class_select(@id, @pvp) {
+proc _classes_select(@id, @pvp) {
 	if(@pvp['arena']['class_picking'] === 'random'
 	|| (array_index_exists(@pvp['arena'], 'class_picks')
 	&& @pvp['arena']['class_picks'] == 0)) {

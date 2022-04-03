@@ -1,5 +1,4 @@
-switch(@action) {
-case 'load':
+proc _class_load(@player, @pvp) {
 	bind('player_interact', array(id: @player.'interact'), array(player: @player, button: 'right', itemname: 'IRON_HOE', hand: 'main_hand'), @e) {
 		cancel();
 		if(get_block(ploc()) === 'AIR' || phunger() == 0) {
@@ -55,15 +54,16 @@ case 'load':
 		}
 	}
 	_manti_noise(@player);
+}
 
-case 'powerup':
+proc _class_powerup(@player) {
 	set_phunger(@player, min(20, phunger(@player) + 4));
+}
 
-case 'unload':
+proc _class_unload(@player, @pvp) {
 	unbind(@player.'interact');
 	unbind(@player.'falldamage');
 	unbind(@player.'damage');
 	unbind(@player.'death');
 	queue_clear(@player);
-
 }

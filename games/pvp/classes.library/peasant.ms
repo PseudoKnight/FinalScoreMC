@@ -1,5 +1,4 @@
-switch(@action) {
-case 'load':
+proc _class_load(@player, @pvp) {
 	proc _prime_hot_potato(@damager, @damaged, @item, @pvp) {
 		try {
 			if(!is_null(@item['meta']['lore'])) {
@@ -122,8 +121,9 @@ case 'load':
 			});
 		}
 	}
+}
 
-case 'unload':
+proc _class_unload(@player, @pvp) {
 	unbind(@player.'pot');
 	unbind(@player.'hotdrop');
 	unbind(@player.'hotpickup');

@@ -6,7 +6,7 @@ proc _bind(@pvp) {
 
 		modify_event('item', null);
 		consume();
-		_class('powerup', player(), @pvp['players'][player()]['class'], @pvp);
+		_classes_powerup(player(), @pvp['players'][player()]['class'], @pvp);
 		if(array_index_exists(@pvp, 'stats')) {
 			@pvp['stats'][player()]['pickups']++;
 		}

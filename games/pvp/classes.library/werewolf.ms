@@ -1,5 +1,4 @@
-switch(@action) {
-case 'load':
+proc _class_load(@player, @pvp) {
 	bind('entity_damage_player', array(id: @player.'werewolf'), null, @e, @p = @player) {
 		if(@e['player'] == @p && !is_null(pinv(@p, 103))) {
 			play_sound(ploc(@p), array(sound: 'ENTITY_WOLF_HURT', pitch: 0.75));
@@ -25,8 +24,9 @@ case 'load':
 			spawn_particle(location_shift(ploc(), 'up', 2), array(particle: 'BLOCK_DUST', count: 10, block: 'NETHER_WART_BLOCK', speed: 0.1));
 		});
 	}
+}
 
-case 'equip':
+proc _class_equip(@player) {
 	@r = rand(0, 256);
 	@g = rand(0, 256);
 	@b = rand(0, 256);
@@ -36,8 +36,9 @@ case 'equip':
 		102: array(name: 'LEATHER_CHESTPLATE', meta: array(color: array(r: @r, g: @g, b: @b))),
 	));
 	queue_clear(@player.'evolve');
+}
 
-case 'powerup':
+proc _class_powerup(@player) {
 	damage_entity(puuid(@player), min(phealth(@player) - 1, 5));
 	set_peffect(@player, 'SPEED', 3, 17);
 	set_peffect(@player, 'STRENGTH', 1, 17);
@@ -76,10 +77,10 @@ case 'powerup':
 			}
 		}
 	});
+}
 
-case 'unload':
+proc _class_unload(@player, @pvp) {
 	unbind(@player.'werewolf');
 	unbind(@player.'kill');
 	unbind(@player.'eat');
-
 }

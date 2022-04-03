@@ -1,5 +1,4 @@
-switch(@action) {
-case 'load':
+proc _class_load(@player, @pvp) {
 	bind('player_interact', array(id: @player.'grenade'), array(player: @player, itemname: 'STONE_SHOVEL'), @e, @pvp) {
 		if(!ptake_item(player(), array(name: 'STONE_SHOVEL'))) {
 			die();
@@ -32,7 +31,8 @@ case 'load':
 			}
 		});
 	}
+}
 
-case 'unload':
+proc _class_unload(@player, @pvp) {
 	unbind(@player.'grenade');
 }

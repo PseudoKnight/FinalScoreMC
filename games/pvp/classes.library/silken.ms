@@ -1,5 +1,4 @@
-switch(@action) {
-case 'load':
+proc _class_load(@player, @pvp) {
 	set_peffect(@player, 'MINING_FATIGUE', 1, 9999, true, false);
 	bind('entity_damage', array(id: @player.'damage'), array(type: 'PLAYER', cause: 'ENTITY_ATTACK'), @event, @p = @player) {
 		if(@event['damager'] == @p) {
@@ -103,8 +102,9 @@ case 'load':
 			clear_task();
 		}
 	})
+}
 
-case 'unload':
+proc _class_unload(@player, @pvp) {
 	unbind(@player.'damage');
 	unbind(@player.'web');
 	unbind(@player.'webbreak');
@@ -112,5 +112,4 @@ case 'unload':
 		set_block(@block, 'AIR');
 	}
 	@pvp['players'][@player]['blocks'] = array();
-
 }

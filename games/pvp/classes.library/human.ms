@@ -1,5 +1,4 @@
-switch(@action) {
-case 'load':
+proc _class_load(@player, @pvp) {
 	bind('player_interact', array(id: @player.'interact'), array(player: @player, button: 'right', itemname: 'NETHER_STAR'), @e) {
 		if(@e['block'] !== 'STONE_BUTTON' && pexp() == 99) {
 			cancel();
@@ -29,11 +28,11 @@ case 'load':
 	bind('player_death', array(id: @player.'death'), array(player: @player), @e) {
 		play_sound(ploc(), array(sound: 'ENTITY_ZOMBIE_VILLAGER_CONVERTED', pitch: 1, volume: 3));
 	}
+}
 
-case 'unload':
+proc _class_unload(@player, @pvp) {
 	unbind(@player.'interact');
 	unbind(@player.'hit');
 	unbind(@player.'damage');
 	unbind(@player.'death');
-
 }

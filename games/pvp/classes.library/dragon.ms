@@ -1,5 +1,4 @@
-switch(@action) {
-case 'load':
+proc _class_load(@player, @pvp) {
 	set_pflight(@player, true);
 	bind('player_toggle_flight', array(id: @player.'dragonfly'), array(player: @player), @e) {
 		cancel();
@@ -43,17 +42,17 @@ case 'load':
 			});
 		}
 	}
+}
 
-
-case 'powerup':
+proc _class_powerup(@player) {
 	set_pexp(@player, 99);
 	set_pflight(@player, true);
+}
 
-case 'unload':
+proc _class_unload(@player, @pvp) {
 	unbind(@player.'dragonfly');
 	unbind(@player.'dragonsbreath');
 	set_pexp(@player, 0);
 	set_pflight(@player, false);
 	queue_clear(@player.'flap');
-
 }

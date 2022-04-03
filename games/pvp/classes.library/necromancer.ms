@@ -1,5 +1,4 @@
-switch(@action) {
-case 'load':
+proc _class_load(@player, @pvp) {
 	bind('target_player', array(id: @player.'necrotarget'), array(player: @player), @e) {
 		cancel();
 	}
@@ -29,10 +28,10 @@ case 'load':
 			}
 		}
 	}
+}
 
-case 'unload':
+proc _class_unload(@player, @pvp) {
 	unbind(@player.'necrotarget');
 	unbind(@player.'necrodamage');
 	unbind(@player.'necrodeath');
-	
 }

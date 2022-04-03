@@ -120,14 +120,14 @@ proc _bind_events(@pvp) {
 			set_timeout(50, closure(){
 				if(array_index_exists(@arena, 'classes')) {
 					if(array_index_exists(@playerData, 'class')) {
-						_class('unload', player(), @playerData['class'], @pvp);
+						_classes_unload(player(), @playerData['class'], @pvp);
 						array_remove(@playerData, 'class');
 					}
 					foreach(@classname: @class in @arena['classes']) {
 						if(!array_index_exists(@class, 'disabled')
 						&& (!array_index_exists(@class, 'team') || @class['team'] == @team)) {
 							@playerData['class'] = @classname;
-							_class('load', player(), @playerData['class'], @pvp);
+							_classes_load(player(), @playerData['class'], @pvp);
 						}
 					}
 				}
@@ -189,7 +189,7 @@ proc _bind_events(@pvp) {
 				} else if(array_index_exists(@arena, 'captain')
 				&& @drop['name'] == @pvp['team'][@team]['captainhat']['name']) {
 					@pvp['team'][@team]['captain'] = '';
-					_class('unload', player(),@playerData['class'], @pvp);
+					_classes_unload(player(),@playerData['class'], @pvp);
 					foreach(@classname: @class in @arena['classes']) {
 						if(@classname != @playerData['class']
 						&& !array_index_exists(@class, 'disabled')
@@ -198,7 +198,7 @@ proc _bind_events(@pvp) {
 							break();
 						}
 					}
-					_class('load', player(), @playerData['class'], @pvp);
+					_classes_load(player(), @playerData['class'], @pvp);
 					_pvp_msg(@pvp, color('gray').'[PVP] '.@playerData['color']
 						._to_upper_camel_case(@arena['team'][@team]['name']).color('r').' - Captain has died and dropped his hat!');
 					foreach(@p: @player in @pvp['players']) {
@@ -241,10 +241,10 @@ proc _bind_events(@pvp) {
 				});
 			} else if(array_index_exists(@arena, 'classes')) {
 				if(array_index_exists(@playerData, 'class')) {
-					_class('unload', player(), @playerData['class'], @pvp);
+					_classes_unload(player(), @playerData['class'], @pvp);
 				}
 				if(@arena['class_picking'] === 'random') {
-					_class_select_random(player(), @pvp);
+					_classes_select_random(player(), @pvp);
 				} else if(!array_index_exists(@arena, 'class_picks')
 				|| (array_index_exists(@playerData, 'picks') && @playerData['picks'] > 0)) {
 					if(array_index_exists(@playerData, 'picks')

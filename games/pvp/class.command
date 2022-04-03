@@ -263,7 +263,7 @@ register_command('class', array(
 						@pvp = associative_array();
 						@pvp['arena'] = @arena;
 						include('core.library/classes.ms');
-						_class('equip', player(), @classid, @pvp);
+						_classes_equip(player(), @classid, @pvp);
 						
 					case 'selector':
 						set_pinv(player(), null, @arena['classes'][@classid]['selector']);

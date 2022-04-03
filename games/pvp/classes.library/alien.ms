@@ -1,5 +1,4 @@
-switch(@action) {
-case 'load':
+proc _class_load(@player, @pvp) {
 	bind('player_interact', array(id: @player.'plasmagun'), array(itemname: 'GLISTERING_MELON_SLICE', button: 'right', player: @player), @e) {
 		if(pinfo(player(), 6) != @e['item']['name']) {
 			die();
@@ -76,13 +75,14 @@ case 'load':
 			// Player is probably dead.
 		}
 	}
+}
 
-case 'powerup':
+proc _class_powerup(@player) {
 	set_pexp(@player, 99);
+}
 
-case 'unload':
+proc _class_unload(@player, @pvp) {
 	unbind(@player.'plasmagun');
 	unbind(@player.'hit');
 	unbind(@player.'teleport');
-
 }

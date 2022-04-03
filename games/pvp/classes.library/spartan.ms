@@ -1,5 +1,4 @@
-switch(@action) {
-case 'load':
+proc _class_load(@player, @pvp) {
 	@uuid = puuid(@player);
 	@pvp['players'][@player]['task'] = set_interval(50, closure(){
 		try {
@@ -23,8 +22,9 @@ case 'load':
 			console(@ex);
 		}
 	});
+}
 	
-case 'powerup':
+proc _class_powerup(@player) {
 	@item1 = pinv(@player, 0);
 	@item2 = pinv(@player, 1);
 	if(@item1) {
@@ -33,7 +33,8 @@ case 'powerup':
 	if(@item2) {
 		set_pcooldown(@player, @item2['name'], 0);
 	}
-	
-case 'unload':
+}
+
+proc _class_unload(@player, @pvp) {
 	clear_task(@pvp['players'][@player]['task']);
 }

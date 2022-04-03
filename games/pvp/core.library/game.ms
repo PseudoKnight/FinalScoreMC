@@ -214,7 +214,7 @@ proc _pvp_start(@pvp){
 
 	# CLASSES
 	if(array_index_exists(@arena, 'classes')) {
-		_class_select(@id, @pvp);
+		_classes_select(@id, @pvp);
 	}
 
 	# ARENA
@@ -505,7 +505,7 @@ proc _pvp_start_match(@id) {
 						set_pmode(@player, 'ADVENTURE');
 					}
 					if(array_index_exists(@pvp['players'][@player], 'class')) {
-						_class('load', @player, @pvp['players'][@player]['class'], @pvp);
+						_classes_load(@player, @pvp['players'][@player]['class'], @pvp);
 					}
 					preset_time(@player);
 					_player_equip(@id, @player);
@@ -831,7 +831,7 @@ proc _pvp_end_match(@id, @winners) {
 		foreach(@player in array_keys(@pvp['players'])) {
 			try {
 				if(array_index_exists(@pvp['players'][@player], 'class')) {
-					_class('unload', @player, @pvp['players'][@player]['class'], @pvp);
+					_classes_unload(@player, @pvp['players'][@player]['class'], @pvp);
 					array_remove(@pvp['players'][@player], 'class');
 				}
 				if(ponline(@player)) {

@@ -1,5 +1,4 @@
-switch(@action) {
-case 'load':
+proc _class_load(@player, @pvp) {
 	bind('player_interact', array(id: @player.'lightning'), array(itemname: 'LIGHTNING_ROD', button: 'right', player: @player), @e, @pvp) {
 		if(pinfo(player(), 6) != @e['item']['name'] || pcooldown('LIGHTNING_ROD')) {
 			die();
@@ -164,10 +163,10 @@ case 'load':
 			clear_task();
 		});
 	}
+}
 
-case 'unload':
+proc _class_unload(@player, @pvp) {
 	unbind(@player.'lightning');
 	unbind(@player.'woosh');
 	unbind(@player.'freeze');
-
 }

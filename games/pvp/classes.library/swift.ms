@@ -1,5 +1,4 @@
-switch(@action) {
-case 'load':
+proc _class_load(@player, @pvp) {
 	@glideState = array(false);
 	set_interval(100, closure(){
 		try {
@@ -48,13 +47,14 @@ case 'load':
 			play_sound(ploc(), array(sound: 'ENTITY_ENDER_DRAGON_FLAP', category: 'PLAYERS', pitch: 1.3, volume: 0.4));
 		}
 	}
+}
 	
-case 'powerup':
+proc _class_powerup(@player) {
 	set_pexp(@player, min(99, pexp(@player) + 33));
+}
 
-case 'unload':
+proc _class_unload(@player, @pvp) {
 	unbind(@player.'sneak');
 	unbind(@player.'glide');
 	unbind(@player.'boost');
-
 }

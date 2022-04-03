@@ -137,7 +137,7 @@ proc _player_remove(@player, @id) {
 		_pvp_bomb_spawn(@id);
 	}
 	if(array_index_exists(@pvp['players'][@player], 'class')) {
-		_class('unload', @player, @pvp['players'][@player]['class'], @pvp);
+		_classes_unload(@player, @pvp['players'][@player]['class'], @pvp);
 	}
 	array_remove(@pvp['players'], @player);
 	if(array_index_exists(@pvp['arena'], 'lives') && @pvp['arena']['lives'] > 1) {
@@ -170,7 +170,7 @@ proc _player_remove(@player, @id) {
 
 proc _player_to_spectator(@player, @pvp) {
 	if(array_index_exists(@pvp['players'][player()], 'class')) {
-		_class('unload', player(), @pvp['players'][player()]['class'], @pvp);
+		_classes_unload(player(), @pvp['players'][player()]['class'], @pvp);
 	}
 	array_remove(@pvp['players'], player());
 	if(function_exists('dm_set_pvisible')) {
@@ -256,10 +256,10 @@ proc _pvp_initialize_players(@id, @players) {
 		_player_reset(@player, @pvp);
 		if(array_index_exists(@pvp['arena'], 'classes')) {
 		 	if(!array_index_exists(@pArray, 'class')) {
-				_class_select_random(@player, @pvp);
+				_classes_select_random(@player, @pvp);
 			}
 			if(array_index_exists(@pArray, 'class')) {
-				_class('load', @player, @pArray['class'], @pvp);
+				_classes_load(@player, @pArray['class'], @pvp);
 			}
 			if(array_index_exists(@pvp['arena'], 'class_picks') && !array_index_exists(@pArray, 'picks')) {
 				@pArray['picks'] = @pvp['arena']['class_picks'];
@@ -357,7 +357,7 @@ proc _player_equip(@id, @player) {
 			}
 		}
 		if(array_index_exists(@pvp['players'][@player], 'class')) {
-			_class('equip', @player, @pvp['players'][@player]['class'], @pvp);
+			_classes_equip(@player, @pvp['players'][@player]['class'], @pvp);
 		}
 	}
 	if(array_index_exists(@pvp['arena'], 'effect')) {

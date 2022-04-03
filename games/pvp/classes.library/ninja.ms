@@ -1,5 +1,4 @@
-switch(@action) {
-case 'load':
+proc _class_load(@player, @pvp) {
 	set_pflight(@player, true);
 	bind('player_toggle_flight', array(id: @player.'doublejump'), array(flying: true, player: @player), @e) {
 		if(pmode() == 'SPECTATOR') {
@@ -17,6 +16,7 @@ case 'load':
 		}, player().'doublejump');
 	}
 
+	@classname = @pvp['players'][@player]['class'];
 	@armor = array(
 		100: @pvp['arena']['classes'][@classname]['kit'][100],
 		101: @pvp['arena']['classes'][@classname]['kit'][101],
@@ -130,16 +130,17 @@ case 'load':
 			cancel();
 		}
 	}
+}
 	
-case 'powerup':
+proc _class_powerup(@player) {
 	set_parrow_count(@player, 0);
+}
 
-case 'unload':
+proc _class_unload(@player, @pvp) {
 	unbind(@player.'ninja');
 	unbind(@player.'doublejump');
 	unbind(@player.'falldamage');
 	unbind(@player.'throwstar');
 	unbind(@player.'starpickup');
 	queue_clear(@player.'doublejump');
-
 }

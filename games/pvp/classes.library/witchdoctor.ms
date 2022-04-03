@@ -1,5 +1,4 @@
-switch(@action) {
-case 'load':
+proc _class_load(@player, @pvp) {
 	bind('player_interact', array(id: @player.'blind'), array(player: @player, itemname: 'WOODEN_HOE', button: 'right'), @event, @pvp) {
 		if(pinfo(player(), 6) != @event['item']['name']) {
 			die();
@@ -34,8 +33,8 @@ case 'load':
 			}
 		});
 	}
+}
 
-case 'unload':
+proc _class_unload(@player, @pvp) {
 	unbind(@player.'blind');
-
 }
