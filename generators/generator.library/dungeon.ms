@@ -855,7 +855,17 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 									@world
 								);
 								if(equals_ic(@materials['room'], get_block(@loc))) {
-									set_block(@loc, 'CAMPFIRE', false);
+									set_block(@loc, 'CAMPFIRE', false);\
+									@loc = location_shift(@loc, 'down');
+									set_block(@loc, 'PODZOL', false);
+									for(@x = -1, @x <= 1, @x++) {
+										for(@z = -1, @z <= 1, @z++) {
+											@r = rand();
+											if(@x == @z && @r > 0.75 || @x != @z && @r > 0.25) {
+												set_block(array(@loc['x'] + @x, @loc['y'], @loc['z'] + @z, @loc['world']), 'PODZOL', false);
+											}
+										}
+									}
 									break();
 								}
 							}
