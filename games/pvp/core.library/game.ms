@@ -443,6 +443,7 @@ proc _pvp_start_match(@id) {
 	if(array_index_exists(@arena, 'weapons')) {
 		foreach(@weapon in @arena['weapons']) {
 			include('../weapons.library/'.@weapon.'.ms');
+			_weapon_bind_events(@pvp);
 		}
 	}
 

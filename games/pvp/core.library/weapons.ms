@@ -1,3 +1,5 @@
+include_dir('../weapons.library');
+
 proc _weapon_cooldown(@player, @time, @type, @onCooldown, @remove = 1) {
 	@item = pinv(@player, null);
 	@item['qty'] -= @remove;

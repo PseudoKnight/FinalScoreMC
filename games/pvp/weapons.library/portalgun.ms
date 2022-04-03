@@ -1,4 +1,4 @@
-execute(iclosure(){
+proc _weapon_bind_events(@pvp) {
 	proc _portal(@color, @button, @portalgun, @portalExits) {
 		if(pworld() != 'dev' || pmode() != 'ADVENTURE') {
 			return();
@@ -156,12 +156,11 @@ execute(iclosure(){
 		BLUE: array(null, null),
 	);
 
-	bind('player_interact', array(priority: 'LOW'), array(itemname: 'LANTERN'), @event, @portalExits, @portalgun = associative_array()) {
+	@pvp['binds'][] = bind('player_interact', array(priority: 'LOW'), array(itemname: 'LANTERN'), @event, @portalExits, @portalgun = associative_array()) {
 		_portal('ORANGE', @event['button'], @portalgun, @portalExits);
 	}
 
-	bind('player_interact', array(priority: 'LOW'), array(itemname: 'SOUL_LANTERN'), @event, @portalExits, @portalgun = associative_array()) {
+	@pvp['binds'][] = bind('player_interact', array(priority: 'LOW'), array(itemname: 'SOUL_LANTERN'), @event, @portalExits, @portalgun = associative_array()) {
 		_portal('BLUE', @event['button'], @portalgun, @portalExits);
 	}
-
-});
+}
