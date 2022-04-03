@@ -983,7 +983,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 							@type = split('_', @materials['trap'][integer(srand(@random) * array_size(@materials['trap']))]);
 							@trigger = @type[0];
 							@effect = @type[1];
-							@data = if(array_size(@type) == 3, @type[2], null);
+							@data = if(array_size(@type) >= 3, array_implode(@type[2..], '_'), null);
 							@facing = 'up';
 							@loc = null;
 							if(@trigger == 'chest' || @effect == 'cactus') {
@@ -1018,6 +1018,20 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 									set_block(@loc, 'TRAPPED_CHEST', false);
 									@loc = location_shift(@loc, 'down');
 									@traps = 0; // so we don't block the door
+								case 'vines':
+									if(@room['type'] == 'ATTIC') {
+										continue();
+									}
+									if(!@spawner) {
+										set_block(@loc, 'TRIPWIRE', false);
+										@loc = location_shift(@loc, 'up');
+									}
+									while(!material_info(get_block(@loc), 'isOccluding')) {
+										set_block(@loc, 'TWISTING_VINES');
+										@loc = location_shift(@loc, 'up');
+									}
+									set_blockdata(location_shift(@loc, 'up'), 'redstone_block', false);
+									@facing = 'down';
 								case 'tripwire':
 									if(@spawner) {
 										// ignore rooms that already have spawners
@@ -1094,14 +1108,14 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 									set_inventory(@loc, array(0: array(name: 'TNT', qty: 2)));
 								case 'potion':
 									@solid = material_info(get_block(location_shift(@loc, @facing)), 'isSolid');
-									if(@solid) {
+									if(@solid || @facing == 'down') {
 										set_blockdata_string(@loc, 'dispenser[facing='.@facing.']', false);
 									} else {
 										set_blockdata_string(@loc, 'dispenser[facing=north]', false);
 									}
 									set_inventory(@loc, array(0: array(
-										name: if(@solid, 'LINGERING_POTION', 'SPLASH_POTION'),
-										qty: 3,
+										name: if(@solid || @facing == 'down', 'LINGERING_POTION', 'SPLASH_POTION'),
+										qty: if(@trigger == 'vines', 1, 3),
 										meta: array(base: array(extended: false, type: to_upper(@data), upgraded: true))
 									)));
 								case 'arrow':

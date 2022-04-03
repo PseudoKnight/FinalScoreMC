@@ -12,7 +12,7 @@ floors:
         waterPit: 0.06
         campfireChance: 0.5
         spawner: [silverfish, bat]
-        trap: plate_tnt
+        trap: [plate_tnt, vines_potion_poison]
         wall: [stone, stone, stone, stone, stone, stone, stone, stone, andesite, andesite, andesite, iron_ore]
         column: stone
         ceiling: [stone, stone, stone, stone, stone, stone, stone, stone, andesite, andesite, andesite, iron_ore]
