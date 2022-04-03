@@ -226,15 +226,16 @@ bind('player_enter_bed', null, null, @event) {
 }
 
 # Anti-xray helper
-bind('block_break', null, array('block': 'DIAMOND_ORE'), @event) {
+bind('block_break', null, array(block: 'DIAMOND_ORE'), @event) {
 	if(!_is_survival_world(pworld())) {
 		die();
 	}
-	queue_push(closure(){
+	@loc = @event['location'];
+	set_timeout(1, closure(){ // right after event finished, so current block is gone
 		@report = true;
-		for(@x = @event['location']['x'] - 1, @x <= @event['location']['x'] + 1, @x++) {
-			for(@y = @event['location']['y'] - 1, @y <= @event['location']['y'] + 1, @y++) {
-				for(@z = @event['location']['z'] - 1, @z <= @event['location']['z'] + 1, @z++) {
+		for(@x = @loc['x'] - 1, @x <= @loc['x'] + 1, @x++) {
+			for(@y = @loc['y'] - 1, @y <= @loc['y'] + 1, @y++) {
+				for(@z = @loc['z'] - 1, @z <= @loc['z'] + 1, @z++) {
 					if(get_block(array(@x, @y, @z, pworld())) === 'DIAMOND_ORE') {
 						@report = false;
 					}
