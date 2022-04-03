@@ -901,9 +901,11 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 								try(set_inventory(@loc, _get_loot(@floor, @random, @bonus)));
 								if(@room['type'] == 'TREASURE') {
 									set_blockdata_string(location_shift(@loc, 'down'), 'diamond_block');
-									set_block_lock(@loc, 'Key'.(@floor + 1));
-									add_to_inventory(@chestArray[integer(srand(@random) * array_size(@chestArray))],
-											array(name: 'TRIPWIRE_HOOK', meta: array(display: 'Key'.(@floor + 1))));
+									if(@chestArray) { // only lock this chest if we have a previous chest to add a key to
+										set_block_lock(@loc, 'Key'.(@floor + 1));
+										add_to_inventory(@chestArray[integer(srand(@random) * array_size(@chestArray))],
+												array(name: 'TRIPWIRE_HOOK', meta: array(display: 'Key'.(@floor + 1))));
+									}
 								} else {
 									@chestArray[] = @loc;
 								}
