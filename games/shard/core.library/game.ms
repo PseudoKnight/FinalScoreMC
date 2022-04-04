@@ -172,6 +172,7 @@ proc _shard_create(@rules){
 				_add_activity('shard', @worldname.'//Shard');
 
 				// Default procedures (overrideable)
+				include_dir('../rules.library');
 				proc _set_inventory_contents(@loc, @count, @player) {
 					// Clear all inventory
 					if(has_metadata(@loc, 'loot')) {
@@ -197,6 +198,7 @@ proc _shard_create(@rules){
 						_objective_load(@binds, @rules);
 					} else if(@value && file_exists('../rules.library/'.@rule.'.ms')) {
 						include('../rules.library/'.@rule.'.ms');
+						_rule_load(@binds, @value);
 					}
 				}
 
