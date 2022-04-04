@@ -190,7 +190,11 @@ proc _shard_create(@rules){
 				@game['binds'] = @binds;
 				foreach(@rule: @value in @rules) {
 					if(@rule == 'objective' && file_exists('../objectives.library/'.@value.'.ms')) {
+						// games only have one objective, but we need to statically include all of them first
+						include_dir('../objectives.library');
+						// now we make sure the current objective is last before calling _objective_load
 						include('../objectives.library/'.@value.'.ms');
+						_objective_load(@binds, @rules);
 					} else if(@value && file_exists('../rules.library/'.@rule.'.ms')) {
 						include('../rules.library/'.@rule.'.ms');
 					}
