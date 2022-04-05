@@ -26,13 +26,12 @@ execute(iclosure(){
 						if(is_null(@portals[@color])) {
 							continue();
 						}
-						foreach(@p in players_in_radius(@from, 48)) {
-							foreach(@b in @portals[@color]['blocks']) {
-								if(is_array(@b)) {
-									psend_block_change(@p, @b, get_blockdata_string(@b));
-								}
+						foreach(@e in @portals[@color]['entities']) {
+							if(entity_exists(@e)) {
+								entity_remove(@e);
 							}
 						}
+						@portals[@color] = null;
 					}
 					die();
 				}
@@ -76,6 +75,7 @@ execute(iclosure(){
 		@trace = ray_trace(48);
 
 		if(!@trace['hitblock']) {
+			play_sound(ploc(), array(sound: 'ENTITY_SHULKER_CLOSE'));
 			return(true);
 		}
 
@@ -90,7 +90,7 @@ execute(iclosure(){
 		@face = @trace['hitface'];
 
 		@portal = @block[];
-		
+
 		@portal['x'] += 0.5;
 		@portal['z'] += 0.5;
 
@@ -131,22 +131,16 @@ execute(iclosure(){
 				@portal['pitch'] = 90;
 		}
 
-		// clean up old portal blocks before modifying the portals array
+		// clean up old portal frames before modifying the portals array
 		if(@portals[@color]) {
-			@oldLocs = @portals[@color]['blocks'];
-			if(is_null(@oldLocs)) {
-				continue();
-			}
-			foreach(@p in players_in_radius(@block, 48)) {
-				foreach(@b in @oldLocs) {
-					if(is_array(@b)) {
-						psend_block_change(@p, @b, get_blockdata_string(@b));
-					}
+			foreach(@e in @portals[@color]['entities']) {
+				if(entity_exists(@e)) {
+					entity_remove(@e);
 				}
 			}
 		}
 
-		@portals[@color] = array(exit: @portal, blocks: array(@block, @extension));
+		@portals[@color] = array(exit: @portal, blocks: array(@block, @extension), entities: array());
 
 		// play effects
 		play_sound(@loc, array(sound: 'ENTITY_SHULKER_SHOOT', pitch: 1.3, volume: 3));
@@ -173,11 +167,26 @@ execute(iclosure(){
 			spawn_particle(@origin, array(particle: 'FALLING_DUST', block: @color.'_concrete'));
 		}
 
-		@otherColor = if(@color == 'orange', 'blue', 'orange');
-		if(@portals[@otherColor]) {
-			foreach(@p in players_in_radius(@portal, 0.7)) {
-				@b = @portals[@color]['blocks'][0];
-				if(is_array(@b) && array_subset_of(@block, @b)) {
+		// set new portal frames
+		@modify = closure(@e){
+			set_entity_spec(@e, array(
+				fixed: true,
+				item: array(name: 'FILLED_MAP', meta: array(mapid: if(@color == 'orange', 1314, 1317))),
+				visible: false,
+			));
+			set_hanging_direction(@e, @face);
+			@portals[@color]['entities'][] = @e;
+		}
+		spawn_entity('ITEM_FRAME', 1, location_shift(@block, @face), @modify);
+		if(@extension) {
+			spawn_entity('ITEM_FRAME', 1, location_shift(@extension, @face), @modify);
+		}
+
+		// special case if they shoot right below a player
+		if(@face == 'UP') {
+			@otherColor = if(@color == 'orange', 'blue', 'orange');
+			if(@portals[@otherColor]) {
+				foreach(@p in players_in_radius(@portal, 0.7)) {
 					@ploc = ploc();
 					@newLoc = _rotate_exit(@portals, @color, @ploc['yaw'], @ploc['pitch']);
 					relative_teleport(@newLoc);
@@ -186,20 +195,9 @@ execute(iclosure(){
 					@v = get_vector(@portals[@otherColor]['exit'], 0.15);
 					set_pvelocity(@v);
 					set_timeout(1, closure(set_pvelocity(@v)));
-					break();
 				}
 			}
 		}
-
-		// set new portal blocks
-		set_timeout(1, closure(){
-			foreach(@p in players_in_radius(@block, 48)) {
-				psend_block_change(@p, @block, @color.'_concrete');
-				if(@extension) {
-					psend_block_change(@p, @extension, @color.'_concrete');
-				}
-			}
-		});
 
 		return(true);
 	}
