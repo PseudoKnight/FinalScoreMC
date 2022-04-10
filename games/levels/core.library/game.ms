@@ -1,4 +1,5 @@
 include('player.ms');
+include_dir('../mobs.library');
 
 proc _level_prepare(@name, @arena, @region, @world) {
 	@level = array(
