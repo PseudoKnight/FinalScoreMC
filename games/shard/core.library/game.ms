@@ -30,8 +30,10 @@ proc _shard_create(@rules){
 	try {
 		@files = list_files("@base/shard/region");
 		foreach(@file in @files) {
-			if(string_starts_with(@file, 'r.') && file_size("@base/shard/region/@file") > 1000000) {
+			if(string_starts_with(@file, 'r.')) { // 
 				delete_file("@base/shard/region/@file");
+				try(delete_file("@base/shard/entities/@file"));
+				try(delete_file("@base/shard/poi/@file"));
 			}
 		}
 	} catch(IOException @ex) {
