@@ -48,8 +48,8 @@ proc _stats_table() {
 	return(array(
 		array('kills', 2, '-------', 'K'),
 		array('deaths', 2, '--------', 'D'),
-		array('damage', 3, '--------', 'DMG'),
-		array('pickups', 2, '-------', 'PKS')
+		array('damage', 3, '--------', 'DA'),
+		array('pickups', 2, '-------', 'PU')
 	));
 }
 
@@ -113,8 +113,8 @@ proc _stats_print(@winners, @pvp) {
 				@player)
 			.'-', '-', ' '));
 		
-		@embed['fields'][0]['value'] .= if(!@firstline, '\n').integer(@stats[@a[0]]).' : '.integer(@stats[@b[0]]);
-		@embed['fields'][1]['value'] .= if(!@firstline, '\n').integer(@stats[@c[0]]).' : '.integer(@stats[@d[0]]);
+		@embed['fields'][0]['value'] .= if(!@firstline, '\n').'`'.integer(@stats[@a[0]]).' : '.integer(@stats[@b[0]].'`');
+		@embed['fields'][1]['value'] .= if(!@firstline, '\n').'`'.integer(@stats[@c[0]]).' : '.integer(@stats[@d[0]].'`');
 		@embed['fields'][2]['value'] .= if(!@firstline, '\n').if(array_contains(@winners, @player), '**'.@player.'**', @player);
 
 		@firstline = false;
