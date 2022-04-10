@@ -72,44 +72,43 @@ bind('player_death', null, null, @event) {
 		// Why does this even exist?
 		modify_event('xp', plevel() * 7);
 
-		/*
 		if(array_index_exists(@event['cause'], 'damager')) {
 			@damager = @event['cause']['damager'];
 			if(@event['cause']['cause'] == 'PROJECTILE') {
 				@damager = @event['cause']['shooter'];
 			}
 			if(length(@damager) > 16 && !get_mob_name(@damager)) {
-				@names = get_value('mobnames');
-				if(!@names) {
-					http_request('http://www.wordgenerator.net/application/p.php?type=1&id=fake_words', array(
-						'method': 'GET',
-						'success': closure(@response){
-							try {
-								if(!@response['error']) {
-									@names = split(',', @response['body']);
-									set_mob_name(@damager, @names[0]);
-									set_entity_persistence(@damager, true);
-									array_remove(@names, 0);
-									store_value('mobnames', @names);
+				scriptas('~console', // avoid exception spam to player if this breaks
+					@entityType = _to_upper_camel_case(replace(entity_type(@damager), '_', ' '));
+					@names = get_value('mobnames');
+					if(!@names) {
+						http_request('http://www.wordgenerator.net/application/p.php?type=1&id=fake_words', array(
+							'method': 'GET',
+							'success': closure(@response){
+								try {
+									if(!@response['error']) {
+										@names = split(',', @response['body']);
+										set_mob_name(@damager, array_remove(@names, 0).' the '.@entityType);
+										set_entity_persistence(@damager, true);
+										store_value('mobnames', @names);
+									}
+								} catch(Exception @ex) {
+									// ignore
 								}
-							} catch(Exception @ex) {
-								// ignore
 							}
+						));
+					} else {
+						try {
+							set_mob_name(@damager, array_remove(@names, 0).' the '.@entityType);
+							set_entity_persistence(@damager, true);
+							store_value('mobnames', @names);
+						} catch(BadEntityException @ex) {
+							// ignore
 						}
-					));
-				} else {
-					try {
-						set_mob_name(@damager, @names[0]);
-						set_entity_persistence(@damager, true);
-						array_remove(@names, 0);
-						store_value('mobnames', @names);
-					} catch(BadEntityException @ex) {
-						// ignore
 					}
-				}
+				);
 			}
 		}
-		*/
 	} else {
 		modify_event('death_message', null);
 	}
