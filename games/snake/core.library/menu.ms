@@ -35,8 +35,8 @@ proc _snake_menu() {
 		@item = @event['slotitem'];
 		if(@item) {
 			close_pinv();
+			include('game.ms');
 			try {
-				include('game.ms');
 				@modes = array(
 					0: 'elimination',
 					1: 'versus',
