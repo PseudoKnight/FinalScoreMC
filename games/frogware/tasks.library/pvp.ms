@@ -11,7 +11,7 @@ proc _fw_start_task(@secs) {
 		case 0:
 			@weapon = array(name: 'BOW', meta: array(damage: 379));
 		case 1:
-			@weapon = array(name: 'SNOW_BALL');
+			@weapon = array(name: 'SNOWBALL');
 	}
 	@meta = null;
 	if(!rand(4)) {
