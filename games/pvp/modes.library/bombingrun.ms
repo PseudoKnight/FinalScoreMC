@@ -34,83 +34,85 @@ proc _stats_table() {
 	));
 }
 
-@pvp['binds'][] = bind('item_pickup', null, null, @event, @pvp) {
-	if(array_index_exists(@pvp['players'], player())
-	&& _is_bomb(@pvp, @event['item'])) {
-		@pvp['bombholder'] = player();
-		set_pinv(player(), array(-106: @event['item'], 102: array(name: 'GOLDEN_CHESTPLATE')));
-		modify_event('item', null);
-		play_sound(ploc(player()), array(sound: 'ENTITY_ENDERMAN_TELEPORT', pitch: 2), player());
-		set_peffect(player(), 'GLOWING', 0, 9999, true, false);
-		title('', 'Take the bomb to the enemy target!', 0, 20, 20);
-	}
-}
-
-@pvp['binds'][] = bind('entity_damage', null, array(type: 'DROPPED_ITEM'), @event, @pvp) {
-	if(array_index_exists(@pvp, 'bomb')
-	&& @event['id'] == @pvp['bomb']) {
-		// ensure it's destroyed before spawning a new one
-		set_timeout(100, closure() {
-			if(!entity_exists(@event['id'])) {
-				array_remove(@pvp, 'bomb');
-			}
-		});
-	}
-}
-
-@pvp['binds'][] = bind('item_drop', null, array(itemname: @pvp['arena']['bomb']), @event, @pvp) {
-	if(array_contains(sk_current_regions(), @pvp['arena']['region'])) {
-		@pvp['bomb'] = @event['id'];
-		@pvp['bombholder'] = null;
-	}
-}
-
-@pvp['binds'][] = bind('item_spawn', null, array(itemname: @pvp['arena']['bomb']), @event, @pvp) {
-	if(array_contains(sk_regions_at(@event['location']), @pvp['arena']['region'])) {
-		set_entity_glowing(@event['id'], true);
-	}
-}
-
-@pvp['binds'][] = bind('player_move', null, null, @event, @pvp, @id) {
-	if(@pvp['bombholder'] == player()) {
-		@regions = sk_current_regions();
-		@team = null;
-		if(array_contains(@regions, @pvp['arena']['bombtarget'][0])) {
-			@team = 1;
-		} else if(array_contains(@regions, @pvp['arena']['bombtarget'][1])) {
-			@team = 0;
+proc _load_mode(@pvp) {
+	@pvp['binds'][] = bind('item_pickup', null, null, @event, @pvp) {
+		if(array_index_exists(@pvp['players'], player())
+		&& _is_bomb(@pvp, @event['item'])) {
+			@pvp['bombholder'] = player();
+			set_pinv(player(), array(-106: @event['item'], 102: array(name: 'GOLDEN_CHESTPLATE')));
+			modify_event('item', null);
+			play_sound(ploc(player()), array(sound: 'ENTITY_ENDERMAN_TELEPORT', pitch: 2), player());
+			set_peffect(player(), 'GLOWING', 0, 9999, true, false);
+			title('', 'Take the bomb to the enemy target!', 0, 20, 20);
 		}
-		if(!is_null(@team)) {
-			@item = pinv(player(), -106);
-			if(@item && @item['name'] == @pvp['arena']['bomb'] || ptake_item(array(name: @pvp['arena']['bomb']))) {
-				set_pinv(player(), -106, null);
-				@bind = bind('entity_damage', null, array(type: 'PLAYER'), @event, @damager = player(), @pvp) {
-					if(array_index_exists(@pvp['players'], @event['player'])) {
-						set_mob_killer(@event['id'], @event['player']);
-						_stats_damage(@damager, @event['player'], @event['amount'], @pvp);
-					}
+	}
+
+	@pvp['binds'][] = bind('entity_damage', null, array(type: 'DROPPED_ITEM'), @event, @pvp) {
+		if(array_index_exists(@pvp, 'bomb')
+		&& @event['id'] == @pvp['bomb']) {
+			// ensure it's destroyed before spawning a new one
+			set_timeout(100, closure() {
+				if(!entity_exists(@event['id'])) {
+					array_remove(@pvp, 'bomb');
 				}
-				explosion(location_shift(@event['to'], 'up'), 3, true);
-				unbind(@bind);
-				@pvp['team'][@team]['score']++;
-				set_pscore('bombs', @pvp['arena']['team'][@team]['name'], @pvp['team'][@team]['score'], @id);
-				@pvp['stats'][player()]['scores']++;
-				_pvp_msg(@pvp, color('gray').'[PVP] '
-					.@pvp['arena']['team'][@team]['color'].player().color('r').' blew up the target!');
-				if(array_index_exists(@pvp['arena'], 'rsoutputscore')) {
-					set_block(@pvp['arena']['rsoutputscore'][@team], 'REDSTONE_TORCH');
-					set_timeout(1000, closure(){
-						set_block(@pvp['arena']['rsoutputscore'][@team], 'TORCH');
-					});
-				}
-				_pvp_check_objectives(@id);
-			}
+			});
+		}
+	}
+
+	@pvp['binds'][] = bind('item_drop', null, array(itemname: @pvp['arena']['bomb']), @event, @pvp) {
+		if(array_contains(sk_current_regions(), @pvp['arena']['region'])) {
+			@pvp['bomb'] = @event['id'];
 			@pvp['bombholder'] = null;
-			set_pinv(player(), 102, array(name: 'IRON_CHESTPLATE', meta: array(enchants: array(fire_protection: array(elevel: 1)))));
-		} else {
-			spawn_particle(location_shift(@event['to'], 'up'),'CAMPFIRE_COSY_SMOKE');
 		}
 	}
-}
 
-@pvp['bombholder'] = null;
+	@pvp['binds'][] = bind('item_spawn', null, array(itemname: @pvp['arena']['bomb']), @event, @pvp) {
+		if(array_contains(sk_regions_at(@event['location']), @pvp['arena']['region'])) {
+			set_entity_glowing(@event['id'], true);
+		}
+	}
+
+	@pvp['binds'][] = bind('player_move', null, null, @event, @pvp, @id = @pvp['id']) {
+		if(@pvp['bombholder'] == player()) {
+			@regions = sk_current_regions();
+			@team = null;
+			if(array_contains(@regions, @pvp['arena']['bombtarget'][0])) {
+				@team = 1;
+			} else if(array_contains(@regions, @pvp['arena']['bombtarget'][1])) {
+				@team = 0;
+			}
+			if(!is_null(@team)) {
+				@item = pinv(player(), -106);
+				if(@item && @item['name'] == @pvp['arena']['bomb'] || ptake_item(array(name: @pvp['arena']['bomb']))) {
+					set_pinv(player(), -106, null);
+					@bind = bind('entity_damage', null, array(type: 'PLAYER'), @event, @damager = player(), @pvp) {
+						if(array_index_exists(@pvp['players'], @event['player'])) {
+							set_mob_killer(@event['id'], @event['player']);
+							_stats_damage(@damager, @event['player'], @event['amount'], @pvp);
+						}
+					}
+					explosion(location_shift(@event['to'], 'up'), 3, true);
+					unbind(@bind);
+					@pvp['team'][@team]['score']++;
+					set_pscore('bombs', @pvp['arena']['team'][@team]['name'], @pvp['team'][@team]['score'], @id);
+					@pvp['stats'][player()]['scores']++;
+					_pvp_msg(@pvp, color('gray').'[PVP] '
+						.@pvp['arena']['team'][@team]['color'].player().color('r').' blew up the target!');
+					if(array_index_exists(@pvp['arena'], 'rsoutputscore')) {
+						set_block(@pvp['arena']['rsoutputscore'][@team], 'REDSTONE_TORCH');
+						set_timeout(1000, closure(){
+							set_block(@pvp['arena']['rsoutputscore'][@team], 'TORCH');
+						});
+					}
+					_pvp_check_objectives(@id);
+				}
+				@pvp['bombholder'] = null;
+				set_pinv(player(), 102, array(name: 'IRON_CHESTPLATE', meta: array(enchants: array(fire_protection: array(elevel: 1)))));
+			} else {
+				spawn_particle(location_shift(@event['to'], 'up'),'CAMPFIRE_COSY_SMOKE');
+			}
+		}
+	}
+
+	@pvp['bombholder'] = null;
+}

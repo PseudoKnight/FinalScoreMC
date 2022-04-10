@@ -436,7 +436,13 @@ proc _pvp_start_match(@id) {
 	# MODES
 	@modeScript = '../modes.library/'.@arena['mode'].'.ms';
 	if(file_exists(@modeScript)) {
+		// Since this is after some default procs are loaded, don't use include_dir
+		// This proc stub is the only one modes must override.
+		proc _load_mode(@pvp) {
+			noop();
+		}
 		include(@modeScript);
+		_load_mode(@pvp);
 	}
 
 	# WEAPONS
