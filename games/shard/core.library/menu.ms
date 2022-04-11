@@ -117,8 +117,17 @@ proc _open_rules_menu(@objective) {
 				'name': 'TNT', 'meta': array(
 					'display': color('aqua').color('bold').'MEGA DESTRUCTION',
 					'lore': array(
-						color('white').'Who needs tools when you have',
-						color('white').'instant TNT and Fireballs.',
+						color('white').'Spawn with TNT, flint&steel, and fireballs',
+			)))
+		),
+		'icarus': array(
+			'default': false,
+			'shown': true,
+			'item': array(
+				'name': 'ELYTRA', 'meta': array(
+					'display': color('aqua').color('bold').'ICARUS',
+					'lore': array(
+						color('white').'Spawn with elytra and fireworks',
 			)))
 		),
 		'noregen': array(

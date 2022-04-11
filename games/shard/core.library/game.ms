@@ -238,11 +238,13 @@ proc _shard_create(@rules){
 							}
 							if(@airDrop) {
 								pgive_item(@p, array('name': 'ELYTRA', 'meta': array('damage': 402)));
-								set_peffect(@p, 'LEVITATION', -4, 15);
-								bind('entity_toggle_glide', null, array('type': 'PLAYER', 'player': @p), @event) {
-									set_peffect(player(), 'LEVITATION', 0, 0);
-									unbind();
-								}
+								set_peffect(@p, 'SLOW_FALLING', 1, 60);
+								queue_push(closure(){
+									bind('player_armor_change', null, array(player: @p), @event) {
+										set_peffect(player(), 'SLOW_FALLING', 0, 0);
+										unbind();
+									}
+								}, 'shard');
 							}
 							set_plevel(@p, 0);
 							set_peffect(@p, 'RESISTANCE', 3, 30, true);
