@@ -17,6 +17,7 @@ proc _classes_load(@player, @classname, @pvp) {
 proc _classes_equip(@player, @classname, @pvp) {
 	@class = @pvp['arena']['classes'][@classname];
 	if(array_index_exists(@class, 'script')) {
+		proc _class_equip(@player) {}
 		include('../classes.library/'.@classname.'.ms');
 		_class_equip(@player);
 	}
@@ -49,6 +50,7 @@ proc _classes_equip(@player, @classname, @pvp) {
 proc _classes_powerup(@player, @classname, @pvp) {
 	@class = @pvp['arena']['classes'][@classname];
 	if(array_index_exists(@class, 'script')) {
+		proc _class_powerup(@player) {}
 		include('../classes.library/'.@classname.'.ms');
 		_class_powerup(@player);
 	}
