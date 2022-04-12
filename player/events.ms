@@ -82,7 +82,7 @@ bind('player_death', null, null, @event) {
 					@entityType = _to_upper_camel_case(replace(entity_type(@damager), '_', ' '));
 					@names = get_value('mobnames');
 					if(!@names) {
-						http_request('http://www.wordgenerator.net/application/p.php?type=1&id=fake_words', array(
+						http_request('https://www.wordgenerator.net/application/p.php?type=1&id=fake_words', array(
 							'method': 'GET',
 							'success': closure(@response){
 								try {
