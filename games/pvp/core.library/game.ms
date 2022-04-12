@@ -293,9 +293,15 @@ proc _pvp_start(@pvp){
 			if(@timeleft[0] <= 5) {
 				play_sound(@arena['lobby'], array(sound: 'BLOCK_NOTE_BLOCK_PLING', pitch: 1, volume: 3));
 				update_bar(@id, array(percent: (6 - @timeleft[0]) / 6));
-				foreach(@p in array_keys(@pvp['players'])) {
+				foreach(@p: @pd in @pvp['players']) {
 					try {
-						title(@p, color('yellow').@timeleft[0], @pvp['title'], 0, @timeleft[0] * 20, 20);
+						if(array_index_exists(@pvp, 'team')) {
+							@team = @pd['team'];
+							title(@p, color('yellow').@timeleft[0], @arena['team'][@team]['color']
+									.'Team '.@arena['team'][@team]['name'], 0, @timeleft[0] * 20, 20);
+						} else {
+							title(@p, color('yellow').@timeleft[0], @pvp['title'], 0, @timeleft[0] * 20, 20);
+						}
 						if(phealth(@p) == 0) {
 							respawn(@p);
 						}
@@ -319,9 +325,14 @@ proc _pvp_start(@pvp){
 			}
 		} else {
 			remove_bar(@id);
-			foreach(@p in array_keys(@pvp['players'])) {
+			foreach(@p: @pd in @pvp['players']) {
 				try {
-					title(@p, color('green').'GO!', null, 0, 0, 20);
+					if(array_index_exists(@pvp, 'team')) {
+						@team = @pd['team'];
+						title(@p, @arena['team'][@team]['color'].'GO!', null, 0, 0, 20);
+					} else {
+						title(@p, color('green').'GO!', null, 0, 0, 20);
+					}
 				} catch(PlayerOfflineException @ex) {
 					// tease.
 				}
