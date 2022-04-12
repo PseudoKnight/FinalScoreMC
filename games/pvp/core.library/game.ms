@@ -490,7 +490,7 @@ proc _pvp_start_match(@id) {
 		foreach(@player: @p in @pvp['players']) {
 			if(array_index_exists(@arena, 'respawntime') && @p['respawn'] != 0) {
 				@time = time();
-				if(@p['respawn'] < @time) {
+				if(@p['respawn'] < @time + 100) { // couple ticks of leeway
 					@loc = array();
 					if(array_index_exists(@arena, 'captain')) {
 						@team = @p['team'];
