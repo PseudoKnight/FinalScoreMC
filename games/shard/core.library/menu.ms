@@ -313,7 +313,7 @@ proc _open_rules_menu(@objective) {
 					die();
 				}
 			}
-			@ruleSlot = @slot - floor(@slot / 9) * 9;
+			@ruleSlot = @slot - floor(@slot / 18) * 9;
 			@item = @event['inventory'][@slot];
 			@rule = array_get(@rules, @ruleSlot, null);
 			if(@rule) {
