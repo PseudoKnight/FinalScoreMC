@@ -3,9 +3,9 @@ proc _get_categories() {
 }
 
 proc _get_match(@guess, @target) {
-	// ignore beginning articles
-	@guess = reg_replace('^(a|the)\\s', '', to_lower(@guess));
-	@target = reg_replace('^(a|the)\\s', '', to_lower(@target));
+	// ignore all articles
+	@guess = reg_replace('\\s?(a|an|the)\\s', '', to_lower(@guess));
+	@target = reg_replace('\\s?(a|an|the)\\s', '', to_lower(@target));
 
 	// ignore small single spelling errors in targets larger than 4 characters
 	if(length(@target) < 5 && @guess == @target
