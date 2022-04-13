@@ -8,7 +8,7 @@ proc _pvp_bomb_spawn(@pvp, @loc) {
 	}
 	if(!@pvp['bombholder'] && (!array_index_exists(@pvp, 'bomb') || !entity_exists(@pvp['bomb']))) {
 		@pvp['bomb'] = drop_item(@loc, array(name: @pvp['arena']['bomb']), false);
-		set_timeout(1, closure(set_entity_velocity(@pvp['bomb'], null)));
+		set_timeout(1, closure(try(set_entity_velocity(@pvp['bomb'], null))));
 	}
 }
 
