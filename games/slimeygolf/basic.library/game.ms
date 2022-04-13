@@ -248,6 +248,12 @@ proc _start_game(@course, @loc) {
 							}
 						}
 
+						if(@hits == 1) {
+							title(@player, 'Hole in One!', null);
+						} else if(@type) {
+							title(@player, null, @type);
+						}
+
 						# clean up the hole for this player
 						_remove_ball(@ball, @course);
 						unbind('golf_swing1_'.@player)
