@@ -29,8 +29,8 @@ proc _stats_table() {
 	return(array(
 		array('kills', 2, '-------', 'K'),
 		array('deaths', 2, '---------', 'D'),
-		array('scores', 2, '--------', 'SCR'),
-		array('damage', 3, '------', 'DMG')
+		array('scores', 1, '--------', 'S'),
+		array('damage', 3, '------', 'DA')
 	));
 }
 

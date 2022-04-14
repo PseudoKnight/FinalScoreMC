@@ -28,15 +28,15 @@ proc _stats_damage(@damager, @player, @amount, @pvp) {
 	}
 }
 
-proc _stat_pad(@amount, @length) {
+proc _stat_pad(@amount, @length, @char = ' ') {
 	@length -= length(@amount);
 	if(@length <= 0, return(@amount));
-	@pad = '';
+	@pad = if(@char != ' ', color(8), '');
 	while(@length > 0) {
-		@pad .= '0';
+		@pad .= @char;
 		@length--;
 	}
-	return(color(8).@pad.color('r').@amount);
+	return(@pad.if(@char != ' ', color('r')).@amount);
 }
 
 /*
@@ -93,8 +93,10 @@ proc _stats_print(@winners, @pvp) {
 	if(array_size(@winners) == 1) {
 		@embed['author']['icon_url'] = 'https://crafatar.com/avatars/'.puuid(@winners[0], true).'?overlay';
 	}
-	@embed['fields'][] = array(name: @a[3].' : '.@b[3], value: '', inline: true);
-	@embed['fields'][] = array(name: @c[3].' : '.@d[3], value: '', inline: true);
+	@embed['fields'][] = array(name: '`'._stat_pad(@a[3], @a[1])
+	.' : '._stat_pad(@b[3], @b[1]).'`', value: '', inline: true);
+	@embed['fields'][] = array(name: '`'._stat_pad(@c[3], @c[1])
+	.' : '._stat_pad(@d[3], @d[1]).'`', value: '', inline: true);
 	@embed['fields'][] = array(name: '', value: '', inline: true); // player names
 
 	_pvp_msg(@pvp, colorize('&7&m|------------------------------&7&l[ &f&lTHE FINAL SCORE&7&l ]&7&m--|'));
@@ -104,18 +106,23 @@ proc _stats_print(@winners, @pvp) {
 	@firstline = true;
 	foreach(@player: @stats in @pvp['stats']) {
 		_pvp_msg(@pvp, replace('----'
-			._stat_pad(integer(@stats[@a[0]]), @a[1]).@a[2]
-			._stat_pad(integer(@stats[@b[0]]), @b[1]).@b[2]
-			._stat_pad(integer(@stats[@c[0]]), @c[1]).@c[2]
-			._stat_pad(integer(@stats[@d[0]]), @d[1]).@d[2]
+			._stat_pad(integer(@stats[@a[0]]), @a[1], '0').@a[2]
+			._stat_pad(integer(@stats[@b[0]]), @b[1], '0').@b[2]
+			._stat_pad(integer(@stats[@c[0]]), @c[1], '0').@c[2]
+			._stat_pad(integer(@stats[@d[0]]), @d[1], '0').@d[2]
 			.if(array_contains(@winners, @player),
 				color('gold').color('bold').@player.if(@pvp['coins'] > 0, ' +'.@pvp['coins']),
 				@player)
 			.'-', '-', ' '));
 		
-		@embed['fields'][0]['value'] .= if(!@firstline, '\n').'`'.integer(@stats[@a[0]]).' : '.integer(@stats[@b[0]]).'`';
-		@embed['fields'][1]['value'] .= if(!@firstline, '\n').'`'.integer(@stats[@c[0]]).' : '.integer(@stats[@d[0]]).'`';
-		@embed['fields'][2]['value'] .= if(!@firstline, '\n').if(array_contains(@winners, @player), '**'.@player.'**', @player);
+		@embed['fields'][0]['value'] .= if(!@firstline, '\n')
+				.'`'._stat_pad(integer(@stats[@a[0]]), @a[1])
+				.' : '._stat_pad(integer(@stats[@b[0]]), @b[1]).'`';
+		@embed['fields'][1]['value'] .= if(!@firstline, '\n')
+				.'`'._stat_pad(integer(@stats[@c[0]]), @c[1])
+				.' : '._stat_pad(integer(@stats[@d[0]]), @d[1]).'`';
+		@embed['fields'][2]['value'] .= if(!@firstline, '\n')
+				.if(array_contains(@winners, @player), '**'.@player.'**', @player);
 
 		@firstline = false;
 	}
