@@ -23,13 +23,23 @@ register_command('warp', array(
 			@warpid = @args[0];
 		}
 		
+		include('includes.library/teleports.ms');
 		@closure = closure(@uuid) {
 			@warp = get_value('warp.'.to_lower(@warpid));
 			if(!@warp) {
-				die(color('gold').'That warp does not exist.');
+				try {
+					// try a world name
+					@world = _worldid(@warpid);
+					if(!pisop(@uuid) && !_allows_teleports(@world)) {
+						die(color('gold').'You cannot teleport directly to that world.');
+					}
+					@warp = get_spawn(@world);
+					@warp = array(@warp[0] + 0.5, @warp[1] - 1, @warp[2] + 0.5, @warp[3]);
+				} catch (InvalidWorldException @ex) {
+					die(color('gold').'That warp does not exist.');
+				}
 			}
-			
-			include('includes.library/teleports.ms');
+
 			if(!_allows_teleports(pworld(@uuid))) {
 				die(color('gold').'You cannot warp in this world.');
 			}
