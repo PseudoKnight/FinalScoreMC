@@ -270,44 +270,47 @@ bind('player_interact_entity', null, array('clicked': 'PAINTING','hand': 'main_h
 }
 
 // Hand instruments
-bind('item_swap', null, null, @event,
-	@instruments = array(
-		'IRON_NUGGET': array('note': 'flute', 'name': 'Ocarina'),
-		'GOLD_NUGGET': array('note': 'bell', 'name': 'Bell'),
-		'STRING': array('note': 'guitar', 'name': 'Lute'),
-		'BONE': array('note': 'xylophone', 'name': 'Bones'),
-		'IRON_INGOT': array('note': 'iron_xylophone', 'name': 'Iron Xylophone'),
-		'BAMBOO': array('note': 'didgeridoo', 'name': 'Didgeridoo'),
+@instruments = array(
+	'IRON_NUGGET': 'flute',
+	'GOLD_NUGGET':'bell',
+	'BONE': 'xylophone',
+	'IRON_INGOT': 'iron_xylophone',
+	//'STRING':'guitar',
+	//'BAMBOO': 'didgeridoo',
+);
+
+bind('player_interact', null, null, @event, @instruments,
+	@notes = array(
+		0.5, 0.53, 0.56, 0.6, 0.63, 0.67, 0.7, 0.75, 0.79, 0.84, 0.89, 0.94,
+		1.0, 1.06, 01.12, 1.19, 1.26, 1.33, 1.41, 1.5, 1.59, 1.68, 1.78, 1.89, 2.0
 	)
 ) {
-	@offhand = @event['off_hand'];
-	if(@offhand) {
-		@material = @offhand['name'];
+	@item = @event['item'];
+	if(@item && _is_survival_world(pworld())) {
+		@material = @item['name'];
 		if(array_index_exists(@instruments, @material)) {
 			@instrument = @instruments[@material];
-			action_msg('Playing '.@instrument['name'].'...');
-			if(has_bind(player().'instrument')) {
-				unbind(player().'instrument');
+			@pitch = floor((-ploc()['pitch'] + 90) / 7.5);
+			if(@event['hand'] == 'off_hand') {
+				@pitch += if(@pitch < 21, 4, -5);
 			}
-			bind('item_held', array('id': player().'instrument'), null, @event,
-				@material,
-				@player = player(),
-				@sound = 'block.note_block.'.@instrument['note'],
-				@notes = array(0.62, 0.7, 0.8, 0.95, 1.05, 1.25, 1.4, 1.59),
-			) {
-				@num = @event['to'];
-				if(@player == player() && @num != 8) {
-					@item = pinv(player(), -106);
-					if(@item && @item['name'] == @material) {
-						cancel();
-						play_named_sound(ploc(), array('sound': @sound, 'pitch': @notes[@num], 'category': 'VOICE'));
-					} else {
-						unbind();
-					}
-				}
+			@pitch = @notes[@pitch];
+			if(@event['button'] == 'left' && @event['block']) {
+				play_named_sound(ploc(), array('sound': 'block.note_block.snare', 'category': 'VOICE'));
+			} else {
+				play_named_sound(ploc(), array('sound': 'block.note_block.'.@instrument, 'pitch': @pitch, 'category': 'VOICE'));
 			}
-			set_timeout(1, closure(try(set_pheld_slot(8))));
 		}
+	}
+}
+
+bind('player_toggle_sneak', null, array(sneaking: true), @event, @instruments) {
+	@mainhand = pinv(player(), null);
+	@offhand = pinv(player(), -106);
+	if(@mainhand && array_index_exists(@instruments, @mainhand['name'])) {
+		play_named_sound(ploc(), array('sound': 'block.note_block.basedrum', 'category': 'VOICE'));
+	} else if(@offhand && array_index_exists(@instruments, @offhand['name'])) {
+		play_named_sound(ploc(), array('sound': 'block.note_block.basedrum', 'category': 'VOICE'));
 	}
 }
 
