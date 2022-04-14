@@ -59,7 +59,6 @@ bind('target_player', null, array('mobtype': 'ZOMBIE'), @event, @day) {
 					'ENDERMAN',
 					'ENDERMITE',
 					'EVOKER',
-					'GHAST',
 					'GLOW_SQUID',
 					'GOAT',
 					'GUARDIAN',
