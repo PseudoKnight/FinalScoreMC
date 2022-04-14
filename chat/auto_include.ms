@@ -251,7 +251,7 @@ proc _tellraw(@recipients, @components) {
 proc _to_upper_camel_case(@string) {
 	@split = reg_split('[_\\s]', @string);
 	foreach(@i: @s in @split) {
-		@split[@i] = to_upper(@s[0]).@s[1..];
+		@split[@i] = to_upper(@s[0]).to_lower(@s[1..]);
 	}
 	return(array_implode(@split));
 }

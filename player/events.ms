@@ -79,7 +79,7 @@ bind('player_death', null, null, @event) {
 			}
 			if(length(@damager) > 16 && !get_mob_name(@damager)) {
 				scriptas('~console', // avoid exception spam to player if this breaks
-					@entityType = _to_upper_camel_case(replace(entity_type(@damager), '_', ' '));
+					@entityType = _to_upper_camel_case(entity_type(@damager));
 					@names = get_value('mobnames');
 					if(!@names) {
 						http_request('https://www.wordgenerator.net/application/p.php?type=1&id=fake_words', array(
