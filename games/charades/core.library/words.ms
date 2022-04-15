@@ -2,10 +2,10 @@ proc _get_categories() {
 	return(array('actions', 'animals', 'easy', 'food_and_cooking', 'hard', 'household_items', 'idioms', 'medium', 'movies', 'other', 'person_or_character', 'travel', 'very_hard', 'songs', 'video_games'));
 }
 
-proc _get_match(@guess, @target) {
+proc _is_match(@guess, @target) {
 	// ignore all articles
-	@guess = reg_replace('\\s?(a|an|the)\\s', '', to_lower(@guess));
-	@target = reg_replace('\\s?(a|an|the)\\s', '', to_lower(@target));
+	@guess = reg_replace('(a|an|the)\\s', '', to_lower(@guess));
+	@target = reg_replace('(a|an|the)\\s', '', to_lower(@target));
 
 	// ignore small single spelling errors in targets larger than 4 characters
 	if(length(@target) < 5 && @guess == @target
@@ -20,16 +20,16 @@ proc _get_match(@guess, @target) {
 	return(false);
 }
 
-proc _highlight_similarities(@guess, @target) {
-	@words = parse_args(@guess);
-	foreach(@index: @word in @words) {
-		if(length(@word) > 1 && reg_match('(?i)'.@word, @target)) {
-			@words[@index] = color('bold').@word;
-		} else {
-			@words[@index] = color('reset').@word;
+proc _show_matches(@guess, @target) {
+	@obscured = reg_replace('[a-zA-Z0-9]', '_', @target);
+	@target = to_lower(@target);
+	foreach(@word in parse_args(@guess)) {
+		@pos = string_position(@target, to_lower(@word));
+		if(@pos > -1) {
+			@obscured = substr(@obscured, 0, @pos).@word.substr(@obscured, @pos + length(@word));
 		}
 	}
-	return(array_implode(@words));
+	return(@obscured);
 }
 
 proc _get_build(@category) {

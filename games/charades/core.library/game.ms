@@ -49,6 +49,7 @@ proc _prepare_game(@category) {
 	foreach(@p in @players) {
 		_charades_add_player(@p);
 		title(@p, 'Charades', to_upper(@category), 20, 60, 40);
+		tmsg(@p, 'Use ! to send a chat normal chat message instead of guessing.');
 	}
 
 	@spawn = sk_region_info('charades-beacon', pworld(), 0)[0];

@@ -21,10 +21,11 @@ register_command('charades', array(
 								if(@charades['reroll']) {
 									@charades['reroll']--;
 									_msg_charades(color('yellow').player().' re-rolled "'.@charades['build'].'" ('.@charades['reroll'].' left)');
+									_msg_charades(color('yellow').color('bold').'You must now guess: '.color('reset').reg_replace('[a-zA-Z0-9]', '_', @charades['build']));
 									@new = _get_build(@charades['category']);
 									@charades['build'] = @new['build'];
 									@charades['hint'] = @new['hint'];
-									msg('You must now build "'.color('green').color('bold').@charades['build'].color('reset').'"');
+									msg('You must now build: '.color('green').color('bold').@charades['build'].color('reset'));
 								} else {
 									msg(color('gold').'You cannot re-roll again.');
 								}

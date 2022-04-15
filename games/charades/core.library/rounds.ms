@@ -28,8 +28,9 @@ proc _queue_next_builder() {
 	}
 	@charades['reroll'] = 2;
 	_msg_charades(color('yellow').color('bold').'Charades Category: '.color('yellow').replace(to_upper(@charades['category']), '_', ' '));
+	_msg_charades(color('yellow').color('bold').'You must guess: '.color('reset').reg_replace('[a-zA-Z0-9]', '_', @charades['build']));
 	_click_tell(array(@builder), array(
-		'You must build '.color('green').color('bold').@charades['build'].color('reset').' ',
+		'You must build: '.color('green').color('bold').@charades['build'].color('reset').' ',
 		array(color('yellow').'[Re-roll]', '/charades reroll')
 	));
 	title(@builder, 'Your turn to build!', '', 20, 40, 20);
@@ -74,19 +75,23 @@ proc _queue_next_builder() {
 
 	bind('player_chat', array('id': 'charades-guessing', 'priority': 'HIGH'), null, @event, @charades) {
 		if(get_pscoreboard(player()) == 'charades') {
-			consume();
-			cancel();
-			if(array_get(get_pteam(player(), 'charades'), 'name', null) == 'guessers') {
-				@message = @event['message'];
-				@timestamp = simple_date('h:mm');
-				@name = display_name();
-				if(_get_match(@message, @charades['build'])) {
-					play_sound(ploc(), array('sound': 'ENTITY_PLAYER_LEVELUP'));
-					_regionmsg('charades', colorize("&8@timestamp [Charades] @{name}&8: &r@message"));
-					_end_build(player(), @charades['build']);
-				} else {
-					@message = _highlight_similarities(@message, @charades['build']);
-					_regionmsg('charades', colorize("&8@timestamp [Charades] @{name}&8: &r@message"));
+			if(@event['message'][0] == '!') {
+				modify_event('message', @event['message'][1..]);
+			} else {
+				consume();
+				cancel();
+				if(array_get(get_pteam(player(), 'charades'), 'name', null) == 'guessers') {
+					@message = @event['message'];
+					@timestamp = simple_date('h:mm');
+					@name = display_name();
+					if(_is_match(@message, @charades['build'])) {
+						play_sound(ploc(), array('sound': 'ENTITY_PLAYER_LEVELUP'));
+						_regionmsg('charades', colorize("&8@timestamp [Charades] @{name}&8: &r@message"));
+						_end_build(player(), @charades['build']);
+					} else {
+						@message = _show_matches(@message, @charades['build']);
+						_regionmsg('charades', colorize("&8@timestamp [Charades] @{name}&8: &r@message"));
+					}
 				}
 			}
 		}
