@@ -55,7 +55,7 @@ proc _queue_next_builder() {
 			if(!ponline(@builder) || !array_contains(sk_current_regions(@builder), 'charades')) {
 				team_remove_player('builder', @builder, 'charades');
 				_charades_remove_player(@builder);
-				_end_build(null, @charades['build']);
+				_end_build();
 			} else {
 				_msg_charades(integer(@timer[0]), 'action');
 				if(@timer[0] == 25) {
@@ -63,7 +63,7 @@ proc _queue_next_builder() {
 						_msg_charades(color('bold').'Hint: '.@charades['hint']);
 					}
 				} else if(@timer[0] <= 0) {
-					_end_build(null, @charades['build']);
+					_end_build();
 				}
 			}
 		} catch(Exception @ex) {
@@ -86,11 +86,14 @@ proc _queue_next_builder() {
 					@name = display_name();
 					if(_is_match(@message, @charades['build'])) {
 						play_sound(ploc(), array('sound': 'ENTITY_PLAYER_LEVELUP'));
-						_regionmsg('charades', colorize("&8@timestamp [Charades] @{name}&8: &r@message"));
-						_end_build(player(), @charades['build']);
+						@charades['buffer'][player()] = colorize("&8@timestamp [Charades] @{name}&8: &r@message");
+						_msg_charades(color('green').player().' guessed correctly!');
+						if(@charades['seconds'] > 2) {
+							@charades['seconds'] = 2.0;
+						}
 					} else {
 						@message = _show_matches(@message, @charades['build']);
-						_regionmsg('charades', colorize("&8@timestamp [Charades] @{name}&8: &r@message"));
+						_msg_charades(colorize("&8@timestamp [Charades] @{name}&8: &r@message"));
 					}
 				}
 			}
@@ -98,7 +101,7 @@ proc _queue_next_builder() {
 	}
 }
 
-proc _end_build(@guesser, @word) {
+proc _end_build() {
 	unbind('charades-guessing');
 
 	@charades = import('charades');
@@ -113,21 +116,24 @@ proc _end_build(@guesser, @word) {
 
 	@points = if(@charades['finalRound'], 2, 1);
 
-	if(@guesser) {
-		_regionmsg('charades', color('green').color('bold').@guesser.color('green').' correctly guessed "'.color('bold').@word.color('green').'"!');
-		set_pscore('score', @guesser, get_pscore('score', @guesser, 'charades') + @points, 'charades');
-	} else if(@word) {
-		_regionmsg('charades', color('yellow').'The answer you were looking for was "'.color('bold').@word.color('yellow').'"!');
+	if(@charades['buffer']) {
+		foreach(@guesser: @guess in @charades['buffer']) {
+			_msg_charades(@guess);
+			set_pscore('score', @guesser, get_pscore('score', @guesser, 'charades') + @points, 'charades');
+		}
+	} else if(@charades['build']) {
+		_msg_charades(color('yellow').'The answer you were looking for was "'.color('bold').@charades['build'].color('yellow').'"!');
 	} else {
-		_regionmsg('charades', color('gold').'The game was called on account of rain.');
+		_msg_charades(color('gold').'The game was called on account of rain.');
 	}
 
 	foreach(@t in get_teams('charades')) {
 		if(@t['name'] == 'builder') {
 			if(@t['players']) {
 				@builder = @t['players'][0];
-				if(@guesser) {
+				if(@charades['buffer']) {
 					set_pscore('score', @builder, get_pscore('score', @builder, 'charades') + @points, 'charades');
+					@charades['buffer'] = associative_array();
 				}
 				team_add_player('guessers', @builder, 'charades');
 				_equip_kit(@builder);
