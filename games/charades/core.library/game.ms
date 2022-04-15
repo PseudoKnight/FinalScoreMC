@@ -104,11 +104,11 @@ proc _end_game() {
 	}
 
 	if(array_size(@topPlayers) == 1) {
-		_regionmsg('charades', color('green').@topPlayers[0].' wins!');
+		_worldmsg(@charades['world'], color('green').@topPlayers[0].' wins Charades!');
 	} else if(array_size(@topPlayers) > 1) {
-		_regionmsg('charades', color('green').array_implode(@topPlayers, ' and ').' tied for the win!');
+		_worldmsg(@charades['world'], color('green').array_implode(@topPlayers, ' and ').' tied for the win in Charades!');
 	} else {
-		_regionmsg('charades', color('yellow').'Nobody wins! I\'M NOT SURE HOW THIS IS POSSIBLE. IS ANYONE THERE? WHY AM I YELLING?!');
+		_worldmsg(@charades['world'], color('yellow').'Nobody wins! I\'M NOT SURE HOW THIS IS POSSIBLE. IS ANYONE THERE? WHY AM I YELLING?!');
 	}
 	_unbind_charade_events();
 	export('charades', null);
