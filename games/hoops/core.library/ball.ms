@@ -262,10 +262,12 @@ proc _hoops_ball_create(@loc) {
 				}
 				if(@game['state'] < 3 && @game['lastholder']) {
 					@lastHolder = @game['lastholder'];
-					@effect = array('particle': 'REDSTONE', 'color': @game['players'][@lastHolder]['team']);
-					queue_push(closure(){
-						spawn_particle(location_shift(@loc, 'up', 0.5), @effect);
-					}, 'balltrail');
+					if(array_index_exists(@game['players'], @lastHolder)) {
+						@effect = array('particle': 'REDSTONE', 'color': @game['players'][@lastHolder]['team']);
+						queue_push(closure(){
+							spawn_particle(location_shift(@loc, 'up', 0.5), @effect);
+						}, 'balltrail');
+					}
 				}
 			}
 
