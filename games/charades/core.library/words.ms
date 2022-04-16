@@ -23,13 +23,19 @@ proc _is_match(@guess, @target) {
 proc _show_matches(@guess, @target) {
 	@obscured = reg_replace('[a-zA-Z0-9]', '_', @target);
 	@target = to_lower(@target);
+	@found = false;
 	foreach(@word in parse_args(@guess)) {
 		@pos = string_position(@target, to_lower(@word));
 		if(@pos > -1) {
+			@found = true;
 			@obscured = substr(@obscured, 0, @pos).@word.substr(@obscured, @pos + length(@word));
 		}
 	}
-	return(@obscured);
+	if(@found) {
+		return(@obscured);
+	} else {
+		return(@guess);
+	}
 }
 
 proc _get_build(@category) {
