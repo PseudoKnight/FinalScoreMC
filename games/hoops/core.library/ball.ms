@@ -63,14 +63,18 @@ proc _hoops_ball_create(@loc) {
 					} else if(@charge[0] == 0 || !ponline(player())) {
 						@game['holder'] = '';
 						@game['lastholder'] = player();
-						set_entity_spec(@stand, array('gravity': true));
-						set_entity_velocity(@stand, array(rand() * 0.2, rand() * 0.2, rand() * 0.2));
+						try {
+							set_entity_spec(@stand, array('gravity': true));
+							set_entity_velocity(@stand, array(rand() * 0.2, rand() * 0.2, rand() * 0.2));
+							set_entity_glowing(@game['slime'], false);
+						} catch(BadEntityException @ex) {
+							clear_task();
+						}
 						try(update_bar('hoops', 0.0));
 						if(ponline(player())) {
 							set_pinv(player(), array(0: null, -106: null));
 						}
 						@charge[0] = 0;
-						try(set_entity_glowing(@game['slime'], false));
 					} else {
 						@charge[0] += 3;
 						if(@charge[0] > 100) {
