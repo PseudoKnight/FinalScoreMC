@@ -73,7 +73,7 @@ proc _queue_next_builder() {
 		}
 	});
 
-	bind('player_chat', array('id': 'charades-guessing', 'priority': 'HIGH'), null, @event, @charades) {
+	bind('player_chat', array('id': 'charades-guessing', 'priority': 'HIGH'), null, @event, @charades, @timer) {
 		if(get_pscoreboard(player()) == 'charades') {
 			if(@event['message'][0] == '!') {
 				modify_event('message', @event['message'][1..]);
@@ -88,8 +88,8 @@ proc _queue_next_builder() {
 						play_sound(ploc(), array('sound': 'ENTITY_PLAYER_LEVELUP'));
 						@charades['buffer'][player()] = colorize("&8@timestamp [Charades] @{name}&8: &r@message");
 						_msg_charades(color('green').player().' guessed correctly!');
-						if(@charades['seconds'] > 2) {
-							@charades['seconds'] = 2.0;
+						if(@timer[0] > 3) {
+							@timer[0] = 3.0;
 						}
 					} else {
 						@message = _show_matches(@message, @charades['build']);
