@@ -766,11 +766,23 @@ proc _pvp_end_match(@id, @winners) {
 		if(array_index_exists(@pvp, 'stats')) {
 			_stats_print(@winners, @pvp);
 		} else if(array_index_exists(@pvp, 'team') && array_size(@winners) > 0) {
-			@leader = @winners[0];
-			@team = @pvp['players'][@leader]['team'];
-			@title = @pvp['players'][@leader]['color'].color('bold')
-				.@arena['team'][@team]['name'].' win '.@pvp['title'].'!';
-			@subtitle = @pvp['players'][@leader]['color'].array_implode(@winners, ' ');
+			@leader = '';
+			foreach(@leader in @winners) {
+				if(array_index_exists(@pvp['players'], @leader)) {
+					break();
+				}
+			}
+			@title = '';
+			@subtitle = '';
+			if(@leader) {
+				@team = @pvp['players'][@leader]['team'];
+				@title = @pvp['players'][@leader]['color'].color('bold')
+					.@arena['team'][@team]['name'].' win '.@pvp['title'].'!';
+				@subtitle = @pvp['players'][@leader]['color'].array_implode(@winners, ' ');
+			} else {
+				console('Winners left the game as it ended? '.@winners.' not in '.array_keys(@pvp['players']));
+				@title = array_implode(@winners, ' ').' won '.@pvp['title'].'!';
+			}
 			_worldmsg(@world, color('gray').'[PVP] '.@title.'\n'.@subtitle);
 			foreach(@p in array_keys(@pvp['players'])) {
 				title(@p, @title, @subtitle, 20, 60, 20);
