@@ -1,9 +1,16 @@
+@warps = array();
+foreach(@w in array_keys(get_values('warp'))) {
+	@warps[] = split('.', @w)[1];
+}
+foreach(@w in _worlds_config()) {
+	if(is_array(@w)) {
+		@warps[] = replace(@w['name'], ' ', '');
+	}
+}
 register_command('warp', array(
 	'description': 'Teleports you to a predefined location.',
 	'usage': '/warp [player] <warp_name>',
-	'tabcompleter': closure(@alias, @sender, @args, @info) {
-		return(array());
-	},
+	'tabcompleter': _create_tabcompleter(@warps),
 	'executor': closure(@alias, @sender, @args, @info) {
 		if(!@args) {
 			run('/warps list');
