@@ -28,15 +28,18 @@ proc _stats_damage(@damager, @player, @amount, @pvp) {
 	}
 }
 
-proc _stat_pad(@amount, @length, @char = ' ') {
+proc _stat_pad(@amount, @length) {
 	@length -= length(@amount);
 	if(@length <= 0, return(@amount));
-	@pad = if(@char != ' ', color(8), '');
-	while(@length > 0) {
-		@pad .= @char;
-		@length--;
-	}
-	return(@pad.if(@char != ' ', color('r')).@amount);
+	@left = ceil(@length / 2);
+	@right = floor(@length / 2);
+	return(string_multiply(' ', @left).@amount.string_multiply(' ', @right));
+}
+
+proc _stat_num_pad(@amount, @length) {
+	@length -= length(@amount);
+	if(@length <= 0, return(@amount));
+	return(color(8).string_multiply('0', @length).color('r').@amount);
 }
 
 /*
@@ -46,10 +49,10 @@ proc _stat_pad(@amount, @length, @char = ' ') {
  */
 proc _stats_table() {
 	return(array(
-		array('kills', 2, '-------', 'K'),
-		array('deaths', 2, '--------', 'D'),
-		array('damage', 3, '--------', 'DA'),
-		array('pickups', 2, '-------', 'PU')
+		array('kills', 2, '-------'),
+		array('deaths', 2, '--------'),
+		array('damage', 3, '--------'),
+		array('pickups', 2, '-------')
 	));
 }
 
@@ -60,6 +63,7 @@ proc _stats_print(@winners, @pvp) {
 
 	@title = '';
 	@subtitle = '';
+	@color = null;
 	if(array_index_exists(@pvp, 'team') && @winners) {
 		@leader = null;
 		foreach(@p in @winners) {
@@ -69,9 +73,13 @@ proc _stats_print(@winners, @pvp) {
 			}
 		}
 		@team = @pvp['players'][@leader]['team'];
-		@title = @pvp['players'][@leader]['color'].color('bold')
-				.@pvp['arena']['team'][@team]['name'].' win '.@pvp['title'].'!';
+		@teamColor = @pvp['players'][@leader]['color'];
+		@title = @teamColor.color('bold').@pvp['arena']['team'][@team]['name'].' win '.@pvp['title'].'!';
 		@subtitle = @pvp['players'][@leader]['color'].array_implode(@winners, ' ');
+		// colors in both MCColor and MChatColor
+		if(array_contains(array('RED', 'BLUE', 'WHITE', 'GRAY', 'BLACK', 'YELLOW', 'GREEN', 'AQUA'), @teamColor)) {
+			@color = @teamColor;
+		}
 	} else if(@winners) {
 		@title = array_implode(@winners, ' and ').' win'.if(array_size(@winners) == 1, 's ', ' ').@pvp['title'].'!';
 	} else {
@@ -93,36 +101,39 @@ proc _stats_print(@winners, @pvp) {
 	if(array_size(@winners) == 1) {
 		@embed['author']['icon_url'] = 'https://crafatar.com/avatars/'.puuid(@winners[0], true).'?overlay';
 	}
-	@embed['fields'][] = array(name: '`'._stat_pad(@a[3], @a[1])
-	.' : '._stat_pad(@b[3], @b[1]).'`', value: '', inline: true);
-	@embed['fields'][] = array(name: '`'._stat_pad(@c[3], @c[1])
-	.' : '._stat_pad(@d[3], @d[1]).'`', value: '', inline: true);
+	if(@color) {
+		@embed['color'] = @color;
+	}
+	@embed['fields'][] = array(name: '`'.to_upper(@a[0])
+	.' : '.to_upper(@b[0]).'`', value: '', inline: true);
+	@embed['fields'][] = array(name: '`'.to_upper(@c[0])
+	.' '.to_upper(@d[0]).'`', value: '', inline: true);
 	@embed['fields'][] = array(name: '', value: '', inline: true); // player names
 
 	_pvp_msg(@pvp, colorize('&7&m|------------------------------&7&l[ &f&lTHE FINAL SCORE&7&l ]&7&m--|'));
-	_pvp_msg(@pvp, colorize(replace('--&7'.to_upper(@a[0]).' &8:&7 '.to_upper(@b[0]).' &8:&7 '.to_upper(@c[0]).' &8:&7 '.to_upper(@d[0]), '-', ' ')));
+	_pvp_msg(@pvp, colorize(replace('--&7'.to_upper(@a[0]).' &8:&7 '.to_upper(@b[0]).' &8 &7 '.to_upper(@c[0]).' &8 &7 '.to_upper(@d[0]), '-', ' ')));
 	_pvp_msg(@pvp, colorize('&7&m|----------------------------------------------------|'));
 
 	@firstline = true;
 	foreach(@player: @stats in @pvp['stats']) {
 		_pvp_msg(@pvp, replace('----'
-			._stat_pad(integer(@stats[@a[0]]), @a[1], '0').@a[2]
-			._stat_pad(integer(@stats[@b[0]]), @b[1], '0').@b[2]
-			._stat_pad(integer(@stats[@c[0]]), @c[1], '0').@c[2]
-			._stat_pad(integer(@stats[@d[0]]), @d[1], '0').@d[2]
+			._stat_num_pad(integer(@stats[@a[0]]), @a[1]).@a[2]
+			._stat_num_pad(integer(@stats[@b[0]]), @b[1]).@b[2]
+			._stat_num_pad(integer(@stats[@c[0]]), @c[1]).@c[2]
+			._stat_num_pad(integer(@stats[@d[0]]), @d[1]).@d[2]
 			.if(array_contains(@winners, @player),
 				color('gold').color('bold').@player.if(@pvp['coins'] > 0, ' +'.@pvp['coins']),
 				@player)
 			.'-', '-', ' '));
 		
 		@embed['fields'][0]['value'] .= if(!@firstline, '\n')
-				.'`'._stat_pad(integer(@stats[@a[0]]), @a[1])
-				.' : '._stat_pad(integer(@stats[@b[0]]), @b[1]).'`';
+				.'`'._stat_pad(integer(@stats[@a[0]]), length(@a[0]))
+				.' : '._stat_pad(integer(@stats[@b[0]]), length(@b[0])).'`';
 		@embed['fields'][1]['value'] .= if(!@firstline, '\n')
-				.'`'._stat_pad(integer(@stats[@c[0]]), @c[1])
-				.' : '._stat_pad(integer(@stats[@d[0]]), @d[1]).'`';
+				.'`'._stat_pad(integer(@stats[@c[0]]), length(@c[0]))
+				.' '._stat_pad(integer(@stats[@d[0]]), length(@d[0])).'`';
 		@embed['fields'][2]['value'] .= if(!@firstline, '\n')
-				.if(array_contains(@winners, @player), '**'.@player.'**', @player);
+				.if(array_contains(@winners, @player), '`+` **'.@player.'**', '` ` '.@player);
 
 		@firstline = false;
 	}
