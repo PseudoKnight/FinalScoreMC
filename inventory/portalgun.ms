@@ -1,4 +1,12 @@
 execute(iclosure(){
+	proc _opposite_portal(@portals, @color) {
+		return(@portals[if(@color == 'orange', 'blue', 'orange')]);
+	}
+
+	proc _map_id(@color) {
+		return(if(@color == 'orange', 1314, 1317));
+	}
+
 	proc _portal(@color, @portals) {
 		if(pworld() != 'dev' || pmode() != 'ADVENTURE') {
 			return(false);
@@ -6,7 +14,7 @@ execute(iclosure(){
 
 		proc _rotate_exit(@portals, @color, @yaw, @pitch) {
 			@entrance = @portals[@color]['exit'];
-			@exit = @portals[if(@color == 'blue', 'orange', 'blue')]['exit'];
+			@exit = _opposite_portal(@portals, @color)['exit'];
 			if(!is_null(@entrance['yaw']) && !is_null(@exit['yaw'])) {
 				@yaw += @exit['yaw'] - @entrance['yaw'] + 180;
 			}
@@ -63,7 +71,7 @@ execute(iclosure(){
 						relative_teleport(@newLoc);
 						play_sound(@newLoc, array(sound: 'ENTITY_ILLUSIONER_MIRROR_MOVE', volume: 0.3));
 						play_sound(@newLoc, array(sound: 'ENTITY_ILLUSIONER_CAST_SPELL', volume: 0.3));
-						@v = get_vector(@portals[if(@color == 'orange', 'blue', 'orange')]['exit'], @dist);
+						@v = get_vector(_opposite_portal(@portals, @color)['exit'], @dist);
 						set_pvelocity(@v);
 						set_timeout(1, closure(set_pvelocity(@v)));
 						die();
@@ -80,11 +88,6 @@ execute(iclosure(){
 		}
 
 		@block = @trace['block'];
-		if(get_block(@block) != 'WHITE_CONCRETE') {
-			play_sound(ploc(), array(sound: 'ENTITY_SHULKER_CLOSE'));
-			return(true);
-		}
-
 		@origin = location_shift(@trace['origin'], 'down', 0.3);
 		@loc = @trace['location'];
 		@face = @trace['hitface'];
@@ -97,17 +100,33 @@ execute(iclosure(){
 		@extension = null;
 		if(@face != 'UP' && @face != 'DOWN') {
 			@portal = location_shift(@portal, @face);
-			if(round(@loc['y']) == floor(@loc['y'])) {
+			if(round(@loc['y']) == floor(@loc['y']) && get_block(location_shift(@portal, 'down')) == 'AIR') {
 				@extension = @block;
 				@block = location_shift(@block, 'down');
 				@portal['y'] -= 1;
-			} else {
+			} else if(get_block(location_shift(@portal, 'up')) == 'AIR') {
 				@extension = location_shift(@block, 'up');
+			} else {
+				play_sound(ploc(), array(sound: 'ENTITY_SHULKER_CLOSE'));
+				return(true);
 			}
 		} else if(@face == 'UP') {
 			@portal['y'] += 1;
 		} else if(@face == 'DOWN') {
 			@portal['y'] -= 2;
+		}
+
+		if(get_block(@block) != 'WHITE_CONCRETE' || @extension && get_block(@extension) != 'WHITE_CONCRETE') {
+			play_sound(ploc(), array(sound: 'ENTITY_SHULKER_CLOSE'));
+			return(true);
+		}
+
+		@oppositePortal = _opposite_portal(@portals, @color);
+		if(@oppositePortal) {
+			if(distance(@oppositePortal['exit'], @portal) < 1.1) {
+				play_sound(ploc(), array(sound: 'ENTITY_SHULKER_CLOSE'));
+				return(true);
+			}
 		}
 
 		switch(@face) {
@@ -171,33 +190,101 @@ execute(iclosure(){
 		@modify = closure(@e){
 			set_entity_spec(@e, array(
 				fixed: true,
-				item: array(name: 'FILLED_MAP', meta: array(mapid: if(@color == 'orange', 1314, 1317))),
-				visible: false,
+				item: array(name: 'FILLED_MAP', meta: array(mapid: _map_id(@color))),
 			));
 			set_hanging_direction(@e, @face);
 			@portals[@color]['entities'][] = @e;
 		}
-		spawn_entity('ITEM_FRAME', 1, location_shift(@block, @face), @modify);
+
+		@itemFrame = spawn_entity('ITEM_FRAME', 1, location_shift(@block, @face), @modify)[0];
+		set_entity_glowing(@itemFrame, true);
+		team_add_player(@color, @itemFrame);
 		if(@extension) {
-			spawn_entity('ITEM_FRAME', 1, location_shift(@extension, @face), @modify);
+			@itemFrame = spawn_entity('ITEM_FRAME', 1, location_shift(@extension, @face), @modify)[0];
+			set_entity_glowing(@itemFrame, true);
+			team_add_player(@color, @itemFrame);
 		}
 
 		// special case if they shoot right below a player
 		if(@face == 'UP') {
-			@otherColor = if(@color == 'orange', 'blue', 'orange');
-			if(@portals[@otherColor]) {
+			@otherPortal = _opposite_portal(@portals, @color);
+			if(@otherPortal) {
 				foreach(@p in players_in_radius(@portal, 0.7)) {
 					@ploc = ploc();
 					@newLoc = _rotate_exit(@portals, @color, @ploc['yaw'], @ploc['pitch']);
 					relative_teleport(@newLoc);
 					play_sound(@newLoc, array(sound: 'ENTITY_ILLUSIONER_MIRROR_MOVE', volume: 0.3));
 					play_sound(@newLoc, array(sound: 'ENTITY_ILLUSIONER_CAST_SPELL', volume: 0.3));
-					@v = get_vector(@portals[@otherColor]['exit'], 0.15);
+					@v = get_vector(@otherPortal['exit'], 0.15);
 					set_pvelocity(@v);
 					set_timeout(1, closure(set_pvelocity(@v)));
 				}
 			}
 		}
+
+		@edges = array();
+		@loc = location_shift(@block, @face, 0.1);
+		if(@face == 'UP' || @face == 'DOWN') {
+			if(@face == 'UP') {
+				@loc['y'] += 1.0;
+			}
+			@loc['dir'] = 'south';
+			@edges[] = @loc[];
+			@loc['dir'] = 'east';
+			@edges[] = @loc[];
+			@loc['dir'] = 'south';
+			@loc['x'] += 1.0;
+			@edges[] = @loc[];
+			@loc['dir'] = 'east';
+			@loc['z'] += 1.0;
+			@loc['x'] -= 1.0;
+			@edges[] = @loc[];
+		} else if(@face == 'EAST' || @face == 'WEST') {
+			if(@face == 'EAST') {
+				@loc['x'] += 1.0;
+			}
+			@loc['dir'] = 'up';
+			@edges[] = @loc[];
+			@loc['y'] += 1;
+			@edges[] = @loc[];
+			@loc['z'] += 1;
+			@edges[] = @loc[];
+			@loc['y'] -= 1;
+			@edges[] = @loc[];
+			@loc['z'] -= 1;
+			@loc['dir'] = 'south';
+			@edges[] = @loc[];
+			@loc['y'] += 2;
+			@edges[] = @loc[];
+		} else if(@face == 'NORTH' || @face == 'SOUTH') {
+			if(@face == 'SOUTH') {
+				@loc['z'] += 1.0;
+			}
+			@loc['dir'] = 'up';
+			@edges[] = @loc[];
+			@loc['y'] += 1;
+			@edges[] = @loc[];
+			@loc['x'] += 1;
+			@edges[] = @loc[];
+			@loc['y'] -= 1;
+			@edges[] = @loc[];
+			@loc['x'] -= 1;
+			@loc['dir'] = 'east';
+			@edges[] = @loc[];
+			@loc['y'] += 2;
+			@edges[] = @loc[];
+		}
+		set_interval(50, closure(){
+			if(!entity_exists(@itemFrame)) {
+				clear_task();
+			} else {
+				foreach(@edge in @edges) {
+					@loc = location_shift(@edge, @edge['dir'], rand());
+					spawn_particle(@loc, array(particle: 'REDSTONE', color: @color));
+				}
+			}
+		});
+
 
 		return(true);
 	}
@@ -206,6 +293,13 @@ execute(iclosure(){
 		'orange': null,
 		'blue': null,
 	);
+
+	if(!array_index_exists(get_teams(), 'orange')) {
+		create_team('orange');
+		create_team('blue');
+		set_team_display('orange', array(color: 'GOLD'));
+		set_team_display('blue', array(color: 'BLUE'));
+	}
 
 	bind('player_interact', array(priority: 'LOW'), array(itemname: 'LANTERN'), @event, @portals) {
 		if(!pcooldown('LANTERN')) {
