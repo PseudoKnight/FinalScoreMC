@@ -2,7 +2,8 @@
 	Grant Uneasy Alliance advancement in non-default worlds
  */
 bind('entity_death', null, array(type: 'GHAST'), @event) {
-	if(world_info(@event['location']['world'])['environment'] == 'NORMAL') {
+	if(world_info(@event['location']['world'])['environment'] == 'NORMAL'
+			&& _is_survival_world(@event['location']['world'])) {
 		@damager = '';
 		if(array_index_exists(@event['cause'], 'shooter')) {
 			@damager = @event['cause']['shooter'];
