@@ -9,10 +9,14 @@ proc _fw_start_task(@secs) {
 	));
 	@count = min(_fw_total_players() * 24, 200);
 	@region = sk_region_info('frogware', 'custom', 0);
+	@damage = !rand(4);
 	for(@i = 0, @i < @count, @i++) {
-		spawn_entity('SHEEP', 1, _fw_loc(), closure(@entity) {
+		@sheep = spawn_entity('SHEEP', 1, _fw_loc(), closure(@entity) {
 			set_entity_spec(@entity, array(color: array_get_rand(@colors)));
-		});
+		})[0];
+		if(@damage) {
+			damage_entity(@sheep, 0);
+		}
 	}
 	if(!rand(4)) {
 		_fw_mobs('wolf', 8);

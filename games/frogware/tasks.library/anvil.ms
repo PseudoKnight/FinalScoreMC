@@ -34,6 +34,7 @@ proc _fw_start_task(@secs) {
 		}, 'fw3');
 		queue_delay(1000, 'fw3');
 	}
+	_fw_clear_blocks(3);
 }
 
 proc _fw_end_task(@secs) {

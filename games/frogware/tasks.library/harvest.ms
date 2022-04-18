@@ -17,6 +17,17 @@ proc _fw_start_task(@secs) {
 			pgive_item(@p, array(name: 'SEEDS')); # seeds
 		}
 	}
+	if(!rand(5)) {
+		set_timeout(3000, closure(){
+			@velocity = array(rand(), rand(), rand());
+			foreach(@p in all_players('custom')) {
+				if(_fw_player(@p)) {
+					play_sound(ploc(@p), array(sound: 'entity_witch_ambient', volume: 4, pitch: 1.2), @p);
+					set_pvelocity(@p, @velocity);
+				}
+			}
+		});
+	}
 	bind('item_pickup', array(id: 'fwtask'), array(itemname: 'WHEAT'), @e) {
 		if(_fw_player(player())
 		&& _fw_change_team(player(), 'winners')) {

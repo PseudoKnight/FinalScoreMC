@@ -19,14 +19,15 @@ proc _fw_start_task(@secs) {
 	@minY = @region[1][1];
 	@minZ = @region[1][2];
 	@maxZ = @region[0][2];
+	foreach(@p in all_players('custom')) {
+		if(_fw_player(@p)) {
+			set_pvelocity(@p, rand(), 2, rand());
+			play_sound(ploc(@p), array(sound: 'ENTITY_GHAST_SHOOT'), @p);
+		}
+	}
 	for(@y = @minY, @y <= @minY + 2, @y++) {
 		queue_delay(500, 'fw3');
 		queue_push(closure(){
-			foreach(@p in all_players('custom')) {
-				if(_fw_player(@p)) {
-					relative_teleport(@p, location_shift(ploc(), 'up', 2));
-				}
-			}
 			for(@x = @minX, @x <= @maxX, @x++) {
 				for(@z = @minZ, @z <= @maxZ, @z++) {
 					if(@y == @minY + 2 || rand(16)) {

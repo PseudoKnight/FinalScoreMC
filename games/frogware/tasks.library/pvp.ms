@@ -25,6 +25,31 @@ proc _fw_start_task(@secs) {
 			}
 		}
 	}
+	if(!rand(3)) {
+		@blocks = import('frogware.blocks');
+		if(is_null(@blocks)) {
+			@blocks = array();
+		}
+		@region = sk_region_info('frogware', 'custom', 0);
+		@minX = @region[1][0];
+		@maxX = @region[0][0];
+		@minZ = @region[1][2];
+		@maxZ = @region[0][2];
+		@minY = @region[1][1];
+		@maxY = @region[1][1] + 3;
+		for(@x = @minX, @x <= @maxX, @x++) {
+			for(@z = @minZ, @z <= @maxZ, @z++) {
+				if(rand() < 0.07) {
+					for(@y = @minY, @y < @maxY, @y++) {
+						@block = array(@x, @y, @z, 'custom');
+						set_block(@block, 'GRAY_CONCRETE');
+						@blocks[] = @block;
+					}
+				}
+			}
+		}
+		export('frogware.blocks', @blocks);
+	}
 	bind('entity_damage', array(id: 'fwtask'), array(type: 'PLAYER', world: 'custom'), @e, @weapon) {
 		if(array_index_exists(@e, 'damager') && _fw_player(@e['player'])) {
 			@damager = @e['damager'];

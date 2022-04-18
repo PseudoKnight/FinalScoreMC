@@ -33,6 +33,17 @@ proc _fw_start_task(@secs) {
 			}
 		}
 	}
+	if(!rand(5)) {
+		set_timeout(2500, closure(){
+			@velocity = array(rand(), rand(), rand());
+			foreach(@p in all_players('custom')) {
+				if(_fw_player(@p)) {
+					play_sound(ploc(@p), array(sound: 'entity_witch_ambient', volume: 4, pitch: 1.2), @p);
+					set_pvelocity(@p, @velocity);
+				}
+			}
+		});
+	}
 }
 
 proc _fw_end_task(@secs) {
