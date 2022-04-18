@@ -179,6 +179,11 @@ proc _hazard_define_regions(@game) {
 		} else {
 			sk_region_update(@game['world'], 'hazard_start', @start);
 		}
+		@warp = @start[1][];
+		@warp[0] += 1.5;
+		@warp[2] += 1.5;
+		@warp[3] = @game['world'];
+		store_value('warp.hazard', @warp);
 	} else {
 		@start = sk_region_info('hazard_start', @game['world'], 0);
 	}
