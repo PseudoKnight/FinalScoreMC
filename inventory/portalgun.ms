@@ -7,21 +7,33 @@ execute(iclosure(){
 		return(if(@color == 'orange', 1314, 1317));
 	}
 
+	proc _portal_to(@portals, @color, @ploc, @dist) {
+		@yaw = @ploc['yaw'];
+		@pitch = @ploc['pitch'];
+		@entrance = @portals[@color]['exit'];
+		@exit = _opposite_portal(@portals, @color)['exit'];
+		if(!is_null(@entrance['yaw']) && !is_null(@exit['yaw'])) {
+			@yaw += @exit['yaw'] - @entrance['yaw'] + 180;
+		}
+		if(!is_null(@entrance['pitch']) && @entrance['pitch'] == @exit['pitch']) {
+			@pitch = neg(@pitch);
+		}
+		@newLoc = array(@exit['x'], @exit['y'], @exit['z'], @exit['world'], @yaw, @pitch);
+		if(@entrance['pitch'] == -90.0 || @exit['pitch'] == -90.0) {
+			set_ploc(location_shift(@newLoc, 'down'));
+		} else {
+			relative_teleport(@newLoc);
+		}
+		play_sound(@newLoc, array(sound: 'ENTITY_ILLUSIONER_MIRROR_MOVE', volume: 0.3));
+		play_sound(@newLoc, array(sound: 'ENTITY_ILLUSIONER_CAST_SPELL', volume: 0.3));
+		@v = get_vector(@exit, @dist);
+		set_pvelocity(@v);
+		set_timeout(10, closure(set_pvelocity(@v)));
+	}
+
 	proc _portal(@color, @portals) {
 		if(pworld() != 'dev' || pmode() != 'ADVENTURE') {
 			return(false);
-		}
-
-		proc _rotate_exit(@portals, @color, @yaw, @pitch) {
-			@entrance = @portals[@color]['exit'];
-			@exit = _opposite_portal(@portals, @color)['exit'];
-			if(!is_null(@entrance['yaw']) && !is_null(@exit['yaw'])) {
-				@yaw += @exit['yaw'] - @entrance['yaw'] + 180;
-			}
-			if(!is_null(@entrance['pitch']) && @entrance['pitch'] == @exit['pitch']) {
-				@pitch = neg(@pitch);
-			}
-			return(array(@exit['x'], @exit['y'], @exit['z'], @exit['world'], @yaw, @pitch));
 		}
 
 		if(!has_bind('portalgun'.player())) {
@@ -29,7 +41,7 @@ execute(iclosure(){
 				@from = @event['from'];
 				@to = @event['to'];
 				if(@to['world'] != 'dev' || pmode() != 'ADVENTURE') {
-					set_timeout(1, closure(unbind())); // syncs to work around concurrency exception
+					set_timeout(1, iclosure(unbind())); // syncs to work around concurrency exception
 					foreach(@color in array('orange', 'blue')) {
 						if(is_null(@portals[@color])) {
 							continue();
@@ -46,6 +58,7 @@ execute(iclosure(){
 				if(!@portals['orange'] || !@portals['blue']) {
 					die();
 				}
+				set_entity_fall_distance(puuid(), 0);
 				@dist = distance(@from, @to);
 				if(@dist > 2) {
 					// Problem: I think a player_move event is called when teleporting.
@@ -67,13 +80,7 @@ execute(iclosure(){
 				foreach(@color in array('orange', 'blue')) {
 					@b = @portals[@color]['blocks'][0];
 					if(is_array(@b) && array_subset_of(@block, @b)) {
-						@newLoc = _rotate_exit(@portals, @color, @to['yaw'], @to['pitch']);
-						relative_teleport(@newLoc);
-						play_sound(@newLoc, array(sound: 'ENTITY_ILLUSIONER_MIRROR_MOVE', volume: 0.3));
-						play_sound(@newLoc, array(sound: 'ENTITY_ILLUSIONER_CAST_SPELL', volume: 0.3));
-						@v = get_vector(_opposite_portal(@portals, @color)['exit'], @dist);
-						set_pvelocity(@v);
-						set_timeout(1, closure(set_pvelocity(@v)));
+						_portal_to(@portals, @color, @to, @dist);
 						die();
 					}
 				}
@@ -101,10 +108,11 @@ execute(iclosure(){
 		if(@face != 'UP' && @face != 'DOWN') {
 			@portal = location_shift(@portal, @face);
 			if(round(@loc['y']) == floor(@loc['y']) && get_block(location_shift(@portal, 'down')) == 'AIR') {
-				@extension = @block;
+				@extension = location_shift(@block, 'down', 0); // consistent arrays
 				@block = location_shift(@block, 'down');
 				@portal['y'] -= 1;
 			} else if(get_block(location_shift(@portal, 'up')) == 'AIR') {
+				@block = location_shift(@block, 'down', 0); // consistent arrays
 				@extension = location_shift(@block, 'up');
 			} else {
 				play_sound(ploc(), array(sound: 'ENTITY_SHULKER_CLOSE'));
@@ -119,14 +127,6 @@ execute(iclosure(){
 		if(get_block(@block) != 'WHITE_CONCRETE' || @extension && get_block(@extension) != 'WHITE_CONCRETE') {
 			play_sound(ploc(), array(sound: 'ENTITY_SHULKER_CLOSE'));
 			return(true);
-		}
-
-		@oppositePortal = _opposite_portal(@portals, @color);
-		if(@oppositePortal) {
-			if(distance(@oppositePortal['exit'], @portal) < 1.1) {
-				play_sound(ploc(), array(sound: 'ENTITY_SHULKER_CLOSE'));
-				return(true);
-			}
 		}
 
 		switch(@face) {
@@ -148,6 +148,18 @@ execute(iclosure(){
 			case 'DOWN':
 				@portal['yaw'] = null;
 				@portal['pitch'] = 90;
+		}
+
+		@oppositePortal = _opposite_portal(@portals, @color);
+		if(@oppositePortal) {
+			if(@oppositePortal['exit']['yaw'] == @portal['yaw'] && @oppositePortal['exit']['pitch'] == @portal['pitch']) {
+				foreach(@b in @oppositePortal['blocks']) {
+					if(@b && (array_subset_of(@b, @block) || @extension && array_subset_of(@b, @extension))) {
+						play_sound(ploc(), array(sound: 'ENTITY_SHULKER_CLOSE'));
+						return(true);
+					}
+				}
+			}
 		}
 
 		// clean up old portal frames before modifying the portals array
@@ -178,7 +190,7 @@ execute(iclosure(){
 
 		// render particle trail
 		@distance = distance(@origin, @loc);
-		@maxParticles = min(ceil(@distance), 20);
+		@maxParticles = min(ceil(@distance * 2), 48);
 		@distance /= @maxParticles;
 		@particles = 0;
 		while(@particles++ <= @maxParticles) {
@@ -208,68 +220,51 @@ execute(iclosure(){
 		// special case if they shoot right below a player
 		if(@face == 'UP') {
 			@otherPortal = _opposite_portal(@portals, @color);
-			if(@otherPortal) {
-				foreach(@p in players_in_radius(@portal, 0.7)) {
-					@ploc = ploc();
-					@newLoc = _rotate_exit(@portals, @color, @ploc['yaw'], @ploc['pitch']);
-					relative_teleport(@newLoc);
-					play_sound(@newLoc, array(sound: 'ENTITY_ILLUSIONER_MIRROR_MOVE', volume: 0.3));
-					play_sound(@newLoc, array(sound: 'ENTITY_ILLUSIONER_CAST_SPELL', volume: 0.3));
-					@v = get_vector(@otherPortal['exit'], 0.15);
-					set_pvelocity(@v);
-					set_timeout(1, closure(set_pvelocity(@v)));
-				}
+			if(@otherPortal && distance(location_shift(ploc(), 'up'), @portal)  < 0.5) {
+				_portal_to(@portals, @color, ploc(), 0.15);
 			}
 		}
 
 		@edges = array();
-		@loc = location_shift(@block, @face, 0.1);
+		@loc = location_shift(@block, @face, 0.05);
 		if(@face == 'UP' || @face == 'DOWN') {
 			if(@face == 'UP') {
 				@loc['y'] += 1.0;
 			}
 			@loc['dir'] = 'south';
 			@edges[] = @loc[];
-			@loc['dir'] = 'east';
-			@edges[] = @loc[];
-			@loc['dir'] = 'south';
 			@loc['x'] += 1.0;
 			@edges[] = @loc[];
 			@loc['dir'] = 'east';
-			@loc['z'] += 1.0;
 			@loc['x'] -= 1.0;
 			@edges[] = @loc[];
-		} else if(@face == 'EAST' || @face == 'WEST') {
+			@loc['z'] += 1.0;
+			@edges[] = @loc[];
+		} else {
 			if(@face == 'EAST') {
 				@loc['x'] += 1.0;
-			}
-			@loc['dir'] = 'up';
-			@edges[] = @loc[];
-			@loc['y'] += 1;
-			@edges[] = @loc[];
-			@loc['z'] += 1;
-			@edges[] = @loc[];
-			@loc['y'] -= 1;
-			@edges[] = @loc[];
-			@loc['z'] -= 1;
-			@loc['dir'] = 'south';
-			@edges[] = @loc[];
-			@loc['y'] += 2;
-			@edges[] = @loc[];
-		} else if(@face == 'NORTH' || @face == 'SOUTH') {
-			if(@face == 'SOUTH') {
+			} else if(@face == 'SOUTH') {
 				@loc['z'] += 1.0;
 			}
 			@loc['dir'] = 'up';
 			@edges[] = @loc[];
 			@loc['y'] += 1;
 			@edges[] = @loc[];
-			@loc['x'] += 1;
-			@edges[] = @loc[];
-			@loc['y'] -= 1;
-			@edges[] = @loc[];
-			@loc['x'] -= 1;
-			@loc['dir'] = 'east';
+			if(@face == 'EAST' || @face == 'WEST') {
+				@loc['z'] += 1;
+				@edges[] = @loc[];
+				@loc['y'] -= 1;
+				@edges[] = @loc[];
+				@loc['z'] -= 1;
+				@loc['dir'] = 'south';
+			} else {
+				@loc['x'] += 1;
+				@edges[] = @loc[];
+				@loc['y'] -= 1;
+				@edges[] = @loc[];
+				@loc['x'] -= 1;
+				@loc['dir'] = 'east';
+			}
 			@edges[] = @loc[];
 			@loc['y'] += 2;
 			@edges[] = @loc[];
