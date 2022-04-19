@@ -7,10 +7,15 @@ register_command('eval', array(
 	},
 	'executor': closure(@alias, @sender, @args, @info) {
 		@script = array_implode(@args);
+		if(player() == '~console') {
+			console(@script);
+		}
 		@output = eval(
 			'<! suppressWarnings: UseBareStrings >'
 			. @script
 		);
-		msg(@output);
+		if(@output) {
+			msg(@output);
+		}
 	}
 ));
