@@ -3,7 +3,7 @@ register_command('compass', array(
 	'usage': '/compass <here|spawn|home [player]|playerName|x z>',
 	'tabcompleter': closure(@alias, @sender, @args, @info) {
 		if(array_size(@args) == 1) {
-			@completions = array_merge(all_players(), array('here', 'spawn', 'home'));
+			@completions = array_merge(all_players(), array('here', 'spawn', 'home', 'death'));
 			return(_strings_start_with_ic(@completions, @args[-1]));
 		}
 	},
@@ -36,6 +36,18 @@ register_command('compass', array(
 			case 'here':
 				set_compass_target(ploc());
 				msg(color('green').'Compass is now pointing to this location.');
+
+			// 1.19 feature
+			case 'death':
+				@pdata = _pdata(player());
+				if(!array_index_exists(@pdata, 'death')) {
+					die('You haven\'t died recently.');
+				}
+				if(@pdata['death'][3] != pworld()) {
+					die('Your last death wasn\'t in this world.');
+				}
+				set_compass_target(@pdata['death']);
+				msg(color('green').'Compass is now pointing to your last death location.');
 	
 			default:
 				try {

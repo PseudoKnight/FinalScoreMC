@@ -11,7 +11,15 @@ bind('player_command', null, null, @event) {
 bind('player_death', null, null, @event) {
 	if(_is_survival_world(@event['location']['world'])) {
 		@loc = @event['location'];
-		@stringLoc = floor(@loc['x']).','.floor(@loc['y']).','.floor(@loc['z']).' '._worldname(@loc['world']);
+		@x = floor(@loc['x']);
+		@y = floor(@loc['y']);
+		@z = floor(@loc['z']);
+		@world = @loc['world'];
+
+		@pdata = _pdata(player());
+		@pdata['death'] = array(@x, @y, @z, @world);
+
+		@stringLoc = "@x,@y,@z "._worldname(@world);
 
 		// Log to console
 		@log = @event['player'].' died @ '.@stringLoc.': ';
