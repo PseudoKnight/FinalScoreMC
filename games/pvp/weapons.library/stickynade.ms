@@ -36,7 +36,7 @@ proc _weapon_bind_events(@pvp) {
 					x: @hit['x'] - @entityPos['x'],
 					y: @hit['y'] - @entityPos['y'] - 0.75,
 					z: @hit['z'] - @entityPos['z'],
-					world: @hit['world'];
+					world: @hit['world'],
 				);
 				@hit['yaw'] = @loc['yaw'];
 				@hit['pitch'] = @loc['pitch'];

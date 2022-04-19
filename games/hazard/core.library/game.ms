@@ -172,7 +172,7 @@ proc _hazard_define_regions(@game) {
 		@startZ = rand(@coords[1][2] + 1, @coords[0][2] - @size);
 		@start = array(
 			array(@startX + @size, @startY + 3, @startZ + @size),
-			array(@startX, @startY, @startZ);
+			array(@startX, @startY, @startZ),
 		);
 		if(!sk_region_exists('hazard_start')) {
 			sk_region_create(@game['world'], 'hazard_start', @start);
@@ -203,7 +203,7 @@ proc _hazard_define_regions(@game) {
 	@endZ = rand(@coords[1][2] + 1, @coords[0][2] - @size);
 	@end = array(
 		array(@endX + @size, @endY + 3, @endZ + @size),
-		array(@endX, @endY, @endZ);
+		array(@endX, @endY, @endZ),
 	);
 	if(!sk_region_exists('hazard_end')) {
 		sk_region_create(@game['world'], 'hazard_end', @end);

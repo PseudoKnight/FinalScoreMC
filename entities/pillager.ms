@@ -13,7 +13,7 @@ bind('player_interact_at_entity', null, array('clicked': 'PILLAGER', 'hand': 'ma
 			@slot = 'weapon';
 			if(@event['position']['y'] > 1.7) {
 				@slot = 'helmet';
-				@held = get_mob_equipment(@event['id'])['helmet'];;
+				@held = get_mob_equipment(@event['id'])['helmet'];
 			}
 			@item = pinv(player(), null);
 			if(@item) {		

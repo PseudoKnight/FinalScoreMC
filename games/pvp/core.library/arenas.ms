@@ -7,7 +7,7 @@ proc _arena_prepare(@pvp) {
 
 proc _arena_load(@pvp) {
 	@id = @pvp['id'];
-	@pvp['arena'] = get_value('arena', @id);;
+	@pvp['arena'] = get_value('arena', @id);
 	if(is_null(@pvp['arena'])) {
 		die(color('gold').'Can\'t find that arena.');
 	}

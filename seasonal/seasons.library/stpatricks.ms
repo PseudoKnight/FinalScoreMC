@@ -20,7 +20,7 @@ bind('creature_spawn', null, array('type': 'ZOMBIE', 'reason': 'NATURAL'), @even
 			} while(rand() > 0.67);
 		} else {
 			@bottle = array('name': 'POTION', 'meta': array(
-				'base': array('type': 'LUCK');
+				'base': array('type': 'LUCK')
 			));
 		}
 

@@ -28,7 +28,7 @@ proc _get_loot(@floor, @random, @bonus, @loot = array(
 	array(0.10, associative_array('name': 'BOW')),
 	array(0.10, associative_array('name': 'SPECTRAL_ARROW', 'qty': array(1, 4))),
 	array(0.04, associative_array('name': 'SNOWBALL', 'qty': 2, 'meta': associative_array('display': 'SHOTGUN'))),
-	array(0.02, associative_array('name': 'GHAST_TEAR', 'qty': array(1, 7), 'meta': associative_array('display': 'PISTOL')));
+	array(0.02, associative_array('name': 'GHAST_TEAR', 'qty': array(1, 7), 'meta': associative_array('display': 'PISTOL'))),
 )) {
 	@inv = associative_array();
 	foreach(@weightedLoot in @loot){
