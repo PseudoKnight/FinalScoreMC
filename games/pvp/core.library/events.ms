@@ -418,7 +418,7 @@ proc _bind_events(@pvp) {
 				if(@ff == 'knockback') {
 					modify_event('amount', 0);
 				} else if(@ff == 'reduced') {
-					modify_event('amount', @e['amount'] / 2);
+					modify_event('amount', @e['amount'] / 3);
 				} else {
 					cancel();
 				}
