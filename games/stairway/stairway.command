@@ -3,7 +3,8 @@
 	Records are stored for how high the player made it.;
 
 	requiredExtensions: SKCompat;
-	requiredProcs: _acc_add() proc for rewarding players who reach the top.;
+	requiredProcs: _acc_add() proc for rewarding players who reach the top.
+		_add_activity() and _remove_activity() procedures to keep a list of all current activities on server.;
 >
 register_command('stairway', array(
 	'description': 'Starts a randomly generated block stairway in the region.',
@@ -23,6 +24,7 @@ register_command('stairway', array(
 		} else if(array_index_exists(@players, @player)) {
 			die();
 		}
+		_add_activity(@player.'stairway', @player.' on Stairway');
 		if(array_size(@players) == 0) {
 			@players[@player] = 'WHITE';
 			runas('~console', '/jukebox music @stairway http://finalscoremc.com/media/stairway.mp3 {volume:30,fadeDuration:2}');
@@ -53,6 +55,7 @@ register_command('stairway', array(
 					runas('~console', '/jukebox stop music @stairway {fadeDuration:3}');
 				}
 			}
+			_remove_activity(@player.'stairway');
 			if(!ponline(@player)) {
 				return();
 			}

@@ -40,10 +40,12 @@ proc _worms_start(@game) {
 		_worms_spawn(@p, @game);
 	}
 	export('worms'.@game['region'], true);
+	_add_activity('worms'.@game['region'], 'Worms', @game['region'], @game['world']);
 	_worms_bind_events(@game);
 }
 
 proc _worms_end(@game) {
+	_remove_activity('worms'.@game['region']);
 	export('worms'.@game['region'], null);
 	_worms_unbind_events(@game);
 	@winner = '';
