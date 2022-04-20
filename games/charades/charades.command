@@ -27,31 +27,31 @@ register_command('charades', array(
 									@charades['hint'] = @new['hint'];
 									msg('You must now build: '.color('green').color('bold').@charades['build'].color('reset'));
 								} else {
-									msg(color('gold').'You cannot re-roll again.');
+									msg(color('red').'You cannot re-roll again.');
 								}
 							} else {
-								msg(color('gold').'You are not building.');
+								msg(color('red').'You are not building.');
 							}
 						}
 					}
 				} catch(ScoreboardException @ex) {
-					msg(color('gold').'Game is not running.');
+					msg(color('red').'Game is not running.');
 				}
 
 			case 'vote':
 				if(array_size(@args) < 2) {
-					die(color('gold').'You must specify a category.');
+					die(color('red').'You must specify a category.');
 				}
 				@category = @args[1];
 				@charades = import('charades');
 				if(!@charades) {
-					die(color('gold').'Game is not running.');
+					die(color('red').'Game is not running.');
 				}
 				@charades['votes'][player()] = @category;
 
 			default:
 				if(array_contains(get_scoreboards(), 'charades')) {
-					die(color('gold').'Already running.');
+					die(color('red').'Already running.');
 				}
 				_prepare_game(@args[0]);
 		}

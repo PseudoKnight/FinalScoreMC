@@ -58,9 +58,9 @@ proc _queue_next_builder() {
 				_end_build();
 			} else {
 				_msg_charades(integer(@timer[0]), 'action');
-				if(@timer[0] == 25) {
+				if(@timer[0] == 20) {
 					if(@charades['hint']) {
-						_msg_charades(color('bold').'Hint: '.@charades['hint']);
+						_msg_charades(color('yellow').color('bold').'Hint: '.@charades['hint']);
 					}
 				} else if(@timer[0] <= 0) {
 					_end_build();
@@ -86,7 +86,7 @@ proc _queue_next_builder() {
 					@name = display_name();
 					if(_is_match(@message, @charades['build'])) {
 						play_sound(ploc(), array('sound': 'ENTITY_PLAYER_LEVELUP'));
-						@charades['buffer'][player()] = colorize("&8@timestamp [Charades] @{name}&8: &r@message");
+						@charades['buffer'][player()] = colorize("&8@timestamp [Charades] @{name}&8: &r&a&l@message");
 						_msg_charades(color('green').player().' guessed correctly!');
 						if(@timer[0] > 3) {
 							@timer[0] = 3.0;
@@ -122,7 +122,7 @@ proc _end_build() {
 			set_pscore('score', @guesser, get_pscore('score', @guesser, 'charades') + @points, 'charades');
 		}
 	} else if(@charades['build']) {
-		_msg_charades(color('yellow').'The answer you were looking for was "'.color('bold').@charades['build'].color('yellow').'"!');
+		_msg_charades(color('gold').'The answer you were looking for was "'.color('bold').@charades['build'].color('gold').'"!');
 	} else {
 		_msg_charades(color('gold').'The game was called on account of rain.');
 	}
@@ -199,7 +199,7 @@ proc _end_build() {
 						_msg_charades(color('yellow').@player.' chose '.replace(to_upper(@charades['category']), '_', ' '));
 
 						if(@charades['category'] == 'final_round') {
-							_msg_charades(color('red').color('bold').'FINAL ROUND! '.color('red').'RANDOM CATEGORY! DOUBLE POINTS! SHORTER CLOCK!');
+							_msg_charades(color('aqua').color('bold').'FINAL ROUND! '.color('aqua').'RANDOM CATEGORY! DOUBLE POINTS! SHORTER CLOCK!');
 							@charades['category'] = array_get_rand(_get_categories());
 							@charades['seconds'] = 100.0;
 							@charades['finalRound'] = true;
