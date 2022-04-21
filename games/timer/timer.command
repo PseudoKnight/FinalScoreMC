@@ -440,5 +440,5 @@ register_command('timer', array(
 				));
 			}
 		}
-	});
+	})
 );

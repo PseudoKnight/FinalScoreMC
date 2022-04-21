@@ -228,8 +228,8 @@ register_command('spleef', array(
 						set_pinv(@player, 0,
 							array('name': 'DIAMOND_PICKAXE', 'qty': 1, 'meta': array(
 								'enchants': array('efficiency': 40),
-								 array('display': color('green').'SUPERPICK')
-							));
+								'display': color('green').'SUPERPICK',
+							))
 						);
 						if(reg_match('lit\\=true', get_blockdata_string(@cfg['option']['speed']))) {
 							set_peffect(@player, 'SPEED', 1, 9999, true, false);

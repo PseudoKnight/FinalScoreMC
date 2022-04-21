@@ -91,7 +91,7 @@ register_command('cluck', array(
 				unbind('cluckregion');
 			}
 			
-			proc _cluck_startround(@cluck) {;
+			proc _cluck_startround(@cluck) {
 				_regionmsg('cluck', 'Round '.@cluck['round']);
 				bind('entity_damage', array('id': 'cluckdamage'), array('cause': 'PROJECTILE', 'type': 'CHICKEN', 'world': @cluck['world']), @event, @cluck) {
 					if(array_contains(@cluck['chickens'], @event['id']) && @event['finalamount'] > 0) {
