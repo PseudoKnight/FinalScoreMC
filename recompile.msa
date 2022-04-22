@@ -70,9 +70,18 @@
 		export('recompile', true);
 	}
 
-	@start = time();
+	// if this queue isn't cleared by the recompile, it'll clear itself, preventing the recompile broadcast.
+	queue_push(closure(){
+		queue_clear('recompile');
+	}, 'recompile');
+
+	@times = array(time());
 	run('/recompile -rfx'.if(!@clearGlobal, 'g'));
-	@stop = time();
-	broadcast(color('yellow').'Recompiled scripts!'.if(@message, ' "'.@message.'"').' ('.round((@stop - @start) / 1000, 2).'s)');
+	@times[] = time();
+
+	queue_push(closure(){
+		broadcast(color('yellow').'Recompiled scripts!'.if(@message, ' "'.@message.'"').' ('.round((@times[1] - @times[0]) / 1000, 2).'s)');
+	}, 'recompile');
+
 	export('recompile', null);
 <<<
