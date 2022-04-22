@@ -24,6 +24,7 @@ register_command('life', array(
 		}
 		@iterations = integer(@args[0]);
 		@sleepMS = integer(array_get(@args, 1, 10)) * 50 - 50; // convert to ms minus 1 tick
+		@wrapping = false;
 
 		// Define the lowest corner of the region, except use the highest y
 		@xMin = @coords[1][0];
@@ -86,14 +87,22 @@ register_command('life', array(
 						// Count different types of life separately
 						@count = array_resize(array(), array_size(@blockTypes), 0);
 						
-						@count[@grid[@x - 1][@z - 1]]++;
-						@count[@grid[@x][@z - 1]]++;
-						@count[@grid[@xPlusOne][@z - 1]]++;
-						@count[@grid[@x - 1][@z]]++;
-						@count[@grid[@xPlusOne][@z]]++;
-						@count[@grid[@x - 1][@zPlusOne]]++;
-						@count[@grid[@x][@zPlusOne]]++;
-						@count[@grid[@xPlusOne][@zPlusOne]]++;
+						if(@wrapping || @x > 0 && @z > 0) {
+							@count[@grid[@x - 1][@z - 1]]++;
+							@count[@grid[@x][@z - 1]]++;
+							@count[@grid[@x - 1][@z]]++;
+						}
+						if(@wrapping || @x < @xWidth - 1 && @z < @zWidth - 1) {
+							@count[@grid[@xPlusOne][@z]]++;
+							@count[@grid[@x][@zPlusOne]]++;
+							@count[@grid[@xPlusOne][@zPlusOne]]++;
+						}
+						if(@wrapping || @x < @xWidth - 1 && @z > 0) {
+							@count[@grid[@xPlusOne][@z - 1]]++;
+						}
+						if(@wrapping || @z < @zWidth - 1 && @x > 0) {
+							@count[@grid[@x - 1][@zPlusOne]]++;
+						}
 
 						@current = @grid[@x][@z];
 						if(@current) { // if current cell has life
