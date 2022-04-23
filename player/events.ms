@@ -279,12 +279,13 @@ bind('player_interact_entity', null, array('clicked': 'PAINTING','hand': 'main_h
 
 // Hand instruments
 @instruments = array(
-	'IRON_NUGGET': 'flute',
-	'GOLD_NUGGET':'bell',
-	'BONE': 'xylophone',
-	'IRON_INGOT': 'iron_xylophone',
-	//'STRING':'guitar',
-	//'BAMBOO': 'didgeridoo',
+	'IRON_NUGGET': 'block.note_block.flute',
+	'GOLD_NUGGET':'block.note_block.bell',
+	'BONE': 'block.note_block.xylophone',
+	'IRON_INGOT': 'block.note_block.iron_xylophone',
+	'PRISMARINE_CRYSTALS': 'block.note_block.chime',
+	//'STRING':'block.note_block.guitar',
+	//'BAMBOO': 'block.note_block.didgeridoo',
 );
 
 bind('player_interact', null, null, @event, @instruments,
@@ -306,7 +307,7 @@ bind('player_interact', null, null, @event, @instruments,
 			if(@event['button'] == 'left' && @event['block']) {
 				play_named_sound(ploc(), array('sound': 'block.note_block.snare', 'category': 'VOICE'));
 			} else {
-				play_named_sound(ploc(), array('sound': 'block.note_block.'.@instrument, 'pitch': @pitch, 'category': 'VOICE'));
+				play_named_sound(ploc(), array('sound': @instrument, 'pitch': @pitch, 'category': 'VOICE'));
 			}
 		}
 	}
