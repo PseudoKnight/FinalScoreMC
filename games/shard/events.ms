@@ -1,4 +1,4 @@
-bind('player_interact', null, array('itemname': 'AMETHYST_SHARD', 'hand': 'main_hand', 'block': null), @event) {
+proc _trigger_shard() {
 	include('core.library/util.ms');
 	if(array_contains(get_worlds(), 'shard') && array_contains(get_scoreboards(), 'shard')) {
 		if(pworld() == 'shard') {
@@ -35,4 +35,12 @@ bind('player_interact', null, array('itemname': 'AMETHYST_SHARD', 'hand': 'main_
 		include('core.library/menu.ms');
 		_open_objective_menu();
 	}
+}
+
+bind('player_interact', null, array(itemname: 'PRISMARINE_SHARD', hand: 'main_hand', block: null, button: 'right'), @event) {
+	_trigger_shard();
+}
+
+bind('player_interact', null, array(itemname: 'AMETHYST_SHARD', hand: 'main_hand', block: null, button: 'right'), @event) {
+	_trigger_shard();
 }

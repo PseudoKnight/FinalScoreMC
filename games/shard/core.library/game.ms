@@ -10,7 +10,7 @@ proc _shard_create(@rules){
 			continue();
 		}
 		@item = pinv(@p, null);
-		if(@item && @item['name'] == 'AMETHYST_SHARD') {
+		if(@item && string_ends_with(@item['name'], 'SHARD')) {
 			@players[] = @p;
 			@ploc = ploc(@p);
 			play_named_sound(@ploc, array('sound': 'entity.guardian.attack', 'volume': 2));
