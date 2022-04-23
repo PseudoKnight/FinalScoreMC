@@ -5,7 +5,7 @@
 >
 register_command('life', array(
 	'description': 'Starts a Game of Life in the "life" region',
-	'usage': '/life <iterations> [sleep_ticks]',
+	'usage': '/life <iterations> [sleep_ticks] [wrapping]',
 	'permission': 'command.life',
 	'tabcompleter': closure(@alias, @sender, @args, @info) {
 		return(array());
@@ -24,7 +24,7 @@ register_command('life', array(
 		}
 		@iterations = integer(@args[0]);
 		@sleepMS = integer(array_get(@args, 1, 10)) * 50 - 50; // convert to ms minus 1 tick
-		@wrapping = false;
+		@wrapping = array_get(@args, 2, 'false') == 'true';
 
 		// Define the lowest corner of the region, except use the highest y
 		@xMin = @coords[1][0];
