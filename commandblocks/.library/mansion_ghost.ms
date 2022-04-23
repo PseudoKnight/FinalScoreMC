@@ -20,20 +20,20 @@ set_interval(1000, closure(){
 		clear_task();
 		try(entity_remove(@husk));
 		die();
-	};
+	}
 	if(!entity_exists(@husk)) {
 		clear_task();
 		die();
 	}
 	@loc = entity_loc(@husk);
-	if( distance(ploc(@p), @loc) > 32) {
+	if(distance(ploc(@p), @loc) > 32) {
 		clear_task();
 		try(entity_remove(@husk));
 		die();
 	}
 	set_mob_target(@husk, puuid(@p));
 	if(!rand(3)) {
-		play_sound(@loc, array(sound: 'ENTITY_HUSK_AMBIENT', pitch:0.5, volume:0.5));
+		play_sound(@loc, array(sound: 'ENTITY_HUSK_AMBIENT', pitch: 0.5, volume: 0.5));
 	}
 	spawn_particle(location_shift(@loc, 'up'), 'CAMPFIRE_SIGNAL_SMOKE');
 	spawn_particle(location_shift(@loc, 'up', 2),'CAMPFIRE_SIGNAL_SMOKE');

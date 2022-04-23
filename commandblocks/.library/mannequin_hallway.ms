@@ -1,12 +1,12 @@
 @loc = get_command_block();
 @p = entities_in_radius(@loc, 20, 'PLAYER')[0];
 set_interval(150, closure(){
-	if(!ponline(@p) || !array_contains(sk_current_regions(@p),'hallway')) {
+	if(!ponline(@p) || !array_contains(sk_current_regions(@p), 'hallway')) {
 		clear_task();
 		die();
 	}
 	@loc = ploc(@p);
-	foreach(@e in entities_in_radius(@loc, 16, 'ARMOR_STAND')){
+	foreach(@e in entities_in_radius(@loc, 16, 'ARMOR_STAND')) {
 		try {
 			@eLoc = entity_loc(@e);
 			play_sound(@eLoc, array(sound: 'ENTITY_SILVERFISH_STEP', pitch: 0.5 + rand(), volume: 0.05));
