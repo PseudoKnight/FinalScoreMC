@@ -32,6 +32,7 @@ proc _trigger_shard() {
 	} else if(array_contains(get_virtual_inventories(), 'shard')) {
 		action_msg('Another player is generating a shard.');
 	} else {
+		play_sound(ploc(), array(sound: 'BLOCK_AMETHYST_BLOCK_HIT'));
 		include('core.library/menu.ms');
 		_open_objective_menu();
 	}

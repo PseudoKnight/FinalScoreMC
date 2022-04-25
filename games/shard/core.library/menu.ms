@@ -355,6 +355,7 @@ proc _open_rules_menu(@objective) {
 					}
 				}
 				set_inventory_item('shard', @slot, @item);
+				play_sound(ploc(), array(sound: 'BLOCK_AMETHYST_BLOCK_HIT'));
 			}
 		}
 	}

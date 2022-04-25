@@ -13,12 +13,14 @@ proc _shard_create(@rules){
 		if(@item && string_ends_with(@item['name'], 'SHARD')) {
 			@players[] = @p;
 			@ploc = ploc(@p);
-			play_named_sound(@ploc, array('sound': 'entity.guardian.attack', 'volume': 2));
+			play_named_sound(@ploc, array(sound: 'entity.guardian.attack'));
 		}
 	}
-	if(array_size(@players) < 2 && !pisop()) {
-		play_sound(ploc(), array('sound': 'BLOCK_FIRE_EXTINGUISH', 'pitch': 0.7));
-		action_msg('Not enough players to generate a shard!');
+	if(array_size(@players) < 2 && @rules['objective'] != 'creative') {
+		set_timeout(1800, closure(){
+			action_msg(color('red').'Not enough players to generate a shard!');
+			play_sound(ploc(), array(sound: 'BLOCK_FIRE_EXTINGUISH', volume: 0.5));
+		});
 		die();
 	}
 
