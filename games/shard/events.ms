@@ -6,7 +6,7 @@ proc _trigger_shard() {
 		} else {
 			// Late join
 			@game = import('shard');
-			play_sound(ploc(), array('sound': 'BLOCK_AMETHYST_CLUSTER_BREAK', 'pitch': 0.5));
+			play_sound(ploc(), array(sound: 'BLOCK_AMETHYST_CLUSTER_BREAK', pitch: 0.5));
 			@loc = get_spawn('shard');
 			@loc['y'] -= 1;
 			if(set_ploc(_get_spawn_location())) {
@@ -18,7 +18,7 @@ proc _trigger_shard() {
 				set_plevel(player(), 0);
 				set_peffect(player(), 'RESISTANCE', 3, 30, true);
 				set_pscoreboard(player(), 'shard');
-				play_sound(@loc, array('sound': 'BLOCK_AMETHYST_CLUSTER_BREAK', 'pitch': 0.5), player());
+				play_sound(@loc, array(sound: 'BLOCK_AMETHYST_CLUSTER_BREAK', pitch: 0.5), player());
 				@game = import('shard');
 				if(@game && !@game['lateJoin']) {
 					set_pmode(player(), 'SPECTATOR');

@@ -824,7 +824,7 @@ proc _objective_load(@binds, @rules) {
 		@card[@i] = array();
 		for(@j = 0, @j < @width, @j++) {
 			@index = array_rand(@items, 1)[0];
-			@card[@i][@j] = array('players': array(), 'material': @items[@index]);
+			@card[@i][@j] = array(players: array(), material: @items[@index]);
 			array_remove(@items, @index);
 		}
 	}
@@ -835,9 +835,9 @@ proc _objective_load(@binds, @rules) {
 	create_objective('reroll', 'DUMMY', 'shard');
 	create_objective('total', 'DUMMY', 'shard');
 	if(@size) {
-		set_objective_display('inarow', array('slot': 'SIDEBAR', 'displayname': 'In a Row ('.@size.')'), 'shard');
+		set_objective_display('inarow', array(slot: 'SIDEBAR', displayname: 'In a Row ('.@size.')'), 'shard');
 	} else {
-		set_objective_display('total', array('slot': 'SIDEBAR', 'displayname': 'In a Row (4)'), 'shard');
+		set_objective_display('total', array(slot: 'SIDEBAR', displayname: 'In a Row (4)'), 'shard');
 	}
 
 	// Player colors
@@ -859,7 +859,7 @@ proc _objective_load(@binds, @rules) {
 	// Procedures
 	proc _scavengerhunt_win(@player) {
 		_worldmsg('shard', color('green').@player.' wins!');
-		launch_firework(ploc(@player), array('strength': 3, 'type': 'BALL_LARGE', 'flicker': true));
+		launch_firework(ploc(@player), array(strength: 3, type: 'BALL_LARGE', flicker: true));
 		set_timeout(20000, closure(){
 			_unload_shard();
 		});
@@ -885,12 +885,12 @@ proc _objective_load(@binds, @rules) {
 					for(@j = 0, @j < @cardSize, @j++) {
 						@item = @card[@i][@j];
 						if(array_contains(@item['players'], @p)) {
-							@chest[@offset + @j + @i * @chestWidth] = array('name': 'RED_STAINED_GLASS_PANE');
+							@chest[@offset + @j + @i * @chestWidth] = array(name: 'RED_STAINED_GLASS_PANE');
 						} else if(array_size(@item['players'])) {
-							@chest[@offset + @j + @i * @chestWidth] = array('name': @item['material'], 'meta': array('enchants':
-									array('sharpness': 1), 'flags': array('HIDE_ENCHANTS')));
+							@chest[@offset + @j + @i * @chestWidth] = array(name: @item['material'], meta: array(enchants:
+									array(sharpness: 1), flags: array('HIDE_ENCHANTS')));
 						} else {
-							@chest[@offset + @j + @i * @chestWidth] = array('name': @item['material'], 'meta': array('lore':
+							@chest[@offset + @j + @i * @chestWidth] = array(name: @item['material'], meta: array(lore:
 									array('Click to re-roll this item.')));
 						}
 					}
@@ -954,11 +954,11 @@ proc _objective_load(@binds, @rules) {
 					}
 					if(@item['players']) {
 						@firstPlayer = @item['players'][0];
-						@chest[@j + @i * @chestWidth] = array('name': @colorMap[@firstPlayer][0],
-								'meta': array('display': @firstPlayer));
+						@chest[@j + @i * @chestWidth] = array(name: @colorMap[@firstPlayer][0],
+								meta: array(display: @firstPlayer));
 						@item['material'] = 'WHITE_STAINED_GLASS_PANE';
 					} else {
-						@chest[@j + @i * @chestWidth] = array('name': @item['material'], 'meta': array('lore':
+						@chest[@j + @i * @chestWidth] = array(name: @item['material'], meta: array(lore:
 								array('Click to re-roll this item.')));
 					}
 				}
@@ -1046,7 +1046,7 @@ proc _objective_load(@binds, @rules) {
 
 	// Events
 	@binds[] = 'shard-scavenger-worldchanged';
-	bind('world_changed', array('id': 'shard-scavenger-worldchanged', 'priority': 'LOW'), array('to': 'shard'), @event, @size, @colors, @colorMap) {
+	bind('world_changed', array(id: 'shard-scavenger-worldchanged', priority: 'LOW'), array(to: 'shard'), @event, @size, @colors, @colorMap) {
 		queue_push(closure(){
 			try {
 				@index = array_rand(@colors, 1)[0];
@@ -1054,8 +1054,8 @@ proc _objective_load(@binds, @rules) {
 				array_remove(@colors, @index);
 				create_team(player(), 'shard');
 				team_add_player(player(), player(), 'shard');
-				set_team_display(player(), array('color': @colorMap[player()][1]), 'shard');
-				pgive_item(player(), array('name': 'MAP', 'meta': array('display': 'Scavenger Hunt Card')));
+				set_team_display(player(), array(color: @colorMap[player()][1]), 'shard');
+				pgive_item(player(), array(name: 'MAP', meta: array(display: 'Scavenger Hunt Card')));
 				if(@size) {
 					_refresh_card();
 				}
@@ -1066,7 +1066,7 @@ proc _objective_load(@binds, @rules) {
 	}
 
 	@binds[] = 'shard-scavenger-playerinteract';
-	bind('player_interact', array('id': 'shard-scavenger-playerinteract'), array('itemname': 'MAP', 'button': 'right'), @event, @size) {
+	bind('player_interact', array(id: 'shard-scavenger-playerinteract'), array(itemname: 'MAP', button: 'right'), @event, @size) {
 		if(pworld() == 'shard') {
 			cancel();
 			if(@size) {
@@ -1078,7 +1078,7 @@ proc _objective_load(@binds, @rules) {
 	}
 
 	@binds[] = 'shard-scavenger-inventoryclick';
-	bind('inventory_click', array('id': 'shard-scavenger-inventoryclick'), array('clicktype': 'LEFT', 'virtual': true), @event,
+	bind('inventory_click', array(id: 'shard-scavenger-inventoryclick'), array(clicktype: 'LEFT', virtual: true), @event,
 		@card, @items, @width, @height) {
 
 		if(@event['slotitem'] && @event['rawslot'] < @event['inventorysize']) {
@@ -1096,7 +1096,7 @@ proc _objective_load(@binds, @rules) {
 						@item = @card[@i][@j];
 						if(@item['material'] == @material && !@item['players']) {
 							@newmaterial = array_get_rand(@items);
-							@card[@i][@j] = array('players': array(), 'material': @newmaterial);
+							@card[@i][@j] = array(players: array(), material: @newmaterial);
 							set_pscore('reroll', player(), 1, 'shard');
 							_refresh_card();
 							_worldmsg('shard', player().' re-rolled '.@material.' and got '.@newmaterial.'.');
@@ -1110,13 +1110,13 @@ proc _objective_load(@binds, @rules) {
 	}
 
 	@binds[] = 'shard-scavenger-itempickup';
-	bind('item_pickup', array('id': 'shard-scavenger-itempickup'), null, @event, @card, @size, @width, @height) {
+	bind('item_pickup', array(id: 'shard-scavenger-itempickup'), null, @event, @card, @size, @width, @height) {
 		if(pworld() == 'shard') {
 			@thisMaterial = @event['item']['name'];
 			if(string_ends_with(@thisMaterial, '_STAINED_GLASS_PANE')) {
 				die();
 			} else if(@thisMaterial == 'MAP') {
-				modify_event('item', array('name': 'MAP', 'meta': array('display': 'Scavenger Hunt Card')));
+				modify_event('item', array(name: 'MAP', meta: array(display: 'Scavenger Hunt Card')));
 				die();
 			}
 			for(@i = 0, @i < @height, @i++) {

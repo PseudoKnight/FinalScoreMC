@@ -3,7 +3,7 @@ proc _rule_load(@binds, @value) {
 		queue_push(closure(){
 			ptake_item(player(), array(name: 'ELYTRA')); // just in case they have one already
 			pgive_item(player(), array(name: 'ELYTRA'));
-			pgive_item(player(), array(name: 'FIREWORK', 'qty': 64));
+			pgive_item(player(), array(name: 'FIREWORK', qty: 64));
 		}, 'shard');
 	}
 }

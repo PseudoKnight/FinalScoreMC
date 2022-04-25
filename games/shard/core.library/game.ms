@@ -76,14 +76,14 @@ proc _shard_create(@rules){
 			// Create shard
 			@start = time();
 			_create_world('shard', array(
-				'name': @worldname.'//Shard',
-				'mode': 'SURVIVAL',
-				'group': 'shard',
-				'teleports': true,
-				'environment': 'NORMAL',
-				'seed': null,
-				'generator': 'CleanroomGenerator:.',
-				'difficulty': 'HARD',
+				name: @worldname.'//Shard',
+				mode: 'SURVIVAL',
+				group: 'shard',
+				teleports: true,
+				environment: 'NORMAL',
+				seed: null,
+				generator: 'CleanroomGenerator:.',
+				difficulty: 'HARD',
 			));
 			@stop = time();
 			console('Created shard ('.(@stop - @start).'ms)', false);
@@ -129,7 +129,7 @@ proc _shard_create(@rules){
 				set_spawn(@loc);
 				set_world_time('shard', get_world_time(@world));
 				storm(false, 'shard');
-				set_world_border('shard', array('width': @rules['width'], 'center': @loc));
+				set_world_border('shard', array(width: @rules['width'], center: @loc));
 				set_gamerule('shard', 'NATURALREGENERATION', !array_index_exists(@rules, 'regen') || !@rules['noregen']);
 				set_spawning('shard', array(
 					'animal-spawn-limit': 20,
@@ -139,16 +139,16 @@ proc _shard_create(@rules){
 				if(!@respawnPlayers && @rules['buffertime'] && @rules['timelimit']) {
 					set_timeout(@rules['buffertime'], closure(){
 						if(array_contains(get_worlds(), 'shard')) {
-							set_world_border('shard', array('width': 1, 'seconds': @rules['timelimit'] * 60));
+							set_world_border('shard', array(width: 1, seconds: @rules['timelimit'] * 60));
 							_worldmsg('shard', color('red').color('bold').'Shard has started to collapse! ('.@rules['timelimit'].' minutes)');
 						}
 					});
 				}
 				@game = array(
-					'respawnPlayers': @respawnPlayers,
-					'rules': @rules,
-					'lateJoin': true,
-					'inv': if(array_index_exists(@rules, 'mirrored') && @rules['mirrored'], pinv(), null),
+					respawnPlayers: @respawnPlayers,
+					rules: @rules,
+					lateJoin: true,
+					inv: if(array_index_exists(@rules, 'mirrored') && @rules['mirrored'], pinv(), null),
 				);
 				export('shard', @game);
 
@@ -213,7 +213,7 @@ proc _shard_create(@rules){
 							return();
 						}
 						@ploc = ploc(@p);
-						play_sound(@ploc, array('sound': 'BLOCK_AMETHYST_CLUSTER_BREAK', 'pitch': 0.5));
+						play_sound(@ploc, array(sound: 'BLOCK_AMETHYST_CLUSTER_BREAK', pitch: 0.5));
 						@ploc['world'] = 'shard';
 						@airDrop = false;
 						if(array_index_exists(@rules, 'randomspawn') && @rules['randomspawn']
@@ -239,7 +239,7 @@ proc _shard_create(@rules){
 								_clear_pinv(@p);
 							}
 							if(@airDrop) {
-								pgive_item(@p, array('name': 'ELYTRA', 'meta': array('damage': 402)));
+								pgive_item(@p, array(name: 'ELYTRA', meta: array(damage: 402)));
 								set_peffect(@p, 'SLOW_FALLING', 1, 60);
 								queue_push(closure(){
 									bind('player_armor_change', null, array(player: @p), @event) {
@@ -251,8 +251,8 @@ proc _shard_create(@rules){
 							set_plevel(@p, 0);
 							set_peffect(@p, 'RESISTANCE', 3, 30, true);
 							set_pscoreboard(@p, 'shard');
-							play_sound(@ploc, array('sound': 'BLOCK_AMETHYST_CLUSTER_BREAK', 'pitch': 0.5), @p);
-							play_sound(@ploc, array('sound': 'ENTITY_WITHER_SPAWN', 'pitch': 0.7), @p);
+							play_sound(@ploc, array(sound: 'BLOCK_AMETHYST_CLUSTER_BREAK', pitch: 0.5), @p);
+							play_sound(@ploc, array(sound: 'ENTITY_WITHER_SPAWN', pitch: 0.7), @p);
 						}
 					}, 'shard');
 				}
@@ -287,7 +287,7 @@ proc _shard_create(@rules){
 							}
 						}
 						if(@count == 1 && !@willRespawnPlayers) {
-							set_world_border('shard', array('width': 1, 'seconds': 20));
+							set_world_border('shard', array(width: 1, seconds: 20));
 							storm(true, 'shard');
 							set_thunder(true, 'shard');
 							_worldmsg('shard', color('green').@last.' wins!');
@@ -304,7 +304,7 @@ proc _shard_create(@rules){
 
 				// Events
 				@binds[] = 'shard-quit';
-				bind('player_quit', array('priority': 'HIGHEST', 'id': 'shard-quit'), null, @event) {
+				bind('player_quit', array(priority: 'HIGHEST', id: 'shard-quit'), null, @event) {
 					if(pworld() == 'shard') {
 						@loc = get_spawn('custom');
 						@loc['y'] -= 1;
@@ -314,7 +314,7 @@ proc _shard_create(@rules){
 				}
 
 				@binds[] = 'shard-death';
-				bind('player_death', array('priority': 'HIGHEST', 'id': 'shard-death'), null, @event, @players, @rules, @respawnPlayers) {
+				bind('player_death', array(priority: 'HIGHEST', id: 'shard-death'), null, @event, @players, @rules, @respawnPlayers) {
 					if(@event['location']['world'] == 'shard') {
 						consume();
 						if(!@respawnPlayers) {
@@ -326,7 +326,7 @@ proc _shard_create(@rules){
 							export('playerspawn', @loc);
 							set_pmode('SPECTATOR');
 							if(@rules['timelimit'] && !@rules['buffertime'] && get_world_border('shard')['width'] == @rules['width']) {
-								set_world_border('shard', array('width': 1, 'seconds': @rules['timelimit'] * 60));
+								set_world_border('shard', array(width: 1, seconds: @rules['timelimit'] * 60));
 								_worldmsg('shard', color('red').color('bold').'Shard has started to collapse! ('.@rules['timelimit'].' minutes)');
 							}
 							@game = import('shard');
@@ -342,18 +342,18 @@ proc _shard_create(@rules){
 				}
 
 				@binds[] = 'shard-spawn';
-				bind('player_spawn', array('id': 'shard-spawn', 'priority': 'LOWEST'), array('world': 'shard'), @event) {
+				bind('player_spawn', array(id: 'shard-spawn', priority: 'LOWEST'), array(world: 'shard'), @event) {
 					modify_event('location', import('playerspawn', _get_spawn_location()));
 					_check_shard();
 					export('playerspawn', null);
 				}
 
-				bind('world_changed', array('id': 'shard-worldchanged'), array('from': 'shard'), @event) {
+				bind('world_changed', array(id: 'shard-worldchanged'), array(from: 'shard'), @event) {
 					_check_shard();
 				}
 
 				@binds[] = 'shard-interact';
-				bind('player_interact', array('id': 'shard-interact'), null, @event) {
+				bind('player_interact', array(id: 'shard-interact'), null, @event) {
 					if(@event['block'] && pworld() == 'shard') {
 						switch(@event['block']) {
 							case 'BLAST_FURANCE':
@@ -385,17 +385,17 @@ proc _shard_create(@rules){
 				}
 
 				@binds[] = 'shard-place1';
-				bind('block_place', array('id': 'shard-place1'), array('block': 'CHEST'), @event) {
+				bind('block_place', array(id: 'shard-place1'), array(block: 'CHEST'), @event) {
 					_set_inventory_contents(@event['location'], 0);
 				}
 
 				@binds[] = 'shard-place2';
-				bind('block_place', array('id': 'shard-place2'), array('block': 'TRAPPED_CHEST'), @event) {
+				bind('block_place', array(id: 'shard-place2'), array(block: 'TRAPPED_CHEST'), @event) {
 					_set_inventory_contents(@event['location'], 0);
 				}
 
 				@binds[] = 'shard-explosion';
-				bind('entity_explode', array('id': 'shard-explosion'), null, @event) {
+				bind('entity_explode', array(id: 'shard-explosion'), null, @event) {
 					if(@event['location']['world'] == 'shard') {
 						foreach(@block in @event['blocks']) {
 							switch(get_block(@block)) {
