@@ -1,26 +1,18 @@
-register_command('level', array(
-	'description': 'Manages and starts custom levels against waves of enemies.',
-	'usage': '/level <start|setspawn|delete|setlobby|setschematic|setstartblock> [arena_id] [blocktype|schematic]',
-	'tabcompleter': closure(@alias, @sender, @args, @info) {
+register_command('waves', array(
+	description: 'Manages and starts custom waves against enemies.',
+	usage: '/waves <start|setspawn|delete|setlobby|setschematic|setstartblock> [arena_id] [blocktype|schematic]',
+	tabcompleter: closure(@alias, @sender, @args, @info) {
 		if(array_size(@args) == 1) {
 			return(_strings_start_with_ic(array('start', 'setspawn', 'delete', 'setlobby', 'setschematic', 'setstartblock'), @args[-1]));
 		}
 		return(array());
 	},
-	'executor': closure(@alias, @sender, @args, @info) {
+	executor: closure(@alias, @sender, @args, @info) {
 		if(!@args) {
 			return(false);
 		}
 		@action = @args[0];
-		switch(@action) {
-			case 'reload':
-				if(!has_permission('group.engineer')) {
-					die(color('gold').'No permission.');
-				}
-				x_recompile_includes('core.library');
-				x_recompile_includes('mobs.library');
-				msg(color('green').'Done!');
-			
+		switch(@action) {			
 			case 'setspawn':
 				if(!has_permission('group.engineer')) {
 					die(color('gold').'No permission.');
@@ -29,7 +21,7 @@ register_command('level', array(
 					die(color('gold').'This requires an arena id');
 				}
 				@name = @args[1];
-				@arena = get_value('level', @name);
+				@arena = get_value('waves', @name);
 				@group = 'spawns';
 				if(array_size(@args) > 2) {
 					@group = @args[2];
@@ -43,7 +35,7 @@ register_command('level', array(
 				}
 				@loc = array_normalize(location_shift(ploc(), 'up'))[0..3];
 				@arena[@group][] = @loc;
-				store_value('level', @name, @arena);
+				store_value('waves', @name, @arena);
 				msg(color('green').'Added spawn location');
 				
 			case 'delete':
@@ -54,7 +46,7 @@ register_command('level', array(
 					die(color('gold').'This requires an arena id');
 				}
 				@name = @args[1];
-				clear_value('level', @name);
+				clear_value('waves', @name);
 				msg(color('green').'Deleted arena');
 				
 			case 'setlobby':
@@ -65,13 +57,13 @@ register_command('level', array(
 					die(color('gold').'This requires an arena id');
 				}
 				@name = @args[1];
-				@arena = get_value('level', @name);
+				@arena = get_value('waves', @name);
 				if(!@arena) {
 					@arena = associative_array();
 				}
 				@loc = array_normalize(ploc())[0..3];
 				@arena['lobby'] = @loc;
-				store_value('level', @name, @arena);
+				store_value('waves', @name, @arena);
 				msg(color('green').'Set lobby location');
 				
 			case 'setschematic':
@@ -82,12 +74,12 @@ register_command('level', array(
 					die(color('gold').'This requires an arena id and schematic name.');
 				}
 				@name = @args[1];
-				@arena = get_value('level', @name);
+				@arena = get_value('waves', @name);
 				if(!@arena) {
 					@arena = associative_array();
 				}
 				@arena['schematic'] = @args[2];
-				store_value('level', @name, @arena);
+				store_value('waves', @name, @arena);
 				msg(color('green').'Set schematic');
 				
 			case 'setstartblock':
@@ -98,12 +90,12 @@ register_command('level', array(
 					die(color('gold').'This requires an arena id and block type.');
 				}
 				@name = @args[1];
-				@arena = get_value('level', @name);
+				@arena = get_value('waves', @name);
 				if(!@arena) {
 					@arena = associative_array();
 				}
-				@arena['startblock'] = array('loc': ptarget_space(), 'type': @args[2]);
-				store_value('level', @name, @arena);
+				@arena['startblock'] = array(loc: ptarget_space(), type: @args[2]);
+				store_value('waves', @name, @arena);
 				msg(color('green').'Set startblock');
 				
 			case 'settrigger':
@@ -114,7 +106,7 @@ register_command('level', array(
 					die(color('gold').'This requires an arena id and trigger id.');
 				}
 				@name = @args[1];
-				@arena = get_value('level', @name);
+				@arena = get_value('waves', @name);
 				if(!@arena) {
 					@arena = associative_array();
 				}
@@ -122,7 +114,7 @@ register_command('level', array(
 					@arena['triggers'] = associative_array();
 				}
 				@arena['triggers'][@args[2]] =  ptarget_space();
-				store_value('level', @name, @arena);
+				store_value('waves', @name, @arena);
 				msg(color('green').'Set trigger location for '.@args[2]);
 				
 			case 'start':
@@ -138,7 +130,7 @@ register_command('level', array(
 					die(color('gold').'There\'s no arena here.');
 				}
 				@region = @region[-1];
-				@arena = get_value('level', @region);
+				@arena = get_value('waves', @region);
 				if(!@arena) {
 					die(color('gold').'This region is not defined as an arena.');
 				}
@@ -147,15 +139,15 @@ register_command('level', array(
 				try {
 					@scripts = read('arenas/'.@region.'.yml');
 				} catch(IOException @ex) {
-					die(color('gold').'This are no levels defined for this region.');
+					die(color('gold').'This are no waves defined for this region.');
 				}
 				@scripts = yml_decode(@scripts);
 				
 				@activities = import('activities');
-				if(@activities && array_index_exists(@activities, 'level'.@region)) {
+				if(@activities && array_index_exists(@activities, 'waves'.@region)) {
 					die(color('gold').'Game is already running.');
 				}
-				if(array_contains(get_virtual_inventories(), 'levelstart'.@region)) {
+				if(array_contains(get_virtual_inventories(), 'wavesstart'.@region)) {
 					die(color('gold').'Someone is already starting the game.');
 				}
 				
@@ -164,8 +156,8 @@ register_command('level', array(
 				if(array_size(@scripts) == 1) {
 					@name = array_keys(@scripts)[0];
 					try {
-						@level = _level_prepare(@name, @arena, @region, @world);
-						_level_start(@level);
+						@waves = _waves_prepare(@name, @arena, @region, @world);
+						_waves_start(@waves);
 					} catch(Exception @ex) {
 						console(@ex['classType'].': '.@ex['message'], false);
 						foreach(@trace in @ex['stackTrace']) {
@@ -173,7 +165,7 @@ register_command('level', array(
 						}
 						msg(color('red').@ex['message']);
 						msg(color('yellow').'Cleaning up game...');
-						_level_end(@level, false);
+						_waves_end(@waves, false);
 					}
 					return(true);
 				}
@@ -182,23 +174,23 @@ register_command('level', array(
 				@index = 0;
 				foreach(@id: @item in @scripts) {
 					@menu[@index] = array(
-						'name': @item['name'],
-						'meta': array('display': @item['display'], 'lore': @item['lore'], 'flags': array('HIDE_ATTRIBUTES')),
+						name: @item['name'],
+						meta: array(display: @item['display'], lore: @item['lore'], flags: array('HIDE_ATTRIBUTES')),
 					);
 					@index++;
 				}
-				create_virtual_inventory('levelstart'.@region, 9, 'Pick a Script', @menu);
-				popen_inventory('levelstart'.@region);
+				create_virtual_inventory('wavesstart'.@region, 9, 'Pick a Script', @menu);
+				popen_inventory('wavesstart'.@region);
 				
 				bind('inventory_close', null, null, @e, @player = player(), @region) {
 					if(player() == @player) {
 						unbind(player().'click');
 						unbind();
-						delete_virtual_inventory('levelstart'.@region);
+						delete_virtual_inventory('wavesstart'.@region);
 					}
 				}
 				
-				bind('inventory_click', array('id': player().'click'), array('player': player()), @e, @arena, @region, @world) {
+				bind('inventory_click', array(id: player().'click'), array(player: player()), @e, @arena, @region, @world) {
 					@item = @e['slotitem'];
 					if(@item && @item['meta'] && @item['meta']['display']) {
 						close_pinv(); // unbinds and deletes menu
@@ -206,8 +198,8 @@ register_command('level', array(
 						@name = replace(to_lower(@item['meta']['display']), ' ', '');
 
 						try {
-							@level = _level_prepare(@name, @arena, @region, @world);
-							_level_start(@level);
+							@waves = _waves_prepare(@name, @arena, @region, @world);
+							_waves_start(@waves);
 						} catch(Exception @ex) {
 							console(@ex['classType'].': '.@ex['message'], false);
 							foreach(@trace in @ex['stackTrace']) {
@@ -215,7 +207,7 @@ register_command('level', array(
 							}
 							msg(color('red').@ex['message']);
 							msg(color('yellow').'Cleaning up game...');
-							_level_end(@level, false);
+							_waves_end(@waves, false);
 						}
 					}
 				}
