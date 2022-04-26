@@ -1,11 +1,11 @@
 register_command('i', array(
-	'description': 'Creates a new item.',
-	'usage': '/i <id:data> [quantity]',
-	'permission': 'command.items',
-	'tabcompleter': closure(@alias, @sender, @args, @info) {
+	description: 'Creates a new item with optional yaml or json formatted meta.',
+	usage: 'Examples: \'/i stick 64\', \'/i stick|display:"Mighty Stick"\', or \'/i stick{"display":"Mighty Stick"}\'',
+	permission: 'command.items',
+	tabcompleter: closure(@alias, @sender, @args, @info) {
 		return(array());
 	},
-	'executor': closure(@alias, @sender, @args, @info) {
+	executor: closure(@alias, @sender, @args, @info) {
 		if(!@args) {
 			return(false);
 		}
@@ -41,7 +41,7 @@ register_command('i', array(
 			@itemName = array_implode(@args[cslice(0, @index)], '_');
 		}
 		try {
-			pgive_item(array('name': to_upper(@itemName), 'qty': @amount, 'meta': @meta));
+			pgive_item(array(name: to_upper(@itemName), qty: @amount, meta: @meta));
 			msg(color('yellow').'You\'ve been given '.@amount.' of '.@itemName.'.');
 		} catch(Exception @ex) {
 			msg(color('red').'The item '.@itemName.' doesn\'t appear to exist.');
