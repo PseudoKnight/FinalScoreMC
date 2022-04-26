@@ -1,5 +1,5 @@
 register_command('dye', array(
-	description: 'Dyes leather armor or maps using hex or rgb (0-255).',
+	description: 'Dyes leather armor, maps, and potions using hex or rgb (0-255).',
 	usage: '/dye <#rrggbb> | /dye <r> <g> <b>',
 	permission: 'command.items',
 	tabcompleter: closure(@alias, @sender, @args, @info) {
@@ -11,7 +11,7 @@ register_command('dye', array(
 		}
 		@item = pinv(player(), null);
 		if(!@item) {
-			die(color('gold').'You must be holding an item in your hand.');
+			die(color('gold').'You must be holding a map, potion or leather armor in your hand.');
 		}
 		@r = 255;
 		@g = 255;
@@ -36,7 +36,7 @@ register_command('dye', array(
 			try {
 				set_armor_color(pheld_slot(), @color);
 			} catch(Exception @ex) {
-				die(color('gold').'Hold leather armor in your hand and type the command. eg. /dye 255 255 255');
+				die(color('gold').'This leather item cannot be dyed.');
 			}
 		} else if(@item['name'] == 'FILLED_MAP' || string_ends_with(@item['name'], 'POTION')) {
 			if(!@item['meta']) {
@@ -45,7 +45,7 @@ register_command('dye', array(
 			@item['meta']['color'] = @color;
 			set_pinv(player(), null, @item);
 		} else {
-			die(color('gold').'You must be holding leather armor or a map in your hand.');
+			die(color('gold').'You must be holding a map, potion, or leather armor in your hand.');
 		}
 	}
 ));
