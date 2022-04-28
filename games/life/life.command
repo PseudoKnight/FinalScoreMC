@@ -5,7 +5,7 @@
 >
 register_command('life', array(
 	'description': 'Starts a Game of Life in the "life" region',
-	'usage': '/life <iterations> [sleep_ticks] [wrapping]',
+	'usage': '/life <iterations> [sleep_ticks] [walls=wrap|dead|alive]',
 	'permission': 'command.life',
 	'tabcompleter': closure(@alias, @sender, @args, @info) {
 		return(array());
@@ -24,7 +24,7 @@ register_command('life', array(
 		}
 		@iterations = integer(@args[0]);
 		@sleepMS = integer(array_get(@args, 1, 10)) * 50 - 50; // convert to ms minus 1 tick
-		@wrapping = array_get(@args, 2, 'false') == 'true';
+		@walls = array_get(@args, 2, 'wrap');
 
 		// Define the lowest corner of the region, except use the highest y
 		@xMin = @coords[1][0];
@@ -80,31 +80,35 @@ register_command('life', array(
 				@gridChanges = array();
 				for(@x = 0, @x < @xWidth, @x++) {
 					for(@z = 0, @z < @zWidth, @z++) {
-						// Use negative indices and width checks for grid wrapping
-						@xPlusOne = if(@x == @xWidth - 1, 0, @x + 1);
-						@zPlusOne = if(@z == @zWidth - 1, 0, @z + 1);
-
 						// Count different types of life separately
 						@count = array_resize(array(), array_size(@blockTypes), 0);
-						
-						if(@wrapping || @x > 0 && @z > 0) {
-							@count[@grid[@x - 1][@z - 1]]++;
-							@count[@grid[@x][@z - 1]]++;
-							@count[@grid[@x - 1][@z]]++;
-						}
-						if(@wrapping || @x < @xWidth - 1 && @z < @zWidth - 1) {
-							@count[@grid[@xPlusOne][@z]]++;
-							@count[@grid[@x][@zPlusOne]]++;
-							@count[@grid[@xPlusOne][@zPlusOne]]++;
-						}
-						if(@wrapping || @x < @xWidth - 1 && @z > 0) {
-							@count[@grid[@xPlusOne][@z - 1]]++;
-						}
-						if(@wrapping || @z < @zWidth - 1 && @x > 0) {
-							@count[@grid[@x - 1][@zPlusOne]]++;
+						@current = @grid[@x][@z];
+
+						// Loop through adjacent grid locations
+						// respecting wrapping and other wall states
+						for(@rx = @x - 1, @rx <= @x + 1, @rx++) {
+							if(@walls != 'wrap' && (@rx < 0 || @rx == @xWidth)) {
+								if(@walls == 'alive') {
+									@count[@current] += 3;
+								}
+								continue();
+							}
+							for(@rz = @z - 1, @rz <= @z + 1, @rz++) {
+								if(@walls != 'wrap' && (@rz < 0 || @rz == @zWidth)) {
+									if(@walls == 'alive') {
+										@count[@current]++;
+									}
+									continue();
+								}
+								if(!(@rx == @x && @rz == @z)) {
+									@gx = if(@rx == @xWidth, 0, @rx);
+									@gz = if(@rz == @zWidth, 0, @rz);
+									@blockType = @grid[@gx][@gz];
+									@count[@blockType]++;
+								}
+							}
 						}
 
-						@current = @grid[@x][@z];
 						if(@current) { // if current cell has life
 							if(@count[@current] < 2) { // underpopulation of current type
 								@gridChanges[] = array(@x, @z, 0, array('particle': 'FALLING_DUST', 'block': @blockTypes[@current]));
