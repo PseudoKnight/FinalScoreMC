@@ -43,6 +43,8 @@ register_command('life', array(
 		}
 
 		// Define the possible block types
+		// This can include any number of block types
+		// as long as the first type is AIR.
 		@blockTypes = array(
 			'AIR', // it's dead, jim
 			'WHITE_CONCRETE',
@@ -58,7 +60,7 @@ register_command('life', array(
 			'GREEN_CONCRETE',
 			'BROWN_CONCRETE',
 			'RED_CONCRETE',
-			'SLIME_BLOCK' // non-player gaia
+			'SLIME_BLOCK' // can be used for non-player gaia
 		);
 
 		// Define our grid using existing blocks
@@ -122,9 +124,11 @@ register_command('life', array(
 								}
 							}
 						} else { // no life here
-							@index = array_index(@count, 3); // get first life type that has 3 neighbors
-							if(@index) { // birth
-								@gridChanges[] = array(@x, @z, @index, null);
+							@indexes = array_indexes(@count, 3); // get life forms that have 3 neighbors
+							if(array_size(@indexes) == 1 && @indexes[0]) { // birth of a specific life form
+								@gridChanges[] = array(@x, @z, @indexes[0], null);
+							} else if(@indexes) { // conflict between multiple life forms
+								@gridChanges[] = array(@x, @z, 0, 'EXPLOSION_LARGE');
 							}
 						}
 					}
