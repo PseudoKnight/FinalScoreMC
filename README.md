@@ -1,19 +1,22 @@
-This repository consists of scripts for the FinalScore Minecraft server in the MethodScript language using the CommandHelper plugin. It contains extensive custom functionality and games. If you want to use any of this on your server, you're free to do so. However, each script should be evaluated for dependencies, like CommandHelper extensions, auto_includes, and other server-specific configurations. Not all scripts have this documentation, but I try to make sure [minigames in this directory](games/minigames) do.
+# FinalScoreMC Scripts
+
+This repository consists of scripts for the FinalScoreMC.com Minecraft server in the MethodScript language using the CommandHelper plugin. It contains extensive custom functionality and games. If you want to use any of this on your server, you're free to do so. However, each script should be evaluated for dependencies, like CommandHelper extensions, auto included procedures, and possibly other server-specific configurations. Some scripts will have this documented at the top file options.
 
 Visit http://methodscript.com for details on CommandHelper itself and the MethodScript language.
 
-The following CommandHelper extensions are used:
+## Extensions Used
 
-- [CHDiscord](https://github.com/PseudoKnight/CHDiscord/)
-- [CHDisguises](https://github.com/PseudoKnight/CHDisguises/)
-- [CHDynmap](https://github.com/PseudoKnight/CHDynmap/)
-- [CHFiles](https://github.com/PseudoKnight/CHFiles/)
-- [CHNaughty](https://github.com/PseudoKnight/CHNaughty/)
-- [CHPaper](https://github.com/PseudoKnight/CHPaper)
-- [CHPerms](https://github.com/jb-aero/CHPerms/)
-- [CHRegionChange](https://github.com/PseudoKnight/CHRegionChange)
-- CHSerialize
-- [CHSpigot](https://github.com/PseudoKnight/CHSpigot/)
-- [CHStargate](https://github.com/PseudoKnight/CHStargate/)
-- CHWorldBorderAPI
-- [SKCompat](https://github.com/jb-aero/SKCompat/)
+| Extension | Source | Download | Dependency |
+| --------- | ------ | -------- | ---------- |
+| CHDiscord | [Source](https://github.com/PseudoKnight/CHDiscord/) | [Download](https://letsbuild.net/jenkins/job/CHDiscord/) | |
+| CHDisguises | [Source](https://github.com/PseudoKnight/CHDisguises/) | [Download](https://letsbuild.net/jenkins/job/CHDisguises/) | LibsDisguises |
+| CHDynmap | [Source](https://github.com/PseudoKnight/CHDynmap/) | [Download](https://letsbuild.net/jenkins/job/CHDynmap/) | Dynmap |
+| CHFiles | [Source](https://github.com/PseudoKnight/CHFiles/) | [Download](https://letsbuild.net/jenkins/job/CHFiles/) | |
+| CHNaughty | [Source](https://github.com/PseudoKnight/CHNaughty/) | [Download](https://github.com/PseudoKnight/CHNaughty/releases) | |
+| CHPaper | [Source](https://github.com/PseudoKnight/CHPaper) | [Download](https://letsbuild.net/jenkins/job/CHPaper/) | Paper |
+| CHPerms | [Source](https://github.com/jb-aero/CHPerms/) | [Download](https://letsbuild.net/jenkins/job/CHPerms/) | |
+| CHRegionChange | [Source](https://github.com/PseudoKnight/CHRegionChange) | [Download](https://letsbuild.net/jenkins/job/CHRegionChange/) | WorldGuard |
+| CHSerialize | | | |
+| CHSpigot | [Source](https://github.com/PseudoKnight/CHSpigot/) | [Download](https://letsbuild.net/jenkins/job/CHSpigot/) | Spigot |
+| CHStargate | [Source](https://github.com/PseudoKnight/CHStargate/) | [Download](https://letsbuild.net/jenkins/job/CHStargate/) | Stargate |
+| SKCompat | [Source](https://github.com/jb-aero/SKCompat/) | [Download](https://letsbuild.net/jenkins/job/SKCompat/) | WorldEdit/WorldGuard |
