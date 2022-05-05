@@ -70,6 +70,7 @@ bind('player_death', null, null, @event) {
 		if(!has_bind('deathdrops')) {
 			bind('item_despawn', array('id': 'deathdrops'), null, @event) {
 				if(array_contains(get_scoreboard_tags(@event['id']), 'deathdrop')) {
+					console('Reset death drop despawn: '.@event['item']['name']);
 					remove_scoreboard_tag(@event['id'], 'deathdrop');
 					cancel();
 				}
