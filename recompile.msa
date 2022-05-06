@@ -1,3 +1,12 @@
+/**
+ * Overrides CommandHelper's recompile command to:
+ * - Change default flags to -gfrx (use -g to clear globals)
+ * - Prevent recompile if certain scripts like games are running (use -f to force recompile)
+ * - Temporarily store some globals if they're cleared (use -p to also clear protected globals)
+ * - Clear orphan scoreboards and boss bars
+ * - Prints time to reload, compile and execute
+ * - Broadcasts optional recompile reason text
+ */
 /recompile [$args] [$] = >>>
 	@clearGlobal = false; # -g clear all but protected exported global vars
 	@clearProtected = false; # -p clear protected global vars
