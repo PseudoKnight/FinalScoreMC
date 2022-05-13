@@ -23,7 +23,7 @@ register_command('life', array(
 			return(false);
 		}
 		@iterations = integer(@args[0]);
-		@sleepMS = integer(array_get(@args, 1, 10)) * 50 - 50; // convert to ms minus 1 tick
+		@sleepMS = integer(array_get(@args, 1, 10)) * 50 - 50; // Convert to ms, minus 1 tick
 		@walls = array_get(@args, 2, 'wrap');
 
 		// Define the lowest corner of the region, except use the highest y
@@ -46,7 +46,9 @@ register_command('life', array(
 		// This can include any number of block types
 		// as long as the first type is AIR.
 		@blockTypes = array(
-			'AIR', // it's dead, jim
+			// Empty cell at index 0
+			'AIR',
+			// Different color options that could be used for multiple players
 			'WHITE_CONCRETE',
 			'ORANGE_CONCRETE',
 			'MAGENTA_CONCRETE',
@@ -60,7 +62,8 @@ register_command('life', array(
 			'GREEN_CONCRETE',
 			'BROWN_CONCRETE',
 			'RED_CONCRETE',
-			'SLIME_BLOCK' // can be used for non-player gaia
+			 // Slime can be used for non-player gaia
+			'SLIME_BLOCK'
 		);
 
 		// Define our grid using existing blocks
@@ -107,24 +110,29 @@ register_command('life', array(
 							}
 						}
 
-						if(@current) { // if current cell has life
-							if(@count[@current] < 3) { // underpopulation of current type
+						// Prepare grid changes based on current state
+						if(@current) { // If current cell has life
+							if(@count[@current] < 3) {
+								// Underpopulation of current life form
 								@gridChanges[] = array(@x, @z, 0, array(particle: 'FALLING_DUST', block: @blockTypes[@current]));
 							} else {
 								@total = array_reduce(@count, closure(@this, @next) {
 									return(@this + @next);
 								});
-								@total -= @count[0]; // do not count empty cells
-								if(@total > 4) { // overpopulation of any type
+								@total -= @count[0]; // Do not count empty cells
+								if(@total > 4) {
+									// Overpopulation of any life form
 									@gridChanges[] = array(@x, @z, 0, if(@total != @count[@current], 'EXPLOSION_LARGE', null));
 								}
 							}
-						} else { // no life here
-							@indexes = array_indexes(@count, 3); // get life forms that have 3 neighbors
+						} else { // No life here
+							@indexes = array_indexes(@count, 3); // Get life forms that have 3 neighbors
 							if(@indexes && @indexes[0]) {
-								if(array_size(@indexes) == 1) { // birth of a specific life form
+								if(array_size(@indexes) == 1) {
+									 // Birth of a specific life form
 									@gridChanges[] = array(@x, @z, @indexes[0], null);
-								} else { // conflict between multiple life forms
+								} else {
+									 // Conflict between multiple life forms, indicated by explosion particle
 									@gridChanges[] = array(@x, @z, 0, 'EXPLOSION_LARGE');
 								}
 							}
@@ -132,6 +140,7 @@ register_command('life', array(
 					}
 				}
 
+				// Apply grid changes and prepare block changes and particles
 				@blockChanges = array();
 				foreach(@change in @gridChanges) {
 					@x = @change[0];
@@ -151,22 +160,24 @@ register_command('life', array(
 				if(!@blockChanges) {
 					die();
 				}
+				// Queue block changes, which forces to main thread
 				queue_push(iclosure(@blocks = @blockChanges) {
 					array @block;
 					foreach(@block in @blocks) {
 						set_block(@block, @block['type']);
 						if(@block['particle']) {
-							@block['x'] += 0.5;
-							@block['y'] += 0.5;
-							@block['z'] += 0.5;
+							@block['x'] += rand();
+							@block['y'] += rand();
+							@block['z'] += rand();
 							spawn_particle(@block, @block['particle']);
 						}
 					}
-					play_sound(@block, array(
-						sound: 'ENTITY_CHICKEN_EGG',
-						pitch: clamp(0.5 + 1.5 * (array_size(@blocks) / 100), 0.5, 2.0),
-						volume: 2
-					));
+					foreach(@player in players_in_radius(@block, 64)) {
+						play_sound(ploc(@player), array(
+							sound: 'ENTITY_CHICKEN_EGG',
+							pitch: 0.5 + 1.5 * rand()
+						), @player);
+					}
 				}, 'life');
 				if(@sleepMS) {
 					queue_delay(@sleepMS, 'life');
