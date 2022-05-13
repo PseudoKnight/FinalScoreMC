@@ -5,12 +5,15 @@
 >
 register_command('life', array(
 	description: 'Starts a Game of Life in the "life" region',
-	usage: '/life <iterations> [sleep_ticks] [walls=wrap|dead|alive]',
+	usage: '/life <iterations> [sleep_ticks=10] [walls=wrap|empty|alive]',
 	permission: 'command.life',
-	tabcompleter: closure(@alias, @sender, @args, @info) {
+	tabcompleter: closure(@alias, @sender, @args) {
+		if(array_size(@args) == 3) {
+			return(_strings_start_with_ic(array('wrap', 'empty', 'alive'), @args[-1]));
+		}
 		return(array());
 	},
-	executor: closure(@alias, @sender, @args, @info) {
+	executor: closure(@alias, @sender, @args) {
 		@commandBlock = get_command_block();
 		@world = if(@commandBlock, @commandBlock['world'], pworld());
 		if(!sk_region_exists(@world, 'life')) {
