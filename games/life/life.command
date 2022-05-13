@@ -1,16 +1,16 @@
 <!
-	description: An implementation of John Conway's Game of Life. Supports multiple types of competing life.;
+	description: An implementation of John Conways Game of Life. Supports multiple types of competing life.;
 	requiredExtensions: SKCompat;
 	author: PseudoKnight;
 >
 register_command('life', array(
-	'description': 'Starts a Game of Life in the "life" region',
-	'usage': '/life <iterations> [sleep_ticks] [walls=wrap|dead|alive]',
-	'permission': 'command.life',
-	'tabcompleter': closure(@alias, @sender, @args, @info) {
+	description: 'Starts a Game of Life in the "life" region',
+	usage: '/life <iterations> [sleep_ticks] [walls=wrap|dead|alive]',
+	permission: 'command.life',
+	tabcompleter: closure(@alias, @sender, @args, @info) {
 		return(array());
 	},
-	'executor': closure(@alias, @sender, @args, @info) {
+	executor: closure(@alias, @sender, @args, @info) {
 		@commandBlock = get_command_block();
 		@world = if(@commandBlock, @commandBlock['world'], pworld());
 		if(!sk_region_exists(@world, 'life')) {
@@ -102,33 +102,31 @@ register_command('life', array(
 									}
 									continue();
 								}
-								if(!(@rx == @x && @rz == @z)) {
-									@gx = if(@rx == @xWidth, 0, @rx);
-									@gz = if(@rz == @zWidth, 0, @rz);
-									@blockType = @grid[@gx][@gz];
-									@count[@blockType]++;
-								}
+								@blockType = @grid[if(@rx == @xWidth, 0, @rx)][if(@rz == @zWidth, 0, @rz)];
+								@count[@blockType]++;
 							}
 						}
 
 						if(@current) { // if current cell has life
-							if(@count[@current] < 2) { // underpopulation of current type
-								@gridChanges[] = array(@x, @z, 0, array('particle': 'FALLING_DUST', 'block': @blockTypes[@current]));
+							if(@count[@current] < 3) { // underpopulation of current type
+								@gridChanges[] = array(@x, @z, 0, array(particle: 'FALLING_DUST', block: @blockTypes[@current]));
 							} else {
 								@total = array_reduce(@count, closure(@this, @next) {
 									return(@this + @next);
 								});
-								@total -= @count[0]; // don't count empty cells
-								if(@total > 3) { // overpopulation of any type
-									@gridChanges[] = array(@x, @z, 0, if(@count[@current] < 4, 'EXPLOSION_LARGE', null));
+								@total -= @count[0]; // do not count empty cells
+								if(@total > 4) { // overpopulation of any type
+									@gridChanges[] = array(@x, @z, 0, if(@total != @count[@current], 'EXPLOSION_LARGE', null));
 								}
 							}
 						} else { // no life here
 							@indexes = array_indexes(@count, 3); // get life forms that have 3 neighbors
-							if(array_size(@indexes) == 1 && @indexes[0]) { // birth of a specific life form
-								@gridChanges[] = array(@x, @z, @indexes[0], null);
-							} else if(@indexes) { // conflict between multiple life forms
-								@gridChanges[] = array(@x, @z, 0, 'EXPLOSION_LARGE');
+							if(@indexes && @indexes[0]) {
+								if(array_size(@indexes) == 1) { // birth of a specific life form
+									@gridChanges[] = array(@x, @z, @indexes[0], null);
+								} else { // conflict between multiple life forms
+									@gridChanges[] = array(@x, @z, 0, 'EXPLOSION_LARGE');
+								}
 							}
 						}
 					}
@@ -141,12 +139,12 @@ register_command('life', array(
 					@value = @change[2];
 					@grid[@x][@z] = @value;
 					@blockChanges[] = array(
-						'x': @xMin + @x,
-						'y': @y, 
-						'z': @zMin + @z,
-						'world': @world, 
-						'type': @blockTypes[@value],
-						'particle': @change[3]
+						x: @xMin + @x,
+						y: @y, 
+						z: @zMin + @z,
+						world: @world, 
+						type: @blockTypes[@value],
+						particle: @change[3]
 					);
 				}
 
@@ -165,9 +163,9 @@ register_command('life', array(
 						}
 					}
 					play_sound(@block, array(
-						'sound': 'ENTITY_CHICKEN_EGG',
-						'pitch': clamp(0.5 + 1.5 * (array_size(@blocks) / 100), 0.5, 2.0),
-						'volume': 2
+						sound: 'ENTITY_CHICKEN_EGG',
+						pitch: clamp(0.5 + 1.5 * (array_size(@blocks) / 100), 0.5, 2.0),
+						volume: 2
 					));
 				}, 'life');
 				if(@sleepMS) {
