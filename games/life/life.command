@@ -5,7 +5,7 @@
 >
 register_command('life', array(
 	description: 'Starts a Game of Life in the "life" region',
-	usage: '/life <iterations> [sleep_ticks=10] [walls=wrap|empty|alive]',
+	usage: '/life <iterations> [rules=B3/S23] [sleep_ticks=1] [walls=wrap|empty|alive]',
 	permission: 'command.life',
 	tabcompleter: closure(@alias, @sender, @args) {
 		if(array_size(@args) == 3) {
@@ -26,8 +26,18 @@ register_command('life', array(
 			return(false);
 		}
 		@iterations = integer(@args[0]);
-		@sleepMS = integer(array_get(@args, 1, 10)) * 50 - 50; // Convert to ms, minus 1 tick
-		@walls = array_get(@args, 2, 'wrap');
+		@rules = array_get(@args, 1, null);
+		@sleepMS = integer(array_get(@args, 2, 1)) * 50 - 50; // Convert to ms, minus 1 tick
+		@walls = array_get(@args, 3, 'wrap');
+
+		// Define rules
+		@birth = array(3);
+		@survive = array(2, 3);
+		if(@rules) {
+			@splitRules = split('/', @rules);
+			@birth = split('', @splitRules[0])[1..];
+			@survive = split('', @splitRules[1])[1..];
+		}
 
 		// Define the lowest corner of the region, except use the highest y
 		@xMin = @coords[1][0];
@@ -118,11 +128,9 @@ register_command('life', array(
 							Rules:
 							- Living cell: 
 								- if fewer than hostile neighbors, get eaten
-								- if 1 or less similar neighbors, die
-								- if 2-3 similar neighbors, survive
-								- if 4 or more neighbors die
+								- if @survive similar neighbors, survive
 							- Empty cell:
-								- 3 similar neighbors creates new life, unless contested by equal or more others
+								- if @birth similar neighbors creates new life, unless contested by equal or more others
 						*/
 
 						if(@current) { // Current cell has life
@@ -135,27 +143,24 @@ register_command('life', array(
 								}
 							}
 							if(@attacker) {
-								// Eaten
+								// Consumed
 								@gridChanges[] = array(@x, @z, @attacker, 
 										array(particle: 'BLOCK_CRACK', block: @blockTypes[@current], count: 9));
-							} else if(@currentCount < 3) {
-								// Dies of loneliness
+							} else if(!array_contains(@survive, 8 - @count[0])) {
+								// Death
 								@gridChanges[] = array(@x, @z, 0, 
 										array(particle: 'FALLING_DUST', block: @blockTypes[@current]));
-							} else if(@count[0] < 5) { // Four or less empty cells, so four or more neighbors
-								// Dies of overpopulation
-								@particle = array(particle: 'FALLING_DUST', block: @blockTypes[@current]);
-								if(@count[0] + @currentCount < 9) {
-									// Nearby competitor
-									@particle = array(particle: 'BLOCK_CRACK', block: @blockTypes[@current], count: 9);
-								}
-								@gridChanges[] = array(@x, @z, 0, @particle);
 							}
-						} else if(@count[0] > 3) { // Empty cell that's uncontested
-							@index = array_index(@count, 3); // Get life forms with three neighbors
-							if(@index) {
-								// Birth new life form here.
-								@gridChanges[] = array(@x, @z, @index, null);
+						} else {
+							foreach(@b in @birth) {
+								@indexes = array_indexes(@count, @b); // Get life forms with b neighbors
+								foreach(@index in @indexes) {
+									if(@index) { // Ignore empty neighbors
+										// Birth new life form here.
+										@gridChanges[] = array(@x, @z, @index, null);
+										break(2);
+									}
+								}
 							}
 						}
 					}
