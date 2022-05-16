@@ -33,6 +33,4 @@ proc _fw_start_task(@secs) {
 	}
 }
 
-proc _fw_end_task(@secs) {
-	
-}
+proc _fw_end_task(@secs) {}

@@ -34,6 +34,4 @@ proc _fw_start_task(@secs) {
 	_fw_change_team(@leader, 'winners');
 }
 
-proc _fw_end_task(@secs) {
-	
-}
+proc _fw_end_task(@secs) {}

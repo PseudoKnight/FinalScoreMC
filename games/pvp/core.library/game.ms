@@ -449,9 +449,7 @@ proc _pvp_start_match(@id) {
 	if(file_exists(@modeScript)) {
 		// Since this is after some default procs are loaded, don't use include_dir
 		// This proc stub is the only one modes must override.
-		proc _load_mode(@pvp) {
-			noop();
-		}
+		proc _load_mode(@pvp) {}
 		include(@modeScript);
 		_load_mode(@pvp);
 	}

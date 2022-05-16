@@ -1,6 +1,4 @@
-proc _rule_load(@binds, @value) {
-	noop(); // Nothing to load for this event, just a proc to override
-}
+proc _rule_load(@binds, @value) {}
 
 proc _set_inventory_contents(@loc, @count, @player,
 @baseItems = array(

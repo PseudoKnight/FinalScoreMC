@@ -30,6 +30,4 @@ proc _arena_prepare(@pvp) {
 	});
 }
 
-proc _arena_bind_events(@id) {
-	noop();
-}
+proc _arena_bind_events(@id) {}

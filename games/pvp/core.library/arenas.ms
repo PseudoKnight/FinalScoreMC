@@ -1,9 +1,7 @@
 /*
 	Core arena preparation (can be overriden by arena code)
 */
-proc _arena_prepare(@pvp) {
-	noop();
-}
+proc _arena_prepare(@pvp) {}
 
 proc _arena_load(@pvp) {
 	@id = @pvp['id'];
