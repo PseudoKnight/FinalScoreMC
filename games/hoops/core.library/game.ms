@@ -64,13 +64,13 @@ proc _hoops_equip_players() {
 	}
 }
 
-proc _hoops_queue(@seconds) {
+proc _hoops_queue() {
 	@game = import('hoops');
 	@game['state'] = 1;
 
 	@startTime = time();
 	set_interval(1000, closure() {
-		@countdown = @seconds - integer((time() - @startTime) / 1000);
+		@countdown = 5 - integer((time() - @startTime) / 1000);
 		if(@countdown <= 0) {
 			clear_task();
 			_hoops_start();

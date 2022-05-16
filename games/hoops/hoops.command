@@ -1,45 +1,26 @@
 register_command('hoops', array(
-	'description': 'Creates, joins and manages a game of basketball.',
-	'usage': '/hoops',
-	'permission': 'command.hoops',
-	'tabcompleter': closure(@alias, @sender, @args, @info) {
-		return(array());
-	},
-	'executor': closure(@alias, @sender, @args, @info) {
-		if(!@args) {
-			@args[0] = 'start';
-		}
+	description: 'Creates a game of basketball in a hoops region.',
+	usage: '/hoops',
+	permission: 'command.hoops',
+	tabcompleter: closure(return(array())),
+	executor: closure(@alias, @sender, @args, @info) {
+		@action = array_get(@args, 0, 'start');
 		include('core.library/game.ms');
-		switch(@args[0]) {
-			case 'reload':
-				if(!has_permission('command.hoops.reload')) {
-					die(color('red').'No permission.');
-				}
-				if(import('hoops')) {
-					_hoops_delete();
-				}
-				x_recompile_includes('core.library');
-
+		switch(@action) {
 			case 'start':
-				if(!sk_region_exists('hoops')) {
-					die(color('red').'Hoops doesn\'t exist in this world.');
+				@regions = sk_current_regions();
+				if(!@regions || !string_contains_ic(@regions[-1], 'hoops')) {
+					die(color('red').'You must be in the hoops region.');
 				}
-				if(import('hoops')) {
+				@region = @regions[-1];
+				if(import(@region)) {
 					die(color('red').'Already running.');
 				}
-				// Wait for task cleanup.
-				// May want to change this later with a proper cleanup proc.
-				set_timeout(100, closure(){
-					_hoops_create();
-					@count = _hoops_add_players();
-					if(@count < 1) {
-						_hoops_delete();
-						die(color('red').'You must be in the hoops region.');
-					}
-					_hoops_equip_players();
-					broadcast(player(). ' started Hoops!', all_players(pworld()));
-					_hoops_queue(5);
-				});
+				_hoops_create();
+				_hoops_add_players();
+				_hoops_equip_players();
+				_hoops_queue();
+				broadcast(player(). ' started Hoops!', all_players(pworld()));
 
 			default:
 				return(false);
