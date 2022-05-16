@@ -52,7 +52,6 @@ register_command('life', array(
 			// Empty cell at index 0
 			'AIR',
 			// Different color options that could be used for multiple players
-			'WHITE_CONCRETE',
 			'ORANGE_CONCRETE',
 			'MAGENTA_CONCRETE',
 			'LIGHT_BLUE_CONCRETE',
@@ -113,31 +112,50 @@ register_command('life', array(
 							}
 						}
 
-						// Prepare grid changes based on current state
-						if(@current) { // If current cell has life
-							if(@count[@current] < 3) {
-								// Underpopulation of current life form
-								@gridChanges[] = array(@x, @z, 0, array(particle: 'FALLING_DUST', block: @blockTypes[@current]));
-							} else {
-								@total = array_reduce(@count, closure(@this, @next) {
-									return(@this + @next);
-								});
-								@total -= @count[0]; // Do not count empty cells
-								if(@total > 4) {
-									// Overpopulation of any life form
-									@gridChanges[] = array(@x, @z, 0, if(@total != @count[@current], 'EXPLOSION_LARGE', null));
+						/* 
+							Prepare grid changes based on current state
+
+							Rules:
+							- Living cell: 
+								- if fewer than hostile neighbors, get eaten
+								- if 1 or less similar neighbors, die
+								- if 2-3 similar neighbors, survive
+								- if 4 or more neighbors die
+							- Empty cell:
+								- 3 similar neighbors creates new life, unless contested by equal or more others
+						*/
+
+						if(@current) { // Current cell has life
+							@currentCount = @count[@current];
+							@attacker = 0;
+							foreach(@type: @c in @count) {
+								if(@type && @c > @currentCount) {
+									@attacker = @type;
+									break();
 								}
 							}
-						} else { // No life here
-							@indexes = array_indexes(@count, 3); // Get life forms that have 3 neighbors
-							if(@indexes && @indexes[0]) {
-								if(array_size(@indexes) == 1) {
-									 // Birth of a specific life form
-									@gridChanges[] = array(@x, @z, @indexes[0], null);
-								} else {
-									 // Conflict between multiple life forms, indicated by explosion particle
-									@gridChanges[] = array(@x, @z, 0, 'EXPLOSION_LARGE');
+							if(@attacker) {
+								// Eaten
+								@gridChanges[] = array(@x, @z, @attacker, 
+										array(particle: 'BLOCK_CRACK', block: @blockTypes[@current], count: 9));
+							} else if(@currentCount < 3) {
+								// Dies of loneliness
+								@gridChanges[] = array(@x, @z, 0, 
+										array(particle: 'FALLING_DUST', block: @blockTypes[@current]));
+							} else if(@count[0] < 5) { // Four or less empty cells, so four or more neighbors
+								// Dies of overpopulation
+								@particle = array(particle: 'FALLING_DUST', block: @blockTypes[@current]);
+								if(@count[0] + @currentCount < 9) {
+									// Nearby competitor
+									@particle = array(particle: 'BLOCK_CRACK', block: @blockTypes[@current], count: 9);
 								}
+								@gridChanges[] = array(@x, @z, 0, @particle);
+							}
+						} else if(@count[0] > 3) { // Empty cell that's uncontested
+							@index = array_index(@count, 3); // Get life forms with three neighbors
+							if(@index) {
+								// Birth new life form here.
+								@gridChanges[] = array(@x, @z, @index, null);
 							}
 						}
 					}
@@ -167,7 +185,7 @@ register_command('life', array(
 				queue_push(iclosure(@blocks = @blockChanges) {
 					array @block;
 					foreach(@block in @blocks) {
-						set_block(@block, @block['type']);
+						set_block(@block, @block['type'], false);
 						if(@block['particle']) {
 							@block['x'] += rand();
 							@block['y'] += rand();
