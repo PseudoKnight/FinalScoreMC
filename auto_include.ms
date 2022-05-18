@@ -79,7 +79,7 @@ proc _remove_activity(@id) {
 		@activity = array_remove(@activities, @id);
 		if(@activity['region']) {
 			if(extension_exists('CHDynmap')) {
-				try(dm_delete_marker('markers', @id));
+				try(dm_delete_marker('markers', @id))
 			}
 		}
 		return(true);

@@ -165,14 +165,14 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 			@length -= 1;
 		}
 		@c = if(@dungeonEntrance) {
-			integer((@width / 2 - 3) / 2) * 2 + 1;
+			integer((@width / 2 - 3) / 2) * 2 + 1
 		} else {
-			integer(srand(@random) * (@width / 2 - 3)) * 2 + 3;
+			integer(srand(@random) * (@width / 2 - 3)) * 2 + 3
 		}
 		@r = if(@dungeonEntrance) {
-			@length - 4;
+			@length - 4
 		} else {
-			integer(srand(@random) * (@length / 2 - 3)) * 2 + 3;
+			integer(srand(@random) * (@length / 2 - 3)) * 2 + 3
 		}
 		@entranceRoom = array(
 			r1: @r,
@@ -883,9 +883,9 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 						@chestHeight = if(@room['type'] == 'ATTIC' && srand(@random) > 0.33){
 							@room['midheight'] + 1
 						} else if(@room['type'] == 'TREASURE') {
-							1;
+							1
 						} else {
-							0;
+							0
 						}
 						@attempts = 10;
 						while(@attempts-- > 0 && @chests > 0) {
@@ -898,7 +898,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 							if(equals_ic(@materials['room'], get_block(@loc))) {
 								@chests--;
 								set_blockdata_string(@loc, 'chest[facing='._get_direction(@random).if(@materials['room'] == 'water', ',waterlogged=true').']', false);
-								try(set_inventory(@loc, _get_loot(@floor, @random, @bonus)));
+								try(set_inventory(@loc, _get_loot(@floor, @random, @bonus)))
 								if(@room['type'] == 'TREASURE') {
 									set_blockdata_string(location_shift(@loc, 'down'), 'diamond_block');
 									if(@chestArray) { // only lock this chest if we have a previous chest to add a key to

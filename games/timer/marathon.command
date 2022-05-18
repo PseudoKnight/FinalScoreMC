@@ -99,7 +99,7 @@ register_command('marathon', array(
 			}
 			if(--@timer[0] > 0) {
 				foreach(@p in array_keys(@players)) {
-					try(title(@p, '', @timer[0]));
+					try(title(@p, '', @timer[0]))
 				}
 				die();
 			}

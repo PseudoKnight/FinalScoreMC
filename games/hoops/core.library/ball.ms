@@ -38,7 +38,7 @@ proc _hoops_ball_create(@loc) {
 					@game['holder'] = @holder;
 					set_pinv(@holder, -106, array('name': 'MAGMA_CREAM'));
 					set_pinv(player(), array(0: null, -106: null));
-					try(update_bar('hoops', array('color': to_upper(@game['players'][@holder]['team']))));
+					try(update_bar('hoops', array('color': to_upper(@game['players'][@holder]['team']))))
 				} else {
 					set_pinv(player(), array(0: null, -106: null));
 					@game['holder'] = '';
@@ -47,16 +47,16 @@ proc _hoops_ball_create(@loc) {
 					set_entity_velocity(@stand, get_vector(ploc(), if(@charge[0] > 0, @charge[0] / 40, if(!array_index_exists(@event, 'location') && ploc()['pitch'] > -10, 1.5, 0.2))));
 					@game['trail'] = true;
 					@charge[0] = 0;
-					try(set_entity_glowing(@game['slime'], false));
+					try(set_entity_glowing(@game['slime'], false))
 					@game['shootLoc'] = ploc();
-					try(update_bar('hoops', array('color': 'WHITE')));
+					try(update_bar('hoops', array('color': 'WHITE')))
 				}
 			} else if(@charge[0] == 0){
 				set_pinv(player(), -106, null);
 				set_pinv(player(), 0, array('name': 'MAGMA_CREAM'));
 				set_pheld_slot(player(), 0);
 				@charge[0] = 1;
-				try(set_entity_glowing(@game['slime'], true));
+				try(set_entity_glowing(@game['slime'], true))
 				set_interval(50, closure(){
 					if(@game['holder'] != player()) {
 						clear_task();
@@ -70,7 +70,7 @@ proc _hoops_ball_create(@loc) {
 						} catch(BadEntityException @ex) {
 							clear_task();
 						}
-						try(update_bar('hoops', 0.0));
+						try(update_bar('hoops', 0.0))
 						if(ponline(player())) {
 							set_pinv(player(), array(0: null, -106: null));
 						}
@@ -79,9 +79,9 @@ proc _hoops_ball_create(@loc) {
 						@charge[0] += 3;
 						if(@charge[0] > 100) {
 							@charge[0] = 0;
-							try(set_entity_glowing(@game['slime'], false));
+							try(set_entity_glowing(@game['slime'], false))
 						}
-						try(update_bar('hoops', double(@charge[0] / 100)));
+						try(update_bar('hoops', double(@charge[0] / 100)))
 					}
 				});
 			}
@@ -106,7 +106,7 @@ proc _hoops_ball_create(@loc) {
 			@game['holder'] = @holder;
 			set_pinv(@holder, -106, array('name': 'MAGMA_CREAM'));
 			update_bar('hoops', 0.0);
-			try(update_bar('hoops', array('color': to_upper(@game['players'][@holder]['team']))));
+			try(update_bar('hoops', array('color': to_upper(@game['players'][@holder]['team']))))
 			@charge[0] = -1;
 			set_timeout(250, closure(){
 				@charge[0] = 0;
@@ -125,7 +125,7 @@ proc _hoops_ball_create(@loc) {
 		set_entity_spec(@stand, array('gravity': true));
 		set_entity_velocity(@stand, get_vector(ploc(@event['damager']), 0.6));
 		@charge[0] = 0;
-		try(set_entity_glowing(@game['slime'], false));
+		try(set_entity_glowing(@game['slime'], false))
 	}
 
 	@verticalBounciness = 0.7;
@@ -183,7 +183,7 @@ proc _hoops_ball_create(@loc) {
 				} else if(!array_contains(sk_regions_at(@loc), 'hoops')) {
 					make_effect(@loc, 'ENDER_SIGNAL');
 					play_sound(@loc, array('sound': 'ENTITY_ZOMBIE_VILLAGER_CONVERTED', 'pitch': 1.8, 'volume': 3));
-					try(update_bar('hoops', 0.0));
+					try(update_bar('hoops', 0.0))
 					if(array_size(@game['players']) == 1 && !@game['holder']) {
 						@holder = array_keys(@game['players'])[0];
 						@game['lastholder'] = '';
@@ -213,7 +213,7 @@ proc _hoops_ball_create(@loc) {
 					set_mob_effect(@bball, 'resistance', 2, 10, true, false);
 					set_mob_effect(@bball, 'wither', 1, 10, true, false);
 					set_timeout(4000, closure(){
-						try(entity_remove(@stand));
+						try(entity_remove(@stand))
 					});
 					@binds[] = bind('entity_death', null, array('id': @bball), @event, @binds) {
 						modify_event('drops', array());
@@ -291,7 +291,7 @@ proc _hoops_ball_create(@loc) {
 			foreach(@bind in @binds) {
 				unbind(@bind);
 			}
-			try(entity_remove(@stand));
+			try(entity_remove(@stand))
 			@game['ball'] = '';
 			@game['slime'] = '';
 			_remove_activity('hoops');

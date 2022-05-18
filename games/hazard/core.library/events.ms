@@ -48,7 +48,7 @@ proc _hazard_bind(@game) {
 				@loc['x'] += @v['x'] * 4;
 				@loc['z'] += @v['z'] * 4;
 				if(sk_can_build(@loc)) {
-					try(set_block(@loc, @item['name']));
+					try(set_block(@loc, @item['name']))
 					play_sound(@loc, array(sound: 'BLOCK_STONE_PLACE'));
 				}
 			}
@@ -123,7 +123,7 @@ proc _hazard_bind(@game) {
 	@game['binds'][] = bind('item_spawn', null, null, @event, @game) {
 		if(@game['state'] == 'RUN' && @game['world'] == @event['location']['world'] && array_contains(sk_regions_at(@event['location']), 'hazard')) {
 			cancel();
-		};
+		}
 	}
 
 	@game['binds'][] = bind('item_drop', null, null, @event, @game) {

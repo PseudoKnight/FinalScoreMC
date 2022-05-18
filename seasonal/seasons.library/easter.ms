@@ -123,7 +123,7 @@ bind('target_player', null, array('mobtype': 'ZOMBIE'), @event, @day) {
 						set_mob_name(@event['id'], 'Dinnerbone');
 					}
 				}
-				set_timeout(0, closure(try(set_metadata(@e, 'spawn_egg', @mob))));
+				set_timeout(0, closure(try(set_metadata(@e, 'spawn_egg', @mob))))
 				set_timeout((1 + rand(3)) * 1000, closure() {
 					if(entity_exists(@event['id'])
 					&& ponline(@event['player'])
@@ -141,7 +141,7 @@ bind('target_player', null, array('mobtype': 'ZOMBIE'), @event, @day) {
 								set_mob_name(@event['id'], 'Dinnerbone');
 							}
 						}
-						set_timeout(0, closure(try(set_metadata(@e, 'spawn_egg', @mob))));
+						set_timeout(0, closure(try(set_metadata(@e, 'spawn_egg', @mob))))
 					}
 				});
 			}

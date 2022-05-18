@@ -13,10 +13,10 @@ proc _worms_shoot_projectile(@player, @game) {
 	set_interval(50, closure(){
 		@count[0]--;
 		@trace = ray_trace(@player, @loc, 0.8 - @count[1] * 0.2, 0.1);
-		try(set_entity_loc(@segment, location_shift(@trace['location'], 'down', 1.5)));
+		try(set_entity_loc(@segment, location_shift(@trace['location'], 'down', 1.5)))
 		if(@count[0] < 0 || @trace['hitblock'] && @count[1] == 3) {
 			clear_task();
-			try(set_entity_spec(@segment, array('small': false)));
+			try(set_entity_spec(@segment, array('small': false)))
 			@game['segments'][] = @segment;
 			spawn_particle(@trace['location'], array('particle': 'EXPLOSION_LARGE', 'count': 0, 'xoffset': 1.1));
 			play_sound(@trace['location'], array('sound': 'ENTITY_SHULKER_BULLET_HIT', 'pitch': 2, 'volume': 3));
@@ -45,7 +45,7 @@ proc _worms_shoot_projectile(@player, @game) {
 						@index = array_index(@worm['segments'], @e['uuid']);
 						if(!is_null(@index)) {
 							clear_task();
-							try(set_entity_spec(@segment, array('small': false)));
+							try(set_entity_spec(@segment, array('small': false)))
 							@v = get_vector(@loc);
 							while(array_index_exists(@worm['segments'], @index)) {
 								@segment = @worm['segments'][@index];

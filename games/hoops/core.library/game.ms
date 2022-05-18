@@ -212,7 +212,7 @@ proc _hoops_cheer(@count = 15, @jump = true, @sound = array('ENTITY_VILLAGER_YES
 				set_entity_loc(@villager, location_shift(@loc, 'up'));
 				set_timeout(800, closure(){
 					@loc['y'] = @game['center'][1];
-					try(set_entity_loc(@villager, @loc));
+					try(set_entity_loc(@villager, @loc))
 				});
 			}
 		} catch(BadEntityException @ex) {
@@ -244,7 +244,7 @@ proc _hoops_delete() {
 		_hoops_player_remove(@p);
 	}
 	foreach(@v in @game['villagers']) {
-		try(entity_remove(@v));
+		try(entity_remove(@v))
 	}
 	export('hoops', null);
 	remove_bar('hoops');

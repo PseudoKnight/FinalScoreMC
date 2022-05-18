@@ -103,7 +103,7 @@ proc _class_load(@player, @pvp) {
 						clear_task();
 						execute(@returnToSender);
 						// Self-detonate missile
-						try(execute(_get_missile_location(entity_loc(@box)), @explode));
+						try(execute(_get_missile_location(entity_loc(@box)), @explode))
 					} else {
 						@loc = _get_missile_location(entity_loc(@box));
 

@@ -34,7 +34,7 @@ proc _shard_create(@rules){
 		foreach(@file in @files) {
 			if(string_starts_with(@file, 'r.')) { // 
 				delete_file("@base/shard/region/@file");
-				try(delete_file("@base/shard/entities/@file"));
+				try(delete_file("@base/shard/entities/@file"))
 			}
 		}
 	} catch(IOException @ex) {
@@ -170,7 +170,7 @@ proc _shard_create(@rules){
 					slot: 'SIDEBAR'
 				), 'shard');
 				set_timeout(60 * 1000, closure() {
-					try(set_objective_display('rules', array(slot: null), 'shard'));
+					try(set_objective_display('rules', array(slot: null), 'shard'))
 				});
 				_add_activity('shard', @worldname.'//Shard');
 

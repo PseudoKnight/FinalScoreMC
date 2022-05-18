@@ -18,7 +18,7 @@ bind('player_interact', null, array('itemname': 'FIREWORK_ROCKET', 'button': 'ri
 			@gliding = true;
 		}
 		set_timeout(150, closure(){
-			try(set_entity_gliding(@uuid, true));
+			try(set_entity_gliding(@uuid, true))
 		});
 	}
 	@slot = if(@event['hand'] == 'main_hand', null, -106);
@@ -181,7 +181,7 @@ bind('firework_explode', null, null, @event){
 		@returnLoc = get_metadata(@event['id'], 'loc', 'CommandHelper');
 		@stand = get_entity_rider(@event['id']);
 		set_timeout(1500, closure(){
-			try(entity_remove(@stand));
+			try(entity_remove(@stand))
 			unbind(@player.'firework');
 			if(ponline(@player) && pmode(@player) == 'SPECTATOR') {
 				set_ploc(@player, @returnLoc);

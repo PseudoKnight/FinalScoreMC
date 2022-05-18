@@ -31,7 +31,7 @@ proc _waves_add_player(@player, @waves) {
 }
 
 proc _waves_remove_player(@player, @waves) {
-	try(bar_remove_player('waves'.@waves['region'], @player));
+	try(bar_remove_player('waves'.@waves['region'], @player))
 	array_remove_values(@waves['players'], @player);
 	clear_peffects(@player);
 	_equip_kit(@player);

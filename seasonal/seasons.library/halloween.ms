@@ -85,7 +85,7 @@ bind('creature_spawn', null, array(type: 'SKELETON', reason: 'NATURAL'), @event)
 
 bind('entity_damage', null, array(type: 'ZOMBIE', cause: 'ENTITY_ATTACK'), @event) {
 	if(array_contains(get_scoreboard_tags(@event['id']), 'Herobrine')) {
-		try(entity_remove(@event['id']));
+		try(entity_remove(@event['id']))
 		play_sound(@event['location'], array(sound: 'ENTITY_EVOKER_PREPARE_ATTACK', pitch: 0.7));
 		spawn_particle(location_shift(@event['location'], 'up'), array(particle: 'CAMPFIRE_COSY_SMOKE', count: 3, yoffset: 1));
 	}
@@ -93,7 +93,7 @@ bind('entity_damage', null, array(type: 'ZOMBIE', cause: 'ENTITY_ATTACK'), @even
 
 bind('entity_damage_player', null, array(damager: 'ZOMBIE'), @event) {
 	if(array_contains(get_scoreboard_tags(@event['id']), 'Herobrine')) {
-		try(entity_remove(@event['id']));
+		try(entity_remove(@event['id']))
 		play_sound(@event['location'], array(sound: 'ENTITY_EVOKER_PREPARE_ATTACK', pitch: 0.7));
 		spawn_particle(location_shift(@event['location'], 'up'), array(particle: 'CAMPFIRE_COSY_SMOKE', count: 3, yoffset: 1));
 	}
@@ -107,7 +107,7 @@ bind('target_player', null, array(mobtype: 'ZOMBIE'), @event) {
 			@timer[0]--;
 			if(!entity_exists(@event['id']) || !ponline(@event['player']) || pworld(@event['player']) != @loc['world'] || @timer[0] < 0) {
 				clear_task();
-				try(entity_remove(@event['id']));
+				try(entity_remove(@event['id']))
 			} else {
 				@newLoc = entity_loc(@event['id']);
 				@dist = distance(ploc(@event['player']), @newLoc);

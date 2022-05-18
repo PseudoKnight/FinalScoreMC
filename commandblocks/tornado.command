@@ -13,7 +13,7 @@ register_command('tornado', array(
 			if(!players_in_radius(@loc, 64)) {
 				clear_task();
 				foreach(@e in @oldEntities) {
-					try(set_entity_gravity(@e, true));
+					try(set_entity_gravity(@e, true))
 				}
 				die();
 			}
@@ -38,7 +38,7 @@ register_command('tornado', array(
 
 			foreach(@i: @e in @oldEntities) {
 				if(!array_contains(@entities, @e)) {
-					try(set_entity_gravity(@e, true));
+					try(set_entity_gravity(@e, true))
 					array_remove(@oldEntities, @i);
 				}
 			}

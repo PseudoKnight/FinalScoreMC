@@ -98,7 +98,7 @@ proc _race_drop_player(@race, @player) {
 		return();
 	}
 	foreach(@stand in @race['players'][@player]['stands']) {
-		try(entity_remove(@stand));
+		try(entity_remove(@stand))
 	}
 	play_sound(ploc(@player), array('sound': 'ENTITY_FIREWORK_ROCKET_BLAST'), @player);
 	if(array_index_exists(@race, 'health')) {

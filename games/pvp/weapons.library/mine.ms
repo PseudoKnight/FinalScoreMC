@@ -12,12 +12,12 @@ proc _weapon_bind_events(@pvp) {
 			die();
 		}
 		set_timeout(2000, closure(){
-			try(
+			try {
 				set_entity_age(@event['id'], 3600); # 2 minutes until despawn
 				@loc = location_shift(entity_loc(@event['id']), 'up', 0.5);
 				play_sound(@loc, array(sound: 'ITEM_FLINTANDSTEEL_USE', pitch: 0.6));
 				spawn_particle(@loc, array(particle: 'SMOKE_LARGE', speed: 0.01));
-			);
+			} catch (Exception @ex) {}
 		});
 	}
 
@@ -51,7 +51,7 @@ proc _weapon_bind_events(@pvp) {
 					spawn_particle(@loc, array(particle: 'EXPLOSION_LARGE', count: 2));
 					if(array_index_exists(@pvp['players'], @damager)
 					&& sk_region_check_flag(ploc(@damager), 'PVP', @damager)) {
-						try(damage_entity(puuid(), @power, puuid(@damager)));
+						try(damage_entity(puuid(), @power, puuid(@damager)))
 					} else {
 						damage_entity(puuid(), @power);
 						_stats_damage(@damager, player(), @power, @pvp);

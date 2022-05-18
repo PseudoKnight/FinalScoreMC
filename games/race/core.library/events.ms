@@ -3,7 +3,7 @@ proc _race_bind_events(@race) {
 		try {
 			@player = player(@event['id']);
 			if(array_index_exists(@race['players'], @player) && entity_exists(@event['mountid'])) {
-				set_timeout(1, closure(try(entity_remove(@event['mountid']))));
+				set_timeout(1, closure(try(entity_remove(@event['mountid']))))
 			}
 		} catch(PlayerOfflineException @ex) {
 			// entity was not a player

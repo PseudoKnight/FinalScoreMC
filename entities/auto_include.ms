@@ -128,8 +128,8 @@ proc _spawn_entity(@entity, @loc, @spawnData, @consumer) {
 						@cleanup = true;
 					}
 					if(@cleanup) {
-						try(entity_remove(@display));
-						try(damage_entity(@e, 50));
+						try(entity_remove(@display))
+						try(damage_entity(@e, 50))
 						clear_task();
 					}
 				});
@@ -197,7 +197,7 @@ proc _spawn_entity(@entity, @loc, @spawnData, @consumer) {
 		}
 		if(array_index_exists(@entity, 'scripts')) {
 			foreach(@s in @entity['scripts']) {
-				try(include('custom/script.library/'.@s.'.ms'));
+				try(include('custom/script.library/'.@s.'.ms'))
 			}
 		}
 		if(is_closure(@consumer)) {

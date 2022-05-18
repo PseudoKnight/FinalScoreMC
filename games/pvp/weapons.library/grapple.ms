@@ -16,7 +16,7 @@ proc _weapon_bind_events(@pvp) {
 		@slot = pheld_slot(@player);
 
 		set_timeout(1, closure(){
-			try(set_entity_rider(@arrow, @hook));
+			try(set_entity_rider(@arrow, @hook))
 		});
 
 		proc _reel(@loc2, @shooter, @slot, @hook, @target, @mover) {
@@ -28,7 +28,7 @@ proc _weapon_bind_events(@pvp) {
 			@dist = distance(@loc1, @loc2);
 			if(@dist >= 32) {
 				if(@target != @shooter) {
-					try(entity_remove(@target));
+					try(entity_remove(@target))
 				}
 				die();
 			}
@@ -111,7 +111,7 @@ proc _weapon_bind_events(@pvp) {
 			unbind();
 			if(@event['hittype'] == 'ENTITY') {
 				@hit = @event['hit'];
-				try(set_entity_rider(@hit, @hook));
+				try(set_entity_rider(@hit, @hook))
 				_reel(@event['location'], @shooter, @slot, @hook, @shooter, @hit);
 			} else {
 				_reel(@event['location'], @shooter, @slot, @hook, @event['id'], @shooter);
@@ -120,7 +120,7 @@ proc _weapon_bind_events(@pvp) {
 
 		set_timeout(800, closure(){
 			if(has_bind('hit'.@arrow)) {
-				try(entity_remove(@arrow));
+				try(entity_remove(@arrow))
 				unbind('hit'.@arrow);
 			}
 		});

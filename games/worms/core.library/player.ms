@@ -17,7 +17,7 @@ proc _worms_add_player(@player, @game) {
 
 proc _worms_remove_player(@player, @game) {
 	foreach(@segment in @game['players'][@player]['segments']) {
-		try(entity_remove(@segment));
+		try(entity_remove(@segment))
 	}
 	array_remove(@game['players'], @player);
 	if(pworld(@player) == @game['world']) {

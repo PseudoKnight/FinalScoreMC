@@ -23,7 +23,7 @@ proc _class_load(@player, @pvp) {
 				}
 			});
 			set_timeout(800, closure(){
-				try(entity_remove(@arrow));
+				try(entity_remove(@arrow))
 			});
 			set_entity_spec(@arrow, array(damage: 1.0));
 		}
@@ -34,7 +34,7 @@ proc _class_load(@player, @pvp) {
 			spawn_particle(@e['location'], array(particle: 'LAVA', count: 7));
 			play_sound(@e['location'], array(sound: 'BLOCK_NOTE_BLOCK_BASEDRUM', pitch: 2, volume: 2));
 			play_sound(@e['location'], array(sound: 'BLOCK_FIRE_EXTINGUISH', pitch: 2, volume: 2));
-			try(entity_remove(@e['id']));
+			try(entity_remove(@e['id']))
 		}
 	}
 

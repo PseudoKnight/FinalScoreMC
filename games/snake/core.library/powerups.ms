@@ -322,7 +322,7 @@ proc _snake_drop_nuke(@snake, @game) {
 				clear_task();
 				// load chunk just in case players left
 				get_block(@loc);
-				try(entity_remove(@marker));
+				try(entity_remove(@marker))
 			}
 		} else {
 			clear_task();

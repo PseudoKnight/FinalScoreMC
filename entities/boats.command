@@ -123,7 +123,7 @@ register_command('boats', array(
 				} catch(BadEntityException @ex) {
 					clear_task();
 					foreach(@e in array_merge(@boats, @stands)) {
-						try(entity_remove(@e));
+						try(entity_remove(@e))
 					}
 				}
 			});

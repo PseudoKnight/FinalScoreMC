@@ -158,7 +158,7 @@ register_command('worm', array(
 						if(@worms) {
 							foreach(@w in @worms) {
 								foreach(@s in @w) {
-									try(entity_remove(@s));
+									try(entity_remove(@s))
 								}
 							}
 						}
@@ -232,7 +232,7 @@ register_command('worm', array(
 		} else if(@args[0] == 'delete') {
 			foreach(@i: @w in @worms) {
 				foreach(@s in @w['segments']) {
-					try(entity_remove(@s));
+					try(entity_remove(@s))
 				}
 				array_remove(@worms, @i);
 			}

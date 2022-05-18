@@ -48,7 +48,7 @@ bind('player_join', null, null, @event) {
 				if(function_exists('discord_broadcast')) {
 					@count = array_size(all_players());
 					@msg = reg_replace('[&§][0-9a-fk-o]', '', @msg);
-					try(discord_broadcast('minecraft_chat', '**\u00bb '.player().@msg.'** ('.@count.' player'.if(@count != 1, 's').' online)'));
+					try(discord_broadcast('minecraft_chat', '**\u00bb '.player().@msg.'** ('.@count.' player'.if(@count != 1, 's').' online)'))
 				}
 			}
 

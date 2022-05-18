@@ -150,7 +150,7 @@ proc _waves_start(@waves) {
 					}
 					@health /= @waves['mobCount'];
 					@health /= 100;
-					try(update_bar('waves'.@waves['region'], double(@health)));
+					try(update_bar('waves'.@waves['region'], double(@health)))
 				});
 			}
 		}

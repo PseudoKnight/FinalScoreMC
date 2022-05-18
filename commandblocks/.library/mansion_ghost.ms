@@ -18,7 +18,7 @@ if(!@p) {
 set_interval(1000, closure(){
 	if(!ponline(@p)) {
 		clear_task();
-		try(entity_remove(@husk));
+		try(entity_remove(@husk))
 		die();
 	}
 	if(!entity_exists(@husk)) {
@@ -28,7 +28,7 @@ set_interval(1000, closure(){
 	@loc = entity_loc(@husk);
 	if(distance(ploc(@p), @loc) > 32) {
 		clear_task();
-		try(entity_remove(@husk));
+		try(entity_remove(@husk))
 		die();
 	}
 	set_mob_target(@husk, puuid(@p));

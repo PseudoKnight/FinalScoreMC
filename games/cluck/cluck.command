@@ -238,7 +238,7 @@ register_command('cluck', array(
 							set_block(@loc, 'AIR');
 							spawn_particle(_center(@loc), 'EXPLOSION_LARGE');
 							play_sound(@loc, array(sound: 'ENTITY_CHICKEN_EGG', pitch: 0.5));
-							try(entity_remove(@event['id']));
+							try(entity_remove(@event['id']))
 						}
 					}
 				}

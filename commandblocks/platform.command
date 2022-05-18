@@ -41,7 +41,7 @@ register_command('platform', array(
 		}
 		
 		@shulker = spawn_entity('SHULKER', 1, @loc, closure(@e){
-			try(set_entity_spec(@e, array(color: @color)));
+			try(set_entity_spec(@e, array(color: @color)))
 			set_entity_ai(@e, false);
 		})[0];
 		set_entity_loc(@shulker, @loc);
@@ -50,7 +50,7 @@ register_command('platform', array(
 		
 		set_timeout(@ms, closure(){
 			foreach(@entity in @entities) {
-				try(entity_remove(@entity));
+				try(entity_remove(@entity))
 			}
 		});
 	}

@@ -72,7 +72,7 @@ proc _get_nearest_height(@heightMap, @maxRoomHeight, @c, @r, @x, @z) {
 		// This is not desirable.
 		if(@height != @maxRoomHeight) {
 			return(@height);
-		};
+		}
 	} catch (IndexOverflowException @ex) {
 		// outside map
 	}
