@@ -96,7 +96,7 @@ proc _fw_start_round(@secs = 12) {
 			} else if((@firstplace / @goal) < 0.90 || @total == 1) { // first place is less than 90% towards the goal (or only one player)
 				array('climb', 'keepaway', 'harvest', 'koth', 'cake', 'fall', 'cluck', 'frogegg', 'lavafall',
 					'shepherd', 'anvil', 'trade', 'fish', 'panel', 'mine', 'enderpearl', 'extinguish', 'hotpotato',
-					'parking', 'musicalchairs')
+					'parking', 'musicalchairs', 'step')
 			} else {
 				array('pvp')
 			}
