@@ -114,7 +114,9 @@ proc _iterate_cuboid(@b1, @b2, @block, @percent) {
 			for(@z = @minZ, @z <= @maxZ, @z++) {
 				if(rand(100) < @percent) {
 					set_block(array(@x, @y, @z, 'custom'), @block);
-					@blocks[] = array(@x, @y, @z, 'custom');
+					if(@block != 'ANVIL') {
+						@blocks[] = array(@x, @y, @z, 'custom');
+					}
 				}
 				if(@count++ > 5000) {
 					console('Warning: _iterate_cuboid logic potentially caused infinite loop.');

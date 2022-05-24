@@ -6,22 +6,29 @@ proc _fw_start_task(@secs) {
 		'It\'s a free-for-all!',
 	));
 	_fw_random_potion(array('speed', 'jump_boost', 'blindness', 'invisibility'));
-	@weapon = array(name: 'IRON_SWORD', meta: array(damage: 226));
-	switch(rand(3)) {
+	@weapons = array();
+	switch(rand(4)) {
 		case 0:
-			@weapon = array(name: 'BOW', meta: array(damage: 379));
+			@bow = array(name: 'BOW');
+			if(!rand(4)) {
+				@bow['meta'] = array(enchants: array(punch: 8));
+			}
+			@weapons = array(@bow, array(name: 'ARROW', qty: rand(1, 12)));
 		case 1:
-			@weapon = array(name: 'SNOWBALL');
-	}
-	@meta = null;
-	if(!rand(4)) {
-		@weapon['meta'] = array(enchants: array(knockback: 8, punch: 8));
+			@weapons = array(array(name: 'SNOWBALL', qty: rand(1, 4)));
+		case 2:
+			@weapons = array(array(name: 'CROSSBOW'), array(name: 'ARROW', qty: rand(1, 12)));
+		case 3:
+			@sword = array(name: 'IRON_SWORD');
+			if(!rand(4)) {
+				@sword['meta'] = array(enchants: array(knockback: 8));
+			}
+			@weapons = array(@sword);
 	}
 	foreach(@p in all_players('custom')) {
 		if(_fw_player(@p)) {
-			pgive_item(@p, @weapon);
-			if(@weapon['name'] == 'BOW') {
-				pgive_item(@p, array(name: 'ARROW', qty: 10));
+			foreach(@weapon in @weapons) {
+				pgive_item(@p, @weapon);
 			}
 		}
 	}

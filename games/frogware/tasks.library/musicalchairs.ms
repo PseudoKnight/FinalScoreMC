@@ -4,7 +4,7 @@
 proc _fw_start_task(@secs) {
 	_fw_msg('Musical chairs!');
 	@total = _fw_total_players();
-	@total = max(1, @total - rand(1, @total + 1));
+	@total = @total - rand(@total);
 	@carts = array();
 	for(@i = 0, @i < @total, @i++) {
 		@loc = _fw_loc(32);
@@ -20,9 +20,9 @@ proc _fw_start_task(@secs) {
 		}
 	}
 	if(!rand(5)) {
-		set_timeout(3000, closure(){
+		set_timeout(2400, closure(){
 			foreach(@cart in @carts) {
-				@velocity = array(rand(), rand(), rand());
+				@velocity = array(rand() * 4, rand(), rand() * 4);
 				play_sound(entity_loc(@cart), array(sound: 'entity_witch_ambient', volume: 4, pitch: 1.2));
 				set_entity_velocity(@cart, @velocity);
 			}

@@ -19,11 +19,11 @@ proc _fw_start_task(@secs) {
 	}
 	_fw_set_winners();
 	@region = sk_region_info('frogware', 'custom', 0);
-	for(@i = 0, @i < @secs - 2, @i++) {
+	for(@i = 0, @i < @secs * 2 - 5, @i++) {
 		queue_push(closure(){
 			_iterate_cuboid(array(@region[0][0], @region[1][1] + 24, @region[0][2], 'custom'),
 				array(@region[1][0], @region[1][1] + 24, @region[1][2], 'custom'),
-				'ANVIL', 3);
+				'ANVIL', 5);
 			foreach(@p in all_players('custom')) {
 				if(get_pscoreboard(@p) == 'fw') {
 					@loc = ploc(@p);
@@ -32,13 +32,13 @@ proc _fw_start_task(@secs) {
 				}
 			}
 		}, 'fw3');
-		queue_delay(1000, 'fw3');
+		queue_delay(500, 'fw3');
 	}
 	_fw_clear_blocks(3);
 }
 
 proc _fw_end_task(@secs) {
 	_remove_region_entities('frogware');
-	_fw_clear_blocks(1);
+	_fw_clear_blocks(2);
 	_fw_clear_effects();
 }
