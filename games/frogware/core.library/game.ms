@@ -96,7 +96,7 @@ proc _fw_start_round(@secs = 12) {
 			} else if((@firstplace / @goal) < 0.90 || @total == 1) { // first place is less than 90% towards the goal (or only one player)
 				array('climb', 'keepaway', 'harvest', 'koth', 'cake', 'fall', 'cluck', 'frogegg', 'lavafall',
 					'shepherd', 'anvil', 'trade', 'fish', 'panel', 'mine', 'enderpearl', 'extinguish', 'hotpotato',
-					'parking', 'musicalchairs', 'step')
+					'parking', 'musicalchairs', 'step', 'fashion', 'elytra')
 			} else {
 				array('pvp')
 			}
@@ -110,6 +110,13 @@ proc _fw_start_round(@secs = 12) {
 			for(@i = @secs, @i >= 0, @i--) {
 				if(@i > 0) {
 					queue_push(closure(){
+						foreach(@p in all_players('custom')) {
+							if(_fw_player(@p) && !array_contains(sk_current_regions(@p), 'frogware')) {
+								set_pscoreboard(@p);
+								reset_all_pscores(@p, 'fw');
+								_equip_kit(@p);
+							}
+						}
 						_fw_countdown(@i);
 					}, 'fw2');
 					queue_delay(1000, 'fw2');
