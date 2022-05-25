@@ -21,18 +21,37 @@ proc _is_match(@guess, @target) {
 }
 
 proc _show_matches(@guess, @target) {
-	@obscured = reg_replace('[a-zA-Z0-9]', '_', @target);
-	@target = to_lower(@target);
 	@found = false;
-	foreach(@word in parse_args(@guess)) {
-		@pos = string_position(@target, to_lower(@word));
-		if(@pos > -1) {
-			@found = true;
-			@obscured = substr(@obscured, 0, @pos).@word.substr(@obscured, @pos + length(@word));
+	@modified = '';
+	if(length(@guess) == 1) { // if guessing one letter, match the one letter
+		@obscured = reg_replace('[a-zA-Z0-9]', '_', @target);
+		@target = to_lower(@target);
+		@guess = to_lower(@guess);
+		@pos = -1;
+		do {
+			@pos = string_position(substr(@target, @pos + 1), @guess);
+			if(@pos > -1) {
+				@found = true;
+				@modified .= substr(@obscured, 0, @pos).@guess;
+				@obscured = substr(@obscured, @pos + 1);
+			} else {
+				@modified .= substr(@obscured, @pos + 1);
+			}
+		} while(@pos > -1 && length(@obscured) > 0);
+	} else { // else try to match words
+		@targetWords = parse_args(@target);
+		@guesses = parse_args(@guess);
+		foreach(@i: @targetWord in @targetWords) {
+			if(array_contains_ic(@guesses, @targetWord)) {
+				@found = true;
+			} else {
+				@targetWords[@i] = reg_replace('[a-zA-Z0-9]', '_', @targetWord);
+			}
 		}
+		@modified = array_implode(@targetWords);
 	}
 	if(@found) {
-		return(@obscured);
+		return(@modified);
 	} else {
 		return(@guess);
 	}
