@@ -8,8 +8,8 @@ proc _is_match(@guess, @target) {
 	@target = reg_replace('(a|an|the)\\s', '', to_lower(@target));
 
 	// ignore small single spelling errors in targets larger than 4 characters
-	if(length(@target) < 5 && @guess == @target
-	|| length(@target) > 4 && levenshtein(@guess, @target) < 2) {
+	if(length(@target) < 6 && @guess == @target
+	|| length(@target) > 5 && levenshtein(@guess, @target) < 2) {
 		return(true);
 	}
 
