@@ -47,8 +47,7 @@ proc _fw_start_task(@secs) {
 					if(@color != null) {
 						die();
 					}
-				} else if(!array_index_exists(@equipment[@type], 'meta')
-						|| !array_index_exists(@equipment[@type]['meta'], 'color')) {
+				} else if(!@equipment[@type]['meta'] || !array_index_exists(@equipment[@type]['meta'], 'color')) {
 					die();
 				} else {
 					@c = @equipment[@type]['meta']['color'];
