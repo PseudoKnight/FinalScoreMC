@@ -13,11 +13,11 @@ proc _fw_start_task(@secs) {
 			if(!rand(4)) {
 				@bow['meta'] = array(enchants: array(punch: 8));
 			}
-			@weapons = array(@bow, array(name: 'ARROW', qty: rand(1, 12)));
+			@weapons = array(@bow, array(name: 'ARROW', qty: rand(1, 6)));
 		case 1:
 			@weapons = array(array(name: 'SNOWBALL', qty: rand(1, 4)));
 		case 2:
-			@weapons = array(array(name: 'CROSSBOW'), array(name: 'ARROW', qty: rand(1, 12)));
+			@weapons = array(array(name: 'CROSSBOW'), array(name: 'ARROW', qty: rand(1, 4)));
 		case 3:
 			@sword = array(name: 'IRON_SWORD');
 			if(!rand(4)) {
@@ -57,13 +57,13 @@ proc _fw_start_task(@secs) {
 		}
 		export('frogware.blocks', @blocks);
 	}
-	bind('entity_damage', array(id: 'fwtask'), array(type: 'PLAYER', world: 'custom'), @e, @weapon) {
+	bind('entity_damage', array(id: 'fwtask'), array(type: 'PLAYER', world: 'custom'), @e, @weapons) {
 		if(array_index_exists(@e, 'damager') && _fw_player(@e['player'])) {
 			@damager = @e['damager'];
 			if(array_index_exists(@e, 'shooter')) {
 				@damager = @e['shooter'];
 			}
-			if(_fw_player(@damager) && (@weapon['name'] == 'IRON_SWORD' || array_index_exists(@e, 'shooter'))) {
+			if(_fw_player(@damager) && (@weapons[0]['name'] == 'IRON_SWORD' || array_index_exists(@e, 'shooter'))) {
 				if(_fw_change_team(@damager, 'winners')) {
 					play_sound(ploc(), array(sound: 'ENTITY_ZOMBIE_ATTACK_IRON_DOOR'), player());
 				}
