@@ -27,7 +27,7 @@ register_command('frogware', array(
 				if(get_pscoreboard(player()) !== 'fw') {
 					die(color('gold').'You haven\'t joined first.');
 				}
-				@points = 20;
+				@points = 25;
 				if(array_size(@args) == 2) {
 					@points = integer(@args[1]);
 				}
