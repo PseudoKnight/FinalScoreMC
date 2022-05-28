@@ -3,10 +3,11 @@ proc _fw_start_task(@secs) {
 		'Get on up there!',
 		'Don\'t fly too close to the sun!',
 	));
+	@qty = rand(1, 3);
 	foreach(@p in all_players('custom')) {
 		if(_fw_player(@p)) {
 			pgive_item(@p, array(name: 'ELYTRA'));
-			pgive_item(@p, array(name: 'FIREWORK_ROCKET', qty: rand(1, 3)));
+			pgive_item(@p, array(name: 'FIREWORK_ROCKET', @qty));
 		}
 	}
 	@region = sk_region_info('frogware', 'custom', 0);
