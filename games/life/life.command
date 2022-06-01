@@ -183,6 +183,12 @@ register_command('life', array(
 					);
 				}
 
+				// Log iteration time when run by player
+				if(!@commandBlock) {
+					@iterationTime = time() - @startTime;
+					msg("@xWidth x @zWidth : @iterationTime ms");
+				}
+
 				if(!@blockChanges) {
 					die();
 				}
