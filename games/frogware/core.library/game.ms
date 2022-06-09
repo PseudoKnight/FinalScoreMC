@@ -111,7 +111,7 @@ proc _fw_start_round(@secs = 12) {
 				if(@i > 0) {
 					queue_push(closure(){
 						foreach(@p in all_players('custom')) {
-							if(_fw_player(@p) && !array_contains(sk_current_regions(@p), 'frogware')) {
+							if(_fw_player(@p) && !array_contains(sk_regions_at(location_shift(ploc(@p), 'up', 2)), 'frogware')) {
 								set_pscoreboard(@p);
 								reset_all_pscores(@p, 'fw');
 								_equip_kit(@p);

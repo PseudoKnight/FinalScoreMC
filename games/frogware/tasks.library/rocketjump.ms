@@ -6,12 +6,12 @@ proc _fw_start_task(@secs) {
 	@qty = rand(1, 4);
 	foreach(@p in all_players('custom')) {
 		if(_fw_player(@p)) {
-			pgive_item(@p, array(name: 'RED_CANDLE', qty: @qty));
+			pgive_item(@p, array(name: 'RED_CANDLE', qty: @qty, meta: array(display: 'Dynamite')));
 		}
 	}
 	@region = sk_region_info('frogware', 'custom', 0);
-	_iterate_cuboid(array(@region[0][0] - 1, @region[1][1] + 5, @region[0][2] - 1, 'custom'),
-		array(@region[1][0] + 1, @region[1][1] + 5, @region[1][2] + 1, 'custom'),
+	_iterate_cuboid(array(@region[0][0] - 1, @region[1][1] + 4, @region[0][2] - 1, 'custom'),
+		array(@region[1][0] + 1, @region[1][1] + 4, @region[1][2] + 1, 'custom'),
 		'EMERALD_BLOCK', 4);
 
 	bind('player_interact', array(id: 'fwtask'), array(itemname: 'RED_CANDLE', button: 'right'), @event) {

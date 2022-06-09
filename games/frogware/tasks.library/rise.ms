@@ -10,7 +10,7 @@ proc _fw_start_task(@secs) {
 		'EMERALD_BLOCK', 2);
 	foreach(@p in all_players('custom')) {
 		if(_fw_player(@p)) {
-			set_peffect(@p, 'levitation', 2, @secs, true, false);
+			set_peffect(@p, 'levitation', 2, @secs + 1, true, false);
 		}
 	}
 }
