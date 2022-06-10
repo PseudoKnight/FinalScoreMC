@@ -27,17 +27,13 @@ proc _show_matches(@guess, @target) {
 		@obscured = reg_replace('[a-zA-Z0-9]', '_', @target);
 		@target = to_lower(@target);
 		@guess = to_lower(@guess);
-		@pos = -1;
-		do {
-			@pos = string_position(substr(@target, @pos + 1), @guess);
-			if(@pos > -1) {
-				@found = true;
-				@modified .= substr(@obscured, 0, @pos).@guess;
-				@obscured = substr(@obscured, @pos + 1);
-			} else {
-				@modified .= substr(@obscured, @pos + 1);
-			}
-		} while(@pos > -1 && length(@obscured) > 0);
+		while((@pos = string_position(@target, @guess)) > -1) {
+			@found = true;
+			@modified .= substr(@obscured, 0, @pos).@guess;
+			@obscured = substr(@obscured, @pos + 1);
+			@target = substr(@target, @pos + 1);
+		}
+		@modified .= @obscured;
 	} else { // else try to match words
 		@targetWords = parse_args(@target);
 		@guesses = parse_args(@guess);
