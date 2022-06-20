@@ -2,8 +2,6 @@ The SouthEast quadrant of the Dev world let's you "/rg claim YourRegionName" in 
 
 "/v" can be used to quickly toggle Spectator mode. Otherwise "/gm" can change your gamemode.
 
-The provided golden axe allows you to select areas to either claim regions, measure, or sometimes use limited WorldEdit.
-
 Spawn special items with the "/i" command. (eg. "/i light")
 
 Change itemtype of item with meta using "/itemtype" command. Keeps display names and lore.
