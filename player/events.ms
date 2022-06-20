@@ -89,24 +89,7 @@ bind('player_death', null, null, @event) {
 			if(length(@damager) > 16 && !get_mob_name(@damager)) {
 				scriptas('~console', // avoid exception spam to player if this breaks
 					@entityType = _to_upper_camel_case(entity_type(@damager));
-					@names = get_value('mobnames');
-					if(!@names) {
-						http_request('https://www.wordgenerator.net/application/p.php?type=1&id=fake_words', array(
-							'method': 'GET',
-							'success': closure(@response){
-								try {
-									if(!@response['error']) {
-										@names = split(',', @response['body']);
-										set_mob_name(@damager, array_remove(@names, 0).' the '.@entityType);
-										set_entity_persistence(@damager, true);
-										store_value('mobnames', @names);
-									}
-								} catch(Exception @ex) {
-									// ignore
-								}
-							}
-						));
-					} else {
+					@setNames = closure(@names) {
 						try {
 							set_mob_name(@damager, array_remove(@names, 0).' the '.@entityType);
 							set_entity_persistence(@damager, true);
@@ -114,6 +97,20 @@ bind('player_death', null, null, @event) {
 						} catch(BadEntityException @ex) {
 							// ignore
 						}
+					}
+					@names = get_value('mobnames');
+					if(@names && @names[0]) {
+						@setNames(@names);
+					} else {
+						http_request('https://www.wordgenerator.net/application/p.php?type=1&id=fake_words', array(
+							'method': 'GET',
+							'success': closure(@response){
+								if(!@response['error']) {
+									@names = split(',', @response['body']);
+									@setNames(@names);
+								}
+							}
+						));
 					}
 				);
 			}
