@@ -1,5 +1,10 @@
-*:/rg $ = call_alias('/region '.$);
+/**
+ * Aliases for WorldGuard region commands
+ * @command
+ * @usage /plot <claim|clear|flag|move|rename|...> <regionId> [args...]
+ */
 *:/plot $ = call_alias('/region '.$);
+*:/rg $ = call_alias('/region '.$);
 *:/region $ = >>>
 	@args = parse_args($);
 	if(array_size(@args) < 2) {
