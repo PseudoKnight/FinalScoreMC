@@ -36,7 +36,7 @@ proc _start_game(@course, @loc) {
 	# Place ball
 	bind('player_interact', array('id': @course), array('itemname': 'SLIME_BALL', 'button': 'right'), @event, @golf) {
 		if(array_index_exists(@golf['players'], player())
-		&& @event['action'] === 'right_click_block'
+		&& @event['block']
 		&& @event['facing'] === 'up'
 		&& string_ends_with(@event['block'], '_TERRACOTTA')
 		&& string_starts_with(@event['block'], @golf['holecolors'][@golf['players'][player()]['hole'] - 1])) {
