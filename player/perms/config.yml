@@ -9,6 +9,9 @@ default:
     custom:
       permissions.build: true
       command.join.to: false
+      command.hoops: true
+      command.charades: true
+      command.7: true
     outworld:
       command.join.to: false
       command.join.from: false
@@ -127,12 +130,9 @@ member:
       stargate.create.network: false
       worldguard.region.claim: false
       command.sethome: false
-      command.7: true
       advancement.all: false
       deadbolt.user.create.*: false
       command.ride: false
-      command.hoops: true
-      command.charades: true
       command.disguise: false
     parkdev:
       advancement.all: false
