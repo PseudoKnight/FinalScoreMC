@@ -342,7 +342,7 @@ proc _shard_create(@rules){
 				}
 
 				@binds[] = 'shard-spawn';
-				bind('player_spawn', array(id: 'shard-spawn', priority: 'LOWEST'), array(world: 'shard'), @event) {
+				bind('player_spawn', array(id: 'shard-spawn', priority: 'LOWEST'), array(location: array(world: 'shard')), @event) {
 					modify_event('location', import('playerspawn', _get_spawn_location()));
 					_check_shard();
 					export('playerspawn', null);
