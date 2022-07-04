@@ -14,7 +14,7 @@ register_command('eval', array(
 			'<! suppressWarnings: UseBareStrings >'
 			. @script
 		);
-		if(@output) {
+		if(length(@output)) {
 			msg(@output);
 		}
 	}
