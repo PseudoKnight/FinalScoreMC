@@ -408,6 +408,24 @@ proc _bind_events(@pvp) {
 			}
 
 			if(!@damager) {
+				// We want to attribute as much damage as possible.
+				// This is debug logging so that we can capture more.
+				@cause = @e['cause'];
+				@amount = @e['amount'];
+				// Don't log self-inflicted damage unless induced by another player.
+				@unattributedTypes = array(
+					'FLY_INTO_WALL', // never attribute
+					'FALL', // attribute only when very recently hit, though accuracy may be difficult
+					'LAVA', // players can knock other players into hazards
+					'FIRE', // standing in fire; treat similar to lava
+					'FIRE_TICK', // certain abilities set players on fire, damaging over time
+					'WITHER', // certain abilties apply wither effect (eg. silken fangs), similar to fire_tick
+					'POISON', // splash potions and other abilities, similar to fire_tick and wither
+					'BLOCK_EXPLOSION' // custom explosions, always caused by abilities and should be attributable
+				);
+				if(!array_contains(@unattributedTypes, @cause)) {
+					console("Unattributed damage: {cause: @cause, amount: @amount}", false);
+				}
 				die();
 			}
 
