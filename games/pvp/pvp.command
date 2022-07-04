@@ -27,9 +27,7 @@ register_command('pvp', array(
 				if(is_null(@pvp)) {
 					die(color('gold').'That arena doesn\'t seem to be running.');
 				}
-				foreach(@key: @value in @pvp) {
-					msg(@key.': '.color('gray').@value);
-				}
+				msg(map_implode(@pvp, ': '.color('gray'), '\n'));
 
 			case 'vote':
 				@pvp = import('pvp'.@id);
