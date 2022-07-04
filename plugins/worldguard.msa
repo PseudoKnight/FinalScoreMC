@@ -195,26 +195,27 @@
 			sudo('/rg redefine '.@region);
 
 		case 'claim':
-			if(pworld() != 'dev') {
-				run('/region '.$);
-				die();
-			}
 			@p1 = sk_pos1();
 			@p2 = sk_pos2();
 			if(!@p1 || !@p2) {
 				die(color('GOLD').'You must select two points to claim a region.');
 			}
-			@p1['y'] = 0;
+			@size = abs(@p1['x'] - @p2['x']) * abs(@p1['z'] - @p2['z']);
+			if(@size > 10000) {
+				die(color('GOLD').'Selection too large. (100x100 upper limit) Ask staff if you need a larger region.');
+			}
+
+			if(pworld() != 'dev') {
+				run('/region '.$);
+				die();
+			}
+
+			// The following only applies to the creative world 'dev'
+			@p1['y'] = 0; // TODO: update these for 1.19
 			@p2['y'] = 255;
 			if(!array_contains(sk_regions_at(@p1), 'plots')
 			|| !array_contains(sk_regions_at(@p2), 'plots')) {
 				die(color('GOLD').'You can only claim regions within the green "plots" region in the southeast.');
-			}
-			@size = abs(@p1['x'] - @p2['x']) * abs(@p1['z'] - @p2['z']);
-			if(@size > 10000) {
-				die(color('GOLD').'Selection too large. (100x100 upper limit) Ask staff if you need a larger region.');
-			} else if(@size < 64) {
-				die(color('GOLD').'Selection too small. (8x8 lower limit)');
 			}
 			@region = @args[1];
 			if(sk_region_exists(pworld(), @region)) {
