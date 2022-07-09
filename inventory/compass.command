@@ -32,13 +32,16 @@ register_command('compass', array(
 				}
 				set_compass_target(@pdata['homes'][pworld()]);
 				msg(color('green').'Compass is now pointing to '.if(array_size(@args) > 1, @args[1].'\'s', 'your').' home.');
-	
+
 			case 'here':
+				// Somewhat redundant to lodestone.
+				// Consider changing this.
 				set_compass_target(ploc());
 				msg(color('green').'Compass is now pointing to this location.');
 
-			// 1.19 feature
 			case 'death':
+				// Somewhat redundant to recovery compass.
+				// Consider changing this.
 				@pdata = _pdata(player());
 				if(!array_index_exists(@pdata, 'death')) {
 					die('You haven\'t died recently.');
@@ -48,7 +51,7 @@ register_command('compass', array(
 				}
 				set_compass_target(@pdata['death']);
 				msg(color('green').'Compass is now pointing to your last death location.');
-	
+
 			default:
 				try {
 					@player = player(@target);

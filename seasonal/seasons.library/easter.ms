@@ -48,6 +48,7 @@ bind('target_player', null, array('mobtype': 'ZOMBIE'), @event, @day) {
 			&& @inv['helmet']['name'] == 'PLAYER_HEAD'
 			&& entity_can_see(@event['id'], puuid(@event['player']))) {
 				@mobs = array(
+					'ALLAY',
 					'AXOLOTL',
 					'BAT',
 					'BEE',
@@ -59,6 +60,7 @@ bind('target_player', null, array('mobtype': 'ZOMBIE'), @event, @day) {
 					'ENDERMAN',
 					'ENDERMITE',
 					'EVOKER',
+					'FROG',
 					'GLOW_SQUID',
 					'GOAT',
 					'GUARDIAN',
@@ -84,6 +86,7 @@ bind('target_player', null, array('mobtype': 'ZOMBIE'), @event, @day) {
 					'SPIDER',
 					'SQUID',
 					'STRAY',
+					'TADPOLE',
 					'VEX',
 					'VILLAGER',
 					'VINDICATOR',

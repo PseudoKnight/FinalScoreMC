@@ -29,13 +29,3 @@ bind('creature_spawn', null, array('reason': 'DISPENSE_EGG'), @event) {
 bind('creature_spawn', null, array('reason': 'SPAWNER_EGG'), @event) {
 	set_entity_persistence(@event['id'], true);
 }
-
-# enforce 1.18 light level requirement
-bind('creature_spawn', null, array(reason: 'NATURAL'), @event) {
-	if(world_info(@event['location']['world'])['environment'] == 'NORMAL' && get_block_light_at(@event['location'])) {
-		@lightAffected = array('CREEPER', 'ENDERMAN', 'HUSK', 'SKELETON', 'SPIDER', 'STRAY', 'WITCH', 'ZOMBIE', 'ZOMBIE_VILLAGER');
-		if(array_contains(@lightAffected, @event['type'])) {
-			cancel();
-		}
-	}
-}
