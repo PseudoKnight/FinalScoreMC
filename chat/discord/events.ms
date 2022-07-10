@@ -26,7 +26,9 @@ if(extension_exists('CHDiscord')) {
 				}
 			}
 			include('../includes.library/chat.ms');
-			_chat(@name, @event['message'], all_players(), 'discord', @event['channel']);
+			foreach(@line in split('\n', @event['message'])) {
+				_chat(@name, @line, all_players(), 'discord', @event['channel']);
+			}
 		}
 	}
 
