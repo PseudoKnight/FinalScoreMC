@@ -42,6 +42,6 @@ bind('player_interact', null, array(itemname: 'PRISMARINE_SHARD', hand: 'main_ha
 	_trigger_shard();
 }
 
-bind('player_interact', null, array(itemname: 'AMETHYST_SHARD', hand: 'main_hand', block: null, button: 'right'), @event) {
+bind('player_interact', null, array(itemname: 'ECHO_SHARD', hand: 'main_hand', block: null, button: 'right'), @event) {
 	_trigger_shard();
 }
