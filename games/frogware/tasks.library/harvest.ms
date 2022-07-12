@@ -14,7 +14,7 @@ proc _fw_start_task(@secs) {
 	foreach(@p in all_players('custom')) {
 		if(_fw_player(@p)) {
 			pgive_item(@p, array(name: 'STONE_HOE', meta: array(damage: 130)));
-			pgive_item(@p, array(name: 'SEEDS')); # seeds
+			pgive_item(@p, array(name: 'WHEAT_SEEDS')); # seeds
 		}
 	}
 	if(!rand(5)) {
