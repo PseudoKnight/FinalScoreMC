@@ -20,7 +20,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 	}
 
 	// load dungeon type configuration
-	@options = yml_decode(read('/dungeon.library/'.@dungeonType.'.yml'));
+	@options = yml_decode(read('dungeon.library/'.@dungeonType.'.yml'));
 	@defaults = array_merge(array(
 		// size
 		minRoomSize: 5,
