@@ -5,7 +5,7 @@ proc _fw_start_task(@secs) {
 		'PVP round!',
 		'It\'s a free-for-all!',
 	));
-	_fw_random_potion(array('speed', 'jump_boost', 'blindness', 'invisibility'));
+	_fw_random_potion(array('speed', 'jump_boost', 'blindness', 'invisibility', 'darkness'));
 	@weapons = array();
 	switch(rand(4)) {
 		case 0:

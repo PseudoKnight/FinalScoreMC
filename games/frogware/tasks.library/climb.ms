@@ -6,7 +6,7 @@ proc _fw_start_task(@secs) {
 		'JUMP JUMP JUMP',
 	));
 	if(!rand(4)) {
-		_fw_random_potion(array('speed', 'jump_boost', 'blindness'));
+		_fw_random_potion(array('speed', 'jump_boost', 'blindness', 'darkness'));
 	}
 	if(!rand(4)) {
 		_fw_mobs();
