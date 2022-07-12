@@ -28,7 +28,7 @@ proc _fw_loc(@height = 0, @minrange = false) {
 proc _fw_mobs(@mob = 'random', @num = 'random') {
 	if(@mob == 'random') {
 		@mobs = array('creeper', 'zombie', 'silverfish', 'slime', 'magma_cube', 'zombified_piglin', 'shulker', 'ghast',
-				'blaze', 'husk', 'polar_bear', 'vindicator', 'evoker', 'vex', 'ravager', 'bee', 'zoglin');
+				'blaze', 'husk', 'polar_bear', 'vindicator', 'evoker', 'vex', 'ravager', 'bee', 'zoglin', 'warden');
 		@mob = array_get_rand(@mobs);
 	}
 	@height = 0;
@@ -45,6 +45,8 @@ proc _fw_mobs(@mob = 'random', @num = 'random') {
 			@num = rand(6, 12);
 		} else if(@mob == 'zoglin') {
 			@num = rand(16, 32);
+		} else if(@mob == 'warden') {
+			@num = rand(1, 4);
 		} else {
 			@num = rand(25, 50);
 		}
