@@ -28,7 +28,7 @@ proc _spectator_remove(@player, @pvp) {
 			set_ploc(@player, @pvp['arena']['lobby']);
 			if(array_index_exists(@pvp['arena'], 'resourcepack')) {
 				set_timeout(100, closure(){
-					send_resourcepack(@player, 'http://mc.finalscoremc.com:25966/resourcepacks/default.zip');
+					send_resourcepack(@player, 'http://mc.finalscoremc.com:27836/resourcepacks/default.zip');
 				});
 			}
 			_set_pactivity(@player, null);

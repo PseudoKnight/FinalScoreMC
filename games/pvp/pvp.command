@@ -64,7 +64,7 @@ register_command('pvp', array(
 				}
 				@pvp = import('pvp'.@id);
 				if(array_index_exists(@pvp['arena'], 'resourcepack')) {
-					@url = 'http://mc.finalscoremc.com:25966/resourcepacks/';
+					@url = 'http://mc.finalscoremc.com:27836/resourcepacks/';
 					send_resourcepack(player(), @url.@pvp['arena']['resourcepack'].'.zip');
 				}
 				_spectator_add(player(), @pvp);

@@ -51,7 +51,7 @@ proc _player_join(@id) {
 
 	if(@pvp['running'] == 1 || @pvp['running'] == 2) {
 		if(array_index_exists(@pvp['arena'], 'resourcepack')) {
-			send_resourcepack(player(), 'http://mc.finalscoremc.com:25966/resourcepacks/'.@pvp['arena']['resourcepack'].'.zip');
+			send_resourcepack(player(), 'http://mc.finalscoremc.com:27836/resourcepacks/'.@pvp['arena']['resourcepack'].'.zip');
 		}
 		if(array_contains(@pvp['spectators'], player())) {
 			_spectator_remove(player(), @pvp);
@@ -145,7 +145,7 @@ proc _player_remove(@player, @id) {
 	}
 	if(ponline(@player)) {
 		if(array_index_exists(@pvp['arena'], 'resourcepack')) {
-			send_resourcepack(@player, 'http://mc.finalscoremc.com:25966/resourcepacks/default.zip');
+			send_resourcepack(@player, 'http://mc.finalscoremc.com:27836/resourcepacks/default.zip');
 		}
 		preset_time(@player);
 		set_pstorm(@player, null);

@@ -198,7 +198,7 @@ proc _pvp_start(@pvp){
 	if(array_index_exists(@arena, 'resourcepack')) {
 		set_timeout(50, closure(){
 			foreach(@p in array_keys(@pvp['players'])) {
-				send_resourcepack(@p, 'http://mc.finalscoremc.com:25966/resourcepacks/'.@arena['resourcepack'].'.zip');
+				send_resourcepack(@p, 'http://mc.finalscoremc.com:27836/resourcepacks/'.@arena['resourcepack'].'.zip');
 			}
 		});
 	}
@@ -884,8 +884,8 @@ proc _pvp_end_match(@id, @winners) {
 		if(array_index_exists(@arena, 'restore')) {
 			broadcast(color('YELLOW').'Restoring arena for '.@pvp['title'].' ...');
 			foreach(@region in @arena['restore']) {
-				skcb_load(@region);
-				skcb_paste(array(0, 0, 0, @world), array(origin: true));
+				//skcb_load(@region);
+				//skcb_paste(array(0, 0, 0, @world), array(origin: true));
 			}
 		}
 		queue_push(closure(){
