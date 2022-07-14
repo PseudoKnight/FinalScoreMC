@@ -85,12 +85,16 @@ if(extension_exists('CHDynmap')) {
 			if(array_contains(dm_all_markers('tracers'), player())) {
 				dm_delete_marker('tracers', player());
 			}
-			dm_create_marker('tracers', array(
-				'world': pworld(),
-				'label': @event['death_message'],
-				'icon': 'skull',
-				'location': ploc(),
-			));
+			// *_exists() functions don't work for all cases.
+			// So a redundant function_exists() check is needed here.
+			if(function_exists('dm_create_marker')) {
+				dm_create_marker('tracers', array(
+					'world': pworld(),
+					'label': @event['death_message'],
+					'icon': 'skull',
+					'location': ploc(),
+				));
+			}
 		}
 	}
 
@@ -99,13 +103,15 @@ if(extension_exists('CHDynmap')) {
 			if(array_contains(dm_all_markers('tracers'), player())) {
 				dm_delete_marker('tracers', player());
 			}
-			dm_create_marker('tracers', array(
-				'world': pworld(),
-				'id': player().'_quit',
-				'label': player() . ' left the game',
-				'icon': 'walk',
-				'location': ploc(),
-			));
+			if(function_exists('dm_create_marker')) {
+				dm_create_marker('tracers', array(
+					'world': pworld(),
+					'id': player().'_quit',
+					'label': player() . ' left the game',
+					'icon': 'walk',
+					'location': ploc(),
+				));
+			}
 		}
 	}
 
