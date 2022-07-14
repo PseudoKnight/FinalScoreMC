@@ -5,7 +5,7 @@
 	Commands that cannot be deferred should not use *.command suffixes.
 */
 
-proc _include_command(@file, @recompile = import('recompile')) {
+void proc _include_command(string @file, boolean @recompile = import('recompile')) {
 	@closure = closure() {
 		try {
 			include(@file);
@@ -20,17 +20,22 @@ proc _include_command(@file, @recompile = import('recompile')) {
 	}
 }
 
-proc _find_commands(@parent = '.') {
-	foreach(@file in list_files(@parent)) {
+int proc _find_commands(string @parent = '.') {
+	int @count = 0;
+	foreach(string @file in list_files(@parent)) {
 		@path = @parent.'/'.@file;
 		if(is_dir(@path)) {
 			if(string_position(@file, '.disabled') < 0 && string_position(@file, '.library') < 0) {
-				_find_commands(@path);
+				@count += _find_commands(@path);
 			}
 		} else if(string_ends_with(@file, '.command')) {
+			@count++;
 			_include_command(@path);
 		}
 	}
+	return(@count);
 }
 
-_find_commands();
+queue_push(iclosure(int @count = _find_commands()) {
+	msg(@count.' command files processed.');
+});
