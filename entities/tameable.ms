@@ -1,5 +1,5 @@
 // Protect tameable animals from damage by non-owners
-bind('entity_damage', null, array('type': '/(DONKEY|HORSE|LLAMA|MULE|CAT|SKELETON_HORSE|WOLF|ZOMBIE_HORSE|PARROT)/'), @event) {
+bind('entity_damage', array(priority: 'HIGHEST'), array('type': '/(DONKEY|HORSE|LLAMA|MULE|CAT|SKELETON_HORSE|WOLF|ZOMBIE_HORSE|PARROT)/'), @event) {
 	@world = @event['world'];
 	@id = @event['id'];
 	if(!_is_survival_world(@world)) {
@@ -19,6 +19,7 @@ bind('entity_damage', null, array('type': '/(DONKEY|HORSE|LLAMA|MULE|CAT|SKELETO
 			if((@isplayer && @owner != @damager)
 			|| (!@isplayer && !get_entity_rider(@id))) {
 				cancel();
+				consume();
 				if(@isplayer) {
 					@spec = entity_spec(@id);
 					@regions = sk_regions_at(@event['location']);
@@ -41,6 +42,7 @@ bind('entity_damage', null, array('type': '/(DONKEY|HORSE|LLAMA|MULE|CAT|SKELETO
 		case 'PROJECTILE':
 			if(array_index_exists(@event, 'shooter') && length(@event['shooter']) < 17 || !get_entity_rider(@id)) {
 				cancel();
+				consume();
 			}
 
 		default:
