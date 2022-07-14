@@ -64,19 +64,26 @@ bind('player_interact', null, array('block': 'CAKE', 'button': 'right', 'hand': 
 			}
 		}
 
-		// tutorialize secret cakes when finding the first one
-		if(@count == 1) {
-			msg(@tutorial);
-		}
-
 		_broadcast(display_name().color('r').if(@thiscake['type'] == 'secret', ' found ', ' achieved ')
 				.color('a').'['.to_upper(@id).'] '.color('r').@thiscake['type'].' cake! '.color('a').@count.'/'.@total);
 
-		if(!has_permission('group.builder')) {
-			_acc_add(player(), @thiscake['coins']);
-			msg(color('gold').'+ '.@thiscake['coins'].' coins');
-			console(player().' got '.@thiscake['coins'].' coins at '.@id, false);
+		// Tips when getting a certain number of cakes
+		if(@thiscake['type'] == 'secret') {
+			if(@count == 1) {
+				msg(@tutorial);
+			}
+		} else if(@thiscake['type'] == 'challenge') {
+			if(@count == 1) {
+				msg("Run the command '/times top' to see the best times for this course.");
+			} else if(@count == @total) {
+				msg("Getting a top 20 time in a course gives points towards the total parkour rankings.\n"
+					.color('gray')."'/times top all'".color('reset').": See overall parkour rankings.\n"
+					.color('gray')."'/times worst'".color('reset').": List courses with the most rank points you can earn.\n"
+					.color('gray')."'/times best'".color('reset').": List courses you're best at.");
+			}
 		}
+
+		// Cake achieved effects
 		psend_block_change(@event['location'], 'magenta_candle_cake[lit=true]');
 		make_effect(@event['location'], 'ENDER_SIGNAL');
 		play_sound(@event['location'], array('sound': 'MUSIC_DISC_STAL'));
