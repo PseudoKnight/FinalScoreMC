@@ -1,17 +1,18 @@
 register_command('boats', array(
-	'description': 'Boats!',
-	'usage': '/boats [tower]',
-	'permission': 'command.boats',
-	'tabcompleter': closure(@alias, @sender, @args, @info) {
-		return(array());
-	},
-	'executor': closure(@alias, @sender, @args, @info) {
-		@target = ploc();
-		@world = pworld();
+	description: 'Boats!',
+	usage: '/boats <tower|spiral|spin> [height]',
+	permission: 'command.boats',
+	tabcompleter: closure(return(array())),
+	executor: closure(@alias, @sender, @args, @info) {
 		if(@args[0] == 'tower') {
+			@target = get_command_block();
+			if(!@target) {
+				@target = ploc();
+			}
+			@world = @target['world'];
 			@radius = 4;
 			@circle = array();
-			@height = integer(@args[1]);
+			@height = integer(array_get(@args, 1, 15));
 			@h = 1;
 			@offset = 0;
 			for(@j = 1, @j < @height, @j++) {
@@ -42,6 +43,11 @@ register_command('boats', array(
 				}
 			});
 		} else if(@args[0] == 'spiral') {
+			@target = get_command_block();
+			if(!@target) {
+				@target = ploc();
+			}
+			@world = @target['world'];
 			@radius = 10;
 			@circle = array();
 			@height = 0;
@@ -90,37 +96,55 @@ register_command('boats', array(
 				}
 			});
 		} else if(@args[0] == 'spin') {
-			@loc = ptarget_space();
-			@previous = spawn_entity('BOAT', 1, @loc)[0];
-			@boats = array(@previous);
-			@stands = array();
-			@size = integer(@args[1]);
-			@i = @size;
-			while(@i > 0) {
-				@loc = location_shift(@loc, 'up');
-				@boat = spawn_entity('BOAT', 1, @loc)[0];
-				@stand = spawn_entity('ARMOR_STAND', 1, @loc)[0];
-				set_entity_spec(@stand, array('small': true, 'visible': false));
-				set_entity_rider(@previous, @boat);
-				set_entity_rider(@boat, @stand);
-				@boats[] = @boat;
-				@stands[] = @stand;
-				@previous = @stand;
-				@i--;
+			@target = get_command_block();
+			if(!@target) {
+				@target = ptarget_space();
+			} else {
+				@target = _relative_coords(@target, @args[2], @args[3], @args[4]);
 			}
-			
+			@boats = array();
+			@stands = array();
+			@size = integer(array_get(@args, 1, 15));
+			@previous = null;
+			@i = @size;
+			do {
+				@boat = spawn_entity('BOAT', 1, @target)[0];
+				if(@i > 1) {
+					@stand = spawn_entity('ARMOR_STAND', 1, @target)[0];
+					@stand2 = spawn_entity('ARMOR_STAND', 1, @target)[0];
+					set_entity_spec(@stand, array('small': true, visible: false));
+					set_entity_spec(@stand2, array('small': true, visible: false));
+					set_entity_rider(@boat, @stand);
+					set_entity_rider(@boat, @stand2);
+					@stands[] = @stand;
+					@stands[] = @stand2;
+					if(@previous) {
+						set_entity_rider(@previous, @boat);
+					}
+					@previous = @stand2;
+				} else if(@previous) {
+					set_entity_rider(@previous, @boat);
+				}
+				@boats[] = @boat;
+				@target = location_shift(@target, 'up');
+			} while(--@i > 0);
+			if(get_command_block()) {
+				set_entity_rider(@boats[-1], puuid(_get_nearby_player(get_command_block(), 5)));
+			}
+
 			set_interval(50, closure(){
 				try {
-					@add = 1;
+					@rotation = 1;
+					@i = 0;
+					@yaw = null;
 					foreach(@boat in @boats) {
-						if(@add == 1) {
-							@add = -1;
-						} else {
-							@add = 1;
+						@yaw = entity_loc(@boat)['yaw'];
+						set_entity_rotation(@boat, @yaw + @rotation * integer(@i / 5 + 1), 0);
+						if(++@i % 5 == 0) {
+							@rotation = -@rotation;
 						}
-						set_entity_rotation(@boat, entity_loc(@boat)['yaw'] + @add, 0);
 					}
-				} catch(BadEntityException @ex) {
+				} catch(Exception @ex) {
 					clear_task();
 					foreach(@e in array_merge(@boats, @stands)) {
 						try(entity_remove(@e))
