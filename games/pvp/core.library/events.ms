@@ -414,14 +414,21 @@ proc _bind_events(@pvp) {
 				@amount = @e['amount'];
 				// Don't log self-inflicted damage unless induced by another player.
 				@unattributedTypes = array(
-					'FLY_INTO_WALL', // never attribute
+					// Treat as self-inflicted causes
+					'FLY_INTO_WALL',
+					'SUFFOCATION',
+
+					// TODO: Attribute these, if possible
+					'HOT_FLOOR', // can be attributed, but not necessary
+					'CONTACT', // cactus, stalagmite, berry bush (something caused 4.0 dmg)
+					'CUSTOM', // must be damage_entity() without a source? add source where possible
 					'FALL', // attribute only when very recently hit, though accuracy may be difficult
 					'LAVA', // players can knock other players into hazards
 					'FIRE', // standing in fire; treat similar to lava
 					'FIRE_TICK', // certain abilities set players on fire, damaging over time
 					'WITHER', // certain abilties apply wither effect (eg. silken fangs), similar to fire_tick
 					'POISON', // splash potions and other abilities, similar to fire_tick and wither
-					'BLOCK_EXPLOSION' // custom explosions, always caused by abilities and should be attributable
+					'BLOCK_EXPLOSION' // custom explosion(), always caused by abilities and should be attributable
 				);
 				if(!array_contains(@unattributedTypes, @cause)) {
 					console("Unattributed damage: {cause: @cause, amount: @amount}", false);
