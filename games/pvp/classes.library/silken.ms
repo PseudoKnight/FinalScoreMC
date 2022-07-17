@@ -23,6 +23,10 @@ proc _class_load(@player, @pvp) {
 			@loc['z'] += @v['z'];
 			for(@i = 0, @i < 90, @i++) {
 				queue_push(closure(){
+					if(@pvp['players'][player()]['class'] != 'silken') {
+						queue_clear(player().'web');
+						die();
+					}
 					@loc['x'] += @v['x'];
 					@loc['y'] += @v['y'];
 					@loc['z'] += @v['z'];
