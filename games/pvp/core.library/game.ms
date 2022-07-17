@@ -580,7 +580,14 @@ proc _pvp_start_match(@id) {
 						@loc = location_shift(entity_loc(@itemspawn[0]), 'up', 0.4);
 						@itemspawn[1] = time();
 						@players = array_merge(@pvp['spectators'], array_keys(@pvp['players']));
-						spawn_particle(@loc, 'FIREWORKS_SPARK', @players);
+						spawn_particle(@loc, array(
+							particle: 'FIREWORKS_SPARK',
+							count: 1,
+							xoffset: 0.3, 
+							yoffset: 0.3,
+							zoffset: 0.3
+						), @players);
+						set_entity_glowing(@itemspawn[0], false);
 						continue();
 					} catch(BadEntityException @ex) {
 						// item drop was picked up or is unloaded
@@ -590,6 +597,7 @@ proc _pvp_start_match(@id) {
 					@id = drop_item(@item['loc'], @item['item'], false);
 					try {
 						set_entity_velocity(@id, array(0, 0, 0));
+						set_entity_glowing(@id, true);
 						play_sound(@item['loc'], array(sound: 'ENTITY_ENDERMAN_TELEPORT', pitch: 1.5));
 						make_effect(@item['loc'], 'ENDER_SIGNAL');
 						@itemspawn[0] = @id;
