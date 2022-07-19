@@ -199,4 +199,28 @@ proc _get_worldborder(@world) {
 		console('WorldBorder plugin is missing.');
 		return(null);
 	}
+
+/*
+	Interpolates between current world time and target time over a number of ticks.
+ */
+proc _time_travel(@world, @targetTime, @ticks) {
+	@startTime = get_world_time(@world);
+	if(@targetTime <= @startTime) {
+		@targetTime += 24000;
+	}
+	@timeDelta = @targetTime - @startTime;
+
+	@daylightCycle = get_gamerule(@world, 'DODAYLIGHTCYCLE');
+	set_gamerule(@world, 'DODAYLIGHTCYCLE', false);
+
+	@step = array(0);
+	set_interval(50, closure(){
+		@step[0]++;
+		@interp = -(cos(math_const('PI') * @step[0] / @ticks) - 1) / 2;
+		set_world_time(@world, @startTime + integer(round(@timeDelta * @interp)));
+		if(@step[0] == @ticks) {
+			set_gamerule(@world, 'DODAYLIGHTCYCLE', @daylightCycle);
+			clear_task();
+		}
+	});
 }

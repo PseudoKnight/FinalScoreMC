@@ -287,6 +287,9 @@ proc _pvp_start(@pvp){
 	foreach(@p in array_keys(@pvp['players'])) {
 		bar_add_player(@id, @p);
 	}
+	if(array_index_exists(@arena, 'time')) {
+		_time_travel(@arena['lobby'][3], @arena['time'], @pvp['arena']['delay'] * 20);
+	}
 	set_interval(1000, closure(){
 		@timeleft[0] -= 1;
 		if(@timeleft[0] > 0) {
@@ -349,9 +352,6 @@ proc _pvp_start_match(@id) {
 	@arena = @pvp['arena'];
 	if(array_index_exists(@arena, 'rsoutput')) {
 		set_block(@arena['rsoutput'], 'REDSTONE_TORCH');
-	}
-	if(array_index_exists(@arena, 'time')) {
-		set_world_time(@arena['lobby'][3], @arena['time']);
 	}
 
 	if(array_index_exists(@arena, 'chestspawn')) {

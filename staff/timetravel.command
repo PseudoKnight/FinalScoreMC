@@ -19,26 +19,6 @@ register_command('timetravel', array(
 		}
 
 		@world = pworld();
-		@currentTime = get_world_time(@world);
-		if(@targetTime <= @currentTime) {
-			@targetTime += 24000;
-		}
-		@timeDelta = @targetTime - @currentTime;
-		@steps = ceil(@seconds * 20);
-
-		@daylightCycle = get_gamerule(@world, 'DODAYLIGHTCYCLE');
-		set_gamerule(@world, 'DODAYLIGHTCYCLE', false);
-
-		@step = array(0);
-		set_interval(50, closure(){
-			@step[0]++;
-			@interp = -(cos(math_const('PI') * @step[0] / @steps) - 1) / 2;
-			@time = @currentTime + integer(round(@timeDelta * @interp));
-			set_world_time(@world, @time);
-			if(@step[0] == @steps) {
-				set_gamerule(@world, 'DODAYLIGHTCYCLE', @daylightCycle);
-				clear_task();
-			}
-		});
+		_time_travel(@world, @targetTime, @seconds * 20);
 	}
 ));
