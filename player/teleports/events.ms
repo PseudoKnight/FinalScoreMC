@@ -61,23 +61,21 @@ bind('player_teleport', null, null, @event) {
 		@item = pinv(player(), null);
 		if(@item && @item['name'] == 'LEAD') {
 			@entities = array();
-			foreach(@e in entities_in_radius(@from, 7)) {
+			foreach(@e in entities_in_radius(@from, 8)) {
 				if(is_entity_living(@e) && get_leashholder(@e) == @uuid) {
 					@entities[] = @e;
 					set_leashholder(@e, null);
 				}
 			}
 			try {
-				if(!get_block_info(@to, 'solid')) {
+				load_chunk(@from); // keep chunks loaded
+				set_timeout(50, closure(){
 					foreach(@e in @entities) {
 						set_entity_loc(@e, @to);
+						set_leashholder(@e, @uuid);
 					}
-					set_timeout(50, closure(){
-						foreach(@e in @entities) {
-							set_leashholder(@e, @uuid);
-						}
-					});
-				};
+					unload_chunk(@from);
+				});
 			} catch(Exception @ex) {
 				msg('Failed to teleport some leashed mobs with you.');
 				console('Failed to teleport some leashed mobs.', false);
