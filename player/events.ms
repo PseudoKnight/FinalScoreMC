@@ -91,9 +91,11 @@ bind('player_death', null, null, @event) {
 					@entityType = _to_upper_camel_case(entity_type(@damager));
 					@setNames = closure(@names) {
 						try {
-							set_mob_name(@damager, array_remove(@names, 0).' the '.@entityType);
-							set_entity_persistence(@damager, true);
-							store_value('mobnames', @names);
+							if(entity_type(@damager) != 'WARDEN') {
+								set_mob_name(@damager, array_remove(@names, 0).' the '.@entityType);
+								set_entity_persistence(@damager, true);
+								store_value('mobnames', @names);
+							}
 						} catch(BadEntityException @ex) {
 							// ignore
 						}
