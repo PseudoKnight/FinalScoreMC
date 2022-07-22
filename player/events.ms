@@ -215,7 +215,7 @@ bind('player_enter_bed', null, null, @event) {
 		die();
 	}
 	if(get_world_time() > 13700 && get_world_time() < 22300) {
-		set_world_time(22300);
+		_time_travel(pworld(), 22300, 90);
 		msg(color('aqua').'You summoned the sun.');
 	} else if(get_world_time() < 13700 && get_world_time() > 11300) {
 		@time = get_world_time() - 11300;
@@ -223,7 +223,7 @@ bind('player_enter_bed', null, null, @event) {
 		if(@time < 0) {
 			@time = @time + 24000;
 		}
-		set_world_time(@time);
+		_time_travel(pworld(), @time, 120);
 		msg(color('aqua').'You summoned the sun.');
 	}
 	if(has_storm()) {
