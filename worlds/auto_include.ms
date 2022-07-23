@@ -188,17 +188,17 @@ proc _unload_world(@name, @save = true) {
 }
 
 /*
-	Gets the WorldBorder plugin's border for the given world.
+	Gets the custom border for the given world.
+	These are used where visual borders are distracting
+	or when borders are not perfectly square.
 */
 proc _get_worldborder(@world) {
-	try {
-		@worlds = yml_decode(read('../../../WorldBorder/config.yml'))['worlds'];
-		return(array_get(@worlds, @world, null));
-	} catch(IOException @ex) {
-		// WorldBorder plugin doesn't exist
-		console('WorldBorder plugin is missing.');
-		return(null);
+	@worlds = _worlds_config();
+	if(array_index_exists(@worlds, @world, 'border')) {
+		return(@worlds[@world]['border']);
 	}
+	return(null);
+}
 
 /*
 	Interpolates between current world time and target time over a number of ticks.

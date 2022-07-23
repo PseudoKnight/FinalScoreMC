@@ -1,3 +1,7 @@
+/*
+	Expands the worldborder for the Outworld when mobs are killed.
+	The distance expanded is determined by the amount of exp a mob drops.
+ */
 bind('entity_death', null, null, @event, @border = _get_worldborder('outworld')) {
 	if(@border && string_starts_with(@event['location']['world'], 'outworld')) {
 		@width = get_world_border('outworld')['width'];

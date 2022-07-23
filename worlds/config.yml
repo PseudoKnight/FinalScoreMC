@@ -2,16 +2,21 @@ alpha: world
 world:
   name: 'Alpha'
   mode: SURVIVAL
-  group: 'survival'
+  group: survival
   teleports: true
   environment: NORMAL
   seed: -621778714517541268
   generator: 'CleanroomGenerator:.'
+  border:
+    x: -1650.0
+    z: -2100.0
+    radiusX: 3850
+    radiusZ: 5800
 alphanether: world_nether
 world_nether:
   name: 'Alpha Nether'
   mode: SURVIVAL
-  group: 'survival'
+  group: survival
   teleports: true
   environment: NETHER
   respawn: world
@@ -20,7 +25,7 @@ theend: world_the_end
 world_the_end:
   name: 'The End'
   mode: SURVIVAL
-  group: 'survival'
+  group: survival
   teleports: true
   environment: THE_END
   respawn: omega
@@ -28,16 +33,21 @@ delta: world3
 world3:
   name: 'Delta'
   mode: SURVIVAL
-  group: 'survival'
+  group: survival
   teleports: true
   environment: NORMAL
   seed: -8443156782283251243
   generator: 'CleanroomGenerator:.'
+  border:
+    x: 450.0
+    z: -450.0
+    radiusX: 3162
+    radiusZ: 3162
 deltanether: world3_nether
 world3_nether:
   name: 'Delta Nether'
   mode: SURVIVAL
-  group: 'survival'
+  group: survival
   teleports: true
   environment: NETHER
   respawn: world3
@@ -45,37 +55,47 @@ gamma: world4
 world4:
   name: 'Gamma'
   mode: SURVIVAL
-  group: 'survival'
+  group: survival
   teleports: true
   environment: NORMAL
   seed: -754633420005903009
   generator: 'CleanroomGenerator:.'
+  border:
+    x: 0.0
+    z: 1000.0
+    radiusX: 1962
+    radiusZ: 1962
 gammanether: world4_nether
 world4_nether:
   name: 'Gamma Nether'
   mode: SURVIVAL
-  group: 'survival'
+  group: survival
   teleports: true
   environment: NETHER
   respawn: world4
 omega:
   name: 'Omega'
   mode: SURVIVAL
-  group: 'survival'
+  group: survival
   teleports: true
   environment: NORMAL
+  border:
+    x: 0.0
+    z: 0.0
+    radiusX: 4000
+    radiusZ: 4000
 omeganether: omega_nether
 omega_nether:
   name: 'Omega Nether'
   mode: SURVIVAL
-  group: 'survival'
+  group: survival
   teleports: true
   environment: NETHER
   respawn: omega
 psi:
   name: 'Psi'
   mode: SURVIVAL
-  group: 'survival'
+  group: survival
   teleports: true
   environment: NORMAL
   seed: -22023021593178743
@@ -83,21 +103,26 @@ psinether: psi_nether
 psi_nether:
   name: 'Psi Nether'
   mode: SURVIVAL
-  group: 'survival'
+  group: survival
   teleports: true
   environment: NETHER
   respawn: psi
 outworld:
   name: 'Outworld'
   mode: SURVIVAL
-  group: 'survival'
+  group: survival
   teleports: false
   environment: NORMAL
+  border: 
+    x: 0.0
+    z: 0.0
+    radiusX: 3800
+    radiusZ: 3800
 outworldnether: outworld_nether
 outworld_nether:
   name: 'Outworld Nether'
   mode: SURVIVAL
-  group: 'survival'
+  group: survival
   teleports: false
   environment: NETHER
   respawn: outworld
@@ -105,14 +130,14 @@ outworldend: outworld_the_end
 outworld_the_end:
   name: 'Outworld End'
   mode: SURVIVAL
-  group: 'survival'
+  group: survival
   teleports: false
   environment: THE_END
   respawn: outworld
 dev:
   name: 'Dev'
   mode: CREATIVE
-  group: 'dev'
+  group: dev
   teleports: true
   environment: NORMAL
   seed: 0
@@ -125,7 +150,7 @@ frogpark: custom
 custom:
   name: 'FrogPark'
   mode: ADVENTURE
-  group: 'minigames'
+  group: minigames
   teleports: true
   environment: NORMAL
   seed: 0
