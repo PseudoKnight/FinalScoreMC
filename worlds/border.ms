@@ -23,10 +23,6 @@ bind('player_move', array(priority: 'HIGHEST'), array(threshold: 16), @event) {
 bind('entity_damage', array(priority: 'HIGH'), array(type: 'PLAYER', cause: 'SUFFOCATION'), @event) {
 	if(@event['finalamount'] >= phealth(@event['id'])) {
 		@loc = @event['location'];
-		// special handling for shard
-		if(@loc['world'] == 'shard') {
-
-		}
 		@border = get_world_border(@loc['world']);
 		@center = @border['center'];
 		@radius = @border['width'] / 2;
