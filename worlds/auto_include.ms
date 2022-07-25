@@ -202,8 +202,14 @@ proc _get_worldborder(@world) {
 
 /*
 	Interpolates between current world time and target time over a number of ticks.
+	Returns whether or not this will be successful in modifying time.
  */
 proc _time_travel(@world, @targetTime, @ticks) {
+	if(import('timetravel.'.@world)) {
+		return(false);
+	}
+	export('timetravel.'.@world, true);
+
 	@startTime = get_world_time(@world);
 	if(@targetTime <= @startTime) {
 		@targetTime += 24000;
@@ -220,7 +226,9 @@ proc _time_travel(@world, @targetTime, @ticks) {
 		set_world_time(@world, @startTime + integer(round(@timeDelta * @interp)));
 		if(@step[0] == @ticks) {
 			set_gamerule(@world, 'DODAYLIGHTCYCLE', @daylightCycle);
+			export('timetravel.'.@world, null);
 			clear_task();
 		}
 	});
+	return(true);
 }
