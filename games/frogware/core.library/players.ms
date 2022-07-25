@@ -117,12 +117,13 @@ proc _fw_random_potion(@potentials, @secs = 20) {
 		speed: 17,
 		jump_boost: 12,
 		invisibility: 1,
-		blindness: 1
+		blindness: 1,
+		darkness: 1
 	);
 	@potion = array_get_rand(@potentials);
 	foreach(@p in all_players('custom')) {
 		if(_fw_player(@p)) {
-			set_peffect(@p, @potion, @potions[@potion], @secs);
+			set_peffect(@p, @potion, array_get(@potions, @potion, 1), @secs);
 		}
 	}
 }
