@@ -319,6 +319,7 @@ moderator:
     worldedit.drawsel: true
     minecraft.command.toggledownfall: true
     minecraft.command.kick: true
+    minecraft.command.playsound: true
     command.fly: true
     command.gm: true
     command.gm.others: true
