@@ -892,8 +892,8 @@ proc _pvp_end_match(@id, @winners) {
 		if(array_index_exists(@arena, 'restore')) {
 			broadcast(color('YELLOW').'Restoring arena for '.@pvp['title'].' ...');
 			foreach(@region in @arena['restore']) {
-				//skcb_load(@region);
-				//skcb_paste(array(0, 0, 0, @world), array(origin: true));
+				skcb_load(@region);
+				skcb_paste(array(0, 0, 0, @world), array(origin: true));
 			}
 		}
 		queue_push(closure(){
