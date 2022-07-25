@@ -131,7 +131,7 @@ register_command('boats', array(
 			if(get_command_block()) {
 				set_entity_rider(@boats[-1], puuid(_get_nearby_player(get_command_block(), 5)));
 			}
-
+			@segments = ceil(@size / 4);
 			set_interval(50, closure(){
 				try {
 					@rotation = 1;
@@ -139,8 +139,8 @@ register_command('boats', array(
 					@yaw = null;
 					foreach(@boat in @boats) {
 						@yaw = entity_loc(@boat)['yaw'];
-						set_entity_rotation(@boat, @yaw + @rotation * integer(@i / 5 + 1), 0);
-						if(++@i % 5 == 0) {
+						set_entity_rotation(@boat, @yaw + @rotation * integer(@i / @segments + 1), 0);
+						if(++@i % @segments == 0) {
 							@rotation = -@rotation;
 						}
 					}
