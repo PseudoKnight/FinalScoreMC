@@ -25,7 +25,7 @@ proc _class_powerup(@player) {
 		spawn_entity('WOLF', 1, entity_loc(puuid(@player)), closure(@wolf) {
 			set_mob_owner(@wolf, @player);
 			set_entity_spec(@wolf, array(color: array_get_rand(reflect_pull('enum', 'DyeColor'))));
-			set_mob_effect(@wolf, 'SPEED', 0, 9999, true, false);
+			set_mob_effect(@wolf, 'SPEED', 1, 9999, true, false);
 		});
 	}
 }
