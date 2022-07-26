@@ -144,7 +144,7 @@ register_command('timer', array(
 						modify_event('drops', array());
 						set_timeout(400, closure(){
 							respawn();
-							set_timeout(1, closure(){
+							set_timeout(100, closure(){
 								set_pinv(player(), 1, @restartButton);
 								if(has_bind(player().'checkpoint')) {
 									set_pinv(player(), 2, @checkpointButton);
