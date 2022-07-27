@@ -20,7 +20,9 @@ proc _player_join(@id) {
 		// check if you can join this game in progress
 		if(@pvp['running'] > 1 && (array_index_exists(@pvp['arena'], 'lives')
 		|| (array_index_exists(@pvp['arena'], 'max') && array_size(@pvp['players']) >= @pvp['arena']['max']))) {
-			die('Match already in progress.');
+			msg('Match already in progress.');
+			_click_tell(array(player()), array('&7[PVP] ', array('&b[Click to Spectate '.@pvp['title'].']', '/pvp spectate '.@id)));
+			die();
 		}
 	}
 	@pvp['players'][player()] = associative_array();
