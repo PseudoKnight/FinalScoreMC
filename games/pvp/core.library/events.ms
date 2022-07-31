@@ -474,4 +474,10 @@ proc _bind_events(@pvp) {
 			try(entity_remove(@event['id']))
 		}
 	}
+	
+	@pvp['binds'][] = bind('block_ignite', null, null, @event, @pvp) {
+		if(array_index_exists(@pvp['players'], player()) && @event['cause'] != 'FLINT_AND_STEEL') {
+			cancel();
+		}
+	}
 }
