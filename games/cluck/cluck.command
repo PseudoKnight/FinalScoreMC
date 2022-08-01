@@ -75,6 +75,10 @@ register_command('cluck', array(
 					}
 				}
 
+				bind('item_pickup', array(id: 'cluckpickup'), array(player: @cluck['player']), @event) {
+					cancel();
+				}
+
 				_cluck_startround(@cluck);
 			}
 			
@@ -89,6 +93,7 @@ register_command('cluck', array(
 				unbind('cluckdamage');
 				unbind('cluckstart');
 				unbind('cluckregion');
+				unbind('cluckpickup');
 			}
 			
 			proc _cluck_startround(@cluck) {
@@ -163,8 +168,9 @@ register_command('cluck', array(
 			
 				_regionmsg('cluck', color('yellow').@player.' hit '.@cluck['hit'].' chickens.');
 			
-				# Did we not meet the required hit chickens? (or round 10)
-				if(@cluck['hit'] < @cluck['count'] / 2 || @cluck['round'] == 10) {
+				# Check for a round fail state
+				# Did we not meet the required hit chickens? Is it final round? Are there not enough arrows left?
+				if(@cluck['hit'] < @cluck['count'] / 2 || @cluck['round'] == 10 || phas_item(@player, array(name: 'ARROW')) < 2) {
 					_regionmsg('cluck', color('yellow').color('bold').to_upper(@player).' GAMEOVER! Score: '.@score);
 					@cluck['gameover'] = @cluck['round'];
 					
