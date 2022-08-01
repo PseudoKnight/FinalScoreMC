@@ -17,14 +17,12 @@ bind('player_teleport', null, null, @event) {
 
 	if(@event['type'] == 'END_GATEWAY') {
 		if(@fromWorld == 'world_the_end'
-		&& (get_block(location_shift(@from, 'east')) == 'END_GATEWAY'
+		&& abs(@from['x']) > 512 || abs(@from['z']) > 512
+		// ensure not stargate too
+		&& !(get_block(location_shift(@from, 'east')) == 'END_GATEWAY'
 		|| get_block(location_shift(@from, 'west')) == 'END_GATEWAY'
 		|| get_block(location_shift(@from, 'north')) == 'END_GATEWAY'
 		|| get_block(location_shift(@from, 'south')) == 'END_GATEWAY')) {
-			// this is probably a stargate in the end
-			cancel();
-			die();
-		} else if(abs(@from['x']) > 512 || abs(@from['z']) > 512) {
 			// coming from the ring islands, do a safe tp
 			@to = get_spawn(@fromWorld);
 			modify_event('to', @to);
