@@ -572,7 +572,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 										_add_to_chunk(@chunk, @loc, @materials['floor']);
 									}
 								} else if(@roomType == 'PIT' && @layoutMap[@c][@r] != 'column') {
-									if(!_direction_of_solid(@layoutMap, @c, @r) || srand(@random) > 0.4) {
+									if(!_direction_of_solid(@layoutMap, @c, @r) || srand(@random) < 0.55) {
 										@holeDepth = @maxRoomHeight;
 										while(@holeDepth-- > 0) {
 											_add_to_chunk(@chunk, location_shift(@loc, 'down', @holeDepth), 'air');

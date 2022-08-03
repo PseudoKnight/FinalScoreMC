@@ -565,7 +565,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 								if(@roomType == 'FIRE_FLOOR' && @layoutMap[@c][@r] != 'column') {
 									_add_to_chunk(@chunk, @loc, 'dispenser[facing=up]');
 								} else if(@roomType == 'LAVA_PIT' && @layoutMap[@c][@r] != 'column') {
-									if(!_direction_of_solid(@layoutMap, @c, @r) || srand(@random) < 0.6) {
+									if(!_direction_of_solid(@layoutMap, @c, @r) || srand(@random) < 0.55) {
 										_add_to_chunk(@chunk, @loc, 'lava');
 									} else {
 										_add_to_chunk(@chunk, @loc, @materials['floor']);
@@ -577,7 +577,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 										_add_to_chunk(@chunk, @loc, @materials['floor']);
 									}
 								} else if(@roomType == 'PIT' && @layoutMap[@c][@r] != 'column') {
-									if(!_direction_of_solid(@layoutMap, @c, @r) || srand(@random) > 0.4) {
+									if(!_direction_of_solid(@layoutMap, @c, @r) || srand(@random) < 0.55) {
 										@holeDepth = @maxRoomHeight;
 										while(@holeDepth-- > 0) {
 											_add_to_chunk(@chunk, location_shift(@loc, 'down', @holeDepth), 'air');
