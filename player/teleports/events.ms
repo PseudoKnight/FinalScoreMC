@@ -8,7 +8,10 @@ if(!import('requests')) {
 	export('requests', @ignorelist);
 }
 
-# Main teleport handler
+/*
+	Handles additional entity teleports when player teleports
+	(and safer end gateway teleports from end islands)
+ */
 bind('player_teleport', null, null, @event) {
 	@from = @event['from'];
 	@to = @event['to'];
@@ -16,13 +19,14 @@ bind('player_teleport', null, null, @event) {
 	@toWorld = @to['world'];
 
 	if(@event['type'] == 'END_GATEWAY') {
-		if(@fromWorld == 'world_the_end'
-		&& abs(@from['x']) > 512 || abs(@from['z']) > 512
-		// ensure not stargate too
-		&& !(get_block(location_shift(@from, 'east')) == 'END_GATEWAY'
+		if(get_block(location_shift(@from, 'east')) == 'END_GATEWAY'
 		|| get_block(location_shift(@from, 'west')) == 'END_GATEWAY'
 		|| get_block(location_shift(@from, 'north')) == 'END_GATEWAY'
-		|| get_block(location_shift(@from, 'south')) == 'END_GATEWAY')) {
+		|| get_block(location_shift(@from, 'south')) == 'END_GATEWAY') {
+			// This is a stargate, which will be handled on a separate plugin teleport event
+			die();
+		} else if(@fromWorld == 'world_the_end'
+		&& abs(@from['x']) > 512 || abs(@from['z']) > 512) {
 			// coming from the ring islands, do a safe tp
 			@to = get_spawn(@fromWorld);
 			modify_event('to', @to);
@@ -34,50 +38,32 @@ bind('player_teleport', null, null, @event) {
 	if(_is_survival_world(@fromWorld) && _is_survival_world(@toWorld)) {
 		@uuid = puuid();
 
-		@vehicle = null;
-		try {
-			@vehicle = get_entity_vehicle(@uuid);
-		} catch(BadEntityException @ex) {
-			die();
-		}
-		@type = entity_type(@vehicle);
-		if(array_contains(array('DONKEY', 'HORSE', 'LLAMA', 'MULE', 'SKELETON_HORSE', 'ZOMBIE_HORSE', 'STRIDER'), @type)) {
-			set_timeout(1, closure(){
-				try {
-					set_entity_loc(@vehicle, @to);
-					set_timeout(1, closure(){
-						set_entity_rider(@vehicle, @uuid);
-					});
-				} catch(Exception @ex) {
-					msg('Failed to teleport your horse with you.');
-					console('Failed to teleport horse.', false);
-				}
-			});
+		@vehicle = get_entity_vehicle(@uuid);
+
+		@leashedEntities = array();
+		foreach(@e in entities_in_radius(@from, 8)) {
+			if(is_entity_living(@e) && get_leashholder(@e) == @uuid) {
+				@leashedEntities[] = @e;
+				set_leashholder(@e, null);
+			}
 		}
 
-		// Teleport leashed entities with player
-		@item = pinv(player(), null);
-		if(@item && @item['name'] == 'LEAD') {
-			@entities = array();
-			foreach(@e in entities_in_radius(@from, 8)) {
-				if(is_entity_living(@e) && get_leashholder(@e) == @uuid) {
-					@entities[] = @e;
-					set_leashholder(@e, null);
-				}
-			}
-			try {
-				load_chunk(@from); // keep chunks loaded
-				set_timeout(50, closure(){
-					foreach(@e in @entities) {
-						set_entity_loc(@e, @to);
-						set_leashholder(@e, @uuid);
+		if(@vehicle || @leashedEntities) {
+			load_chunk(@from); // keep chunks loaded just in case
+			set_timeout(50, closure(){
+				if(@vehicle != null) {
+					@type = entity_type(@vehicle);
+					if(array_contains(array('DONKEY', 'HORSE', 'LLAMA', 'MULE', 'SKELETON_HORSE', 'ZOMBIE_HORSE', 'STRIDER'), @type)) {
+						set_entity_loc(@vehicle, @to);
+						set_entity_rider(@vehicle, @uuid);
 					}
-					unload_chunk(@from);
-				});
-			} catch(Exception @ex) {
-				msg('Failed to teleport some leashed mobs with you.');
-				console('Failed to teleport some leashed mobs.', false);
-			}
+				}
+				foreach(@e in @leashedEntities) {
+					set_entity_loc(@e, @to);
+					set_leashholder(@e, @uuid);
+				}
+				unload_chunk(@from);
+			});
 		}
 	}
 }
