@@ -38,7 +38,7 @@ proc _class_load(@player, @pvp) {
 							floor(@loc['z']),
 							@loc['world']
 						);
-						set_block(@blockLoc, 'COBWEB');
+						set_block(@blockLoc, 'COBWEB', false);
 						@pvp['players'][player()]['blocks'][] = @blockLoc;
 						play_sound(@loc, array(sound: 'ENTITY_SPIDER_AMBIENT', pitch: 2));
 					} else if(@block != 'COBWEB') {
@@ -57,7 +57,7 @@ proc _class_load(@player, @pvp) {
 		if(@blocks) {
 			foreach(@i: @block in @blocks) {
 				if(@block[0] == @event['location'][0] && @block[1] == @event['location'][1] && @block[2] == @event['location'][2]) {
-					set_block(@block, 'AIR');
+					set_block(@block, 'AIR', false);
 					array_remove(@blocks, @i);
 					play_sound(@block, array(sound: 'BLOCK_WOOL_BREAK', volume: 0.7));
 					play_sound(ploc(@player), array(sound: 'BLOCK_NOTE_BLOCK_BASS', pitch: 1.5 + rand() * 0.5, volume: 0.3), @player);
@@ -92,7 +92,7 @@ proc _class_load(@player, @pvp) {
 							if(get_block(array(@x, @y, @z, @world)) == 'COBWEB') {
 								foreach(@i: @block in @blocks) {
 									if(@block[0] == @x && @block[1] == @y && @block[2] == @z) {
-										set_block(@block, 'AIR');
+										set_block(@block, 'AIR', false);
 										array_remove(@blocks, @i);
 										break();
 									}
@@ -113,7 +113,7 @@ proc _class_unload(@player, @pvp) {
 	unbind(@player.'web');
 	unbind(@player.'webbreak');
 	foreach(@block in @pvp['players'][@player]['blocks']) {
-		set_block(@block, 'AIR');
+		set_block(@block, 'AIR', false);
 	}
 	@pvp['players'][@player]['blocks'] = array();
 }
