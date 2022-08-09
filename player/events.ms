@@ -314,12 +314,14 @@ bind('player_interact', null, null, @event, @instruments,
 }
 
 bind('player_toggle_sneak', null, array(sneaking: true), @event, @instruments) {
-	@mainhand = pinv(player(), null);
-	@offhand = pinv(player(), -106);
-	if(@mainhand && array_index_exists(@instruments, @mainhand['name'])) {
-		play_named_sound(ploc(), array('sound': 'block.note_block.basedrum', 'category': 'VOICE'));
-	} else if(@offhand && array_index_exists(@instruments, @offhand['name'])) {
-		play_named_sound(ploc(), array('sound': 'block.note_block.basedrum', 'category': 'VOICE'));
+	if(_is_survival_world(pworld())) {
+		@mainhand = pinv(player(), null);
+		@offhand = pinv(player(), -106);
+		if(@mainhand && array_index_exists(@instruments, @mainhand['name'])) {
+			play_named_sound(ploc(), array('sound': 'block.note_block.basedrum', 'category': 'VOICE'));
+		} else if(@offhand && array_index_exists(@instruments, @offhand['name'])) {
+			play_named_sound(ploc(), array('sound': 'block.note_block.basedrum', 'category': 'VOICE'));
+		}
 	}
 }
 
