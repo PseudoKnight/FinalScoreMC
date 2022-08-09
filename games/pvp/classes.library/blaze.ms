@@ -40,10 +40,6 @@ proc _class_load(@player, @pvp) {
 	}
 }
 
-proc _class_powerup(@player) {
-	set_phunger(@player, 2);
-}
-
 proc _class_unload(@player, @pvp) {
 	unbind(@player.'blaze');
 	clear_task(@pvp['players'][@player]['task']);
