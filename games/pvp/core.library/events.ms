@@ -417,6 +417,7 @@ proc _bind_events(@pvp) {
 					// Treat as self-inflicted causes
 					'FLY_INTO_WALL',
 					'SUFFOCATION',
+					'DROWNING',
 
 					// TODO: Attribute these, if possible
 					'HOT_FLOOR', // can be attributed, but not necessary
