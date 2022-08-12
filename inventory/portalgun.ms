@@ -87,7 +87,10 @@ execute(iclosure(){
 			}
 		}
 
-		@trace = ray_trace(48);
+		// visual range is 48 for item frames.
+		// consider limiting it to this distance,
+		// or have a fallback to fake blocks when players wander outside of range.
+		@trace = ray_trace(72);
 
 		if(!@trace['hitblock']) {
 			play_sound(ploc(), array(sound: 'ENTITY_SHULKER_CLOSE'));
