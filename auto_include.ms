@@ -87,26 +87,14 @@ void proc _trigger_event(string @eventName, array @data){
 
 	@filePath The path to the NBT file (should be relative to this script)
  */
-array proc _NBT_read(string @filePath){
+array proc _NBT_readFile(string @filePath){
 	byte_array @ba = read_gzip_binary(@filePath);
-	return(_NBT_traverseTag(@ba, null));
+	int @type = ba_get_byte(@ba);
+	ba_get_string(@ba);
+	return(_NBT_readTag(@ba, @type));
 }
 
-mixed proc _NBT_traverseTag(byte_array @ba, array @tree){
-	mixed @tagtype = _NBT_readType(@ba, 1);
-	if(@tagtype == 0){
-		return(null);
-	}
-	string @key = string(_NBT_readType(@ba, 8));
-	mixed @value = _NBT_readType(@ba, @tagtype);
-	if(@tree == null) {
-		return(@value);
-	}
-	@tree[@key] = @value;
-	return(@tree);
-}
-
-mixed proc _NBT_readType(byte_array @ba, int @type){
+mixed proc _NBT_readTag(byte_array @ba, int @type){
 	switch(@type){
 		case 1:
 			return(ba_get_byte(@ba));
@@ -126,32 +114,40 @@ mixed proc _NBT_readType(byte_array @ba, int @type){
 		case 8:
 			return(ba_get_string(@ba));
 		case 9:
-			int @tagtype = ba_get_byte(@ba);
+			int @listType = ba_get_byte(@ba);
 			int @length = ba_get_int(@ba);
 			array @list = array();
 			for(@i = 0, @i < @length, @i++){
-				@list[] = _NBT_readType(@ba, @tagtype);
+				@list[] = _NBT_readTag(@ba, @listType);
 			}
 			return(@list);
 		case 10:
-			array @tree = associative_array();
-			while(_NBT_traverseTag(@ba, @tree) != null)
-			return(@tree);
+			array @compound = associative_array();
+			while(true) {
+				int @tagType = ba_get_byte(@ba);
+				if(@tagType == 0){
+					return(@compound);
+				}
+				string @key = ba_get_string(@ba);
+				mixed @value = _NBT_readTag(@ba, @tagType);
+				@compound[@key] = @value;
+			}
 		case 11:
 			int @length = ba_get_int(@ba);
-			array @list = array();
+			array @intArray = array();
 			for(@i = 0, @i < @length, @i++){
-				@list[] = _NBT_readType(@ba, 3);
+				@intArray[] = ba_get_int(@ba);
 			}
-			return(@list);
+			return(@intArray);
 		case 12:
 			int @length = ba_get_int(@ba);
-			array @list = array();
+			array @longArray = array();
 			for(@i = 0, @i < @length, @i++){
-				@list[] = _NBT_readType(@ba, 4);
+				@longArray[] = ba_get_long(@ba);
 			}
-			return(@list);
+			return(@longArray);
 	}
+	throw('FormatException', 'Encountered invalid NBT type: '.@type);
 }
 
 /*
