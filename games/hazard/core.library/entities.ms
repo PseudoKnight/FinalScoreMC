@@ -34,10 +34,10 @@ proc _hazard_add_entity(@game, @uuid, @type = null, @loc = null, @spawner = null
 	);
 }
 
-proc _hazard_remove_entity(@game, @uuid) {
+proc _hazard_remove_entity(@game, @uuid, @removeFromWorld = true) {
 	foreach(@index: @entity in @game['entities']) {
 		if(@uuid == @entity['uuid']) {
-			if(entity_exists(@uuid)) {
+			if(@removeFromWorld && entity_exists(@uuid)) {
 				entity_remove(@uuid);
 			}
 			array_remove(@game['entities'], @index);
