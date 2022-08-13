@@ -16,6 +16,8 @@ proc _fw_start_game(@pts) {
 		if(_fw_player(@p)) {
 			set_pmode(@p, 'SURVIVAL');
 			_fw_reset_player(@p);
+		} else {
+			_click_tell(array(@p), array('&7[FrogWare Starting] ', array('&b[Click to Join]', '/frogware join')));
 		}
 	}
 	bind('entity_damage', array(id: 'fwdamage'), array(type: 'PLAYER', world: 'custom'), @event) {
