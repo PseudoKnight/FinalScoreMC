@@ -18,6 +18,8 @@ proc _prepare_game(@category) {
 	foreach(@p in all_players(pworld())) {
 		if(array_contains(sk_current_regions(@p), 'charades')) {
 			@players[] = @p;
+		} else {
+			_click_tell(array(@p), array('&7[Charades Starting] ', array('&b[Click to Warp]', '/warp charades')));
 		}
 	}
 	if(array_size(@players) < 3) {
