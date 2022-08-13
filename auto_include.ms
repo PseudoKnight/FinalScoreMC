@@ -83,6 +83,78 @@ void proc _trigger_event(string @eventName, array @data){
 }
 
 /*
+	Reads in an NBT file and returns a formatted array of the data.
+
+	@filePath The path to the NBT file (should be relative to this script)
+ */
+array proc _NBT_read(string @filePath){
+	byte_array @ba = read_gzip_binary(@filePath);
+	return(_NBT_traverseTag(@ba, null));
+}
+
+mixed proc _NBT_traverseTag(byte_array @ba, array @tree){
+	mixed @tagtype = _NBT_readType(@ba, 1);
+	if(@tagtype == 0){
+		return(null);
+	}
+	string @key = string(_NBT_readType(@ba, 8));
+	mixed @value = _NBT_readType(@ba, @tagtype);
+	if(@tree == null) {
+		return(@value);
+	}
+	@tree[@key] = @value;
+	return(@tree);
+}
+
+mixed proc _NBT_readType(byte_array @ba, int @type){
+	switch(@type){
+		case 1:
+			return(ba_get_byte(@ba));
+		case 2:
+			return(ba_get_short(@ba));
+		case 3:
+			return(ba_get_int(@ba));
+		case 4:
+			return(ba_get_long(@ba));
+		case 5:
+			return(ba_get_float(@ba));
+		case 6:
+			return(ba_get_double(@ba));
+		case 7:
+			int @length = ba_get_int(@ba);
+			return(ba_get_bytes(@ba, @length));
+		case 8:
+			return(ba_get_string(@ba));
+		case 9:
+			int @tagtype = ba_get_byte(@ba);
+			int @length = ba_get_int(@ba);
+			array @list = array();
+			for(@i = 0, @i < @length, @i++){
+				@list[] = _NBT_readType(@ba, @tagtype);
+			}
+			return(@list);
+		case 10:
+			array @tree = associative_array();
+			while(_NBT_traverseTag(@ba, @tree) != null)
+			return(@tree);
+		case 11:
+			int @length = ba_get_int(@ba);
+			array @list = array();
+			for(@i = 0, @i < @length, @i++){
+				@list[] = _NBT_readType(@ba, 3);
+			}
+			return(@list);
+		case 12:
+			int @length = ba_get_int(@ba);
+			array @list = array();
+			for(@i = 0, @i < @length, @i++){
+				@list[] = _NBT_readType(@ba, 4);
+			}
+			return(@list);
+	}
+}
+
+/*
 	Returns a tabcompleter closure that supports an ordered list of static or dynamic returns.
 	Example:
 		set_tabcompleter('player', _create_tabcompleter(
