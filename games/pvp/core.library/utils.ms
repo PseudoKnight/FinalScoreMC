@@ -36,6 +36,8 @@ proc _pvp_hat_spawn(@id, @team, @loc) {
 	}
 	@hat = drop_item(@loc, @pvp['team'][@team]['captainhat']);
 	set_entity_velocity(@hat, array(0, 0, 0));
+	team_add_player(@pvp['arena']['team'][@team]['name'], @hat, @id);
+	set_entity_glowing(@hat, true);
 }
 
 /*
