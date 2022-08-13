@@ -73,7 +73,7 @@ proc _queue_next_builder() {
 		}
 	});
 
-	bind('player_chat', array('id': 'charades-guessing', 'priority': 'HIGH'), null, @event, @charades, @timer) {
+	bind('player_chat', array(id: 'charades-guessing', priority: 'HIGH'), null, @event, @charades, @timer) {
 		if(get_pscoreboard(player()) == 'charades') {
 			if(@event['message'][0] == '!') {
 				modify_event('message', @event['message'][1..]);
@@ -85,7 +85,7 @@ proc _queue_next_builder() {
 					@timestamp = simple_date('h:mm');
 					@name = display_name();
 					if(_is_match(@message, @charades['build'])) {
-						play_sound(ploc(), array('sound': 'ENTITY_PLAYER_LEVELUP'));
+						play_sound(ploc(), array(sound: 'ENTITY_PLAYER_LEVELUP'));
 						@charades['buffer'][player()] = colorize("&8@timestamp [Charades] @{name}&8: &r&a&l@message");
 						_msg_charades(color('green').player().' guessed correctly!');
 						if(@timer[0] > 3) {
@@ -150,7 +150,7 @@ proc _end_build() {
 		set_timeout(50,closure(){
 			try {
 				skcb_load('charades-'.@charades['world']);
-				skcb_paste(array(0, 0, 0, @charades['world']), array('origin': true));
+				skcb_paste(array(0, 0, 0, @charades['world']), array(origin: true));
 			} catch(IOException @ex) {
 				console('Could not load charades schematic for world: '.@charades['world']);
 			}

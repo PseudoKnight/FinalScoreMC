@@ -62,7 +62,7 @@ proc _get_build(@category) {
 			if(is_array(@b)) {
 				@build = @b[0];
 				@hint = @b[1];
-				@builds[@build] = array('count': 0, 'hint': @hint);
+				@builds[@build] = array(count: 0, hint: @hint);
 			} else {
 				@builds[@b] = 0; // number of times used
 			}
@@ -91,5 +91,5 @@ proc _get_build(@category) {
 		@builds[@build]++;
 	}
 	store_value('charades', @category, @builds);
-	return(array('build': @build, 'hint': @hint));
+	return(array(build: @build, hint: @hint));
 }

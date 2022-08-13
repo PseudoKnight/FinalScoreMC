@@ -27,25 +27,25 @@ proc _prepare_game(@category) {
 	_add_activity('charades', 'Charades');
 
 	export('charades', array(
-		'category': @category,
-		'players': @players,
-		'playersLeft': @players[],
-		'interval': 0,
-		'votes': associative_array(),
-		'seconds': 150.0,
-		'build': '',
-		'hint': '',
-		'world': pworld(),
-		'finalRound': false,
-		'buffer': associative_array(),
+		category: @category,
+		players: @players,
+		playersLeft: @players[],
+		interval: 0,
+		votes: associative_array(),
+		seconds: 150.0,
+		build: '',
+		hint: '',
+		world: pworld(),
+		finalRound: false,
+		buffer: associative_array(),
 	));
 
 	create_scoreboard('charades');
 	create_objective('score', 'DUMMY', 'charades');
-	set_objective_display('score', array('displayname': 'Scores', 'slot': 'SIDEBAR'), 'charades');
+	set_objective_display('score', array(displayname: 'Scores', slot: 'SIDEBAR'), 'charades');
 	create_team('guessers', 'charades');
 	create_team('builder', 'charades');
-	set_team_display('builder', array('color': 'GREEN'), 'charades');
+	set_team_display('builder', array(color: 'GREEN'), 'charades');
 
 	foreach(@p in @players) {
 		_charades_add_player(@p);
@@ -79,7 +79,7 @@ proc _end_game() {
 
 	@center = sk_region_info('charades-beacon', @charades['world'], 0)[0];
 	set_block(@center, 'LIGHT_BLUE_STAINED_GLASS');
-	play_sound(@center, array('sound': 'UI_TOAST_CHALLENGE_COMPLETE', 'volume': 5));
+	play_sound(@center, array(sound: 'UI_TOAST_CHALLENGE_COMPLETE', volume: 5));
 
 	@top = 0;
 	@topPlayers = array();

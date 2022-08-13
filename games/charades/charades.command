@@ -1,14 +1,14 @@
 register_command('charades', array(
-	'description': 'A visual game of charades in Minecraft',
-	'usage': '/charades [category]',
-	'permission': 'command.charades',
-	'tabcompleter': closure(@alias, @sender, @args, @info) {
+	description: 'A visual game of charades in Minecraft',
+	usage: '/charades [category]',
+	permission: 'command.charades',
+	tabcompleter: closure(@alias, @sender, @args, @info) {
 		if(array_size(@args) == 1) {
 			include('core.library/words.ms');
 			return(_strings_start_with_ic(_get_categories(), @args[-1]));
 		}
 	},
-	'executor': closure(@alias, @sender, @args, @info) {
+	executor: closure(@alias, @sender, @args, @info) {
 		include('core.library/game.ms');
 		array_resize(@args, 1, '');
 		switch(@args[0]) {
