@@ -23,10 +23,11 @@ register_command('cubeclimber', array(
 				}
 
 				@count = 0;
-				foreach(@p in all_players()) {
-					if(array_contains(sk_current_regions(@p), 'cubeclimber')
-					&& pworld(@p) == pworld()) {
+				foreach(@p in all_players(pworld())) {
+					if(array_contains(sk_current_regions(@p), 'cubeclimber')) {
 						@count++;
+					} else {
+						_click_tell(array(@p), array('&7[&6Cube&cClimber&7] ', array('&b[Click to Warp]', '/warp cubeclimber')));
 					}
 				}
 
