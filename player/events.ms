@@ -201,6 +201,10 @@ bind('player_interact', null, array('button': 'right'), @event) {
 			@loc = location_shift(@event['location'], @event['facing']);
 			@loc['x'] += 0.5;
 			@loc['z'] += 0.5;
+			if(array_size(entities_in_radius(@loc, 64)) > 250) {
+				spawn_particle(@loc, 'SMOKE_NORMAL');
+				die();
+			}
 			@entity = spawn_entity(@type, 1, @loc)[0];
 			set_entity_persistence(@entity, true);
 		}
@@ -386,3 +390,23 @@ bind('vehicle_enter', null, array('vehicletype': 'MINECART', 'passengertype': 'P
 		}
 	}
 }
+
+/*
+bind('region_change', null, null, @event) {
+	@world = @event['to']['world'];
+	if(@world == 'dev') {
+		foreach(@region in @event['toRegions']) {
+			if(array_contains(sk_region_owners(@region, @world)['players'], puuid())) {
+				action_msg('Entered your region');
+				die();
+			}
+		}
+		foreach(@region in @event['fromRegions']) {
+			if(array_contains(sk_region_owners(@region, @world)['players'], puuid())) {
+				action_msg('Exited your region');
+				die();
+			}
+		}
+	}
+}
+ */
