@@ -99,30 +99,26 @@ if(extension_exists('CHDynmap')) {
 	}
 
 	bind('player_quit', array('priority': 'HIGHEST'), null, @event) {
-		if(has_permission('livemap.markers')) {
-			if(array_contains(dm_all_markers('tracers'), player())) {
-				dm_delete_marker('tracers', player());
-			}
-			if(function_exists('dm_create_marker')) {
-				dm_create_marker('tracers', array(
-					'world': pworld(),
-					'id': player().'_quit',
-					'label': player() . ' left the game',
-					'icon': 'walk',
-					'location': ploc(),
-				));
-			}
+		if(array_contains(dm_all_markers('tracers'), player())) {
+			dm_delete_marker('tracers', player());
+		}
+		if(function_exists('dm_create_marker')) {
+			dm_create_marker('tracers', array(
+				'world': pworld(),
+				'id': player().'_quit',
+				'label': player() . ' left the game',
+				'icon': 'walk',
+				'location': ploc(),
+			));
 		}
 	}
 
 	bind('player_join', null, null, @event) {
 		set_timeout(50, closure(){
-			if(has_permission('livemap.markers')) {
-				try {
-					dm_delete_marker('tracers', player().'_quit');
-				} catch(NotFoundException @e) {
-					 # first time joining this session
-				}
+			try {
+				dm_delete_marker('tracers', player().'_quit');
+			} catch(NotFoundException @e) {
+					# first time joining this session
 			}
 		});
 	}
