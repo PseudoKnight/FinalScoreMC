@@ -23,7 +23,7 @@ proc _get_pstate(@player, @state) {
 		console('WARNING: Failed to load survival enderchest for '.@player.'.', false);
 		console(@ex['message'], false);
 		if(array_index_exists(@pdata, 'ender')) {
-			console(@pstate['inv'], false);
+			console(@pstate['ender'], false);
 		}
 		@inv = array();
 		array_resize(@inv, 27);
