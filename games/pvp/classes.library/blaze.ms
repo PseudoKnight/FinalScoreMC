@@ -38,9 +38,19 @@ proc _class_load(@player, @pvp) {
 			});
 		}
 	}
+
+	bind('player_move', array(id: @player.'blazetrail'), array(player: @player, threshold: 2), @event) {
+		if(!pcooldown(player(), 'BLAZE_ROD') && get_block(@event['from']) == 'AIR') {
+			set_block(@event['from'], 'FIRE', false);
+			set_timeout(3000, closure(){
+				set_block(@event['from'], 'AIR', false);
+			});
+		}
+	}
 }
 
 proc _class_unload(@player, @pvp) {
 	unbind(@player.'blaze');
+	unbind(@player.'blazetrail');
 	clear_task(@pvp['players'][@player]['task']);
 }
