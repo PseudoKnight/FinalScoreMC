@@ -168,23 +168,43 @@ proc _pvp_start(@pvp){
 			@pvp['team'][0]['players'] = array();
 			@pvp['team'][1]['players'] = array();
 		}
-		if(!array_index_exists(@arena, 'teamratio')) {
-			@arena['teamratio'] = array(1, 1);
-		}
+
+		// Team assignment
 		@players = array_keys(@pvp['players']);
-		// first make sure solo player doesn't end up on the same team as last game
-		if(array_index_exists(@pvp, 'lastsolo') && array_contains(@players, @pvp['lastsolo'])) {
-			@player = @pvp['lastsolo'];
-			@team = abs(array_index(@pvp['arena']['teamratio'], 1) - 1);
-			@pvp['players'][@player]['team'] = @team;
-			@pvp['team'][@team]['players'][] = @player;
-			array_remove_values(@players, @player);
-		}
-		while(@players) {
-			@index = rand(0, array_size(@players));
-			@player = @players[@index];
-			_player_assign_team(@player, @pvp);
-			array_remove(@players, @index);
+		if(array_index_exists(@arena, 'teamratio')) {
+			// Uneven team ratios require assigning players randomly
+
+			// First make sure solo player doesn't end up on the same team as last game
+			if(array_index_exists(@pvp, 'lastsolo') && array_contains(@players, @pvp['lastsolo'])) {
+				@player = @pvp['lastsolo'];
+				@team = abs(array_index(@pvp['arena']['teamratio'], 1) - 1);
+				@pvp['players'][@player]['team'] = @team;
+				@pvp['team'][@team]['players'][] = @player;
+				array_remove_values(@players, @player);
+			}
+
+			// Now assign team randomly
+			while(@players) {
+				@index = rand(0, array_size(@players));
+				@player = @players[@index];
+				_player_assign_team(@player, @pvp);
+				array_remove(@players, @index);
+			}
+		} else {
+			// Even team ratios, so sort players based on win/loss ratios
+			@arena['teamratio'] = array(1, 1);
+			@ratios = associative_array();
+			foreach(@player in @players) {
+				@pstats = get_value('pvp', puuid(@player, true));
+				@ratios[@player] = @pstats['wins'] / @pstats['games'];
+			}
+			array_sort(@players, closure(@left, @right) {
+				return(@ratios[@left] > @ratios[@right]);
+			});
+			foreach(@player in @players) {
+				// assignment naturally alternates unless there's a special ratio
+				_player_assign_team(@player, @pvp);
+			}
 		}
 	}
 
