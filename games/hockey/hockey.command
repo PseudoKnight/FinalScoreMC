@@ -16,9 +16,12 @@ register_command('hockey', array(
 		}
 
 		@players = array();
+		@invitations = array();
 		foreach(@p in all_players(pworld())) {
 			if(array_contains(sk_current_regions(@p), 'hockey')) {
 				@players[] = @p;
+			} else {
+				@invitations[] = @p;
 			}
 		}
 		if(array_size(@players) < 1) {
@@ -26,6 +29,8 @@ register_command('hockey', array(
 		} else if(array_size(@players) % 2 == 1) {
 			//die('Teams are not even.');
 		}
+
+		_click_tell(@invitations, array('&7[Hockey]&r Starting... ', array('&b[Click to Warp]', '/warp hockey')));
 
 		proc _queue_game(@players) {
 			_add_activity('hockey', 'Ice Hockey');

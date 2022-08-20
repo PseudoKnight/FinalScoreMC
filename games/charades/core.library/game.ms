@@ -15,17 +15,19 @@ proc _prepare_game(@category) {
 	}
 
 	@players = array();
+	@invitations = array();
 	foreach(@p in all_players(pworld())) {
 		if(array_contains(sk_current_regions(@p), 'charades')) {
 			@players[] = @p;
 		} else {
-			_click_tell(array(@p), array('&7[Charades Starting] ', array('&b[Click to Warp]', '/warp charades')));
+			@invitations[] = @p;
 		}
 	}
 	if(array_size(@players) < 3) {
 		die(color('red').'Requires at least 3 players.');
 	}
 
+	_click_tell(@invitations, array('&7[Charades]&r Starting... ', array('&b[Click to Warp]', '/warp charades')));
 	_add_activity('charades', 'Charades');
 
 	export('charades', array(

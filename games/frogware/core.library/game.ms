@@ -12,14 +12,16 @@ proc _fw_create_scoreboard() {
 
 proc _fw_start_game(@pts) {
 	_add_activity('frogware', 'FrogWare', 'frogware', 'custom');
+	@invitations = array();
 	foreach(@p in all_players('custom')) {
 		if(_fw_player(@p)) {
 			set_pmode(@p, 'SURVIVAL');
 			_fw_reset_player(@p);
 		} else {
-			_click_tell(array(@p), array('&7[FrogWare Starting] ', array('&b[Click to Join]', '/frogware join')));
+			@invitations[] = @p;
 		}
 	}
+	_click_tell(@invitations, array('&7[FrogWare]&r Starting... ', array('&b[Click to Join]', '/frogware join')));
 	bind('entity_damage', array(id: 'fwdamage'), array(type: 'PLAYER', world: 'custom'), @event) {
 		if(_fw_player(@event['player'])) {
 			modify_event('amount', 0);

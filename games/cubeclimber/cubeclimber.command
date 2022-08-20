@@ -23,17 +23,20 @@ register_command('cubeclimber', array(
 				}
 
 				@count = 0;
+				@invitations = array();
 				foreach(@p in all_players(pworld())) {
 					if(array_contains(sk_current_regions(@p), 'cubeclimber')) {
 						@count++;
 					} else {
-						_click_tell(array(@p), array('&7[&6Cube&cClimber&7] ', array('&b[Click to Warp]', '/warp cubeclimber')));
+						@invitations[] = @p;
 					}
 				}
 
 				if(@count < 2) {
 					die(color('gold').'You need to have at least 2 players to start CubeClimber.');
 				}
+
+				_click_tell(@invitations, array('&7[&6Cube&cClimber&7]&r Starting... ', array('&b[Click to Warp]', '/warp cubeclimber')));
 
 				@cc = import('cubeclimber');
 				if(!@cc) {

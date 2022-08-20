@@ -43,12 +43,16 @@ proc _hoops_create() {
 
 proc _hoops_add_players() {
 	@count = 0;
+	@invitations = array();
 	foreach(@p in all_players(pworld())) {
 		if(array_contains(sk_current_regions(@p), 'hoops')) {
 			_hoops_player_add(@p);
 			@count++;
+		} else {
+			@invitations[] = @p;
 		}
 	}
+	_click_tell(@invitations, array('&7[Hoops]&r Starting... ', array('&b[Click to Warp]', '/warp hoops')));
 	return(@count);
 }
 

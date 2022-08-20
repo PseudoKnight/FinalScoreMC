@@ -41,11 +41,15 @@ proc _hazard_start(@game) {
 	_hazard_define_regions(@game);
 	_hazard_bind(@game);
 
+	@invitations = array();
 	foreach(@player in all_players(@game['world'])) {
 		if(array_contains(sk_current_regions(@player), 'hazard')) {
 			_hazard_add_player(@player, @game);
+		} else {
+			@invitations[] = @player;
 		}
 	}
+	_click_tell(@invitations, array('&7[Hazard]&r Starting... ', array('&b[Click to Warp]', '/warp hazard')));
 
 	@timer = mutable_primitive(neg(@game['timer']));
 	set_interval(1000, 0, closure() {

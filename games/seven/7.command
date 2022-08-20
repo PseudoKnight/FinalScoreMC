@@ -235,7 +235,7 @@ register_command('7', array(
 				export('7', @7);
 			}
 
-			broadcast(colorize('&6&l7 Seconds to Live&r has been queued up by '.player().' /warp 7'), all_players(@world));
+			_click_tell(all_players(@world), array('&7[7 Seconds to Live]&r Queued up by '.player(), array('&b[Click to Warp]', '/warp 7')))
 
 			@timer = array(7);
 			@7['state'] = 1;
