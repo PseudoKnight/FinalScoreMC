@@ -1,11 +1,11 @@
 register_command('worms', array(
-	'description': 'Creates a worms game.',
-	'usage': '/worms <region>',
-	'permission': 'command.worms',
-	'tabcompleter': closure(@alias, @sender, @args, @info) {
+	description: 'Creates a worms game.',
+	usage: '/worms <region>',
+	permission: 'command.worms',
+	tabcompleter: closure(@alias, @sender, @args, @info) {
 		return(array());
 	},
-	'executor': closure(@alias, @sender, @args, @info) {
+	executor: closure(@alias, @sender, @args, @info) {
 		if(@args[0] == 'reload') {
 			@count = x_recompile_includes('core.library');
 			die(color('green').'Recompiled '.@count.' scripts');

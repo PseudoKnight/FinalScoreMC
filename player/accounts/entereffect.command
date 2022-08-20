@@ -1,10 +1,10 @@
 register_command('entereffect', array(
-	'description': 'Sets a player\'s server enter effect.',
-	'usage': '/entereffect <type>',
-	'tabcompleter': closure(@alias, @sender, @args, @info) {
+	description: 'Sets a player\'s server enter effect.',
+	usage: '/entereffect <type>',
+	tabcompleter: closure(@alias, @sender, @args, @info) {
 		return(array('lightning', 'clear'));
 	},
-	'executor': closure(@alias, @sender, @args, @info) {
+	executor: closure(@alias, @sender, @args, @info) {
 		if(!@args) {
 			return(false);
 		}

@@ -1,8 +1,8 @@
 register_command('ride', array(
-	'description': 'Ride on another player\'s shoulders',
-	'usage': '/ride <player>',
-	'permission': 'command.ride',
-	'executor': closure(@alias, @sender, @args, @info) {
+	description: 'Ride on another player\'s shoulders',
+	usage: '/ride <player>',
+	permission: 'command.ride',
+	executor: closure(@alias, @sender, @args, @info) {
 		if(!@args) {
 			return(false);
 		}

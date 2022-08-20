@@ -1,10 +1,10 @@
 register_command('park', array(
-	'description': 'Teleports you to your last known location in the park.',
-	'usage': '/park',
-	'tabcompleter': closure(@alias, @sender, @args, @info) {
+	description: 'Teleports you to your last known location in the park.',
+	usage: '/park',
+	tabcompleter: closure(@alias, @sender, @args, @info) {
 		return(array());
 	},
-	'executor': closure(@alias, @sender, @args, @info) {
+	executor: closure(@alias, @sender, @args, @info) {
 		if(pworld() == 'custom') {
 			die(color('yellow').'You are already in Frog Park.');
 		}

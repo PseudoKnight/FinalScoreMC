@@ -1,13 +1,13 @@
 register_command('cubeclimber', array(
-	'description': 'Starts CubeClimber games and lists/manages stats for it.',
-	'usage': '/cc <start|stats|top|reset|resetstats|recalctimes> [player]',
-	'aliases': array('cc'),
-	'tabcompleter': closure(@alias, @sender, @args, @info) {
+	description: 'Starts CubeClimber games and lists/manages stats for it.',
+	usage: '/cc <start|stats|top|reset|resetstats|recalctimes> [player]',
+	aliases: array('cc'),
+	tabcompleter: closure(@alias, @sender, @args, @info) {
 		if(array_size(@args) == 1) {
 			return(_strings_start_with_ic(array('start', 'stats', 'top', 'reset', 'resetstats', 'recalctimes'), @args[-1]));
 		}
 	},
-	'executor': closure(@alias, @sender, @args, @info) {
+	executor: closure(@alias, @sender, @args, @info) {
 		if(!@args) {
 			return(false);
 		}

@@ -8,11 +8,11 @@
 		_regionmsg() proc to broadcast to players only within a region.
 >
 register_command('7', array(
-	'description': 'Starts and manages "Seven Seconds to Live" minigame.',
-	'usage': '/7 [start|list|create|edit|save|delete|reset|setspawn|resetspawns] [map_id]',
-	'permission': 'command.7',
-	'aliases': array('seven'),
-	'tabcompleter': closure(@alias, @sender, @args, @info) {
+	description: 'Starts and manages "Seven Seconds to Live" minigame.',
+	usage: '/7 [start|list|create|edit|save|delete|reset|setspawn|resetspawns] [map_id]',
+	permission: 'command.7',
+	aliases: array('seven'),
+	tabcompleter: closure(@alias, @sender, @args, @info) {
 		if(array_size(@args) == 1) {
 			@chars = @args[-1];
 			return(array_filter(array('start', 'list', 'create', 'edit', 'save', 'delete', 'reset', 'setspawn', 'resetspawns'),
@@ -23,7 +23,7 @@ register_command('7', array(
 		}
 		return(array());
 	},
-	'executor': closure(@alias, @sender, @args, @info) {
+	executor: closure(@alias, @sender, @args, @info) {
 		@schematic = '';
 		if(array_size(@args) > 1) {
 			@schematic = @args[1];

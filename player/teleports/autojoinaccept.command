@@ -1,11 +1,11 @@
 register_command('autojoinaccept', array(
-	'description': 'Accepts a teleport request.',
-	'usage': '/autojoinaccept <on|off>',
-	'aliases': array('autojoin'),
-	'tabcompleter': closure(@alias, @sender, @args, @info) {
+	description: 'Accepts a teleport request.',
+	usage: '/autojoinaccept <on|off>',
+	aliases: array('autojoin'),
+	tabcompleter: closure(@alias, @sender, @args, @info) {
 		return(array());
 	},
-	'executor': closure(@alias, @sender, @args, @info) {
+	executor: closure(@alias, @sender, @args, @info) {
 		@pdata = _pdata(player());
 		if(!@args) {
 			if(array_index_exists(@pdata, 'joinaccept')) {

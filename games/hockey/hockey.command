@@ -5,12 +5,12 @@
 	requiredProcs: _add_activity() and _remove_activity() procedures to keep a list of all current activities on server.
 >
 register_command('hockey', array(
-	'description': 'Starts a hockey game.',
-	'usage': '/hockey',
-	'tabcompleter': closure(@alias, @sender, @args, @info) {
+	description: 'Starts a hockey game.',
+	usage: '/hockey',
+	tabcompleter: closure(@alias, @sender, @args, @info) {
 		return(array());
 	},
-	'executor': closure(@alias, @sender, @args, @info) {
+	executor: closure(@alias, @sender, @args, @info) {
 		if(array_contains(get_scoreboards(), 'hockey')) {
 			die(color('gold').'Hockey already running.');
 		}

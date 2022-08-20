@@ -1,7 +1,7 @@
 register_command('transfer', array(
-	'description': 'Transfers the ownership of a tamed mob to another player.',
-	'usage': '/transfer <player>',
-	'executor': closure(@alias, @sender, @args, @info) {
+	description: 'Transfers the ownership of a tamed mob to another player.',
+	usage: '/transfer <player>',
+	executor: closure(@alias, @sender, @args, @info) {
 		if(!@args) {
 			return(false);
 		}

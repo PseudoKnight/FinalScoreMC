@@ -10,9 +10,9 @@
 		_acc_add() proc to reward players with coins.;
 >
 register_command('spleef', array(
-	'description': 'Starts, joins, or sets the floor of a Spleef game.',
-	'usage': '/spleef <join|start|floor>',
-	'tabcompleter': closure(@alias, @sender, @args, @info) {
+	description: 'Starts, joins, or sets the floor of a Spleef game.',
+	usage: '/spleef <join|start|floor>',
+	tabcompleter: closure(@alias, @sender, @args, @info) {
 		if(array_size(@args) == 1) {
 			@chars = @args[-1];
 			return(array_filter(array('join', 'floor', 'start'), closure(@index, @string) {
@@ -21,7 +21,7 @@ register_command('spleef', array(
 		}
 		return(array());
 	},
-	'executor': closure(@alias, @sender, @args, @info) {
+	executor: closure(@alias, @sender, @args, @info) {
 		if(!@args) {
 			return(false);
 		}

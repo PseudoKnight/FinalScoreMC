@@ -1,10 +1,10 @@
 register_command('swap', array(
-	'description': 'Toggles the experimental time swapper.',
-	'usage': '/swap',
-	'tabcompleter': closure(@alias, @sender, @args, @info) {
+	description: 'Toggles the experimental time swapper.',
+	usage: '/swap',
+	tabcompleter: closure(@alias, @sender, @args, @info) {
 		return(array());
 	},
-	'executor': closure(@alias, @sender, @args, @info) {
+	executor: closure(@alias, @sender, @args, @info) {
 		if(has_bind('timeswap')) {
 			unbind('timeswap');
 			msg('Disabled time swap.');

@@ -1,7 +1,7 @@
 register_command('times', array(
-	'description': 'Lists and manages time trial records.',
-	'usage': '/times <top|avg|segmented|worst> [course_id] [player]',
-	'tabcompleter': closure(@alias, @sender, @args, @info) {
+	description: 'Lists and manages time trial records.',
+	usage: '/times <top|avg|segmented|worst> [course_id] [player]',
+	tabcompleter: closure(@alias, @sender, @args, @info) {
 		if(array_size(@args) == 1) {
 			if(pisop(@sender)) {
 				return(_strings_start_with_ic(array('top', 'avg', 'segmented', 'best', 'worst', 'reset', 'resetplayer'), @args[-1]));
@@ -11,7 +11,7 @@ register_command('times', array(
 		}
 		return(array());
 	},
-	'executor': closure(@alias, @sender, @args, @info) {
+	executor: closure(@alias, @sender, @args, @info) {
 		@action = 'top';
 		@id = '';
 		@player = '';

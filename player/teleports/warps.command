@@ -1,13 +1,13 @@
 register_command('warps', array(
-	'description': 'Lists and manage warp locations.',
-	'usage': '/warps <list|delete|resetmarkers> [warp_id]',
-	'tabcompleter': closure(@alias, @sender, @args, @info) {
+	description: 'Lists and manage warp locations.',
+	usage: '/warps <list|delete|resetmarkers> [warp_id]',
+	tabcompleter: closure(@alias, @sender, @args, @info) {
 		if(array_size(@args) == 1) {
 			return(_strings_start_with_ic(array('list', 'delete', 'resetmarkers'), @args[-1]));
 		}
 		return(array());
 	},
-	'executor': closure(@alias, @sender, @args, @info) {
+	executor: closure(@alias, @sender, @args, @info) {
 		if(!@args) {
 			return(false);
 		}

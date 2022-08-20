@@ -1,10 +1,10 @@
 register_command('accept', array(
-	'description': 'Accepts a teleport request.',
-	'usage': '/accept',
-	'tabcompleter': closure(@alias, @sender, @args, @info) {
+	description: 'Accepts a teleport request.',
+	usage: '/accept',
+	tabcompleter: closure(@alias, @sender, @args, @info) {
 		return(array());
 	},
-	'executor': closure(@alias, @sender, @args, @info) {
+	executor: closure(@alias, @sender, @args, @info) {
 		include('includes.library/teleports.ms');
 		@requests = import('requests');
 		if(!array_index_exists(@requests, player()) || @requests[player()][2] + 300000 < time()) {

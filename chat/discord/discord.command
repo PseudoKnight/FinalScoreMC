@@ -1,10 +1,10 @@
 register_command('discord', array(
-	'description': 'Gets the discord invite and links accounts.',
-	'usage': '/discord [user_id]',
-	'tabcompleter': closure(@alias, @sender, @args, @info) {
+	description: 'Gets the discord invite and links accounts.',
+	usage: '/discord [user_id]',
+	tabcompleter: closure(@alias, @sender, @args, @info) {
 		return(array());
 	},
-	'executor': closure(@alias, @sender, @args, @info) {
+	executor: closure(@alias, @sender, @args, @info) {
 		if(!@args) {
 			die(colorize('&lWe have a Discord server @ \n>>> &a&lhttps://discord.gg/GHgfWp4 &l<<<'));
 		}

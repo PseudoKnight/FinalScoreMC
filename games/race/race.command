@@ -1,10 +1,10 @@
 register_command('race', array(
-	'description': 'Commands for managing and participating in races.',
-	'usage': '/race <start|join> <track>',
-	'tabcompleter': closure(@alias, @sender, @args, @info) {
+	description: 'Commands for managing and participating in races.',
+	usage: '/race <start|join> <track>',
+	tabcompleter: closure(@alias, @sender, @args, @info) {
 		return(array());
 	},
-	'executor': closure(@alias, @sender, @args, @info) {
+	executor: closure(@alias, @sender, @args, @info) {
 		if(array_size(@args) < 2) {
 			return(false);
 		}

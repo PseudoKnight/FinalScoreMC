@@ -1,10 +1,10 @@
 register_command('exit', array(
-	'description': 'Sets an player\'s server exit message.',
-	'usage': '/exit <message>',
-	'tabcompleter': closure(@alias, @sender, @args, @info) {
+	description: 'Sets an player\'s server exit message.',
+	usage: '/exit <message>',
+	tabcompleter: closure(@alias, @sender, @args, @info) {
 		return(array());
 	},
-	'executor': closure(@alias, @sender, @args, @info) {
+	executor: closure(@alias, @sender, @args, @info) {
 		@msg = array_implode(@args);
 		if(!@msg) {
 			die('Enter a message to be displayed when exiting the server.');

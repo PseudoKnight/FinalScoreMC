@@ -1,8 +1,8 @@
 register_command('entity', array(
-	'description': 'Custom entity management commands',
-	'usage': '/entity <list|info|set|delete|spawn|reload> [entity_name] [setting] [value(s)]',
-	'permission': 'command.entity',
-	'tabcompleter': closure(@alias, @sender, @args, @info) {
+	description: 'Custom entity management commands',
+	usage: '/entity <list|info|set|delete|spawn|reload> [entity_name] [setting] [value(s)]',
+	permission: 'command.entity',
+	tabcompleter: closure(@alias, @sender, @args, @info) {
 		if(array_size(@args) == 1) {
 			return(_strings_start_with_ic(array('list', 'info', 'set', 'delete', 'spawn', 'reload'), @args[-1]));
 		} else if(array_size(@args) == 3) {
@@ -12,7 +12,7 @@ register_command('entity', array(
 		}
 		return(array());
 	},
-	'executor': closure(@alias, @sender, @args, @info) {
+	executor: closure(@alias, @sender, @args, @info) {
 		if(!@args) {
 			return(false);
 		}

@@ -1,11 +1,11 @@
 register_command('cleandatabase', array(
-	'description': 'Cleans up junk data in database.',
-	'usage': '/cleandatabase',
-	'permission': 'command.cleandatabase',
-	'tabcompleter': closure(@alias, @sender, @args, @info) {
+	description: 'Cleans up junk data in database.',
+	usage: '/cleandatabase',
+	permission: 'command.cleandatabase',
+	tabcompleter: closure(@alias, @sender, @args, @info) {
 		return(array());
 	},
-	'executor': closure(@alias, @sender, @args, @info) {
+	executor: closure(@alias, @sender, @args, @info) {
 		@players = get_values('uuids');
 		foreach(@key: @pdata in @players) {
 			// Remove survival state if player is in survival

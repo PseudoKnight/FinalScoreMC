@@ -1,10 +1,10 @@
 register_command('firstseen', array(
-	'description': 'Returns the first time this player joined the server.',
-	'usage': '/firstseen <player>',
-	'tabcompleter': closure(@alias, @sender, @args, @info) {
+	description: 'Returns the first time this player joined the server.',
+	usage: '/firstseen <player>',
+	tabcompleter: closure(@alias, @sender, @args, @info) {
 		return(array());
 	},
-	'executor': closure(@alias, @sender, @args, @info) {
+	executor: closure(@alias, @sender, @args, @info) {
 		if(!@args) {
 			return(false);
 		}

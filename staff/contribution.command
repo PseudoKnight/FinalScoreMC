@@ -1,9 +1,9 @@
 register_command('contribution', array(
-	'description': 'Adds a donation amount to a player\'s account.',
-	'usage': '/contribution <account> <amount>',
-	'aliases': array('support', 'donation'),
-	'permission': 'command.contribution',
-	'executor': closure(@alias, @sender, @args, @info) {
+	description: 'Adds a donation amount to a player\'s account.',
+	usage: '/contribution <account> <amount>',
+	aliases: array('support', 'donation'),
+	permission: 'command.contribution',
+	executor: closure(@alias, @sender, @args, @info) {
 		if(array_size(@args) < 2) {
 			return(false);
 		}

@@ -8,10 +8,10 @@ foreach(@w in _worlds_config()) {
 	}
 }
 register_command('warp', array(
-	'description': 'Teleports you to a predefined location.',
-	'usage': '/warp [player] <warp_name>',
+	description: 'Teleports you to a predefined location.',
+	usage: '/warp [player] <warp_name>',
 	'tabcompleter': _create_tabcompleter(@warps),
-	'executor': closure(@alias, @sender, @args, @info) {
+	executor: closure(@alias, @sender, @args, @info) {
 		if(!@args) {
 			run('/warps list');
 			die();

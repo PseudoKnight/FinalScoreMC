@@ -1,10 +1,10 @@
 register_command('unsend', array(
-	'description': 'Unsends the last offline message you sent.',
-	'usage': '/unsend',
-	'tabcompleter': closure(@alias, @sender, @args, @info) {
+	description: 'Unsends the last offline message you sent.',
+	usage: '/unsend',
+	tabcompleter: closure(@alias, @sender, @args, @info) {
 		return(array());
 	},
-	'executor': closure(@alias, @sender, @args, @info) {
+	executor: closure(@alias, @sender, @args, @info) {
 		@player = import(player().'_mail');
 		if(is_null(@player)) {
 			die(color('yellow').'There are no offline messages for you to unsend. Perhaps you waited too long.');

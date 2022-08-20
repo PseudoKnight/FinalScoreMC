@@ -1,8 +1,8 @@
 register_command('unban', array(
-	'description': 'Unbans an account from entering the server.',
-	'usage': '/unban <account>',
-	'permission': 'command.unban',
-	'executor': closure(@alias, @sender, @args, @info) {
+	description: 'Unbans an account from entering the server.',
+	usage: '/unban <account>',
+	permission: 'command.unban',
+	executor: closure(@alias, @sender, @args, @info) {
 		if(!@args) {
 			return(false);
 		}

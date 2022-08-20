@@ -1,10 +1,10 @@
 register_command('r', array(
-	'description': 'Replies to the private message.',
-	'usage': '/r <message>',
-	'tabcompleter': closure(@alias, @sender, @args, @info) {
+	description: 'Replies to the private message.',
+	usage: '/r <message>',
+	tabcompleter: closure(@alias, @sender, @args, @info) {
 		return(array());
 	},
-	'executor': closure(@alias, @sender, @args, @info) {
+	executor: closure(@alias, @sender, @args, @info) {
 		if(!@args) {
 			return(false);
 		}

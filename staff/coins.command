@@ -1,13 +1,13 @@
 register_command('coins', array(
-	'description': 'Displays and manages player coins.',
-	'usage': '/coins [add|sub|info] [player] [amount]',
-	'tabcompleter': closure(@alias, @sender, @args, @info) {
+	description: 'Displays and manages player coins.',
+	usage: '/coins [add|sub|info] [player] [amount]',
+	tabcompleter: closure(@alias, @sender, @args, @info) {
 		if(array_size(@args) == 1) {
 			return(_strings_start_with_ic(array('add', 'sub', 'info'), @args[-1]));
 		}
 		return(array());
 	},
-	'executor': closure(@alias, @sender, @args, @info) {
+	executor: closure(@alias, @sender, @args, @info) {
 		if(!@args) {
 			msg(color('gold').integer(_acc_balance(player())).' coins');
 		} else {

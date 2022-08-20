@@ -1,8 +1,8 @@
 register_command('perm', array(
-	'description': 'Manages permission groups.',
-	'usage': '/perm <reload|setgroup|ingroup|havegroup> [player] <group>',
-	'permission': 'command.perm',
-	'tabcompleter': closure(@alias, @sender, @args, @info) {
+	description: 'Manages permission groups.',
+	usage: '/perm <reload|setgroup|ingroup|havegroup> [player] <group>',
+	permission: 'command.perm',
+	tabcompleter: closure(@alias, @sender, @args, @info) {
 		if(array_size(@args) == 1) {
 			return(_strings_start_with_ic(array('reload', 'setgroup', 'ingroup', 'havegroup'), @args[-1]));
 		} else if(array_size(@args) == 3) {
@@ -14,7 +14,7 @@ register_command('perm', array(
 		}
 		return(array());
 	},
-	'executor': closure(@alias, @sender, @args, @info) {
+	executor: closure(@alias, @sender, @args, @info) {
 		if(!@args) {
 			return(false);
 		}

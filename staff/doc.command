@@ -5,13 +5,13 @@
 # /doc <extensionname> - List all functions in a given extension.
 # /doc <func>[,func] [func] - List specific functions.
 register_command('doc', array(
-	'description': 'Output colorful information about extensions and functions.',
-	'usage': '/doc <function_name>',
-	'permission': 'command.doc',
-	'tabcompleter': closure(@alias, @sender, @args, @info) {
+	description: 'Output colorful information about extensions and functions.',
+	usage: '/doc <function_name>',
+	permission: 'command.doc',
+	tabcompleter: closure(@alias, @sender, @args, @info) {
 		return(array());
 	},
-	'executor': closure(@alias, @sender, @args, @info) {
+	executor: closure(@alias, @sender, @args, @info) {
 		proc _get_closest(@name, @list) {
 			# Search an array for a matching entry, regardless of case, and return it.
 			foreach(@ext in @list) {

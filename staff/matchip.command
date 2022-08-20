@@ -1,11 +1,11 @@
 register_command('matchip', array(
-	'description': 'Finds all players in the database with a matching IP address',
-	'usage': '/matchip <ip>',
-	'permission': 'command.matchip',
-	'tabcompleter': closure(@alias, @sender, @args, @info) {
+	description: 'Finds all players in the database with a matching IP address',
+	usage: '/matchip <ip>',
+	permission: 'command.matchip',
+	tabcompleter: closure(@alias, @sender, @args, @info) {
 		return(array());
 	},
-	'executor': closure(@alias, @sender, @args, @info) {
+	executor: closure(@alias, @sender, @args, @info) {
 		if(!@args) {
 			return(false);
 		}

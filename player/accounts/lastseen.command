@@ -1,10 +1,10 @@
 register_command('lastseen', array(
-	'description': 'Returns the last time this player exited the server.',
-	'usage': '/lastseen <player>',
-	'tabcompleter': closure(@alias, @sender, @args, @info) {
+	description: 'Returns the last time this player exited the server.',
+	usage: '/lastseen <player>',
+	tabcompleter: closure(@alias, @sender, @args, @info) {
 		return(array());
 	},
-	'executor': closure(@alias, @sender, @args, @info) {
+	executor: closure(@alias, @sender, @args, @info) {
 		if(!@args) {
 			return(false);
 		}

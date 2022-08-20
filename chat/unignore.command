@@ -1,7 +1,7 @@
 register_command('unignore', array(
-	'description': 'Unsets a player as ignored, allowing you to see messages from them.',
-	'usage': '/unignore <player|all>',
-	'tabcompleter': closure(@alias, @sender, @args, @info) {
+	description: 'Unsets a player as ignored, allowing you to see messages from them.',
+	usage: '/unignore <player|all>',
+	tabcompleter: closure(@alias, @sender, @args, @info) {
 		if(array_size(@args) == 1) {
 			@players = all_players();
 			@players[] = 'all';
@@ -9,7 +9,7 @@ register_command('unignore', array(
 		}
 		return(array());
 	},
-	'executor': closure(@alias, @sender, @args, @info) {
+	executor: closure(@alias, @sender, @args, @info) {
 		if(!@args) {
 			return(false);
 		}

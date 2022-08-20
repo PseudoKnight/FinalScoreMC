@@ -1,13 +1,13 @@
 register_command('snake', array(
-	'description': 'Starts or gets statistics for Snake.',
-	'usage': '/snake',
-	'tabcompleter': closure(@alias, @sender, @args, @info) {
+	description: 'Starts or gets statistics for Snake.',
+	usage: '/snake',
+	tabcompleter: closure(@alias, @sender, @args, @info) {
 		if(array_size(@args) == 1) {
 			return(_strings_start_with_ic(array('top', 'resetstats'), @args[-1]));
 		}
 		return(array());
 	},
-	'executor': closure(@alias, @sender, @args, @info) {
+	executor: closure(@alias, @sender, @args, @info) {
 		if(!@args) {
 			if(queue_running('snake_cleanup')) {
 				die(color('gold').'The game is still resetting.');

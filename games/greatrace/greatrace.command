@@ -7,12 +7,12 @@
 	As well as _get_worldborder() to get the limits of the world.
 >
 register_command('greatrace', array(
-	'description': 'Creates a race in survival for all players in the area.',
-	'usage': '/greatrace [x] [z]',
-	'tabcompleter': closure(@alias, @sender, @args, @info) {
+	description: 'Creates a race in survival for all players in the area.',
+	usage: '/greatrace [x] [z]',
+	tabcompleter: closure(@alias, @sender, @args, @info) {
 		return(array());
 	},
-	'executor': closure(@alias, @sender, @args, @info) {
+	executor: closure(@alias, @sender, @args, @info) {
 		@world = pworld();
 
 		# Get players

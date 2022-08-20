@@ -1,7 +1,7 @@
 register_command('spawn', array(
-	'description': 'Teleports you to a world\'s spawn.',
-	'usage': '/spawn [world]',
-	'executor': closure(@alias, @sender, @args, @info) {
+	description: 'Teleports you to a world\'s spawn.',
+	usage: '/spawn [world]',
+	executor: closure(@alias, @sender, @args, @info) {
 		include('includes.library/teleports.ms');
 		try {
 			@world = if(@args, _worldid(@args[0]), pworld());
@@ -21,7 +21,7 @@ register_command('spawn', array(
 		}
 		_warmuptp(player(), @loc, @loc[3] == 'custom');
 	},
-	'tabcompleter': closure(@alias, @sender, @args, @info) {
+	tabcompleter: closure(@alias, @sender, @args, @info) {
 		@worlds = array();
 		@attempt = @args[-1];
 		foreach(@world in _worlds_config()) {

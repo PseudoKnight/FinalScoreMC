@@ -1,12 +1,12 @@
 register_command('share', array(
-	'description': 'Share horses (and other things) with friends you trust.',
-	'usage': '/share <player> <sharable[s]>',
-	'tabcompleter': closure(@alias, @sender, @args, @info) {
+	description: 'Share horses (and other things) with friends you trust.',
+	usage: '/share <player> <sharable[s]>',
+	tabcompleter: closure(@alias, @sender, @args, @info) {
 		if(array_size(@args) > 1) {
 			return(_strings_start_with_ic(array('horses'), @args[-1]));
 		}
 	},
-	'executor': closure(@alias, @sender, @args, @info) {
+	executor: closure(@alias, @sender, @args, @info) {
 		if(!@args) {
 			return(false);
 		}

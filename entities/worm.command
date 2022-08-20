@@ -1,11 +1,11 @@
 register_command('worm', array(
-	'description': 'Creates a worm',
-	'usage': '/worm <create|delete> [length]',
-	'permission': 'command.entity',
-	'tabcompleter': closure(@alias, @sender, @args, @info) {
+	description: 'Creates a worm',
+	usage: '/worm <create|delete> [length]',
+	permission: 'command.entity',
+	tabcompleter: closure(@alias, @sender, @args, @info) {
 		return(array());
 	},
-	'executor': closure(@alias, @sender, @args, @info) {
+	executor: closure(@alias, @sender, @args, @info) {
 		@worms = import('worms', array());
 
 		@body = 'BLACK_CONCRETE_POWDER';

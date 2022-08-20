@@ -1,7 +1,7 @@
 register_command('livemap', array(
-	'description': 'Displays a link to this or another player\'s location on the livemap.',
-	'usage': '/livemap <player>',
-	'executor': closure(@alias, @sender, @args, @info) {
+	description: 'Displays a link to this or another player\'s location on the livemap.',
+	usage: '/livemap <player>',
+	executor: closure(@alias, @sender, @args, @info) {
 		@player = player();
 		if(@args) {
 			@player = _find_player(@args[0]);

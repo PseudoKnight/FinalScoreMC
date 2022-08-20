@@ -1,7 +1,7 @@
 register_command('home', array(
-	'description': 'Teleports you to the specified home location.',
-	'usage': '/home [world] [player]',
-	'tabcompleter': closure(@alias, @sender, @args, @info) {
+	description: 'Teleports you to the specified home location.',
+	usage: '/home [world] [player]',
+	tabcompleter: closure(@alias, @sender, @args, @info) {
 		@worlds = array();
 		@attempt = @args[-1];
 		foreach(@world in _worlds_config()) {
@@ -14,7 +14,7 @@ register_command('home', array(
 		}
 		return(@worlds);
 	},
-	'executor': closure(@alias, @sender, @args, @info) {
+	executor: closure(@alias, @sender, @args, @info) {
 		include('includes.library/teleports.ms');
 		if(!_allows_teleports(pworld())) {
 			die('You cannot teleport in this world.');

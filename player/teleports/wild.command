@@ -1,11 +1,11 @@
 register_command('wild', array(
-	'description': 'Teleports a player to a random location within a survival world.',
-	'aliases': array('rtp'),
-	'usage': '/wild [player]',
-	'tabcompleter': closure(@alias, @sender, @args, @info) {
+	description: 'Teleports a player to a random location within a survival world.',
+	aliases: array('rtp'),
+	usage: '/wild [player]',
+	tabcompleter: closure(@alias, @sender, @args, @info) {
 		return(array());
 	},
-	'executor': closure(@alias, @sender, @args, @info) {
+	executor: closure(@alias, @sender, @args, @info) {
 		@player = player();
 		if(@args) {
 			if(!has_permission('command.wild.other')) {

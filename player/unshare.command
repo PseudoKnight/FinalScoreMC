@@ -1,12 +1,12 @@
 register_command('unshare', array(
-	'description': 'Unshare horses (and other things) with friends.',
-	'usage': '/unshare <player> <sharable[s]>',
-	'tabcompleter': closure(@alias, @sender, @args, @info) {
+	description: 'Unshare horses (and other things) with friends.',
+	usage: '/unshare <player> <sharable[s]>',
+	tabcompleter: closure(@alias, @sender, @args, @info) {
 		if(array_size(@args) > 1) {
 			return(_strings_start_with_ic(array('horses'), @args[-1]));
 		}
 	},
-	'executor': closure(@alias, @sender, @args, @info) {
+	executor: closure(@alias, @sender, @args, @info) {
 		if(array_size(@args) < 2) {
 			return(false);
 		}

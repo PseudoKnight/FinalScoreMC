@@ -1,11 +1,11 @@
 register_command('lore', array(
-	'description': 'Sets the lore on an item.',
-	'usage': '/lore <line#> <lore string>',
-	'permission': 'command.items',
-	'tabcompleter': closure(@alias, @sender, @args, @info) {
+	description: 'Sets the lore on an item.',
+	usage: '/lore <line#> <lore string>',
+	permission: 'command.items',
+	tabcompleter: closure(@alias, @sender, @args, @info) {
 		return(array());
 	},
-	'executor': closure(@alias, @sender, @args, @info) {
+	executor: closure(@alias, @sender, @args, @info) {
 		if(array_size(@args) < 2 || !is_numeric(@args[0]) || integer(@args[0]) < 1) {
 			return(false);
 		}

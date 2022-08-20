@@ -1,11 +1,11 @@
 register_command('track', array(
-	'description': 'Commands for creating and editing tracks for races.',
-	'usage': '/track <set|delete> <track> [setting] [value(s)]',
-	'permission': 'command.track',
-	'tabcompleter': closure(@alias, @sender, @args, @info) {
+	description: 'Commands for creating and editing tracks for races.',
+	usage: '/track <set|delete> <track> [setting] [value(s)]',
+	permission: 'command.track',
+	tabcompleter: closure(@alias, @sender, @args, @info) {
 		return(array());
 	},
-	'executor': closure(@alias, @sender, @args, @info) {
+	executor: closure(@alias, @sender, @args, @info) {
 		if(array_size(@args) < 2) {
 			return(false);
 		}

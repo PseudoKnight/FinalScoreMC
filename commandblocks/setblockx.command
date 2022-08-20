@@ -1,11 +1,11 @@
 register_command('setblockx', array(
-	'description': 'An extended setblock command with additional modes: timed, fall, toggle.',
-	'usage': '/setblockx <x> <y> <z> <blockdata> [mode] [extra]',
-	'permission': 'command.setblockx',
-	'tabcompleter': closure(@alias, @sender, @args, @info) {
+	description: 'An extended setblock command with additional modes: timed, fall, toggle.',
+	usage: '/setblockx <x> <y> <z> <blockdata> [mode] [extra]',
+	permission: 'command.setblockx',
+	tabcompleter: closure(@alias, @sender, @args, @info) {
 		return(array());
 	},
-	'executor': closure(@alias, @sender, @args, @info) {
+	executor: closure(@alias, @sender, @args, @info) {
 		if(array_size(@args) < 4) {
 			return(false);
 		}

@@ -7,10 +7,10 @@
 		_add_activity() and _remove_activity() procedures to keep a list of all current activities on server.;
 >
 register_command('stairway', array(
-	'description': 'Starts a randomly generated block stairway in the region.',
-	'usage': '/stairway <player>',
-	'permission': 'command.stairway',
-	'executor': closure(@alias, @sender, @args, @info) {
+	description: 'Starts a randomly generated block stairway in the region.',
+	usage: '/stairway <player>',
+	permission: 'command.stairway',
+	executor: closure(@alias, @sender, @args, @info) {
 		if(!@args) {
 			return(false);
 		}

@@ -1,11 +1,11 @@
 register_command('where', array(
-	'description': 'Lists which players are in which worlds.',
-	'usage': '/where',
-	'aliases': array('mvw'),
-	'tabcompleter': closure(@alias, @sender, @args, @info) {
+	description: 'Lists which players are in which worlds.',
+	usage: '/where',
+	aliases: array('mvw'),
+	tabcompleter: closure(@alias, @sender, @args, @info) {
 		return(array());
 	},
-	'executor': closure(@alias, @sender, @args, @info) {
+	executor: closure(@alias, @sender, @args, @info) {
 		@worlds = _worlds_config();
 		@list = associative_array();
 		foreach(@player in all_players()) {

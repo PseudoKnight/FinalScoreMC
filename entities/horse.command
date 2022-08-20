@@ -1,10 +1,10 @@
 register_command('horse', array(
-	'description': 'Spawns a temporary race horse.',
-	'usage': '/horse',
-	'tabcompleter': closure(@alias, @sender, @args, @info) {
+	description: 'Spawns a temporary race horse.',
+	usage: '/horse',
+	tabcompleter: closure(@alias, @sender, @args, @info) {
 		return(array());
 	},
-	'executor': closure(@alias, @sender, @args, @info) {
+	executor: closure(@alias, @sender, @args, @info) {
 		if(pmode() !== 'CREATIVE' || get_entity_vehicle(puuid())) {
 			die(color('gold').'You are not in creative mode.');
 		}

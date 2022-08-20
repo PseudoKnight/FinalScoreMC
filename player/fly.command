@@ -1,13 +1,13 @@
 register_command('fly', array(
-	'description': 'Changes or toggles flight mode.',
-	'usage': '/fly [<player> <on|off>]',
-	'permission': 'command.fly',
-	'tabcompleter': closure(@alias, @sender, @args, @info) {
+	description: 'Changes or toggles flight mode.',
+	usage: '/fly [<player> <on|off>]',
+	permission: 'command.fly',
+	tabcompleter: closure(@alias, @sender, @args, @info) {
 		if(array_size(@args) == 2) {
 			return(_strings_start_with_ic(array('on', 'off'), @args[-1]));
 		}
 	},
-	'executor': closure(@alias, @sender, @args, @info) {
+	executor: closure(@alias, @sender, @args, @info) {
 		if(!@args) {
 			if(phas_flight()) {
 				set_pflight(player(), 0);

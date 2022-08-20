@@ -1,10 +1,10 @@
 register_command('hat', array(
-	'description': 'Puts the item in your hand onto your head.',
-	'usage': '/hat',
-	'tabcompleter': closure(@alias, @sender, @args, @info) {
+	description: 'Puts the item in your hand onto your head.',
+	usage: '/hat',
+	tabcompleter: closure(@alias, @sender, @args, @info) {
 		return(array());
 	},
-	'executor': closure(@alias, @sender, @args, @info) {
+	executor: closure(@alias, @sender, @args, @info) {
 		if(!is_null(pinv(player(), 103))) {
 			die(color('gold').'You already have something on your head.');
 		}

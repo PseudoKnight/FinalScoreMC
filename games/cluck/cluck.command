@@ -10,12 +10,12 @@
 		_remove_region_entities() proc for removing all entities within the given region.
 >
 register_command('cluck', array(
-	'description': 'A game of shooting chickens.',
-	'usage': '/cluck [start]',
-	'tabcompleter': closure(@alias, @sender, @args, @info) {
+	description: 'A game of shooting chickens.',
+	usage: '/cluck [start]',
+	tabcompleter: closure(@alias, @sender, @args, @info) {
 		return(array());
 	},
-	'executor': closure(@alias, @sender, @args, @info) {
+	executor: closure(@alias, @sender, @args, @info) {
 		if(!@args) {
 			@scores = get_value('cluck');
 			@top = @scores['top'];

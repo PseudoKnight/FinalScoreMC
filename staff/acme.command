@@ -1,8 +1,8 @@
 register_command('acme', array(
-	'description': 'Drops an anvil on the player\'s head',
-	'usage': '/acme <player> [silent]',
-	'permission': 'command.acme',
-	'executor': closure(@alias, @sender, @args, @info) {
+	description: 'Drops an anvil on the player\'s head',
+	usage: '/acme <player> [silent]',
+	permission: 'command.acme',
+	executor: closure(@alias, @sender, @args, @info) {
 		if(!@args) {
 			return(false);
 		}

@@ -1,13 +1,13 @@
 register_command('map', array(
-	'description': 'Manages custom maps players can create.',
-	'usage': '/map <create|load|delete> <id> [dimension]',
-	'permission': 'command.map',
+	description: 'Manages custom maps players can create.',
+	usage: '/map <create|load|delete> <id> [dimension]',
+	permission: 'command.map',
 	'tabcompleter': _create_tabcompleter(
 		array('create', 'load', 'delete'),
 		null,
 		array('<<create': array('normal', 'nether', 'the_end'))
 	),
-	'executor': closure(@alias, @sender, @args, @info) {
+	executor: closure(@alias, @sender, @args, @info) {
 		if(!@args) {
 			return(false);
 		}

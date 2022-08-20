@@ -1,10 +1,10 @@
 register_command('slimeygolf', array(
-	'description': 'Starts a game of SlimeyGolf.',
-	'usage': '/slimeygolf',
-	'tabcompleter': closure(@alias, @sender, @args, @info) {
+	description: 'Starts a game of SlimeyGolf.',
+	usage: '/slimeygolf',
+	tabcompleter: closure(@alias, @sender, @args, @info) {
 		return(array());
 	},
-	'executor': closure(@alias, @sender, @args, @info) {
+	executor: closure(@alias, @sender, @args, @info) {
 		include('basic.library/game.ms');
 		@loc = get_command_block();
 		if(!@loc) {

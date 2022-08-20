@@ -1,11 +1,11 @@
 register_command('generate', array(
-	'description': 'Generates something using a script.',
-	'usage': '/generate <type> <config> <region> [seed=0] [markers=true]',
-	'permission': 'command.generate',
-	'tabcompleter': closure(@alias, @sender, @args, @info) {
+	description: 'Generates something using a script.',
+	usage: '/generate <type> <config> <region> [seed=0] [markers=true]',
+	permission: 'command.generate',
+	tabcompleter: closure(@alias, @sender, @args, @info) {
 		return(array());
 	},
-	'executor': closure(@alias, @sender, @args, @info) {
+	executor: closure(@alias, @sender, @args, @info) {
 		if(!@args) {
 			return(false);
 		}

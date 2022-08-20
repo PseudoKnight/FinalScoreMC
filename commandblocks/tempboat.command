@@ -1,11 +1,11 @@
 register_command('tempboat', array(
-	'description': 'Creates a temporary boat like /tempcart.',
-	'usage': '/tempboat <player>',
-	'permission': 'command.tempboat',
-	'tabcompleter': closure(@alias, @sender, @args, @info) {
+	description: 'Creates a temporary boat like /tempcart.',
+	usage: '/tempboat <player>',
+	permission: 'command.tempboat',
+	tabcompleter: closure(@alias, @sender, @args, @info) {
 		return(array());
 	},
-	'executor': closure(@alias, @sender, @args, @info) {
+	executor: closure(@alias, @sender, @args, @info) {
 		@loc = get_command_block();
 		@player = _get_nearby_player(@loc, 3);
 		if(!@player) {

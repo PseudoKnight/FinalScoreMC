@@ -1,11 +1,11 @@
 register_command('setwarp', array(
-	'description': 'Sets a location for players to teleport to.',
-	'usage': '/setwarp <warp_name>',
-	'permission': 'command.setwarp',
-	'tabcompleter': closure(@alias, @sender, @args, @info) {
+	description: 'Sets a location for players to teleport to.',
+	usage: '/setwarp <warp_name>',
+	permission: 'command.setwarp',
+	tabcompleter: closure(@alias, @sender, @args, @info) {
 		return(array());
 	},
-	'executor': closure(@alias, @sender, @args, @info) {
+	executor: closure(@alias, @sender, @args, @info) {
 		if(!@args) {
 			return(false);
 		}

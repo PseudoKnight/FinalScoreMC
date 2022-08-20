@@ -1,13 +1,13 @@
 register_command('compass', array(
-	'description': 'Sets the compass target.',
-	'usage': '/compass <here|spawn|home [player]|playerName|x z>',
-	'tabcompleter': closure(@alias, @sender, @args, @info) {
+	description: 'Sets the compass target.',
+	usage: '/compass <here|spawn|home [player]|playerName|x z>',
+	tabcompleter: closure(@alias, @sender, @args, @info) {
 		if(array_size(@args) == 1) {
 			@completions = array_merge(all_players(), array('here', 'spawn', 'home', 'death'));
 			return(_strings_start_with_ic(@completions, @args[-1]));
 		}
 	},
-	'executor': closure(@alias, @sender, @args, @info) {
+	executor: closure(@alias, @sender, @args, @info) {
 		if(!@args) {
 			return(false);
 		}

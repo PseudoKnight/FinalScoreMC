@@ -1,10 +1,10 @@
 register_command('override', array(
-	'description': 'Overrides to activate an unsafe teleport.',
-	'usage': '/override',
-	'tabcompleter': closure(@alias, @sender, @args, @info) {
+	description: 'Overrides to activate an unsafe teleport.',
+	usage: '/override',
+	tabcompleter: closure(@alias, @sender, @args, @info) {
 		return(array());
 	},
-	'executor': closure(@alias, @sender, @args, @info) {
+	executor: closure(@alias, @sender, @args, @info) {
 		include('includes.library/teleports.ms');
 		@overrides = import('tp.overrides');
 		if(!@overrides || !array_index_exists(@overrides, player())) {

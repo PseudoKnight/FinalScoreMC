@@ -1,8 +1,8 @@
 register_command('world', array(
-	'description': 'Lists and manages worlds.',
-	'usage': '/world <list|create|unload|reload> [name] [value]',
-	'permission': 'command.world',
-	'tabcompleter': closure(@alias, @sender, @args, @info) {
+	description: 'Lists and manages worlds.',
+	usage: '/world <list|create|unload|reload> [name] [value]',
+	permission: 'command.world',
+	tabcompleter: closure(@alias, @sender, @args, @info) {
 		if(array_size(@args) == 1) {
 			return(_strings_start_with_ic(array('list', 'create', 'unload', 'reload'), @args[-1]));
 		} else if(array_size(@args) == 2 && @args[0] == 'unload') {
@@ -10,7 +10,7 @@ register_command('world', array(
 		}
 		return(array());
 	},
-	'executor': closure(@alias, @sender, @args, @info) {
+	executor: closure(@alias, @sender, @args, @info) {
 		if(!@args) {
 			return(false);
 		}

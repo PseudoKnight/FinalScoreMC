@@ -1,7 +1,7 @@
 register_command('ignore', array(
-	'description': 'Sets a player as ignored, preventing you from seeing any messages from them.',
-	'usage': '/ignore <player|all>',
-	'tabcompleter': closure(@alias, @sender, @args, @info) {
+	description: 'Sets a player as ignored, preventing you from seeing any messages from them.',
+	usage: '/ignore <player|all>',
+	tabcompleter: closure(@alias, @sender, @args, @info) {
 		if(array_size(@args) == 1) {
 			@players = all_players();
 			@players[] = 'all';
@@ -9,7 +9,7 @@ register_command('ignore', array(
 		}
 		return(array());
 	},
-	'executor': closure(@alias, @sender, @args, @info) {
+	executor: closure(@alias, @sender, @args, @info) {
 		if(!@args) {
 			return(false);
 		}

@@ -1,8 +1,8 @@
 register_command('potion', array(
-	'description': 'Creates custom potions.',
-	'usage': '/potion <potionType> <potionEffect> [#seconds|true|false] [#strength|true|false]',
-	'permission': 'command.items',
-	'tabcompleter': closure(@alias, @sender, @args, @info) {
+	description: 'Creates custom potions.',
+	usage: '/potion <potionType> <potionEffect> [#seconds|true|false] [#strength|true|false]',
+	permission: 'command.items',
+	tabcompleter: closure(@alias, @sender, @args, @info) {
 		if(array_size(@args) == 1) {
 			return(_strings_start_with_ic(array('potion', 'splash_potion', 'lingering_potion', 'tipped_arrow'), @args[-1]));
 		} else if(array_size(@args) == 2) {
@@ -10,7 +10,7 @@ register_command('potion', array(
 		}
 		return(array());
 	},
-	'executor': closure(@alias, @sender, @args, @info) {
+	executor: closure(@alias, @sender, @args, @info) {
 		if(array_size(@args) < 2) {
 			return(false);
 		}

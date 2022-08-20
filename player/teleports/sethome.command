@@ -1,8 +1,8 @@
 register_command('sethome', array(
-	'description': 'Sets your home for this world.',
-	'usage': '/sethome [player]',
-	'permission': 'command.sethome',
-	'executor': closure(@alias, @sender, @args, @info) {
+	description: 'Sets your home for this world.',
+	usage: '/sethome [player]',
+	permission: 'command.sethome',
+	executor: closure(@alias, @sender, @args, @info) {
 		if(@args && !has_permission('command.sethome.others')) {
 			die(color('gold').'You cannot set other player\'s homes.');
 		}

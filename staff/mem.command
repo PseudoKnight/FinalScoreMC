@@ -1,10 +1,10 @@
 register_command('mem', array(
-	'description': 'Displays memory usage',
-	'usage': '/mem',
-	'tabcompleter': closure(@alias, @sender, @args, @info) {
+	description: 'Displays memory usage',
+	usage: '/mem',
+	tabcompleter: closure(@alias, @sender, @args, @info) {
 		return(array());
 	},
-	'executor': closure(@alias, @sender, @args, @info) {
+	executor: closure(@alias, @sender, @args, @info) {
 		@maxMem = get_server_info(14);
 		@barMem = round(@maxMem / 77);
 		@allocMem = get_server_info(15);

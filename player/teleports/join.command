@@ -1,8 +1,8 @@
 register_command('join', array(
-	'description': 'Sends a teleport request to another player.',
-	'usage': '/join <player>',
-	'aliases': array('tpa'),
-	'executor': closure(@alias, @sender, @args, @info) {
+	description: 'Sends a teleport request to another player.',
+	usage: '/join <player>',
+	aliases: array('tpa'),
+	executor: closure(@alias, @sender, @args, @info) {
 		if(!@args) {
 			return(false);
 		}

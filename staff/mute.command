@@ -1,8 +1,8 @@
 register_command('mute', array(
-	'description': 'Mutes a player for all other players',
-	'usage': '/mute <player>',
-	'permission': 'command.mute',
-	'executor': closure(@alias, @sender, @args, @info) {
+	description: 'Mutes a player for all other players',
+	usage: '/mute <player>',
+	permission: 'command.mute',
+	executor: closure(@alias, @sender, @args, @info) {
 		if(!@args) {
 			return(false);
 		}
