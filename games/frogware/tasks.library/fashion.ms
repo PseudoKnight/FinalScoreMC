@@ -1,7 +1,7 @@
 proc _fw_start_task(@secs) {
 	@colors = array('RED': array(255, 0, 0), 'YELLOW': array(255, 255, 0), 'BLUE': array(0, 0, 255));
 	@clothing = array(leggings: null, boots: null, helmet: null, chestplate: null);
-	@num = rand(1, 3);
+	@num = rand(1, 4);
 	@string = '';
 	while(@num-- > 0) {
 		@type = array_rand(@clothing)[0];

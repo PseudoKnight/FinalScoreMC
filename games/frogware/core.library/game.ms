@@ -98,7 +98,7 @@ proc _fw_start_round(@secs = 12) {
 			} else if(@goal - @firstplace > 2 || @total == 1) { // first place is more than a couple points away from winning (or only one player)
 				array('climb', 'keepaway', 'harvest', 'koth', 'cake', 'fall', 'cluck', 'frogegg', 'lavafall',
 					'shepherd', 'anvil', 'trade', 'fish', 'panel', 'mine', 'enderpearl', 'extinguish', 'hotpotato',
-					'parking', 'musicalchairs', 'step', 'fashion', 'elytra', 'mario', 'rise', 'rocketjump')
+					'parking', 'musicalchairs', 'step', 'fashion', 'elytra', 'mario', 'rise', 'rocketjump', 'hat')
 			} else { // first place player is within a couple points of winning.
 				array('pvp')
 			}
