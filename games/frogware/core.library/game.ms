@@ -76,7 +76,7 @@ proc _fw_start_round(@secs = 12) {
 					@score = get_pscore('score', @p, 'fw');
 					if(@score == @goal) {
 						@winners[] = @p;
-					} else if(@score > @firstplace) {
+					} else if(@score >= @firstplace) {
 						@secondplace = @firstplace;
 						@firstplace = @score;
 					} else if(@secondplace == 0) {
@@ -93,7 +93,7 @@ proc _fw_start_round(@secs = 12) {
 			_fw_end_game(@winners);
 		} else {
 			@secs = 13 - integer(round(8 * (@firstplace / @goal)));
-			@tasks = if(@total != 1 && !rand(3) && @firstplace >= @secondplace + @goal * 0.2) { // first place is 20% ahead and coinflip
+			@tasks = if(@total != 1 && !rand(3) && @firstplace >= @secondplace + @goal * 0.2) { // if first place is 20% ahead, then 33% chance
 				array('explosive')
 			} else if(@goal - @firstplace > 2 || @total == 1) { // first place is more than a couple points away from winning (or only one player)
 				array('climb', 'keepaway', 'harvest', 'koth', 'cake', 'fall', 'cluck', 'frogegg', 'lavafall',
