@@ -16,7 +16,7 @@ register_command('arena', array(
 					'ctfflag', 'respawn', 'spawn','blockbreak', 'ff', 'arenaselect', 'sharedarenas', 'mode',
 					'mobprotect', 'team', 'kit', 'restore','itemspawn', 'chestgroup', 'chestspawn', 'rsoutput',
 					'rsoutputscore', 'effect', 'denydrop', 'mobspawn', 'weapons', 'options'),
-			'<<add': array('description', 'arenaselect', 'weapons', 'options'),
+			'<<add': array('description', 'arenaselect', 'weapons', 'options', 'deathdrops'),
 			'<<load': array('kit', 'chestspawn', 'spawn')),
 		array(
 			'<weapons': array('endernades', 'fireball', 'firebreath', 'firefire', 'flamethrower', 'grapple',
@@ -499,6 +499,11 @@ register_command('arena', array(
 							@arena['denydrop'] = split(',', @args[3]);
 						}
 						msg('Set '.color(10).@args[3].color('r').' item IDs to not drop on player death.');
+					
+					case 'deathdrops':
+						@inv = _minify_inv(pinv());
+						@arena['deathdrops'] = array_normalize(@inv);
+						msg('Set items to drop on player death.');
 
 					case 'mobspawn':
 						if(array_size(@args) < 7) {

@@ -220,6 +220,9 @@ proc _bind_events(@pvp) {
 				}
 			}
 		}
+		if(array_index_exists(@pvp['arena'], 'deathdrops')) {
+			@drops = array_merge(@drops, @pvp['arena']['deathdrops']);
+		}
 
 		// Don't actually die
 		_player_reset(player());
