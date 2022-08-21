@@ -4,7 +4,7 @@ register_command('invite', array(
 	aliases: array('tpahere'),
 	tabcompleter: closure(@alias, @sender, @args, @info) {
 		if(array_size(@args) == 1) {
-			@completions = array_merge(array('all', 'dev', 'park', 'survival'). all_players());
+			@completions = array_merge(array('all', 'dev', 'park', 'survival'), all_players());
 			return(_strings_start_with_ic(@completions, @args[-1]));
 		}
 		return(array());
