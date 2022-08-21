@@ -1,5 +1,5 @@
 @menu = @main[];
-@menu[@rows * 9 + 1]['name'] = 'LIME_WOOL';
+@menu[@rows * 9 + 2]['name'] = 'LIME_WOOL';
 
 @menu[0] = array(
 	'name': 'SNOW_BLOCK',
@@ -155,7 +155,7 @@
 		)
 	),
 );
-@menu[27] = array(
+@menu[26] = array(
 	'name': 'CRACKED_STONE_BRICKS',
 	'meta': array(
 		'display': color('yellow').'Gladiator Arena',

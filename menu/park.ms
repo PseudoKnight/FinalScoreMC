@@ -5,11 +5,13 @@ queue_push(iclosure(){
 			'item': 'RED_CARPET',
 			'action': 'Open: pvp',
 		),
+		null,
 		array(
 			'title': 'Other Games',
 			'item': 'LIME_CARPET',
 			'action': 'Open: other'
 		),
+		null,
 		array(
 			'title': 'Easier Solo Courses',
 			'item': 'LIGHT_BLUE_CARPET',
@@ -25,15 +27,19 @@ queue_push(iclosure(){
 			'item': 'ORANGE_CARPET',
 			'action': 'Load: coop',
 		),
+		null,
 		array(
 			'title': 'Go to Survival Worlds',
 			'item': 'DIAMOND_PICKAXE',
 			'action': 'Run: /survival',
 		),
 	);
-	@rows = 4;
+	@rows = 3;
 	@main = associative_array();
 	foreach(@i: @entry in @menu) {
+		if(!@entry) {
+			continue();
+		}
 		@main[@rows * 9 + @i] = array(
 			'name': @entry['item'],
 			'meta': array(

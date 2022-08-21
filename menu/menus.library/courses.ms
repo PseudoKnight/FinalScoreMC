@@ -41,13 +41,13 @@ foreach(@tier in @tiers) {
 }
 
 @solo1 = @main[];
-@solo1[@rows * 9 + 2]['name'] = 'LIGHT_BLUE_WOOL';
+@solo1[@rows * 9 + 4]['name'] = 'LIGHT_BLUE_WOOL';
 
 @solo2 = @main[];
-@solo2[@rows * 9 + 3]['name'] = 'PURPLE_WOOL';
+@solo2[@rows * 9 + 5]['name'] = 'PURPLE_WOOL';
 
 @coop = @main[];
-@coop[@rows * 9 + 4]['name'] = 'ORANGE_WOOL';
+@coop[@rows * 9 + 6]['name'] = 'ORANGE_WOOL';
 
 @soloMenu1 = array(
 	'menu': @solo1,
@@ -165,7 +165,7 @@ foreach(@t: @tier in @tiers) {
 		@menu[@slot] = @item;
 	}
 	delete_virtual_inventory(@player.@import['id']);
-	create_virtual_inventory(@player.@import['id'], 4 * 9 + 9, @import['title'], @menu);
+	create_virtual_inventory(@player.@import['id'], 3 * 9 + 9, @import['title'], @menu);
 	popen_inventory(@player, @player.@import['id']);
 }
 @soloMenu1['loadMenu'] = @loadMenu;
