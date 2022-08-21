@@ -167,6 +167,7 @@ proc _fw_end_game(@winners) {
 						@session['trophies'] = array();
 					}
 					@session['trophies'][] = color('yellow').'Best Frog in the House!';
+					store_value('frogware', @winners);
 				}
 				_fw_change_team(@p, 'winners');
 				launch_firework(location_shift(ploc(@p), 'up'), array(strength: 0, type: 'BALL_LARGE'));
@@ -188,7 +189,6 @@ proc _fw_end_game(@winners) {
 		set_timeout(5000, closure(){
 			remove_scoreboard('fw');
 			_remove_activity('frogware');
-			store_value('frogware', @winners);
 		});
 	}
 }
