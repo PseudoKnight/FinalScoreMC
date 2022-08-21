@@ -36,6 +36,7 @@ member:
     stargate.create.gate: true
     stargate.destroy.personal: true
     stargate.option: true
+    stargate.option.alwayson: false
     worldedit.help: true
     worldedit.calc: true
     worldedit.wand.toggle: true
