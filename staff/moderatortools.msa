@@ -31,7 +31,7 @@
 
 	foreach(@arg in parse_args($)) {
 		if(is_numeric(@arg)) {
-			@radius = min(@arg, 64);
+			@radius = min(@arg, 128);
 		} else if(@arg === '-n') {
 			@removenamed = true;
 		} else if(@arg === '-e') {
