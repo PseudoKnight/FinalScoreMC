@@ -368,6 +368,9 @@ register_command('hockey', array(
 				@msg = @teams[@winner]['displayname'].' won! '.color('bold').@score;
 			}
 			broadcast(@msg, @hockey['players']);
+			foreach(@p in @hockey['players']) {
+				_equip_kit(@p);
+			}
 			remove_scoreboard('hockey');
 			_remove_activity('hockey');
 			entity_remove(@hockey['puck']);
