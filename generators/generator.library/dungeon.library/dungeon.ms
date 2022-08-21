@@ -73,7 +73,7 @@ proc _get_loot(@floor, @random, @bonus = 1.0, @loot = array(
 					'UNBREAKING', 'FIRE_ASPECT', 'KNOCKBACK', 'LOOTING', 'RESPIRATION', 'PROTECTION',
 					'BLAST_PROTECTION', 'FEATHER_FALLING', 'FIRE_PROTECTION', 'PROJECTILE_PROTECTION',
 					'THORNS', 'DEPTH_STRIDER', 'MENDING', 'SWEEPING_EDGE', 'IMPALING', 'RIPTIDE', 'LOYALTY',
-					'SWIFT_SNEAK'
+					'SWIFT_SNEAK', 'PIERCING', 'MULTISHOT', 'QUICK_CHARGE'
 				);
 				@meta = array('stored': associative_array());
 				@id = integer(srand(@random) * array_size(@enchants));
