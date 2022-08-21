@@ -1,26 +1,35 @@
 proc _fw_start_task(@secs) {
 	@mob = if(!rand(4), 'BAT', 'CHICKEN');
-	@gun = !rand(4);
-	@count = if(@mob == 'BAT', if(@gun, 3, 1), if(@gun, 7, 3));
+	@weapons = array(
+		gun: array(
+			BAT: 3, 
+			CHICKEN: 7, 
+			inv: array(array(name: 'STONE_HOE', meta: array(display: 'Machine Gun')))),
+		bow: array(
+			BAT: 1, 
+			CHICKEN: 3, 
+			inv: array(array(name: 'BOW', meta: array(damage: 379, enchants: array(flame: 1))), array(name: 'ARROW', qty: 6))),
+		crossbow: array(
+			BAT: 2, 
+			CHICKEN: 2,
+			inv: array(array(name: 'CROSSBOW', meta: array(damage: 464, enchants: array(piercing: 1))), array(name: 'ARROW'))),
+	)
+	@type = array_rand(@weapons)[0];
+	@count = @weapons[@type][@mob];
 	_fw_msg(array(
 		'Shoot '.@count.'!',
 		'KILL ALL '.@mob.'S! Well, '.@count.' of them.',
 	));
 	foreach(@p in all_players('custom')) {
 		if(_fw_player(@p)) {
-			if(@gun) {
-				pgive_item(@p, array(name: 'STONE_HOE', meta: array(display: 'Machine Gun')));
-			} else {
-				pgive_item(@p, array(name: 'BOW', meta: array(damage: 379, enchants: array(flame: 1))));
-				pgive_item(@p, array(name: 'ARROW', qty: 6));
-			}
+			set_pinv(@p, @weapons[@type]['inv']);
 			play_sound(ploc(@p), array(sound: if(@mob === 'BAT', 'ENTITY_BAT_LOOP', 'ENTITY_CHICKEN_AMBIENT')), @p);
 			set_pexp(@p, 0);
 		}
 	}
 
 	for(@i = 0, @i < (_fw_total_players() * (@count + 1)), @i++) {
-		spawn_entity(@mob, 1, if(@mob === 'BAT', _fw_loc(8), _fw_loc(18)));
+		spawn_entity(@mob, 1, if(@mob === 'BAT', _fw_loc(8), _fw_loc(rand(16, 21))));
 	}
 	bind('entity_death', array(id: 'fwtask'), array(type: @mob), @e, @count) {
 		if(!array_index_exists(@e['cause'], 'shooter')) {
@@ -37,7 +46,7 @@ proc _fw_start_task(@secs) {
 			}
 		}
 	}
-	if(@gun) {
+	if(@type == 'gun') {
 		bind('player_interact', array(id: 'fwgun'), array(hand: 'main_hand', button: 'right', itemname: 'STONE_HOE'), @e) {
 			if(_fw_player(player())) {
 				@arrow = shoot_projectile(player(), 'ARROW');
