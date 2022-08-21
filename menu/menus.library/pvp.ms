@@ -20,6 +20,9 @@
 });
 @slot = floor((@rows * 9 - array_size(@arenas)) / 9) * 9;
 foreach(@name: @arena in @arenas) {
+	if(array_index_exists(@arena, 'flags') && array_contains(@arena['flags'], 'hidden')) {
+		continue();
+	}
 	@name = split('.', @name)[1];
 	@item = 'IRON_SWORD';
 	@qty = 1;

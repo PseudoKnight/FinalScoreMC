@@ -15,7 +15,7 @@ register_command('arena', array(
 					'heartsdisplay', 'script', 'exitrespawn', 'description', 'lobby', 'podium', 'kothbeacon',
 					'ctfflag', 'respawn', 'spawn','blockbreak', 'ff', 'arenaselect', 'sharedarenas', 'mode',
 					'mobprotect', 'team', 'kit', 'restore','itemspawn', 'chestgroup', 'chestspawn', 'rsoutput',
-					'rsoutputscore', 'effect', 'denydrop', 'mobspawn', 'weapons', 'options'),
+					'rsoutputscore', 'effect', 'denydrop', 'mobspawn', 'weapons', 'options', 'hidden'),
 			'<<add': array('description', 'arenaselect', 'weapons', 'options', 'deathdrops'),
 			'<<load': array('kit', 'chestspawn', 'spawn')),
 		array(
@@ -143,6 +143,7 @@ register_command('arena', array(
 					case 'heartsdisplay':
 					case 'exitrespawn':
 					case 'script':
+					case 'hidden':
 
 						switch(@args[3]) {
 							case 'true':
