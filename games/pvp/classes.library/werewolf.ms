@@ -15,14 +15,9 @@ proc _class_load(@player, @pvp) {
 	
 	bind('player_interact', array(id: @player.'eat'), array(button: 'right', itemname: 'FERMENTED_SPIDER_EYE', player: @player), @event) {
 		ptake_item(array(name: 'FERMENTED_SPIDER_EYE'));
-		set_phealth(player(), min(20, phealth() + 4));
+		set_phealth(player(), min(20, phealth() + 2));
 		play_sound(ploc(), array(sound: 'ENTITY_GENERIC_EAT', pitch: 0.5));
 		spawn_particle(location_shift(ploc(), 'up', 2), array(particle: 'BLOCK_DUST', count: 10, block: 'NETHER_WART_BLOCK', speed: 0.1));
-		set_timeout(500, closure(){
-			set_phealth(player(), min(20, phealth() + 4));
-			play_sound(ploc(), array(sound: 'ENTITY_GENERIC_EAT', pitch: 0.5));
-			spawn_particle(location_shift(ploc(), 'up', 2), array(particle: 'BLOCK_DUST', count: 10, block: 'NETHER_WART_BLOCK', speed: 0.1));
-		});
 	}
 }
 
