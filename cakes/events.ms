@@ -195,7 +195,7 @@ bind('player_join', null, null, @event) {
 				@session['trophies'] = array();
 			}
 			@pct = integer(@percent['coop'] * 100);
-			@session['trophies'][] = if(@pct == '100', color('yellow'), color('gray')).@pct.'% Coop Cakes';
+			@session['trophies'][] = if(@pct == '100', color('red'), color('gray')).'\u2764 '.@pct.'% Coop Cakes';
 		}
 	}, 'trophies');
 }
