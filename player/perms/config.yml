@@ -107,6 +107,7 @@ member:
       command.sethome: false
       item.lighter: true
     dev:
+      command.fly: true
       stargate.create.personal: false
       stargate.create.network: false
       worldedit.navigation.jumpto.*: true
@@ -203,7 +204,6 @@ builder:
       worldguard.region.claim: true
       minecraft.command.stopsound: true
     dev:
-      command.fly: true
       command.gm.others: true
       command.effect: true
       command.velocity: true
