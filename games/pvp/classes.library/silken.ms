@@ -112,6 +112,7 @@ proc _class_unload(@player, @pvp) {
 	unbind(@player.'damage');
 	unbind(@player.'web');
 	unbind(@player.'webbreak');
+	queue_clear(@player.'web');
 	foreach(@block in @pvp['players'][@player]['blocks']) {
 		set_block(@block, 'AIR', false);
 	}
