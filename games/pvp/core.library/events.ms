@@ -385,25 +385,27 @@ proc _bind_events(@pvp) {
 		}
 	}
 
-	@pvp['binds'][] = bind('entity_damage', array(priority: 'LOWEST'), null, @e, @pvp) {
-		if(@e['type'] === 'PLAYER' && array_index_exists(@pvp['players'], player())) {
-			@damager = '';
-			if(array_index_exists(@e, 'shooter')) {
-				if(array_index_exists(@pvp['players'], @e['shooter'])) {
-					@damager = @e['shooter'];
+	@pvp['binds'][] = bind('entity_damage', array(priority: 'LOWEST'), array(type: 'PLAYER'), @event, @pvp) {
+		if(array_index_exists(@pvp['players'], player())) {
+			@cause = @event['cause'];
+			@amount = @event['amount'];
+			@damager = null;
+			if(array_index_exists(@event, 'shooter')) {
+				if(array_index_exists(@pvp['players'], @event['shooter'])) {
+					@damager = @event['shooter'];
 				} else {
 					try {
-						@damager = get_mob_owner(@e['shooter']);
+						@damager = get_mob_owner(@event['shooter']);
 					} catch(Exception @ex) {
 						die();
 					}
 				}
-			} else if(array_index_exists(@e, 'damager')) {
-				if(array_index_exists(@pvp['players'], @e['damager'])) {
-					@damager = @e['damager'];
+			} else if(array_index_exists(@event, 'damager')) {
+				if(array_index_exists(@pvp['players'], @event['damager'])) {
+					@damager = @event['damager'];
 				} else {
 					try {
-						@damager = get_mob_owner(@e['damager']);
+						@damager = get_mob_owner(@event['damager']);
 					} catch(Exception @ex) {
 						die();
 					}
@@ -411,48 +413,49 @@ proc _bind_events(@pvp) {
 			}
 
 			if(!@damager) {
+				// Unknown damager
 				// We want to attribute as much damage as possible.
-				// This is debug logging so that we can capture more.
-				@cause = @e['cause'];
-				@amount = @e['amount'];
-				// Don't log self-inflicted damage unless induced by another player.
 				@unattributedTypes = array(
-					// Treat as self-inflicted causes
+					// Treat as self-inflicted causes, extremely unlikely to be caused by other player
 					'FLY_INTO_WALL',
 					'SUFFOCATION',
 					'DROWNING',
+					'CUSTOM', // damage_entity() without a source, should be self-inflicted (or a bug)
+					'BLOCK_EXPLOSION', // explosion() without a source, sometimes captured by separate entity_damage binds
 
-					// TODO: Attribute these, if possible
+					// Partially self-inflicted; possibly use time after last damage to attribute, like vanilla falls
 					'HOT_FLOOR', // can be attributed, but not necessary
+					'FREEZE', // like hot floor, this seems like it would more likely be player's fault
 					'CONTACT', // cactus, stalagmite, berry bush (something caused 4.0 dmg)
-					'CUSTOM', // must be damage_entity() without a source? add source where possible
 					'FALL', // attribute only when very recently hit, though accuracy may be difficult
 					'LAVA', // players can knock other players into hazards
 					'FIRE', // standing in fire; treat similar to lava
 					'FIRE_TICK', // certain abilities set players on fire, damaging over time
-					'WITHER', // certain abilties apply wither effect (eg. silken fangs), similar to fire_tick
-					'POISON', // splash potions and other abilities, similar to fire_tick and wither
-					'BLOCK_EXPLOSION' // custom explosion(), always caused by abilities and should be attributable
 				);
-				if(!array_contains(@unattributedTypes, @cause)) {
-					console("Unattributed damage: {cause: @cause, amount: @amount}", false);
+				if(array_contains(@unattributedTypes, @cause)) {
+					die();
 				}
-				die();
+				@damager = _stats_get_damager(player(), @cause, @pvp);
+				if(!@damager) {
+					console("Unexpected unattributed damage: {cause: @cause, amount: @amount}", false);
+					die();
+				}
+				set_mob_killer(puuid(), @damager);
 			}
 
-			if(@pvp['arena']['ff'] != 'true'
+			@friendlyFire = @pvp['arena']['ff'];
+			if(@friendlyFire != 'true'
 			&& ((array_index_exists(@pvp['arena'], 'team') && @pvp['players'][ player()]['team'] == @pvp['players'][@damager]['team'])
-			|| (!array_index_exists(@pvp['arena'], 'team') &&  player() == @damager))) {
-				@ff = @pvp['arena']['ff'];
-				if(@ff == 'knockback') {
+			|| (!array_index_exists(@pvp['arena'], 'team') && player() == @damager))) {
+				if(@friendlyFire == 'knockback') {
 					modify_event('amount', 0);
-				} else if(@ff == 'reduced') {
-					modify_event('amount', @e['amount'] / 3);
+				} else if(@friendlyFire == 'reduced') {
+					modify_event('amount', @amount / 3);
 				} else {
 					cancel();
 				}
 			} else {
-				_stats_damage(@damager, player(), @e['amount'], @pvp);
+				_stats_damage(@damager, player(), @amount, @pvp);
 			}
 		}
 	}

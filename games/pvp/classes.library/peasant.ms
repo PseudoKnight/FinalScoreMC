@@ -79,6 +79,7 @@ proc _class_load(@player, @pvp) {
 
 			case 'POISONOUS_POTATO': # poison effect
 				set_peffect(@damaged, 'POISON', 0, 10);
+				_stats_attribute_until(@damager, @damaged, time() + 10000, 'POISON', @pvp);
 
 			case 'BAKED_POTATO': # hot potato
 				set_pinv(@damager, null, null);

@@ -1,11 +1,16 @@
 proc _class_load(@player, @pvp) {
 	set_peffect(@player, 'MINING_FATIGUE', 1, 9999, true, false);
-	bind('entity_damage', array(id: @player.'damage'), array(type: 'PLAYER', cause: 'ENTITY_ATTACK'), @event, @p = @player) {
+	bind('entity_damage', array(id: @player.'damage'), array(type: 'PLAYER', cause: 'ENTITY_ATTACK'), @event, @pvp, @p = @player) {
 		if(@event['damager'] == @p) {
 			@weapon = pinv(@p, null);
 			if(@weapon && @weapon['name'] == 'STONE_HOE') {
-				modify_event('amount', pattack_cooldown(@p) * 2);
-				set_mob_effect(@event['id'], 'wither', 1, pattack_cooldown(@p) * 7);
+				@intensity = pattack_cooldown(@p);
+				modify_event('amount', @intensity * 2);
+				@seconds = @intensity * 7;
+				set_mob_effect(@event['id'], 'wither', 1, @seconds);
+				if(array_index_exists(@event, 'player')) {
+					_stats_attribute_until(@p, @event['player'], time() + 1000 * @seconds, 'WITHER', @pvp);
+				}
 			}
 		}
 	}

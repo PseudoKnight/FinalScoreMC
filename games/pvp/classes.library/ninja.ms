@@ -126,6 +126,7 @@ proc _class_load(@player, @pvp) {
 			modify_event('item', null);
 			set_peffect(player(), 'POISON', 0, 5);
 			damage_entity(puuid(), integer(@e['item']['meta']['lore'][0]), puuid(@player));
+			_stats_attribute_until(@player, player(), time() + 5000, 'POISON', @pvp);
 		} else {
 			cancel();
 		}

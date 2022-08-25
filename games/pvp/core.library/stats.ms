@@ -10,6 +10,7 @@ proc _stats_add_player(@player, @pvp) {
 		pickups: 0,
 		seconds: 0,
 		scores: 0,
+		attributions: array(),
 	);
 }
 
@@ -26,6 +27,32 @@ proc _stats_damage(@damager, @player, @amount, @pvp) {
 		@pvp['stats'][@player]['damager'] = @damager;
 		@pvp['stats'][@player]['damaged'] = time();
 	}
+}
+
+proc _stats_attribute_until(@damager, @player, @until, @cause, @pvp) {
+	if(array_index_exists(@pvp, 'stats', @player)
+	&& @damager != @player) {
+		@pvp['stats'][@player]['attributions'][] = array(
+			damager: @damager, 
+			until: @until,
+			cause: @cause,
+		);
+	}
+}
+
+proc _stats_get_damager(@player, @cause, @pvp) {
+	if(array_index_exists(@pvp, 'stats', @player)) {
+		foreach(@index: @attribution in @pvp['stats'][@player]['attributions']) {
+			if(time() < @attribution['until']) {
+				if(@attribution['cause'] == null || @attribution['cause'] == @cause) {
+					return(@attribution['damager']);
+				}
+			} else {
+				array_remove(@pvp['stats'][@player]['attributions'], @index);
+			}
+		}
+	}
+	return(null);
 }
 
 proc _stat_pad(@amount, @length) {
