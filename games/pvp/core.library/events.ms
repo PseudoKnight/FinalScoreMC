@@ -477,6 +477,37 @@ proc _bind_events(@pvp) {
 		}
 	}
 
+	@pvp['binds'][] = bind('potion_splash', null, null, @event, @pvp) {
+		@thrower = get_projectile_shooter(@event['id']);
+		if(array_index_exists(@pvp['players'], @thrower)) {
+			@potionMeta = entity_spec(@event['id'])['item']['meta'];
+			@seconds = 0;
+			if(array_index_exists(@potionMeta, 'base') && @potionMeta['base']['type'] == 'POISON') {
+				@seconds = 45;
+				if(@potionMeta['base']['extended']) {
+					@seconds = 90;
+				} else if(@potionMeta['base']['upgraded']) {
+					@seconds = 21.6;
+				}
+			} else {
+				foreach(@id: @effect in @potionMeta['potions']) {
+					if(@id == 'poison') {
+						@seconds = @effect['seconds'];
+					}
+				}
+				if(!@seconds) {
+					die();
+				}
+			}
+			foreach(@entity: @intensity in @event['entities']) {
+				if(entity_type(@entity) == 'PLAYER' && array_index_exists(@pvp['players'], player(@entity))) {
+					@effectiveDurationMS = ceil(@seconds * @intensity * 1000);
+					_stats_attribute_until(@thrower, player(@entity), time() + @effectiveDuration, 'POISON', @pvp);
+				}
+			}
+		}
+	}
+
 	// barrier eat projectiles
 	@pvp['binds'][] = bind('projectile_hit', array(priority: 'HIGHEST'), array(hittype: 'BLOCK', type: 'ARROW'), @event, @pvp) {
 		if(get_block(@event['hit']) == 'BARRIER') {
