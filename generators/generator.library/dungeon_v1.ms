@@ -1024,9 +1024,9 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 						@chestHeight = if(@room['type'] == 'ATTIC' && srand(@random) > 0.33){
 							@room['midheight'] + 1
 						} else if(@room['type'] == 'TREASURE') {
-							1;
+							1
 						} else {
-							0;
+							0
 						}
 						@attempts = 10;
 						while(@attempts-- > 0 && @chests > 0) {
