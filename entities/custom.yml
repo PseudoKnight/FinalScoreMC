@@ -304,7 +304,7 @@ parrotbomb:
     WEAPON: 0.0
   explode:
   - 4
-  - 3
+  - 2
   tame: true
   type: PARROT
 pony:
@@ -329,6 +329,9 @@ shulkerelevator:
   ai: false
   invulnerable: true
   type: shulker
+silentcart:
+  silent: true
+  type: minecart
 skeletonminion:
   gear:
     BOOTS: null
@@ -360,8 +363,8 @@ speedypig:
 steed:
   age: 0
   attributes:
-    GENERIC_MOVEMENT_SPEED: 0.2
-  health: 16
+    GENERIC_MOVEMENT_SPEED: 0.225
+  health: 8
   rider: owner
   tags:
     armor:
