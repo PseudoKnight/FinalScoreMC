@@ -19,6 +19,37 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 		// doesn't exist, but that's okay
 	}
 
+	/*
+	 * Gets the cell height of the nearest adjacent cell to this coordinate.
+	 */
+	proc _get_nearest_height(@heightMap, @maxRoomHeight, @c, @r, @x, @z) {
+		@height = -1;
+		try {
+			if(@x % 2 == 1) {
+				@height = @heightMap[@c + 1][@r];
+			} else {
+				@height = @heightMap[@c - 1][@r];
+			}
+			// Will be max room height if not inside a room.
+			// This is not desirable.
+			if(@height != @maxRoomHeight) {
+				return(@height);
+			}
+		} catch (IndexOverflowException @ex) {
+			// outside map
+		}
+		try {
+			if(@z % 2 == 1) {
+				@height = @heightMap[@c][@r + 1];
+			} else {
+				@height = @heightMap[@c][@r - 1];
+			}
+		} catch (IndexOverflowException @ex) {
+			// outside map
+		}
+		return(@height);
+	}
+
 	// load dungeon type configuration
 	@options = yml_decode(read('dungeon.library/'.@dungeonType.'.yml'));
 	@defaults = array_merge(array(

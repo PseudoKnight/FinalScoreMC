@@ -58,37 +58,6 @@ proc _get_direction(@random, @dirs = array('north', 'south', 'east', 'west')) {
 }
 
 /*
- * Gets the cell height of the nearest adjacent cell to this coordinate.
- */
-proc _get_nearest_height(@heightMap, @maxRoomHeight, @c, @r, @x, @z) {
-	@height = -1;
-	try {
-		if(@x % 2 == 1) {
-			@height = @heightMap[@c + 1][@r];
-		} else {
-			@height = @heightMap[@c - 1][@r];
-		}
-		// Will be max room height if not inside a room.
-		// This is not desirable.
-		if(@height != @maxRoomHeight) {
-			return(@height);
-		}
-	} catch (IndexOverflowException @ex) {
-		// outside map
-	}
-	try {
-		if(@z % 2 == 1) {
-			@height = @heightMap[@c][@r + 1];
-		} else {
-			@height = @heightMap[@c][@r - 1];
-		}
-	} catch (IndexOverflowException @ex) {
-		// outside map
-	}
-	return(@height);
-}
-
-/*
  * Add block to chunk batch.
  * To minimize memory use, the chunk array alternates between location and material.
  * Therefore these chunk batches should always be processed sequentially.
