@@ -25,13 +25,6 @@ proc _fw_start_task(@secs) {
 			}
 			@weapons = array(@sword);
 	}
-	foreach(@p in all_players('custom')) {
-		if(_fw_player(@p)) {
-			foreach(@weapon in @weapons) {
-				pgive_item(@p, @weapon);
-			}
-		}
-	}
 	if(!rand(3)) {
 		@blocks = import('frogware.blocks');
 		if(is_null(@blocks)) {
@@ -70,6 +63,20 @@ proc _fw_start_task(@secs) {
 				if(_fw_change_team(@e['player'], 'losers')) {
 					play_sound(ploc(@e['player']), array(sound: 'ENTITY_ZOMBIE_VILLAGER_CONVERTED'), @e['player']);
 				}
+			}
+		}
+	}
+	@horse = !rand(4);
+	foreach(@p in all_players('custom')) {
+		if(_fw_player(@p)) {
+			foreach(@weapon in @weapons) {
+				pgive_item(@p, @weapon);
+			}
+			if(@horse) {
+				@entity = spawn_entity('HORSE', 1, entity_loc(puuid(@p)))[0];
+				set_mob_owner(@entity, @p);
+				set_entity_spec(@entity, array(saddle: array(name: 'SADDLE')));
+				set_entity_rider(@entity, puuid(@p));
 			}
 		}
 	}
