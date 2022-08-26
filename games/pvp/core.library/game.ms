@@ -409,6 +409,10 @@ proc _pvp_start_match(@id) {
 		}
 	}
 
+	if(array_index_exists(@arena, 'powerup')) {
+		@pvp['powerups'] = array();
+	}
+
 	if(array_index_exists(@arena, 'mobspawn')) {
 		@pvp['mobspawn'] = array();
 		for(@i = 0, @i < array_size(@arena['mobspawn']), @i++) {
@@ -593,20 +597,20 @@ proc _pvp_start_match(@id) {
 		}
 
 		if(array_index_exists(@arena, 'itemspawn')) {
+			@viewers = array_merge(@pvp['spectators'], array_keys(@pvp['players']));
 			foreach(@i: @item in @arena['itemspawn']) {
 				@itemspawn = @pvp['itemspawn'][@i];
 				if(@itemspawn[0]) {
 					try {
 						@loc = location_shift(entity_loc(@itemspawn[0]), 'up', 0.4);
 						@itemspawn[1] = time();
-						@players = array_merge(@pvp['spectators'], array_keys(@pvp['players']));
 						spawn_particle(@loc, array(
 							particle: 'FIREWORKS_SPARK',
 							count: 1,
 							xoffset: 0.3, 
 							yoffset: 0.3,
 							zoffset: 0.3
-						), @players);
+						), @viewers);
 						set_entity_glowing(@itemspawn[0], false);
 						continue();
 					} catch(BadEntityException @ex) {
@@ -626,6 +630,22 @@ proc _pvp_start_match(@id) {
 						// chunk might not be loaded, so try again next tick
 						@itemspawn[0] = '';
 					}
+				}
+			}
+		}
+
+		if(array_index_exists(@pvp, 'powerups')) {
+			foreach(@index: @entity in @pvp['powerups']) {
+				if(entity_exists(@entity)) {
+					spawn_particle(entity_loc(@entity), array(
+						particle: 'FIREWORKS_SPARK',
+						count: 1,
+						xoffset: 0.3, 
+						yoffset: 0.3,
+						zoffset: 0.3
+					));
+				} else {
+					array_remove(@pvp['powerups'], @index);
 				}
 			}
 		}

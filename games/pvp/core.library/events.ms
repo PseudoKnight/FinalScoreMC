@@ -326,7 +326,10 @@ proc _bind_events(@pvp) {
 		set_peffect(player(), 'NIGHT_VISION', 0, 0.3);
 		title(player(), 'You died.', '', 0, 6, 0);
 		foreach(@item in @drops) {
-			drop_item(@location, @item);
+			@drop = drop_item(@location, @item);
+			if(array_index_exists(@arena, 'powerup') && @item['name'] == @arena['powerup']) {
+				@pvp['powerups'][] = @drop;
+			}
 		}
 		@deadplayer = spawn_entity('SKELETON', 1, @location, closure(@deadplayer) {
 			add_scoreboard_tag(@deadplayer, 'nodrops');
