@@ -1,7 +1,7 @@
 dungeonEntrance: true
 default:
     maxRoomHeight: 12
-    chestCount: 0.9
+    chestCount: 0.8
     attic: 0.3
     balcony: 0.3
     campfireChance: 0.1
@@ -22,7 +22,6 @@ floors:
         edge: stone
         boss: CREEPER
     1:
-        staggeredWall: true
         campfireChance: 0.5
         spawner: [cave_spider, spider]
         trap: [static_web]

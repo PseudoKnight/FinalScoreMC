@@ -1,0 +1,13 @@
+default:
+    chestCount: 0
+    maxRoomHeight: 4
+floors:
+    0:
+        spawner: []
+        wall: polished_andesite
+        column: yellow_concrete
+        ceiling: air
+        floor: [black_terracotta,lime_terracotta,red_terracotta,blue_terracotta,green_terracotta,yellow_terracotta,magenta_terracotta,orange_terracotta,light_blue_terracotta,pink_terracotta,light_gray_terracotta,gray_terracotta,cyan_terracotta,purple_terracotta,brown_terracotta,white_terracotta]
+        edge: air
+        divider: air
+        empty: air
