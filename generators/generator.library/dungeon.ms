@@ -951,7 +951,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 						} else {
 							0
 						}
-						@attempts = 10;
+						@attempts = 8;
 						while(@attempts-- > 0 && @chests > 0) {
 							@loc = array(
 								@regionMinX + @room['c1'] + 1 + integer(srand(@random) * (@room['width'] - 2)),
@@ -960,18 +960,32 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 								@world
 							);
 							if(equals_ic(@materials['room'], get_block(@loc))) {
-								@chests--;
-								set_blockdata_string(@loc, 'chest[facing='._get_direction(@random).if(@materials['room'] == 'water', ',waterlogged=true').']', false);
-								try(set_inventory(@loc, _get_loot(@floor, @random, @bonus)))
-								if(@room['type'] == 'TREASURE') {
-									set_blockdata_string(location_shift(@loc, 'down'), 'diamond_block');
-									if(@chestArray) { // only lock this chest if we have a previous chest to add a key to
-										set_block_lock(@loc, 'Key'.(@floor + 1));
-										add_to_inventory(@chestArray[integer(srand(@random) * array_size(@chestArray))],
-												array(name: 'TRIPWIRE_HOOK', meta: array(display: 'Key'.(@floor + 1))));
+								@inv = _get_loot(@floor, @random, @bonus);
+								if(@inv) {
+									@chests--;
+									if(@room['type'] == 'TREASURE') {
+										@double = false;
+										if(equals_ic(@materials['room'], get_block(location_shift(@loc, 'west')))) {
+											@double = true;
+											@rightSide = location_shift(@loc, 'west');
+											set_blockdata_string(@rightSide, 'chest[facing=south'.if(@materials['room'] == 'water', ',waterlogged=true').',type=right]', false);
+											set_blockdata_string(location_shift(@rightSide, 'down'), 'reinforced_deepslate');
+										}
+										set_blockdata_string(@loc, 'chest[facing=south'.if(@materials['room'] == 'water', ',waterlogged=true').if(@double, ',type=left').']', false);
+										set_blockdata_string(location_shift(@loc, 'down'), 'reinforced_deepslate');
+										if(@chestArray) { // only lock this chest if we have a previous chest to add a key to
+											set_block_lock(@loc, 'Key'.(@floor + 1));
+											add_to_inventory(@chestArray[integer(srand(@random) * array_size(@chestArray))],
+													array(name: 'TRIPWIRE_HOOK', meta: array(display: 'Key'.(@floor + 1))));
+										}
+									} else {
+										set_blockdata_string(@loc, 'chest[facing='._get_direction(@random).if(@materials['room'] == 'water', ',waterlogged=true').']', false);
+										@chestArray[] = @loc;
 									}
-								} else {
-									@chestArray[] = @loc;
+									if(array_size(@inv) > get_inventory_size(@loc)) {
+										@inv = @inv[cslice(0, get_inventory_size(@loc))];
+									}
+									try(set_inventory(@loc, @inv));
 								}
 							}
 						}
