@@ -159,12 +159,12 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 		@c = if(@dungeonEntrance) {
 			integer(@width / 2 - 4)
 		} else {
-			1 + integer(srand(@random) * (@width - 5))
+			1 + integer(srand(@random) * (@width - 6))
 		}
 		@r = if(@dungeonEntrance) {
 			@length - 7
 		} else {
-			1 + integer(srand(@random) * (@length - 5))
+			1 + integer(srand(@random) * (@length - 6))
 		}
 		@entranceRoom = array(
 			r1: @r,
