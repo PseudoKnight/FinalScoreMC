@@ -21,8 +21,8 @@ register_command('generate', array(
 					set_block(location_shift(@end, 'up'), 'CAKE', false);
 					foreach(@floor in @spawns) {
 						foreach(@spawn in @floor) {
-							set_block(@spawn, 'OAK_SIGN');
-							set_sign_text(@spawn, array('Doors: '.@spawn[4], 'Distance: '.@spawn[5]));
+							set_block(@spawn, 'OAK_SIGN', false);
+							try(set_sign_text(@spawn, array('Doors: '.@spawn[4], 'Distance: '.@spawn[5])))
 						}
 					}
 				}
