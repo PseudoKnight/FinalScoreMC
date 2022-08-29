@@ -163,20 +163,20 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 		@width = @regionWidth;
 		@length = @regionLength;
 		@c = if(@dungeonEntrance) {
-			integer(@width / 2 - 3)
+			integer(@width / 2 - 4)
 		} else {
 			1 + integer(srand(@random) * (@width - 5))
 		}
 		@r = if(@dungeonEntrance) {
-			@length - 6
+			@length - 7
 		} else {
 			1 + integer(srand(@random) * (@length - 5))
 		}
 		@entranceRoom = array(
 			r1: @r,
 			c1: @c,
-			width: 5,
-			length: 5,
+			width: 6,
+			length: 6,
 			connected: 0,
 			doors: 0,
 			height: @options['floors'][0]['maxRoomHeight'],
@@ -233,7 +233,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 			@c = 0;
 			if(@floor == 0) {
 				if(@dungeonEntrance) {
-					@layoutMap[integer(@width / 2)][@length - 1] = 'door';
+					@layoutMap[integer(@width / 2) - 1][@length - 1] = 'door';
 				}
 				@r = @entranceRoom['r1'];
 				@c = @entranceRoom['c1'];
