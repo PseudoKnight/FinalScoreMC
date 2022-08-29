@@ -193,24 +193,3 @@ floors:
         edge: birch_stairs
         window: light_gray_stained_glass
         boss: EVOKER
-    10:
-        lavaPit: 0.06
-        campfireChance: 0.0
-        spawner: [primed_tnt, ender_crystal, creeper, creeper, creeper]
-        trap: plate_tnt
-        wall: bedrock
-        column: bedrock
-        ceiling: bedrock
-        floor: bedrock
-        utility: bedrock
-        decor: bedrock
-        edge: air
-        door: air
-        minRoomHeight: 4
-        chestCount: 0
-        attic: 0.0
-        balcony: 0.0
-        boss:
-            type: CREEPER
-            tags:
-                powered: true
