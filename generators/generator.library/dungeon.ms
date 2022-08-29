@@ -885,7 +885,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 						}
 					} else {
 						// spawner
-						if(@room['connected'] > 1 && @mobTypes && srand(@random) < @floorData['spawnerChance']) {
+						if(@room['connected'] > 2 && @mobTypes && srand(@random) < @floorData['spawnerChance']) {
 							@loc = array(
 								@regionMinX + @room['c1'] + 1 + integer(srand(@random) * (@room['width'] - 2)),
 								@yFloor + if(@room['type'] == 'ATTIC' && srand(@random) > 0.67, @room['midheight'] + 1, 0),
@@ -1058,7 +1058,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 						}
 					}
 
-					if(@floorData['trap'] && @room['type'] != 'FIRE_FLOOR') {
+					if(@room['connected'] > 2 && @floorData['trap'] && @room['type'] != 'FIRE_FLOOR') {
 						@traps = integer(srand(@random) * (@room['length'] + @room['width']));
 						while(@traps-- > 0) {
 							@type = split('_', @materials['trap'][integer(srand(@random) * array_size(@materials['trap']))]);
