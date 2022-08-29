@@ -1,6 +1,5 @@
 default:
     chestCount: 0
-    maxRoomHeight: 4
     roof: false
 floors:
     0:

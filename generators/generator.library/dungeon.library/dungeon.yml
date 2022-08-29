@@ -25,7 +25,7 @@ floors:
         campfireChance: 0.5
         spawner: [cave_spider, spider]
         trap: [static_web]
-        wall: [acacia_log, acacia_log, dark_oak_log]
+        wall: [acacia_log, dark_oak_log]
         column: dark_oak_log
         ceiling: [birch_leaves, dark_oak_leaves]
         floor: [grass_block, podzol]
