@@ -27,7 +27,6 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 		maxRoomSize: 21,
 		minRoomHeight: 3,
 		maxRoomHeight: 3,
-		padding: 1,
 
 		// variability on room features
 		chestCount: 0,
@@ -196,7 +195,6 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 			@floorData = @options['floors'][@floor];
 			@minRoomSize = @floorData['minRoomSize'];
 			@maxRoomSize = @floorData['maxRoomSize'];
-			@padding = @floorData['padding'];
 			@maxRoomHeight = @floorData['maxRoomHeight'];
 			@minRoomHeight = @floorData['minRoomHeight'];
 			@roof = @floorData['roof'];
@@ -219,12 +217,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 				@roomMap[@c] = array();
 				@heightMap[@c] = array();
 				for(@r = 0, @r < @length, @r++) {
-					@type = 'empty';
-					if(@r == 0 || @r == @length - 1
-					|| @c == 0 || @c == @width - 1) {
-						@type = 'wall';
-					}
-					@layoutMap[@c][@r] = @type;
+					@layoutMap[@c][@r] = 'empty';
 					@roomMap[@c][@r] = -1;
 					@heightMap[@c][@r] = @maxRoomHeight;
 				}
@@ -265,12 +258,13 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 			}
 
 			// Place rooms
+			@maxRoomCount = min(@width, @length) / 2 - 1;
 			@unconnected = array(0);
 			for(@r = 0, @r < @length - 2, @r++) {
 				for(@c = 0, @c < @width - 2, @c++) {
 					if(x_is_interrupted()) {
 						remove_bar('gen'.@region);
-						die('Interrupted planning rooms: '.array_size(@rooms).' '.@rooms[0..5]);
+						die('Interrupted planning rooms: '.array_size(@rooms).' '.@rooms[0..5].' ... ');
 					}
 					if(@roomMap[@c][@r] == -1 && @roomMap[@c + 1][@r + 1] == -1) {
 						@roomWidth = integer(srand(@random) * (min(@width - @c - 2, @maxRoomSize) - @minRoomSize + 1)) + @minRoomSize;
@@ -353,6 +347,11 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 							type: @type
 						);
 
+						if(array_size(@rooms) > @maxRoomCount) {
+							console('Debug: (max room count exceeded) '.@rooms);
+							die('Exceeded max room count of '.@maxRoomCount.'. Stopped room planning.');
+						}
+
 						// Mask room
 						for(@r2 = @r + 1, @r2 < @roomLength + @r + 1, @r2++) {
 							for(@c2 = @c + 1, @c2 < @roomWidth + @c + 1, @c2++) {
@@ -378,7 +377,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 			while(@unconnected) {
 				if(x_is_interrupted()) {
 					remove_bar('gen'.@region);
-					die('Interrupted connecting rooms: '.array_size(@unconnected).'/'.array_size(@rooms));
+					die('Interrupted connecting rooms: '.array_size(@unconnected).'/'.array_size(@rooms).' ... ');
 				}
 				@limit--;
 				if(@limit < 0){
@@ -405,8 +404,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 				@success = false;
 				@dirs = array(0, 1, 2, 3);
 				foreach(@d in range(4)) {
-					@dir = integer(srand(@random) * array_size(@dirs));
-					array_remove_values(@dirs, @dir);
+					@dir = array_remove(@dirs, integer(srand(@random) * array_size(@dirs)));
 					try {
 						@c2 = 0;
 						@r2 = 0;
@@ -415,21 +413,33 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 						switch(@dir){
 							case 0:
 								@r2 = @r - 2;
+								if(@r2 < 1) {
+									continue();
+								}
 								@c2 = @c + integer(srand(@random) * @roomWidth);
 								@r3 = @r2 + 1;
 								@c3 = @c2;
 							case 1:
 								@r2 = @r + @roomLength + 1;
+								if(@r2 >= @length) {
+									continue();
+								}
 								@c2 = @c + integer(srand(@random) * @roomWidth);
 								@r3 = @r2 - 1;
 								@c3 = @c2;
 							case 2:
 								@c2 = @c - 2;
+								if(@c2 < 1) {
+									continue();
+								}
 								@r2 = @r + integer(srand(@random) * @roomLength);
 								@c3 = @c2 + 1;
 								@r3 = @r2;
 							case 3:
 								@c2 = @c + @roomWidth + 1;
+								if(@c2 >= @width) {
+									continue();
+								}
 								@r2 = @r + integer(srand(@random) * @roomLength);
 								@c3 = @c2 - 1;
 								@r3 = @r2;
@@ -599,7 +609,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 								} else {
 									// different rooms, different floors
 									@floorMat = @materials['floor'];
-									if(is_array(@floorMat)) {
+									if(is_array(@floorMat) && @testFloor > -1) {
 										if(@room != null) {
 											@floorMat = @floorMat[@room['connected'] % array_size(@materials['floor'])];
 										} else {
