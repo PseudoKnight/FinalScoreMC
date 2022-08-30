@@ -20,6 +20,7 @@ proc _get_loot(@floor, @random, @bonus = 1.0, @loot = array(
 	array(chance: -0.03, item: 'TRIDENT', damage: 251),
 	array(chance: 0.03, item: 'BOW', damage: 385),
 	array(chance: 0.03, item: 'CROSSBOW', damage: 466),
+	array(chance: 0.03, item: 'BONE'),
 	array(chance: 0.07, item: 'LEATHER_HELMET', damage: 56),
 	array(chance: 0.07, item: 'LEATHER_CHESTPLATE', damage: 81),
 	array(chance: 0.07, item: 'LEATHER_LEGGINGS', damage: 76),
@@ -56,23 +57,84 @@ proc _get_loot(@floor, @random, @bonus = 1.0, @loot = array(
 	array(chance: 0.01, item: 'ENDER_PEARL'),
 	array(chance: 0.01, item: 'ENCHANTED_BOOK'),
 	array(chance: 0.01, item: 'WOLF_SPAWN_EGG'),
-	array(chance: 0.01, item: 'VILLAGER_SPAWN_EGG'),
 )) {
 	@inv = array();
 	foreach(@weightedLoot in @loot){
-		@r = srand(@random);
-		if(@r < @weightedLoot['chance'] + @bonus / 100 + @bonus * @floor * 0.01){
+		if(srand(@random) < @weightedLoot['chance'] + @bonus / 100 + @bonus * @floor * 0.01) {
 			@item = array(name: @weightedLoot['item']);
 			if(array_index_exists(@weightedLoot, 'qty') && is_array(@weightedLoot['qty'])) {
 				@item['qty'] = integer(srand(@random) * (@weightedLoot['qty'][1] - @weightedLoot['qty'][0]) + @weightedLoot['qty'][0]);
 			}
 			if(array_index_exists(@weightedLoot, 'damage')) {
-				@item['meta'] = array(damage: integer(srand(@random) * @weightedLoot['damage']));
-			} else if(string_starts_with(@item['name'], 'DIAMOND_')) {
-				if(srand(@random) > 0.8) {
-					@item['meta'] = array(enchants: array(curse_of_binding: 1));
-				} else {
-					@item['meta'] = array(enchants: array(curse_of_vanishing: 1));
+				@item['meta'] = array(damage: max(0, @weightedLoot['damage'] - 1 - integer(srand(@random) * @weightedLoot['damage'] * (@floor + @bonus) * 0.1)));
+				if(@bonus > 1.0) {
+					@rarity = array_get(array(color('yellow').'Uncommon ', color('aqua').'Rare ', color('light_purple').'Epic '), min(2, integer(@floor / 3)));
+					@item['meta']['display'] = @rarity._to_upper_camel_case(@item['name']);
+					@item['meta']['modifiers'] = array();
+					@attributes = array('GENERIC_ARMOR_TOUGHNESS', 'GENERIC_ATTACK_DAMAGE', 'GENERIC_ATTACK_SPEED',
+										'GENERIC_KNOCKBACK_RESISTANCE', 'GENERIC_MAX_HEALTH', 'GENERIC_MOVEMENT_SPEED');
+					@operations = array('ADD_NUMBER', 'ADD_SCALAR');
+					@slot = 'WEAPON';
+					if(string_ends_with(@item['name'], 'LEGGINGS')) {
+						@slot = 'LEGGINGS';
+					} else if(string_ends_with(@item['name'], 'BOOTS')) {
+						@slot = 'BOOTS';
+					} else if(string_ends_with(@item['name'], 'HELMET')) {
+						@slot = 'HELMET';
+					} else if(string_ends_with(@item['name'], 'CHESTPLATE')) {
+						@slot = 'CHESTPLATE';
+					} else if(@item['name'] == 'SHIELD') {
+						@slot = 'OFF_HAND';
+					}
+					if(@slot == 'WEAPON') {
+						if(!string_ends_with(@item['name'], 'BOW')) {
+							@item['meta']['modifiers'][] = array(
+								attribute: 'GENERIC_ATTACK_DAMAGE',
+								operation: 'ADD_NUMBER',
+								amount: integer(srand(@random) * min(@floor + 1, 8)) + ceil(min(@floor + 1, 8) / 2),
+								slot: @slot,
+							);
+							@item['meta']['modifiers'][] = array(
+								attribute: 'GENERIC_ATTACK_SPEED',
+								operation: 'ADD_NUMBER',
+								amount: 0.5 + integer(srand(@random) * 2),
+								slot: @slot,
+							);
+						}
+					} else if(@slot != 'OFF_HAND') {
+						@item['meta']['modifiers'][] = array(
+							attribute: 'GENERIC_ARMOR',
+							operation: 'ADD_NUMBER',
+							amount: integer(srand(@random) * min(@floor + 1, 8)) + ceil(min(@floor + 1, 9) / 3),
+							slot: @slot,
+						);
+					}
+					@attribute = @attributes[integer(srand(@random) * array_size(@attributes))];
+					@operation = @operations[integer(srand(@random) * array_size(@operations))];
+					@amount = 0;
+					if(@operation == 'ADD_NUMBER') {
+						@amount = integer(srand(@random) * (@floor + 1)) + 1;
+					} else if(@attribute == 'GENERIC_MOVEMENT_SPEED') {
+						@amount = srand(@random) * (@floor + 1) * 0.05;
+					} else {
+						@amount = srand(@random) * (@floor + 1) * 0.1;
+					}
+					@item['meta']['modifiers'][] = array(
+						attribute: @attribute,
+						operation: @operation,
+						amount: @amount,
+						slot: @slot,
+					);
+				} else if(srand(@random) < 0.2) {
+					if(srand(@random) < 0.5
+					&& (string_ends_with(@item['name'], 'LEGGINGS') 
+					|| string_ends_with(@item['name'], 'HELMET') 
+					|| string_ends_with(@item['name'], 'BOOTS')
+					|| string_ends_with(@item['name'], 'CHESTPLATE'))) {
+						@item['meta']['enchants'] = array(curse_of_binding: 1);
+					} else {
+						@item['meta']['enchants'] = array(curse_of_vanishing: 1);
+					}
 				}
 			} else if(@item['name'] == 'ENCHANTED_BOOK') {
 				@enchants = array(
