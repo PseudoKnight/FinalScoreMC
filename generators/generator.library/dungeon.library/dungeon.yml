@@ -9,36 +9,10 @@ default:
     door: spruce_door
 floors:
     0:
-        waterPit: 0.06
-        campfireChance: 0.5
-        spawner: [silverfish, bat]
-        trap: [plate_tnt, vines_potion_poison]
-        wall: [stone, stone, stone, stone, stone, stone, stone, stone, andesite, andesite, andesite, iron_ore]
-        column: stone
-        ceiling: [stone, stone, stone, stone, stone, stone, stone, stone, andesite, andesite, andesite, iron_ore]
-        floor: [stone, stone, stone, stone, stone, stone, stone, stone, andesite, andesite, andesite, iron_ore]
-        utility: gold_ore
-        decor: stone
-        edge: stone
-        boss: CREEPER
-    1:
-        campfireChance: 0.5
-        spawner: [cave_spider, spider]
-        trap: [static_web]
-        wall: [acacia_log, dark_oak_log]
-        column: dark_oak_log
-        ceiling: [birch_leaves, dark_oak_leaves]
-        floor: [grass_block, podzol]
-        utility: [damaged_anvil]
-        decor: [birch_leaves, cobweb, wither_rose, sweet_berry_bush]
-        edge: acacia_leaves
-        boss:
-            type: CAVE_SPIDER
-            rider: GUARDIAN
-    2:
+        # village
         spawner: [zombie_villager]
-        trap: [plate_potion_poison, tripwire_arrow]
-        wall: oak_planks
+        trap: [tripwire_arrow]
+        wall: [oak_planks,oak_planks,oak_planks,oak_planks,oak_planks,oak_planks,oak_planks,oak_planks,oak_planks,oak_planks,oak_planks,oak_planks,furnace]
         column: oak_log
         ceiling: oak_planks
         floor: [cobblestone, stone]
@@ -46,6 +20,8 @@ floors:
         decor: [oak_stairs, bookshelf, cake]
         edge: bookshelf
         window: glass
+        tables: 0.1
+        table: red_carpet
         boss:
             type: ZOMBIE_VILLAGER
             tags:
@@ -61,7 +37,37 @@ floors:
                     name: IRON_CHESTPLATE
                 helmet:
                     name: IRON_HELMET
+    1:
+        # caves
+        waterPit: 0.06
+        campfireChance: 0.5
+        spawner: [silverfish, zombie]
+        trap: [plate_tnt, vines_potion_poison]
+        wall: [stone, stone, stone, stone, stone, stone, stone, stone, andesite, andesite, andesite, iron_ore]
+        column: stone
+        ceiling: [stone, stone, stone, stone, stone, stone, stone, stone, andesite, andesite, andesite, iron_ore]
+        floor: [stone, stone, stone, stone, stone, stone, stone, stone, andesite, andesite, andesite, iron_ore]
+        utility: gold_ore
+        decor: stone
+        edge: stone
+        boss: CREEPER
+    2:
+        # forest
+        campfireChance: 0.5
+        spawner: [cave_spider, spider]
+        trap: [static_web]
+        wall: [acacia_log, dark_oak_log]
+        column: dark_oak_log
+        ceiling: [birch_leaves, dark_oak_leaves]
+        floor: [grass_block, podzol]
+        utility: [damaged_anvil]
+        decor: [azalea, cobweb, wither_rose, sweet_berry_bush]
+        edge: acacia_leaves
+        boss:
+            type: CAVE_SPIDER
+            rider: GUARDIAN
     3:
+        # desert
         lavaPit: 0.06
         campfireChance: 0.5
         spawner: [husk, husk, husk, husk, creeper]
@@ -89,13 +95,14 @@ floors:
                 helmet:
                     name: DIAMOND_HELMET
     4:
+        # ice caves
         waterPit: 0.06
         campfireChance: 0.5
         spawner: [stray]
         wall: [snow_block, packed_ice]
         column: packed_ice
         ceiling: [snow_block, packed_ice]
-        floor: [snow_block, packed_ice]
+        floor: [snow_block, snow_block, snow_block, packed_ice, packed_ice, powder_snow]
         utility: [enchanting_table, damaged_anvil]
         decor: blue_ice
         edge: snow_block
@@ -115,6 +122,7 @@ floors:
                     helmet:
                         name: DIAMOND_HELMET
     5:
+        # nether fortress
         minRoomHeight: 4
         lavaPit: 0.06
         fireFloor: 0.06
@@ -130,6 +138,7 @@ floors:
         window: 'nether_brick_fence[north=true,south=true,east=true,west=true]'
         boss: WITHER_SKELETON
     6:
+        # ocean monument
         campfireChance: 0.0
         spawner: [guardian, pufferfish]
         wall: prismarine_bricks
@@ -155,6 +164,7 @@ floors:
                 helmet:
                     name: DIAMOND_HELMET
     7:
+        # stronghold
         lavaPit: 0.06
         spawner: [skeleton, witch, creeper]
         trap: [chest_tnt, plate_potion_poison]
@@ -171,6 +181,7 @@ floors:
             tags:
                 type: THE_KILLER_BUNNY
     8:
+        # end city
         spawner: [ender_crystal, endermite, shulker]
         wall: purpur_block
         column: purpur_pillar
@@ -182,6 +193,7 @@ floors:
         attic: 0.0
         boss: ENDER_CRYSTAL
     9:
+        # woodland mansion
         spawner: [vindicator, vindicator, vindicator, pillager, pillager, illusioner]
         trap: chest_potion_poison
         wall: dark_oak_planks
