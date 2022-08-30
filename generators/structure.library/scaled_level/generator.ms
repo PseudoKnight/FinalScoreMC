@@ -11,10 +11,9 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 	@testFloor = if(array_size(@split) == 1, -1, integer(@split[1]));
 
 	// load dungeon type specific procedures
-	include('dungeon.library/util.ms');
-	include('dungeon.library/default.ms');
+	include('loot/default.ms');
 	try {
-		include('dungeon.library/'.@dungeonType.'.ms');
+		include('loot/'.@dungeonType.'.ms');
 	} catch(IOException @ex) {
 		// doesn't exist, but that's okay
 	}
@@ -51,7 +50,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 	}
 
 	// load dungeon type configuration
-	@options = yml_decode(read('dungeon.library/'.@dungeonType.'.yml'));
+	@options = yml_decode(read('configs/'.@dungeonType.'.yml'));
 	@defaults = array_merge(array(
 		// size and scale
 		scale: 2,
