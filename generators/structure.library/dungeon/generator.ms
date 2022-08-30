@@ -1015,21 +1015,29 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 						@vines = min(@room['width'], @room['length']);
 						do {
 							@loc = null;
+							@block = null;
+							@length = null;
+							if(array_index_exists(@materials, 'vines')) {
+								@block = @materials['vines'];
+								@length = @room['height'];
+							} else {
+								@dirs = array_rand(array('east', 'west', 'north', 'south'), rand(1, 4), false);
+								@block = array(block: 'vine');
+								foreach(@dir in @dirs) {
+									@block[@dir] = true;
+								}
+								@length = @room['midheight'] + 1;
+							}
 							@attempts = 5;
 							do {
 								@loc = array(
 									@regionMinX + @room['c1'] + integer(srand(@random) * @room['width']),
-									@yFloor + @room['midheight'] + 1,
+									@yFloor + @length,
 									@regionMinZ + @room['r1'] + integer(srand(@random) * @room['length']),
 									@world
 								);
 							} while(!equals_ic(@materials['room'], get_block(@loc)) && --@attempts > 0);
-							@dirs = array_rand(array('east', 'west', 'north', 'south'), rand(1, 4), false);
-							@block = array(block: 'vine');
-							foreach(@dir in @dirs) {
-								@block[@dir] = true;
-							}
-							@length = @room['midheight'];
+
 							while(@length-- > 0) {
 								@loc[1]--;
 								set_blockdata(@loc, @block);
@@ -1211,6 +1219,19 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 
 					execute(@createSpawns);
 				}, 'generator');
+
+				
+				if(is_array(@materials['floor']) && array_contains(@materials['floor'], 'grass_block') || @materials['floor'] === 'grass_block') {
+					queue_push(closure(){
+						@loc = array(
+							@regionMinX + @room['c1'] + 1 + integer(srand(@random) * (@room['width'] - 2)),
+							@yFloor - 1,
+							@regionMinZ + @room['r1']  + 1 + integer(srand(@random) * (@room['length'] - 2)),
+							@world
+						);
+						bone_meal_block(@loc);
+					}, 'generator');
+				}
 			}
 
 			// exit room / Pop ladder into floor

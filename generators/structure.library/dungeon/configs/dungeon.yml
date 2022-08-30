@@ -12,11 +12,11 @@ floors:
         # village
         spawner: [zombie_villager]
         trap: [tripwire_arrow]
-        wall: [oak_planks,oak_planks,oak_planks,oak_planks,oak_planks,oak_planks,oak_planks,oak_planks,oak_planks,oak_planks,oak_planks,oak_planks,furnace]
+        wall: [oak_planks,oak_planks,oak_planks,oak_planks,oak_planks,oak_planks,oak_planks,oak_planks,oak_planks,oak_planks,oak_planks,oak_planks]
         column: oak_log
         ceiling: oak_planks
         floor: [cobblestone, stone]
-        utility: [damaged_anvil]
+        utility: [damaged_anvil, 'furnace[lit=true]']
         decor: [oak_stairs, bookshelf, cake]
         edge: bookshelf
         window: glass
@@ -59,7 +59,7 @@ floors:
         wall: [acacia_log, dark_oak_log]
         column: dark_oak_log
         ceiling: [birch_leaves, dark_oak_leaves]
-        floor: [grass_block, podzol]
+        floor: [grass_block, grass_block, podzol]
         utility: [damaged_anvil]
         decor: [azalea, cobweb, wither_rose, sweet_berry_bush]
         edge: acacia_leaves
@@ -137,6 +137,7 @@ floors:
         edge: nether_brick_stairs
         window: 'nether_brick_fence[north=true,south=true,east=true,west=true]'
         boss: WITHER_SKELETON
+        vines: weeping_vines
     6:
         # ocean monument
         campfireChance: 0.0
