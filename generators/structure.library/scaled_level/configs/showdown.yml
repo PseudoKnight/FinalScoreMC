@@ -1,24 +1,24 @@
 default:
-    maxRoomHeight: 11
-    attic: 0.3
-    balcony: 0.3
+    maxRoomHeight: 7
     pillars: 0.2
     lavaPit: 0.07
     waterPit: 0.07
     pit: 0.07
-    extraDoors: 0.3
+    extraDoors: 0.4
     maxRoomSize: 13
     spawnerChance: 0.0
     campfireChance: 1.0
     spawnCount: 1
+    tables: 1.0
 floors:
     0:
-        wall: [stone_bricks, stone_bricks, stone_bricks, mossy_stone_bricks, cracked_stone_bricks, infested_cracked_stone_bricks]
+        wall: [stone_bricks, stone_bricks, stone_bricks, mossy_stone_bricks, cracked_stone_bricks]
         column: bookshelf
         ceiling: stone_bricks
-        floor: [stone_bricks, mossy_stone_bricks, mossy_stone_bricks, mossy_stone_bricks, mossy_stone_bricks, mossy_stone_bricks, cracked_stone_bricks, infested_cracked_stone_bricks]
+        floor: [stone_bricks, mossy_stone_bricks, mossy_stone_bricks, mossy_stone_bricks, mossy_stone_bricks, mossy_stone_bricks, cracked_stone_bricks]
         utility: ['skeleton_skull[rotation=1]','skeleton_skull[rotation=5]','skeleton_skull[rotation=10]','skeleton_skull[rotation=15]']
         decor: [gravel, gravel, lantern]
         edge: stone_brick_stairs
         window: air
         divider: crying_obsidian
+        table: red_carpet
