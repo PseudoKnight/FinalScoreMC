@@ -22,6 +22,7 @@ floors:
         window: glass
         tables: 0.1
         table: red_carpet
+        vines: ladder
         boss:
             type: ZOMBIE_VILLAGER
             tags:
@@ -50,6 +51,7 @@ floors:
         utility: gold_ore
         decor: stone
         edge: stone
+        vines: twisting_vines_plant
         boss: CREEPER
     2:
         # forest

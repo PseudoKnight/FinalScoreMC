@@ -691,7 +691,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 													continue();
 												}
 											case 'ATTIC':
-												if(@y == @ceilingY - @roomHeight + @room['midheight']) {
+												if(@y == @ceilingY - @roomHeight + @room['midheight'] && srand(@random) > 0.1) {
 													_add_to_chunk(@chunk, @loc, @materials['floor']);
 													continue();
 												}
@@ -1012,7 +1012,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 					}
 
 					if(@room['type'] == 'ATTIC') {
-						@vines = min(@room['width'], @room['length']);
+						@vines = integer(min(@room['width'], @room['length']) / 2);
 						do {
 							@loc = null;
 							@block = null;
@@ -1195,6 +1195,9 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 									set_blockdata_string(@loc, 'dispenser[facing='.@facing.']', false);
 									set_inventory(@loc, array(0: array(name: 'TNT', qty: 2)));
 								case 'potion':
+									if(@spawner) {
+										continue();
+									}
 									@solid = material_info(get_block(location_shift(@loc, @facing)), 'isSolid');
 									if(@solid || @facing == 'down') {
 										set_blockdata_string(@loc, 'dispenser[facing='.@facing.']', false);
