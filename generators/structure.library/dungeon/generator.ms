@@ -830,8 +830,13 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 					continue();
 				}
 
-				@yFloor = @regionMinY + (@floor * (@maxRoomHeight + 4)) + 2;
+				@roomType = @room['type'];
+				@roomWidth = @room['width'];
+				@roomLength = @room['length']
 				@roomHeight = @room['height'];
+				@roomX = @regionMinX + @room['c1'];
+				@roomY = @regionMinY + (@floor * (@maxRoomHeight + 4)) + 2;
+				@roomZ = @regionMinZ + @room['r1'];
 
 				// We need to create spawns after all blocks are set to ensure clearance.
 				@createSpawns = closure(){
@@ -839,15 +844,15 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 						@count = @spawnCount;
 						while(@count > 0) {
 							@loc = array(
-								@regionMinX + @room['c1'] + integer(srand(@random) * (@room['width'])) + 0.5,
-								@yFloor + if(@room['type'] == 'ATTIC', @room['midheight'] + 1, 0),
-								@regionMinZ + @room['r1'] + integer(srand(@random) * (@room['length'])) + 0.5,
+								@roomX + integer(srand(@random) * @roomWidth) + 0.5,
+								@roomY + if(@roomType == 'ATTIC', @room['midheight'] + 1, 0),
+								@roomZ + integer(srand(@random) * @roomLength) + 0.5,
 								@world,
-								if(@room['type'] == 'ATTIC', 0, @room['doors']), // use this for sorting, lower being more isolated a room
+								if(@roomType == 'ATTIC', 0, @room['doors']), // use this for sorting, lower being more isolated a room
 								@room['connected'] // distance to start
 							);
 							if(equals_ic(@materials['room'], get_block(@loc))) {
-								if(string_ends_with(@room['type'], 'PIT')) {
+								if(string_ends_with(@roomType, 'PIT')) {
 									set_blockdata_string(location_shift(@loc, 'down'), array_get_rand(@materials['floor']), false);
 								}
 								@count--;
@@ -859,13 +864,13 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 					}
 				}
 
-				if(@room['length'] == 1 || @room['width'] == 1) {
+				if(@roomLength == 1 || @roomWidth == 1) {
 					if(@room['doors'] == 1) {
 						// only create spawns if it's a dead end hallway
 						queue_push(@createSpawns, 'generator');
 					}
 					continue();
-				} else if(string_ends_with(@room['type'], 'PIT')) {
+				} else if(string_ends_with(@roomType, 'PIT')) {
 					// Still want to create spawns, but conditions are poor for other blocks and traps
 					queue_push(@createSpawns, 'generator');
 					continue();
@@ -873,10 +878,10 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 
 				queue_push(closure(){
 					@spawner = false;
-					if(@room['type'] == 'FIRE_FLOOR') {
-						@y = @yFloor - 1;
-						for(@x = @regionMinX + @room['c1'], @x < @regionMinX + @room['c1'] + @room['width'], @x++) {
-							for(@z = @regionMinZ + @room['r1'], @z < @regionMinZ + @room['r1'] + @room['length'], @z++) {
+					if(@roomType == 'FIRE_FLOOR') {
+						@y = @roomY - 1;
+						for(@x = @roomX, @x < @roomX + @roomWidth, @x++) {
+							for(@z = @roomZ, @z < @roomZ + @roomLength, @z++) {
 								try(set_inventory(array(@x, @y, @z, @world), array(0: array(
 									name: 'FLINT_AND_STEEL'
 								))));
@@ -886,9 +891,9 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 						// spawner
 						if(@room['connected'] > 2 && @mobTypes && srand(@random) < @floorData['spawnerChance']) {
 							@loc = array(
-								@regionMinX + @room['c1'] + 1 + integer(srand(@random) * (@room['width'] - 2)),
-								@yFloor + if(@room['type'] == 'ATTIC' && srand(@random) > 0.67, @room['midheight'] + 1, 0),
-								@regionMinZ + @room['r1'] + 1 + integer(srand(@random) * (@room['length'] - 2)),
+								@roomX + 1 + integer(srand(@random) * (@roomWidth - 2)),
+								@roomY + if(@roomType == 'ATTIC' && srand(@random) > 0.67, @room['midheight'] + 1, 0),
+								@roomZ + 1 + integer(srand(@random) * (@roomLength - 2)),
 								@world
 							);
 							if(equals_ic(@materials['room'], get_block(@loc))) {
@@ -898,14 +903,14 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 								@mob = array_get(@mobTypes, @rand, 'ZOMBIE');
 								set_spawner_type(@loc, @mob);
 							}
-						} else if(@room['width'] > 2 && @room['length'] > 2
+						} else if(@roomWidth > 2 && @roomLength > 2
 								&& @floorData['campfireChance'] && srand(@random) < @floorData['campfireChance']) {
 							@attempts = 10;
 							while(@attempts-- > 0) {
 								@loc = array(
-									@regionMinX + @room['c1'] + 1 + integer(srand(@random) * (@room['width'] - 2)),
-									@yFloor + if(@room['type'] == 'ATTIC' && srand(@random) > 0.67, @room['midheight'] + 1, 0),
-									@regionMinZ + @room['r1'] + 1 + integer(srand(@random) * (@room['length'] - 2)),
+									@roomX + 1 + integer(srand(@random) * (@roomWidth - 2)),
+									@roomY + if(@roomType == 'ATTIC' && srand(@random) > 0.67, @room['midheight'] + 1, 0),
+									@roomZ + 1 + integer(srand(@random) * (@roomLength - 2)),
 									@world
 								);
 								if(equals_ic(@materials['room'], get_block(@loc))) {
@@ -928,15 +933,15 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 
 					if(@chestCount > 0) {
 						@chests = @chestCount;
-						if(@room['type'] == 'TREASURE') {
+						if(@roomType == 'TREASURE') {
 							@chests = 1;
 						} else if(is_double(@chests)) {
-							@chests = integer(srand(@random) * min(@room['length'], @room['width']) * @chests);
+							@chests = integer(srand(@random) * min(@roomLength, @roomWidth) * @chests);
 						}
-						@bonus = if(@room['type'] == 'TREASURE', 4, 1);
-						@chestHeight = if(@room['type'] == 'ATTIC' && srand(@random) > 0.33){
+						@bonus = if(@roomType == 'TREASURE', 4, 1);
+						@chestHeight = if(@roomType == 'ATTIC' && srand(@random) > 0.33){
 							@room['midheight'] + 1
-						} else if(@room['type'] == 'TREASURE') {
+						} else if(@roomType == 'TREASURE') {
 							1
 						} else {
 							0
@@ -944,16 +949,16 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 						@attempts = 8;
 						while(@attempts-- > 0 && @chests > 0) {
 							@loc = array(
-								@regionMinX + @room['c1'] + 1 + integer(srand(@random) * (@room['width'] - 2)),
-								@yFloor + @chestHeight,
-								@regionMinZ + @room['r1']  + 1 + integer(srand(@random) * (@room['length'] - 2)),
+								@roomX + 1 + integer(srand(@random) * (@roomWidth - 2)),
+								@roomY + @chestHeight,
+								@roomZ + 1 + integer(srand(@random) * (@roomLength - 2)),
 								@world
 							);
 							if(equals_ic(@materials['room'], get_block(@loc))) {
 								@inv = _get_loot(@floor, @random, @bonus);
 								if(@inv) {
 									@chests--;
-									if(@room['type'] == 'TREASURE') {
+									if(@roomType == 'TREASURE') {
 										@double = false;
 										if(equals_ic(@materials['room'], get_block(location_shift(@loc, 'west')))) {
 											@double = true;
@@ -981,16 +986,15 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 						}
 					}
 
-					if(@room['type'] == 'TREASURE') {
+					if(@roomType == 'TREASURE') {
 						die();
 					}
 
-					@utilities = integer(srand(@random) * 2);
-					while(@utilities-- > 0) {
+					if(integer(srand(@random) * 2) == 1) {
 						@loc = array(
-							@regionMinX + @room['c1'] + 1 + integer(srand(@random) * (@room['width'] - 2)),
-							@yFloor + if(@room['type'] == 'ATTIC' && srand(@random) > 0.5, @room['midheight'] + 1, 0),
-							@regionMinZ + @room['r1'] + 1 + integer(srand(@random) * (@room['length'] - 2)),
+							@roomX + 1 + integer(srand(@random) * (@roomWidth - 2)),
+							@roomY + if(@roomType == 'ATTIC' && srand(@random) > 0.5, @room['midheight'] + 1, 0),
+							@roomZ + 1 + integer(srand(@random) * (@roomLength - 2)),
 							@world
 						);
 						if(equals_ic(@materials['room'], get_block(@loc))) {
@@ -998,12 +1002,12 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 						}
 					}
 
-					@decorations = integer(srand(@random) * max(@room['length'], @room['width']));
+					@decorations = integer(srand(@random) * max(@roomLength, @roomWidth));
 					while(@decorations-- > 0) {
 						@loc = array(
-							@regionMinX + @room['c1'] + 1 + integer(srand(@random) * (@room['width'] - 2)),
-							@yFloor + if(@room['type'] == 'ATTIC' && srand(@random) > 0.5, @room['midheight'] + 1, 0),
-							@regionMinZ + @room['r1'] + 1 + integer(srand(@random) * (@room['length'] - 2)),
+							@roomX + 1 + integer(srand(@random) * (@roomWidth - 2)),
+							@roomY + if(@roomType == 'ATTIC' && srand(@random) > 0.5, @room['midheight'] + 1, 0),
+							@roomZ + 1 + integer(srand(@random) * (@roomLength - 2)),
 							@world
 						);
 						if(equals_ic(@materials['room'], get_block(@loc))) {
@@ -1011,8 +1015,8 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 						}
 					}
 
-					if(@room['type'] == 'ATTIC') {
-						@vines = integer(min(@room['width'], @room['length']) / 2);
+					if(@roomType == 'ATTIC') {
+						@vines = integer(min(@roomWidth, @roomLength) / 2);
 						do {
 							@loc = null;
 							@block = null;
@@ -1031,9 +1035,9 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 							@attempts = 5;
 							do {
 								@loc = array(
-									@regionMinX + @room['c1'] + integer(srand(@random) * @room['width']),
-									@yFloor + @length,
-									@regionMinZ + @room['r1'] + integer(srand(@random) * @room['length']),
+									@roomX + integer(srand(@random) * @roomWidth),
+									@roomY + @length,
+									@roomZ + integer(srand(@random) * @roomLength),
 									@world
 								);
 							} while(!equals_ic(@materials['room'], get_block(@loc)) && --@attempts > 0);
@@ -1050,9 +1054,9 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 						@tries = 10;
 						while(@tries-- > 0) {
 							@loc = array(
-								@regionMinX + @room['c1'] + integer(srand(@random) * @room['width']) + 0.5,
-								@yFloor,
-								@regionMinZ + @room['r1'] + integer(srand(@random) * @room['length']) + 0.5,
+								@roomX + integer(srand(@random) * @roomWidth) + 0.5,
+								@roomY,
+								@roomZ + integer(srand(@random) * @roomLength) + 0.5,
 								@world
 							);
 							if(equals_ic(@materials['room'], get_block(@loc))) {
@@ -1065,8 +1069,8 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 						}
 					}
 
-					if(@room['connected'] > 2 && @floorData['trap'] && @room['type'] != 'FIRE_FLOOR') {
-						@traps = integer(srand(@random) * (@room['length'] + @room['width']));
+					if(@room['connected'] > 2 && @floorData['trap'] && @roomType != 'FIRE_FLOOR') {
+						@traps = integer(srand(@random) * (@roomLength + @roomWidth));
 						while(@traps-- > 0) {
 							@type = split('_', @materials['trap'][integer(srand(@random) * array_size(@materials['trap']))]);
 							@trigger = @type[0];
@@ -1076,16 +1080,16 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 							@loc = null;
 							if(@trigger == 'chest' || @effect == 'cactus') {
 								@loc = array(
-									@regionMinX + @room['c1'] + 1 + integer(srand(@random) * (@room['width'] - 2)),
-									@yFloor,
-									@regionMinZ + @room['r1'] + 1 + integer(srand(@random) * (@room['length'] - 2)),
+									@roomX + 1 + integer(srand(@random) * (@roomWidth - 2)),
+									@roomY,
+									@roomZ + 1 + integer(srand(@random) * (@roomLength - 2)),
 									@world
 								);
 							} else {
 								@loc = array(
-									@regionMinX + @room['c1'] + integer(srand(@random) * @room['width']),
-									@yFloor,
-									@regionMinZ + @room['r1'] + integer(srand(@random) * @room['length']),
+									@roomX + integer(srand(@random) * @roomWidth),
+									@roomY,
+									@roomZ + integer(srand(@random) * @roomLength),
 									@world
 								);
 							}
@@ -1107,14 +1111,14 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 									@loc = location_shift(@loc, 'down');
 									@traps = 0; // so we don't block the door
 								case 'vines':
-									if(@room['type'] == 'ATTIC' || @room['type'] == 'BALCONY') {
+									if(@roomType == 'ATTIC' || @roomType == 'BALCONY') {
 										continue();
 									}
 									if(!@spawner) {
 										set_block(@loc, 'TRIPWIRE', false);
 										@loc = location_shift(@loc, 'up');
 									}
-									while(@loc[1] < @yFloor + @roomHeight && !material_info(get_block(@loc), 'isOccluding')) {
+									while(@loc[1] < @roomY + @roomHeight && !material_info(get_block(@loc), 'isOccluding')) {
 										set_block(@loc, 'TWISTING_VINES');
 										@loc = location_shift(@loc, 'up');
 									}
@@ -1127,10 +1131,10 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 									}
 									@positive = null;
 									@negative = null;
-									if(@room['width'] > 1 && @room['width'] < 6) {
+									if(@roomWidth > 1 && @roomWidth < 6) {
 										@positive = 'east';
 										@negative = 'west';
-									} else if(@room['length'] > 1 && @room['length'] < 6) {
+									} else if(@roomLength > 1 && @roomLength < 6) {
 										@positive = 'south';
 										@negative = 'north';
 									}
@@ -1227,9 +1231,9 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 				if(is_array(@materials['floor']) && array_contains(@materials['floor'], 'grass_block') || @materials['floor'] === 'grass_block') {
 					queue_push(closure(){
 						@loc = array(
-							@regionMinX + @room['c1'] + 1 + integer(srand(@random) * (@room['width'] - 2)),
-							@yFloor - 1,
-							@regionMinZ + @room['r1']  + 1 + integer(srand(@random) * (@room['length'] - 2)),
+							@roomX + 1 + integer(srand(@random) * (@roomWidth - 2)),
+							@roomY - 1,
+							@roomZ  + 1 + integer(srand(@random) * (@roomLength - 2)),
 							@world
 						);
 						bone_meal_block(@loc);
