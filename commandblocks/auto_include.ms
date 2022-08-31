@@ -31,7 +31,7 @@ proc _relative_coords(@originloc, @x, @y, @z) {
 	Returns the nearest player or null if not within range.
 */
 proc _get_nearby_player(@loc, @maxRange) {
-	@players = all_players(@loc[3]);
+	@players = all_players(@loc['world']);
 	@player = null;
 	foreach(@p in @players) {
 		if(pmode(@p) != 'SPECTATOR') {
@@ -51,11 +51,11 @@ proc _get_nearby_player(@loc, @maxRange) {
 proc _get_target(@target)  {
 	if(@target[0] == '@') {
 		if(length(@target) < 2) {
-			return(false);
+			return(null);
 		}
 		@loc = get_command_block();
 		if(!@loc) {
-			return(false);
+			@loc = ploc();
 		}
 
 		@maxRange = 128;
@@ -65,6 +65,8 @@ proc _get_target(@target)  {
 				@value = split('=', @filter);
 				if(@value[0] == 'r') {
 					@maxRange = double(@value[1]);
+				} else if(@value[0] == 'distance') {
+					@maxRange = double(split('..', @value[1])[1]);
 				}
 			}
 		}
@@ -75,7 +77,7 @@ proc _get_target(@target)  {
 			if(@player) {
 				return(array(@player));
 			}
-			return(false);
+			return(null);
 		} else if(@target[1] == 'a') {
 			// multi player selector
 			return(players_in_radius(@loc, @maxRange));
@@ -83,7 +85,7 @@ proc _get_target(@target)  {
 	} else if(ponline(@target) && !get_command_block()) {
 		return(array(@target));
 	}
-	return(false);
+	return(null);
 }
 
 /*

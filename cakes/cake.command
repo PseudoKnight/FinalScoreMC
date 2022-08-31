@@ -4,9 +4,13 @@ register_command('cake', array(
 	tabcompleter: closure(@alias, @sender, @args, @info) {
 		if(array_size(@args) == 1) {
 			if(has_permission('group.engineer')) {
-				return(_strings_start_with_ic(array('list', 'info', 'find', 'set', 'move', 'delete', 'rename', 'tp', 'resetplayer', 'stats'), @args[-1]));
+				return(_strings_start_with_ic(array('achieved', 'list', 'info', 'find', 'set', 'move', 'delete', 'rename', 'tp', 'resetplayer', 'stats'), @args[-1]));
 			} else {
-				return(_strings_start_with_ic(array('list', 'info', 'stats'), @args[-1]));
+				return(_strings_start_with_ic(array('achieved', 'list', 'info', 'stats'), @args[-1]));
+			}
+		} else if(array_size(@args) == 3) {
+			if(@args[0] == 'achieved') {
+				return(_strings_start_with_ic(array_merge(array('@a', '@p'), all_players()), @args[-1]));
 			}
 		} else if(array_size(@args) == 4) {
 			return(_strings_start_with_ic(array('challenge', 'secret', 'coop'), @args[-1]));
@@ -20,6 +24,31 @@ register_command('cake', array(
 			return(false);
 		}
 		switch(@args[0]) {
+			case 'achieved': 
+				@id = @args[1];
+				@players = _get_target(@args[2]);
+				if(!@players) {
+					die('No player found. Player must be online.');
+				}
+				@cakes = get_value('cakeinfo');
+				if(!array_index_exists(@cakes, @id)) {
+					die('That cake does not exist.');
+				}
+				@cake = @cakes[@id];
+				@achieved = 0; 
+				foreach(@p in @players) {
+					if(array_index_exists(@cake['players'], puuid(@p, true))) {
+						@achieved++;
+					}
+				}
+				if(get_command_block()) {
+					set_command_block_success(get_command_block(), @achieved - 1);
+				} else if(array_size(@players) == 1) {
+					msg(@players[0].' has '.if(!@achieved, 'not').' achieved that cake.');
+				} else {
+					msg('Found '.@achieved.' players that have achieved that cake.');
+				}
+
 			case 'list':
 				@cakes = get_value('cakeinfo');
 				@achieved = '';
@@ -417,6 +446,7 @@ register_command('cake', array(
 
 			default:
 				msg(color('green').'[CAKE] Commands to create, change and remove cake prizes.');
+				msg('/cake achieved <id> <player/selector> '.color('gray').'Gets if the online player has achieved a cake.');
 				msg('/cake list '.color('gray').'List the names of all cake prizes.');
 				msg('/cake info [id] '.color('gray').'Shows cake info and the players who have it.');
 				msg('/cake stats <type> '.color('gray').'Shows the completion frequency for all cakes of this type.');
