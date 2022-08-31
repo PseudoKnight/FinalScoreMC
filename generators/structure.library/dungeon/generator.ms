@@ -612,6 +612,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 							// Walls
 							@ceilingY = @groundY + @roomHeight + 2;
 							@y = 0;
+							@columnRandom = srand(@random);
 							for(@y = @groundY + 2, @y < @ceilingY, @y++) {
 								@loc[1] = @y;
 								switch(@column) {
@@ -658,10 +659,10 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 											@wallMaterial = @materials['wall'];
 											// tree log walls need special handling to look good
 											if(is_array(@wallMaterial) && string_ends_with(@wallMaterial[0], 'log')) {
-												if((@x + @z) % 3 == 0) {
-													@wallMaterial = @wallMaterial[(@x + @z) % array_size(@wallMaterial)];
-												} else {
+												if(@columnRandom < 0.6) {
 													@wallMaterial = @wallMaterial[0];
+												} else {
+													@wallMaterial = @wallMaterial[1];
 												}
 											}
 											_add_to_chunk(@chunk, @loc, @wallMaterial);
@@ -677,9 +678,8 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 												}
 											case 'PILLARS':
 												if(!_adjacent_equals(@layoutMap, @c, @r, 'door') 
-												&& !bit_and(@noise, integer(2 ** (abs(@x) + abs(@z))))
-												&& integer(@x ** abs(@z)) % 5 == 1
-												&& integer(@z ** abs(@x)) % 5 == 1) {
+												&& @columnRandom < 0.2
+												&& (@c + (@r + 1) * @width) % 3 == 0) {
 													_add_to_chunk(@chunk, @loc, @materials['column']);
 													continue();
 												}

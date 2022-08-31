@@ -12,15 +12,15 @@ floors:
         # village
         spawner: [zombie_villager]
         trap: [tripwire_arrow]
-        wall: [oak_planks,oak_planks,oak_planks,oak_planks,oak_planks,oak_planks,oak_planks,oak_planks,oak_planks,oak_planks,oak_planks,oak_planks]
+        wall: [cobblestone, cobblestone, cobblestone, cobblestone, cobblestone, cobblestone, mossy_cobblestone]
         column: oak_log
         ceiling: oak_planks
-        floor: [cobblestone, stone]
-        utility: [damaged_anvil, 'furnace[lit=true]']
-        decor: [oak_stairs, bookshelf, cake]
-        edge: bookshelf
+        floor: [cobblestone, cobblestone, cobblestone, mossy_cobblestone]
+        utility: [damaged_anvil, 'furnace[lit=true]', crafting_table, cake]
+        decor: bookshelf
+        edge: oak_stairs
         window: glass
-        tables: 0.1
+        tables: 0.5
         table: red_carpet
         vines: ladder
         boss:
@@ -65,6 +65,7 @@ floors:
         utility: [damaged_anvil]
         decor: [azalea, cobweb, wither_rose, sweet_berry_bush]
         edge: acacia_leaves
+        pillars: 0.3
         boss:
             type: CAVE_SPIDER
             rider: GUARDIAN
@@ -104,10 +105,11 @@ floors:
         wall: [snow_block, packed_ice]
         column: packed_ice
         ceiling: [snow_block, packed_ice]
-        floor: [snow_block, snow_block, snow_block, packed_ice, packed_ice, powder_snow]
+        floor: [snow_block, snow_block, snow_block, packed_ice, packed_ice]
         utility: [enchanting_table, damaged_anvil]
         decor: blue_ice
         edge: snow_block
+        pillars: 0.3
         boss:
             type: POLAR_BEAR
             rider:
