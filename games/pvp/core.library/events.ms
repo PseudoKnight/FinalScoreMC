@@ -502,7 +502,7 @@ proc _bind_events(@pvp) {
 			foreach(@entity: @intensity in @event['entities']) {
 				if(entity_type(@entity) == 'PLAYER' && array_index_exists(@pvp['players'], player(@entity))) {
 					@effectiveDurationMS = ceil(@seconds * @intensity * 1000);
-					_stats_attribute_until(player(@thrower), player(@entity), time() + @effectiveDuration, 'POISON', @pvp);
+					_stats_attribute_until(player(@thrower), player(@entity), time() + @effectiveDurationMS, 'POISON', @pvp);
 				}
 			}
 		}
