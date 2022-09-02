@@ -17,7 +17,7 @@ proc _cc_generate(@world = 'custom') {
 			for(@x = min(@rg[0][0], @rg[1][0]), @x <= max(@rg[0][0], @rg[1][0]), @x++) {
 				for(@z = min(@rg[0][2], @rg[1][2]), @z <= max(@rg[0][2], @rg[1][2]), @z++) {
 					if(!rand(@density)) {
-						set_block(array(@x, @y, @z, @world), array_get_rand(reflect_pull('enum', 'DyeColor')).'_TERRACOTTA', false);
+						set_block(array(@x, @y, @z, @world), array_get_rand(reflect_pull('enum', 'DyeColor')).'_CONCRETE', false);
 					} else {
 						set_block(array(@x, @y, @z, @world), 'AIR', false);
 					}
@@ -126,7 +126,7 @@ proc _cc_start(@world = 'custom') {
 		bind('player_interact', array('id': 'cube-interact'), null, @e) {
 			@cc = import('cubeclimber');
 			if(array_index_exists(@cc['players'], player())) {
-				if(@e['block'] === @cc['players'][player()].'_TERRACOTTA'
+				if(@e['block'] === @cc['players'][player()].'_CONCRETE'
 				&& array_contains(sk_regions_at(@e['location']), 'cubeclimber_blocks')) {
 
 					set_block(@e['location'], 'AIR', false);
@@ -136,8 +136,8 @@ proc _cc_start(@world = 'custom') {
 					for(@y = @e['location'][1] - 1, @y <= @e['location'][1] + 1, @y++) {
 						for(@x = @e['location'][0] - 1, @x <= @e['location'][0] + 1, @x++) {
 							for(@z = @e['location'][2] - 1, @z <= @e['location'][2] + 1, @z++) {
-								if(string_ends_with(get_block(array(@x, @y, @z, @e['location'][3])), '_TERRACOTTA')) {
-									set_block(array(@x, @y, @z, @e['location'][3]), 'TERRACOTTA', false);
+								if(string_ends_with(get_block(array(@x, @y, @z, @e['location'][3])), '_CONCRETE')) {
+									set_block(array(@x, @y, @z, @e['location'][3]), 'CONCRETE', false);
 								}
 							}
 						}
@@ -192,8 +192,8 @@ proc _cc_start(@world = 'custom') {
 
 					if(array_contains(@pregions, 'cubeclimber_blocks')) {
 
-						if(string_ends_with(get_block(@ploc), '_TERRACOTTA')) {
-							set_block(@ploc, @cc['players'][@p].'_TERRACOTTA', false);
+						if(string_ends_with(get_block(@ploc), '_CONCRETE')) {
+							set_block(@ploc, @cc['players'][@p].'_CONCRETE', false);
 						}
 
 						@oldheight = get_pscore('height', @p, 'cc');
