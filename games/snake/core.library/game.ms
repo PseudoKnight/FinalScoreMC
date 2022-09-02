@@ -287,9 +287,6 @@ proc _snake_end(@winner, @game) {
 		}
 		_snake_cleanup(@game);
 	} else if(@game['mode'] == 'versus' || @game['mode'] == 'elimination') {
-		if(array_size(@game['snakes'][@winner]['blocks']) == 2) {
-			console(@game);
-		}
 		@endgame = false;
 		if(@winner && @winner != 'No one') {
 			@title = @game['snakes'][@winner]['color'].@winner.' wins ';
