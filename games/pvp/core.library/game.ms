@@ -637,7 +637,7 @@ proc _pvp_start_match(@id) {
 		if(array_index_exists(@pvp, 'powerups')) {
 			foreach(@index: @entity in @pvp['powerups']) {
 				if(entity_exists(@entity)) {
-					spawn_particle(entity_loc(@entity), array(
+					spawn_particle(location_shift(entity_loc(@entity), 'up', 0.4), array(
 						particle: 'FIREWORKS_SPARK',
 						count: 1,
 						xoffset: 0.3, 
