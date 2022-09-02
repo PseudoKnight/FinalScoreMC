@@ -77,6 +77,10 @@ proc _snake_add(@player, @game) {
 		set_ploc(@player, location_shift(@snake['loc'], @snake['top'], 20));
 		@yaw = get_yaw(ploc(@player), @snake['loc']);
 		@pitch = get_pitch(ploc(@player), @snake['loc']);
+		if(@yaw == NaN) {
+			// probably directly above snake location
+			@yaw = 0;
+		}
 		pfacing(@player, @yaw, @pitch);
 
 		set_pscoreboard(@player, 'snake');
