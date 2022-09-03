@@ -13,7 +13,7 @@ floors:
         ceiling: air
         floor: brown_terracotta
         utility: [yellow_concrete, lime_concrete]
-        decor: [yellow_concrete, lime_concrete]
+        randomblocks: [yellow_concrete, lime_concrete]
         edge: air
 cloneOffset: 12
 cloneDir: up
@@ -25,6 +25,5 @@ cloneFloors:
         ceiling: air
         floor: barrier
         utility: air
-        decor: air
         edge: air
         divider: air

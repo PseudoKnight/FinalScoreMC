@@ -17,7 +17,7 @@ floors:
         ceiling: stone_bricks
         floor: [stone_bricks, mossy_stone_bricks, mossy_stone_bricks, mossy_stone_bricks, mossy_stone_bricks, mossy_stone_bricks, cracked_stone_bricks]
         utility: ['skeleton_skull[rotation=1]','skeleton_skull[rotation=5]','skeleton_skull[rotation=10]','skeleton_skull[rotation=15]']
-        decor: [gravel, gravel, lantern]
+        randomblocks: [gravel, gravel, lantern]
         edge: stone_brick_stairs
         window: air
         divider: crying_obsidian

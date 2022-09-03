@@ -7,5 +7,5 @@ floors:
         ceiling: [stone, stone, stone, stone, stone, stone, stone, stone, andesite, andesite, andesite, iron_ore]
         floor: [stone, stone, stone, stone, stone, stone, stone, stone, andesite, andesite, andesite, iron_ore]
         utility: gold_ore
-        decor: stone
+        randomblocks: [stone]
         edge: stone

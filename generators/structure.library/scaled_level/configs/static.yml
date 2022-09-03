@@ -12,5 +12,5 @@ floors:
         ceiling: polished_blackstone
         floor: [blackstone]
         utility: chiseled_polished_blackstone
-        decor: soul_torch
+        randomblocks: [soul_torch]
         edge: polished_blackstone_stairs

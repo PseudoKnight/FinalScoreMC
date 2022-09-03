@@ -17,7 +17,7 @@ floors:
         ceiling: oak_planks
         floor: [cobblestone, cobblestone, cobblestone, mossy_cobblestone]
         utility: [damaged_anvil, 'furnace[lit=true]', crafting_table, cake]
-        decor: bookshelf
+        randomblocks: [bookshelf]
         edge: oak_stairs
         window: glass
         tables: 0.5
@@ -49,7 +49,7 @@ floors:
         ceiling: [stone, stone, stone, stone, stone, stone, stone, stone, andesite, andesite, andesite, iron_ore]
         floor: [stone, stone, stone, stone, stone, stone, stone, stone, andesite, andesite, andesite, iron_ore]
         utility: gold_ore
-        decor: stone
+        randomblocks: [stone, 'stone_button[face=floor,facing=east]', 'stone_button[face=floor,facing=north]']
         edge: stone
         vines: twisting_vines_plant
         boss: CREEPER
@@ -63,7 +63,7 @@ floors:
         ceiling: [birch_leaves, dark_oak_leaves]
         floor: [grass_block, grass_block, podzol]
         utility: [damaged_anvil]
-        decor: [azalea, cobweb, wither_rose, sweet_berry_bush]
+        randomblocks: [azalea, cobweb, wither_rose, sweet_berry_bush]
         edge: acacia_leaves
         pillars: 0.3
         boss:
@@ -80,7 +80,7 @@ floors:
         ceiling: sandstone
         floor: terracotta
         utility: [damaged_anvil]
-        decor: dead_bush
+        randomblocks: [dead_bush]
         edge: sandstone_stairs
         boss:
             type: HUSK
@@ -107,7 +107,7 @@ floors:
         ceiling: [snow_block, packed_ice]
         floor: [snow_block, snow_block, snow_block, packed_ice, packed_ice]
         utility: [enchanting_table, damaged_anvil]
-        decor: blue_ice
+        randomblocks: [blue_ice]
         edge: snow_block
         pillars: 0.3
         boss:
@@ -137,7 +137,7 @@ floors:
         ceiling: nether_bricks
         floor: [nether_bricks, nether_bricks, nether_bricks, nether_bricks, nether_bricks, nether_bricks, magma_block, soul_sand]
         utility: [furnace, damaged_anvil]
-        decor: cauldron
+        randomblocks: [cauldron]
         edge: nether_brick_stairs
         window: 'nether_brick_fence[north=true,south=true,east=true,west=true]'
         boss: WITHER_SKELETON
@@ -153,7 +153,7 @@ floors:
         ceiling: prismarine
         floor: dark_prismarine
         utility: sea_lantern
-        decor: soul_sand
+        randomblocks: [soul_sand]
         edge: dark_prismarine_stairs
         boss:
             type: DROWNED
@@ -178,7 +178,7 @@ floors:
         ceiling: stone_bricks
         floor: [mossy_stone_bricks, mossy_stone_bricks, mossy_stone_bricks, mossy_stone_bricks, mossy_stone_bricks, mossy_stone_bricks, cracked_stone_bricks, cracked_stone_bricks, water]
         utility: [enchanting_table, brewing_stand, cauldron]
-        decor: rail
+        randomblocks: [rail]
         edge: stone_brick_stairs
         window: cobblestone_wall
         boss:
@@ -193,7 +193,7 @@ floors:
         ceiling: purpur_block
         floor: end_stone
         utility: enchanting_table
-        decor: chorus_plant
+        randomblocks: [chorus_plant]
         edge: purpur_stairs
         attic: 0.0
         boss: ENDER_CRYSTAL
@@ -206,7 +206,7 @@ floors:
         ceiling: birch_planks
         floor: birch_planks
         utility: [enchanting_table, damaged_anvil, bell]
-        decor: bookshelf
+        randomblocks: [bookshelf]
         edge: birch_stairs
         window: light_gray_stained_glass
         boss: EVOKER

@@ -17,6 +17,6 @@ floors:
         ceiling: stone_bricks
         floor: [mossy_stone_bricks, mossy_stone_bricks, mossy_stone_bricks, stone_bricks, cracked_stone_bricks, infested_cracked_stone_bricks]
         utility: gravel
-        decor: gravel
+        randomblocks: [gravel]
         edge: stone_bricks
         door: oak_door

@@ -121,7 +121,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 
 			// ensure certain values are arrays
 			// these default to an array with air
-			foreach(@key in array('utility', 'decor', 'wall', 'floor')) {
+			foreach(@key in array('utility', 'wall', 'floor')) {
 				if(array_index_exists(@floorData, @key)) {
 					if(is_string(@floorData[@key])) {
 						@floorData[@key] = array(@floorData[@key]);
@@ -1084,16 +1084,18 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 						}
 					}
 
-					@decorations = integer(srand(@random) * max(@roomLength, @roomWidth));
-					while(@decorations-- > 0) {
-						@loc = array(
-							@roomX + 1 + integer(srand(@random) * (@roomWidth - 1) * @scale),
-							@roomY + if(@roomType == 'ATTIC' && srand(@random) > 0.5, @room['midheight'] + 1, 0),
-							@roomZ + 1 + integer(srand(@random) * (@roomLength - 1) * @scale),
-							@world
-						);
-						if(equals_ic(@materials['room'], get_block(@loc))) {
-							set_blockdata_string(@loc, @materials['decor'][integer(srand(@random) * array_size(@materials['decor']))], false);
+					if(array_index_exists(@materials, 'randomblocks')) {
+						@decorations = integer(srand(@random) * max(@roomLength, @roomWidth));
+						while(@decorations-- > 0) {
+							@loc = array(
+								@roomX + 1 + integer(srand(@random) * (@roomWidth - 1) * @scale),
+								@roomY + if(@roomType == 'ATTIC' && srand(@random) > 0.5, @room['midheight'] + 1, 0),
+								@roomZ + 1 + integer(srand(@random) * (@roomLength - 1) * @scale),
+								@world
+							);
+							if(equals_ic(@materials['room'], get_block(@loc))) {
+								set_blockdata_string(@loc, @materials['randomblocks'][integer(srand(@random) * array_size(@materials['randomblocks']))], false);
+							}
 						}
 					}
 
