@@ -30,6 +30,10 @@ register_command('scb', array(
 					unbind(@bind);
 				}
 			}
+			@binds[] = bind('player_interact', null, array(player: player()), @event) {
+				cancel();
+				msg(color('yellow').'Type the desired command in chat:');
+			}
 			@binds[] = bind('player_command', null, array(player: player()), @event, @binds, @block, @allowedCommands) {
 				cancel();
 				psetop(false);
