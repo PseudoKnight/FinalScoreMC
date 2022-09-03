@@ -219,7 +219,7 @@ proc _tellraw(@recipients, @components) {
 	@raw = ' [""';
 	foreach(@c in @components) {
 		if(!is_array(@c)) {
-			@parts = reg_match('(.*?)(?:https?://|www\\.)([\\da-z.-]+\\.[a-z.]{2,6})([/\\w\\#\\+~:.?=&-]*)(.*)', @c);
+			@parts = reg_match('(.*?)(?:https?://|www\\.)([\\da-z.-]+\\.[a-z.]{2,6})([^\\s]*)(.*)', @c);
 			if(@parts) {
 				@raw .= _colorize(@parts[1])
 						.',{"color":"aqua","text":"\u29C9'.@parts[2].'","clickEvent":{"action":"open_url","value":"http://'
@@ -230,6 +230,9 @@ proc _tellraw(@recipients, @components) {
 			}
 		} else {
 			switch(@c[0]) {
+				case "open_url":
+					@raw .= '{"color":"aqua","text":"\u29C9'.@c[1].'","clickEvent":{"action":"open_url","value":"'.@c[2]
+							.'"},"hoverEvent":{"action":"show_text","value":"'.@c[3].'"}}';
 				case 'hover':
 					@raw .= ',{"text":"'.colorize(@c[1]).'","hoverEvent":{"action":"show_text","value":"'.colorize(@c[2]).'"}}';
 				case 'colorize':
