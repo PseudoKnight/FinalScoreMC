@@ -1,10 +1,12 @@
-proc _perm_player(@player, @clear = true) {
+proc _perm_player(@player, @force = true) {
 	@pdata = _pdata(@player);
 	@group = 'default';
 	if(array_index_exists(@pdata, 'group')) {
 		@group = @pdata['group'];
 	}
-	_add_group_perms(@player, @group, false);
+	if(@force || !has_permission(@player, 'group.'.@group)) {
+		_add_group_perms(@player, @group, false);
+	}
 	if(pisop(@player) && @group != 'admin') {
 		psetop(@player, false);
 	}

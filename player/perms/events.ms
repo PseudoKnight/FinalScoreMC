@@ -1,8 +1,11 @@
+include('includes.library/procedures.ms');
 @perms = yml_decode(read('config.yml'));
 export('perms', @perms);
+foreach(@player in all_players()) {
+	_perm_player(@player, false);
+}
 
 bind('player_join', null, null, @event) {
-	include('includes.library/procedures.ms');
 	_perm_player(@event['player']);
 }
 
@@ -11,7 +14,6 @@ bind('player_quit', array('priority': 'LOWEST'), null, @event) {
 }
 
 bind('world_changed', null, null, @event) {
-	include('includes.library/procedures.ms');
 	_perm_player(@event['player']);
 }
 
