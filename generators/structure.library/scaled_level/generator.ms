@@ -1,4 +1,4 @@
-proc _generate(@dungeonType, @region, @world, @seed, @callback) {
+proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) {
 	// verify location is valid
 	if(_is_survival_world(@world)) {
 		die('Cannot generate a dungeon in a survival world!');

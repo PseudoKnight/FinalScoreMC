@@ -1,4 +1,4 @@
-proc _generate(@dungeonType, @region, @world, @seed, @callback) {
+proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) {
 	// verify location is valid
 	if(_is_survival_world(@world)) {
 		die('Cannot generate a dungeon in a survival world!');
@@ -257,6 +257,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 			// Place rooms
 			@maxRoomCount = min(@width, @length);
 			@unconnected = array(0);
+			@attempts = 0;
 			for(@r = 0, @r < @length - 2, @r++) {
 				for(@c = 0, @c < @width - 2, @c++) {
 					if(x_is_interrupted()) {
@@ -264,6 +265,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 						die('Interrupted planning rooms: '.array_size(@rooms).' '.@rooms[0..5].' ... ');
 					}
 					if(@roomMap[@c][@r] == -1 && @roomMap[@c + 1][@r + 1] == -1) {
+						@attempts++;
 						@roomWidth = integer(srand(@random) * (@maxRoomSize - @minRoomSize + 1)) + @minRoomSize;
 						@roomLength = integer(srand(@random) * (@maxRoomSize - @minRoomSize + 1)) + @minRoomSize;
 
@@ -363,11 +365,16 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 				}
 			}
 
+			if(@debug) {
+				msg(@attempts.' were made to create '.array_size(@rooms).' rooms.');
+			}
+
 			// Connect rooms
 			@current = 0;
 			@previous = 0;
 			@try = array();
-			@limit = array_size(@rooms) * @maxRoomSize * 4;
+			@maxAttempts = array_size(@rooms) * @maxRoomSize * 4;
+			@attempts = 0;
 			@connected = associative_array();
 			@maxRoomDistance = 0;
 			@farthestRoom = null;
@@ -377,9 +384,9 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 					remove_bar('gen'.@region);
 					die('Interrupted connecting rooms: '.array_size(@unconnected).'/'.array_size(@rooms).' ... ');
 				}
-				@limit--;
-				if(@limit < 0){
-					msg('Hit room connector limit ('.@limit.')! Rooms left: '.array_size(@unconnected).'/'.array_size(@rooms).'!');
+				@attempts--;
+				if(@attempts >= @maxAttempts){
+					msg('Hit room connector limit ('.@attempts.')! Rooms left: '.array_size(@unconnected).'/'.array_size(@rooms).'!');
 					break();
 				}
 
@@ -477,6 +484,10 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 						@current = @previous;
 					}
 				}
+			}
+
+			if(@debug) {
+				msg(@attempts.' / '.@maxAttempts.' were made to connect '.array_size(@rooms).' rooms.');
 			}
 
 			// Mark special rooms
@@ -599,7 +610,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback) {
 							} else {
 								// different rooms, different floors
 								@floorMat = @materials['floor'];
-								if(is_array(@floorMat) && @testFloor > -1) {
+								if(is_array(@floorMat) && @debug) {
 									if(@room != null) {
 										@floorMat = @floorMat[@room['connected'] % array_size(@materials['floor'])];
 									} else {
