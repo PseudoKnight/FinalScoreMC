@@ -47,10 +47,19 @@ proc _class_load(@player, @pvp) {
 			});
 		}
 	}
+
+	bind('entity_damage', array(id: @player.'blazedamage', priority: 'HIGH'), array(id: puuid(@player)), @event) {
+		if(@event['cause'] == 'FIRE' || @event['cause'] == 'FIRE_TICK') {
+			cancel();
+			set_entity_onfire(@event['id'], 0);
+			consume();
+		}
+	}
 }
 
 proc _class_unload(@player, @pvp) {
 	unbind(@player.'blaze');
 	unbind(@player.'blazetrail');
+	unbind(@player.'blazedamage');
 	clear_task(@pvp['players'][@player]['task']);
 }
