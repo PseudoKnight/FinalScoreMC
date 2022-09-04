@@ -25,7 +25,7 @@ register_command('cake', array(
 		}
 		switch(@args[0]) {
 			case 'achieved': 
-				@id = @args[1];
+				@id = to_lower(@args[1]);
 				@players = _get_target(@args[2]);
 				if(!@players) {
 					die('No player found. Player must be online.');
@@ -141,7 +141,7 @@ register_command('cake', array(
 						die('No cake prize found.');
 					}
 				} else {
-					@id = @args[1];
+					@id = to_lower(@args[1]);
 				}
 				@cake = get_value('cakeinfo')[@id];
 				@names = '';
@@ -164,7 +164,7 @@ register_command('cake', array(
 					die('No cake in range.');
 				}
 				@cakes = get_value('cakes');
-				@id = @args[1];
+				@id = to_lower(@args[1]);
 
 				if(!array_index_exists(@cakes, @id) && get_block(@loc) !== 'CAKE') {
 					die(color('gold').'That doesn\'t appear to be a cake. Is it obstructed by a sign or other partial block?');
@@ -224,7 +224,7 @@ register_command('cake', array(
 				if(array_size(@args) < 2) {
 					die(color('gold').'This needs a cake id.');
 				}
-				@id = @args[1];
+				@id = to_lower(@args[1]);
 				@loc = ray_trace(8)['block'];
 				if(!@loc) {
 					die('No cake in range.');
@@ -265,7 +265,7 @@ register_command('cake', array(
 						die(color('gold').'No cake prize found.');
 					}
 				} else {
-					@id = @args[1];
+					@id = to_lower(@args[1]);
 				}
 				if(!array_index_exists(@cakes, @id)) {
 					die(color('gold').'No cake by that ID found.');
@@ -300,10 +300,10 @@ register_command('cake', array(
 					if(!@old) {
 						die(color('gold').'No cake prize found.');
 					}
-					@new = @args[1];
+					@new = to_lower(@args[1]);
 				} else if(array_size(@args) == 3) {
-					@old = @args[1];
-					@new = @args[2];
+					@old = to_lower(@args[1]);
+					@new = to_lower(@args[2]);
 					if(!array_index_exists(@cakes, @old)) {
 						die(color('gold').'No cake by that ID found.');
 					}
@@ -326,7 +326,7 @@ register_command('cake', array(
 				if(array_size(@args) < 2) {
 					die(color('gold').'This needs an id.');
 				}
-				@id = @args[1];
+				@id = to_lower(@args[1]);
 				@cakes = get_value('cakes');
 				if(!array_index_exists(@cakes, @id)) {
 					die('That cake ID doesn\'t exist');
@@ -362,11 +362,11 @@ register_command('cake', array(
 				} else if(array_size(@args) == 3) {
 					@id = '';
 					@player = '';
-					if(array_index_exists(@cakeinfo, @args[1])) {
-						@id = @args[1];
+					if(array_index_exists(@cakeinfo, to_lower(@args[1]))) {
+						@id = to_lower(@args[1]);
 						@player = @args[2];
-					} else if(array_index_exists(@cakeinfo, @args[2])) {
-						@id = @args[2];
+					} else if(array_index_exists(@cakeinfo,to_lower(@args[2]))) {
+						@id =to_lower(@args[2]);
 						@player = @args[1];
 					} else {
 						die(color('gold').'No cake found by that name.');
