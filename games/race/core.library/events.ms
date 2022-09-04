@@ -12,8 +12,8 @@ proc _race_bind_events(@race) {
 
 	@race['binds'][] = bind('player_toggle_sneak', null, array(sneaking: false, world: @race['world']), @event, @race) {
 		if(array_index_exists(@race['players'], player())) {
-			_race_place_player(@race, player(), @race['players'][player()]['loc']);
-			if(@race['state'] == 'running') {
+			@success = _race_place_player(@race, player(), @race['players'][player()]['loc']);
+			if(@success && @race['state'] == 'running') {
 				set_timeout(1000, closure(){
 					_race_drop_player(@race, player());
 				});

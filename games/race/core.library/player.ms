@@ -15,6 +15,9 @@ proc _race_add_player(@id, @player) {
 }
 
 proc _race_remove_player(@race, @player) {
+	foreach(@stand in @race['players'][@player]['stands']) {
+		try(entity_remove(@stand))
+	}
 	array_remove(@race['players'], @player);
 	if(ponline(@player) && pworld(@player) == @race['world']) {
 		clear_peffects(@player);
@@ -50,6 +53,11 @@ proc _race_prepare_player(@race, @player) {
 }
 
 proc _race_place_player(@race, @player, @loc) {
+	@state = @race['players'][@player]['state'];
+	if(@state == 'waiting' || @state == 'finished') {
+		return(false);
+	}
+	@race['players'][@player]['state'] = 'waiting';
 	set_entity_loc(puuid(@player), @loc);
 
 	@stand = spawn_entity('ARMOR_STAND', 1, @loc)[0];
@@ -79,6 +87,7 @@ proc _race_place_player(@race, @player, @loc) {
 	} else {
 		set_entity_rider(@stand, puuid(@player));
 	}
+	return(true);
 }
 
 proc _race_place_players(@race) {
@@ -97,8 +106,14 @@ proc _race_drop_player(@race, @player) {
 	if(!array_index_exists(@race['players'], @player)) {
 		return();
 	}
-	foreach(@stand in @race['players'][@player]['stands']) {
-		try(entity_remove(@stand))
+	@race['players'][@player]['state'] = 'racing';
+	foreach(@index: @stand in @race['players'][@player]['stands']) {
+		try{
+			entity_remove(@stand);
+			array_remove(@race['players'][@player], @index);
+		} catch(BadEntityException @ex) {
+			// try again later
+		}
 	}
 	play_sound(ploc(@player), array('sound': 'ENTITY_FIREWORK_ROCKET_BLAST'), @player);
 	if(array_index_exists(@race, 'health')) {

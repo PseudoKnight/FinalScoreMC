@@ -181,7 +181,19 @@ proc _race_start(@race) {
 					} else {
 						set_pscore('time', player(), @race['times'][@lap][@checkpoint] - integer(time() / 1000), @race['id']);
 					}
-				} else if(!array_contains(sk_regions_at(@loc), @race['region'])) {
+				} else if(array_contains(sk_regions_at(@loc), @race['region'])) {
+					// ensure they're still in a vehicle in vehicle races
+					if(!get_entity_vehicle(puuid())
+					&& @race['players'][player()]['state'] != 'waiting'
+					&& array_contains(array('pig', 'boat', 'horse'), @race['type'])) {
+						@success = _race_place_player(@race, player(), @race['players'][player()]['loc']);
+						if(@success && @race['state'] == 'running') {
+							set_timeout(1000, closure(){
+								_race_drop_player(@race, player());
+							});
+						}
+					}
+				} else {
 					@vehicle = get_entity_vehicle(puuid());
 					if(@vehicle) {
 						set_entity_rider(null, puuid());
