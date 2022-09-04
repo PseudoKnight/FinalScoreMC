@@ -91,7 +91,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 
 		// ensure certain values are arrays
 		// these default to an array with air
-		foreach(@key in array('utility', 'wall', 'floor')) {
+		foreach(@key in array('wall', 'floor')) {
 			if(array_index_exists(@floorData, @key)) {
 				if(is_string(@floorData[@key])) {
 					@floorData[@key] = array(@floorData[@key]);
@@ -101,7 +101,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 			}
 		}
 		// these default to falsey
-		foreach(@key in array('trap', 'spawner')) {
+		foreach(@key in array('utility', 'trap', 'spawner')) {
 			if(array_index_exists(@floorData, @key)) {
 				if(is_string(@floorData[@key])) {
 					@floorData[@key] = array(@floorData[@key]);
@@ -1001,15 +1001,17 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 						die();
 					}
 
-					if(integer(srand(@random) * 2) == 1) {
-						@loc = array(
-							@roomX + 1 + integer(srand(@random) * (@roomWidth - 2)),
-							@roomY + if(@roomType == 'ATTIC' && srand(@random) > 0.5, @room['midheight'] + 1, 0),
-							@roomZ + 1 + integer(srand(@random) * (@roomLength - 2)),
-							@world
-						);
-						if(equals_ic(@materials['room'], get_block(@loc))) {
-							set_blockdata_string(@loc, @materials['utility'][integer(srand(@random) * array_size(@materials['utility']))], false);
+					if(@materials['utility']) {
+						if(integer(srand(@random) * 2) == 1) {
+							@loc = array(
+								@roomX + 1 + integer(srand(@random) * (@roomWidth - 2)),
+								@roomY + if(@roomType == 'ATTIC' && srand(@random) > 0.5, @room['midheight'] + 1, 0),
+								@roomZ + 1 + integer(srand(@random) * (@roomLength - 2)),
+								@world
+							);
+							if(equals_ic(@materials['room'], get_block(@loc))) {
+								set_blockdata_string(@loc, @materials['utility'][integer(srand(@random) * array_size(@materials['utility']))], false);
+							}
 						}
 					}
 
