@@ -1,7 +1,7 @@
 /*
 	Game data
 
-	'arena': the arena name, used to get region names for valid spawn locations
+	'region': the region name, used to get sub region names for valid spawn locations
 	'surfaces': the number of regions where valid spawn locations exist
 	'snakes': an array of arrays of snake data for each player (see snake.ms)
 	'powerups': an array of arrays of current powerups in the game
@@ -23,7 +23,7 @@ include('bot.ms');
 proc _snake_queue(@mode) {
 	// Default options
 	@game = associative_array();
-	@game['arena'] = '';
+	@game['region'] = '';
 	@game['surfaces'] = 0;
 	@game['snakes'] = associative_array();
 	@game['powerups'] = array();
@@ -42,16 +42,16 @@ proc _snake_queue(@mode) {
 	// Get arena
 	foreach(@region in sk_current_regions()) {
 		if(string_starts_with(@region, 'snake_')) {
-			@game['arena'] = substr(@region, 6);
+			@game['region'] = @region;
 			break();
 		}
 	}
-	if(!@game['arena']) {
+	if(!@game['region']) {
 		die(color('red').'Not in a snake region.');
 	}
 
 	// Get region count
-	while(sk_region_exists('custom', 'snake_'.@game['arena'].(@game['surfaces'] + 1))) {
+	while(sk_region_exists('custom', @game['region'].(@game['surfaces'] + 1))) {
 		@game['surfaces']++;
 	}
 
@@ -94,7 +94,7 @@ proc _snake_queue(@mode) {
 	}
 	@loadMenu = false;
 	foreach(@p in all_players()) {
-		if(array_contains(sk_current_regions(@p), 'snake_'.@game['arena']) && pmode(@p) == 'ADVENTURE') {
+		if(array_contains(sk_current_regions(@p), @game['region']) && pmode(@p) == 'ADVENTURE') {
 			if(_snake_add(@p, @game) && !@game['snakes'][@p]['head']) {
 				@loadMenu = true;
 			}
@@ -169,43 +169,36 @@ proc _snake_queue(@mode) {
 }
 
 proc _snake_countdown(@game) {
-	// Start countdown
+	// Start 
 	@help = array(
-		'',
-		'Press '.color('green').'slot #'.color('reset').' to activate pickup',
-		'Press '.color('green').'slot #'.color('reset').' to activate pickup',
-		'Press '.color('green').'slot #'.color('reset').' to activate pickup',
-		'Use '.color('green').'left and right mouse buttons'.color('reset').' to turn',
-		'Use '.color('green').'left and right mouse buttons'.color('reset').' to turn',
-		'Use '.color('green').'left and right mouse buttons'.color('reset').' to turn',
 		color('red').color('bold').'SNAKE: '.to_upper(@game['mode']),
+		'Use '.color('green').'left and right mouse buttons'.color('reset').' to turn',
+		'Press '.color('green').'slot #'.color('reset').' to activate pickup',
+		color('green').color('italic').'Go snake, go!'
 	);
-	@countdown = array(8);
+	@secondsLeft = array(10);
 	set_interval(1000, closure(){
+		@secondsLeft[0]--;
 		_snake_set_colors(@game);
+		@title = if(@secondsLeft[0], @secondsLeft[0], '');
+		@subtitle = array_get(@help, -ceil(@secondsLeft[0] / 3) - 1, '');
 		foreach(@p in array_keys(@game['snakes'])) {
-			if(!ponline(@p)) {
+			if(!ponline(@p) || !array_contains(sk_current_regions(@p), @game['region'])) {
 				continue();
 			}
-			if(@countdown[0]) {
-				title(@p, @countdown[0], array_get(@help, @countdown[0], ''), 0, 25, 0);
-			} else {
-				title(@p, '', color('green').color('italic').'Go snake, go!', 0, 20, 20);
-			}
+			title(@p, @title, @subtitle, 0, 25, 20);
 			set_pheld_slot(@p, 8);
 		}
-		if(@countdown[0] == 6) {
+		if(@secondsLeft[0] == 6) {
 			_snake_play_song(@game);
 		}
-		if(@countdown[0] == 0) {
+		if(@secondsLeft[0] == 0) {
 			if(!queue_running('snake_cleanup')) {
 				clear_task();
 				_snake_bind_events(@game);
 				_snake_add_powerup(@game);
 				_snake_start_task(@game);
 			}
-		} else {
-			@countdown[0] -= 1;
 		}
 	});
 }
@@ -220,7 +213,7 @@ proc _snake_start_task(@game) {
 		}
 		foreach(@player: @snake in @game['snakes']) {
 			try {
-				if(!@snake['bot'] && (!ponline(@player) || !array_contains(sk_current_regions(@player), 'snake_'.@game['arena']))) {
+				if(!@snake['bot'] && (!ponline(@player) || !array_contains(sk_current_regions(@player), @game['region']))) {
 					_snake_remove(@player, @game);
 				} else if(@snake['alive']) {
 					if(!@snake['bot']) {

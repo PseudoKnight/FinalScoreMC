@@ -148,7 +148,7 @@ proc _snake_play_song(@game) {
 	@songs = array('security_robots', 'so_long', 'neon_transit', 'flying_me_softly', 'epic_fall', 'zigzag');
 	@song = array_get_rand(@songs);
 	foreach(@p in all_players()) {
-		if(array_contains(sk_current_regions(@p), 'snake_'.@game['arena'])) {
+		if(array_contains(sk_current_regions(@p), @game['region'])) {
 			action_msg(@p, color('aqua').@song.' by Alexandr Zhelanov');
 		}
 	}
@@ -160,11 +160,11 @@ proc _snake_stop_song() {
 }
 
 proc _snake_clean_surfaces(@game) {
-	@region = @game['arena'];
+	@region = @game['region'];
 	@count = @game['surfaces'];
 	@walls = @game['mode'] == 'capture';
 	while(@count) {
-		@area = sk_region_info('snake_'.@region.@count, 'custom', 0);
+		@area = sk_region_info(@region.@count, 'custom', 0);
 		@minX = min(@area[1][0], @area[0][0]);
 		@maxX = max(@area[1][0], @area[0][0]);
 		@minY = min(@area[1][1], @area[0][1]);
@@ -218,7 +218,7 @@ proc _snake_clean_surfaces(@game) {
 	}
 }
 proc _snake_spawn_flag(@team, @game) {
-	@region = 'snake_'.@game['arena'].(@team * 2 + 2);
+	@region = @game['region'].(@team * 2 + 2);
 	@loc = _snake_valid_location(@region, 13);
 	if(@loc) {
 		set_block(@loc, if(@team, 'RED_GLAZED_TERRACOTTA', 'CYAN_GLAZED_TERRACOTTA'), false);

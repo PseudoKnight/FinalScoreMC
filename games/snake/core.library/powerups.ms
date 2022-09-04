@@ -72,7 +72,7 @@ proc _snake_get_slot_from(@powerup) {
 }
 
 proc _snake_add_powerup(@game) {
-	@region = 'snake_'.@game['arena'].rand(1, @game['surfaces'] + 1);
+	@region = @game['region'].rand(1, @game['surfaces'] + 1);
 	@loc = _snake_valid_location(@region);
 	if(@loc) {
 		@r = rand(if(@game['mode'] == 'capture', 4, 5)) + 1;

@@ -100,12 +100,12 @@ proc _snake_spawn(@player, @game) {
 	@region = '';
 	@startLoc = null;
 	if(@game['mode'] == 'capture') {
-		@region = 'snake_'.@game['arena'].(@game['snakes'][@player]['team'] * 2 + 2);
+		@region = @game['region'].(@game['snakes'][@player]['team'] * 2 + 2);
 		@startLoc = _snake_valid_location(@region, 8);
 	} else {
 		@num = 0;
 		while(@num++ < @game['surfaces']) {
-			@region = 'snake_'.@game['arena'].@num;
+			@region = @game['region'].@num;
 			@found = false;
 			foreach(@snake in @game['snakes']) {
 				if(array_index_exists(@snake, 'region') && @snake['region'] == @region) {
@@ -118,9 +118,9 @@ proc _snake_spawn(@player, @game) {
 			}
 		}
 		if(@num > @game['surfaces']) {
-			@region = 'snake_'.@game['arena'].rand(1, @game['surfaces'] + 1);
+			@region = @game['region'].rand(1, @game['surfaces'] + 1);
 		} else {
-			@region = 'snake_'.@game['arena'].@num;
+			@region = @game['region'].@num;
 		}
 		@startLoc = _snake_valid_location(@region, 5);
 	}
