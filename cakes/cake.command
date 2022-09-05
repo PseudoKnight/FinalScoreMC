@@ -27,18 +27,17 @@ register_command('cake', array(
 			case 'achieved': 
 				@id = to_lower(@args[1]);
 				@players = _get_target(@args[2]);
-				if(!@players) {
-					die('No player found. Player must be online.');
-				}
-				@cakes = get_value('cakeinfo');
-				if(!array_index_exists(@cakes, @id)) {
-					die('That cake does not exist.');
-				}
-				@cake = @cakes[@id];
 				@achieved = 0; 
-				foreach(@p in @players) {
-					if(array_index_exists(@cake['players'], puuid(@p, true))) {
-						@achieved++;
+				if(@players) {
+					@cakes = get_value('cakeinfo');
+					if(!array_index_exists(@cakes, @id)) {
+						die('That cake does not exist.');
+					}
+					@cake = @cakes[@id];
+					foreach(@p in @players) {
+						if(array_index_exists(@cake['players'], puuid(@p, true))) {
+							@achieved++;
+						}
 					}
 				}
 				if(get_command_block()) {
