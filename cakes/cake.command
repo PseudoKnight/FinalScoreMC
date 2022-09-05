@@ -27,25 +27,28 @@ register_command('cake', array(
 			case 'achieved': 
 				@id = to_lower(@args[1]);
 				@players = _get_target(@args[2]);
-				@achieved = 0; 
+				@commandblock = get_command_block();
+				@achieved = 0;
 				if(@players) {
 					@cakes = get_value('cakeinfo');
-					if(!array_index_exists(@cakes, @id)) {
-						die('That cake does not exist.');
-					}
-					@cake = @cakes[@id];
-					foreach(@p in @players) {
-						if(array_index_exists(@cake['players'], puuid(@p, true))) {
-							@achieved++;
+					if(array_index_exists(@cakes, @id)) {
+						@cake = @cakes[@id];
+						foreach(@p in @players) {
+							if(array_index_exists(@cake['players'], puuid(@p, true))) {
+								@achieved++;
+							}
 						}
+						if(array_size(@players) == 1) {
+							msg(@players[0].' has '.if(!@achieved, 'not').' achieved that cake.');
+						} else {
+							msg('Found '.@achieved.' players that have achieved that cake.');
+						}
+					} else {
+						msg('That cake does not exist.');
 					}
 				}
-				if(get_command_block()) {
-					set_command_block_success(get_command_block(), @achieved - 1);
-				} else if(array_size(@players) == 1) {
-					msg(@players[0].' has '.if(!@achieved, 'not').' achieved that cake.');
-				} else {
-					msg('Found '.@achieved.' players that have achieved that cake.');
+				if(@commandblock) {
+					set_command_block_success(@commandblock, @achieved - 1);
 				}
 
 			case 'list':
