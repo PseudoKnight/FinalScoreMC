@@ -31,7 +31,9 @@
 	if(!@loc) {
 		die();
 	}
-	@loc = array(@loc[0] + 0.5, @loc[1] + 2, @loc[2] + 0.5, @loc[3]);
+	@loc['x'] += 0.5;
+	@loc['y'] += 2;
+	@loc['z'] += 0.5;
 	@target = $target;
 	if(@target[0] == '@') {
 		@player = _get_nearby_player(@loc, 3);
