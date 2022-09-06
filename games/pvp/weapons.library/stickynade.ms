@@ -66,9 +66,9 @@ proc _weapon_bind_events(@pvp) {
 						}
 						try {
 							set_entity_velocity(@e, array(
-								(@eloc['x'] - @hit['x']) / max(1, @dist ** 2),
-								(@eloc['y'] - @hit['y']) / max(1, @dist ** 2),
-								(@eloc['z'] - @hit['z']) / max(1, @dist ** 2)
+								(@eloc['x'] - @hit['x']) / max(0.5, @dist ** 2),
+								(@eloc['y'] - @hit['y']) / max(0.5, @dist ** 2),
+								(@eloc['z'] - @hit['z']) / max(0.5, @dist ** 2)
 							));
 						} catch(BadEntityException @ex) {
 							// blew completely off server
