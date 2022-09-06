@@ -15,9 +15,9 @@ proc _class_load(@player, @pvp) {
 
 			@trace = ray_trace(player(), 90, 0.5);
 			@target = @trace['location'];
+			@exitsRegion = false;
 			if(!array_contains(sk_regions_at(@target), @pvp['arena']['region'])) {
-				title(player(), '', color('red').'[no_target_found]', 0, 10, 10);
-				die();
+				@exitsRegion = true;
 			}
 			if(@trace['entities']) {
 				foreach(@entity in @trace['entities']) {
@@ -115,7 +115,7 @@ proc _class_load(@player, @pvp) {
 						@yaw = get_yaw(@loc, @newLoc);
 						@pitch = get_pitch(@loc, @newLoc);
 
-						if(@yaw == 'NaN') {
+						if(@yaw == 'NaN' || @exitsRegion && !array_contains(sk_regions_at(@loc), @pvp['arena']['region'])) {
 							clear_task();
 							execute(@loc, @explode);
 							set_timeout(500, @returnToSender);
