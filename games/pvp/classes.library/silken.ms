@@ -28,7 +28,7 @@ proc _class_load(@player, @pvp) {
 			@loc['z'] += @v['z'];
 			for(@i = 0, @i < 90, @i++) {
 				queue_push(closure(){
-					if(@pvp['players'][player()]['class'] != 'silken') {
+					if(!array_index_exists(@pvp['players'], player()) || @pvp['players'][player()]['class'] != 'silken') {
 						queue_clear(player().'web');
 						die();
 					}

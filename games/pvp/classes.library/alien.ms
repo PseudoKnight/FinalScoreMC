@@ -43,7 +43,7 @@ proc _class_load(@player, @pvp) {
 			die();
 		}
 		cancel();
-		@players = _weapon_hit_scan(player(), 96, 0.2, 1, array(tracerparticle: 'VILLAGER_HAPPY'), @pvp);
+		@players = _weapon_hit_scan(player(), array(raySize: 0.2), 1, array(tracer: 'VILLAGER_HAPPY'), @pvp);
 
 		if(@players) {
 			@player = @players[0];

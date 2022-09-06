@@ -35,16 +35,26 @@ proc _weapon_cooldown(@player, @time, @type, @onCooldown, @remove = 1) {
 	}
 }
 
-proc _weapon_hit_scan(@player, @range, @raySize, @damage, @effects, @pvp){
+proc _weapon_hit_scan(@player, @ray, @damage, @effects, @pvp){
 	@damager = puuid(@player);
-	@visibleRange = max(64, @range);
+	@range = array_get(@ray, 'range', 96);
+	@raySize = array_get(@ray, 'raySize', 0.0);
+	@inaccuracy = array_get(@ray, 'inaccuracy', 0.0);
 	
 	@hitsound = 'ENTITY_ARROW_HIT_PLAYER';
 	if(array_index_exists(@effects, 'hitsound')) {
 		@hitsound = @effects['hitsound'];
 	}
 	
-	@trace = ray_trace(@player, @range, @raySize);
+	@trace = null;
+	if(!@inaccuracy) {
+		@trace = ray_trace(@player, @range, @raySize);
+	} else {
+		@loc = location_shift(ploc(), 'up', if(psneaking(), 2.27, 2.62));
+		@loc['yaw'] += rand() * @inaccuracy * 2 - @inaccuracy;
+		@loc['pitch'] += rand() * @inaccuracy * 2 - @inaccuracy;
+		@trace = ray_trace(@player, @loc, @range, @raySize);
+	}
 	@origin = @trace['origin'];
 	@location = @trace['location'];
 	@entities = @trace['entities'];
@@ -56,7 +66,8 @@ proc _weapon_hit_scan(@player, @range, @raySize, @damage, @effects, @pvp){
 	if(@entities) {
 		foreach(@entity in @entities) {
 			if(is_entity_living(@entity['uuid'])
-			&& array_contains(sk_regions_at(@entity['location']), @pvp['arena']['region'])) {
+			&& array_contains(sk_regions_at(@entity['location']), @pvp['arena']['region'])
+			&& @entity != pvehicle(@player)) {
 				try {
 					@player = player(@entity['uuid']);
 					if(!array_index_exists(@pvp['players'], @player) || pmode(@player) == 'SPECTATOR') {
@@ -83,7 +94,7 @@ proc _weapon_hit_scan(@player, @range, @raySize, @damage, @effects, @pvp){
 		}
 	}
 	
-	if(array_index_exists(@effects, 'tracerparticle')) {
+	if(array_index_exists(@effects, 'tracer')) {
 		@distance = distance(@origin, @location);
 		@maxParticles = max(ceil(@distance), 20);
 		@distance /= @maxParticles;
@@ -91,7 +102,7 @@ proc _weapon_hit_scan(@player, @range, @raySize, @damage, @effects, @pvp){
 		@particles = 0;
 		while(@particles++ <= @maxParticles) {
 			@origin = location_shift(@origin, @location, @distance);
-			spawn_particle(@origin, @effects['tracerparticle']);
+			spawn_particle(@origin, @effects['tracer']);
 		}
 	}
 	

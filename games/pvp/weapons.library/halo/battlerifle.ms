@@ -18,7 +18,7 @@ proc _weapon_bind_events(@pvp) {
 			die();
 		}
 		
-		_weapon_hit_scan(player(), 84, 0.0, 1.29, array(tracerparticle: 'SUSPENDED_DEPTH', hitparticle: 'SMOKE_LARGE'), @pvp);
+		_weapon_hit_scan(player(), array(range: 84), 1.29, array(tracer: 'SUSPENDED_DEPTH', hitparticle: 'SMOKE_LARGE'), @pvp);
 		play_sound(ploc(), array(sound: 'ENTITY_FIREWORK_ROCKET_BLAST', pitch: 0.8, volume: 4));
 		action_msg(player(), (--@currentAmmo).' / '.@maxAmmo);
 		set_pcooldown(@item['name'], 500 / 50);
@@ -26,7 +26,7 @@ proc _weapon_bind_events(@pvp) {
 		set_pinv(player(), @slot, @item);
 		set_timeout(50, closure(){
 			if(pheld_slot() == @slot) {
-				_weapon_hit_scan(player(), 84, 0.0, 2.58, array(tracerparticle: 'SUSPENDED_DEPTH', hitparticle: 'SMOKE_LARGE'), @pvp);
+				_weapon_hit_scan(player(), array(range: 84), 2.58, array(tracer: 'SUSPENDED_DEPTH', hitparticle: 'SMOKE_LARGE'), @pvp);
 				play_sound(ploc(), array(sound: 'ENTITY_FIREWORK_ROCKET_BLAST', pitch: 0.8, volume: 4));
 				action_msg(player(), (--@currentAmmo).' / '.@maxAmmo);
 				@newitem = pinv(player(), @slot);
@@ -36,7 +36,7 @@ proc _weapon_bind_events(@pvp) {
 				}
 				set_timeout(50, closure(){
 					if(pheld_slot() == @slot) {
-						_weapon_hit_scan(player(), 84, 0.0, 3.87, array(tracerparticle: 'SUSPENDED_DEPTH', hitparticle: 'SMOKE_LARGE'), @pvp);
+						_weapon_hit_scan(player(), array(range: 84), 3.87, array(tracer: 'SUSPENDED_DEPTH', hitparticle: 'SMOKE_LARGE'), @pvp);
 						play_sound(ploc(), array(sound: 'ENTITY_FIREWORK_ROCKET_BLAST', pitch: 0.8, volume: 4));
 						action_msg(player(), (--@currentAmmo).' / '.@maxAmmo);
 						@newitem = pinv(player(), @slot);

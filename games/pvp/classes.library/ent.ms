@@ -119,7 +119,7 @@ proc _class_load(@player, @pvp) {
 					clear_task();
 					set_pexp(0);
 					try(set_entity_attribute_base(puuid(), 'GENERIC_KNOCKBACK_RESISTANCE', 0))
-					@players = _weapon_hit_scan(player(), 13, 0.2, 2, array(tracerparticle: 'VILLAGER_HAPPY'), @pvp);
+					@players = _weapon_hit_scan(player(), array(range: 13, raySize: 0.2), 2, array(tracer: 'VILLAGER_HAPPY'), @pvp);
 					@loc = ploc();
 					if(@players) {
 						@p = @players[0];
