@@ -137,7 +137,7 @@ bind('player_interact', null, array('itemname': 'FIREWORK_ROCKET', 'button': 'ri
 			if(@f > 1 && !rand(4)) {
 				set_metadata(@firework, 'mob', array_get_rand(array('chicken', 'bat', 'pig')));
 			}
-			if(@f == 2) {
+			if(pworld() == 'dev' && @f == 2) {
 				set_metadata(@firework, 'spec', player());
 				set_metadata(@firework, 'loc', ploc());
 				@stand = spawn_entity('ARMOR_STAND', 1, @loc, closure(@e){
