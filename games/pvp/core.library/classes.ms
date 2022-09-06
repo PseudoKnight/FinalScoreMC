@@ -55,6 +55,7 @@ proc _classes_powerup(@player, @classname, @pvp) {
 		_class_powerup(@player);
 	}
 
+	set_entity_fall_distance(puuid(@player), 0);
 	set_phunger(@player, min(20, phunger(@player) + 4));
 	set_phealth(@player, min(20, phealth(@player) + 1));
 	set_ponfire(@player, false);
