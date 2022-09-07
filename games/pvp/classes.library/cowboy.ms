@@ -42,6 +42,7 @@ proc _class_load(@player, @pvp) {
 	}
 	bind('player_interact', array(id: @player.'lassothrow'), array(player: @player, itemname: 'LEAD', button: 'right'), @event, @pvp){
 		if(!pcooldown('LEAD')) {
+			set_pcooldown('LEAD', 40);
 			play_sound(ploc(), array(sound: 'ITEM_ARMOR_EQUIP_LEATHER'));
 			@slot = pheld_slot();
 			@item = pinv(player(), @slot);
@@ -121,7 +122,7 @@ proc _class_load(@player, @pvp) {
 			set_timeout(1, closure(){
 				try {
 					entity_remove(@event['vehicle']);
-					set_pcooldown(@player, 'HORSE_SPAWN_EGG', 2500 / 50);
+					set_pcooldown(@player, 'HORSE_SPAWN_EGG', 2000 / 50);
 					set_pinv(@player, 3, array(name: 'HORSE_SPAWN_EGG', meta: array(display: 'Critter', lore: array(@horseHealth))));
 				} catch(BadEntityException @e) {}
 			});
