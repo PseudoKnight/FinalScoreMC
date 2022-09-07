@@ -44,11 +44,12 @@ proc _class_load(@player, @pvp) {
 				set_mob_effect(@cat, 'INVISIBILITY', 0, 9, true, false);
 				set_leashholder(@cat, puuid());
 			})[0];
-			@vector = get_vector(ploc());
+			@vector = get_vector(ploc(), 1.1);
 			@timer = array(40);
 			set_interval(50, closure(){
 				if(!array_index_exists(@pvp['players'], player()) || pmode() != 'ADVENTURE') {
 					clear_task();
+					try(entity_remove(@cat))
 					die();
 				}
 				try {
@@ -60,7 +61,10 @@ proc _class_load(@player, @pvp) {
 					}
 					@entity = null;
 					foreach(@e in entities_in_radius(entity_loc(@cat), 4)) {
-						if(@e != puuid() && @e != pvehicle() && @e != @cat) {
+						if(@e != puuid()
+						&& @e != pvehicle()
+						&& @e != @cat
+						&& (entity_type(@e) != 'PLAYER' || pmode(@e) != 'SPECTATOR')) {
 							@dist = distance(location_shift(entity_loc(@e), 'up'), entity_loc(@cat));
 							if(@dist < 2.5) {
 								@entity = @e;
