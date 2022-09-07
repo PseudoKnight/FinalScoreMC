@@ -120,7 +120,9 @@ proc _weapon_bind_events(@pvp) {
 				@range = distance(ploc(), ploc(@p));
 				@damage = if(entity_can_see(puuid(), @uuid), min(12 / @range, 6), 6 / @range);
 				damage_entity(@uuid, @damage, puuid());
-				set_entity_onfire(@uuid, 1);
+				if(!pblocking(@p)) {
+					set_entity_onfire(@uuid, 1);
+				}
 				continue();
 			}
 			@dist = _squared_distance_to_segment(@ploc, @loc, @targetl);
@@ -129,7 +131,9 @@ proc _weapon_bind_events(@pvp) {
 				@range = distance(ploc(), ploc(@p));
 				@damage = if(entity_can_see(puuid(), @uuid),  min(10 / @range, 5), 5 / @range);
 				damage_entity(@uuid, @damage, puuid());
-				set_entity_onfire(@uuid, 1);
+				if(!pblocking(@p)) {
+					set_entity_onfire(@uuid, 1);
+				}
 				continue();
 			}
 			@dist = _squared_distance_to_segment(@ploc, @loc, @targetr);
@@ -138,7 +142,9 @@ proc _weapon_bind_events(@pvp) {
 				@range = distance(ploc(), ploc(@p));
 				@damage = if(entity_can_see(puuid(), @uuid),  min(10 / @range, 5), 5 / @range);
 				damage_entity(@uuid, @damage, puuid());
-				set_entity_onfire(@uuid, 1);
+				if(!pblocking(@p)) {
+					set_entity_onfire(@uuid, 1);
+				}
 				continue();
 			}
 		}
