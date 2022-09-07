@@ -11,7 +11,14 @@ proc _class_load(@player, @pvp) {
 			}
 			play_sound(ploc(), array(sound: 'ENTITY_FIREWORK_ROCKET_BLAST', pitch: 0.9, volume: 2));
 			play_sound(ploc(), array(sound: 'ENTITY_FIREWORK_ROCKET_BLAST_FAR', pitch: 0.5, volume: 2));
-			_weapon_hit_scan(player(), array(range: 16, raySize: 0.2, inaccuracy: 10), 4, array(tracer: 'SUSPENDED_DEPTH', hitparticle: 'SMOKE_LARGE'), @pvp);
+			@inaccuracy = 10;
+			if(!pvehicle() && !psprinting()) {
+				@inaccuracy = 5;
+				if(psneaking()) {
+					@inaccuracy = 2.5;
+				}
+			}
+			_weapon_hit_scan(player(), array(range: 16, raySize: 0.2, inaccuracy: @inaccuracy), 4.2, array(tracer: 'SUSPENDED_DEPTH', hitparticle: 'SMOKE_LARGE'), @pvp);
 		}
 	}
 	bind('player_interact', array(id: @player.'round'), array(player: @player, itemname: 'POLISHED_BLACKSTONE_BUTTON', button: 'right'), @event){
