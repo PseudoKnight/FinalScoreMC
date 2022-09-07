@@ -67,7 +67,7 @@ proc _weapon_hit_scan(@player, @ray, @damage, @effects, @pvp){
 		foreach(@entity in @entities) {
 			if(is_entity_living(@entity['uuid'])
 			&& array_contains(sk_regions_at(@entity['location']), @pvp['arena']['region'])
-			&& @entity != pvehicle(@player)) {
+			&& @entity['uuid'] != pvehicle(@player)) {
 				try {
 					@player = player(@entity['uuid']);
 					if(!array_index_exists(@pvp['players'], @player) || pmode(@player) == 'SPECTATOR') {
