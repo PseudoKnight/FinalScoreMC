@@ -2,10 +2,10 @@ proc _class_load(@player, @pvp) {
 	@pvp['players'][@player]['task'] = set_interval(50, closure(){
 		try {
 			if(!pcooldown(@player, 'BLAZE_ROD')) {
-				spawn_particle(location_shift(ploc(@player), 'up', 2), array(
+				spawn_particle(location_shift(ploc(@player), 'up', 1.5), array(
 					particle: 'FLAME',
 					xoffset: 0.6,
-					yoffset: 1.5,
+					yoffset: 1.0,
 					zoffset: 0.6,
 					count: 2
 				));
@@ -42,7 +42,7 @@ proc _class_load(@player, @pvp) {
 	bind('player_move', array(id: @player.'blazetrail'), array(player: @player, threshold: 2), @event) {
 		if(!pcooldown(player(), 'BLAZE_ROD') && get_block(@event['from']) == 'AIR') {
 			set_block(@event['from'], 'FIRE', false);
-			set_timeout(3000, closure(){
+			set_timeout(2500, closure(){
 				set_block(@event['from'], 'AIR', false);
 			});
 		}
