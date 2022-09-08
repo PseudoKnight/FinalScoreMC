@@ -87,9 +87,15 @@ proc _class_load(@player, @pvp) {
 						@loc2 = entity_loc(puuid());
 						@dist = distance(@loc1, @loc2) / 2;
 						if(@dist > 0) {
+							@minY = 0.2;
+							if(entity_grounded(@entity) && entity_type(@entity) == 'PLAYER' && psneaking(@entity)) {
+								// halve velocity if lasso'd player is sneaking
+								@dist *= 2;
+								@minY = 0.0;
+							}
 							set_entity_velocity(@entity, array(
 								(@loc2['x'] - @loc1['x']) / @dist,
-								max((@loc2['y'] - @loc1['y']) / @dist, 0.2),
+								max((@loc2['y'] - @loc1['y']) / @dist, @minY),
 								(@loc2['z'] - @loc1['z']) / @dist,
 							));
 						}
