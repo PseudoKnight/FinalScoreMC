@@ -70,27 +70,31 @@
 
 &7/rg remmember <region> <player(s)>&r : Removes member(s) from your specified region.
 
+&7/wild&r : Teleports you to a random location in the world.
+
+&7/tip&r : Displays a random tip.
+
 Bottles can be crafted into exp bottles by using your own experience.
 
-When right-clicking armor stands with an open hand while sneaking, you can pose many of its elements.
+Right-click armor stands with an open hand while sneaking to pose many of its elements.
 
-Right-clicking armor stands with at least 2 sticks in your hands will give the armor stand arms.
+Right-click armor stands with 2 sticks in your hand will give the armor stand arms.
 
-Hitting armor stands will remove arms first, then the baseplate, before destroying the armor stand itself.
+Hitting an armor stand in the chestplate will remove arms first.
+
+Hitting an armor stand at the feet will first remove the baseplate.
 
 The left hand of armor stands can have items placed in them too.
 
 Any item can be placed in the helmet slot of an armor stand.
 
-Dispensers can place armor stands.
-
 Place any item in your helmet slot.
 
-Horses are protected from all damage unless they are being ridden, and even they are still protected from other players.
+Horses are protected from all damage unless they are being ridden, and even then are still protected from other players.
 
 Undead horses can be fed rotten flesh.
 
-There are additional noteblock sounds with these blocks: ANVIL, COAL_BLOCK, SLIME_BLOCK.
+There are custom noteblock sounds with these blocks: anvil, coal block, slime block, terracotta, ice, sea lantern, soul sand, and iron block.
 
 If powered by redstone, noteblocks can be heard up to 8 chunks away. (128 meters)
 
@@ -98,17 +102,17 @@ Right-clicking paintings will cycle through them, if they fit.
 
 When minecarts collide with unpowered dispensers, they get added to the dispenser inventory.
 
-Beds will set your bed location, make the sun rise, and halt precipitation regardless of other players in the world.
+Beds will set your respawn location, time travel through the night, and halt precipitation regardless of other players in the world.
 
 Creepers do not do block damage with the exception of the outworlds.
 
-You can get help from anyone with a blue name. Orange players are Frog Park staff and can help there.
+You can get help from server staff who have a cyan name. Staff specific to Frog Park have orange names.
 
-You can have one /home per world, excluding the outworld.
+You can have one /home per world, excluding the outworld and park.
 
 We have a Discord server @ &bhttps://discord.gg/GHgfWp4
 
-There are five primary survival worlds: Alpha, Delta, Gamma, Omega, and Psi.
+There are five buildable survival overworlds: Alpha, Delta, Gamma, Omega, and Psi. Each has a nether, but there's one shared End dimension.
 
 If you changed your name, you can update [private] and shop signs to your new name by clicking the sign.
 
@@ -124,15 +128,15 @@ Cauldrons are an infinite water source, unless sneaking. You can incrementally f
 
 You can also wash dyes from terracotta, wool, and carpet using a cauldron.
 
-Temporary mirror world "shards" can be created by right-clicking an amethyst shard while in the location you want to mirror.
+Temporary mirror world "shards" can be created by right-clicking any item with shard in the name.
 
 You can teleport with a horse you're riding (includes donkeys, llamas, etc)
 
-If holding a lead when teleporting, you may bring all leashed mobs with you.
+When teleporting you will bring all leashed mobs with you.
 
 You can adjust the volume of notification sounds (eg. direct messages) via the Voice/Speech slider in Sound Options.
 
-You can craft bones directly to bone blocks.
+As a convenience, you can craft bones directly to bone blocks.
 
 Skulls can be crafted into player skulls using clay balls, the naming it in an anvil applies that player's skin to the skull.
 
@@ -144,7 +148,9 @@ The end crystal beam target can be set by placing a dragon egg within 32 meters 
 
 Hats can be put on villagers by right clicking on their head with an item in hand.
 
-You can play instruments with these in your hands: iron_nugget, gold_nugget, bone, and iron_ingot.
+Items can be put in pillager's hands if their crossbow breaks.
+
+You can play instruments with these in your hands: iron_nugget, gold_nugget, bone, iron_ingot, and prismarine crystals.
 
 Channeling tridents striking a lodestone will summon a thunder storm.
 
