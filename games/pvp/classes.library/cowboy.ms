@@ -18,7 +18,7 @@ proc _class_load(@player, @pvp) {
 					@inaccuracy = 2.5;
 				}
 			}
-			_weapon_hit_scan(player(), array(range: 16, raySize: 0.2, inaccuracy: @inaccuracy), 4.2, array(tracer: 'SUSPENDED_DEPTH', hitparticle: 'SMOKE_LARGE'), @pvp);
+			_weapon_hit_scan(player(), array(range: 32, raySize: 0.2, inaccuracy: @inaccuracy), 4.2, array(tracer: 'SUSPENDED_DEPTH', hitparticle: 'SMOKE_LARGE'), @pvp);
 		}
 	}
 	bind('player_interact', array(id: @player.'round'), array(player: @player, itemname: 'POLISHED_BLACKSTONE_BUTTON', button: 'right'), @event){
