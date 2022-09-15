@@ -45,3 +45,9 @@ bind('player_interact', null, array(itemname: 'PRISMARINE_SHARD', hand: 'main_ha
 bind('player_interact', null, array(itemname: 'ECHO_SHARD', hand: 'main_hand', block: null, button: 'right'), @event) {
 	_trigger_shard();
 }
+
+bind('player_interact', null, array(itemname: 'AMETHYST_SHARD', hand: 'main_hand', block: null, button: 'right'), @event) {
+	if(!entities_in_radius(entity_loc(puuid()), 6, 'ALLAY')) {
+		_trigger_shard();
+	}
+}
