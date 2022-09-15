@@ -171,7 +171,7 @@
 			if(is_null(@p1) || is_null(@p2)) {
 				die(color('GOLD').'Please make a selection.');
 			}
-			if(!has_permission('group.regular') && abs(@p1['x'] - @p2['x']) * abs(@p1['z'] - @p2['z']) > 10000) {
+			if(!has_permission('group.regular') && abs(@p1['x'] - @p2['x']) * abs(@p1['z'] - @p2['z']) > 16384) {
 				die(color('GOLD').'Selection too large. (100m^2 limit) Ask staff if you need a larger region.');
 			}
 
@@ -201,8 +201,8 @@
 				die(color('GOLD').'You must select two points to claim a region.');
 			}
 			@size = abs(@p1['x'] - @p2['x']) * abs(@p1['z'] - @p2['z']);
-			if(@size > 10000) {
-				die(color('GOLD').'Selection too large. (100x100 upper limit) Ask staff if you need a larger region.');
+			if(@size > 16384) {
+				die(color('GOLD').'Selection too large. (128x128 upper limit) Ask staff if you need a larger region.');
 			}
 
 			if(pworld() != 'dev') {
