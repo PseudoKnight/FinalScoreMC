@@ -2,14 +2,14 @@ register_command('entereffect', array(
 	description: 'Sets a player\'s server enter effect.',
 	usage: '/entereffect <type>',
 	tabcompleter: closure(@alias, @sender, @args, @info) {
-		return(array('lightning', 'clear'));
+		return(array('lightning', 'kaboom', 'clear'));
 	},
 	executor: closure(@alias, @sender, @args, @info) {
 		if(!@args) {
 			return(false);
 		}
 		@type = to_lower(@args[0]);
-		@types = array('lightning', 'clear');
+		@types = array('lightning', 'kaboom', 'clear');
 		if(array_contains(@types, @type)) {
 			@pdata = _pdata(player());
 			if(@type == 'clear') {

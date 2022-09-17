@@ -163,9 +163,26 @@ bind('player_join', null, null, @event) {
 		if(array_index_exists(@pdata, 'entereffect')) {
 			queue_push(closure(){
 				if(ponline(player())) {
+					@loc = ploc();
 					switch(@pdata['entereffect']) {
 						case 'lightning':
-							lightning(ploc(), true);
+							lightning(@loc, true);
+						case 'kaboom':
+							@ball = launch_firework(location_shift(@loc, 'up'), array(
+								strength: 0,
+								type: 'BALL_LARGE',
+								colors: 'BLACK',
+							));
+							set_entity_spec(@ball, array(angled: true));
+							set_entity_velocity(@ball, array(0, -1, 0));
+							add_scoreboard_tag(@ball, 'nodamage');
+							@burst = launch_firework(@loc, array(
+								strength: 0,
+								type: 'BURST',
+								trail: true,
+								colors: 'BLACK',
+							));
+							add_scoreboard_tag(@burst, 'nodamage');
 					}
 				}
 			}, player().'join');
