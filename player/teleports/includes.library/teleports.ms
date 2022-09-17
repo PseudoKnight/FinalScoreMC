@@ -35,13 +35,11 @@ proc _warmuptp(@player, @loc, @cleareffects = false, @force = false) {
 	Returns true if the location is (mostly) safe for a player
 */
 proc _is_safe_location(@loc) {
-	if(get_block_info(location_shift(@loc, 'up', 2), 'occluding')) {
+	if(get_block_info(location_shift(@loc, 'up', 2), 'occluding')
+	&& get_block_info(location_shift(@loc, 'up'), 'occluding')) {
 		return(false);
 	}
-	if(!get_block_info(@loc, 'solid')) {
-		if(get_block_info(location_shift(@loc, 'up'), 'occluding')) {
-			return(false);
-		}
+	if(!get_block_info(@loc, 'solid') && get_block(@loc) != 'WATER') {
 		if(!get_block_info(location_shift(@loc, 'down'), 'solid')) {
 			return(false);
 		}
