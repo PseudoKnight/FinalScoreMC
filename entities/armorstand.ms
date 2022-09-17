@@ -46,9 +46,8 @@ bind('player_interact_at_entity', null, array('clicked': 'ARMOR_STAND'), @event)
 		return(@poseable);
 	}
 
-	@item = pinv(player(), null);
 	@armorstand = entity_spec(@event['id']);
-	if(is_null(@item) && psneaking()) {
+	if(psneaking()) {
 		if(!@armorstand['visible']) {
 			cancel();
 			die();
@@ -56,6 +55,7 @@ bind('player_interact_at_entity', null, array('clicked': 'ARMOR_STAND'), @event)
 
 		@posing = import(player().'posing');
 		if(@posing) {
+			cancel();
 			die();
 		}
 
@@ -170,8 +170,12 @@ bind('player_interact_at_entity', null, array('clicked': 'ARMOR_STAND'), @event)
 			});
 		}
 
-	} else {
-		switch(if(@item, @item['name'], null)) {
+	} else { // not sneaking
+		@item = pinv(player(), null);
+		if(!@item){
+			die();
+		}
+		switch(@item['name']) {
 			case 'STICK': # 2 sticks attaches arms
 				if(@item['qty'] >= 2 && !@armorstand['arms']) {
 					set_entity_spec(@event['id'], array('arms': true));
@@ -284,7 +288,7 @@ bind('player_interact_at_entity', null, array('clicked': 'ARMOR_STAND'), @event)
 
 bind('player_interact', null, array('itemname': 'ARMOR_STAND', 'button': 'right'), @event) {
 	if(@event['action'] == 'right_click_block') {
-		title('', color(6).'Use an open hand whilst sneaking to pose');
+		title('', color('gold').'Sneak and right-click to pose');
 	}
 }
 
