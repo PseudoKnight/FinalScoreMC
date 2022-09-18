@@ -150,6 +150,7 @@ proc _hazard_bind(@game) {
 			if(pmode() == 'ADVENTURE' && array_contains(@event['toRegions'], 'hazard_end')) {
 				@data = @game['players'][player()];
 				@data['score'] += 10;
+				@data['finished'] = true;
 				set_pscore('score', player(), @data['score'], 'hazard');
 				set_pmode('SPECTATOR');
 				play_sound(ploc(), array(sound: 'ENTITY_VINDICATOR_CELEBRATE', pitch: 1.5));

@@ -6,6 +6,7 @@ proc _hazard_add_player(@player, @game) {
 			score: 0,
 			inv: array(),
 			buildCount: 0,
+			finished: false,
 		);
 	}
 	set_pscoreboard(@player, 'hazard');
@@ -16,6 +17,9 @@ proc _hazard_add_player(@player, @game) {
 		@coords = sk_region_info('hazard_start', @game['world'], 0);
 		@loc = array(rand(@coords[1][0] + 1, @coords[0][0]) + 0.5, @coords[1][1], rand(@coords[1][2] + 1, @coords[0][2]) + 0.5, @game['world']);
 		set_ploc(@player, @loc);
+		if(@game['players'][@player]['finished']) {
+			set_pmode(@player, 'SPECTATOR');
+		}
 	} else if(@game['state'] == 'BUILD') {
 		set_pmode(@player, 'CREATIVE');
 	}
@@ -39,6 +43,7 @@ proc _hazard_spawn_players(@game) {
 	@mode = if(@game['state'] == 'RUN', 'ADVENTURE', 'CREATIVE');
 	foreach(@player: @data in @game['players']) {
 		@data['buildCount'] = 0;
+		@data['finished'] = false;
 		if(ponline(@player)) {
 			@loc = array(rand(@coords[1][0] + 1, @coords[0][0]) + 0.5, @coords[1][1], rand(@coords[1][2] + 1, @coords[0][2]) + 0.5, @game['world']);
 			set_ploc(@player, @loc);
