@@ -10,7 +10,15 @@ bind('player_move', array(priority: 'HIGHEST'), array(threshold: 16), @event) {
 		|| @loc['x'] < @border['x'] - @border['radiusX']
 		|| @loc['z'] > @border['z'] + @border['radiusZ']
 		|| @loc['z'] < @border['z'] - @border['radiusZ']) {
-			cancel();
+			@vehicle = pvehicle();
+			if(@vehicle) {
+				set_entity_rider(null, puuid());
+				set_entity_loc(@vehicle, @event['from']);
+				set_ploc(location_shift(@event['from'], 'down'));
+				play_sound(@event['from'], array(sound: 'ENTITY_BLAZE_SHOOT'));
+			} else {
+				cancel();
+			}
 			action_msg('Exceeded world border');
 		}
 	}
