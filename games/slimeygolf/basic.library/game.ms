@@ -179,9 +179,9 @@ proc _start_game(@course, @loc) {
 		@friction = 1.07;
 
 		@count = 0;
-		foreach(@player in all_players(@golf['world'])) {
+		foreach(@player in all_players()) {
 			if(!array_index_exists(@golf['players'], @player)) {
-				if(array_contains(sk_current_regions(@player), @course)) {
+				if(pworld(@player) == @golf['world'] && array_contains(sk_current_regions(@player), @course)) {
 					if(@golf['lowestHole'] == 1 && array_size(@golf['players']) < 4 && _add_player(@player, @golf)) {
 						@count++;
 					} else if(!array_contains(@golf['spectators'], @player)) {
@@ -190,6 +190,9 @@ proc _start_game(@course, @loc) {
 				} else if(array_contains(@golf['spectators'], @player)) {
 					array_remove_values(@golf['spectators'], @player);
 				}
+				continue();
+			} else if(pworld(@player) != @golf['world'] || !array_contains(sk_current_regions(@player), @course)) {
+				_remove_player(@player, @golf);
 				continue();
 			} else {
 				@count++;
@@ -404,18 +407,7 @@ proc _start_game(@course, @loc) {
 				if(@ball['type'] >= 2) {
 					play_entity_effect(@ball['id'], 'HURT');
 				}
-
 			}
-
-			if(!ponline(@player) || !array_contains(sk_current_regions(@player), @course)) {
-				_remove_player(@player, @golf);
-				_remove_ball(@ball, @course);
-				if(array_size(@golf['players']) == 0) {
-					_golf_cleanup(@golf);
-					break();
-				}
-			}
-
 		}
 		if(@count == 0) {
 			_golf_cleanup(@golf);
