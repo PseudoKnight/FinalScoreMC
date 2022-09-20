@@ -227,8 +227,8 @@ bind('player_enter_bed', null, null, @event) {
 			@time = @time + 24000;
 		}
 		set_world_time(@time);
-			msg(color('aqua').'You summoned the sun.');
-		}
+		msg(color('aqua').'You summoned the sun.');
+	}
 	if(has_storm()) {
 		storm(false);
 		msg(color('aqua').'You calmed the storm.');
@@ -369,9 +369,9 @@ bind('entity_toggle_glide', null, array('type': 'PLAYER'), @event) {
 }
 
 # Minecart speed control (can cause derailment and other issues after around 5/ms)
-bind('vehicle_enter', null, array('vehicletype': 'MINECART', 'passengertype': 'PLAYER'), @event) {
+bind('vehicle_enter', null, array(vehicletype: 'MINECART', passengertype: 'PLAYER'), @event) {
 	if(_is_survival_world(pworld()) && !has_bind(player().'vehiclecontrol')) {
-		bind('player_interact', array('id': player().'vehiclecontrol'), array('hand': 'main_hand', 'player': player()), @event) {
+		bind('player_interact', array(id: player().'vehiclecontrol'), array(hand: 'main_hand', player: player()), @event) {
 			@vehicle = get_entity_vehicle(puuid());
 			if(@vehicle && entity_type(@vehicle) == 'MINECART') {
 				@speed = get_entity_max_speed(@vehicle) * 20;
@@ -381,7 +381,25 @@ bind('vehicle_enter', null, array('vehicletype': 'MINECART', 'passengertype': 'P
 					@speed += 1.0;
 				}
 				@speed = clamp(@speed, 0, 40);
-				action_msg(integer(@speed).'m/s');
+				@speedOutput = 'Max Speed: '.integer(@speed).' m/s';
+				if(@speed > 8) {
+					@speedOutput .= ' (derailng possible)';
+					if(@speed > 10) {
+						@speedOutput = color('red').@speedOutput;
+					} else if(@speed > 9) {
+						@speedOutput = color('gold').@speedOutput;
+					} else {
+						@speedOutput = color('yellow').@speedOutput;
+					}
+				} else if(@speed == 0) {
+					set_entity_silent(@vehicle, true);
+					@speedOutput = color('red').'Stopped.';
+				} else if(@speed < 8) {
+					@speedOutput = color('aqua').@speedOutput;
+				} else {
+					@speedOutput = @speedOutput.' (default speed)';
+				}
+				action_msg(@speedOutput);
 				set_entity_max_speed(@vehicle, @speed / 20);
 			} else {
 				unbind();
