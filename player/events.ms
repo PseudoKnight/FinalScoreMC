@@ -226,10 +226,9 @@ bind('player_enter_bed', null, null, @event) {
 		if(@time < 0) {
 			@time = @time + 24000;
 		}
-		if(_time_travel(pworld(), @time, 120)) {
+		set_world_time(@time);
 			msg(color('aqua').'You summoned the sun.');
 		}
-	}
 	if(has_storm()) {
 		storm(false);
 		msg(color('aqua').'You calmed the storm.');
