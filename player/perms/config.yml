@@ -264,6 +264,8 @@ builder:
       livemap.tracers: true
     omega:
       livemap.tracers: true
+    psi:
+      livemap.tracers: true
   inheritance: regular
 engineer:
   permissions:
