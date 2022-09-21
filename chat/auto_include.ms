@@ -231,7 +231,7 @@ proc _tellraw(@recipients, @components) {
 		} else {
 			switch(@c[0]) {
 				case "open_url":
-					@raw .= '{"color":"aqua","text":"\u29C9'.@c[1].'","clickEvent":{"action":"open_url","value":"'.@c[2]
+					@raw .= ',{"color":"aqua","text":"\u29C9'.@c[1].'","clickEvent":{"action":"open_url","value":"'.@c[2]
 							.'"},"hoverEvent":{"action":"show_text","value":"'.@c[3].'"}}';
 				case 'hover':
 					@raw .= ',{"text":"'.colorize(@c[1]).'","hoverEvent":{"action":"show_text","value":"'.colorize(@c[2]).'"}}';

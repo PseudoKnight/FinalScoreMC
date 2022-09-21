@@ -30,8 +30,7 @@ if(extension_exists('CHDiscord')) {
 				_chat(@name, @line, all_players(), 'discord', @event['channel']);
 			}
 			foreach(@attachment in @event['attachments']) {
-				_chat(@name, array('open_url', @attachment['filename'], @attachment['url'], @attachment['description']),
-						all_players(), 'discord', @event['channel']);
+				_tellraw(all_players(), array(array('open_url', @attachment['filename'], @attachment['url'], @attachment['description'])));
 			}
 		}
 	}
