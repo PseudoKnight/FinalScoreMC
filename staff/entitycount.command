@@ -22,7 +22,7 @@ register_command('entitycount', array(
 		@sortedTypes = array_sort(@sortedTypes, closure(@left, @right) {
 			return(@left['count'] < @right['count']);
 		});
-		@sortedTypes = @sortedTypes[cslice(0, min(10, array_size(@sortedTypes) - 1))]
+		@sortedTypes = @sortedTypes[cslice(0, min(9, array_size(@sortedTypes) - 1))]
 		msg('Top entity counts:');
 		foreach(@type in @sortedTypes) {
 			msg('  '.color('GRAY').to_lower(@type['name']).color('RESET').': '.@type['count']);
