@@ -26,7 +26,7 @@ proc _chat(@player, @message, @recipients, @source = '', @channel = '') {
 
 	# Construct chat components
 	@components = array();
-	@components[] = array('colorize', '&8'.simple_date('h:mm').' ');
+	@components[] = array('plain', _timestamp());
 
 	if(@source) {
 		if(@source == 'dynmap') {
@@ -134,7 +134,7 @@ proc _pmsg(@from, @player, @message) {
 			@pdata['mail'] = array();
 		}
 		@pdata['mail'][] = array(
-			simple_date('MMM d h:mm a', time(), 'CST'),
+			simple_date('MMM d h:mm a', time(), 'US/Central'),
 			@from.if(!ponline(@from), ' on web'),
 			@message
 		);

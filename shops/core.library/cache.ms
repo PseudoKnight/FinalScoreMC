@@ -49,7 +49,7 @@ proc _cache_shop(@shop) {
 							 @pdata['mail'] = array();
 						}
 						@pdata['mail'][] = array(
-							simple_date('MMM d h:mm a', time(), 'CST'),
+							simple_date('MMM d h:mm a', time(), 'US/Central'),
 							player(),
 							@msg,
 						);
@@ -102,7 +102,7 @@ proc _cache_shop(@shop) {
 							 @pdata['mail'] = array();
 						}
 						@pdata['mail'][] = array(
-							simple_date('MMM d h:mm a', time(), 'CST'),
+							simple_date('MMM d h:mm a', time(), 'US/Central'),
 							player(),
 							@msg,
 						);

@@ -18,8 +18,8 @@ register_command('enter', array(
 		@pdata['enter'] = @escapedMessage;
 		_store_pdata(player(), @pdata);
 		msg(colorize('&7Set server enter message to: '));
-		@pre = '&8'.simple_date('h:mm').' &2\u00bb ';
+		@pre = _timestamp().color('dark_green').'\u00bb ';
 		@name = _colorname().color('italic').player();
-		_tellraw(array(player()), array(array('colorize', @pre), array('hover', @name, 'Last played: Now'), '&e&o '.@escapedMessage));
+		_tellraw(array(player()), array(array('plain', @pre), array('hover', @name, 'Last played: Now'), '&e&o '.@escapedMessage));
 	}
 ));

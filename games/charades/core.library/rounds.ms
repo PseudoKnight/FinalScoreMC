@@ -82,18 +82,18 @@ proc _queue_next_builder() {
 				cancel();
 				if(array_get(get_pteam(player(), 'charades'), 'name', null) == 'guessers') {
 					@message = @event['message'];
-					@timestamp = simple_date('h:mm');
+					@timestamp = _timestamp();
 					@name = display_name();
 					if(_is_match(@message, @charades['build'])) {
 						play_sound(ploc(), array(sound: 'ENTITY_PLAYER_LEVELUP'));
-						@charades['buffer'][player()] = colorize("&8@timestamp [Charades] @{name}&8: &r&a&l@message");
+						@charades['buffer'][player()] = @timestamp.colorize("[Charades] @{name}&8: &r&a&l@message");
 						_msg_charades(color('green').player().' guessed correctly!');
 						if(@timer[0] > 3) {
 							@timer[0] = 3.0;
 						}
 					} else {
 						@message = _show_matches(@message, @charades['build']);
-						_msg_charades(colorize("&8@timestamp [Charades] @{name}&8: &r@message"));
+						_msg_charades(@timestamp.colorize("[Charades] @{name}&8: &r@message"));
 					}
 				}
 			}

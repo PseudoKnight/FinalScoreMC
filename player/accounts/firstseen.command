@@ -15,7 +15,7 @@ register_command('firstseen', array(
 		@minutes = (time() - @firstPlayed) / 60000;
 		@hours = @minutes / 60
 		@days = @hours / 24
-		@date = simple_date('yyyy-MM-dd', @firstPlayed);
+		@date = simple_date('yyyy-MM-dd', @firstPlayed, 'US/Central');
 		msg('Bukkit says '.@pdata['name'].' was first seen '.
 			if(@days > 14) {
 				@date

@@ -55,8 +55,9 @@ register_command('invite', array(
 				continue();
 			}
 			@requests[@player] = array('invite', player(), time());
-			tmsg(@player, color('dark_gray').simple_date('h:mm').' '.color('b').player().' has requested that you join them. /accept');
-			msg(color('dark_gray').simple_date('h:mm').' '.color('b').'Invitation sent to '.@player.'.');
+			@time = _timestamp();
+			tmsg(@player, @time.color('b').player().' has requested that you join them. /accept');
+			msg(@time.color('b').'Invitation sent to '.@player.'.');
 		}
 		export('requests', @requests);
 	}

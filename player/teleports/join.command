@@ -58,7 +58,8 @@ register_command('join', array(
 		}
 		@requests[@player] = array('join', player(), time());
 		export('requests', @requests);
-		tmsg(@player, color('dark_gray').simple_date('h:mm').' '.color('b').player().' has requested to join you. /accept');
-		msg(color('dark_gray').simple_date('h:mm').' '.color('b').'Request to join sent to '.@player.'.');
+		@time = _timestamp();
+		tmsg(@player, @time.color('b').player().' has requested to join you. /accept');
+		msg(@time.color('b').'Request to join sent to '.@player.'.');
 	}
 ));

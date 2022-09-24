@@ -29,7 +29,7 @@ bind('player_join', null, null, @event) {
 			}
 
 			if(!string_starts_with(pinfo(player(), 12), 'silent')) {
-				@pre = '&8'.simple_date('h:mm').' &2\u00bb ';
+				@pre = _timestamp().color('dark_green').'\u00bb ';
 				@name = _colorname().color('italic').player();
 				@msg = '&e&o ';
 				if(array_index_exists(@pdata, 'enter')) {
@@ -39,12 +39,12 @@ bind('player_join', null, null, @event) {
 				}
 				@hover = 'New Player!';
 				if(@lastPlayed) {
-					@hover = 'Last played: '.simple_date('MMM d, yyyy', @lastPlayed);
+					@hover = 'Last played: '.simple_date('MMM d, yyyy', @lastPlayed, 'US/Central');
 				}
 				if(array_index_exists(@pdata, 'names')) {
 					@hover .= '\\n&7'.array_implode(@pdata['names']);
 				}
-				_tellraw(all_players(), array(array('colorize', @pre), array('hover', @name, @hover), @msg));
+				_tellraw(all_players(), array(array('plain', @pre), array('hover', @name, @hover), @msg));
 				if(function_exists('discord_broadcast')) {
 					@count = array_size(all_players());
 					@msg = reg_replace('[&§][0-9a-fk-o]', '', @msg);
@@ -202,7 +202,7 @@ bind('player_quit', null, null, @event) {
 		} else {
 			@msg .= 'left the game';
 		}
-		broadcast(colorize('&8'.simple_date('h:mm').' &4\u00ab &o'.@msg));
+		broadcast(_timestamp().colorize('&4\u00ab &o'.@msg));
 		if(extension_exists('CHDiscord')) {
 			set_timeout(1, closure(){
 				@count = array_size(all_players());

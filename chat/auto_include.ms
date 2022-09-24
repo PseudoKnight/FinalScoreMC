@@ -273,3 +273,10 @@ proc _broadcast(@msg) {
 		dm_broadcast_to_web('* '.@msg);
 	}
 }
+
+/*
+	Returns a timestamp chat prefix using the server's timezone.
+ */
+proc _timestamp() {
+	return(color('dark_gray').simple_date('h:mm', time(), 'US/Central').' ');
+}

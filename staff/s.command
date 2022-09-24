@@ -11,7 +11,7 @@ register_command('s', array(
 		}
 		@name = @args[0];
 		@message = array_implode(@args[1..-1]);
-		broadcast(colorize('&8'.simple_date('h:mm').'&7 [console] &b'.@name.'&8:&r '.@message));
+		broadcast(_timestamp().colorize('&7[console] &b'.@name.'&8:&r '.@message));
 		if(function_exists('dm_broadcast_to_web')) {
 			dm_broadcast_to_web(@message, @name)
 		}

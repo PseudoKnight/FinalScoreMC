@@ -25,7 +25,7 @@ bind('player_login', null, null, @event) {
 			@pdata['name'] = @event['player'];
 		} else { # new player!
 			@pdata = array(
-				'joined': simple_date('yyyy-MM-dd'),
+				'joined': simple_date('yyyy-MM-dd', time(), 'US/Central'),
 				'name': @event['player'],
 			);
 		}

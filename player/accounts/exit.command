@@ -16,6 +16,6 @@ register_command('exit', array(
 		@pdata['exit'] = @msg;
 		_store_pdata(player(), @pdata);
 		msg(colorize('&7Set server exit message to: '));
-		msg(colorize('&8'.simple_date('h:mm').' &4\u00ab &o'._colorname().'&o'.player().'&e&o '.@msg));
+		msg(_timestamp().colorize('&4\u00ab &o'._colorname().'&o'.player().'&e&o '.@msg));
 	}
 ));

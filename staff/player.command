@@ -53,7 +53,7 @@ register_command('player', array(
 				.if(array_index_exists(@pdata['ban'], 'message'), '- "'.@pdata['ban']['message'].'"')))
 			msg(color('gray').'Last Played: '.color('r').
 			if(@days > 14) {
-				simple_date('MMMMM dd, yyyy', @lastPlayed);
+				simple_date('MMMMM dd, yyyy', @lastPlayed, 'US/Central');
 			} else if(@days >= 3) {
 				'Over '.floor(@days).' days ago'
 			} else if(@hours >= 2) {
