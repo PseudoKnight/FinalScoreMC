@@ -53,14 +53,14 @@ register_command('player', array(
 				.if(array_index_exists(@pdata['ban'], 'message'), '- "'.@pdata['ban']['message'].'"')))
 			msg(color('gray').'Last Played: '.color('r').
 			if(@days > 14) {
-				simple_date('MMMMM dd, yyyy', @lastPlayed, 'US/Central');
+				simple_date('MMMMM dd, yyyy', @lastPlayed, 'US/Central')
 			} else if(@days >= 3) {
 				'Over '.floor(@days).' days ago'
 			} else if(@hours >= 2) {
 				'Over '.floor(@hours).' hours ago'
 			} else {
 				floor(@minutes).' minutes ago'
-			})
+			});
 			if(array_index_exists(@pdata, 'homeless'), msg(color('gray').'Homeless: '.color('r').'TRUE'));
 			if(array_index_exists(@pdata, 'ips'), msg(color('gray').'IPs: '.color('r').array_implode(@pdata['ips'], ' ')));
 			if(array_index_exists(@pdata, 'world'), msg(color('gray').'World: '.color('r').@pdata['world']));
