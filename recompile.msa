@@ -4,13 +4,14 @@
  * - Prevent recompile if certain scripts like games are running (use -f to force recompile)
  * - Temporarily store some globals if they're cleared (use -p to also clear protected globals)
  * - Clear orphan scoreboards and boss bars
- * - Prints time to reload, compile and execute
+ * - Prints time to reload, compile and execute (use -s to silence this broadcast)
  * - Broadcasts optional recompile reason text
  */
 /recompile [$args] [$] = >>>
 	@clearGlobal = false; # -g clear all but protected exported global vars
 	@clearProtected = false; # -p clear protected global vars
 	@force = false; # -f force recompile even if games are running
+	@silent = false;
 	@message = '';
 	if($args) {
 		if($args[0] === '-') {
@@ -22,6 +23,8 @@
 						@clearProtected = true;
 					case 'f':
 						@force = true;
+					case 's':
+						@silent = true;
 				}
 			}
 		} else {
@@ -85,6 +88,8 @@
 	@start = time();
 	run('/recompile -rfx'.if(!@clearGlobal, 'g'));
 	@stop = time();
-	broadcast(color('yellow').'Recompiled scripts!'.if(@message, ' "'.@message.'"').' ('.round((@stop - @start) / 1000, 2).'s)');
+	if(!@silent) {
+		broadcast(color('yellow').'Recompiled scripts!'.if(@message, ' "'.@message.'"').' ('.round((@stop - @start) / 1000, 2).'s)');
+	}
 	export('recompile', null);
 <<<
