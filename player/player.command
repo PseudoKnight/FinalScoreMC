@@ -1,7 +1,6 @@
 register_command('player', array(
-	description: 'Displays information about the given player.',
+	description: 'Displays information about an online or offline player.',
 	usage: '/player <player>',
-	permission: 'command.player',
 	tabcompleter: closure(@alias, @sender, @args, @info) {
 		return(array());
 	},
@@ -9,30 +8,40 @@ register_command('player', array(
 		if(!@args) {
 			return(false);
 		}
+		@extendedInfo = has_permission('group.moderator');
 		@player = @args[0];
 		@uuid = '';
 		@pdata = null;
+
 		try {
 			# ONLINE INFO
 			@player = player(@player);
 			@uuid = puuid(@player);
 			@pdata = _pdata(@player);
-			@onlineinfo = pinfo(@player);
-			msg(color('gray').'--[ '.color('l').@player.color('gray').' ]-------------------------');
-			msg(color('gray').'UUID: '.color('r').@uuid);
-			msg(color('gray').'Location: '.color('r')._worldname(@onlineinfo[7]).'('.@onlineinfo[7].') '
-					.floor(@onlineinfo[1][0]).','.floor(@onlineinfo[1][1]).','.floor(@onlineinfo[1][2]));
-			if(pmode(@player) === 'CREATIVE') {
-				msg(color('gray').'Gamemode: '.color('r').'CREATIVE');
-			}
-			msg(color('gray').'IP: '.color('r').@onlineinfo[3]);
-			msg(color('gray').'Hostname: '.color('r').@onlineinfo[10]);
-			@ignorelist = import('ignorelist')
-			if(array_index_exists(@ignorelist, @player)) {
-				if(array_contains(@ignorelist[@player], 'all')) {
-					msg(color('r').'MUTED');
-				} else {
-					msg(color('gray').'Ignored by: '.color('r').array_implode(@ignorelist[@player], ', '));
+			@color = _colorname(@player);
+			@world = pworld(@player);
+			msg(colorize("&7&m⎯⎯&7[&l@color @player &7]&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"));
+			msg(color('gray').' UUID: '.color('white').@uuid);
+			msg(color('gray').' Gamemode: '.color('white').to_lower(pmode(@player)));
+			msg(color('gray').' World: '.color('white')._worldname(@world).' ('._world_group(@world).')');
+
+			if(@extendedInfo) {
+				@info = pinfo(@player);
+				@x = floor(@info[1][0]);
+				@y = floor(@info[1][1]);
+				@z = floor(@info[1][2]);
+				msg(color('gray')." Position: x: @x y: @y z: @z");
+				@ignorelist = import('ignorelist');
+				if(array_index_exists(@ignorelist, @player)) {
+					if(array_contains(@ignorelist[@player], 'all')) {
+						msg(color('gray').' Muted by Moderator');
+					} else {
+						msg(color('gray').' Ignored by: '.array_implode(@ignorelist[@player], ', '));
+					}
+				}
+				if(pisop()) {
+					msg(color('gray').' IP: '.@info[3]);
+					msg(color('gray').' Hostname: '.@info[10]);
 				}
 			}
 
@@ -40,42 +49,68 @@ register_command('player', array(
 			# OFFLINE INFO
 			@uuid = _get_uuid(to_lower(@player), true, false);
 			@pdata = _pdata_by_uuid(replace(@uuid, '-', ''));
+			@player = @pdata['name'];
+			@color = _colorname(@player);
+			msg(colorize("&7&m⎯⎯&7[&l@color @player &7]&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"));
+			msg(color('gray').' UUID: '.color('white').@uuid);
+
+			if(@extendedInfo) {
+				if(array_index_exists(@pdata, 'ban')) {
+					msg(color('red').' Banned '
+							.if(array_index_exists(@pdata['ban'], 'by'), 'by '.@pdata['ban']['by'].' ')
+							.if(array_index_exists(@pdata['ban'], 'time'), 'temporarily ')
+							.if(array_index_exists(@pdata['ban'], 'message'), '- "'.@pdata['ban']['message'].'"'));
+				}
+				if(pisop() && array_index_exists(@pdata, 'ips')) {
+					msg(color('gray').' IPs: '.array_implode(@pdata['ips'], ' '));
+				}
+				if(array_index_exists(@pdata, 'homeless')) {
+					msg(color('gray').' Homeless: Player was in Outworld when it was reset.');
+				}
+			}
+
+			if(array_index_exists(@pdata, 'world')) {
+				msg(color('gray').' Last World: '.color('white')._worldname(@pdata['world']).' ('._world_group(@pdata['world']).')');
+			}
 			@lastPlayed = plast_played(@pdata['name']);
 			@minutes = (time() - @lastPlayed) / 60000;
 			@hours = @minutes / 60;
 			@days = @hours / 24;
-			msg(color('gray').'--[ '.color('l').@pdata['name'].color('gray').' ]-------------------------')
-			msg(color('gray').'UUID: '.color('r').@uuid);
-
-			if(array_index_exists(@pdata, 'ban'), msg(color('red').'Banned '.color('r')
-				.if(array_index_exists(@pdata['ban'], 'by'), 'by '.@pdata['ban']['by'].' ')
-				.if(array_index_exists(@pdata['ban'], 'time'), 'temporarily ')
-				.if(array_index_exists(@pdata['ban'], 'message'), '- "'.@pdata['ban']['message'].'"')))
-			msg(color('gray').'Last Played: '.color('r').
+			@lastPlayedOutput = '';
 			if(@days > 14) {
-				simple_date('MMMMM dd, yyyy', @lastPlayed, 'US/Central')
+				@lastPlayedOutput = simple_date('MMMMM dd, yyyy', @lastPlayed, 'US/Central');
 			} else if(@days >= 3) {
-				'Over '.floor(@days).' days ago'
+				@lastPlayedOutput = 'Less than '.ceil(@days).' days ago';
 			} else if(@hours >= 2) {
-				'Over '.floor(@hours).' hours ago'
+				@lastPlayedOutput = 'Less than '.ceil(@hours).' hours ago';
 			} else {
-				floor(@minutes).' minutes ago'
-			});
-			if(array_index_exists(@pdata, 'homeless'), msg(color('gray').'Homeless: '.color('r').'TRUE'));
-			if(array_index_exists(@pdata, 'ips'), msg(color('gray').'IPs: '.color('r').array_implode(@pdata['ips'], ' ')));
-			if(array_index_exists(@pdata, 'world'), msg(color('gray').'World: '.color('r').@pdata['world']));
-		}
-		msg(color('gray').'Group: '.color('r').array_get(@pdata, 'group', 'default'));
-		if(array_index_exists(@pdata, 'names'), msg(color('gray').'Aliases: '.color('r').array_implode(@pdata['names'], ', ')));
-		if(array_index_exists(@pdata, 'joined'), msg(color('gray').'Joined: '.color('r').@pdata['joined']));
-		if(array_index_exists(@pdata, 'approval'), msg(color('gray').'Approved by: '.color('r').@pdata['approval']));
-		if(array_index_exists(@pdata, 'coins'), msg(color('gray').'Coins: '.color('r').@pdata['coins']));
-		if(array_index_exists(@pdata, 'support'), msg(color('gray').'Support: '.color('r').'$'.@pdata['support']));
-		_bm_request('lookup_uuid', 'a1634f37480a4bb9a0b2200266597ac0', array('user_uuid': replace(@uuid, '-', '')), closure(@result) {
-			if(@result) {
-				msg(color('gray').'Notes: '.color('r').@result['user']['notes']);
-				msg(color('gray').'Relations: '.color('r').@result['user']['relations']);
+				@lastPlayedOutput = floor(@minutes).' minutes ago';
 			}
-		});
+			msg(color('gray').' Last Played: '.color('white').@lastPlayedOutput);
+		}
+
+		@firstPlayed = simple_date('MMMMM dd, yyyy', pfirst_played(@pdata['name']), 'US/Central');
+		@joined = if(array_index_exists(@pdata, 'joined'), color('gray').' ('.@pdata['joined'].')', '');
+		msg(color('gray').' First Played: '.color('white').@firstPlayed.@joined);
+		msg(color('gray').' Group: '.color('white').array_get(@pdata, 'group', 'default'));
+		if(array_index_exists(@pdata, 'names')) {
+			msg(color('gray').' Aliases: '.color('white').array_implode(@pdata['names'], ', '));
+		}
+		if(array_index_exists(@pdata, 'approval')) {
+			msg(color('gray').' Approved by: '.color('white').@pdata['approval']);
+		}
+
+		if(@extendedInfo) {
+			if(array_index_exists(@pdata, 'coins')) {
+				msg(color('gray').' Coins: '.@pdata['coins']);
+			}
+			if(array_index_exists(@pdata, 'support'), msg(color('gray').' Support: $'.@pdata['support']));
+			_bm_request('lookup_uuid', 'a1634f37480a4bb9a0b2200266597ac0', array('user_uuid': replace(@uuid, '-', '')), closure(@result) {
+				if(@result) {
+					msg(color('gray').' Notes: '.@result['user']['notes']);
+					msg(color('gray').' Relations: '.@result['user']['relations']);
+				}
+			});
+		}
 	}
 ));
