@@ -371,7 +371,20 @@ bind('entity_toggle_glide', null, array('type': 'PLAYER'), @event) {
 # Minecart speed control (can cause derailment and other issues after around 5/ms)
 bind('vehicle_enter', null, array(vehicletype: 'MINECART', passengertype: 'PLAYER'), @event) {
 	if(_is_survival_world(pworld()) && !has_bind(player().'vehiclecontrol')) {
-		bind('player_interact', array(id: player().'vehiclecontrol'), array(hand: 'main_hand', player: player()), @event) {
+		@moveBind = bind('vehicle_move', null, array(vehicletype: 'MINECART', passengertype: 'PLAYER', threshold: 0), @event, @player = @event['player']) {
+			if(@player == @event['player']) {
+				if(get_entity_max_speed(@event['id']) > 0.4) {
+					@blockData = get_blockdata(@event['to']);
+					@block = @blockData['block'];
+					if((@block != 'rail' && @block != 'powered_rail')
+					|| (@blockData['shape'] != 'east_west' && @blockData['shape'] != 'north_south')) {
+						action_msg(@event['passenger'], 'Max Speed: 8 m/s (default speed)');
+						set_entity_max_speed(@event['id'], 0.4);
+					}
+				}
+			}
+		}
+		bind('player_interact', array(id: player().'vehiclecontrol'), array(hand: 'main_hand', player: player()), @event, @moveBind) {
 			@vehicle = get_entity_vehicle(puuid());
 			if(@vehicle && entity_type(@vehicle) == 'MINECART') {
 				@speed = get_entity_max_speed(@vehicle) * 20;
@@ -380,13 +393,13 @@ bind('vehicle_enter', null, array(vehicletype: 'MINECART', passengertype: 'PLAYE
 				} else {
 					@speed += 1.0;
 				}
-				@speed = clamp(@speed, 0, 40);
+				@speed = clamp(@speed, 0, 30);
 				@speedOutput = 'Max Speed: '.integer(@speed).' m/s';
 				if(@speed > 8) {
-					@speedOutput .= ' (derailng possible)';
-					if(@speed > 10) {
+					@speedOutput .= ' (derailing possible)';
+					if(@speed > 19) {
 						@speedOutput = color('red').@speedOutput;
-					} else if(@speed > 9) {
+					} else if(@speed > 14) {
 						@speedOutput = color('gold').@speedOutput;
 					} else {
 						@speedOutput = color('yellow').@speedOutput;
@@ -403,6 +416,7 @@ bind('vehicle_enter', null, array(vehicletype: 'MINECART', passengertype: 'PLAYE
 				set_entity_max_speed(@vehicle, @speed / 20);
 			} else {
 				unbind();
+				unbind(@moveBind);
 			}
 		}
 	}
