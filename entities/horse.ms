@@ -6,14 +6,13 @@ bind('player_interact_entity', null, array('clicked': '/(DONKEY|HORSE|LLAMA|MULE
 
 	@jump = 0;
 	try {
-		@yVelocity = round(entity_spec(@event['id'])['jump'], 2);
+		@strength = entity_spec(@event['id'])['jump'];
 		# calculate jump height in meters
-		while(@yVelocity > 0) {
-			@jump += @yVelocity;
-			@yVelocity -= 0.08;
-			@yVelocity *= 0.98;
-		}
-		@jump = round(@jump, 1);
+		@jump = -0.9078526641492174 * @strength ** 3
+				+ 5.380296913832499 * @strength ** 2
+				+ 0.8696246225981936 * @strength
+				- 0.04348078381106464;
+		@jump = round(@jump, 2);
 	} catch(IndexOverflowException @ex) {
 		// llama
 	}
