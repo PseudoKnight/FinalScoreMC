@@ -39,7 +39,7 @@ register_command('player', array(
 						msg(color('gray').' Ignored by: '.array_implode(@ignorelist[@player], ', '));
 					}
 				}
-				if(pisop()) {
+				if(player() == '~console' || pisop()) {
 					msg(color('gray').' IP: '.@info[3]);
 					msg(color('gray').' Hostname: '.@info[10]);
 				}
@@ -61,7 +61,7 @@ register_command('player', array(
 							.if(array_index_exists(@pdata['ban'], 'time'), 'temporarily ')
 							.if(array_index_exists(@pdata['ban'], 'message'), '- "'.@pdata['ban']['message'].'"'));
 				}
-				if(pisop() && array_index_exists(@pdata, 'ips')) {
+				if((player() == '~console' || pisop()) && array_index_exists(@pdata, 'ips')) {
 					msg(color('gray').' IPs: '.array_implode(@pdata['ips'], ' '));
 				}
 				if(array_index_exists(@pdata, 'homeless')) {
