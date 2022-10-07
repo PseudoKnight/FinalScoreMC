@@ -21,7 +21,7 @@ if(extension_exists('CHDynmap')) {
 		dm_set_markerset_hide_by_default('tracers', false);
 	}
 
-	bind('player_move', null, array('threshold': 8), @event) {
+	bind('player_move', null, array('threshold': 8), @event, @color = array('r': 200, 'g': 0, 'b': 0)) {
 		if(pmode() == 'SPECTATOR' || !has_permission('livemap.tracers')) {
 			die();
 		}
@@ -29,6 +29,10 @@ if(extension_exists('CHDynmap')) {
 		@pdata = _pdata(player());
 		if(!array_index_exists(@pdata, 'support')) {
 			die();
+		}
+
+		if(array_index_exists(@pdata, 'trail')) {
+			@color = @pdata['trail'];
 		}
 
 		try {
@@ -50,7 +54,7 @@ if(extension_exists('CHDynmap')) {
 				'corners': array(@event['to'])
 			));
 			dm_set_marker_line_style('tracers', player(), array(
-				'color': array('r': 200, 'g': 0, 'b': 0),
+				'color': @color,
 				'opacity': 0.5,
 				'weight': 2,
 			));
