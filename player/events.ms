@@ -373,13 +373,34 @@ bind('vehicle_enter', null, array(vehicletype: 'MINECART', passengertype: 'PLAYE
 	if(_is_survival_world(pworld()) && !has_bind(player().'vehiclecontrol')) {
 		@moveBind = bind('vehicle_move', null, array(vehicletype: 'MINECART', passengertype: 'PLAYER', threshold: 0), @event, @player = @event['player']) {
 			if(@player == @event['player']) {
-				if(get_entity_max_speed(@event['id']) > 0.4) {
+				@maxSpeed = get_entity_max_speed(@event['id']);
+				if(@maxSpeed > 0.4) {
 					@blockData = get_blockdata(@event['to']);
 					@block = @blockData['block'];
 					if((@block != 'rail' && @block != 'powered_rail')
 					|| (@blockData['shape'] != 'east_west' && @blockData['shape'] != 'north_south')) {
 						action_msg(@event['passenger'], 'Max Speed: 8 m/s (default speed)');
 						set_entity_max_speed(@event['id'], 0.4);
+					} else if(@maxSpeed == 1.5) {
+						@to = @event['to'];
+						@yaw = @to['yaw'] + 90;
+						@left = array(
+							@to['x'] + cos(to_radians(@yaw)) * 0.32,
+							@to['y'],
+							@to['z'] + sin(to_radians(@yaw)) * 0.32,
+							@to['world']
+						);
+						@yaw -= 180;
+						@right = array(
+							@to['x'] + cos(to_radians(@yaw)) * 0.32,
+							@to['y'],
+							@to['z'] + sin(to_radians(@yaw)) * 0.32,
+							@to['world']
+						);
+						spawn_particle(@left, array(particle: 'FLAME'));
+						spawn_particle(@left, array(particle: 'SMOKE_NORMAL'));
+						spawn_particle(@right, array(particle: 'FLAME'));
+						spawn_particle(@right, array(particle: 'SMOKE_NORMAL'));
 					}
 				}
 			}
@@ -397,7 +418,10 @@ bind('vehicle_enter', null, array(vehicletype: 'MINECART', passengertype: 'PLAYE
 				@speedOutput = 'Max Speed: '.integer(@speed).' m/s';
 				if(@speed > 8) {
 					@speedOutput .= ' (derailing possible)';
-					if(@speed > 19) {
+					if(@speed == 30) {
+						@speedOutput = color('red').'Max Speed: 39.'.color('k').'34'.color('red')
+								.' m/s (where we\'re going, we don\'t need rails)';
+					} else if(@speed > 19) {
 						@speedOutput = color('red').@speedOutput;
 					} else if(@speed > 14) {
 						@speedOutput = color('gold').@speedOutput;
