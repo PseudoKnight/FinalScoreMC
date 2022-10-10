@@ -1,6 +1,6 @@
 proc _chat(@player, @message, @recipients, @source = '', @channel = '') {
 	if(length(@message) == 0) {
-		die();
+		return();
 	}
 	# PRIVATE MESSAGING
 	if(@message[0] === '@') {
@@ -10,7 +10,7 @@ proc _chat(@player, @message, @recipients, @source = '', @channel = '') {
 			@message = substr(@message, length(@p) + 2);
 			_pmsg(@player, @p, @message);
 			console(@player.' @ '.@p.': '.@message, false);
-			die();
+			return();
 		}
 	}
 
@@ -57,7 +57,7 @@ proc _chat(@player, @message, @recipients, @source = '', @channel = '') {
 	} else {
 		if(array_index_exists(@pdata, 'ban')) {
 			console(@player.' tried to speak in web chat', false);
-			die();
+			return();
 		}
 		if(@pdata) {
 			@displayName = _colorname(@player).@player;
