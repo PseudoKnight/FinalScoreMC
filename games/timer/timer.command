@@ -8,7 +8,7 @@ register_command('timer', array(
 		}
 
 		@player = _get_nearby_player(get_command_block(), 5);
-		if(!@player || phas_flight(@player)) {
+		if(!@player || phas_flight(@player) || geyser_connected(@player)) {
 			return();
 		}
 
