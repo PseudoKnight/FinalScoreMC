@@ -11,10 +11,9 @@ bind('inventory_click', null, array('clicktype': 'SHIFT_RIGHT'), @event) {
 		case 'ENDER_CHEST':
 			cancel();
 			play_sound(ploc(), array('sound': 'BLOCK_ENDER_CHEST_OPEN'));
-			show_enderchest();
-		case 'ENCHANTMENT_TABLE':
-			cancel();
-			penchanting();
+			set_timeout(10, closure(){
+				show_enderchest();
+			});
 		default:
 			if(@event['inventorytype'] == 'CRAFTING' && string_ends_with(@event['slotitem']['name'], 'SHULKER_BOX')) {
 				if(!import('test_shulker_box')) {
