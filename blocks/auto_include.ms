@@ -4,6 +4,7 @@
 proc _get_pitch(@tone, @octave) {
 	switch(@tone) {
 		case 'F#':
+		case 'Gb':
 			if(@octave == 2) {
 				return(2.0);
 			} else if(@octave == 1) {
@@ -16,6 +17,7 @@ proc _get_pitch(@tone, @octave) {
 			}
 			return(0.53);
 		case 'G#':
+		case 'AB':
 			if(@octave == 1) {
 				return(1.12);
 			}
@@ -26,6 +28,7 @@ proc _get_pitch(@tone, @octave) {
 			}
 			return(0.6);
 		case 'A#':
+		case 'BB':
 			if(@octave == 1) {
 				return(1.26);
 			}
@@ -41,6 +44,7 @@ proc _get_pitch(@tone, @octave) {
 			}
 			return(0.7);
 		case 'C#':
+		case 'DB':
 			if(@octave == 1) {
 				return(1.50);
 			}
@@ -51,6 +55,7 @@ proc _get_pitch(@tone, @octave) {
 			}
 			return(0.79);
 		case 'D#':
+		case 'EB':
 			if(@octave == 1) {
 				return(1.68);
 			}

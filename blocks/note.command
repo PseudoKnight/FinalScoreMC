@@ -58,20 +58,30 @@ register_command('note', array(
 		}
 
 
-		@clicks = @args[0];
+		@note = @args[0];
 		@octave = 0;
 		if(array_size(@args) == 2) {
-			@octave = integer(@args[1]);
+			@octave = integer(@args[1]) - 1;
 		}
 		@pitch = 0.5;
 		@notes = array('F#', 'G', 'G#', 'A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F');
-		if(!is_numeric(@clicks)) {
-			@pitch = _get_pitch(to_upper(@args[0]), @octave);
-			@clicks = array_index(@notes, to_upper(@args[0])) + (@octave * 12);
+		@notesB = array('GB', 'G', 'AB', 'A', 'BB', 'B', 'C', 'DD', 'D', 'EB', 'E', 'F');
+		if(!is_numeric(@note)) {
+			@note = to_upper(@note);
+			@pitch = _get_pitch(@note, @octave);
+			@index = array_index(@notes, @note);
+			if(!@index) {
+				// try flats
+				@index = array_index(@notesB, @note);
+				if(!@index) {
+					die('Invalid note: '.@note);
+				}
+			}
+			@note = @index + (@octave * 12);
 		} else {
-			@pitch = _get_pitch(@notes[@clicks % 12], floor(@clicks / 12));
+			@pitch = _get_pitch(@notes[@note % 12], floor(@note / 12));
 		}
 		play_sound(@l, array(sound: @sound, category: 'RECORDS', pitch: @pitch));
-		set_blockdata_string(@l, 'note_block[note='.@clicks.',instrument='.@instrument.']');
+		set_blockdata_string(@l, 'note_block[note='.@note.',instrument='.@instrument.']');
 	}
 ));
