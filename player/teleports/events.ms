@@ -25,7 +25,7 @@ bind('player_teleport', null, null, @event) {
 		|| get_block(location_shift(@from, 'south')) == 'END_GATEWAY') {
 			// This is a stargate, which will be handled on a separate plugin teleport event
 			die();
-		} else if(@fromWorld == 'world_the_end'
+		} else if(string_ends_with(@fromWorld, '_the_end')
 		&& abs(@from['x']) > 512 || abs(@from['z']) > 512) {
 			// coming from the ring islands, do a safe tp
 			@to = get_spawn(@fromWorld);
@@ -38,12 +38,11 @@ bind('player_teleport', null, null, @event) {
 	if(_is_survival_world(@fromWorld) && _is_survival_world(@toWorld)) {
 		@uuid = null;
 		try {
-		@uuid = puuid();
+			@uuid = puuid();
 		} catch(BadEntityException @ex) {
 			// possibly teleported on join
 			die();
 		}
-		
 
 		@vehicle = get_entity_vehicle(@uuid);
 
@@ -61,13 +60,13 @@ bind('player_teleport', null, null, @event) {
 				if(@vehicle != null) {
 					@type = entity_type(@vehicle);
 					if(array_contains(array('DONKEY', 'HORSE', 'LLAMA', 'MULE', 'SKELETON_HORSE', 'ZOMBIE_HORSE', 'STRIDER'), @type)) {
-						set_entity_loc(@vehicle, @to);
-						set_entity_rider(@vehicle, @uuid);
+							set_entity_loc(@vehicle, @to);
+							set_entity_rider(@vehicle, @uuid);
 					}
 				}
 				foreach(@e in @leashedEntities) {
-					set_entity_loc(@e, @to);
-					set_leashholder(@e, @uuid);
+						set_entity_loc(@e, @to);
+						set_leashholder(@e, @uuid);
 				}
 				unload_chunk(@from);
 			});
