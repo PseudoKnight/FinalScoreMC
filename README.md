@@ -12,6 +12,7 @@ Visit http://methodscript.com for details on CommandHelper itself and the Method
 | CHDisguises | [Source](https://github.com/PseudoKnight/CHDisguises/) | [Download](https://letsbuild.net/jenkins/job/CHDisguises/) | LibsDisguises |
 | CHDynmap | [Source](https://github.com/PseudoKnight/CHDynmap/) | [Download](https://letsbuild.net/jenkins/job/CHDynmap/) | Dynmap |
 | CHFiles | [Source](https://github.com/PseudoKnight/CHFiles/) | [Download](https://letsbuild.net/jenkins/job/CHFiles/) | |
+| CHGeyser | | | Geyser |
 | CHNaughty | [Source](https://github.com/PseudoKnight/CHNaughty/) | [Download](https://github.com/PseudoKnight/CHNaughty/releases) | |
 | CHPaper | [Source](https://github.com/PseudoKnight/CHPaper) | [Download](https://letsbuild.net/jenkins/job/CHPaper/) | Paper |
 | CHPerms | [Source](https://github.com/jb-aero/CHPerms/) | [Download](https://letsbuild.net/jenkins/job/CHPerms/) | |
