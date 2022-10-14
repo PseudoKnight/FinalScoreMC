@@ -55,21 +55,23 @@ bind('player_teleport', null, null, @event) {
 		}
 
 		if(@vehicle || @leashedEntities) {
-			load_chunk(@from); // keep chunks loaded just in case
-			set_timeout(50, closure(){
-				if(@vehicle != null) {
-					@type = entity_type(@vehicle);
-					if(array_contains(array('DONKEY', 'HORSE', 'LLAMA', 'MULE', 'SKELETON_HORSE', 'ZOMBIE_HORSE', 'STRIDER'), @type)) {
-							set_entity_loc(@vehicle, @to);
-							set_entity_rider(@vehicle, @uuid);
-					}
+			load_chunk(@to);
+			if(@vehicle != null) {
+				@type = entity_type(@vehicle);
+				if(array_contains(array('DONKEY', 'HORSE', 'LLAMA', 'MULE', 'SKELETON_HORSE', 'ZOMBIE_HORSE', 'STRIDER'), @type)) {
+					set_entity_loc(@vehicle, @to);
+					set_timeout(10, closure(){
+						set_entity_rider(@vehicle, @uuid);
+					});
 				}
-				foreach(@e in @leashedEntities) {
-						set_entity_loc(@e, @to);
-						set_leashholder(@e, @uuid);
-				}
-				unload_chunk(@from);
-			});
+			}
+			foreach(@e in @leashedEntities) {
+				set_entity_loc(@e, @to);
+				set_timeout(10, closure(){
+					set_leashholder(@e, @uuid);
+				});
+			}
+			unload_chunk(@to);
 		}
 	}
 }
