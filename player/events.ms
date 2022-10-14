@@ -1,11 +1,3 @@
-bind('player_command', null, null, @event) {
-	try {
-		console(@event['player'].' ran: '.@event['command'], false);
-	} catch(RangeException @ex) {
-		call_alias('/help');
-	}
-}
-
 bind('player_death', null, null, @event) {
 	if(_is_survival_world(@event['location']['world'])) {
 		@loc = @event['location'];
