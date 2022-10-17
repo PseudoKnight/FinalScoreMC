@@ -1,7 +1,7 @@
 register_command('unmute', array(
 	description: 'Unmutes a player for all other players',
 	usage: '/unmute <player>',
-	permission: 'command.unmute',
+	permission: 'command.mute',
 	executor: closure(@alias, @sender, @args, @info) {
 		if(!@args) {
 			return(false);

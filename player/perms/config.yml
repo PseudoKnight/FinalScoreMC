@@ -338,6 +338,8 @@ moderator:
     command.vanish: true
     command.goto: true
     command.goto.anywhere: true
+    command.mute: true
+    command.clearchat: true
   worlds:
     dev:
       worldedit.*: true
