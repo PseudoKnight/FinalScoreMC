@@ -79,6 +79,8 @@ member:
       livemap.markers: true
     world_the_end:
       livemap.markers: true
+    psi:
+      livemap.markers: true
     shard:
       stargate.create.personal: false
       stargate.create.network: false
