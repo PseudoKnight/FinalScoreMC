@@ -663,7 +663,8 @@ proc _pvp_start_match(@id) {
 			foreach(@i: @chest in @arena['chestspawn']) {
 				if(array_index_exists(@pvp['chestspawn'], @i)
 				&& (@pvp['chestspawn'][@i] + (@chest['cooldown'] * 1000)) < time()) {
-					if(get_block(@chest['loc']) === 'AIR') {
+					@block = get_block(@chest['loc']);
+					if(@block === 'AIR' || @block == 'WATER') {
 						set_block(@chest['loc'], 'CHEST');
 						for(@y = 0, @y < array_size(@chest['items']), @y++) {
 							set_inventory_item(@chest['loc'], @y, @chest['items'][@y]);
