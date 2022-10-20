@@ -426,10 +426,13 @@ register_command('arena', array(
 							}
 							@items = array();
 							for(@i = 0, @i < 27, @i++) {
-								if(is_null(get_inventory_item(@loc, @i))) {
-									break();
+								@item = get_inventory_item(@loc, @i);
+								if(@item) {
+									@items[] = @item;
 								}
-								@items[] = get_inventory_item(@loc, @i);
+							}
+							if(!@items) {
+								die('No items found in that chest.');
 							}
 							@arena['chestspawn'][] = array(
 								start: @start,
