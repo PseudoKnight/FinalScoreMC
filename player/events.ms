@@ -177,7 +177,9 @@ bind('player_interact', null, array('button': 'right'), @event) {
 			if(@event['block'] == 'SPAWNER') {
 				cancel();
 			}
-		} else if(array_index_exists(@event, 'location') && sk_can_build(@event['location'])) {
+		} else if(array_index_exists(@event, 'location') 
+		&& sk_can_build(@event['location'])
+		&& @event['block'] != 'SPAWNER') {
 			// this ignores mob spawning flags creative/game worlds
 			cancel();
 			@item = null;
