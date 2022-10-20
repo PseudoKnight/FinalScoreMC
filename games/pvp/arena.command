@@ -16,7 +16,7 @@ register_command('arena', array(
 					'ctfflag', 'respawn', 'spawn','blockbreak', 'ff', 'arenaselect', 'sharedarenas', 'mode',
 					'mobprotect', 'team', 'kit', 'restore','itemspawn', 'chestgroup', 'chestspawn', 'rsoutput',
 					'rsoutputscore', 'effect', 'denydrop', 'mobspawn', 'weapons', 'options', 'hidden'),
-			'<<add': array('description', 'arenaselect', 'weapons', 'options', 'deathdrops'),
+			'<<add': array('description', 'arenaselect', 'weapons', 'options', 'deathdrops', 'denydrop'),
 			'<<load': array('kit', 'chestspawn', 'spawn')),
 		array(
 			'<weapons': array('endernades', 'fireball', 'firebreath', 'firefire', 'flamethrower', 'grapple',
