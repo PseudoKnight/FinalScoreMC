@@ -618,13 +618,13 @@ proc _pvp_start_match(@id) {
 					}
 				}
 				if(@itemspawn[1] + (@item['cooldown'] * 1000) < time()) {
-					@id = drop_item(@item['loc'], @item['item'], false);
+					@itemId = drop_item(@item['loc'], @item['item'], false);
 					try {
-						set_entity_velocity(@id, array(0, 0, 0));
-						set_entity_glowing(@id, true);
+						set_entity_velocity(@itemId, array(0, 0, 0));
+						set_entity_glowing(@itemId, true);
 						play_sound(@item['loc'], array(sound: 'ENTITY_ENDERMAN_TELEPORT', pitch: 1.5));
 						make_effect(@item['loc'], 'ENDER_SIGNAL');
-						@itemspawn[0] = @id;
+						@itemspawn[0] = @itemId;
 						@itemspawn[1] = time();
 					} catch(BadEntityException @ex) {
 						// chunk might not be loaded, so try again next tick
