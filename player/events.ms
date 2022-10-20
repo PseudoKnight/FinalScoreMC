@@ -139,11 +139,11 @@ bind('player_interact', null, array(itemname: 'FLINT_AND_STEEL', button: 'right'
 	&& @block != 'CANDLE_CAKE'
 	&& !string_ends_with(@block, 'CANDLE')) {
 		if(@block == 'OBSIDIAN' && @event['facing'] == 'up') {
-		queue_push(closure(){
+			queue_push(closure(){
 				if(get_block(location_shift(@event['location'], 'up')) != 'NETHER_PORTAL') {
 					set_block(location_shift(@event['location'], 'up'), 'AIR');
-			}
-		});
+				}
+			});
 		} else if(!sk_regions_at(location_shift(@event['location'], @event['facing']))) {
 			cancel();
 			msg('Flint and steel is limited here to nether portals, TNT, campfires, and candles.');
@@ -290,7 +290,7 @@ bind('player_interact', null, null, @event, @instruments,
 	)
 ) {
 	@item = @event['item'];
-	if(@item && _is_survival_world(pworld())) {
+	if(@item && !@item['meta']) {
 		@material = @item['name'];
 		if(array_index_exists(@instruments, @material)) {
 			@instrument = @instruments[@material];
@@ -309,14 +309,12 @@ bind('player_interact', null, null, @event, @instruments,
 }
 
 bind('player_toggle_sneak', null, array(sneaking: true), @event, @instruments) {
-	if(_is_survival_world(pworld())) {
-		@mainhand = pinv(player(), null);
-		@offhand = pinv(player(), -106);
-		if(@mainhand && array_index_exists(@instruments, @mainhand['name'])) {
-			play_named_sound(ploc(), array('sound': 'block.note_block.basedrum', 'category': 'VOICE'));
-		} else if(@offhand && array_index_exists(@instruments, @offhand['name'])) {
-			play_named_sound(ploc(), array('sound': 'block.note_block.basedrum', 'category': 'VOICE'));
-		}
+	@mainhand = pinv(player(), null);
+	@offhand = pinv(player(), -106);
+	if(@mainhand && !@mainhand['meta'] && array_index_exists(@instruments, @mainhand['name'])) {
+		play_named_sound(ploc(), array('sound': 'block.note_block.basedrum', 'category': 'VOICE'));
+	} else if(@offhand && !@offhand['meta'] && array_index_exists(@instruments, @offhand['name'])) {
+		play_named_sound(ploc(), array('sound': 'block.note_block.basedrum', 'category': 'VOICE'));
 	}
 }
 
