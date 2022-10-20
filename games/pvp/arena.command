@@ -21,7 +21,7 @@ register_command('arena', array(
 		array(
 			'<weapons': array('endernades', 'fireball', 'firebreath', 'firefire', 'flamethrower', 'grapple',
 				'halo/battlerifle', 'knockout', 'mine', 'pistoltears', 'primedtnt', 'railgun', 'rifle', 'shotgunballs',
-				'skullrockets', 'snipeglass', 'spawner', 'tracker', 'dynamitestick'),
+				'skullrockets', 'snipeglass', 'spawner', 'stickynade', 'tracker', 'dynamitestick'),
 			'<options': array('lives', 'score', 'class_picks', 'class_picking'),
 		)
 	),
@@ -496,6 +496,8 @@ register_command('arena', array(
 					case 'denydrop':
 						if(to_lower(@args[3]) === 'all') {
 							@arena['denydrop'] = 'all';
+						} else if(@action == 'add') {
+							@arena['denydrop'] = array_merge(array_get(@arena, 'denydrop', array()), split(',', @args[3]));
 						} else {
 							@arena['denydrop'] = split(',', @args[3]);
 						}
