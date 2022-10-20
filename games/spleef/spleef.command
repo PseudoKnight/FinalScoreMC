@@ -360,10 +360,11 @@ register_command('spleef', array(
 							@currentspleef = array();
 							export('currentspleef', @currentspleef);
 							_remove_activity('currentspleef');
-							clear_task();
 							if(@worminterval) {
 								clear_task(@worminterval);
 							}
+							clear_task();
+							die();
 						}
 
 						foreach(@player in all_players(@world)){
