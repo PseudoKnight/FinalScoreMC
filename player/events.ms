@@ -128,25 +128,25 @@ bind('block_place', null, array(block: 'WITHER_SKELETON_SKULL'), @event) {
 	}
 }
 
-# Block lighters
-bind('player_interact', null, array('itemname': 'FLINT_AND_STEEL', 'button': 'right'), @event) {
-	if(has_permission('item.lighter')
-	|| !array_index_exists(@event, 'location')) {
-		die();
-	}
-	@loc = @event['location'];
-	if(@event['block'] === 'TNT') {
-		die();
-	} else if(@event['block'] === 'OBSIDIAN' && @event['facing'] === 'up') {
+# Add barriers to dangerous flint&steel use
+bind('player_interact', null, array(itemname: 'FLINT_AND_STEEL', button: 'right'), @event) {
+	@block = @event['block']
+	if(array_index_exists(@event, 'location')
+	&& !has_permission('item.lighter')
+	&& @block != 'TNT'
+	&& @block != 'CAMPFIRE'
+	&& @block != 'SOUL_CAMPFIRE'
+	&& @block != 'CANDLE_CAKE'
+	&& !string_ends_with(@block, 'CANDLE')) {
+		if(@block == 'OBSIDIAN' && @event['facing'] == 'up') {
 		queue_push(closure(){
-			if(get_block(location_shift(@loc, 'up')) !== 'NETHER_PORTAL') {
-				set_block(location_shift(@loc, 'up'), 'AIR');
+				if(get_block(location_shift(@event['location'], 'up')) != 'NETHER_PORTAL') {
+					set_block(location_shift(@event['location'], 'up'), 'AIR');
 			}
 		});
-	} else {
-		if(!sk_regions_at(location_shift(@loc, 'up')) || !sk_can_build(location_shift(@loc, 'up'))) {
+		} else if(!sk_regions_at(location_shift(@event['location'], @event['facing']))) {
 			cancel();
-			msg('Use of flint and steel is restricted here, except on nether portals and TNT.');
+			msg('Flint and steel is limited here to nether portals, TNT, campfires, and candles.');
 		}
 	}
 }
