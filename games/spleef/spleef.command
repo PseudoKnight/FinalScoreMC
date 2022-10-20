@@ -225,7 +225,7 @@ register_command('spleef', array(
 						if(get_block(array(@location[0], @location[1], @location[2], @world)) === 'AIR') {
 							set_blockdata_string(array(@location[0], @location[1], @location[2], @world), @mat, false);
 						}
-						set_ploc(@player, array(@location[0] + 0.5, @location[1], @location[2] + 0.5, @world));
+						set_ploc(@player, array(@location[0] + 0.5, @location[1] + 0.5, @location[2] + 0.5, @world));
 						set_pinv(@player, 0,
 							array('name': 'DIAMOND_PICKAXE', 'qty': 1, 'meta': array(
 								'enchants': array('efficiency': 40),
