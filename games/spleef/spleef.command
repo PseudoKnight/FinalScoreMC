@@ -89,7 +89,8 @@ register_command('spleef', array(
 				bind('player_interact', null, array('player': player()), @event, @cfg) {
 					if(@event['block'] && array_contains(sk_regions_at(@event['location']), @cfg['region']['material'])) {
 						@blocktype = get_block(@event['location']);
-						set_block(@cfg['option']['material'], @blocktype);
+						@blockdata = get_blockdata_string(@event['location']);
+						set_blockdata_string(@cfg['option']['material'], @blockdata);
 						msg(color('green').'[Spleef] '.color('r').'You have selected '.color('6').@blocktype.'.');
 						cancel();
 						unbind();
@@ -136,7 +137,7 @@ register_command('spleef', array(
 
 				_regionmsg(@cfg['region']['wrapper'], color('green').'[Spleef] '.color('r').'Match starting in 3 seconds...');
 				@region = sk_region_info(@cfg['region']['floor'], @world)[0];
-				@mat = get_block(@cfg['option']['material']);
+				@mat = get_blockdata_string(@cfg['option']['material']);
 
 				#Given two blocks, iterates through all the blocks inside the cuboid, and calls the
 				#user defined function on them. The used defined procedure should accept 3 parameters,
@@ -156,7 +157,7 @@ register_command('spleef', array(
 						#platforming
 						proc _setfloor(@x, @y, @z, @world, @mat) {
 							if(rand(2)) {
-								set_block(array(@x, @y, @z, @world), @mat,  false);
+								set_blockdata_string(array(@x, @y, @z, @world), @mat,  false);
 							} else {
 								set_block(array(@x, @y, @z, @world), 'AIR', false);
 							}
@@ -165,7 +166,7 @@ register_command('spleef', array(
 						#regular floor
 						proc _setfloor(@x, @y, @z, @world, @mat) {
 							if(get_block(array(@x, @y, @z, @world)) != @mat) {
-								set_block(array(@x, @y, @z, @world), @mat, false);
+								set_blockdata_string(array(@x, @y, @z, @world), @mat, false);
 							}
 						}
 					}
@@ -222,7 +223,7 @@ register_command('spleef', array(
 						}
 						#check if they're spawning over air
 						if(get_block(array(@location[0], @location[1], @location[2], @world)) === 'AIR') {
-							set_block(array(@location[0], @location[1], @location[2], @world), @mat, false);
+							set_blockdata_string(array(@location[0], @location[1], @location[2], @world), @mat, false);
 						}
 						set_ploc(@player, array(@location[0] + 0.5, @location[1], @location[2] + 0.5, @world));
 						set_pinv(@player, 0,
