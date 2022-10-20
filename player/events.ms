@@ -255,7 +255,7 @@ bind('block_break', null, array(block: 'DIAMOND_ORE'), @event) {
 }
 
 # painting cycler
-bind('player_interact_entity', null, array('clicked': 'PAINTING','hand': 'main_hand'), @event) {
+bind('player_interact_entity', null, array(clicked: 'PAINTING', hand: 'main_hand'), @event) {
 	if(pmode() != 'ADVENTURE' && sk_can_build(entity_loc(@event['id']))) {
 		@paintings = reflect_pull('enum', 'Art');
 		@current = entity_spec(@event['id'])['type'];
@@ -263,11 +263,11 @@ bind('player_interact_entity', null, array('clicked': 'PAINTING','hand': 'main_h
 		@tries = 0;
 		@next = null;
 		do {
-			@next = @paintings[(@index = (@index + 1) % array_size(@paintings))];
-			set_entity_spec(@event['id'], array('type': @next));
-			# if successful, the entity id/uuid will change
+			@index = (@index + 1) % array_size(@paintings);
+			@next = @paintings[@index];
+			set_entity_spec(@event['id'], array(type: @next));
 			# but just in case, only try 20 times (enough to cycle from the last 1x1 back to the first 1x1)
-		} while(entity_exists(@event['id']) && @tries++ < 20);
+		} while(entity_spec(@event['id'])['type'] != @next && ++@tries < 20);
 		if(extension_exists('CHNaughty')) {
 			action_msg(@next);
 		}
