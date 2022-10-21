@@ -342,6 +342,7 @@ moderator:
     command.goto.anywhere: true
     command.mute: true
     command.clearchat: true
+    minecraft.nbt.place: true
   worlds:
     dev:
       worldedit.*: true
