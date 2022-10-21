@@ -29,3 +29,69 @@ bind('creature_spawn', null, array('reason': 'DISPENSE_EGG'), @event) {
 bind('creature_spawn', null, array('reason': 'SPAWNER_EGG'), @event) {
 	set_entity_persistence(@event['id'], true);
 }
+
+bind('player_interact_at_entity', null, array(hand: 'main_hand'), @event) {
+	if(pmode() == 'CREATIVE'
+	&& psneaking()
+	&& is_entity_living(@event['id'])
+	&& !get_entity_ai(@event['id'])
+	&& entity_type(@event['id']) != 'ARMOR_STAND'
+	&& sk_can_build(entity_loc(@event['id']))) {
+
+		@dir = pfacing();
+		@eloc = entity_loc(@event['id']);
+		@newloc = @eloc[];
+
+		export(player().'posing', true);
+		cancel();
+
+		if(@event['position']['y'] < 0.5) {
+			title('', color(6).'Rotating entity.', 0, 40, 10);
+
+			@taskid = set_interval(50, closure(){
+				if(!psneaking() || !entity_exists(@event['id'])) {
+					clear_task();
+					export(player().'posing', null);
+					return();
+				}
+
+				@newdir = pfacing();
+
+				@yawdiff = @newdir[0] - @dir[0];
+				if(@yawdiff > 180) {
+					@yawdiff -= 360;
+				} else if(@yawdiff < -180) {
+					@yawdiff += 360;
+				}
+
+				@dyaw = @yawdiff * 2.5;
+				@newloc['yaw'] = @eloc['yaw'] - @dyaw;
+				set_entity_loc(@event['id'], @newloc);
+			});
+
+		} else {
+			title('', color(6).'Adjusting entity position.', 0, 40, 10);
+
+			@eloc = entity_loc(@event['id']);
+			@originalYaw = @eloc['yaw'];
+			@dist = distance(@eloc, location_shift(ploc(), 'up'));
+
+			set_interval(50, closure(){
+				if(!ponline(player()) || !psneaking() || !entity_exists(@event['id'])) {
+					clear_task();
+					export(player().'posing', null);
+					return();
+				}
+
+				@eloc = location_shift(ploc(), 'up', 1.3);
+				@yaw = to_radians(@eloc['yaw'] + 90);
+				@pitch = to_radians(0 - @eloc['pitch']);
+				@eloc['x'] += @dist * cos(@yaw) * cos(@pitch);
+				@eloc['y'] += @dist * sin(@pitch);
+				@eloc['z'] += @dist * sin(@yaw) * cos(@pitch);
+				@eloc['yaw'] = @originalYaw;
+				set_entity_loc(@event['id'], @eloc);
+			});
+		}
+	}
+}
