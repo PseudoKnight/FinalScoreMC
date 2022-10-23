@@ -141,6 +141,9 @@ proc _player_remove(@player, @id) {
 	if(array_index_exists(@pvp['players'][@player], 'class')) {
 		_classes_unload(@player, @pvp['players'][@player]['class'], @pvp);
 	}
+	foreach(@entity in @pvp['players'][@player]['entities']) {
+		try(entity_remove(@entity))
+	}
 	array_remove(@pvp['players'], @player);
 	if(array_index_exists(@pvp['arena'], 'lives') && @pvp['arena']['lives'] > 1) {
 		set_pscore('lives', @player, 0, @id);
@@ -174,6 +177,9 @@ proc _player_to_spectator(@player, @pvp) {
 	if(array_index_exists(@pvp['players'][player()], 'class')) {
 		_classes_unload(player(), @pvp['players'][player()]['class'], @pvp);
 	}
+	foreach(@entity in @pvp['players'][@player]['entities']) {
+		try(entity_remove(@entity))
+	}
 	array_remove(@pvp['players'], player());
 	if(function_exists('dm_set_pvisible')) {
 		dm_set_pvisible(@player, true);
@@ -204,6 +210,7 @@ proc _pvp_initialize_players(@id, @players) {
 		@pArray = @pvp['players'][@player];
 
 		@pArray['blocks'] = array(); // used for cleaning up placed blocks
+		@pArray['entities'] = associative_array(); // used for cleaning up player-specific entities
 
 		if(array_contains(@pvp['arena']['flags'], 'build')) {
 			set_pmode(@player, 'SURVIVAL');

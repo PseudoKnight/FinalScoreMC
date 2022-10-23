@@ -10,7 +10,7 @@ proc _class_load(@player, @pvp) {
 	}
 }
 
-proc _class_powerup(@player) {
+proc _class_powerup(@player, @pvp) {
 	@wolves = entities_in_radius(ploc(@player), 24, 'WOLF');
 	@existingWolf = null;
 	foreach(@wolf in @wolves) {
@@ -22,20 +22,19 @@ proc _class_powerup(@player) {
 	if(@existingWolf) {
 		set_entity_health(@existingWolf, 100);
 	} else {
-		spawn_entity('WOLF', 1, entity_loc(puuid(@player)), closure(@wolf) {
+		@pvp['players'][@player]['entities']['wolf'] = spawn_entity('WOLF', 1, entity_loc(puuid(@player)), closure(@wolf) {
 			set_mob_owner(@wolf, @player);
 			set_entity_spec(@wolf, array(color: array_get_rand(reflect_pull('enum', 'DyeColor'))));
 			set_mob_effect(@wolf, 'SPEED', 1, 9999, true, false);
-		});
+		})[0];
 	}
 }
 
 proc _class_unload(@player, @pvp) {
 	unbind(@player.'huntershoot');
 	unbind(@player.'hunterswap');
-	foreach(@wolf in entities_in_radius(ploc(@player), 64, 'WOLF')) {
-		if(get_mob_owner(@wolf) == @player) {
-			entity_remove(@wolf);
-		}
-	}
+	try {
+		entity_remove(@pvp['players'][@player]['entities']['wolf']);
+		array_remove(@pvp['players'][@player]['entities'], 'wolf');
+	} catch(BadEntityException @ex) {}
 }

@@ -50,9 +50,9 @@ proc _classes_equip(@player, @classname, @pvp) {
 proc _classes_powerup(@player, @classname, @pvp) {
 	@class = @pvp['arena']['classes'][@classname];
 	if(array_index_exists(@class, 'script')) {
-		proc _class_powerup(@player) {}
+		proc _class_powerup(@player, @pvp) {}
 		include('../classes.library/'.@classname.'.ms');
-		_class_powerup(@player);
+		_class_powerup(@player, @pvp);
 	}
 
 	set_entity_fall_distance(puuid(@player), 0);
