@@ -206,11 +206,12 @@ proc _tellraw(@recipients, @components) {
 			'&r': '"color":"reset",',
 			'': '',
 		);
-		@matches = reg_match_all('(&[0-9a-fk-or])?(&[k-o])?(&[k-o])?(&[k-o])?((?:&[^0-9a-fk-or]|[^&])*)', @text);
+		@matches = reg_match_all('(&[0-9a-fk-or]|&#[0-9a-f]{6})?(&[k-o])?(&[k-o])?(&[k-o])?((?:&[^0-9a-fk-or#]|[^&])*)', @text);
 		@raw = '';
 		foreach(@m in @matches) {
 			if(@m[0]) {
-				@raw .= ',{'.@colors[@m[1]].@colors[@m[2]].@colors[@m[3]].@colors[@m[4]].'"text":"'.@m[5].'"}';
+				@c = array_get(@colors, @m[1], '"color":"'.@m[1][1..-1].'",');
+				@raw .= ',{'.@c.@colors[@m[2]].@colors[@m[3]].@colors[@m[4]].'"text":"'.@m[5].'"}';
 			}
 		}
 		return(@raw);
