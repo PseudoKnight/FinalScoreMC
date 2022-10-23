@@ -55,10 +55,10 @@ bind('player_teleport', null, null, @event) {
 		}
 
 		if(@vehicle || @leashedEntities) {
-			load_chunk(@to);
 			if(@vehicle != null) {
 				@type = entity_type(@vehicle);
 				if(array_contains(array('DONKEY', 'HORSE', 'LLAMA', 'MULE', 'SKELETON_HORSE', 'ZOMBIE_HORSE', 'STRIDER'), @type)) {
+					set_entity_rider(@vehicle, null);
 					set_entity_loc(@vehicle, @to);
 					set_timeout(10, closure(){
 						set_entity_rider(@vehicle, @uuid);
@@ -71,7 +71,6 @@ bind('player_teleport', null, null, @event) {
 					set_leashholder(@e, @uuid);
 				});
 			}
-			unload_chunk(@to);
 		}
 	}
 }
