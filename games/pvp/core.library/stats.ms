@@ -30,8 +30,7 @@ proc _stats_damage(@damager, @player, @amount, @pvp) {
 }
 
 proc _stats_attribute_until(@damager, @player, @until, @cause, @pvp) {
-	if(array_index_exists(@pvp, 'stats', @player)
-	&& @damager != @player) {
+	if(array_index_exists(@pvp, 'stats', @player)) {
 		@pvp['stats'][@player]['attributions'][] = array(
 			damager: @damager, 
 			until: @until,
