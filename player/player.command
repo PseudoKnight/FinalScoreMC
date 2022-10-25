@@ -72,7 +72,7 @@ register_command('player', array(
 			if(array_index_exists(@pdata, 'world')) {
 				msg(color('gray').' Last World: '.color('white')._worldname(@pdata['world']).' ('._world_group(@pdata['world']).')');
 			}
-			@lastPlayed = plast_played(@pdata['name']);
+			@lastPlayed = plast_played(@uuid);
 			@minutes = (time() - @lastPlayed) / 60000;
 			@hours = @minutes / 60;
 			@days = @hours / 24;
@@ -89,7 +89,7 @@ register_command('player', array(
 			msg(color('gray').' Last Played: '.color('white').@lastPlayedOutput);
 		}
 
-		@firstPlayed = simple_date('MMMMM dd, yyyy', pfirst_played(@pdata['name']), 'US/Central');
+		@firstPlayed = simple_date('MMMMM dd, yyyy', pfirst_played(@uuid), 'US/Central');
 		@joined = if(array_index_exists(@pdata, 'joined'), color('gray').' ('.@pdata['joined'].')', '');
 		msg(color('gray').' First Played: '.color('white').@firstPlayed.@joined);
 		msg(color('gray').' Group: '.color('white').array_get(@pdata, 'group', 'default'));
