@@ -1,19 +1,22 @@
 /*
 	Named dolphin suffocation protection.
 	Dolphins can suffocate themselves despite having the correct conditions to breathe.
-	Logging this behavior to better figure out how this happens.
  */
-bind('entity_damage', null, array(type: 'DOLPHIN', cause: '/(DRYOUT|DROWNING)/'), @event) {
+bind('entity_damage', null, array(type: 'DOLPHIN', cause: '/(DRYOUT|DROWNING|SUFFOCATION)/'), @event) {
 	@name = get_mob_name(@event['id']);
 	if(@name) {
 		cancel();
 
 		@cause = to_lower(@event['cause']);
-		@loc = @event['location'];
-		@x = integer(@loc['x']);
-		@y = integer(@loc['y']);
-		@z = integer(@loc['z']);
-		@world = @loc['world'];
-		console("@name, a dolphin at @x @y @z (@world), took damage from @cause.");
+		if(@cause != 'drowning') {
+			// Drowning seems to be caused by bad pathing or entity collisions,
+			// but log other causes to see if we need to keep canceling them.
+			@loc = @event['location'];
+			@x = integer(@loc['x']);
+			@y = integer(@loc['y']);
+			@z = integer(@loc['z']);
+			@world = @loc['world'];
+			console("Debug: Canceled damage from @cause to @name, a dolphin at @x @y @z (@world).", false);
+		}
 	}
 }
