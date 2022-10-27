@@ -1,6 +1,9 @@
 register_command('trail', array(
 	description: 'Sets the color of your trail on the live map using hex (0-f) or rgb (0-255).',
 	usage: '/trail <#rrggbb> | /dye <r> <g> <b>',
+	tabcompleter: closure(@alias, @sender, @args) {
+		return(array());
+	},
 	executor: closure(@alias, @sender, @args, @info) {
 		@pdata = _pdata(player());
 		if(!array_index_exists(@pdata, 'support')) {
