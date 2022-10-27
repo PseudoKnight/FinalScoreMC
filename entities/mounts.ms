@@ -1,10 +1,14 @@
 proc _direct_vehicle() {
 	@vehicleType = entity_type(pvehicle());
 	set_interval(1000, closure(){
-		@vehicle = pvehicle();
-		if(@vehicle && @vehicleType == entity_type(@vehicle)) {
-			set_mob_destination(@vehicle, ptarget_space(), 1.5);
-		} else {
+		try {
+			@vehicle = pvehicle();
+			if(@vehicle && @vehicleType == entity_type(@vehicle)) {
+				set_mob_destination(@vehicle, ptarget_space(), 1.5);
+			} else {
+				clear_task();
+			}
+		} catch (PlayerOfflineException @ex) {
 			clear_task();
 		}
 	});
