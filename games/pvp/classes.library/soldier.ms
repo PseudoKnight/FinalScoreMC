@@ -1,5 +1,5 @@
 proc _class_load(@player, @pvp) {
-	bind('player_interact', array(id: @player.'grenade'), array(player: @player, itemname: 'STONE_SHOVEL'), @e, @pvp) {
+	bind('player_interact', array(id: @player.'grenade'), array(player: @player, itemname: 'STONE_SHOVEL', button: 'right'), @e, @pvp) {
 		if(!ptake_item(player(), array(name: 'STONE_SHOVEL'))) {
 			die();
 		}
