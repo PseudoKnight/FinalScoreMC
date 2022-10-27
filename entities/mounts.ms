@@ -3,7 +3,7 @@ proc _direct_vehicle() {
 	set_interval(1000, closure(){
 		@vehicle = pvehicle();
 		if(@vehicle && @vehicleType == entity_type(@vehicle)) {
-			set_mob_destination(@vehicle, ptarget_space());
+			set_mob_destination(@vehicle, ptarget_space(), 1.5);
 		} else {
 			clear_task();
 		}
