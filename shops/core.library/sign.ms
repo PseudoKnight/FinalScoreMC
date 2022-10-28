@@ -51,7 +51,7 @@ proc _sign_get_shop(@location) {
 
 proc _sign_get_item_string(@sign) {
 	@match = reg_match('^\\[(.+)\\]$', @sign[0])
-	if(@match) {
+	if(@match && !equals_ic(@match[1], 'private')) { // ignore private/deadbolt signs
 		return(@match[1]);
 	} else {
 		return(null);
