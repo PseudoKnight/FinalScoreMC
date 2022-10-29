@@ -81,6 +81,19 @@ catbomb:
   - 3
   tame: true
   type: CAT
+critter:
+  age: 0
+  attributes:
+    GENERIC_MOVEMENT_SPEED: 0.225
+  health: 12
+  rider: owner
+  tags:
+    armor:
+      name: LEATHER_HORSE_ARMOR
+    saddle:
+      name: SADDLE
+  tame: true
+  type: horse
 deadplayer:
   gear:
     BOOTS: null
@@ -229,14 +242,8 @@ gothemboss:
 invishulker:
   effects:
   - id: 14
-    seconds: 1
-    strength: 9998
-  - id: 14
     seconds: 9999
     strength: 0
-  - id: 14
-    seconds: 9999
-    strength: 8
   type: shulker
 jeb:
   effects:
@@ -377,19 +384,10 @@ turret:
   effects:
   - id: 11
     seconds: 99999
-    strength: -1
-  - id: 11
-    seconds: 99999
-    strength: -1
-  - id: 11
-    seconds: 99999
     strength: 3
   - id: 14
     seconds: 99999
     strength: -1
-  - id: 11
-    seconds: 99999
-    strength: 4
   silent: true
   type: guardian
 turretstand:
