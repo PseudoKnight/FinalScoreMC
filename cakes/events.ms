@@ -76,7 +76,7 @@ bind('player_interact', null, array('block': 'CAKE', 'button': 'right', 'hand': 
 			if(@count == 1) {
 				msg("Run the command '/times top' to see the best times for this course.");
 			} else if(@count == @total) {
-				msg(color('green').color('bold')."Congratulations for completing all '.@total.' challenge courses!\n"
+				msg(color('green').color('bold')."Congratulations for completing all @total challenge courses!\n"
 					.color('gray')."/times top all".color('reset')." : See overall parkour rankings\n"
 					.color('gray')."/times worst".color('reset')." : List courses with the most points you can earn\n"
 					.color('gray')."/times best".color('reset')." : List courses you're best at"
