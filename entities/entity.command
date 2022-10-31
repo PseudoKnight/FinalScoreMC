@@ -1,18 +1,16 @@
 register_command('entity', array(
 	description: 'Custom entity management commands',
-	usage: '/entity <list|info|set|delete|spawn|reload> [entity_name] [setting] [value(s)]',
+	usage: '/entity <list|info|set|delete|spawn|patrol|reload> [entity_name] [...]',
 	permission: 'command.entity',
-	tabcompleter: closure(@alias, @sender, @args, @info) {
-		if(array_size(@args) == 1) {
-			return(_strings_start_with_ic(array('list', 'info', 'set', 'delete', 'spawn', 'reload'), @args[-1]));
-		} else if(array_size(@args) == 3) {
-			return(_strings_start_with_ic(array('type', 'name', 'age', 'health', 'lifetime', 'onfire', 'targetnear',
+	tabcompleter: _create_tabcompleter(
+		array('list', 'info', 'set', 'delete', 'spawn', 'patrol', 'reload'),
+		array('<info|set|delete|spawn|patrol': array_keys(_get_custom_entities())),
+		array('<<set|delete': array('type', 'name', 'age', 'health', 'lifetime', 'onfire', 'targetnear',
 					'ai', 'tame', 'glowing', 'invulnerable', 'gravity', 'silent', 'gear', 'droprate', 'effect', 'tags',
-					'attributes', 'rider', 'explode', 'scripts'), @args[-1]));
-		}
-		return(array());
-	},
-	executor: closure(@alias, @sender, @args, @info) {
+					'attributes', 'rider', 'explode')),
+		array('<type|rider': reflect_pull('enum', 'EntityType')),
+	),
+	executor: closure(@alias, @sender, @args) {
 		if(!@args) {
 			return(false);
 		}
@@ -127,19 +125,27 @@ register_command('entity', array(
 						if(!array_index_exists(@entity, 'effects')) {
 							@entity['effects'] = array();
 						}
-						@duration = integer(@args[5]);
-						if(@duration == 0) {
-							foreach(@index: @effect in @entity['effects']) {
-								if(@effect['id'] == @effectid) {
+						@strength = integer(@args[4]) - 1;
+						@duration = double(@args[5]);
+						@found = false;
+						foreach(@index: @effect in @entity['effects']) {
+							if(@effect['id'] == @effectid) {
+								@found = true;
+								if(@duration == 0) {
 									array_remove(@entity['effects'], @index);
 									msg(color('green').'Effect removed');
-									break();
+								} else {
+									@entity['effects'][@index]['strength'] = @strength;
+									@entity['effects'][@index]['seconds'] = @duration;
+									msg(color('green').'Effect modified');
 								}
+								break();
 							}
-						} else {
+						}
+						if(!@found) {
 							@entity['effects'][] = array(
 								'id': @effectid,
-								'strength': @args[4] - 1,
+								'strength': @strength,
 								'seconds': @duration
 							);
 							msg(color('green').'Effect added');
@@ -182,13 +188,6 @@ register_command('entity', array(
 						}
 						@entity['explode'] = array(integer(@duration), integer(@strength));
 						msg(color('green').'Set entity to explode after '.@duration.' seconds with strength of '.@strength);
-
-					case 'scripts':
-						if(array_size(@args) == 3) {
-							return(false);
-						}
-						@entity['scripts'] = split(',', @args[3]);
-						msg(color('green').'Set entity scripts to '. @entity['scripts']);
 
 					default:
 						die(color('yellow').'Invalid setting.');
@@ -264,12 +263,77 @@ register_command('entity', array(
 						@loc['yaw'] = @args[6 + @offset];
 					}
 				}
-				@loc['x'] += 0.5;
-				@loc['z'] += 0.5;
+				@loc = _center(@loc, 0.0);
 				while(@entityCount > 0) {
 					_spawn_entity(@id, @loc);
 					@entityCount--;
 				}
+
+			case 'patrol':
+				if(array_size(@args) < 6) {
+					return(false);
+				}
+				@loc = get_command_block();
+				if(!@loc) {
+					return(false);
+				}
+				@id = @args[1];
+				@data = array_get(@args, 2, null);
+				@offset = 0;
+				if(string_starts_with(@id, '{')) {
+					@id = json_decode(@id);
+				} else if(@data && string_starts_with(@data, '{'))  {
+					@data = json_decode(@data);
+					@data['type'] = @id;
+					@id = @data;
+					@offset = 1;
+				}
+				
+				@loc = _relative_coords(@loc, @args[2 + @offset], @args[3 + @offset], @args[4 + @offset]);
+				@patrol = @args[cslice(5 + @offset, -1)];
+
+				@loc = _center(@loc, 0.0);
+				@entity = _spawn_entity(@id, @loc, null, closure(@e) {
+					set_entity_ai(@e, false);
+				});
+				@speed = entity_attribute_value(@entity, 'GENERIC_MOVEMENT_SPEED') / 2.1585; // meters/tick
+
+				@target = @loc[];
+				@wait = array(0);
+				set_interval(50, closure(){
+					try {
+						if(@wait[0] > 0) {
+							@wait[0]--;
+						} else {
+							@loc = entity_loc(@entity);
+							@yaw = get_yaw(@loc, @target);
+							if(@yaw != 'NaN') {
+								set_entity_loc(@entity, location_shift(@loc, @target, @speed));
+							}
+							if(distance(@loc, @target) <= 0.3) {
+								if(!@patrol) {
+									clear_task();
+									try(entity_remove(@entity))
+								} else {
+									@next = array_remove(@patrol, 0);
+									@action = @next[0];
+									@value = @next[1..-1];
+									if(@action == 'w') {
+										@wait[0] = integer(@value);
+										if(@patrol) {
+											@next = array_remove(@patrol, 0);
+											@target[@action] += integer(@value);
+										}
+									} else {
+										@target[@action] += integer(@value);
+									}
+								}
+							}
+						}
+					} catch(Exception @ex) {
+						clear_task();
+					}
+				});
 
 			case 'list':
 				@custom = _get_custom_entities();
@@ -277,14 +341,16 @@ register_command('entity', array(
 
 			case 'reload':
 				export('customEntities', null);
+				_get_custom_entities();
 				msg(color('green').'Reloaded custom entities from YML configuration.');
 
 			default:
+				msg('/entity list '.color('gray').'Lists all custom entities');
+				msg('/entity info <entity> '.color('gray').'Displays information about custom entity');
 				msg('/entity set <entity> <setting> <value> '.color('gray').'Sets a value to the custom entity');
 				msg('/entity delete <entity> [setting] '.color('gray').'Deletes entity or setting');
-				msg('/entity info <entity> '.color('gray').'Displays information about custom entity');
 				msg('/entity spawn <entity> '.color('gray').'Spawns entity where you\'re looking');
-				msg('/entity list '.color('gray').'Lists all custom entities');
+				msg('/entity patrol <entity> <~x ~y ~z> <directions...>'.color('gray').'Spawns temporary entity and directs it');
 				msg('/entity reload '.color('gray').'Reloads custom entities from YML configuration.');
 
 		}

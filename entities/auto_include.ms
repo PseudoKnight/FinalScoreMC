@@ -195,11 +195,6 @@ proc _spawn_entity(@entity, @loc, @spawnData, @consumer) {
 				// mob is gone for some reason
 			}
 		}
-		if(array_index_exists(@entity, 'scripts')) {
-			foreach(@s in @entity['scripts']) {
-				try(include('custom/script.library/'.@s.'.ms'))
-			}
-		}
 		if(is_closure(@consumer)) {
 			execute(@e, @consumer);
 		}
