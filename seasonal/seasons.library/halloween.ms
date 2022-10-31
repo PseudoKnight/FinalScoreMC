@@ -13,7 +13,7 @@ bind('creature_spawn', null, array(type: 'ZOMBIE', reason: 'NATURAL'), @event) {
 	@rand = rand(5);
 	if(@rand == 0 && @event['location']['world'] == 'outworld'){
 		cancel();
-		switch(rand(3)) {
+		switch(rand(5)) {
 			case 0:
 				spawn_entity('VINDICATOR', 1, @event['location'], closure(@vindicator) {
 					if(rand(2)) {
@@ -28,22 +28,14 @@ bind('creature_spawn', null, array(type: 'ZOMBIE', reason: 'NATURAL'), @event) {
 					set_entity_spec(@rabbit, array(type: 'THE_KILLER_BUNNY'));
 					set_entity_persistence(@rabbit, false);
 				});
-		}
-	} else if(@rand == 1) {
-		cancel();
-		switch(rand(3)) {
-			case 0:
+			case 3:
 				spawn_entity('ILLUSIONER', 1, @event['location']);
-			case 1:
+			case 4:
 				spawn_entity('VEX', 1, @event['location'], closure(@vex) {
 					set_mob_equipment(@vex, array(WEAPON: null));
 				});
-			case 2:
-				spawn_entity('VINDICATOR', 1, @event['location'], closure(@vindicator) {
-					set_mob_equipment(@vindicator, array(WEAPON: null));
-				});
 		}
-	} else if(@rand == 2) {
+	} else if(@rand == 1) {
 		set_mob_equipment(@event['id'], array(
 			WEAPON: array(name: 'ZOMBIE_HEAD'),
 			HELMET: null,
@@ -52,7 +44,7 @@ bind('creature_spawn', null, array(type: 'ZOMBIE', reason: 'NATURAL'), @event) {
 			BOOTS: array(name: 'LEATHER_BOOTS'),
 		));
 		set_mob_effect(@event['id'], 'invisibility', 0, 107374182);
-	} else if(@rand == 3) {
+	} else if(@rand == 2 && @event['location']['world'] == 'outworld') {
 		set_mob_equipment(@event['id'], array(
 			HELMET: array(name: 'PLAYER_HEAD', meta: array(
 				owneruuid: '617a67e5-7988-4645-af56-42c770a6dda5',
@@ -73,7 +65,7 @@ bind('creature_spawn', null, array(type: 'ZOMBIE', reason: 'NATURAL'), @event) {
 		set_entity_silent(@event['id'], true);
 	} else {
 		set_mob_equipment(@event['id'], array(HELMET: array(name: 'JACK_O_LANTERN')));
-		if(rand(2)) {
+		if(!rand(3)) {
 			set_mob_effect(@event['id'], 'invisibility', 0, 107374182);
 		}
 	}
@@ -83,7 +75,7 @@ bind('creature_spawn', null, array(type: 'SKELETON', reason: 'NATURAL'), @event)
 	set_mob_equipment(@event['id'], array(HELMET: array(name: 'JACK_O_LANTERN')));
 }
 
-bind('entity_damage', null, array(type: 'ZOMBIE', cause: 'ENTITY_ATTACK'), @event) {
+bind('entity_damage', array(priority: 'LOWEST'), array(type: 'ZOMBIE', cause: 'ENTITY_ATTACK', world: 'outworld'), @event) {
 	if(array_contains(get_scoreboard_tags(@event['id']), 'Herobrine')) {
 		try(entity_remove(@event['id']))
 		play_sound(@event['location'], array(sound: 'ENTITY_EVOKER_PREPARE_ATTACK', pitch: 0.7));
