@@ -308,9 +308,10 @@ register_command('entity', array(
 							@loc = entity_loc(@entity);
 							@yaw = get_yaw(@loc, @target);
 							if(@yaw != 'NaN') {
+								@loc['yaw'] = @yaw;
 								set_entity_loc(@entity, location_shift(@loc, @target, @speed));
 							}
-							if(distance(@loc, @target) <= 0.3) {
+							if(distance(@loc, @target) <= @speed) {
 								if(!@patrol) {
 									clear_task();
 									try(entity_remove(@entity))
@@ -322,6 +323,8 @@ register_command('entity', array(
 										@wait[0] = integer(@value);
 										if(@patrol) {
 											@next = array_remove(@patrol, 0);
+											@action = @next[0];
+											@value = @next[1..-1];
 											@target[@action] += integer(@value);
 										}
 									} else {
