@@ -288,9 +288,9 @@ register_command('entity', array(
 					@id = @data;
 					@offset = 1;
 				}
-				
+
 				@loc = _relative_coords(@loc, @args[2 + @offset], @args[3 + @offset], @args[4 + @offset]);
-				@patrol = @args[cslice(5 + @offset, -1)];
+				@directions = @args[cslice(5 + @offset, -1)];
 
 				@loc = _center(@loc, 0.0);
 				@entity = _spawn_entity(@id, @loc, null, closure(@e) {
@@ -299,41 +299,37 @@ register_command('entity', array(
 				@speed = entity_attribute_value(@entity, 'GENERIC_MOVEMENT_SPEED') / 2.1585; // meters/tick
 
 				@target = @loc[];
-				@wait = array(0);
+				@target['w'] = 0;
 				set_interval(50, closure(){
 					try {
-						if(@wait[0] > 0) {
-							@wait[0]--;
-						} else {
-							@loc = entity_loc(@entity);
-							@yaw = get_yaw(@loc, @target);
-							if(@yaw != 'NaN') {
-								@loc['yaw'] = @yaw;
-								set_entity_loc(@entity, location_shift(@loc, @target, @speed));
+						if(@target['w'] > 0) {
+							@target['w'] -= 1;
+							return();
+						}
+						@loc = entity_loc(@entity);
+						@distance = distance(@loc, @target);
+						@yaw = get_yaw(@loc, @target);
+						if(@yaw != 'NaN') {
+							@loc['yaw'] = @yaw;
+						}
+						set_entity_loc(@entity, location_shift(@loc, @target, min(@distance, @speed)));
+						if(@distance <= @speed) {
+							// if target was within reach in this tick, queue any remaining directions
+							if(!@directions) {
+								clear_task();
+								try(entity_remove(@entity))
+								return();
 							}
-							if(distance(@loc, @target) <= @speed) {
-								if(!@patrol) {
-									clear_task();
-									try(entity_remove(@entity))
-								} else {
-									@next = array_remove(@patrol, 0);
-									@action = @next[0];
-									@value = @next[1..-1];
-									if(@action == 'w') {
-										@wait[0] = integer(@value);
-										if(@patrol) {
-											@next = array_remove(@patrol, 0);
-											@action = @next[0];
-											@value = @next[1..-1];
-											@target[@action] += integer(@value);
-										}
-									} else {
-										@target[@action] += integer(@value);
-									}
-								}
+							@next = array_remove(@directions, 0);
+							foreach(@axis in split(',', @next)) {
+								@coord = @axis[0];
+								@target[@coord] += @axis[1..-1];
 							}
 						}
 					} catch(Exception @ex) {
+						if(@ex['classType'] != 'com.commandhelper.BadEntityException') {
+							console(@ex['message']);
+						}
 						clear_task();
 					}
 				});
