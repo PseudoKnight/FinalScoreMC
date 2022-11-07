@@ -36,5 +36,5 @@ proc _class_unload(@player, @pvp) {
 	try {
 		entity_remove(@pvp['players'][@player]['entities']['wolf']);
 		array_remove(@pvp['players'][@player]['entities'], 'wolf');
-	} catch(BadEntityException @ex) {}
+	} catch(Exception @ex) {}
 }
