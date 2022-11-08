@@ -198,12 +198,27 @@ proc _pvp_start(@pvp){
 				@pstats = get_value('pvp', puuid(@player, true));
 				@ratios[@player] = @pstats['wins'] / @pstats['games'];
 			}
+			// Sort highest to lowest win ratios
 			array_sort(@players, closure(@left, @right) {
-				return(@ratios[@left] > @ratios[@right]);
+				return(@ratios[@left] < @ratios[@right]);
 			});
+			// Players will be assigned based on average team win ratio,
+			// if there's an even number of players on each team.
+			// Should always assign best player first to team 0.
+			// The next two players will be on team 1. 4th player on team 0.
+			// After that, it might alternate either way, with the higher win ratio players
+			// being placed on teams with lower average team win ratios.
+			@teamValues = array(0.0, 0.0);
 			foreach(@player in @players) {
-				// assignment naturally alternates unless there's a special ratio
-				_player_assign_team(@player, @pvp);
+				@team = 1;
+				if(array_size(@pvp['team'][0]['players']) == array_size(@pvp['team'][1]['players'])
+				&& @teamValues[0] <= @teamValues[1] 
+				|| array_size(@pvp['team'][0]['players']) < array_size(@pvp['team'][1]['players'])) {
+					@team = 0;
+				}
+				@teamValues[@team] += @ratios[@player];
+				@pvp['players'][@player]['team'] = @team;
+				@pvp['team'][@team]['players'][] = @player;
 			}
 		}
 	}
