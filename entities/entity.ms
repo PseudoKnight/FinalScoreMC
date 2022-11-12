@@ -1,12 +1,20 @@
-# 100% drop rate for all explosions, unless overriden
-bind('entity_explode', array('priority': 'HIGH'), null, @event) {
+/*
+	100% drop rate for all explosions
+ */
+bind('entity_explode', array(priority: 'HIGH'), null, @event) {
+	// While normally you wouldn't have to exempt ender dragons,
+	// if they get to an overworld, the number of drops will tank performance.
 	if(@event['type'] != 'ENDER_DRAGON') {
 		modify_event('yield', 1.0);
 	}
 }
 
-# Limit breeding in high entity areas
-bind('creature_spawn', null, array('reason': 'BREEDING'), @event) {
+/*
+	Limit breeding in high entity areas
+ */
+bind('creature_spawn', null, array(reason: 'BREEDING'), @event) {
+	// Horse/donkey/mule breeding is special and fairly expensive.
+	// All other animal breeding is limited for performance reasons.
 	if(!array_contains(array('DONKEY', 'HORSE', 'MULE'), @event['type'])
 	&& array_size(entities_in_radius(@event['location'], 48)) > 320) {
 		cancel();
@@ -15,9 +23,15 @@ bind('creature_spawn', null, array('reason': 'BREEDING'), @event) {
 	}
 }
 
-# Limit dispensing entities
-bind('creature_spawn', null, array('reason': 'DISPENSE_EGG'), @event) {
+/*
+	Limit dispensing entities
+ */
+bind('creature_spawn', null, array(reason: 'DISPENSE_EGG'), @event) {
 	if(!_is_survival_world(@event['location']['world'])) {
+		// 48 radius is the configured entity-tracking-range for animals in spigot.yml
+		// 300 is a rough estimate for when performance noticeably suffers on many clients.
+		// This will vary depending on performance targets, typical client hardware and mods,
+		// as well as the Minecraft version.
 		if(array_size(entities_in_radius(@event['location'], 48)) > 300) {
 			cancel();
 			spawn_particle(@event['location'], 'SMOKE_NORMAL');
@@ -25,11 +39,16 @@ bind('creature_spawn', null, array('reason': 'DISPENSE_EGG'), @event) {
 	}
 }
 
-# prevent egg-spawned mobs from despawning
-bind('creature_spawn', null, array('reason': 'SPAWNER_EGG'), @event) {
+/*
+	Prevent egg-spawned mobs from despawning
+ */
+bind('creature_spawn', null, array(reason: 'SPAWNER_EGG'), @event) {
 	set_entity_persistence(@event['id'], true);
 }
 
+/*
+	No-AI mob posing
+ */
 bind('player_interact_at_entity', null, array(hand: 'main_hand'), @event) {
 	if(pmode() == 'CREATIVE'
 	&& psneaking()
@@ -45,6 +64,7 @@ bind('player_interact_at_entity', null, array(hand: 'main_hand'), @event) {
 		export(player().'posing', true);
 		cancel();
 
+		// This is roughly the same as the armor stand rotation and moving.
 		if(@event['position']['y'] < 0.5) {
 			title('', color(6).'Rotating entity.', 0, 40, 10);
 
