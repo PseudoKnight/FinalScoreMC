@@ -50,6 +50,9 @@ register_command('times', array(
 					die(color('gold').'Cannot get the average of all courses at this time.');
 				}
 				@times = get_values('times', @id);
+				if(!@times) {
+					die('No average times for '.@title.'.');
+				}
 				@total = 0;
 				@alltimes = array();
 				foreach(@time in @times) {
