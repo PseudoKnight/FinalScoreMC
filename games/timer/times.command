@@ -64,13 +64,13 @@ register_command('times', array(
 				}
 				array_sort(@alltimes, 'NUMERIC');
 				@median = array_size(@alltimes) / 2;
-				if(array_size(@alltimes) % 2 > 0) {
-					@median = (@alltimes[floor(@median)] + @alltimes[ceil(@median)]) / 2;
+				if(array_size(@alltimes) % 2 == 0) {
+					@median = (@alltimes[@median - 1] + @alltimes[@median]) / 2;
 				} else {
-					@median = @alltimes[@median];
+					@median = @alltimes[integer(@median)];
 				}
 				@avg = round(@total / (array_size(@times) - 1), 1);
-				msg('Median time: '.color('green').@median.color('r').' | Average time: '.color('green').@avg);
+				msg(@title.' | Median time: '.color('green').@median.color('r').' | Average time: '.color('green').@avg);
 
 			case 'reset':
 				if(!has_permission('command.resettimes')) {
