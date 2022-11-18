@@ -23,7 +23,7 @@ register_command('player', array(
 			msg(colorize("&7&m⎯⎯&7[&l@color @player &7]&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"));
 			msg(color('gray').' UUID: '.color('white').@uuid);
 			msg(color('gray').' Gamemode: '.color('white').to_lower(pmode(@player)));
-			msg(color('gray').' World: '.color('white')._worldname(@world).' ('._world_group(@world).')');
+			msg(color('gray').' World: '.color('white')._world_name(@world).' ('._world_group(@world).')');
 
 			if(@extendedInfo) {
 				@info = pinfo(@player);
@@ -70,7 +70,7 @@ register_command('player', array(
 			}
 
 			if(array_index_exists(@pdata, 'world')) {
-				msg(color('gray').' Last World: '.color('white')._worldname(@pdata['world']).' ('._world_group(@pdata['world']).')');
+				msg(color('gray').' Last World: '.color('white')._world_name(@pdata['world']).' ('._world_group(@pdata['world']).')');
 			}
 			@lastPlayed = plast_played(@uuid);
 			@minutes = (time() - @lastPlayed) / 60000;

@@ -9,7 +9,7 @@ bind('player_death', null, null, @event) {
 		@pdata = _pdata(player());
 		@pdata['death'] = array(@x, @y, @z, @world);
 
-		@stringLoc = "@x,@y,@z "._worldname(@world);
+		@stringLoc = "@x,@y,@z "._world_name(@world);
 
 		// Log to console
 		@log = @event['player'].' died @ '.@stringLoc.': ';
@@ -121,7 +121,7 @@ bind('block_place', null, array(block: 'WITHER_SKELETON_SKULL'), @event) {
 		@block = get_block(location_shift(@loc, @dir));
 		if(@block == 'SOUL_SAND' || @block == 'SOUL_SOIL') {
 			@player = player();
-			@stringLoc = floor(@loc['x']).','.floor(@loc['y']).','.floor(@loc['z']).' '._worldname(@loc['world']);
+			@stringLoc = floor(@loc['x']).','.floor(@loc['y']).','.floor(@loc['z']).' '._world_name(@loc['world']);
 			console("@player spawning a wither at @stringLoc!", false);
 			break();
 		}
@@ -211,7 +211,7 @@ bind('player_enter_bed', null, null, @event) {
 		die();
 	}
 	if(get_world_time() > 13700 && get_world_time() < 22300) {
-		if(_time_travel(pworld(), 22300, 90)) {
+		if(_world_time_travel(pworld(), 22300, 90)) {
 			msg(color('aqua').'You summoned the sun.');
 		}
 	} else if(get_world_time() < 13700 && get_world_time() > 11300) {

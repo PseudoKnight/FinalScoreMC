@@ -8,7 +8,7 @@ register_command('join', array(
 		}
 		@player = _find_player(@args[0]);
 		if(!has_permission('command.join.from')) {
-			die(color('gold').'You cannot use teleport commands in '._worldname(pworld()));
+			die(color('gold').'You cannot use teleport commands in '._world_name(pworld()));
 		}
 		include('includes.library/teleports.ms');
 		if(!has_permission(@player, 'command.join.to')) {
@@ -26,7 +26,7 @@ register_command('join', array(
 				}
 			}
 			if(is_null(@closest)) {
-				die(color('gold').'You cannot directly join a player who is in '._worldname(pworld(@player)));
+				die(color('gold').'You cannot directly join a player who is in '._world_name(pworld(@player)));
 			}
 			_warmuptp(player(), @closest, @closest[3] == 'custom');
 			die(color('b').'Teleporting you near '.@player);

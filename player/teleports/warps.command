@@ -50,7 +50,7 @@ register_command('warps', array(
 				msg(color('bold').'AVAILABLE WARPS:');
 				foreach(@worldname: @worldwarps in @warplist) {
 					if(@worldwarps) {
-						msg(color('gray').color('bold').'['._worldname(@worldname).'] '.color('white').@worldwarps);
+						msg(color('gray').color('bold').'['._world_name(@worldname).'] '.color('white').@worldwarps);
 					}
 				}
 

@@ -19,6 +19,6 @@ register_command('timetravel', array(
 		}
 
 		@world = pworld();
-		_time_travel(@world, @targetTime, @seconds * 20);
+		_world_time_travel(@world, @targetTime, @seconds * 20);
 	}
 ));

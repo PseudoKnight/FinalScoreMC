@@ -323,7 +323,7 @@ proc _pvp_start(@pvp){
 		bar_add_player(@id, @p);
 	}
 	if(array_index_exists(@arena, 'time')) {
-		_time_travel(@arena['lobby'][3], @arena['time'], @pvp['arena']['delay'] * 20);
+		_world_time_travel(@arena['lobby'][3], @arena['time'], @pvp['arena']['delay'] * 20);
 	}
 	set_interval(1000, closure(){
 		@timeleft[0] -= 1;

@@ -16,21 +16,21 @@ register_command('home', array(
 	},
 	executor: closure(@alias, @sender, @args, @info) {
 		include('includes.library/teleports.ms');
-		if(!_allows_teleports(pworld())) {
+		if(!_world_allows_teleports(pworld())) {
 			die('You cannot teleport in this world.');
 		}
 		@world = pworld();
 		@player = player();
 		if(@args) {
 			try {
-				@world = _worldid(@args[0]);
+				@world = _world_id(@args[0]);
 				if(array_size(@args) == 2) {
 					@player = @args[1];
 				}
 			} catch(InvalidWorldException @ex) {
 				@player = @args[0];
 				if(array_size(@args) == 2) {
-					@world = _worldid(@args[1]);
+					@world = _world_id(@args[1]);
 				}
 			}
 		}

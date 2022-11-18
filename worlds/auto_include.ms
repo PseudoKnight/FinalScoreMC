@@ -11,6 +11,18 @@ proc _worlds_config() {
 }
 
 /*
+	Returns the absolute directory of the worlds container.
+ */
+proc _worlds_dir() {
+	@userDir = sys_properties()['user.dir'];
+	@worldContainer = get_server_info(6);
+	if(@worldContainer == '.') {
+		return(@userDir);
+	}
+	return(@userDir.'/'.@worldContainer);
+}
+
+/*
 	Returns world group
 */
 proc _world_group(@world) {
@@ -24,7 +36,7 @@ proc _world_group(@world) {
 /*
 	Returns world alias when given world folder name
 */
-proc _worldname(@world) {
+proc _world_name(@world) {
 	@worlds = _worlds_config();
 	@world = to_lower(@world);
 	try {
@@ -38,7 +50,7 @@ proc _worldname(@world) {
 /*
 	Returns a world folder name when given a world alias
 */
-proc _worldid(@world) {
+proc _world_id(@world) {
 	@worlds = _worlds_config();
 	@world_name = to_lower(@world);
 	@world_id = '';
@@ -70,7 +82,7 @@ proc _is_survival_world(@world) {
 /*
 	Returns if the world allows teleports
 */
-proc _allows_teleports(@world) {
+proc _world_allows_teleports(@world) {
 	@worlds = _worlds_config();
 	try {
 		return(@worlds[@world]['teleports']);
@@ -204,7 +216,7 @@ proc _get_worldborder(@world) {
 	Interpolates between current world time and target time over a number of ticks.
 	Returns whether or not this will be successful in modifying time.
  */
-proc _time_travel(@world, @targetTime, @ticks) {
+proc _world_time_travel(@world, @targetTime, @ticks) {
 	if(import('timetravel.'.@world)) {
 		return(false);
 	}

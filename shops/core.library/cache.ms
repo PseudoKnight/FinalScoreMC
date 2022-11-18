@@ -40,7 +40,7 @@ proc _cache_shop(@shop) {
 			&& @s['location'][3] == @location[3]) {
 				if(@count < @shop['buy'][2]) {
 					@msg = color('gold').'[OUT OF STOCK] '.color('r')._item_display(@item).color(7)
-						.' @ '.@location[0].','.@location[1].','.@location[2].' '._worldname(@location[3]);
+						.' @ '.@location[0].','.@location[1].','.@location[2].' '._world_name(@location[3]);
 					if(ponline(@shop['owner'])) {
 						tmsg(@shop['owner'], @msg);
 					} else {
@@ -93,7 +93,7 @@ proc _cache_shop(@shop) {
 			&& @s['location'][3] == @location[3]) {
 				if(@count < @shop['sell'][3]) {
 					@msg = color('gold').'[OUT OF CURRENCY] '.color('r').data_name(@currency).color(7)
-						.' @ '.@location[0].','.@location[1].','.@location[2].' '._worldname(@location[3]);
+						.' @ '.@location[0].','.@location[1].','.@location[2].' '._world_name(@location[3]);
 					if(ponline(@shop['owner'])) {
 						tmsg(@shop['owner'], @msg);
 					} else {

@@ -15,7 +15,7 @@ register_command('compass', array(
 		switch(@target) {
 			case 'spawn':
 				set_compass_target(get_spawn());
-				msg(color('green').'Compass is now pointing to '._worldname(pworld()).'\'s spawn.');
+				msg(color('green').'Compass is now pointing to '._world_name(pworld()).'\'s spawn.');
 	
 			case 'home':
 				@pdata = null;

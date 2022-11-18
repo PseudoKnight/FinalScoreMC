@@ -3,7 +3,7 @@ proc _shard_create(@rules){
 	// Get players
 	@world = pworld();
 	@worldgroup = _world_group(@world);
-	@worldname = _worldname(@world);
+	@worldname = _world_name(@world);
 	@players = array();
 	foreach(@p in all_players()) {
 		if(_world_group(pworld(@p)) != @worldgroup) {

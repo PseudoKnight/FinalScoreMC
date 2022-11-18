@@ -32,7 +32,7 @@ register_command('accept', array(
 					}
 				}
 				if(is_null(@closest)) {
-					die(color('gold').'You cannot join a player in '._worldname(pworld(@requests[player()][1])));
+					die(color('gold').'You cannot join a player in '._world_name(pworld(@requests[player()][1])));
 				}
 				_warmuptp(player(), @closest, @closest[3] == 'custom');
 				tmsg(@requests[player()][1], color('b').'Teleporting '.player().' nearby...');

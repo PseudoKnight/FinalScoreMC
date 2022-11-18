@@ -70,7 +70,7 @@ bind('player_teleport', array('priority': 'HIGH'), null, @event) {
 			@pdata = _pdata(player());
 			if(array_index_exists(@pdata, @toGroup) && array_index_exists(@pdata[@toGroup], 'loc')) {
 				@loc = @pdata[@toGroup]['loc'];
-				if(!_allows_teleports(@loc[3])) {
+				if(!_world_allows_teleports(@loc[3])) {
 					// Restoring their last location within that worldgroup since they were not allowed to teleport out
 					// of it except to another worldgroup
 					modify_event('to', @loc);

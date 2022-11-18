@@ -38,7 +38,7 @@ register_command('shop', array(
 			foreach(@key: @shop in @shops[0]) {
 				if(_is_survival_world(@shop['location'][3]) && (@shopsign = _sign_get_shop(@shop['location'])) && @shopsign['item'] == @item) {
 					msg(colorize('Buy '.@shop['price'].'&7 ('.@shop['stock'].') &e'.@shop['owner'].'&7 '
-					.@shop['location'][0].','.@shop['location'][1].','.@shop['location'][2].' '._worldname(@shop['location'][3])));
+					.@shop['location'][0].','.@shop['location'][1].','.@shop['location'][2].' '._world_name(@shop['location'][3])));
 				} else {
 					array_remove(@shops[0], @key);
 					@save = true;
@@ -49,7 +49,7 @@ register_command('shop', array(
 				foreach(@key: @shop in @shops[1]) {
 					if(_is_survival_world(@shop['location'][3]) && (@shopsign = _sign_get_shop(@shop['location'])) && @shopsign['item'] == @item) {
 						msg(colorize('Sell '.@shop['price'].'&7 ('.@shop['stock'].') &e'.@shop['owner'].'&7 '
-						.@shop['location'][0].','.@shop['location'][1].','.@shop['location'][2].' '._worldname(@shop['location'][3])));
+						.@shop['location'][0].','.@shop['location'][1].','.@shop['location'][2].' '._world_name(@shop['location'][3])));
 					} else {
 						array_remove(@shops[1], @key);
 						@save = true;

@@ -4,8 +4,8 @@ register_command('spawn', array(
 	executor: closure(@alias, @sender, @args, @info) {
 		include('includes.library/teleports.ms');
 		try {
-			@world = if(@args, _worldid(@args[0]), pworld());
-			if(!pisop() && (!_allows_teleports(@world) || !_allows_teleports(pworld()))) {
+			@world = if(@args, _world_id(@args[0]), pworld());
+			if(!pisop() && (!_world_allows_teleports(@world) || !_world_allows_teleports(pworld()))) {
 				die(color('gold').'You cannot teleport directly to or from that world.');
 			}
 			@loc = get_spawn(@world);
@@ -15,7 +15,7 @@ register_command('spawn', array(
 			if(!@loc) {
 				die(color('gold').'That world does not exist.');
 			}
-			if(!_allows_teleports(pworld())) {
+			if(!_world_allows_teleports(pworld())) {
 				die(color('gold').'You cannot teleport in this world.');
 			}
 		}

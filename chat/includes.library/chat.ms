@@ -73,7 +73,7 @@ proc _chat(@player, @message, @recipients, @source = '', @channel = '') {
 			if(has_permission(@player, 'group.moderator'), '&bSTAFF\\n')
 			.if(array_index_exists(@pdata, 'names'), '&7'.array_implode(@pdata['names']).'\\n')
 			.if(array_index_exists(@session, 'lastplayed'), '&8[last played] &r'.@session['lastplayed'].'\\n')
-			.'&8[world] &r'._worldname(pworld(@player)));
+			.'&8[world] &r'._world_name(pworld(@player)));
 	} else {
 		@components[] = array('hover', ' '.@displayName,
 			if(array_index_exists(@pdata, 'names'), '&7'.array_implode(@pdata['names']).'\\n')

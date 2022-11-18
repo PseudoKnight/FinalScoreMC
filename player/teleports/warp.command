@@ -36,8 +36,8 @@ register_command('warp', array(
 			if(!@warp) {
 				try {
 					// try a world name
-					@world = _worldid(@warpid);
-					if(!pisop(@uuid) && !_allows_teleports(@world)) {
+					@world = _world_id(@warpid);
+					if(!pisop(@uuid) && !_world_allows_teleports(@world)) {
 						die(color('gold').'You cannot teleport directly to that world.');
 					}
 					@warp = get_spawn(@world);
@@ -47,7 +47,7 @@ register_command('warp', array(
 				}
 			}
 
-			if(!_allows_teleports(pworld(@uuid))) {
+			if(!_world_allows_teleports(pworld(@uuid))) {
 				die(color('gold').'You cannot warp in this world.');
 			}
 			
