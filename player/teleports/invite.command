@@ -17,7 +17,7 @@ register_command('invite', array(
 		@players = null;
 		if(@input == 'all') {
 			@players = all_players();
-			array_remove(@players, player());
+			array_remove_values(@players, player());
 		} else if(array_contains(array('survival', 'dev', 'park'), @input)) {
 			@players = all_players();
 			foreach(@index: @player in @players) {
