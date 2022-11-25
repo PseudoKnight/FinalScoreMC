@@ -83,5 +83,6 @@ proc _fw_start_task(@secs) {
 }
 
 proc _fw_end_task(@secs) {
+	_remove_region_entities('frogware');
 	_fw_clear_effects();
 }
