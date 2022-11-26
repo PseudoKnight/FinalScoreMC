@@ -95,14 +95,21 @@ proc _fw_start_round(@secs = 12) {
 			_fw_end_game(@winners);
 		} else {
 			@secs = 13 - integer(round(8 * (@firstplace / @goal)));
-			@tasks = if(@total != 1 && !rand(3) && @firstplace >= @secondplace + @goal * 0.2) { // if first place is 20% ahead, then 33% chance
-				array('explosive')
-			} else if(@goal - @firstplace > 2 || @total == 1) { // first place is more than a couple points away from winning (or only one player)
-				array('climb', 'keepaway', 'harvest', 'koth', 'cake', 'fall', 'cluck', 'frogegg', 'lavafall',
+			@tasks = null;
+			if(@total != 1 && rand() < (@firstplace - 2 - @secondplace) / 10) {
+				// CATCH-UP TASKS
+				// 10% chance for every point above a 2 point lead
+				@tasks = array('explosive');
+			} else if(@goal - @firstplace > 2 || @total == 1) {
+				// NORMAL TASKS
+				// first place player is more than a couple points away from winning (or only one player)
+				@tasks = array('climb', 'keepaway', 'harvest', 'koth', 'cake', 'fall', 'cluck', 'frogegg', 'lavafall',
 					'shepherd', 'anvil', 'trade', 'fish', 'panel', 'mine', 'enderpearl', 'extinguish', 'hotpotato',
-					'parking', 'musicalchairs', 'step', 'fashion', 'elytra', 'mario', 'rise', 'rocketjump', 'hat')
-			} else { // first place player is within a couple points of winning.
-				array('pvp')
+					'parking', 'musicalchairs', 'step', 'fashion', 'elytra', 'mario', 'rise', 'rocketjump', 'hat');
+			} else {
+				// FINAL TASKS
+				// first place player is within a couple points of winning.
+				@tasks = array('pvp');
 			}
 			@task = array_get_rand(@tasks);
 			include("../tasks.library/@task.ms");
