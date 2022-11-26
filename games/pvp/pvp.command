@@ -9,7 +9,7 @@ register_command('pvp', array(
 		array(
 			'group.builder': array('join', 'start', 'vote', 'spectate', 'debug', 'addtime', 'end', 'stats', 'reload'),
 			null: array('join', 'start', 'vote', 'spectate')),
-		@arenaList
+		array('<stats': array('kills', 'deaths', 'me'), null: @arenaList),
 	),
 	executor: closure(@alias, @sender, @args, @info) {
 		if(array_size(@args) < 2) {
@@ -119,17 +119,58 @@ register_command('pvp', array(
 				}
 				
 			case 'stats':
-				@player = player();
-				if(@id != 'me') {
-					@player = @id;
-				}
-				@uuid = _get_uuid(@player);
-				@pstats = get_value('pvp', @uuid);
-				if(@pstats) {
-					msg(color('bold').'KD Ratio: '.color('r').@pstats['kills'] / @pstats['deaths']);
-					msg(color('bold').'Win/Loss: '.color('r').@pstats['wins'].':'.@pstats['losses']);
+				if(@id == 'wins') {
+					@stats = get_values('pvp');
+					@sortedArray = array();
+					foreach(@key: @value in	@stats) {
+						if(@value['losses'] > 0) {
+							@value['uuid'] = split('.', @key)[1];
+							@sortedArray[] = @value;
+						}
+					}
+					array_sort(@sortedArray, closure(@left, @right) {
+						return((@left['wins'] / @left['losses']) < (@right['wins'] / @right['losses']));
+					});
+					msg(color('bold').'BEST WIN/LOSS RATIOS:');
+					foreach(@i: @entry in @sortedArray[0..18]) {
+						@name = get_value('uuids', @entry['uuid'])['name'];
+						msg((@i + 1).' '.color('bold').@name.': '.color('r').@entry['wins'] / @entry['losses']);
+					}
+				} else if(@id == 'kills') {
+					@stats = get_values('pvp');
+					@sortedArray = array();
+					foreach(@key: @value in	@stats) {
+						if(@value['deaths'] > 0) {
+							@value['uuid'] = split('.', @key)[1];
+							@sortedArray[] = @value;
+						}
+					}
+					array_sort(@sortedArray, closure(@left, @right) {
+						return((@left['kills'] / @left['deaths']) < (@right['kills'] / @right['deaths']));
+					});
+					msg(color('bold').'BEST KILL/DEATH RATIOS:');
+					foreach(@i: @entry in @sortedArray[0..18]) {
+						@name = get_value('uuids', @entry['uuid'])['name'];
+						msg((@i + 1).' '.color('bold').@name.': '.color('r').@entry['kills'] / @entry['deaths']);
+					}
 				} else {
-					msg(color('gold').'No stats for '.@player);
+					@player = @id;
+					if(@id == 'me') {
+						@player = player();
+					}
+					@uuid = _get_uuid(@player);
+					@pstats = get_value('pvp', @uuid);
+					msg(color('bold').'PVP Stats for '.@player.':');
+					if(@pstats) {
+						try {
+							msg(color('bold').'Kills/Deaths: '.color('r').@pstats['kills'] / @pstats['deaths']);
+							msg(color('bold').'Win/Loss: '.color('r').@pstats['wins'].':'.@pstats['losses']);
+						} catch(RangeException @ex) {
+							msg(color('gold').'Insufficient stats for '.@player);
+						}
+					} else {
+						msg(color('gold').'No stats for '.@player);
+					}
 				}
 				
 			case 'reload':
