@@ -72,7 +72,7 @@ proc _load_mode(@pvp) {
 		}
 	}
 
-	@pvp['binds'][] = bind('player_move', null, null, @event, @pvp, @id = @pvp['id']) {
+	@pvp['binds'][] = bind('player_move', null, null, @event, @pvp) {
 		if(@pvp['bombholder'] == player()) {
 			@regions = sk_current_regions();
 			@team = null;
@@ -94,17 +94,23 @@ proc _load_mode(@pvp) {
 					explosion(location_shift(@event['to'], 'up'), 3, true);
 					unbind(@bind);
 					@pvp['team'][@team]['score']++;
-					set_pscore('bombs', @pvp['arena']['team'][@team]['name'], @pvp['team'][@team]['score'], @id);
-					@pvp['stats'][player()]['scores']++;
-					_pvp_msg(@pvp, color('gray').'[PVP] '
-						.@pvp['arena']['team'][@team]['color'].player().color('r').' blew up the target!');
+					set_pscore('bombs', @pvp['arena']['team'][@team]['name'], @pvp['team'][@team]['score'], @pvp['id']);
+					if(@team != @pvp['players'][player()]['team']) {
+						@pTeam = @pvp['players'][player()]['team'];
+						_pvp_msg(@pvp, color('gray').'[PVP] '
+							.@pvp['arena']['team'][@pTeam]['color'].player().color('r').' blew up the wrong target?!');
+					} else {
+						@pvp['stats'][player()]['scores']++;
+						_pvp_msg(@pvp, color('gray').'[PVP] '
+							.@pvp['arena']['team'][@team]['color'].player().color('r').' blew up the target!');
+					}
 					if(array_index_exists(@pvp['arena'], 'rsoutputscore')) {
 						set_block(@pvp['arena']['rsoutputscore'][@team], 'REDSTONE_TORCH');
 						set_timeout(1000, closure(){
 							set_block(@pvp['arena']['rsoutputscore'][@team], 'TORCH');
 						});
 					}
-					_pvp_check_objectives(@id);
+					_pvp_check_objectives(@pvp['id']);
 				}
 				@pvp['bombholder'] = null;
 				set_pinv(player(), 102, array(name: 'IRON_CHESTPLATE', meta: array(enchants: array(fire_protection: array(elevel: 1)))));
