@@ -328,7 +328,7 @@ bind('entity_damage_player', null, null, @event) {
 			if(get_mob_owner(@event['id'])) { # tamed wolves count as pvp
 				cancel();
 			}
-		} else if(@event['damager'] == 'PLAYER' && @event['data'] != @event['player']) { # not self-inflicted
+		} else if(ponline(@event['data']) && @event['data'] != @event['player']) { # not self-inflicted
 			@vehicle = get_entity_vehicle(puuid(@event['player']));
 			@weapon = pinfo(@event['data'], 6);
 			if(@vehicle && @weapon == 'STICK') { # stick is lance for jousting
