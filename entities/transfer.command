@@ -5,7 +5,10 @@ register_command('transfer', array(
 		if(!@args) {
 			return(false);
 		}
-		@player = _find_player(@args[0]);
+		@player = null;
+		if(@args[0] != 'null') {
+			@player = _find_player(@args[0]);
+		}
 		bind('player_interact_entity', array('id': 'transfer'.player().@player), null, @e, @player, @commandsender = player()) {
 			if(player() != @commandsender) {
 				die();
