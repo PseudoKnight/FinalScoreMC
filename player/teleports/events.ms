@@ -36,7 +36,7 @@ bind('player_teleport', null, null, @event) {
 	}
 
 	if(_is_survival_world(@fromWorld) && _is_survival_world(@toWorld)) {
-		if(distance(@from, @to) < 6) {
+		if(@fromWorld == @toWorld && distance(@from, @to) < 6) {
 			// ignore mount/dismount teleports
 			die();
 		}
