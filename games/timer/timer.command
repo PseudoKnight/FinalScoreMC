@@ -212,7 +212,7 @@ register_command('timer', array(
 			@marathon = import('marathon');
 			if(@marathon && array_index_exists(@marathon['players'], @player)) {
 
-				// we don't want to wait to remove reset button
+				// we do not want to wait to remove reset button
 				unbind(@player.'reset');
 				ptake_item(@player, array(name: 'IRON_NUGGET'));
 

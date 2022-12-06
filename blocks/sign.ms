@@ -22,7 +22,7 @@ bind('player_interact', null, array(hand: 'MAIN_HAND'), @event) {
 	try {
 		@sign = get_sign_text(@loc);
 	} catch(RangeException @ex) {
-		die(); // wallsign isn't a sign
+		die(); // wallsign is not a sign
 	}
 	if(reg_match('(?i)^(\\u00A7[0-9a-f])?\\[private\\]$', @sign[0])) {
 		for(@i = 1, @i < 4, @i++) {

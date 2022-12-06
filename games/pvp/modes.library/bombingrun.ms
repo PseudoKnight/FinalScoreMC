@@ -50,7 +50,7 @@ proc _load_mode(@pvp) {
 	@pvp['binds'][] = bind('entity_damage', null, array(type: 'DROPPED_ITEM'), @event, @pvp) {
 		if(array_index_exists(@pvp, 'bomb')
 		&& @event['id'] == @pvp['bomb']) {
-			// ensure it's destroyed before spawning a new one
+			// ensure it is destroyed before spawning a new one
 			set_timeout(100, closure() {
 				if(!entity_exists(@event['id'])) {
 					array_remove(@pvp, 'bomb');

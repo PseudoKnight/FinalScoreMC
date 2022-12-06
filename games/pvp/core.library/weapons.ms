@@ -82,7 +82,7 @@ proc _weapon_hit_scan(@player, @ray, @damage, @effects, @pvp){
 					}
 					@players[] = @player;
 				} catch(PlayerOfflineException @ex) {
-					// not a player, but let's still kill it
+					// not a player, but let us still kill it
 				}
 				if(!is_null(@damage)) {
 					damage_entity(@entity['uuid'], @damage, @damager);

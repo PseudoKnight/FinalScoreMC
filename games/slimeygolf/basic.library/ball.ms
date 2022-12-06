@@ -30,7 +30,7 @@ proc _remove_ball(@ball, @course) {
 		entity_remove(@ball['slime']);
 		entity_remove(@ball['id']);
 	} catch(Exception @ex) {
-		// doesn't exist
+		// does not exist
 	}
 }
 
@@ -52,7 +52,7 @@ proc _get_block_below(@loc, @v) {
 		@v['z'] += ((@center['z'] - @loc['z']) / @dist) * 0.02;
 	}
 
-	# check closer if it's over the edge
+	# check closer if it is over the edge
 	@rx = @loc['x'] - floor(@loc['x']);
 	@dirx = '';
 	if(@rx < 0.21) {

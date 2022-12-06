@@ -1,7 +1,7 @@
-# Don't instant-break noteblocks in creative mode if not sneaking
+# Do not instant-break noteblocks in creative mode if not sneaking
 bind('player_interact', null, array('block': 'NOTE_BLOCK', 'button': 'left'), @event) {
 	if(pmode() === 'CREATIVE' && !psneaking()) {
-		// It won't break if in survival, and it'll play the note if we don't cancel
+		// It will not break if in survival, and it will play the note if we do not cancel
 		set_pmode('SURVIVAL');
 		set_pflight(true);
 		set_pflying(true);

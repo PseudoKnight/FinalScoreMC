@@ -27,7 +27,7 @@ proc _arena_load(@pvp) {
 			@pvp['arenapicked'] = @picked;
 
 			// Store total votes
-			if(array_size(@pvp['players']) > 1) { // don't store if testing with one player
+			if(array_size(@pvp['players']) > 1) { // don not store if testing with one player
 				if(!array_index_exists(@pvp['arena'], 'arenavotes')) {
 					@pvp['arena']['arenavotes'] = associative_array();
 				}

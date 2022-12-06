@@ -42,7 +42,7 @@
 	proc _remove_npc(@npc) {
 		unbind(@npc.'nav');
 		unbind(@npc.'despawn');
-		# delay so citizens doesn't give an error updating NPC
+		# delay so citizens does not give an error updating NPC
 		set_timeout(50, closure(){
 			ctz_remove_npc(@npc);
 		});

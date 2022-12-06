@@ -224,7 +224,7 @@ proc _bind_events(@pvp) {
 			@drops = array_merge(@drops, @pvp['arena']['deathdrops']);
 		}
 
-		// Don't actually die
+		// Don not actually die
 		_player_reset(player());
 
 		// Respawning
@@ -428,7 +428,7 @@ proc _bind_events(@pvp) {
 
 					// Partially self-inflicted; possibly use time after last damage to attribute, like vanilla falls
 					'HOT_FLOOR', // can be attributed, but not necessary
-					'FREEZE', // like hot floor, this seems like it would more likely be player's fault
+					'FREEZE', // like hot floor, this seems like it would more likely be the fault of the player
 					'CONTACT', // cactus, stalagmite, berry bush (something caused 4.0 dmg)
 					'FALL', // attribute only when very recently hit, though accuracy may be difficult
 					'LAVA', // players can knock other players into hazards

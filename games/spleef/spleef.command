@@ -201,7 +201,7 @@ register_command('spleef', array(
 							}
 						}
 					}
-					// uh this might not be the right variable order... where's @mat
+					// uh this might not be the right variable order... where is @mat
 					_iterate_cuboid(array(@region[0][0], @region[0][1] + 1, @region[0][2]), array(@region[1][0], @region[1][1] + 1, @region[1][2]), '_setwalls', @world);
 
 					foreach(@player in array_keys(@currentspleef)) {
@@ -216,12 +216,12 @@ register_command('spleef', array(
 							continue();
 						}
 						@location = array(@region[0][0] - rand(sqrt((@region[0][0] - @region[1][0]) ** 2)), @region[0][1], @region[0][2] - rand(sqrt((@region[0][2] - @region[1][2]) ** 2)));
-						#check if they're spawning into a block
+						# check if they are spawning into a block
 						if(get_block(array(@location[0], @location[1] + 1, @location[2], @world)) !== 'AIR') {
 							set_block(array(@location[0], @location[1] + 1, @location[2], @world), 'AIR', false);
 							set_block(array(@location[0], @location[1] + 2, @location[2], @world), 'AIR', false);
 						}
-						#check if they're spawning over air
+						# check if they are spawning over air
 						if(get_block(array(@location[0], @location[1], @location[2], @world)) === 'AIR') {
 							set_blockdata_string(array(@location[0], @location[1], @location[2], @world), @mat, false);
 						}

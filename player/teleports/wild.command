@@ -29,7 +29,7 @@ register_command('wild', array(
 		@xMax = integer(@worldBorder['center']['x'] + @width / 2);
 		@zMax = integer(@worldBorder['center']['z'] + @width / 2);
 
-		// Make sure it's within our custom world border too
+		// Make sure it is within our custom world border too
 		@border = _get_worldborder(@world);
 		if(@border) {
 			@xCenter = @border['x'];

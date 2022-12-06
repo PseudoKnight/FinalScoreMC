@@ -28,7 +28,7 @@ bind('player_interact', null, array('block': 'CAKE', 'button': 'right', 'hand': 
 
 	@cakeinfo = get_value('cakeinfo');
 	if(!array_index_exists(@cakeinfo, @id)) {
-		// this shouldn't happen
+		// this should not happen
 		die('The cake is a lie.');
 	}
 	@thiscake = @cakeinfo[@id];

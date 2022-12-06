@@ -30,8 +30,8 @@ bind('player_death', null, null, @event) {
 			discord_broadcast('minecraft_chat', '*'.@event['death_message'].' @ '.@stringLoc.'*');
 		}
 
-		// Check if the player hasn't respawned in 60 seconds. 
-		// This way we can prevent their items from despawning if they're AFK.
+		// Check if the player has not respawned in 60 seconds. 
+		// This way we can prevent their items from despawning if they are AFK.
 		@time = array(60);
 		set_interval(1000, closure(){
 			if(!ponline(player()) || phealth() > 0) {
@@ -281,8 +281,6 @@ bind('player_interact_entity', null, array(clicked: 'PAINTING', hand: 'main_hand
 	'BONE': 'block.note_block.xylophone',
 	'IRON_INGOT': 'block.note_block.iron_xylophone',
 	'PRISMARINE_CRYSTALS': 'block.note_block.chime',
-	//'STRING':'block.note_block.guitar',
-	//'BAMBOO': 'block.note_block.didgeridoo',
 );
 
 bind('player_interact', null, null, @event, @instruments,

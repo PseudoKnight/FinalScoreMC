@@ -15,7 +15,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 	try {
 		include('loot/'.@dungeonType.'.ms');
 	} catch(IOException @ex) {
-		// doesn't exist, but that's okay
+		// does not exist, but that is okay
 	}
 
 	/*
@@ -481,7 +481,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 						} while(@limit2 > 0 && (@current == @previous || array_contains(@try, @current)));
 						@try[] = @current;
 					} else {
-						// go back one if we haven't already
+						// go back one if we have not already
 						@current = @previous;
 					}
 				}
@@ -964,7 +964,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 
 				if(@roomLength == 1 || @roomWidth == 1) {
 					if(@room['doors'] == 1) {
-						// only create spawns if it's a dead end hallway
+						// only create spawns if it is a dead end hallway
 						queue_push(@createSpawns, 'generator');
 					}
 					continue();
@@ -1185,7 +1185,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 								case 'chest':
 									set_block(@loc, 'TRAPPED_CHEST', false);
 									@loc = location_shift(@loc, 'down');
-									@traps = 0; // so we don't block the door
+									@traps = 0; // so we do not block the door
 								case 'tripwire':
 									if(@spawner) {
 										// ignore rooms that already have spawners
@@ -1340,7 +1340,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 			remove_bar('gen'.@region);
 
 			if(is_closure(@callback)) {
-				// find an end col and row that isn't in a column
+				// find an end col and row that is not in a column
 				for(@c = 0, @c < @exitRoom['width'], @c++) {
 					for(@r = 0, @r < @exitRoom['length'], @r++) {
 						@exitRoomC = @exitRoom['c1'] + @c;

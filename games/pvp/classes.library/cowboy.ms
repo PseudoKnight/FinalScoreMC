@@ -89,7 +89,7 @@ proc _class_load(@player, @pvp) {
 						if(@dist > 0) {
 							@minY = 0.2;
 							if(entity_grounded(@entity) && entity_type(@entity) == 'PLAYER' && psneaking(@entity)) {
-								// halve velocity if lasso'd player is sneaking
+								// halve velocity if hit player is sneaking
 								@dist *= 2;
 								@minY = 0.0;
 							}

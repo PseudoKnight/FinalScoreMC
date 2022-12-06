@@ -76,7 +76,7 @@ proc _weapon_bind_events(@pvp) {
 					}
 
 				} catch (BadEntityException @ex) {
-					// doesn't exist, don't explode
+					// does not exist, do not explode
 				}
 			}
 

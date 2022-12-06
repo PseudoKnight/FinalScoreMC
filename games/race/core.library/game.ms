@@ -182,7 +182,7 @@ proc _race_start(@race) {
 						set_pscore('time', player(), @race['times'][@lap][@checkpoint] - integer(time() / 1000), @race['id']);
 					}
 				} else if(array_contains(sk_regions_at(@loc), @race['region'])) {
-					// ensure they're still in a vehicle in vehicle races
+					// ensure they are still in a vehicle in vehicle races
 					if(!get_entity_vehicle(puuid())
 					&& @race['players'][player()]['state'] != 'waiting'
 					&& array_contains(array('pig', 'boat', 'horse'), @race['type'])) {

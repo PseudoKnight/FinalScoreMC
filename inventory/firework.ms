@@ -1,6 +1,6 @@
 bind('player_interact', null, array('itemname': 'FIREWORK_ROCKET', 'button': 'right'), @event) {
 	if(@event['hand'] == 'off_hand' && @event['block'] == 'IRON_DOOR') {
-		// ignore iron doors if we're not boosting; Deadbolt already cancels main hand
+		// ignore iron doors if we are not boosting; Deadbolt already cancels main hand
 		cancel();
 		die();
 	}

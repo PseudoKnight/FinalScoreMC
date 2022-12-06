@@ -5,7 +5,7 @@ bind('world_changed', null, null, @event) {
 	@fromGroup = @worlds[@from]['group'];
 	@toGroup = @worlds[@to]['group'];
 	if(@fromGroup != @toGroup) {
-		# let's swap inventory
+		# swap inventory
 		close_pinv();
 		@toMode = @worlds[@to]['mode'];
 		if(@toMode == pmode()) {
@@ -77,7 +77,7 @@ bind('player_teleport', array('priority': 'HIGH'), null, @event) {
 				}
 			}
 			
-			if(@fromWorld != 'shard') { // temporary world, don't save location
+			if(@fromWorld != 'shard') { // temporary world, do not save location
 				set_timeout(50, closure(){
 					if(!array_index_exists(@pdata, @fromGroup)) {
 						@pdata[@fromGroup] = associative_array();

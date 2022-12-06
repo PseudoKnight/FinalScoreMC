@@ -27,7 +27,7 @@ proc _player_join(@id) {
 	}
 	@pvp['players'][player()] = associative_array();
 
-	// ensure staff doesn't have flight
+	// ensure staff does not have flight
 	if(phas_flight()) {
 		set_pflight(false);
 	}

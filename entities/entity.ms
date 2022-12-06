@@ -2,7 +2,7 @@
 	100% drop rate for all explosions
  */
 bind('entity_explode', array(priority: 'HIGH'), null, @event) {
-	// While normally you wouldn't have to exempt ender dragons,
+	// While normally you would not have to exempt ender dragons,
 	// if they get to an overworld, the number of drops will tank performance.
 	if(@event['type'] != 'ENDER_DRAGON') {
 		modify_event('yield', 1.0);

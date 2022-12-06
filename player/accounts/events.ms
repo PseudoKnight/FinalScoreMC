@@ -11,7 +11,7 @@ bind('player_login', null, null, @event) {
 		@pdata = get_value('uuids', @uuid);
 		store_value('players', to_lower(@event['player']), @event['uuid']);
 		@update = true;
-		if(@pdata) { # someone changed their name or name doesn't exist
+		if(@pdata) { # someone changed their name or name does not exist
 			if(array_index_exists(@pdata, 'name')) {
 				export('pdata.'.to_lower(@pdata['name']), null);
 				if(!array_index_exists(@pdata, 'names')) {

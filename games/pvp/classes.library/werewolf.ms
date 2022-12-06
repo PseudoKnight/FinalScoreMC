@@ -58,7 +58,7 @@ proc _class_powerup(@player) {
 		if(ponline(@player) && pmode(@player) != 'SPECTATOR') {
 			@effects = get_peffect(@player);
 			if(array_index_exists(@effects, 'night_vision') && @effects['night_vision']['seconds'] < 7) {
-				# if there's 6 seconds of night vision left, he hasn't gotten another powerup
+				# if there is 6 seconds of night vision left, he has not gotten another powerup
 				@r = rand(0, 256);
 				@g = rand(0, 256);
 				@b = rand(0, 256);

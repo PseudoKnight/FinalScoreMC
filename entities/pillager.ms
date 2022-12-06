@@ -8,7 +8,7 @@ bind('player_interact_at_entity', null, array('clicked': 'PILLAGER', 'hand': 'ma
 	if(sk_can_build(@loc)) {
 		@held = get_mob_equipment(@event['id'])['weapon'];
 		if(!@held || @held['name'] != 'CROSSBOW') {
-			// It's passive
+			// It is passive
 			cancel();
 			@slot = 'weapon';
 			if(@event['position']['y'] > 1.7) {

@@ -70,7 +70,7 @@ bind('target_player', null, array('mobtype': 'ZOMBIE'), @event, @day) {
 					'LLAMA',
 					'MAGMA_CUBE',
 					'MULE',
-					'MOOSHROOM', //'MUSHROOM_COW'
+					'MOOSHROOM', // MUSHROOM_COW
 					'OCELOT',
 					'PARROT',
 					'PIG',

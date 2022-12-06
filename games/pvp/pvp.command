@@ -86,7 +86,7 @@ register_command('pvp', array(
 					try {
 						title(@p, 'Added '.@minutes.' minutes', null, 20, 20, 20);
 					} catch(PlayerOfflineException @ex) {
-						// we'll remove them elsewhere
+						// we will remove them elsewhere
 					}
 				}
 

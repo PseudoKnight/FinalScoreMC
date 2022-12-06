@@ -314,7 +314,7 @@ proc _hoops_ball_in_hoop(@location) {
 				@loc['x'] += @x;
 				@loc['z'] += @z;
 				if(get_block(@loc) == 'TRIPWIRE') {
-					// check if it's within a meter of the center of the net in both directions
+					// check if it is within a meter of the center of the net in both directions
 					if(abs(floor(@loc['x']) + 0.5 - @location['x']) < 1
 					&& abs(floor(@loc['z']) + 0.5 - @location['z']) < 1) {
 						return(true);

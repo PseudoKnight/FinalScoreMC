@@ -65,7 +65,7 @@ if(!import('recompile')) {
 		'ingredients': array('WRITTEN_BOOK', 'ENCHANTED_BOOK')
 	));
 
-	# Bottle o' Enchanting experience storage
+	# Bottle o Enchanting experience storage
 	add_recipe(array(
 		'key': 'exp_bottle',
 		'type': 'SHAPELESS',

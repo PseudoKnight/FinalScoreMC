@@ -23,7 +23,7 @@ foreach(@id: @world in @worlds) {
 		set_metadata(@id, 'survival', true);
 	}
 	
-	// Since difficulty isn't currently loaded from level.dat
+	// Since difficulty is not currently loaded from level.dat
 	@difficulty = 'HARD';
 	if(array_index_exists(@world, 'difficulty')) {
 		@difficulty = @world['difficulty'];

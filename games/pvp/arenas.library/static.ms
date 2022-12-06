@@ -57,7 +57,7 @@ proc _arena_bind_events(@id) {
 				clear_task();
 			}
 		} catch(Exception @ex) {
-			// not sure what can go wrong here, but if I've learned anything, something will
+			// not sure what can go wrong here, but if I have learned anything, something will
 			console(@ex);
 			clear_task();
 		}

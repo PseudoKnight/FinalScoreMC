@@ -52,7 +52,7 @@ register_command('marathon', array(
 		@coursedata = get_values('times');
 		@courses = array();
 		foreach(@key: @value in @coursedata) {
-			if(is_array(@value) && @key != 'times') { // make sure we're getting an actual course
+			if(is_array(@value) && @key != 'times') { // make sure we are getting an actual course
 				@course = split('.', @key)[1]; // grab the name by removing the namespace
 				if(!@difficulty || @cakes[@course]['difficulty'] == @difficulty) {
 					@courses[] = @course;

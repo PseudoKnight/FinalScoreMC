@@ -174,7 +174,7 @@ proc _pvp_start(@pvp){
 		if(array_index_exists(@arena, 'teamratio')) {
 			// Uneven team ratios require assigning players randomly
 
-			// First make sure solo player doesn't end up on the same team as last game
+			// First make sure solo player does not end up on the same team as last game
 			if(array_index_exists(@pvp, 'lastsolo') && array_contains(@players, @pvp['lastsolo'])) {
 				@player = @pvp['lastsolo'];
 				@team = abs(array_index(@pvp['arena']['teamratio'], 1) - 1);
@@ -203,7 +203,7 @@ proc _pvp_start(@pvp){
 				return(@ratios[@left] < @ratios[@right]);
 			});
 			// Players will be assigned based on average team win ratio,
-			// if there's an even number of players on each team.
+			// if there is an even number of players on each team.
 			// Should always assign best player first to team 0.
 			// The next two players will be on team 1. 4th player on team 0.
 			// After that, it might alternate either way, with the higher win ratio players
@@ -486,7 +486,7 @@ proc _pvp_start_match(@id) {
 	# MODES
 	@modeScript = '../modes.library/'.@arena['mode'].'.ms';
 	if(file_exists(@modeScript)) {
-		// Since this is after some default procs are loaded, don't use include_dir
+		// Since this is after some default procs are loaded, do not use include_dir
 		// This proc stub is the only one modes must override.
 		proc _load_mode(@pvp) {}
 		include(@modeScript);
@@ -813,7 +813,7 @@ proc _pvp_end_match(@id, @winners) {
 		}
 	}
 
-	// Make sure we don't assign them to the same solo team twice in a row
+	// Make sure we do not assign them to the same solo team twice in a row
 	@lastSolo = '';
 	if(array_index_exists(@arena, 'teamratio')) {
 		@teams = array_indexes(@arena['teamratio'], 1);

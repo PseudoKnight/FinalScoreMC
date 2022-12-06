@@ -142,7 +142,7 @@ register_command('worm', array(
 										spawn_particle(location_shift(entity_loc(@s), 'up', 2), array('particle': 'BLOCK_DUST', 'count': 15, 'block': @body));
 										entity_remove(@s);
 									} catch (BadEntityException @ex) {
-										// doesn't exist
+										// does not exist
 									}
 								}
 							}

@@ -1,7 +1,7 @@
 // Block firework damage
 bind('entity_damage', null, array('cause': 'ENTITY_EXPLOSION'), @event) {
 	if(entity_type(@event['damager']) == 'FIREWORK') {
-		// Crossbows currently do not set the firework's shooter.
+		// Crossbows currently do not set the shooter of the firework.
 		// This is an imperfect solution but captures more cases where we want to cancel damage.
 		if(!is_null(get_firework_shooter(@event['damager']))) {
 			cancel();

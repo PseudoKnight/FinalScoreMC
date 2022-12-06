@@ -210,7 +210,7 @@
 				die();
 			}
 
-			// The following only applies to the creative world 'dev'
+			// The following only applies to the creative world
 			@p1['y'] = -64;
 			@p2['y'] = 319;
 			if(!array_contains(sk_regions_at(@p1), 'plots')

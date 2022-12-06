@@ -464,7 +464,7 @@ proc _waves_start(@waves) {
 					_waves_end(@waves, true);
 				}
 			} else {
-				// Check random entity if it's still in region
+				// Check random entity if it is still in region
 				@r = array_rand(@entities)[0];
 				if(!entity_exists(@entities[@r]) || !array_contains(sk_regions_at(entity_loc(@entities[@r])), @waves['region'])) {
 					array_remove(@entities, @r);

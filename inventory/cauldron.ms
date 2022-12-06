@@ -39,7 +39,7 @@ bind('player_interact', null, array('block': 'WATER_CAULDRON', 'button': 'right'
 			set_pinv(player(), @slot, array('name': 'GLASS_BOTTLE'));
 		}
 	} else if(@level > 0) {
-		// There's some water
+		// There is some water
 		@item = pinv(player(), @slot);
 		if(!@item) {
 			die();

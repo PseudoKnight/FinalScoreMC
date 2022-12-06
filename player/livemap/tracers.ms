@@ -89,7 +89,7 @@ if(extension_exists('CHDynmap')) {
 			if(array_contains(dm_all_markers('tracers'), player())) {
 				dm_delete_marker('tracers', player());
 			}
-			// *_exists() functions don't work for all cases.
+			// *_exists() functions do not work for all cases.
 			// So a redundant function_exists() check is needed here.
 			if(function_exists('dm_create_marker')) {
 				dm_create_marker('tracers', array(

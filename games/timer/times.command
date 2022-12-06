@@ -349,7 +349,7 @@ register_command('times', array(
 					// Add all players to course lists
 					foreach(@key: @time in @allcourses) {
 						if(is_array(@time)) {
-							// This is a list. We're only interested in player times.
+							// This is a list. We are only interested in player times.
 							continue();
 						}
 						@split = split('.', @key, 2);

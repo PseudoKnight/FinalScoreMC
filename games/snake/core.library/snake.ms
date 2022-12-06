@@ -190,7 +190,7 @@ proc _snake_set_color(@player, @color, @game,
 	}
 }
 
-// Set colors for all snakes that don't have one set
+// Set colors for all snakes that do not have one set
 proc _snake_set_colors(@game) {
 	foreach(@name: @snake in @game['snakes']) {
 		if(!@snake['head']) {

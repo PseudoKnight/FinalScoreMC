@@ -1,5 +1,5 @@
 // Open inventories without having to place them.
-// While a convenience, this also helps players who are in protected regions where they can't place blocks.
+// While a convenience, this also helps players who are in protected regions where they cannot place blocks.
 bind('inventory_click', null, array('clicktype': 'SHIFT_RIGHT'), @event) {
 	if(!@event['slotitem'] || !_is_survival_world(pworld())) {
 		die();
@@ -18,7 +18,7 @@ bind('inventory_click', null, array('clicktype': 'SHIFT_RIGHT'), @event) {
 			if(@event['inventorytype'] == 'CRAFTING' && string_ends_with(@event['slotitem']['name'], 'SHULKER_BOX')) {
 				if(!import('test_shulker_box')) {
 					// In testing.
-					// Currently there's a bug where chests with meta will cause an NPE.
+					// Currently there is a bug where chests with meta will cause an NPE.
 					// This would need to be fixed in Spigot or worked around in CH before we can re-enabled this.
 					die();
 				}

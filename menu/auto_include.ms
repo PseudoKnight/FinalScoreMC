@@ -4,7 +4,7 @@
  */
 proc _menu_refresh(@id) {
 	switch(@id) {
-		// menu view depends on player count in 'minigames' worldgroup
+		// menu view depends on player count in minigames worldgroup
 		case 'pvp':
 			@menuTemplate = import('menu.pvp');
 			@menu = @menuTemplate['menu'][];

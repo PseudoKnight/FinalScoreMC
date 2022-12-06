@@ -1,6 +1,6 @@
 proc _objective_load(@binds, @rules) {
 	// A list of reasonably obtainable items in the overworld.
-	// This means it can't depend on mobs spawned in the nether/end, or items in chests.
+	// This means it cannot depend on mobs spawned in the nether/end, or items in chests.
 	// DO include any blocks that may have been placed in the overworld.
 	// DO NOT include blocks that require silk touch.
 	// DO NOT include shiny items. (can be confused with obtained/locked items)

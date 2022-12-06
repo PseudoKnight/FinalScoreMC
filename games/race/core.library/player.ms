@@ -37,7 +37,7 @@ proc _race_remove_player(@race, @player) {
 				set_entity_loc(puuid(@player), @race['lobby']);
 			}
 		} catch(BadEntityException @ex) {
-			// player entity doesn't exist in world for some reason
+			// player entity does not exist in world for some reason
 		}
 	}
 }

@@ -34,7 +34,7 @@ proc _spectator_remove(@player, @pvp) {
 			_set_pactivity(@player, null);
 		}
 	} catch(Exception @ex) {
-		// not sure why this happens, but let's log it and continue
+		// not sure why this happens, but let us log it and continue
 		console(@ex, false);
 	}
 }

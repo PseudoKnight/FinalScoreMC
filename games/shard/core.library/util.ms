@@ -30,7 +30,7 @@ proc _unload_shard() {
 			dm_delete_marker('markers', 'shard');
 		}
 	} catch(NotFoundException @ex) {
-		// shard probably doesn't exist, but continue anyway
+		// shard probably does not exist, but continue anyway
 	}
 	
 	unbind('shard-worldchanged');
