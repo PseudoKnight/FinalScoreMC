@@ -1,4 +1,8 @@
-bind('player_interact_entity', null, array('clicked': 'MINECART'), @event) {
+/*
+	Feature to place and remove any block type in a normal minecart.
+	When a block already exists, the player can also adjust its vertical offset.
+ */
+bind('player_interact_entity', null, array(clicked: 'MINECART'), @event) {
 	if(!sk_can_build(entity_loc(@event['id'])) || !psneaking()) {
 		die();
 	}
@@ -24,13 +28,13 @@ bind('player_interact_entity', null, array('clicked': 'MINECART'), @event) {
 			}
 			
 			@newPitch = pfacing()[1];
-			set_entity_spec(@event['id'], array('offset': integer(@originalOffset - (@newPitch - @originalPitch))));
+			set_entity_spec(@event['id'], array(offset: integer(@originalOffset - (@newPitch - @originalPitch))));
 		});
 		
 	} else if(@minecart['block'] == 'AIR' && material_info(@item['name'], 'isBlock')) {
 		if(!@item['meta']) {
 			@item['qty'] -= 1;
-			set_entity_spec(@event['id'], array('block': @item['name']));
+			set_entity_spec(@event['id'], array(block: @item['name']));
 			if(!@item['qty']) {
 				@item = null;
 			}
@@ -41,14 +45,14 @@ bind('player_interact_entity', null, array('clicked': 'MINECART'), @event) {
 	}
 }
 
-bind('vehicle_destroy', array('priority': 'MONITOR'), array('vehicletype': 'MINECART'), @event) {
+bind('vehicle_destroy', array(priority: 'MONITOR'), array(vehicletype: 'MINECART'), @event) {
 	if(!is_cancelled()) {
 		@minecart = entity_spec(@event['vehicle']);
 		if(@minecart['block'] != 'AIR') {
 			// make sure no plugin has cancelled this
 			set_timeout(1, closure(){
 				if(!entity_exists(@event['vehicle'])) {
-					drop_item(location_shift(@event['location'], 'up', @minecart['offset'] / 20), array('name': @minecart['block']));
+					drop_item(location_shift(@event['location'], 'up', @minecart['offset'] / 20), array(name: @minecart['block']));
 				}
 			});
 		}
