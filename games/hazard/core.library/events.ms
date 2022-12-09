@@ -23,6 +23,10 @@ proc _hazard_bind(@game) {
 					@type = reg_match('(.*)_SPAWN_EGG', @item['name'])[1];
 					if(@type == 'MOOSHROOM') {
 						@type = 'MUSHROOM_COW';
+					} else if(@type == 'SNOW_GOLEM') {
+						@type = 'SNOWMAN';
+					} else if(@type == 'ENDER_DRAGON') {
+						die(); // potentially too destructive
 					}
 					_hazard_create_entity(@game, @type, @loc, player());
 				}

@@ -66,6 +66,7 @@ bind('target_player', null, array('mobtype': 'ZOMBIE'), @event, @day) {
 					'GUARDIAN',
 					'HOGLIN',
 					'HORSE',
+					'IRON_GOLEM',
 					'HUSK',
 					'LLAMA',
 					'MAGMA_CUBE',
@@ -83,6 +84,7 @@ bind('target_player', null, array('mobtype': 'ZOMBIE'), @event, @day) {
 					'SKELETON',
 					'SKELETON_HORSE',
 					'SLIME',
+					'SNOW_GOLEM', // SNOWMAN
 					'SPIDER',
 					'SQUID',
 					'STRAY',
@@ -159,6 +161,8 @@ bind('projectile_hit', null, array('type': 'EGG'), @event) {
 		@mob = get_metadata(@event['id'], 'spawn_egg', 'CommandHelper');
 		if(@mob == 'MOOSHROOM') {
 			@mob = 'MUSHROOM_COW';
+		} else if(@mob == 'SNOW_GOLEM') {
+			@mob = 'SNOWMAN';
 		}
 		@loc = _center(@event['location'], 1);
 		spawn_entity(@mob, 1, @loc, closure(@e) {

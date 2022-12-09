@@ -191,6 +191,10 @@ bind('player_interact', null, array('button': 'right'), @event) {
 			@type = reg_match('(.*)_SPAWN_EGG', @item['name'])[1];
 			if(@type == 'MOOSHROOM') {
 				@type = 'MUSHROOM_COW';
+			} else if(@type == 'SNOW_GOLEM') {
+				@type = 'SNOWMAN';
+			} else if(@type == 'ENDER_DRAGON') {
+				die(); // potentially too destructive
 			}
 			@loc = location_shift(@event['location'], @event['facing']);
 			@loc['x'] += 0.5;
