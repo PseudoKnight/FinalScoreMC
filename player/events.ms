@@ -131,8 +131,8 @@ bind('block_place', null, array(block: 'WITHER_SKELETON_SKULL'), @event) {
 # Add barriers to dangerous flint&steel use
 bind('player_interact', null, array(itemname: 'FLINT_AND_STEEL', button: 'right'), @event) {
 	@block = @event['block']
-	if(array_index_exists(@event, 'location')
-	&& !has_permission('item.lighter')
+	if(!has_permission('item.lighter')
+	&& @block
 	&& @block != 'TNT'
 	&& @block != 'CAMPFIRE'
 	&& @block != 'SOUL_CAMPFIRE'
