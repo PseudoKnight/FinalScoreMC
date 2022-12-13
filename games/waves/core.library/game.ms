@@ -479,7 +479,7 @@ proc _waves_start(@waves) {
 
 proc _waves_end(@waves, @win) {
 	clear_task(@waves['task']);
-	if(array_contains(get_virtual_inventories(), 'waves'.@waves['region'])) {
+	if(has_inventory('waves'.@waves['region'])) {
 		delete_virtual_inventory('waves'.@waves['region']);
 	}
 	sk_region_flag(@waves['world'], @waves['region'], 'mob-spawning', 'deny');

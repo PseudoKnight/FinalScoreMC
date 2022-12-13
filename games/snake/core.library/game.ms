@@ -152,7 +152,7 @@ proc _snake_queue(@mode) {
 		}
 		bind('inventory_close', null, null, @event, @game) {
 			set_timeout(1, closure() {
-				if(array_contains(get_virtual_inventories(), 'snake') && !get_inventory_viewers('snake')) {
+				if(has_inventory('snake') && !get_inventory_viewers('snake')) {
 					unbind();
 					unbind('snake-invclick');
 					_snake_set_colors(@game);

@@ -64,7 +64,7 @@ proc _player_join(@id) {
 	}
 
 	if(@pvp['running'] == 0 && @playerCount == 1 && array_index_exists(@arena, 'options')) {
-		if(!array_contains(get_virtual_inventories(), @id.'options')) {
+		if(!has_inventory(@id.'options')) {
 			_create_options_menu(@id, @arena);
 		}
 		popen_inventory(@id.'options');
@@ -111,11 +111,11 @@ proc _player_join(@id) {
 	} else if(@pvp['running'] == 1) {
 		if(array_index_exists(@pvp['arena'], 'classes')) {
 			if(!array_index_exists(@pvp['players'][player()], 'team') || @pvp['players'][player()]['team'] == 0) {
-				if(array_contains(get_virtual_inventories(), @id.'0')) {
+				if(has_inventory(@id.'0')) {
 					popen_inventory(player(), @id.'0');
 				}
 			} else {
-				if(array_contains(get_virtual_inventories(), @id.'1')) {
+				if(has_inventory(@id.'1')) {
 					popen_inventory(player(), @id.'1');
 				}
 			}

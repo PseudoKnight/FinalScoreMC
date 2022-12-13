@@ -147,7 +147,7 @@ register_command('waves', array(
 				if(@activities && array_index_exists(@activities, 'waves'.@region)) {
 					die(color('gold').'Game is already running.');
 				}
-				if(array_contains(get_virtual_inventories(), 'wavesstart'.@region)) {
+				if(has_inventory('wavesstart'.@region)) {
 					die(color('gold').'Someone is already starting the game.');
 				}
 				

@@ -29,7 +29,7 @@ proc _trigger_shard() {
 	}
 	if(!_is_survival_world(pworld())) {
 		action_msg('A shard can only be generated from a survival world.');
-	} else if(array_contains(get_virtual_inventories(), 'shard')) {
+	} else if(has_inventory('shard')) {
 		action_msg('Another player is generating a shard.');
 	} else {
 		play_sound(ploc(), array(sound: 'BLOCK_AMETHYST_BLOCK_HIT'));

@@ -175,7 +175,7 @@ proc _snake_set_color(@player, @color, @game,
 	@snake = @game['snakes'][@player];
 	foreach(@slot: @colorArray in @colors) {
 		if(@colorArray[1] == @color) {
-			if(array_contains(get_virtual_inventories(), 'snake')) {
+			if(has_inventory('snake')) {
 				set_inventory_item('snake', @slot, null);
 			}
 			@head = @colorArray[0];

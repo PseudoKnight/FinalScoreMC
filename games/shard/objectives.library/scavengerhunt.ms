@@ -931,7 +931,7 @@ proc _objective_load(@binds, @rules) {
 						}
 					}
 				}
-				if(array_contains(get_virtual_inventories(), @p.'card')) {
+				if(has_inventory(@p.'card')) {
 					set_inventory(@p.'card', @chest);
 				} else {
 					create_virtual_inventory(@p.'card', @size, @p.'\'s Card', @chest);
@@ -999,7 +999,7 @@ proc _objective_load(@binds, @rules) {
 					}
 				}
 			}
-			if(array_contains(get_virtual_inventories(), 'shardcard')) {
+			if(has_inventory('shardcard')) {
 				set_inventory('shardcard', @chest);
 			} else {
 				create_virtual_inventory('shardcard', 54, 'Get 4 In A Row', @chest);

@@ -256,13 +256,13 @@ proc _bind_events(@pvp) {
 					}
 					if(!array_index_exists(@playerData, 'team') || @playerData['team'] == 0) {
 						set_timeout(300, closure(){
-							if(array_contains(get_virtual_inventories(), @id.'0')) {
+							if(has_inventory(@id.'0')) {
 								popen_inventory(player(), @id.'0');
 							}
 						});
 					} else {
 						set_timeout(300, closure(){
-							if(array_contains(get_virtual_inventories(), @id.'1')) {
+							if(has_inventory(@id.'1')) {
 								popen_inventory(player(), @id.'1');
 							}
 						});
