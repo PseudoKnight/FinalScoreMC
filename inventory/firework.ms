@@ -54,6 +54,9 @@ bind('player_interact', null, array('itemname': 'FIREWORK_ROCKET', 'button': 'ri
 					set_entity_velocity(@horse, get_vector(ploc(), 0.05));
 					foreach(@mob in @mobs) {
 						@rider = spawn_entity(@mob, 1, @loc)[0];
+						if(!_is_survival_world(@loc['world'])) {
+							set_mob_effect(@rider, 'WITHER', 4, 999, true, false);
+						}
 						set_entity_rider(@horse, @rider);
 						@horse = @rider;
 					}
@@ -63,6 +66,9 @@ bind('player_interact', null, array('itemname': 'FIREWORK_ROCKET', 'button': 'ri
 					@horse = null;
 					foreach(@mob in @mobs) {
 						@rider = spawn_entity(@mob, 1, @loc)[0];
+						if(!_is_survival_world(@loc['world'])) {
+							set_mob_effect(@rider, 'WITHER', 4, 999, true, false);
+						}
 						if(@horse) {
 							set_entity_rider(@horse, @rider);
 						} else {
