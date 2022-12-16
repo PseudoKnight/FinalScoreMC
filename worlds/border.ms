@@ -5,21 +5,39 @@
 bind('player_move', array(priority: 'HIGHEST'), array(threshold: 16), @event) {
 	@border = _get_worldborder(@event['world']);
 	if(@border) {
-		@loc = @event['to'];
-		if(@loc['x'] > @border['x'] + @border['radiusX']
-		|| @loc['x'] < @border['x'] - @border['radiusX']
-		|| @loc['z'] > @border['z'] + @border['radiusZ']
-		|| @loc['z'] < @border['z'] - @border['radiusZ']) {
+		@to = @event['to'];
+		if(@to['x'] > @border['x'] + @border['radiusX']
+		|| @to['x'] < @border['x'] - @border['radiusX']
+		|| @to['z'] > @border['z'] + @border['radiusZ']
+		|| @to['z'] < @border['z'] - @border['radiusZ']) {
+			@safeLoc = @event['from'];
+			@safeLoc['yaw'] = @to['yaw'];
+			@safeLoc['pitch'] = @to['pitch'];
 			@vehicle = pvehicle();
 			if(@vehicle) {
 				set_entity_rider(null, puuid());
-				set_entity_loc(@vehicle, @event['from']);
-				set_ploc(location_shift(@event['from'], 'down'));
-				play_sound(@event['from'], array(sound: 'ENTITY_BLAZE_SHOOT'));
+				set_entity_loc(@vehicle, @safeLoc);
+				set_ploc(location_shift(@safeLoc, 'down'));
+				play_sound(@safeLoc, array(sound: 'ENTITY_BLAZE_SHOOT'));
 			} else {
-				cancel();
+				set_ploc(location_shift(@safeLoc, 'down'));
+				play_sound(@safeLoc, array(sound: 'ENTITY_BLAZE_SHOOT'));
 			}
 			action_msg('Exceeded world border');
+			set_pborder(array(
+				center: array(@border['x'], 0, @border['z']), 
+				width: @border['radiusX'] * 2, 
+				warningdistance: 16,
+			));
+		} else {
+			@border = pborder();
+			if(@border != null) {
+				if(@border['warningdistance'] > 0) {
+					set_pborder(array(warningdistance: 0));
+				} else {
+					set_pborder(null);
+				}
+			}
 		}
 	}
 }
