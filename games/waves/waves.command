@@ -127,7 +127,7 @@ register_command('waves', array(
 					@world = pworld();
 				}
 				if(!@region) {
-					die(color('gold').'There\'s no arena here.');
+					die(color('gold').'There is no arena here.');
 				}
 				@region = @region[-1];
 				@arena = get_value('waves', @region);
