@@ -51,7 +51,7 @@ register_command('invite', array(
 			&& @requests[@player][0] === 'invite'
 			&& @requests[@player][1] == player()
 			&& @requests[@player][2] + 300000 > time()) { // 5 minutes
-				msg(color('gold').'You\'ve already sent an invite request to '.@player.' in the last 5 minutes.');
+				msg(color('gold').'You have already sent an invite request to '.@player.' in the last 5 minutes.');
 				continue();
 			}
 			@requests[@player] = array('invite', player(), time());

@@ -54,7 +54,7 @@ register_command('join', array(
 		&& @requests[@player][0] === 'join'
 		&& @requests[@player][1] == player()
 		&& @requests[@player][2] + 300000 > time()) { // 5 minutes
-			die(color('gold').'You\'ve already sent a join request to this player in the last 5 minutes.');
+			die(color('gold').'You have already sent a join request to this player in the last 5 minutes.');
 		}
 		@requests[@player] = array('join', player(), time());
 		export('requests', @requests);

@@ -10,7 +10,7 @@ register_command('here', array(
 		@z = @loc['z'];
 		@world = @loc['world'];
 		@url = "http://".get_server_info(12).":27836/?worldname=@{world}&mapname=detailed&zoom=2&x=@{x}&y=64&z=@{z}";
-		@msg = '["",{"text":"'.color('b').'[\u21D6 '.player().'\'s location on the Live Map]'.color('r').'","clickEvent":'
+		@msg = '["",{"text":"'.color('b').'[\u21D6 Location of '.player().' on the Live Map]'.color('r').'","clickEvent":'
 				.'{"action":"open_url","value":"'.@url.'"}}]';
 		foreach(@player in all_players()) {
 			runas('~console', "/tellraw @player @msg");

@@ -25,7 +25,7 @@ register_command('pvp', array(
 			case 'debug':
 				@pvp = import('pvp'.@id);
 				if(is_null(@pvp)) {
-					die(color('gold').'That arena doesn\'t seem to be running.');
+					die(color('gold').'That arena does not seem to be running.');
 				}
 				msg(map_implode(@pvp, ': '.color('gray'), '\n'));
 
@@ -35,7 +35,7 @@ register_command('pvp', array(
 					die(color('yellow').'Game is not queued.');
 				}
 				if(!array_index_exists(@pvp['players'], player())) {
-					die(color('yellow').'You haven\'t joined.');
+					die(color('yellow').'You have not joined.');
 				}
 				if(array_size(@args) < 4) {
 					die(color('gold').'You need to specify a vote type and value.');
@@ -54,13 +54,13 @@ register_command('pvp', array(
 					die(color('gold').'Game is not running.');
 				}
 				if(array_index_exists(@pvp['players'], player())) {
-					die(color('gold').'You\'re already in the game.');
+					die(color('gold').'You are already in the game.');
 				}
 				if(!array_contains(get_scoreboards(), @id)) {
-					die(color('gold').'The arena isn\'t running.');
+					die(color('gold').'The arena is not running.');
 				}
 				if(!_set_pactivity(player(), _to_upper_camel_case(@id))) {
-					die(color('gold').'You\'re in another game.');
+					die(color('gold').'You are in another game.');
 				}
 				@pvp = import('pvp'.@id);
 				if(array_index_exists(@pvp['arena'], 'resourcepack')) {

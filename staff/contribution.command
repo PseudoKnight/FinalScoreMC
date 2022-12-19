@@ -1,5 +1,5 @@
 register_command('contribution', array(
-	description: 'Adds a donation amount to a player\'s account.',
+	description: 'Adds a donation amount to the account of a player.',
 	usage: '/contribution <account> <amount>',
 	aliases: array('support', 'donation'),
 	permission: 'command.contribution',
@@ -12,10 +12,10 @@ register_command('contribution', array(
 		@pdata = _pdata(@player);
 		if(array_index_exists(@pdata, 'support')) {
 			@pdata['support'] += @amount;
-			msg('Added $'.@amount.' to '.@player.'\'s contributions; Total: $'.@pdata['support'].'.')
+			msg('Added $'.@amount.' to the total contributions of '.@pdata['name'].'; Total: $'.@pdata['support'].'.')
 		} else {
 			@pdata['support'] = @amount
-			msg('Set '.@pdata['name'].'\'s contribution amount to $'.@amount.'.')
+			msg('Set contribution amount of '.@pdata['name'].' to $'.@amount.'.')
 		}
 		if(@pdata['group'] === 'member' || @pdata['group'] === 'regular') {
 			@pdata['group'] = 'donor';

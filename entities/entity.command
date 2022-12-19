@@ -184,7 +184,7 @@ register_command('entity', array(
 							die(color('gold').'Must give a number for the strength of explosion.');
 						}
 						if(@strength > 8) {
-							die(color('gold').'That explosion is too big. Yes, that\'s a thing.');
+							die(color('gold').'That explosion is too big. Yes, that is a thing.');
 						}
 						@entity['explode'] = array(integer(@duration), integer(@strength));
 						msg(color('green').'Set entity to explode after '.@duration.' seconds with strength of '.@strength);
@@ -348,7 +348,7 @@ register_command('entity', array(
 				msg('/entity info <entity> '.color('gray').'Displays information about custom entity');
 				msg('/entity set <entity> <setting> <value> '.color('gray').'Sets a value to the custom entity');
 				msg('/entity delete <entity> [setting] '.color('gray').'Deletes entity or setting');
-				msg('/entity spawn <entity> '.color('gray').'Spawns entity where you\'re looking');
+				msg('/entity spawn <entity> '.color('gray').'Spawns entity where you are looking');
 				msg('/entity patrol <entity> <~x ~y ~z> <directions...>'.color('gray').'Spawns temporary entity and directs it');
 				msg('/entity reload '.color('gray').'Reloads custom entities from YML configuration.');
 

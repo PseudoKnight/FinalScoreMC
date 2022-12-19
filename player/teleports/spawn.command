@@ -1,5 +1,5 @@
 register_command('spawn', array(
-	description: 'Teleports you to a world\'s spawn.',
+	description: 'Teleports you to the spawn of a world.',
 	usage: '/spawn [world]',
 	executor: closure(@alias, @sender, @args, @info) {
 		include('includes.library/teleports.ms');

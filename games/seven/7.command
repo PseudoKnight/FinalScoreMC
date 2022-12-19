@@ -373,7 +373,7 @@ register_command('7', array(
 
 					@arenas = get_value('seven');
 					if(!array_index_exists(@arenas, @schematic)) {
-						die(color('gold').'Arena doesn\'t exist by that name.');
+						die(color('gold').'Arena does not exist by that name.');
 					}
 					if(!array_index_exists(@arenas[@schematic], 'author')) {
 						@arenas[@schematic]['author'] = array(puuid(), player());
@@ -396,7 +396,7 @@ register_command('7', array(
 					}
 					@arenas = get_value('seven')
 					if(!array_index_exists(@arenas, @schematic)) {
-						die(color('gold').'Arena doesn\'t exist by that name.')
+						die(color('gold').'Arena does not exist by that name.')
 					}
 					@loc = ploc()
 					@loc = array(round(@loc[0], 1), @loc[1], round(@loc[2], 1), @world)
@@ -410,7 +410,7 @@ register_command('7', array(
 					}
 					@arenas = get_value('seven');
 					if(!array_index_exists(@arenas, @schematic)) {
-						die(color('gold').'Arena doesn\'t exist by that name.');
+						die(color('gold').'Arena does not exist by that name.');
 					}
 					@arenas[@schematic] = array('spawns': array());
 					store_value('seven', @arenas);
@@ -451,7 +451,7 @@ register_command('7', array(
 					msg('/7 setspawn <arena> '.color('gray').'Creates a spawnpoint on arena');
 					msg('/7 delete <arena> '.color('gray').'Deletes arena');
 					msg('/7 list '.color('gray').'Lists all arenas');
-					msg('/7 reset '.color('gray').'Resets game if it\'s stuck');
+					msg('/7 reset '.color('gray').'Resets game if it is stuck');
 
 			}
 		}

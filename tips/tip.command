@@ -5,7 +5,7 @@ register_command('tip', array(
 		return(array());
 	},
 	executor: closure(@alias, @sender, @args, @info) {
-		@tips = import(_world_group(pworld()).'-tips', array('Sometimes there\'s no more tips.'));
+		@tips = import(_world_group(pworld()).'-tips', array('Sometimes there are no more tips.'));
 		@tip = array_get_rand(@tips);
 		msg(colorize('&7TIP: &r'.@tip));
 	}

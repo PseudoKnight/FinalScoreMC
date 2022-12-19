@@ -1,5 +1,5 @@
 register_command('entereffect', array(
-	description: 'Sets a player\'s server enter effect.',
+	description: 'Sets the server enter effect of a player.',
 	usage: '/entereffect <type>',
 	tabcompleter: closure(@alias, @sender, @args, @info) {
 		return(array('lightning', 'kaboom', 'clear'));

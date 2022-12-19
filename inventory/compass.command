@@ -15,7 +15,7 @@ register_command('compass', array(
 		switch(@target) {
 			case 'spawn':
 				set_compass_target(get_spawn());
-				msg(color('green').'Compass is now pointing to '._world_name(pworld()).'\'s spawn.');
+				msg(color('green').'Compass is now pointing to '._world_name(pworld()).' spawn.');
 	
 			case 'home':
 				@pdata = null;
@@ -31,7 +31,7 @@ register_command('compass', array(
 					die(color('gold').'No home in this world to target.');
 				}
 				set_compass_target(@pdata['homes'][pworld()]);
-				msg(color('green').'Compass is now pointing to '.if(array_size(@args) > 1, @args[1].'\'s', 'your').' home.');
+				msg(color('green').'Compass is now pointing to home'.if(array_size(@args) > 1, ' of '.@args[1]).'.');
 
 			case 'here':
 				// Somewhat redundant to lodestone.
@@ -44,10 +44,10 @@ register_command('compass', array(
 				// Consider changing this.
 				@pdata = _pdata(player());
 				if(!array_index_exists(@pdata, 'death')) {
-					die('You haven\'t died recently.');
+					die('You have not died recently.');
 				}
 				if(@pdata['death'][3] != pworld()) {
-					die('Your last death wasn\'t in this world.');
+					die('Your last death was not in this world.');
 				}
 				set_compass_target(@pdata['death']);
 				msg(color('green').'Compass is now pointing to your last death location.');
@@ -57,7 +57,7 @@ register_command('compass', array(
 					@player = player(@target);
 					if(pworld(@player) != pworld(), die('Player is not in this world.'));
 					set_compass_target(ploc(@player));
-					msg(color('green').'Compass is now pointing to '.@player.'\'s last location.');
+					msg(color('green').'Compass is now pointing to last location of '.@player.'.');
 				} catch(PlayerOfflineException @ex) {
 					if(array_size(@args) < 2) {
 						die(color('gold').'Unknown compass target: '.array_implode(@args).'. Available targets: '

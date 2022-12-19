@@ -63,7 +63,7 @@ register_command('shop', array(
 			
 		} else if(@args[0] == 'edit') {
 			if(array_size(@args) < 2) {
-				msg(color('gold').'[Shop] Edits a line on your shop that you\'re looking at.');
+				msg(color('gold').'[Shop] Edits a line on your shop that you are looking at.');
 				die('Example: '.color('gray').'"/shop edit buy 1 for 1g"');
 			}
 			

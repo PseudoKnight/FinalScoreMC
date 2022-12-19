@@ -121,13 +121,13 @@ register_command('times', array(
 							continue();
 						}
 						if(@uuid == @puuid) {
-							msg('Removing '.@player.'\'s time in '.split('.', @key)[1]);
+							msg('Removing '.@player.' time in '.split('.', @key)[1]);
 							clear_value(@key);
 							@count += 1;
 						}
 					}
 				}
-				msg('Finished resetting '.@player.'\'s times in '.@count.' courses.');
+				msg('Finished resetting '.@player.' times in '.@count.' courses.');
 
 			case 'segmented':
 				@times = get_values('times');
@@ -302,7 +302,7 @@ register_command('times', array(
 					if(!@time) {
 						die('No time for '.@player.' on '.@id.'.')
 					}
-					msg(color('yellow').@player.'\'s best time for '.color('gold').@title.color('r').' is '.color('green').@time.' seconds.')
+					msg(color('yellow').'Best time for '.@player.' on '.color('gold').@title.color('r').' is '.color('green').@time.' seconds.')
 
 				} else {
 					@times = get_value('times', @id);

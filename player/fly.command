@@ -21,7 +21,7 @@ register_command('fly', array(
 		} else {
 			@player = _find_player(@args[0]);
 			if(@player != player() && !has_permission('command.fly.others')) {
-				die(color('gold').'You do not have permission to change other player\'s flight mode.');
+				die(color('gold').'You do not have permission to change flight mode of other players.');
 			}
 			if(pworld(@player) != pworld()) {
 				die(color('gold').'You cannot set the flight mode of a player in another world.');

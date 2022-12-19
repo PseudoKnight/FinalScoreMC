@@ -169,7 +169,7 @@ register_command('cake', array(
 				@id = to_lower(@args[1]);
 
 				if(!array_index_exists(@cakes, @id) && get_block(@loc) !== 'CAKE') {
-					die(color('gold').'That doesn\'t appear to be a cake. Is it obstructed by a sign or other partial block?');
+					die(color('gold').'That does not appear to be a cake. Is it obstructed by a sign or other partial block?');
 				}
 
 				if(!@cakes) {
@@ -232,12 +232,12 @@ register_command('cake', array(
 					die('No cake in range.');
 				}
 				if(get_block(@loc) !== 'CAKE') {
-					die(color('gold').'That doesn\'t appear to be a cake. Is it obstructed by a sign or other partial block?');
+					die(color('gold').'That does not appear to be a cake. Is it obstructed by a sign or other partial block?');
 				}
 
 				@cakes = get_value('cakes');
 				if(!array_index_exists(@cakes,@id)) {
-					die('There doesn\'t appaar to be a cake by that id.');
+					die('There does not appaar to be a cake by that id.');
 				}
 				@cakes[@id] = array(integer(@loc[0]), integer(@loc[1]), integer(@loc[2]), @loc[3]);
 				store_value('cakes', @cakes);
@@ -331,7 +331,7 @@ register_command('cake', array(
 				@id = to_lower(@args[1]);
 				@cakes = get_value('cakes');
 				if(!array_index_exists(@cakes, @id)) {
-					die('That cake ID doesn\'t exist');
+					die('That cake ID does not exist');
 				}
 				set_ploc(array(@cakes[@id][0] + 0.5, @cakes[@id][1], @cakes[@id][2] + 0.5, @cakes[@id][3]));
 				msg('Teleported.');
@@ -459,7 +459,7 @@ register_command('cake', array(
 					msg('/cake move <id> '.color('gray').'Moves the prize cake to a new location.');
 					msg('/cake tp <id> '.color('gray').'Teleports you to a cake.');
 					msg('/cake rename <old> <new> '.color('gray').'Renames a cake.');
-					msg('/cake delete [id] '.color('gray').'Deletes the prize for the cake you\'re looking at.');
+					msg('/cake delete [id] '.color('gray').'Deletes the prize for the cake you are looking at.');
 					msg('/cake resetplayer [id] <player> '.color('gray').'Deletes player from cake.');
 					msg('/cake find [range] '.color('gray').'Finds and teleports to the nearest cake.');
 				}

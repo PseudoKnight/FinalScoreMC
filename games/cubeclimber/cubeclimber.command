@@ -15,11 +15,11 @@ register_command('cubeclimber', array(
 			case 'start':
 
 				if(!sk_region_exists(pworld(), 'cubeclimber')) {
-					die(color('gold').'Define the \'cubeclimber\' region first.');
+					die(color('gold').'Define the cubeclimber region first.');
 				}
 
 				if(!sk_region_exists(pworld(), 'cubeclimber_blocks')) {
-					die(color('gold').'Define the \'cubeclimber_blocks\' region first.');
+					die(color('gold').'Define the cubeclimber_blocks region first.');
 				}
 
 				@count = 0;

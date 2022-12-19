@@ -184,7 +184,7 @@ register_command('arena', array(
 					case 'bombloc':
 
 						if(_is_survival_world(pworld())) {
-							die(color('gold').'You can\'t set location in survival world.');
+							die(color('gold').'You cannot set location in survival world.');
 						}
 						@loc = ploc();
 						@arena[@setting] = array(round(@loc['x'], 1), @loc['y'], round(@loc['z'], 1), @loc['world']);
@@ -213,7 +213,7 @@ register_command('arena', array(
 					case 'blockbreak':
 
 						if(_is_survival_world(pworld())) {
-							die(color('gold').'You can\'t set location in survival world.');
+							die(color('gold').'You cannot set location in survival world.');
 						}
 						if(!array_index_exists(@arena, @setting)) {
 							@arena[@setting] = array();
@@ -454,7 +454,7 @@ register_command('arena', array(
 						@loc = pcursor();
 						if(get_block(@loc) === 'TORCH') {
 							@arena['rsoutput'] = @loc;
-							msg(color('green').'Set arena\'s start/end torch. Do not use the block it\'s on to transmit power.');
+							msg(color('green').'Set arena start/end torch. Do not use the block it is on to transmit power.');
 						} else {
 							die(color('gold').'You must be looking at a torch placed on top of a block.');
 						}
@@ -647,7 +647,7 @@ register_command('arena', array(
 				if(array_size(@args) < 4) {
 					die(color('gold').'Requires a direction after the arena id (north, south, east, west, up, down)'
 							.' and an integer specifying the distance. '.color('red').'WARNING: This moves almost ALL'
-							.' locations in an arena configuration. You should know what you\'re doing.');
+							.' locations in an arena configuration. You should know what you are doing.');
 				}
 				if(!is_integral(@args[3])) {
 					die(color('gold').'Should be a integer after direction.');

@@ -134,7 +134,7 @@ register_command('greatrace', array(
 				@dist = distance(@e['from'], @e['to']);
 				if(@dist > 8) {
 					array_remove_values(@players, @e['player']);
-					msg('You\'ve been disqualified for teleporting.');
+					msg('You have been disqualified for teleporting.');
 					broadcast(@e['player'].' has been disqualified for teleporting.', @players);
 				}
 			}

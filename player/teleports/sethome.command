@@ -4,7 +4,7 @@ register_command('sethome', array(
 	permission: 'command.sethome',
 	executor: closure(@alias, @sender, @args, @info) {
 		if(@args && !has_permission('command.sethome.others')) {
-			die(color('gold').'You cannot set other player\'s homes.');
+			die(color('gold').'You cannot set the home of another player.');
 		}
 		@player = player();
 		if(@args) {

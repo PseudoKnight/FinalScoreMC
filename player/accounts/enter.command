@@ -1,5 +1,5 @@
 register_command('enter', array(
-	description: 'Sets an player\'s server enter message.',
+	description: 'Sets the server enter message of a player.',
 	usage: '/enter <message>',
 	tabcompleter: closure(@alias, @sender, @args, @info) {
 		return(array());

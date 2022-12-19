@@ -37,7 +37,7 @@ register_command('perm', array(
 				if(@oldgroup = _set_group(@args[1], @args[2])) {
 					msg('Changed group from '.@oldgroup.' to '.@args[2]);
 				} else {
-					msg('Could not set player\'s group to '.@args[2]);
+					msg('Could not set group to '.@args[2]);
 				}
 
 			case 'ingroup':

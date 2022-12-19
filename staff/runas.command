@@ -15,7 +15,7 @@ register_command('runas', array(
 			tmsg(@player, color('GREEN').player().' ran this command for you:');
 			tmsg(@player, color('GOLD').@cmd);
 		}
-		console("\'@cmd\' was run on @player", false);
+		console("@cmd was run on @player", false);
 		if(!call_alias(@cmd)) {
 			sudo(@player, @cmd);
 		}

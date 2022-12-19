@@ -1,5 +1,5 @@
 register_command('icon', array(
-	description: 'Sets an icon next to a player\'s name in chat.',
+	description: 'Sets an icon next to the name of a player in chat.',
 	usage: '/icon <player> [icon]',
 	permission: 'command.icon',
 	tabcompleter: closure(@alias, @sender, @args, @info) {

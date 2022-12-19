@@ -1,5 +1,5 @@
 register_command('exit', array(
-	description: 'Sets an player\'s server exit message.',
+	description: 'Sets the server exit message of a player.',
 	usage: '/exit <message>',
 	tabcompleter: closure(@alias, @sender, @args, @info) {
 		return(array());

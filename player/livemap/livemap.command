@@ -1,5 +1,5 @@
 register_command('livemap', array(
-	description: 'Displays a link to this or another player\'s location on the livemap.',
+	description: 'Displays a link to the location of a player on the livemap.',
 	usage: '/livemap <player>',
 	executor: closure(@alias, @sender, @args, @info) {
 		@player = player();

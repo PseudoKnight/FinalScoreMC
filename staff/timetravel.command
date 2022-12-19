@@ -1,5 +1,5 @@
 register_command('timetravel', array(
-	description: 'Sets the world\'s time of day with a smooth interpolation.'
+	description: 'Sets the time of day with a smooth interpolation.'
 		.' Time must be a number from 0-24000.',
 	usage: '/time <time> [seconds=5]',
 	permission: 'command.time',

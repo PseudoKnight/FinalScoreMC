@@ -19,7 +19,7 @@ register_command('unignore', array(
 		}
 		@ignorelist = import('ignorelist');
 		if(!array_index_exists(@ignorelist, @player)) {
-			die(color('yellow').'Wasn\'t ignored.');
+			die(color('yellow').'Was not ignored.');
 		} else if(!array_contains_ic(@ignorelist[@player], player())) {
 			die(color('yellow').'You have not ignored that player.');
 		}

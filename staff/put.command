@@ -1,5 +1,5 @@
 register_command('put', array(
-	description: 'Teleports the specified player to the location you\'re looking at.',
+	description: 'Teleports the specified player to the location you are looking at.',
 	usage: '/put <player>',
 	permission: 'command.put',
 	executor: closure(@alias, @sender, @args, @info) {

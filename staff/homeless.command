@@ -1,5 +1,5 @@
 register_command('homeless', array(
-	description: 'Sets players\' current world (ie. outworld) as not existing anymore.',
+	description: 'Flags all players who were last in outworld.',
 	usage: '/homeless [player]',
 	permission: 'command.homeless',
 	tabcompleter: closure(@alias, @sender, @args, @info) {

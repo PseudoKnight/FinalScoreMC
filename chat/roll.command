@@ -16,10 +16,10 @@ register_command('roll', array(
 			}
 		}
 		if(@sides > 100) {
-			die(colorize('&a[Dice]&f There\'s a limit of 100 sides.'));
+			die(colorize('&a[Dice]&f There is a limit of 100 sides.'));
 		}
 		if(@sides < 2) {
-			die(colorize('&a[Dice]&f There\'s a minimum of 2 sides.'));
+			die(colorize('&a[Dice]&f There is a minimum of 2 sides.'));
 		}
 
 		proc _get_dice_result() {
