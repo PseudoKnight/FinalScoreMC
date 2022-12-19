@@ -172,7 +172,7 @@
 				die(color('GOLD').'Please make a selection.');
 			}
 			if(!has_permission('group.regular') && abs(@p1['x'] - @p2['x']) * abs(@p1['z'] - @p2['z']) > 16384) {
-				die(color('GOLD').'Selection too large. (100m^2 limit) Ask staff if you need a larger region.');
+				die(color('GOLD').'Selection too large. (128m^2 limit) Ask staff if you need a larger region.');
 			}
 
 			if(pworld() == 'dev' && !has_permission('group.builder')
