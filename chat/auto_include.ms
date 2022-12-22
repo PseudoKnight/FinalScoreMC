@@ -27,17 +27,6 @@ proc _colorname(@player) {
 }
 
 /*
-	Messsages every player within a WorldGuard region
-*/
-proc _regionmsg(@region, @msg) {
-	foreach(@player in all_players()) {
-		if(array_contains(sk_current_regions(@player), @region)) {
-			tmsg(@player, @msg);
-		}
-	}
-}
-
-/*
 	Messsages every player within a world
 */
 proc _worldmsg(@world, @msg) {
