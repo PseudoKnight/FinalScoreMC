@@ -51,8 +51,10 @@ register_command('spleef', array(
 				'speed': array(-488, 56, -658, @world),
 				'jump': array(-488, 56, -660, @world),
 				'material': array(-488, 54, -642, @world),
+				'material_alt': array(-488, 54, -638, @world),
 				'snake': array(-488, 56, -662, @world),
-				'creepers': array(-488, 56, -664, @world)
+				'checkered': array(-488, 56, -664, @world),
+				'creepers': array(-488, 56, -666, @world),
 			)
 		);
 
@@ -84,13 +86,17 @@ register_command('spleef', array(
 				}
 
 			case 'floor':
+				@key = 'material';
+				if(array_size(@args) == 2 && @args[1] == 'alt') {
+					@key = 'material_alt';
+				}
 				set_ploc(@cfg['warp']['material']);
 				msg(color('yellow').'Pick a block.');
-				bind('player_interact', null, array('player': player()), @event, @cfg) {
+				bind('player_interact', null, array('player': player()), @event, @cfg, @key) {
 					if(@event['block'] && array_contains(sk_regions_at(@event['location']), @cfg['region']['material'])) {
 						@blocktype = get_block(@event['location']);
 						@blockdata = get_blockdata_string(@event['location']);
-						set_blockdata_string(@cfg['option']['material'], @blockdata);
+						set_blockdata_string(@cfg['option'][@key], @blockdata);
 						msg(color('green').'[Spleef] '.color('r').'You have selected '.color('6').@blocktype.'.');
 						cancel();
 						unbind();
@@ -138,15 +144,16 @@ register_command('spleef', array(
 				_regionmsg(@cfg['region']['wrapper'], color('green').'[Spleef] '.color('r').'Match starting in 3 seconds...');
 				@region = sk_region_info(@cfg['region']['floor'], @world)[0];
 				@mat = get_blockdata_string(@cfg['option']['material']);
+				@matAlt = get_blockdata_string(@cfg['option']['material_alt']);
 
 				#Given two blocks, iterates through all the blocks inside the cuboid, and calls the
 				#user defined function on them. The used defined procedure should accept 3 parameters,
 				#the x, y, and z coordinates of the block.
-				proc _iterate_cuboid(@b1, @b2, @proc_name, @world, @mat) {
+				proc _iterate_cuboid(@b1, @b2, @proc_name, @world, @mat, @matAlt) {
 					for(@x = min(@b1[0], @b2[0]), @x <= max(@b1[0], @b2[0]), @x++) {
 						for(@y = min(@b1[1], @b2[1]), @y <= max(@b1[1], @b2[1]), @y++) {
 							for(@z = min(@b1[2], @b2[2]), @z <= max(@b1[2], @b2[2]), @z++) {
-								call_proc(@proc_name, @x, @y, @z, @world, @mat);
+								call_proc(@proc_name, @x, @y, @z, @world, @mat, @matAlt);
 							}
 						}
 					}
@@ -155,22 +162,44 @@ register_command('spleef', array(
 				set_timeout(1000, closure(){
 					if(reg_match('lit\\=true', get_blockdata_string(@cfg['option']['platforming']))) {
 						#platforming
-						proc _setfloor(@x, @y, @z, @world, @mat) {
-							if(rand(2)) {
-								set_blockdata_string(array(@x, @y, @z, @world), @mat,  false);
-							} else {
-								set_block(array(@x, @y, @z, @world), 'AIR', false);
+						if(reg_match('lit\\=true', get_blockdata_string(@cfg['option']['checkered']))) {
+							proc _setfloor(@x, @y, @z, @world, @mat, @matAlt) {
+								if(rand(2)) {
+									@chosenMat = @mat;
+									if((floor(abs(@x) / 6) + floor(abs(@z) / 6)) % 2 == 0) {
+										@chosenMat = @matAlt;
+									}
+									set_blockdata_string(array(@x, @y, @z, @world), @chosenMat,  false);
+								} else {
+									set_block(array(@x, @y, @z, @world), 'AIR', false);
+								}
+							}
+						} else {
+							proc _setfloor(@x, @y, @z, @world, @mat, @matAlt) {
+								if(rand(2)) {
+									set_blockdata_string(array(@x, @y, @z, @world), @mat,  false);
+								} else {
+									set_block(array(@x, @y, @z, @world), 'AIR', false);
+								}
 							}
 						}
-					} else {
+					}  else {
 						#regular floor
-						proc _setfloor(@x, @y, @z, @world, @mat) {
-							if(get_block(array(@x, @y, @z, @world)) != @mat) {
+						if(reg_match('lit\\=true', get_blockdata_string(@cfg['option']['checkered']))) {
+							proc _setfloor(@x, @y, @z, @world, @mat, @matAlt) {
+								@chosenMat = @mat;
+								if((floor(abs(@x) / 6) + floor(abs(@z) / 6)) % 2 == 0) {
+									@chosenMat = @matAlt;
+								}
+								set_blockdata_string(array(@x, @y, @z, @world), @chosenMat, false);
+							}
+						} else {
+							proc _setfloor(@x, @y, @z, @world, @mat, @matAlt) {
 								set_blockdata_string(array(@x, @y, @z, @world), @mat, false);
 							}
 						}
 					}
-					_iterate_cuboid(@region[0], @region[1], '_setfloor', @world, @mat);
+					_iterate_cuboid(@region[0], @region[1], '_setfloor', @world, @mat, @matAlt);
 				});
 
 				set_timeout(2000, closure(){
