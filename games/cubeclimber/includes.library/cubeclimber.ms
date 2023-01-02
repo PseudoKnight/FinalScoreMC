@@ -137,7 +137,7 @@ proc _cc_start(@world = 'custom') {
 						for(@x = @e['location'][0] - 1, @x <= @e['location'][0] + 1, @x++) {
 							for(@z = @e['location'][2] - 1, @z <= @e['location'][2] + 1, @z++) {
 								if(string_ends_with(get_block(array(@x, @y, @z, @e['location'][3])), '_CONCRETE')) {
-									set_block(array(@x, @y, @z, @e['location'][3]), 'CONCRETE', false);
+									set_block(array(@x, @y, @z, @e['location'][3]), 'OBSIDIAN', false);
 								}
 							}
 						}
