@@ -33,9 +33,9 @@ if(extension_exists('CHDiscord')) {
 				_tellraw(all_players(), array(array('open_url', @attachment['filename'], @attachment['url'], @attachment['description'])));
 			}
 		} else if(@event['channel'] == 'general') {
-			if(reg_match('(?i).*\bserver\b.*\bdown\b.*', @event['message'])) {
+			if(reg_match('(?i).*\\bserver\\b.*\\b(down|alive)\\b.*', @event['message'])) {
 				discord_broadcast(@event['channel'], 'Beep boop. I am still alive!'
-						.'If you are having trouble connecting to `finalscoremc.com`, you can also use `'
+						.' If you are having trouble connecting to `finalscoremc.com`, you can also use `'
 						.get_server_info(12).':'.get_server_info(11).'`.');
 			}
 		}
