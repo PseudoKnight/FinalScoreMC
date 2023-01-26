@@ -5,29 +5,29 @@ proc _perm_player(@player, @force = true) {
 		@group = @pdata['group'];
 	}
 	if(@force || !has_permission(@player, 'group.'.@group)) {
-		_add_group_perms(@player, @group, false);
+		_add_group_perms(@player, @group, true);
 	}
 	if(pisop(@player) && @group != 'admin') {
 		psetop(@player, false);
 	}
 }
 
-proc _add_group_perms(@player, @group, @return = true) {
-	@perms = import('perms');
-	@toAdd = associative_array();
+proc _add_group_perms(@player, @group, @primaryGroup = false) {
+	@groupPerms = import('perms')[@group];
+	@perms = associative_array();
 	# Add inherited perms first
-	if(array_index_exists(@perms[@group], 'inheritance')) {
-		@toAdd = _add_group_perms(@player, @perms[@group]['inheritance']);
+	if(array_index_exists(@groupPerms, 'inheritance')) {
+		@perms = _add_group_perms(@player, @groupPerms['inheritance']);
 	}
-	@toAdd = array_merge(@toAdd, @perms[@group]['permissions']);
-	if(array_index_exists(@perms[@group], 'worlds')
-	&& array_index_exists(@perms[@group]['worlds'], pworld(@player))) {
-		@toAdd = array_merge(@toAdd, @perms[@group]['worlds'][pworld(@player)]);
+	@perms = array_merge(@perms, @groupPerms['permissions']);
+	# Add world overrides
+	if(array_index_exists(@groupPerms, 'worlds', pworld(@player))) {
+		@perms = array_merge(@perms, @groupPerms['worlds'][pworld(@player)]);
 	}
-	if(@return) {
-		return(@toAdd);
+	if(@primaryGroup) {
+		set_permissions(@player, @perms);
 	}
-	set_permissions(@player, @toAdd);
+	return(@perms);
 }
 
 proc _set_group(@player, @group, @checkInheritance = false) {
