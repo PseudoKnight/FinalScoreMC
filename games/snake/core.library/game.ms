@@ -5,13 +5,16 @@
 	'surfaces': the number of regions where valid spawn locations exist
 	'snakes': an array of arrays of snake data for each player (see snake.ms)
 	'powerups': an array of arrays of current powerups in the game
-	'speed': a game option that controls the interval frequency (how often the snakes update)
 	'numPowerups': the number of powerups that can exist in the game at any given time
-	'extraBlocks': extraneous obstacle blocks to clean-up
 	'numPlayers': the number of snakes in the game
 	'botsOnly': indicated if only bots are left in the game
 	'missiles': an array of flying missiles
 	'tnt': an array of primed tnt entities
+	'mode': the game mode (elimination, versus, endless, capture)
+	'nukes': an array of regions that are getting nuked
+	'teams': an array of two arrays containing the list of players on that team
+	'flags': an array of two location arrays or player names where the team flags are in capture mode
+	'fire': an array of location arrays where decaying fire blocks are located
 */
 
 include('util.ms');
