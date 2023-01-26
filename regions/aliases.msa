@@ -146,18 +146,16 @@
 		case 'redefine':
 		case 'update':
 		case 'move':
-			if(has_permission('worldguard.region.*') || array_size(@args) < 2) {
-				run('/region '.$);
-				die();
-			}
+			@hasOverride = has_permission('worldguard.region.*');
 			@region = @args[1];
 			@owners = null;
+			@world = pworld();
 			try {
-				@owners = sk_region_owners(@region, pworld());
+				@owners = sk_region_owners(@region, @world);
 			} catch(PluginInternalException @ex) {
 				die(color('GOLD').'That region doesn\'t exist.');
 			}
-			if(!array_contains(@owners['players'], puuid())) {
+			if(!@hasOverride && !array_contains(@owners['players'], puuid())) {
 				die(color('GOLD').'You do not own this region.');
 			}
 			@p1 = null;
@@ -166,33 +164,49 @@
 				@p1 = sk_pos1();
 				@p2 = sk_pos2();
 			} catch(PluginInternalException @ex) {
-				die(color('GOLD').'You can only update cuboid regions, not polygonal regions.');
+				if(@hasOverride) {
+					run('/region '.$);
+					die();
+				} else {
+					die(color('GOLD').'You can only update cuboid regions, not polygonal regions.');
+				}
 			}
 			if(is_null(@p1) || is_null(@p2)) {
 				die(color('GOLD').'Please make a selection.');
 			}
-			if(!has_permission('group.regular') && abs(@p1['x'] - @p2['x']) * abs(@p1['z'] - @p2['z']) > 16384) {
+			if(!@hasOverride && !has_permission('group.regular') && abs(@p1['x'] - @p2['x']) * abs(@p1['z'] - @p2['z']) > 16384) {
 				die(color('GOLD').'Selection too large. (128m^2 limit) Ask staff if you need a larger region.');
 			}
 
-			if(pworld() == 'dev' && !has_permission('group.builder')
+			if(@world == 'dev' && !has_permission('group.builder')
 			&& (!array_contains(sk_regions_at(@p1), 'plots') || !array_contains(sk_regions_at(@p2), 'plots'))) {
 				die(color('GOLD').'You may not expand your region outside of the "plots" region.');
 			}
 
-			sk_region_create(pworld(), @region.'-temp', array(@p1, @p2));
-			@regions = sk_region_intersect(pworld(), @region.'-temp');
-			sk_region_remove(pworld(), @region.'-temp');
+			sk_region_create(@world, @region.'-temp', array(@p1, @p2));
+			@regions = sk_region_intersect(@world, @region.'-temp');
+			sk_region_remove(@world, @region.'-temp');
 			foreach(@rg in @regions) {
 				if(@rg == 'plots') {
 					continue();
 				}
-				@owners = sk_region_owners(@rg, pworld());
+				@owners = sk_region_owners(@rg, @world);
 				if(!array_contains(@owners['players'], puuid())) {
-					die(color('GOLD').'This selection overlaps a region you do not own.');
+					if(@hasOverride) {
+						msg(color('YELLOW').'Note: New region boundaries overlap a region you do not own.');
+					} else {
+						die(color('GOLD').'This selection overlaps a region you do not own.');
+					}
 				}
 			}
 			sudo('/rg redefine '.@region);
+			// Update region on live map right away
+			if(function_exists('dm_set_marker_corners')) {
+				dm_set_marker_corners('worldguard.markerset', @world.'_'.to_lower(@region), array(
+					array(@p1['x'], 0, @p1['z'], @world),
+					array(@p2['x'], 0, @p2['z'], @world),
+				));
+			}
 
 		case 'claim':
 			@p1 = sk_pos1();
@@ -207,6 +221,25 @@
 
 			if(pworld() != 'dev') {
 				run('/region '.$);
+				// Add region to live map right away
+				if(sk_region_exists(pworld(), @args[1])) {
+					if(function_exists('dm_set_marker_corners')) {
+						try {
+							dm_create_marker('worldguard.markerset', array(
+								type: 'AREA',
+								world: pworld(),
+								label: _to_upper_camel_case(@args[1]),
+								id: pworld().'_'.to_lower(@args[1]),
+								corners: array(
+									array(@p1['x'], 0, @p1['z'], pworld()),
+									array(@p2['x'], 0, @p2['z'], pworld()),
+								),
+							));
+						} catch(PluginInternalException @ex) {
+							// probably already existed
+						}
+					}
+				}
 				die();
 			}
 
@@ -251,6 +284,20 @@
 			sk_region_addowner(@region, pworld(), puuid());
 			sk_region_setpriority(pworld(), @region, 1);
 			msg(color('green').'Successfully created Dev plot by the name "'.@region.'" here.');
+
+		case 'remove':
+		case 'rem':
+		case 'delete':
+		case 'del':
+			run('/region '.$);
+			// Remove from live map right away
+			set_timeout(50, closure(){
+				if(!sk_region_exists(pworld(), @args[1])) {
+					if(function_exists('dm_delete_marker')) {
+						try(dm_delete_marker('worldguard.markerset', pworld().'_'.to_lower(@args[1])))
+					}
+				}
+			});
 
 		default:
 			run('/region '.$);
