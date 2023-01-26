@@ -189,9 +189,6 @@ proc _snake_countdown(@game) {
 			title(@p, @title, @subtitle, 0, 25, 20);
 			set_pheld_slot(@p, 8);
 		}
-		if(@secondsLeft[0] == 6) {
-			_snake_play_song(@game);
-		}
 		if(@secondsLeft[0] == 0) {
 			if(!queue_running('snake_cleanup')) {
 				clear_task();
@@ -410,7 +407,6 @@ proc _snake_cleanup_round(@game) {
 	@game['tnt'] = array();
 	@game['nukes'] = array();
 	_snake_unbind_events();
-	_snake_stop_song();
 	if(array_index_exists(@game, 'interval')) {
 		clear_task(@game['interval']);
 	}
