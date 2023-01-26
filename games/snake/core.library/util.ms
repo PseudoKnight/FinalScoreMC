@@ -131,19 +131,6 @@ proc _snake_opposite_dir(@dir) {
 	return(null);
 }
 
-proc _snake_change_speed(@value, @game) {
-	@speeds = array('slow', 'normal', 'fast', 'superfast');
-	@current = array_index(@speeds, @game['speed']);
-	@new = @current + @value;
-	if(@new > -1 && array_index_exists(@speeds, @new)) {
-		@game['speed'] = @speeds[@new];
-		clear_task(@game['interval']);
-		_snake_start_task(@game);
-		return(true);
-	}
-	return(false);
-}
-
 proc _snake_clean_surfaces(@game) {
 	@region = @game['region'];
 	@count = @game['surfaces'];
