@@ -46,7 +46,7 @@ proc _class_load(@player, @pvp) {
 			} catch(Exception @e) {
 				clear_task();
 				die();
-			};
+			}
 		});
 
 		@item['meta']['lore'] = array(@task);

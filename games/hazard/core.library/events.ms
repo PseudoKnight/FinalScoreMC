@@ -144,9 +144,9 @@ proc _hazard_bind(@game) {
 							// possibly picked up already
 						}
 					});
-				};
+				}
 			}
-		};
+		}
 	}
 
 	@game['binds'][] = bind('region_change', null, null, @event, @game) {
