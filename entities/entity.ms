@@ -16,7 +16,7 @@ bind('creature_spawn', null, array(reason: 'BREEDING'), @event) {
 	// Horse/donkey/mule breeding is special and fairly expensive.
 	// All other animal breeding is limited for performance reasons.
 	if(!array_contains(array('DONKEY', 'HORSE', 'MULE'), @event['type'])
-	&& array_size(entities_in_radius(@event['location'], 48)) > 320) {
+	&& array_size(entities_in_radius(@event['location'], 48)) > 340) {
 		cancel();
 		spawn_particle(@event['location'], 'SMOKE_NORMAL');
 		broadcast(color('gold').'Breeding failed due to overcrowding.', players_in_radius(@event['location'], 16));
@@ -32,7 +32,7 @@ bind('creature_spawn', null, array(reason: 'DISPENSE_EGG'), @event) {
 		// 300 is a rough estimate for when performance noticeably suffers on many clients.
 		// This will vary depending on performance targets, typical client hardware and mods,
 		// as well as the Minecraft version.
-		if(array_size(entities_in_radius(@event['location'], 48)) > 300) {
+		if(array_size(entities_in_radius(@event['location'], 48)) > 340) {
 			cancel();
 			spawn_particle(@event['location'], 'SMOKE_NORMAL');
 		}
