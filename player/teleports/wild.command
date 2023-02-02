@@ -21,40 +21,12 @@ register_command('wild', array(
 		}
 
 		# Get target location
-		@worldBorder = get_world_border(@world);
-
-		@width = integer(@worldBorder['width']);
-		@xMin = integer(@worldBorder['center']['x'] - @width / 2);
-		@zMin = integer(@worldBorder['center']['z'] - @width / 2);
-		@xMax = integer(@worldBorder['center']['x'] + @width / 2);
-		@zMax = integer(@worldBorder['center']['z'] + @width / 2);
-
-		// Make sure it is within our custom world border too
-		@border = _get_worldborder(@world);
-		if(@border) {
-			@xCenter = @border['x'];
-			@zCenter = @border['z'];
-			@xRadius = @border['radiusX'];
-			@zRadius = @border['radiusZ'];
-
-			// limit to within both world borders
-			@xMin = max(@xMin, @xCenter - @xRadius);
-			@xMax = min(@xMax, @xCenter + @xRadius);
-			@zMin = max(@zMin, @zCenter - @zRadius);
-			@zMax = min(@zMax, @zCenter + @zRadius);
-		}
-
-		// border buffer
-		@xMin += 128;
-		@zMin += 128;
-		@xMax -= 128;
-		@zMax -= 128;
-
+		@worldExtent = _get_world_extent(@world, 128);
 		@tries = 20;
 		@target = null;
 		while(@tries-- > 0) {
-			@x = @xMin + rand(@xMax - @xMin);
-			@z = @zMin + rand(@zMax - @zMin);
+			@x = @worldExtent['xMin'] + rand(@worldExtent['xMax'] - @worldExtent['xMin']);
+			@z = @worldExtent['zMin'] + rand(@worldExtent['zMax'] - @worldExtent['zMin']);
 			@target = get_highest_block_at(@x, @z, @world);
 			if(@target['y'] > 62 && get_block(@target) != 'LAVA' && !sk_regions_at(@target)) {
 				// not in the sea, not in lava, not in a region

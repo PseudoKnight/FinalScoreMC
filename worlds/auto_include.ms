@@ -1,6 +1,6 @@
-/*
-	Returns the worlds config
-*/
+/**
+ * Returns the worlds config
+ */
 proc _worlds_config() {
 	@worlds = import('worlds');
 	if(is_null(@worlds)) {
@@ -10,8 +10,8 @@ proc _worlds_config() {
 	return(@worlds);
 }
 
-/*
-	Returns the absolute directory of the worlds container.
+/**
+ * Returns the absolute directory of the worlds container.
  */
 proc _worlds_dir() {
 	@userDir = sys_properties()['user.dir'];
@@ -22,9 +22,9 @@ proc _worlds_dir() {
 	return(@userDir.'/'.@worldContainer);
 }
 
-/*
-	Returns world group
-*/
+/**
+ * Returns world group
+ */
 proc _world_group(@world) {
 	@worlds = _worlds_config();
 	if(array_index_exists(@worlds, @world)) {
@@ -33,9 +33,9 @@ proc _world_group(@world) {
 	return(null);
 }
 
-/*
-	Returns world alias when given world folder name
-*/
+/**
+ * Returns world alias when given world folder name
+ */
 proc _world_name(@world) {
 	@worlds = _worlds_config();
 	@world = to_lower(@world);
@@ -47,9 +47,9 @@ proc _world_name(@world) {
 	}
 }
 
-/*
-	Returns a world folder name when given a world alias
-*/
+/**
+ * Returns a world folder name when given a world alias
+ */
 proc _world_id(@world) {
 	@worlds = _worlds_config();
 	@world_name = to_lower(@world);
@@ -72,16 +72,16 @@ proc _world_id(@world) {
 	}
 }
 
-/*
-	Returns if the world is a survival world
-*/
+/**
+ * Returns if the world is a survival world
+ */
 proc _is_survival_world(@world) {
 	return(has_metadata(@world, 'survival'));
 }
 
-/*
-	Returns if the world allows teleports
-*/
+/**
+ * Returns if the world allows teleports
+ */
 proc _world_allows_teleports(@world) {
 	@worlds = _worlds_config();
 	try {
@@ -92,22 +92,21 @@ proc _world_allows_teleports(@world) {
 	}
 }
 
-/*
-	Creates and adds a world to config transiently.
-	Throws InvalidWorldException if the world already exists by that name or display name.
-
-	@world keys:
-	name: The display title for the world.
-	mode: The default gamemode for players entering the world.
-	group: The world group name. Used for separating inventories, among other things.
-	teleports: Whether or not a player can use teleport commands to enter/exit this world. (default: true)
-	seed: The world seed used to generate terrain. Random if not provided.
-	environment: The world dimension. (NORMAL, NETHER, THE_END)
-	generator: The name of a custom world generator.
-	difficulty: The difficulty mode. (default: HARD)
-	spawning: An associative array of spawning behavior defined in bukkit.yml. (eg. ticks-per-monster-spawns)
-
-*/
+/**
+ * Creates and adds a world to config transiently.
+ * Throws InvalidWorldException if the world already exists by that name or display name.
+ * 
+ * @world keys:
+ * name: The display title for the world.
+ * mode: The default gamemode for players entering the world.
+ * group: The world group name. Used for separating inventories, among other things.
+ * teleports: Whether or not a player can use teleport commands to enter/exit this world. (default: true)
+ * seed: The world seed used to generate terrain. Random if not provided.
+ * environment: The world dimension. (NORMAL, NETHER, THE_END)
+ * generator: The name of a custom world generator.
+ * difficulty: The difficulty mode. (default: HARD)
+ * spawning: An associative array of spawning behavior defined in bukkit.yml. (eg. ticks-per-monster-spawns)
+ */
 proc _create_world(@name, @world) {
 	@title = @world['name'];
 	@worlds = _worlds_config();
@@ -142,7 +141,7 @@ proc _create_world(@name, @world) {
 	}
 }
 
-/*
+/**
  * Unloads world from server and worlds config.
  * Teleports existing players to another world in the same world group.
  * Throws InvalidWorldException if something goes wrong.
@@ -199,11 +198,11 @@ proc _unload_world(@name, @save = true) {
 	}
 }
 
-/*
-	Gets the custom border for the given world.
-	These are used where visual borders are distracting
-	or when borders are not perfectly square.
-*/
+/**
+ * Gets the custom border for the given world.
+ * These are used where visual borders are distracting
+ * or when borders are not perfectly square.
+ */
 proc _get_worldborder(@world) {
 	@worlds = _worlds_config();
 	if(array_index_exists(@worlds, @world, 'border')) {
@@ -212,9 +211,50 @@ proc _get_worldborder(@world) {
 	return(null);
 }
 
-/*
-	Interpolates between current world time and target time over a number of ticks.
-	Returns whether or not this will be successful in modifying time.
+/**
+ * Gets the extent of the world on the x and z axes.
+ * Optionally specify a buffer in meters.
+ * Returns an array with the indexes xMin, xMax, zMin, and zMax.
+ */
+proc _get_world_extent(@world, @buffer = 0) {
+	@worldBorder = get_world_border(@world);
+
+	@center = @worldBorder['center'];
+	@width = integer(@worldBorder['width']);
+	if(@buffer >= @width / 2) {
+		throw('RangeException', 'Buffer is larger than world radius');
+	}
+
+	@xMin = integer(@center['x'] - @width / 2);
+	@zMin = integer(@center['z'] - @width / 2);
+	@xMax = integer(@center['x'] + @width / 2);
+	@zMax = integer(@center['z'] + @width / 2);
+
+	// Make sure it is within our custom world border too
+	@border = _get_worldborder(@world);
+	if(@border) {
+		@xCenter = @border['x'];
+		@zCenter = @border['z'];
+		@xRadius = @border['radiusX'];
+		@zRadius = @border['radiusZ'];
+
+		// limit to within both world borders
+		@xMin = max(@xMin, @xCenter - @xRadius);
+		@xMax = min(@xMax, @xCenter + @xRadius);
+		@zMin = max(@zMin, @zCenter - @zRadius);
+		@zMax = min(@zMax, @zCenter + @zRadius);
+	}
+
+	@xMin += @buffer;
+	@zMin += @buffer;
+	@xMax -= @buffer;
+	@zMax -= @buffer;
+	return(array(xMin: @xMin, xMax: @xMax, zMin: @zMin, zMax: @zMax));
+}
+
+/**
+ * Interpolates between current world time and target time over a number of ticks.
+ * Returns whether or not this will be successful in modifying time.
  */
 proc _world_time_travel(@world, @targetTime, @ticks) {
 	if(import('timetravel.'.@world)) {

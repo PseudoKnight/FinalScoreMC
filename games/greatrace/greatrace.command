@@ -1,127 +1,128 @@
 <!
-	description: Players sprint and/or ride to the target location. First there wins.
-	NO teleports. Horses/Minecarts/Potions are allowed.;
+	description: Players race to the target location. First there wins.
+	Teleports disqualifies players. Horses/Minecarts/Potions/Elytra are not blocked.;
 
-	requiredExtensions: CHNaughty;
 	requiredProcs: _add_activity() and _remove_activity() procedures to keep a list of all current activities on server.
 	As well as _get_worldborder() to get the limits of the world.
 >
 register_command('greatrace', array(
 	description: 'Creates a race in survival for all players in the area.',
-	usage: '/greatrace [x] [z]',
-	tabcompleter: closure(@alias, @sender, @args, @info) {
-		return(array());
-	},
+	usage: '/greatrace [radius | x z]',
+	tabcompleter: closure(return(array())),
 	executor: closure(@alias, @sender, @args, @info) {
-		@world = pworld();
-
-		# Get players
+		// Get players
 		@start = ploc();
-		@players = players_in_radius(@start, 32);
-		if(array_size(@players) < 1) {
-			die(color('gold').'Not enough players within 32 blocks.');
+		@world = @start['world'];
+		@players = players_in_radius(@start, 24);
+		if(array_size(@players) < 1 && !pisop()) {
+			die(color('gold').'Not enough players within 24 blocks.');
 		}
 
-		# Get target location
-		@target = null;
-		if(!@args) {
-			@border = _get_worldborder(@world);
-			@x = 0;
-			@z = 0;
-			if(@border) {
-				@x = @border['x'] - @border['radiusX'] + rand(@border['radiusX'] * 2);
-				@z = @border['z'] - @border['radiusZ'] + rand(@border['radiusZ'] * 2);
-			} else {
-				@width = min(8192, integer(get_world_border(@world)['width']));
-				@x += rand(@width) - @width / 2;
-				@z += rand(@width) - @width / 2;
-			}
-			@target = get_highest_block_at(@x, @z, @world);
+		// Get target locations
+		@targets = array();
+		@worldExtent = _get_world_extent(@world, 8);
+		if(array_size(@args) < 2) {
+			@radius = array_get(@args, 0, 512);
+			do {
+				@x = @start['x'] - @radius + @radius * 2 * rand();
+				@z = @start['z'] - @radius + @radius * 2 * rand();
+				if(@x > @worldExtent['xMin'] && @x < @worldExtent['xMax']
+				&& @z > @worldExtent['zMin'] && @z < @worldExtent['zMax']) {
+					@targets[] = get_highest_block_at(@x, @z, @world);
+				}
+			} while(array_size(@targets) < 2 || rand(2))
 		} else if(array_size(@args) == 2) {
-			@target = get_highest_block_at(@args[0], @args[1], @world);
+			@x = integer(@args[0]);
+			@z = integer(@args[1]);
+			if(@x > @worldExtent['xMin'] && @x < @worldExtent['xMax']
+			&& @z > @worldExtent['zMin'] && @z < @worldExtent['zMax']) {
+				@targets[] = get_highest_block_at(@x, @z, @world);
+			} else {
+				die(color('gold').'Coordinates outside world extent.');
+			}
 		} else {
 			return(false);
 		}
 
-		# Create an array of points in a circle around the target location
-		@radius = 8;
-		@circle = array();
-		for(@angle = 0, @angle < 6.28, @angle += 0.4) {
-			@circle[] = array(
-				'x': @radius * cos(@angle) + @target['x'],
-				'y': @target['y'] + 4,
-				'z': @radius * sin(@angle) + @target['z'],
-				'world': @world,
-			);
-		}
-
-		# Setup scoreboard
+		// Setup scoreboard
 		create_scoreboard('greatrace');
 		create_objective('distance', 'DUMMY', 'greatrace');
-		set_objective_display('distance', array('slot': 'SIDEBAR', 'displayname': color('b').'Distance'), 'greatrace');
+		create_objective('target', 'DUMMY', 'greatrace');
+		set_objective_display('distance', array(slot: 'SIDEBAR', displayname: color('b').'Distance'), 'greatrace');
 		foreach(@p in @players) {
 			set_pscoreboard(@p, 'greatrace');
 		}
 
 		_add_activity('greatrace', 'The Great Race');
 
-		# Main loop
-		@timer = array(3);
-		set_interval(1000, closure(){
+		proc _end_race() {
+			_remove_activity('greatrace');
+			unbind('greatrace');
+			remove_scoreboard('greatrace');
+		}
+
+		@timer = array(10);
+		set_interval(500, closure(){
 			foreach(@index: @p in @players) {
 				if(!ponline(@p) || pworld(@p) != @world || phealth(@p) == 0) {
 					array_remove(@players, @index);
 				}
 			}
 
-			if(array_size(@players) <= 1) {
+			if(array_size(@players) == 0 || array_size(@players) == 1 && !pisop(@players[0])) {
 				tmsg(array_get(@players, 0, '~console'), 'All players left the race.');
-				_remove_activity('greatrace');
-				unbind('thegreatrace');
-				remove_scoreboard('greatrace');
+				_end_race();
 				clear_task();
 
 			} else if(@timer[0] > -1) {
-				# COUNTDOWN
+				// Counting down to start
 				foreach(@index: @p in @players) {
 					@l = ploc(@p);
 					@dist = distance(@l, @start);
-					if(@dist > 32) {
+					if(@dist > 24) {
 						array_remove(@players, @index);
 					} else if(@timer[0]) {
-						title(@p, @timer[0], 'The Great Race', 0, 40, 0);
-						play_sound(@l, array('sound': 'BLOCK_NOTE_BLOCK_PLING'), @p);
+						title(@p, ceil(@timer[0] / 2), 'The Great Race', 0, 20, 0);
 					} else {
 						title(@p, 'GO!', 'The Great Race', 0, 40, 20);
-						play_sound(@l, array('sound': 'ENTITY_FIREWORK_ROCKET_BLAST_FAR'), @p);
-						set_compass_target(@p, @target);
-						tmsg(@p, 'Target Location: '.@target['x'].' / '.@target['y'].' / '.@target['z']);
+						play_sound(@l, array(sound: 'ENTITY_FIREWORK_ROCKET_BLAST_FAR'), @p);
 					}
 				}
 				@timer[0] -= 1;
 
 			} else {
-				#RACE
+				// Racing to target
 				foreach(@p in @players) {
-					@l = ploc(@p);
-					@dist = distance(@l, @target);
-					if(@dist > @radius) {
-						action_msg(@p, 'Distance to target: '.floor(@dist).'m');
+					@ploc = location_shift(ploc(@p), 'up', 1.5);
+					@targetIndex = get_pscore('target', @p, 'greatrace');
+					@targetLoc = @targets[@targetIndex];
+					@dist = distance(@ploc, @targetLoc);
+					if(@dist > 8) {
 						set_pscore('distance', @p, integer(@dist), 'greatrace');
 						if(@dist < 96) {
-							foreach(@point in @circle) {
-								spawn_particle(@point, 'FIREWORKS_SPARK', @players);
+							for(@i = 0, @i < 5, @i++) {
+								@vector = get_vector(array(0, 0, 0, @world, rand(360), 0), 8);
+								@point = array(
+									@targetLoc['x'] + @vector['x'],
+									@targetLoc['y'] + 1.2,
+									@targetLoc['z'] + @vector['z'],
+									@world,
+								);
+								spawn_particle(@point, 'CAMPFIRE_SIGNAL_SMOKE', @p);
 							}
 						}
-
+						if(@dist > 18) {
+							spawn_particle(@ploc, array(particle: 'VIBRATION', destination: location_shift(@ploc, @targetLoc, 16)), @p);
+						}
+					} else if(@targetIndex + 1 < array_size(@targets)) {
+						// Player reached target, so select the next target.
+						set_pscore('target', @p, @targetIndex + 1, 'greatrace');
+						play_sound(@ploc, array(sound: 'ENTITY_ARROW_HIT_PLAYER'), @p);
 					} else {
-						# WINNER!
-						@l['y'] += 2;
-						launch_firework(@l);
-						broadcast(@p.' won The Great Race!', all_players(@world));
-						_remove_activity('greatrace');
-						unbind('thegreatrace');
-						remove_scoreboard('greatrace');
+						// Winner!
+						launch_firework(location_shift(@ploc, 'up', 2));
+						broadcast(@p.' won the Great Race!', all_players(@world));
+						_end_race();
 						clear_task();
 						break();
 					}
@@ -129,13 +130,13 @@ register_command('greatrace', array(
 			}
 		});
 
-		bind('player_teleport', array('id': 'thegreatrace'), null, @e, @players) {
-			if(array_contains(@players, @e['player'])) {
-				@dist = distance(@e['from'], @e['to']);
+		bind('player_teleport', array(id: 'greatrace'), null, @event, @players) {
+			if(array_contains(@players, player())) {
+				@dist = distance(@event['from'], @event['to']);
 				if(@dist > 8) {
-					array_remove_values(@players, @e['player']);
+					array_remove_values(@players, player());
 					msg('You have been disqualified for teleporting.');
-					broadcast(@e['player'].' has been disqualified for teleporting.', @players);
+					broadcast(player().' has been disqualified for teleporting.', @players);
 				}
 			}
 		}
