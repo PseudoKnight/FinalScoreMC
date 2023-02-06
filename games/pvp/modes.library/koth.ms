@@ -32,17 +32,17 @@ proc _interval(@pvp, @id) {
 		
 		if(@kingteam > -1) {
 			@team = @pvp['arena']['team'][@kingteam]['name'];
-			@score = get_pscore('seconds', @team, @id);
-			set_pscore('seconds', @team, @score + @count, @id);
+			@score = get_pscore('seconds', @team, @id) + @count;
+			set_pscore('seconds', @team, @score, @id);
 			foreach(@p in @players) {
 				@pvp['stats'][@p]['seconds']++;
 			}
 			if(array_index_exists(@pvp['arena'], 'kothbeacon')) {
 				set_block(@pvp['arena']['kothbeacon'], if(@kingteam, 'BLUE', 'RED').'_STAINED_GLASS');
 			}
-			if(@score >= -11) {
+			if(@score >= -10) {
 				play_sound(@pvp['arena']['kothbeacon'], array(sound: 'BLOCK_NOTE_BLOCK_PLING', volume: 5));
-				if(@score >= -1) {
+				if(@score >= 0) {
 					_pvp_end_match(@id, @pvp['team'][@kingteam]['players']);
 				}
 			}
