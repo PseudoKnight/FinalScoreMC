@@ -197,10 +197,8 @@ proc _arena_load(@pvp) {
 	}
 
 	// Adjust target scores for player counts
-	if(@arena['mode'] == 'koth') {
-		if(!array_index_exists(@pvp, 'team') && array_size(@pvp['players']) > 4) {
-			@arena['score'] = integer(@arena['score'] / 2);
-		}
+	if(@arena['mode'] == 'koth' && !array_index_exists(@pvp, 'team') && array_size(@pvp['players']) > 4) {
+		@arena['score'] = integer(@arena['score'] / (array_size(@pvp['players'] - 3)));
 	}
 
 	return(@arena);
