@@ -448,7 +448,9 @@ proc _bind_events(@pvp) {
 
 			@friendlyFire = @pvp['arena']['ff'];
 			if(@friendlyFire != 'true'
-			&& ((array_index_exists(@pvp['arena'], 'team') && @pvp['players'][ player()]['team'] == @pvp['players'][@damager]['team'])
+			// player does not exist in index
+			&& ((array_index_exists(@pvp['arena'], 'team') && array_index_exists(@pvp['players'], @damager)
+			&& @pvp['players'][player()]['team'] == @pvp['players'][@damager]['team'])
 			|| (!array_index_exists(@pvp['arena'], 'team') && player() == @damager))) {
 				if(@friendlyFire == 'knockback') {
 					modify_event('amount', 0);
