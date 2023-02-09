@@ -131,9 +131,9 @@ proc _get_loot(@floor, @random, @bonus = 1.0, @loot = array(
 					|| string_ends_with(@item['name'], 'HELMET') 
 					|| string_ends_with(@item['name'], 'BOOTS')
 					|| string_ends_with(@item['name'], 'CHESTPLATE'))) {
-						@item['meta']['enchants'] = array(curse_of_binding: 1);
+						@item['meta']['enchants'] = array(binding_curse: 1);
 					} else {
-						@item['meta']['enchants'] = array(curse_of_vanishing: 1);
+						@item['meta']['enchants'] = array(vanishing_curse: 1);
 					}
 				}
 			} else if(@item['name'] == 'ENCHANTED_BOOK') {
