@@ -18,6 +18,12 @@ proc _weapon_bind_events(@pvp) {
 			@loc = @e['location'];
 			if(get_block_info(@loc)['solid']) {
 				@loc = location_shift(@loc, @e['facing']);
+				if(get_block_info(@loc)['solid']) {
+					@loc = location_shift(@loc, 'up');
+					if(get_block_info(@loc)['solid']) {
+						die();
+					}
+				}
 			}
 			@loc['x'] += 0.5;
 			@loc['z'] += 0.5;

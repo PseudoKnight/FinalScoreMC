@@ -128,26 +128,21 @@ proc _class_load(@player, @pvp) {
 			set_timeout(1, closure(){
 				try {
 					entity_remove(@event['vehicle']);
-					set_pcooldown(@player, 'HORSE_SPAWN_EGG', 2000 / 50);
-					set_pinv(@player, 3, array(name: 'HORSE_SPAWN_EGG', meta: array(display: 'Critter', lore: array(@horseHealth))));
+					set_pcooldown(@player, 'SADDLE', 2000 / 50);
+					set_pinv(@player, 3, array(name: 'SADDLE', meta: array(display: 'Critter', lore: array(@horseHealth))));
 				} catch(BadEntityException @e) {}
 			});
 		}
 	}
-	bind('player_interact', array(id: @player.'mount', priority: 'HIGHEST'), array(player: @player, itemname: 'HORSE_SPAWN_EGG', button: 'right'), @event, @horseHealth){
+	bind('player_interact', array(id: @player.'mount', priority: 'HIGHEST'), array(player: @player, itemname: 'SADDLE', button: 'right'), @event, @horseHealth){
 		cancel();
 		consume();
-		if(!array_index_exists(@event, 'location') || pcooldown('HORSE_SPAWN_EGG')) {
+		if(!entity_grounded(puuid()) || pcooldown('SADDLE')) {
 			die();
 		}
 		@item = pinv(player(), null);
 		set_pinv(player(), null, null);
-		@loc = @event['location'];
-		if(get_block_info(@loc)['solid']) {
-			@loc = location_shift(@loc, @event['facing']);
-		}
-		@loc['x'] += 0.5;
-		@loc['z'] += 0.5;
+		@loc = entity_loc(puuid());
 		_spawn_entity('critter', @loc, null, closure(@horse) {
 			set_entity_health(@horse, @item['meta']['lore'][0]);
 			add_scoreboard_tag(@horse, 'nodrops');
@@ -163,7 +158,7 @@ proc _class_powerup(@player) {
 	if(@vehicle) {
 		set_entity_health(@vehicle, 100);
 	} else {
-		set_pinv(@player, 3, array(name: 'HORSE_SPAWN_EGG', meta: array(
+		set_pinv(@player, 3, array(name: 'SADDLE', meta: array(
 			display: 'Critter',
 			lore: array(100),
 		)));
