@@ -21,7 +21,7 @@ proc _weapon_bind_events(@pvp) {
 						play_sound(ploc(), array(sound: 'BLOCK_BEACON_ACTIVATE', pitch: 0.5 + 1.5 * @xp / 70));
 					} else if(@xp == 99) {
 						clear_task();
-						_weapon_hit_scan(player(), array(range: 112, raySize: 0.1), 16, array(tracer: 'CRIT', hitparticle: 'LAVA'), @pvp);
+						_weapon_hit_scan(player(), array(raySize: 0.1), 16, array(tracer: 'CRIT', hitparticle: 'LAVA'), @pvp);
 						play_sound(ploc(), array(sound: 'ENTITY_ZOMBIE_VILLAGER_CURE', pitch: 1.8, volume: 3));
 					}
 				}
