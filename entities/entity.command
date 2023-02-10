@@ -7,7 +7,7 @@ register_command('entity', array(
 		array('<info|set|delete|spawn|patrol': array_keys(_get_custom_entities())),
 		array('<<set|delete': array('type', 'name', 'age', 'health', 'lifetime', 'onfire', 'targetnear',
 					'ai', 'tame', 'glowing', 'invulnerable', 'gravity', 'silent', 'gear', 'droprate', 'effect', 'tags',
-					'attributes', 'rider', 'explode')),
+					'attributes', 'rider', 'explode', 'scoreboardtags')),
 		array('<type|rider': reflect_pull('enum', 'EntityType')),
 	),
 	executor: closure(@alias, @sender, @args) {
@@ -188,6 +188,11 @@ register_command('entity', array(
 						}
 						@entity['explode'] = array(integer(@duration), integer(@strength));
 						msg(color('green').'Set entity to explode after '.@duration.' seconds with strength of '.@strength);
+
+					case 'scoreboardtags':
+						@tags = split(',', @args[3]);
+						@entity['scoreboardtags'] = @tags;
+						msg(color('green').'Set entity scoreboard tags to '.@tags);
 
 					default:
 						die(color('yellow').'Invalid setting.');

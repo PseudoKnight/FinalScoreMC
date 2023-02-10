@@ -195,6 +195,11 @@ proc _spawn_entity(@entity, @loc, @spawnData, @consumer) {
 				// mob is gone for some reason
 			}
 		}
+		if(array_index_exists(@entity, 'scoreboardtags')) {
+			foreach(@tag in @entity['scoreboardtags']) {
+				add_scoreboard_tag(@e, @tag);
+			}
+		}
 		if(is_closure(@consumer)) {
 			execute(@e, @consumer);
 		}
