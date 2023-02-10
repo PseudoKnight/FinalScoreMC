@@ -4,7 +4,7 @@ default:
     lavaPit: 0.07
     waterPit: 0.07
     pit: 0.07
-    extraDoors: 0.4
+    extraDoors: 0.6
     maxRoomSize: 13
     spawnerChance: 0.0
     campfireChance: 1.0
