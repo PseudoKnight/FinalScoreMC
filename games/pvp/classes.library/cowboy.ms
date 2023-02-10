@@ -1,5 +1,4 @@
 proc _class_load(@player, @pvp) {
-	@horseHealth = array(100.0);
 	bind('player_interact', array(id: @player.'revolver'), array(player: @player, itemname: 'IRON_HORSE_ARMOR', button: 'right'), @event, @pvp){
 		if(!pcooldown('IRON_HORSE_ARMOR')) {
 			@item = pinv(player(), null);
@@ -134,7 +133,7 @@ proc _class_load(@player, @pvp) {
 			});
 		}
 	}
-	bind('player_interact', array(id: @player.'mount', priority: 'HIGHEST'), array(player: @player, itemname: 'SADDLE', button: 'right'), @event, @horseHealth){
+	bind('player_interact', array(id: @player.'mount', priority: 'HIGHEST'), array(player: @player, itemname: 'SADDLE', button: 'right'), @event){
 		cancel();
 		consume();
 		if(!entity_grounded(puuid()) || pcooldown('SADDLE')) {

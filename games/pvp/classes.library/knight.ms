@@ -12,7 +12,7 @@ proc _class_load(@player, @pvp) {
 			});
 		}
 	}
-	bind('player_interact', array(id: @player.'mount', priority: 'HIGHEST'), array(player: @player, itemname: 'SADDLE', button: 'right'), @event, @horseHealth){
+	bind('player_interact', array(id: @player.'mount', priority: 'HIGHEST'), array(player: @player, itemname: 'SADDLE', button: 'right'), @event){
 		cancel();
 		consume();
 		if(!entity_grounded(puuid()) || pcooldown('SADDLE')) {
