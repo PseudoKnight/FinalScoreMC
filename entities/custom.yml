@@ -312,6 +312,8 @@ parrotbomb:
   explode:
   - 4
   - 2
+  scoreboardtags:
+  - nodrops
   tame: true
   type: PARROT
 pony:
