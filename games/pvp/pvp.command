@@ -123,7 +123,7 @@ register_command('pvp', array(
 					@stats = get_values('pvp');
 					@sortedArray = array();
 					foreach(@key: @value in	@stats) {
-						if(@value['losses'] > 0) {
+						if(@value['losses'] > 0 && @value['games'] >= 50) {
 							@value['uuid'] = split('.', @key)[1];
 							@sortedArray[] = @value;
 						}
@@ -131,16 +131,16 @@ register_command('pvp', array(
 					array_sort(@sortedArray, closure(@left, @right) {
 						return((@left['wins'] / @left['losses']) < (@right['wins'] / @right['losses']));
 					});
-					msg(color('bold').'BEST WIN/LOSS RATIOS:');
+					msg(color('bold').'BEST WIN/LOSS RATIOS: (at least 50 games)');
 					foreach(@i: @entry in @sortedArray[0..18]) {
 						@name = get_value('uuids', @entry['uuid'])['name'];
-						msg((@i + 1).' '.color('bold').@name.': '.color('r').@entry['wins'] / @entry['losses']);
+						msg((@i + 1).' '.color('bold').@name.': '.color('r').round(@entry['wins'] / @entry['losses'], 2));
 					}
 				} else if(@id == 'kills') {
 					@stats = get_values('pvp');
 					@sortedArray = array();
 					foreach(@key: @value in	@stats) {
-						if(@value['deaths'] > 0) {
+						if(@value['deaths'] > 0 && @value['games'] >= 50) {
 							@value['uuid'] = split('.', @key)[1];
 							@sortedArray[] = @value;
 						}
@@ -148,10 +148,10 @@ register_command('pvp', array(
 					array_sort(@sortedArray, closure(@left, @right) {
 						return((@left['kills'] / @left['deaths']) < (@right['kills'] / @right['deaths']));
 					});
-					msg(color('bold').'BEST KILL/DEATH RATIOS:');
+					msg(color('bold').'BEST KILL/DEATH RATIOS: (at least 50 games)');
 					foreach(@i: @entry in @sortedArray[0..18]) {
 						@name = get_value('uuids', @entry['uuid'])['name'];
-						msg((@i + 1).' '.color('bold').@name.': '.color('r').@entry['kills'] / @entry['deaths']);
+						msg((@i + 1).' '.color('bold').@name.': '.color('r').round(@entry['kills'] / @entry['deaths'], 2));
 					}
 				} else {
 					@player = @id;
