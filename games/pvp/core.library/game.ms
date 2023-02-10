@@ -191,12 +191,25 @@ proc _pvp_start(@pvp){
 				array_remove(@players, @index);
 			}
 		} else {
-			// Even team ratios, so sort players based on win/loss ratios
+			// Even team ratios, so sort players based on win/loss or kill/death ratios
+			// Use different sorting methods for slight variations in teams
+			@balanceType = array_get_rand(array('wins', 'kills'));
+			console('Balancing teams by '.@balanceType);
 			@arena['teamratio'] = array(1, 1);
 			@ratios = associative_array();
 			foreach(@player in @players) {
 				@pstats = get_value('pvp', puuid(@player, true));
-				@ratios[@player] = @pstats['wins'] / @pstats['games'];
+				try {
+					if(@balanceType == 'wins') {
+						@ratios[@player] = @pstats['wins'] / @pstats['games'];
+					} else if(@balanceType == 'kills') {
+						@ratios[@player] = @pstats['kills'] / @pstats['deaths'];
+					} else {
+						@ratios[@player] = rand();
+					}
+				} catch (Exception @ex) {
+					@ratios[@player] = 0.0;
+				}
 			}
 			// Sort highest to lowest win ratios
 			array_sort(@players, closure(@left, @right) {
