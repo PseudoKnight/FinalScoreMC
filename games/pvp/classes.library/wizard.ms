@@ -6,7 +6,12 @@ proc _class_load(@player, @pvp) {
 		@trace = ray_trace(player(), 96);
 		@loc = @trace['location'];
 		if(@trace['entities']) {
-			@loc = @trace['entities'][0]['location'];
+			foreach(@entity in @trace['entities']) {
+				if(!ponline(@entity['uuid']) || pmode(@entity['uuid']) != 'SPECTATOR') {
+					@loc = @trace['entities'][0]['location'];
+					break();
+				}
+			}
 		}
 		@lightning = lightning(@loc);
 		@bind = bind('entity_damage', null, array(type: 'PLAYER', cause: 'LIGHTNING'), @event,
@@ -132,7 +137,7 @@ proc _class_load(@player, @pvp) {
 			@hit = false;
 			if(@trace['entities']) {
 				foreach(@entity in @trace['entities']) {
-					if(@entity['uuid'] != puuid()) {
+					if(@entity['uuid'] != puuid() && (!ponline(@entity['uuid']) || pmode(@entity['uuid']) != 'SPECTATOR')) {
 						@hit = true;
 						@loc = @entity['location'];
 					}
