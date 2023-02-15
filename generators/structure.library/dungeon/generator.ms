@@ -384,7 +384,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 					remove_bar('gen'.@region);
 					die('Interrupted connecting rooms: '.array_size(@unconnected).'/'.array_size(@rooms).' ... ');
 				}
-				@attempts--;
+				@attempts++;
 				if(@attempts >= @maxAttempts){
 					msg('Hit room connector limit ('.@attempts.')! Rooms left: '.array_size(@unconnected).'/'.array_size(@rooms).'!');
 					break();
@@ -898,8 +898,8 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 								))));
 							}
 						}
-					} else {
-						// spawner
+					} else if(@roomWidth > 2 && @roomLength > 2) {
+						// can place a door blocking block in the room
 						if(@room['connected'] > 2 && @mobTypes && srand(@random) < @floorData['spawnerChance']) {
 							@loc = array(
 								@roomX + 1 + integer(srand(@random) * (@roomWidth - 2)),
@@ -907,15 +907,12 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 								@roomZ + 1 + integer(srand(@random) * (@roomLength - 2)),
 								@world
 							);
-							if(equals_ic(@materials['room'], get_block(@loc))) {
-								@spawner = true;
-								set_block(@loc, 'SPAWNER', false);
-								@rand = integer(srand(@random) * array_size(@mobTypes));
-								@mob = array_get(@mobTypes, @rand, 'ZOMBIE');
-								set_spawner_type(@loc, @mob);
-							}
-						} else if(@roomWidth > 2 && @roomLength > 2
-								&& @floorData['campfireChance'] && srand(@random) < @floorData['campfireChance']) {
+							@spawner = true;
+							set_block(@loc, 'SPAWNER', false);
+							@rand = integer(srand(@random) * array_size(@mobTypes));
+							@mob = array_get(@mobTypes, @rand, 'ZOMBIE');
+							set_spawner_type(@loc, @mob);
+						} else if(@floorData['campfireChance'] && srand(@random) < @floorData['campfireChance']) {
 							@attempts = 10;
 							while(@attempts-- > 0) {
 								@loc = array(
