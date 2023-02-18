@@ -1,15 +1,17 @@
 dungeonEntrance: true
 default:
     maxRoomHeight: 12
-    chestCount: 0.8
+    chestCount: 0.1
     attic: 0.3
     balcony: 0.3
-    campfireChance: 0.1
+    campfireChance: 0.2
     treasureRoom: true
     door: spruce_door
 floors:
     0:
         # village
+        chestCount: 0.6
+        barrelCount: 0.4
         spawner: [zombie_villager]
         trap: [tripwire_arrow]
         wall: [cobblestone, cobblestone, cobblestone, cobblestone, cobblestone, cobblestone, mossy_cobblestone]
@@ -40,6 +42,8 @@ floors:
                     name: IRON_HELMET
     1:
         # caves
+        chestCount: 0.2
+        barrelCount: 0.4
         waterPit: 0.06
         campfireChance: 0.5
         spawner: [silverfish, zombie]
@@ -55,6 +59,8 @@ floors:
         boss: CREEPER
     2:
         # forest
+        chestCount: 0.5
+        barrelCount: 0.2
         campfireChance: 0.5
         spawner: [cave_spider, spider]
         trap: [static_web]
@@ -63,7 +69,7 @@ floors:
         ceiling: [birch_leaves, dark_oak_leaves]
         floor: [grass_block, grass_block, podzol]
         utility: [damaged_anvil]
-        randomblocks: [azalea, cobweb, wither_rose, sweet_berry_bush]
+        randomblocks: [azalea, cobweb, sweet_berry_bush]
         edge: acacia_leaves
         pillars: 0.3
         boss:
@@ -71,6 +77,8 @@ floors:
             rider: GUARDIAN
     3:
         # desert
+        chestCount: 0.5
+        barrelCount: 0.2
         lavaPit: 0.06
         campfireChance: 0.5
         spawner: [husk, husk, husk, husk, creeper]
@@ -99,6 +107,8 @@ floors:
                     name: DIAMOND_HELMET
     4:
         # ice caves
+        chestCount: 0.5
+        barrelCount: 0.4
         waterPit: 0.06
         campfireChance: 0.5
         spawner: [stray]
@@ -127,6 +137,8 @@ floors:
                         name: DIAMOND_HELMET
     5:
         # nether fortress
+        chestCount: 0.6
+        barrelCount: 0.1
         minRoomHeight: 4
         lavaPit: 0.06
         fireFloor: 0.06
@@ -144,6 +156,8 @@ floors:
         vines: weeping_vines
     6:
         # ocean monument
+        chestCount: 0
+        barrelCount: 0.2
         campfireChance: 0.0
         spawner: [guardian, pufferfish]
         wall: prismarine_bricks
@@ -170,6 +184,8 @@ floors:
                     name: DIAMOND_HELMET
     7:
         # stronghold
+        chestCount: 0.7
+        barrelCount: 0.4
         lavaPit: 0.06
         spawner: [skeleton, witch, creeper]
         trap: [chest_tnt, plate_potion_poison]
@@ -199,6 +215,7 @@ floors:
         boss: ENDER_CRYSTAL
     9:
         # woodland mansion
+        barrelCount: 0.2
         spawner: [vindicator, vindicator, vindicator, pillager, pillager, illusioner]
         trap: chest_potion_poison
         wall: dark_oak_planks

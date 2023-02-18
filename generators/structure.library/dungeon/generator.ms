@@ -33,6 +33,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 
 		// variability on room features
 		chestCount: 0,
+		barrelCount: 0,
 		spawnerChance: 0.7,
 		extraDoors: 0.0,
 		campfireChance: 0.0,
@@ -196,10 +197,11 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 			@minRoomHeight = min(@floorData['minRoomHeight'], @maxRoomHeight);
 			@roof = @floorData['roof'];
 			@chestCount = @floorData['chestCount'];
+			@barrelCount = @floorData['barrelCount'];
 			@spawnCount = @floorData['spawnCount'];
 			@extraDoors = @floorData['extraDoors'];
 			@mobTypes = @floorData['spawner'];
-			@noise = math_const('INTEGER_MAX') + 1 + integer(srand(@random) * math_const('INTEGER_MAX'));
+			@noise = integer(srand(@random) * math_const('LONG_MAX'));
 
 			@width = @regionWidth;
 			@length = @regionLength;
@@ -312,7 +314,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 							@type = 'TABLE';
 						} else if(@floorData['pillars'] && @roomWidth > 1 && @roomLength > 1 && srand(@random) < @floorData['pillars']) {
 							@type = 'PILLARS';
-						} else if(@floorData['attic'] && @height >= 7 && srand(@random) < @floorData['attic']) {
+						} else if(@floorData['attic'] && @height >= 7 && @roomWidth > 2 && @roomLength > 2 && srand(@random) < @floorData['attic']) {
 							@type = 'ATTIC';
 						} else if(@floorData['balcony'] && @roomWidth > 1 && @roomLength > 1 && @height >= 7 && srand(@random) < @floorData['balcony']) {
 							@type = 'BALCONY';
@@ -843,7 +845,8 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 
 				@roomType = @room['type'];
 				@roomWidth = @room['width'];
-				@roomLength = @room['length']
+				@roomLength = @room['length'];
+				@minWidth = min(@roomWidth, @roomLength);
 				@roomHeight = @room['height'];
 				@roomX = @regionMinX + @room['c1'];
 				@roomY = @regionMinY + (@floor * (@maxRoomHeight + 4)) + 2;
@@ -900,7 +903,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 						}
 					} else if(@roomWidth > 2 && @roomLength > 2) {
 						// can place a door blocking block in the room
-						if(@room['connected'] > 2 && @mobTypes && srand(@random) < @floorData['spawnerChance']) {
+						if(@room['connected'] > 2 && @mobTypes && @roomType != 'TREASURE' && srand(@random) < @floorData['spawnerChance']) {
 							@loc = array(
 								@roomX + 1 + integer(srand(@random) * (@roomWidth - 2)),
 								@roomY + if(@roomType == 'ATTIC' && srand(@random) > 0.67, @room['midheight'] + 1, 0),
@@ -939,23 +942,100 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 						}
 					}
 
-					if(@chestCount > 0) {
+					if(@roomType == 'TREASURE' || (@roomWidth > 2 && @roomLength > 2 && (@chestCount > 0 || @barrelCount > 0))) {
 						@chests = @chestCount;
+						@barrels = @barrelCount;
 						if(@roomType == 'TREASURE') {
-							@chests = 1;
-						} else if(is_double(@chests)) {
-							@chests = integer(srand(@random) * min(@roomLength, @roomWidth) * @chests);
+							@chests = 0;
+							@barrels = 0;
+						} else {
+							if(is_double(@chests)) {
+								@chests = integer(round(@minWidth * srand(@random) * @chests)) * if(@i == 0 && @floor == 0, 2, 1);
+							}
+							if(is_double(@barrels)) {
+								@barrels = integer(round(@minWidth * srand(@random) * @barrels)) * if(@i == 0 && @floor == 0, 2, 1);
+							}
 						}
 						@bonus = if(@roomType == 'TREASURE', 4, 1);
-						@chestHeight = if(@roomType == 'ATTIC' && srand(@random) > 0.33){
-							@room['midheight'] + 1
+						@chestHeight = 0;
+						if(@roomType == 'ATTIC' && srand(@random) > 0.33) {
+							@chestHeight = @room['midheight'] + 1;
 						} else if(@roomType == 'TREASURE') {
-							1
-						} else {
-							0
+							@chestHeight = 1;
+						}
+						@attempts = 10;
+						while(@attempts-- > 0 && @chests > 0) {
+							@wallSide = _get_direction(@random);
+							@loc = array(
+								@roomX,
+								@roomY + @chestHeight,
+								@roomZ,
+								@world
+							);
+							if(@wallSide == 'north') {
+								@loc[0] += 1 + integer(srand(@random) * (@roomWidth - 2));
+							} else if(@wallSide == 'south') {
+								@loc[0] += 1 + integer(srand(@random) * (@roomWidth - 2));
+								@loc[2] += @roomLength - 1;
+							} else if(@wallSide == 'east') {
+								@loc[0] += @roomWidth - 1;
+								@loc[2] += 1 + integer(srand(@random) * (@roomLength - 2));
+							} else if(@wallSide == 'west') {
+								@loc[2] += 1 + integer(srand(@random) * (@roomLength - 2));
+							}
+							if(equals_ic(@materials['room'], get_block(@loc))
+							&& array_contains_ic(@materials['wall'], get_block(location_shift(@loc, @wallSide)))) {
+								@inv = _get_chest_loot(@floor, @random, @bonus);
+								set_blockdata_string(@loc, 'chest[facing='._opposite_direction(@wallSide).if(@materials['room'] == 'water', ',waterlogged=true').']', false);
+								@chestArray[] = @loc;
+								@chests--;
+								if(array_size(@inv) > get_inventory_size(@loc)) {
+									@inv = @inv[cslice(0, get_inventory_size(@loc))];
+								}
+								try(set_inventory(@loc, @inv));
+							}
+						}
+						if(@roomType == 'TREASURE') {
+							@attempts = 8;
+							while(@attempts-- > 0) {
+								@loc = array(
+									@roomX + 1 + integer(srand(@random) * (@roomWidth - 2)),
+									@roomY + @chestHeight,
+									@roomZ + 1 + integer(srand(@random) * (@roomLength - 2)),
+									@world
+								);
+								if(equals_ic(@materials['room'], get_block(@loc))) {
+									@podium = array_get(array('OCHRE_FROGLIGHT', 'VERDANT_FROGLIGHT', 'PEARLESCENT_FROGLIGHT'), min(2, integer(@floor / 3)));
+									@double = false;
+									if(equals_ic(@materials['room'], get_block(location_shift(@loc, 'west')))) {
+										@double = true;
+										@rightSide = location_shift(@loc, 'west');
+										set_blockdata_string(@rightSide, 'chest[facing=south'.if(@materials['room'] == 'water', ',waterlogged=true').',type=right]', false);
+										set_block(location_shift(@rightSide, 'down'), @podium, false);
+									}
+									set_blockdata_string(@loc, 'chest[facing=south'.if(@materials['room'] == 'water', ',waterlogged=true').if(@double, ',type=left').']', false);
+									set_block(location_shift(@loc, 'down'), @podium, false);
+									if(@chestArray) { // only lock this chest if we have a previous chest to add a key to
+										try {
+											add_to_inventory(_array_get_srand(@random, @chestArray),
+													array(name: 'TRIPWIRE_HOOK', meta: array(display: 'Key'.(@floor + 1))));
+											set_block_lock(@loc, 'Key'.(@floor + 1));
+										} catch(Exception @ignore) {
+											// just do not lock it
+										}
+									}
+									@inv = _get_chest_loot(@floor, @random, @bonus);
+									@chests--;
+									if(array_size(@inv) > get_inventory_size(@loc)) {
+										@inv = @inv[cslice(0, get_inventory_size(@loc))];
+									}
+									try(set_inventory(@loc, @inv));
+									break();
+								}
+							}
 						}
 						@attempts = 8;
-						while(@attempts-- > 0 && @chests > 0) {
+						while(@attempts-- > 0 && @barrels > 0) {
 							@loc = array(
 								@roomX + 1 + integer(srand(@random) * (@roomWidth - 2)),
 								@roomY + @chestHeight,
@@ -963,42 +1043,18 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 								@world
 							);
 							if(equals_ic(@materials['room'], get_block(@loc))) {
-								@inv = _get_loot(@floor, @random, @bonus);
-								if(@inv) {
-									@chests--;
-									if(@roomType == 'TREASURE') {
-										@double = false;
-										if(equals_ic(@materials['room'], get_block(location_shift(@loc, 'west')))) {
-											@double = true;
-											@rightSide = location_shift(@loc, 'west');
-											set_blockdata_string(@rightSide, 'chest[facing=south'.if(@materials['room'] == 'water', ',waterlogged=true').',type=right]', false);
-											set_blockdata_string(location_shift(@rightSide, 'down'), 'reinforced_deepslate');
-										}
-										set_blockdata_string(@loc, 'chest[facing=south'.if(@materials['room'] == 'water', ',waterlogged=true').if(@double, ',type=left').']', false);
-										set_blockdata_string(location_shift(@loc, 'down'), 'reinforced_deepslate');
-										if(@chestArray) { // only lock this chest if we have a previous chest to add a key to
-											set_block_lock(@loc, 'Key'.(@floor + 1));
-											add_to_inventory(@chestArray[integer(srand(@random) * array_size(@chestArray))],
-													array(name: 'TRIPWIRE_HOOK', meta: array(display: 'Key'.(@floor + 1))));
-										}
-									} else {
-										set_blockdata_string(@loc, 'chest[facing='._get_direction(@random).if(@materials['room'] == 'water', ',waterlogged=true').']', false);
-										@chestArray[] = @loc;
-									}
-									if(array_size(@inv) > get_inventory_size(@loc)) {
-										@inv = @inv[cslice(0, get_inventory_size(@loc))];
-									}
-									try(set_inventory(@loc, @inv));
+								@inv = _get_barrel_loot(@floor, @random, @bonus);
+								set_blockdata_string(@loc, 'barrel[facing='._get_direction(@random, array('north', 'south', 'east', 'west', 'up')).']', false);
+								@barrels--;
+								if(array_size(@inv) > get_inventory_size(@loc)) {
+									@inv = @inv[cslice(0, get_inventory_size(@loc))];
 								}
+								set_inventory(@loc, @inv);
 							}
 						}
 					}
 
-					if(@roomType == 'TREASURE') {
-						die();
-					}
-
-					if(@materials['utility']) {
+					if(@materials['utility'] && @roomWidth > 2 && @roomLength > 2) {
 						if(integer(srand(@random) * 2) == 1) {
 							@loc = array(
 								@roomX + 1 + integer(srand(@random) * (@roomWidth - 2)),
@@ -1007,12 +1063,12 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 								@world
 							);
 							if(equals_ic(@materials['room'], get_block(@loc))) {
-								set_blockdata_string(@loc, @materials['utility'][integer(srand(@random) * array_size(@materials['utility']))], false);
+								set_blockdata_string(@loc, _array_get_srand(@random, @materials['utility']), false);
 							}
 						}
 					}
 
-					if(array_index_exists(@materials, 'randomblocks')) {
+					if(array_index_exists(@materials, 'randomblocks') && @roomWidth > 2 && @roomLength > 2 && @i != 0) {
 						@decorations = integer(srand(@random) * max(@roomLength, @roomWidth));
 						while(@decorations-- > 0) {
 							@loc = array(
@@ -1022,13 +1078,17 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 								@world
 							);
 							if(equals_ic(@materials['room'], get_block(@loc))) {
-								set_blockdata_string(@loc, @materials['randomblocks'][integer(srand(@random) * array_size(@materials['randomblocks']))], false);
+								@blockType = _array_get_srand(@random, @materials['randomblocks']);
+								set_blockdata_string(@loc, @blockType, false);
+								if(!string_contains(@blockType, '[') && material_info(@blockType, 'isSolid') && srand(@random) > 0.5) {
+									set_blockdata_string(location_shift(@loc, 'up'), @blockType, false);
+								}
 							}
 						}
 					}
 
 					if(@roomType == 'ATTIC') {
-						@vines = integer(min(@roomWidth, @roomLength) / 2);
+						@vines = integer(@minWidth / 2);
 						do {
 							@loc = null;
 							@block = null;
@@ -1047,9 +1107,9 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 							@attempts = 5;
 							do {
 								@loc = array(
-									@roomX + integer(srand(@random) * @roomWidth),
+									@roomX + 1 + integer(srand(@random) * (@roomWidth - 2)),
 									@roomY + @length,
-									@roomZ + integer(srand(@random) * @roomLength),
+									@roomZ + 1 + integer(srand(@random) * (@roomLength - 2)),
 									@world
 								);
 							} while(!equals_ic(@materials['room'], get_block(@loc)) && --@attempts > 0);
@@ -1082,9 +1142,9 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 					}
 
 					if(@room['connected'] > 2 && @floorData['trap'] && @roomType != 'FIRE_FLOOR') {
-						@traps = integer(srand(@random) * (@roomLength + @roomWidth));
+						@traps = integer(srand(@random) * max(@roomLength, @roomWidth));
 						while(@traps-- > 0) {
-							@type = split('_', @materials['trap'][integer(srand(@random) * array_size(@materials['trap']))]);
+							@type = split('_', _array_get_srand(@random, @materials['trap']));
 							@trigger = @type[0];
 							@effect = @type[1];
 							@data = if(array_size(@type) >= 3, array_implode(@type[2..], '_'), null);
@@ -1143,10 +1203,10 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 									}
 									@positive = null;
 									@negative = null;
-									if(@roomWidth > 1 && @roomWidth < 6) {
+									if(@roomWidth > 2 && @roomWidth < 12) {
 										@positive = 'east';
 										@negative = 'west';
-									} else if(@roomLength > 1 && @roomLength < 6) {
+									} else if(@roomLength > 2 && @roomLength < 12) {
 										@positive = 'south';
 										@negative = 'north';
 									}
@@ -1186,15 +1246,25 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 							switch(@effect) {
 								case 'fire':
 									foreach(@dir in array('north', 'south', 'east', 'west')) {
-										set_blockdata_string(location_shift(@loc, @dir), 'dispenser[facing=up]', false);
-										set_inventory(location_shift(@loc, @dir), array(0: array(
+										@dispenserLoc = location_shift(@loc, @dir);
+										set_blockdata_string(@dispenserLoc, 'dispenser[facing=up]', false);
+										set_inventory(@dispenserLoc, array(0: array(
 											name: 'FLINT_AND_STEEL', meta: array(damage: 61)
 										)));
+										set_block_lock(@dispenserLoc, 'Key'.(@floor + 1));
 									}
 								case 'cactus':
-									set_block(location_shift(@loc, 'down'), 'SAND', false);
-									set_block(@loc, 'CACTUS', false);
-									set_block(location_shift(@loc, 'up'), 'CACTUS', false);
+									set_block(location_shift(@loc, 'down'), 'RED_SAND', false);
+									@valid = true;
+									foreach(@dir in array('north', 'south', 'east', 'west')) {
+										if(material_info(get_block(location_shift(@loc, @dir)), 'isSolid')) {
+											@valid = false;
+										}
+									}
+									if(@valid) {
+										set_block(@loc, 'CACTUS', false);
+										set_block(location_shift(@loc, 'up'), 'CACTUS', false);
+									}
 								case 'web':
 									set_block(@loc, 'COBWEB', false);
 									@dir = _get_direction(@random);
@@ -1210,6 +1280,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 								case 'tnt':
 									set_blockdata_string(@loc, 'dispenser[facing='.@facing.']', false);
 									set_inventory(@loc, array(0: array(name: 'TNT', qty: 2)));
+									set_block_lock(@loc, 'Key'.(@floor + 1));
 								case 'potion':
 									if(@spawner) {
 										continue();
@@ -1225,9 +1296,11 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 										qty: if(@trigger == 'vines', 1, 3),
 										meta: array(base: array(extended: false, type: to_upper(@data), upgraded: true))
 									)));
+									set_block_lock(@loc, 'Key'.(@floor + 1));
 								case 'arrow':
 									set_blockdata_string(@loc, 'dispenser[facing='.@facing.']', false);
 									set_inventory(@loc, array(0: array(name: 'TIPPED_ARROW', qty: 3, meta: array(base: array(type: 'INSTANT_DAMAGE', upgraded: true, extended: false)))));
+									set_block_lock(@loc, 'Key'.(@floor + 1));
 							}
 							if(@trigger == 'plate') {
 								// needs to be after dispenser
@@ -1277,7 +1350,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 						if(!@exitRoom['boss'] || @ladderHeight > 2) {
 							set_blockdata_string(@loc, 'ladder[facing=south]', false);
 						} else {
-							set_blockdata_string(@loc, 'reinforced_deepslate', false);
+							set_block(@loc, 'REINFORCED_DEEPSLATE', false);
 						}
 						if(@ladderHeight > 2) {
 							set_block(location_shift(@loc, 'south'), @materials['wall'][0], false);

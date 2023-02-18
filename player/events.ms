@@ -205,6 +205,10 @@ bind('player_interact', null, array('button': 'right'), @event) {
 			}
 			@entity = spawn_entity(@type, 1, @loc)[0];
 			set_entity_persistence(@entity, true);
+			if(pmode() != 'CREATIVE') {
+				@item['qty']--;
+				set_pinv(player(), null, @item);
+			}
 		}
 	}
 }

@@ -57,6 +57,29 @@ proc _get_direction(@random, @dirs = array('north', 'south', 'east', 'west')) {
 	return(@dirs[integer(srand(@random) * array_size(@dirs))]);
 }
 
+proc _opposite_direction(@dir) {
+	switch(@dir) {
+		case 'north':
+			return('south');
+		case 'south':
+			return('north');
+		case 'east':
+			return('west');
+		case 'west':
+			return('east');
+		case 'up':
+			return('down');
+		case 'down':
+			return('up');
+		default:
+			throw('FormatException', 'Invalid direction: '.@dir);
+	}
+}
+
+proc _array_get_srand(@random, @array) {
+	return @array[integer(srand(@random) * array_size(@array))];
+}
+
 /*
  * Add block to chunk batch.
  * To minimize memory use, the chunk array alternates between location and material.
