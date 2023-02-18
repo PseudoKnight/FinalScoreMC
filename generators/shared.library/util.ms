@@ -21,10 +21,15 @@ proc _get_cell(@map, @c, @r, @dir) {
 }
 
 proc _adjacent_equals(@layoutMap, @c, @r, @type) {
-	return(@layoutMap[@c + 1][@r] == @type
-			|| @layoutMap[@c - 1][@r] == @type
-			|| @layoutMap[@c][@r + 1] == @type
-			|| @layoutMap[@c][@r - 1] == @type);
+	try {
+		return(@layoutMap[@c + 1][@r] == @type
+				|| @layoutMap[@c - 1][@r] == @type
+				|| @layoutMap[@c][@r + 1] == @type
+				|| @layoutMap[@c][@r - 1] == @type);
+	} catch(IndexOverflowException @ex) {
+		// outside the map
+		return(false);
+	}
 }
 
 proc _is_solid(@cell) {

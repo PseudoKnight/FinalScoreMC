@@ -4,7 +4,7 @@ default:
     attic: 0.3
     balcony: 0.3
     lavaPit: 0.06
-    extraDoors: 0.2
+    extraDoorChance: 0.2
     maxRoomSize: 7
     spawnerChance: 0.8
 floors:
