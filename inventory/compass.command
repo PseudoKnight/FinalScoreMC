@@ -1,6 +1,6 @@
 register_command('compass', array(
 	description: 'Sets the compass target.',
-	usage: '/compass <here|spawn|home [player]|playerName|x z>',
+	usage: '/compass <here|spawn|home|death|player|x z>',
 	tabcompleter: closure(@alias, @sender, @args, @info) {
 		if(array_size(@args) == 1) {
 			@completions = array_merge(all_players(), array('here', 'spawn', 'home', 'death'));
@@ -59,9 +59,11 @@ register_command('compass', array(
 					set_compass_target(ploc(@player));
 					msg(color('green').'Compass is now pointing to last location of '.@player.'.');
 				} catch(PlayerOfflineException @ex) {
+					if(array_size(@args) == 1) {
+						@args = split(',', @args[0]);
+					}
 					if(array_size(@args) < 2) {
-						die(color('gold').'Unknown compass target: '.array_implode(@args).'. Available targets: '
-								.'spawn, home [PlayerName], here, PlayerName, x [y] z.');
+						return(false);
 					}
 					@x = @args[0];
 					@z = @args[1];
@@ -70,7 +72,9 @@ register_command('compass', array(
 					}
 					if(is_numeric(@x) && is_numeric(@z)) {
 						set_compass_target(array(double(@x), 0, double(@z), pworld()));
-						msg(color('green').'Compass is now pointing to x:'.@target.' z:'.@args[1]);
+						msg(color('green').'Compass is now pointing to x:'.@x.' z:'.@z);
+					} else {
+						return(false);
 					}
 				}
 		}
