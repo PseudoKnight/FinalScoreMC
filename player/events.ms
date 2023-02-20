@@ -448,6 +448,32 @@ bind('vehicle_enter', null, array(vehicletype: 'MINECART', passengertype: 'PLAYE
 	}
 }
 
+// 1.19.4 armor swapping
+bind('player_interact', null, array(hand: 'main_hand', button: 'right'), @event) {
+	@item = @event['item'];
+	if(@item) {
+		@itemName = @item['name'];
+		@slot = -1;
+		if(string_ends_with(@itemName, 'HELMET')) {
+			@slot = 103;
+		} else if(@itemName == 'ELYTRA' || string_ends_with(@itemName, 'CHESTPLATE')) {
+			@slot = 102;
+		} else if(string_ends_with(@itemName, 'LEGGINGS')) {
+			@slot = 101;
+		} else if(string_ends_with(@itemName, 'BOOTS')) {
+			@slot = 100;
+		}
+		if(@slot > 0) {
+			@armor = pinv(player(), @slot);
+			if(@armor) {
+				cancel();
+				set_pinv(player(), null, @armor);
+				set_pinv(player(), @slot, @item);
+			}
+		}
+	}
+}
+
 /*
 bind('region_change', null, null, @event) {
 	@world = @event['to']['world'];
