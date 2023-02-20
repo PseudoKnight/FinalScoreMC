@@ -341,6 +341,7 @@ bind('entity_damage_player', null, null, @event) {
 				modify_event('amount', 0);
 				set_entity_rider(@vehicle, null);
 			} else {
+				title(@event['data'], '', color('red').round(@event['amount'], 1), 0, 40, 20);
 				cancel();
 			}
 		}
