@@ -175,14 +175,12 @@ bind('player_join', null, null, @event) {
 							));
 							set_entity_spec(@ball, array(angled: true));
 							set_entity_velocity(@ball, array(0, -1, 0));
-							add_scoreboard_tag(@ball, 'nodamage');
 							@burst = launch_firework(@loc, array(
 								strength: 0,
 								type: 'BURST',
 								trail: true,
 								colors: 'BLACK',
 							));
-							add_scoreboard_tag(@burst, 'nodamage');
 					}
 				}
 			}, player().'join');
