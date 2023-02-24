@@ -116,8 +116,8 @@ outworld:
   border: 
     x: 0.0
     z: 0.0
-    radiusX: 3800
-    radiusZ: 3800
+    radiusX: 4000
+    radiusZ: 4000
 outworldnether: outworld_nether
 outworld_nether:
   name: 'Outworld Nether'
