@@ -138,7 +138,7 @@ bind('player_interact', null, array('block': 'OAK_WALL_SIGN'), @event) {
 							}
 							set_pinv(player(), @p, @chest[@c]);
 							set_inventory_item(@chestLoc, @c, null);
-							_acc_subtract(player(), @cost[1]);
+							_acc_add(player(), -@cost[1]);
 							die(color('yellow').'[Coin Shop] '.color('r').'Transaction successful. Your coins: '
 									.floor(@coins - @cost[1]).' (-'.@cost[1].')');
 						}

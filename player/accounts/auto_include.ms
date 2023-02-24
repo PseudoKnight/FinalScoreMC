@@ -102,21 +102,3 @@ proc _acc_add(@player, @amount) {
 	_store_pdata(@player, @pdata);
 	return(true);
 }
-
-/*
-	Subtracts an amount from a player's coin balance
-*/
-proc _acc_subtract(@player, @amount) {
-	@pdata = null;
-	try {
-		@pdata = _pdata(@player);
-	} catch(NotFoundException @ex) {
-		return(false);
-	}
-	if(!array_index_exists(@pdata, 'coins')) {
-		@pdata['coins'] = 0;
-	}
-	@pdata['coins'] -= @amount;
-	_store_pdata(@player, @pdata);
-	return(true);
-}

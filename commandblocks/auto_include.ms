@@ -46,12 +46,13 @@ proc _get_nearby_player(@loc, @maxRange) {
 }
 
 /*
-	Returns an array of players matching selectors
+	This executes a closure on one or more targets (if any) based on a limited set of vanilla player selector patterns
 */
-proc _get_target(@target)  {
+proc _execute_on(@target, @closure) {
+	@players = null;
 	if(@target[0] == '@') {
 		if(length(@target) < 2) {
-			return(null);
+			return(0);
 		}
 		@loc = get_command_block();
 		if(!@loc) {
@@ -74,30 +75,23 @@ proc _get_target(@target)  {
 		if(@target[1] == 'p') {
 			// single player selector
 			@player = _get_nearby_player(@loc, @maxRange);
-			if(@player) {
-				return(array(@player));
+			if(!@player) {
+				return(0);
 			}
-			return(null);
+			@players = array(@player);
 		} else if(@target[1] == 'a') {
 			// multi player selector
-			return(players_in_radius(@loc, @maxRange));
+			@players = players_in_radius(@loc, @maxRange);
 		}
 	} else if(ponline(@target) && !get_command_block()) {
-		return(array(@target));
+		@players = array(@target);
 	}
-	return(null);
-}
 
-/*
-	This executes a closure on one or more targets (if any) based on a limited set of vanilla player selector patterns
-*/
-proc _execute_on(@target, @closure) {
-	@players = _get_target(@target);
 	if(!@players) {
-		return(false);
+		return(0);
 	}
 	foreach(@p in @players) {
 		execute(@p, @closure);
 	}
-	return(true);
+	return(array_size(@players));
 }

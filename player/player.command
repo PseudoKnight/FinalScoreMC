@@ -105,12 +105,6 @@ register_command('player', array(
 				msg(color('gray').' Coins: '.@pdata['coins']);
 			}
 			if(array_index_exists(@pdata, 'support'), msg(color('gray').' Support: $'.@pdata['support']));
-			_bm_request('lookup_uuid', 'a1634f37480a4bb9a0b2200266597ac0', array('user_uuid': replace(@uuid, '-', '')), closure(@result) {
-				if(@result) {
-					msg(color('gray').' Notes: '.@result['user']['notes']);
-					msg(color('gray').' Relations: '.@result['user']['relations']);
-				}
-			});
 		}
 	}
 ));

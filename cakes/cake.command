@@ -26,29 +26,27 @@ register_command('cake', array(
 		switch(@args[0]) {
 			case 'achieved': 
 				@id = to_lower(@args[1]);
-				@players = _get_target(@args[2]);
-				@commandblock = get_command_block();
-				@achieved = 0;
-				if(@players) {
-					@cakes = get_value('cakeinfo');
-					if(array_index_exists(@cakes, @id)) {
-						@cake = @cakes[@id];
-						foreach(@p in @players) {
-							if(array_index_exists(@cake['players'], puuid(@p, true))) {
-								@achieved++;
-							}
-						}
-						if(array_size(@players) == 1) {
-							msg(@players[0].' has '.if(!@achieved, 'not').' achieved that cake.');
+				@cakes = get_value('cakeinfo');
+				if(array_index_exists(@cakes, @id)) {
+					@cake = @cakes[@id];
+					@achievedCount = array(0);
+					@playerCount = _execute_on(@args[2], closure(@p) {
+						if(array_index_exists(@cake['players'], puuid(@p, true))) {
+							@achievedCount[0]++;
+							msg(@p.' has achieved that cake.');
 						} else {
-							msg('Found '.@achieved.' players that have achieved that cake.');
+							msg(@p.' has not achieved that cake.');
 						}
-					} else {
-						msg('That cake does not exist.');
+					});
+					if(@playerCount != 1) {
+						msg('Found '.@achievedCount[0].' players that have achieved that cake.');
 					}
-				}
-				if(@commandblock) {
-					set_command_block_success(@commandblock, @achieved - 1);
+					@commandblock = get_command_block();
+					if(@commandblock) {
+						set_command_block_success(@commandblock, @achievedCount[0] - 1);
+					}
+				} else {
+					msg('That cake does not exist.');
 				}
 
 			case 'list':
@@ -355,7 +353,7 @@ register_command('cake', array(
 					}
 					store_value('cakeinfo', @cakeinfo);
 					msg(color('green').'Deleted player from '.@count.' cakes.');
-					if(_acc_subtract(@player, @amount)) {
+					if(_acc_add(@player, -@amount)) {
 						msg(color('green').'Removed '.@amount.' coins.');
 					} else {
 						msg(color('gold').'Failed to remove '.@amount.' coins.');
@@ -380,7 +378,7 @@ register_command('cake', array(
 					array_remove(@cakeinfo[@id]['players'], @uuid)
 					store_value('cakeinfo', @cakeinfo)
 					msg(color('green').'Deleted player from '.@id.' cake.')
-					if(_acc_subtract(@player, @cakeinfo[@id]['coins'])) {
+					if(_acc_add(@player, -@cakeinfo[@id]['coins'])) {
 						msg(color('green').'Remove '.@cakeinfo[@id]['coins'].' coins.');
 					} else {
 						msg(color('gold').'Failed to remove '.@cakeinfo[@id]['coins'].' coins.');

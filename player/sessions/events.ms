@@ -185,8 +185,6 @@ bind('player_join', null, null, @event) {
 				}
 			}, player().'join');
 		}
-
-		_bm_request('set_user_uuid', 'a1634f37480a4bb9a0b2200266597ac0', array('username': player(), 'user_uuid': puuid()));
 	});
 }
 

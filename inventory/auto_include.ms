@@ -83,6 +83,59 @@ proc _minify_inv(@inv, @keepnulls = false) {
 	if(!is_array(@inv)) {
 		throw('FormatException', 'This must be an item!');
 	}
+
+	/*
+		Reduces an item array down to their necessary components to recreate the item.
+	*/
+	proc _minify_item(@item) {
+		if(@item['qty'] == 1) {
+			array_remove(@item, 'qty');
+		}
+		if(is_null(@item['meta'])) {
+			array_remove(@item, 'meta');
+		} else {
+			@meta = @item['meta'];
+			if(array_size(@meta['enchants']) == 0) {
+				array_remove(@meta, 'enchants');
+			} else {
+				foreach(@enchant: @enchantArray in @meta['enchants']) {
+					@meta['enchants'][@enchant] = @enchantArray['elevel'];
+				}
+			}
+			if(is_null(@meta['display'])) {
+				array_remove(@meta, 'display');
+			}
+			if(is_null(@meta['lore'])) {
+				array_remove(@meta, 'lore');
+			}
+			if(is_null(@meta['model'])) {
+				array_remove(@meta, 'model');
+			}
+			if(is_null(@meta['modifiers'])) {
+				array_remove(@meta, 'modifiers');
+			}
+			if(array_index_exists(@meta, 'firework')
+			&& is_null(@meta['firework'])) {
+				array_remove(@meta, 'firework');
+			}
+			if(@meta['repair'] == 0) {
+				array_remove(@meta, 'repair');
+			}
+			if(array_size(@meta['flags']) == 0) {
+				array_remove(@meta, 'flags');
+			}
+			if(array_index_exists(@meta, 'inventory')) {
+				_minify_inv(@meta['inventory']);
+			}
+			if(array_index_exists(@meta, 'unbreakable') && @meta['unbreakable'] == false) {
+				array_remove(@meta, 'unbreakable');
+			}
+			if(array_index_exists(@meta, 'damage') && @meta['damage'] == 0) {
+				array_remove(@meta, 'damage');
+			}
+		}
+	}
+
 	if(array_index_exists(@inv, 'name')) {
 		_minify_item(@inv);
 	} else {
@@ -97,56 +150,4 @@ proc _minify_inv(@inv, @keepnulls = false) {
 		}
 	}
 	return(@inv);
-}
-
-/*
-	Reduces an item array down to their necessary components to recreate the item.
-*/
-proc _minify_item(@item) {
-	if(@item['qty'] == 1) {
-		array_remove(@item, 'qty');
-	}
-	if(is_null(@item['meta'])) {
-		array_remove(@item, 'meta');
-	} else {
-		@meta = @item['meta'];
-		if(array_size(@meta['enchants']) == 0) {
-			array_remove(@meta, 'enchants');
-		} else {
-			foreach(@enchant: @enchantArray in @meta['enchants']) {
-				@meta['enchants'][@enchant] = @enchantArray['elevel'];
-			}
-		}
-		if(is_null(@meta['display'])) {
-			array_remove(@meta, 'display');
-		}
-		if(is_null(@meta['lore'])) {
-			array_remove(@meta, 'lore');
-		}
-		if(is_null(@meta['model'])) {
-			array_remove(@meta, 'model');
-		}
-		if(is_null(@meta['modifiers'])) {
-			array_remove(@meta, 'modifiers');
-		}
-		if(array_index_exists(@meta, 'firework')
-		&& is_null(@meta['firework'])) {
-			array_remove(@meta, 'firework');
-		}
-		if(@meta['repair'] == 0) {
-			array_remove(@meta, 'repair');
-		}
-		if(array_size(@meta['flags']) == 0) {
-			array_remove(@meta, 'flags');
-		}
-		if(array_index_exists(@meta, 'inventory')) {
-			_minify_inv(@meta['inventory']);
-		}
-		if(array_index_exists(@meta, 'unbreakable') && @meta['unbreakable'] == false) {
-			array_remove(@meta, 'unbreakable');
-		}
-		if(array_index_exists(@meta, 'damage') && @meta['damage'] == 0) {
-			array_remove(@meta, 'damage');
-		}
-	}
 }

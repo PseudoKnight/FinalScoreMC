@@ -35,7 +35,7 @@ register_command('coins', array(
 						return(false);
 					}
 					@amount = integer(@args[2]);
-					_acc_subtract(@player, @amount);
+					_acc_add(@player, -@amount);
 					msg('Subtracted '.@amount.' coins from '.@player);
 					
 				case 'info':
