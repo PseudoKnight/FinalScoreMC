@@ -3,7 +3,7 @@
 	Used memory is probably inaccurate, but it's useful information.
  */
 set_cron('*/5 * * * *', iclosure(){
-	@activities = _get_activities_string();
+	@activities = array_keys(import('activities', associative_array()));
 	@allocMem = get_server_info(15);
 	@freeMem = get_server_info(16);
 	console('---[ TPS: '.round(tps()[0], 1).' ]'

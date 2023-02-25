@@ -1,3 +1,12 @@
+proc _get_custom_entities() {
+	@custom = import('customEntities');
+	if(is_null(@custom)) {
+		@custom = yml_decode(read('custom.yml'));
+		export('customEntities', @custom);
+	}
+	return(@custom);
+}
+
 register_command('entity', array(
 	description: 'Custom entity management commands',
 	usage: '/entity <list|info|set|delete|spawn|patrol|reload> [entity_name] [...]',

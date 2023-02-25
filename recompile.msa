@@ -36,13 +36,13 @@
 	}
 
 	# check if a game is running before recompiling
-	@activities = _get_activities_string();
+	@activities = import('activities');
 	if(@activities) {
-		msg(color('gold').'Currently in progress: '.@activities);
+		msg(color('gold').'Currently in progress: '.array_keys(@activities));
 		if(!@force) {
 			die(color('red').'Halted recompile due to games in progress.');
 		} else {
-			foreach(@id: @activity in import('activities')) {
+			foreach(@id: @activity in @activities) {
 				export(@id, null);
 			}
 		}

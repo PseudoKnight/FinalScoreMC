@@ -223,18 +223,10 @@ proc _get_entity(@type = null) {
 	if(array_contains_ic(@entityTypes, @type)) {
 		return(array('type': @type));
 	}
-	@custom = _get_custom_entities();
-	return(array_get(@custom, @type, null));
-}
-
-/*
-	Gets all custom entity definitions
-*/
-proc _get_custom_entities() {
 	@custom = import('customEntities');
 	if(is_null(@custom)) {
 		@custom = yml_decode(read('custom.yml'));
 		export('customEntities', @custom);
 	}
-	return(@custom);
+	return(array_get(@custom, @type, null));
 }

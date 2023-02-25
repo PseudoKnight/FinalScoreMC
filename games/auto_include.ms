@@ -64,15 +64,3 @@ proc _remove_activity(@id) {
 	}
 	return(false);
 }
-
-proc _get_activities_string() {
-	@activities = import('activities');
-	if(!@activities) {
-		return('');
-	}
-	@string = '';
-	foreach(@id: @activity in @activities) {
-		@string .= if(@string, ', ').@activity['title'];
-	}
-	return(@string);
-}

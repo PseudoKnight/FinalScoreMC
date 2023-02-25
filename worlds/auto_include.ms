@@ -10,17 +10,17 @@ proc _worlds_config() {
 	return(@worlds);
 }
 
-/**
- * Returns the absolute directory of the worlds container.
- */
-proc _worlds_dir() {
-	@userDir = sys_properties()['user.dir'];
-	@worldContainer = get_server_info(6);
-	if(@worldContainer == '.') {
-		return(@userDir);
-	}
-	return(@userDir.'/'.@worldContainer);
-}
+// /**
+//  * Returns the absolute directory of the worlds container.
+//  */
+// proc _worlds_dir() {
+// 	@userDir = sys_properties()['user.dir'];
+// 	@worldContainer = get_server_info(6);
+// 	if(@worldContainer == '.') {
+// 		return(@userDir);
+// 	}
+// 	return(@userDir.'/'.@worldContainer);
+// }
 
 /**
  * Returns world group
