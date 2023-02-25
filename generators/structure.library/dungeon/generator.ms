@@ -151,12 +151,12 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 		@c = if(@dungeonEntrance) {
 			integer(@width / 2 - 4)
 		} else {
-			1 + integer(srand(@random) * (@width - 6))
+			2 + integer(srand(@random) * (@width - 9))
 		}
 		@r = if(@dungeonEntrance) {
 			@length - 8
 		} else {
-			1 + integer(srand(@random) * (@length - 6))
+			2 + integer(srand(@random) * (@length - 9))
 		}
 		@entranceRoom = array(
 			r1: @r,
@@ -177,7 +177,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 		foreach(@floor in range(if(@testFloor > -1, @testFloor, 0), if(@testFloor > -1, @testFloor + 1, array_size(@options['floors'])))) {
 
 			@floorData = @options['floors'][@floor];
-			@maxRoomSize = min(@floorData['maxRoomSize'], @length - 2, @width - 2);
+			@maxRoomSize = min(@floorData['maxRoomSize'], @length - 4, @width - 4);
 			@minRoomSize = min(@floorData['minRoomSize'], @maxRoomSize);
 			@maxRoomHeight = @floorData['maxRoomHeight'];
 			@minRoomHeight = min(@floorData['minRoomHeight'], @maxRoomHeight);
