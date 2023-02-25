@@ -321,7 +321,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 							@type = 'PILLARS';
 						} else if(@floorData['attic'] && @height >= 7 && @roomWidth > 2 && @roomLength > 2 && srand(@random) < @floorData['attic']) {
 							@type = 'ATTIC';
-						} else if(@floorData['balcony'] && @roomWidth > 1 && @roomLength > 1 && @height >= 7 && srand(@random) < @floorData['balcony']) {
+						} else if(@floorData['balcony'] && @roomWidth > 3 && @roomLength > 3 && @height >= 7 && srand(@random) < @floorData['balcony']) {
 							@type = 'BALCONY';
 						} else if(@floorData['lavaPit'] && @roomWidth > 1 && @roomLength > 1 && srand(@random) < @floorData['lavaPit']) {
 							@type = 'LAVA_PIT';
@@ -757,9 +757,28 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 													continue();
 												}
 											case 'BALCONY':
+												@d = @roomId % 4;
 												if(@y == @ceilingY - @roomHeight + @room['midheight']
-												&& _direction_of_border(@layoutMap, @c, @r)) {
+												&& (@d == 0 && @c < @room['c1'] + @room['width'] / 2
+												|| @d == 1 && @c > @room['c1'] + @room['width'] / 2
+												|| @d == 2 && @r < @room['r1'] + @room['length'] / 2
+												|| @d == 3 && @r > @room['r1'] + @room['length'] / 2)) {
 													_add_to_chunk(@chunk, @loc, @materials['floor'][0]);
+													continue();
+												} else if(@y <= @ceilingY - @roomHeight + @room['midheight']
+												&& (@d == 0 && @c == ceil(@room['c1'] + @room['width'] / 2) && @r == @room['r1']
+												|| @d == 1 && @c == floor(@room['c1'] + @room['width'] / 2) && @r == @room['r1']
+												|| @d == 2 && @r == ceil(@room['r1'] + @room['length'] / 2) && @c == @room['c1']
+												|| @d == 3 && @r == floor(@room['r1'] + @room['length'] / 2) && @c == @room['c1'])) {
+													@dir = 'east';
+													if(@d == 1) {
+														@dir = 'west';
+													} else if(@d == 2) {
+														@dir = 'south';
+													} else if(@d == 3) {
+														@dir = 'north';
+													}
+													_add_to_chunk(@chunk, @loc, 'ladder[facing='.@dir.']');
 													continue();
 												}
 										}
@@ -1022,6 +1041,15 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 								@roomZ,
 								@world
 							);
+							if(@roomType == 'BALCONY') {
+								@d = @i % 4;
+								if(@d == 0 && @wallSide == 'west'
+								|| @d == 1 && @wallSide == 'east'
+								|| @d == 2 && @wallSide == 'north'
+								|| @d == 3 && @wallSide == 'south') {
+									@loc[1] += @room['midheight'] + 1;
+								}
+							}
 							if(@wallSide == 'north') {
 								@loc[0] += 1 + integer(srand(@random) * (@roomWidth - 2));
 							} else if(@wallSide == 'south') {
