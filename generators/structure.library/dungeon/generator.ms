@@ -154,7 +154,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 			1 + integer(srand(@random) * (@width - 6))
 		}
 		@r = if(@dungeonEntrance) {
-			@length - 7
+			@length - 8
 		} else {
 			1 + integer(srand(@random) * (@length - 6))
 		}
@@ -226,8 +226,12 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 			@c = 0;
 			if(@floor == 0) {
 				if(@dungeonEntrance) {
+					@layoutMap[integer(@width / 2) - 1][@length - 2] = 'door';
+					@layoutMap[integer(@width / 2) - 2][@length - 2] = 'door';
 					@layoutMap[integer(@width / 2) - 1][@length - 1] = 'door';
 					@layoutMap[integer(@width / 2) - 2][@length - 1] = 'door';
+					@layoutMap[integer(@width / 2) - 3][@length - 1] = 'wall';
+					@layoutMap[integer(@width / 2)][@length - 1] = 'wall';
 				}
 				@r = @entranceRoom['r1'];
 				@c = @entranceRoom['c1'];
@@ -259,8 +263,8 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 			@maxRoomCount = integer((average(@width, @length) / @minRoomSize) ** 2);
 			@unconnected = array(0);
 			@attempts = 0;
-			for(@r = 0, @r < @length - 2, @r++) {
-				for(@c = 0, @c < @width - 2, @c++) {
+			for(@r = 1, @r < @length - 3, @r++) {
+				for(@c = 1, @c < @width - 3, @c++) {
 					if(x_is_interrupted()) {
 						remove_bar('gen'.@region);
 						sk_pos1(player(), null);
@@ -274,7 +278,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 
 						// Check placement and shrink if necessary to avoid room collisions.
 						for(@r2 = @r, @r2 < @r + @roomLength + 2, @r2++) {
-							if(@r2 >= @length) {
+							if(@r2 + 1 >= @length) {
 								@roomLength = @r2 - @r - 2;
 								break();
 							} else if(@roomMap[@c][@r2] != -1) {
@@ -282,7 +286,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 								break();
 							}
 							for(@c2 = @c + 1, @c2 < @c + @roomWidth + 2, @c2++) {
-								if(@c2 >= @width) {
+								if(@c2 + 1 >= @width) {
 									@roomWidth = @c2 - @c - 2;
 									break();
 								} else if(@roomMap[@c2][@r2] != -1) {
@@ -639,6 +643,8 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 								}
 							} else if(@column == 'wall') {
 								_add_to_chunk(@chunk, @loc, @materials['wall']);
+							} else if(@column == 'empty') {
+								_add_to_chunk(@chunk, @loc, @materials['divider']);
 							} else {
 								// different rooms, different floors
 								@floorMat = @materials['floor'];
