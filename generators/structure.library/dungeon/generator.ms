@@ -77,16 +77,8 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 			}
 		}
 
-		if(@floorData['minRoomSize'] % 2 != 1) {
-			console(@dungeonType.'.yml minRoomSize must be an odd number.');
-			return();
-		}
 		if(@floorData['minRoomSize'] < 5) {
 			console(@dungeonType.'.yml minRoomSize must be 5 or larger');
-			return();
-		}
-		if(@floorData['maxRoomSize'] % 2 != 1) {
-			console(@dungeonType.'.yml maxRoomSize must be an odd number.');
 			return();
 		}
 
@@ -264,7 +256,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 			}
 
 			// Place rooms
-			@maxRoomCount = min(@width, @length);
+			@maxRoomCount = integer((average(@width, @length) / @minRoomSize) ** 2);
 			@unconnected = array(0);
 			@attempts = 0;
 			for(@r = 0, @r < @length - 2, @r++) {
