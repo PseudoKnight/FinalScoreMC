@@ -1,9 +1,9 @@
 register_command('arena', array(
 	description: 'Manages pvp arena configurations.',
-	usage: '/arena <list|set|add|load|move|delete|info|stats|resetstats> [arena_id] [setting] [value(s)]',
+	usage: '/arena <list|set|add|load|move|delete|info|stats|resetstats|tp> [arena_id] [setting] [value(s)]',
 	tabcompleter: _create_tabcompleter(
 		array(
-			'group.builder': array('list', 'set', 'add', 'load', 'move', 'delete', 'info', 'stats', 'resetstats'),
+			'group.builder': array('list', 'set', 'add', 'load', 'move', 'delete', 'info', 'stats', 'resetstats', 'tp'),
 			null: array('list', 'info', 'stats')),
 		null,
 		array(
@@ -13,11 +13,12 @@ register_command('arena', array(
 					'captain', 'nametags', 'stats', 'build', 'debug', 'hideplayers', 'infinitedispensers',
 					'keepinventory', 'nobottles', 'noinventory', 'noxp', 'rallycall', 'stackedpickup',
 					'heartsdisplay', 'script', 'exitrespawn', 'description', 'lobby', 'podium', 'kothbeacon',
-					'ctfflag', 'respawn', 'spawn','blockbreak', 'ff', 'arenaselect', 'sharedarenas', 'mode',
+					'ctfflag', 'respawn', 'spawn', 'blockbreak', 'ff', 'arenaselect', 'sharedarenas', 'mode',
 					'mobprotect', 'team', 'kit', 'restore','itemspawn', 'chestgroup', 'chestspawn', 'rsoutput',
 					'rsoutputscore', 'effect', 'denydrop', 'mobspawn', 'weapons', 'options', 'hidden'),
 			'<<add': array('description', 'arenaselect', 'weapons', 'options', 'deathdrops', 'denydrop'),
-			'<<load': array('kit', 'chestspawn', 'spawn')),
+			'<<load': array('kit', 'chestspawn', 'spawn', 'itemspawn'),
+			'<<tp': array('lobby', 'podium', 'kothbeacon', 'bombloc', 'region')),
 		array(
 			'<weapons': array('endernades', 'fireball', 'firebreath', 'firefire', 'flamethrower', 'grapple',
 				'halo/battlerifle', 'knockout', 'mine', 'pistoltears', 'primedtnt', 'railgun', 'rifle', 'shotgunballs',
@@ -583,6 +584,9 @@ register_command('arena', array(
 				@id = @args[1];
 				@setting = @args[2];
 				@arena = get_value('arena.'.@id);
+				if(!array_index_exists(@arena, @setting)) {
+					die(color('gold').'Not set for arena: '.@setting);
+				}
 				switch(@setting) {
 					case 'kit':
 						if(array_size(@args) < 4) {
@@ -619,7 +623,13 @@ register_command('arena', array(
 							}
 						}
 						msg(color('yellow').'No chestspawn found for that location.');
-					
+
+					case 'itemspawn':
+						foreach(@i: @itemSpawn in @arena['itemspawn']) {
+							psend_block_change(location_shift(@itemSpawn['loc'], 'down'), 'gold_block');
+							set_pinv(player(), @i, @itemSpawn['item']);
+						}
+
 					case 'spawn':
 						@block = 'RED_WOOL';
 						foreach(@spawn in @arena['spawn'][0]) {
@@ -634,6 +644,34 @@ register_command('arena', array(
 
 					default:
 						die(color('gold').'Unsupported setting for loading.');
+				}
+
+			case 'tp':
+				if(_is_survival_world(pworld()) || !has_permission('group.builder')) {
+					die(color('gold').'You do not have permission.');
+				}
+				if(array_size(@args) < 3) {
+					return(false);
+				}
+				@id = @args[1];
+				@setting = @args[2];
+				@arena = get_value('arena.'.@id);
+				if(!array_index_exists(@arena, @setting)) {
+					die(color('gold').'Not set for arena: '.@setting);
+				}
+				switch(@setting) {
+					case 'lobby':
+					case 'podium':
+					case 'kothbeacon':
+					case 'bombloc':
+						set_ploc(@arena[@setting]);
+
+					case 'region':
+						set_pmode('SPECTATOR');
+						run('/rg teleport -c '.@arena['region']);
+
+					default:
+						die(color('gold').'Unsupported setting for teleporting.');
 				}
 
 			case 'move':
