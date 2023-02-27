@@ -301,7 +301,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 							}
 						}
 
-						if(@roomLength < 1 || @roomWidth < 1) {
+						if(@roomLength < @minRoomSize || @roomWidth < @minRoomSize) {
 							continue();
 						}
 
@@ -373,7 +373,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 			}
 
 			if(@debug) {
-				msg(@attempts.' were made to create '.array_size(@rooms).' rooms.');
+				msg(@attempts.' attempts were made to create '.array_size(@rooms).' rooms.');
 			}
 
 			// Connect rooms
@@ -523,7 +523,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 			}
 
 			if(@debug) {
-				msg(@attempts.' / '.@maxAttempts.' were made to connect '.array_size(@rooms).' rooms.');
+				msg(@attempts.' / '.@maxAttempts.' attempts were made to connect '.array_size(@rooms).' rooms.');
 			}
 
 			// Mark special rooms
@@ -575,9 +575,12 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 								}
 							}
 						} else if(@layoutMap[@c2][@r2] !== 'door') {
-							if(@floorData['window'] && srand(@random) > 0.9 &&
-							!(@c2 == 0 || @r2 == 0 || @c2 == @width - 1 || @r2 == @length - 1
-							|| _adjacent_equals(@layoutMap, @c2, @r2, 'door'))) {
+							if(@floorData['window']
+							&& !(@c2 == 1 || @r2 == 1 || @c2 == @width - 2 || @r2 == @length - 2)
+							&& ((@r2 == @r - 1 || @r2 == @roomLength + @r) && @c2 > @c && @c2 < @roomWidth + @c - 1
+							|| (@c2 == @c - 1 || @c2 == @roomWidth + @c) && @r2 > @r && @r2 < @roomLength + @r - 1)
+							&& (srand(@random) > 0.9 || _adjacent_equals(@layoutMap, @c2, @r2, 'window') && srand(@random) > 0.5)
+							&& !_adjacent_equals(@layoutMap, @c2, @r2, 'door')) {
 								@layoutMap[@c2][@r2] = 'window';
 							} else {
 								@layoutMap[@c2][@r2] = 'wall';

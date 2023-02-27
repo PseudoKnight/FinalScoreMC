@@ -56,10 +56,11 @@ floors:
         ceiling: [stone, stone, stone, stone, stone, stone, stone, stone, andesite, andesite, andesite, iron_ore]
         floor: [stone, stone, stone, stone, stone, stone, stone, stone, andesite, andesite, andesite, iron_ore]
         utility: gold_ore
-        randomblocks: [stone, 'stone_button[face=floor,facing=east]', 'stone_button[face=floor,facing=north]']
+        randomblocks: [stone, 'stone_button[face=floor,facing=east]', 'stone_button[face=floor,facing=north]', 'glow_lichen[down=true]']
         edge: stone
         vines: twisting_vines_plant
         boss: CREEPER
+        window: infested_stone
     2:
         # forest
         chestCount: 0.5
@@ -77,6 +78,7 @@ floors:
         doorFrame: dark_oak_wood
         door: warped_door
         pillars: 0.3
+        window: mangrove_roots
         boss:
             type: CAVE_SPIDER
             rider: GUARDIAN
@@ -97,6 +99,7 @@ floors:
         edge: sandstone_stairs
         doorFrame: chiseled_sandstone
         door: mangrove_door
+        window: 'sandstone_wall[east=tall,west=tall,south=tall,north=tall]'
         boss:
             type: HUSK
             tags:
@@ -128,6 +131,7 @@ floors:
         edge: snow_block
         pillars: 0.3
         doorFrame: packed_ice
+        window: ice
         boss:
             type: POLAR_BEAR
             rider:
@@ -180,6 +184,7 @@ floors:
         randomblocks: [soul_sand]
         edge: dark_prismarine_stairs
         doorFrame: dark_prismarine
+        balcony: 0.0
         boss:
             type: DROWNED
             gear:
@@ -207,7 +212,7 @@ floors:
         utility: [enchanting_table, brewing_stand, cauldron]
         randomblocks: [rail]
         edge: stone_brick_stairs
-        window: cobblestone_wall
+        window: bookshelf
         doorFrame: chiseled_stone_bricks
         boss:
             type: RABBIT
