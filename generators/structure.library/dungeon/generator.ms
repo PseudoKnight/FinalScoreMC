@@ -242,8 +242,8 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 				@rooms[] = array(
 					r1: @r,
 					c1: @c,
-					width: min(@exitRoom['width'], 3),
-					length: min(@exitRoom['length'], 3),
+					width: min(@exitRoom['width'], 6),
+					length: min(@exitRoom['length'], 6),
 					connected: 0,
 					doors: 0,
 					height: 4,
@@ -565,7 +565,8 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 							|| @roomWidth == 1
 							|| _adjacent_equals(@layoutMap, @c2, @r2, 'door')
 							|| (!is_null(@rowOdd) && (@rowOdd != @r2 % 2 || @columnOdd != @c2 % 2))
-							|| integer(srand(@random) * 100) < 90) {
+							|| integer(srand(@random) * 100) < 90
+							|| @room['connected'] == 1) {
 								@layoutMap[@c2][@r2] = 'room';
 							} else {
 								@layoutMap[@c2][@r2] = 'column';
