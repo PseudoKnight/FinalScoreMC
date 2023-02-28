@@ -181,7 +181,7 @@ floors:
         ceiling: prismarine
         floor: dark_prismarine
         utility: sea_lantern
-        randomblocks: [soul_sand]
+        randomblocks: [soul_sand, magma_block, tube_coral_block, brain_coral_block, bubble_coral_block, fire_coral_block, horn_coral_block, tube_coral, brain_coral, bubble_coral, fire_coral, horn_coral]
         edge: dark_prismarine_stairs
         doorFrame: dark_prismarine
         balcony: 0.0

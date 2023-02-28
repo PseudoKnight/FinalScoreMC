@@ -26,7 +26,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 	}
 	@defaults = array_merge(array(
 		// size
-		minRoomSize: 5,
+		minRoomSize: 3,
 		maxRoomSize: 21,
 		minRoomHeight: 3,
 		maxRoomHeight: 3,
@@ -75,11 +75,6 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 				console(@dungeonType.'.yml '.@key.' must be positive.');
 				return();
 			}
-		}
-
-		if(@floorData['minRoomSize'] < 5) {
-			console(@dungeonType.'.yml minRoomSize must be 5 or larger');
-			return();
 		}
 
 		// ensure certain values are arrays
@@ -974,7 +969,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 								))));
 							}
 						}
-					} else if(@roomWidth > 2 && @roomLength > 2) {
+					} else if(@minWidth > 2) {
 						// can place a door blocking block in the room
 						if(@room['connected'] > 2 && @mobTypes && @roomType != 'TREASURE' && srand(@random) < @floorData['spawnerChance']) {
 							@loc = array(
@@ -1015,7 +1010,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 						}
 					}
 
-					if(@roomType == 'TREASURE' || (@roomWidth > 2 && @roomLength > 2 && (@chestCount > 0 || @barrelCount > 0))) {
+					if(@roomType == 'TREASURE' || (@minWidth > 2 && (@chestCount > 0 || @barrelCount > 0))) {
 						@chests = @chestCount;
 						@barrels = @barrelCount;
 						if(@roomType == 'TREASURE') {
@@ -1136,7 +1131,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 						}
 					}
 
-					if(@materials['utility'] && @roomWidth > 2 && @roomLength > 2) {
+					if(@materials['utility'] && @minWidth > 2) {
 						if(integer(srand(@random) * 2) == 1) {
 							@loc = array(
 								@roomX + 1 + integer(srand(@random) * (@roomWidth - 2)),
@@ -1150,7 +1145,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 						}
 					}
 
-					if(array_index_exists(@materials, 'randomblocks') && @roomWidth > 2 && @roomLength > 2 && @i != 0) {
+					if(array_index_exists(@materials, 'randomblocks') && @minWidth > 3 && @i != 0) {
 						@decorations = integer(srand(@random) * max(@roomLength, @roomWidth));
 						while(@decorations-- > 0) {
 							@loc = array(
@@ -1161,15 +1156,15 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 							);
 							if(equals_ic(@materials['room'], get_block(@loc))) {
 								@blockType = _array_get_srand(@random, @materials['randomblocks']);
-								set_blockdata_string(@loc, @blockType, false);
+								set_blockdata_string(@loc, @blockType, @materials['room'] == 'water');
 								if(!string_contains(@blockType, '[') && material_info(@blockType, 'isSolid') && srand(@random) > 0.5) {
-									set_blockdata_string(location_shift(@loc, 'up'), @blockType, false);
+									set_blockdata_string(location_shift(@loc, 'up'), @blockType, @materials['room'] == 'water');
 								}
 							}
 						}
 					}
 
-					if(@roomType == 'ATTIC') {
+					if(@roomType == 'ATTIC' && @materials['room'] != 'water') {
 						@vines = integer(@minWidth / 2);
 						do {
 							@loc = null;
@@ -1395,7 +1390,8 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 				}, 'generator');
 
 				
-				if(is_array(@materials['floor']) && array_contains(@materials['floor'], 'grass_block') || @materials['floor'] === 'grass_block') {
+				if(array_contains(@materials['floor'], 'grass_block')
+				|| @materials['room'] == 'water') {
 					queue_push(closure(){
 						@loc = array(
 							@roomX + 1 + integer(srand(@random) * (@roomWidth - 2)),
@@ -1418,7 +1414,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 						@regionMinZ + @exitRoom['r1'],
 						@world,
 					);
-					set_blockdata_string(@loc, 'spruce_trapdoor[facing=south,half=bottom]', false);
+					set_blockdata_string(@loc, 'spruce_trapdoor[facing=south,half=bottom,waterlogged='.(@materials['room'] == 'water').']', false);
 
 					if(@floorData['bed']) {
 						@bedLoc = location_shift(@loc, 'east');
