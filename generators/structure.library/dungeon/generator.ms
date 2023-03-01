@@ -424,7 +424,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 						} else {
 							@rRoom = @r + integer(srand(@random) * @roomLength);
 						}
-						while(++@dist <= @minRoomSize + 2) {
+						while(++@dist <= @maxRoomSize) {
 							switch(@dir) {
 								case 'north':
 									@rRoom = @r - @dist;
@@ -472,7 +472,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 								@room['doors']++;
 								try {
 									// attempt to add a double door
-									if(@dist == 2 && @room['height'] >= 5 && @rooms[@next]['height'] >= 5 && srand(@random) < 0.5) {
+									if(@dist == 2 && @room['height'] >= 5 && @rooms[@next]['height'] >= 5) {
 										if(@dir == 'north') {
 											// check both rooms for space (current and next room)
 											if(@roomMap[@cRoom + 1][@rRoom] == @next && @roomMap[@cRoom + 1][@rRoom + 2] == @current) {
@@ -675,6 +675,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 							@ceilingY = @groundY + @roomHeight + 2;
 							@y = 0;
 							@columnRandom = srand(@random);
+							@openableDoor = false;
 							for(@y = @groundY + 2, @y < @ceilingY, @y++) {
 								@loc[1] = @y;
 								@doorAdjacent = _adjacent_equals(@layoutMap, @c, @r, 'door');
@@ -693,42 +694,51 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 											if(string_ends_with(@materials['door'], 'door')) {
 												@lower = @y < @ceilingY - @roomHeight + 1;
 												@north = @roomMap[@c][@r - 1];
+												@northCell = @layoutMap[@c][@r - 1];
 												@south = array_get(@roomMap[@c], @r + 1, 0); // special case for dungeon entrance
+												@southCell = array_get(@layoutMap[@c], @r + 1, 0);
 												@west = @roomMap[@c - 1][@r];
+												@westCell = @layoutMap[@c - 1][@r];
 												@east = @roomMap[@c + 1][@r];
-												@count = array_size(@chunk);
-												if(!@doorAdjacent) {
-													if(@north % 6 == 0) {
-														@half = if(@lower, 'half=lower,', 'half=upper,');
-														_add_to_chunk(@chunk, @loc, @materials['door'].'[facing=south,'.@half.'hinge=left]');
-													} else if(@south % 6 == 0) {
-														@half = if(@lower, 'half=lower,', 'half=upper,');
-														_add_to_chunk(@chunk, @loc, @materials['door'].'[facing=north,'.@half.'hinge=left]');
-													} else if(@west % 6 == 0) {
-														@half = if(@lower, 'half=lower,', 'half=upper,');
-														_add_to_chunk(@chunk, @loc, @materials['door'].'[facing=east,'.@half.'hinge=left]');
-													} else if(@east % 6 == 0) {
-														@half = if(@lower, 'half=lower,', 'half=upper,');
-														_add_to_chunk(@chunk, @loc, @materials['door'].'[facing=west,'.@half.'hinge=left]');
-													}
+												@eastCell = @layoutMap[@c + 1][@r];
+												if(@north % 3 == 0 && (!@doorAdjacent || @southCell == 'door')) {
+													@openableDoor = true;
+													@half = if(@lower, 'half=lower,', 'half=upper,');
+													_add_to_chunk(@chunk, @loc, @materials['door'].'[facing=south,'.@half.'hinge=left]');
+												} else if(@south % 3 == 0 && (!@doorAdjacent || @northCell == 'door')) {
+													@openableDoor = true;
+													@half = if(@lower, 'half=lower,', 'half=upper,');
+													_add_to_chunk(@chunk, @loc, @materials['door'].'[facing=north,'.@half.'hinge=left]');
+												} else if(@west % 3 == 0 && (!@doorAdjacent || @eastCell == 'door')) {
+													@openableDoor = true;
+													@half = if(@lower, 'half=lower,', 'half=upper,');
+													_add_to_chunk(@chunk, @loc, @materials['door'].'[facing=east,'.@half.'hinge=left]');
+												} else if(@east % 3 == 0 && (!@doorAdjacent || @westCell == 'door')) {
+													@openableDoor = true;
+													@half = if(@lower, 'half=lower,', 'half=upper,');
+													_add_to_chunk(@chunk, @loc, @materials['door'].'[facing=west,'.@half.'hinge=left]');
 												}
-												if(@count == array_size(@chunk)) {
+												if(!@openableDoor) {
 													_add_to_chunk(@chunk, @loc, @materials['room']);
 												}
 											} else {
 												_add_to_chunk(@chunk, @loc, @materials['door']);
 											}
-										} else if(@column == 'door' && @y == @ceilingY - @roomHeight + 2
+
+										} else if(@column == 'door' && @y == @ceilingY - @roomHeight + 2 && !@openableDoor
 										&& (!string_ends_with(@materials['door'], 'door') || @doorAdjacent)) {
 											_add_to_chunk(@chunk, @loc, @materials['room']);
+
 										} else if(array_index_exists(@materials, 'doorFrame')
 										&& (@column == 'door' || @doorAdjacent)
 										&& @y <= @ceilingY - @roomHeight + if((!string_ends_with(@materials['door'], 'door') || @doorAdjacent) && @column == 'door', 3, 2)) {
 											_add_to_chunk(@chunk, @loc, @materials['doorFrame']);
+
 										} else if(array_index_exists(@materials, 'windowFrame')
 										&& _adjacent_equals(@layoutMap, @c, @r, 'window')
 										&& @y < @ceilingY - @roomHeight + 3 && @y > @ceilingY - @roomHeight) {
 											_add_to_chunk(@chunk, @loc, @materials['windowFrame']);
+
 										} else {
 											@wallMaterial = @materials['wall'];
 											// tree log walls need special handling to look good
