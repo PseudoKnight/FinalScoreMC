@@ -32,15 +32,11 @@ proc _adjacent_equals(@layoutMap, @c, @r, @type) {
 	}
 }
 
-proc _is_solid(@cell) {
-	return(@cell == 'wall' || @cell == 'window' || @cell == 'column');
-}
-
-proc _is_room_border(@cell) {
-	return(@cell == 'wall' || @cell == 'window' || @cell == 'door');
-}
-
 proc _direction_of_solid(@layoutMap, @c, @r) {
+	proc _is_solid(@cell) {
+		return(@cell == 'wall' || @cell == 'window' || @cell == 'column');
+	}
+
 	foreach(@dir in array('north', 'south', 'east', 'west')) {
 		if(_is_solid(_get_cell(@layoutMap, @c, @r, @dir))) {
 			return(@dir);
@@ -50,6 +46,10 @@ proc _direction_of_solid(@layoutMap, @c, @r) {
 }
 
 proc _direction_of_border(@layoutMap, @c, @r) {
+	proc _is_room_border(@cell) {
+		return(@cell == 'wall' || @cell == 'window' || @cell == 'door');
+	}
+
 	foreach(@dir in array('north', 'south', 'east', 'west')) {
 		if(_is_room_border(_get_cell(@layoutMap, @c, @r, @dir))) {
 			return(@dir);
@@ -60,29 +60,6 @@ proc _direction_of_border(@layoutMap, @c, @r) {
 
 proc _get_direction(@random, @dirs = array('north', 'south', 'east', 'west')) {
 	return(@dirs[integer(srand(@random) * array_size(@dirs))]);
-}
-
-proc _opposite_direction(@dir) {
-	switch(@dir) {
-		case 'north':
-			return('south');
-		case 'south':
-			return('north');
-		case 'east':
-			return('west');
-		case 'west':
-			return('east');
-		case 'up':
-			return('down');
-		case 'down':
-			return('up');
-		default:
-			throw('FormatException', 'Invalid direction: '.@dir);
-	}
-}
-
-proc _array_get_srand(@random, @array) {
-	return @array[integer(srand(@random) * array_size(@array))];
 }
 
 /*
