@@ -18,6 +18,10 @@ bind('world_changed', null, null, @event) {
 				dm_set_pvisible(true);
 			}
 		}
+		if(@fromGroup == 'dev') {
+			@session = _psession(player());
+			@session['devInventory'] = pinv();
+		}
 		include('util.library/storage.ms');
 		if(@fromGroup == 'survival') {
 			_store_pstate(@event['player'], 'survival');

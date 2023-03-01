@@ -61,7 +61,12 @@ proc _equip_kit(@player, @inv) {
 			set_pflight(@player, false);
 
 		case 'dev':
-			_clear_pinv(@player);
+			@session = _psession(player());
+			if(array_index_exists(@session, 'devInventory')) {
+				set_pinv(@player, @session['devInventory']);
+			} else {
+				_clear_pinv(@player);
+			}
 	}
 }
 
