@@ -417,49 +417,62 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 						@rRoom = 0;
 						@cDoor = 0;
 						@rDoor = 0;
-						switch(@dir) {
-							case 'north':
-								@rRoom = @r - 2;
-								if(@rRoom < 1) {
-									continue();
-								}
-								@cRoom = @c + integer(srand(@random) * @roomWidth);
-								@rDoor = @rRoom + 1;
-								@cDoor = @cRoom;
-							case 'south':
-								@rRoom = @r + @roomLength + 1;
-								if(@rRoom >= @length) {
-									continue();
-								}
-								@cRoom = @c + integer(srand(@random) * @roomWidth);
-								@rDoor = @rRoom - 1;
-								@cDoor = @cRoom;
-							case 'west':
-								@cRoom = @c - 2;
-								if(@cRoom < 1) {
-									continue();
-								}
-								@rRoom = @r + integer(srand(@random) * @roomLength);
-								@cDoor = @cRoom + 1;
-								@rDoor = @rRoom;
-							case 'east':
-								@cRoom = @c + @roomWidth + 1;
-								if(@cRoom >= @width) {
-									continue();
-								}
-								@rRoom = @r + integer(srand(@random) * @roomLength);
-								@cDoor = @cRoom - 1;
-								@rDoor = @rRoom;
+						@dist = 1;
+						@next = -1;
+						if(@dir == 'north' || @dir == 'south') {
+							@cRoom = @c + integer(srand(@random) * @roomWidth);
+						} else {
+							@rRoom = @r + integer(srand(@random) * @roomLength);
 						}
-						@next = @roomMap[@cRoom][@rRoom];
+						while(++@dist <= @minRoomSize + 2) {
+							switch(@dir) {
+								case 'north':
+									@rRoom = @r - @dist;
+									@rDoor = @r - 1;
+									@cDoor = @cRoom;
+								case 'south':
+									@rRoom = @r + @roomLength - 1 + @dist;
+									@rDoor = @r + @roomLength;
+									@cDoor = @cRoom;
+								case 'west':
+									@cRoom = @c - @dist;
+									@cDoor = @c - 1;
+									@rDoor = @rRoom;
+								case 'east':
+									@cRoom = @c + @roomWidth - 1 + @dist;
+									@cDoor = @c + @roomWidth;
+									@rDoor = @rRoom;
+							}
+							@next = @roomMap[@cRoom][@rRoom];
+							if(@next != -1) {
+								break();
+							}
+						}
+
+						if(@rRoom < 2 || @cRoom < 2) {
+							continue();
+						}
+
 						if(@next != -1 && @next != @previous) {
 							if(!@rooms[@next]['connected']) {
-								@layoutMap[@cDoor][@rDoor] = 'door';
+								@doorDist = @dist;
+								while(--@doorDist-- > 0) {
+									switch(@dir) {
+										case 'north':
+											@layoutMap[@cRoom][@r - @doorDist] = 'door';
+										case 'south':
+											@layoutMap[@cRoom][@r + @roomLength - 1 + @doorDist] = 'door';
+										case 'west':
+											@layoutMap[@c - @doorDist][@rRoom] = 'door';
+										case 'east':
+											@layoutMap[@c + @roomWidth - 1 + @doorDist][@rRoom] = 'door';
+									}
+								}
 								@rooms[@next]['doors']++;
 								@room['doors']++;
 								try {
 									// attempt to add a double door
-									if(@room['height'] >= 5 && @rooms[@next]['height'] >= 5 && srand(@random) < 0.5) {
+									if(@dist == 2 && @room['height'] >= 5 && @rooms[@next]['height'] >= 5 && srand(@random) < 0.5) {
 										if(@dir == 'north') {
 											// check both rooms for space (current and next room)
 											if(@roomMap[@cRoom + 1][@rRoom] == @next && @roomMap[@cRoom + 1][@rRoom + 2] == @current) {
@@ -493,7 +506,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 								@success = true;
 								@try = array();
 								break();
-							} else if((@rooms[@next]['doors'] == 2 || @rooms[@current]['doors'] == 2) && srand(@random) < @extraDoorChance) {
+							} else if(@dist == 2 && (@rooms[@next]['doors'] == 2 || @rooms[@current]['doors'] == 2) && srand(@random) < @extraDoorChance) {
 								@layoutMap[@cDoor][@rDoor] = 'door';
 								@rooms[@next]['doors']++;
 								@room['doors']++;
@@ -559,8 +572,9 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 							|| @roomLength == 1
 							|| @roomWidth == 1
 							|| _adjacent_equals(@layoutMap, @c2, @r2, 'door')
+							|| _adjacent_equals(@layoutMap, @c2, @r2, 'window')
 							|| (!is_null(@rowOdd) && (@rowOdd != @r2 % 2 || @columnOdd != @c2 % 2))
-							|| integer(srand(@random) * 100) < 90
+							|| srand(@random) < 0.9
 							|| @room['connected'] == 1) {
 								@layoutMap[@c2][@r2] = 'room';
 							} else {
@@ -849,7 +863,15 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 										_add_to_chunk(@chunk, @loc, @materials['column']);
 
 									default:
-										_add_to_chunk(@chunk, @loc, @materials['empty']);
+										if(_adjacent_equals(@layoutMap, @c, @r, 'door')) {
+											if(array_index_exists(@materials, 'doorFrame')) {
+												_add_to_chunk(@chunk, @loc, @materials['doorFrame']);
+											} else {
+												_add_to_chunk(@chunk, @loc, @materials['wall']);
+											}
+										} else {
+											_add_to_chunk(@chunk, @loc, @materials['empty']);
+										}
 								}
 							}
 
@@ -1407,7 +1429,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 			// exit room / Pop ladder into floor
 			if(@exitRoom) {
 				queue_push(closure(){
-
+					// TODO: fix sometimes in doorway
 					@loc = array(
 						@regionMinX + @exitRoom['c1'],
 						@regionMinY + @floor * (@maxRoomHeight + 4) + 2,

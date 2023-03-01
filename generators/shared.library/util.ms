@@ -6,10 +6,16 @@ proc _get_cell(@map, @c, @r, @dir) {
 	try {
 		switch(@dir) {
 			case 'north':
+				if(@r == 0) {
+					return(null);
+				}
 				return(@map[@c][@r - 1]);
 			case 'south':
 				return(@map[@c][@r + 1]);
 			case 'west':
+				if(@c == 0) {
+					return(null);
+				}
 				return(@map[@c - 1][@r]);
 			case 'east':
 				return(@map[@c + 1][@r]);
@@ -23,9 +29,9 @@ proc _get_cell(@map, @c, @r, @dir) {
 proc _adjacent_equals(@layoutMap, @c, @r, @type) {
 	try {
 		return(@layoutMap[@c + 1][@r] == @type
-				|| @layoutMap[@c - 1][@r] == @type
+				|| (@c > 0 && @layoutMap[@c - 1][@r] == @type)
 				|| @layoutMap[@c][@r + 1] == @type
-				|| @layoutMap[@c][@r - 1] == @type);
+				|| (@r > 0 && @layoutMap[@c][@r - 1] == @type));
 	} catch(IndexOverflowException @ex) {
 		// outside the map
 		return(false);
