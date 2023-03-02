@@ -478,7 +478,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 						do {
 							@current = array_keys(@connected)[integer(srand(@random) * array_size(@connected))];
 							@limit2--;
-						} while(@limit2 > 0 && (@current == @previous || array_contains(@try, @current)));
+						} while(@limit2 > 0 && (@current == @previous || array_contains(@try, @current)))
 						@try[] = @current;
 					} else {
 						// go back one if we have not already
@@ -1111,7 +1111,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 									@roomZ + integer(srand(@random) * @roomLength) * @scale,
 									@world
 								);
-							} while(!equals_ic(@materials['room'], get_block(@loc)) && --@attempts > 0);
+							} while(!equals_ic(@materials['room'], get_block(@loc)) && --@attempts > 0)
 							@dirs = array_rand(array('east', 'west', 'north', 'south'), rand(1, 4), false);
 							@block = array(block: 'vine');
 							foreach(@dir in @dirs) {
@@ -1123,7 +1123,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 								set_blockdata(@loc, @block);
 							}
 							@vines--;
-						} while(@vines > 0 || srand(@random) > 0.45);
+						} while(@vines > 0 || srand(@random) > 0.45)
 					}
 
 					if(@i == @farthestRoom && @floorData['boss']) {

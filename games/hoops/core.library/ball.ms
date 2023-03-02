@@ -167,7 +167,7 @@ proc _hoops_ball_create(@loc) {
 						@block = '';
 						do {
 							@block = get_block(location_shift(@loc, 'down', @y++));
-						} while(@block == 'AIR');
+						} while(@block == 'AIR')
 						@points = if(distance(@loc, @game['shootLoc']) > 15 || get_block(@game['shootLoc']) == 'BIRCH_PLANKS', 3, 2);
 						@lastHolder = @game['lastholder'];
 						@game['players'][@lastHolder]['score'] += @points;

@@ -103,7 +103,7 @@ proc _random_item(@baseItems) {
 			do {
 				@enchant = array_get_rand(@enchants);
 				@meta['stored'][@enchant] = array(elevel: rand(1, 3));
-			} while(rand(2));
+			} while(rand(2))
 		case 'POTION':
 		case 'SPLASH_POTION':
 		case 'TIPPED_ARROW':
@@ -120,7 +120,7 @@ proc _random_item(@baseItems) {
 				do {
 					@effect = array_get_rand(@effects);
 					@meta['potions'][@effect] = array(seconds: rand(1, 480), strength: rand(3)),
-				} while(rand(2));
+				} while(rand(2))
 			}
 	}
 	

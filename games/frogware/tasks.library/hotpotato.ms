@@ -10,7 +10,7 @@ proc _fw_start_task(@secs) {
 	@inv = associative_array();
 	do {
 		@inv[rand(35)] = array(name: 'BAKED_POTATO');
-	} while(rand() < 0.5);
+	} while(rand() < 0.5)
 	foreach(@p in all_players('custom')) {
 		if(_fw_player(@p)) {
 			set_pinv(@p, @inv);

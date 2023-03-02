@@ -385,13 +385,13 @@ proc _waves_start(@waves) {
 							do {
 								@loc = @spawns[@spawnGroup][(@waves['duplicate'] * (@i + 1) * @count) % array_size(@spawns[@spawnGroup])];
 								_spawn_entity(@mob, @loc, array(ignore: @waves['spectators']));
-							} while(--@count > 0);
+							} while(--@count > 0)
 						} else {
 							@loc = @spawns['spawns'][(@waves['duplicate'] * (@i + 1)) % array_size(@spawns['spawns'])];
 							spawn_entity(@mob, 1, @loc);
 						}
 					}
-				} while(--@waves['duplicate']);
+				} while(--@waves['duplicate'])
 				@waves['mobs'] = array();
 				@sleep[] = 5;
 

@@ -33,7 +33,7 @@ register_command('snake', array(
 				do {
 					@name = _pdata_by_uuid(@top[@i]['uuid'])['name'];
 					msg(color('green').'['.@top[@i]['value'].'] '.color('white').@name);
-				} while(++@i < @size);
+				} while(++@i < @size)
 			
 			case 'resetstats':
 				if(!has_permission('group.moderator')) {

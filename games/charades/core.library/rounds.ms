@@ -5,7 +5,7 @@ proc _queue_next_builder() {
 		@index = array_rand(@charades['playersLeft'], 1)[0];
 		@builder = @charades['playersLeft'][@index];
 		array_remove(@charades['playersLeft'], @index);
-	} while(!ponline(@builder) || !array_contains(sk_current_regions(@builder), 'charades'));
+	} while(!ponline(@builder) || !array_contains(sk_current_regions(@builder), 'charades'))
 
 	if(!@charades['playersLeft']) {
 		_msg_charades(color('yellow').color('bold').'Last turn!');

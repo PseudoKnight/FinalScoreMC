@@ -127,7 +127,7 @@ register_command('boats', array(
 				}
 				@boats[] = @boat;
 				@target = location_shift(@target, 'up');
-			} while(--@i > 0);
+			} while(--@i > 0)
 			if(get_command_block()) {
 				set_entity_rider(@boats[-1], puuid(_get_nearby_player(get_command_block(), 5)));
 			}

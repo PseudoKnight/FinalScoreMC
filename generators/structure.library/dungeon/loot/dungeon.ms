@@ -304,7 +304,7 @@ proc _get_barrel_loot(@floor, @random, @bonus = 1.0, @loot = array(
 							seconds: srand(@random) * 480,
 							strength: integer(srand(@random) * 3)
 						);
-					} while(srand(@random) > 0.6);
+					} while(srand(@random) > 0.6)
 					@meta['display'] = 'Suspicious Potion';
 					@meta['flags'] = array('HIDE_POTION_EFFECTS');
 				}

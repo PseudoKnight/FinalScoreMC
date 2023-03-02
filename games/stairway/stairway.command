@@ -142,7 +142,7 @@ register_command('stairway', array(
 					} else {
 						break();
 					}
-				} while(@maxLength-- > 0);
+				} while(@maxLength-- > 0)
 				
 				// do jump
 				@max = rand(3,5); // reduce chance of max jump length
@@ -165,7 +165,7 @@ register_command('stairway', array(
 						@loc[2] = @newLoc[2];
 						break();
 					}
-				} while(@attempts-- > 0);
+				} while(@attempts-- > 0)
 				set_block(@loc, @players[@player].'_STAINED_GLASS', false);
 				title(@player, integer(@loc[1]) - @startY, if(@passing, 'Passing '.@passing));
 			} else if(@oldLocs && @ploc['y'] < @startY) {

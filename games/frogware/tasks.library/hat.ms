@@ -10,7 +10,7 @@ proc _fw_start_task(@secs) {
 		for(@i = 0, @i < @count, @i++) {
 			@entity = drop_item(_fw_loc(), array(name: @hat));
 		}
-	} while(--@attempts && !entity_exists(@entity));
+	} while(--@attempts && !entity_exists(@entity))
 
 	if(!@attempts) {
 		console('Failed to create item drops');

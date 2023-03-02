@@ -244,7 +244,7 @@ proc _classes_select(@id, @pvp) {
 				if(@classes) {
 					do {
 						@class = array_rand(@classes, 1, true)[0];
-					} while(array_index_exists(@pvp['arena']['classes'][@class], 'disabled'));
+					} while(array_index_exists(@pvp['arena']['classes'][@class], 'disabled'))
 				} else {
 					@class = array_rand(@pvp['arena']['classes'], 1, true)[0];
 				}

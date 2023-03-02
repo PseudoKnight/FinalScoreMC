@@ -76,7 +76,7 @@ proc _class_load(@player, @pvp) {
 								do {
 									@loc = location_shift(@loc, @loc2, 1);
 									spawn_particle(@loc, 'SOUL');
-								} while(--@i > 0);
+								} while(--@i > 0)
 							} else {
 								clear_task();
 								set_pexp(player(), 0);
