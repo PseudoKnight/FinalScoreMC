@@ -11,7 +11,7 @@ proc _hoops_ball_create(@loc) {
 	@stand = spawn_entity('ARMOR_STAND', 1, @loc, closure(@entity) {
 		set_entity_spec(@entity, array('small': true, 'visible': false));
 		if(function_exists('set_entity_size')) {
-			set_entity_size(@entity, 0.88, 1.0);
+			set_entity_size(@entity, 0.44, 0.44);
 		}
 		set_entity_velocity(@entity, array(0, 1, 0));
 	})[0];
@@ -141,7 +141,7 @@ proc _hoops_ball_create(@loc) {
 			if(@game['holder']) {
 				@ploc = ploc(@game['holder']);
 				if(@ploc['world'] == @loc['world']) {
-					@loc = location_shift(@ploc, 'up', 3.5);  // max shooting angle: 55.2 degrees
+					@loc = location_shift(@ploc, 'up', 3.6);  // max shooting angle: 67.7 degrees
 					set_entity_loc(@stand, @loc);
 				} else {
 					@game['holder'] = null;
