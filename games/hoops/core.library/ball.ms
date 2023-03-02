@@ -114,7 +114,7 @@ proc _hoops_ball_create(@loc) {
 		}
 	}
 	@binds[] = bind('entity_damage', null, array('id': @bball), @event, @game, @stand, @charge) {
-		if(!array_index_exists(@event, 'damager')) {
+		if(!array_index_exists(@event, 'damager') || @game['holder'] == @event['damager']) {
 			die();
 		}
 		if(@game['holder']) {
@@ -141,7 +141,7 @@ proc _hoops_ball_create(@loc) {
 			if(@game['holder']) {
 				@ploc = ploc(@game['holder']);
 				if(@ploc['world'] == @loc['world']) {
-					@loc = location_shift(@ploc, 'up', 3.3);
+					@loc = location_shift(@ploc, 'up', 3.5);  // max shooting angle: 55.2 degrees
 					set_entity_loc(@stand, @loc);
 				} else {
 					@game['holder'] = null;
