@@ -59,7 +59,7 @@ proc _get_chest_loot(@floor, @random, @bonus = 1.0, @loot = array(
 	array(chance: -0.06, item: 'NETHERITE_BOOTS'),
 )) {
 	@inv = associative_array();
-	@count = integer(@bonus + srand(@random) * 9);
+	@count = integer(@bonus + srand(@random) * @bonus * 8);
 	while(@count > 0) {
 		@weightedLoot = _array_get_srand(@random, @loot);
 		@calculatedChance = @weightedLoot['chance'] + @bonus * @floor * 0.01;
@@ -67,7 +67,7 @@ proc _get_chest_loot(@floor, @random, @bonus = 1.0, @loot = array(
 		if(srand(@random) < @calculatedChance && (@maxDurability == 0 || @weightedLoot['chance'] + @floor * 0.01 < 0.09)) {
 			@item = array(name: @weightedLoot['item']);
 			if(array_index_exists(@weightedLoot, 'qty') && is_array(@weightedLoot['qty'])) {
-				@item['qty'] = integer(srand(@random) * (@weightedLoot['qty'][1] - @weightedLoot['qty'][0]) + @weightedLoot['qty'][0]);
+				@item['qty'] = integer(srand(@random) * @bonus * (@weightedLoot['qty'][1] - @weightedLoot['qty'][0]) + @weightedLoot['qty'][0]);
 			}
 			if(@maxDurability > 0) {
 				@item['meta'] = array(damage: max(0, integer(srand(@random) * @maxDurability)));
@@ -252,14 +252,14 @@ proc _get_barrel_loot(@floor, @random, @bonus = 1.0, @loot = array(
 	array(chance: 0.00, item: 'GOLDEN_CARROT', qty: array(1, 9)),
 )) {
 	@inv = associative_array();
-	@count = integer(srand(@random) * 4);
+	@count = integer(@bonus + srand(@random) * @bonus * 3);
 	while(@count > 0) {
 		@weightedLoot = _array_get_srand(@random, @loot);
 		@calculatedChance = @weightedLoot['chance'] + @bonus * @floor * 0.01;
 		if(srand(@random) < @calculatedChance) {
 			@item = array(name: @weightedLoot['item']);
 			if(array_index_exists(@weightedLoot, 'qty') && is_array(@weightedLoot['qty'])) {
-				@item['qty'] = integer(srand(@random) * (@weightedLoot['qty'][1] - @weightedLoot['qty'][0]) + @weightedLoot['qty'][0]);
+				@item['qty'] = integer(srand(@random) * @bonus * (@weightedLoot['qty'][1] - @weightedLoot['qty'][0]) + @weightedLoot['qty'][0]);
 			}
 			if(string_ends_with(@item['name'], 'POTION')) {
 				@meta = associative_array();

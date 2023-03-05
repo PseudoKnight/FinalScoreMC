@@ -7,6 +7,8 @@ default:
     campfireChance: 0.2
     treasureRoom: true
     door: spruce_door
+    empty: barrier
+    divider: barrier
 floors:
     0:
         # village
@@ -25,7 +27,7 @@ floors:
         windowFrame: oak_log
         tables: 0.5
         table: red_carpet
-        vines: ladder
+        vine: ladder
         door: oak_door
         doorFrame: oak_planks
         boss:
@@ -58,8 +60,16 @@ floors:
         utility: gold_ore
         randomblocks: [stone, 'stone_button[face=floor,facing=east]', 'stone_button[face=floor,facing=north]', 'glow_lichen[down=true]']
         edge: stone
-        vines: twisting_vines_plant
-        boss: CREEPER
+        vine: twisting_vines_plant
+        randomRoofHeight: true
+        empty: stone
+        divider: stone
+        boss:
+            type: CREEPER
+            effects:
+                speed:
+                    strength: 0
+                    seconds: 99999
         window: infested_stone
     2:
         # forest
@@ -79,9 +89,15 @@ floors:
         door: warped_door
         pillars: 0.3
         window: mangrove_roots
+        randomRoofHeight: true
+        empty: acacia_leaves
+        divider: bedrock
         boss:
             type: CAVE_SPIDER
-            rider: GUARDIAN
+            effects:
+                speed: 
+                    strength: 2
+                    seconds: 99999
     3:
         # desert
         chestCount: 0.5
@@ -132,21 +148,22 @@ floors:
         pillars: 0.3
         doorFrame: packed_ice
         window: ice
+        randomRoofHeight: true
+        empty: packed_ice
+        divider: packed_ice
         boss:
-            type: POLAR_BEAR
-            rider:
-                type: STRAY
-                gear:
-                    weapon:
-                        name: BOW
-                    boots:
-                        name: DIAMOND_BOOTS
-                    leggings:
-                        name: DIAMOND_LEGGINGS
-                    chestplate:
-                        name: DIAMOND_CHESTPLATE
-                    helmet:
-                        name: DIAMOND_HELMET
+            type: STRAY
+            gear:
+                weapon:
+                    name: BOW
+                boots:
+                    name: DIAMOND_BOOTS
+                leggings:
+                    name: DIAMOND_LEGGINGS
+                chestplate:
+                    name: DIAMOND_CHESTPLATE
+                helmet:
+                    name: DIAMOND_HELMET
     5:
         # nether fortress
         chestCount: 0.6
@@ -166,7 +183,7 @@ floors:
         window: 'nether_brick_fence[north=true,south=true,east=true,west=true]'
         doorFrame: chiseled_nether_bricks
         boss: WITHER_SKELETON
-        vines: weeping_vines
+        vine: weeping_vines
         door: crimson_door
     6:
         # ocean monument
@@ -215,24 +232,12 @@ floors:
         window: bookshelf
         doorFrame: chiseled_stone_bricks
         boss:
-            type: RABBIT
-            tags:
-                type: THE_KILLER_BUNNY
+            type: SILVERFISH
+            effects:
+                resistance:
+                    strength: 2
+                    seconds: 99999
     8:
-        # end city
-        spawner: [ender_crystal, endermite, shulker]
-        wall: purpur_block
-        column: purpur_pillar
-        ceiling: purpur_block
-        floor: end_stone
-        utility: enchanting_table
-        randomblocks: [chorus_plant]
-        edge: purpur_stairs
-        doorFrame: purpur_pillar
-        door: birch_door
-        attic: 0.0
-        boss: ENDER_CRYSTAL
-    9:
         # woodland mansion
         barrelCount: 0.2
         spawner: [vindicator, vindicator, vindicator, pillager, pillager, illusioner]
@@ -247,4 +252,3 @@ floors:
         window: light_gray_stained_glass
         windowFrame: spruce_log
         doorFrame: spruce_wood
-        boss: EVOKER

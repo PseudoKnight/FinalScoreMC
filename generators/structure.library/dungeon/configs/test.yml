@@ -6,6 +6,6 @@ floors:
         spawner: []
         wall: polished_andesite
         column: white_stained_glass
-        floor: [black_terracotta,lime_terracotta,red_terracotta,blue_terracotta,green_terracotta,yellow_terracotta,magenta_terracotta,orange_terracotta,light_blue_terracotta,pink_terracotta,light_gray_terracotta,gray_terracotta,cyan_terracotta,purple_terracotta,brown_terracotta,white_terracotta]
+        floor: polished_andesite
         edge: air
         window: glass
