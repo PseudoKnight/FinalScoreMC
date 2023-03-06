@@ -171,7 +171,8 @@ bind('projectile_launch', null, array(shootertype: 'PLAYER', type: 'FIREWORK'), 
 	}
 	try {
 		@projectileMeta = @item['meta']['projectiles'][0]['meta'];
-		if(@projectileMeta && @projectileMeta['lore']) {
+		if(@projectileMeta && @projectileMeta['lore'] && pcooldown('CROSSBOW') == 0) {
+			set_pcooldown('CROSSBOW', 1);
 			@mobs = array();
 			foreach(@line in @projectileMeta['lore']) {
 				@split = split(': ', @line, 1);
