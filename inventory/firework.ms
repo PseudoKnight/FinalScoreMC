@@ -35,51 +35,35 @@ bind('player_interact', null, array('itemname': 'FIREWORK_ROCKET', 'button': 'ri
 		if(@mobs) {
 			if(@gliding) {
 				@loc = location_shift(ploc(), 'up');
-				@horse = null;
+				@vehicle = null;
 				foreach(@mob in @mobs) {
 					@rider = spawn_entity(@mob, 1, @loc)[0];
-					if(@horse) {
-						set_entity_rider(@horse, @rider);
+					if(@vehicle) {
+						set_entity_rider(@vehicle, @rider);
 					}
-					@horse = @rider;
+					@vehicle = @rider;
 				}
 			} else {
 				cancel(); // handle manually
+				@loc = location_shift(ploc(), 'up', 2);
 				if(@event['block']) {
 					@loc = location_shift(@event['location'], @event['facing']);
 					@loc['x'] += 0.5;
 					@loc['y'] += 0.5;
 					@loc['z'] += 0.5;
-					@horse = launch_firework(@loc, @item['meta']['firework']);
-					set_entity_velocity(@horse, get_vector(ploc(), 0.05));
-					foreach(@mob in @mobs) {
-						@rider = spawn_entity(@mob, 1, @loc)[0];
-						if(!_is_survival_world(@loc['world'])) {
-							set_mob_effect(@rider, 'WITHER', 4, 999, true, false);
-						}
-						set_entity_rider(@horse, @rider);
-						@horse = @rider;
+				}
+				@vehicle = launch_firework(@loc, @item['meta']['firework']);
+				if(!@event['block']) {
+					set_entity_velocity(@vehicle, get_vector(ploc(), 0.05));
+				}
+				foreach(@mob in @mobs) {
+					@rider = spawn_entity(@mob, 1, @loc)[0];
+					if(!_is_survival_world(@loc['world'])) {
+						set_mob_effect(@rider, 'WITHER', 4, 999, true, false);
 					}
-				} else {
-					@loc = location_shift(ploc(), 'up', 2);
-					@firework = launch_firework(@loc, @item['meta']['firework']);
-					@horse = null;
-					foreach(@mob in @mobs) {
-						@rider = spawn_entity(@mob, 1, @loc)[0];
-						if(!_is_survival_world(@loc['world'])) {
-							set_mob_effect(@rider, 'WITHER', 4, 999, true, false);
-						}
-						if(@horse) {
-							set_entity_rider(@horse, @rider);
-						} else {
-							set_mob_equipment(@rider, array('chestplate': array('name': 'ELYTRA')));
-							set_equipment_droprates(@rider, null);
-							set_entity_velocity(@rider, get_vector(ploc(), 1.5));
-							set_entity_gliding(@rider, true);
-						}
-						@horse = @rider;
-					}
-					set_entity_rider(@horse, @firework);
+					set_mob_effect(@rider, 'RESISTANCE', 4, 10, true, false);
+					set_entity_rider(@vehicle, @rider);
+					@vehicle = @rider;
 				}
 				if(pmode() != 'CREATIVE') {
 					@item['qty']--;
@@ -175,6 +159,45 @@ bind('player_interact', null, array('itemname': 'FIREWORK_ROCKET', 'button': 'ri
 			}
 		});
 	}
+}
+
+bind('projectile_launch', null, array(shootertype: 'PLAYER', type: 'FIREWORK'), @event) {
+	@item = pinv(player(), null);
+	if(!@item || @item['name'] != 'CROSSBOW') {
+		@item = pinv(player(), -106);
+		if(!@item || @item['name'] != 'CROSSBOW') {
+			die();
+		}
+	}
+	try {
+		@projectileMeta = @item['meta']['projectiles'][0]['meta'];
+		if(@projectileMeta && @projectileMeta['lore']) {
+			@mobs = array();
+			foreach(@line in @projectileMeta['lore']) {
+				@split = split(': ', @line, 1);
+				if(array_size(@split) == 2 && @split[0] == color('gray').'Spawn Type') {
+					@mobs[] = @split[1];
+				}
+			}
+			if(@mobs) {
+				@vehicle = @event['id'];
+				set_timeout(10, closure(){
+					@loc = entity_loc(@event['id']);
+					foreach(@mob in @mobs) {
+						@rider = spawn_entity(@mob, 1, @loc)[0];
+						if(!_is_survival_world(@loc['world'])) {
+							set_mob_effect(@rider, 'WITHER', 4, 999, true, false);
+						}
+						set_entity_rider(@vehicle, @rider);
+						set_mob_effect(@rider, 'RESISTANCE', 4, 10, true, false);
+						@vehicle = @rider;
+					}
+					set_entity_rider(@vehicle, @event['id']);
+				});
+			}
+		}
+
+	} catch(IndexOverflowException @ignore) {}
 }
 
 bind('firework_explode', null, null, @event){
