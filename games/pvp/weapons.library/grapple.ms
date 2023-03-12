@@ -69,7 +69,7 @@ proc _weapon_bind_events(@pvp) {
 						@loc2 = entity_loc(@target);
 						@loc1 = entity_loc(@mover);
 						@dist = distance(@loc1, @loc2);
-						@dist = clamp(@dist, 0.1, 20);
+						@dist = min(max(@dist, 0.1), 20);
 						set_entity_fall_distance(@mover, 0);
 						if(@dist > 2.5) {
 							if(@dist > 10) {

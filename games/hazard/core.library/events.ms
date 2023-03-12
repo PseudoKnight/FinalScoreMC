@@ -30,7 +30,7 @@ proc _hazard_bind(@game) {
 					}
 					_hazard_create_entity(@game, @type, @loc, player());
 				}
-			} else if(string_contains(@item['name'], 'MINECART')) {
+			} else if(string_ends_with(@item['name'], 'MINECART')) {
 				cancel();
 				consume();
 				if(pmode() == 'CREATIVE' && array_index_exists(@event, 'location')) {

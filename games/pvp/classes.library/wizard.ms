@@ -91,7 +91,7 @@ proc _class_load(@player, @pvp) {
 				try {
 					set_entity_velocity(@entity, array(
 						@force * ((@loc2['x'] - @loc1['x']) / @dist), # vector normalization
-						clamp((@loc2['y'] - @loc1['y']) / @dist, 0.15, @force), # always bounce upwards
+						min(max((@loc2['y'] - @loc1['y']) / @dist, 0.15), @force), # always bounce upwards
 						@force * ((@loc2['z'] - @loc1['z']) / @dist),
 					));
 				} catch(BadEntityException @ex) {

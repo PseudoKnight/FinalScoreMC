@@ -1263,7 +1263,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 							if(equals_ic(@floorData['room'], get_block(@loc))) {
 								@blockType = _array_get_srand(@random, @floorData['randomblocks']);
 								set_blockdata_string(@loc, @blockType, @floorData['room'] == 'water');
-								if(!string_contains(@blockType, '[') && material_info(@blockType, 'isSolid') && srand(@random) > 0.5) {
+								if(string_position(@blockType, '[') == -1 && material_info(@blockType, 'isSolid') && srand(@random) > 0.5) {
 									set_blockdata_string(location_shift(@loc, 'up'), @blockType, @floorData['room'] == 'water');
 								}
 							}

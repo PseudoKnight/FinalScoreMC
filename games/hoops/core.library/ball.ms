@@ -197,9 +197,9 @@ proc _hoops_ball_create(@loc) {
 						@team = if(@game['players'][@holder]['team'] == 'red', 'blue', 'red');
 						@game['possession'] = @team;
 						@location = @loc[];
-						@location['x'] = clamp(@location['x'], @game['coords'][1][0], @game['coords'][0][0]) + 0.5;
+						@location['x'] = min(max(@location['x'], @game['coords'][1][0]), @game['coords'][0][0]) + 0.5;
 						@location['y'] = @game['coords'][1][1];
-						@location['z'] = clamp(@location['z'], @game['coords'][1][2], @game['coords'][0][2]) + 0.5;
+						@location['z'] = min(max(@location['z'], @game['coords'][1][2]), @game['coords'][0][2]) + 0.5;
 						@game['possessionLoc'] = @location;
 						@game['lastholder'] = '';
 						_hoops_boo();

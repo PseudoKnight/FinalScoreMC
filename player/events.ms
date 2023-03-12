@@ -417,7 +417,7 @@ bind('vehicle_enter', null, array(vehicletype: 'MINECART', passengertype: 'PLAYE
 				} else {
 					@speed += 1.0;
 				}
-				@speed = clamp(@speed, 0, 30);
+				@speed = min(max(@speed, 0), 30);
 				@speedOutput = 'Max Speed: '.integer(@speed).' m/s';
 				if(@speed > 8) {
 					@speedOutput .= ' (derailing possible)';
