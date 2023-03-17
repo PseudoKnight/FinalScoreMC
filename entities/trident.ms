@@ -14,7 +14,7 @@ bind('projectile_hit', null, array(type: 'TRIDENT'), @event) {
 		if(@block == 'LODESTONE' && get_highest_block_at(@event['hit'])['y'] == @event['hit']['y']) {
 			storm(true, @event['location']['world']);
 			set_thunder(true, @event['location']['world']);
-			lightning(@event['location']);
+			lightning(@event['location'], true);
 		}
 	}
 	// This animates the trident back to the player better than vanilla,
