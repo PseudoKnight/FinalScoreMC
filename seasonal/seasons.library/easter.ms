@@ -56,6 +56,7 @@ bind('target_player', null, array('mobtype': 'ZOMBIE'), @event, @day) {
 					'CHICKEN',
 					'COW',
 					'CREEPER',
+					'DONKEY',
 					'ELDER_GUARDIAN',
 					'ENDERMAN',
 					'ENDERMITE',
