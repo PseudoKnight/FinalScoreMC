@@ -121,7 +121,7 @@ proc _class_load(@player, @pvp) {
 		@trace = ray_trace(player(), 96);
 		@origin = @trace['origin'];
 		@loc = @trace['location'];
-		play_sound(@origin, array(sound: 'ENTITY_EVOKER_CAST_SPELL'));
+		play_sound(@origin, array(sound: 'ENTITY_GLOW_SQUID_SQUIRT', pitch: 0.8));
 		@count = array(96);
 		set_interval(50, closure() {
 			@count[0]--;
