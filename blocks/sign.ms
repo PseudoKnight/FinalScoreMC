@@ -47,12 +47,24 @@ bind('player_interact', null, array(hand: 'MAIN_HAND', button: 'right'), @event)
 		}
 		// 1.20 feature
 		if(sk_can_build(@loc)) {
-			foreach(@line in @sign) {
+			@colorCodes = false;
+			foreach(@i: @line in @sign) {
 				if(string_position(@line, '\u00A7') != -1) {
-					die();
+					@sign[@i] = replace(@line, '\u00A7', '&');
+					@colorCodes = true;
 				}
 			}
-			open_sign(@loc);
+			if(@colorCodes) {
+				if(pmode() != 'CREATIVE') {
+					die();
+				}
+				set_sign_text(@loc, @sign);
+				set_timeout(50, closure(){
+					open_sign(@loc);
+				});
+			} else {
+				open_sign(@loc);
+			}
 		}
 	}
 }
