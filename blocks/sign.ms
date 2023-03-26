@@ -46,7 +46,8 @@ bind('player_interact', null, array(hand: 'MAIN_HAND', button: 'right'), @event)
 			}
 		}
 		// 1.20 feature
-		if(sk_can_build(@loc)) {
+		if(sk_can_build(@loc)
+		&& (!@event['item'] || (!string_ends_with(@event['item']['name'], 'DYE') && @event['item']['name'] != 'GLOW_INK_SAC'))) {
 			@colorCodes = false;
 			foreach(@i: @line in @sign) {
 				if(string_position(@line, '\u00A7') != -1) {
