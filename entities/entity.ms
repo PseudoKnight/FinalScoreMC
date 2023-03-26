@@ -54,6 +54,7 @@ bind('player_interact_at_entity', null, array(hand: 'main_hand'), @event) {
 	&& psneaking()
 	&& is_entity_living(@event['id'])
 	&& !get_entity_ai(@event['id'])
+	&& entity_type(@event['id']) != 'PLAYER'
 	&& entity_type(@event['id']) != 'ARMOR_STAND'
 	&& sk_can_build(entity_loc(@event['id']))) {
 
