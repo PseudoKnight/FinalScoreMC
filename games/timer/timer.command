@@ -60,6 +60,7 @@ register_command('timer', array(
 						if(!array_index_exists(@timers, @player)) {
 							console('[Timer] ERROR: Failed to find player in array:', false);
 							console('[Timer] '.@timers, false);
+							clear_task();
 							die();
 						}
 						@time = integer(round((time() - @timers[@player][1]) / 1000));
@@ -80,6 +81,10 @@ register_command('timer', array(
 							} else {
 								play_sound(@ploc, array(sound: 'UI_BUTTON_CLICK', pitch: 2), @player);
 							}
+						}
+
+						if(pmode(@player) != 'ADVENTURE') {
+							@stop = true;
 						}
 
 					} else if(@ploc['y'] < 0) {
