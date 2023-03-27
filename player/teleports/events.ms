@@ -60,8 +60,7 @@ bind('player_teleport', null, null, @event) {
 
 		if(@vehicle || @leashedEntities) {
 			if(@vehicle != null) {
-				@type = entity_type(@vehicle);
-				if(array_contains(array('DONKEY', 'HORSE', 'LLAMA', 'MULE', 'SKELETON_HORSE', 'ZOMBIE_HORSE', 'STRIDER'), @type)) {
+				if(entity_type(@vehicle) != 'PLAYER' && is_entity_living(@vehicle)) {
 					set_entity_rider(@vehicle, null);
 					set_entity_loc(@vehicle, @to);
 					set_timeout(10, closure(){
