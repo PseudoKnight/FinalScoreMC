@@ -1,9 +1,9 @@
 /hologram $ = >>>
-	@loc = ploc();
+	@loc = location_shift(ploc(), 'up');
 	@lines = split(',', $);
 	for(@i = array_size(@lines) - 1, @i >= 0, @i--) {
 		@armorstand = spawn_entity('ARMOR_STAND', 1, @loc)[0];
-		set_entity_spec(@armorstand, array('gravity': false, 'visible': false));
+		set_entity_spec(@armorstand, array(marker: true, visible: false));
 		set_mob_name(@armorstand, colorize(@lines[@i]));
 		set_name_visible(@armorstand, true);
 		@loc['y'] += 0.28;

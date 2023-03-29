@@ -99,7 +99,7 @@ proc _spawn_entity(@entity, @loc, @spawnData, @consumer) {
 			@size = @entity['explode'][1];
 			set_timeout(50, closure(){
 				@display = spawn_entity('ARMOR_STAND', 1, @loc)[0];
-				set_entity_spec(@display, array('small': true, 'visible': false));
+				set_entity_spec(@display, array(marker: true, visible: false));
 				add_scoreboard_tag(@display, 'remove');
 				set_mob_name(@display, @countdown[0]);
 				set_name_visible(@display, true);
