@@ -11,6 +11,7 @@ proc _arena_bind_events(@id) {
 			if(@pvp['players'][player()]['team'] == 1) {
 				play_sound(ploc(), array(sound: 'ENTITY_WOLF_HOWL', pitch: 1.7, volume: 3));
 				@stand = spawn_entity('ARMOR_STAND', 1, @event['location'])[0];
+				add_scoreboard_tag(@stand, 'remove');
 				set_entity_spec(@stand, array(
 					arms: true,
 					baseplate: false,

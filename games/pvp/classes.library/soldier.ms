@@ -5,6 +5,7 @@ proc _class_load(@player, @pvp) {
 		}
 		@loc = location_shift(ploc(), 'up', 2);
 		@armorStand = spawn_entity('ARMOR_STAND', 1, @loc)[0];
+		add_scoreboard_tag(@armorStand, 'remove');
 		set_entity_spec(@armorStand, array(visible: false, small: true, arms: true));
 		set_mob_equipment(@armorStand, array(WEAPON: array(name: 'STONE_SHOVEL')));
 		set_entity_spec(@armorStand, array(poses: array(poseArmRight: array(x: -0.28, y: -1.656, z: 0.338))));

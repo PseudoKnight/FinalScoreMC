@@ -14,6 +14,7 @@ proc _hoops_ball_create(@loc) {
 			set_entity_size(@entity, 0.44, 0.44);
 		}
 		set_entity_velocity(@entity, array(0, 1, 0));
+		add_scoreboard_tag(@entity, 'remove');
 	})[0];
 
 	@game['ball'] = @stand;

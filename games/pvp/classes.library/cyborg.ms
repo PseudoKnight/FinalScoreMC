@@ -63,6 +63,7 @@ proc _class_load(@player, @pvp) {
 					visible: false,
 					small: true,
 				));
+				add_scoreboard_tag(@e, 'remove');
 			})[0];
 
 			// launch sound

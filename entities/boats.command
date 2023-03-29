@@ -114,6 +114,8 @@ register_command('boats', array(
 					@stand2 = spawn_entity('ARMOR_STAND', 1, @target)[0];
 					set_entity_spec(@stand, array('small': true, visible: false));
 					set_entity_spec(@stand2, array('small': true, visible: false));
+					add_scoreboard_tag(@stand, 'remove');
+					add_scoreboard_tag(@stand2, 'remove');
 					set_entity_rider(@boat, @stand);
 					set_entity_rider(@boat, @stand2);
 					@stands[] = @stand;

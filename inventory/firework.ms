@@ -132,6 +132,7 @@ bind('player_interact', null, array('itemname': 'FIREWORK_ROCKET', 'button': 'ri
 				set_metadata(@firework, 'loc', ploc());
 				@stand = spawn_entity('ARMOR_STAND', 1, @loc, closure(@e){
 					set_entity_spec(@e, array(visible: false, gravity: false));
+					add_scoreboard_tag(@e, 'remove');
 				})[0];
 				set_entity_rider(@firework, @stand);
 				set_pmode(player(), 'SPECTATOR');

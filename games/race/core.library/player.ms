@@ -61,6 +61,7 @@ proc _race_place_player(@race, @player, @loc) {
 	set_entity_loc(puuid(@player), @loc);
 
 	@stand = spawn_entity('ARMOR_STAND', 1, @loc)[0];
+	add_scoreboard_tag(@stand, 'remove');
 	set_entity_spec(@stand, array('small': true, 'visible': false, 'gravity': false));
 	@race['players'][@player]['stands'][] = @stand;
 

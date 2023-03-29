@@ -33,6 +33,7 @@ register_command('platform', array(
 					@spec['small'] = true;
 				}
 				set_entity_spec(@e, @spec);
+				add_scoreboard_tag(@e, 'remove');
 			})[0];
 			@entities[] = @stand;
 			set_entity_rider(@previous, @stand);

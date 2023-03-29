@@ -41,6 +41,7 @@ proc _class_load(@player, @pvp) {
 
 			@loc = location_shift(ploc(), 'up');
 			@box = spawn_entity('ARMOR_STAND', 1, @loc)[0];
+			add_scoreboard_tag(@box, 'remove');
 			set_mob_equipment(@box, array(WEAPON: @item));
 			set_entity_spec(@box, array(
 				gravity: false,

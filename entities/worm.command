@@ -28,6 +28,7 @@ register_command('worm', array(
 				set_mob_equipment(@segment, array(
 					'helmet': array('name': if(@i % 4 != 1, @body, @heart)),
 				));
+				add_scoreboard_tag(@segment, 'remove');
 			}
 			@worm = array(
 				'segments': @segments,

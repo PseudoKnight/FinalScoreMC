@@ -304,6 +304,7 @@ proc _snake_drop_nuke(@snake, @game) {
 	@loc[1] -= 0.5;
 	@loc[2] += 0.5;
 	@marker = spawn_entity('ARMOR_STAND', 1, @loc, closure(@entity) {
+		add_scoreboard_tag(@entity, 'remove');
 		set_entity_spec(@entity, array('marker': true, 'visible': false, 'gravity': false, 'small': true));
 		set_mob_equipment(@entity, array('helmet': array('name': 'DIAMOND_BLOCK')));
 	})[0];

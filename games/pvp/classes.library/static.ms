@@ -28,6 +28,7 @@ proc _class_load(@player, @pvp) {
 			));
 		} else if(!@event['sprinting'] && @mode == 'SPECTATOR') {
 			@armorstand = spawn_entity('ARMOR_STAND', 1, ploc())[0];
+			add_scoreboard_tag(@armorstand, 'remove');
 			set_entity_spec(@armorstand, associative_array(visible: false));
 			set_interval(50, closure(){
 				try {

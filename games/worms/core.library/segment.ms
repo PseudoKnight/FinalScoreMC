@@ -13,6 +13,7 @@ proc _worms_create_segments(@loc, @num, @color, @game) {
 		set_mob_equipment(@segment, array(
 			'HELMET': array('name': @color.'_CONCRETE'),
 		));
+		add_scoreboard_tag(@segment, 'remove');
 	}
 	return(@segments);
 }
