@@ -1,11 +1,8 @@
 default:
-    chestCount: 0
-    roof: false
+  roof: false
 floors:
-    0:
-        spawner: []
-        wall: polished_andesite
-        column: white_stained_glass
-        floor: polished_andesite
-        edge: air
-        window: glass
+- title: 'Test Floor'
+  wall: polished_andesite
+  column: white_stained_glass
+  floor: polished_andesite
+  window: glass

@@ -1,11 +1,11 @@
 default:
-    maxRoomHeight: 8
+  maxRoomHeight: 8
 floors:
-    0:
-        wall: [stone, stone, stone, stone, stone, stone, stone, stone, andesite, andesite, andesite, iron_ore]
-        column: stone
-        ceiling: [stone, stone, stone, stone, stone, stone, stone, stone, andesite, andesite, andesite, iron_ore]
-        floor: [stone, stone, stone, stone, stone, stone, stone, stone, andesite, andesite, andesite, iron_ore]
-        utility: gold_ore
-        randomblocks: [stone]
-        edge: stone
+- title: 'Caves'
+  wall: [stone, stone, stone, stone, stone, stone, stone, stone, andesite, andesite, andesite, iron_ore]
+  column: stone
+  ceiling: [stone, stone, stone, stone, stone, stone, stone, stone, andesite, andesite, andesite, iron_ore]
+  floor: [stone, stone, stone, stone, stone, stone, stone, stone, andesite, andesite, andesite, iron_ore]
+  utility: gold_ore
+  randomblocks: [stone]
+  edge: stone

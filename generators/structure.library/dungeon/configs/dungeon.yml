@@ -1,254 +1,233 @@
-dungeonEntrance: true
+dungeonEntrance: 'house'
 default:
-    maxRoomHeight: 12
-    chestCount: 0.1
-    attic: 0.3
-    balcony: 0.3
-    campfireChance: 0.2
-    treasureRoom: true
-    door: spruce_door
-    empty: barrier
-    divider: barrier
+  maxRoomHeight: 12
+  chestCount: 0.1
+  attic: 0.3
+  balcony: 0.3
+  campfireChance: 0.2
+  treasureRoom: true
+  door: spruce_door
+  empty: barrier
+  divider: barrier
 floors:
-    0:
-        # village
-        chestCount: 0.6
-        barrelCount: 0.4
-        spawner: [zombie_villager]
-        trap: [tripwire_arrow]
-        wall: [cobblestone, cobblestone, cobblestone, cobblestone, cobblestone, cobblestone, mossy_cobblestone]
-        column: oak_log
-        ceiling: oak_planks
-        floor: [cobblestone, cobblestone, cobblestone, mossy_cobblestone]
-        utility: [damaged_anvil, 'furnace[lit=true]', crafting_table, cake]
-        randomblocks: [bookshelf]
-        edge: oak_stairs
-        window: glass
-        windowFrame: oak_log
-        tables: 0.5
-        table: red_carpet
-        vine: ladder
-        door: oak_door
-        doorFrame: oak_planks
-        boss:
-            type: ZOMBIE_VILLAGER
-            tags:
-                baby: true
-            gear:
-                weapon:
-                    name: IRON_SWORD
-                boots:
-                    name: IRON_BOOTS
-                leggings:
-                    name: IRON_LEGGINGS
-                chestplate:
-                    name: IRON_CHESTPLATE
-                helmet:
-                    name: IRON_HELMET
-    1:
-        # caves
-        chestCount: 0.2
-        barrelCount: 0.4
-        waterPit: 0.06
-        campfireChance: 0.5
-        spawner: [silverfish, zombie]
-        trap: [plate_tnt, vines_potion_poison]
-        wall: [stone, stone, stone, stone, stone, stone, stone, stone, andesite, andesite, andesite, iron_ore]
-        column: stone
-        ceiling: [stone, stone, stone, stone, stone, stone, stone, stone, andesite, andesite, andesite, iron_ore]
-        floor: [stone, stone, stone, stone, stone, stone, stone, stone, andesite, andesite, andesite, iron_ore]
-        utility: gold_ore
-        randomblocks: [stone, 'stone_button[face=floor,facing=east]', 'stone_button[face=floor,facing=north]', 'glow_lichen[down=true]']
-        edge: stone
-        vine: twisting_vines_plant
-        randomRoofHeight: true
-        empty: stone
-        divider: stone
-        boss:
-            type: CREEPER
-            effects:
-                speed:
-                    strength: 0
-                    seconds: 99999
-        window: infested_stone
-    2:
-        # forest
-        chestCount: 0.5
-        barrelCount: 0.2
-        campfireChance: 0.5
-        spawner: [cave_spider, spider]
-        trap: [static_web]
-        wall: [acacia_log, dark_oak_log]
-        column: dark_oak_log
-        ceiling: [birch_leaves, dark_oak_leaves]
-        floor: [grass_block, grass_block, podzol]
-        utility: [damaged_anvil]
-        randomblocks: [azalea, cobweb, sweet_berry_bush]
-        edge: acacia_leaves
-        doorFrame: dark_oak_wood
-        door: warped_door
-        pillars: 0.3
-        window: mangrove_roots
-        randomRoofHeight: true
-        empty: acacia_leaves
-        divider: bedrock
-        boss:
-            type: CAVE_SPIDER
-            effects:
-                speed: 
-                    strength: 2
-                    seconds: 99999
-    3:
-        # desert
-        chestCount: 0.5
-        barrelCount: 0.2
-        lavaPit: 0.06
-        campfireChance: 0.5
-        spawner: [husk, husk, husk, husk, creeper]
-        trap: [static_cactus]
-        wall: [sandstone, smooth_sandstone]
-        column: chiseled_sandstone
-        ceiling: sandstone
-        floor: terracotta
-        utility: [damaged_anvil]
-        randomblocks: [dead_bush]
-        edge: sandstone_stairs
-        doorFrame: chiseled_sandstone
-        door: mangrove_door
-        window: 'sandstone_wall[east=tall,west=tall,south=tall,north=tall]'
-        boss:
-            type: HUSK
-            tags:
-                baby: true
-            gear:
-                weapon:
-                    name: DIAMOND_SWORD
-                boots:
-                    name: DIAMOND_BOOTS
-                leggings:
-                    name: DIAMOND_LEGGINGS
-                chestplate:
-                    name: DIAMOND_CHESTPLATE
-                helmet:
-                    name: DIAMOND_HELMET
-    4:
-        # ice caves
-        chestCount: 0.5
-        barrelCount: 0.4
-        waterPit: 0.06
-        campfireChance: 0.5
-        spawner: [stray]
-        wall: [snow_block, packed_ice]
-        column: packed_ice
-        ceiling: [snow_block, packed_ice]
-        floor: [snow_block, snow_block, snow_block, packed_ice, packed_ice]
-        utility: [enchanting_table, damaged_anvil]
-        randomblocks: [blue_ice]
-        edge: snow_block
-        pillars: 0.3
-        doorFrame: packed_ice
-        window: ice
-        randomRoofHeight: true
-        empty: packed_ice
-        divider: packed_ice
-        boss:
-            type: STRAY
-            gear:
-                weapon:
-                    name: BOW
-                boots:
-                    name: DIAMOND_BOOTS
-                leggings:
-                    name: DIAMOND_LEGGINGS
-                chestplate:
-                    name: DIAMOND_CHESTPLATE
-                helmet:
-                    name: DIAMOND_HELMET
-    5:
-        # nether fortress
-        chestCount: 0.6
-        barrelCount: 0.1
-        minRoomHeight: 4
-        lavaPit: 0.06
-        fireFloor: 0.06
-        spawner: [zombified_piglin, magma_cube, blaze]
-        trap: [plate_fire]
-        wall: nether_bricks
-        column: nether_brick_fence
-        ceiling: nether_bricks
-        floor: [nether_bricks, nether_bricks, nether_bricks, nether_bricks, nether_bricks, nether_bricks, magma_block, soul_sand]
-        utility: [furnace, damaged_anvil]
-        randomblocks: [cauldron]
-        edge: nether_brick_stairs
-        window: 'nether_brick_fence[north=true,south=true,east=true,west=true]'
-        doorFrame: chiseled_nether_bricks
-        boss: WITHER_SKELETON
-        vine: weeping_vines
-        door: crimson_door
-    6:
-        # ocean monument
-        chestCount: 0
-        barrelCount: 0.2
-        campfireChance: 0.0
-        spawner: [guardian, pufferfish]
-        wall: prismarine_bricks
-        room: water
-        door: water
-        column: prismarine_bricks
-        ceiling: prismarine
-        floor: dark_prismarine
-        utility: sea_lantern
-        randomblocks: [soul_sand, magma_block, tube_coral_block, brain_coral_block, bubble_coral_block, fire_coral_block, horn_coral_block, tube_coral, brain_coral, bubble_coral, fire_coral, horn_coral]
-        edge: dark_prismarine_stairs
-        doorFrame: dark_prismarine
-        balcony: 0.0
-        boss:
-            type: DROWNED
-            gear:
-                weapon:
-                    name: TRIDENT
-                boots:
-                    name: DIAMOND_BOOTS
-                leggings:
-                    name: DIAMOND_LEGGINGS
-                chestplate:
-                    name: DIAMOND_CHESTPLATE
-                helmet:
-                    name: DIAMOND_HELMET
-    7:
-        # stronghold
-        chestCount: 0.7
-        barrelCount: 0.4
-        lavaPit: 0.06
-        spawner: [skeleton, witch, creeper]
-        trap: [chest_tnt, plate_potion_poison]
-        wall: [polished_andesite, stone_bricks, mossy_stone_bricks, cracked_stone_bricks, infested_cracked_stone_bricks]
-        column: bookshelf
-        ceiling: stone_bricks
-        floor: [mossy_stone_bricks, mossy_stone_bricks, mossy_stone_bricks, mossy_stone_bricks, mossy_stone_bricks, mossy_stone_bricks, cracked_stone_bricks, cracked_stone_bricks]
-        utility: [enchanting_table, brewing_stand, cauldron]
-        randomblocks: [rail]
-        edge: stone_brick_stairs
-        window: bookshelf
-        doorFrame: chiseled_stone_bricks
-        boss:
-            type: SILVERFISH
-            effects:
-                resistance:
-                    strength: 2
-                    seconds: 99999
-    8:
-        # woodland mansion
-        barrelCount: 0.2
-        spawner: [vindicator, vindicator, vindicator, pillager, pillager, illusioner]
-        trap: chest_potion_poison
-        wall: dark_oak_planks
-        column: cobblestone_wall
-        ceiling: birch_planks
-        floor: birch_planks
-        utility: [enchanting_table, damaged_anvil, bell]
-        randomblocks: [bookshelf]
-        edge: birch_stairs
-        window: light_gray_stained_glass
-        windowFrame: spruce_log
-        doorFrame: spruce_wood
+- title: 'The Village'
+  wall: cobblestone
+  ceiling: cobblestone
+  floor: cobblestone
+  roomTypes:
+    house:
+      chance: 0.7
+    outdoors:
+      chance: 0.3
+- title: 'Caves'
+  roomTypes:
+    cave:
+      chance: 0.6
+    deepslate_cave:
+      chance: 0.3
+    geode:
+      chance: 0.1
+- title: 'The Forest'
+  chestCount: 0.5
+  barrelCount: 0.2
+  campfireChance: 0.5
+  spawner: [cave_spider, spider]
+  trap: [static_web]
+  wall: [acacia_log, dark_oak_log]
+  column: dark_oak_log
+  ceiling: [birch_leaves, dark_oak_leaves]
+  floor: [grass_block, grass_block, podzol]
+  utility: [damaged_anvil]
+  randomblocks: [azalea, cobweb, sweet_berry_bush]
+  edge: acacia_leaves
+  doorFrame: dark_oak_wood
+  door: warped_door
+  window: mangrove_roots
+  randomRoofHeight: true
+  empty: acacia_leaves
+  divider: bedrock
+- title: 'Desert Temple'
+  chestCount: 0.5
+  barrelCount: 0.2
+  lavaPit: 0.06
+  campfireChance: 0.5
+  spawner: [husk, husk, husk, husk, creeper]
+  trap: [static_cactus]
+  wall: [sandstone, smooth_sandstone]
+  column: chiseled_sandstone
+  ceiling: sandstone
+  floor: terracotta
+  utility: [damaged_anvil]
+  randomblocks: [dead_bush]
+  edge: sandstone_stairs
+  doorFrame: chiseled_sandstone
+  door: mangrove_door
+  window: 'sandstone_wall[east=tall,west=tall,south=tall,north=tall]'
+- title: 'Ice Caverns'
+  chestCount: 0.5
+  barrelCount: 0.4
+  waterPit: 0.06
+  campfireChance: 0.5
+  spawner: [stray]
+  wall: [snow_block, packed_ice]
+  column: packed_ice
+  ceiling: [snow_block, packed_ice]
+  floor: [snow_block, snow_block, snow_block, packed_ice, packed_ice]
+  utility: [enchanting_table, damaged_anvil]
+  randomblocks: [blue_ice]
+  edge: snow_block
+  doorFrame: packed_ice
+  window: ice
+  randomRoofHeight: true
+  empty: packed_ice
+  divider: packed_ice
+- title: 'Nether Fortress'
+  chestCount: 0.6
+  barrelCount: 0.1
+  minRoomHeight: 4
+  lavaPit: 0.06
+  fireFloor: 0.06
+  spawner: [zombified_piglin, magma_cube, blaze]
+  trap: [plate_fire]
+  wall: nether_bricks
+  column: nether_brick_fence
+  ceiling: nether_bricks
+  floor: [nether_bricks, nether_bricks, nether_bricks, nether_bricks, nether_bricks, nether_bricks, magma_block, soul_sand]
+  utility: [furnace, damaged_anvil]
+  randomblocks: [cauldron]
+  edge: nether_brick_stairs
+  window: 'nether_brick_fence[north=true,south=true,east=true,west=true]'
+  doorFrame: chiseled_nether_bricks
+  boss: WITHER_SKELETON
+  vine: weeping_vines
+  door: crimson_door
+- title: 'Ocean Monument'
+  chestCount: 0
+  barrelCount: 0.2
+  campfireChance: 0.0
+  spawner: [guardian, pufferfish]
+  wall: prismarine_bricks
+  room: water
+  door: water
+  column: prismarine_bricks
+  ceiling: prismarine
+  floor: dark_prismarine
+  utility: sea_lantern
+  randomblocks: [soul_sand, magma_block, tube_coral_block, brain_coral_block, bubble_coral_block, fire_coral_block, horn_coral_block, tube_coral, brain_coral, bubble_coral, fire_coral, horn_coral]
+  edge: dark_prismarine_stairs
+  doorFrame: dark_prismarine
+  balcony: 0.0
+- title: 'Stronghold'
+  chestCount: 0.7
+  barrelCount: 0.4
+  lavaPit: 0.06
+  spawner: [skeleton, witch, creeper]
+  trap: [chest_tnt, plate_potion_poison]
+  wall: [polished_andesite, stone_bricks, mossy_stone_bricks, cracked_stone_bricks, infested_cracked_stone_bricks]
+  column: bookshelf
+  ceiling: stone_bricks
+  floor: [mossy_stone_bricks, mossy_stone_bricks, mossy_stone_bricks, mossy_stone_bricks, mossy_stone_bricks, mossy_stone_bricks, cracked_stone_bricks, cracked_stone_bricks]
+  utility: [enchanting_table, brewing_stand, cauldron]
+  randomblocks: [rail]
+  edge: stone_brick_stairs
+  window: bookshelf
+  doorFrame: chiseled_stone_bricks
+- title: 'Woodland Mansion'
+  barrelCount: 0.2
+  spawner: [vindicator, vindicator, vindicator, pillager, pillager, illusioner]
+  trap: chest_potion_poison
+  wall: dark_oak_planks
+  column: cobblestone_wall
+  ceiling: birch_planks
+  floor: birch_planks
+  utility: [enchanting_table, damaged_anvil, bell]
+  randomblocks: [bookshelf]
+  edge: birch_stairs
+  window: light_gray_stained_glass
+  windowFrame: spruce_log
+  doorFrame: spruce_wood
+rooms:
+  house:
+    chestCount: 0.6
+    barrelCount: 0.4
+    spawner: [zombie_villager]
+    trap: [tripwire_arrow]
+    wall: [cobblestone, cobblestone, cobblestone, cobblestone, cobblestone, cobblestone, mossy_cobblestone]
+    column: oak_log
+    ceiling: oak_planks
+    floor: [cobblestone, cobblestone, cobblestone, mossy_cobblestone]
+    utility: [damaged_anvil, 'furnace[lit=true]', crafting_table, cake]
+    randomblocks: [bookshelf]
+    edge: oak_stairs
+    window: glass
+    windowFrame: oak_log
+    tables: 0.5
+    table: red_carpet
+    vine: ladder
+    door: oak_door
+    doorFrame: oak_planks
+  outdoors:
+    chestCount: 0.0
+    barrelCount: 0.4
+    wall: [oak_log, acacia_log]
+    column: oak_log
+    ceiling: [oak_leaves, acacia_leaves]
+    floor: [grass_block]
+    utility: [crafting_table]
+    randomblocks: [oak_leaves, dandelion, poppy]
+    edge: oak_leaves
+    randomRoofHeight: true
+    empty: acacia_leaves
+    door: air
+    doorFrame: cobblestone
+  cave:
+    chestCount: 0.2
+    barrelCount: 0.4
+    waterPit: 0.06
+    campfireChance: 0.5
+    spawner: [silverfish, zombie]
+    trap: [plate_tnt, vines_potion_poison]
+    wall: [stone, stone, stone, stone, stone, stone, stone, stone, andesite, andesite, andesite, iron_ore]
+    column: stone
+    ceiling: [stone, stone, stone, stone, stone, stone, stone, stone, andesite, andesite, andesite, iron_ore]
+    floor: [stone, stone, stone, stone, stone, stone, stone, stone, andesite, andesite, andesite, iron_ore]
+    utility: gold_ore
+    randomblocks: [stone, 'stone_button[face=floor,facing=east]', 'stone_button[face=floor,facing=north]', 'glow_lichen[down=true]']
+    edge: stone
+    vine: twisting_vines_plant
+    randomRoofHeight: true
+    empty: stone
+    divider: stone
+    window: infested_stone
+  deepslate_cave:
+    chestCount: 0.2
+    barrelCount: 0.4
+    waterPit: 0.06
+    campfireChance: 0.5
+    spawner: [zombie]
+    trap: [plate_tnt, vines_potion_poison]
+    wall: [deepslate, deepslate, deepslate, deepslate, deepslate, deepslate, deepslate_redstone_ore]
+    column: dripstone_block
+    ceiling: [deepslate, deepslate, deepslate, deepslate, deepslate, deepslate, deepslate_redstone_ore]
+    floor: [deepslate, deepslate, deepslate, deepslate, deepslate, deepslate, deepslate_redstone_ore]
+    utility: deepslate_diamond_ore
+    randomblocks: ['glow_lichen[down=true]', deepslate, deepslate, deepslate, deepslate, deepslate_redstone_ore]
+    edge: deepslate
+    vine: twisting_vines_plant
+    randomRoofHeight: true
+    empty: deepslate
+    divider: deepslate
+  geode:
+    chestCount: 0.4
+    barrelCount: 0.5
+    wall: [amethyst_block, amethyst_block, amethyst_block, amethyst_block, amethyst_block, budding_amethyst]
+    column: amethyst_block
+    ceiling: [amethyst_block, amethyst_block, amethyst_block, amethyst_block, amethyst_block, budding_amethyst]
+    floor: [amethyst_block, amethyst_block, amethyst_block, amethyst_block, amethyst_block, budding_amethyst]
+    utility: amethyst_cluster
+    randomblocks: [small_amethyst_bud, medium_amethyst_bud, large_amethyst_bud]
+    edge: amethyst_block
+    vine: twisting_vines_plant
+    empty: amethyst_block
+    divider: amethyst_block
+
