@@ -45,6 +45,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 		fireFloor: 0.0, // 0.06
 		tables: 0.0,
 		spawnCount: 1,
+		title: '',
 
 		// toggleable features
 		roof: true,
@@ -1557,6 +1558,26 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 						bone_meal_block(@loc);
 					}, 'generator');
 				}
+			}
+
+			if(@floorData['title'] && @floor < 12) {
+				queue_push(closure(){
+					@floorRegion = @region.(@floor + 1);
+					if(!sk_region_exists(@world, @floorRegion)) {
+						sk_region_create(@world, @floorRegion, array(
+							array(@regionMaxX, @groundY + @maxRoomHeight, @regionMaxZ, @world),
+							array(@regionMinX, @groundY, @regionMinZ, @world),
+						));
+						sk_region_flag(@world, @floorRegion, 'passthrough', 'allow');
+					} else {
+						sk_region_update(@world, @floorRegion, array(
+							array(@regionMaxX, @groundY + @maxRoomHeight, @regionMaxZ),
+							array(@regionMinX, @groundY, @regionMinZ),
+						));
+					}
+					@floorNums = array('One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 'Eleven', 'Twelve');
+					sk_region_flag(@world, @floorRegion, 'greeting-title', '\u00A77- Floor '.@floorNums[@floor].' -\n'.@floorData['title']);
+				}, 'generator');
 			}
 
 			// exit room / Pop ladder into floor
