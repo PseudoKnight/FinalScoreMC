@@ -89,6 +89,7 @@ bind('target_player', null, array('mobtype': 'ZOMBIE'), @event, @day) {
 					'SPIDER',
 					'SQUID',
 					'STRAY',
+					'STRIDER',
 					'TADPOLE',
 					'VEX',
 					'VILLAGER',
