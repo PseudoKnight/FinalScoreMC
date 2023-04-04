@@ -465,20 +465,6 @@ proc _bind_events(@pvp) {
 		}
 	}
 
-	@pvp['binds'][] = bind('entity_damage', array(priority: 'HIGHEST'), array(cause: 'ENTITY_EXPLOSION'), @event, @pvp) {
-		if(entity_type(@event['damager']) == 'FIREWORK') {
-			foreach(@player in array_keys(@pvp['players'])) {
-				if(get_firework_shooter(@event['damager']) == puuid(@player)) {
-					consume();
-					if(array_index_exists(@event, 'player')) {
-						_stats_damage(@player, @event['player'], @event['amount'], @pvp);
-					}
-					break();
-				}
-			}
-		}
-	}
-
 	@pvp['binds'][] = bind('potion_splash', null, null, @event, @pvp) {
 		@thrower = get_projectile_shooter(@event['id']);
 		if(entity_type(@thrower) == 'PLAYER' && array_index_exists(@pvp['players'], player(@thrower))) {
@@ -510,14 +496,31 @@ proc _bind_events(@pvp) {
 		}
 	}
 
-	// barrier eat projectiles
-	@pvp['binds'][] = bind('projectile_hit', array(priority: 'HIGHEST'), array(hittype: 'BLOCK', type: 'ARROW'), @event, @pvp) {
-		if(get_block(@event['hit']) == 'BARRIER') {
+	// clean up projectiles and protect item frames and paintings
+	@pvp['binds'][] = bind('projectile_hit', array(priority: 'HIGHEST'), null, @event, @pvp) {
+		if(@event['hittype'] == 'BLOCK' && get_block(@event['hit']) == 'BARRIER') {
 			consume();
 			try(entity_remove(@event['id']))
+		} else if(@event['hittype'] == 'ENTITY') {
+			@type = entity_type(@event['hit']);
+			if(@type == 'ITEM_FRAME' || @type == 'GLOW_ITEM_FRAME' || @type == 'PAINTING') {
+				if(@event['location']['world'] == @pvp['arena']['lobby'][3]) {
+					cancel();
+					consume();
+					try(entity_remove(@event['id']))
+				}
+			}
 		}
 	}
 
+	// prevent all item frame and painting destruction
+	if(!array_contains(@pvp['arena']['flags'], 'build')) {
+		@pvp['binds'][] = bind('hanging_break', null, array(world: @pvp['arena']['lobby'][3]), @event, @pvp) {
+			cancel();
+		}
+	}
+
+	// add tridents to player's entity map for cleanup later
 	@pvp['binds'][] = bind('projectile_launch', null, array(type: 'TRIDENT'), @event, @pvp) {
 		if(array_index_exists(@pvp['players'], @event['player'])) {
 			@pvp['players'][player()]['entities']['trident'] = @event['id'];
