@@ -708,22 +708,25 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 
 							// Floor
 							@loc[1] += 1;
-							if(@roomShape == 'fire_floor' && @column != 'column') {
+							if(@roomShape == 'fire_floor' && @column == 'room') {
 								_add_to_chunk(@chunk, @loc, 'dispenser[facing=up]');
-							} else if(@roomShape == 'lava_pit' && @column != 'column') {
-								if(!_direction_of_solid(@layoutMap, @c, @r) || srand(@random) < 0.6) {
+							} else if(@roomShape == 'lava_pit' && @column == 'room') {
+								if((!_direction_of_solid(@layoutMap, @c, @r) || srand(@random) < 0.6)
+								&& !_adjacent_equals(@layoutMap, @c, @r, 'door')) {
 									_add_to_chunk(@chunk, @loc, 'lava');
 								} else {
 									_add_to_chunk(@chunk, @loc, @roomData['floor']);
 								}
-							} else if(@roomShape == 'water_pit' && @column != 'column') {
-								if(!_direction_of_solid(@layoutMap, @c, @r) || srand(@random) < 0.7) {
+							} else if(@roomShape == 'water_pit' && @column == 'room') {
+								if((!_direction_of_solid(@layoutMap, @c, @r) || srand(@random) < 0.7)
+								&& !_adjacent_equals(@layoutMap, @c, @r, 'door')) {
 									_add_to_chunk(@chunk, @loc, 'water');
 								} else {
 									_add_to_chunk(@chunk, @loc, @roomData['floor']);
 								}
-							} else if(@roomShape == 'pit' && @column != 'column') {
-								if(!_direction_of_solid(@layoutMap, @c, @r) || srand(@random) < 0.55) {
+							} else if(@roomShape == 'pit' && @column == 'room') {
+								if((!_direction_of_solid(@layoutMap, @c, @r) || srand(@random) < 0.55)
+								&& !_adjacent_equals(@layoutMap, @c, @r, 'door')) {
 									@holeDepth = @maxRoomHeight;
 									while(@holeDepth-- > 0) {
 										_add_to_chunk(@chunk, location_shift(@loc, 'down', @holeDepth), 'air');
