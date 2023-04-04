@@ -14,17 +14,32 @@ register_command('arena', array(
 					'keepinventory', 'nobottles', 'noinventory', 'noxp', 'rallycall', 'stackedpickup',
 					'heartsdisplay', 'script', 'exitrespawn', 'description', 'lobby', 'podium', 'kothbeacon',
 					'ctfflag', 'respawn', 'spawn', 'blockbreak', 'ff', 'arenaselect', 'sharedarenas', 'mode',
-					'mobprotect', 'team', 'kit', 'restore','itemspawn', 'chestgroup', 'chestspawn', 'rsoutput',
+					'mobprotect', 'team', 'kit', 'restore', 'itemspawn', 'chestgroup', 'chestspawn', 'rsoutput',
 					'rsoutputscore', 'effect', 'denydrop', 'mobspawn', 'weapons', 'options', 'hidden'),
 			'<<add': array('description', 'arenaselect', 'weapons', 'options', 'deathdrops', 'denydrop'),
 			'<<load': array('kit', 'chestspawn', 'spawn', 'itemspawn'),
 			'<<tp': array('lobby', 'podium', 'kothbeacon', 'bombloc', 'region')),
 		array(
+			'<build|debug|exitrespawn|heartsdisplay|hidden|hideplayers|infinitedispensers|keepinventory|nobottles|noinventory|noxp|rallycall|script|stackedpickup|stats':
+				array('true', 'false'),
+			'<ff': array('false', 'knockback', 'reduced', 'true'),
+			'<mode': array('bombingrun', 'ctf', 'ddm', 'dm', 'infection', 'koth'),
+			'<nametags': array('ALWAYS', 'FOR_OTHER_TEAMS', 'FOR_OWN_TEAM', 'NEVER'),
+			'<options': array('lives', 'score', 'class_picks', 'class_picking'),
+			'<respawnmode': array('mob'),
+			'<team': array('BLACK', 'DARK_BLUE', 'DARK_GREEN', 'DARK_AQUA', 'DARK_RED', 'DARK_PURPLE', 'GOLD', 'GRAY',
+				'DARK_GRAY', 'BLUE', 'GREEN', 'AQUA', 'RED', 'LIGHT_PURPLE', 'YELLOW', 'WHITE'),
 			'<weapons': array('endernades', 'fireball', 'firebreath', 'firefire', 'flamethrower', 'grapple',
 				'halo/battlerifle', 'knockout', 'mine', 'pistoltears', 'primedtnt', 'railgun', 'rifle', 'shotgunballs',
 				'skullrockets', 'snipeglass', 'spawner', 'stickynade', 'tracker', 'dynamitestick'),
-			'<options': array('lives', 'score', 'class_picks', 'class_picking'),
-		)
+		),
+		array(
+			'<<nametags': array('ALWAYS', 'FOR_OTHER_TEAMS', 'FOR_OWN_TEAM', 'NEVER'),
+		),
+		array(
+			'<<<team': array('BLACK', 'DARK_BLUE', 'DARK_GREEN', 'DARK_AQUA', 'DARK_RED', 'DARK_PURPLE', 'GOLD', 'GRAY',
+				'DARK_GRAY', 'BLUE', 'GREEN', 'AQUA', 'RED', 'LIGHT_PURPLE', 'YELLOW', 'WHITE'),
+		),
 	),
 	executor: closure(@alias, @sender, @args, @info) {
 		if(!@args) {
