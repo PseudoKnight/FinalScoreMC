@@ -532,4 +532,16 @@ proc _bind_events(@pvp) {
 			cancel();
 		}
 	}
+
+	if(array_contains(@pvp['arena']['flags'], 'nodoors')) {
+		@pvp['binds'][] = bind('player_interact', array(priority: 'LOWEST'), array(button: 'right'), @event, @pvp) {
+			if(!is_cancelled()
+			&& @event['block']
+			&& array_index_exists(@pvp['players'], player())
+			&& string_ends_with(@event['block'], 'DOOR')) {
+				action_msg('Doors are disabled');
+				cancel();
+			}
+		}
+	}
 }

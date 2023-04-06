@@ -15,12 +15,12 @@ register_command('arena', array(
 					'heartsdisplay', 'script', 'exitrespawn', 'description', 'lobby', 'podium', 'kothbeacon',
 					'ctfflag', 'respawn', 'spawn', 'blockbreak', 'ff', 'arenaselect', 'sharedarenas', 'mode',
 					'mobprotect', 'team', 'kit', 'restore', 'itemspawn', 'chestgroup', 'chestspawn', 'rsoutput',
-					'rsoutputscore', 'effect', 'denydrop', 'mobspawn', 'weapons', 'options', 'hidden'),
+					'rsoutputscore', 'effect', 'denydrop', 'mobspawn', 'weapons', 'options', 'hidden', 'nodoors'),
 			'<<add': array('description', 'arenaselect', 'weapons', 'options', 'deathdrops', 'denydrop'),
 			'<<load': array('kit', 'chestspawn', 'spawn', 'itemspawn'),
 			'<<tp': array('lobby', 'podium', 'kothbeacon', 'bombloc', 'region')),
 		array(
-			'<build|debug|exitrespawn|heartsdisplay|hidden|hideplayers|infinitedispensers|keepinventory|nobottles|noinventory|noxp|rallycall|script|stackedpickup|stats':
+			'<build|debug|exitrespawn|heartsdisplay|hidden|hideplayers|infinitedispensers|keepinventory|nobottles|noinventory|noxp|rallycall|script|stackedpickup|stats|nodoors':
 				array('true', 'false'),
 			'<ff': array('false', 'knockback', 'reduced', 'true'),
 			'<mode': array('bombingrun', 'ctf', 'ddm', 'dm', 'infection', 'koth'),
@@ -160,6 +160,7 @@ register_command('arena', array(
 					case 'exitrespawn':
 					case 'script':
 					case 'hidden':
+					case 'nodoors':
 
 						switch(@args[3]) {
 							case 'true':
