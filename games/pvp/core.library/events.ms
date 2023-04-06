@@ -518,6 +518,21 @@ proc _bind_events(@pvp) {
 		@pvp['binds'][] = bind('hanging_break', null, array(world: @pvp['arena']['lobby'][3]), @event, @pvp) {
 			cancel();
 		}
+
+		@pvp['binds'][] = bind('player_interact_entity', array(priority: 'LOWEST'), array(clicked: '/(GLOW_)?ITEM_FRAME/'), @event, @pvp) {
+			if(!is_cancelled()
+			&& array_contains(sk_regions_at(entity_loc(@event['id'])), @pvp['arena']['region'])) {
+				action_msg('Item frames are disabled');
+				cancel();
+			}
+		}
+
+		@pvp['binds'][] = bind('entity_damage', array(priority: 'LOWEST'), array(type: '/(GLOW_)?ITEM_FRAME/'), @event, @pvp) {
+			if(!is_cancelled()
+			&& array_contains(sk_regions_at(@event['location']), @pvp['arena']['region'])) {
+				cancel();
+			}
+		}
 	}
 
 	// add tridents to player's entity map for cleanup later
