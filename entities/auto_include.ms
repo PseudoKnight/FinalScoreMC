@@ -173,10 +173,11 @@ proc _spawn_entity(@entity, @loc, @spawnData, @consumer) {
 					}
 				});
 			} else {
-				set_timeout(50, closure(){
+				set_timeout(100, closure(){
 					foreach(@p in players_in_radius(entity_loc(@e), @range)) {
 						if(!array_contains(@ignore, @p)) {
 							damage_entity(@e, 0, puuid(@p));
+							set_mob_target(@e, puuid(@p));
 							break();
 						}
 					}
