@@ -35,6 +35,7 @@ bind('player_interact_at_entity', array('priority': 'HIGH'), array('clicked': 'A
 		@equipment = get_mob_equipment(@event['id']);
 		if(@equipment['helmet'] && @equipment['helmet']['meta']) {
 			run_cmd(@equipment['helmet']['meta']['display']);
+			consume();
 		}
 	}
 }
