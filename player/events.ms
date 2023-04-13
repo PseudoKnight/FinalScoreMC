@@ -213,7 +213,8 @@ bind('player_interact', null, array('button': 'right'), @event) {
 	}
 }
 
-# Let one player in a world make the sun rise
+# Let one player in a world make the sun rise.
+# Set player's home if unset for this world.
 bind('player_enter_bed', null, null, @event) {
 	if(!_is_survival_world(pworld())) {
 		die();
@@ -234,6 +235,27 @@ bind('player_enter_bed', null, null, @event) {
 	if(has_storm()) {
 		storm(false);
 		msg(color('aqua').'You calmed the storm.');
+	}
+
+	if(has_permission('command.sethome')) {
+		@pdata = _pdata(player());
+		if(!array_index_exists(@pdata, 'homes')) {
+			@pdata['homes'] = associative_array();
+		}
+		if(!array_index_exists(@pdata['homes'], pworld())) {
+			@loc = ploc();
+			@pdata['homes'][pworld()] = array(
+				floor(@loc['x']) + 0.5,
+				@loc['y'],
+				floor(@loc['z']) + 0.5,
+				pworld(),
+				round(@loc['yaw'], 2),
+				round(@loc['pitch'], 2),
+			);
+			_store_pdata(player(), @pdata);
+			msg(color('green').'Set your '.color('bold').'/home'.color('green').' teleport location for this world.');
+			msg(color('green').'You can use '.color('bold').'/sethome'.color('green').' to change it.');
+		}
 	}
 }
 
