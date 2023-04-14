@@ -1,7 +1,7 @@
 proc _load_mob(@waves) {
-	bind('entity_damage_player', array(id: 'waves'.@waves['region'].'evilsnowman'), array(damager: 'SNOWBALL'), @e, @waves) {
-		@player = @e['player'];
-		@damager = @e['data'];
+	@waves['binds'][] = bind('entity_damage_player', null, array(damager: 'SNOWBALL'), @event, @waves) {
+		@player = @event['player'];
+		@damager = @event['data'];
 		if(!array_contains(@waves['players'], @player)) {
 			die();
 		}
@@ -12,6 +12,4 @@ proc _load_mob(@waves) {
 	}
 }
 
-proc _unload_mob(@waves) {
-	unbind('waves'.@waves['region'].'evilsnowman');
-}
+proc _unload_mob(@waves) {}

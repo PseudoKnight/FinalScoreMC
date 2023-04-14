@@ -151,7 +151,8 @@ register_command('waves', array(
 					die(color('gold').'Someone is already starting the game.');
 				}
 				
-				include('core.library/game.ms');
+				include_dir('core.library');
+				include_dir('mobs.library');
 				
 				if(array_size(@scripts) == 1) {
 					@name = array_keys(@scripts)[0];

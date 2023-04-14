@@ -27,7 +27,9 @@ proc _waves_add_player(@player, @waves) {
 	}
 	set_plevel(@player, @levels);
 	set_pexp(@player, 0);
-	title(@player, @c['title'], if(array_index_exists(@c, 'subtitle'), '('.@c['subtitle'].')', ''), 20, 40, 20);
+	if(array_index_exists(@c, 'title')) {
+		title(@player, @c['title'], if(array_index_exists(@c, 'subtitle'), '('.@c['subtitle'].')', ''), 20, 40, 20);
+	}
 }
 
 proc _waves_remove_player(@player, @waves) {

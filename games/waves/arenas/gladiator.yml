@@ -1,12 +1,6 @@
-steplightly:
-    name: TOTEM_OF_UNDYING
-    display: 'Step Lightly'
-    lore:
-        - 'by gothem8'
-        - 'Buy items with levels.'
-        - 'Sell items to get more levels.'
-bees:
-    name: TNT
-    display: 'Bees'
-    lore:
-        - 'by PseudoKnight'
+random:
+    name: SPAWNER
+    display: 'Random'
+    lore: 
+        - 'Generates random waves of mobs.'
+        - 'Difficulty increases over time.'
