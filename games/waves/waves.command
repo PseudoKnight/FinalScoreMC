@@ -1,122 +1,105 @@
 register_command('waves', array(
 	description: 'Manages and starts custom waves against enemies.',
-	usage: '/waves <start|setspawn|delete|setlobby|setschematic|setstartblock> [arena_id] [blocktype|schematic]',
-	tabcompleter: closure(@alias, @sender, @args, @info) {
-		if(array_size(@args) == 1) {
-			return(_strings_start_with_ic(array('start', 'setspawn', 'delete', 'setlobby', 'setschematic', 'setstartblock'), @args[-1]));
-		}
-		return(array());
-	},
+	usage: '/waves <start|set|delete|info> [arena_id] [spawn|lobby|schematic|startblock] [blocktype|schematicname]',
+	tabcompleter: _create_tabcompleter(
+		array('start', 'set', 'delete'),
+		null,
+		array(
+			'<<set', array('spawn', 'lobby', 'schematic', 'startblock'),
+			'<<delete': array('spawns', 'schematic', 'startblock')),
+	),
 	executor: closure(@alias, @sender, @args, @info) {
 		if(!@args) {
 			return(false);
 		}
 		@action = @args[0];
-		switch(@action) {			
-			case 'setspawn':
+		switch(@action) {
+			case 'set':
 				if(!has_permission('group.engineer')) {
 					die(color('gold').'No permission.');
 				}
-				if(array_size(@args) < 2) {
-					die(color('gold').'This requires an arena id');
+				@name = array_get(@args, 1, null);
+				if(!@name) {
+					die(color('gold').'This requires an arena id.');
 				}
-				@name = @args[1];
 				@arena = get_value('waves', @name);
-				@group = 'spawns';
-				if(array_size(@args) > 2) {
-					@group = @args[2];
-				}
 				if(!@arena) {
 					@arena = associative_array();
-					@arena[@group] = array();
 				}
-				if(!array_index_exists(@arena, @group)) {
-					@arena[@group] = array();
+				@setting = array_get(@args, 2, null);
+				switch(@setting) {
+					case 'spawn':
+						@group = 'spawns';
+						if(array_size(@args) > 3) {
+							@group = @args[3];
+						}
+						if(!array_index_exists(@arena, @group)) {
+							@arena[@group] = array();
+						}
+						@loc = array_normalize(location_shift(ploc(), 'up'))[0..3];
+						@arena[@group][] = @loc;
+						msg(color('green').'Added spawn location');
+
+					case 'lobby':
+						@loc = array_normalize(ploc())[0..3];
+						@arena['lobby'] = @loc;
+						msg(color('green').'Set lobby location');
+
+					case 'schematic':
+						@arena['schematic'] = @args[3];
+						msg(color('green').'Set schematic');
+
+					case 'startblock':
+						@arena['startblock'] = array(loc: ptarget_space(), type: @args[3]);
+						msg(color('green').'Set startblock');
+
+					case 'trigger':
+						if(!array_index_exists(@arena, 'triggers')) {
+							@arena['triggers'] = associative_array();
+						}
+						@arena['triggers'][@args[3]] =  ptarget_space();
+						msg(color('green').'Set trigger location for '.@args[3]);
+
 				}
-				@loc = array_normalize(location_shift(ploc(), 'up'))[0..3];
-				@arena[@group][] = @loc;
 				store_value('waves', @name, @arena);
-				msg(color('green').'Added spawn location');
-				
+
 			case 'delete':
 				if(!has_permission('group.engineer')) {
 					die(color('gold').'No permission.');
 				}
-				if(array_size(@args) < 2) {
-					die(color('gold').'This requires an arena id');
+				@name = array_get(@args, 1, null);
+				if(!@name) {
+					die(color('gold').'This requires an arena id.');
 				}
-				@name = @args[1];
-				clear_value('waves', @name);
-				msg(color('green').'Deleted arena');
-				
-			case 'setlobby':
+				if(array_size(@args) == 2) {
+					clear_value('waves', @name);
+					msg(color('green').'Deleted arena');
+				} else {
+					@arena = get_value('waves', @name);
+					if(!@arena) {
+						die(color('gold').'Arena does not exist: '.@name);
+					}
+					@key = @args[2];
+					if(!array_index_exists(@arena, @key)) {
+						die(color('gold').'Value does not exist in arena: '.@key);
+					}
+					array_remove(@arena, @key);
+					msg(color('green').'Removed '.@key.' from '.@name);
+					store_value('waves', @name, @arena);
+				}
+
+			case 'info':
 				if(!has_permission('group.engineer')) {
 					die(color('gold').'No permission.');
 				}
-				if(array_size(@args) < 2) {
-					die(color('gold').'This requires an arena id');
+				@name = array_get(@args, 1, null);
+				if(!@name) {
+					die(color('gold').'This requires an arena id.');
 				}
-				@name = @args[1];
 				@arena = get_value('waves', @name);
-				if(!@arena) {
-					@arena = associative_array();
-				}
-				@loc = array_normalize(ploc())[0..3];
-				@arena['lobby'] = @loc;
-				store_value('waves', @name, @arena);
-				msg(color('green').'Set lobby location');
-				
-			case 'setschematic':
-				if(!has_permission('group.engineer')) {
-					die(color('gold').'No permission.');
-				}
-				if(array_size(@args) < 3) {
-					die(color('gold').'This requires an arena id and schematic name.');
-				}
-				@name = @args[1];
-				@arena = get_value('waves', @name);
-				if(!@arena) {
-					@arena = associative_array();
-				}
-				@arena['schematic'] = @args[2];
-				store_value('waves', @name, @arena);
-				msg(color('green').'Set schematic');
-				
-			case 'setstartblock':
-				if(!has_permission('group.engineer')) {
-					die(color('gold').'No permission.');
-				}
-				if(array_size(@args) < 3) {
-					die(color('gold').'This requires an arena id and block type.');
-				}
-				@name = @args[1];
-				@arena = get_value('waves', @name);
-				if(!@arena) {
-					@arena = associative_array();
-				}
-				@arena['startblock'] = array(loc: ptarget_space(), type: @args[2]);
-				store_value('waves', @name, @arena);
-				msg(color('green').'Set startblock');
-				
-			case 'settrigger':
-				if(!has_permission('group.engineer')) {
-					die(color('gold').'No permission.');
-				}
-				if(array_size(@args) < 3) {
-					die(color('gold').'This requires an arena id and trigger id.');
-				}
-				@name = @args[1];
-				@arena = get_value('waves', @name);
-				if(!@arena) {
-					@arena = associative_array();
-				}
-				if(!array_index_exists(@arena, 'triggers')) {
-					@arena['triggers'] = associative_array();
-				}
-				@arena['triggers'][@args[2]] =  ptarget_space();
-				store_value('waves', @name, @arena);
-				msg(color('green').'Set trigger location for '.@args[2]);
-				
+				msg(color('green').'Arena info for '.@name);
+				msg(map_implode(@arena, ': '.color('gray'), '\n'));
+
 			case 'start':
 				@region = null;
 				if(@block = get_command_block()) {
