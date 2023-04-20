@@ -1,16 +1,13 @@
-levels: 5
-mobs:
-    - EVILSNOWMAN
 gear:
     0:
         name: WOODEN_SWORD
 shop:
     0:
         name: STONE_SWORD
-        cost: 2
+        cost: 1
     1:
         name: IRON_SWORD
-        cost: 3
+        cost: 2
     2:
         name: DIAMOND_SWORD
         cost: 4
@@ -39,100 +36,85 @@ shop:
             enchants:
                 piercing: 4
     9:
-        name: MILK_BUCKET
-        cost: 1
-    10:
         name: APPLE
         cost: 1
-    11:
-        name: MUSHROOM_STEW
+    10:
+        name: COOKED_CHICKEN
         cost: 2
-    12:
+    11:
         name: GOLDEN_APPLE
         cost: 3
-    13:
+    12:
         name: POTION
         cost: 1
         meta:
             base:
                 extended: true
                 type: SPEED
-    14:
+    13:
         name: POTION
         cost: 1
         meta:
             base:
                 extended: true
                 type: STRENGTH
-    15:
+    14:
         name: SPLASH_POTION
         cost: 1
         meta:
             base:
                 upgraded: true
                 type: INSTANT_HEAL
-    16:
+    15:
         name: ARROW
         cost: 1
-    17:
+    16:
         name: NETHER_STAR
         cost: 8
         meta:
             display: 'Resurrection Star'
     18:
-        name: LEATHER_HELMET
+        name: LEATHER_CHESTPLATE
         cost: 1
     19:
-        name: LEATHER_CHESTPLATE
-        cost: 3
-    20:
         name: LEATHER_LEGGINGS
-        cost: 2
-    21:
+        cost: 1
+    20:
         name: GOLDEN_HELMET
+        cost: 1
+    21:
+        name: GOLDEN_CHESTPLATE
         cost: 2
     22:
-        name: GOLDEN_CHESTPLATE
-        cost: 5
-    23:
         name: GOLDEN_LEGGINGS
-        cost: 3
-    27:
-        name: CHAINMAIL_HELMET
         cost: 2
-    28:
-        name: CHAINMAIL_CHESTPLATE
-        cost: 5
-    29:
-        name: CHAINMAIL_LEGGINGS
-        cost: 4
-    30:
-        name: CHAINMAIL_BOOTS
+    23: 
+        name: GOLDEN_BOOTS
         cost: 1
-    31:
-        name: IRON_HELMET
-        cost: 2
-    32:
-        name: IRON_CHESTPLATE
-        cost: 6
-    33:
-        name: IRON_LEGGINGS
-        cost: 5
-    34:
-        name: IRON_BOOTS
-        cost: 2
-    36:
-        name: DIAMOND_HELMET
-        cost: 3
-    37:
-        name: DIAMOND_CHESTPLATE
-        cost: 8
-    38:
-        name: DIAMOND_LEGGINGS
-        cost: 6
-    39:
-        name: DIAMOND_BOOTS
-        cost: 3
-    40:
+    24:
         name: SHIELD
         cost: 5
+    27:
+        name: IRON_HELMET
+        cost: 2
+    28:
+        name: IRON_CHESTPLATE
+        cost: 6
+    29:
+        name: IRON_LEGGINGS
+        cost: 5
+    30:
+        name: IRON_BOOTS
+        cost: 2
+    31:
+        name: DIAMOND_HELMET
+        cost: 3
+    32:
+        name: DIAMOND_CHESTPLATE
+        cost: 8
+    33:
+        name: DIAMOND_LEGGINGS
+        cost: 6
+    34:
+        name: DIAMOND_BOOTS
+        cost: 3
