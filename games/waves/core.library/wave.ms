@@ -77,8 +77,8 @@ proc _get_random_wave(@random, @waveNum) {
 		array(type: 'WITHER_SKELETON', adjective: 'Withering', noun: 'Swordsmen'),
 	),
 	6: array(
-		array(type: 'WARDEN', adjective: 'Ancient', noun: 'Sensor'),
-		array(type: 'WITHER', adjective: 'Nether', noun: 'Boss'),
+		array(type: 'WARDEN', adjective: 'The', noun: 'Warden'),
+		array(type: 'WITHER', adjective: 'The', noun: 'Wither'),
 	));
 	@wave = array(mobs: array(), subtitle: '');
 	@totalCount = max(1, integer(@waveNum * 0.25 + srand(@random) * @waveNum * 0.75));
@@ -91,7 +91,10 @@ proc _get_random_wave(@random, @waveNum) {
 			@tier = max(1, integer(@waveNum / 10));
 		}
 		@mobData = @mobs[@tier][integer(srand(@random) * array_size(@mobs[@tier]))][];
-		if(!@wave['mobs']) {
+		if(@waveNum == 50) { // boss wave
+			@mobData['count'] = 1;
+			@totalCount = 0;
+		} else if(!@wave['mobs']) {
 			@mobData['count'] = min(@totalCount, @waveNum % 10 + 1);
 		} else {
 			@mobData['count'] = ceil(srand(@random) * @totalCount);

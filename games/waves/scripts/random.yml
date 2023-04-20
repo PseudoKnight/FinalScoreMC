@@ -1,3 +1,4 @@
+maxWaves: 50
 gear:
     0:
         name: WOODEN_SWORD

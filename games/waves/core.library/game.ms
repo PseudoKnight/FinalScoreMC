@@ -318,6 +318,8 @@ proc _waves_start(@waves) {
 				} while(--@waves['duplicate'])
 				@waves['mobs'] = array();
 
+			} else if(array_index_exists(@waves['config'], 'maxWaves') && @waves['wave'] == @waves['config']['maxWaves']) {
+				_waves_end(@waves, true);
 			} else if(!@entities) {
 				@p = null;
 				foreach(@p in @waves['players']) {
