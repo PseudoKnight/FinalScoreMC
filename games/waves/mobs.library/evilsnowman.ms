@@ -7,7 +7,9 @@ proc _load_mob(@waves) {
 		}
 		@loc = location_shift(ploc(@player), 'up', 2);
 		spawn_particle(@loc, array(particle: 'SNOWBALL', count: 20, xoffset: 0.5, yoffset: 1, zoffset: 0.5));
-		play_sound(@loc, array(sound: 'ENTITY_LLAMA_SPIT', pitch: 0.5));
+		play_sound(@loc, array(sound: 'BLOCK_SNOW_BREAK', pitch: 0.5));
+		play_sound(@loc, array(sound: 'BLOCK_SNOW_BREAK', pitch: 1));
+		play_sound(@loc, array(sound: 'BLOCK_SNOW_BREAK', pitch: 2));
 		damage_entity(puuid(@player), 2);
 	}
 }
