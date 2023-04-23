@@ -91,7 +91,8 @@ proc _get_random_wave(@random, @waveNum) {
 			@tier = max(1, integer(@waveNum / 10));
 		}
 		@mobData = @mobs[@tier][integer(srand(@random) * array_size(@mobs[@tier]))][];
-		if(@waveNum == 50) { // boss wave
+		if(@waveNum == 50) {
+			@mobData['boss'] = true;
 			@mobData['count'] = 1;
 			@totalCount = 0;
 		} else if(!@wave['mobs']) {
@@ -102,6 +103,14 @@ proc _get_random_wave(@random, @waveNum) {
 		@totalCount -= @mobData['count'];
 		@wave['mobs'][] = @mobData;
 		@numTypes--;
+	}
+
+	if(@waveNum == 50) {
+		if(@wave['mobs'][0]['type'] == 'WARDEN') {
+			@wave['music'] = 'music.overworld.deep_dark';
+		} else {
+			@wave['music'] = 'music.nether.basalt_deltas';
+		}
 	}
 
 	if(array_size(@wave['mobs']) > 1) {
