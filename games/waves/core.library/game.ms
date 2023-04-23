@@ -15,14 +15,9 @@ proc _waves_prepare(@name, @arena, @region, @world) {
 		region: @region,
 		config: yml_decode(read('../scripts/'.@name.'.yml')),
 		trigger: null,
-		coins: 20,
 		boss: false,
-		teamDamage: true,
 		binds: array(),
 	);
-	if(array_index_exists(@waves['config'], 'coins')) {
-		@waves['coins'] = @waves['config']['coins'];
-	}
 	if(array_index_exists(@waves['config'], 'title')) {
 		_add_activity('waves'.@region, _to_upper_camel_case(@region).': '.@waves['config']['title'], @region, @world);
 	} else {
@@ -60,7 +55,9 @@ proc _waves_start(@waves) {
 
 	@waves['binds'][] = bind('player_death', null, null, @event, @waves) {
 		if(array_contains(@waves['players'], player())) {
-			@waves['coins'] /= 2;
+			if(array_index_exists(@waves['config'], 'coins')) {
+				@waves['config']['coins'] /= 2;
+			}
 			_waves_remove_player(player(), @waves);
 			_waves_add_spectator(player(), @waves);
 			@loc = ploc();
@@ -125,7 +122,8 @@ proc _waves_start(@waves) {
 
 	@waves['binds'][] = bind('entity_damage', null, null, @event, @entities, @waves) {
 		if(array_contains(@entities, @event['id'])) {
-			if(!@waves['teamDamage'] && array_index_exists(@event, 'damager') && array_contains(@entities, @event['damager'])) {
+			if(array_index_exists(@event, 'damager') && array_contains(@entities, @event['damager'])
+			&& (array_index_exists(@waves['config'], 'teamDamage') && !@waves['config']['teamDamage'])) {
 				modify_event('amount', 0.0);
 			} else {
 				set_timeout(0, closure(){
@@ -435,12 +433,17 @@ proc _waves_end(@waves, @win) {
 		skcb_load(@waves['arena']['schematic']);
 		skcb_paste(array(0, 0, 0, @waves['world']), array(origin: true, entities: true));
 	}
-	@coins = ceil(@waves['coins']);
+	@coins = 0;
+	if(array_index_exists(@waves['config'], 'coins')) {
+		@coins = ceil(@waves['config']['coins']);
+	}
 	foreach(@p in @waves['players']) {
 		if(ponline(@p)) {
 			if(@win) {
-				title(@p, color('green').'Success!', color('gold').'+ '.@coins.' Coins');
-				_acc_add(@p, @coins);
+				title(@p, color('green').'Success!', if(@coins, color('gold').'+ '.@coins.' Coins', ''));
+				if(@coins) {
+					_acc_add(@p, @coins);
+				}
 			}
 			stop_named_sound(@p, @waves['music'], 'RECORDS');
 			_waves_remove_player(@p, @waves);
