@@ -137,20 +137,32 @@ proc _spawn_entity(@entity, @loc, @spawnData, @consumer) {
 			});
 		}
 		if(array_index_exists(@entity, 'targetnear')) {
-			@range = @entity['targetnear'];
+			@range = 0;
 			@projectile = '';
-			switch(to_upper(@entity['type'])) {
-				case 'SNOWMAN':
-					@projectile = 'SNOWBALL';
-				case 'CHICKEN':
-					@projectile = 'EGG';
+			@interval = 1500;
+			if(is_array(@entity['targetnear'])) {
+				@range = @entity['targetnear']['range'];
+				if(array_index_exists(@entity['targetnear'], 'projectile')) {
+					@projectile = @entity['targetnear']['projectile'];
+					if(array_index_exists(@entity['targetnear'], 'interval')) {
+						@interval = @entity['targetnear']['interval'];
+					}
+				}
+			} else {
+				@range = @entity['targetnear'];
+				switch(to_upper(@entity['type'])) {
+					case 'SNOWMAN':
+						@projectile = 'SNOWBALL';
+					case 'CHICKEN':
+						@projectile = 'EGG';
+				}
 			}
 			@ignore = array();
 			if(@spawnData && array_index_exists(@spawnData, 'ignore')) {
 				@ignore = @spawnData['ignore'];
 			}
 			if(@projectile) {
-				set_interval(1500, closure() {
+				set_interval(@interval, closure() {
 					try {
 						if(get_entity_health(@e) == 0.0) {
 							clear_task();
@@ -163,7 +175,9 @@ proc _spawn_entity(@entity, @loc, @spawnData, @consumer) {
 									@loc1['yaw'] = get_yaw(@loc1, @loc2);
 									@loc1['pitch'] = get_pitch(@loc1, @loc2);
 									set_entity_loc(@e, @loc1);
-									shoot_projectile(@e, @projectile, @p);
+									if(entity_can_see(@e, puuid(@p))) {
+										shoot_projectile(@e, @projectile, @p);
+									}
 									break();
 								}
 							}
