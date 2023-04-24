@@ -169,7 +169,7 @@ proc _spawn_entity(@entity, @loc, @spawnData, @consumer) {
 						} else {
 							@loc1 = entity_loc(@e);
 							foreach(@p in players_in_radius(@loc1, @range)) {
-								if(!array_contains(@ignore, @p)) {
+								if(!array_contains(@ignore, @p) && pmode(@p) != 'SPECTATOR') {
 									@loc2 = ploc(@p);
 									@loc2['y'] += 2;
 									@loc1['yaw'] = get_yaw(@loc1, @loc2);

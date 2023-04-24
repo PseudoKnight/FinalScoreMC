@@ -298,7 +298,7 @@ proc _waves_start(@waves) {
 							}
 							do {
 								@loc = @spawns[@spawnGroup][(@waves['duplicate'] * (@i + 1) * @count) % array_size(@spawns[@spawnGroup])];
-								_spawn_entity(@mob, @loc, array(ignore: @waves['spectators']), closure(@e) {
+								_spawn_entity(@mob, @loc, null, closure(@e) {
 									set_entity_ai(@e, false);
 									set_mob_effect(@e, 'glowing', 0, 999, true, false);
 									set_entity_invulnerable(@e, true);
