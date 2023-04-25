@@ -455,8 +455,8 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 					}
 				}
 
-				@r = @room['r1'];
-				@c = @room['c1'];
+				@roomR = @room['r1'];
+				@roomC = @room['c1'];
 				@roomWidth = @room['width'];
 				@roomLength = @room['length'];
 
@@ -465,112 +465,121 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 				foreach(@d in range(4)) {
 					@dir = array_remove(@dirs, integer(srand(@random) * array_size(@dirs)));
 					try {
-						@cRoom = 0;
-						@rRoom = 0;
-						@cDoor = 0;
-						@rDoor = 0;
+						// Example for 'south' direction:
+						//
+						// [][][][][][] <-- walls of room included in @roomMap
+						// []        []
+						// []        []
+						// []        []
+						// []        []
+						// [][][]||[][] <-- choose random inner column at positive row edge of room
+						//       ||     <-- iterate row positively
+						// [][][]||[][] <-- find room index in @roomMap
+						// []        []
+						// []    ^ Check to see if entrance is on an inner column for next room
+						//
+						@c = 0;
+						@r = 0;
 						@dist = 1;
 						@next = -1;
 						if(@dir == 'north' || @dir == 'south') {
-							@cRoom = @c + 1 + integer(srand(@random) * (@roomWidth - 2));
+							@c = @roomC + 1 + integer(srand(@random) * (@roomWidth - 2));
 						} else {
-							@rRoom = @r + 1 + integer(srand(@random) * (@roomLength - 2));
+							@r = @roomR + 1 + integer(srand(@random) * (@roomLength - 2));
 						}
 						while(++@dist <= @maxRoomSize) {
 							switch(@dir) {
 								case 'north':
-									@rRoom = @r - @dist;
-									@rDoor = @r - 1;
-									@cDoor = @cRoom;
+									@r = @roomR - @dist;
 								case 'south':
-									@rRoom = @r + @roomLength - 1 + @dist;
-									@rDoor = @r + @roomLength;
-									@cDoor = @cRoom;
+									@r = @roomR + @roomLength - 1 + @dist;
 								case 'west':
-									@cRoom = @c - @dist;
-									@cDoor = @c - 1;
-									@rDoor = @rRoom;
+									@c = @roomC - @dist;
 								case 'east':
-									@cRoom = @c + @roomWidth - 1 + @dist;
-									@cDoor = @c + @roomWidth;
-									@rDoor = @rRoom;
+									@c = @roomC + @roomWidth - 1 + @dist;
 							}
 							if(@next != -1) {
 								break();
 							}
-							@next = @roomMap[@cRoom][@rRoom];
+							@next = @roomMap[@c][@r];
 						}
 
-						if(@rRoom < 2 || @cRoom < 2) {
+						if(@r < 2 || @c < 2) {
 							continue();
 						}
 
 						if(@next != -1 && @next != @previous
 						// and inside room
-						&& @cRoom >= @rooms[@next]['c1']
-						&& @cRoom < @rooms[@next]['c1'] + @rooms[@next]['width']
-						&& @rRoom >= @rooms[@next]['r1']
-						&& @rRoom < @rooms[@next]['r1'] + @rooms[@next]['length']) {
+						&& @c >= @rooms[@next]['c1']
+						&& @c < @rooms[@next]['c1'] + @rooms[@next]['width']
+						&& @r >= @rooms[@next]['r1']
+						&& @r < @rooms[@next]['r1'] + @rooms[@next]['length']) {
 							if(!@rooms[@next]['connected']
-							|| @dist == 2 && (@rooms[@next]['doors'] == 2 || @rooms[@current]['doors'] == 2) && srand(@random) < @extraDoorChance) {
+							|| (@rooms[@next]['doors'] == 2 || @rooms[@current]['doors'] == 2) && srand(@random) < @extraDoorChance) {
+								// Attempt to add a double door
+								//
+								// []        [] <- Both rooms must be width > 3 and height > 4
+								// [][]|< |[][] <- Check towards center of room
+								//     |  |    
+								// [][]|  |[][]
+								// []        []
+								// []  ^ Check if still inside next room
+								//
+								@c2 = @c;
+								@r2 = @r;
+								if(@room['height'] > 4 && @rooms[@next]['height'] > 4) {
+									if((@dir == 'north' || @dir == 'south')
+									&& @room['width'] > 3 && @rooms[@next]['width'] > 3) {
+										@c2 = @c + if(@c > @roomC + @roomWidth / 2, -1, 1);
+										if(@c2 < @rooms[@next]['c1']
+										|| @c2 >= @rooms[@next]['c1'] + @rooms[@next]['width']) {
+											@c2 = @c;
+										}
+									} else if((@dir == 'east' || @dir == 'west')
+									&& @room['length'] > 3 && @rooms[@next]['length'] > 3) {
+										@r2 = @r + if(@r > @roomR + @roomLength / 2, -1, 1);
+										if(@r2 < @rooms[@next]['r1']
+										|| @r2 >= @rooms[@next]['r1'] + @rooms[@next]['length']) {
+											@r2 = @r;
+										}
+									}
+								}
 								@doorDist = @dist;
 								while(--@doorDist > 0) {
 									@cell = if(@doorDist == 1 || @doorDist == @dist - 1, 'door', 'hall');
 									switch(@dir) {
 										case 'north':
-											@layoutMap[@cRoom][@r - @doorDist] = @cell;
+											@layoutMap[@c][@roomR - @doorDist] = @cell;
+											@layoutMap[@c2][@roomR - @doorDist] = @cell;
 											if(@cell == 'hall') {
-												@heightMap[@cRoom][@r - @doorDist] = 2;
+												@heightMap[@c][@roomR - @doorDist] = 2;
+												@heightMap[@c2][@roomR - @doorDist] = 2;
 											}
 										case 'south':
-											@layoutMap[@cRoom][@r + @roomLength - 1 + @doorDist] = @cell;
+											@layoutMap[@c][@roomR + @roomLength - 1 + @doorDist] = @cell;
+											@layoutMap[@c2][@roomR + @roomLength - 1 + @doorDist] = @cell;
 											if(@cell == 'hall') {
-												@heightMap[@cRoom][@r + @roomLength - 1 + @doorDist] = 2;
+												@heightMap[@c][@roomR + @roomLength - 1 + @doorDist] = 2;
+												@heightMap[@c2][@roomR + @roomLength - 1 + @doorDist] = 2;
 											}
 										case 'west':
-											@layoutMap[@c - @doorDist][@rRoom] = @cell;
+											@layoutMap[@roomC - @doorDist][@r] = @cell;
+											@layoutMap[@roomC - @doorDist][@r2] = @cell;
 											if(@cell == 'hall') {
-												@heightMap[@c - @doorDist][@rRoom] = 2;
+												@heightMap[@roomC - @doorDist][@r] = 2;
+												@heightMap[@roomC - @doorDist][@r2] = 2;
 											}
 										case 'east':
-											@layoutMap[@c + @roomWidth - 1 + @doorDist][@rRoom] = @cell;
+											@layoutMap[@roomC + @roomWidth - 1 + @doorDist][@r] = @cell;
+											@layoutMap[@roomC + @roomWidth - 1 + @doorDist][@r2] = @cell;
 											if(@cell == 'hall') {
-												@heightMap[@c + @roomWidth - 1 + @doorDist][@rRoom] = 2;
+												@heightMap[@roomC + @roomWidth - 1 + @doorDist][@r] = 2;
+												@heightMap[@roomC + @roomWidth - 1 + @doorDist][@r2] = 2;
 											}
 									}
 								}
 								@rooms[@next]['doors']++;
 								@room['doors']++;
-								// TODO: fix/re-add double doors
-								// attempt to add a double door
-								if(@dist == 2 && @room['height'] >= 5 && @rooms[@next]['height'] >= 5) {
-									if(@dir == 'north') {
-										// check both rooms for space (current and next room)
-										if(@roomMap[@cRoom + 1][@rRoom] == @next && @roomMap[@cRoom + 1][@rRoom + 2] == @current) {
-											@layoutMap[@cDoor + 1][@rDoor] = 'door';
-										} else if(@roomMap[@cRoom - 1][@rRoom] == @next && @roomMap[@cRoom - 1][@rRoom + 2] == @current) {
-											@layoutMap[@cDoor - 1][@rDoor] = 'door';
-										}
-									} else if(@dir == 'south') {
-										if(@roomMap[@cRoom + 1][@rRoom] == @next && @roomMap[@cRoom + 1][@rRoom + 2] == @current) {
-											@layoutMap[@cDoor + 1][@rDoor] = 'door';
-										} else if(@roomMap[@cRoom - 1][@rRoom] == @next && @roomMap[@cRoom - 1][@rRoom - 2] == @current) {
-											@layoutMap[@cDoor - 1][@rDoor] = 'door';
-										}
-									} else if(@dir == 'east') {
-										if(@roomMap[@cRoom][@rRoom + 1] == @next && @roomMap[@cRoom - 2][@rRoom + 1] == @current) {
-											@layoutMap[@cDoor][@rDoor + 1] = 'door';
-										} else if(@roomMap[@cRoom][@rRoom - 1] == @next && @roomMap[@cRoom - 2][@rRoom - 1] == @current) {
-											@layoutMap[@cDoor][@rDoor - 1] = 'door';
-										}
-									} else { // west
-										if(@roomMap[@cRoom][@rRoom + 1] == @next && @roomMap[@cRoom + 2][@rRoom + 1] == @current) {
-											@layoutMap[@cDoor][@rDoor + 1] = 'door';
-										} else if(@roomMap[@cRoom][@rRoom - 1] == @next && @roomMap[@cRoom + 2][@rRoom - 1] == @current) {
-											@layoutMap[@cDoor][@rDoor - 1] = 'door';
-										}
-									}
-								}
 								if(!@rooms[@next]['connected']) {
 									@previous = @current;
 									@current = @next;
@@ -811,34 +820,24 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 									case 'door':
 										if(@column == 'door' && @y < @ceilingY - @roomHeight + 2) {
 											if(string_ends_with(@roomData['door'], 'door')) {
-												@lower = @y < @ceilingY - @roomHeight + 1;
-												@north = @roomMap[@c][@r - 1];
-												@northCell = @layoutMap[@c][@r - 1];
-												@south = array_get(@roomMap[@c], @r + 1, 0); // special case for dungeon entrance
-												@southCell = array_get(@layoutMap[@c], @r + 1, 0);
-												@west = @roomMap[@c - 1][@r];
-												@westCell = @layoutMap[@c - 1][@r];
-												@east = @roomMap[@c + 1][@r];
-												@eastCell = @layoutMap[@c + 1][@r];
-												@openableDoor = false;
-												if(@north == -1 && @roomId != -1 && @room['connected'] % 3 == 1 && (!@doorAdjacent || @southCell == 'door')) {
-													@openableDoor = true;
-													@half = if(@lower, 'half=lower,', 'half=upper,');
-													_add_to_chunk(@chunk, @loc, @roomData['door'].'[facing=south,'.@half.'hinge=left]');
-												} else if(@south == -1 && @roomId != -1 && @room['connected'] % 3 == 1 && (!@doorAdjacent || @northCell == 'door')) {
-													@openableDoor = true;
-													@half = if(@lower, 'half=lower,', 'half=upper,');
-													_add_to_chunk(@chunk, @loc, @roomData['door'].'[facing=north,'.@half.'hinge=left]');
-												} else if(@west == -1 && @roomId != -1 && @room['connected'] % 3 == 1 && (!@doorAdjacent || @eastCell == 'door')) {
-													@openableDoor = true;
-													@half = if(@lower, 'half=lower,', 'half=upper,');
-													_add_to_chunk(@chunk, @loc, @roomData['door'].'[facing=east,'.@half.'hinge=left]');
-												} else if(@east == -1 && @roomId != -1 && @room['connected'] % 3 == 1 && (!@doorAdjacent || @westCell == 'door')) {
-													@openableDoor = true;
-													@half = if(@lower, 'half=lower,', 'half=upper,');
-													_add_to_chunk(@chunk, @loc, @roomData['door'].'[facing=west,'.@half.'hinge=left]');
-												}
-												if(!@openableDoor) {
+												if(!@doorAdjacent && @roomId != -1 && @room['connected'] % 3 == 1) {
+													@lower = @y < @ceilingY - @roomHeight + 1;
+													if(@roomMap[@c][@r - 1] == -1) {
+														@half = if(@lower, 'half=lower,', 'half=upper,');
+														_add_to_chunk(@chunk, @loc, @roomData['door'].'[facing=south,'.@half.'hinge=left]');
+													} else if(array_get(@roomMap[@c], @r + 1, 0) == -1) { // dungeon entrance special case
+														@half = if(@lower, 'half=lower,', 'half=upper,');
+														_add_to_chunk(@chunk, @loc, @roomData['door'].'[facing=north,'.@half.'hinge=left]');
+													} else if(@roomMap[@c - 1][@r] == -1) {
+														@half = if(@lower, 'half=lower,', 'half=upper,');
+														_add_to_chunk(@chunk, @loc, @roomData['door'].'[facing=east,'.@half.'hinge=left]');
+													} else if(@roomMap[@c + 1][@r] == -1) {
+														@half = if(@lower, 'half=lower,', 'half=upper,');
+														_add_to_chunk(@chunk, @loc, @roomData['door'].'[facing=west,'.@half.'hinge=left]');
+													} else {
+														_add_to_chunk(@chunk, @loc, @roomData['room']);
+													}
+												} else {
 													_add_to_chunk(@chunk, @loc, @roomData['room']);
 												}
 											} else {
