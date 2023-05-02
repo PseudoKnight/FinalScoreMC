@@ -9,6 +9,11 @@ proc _waves_add_player(@player, @waves) {
 	@waves['players'][] = @player;
 	set_pscoreboard(@player, 'waves'.@waves['region']);
 	bar_add_player('waves'.@waves['region'], @player);
+	create_bar('waves'.@waves['region'].@player, array(visible: false, color: 'YELLOW'));
+	foreach(@p in @waves['players']) {
+		bar_add_player('waves'.@waves['region'].@p, @player);
+		bar_add_player('waves'.@waves['region'].@player, @p);
+	}
 	clear_peffects(@player);
 	_clear_pinv(@player);
 	if(array_index_exists(@c, 'gear')) {
@@ -33,11 +38,15 @@ proc _waves_add_player(@player, @waves) {
 }
 
 proc _waves_remove_player(@player, @waves) {
-	try(bar_remove_player('waves'.@waves['region'], @player))
 	array_remove_values(@waves['players'], @player);
 	clear_peffects(@player);
 	_equip_kit(@player);
 	_set_pactivity(@player, null);
+	try(bar_remove_player('waves'.@waves['region'], @player))
+	foreach(@p in @waves['players']) {
+		try(bar_remove_player('waves'.@waves['region'].@p, @player))
+	}
+	remove_bar('waves'.@waves['region'].@player);
 }
 
 proc _waves_add_spectator(@player, @waves) {

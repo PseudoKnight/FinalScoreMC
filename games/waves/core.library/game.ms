@@ -6,6 +6,7 @@ proc _waves_prepare(@name, @arena, @region, @world) {
 		spectators: array(),
 		title: '',
 		subtitle: '',
+		bossbar: '',
 		music: '',
 		mobs: array(),
 		mobCount: 1,
@@ -15,7 +16,6 @@ proc _waves_prepare(@name, @arena, @region, @world) {
 		region: @region,
 		config: yml_decode(read('../scripts/'.@name.'.yml')),
 		trigger: null,
-		boss: false,
 		binds: array(),
 	);
 	if(array_index_exists(@waves['config'], 'title')) {
@@ -196,11 +196,16 @@ proc _waves_start(@waves) {
 			@viewers = null;
 			if(@countdown > 0) {
 				if(array_index_exists(@waves['config'], 'shop') && (@viewers = get_inventory_viewers('waves'.@waves['region']))) {
-					update_bar('waves'.@waves['region'], array(color: 'YELLOW', title: array_implode(@viewers, ', ').' viewing shop'));
+					foreach(@viewer in @viewers) {
+						update_bar('waves'.@waves['region'].@viewer, array(visible: true, title: @viewer.' viewing shop ('.plevel(@viewer).' levels)'));
+					}
 					die();
 				}
+				foreach(@p in @waves['players']) {
+					update_bar('waves'.@waves['region'].@p, array(visible: false));
+				}
 				@countdown--;
-				update_bar('waves'.@waves['region'], array(color: 'WHITE', title: '', percent: (6 - @countdown[0]) / 6));
+				update_bar('waves'.@waves['region'], array(color: 'WHITE', title: @waves['bossbar'], percent: (6 - @countdown[0]) / 6));
 				if(@countdown == 5) {
 					if(@waves['title']) {
 						foreach(@p in @waves['players']) {
@@ -238,7 +243,7 @@ proc _waves_start(@waves) {
 				update_bar('waves'.@waves['region'], array(
 					percent: 1.0,
 					visible: true,
-					title: if(@waves['boss'], color('red').color('bold').'BOSS', ''),
+					title: @waves['bossbar'],
 					color: 'RED',
 					style: 'SOLID',
 				));
@@ -357,7 +362,7 @@ proc _waves_start(@waves) {
 					}
 					if(array_index_exists(@wave, 'duplicate')) {
 						@waves['duplicate'] = @wave['duplicate'];
-					} else if(@waves['name'] == 'random' && !array_index_exists(@wave, 'boss')) {
+					} else if(@waves['name'] == 'random') {
 						@waves['duplicate'] = array_size(@waves['players']);
 					} else {
 						@waves['duplicate'] = 1;
@@ -369,10 +374,10 @@ proc _waves_start(@waves) {
 						set_block(@trigger, 'REDSTONE_BLOCK');
 						@waves['trigger'] = @trigger;
 					}
-					if(array_index_exists(@wave, 'boss')) {
-						@waves['boss'] = true;
+					if(array_index_exists(@wave, 'bossbar')) {
+						@waves['bossbar'] = @wave['bossbar'];
 					} else {
-						@waves['boss'] = false;
+						@waves['bossbar'] = '';
 					}
 
 					@waves['mobs'] = @wave['mobs'];
@@ -383,7 +388,7 @@ proc _waves_start(@waves) {
 					update_bar('waves'.@waves['region'], 0.0);
 					update_bar('waves'.@waves['region'], array(
 						visible: true,
-						title: '',
+						title: @waves['bossbar'],
 						style: 'SEGMENTED_6',
 					));
 				} catch(IndexOverflowException @ex) {

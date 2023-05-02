@@ -92,7 +92,7 @@ proc _get_random_wave(@random, @waveNum) {
 		}
 		@mobData = @mobs[@tier][integer(srand(@random) * array_size(@mobs[@tier]))][];
 		if(@waveNum == 50) {
-			@mobData['boss'] = true;
+			@wave['duplicate'] = 1;
 			@mobData['count'] = 1;
 			@totalCount = 0;
 		} else if(!@wave['mobs']) {
@@ -111,14 +111,18 @@ proc _get_random_wave(@random, @waveNum) {
 		} else {
 			@wave['music'] = 'music.nether.basalt_deltas';
 		}
+	} else if(@waveNum == 40) {
+		@wave['music'] = 'music.credits';
+	} else if(@waveNum % 10 == 0) {
+		@wave['music'] = 'music.game';
 	}
 
 	if(array_size(@wave['mobs']) > 1) {
-		@wave['subtitle'] = @waveNum .': '. @wave['mobs'][1]['adjective'].' '.@wave['mobs'][0]['noun'];
+		@wave['bossbar'] = color('bold').@waveNum .': '. @wave['mobs'][1]['adjective'].' '.@wave['mobs'][0]['noun'];
 	} else {
-		@wave['subtitle'] = @waveNum .': '.@wave['mobs'][0]['noun'];
+		@wave['bossbar'] = color('bold').@waveNum .': '.@wave['mobs'][0]['noun'];
 	}
-	console('Wave #'.@waveNum.': '.@wave['subtitle']);
+	console('Wave #'.@waveNum.': '.@wave['bossbar']);
 
 	if(@free) {
 		res_free_resource(@random);
