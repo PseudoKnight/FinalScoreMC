@@ -6,3 +6,12 @@ bind('entity_damage', null, array(type: 'TROPICAL_FISH', cause: 'ENTITY_ATTACK')
 		cancel();
 	}
 }
+
+/*
+	Prevent dehydration damage to named axolotls
+ */
+bind('entity_damage', null, array(type: 'AXOLOTL', cause: 'DRYOUT'), @event) {
+	if(get_mob_name(@event['id'])) {
+		cancel();
+	}
+}
