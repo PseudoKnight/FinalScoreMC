@@ -100,6 +100,9 @@ proc _get_random_wave(@random, @waveNum) {
 		} else {
 			@mobData['count'] = ceil(srand(@random) * @totalCount);
 		}
+		if(@mobData['count'] == 1) {
+			@mobData['pos'] = 'center';
+		}
 		@totalCount -= @mobData['count'];
 		@wave['mobs'][] = @mobData;
 		@numTypes--;
