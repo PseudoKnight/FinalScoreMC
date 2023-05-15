@@ -6,7 +6,7 @@ register_command('discord', array(
 	},
 	executor: closure(@alias, @sender, @args, @info) {
 		if(!@args) {
-			die(colorize('&lWe have a Discord server @ \n>>> &a&lhttps://discord.gg/GHgfWp4 &l<<<'));
+			die(colorize('&lWe have a Discord server @ \n>>> &a&lhttps://discord.gg/XAJAdCXdwr &l<<<'));
 		}
 		@id = @args[0];
 		if(is_integral(@id)) {

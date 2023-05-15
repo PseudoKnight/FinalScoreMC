@@ -110,7 +110,7 @@ You can get help from server staff who have a cyan name. Staff specific to Frog 
 
 You can have one /home per world, excluding the outworld and park.
 
-We have a Discord server @ &bhttps://discord.gg/GHgfWp4
+We have a Discord server @ &bhttps://discord.gg/XAJAdCXdwr
 
 There are five buildable survival overworlds: Alpha, Delta, Gamma, Omega, and Psi. Each has a nether, but there's one shared End dimension.
 
