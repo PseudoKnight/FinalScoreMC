@@ -60,13 +60,15 @@ proc _snake_add(@player, @game) {
 		}
 	}
 
-	@i = 20;
+	@i = 10;
 	while(!_snake_spawn(@player, @game)) {
 		if(--@i <= 0) {
-			array_remove(@game['snakes'], @player);
-			remove_team(@player, 'snake');
-			if(@game['mode'] == 'capture') {
-				array_remove_values(@game['teams'][@team], @player);
+			if(@game['mode'] != 'endless') {
+				array_remove(@game['snakes'], @player);
+				remove_team(@player, 'snake');
+				if(@game['mode'] == 'capture') {
+					array_remove_values(@game['teams'][@team], @player);
+				}
 			}
 			return(false);
 		}
@@ -88,7 +90,6 @@ proc _snake_add(@player, @game) {
 		set_pflight(@player, true);
 		set_pflying(@player, true);
 		_set_pactivity(@player, 'Snake');
-		runas('~console', '/jukebox show add '.@player.' @snake');
 	} else {
 		@game['snakes'][@player]['bot'] = @player;
 	}
@@ -222,7 +223,6 @@ proc _snake_remove(@player, @game) {
 	}
 	if(ponline(@player)) {
 		set_pflight(@player, false);
-		runas('~console', '/jukebox show remove '.@player.' @snake');
 		_equip_kit(@player, array(7: pinv(@player, 7)));
 		_set_pactivity(@player, null);
 	}
@@ -247,16 +247,6 @@ proc _snake_kill(@player, @game) {
 		foreach(@p: @s in @game['snakes']) {
 			if(@s['alive']) {
 				set_pscore('score', @p, get_pscore('score', @p, 'snake') + 1, 'snake');
-			}
-		}
-		if(@snake['bot']) {
-			@color = @snake['tail'];
-			@abilities = @snake['ability-count'];
-			if(_snake_add(@player, @game)) {
-				_snake_set_color(@player, @color, @game); // keep color
-				@game['snakes'][@player]['ability-count'] = @abilities; // keep abilities
-			} else {
-				set_pscore('score', @player, 0, 'snake');
 			}
 		}
 	} else {

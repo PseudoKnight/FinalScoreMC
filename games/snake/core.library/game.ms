@@ -237,6 +237,13 @@ proc _snake_start_task(@game) {
 						@alive++;
 						@active = @player;
 					}
+				} else if(@game['mode'] == 'endless' && @snake['bot']) {
+					@color = @snake['tail'];
+					@abilities = @snake['ability-count'];
+					if(_snake_add(@player, @game)) {
+						_snake_set_color(@player, @color, @game); // keep color
+						@game['snakes'][@player]['ability-count'] = @abilities; // keep abilities
+					}
 				}
 			} catch (IndexOverflowException @ex) {
 				console(@ex);
