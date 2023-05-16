@@ -17,6 +17,7 @@ proc _waves_prepare(@name, @arena, @region, @world) {
 		config: yml_decode(read('../scripts/'.@name.'.yml')),
 		trigger: null,
 		binds: array(),
+		task:  null,
 	);
 	if(array_index_exists(@waves['config'], 'title')) {
 		_add_activity('waves'.@region, _to_upper_camel_case(@region).': '.@waves['config']['title'], @region, @world);
@@ -409,7 +410,9 @@ proc _waves_start(@waves) {
 }
 
 proc _waves_end(@waves, @win) {
-	clear_task(@waves['task']);
+	if(@waves['task']) {
+		clear_task(@waves['task']);
+	}
 	if(has_inventory('waves'.@waves['region'])) {
 		delete_virtual_inventory('waves'.@waves['region']);
 	}
