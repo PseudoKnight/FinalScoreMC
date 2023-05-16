@@ -184,6 +184,11 @@ proc _waves_start(@waves) {
 	@waves['task'] = set_interval(1000, closure(){
 		try {
 			// Check if players are still in play
+			foreach(@p in @waves['players']) {
+				if(!array_contains(sk_current_regions(@p), @waves['region'])) {
+					_waves_remove_player(@p, @waves);
+				}
+			}
 			if(!@waves['players']) {
 				_waves_end(@waves, false);
 				die();
@@ -210,25 +215,19 @@ proc _waves_start(@waves) {
 				if(@countdown == 5) {
 					if(@waves['title']) {
 						foreach(@p in @waves['players']) {
-							if(ponline(@p)) {
-								title(@p, @waves['title'], null, 10, 70, 20);
-							}
+							title(@p, @waves['title'], null, 10, 70, 20);
 						}
 						if(!@waves['subtitle']) {
 							@waves['title'] = '';
 						}
 					} else if(@waves['subtitle']) {
 						foreach(@p in @waves['players']) {
-							if(ponline(@p)) {
-								title(@p, '', @waves['subtitle'], 10, 70, 20);
-							}
+							title(@p, '', @waves['subtitle'], 10, 70, 20);
 						}
 					}
 				} else if(@countdown == 3 && @waves['title'] && @waves['subtitle']) {
 					foreach(@i: @p in @waves['players']) {
-						if(ponline(@p)) {
-							title(@p, @waves['title'], @waves['subtitle'], 0, 40, 20);
-						}
+						title(@p, @waves['title'], @waves['subtitle'], 0, 40, 20);
 					}
 					@waves['title'] = '';
 					@waves['subtitle'] = '';
@@ -249,9 +248,7 @@ proc _waves_start(@waves) {
 					style: 'SOLID',
 				));
 				foreach(@p in @waves['players']) {
-					if(ponline(@p)) {
-						play_sound(ploc(@p), array(sound: 'ENTITY_EVOKER_PREPARE_SUMMON', volume: 0.4), @p);
-					}
+					play_sound(ploc(@p), array(sound: 'ENTITY_EVOKER_PREPARE_SUMMON', volume: 0.4), @p);
 				}
 			}
 			if(@sleep > 0) {
@@ -327,9 +324,7 @@ proc _waves_start(@waves) {
 			} else if(!@entities) {
 				@p = null;
 				foreach(@p in @waves['players']) {
-					if(ponline(@p)) {
-						play_sound(ploc(@p), array(sound: 'BLOCK_ENCHANTMENT_TABLE_USE', pitch: 0.5), @p);
-					}
+					play_sound(ploc(@p), array(sound: 'BLOCK_ENCHANTMENT_TABLE_USE', pitch: 0.5), @p);
 				}
 				@waves['wave']++;
 				@waveNum = @waves['wave'];
@@ -341,9 +336,7 @@ proc _waves_start(@waves) {
 					if(array_index_exists(@wave, 'music')) {
 						if(@waves['music']) {
 							foreach(@p in @waves['players']) {
-								if(ponline(@p)) {
-									stop_named_sound(@p, @waves['music'], 'RECORDS');
-								}
+								stop_named_sound(@p, @waves['music'], 'RECORDS');
 							}
 						}
 						@waves['music'] = @wave['music'];
@@ -351,10 +344,8 @@ proc _waves_start(@waves) {
 					}
 					if(array_index_exists(@wave, 'items')) {
 						foreach(@p in @waves['players']) {
-							if(ponline(@p)) {
-								foreach(@item in @wave['items']) {
-									drop_item(@p, @item);
-								}
+							foreach(@item in @wave['items']) {
+								drop_item(@p, @item);
 							}
 						}
 					}
@@ -446,24 +437,20 @@ proc _waves_end(@waves, @win) {
 		@coins = ceil(@waves['config']['coins']);
 	}
 	foreach(@p in @waves['players']) {
-		if(ponline(@p)) {
-			if(@win) {
-				title(@p, color('green').'Success!', if(@coins, color('gold').'+ '.@coins.' Coins', ''));
-				if(@coins) {
-					_acc_add(@p, @coins);
-				}
+		if(@win) {
+			title(@p, color('green').'Success!', if(@coins, color('gold').'+ '.@coins.' Coins', ''));
+			if(@coins) {
+				_acc_add(@p, @coins);
 			}
-			stop_named_sound(@p, @waves['music'], 'RECORDS');
-			_waves_remove_player(@p, @waves);
 		}
+		stop_named_sound(@p, @waves['music'], 'RECORDS');
+		_waves_remove_player(@p, @waves);
 	}
 	foreach(@p in @waves['spectators']) {
-		if(ponline(@p)) {
-			if(@win) {
-				title(@p, color('green').'Success!', '');
-			}
-			stop_named_sound(@p, @waves['music'], 'RECORDS');
-			_waves_remove_spectator(@p, @waves);
+		if(@win) {
+			title(@p, color('green').'Success!', '');
 		}
+		stop_named_sound(@p, @waves['music'], 'RECORDS');
+		_waves_remove_spectator(@p, @waves);
 	}
 }

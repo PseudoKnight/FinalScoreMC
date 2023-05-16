@@ -51,7 +51,7 @@ proc _waves_remove_player(@player, @waves) {
 	foreach(@p in @waves['players']) {
 		try(bar_remove_player('waves'.@waves['region'].@p, @player))
 	}
-	remove_bar('waves'.@waves['region'].@player);
+	try(remove_bar('waves'.@waves['region'].@player))
 }
 
 proc _waves_add_spectator(@player, @waves) {
