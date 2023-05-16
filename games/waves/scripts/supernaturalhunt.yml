@@ -115,8 +115,8 @@ shop:
     40:
         name: SHIELD
         cost: 5
-gear:
-    0:
+equipment:
+    weapon:
         name: STONE_SWORD
 waves:
     1:
@@ -499,7 +499,7 @@ waves:
                       name: IRON_LEGGINGS
                   boots:
                       name: IRON_BOOTS
-    16:
+    17:
         subtitle: 'PseudoKnight'
         duplicate: 4
         mobs:
@@ -527,7 +527,7 @@ waves:
                       name: IRON_LEGGINGS
                   boots:
                       name: IRON_BOOTS
-    17:
+    18:
         subtitle: 'BOSS: gothem8'
         duplicate: 6
         mobs:
@@ -543,7 +543,7 @@ waves:
                       name: PLAYER_HEAD
                       meta:
                           owner: gothem8
-    18:
+    19:
         title: 'Ghost Stories'
         subtitle: 'Flight'
         mobs:
@@ -553,7 +553,7 @@ waves:
                   baby: true
             - HUSK
             - HUSK
-    19:
+    20:
         subtitle: "Don't Blink"
         mobs:
             - GHAST
@@ -562,7 +562,7 @@ waves:
             - WITCH
             - WITCH
             - WITCH
-    20:
+    21:
         subtitle: 'Haunted'
         mobs:
             - STRAY
@@ -573,20 +573,20 @@ waves:
             - VEX
             - VEX
             - VEX
-    21:
+    22:
         subtitle: 'Logging & Co.'
         mobs:
             - VINDICATOR
             - VINDICATOR
             - VINDICATOR
             - VINDICATOR
-    22:
+    23:
         subtitle: 'Steel Trap'
         mobs:
             - EVOKER
             - EVOKER
             - EVOKER
-    23:
+    24:
         subtitle: 'BOSS: Nightmare'
         mobs:
             - EVOKER
@@ -596,7 +596,7 @@ waves:
             - VINDICATOR
             - VINDICATOR
             - VINDICATOR
-    24:
+    25:
         title: 'Unnatural Disasters'
         subtitle: 'Australia'
         mobs:
@@ -605,7 +605,7 @@ waves:
             - CAVE_SPIDER
             - SILVERFISH
             - SILVERFISH
-    25:
+    26:
         subtitle: 'UntameCanine'
         mobs:
             - WOLF
@@ -615,7 +615,7 @@ waves:
             - WOLF
             - WOLF
             - WOLF
-    26:
+    27:
         subtitle: 'Demolition Job'
         mobs:
             - GHAST
@@ -625,7 +625,7 @@ waves:
             - CREEPER
             - CREEPER
             - CREEPER
-    27:
+    28:
         subtitle: 'Toxic Fallout'
         mobs:
             - WITCH
@@ -634,7 +634,7 @@ waves:
             - WITCH
             - WITHER_SKELETON
             - WITHER_SKELETON
-    28:
+    29:
         subtitle: 'BadScience'
         mobs:
             - GHAST
@@ -642,7 +642,7 @@ waves:
             - WITCH
             - WITCH
             - EVOKER
-    29:
+    30:
         subtitle: 'FINAL BOSS: Global Termination'
         mobs:
             - GHAST

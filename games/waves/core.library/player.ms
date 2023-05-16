@@ -16,8 +16,13 @@ proc _waves_add_player(@player, @waves) {
 	}
 	clear_peffects(@player);
 	_clear_pinv(@player);
-	if(array_index_exists(@c, 'gear')) {
-		set_pinv(@player, @c['gear']);
+	if(array_index_exists(@c, 'equipment')) {
+		set_mob_equipment(puuid(@player), @c['equipment']);
+	}
+	if(array_index_exists(@c, 'inventory')) {
+		foreach(@item in @c['inventory']) {
+			pgive_item(@player, @item);
+		}
 	}
 	if(array_index_exists(@c, 'shop')) {
 		pgive_item(@player, array(name: 'EMERALD', meta: array(display: 'Open Shop', lore: array(@player.'\'s Shop Token'))));

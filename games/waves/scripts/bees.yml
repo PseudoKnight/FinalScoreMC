@@ -1,10 +1,10 @@
 title: 'Bees'
 author: 'PseudoKnight'
 levels: 5
-gear:
-    0:
+equipment:
+    weapon:
         name: WOODEN_SWORD
-    1:
+    off_hand:
         name: SHIELD
 shop:
     0:

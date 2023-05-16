@@ -1,6 +1,6 @@
 maxWaves: 50
-gear:
-    0:
+equipment:
+    weapon:
         name: WOODEN_SWORD
 shop:
     0:

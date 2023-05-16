@@ -1,24 +1,23 @@
 title: 'Classic'
 author: 'rivergod'
-gear:
-    0:
+equipment:
+    weapon:
         name: DIAMOND_SWORD
         meta:
             enchants:
                 looting: 2
-    1:
-        name: BOW
-    2:
-        name: ARROW
-        qty: 20
-    100:
+    boots:
         name: DIAMOND_BOOTS
-    101:
+    leggings:
         name: DIAMOND_LEGGINGS
-    102:
+    chestplate:
         name: DIAMOND_CHESTPLATE
-    103:
+    helmet:
         name: DIAMOND_HELMET
+inventory:
+    - name: BOW
+    - name: ARROW
+      qty: 20
 waves:
     1:
         title: 'Proving Grounds'

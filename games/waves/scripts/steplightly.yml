@@ -3,8 +3,8 @@ author: 'gothem8'
 levels: 5
 mobs:
     - EVILSNOWMAN
-gear:
-    0:
+equipment:
+    weapon:
         name: WOODEN_SWORD
 shop:
     0:
