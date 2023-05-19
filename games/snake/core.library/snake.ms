@@ -8,6 +8,7 @@
 	'tail': the block type:data for the color of their tail
 	'blocks': an array of ordered block locations representing the tail, new ones pushed on end, such that
 			  order is back of tail to head. This is used for removing blocks.
+	'max': maximum number of blocks for the tail (0 is infinite)
 	'ability-count': the current ammo for each ability
 	'alive': whether the snake is active or dead
 	'turned': set to true if an action is performed, set to false on update
@@ -137,6 +138,7 @@ proc _snake_spawn(@player, @game) {
 	@snake = @game['snakes'][@player];
 	@snake['ability-count'] = array(0, 0, 0, 0, 0);
 	@snake['blocks'] = array(@startLoc, @headLoc);
+	@snake['max'] = 0;
 	@snake['loc'] = @headLoc;
 	@snake['dir'] = @dir;
 	@snake['region'] = @region;
@@ -289,7 +291,10 @@ proc _snake_move(@player, @game) {
 	@snake = @game['snakes'][@player];
 
 	// Boost
-	@snake['sleep'] = if(@game['botsOnly'], if(@snake['boost'], 1, 2), max(1, 5 - @snake['boost']));
+	@snake['sleep'] = if(@game['mode'] == 'gluttony', 1,
+		if(@game['botsOnly'], 
+			if(@snake['boost'], 1, 2),
+			max(1, 5 - @snake['boost'])))
 	if(@snake['boost']) {
 		@loc = @snake['loc'][];
 		@loc[0] += 0.5;

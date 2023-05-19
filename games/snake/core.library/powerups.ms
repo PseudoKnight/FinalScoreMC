@@ -75,7 +75,8 @@ proc _snake_add_powerup(@game) {
 	@region = @game['region'].rand(1, @game['surfaces'] + 1);
 	@loc = _snake_valid_location(@region);
 	if(@loc) {
-		@r = rand(if(@game['mode'] == 'capture', 4, 5)) + 1;
+		@maxIndex = if(@game['mode'] == 'capture', 4, if(@game['mode'] == 'gluttony', 2, 5));
+		@r = rand(@maxIndex) + 1;
 		@block = _snake_get_block_from(@r);
 		@type = _snake_get_powerup_from(@r);
 		set_block(@loc, @block, false);
@@ -119,24 +120,37 @@ proc _snake_powerup(@player, @powerup, @game) {
 		return(false);
 	}
 	@snake = @game['snakes'][@player];
-	@slot = _snake_get_slot_from(@powerup);
-	@snake['ability-count'][@slot] += 1;
-	if(!@snake['bot']) {
-		@item = pinv(@player, @slot);
-		@inv = associative_array();
-		if(@item && @item['name'] == _snake_get_block_from(@powerup)) {
-			@item['qty'] += 1;
-			@inv[@slot] = @item;
+	if(@game['mode'] == 'gluttony') {
+		if(@snake['max'] < 100) {
+			@snake['max'] += 10;
+		} else if(@snake['max'] < 200) {
+			@snake['max'] += 20;
+		} else if(@snake['max'] < 500) {
+			@snake['max'] += 50;
 		} else {
-			@inv[@slot] = array(
-				'name': _snake_get_block_from(@powerup),
-				'meta': associative_array('display': _snake_get_name_from(@powerup)),
-			);
+			@snake['max'] += 100;
 		}
-		set_pinv(@player, @inv);
-		title(@player, '', color('dark_gray').'+'.@powerup, 2, 0, 40);
+		set_pscore('score', @player, @snake['max'], 'snake');
+	} else {
+		@slot = _snake_get_slot_from(@powerup);
+		@snake['ability-count'][@slot] += 1;
+		if(!@snake['bot']) {
+			@item = pinv(@player, @slot);
+			@inv = associative_array();
+			if(@item && @item['name'] == _snake_get_block_from(@powerup)) {
+				@item['qty'] += 1;
+				@inv[@slot] = @item;
+			} else {
+				@inv[@slot] = array(
+					name: _snake_get_block_from(@powerup),
+					meta: associative_array(display: _snake_get_name_from(@powerup)),
+				);
+			}
+			set_pinv(@player, @inv);
+			title(@player, '', color('dark_gray').'+'.@powerup, 2, 0, 40);
+		}
 	}
-	play_sound(@snake['loc'], associative_array('sound': 'ENTITY_ENDERMAN_TELEPORT', 'pitch': 2, 'volume': 4));
+	play_sound(@snake['loc'], associative_array(sound: 'ENTITY_ENDERMAN_TELEPORT', pitch: 2, volume: 4));
 	return(true);
 }
 
