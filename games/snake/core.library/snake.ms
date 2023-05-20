@@ -116,15 +116,16 @@ proc _snake_spawn(@player, @game) {
 				}
 			}
 			if(!@found) {
-				break();
+				@startLoc = _snake_valid_location(@region, if(ponline(@player), 5, 1));
+				if(@startLoc) {
+					break();
+				}
 			}
 		}
 		if(@num > @game['surfaces']) {
 			@region = @game['region'].rand(1, @game['surfaces'] + 1);
-		} else {
-			@region = @game['region'].@num;
+			@startLoc = _snake_valid_location(@region, if(ponline(@player), 5, 1));
 		}
-		@startLoc = _snake_valid_location(@region, 5);
 	}
 	if(!@startLoc) {
 		return(false);

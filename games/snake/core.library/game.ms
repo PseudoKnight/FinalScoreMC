@@ -280,7 +280,7 @@ proc _snake_start_task(@game) {
 				@game['botsOnly'] = true;
 			}
 		}
-		if(@alive < 2 && @game['mode'] != 'gluttony') {
+		if(@alive < 2 && @game['mode'] != 'gluttony' && @game['mode'] != 'endless') {
 			_snake_end(@active, @game);
 		}
 	});
