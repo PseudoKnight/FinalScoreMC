@@ -559,13 +559,15 @@ proc _snake_shoot_laser(@player, @loc, @dir, @game) {
 
 proc _snake_update_laser(@player, @game) {
 	@snake = @game['snakes'][@player];
-	spawn_particle(@snake['laser-blocks'][-1], array(
-		'particle': 'LAVA',
-		'count': 8,
-		'xoffset': 0.5,
-		'yoffset': 0.5,
-		'zoffset': 0.5,
-	));
+	if(@snake['laser-blocks']) {
+		spawn_particle(@snake['laser-blocks'][-1], array(
+			'particle': 'LAVA',
+			'count': 8,
+			'xoffset': 0.5,
+			'yoffset': 0.5,
+			'zoffset': 0.5,
+		));
+	}
 	if(time() > @snake['laser']) {
 		_snake_clear_laser(@player, @game);
 		@snake['laser'] = 0;
@@ -577,9 +579,11 @@ proc _snake_update_laser(@player, @game) {
 
 proc _snake_clear_laser(@player, @game) {
 	@snake = @game['snakes'][@player];
-	foreach(@l in @snake['laser-blocks']) {
-		if(get_block(@l) == 'RED_STAINED_GLASS') {
-			set_block(@l, 'AIR', false);
+	if(@snake['laser-blocks']) {
+		foreach(@l in @snake['laser-blocks']) {
+			if(get_block(@l) == 'RED_STAINED_GLASS') {
+				set_block(@l, 'AIR', false);
+			}
 		}
 	}
 	@snake['laser-blocks'] = null;
