@@ -402,18 +402,17 @@ proc _snake_end(@winner, @game) {
 
 		// Display scores
 		if(@scores) {
-			@topPlayer = @scores[0]['name'];
-			@title = '['.@scores[0]['value'].'] '.@game['snakes'][@topPlayer]['color'].@topPlayer
-					.if(@scores[0]['topscore'], color('bold').' TOPSCORE!', if(@scores[0]['highscore'], color('bold').' HIGHSCORE!'));
-			@subtitle = '';
-			if(array_size(@scores) > 1) {
-				@secondPlayer = @scores[1]['name'];
-				@subtitle = '['.@scores[1]['value'].'] '.@game['snakes'][@secondPlayer]['color'].@secondPlayer
-						.if(@scores[1]['topscore'], color('bold').' TOPSCORE!', if(@scores[1]['highscore'], color('bold').' HIGHSCORE!'));
+			@output = array();
+			foreach(@score in @scores) {
+				@player = @score['name'];
+				@output[] = '['.@score['value'].'] '.@game['snakes'][@player]['color'].@player
+					.if(@score['topscore'], color('bold').' TOPSCORE!', if(@score['highscore'], color('bold').' HIGHSCORE!'));
 			}
 			foreach(@player in array_keys(@game['snakes'])) {
 				if(ponline(@player)) {
-					title(@player, @title, @subtitle, 40, 80, 40);
+					foreach(@line in @output) {
+						tmsg(@player, @line);
+					}
 				}
 			}
 		}
