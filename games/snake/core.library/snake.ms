@@ -261,7 +261,7 @@ proc _snake_kill(@player, @game) {
 						@block = @snake['blocks'][@i - @n];
 						@blockType = get_block(@block);
 						if(@blockType == @snake['tail']) {
-							set_block(@block, if(@game['mode'] == 'capture', 'AIR', @snake['head']), false);
+							set_block(@block, if(@game['mode'] == 'capture' || @game['mode'] == 'gluttony', 'AIR', @snake['head']), false);
 							spawn_particle(@block, array('particle': 'SMOKE_NORMAL', 'count': 8, 'xoffset': 1, 'yoffset': 1, 'zoffset': 1));
 						}
 						@n++;
