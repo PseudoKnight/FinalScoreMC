@@ -4,7 +4,7 @@ foreach(@w in array_keys(get_values('warp'))) {
 }
 foreach(@w in _worlds_config()) {
 	if(is_array(@w)) {
-		@warps[] = replace(@w['name'], ' ', '');
+		@warps[] = replace(to_lower(@w['name']), ' ', '');
 	}
 }
 register_command('warp', array(

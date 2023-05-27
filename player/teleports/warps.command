@@ -39,19 +39,25 @@ register_command('warps', array(
 
 			case 'list':
 				@warps = get_values('warp');
+				@worldGroup = _world_group(pworld());
 				@worlds = get_worlds();
-				@warplist = associative_array();
+				@warplist = array();
 				foreach(@world in @worlds) {
-					@warplist[@world] = '';
-				}
-				foreach(@warpkey: @warpdata in @warps) {
-					@warplist[@warpdata[3]] .= split('.', @warpkey)[1].' ';
-				}
-				msg(color('bold').'AVAILABLE WARPS:');
-				foreach(@worldname: @worldwarps in @warplist) {
-					if(@worldwarps) {
-						msg(color('gray').color('bold').'['._world_name(@worldname).'] '.color('white').@worldwarps);
+					if(_world_allows_teleports(@world)) {
+						@warplist[] = replace(_world_name(@world), ' ', '');
 					}
+				}
+				msg(color('green').color('bold').'Available Worlds:');
+				msg(array_implode(@warplist));
+				@warplist = array();
+				foreach(@warpkey: @warpdata in @warps) {
+					if(_world_group(@warpdata[3]) == @worldGroup) {
+						@warplist[] = split('.', @warpkey)[1];
+					}
+				}
+				if(@warplist) {
+					msg(color('green').color('bold').'Available Warps for '.to_upper(@worldGroup).':');
+					msg(array_implode(@warplist));
 				}
 
 			case 'resetmarkers':
