@@ -126,7 +126,7 @@ Hovering your cursor over someone's name in chat allows you to see their group, 
 
 Cauldrons are an infinite water source, unless sneaking. You can incrementally fill cauldrons using water bottles.
 
-You can also wash dyes from terracotta, wool, and carpet using a cauldron.
+You can also wash dyes from terracotta and shulker boxes using a cauldron.
 
 Temporary mirror world "shards" can be created by right-clicking any item with shard in the name.
 

@@ -10,7 +10,6 @@
 	}
 <<<
 
-/butcher [$] = call_alias('/remove '.$)
 /remove [$] = >>>
 	if(!$) {
 		msg('Usage: /remove [radius] [entityType] [-n]');

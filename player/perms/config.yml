@@ -316,7 +316,6 @@ moderator:
     stargate.admin: true
     stargate.destroy: true
     worldedit.history.*: true
-    worldedit.butcher: true
     worldedit.remove: true
     worldedit.extinguish: true
     worldedit.navigation.*: true
@@ -341,7 +340,6 @@ moderator:
     command.goto: true
     command.goto.anywhere: true
     command.mute: true
-    command.clearchat: true
     minecraft.nbt.place: true
   worlds:
     dev:

@@ -4,7 +4,7 @@
 	Also lets players incrementally fill cauldrons with water bottles.
 
 	Undyeing More items
-	Stained clay, Wool, Carpet, Shulker Boxes
+	Stained Terracotta, Shulker Boxes
 */
 bind('player_interact', null, array('block': 'CAULDRON', 'button': 'right'), @event) {
 	@slot = null;
@@ -66,10 +66,6 @@ bind('player_interact', null, array('block': 'WATER_CAULDRON', 'button': 'right'
 			@newItem['qty'] = 1;
 		} else if(string_ends_with(@item['name'], '_TERRACOTTA')) {
 			@newItem['name'] = 'TERRACOTTA';
-		} else if(string_ends_with(@item['name'], '_WOOL')) {
-			@newItem['name'] = 'WHITE_WOOL';
-		} else if(string_ends_with(@item['name'], '_CARPET')) {
-			@newItem['name'] = 'WHITE_CARPET';
 		} else {
 			die();
 		}

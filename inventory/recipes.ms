@@ -17,21 +17,6 @@ if(!import('recompile')) {
 	));
 
 	add_recipe(array(
-		'key': 'wither_to_player_skull',
-		'type': 'SHAPED',
-		'result': array('name': 'PLAYER_HEAD'),
-		'ingredients': array(
-			'S': 'WITHER_SKELETON_SKULL',
-			'C': 'CLAY_BALL'
-		),
-		'shape': array(
-			'CCC',
-			'CSC',
-			'CCC'
-		)
-	));
-	
-	add_recipe(array(
 		'key': 'red_sand',
 		'type': 'SHAPED',
 		'result': array('name': 'RED_SAND', 'qty': 8),
