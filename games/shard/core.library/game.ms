@@ -443,7 +443,7 @@ proc _shard_create(@rules){
 				}
 
 				// Bypass survival worldborder suffocation protection
-				@binds[] = bind('entity_damage', array(priority: 'HIGHEST'), array(world: 'SHARD', type: 'PLAYER', cause: 'SUFFOCATION'), @event) {
+				@binds[] = bind('entity_damage', array(priority: 'HIGHEST'), array(world: 'SHARD', type: 'PLAYER', cause: 'WORLD_BORDER'), @event) {
 					consume();
 				}
 			});

@@ -51,6 +51,7 @@ bind('target_player', null, array(mobtype: 'ZOMBIE'), @event, @day) {
 					'AXOLOTL',
 					'BAT',
 					'BEE',
+					'CAMEL':
 					'CAVE_SPIDER',
 					'CHICKEN',
 					'COW',
@@ -84,6 +85,7 @@ bind('target_player', null, array(mobtype: 'ZOMBIE'), @event, @day) {
 					'SKELETON',
 					'SKELETON_HORSE',
 					'SLIME',
+					'SNIFFER':
 					'SNOW_GOLEM', // SNOWMAN
 					'SPIDER',
 					'SQUID',

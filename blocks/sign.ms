@@ -45,8 +45,8 @@ bind('player_interact', null, array(hand: 'MAIN_HAND', button: 'right'), @event)
 				}
 			}
 		}
-		// 1.20 feature
-		if(sk_can_build(@loc)
+
+		if(sk_can_build(@loc) && pmode() == 'CREATIVE'
 		&& (!@event['item'] || (!string_ends_with(@event['item']['name'], 'DYE') && @event['item']['name'] != 'GLOW_INK_SAC'))) {
 			@colorCodes = false;
 			foreach(@i: @line in @sign) {
@@ -56,15 +56,11 @@ bind('player_interact', null, array(hand: 'MAIN_HAND', button: 'right'), @event)
 				}
 			}
 			if(@colorCodes) {
-				if(pmode() != 'CREATIVE') {
-					die();
-				}
+				cancel();
 				set_sign_text(@loc, @sign);
 				set_timeout(50, closure(){
 					open_sign(@loc);
 				});
-			} else {
-				open_sign(@loc);
 			}
 		}
 	}

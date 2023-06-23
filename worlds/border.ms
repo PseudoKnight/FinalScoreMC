@@ -43,23 +43,14 @@ bind('player_move', array(priority: 'HIGHEST'), array(threshold: 16), @event) {
 }
 
 /*
-	If a player takes fatal suffocation damage from being outside the worldborder,
+	If a player takes fatal damage from being outside the worldborder,
 	instead teleport them to world spawn.
  */
-bind('entity_damage', array(priority: 'HIGH'), array(type: 'PLAYER', cause: 'SUFFOCATION'), @event) {
+bind('entity_damage', array(priority: 'HIGH'), array(type: 'PLAYER', cause: 'WORLD_BORDER'), @event) {
 	if(@event['finalamount'] >= phealth(@event['id'])) {
-		@loc = @event['location'];
-		@border = get_world_border(@loc['world']);
-		@center = @border['center'];
-		@radius = @border['width'] / 2;
-		if(@loc['x'] > @center['x'] + @radius
-		|| @loc['x'] < @center['x'] - @radius
-		|| @loc['z'] > @center['z'] + @radius
-		|| @loc['z'] < @center['z'] - @radius) {
-			cancel();
-			set_timeout(1, closure(){
-				set_ploc(@event['id'], _center(get_spawn(@loc['world']), -1));
-			});
-		}
+		cancel();
+		set_timeout(1, closure(){
+			set_ploc(@event['id'], _center(get_spawn(@loc['world']), -1));
+		});
 	}
 }
