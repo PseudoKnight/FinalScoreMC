@@ -41,7 +41,7 @@ register_command('sign', array(
 		}
 		@lines = get_sign_text(@sign, @side);
 		if(is_integral(@args[@numIndex]) && integer(@args[@numIndex]) > 0 && integer(@args[@numIndex]) < 5) {
-			@lines[@args[@numIndex] - 1] = colorize(array_implode(@args[cslice(@numIndex, -1)]));
+			@lines[@args[@numIndex] - 1] = colorize(array_implode(@args[cslice(@numIndex + 1, -1)]));
 		} else {
 			@lines = split('\\', colorize(array_implode(@args[cslice(@numIndex, -1)])));
 		}
