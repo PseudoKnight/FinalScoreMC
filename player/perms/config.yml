@@ -341,6 +341,7 @@ moderator:
     command.goto.anywhere: true
     command.mute: true
     minecraft.nbt.place: true
+    shop.admin: true
   worlds:
     dev:
       worldedit.*: true

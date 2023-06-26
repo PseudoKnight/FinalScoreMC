@@ -51,7 +51,7 @@ bind('block_break', array('priority': 'LOWEST'), array('block': 'CHEST'), @event
 	if(sk_can_build(@event['location'])) {
 		include('core.library/shop.ms');
 		if(@shop = _sign_get_shop(location_shift(@event['location'], 'up'))) {
-			if(_is_shop_owner(@shop) || pisop()) {
+			if(_is_shop_owner(@shop) || has_permission('shop.admin')) {
 				if(_is_survival_world(@shop['loc']['world'])) {
 					include('core.library/cache.ms');
 					_remove_cached_shop(@shop);
@@ -68,7 +68,7 @@ bind('block_break', array('priority': 'LOWEST'), array('block': 'TRAPPED_CHEST')
 	if(sk_can_build(@event['location'])) {
 		include('core.library/shop.ms');
 		if(@shop = _sign_get_shop(location_shift(@event['location'], 'up'))) {
-			if(_is_shop_owner(@shop) || pisop()) {
+			if(_is_shop_owner(@shop) || has_permission('shop.admin')) {
 				if(_is_survival_world(@shop['loc']['world'])) {
 					include('core.library/cache.ms');
 					_remove_cached_shop(@shop);
@@ -140,7 +140,7 @@ bind('player_interact', array('priority': 'LOWEST'), array('block': 'CHEST', 'bu
 	if(sk_can_build(@event['location'])) {
 		include('core.library/shop.ms');
 		if(@shop = _sign_get_shop(location_shift(@event['location'], 'up'))) {
-			if(!_is_shop_owner(@shop) && !pisop()) {
+			if(!_is_shop_owner(@shop) && !has_permission('shop.admin')) {
 				cancel();
 				msg(color('red').'[Shop] You do not own this shop.');
 			}
@@ -152,7 +152,7 @@ bind('player_interact', array('priority': 'LOWEST'), array('block': 'TRAPPED_CHE
 	if(sk_can_build(@event['location'])) {
 		include('core.library/shop.ms');
 		if(@shop = _sign_get_shop(location_shift(@event['location'], 'up'))) {
-			if(!_is_shop_owner(@shop) && !pisop()) {
+			if(!_is_shop_owner(@shop) && !has_permission('shop.admin')) {
 				cancel();
 				msg(color('red').'[Shop] You do not own this shop.');
 			}
