@@ -50,7 +50,7 @@ bind('entity_damage', array(priority: 'HIGH'), array(type: 'PLAYER', cause: 'WOR
 	if(@event['finalamount'] >= phealth(@event['id'])) {
 		cancel();
 		set_timeout(1, closure(){
-			set_ploc(@event['id'], _center(get_spawn(@loc['world']), -1));
+			set_ploc(@event['id'], _center(get_spawn(@event['location']['world']), -1));
 		});
 	}
 }
