@@ -27,3 +27,5 @@ With armor stands, you can right-click to toggle gravity when holding a feather,
 Your inventory here is separate from your survival inventory.
 
 This world is primarily for build testing, projects for the park, and for funsies.
+
+Use "/trim" to try different armor trim patterns and materials.
