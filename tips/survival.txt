@@ -9,7 +9,7 @@
 
 &7/shop list <item name>&r : List all shops where you can buy or sell a particular item.
 
-&7/compass <target>&r : Sets compass to point to target: spawn, home [player], here, player, or x z coordinates.
+&7/compass <target>&r : Sets compass to point to target: spawn, player, or x z coordinates.
 
 &7/transfer <player>&r : Transfers ownership of a tamed mob to another online player.
  &7&oExample: /transfer PseudoKnight
