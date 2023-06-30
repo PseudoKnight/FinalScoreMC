@@ -34,20 +34,25 @@ proc _equip_kit(@player, @inv) {
 			_clear_pinv(@player);
 			@pdata = _pdata(@player);
 			@kit = array(
-				4: array('name': 'BOOK', 'meta': array(
-					'display': 'Park Directory',
+				4: array(
+					name: 'KNOWLEDGE_BOOK',
+					meta: array(
+						display: 'Park Directory',
 				)),
-				3: array('name': 'COOKED_MUTTON', 'qty': 32, 'meta': array(
-					'display': 'Frog Legs',
-					'lore': array('Good eatin\''),
+				3: array(
+					name: 'COOKED_MUTTON',
+					qty: 32,
+					meta: array(
+						display: 'Frog Legs',
+						lore: array('Good eatin\''),
 				)),
 			);
 			if(array_index_exists(@pdata, 'support') && @pdata['support'] >= 10) {
 				@kit[5] = array(
-					'name': 'FIREWORK_ROCKET',
-					'meta': array(
-						'display': colorize('&r&kX&a&l Random Firework &r&kX'),
-						'lore': array(
+					name: 'FIREWORK_ROCKET',
+					meta: array(
+						display: colorize('&r&kX&a&l Random Firework &r&kX'),
+						lore: array(
 							color('f').'A dynamic donor detonation!',
 						)
 					)
