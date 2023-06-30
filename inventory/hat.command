@@ -12,8 +12,8 @@ register_command('hat', array(
 		if(is_null(@item)) {
 			die(color('gold').'You need to hold something before you can put it on your head.');
 		}
-		@excluded = array();
-		if(array_contains(@excluded, @item['name'])) {
+		@excluded = array('BEE_NEST', 'BEEHIVE', 'DECORATED_POT', 'BUNDLE', 'AXOLOTL_BUCKET');
+		if(array_contains(@excluded, @item['name']) || string_ends_with(@item['name'], 'SHULKER_BOX')) {
 			die(color('gold').'That item cannot be put on your head without losing data tags.');
 		}
 		if(@item['qty'] == 1) {

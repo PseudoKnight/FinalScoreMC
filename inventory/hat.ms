@@ -1,7 +1,9 @@
 bind('inventory_click', null, array('slottype': 'ARMOR'), @event) {
 	if(@event['slot'] == 39
 	&& @event['cursoritem']
-	&& !string_ends_with(@event['cursoritem']['name'], 'HELMET')) {
+	&& !string_ends_with(@event['cursoritem']['name'], 'HELMET')
+	&& !string_ends_with(@event['cursoritem']['name'], 'SHULKER_BOX')
+	&& !array_contains(array('BEE_NEST', 'BEEHIVE', 'DECORATED_POT', 'BUNDLE', 'AXOLOTL_BUCKET'), @event['cursoritem']['name'])) {
 		switch(@event['action']) {
 			case 'PLACE_ONE':
 				@item = @event['cursoritem'][];
