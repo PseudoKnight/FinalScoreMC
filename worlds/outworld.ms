@@ -23,7 +23,7 @@ bind('entity_death', null, null, @event, @border = _get_worldborder('outworld'))
 			if(@amount >= 1) {
 				@width = min(@width + @amount, @border['radiusX'] * 2);
 				set_world_border('outworld', array(width: @width, seconds: 2));
-				set_world_border('outworld_nether', array(width: @width / 8, seconds: 2));
+				set_world_border('outworld_nether', array(width: @width / 4, seconds: 2));
 				set_world_border('outworld_the_end', array(width: @width, seconds: 2));
 				action_msg(@player, 'WorldBorder: '.integer(@width / 2).color('green').' +'.integer(@amount));
 				play_sound(ploc(@player), array(sound: 'BLOCK_ENCHANTMENT_TABLE_USE', pitch: 0.5));
@@ -43,7 +43,7 @@ bind('block_break', null, null, @event, @border = _get_worldborder('outworld')) 
 		if(@amount >= 1) {
 			@width = min(@width + @amount, @border['radiusX'] * 2);
 			set_world_border('outworld', array(width: @width, seconds: 2));
-			set_world_border('outworld_nether', array(width: @width / 8, seconds: 2));
+			set_world_border('outworld_nether', array(width: @width / 4, seconds: 2));
 			set_world_border('outworld_the_end', array(width: @width, seconds: 2));
 			action_msg(@player, 'WorldBorder: '.integer(@width / 2).color('green').' +'.integer(@amount));
 			play_sound(ploc(@player), array(sound: 'BLOCK_ENCHANTMENT_TABLE_USE', pitch: 0.5));
