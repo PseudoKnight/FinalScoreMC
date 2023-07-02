@@ -291,13 +291,15 @@ register_command('timer', array(
 				});
 			}
 
-			# PERSONAL TIME
+			// Check if time is better than personal best
 			@uuid = _get_uuid(to_lower(@player), false);
 			@ptime = get_value('times.'.@id, @uuid);
 			if(@ptime && @time >= @ptime) {
+				// Time was not better
 				die();
 			}
 
+			// Update personal time for this course
 			if(@ptime) {
 				tmsg(@player, color('green').'You beat your personal best time of '.color('bold').@ptime.color('green').' seconds.');
 			}
@@ -305,18 +307,18 @@ register_command('timer', array(
 			@loc['y'] += 3;
 			store_value('times.'.@id, @uuid, @time);
 
-			# TOP TIMES
+			// Update rankings for this course
 			@times = get_value('times', @id);
 			if(!@times) {
+				// Create rankings for this mew course
 				@times = array(array(@uuid, @player, @time));
 				store_value('times', @id, @times);
 				die();
 			}
-
 			@place = 0;
 			@rankup = false;
 			@tied = false;
-			for(@i = 0, @i < 20, @i++) {
+			for(@i = 0, @i <= array_size(@times), @i++) {
 				if(!@place) {
 					if(!array_index_exists(@times, @i) || @time < @times[@i][2]) {
 						if(array_index_exists(@times, @i) && (@times[@i][0] != @uuid || @i == 0)) {
@@ -335,7 +337,10 @@ register_command('timer', array(
 					}
 				}
 			}
-			if(@place) {
+			store_value('times', @id, @times);
+
+			// Celebrate good times, come on!
+			if(@place < array_size(@times) / 2) {
 				if(@place < 4 || @place > 20) {
 					switch(@place % 10) {
 						case 1:
@@ -361,82 +366,6 @@ register_command('timer', array(
 					fade: array(array(rand(256), rand(256), rand(256))),
 					type: 'BALL_LARGE',
 				));
-				if(array_size(@times) > 20) {
-					array_remove(@times, 20);
-				}
-				store_value('times', @id, @times);
-
-				// Recalculate average placement
-				@times = get_values('times');
-				x_new_thread('times', closure(){
-					@players = array();
-					foreach(@key: @time in @times) {
-						if(is_array(@time) && @key != 'times') {
-							@lastTime = 1.0;
-							@lastCount = 0;
-							foreach(@i: @t in @time) {
-								if(@t[2] == @lastTime){
-									@lastCount++;
-								} else {
-									@lastCount = 0;
-								}
-								if(!array_index_exists(@players, @t[0])) {
-									@players[@t[0]] = array(@t[1], array_size(@time) - @i + @lastCount);
-								} else {
-									@players[@t[0]][1] += array_size(@time) - @i + @lastCount;
-								}
-								@lastTime = @t[2];
-							}
-						}
-					}
-					@averages = array();
-					foreach(@uuid2: @score in @players) {
-						@averages[] = array(@uuid2, @score[0], @score[1]);
-					}
-					array_sort(@averages, closure(@left, @right){
-						return(@left[2] < @right[2]);
-					});
-					@overallRankup = false;
-					@suffix = 'th';
-					if(@rankup || @tied) {
-						@overallPlace = 0;
-						foreach(@index: @time in @times['times']) {
-							if(@time[0] == @uuid) {
-								@overallPlace = @index + 1;
-								break();
-							}
-						}
-						if(@overallPlace) {
-							foreach(@index: @time in @averages) {
-								if(@time[0] == @uuid) {
-									if(@index + 1 < @overallPlace) {
-										@place = @index + 1;
-										if(@place > 20 || @place < 4) { // special cases for 11, 12, and 13
-											switch(@place % 10) {
-												case 1:
-													@suffix = 'st';
-												case 2:
-													@suffix = 'nd';
-												case 3:
-													@suffix = 'rd';
-											}
-										}
-										@overallRankup = true;
-									}
-									break();
-								}
-							}
-						}
-					}
-					x_run_on_main_thread_later(closure(){
-						store_value('times', @averages);
-						if(@overallRankup) {
-							_broadcast(color('green').@player.' moved to '.@place.@suffix.' place overall!');
-							play_sound(@loc, array(sound: 'UI_TOAST_CHALLENGE_COMPLETE'));
-						}
-					});
-				});
-
 			} else {
 				launch_firework(@loc, array(
 					strength: 0,
@@ -444,6 +373,78 @@ register_command('timer', array(
 					fade: array(array(rand(256), rand(256), rand(256))),
 				));
 			}
+
+			// Recalculate course rankings
+			@times = get_values('times');
+			@top = get_value('rank.times');
+			x_new_thread('times'.@player, closure(){
+				@players = array();
+				foreach(@key: @time in @times) {
+					if(is_array(@time) && @key != 'times') {
+						@lastTime = 1.0;
+						@lastCount = 0;
+						foreach(@i: @t in @time) {
+							if(@t[2] == @lastTime){
+								@lastCount++;
+							} else {
+								@lastCount = 0;
+							}
+							if(!array_index_exists(@players, @t[0])) {
+								@players[@t[0]] = array(@t[1], array_size(@time) - @i + @lastCount);
+							} else {
+								@players[@t[0]][1] += array_size(@time) - @i + @lastCount;
+							}
+							@lastTime = @t[2];
+						}
+					}
+				}
+				@ranks = array();
+				foreach(@uuid2: @score in @players) {
+					@ranks[] = array(@uuid2, @score[0], @score[1]);
+				}
+				array_sort(@ranks, closure(@left, @right){
+					return(@left[2] < @right[2]);
+				});
+				@overallRankup = false;
+				@suffix = 'th';
+				if(@rankup || @tied) {
+					@overallPlace = 0;
+					foreach(@index: @time in @top) {
+						if(@time[0] == @uuid) {
+							@overallPlace = @index + 1;
+							break();
+						}
+					}
+					if(@overallPlace) {
+						foreach(@index: @time in @ranks) {
+							if(@time[0] == @uuid) {
+								if(@index + 1 < @overallPlace) {
+									@place = @index + 1;
+									if(@place > 20 || @place < 4) { // special cases for 11, 12, and 13
+										switch(@place % 10) {
+											case 1:
+												@suffix = 'st';
+											case 2:
+												@suffix = 'nd';
+											case 3:
+												@suffix = 'rd';
+										}
+									}
+									@overallRankup = true;
+								}
+								break();
+							}
+						}
+					}
+				}
+				x_run_on_main_thread_later(closure(){
+					store_value('rank.times', @ranks);
+					if(@overallRankup) {
+						_broadcast(color('green').@player.' moved to '.@place.@suffix.' place overall!');
+						play_sound(@loc, array(sound: 'UI_TOAST_CHALLENGE_COMPLETE'));
+					}
+				});
+			});
 		}
 	})
 );

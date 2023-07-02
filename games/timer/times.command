@@ -107,7 +107,7 @@ register_command('times', array(
 							if(@t[0] != @puuid) {
 								continue();
 							}
-							msg('Removing '.@player.' from top ten in '.split('.', @key)[1]);
+							msg('Removing '.@player.' from top list in '.split('.', @key)[1]);
 							array_remove(@time, @i);
 							store_value(@key, @time);
 							break();
@@ -284,37 +284,58 @@ register_command('times', array(
 				});
 
 			case 'top':
+				@top = if(@id == 'all', get_value('rank.times'), get_value('times', @id));
+				if(!@top) {
+					die('No top times for '.@title.'.');
+				}
+				@uuid = null;
+				if(@player) {
+					@uuid = _get_uuid(to_lower(@player));
+				} else if(ponline(@sender)) {
+					@uuid = puuid(@sender, true);
+				}
+				@indexes = range(min(15, array_size(@top)));
+				if(array_size(@indexes) < array_size(@top)) {
+					@checkForPlayer = @id == 'all' || @uuid && !is_null(get_value('times.'.@id, @uuid));
+					for(@i = if(@checkForPlayer, 0, 15), @i < array_size(@top) && array_size(@indexes) < 19, @i++) {
+						if(@top[@i][0] == @uuid) {
+							@checkForPlayer = false;
+						}
+						if(@i >= 15) {
+							// Try to list target player at the bottom of the list if still unfound
+							if(!@checkForPlayer || @i + 1 == array_size(@top) || @top[@i + 1][0] == @uuid) {
+								@indexes[] = @i;
+							} else if(@i == 15) {
+								// ellipsis
+								@indexes[] = null;
+							}
+						}
+					}
+				}
 				if(@id == 'all') {
-					@top = get_value('times');
 					msg(colorize('&e&m|------------------&e&l[ TOTAL COURSE RANKINGS ]'));
 					@max = min(19, array_size(@top));
-					for(@i = 0, @i < @max, @i++) {
-						if(@top[@i][1] == @sender) {
+					foreach(@i in @indexes) {
+						if(is_null(@i)) {
+							msg('  ···');
+							continue();
+						}
+						if(@top[@i][0] == @uuid) {
 							msg(colorize(' '.if(@i < 9, '&80').'&e'.(@i + 1).' [ '.@top[@i][2].' ] &l'.@top[@i][1]));
 						} else {
 							msg(colorize(' '.if(@i < 9, '&80').'&7'.(@i + 1).'&a [ '.@top[@i][2].' ] &r'.@top[@i][1]));
 						}
 					}
-
-				} else if(@player) {
-					@uuid = _get_uuid(to_lower(@player));
-					@time = get_value('times.'.@id, @uuid);
-					if(!@time) {
-						die('No time for '.@player.' on '.@id.'.')
-					}
-					msg(color('yellow').'Best time for '.@player.' on '.color('gold').@title.color('r').' is '.color('green').@time.' seconds.')
-
 				} else {
-					@times = get_value('times', @id);
-					if(!@times) {
-						die('No top times for '.@title.'.');
-					}
 					msg(colorize('&e&m|-------------------&e&l[ TOP TIMES: '.@title.' ]'));
 					@lastTime = 1.0;
 					@lastCount = 0;
-					@lines = 1;
-					for(@i = 0, @i < array_size(@times) && @lines < 20, @i++) {
-						@thisTime = @times[@i][2];
+					foreach(@i in @indexes) {
+						if(is_null(@i)) {
+							msg('  ···');
+							continue();
+						}
+						@thisTime = @top[@i][2];
 						if(@thisTime == @lastTime){
 							@lastCount++;
 						} else {
@@ -333,17 +354,19 @@ register_command('times', array(
 							@time = @timeSplit[0].'.'.@timeSplit[1][0].'s';
 						}
 						@place = @i + 1 - @lastCount;
-						if(@times[@i][1] == @sender) {
-							msg(colorize(' '.if(@place < 10, '&80').'&e'.@place.' [ '.@time.' ] &l'.@times[@i][1]));
+						if(@top[@i][0] == @uuid) {
+							msg(colorize(' '.if(@place < 10, '&80').'&e'.@place.' [ '.@time.' ] &l'.@top[@i][1]));
 						} else {
-							msg(colorize(' '.if(@place < 10, '&80').'&7'.@place.'&a [ '.@time.' ] &r'.@times[@i][1]));
+							msg(colorize(' '.if(@place < 10, '&80').'&7'.@place.'&a [ '.@time.' ] &r'.@top[@i][1]));
 						}
 						@lastTime = @thisTime;
-						@lines++;
 					}
 				}
 
 			case 'recalculate':
+				if(!pisop()) {
+					die('Only ops can recalculate times.');
+				}
 				@allcourses = get_values('times');
 				x_new_thread('times', closure(){
 					// Add all players to course lists
@@ -402,30 +425,25 @@ register_command('times', array(
 						}
 					}
 					// Convert to normal array for sorting
-					@averages = array();
+					@ranks = array();
 					foreach(@uuid: @entry in @players) {
-						@averages[] = array(@uuid, @entry[0], @entry[1]);
+						@ranks[] = array(@uuid, @entry[0], @entry[1]);
 					}
-					array_sort(@averages, closure(@left, @right){
+					array_sort(@ranks, closure(@left, @right){
 						return(@left[2] < @right[2]);
 					});
 
-					@max = min(19, array_size(@averages));
-					for(@i = 0, @i < @max, @i++) {
-						console(' '.if(@i < 9, '0').(@i + 1).' [ '.@averages[@i][2].' ] '.@averages[@i][1], false);
-					}
-
 					// Store the new lists on the main thread to avoid issues.
-					/*
 					x_run_on_main_thread_later(closure(){
-						store_value('times', @averages);
+						clear_value('times'); // legacy ranks
+						store_value('rank.times', @ranks);
 						foreach(@key: @value in @allcourses) {
 							if(is_array(@value)) {
 								store_value(@key, @value);
 							}
 						}
+						msg('Finished.');
 					});
-					*/
 				});
 		}
 	}
