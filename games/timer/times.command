@@ -1,15 +1,24 @@
+@courses = array('all');
+foreach(@course in array_keys(get_values('times'))) {
+	@split = split('.', @course);
+	if(array_size(@split) == 2) {
+		@courses[] = @split[1];
+	}
+}
 register_command('times', array(
 	description: 'Lists and manages time trial records.',
-	usage: '/times <top|avg|segmented|worst> [course_id] [player]',
+	usage: '/times <top|avg|segmented|best|worst> [course] [player]',
 	tabcompleter: closure(@alias, @sender, @args, @info) {
 		if(array_size(@args) == 1) {
 			if(pisop(@sender)) {
-				return(_strings_start_with_ic(array('top', 'avg', 'segmented', 'best', 'worst', 'reset', 'resetplayer'), @args[-1]));
+				return(_strings_start_with_ic(array('top', 'avg', 'segmented', 'best', 'worst', 'reset', 'resetplayer', 'recalculate'), @args[-1]));
 			} else {
 				return(_strings_start_with_ic(array('top', 'avg', 'segmented', 'best', 'worst'), @args[-1]));
 			}
+		} else if(array_size(@args) == 2) {
+			return(_strings_start_with_ic(@courses, @args[-1]));
 		}
-		return(array());
+		return(null);
 	},
 	executor: closure(@alias, @sender, @args, @info) {
 		@action = 'top';
