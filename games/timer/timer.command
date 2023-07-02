@@ -340,25 +340,24 @@ register_command('timer', array(
 			store_value('times', @id, @times);
 
 			// Celebrate good times, come on!
-			if(@place < array_size(@times) / 2) {
-				if(@place < 4 || @place > 20) {
-					switch(@place % 10) {
-						case 1:
-							@place = @place.'st';
-						case 2:
-							@place = @place.'nd';
-						case 3:
-							@place = @place.'rd';
-						default:
-							@place = @place.'th';
-					}
-				} else {
-					@place = @place.'th';
+			@rank = @place.'th';
+			if(@place < 4 || @place > 20) {
+				switch(@place % 10) {
+					case 1:
+						@rank = @place.'st';
+					case 2:
+						@rank = @place.'nd';
+					case 3:
+						@rank = @place.'rd';
+					default:
+						@rank =  @place.'th';
 				}
+			}
+			if(@place < array_size(@times) / 2) {
 				if(@tied) {
-					_broadcast(color('green').@player.' tied the '.color('bold').@place.color('green').' place time for '._to_upper_camel_case(@id).'!');
+					_broadcast(color('green').@player.' tied the '.color('bold').@rank.color('green').' place time for '._to_upper_camel_case(@id).'!');
 				} else if(@rankup) {
-					_broadcast(color('green').@player.' got a '.color('bold').@place.color('green').' place time for '._to_upper_camel_case(@id).'!');
+					_broadcast(color('green').@player.' got a '.color('bold').@rank.color('green').' place time for '._to_upper_camel_case(@id).'!');
 				}
 				launch_firework(@loc, array(
 					strength: 1,
@@ -367,6 +366,11 @@ register_command('timer', array(
 					type: 'BALL_LARGE',
 				));
 			} else {
+				if(@tied) {
+					tmsg(@player, color('green').'You tied the '.color('bold').@rank.color('green').' place time for '._to_upper_camel_case(@id).'!');
+				} else if(@rankup) {
+					tmsg(@player, color('green').'You got a '.color('bold').@rank.color('green').' place time for '._to_upper_camel_case(@id).'!');
+				}
 				launch_firework(@loc, array(
 					strength: 0,
 					colors: array(array(rand(256), rand(256), rand(256))),
