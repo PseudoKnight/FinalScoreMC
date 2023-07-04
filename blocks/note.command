@@ -63,14 +63,12 @@ register_command('note', array(
 		if(array_size(@args) == 2) {
 			@octave = integer(@args[1]) - 1;
 		}
-		@pitch = 0.5;
-		@notes = array('F#', 'G', 'G#', 'A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F');
-		@notesB = array('GB', 'G', 'AB', 'A', 'BB', 'B', 'C', 'DD', 'D', 'EB', 'E', 'F');
 		if(!is_numeric(@note)) {
+			@notes = array('F#', 'G', 'G#', 'A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F');
+			@notesB = array('GB', 'G', 'AB', 'A', 'BB', 'B', 'C', 'DD', 'D', 'EB', 'E', 'F');
 			@note = to_upper(@note);
-			@pitch = _get_pitch(@note, @octave);
 			@index = array_index(@notes, @note);
-			if(!@index) {
+			if(is_null(@index)) {
 				// try flats
 				@index = array_index(@notesB, @note);
 				if(!@index) {
@@ -78,10 +76,16 @@ register_command('note', array(
 				}
 			}
 			@note = @index + (@octave * 12);
-		} else {
-			@pitch = _get_pitch(@notes[@note % 12], floor(@note / 12));
 		}
+		if(@note < 0 || @note > 24) {
+			die('Invalid note');
+		}
+		@pitch = 2 ** ((@note - 12) / 12);
 		play_sound(@l, array(sound: @sound, category: 'RECORDS', pitch: @pitch));
 		set_blockdata_string(@l, 'note_block[note='.@note.',instrument='.@instrument.']');
+		@l['x'] += 0.5;
+		@l['y'] += 1.3;
+		@l['z'] += 0.5;
+		spawn_particle(@l, array(particle: 'NOTE', speed: 4.0, xoffset: @note / 24));
 	}
 ));

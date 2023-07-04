@@ -46,20 +46,20 @@ bind('note_play', null, null, @event, @instruments = array(
 	cancel();
 	@sound = '';
 	@block = get_block(location_shift(@event['location'], 'down'));
+	@noteblock = get_blockdata(@event['location']);
 	if(array_index_exists(@instruments, @block)) {
 		@sound = @instruments[@block];
 	} else {
-		@sound = 'BLOCK_NOTE_BLOCK_'.reg_match('instrument\\=([a-z]+)', get_blockdata_string(@event['location']))[1];
+		@sound = 'BLOCK_NOTE_BLOCK_'.@noteblock['instrument'];
 	}
-	@pitch = _get_pitch(@event['tone'], @event['octave']);
 	play_sound(@event['location'], array(
 		sound: @sound,
 		category: 'RECORDS',
-		pitch: @pitch,
+		pitch: 2 ** ((@noteblock['note'] - 12) / 12),
 		volume: if(is_block_powered(@event['location']), 8, 1)
 	));
 	@event['location']['x'] += 0.5;
 	@event['location']['y'] += 1.3;
 	@event['location']['z'] += 0.5;
-	spawn_particle(@event['location'], array(particle: 'NOTE', speed: 2.4, xoffset: @pitch - 0.5));
+	spawn_particle(@event['location'], array(particle: 'NOTE', speed: 4.0, xoffset: @noteblock['note'] / 24));
 }
