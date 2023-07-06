@@ -143,6 +143,9 @@ proc _minify_inv(@inv, @keepnulls = false) {
 			if(array_index_exists(@meta, 'damage') && @meta['damage'] == 0) {
 				array_remove(@meta, 'damage');
 			}
+			if(array_index_exists(@meta, 'trim') && is_null(@meta['trim'])) {
+				array_remove(@meta, 'trim');
+			}
 		}
 	}
 
