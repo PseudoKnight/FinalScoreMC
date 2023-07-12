@@ -33,7 +33,7 @@ bind('block_break', array('priority': 'LOWEST'), null, @event) {
 	if(sk_can_build(@event['location']) && string_ends_with(@event['block'], 'WALL_SIGN')) {
 		include('core.library/shop.ms');
 		if(@shop = _sign_get_shop(@event['location'])) {
-			if(_is_shop_owner(@shop)) {
+			if(_is_shop_owner(@shop) || has_permission('shop.admin')) {
 				if(_is_survival_world(@shop['loc']['world'])) {
 					include('core.library/cache.ms');
 					_remove_cached_shop(@shop);
@@ -90,7 +90,7 @@ bind('block_place', null, array('block': 'HOPPER'), @event) {
 			if(string_ends_with(get_block(@signLoc), 'WALL_SIGN')) {
 				include('core.library/shop.ms');
 				if(@shop = _sign_get_shop(@signLoc)) {
-					if(!_is_shop_owner(@shop)) {
+					if(!_is_shop_owner(@shop) || has_permission('shop.admin')) {
 						cancel();
 						msg(color('red').'[Shop] You cannot place a hopper below a shop you don\'t own.');
 					}
