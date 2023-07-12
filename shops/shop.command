@@ -1,9 +1,18 @@
+@materials = array_map(all_materials(), closure(@value) {
+	return(to_lower(string(@value)));
+});
 register_command('shop', array(
 	description: 'List cached item shops or edit owned item shops.',
 	usage: '/shop list <item_name> | /shop edit <buy|sell> <#qty> for <#currency>',
 	tabcompleter: closure(@alias, @sender, @args, @info) {
 		if(array_size(@args) == 1) {
 			return(_strings_start_with_ic(array('list', 'edit'), @args[-1]));
+		} else if(array_size(@args) == 2) {
+			if(@args[0] == 'list') {
+				return(_strings_start_with_ic(@materials, @args[-1]));
+			} else if(@args[0] == 'edit') {
+				return(_strings_start_with_ic(array('buy', 'sell', '['), @args[-1]));
+			}
 		}
 		return(array());
 	},
