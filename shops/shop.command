@@ -20,7 +20,7 @@ register_command('shop', array(
 		if(!@args) {
 			return(false);
 		}
-		include('core.library/sign.ms');
+		include_dir('core.library');
 		
 		if(@args[0] == 'list') {
 			if(array_size(@args) == 1) {
@@ -75,16 +75,13 @@ register_command('shop', array(
 				msg(color('gold').'[Shop] Edits a line on your shop that you are looking at.');
 				die('Example: '.color('gray').'"/shop edit buy 1 for 1g"');
 			}
-			
-			include('core.library/item.ms');
 		
 			@loc = pcursor();
 		
 			if(!@shop = _sign_get_shop(@loc)) {
 				die(color('gold').'[Shop] There is no shop sign there.');
 			}
-			
-			include('core.library/shop.ms');
+
 			if(!_is_shop_owner(@shop) && !has_permission('shop.admin')) {
 				die(color('gold').'[Shop] You do not own this shop.');
 			}
@@ -93,7 +90,7 @@ register_command('shop', array(
 
 			// Check first for item name change
 			if(string_starts_with(@args[1], '[') && string_ends_with(@args[-1], ']')) {
-				include('core.library/cache.ms');
+				include_dir('cache.library');
 				@signText[0] = array_implode(@args[1..-1], ' ');
 				// Remove and create new cache when changing item name
 				_remove_cached_shop(@shop);

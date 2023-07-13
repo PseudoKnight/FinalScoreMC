@@ -1,7 +1,3 @@
-include('item.ms');
-include('chest.ms');
-include('sign.ms');
-
 proc _is_shop_owner(@shop) {
 	return(@shop['owner'] == player());
 }

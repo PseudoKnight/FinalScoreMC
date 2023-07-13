@@ -15,9 +15,6 @@ proc _cache_shop(@shop) {
 		integer(@location['z']),
 		@location['world'],
 	);
-
-	include('chest.ms');
-	include('item.ms');
 	
 	@chestLoc = location_shift(@location, 'down');
 	try {
@@ -155,8 +152,7 @@ proc _remove_cached_shop(@shop) {
 		integer(@location['z']),
 		@location['world'],
 	);
-	
-	include('shop.ms');
+
 	if(@shop['buy'] && @shops[0]) {
 		foreach(@i: @s in @shops[0]) {
 			if(@s['location'][0] == @location[0]

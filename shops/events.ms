@@ -4,7 +4,7 @@ bind('player_interact', null, array(hand: 'main_hand'), @event) {
 		die();
 	}
 	@signLoc = @event['location'];
-	include('core.library/shop.ms');
+	include_dir('core.library');
 	if(@shop = _sign_get_shop(@signLoc)) {
 		if(!@shop['item']) {
 			// handle null items
@@ -21,7 +21,7 @@ bind('player_interact', null, array(hand: 'main_hand'), @event) {
 		// cache current stock
 		if(_is_survival_world(@signLoc['world'])) {
 			set_timeout(50, closure(){ // do this after a transaction
-				include('core.library/cache.ms');
+				include_dir('cache.library');
 				_cache_shop(@shop);
 			});
 		}
@@ -31,11 +31,11 @@ bind('player_interact', null, array(hand: 'main_hand'), @event) {
 // Shop Sign Break
 bind('block_break', array('priority': 'LOWEST'), null, @event) {
 	if(sk_can_build(@event['location']) && string_ends_with(@event['block'], 'WALL_SIGN')) {
-		include('core.library/shop.ms');
+		include_dir('core.library');
 		if(@shop = _sign_get_shop(@event['location'])) {
 			if(_is_shop_owner(@shop) || has_permission('shop.admin')) {
 				if(_is_survival_world(@shop['loc']['world'])) {
-					include('core.library/cache.ms');
+					include_dir('cache.library');
 					_remove_cached_shop(@shop);
 				}
 			} else {
@@ -49,11 +49,11 @@ bind('block_break', array('priority': 'LOWEST'), null, @event) {
 // Chest Protections
 bind('block_break', array('priority': 'LOWEST'), array('block': 'CHEST'), @event) {
 	if(sk_can_build(@event['location'])) {
-		include('core.library/shop.ms');
+		include_dir('core.library');
 		if(@shop = _sign_get_shop(location_shift(@event['location'], 'up'))) {
 			if(_is_shop_owner(@shop) || has_permission('shop.admin')) {
 				if(_is_survival_world(@shop['loc']['world'])) {
-					include('core.library/cache.ms');
+					include_dir('cache.library');
 					_remove_cached_shop(@shop);
 				}
 			} else {
@@ -66,11 +66,11 @@ bind('block_break', array('priority': 'LOWEST'), array('block': 'CHEST'), @event
 
 bind('block_break', array('priority': 'LOWEST'), array('block': 'TRAPPED_CHEST'), @event) {
 	if(sk_can_build(@event['location'])) {
-		include('core.library/shop.ms');
+		include_dir('core.library');
 		if(@shop = _sign_get_shop(location_shift(@event['location'], 'up'))) {
 			if(_is_shop_owner(@shop) || has_permission('shop.admin')) {
 				if(_is_survival_world(@shop['loc']['world'])) {
-					include('core.library/cache.ms');
+					include_dir('cache.library');
 					_remove_cached_shop(@shop);
 				}
 			} else {
@@ -88,7 +88,7 @@ bind('block_place', null, array('block': 'HOPPER'), @event) {
 		if(@type === 'CHEST' || @type === 'TRAPPED_CHEST') {
 			@signLoc = location_shift(@loc, 'up');
 			if(string_ends_with(get_block(@signLoc), 'WALL_SIGN')) {
-				include('core.library/shop.ms');
+				include_dir('core.library');
 				if(@shop = _sign_get_shop(@signLoc)) {
 					if(!_is_shop_owner(@shop) && !has_permission('shop.admin')) {
 						cancel();
@@ -107,7 +107,7 @@ bind('block_place', null, array('block': 'CHEST'), @event) {
 			if(get_block(@loc) == @event['block']) {
 				@signLoc = location_shift(@loc, 'up');
 				if(string_ends_with(get_block(@signLoc), 'WALL_SIGN')) {
-					include('core.library/shop.ms');
+					include_dir('core.library');
 					if(_sign_get_shop(@signLoc)) {
 						cancel();
 						die(color('red').'[Shop] You cannot connect a chest to a shop.');
@@ -125,7 +125,7 @@ bind('block_place', null, array('block': 'TRAPPED_CHEST'), @event) {
 			if(get_block(@loc) == @event['block']) {
 				@signLoc = location_shift(@loc, 'up');
 				if(string_ends_with(get_block(@signLoc), 'WALL_SIGN')) {
-					include('core.library/shop.ms');
+					include_dir('core.library');
 					if(_sign_get_shop(@signLoc)) {
 						cancel();
 						die(color('red').'[Shop] You cannot connect a chest to a shop.');
@@ -138,7 +138,7 @@ bind('block_place', null, array('block': 'TRAPPED_CHEST'), @event) {
 
 bind('player_interact', array('priority': 'LOWEST'), array('block': 'CHEST', 'button': 'right'), @event) {
 	if(sk_can_build(@event['location'])) {
-		include('core.library/shop.ms');
+		include_dir('core.library');
 		if(@shop = _sign_get_shop(location_shift(@event['location'], 'up'))) {
 			if(!_is_shop_owner(@shop) && !has_permission('shop.admin')) {
 				cancel();
@@ -150,7 +150,7 @@ bind('player_interact', array('priority': 'LOWEST'), array('block': 'CHEST', 'bu
 
 bind('player_interact', array('priority': 'LOWEST'), array('block': 'TRAPPED_CHEST', 'button': 'right'), @event) {
 	if(sk_can_build(@event['location'])) {
-		include('core.library/shop.ms');
+		include_dir('core.library');
 		if(@shop = _sign_get_shop(location_shift(@event['location'], 'up'))) {
 			if(!_is_shop_owner(@shop) && !has_permission('shop.admin')) {
 				cancel();
