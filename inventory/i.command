@@ -1,8 +1,15 @@
+@materials = array_map(all_materials(), closure(@value) {
+	return(to_lower(string(@value)));
+});
+export('materials', @materials);
 register_command('i', array(
 	description: 'Creates a new item with optional yaml or json formatted meta.',
 	usage: 'Examples: /i stick 64, /i stick|display:"Mighty Stick", or /i stick{"display":"Mighty Stick"}',
 	permission: 'command.items',
 	tabcompleter: closure(@alias, @sender, @args, @info) {
+		if(array_size(@args) == 1) {
+			return(_strings_start_with_ic(@materials, @args[-1]));
+		}
 		return(array());
 	},
 	executor: closure(@alias, @sender, @args, @info) {

@@ -3,6 +3,9 @@ register_command('itemtype', array(
 	usage: '/itemtype <type> [data]',
 	permission: 'command.items',
 	tabcompleter: closure(@alias, @sender, @args, @info) {
+		if(array_size(@args) == 1) {
+			return(_strings_start_with_ic(import('materials', array()), @args[-1]));
+		}
 		return(array());
 	},
 	executor: closure(@alias, @sender, @args, @info) {
