@@ -11,14 +11,14 @@ proc _sign_get_shop(@location) {
 	if(length(@owner) < 3) {
 		return(null);
 	}
-	
-	# Get item
-	include('item.ms');
-	@item = _item_get_material(_sign_get_item_string(@sign));
-	
+
 	@buy = _sign_get_buy_price(@sign);
 	@sell = _sign_get_sell_price(@sign);
-	if(@buy || @sell) {
+	if(@buy || @sell) {	
+		# Get item
+		include('item.ms');
+		@item = _item_get_material(_sign_get_item_string(@sign));
+
 		# Update owner player name, if changed
 		@pdata = null;
 		try {
