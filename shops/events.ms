@@ -90,7 +90,7 @@ bind('block_place', null, array('block': 'HOPPER'), @event) {
 			if(string_ends_with(get_block(@signLoc), 'WALL_SIGN')) {
 				include('core.library/shop.ms');
 				if(@shop = _sign_get_shop(@signLoc)) {
-					if(!_is_shop_owner(@shop) || has_permission('shop.admin')) {
+					if(!_is_shop_owner(@shop) && !has_permission('shop.admin')) {
 						cancel();
 						msg(color('red').'[Shop] You cannot place a hopper below a shop you don\'t own.');
 					}

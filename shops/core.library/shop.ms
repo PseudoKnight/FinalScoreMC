@@ -2,22 +2,8 @@ include('item.ms');
 include('chest.ms');
 include('sign.ms');
 
-proc _is_shop_owner(@shop, @player) {
-	if(!@player) {
-		@player = player();
-	}
-	if(length(@player) > 15) {
-		try {
-			if(substr(@shop['owner'], 0, 13) == substr(@player, 0, 13)) {
-				return(true);
-			}
-		} catch(RangeException @ex) {
-			return(false);
-		}
-	} else if(@shop['owner'] == @player) {
-		return(true);
-	}
-	return(false);
+proc _is_shop_owner(@shop) {
+	return(@shop['owner'] == player());
 }
 
 proc _shop_show_info(@shop) {
