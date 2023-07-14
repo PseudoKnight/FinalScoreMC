@@ -974,6 +974,7 @@ proc _pvp_end_match(@id, @winners) {
 				@pvp['lastsolo'] = @lastSolo;
 			}
 			_remove_activity('pvp'.@id);
+			array_remove_values(import('pvp.joined'), @id);
 			_menu_refresh('pvp');
 		}, @id);
 

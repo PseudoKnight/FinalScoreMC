@@ -27,6 +27,8 @@ proc _player_join(@id) {
 	}
 	@pvp['players'][player()] = associative_array();
 
+	import('pvp.joined')[] = @id;
+
 	// ensure staff does not have flight
 	if(phas_flight()) {
 		set_pflight(false);

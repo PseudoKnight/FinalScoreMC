@@ -1,7 +1,11 @@
+// prepare tabcompletions
 @arenaList = array_keys(get_values('arena'));
 foreach(@i: @key in @arenaList) {
 	@arenaList[@i] = split('.', @key)[1];
 }
+@joined = array();
+export('pvp.joined', @joined);
+
 register_command('pvp', array(
 	description: 'Starting and managing active PVP games.',
 	usage: '/pvp <join|start|vote|spectate> <arena>',
@@ -9,7 +13,10 @@ register_command('pvp', array(
 		array(
 			'group.builder': array('join', 'start', 'vote', 'spectate', 'debug', 'addtime', 'end', 'stats', 'reload'),
 			null: array('join', 'start', 'vote', 'spectate')),
-		array('<stats': array('kills', 'deaths', 'me'), null: @arenaList),
+		array(
+			'<stats': array('kills', 'deaths', 'me'),
+			'<start|spectate': @joined,
+			null: @arenaList),
 	),
 	executor: closure(@alias, @sender, @args, @info) {
 		if(array_size(@args) < 2) {
