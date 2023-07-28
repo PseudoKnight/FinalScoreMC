@@ -2,11 +2,11 @@
 @menu[@rows * 9]['name'] = 'RED_WOOL';
 
 @menuPvp = array(
-	'inv': associative_array(),
-	'id': 'pvp',
-	'title': 'PVP Arenas',
-	'size': @rows * 9 + 9,
-	'menu': @menu
+	inv: associative_array(),
+	id: 'pvp',
+	title: 'PVP Arenas',
+	size: @rows * 9 + 9,
+	menu: @menu
 );
 
 @arenas = get_values('arena');
@@ -37,6 +37,8 @@ foreach(@name: @arena in @arenas) {
 		} else if(@arena['mode'] == 'bombingrun') {
 			@lore[] = color('green').'Bombing Run';
 			@item = 'FIRE_CHARGE';
+		} else if(array_index_exists(@arena, 'flags') && array_contains(@arena['flags'], 'build')) {
+			@item = 'IRON_PICKAXE';
 		}
 	}
 	if(array_index_exists(@arena, 'arenaselect')) {
@@ -53,12 +55,12 @@ foreach(@name: @arena in @arenas) {
 	}
 	@lore[] = color('dark_gray').'Run: /warp '.@name;
 	@menuPvp['inv'][@slot++] = associative_array(
-		'name': @item,
-		'qty': @qty,
-		'meta': associative_array(
-			'display': color('green')._to_upper_camel_case(@name),
-			'lore': @lore,
-			'flags': array('HIDE_ATTRIBUTES', 'HIDE_ENCHANTS'),
+		name: @item,
+		qty: @qty,
+		meta: associative_array(
+			display: color('green')._to_upper_camel_case(@name),
+			lore: @lore,
+			flags: array('HIDE_ATTRIBUTES', 'HIDE_ENCHANTS'),
 		),
 	);
 }

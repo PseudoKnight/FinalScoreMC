@@ -22,6 +22,8 @@ proc _menu_refresh(@id) {
 					@item = @item[];
 					if(@item['name'] == 'IRON_SWORD') {
 						@item['name'] = 'DIAMOND_SWORD';
+					} else if(@item['name'] == 'IRON_PICKAXE') {
+						@item['name'] = 'DIAMOND_PICKAXE';
 					} else if(@item['name'] == 'IRON_HELMET') {
 						@item['name'] = 'DIAMOND_HELMET';
 					} else if(@item['name'] == 'WHITE_BANNER') {

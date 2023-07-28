@@ -1,38 +1,38 @@
 @tiers = array(
 	array(
-		'name': 'easy',
-		'chatcolor': color('aqua'),
-		'dyecolor': 'LIGHT_BLUE',
+		name: 'easy',
+		chatcolor: color('aqua'),
+		dyecolor: 'LIGHT_BLUE',
 	),
 	array(
-		'name': 'easy-medium',
-		'chatcolor': color('green'),
-		'dyecolor': 'LIME',
+		name: 'easy-medium',
+		chatcolor: color('green'),
+		dyecolor: 'LIME',
 	),
 	array(
-		'name': 'medium',
-		'chatcolor':color('yellow'),
-		'dyecolor': 'YELLOW',
+		name: 'medium',
+		chatcolor: color('yellow'),
+		dyecolor: 'YELLOW',
 	),
 	array(
-		'name': 'medium-hard',
-		'chatcolor': color('gold'),
-		'dyecolor': 'ORANGE',
+		name: 'medium-hard',
+		chatcolor: color('gold'),
+		dyecolor: 'ORANGE',
 	),
 	array(
-		'name': 'hard',
-		'chatcolor': color('dark_red'),
-		'dyecolor': 'RED',
+		name: 'hard',
+		chatcolor: color('dark_red'),
+		dyecolor: 'RED',
 	),
 	array(
-		'name': 'very-hard',
-		'chatcolor': color('dark_purple'),
-		'dyecolor': 'PURPLE',
+		name: 'very-hard',
+		chatcolor: color('dark_purple'),
+		dyecolor: 'PURPLE',
 	),
 	array(
-		'name': 'other',
-		'chatcolor': color('white'),
-		'dyecolor': 'WHITE',
+		name: 'other',
+		chatcolor: color('white'),
+		dyecolor: 'WHITE',
 	),
 );
 foreach(@tier in @tiers) {
@@ -41,31 +41,31 @@ foreach(@tier in @tiers) {
 }
 
 @solo1 = @main[];
-@solo1[@rows * 9 + 4]['name'] = 'LIGHT_BLUE_WOOL';
+@solo1[@rows * 9 + 2]['name'] = 'LIGHT_BLUE_WOOL';
 
 @solo2 = @main[];
-@solo2[@rows * 9 + 5]['name'] = 'PURPLE_WOOL';
+@solo2[@rows * 9 + 3]['name'] = 'PURPLE_WOOL';
 
 @coop = @main[];
-@coop[@rows * 9 + 6]['name'] = 'ORANGE_WOOL';
+@coop[@rows * 9 + 4]['name'] = 'ORANGE_WOOL';
 
 @soloMenu1 = array(
-	'menu': @solo1,
-	'id': 'solo1',
-	'title': 'Easier Solo Courses',
-	'inv': associative_array(),
+	menu: @solo1,
+	id: 'easy-courses',
+	title: 'Easier Solo Courses',
+	inv: associative_array(),
 );
 @soloMenu2 = array(
-	'menu': @solo2,
-	'id': 'solo2',
-	'title': 'Harder Solo Courses',
-	'inv': associative_array(),
+	menu: @solo2,
+	id: 'hard-courses',
+	title: 'Harder Solo Courses',
+	inv: associative_array(),
 );
 @coopMenu = array(
-	'menu': @coop,
-	'id': 'coop',
-	'title': 'Cooperative Courses',
-	'inv': associative_array(),
+	menu: @coop,
+	id: 'coop-courses',
+	title: 'Cooperative Courses',
+	inv: associative_array(),
 );
 
 @cakes = get_value('cakeinfo');
@@ -76,17 +76,18 @@ foreach(@name: @cake in @cakes) {
 		if(array_index_exists(@cake, 'difficulty')) {
 			foreach(@t: @this in @tiers) {
 				if(@this['name'] == @cake['difficulty']) {
-					@lore[] = @tiers[@t]['chatcolor'].color('l').to_upper(@cake['difficulty']);
+					@lore[] = @tiers[@t]['chatcolor'].color('bold').to_upper(@cake['difficulty'])
+							.' '.color('gold').'('.@cake['coins'].' coins)';
 					break();
 				}
 			}
 		}
-		@lore[] = color('gold').@cake['coins'].' coins';
-		@lore[] = color('green').'Achieved by '.array_size(@cake['players']).' players';
+		@lore[] = color('gray').'Achieved by '.array_size(@cake['players']).' players';
 		if(@cake['type'] == 'challenge') {
 			@times = get_value('times', @name);
 			if(@times) {
-				@time = @times[-1][2];
+				@playerName = _pdata_by_uuid(@times[0][0])['name'];
+				@time = @times[0][2];
 				if(@time > 3600) {
 					@time = '1 hour';
 				} else if(@time >= 60) {
@@ -96,20 +97,19 @@ foreach(@name: @cake in @cakes) {
 					@time = simple_date('s.S', integer(@time * 1000));
 					@time = substr(@time, 0, length(@time) - 2).'s';
 				}
-				@lore[] = color('green').'Top 20 time: ' . @time;
+				@lore[] = color('gray').'Best time: ' . @time . ' by '.@playerName;
 			}
 		}
-		@lore[] = color('dark_gray').'Run: /warp '.@name;
 		if(@cake['type'] == 'challenge') {
 			@coins = @cake['coins'];
 			if(array_index_exists(@tiers[@t]['parkour'], @coins)) {
 				@coins++
 			}
 			@tiers[@t]['parkour'][@coins] = array(
-				'name': @tiers[@t]['dyecolor'].'_STAINED_GLASS_PANE',
-				'meta': array(
-					'display': color('green').to_upper(@name),
-					'lore': @lore,
+				name: @tiers[@t]['dyecolor'].'_STAINED_GLASS',
+				meta: array(
+					display: @tiers[@t]['chatcolor'].to_upper(@name),
+					lore: @lore,
 				),
 			);
 		} else {
@@ -118,10 +118,10 @@ foreach(@name: @cake in @cakes) {
 				@coins++
 			}
 			@tiers[@t]['coop'][@coins] =  array(
-				'name': @tiers[@t]['dyecolor'].'_STAINED_GLASS_PANE',
-				'meta': array(
-					'display': color('green').to_upper(@name),
-					'lore': @lore,
+				name: @tiers[@t]['dyecolor'].'_STAINED_GLASS',
+				meta: array(
+					display: @tiers[@t]['chatcolor'].to_upper(@name),
+					lore: @lore,
 				),
 			);
 		}
@@ -153,25 +153,46 @@ foreach(@t: @tier in @tiers) {
 @tiers = null;
 
 @loadMenu = iclosure(@player, @import){
-	@uuid = puuid(@player, true);
-	@cakes = get_value('cakeinfo');
-	@menu = @import['menu'][];
-	foreach(@slot: @item in @import['inv']) {
-		@name = to_lower(substr(@item['meta']['display'], 2));
-		if(array_index_exists(@cakes[@name]['players'], @uuid)) {
-			@item = @item[];
-			@item['name'] = 'WHITE_STAINED_GLASS_PANE';
+	if(!has_inventory(@player.@import['id'])) {
+		@uuid = puuid(@player, true);
+		@cakes = get_value('cakeinfo');
+		@menu = @import['menu'][];
+		foreach(@slot: @item in @import['inv']) {
+			@name = to_lower(substr(@item['meta']['display'], 2));
+			if(array_index_exists(@cakes[@name]['players'], @uuid)) {
+				@item = @item[];
+				@item['name'] = replace(@item['name'], '_STAINED_GLASS', '_CONCRETE');
+				@times = get_value('times', @name);
+				if(@times) {
+					@tied = 0;
+					@previousTime = 0.0;
+					foreach(@i: @time in @times) {
+						if(@previousTime == @time[2]) {
+							@tied++;
+						} else {
+							@previousTime = @time[2];
+							@tied = 0;
+						}
+						if(@time[0] == @uuid) {
+							@item['qty'] = @i + 1 - @tied;
+							break();
+						} else if(@i == 126) {
+							break();
+						}
+					}
+				}
+				@item['meta']['lore'][] = color('dark_gray').'Run: /warp '.@name;
+			}
+			@menu[@slot] = @item;
 		}
-		@menu[@slot] = @item;
+		create_virtual_inventory(@player.@import['id'], 4 * 9 + 9, @import['title'], @menu);
 	}
-	delete_virtual_inventory(@player.@import['id']);
-	create_virtual_inventory(@player.@import['id'], 3 * 9 + 9, @import['title'], @menu);
 	popen_inventory(@player, @player.@import['id']);
 }
 @soloMenu1['loadMenu'] = @loadMenu;
 @soloMenu2['loadMenu'] = @loadMenu;
 @coopMenu['loadMenu'] = @loadMenu;
 
-export('menu.solo1', @soloMenu1);
-export('menu.solo2', @soloMenu2)
-export('menu.coop', @coopMenu);
+export('menu.easy-courses', @soloMenu1);
+export('menu.hard-courses', @soloMenu2)
+export('menu.coop-courses', @coopMenu);

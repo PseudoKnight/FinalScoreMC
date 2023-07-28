@@ -37,15 +37,19 @@ proc _equip_kit(@player, @inv) {
 				4: array(
 					name: 'KNOWLEDGE_BOOK',
 					meta: array(
-						display: 'Park Directory',
-				)),
+						display: color('green').'Park Directory',
+						lore: array(
+							color('white').'Opens a menu to view and teleport to various',
+							color('white').'games and attractions here in Frog Park.'
+				))),
 				3: array(
 					name: 'COOKED_MUTTON',
 					qty: 32,
 					meta: array(
-						display: 'Frog Legs',
-						lore: array('Good eatin\''),
-				)),
+						display: color('white').'Frog Legs',
+						lore: array(
+							color('gray').'Good eatin\''
+				))),
 			);
 			if(array_index_exists(@pdata, 'support') && @pdata['support'] >= 10) {
 				@kit[5] = array(
@@ -53,10 +57,8 @@ proc _equip_kit(@player, @inv) {
 					meta: array(
 						display: colorize('&r&kX&a&l Random Firework &r&kX'),
 						lore: array(
-							color('f').'A dynamic donor detonation!',
-						)
-					)
-				);
+							color('white').'A dynamic donor detonation!',
+				)));
 			}
 			if(is_array(@inv)) {
 				set_pinv(@player, array_merge(@kit, @inv));

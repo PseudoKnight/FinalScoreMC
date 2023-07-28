@@ -52,6 +52,14 @@ bind('player_interact', null, array('block': 'CAKE', 'button': 'right', 'hand': 
 	@thiscake['players'][@uuid] = time();
 	store_value('cakeinfo', @cakeinfo);
 
+	// Force cached menus to regenerate
+	if(@thiscake['type'] == 'coop') {
+		delete_virtual_inventory(player().'coop-courses');
+	} else if(@thiscake['type'] == 'challenge') {
+		delete_virtual_inventory(player().'easy-courses');
+		delete_virtual_inventory(player().'hard-courses');
+	}
+
 	set_timeout(50, closure(){
 		@count = 0;
 		@total = 0;

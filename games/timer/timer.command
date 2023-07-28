@@ -447,6 +447,10 @@ register_command('timer', array(
 						_broadcast(color('green').@player.' moved to '.@place.@suffix.' place overall!');
 						play_sound(@loc, array(sound: 'UI_TOAST_CHALLENGE_COMPLETE'));
 					}
+
+					// Force cached menus to regenerate
+					delete_virtual_inventory(@player.'easy-courses');
+					delete_virtual_inventory(@player.'hard-courses');
 				});
 			});
 		}
