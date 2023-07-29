@@ -42,6 +42,7 @@ register_command('frogware', array(
 				queue_clear('fw2');
 				queue_clear('fw3');
 				remove_scoreboard('fw');
+				remove_bar('fw');
 				unbind('fwdamage');
 				unbind('fwtask');
 				_remove_activity('frogware');

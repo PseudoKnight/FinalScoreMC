@@ -1,7 +1,8 @@
 proc _fw_add_player(@player) {
 	_fw_create_scoreboard();
 	set_pscoreboard(@player, 'fw');
-	team_add_player('losers',@player, 'fw');
+	team_add_player('losers', @player, 'fw');
+	bar_add_player('fw', @player);
 
 	@scores = array();
 	foreach(@p in all_players('custom')) {
@@ -82,17 +83,6 @@ proc _fw_leader() {
 		}
 	}
 	return(@leader);
-}
-
-proc _fw_msg(@msg) {
-	if(is_array(@msg)) {
-		@msg = array_get_rand(@msg);
-	}
-	foreach(@p in all_players('custom')) {
-		if(_fw_player(@p)) {
-			title(@p, '', @msg, 0, 40, 20);
-		}
-	}
 }
 
 proc _fw_countdown(@c) {

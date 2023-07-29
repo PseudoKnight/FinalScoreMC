@@ -138,3 +138,10 @@ proc _fw_clear_blocks(@height = 1) {
 		array(@region[1][0], @region[1][1] + @height - 1, @region[1][2], 'custom'),
 		'AIR', 100);
 }
+
+proc _fw_msg(@msg) {
+	if(is_array(@msg)) {
+		@msg = array_get_rand(@msg);
+	}
+	update_bar('fw', array(title: @msg));
+}

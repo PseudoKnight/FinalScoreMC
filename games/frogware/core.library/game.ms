@@ -1,5 +1,10 @@
 proc _fw_create_scoreboard() {
 	if(!array_contains(get_scoreboards(), 'fw')) {
+		create_bar('fw', array(
+			style: 'SOLID',
+			percent: 0.0,
+			visible: false,
+		));
 		create_scoreboard('fw');
 		create_objective('score', 'DUMMY', 'fw');
 		create_team('losers', 'fw');
@@ -56,6 +61,7 @@ proc _fw_start_round(@secs = 12) {
 
 	queue_delay(1000, 'fw');
 	queue_push(closure(){
+		update_bar('fw', array(visible: false));
 		@winners = array();
 		@count = 0;
 		@total = 0;
@@ -88,6 +94,7 @@ proc _fw_start_round(@secs = 12) {
 					set_pscoreboard(@p);
 					reset_all_pscores(@p, 'fw');
 					_equip_kit(@p);
+					bar_remove_player('fw', @p);
 				}
 			}
 		}
@@ -117,6 +124,7 @@ proc _fw_start_round(@secs = 12) {
 			queue_push(closure(){
 				play_named_sound(@loc, array(sound: 'music_disc.stal', pitch: 10 / @secs, category: 'RECORDS', volume: 3));
 				_fw_start_task(@secs);
+				update_bar('fw', array(visible: true, percent: 0.0, color: 'WHITE'));
 			}, 'fw2');
 			for(@i = @secs, @i >= 0, @i--) {
 				if(@i > 0) {
@@ -126,14 +134,17 @@ proc _fw_start_round(@secs = 12) {
 								set_pscoreboard(@p);
 								reset_all_pscores(@p, 'fw');
 								_equip_kit(@p);
+								bar_remove_player('fw', @p);
 							}
 						}
 						_fw_countdown(@i);
+						update_bar('fw', array(percent: (@secs - @i) / @secs, color: if(@i < 4, 'YELLOW', 'WHITE')));
 					}, 'fw2');
 					queue_delay(1000, 'fw2');
 				} else {
 					queue_push(closure(){
 						_fw_countdown(@i);
+						update_bar('fw', array(percent: 1.0, color: 'RED'));
 						_fw_end_task(@secs);
 						foreach(@p in all_players('custom')) {
 							if(_fw_player(@p)) {
@@ -195,6 +206,7 @@ proc _fw_end_game(@winners) {
 	if(array_contains(get_scoreboards(), 'fw')) {
 		set_timeout(5000, closure(){
 			remove_scoreboard('fw');
+			remove_bar('fw');
 			_remove_activity('frogware');
 		});
 	}
