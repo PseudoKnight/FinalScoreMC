@@ -16,12 +16,7 @@ proc _fw_start_task(@secs) {
 		console('Failed to create item drops');
 	}
 
-	@string = _to_upper_camel_case(@hat);
-	foreach(@p in all_players('custom')) {
-		if(_fw_player(@p)) {
-			title(@p, 'Put on a fancy hat!', @string, 0, 80, 40);
-		}
-	}
+	update_bar('fw', array(title: 'Put on a fancy hat! '._to_upper_camel_case(@hat)));
 
 	// now drop some random items
 	@count = @secs * 10;

@@ -14,11 +14,7 @@ proc _fw_start_task(@secs) {
 			@string .= _to_upper_camel_case(@color.' '.@type);
 		}
 	}
-	foreach(@p in all_players('custom')) {
-		if(_fw_player(@p)) {
-			title(@p, 'Wear the following:', @string, 0, 80, 40);
-		}
-	}
+	update_bar('fw', array(title: 'Wear '.@string));
 	// drop the desired items first
 	@count = _fw_total_players() * 2;
 	for(@i = 0, @i < @count, @i++) {
