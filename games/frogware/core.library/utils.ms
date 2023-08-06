@@ -57,23 +57,25 @@ proc _fw_mobs(@mob = 'random', @num = 'random') {
 		if(@loc = _fw_loc(@height, true)) {
 			@m = _spawn_entity(@mob, @loc);
 			@entities[] = @m;
-			if(@mob == 'wolf') {
-				set_entity_spec(@m, array(angry: true));
-				set_mob_target(@m, puuid(_fw_leader()));
-			} else if(@mob == 'polarbear' && !rand(8)) {
-				set_mob_age(@m, -3000);
-			} else if(@mob == 'villager') {
-				if(!@types) {
-					@types = reflect_pull('enum', 'Profession');
+			try {
+				if(@mob == 'wolf') {
+					set_entity_spec(@m, array(angry: true));
+					set_mob_target(@m, puuid(_fw_leader()));
+				} else if(@mob == 'polarbear' && !rand(8)) {
+					set_mob_age(@m, -3000);
+				} else if(@mob == 'villager') {
+					if(!@types) {
+						@types = reflect_pull('enum', 'Profession');
+					}
+					set_entity_spec(@m, array(profession: array_get_rand(@types), level: 2));
+				} else if(@mob == 'bee' || @mob == 'zombified_piglin') {
+					set_entity_spec(@m, array(anger: 9999));
+					@players = players_in_radius(@loc, 16);
+					if(@players) {
+						set_mob_target(@m, puuid(array_get_rand(@players)));
+					}
 				}
-				set_entity_spec(@m, array(profession: array_get_rand(@types), level: 2));
-			} else if(@mob == 'bee' || @mob == 'zombified_piglin') {
-				set_entity_spec(@m, array(anger: 9999));
-				@players = players_in_radius(@loc, 16);
-				if(@players) {
-					set_mob_target(@m, puuid(array_get_rand(@players)));
-				}
-			}
+			} catch(BadEntityException @failedToSpawn) {}
 		}
 	}
 	if(!rand(4)) {
