@@ -100,6 +100,7 @@ foreach(@name: @cake in @cakes) {
 				@lore[] = color('gray').'Best time: ' . @time . ' by '.@playerName;
 			}
 		}
+		@lore[] = color('dark_gray').'Run: /warp '.@name;
 		if(@cake['type'] == 'challenge') {
 			@coins = @cake['coins'];
 			if(array_index_exists(@tiers[@t]['parkour'], @coins)) {
@@ -181,7 +182,6 @@ foreach(@t: @tier in @tiers) {
 						}
 					}
 				}
-				@item['meta']['lore'][] = color('dark_gray').'Run: /warp '.@name;
 			}
 			@menu[@slot] = @item;
 		}

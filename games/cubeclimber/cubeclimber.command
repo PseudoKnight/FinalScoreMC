@@ -41,8 +41,8 @@ register_command('cubeclimber', array(
 				@cc = import('cubeclimber');
 				if(!@cc) {
 					@cc = array(
-						'players': array(),
-						'highest': 0,
+						players: array(),
+						highest: 0,
 					);
 					export('cubeclimber', @cc);
 					broadcast(player().colorize(' queued up a game of &7[&6Cube&cClimber&7]'), all_players(pworld()));
@@ -53,7 +53,7 @@ register_command('cubeclimber', array(
 				if(!array_contains(get_scoreboards(), 'cc')) {
 					create_scoreboard('cc');
 					create_objective('height', 'DUMMY', 'cc');
-					set_objective_display('height', array('slot': 'SIDEBAR', 'displayname': 'Starting...'), 'cc');
+					set_objective_display('height', array(slot: 'SIDEBAR', displayname: 'Starting...'), 'cc');
 					_add_activity('cubeclimber', 'CubeClimber', 'cubeclimber', pworld());
 				}
 
