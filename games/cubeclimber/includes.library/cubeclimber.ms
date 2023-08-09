@@ -131,7 +131,14 @@ proc _cc_start(@world = 'custom') {
 
 					set_block(@e['location'], 'AIR', false);
 					play_sound(@e['location'], array(sound: 'ENTITY_CHICKEN_EGG', pitch: 0.5));
-					make_effect(@e['location'], 'smoke:4');
+					spawn_particle(_center(@e['location']), array(
+						particle: 'BLOCK_CRACK',
+						count: 64,
+						xoffset: 1,
+						yoffset: 1,
+						zoffset: 1,
+						block: @e['block'],
+					));
 
 					for(@y = @e['location'][1] - 1, @y <= @e['location'][1] + 1, @y++) {
 						for(@x = @e['location'][0] - 1, @x <= @e['location'][0] + 1, @x++) {
