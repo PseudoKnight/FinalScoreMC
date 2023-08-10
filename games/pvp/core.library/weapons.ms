@@ -37,9 +37,20 @@ proc _weapon_cooldown(@player, @time, @type, @onCooldown, @remove = 1) {
 
 proc _weapon_hit_scan(@player, @ray, @damage, @effects, @pvp){
 	@damager = puuid(@player);
-	@range = array_get(@ray, 'range', 112);
-	@raySize = array_get(@ray, 'raySize', 0.0);
-	@inaccuracy = array_get(@ray, 'inaccuracy', 0.0);
+	@range = 112;
+	@raySize = 0.0;
+	@inaccuracy = 0.0;
+	if(@ray) {
+		if(array_index_exists(@ray, 'range')) {
+			@range = @ray['range'];
+		}
+		if(array_index_exists(@ray, 'raySize')) {
+			@raySize = @ray['raySize'];
+		}
+		if(array_index_exists(@ray, 'inaccuracy')) {
+			@inaccuracy = @ray['inaccuracy'];
+		}
+	}
 	
 	@hitsound = 'ENTITY_ARROW_HIT_PLAYER';
 	if(array_index_exists(@effects, 'hitsound')) {
