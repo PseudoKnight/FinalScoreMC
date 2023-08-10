@@ -168,18 +168,26 @@ proc _spawn_entity(@entity, @loc, @spawnData, @consumer) {
 							clear_task();
 						} else {
 							@loc1 = entity_loc(@e);
+							@nearestTarget = null;
+							@nearestDistance = @range;
 							foreach(@p in players_in_radius(@loc1, @range)) {
-								if(!array_contains(@ignore, @p) && pmode(@p) != 'SPECTATOR') {
-									@loc2 = ploc(@p);
-									@loc2['y'] += 2;
-									@loc1['yaw'] = get_yaw(@loc1, @loc2);
-									@loc1['pitch'] = get_pitch(@loc1, @loc2);
-									set_entity_loc(@e, @loc1);
-									if(entity_can_see(@e, puuid(@p))) {
-										shoot_projectile(@e, @projectile, @p);
+								if(!array_contains(@ignore, @p)
+								&& pmode(@p) != 'SPECTATOR'
+								&& entity_can_see(@e, puuid(@p))) {
+									@distance = distance(ploc(@p), @loc1);
+									if(@nearestDistance > @distance) {
+										@nearestDistance = @distance;
+										@nearestTarget = @p;
 									}
-									break();
 								}
+							}
+							if(@nearestTarget) {
+								@loc2 = ploc(@nearestTarget);
+								@loc2['y'] += 2;
+								@loc1['yaw'] = get_yaw(@loc1, @loc2);
+								@loc1['pitch'] = get_pitch(@loc1, @loc2);
+								set_entity_loc(@e, @loc1);
+								shoot_projectile(@e, @projectile, @nearestTarget);
 							}
 						}
 					} catch(BadEntityException @ex) {
@@ -188,12 +196,23 @@ proc _spawn_entity(@entity, @loc, @spawnData, @consumer) {
 				});
 			} else {
 				set_timeout(100, closure(){
+					@loc1 = entity_loc(@e);
+					@nearestTarget = null;
+					@nearestDistance = @range;
 					foreach(@p in players_in_radius(entity_loc(@e), @range)) {
-						if(!array_contains(@ignore, @p)) {
-							damage_entity(@e, 0, puuid(@p));
-							set_mob_target(@e, puuid(@p));
-							break();
+						if(!array_contains(@ignore, @p)
+						&& pmode(@p) != 'SPECTATOR'
+						&& entity_can_see(@e, puuid(@p))) {
+							@distance = distance(ploc(@p), @loc1);
+							if(@nearestDistance > @distance) {
+								@nearestDistance = @distance;
+								@nearestTarget = @p;
+							}
 						}
+					}
+					if(@nearestTarget) {
+						damage_entity(@e, 0, puuid(@nearestTarget));
+						set_mob_target(@e, puuid(@nearestTarget));
 					}
 				});
 			}
