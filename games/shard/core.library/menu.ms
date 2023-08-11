@@ -3,39 +3,34 @@ proc _open_objective_menu() {
 	@menu = array(
 		'0': array(
 			name: 'IRON_SWORD', meta: array(
-				display: color('aqua').'Elimination',
+				display: color('aqua').'PVP Elimination',
 				flags: array('HIDE_ATTRIBUTES'),
 				lore: array(
-					color('white').'Eliminate all other players not in your team.',
-			))
-		),
+					color('white').'Eliminate all other players. Supports teams.',
+		))),
 		'1': array(
 			name: 'ENDER_CHEST', meta: array(
 				display: color('aqua').'Treasure Hunt',
 				lore: array(
 					color('white').'Collect randomly buried treasure. Players respawn.',
-					color('white').'One minute after a treasure is found and retrieved,',
-					color('white').'another is spawned. Compasses point to treasures,',
-					color('white').'but coordinates are also given.',
-			))
-		),
+					color('white').'Compasses point to a single treasure for all players,',
+					color('white').'but coordinates and distances are also given.',
+					color('white').'First player or team to claim a third treasure wins.'
+		))),
 		'2': array(
 			name: 'MAP', meta: array(
-				display: color('aqua').'Scavenger Hunt',
+				display: color('aqua').'Scavenger Hunt / BINGO',
 				lore: array(
-					color('white').'Find and collect items to complete your card.',
-					color('white').'Can be played like BINGO where',
-					color('white').'across, down, or diagonal wins the game.',
-			))
-		),
+					color('white').'Find and collect items to complete your BINGO card.',
+					color('white').'Horizontal, vertical or diagonal across wins the game.',
+		))),
 		'3': array(
 			name: 'GRASS_BLOCK', meta: array(
-				display: color('aqua').'Creative',
+				display: color('aqua').'Creative Mode',
 				lore: array(
 					color('white').'Creative mode in shard.',
-					color('white').'Ends when all players exit the world.',
-			))
-		)
+					color('white').'Ends when all players teleport out of the world.',
+		)))
 	);
 	create_virtual_inventory('shard', 'HOPPER', 'Choose an Objective', @menu);
 	popen_inventory('shard');
@@ -79,12 +74,12 @@ proc _open_rules_menu(@objective) {
 					),
 					owneruuid: '9b0146a5-2305-4675-ba3e-e5a3524ebb69',
 					texture: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYzgzMTEzOGMyMDYxMWQzMDJjNDIzZmEzMjM3MWE3NDNkMTc0MzdhMTg5NzNjMzUxOTczNDQ3MGE3YWJiNCJ9fX0=',
-			))
-		),
+		))),
 		keep: array(
 			objective: array('elimination', 'treasurehunt', 'creative'),
 			default: false,
 			shown: true,
+			show: 'mirrored',
 			item: array(
 				name: 'DIAMOND_CHESTPLATE', meta: array(
 					display: color('aqua').color('bold').'KEEP INVENTORY',
@@ -92,9 +87,7 @@ proc _open_rules_menu(@objective) {
 					lore: array(
 						color('white').'Players keep their current inventory.',
 						color('red').'VERY UNFAIR!'
-			))),
-			show: 'mirrored',
-		),
+		)))),
 		mirrored: array(
 			objective: array('elimination', 'treasurehunt'),
 			default: false,
@@ -108,8 +101,7 @@ proc _open_rules_menu(@objective) {
 						color('white').'The shard creator\'s inventory is used.',
 						color('white').'Overrides KEEP INVENTORY.',
 						color('green').'VERY FAIR!'
-			)))
-		),
+		)))),
 		megadestruction: array(
 			default: false,
 			shown: true,
@@ -118,8 +110,7 @@ proc _open_rules_menu(@objective) {
 					display: color('aqua').color('bold').'MEGA DESTRUCTION',
 					lore: array(
 						color('white').'Spawn with TNT, flint&steel, and fireballs',
-			)))
-		),
+		)))),
 		icarus: array(
 			default: false,
 			shown: true,
@@ -128,8 +119,7 @@ proc _open_rules_menu(@objective) {
 					display: color('aqua').color('bold').'ICARUS',
 					lore: array(
 						color('white').'Spawn with elytra and fireworks',
-			)))
-		),
+		)))),
 		noregen: array(
 			objective: array('elimination'),
 			default: false,
@@ -141,8 +131,7 @@ proc _open_rules_menu(@objective) {
 						color('white').'Disables health regeneration from hunger satiation.',
 						color('white').'Potions and golden apples still regenerate health.',
 						color('gold').'HARD, BUT FAIR!'
-			)))
-		),
+		)))),
 		randomspawn: array(
 			objective: array('elimination', 'treasurehunt', 'scavengerhunt'),
 			default: true,
@@ -154,8 +143,7 @@ proc _open_rules_menu(@objective) {
 						color('white').'Selects a random spawn for all players,',
 						color('white').'even if they\'re within the region.',
 						color('yellow').'RANDOM, BUT FAIR-ISH!'
-			)))
-		),
+		)))),
 		teams: array(
 			objective: array('elimination', 'treasurehunt'),
 			default: 0,
@@ -166,23 +154,21 @@ proc _open_rules_menu(@objective) {
 					display: color('aqua').color('bold').'TEAMS',
 					lore: array(
 						color('white').'Number of teams'
-			)))
-		),
+		)))),
 		width: array(
 			default: 64,
 			shown: true,
 			values: array(16, 24, 32, 48, 64),
+			result: iclosure(@value) {
+				return(@value * 16);
+			},
 			item: array(
 				name: 'END_CRYSTAL', meta: array(
 					display: color('aqua').color('bold').'WORLDBORDER CHUNK WIDTH',
 					lore: array(
 						color('white').'Width of shard world border in chunks',
 						color('white').'Max (64) is equal to 1024 meters wide',
-			))),
-			result: iclosure(@value) {
-				return(@value * 16);
-			}
-		),
+		)))),
 		timelimit: array(
 			objective: array('elimination'),
 			default: 10,
@@ -195,13 +181,15 @@ proc _open_rules_menu(@objective) {
 						color('white').'How much time for the worldborder to collapse',
 						color('white').'If deactivated, the worldborder will not collapse',
 						color('white').'and it will override BUFFER TIME'
-			)))
-		),
+		)))),
 		buffertime: array(
 			objective: array('elimination', 'treasurehunt'),
 			default: 0,
 			shown: true,
 			values: array(0, 1, 3, 5, 10, 15, 20),
+			result: iclosure(@value) {
+				return(@value * 60000);
+			},
 			item: array(
 				name: 'CLOCK', meta: array(
 					display: color('aqua').color('bold').'BUFFER TIME',
@@ -214,13 +202,8 @@ proc _open_rules_menu(@objective) {
 						),
 						array(
 							color('white').'How much time before the first treasure is spawned.',
-						),
-					),
-			)),
-			result: iclosure(@value) {
-				return(@value * 60000);
-			}
-		),
+						)
+		)))),
 		cardsize: array(
 			objective: array('scavengerhunt'),
 			default: 5,
@@ -234,8 +217,7 @@ proc _open_rules_menu(@objective) {
 						color('white').'If disabled, uses a full card,',
 						color('white').'and requires 4 in a row. In this mode,',
 						color('white').'only one player may get each item.',
-			)))
-		),
+		))))
 	);
 	@menu = array(
 		44: array(
@@ -243,8 +225,7 @@ proc _open_rules_menu(@objective) {
 				display: color('green').color('bold').'ENTER SHARD',
 				enchants: array(unbreaking: 1),
 				flags: array('HIDE_ENCHANTS', 'HIDE_ATTRIBUTES')
-			)
-		),
+		))
 	)
 
 	// Populate rules and menu with provided options
