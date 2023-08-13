@@ -1166,7 +1166,44 @@ proc _objective_load(@binds, @rules) {
 		}
 	}
 
-
+	// Timer task
+	if(@rules['timelimit']) {
+		export('shard.countdown', @rules['timelimit'] * 60);
+		set_interval(1000, closure(){
+			try {
+				@secondsLeft = import('shard.countdown')--;
+				@minutes = integer(abs(@secondsLeft) / 60);
+				@seconds = abs(@secondsLeft) - @minutes * 60;
+				@displayTime = 'Time Left: '.if(@secondsLeft < 0, '-').@minutes.':'.if(@seconds < 10, '0').@seconds;
+				if(@size) {
+					set_objective_display('inarow', array(displayname: @displayTime), 'shard');
+				} else {
+					set_objective_display('total', array(displayname: @displayTime), 'shard');
+				}
+				if(@secondsLeft <= 0) {
+					@bestScore = 0;
+					@winner = '';
+					foreach(@p in all_players()) {
+						if(pworld(@p) == 'shard') {
+							@score = get_pscore('total', @p, 'shard');
+							if(@score > @bestScore) {
+								@bestScore = @score;
+								@winner = @p;
+							}
+						}
+					}
+					if(@winner) {
+						clear_task();
+						_scavengerhunt_win(@winner);
+					}
+				}
+				export('shard.countdown', @secondsLeft);
+			} catch(Exception @gameEnded) {
+				clear_task();
+				export('shard.countdown', null);
+			}
+		});
+	}
 
 	// Events
 	@binds[] = 'shard-scavenger-worldchanged';

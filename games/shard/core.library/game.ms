@@ -16,7 +16,7 @@ proc _shard_create(@rules){
 			play_named_sound(@ploc, array(sound: 'entity.guardian.attack'));
 		}
 	}
-	if(array_size(@players) < 2 && @rules['objective'] != 'creative') {
+	if(array_size(@players) < 2 && @rules['objective'] != 'creative' && @rules['objective'] != 'scavengerhunt') {
 		set_timeout(1800, closure(){
 			action_msg(color('red').'Not enough players to generate a shard!');
 			play_sound(ploc(), array(sound: 'BLOCK_FIRE_EXTINGUISH', volume: 0.5));
@@ -156,7 +156,7 @@ proc _shard_create(@rules){
 					'ticks-per-animal-spawns': 20,
 				));
 				@respawnPlayers = (@rules['objective'] == 'treasurehunt' || @rules['objective'] == 'scavengerhunt' || @rules['objective'] == 'creative');
-				if(!@respawnPlayers && @rules['buffertime'] && @rules['timelimit']) {
+				if(!@respawnPlayers && @rules['buffertime'] && @rules['timelimit'] && @rules['objective'] != 'scavengerhunt') {
 					set_timeout(@rules['buffertime'], closure(){
 						if(array_contains(get_worlds(), 'shard')) {
 							set_world_border('shard', array(width: 1, seconds: @rules['timelimit'] * 60));
@@ -345,7 +345,10 @@ proc _shard_create(@rules){
 							}
 							export('playerspawn', @loc);
 							set_pmode('SPECTATOR');
-							if(@rules['timelimit'] && !@rules['buffertime'] && get_world_border('shard')['width'] == @rules['width']) {
+							if(@rules['timelimit'] 
+							&& !@rules['buffertime'] 
+							&& @rules['objective'] != 'scavengerhunt'
+							&& get_world_border('shard')['width'] == @rules['width']) {
 								set_world_border('shard', array(width: 1, seconds: @rules['timelimit'] * 60));
 								_worldmsg('shard', color('red').color('bold').'Shard has started to collapse! ('.@rules['timelimit'].' minutes)');
 							}

@@ -1,14 +1,14 @@
 proc _open_objective_menu() {
-	@objectives = array('treasurehunt', 'elimination', 'scavengerhunt', 'creative');
+	@objectives = array('elimination', 'treasurehunt', 'scavengerhunt', 'creative');
 	@menu = array(
-		'0': array(
+		array(
 			name: 'IRON_SWORD', meta: array(
 				display: color('aqua').'PVP Elimination',
 				flags: array('HIDE_ATTRIBUTES'),
 				lore: array(
 					color('white').'Eliminate all other players. Supports teams.',
 		))),
-		'1': array(
+		array(
 			name: 'ENDER_CHEST', meta: array(
 				display: color('aqua').'Treasure Hunt',
 				lore: array(
@@ -17,14 +17,14 @@ proc _open_objective_menu() {
 					color('white').'but coordinates and distances are also given.',
 					color('white').'First player or team to claim a third treasure wins.'
 		))),
-		'2': array(
+		array(
 			name: 'MAP', meta: array(
 				display: color('aqua').'Scavenger Hunt / BINGO',
 				lore: array(
 					color('white').'Find and collect items to complete your BINGO card.',
 					color('white').'Horizontal, vertical or diagonal across wins the game.',
 		))),
-		'3': array(
+		array(
 			name: 'GRASS_BLOCK', meta: array(
 				display: color('aqua').'Creative Mode',
 				lore: array(
@@ -37,14 +37,10 @@ proc _open_objective_menu() {
 	play_sound(ploc(), array(sound: 'BLOCK_AMETHYST_BLOCK_CHIME'));
 
 	bind('inventory_click', array(id: player().'click'), array(player: player(), virtual: true), @event, @objectives) {
-		@item = @event['slotitem'];
-		if(@item && @item['meta'] && @item['meta']['display'] && length(@item['meta']['display']) >= 2) {
-			@objective = replace(to_lower(substr(@item['meta']['display'], 2)), ' ', '');
-			if(array_contains(@objectives, @objective)) {
-				unbind();
-				unbind(player().'close');
-				_open_rules_menu(@objective);
-			}
+		if(array_index_exists(@objectives, @event['rawslot'])) {
+			unbind();
+			unbind(player().'close');
+			_open_rules_menu(@objectives[@event['rawslot']]);
 		}
 	}
 
@@ -170,17 +166,24 @@ proc _open_rules_menu(@objective) {
 						color('white').'Max (64) is equal to 1024 meters wide',
 		)))),
 		timelimit: array(
-			objective: array('elimination'),
-			default: 10,
+			objective: array('elimination', 'scavengerhunt'),
+			default:  if(@objective == 'elimination', 10, 45),
 			shown: true,
 			values: array(0, 10, 15, 20, 25, 30, 45, 60),
 			item: array(
 				name: 'CLOCK', meta: array(
 					display: color('aqua').color('bold').'TIME LIMIT',
-					lore: array(
-						color('white').'How much time for the worldborder to collapse',
-						color('white').'If deactivated, the worldborder will not collapse',
-						color('white').'and it will override BUFFER TIME'
+					lore: if(@objective == 'elimination',
+						array(
+							color('white').'How many minutes for the worldborder to collapse.',
+							color('white').'If deactivated, the worldborder will not collapse',
+							color('white').'and it will override the BUFFER TIME value.'
+						),
+						array(
+							color('white').'Minutes until scavenger hunt ends automatically.',
+							color('white').'If time limit expires, player with most slots wins.',
+							color('white').'If disabled there is no time limit.'
+						)
 		)))),
 		buffertime: array(
 			objective: array('elimination', 'treasurehunt'),
@@ -197,11 +200,11 @@ proc _open_rules_menu(@objective) {
 					flags: array('HIDE_ENCHANTS'),
 					lore: if(@objective == 'elimination',
 						array(
-							color('white').'How much time before the worldborder collapses.',
+							color('white').'How many minutes before the worldborder begins to collapse.',
 							color('white').'If deactivated, the worldborder will collapse after first death.'
 						),
 						array(
-							color('white').'How much time before the first treasure is spawned.',
+							color('white').'How many minutes before the first treasure is spawned.',
 						)
 		)))),
 		cardsize: array(
