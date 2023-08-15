@@ -111,15 +111,17 @@ proc _cc_start(@world = 'custom') {
 		play_sound(@region[1], array(sound: 'ENTITY_EXPERIENCE_ORB_PICKUP', volume: 2));
 		set_objective_display('height', color(7).'['.color('gold').'Cube'.color('red').'Climber'.color(7).']', 'cc');
 
+		@cc = import('cubeclimber');
+
 		foreach(@p in all_players()) {
 			if(array_contains(sk_current_regions(@p), 'cubeclimber')
-			&& pworld(@p) == @world) {
+			&& pworld(@p) == @world
+			&& !array_index_exists(@cc['players'], @p)) {
 				_cc_spawn(@p);
 				_cc_add_player(@p);
 			}
 		}
 
-		@cc = import('cubeclimber');
 		@cc['starttime'] = time();
 		export('cubeclimber', @cc);
 
