@@ -18,7 +18,7 @@
 		lore: array(
 			color('white').'Players race to the top of randomly placed cubes.',
 			color('white').'Click certain color blocks to remove them.',
-			color('white').'First player to the top wins. (2+ players)',
+			color('white').'First player to the top wins. (1+ players)',
 			color('white').'Get a high score for fastest climb!',
 			color('dark_gray').'Run: /warp cubeclimber',
 		),

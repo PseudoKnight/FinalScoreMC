@@ -273,22 +273,24 @@ proc _cc_end(@winners, @world = 'custom') {
 			@pstats = array(0, 0, 0, 0);
 		}
 
-		# games won
-		if(get_pscore('height', @p, 'cc') == @height) {
-			@pstats[0] += 1;
+		# Only count times when not playing against other players
+		if(array_size(@cc['players']) > 1) {
+			# games won
+			if(get_pscore('height', @p, 'cc') == @height) {
+				@pstats[0] += 1;
+			}
+
+			# games played
+			@pstats[1] += 1;
+
+			# blocks climbed
+			@pstats[2] += get_pscore('height', @p, 'cc');
+
+			# opponents played
+			@pstats[3] += array_size(@cc['players']) - 1;
 		}
 
-		# games played
-		@pstats[1] += 1;
-
-		# blocks climbed
-		@pstats[2] += get_pscore('height', @p, 'cc');
-
-		# opponents played
-		@pstats[3] += array_size(@cc['players']) - 1;
-
 		# best time
-
 		if(array_contains(@winners, @p)) {
 			if(!array_index_exists(@pstats, 4) || @time < @pstats[4]) {
 				if(array_index_exists(@pstats, 4)) {

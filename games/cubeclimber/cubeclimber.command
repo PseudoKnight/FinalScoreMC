@@ -22,18 +22,11 @@ register_command('cubeclimber', array(
 					die(color('gold').'Define the cubeclimber_blocks region first.');
 				}
 
-				@count = 0;
 				@invitations = array();
 				foreach(@p in all_players(pworld())) {
-					if(array_contains(sk_current_regions(@p), 'cubeclimber')) {
-						@count++;
-					} else {
+					if(!array_contains(sk_current_regions(@p), 'cubeclimber')) {
 						@invitations[] = @p;
 					}
-				}
-
-				if(@count < 2) {
-					die(color('gold').'You need to have at least 2 players to start CubeClimber.');
 				}
 
 				_click_tell(@invitations, array('&7[&6Cube&cClimber&7]&r Starting... ', array('&b[Click to Warp]', '/warp cubeclimber')));
