@@ -165,8 +165,6 @@ proc _cc_start(@world = 'custom') {
 		}
 
 		@basenote = @region[0][1] - @region[1][1] - 23;
-		@notes = array(0.5, 0.53, 0.56, 0.59, 0.62, 0.67, 0.7, 0.75, 0.8, 0.84, 0.9, 0.95, 1.0, 1.05, 1.12, 1.19, 1.26,
-				1.34, 1.42, 1.5, 1.6, 1.68, 1.78, 1.88, 2.0);
 		@winners = array();
 		set_interval(200, closure(){
 			@cc = import('cubeclimber');
@@ -201,7 +199,8 @@ proc _cc_start(@world = 'custom') {
 
 					if(array_contains(@pregions, 'cubeclimber_blocks')) {
 
-						if(string_ends_with(get_block(@ploc), '_CONCRETE')) {
+						@block = get_block(@ploc);
+						if(string_ends_with(@block, '_CONCRETE') && @block != @cc['players'][@p].'_CONCRETE') {
 							set_block(@ploc, @cc['players'][@p].'_CONCRETE', false);
 						}
 
@@ -221,8 +220,8 @@ proc _cc_start(@world = 'custom') {
 								@cc['highest'] = @newheight;
 
 								play_sound(@ploc, array(
-									sound: 'BLOCK_NOTE_BLOCK_HARP',
-									pitch: if(@newheight >= @basenote, @notes[@newheight - @basenote], 0.5),
+									sound: 'BLOCK_NOTE_BLOCK_BIT',
+									pitch: 2 ** ((@newheight - @basenote - 12) / 12),
 									volume: 2,
 								));
 
