@@ -50,15 +50,21 @@ proc _set_inventory_contents(@loc, @count, @player,
 		return();
 	}
 
+	if(has_metadata(@loc, 'treasure')) {
+		@count *= 5;
+	}
+
 	@size = get_inventory_size(@loc);
 	@inv = array();
 	array_resize(@inv, @size);
+	@emptySlots = range(@size);
 	
-	@c = @count;
+	@c = min(@size, @count);
 	while(@c > 0) {
 		@item = _random_item(@baseItems);
 		if(@item) {
-			@inv[rand(0, @size)] = @item;
+			@randomSlot = array_remove(@emptySlots, rand(array_size(@emptySlots)));
+			@inv[@randomSlot] = @item;
 			@c--;
 		}
 	}
@@ -124,8 +130,20 @@ proc _random_item(@baseItems) {
 					@meta['potions'][@effect] = array(seconds: rand(1, 480), strength: rand(3)),
 				} while(rand(2))
 			}
+		case 'COMPASS':
+			if(rand(2)) {
+				@worldborder = get_world_border('shard');
+				@width = max(16, @worldborder['width'] - 32);
+				@loc = @worldborder['center'];
+				@loc['x'] += rand() * @width - @width / 2;
+				@loc['z'] += rand() * @width - @width / 2;
+				@loc['y'] = rand(32, 62);
+				set_block(@loc, 'CHEST');
+				set_metadata(@loc, 'treasure', 1);
+				@meta = array(display: 'Treasure Compass', target: @loc, lodestone: false);
+			}
 	}
-	
+
 	@item = array(
 		name: @id,
 		qty: rand(1, @max + 1),
