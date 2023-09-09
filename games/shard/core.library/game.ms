@@ -28,7 +28,7 @@ proc _shard_create(@rules){
 	if(extension_exists('CHDynmap')) {
 		dm_set_update_renders_paused(true);
 	}
-	@base = '../../../../../..'; // relative to script location
+	@base = '../../../../../../worlds'; // relative to script location
 	try {
 		@files = list_files("@base/shard/region");
 		foreach(@file in @files) {
