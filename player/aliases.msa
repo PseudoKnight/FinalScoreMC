@@ -46,7 +46,7 @@
 			'videos, live maps, and more.',
 		'map': 'livemap',
 		'livemap':
-			'>>> http://'.get_server_info(12).':27836 <<< The website has a handy live map that shows the '.
+			'>>> http://65.75.211.105:30027 <<< The website has a handy live map that shows the '.
 			'location of players and their homes, among other things.',
 		'staff':
 			'You can get help from anyone with a blue name. Orange players are Frog Park staff and can help there.',

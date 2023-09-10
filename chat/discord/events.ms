@@ -36,7 +36,7 @@ if(extension_exists('CHDiscord')) {
 			if(reg_match('(?i).*\\bserver\\b.*\\b(down|alive)\\b.*', @event['message'])) {
 				discord_broadcast(@event['channel'], 'Beep boop. I am still alive!'
 						.' If you are having trouble connecting to `finalscoremc.com`, you can also use `'
-						.get_server_info(12).':'.get_server_info(11).'`.');
+						.'65.75.211.105:'.get_server_info(11).'`.');
 			}
 		}
 	}
