@@ -27,11 +27,9 @@ register_command('stairway', array(
 		_add_activity(@player.'stairway', @player.' on Stairway');
 		if(array_size(@players) == 0) {
 			@players[@player] = 'WHITE';
-			runas('~console', '/jukebox music @stairway http://finalscoremc.com/media/stairway.mp3 {volume:30,fadeDuration:2}');
 		} else {
 			@players[@player] = array_get_rand(reflect_pull('enum', 'DyeColor'));
 		}
-		runas('~console', '/jukebox show add '.@player.' @stairway');
 		@loc = get_command_block();
 		@startY = integer(@loc['y'] + 2);
 		@loc = array(floor(@loc[0] + 1), floor(@loc[1] + 2), floor(@loc[2]), @loc[3]);
@@ -45,16 +43,6 @@ register_command('stairway', array(
 			@players = import('stairway');
 			array_remove(@players, @player);
 			export('stairway', @players);
-			if(!@players) {
-				if(@height == 256) {
-					runas('~console', '/jukebox stop music @stairway {fadeDuration:10}');
-				} else if(!ponline(@player) || phealth(@player) == 0) {
-					runas('~console', '/jukebox sound @stairway http://finalscoremc.com/media/record_scratch.ogg {volume:20}');
-					runas('~console', '/jukebox stop music @stairway');
-				} else {
-					runas('~console', '/jukebox stop music @stairway {fadeDuration:3}');
-				}
-			}
 			_remove_activity(@player.'stairway');
 			if(!ponline(@player)) {
 				return();
