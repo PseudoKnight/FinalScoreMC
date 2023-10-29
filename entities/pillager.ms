@@ -30,7 +30,7 @@ bind('player_interact_at_entity', null, array('clicked': 'PILLAGER', 'hand': 'ma
 				@gear = associative_array();
 				@drops = associative_array();
 				@gear[@slot] = @item;
-				@drops[@slot] = 1.0;
+				@drops[@slot] = 2.0;
 				set_mob_equipment(@event['id'], @gear);
 				set_equipment_droprates(@event['id'], @drops);
 				play_sound(@loc, array('sound': 'ITEM_ARMOR_EQUIP_LEATHER', 'volume': 0.2));
