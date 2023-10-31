@@ -109,6 +109,6 @@ proc _stats_table(){
 		array('kills', 2, '-------'),
 		array('deaths', 2, '--------'),
 		array('seconds', 3, '--------'),
-		array('pickups', 3, '-------')
+		array('pickups', 3, '------')
 	));
 }
