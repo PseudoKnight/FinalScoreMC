@@ -324,7 +324,7 @@ register_command('times', array(
 				if(@id == 'all') {
 					msg(colorize('&e&m|------------------&e&l[ TOTAL COURSE RANKINGS ]'));
 					@max = min(19, array_size(@top));
-					foreach(@i in @indexes) {
+					foreach(@lineIndex: @i in @indexes) {
 						if(is_null(@i)) {
 							msg('  ···');
 							continue();
@@ -332,14 +332,15 @@ register_command('times', array(
 						if(@top[@i][0] == @uuid) {
 							msg(colorize(' '.if(@i < 9, '&80').'&e'.(@i + 1).' [ '.@top[@i][2].' ] &l'.@top[@i][1]));
 						} else {
-							msg(colorize(' '.if(@i < 9, '&80').'&7'.(@i + 1).'&a [ '.@top[@i][2].' ] &r'.@top[@i][1]));
+							msg(colorize(' '.if(@i < 9, '&80').'&7'.(@i + 1).'&a [ '.@top[@i][2].' ] &r'.@top[@i][1]
+									.if(@lineIndex == 18 && array_size(@top) - 1 > @i, ' (and '.(array_size(@top) - 1 - @i).' more)')));
 						}
 					}
 				} else {
 					msg(colorize('&e&m|-------------------&e&l[ TOP TIMES: '.@title.' ]'));
 					@lastTime = 1.0;
 					@lastCount = 0;
-					foreach(@i in @indexes) {
+					foreach(@lineIndex: @i in @indexes) {
 						if(is_null(@i)) {
 							msg('  ···');
 							continue();
@@ -366,7 +367,8 @@ register_command('times', array(
 						if(@top[@i][0] == @uuid) {
 							msg(colorize(' '.if(@place < 10, '&80').'&e'.@place.' [ '.@time.' ] &l'.@top[@i][1]));
 						} else {
-							msg(colorize(' '.if(@place < 10, '&80').'&7'.@place.'&a [ '.@time.' ] &r'.@top[@i][1]));
+							msg(colorize(' '.if(@place < 10, '&80').'&7'.@place.'&a [ '.@time.' ] &r'.@top[@i][1]
+									.if(@lineIndex == 18 && array_size(@top) - 1 > @i, ' (and '.(array_size(@top) - 1 - @i).' more)')));
 						}
 						@lastTime = @thisTime;
 					}
