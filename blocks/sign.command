@@ -19,23 +19,31 @@ register_command('sign', array(
 			@side = to_upper(@args[0]);
 		} else {
 			@loc = ploc();
-			if(string_position(@signData['block'], 'wall') > -1) {
-				if(@signData['facing'] == 'east') {
-					if(@loc['x'] < @sign['x']) {
-						@side = 'BACK';
-					}
-				} else if(@signData['facing'] == 'west') {
-					if(@loc['x'] > @sign['x']) {
-						@side = 'BACK';
-					}
-				} else if(@signData['facing'] == 'south') {
-					if(@loc['z'] < @sign['z']) {
-						@side = 'BACK';
-					}
-				} else {
-					if(@loc['z'] > @sign['z']) {
-						@side = 'BACK';
-					}
+			if(array_index_exists(@signData, 'rotation')) {
+				@dYaw = @loc['yaw'] - @signData['rotation'] * 22.5;
+				if(@dYaw > 180) {
+					@dYaw -= 360;
+				} else if(@dYaw < -180) {
+					@dYaw += 360;
+				}
+				if(abs(@dYaw) < 90) {
+					@side = 'BACK';
+				}
+			} else if(@signData['facing'] == 'east') {
+				if(@loc['x'] < @sign['x'] + 0.25) {
+					@side = 'BACK';
+				}
+			} else if(@signData['facing'] == 'west') {
+				if(@loc['x'] > @sign['x'] + 0.75) {
+					@side = 'BACK';
+				}
+			} else if(@signData['facing'] == 'south') {
+				if(@loc['z'] < @sign['z'] + 0.25) {
+					@side = 'BACK';
+				}
+			} else {
+				if(@loc['z'] > @sign['z'] + 0.75) {
+					@side = 'BACK';
 				}
 			}
 		}
