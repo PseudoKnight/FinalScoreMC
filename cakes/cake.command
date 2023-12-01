@@ -65,7 +65,7 @@ register_command('cake', array(
 					if(array_contains(array('challenge', 'secret', 'coop'), @arg)) {
 						@type = @arg;
 					} else {
-						@player = puuid(@arg, true);
+						@player = _get_uuid(@arg);
 					}
 				}
 				if(!@player) {
