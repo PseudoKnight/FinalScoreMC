@@ -1270,8 +1270,29 @@ proc _objective_load(@binds, @rules) {
 		}
 	}
 
+	@binds[] = 'shard-scavenger-crafting';
+	bind('inventory_click', array(id: 'shard-scavenger-crafting'), array(slottype: 'RESULT'), @event, @card, @width, @height) {
+		if(pworld() == 'shard') {
+			@thisMaterial = @event['slotitem']['name'];
+			for(@i = 0, @i < @height, @i++) {
+				for(@j = 0, @j < @width, @j++) {
+					@item = @card[@i][@j];
+					if(@item['material'] == @thisMaterial && !array_contains(@item['players'], player())) {
+						@item['players'][] = player();
+						set_pscore('total', player(), get_pscore('total', player(), 'shard') + 1, 'shard');
+						launch_firework(ploc());
+						_worldmsg('shard', player().' found '.color('green').'['.@event['slotitem']['name'].']');
+						_refresh_card();
+						_check_card(player(), @i, @j);
+						break(2);
+					}
+				}
+			}
+		}
+	}
+
 	@binds[] = 'shard-scavenger-itempickup';
-	bind('item_pickup', array(id: 'shard-scavenger-itempickup'), null, @event, @card, @size, @width, @height) {
+	bind('item_pickup', array(id: 'shard-scavenger-itempickup'), null, @event, @card, @width, @height) {
 		if(pworld() == 'shard') {
 			@thisMaterial = @event['item']['name'];
 			if(string_ends_with(@thisMaterial, '_STAINED_GLASS_PANE')) {
@@ -1284,12 +1305,6 @@ proc _objective_load(@binds, @rules) {
 				for(@j = 0, @j < @width, @j++) {
 					@item = @card[@i][@j];
 					if(@item['material'] == @thisMaterial && !array_contains(@item['players'], player())) {
-						if(@event['item']['qty'] > 1) {
-							@event['item']['qty']--;
-							modify_event('item', @event['item']);
-						} else {
-							modify_event('item', null);
-						}
 						@item['players'][] = player();
 						set_pscore('total', player(), get_pscore('total', player(), 'shard') + 1, 'shard');
 						launch_firework(ploc());
