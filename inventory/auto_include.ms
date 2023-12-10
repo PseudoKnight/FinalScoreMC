@@ -126,9 +126,8 @@ proc _minify_inv(@inv, @keepnulls = false) {
 			if(is_null(@meta['modifiers'])) {
 				array_remove(@meta, 'modifiers');
 			}
-			if(array_index_exists(@meta, 'firework')
-			&& is_null(@meta['firework'])) {
-				array_remove(@meta, 'firework');
+			if(is_null(@meta['tags'])) {
+				array_remove(@meta, 'tags');
 			}
 			if(@meta['repair'] == 0) {
 				array_remove(@meta, 'repair');
@@ -136,16 +135,21 @@ proc _minify_inv(@inv, @keepnulls = false) {
 			if(array_size(@meta['flags']) == 0) {
 				array_remove(@meta, 'flags');
 			}
+			if(array_index_exists(@meta, 'damage')) {
+				if(!@meta['damage']) {
+					array_remove(@meta, 'damage');
+				}
+				if(!@meta['unbreakable']) {
+					array_remove(@meta, 'unbreakable');
+				}
+			}
+			// specific meta
 			if(array_index_exists(@meta, 'inventory')) {
 				_minify_inv(@meta['inventory']);
-			}
-			if(array_index_exists(@meta, 'unbreakable') && @meta['unbreakable'] == false) {
-				array_remove(@meta, 'unbreakable');
-			}
-			if(array_index_exists(@meta, 'damage') && @meta['damage'] == 0) {
-				array_remove(@meta, 'damage');
-			}
-			if(array_index_exists(@meta, 'trim') && is_null(@meta['trim'])) {
+			} else if(array_index_exists(@meta, 'firework')
+			&& is_null(@meta['firework'])) {
+				array_remove(@meta, 'firework');
+			} else if(array_index_exists(@meta, 'trim') && is_null(@meta['trim'])) {
 				array_remove(@meta, 'trim');
 			}
 		}
