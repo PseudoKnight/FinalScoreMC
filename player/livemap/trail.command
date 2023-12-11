@@ -43,8 +43,10 @@ register_command('trail', array(
 		}
 		@color = array(@R, @G, @B);
 		@pdata['trail'] = @color;
-		if(array_contains(dm_all_markers('tracers'), player())) {
-			dm_delete_marker('tracers', player());
+		if(extension_exists('CHDynmap')) {
+			if(array_contains(dm_all_markers('tracers'), player())) {
+				dm_delete_marker('tracers', player());
+			}
 		}
 		runas('~console', '/tellraw '.player()
 				.' [{"text":"Trail color set to "},'
