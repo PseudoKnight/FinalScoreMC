@@ -161,8 +161,8 @@ rooms:
     edge: oak_stairs
     window: glass
     windowFrame: oak_log
-    tables: 0.5
-    table: red_carpet
+    rugs: 0.5
+    rug: red_carpet
     vine: ladder
     door: oak_door
     doorFrame: oak_planks

@@ -43,7 +43,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 		waterPit: 0.0, // 0.06
 		pit: 0.0, // 0.06
 		fireFloor: 0.0, // 0.06
-		tables: 0.0,
+		rugs: 0.0,
 		spawnCount: 1,
 		title: '',
 
@@ -61,7 +61,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 		doorFrame: '',
 		ceiling: 'stone',
 		column: 'stone',
-		table: 'red_carpet',
+		rug: 'red_carpet',
 
 		// single materials
 		door: 'air',
@@ -363,8 +363,8 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 
 						// Room shapes determine dominant room features
 						@shape = 'normal';
-						if(@floorData['tables'] && @roomWidth == @roomLength && @roomWidth > 2 && @roomWidth < 6 && srand(@random) < @floorData['tables']) {
-							@shape = 'table';
+						if(@floorData['rugs'] && @roomWidth == @roomLength && @roomWidth > 2 && @roomWidth < 8 && srand(@random) < @floorData['rugs']) {
+							@shape = 'rug';
 							@minHeight = 4;
 						} else if(@floorData['attic'] && @roomWidth > 2 && @roomLength > 2 && srand(@random) < @floorData['attic']) {
 							@shape = 'attic';
@@ -651,7 +651,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 							if(@roomData['randomRoofHeight']) {
 						 		@heightMap[@c2][@r2] = @room['midheight'] + 2 + integer(srand(@random) * (@maxRoomHeight - @room['midheight'] - 2));
 							}
-							if(@room['shape'] == 'TABLE'
+							if(@room['shape'] == 'rug'
 							|| @roomLength == 1
 							|| @roomWidth == 1
 							|| _adjacent_equals(@layoutMap, @c2, @r2, 'door')
@@ -742,6 +742,10 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 									}
 								} else {
 									_add_to_chunk(@chunk, @loc, @roomData['floor']);
+								}
+							} else if(@roomShape == 'rug') {
+								if(!_direction_of_border(@layoutMap, @c, @r)) {
+									_add_to_chunk(@chunk, @loc, 'redstone_ore');
 								}
 							} else if(@column == 'wall') {
 								_add_to_chunk(@chunk, @loc, @roomData['wall']);
@@ -862,10 +866,10 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 
 									case 'room':
 										switch(@roomShape) {
-											case 'table':
+											case 'rug':
 												if(@y == @groundY + 2
 												&& !_direction_of_border(@layoutMap, @c, @r)) {
-													_add_to_chunk(@chunk, @loc, @roomData['table']);
+													_add_to_chunk(@chunk, @loc, @roomData['rug']);
 													continue();
 												}
 											case 'fire_floor':
@@ -1007,7 +1011,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 								while(@loc[1] < @y + @maxRoomHeight - @roomHeight + 1) {
 									@loc[1] += 1;
 									if(@roomData['randomRoofHeight'] && @loc[1] < @y + @maxRoomHeight - @roomHeight) {
-										_add_to_chunk(@chunk, @loc, @roomData['empty']);
+										_add_to_chunk(@chunk, @loc, @roomData['ceiling']);
 									} else {
 										_add_to_chunk(@chunk, @loc, @roomData['divider']);
 									}
