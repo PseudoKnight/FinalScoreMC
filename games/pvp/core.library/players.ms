@@ -108,7 +108,6 @@ proc _player_join(@id) {
 				.',{"text":"\\n \u27a2 Solo","clickEvent":{"action":"run_command","value":"/pvp vote '.@id.' mode solo"}}'
 				.',{"text":"\\n \u27a2 Teams","clickEvent":{"action":"run_command","value":"/pvp vote '.@id.' mode teams"}}'
 				.']';
-				console(@pages);
 		open_book(@pages);
 
 	} else if(@pvp['running'] == 1) {
