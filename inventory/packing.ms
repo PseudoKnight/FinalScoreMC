@@ -1,7 +1,7 @@
 /*
 	EXPERIMENTAL
 	Allows players to manually "pack" certain item types with low max stack sizes up to 64.
-	Currently using this to make certain consumables more practical on the hotbar.
+	Can be used to make certain consumables more practical on the hotbar.
 	(e.g. potions, soups, ender pearls)
  */
 bind('inventory_click', null, array(clicktype: 'LEFT', virtual: false), @event) {
@@ -38,7 +38,8 @@ bind('inventory_click', null, array(clicktype: 'LEFT', virtual: false), @event) 
 		}
 
 		// Exclude items where meta is not identical
-		if(@slotItem && !array_subset_of(@cursorItem['meta'], @slotItem['meta'])) {
+		if(@slotItem && (is_null(@cursorItem['meta']) != is_null(@slotItem['meta']) 
+				|| @slotItem['meta'] && !array_subset_of(@cursorItem['meta'], @slotItem['meta']))) {
 			die();
 		}
 
