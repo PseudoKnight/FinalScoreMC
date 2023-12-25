@@ -471,6 +471,16 @@ bind('vehicle_enter', null, array(vehicletype: 'MINECART', passengertype: 'PLAYE
 	}
 }
 
+// Protect farmland when using feather falling boots
+bind('pressure_plate_activated', null, null, @event) {
+	if(get_block(@event['location']) == 'FARMLAND') {
+		@item = pinv(player(), 100);
+		if(@item && @item['meta'] && array_index_exists(@item['meta']['enchants'], 'feather_falling')) {
+			cancel();
+		}
+	}
+}
+
 /*
 bind('region_change', null, null, @event) {
 	@world = @event['to']['world'];
