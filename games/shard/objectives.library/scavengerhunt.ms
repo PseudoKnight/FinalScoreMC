@@ -380,7 +380,7 @@ proc _objective_load(@binds, @rules) {
 		'GRANITE_SLAB',
 		'GRANITE_STAIRS',
 		'GRANITE_WALL',
-		'GRASS',
+		'SHORT_GRASS',
 		'GRAVEL',
 		'GRAY_BANNER',
 		'GRAY_BED',
