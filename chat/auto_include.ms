@@ -192,7 +192,7 @@ proc _tellraw(@recipients, @components) {
 			'&m': '"strikethrough":true,',
 			'&n': '"underlined":true,',
 			'&o': '"italic":true,',
-			'&r': '"color":"reset",',
+			'&r': '',
 			'': '',
 		);
 		@matches = reg_match_all('(&[0-9a-fk-or]|&#[0-9a-f]{6})?(&[k-o])?(&[k-o])?(&[k-o])?((?:&[^0-9a-fk-or#]|[^&])*)', @text);
