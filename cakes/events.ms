@@ -1,5 +1,5 @@
 # Clicking cakes
-bind('player_interact', null, array('block': 'CAKE', 'button': 'right', 'hand': 'main_hand'), @event) {
+bind('player_interact', null, array(block: 'CAKE', button: 'right', hand: 'main_hand'), @event) {
 	if(phas_flight() || pworld() !== 'custom') {
 		die();
 	}
@@ -38,7 +38,7 @@ bind('player_interact', null, array('block': 'CAKE', 'button': 'right', 'hand': 
 
 	@tutorial = 'Secret cakes like this can be found all over the park.\n'
 			.'Find enough of them and get a '.color('gold').'trophy'.color('r').' next to your name!\n'
-			.'Track your progress for all cakes with '.color('a').'/cake list';
+			.'Track your progress for all cakes with '.color('green').'/cake list';
 
 	// always print tutorial message for welcome cake 
 	if(@id == 'welcome') {
@@ -73,11 +73,11 @@ bind('player_interact', null, array('block': 'CAKE', 'button': 'right', 'hand': 
 		}
 
 		_broadcast(display_name().color('r').if(@thiscake['type'] == 'secret', ' found ', ' achieved ')
-				.color('a').'['.to_upper(@id).'] '.color('r').@thiscake['type'].' cake! '.color('a').@count.'/'.@total);
+				.color('green').'['.to_upper(@id).'] '.color('r').@thiscake['type'].' cake! '.color('green').@count.'/'.@total);
 
 		// Tips when getting a certain number of cakes
 		if(@thiscake['type'] == 'secret') {
-			if(@count == 1) {
+			if(@count == 1 && @id != 'welcome') {
 				msg(@tutorial);
 			}
 		} else if(@thiscake['type'] == 'challenge') {
@@ -86,16 +86,15 @@ bind('player_interact', null, array('block': 'CAKE', 'button': 'right', 'hand': 
 			} else if(@count == @total) {
 				msg(color('green').color('bold')."Congratulations for completing all @total challenge courses!\n"
 					.color('gray')."/times top all".color('reset')." : See overall parkour rankings\n"
-					.color('gray')."/times worst".color('reset')." : List courses with the most points you can earn\n"
-					.color('gray')."/times best".color('reset')." : List courses you're best at"
-					."Top 20 times in courses earn points towards overall ranking.\n");
+					.color('gray')."/times worst".color('reset')." : List courses with your worst ranked times\n"
+					.color('gray')."/times best".color('reset')." : List courses with your best ranked times");
 			}
 		}
 
 		// Cake achieved effects
 		psend_block_change(@event['location'], 'magenta_candle_cake[lit=true]');
 		make_effect(@event['location'], 'ENDER_SIGNAL');
-		play_sound(@event['location'], array('sound': 'MUSIC_DISC_STAL'));
+		play_sound(@event['location'], array(sound: 'MUSIC_DISC_STAL'));
 		@loc = @event['location'][];
 		@loc['x'] += 0.5;
 		@loc['y'] += 0.5;
@@ -112,7 +111,7 @@ bind('player_interact', null, array('block': 'CAKE', 'button': 'right', 'hand': 
 }
 
 # COIN SHOPS!
-bind('player_interact', null, array('block': 'OAK_WALL_SIGN'), @event) {
+bind('player_interact', null, array(block: 'OAK_WALL_SIGN'), @event) {
 	@signtext = get_sign_text(@event['location']);
 	if(@cost = reg_match('(?:\\u00a7[0-9a-o])+\\-(\\d{1,3})\\sCoins', @signtext[3])) {
 		cancel();
@@ -124,7 +123,7 @@ bind('player_interact', null, array('block': 'OAK_WALL_SIGN'), @event) {
 			}
 		}
 		@coins = _acc_balance(player())
-		if(@event['action'] === 'left_click_block') {
+		if(@event['action'] == 'left_click_block') {
 			msg(color('yellow').'[Coin Shop] '.color('r').@count.if(@count == 1, ' item', ' items').' left. '
 			.'Your coins: '.if(@coins < @cost[1], color('red'), color('green')).floor(@coins))
 		} else { #right_click_block
