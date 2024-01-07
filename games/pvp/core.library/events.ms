@@ -18,16 +18,18 @@ proc _bind_events(@pvp) {
 		}
 	}
 
-	foreach(@flag in array('infinitedispensers', 'nobottles', 'noinventory', 'rallycall', 'stackedpickup')) {
+	# Enabled flag binds
+	foreach(@flag in array('infinitedispensers', 'nobottles', 'noinventory', 'rallycall', 'stackedpickup', 'nodoors')) {
 		if(array_contains(@pvp['arena']['flags'], @flag)) {
 			include("../events.library/@flag.ms");
 			_bind(@pvp);
 		}
 	}
 
+	# Disabled flag binds
 	foreach(@flag in array('build')) {
 		if(!array_contains(@pvp['arena']['flags'], @flag)) {
-			include("../events.library/@flag.ms");
+			include("../events.library/@{flag}_disabled.ms");
 			_bind(@pvp);
 		}
 	}
@@ -513,28 +515,6 @@ proc _bind_events(@pvp) {
 		}
 	}
 
-	// prevent all item frame and painting destruction
-	if(!array_contains(@pvp['arena']['flags'], 'build')) {
-		@pvp['binds'][] = bind('hanging_break', null, array(world: @pvp['arena']['lobby'][3]), @event, @pvp) {
-			cancel();
-		}
-
-		@pvp['binds'][] = bind('player_interact_entity', array(priority: 'LOWEST'), array(clicked: '/(GLOW_)?ITEM_FRAME/'), @event, @pvp) {
-			if(!is_cancelled()
-			&& array_contains(sk_regions_at(entity_loc(@event['id'])), @pvp['arena']['region'])) {
-				action_msg('Item frames are disabled');
-				cancel();
-			}
-		}
-
-		@pvp['binds'][] = bind('entity_damage', array(priority: 'LOWEST'), array(type: '/(GLOW_)?ITEM_FRAME/'), @event, @pvp) {
-			if(!is_cancelled()
-			&& array_contains(sk_regions_at(@event['location']), @pvp['arena']['region'])) {
-				cancel();
-			}
-		}
-	}
-
 	// add tridents to player's entity map for cleanup later
 	@pvp['binds'][] = bind('projectile_launch', null, array(type: 'TRIDENT'), @event, @pvp) {
 		if(array_index_exists(@pvp['players'], @event['player'])) {
@@ -545,18 +525,6 @@ proc _bind_events(@pvp) {
 	@pvp['binds'][] = bind('block_ignite', null, null, @event, @pvp) {
 		if(array_index_exists(@pvp['players'], player()) && @event['cause'] != 'FLINT_AND_STEEL') {
 			cancel();
-		}
-	}
-
-	if(array_contains(@pvp['arena']['flags'], 'nodoors')) {
-		@pvp['binds'][] = bind('player_interact', array(priority: 'LOWEST'), array(button: 'right'), @event, @pvp) {
-			if(!is_cancelled()
-			&& @event['block']
-			&& array_index_exists(@pvp['players'], player())
-			&& string_ends_with(@event['block'], 'DOOR')) {
-				action_msg('Doors are disabled');
-				cancel();
-			}
 		}
 	}
 }
