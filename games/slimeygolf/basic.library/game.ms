@@ -60,7 +60,14 @@ proc _start_game(@course, @loc) {
 				@mobtype = 'SLIME';
 			}
 
-			_place_ball(@mobtype, @event['location'], @ball, @golf['name']);
+			@ballLoc = array(
+				x: @event['location']['x'] + @event['position']['x'],
+				y: @event['location']['y'] + @event['position']['y'],
+				z: @event['location']['z'] + @event['position']['z'],
+				world: @event['location']['world'],
+			)
+
+			_place_ball(@mobtype, @ballLoc, @ball, @golf['name']);
 
 			@hole = @ball['hole'];
 			if(!array_index_exists(@golf, @hole)) {

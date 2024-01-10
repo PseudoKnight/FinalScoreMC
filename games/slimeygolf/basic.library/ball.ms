@@ -1,8 +1,6 @@
 proc _place_ball(@mobtype, @loc, @ball, @course) {
 	@loc = @loc[];
-	@loc['x'] += 0.5;
-	@loc['y'] -= 1;
-	@loc['z'] += 0.5;
+	@loc['y'] -= 2;
 
 	@ball['id'] = spawn_entity('ARMOR_STAND', 1, @loc)[0];
 	@loc['y'] += 2;
