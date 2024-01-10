@@ -46,9 +46,17 @@ bind('player_interact', null, array('block': 'WATER_CAULDRON', 'button': 'right'
 		}
 
 		@loc = @event['location'][];
-		@loc['x'] += 0.5;
-		@loc['y'] += 1;
-		@loc['z'] += 0.5;
+		@pos = @event['position'];
+		if(@event['facing'] == 'up' && @pos['y'] < 1.0) {
+			@loc['x'] += @event['position']['x'];
+			@loc['y'] += 1;
+			@loc['z'] += @event['position']['z'];
+		} else {
+			@loc['x'] += 0.5;
+			@loc['y'] += 1;
+			@loc['z'] += 0.5;
+		}
+
 		spawn_particle(@loc, array('particle': 'WATER_SPLASH', 'count': 10, 'xoffset': 0.15, 'zoffset': 0.15));
 		play_sound(@loc, array('sound': 'ENTITY_GENERIC_SPLASH', 'pitch': 2, 'volume': 0.3));
 
