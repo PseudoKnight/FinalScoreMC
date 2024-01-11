@@ -68,6 +68,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 		room: 'air',
 		edge: 'air',
 		vine: '',
+		overhead: '',
 
 		// multiple materials
 		wall: array('stone'),
@@ -1069,6 +1070,18 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 					@roomData = array_merge(@roomData, @options['rooms'][@roomType]);
 				}
 
+				if(@roomData['overhead']) {
+					queue_push(closure(){
+						@loc = array(
+							@roomX + @roomWidth / 2,
+							@roomY + @roomHeight - 1,
+							@roomZ + @roomLength / 2,
+							@world,
+						);
+						set_blockdata_string(@loc, @roomData['overhead']);
+					}, 'generator');
+				}
+
 				// We need to create spawns after all blocks are set to ensure clearance.
 				@createSpawns = closure(){
 					if(@roomData['spawnCount'] > 0) {
@@ -1285,16 +1298,14 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 					}
 
 					if(@roomData['utility'] && @minWidth > 2) {
-						if(integer(srand(@random) * 2) == 1) {
-							@loc = array(
-								@roomX + 1 + integer(srand(@random) * (@roomWidth - 2)),
-								@roomY + if(@roomShape == 'attic' && srand(@random) > 0.5, @room['midheight'] + 1, 0),
-								@roomZ + 1 + integer(srand(@random) * (@roomLength - 2)),
-								@world
-							);
-							if(equals_ic(@roomData['room'], get_block(@loc))) {
-								set_blockdata_string(@loc, _array_get_srand(@random, @roomData['utility']), false);
-							}
+						@loc = array(
+							@roomX + 1 + integer(srand(@random) * (@roomWidth - 2)),
+							@roomY + if(@roomShape == 'attic' && srand(@random) > 0.5, @room['midheight'] + 1, 0),
+							@roomZ + 1 + integer(srand(@random) * (@roomLength - 2)),
+							@world
+						);
+						if(equals_ic(@roomData['room'], get_block(@loc))) {
+							set_blockdata_string(@loc, _array_get_srand(@random, @roomData['utility']), false);
 						}
 					}
 
