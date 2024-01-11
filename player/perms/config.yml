@@ -234,6 +234,7 @@ builder:
       worldguard.region.claim: true
       minecraft.command.stopsound: true
     custom:
+      command.arena: true
       command.acme: true
       command.fly: true
       command.gm: true
@@ -294,6 +295,7 @@ engineer:
       worldedit.drawsel: true
       command.setwarp: true
       command.class: true
+      command.arena.advanced: true
   inheritance: builder
 moderator:
   permissions:

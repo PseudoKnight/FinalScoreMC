@@ -3,7 +3,7 @@ register_command('arena', array(
 	usage: '/arena <list|set|add|load|move|delete|info|stats|resetstats|tp> [arena_id] [setting] [value(s)]',
 	tabcompleter: _create_tabcompleter(
 		array(
-			'group.builder': array('list', 'set', 'add', 'load', 'move', 'delete', 'info', 'stats', 'resetstats', 'tp'),
+			'command.arena': array('list', 'create', 'set', 'add', 'load', 'move', 'delete', 'info', 'stats', 'resetstats', 'tp'),
 			null: array('list', 'info', 'stats')),
 		null,
 		array(
@@ -15,7 +15,8 @@ register_command('arena', array(
 					'heartsdisplay', 'script', 'exitrespawn', 'description', 'lobby', 'podium', 'kothbeacon',
 					'ctfflag', 'respawn', 'spawn', 'blockbreak', 'ff', 'arenaselect', 'sharedarenas', 'mode',
 					'mobprotect', 'team', 'kit', 'restore', 'itemspawn', 'chestgroup', 'chestspawn', 'rsoutput',
-					'rsoutputscore', 'effect', 'denydrop', 'mobspawn', 'weapons', 'options', 'hidden', 'nodoors'),
+					'rsoutputscore', 'effect', 'denydrop', 'mobspawn', 'weapons', 'options', 'hidden', 'nodoors',
+					'owner'),
 			'<<add': array('description', 'arenaselect', 'weapons', 'options', 'deathdrops', 'denydrop'),
 			'<<load': array('kit', 'chestspawn', 'spawn', 'itemspawn'),
 			'<<tp': array('lobby', 'podium', 'kothbeacon', 'bombloc', 'region')),
@@ -47,13 +48,28 @@ register_command('arena', array(
 		}
 		@action = @args[0];
 		switch(@action) {
+			case 'create':
+				if(!has_permission('command.arena')) {
+					die(color('gold').'You do not have permission.');
+				}
+				@id = @args[1];
+				if(reg_count('^[a-z0-9_]+$', @id) < 1) {
+					die(color('gold').'You can only use lowercase alphanumeric characters for the ID');
+				}
+				@arena = get_value('arena', @id);
+				if(@arena) {
+					die(color('gold').'Arena already exists by that name.');
+				}
+				@arena = associative_array(owner: puuid());
+				store_value('arena', @id, @arena);
+				msg(color('green').'Created new arena: '.@id);
+
 			case 'set':
-			case 's':
 			case 'add':
 				if(array_size(@args) < 3) {
 					return(false);
 				}
-				if(!has_permission('group.builder')) {
+				if(!has_permission('command.arena')) {
 					die(color('gold').'You do not have permission.');
 				}
 				@id = @args[1];
@@ -62,7 +78,7 @@ register_command('arena', array(
 				}
 				@arena = get_value('arena.'.@id);
 				if(!@arena) {
-					@arena = associative_array();
+					@arena = associative_array(owner: puuid());
 					msg(color('green').'Creating new arena... ');
 				}
 				
@@ -252,7 +268,13 @@ register_command('arena', array(
 						}
 						@arena[@setting][@team][] = @loc;
 						msg(colorize('Set a &a' . @setting . '&r to current location for team &a' . @team));
-						
+
+					case 'owner':
+						@ownerName = @args[3];
+						@uuid = _get_uuid(@ownerName, false, false);
+						@arena[@setting] = @uuid;
+						msg(colorize('Set &a' . @setting . '&r to &a' . @ownerName. ' ('.@uuid.')'));
+
 					case 'ff':
 						switch(@args[3]) {
 							case 'true':
@@ -591,7 +613,7 @@ register_command('arena', array(
 				store_value('arena.'.@id, @arena);
 
 			case 'load':
-				if(_is_survival_world(pworld()) || !has_permission('group.builder')) {
+				if(!has_permission('command.arena')) {
 					die(color('gold').'You do not have permission.');
 				}
 				if(array_size(@args) < 3) {
@@ -663,7 +685,7 @@ register_command('arena', array(
 				}
 
 			case 'tp':
-				if(_is_survival_world(pworld()) || !has_permission('group.builder')) {
+				if(!has_permission('command.arena')) {
 					die(color('gold').'You do not have permission.');
 				}
 				if(array_size(@args) < 3) {
@@ -691,7 +713,7 @@ register_command('arena', array(
 				}
 
 			case 'move':
-				if(!has_permission('group.engineer')) {
+				if(!has_permission('command.arena.advanced')) {
 					die('You do not have permission.');
 				}
 				if(array_size(@args) < 2) {
@@ -790,7 +812,7 @@ register_command('arena', array(
 				msg(color('red').'Reset any setting locations that were not moved.');
 
 			case 'rename':
-				if(!has_permission('group.builder')) {
+				if(!has_permission('command.arena')) {
 					die('You do not have permission.');
 				}
 				if(array_size(@args) < 2) {
@@ -801,19 +823,29 @@ register_command('arena', array(
 					die(color('gold').'This command requires a new arena ID.');
 				}
 				if(reg_count('^[a-z0-9_]+$', @id) < 1) {
-					die(color('gold').'You can only use lowercase alphanumeric characters for the arena ID');
+					die(color('gold').'You can only use lowercase alphanumeric characters for the arena ID: '.@id);
+				}
+				@newId = @args[2];
+				if(reg_count('^[a-z0-9_]+$', @newId) < 1) {
+					die(color('gold').'You can only use lowercase alphanumeric characters for the ID: '.@newId);
+				}
+				if(get_value('arena', @newId)) {
+					die(color('gold').'Arena already exists by that name: '.@newId);
 				}
 				@arena = get_value('arena', @id);
 				if(!@arena) {
-					die(color('gold').'There is no defined arena by that name.');
+					die(color('gold').'There is no defined arena by that name: '.@id);
 				}
-				store_value('arena', @args[2], @arena);
+				if(!has_permission('command.arena.advanced') && (!array_index_exists(@arena, 'owner') || @arena['owner'] != puuid())) {
+					die(color('gold').'You do not have permission to change an arena you do not own.');
+				}
+				store_value('arena', @newId, @arena);
 				clear_value('arena', @id);
-				msg('Renamed '.@id.' to '.@args[2].'.');
+				msg('Renamed '.@id.' to '.@newId.'.');
 
 			case 'remove':
 			case 'delete':
-				if(!has_permission('group.builder')) {
+				if(!has_permission('command.arena')) {
 					die(color('gold').'You do not have permission.');
 				}
 				if(array_size(@args) < 2) {
@@ -935,7 +967,6 @@ register_command('arena', array(
 				store_value('arena', @id, @arena);
 
 			case 'info':
-			case 'i':
 				if(array_size(@args) < 2) {
 					return(false);
 				}
@@ -1004,7 +1035,7 @@ register_command('arena', array(
 				}
 
 			case 'resetstats':
-				if(!has_permission('group.builder')) {
+				if(!has_permission('command.arena.advanced')) {
 					die(color('gold').'You do not have permission.');
 				}
 				if(array_size(@args) < 2) {
