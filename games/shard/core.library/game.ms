@@ -16,7 +16,7 @@ proc _shard_create(@rules){
 			play_named_sound(@ploc, array(sound: 'entity.guardian.attack'));
 		}
 	}
-	if(array_size(@players) < 2 && @rules['objective'] != 'creative' && @rules['objective'] != 'scavengerhunt') {
+	if(array_size(@players) < 1 && @rules['objective'] != 'creative' && @rules['objective'] != 'scavengerhunt') {
 		set_timeout(1800, closure(){
 			action_msg(color('red').'Not enough players to generate a shard!');
 			play_sound(ploc(), array(sound: 'BLOCK_FIRE_EXTINGUISH', volume: 0.5));
@@ -323,8 +323,7 @@ proc _shard_create(@rules){
 				}
 
 				// Events
-				@binds[] = 'shard-quit';
-				bind('player_quit', array(priority: 'HIGHEST', id: 'shard-quit'), null, @event) {
+				@binds[] = bind('player_quit', array(priority: 'HIGHEST', id: 'shard-quit'), null, @event) {
 					if(pworld() == 'shard') {
 						@loc = get_spawn('custom');
 						@loc['y'] -= 1;
@@ -333,8 +332,7 @@ proc _shard_create(@rules){
 					}
 				}
 
-				@binds[] = 'shard-death';
-				bind('player_death', array(priority: 'HIGHEST', id: 'shard-death'), null, @event, @players, @rules, @respawnPlayers) {
+				@binds[] = bind('player_death', array(priority: 'HIGHEST', id: 'shard-death'), null, @event, @players, @rules, @respawnPlayers) {
 					if(@event['location']['world'] == 'shard') {
 						consume();
 						if(!@respawnPlayers) {
@@ -364,8 +362,7 @@ proc _shard_create(@rules){
 					}
 				}
 
-				@binds[] = 'shard-spawn';
-				bind('player_spawn', array(id: 'shard-spawn', priority: 'LOWEST'), array(location: array(world: 'shard')), @event) {
+				@binds[] = bind('player_spawn', array(id: 'shard-spawn', priority: 'LOWEST'), array(location: array(world: 'shard')), @event) {
 					@respawnLocation = import('playerspawn');
 					if(!@respawnLocation) {
 						@respawnLocation = _get_spawn_location();
@@ -375,12 +372,12 @@ proc _shard_create(@rules){
 					export('playerspawn', null);
 				}
 
+				// special-case, do not add to @binds
 				bind('world_changed', array(id: 'shard-worldchanged'), array(from: 'shard'), @event) {
 					_check_shard();
 				}
 
-				@binds[] = 'shard-interact';
-				bind('player_interact', array(id: 'shard-interact'), null, @event) {
+				@binds[] = bind('player_interact', array(id: 'shard-interact'), null, @event) {
 					if(@event['block'] && pworld() == 'shard') {
 						switch(@event['block']) {
 							case 'BLAST_FURANCE':
@@ -403,6 +400,8 @@ proc _shard_create(@rules){
 									@luck -= @effects['bad_luck']['strength'] + 1;
 								}
 								_set_inventory_contents(@event['location'], 3 + @luck);
+							case 'DECORATED_POT':
+								_set_inventory_contents(@event['location'], 1);
 							default:
 								if(string_ends_with(@event['block'], 'SHULKER_BOX')) {
 									_set_inventory_contents(@event['location'], 0);
@@ -411,21 +410,27 @@ proc _shard_create(@rules){
 					}
 				}
 
-				@binds[] = 'shard-place1';
-				bind('block_place', array(id: 'shard-place1'), array(block: 'CHEST'), @event) {
+				@binds[] = bind('block_place', array(id: 'shard-chest'), array(block: 'CHEST'), @event) {
 					_set_inventory_contents(@event['location'], 0);
 				}
 
-				@binds[] = 'shard-place2';
-				bind('block_place', array(id: 'shard-place2'), array(block: 'TRAPPED_CHEST'), @event) {
+				@binds[] = bind('block_place', array(id: 'shard-trapped-chest'), array(block: 'TRAPPED_CHEST'), @event) {
 					_set_inventory_contents(@event['location'], 0);
 				}
 
-				@binds[] = 'shard-explosion';
-				bind('entity_explode', array(id: 'shard-explosion'), null, @event) {
+				@binds[] = bind('block_place', array(id: 'shard-barrel'), array(block: 'BARREL'), @event) {
+					_set_inventory_contents(@event['location'], 0);
+				}
+
+				@binds[] = bind('block_place', array(id: 'shard-decorated-pot'), array(block: 'DECORATED_POT'), @event) {
+					_set_inventory_contents(@event['location'], 0);
+				}
+
+				@binds[] = bind('entity_explode', array(id: 'shard-explosion'), null, @event) {
 					if(@event['location']['world'] == 'shard') {
 						foreach(@block in @event['blocks']) {
-							switch(get_block(@block)) {
+							@type = get_block(@block);
+							switch(@type) {
 								case 'BLAST_FURNACE':
 								case 'COOKER':
 								case 'DISPENSER':
@@ -440,6 +445,14 @@ proc _shard_create(@rules){
 								case 'CHEST':
 								case 'TRAPPED_CHEST':
 									_set_inventory_contents(@block, 3);
+								case 'DECORATED_POT':
+									_set_inventory_contents(@block, 1);
+								default:
+									if(string_ends_with(@type, 'SHULKER_BOX')) {
+										@inv = array();
+										array_resize(@inv, get_inventory_size(@block));
+										set_inventory(@block, @inv);
+									}
 							}
 						}
 					}
