@@ -9,16 +9,12 @@ register_command('gateway', array(
 		if(@block != 'AIR') {
 			die(color('red').'Expected air but got '.@block);
 		}
-		@x = integer(@location['x']);
-		@y = integer(@location['y']);
-		@z = integer(@location['z']);
 		@pos = sk_pos1();
 		if(!@pos) {
 			die(color('red').'No selection point detected.');
 		}
-		@px = @pos['x'];
-		@py = @pos['y'];
-		@pz = @pos['z'];
-		sudo("/setblock @x @y @z end_gateway{\"ExitPortal\":{\"X\":@px,\"Y\":@py,\"Z\":@pz},\"ExactTeleport\":1,\"Age\":-9223372036854775808L}");
+		set_block(@location, 'END_GATEWAY');
+		set_end_gateway_exit(@location, @pos, true);
+		set_end_gateway_age(@location, math_const('LONG_MIN'));
 	}
 ));
