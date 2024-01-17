@@ -17,10 +17,11 @@ register_command('arena', array(
 					'mobprotect', 'team', 'kit', 'restore', 'itemspawn', 'chestgroup', 'chestspawn', 'rsoutput',
 					'rsoutputscore', 'effect', 'denydrop', 'mobspawn', 'weapons', 'options', 'hidden', 'nodoors',
 					'owner'),
-			'<<add': array('description', 'arenaselect', 'weapons', 'options', 'deathdrops', 'denydrop'),
+			'<<add': array('description', 'arenaselect', 'weapons', 'options', 'deathdrops', 'denydrop', 'rsoutput'),
 			'<<load': array('kit', 'chestspawn', 'spawn', 'itemspawn'),
 			'<<tp': array('lobby', 'podium', 'kothbeacon', 'bombloc', 'region')),
 		array(
+			'<<<delete': array('here', 'all'),
 			'<build|debug|exitrespawn|heartsdisplay|hidden|hideplayers|infinitedispensers|keepinventory|nobottles|noinventory|noxp|rallycall|script|stackedpickup|stats|nodoors':
 				array('true', 'false'),
 			'<ff': array('false', 'knockback', 'reduced', 'true'),
@@ -492,8 +493,18 @@ register_command('arena', array(
 					case 'rsoutput':
 						@loc = pcursor();
 						if(get_block(@loc) === 'TORCH') {
-							@arena['rsoutput'] = @loc;
-							msg(color('green').'Set arena start/end torch. Do not use the block it is on to transmit power.');
+							if(@action == 'add') {
+								if(!array_index_exists(@arena, 'rsoutput')) {
+									@arena['rsoutput'] = array();
+								} else if(is_associative(@arena['rsoutput'])) {
+									@arena['rsoutput'] = array(@arena['rsoutput']);
+								}
+								@arena['rsoutput'][] = @loc;
+								msg(color('green').'Added arena start/end torch. Do not use the block it is on to transmit power.');
+							} else {
+								@arena['rsoutput'] = @loc;
+								msg(color('green').'Set arena start/end torch. Do not use the block it is on to transmit power.');
+							}
 						} else {
 							die(color('gold').'You must be looking at a torch placed on top of a block.');
 						}
@@ -798,7 +809,13 @@ register_command('arena', array(
 				}
 
 				if(array_index_exists(@arena, 'rsoutput')) {
-					@arena['rsoutput'] = location_shift(@arena['rsoutput'], @dir, @distance);
+					if(is_associative(@arena['rsoutput'])) {
+						@arena['rsoutput'] = location_shift(@arena['rsoutput'], @dir, @distance);
+					} else {
+						foreach(@i: @loc in @arena['rsoutput']) {
+							@arena['rsoutput'][@i] = location_shift(@loc, @dir, @distance);
+						}
+					}
 				}
 
 				if(array_index_exists(@arena, 'rsoutputscore')) {
@@ -959,6 +976,23 @@ register_command('arena', array(
 							}
 						}
 
+					case 'rsoutput':
+						if(is_associative(@arena[@setting])) {
+							array_remove(@arena, @setting);
+						} else {
+							@loc = ploc();
+							@loc = array(round(@loc[0], 1), round(@loc[1], 1) + 1.5, round(@loc[2], 1), @loc[3]);
+							foreach(@index: @spawn in @arena[@setting]) {
+								if(@spawn['loc'][0] < @loc[0] + 2 && @spawn['loc'][0] > @loc[0] - 2
+								&& @spawn['loc'][1] < @loc[1] + 2 && @spawn['loc'][1] > @loc[1] - 2
+								&& @spawn['loc'][2] < @loc[2] + 2 && @spawn['loc'][2] > @loc[2] - 2) {
+									array_remove(@arena[@setting], @index);
+									msg(color('green').'Removed this from '.@setting);
+									break();
+								}
+							}
+						}
+
 					default:
 						array_remove(@arena, @setting);
 						msg(color('green').'Deleted ' . @setting . ' from ' . @id);
@@ -1003,7 +1037,8 @@ register_command('arena', array(
 							msg(color('gold').'keepinventory '.color(7).'(this flag required for "dropchance")'));
 					}
 					foreach(@setting: @value in @arena) {
-						if(array_contains(array('spawn', 'kit', 'itemspawn', 'chestspawn', 'mobspawn', 'classes', 'respawn'), @setting)) {
+						if(array_contains(array('spawn', 'kit', 'itemspawn', 'chestspawn', 'mobspawn', 'classes', 'respawn', 'rsoutput'), @setting)
+						&& !is_associative(@value)) {
 							msg(@setting.' '.color('gray').'['.array_size(@value).' value(s) ...]');
 						} else if(array_contains(array('team'), @setting)) {
 							continue();

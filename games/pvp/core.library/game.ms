@@ -399,7 +399,13 @@ proc _pvp_start_match(@id) {
 	@pvp = import('pvp'.@id);
 	@arena = @pvp['arena'];
 	if(array_index_exists(@arena, 'rsoutput')) {
-		set_block(@arena['rsoutput'], 'REDSTONE_TORCH');
+		if(is_associative(@arena['rsoutput'])) {
+			set_block(@arena['rsoutput'], 'REDSTONE_TORCH');
+		} else {
+			foreach(@torchLoc in @arena['rsoutput']) {
+				set_block(@torchLoc, 'REDSTONE_TORCH');
+			}
+		}
 	}
 
 	if(array_index_exists(@arena, 'chestspawn')) {
@@ -893,7 +899,13 @@ proc _pvp_end_match(@id, @winners) {
 	try {
 
 		if(array_index_exists(@arena, 'rsoutput')) {
-			set_block(@arena['rsoutput'], 'TORCH');
+			if(is_associative(@arena['rsoutput'])) {
+				set_block(@arena['rsoutput'], 'TORCH');
+			} else {
+				foreach(@torchLoc in @arena['rsoutput']) {
+					set_block(@torchLoc, 'TORCH');
+				}
+			}
 		}
 
 		if(@arena['mode'] === 'ctf') {
