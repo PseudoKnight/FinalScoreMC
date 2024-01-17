@@ -154,7 +154,7 @@ proc _class_load(@player, @pvp) {
 
 proc _class_powerup(@player) {
 	@vehicle = pvehicle(@player);
-	if(@vehicle) {
+	if(@vehicle && entity_type(@vehicle) == 'HORSE') {
 		set_entity_health(@vehicle, 100);
 	} else {
 		set_pinv(@player, 3, array(name: 'SADDLE', meta: array(
