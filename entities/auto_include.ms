@@ -235,6 +235,9 @@ proc _spawn_entity(@entity, @loc, @spawnData, @consumer) {
 				add_scoreboard_tag(@e, @tag);
 			}
 		}
+		if(array_index_exists(@entity, 'velocity')) {
+			set_entity_velocity(@e, @entity['velocity']);
+		}
 		if(is_closure(@consumer)) {
 			execute(@e, @consumer);
 		}

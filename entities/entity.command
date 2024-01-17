@@ -16,7 +16,7 @@ register_command('entity', array(
 		array('<info|set|delete|spawn|patrol': array_keys(_get_custom_entities())),
 		array('<<set|delete': array('type', 'name', 'age', 'health', 'lifetime', 'onfire', 'targetnear',
 					'ai', 'tame', 'glowing', 'invulnerable', 'gravity', 'silent', 'gear', 'droprate', 'effect', 'tags',
-					'attributes', 'rider', 'explode', 'scoreboardtags')),
+					'attributes', 'rider', 'explode', 'scoreboardtags', 'velocity')),
 		array('<type|rider': reflect_pull('enum', 'EntityType')),
 	),
 	executor: closure(@alias, @sender, @args) {
@@ -203,6 +203,13 @@ register_command('entity', array(
 						@entity['scoreboardtags'] = @tags;
 						msg(color('green').'Set entity scoreboard tags to '.@tags);
 
+					case 'velocity':
+						if(array_size(@args) < 6) {
+							die(color('gold').'Must give three numbers (x y z)')
+						}
+						@entity['velocity'] = array(integer(@args[3]), integer(@args[4]), integer(@args[5]));
+						msg(color('green').'Set velocity to '.@entity['velocity']);
+
 					default:
 						die(color('yellow').'Invalid setting.');
 				}
@@ -251,7 +258,12 @@ register_command('entity', array(
 
 			case 'spawn':
 				if(array_size(@args) < 2) {
-					return(false);
+					die('Spawn takes the following arguments:\n'
+					. '- Entity type or custom entity (e.g. minecart or badsnowman)\n'
+					. '- JSON (optional) to modify the entity with additional data\n'
+					. '- Count (required if commandblock)\n'
+					. '- Relative coords (required if commandblock)\n'
+					. 'Example: /entity spawn minecart {"velocity":[0,1,0]} 1 ~ ~2 ~');
 				}
 				@id = @args[1];
 				@data = array_get(@args, 2, null);
