@@ -496,7 +496,7 @@ register_command('arena', array(
 							if(@action == 'add') {
 								if(!array_index_exists(@arena, 'rsoutput')) {
 									@arena['rsoutput'] = array();
-								} else if(is_associative(@arena['rsoutput'])) {
+								} else if(is_associative(@arena['rsoutput']) || !is_array(@arena['rsoutput'][0])) {
 									@arena['rsoutput'] = array(@arena['rsoutput']);
 								}
 								@arena['rsoutput'][] = @loc;
@@ -809,7 +809,7 @@ register_command('arena', array(
 				}
 
 				if(array_index_exists(@arena, 'rsoutput')) {
-					if(is_associative(@arena['rsoutput'])) {
+					if(is_associative(@arena['rsoutput']) || !is_array(@arena['rsoutput'][0])) {
 						@arena['rsoutput'] = location_shift(@arena['rsoutput'], @dir, @distance);
 					} else {
 						foreach(@i: @loc in @arena['rsoutput']) {
@@ -977,15 +977,15 @@ register_command('arena', array(
 						}
 
 					case 'rsoutput':
-						if(is_associative(@arena[@setting])) {
+						if(is_associative(@arena[@setting]) || !is_array(@arena['rsoutput'][0])) {
 							array_remove(@arena, @setting);
 						} else {
 							@loc = ploc();
 							@loc = array(round(@loc[0], 1), round(@loc[1], 1) + 1.5, round(@loc[2], 1), @loc[3]);
-							foreach(@index: @spawn in @arena[@setting]) {
-								if(@spawn['loc'][0] < @loc[0] + 2 && @spawn['loc'][0] > @loc[0] - 2
-								&& @spawn['loc'][1] < @loc[1] + 2 && @spawn['loc'][1] > @loc[1] - 2
-								&& @spawn['loc'][2] < @loc[2] + 2 && @spawn['loc'][2] > @loc[2] - 2) {
+							foreach(@index: @rs in @arena[@setting]) {
+								if(@rs['loc'][0] < @loc[0] + 2 && @rs['loc'][0] > @loc[0] - 2
+								&& @rs['loc'][1] < @loc[1] + 2 && @rs['loc'][1] > @loc[1] - 2
+								&& @rs['loc'][2] < @loc[2] + 2 && @rs['loc'][2] > @loc[2] - 2) {
 									array_remove(@arena[@setting], @index);
 									msg(color('green').'Removed this from '.@setting);
 									break();
@@ -1038,7 +1038,7 @@ register_command('arena', array(
 					}
 					foreach(@setting: @value in @arena) {
 						if(array_contains(array('spawn', 'kit', 'itemspawn', 'chestspawn', 'mobspawn', 'classes', 'respawn', 'rsoutput'), @setting)
-						&& !is_associative(@value)) {
+						&& (!is_associative(@value) || !is_array(@value[0]))) {
 							msg(@setting.' '.color('gray').'['.array_size(@value).' value(s) ...]');
 						} else if(array_contains(array('team'), @setting)) {
 							continue();

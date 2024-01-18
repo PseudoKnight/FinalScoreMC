@@ -399,7 +399,7 @@ proc _pvp_start_match(@id) {
 	@pvp = import('pvp'.@id);
 	@arena = @pvp['arena'];
 	if(array_index_exists(@arena, 'rsoutput')) {
-		if(is_associative(@arena['rsoutput'])) {
+		if(is_associative(@arena['rsoutput']) || !is_array(@arena['rsoutput'][0])) {
 			set_block(@arena['rsoutput'], 'REDSTONE_TORCH');
 		} else {
 			foreach(@torchLoc in @arena['rsoutput']) {
@@ -899,7 +899,7 @@ proc _pvp_end_match(@id, @winners) {
 	try {
 
 		if(array_index_exists(@arena, 'rsoutput')) {
-			if(is_associative(@arena['rsoutput'])) {
+			if(is_associative(@arena['rsoutput']) || !is_array(@arena['rsoutput'][0])) {
 				set_block(@arena['rsoutput'], 'TORCH');
 			} else {
 				foreach(@torchLoc in @arena['rsoutput']) {
