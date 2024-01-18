@@ -902,6 +902,9 @@ register_command('arena', array(
 						foreach(@value in split(',', @string)) {
 							array_remove_values(@arena[@setting]['arenas'], @value);
 						}
+						if(!@arena[@setting]['arenas']) {
+							array_remove(@arena, @setting);
+						}
 						msg('Removed '.@string.' from '.@setting.': '.@arena[@setting]);
 
 					case 'spawn':
@@ -928,6 +931,9 @@ register_command('arena', array(
 									break();
 								}
 							}
+						}
+						if(!@arena['spawn'][0] && !@arena['spawn'][1]) {
+							array_remove(@arena, 'spawn');
 						}
 
 					case 'itemspawn':
@@ -997,6 +1003,9 @@ register_command('arena', array(
 						array_remove(@arena, @setting);
 						msg(color('green').'Deleted ' . @setting . ' from ' . @id);
 
+				}
+				if(array_index_exists(@arena, @setting) && is_array(@arena[@setting]) && array_size(@arena[@setting]) == 0) {
+					array_remove(@arena, @setting);
 				}
 				store_value('arena', @id, @arena);
 
