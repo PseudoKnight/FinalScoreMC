@@ -1046,13 +1046,38 @@ register_command('arena', array(
 							msg(color('gold').'keepinventory '.color(7).'(this flag required for "dropchance")'));
 					}
 					foreach(@setting: @value in @arena) {
-						if(array_contains(array('spawn', 'kit', 'itemspawn', 'chestspawn', 'mobspawn', 'classes', 'respawn', 'rsoutput'), @setting)
-						&& (!is_associative(@value) || !is_array(@value[0]))) {
-							msg(@setting.' '.color('gray').'['.array_size(@value).' value(s) ...]');
-						} else if(array_contains(array('team'), @setting)) {
-							continue();
-						} else {
-							msg(@setting.' '.color('gray').@value);
+						switch(@setting) {
+							// arrays of arrays
+							case 'itemspawn':
+							case 'chestspawn':
+							case 'mobspawn':
+							case 'kit':
+								msg(@setting.' '.color('gray').'['.array_size(@value).' value(s) ...]');
+
+							// team arrays of arrays
+							case 'spawn':
+							case 'respawn':
+							case 'blockbreak':
+								msg(@setting.' '.color('gray').'['.array_size(@value[0]).if(array_size(@value) > 1, ' and '.array_size(@value[1])).' value(s) ...]');
+
+							// print keys only
+							case 'classes':
+								msg(@setting.' '.color('gray').array_keys(@value));
+
+							// print single array but not multiple arrays
+							case 'rsoutput':
+								if(!is_associative(@value) && is_array(@value[0]) && array_size(@value) > 1) {
+									msg(@setting.' '.color('gray').'['.array_size(@value).' values ...]');
+								} else {
+									msg(@setting.' '.color('gray').@value);
+								}
+
+							// ignored
+							case 'team':
+								noop();
+
+							default: 
+								msg(@setting.' '.color('gray').@value);
 						}
 					}
 				}
