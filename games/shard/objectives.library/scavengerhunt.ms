@@ -939,6 +939,33 @@ proc _objective_load(@binds, @rules) {
 		'ZOMBIE_HEAD',
 	);
 
+	@letters = array(
+		A: array(meta: array(patterns: array(array(color: 'WHITE', shape: 'STRIPE_RIGHT'), array(color: 'WHITE', shape: 'STRIPE_LEFT'), array(color: 'WHITE', shape: 'STRIPE_MIDDLE'), array(color: 'WHITE', shape: 'STRIPE_TOP'), array(color: 'BLACK', shape: 'BORDER'))), name: 'BLACK_BANNER'),
+		B: array(meta: array(patterns: array(array(color: 'WHITE', shape: 'STRIPE_RIGHT'), array(color: 'WHITE', shape: 'STRIPE_BOTTOM'), array(color: 'WHITE', shape: 'STRIPE_TOP'), array(color: 'BLACK', shape: 'CURLY_BORDER'), array(color: 'WHITE', shape: 'STRIPE_LEFT'), array(color: 'WHITE', shape: 'STRIPE_MIDDLE'), array(color: 'BLACK', shape: 'BORDER'))), name: 'BLACK_BANNER'),
+		C: array(meta: array(patterns: array(array(color: 'WHITE', shape: 'STRIPE_TOP'), array(color: 'WHITE', shape: 'STRIPE_BOTTOM'), array(color: 'WHITE', shape: 'STRIPE_RIGHT'), array(color: 'BLACK', shape: 'STRIPE_MIDDLE'), array(color: 'WHITE', shape: 'STRIPE_LEFT'), array(color: 'BLACK', shape: 'BORDER'))), name: 'BLACK_BANNER'),
+		D: array(meta: array(patterns: array(array(color: 'WHITE', shape: 'STRIPE_RIGHT'), array(color: 'WHITE', shape: 'STRIPE_BOTTOM'), array(color: 'WHITE', shape: 'STRIPE_TOP'), array(color: 'BLACK', shape: 'CURLY_BORDER'), array(color: 'WHITE', shape: 'STRIPE_LEFT'), array(color: 'BLACK', shape: 'BORDER'))), name: 'BLACK_BANNER'),
+		E: array(meta: array(patterns: array(array(color: 'WHITE', shape: 'STRIPE_LEFT'), array(color: 'WHITE', shape: 'STRIPE_TOP'), array(color: 'WHITE', shape: 'STRIPE_MIDDLE'), array(color: 'WHITE', shape: 'STRIPE_BOTTOM'), array(color: 'BLACK', shape: 'BORDER'))), name: 'BLACK_BANNER'),
+		F: array(meta: array(patterns: array(array(color: 'WHITE', shape: 'STRIPE_MIDDLE'), array(color: 'BLACK', shape: 'STRIPE_RIGHT'), array(color: 'WHITE', shape: 'STRIPE_TOP'), array(color: 'WHITE', shape: 'STRIPE_LEFT'), array(color: 'BLACK', shape: 'BORDER'))), name: 'BLACK_BANNER'),
+		G: array(meta: array(patterns: array(array(color: 'WHITE', shape: 'STRIPE_RIGHT'), array(color: 'BLACK', shape: 'HALF_HORIZONTAL'), array(color: 'WHITE', shape: 'STRIPE_BOTTOM'), array(color: 'WHITE', shape: 'STRIPE_LEFT'), array(color: 'WHITE', shape: 'STRIPE_TOP'), array(color: 'BLACK', shape: 'BORDER'))), name: 'BLACK_BANNER'),
+		H: array(meta: array(patterns: array(array(color: 'BLACK', shape: 'STRIPE_TOP'), array(color: 'BLACK', shape: 'STRIPE_BOTTOM'), array(color: 'WHITE', shape: 'STRIPE_LEFT'), array(color: 'WHITE', shape: 'STRIPE_RIGHT'), array(color: 'BLACK', shape: 'BORDER'))), name: 'WHITE_BANNER'),
+		I: array(meta: array(patterns: array(array(color: 'WHITE', shape: 'STRIPE_CENTER'), array(color: 'WHITE', shape: 'STRIPE_TOP'), array(color: 'WHITE', shape: 'STRIPE_BOTTOM'), array(color: 'BLACK', shape: 'BORDER'))), name: 'BLACK_BANNER'),
+		J: array(meta: array(patterns: array(array(color: 'WHITE', shape: 'STRIPE_LEFT'), array(color: 'BLACK', shape: 'HALF_HORIZONTAL'), array(color: 'WHITE', shape: 'STRIPE_BOTTOM'), array(color: 'WHITE', shape: 'STRIPE_RIGHT'), array(color: 'BLACK', shape: 'BORDER'))), name: 'BLACK_BANNER'),
+		K: array(meta: array(patterns: array(array(color: 'WHITE', shape: 'STRIPE_DOWNRIGHT'), array(color: 'BLACK', shape: 'HALF_HORIZONTAL'), array(color: 'WHITE', shape: 'STRIPE_DOWNLEFT'), array(color: 'WHITE', shape: 'STRIPE_LEFT'), array(color: 'BLACK', shape: 'BORDER'))), name: 'BLACK_BANNER'),
+		L: array(meta: array(patterns: array(array(color: 'WHITE', shape: 'STRIPE_BOTTOM'), array(color: 'WHITE', shape: 'STRIPE_LEFT'), array(color: 'BLACK', shape: 'BORDER'))), name: 'BLACK_BANNER'),
+		M: array(meta: array(patterns: array(array(color: 'WHITE', shape: 'TRIANGLE_TOP'), array(color: 'BLACK', shape: 'TRIANGLES_TOP'), array(color: 'WHITE', shape: 'STRIPE_LEFT'), array(color: 'WHITE', shape: 'STRIPE_RIGHT'), array(color: 'BLACK', shape: 'BORDER'))), name: 'BLACK_BANNER'),
+		N: array(meta: array(patterns: array(array(color: 'WHITE', shape: 'STRIPE_LEFT'), array(color: 'BLACK', shape: 'TRIANGLE_TOP'), array(color: 'WHITE', shape: 'STRIPE_DOWNRIGHT'), array(color: 'WHITE', shape: 'STRIPE_RIGHT'), array(color: 'BLACK', shape: 'BORDER'))), name: 'BLACK_BANNER'),
+		O: array(meta: array(patterns: array(array(color: 'WHITE', shape: 'STRIPE_LEFT'), array(color: 'WHITE', shape: 'STRIPE_RIGHT'), array(color: 'WHITE', shape: 'STRIPE_BOTTOM'), array(color: 'WHITE', shape: 'STRIPE_TOP'), array(color: 'BLACK', shape: 'BORDER'))), name: 'BLACK_BANNER'),
+		P: array(meta: array(patterns: array(array(color: 'WHITE', shape: 'STRIPE_RIGHT'), array(color: 'BLACK', shape: 'HALF_HORIZONTAL_MIRROR'), array(color: 'WHITE', shape: 'STRIPE_MIDDLE'), array(color: 'WHITE', shape: 'STRIPE_TOP'), array(color: 'WHITE', shape: 'STRIPE_LEFT'), array(color: 'BLACK', shape: 'BORDER'))), name: 'BLACK_BANNER'),
+		Q: array(meta: array(patterns: array(array(color: 'BLACK', shape: 'RHOMBUS_MIDDLE'), array(color: 'WHITE', shape: 'STRIPE_RIGHT'), array(color: 'WHITE', shape: 'STRIPE_LEFT'), array(color: 'WHITE', shape: 'SQUARE_BOTTOM_RIGHT'), array(color: 'BLACK', shape: 'BORDER'))), name: 'WHITE_BANNER'),
+		R: array(meta: array(patterns: array(array(color: 'WHITE', shape: 'HALF_HORIZONTAL'), array(color: 'BLACK', shape: 'STRIPE_CENTER'), array(color: 'WHITE', shape: 'STRIPE_TOP'), array(color: 'WHITE', shape: 'STRIPE_LEFT'), array(color: 'WHITE', shape: 'STRIPE_DOWNRIGHT'), array(color: 'BLACK', shape: 'BORDER'))), name: 'BLACK_BANNER'),
+		S: array(meta: array(patterns: array(array(color: 'BLACK', shape: 'RHOMBUS_MIDDLE'), array(color: 'BLACK', shape: 'STRIPE_MIDDLE'), array(color: 'WHITE', shape: 'STRIPE_DOWNRIGHT'), array(color: 'BLACK', shape: 'BORDER'))), name: 'WHITE_BANNER'),
+		T: array(meta: array(patterns: array(array(color: 'WHITE', shape: 'STRIPE_TOP'), array(color: 'WHITE', shape: 'STRIPE_CENTER'), array(color: 'BLACK', shape: 'BORDER'))), name: 'BLACK_BANNER'),
+		V: array(meta: array(patterns: array(array(color: 'WHITE', shape: 'STRIPE_DOWNLEFT'), array(color: 'WHITE', shape: 'STRIPE_LEFT'), array(color: 'BLACK', shape: 'TRIANGLE_BOTTOM'), array(color: 'WHITE', shape: 'STRIPE_DOWNLEFT'), array(color: 'BLACK', shape: 'BORDER'))), name: 'BLACK_BANNER'),
+		W: array(meta: array(patterns: array(array(color: 'WHITE', shape: 'TRIANGLE_BOTTOM'), array(color: 'BLACK', shape: 'TRIANGLES_BOTTOM'), array(color: 'WHITE', shape: 'STRIPE_LEFT'), array(color: 'WHITE', shape: 'STRIPE_RIGHT'), array(color: 'BLACK', shape: 'BORDER'))), name: 'BLACK_BANNER'),
+		Y: array(meta: array(patterns: array(array(color: 'WHITE', shape: 'STRIPE_DOWNRIGHT'), array(color: 'BLACK', shape: 'HALF_HORIZONTAL_MIRROR'), array(color: 'WHITE', shape: 'STRIPE_DOWNLEFT'), array(color: 'BLACK', shape: 'BORDER'))), name: 'BLACK_BANNER'),
+		Z: array(meta: array(patterns: array(array(color: 'WHITE', shape: 'STRIPE_TOP'), array(color: 'WHITE', shape: 'STRIPE_DOWNLEFT'), array(color: 'WHITE', shape: 'STRIPE_BOTTOM'), array(color: 'BLACK', shape: 'BORDER'))), name: 'BLACK_BANNER'),
+	);
+
 	// grid of random items
 	@card = array();
 	@size = @rules['cardsize'];
@@ -952,6 +979,14 @@ proc _objective_load(@binds, @rules) {
 			array_remove(@items, @index);
 		}
 	}
+	// random character banner
+	@index = array_rand(@letters, 1)[0];
+	@letter = @letters[@index];
+	@letter['players'] = array();
+	@letter['material'] = @letter['name'];
+	@letter['meta']['display'] = 'Starts with letter '.@index;
+	@letter['meta'][]
+	@card[rand(@height)][rand(@width)] = @letter;
 	export('shard.card', @card);
 
 	// Scoreboard
@@ -1008,15 +1043,23 @@ proc _objective_load(@binds, @rules) {
 				for(@i = 0, @i < @cardSize, @i++) {
 					for(@j = 0, @j < @cardSize, @j++) {
 						@item = @card[@i][@j];
+						@itemStack = null;
 						if(array_contains(@item['players'], @p)) {
-							@chest[@offset + @j + @i * @chestWidth] = array(name: 'RED_STAINED_GLASS_PANE');
+							@itemStack = array(name: 'RED_STAINED_GLASS_PANE');
 						} else if(array_size(@item['players'])) {
-							@chest[@offset + @j + @i * @chestWidth] = array(name: @item['material'], meta: array(enchants:
-									array(sharpness: 1), flags: array('HIDE_ENCHANTS')));
+							@itemStack = array(name: @item['material'], meta: array(enchants:
+									array(sharpness: 1), flags: array('HIDE_ENCHANTS', 'HIDE_POTION_EFFECTS')));
+							if(array_index_exists(@item, 'meta')) {
+								@itemStack['meta'] = array_merge(@itemStack['meta'], @item['meta']);
+							}
 						} else {
-							@chest[@offset + @j + @i * @chestWidth] = array(name: @item['material'], meta: array(lore:
-									array('Click to re-roll this item.')));
+							@itemStack = array(name: @item['material'], meta: array(lore:
+									array('Click to re-roll this item.'), flags: array('HIDE_ENCHANTS', 'HIDE_POTION_EFFECTS')));
+							if(array_index_exists(@item, 'meta')) {
+								@itemStack['meta'] = array_merge(@itemStack['meta'], @item['meta']);
+							}
 						}
+						@chest[@offset + @j + @i * @chestWidth] = @itemStack;
 					}
 				}
 				if(has_inventory(@p.'card')) {
@@ -1076,15 +1119,20 @@ proc _objective_load(@binds, @rules) {
 					if(string_ends_with(@item['material'], '_STAINED_GLASS_PANE')) {
 						continue();
 					}
+					@itemStack = null;
 					if(@item['players']) {
 						@firstPlayer = @item['players'][0];
-						@chest[@j + @i * @chestWidth] = array(name: @colorMap[@firstPlayer][0],
-								meta: array(display: @firstPlayer));
+						@itemStack = array(name: @colorMap[@firstPlayer][0],
+								meta: array(display: @firstPlayer), flags: array('HIDE_ENCHANTS', 'HIDE_POTION_EFFECTS'));
 						@item['material'] = 'WHITE_STAINED_GLASS_PANE';
 					} else {
-						@chest[@j + @i * @chestWidth] = array(name: @item['material'], meta: array(lore:
-								array('Click to re-roll this item.')));
+						@itemStack = array(name: @item['material'], meta: array(lore:
+								array('Click to re-roll this item.'), flags: array('HIDE_ENCHANTS', 'HIDE_POTION_EFFECTS')));
+						if(array_index_exists(@item, 'meta')) {
+							@itemStack['meta'] = array_merge(@itemStack['meta'], @item['meta']);
+						}
 					}
+					@chest[@j + @i * @chestWidth] = @itemStack;
 				}
 			}
 			if(has_inventory('shardcard')) {
@@ -1274,6 +1322,7 @@ proc _objective_load(@binds, @rules) {
 	bind('inventory_click', array(id: 'shard-scavenger-crafting'), array(slottype: 'RESULT'), @event, @card, @width, @height) {
 		if(pworld() == 'shard') {
 			@thisMaterial = @event['slotitem']['name'];
+			@bannerSlot = null;
 			for(@i = 0, @i < @height, @i++) {
 				for(@j = 0, @j < @width, @j++) {
 					@item = @card[@i][@j];
@@ -1285,7 +1334,23 @@ proc _objective_load(@binds, @rules) {
 						_refresh_card();
 						_check_card(player(), @i, @j);
 						break(2);
+					} else if(string_ends_with(@item['material'], '_BANNER')
+					&& array_index_exists(@item, 'meta')
+					&& @item['meta']['patterns']) {
+						@bannerSlot = array(@i, @j);
 					}
+				}
+			}
+			if(@bannerSlot) {
+				@item = @card[@bannerSlot[0]][@bannerSlot[1]];
+				if(@thisMaterial[0] == @item['meta']['display'][length(@item['meta']['display']) - 1]) {
+					@item['players'][] = player();
+					set_pscore('total', player(), get_pscore('total', player(), 'shard') + 1, 'shard');
+					launch_firework(ploc());
+					_worldmsg('shard', player().' found '.color('green').'['.@event['slotitem']['name'].']'
+							.color('white').' for '.@item['meta']['display']);
+					_refresh_card();
+					_check_card(player(), @bannerSlot[0], @bannerSlot[1]);
 				}
 			}
 		}
@@ -1301,6 +1366,7 @@ proc _objective_load(@binds, @rules) {
 				modify_event('item', array(name: 'MAP', meta: array(display: 'Scavenger Hunt Card')));
 				die();
 			}
+			@bannerSlot = null;
 			for(@i = 0, @i < @height, @i++) {
 				for(@j = 0, @j < @width, @j++) {
 					@item = @card[@i][@j];
@@ -1312,7 +1378,23 @@ proc _objective_load(@binds, @rules) {
 						_refresh_card();
 						_check_card(player(), @i, @j);
 						break(2);
+					} else if(string_ends_with(@item['material'], '_BANNER')
+					&& array_index_exists(@item, 'meta')
+					&& @item['meta']['patterns']) {
+						@bannerSlot = array(@i, @j);
 					}
+				}
+			}
+			if(@bannerSlot) {
+				@item = @card[@bannerSlot[0]][@bannerSlot[1]];
+				if(@thisMaterial[0] == @item['meta']['display'][length(@item['meta']['display']) - 1]) {
+					@item['players'][] = player();
+					set_pscore('total', player(), get_pscore('total', player(), 'shard') + 1, 'shard');
+					launch_firework(ploc());
+					_worldmsg('shard', player().' found '.color('green').'['.@event['item']['name'].']'
+							.color('white').' for '.@item['meta']['display']);
+					_refresh_card();
+					_check_card(player(), @bannerSlot[0], @bannerSlot[1]);
 				}
 			}
 		}
