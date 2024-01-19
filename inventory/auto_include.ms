@@ -143,6 +143,9 @@ proc _minify_inv(@inv, @keepnulls = false) {
 					array_remove(@meta, 'unbreakable');
 				}
 			}
+			if(array_index_exists(@meta, 'blockdata') && is_null(@meta['blockdata'])) {
+				array_remove(@meta, 'blockdata');
+			}
 			// specific meta
 			if(array_index_exists(@meta, 'inventory')) {
 				_minify_inv(@meta['inventory']);
