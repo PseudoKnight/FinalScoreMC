@@ -1,4 +1,4 @@
-proc _trigger_shard() {
+bind('player_interact', null, array(itemname: 'ECHO_SHARD', hand: 'main_hand', block: null, button: 'right'), @event) {
 	include('core.library/util.ms');
 	if(array_contains(get_worlds(), 'shard') && array_contains(get_scoreboards(), 'shard')) {
 		if(pworld() == 'shard') {
@@ -35,19 +35,5 @@ proc _trigger_shard() {
 		play_sound(ploc(), array(sound: 'BLOCK_AMETHYST_BLOCK_HIT'));
 		include('core.library/menu.ms');
 		_open_objective_menu();
-	}
-}
-
-bind('player_interact', null, array(itemname: 'PRISMARINE_SHARD', hand: 'main_hand', block: null, button: 'right'), @event) {
-	_trigger_shard();
-}
-
-bind('player_interact', null, array(itemname: 'ECHO_SHARD', hand: 'main_hand', block: null, button: 'right'), @event) {
-	_trigger_shard();
-}
-
-bind('player_interact', null, array(itemname: 'AMETHYST_SHARD', hand: 'main_hand', block: null, button: 'right'), @event) {
-	if(!entities_in_radius(entity_loc(puuid()), 6, 'ALLAY')) {
-		_trigger_shard();
 	}
 }

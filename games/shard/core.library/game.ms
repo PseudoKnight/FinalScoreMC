@@ -10,16 +10,16 @@ proc _shard_create(@rules){
 			continue();
 		}
 		@item = pinv(@p, null);
-		if(@item && string_ends_with(@item['name'], 'SHARD')) {
+		if(@p == player() || @item && @item['name'] == 'ECHO_SHARD') {
 			@players[] = @p;
 			@ploc = ploc(@p);
-			play_named_sound(@ploc, array(sound: 'entity.guardian.attack'));
+			play_sound(@ploc, array(sound: 'ENTITY_GUARDIAN_ATTACK'), @p);
 		}
 	}
-	if(array_size(@players) < 1 && @rules['objective'] != 'creative' && @rules['objective'] != 'scavengerhunt') {
+	if(array_size(@players) < 2 && @rules['objective'] != 'creative' && @rules['objective'] != 'scavengerhunt') {
 		set_timeout(1800, closure(){
 			action_msg(color('red').'Not enough players to generate a shard!');
-			play_sound(ploc(), array(sound: 'BLOCK_FIRE_EXTINGUISH', volume: 0.5));
+			play_sound(ploc(), array(sound: 'BLOCK_FIRE_EXTINGUISH', volume: 0.5), player());
 		});
 		die();
 	}
@@ -30,11 +30,19 @@ proc _shard_create(@rules){
 	}
 	@base = '../../../../../../worlds'; // relative to script location
 	try {
-		@files = list_files("@base/shard/region");
-		foreach(@file in @files) {
+		foreach(@file in list_files("@base/shard/region")) {
 			if(string_starts_with(@file, 'r.')) { // 
 				delete_file("@base/shard/region/@file");
-				try(delete_file("@base/shard/entities/@file"))
+			}
+		}
+		foreach(@file in list_files("@base/shard/entities")) {
+			if(string_starts_with(@file, 'r.')) { // 
+				delete_file("@base/shard/entities/@file");
+			}
+		}
+		foreach(@file in list_files("@base/shard/poi")) {
+			if(string_starts_with(@file, 'r.')) { // 
+				delete_file("@base/shard/poi/@file");
 			}
 		}
 	} catch(IOException @ex) {
@@ -67,6 +75,8 @@ proc _shard_create(@rules){
 			copy_file("@base/@{world}@dim/region/r.@x2.@z2.mca", "@base/shard/region/r.@x2.@z2.mca");
 		} catch(IOException @ex) {
 			console('Failed to copy files!', false);
+			action_msg(color('red').'Failed to create Shard!');
+			play_sound(ploc(), array(sound: 'BLOCK_FIRE_EXTINGUISH', volume: 0.5));
 			die();
 		}
 		@stop = time();
@@ -89,9 +99,6 @@ proc _shard_create(@rules){
 			console('Created shard ('.(@stop - @start).'ms)', false);
 
 			set_timeout(150, closure(){
-				if(extension_exists('CHDynmap')) {
-					dm_set_update_renders_paused(false);
-				}
 
 				// Calculate center
 				@centerX = 0;
@@ -143,6 +150,7 @@ proc _shard_create(@rules){
 						color: array(r: 255, g: 0, b: 0),
 						opacity: 0.1,
 					));
+					dm_set_update_renders_paused(false);
 				}
 
 				// Set world settings
