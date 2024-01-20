@@ -57,7 +57,7 @@ proc _classes_powerup(@player, @classname, @pvp) {
 
 	set_entity_fall_distance(puuid(@player), 0);
 	set_phunger(@player, min(20, phunger(@player) + 4));
-	set_phealth(@player, min(20, phealth(@player) + 1));
+	set_phealth(@player, min(get_max_health(puuid(@player)), phealth(@player) + 1));
 	set_ponfire(@player, false);
 	if(!array_index_exists(get_peffect(@player), 'night_vision')) {
 		set_peffect(@player, 'NIGHT_VISION', 0, 1, true);
