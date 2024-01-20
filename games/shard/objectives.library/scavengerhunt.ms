@@ -971,12 +971,11 @@ proc _objective_load(@binds, @rules) {
 	@size = @rules['cardsize'];
 	@width = if(@size, @size, 9);
 	@height = if(@size, @size, 6);
+	@selectedItems = array_rand(@items, @width * @height, false);
 	for(@i = 0, @i < @height, @i++) {
 		@card[@i] = array();
 		for(@j = 0, @j < @width, @j++) {
-			@index = array_rand(@items, 1)[0];
-			@card[@i][@j] = array(players: array(), material: @items[@index]);
-			array_remove(@items, @index);
+			@card[@i][@j] = array(players: array(), material: @selectedItems[@i * @height + @j]);
 		}
 	}
 	// random character banner
@@ -985,7 +984,6 @@ proc _objective_load(@binds, @rules) {
 	@letter['players'] = array();
 	@letter['material'] = @letter['name'];
 	@letter['meta']['display'] = 'Starts with letter '.@index;
-	@letter['meta'][]
 	@card[rand(@height)][rand(@width)] = @letter;
 	export('shard.card', @card);
 
@@ -1320,13 +1318,16 @@ proc _objective_load(@binds, @rules) {
 
 	@binds[] = 'shard-scavenger-crafting';
 	bind('inventory_click', array(id: 'shard-scavenger-crafting'), array(slottype: 'RESULT'), @event, @card, @width, @height) {
-		if(pworld() == 'shard') {
+		if(pworld() == 'shard' && @event['slotitem']) {
 			@thisMaterial = @event['slotitem']['name'];
 			@bannerSlot = null;
 			for(@i = 0, @i < @height, @i++) {
 				for(@j = 0, @j < @width, @j++) {
 					@item = @card[@i][@j];
-					if(@item['material'] == @thisMaterial && !array_contains(@item['players'], player())) {
+					if(array_contains(@item['players'], player())) {
+						continue();
+					}
+					if(@item['material'] == @thisMaterial) {
 						@item['players'][] = player();
 						set_pscore('total', player(), get_pscore('total', player(), 'shard') + 1, 'shard');
 						launch_firework(ploc());
@@ -1370,7 +1371,10 @@ proc _objective_load(@binds, @rules) {
 			for(@i = 0, @i < @height, @i++) {
 				for(@j = 0, @j < @width, @j++) {
 					@item = @card[@i][@j];
-					if(@item['material'] == @thisMaterial && !array_contains(@item['players'], player())) {
+					if(array_contains(@item['players'], player())) {
+						continue();
+					}
+					if(@item['material'] == @thisMaterial) {
 						@item['players'][] = player();
 						set_pscore('total', player(), get_pscore('total', player(), 'shard') + 1, 'shard');
 						launch_firework(ploc());
