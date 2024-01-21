@@ -102,24 +102,21 @@ proc _class_load(@player, @pvp) {
 		}
 	}
 
-	bind('player_interact_entity', array(id: @player.'throw'), array(hand: 'main_hand', clicked: '/(PLAYER|PRIMED_TNT|HORSE)/'), @event) {
+	bind('player_interact_entity', array(id: @player.'throw'), array(hand: 'main_hand', clicked: 'PLAYER'), @event) {
 		play_named_sound(ploc(), array(sound: 'entity.ravager.step', pitch: 0.5));
 		@timer = array(20);
 		set_interval(50, closure(){
 			@timer[0]--;
 			try {
+				@loc = ploc();
 				if(@timer[0] <= 0) {
 					clear_task();
-					@facing = pfacing(player());
-					@yaw = @facing[0] + 90;
-					@pitch = 0 - @facing[1];
-					@x = 1.60 * cos(to_radians(@yaw)) * cos(to_radians(@pitch));
-					@y = max((1.60 * sin(to_radians(@pitch))) + 0.2, 0.2);
-					@z = 1.60 * sin(to_radians(@yaw)) * cos(to_radians(@pitch));
-					set_entity_velocity(@event['id'], array(@x, @y, @z));
-					play_named_sound(ploc(), array(sound: 'entity.ravager.stunned'));
+					@vector = get_vector(@loc, 1.6);
+					@vector['y'] = max(@vector['y'] + 0.2, 0.2);
+					set_entity_velocity(@event['id'], @vector);
+					play_named_sound(@loc, array(sound: 'entity.ravager.stunned'));
 				} else {
-					set_entity_loc(@event['id'], location_shift(ploc(), 'up', 3));
+					set_entity_loc(@event['id'], location_shift(@loc, 'up', 3));
 				}
 			} catch(Exception @ex) {
 				clear_task();
