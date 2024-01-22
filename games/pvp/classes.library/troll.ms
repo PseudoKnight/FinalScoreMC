@@ -17,7 +17,7 @@ proc _class_load(@player, @pvp) {
 
 	bind('player_toggle_sneak', array(id: @player.'roar'), array(player: @player, sneaking: true), @event) {
 		if(pexp() == 99) {
-			play_named_sound(ploc(), array(sound: 'entity.ravager.roar', pitch: 0.5));
+			play_named_sound(ploc(), array(sound: 'entity.ravager.roar', pitch: 0.6));
 			set_pexp(0);
 			set_interval(50, closure(){
 				try {
@@ -124,8 +124,9 @@ proc _class_load(@player, @pvp) {
 		});
 	}
 
-	set_entity_attribute_base(puuid(@player), 'GENERIC_KNOCKBACK_RESISTANCE', 1);
-	set_entity_attribute_base(puuid(@player), 'GENERIC_MAX_HEALTH', 40);
+	set_entity_attribute_base(puuid(@player), 'GENERIC_KNOCKBACK_RESISTANCE', 1.0);
+	set_entity_attribute_base(puuid(@player), 'GENERIC_MAX_HEALTH', 40.0);
+	set_entity_attribute_base(puuid(@player), 'GENERIC_ATTACK_DAMAGE', 8.0);
 	set_phealth(@player, 40);
 }
 
@@ -140,7 +141,8 @@ proc _class_unload(@player, @pvp) {
 	unbind(@player.'roar');
 	unbind(@player.'groundpound');
 	unbind(@player.'throw');
-	set_entity_attribute_base(puuid(@player), 'GENERIC_KNOCKBACK_RESISTANCE', 0);
-	set_entity_attribute_base(puuid(@player), 'GENERIC_MAX_HEALTH', 20);
+	set_entity_attribute_base(puuid(@player), 'GENERIC_KNOCKBACK_RESISTANCE', 0.0);
+	set_entity_attribute_base(puuid(@player), 'GENERIC_MAX_HEALTH', 20.0);
+	set_entity_attribute_base(puuid(@player), 'GENERIC_ATTACK_DAMAGE', 1.0);
 	set_phunger(@player, 20);
 }
