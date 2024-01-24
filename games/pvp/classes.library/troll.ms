@@ -16,7 +16,7 @@ proc _class_load(@player, @pvp) {
 	}
 
 	bind('player_interact', array(id: @player.'club'), array(player: @player, itemname: 'POINTED_DRIPSTONE', button: 'left'), @event) {
-		_swing_club(@player);
+		_swing_club(@event['player']);
 	}
 
 	bind('entity_damage', array(id: @player.'clubdamage'), array(cause: 'ENTITY_ATTACK'), @event, @player) {
