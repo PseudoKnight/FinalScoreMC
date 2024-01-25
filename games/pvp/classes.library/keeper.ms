@@ -69,8 +69,8 @@ proc _class_load(@player, @pvp) {
 	bind('player_toggle_sneak', array(id: @player.'boom'), array(player: @player, sneaking: true), @event) {
 		if(pexp() == 99) {
 			@center = location_shift(ploc(), 'up');
-			@radius = 2;
-			for(@angle = 0, @angle < 6.28, @angle += rand() / 3) {
+			@radius = 1.5;
+			for(@angle = 0, @angle < 6.28, @angle += rand() / 2) {
 				@point = array(
 					@radius * cos(@angle) + @center['x'],
 					@center['y'],
@@ -81,12 +81,12 @@ proc _class_load(@player, @pvp) {
 			}
 			play_named_sound(ploc(), array(sound: 'entity.warden.sonic_charge'));
 			set_pexp(0);
-			set_interval(50, closure(){
+			set_interval(100, closure(){
 				try {
 					@xp = pexp();
 					@xp = min(99, @xp + 1);
 					set_pexp(@xp);
-					if(@xp == 34) {
+					if(@xp == 17) {
 						if(!psneaking()) {
 							clear_task();
 							set_pexp(99);
@@ -102,7 +102,7 @@ proc _class_load(@player, @pvp) {
 							@loc['z'] += @v['z'];
 							spawn_particle(@loc, 'SONIC_BOOM');
 							foreach(@p in players_in_radius(@loc, 1.5)) {
-								damage_entity(puuid(@p), 16, puuid());
+								damage_entity(puuid(@p), 12, puuid());
 							}
 						}
 					} else if(@xp == 99) {
