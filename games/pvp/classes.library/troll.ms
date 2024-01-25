@@ -20,7 +20,7 @@ proc _class_load(@player, @pvp) {
 	}
 
 	bind('entity_damage', array(id: @player.'clubdamage'), array(cause: 'ENTITY_ATTACK'), @event, @player) {
-		if(@event['damager'] == @player) {
+		if(@event['damager'] == @player && @event['damage'] >= 8.0) {
 			_swing_club(@player, @event['id']);
 		}
 	}
