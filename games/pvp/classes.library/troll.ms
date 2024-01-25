@@ -1,12 +1,12 @@
 proc _class_load(@player, @pvp) {
-	proc _swing_club(@player) {
+	proc _swing_club(@player, @victim) {
 		if(pcooldown(@player, 'POINTED_DRIPSTONE') == 0) {
 			@raytrace = ray_trace(@player, 2);
 			spawn_particle(location_shift(@raytrace['location'], 'down'), array(particle: 'SWEEP_ATTACK', speed: 32.0, count: 0, xoffset: 1));
 			play_named_sound(@raytrace['location'], array(sound: 'entity.player.attack.sweep', pitch: 0.5));
 			play_named_sound(@raytrace['location'], array(sound: 'entity.ravager.attack', pitch: 0.5));
 			foreach(@p in players_in_radius(@raytrace['location'], 3)) {
-				if(@p == @player && pmode(@p) != 'SPECTATOR') {
+				if(@p == @player || pmode(@p) == 'SPECTATOR' || puuid(@p) == @victim) {
 					continue();
 				}
 				damage_entity(puuid(@p), 6, puuid(@player));
@@ -21,7 +21,7 @@ proc _class_load(@player, @pvp) {
 
 	bind('entity_damage', array(id: @player.'clubdamage'), array(cause: 'ENTITY_ATTACK'), @event, @player) {
 		if(@event['damager'] == @player) {
-			_swing_club(@player);
+			_swing_club(@player, @event['id']);
 		}
 	}
 
