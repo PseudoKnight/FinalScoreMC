@@ -153,6 +153,7 @@ proc _class_unload(@player, @pvp) {
 	unbind(@player.'roar');
 	unbind(@player.'groundpound');
 	unbind(@player.'throw');
+	unbind(@player.'clubdamage');
 	set_entity_attribute_base(puuid(@player), 'GENERIC_KNOCKBACK_RESISTANCE', 0.0);
 	set_entity_attribute_base(puuid(@player), 'GENERIC_MAX_HEALTH', 20.0);
 	set_entity_attribute_base(puuid(@player), 'GENERIC_ATTACK_DAMAGE', 1.0);
