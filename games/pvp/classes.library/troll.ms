@@ -137,7 +137,6 @@ proc _class_load(@player, @pvp) {
 	}
 
 	set_entity_attribute_base(puuid(@player), 'GENERIC_KNOCKBACK_RESISTANCE', 1.0);
-	set_entity_attribute_base(puuid(@player), 'GENERIC_MAX_HEALTH', 40.0);
 	set_entity_attribute_base(puuid(@player), 'GENERIC_ATTACK_DAMAGE', 8.0);
 	set_phealth(@player, 40);
 }
@@ -155,7 +154,6 @@ proc _class_unload(@player, @pvp) {
 	unbind(@player.'throw');
 	unbind(@player.'clubdamage');
 	set_entity_attribute_base(puuid(@player), 'GENERIC_KNOCKBACK_RESISTANCE', 0.0);
-	set_entity_attribute_base(puuid(@player), 'GENERIC_MAX_HEALTH', 20.0);
 	set_entity_attribute_base(puuid(@player), 'GENERIC_ATTACK_DAMAGE', 1.0);
 	set_phunger(@player, 20);
 }
