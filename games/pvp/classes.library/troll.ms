@@ -20,7 +20,7 @@ proc _class_load(@player, @pvp) {
 	}
 
 	bind('entity_damage', array(id: @player.'clubdamage'), array(cause: 'ENTITY_ATTACK'), @event, @player) {
-		if(@event['damager'] == @player && @event['damage'] >= 8.0) {
+		if(@event['damager'] == @player && @event['amount'] >= 8.0) {
 			_swing_club(@player, @event['id']);
 		}
 	}
@@ -138,7 +138,6 @@ proc _class_load(@player, @pvp) {
 
 	set_entity_attribute_base(puuid(@player), 'GENERIC_KNOCKBACK_RESISTANCE', 1.0);
 	set_entity_attribute_base(puuid(@player), 'GENERIC_ATTACK_DAMAGE', 8.0);
-	set_phealth(@player, 40);
 }
 
 proc _class_powerup(@player) {
