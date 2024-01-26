@@ -1,6 +1,6 @@
 proc _class_load(@player, @pvp) {
 	proc _swing_club(@player, @victim) {
-		if(pcooldown(@player, 'POINTED_DRIPSTONE') == 0) {
+		if(pattack_cooldown(@player) == 1.0) {
 			@raytrace = ray_trace(@player, 2);
 			spawn_particle(location_shift(@raytrace['location'], 'down'), array(particle: 'SWEEP_ATTACK', speed: 32.0, count: 0, xoffset: 1));
 			play_named_sound(@raytrace['location'], array(sound: 'entity.player.attack.sweep', pitch: 0.5));
@@ -11,7 +11,6 @@ proc _class_load(@player, @pvp) {
 				}
 				damage_entity(puuid(@p), 6, puuid(@player));
 			}
-			set_pcooldown(@player, 'POINTED_DRIPSTONE', 50);
 		}
 	}
 
@@ -42,7 +41,7 @@ proc _class_load(@player, @pvp) {
 							die();
 						}
 						@yaw = to_radians(@loc['yaw'] + 45);
-						for(@radius = 1, @radius <= 8, @radius++) {
+						for(@radius = 1, @radius <= 16, @radius++) {
 							queue_push(closure() {
 								for(@angle = @yaw, @angle < @yaw + 1.57, @angle += rand() / 3) {
 									@point = array(
@@ -57,17 +56,16 @@ proc _class_load(@player, @pvp) {
 											spawn_particle(@point, array(particle: 'BLOCK_CRACK', block: @block, count: 5));
 										}
 									}
-									foreach(@player in players_in_radius(@point, 1.5)) {
+									foreach(@player in players_in_radius(@point, 2)) {
 										if(@player == player() && pmode(@player) != 'SPECTATOR') {
 											continue();
 										}
-										damage_entity(puuid(@player), 0.5, puuid());
-										set_peffect(@player, 'SLOWNESS', 0, 10, true);
-										set_peffect(@player, 'NAUSEA', 0, 1, true, false);
+										damage_entity(puuid(@player), 1, puuid());
+										set_peffect(@player, 'SLOWNESS', 2, 10, true);
+										set_peffect(@player, 'NAUSEA', 0, 2, true, false);
 									}
 								}
 							}, player().'roar');
-							queue_delay(50, player().'roar');
 						}
 					} else if(@xp == 99) {
 						clear_task();
@@ -113,21 +111,27 @@ proc _class_load(@player, @pvp) {
 	}
 
 	bind('player_interact_entity', array(id: @player.'throw'), array(hand: 'main_hand', clicked: 'PLAYER'), @event, @player) {
-		if(player() == @player) {
+		if(player() == @player && pcooldown('POINTED_DRIPSTONE') == 0) {
 			play_named_sound(ploc(), array(sound: 'entity.ravager.step', pitch: 0.5));
-			@timer = array(20);
+			set_pcooldown('POINTED_DRIPSTONE', 50);
+			set_entity_rider(puuid(), @event['id']);
+			@timer = array(10);
 			set_interval(50, closure(){
 				@timer[0]--;
 				try {
-					@loc = ploc();
 					if(@timer[0] <= 0) {
 						clear_task();
+						@loc = ploc();
 						@vector = get_vector(@loc, 1.6);
 						@vector['y'] = max(@vector['y'] + 0.2, 0.2);
-						set_entity_velocity(@event['id'], @vector);
 						play_named_sound(@loc, array(sound: 'entity.ravager.stunned'));
-					} else {
-						set_entity_loc(@event['id'], location_shift(@loc, 'up', 3));
+						set_entity_velocity(@event['id'], @vector);
+					} else if(@timer[0] == 1) {
+						if(get_entity_rider(puuid()) == @event['id']) {
+							set_entity_rider(puuid(), null);
+						} else {
+							clear_task();
+						}
 					}
 				} catch(Exception @ex) {
 					clear_task();
@@ -138,12 +142,14 @@ proc _class_load(@player, @pvp) {
 
 	set_entity_attribute_base(puuid(@player), 'GENERIC_KNOCKBACK_RESISTANCE', 1.0);
 	set_entity_attribute_base(puuid(@player), 'GENERIC_ATTACK_DAMAGE', 8.0);
+	set_entity_attribute_base(puuid(@player), 'GENERIC_MAX_HEALTH', 30.0);
+	set_phealth(@player, 30);
 }
 
 proc _class_powerup(@player) {
 	set_pexp(@player, 99);
 	set_phunger(@player, 2);
-	set_phealth(@player, max(1, phealth(@player) - 1));
+	set_phealth(@player, min(get_max_health(puuid(@player)), phealth(@player) + 1));
 }
 
 proc _class_unload(@player, @pvp) {
@@ -154,5 +160,6 @@ proc _class_unload(@player, @pvp) {
 	unbind(@player.'clubdamage');
 	set_entity_attribute_base(puuid(@player), 'GENERIC_KNOCKBACK_RESISTANCE', 0.0);
 	set_entity_attribute_base(puuid(@player), 'GENERIC_ATTACK_DAMAGE', 1.0);
+	set_entity_attribute_base(puuid(@player), 'GENERIC_MAX_HEALTH', 20.0);
 	set_phunger(@player, 20);
 }
