@@ -11,10 +11,10 @@ proc _class_load(@player, @pvp) {
 			if(!rand(10)) {
 				play_named_sound(@loc, array(sound: 'entity.warden.ambient', pitch: 2.0));
 			}
-			if(array_index_exists(@pvp['players'][@player]['entities'], 'sculk_sensor')) {
+			foreach(@sensor in array('sculk_sensor_first', 'sculk_sensor_last')) {
 				try {
-					@loc = location_shift(entity_loc(@pvp['players'][@player]['entities']['sculk_sensor']), 'up', 0.7);
-					foreach(@p in players_in_radius(@loc, 14)) {
+					@loc = location_shift(entity_loc(@sensor), 'up', 0.7);
+					foreach(@p in players_in_radius(@loc, 15)) {
 						if(@p == @player || pmode(@p) == 'SPECTATOR' || psneaking(@p)) {
 							continue();
 						}
@@ -39,13 +39,16 @@ proc _class_load(@player, @pvp) {
 			}
 			@loc = location_shift(@event['location'], 'up');
 			if(get_block(@loc) == 'AIR') {
-				if(array_index_exists(@pvp['players'][player()]['entities'], 'sculk_sensor')) {
-					try {
-						@sensor = @pvp['players'][player()]['entities']['sculk_sensor'];
-						@oldLoc = entity_loc(@sensor);
-						entity_remove(@sensor);
-						spawn_particle(location_shift(@oldLoc, 'up', 0.78), array(particle: 'SCULK_CHARGE', count: 8, xoffset: 0.5, yoffset: 0.2, zoffset: 0.5));
-					} catch(BadEntityException @ex) {}
+				@entities = @pvp['players'][player()]['entities'];
+				if(array_index_exists(@entities, 'sculk_sensor_first')) {
+					if(array_index_exists(@entities, 'sculk_sensor_last')) {
+						try {
+							@oldLoc = entity_loc(@entities['sculk_sensor_last']);
+							entity_remove(@entities['sculk_sensor_last']);
+							spawn_particle(location_shift(@oldLoc, 'up', 0.78), array(particle: 'SCULK_CHARGE', count: 8, xoffset: 0.5, yoffset: 0.2, zoffset: 0.5));
+						} catch(BadEntityException @ex) {}
+					}
+					@entities['sculk_sensor_last'] = @entities['sculk_sensor_first'];
 				}
 				@loc['x'] += @event['position']['x']
 				@loc['y'] += 0.2;
@@ -53,11 +56,25 @@ proc _class_load(@player, @pvp) {
 				spawn_particle(@loc, array(particle: 'SCULK_CHARGE', count: 8, xoffset: 0.5, yoffset: 0.2, zoffset: 0.5));
 				play_named_sound(@loc, array(sound: 'block.sculk.place'));
 				@loc = location_shift(@loc, 'down', 0.88);
-				@pvp['players'][player()]['entities']['sculk_sensor'] = spawn_entity('ARMOR_STAND', 1, @loc, closure(@stand) {
+				@entities['sculk_sensor_first'] = spawn_entity('ARMOR_STAND', 1, @loc, closure(@stand) {
 					set_entity_spec(@stand, array(gravity: false, visible: false, small: true));
 					set_mob_equipment(@stand, array(HELMET: array(name: 'SCULK_SENSOR')));
 					add_scoreboard_tag(@stand, 'remove');
 				})[0];
+			}
+		}
+	}
+
+	bind('entity_damage', array(id: @player.'sensor'), array(type: 'ARMOR_STAND', cause: 'ENTITY_ATTACK'), @event,
+			@entities = @pvp['players'][@player]['entities']) {
+		foreach(@sensor in array('sculk_sensor_first', 'sculk_sensor_last')) {
+			if(array_index_exists(@entities, @sensor)) {
+				if(@event['id'] == @entities[@sensor]) {
+					spawn_particle(location_shift(entity_loc(@event['id']), 'up', 0.78), array(particle: 'SCULK_CHARGE', count: 8, xoffset: 0.5, yoffset: 0.2, zoffset: 0.5));
+					try(entity_remove(@entities[@sensor]))
+					array_remove(@entities, @sensor);
+					consume();
+				}
 			}
 		}
 	}
@@ -113,5 +130,7 @@ proc _class_powerup(@player) {
 proc _class_unload(@player, @pvp) {
 	unbind(@player.'sculk');
 	unbind(@player.'boom');
-	try(entity_remove(@pvp['players'][@player]['entities']['sculk_sensor']))
+	unbind(@player.'sensor');
+	try(entity_remove(@pvp['players'][@player]['entities']['sculk_sensor_first']))
+	try(entity_remove(@pvp['players'][@player]['entities']['sculk_sensor_last']))
 }
