@@ -8,9 +8,6 @@ proc _class_load(@player, @pvp) {
 				die();
 			}
 			@loc = location_shift(ploc(@player), 'up', 3);
-			if(!rand(10)) {
-				play_named_sound(@loc, array(sound: 'entity.warden.ambient', pitch: 2.0));
-			}
 			foreach(@sensor in array('sculk_sensor_first', 'sculk_sensor_last')) {
 				try {
 					@loc = location_shift(entity_loc(@sensor), 'up', 0.7);
@@ -45,7 +42,7 @@ proc _class_load(@player, @pvp) {
 						try {
 							@oldLoc = entity_loc(@entities['sculk_sensor_last']);
 							entity_remove(@entities['sculk_sensor_last']);
-							spawn_particle(location_shift(@oldLoc, 'up', 0.78), array(particle: 'SCULK_CHARGE', count: 8, xoffset: 0.5, yoffset: 0.2, zoffset: 0.5));
+							spawn_particle(location_shift(@oldLoc, 'up'), array(particle: 'SCULK_SOUL', count: 3, xoffset: 0.5, yoffset: 0.2, zoffset: 0.5));
 						} catch(BadEntityException @ex) {}
 					}
 					@entities['sculk_sensor_last'] = @entities['sculk_sensor_first'];
@@ -53,7 +50,7 @@ proc _class_load(@player, @pvp) {
 				@loc['x'] += @event['position']['x']
 				@loc['y'] += 0.2;
 				@loc['z'] += @event['position']['z'];
-				spawn_particle(@loc, array(particle: 'SCULK_CHARGE', count: 8, xoffset: 0.5, yoffset: 0.2, zoffset: 0.5));
+				spawn_particle(@loc, array(particle: 'SCULK_CHARGE', count: 5, xoffset: 0.6, yoffset: 0.2, zoffset: 0.6));
 				play_named_sound(@loc, array(sound: 'block.sculk.place'));
 				@loc = location_shift(@loc, 'down', 0.88);
 				@entities['sculk_sensor_first'] = spawn_entity('ARMOR_STAND', 1, @loc, closure(@stand) {
@@ -70,7 +67,7 @@ proc _class_load(@player, @pvp) {
 		foreach(@sensor in array('sculk_sensor_first', 'sculk_sensor_last')) {
 			if(array_index_exists(@entities, @sensor)) {
 				if(@event['id'] == @entities[@sensor]) {
-					spawn_particle(location_shift(entity_loc(@event['id']), 'up', 0.78), array(particle: 'SCULK_CHARGE', count: 8, xoffset: 0.5, yoffset: 0.2, zoffset: 0.5));
+					spawn_particle(location_shift(entity_loc(@event['id']), 'up'), array(particle: 'SCULK_SOUL', count: 3, xoffset: 0.5, yoffset: 0.2, zoffset: 0.5));
 					try(entity_remove(@entities[@sensor]))
 					array_remove(@entities, @sensor);
 					consume();
@@ -81,6 +78,7 @@ proc _class_load(@player, @pvp) {
 
 	bind('player_toggle_sneak', array(id: @player.'boom'), array(player: @player, sneaking: true), @event) {
 		if(pexp() == 99) {
+			set_peffect(player(), 'darkness', 0, 2.9, true, false);
 			play_named_sound(ploc(), array(sound: 'entity.warden.sonic_charge'));
 			set_pexp(0);
 			set_interval(100, closure(){
@@ -106,13 +104,26 @@ proc _class_load(@player, @pvp) {
 							foreach(@p in players_in_radius(location_shift(@loc, 'down'), 1.6)) {
 								if(@p != player()) {
 									damage_entity(puuid(@p), 12, puuid());
+									play_named_sound(ploc(), array(sound: 'entity.arrow.hit_player'), player());
 								}
 							}
 						}
 					} else if(@xp == 99) {
+						play_named_sound(ploc(), array(sound: 'entity.warden.ambient', pitch: 2.0));
 						clear_task();
 					} else if(@xp < 17) {
-						spawn_particle(location_shift(ploc(), 'up', 0.2), array(particle: 'SCULK_CHARGE', count: 2, xoffset: 3, zoffset: 3));
+						@center = location_shift(ploc(), 'up', 1.2);
+						@radius = 16 / @xp;
+						@r = rand() * 2;
+						for(@angle = @r, @angle < 6.28 + @r, @angle += rand() * 2) {
+							@point = array(
+								@radius * cos(@angle) + @center['x'],
+								@center['y'],
+								@radius * sin(@angle) + @center['z'],
+								@center['world'],
+							);
+							spawn_particle(@point, array(particle: 'SCULK_CHARGE_POP'));
+						}
 					}
 				} catch(Exception @ex) {
 					clear_task();
