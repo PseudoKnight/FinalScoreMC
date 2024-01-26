@@ -195,8 +195,9 @@ proc _classes_select(@id, @pvp) {
 			|| is_null(@e['slotitem']['meta']['display'])) {
 				die();
 			}
-			@class = to_lower(strip_colors(@e['slotitem']['meta']['display']))
-			if(!array_index_exists(@pvp['arena']['classes'], @class) && @class !== 'random') {
+			@class = to_lower(strip_colors(@e['slotitem']['meta']['display']));
+			@classes = @pvp['arena']['classes'];
+			if(!array_index_exists(@classes, @class) && @class !== 'random') {
 				die();
 			}
 			if(array_index_exists(@pvp['players'][player()], 'picks')) {
@@ -234,9 +235,8 @@ proc _classes_select(@id, @pvp) {
 			cancel();
 
 			if(@class === 'random') {
-				@classes = @pvp['arena']['classes'];
 				if(array_index_exists(@pvp['players'][player()], 'team')) {
-					@classes = array_filter(@pvp['arena']['classes'], closure(@key, @value){
+					@classes = array_filter(@classes, closure(@key, @value){
 						return(!array_index_exists(@value, 'disabled')
 						&& (!array_index_exists(@value, 'team') || @value['team'] == @pvp['players'][player()]['team']));
 					});
@@ -244,13 +244,21 @@ proc _classes_select(@id, @pvp) {
 				if(@classes) {
 					do {
 						@class = array_rand(@classes, 1, true)[0];
-					} while(array_index_exists(@pvp['arena']['classes'][@class], 'disabled'))
+					} while(array_index_exists(@classes[@class], 'disabled'))
 				} else {
-					@class = array_rand(@pvp['arena']['classes'], 1, true)[0];
+					@class = array_rand(@classes, 1, true)[0];
 				}
+				msg(color('green')._to_upper_camel_case(@class).color('r').' has been randomly selected for you.');
+				if(array_index_exists(@classes[@class]['selector']['meta'], 'lore')
+				&& @classes[@class]['selector']['meta']['lore']) {
+					foreach(@line in @classes[@class]['selector']['meta']['lore']) {
+						msg(@line);
+					}
+				}
+			} else {
+				msg(color('green')._to_upper_camel_case(@class).color('r').' has been selected.');
 			}
-			msg(color('green')._to_upper_camel_case(@class).color('r').' has been selected.');
-			if(array_index_exists(@pvp['arena']['classes'][@class], 'limit')) {
+			if(array_index_exists(@classes[@class], 'limit')) {
 				@team = @pvp['players'][player()]['team'];
 				@count = 1;
 				foreach(@name: @player in @pvp['players']) {
@@ -259,7 +267,7 @@ proc _classes_select(@id, @pvp) {
 						@count++;
 					}
 				}
-				if(@count >= @pvp['arena']['classes'][@class]['limit']) {
+				if(@count >= @classes[@class]['limit']) {
 					foreach(@slot: @item in get_inventory(@id.@team)) {
 						if(is_array(@item) && !is_null(@item['meta'])
 						&& @class == to_lower(strip_colors(@item['meta']['display']))) {
