@@ -186,12 +186,7 @@ proc _player_to_spectator(@player, @pvp) {
 	if(function_exists('dm_set_pvisible')) {
 		dm_set_pvisible(@player, true);
 	}
-
-	# Delay spectator mode so that health amount is updated.
-	# Health can be above zero when pkill() or set_phealth() are used.
-	set_timeout(1, closure(){
-		_spectator_add(player(), @pvp);
-	});
+	_spectator_add(player(), @pvp);
 }
 
 proc _pvp_initialize_players(@id, @players) {
