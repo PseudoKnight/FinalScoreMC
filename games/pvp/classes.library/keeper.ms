@@ -102,7 +102,9 @@ proc _class_load(@player, @pvp) {
 							@loc['z'] += @v['z'];
 							spawn_particle(@loc, 'SONIC_BOOM');
 							foreach(@p in players_in_radius(@loc, 1.5)) {
-								damage_entity(puuid(@p), 12, puuid());
+								if(@p != player()) {
+									damage_entity(puuid(@p), 12, puuid());
+								}
 							}
 						}
 					} else if(@xp == 99) {
