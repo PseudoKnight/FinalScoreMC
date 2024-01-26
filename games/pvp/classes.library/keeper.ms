@@ -8,24 +8,14 @@ proc _class_load(@player, @pvp) {
 				die();
 			}
 			@loc = location_shift(ploc(@player), 'up', 3);
-			if(!rand(8)) {
+			if(!rand(10)) {
 				play_named_sound(@loc, array(sound: 'entity.warden.ambient', pitch: 2.0));
-			}
-			foreach(@p in players_in_radius(@loc, 14)) {
-				if(@p == @player) {
-					continue();
-				}
-				if(!array_index_exists(get_peffect(@p), 'glowing')) {
-					spawn_particle(@loc, array(particle: 'VIBRATION', destination: puuid(@p)));
-					play_named_sound(@loc, array(sound: 'entity.warden.tendril_clicks', pitch: 1.2));
-				}
-				set_peffect(@p, 'glowing', 1, 2, true, false);
 			}
 			if(array_index_exists(@pvp['players'][@player]['entities'], 'sculk_sensor')) {
 				try {
 					@loc = location_shift(entity_loc(@pvp['players'][@player]['entities']['sculk_sensor']), 'up', 0.7);
 					foreach(@p in players_in_radius(@loc, 14)) {
-						if(@p == @player) {
+						if(@p == @player || pmode(@p) == 'SPECTATOR' || psneaking(@p)) {
 							continue();
 						}
 						if(!array_index_exists(get_peffect(@p), 'glowing')) {
@@ -43,6 +33,10 @@ proc _class_load(@player, @pvp) {
 
 	bind('player_interact', array(id: @player.'sculk'), array(player: @player, button: 'right', itemname: 'SCULK_SENSOR', hand: 'main_hand'), @event, @pvp) {
 		if(array_index_exists(@event, 'location') && @event['facing'] == 'up') {
+			@material = material_info(get_block(@event['location']));
+			if(@material['isTransparent'] || !@material['isSolid']) {
+				die();
+			}
 			@loc = location_shift(@event['location'], 'up');
 			if(get_block(@loc) == 'AIR') {
 				if(array_index_exists(@pvp['players'][player()]['entities'], 'sculk_sensor')) {
@@ -53,7 +47,9 @@ proc _class_load(@player, @pvp) {
 						spawn_particle(location_shift(@oldLoc, 'up', 0.78), array(particle: 'SCULK_CHARGE', count: 8, xoffset: 0.5, yoffset: 0.2, zoffset: 0.5));
 					} catch(BadEntityException @ex) {}
 				}
-				@loc = _center(@loc, 0.2);
+				@loc['x'] += @event['position']['x']
+				@loc['y'] += 0.2;
+				@loc['z'] += @event['position']['z'];
 				spawn_particle(@loc, array(particle: 'SCULK_CHARGE', count: 8, xoffset: 0.5, yoffset: 0.2, zoffset: 0.5));
 				play_named_sound(@loc, array(sound: 'block.sculk.place'));
 				@loc = location_shift(@loc, 'down', 0.88);
@@ -68,17 +64,6 @@ proc _class_load(@player, @pvp) {
 
 	bind('player_toggle_sneak', array(id: @player.'boom'), array(player: @player, sneaking: true), @event) {
 		if(pexp() == 99) {
-			@center = location_shift(ploc(), 'up');
-			@radius = 1.5;
-			for(@angle = 0, @angle < 6.28, @angle += rand() / 2) {
-				@point = array(
-					@radius * cos(@angle) + @center['x'],
-					@center['y'],
-					@radius * sin(@angle) + @center['z'],
-					@center['world'],
-				);
-				spawn_particle(@point, array(particle: 'SCULK_CHARGE'));
-			}
 			play_named_sound(ploc(), array(sound: 'entity.warden.sonic_charge'));
 			set_pexp(0);
 			set_interval(100, closure(){
@@ -101,7 +86,7 @@ proc _class_load(@player, @pvp) {
 							@loc['y'] += @v['y'];
 							@loc['z'] += @v['z'];
 							spawn_particle(@loc, 'SONIC_BOOM');
-							foreach(@p in players_in_radius(@loc, 1.5)) {
+							foreach(@p in players_in_radius(location_shift(@loc, 'down'), 1.6)) {
 								if(@p != player()) {
 									damage_entity(puuid(@p), 12, puuid());
 								}
@@ -109,6 +94,8 @@ proc _class_load(@player, @pvp) {
 						}
 					} else if(@xp == 99) {
 						clear_task();
+					} else if(@xp < 17) {
+						spawn_particle(location_shift(ploc(), 'up', 0.2), array(particle: 'SCULK_CHARGE', count: 2, xoffset: 3, zoffset: 3));
 					}
 				} catch(Exception @ex) {
 					clear_task();
