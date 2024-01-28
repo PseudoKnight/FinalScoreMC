@@ -7,21 +7,24 @@ proc _class_load(@player, @pvp) {
 				clear_task();
 				die();
 			}
-			@loc = location_shift(ploc(@player), 'up', 3);
-			foreach(@sensor in array('sculk_sensor_first', 'sculk_sensor_last')) {
-				try {
-					@loc = location_shift(entity_loc(@sensor), 'up', 0.7);
-					foreach(@p in players_in_radius(@loc, 15)) {
-						if(@p == @player || pmode(@p) == 'SPECTATOR' || psneaking(@p)) {
-							continue();
+			@entities = @pvp['players'][@player]['entities'];
+			foreach(@id in array('sculk_sensor_first', 'sculk_sensor_last')) {
+				if(array_index_exists(@entities, @id)) {
+					@sensor = @entities[@id];
+					try {
+						@loc = location_shift(entity_loc(@sensor), 'up', 0.7);
+						foreach(@p in players_in_radius(@loc, 16)) {
+							if(@p == @player || pmode(@p) == 'SPECTATOR' || psneaking(@p)) {
+								continue();
+							}
+							if(!array_index_exists(get_peffect(@p), 'glowing')) {
+								spawn_particle(@loc, array(particle: 'VIBRATION', destination: puuid(@p)));
+								play_named_sound(@loc, array(sound: 'entity.warden.tendril_clicks', pitch: 1.2));
+							}
+							set_peffect(@p, 'glowing', 1, 1.5, true, false);
 						}
-						if(!array_index_exists(get_peffect(@p), 'glowing')) {
-							spawn_particle(@loc, array(particle: 'VIBRATION', destination: puuid(@p)));
-							play_named_sound(@loc, array(sound: 'entity.warden.tendril_clicks', pitch: 1.2));
-						}
-						set_peffect(@p, 'glowing', 1, 2, true, false);
-					}
-				} catch(BadEntityException @ex) {}
+					} catch(BadEntityException @ex) {}
+				}
 			}
 		} catch(Exception @ex) {
 			clear_task();
@@ -78,8 +81,7 @@ proc _class_load(@player, @pvp) {
 
 	bind('player_toggle_sneak', array(id: @player.'boom'), array(player: @player, sneaking: true), @event) {
 		if(pexp() == 99) {
-			set_peffect(player(), 'darkness', 0, 2.9, true, false);
-			play_named_sound(ploc(), array(sound: 'entity.warden.sonic_charge'));
+			play_named_sound(ploc(), array(sound: 'entity.warden.sonic_charge', volume: 2));
 			set_pexp(0);
 			set_interval(100, closure(){
 				try {
@@ -93,7 +95,7 @@ proc _class_load(@player, @pvp) {
 							die();
 						}
 						@loc = location_shift(ploc(), 'up', 2.5);
-						play_named_sound(@loc, array(sound: 'entity.warden.sonic_boom'));
+						play_named_sound(@loc, array(sound: 'entity.warden.sonic_boom', volume: 2));
 						@v = get_vector(@loc);
 						@i = 16;
 						while(@i-- > 0) {
@@ -109,7 +111,7 @@ proc _class_load(@player, @pvp) {
 							}
 						}
 					} else if(@xp == 99) {
-						play_named_sound(ploc(), array(sound: 'entity.warden.ambient', pitch: 2.0));
+						play_named_sound(ploc(), array(sound: 'entity.warden.ambient', pitch: 2.0, volume: 2));
 						clear_task();
 					} else if(@xp < 17) {
 						@center = location_shift(ploc(), 'up', 1.2);
