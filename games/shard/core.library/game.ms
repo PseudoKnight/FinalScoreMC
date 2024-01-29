@@ -365,7 +365,7 @@ proc _shard_create(@rules){
 							modify_event('keep_inventory', true);
 						}
 						set_timeout(50, closure(){
-							respawn();
+							pforce_respawn();
 						});
 					}
 				}

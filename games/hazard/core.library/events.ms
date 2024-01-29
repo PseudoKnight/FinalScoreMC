@@ -95,7 +95,7 @@ proc _hazard_bind(@game) {
 			modify_event('keep_inventory', true);
 			export(player().'spawn', location_shift(ploc(), 'up', 2));
 			set_timeout(1000, closure() {
-				respawn(player());
+				pforce_respawn();
 			});
 		}
 	}

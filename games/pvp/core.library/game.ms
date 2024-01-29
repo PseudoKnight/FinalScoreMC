@@ -354,7 +354,7 @@ proc _pvp_start(@pvp){
 							title(@p, color('yellow').@timeleft[0], @pvp['title'], 0, @timeleft[0] * 20, 20);
 						}
 						if(phealth(@p) == 0) {
-							respawn(@p);
+							pforce_respawn(@p);
 						}
 					} catch(PlayerOfflineException @ex) {
 						// they quit during the countdown.

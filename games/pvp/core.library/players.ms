@@ -201,7 +201,7 @@ proc _pvp_initialize_players(@id, @players) {
 		}
 
 		if(phealth(@player) == 0) {
-			respawn(@player);
+			pforce_respawn(@player);
 		}
 
 		@pArray = @pvp['players'][@player];
