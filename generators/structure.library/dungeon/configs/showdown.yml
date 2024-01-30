@@ -1,0 +1,44 @@
+default:
+  tallDoors: true
+  minRoomHeight: 5
+  maxRoomHeight: 9
+  lavaPit: 0.07
+  waterPit: 0.07
+  pit: 0.07
+  minRoomSize: 7
+  maxRoomSize: 17
+  spawnerChance: 0.0
+  spawnCount: 1
+  extraDoorChance: 0.7
+  empty: polished_andesite
+  divider: crying_obsidian
+  wall: [stone_bricks, stone_bricks, cracked_stone_bricks]
+  column: polished_andesite
+  ceiling: [stone_bricks, stone_bricks, stone_bricks, cracked_stone_bricks]
+  floor: [stone_bricks, cracked_stone_bricks, mossy_stone_bricks]
+  utility: [chiseled_stone_bricks]
+  randomblocks: [polished_andesite]
+  edge: stone_brick_stairs
+  doorFrame: polished_andesite
+  overhead: 'lantern[hanging=true]'
+  wallTorchChance: 0.07
+floors:
+- roomTypes:
+    stronghold:
+      chance: 0.8
+    deep_dark:
+      chance: 0.2
+rooms:
+  stronghold: {}
+  deep_dark:
+    wall: [sculk]
+    column: sculk
+    ceiling: sculk
+    floor: [sculk]
+    utility: [sculk_catalyst]
+    randomblocks: [sculk, sculk, soul_torch]
+    edge: sculk
+    doorFrame: sculk
+    randomRoofHeight: true
+    overhead: 'soul_lantern[hanging=true]'
+    wallTorchChance: 0.0

@@ -37,6 +37,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 		spawnerChance: 0.7,
 		extraDoorChance: 0.0,
 		campfireChance: 0.0,
+		wallTorchChance: 0.0,
 		attic: 0.0, // 0.3 is a good value
 		balcony: 0.0, // 0.3
 		lavaPit: 0.0, // 0.06
@@ -52,6 +53,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 		bed: false,
 		treasureRoom: false,
 		randomRoofHeight: false,
+		tallDoors: false,
 
 		// materials (single or multiple)
 		divider: 'bedrock',
@@ -403,7 +405,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 						);
 
 						if(array_size(@rooms) > @maxRoomCount) {
-							@cleanUp[@random];
+							@cleanUp(@random);
 							die('Exceeded max room count of '.@maxRoomCount.'. Stopped room planning.');
 						}
 
@@ -516,7 +518,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 						&& @r >= @rooms[@next]['r1']
 						&& @r < @rooms[@next]['r1'] + @rooms[@next]['length']) {
 							if(!@rooms[@next]['connected']
-							|| (@rooms[@next]['doors'] == 2 || @rooms[@current]['doors'] == 2) && srand(@random) < @extraDoorChance) {
+							|| srand(@random) < @extraDoorChance) {
 								// Attempt to add a double door
 								//
 								// []        [] <- Both rooms must be width > 3 and height > 4
@@ -761,12 +763,13 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 							}
 
 							// Walls
+							@doorAdjacent = _adjacent_equals(@layoutMap, @c, @r, 'door');
+							@hallAdjacent = _adjacent_equals(@layoutMap, @c, @r, 'hall');
 							@ceilingY = @groundY + @roomHeight + 2;
 							@y = 0;
 							@columnRandom = srand(@random);
-							for(@y = @groundY + 2, @y < @ceilingY, @y++) {
+							for(@y = @groundY + 2, @y < @ceilingY + if(@roomData['tallDoors'], 1, 0), @y++) {
 								@loc[1] = @y;
-								@doorAdjacent = _adjacent_equals(@layoutMap, @c, @r, 'door');
 								switch(@column) {
 									case 'window':
 										if(@roomData['window']
@@ -787,9 +790,9 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 										}
 
 									case 'hall':
-										if(@y < @ceilingY - @roomHeight + 2 || !@roomData['ceiling']) {
+										if(@y < @ceilingY - @roomHeight + 2 + if(@roomData['tallDoors'] && @hallAdjacent, 1, 0) || !@roomData['ceiling']) {
 											_add_to_chunk(@chunk, @loc, @roomData['room']);
-										} else if(@y == @ceilingY - @roomHeight + 2) {
+										} else if(@y == @ceilingY - @roomHeight + 2 + if(@roomData['tallDoors'] && @hallAdjacent, 1, 0)) {
 											_add_to_chunk(@chunk, @loc, @roomData['ceiling']);
 										} else {
 											_add_to_chunk(@chunk, @loc, @roomData['empty']);
@@ -823,7 +826,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 										}
 
 									case 'door':
-										if(@column == 'door' && @y < @ceilingY - @roomHeight + 2) {
+										if(@y < @ceilingY - @roomHeight + 2 + if(@roomData['tallDoors'] && @doorAdjacent, 1, 0)) {
 											if(string_ends_with(@roomData['door'], 'door')) {
 												if(!@doorAdjacent && @roomId != -1 && @room['connected'] % 3 == 1) {
 													@lower = @y < @ceilingY - @roomHeight + 1;
@@ -971,6 +974,16 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 											}
 											_add_to_chunk(@chunk, @loc, @state);
 
+										} else if(@y == @groundY + 3
+										&& srand(@random) < @roomData['wallTorchChance']
+										&& _adjacent_equals(@layoutMap, @c, @r, 'wall')) {
+											@dir = _direction_of_solid(@layoutMap, @c, @r);
+											if(!@dir) {
+												_add_to_chunk(@chunk, @loc, @roomData['room']);
+											} else {
+												_add_to_chunk(@chunk, @loc, 'wall_torch[facing='._opposite_direction(@dir).']');
+											}
+
 										} else {
 											_add_to_chunk(@chunk, @loc, @roomData['room']);
 										}
@@ -982,7 +995,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 										_add_to_chunk(@chunk, @loc, @roomData['divider']);
 
 									default:
-										if(_adjacent_equals(@layoutMap, @c, @r, 'hall') && @y < @ceilingY - @roomHeight + 2) {
+										if(_adjacent_equals(@layoutMap, @c, @r, 'hall') && @y < @ceilingY - @roomHeight + 2 + if(@roomData['tallDoors'], 1, 0)) {
 											_add_to_chunk(@chunk, @loc, @roomData['wall']);
 										} else if(_adjacent_equals(@layoutMap, @c, @r, 'window')) {
 											if(@y < @ceilingY - @roomHeight + 3
