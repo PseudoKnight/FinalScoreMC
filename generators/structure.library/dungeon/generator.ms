@@ -485,6 +485,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 						@r = 0;
 						@dist = 1;
 						@next = -1;
+						@hall = false;
 						if(@dir == 'north' || @dir == 'south') {
 							@c = @roomC + 1 + integer(srand(@random) * (@roomWidth - 2));
 						} else {
@@ -501,13 +502,14 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 								case 'east':
 									@c = @roomC + @roomWidth - 1 + @dist;
 							}
-							if(@next != -1) {
+							@hall = @layoutMap[@c][@r] == 'hall';
+							if(@hall || @next != -1) {
 								break();
 							}
 							@next = @roomMap[@c][@r];
 						}
 
-						if(@r < 2 || @c < 2) {
+						if(@hall || @r < 2 || @c < 2) {
 							continue();
 						}
 
@@ -518,7 +520,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 						&& @r >= @rooms[@next]['r1']
 						&& @r < @rooms[@next]['r1'] + @rooms[@next]['length']) {
 							if(!@rooms[@next]['connected']
-							|| srand(@random) < @extraDoorChance) {
+							|| abs(@rooms[@next]['connected'] - @rooms[@current]['connected']) != 1 && srand(@random) < @extraDoorChance) {
 								// Attempt to add a double door
 								//
 								// []        [] <- Both rooms must be width > 3 and height > 4
@@ -530,6 +532,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 								//
 								@c2 = @c;
 								@r2 = @r;
+								@height = 2 + if(@floorData['tallDoors'], 1, 0);
 								if(@room['height'] > 4 && @rooms[@next]['height'] > 4) {
 									if((@dir == 'north' || @dir == 'south')
 									&& @room['width'] > 3 && @rooms[@next]['width'] > 3) {
@@ -537,6 +540,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 										if(@c2 < @rooms[@next]['c1']
 										|| @c2 >= @rooms[@next]['c1'] + @rooms[@next]['width']) {
 											@c2 = @c;
+											@height = 2;
 										}
 									} else if((@dir == 'east' || @dir == 'west')
 									&& @room['length'] > 3 && @rooms[@next]['length'] > 3) {
@@ -544,6 +548,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 										if(@r2 < @rooms[@next]['r1']
 										|| @r2 >= @rooms[@next]['r1'] + @rooms[@next]['length']) {
 											@r2 = @r;
+											@height = 2;
 										}
 									}
 								}
@@ -555,29 +560,29 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 											@layoutMap[@c][@roomR - @doorDist] = @cell;
 											@layoutMap[@c2][@roomR - @doorDist] = @cell;
 											if(@cell == 'hall') {
-												@heightMap[@c][@roomR - @doorDist] = 2;
-												@heightMap[@c2][@roomR - @doorDist] = 2;
+												@heightMap[@c][@roomR - @doorDist] = @height;
+												@heightMap[@c2][@roomR - @doorDist] = @height;
 											}
 										case 'south':
 											@layoutMap[@c][@roomR + @roomLength - 1 + @doorDist] = @cell;
 											@layoutMap[@c2][@roomR + @roomLength - 1 + @doorDist] = @cell;
 											if(@cell == 'hall') {
-												@heightMap[@c][@roomR + @roomLength - 1 + @doorDist] = 2;
-												@heightMap[@c2][@roomR + @roomLength - 1 + @doorDist] = 2;
+												@heightMap[@c][@roomR + @roomLength - 1 + @doorDist] = @height;
+												@heightMap[@c2][@roomR + @roomLength - 1 + @doorDist] = @height;
 											}
 										case 'west':
 											@layoutMap[@roomC - @doorDist][@r] = @cell;
 											@layoutMap[@roomC - @doorDist][@r2] = @cell;
 											if(@cell == 'hall') {
-												@heightMap[@roomC - @doorDist][@r] = 2;
-												@heightMap[@roomC - @doorDist][@r2] = 2;
+												@heightMap[@roomC - @doorDist][@r] = @height;
+												@heightMap[@roomC - @doorDist][@r2] = @height;
 											}
 										case 'east':
 											@layoutMap[@roomC + @roomWidth - 1 + @doorDist][@r] = @cell;
 											@layoutMap[@roomC + @roomWidth - 1 + @doorDist][@r2] = @cell;
 											if(@cell == 'hall') {
-												@heightMap[@roomC + @roomWidth - 1 + @doorDist][@r] = 2;
-												@heightMap[@roomC + @roomWidth - 1 + @doorDist][@r2] = 2;
+												@heightMap[@roomC + @roomWidth - 1 + @doorDist][@r] = @height;
+												@heightMap[@roomC + @roomWidth - 1 + @doorDist][@r2] = @height;
 											}
 									}
 								}
@@ -723,14 +728,14 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 							if(@roomShape == 'fire_floor' && @column == 'room') {
 								_add_to_chunk(@chunk, @loc, 'dispenser[facing=up]');
 							} else if(@roomShape == 'lava_pit' && @column == 'room') {
-								if((!_direction_of_solid(@layoutMap, @c, @r) || srand(@random) < 0.6)
+								if((!_direction_of_solid(@layoutMap, @c, @r) && srand(@random) > 0.06 || srand(@random) < 0.6)
 								&& !_adjacent_equals(@layoutMap, @c, @r, 'door')) {
 									_add_to_chunk(@chunk, @loc, 'lava');
 								} else {
 									_add_to_chunk(@chunk, @loc, @roomData['floor']);
 								}
 							} else if(@roomShape == 'water_pit' && @column == 'room') {
-								if((!_direction_of_solid(@layoutMap, @c, @r) || srand(@random) < 0.7)
+								if((!_direction_of_solid(@layoutMap, @c, @r) && srand(@random) > 0.07 || srand(@random) < 0.7)
 								&& !_adjacent_equals(@layoutMap, @c, @r, 'door')) {
 									_add_to_chunk(@chunk, @loc, 'water');
 								} else {
@@ -764,11 +769,10 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 
 							// Walls
 							@doorAdjacent = _adjacent_equals(@layoutMap, @c, @r, 'door');
-							@hallAdjacent = _adjacent_equals(@layoutMap, @c, @r, 'hall');
 							@ceilingY = @groundY + @roomHeight + 2;
 							@y = 0;
 							@columnRandom = srand(@random);
-							for(@y = @groundY + 2, @y < @ceilingY + if(@roomData['tallDoors'], 1, 0), @y++) {
+							for(@y = @groundY + 2, @y < @ceilingY, @y++) {
 								@loc[1] = @y;
 								switch(@column) {
 									case 'window':
@@ -790,9 +794,9 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 										}
 
 									case 'hall':
-										if(@y < @ceilingY - @roomHeight + 2 + if(@roomData['tallDoors'] && @hallAdjacent, 1, 0) || !@roomData['ceiling']) {
+										if(@y < @ceilingY || !@roomData['ceiling']) {
 											_add_to_chunk(@chunk, @loc, @roomData['room']);
-										} else if(@y == @ceilingY - @roomHeight + 2 + if(@roomData['tallDoors'] && @hallAdjacent, 1, 0)) {
+										} else if(@y == @ceilingY) {
 											_add_to_chunk(@chunk, @loc, @roomData['ceiling']);
 										} else {
 											_add_to_chunk(@chunk, @loc, @roomData['empty']);
@@ -1115,6 +1119,10 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 								}
 								@count--;
 								@spawns[@floor][] = @loc;
+								if(@debug) {
+									set_block(@loc, 'OAK_SIGN');
+									set_sign_text(@loc, @room['connected']);
+								}
 							}
 						}
 					}

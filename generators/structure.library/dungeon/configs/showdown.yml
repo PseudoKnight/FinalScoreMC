@@ -9,7 +9,7 @@ default:
   maxRoomSize: 17
   spawnerChance: 0.0
   spawnCount: 1
-  extraDoorChance: 0.7
+  extraDoorChance: 0.6
   empty: polished_andesite
   divider: crying_obsidian
   wall: [stone_bricks, stone_bricks, cracked_stone_bricks]
@@ -17,7 +17,7 @@ default:
   ceiling: [stone_bricks, stone_bricks, stone_bricks, cracked_stone_bricks]
   floor: [stone_bricks, cracked_stone_bricks, mossy_stone_bricks]
   utility: [chiseled_stone_bricks]
-  randomblocks: [polished_andesite]
+  randomblocks: [gravel]
   edge: stone_brick_stairs
   doorFrame: polished_andesite
   overhead: 'lantern[hanging=true]'
@@ -25,8 +25,10 @@ default:
 floors:
 - roomTypes:
     stronghold:
-      chance: 0.8
+      chance: 0.6
     deep_dark:
+      chance: 0.2
+    mansion:
       chance: 0.2
 rooms:
   stronghold: {}
@@ -41,4 +43,16 @@ rooms:
     doorFrame: sculk
     randomRoofHeight: true
     overhead: 'soul_lantern[hanging=true]'
+    wallTorchChance: 0.0
+  mansion:
+    wall: dark_oak_planks
+    column: cobblestone_wall
+    ceiling: birch_planks
+    floor: birch_planks
+    utility: [lantern]
+    randomblocks: [bookshelf]
+    edge: birch_stairs
+    doorFrame: spruce_wood
+    lavaPit: 0.0
+    waterPit: 0.0
     wallTorchChance: 0.0
