@@ -1,11 +1,11 @@
 /*
 	Returns a tabcompleter closure that supports an ordered list of static or dynamic returns.
 	Example:
-		set_tabcompleter('player', _create_tabcompleter(
-			array('player.management': array('set', 'get'), ), // requires permission to see
+ 		set_tabcompleter('player', _create_tabcompleter(
+			array('player.management': array('set', 'get')), // requires permission to see
 			null, // no completion
 			array('health', 'hunger'), // simple list of options
-			array('<health|hunger': array('min', 'max', 'none'), // requires previous to be health or hunger
+			array('<health|hunger': array('min', 'max', 'none')), // requires previous to be health or hunger
 			closure(@alias, @sender, @args){ ... }, // custom tabcompleter for this argument
 		));
  */
