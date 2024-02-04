@@ -2,10 +2,14 @@
 	Returns a tabcompleter closure that supports an ordered list of static or dynamic returns.
 	Example:
  		set_tabcompleter('player', _create_tabcompleter(
-			array('player.management': array('set', 'get')), // requires permission to see
+			array(
+				'player.management': array('set', 'get') // requires permission to see
+				null: array('get')), // null key is used when all other conditions fail
 			null, // no completion
-			array('health', 'hunger'), // simple list of options
-			array('<health|hunger': array('min', 'max', 'none')), // requires previous to be health or hunger
+			array('health', 'hunger', 'mode'), // simple list of options
+			array(
+				'<health|hunger': array('min', 'max', 'none') // requires previous to be health or hunger
+				'<mode': array('creative', 'survival', 'adventure', 'spectator')),
 			closure(@alias, @sender, @args){ ... }, // custom tabcompleter for this argument
 		));
  */
@@ -18,37 +22,36 @@ proc _create_tabcompleter() {
 		@completions = @argumentCompletions[array_size(@args) - 1];
 		if(is_array(@completions)) {
 			@arg = to_lower(@args[-1]);
-			if(is_associative(@completions)) {
-				@result = array();
-				foreach(@perm: @array in @completions) {
-					if(!@perm) {
-						@result = @array;
-					} else if(@perm[0] == '<') {
+			while(is_associative(@completions)) {
+				@conditionalCompletions = array();
+				foreach(@condition: @array in @completions) {
+					if(!@condition) {
+						@conditionalCompletions = @array;
+					} else if(@condition[0] == '<') {
 						@count = 1;
-						while(@perm[@count] == '<') {
+						while(@condition[@count] == '<') {
 							@count++;
 						}
 						@previous = @args[array_size(@args) - 1 - @count];
-						@split = split('|', substr(@perm, @count));
-						foreach(@s in @split) {
+						foreach(@s in split('|', substr(@condition, @count))) {
 							if(@previous == @s) {
-								@result = @array;
-								break();
+								@conditionalCompletions = @array;
+								break(2);
 							}
 						}
-					} else if(has_permission(@perm)) {
-						@result = @array;
+					} else if(has_permission(@condition)) {
+						@conditionalCompletions = @array;
 						break();
 					}
 				}
-				return(array_filter(@result, closure(@key, @value) {
-					return(string_starts_with(@value, @arg));
-				}));
-			} else {
-				return(array_filter(@completions, closure(@key, @value) {
-					return(string_starts_with(@value, @arg));
-				}));
+				@completions = @conditionalCompletions;
 			}
+			if(!@arg) {
+				return(@completions);
+			}
+			return(array_filter(@completions, closure(@key, @value) {
+				return(string_starts_with(@value, @arg));
+			}));
 		} else if(is_closure(@completions)) {
 			return(execute(@completions));
 		}
