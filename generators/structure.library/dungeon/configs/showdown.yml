@@ -1,15 +1,15 @@
 default:
   tallDoors: true
   minRoomHeight: 5
-  maxRoomHeight: 9
+  maxRoomHeight: 10
   lavaPit: 0.07
   waterPit: 0.07
   pit: 0.07
-  minRoomSize: 7
+  minRoomSize: 5
   maxRoomSize: 17
   spawnerChance: 0.0
   spawnCount: 1
-  extraDoorChance: 0.6
+  extraDoorChance: 0.75
   empty: polished_andesite
   divider: crying_obsidian
   wall: [stone_bricks, stone_bricks, cracked_stone_bricks]
@@ -22,6 +22,7 @@ default:
   doorFrame: polished_andesite
   overhead: 'lantern[hanging=true]'
   wallTorchChance: 0.07
+  attic: 0.2
 floors:
 - roomTypes:
     stronghold:
@@ -40,10 +41,11 @@ rooms:
     utility: [sculk_catalyst]
     randomblocks: [sculk, sculk, soul_torch]
     edge: sculk
-    doorFrame: sculk
     randomRoofHeight: true
     overhead: 'soul_lantern[hanging=true]'
     wallTorchChance: 0.0
+    attic: 0.0
+    vine: twisting_vines_plant
   mansion:
     wall: dark_oak_planks
     column: cobblestone_wall
@@ -52,7 +54,7 @@ rooms:
     utility: [lantern]
     randomblocks: [bookshelf]
     edge: birch_stairs
-    doorFrame: spruce_wood
     lavaPit: 0.0
     waterPit: 0.0
     wallTorchChance: 0.0
+    vine: ladder
