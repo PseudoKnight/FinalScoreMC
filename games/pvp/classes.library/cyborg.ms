@@ -4,7 +4,7 @@ proc _class_load(@player, @pvp) {
 		cancel();
 	}
 
-	bind('player_interact', array(id: @player.'cyborgshoot'), array(player: @player), @event, @pvp) {
+	bind('player_interact', array(id: @player.'cyborgshoot'), array(player: @player, block: null), @event, @pvp) {
 		@slot = 0;
 		if(@event['button'] == 'left') {
 			@slot = -106;

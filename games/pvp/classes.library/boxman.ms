@@ -4,7 +4,7 @@ proc _class_load(@player, @pvp) {
 		cancel();
 	}
 
-	bind('player_interact', array(id: @player.'boxmanattack'), array(player: @player), @e, @pvp) {
+	bind('player_interact', array(id: @player.'boxmanattack'), array(player: @player, block: null), @e, @pvp) {
 		@slot = 0;
 		@checkSlot = -106;
 		if(@e['button'] == 'left') {
