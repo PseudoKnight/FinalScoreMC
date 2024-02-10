@@ -16,14 +16,14 @@ proc _arena_prepare(@pvp) {
 			@pvp['arena']['spawn'] = array(@playerSpawns);
 		}
 
-		@itemSpawns = @spawns[cslice(integer(length(@spawns) / 2), -1)];
-		@pvp['arena']['itemspawn'] = array();
-		foreach(@spawn in @itemSpawns) {
-			@pvp['arena']['itemspawn'][] = array(
-				start: true,
+		@chestSpawns = @spawns[cslice(integer(length(@spawns) / 2), -1)];
+		@pvp['arena']['chestspawn'] = array();
+		foreach(@spawn in @chestSpawns) {
+			@pvp['arena']['chestspawn'][] = array(
+				start: 'true',
 				cooldown: 60,
-				loc: @spawn,
-				item: array(name: 'LILY_PAD', meta: array(enchants: array(unbreaking: 1))),
+				loc: array(floor(@spawn[0]), floor(@spawn[1]), floor(@spawn[2]), @spawn[3]),
+				items: array(array(name: 'LILY_PAD', meta: array(enchants: array(unbreaking: 1)))),
 			);
 			set_block(location_shift(@spawn, 'down'), 'EMERALD_BLOCK');
 		}

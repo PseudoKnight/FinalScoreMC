@@ -22,7 +22,6 @@ default:
   doorFrame: polished_andesite
   overhead: 'lantern[hanging=true]'
   wallTorchChance: 0.07
-  attic: 0.2
 floors:
 - roomTypes:
     stronghold:
@@ -44,7 +43,6 @@ rooms:
     randomRoofHeight: true
     overhead: 'soul_lantern[hanging=true]'
     wallTorchChance: 0.0
-    attic: 0.0
     vine: twisting_vines_plant
   mansion:
     wall: dark_oak_planks
