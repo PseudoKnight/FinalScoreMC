@@ -207,7 +207,7 @@ register_command('entity', array(
 						if(array_size(@args) < 6) {
 							die(color('gold').'Must give three numbers (x y z)')
 						}
-						@entity['velocity'] = array(integer(@args[3]), integer(@args[4]), integer(@args[5]));
+						@entity['velocity'] = array(double(@args[3]), double(@args[4]), double(@args[5]));
 						msg(color('green').'Set velocity to '.@entity['velocity']);
 
 					default:
