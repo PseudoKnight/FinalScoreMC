@@ -203,7 +203,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 			c1: @c,
 			width: 6,
 			length: 6,
-			connected: 0,
+			depth: 0,
 			doors: 0,
 			floor: 0,
 			height: @options['floors'][0]['maxRoomHeight'],
@@ -288,7 +288,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 					c1: @c,
 					width: min(@exitRoom['width'], 6, @width - @c - 1),
 					length: min(@exitRoom['length'], 6, @length - @r - 1),
-					connected: 0,
+					depth: 0,
 					doors: 0,
 					floor: 0,
 					height: 4,
@@ -405,7 +405,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 							c1: @c + 1,
 							width: @roomWidth,
 							length: @roomLength,
-							connected: 0,
+							depth: 0,
 							doors: 0,
 							floor: 0,
 							height: @height,
@@ -460,10 +460,10 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 				array_remove_values(@unconnected, @current);
 				@connected[@current] = null;
 				@room = @rooms[@current];
-				if(@room['connected'] == 0){
-					@room['connected'] = @rooms[@previous]['connected'] + 1;
-					if(@room['connected'] > @maxRoomDistance) {
-						@maxRoomDistance = @room['connected'];
+				if(@room['depth'] == 0){
+					@room['depth'] = @rooms[@previous]['depth'] + 1;
+					if(@room['depth'] > @maxRoomDistance) {
+						@maxRoomDistance = @room['depth'];
 						@farthestRoom = @current;
 					}
 				}
@@ -531,8 +531,8 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 						&& @r < @rooms[@next]['r1'] + @rooms[@next]['length']
 						&& (@rooms[@next]['floor'] == 0
 						|| @dist - 1 >= abs(@rooms[@next]['floor'] - @room['floor']))) {
-							if(!@rooms[@next]['connected']
-							|| abs(@rooms[@next]['connected'] - @rooms[@current]['connected']) != 1 && srand(@random) < @extraDoorChance) {
+							if(!@rooms[@next]['depth']
+							|| abs(@rooms[@next]['depth'] - @rooms[@current]['depth']) != 1 && srand(@random) < @extraDoorChance) {
 								@delta = 0;
 								@offset = 0;
 								if(@floorData['ascending']) {
@@ -631,7 +631,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 								}
 								@rooms[@next]['doors']++;
 								@room['doors']++;
-								if(!@rooms[@next]['connected']) {
+								if(!@rooms[@next]['depth']) {
 									@previous = @current;
 									@current = @next;
 									@success = true;
@@ -681,7 +681,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 
 			// Mark room layout
 			foreach(@n: @room in @rooms){
-				if(!@room['connected']){
+				if(!@room['depth']){
 					continue();
 				}
 				@r = @room['r1'];
@@ -712,7 +712,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 							|| _adjacent_equals(@layoutMap, @c2, @r2, 'window')
 							|| (!is_null(@rowOdd) && (@rowOdd != @r2 % 2 || @columnOdd != @c2 % 2))
 							|| srand(@random) < 0.9
-							|| @room['connected'] == 1) {
+							|| @room['depth'] == 1) {
 								@layoutMap[@c2][@r2] = 'room';
 							} else {
 								@layoutMap[@c2][@r2] = 'column';
@@ -826,7 +826,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 								}
 							} else {
 								if(@debug) {
-									_add_to_chunk(@chunk, @loc, @debugMaterials[if(@room, @room['connected'] % array_size(@debugMaterials), 0)]);
+									_add_to_chunk(@chunk, @loc, @debugMaterials[if(@room, @room['depth'] % array_size(@debugMaterials), 0)]);
 								} else {
 									_add_to_chunk(@chunk, @loc, @roomData['floor']);
 								}
@@ -994,7 +994,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 											_add_to_chunk(@chunk, @loc, @roomData['windowFrame']);
 
 										} else if(@debug) {
-											_add_to_chunk(@chunk, @loc, @debugMaterials[if(@room, @room['connected'] % array_size(@debugMaterials), 0)]);
+											_add_to_chunk(@chunk, @loc, @debugMaterials[if(@room, @room['depth'] % array_size(@debugMaterials), 0)]);
 
 										} else {
 											@wallMaterial = @roomData['wall'];
@@ -1012,7 +1012,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 									case 'door':
 										if(@y < @ceilingY - @roomHeight + 2 + if(@roomData['tallDoors'] && @doorAdjacent, 1, 0) + if(@floorData['ascending'], 1, 0)) {
 											if(string_ends_with(@roomData['door'], 'door')) {
-												if(!@doorAdjacent && @roomId != -1 && @room['connected'] % 3 == 1) {
+												if(!@doorAdjacent && @roomId != -1 && @room['depth'] % 3 == 1) {
 													@lower = @y < @ceilingY - @roomHeight + 1;
 													if(@roomMap[@c][@r - 1] == -1) {
 														@half = if(@lower, 'half=lower,', 'half=upper,');
@@ -1128,7 +1128,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 			// Populate rooms
 			@chestArray = array();
 			foreach(@i: @room in @rooms) {
-				if(!@room['connected']) {
+				if(!@room['depth']) {
 					continue();
 				}
 
@@ -1171,7 +1171,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 								@roomZ + integer(srand(@random) * @roomLength) + 0.5,
 								@world,
 								if(@roomShape == 'attic', 0, @room['doors']), // use this for sorting, lower being more isolated a room
-								@room['connected'] // distance to start
+								@room['depth'] // distance to start
 							);
 							if(equals_ic(@roomData['room'], get_block(@loc))) {
 								if(string_ends_with(@roomShape, 'pit')) {
@@ -1181,7 +1181,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 								@spawns[@floor][] = @loc;
 								if(@debug) {
 									set_block(@loc, 'OAK_SIGN');
-									set_sign_text(@loc, @room['connected']);
+									set_sign_text(@loc, @room['depth']);
 								}
 							}
 						}
@@ -1218,7 +1218,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 						}
 					} else if(@minWidth > 2) {
 						// can place a door blocking block in the room
-						if(@room['connected'] > 2 && @roomData['spawner'] && @roomShape != 'treasure' && srand(@random) < @roomData['spawnerChance']) {
+						if(@room['depth'] > 2 && @roomData['spawner'] && @roomShape != 'treasure' && srand(@random) < @roomData['spawnerChance']) {
 							@loc = array(
 								@roomX + 1 + integer(srand(@random) * (@roomWidth - 2)),
 								@roomY + if(@roomShape == 'attic' && srand(@random) > 0.67, @room['midheight'] + 1, 0),
@@ -1470,7 +1470,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 						}
 					}
 
-					if(@room['connected'] > 2 && @roomData['trap'] && @roomShape != 'fire_floor') {
+					if(@room['depth'] > 2 && @roomData['trap'] && @roomShape != 'fire_floor') {
 						@traps = integer(srand(@random) * max(@roomLength, @roomWidth));
 						while(@traps-- > 0) {
 							@type = split('_', _array_get_srand(@random, @roomData['trap']));
