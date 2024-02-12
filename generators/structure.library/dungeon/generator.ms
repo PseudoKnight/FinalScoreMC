@@ -205,7 +205,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 			length: 6,
 			depth: 0,
 			doors: 0,
-			floor: 0,
+			floor: 1,
 			height: @options['floors'][0]['maxRoomHeight'],
 			type: @dungeonEntrance,
 			shape: 'normal',
@@ -290,7 +290,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 					length: min(@exitRoom['length'], 6, @length - @r - 1),
 					depth: 0,
 					doors: 0,
-					floor: 0,
+					floor: 1,
 					height: 4,
 					midheight: 3 + integer(srand(@random) * -3),
 					type: if(array_index_exists(@floorData, 'roomTypes'), _array_get_srand(@random, array_keys(@floorData['roomTypes'])), ''),
@@ -767,6 +767,15 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 								@world
 							);
 
+							if(@column == 'empty') {
+								foreach(@dir in array('north', 'south', 'east', 'west')) {
+									if(_get_cell(@layoutMap, @c, @r, @dir) == 'hall') {
+										@floorHeight = _get_cell(@floorHeightMap, @c, @r, @dir) - 1;
+										break();
+									}
+								}
+							}
+
 							// Bedrock divider
 							_add_to_chunk(@chunk, @loc, @roomData['divider']);
 
@@ -808,19 +817,23 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 								_add_to_chunk(@chunk, @loc, @roomData['wall']);
 							} else if(@column == 'empty' || @column == 'divider') {
 								_add_to_chunk(@chunk, @loc, @roomData['divider']);
-							} else if((@column == 'door' || @column == 'hall') && @floorData['ascending'] && string_ends_with(@roomData['edge'], 'stairs')) {
- 								if(_get_cell(@floorHeightMap, @c, @r, 'north') - @floorHeight == 1
+							} else if((@column == 'door' || @column == 'hall') && @floorData['ascending'] && @floorHeight != 1) {
+								@stairs = @roomData['edge'];
+								if(!string_ends_with(@stairs, 'stairs')) {
+									@stairs = 'cobblestone_stairs';
+								}
+ 								if(_get_cell(@floorHeightMap, @c, @r, 'north') - @floorHeight == -1
 								&& _get_cell(@layoutMap, @c, @r, 'north') != 'wall') {
-									_add_to_chunk(@chunk, @loc, @roomData['edge'].'[facing=north]');
-								} else if(_get_cell(@floorHeightMap, @c, @r, 'south') - @floorHeight == 1
+									_add_to_chunk(@chunk, @loc, @stairs.'[facing=south]');
+								} else if(_get_cell(@floorHeightMap, @c, @r, 'south') - @floorHeight == -1
 								&& _get_cell(@layoutMap, @c, @r, 'south') != 'wall') {
-									_add_to_chunk(@chunk, @loc, @roomData['edge'].'[facing=south]');
-								} else if(_get_cell(@floorHeightMap, @c, @r, 'east') - @floorHeight == 1
+									_add_to_chunk(@chunk, @loc, @stairs.'[facing=north]');
+								} else if( _get_cell(@floorHeightMap, @c, @r, 'east') - @floorHeight == -1
 								&& _get_cell(@layoutMap, @c, @r, 'east') != 'wall') {
-									_add_to_chunk(@chunk, @loc, @roomData['edge'].'[facing=east]');
-								} else if(_get_cell(@floorHeightMap, @c, @r, 'west') - @floorHeight == 1
+									_add_to_chunk(@chunk, @loc, @stairs.'[facing=west]');
+								} else if(_get_cell(@floorHeightMap, @c, @r, 'west') - @floorHeight == -1
 								&& _get_cell(@layoutMap, @c, @r, 'west') != 'wall') {
-									_add_to_chunk(@chunk, @loc, @roomData['edge'].'[facing=west]');
+									_add_to_chunk(@chunk, @loc, @stairs.'[facing=east]');
 								} else {
 									_add_to_chunk(@chunk, @loc, @roomData['floor']);
 								}
