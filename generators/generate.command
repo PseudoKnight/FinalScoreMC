@@ -4,8 +4,8 @@ register_command('generate', array(
 	permission: 'command.generate',
 	tabcompleter: _create_tabcompleter(
 		array('dungeon', 'scaled_level', 'interrupt'),
-		array('<dungeon': array('dungeon', 'phd', 'stronghold', 'test'),
-			'<scaled_level': array('dirt', 'showdown', 'static')),
+		array('<dungeon': array('dungeon', 'phd', 'showdown', 'stronghold', 'test'),
+			'<scaled_level': array('dirt', 'static')),
 		array('<region>'),
 		array('<seed>'),
 		array('debug'),

@@ -9,9 +9,9 @@ default:
   maxRoomSize: 17
   spawnerChance: 0.0
   spawnCount: 1
-  extraDoorChance: 0.75
+  extraDoorChance: 0.9
   empty: polished_andesite
-  divider: crying_obsidian
+  divider: bedrock
   wall: [stone_bricks, stone_bricks, cracked_stone_bricks]
   column: polished_andesite
   ceiling: [stone_bricks, stone_bricks, stone_bricks, cracked_stone_bricks]
@@ -31,8 +31,10 @@ floors:
     mansion:
       chance: 0.2
 rooms:
-  stronghold: {}
+  stronghold:
+    divider: magma_block
   deep_dark:
+    divider: sculk_catalyst
     wall: [sculk]
     column: sculk
     ceiling: sculk
@@ -45,6 +47,7 @@ rooms:
     wallTorchChance: 0.0
     vine: twisting_vines_plant
   mansion:
+    divider: crying_obsidian
     wall: dark_oak_planks
     column: cobblestone_wall
     ceiling: birch_planks
