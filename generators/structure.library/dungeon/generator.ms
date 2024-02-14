@@ -1079,7 +1079,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 										_add_to_chunk(@chunk, @loc, @roomData['divider']);
 
 									default:
-										if(_adjacent_equals(@layoutMap, @c, @r, 'hall') && @y < @ceilingY - @roomHeight + 2 + if(@roomData['tallDoors'], 1, 0) + if(@floorData['ascending'], 1, 0)) {
+										if(_adjacent_equals(@layoutMap, @c, @r, 'hall') && @y < @ceilingY - @roomHeight + 3 + if(@roomData['tallDoors'], 1, 0) + if(@floorData['ascending'], 1, 0)) {
 											_add_to_chunk(@chunk, @loc, @roomData['wall']);
 										} else if(_adjacent_equals(@layoutMap, @c, @r, 'window')) {
 											if(@y < @ceilingY - @roomHeight + 3
