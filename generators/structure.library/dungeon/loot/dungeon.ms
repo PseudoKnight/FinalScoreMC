@@ -1,6 +1,6 @@
 proc _get_chest_loot(@floor, @random, @bonus = 1.0, @loot = array(
-	array(chance: 0.35, item: 'TORCH', qty: array(1, 16)),
-	array(chance: 0.15, item: 'ARROW', qty: array(1, 6)),
+	array(chance: 0.3, item: 'TORCH', qty: array(1, 12)),
+	array(chance: 0.1, item: 'ARROW', qty: array(1, 7)),
 	array(chance: 0.05, item: 'GOLD_NUGGET', qty: array(1, 9)),
 	array(chance: 0.05, item: 'GOLD_INGOT'),
 	array(chance: 0.05, item: 'COBWEB'),
@@ -89,7 +89,7 @@ proc _get_chest_loot(@floor, @random, @bonus = 1.0, @loot = array(
 						@slot = 'HELMET';
 					} else if(string_ends_with(@item['name'], 'CHESTPLATE')) {
 						@slot = 'CHESTPLATE';
-					} else if(@item['name'] == 'SHIELD') {
+					} else if(@item['name'] === 'SHIELD') {
 						@slot = 'OFF_HAND';
 					}
 					if(string_starts_with(@item['name'], 'CHAINMAIL')) {
@@ -114,7 +114,7 @@ proc _get_chest_loot(@floor, @random, @bonus = 1.0, @loot = array(
 						} else if(string_starts_with(@item['name'], 'DIAMOND') || string_starts_with(@item['name'], 'NETHERITE')) {
 							@rarityIndex--;
 						}
-						if(@slot == 'WEAPON') {
+						if(@slot === 'WEAPON') {
 							@weaponEnchants = array(
 								'SHARPNESS', 'BANE_OF_ARTHROPODS', 'SMITE', 'UNBREAKING', 'FIRE_ASPECT', 'KNOCKBACK', 'LOOTING', 'MENDING'
 							);
@@ -134,11 +134,11 @@ proc _get_chest_loot(@floor, @random, @bonus = 1.0, @loot = array(
 							@armorEnchants = array(
 								'UNBREAKING', 'PROTECTION', 'BLAST_PROTECTION', 'FIRE_PROTECTION', 'PROJECTILE_PROTECTION', 'THORNS', 'MENDING'
 							);
-							if(@slot == 'HELMET') {
+							if(@slot === 'HELMET') {
 								@armorEnchants[] = 'RESPIRATION';
-							} else if(@slot == 'LEGGINGS') {
+							} else if(@slot === 'LEGGINGS') {
 								@armorEnchants[] = 'SWIFT_SNEAK';
-							} else if(@slot == 'BOOTS') {
+							} else if(@slot === 'BOOTS') {
 								@armorEnchants[] = 'DEPTH_STRIDER';
 							}
 							@item['meta']['enchants'] = associative_array();
@@ -151,7 +151,7 @@ proc _get_chest_loot(@floor, @random, @bonus = 1.0, @loot = array(
 								}
 							}
 						}
-					} else if(@item['name'] == 'CROSSBOW') {
+					} else if(@item['name'] === 'CROSSBOW') {
 						if(srand(@random) < 0.5) {
 							@item['meta'] = array(projectiles: array(array(name: 'FIREWORK_ROCKET', meta: array(firework: array(
 								strength: 1, 
@@ -172,7 +172,7 @@ proc _get_chest_loot(@floor, @random, @bonus = 1.0, @loot = array(
 								}
 							}
 						}
-					} else if(@item['name'] == 'BOW') {
+					} else if(@item['name'] === 'BOW') {
 						@bowEnchants = array(
 							'POWER', 'FLAME', 'INFINITY', 'PUNCH', 'UNBREAKING', 'MENDING'
 						);
@@ -185,7 +185,7 @@ proc _get_chest_loot(@floor, @random, @bonus = 1.0, @loot = array(
 								@item['meta']['enchants'][@enchant] = 1;
 							}
 						}
-					} else if(@item['name'] == 'TRIDENT') {
+					} else if(@item['name'] === 'TRIDENT') {
 						@tridentEnchants = array(
 							'IMPALING', 'RIPTIDE', 'LOYALTY', 'UNBREAKING', 'MENDING'
 						);
@@ -214,7 +214,7 @@ proc _get_chest_loot(@floor, @random, @bonus = 1.0, @loot = array(
 						@item['meta']['enchants']['vanishing_curse'] = 1;
 					}
 				}
-			} else if(@item['name'] == 'ENCHANTED_BOOK') {
+			} else if(@item['name'] === 'ENCHANTED_BOOK') {
 				@enchants = array(
 					'POWER', 'FLAME', 'INFINITY', 'PUNCH', 'SHARPNESS', 'BANE_OF_ARTHROPODS', 'SMITE',
 					'UNBREAKING', 'FIRE_ASPECT', 'KNOCKBACK', 'LOOTING', 'RESPIRATION', 'PROTECTION',
@@ -227,7 +227,7 @@ proc _get_chest_loot(@floor, @random, @bonus = 1.0, @loot = array(
 				@enchant = @enchants[@id];
 				@meta['stored'][@enchant] = array(elevel: 1);
 				@item['meta'] = @meta;
-			} else if(@item['name'] == 'BUNDLE') {
+			} else if(@item['name'] === 'BUNDLE') {
 				@item['meta'] = array(items: if(srand(@random) > 0.5, _get_chest_loot(@floor, @random), _get_barrel_loot(@floor, @random)));
 			}
 			@inv[integer(srand(@random) * 27)] = @item;
@@ -277,7 +277,7 @@ proc _get_barrel_loot(@floor, @random, @bonus = 1.0, @loot = array(
 						'NIGHT_VISION': 2,
 						'LUCK': 1
 					);
-					if(@item['name'] == 'SPLASH_POTION') {
+					if(@item['name'] === 'SPLASH_POTION') {
 						@potionTypes = array_merge(@potionTypes, array(
 							'SLOWNESS': 3,
 							'WEAKNESS': 2,

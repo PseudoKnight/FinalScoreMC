@@ -40,7 +40,7 @@ proc _adjacent_equals(@layoutMap, @c, @r, @type) {
 
 proc _direction_of_solid(@layoutMap, @c, @r) {
 	proc _is_solid(@cell) {
-		return(@cell == 'wall' || @cell == 'window' || @cell == 'column');
+		return(@cell === 'wall' || @cell === 'window' || @cell === 'column');
 	}
 
 	foreach(@dir in array('north', 'south', 'east', 'west')) {
@@ -53,7 +53,7 @@ proc _direction_of_solid(@layoutMap, @c, @r) {
 
 proc _direction_of_border(@layoutMap, @c, @r) {
 	proc _is_room_border(@cell) {
-		return(@cell == 'wall' || @cell == 'window' || @cell == 'door');
+		return(@cell === 'wall' || @cell === 'window' || @cell === 'door');
 	}
 
 	foreach(@dir in array('north', 'south', 'east', 'west')) {

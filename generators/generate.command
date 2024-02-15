@@ -11,14 +11,14 @@ register_command('generate', array(
 		array('debug'),
 	),
 	executor: closure(@alias, @sender, @args, @info) {
-		if(array_size(@args) == 1 && @args[0] == 'interrupt') {
+		if(array_size(@args) == 1 && @args[0] === 'interrupt') {
 			x_interrupt('DungeonPlanner');
 		} else if(array_size(@args) >= 3) {
 			@type = @args[0];
 			@config = @args[1];
 			@region = @args[2];
 			@seed = integer(array_get(@args, 3, 0));
-			@debug = array_get(@args, 4, '') == 'debug';
+			@debug = array_get(@args, 4, '') === 'debug';
 			_generator_create(@type, @config, @region, pworld(), @seed, null, @debug);
 		} else {
 			return(false);
