@@ -198,16 +198,17 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 		@c = integer(@width / 2 - 4);
 		@r = if(@dungeonEntrance, @length - 8, integer(@length / 2 - 4));
 
-		@entranceRoom = array(
+		@startingRoom = array(
 			r1: @r,
 			c1: @c,
-			width: 6,
 			length: 6,
+			width: 6,
 			depth: 0,
 			doors: 0,
 			floor: if(@options['floors'][0]['ascending'], 1, 0),
 			height: @options['floors'][0]['maxRoomHeight'],
-			type: @dungeonEntrance,
+			midheight: 3 + @options['floors'][0]['maxRoomHeight'] - 7,
+			type: null,
 			shape: 'normal',
 		);
 
@@ -265,182 +266,186 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 			}
 
 			// Define rooms
-			@rooms = array();
-			@r = 0;
-			@c = 0;
-			if(@floor == 0) {
-				if(@dungeonEntrance) {
-					@layoutMap[integer(@width / 2) - 1][@length - 2] = 'door';
-					@layoutMap[integer(@width / 2) - 2][@length - 2] = 'door';
-					@layoutMap[integer(@width / 2) - 1][@length - 1] = 'door';
-					@layoutMap[integer(@width / 2) - 2][@length - 1] = 'door';
-					@layoutMap[integer(@width / 2) - 3][@length - 1] = 'wall';
-					@layoutMap[integer(@width / 2)][@length - 1] = 'wall';
-				}
-				@r = @entranceRoom['r1'];
-				@c = @entranceRoom['c1'];
-				@rooms[] = @entranceRoom;
-			} else if(@exitRoom != null) {
-				@r = @exitRoom['r1'];
-				@c = @exitRoom['c1'];
-				@rooms[] = array(
-					r1: @r,
-					c1: @c,
-					width: min(@exitRoom['width'], 6, @width - @c - 1),
-					length: min(@exitRoom['length'], 6, @length - @r - 1),
+			if(@exitRoom != null) {
+				@startingRoom = array(
+					r1: @exitRoom['r1'],
+					c1: @exitRoom['c1'],
+					length: @exitRoom['length'],
+					width: @exitRoom['width'],
 					depth: 0,
 					doors: 0,
 					floor: if(@floorData['ascending'], 1, 0),
-					height: 4,
-					midheight: 3 + integer(srand(@random) * -3),
-					type: if(array_index_exists(@floorData, 'roomTypes'), _array_get_srand(@random, array_keys(@floorData['roomTypes'])), ''),
+					height: @floorData['maxRoomHeight'],
+					midheight: 3 + @floorData['maxRoomHeight'] - 7,
+					type: null,
 					shape: 'normal',
 				);
+			} else if(@dungeonEntrance) {
+				@layoutMap[integer(@width / 2) - 1][@length - 2] = 'door';
+				@layoutMap[integer(@width / 2) - 2][@length - 2] = 'door';
+				@layoutMap[integer(@width / 2) - 1][@length - 1] = 'door';
+				@layoutMap[integer(@width / 2) - 2][@length - 1] = 'door';
+				@layoutMap[integer(@width / 2) - 3][@length - 1] = 'wall';
+				@layoutMap[integer(@width / 2)][@length - 1] = 'wall';
 			}
-			if(@rooms) {
-				// do not include walls
-				for(@r2 = @r, @r2 < @rooms[0]['length'] + @r, @r2++) {
-					for(@c2 = @c, @c2 < @rooms[0]['width'] + @c, @c2++) {
-						@layoutMap[@c2][@r2] = 'room';
-					}
-				}
-				// include walls
-				for(@r2 = @r - 1, @r2 < @rooms[0]['length'] + @r + 1, @r2++) {
-					for(@c2 = @c - 1, @c2 < @rooms[0]['width'] + @c + 1, @c2++) {
-						@roomMap[@c2][@r2] = 0;
-					}
-				}
-			}
+			@rooms = array(@startingRoom);
+			@r = @startingRoom['r1'];
+			@c = @startingRoom['c1'];
 
 			// Place rooms
-			@maxRoomCount = integer((average(@width, @length) / @minRoomSize) ** 2);
-			@unconnected = array(0);
-			@attempts = 0;
-			for(@r = 1, @r < @length - 3, @r++) {
-				for(@c = 1, @c < @width - 3, @c++) {
-					if(x_is_interrupted()) {
-						@cleanUp(@random);
-						die('Interrupted planning rooms: '.array_size(@rooms).' '.@rooms[0..5].' ... ');
+			// Split around starting room
+			if(@r > @minRoomSize + 4) {
+				@rooms[] = array( // northeast on north face
+					r1: 2,
+					c1: @c,
+					length: @r - 5,
+					width: @width - @c - 3,
+				);
+			}
+			if(@c + @startingRoom['width'] + 3 + @minRoomSize < @width) {
+				@rooms[] = array( // southeast on east face
+					r1: @r,
+					c1: @c + @startingRoom['width'] + 3,
+					length: @length - @r - 2,
+					width: @width - @c - @startingRoom['width'] - 6,
+				);
+			}
+			if(@r + @startingRoom['length'] + 3 + @minRoomSize < @length) {
+				@rooms[] = array( // southwest on south face
+					r1: @r + @startingRoom['length'] + 3,
+					c1: 2,
+					length: @length - @r - @startingRoom['length'] - 5,
+					width: @c + @startingRoom['width'] - 2,
+				);
+			}
+			if(@c > @minRoomSize + 4) {
+				@rooms[] = array( // northwest on west face
+					r1: 2,
+					c1: 2,
+					length: @r - 2 + @startingRoom['length'],
+					width: @c - 5,
+				);
+			}
+
+			// Binary Space Partitioning (BSP)
+			@count = 1;
+			while(@count < array_size(@rooms)) {
+				if(x_is_interrupted()) {
+					@cleanUp(@random);
+					die('Interrupted partitioning rooms: '.@count.'/'.array_size(@rooms));
+				}
+				foreach(@room in @rooms) {
+					if(array_index_exists(@room, 'depth')) {
+						continue();
 					}
-					if(@roomMap[@c][@r] == -1
-					&& @roomMap[@c + 1][@r + 1] == -1
-					&& @roomMap[@c][@r - 1] == -1
-					&& @roomMap[@c - 1][@r] == -1) {
-						@attempts++;
-						@roomWidth = integer(srand(@random) * (@maxRoomSize - @minRoomSize + 1)) + @minRoomSize;
-						@roomLength = integer(srand(@random) * (@maxRoomSize - @minRoomSize + 1)) + @minRoomSize;
-
-						// Check placement and shrink if necessary to avoid room collisions.
-						for(@r2 = @r, @r2 < @r + @roomLength + 3, @r2++) {
-							if(@r2 + 1 >= @length) {
-								@roomLength = @r2 - @r - 2;
-								break();
-							} else if(@roomMap[@c][@r2] != -1) {
-								@roomLength = @r2 - @r - 3;
-								break();
-							}
-							for(@c2 = @c + 1, @c2 < @c + @roomWidth + 3, @c2++) {
-								if(@c2 + 1 >= @width) {
-									@roomWidth = @c2 - @c - 2;
-									break();
-								} else if(@roomMap[@c2][@r2] != -1) {
-									if(@c2 - @c - 2 < 1) {
-										@roomLength = @r2 - @r - 3;
-										break(2);
-									} else {
-										@roomWidth = @c2 - @c - 3;
-										break();
-									}
-								}
-							}
-						}
-
-						if(@roomLength < @minRoomSize || @roomWidth < @minRoomSize) {
-							continue();
-						}
-
-						// Room types determine material theme and other characteristics
-						@roomType = '';
-						@minHeight = @minRoomHeight;
-						if(array_index_exists(@floorData, 'roomTypes')) {
-							@rand = srand(@random);
-							foreach(@id: @roomData in @floorData['roomTypes']) {
-								if(@rand < @roomData['chance']) {
-									@roomType = @id;
-									break();
-								}
-								@rand -= @roomData['chance'];
-							}
-						}
-
-						// Room shapes determine dominant room features
-						@shape = 'normal';
-						if(@floorData['rugs'] && @roomWidth == @roomLength && @roomWidth > 2 && @roomWidth < 8 && srand(@random) < @floorData['rugs']) {
-							@shape = 'rug';
-							@minHeight = 4;
-						} else if(@floorData['attic'] && @roomWidth > 2 && @roomLength > 2 && srand(@random) < @floorData['attic']) {
-							@shape = 'attic';
-							@minHeight = 7;
-						} else if(@floorData['balcony'] && @roomWidth > 3 && @roomLength > 3 && srand(@random) < @floorData['balcony']) {
-							@shape = 'balcony';
-							@minHeight = 7;
-						} else if(@floorData['lavaPit'] && @roomWidth > 1 && @roomLength > 1 && srand(@random) < @floorData['lavaPit']) {
-							@shape = 'lava_pit';
-							@minHeight = 4;
-						} else if(@floorData['waterPit'] && srand(@random) < @floorData['waterPit']) {
-							@shape = 'water_pit';
-						} else if(@floorData['fireFloor'] && @roomWidth > 1 && @roomLength > 1 && srand(@random) < @floorData['fireFloor']) {
-							@shape = 'fire_floor';
-						} else if(@floorData['pit'] && srand(@random) < @floorData['pit']) {
-							@shape = 'pit';
-							@minHeight = 4;
-						}
-
-						@height = @minHeight + integer(srand(@random) * (@maxRoomHeight - @minHeight + 1));
-
-						// Save room
-						@unconnected[] = array_size(@rooms);
+					if(@room['width'] <= @maxRoomSize && @room['length'] <= @maxRoomSize && srand(@random) < 0.67) {
+						// sufficiently split
+						@room['depth'] = 0;
+						@count++;
+						continue();
+					}
+					@widthTooSmall = @room['width'] < @minRoomSize * 2 + 3;
+					@lengthTooSmall = @room['length'] < @minRoomSize * 2 + 3;
+					if(@widthTooSmall && @lengthTooSmall) {
+						// can't split anymore
+						@room['depth'] = 0;
+						@count++;
+						continue();
+					}
+					if(!@widthTooSmall && srand(@random) < 0.5) {
+						// split on column
+						@split = @minRoomSize + 1 + integer(srand(@random) * (@room['width'] - @minRoomSize * 2 - 2));
 						@rooms[] = array(
-							r1: @r + 1,
-							c1: @c + 1,
-							width: @roomWidth,
-							length: @roomLength,
-							depth: 0,
-							doors: 0,
-							floor: 0,
-							height: @height,
-							midheight: 3 + integer(srand(@random) * (@height - 7)),
-							shape: @shape,
-							type: @roomType,
+							r1: @room['r1'],
+							c1: @room['c1'] + @split + 2,
+							length: @room['length'],
+							width: @room['width'] - @split - 2,
 						);
-
-						if(array_size(@rooms) > @maxRoomCount) {
-							@cleanUp(@random);
-							die('Exceeded max room count of '.@maxRoomCount.'. Stopped room planning.');
-						}
-
-						// Mask room
-						for(@r2 = @r, @r2 < @roomLength + @r + 2, @r2++) {
-							for(@c2 = @c, @c2 < @roomWidth + @c + 2, @c2++) {
-								@roomMap[@c2][@r2] = array_size(@rooms) - 1;
-							}
-						}
-
-						// Move the column var to the end of the room, before incrementation.
-						@c += @roomWidth + 2;
+						@room['width'] = @split - 1;
+					} else if(!@lengthTooSmall) {
+						// split on row
+						@split = @minRoomSize + 1 + integer(srand(@random) * (@room['length'] - @minRoomSize * 2 - 2));
+						@rooms[] = array(
+							r1: @room['r1'] + @split + 2,
+							c1: @room['c1'],
+							length: @room['length'] - @split - 2,
+							width: @room['width'],
+						);
+						@room['length'] = @split - 1;
 					}
 				}
 			}
 
-			if(@debug) {
-				msg(@attempts.' attempts were made to create '.array_size(@rooms).' rooms.');
+			// Configure rooms
+			@unconnected = array();
+			foreach(@i: @room in @rooms) {
+				@unconnected[] = @i;
+				// mask roomMap
+				@r = @room['r1'];
+				@c = @room['c1'];
+				@roomLength = @room['length'];
+				@roomWidth = @room['width'];
+				for(@r2 = @r - 1, @r2 <= @roomLength + @r, @r2++) {
+					for(@c2 = @c - 1, @c2 <= @roomWidth + @c, @c2++) {
+						@roomMap[@c2][@r2] = @i;
+					}
+				}
+
+				// Room types determine material theme and other characteristics
+				@roomType = '';
+				@minHeight = @minRoomHeight;
+				if(array_index_exists(@floorData, 'roomTypes')) {
+					@rand = srand(@random);
+					foreach(@id: @roomData in @floorData['roomTypes']) {
+						if(@rand < @roomData['chance']) {
+							@roomType = @id;
+							break();
+						}
+						@rand -= @roomData['chance'];
+					}
+				}
+
+				// Room shapes determine dominant room features
+				@shape = 'normal';
+				if(@floorData['rugs'] && @roomWidth == @roomLength && @roomWidth > 2 && @roomWidth < 8 && srand(@random) < @floorData['rugs']) {
+					@shape = 'rug';
+					@minHeight = 4;
+				} else if(@floorData['attic'] && @roomWidth > 2 && @roomLength > 2 && srand(@random) < @floorData['attic']) {
+					@shape = 'attic';
+					@minHeight = 7;
+				} else if(@floorData['balcony'] && @roomWidth > 3 && @roomLength > 3 && srand(@random) < @floorData['balcony']) {
+					@shape = 'balcony';
+					@minHeight = 7;
+				} else if(@floorData['lavaPit'] && @roomWidth > 1 && @roomLength > 1 && srand(@random) < @floorData['lavaPit']) {
+					@shape = 'lava_pit';
+					@minHeight = 4;
+				} else if(@floorData['waterPit'] && srand(@random) < @floorData['waterPit']) {
+					@shape = 'water_pit';
+				} else if(@floorData['fireFloor'] && @roomWidth > 1 && @roomLength > 1 && srand(@random) < @floorData['fireFloor']) {
+					@shape = 'fire_floor';
+				} else if(@floorData['pit'] && srand(@random) < @floorData['pit']) {
+					@shape = 'pit';
+					@minHeight = 4;
+				}
+
+				@height = @minHeight + integer(srand(@random) * (@maxRoomHeight - @minHeight + 1));
+
+				// Save room with remaining data
+				@rooms[@i] = array_merge(array(
+					doors: 0,
+					floor: 0,
+					height: @height,
+					midheight: 3 + integer(srand(@random) * (@height - 7)),
+					shape: @shape,
+					type: @roomType,
+				), @room);
 			}
 
 			// Connect rooms
 			@current = 0;
 			@previous = 0;
 			@try = array();
-			@maxAttempts = array_size(@rooms) * @maxRoomSize * 4;
+			@maxAttempts = array_size(@rooms) * 12;
 			@attempts = 0;
 			@connected = associative_array();
 			@maxRoomDistance = 0;
@@ -513,7 +518,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 									@c = @roomC + @roomWidth - 1 + @dist;
 							}
 							@hall = @layoutMap[@c][@r] == 'hall';
-							if(@hall || @next != -1) {
+							if(@hall || @next != -1 || @c < 2 || @r < 2) {
 								break();
 							}
 							@next = @roomMap[@c][@r];
@@ -530,24 +535,24 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 						&& @r >= @rooms[@next]['r1']
 						&& @r < @rooms[@next]['r1'] + @rooms[@next]['length']
 						&& (@rooms[@next]['floor'] == 0
-						|| @dist - 1 >= abs(@rooms[@next]['floor'] - @room['floor']))) {
+						|| @dist > abs(@rooms[@next]['floor'] - @room['floor']))) {
 							if(!@rooms[@next]['depth']
 							|| abs(@rooms[@next]['depth'] - @rooms[@current]['depth']) != 1 && srand(@random) < @extraDoorChance) {
-								@delta = 0;
-								@offset = 0;
+								@heightMultiplier = 0;
+								@distOffset = 0;
 								if(@floorData['ascending']) {
 									if(@rooms[@next]['floor'] == 0) {
 										if(@room['floor'] > @dist - 1) {
-											@offset = -1;
-											@delta = -1;
+											@distOffset = -1;
+											@heightMultiplier = -1;
 										} else {
-											@delta = 1;
+											@heightMultiplier = 1;
 										}
-										@rooms[@next]['floor'] = @room['floor'] + (@dist - 1) * @delta;
+										@rooms[@next]['floor'] = @room['floor'] + (@dist - 1) * @heightMultiplier;
 									} else {
-										@delta = (@rooms[@next]['floor'] - @room['floor']) / @dist;
+										@heightMultiplier = (@rooms[@next]['floor'] - @room['floor']) / @dist;
 										if(@rooms[@next]['floor'] > @room['floor']) {
-											@offset = -1;
+											@distOffset = 1;
 										}
 									}
 								};
@@ -563,7 +568,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 								@c2 = 0;
 								@r2 = 0;
 								@double = false;
-								@roomHeight = 2 + abs(@delta);
+								@roomHeight = 2 + abs(@heightMultiplier);
 								if(@room['height'] > 4 && @rooms[@next]['height'] > 4) {
 									if((@dir == 'north' || @dir == 'south')
 									&& @room['width'] > 3 && @rooms[@next]['width'] > 3) {
@@ -588,7 +593,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 								@doorDist = @dist;
 								while(--@doorDist > 0) {
 									@cell = if(@doorDist == 1 || @doorDist == @dist - 1, 'door', 'hall');
-									@floorHeight = @room['floor'] + integer((@doorDist + @offset) * @delta);
+									@floorHeight = @room['floor'] + integer((@doorDist + @distOffset) * @heightMultiplier);
 									switch(@dir) {
 										case 'north':
 											@r = @roomR - @doorDist;
@@ -1772,9 +1777,9 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 					world: @world,
 				);
 				@start = array(
-					x: @entranceRoom['c1'] + @regionMinX + 0.5,
+					x: @startingRoom['c1'] + @regionMinX + 0.5,
 					y: @sy = @regionMinY + 1,
-					z: @entranceRoom['r1'] + @regionMinZ + 0.5,
+					z: @startingRoom['r1'] + @regionMinZ + 0.5,
 					world: @world,
 				);
 				foreach(@floor: @spawnSet in @spawns) {
