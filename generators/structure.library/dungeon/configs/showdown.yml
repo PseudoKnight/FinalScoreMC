@@ -22,6 +22,7 @@ default:
   doorFrame: polished_andesite
   overhead: 'lantern[hanging=true]'
   wallTorchChance: 0.07
+  randomBlockChance: 0.1
 floors:
 - roomTypes:
     stronghold:
@@ -46,6 +47,7 @@ rooms:
     overhead: 'soul_lantern[hanging=true]'
     wallTorchChance: 0.0
     vine: twisting_vines_plant
+    randomBlockChance: 0.2
   mansion:
     divider: crying_obsidian
     wall: dark_oak_planks
@@ -59,3 +61,4 @@ rooms:
     waterPit: 0.0
     wallTorchChance: 0.0
     vine: ladder
+    randomBlockChance: 0.2
