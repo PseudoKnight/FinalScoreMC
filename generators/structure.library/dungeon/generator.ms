@@ -841,7 +841,10 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 
 							// Walls
 							@randomBlock = '';
-							if(!@doorAdjacent && !string_ends_with(@roomShape, 'pit') && srand(@random) < @roomData['randomBlockChance']) {
+							if(@roomData['randomblocks']
+							&& !@doorAdjacent
+							&& !string_ends_with(@roomShape, 'pit')
+							&& srand(@random) < @roomData['randomBlockChance']) {
 								@randomBlock = _array_get_srand(@random, @roomData['randomblocks']);
 							}
 							@groundY += @floorHeight;
