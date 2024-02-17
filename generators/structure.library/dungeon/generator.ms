@@ -970,7 +970,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 
 									} else if(@randomBlock && (@y == @groundY + 2 || @y == @groundY + 3
 									&& string_position(@randomBlock, '[') == -1
-									&& srand(@random) < 0.4
+									&& (_direction_of_solid(@layoutMap, @c, @r) != null && srand(@random) < 0.67 || srand(@random) < 0.33)
 									&& material_info(@randomBlock, 'isSolid')
 									&& material_info(@randomBlock, 'isOccluding'))) {
 										_add_to_chunk(@chunk, @loc, @randomBlock);
