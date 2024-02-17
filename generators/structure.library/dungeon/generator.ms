@@ -1160,18 +1160,6 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 					@roomData = array_merge(@roomData, @options['rooms'][@roomType]);
 				}
 
-				if(@roomData['overhead']) {
-					queue_push(closure(){
-						@loc = array(
-							@roomX + @roomWidth / 2,
-							@roomY + @roomHeight - 1,
-							@roomZ + @roomLength / 2,
-							@world,
-						);
-						set_blockdata_string(@loc, @roomData['overhead']);
-					}, 'generator');
-				}
-
 				// We need to create spawns after all blocks are set to ensure clearance.
 				@createSpawns = closure(){
 					if(@roomData['spawnCount'] > 0) {
@@ -1217,6 +1205,16 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 					if(@debug) {
 						sk_pos1(player(), array(@roomX, @roomY, @roomZ));
 						sk_pos2(player(), array(@roomX + @roomWidth, @roomY + @roomHeight, @roomZ + @roomLength));
+					}
+
+					if(@roomData['overhead']) {
+						@loc = array(
+							@roomX + @roomWidth / 2,
+							@roomY + @roomHeight - 1,
+							@roomZ + @roomLength / 2,
+							@world,
+						);
+						set_blockdata_string(@loc, @roomData['overhead']);
 					}
 
 					@spawner = false;
@@ -1630,12 +1628,9 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 					}
 
 					execute(@createSpawns);
-				}, 'generator');
 
-				
-				if(array_contains(@roomData['floor'], 'grass_block')
-				|| @roomData['room'] === 'water') {
-					queue_push(closure(){
+					if(array_contains(@roomData['floor'], 'grass_block')
+					|| @roomData['room'] === 'water') {
 						@loc = array(
 							@roomX + 1 + integer(srand(@random) * (@roomWidth - 2)),
 							@roomY - 1,
@@ -1643,8 +1638,8 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 							@world
 						);
 						bone_meal_block(@loc);
-					}, 'generator');
-				}
+					}
+				}, 'generator');
 			}
 
 			if(@floorData['title'] && @floor < 12) {
