@@ -26,7 +26,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 	}
 	@defaults = array_merge(array(
 		// size
-		minRoomSize: 3,
+		minRoomSize: 5,
 		maxRoomSize: 21,
 		minRoomHeight: 3,
 		maxRoomHeight: 3,
@@ -405,26 +405,30 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 						@rand -= @roomData['chance'];
 					}
 				}
+				@roomData = @floorData;
+				if(@roomType && array_index_exists(@options, 'rooms') && array_index_exists(@options['rooms'], @roomType)) {
+					@roomData = array_merge(@floorData, @options['rooms'][@roomType]);
+				}
 
 				// Room shapes determine dominant room features
 				@shape = 'normal';
-				if(@floorData['rugs'] && @roomWidth == @roomLength && @roomWidth > 2 && @roomWidth < 8 && srand(@random) < @floorData['rugs']) {
+				if(@roomData['rugs'] && @roomWidth == @roomLength && @roomWidth > 2 && @roomWidth < 8 && srand(@random) < @roomData['rugs']) {
 					@shape = 'rug';
 					@minHeight = 4;
-				} else if(@floorData['attic'] && @roomWidth > 2 && @roomLength > 2 && srand(@random) < @floorData['attic']) {
+				} else if(@roomData['attic'] && @roomWidth > 2 && @roomLength > 2 && srand(@random) < @roomData['attic']) {
 					@shape = 'attic';
 					@minHeight = 7;
-				} else if(@floorData['balcony'] && @roomWidth > 3 && @roomLength > 3 && srand(@random) < @floorData['balcony']) {
+				} else if(@roomData['balcony'] && @roomWidth > 3 && @roomLength > 3 && srand(@random) < @roomData['balcony']) {
 					@shape = 'balcony';
 					@minHeight = 7;
-				} else if(@floorData['lavaPit'] && @roomWidth > 1 && @roomLength > 1 && srand(@random) < @floorData['lavaPit']) {
+				} else if(@roomData['lavaPit'] && @roomWidth > 1 && @roomLength > 1 && srand(@random) < @roomData['lavaPit']) {
 					@shape = 'lava_pit';
 					@minHeight = 4;
-				} else if(@floorData['waterPit'] && srand(@random) < @floorData['waterPit']) {
+				} else if(@roomData['waterPit'] && srand(@random) < @roomData['waterPit']) {
 					@shape = 'water_pit';
-				} else if(@floorData['fireFloor'] && @roomWidth > 1 && @roomLength > 1 && srand(@random) < @floorData['fireFloor']) {
+				} else if(@roomData['fireFloor'] && @roomWidth > 1 && @roomLength > 1 && srand(@random) < @roomData['fireFloor']) {
 					@shape = 'fire_floor';
-				} else if(@floorData['pit'] && srand(@random) < @floorData['pit']) {
+				} else if(@roomData['pit'] && srand(@random) < @roomData['pit']) {
 					@shape = 'pit';
 					@minHeight = 4;
 				}
@@ -776,22 +780,22 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 							if(@roomShape === 'fire_floor' && @column === 'room') {
 								_add_to_chunk(@chunk, @loc, 'dispenser[facing=up]');
 							} else if(@roomShape === 'lava_pit' && @column === 'room') {
-								if((!_direction_of_solid(@layoutMap, @c, @r) && srand(@random) > 0.06 || srand(@random) < 0.6)
-								&& !_adjacent_equals(@layoutMap, @c, @r, 'door')) {
+								if(!@doorAdjacent 
+								&& (!_direction_of_solid(@layoutMap, @c, @r) && srand(@random) > 0.06 || srand(@random) < 0.6)) {
 									_add_to_chunk(@chunk, @loc, 'lava');
 								} else {
 									_add_to_chunk(@chunk, @loc, @roomData['floor']);
 								}
 							} else if(@roomShape === 'water_pit' && @column === 'room') {
-								if((!_direction_of_solid(@layoutMap, @c, @r) && srand(@random) > 0.07 || srand(@random) < 0.7)
-								&& !_adjacent_equals(@layoutMap, @c, @r, 'door')) {
+								if(!@doorAdjacent 
+								&& (!_direction_of_solid(@layoutMap, @c, @r) && srand(@random) > 0.07 || srand(@random) < 0.7)) {
 									_add_to_chunk(@chunk, @loc, 'water');
 								} else {
 									_add_to_chunk(@chunk, @loc, @roomData['floor']);
 								}
 							} else if(@roomShape === 'pit' && @column === 'room') {
-								if((!_direction_of_solid(@layoutMap, @c, @r) || srand(@random) < 0.55)
-								&& !_adjacent_equals(@layoutMap, @c, @r, 'door')) {
+								if(!@doorAdjacent 
+								&& (!_direction_of_solid(@layoutMap, @c, @r) || srand(@random) < 0.55)) {
 									@holeDepth = @maxRoomHeight;
 									while(@holeDepth-- > 0) {
 										_add_to_chunk(@chunk, location_shift(@loc, 'down', @holeDepth), 'air');
@@ -1200,6 +1204,17 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 					continue();
 				} else if(string_ends_with(@roomShape, 'pit')) {
 					// Still want to create spawns, but conditions are poor for other blocks and traps
+					if(@roomData['overhead']) {
+						queue_push(closure(){
+							@loc = array(
+								@roomX + @roomWidth / 2,
+								@roomY + @roomHeight - 1,
+								@roomZ + @roomLength / 2,
+								@world,
+							);
+							set_blockdata_string(@loc, @roomData['overhead']);
+						}, 'generator');
+					}
 					queue_push(@createSpawns, 'generator');
 					continue();
 				}
@@ -1740,7 +1755,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 				);
 				@start = array(
 					x: @startingRoom['c1'] + @regionMinX + 0.5,
-					y: @sy = @regionMinY + 1,
+					y: @regionMinY + 1,
 					z: @startingRoom['r1'] + @regionMinZ + 0.5,
 					world: @world,
 				);

@@ -11,11 +11,11 @@ default:
   spawnCount: 1
   extraDoorChance: 0.9
   empty: polished_andesite
-  divider: bedrock
-  wall: [stone_bricks, stone_bricks, cracked_stone_bricks]
+  divider: polished_andesite
+  wall: polished_andesite
   column: polished_andesite
-  ceiling: [stone_bricks, stone_bricks, stone_bricks, cracked_stone_bricks]
-  floor: [stone_bricks, cracked_stone_bricks, mossy_stone_bricks]
+  floor: polished_andesite
+  ceiling: polished_andesite
   utility: [chiseled_stone_bricks]
   randomblocks: [gravel]
   edge: stone_brick_stairs
@@ -29,11 +29,14 @@ floors:
       chance: 0.6
     deep_dark:
       chance: 0.2
-    mansion:
+    chasm:
       chance: 0.2
 rooms:
   stronghold:
     divider: magma_block
+    wall: [stone_bricks, stone_bricks, cracked_stone_bricks]
+    floor: [stone_bricks, cracked_stone_bricks, mossy_stone_bricks]
+    ceiling: [stone_bricks, stone_bricks, stone_bricks, cracked_stone_bricks]
   deep_dark:
     divider: sculk_catalyst
     wall: [sculk]
@@ -48,17 +51,16 @@ rooms:
     wallTorchChance: 0.0
     vine: twisting_vines_plant
     randomBlockChance: 0.2
-  mansion:
-    divider: crying_obsidian
-    wall: dark_oak_planks
-    column: cobblestone_wall
-    ceiling: birch_planks
-    floor: birch_planks
-    utility: [lantern]
-    randomblocks: [bookshelf]
-    edge: birch_stairs
+  chasm:
+    divider: air
+    wall: 'light[level=6]'
+    column: chain
+    ceiling: netherite_block
+    floor: [exposed_cut_copper, exposed_copper]
+    utility: []
+    edge: air
     lavaPit: 0.0
     waterPit: 0.0
+    pit: 0.5
     wallTorchChance: 0.0
-    vine: ladder
-    randomBlockChance: 0.12
+    randomBlockChance: 0.0
