@@ -1,0 +1,23 @@
+default:
+  chestCount: 0.5
+floors:
+- wall: crying_obsidian
+  divider: polished_blackstone_bricks
+  empty: polished_blackstone_bricks
+  floor: crying_obsidian
+  ceiling: crying_obsidian
+  roomTypes:
+    static:
+      chance: 1.0
+rooms:
+  static:
+    wall: [polished_blackstone_brick_stairs,'polished_blackstone_brick_stairs[facing=east]','polished_blackstone_brick_stairs[facing=west]','polished_blackstone_brick_stairs[facing=north]','polished_blackstone_brick_stairs[facing=south]','polished_blackstone_brick_stairs[facing=east,half=top]','polished_blackstone_brick_stairs[facing=west,half=top]','polished_blackstone_brick_stairs[facing=north,half=top]','polished_blackstone_brick_stairs[facing=south,half=top]']
+    column: polished_blackstone
+    floor: blackstone
+    ceiling: [polished_blackstone_brick_stairs,'polished_blackstone_brick_stairs[facing=east,half=top]','polished_blackstone_brick_stairs[facing=west,half=top]','polished_blackstone_brick_stairs[facing=north,half=top]','polished_blackstone_brick_stairs[facing=south,half=top]']
+    utility: chiseled_polished_blackstone
+    randomblocks: [soul_torch]
+    randomBlockChance: 0.05
+    edge: polished_blackstone_stairs
+    doorFrame: polished_blackstone
+    overhead: soul_lantern
