@@ -1,13 +1,13 @@
+// Posing armor stands in survival and managing their inventories
 foreach(@p in all_players()) {
 	export(@p.'posing', null);
 }
 
-bind('player_interact_at_entity', null, array('clicked': 'ARMOR_STAND'), @event) {
+bind('player_interact_at_entity', null, array(clicked: 'ARMOR_STAND'), @event) {
 	if(!sk_can_build(entity_loc(@event['id']))) {
 		cancel();
 		die();
 	}
-
 
 	proc _position_degrees(@position, @rotation) {
 		@yaw = get_yaw(array(0, 0, 0), @position);
@@ -99,15 +99,15 @@ bind('player_interact_at_entity', null, array('clicked': 'ARMOR_STAND'), @event)
 			@eloc = entity_loc(@event['id']);
 			@originalYaw = @eloc['yaw'];
 			@dist = distance(@eloc, location_shift(ploc(), 'up'));
-			set_entity_spec(@event['id'], array('gravity': false));
+			set_entity_spec(@event['id'], array(gravity: false));
 
 			set_interval(50, closure(){
 				if(!ponline(player()) || !psneaking() || !entity_exists(@event['id'])) {
 					try {
 						if(pmode() == 'CREATIVE') {
-							set_entity_spec(@event['id'], array('gravity': @armorstand['gravity']));
+							set_entity_spec(@event['id'], array(gravity: @armorstand['gravity']));
 						} else {
-							set_entity_spec(@event['id'], array('gravity': !get_block_info(entity_loc(@event['id']), 'solid')));
+							set_entity_spec(@event['id'], array(gravity: !get_block_info(entity_loc(@event['id']), 'solid')));
 						}
 					} catch(BadEntityException @ex) {
 						// no longer exists
@@ -134,7 +134,7 @@ bind('player_interact_at_entity', null, array('clicked': 'ARMOR_STAND'), @event)
 			@eloc = entity_loc(@event['id']);
 			@dist = distance(@eloc, ploc());
 			@poseable = 'pose'.@poseable;
-			@newspec = associative_array('poses': array());
+			@newspec = array(poses: array());
 			@newspec['poses'][@poseable] = @armorstand['poses'][@poseable][];
 
 			set_interval(50, closure(){
@@ -178,7 +178,7 @@ bind('player_interact_at_entity', null, array('clicked': 'ARMOR_STAND'), @event)
 		switch(@item['name']) {
 			case 'STICK': # 2 sticks attaches arms
 				if(@item['qty'] >= 2 && !@armorstand['arms']) {
-					set_entity_spec(@event['id'], array('arms': true));
+					set_entity_spec(@event['id'], array(arms: true));
 					@item['qty'] -= 2;
 					set_pinv(player(), null, @item);
 					cancel();
@@ -188,7 +188,7 @@ bind('player_interact_at_entity', null, array('clicked': 'ARMOR_STAND'), @event)
 				if(!_is_survival_world(pworld())) {
 					@gravity = if(@armorstand['gravity'], false, true);
 					title('', color(6).'Toggled gravity '.if(@gravity, 'on', 'off').' for armor stand.', 0, 40, 10);
-					set_entity_spec(@event['id'], array('gravity': @gravity));
+					set_entity_spec(@event['id'], array(gravity: @gravity));
 					cancel();
 				}
 
@@ -198,7 +198,7 @@ bind('player_interact_at_entity', null, array('clicked': 'ARMOR_STAND'), @event)
 					@visible = @armorstand['visible'];
 					if(!@visible || @gear['weapon'] || @gear['off_hand'] || @gear['helmet'] || @gear['chestplate'] || @gear['leggings'] || @gear['boots']) {
 						title('', color(6).'Toggled visibility '.if(@visible, 'off', 'on').' for armor stand.', 0, 40, 10);
-						set_entity_spec(@event['id'], array('visible': !@visible));
+						set_entity_spec(@event['id'], array(visible: !@visible));
 						cancel();
 					}
 				}
@@ -207,7 +207,7 @@ bind('player_interact_at_entity', null, array('clicked': 'ARMOR_STAND'), @event)
 				if(!_is_survival_world(pworld())) {
 					@small = if(@armorstand['small'], false, true);
 					title('', color(6).if(@small, 'Shrunk', 'Embiggened').' armor stand.', 0, 40, 10);
-					set_entity_spec(@event['id'], array('small': @small));
+					set_entity_spec(@event['id'], array(small: @small));
 					cancel();
 				}
 
@@ -227,7 +227,7 @@ bind('player_interact_at_entity', null, array('clicked': 'ARMOR_STAND'), @event)
 				if(!psneaking() && !get_entity_rider(puuid())) {
 					cancel();
 					title('', color(6).'Moving Armor Stand. Click to place.', 0, 40, 10);
-					bind('player_interact', null, array('player': player()), @event, @world = pworld(), @stand = @event['id']) {
+					bind('player_interact', null, array(player: player()), @event, @world = pworld(), @stand = @event['id']) {
 						if(array_index_exists(@event, 'location')) {
 							unbind();
 							@loc = @event['location'];
@@ -257,9 +257,9 @@ bind('player_interact_at_entity', null, array('clicked': 'ARMOR_STAND'), @event)
 					die();
 				}
 				@poseable = _get_poseable(@event['id'], @armorstand, @event['position']);
-				if(@poseable == 'ArmLeft' || @poseable == 'Head') {
+				if(@poseable === 'ArmLeft' || @poseable === 'Head') {
 					@slot = 'off_hand';
-					if(@poseable == 'Head') {
+					if(@poseable === 'Head') {
 						@slot = 'helmet';
 					}
 					cancel();
@@ -294,13 +294,13 @@ bind('player_interact_at_entity', null, array('clicked': 'ARMOR_STAND'), @event)
 	}
 }
 
-bind('player_interact', null, array('itemname': 'ARMOR_STAND', 'button': 'right'), @event) {
-	if(@event['action'] == 'right_click_block') {
+bind('player_interact', null, array(itemname: 'ARMOR_STAND', button: 'right'), @event) {
+	if(@event['action'] === 'right_click_block') {
 		title('', color('gold').'Sneak and right-click to pose');
 	}
 }
 
-bind('entity_damage', null, array('type': 'ARMOR_STAND'), @event) {
+bind('entity_damage', null, array(type: 'ARMOR_STAND'), @event) {
 	@damager = '';
 	if(array_index_exists(@event, 'shooter')) {
 		@damager = @event['shooter'];
@@ -331,7 +331,7 @@ bind('entity_damage', null, array('type': 'ARMOR_STAND'), @event) {
 			@poseable = 'Legs';
 		}
 
-		if(@poseable == 'Torso' && @armorstand['arms']) {
+		if(@poseable === 'Torso' && @armorstand['arms']) {
 			if(!array_index_exists(@event, 'shooter')) {
 				cancel();
 			}
@@ -339,17 +339,17 @@ bind('entity_damage', null, array('type': 'ARMOR_STAND'), @event) {
 			@loc = entity_loc(@event['id']);
 			if(!is_null(@equipment['weapon'])) {
 				drop_item(@loc, @equipment['weapon']);
-				set_mob_equipment(@event['id'], array('weapon': null));
+				set_mob_equipment(@event['id'], array(weapon: null));
 			}
 			if(!is_null(@equipment['off_hand'])) {
 				drop_item(@loc, @equipment['off_hand']);
-				set_mob_equipment(@event['id'], array('off_hand': null));
+				set_mob_equipment(@event['id'], array(off_hand: null));
 			}
-			drop_item(@loc, array('name': 'STICK', 'qty': 2));
-			set_entity_spec(@event['id'], array('arms': false));
-		} else if(@poseable == 'Feet' && @armorstand['baseplate'] && !array_index_exists(@event, 'shooter')) {
+			drop_item(@loc, array(name: 'STICK', qty: 2));
+			set_entity_spec(@event['id'], array(arms: false));
+		} else if(@poseable === 'Feet' && @armorstand['baseplate'] && !array_index_exists(@event, 'shooter')) {
 			cancel();
-			set_entity_spec(@event['id'], array('baseplate': false));
+			set_entity_spec(@event['id'], array(baseplate: false));
 		}
 	}
 }

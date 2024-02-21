@@ -1,4 +1,3 @@
-# Block creeper damage on the surface.
 /*
 	Prevent creeper block damage in main overworlds.
 	Recreates explosion effects, which now don't play when event is canceled.

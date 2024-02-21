@@ -1,6 +1,4 @@
-# Dispenser handling
-# Infinite dispensers on creative/game worlds
-# Special behavior for other items (eg. place armor stands)
+// Infinite dispensers on creative/game worlds
 bind('block_dispense', null, array('type': 'DISPENSER'), @event,
 		@ignored = array('BUCKET', 'WATER_BUCKET', 'LAVA_BUCKET', 'POWDER_SNOW_BUCKET')) {
 	if(!has_metadata(@event['location']['world'], 'survival')
