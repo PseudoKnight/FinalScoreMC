@@ -972,6 +972,19 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 											_add_to_chunk(@chunk, @loc, 'wall_torch[facing='._opposite_direction(@dir).']');
 										}
 
+									} else if(!@doorAdjacent
+									&& is_array(@roomData['wall'])
+									&& string_ends_with(@roomData['wall'][0], 'log')
+									&& @columnRandom < 0.25
+									&& @room['width'] > 2
+									&& @room['length'] > 2
+									&& _adjacent_equals(@layoutMap, @c, @r, 'wall')) {
+										if(@columnRandom < 0.125) {
+											_add_to_chunk(@chunk, @loc, @roomData['wall'][0]);
+										} else {
+											_add_to_chunk(@chunk, @loc, @roomData['wall'][1]);
+										}
+
 									} else if(@randomBlock && (@y == @groundY + 2 || @y == @groundY + 3
 									&& string_position(@randomBlock, '[') == -1
 									&& (_direction_of_solid(@layoutMap, @c, @r) != null && srand(@random) < 0.67 || srand(@random) < 0.33)
