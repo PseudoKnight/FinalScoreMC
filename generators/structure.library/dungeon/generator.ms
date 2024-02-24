@@ -1047,20 +1047,37 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 								} else if(@column === 'door') {
 									if(@y < @ceilingY - @roomHeight + 2 + if(@roomData['tallDoors'] && @doorAdjacent, 1, 0) + if(@floorData['ascending'], 1, 0)) {
 										if(string_ends_with(@roomData['door'], 'door')) {
-											if(!@doorAdjacent && @roomId != -1 && @room['depth'] % 3 == 1) {
-												@lower = @y < @ceilingY - @roomHeight + 1;
+											if(@roomId != -1 && @room['depth'] % 3 == 1) {
+												@isTrapDoor = @roomData['tallDoors'] && @doorAdjacent && @y > @ceilingY - @roomHeight + 1;
+												@half = if(@isTrapDoor, 'top', if(@y < @ceilingY - @roomHeight + 1, 'lower', 'upper'));
 												if(@roomMap[@c][@r - 1] == -1) {
-													@half = if(@lower, 'half=lower,', 'half=upper,');
-													_add_to_chunk(@chunk, @loc, @roomData['door'].'[facing=south,'.@half.'hinge=left]');
+													if(@isTrapDoor) {
+														_add_to_chunk(@chunk, @loc, replace(@roomData['door'], 'door', 'trapdoor')."[facing=south,half=@half,open=true]");
+													} else {
+														@hinge = if(@doorAdjacent && @layoutMap[@c - 1][@r] == 'door', 'left', 'right');
+														_add_to_chunk(@chunk, @loc, @roomData['door']."[facing=south,half=@half,hinge=@hinge]");
+													}
 												} else if(array_get(@roomMap[@c], @r + 1, 0) == -1) { // dungeon entrance special case
-													@half = if(@lower, 'half=lower,', 'half=upper,');
-													_add_to_chunk(@chunk, @loc, @roomData['door'].'[facing=north,'.@half.'hinge=left]');
+													if(@isTrapDoor) {
+														_add_to_chunk(@chunk, @loc, replace(@roomData['door'], 'door', 'trapdoor')."[facing=north,half=@half,open=true]");
+													} else {
+														@hinge = if(@doorAdjacent && @layoutMap[@c + 1][@r] == 'door', 'left', 'right');
+														_add_to_chunk(@chunk, @loc, @roomData['door']."[facing=north,half=@half,hinge=@hinge]");
+													}
 												} else if(@roomMap[@c - 1][@r] == -1) {
-													@half = if(@lower, 'half=lower,', 'half=upper,');
-													_add_to_chunk(@chunk, @loc, @roomData['door'].'[facing=east,'.@half.'hinge=left]');
+													if(@isTrapDoor) {
+														_add_to_chunk(@chunk, @loc, replace(@roomData['door'], 'door', 'trapdoor')."[facing=east,half=@half,open=true]");
+													} else {
+														@hinge = if(@doorAdjacent && @layoutMap[@c][@r - 1] == 'door', 'right', 'left');
+														_add_to_chunk(@chunk, @loc, @roomData['door']."[facing=east,half=@half,hinge=@hinge]");
+													}
 												} else if(@roomMap[@c + 1][@r] == -1) {
-													@half = if(@lower, 'half=lower,', 'half=upper,');
-													_add_to_chunk(@chunk, @loc, @roomData['door'].'[facing=west,'.@half.'hinge=left]');
+													if(@isTrapDoor) {
+														_add_to_chunk(@chunk, @loc,replace(@roomData['door'], 'door', 'trapdoor')."[facing=west,half=@half,open=true]");
+													} else {
+														@hinge = if(@doorAdjacent && @layoutMap[@c][@r + 1] == 'door', 'right', 'left');
+														_add_to_chunk(@chunk, @loc, @roomData['door']."[facing=west,half=@half,hinge=@hinge]");
+													}
 												} else {
 													_add_to_chunk(@chunk, @loc, @roomData['room']);
 												}
