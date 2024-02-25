@@ -796,7 +796,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 							} else if(@roomShape === 'pit' && @column === 'room') {
 								if(!@doorAdjacent 
 								&& (!_direction_of_solid(@layoutMap, @c, @r) || srand(@random) < 0.55)) {
-									@holeDepth = @maxRoomHeight;
+									@holeDepth = if(@floor == 0, @floorHeight + 2, @maxRoomHeight);
 									while(@holeDepth-- > 0) {
 										_add_to_chunk(@chunk, location_shift(@loc, 'down', @holeDepth), 'air');
 									}
@@ -821,16 +821,16 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 									@stairs = 'cobblestone_stairs';
 								}
  								if(_get_cell(@floorHeightMap, @c, @r, 'north') - @floorHeight == -1
-								&& _get_cell(@layoutMap, @c, @r, 'north') != 'wall') {
+								&& _get_cell(@layoutMap, @c, @r, 'north') !== 'wall') {
 									_add_to_chunk(@chunk, @loc, @stairs.'[facing=south]');
 								} else if(_get_cell(@floorHeightMap, @c, @r, 'south') - @floorHeight == -1
-								&& _get_cell(@layoutMap, @c, @r, 'south') != 'wall') {
+								&& _get_cell(@layoutMap, @c, @r, 'south') !== 'wall') {
 									_add_to_chunk(@chunk, @loc, @stairs.'[facing=north]');
 								} else if(_get_cell(@floorHeightMap, @c, @r, 'east') - @floorHeight == -1
-								&& _get_cell(@layoutMap, @c, @r, 'east') != 'wall') {
+								&& _get_cell(@layoutMap, @c, @r, 'east') !== 'wall') {
 									_add_to_chunk(@chunk, @loc, @stairs.'[facing=west]');
 								} else if(_get_cell(@floorHeightMap, @c, @r, 'west') - @floorHeight == -1
-								&& _get_cell(@layoutMap, @c, @r, 'west') != 'wall') {
+								&& _get_cell(@layoutMap, @c, @r, 'west') !== 'wall') {
 									_add_to_chunk(@chunk, @loc, @stairs.'[facing=east]');
 								} else {
 									_add_to_chunk(@chunk, @loc, @roomData['floor']);
@@ -1129,7 +1129,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 							if(@roof) {
 								// Ceiling
 								@loc[1] += 1;
-								if(@column != 'empty' && @column != 'divider') {
+								if(@column !== 'empty' && @column !== 'divider') {
 									_add_to_chunk(@chunk, @loc, @roomData['ceiling']);
 								} else {
 									_add_to_chunk(@chunk, @loc, @roomData['divider']);
@@ -1226,29 +1226,6 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 					}
 				}
 
-				if(@roomLength == 1 || @roomWidth == 1) {
-					if(@room['doors'] == 1) {
-						// only create spawns if it is a dead end hallway
-						queue_push(@createSpawns, 'generator');
-					}
-					continue();
-				} else if(string_ends_with(@roomShape, 'pit')) {
-					// Still want to create spawns, but conditions are poor for other blocks and traps
-					if(@roomData['overhead']) {
-						queue_push(closure(){
-							@loc = array(
-								@roomX + @roomWidth / 2,
-								@roomY + @roomHeight - 1,
-								@roomZ + @roomLength / 2,
-								@world,
-							);
-							set_blockdata_string(@loc, @roomData['overhead']);
-						}, 'generator');
-					}
-					queue_push(@createSpawns, 'generator');
-					continue();
-				}
-
 				queue_push(closure(){
 					if(@debug) {
 						sk_pos1(player(), array(@roomX, @roomY, @roomZ));
@@ -1265,6 +1242,18 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 						set_blockdata_string(@loc, @roomData['overhead']);
 					}
 
+					if(@roomLength == 1 || @roomWidth == 1) {
+						if(@room['doors'] == 1) {
+							// only create spawns if it is a dead end hallway
+							@createSpawns();
+						}
+						die();
+					} else if(string_ends_with(@roomShape, 'pit')) {
+						// Still want to create spawns, but conditions are poor for other blocks and traps
+						@createSpawns();
+						die();
+					}
+
 					@spawner = false;
 					if(@roomShape === 'fire_floor') {
 						@y = @roomY - 1;
@@ -1277,7 +1266,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 						}
 					} else if(@minWidth > 2) {
 						// can place a door blocking block in the room
-						if(@room['depth'] > 2 && @roomData['spawner'] && @roomShape != 'treasure' && srand(@random) < @roomData['spawnerChance']) {
+						if(@room['depth'] > 2 && @roomData['spawner'] && @roomShape !== 'treasure' && srand(@random) < @roomData['spawnerChance']) {
 							@loc = array(
 								@roomX + 1 + integer(srand(@random) * (@roomWidth - 2)),
 								@roomY + if(@roomShape === 'attic' && srand(@random) > 0.67, @room['midheight'] + 1, 0),
@@ -1449,7 +1438,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 						}
 					}
 
-					if(@roomShape === 'attic' && @roomData['room'] != 'water') {
+					if(@roomShape === 'attic' && @roomData['room'] !== 'water') {
 						@vines = max(1, integer(@minWidth / 3));
 						do {
 							@loc = null;
@@ -1507,7 +1496,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 						}
 					}
 
-					if(@room['depth'] > 2 && @roomData['trap'] && @roomShape != 'fire_floor') {
+					if(@room['depth'] > 2 && @roomData['trap'] && @roomShape !== 'fire_floor') {
 						@traps = integer(srand(@random) * max(@roomLength, @roomWidth));
 						while(@traps-- > 0) {
 							@type = split('_', _array_get_srand(@random, @roomData['trap']));
@@ -1675,7 +1664,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 						}
 					}
 
-					execute(@createSpawns);
+					@createSpawns();
 
 					if(array_contains(@roomData['floor'], 'grass_block')
 					|| @roomData['room'] === 'water') {
@@ -1771,7 +1760,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 					for(@r = 0, @r < @exitRoom['length'], @r++) {
 						@exitRoomC = @exitRoom['c1'] + @c;
 						@exitRoomR = @exitRoom['r1'] + @r;
-						if(@layoutMap[@exitRoomC][@exitRoomR] != 'column') {
+						if(@layoutMap[@exitRoomC][@exitRoomR] !== 'column') {
 							// we have the desired @c and @r now
 							break(2);
 						}
