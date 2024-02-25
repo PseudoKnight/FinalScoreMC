@@ -125,7 +125,7 @@ proc _stats_print(@winners, @pvp) {
 		fields: array()
 	);
 	if(array_size(@winners) == 1) {
-		@embed['author']['icon_url'] = 'https://crafatar.com/avatars/'.puuid(@winners[0], true).'?overlay';
+		@embed['author']['icon_url'] = 'http://liam.fragify.net:30027/tiles/faces/32x32/'.@winners[0].'.png';
 	}
 	if(@color) {
 		@embed['color'] = @color;
