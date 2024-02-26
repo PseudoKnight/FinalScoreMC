@@ -48,6 +48,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 		rugs: 0.0,
 		spawnCount: 1,
 		title: '',
+		exit: 'ladder',
 
 		// toggleable features
 		roof: true,
@@ -1702,13 +1703,23 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 			// exit room / Pop ladder into floor
 			if(@exitRoom) {
 				queue_push(closure(){
-					// TODO: fix sometimes in doorway
-					@loc = array(
-						@regionMinX + @exitRoom['c1'],
-						@regionMinY + @floor * (@maxRoomHeight + 4) + 2,
-						@regionMinZ + @exitRoom['r1'],
-						@world,
-					);
+					@loc = null;
+					if(@exitRoom['width'] > 4 && @exitRoom['length'] > 4) {
+						@loc = array(
+							@regionMinX + @exitRoom['c1'] + 2 + floor(srand(@random) * (@exitRoom['width'] - 4)),
+							@regionMinY + @floor * (@maxRoomHeight + 4) + 2,
+							@regionMinZ + @exitRoom['r1'] + 2 + floor(srand(@random) * (@exitRoom['length'] - 4)),
+							@world,
+						);
+					} else {
+						@loc = array(
+							@regionMinX + @exitRoom['c1'],
+							@regionMinY + @floor * (@maxRoomHeight + 4) + 2,
+							@regionMinZ + @exitRoom['r1'],
+							@world,
+						);
+					}
+					set_block(location_shift(@loc, 'up'), @floorData['room'], false);
 					set_blockdata_string(@loc, 'spruce_trapdoor[facing=south,half=bottom,waterlogged='.(@floorData['room'] === 'water').']', false);
 
 					if(@floorData['bed']) {
@@ -1721,24 +1732,39 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 					while(@ladderHeight--) {
 						@loc[1]--;
 						if(!@exitRoom['boss'] || @ladderHeight > 2) {
-							set_blockdata_string(@loc, 'ladder[facing=south]', false);
+							if(@floorData['exit'] === 'bubble_column') {
+								set_blockdata_string(@loc, 'bubble_column[drag=false]', false);
+							} else {
+								set_blockdata_string(@loc, 'ladder[facing=south]', false);
+							}
 						} else {
 							set_block(@loc, 'REINFORCED_DEEPSLATE', false);
 						}
-						if(@ladderHeight > 2) {
-							set_block(location_shift(@loc, 'south'), @floorData['wall'][0], false);
-							set_block(location_shift(@loc, 'east'), @floorData['wall'][0], false);
-							set_block(location_shift(@loc, 'west'), @floorData['wall'][0], false);
+						if(@floorData['doorFrame'] && (@ladderHeight == @maxRoomHeight + 3 || @ladderHeight == 3)) {
+							set_block(location_shift(@loc, 'south'), @floorData['doorFrame'], false);
+							set_block(location_shift(@loc, 'east'), @floorData['doorFrame'], false);
+							set_block(location_shift(@loc, 'west'), @floorData['doorFrame'], false);
+							set_block(location_shift(@loc, 'north'), @floorData['doorFrame'], false);
+						} else if(@ladderHeight > 2) {
+							set_blockdata_string(location_shift(@loc, 'south'), array_get_rand(@floorData['wall']), false);
+							set_blockdata_string(location_shift(@loc, 'east'), array_get_rand(@floorData['wall']), false);
+							set_blockdata_string(location_shift(@loc, 'west'), array_get_rand(@floorData['wall']), false);
+							set_blockdata_string(location_shift(@loc, 'north'), array_get_rand(@floorData['wall']), false);
 						} else {
-							set_block(location_shift(@loc, 'south'), 'AIR', false);
+							set_block(location_shift(@loc, 'south'), 'CHAIN', false);
+							set_block(location_shift(@loc, 'east'), 'CHAIN', false);
+							if(@exitRoom['width'] > 4 && @exitRoom['length'] > 4) { 
+								set_block(location_shift(@loc, 'west'), 'CHAIN', false);
+							}
+							set_blockdata_string(location_shift(@loc, 'north'), array_get_rand(@floorData['wall']), false);
 						}
-						set_block(location_shift(@loc, 'north'), @floorData['wall'][0], false);
 					}
-					if(@exitRoom['boss']) {
+					if(@exitRoom['boss'] && @floorData['exit'] !== 'bubble_column') {
 						set_blockdata_string(@loc, 'repeating_command_block[facing=up]', false);
 						set_block_command(@loc, 'execute unless entity @e[tag=floor'.(@floor - 1).'boss] run fill ~ ~ ~ ~ ~2 ~ ladder[facing=south]');
-						@loc[1]--;
-						set_block(@loc, 'REDSTONE_BLOCK');
+						set_block(location_shift(@loc, 'down'), 'REDSTONE_BLOCK');
+					} else if(@floorData['exit'] === 'bubble_column') {
+						set_block(location_shift(@loc, 'down'), 'SOUL_SAND');
 					}
 				}, 'generator');
 			}
