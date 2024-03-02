@@ -13,7 +13,7 @@ bind('player_interact', null, array(hand: 'main_hand'), @event) {
 
 		if(@event['button'] == 'left') {
 			_shop_show_info(@shop);
-		} else {
+		} else if(!_is_shop_owner(@shop)) {
 			cancel();
 			_shop_process_transaction(@shop);
 		}
