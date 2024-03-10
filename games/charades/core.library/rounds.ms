@@ -13,7 +13,7 @@ proc _queue_next_builder() {
 
 	team_add_player('builder', @builder, 'charades');
 	set_pmode(@builder, 'CREATIVE');
-	_clear_pinv(@builder);
+	clear_pinv(@builder);
 
 	set_permission(@builder, 'command.skull', true);
 

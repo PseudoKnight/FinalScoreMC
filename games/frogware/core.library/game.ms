@@ -148,7 +148,7 @@ proc _fw_start_round(@secs = 12) {
 						_fw_end_task(@secs);
 						foreach(@p in all_players('custom')) {
 							if(_fw_player(@p)) {
-								_clear_pinv(@p);
+								clear_pinv(@p);
 							}
 						}
 						unbind('fwtask');

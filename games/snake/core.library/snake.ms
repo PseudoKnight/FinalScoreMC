@@ -155,7 +155,7 @@ proc _snake_spawn(@player, @game) {
 	_snake_set_top(@snake);
 
 	if(ponline(@player) && @game['mode'] == 'capture' && @snake['tail']) {
-		_clear_pinv(@player);
+		clear_pinv(@player);
 		set_pinv(@player, array(
 			7: array('name': @snake['tail']),
 			8: array('name': 'REDSTONE_TORCH', 'meta': associative_array('display': 'JOYSTICK')),
@@ -210,7 +210,7 @@ proc _snake_set_colors(@game) {
 		set_block(@snake['loc'], @snake['head'], false);
 		set_block(@snake['blocks'][0], @snake['tail'], false);
 		if(ponline(@name)) {
-			_clear_pinv(@name);
+			clear_pinv(@name);
 			set_pinv(@name, array(
 				7: array('name': @snake['tail']),
 				8: array('name': 'REDSTONE_TORCH', 'meta': associative_array('display': 'JOYSTICK')),

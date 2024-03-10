@@ -264,7 +264,7 @@ proc _shard_create(@rules){
 							if(@game['inv']) {
 								set_pinv(@p, @game['inv']);
 							} else if(!array_index_exists(@rules, 'keep') || !@rules['keep']) {
-								_clear_pinv(@p);
+								clear_pinv(@p);
 							}
 							if(@airDrop) {
 								pgive_item(@p, array(name: 'ELYTRA', meta: array(damage: 402)));

@@ -641,7 +641,7 @@ register_command('arena', array(
 						if(array_size(@args) < 4) {
 							die(color('gold').'Requires team # to load.');
 						}
-						_clear_pinv();
+						clear_pinv();
 						@team = @args[3];
 						if(@team) {
 							set_pinv(player(), @arena['kit'][@team]);

@@ -4,7 +4,6 @@
 	requiredExtensions: SKCompat, CHRegionChange;
 	requiredProcs: _regionmsg() proc for messaging players within regions.
 		_add_activity() and _remove_activity() procedures to keep a list of all current activities on server.
-		_clear_pinv() proc for clearing the inventory of a player.
 		_equip_kit() proc for resetting player inventory after they're done with the game.
 		_acc_add() proc for rewarding players with coins.
 		_remove_region_entities() proc for removing all entities within the given region.

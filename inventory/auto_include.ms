@@ -31,7 +31,7 @@ proc _equip_kit(@player, @inv) {
 			if(@mode != @worldInfo['mode']) {
 				set_pmode(@player, @worldInfo['mode']);
 			}
-			_clear_pinv(@player);
+			clear_pinv(@player);
 			@pdata = _pdata(@player);
 			@kit = array(
 				4: array(
@@ -72,7 +72,7 @@ proc _equip_kit(@player, @inv) {
 			if(array_index_exists(@session, 'devInventory')) {
 				set_pinv(@player, @session['devInventory']);
 			} else {
-				_clear_pinv(@player);
+				clear_pinv(@player);
 			}
 	}
 }

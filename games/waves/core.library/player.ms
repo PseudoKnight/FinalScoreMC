@@ -15,7 +15,7 @@ proc _waves_add_player(@player, @waves) {
 		bar_add_player('waves'.@waves['region'].@player, @p);
 	}
 	clear_peffects(@player);
-	_clear_pinv(@player);
+	clear_pinv(@player);
 	if(array_index_exists(@c, 'equipment')) {
 		set_mob_equipment(puuid(@player), @c['equipment']);
 	}
