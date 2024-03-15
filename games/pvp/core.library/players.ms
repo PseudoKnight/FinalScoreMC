@@ -135,8 +135,10 @@ proc _player_join(@id) {
 
 proc _player_remove(@player, @id) {
 	@pvp = import('pvp'.@id);
-	if(@pvp['arena']['mode'] === 'ctf' && !is_null(@flag = _flag(pinv(@player, 103)))) {
-		_pvp_flag_spawn(@id, @flag);
+	if(@pvp['arena']['mode'] === 'ctf') {
+		if(!is_null(@flag = _flag(pinv(@player, 103)))) {
+			_pvp_flag_spawn(@id, @flag);
+		}
 	} else if(@pvp['arena']['mode'] == 'bombingrun' && phas_item(@player, array(name: @pvp['arena']['bomb']))) {
 		_pvp_bomb_spawn(@id);
 	}

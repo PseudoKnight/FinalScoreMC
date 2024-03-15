@@ -169,6 +169,7 @@ proc _bind_events(@pvp) {
 				if(!@drop) {
 					continue();
 				}
+				@flag = null;
 				if(@arena['mode'] === 'ctf' && !is_null(@flag = _flag(@drop))) {
 					_pvp_msg(@pvp, color('gray').'[PVP] '.@playerData['color']
 						.player().color('r').' dropped the '.@arena['team'][@flag]['color'].'flag')

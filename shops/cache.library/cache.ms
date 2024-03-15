@@ -17,6 +17,7 @@ proc _cache_shop(@shop) {
 	);
 	
 	@chestLoc = location_shift(@location, 'down');
+	array @chestInv;
 	try {
 		@chestInv = get_inventory(@chestLoc);
 	} catch(FormatException @ex) {

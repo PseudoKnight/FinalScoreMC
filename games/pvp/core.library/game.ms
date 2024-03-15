@@ -795,10 +795,9 @@ proc _pvp_check_objectives(@id) {
 	#check team scores
 	if(@arena['mode'] === 'ctf' || @arena['mode'] === 'bombingrun'
 	&& (@pvp['team'][0]['score'] >= @arena['score'] || @pvp['team'][1]['score'] >= @arena['score'])) {
+		@topteam = 1;
 		if(@pvp['team'][0]['score'] >= @arena['score']) {
 			@topteam = 0;
-		} else {
-			@topteam = 1;
 		}
 		_pvp_end_match(@id, @pvp['team'][@topteam]['players']);
 		die();
