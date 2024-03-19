@@ -56,11 +56,12 @@ rooms:
     wall: 'light[level=6]'
     column: chain
     ceiling: netherite_block
-    floor: [exposed_cut_copper, exposed_copper]
+    floor: [exposed_cut_copper, exposed_copper, 'exposed_cut_copper_slab[type=top]']
     utility: []
     edge: air
     lavaPit: 0.0
     waterPit: 0.0
     pit: 0.5
     wallTorchChance: 0.0
-    randomBlockChance: 0.0
+    randomBlockChance: 0.07
+    randomblocks: [exposed_cut_copper, exposed_copper, exposed_cut_copper_slab]
