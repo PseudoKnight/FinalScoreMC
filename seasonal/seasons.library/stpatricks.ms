@@ -1,5 +1,5 @@
 bind('creature_spawn', null, array(type: 'ZOMBIE', reason: 'NATURAL'), @event) {
-	if(!rand(3)) {
+	if(!rand(4)) {
 		@id = @event['id'];
 		set_entity_spec(@id, array(baby: true));
 
@@ -51,6 +51,7 @@ bind('creature_spawn', null, array(type: 'ZOMBIE', reason: 'NATURAL'), @event) {
 			OFF_HAND: 1,
 		));
 		set_mob_effect(@id, 'speed', 0, -1, true, false);
+		set_mob_name(@id, 'Leprechaun');
 		set_entity_silent(@id, true);
 	}
 }
@@ -87,12 +88,14 @@ bind('entity_damage', null, array(type: 'ZOMBIE'), @event) {
 		} else {
 			set_timeout(500, closure(){
 				try {
-					@loc = entity_loc(@id);
-					play_sound(@loc, array(sound: 'ENTITY_VINDICATOR_CELEBRATE', pitch: 2, volume: 3));
-					@loc['pitch'] = -60.0;
-					@loc['yaw'] = rand(360);
-					@v = get_vector(@loc, 0.6);
-					set_entity_velocity(@id, @v);
+					if(get_entity_health(@id) > 0.0) {
+						@loc = entity_loc(@id);
+						play_sound(@loc, array(sound: 'ENTITY_VINDICATOR_CELEBRATE', pitch: 2, volume: 3));
+						@loc['pitch'] = -60.0;
+						@loc['yaw'] = rand(360);
+						@v = get_vector(@loc, 0.6);
+						set_entity_velocity(@id, @v);
+					}
 				} catch (BadEntityException @ex) {}
 			});
 		}
