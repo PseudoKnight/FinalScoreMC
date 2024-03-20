@@ -51,7 +51,6 @@ bind('creature_spawn', null, array(type: 'ZOMBIE', reason: 'NATURAL'), @event) {
 			OFF_HAND: 1,
 		));
 		set_mob_effect(@id, 'speed', 0, -1, true, false);
-		set_mob_name(@id, 'Leprechaun');
 		set_entity_silent(@id, true);
 	}
 }
@@ -70,6 +69,7 @@ bind('target_player', null, array(mobtype: 'ZOMBIE'), @event) {
 	set_timeout(rand(1000, 5000), closure(){
 		try {
 			if(get_entity_silent(@id)) {
+				set_mob_name(@id, 'Leprechaun');
 				@loc = entity_loc(@id);
 				play_sound(@loc, array(sound: 'ENTITY_VINDICATOR_CELEBRATE', pitch: 1.9, volume: 3));
 				@loc['pitch'] = -60.0;
