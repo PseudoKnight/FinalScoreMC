@@ -69,7 +69,9 @@ bind('target_player', null, array(mobtype: 'ZOMBIE'), @event) {
 	set_timeout(rand(1000, 5000), closure(){
 		try {
 			if(get_entity_silent(@id)) {
-				set_mob_name(@id, 'Leprechaun');
+				if(!get_mob_name(@id)) {
+					set_mob_name(@id, 'Leprechaun');
+				}
 				@loc = entity_loc(@id);
 				play_sound(@loc, array(sound: 'ENTITY_VINDICATOR_CELEBRATE', pitch: 1.9, volume: 3));
 				@loc['pitch'] = -60.0;
