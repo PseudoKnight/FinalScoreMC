@@ -102,12 +102,12 @@ register_command('waves', array(
 
 			case 'start':
 				@region = null;
+				@world = pworld();
 				if(@block = get_command_block()) {
 					@region = sk_regions_at(@block);
 					@world = @block['world'];
 				} else {
 					@region = sk_current_regions();
-					@world = pworld();
 				}
 				if(!@region) {
 					die(color('gold').'There is no arena here.');
@@ -139,6 +139,7 @@ register_command('waves', array(
 				
 				if(array_size(@scripts) == 1) {
 					@name = array_keys(@scripts)[0];
+					array @waves;
 					try {
 						@waves = _waves_prepare(@name, @arena, @region, @world);
 						_waves_start(@waves);
@@ -181,6 +182,7 @@ register_command('waves', array(
 						
 						@name = replace(to_lower(@item['meta']['display']), ' ', '');
 
+						array @waves;
 						try {
 							@waves = _waves_prepare(@name, @arena, @region, @world);
 							_waves_start(@waves);

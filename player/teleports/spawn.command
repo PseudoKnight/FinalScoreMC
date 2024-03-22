@@ -3,6 +3,7 @@ register_command('spawn', array(
 	usage: '/spawn [world]',
 	executor: closure(@alias, @sender, @args, @info) {
 		include('includes.library/teleports.ms');
+		array @loc;
 		try {
 			@world = if(@args, _world_id(@args[0]), pworld());
 			if(!pisop() && (!_world_allows_teleports(@world) || !_world_allows_teleports(pworld()))) {

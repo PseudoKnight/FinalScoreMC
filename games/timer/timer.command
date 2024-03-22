@@ -226,7 +226,7 @@ register_command('timer', array(
 				if(@id != @marathon['courses'][@currentIndex]) {
 					tmsg(@player, 'You skipped a course. Disqualified!');
 					try(remove_bar(@player))
-					_set_pactivity(@lastplayer, null);
+					_set_pactivity(@player, null);
 					array_remove(@marathon['players'], @player);
 				} else {
 					@index = @currentIndex + 1;

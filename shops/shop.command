@@ -129,6 +129,7 @@ register_command('shop', array(
 			@t = if(@transaction == 'buy', 0, 1);
 			foreach(@i: @s in @shops[@t]) {
 				if(@s['location'] == @loc) {
+					array @chestInv;
 					if(@t == 0) {
 						try {
 							@chestInv = get_inventory(location_shift(@loc, 'down'));
