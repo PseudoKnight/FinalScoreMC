@@ -434,6 +434,7 @@ proc _bind_events(@pvp) {
 					'FREEZE', // like hot floor, this seems like it would more likely be the fault of the player
 					'CONTACT', // cactus, stalagmite, berry bush (something caused 4.0 dmg)
 					'FALL', // attribute only when very recently hit, though accuracy may be difficult
+					'KILL', // probably exiting the region (pkill())
 					'LAVA', // players can knock other players into hazards
 					'FIRE', // standing in fire; treat similar to lava
 					'FIRE_TICK', // certain abilities set players on fire, damaging over time
