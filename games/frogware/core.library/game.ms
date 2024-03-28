@@ -106,7 +106,7 @@ proc _fw_start_round(@secs = 12) {
 			if(@total != 1 && rand() < (@firstplace - 2 - @secondplace) / 10) {
 				// CATCH-UP TASKS
 				// 10% chance for every point above a 2 point lead
-				@tasks = array('explosive');
+				@tasks = array('explosive', 'koth', 'pvp');
 			} else if(@goal - @firstplace > 2 || @total == 1) {
 				// NORMAL TASKS
 				// first place player is more than a couple points away from winning (or only one player)
