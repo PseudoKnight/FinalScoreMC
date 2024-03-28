@@ -16,7 +16,7 @@ proc _fw_start_task(@secs) {
 	if(rand(2)) {
 		_fw_random_potion(array('speed', 'jump_boost'));
 	}
-	bind('entity_damage', array(id: 'fwtask'), array(type: 'PLAYER', world: 'custom', cause: 'ENTITY_EXPLOSION'), @e, @leader, @explosives) {
+	bind('entity_damage', array(id: 'fwtask'), array(type: 'PLAYER', world: 'custom', cause: 'BLOCK_EXPLOSION'), @e, @leader, @explosives) {
 		if(_fw_player(@e['player'])) {
 			@damager = @e['damager'];
 			@player = @e['player'];
