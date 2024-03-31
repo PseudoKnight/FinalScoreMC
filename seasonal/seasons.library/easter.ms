@@ -43,15 +43,6 @@ bind('entity_damage', null, array(type: 'ZOMBIE'), @event) {
 			play_sound(@loc, array(sound: 'ENTITY_RABBIT_DEATH', pitch: 0.5));
 		} else {
 			play_sound(@loc, array(sound: 'ENTITY_RABBIT_HURT', pitch: 0.5));
-			if(array_index_exists(@event, 'damager') && length(@event['damager']) < 32) {
-				@loc = location_shift(ploc(@event['damager']), 'up');
-				@dir = array_get_rand(array('north', 'south', 'east', 'west'));
-				@max = 16;
-				while(get_block(location_shift(@loc, @dir)) === 'AIR' && @max-- > 0) {
-					@loc = location_shift(@loc, @dir);
-				}
-				set_mob_destination(@event['id'], @loc, 1.5);
-			}
 		}
 	}
 }
