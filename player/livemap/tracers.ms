@@ -41,7 +41,7 @@ if(extension_exists('CHDynmap')) {
 			if(array_size(@lines) > @pdata['support'] * 2) {
 				array_remove(@lines, 0);
 			}
-			@lines[] = ploc();
+			@lines[] = @event['to'];
 			dm_set_marker_corners('tracers', player(), @lines);
 
 		} catch(NotFoundException @e) {
