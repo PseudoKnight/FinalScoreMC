@@ -320,9 +320,15 @@ register_command('entity', array(
 
 				@loc = _center(@loc, 0.0);
 				@entity = _spawn_entity(@id, @loc, null, closure(@e) {
-					set_entity_ai(@e, false);
+					if(is_entity_living(@e)) {
+						set_entity_ai(@e, false);
+					}
 				});
-				@speed = entity_attribute_value(@entity, 'GENERIC_MOVEMENT_SPEED') / 2.1585; // meters/tick
+				@speed = 0.1
+				@living = is_entity_living(@entity);
+				if(@living) {
+					@speed = entity_attribute_value(@entity, 'GENERIC_MOVEMENT_SPEED') / 2.1585; // meters/tick
+				}
 
 				@target = @loc[];
 				@target['w'] = 0;
@@ -334,16 +340,21 @@ register_command('entity', array(
 						}
 						@loc = entity_loc(@entity);
 						@distance = distance(@loc, @target);
-						@yaw = get_yaw(@loc, @target);
-						if(@yaw != 'NaN') {
-							@loc['yaw'] = @yaw;
+						if(@living) {
+							@yaw = get_yaw(@loc, @target);
+							if(@yaw != 'NaN') {
+								@loc['yaw'] = @yaw;
+							}
 						}
 						set_entity_loc(@entity, location_shift(@loc, @target, min(@distance, @speed)));
 						if(@distance <= @speed) {
 							// if target was within reach in this tick, queue any remaining directions
 							if(!@directions) {
 								clear_task();
-								try(entity_remove(@entity))
+								foreach(@ent in get_entity_riders(@entity)) {
+									try(entity_remove(@ent));
+								}
+								entity_remove(@entity);
 								return();
 							}
 							@next = array_remove(@directions, 0);
