@@ -47,6 +47,18 @@ bind('entity_damage', null, array(type: 'ZOMBIE'), @event) {
 	}
 }
 
+bind('entity_death', null, array(type: 'ZOMBIE'), @event) {
+	if(array_contains(get_scoreboard_tags(@event['id']), 'easter_bunny')) {
+		@drops = @event['drops'];
+		foreach(@i: @drop in @drops) {
+			if(@drop['name'] == 'ROTTEN_FLESH') {
+				array_remove(@drops, @i);
+			}
+		}
+		modify_event('drops', @drops);
+	}
+}
+
 bind('target_player', null, array(mobtype: 'ZOMBIE'), @event, @day) {
 	try {
 		@entity = @event['id'];
