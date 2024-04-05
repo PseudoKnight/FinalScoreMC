@@ -47,8 +47,17 @@ bind('player_join', null, null, @event) {
 				_tellraw(all_players(), array(array('plain', @pre), array('hover', @name, @hover), @msg));
 				if(function_exists('discord_broadcast')) {
 					@count = array_size(all_players());
-					@msg = reg_replace('[&§][0-9a-fk-o]', '', @msg);
-					try(discord_broadcast('minecraft_chat', '**\u00bb '.player().@msg.'** ('.@count.' player'.if(@count != 1, 's').' online)'))
+					@msg = reg_replace('[&§][0-9a-fk-o]', '', @name.@msg);
+					@embed = array(
+						color: array(r: 58, g: 106, b: 39),
+						description: "**\u00bb @msg** `(@count)`");
+					if(!@lastPlayed) {
+						@embed['footer'] = array(text: 'New player');
+					} else if(time() - @lastPlayed > 1000 * 60 * 60 * 24 * 7) {
+						@embed['footer'] = array(text: 'Last played');
+						@embed['timestamp'] = @lastPlayed;
+					}
+					try(discord_broadcast('minecraft_chat', array(embed: @embed)));
 				}
 			}
 
@@ -203,7 +212,9 @@ bind('player_quit', null, null, @event) {
 			set_timeout(1, closure(){
 				@count = array_size(all_players());
 				@msg = reg_replace('[&§][0-9a-fk-o]', '', @msg);
-				discord_broadcast('minecraft_chat', '**\u00ab '.@msg.'** ('.@count.' player'.if(@count != 1, 's').' online)');
+				discord_broadcast('minecraft_chat', array(embed: array(
+					color: array(r: 126, g: 45, b: 35),
+					description: "**\u00ab @msg** `(@count)`")));
 			});
 		}
 	}
