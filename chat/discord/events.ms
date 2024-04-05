@@ -3,23 +3,31 @@ if(extension_exists('CHDiscord')) {
 	bind('discord_message_received', null, null, @event) {
 		if(@event['channel'] == 'minecraft_chat') {
 			@name = @event['nickname'];
+			@msg = @event['message'];
 			@pdata = null;
 			if(ponline(@name)) {
 				@pdata = _pdata(@name);
 			} else {
+				// Not online, so only use account data if linked.
 				@uuid = get_value('discord', @event['userid']);
 				if(@uuid) {
 					@pdata = _pdata_by_uuid(@uuid);
 				}
 			}
 			if(@pdata) {
-				if(array_index_exists(@pdata, 'discord') && @pdata['discord'] != @event['userid']) {
-					console('Discord message ignored from '.@name.': '.@event['message']);
-					die();
+				if(array_index_exists(@pdata, 'discord')) {
+					// Check if linked account matches Discord userid.
+					if(@pdata['discord'] != @event['userid']) {
+						console("Discord message ignored from @name: @msg");
+						die();
+					}
+				} else if(ponline(@name)) { // online but missing linked Discord
+					console("@name account is not linked with Discord");
 				}
 				@name = @pdata['name'];
 			} else {
-				// remove 
+				// Cannot find player data, so use Discord nickname.
+				// However, remove special characters.
 				@name = trim(reg_replace('[^a-zA-Z0-9_-]', '', @name));
 				if(!@name) {
 					@name = color('magic').'[unknown]';
@@ -30,19 +38,23 @@ if(extension_exists('CHDiscord')) {
 				_chat(@name, @line, all_players(), 'discord', @event['channel']);
 			}
 			foreach(@attachment in @event['attachments']) {
-				_tellraw(all_players(), array(array('open_url', @attachment['filename'], @attachment['url'], @attachment['description'])));
+				_tellraw(all_players(), array(array('open_url', @attachment['filename'], @attachment['url'],
+						@attachment['description'])));
 			}
 		} else if(@event['channel'] == 'general') {
 			if(reg_match('(?i).*\\bserver\\b.*\\b(down|alive)\\b.*', @event['message'])) {
-				discord_broadcast(@event['channel'], 'Beep boop. I am still alive!'
-						.' If you are having trouble connecting to `finalscoremc.com`, you can also use `'
-						.'65.75.211.105:'.get_server_info(11).'`.');
+				discord_broadcast('general', 'Beep boop. I am still alive!');
 			}
 		}
 	}
 
 	bind('discord_voice_joined', null, null, @event) {
 		@player = if(ponline(@event['nickname']), display_name(@event['nickname']), @event['nickname']);
-		broadcast(color('yellow').@player.color('yellow').' joined the Discord voice chat.');
+		broadcast(color('yellow').@player.color('yellow').' joined Discord voice chat');
+	}
+
+	bind('discord_voice_left', null, null, @event) {
+		@player = if(ponline(@event['nickname']), display_name(@event['nickname']), @event['nickname']);
+		broadcast(color('yellow').@player.color('yellow').' left Discord voice chat');
 	}
 }
