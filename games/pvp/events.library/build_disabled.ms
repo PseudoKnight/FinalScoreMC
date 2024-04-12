@@ -24,9 +24,16 @@ proc _bind(@pvp) {
 		}
 	}
 
-	@pvp['binds'][] = bind('entity_damage', array(priority: 'LOWEST'), array(type: '/(GLOW_)?ITEM_FRAME/'), @event, @pvp) {
-		if(!is_cancelled()
-		&& array_contains(sk_regions_at(@event['location']), @pvp['arena']['region'])) {
+	@pvp['binds'][] = bind('entity_damage', array(priority: 'LOWEST'), array(type: 'ITEM_FRAME'), @event,
+			@region = @pvp['arena']['region']) {
+		if(!is_cancelled() && array_contains(sk_regions_at(@event['location']), @region)) {
+			cancel();
+		}
+	}
+
+	@pvp['binds'][] = bind('entity_damage', array(priority: 'LOWEST'), array(type: 'GLOW_ITEM_FRAME'), @event,
+			@region = @pvp['arena']['region']) {
+		if(!is_cancelled() && array_contains(sk_regions_at(@event['location']), @region)) {
 			cancel();
 		}
 	}
