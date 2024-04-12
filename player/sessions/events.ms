@@ -50,10 +50,12 @@ bind('player_join', null, null, @event) {
 					@msg = reg_replace('[&§][0-9a-fk-o]', '', @name.@msg);
 					@embed = array(
 						color: array(r: 58, g: 106, b: 39),
-						description: "**\u00bb @msg** `(@count)`");
-					if(!@lastPlayed) {
-						@embed['footer'] = array(text: 'New player');
-					} else if(time() - @lastPlayed > 1000 * 60 * 60 * 24 * 7) {
+						author: array(
+							name: "\u00bb @msg (@count)",
+							icon_url: 'http://liam.fragify.net:30027/tiles/faces/32x32/'.player().'.png'));
+					if(is_null(@lastPlayed)) {
+						@embed['footer'] = array(text: 'New player!');
+					} else if(@lastPlayed && time() - @lastPlayed > 1000 * 60 * 60 * 24 * 7) {
 						@embed['footer'] = array(text: 'Last played');
 						@embed['timestamp'] = @lastPlayed;
 					}
@@ -214,7 +216,9 @@ bind('player_quit', null, null, @event) {
 				@msg = reg_replace('[&§][0-9a-fk-o]', '', @msg);
 				discord_broadcast('minecraft_chat', array(embed: array(
 					color: array(r: 126, g: 45, b: 35),
-					description: "**\u00ab @msg** `(@count)`")));
+					author: array(
+						name: "\u00ab @msg (@count)",
+						icon_url: 'http://liam.fragify.net:30027/tiles/faces/32x32/'.player().'.png'))));
 			});
 		}
 	}
