@@ -41,12 +41,12 @@ bind('player_interact_at_entity', array(priority: 'HIGH'), array(clicked: 'ARMOR
 }
 
 bind('player_interact', null, array(itemname: 'KNOWLEDGE_BOOK', button: 'right', hand: 'main_hand'), @event) {
-	if(pworld() == 'custom') {
+	if(pworld() === 'custom') {
 		@display = _item_meta(pinv(player(), null), 'display');
-		if(@display == color('green').'Park Directory') {
+		if(@display === color('green').'Park Directory') {
 			cancel();
 			popen_inventory('park');
-			play_sound(ploc(), array(sound: 'BLOCK_WOOL_STEP', pitch: 1.2), player());
+			play_sound(ploc(), array(sound: 'ITEM_BOOK_PAGE_TURN', pitch: 1.2), player());
 		}
 	}
 }
