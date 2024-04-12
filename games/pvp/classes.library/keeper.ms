@@ -104,7 +104,7 @@ proc _class_load(@player, @pvp) {
 							@loc['z'] += @v['z'];
 							spawn_particle(@loc, 'SONIC_BOOM');
 							foreach(@p in players_in_radius(location_shift(@loc, 'down'), 1.6)) {
-								if(@p != player()) {
+								if(@p != player() && pmode(@p) !== 'SPECTATOR') {
 									damage_entity(puuid(@p), 12, puuid());
 									play_named_sound(ploc(), array(sound: 'entity.arrow.hit_player'), player());
 								}
