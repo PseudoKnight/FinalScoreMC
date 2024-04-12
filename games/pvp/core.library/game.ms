@@ -313,7 +313,9 @@ proc _pvp_start(@pvp){
 
 	play_sound(@arena['lobby'], array(sound: 'ENTITY_WITHER_SPAWN', pitch: 1.5, volume: 3, category: 'VOICE'));
 
-	_add_activity('pvp'.@id, @pvp['title'], @arena['region'], @world);
+	if(array_size(@pvp['players']) > 1) {
+		_add_activity('pvp'.@id, @pvp['title'], @arena['region'], @world);
+	}
 
 	# COUNTDOWN TO START
 	@timeleft = array(@pvp['arena']['delay']);
