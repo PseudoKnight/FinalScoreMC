@@ -83,7 +83,7 @@ proc _spawn_entity(@entity, @loc, @spawnData, @consumer) {
 				}
 			} else {
 				set_timeout(50, closure() {
-					@rider = _spawn_entity(@entity['rider'], @loc);
+					@rider = _spawn_entity(@entity['rider'], @loc, @spawnData, @consumer);
 					set_entity_rider(@e, @rider);
 				});
 			}

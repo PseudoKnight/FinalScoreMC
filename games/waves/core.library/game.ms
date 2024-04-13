@@ -235,10 +235,14 @@ proc _waves_start(@waves) {
 			} if(@countdown == 0) {
 				@countdown--;
 				foreach(@e in @entities) {
-					set_entity_ai(@e, true);
-					set_mob_effect(@e, 'glowing', 0, 0);
-					set_entity_invulnerable(@e, false);
-					set_mob_target(@e, puuid(array_get_rand(@waves['players'])));
+					try {
+						set_entity_ai(@e, true);
+						set_mob_effect(@e, 'glowing', 0, 0);
+						set_entity_invulnerable(@e, false);
+						set_mob_target(@e, puuid(array_get_rand(@waves['players'])));
+					} catch(BadEntityException @ex){
+						console('Mob dead on round start.');
+					}
 				}
 				update_bar('waves'.@waves['region'], array(
 					percent: 1.0,
