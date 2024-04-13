@@ -158,9 +158,12 @@ register_command('waves', array(
 				@menu = associative_array();
 				@index = 0;
 				foreach(@id: @item in @scripts) {
+					foreach(@i: @line in @item['lore']) {
+						@item['lore'][@i] = color('white').colorize(@line);
+					}
 					@menu[@index] = array(
 						name: @item['name'],
-						meta: array(display: @item['display'], lore: @item['lore'], flags: array('HIDE_ATTRIBUTES')),
+						meta: array(display: @item['display'], lore: @item['lore'], flags: array('HIDE_ATTRIBUTES', 'HIDE_POTION_EFFECTS')),
 					);
 					@index++;
 				}

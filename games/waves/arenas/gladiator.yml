@@ -4,3 +4,15 @@ random:
     lore: 
         - 'Generates random waves of mobs.'
         - 'Difficulty increases over time.'
+steplightly:
+    name: WOODEN_SWORD
+    display: 'Step Lightly'
+    lore: 
+        - 'Custom challenge'
+        - 'by Gothem8'
+bees:
+    name: HONEY_BLOCK
+    display: 'Bees'
+    lore: 
+        - 'Exploding Bees!'
+        - 'by PK (you are welcome)'
