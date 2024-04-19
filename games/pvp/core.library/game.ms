@@ -483,7 +483,7 @@ proc _pvp_start_match(@id) {
 		@pvp['starttime'] = time() / 1000;
 	}
 
-	_remove_region_entities(@arena['region'], array('DROPPED_ITEM', 'EXPERIENCE_ORB'), @arena['lobby'][3]);
+	_remove_region_entities(@arena['region'], @arena['lobby'][3], array('DROPPED_ITEM', 'EXPERIENCE_ORB'));
 	_pvp_initialize_players(@id, array_keys(@pvp['players']));
 
 	if(array_index_exists(@arena, 'captain')) {
@@ -969,7 +969,7 @@ proc _pvp_end_match(@id, @winners) {
 		foreach(@p in @pvp['spectators']) {
 			_spectator_remove(@p, @pvp);
 		}
-		_remove_region_entities(@arena['region'], array(), @world);
+		_remove_region_entities(@arena['region'], @world, array());
 
 		if(array_index_exists(@arena, 'restore')) {
 			broadcast(color('YELLOW').'Restoring arena for '.@pvp['title'].' ...');

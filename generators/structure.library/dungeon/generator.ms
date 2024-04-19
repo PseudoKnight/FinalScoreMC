@@ -172,7 +172,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 	foreach(@p in all_players(@world)) {
 		bar_add_player('gen'.@region, @p);
 	}
-	_remove_region_entities(@region, array(), @world);
+	_remove_region_entities(@region, @world);
 
 	@cleanUp = closure(@randomResource = null){
 		if(!is_null(@randomResource)) {

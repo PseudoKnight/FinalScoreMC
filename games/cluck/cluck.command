@@ -218,7 +218,7 @@ register_command('cluck', array(
 					set_timeout(100, closure(set_block(@cluck['sound']['winround'], 'TORCH')));
 				}
 			
-				_remove_region_entities('cluck', array('DROPPED_ITEM', 'EXPERIENCE_ORB'));
+				_remove_region_entities('cluck', 'custom', array('DROPPED_ITEM', 'EXPERIENCE_ORB'));
 				# Reset for the next round.
 				if(@cluck['gameover'] || @cluck['round'] == 10) {
 					_cluck_end(@cluck);

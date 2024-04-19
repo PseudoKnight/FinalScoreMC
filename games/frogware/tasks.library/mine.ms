@@ -58,5 +58,5 @@ proc _fw_start_task(@secs) {
 
 proc _fw_end_task(@secs) {
 	_fw_clear_blocks(3);
-	_remove_region_entities('frogware', array('DROPPED_ITEM'));
+	_remove_region_entities('frogware', 'custom', array('DROPPED_ITEM'));
 }

@@ -15,15 +15,15 @@ proc _regionmsg(@region, @msg) {
 	@region: The WorldGuard region name.
 	@types: Array of entity types to remove. Defaults to all but excluded types. Can override excluded types.
 	@world: The world to remove the entities from. Defaults to 'custom'.
-	@removeProtected: If true, will also remove excluded entity types. Defaults to false.
-	@excludeTypes: An array of excluded entity types. (visible armor stands are also protected)
+	@removeProtected: If true, will also remove conditionally protected entity types (e.g. ArmorStands). Defaults to false.
+	@excludeTypes: An array of unconditionally excluded entity types.
 
 	Returns: Number of entities removed.
 */
 proc _remove_region_entities(
 	@region,
-	@types = array(),
 	@world = 'custom',
+	@types = array(),
 	@removeProtected = false,
 	@excludeTypes = array('PLAYER', 'COMPLEX_PART', 'GLOW_ITEM_FRAME', 'ITEM_FRAME', 'PAINTING', 'UNKNOWN')
 ) {
@@ -39,7 +39,7 @@ proc _remove_region_entities(
 			if(!array_contains(sk_regions_at(@loc), @region)) {
 				continue();
 			}
-			if(@type == 'ARMOR_STAND' && !@removeProtected) {
+			if(@type === 'ARMOR_STAND' && !@removeProtected) {
 				if(!(array_contains(get_scoreboard_tags(@entity), 'remove'))) {
 					continue();
 				}

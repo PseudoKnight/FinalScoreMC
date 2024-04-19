@@ -145,7 +145,7 @@ proc _end_build() {
 	}
 
 	set_timeout(7000, closure(){
-		_remove_region_entities('charades', array(), @charades['world'], true);
+		_remove_region_entities('charades', @charades['world'], array(), true);
 		// delay before paste to prevent entity issues
 		set_timeout(50,closure(){
 			try {
