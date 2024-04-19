@@ -70,9 +70,10 @@ proc _weapon_hit_scan(@player, @ray, @damage, @effects, @pvp){
 	@location = @trace['location'];
 	@entities = @trace['entities'];
 	@players = array();
-	
+	@spec = array_merge(array_keys(@pvp['players']), @pvp['spectators']);
+
 	if(@trace['hitblock'] && array_index_exists(@effects, 'hitparticle')) {
-		spawn_particle(@location, array(particle: @effects['hitparticle'], count: 8, speed: 0.05));
+		spawn_particle(@location, array(particle: @effects['hitparticle'], count: 8, speed: 0.05), @spec);
 	}
 	if(@entities) {
 		foreach(@entity in @entities) {
@@ -99,23 +100,81 @@ proc _weapon_hit_scan(@player, @ray, @damage, @effects, @pvp){
 					damage_entity(@entity['uuid'], @damage, @damager);
 				}
 				if(array_index_exists(@effects, 'hitparticle')) {
-					spawn_particle(@entity['location'], array(particle: @effects['hitparticle'], count: 4, speed: 0.05));
+					spawn_particle(@entity['location'], array(particle: @effects['hitparticle'], count: 4, speed: 0.05), @spec);
 				}
 			}
 		}
 	}
-	
+
+	@origin['y'] -= if(get_entity_gliding(@damager), 1.54, 0.58); // adjust to gun height for visibility
+	@distance = distance(@origin, @location);
+
+	// create display entity tracer line
+	if(@raySize && array_index_exists(@effects, 'display')) {
+		// remove yaw/pitch from origin location so that display entity doesn't inherit them
+		@yaw = array_remove(@origin, 'yaw');
+		array_remove(@origin, 'pitch'); // pitch will be adjusted for new starting height
+		@pitch = get_pitch(@origin, @location);
+
+		// get xz translation
+		@v = get_vector(array(yaw: @yaw + 90, pitch: 0.0), @raySize);
+
+		// get quaternion rotation
+		@y = -to_radians(@yaw) * 0.5;
+		@p = to_radians(@pitch) * 0.5;
+		@leftRotation = array(
+			w: cos(@p) * cos(@y),
+			x: sin(@p) * cos(@y),
+			y: cos(@p) * sin(@y),
+			z: -sin(@p) * sin(@y),
+		);
+
+		@line = spawn_entity('BLOCK_DISPLAY', 1, @origin, closure(@line) {
+			add_scoreboard_tag(@line, 'remove');
+			set_entity_spec(@line, array(blockdata: @effects['display']));
+			set_display_entity(@line, array(
+				brightness: 15,
+				height: @distance,
+				width: @distance,
+				transformation: array(
+					translation: array(
+						x: @v['x'],
+						y: -@raySize,
+						z: @v['z']),
+					scale: array(
+						x: @raySize * 2,
+						y: @raySize * 2,
+						z: @distance),
+					leftRotation: @leftRotation)));
+		})[0];
+		set_timeout(50, closure(){
+			// shrink display entity
+			set_display_entity(@line, array(
+				interpolationduration: 8,
+				startinterpolation: 0,
+				transformation: array(
+					translation: array(
+						x: 0.0,
+						y: 0.0,
+						z: 0.0),
+					scale: array(
+						x: 0.0,
+						y: 0.0,
+						z: @distance))));
+			set_timeout(400, closure(){
+				try(entity_remove(@line))
+			});
+		});
+	}
+
 	if(array_index_exists(@effects, 'tracer')) {
-		@distance = distance(@origin, @location);
-		@maxParticles = max(ceil(@distance), 20);
-		@distance /= @maxParticles;
-		@origin['y'] -= if(get_entity_gliding(@damager), 1.54, 0.30); // adjust to gun height for visibility
-		@particles = 0;
-		while(@particles++ <= @maxParticles) {
-			@origin = location_shift(@origin, @location, @distance);
-			spawn_particle(@origin, @effects['tracer']);
+		@distanceProgress = 1.0;
+		while(@distanceProgress <= @distance) {
+			@particleLoc = location_shift(@origin, @location, @distanceProgress);
+			spawn_particle(@particleLoc, @effects['tracer'], @spec);
+			@distanceProgress += 0.5 + rand() / 2;
 		}
 	}
-	
+
 	return(@players);
 }
