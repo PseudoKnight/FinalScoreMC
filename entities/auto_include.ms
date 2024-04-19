@@ -36,6 +36,9 @@ proc _spawn_entity(@entity, @loc, @spawnData, @consumer) {
 				set_entity_attribute_base(@e, @k, @v);
 			}
 		}
+		if(array_index_exists(@entity, 'display')) {
+			set_display_entity(@e, @entity['display']);
+		}
 		if(array_index_exists(@entity, 'tame')) {
 			if(@spawnData && array_index_exists(@spawnData, 'owner')) {
 				set_mob_owner(@e, @spawnData['owner']);
