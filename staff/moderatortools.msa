@@ -1,20 +1,8 @@
-/hologram $ = >>>
-	@loc = location_shift(ploc(), 'up');
-	@lines = split(',', $);
-	for(@i = array_size(@lines) - 1, @i >= 0, @i--) {
-		@armorstand = spawn_entity('ARMOR_STAND', 1, @loc)[0];
-		set_entity_spec(@armorstand, array(marker: true, visible: false));
-		set_mob_name(@armorstand, colorize(@lines[@i]));
-		set_name_visible(@armorstand, true);
-		@loc['y'] += 0.28;
-	}
-<<<
-
 /remove [$] = >>>
 	if(!$) {
 		msg('Usage: /remove [radius] [entityType] [-n]');
 		msg('This will preserve named mobs, except when given the -n flag.');
-		msg('Special entityType groups: living, hostile, hologram');
+		msg('Special entityType groups: living, hostile');
 	}
 	@removenamed = false;
 	@spawnEggs = false;
@@ -43,9 +31,6 @@
 							'SHEEP', 'SKELETON_HORSE', 'SNOWMAN', 'SQUID', 'TROPICAL_FISH', 'TURTLE', 'VILLAGER', 'WOLF', 'ZOMBIE_HORSE'));
 				case 'hostile':
 					continue();
-				case 'hologram':
-					@type = 'ARMOR_STAND';
-					@removenamed = true;
 				default:
 					@type = @arg;
 			}
