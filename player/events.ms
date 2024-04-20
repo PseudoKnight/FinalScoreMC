@@ -12,7 +12,7 @@ bind('player_death', null, null, @event) {
 		@stringLoc = "@x,@y,@z "._world_name(@world);
 
 		// Log to console
-		@log = @event['player'].' died @ '.@stringLoc.': ';
+		@log = @event['player'].' died @ '.@stringLoc.' w/ '.plevel().' lvls: ';
 		_minify_inv(@event['drops']);
 		@log .= json_encode(@event['drops']);
 		console(@log, false);
