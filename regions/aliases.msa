@@ -202,10 +202,10 @@
 			sudo('/rg redefine '.@region);
 			// Update region on live map right away
 			if(function_exists('dm_set_marker_corners')) {
-				dm_set_marker_corners('worldguard.markerset', @world.'_'.to_lower(@region), array(
+				try(dm_set_marker_corners('worldguard.markerset', @world.'_'.to_lower(@region), array(
 					array(@p1['x'], 0, @p1['z'], @world),
 					array(@p2['x'], 0, @p2['z'], @world),
-				));
+				)))
 			}
 
 		case 'claim':
