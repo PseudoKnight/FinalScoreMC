@@ -208,9 +208,9 @@
 	meta: array(
 		display: color('aqua').'Pig Race',
 		lore: array(
-			color('white').'Race finnicky pigs around a pleasant course.',
+			color('white').'Race finnicky pigs around a small course.',
 			color('white').'(2+ players)',
-			color('dark_gray').'Run: /warp thatlldo',
+			color('dark_gray').'Run: /warp pigrace',
 		)
 	),
 );
