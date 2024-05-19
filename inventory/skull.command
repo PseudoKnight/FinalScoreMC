@@ -15,8 +15,7 @@ register_command('skull', array(
 		} else if(length(@value) < 37) {
 			pgive_item(array(name: 'PLAYER_HEAD', meta: array(owneruuid: @value)));
 		} else {
-			pgive_item(array(name: 'PLAYER_HEAD', meta: array(owneruuid: puuid(), texture: @value)));
+			pgive_item(array(name: 'PLAYER_HEAD', meta: array(owneruuid: uuid(), texture: @value)));
 		}
-
 	}
 ));
