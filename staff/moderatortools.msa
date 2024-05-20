@@ -1,16 +1,17 @@
 /remove [$] = >>>
 	if(!$) {
-		msg('Usage: /remove [radius] [entityType] [-n]');
+		msg('Usage: /remove [radius=32] [entityType] [-n] [-e]');
 		msg('This will preserve named mobs, except when given the -n flag.');
-		msg('Special entityType groups: living, hostile');
+		msg('Special entityType groups: living, hostile (default)');
+		msg('When given the -e flag, spawn eggs will be given for each mob removed.');
 	}
 	@removenamed = false;
 	@spawnEggs = false;
 	@type = array('BLAZE', 'CAVE_SPIDER', 'CREEPER', 'DROWNED', 'ELDER_GUARDIAN', 'ENDER_DRAGON', 'ENDERMAN', 'ENDERMITE',
 			'EVOKER', 'GUARDIAN', 'GHAST', 'GIANT', 'HOGLIN', 'HUSK', 'MAGMA_CUBE', 'PHANTOM', 'PIGLIN', 'PIGLIN_BRUTE', 
-			'SHULKER', 'SILVERFISH', 'SKELETON', 'SLIME', 'SPIDER', 'STRAY', 'WITCH', 'WITHER', 'WITHER_SKELETON', 'VEX',
+			'SHULKER', 'SILVERFISH', 'SKELETON', 'SLIME', 'SPIDER', 'STRAY', 'WARDEN', 'WITCH', 'WITHER', 'WITHER_SKELETON', 'VEX',
 			'VINDICATOR', 'ZOGLIN', 'ZOMBIE', 'ZOMBIFIED_PIGLIN', 'ZOMBIE_VILLAGER');
-	@radius = 64;
+	@radius = 32;
 	@loc = get_command_block();
 	if(is_null(@loc)) {
 		@loc = ploc();
@@ -26,9 +27,9 @@
 		} else {
 			switch(@arg) {
 				case 'living':
-					@type = array_merge(@type, array('AXOLOTL', 'BAT', 'CHICKEN', 'COD', 'COW', 'DOLPHIN', 'DONKEY', 'GLOW_SQUID', 'GOAT',
+					@type = array_merge(@type, array('ALLAY', 'AXOLOTL', 'BAT', 'CAMEL', 'CHICKEN', 'COD', 'COW', 'DOLPHIN', 'DONKEY', 'FROG', 'GLOW_SQUID', 'GOAT',
 							'HORSE', 'IRON_GOLEM', 'LLAMA', 'MULE', 'MUSHROOM_COW', 'OCELOT', 'PIG', 'PUFFERFISH', 'RABBIT', 'SALMON',
-							'SHEEP', 'SKELETON_HORSE', 'SNOWMAN', 'SQUID', 'TROPICAL_FISH', 'TURTLE', 'VILLAGER', 'WOLF', 'ZOMBIE_HORSE'));
+							'SHEEP', 'SKELETON_HORSE', 'SNIFFER', 'SNOWMAN', 'SQUID', 'TADPOLE', 'TROPICAL_FISH', 'TURTLE', 'VILLAGER', 'WOLF', 'ZOMBIE_HORSE'));
 				case 'hostile':
 					continue();
 				default:
@@ -45,8 +46,10 @@
 				@entitytype = entity_type(@e);
 				if(@entitytype == 'MUSHROOM_COW') {
 					@entitytype = 'MOOSHROOM';
+				} else if(@entitytype == 'SNOWMAN') {
+					@entitytype = 'SNOW_GOLEM';
 				}
-				pgive_item(array('name': entity_type(@e).'_SPAWN_EGG', 'meta': array('display': get_mob_name(@e))));
+				try(pgive_item(array(name: entity_type(@e).'_SPAWN_EGG', meta: array('display': get_mob_name(@e)))))
 			}
 			entity_remove(@e);
 			@count++;
