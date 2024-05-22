@@ -1,5 +1,5 @@
 proc _bind(@pvp) {
-	@pvp['binds'][] = bind('player_interact', null, array(block: 'CHEST'), @e, @pvp) {
+	@pvp['binds'][] = bind('player_interact', array(priority: 'HIGH'), array(block: 'CHEST'), @e, @pvp) {
 		if(!array_index_exists(@pvp['players'], player())) {
 			die();
 		}
@@ -10,6 +10,7 @@ proc _bind(@pvp) {
 			&& @arena['chestspawn'][@i]['loc'][2] == @e['location'][2]
 			&& array_index_exists(@arena['chestspawn'][@i], 'cooldown')) {
 				cancel();
+				consume();
 				@loc = @e['location'];
 				@inv = get_inventory(@loc);
 				foreach(@item in @inv) {
