@@ -9,15 +9,12 @@ proc _class_load(@player, @pvp) {
 
 	bind('player_death', array(id: @player.'kill'), null, @e, @player) {
 		if(@e['killer'] == @player && !is_null(pinv(@player, 103))) {
-			pgive_item(@player, array(name: 'FERMENTED_SPIDER_EYE', meta: array(display: player().'\'s Heart')));
+			pgive_item(@player, array(name: 'BEETROOT', meta: array(display: player().'\'s Heart')));
 		}
 	}
 	
-	bind('player_interact', array(id: @player.'eat'), array(button: 'right', itemname: 'FERMENTED_SPIDER_EYE', player: @player), @event) {
-		ptake_item(array(name: 'FERMENTED_SPIDER_EYE'));
+	bind('player_consume', array(id: @player.'eat'), array(itemname: 'BEETROOT', player: @player), @event) {
 		set_phealth(player(), min(20, phealth() + 2));
-		play_sound(ploc(), array(sound: 'ENTITY_GENERIC_EAT', pitch: 0.5));
-		spawn_particle(location_shift(ploc(), 'up', 2), array(particle: 'BLOCK_DUST', count: 10, block: 'NETHER_WART_BLOCK', speed: 0.1));
 	}
 }
 
@@ -30,7 +27,6 @@ proc _class_equip(@player) {
 		101: array(name: 'LEATHER_LEGGINGS', meta: array(color: array(r: @r, g: @g, b: @b))),
 		102: array(name: 'LEATHER_CHESTPLATE', meta: array(color: array(r: @r, g: @g, b: @b))),
 	));
-	queue_clear(@player.'evolve');
 }
 
 proc _class_powerup(@player) {
