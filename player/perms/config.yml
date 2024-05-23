@@ -128,6 +128,7 @@ member:
       command.heal: true
       command.skipper: true
       command.skull: true
+      command.kart: true
       minecraft.debugstick: true
     custom:
       stargate.create.personal: false
@@ -254,6 +255,7 @@ builder:
       command.put: true
       command.skull: true
       command.track: true
+      command.kart: true
       worldedit.navigation.*: true
       worldguard.region.claim: true
       deadbolt.user.create.*: true

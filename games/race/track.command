@@ -1,16 +1,19 @@
 register_command('track', array(
 	description: 'Commands for creating and editing tracks for races.',
-	usage: '/track <set|delete> <track> [setting] [value(s)]',
+	usage: '/track <set|delete|info|list> <track> [setting] [value(s)]',
 	permission: 'command.track',
-	tabcompleter: closure(@alias, @sender, @args, @info) {
-		return(array());
-	},
+	tabcompleter: _create_tabcompleter(
+		array('set', 'delete', 'info', 'list', 'rename'),
+		null,
+		array('<<set|delete': array('region', 'laps', 'health', 'lobby', 'spawn', 'checkpoint', 'type', 'effect')),
+		array('<type': array('boat', 'elytra', 'horse', 'parkour', 'pig', 'kart'))
+	),
 	executor: closure(@alias, @sender, @args, @info) {
-		if(array_size(@args) < 2) {
+		if(array_size(@args) < 1) {
 			return(false);
 		}
 		@action = @args[0];
-		@id = @args[1];
+		@id = array_get(@args, 1, null);
 		@setting = array_get(@args, 2, null);
 		@value = array_get(@args, 3, null);
 		@values = null;
@@ -18,13 +21,19 @@ register_command('track', array(
 			@values = @args[4..];
 		}
 
-		@track = get_value('track', @id);
-		if(!@track) {
-			@track = associative_array();
-			msg(color('green').'Creating '.@id.'...');
-		}
 		switch(@action) {
 			case 'set':
+				if(!@id) {
+					return(false);
+				}
+				@track = get_value('track', @id);
+				if(!@track) {
+					if(!reg_match('^[a-zA-Z0-9_]+$', @id)) {
+						die(color('gold').'Track name must match [a-zA-Z0-9_]+');
+					}
+					@track = associative_array();
+					msg(color('green').'Creating '.@id.'...');
+				}
 				switch(@setting) {
 					// string
 					case 'region':
@@ -47,15 +56,6 @@ register_command('track', array(
 						@num = @values[0];
 						@track[@setting] = double(@value);
 						msg(colorize("&7[Track]&r Set &e@setting&r to &a@value"));
-
-					// two numbers
-					case 'sky':
-						if(!is_numeric(@value) || !@values || !is_numeric(@values[0])) {
-							die(color('gold').'Expecting two numbers for '.@setting);
-						}
-						@num = @values[0];
-						@track[@setting] = array(double(@value), double(@num));
-						msg(colorize("&7[Track]&r Set &e@setting&r to &a@value&r and &a@num"));
 
 					// single location
 					case 'lobby':
@@ -103,7 +103,7 @@ register_command('track', array(
 
 					// string from set
 					case 'type':
-						@tracktypes = array('boat', 'elytra', 'horse', 'parkour', 'pig');
+						@tracktypes = array('boat', 'elytra', 'horse', 'parkour', 'pig', 'kart');
 						if(!array_contains(@tracktypes, @value)) {
 							die(color('gold').'Expecting one of '.array_implode(@tracktypes));
 						}
@@ -130,12 +130,19 @@ register_command('track', array(
 				store_value('track', @id, @track);
 
 			case 'info':
+				if(!@id) {
+					return(false);
+				}
+				@track = get_value('track', @id);
 				foreach(@setting: @value in @track) {
 					msg(color('yellow').@setting.color('r').': '.@value);
 				}
 
 			case 'delete':
-			case 'remove':
+				if(!@id) {
+					return(false);
+				}
+				@track = get_value('track', @id);
 				if(@setting) {
 					if(@value) {
 						if(is_array(@track[@setting])) {
@@ -153,6 +160,30 @@ register_command('track', array(
 					clear_value('track', @id);
 					msg(colorize("&7[Track]&r Deleted track &a@id"));
 				}
+
+			case 'rename':
+				if(!@id) {
+					return(false);
+				}
+				if(!@setting) {
+					die(color('gold').'Renaming expects a new name for this track.');
+				}
+				@name = @setting;
+				if(!reg_match('^[a-zA-Z0-9_]+$', @name)) {
+					die(color('gold').'Track name must match [a-zA-Z0-9_]+');
+				}
+				@track = get_value('track', @id);
+				store_value('track', @name, @track);
+				clear_value('track', @id);
+				msg(colorize("&7[Track]&r Renamed track from &e@id&r to &e@name&r"));
+
+			case 'list':
+				@tracks = get_values('track');
+				@list = array();
+				foreach(@track in array_keys(@tracks)) {
+					@list[] = split('.', @track)[-1];
+				}
+				msg('Tracks: '.array_implode(@list, ', '));
 
 			default:
 				return(false);

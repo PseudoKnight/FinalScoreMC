@@ -2,27 +2,23 @@ proc _race_bind_events(@race) {
 	@race['binds'][] = bind('entity_dismount', null, array(type: 'PLAYER'), @event, @race) {
 		try {
 			@player = player(@event['id']);
-			if(array_index_exists(@race['players'], @player) && entity_exists(@event['mountid'])) {
-				set_timeout(1, closure(try(entity_remove(@event['mountid']))))
+			if(array_index_exists(@race['players'], @player)) {
+				cancel();
+				if(@race['type'] === 'pig') {
+					play_sound(ploc(), array(sound: 'ENTITY_PIG_AMBIENT', pitch: 2 ** ((rand(25) - 12) / 12), volume: 1));
+				} else if(@race['type'] === 'kart') {
+					@race['players'][@player]['kart']['drift'] = 2;
+				} else {
+					play_sound(ploc(), array(sound: 'BLOCK_NOTE_BLOCK_CHIME', pitch: 2 ** ((rand(25) - 12) / 12), volume: 1));
+				}
 			}
 		} catch(PlayerOfflineException @ex) {
 			// entity was not a player
 		}
 	}
 
-	@race['binds'][] = bind('player_toggle_sneak', null, array(sneaking: false, world: @race['world']), @event, @race) {
-		if(array_index_exists(@race['players'], player())) {
-			@success = _race_place_player(@race, player(), @race['players'][player()]['loc']);
-			if(@success && @race['state'] == 'running') {
-				set_timeout(1000, closure(){
-					_race_drop_player(@race, player());
-				});
-			}
-		}
-	}
-
-	if(@race['type'] == 'boat' || @race['type'] == 'horse' || @race['type'] == 'pig') {
-		@race['binds'][] = bind('vehicle_destroy', null, array('vehicletype': to_upper(@race['type'])), @event, @race) {
+	if(@race['type'] === 'boat' || @race['type'] === 'horse' || @race['type'] === 'pig') {
+		@race['binds'][] = bind('vehicle_destroy', null, array(vehicletype: to_upper(@race['type'])), @event, @race) {
 			@rider = get_entity_rider(@event['vehicle']);
 			if(@rider) {
 				try {
@@ -39,17 +35,8 @@ proc _race_bind_events(@race) {
 
 	@race['binds'][] = bind('player_quit', null, null, @event, @race) {
 		if(array_index_exists(@race['players'], player())) {
+			_race_remove_vehicle(player(), @race);
 			array_remove(@race['players'], player());
-			@vehicle1 = get_entity_vehicle(puuid());
-			if(@vehicle1) {
-				if(entity_type(@vehicle1) != 'ARMOR_STAND') {
-					@vehicle2 = get_entity_vehicle(@vehicle1);
-					if(@vehicle2) {
-						entity_remove(@vehicle2);
-					}
-				}
-				entity_remove(@vehicle1);
-			}
 			set_ploc(@race['lobby']);
 			_race_check_players(@race);
 		}
