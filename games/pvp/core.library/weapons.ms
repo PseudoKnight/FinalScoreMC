@@ -111,7 +111,7 @@ proc _weapon_hit_scan(@player, @ray, @damage, @effects, @pvp){
 
 	// create display entity tracer line
 	if(@raySize && array_index_exists(@effects, 'display')) {
-		// remove yaw/pitch from origin location so that display entity doesn't inherit them
+		// remove yaw/pitch from origin location so that display entity does not inherit them
 		@yaw = array_remove(@origin, 'yaw');
 		array_remove(@origin, 'pitch'); // pitch will be adjusted for new starting height
 		@pitch = get_pitch(@origin, @location);

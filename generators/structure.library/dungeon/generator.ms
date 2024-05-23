@@ -349,7 +349,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 					@widthTooSmall = @room['width'] < @minRoomSize * 2 + 3;
 					@lengthTooSmall = @room['length'] < @minRoomSize * 2 + 3;
 					if(@widthTooSmall && @lengthTooSmall) {
-						// can't split anymore
+						// cannot split anymore
 						@room['depth'] = 0;
 						@count++;
 						continue();

@@ -257,7 +257,7 @@ proc _kart_tick(@player, @kart, @race) {
 
 		// Get input
 		// The player velocity vector while riding a vehicle can be interpreted as directional
-		// movement (e.g. WASD) by translating it relative to the player's yaw
+		// movement (e.g. WASD) by translating it relative to the player yaw
 		@input = pvelocity(@player);
 		if(@input['x'] || @input['z']) {
 			@inputYaw = get_yaw(array(0, 0, 0), @input);

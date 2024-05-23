@@ -19,7 +19,7 @@ bind('projectile_hit', null, array(type: 'TRIDENT'), @event) {
 	}
 	// This animates the trident back to the player better than vanilla,
 	// but it does consequently reduce loyalty time.
-	// First check if they're in the same world.
+	// First check if they are in the same world.
 	if(entity_exists(@event['shooter']) && entity_type(@event['shooter']) == 'PLAYER'
 	&& @event['location']['world'] == ploc(@event['shooter'])['world']) {
 		set_timeout(200, closure() {

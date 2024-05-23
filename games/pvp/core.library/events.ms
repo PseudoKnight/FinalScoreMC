@@ -517,7 +517,7 @@ proc _bind_events(@pvp) {
 		}
 	}
 
-	// add tridents to player's entity map for cleanup later
+	// add tridents to player entity map for cleanup later
 	@pvp['binds'][] = bind('projectile_launch', null, array(type: 'TRIDENT'), @event, @pvp) {
 		if(array_index_exists(@pvp['players'], @event['player'])) {
 			@pvp['players'][player()]['entities']['trident'] = @event['id'];
