@@ -168,7 +168,7 @@ proc _shard_create(@rules){
 					set_timeout(@rules['buffertime'], closure(){
 						if(array_contains(get_worlds(), 'shard')) {
 							set_world_border('shard', array(width: 1, seconds: @rules['timelimit'] * 60));
-							_worldmsg('shard', color('red').color('bold').'Shard has started to collapse! ('.@rules['timelimit'].' minutes)');
+							broadcast(color('red').color('bold').'Shard has started to collapse! ('.@rules['timelimit'].' minutes)', all_players('shard'));
 						}
 					});
 				}
@@ -318,7 +318,7 @@ proc _shard_create(@rules){
 							set_world_border('shard', array(width: 1, seconds: 20));
 							storm(true, 'shard');
 							set_thunder(true, 'shard');
-							_worldmsg('shard', color('green').@last.' wins!');
+							broadcast(color('green').@last.' wins!', all_players('shard'));
 							set_timeout(20000, closure(){
 								if(array_contains(get_worlds(), 'shard') && ponline(@last) && pworld(@last) == 'shard') {
 									explosion(location_shift(ploc(@last), 'up', 2), 5);
@@ -356,7 +356,7 @@ proc _shard_create(@rules){
 							&& @rules['objective'] != 'scavengerhunt'
 							&& get_world_border('shard')['width'] == @rules['width']) {
 								set_world_border('shard', array(width: 1, seconds: @rules['timelimit'] * 60));
-								_worldmsg('shard', color('red').color('bold').'Shard has started to collapse! ('.@rules['timelimit'].' minutes)');
+								broadcast(color('red').color('bold').'Shard has started to collapse! ('.@rules['timelimit'].' minutes)', all_players('shard'));
 							}
 							@game = import('shard');
 							@game['lateJoin'] = false;

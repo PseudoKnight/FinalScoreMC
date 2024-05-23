@@ -253,7 +253,7 @@ register_command('timer', array(
 							if(@coursesBehind >= array_size(@ranks)) {
 								if(ponline(@p)) {
 									title(@p, 'Too slow!', '');
-									_worldmsg(pworld(@p), color('yellow').color('bold').@p.' fell behind');
+									broadcast(color('yellow').color('bold').@p.' fell behind', all_players(pworld(@p)));
 								}
 								array_remove(@marathon['players'], @p);
 								remove_bar(@p);
@@ -264,7 +264,7 @@ register_command('timer', array(
 						}
 
 					} else {
-						_worldmsg(pworld(@player), color('bold').@player.' completed the Marathon!');
+						broadcast(color('bold').@player.' completed the Marathon!', all_players(pworld(@player)));
 						_set_pactivity(@player, null);
 						array_remove(@marathon['players'], @player);
 						update_bar(@player, array(color: 'GREEN', percent: 1.0));

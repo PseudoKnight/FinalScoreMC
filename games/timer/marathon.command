@@ -17,7 +17,7 @@ register_command('marathon', array(
 				if(@marathon) {
 					if(!_pbusy()) {
 						@marathon['players'][player()] = 0;
-						_worldmsg(pworld(), color('green').color('bold').player().' joined the queued Marathon.');
+						broadcast(color('green').color('bold').player().' joined the queued Marathon.', all_players(pworld()));
 					} else {
 						msg(color('gold').'You appear to be playing another game.');
 					}
@@ -128,7 +128,7 @@ register_command('marathon', array(
 					if(array_size(@players) == 1) {
 						@lastplayer = array_keys(@players)[0];
 						title(@lastplayer, 'Too fast!', '');
-						_worldmsg(pworld(), color('green').color('bold').@lastplayer.' left all other players in their dust.');
+						broadcast(color('green').color('bold').@lastplayer.' left all other players in their dust.', all_players(pworld()));
 						remove_bar(@lastplayer);
 						_set_pactivity(@lastplayer, null);
 					}

@@ -32,7 +32,7 @@ proc _rule_load(@binds, @value) {
 					}
 				}
 				if(@otherCount >= @count) {
-					_worldmsg('shard', player().' joined team '.color(@team).@team);
+					broadcast(player().' joined team '.color(@team).@team, all_players('shard'));
 					team_add_player(@team, player(), 'shard');
 					foreach(@item in array('BLUE_WOOL', 'YELLOW_WOOL', 'GREEN_WOOL', 'RED_WOOL')) {
 						ptake_item(array(name: @item));

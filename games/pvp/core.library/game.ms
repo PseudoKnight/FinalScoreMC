@@ -276,17 +276,16 @@ proc _pvp_start(@pvp){
 
 	# ANNOUNCE
 	@world = @arena['lobby'][3];
-	_worldmsg(@world, _fill_string('*', '-', colorize('&7&m|--&7&l[ &r&l'.@pvp['title'].' &7&l]&7&m*|')));
+	broadcast(_fill_string('*', '-', colorize('&7&m|--&7&l[ &r&l'.@pvp['title'].' &7&l]&7&m*|')), all_players(@world));
 
 	if(array_index_exists(@pvp, 'team')) {
-		_worldmsg(@world,
-			@arena['team'][0]['color'].'['.@arena['team'][0]['name'].'] '.
-			array_implode(@pvp['team'][0]['players'], ' ').'\n'.color('r').
+		broadcast(@arena['team'][0]['color'].'['.@arena['team'][0]['name'].'] '.
+			array_implode(@pvp['team'][0]['players']).'\n'.color('r').
 			@arena['team'][1]['color'].'['.@arena['team'][1]['name'].'] '.
-			array_implode(@pvp['team'][1]['players'], ' ')
+			array_implode(@pvp['team'][1]['players']), all_players(@world)
 		);
 	} else {
-		_worldmsg(@world, color('gold').' '.array_implode(array_keys(@pvp['players']), colorize('&r vs &6')));
+		broadcast(color('gold').' '.array_implode(array_keys(@pvp['players']), colorize('&r vs &6')), all_players(@world));
 	}
 	if(array_index_exists(@arena, 'lives')) {
 		_pvp_msg(@pvp, colorize('* &e&lLIVES: '.@arena['lives']));
@@ -304,7 +303,7 @@ proc _pvp_start(@pvp){
 	if(array_index_exists(@pvp, 'moderesult')) {
 		_pvp_msg(@pvp, colorize('* &e&l'.to_upper(@pvp['moderesult']).' picked by '.@pvp['modepicked']));
 	}
-	_worldmsg(@world, colorize('&7&m|----------------------------------------------------|'));
+	broadcast(colorize('&7&m|----------------------------------------------------|'), all_players(@world));
 
 	@nonplayers = array_filter(all_players(@world), closure(@key, @value) {
 		return(!array_index_exists(@pvp['players'], @value));
@@ -860,25 +859,25 @@ proc _pvp_end_match(@id, @winners) {
 				@team = @pvp['players'][@leader]['team'];
 				@title = @pvp['players'][@leader]['color'].color('bold')
 					.@arena['team'][@team]['name'].' win '.@pvp['title'].'!';
-				@subtitle = @pvp['players'][@leader]['color'].array_implode(@winners, ' ');
+				@subtitle = @pvp['players'][@leader]['color'].array_implode(@winners);
 			} else {
 				console('Winners left the game as it ended? '.@winners.' not in '.array_keys(@pvp['players']));
-				@title = array_implode(@winners, ' ').' won '.@pvp['title'].'!';
+				@title = array_implode(@winners).' won '.@pvp['title'].'!';
 			}
-			_worldmsg(@world, color('gray').'[PVP] '.@title.'\n'.@subtitle);
+			broadcast(color('gray').'[PVP] '.@title.'\n'.@subtitle, all_players(@world));
 			foreach(@p in array_keys(@pvp['players'])) {
 				title(@p, @title, @subtitle, 20, 60, 20);
 			}
 			discord_broadcast('minecraft_chat', array(embed: array(title: strip_colors(@title).' ('.strip_colors(@subtitle).')')));
 		} else if(array_size(@winners) > 0) {
 			@winnersString = array_implode(@winners, ' and ').' win'.if(array_size(@winners) == 1, 's ', ' ').@pvp['title'].'!';
-			_worldmsg(@world, color('gray').'[PVP] '.color('r').@winnersString);
+			broadcast(color('gray').'[PVP] '.color('r').@winnersString, all_players(@world));
 			foreach(@p in array_keys(@pvp['players'])) {
 				title(@p, '', @winnersString, 20, 60, 20);
 			}
 			discord_broadcast('minecraft_chat', array(embed: array(title: @winnersString)));
 		} else {
-			_worldmsg(@world, color('gray').'[PVP] '.color('r').'Nobody wins! Wait.. what?!');
+			broadcast(color('gray').'[PVP] '.color('r').'Nobody wins! Wait.. what?!', all_players(@world));
 			discord_broadcast('minecraft_chat', array(embed: array(title: @pvp['title'].' is a draw')));
 		}
 	}, @id);

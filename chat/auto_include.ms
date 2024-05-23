@@ -27,13 +27,6 @@ proc _colorname(@player) {
 }
 
 /*
-	Messsages every player within a world
-*/
-proc _worldmsg(@world, @msg) {
-	broadcast(@msg, all_players(@world));
-}
-
-/*
 	Returns the character width map
 */
 proc _char_width() {

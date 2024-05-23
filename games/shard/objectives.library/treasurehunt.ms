@@ -33,7 +33,7 @@ proc _objective_load(@binds, @rules) {
 
 	proc _end_treasurehunt(@winner) {
 		if(ponline(@winner)) {
-			_worldmsg('shard', color('green').@winner.' wins!');
+			broadcast(color('green').@winner.' wins!', all_players('shard'));
 		} else {
 			@teams = get_teams('shard');
 			@color = '';
@@ -43,7 +43,7 @@ proc _objective_load(@binds, @rules) {
 					break();
 				}
 			}
-			_worldmsg('shard', @color.@winner.' wins!');
+			broadcast(@color.@winner.' wins!', all_players('shard'));
 		}
 
 		set_timeout(20000, closure(){

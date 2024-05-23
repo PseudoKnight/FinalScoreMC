@@ -1015,7 +1015,7 @@ proc _objective_load(@binds, @rules) {
 
 	// Procedures
 	proc _scavengerhunt_win(@player) {
-		_worldmsg('shard', color('green').@player.' wins!');
+		broadcast(color('green').@player.' wins!', all_players('shard'));
 		launch_firework(ploc(@player), array(strength: 3, type: 'BALL_LARGE', flicker: true));
 		set_timeout(20000, closure(){
 			_unload_shard();
@@ -1306,7 +1306,7 @@ proc _objective_load(@binds, @rules) {
 							@card[@i][@j] = array(players: array(), material: @newmaterial);
 							set_pscore('reroll', player(), 1, 'shard');
 							_refresh_card();
-							_worldmsg('shard', player().' re-rolled '.@material.' and got '.@newmaterial.'.');
+							broadcast(player().' re-rolled '.@material.' and got '.@newmaterial.'.', all_players('shard'));
 							die();
 						}
 					}
@@ -1331,7 +1331,7 @@ proc _objective_load(@binds, @rules) {
 						@item['players'][] = player();
 						set_pscore('total', player(), get_pscore('total', player(), 'shard') + 1, 'shard');
 						launch_firework(ploc());
-						_worldmsg('shard', player().' found '.color('green').'['.@event['slotitem']['name'].']');
+						broadcast(player().' found '.color('green').'['.@event['slotitem']['name'].']', all_players('shard'));
 						_refresh_card();
 						_check_card(player(), @i, @j);
 						break(2);
@@ -1348,8 +1348,8 @@ proc _objective_load(@binds, @rules) {
 					@item['players'][] = player();
 					set_pscore('total', player(), get_pscore('total', player(), 'shard') + 1, 'shard');
 					launch_firework(ploc());
-					_worldmsg('shard', player().' found '.color('green').'['.@event['slotitem']['name'].']'
-							.color('white').' for '.@item['meta']['display']);
+					broadcast(player().' found '.color('green').'['.@event['slotitem']['name'].']'
+							.color('white').' for '.@item['meta']['display'], all_players('shard'));
 					_refresh_card();
 					_check_card(player(), @bannerSlot[0], @bannerSlot[1]);
 				}
@@ -1378,7 +1378,7 @@ proc _objective_load(@binds, @rules) {
 						@item['players'][] = player();
 						set_pscore('total', player(), get_pscore('total', player(), 'shard') + 1, 'shard');
 						launch_firework(ploc());
-						_worldmsg('shard', player().' found '.color('green').'['.@event['item']['name'].']');
+						broadcast(player().' found '.color('green').'['.@event['item']['name'].']', all_players('shard'));
 						_refresh_card();
 						_check_card(player(), @i, @j);
 						break(2);
@@ -1395,8 +1395,8 @@ proc _objective_load(@binds, @rules) {
 					@item['players'][] = player();
 					set_pscore('total', player(), get_pscore('total', player(), 'shard') + 1, 'shard');
 					launch_firework(ploc());
-					_worldmsg('shard', player().' found '.color('green').'['.@event['item']['name'].']'
-							.color('white').' for '.@item['meta']['display']);
+					broadcast(player().' found '.color('green').'['.@event['item']['name'].']'
+							.color('white').' for '.@item['meta']['display'], all_players('shard'));
 					_refresh_card();
 					_check_card(player(), @bannerSlot[0], @bannerSlot[1]);
 				}
