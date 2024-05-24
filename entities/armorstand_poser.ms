@@ -4,7 +4,7 @@ foreach(@p in all_players()) {
 }
 
 bind('player_interact_at_entity', null, array(clicked: 'ARMOR_STAND'), @event) {
-	if(!sk_can_build(entity_loc(@event['id']))) {
+	if(!sk_can_build(entity_loc(@event['id'])) || get_entity_vehicle(@event['id'])) {
 		cancel();
 		die();
 	}
