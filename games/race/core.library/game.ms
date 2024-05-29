@@ -134,12 +134,20 @@ proc _race_on_move(@player, @to, @race) {
 		&& @loc['y'] < @p1[1] && @loc['y'] > @p2[1]
 		&& @loc['z'] < @p1[2] && @loc['z'] > @p2[2]) {
 			// hit checkpoint
-			@checkpoint++;
 			@p['checkpointLoc'] = @loc[];
+			if(@race['type'] === 'kart') {
+				if(array_size(@cuboid) == 3) {
+					@p['kart']['camdist'] = @cuboid[2];
+				} else if(array_index_exists(@race, 'camdist')) {
+					@p['kart']['camdist'] = @race['camdist'];
+				}
+			}
+
+			@checkpoint++;
 			if(@checkpoint != array_size(@race['checkpoint'])) {
 				@p['checkpoint'] = @checkpoint;
 				action_msg(@player, color('green').'Checkpoint!');
-				play_sound(@loc, array(sound: 'ENTITY_ARROW_HIT_PLAYER'), @player);
+				play_sound(ploc(@player), array(sound: 'ENTITY_ARROW_HIT_PLAYER'), @player);
 			} else {
 				// hit lap
 				@p['checkpoint'] = 0;
@@ -168,11 +176,11 @@ proc _race_on_move(@player, @to, @race) {
 							@suffix = 'rd';
 					}
 					broadcast(color('gray').'[Race] '.@player.' finished '.color('green').color('bold').@p['place'].@suffix.'!', all_players(pworld(@player)));
-					play_sound(@loc, array(sound: 'UI_TOAST_CHALLENGE_COMPLETE', volume: 3), @player);
+					play_sound(ploc(@player), array(sound: 'UI_TOAST_CHALLENGE_COMPLETE', volume: 3), @player);
 					_race_check_players(@race);
 				} else {
 					title(@player, '', color('green').'Lap '.(@p['lap'] + 1).' / '.@race['laps'], 0, 60, 20);
-					play_sound(@loc, array(sound: 'ENTITY_PLAYER_LEVELUP', pitch: 0.7), @player);
+					play_sound(ploc(@player), array(sound: 'ENTITY_PLAYER_LEVELUP', pitch: 0.7), @player);
 				}
 			}
 			// set pace time

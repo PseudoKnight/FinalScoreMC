@@ -2,7 +2,7 @@
  * Spawns a new kart.
  * Returns the array defining this kart object.
  */
-array proc _kart_spawn(@loc, @player, @design) {
+array proc _kart_spawn(@loc, @player, @design, @camdist = 4.0) {
 	string @engine;
 	string @color;
 	if(@design) {
@@ -27,6 +27,8 @@ array proc _kart_spawn(@loc, @player, @design) {
 		velocity: 0.0,
 		vertical: -0.1,
 		explode: false,
+		camdist: @camdist,
+		tick: 0,
 		// previous inputs
 		boost: false,
 		drift: 0,
@@ -78,7 +80,7 @@ array proc _kart_spawn(@loc, @player, @design) {
 			brightness: @brightness,
 			teleportduration: @teleportduration,
 			transformation: array(
-				translation: array(x: 0.0, y: 0.45, z: 0.0),
+				translation: array(x: 0.0, y: 0.42, z: 0.0),
 				scale: array(x: 1.2, y: 1.2, z: 1.2),
 				leftRotation: array(x: 0.0, y: 1.0, z: 0.0, w: 0.0))));
 	})[0];
@@ -180,16 +182,38 @@ array proc _kart_spawn(@loc, @player, @design) {
 				translation: array(x: -0.87, y: 0.0, z: -0.6),
 				scale: array(x: 0.25, y: 0.5, z: 0.5))));
 	})[0]);
-	@v = get_vector(@loc, 10.0);
+	// set_entity_rider(@vehicle, spawn_entity('ITEM_DISPLAY', 1, @loc, closure(@flagpole) {
+	// 	set_entity_spec(@flagpole, array(item: array(name: 'LIGHT_GRAY_CONCRETE_POWDER')));
+	// 	set_display_entity(@flagpole, array(
+	// 		brightness: @brightness,
+	// 		teleportduration: @teleportduration,
+	// 		transformation: array(
+	// 			translation: array(x: -0.45, y: 1.1, z: -0.88),
+	// 			scale: array(x: 0.04, y: 1.75, z: 0.04),
+	// 			leftRotation: array(x: -0.1, y: 0.0, z: 0.0, w: 0.995))));
+	// })[0]);
+	// set_entity_rider(@vehicle, spawn_entity('ITEM_DISPLAY', 1, @loc, closure(@flag) {
+	// 	set_entity_spec(@flag, array(item: array(name: @color.'_WOOL')));
+	// 	set_display_entity(@flag, array(
+	// 		brightness: @brightness,
+	// 		teleportduration: @teleportduration,
+	// 		transformation: array(
+	// 			translation: array(x: -0.45, y: 1.78, z: -1.15),
+	// 			scale: array(x: 0.03, y: 0.3, z: 0.3),
+	// 			leftRotation: array(x: -0.1, y: 0.0, z: 0.0, w: 0.978))));
+	// })[0]);
+	@v = get_vector(@loc, @camdist);
 	@cameraLoc = @loc[];
 	@cameraLoc['x'] = @cameraLoc[0] - @v['x'];
 	@cameraLoc['z'] = @cameraLoc[2] - @v['z'];
-	@cameraLoc['y'] = @cameraLoc[1] + 10;
+	@cameraLoc['y'] = @cameraLoc[1] + @camdist;
 	@cameraLoc['world'] = @cameraLoc[3];
 	@cameraLoc['yaw'] = @cameraLoc[4];
 	@kart['camera'] = spawn_entity('BLOCK_DISPLAY', 1, @cameraLoc, closure(@camera){
 		set_display_entity(@camera, array(teleportduration: 2));
 	})[0];
+	@cameraLoc['pitch'] = get_pitch(@cameraLoc, @loc);
+	set_entity_loc(puuid(@player), @cameraLoc);
 	set_entity_rider(@kart['camera'], puuid(@player));
 	set_peffect(@player, 'invisibility', 1, -1, true, false, false);
 	set_entity_invulnerable(puuid(@player), true);
@@ -239,10 +263,6 @@ proc _kart_tick(@player, @kart, @race) {
 		}
 		@from = @loc[];
 
-		// Consume inputs
-		@drift = @kart['drift'] && !@kart['boost'] && @kart['velocity'] > 0.4;
-		@kart['drift'] = max(0, @kart['drift'] - 1); // drift key actuates for 2 ticks to smooth input gaps
-
 		// Interpolate pitch back to zero
 		if(!equals_epsilon(@loc['pitch'], 0.0, 0.01)) {
 			@loc['pitch'] = @loc['pitch'] * 0.7;
@@ -279,9 +299,14 @@ proc _kart_tick(@player, @kart, @race) {
 			}
 		}
 
-		// Boost / reset yaw
+		// Consume drift input
+		@drift = @kart['drift'] && !@kart['boost'] && @kart['velocity'] > 0.35;
+		@kart['drift'] = max(0, @kart['drift'] - 1); // drift key actuates for 2 ticks to smooth input gaps
+
+		// Boost / reset yaw from drift turn
 		if(!@drift && pexp(@player) == 99 && @acceleration > 0) {
-			play_sound(@vehicle, array(sound: 'ENTITY_GHAST_SHOOT', pitch: 0.5, volume: 2));
+			play_sound(@vehicle, array(sound: 'BLOCK_RESPAWN_ANCHOR_DEPLETE', volume: @kart['camdist']));
+			play_sound(@vehicle, array(sound: 'ENTITY_GHAST_SHOOT', pitch: 0.5, volume: @kart['camdist']));
 			@kart['boost'] = true;
 			set_entity_spec(@vehicle, array(blockdata: @kart['engine'].'[lit=true]'));
 			@loc['yaw'] -= @kart['driftTurn'] * (@driftAngle / 2);
@@ -303,22 +328,30 @@ proc _kart_tick(@player, @kart, @race) {
 		} else if(!@kart['boost']) {
 			if(@acceleration < 1) {
 				set_pexp(@player, max(0, pexp(@player) - 4));
-			} else {
+			} else if(@kart['driftTurn']) {
 				set_pexp(@player, min(99, pexp(@player) + 3));
 			}
 		}
 		if(@kart['boost']) {
-			@kart['velocity'] = min(1.0, @kart['velocity'] + 0.03);
+			if(@kart['velocity'] < 1.0) {
+				@kart['velocity'] += 0.02 * (1.0 - @kart['velocity']);
+			}
 		} else if(@acceleration > 0) {
 			if(@kart['velocity'] < 0.8) {
-				if(@kart['velocity'] < 0) {
-					@kart['velocity'] = @kart['velocity'] + 0.02;
+				if(@drift) {
+					@kart['velocity'] += 0.01 * (0.8 - @kart['velocity']);
 				} else {
-					@kart['velocity'] = @kart['velocity'] + 0.01;
+					@kart['velocity'] += 0.02 * (0.8 - @kart['velocity']);
 				}
 			}
 		} else if(@acceleration < 0) {
-			@kart['velocity'] = max(@kart['velocity'] - 0.02, -0.3);
+			if(@kart['velocity'] > -0.3) {
+				if(@drift && @kart['velocity'] > 0) {
+					@kart['velocity'] -= 0.04;
+				} else {
+					@kart['velocity'] -= 0.02;
+				}
+			}
 		} else {
 			@kart['velocity'] *= 0.97;
 			if(abs(@kart['velocity']) < 0.01) {
@@ -339,11 +372,11 @@ proc _kart_tick(@player, @kart, @race) {
 		} else if(@loc['yaw'] < 0) {
 			@loc['yaw'] += 360;
 		}
-		if(@acceleration || !rand(20)) {
+		if(@acceleration > 0 || !rand(20)) {
 			play_sound(@vehicle, array(
 				sound: 'ENTITY_BEE_LOOP',
 				pitch: 0.5 + @kart['velocity'] * 1.5,
-				volume: 4 + @acceleration));
+				volume: @kart['camdist'] / 1.5));
 		}
 
 		// Get vector directions
@@ -394,10 +427,10 @@ proc _kart_tick(@player, @kart, @race) {
 								yoffset: 0.15,
 								zoffset: 0.3));
 						}
-						play_named_sound(@loc, array(
+						play_named_sound(@vehicle, array(
 							sound: 'block.vault.break',
 							pitch: 1.3 - @kart['velocity'],
-							volume: 4));
+							volume: @kart['camdist']));
 					}
 					if(@dist2collision < 0.0625 && @magnitude < 0.03) {
 						@velocity = array(x: 0, y: 0, z: 0);
@@ -405,14 +438,18 @@ proc _kart_tick(@player, @kart, @race) {
 					} else {
 						@face = @collision['hitface'];
 						@yaw = @loc['yaw'];
-						// Handles all acute angle wall collisions, but some corner cases still send the kart in the wrong direction
-						if(@isLeft && @face === 'WEST' && @loc['yaw'] > 325.0 || !@isLeft && @face === 'EAST' && @loc['yaw'] < 35.0) {
+						// Handles all acute angle wall collisions
+						if(@isLeft && @face === 'WEST' && @loc['yaw'] > 325.0
+						|| !@isLeft && @face === 'EAST' && @loc['yaw'] < 35.0) {
 							@loc['yaw'] = 0.0;
-						} else if(@isLeft && @face === 'EAST' && @loc['yaw'] > 135.0 || !@isLeft && @face === 'WEST' && @loc['yaw'] < 215.0) {
+						} else if(@isLeft && @face === 'EAST' && @loc['yaw'] > 145.0 && @loc['yaw'] < 180.0
+						|| !@isLeft && @face === 'WEST' && @loc['yaw'] < 215.0 && @loc['yaw'] > 180.0) {
 							@loc['yaw'] = 180.0;
-						} else if(@isLeft && @face === 'SOUTH' && @loc['yaw'] > 235.0 || !@isLeft && @face === 'NORTH' && @loc['yaw'] < 305.0) {
+						} else if(@isLeft && @face === 'SOUTH' && @loc['yaw'] > 235.0 && @loc['yaw'] < 270.0
+						|| !@isLeft && @face === 'NORTH' && @loc['yaw'] < 305.0 && @loc['yaw'] > 270.0) {
 							@loc['yaw'] = 270.0;
-						} else if(@isLeft && @face === 'NORTH' && @loc['yaw'] > 55.0 || !@isLeft && @face === 'SOUTH' && @loc['yaw'] < 125.0) {
+						} else if(@isLeft && @face === 'NORTH' && @loc['yaw'] > 55.0 && @loc['yaw'] < 90.0
+						|| !@isLeft && @face === 'SOUTH' && @loc['yaw'] < 125.0 && @loc['yaw'] > 90.0) {
 							@loc['yaw'] = 90.0;
 						}
 						if(@yaw == @loc['yaw']) {
@@ -423,7 +460,7 @@ proc _kart_tick(@player, @kart, @race) {
 							@kart['velocity'] = -(@kart['velocity'] * 0.25);
 						} else {
 							@velocity = get_vector(array(yaw: @loc['yaw'], pitch: 0), if(@kart['velocity'] > 0, @dist2collision, -@dist2collision));
-							@kart['velocity'] *= 0.5;
+							@kart['velocity'] *= 0.67;
 						}
 					}
 				} else {
@@ -455,10 +492,10 @@ proc _kart_tick(@player, @kart, @race) {
 			if(!equals_epsilon(@vertical, @kart['vertical'], 0.001)) {
 				@kart['vertical'] = @vertical;
 			} else if(@vertical < -0.1) {
-				play_named_sound(@loc, array(
+				play_named_sound(@vehicle, array(
 						sound: 'block.vault.break',
 						pitch: 1.2 + @vertical,
-						volume: 3));
+						volume: @kart['camdist']));
 				@kart['vertical'] = -0.1;
 			}
 		}
@@ -471,47 +508,96 @@ proc _kart_tick(@player, @kart, @race) {
 				@kart['driftTurn'] = @turn;
 			}
 			@loc['yaw'] += @kart['driftTurn'] * @driftAngle;
-			set_display_entity(@kart['leftTire'], array(transformation: array(
-				leftRotation: array(x: 0.0, y: @turn * 0.2, z: 0.0, w: 0.98))));
-			set_display_entity(@kart['rightTire'], array(transformation: array(
-				leftRotation: array(x: 0.0, y: @turn * 0.2, z: 0.0, w: 0.98))));
-		} else {
-			set_display_entity(@kart['leftTire'], array(transformation: array(
-				leftRotation: array(x: 0.0, y: -@turn * 0.1, z: 0.0, w: 1.0))));
-			set_display_entity(@kart['rightTire'], array(transformation: array(
-				leftRotation: array(x: 0.0, y: -@turn * 0.1, z: 0.0, w: 1.0))));
 		}
+		set_display_entity(@kart['leftTire'], array(transformation: array(
+			leftRotation: array(x: 0.0, y: -@turn * 0.1, z: 0.0, w: 1.0))));
+		set_display_entity(@kart['rightTire'], array(transformation: array(
+			leftRotation: array(x: 0.0, y: -@turn * 0.1, z: 0.0, w: 1.0))));
 		set_entity_loc(@vehicle, @loc);
 
 		// Rotate vehicle components
-		@deltaYaw = @loc['yaw'] -  @pfacing[0];
+		@deltaYaw = @loc['yaw'] - @pfacing[0];
 		if(@deltaYaw < -180) {
 			@deltaYaw += 360;
 		} else if(@deltaYaw > 180) {
 			@deltaYaw -= 360;
 		}
-		set_entity_rotation(@kart['head'], @pfacing[0] + @deltaYaw / 2, 0);
+		set_entity_rotation(@kart['head'], @pfacing[0] + @deltaYaw / 1.8, 0);
 		foreach(@rider in get_entity_riders(@vehicle)) {
 			set_entity_rotation(@rider, @loc['yaw'], @loc['pitch']);
 		}
 
 		// Spawn rubber particles
-		if(@drift || @acceleration == 1 && @kart['velocity'] < 0.3) {
+		if(@drift) {
+			array @boostready = null;
+			@xp = pexp(@player);
+			if(pexp(@player) == 99) {
+				@boostready = array(
+					particle: 'LAVA',
+					count: 1,
+					xoffset: 0.1,
+					yoffset: 0.0,
+					zoffset: 0.1);
+				play_sound(@vehicle, array(
+					sound: 'BLOCK_FIRE_EXTINGUISH',
+					pitch: 1 + rand(),
+					volume: @kart['camdist'] / 2));
+			}
+			play_sound(@vehicle, array(
+				sound: 'BLOCK_COMPOSTER_READY',
+				volume: @kart['camdist'] / 2,
+				pitch: 1.5));
 			@particle = array(
 				particle: 'BLOCK_CRACK',
-				block: 'BLACK_CONCRETE_POWDER',
-				count: ceil(abs(@kart['velocity'] - 0.3) * 10),
+				block: 'GRAY_CONCRETE_POWDER',
+				count: ceil(@xp / 10),
 				xoffset: 0.25,
 				yoffset: 0.0,
 				zoffset: 0.25);
+			@particle2 = array(particle: 'CAMPFIRE_SIGNAL_SMOKE');
 			@particleLoc = @from[];
 			@right = get_vector(array(yaw: @loc['yaw'] + 90, pitch: 0));
-			@particleLoc['x'] += @right['x'] * 0.85 - @forward['x'] * 0.5 - @velocity['x'];
-			@particleLoc['z'] += @right['z'] * 0.85 - @forward['z'] * 0.5 - @velocity['z'];
+			@particleLoc['x'] += @right['x'] * 0.77 - @forward['x'] * 0.5 - @velocity['x'];
+			@particleLoc['z'] += @right['z'] * 0.77 - @forward['z'] * 0.5 - @velocity['z'];
 			spawn_particle(@particleLoc, @particle);
-			@particleLoc['x'] -= @right['x'] * 1.7;
-			@particleLoc['z'] -= @right['z'] * 1.7;
+			spawn_particle(@particleLoc, @particle2);
+			if(@boostready) {
+				spawn_particle(@particleLoc, @boostready);
+			}
+			@particleLoc['x'] -= @right['x'] * 1.54;
+			@particleLoc['z'] -= @right['z'] * 1.54;
 			spawn_particle(@particleLoc, @particle);
+			spawn_particle(@particleLoc, @particle2);
+			if(@boostready) {
+				spawn_particle(@particleLoc, @boostready);
+			}
+		} else if(@acceleration == 1 && @kart['velocity'] < 0.35) {
+			play_sound(@vehicle, array(
+				sound: 'BLOCK_COMPOSTER_READY',
+				volume: @kart['camdist'] / 2));
+			@particle1 = array(
+				particle: 'BLOCK_CRACK',
+				block: 'GRAY_CONCRETE_POWDER',
+				count: 0,
+				speed: 7,
+				xoffset: -@forward['x'],
+				yoffset: 1.0,
+				zoffset: -@forward['z']);
+			@particle2 = array(
+				particle: 'FALLING_DUST',
+				block: 'GRAY_CONCRETE_POWDER',
+				count: 0);
+			@particleLoc = @from[];
+			@right = get_vector(array(yaw: @loc['yaw'] + 90, pitch: 0));
+			@r = rand() * 0.24 - 0.12;
+			@particleLoc['x'] += @right['x'] * (0.77 + @r) - @forward['x'] * 0.5 - @velocity['x'];
+			@particleLoc['z'] += @right['z'] * (0.77 + @r) - @forward['z'] * 0.5 - @velocity['z'];
+			spawn_particle(@particleLoc, @particle1);
+			spawn_particle(@particleLoc, @particle2);
+			@particleLoc['x'] -= @right['x'] * (1.54 + @r * 2);
+			@particleLoc['z'] -= @right['z'] * (1.54 + @r * 2);
+			spawn_particle(@particleLoc, @particle1);
+			spawn_particle(@particleLoc, @particle2);
 		}
 
 		// Spawn boost particles
@@ -531,14 +617,15 @@ proc _kart_tick(@player, @kart, @race) {
 			@particleLoc['x'] -= @velocity['x'] / 2;
 			@particleLoc['z'] -= @velocity['z'] / 2;
 			spawn_particle(@particleLoc, @particle);
+			spawn_particle(@particleLoc, array(particle: 'CAMPFIRE_SIGNAL_SMOKE'));
 		}
 
 		// Update camera location
 		@camera = pvehicle(@player);
-		@cameraOffset = get_vector(array(yaw: @pfacing[0], pitch: @pfacing[1]), 10 + @kart['velocity'] + if(@kart['boost'], 1, 0));
+		@cameraOffset = get_vector(array(yaw: @pfacing[0], pitch: 0), @kart['camdist'] + @kart['velocity'] + if(@kart['boost'], 1, 0));
 		@cameraLoc = @loc[];
 		@cameraLoc['x'] -= @cameraOffset['x'];
-		@cameraLoc['y'] += 10.0;
+		@cameraLoc['y'] += @kart['camdist'];
 		@cameraLoc['z'] -= @cameraOffset['z'];
 		set_entity_loc(@camera, @cameraLoc);
 
@@ -546,6 +633,11 @@ proc _kart_tick(@player, @kart, @race) {
 		if(@race) {
 			call_proc(@race['onMove'], @player, @loc, @race);
 		}
+
+		if(!(@kart['tick'] % 10)) {
+			action_msg(@player, 'Speed: '.round(@kart['velocity'] * 20, 1).' m/s');
+		}
+		@kart['tick']++;
 
 		if(@kart['explode']) {
 			clear_task();
@@ -561,7 +653,7 @@ proc _kart_tick(@player, @kart, @race) {
 						interpolationduration: 12,
 						startinterpolation: 0,
 						transformation: array(
-							translation: array(x: @translation['x'] * 4, y: @translation['y'] * 4, z: @translation['z'] * 4),
+							translation: array(x: @translation['x'] * rand(4, 7), y: @translation['y'] * rand(4, 7), z: @translation['z'] * rand(4, 7)),
 							leftRotation: array(x: rand() * 2 - 1, y: rand() * 2 - 1, z: rand() * 2 - 1, w: rand() * 2 - 1))));
 				} else {
 					set_entity_spec(@entity, array(
@@ -573,7 +665,7 @@ proc _kart_tick(@player, @kart, @race) {
 				}
 			}
 			spawn_particle(@loc, array(particle: 'EXPLOSION_HUGE'));
-			play_sound(@loc, array(sound: 'ENTITY_GENERIC_EXPLODE', volume: 2));
+			play_sound(@loc, array(sound: 'ENTITY_GENERIC_EXPLODE', volume: @kart['camdist']));
 			if(@race) {
 				foreach(@otherplayer in array_keys(@race['players'])) {
 					psend_block_change(@otherplayer, @loc, 'fire');

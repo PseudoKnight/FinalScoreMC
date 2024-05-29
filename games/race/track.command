@@ -5,7 +5,7 @@ register_command('track', array(
 	tabcompleter: _create_tabcompleter(
 		array('set', 'delete', 'info', 'list', 'rename'),
 		null,
-		array('<<set|delete': array('region', 'laps', 'health', 'lobby', 'spawn', 'checkpoint', 'type', 'effect')),
+		array('<<set|delete': array('region', 'laps', 'health', 'lobby', 'spawn', 'checkpoint', 'type', 'effect', 'camdist')),
 		array('<type': array('boat', 'elytra', 'horse', 'parkour', 'pig', 'kart'))
 	),
 	executor: closure(@alias, @sender, @args, @info) {
@@ -100,6 +100,39 @@ register_command('track', array(
 						}
 						@track[@setting][@num] = @cuboid;
 						msg(colorize("&7[Track]&r Set &e@setting &a@num&r to the current selection."));
+
+					// integer for checkpoint, double for number value
+					case 'camdist':
+						if(array_index_exists(@track, 'type') && @track['type'] != 'kart') {
+							die(color('gold').@setting.' setting only available to for kart tracks.');
+						}
+						if(!is_numeric(@value)) {
+							die(color('gold').'Expecting another number for '.@setting);
+						}
+						@double = double(@value);
+						if(@values) {
+							@checkpointNum = @values[0];
+							if(!is_integral(@checkpointNum)) {
+								die(color('gold').'Expecting an integer for checkpoint number.');
+							}
+							@checkpointNum = integer(@checkpointNum);
+							if(!array_index_exists(@track, 'checkpoint')) {
+								die(color('gold').'Must create checkpoints first.');
+							}
+							if(!array_index_exists(@track['checkpoint'], @checkpointNum)) {
+								die(color('gold').'Checkpoint #'.@checkpointNum.' does not exist.');
+							}
+							if(!@double) {
+								array_remove(@track['checkpoint'][@checkpointNum], 2);
+								msg(colorize("&7[Track]&r Removed &e@setting&r for checkpoint &e@checkpointNum&r"));
+							} else {
+								@track['checkpoint'][@checkpointNum][2] = @double;
+								msg(colorize("&7[Track]&r Set &e@setting&r for checkpoint &e@checkpointNum&r to &a@double"));
+							}
+						} else {
+							@track[@setting] = @double;
+							msg(colorize("&7[Track]&r Set &e@setting&r to &a@double"));
+						}
 
 					// string from set
 					case 'type':

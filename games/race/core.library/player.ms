@@ -52,7 +52,17 @@ proc _race_place_player(@race, @player, @loc) {
 
 	if(@race['type'] === 'kart') {
 		@loc[5] = 0;
-		@kart = _kart_spawn(@loc, @player, @race['players'][@player]['design']);
+		@checkpoint = @race['players'][@player]['checkpoint'] - 1;
+		if(@checkpoint == -1) {
+			@checkpoint = array_size(@race['checkpoint']) - 1;
+		}
+		@camdist = 4.0;
+		if(array_size(@race['checkpoint'][@checkpoint]) == 3) {
+			@camdist = @race['checkpoint'][@checkpoint][2];
+		} else if(array_index_exists(@race, 'camdist')) {
+			@camdist = @race['camdist'];
+		}
+		@kart = _kart_spawn(@loc, @player, @race['players'][@player]['design'], @camdist);
 		@race['players'][@player]['kart'] = @kart;
 		return(true);
 	}

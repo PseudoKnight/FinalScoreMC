@@ -23,6 +23,7 @@ register_command('kart', array(
 				unbind(player().'kartquit');
 				unbind(player().'kartdismount');
 				unbind(player().'kartdismount2');
+				unbind(player().'kartslot');
 				@kart['explode'] = true;
 				if(@event['prefix'] === '/kart') {
 					set_pmode(@mode);
@@ -35,6 +36,7 @@ register_command('kart', array(
 			unbind(player().'kartcommand');
 			unbind(player().'kartdismount');
 			unbind(player().'kartdismount2');
+			unbind(player().'kartslot');
 			_kart_remove(player(), @kart);
 		}
 		bind('entity_dismount', array(id: player().'kartdismount2'), array(type: 'ARMOR_STAND'), @event, @kart) {
@@ -43,6 +45,7 @@ register_command('kart', array(
 				unbind(player().'kartcommand');
 				unbind(player().'kartquit');
 				unbind(player().'kartdismount');
+				unbind(player().'kartslot');
 			}
 		}
 		bind('entity_dismount', array(id: player().'kartdismount'), array(type: 'PLAYER'), @event, @player = player(), @kart) {
@@ -54,6 +57,18 @@ register_command('kart', array(
 			} catch(PlayerOfflineException @ex) {
 				// entity was not a player
 			}
+		}
+		@slot = array(pheld_slot());
+		bind('item_held', array(id: player().'kartslot'), array(player: player()), @event, @player = player(), @slot, @kart) {
+			@newSlot = @event['to'];
+			if(abs(@newSlot - @slot[0]) < 5) {
+				if(@event['to'] > @slot[0]) {
+					@kart['camdist'] = min(16.0, @kart['camdist'] + 0.5);
+				} else {
+					@kart['camdist'] = max(1.0, @kart['camdist'] - 0.5);
+				}
+			}
+			@slot[0] = @event['to'];
 		}
 		_kart_tick(player(), @kart);
 	}
