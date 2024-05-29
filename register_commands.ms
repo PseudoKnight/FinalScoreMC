@@ -16,12 +16,12 @@ int proc _register_commands(string @parent = '.', boolean @recompile = import('r
 				@count += _register_commands(@path);
 			}
 		} else if(string_ends_with(@file, '.command')) {
-			@commandFiles[] = @file;
+			@commandFiles[] = @path;
 			@count++;
 		}
 	}
-	@registerCommands = iclosure(@commandFiles) {
-		foreach(@file in @commandFiles) {
+	@registerCommands = iclosure(@files = @commandFiles) {
+		foreach(@file in @files) {
 			try {
 				include(@file);
 			} catch(IncludeException @ex) {
