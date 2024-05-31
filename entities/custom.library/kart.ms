@@ -240,7 +240,12 @@ proc _kart_remove(@player, @kart) {
 proc _kart_tick(@player, @kart, @race) {
 	@driftAngle = 32.0;
 	set_interval(50, 0, closure(){
-		if(!ponline(@player) || pvehicle(@player) !== @kart['camera']) {
+		if(!ponline(@player)) {
+			clear_task();
+			die();
+		}
+		if(pvehicle(@player) !== @kart['camera']) {
+			try(_kart_remove(@player, @kart))
 			clear_task();
 			die();
 		}
@@ -300,7 +305,7 @@ proc _kart_tick(@player, @kart, @race) {
 		}
 
 		// Consume drift input
-		@drift = @kart['drift'] && !@kart['boost'] && @kart['velocity'] > 0.35;
+		@drift = @kart['drift'];
 		@kart['drift'] = max(0, @kart['drift'] - 1); // drift key actuates for 2 ticks to smooth input gaps
 
 		// Boost / reset yaw from drift turn
@@ -318,19 +323,17 @@ proc _kart_tick(@player, @kart, @race) {
 		}
 
 		// Handle velocity and yaw
-		if(!@drift) {
-			@xp = max(0, pexp(@player) - 4);
-			set_pexp(@player, @xp);
+		@xp = pexp(@player);
+		if(@kart['boost']) {
+			set_pexp(@player, max(0, @xp - 4));
 			if(@xp == 0) {
 				@kart['boost'] = false;
 				set_entity_spec(@vehicle, array(blockdata: @kart['engine'].'[lit=false]'));
 			}
-		} else if(!@kart['boost']) {
-			if(@acceleration < 1) {
-				set_pexp(@player, max(0, pexp(@player) - 4));
-			} else if(@kart['driftTurn']) {
-				set_pexp(@player, min(99, pexp(@player) + 3));
-			}
+		} else if(@drift && @acceleration == 1) {
+			set_pexp(@player, min(99, @xp + 3));
+		} else if(@xp > 3) {
+			set_pexp(@player, @xp - 4);
 		}
 		if(@kart['boost']) {
 			if(@kart['velocity'] < 1.0) {
@@ -376,7 +379,7 @@ proc _kart_tick(@player, @kart, @race) {
 			play_sound(@vehicle, array(
 				sound: 'ENTITY_BEE_LOOP',
 				pitch: 0.5 + @kart['velocity'] * 1.5,
-				volume: @kart['camdist'] / 1.5));
+				volume: @kart['camdist'] / 1.8));
 		}
 
 		// Get vector directions
@@ -430,7 +433,7 @@ proc _kart_tick(@player, @kart, @race) {
 						play_named_sound(@vehicle, array(
 							sound: 'block.vault.break',
 							pitch: 1.3 - @kart['velocity'],
-							volume: @kart['camdist']));
+							volume: @kart['camdist'] / 3));
 					}
 					if(@dist2collision < 0.0625 && @magnitude < 0.03) {
 						@velocity = array(x: 0, y: 0, z: 0);
@@ -481,7 +484,7 @@ proc _kart_tick(@player, @kart, @race) {
 					} else if(@hitRight['y'] < @loc['y'] - 0.001) {
 						@loc['pitch'] = min(15, get_pitch(@loc, @hitRight));
 						@loc['y'] = @hitRight['y'] + 0.001;
-						@vertical -= 0.09;
+						@vertical -= 0.06;
 					} else {
 						@loc['y'] = @hitRight['y'] + 0.001;
 					}
@@ -530,7 +533,6 @@ proc _kart_tick(@player, @kart, @race) {
 		// Spawn rubber particles
 		if(@drift) {
 			array @boostready = null;
-			@xp = pexp(@player);
 			if(pexp(@player) == 99) {
 				@boostready = array(
 					particle: 'LAVA',
@@ -541,11 +543,11 @@ proc _kart_tick(@player, @kart, @race) {
 				play_sound(@vehicle, array(
 					sound: 'BLOCK_FIRE_EXTINGUISH',
 					pitch: 1 + rand(),
-					volume: @kart['camdist'] / 2));
+					volume: @kart['camdist'] / 6));
 			}
 			play_sound(@vehicle, array(
 				sound: 'BLOCK_COMPOSTER_READY',
-				volume: @kart['camdist'] / 2,
+				volume: @kart['camdist'] / 6,
 				pitch: 1.5));
 			@particle = array(
 				particle: 'BLOCK_CRACK',
@@ -574,7 +576,7 @@ proc _kart_tick(@player, @kart, @race) {
 		} else if(@acceleration == 1 && @kart['velocity'] < 0.35) {
 			play_sound(@vehicle, array(
 				sound: 'BLOCK_COMPOSTER_READY',
-				volume: @kart['camdist'] / 2));
+				volume: @kart['camdist'] / 6));
 			@particle1 = array(
 				particle: 'BLOCK_CRACK',
 				block: 'GRAY_CONCRETE_POWDER',
