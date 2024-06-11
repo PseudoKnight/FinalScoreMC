@@ -5,29 +5,44 @@ proc _get_pstate(@player, @state) {
 		return();
 	}
 	@pstate = @pdata[@state];
-
-	try {
-		deserialize_pinv(@player, array_get(@pstate, 'inv', ''));
-	} catch(Exception @ex) {
-		console('WARNING: Failed to load survival inventory for '.@player.'.', false);
-		console(@ex['message'], false);
-		if(array_index_exists(@pdata, 'inv')) {
-			console(@pstate['inv'], false);
+	
+	if(array_index_exists(@pstate, 'inv') && @pstate['inv']) {
+		try {
+			if(is_array(@pstate['inv'])) {
+				_clear_pinv(@player);
+				set_pinv(@player, @pstate['inv']);
+			} else {
+				deserialize_pinv(@player, @pstate['inv']);
+			}
+		} catch(Exception @ex) {
+			console('WARNING: Failed to load survival inventory for '.@player.'.', false);
+			console(@ex['message'], false);
+			if(array_index_exists(@pdata, 'inv')) {
+				console(@pstate['inv'], false);
+			}
+			_clear_pinv(@player);
 		}
+	} else {
 		_clear_pinv(@player);
 	}
 
-	try {
-		deserialize_penderchest(@player, array_get(@pstate, 'ender', ''));
-	} catch(Exception @ex) {
-		console('WARNING: Failed to load survival enderchest for '.@player.'.', false);
-		console(@ex['message'], false);
-		if(array_index_exists(@pdata, 'ender')) {
-			console(@pstate['ender'], false);
+	if(array_index_exists(@pstate, 'ender') && @pstate['ender']) {
+		try {
+			if(is_array(@pstate['ender'])) {
+				set_penderchest(@player, array_merge(array_resize(array(), 27), @pstate['ender']));
+			} else {
+				deserialize_penderchest(@player, @pstate['ender']);
+			}
+		} catch(Exception @ex) {
+			console('WARNING: Failed to load survival enderchest for '.@player.'.', false);
+			console(@ex['message'], false);
+			if(array_index_exists(@pdata, 'ender')) {
+				console(@pstate['ender'], false);
+			}
+			set_penderchest(@player, array_resize(array(), 27));
 		}
-		@inv = array();
-		array_resize(@inv, 27);
-		set_penderchest(@player, @inv);
+	} else {
+		set_penderchest(@player, array_resize(array(), 27));
 	}
 
 	try {
