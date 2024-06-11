@@ -9,7 +9,7 @@ proc _get_pstate(@player, @state) {
 	if(array_index_exists(@pstate, 'inv') && @pstate['inv']) {
 		try {
 			if(is_array(@pstate['inv'])) {
-				_clear_pinv(@player);
+				clear_pinv(@player);
 				set_pinv(@player, @pstate['inv']);
 			} else {
 				deserialize_pinv(@player, @pstate['inv']);
@@ -20,10 +20,10 @@ proc _get_pstate(@player, @state) {
 			if(array_index_exists(@pdata, 'inv')) {
 				console(@pstate['inv'], false);
 			}
-			_clear_pinv(@player);
+			clear_pinv(@player);
 		}
 	} else {
-		_clear_pinv(@player);
+		clear_pinv(@player);
 	}
 
 	if(array_index_exists(@pstate, 'ender') && @pstate['ender']) {
