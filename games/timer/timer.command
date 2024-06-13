@@ -8,8 +8,14 @@ register_command('timer', array(
 		}
 
 		@player = _get_nearby_player(get_command_block(), 6);
-		if(!@player || phas_flight(@player) || geyser_connected(@player)) {
+		if(!@player || phas_flight(@player)) {
 			return();
+		}
+
+		if(extension_exists('chgeyser')) {
+			if(geyser_connected(@player)) {
+				return();
+			}
 		}
 
 		@id = @args[1];

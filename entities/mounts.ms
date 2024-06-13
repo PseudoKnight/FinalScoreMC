@@ -29,17 +29,19 @@ bind('player_interact_entity', null, array(hand: 'main_hand', clicked: '/(COW|MU
 	Requires using an emote, which typically activates the geyser item swap workaround.
 	If a valid entity is targeted, it'll ride that entity instead.
  */
- bind('item_swap', null, null, @event) {
-	if(geyser_connected()) {
-		@trace = ray_trace(4);
-		if(@trace['entities']) {
-			@entityTypes = array('COW', 'MUSHROOM_COW', 'PANDA', 'POLAR_BEAR', 'SHEEP', 'SNIFFER');
-			foreach(@entity in @trace['entities']) {
-				if(array_contains(@entityTypes, entity_type(@entity['uuid']))) {
-					set_entity_rider(@entity['uuid'], puuid());
-					_direct_vehicle();
-					cancel();
-					return();
+ if(extension_exists('chgeyser')) {
+	bind('item_swap', null, null, @event) {
+		if(geyser_connected()) {
+			@trace = ray_trace(4);
+			if(@trace['entities']) {
+				@entityTypes = array('COW', 'MUSHROOM_COW', 'PANDA', 'POLAR_BEAR', 'SHEEP', 'SNIFFER');
+				foreach(@entity in @trace['entities']) {
+					if(array_contains(@entityTypes, entity_type(@entity['uuid']))) {
+						set_entity_rider(@entity['uuid'], puuid());
+						_direct_vehicle();
+						cancel();
+						return();
+					}
 				}
 			}
 		}
