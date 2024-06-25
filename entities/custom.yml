@@ -229,14 +229,12 @@ gothemboss:
         enchants:
           sharpness:
             elevel: 10
-            etype: DAMAGE_ALL
       name: DIAMOND_SWORD
     WEAPON:
       meta:
         enchants:
           sharpness:
             elevel: 10
-            etype: DAMAGE_ALL
       name: DIAMOND_SWORD
   type: vex
 invishulker:
