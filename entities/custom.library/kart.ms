@@ -484,7 +484,7 @@ proc _kart_tick(@player, @kart, @race) {
 					} else if(@hitRight['y'] < @loc['y'] - 0.001) {
 						@loc['pitch'] = min(15, get_pitch(@loc, @hitRight));
 						@loc['y'] = @hitRight['y'] + 0.001;
-						@vertical -= 0.06;
+						@vertical = @vertical * 0.95 - 0.038; // minecart gravity
 					} else {
 						@loc['y'] = @hitRight['y'] + 0.001;
 					}
@@ -494,12 +494,14 @@ proc _kart_tick(@player, @kart, @race) {
 			}
 			if(!equals_epsilon(@vertical, @kart['vertical'], 0.001)) {
 				@kart['vertical'] = @vertical;
-			} else if(@vertical < -0.1) {
-				play_named_sound(@vehicle, array(
-						sound: 'block.vault.break',
-						pitch: 1.2 + @vertical,
-						volume: @kart['camdist']));
-				@kart['vertical'] = -0.1;
+			} else if(@vertical < -0.038) {
+				if(@vertical < -0.25) { // fell more than half a block
+					play_named_sound(@vehicle, array(
+							sound: 'block.vault.break',
+							pitch: 1.2 + @vertical,
+							volume: @kart['camdist']));
+				}
+				@kart['vertical'] = -0.038;
 			}
 		}
 
