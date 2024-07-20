@@ -227,8 +227,12 @@ proc _bind_events(@pvp) {
 			@drops = array_merge(@drops, @pvp['arena']['deathdrops']);
 		}
 
-		// Don not actually die
+		// Do not actually die
 		_player_reset(player());
+		set_timeout(10, closure(){
+			// clear respawn menu
+			close_pinv();
+		});
 
 		// Respawning
 		if(@arena['respawnmode'] == 'mob'
