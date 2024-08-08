@@ -241,7 +241,7 @@ proc _open_rules_menu(@objective) {
 		if(@option['shown']) {
 			if(@option['default']) {
 				if(is_integral(@option['default'])) {
-					if(@option['default'] > 127) {
+					if(@option['default'] > 99) {
 						@menu[@index] = @activated[];
 						@menu[@index]['meta']['display'] = color('green').@option['default'];
 						@menu[@index]['qty'] = array_index(@option['values'], @option['default']);
@@ -324,7 +324,7 @@ proc _open_rules_menu(@objective) {
 						@rule['value'] = @values[@index];
 					}
 					if(@rule['value']) {
-						if(@rule['value'] > 127) {
+						if(@rule['value'] > 99) {
 							@item['meta']['display'] = color('green').@rule['value'];
 							@item['qty'] = @index + 1;
 						} else {
