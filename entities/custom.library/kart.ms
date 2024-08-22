@@ -217,7 +217,7 @@ array proc _kart_spawn(@loc, @player, @design, @camdist = 4.0) {
 	set_peffect(@player, 'invisibility', 1, -1, true, false, false);
 	set_entity_invulnerable(puuid(@player), true);
 	set_pexp(@player, 0);
-	create_bar(@player.'kart', array(style: 'SEGMENTED_10', percent: 0.0));
+	try(create_bar(@player.'kart', array(style: 'SEGMENTED_10', percent: 0.0)))
 	bar_add_player(@player.'kart', @player);
 	return(@kart);
 }
