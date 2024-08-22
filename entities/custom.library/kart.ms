@@ -223,10 +223,16 @@ array proc _kart_spawn(@loc, @player, @design, @camdist = 4.0) {
 }
 
 proc _kart_remove(@player, @kart) {
-	remove_bar(@player.'kart');
 	if(ponline(@player)) {
-		clear_peffects(@player);
-		set_entity_invulnerable(puuid(@player), false);
+		// double check if they have not switched to new kart
+		@vehicle = pvehicle(@player);
+		if(!@vehicle || @vehicle === @kart['camera'] || entity_type(@vehicle) !== 'BLOCK_DISPLAY') {
+			clear_peffects(@player);
+			set_entity_invulnerable(puuid(@player), false);
+			remove_bar(@player.'kart');
+		}
+	} else {
+		remove_bar(@player.'kart');
 	}
 	foreach(@rider in get_entity_riders(@kart['base'])) {
 		entity_remove(@rider);
@@ -635,15 +641,15 @@ proc _kart_tick(@player, @kart, @race) {
 		@cameraLoc['z'] -= @cameraOffset['z'];
 		set_entity_loc(@camera, @cameraLoc);
 
-		// Check movement on course
-		if(@race) {
-			call_proc(@race['onMove'], @player, @loc, @race);
+		try {
+			update_bar(@player.'kart', array(
+				percent: abs(@kart['velocity']),
+				color: if(@kart['velocity'] < 0.0, 'RED', if(@kart['velocity'] > 0.7975, 'YELLOW', 'WHITE')),
+				title: 'Speed: '.round(@kart['velocity'] * 20, 1).' m/s'));
+		} catch(NotFoundException @ex) {
+			create_bar(@player.'kart', array(style: 'SEGMENTED_10', percent: 0.0));
+			bar_add_player(@player.'kart', @player);
 		}
-
-		update_bar(@player.'kart', array(
-			percent: abs(@kart['velocity']),
-			color: if(@kart['velocity'] < 0.0, 'RED', if(@kart['velocity'] > 0.7975, 'YELLOW', 'WHITE')),
-			title: 'Speed: '.round(@kart['velocity'] * 20, 1).' m/s'));
 
 		if(@kart['explode']) {
 			clear_task();
@@ -683,6 +689,9 @@ proc _kart_tick(@player, @kart, @race) {
 					call_proc(@race['onMove'], @player, @loc, @race);
 				}
 			});
+		} else if(@race) {
+			// Check movement on course
+			call_proc(@race['onMove'], @player, @loc, @race);
 		}
 	});
 }
