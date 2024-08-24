@@ -174,10 +174,10 @@ foreach(@t: @tier in @tiers) {
 							@previousTime = @time[2];
 							@tied = 0;
 						}
-						if(@time[0] == @uuid) {
+						if(@time[0] === @uuid) {
 							@item['qty'] = @i + 1 - @tied;
 							break();
-						} else if(@i == 126) {
+						} else if(@i == 98) {
 							break();
 						}
 					}
