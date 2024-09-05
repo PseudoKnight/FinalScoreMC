@@ -102,17 +102,47 @@
 	});
 <<<
 
-*:/effect $target $effect [$strength=0] [$length=30] = >>>
-	if(!has_permission('command.effect')) {
-		die();
-	}
-	_execute_on($target, closure(@uuid) {
-		if($effect == 'milk') {
-			clear_peffects(@uuid);
-		} else {
-			set_peffect(@uuid, $effect, $strength, $length);
+/**
+	Override for vanilla command. Uses vanilla if given "give" or "clear" arguments.
+	Args: effect_or_milk [strength=0] [seconds=30] [hide_particles] [hide_icon]
+ */
+*:/effect $ = >>>
+	@args = parse_args($);
+	if(@args[0] === 'give' || @args[0] === 'clear') {
+		run('/effect '.$);
+	} else {
+		if(!has_permission('command.effect')) {
+			die();
 		}
-	});
+		@selector = @args[0];
+		@effect = @args[1];
+		@strength = 0;
+		@seconds = 30;
+		@hideParticles = false;
+		@hideIcon = false;
+		if(array_size(@args) > 2) {
+			@strength = @args[2];
+			if(array_size(@args) > 3) {
+				@seconds = @args[3];
+				if(array_size(@args) > 4) {
+					for(@i = 4, @i < array_size(@args), @i++) {
+						if(@args[@i] === 'hide_particles') {
+							@hideParticles = true;
+						} else if(@args[@i] === 'hide_icon') {
+							@hideIcon = true;
+						}
+					}
+				}
+			}
+		}
+		_execute_on(@selector, closure(@uuid) {
+			if(@effect === 'milk') {
+				clear_peffects(@uuid);
+			} else {
+				set_peffect(@uuid, @effect, @strength, @seconds, true, !@hideParticles, !@hideIcon);
+			}
+		});
+	}
 <<<
 
 /velocity $target $x $y $z [$double] = >>>
