@@ -49,42 +49,59 @@ proc _get_nearby_player(@loc, @maxRange) {
 	This executes a closure on one or more targets (if any) based on a limited set of vanilla player selector patterns
 */
 proc _execute_on(@target, @closure) {
-	@players = null;
-	if(@target[0] == '@') {
-		if(length(@target) < 2) {
-			return(0);
-		}
+	if(length(@target) < 7 && @target !== '@s' && @target !== '@p') {
+		// do not accept most selectors without parameters
 		@loc = get_command_block();
-		if(!@loc) {
-			@loc = ploc();
+		if(@loc) {
+			@loc = array_normalize(@loc)[0..3];
+			@player = _get_nearby_player(@loc, 16);
+			if(@player) {
+				tmsg(@player, 'Nearby CommandBlock used unallowed selector: '.@target);
+			}
+			console(@loc.' has '.@target.' selector.');
+		} else {
+			msg('Selector is not allowed: '.@target);
 		}
+		return(0);
+	}
+	@players = null;
+	try {
+		@players = select_entities(@target);
+	} catch(FormatException @ex) {
+		// legacy selectors
+		if(@target[0] === '@') {
+			@loc = get_command_block();
+			if(!@loc) {
+				@loc = ploc();
+			}
 
-		@maxRange = 128;
-		if(length(@target) > 4) {
-			@filters = split(',', substr(@target, 3, length(@target) - 1));
-			foreach(@filter in @filters) {
-				@value = split('=', @filter);
-				if(@value[0] == 'r') {
-					@maxRange = double(@value[1]);
-				} else if(@value[0] == 'distance') {
-					@maxRange = double(split('..', @value[1])[1]);
+			@maxRange = 128;
+			if(length(@target) > 4) {
+				@filters = split(',', substr(@target, 3, length(@target) - 1));
+				foreach(@filter in @filters) {
+					@value = split('=', @filter);
+					if(@value[0] === 'r') {
+						@maxRange = double(@value[1]);
+					} else if(@value[0] === 'distance') {
+						@maxRange = double(split('..', @value[1])[1]);
+					}
 				}
 			}
-		}
 
-		if(@target[1] == 'p') {
-			// single player selector
-			@player = _get_nearby_player(@loc, @maxRange);
-			if(!@player) {
-				return(0);
+			if(@target[1] === 'p') {
+				// single player selector
+				@player = _get_nearby_player(@loc, @maxRange);
+				if(!@player) {
+					return(0);
+				}
+				@players = array(@player);
+			} else if(@target[1] === 'a') {
+				// multi player selector
+				@players = players_in_radius(@loc, @maxRange);
 			}
-			@players = array(@player);
-		} else if(@target[1] == 'a') {
-			// multi player selector
-			@players = players_in_radius(@loc, @maxRange);
+		} else if(ponline(@target) && !get_command_block()) {
+			@players = array(@target);
 		}
-	} else if(ponline(@target) && !get_command_block()) {
-		@players = array(@target);
 	}
 
 	if(!@players) {
