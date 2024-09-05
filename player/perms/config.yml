@@ -196,6 +196,7 @@ builder:
       worldedit.brush.*: true
       worldedit.clipboard.*: true
       worldedit.fast: true
+      worldedit.perf: true
       worldedit.generation.*: true
       worldedit.global-mask: true
       worldedit.history.*: true
@@ -224,6 +225,7 @@ builder:
       worldedit.brush.*: true
       worldedit.clipboard.*: true
       worldedit.fast: true
+      worldedit.perf: true
       worldedit.generation.*: true
       worldedit.global-mask: true
       worldedit.history.*: true
