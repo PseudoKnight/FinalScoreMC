@@ -4,6 +4,9 @@ register_command('sign', array(
 	permission: 'command.sign',
 	tabcompleter: closure(return(array())),
 	executor: closure(@alias, @sender, @args, @info) {
+		if(!@args) {
+			return(false);
+		}
 		@sign = pcursor();
 		if(!sk_can_build(@sign)) {
 			die(color('gold').'You cannot build here.');
