@@ -90,7 +90,8 @@ proc _waves_start(@waves) {
 	}
 
 	@waves['binds'][] = bind('player_teleport', null, null, @event, @waves) {
-		if(@waves['world'] === @event['to']['world'] && (@event['type'] === 'PLUGIN' || @event['type'] === 'SPECTATE')) {
+		if((@event['type'] === 'PLUGIN' || @event['type'] === 'SPECTATE')
+		&& (@waves['world'] === @event['to']['world'] || @waves['world'] === @event['from']['world'])) {
 			@from = array_contains(sk_regions_at(@event['from']), @waves['region']);
 			@to = array_contains(sk_regions_at(@event['to']), @waves['region']);
 			if(@from && !@to) {
