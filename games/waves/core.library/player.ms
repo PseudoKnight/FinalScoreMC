@@ -40,6 +40,7 @@ proc _waves_add_player(@player, @waves) {
 	if(array_index_exists(@c, 'title')) {
 		title(@player, @c['title'], if(array_index_exists(@c, 'subtitle'), '('.@c['subtitle'].')', ''), 20, 40, 20);
 	}
+	return(true);
 }
 
 proc _waves_remove_player(@player, @waves) {

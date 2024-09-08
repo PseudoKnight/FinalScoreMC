@@ -90,7 +90,7 @@ proc _waves_start(@waves) {
 	}
 
 	@waves['binds'][] = bind('player_teleport', null, null, @event, @waves) {
-		if(@event['type'] == 'PLUGIN' || @event['type'] == 'SPECTATE') {
+		if(@waves['world'] === @event['to']['world'] && (@event['type'] === 'PLUGIN' || @event['type'] === 'SPECTATE')) {
 			@from = array_contains(sk_regions_at(@event['from']), @waves['region']);
 			@to = array_contains(sk_regions_at(@event['to']), @waves['region']);
 			if(@from && !@to) {
@@ -100,11 +100,13 @@ proc _waves_start(@waves) {
 				} else if(array_contains(@waves['players'], player())) {
 					_waves_remove_player(player(), @waves);
 				}
-			} else if(@to && !@from) {
+			} else if(@to) {
 				if(@waves['wave'] < 2) {
 					set_timeout(50, closure() {
-						if(pworld() == @waves['world']) {
-							_waves_add_player(player(), @waves);
+						if(pworld() === @waves['world']) {
+							if(!_waves_add_player(player(), @waves)) {
+								_waves_add_spectator(player(), @waves);
+							}
 						}
 					});
 				} else {
