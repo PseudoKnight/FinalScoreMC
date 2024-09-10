@@ -108,6 +108,8 @@ proc _get_random_wave(@random, @waveNum) {
 		@numTypes--;
 	}
 
+	@wave['effects'] = array(array(id: 'regeneration', strength: 1, seconds: 6));
+
 	if(@waveNum == 50) {
 		if(@wave['mobs'][0]['type'] == 'WARDEN') {
 			@wave['music'] = 'music.overworld.deep_dark';
@@ -125,7 +127,7 @@ proc _get_random_wave(@random, @waveNum) {
 	} else {
 		@wave['bossbar'] = color('bold').@waveNum .': '.@wave['mobs'][0]['noun'];
 	}
-	console('Wave #'.@waveNum.': '.@wave['bossbar']);
+	console('Wave '.@wave['bossbar']);
 
 	if(@free) {
 		res_free_resource(@random);

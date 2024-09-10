@@ -356,6 +356,16 @@ proc _waves_start(@waves) {
 							}
 						}
 					}
+					if(array_index_exists(@wave, 'effects')) {
+						foreach(@p in @waves['players']) {
+							foreach(@effect in @wave['effects']) {
+								set_peffect(@p, @effect['id'], @effect['strength'], @effect['seconds'],
+									array_get(@effect, 'ambient', true),
+									array_get(@effect, 'particles', true),
+									array_get(@effect, 'icon', true));
+							}
+						}
+					}
 					if(array_index_exists(@wave, 'subtitle')) {
 						@waves['subtitle'] = @wave['subtitle'];
 					}
