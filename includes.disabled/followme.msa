@@ -1,0 +1,51 @@
+/**
+ * Makes nearby item display (particularly player heads) rotate towards nearby player.
+ * This is a test script not meant for production.
+ * @command
+ */
+/followme = >>>
+	@displays = entities_in_radius(ploc(), 8, 'ITEM_DISPLAY');
+	if(!@displays) {
+		die('No item display in range.');
+	}
+	@display = @displays[0];
+	@look = array(yaw: 0.0, pitch: 0.0);
+	set_interval(500, closure(){
+		if(psneaking()) {
+			// end test
+			clear_task();
+		}
+
+		@origin = location_shift(entity_loc(@display), 'up', 0.2);
+		@target = location_shift(ploc(), 'up', 2.8);
+		@pitch = get_pitch(@target, @origin);
+		if(abs(@pitch) == 90.0) {
+			die();
+		}
+		@yaw = get_yaw(@target, @origin);
+
+		// Check if orientation needs to be updated
+		if(@look['yaw'] == @yaw && @look['pitch'] == @pitch) {
+			die();
+		}
+		@delta = abs(@look['yaw'] - @yaw);
+
+		// get quaternion rotation
+		@y = -to_radians(@yaw) * 0.5;
+		@p = to_radians(@pitch) * 0.5;
+		@leftRotation = array(
+			w: cos(@p) * cos(@y),
+			x: sin(@p) * cos(@y),
+			y: cos(@p) * sin(@y),
+			z: -sin(@p) * sin(@y),
+		);
+		set_display_entity(@display, array(
+			startinterpolation: 0,
+			interpolationduration: min(10, ceil(@delta / 3)),
+			transformation: array(
+				leftRotation: @leftRotation)));
+
+		@look['yaw'] = @yaw;
+		@look['pitch'] = @pitch;
+	});
+<<<
