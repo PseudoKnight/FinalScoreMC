@@ -410,6 +410,11 @@ proc _waves_start(@waves) {
 				@r = array_rand(@entities)[0];
 				if(!entity_exists(@entities[@r]) || !array_contains(sk_regions_at(entity_loc(@entities[@r])), @waves['region'])) {
 					array_remove(@entities, @r);
+				} else {
+					@target = get_mob_target(@entities[@r]);
+					if(!@target) {
+						set_mob_target(@entities[@r], puuid(array_get_rand(@waves['players'])));
+					}
 				}
 			}
 		} catch(Exception @ex) {
