@@ -484,6 +484,10 @@ proc _waves_end(@waves, @win) {
 			@reward = @waveNum - @record;
 			tmsg(@p, color('gold').'+ '.@reward.' Coins'.color('white').' for new personal best');
 			_acc_add(@p, @reward);
+			if(function_exists('discord_broadcast')) {
+				discord_broadcast('minecraft_chat', array(embed: array(title: 
+					@p.' made it to Wave '.@waveNum.' in '._to_upper_camel_case(@waves['region']))));
+			}
 		}
 	}
 }
