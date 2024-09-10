@@ -7,6 +7,7 @@ proc _waves_add_player(@player, @waves) {
 	}
 	@c = @waves['config'];
 	@waves['players'][] = @player;
+	@waves['allplayers'][@player] = array(wave: @waves['wave']);
 	set_pscoreboard(@player, 'waves'.@waves['region']);
 	bar_add_player('waves'.@waves['region'], @player);
 	create_bar('waves'.@waves['region'].@player, array(visible: false, color: 'YELLOW'));

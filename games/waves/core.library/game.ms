@@ -18,6 +18,7 @@ proc _waves_prepare(@name, @arena, @region, @world) {
 		trigger: null,
 		binds: array(),
 		task:  null,
+		allplayers: associative_array(),
 	);
 	if(array_index_exists(@waves['config'], 'title')) {
 		_add_activity('waves'.@region, _to_upper_camel_case(@region).': '.@waves['config']['title'], @region, @world);
@@ -329,12 +330,13 @@ proc _waves_start(@waves) {
 			} else if(array_index_exists(@waves['config'], 'maxWaves') && @waves['wave'] == @waves['config']['maxWaves']) {
 				_waves_end(@waves, true);
 			} else if(!@entities) {
+				@waves['wave']++;
+				@waveNum = @waves['wave'];
 				@p = null;
 				foreach(@p in @waves['players']) {
 					play_sound(ploc(@p), array(sound: 'BLOCK_ENCHANTMENT_TABLE_USE', pitch: 0.5), @p);
+					@waves['allplayers'][@p]['wave'] = @waveNum;
 				}
-				@waves['wave']++;
-				@waveNum = @waves['wave'];
 				try {
 					@wave = if(@waves['name'] == 'random', _get_random_wave(null, @waveNum), @waves['config']['waves'][@waveNum]);
 					if(array_index_exists(@wave, 'title')) {
@@ -469,5 +471,19 @@ proc _waves_end(@waves, @win) {
 		}
 		stop_named_sound(@p, @waves['music'], 'RECORDS');
 		_waves_remove_spectator(@p, @waves);
+	}
+	foreach(@p: @data in @waves['allplayers']) {
+		@record = get_value('waves', @waves['region'], @waves['name'], puuid(@p, true));
+		if(!@record) {
+			@record = 0;
+		}
+		@waveNum = @data['wave'];
+		if(@waveNum > @record) {
+			store_value('waves', @waves['region'], @waves['name'], puuid(@p, true), @waveNum);
+			tmsg(@p, colorize("Made it to &aWave @waveNum&f to beat your previous best of &eWave @record&f."));
+			@reward = @waveNum - @record;
+			tmsg(@p, color('gold').'+ '.@reward.' Coins'.color('white').' for new personal best');
+			_acc_add(@p, @reward);
+		}
 	}
 }
