@@ -407,13 +407,25 @@ proc _kart_tick(@player, @kart, @race) {
 			@origin['z'] += @normalizedVelocity['z'] * @dist2bumper;
 			@origin['x'] -= @right['x'] * 0.5;
 			@origin['z'] -= @right['z'] * 0.5;
-			@hit = ray_trace(@origin, 0.6 - @vertical)['location'];
+			@trace = ray_trace(@origin, 0.6 - @vertical);
+			@hit = @trace['location'];
+			if(@trace['entities']) {
+				@hit = @trace['entities'][0]['location'];
+				@hit['y'] += 1;
+				set_entity_velocity(@trace['entities'][0]['uuid'], @velocity);
+			}
 			@isLeft = true;
 			if(@hit['y'] + 0.001 <= @loc['y']) {
 				@isLeft = false;
 				@origin['x'] += @right['x'];
 				@origin['z'] += @right['z'];
-				@hit = ray_trace(@origin, 0.6 - @vertical)['location'];
+				@trace = ray_trace(@origin, 0.6 - @vertical);
+				@hit = @trace['location'];
+				if(@trace['entities']) {
+					@hit = @trace['entities'][0]['location'];
+					@hit['y'] += 1;
+					set_entity_velocity(@trace['entities'][0]['uuid'], @velocity);
+				}
 			}
 			if(@hit['y'] > @loc['y']) {
 				@magnitude = abs(@kart['velocity']);
