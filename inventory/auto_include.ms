@@ -100,14 +100,14 @@ proc _minify_inv(@inv, @keepnulls = false) {
 		Reduces an item array down to their necessary components to recreate the item.
 	*/
 	proc _minify_item(@item) {
-		if(@item['qty'] == 1) {
+		if(@item['qty'] < 2) {
 			array_remove(@item, 'qty');
 		}
 		if(is_null(@item['meta'])) {
 			array_remove(@item, 'meta');
 		} else {
 			@meta = @item['meta'];
-			if(array_size(@meta['enchants']) == 0) {
+			if(!@meta['enchants']) {
 				array_remove(@meta, 'enchants');
 			} else {
 				foreach(@enchant: @enchantArray in @meta['enchants']) {
@@ -129,10 +129,10 @@ proc _minify_inv(@inv, @keepnulls = false) {
 			if(is_null(@meta['tags'])) {
 				array_remove(@meta, 'tags');
 			}
-			if(@meta['repair'] == 0) {
+			if(!@meta['repair']) {
 				array_remove(@meta, 'repair');
 			}
-			if(array_size(@meta['flags']) == 0) {
+			if(!@meta['flags']) {
 				array_remove(@meta, 'flags');
 			}
 			if(array_index_exists(@meta, 'damage')) {
