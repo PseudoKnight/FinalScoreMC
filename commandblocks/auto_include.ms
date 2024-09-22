@@ -53,8 +53,8 @@ proc _execute_on(@target, @closure) {
 		// do not accept most selectors without parameters
 		@loc = get_command_block();
 		if(@loc) {
-			@loc = array_normalize(@loc)[0..3];
 			@player = _get_nearby_player(@loc, 16);
+			@loc = array_normalize(@loc)[0..3];
 			if(@player) {
 				tmsg(@player, 'Nearby CommandBlock used unallowed selector: '.@target);
 			}
