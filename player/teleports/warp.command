@@ -3,7 +3,7 @@ foreach(@w in array_keys(get_values('warp'))) {
 	@warps[] = split('.', @w)[1];
 }
 foreach(@w in _worlds_config()) {
-	if(is_array(@w)) {
+	if(is_array(@w) && @w['teleports']) {
 		@warps[] = replace(to_lower(@w['name']), ' ', '');
 	}
 }
