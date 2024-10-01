@@ -10,8 +10,6 @@ proc _start_game(@course, @loc) {
 		'players': associative_array(),
 		'spectators': array(),
 		'lowestHole': 1,
-		'holecolors': array('PINK', 'GRAY', 'LIGHT_GRAY', 'CYAN', 'PURPLE', 'BLUE', 'BROWN', 'GREEN', 'RED'),
-		'parcolors': array('WHITE', 'ORANGE', 'MAGENTA', 'LIGHT', 'YELLOW', 'LIME', 'PINK', 'GRAY'),
 	);
 
 	_create_scoreboards(@golf);
@@ -29,19 +27,24 @@ proc _start_game(@course, @loc) {
 		'&a&lSLIMEY&6&lGOLF &a\u2308\u2328 \uFE52\u2328\u2309&r\n'
 		.'&6&l[ How to Play ]&r\n'
 		.'- Place slime ball on starting location.\n'
-		.'- Right-click Slimey to start swing.\n'
-		.'- Wait for desired strength and then hit Slimey into the hole.'
+		.'- Right-click slime ball to start swing.\n'
+		.'- Wait for desired strength and then hit slime into the hole.'
 	), array_keys(@golf['players']));
 
 	# Place ball
-	bind('player_interact', array('id': @course), array('itemname': 'SLIME_BALL', 'button': 'right'), @event, @golf) {
+	bind('player_interact', array('id': @course), array(itemname: 'SLIME_BALL', button: 'right', block: 'WHITE_CONCRETE'), @event, @golf) {
 		if(array_index_exists(@golf['players'], player())
-		&& @event['block']
 		&& @event['facing'] === 'up'
-		&& string_ends_with(@event['block'], '_TERRACOTTA')
-		&& string_starts_with(@event['block'], @golf['holecolors'][@golf['players'][player()]['hole'] - 1])) {
+		&& is_sign_at(location_shift(@event['location'], 'down'))) {
 
 			@ball = @golf['players'][player()];
+			@hole = @ball['hole'];
+
+			# get hole data from sign
+			@sign = get_sign_text(location_shift(@event['location'], 'down'));
+			if(@sign[0] != @hole) {
+				die();
+			}
 
 			set_pinv(player(), null, null);
 			set_pexp(player(), 0);
@@ -69,18 +72,21 @@ proc _start_game(@course, @loc) {
 
 			_place_ball(@mobtype, @ballLoc, @ball, @golf['name']);
 
-			@hole = @ball['hole'];
 			if(!array_index_exists(@golf, @hole)) {
+				@par = 3;
+				if(is_integral(@sign[1])) {
+					@par = integer(@sign[1]);
+				}
 				@golf[@hole] = associative_array(
-					'loc': array(
+					loc: array(
 						@event['location']['x'],
 						@event['location']['y'] - 2,
 						@event['location']['z'],
 						@event['location']['world'],
 					),
-					'par': array_index(@golf['parcolors'], split('_', get_block(location_shift(@event['location'], 'down')), 1)[0]),
-					'strokes': associative_array(),
-					'total': associative_array(),
+					par: @par,
+					strokes: associative_array(),
+					total: associative_array(),
 				);
 				set_pscore('strokes', '--Par-------', @golf[@hole]['par'], @golf['name'].@hole);
 				set_block(@golf[@hole]['loc'], 'REDSTONE_BLOCK');
