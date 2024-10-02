@@ -225,8 +225,8 @@ proc _start_game(@course, @loc, @hole = 1) {
 				@v = entity_velocity(@ball['id']);
 				@block = _get_block_below(location_shift(@loc, 'down', 0.01), @v);
 				@hole = @ball['hole'];
-				if(@block === 'POWERED_RAIL') {
-					// do nothing
+				if(!@block || @block === 'POWERED_RAIL') {
+					// normal gravity
 				} else if(@block === 'BLACK_WOOL') { # if ball dropped into the hole
 					# check for birdie/eagle
 					@hits = plevel(@player);
