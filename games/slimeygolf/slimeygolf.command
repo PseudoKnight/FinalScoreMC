@@ -20,6 +20,6 @@ register_command('slimeygolf', array(
 		if(array_contains(get_scoreboards(), @course.'1')) {
 			die(color('gold').'This game is already active.');
 		}
-		_start_game(@course, @loc);
+		_start_game(@course, @loc, array_get(@args, 0, 1));
 	}
 ));

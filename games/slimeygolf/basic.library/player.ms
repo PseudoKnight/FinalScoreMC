@@ -1,10 +1,10 @@
 proc _add_player(@player, @golf) {
-	if(pmode(@player) === 'CREATIVE' || !_set_pactivity(@player, @golf['name'])) {
+	if(pmode(@player) === 'CREATIVE' || pmode(@player) === 'SPECTATOR' || !_set_pactivity(@player, @golf['name'])) {
 		return(false);
 	}
 	@golf['players'][@player] = array(
 		type: array_size(@golf['players']),
-		hole: 1,
+		hole: @golf['lowestHole'],
 		id: 0,
 		slime: 0,
 		velocity: array('x': 0, 'y': 0, 'z': 0),
