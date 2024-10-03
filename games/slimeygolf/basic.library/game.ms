@@ -52,12 +52,12 @@ proc _start_game(@course, @loc, @hole = 1) {
 
 			if(_ball_exists(@ball['id'])) {
 				_remove_ball(@ball, @golf['name']);
-				unbind('golf_swing1_'.player());
-				unbind('golf_swing2_'.player());
-				unbind('golf_hit_'.player());
 			} else {
 				set_plevel(player(), 0);
 			}
+			unbind('golf_swing1_'.player());
+			unbind('golf_swing2_'.player());
+			unbind('golf_hit_'.player());
 
 			@mobtype = 'MAGMA_CUBE';
 			if(@ball['type'] == 0 || @ball['type'] == 2) {
