@@ -384,10 +384,14 @@ proc _start_game(@course, @loc, @hole = 1) {
 				}
 
 				if(@golf[@hole]['minecart']) {
-					@carts = entities_in_radius(@loc, 1, 'MINECART');
-					if(@carts) {
-						set_entity_rider(@carts[0], @ball['id']);
-						continue();
+					@ball['cooldown']--;
+					if(@ball['cooldown'] <= 0) {
+						@carts = entities_in_radius(@loc, 1, 'MINECART');
+						if(@carts) {
+							set_entity_rider(@carts[0], @ball['id']);
+							@ball['cooldown'] = 10;
+							continue();
+						}
 					}
 				}
 
