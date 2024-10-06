@@ -176,41 +176,41 @@
 	@mode = 'toggle';
 	if($) {
 		@args = parse_args($);
-		try {
-			@player = player(@args[0]);
+		if(array_size(@args) >= 2) {
+			@mode = @args[1];
+			@player = _find_player(@args[0]);
 			if(@player != player() && !has_permission('command.gm.others')) {
 				die('You do not have permission to set another\'s game mode.');
 			} else if(pworld(@player) != pworld()) {
 				die('You do not have permission to set another\'s game mode in another world.');
 			}
-			if(array_size(@args) >= 2) {
-				@mode = @args[1];
-			}
-		} catch(PlayerOfflineException @ex) {
-			if(is_numeric(@args[0])) {
-				@mode = @args[0];
-			} else {
-				die('Who is that? Are they online?');
-			}
+		} else {
+			@mode = @args[0];
 		}
 	}
 
 	switch(to_lower(@mode)) {
 		case '0':
 		case 's':
+		case 'survival':
 			@mode = 'SURVIVAL';
 
 		case '1':
 		case 'c':
+		case 'creative':
 			@mode = 'CREATIVE';
 
 		case '2':
 		case 'a':
+		case 'adventure':
 			@mode = 'ADVENTURE';
 
 		case '3':
+		case 'sp':
+		case 'spectator':
 			@mode = 'SPECTATOR';
 
+		case 't':
 		case 'toggle':
 			@world_mode = _worlds_config()[pworld()]['mode'];
 			if(pmode(@player) == @world_mode) {
@@ -224,7 +224,7 @@
 			}
 
 		default:
-			die('Accepted modes: survival (0, s), creative (1, c), adventure (2, a), spectator (3), toggle (default)');
+			die(color('red').'Accepted modes: survival (0, s), creative (1, c), adventure (2, a), spectator (3, sp), toggle (t) [default]');
 	}
 
 	set_pmode(@player, @mode);
