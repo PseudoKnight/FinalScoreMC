@@ -79,8 +79,15 @@ proc _shard_create(@rules){
 			play_sound(ploc(), array(sound: 'BLOCK_FIRE_EXTINGUISH', volume: 0.5));
 			die();
 		}
+
+		// Copy files of region entities
+		try(copy_file("@base/@{world}@dim/entities/r.@x.@z.mca", "@base/shard/entities/r.@x.@z.mca"))
+		try(copy_file("@base/@{world}@dim/entities/r.@x2.@z.mca", "@base/shard/entities/r.@x2.@z.mca"))
+		try(copy_file("@base/@{world}@dim/entities/r.@x.@z2.mca", "@base/shard/entities/r.@x.@z2.mca"))
+		try(copy_file("@base/@{world}@dim/entities/r.@x2.@z2.mca", "@base/shard/entities/r.@x2.@z2.mca"))
+
 		@stop = time();
-		console('Copy region files ('.(@stop - @start).'ms)', false);
+		console('Copy region/entity files ('.(@stop - @start).'ms)', false);
 
 		set_timeout(50, closure(){
 			// Create shard
