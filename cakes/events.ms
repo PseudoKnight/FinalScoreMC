@@ -94,6 +94,9 @@ bind('player_interact', null, array(block: 'CAKE', button: 'right', hand: 'main_
 		// Cake achieved effects
 		psend_block_change(@event['location'], 'magenta_candle_cake[lit=true]');
 		make_effect(@event['location'], 'ENDER_SIGNAL');
+		foreach(@p in players_in_radius(@event['location'], 64)) {
+			stop_sound(@p, 'MUSIC_DISC_STAL');
+		}
 		play_sound(@event['location'], array(sound: 'MUSIC_DISC_STAL'));
 		@loc = @event['location'][];
 		@loc['x'] += 0.5;
@@ -101,12 +104,6 @@ bind('player_interact', null, array(block: 'CAKE', button: 'right', hand: 'main_
 		@loc['z'] += 0.5;
 		@cloud = spawn_entity('AREA_EFFECT_CLOUD', 1, @loc)[0];
 		set_entity_spec(@cloud, array(particle: 'NOTE', radius: 1, duration: 160));
-		set_timeout(8800, closure(){
-			// turn off music
-			foreach(@p in players_in_radius(@event['location'], 32)) {
-				stop_sound(@p, 'MUSIC_DISC_STAL');
-			}
-		});
 	});
 }
 
