@@ -296,7 +296,7 @@ register_command('entity', array(
 				}
 
 			case 'patrol':
-				if(array_size(@args) < 6) {
+				if(array_size(@args) < 3) {
 					return(false);
 				}
 				@loc = get_command_block();
@@ -306,24 +306,36 @@ register_command('entity', array(
 				@id = @args[1];
 				@data = array_get(@args, 2, null);
 				@offset = 0;
-				if(string_starts_with(@id, '{')) {
-					@id = json_decode(@id);
-				} else if(@data && string_starts_with(@data, '{'))  {
-					@data = json_decode(@data);
-					@data['type'] = @id;
-					@id = @data;
-					@offset = 1;
+				@entity = null;
+				@directions = null;
+				if(@id[0] === '@') {
+					@entities = select_entities(@id);
+					if(!@entities) {
+						die();
+					}
+					@entity = @entities[0];
+					@loc = entity_loc(@entity);
+					@directions = @args[cslice(2, -1)];
+				} else {
+					if(string_starts_with(@id, '{')) {
+						@id = json_decode(@id);
+					} else if(@data && string_starts_with(@data, '{'))  {
+						@data = json_decode(@data);
+						@data['type'] = @id;
+						@id = @data;
+						@offset = 1;
+					}
+					@loc = _relative_coords(@loc, @args[2 + @offset], @args[3 + @offset], @args[4 + @offset]);
+					@directions = @args[cslice(5 + @offset, -1)];
+
+					@loc = _center(@loc, 0.0);
+					@entity = _spawn_entity(@id, @loc, null, closure(@e) {
+						if(is_entity_living(@e)) {
+							set_entity_ai(@e, false);
+						}
+					});
 				}
 
-				@loc = _relative_coords(@loc, @args[2 + @offset], @args[3 + @offset], @args[4 + @offset]);
-				@directions = @args[cslice(5 + @offset, -1)];
-
-				@loc = _center(@loc, 0.0);
-				@entity = _spawn_entity(@id, @loc, null, closure(@e) {
-					if(is_entity_living(@e)) {
-						set_entity_ai(@e, false);
-					}
-				});
 				@speed = 0.1
 				@living = is_entity_living(@entity);
 				if(@living) {
@@ -351,10 +363,12 @@ register_command('entity', array(
 							// if target was within reach in this tick, queue any remaining directions
 							if(!@directions) {
 								clear_task();
-								foreach(@ent in get_entity_riders(@entity)) {
-									try(entity_remove(@ent));
+								if(@id[0] !== '@') {
+									foreach(@ent in get_entity_riders(@entity)) {
+										try(entity_remove(@ent));
+									}
+									entity_remove(@entity);
 								}
-								entity_remove(@entity);
 								return();
 							}
 							@next = array_remove(@directions, 0);
