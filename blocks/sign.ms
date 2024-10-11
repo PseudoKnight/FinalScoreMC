@@ -46,7 +46,7 @@ bind('player_interact', null, array(hand: 'MAIN_HAND', button: 'right'), @event)
 			}
 		}
 
-		if(sk_can_build(@loc) && pmode() == 'CREATIVE'
+		if(sk_can_build(@loc) && pmode() == 'CREATIVE' && !is_sign_waxed(@loc)
 		&& (!@event['item'] || (!string_ends_with(@event['item']['name'], 'DYE') && @event['item']['name'] != 'GLOW_INK_SAC'))) {
 			@colorCodes = false;
 			foreach(@i: @line in @sign) {
