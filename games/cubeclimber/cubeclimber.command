@@ -99,7 +99,7 @@ register_command('cubeclimber', array(
 				}
 				msg(color('green').color('bold').'Top Times');
 				@player = 0;
-				@time = 1;
+				@time = 2;
 				foreach(@this in @toptimes) {
 					msg(color('yellow').'[ '.@this[@time].' ] '.color('r').@this[@player]);
 				}
@@ -147,14 +147,14 @@ register_command('cubeclimber', array(
 						if(@i > 19) {
 							break();
 						}
-						if(@toptime[1] > @time) {
-							array_insert(@toptimes, array(@player, @time), @i);
+						if(@toptime[2] > @time) {
+							array_insert(@toptimes, array(@player, @uuid, @time), @i);
 							@top = true;
 							break();
 						}
 					}
 					if(!@top && array_size(@toptimes) < 19) {
-						@toptimes[] = array(@player, @time);
+						@toptimes[] = array(@player, @uuid, @time);
 					} else if(array_size(@toptimes) > 19) {
 						array_remove(@toptimes, 19);
 					}

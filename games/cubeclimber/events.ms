@@ -1,6 +1,7 @@
 # Calculate trophies
 bind('player_join', null, null, @event) {
 	queue_push(closure(){
+		@uuid = null;
 		try {
 			@uuid = puuid(player(), true);
 		} catch(PlayerOfflineException @ex) {
@@ -8,7 +9,7 @@ bind('player_join', null, null, @event) {
 		}
 		@toptimes = get_value('cubeclimber', 'toptimes');
 		foreach(@i: @this in @toptimes) {
-			if(@this[0] == player()) {
+			if(@this[1] === @uuid) {
 				@rank = '&e\u278A';
 				switch(@i) {
 					case 1:

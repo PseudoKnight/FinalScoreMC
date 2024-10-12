@@ -302,12 +302,12 @@ proc _cc_end(@winners, @world = 'custom') {
 				@top = false;
 				for(@i = 0, @i < 20, @i++) {
 					if(!@top) {
-						if(!array_index_exists(@toptimes, @i) || @time < @toptimes[@i][1]) {
-							array_insert(@toptimes, array(@p, @time), @i);
+						if(!array_index_exists(@toptimes, @i) || @time < @toptimes[@i][2]) {
+							array_insert(@toptimes, array(@p, @uuid, @time), @i);
 							@top = true;
 						}
 					} else {
-						if(array_index_exists(@toptimes, @i) && @toptimes[@i][0] == @p) {
+						if(array_index_exists(@toptimes, @i) && @toptimes[@i][1] == @uuid) {
 							array_remove(@toptimes, @i);
 						}
 					}
