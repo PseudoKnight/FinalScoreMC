@@ -30,7 +30,7 @@ proc _cc_generate(@world = 'custom') {
 	@densityStrength = 'LOW';
 	if(@density == 5) {
 		@densityStrength = 'MEDIUM';
-	} else if(@density == 6) {
+	} else if(@density == 4) {
 		@densityStrength = 'HIGH';
 	}
 	broadcast(colorize('&7[&6Cube&cClimber&7]&r Generating level with '.@densityStrength.' density...'), all_players(pworld()));
