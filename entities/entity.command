@@ -344,6 +344,7 @@ register_command('entity', array(
 
 				@target = @loc[];
 				@target['w'] = 0;
+				@target['s'] = @speed;
 				set_interval(50, closure(){
 					try {
 						if(@target['w'] > 0) {
@@ -358,8 +359,8 @@ register_command('entity', array(
 								@loc['yaw'] = @yaw;
 							}
 						}
-						set_entity_loc(@entity, location_shift(@loc, @target, min(@distance, @speed)));
-						if(@distance <= @speed) {
+						set_entity_loc(@entity, location_shift(@loc, @target, min(@distance, @target['s'])));
+						if(@distance <= @target['s']) {
 							// if target was within reach in this tick, queue any remaining directions
 							if(!@directions) {
 								clear_task();
@@ -374,7 +375,11 @@ register_command('entity', array(
 							@next = array_remove(@directions, 0);
 							foreach(@axis in split(',', @next)) {
 								@coord = @axis[0];
-								@target[@coord] += @axis[1..-1];
+								if(@coord === 's') {
+									@target[@coord] = @axis[1..-1];
+								} else {
+									@target[@coord] += @axis[1..-1];
+								}
 							}
 						}
 					} catch(Exception @ex) {
