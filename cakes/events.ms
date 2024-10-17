@@ -94,10 +94,11 @@ bind('player_interact', null, array(block: 'CAKE', button: 'right', hand: 'main_
 		// Cake achieved effects
 		psend_block_change(@event['location'], 'magenta_candle_cake[lit=true]');
 		make_effect(@event['location'], 'ENDER_SIGNAL');
-		foreach(@p in players_in_radius(@event['location'], 64)) {
+		@players = players_in_radius(@event['location'], 24);
+		foreach(@p in @players) {
 			stop_sound(@p, 'MUSIC_DISC_STAL');
 		}
-		play_sound(@event['location'], array(sound: 'MUSIC_DISC_STAL'));
+		play_sound(@event['location'], array(sound: 'MUSIC_DISC_STAL'), @players);
 		@loc = @event['location'][];
 		@loc['x'] += 0.5;
 		@loc['y'] += 0.5;
