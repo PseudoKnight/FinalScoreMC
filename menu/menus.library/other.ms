@@ -192,6 +192,16 @@
 		),
 	),
 );
+@menu[21] = array(
+	name: 'RED_SANDSTONE',
+	meta: array(
+		display: color('gold').'FrostBurn Golf',
+		lore: array(
+			color('white').'Minigolf course in a badlands fort (1 - 4 players)',
+			color('dark_gray').'Run: /warp frostburn',
+		),
+	),
+);
 @menu[27] = array(
 	name: 'ICE',
 	meta: array(
