@@ -1,5 +1,10 @@
 @tiers = array(
 	array(
+		name: 'beginner',
+		chatcolor: color('blue'),
+		dyecolor: 'BLUE',
+	),
+	array(
 		name: 'easy',
 		chatcolor: color('aqua'),
 		dyecolor: 'LIGHT_BLUE',
@@ -28,6 +33,11 @@
 		name: 'very-hard',
 		chatcolor: color('dark_purple'),
 		dyecolor: 'PURPLE',
+	),
+	array(
+		name: 'expert',
+		chatcolor: color('white'),
+		dyecolor: 'BLACK',
 	),
 	array(
 		name: 'other',

@@ -3,7 +3,7 @@ register_command('marathon', array(
 	usage: '/marathon <difficulty | numCourses:6,10,12,20>',
 	tabcompleter: closure(@alias, @sender, @args, @info) {
 		if(array_size(@args) == 1) {
-			return(_strings_start_with_ic(array('6', '10', '12', '20', 'easy', 'easy-medium', 'medium', 'medium-hard', 'hard', 'very-hard'), @args[-1]));
+			return(_strings_start_with_ic(array('6', '10', '12', '20', 'beginner', 'easy', 'easy-medium', 'medium', 'medium-hard', 'hard', 'very-hard', 'expert'), @args[-1]));
 		}
 		return(array());
 	},
@@ -28,7 +28,7 @@ register_command('marathon', array(
 				if(!array_contains(array(6, 10, 12, 20), @num)) {
 					die(color('gold').'Can only play 6, 10, 12, or 20 random courses. You gave: '.@num);
 				}
-			} else if(array_contains(array('easy', 'easy-medium', 'medium', 'medium-hard', 'hard', 'very-hard'), @args[0])) {
+			} else if(array_contains(array('beginner', 'easy', 'easy-medium', 'medium', 'medium-hard', 'hard', 'very-hard', 'expert'), @args[0])) {
 				@difficulty = @args[0];
 			} else {
 				return(false);

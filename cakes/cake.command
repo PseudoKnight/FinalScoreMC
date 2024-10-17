@@ -15,7 +15,7 @@ register_command('cake', array(
 		} else if(array_size(@args) == 4) {
 			return(_strings_start_with_ic(array('challenge', 'secret', 'coop'), @args[-1]));
 		} else if(array_size(@args) == 5) {
-			return(_strings_start_with_ic(array('easy', 'easy-medium', 'medium', 'medium-hard', 'hard', 'very-hard'), @args[-1]));
+			return(_strings_start_with_ic(array('beginner', 'easy', 'easy-medium', 'medium', 'medium-hard', 'hard', 'very-hard', 'expert'), @args[-1]));
 		}
 		return(array());
 	},
@@ -393,12 +393,14 @@ register_command('cake', array(
 					die(color('gold').'Requires a cake type: challenge, secret, coop.');
 				}
 				@chatcolor = associative_array(
+					'beginner': 'blue',
 					'easy': 'aqua',
 					'easy-medium': 'green',
 					'medium': 'yellow',
 					'medium-hard': 'gold',
 					'hard': 'dark_red',
 					'very-hard': 'dark_purple',
+					'expert': 'white',
 					'other': 'white',
 				);
 				@cakes = get_value('cakeinfo');
@@ -432,7 +434,7 @@ register_command('cake', array(
 					@list[] = array(
 						name: @id,
 						prefix: @prefix,
-						rate: round((time() - @time) / 604800000 / (array_size(@cake['players']) - @min), 2),
+						rate: round((time() - @time) / 604800000 / (array_size(@cake['players'])), 2),
 						players: array_size(@cake['players']),
 					);
 				}
@@ -452,8 +454,8 @@ register_command('cake', array(
 				msg('/cake stats <type> '.color('gray').'Shows the completion frequency for all cakes of this type.');
 				if(has_permission('group.engineer')) {
 					msg('/cake set [id] <coins> [type] [difficulty]'.color('gray').'Sets the data for the specified cake.'
-						.' Type can be "secret", "challenge", or "coop". Difficulty can be "easy", "easy-medium", "medium",'
-						.' "medium-hard", "hard", or "very-hard".');
+						.' Type can be "secret", "challenge", or "coop". Difficulty can be "beginner", "easy", "easy-medium", "medium",'
+						.' "medium-hard", "hard", "very-hard", or "expert".');
 					msg('/cake move <id> '.color('gray').'Moves the prize cake to a new location.');
 					msg('/cake tp <id> '.color('gray').'Teleports you to a cake.');
 					msg('/cake rename <old> <new> '.color('gray').'Renames a cake.');
