@@ -112,40 +112,6 @@ bind('player_death', null, null, @event) {
 	}
 }
 
-/*
-	Logs spawning of a wither
-*/
-bind('block_place', null, array(block: 'WITHER_SKELETON_SKULL'), @event) {
-	@loc = @event['location'];
-	foreach(@dir in array('north', 'south', 'east', 'west', 'up', 'down')) {
-		@block = get_block(location_shift(@loc, @dir));
-		if(@block == 'SOUL_SAND' || @block == 'SOUL_SOIL') {
-			@player = player();
-			@stringLoc = floor(@loc['x']).','.floor(@loc['y']).','.floor(@loc['z']).' '._world_name(@loc['world']);
-			console("@player spawning a wither at @stringLoc!", false);
-			break();
-		}
-	}
-}
-
-# Button commands
-bind('player_interact', null, array('block': 'STONE_BUTTON', 'button': 'right'), @event) {
-	@sign = location_shift(@event['location'], 'up');
-	if(is_sign_at(@sign)) {
-		@line = get_sign_text(@sign);
-		if(@type = reg_match('\u00A7[0-9a-f]{1}\\[(.+)\\]', @line[1])) {
-			run_cmd('/'.to_lower(trim(@type[1])).' '.to_lower(trim(@line[2])).' '.to_lower(trim(@line[3])));
-		}
-	}
-}
-
-# prevent enderdragon egg teleportation
-bind('player_interact', null, array('block': 'DRAGON_EGG'), @event) {
-	if(!_is_survival_world(@event['world']) && (@event['button'] == 'right' || pmode() != 'CREATIVE')) {
-		cancel();
-	}
-}
-
 # spawner eggs
 bind('player_interact', null, array('button': 'right'), @event) {
 	@item = @event['item'];
@@ -236,30 +202,6 @@ bind('player_enter_bed', null, null, @event) {
 	}
 }
 
-# Anti-xray helper
-bind('block_break', null, array(block: 'DIAMOND_ORE'), @event) {
-	if(!_is_survival_world(pworld())) {
-		die();
-	}
-	@loc = @event['location'];
-	set_timeout(1, closure(){ // right after event finished, so current block is gone
-		@report = true;
-		for(@x = @loc['x'] - 1, @x <= @loc['x'] + 1, @x++) {
-			for(@y = @loc['y'] - 1, @y <= @loc['y'] + 1, @y++) {
-				for(@z = @loc['z'] - 1, @z <= @loc['z'] + 1, @z++) {
-					if(get_block(array(@x, @y, @z, pworld())) === 'DIAMOND_ORE') {
-						@report = false;
-					}
-				}
-			}
-		}
-
-		if(@report) {
-			@msg = color('c').'[!] '.display_name().color('r').' found diamonds';
-			broadcast(@msg, 'group.moderator');
-		}
-	});
-}
 
 # painting cycler
 bind('player_interact_entity', null, array(clicked: 'PAINTING', hand: 'main_hand'), @event) {
@@ -447,16 +389,6 @@ bind('vehicle_enter', null, array(vehicletype: 'MINECART', passengertype: 'PLAYE
 				unbind();
 				unbind(@moveBind);
 			}
-		}
-	}
-}
-
-// Protect farmland when using feather falling boots
-bind('pressure_plate_activated', null, null, @event) {
-	if(get_block(@event['location']) == 'FARMLAND') {
-		@item = pinv(player(), 100);
-		if(@item && @item['meta'] && array_index_exists(@item['meta']['enchants'], 'feather_falling')) {
-			cancel();
 		}
 	}
 }
