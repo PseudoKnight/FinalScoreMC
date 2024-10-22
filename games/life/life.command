@@ -104,21 +104,25 @@ register_command('life', array(
 						// Loop through adjacent grid locations
 						// respecting wrapping and other wall states
 						for(@rx = @x - 1, @rx <= @x + 1, @rx++) {
-							if(@walls != 'wrap' && (@rx < 0 || @rx == @xWidth)) {
-								if(@walls == 'alive') {
+							if(@walls !== 'wrap' && (@rx < 0 || @rx == @xWidth)) {
+								if(@walls === 'alive') {
 									@count[@current] += 3;
+								} else {
+									@count[0] += 3;
 								}
 								continue();
 							}
 							for(@rz = @z - 1, @rz <= @z + 1, @rz++) {
-								if(@walls != 'wrap' && (@rz < 0 || @rz == @zWidth)) {
-									if(@walls == 'alive') {
+								if(@walls !== 'wrap' && (@rz < 0 || @rz == @zWidth)) {
+									if(@walls === 'alive') {
 										@count[@current]++;
+									} else {
+										@count[0]++;
 									}
-									continue();
+								} else {
+									@blockType = @grid[if(@rx == @xWidth, 0, @rx)][if(@rz == @zWidth, 0, @rz)];
+									@count[@blockType]++;
 								}
-								@blockType = @grid[if(@rx == @xWidth, 0, @rx)][if(@rz == @zWidth, 0, @rz)];
-								@count[@blockType]++;
 							}
 						}
 
