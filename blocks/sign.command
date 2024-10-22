@@ -29,6 +29,8 @@ register_command('sign', array(
 			 if(array_contains_ic(array('acacia', 'bamboo', 'birch', 'cherry', 'crimson', 'dark_oak', 'jungle', 'mangrove', 'oak', 'spruce', 'warped'), @args[0])) {
 				@linesFront = get_sign_text(@sign, 'FRONT');
 				@linesBack = get_sign_text(@sign, 'BACK');
+				@glowingFront = is_sign_text_glowing(@sign, 'FRONT');
+				@glowingBack = is_sign_text_glowing(@sign, 'BACK');
 				if(string_starts_with(@signData['block'], 'dark_oak')) {
 					@signData['block'] = to_lower(@args[0]).'_'.split('_', @signData['block'], 2)[2];
 				} else {
@@ -37,6 +39,8 @@ register_command('sign', array(
 				set_blockdata(@sign, @signData);
 				set_sign_text(@sign, 'FRONT', @linesFront);
 				set_sign_text(@sign, 'BACK', @linesBack);
+				set_sign_text_glowing(@sign, 'FRONT', @glowingFront);
+				set_sign_text_glowing(@sign, 'BACK', @glowingBack);
 				return(true);
 			}
 		}
