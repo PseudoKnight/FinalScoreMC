@@ -297,7 +297,11 @@ register_command('entity', array(
 
 			case 'patrol':
 				if(array_size(@args) < 3) {
-					return(false);
+					die('Takes an entity type (with optional json) or a vanilla entity selector, followed by relative coords.'
+						.' Directions are space separated relative coordinate directions and distances to target location.'
+						.' They start with a coordinate followed by a number, and can be combined with commas.'
+						.' For example: "x2,z-2 z1 x-2 z1".'
+						.' In addition you can use "w20" to wait 20 ticks, or "s1.0" to change the speed to 1.0 m/s.');
 				}
 				@loc = get_command_block();
 				if(!@loc) {
@@ -404,8 +408,8 @@ register_command('entity', array(
 				msg('/entity info <entity> '.color('gray').'Displays information about custom entity');
 				msg('/entity set <entity> <setting> <value> '.color('gray').'Sets a value to the custom entity');
 				msg('/entity delete <entity> [setting] '.color('gray').'Deletes entity or setting');
-				msg('/entity spawn <entity> '.color('gray').'Spawns entity where you are looking');
-				msg('/entity patrol <entity> <~x ~y ~z> <directions...>'.color('gray').'Spawns temporary entity and directs it');
+				msg('/entity spawn <entity> [json]'.color('gray').'Spawns entity where you are looking');
+				msg('/entity patrol <entity [~x ~y ~z]|selector> <directions...>'.color('gray').'Direct a new or existing entity');
 				msg('/entity reload '.color('gray').'Reloads custom entities from YML configuration.');
 
 		}
