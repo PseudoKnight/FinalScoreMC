@@ -96,11 +96,11 @@ bind('player_interact', null, array('itemname': 'FIREWORK_ROCKET', 'button': 'ri
 			@ploc = ploc();
 			@loc['yaw'] = @ploc['yaw'];
 			@loc['pitch'] = @ploc['pitch'];
+			@loc['x'] += 0.5;
+			@loc['z'] += 0.5;
 		} else {
-			@loc = location_shift(ploc(), 'up');
+			@loc = location_shift(ploc(), 'up', 2.5);
 		}
-		@loc['x'] += 0.5;
-		@loc['z'] += 0.5;
 
 		@colors = array();
 		for(@i = 0, @i < 3, @i++) {
@@ -124,7 +124,11 @@ bind('player_interact', null, array('itemname': 'FIREWORK_ROCKET', 'button': 'ri
 				);
 			}
 			@firework = launch_firework(@loc, @meta);
-			if(@f > 1 && !rand(4)) {
+			if(@event['action'] !== 'right_click_block') {
+				set_entity_spec(@firework, array(angled: true));
+				set_entity_velocity(@firework, get_vector(@loc));
+			}
+			if(@f > 1 && !rand(3)) {
 				set_metadata(@firework, 'mob', array_get_rand(array('chicken', 'bat', 'pig')));
 			}
 			if(pworld() == 'dev' && @f == 2) {
@@ -221,6 +225,9 @@ bind('firework_explode', null, null, @event){
 		});
 	}
 	if(has_metadata(@event['id'], 'mob')){
+		if(sk_regions_at(@event['location'])) {
+			die();
+		}
 		@mob = get_metadata(@event['id'], 'mob', 'CommandHelper');
 		@loc = @event['location'];
 		@loc['yaw'] = 0;
