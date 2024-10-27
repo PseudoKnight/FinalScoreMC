@@ -6,23 +6,35 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 		die('Region doesn\'t exist.');
 	}
 
-	@split = split(':', @dungeonType, 1);
-	@dungeonType = @split[0];
-	@testFloor = if(array_size(@split) == 1, -1, integer(@split[1]));
-
-	// load dungeon type specific procedures
 	include('loot/default.ms');
-	try {
-		include('loot/'.@dungeonType.'.ms');
-	} catch(IOException @ex) {
-		// does not exist, but that is okay
-	}
+	@testFloor = -1;
 
-	// load dungeon type configuration
-	@options = yml_decode(read('configs/'.@dungeonType.'.yml'));
-	if(!array_index_exists(@options, 'floors')
-	|| @testFloor > -1 && !array_index_exists(@options['floors'], @testFloor)) {
-		die('Floor does not exist. '.if(@testFloor > -1, 'Floor: '.@testFloor));
+	@options = null;
+	if(is_array(@dungeonType)) {
+		// is passed options array from code
+		@options = @dungeonType;
+		@dungeonType = @region;
+	} else {
+		// load options array from configuration file
+		@split = split(':', @dungeonType, 1);
+		@dungeonType = @split[0];
+		if(array_size(@split) == 2) {
+			@testFloor = integer(@split[1]);
+		}
+
+		// load dungeon type specific procedures
+		try {
+			include('loot/'.@dungeonType.'.ms');
+		} catch(IOException @ex) {
+			// does not exist, but that is okay
+		}
+
+		// load dungeon type configuration
+		@options = yml_decode(read('configs/'.@dungeonType.'.yml'));
+		if(!array_index_exists(@options, 'floors')
+		|| @testFloor > -1 && !array_index_exists(@options['floors'], @testFloor)) {
+			die('Floor does not exist. '.if(@testFloor > -1, 'Floor: '.@testFloor));
+		}
 	}
 	@defaults = array_merge(array(
 		// size
@@ -564,7 +576,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 								//
 								@double = false;
 								@roomHeight = 2 + abs(@heightMultiplier);
-								if(@room['height'] > 4 && @rooms[@next]['height'] > 4) {
+								if(!@roof || @room['height'] > 4 && @rooms[@next]['height'] > 4) {
 									if((@dir === 'north' || @dir === 'south')
 									&& @room['width'] > 3 && @rooms[@next]['width'] > 3) {
 										// check towards center of room

@@ -36,7 +36,7 @@ register_command('spleef', array(
 			),
 			'warp': array(
 				'lobby': array(-482.5, 53, -646, @world),
-				'material': array(-492, 53, -634, @world)
+				'material': array(-490, 53, -634, @world)
 			),
 			'sign': array(
 				array(-487, 56, -646, @world),
@@ -54,7 +54,8 @@ register_command('spleef', array(
 				'material_alt': array(-488, 54, -638, @world),
 				'snake': array(-488, 56, -662, @world),
 				'checkered': array(-488, 56, -664, @world),
-				'creepers': array(-488, 56, -666, @world),
+				'rooms': array(-488, 56, -666, @world),
+				'creepers': array(-488, 56, -668, @world),
 			)
 		);
 
@@ -143,8 +144,18 @@ register_command('spleef', array(
 
 				_regionmsg(@cfg['region']['wrapper'], color('green').'[Spleef] '.color('r').'Match starting in 3 seconds...');
 				@region = sk_region_info(@cfg['region']['floor'], @world)[0];
+
 				@mat = get_blockdata_string(@cfg['option']['material']);
 				@matAlt = get_blockdata_string(@cfg['option']['material_alt']);
+				@knockback = reg_match('lit\\=true', get_blockdata_string(@cfg['option']['knockback']));
+				@platforming = reg_match('lit\\=true', get_blockdata_string(@cfg['option']['platforming']));
+				@obstacles = reg_match('lit\\=true', get_blockdata_string(@cfg['option']['obstacles']));
+				@speed = reg_match('lit\\=true', get_blockdata_string(@cfg['option']['speed']));
+				@jump = reg_match('lit\\=true', get_blockdata_string(@cfg['option']['jump']));
+				@snake = reg_match('lit\\=true', get_blockdata_string(@cfg['option']['snake']));
+				@checkered = reg_match('lit\\=true', get_blockdata_string(@cfg['option']['checkered']));
+				@rooms = reg_match('lit\\=true', get_blockdata_string(@cfg['option']['rooms']));
+				@creepers = reg_match('lit\\=true', get_blockdata_string(@cfg['option']['creepers']));
 
 				#Given two blocks, iterates through all the blocks inside the cuboid, and calls the
 				#user defined function on them. The used defined procedure should accept 3 parameters,
@@ -160,9 +171,37 @@ register_command('spleef', array(
 				}
 
 				set_timeout(1000, closure(){
-					if(reg_match('lit\\=true', get_blockdata_string(@cfg['option']['platforming']))) {
+					if(@rooms) {
+						#dungeon rooms
+						@dungeonOptions = array(
+							default: array(
+								roof: false,
+								empty: 'air',
+								divider: 'air',
+								maxRoomHeight: 2,
+								extraDoorChance: 1.0,
+								wall: @matAlt,
+								column: if(@obstacles, @matAlt, 'air'),
+								floor: if(@platforming, array(@mat, 'air'), @mat)),
+							floors: if(@checkered, 
+								array(array(roomTypes: array(one: array(chance: 0.5), two: array(chance: 0.5)))),
+								array(array(roomTypes: associative_array()))),
+							rooms: array(
+								one: associative_array(),
+								two: array(
+									floor: if(@platforming, array(@matAlt, 'air'), @matAlt),
+									wall: @mat,
+									column: if(@obstacles, @mat, 'air'))));
+						_generator_create('dungeon', @dungeonOptions, 'spleef-dungeon', @world, 0, closure(@start, @end, @spawns) {
+							@cfg['spawns'] = @spawns[0];
+							foreach(@spawn in @spawns[0]) {
+								set_blockdata(location_shift(@spawn, 'down'), @mat);
+							}
+						});
+						return();
+					} else if(@platforming) {
 						#platforming
-						if(reg_match('lit\\=true', get_blockdata_string(@cfg['option']['checkered']))) {
+						if(@checkered) {
 							proc _setfloor(@x, @y, @z, @world, @mat, @matAlt) {
 								if(rand(2)) {
 									@chosenMat = @mat;
@@ -185,7 +224,7 @@ register_command('spleef', array(
 						}
 					}  else {
 						#regular floor
-						if(reg_match('lit\\=true', get_blockdata_string(@cfg['option']['checkered']))) {
+						if(@checkered) {
 							proc _setfloor(@x, @y, @z, @world, @mat, @matAlt) {
 								@chosenMat = @mat;
 								if((floor(abs(@x) / 6) + floor(abs(@z) / 6)) % 2 == 0) {
@@ -203,8 +242,13 @@ register_command('spleef', array(
 				});
 
 				set_timeout(2000, closure(){
+					foreach(@player in array_keys(@currentspleef)) {
+						set_pmode(@player, 'SURVIVAL');
+					}
 					#random obstacles
-					if(reg_match('lit\\=true', get_blockdata_string(@cfg['option']['obstacles']))) {
+					if(@rooms) {
+						return();
+					} else if(@obstacles) {
 						proc _setwalls(@x, @y, @z, @world) {
 							@rand = rand(100);
 							if(@rand < 5) {
@@ -232,44 +276,44 @@ register_command('spleef', array(
 					}
 					// uh this might not be the right variable order... where is @mat
 					_iterate_cuboid(array(@region[0][0], @region[0][1] + 1, @region[0][2]), array(@region[1][0], @region[1][1] + 1, @region[1][2]), '_setwalls', @world);
-
-					foreach(@player in array_keys(@currentspleef)) {
-						set_pmode(@player, 'SURVIVAL');
-					}
 				});
 
 				set_timeout(3000, closure(){
-					foreach(@player in array_keys(@currentspleef)){
+					foreach(@i: @player in array_keys(@currentspleef)){
 						if(!ponline(@player) || !array_contains(sk_current_regions(@player), @cfg['region']['wrapper'])) {
 							array_remove(@currentspleef, @player);
 							continue();
 						}
-						@location = array(@region[0][0] - rand(sqrt((@region[0][0] - @region[1][0]) ** 2)), @region[0][1], @region[0][2] - rand(sqrt((@region[0][2] - @region[1][2]) ** 2)));
-						# check if they are spawning into a block
-						if(get_block(array(@location[0], @location[1] + 1, @location[2], @world)) !== 'AIR') {
-							set_block(array(@location[0], @location[1] + 1, @location[2], @world), 'AIR', false);
-							set_block(array(@location[0], @location[1] + 2, @location[2], @world), 'AIR', false);
+						if(array_index_exists(@cfg, 'spawns')) {
+							set_ploc(@player, @cfg['spawns'][(@i + 1) % array_size(@cfg['spawns'])]);
+						} else {
+							@location = array(@region[0][0] - rand(sqrt((@region[0][0] - @region[1][0]) ** 2)), @region[0][1], @region[0][2] - rand(sqrt((@region[0][2] - @region[1][2]) ** 2)));
+							# check if they are spawning into a block
+							if(get_block(array(@location[0], @location[1] + 1, @location[2], @world)) !== 'AIR') {
+								set_block(array(@location[0], @location[1] + 1, @location[2], @world), 'AIR', false);
+								set_block(array(@location[0], @location[1] + 2, @location[2], @world), 'AIR', false);
+							}
+							# check if they are spawning over air
+							if(get_block(array(@location[0], @location[1], @location[2], @world)) === 'AIR') {
+								set_blockdata_string(array(@location[0], @location[1], @location[2], @world), @mat, false);
+							}
+							set_ploc(@player, array(@location[0] + 0.5, @location[1] + 0.5, @location[2] + 0.5, @world));
 						}
-						# check if they are spawning over air
-						if(get_block(array(@location[0], @location[1], @location[2], @world)) === 'AIR') {
-							set_blockdata_string(array(@location[0], @location[1], @location[2], @world), @mat, false);
-						}
-						set_ploc(@player, array(@location[0] + 0.5, @location[1] + 0.5, @location[2] + 0.5, @world));
 						set_pinv(@player, 0,
 							array('name': 'DIAMOND_PICKAXE', 'qty': 1, 'meta': array(
 								'enchants': array('efficiency': 40),
 								'display': color('green').'SUPERPICK',
 							))
 						);
-						if(reg_match('lit\\=true', get_blockdata_string(@cfg['option']['speed']))) {
+						if(@speed) {
 							set_peffect(@player, 'SPEED', 1, 9999, true, false);
 						}
-						if(reg_match('lit\\=true', get_blockdata_string(@cfg['option']['jump']))) {
+						if(@jump) {
 							set_peffect(@player, 'JUMP_BOOST', 3, 9999, true, false);
 						}
 					}
 
-					if(reg_match('lit\\=true', get_blockdata_string(@cfg['option']['creepers']))) {
+					if(@creepers) {
 						@creeperLoc = @region[0][];
 						@creeperLoc[0] -= 20;
 						@creeperLoc[1] += 3;
@@ -279,7 +323,7 @@ register_command('spleef', array(
 						}
 					}
 
-					if(reg_match('lit\\=true', get_blockdata_string(@cfg['option']['knockback']))) {
+					if(@knockback) {
 						sk_region_flag(@world, 'spleef-arena', 'pvp', 'allow');
 					} else {
 						sk_region_flag(@world, 'spleef-arena', 'pvp', 'deny');
@@ -300,7 +344,7 @@ register_command('spleef', array(
 					}
 
 					@worminterval = '';
-					if(reg_match('lit\\=true', get_blockdata_string(@cfg['option']['snake']))) {
+					if(@snake) {
 						@wormLoc = @region[0][];
 						@wormLoc[0] -= 20;
 						@wormLoc[2] -= 20;
@@ -380,7 +424,7 @@ register_command('spleef', array(
 								set_pmode(@winner, 'ADVENTURE');
 								_acc_add(@winner, @reward);
 								tmsg(@winner, color('a').'[Spleef] '.color('r').@reward.' coins!');
-							} else if(reg_match('lit\\=true', get_blockdata_string(@cfg['option']['snake']))) {
+							} else if(@snake) {
 								_regionmsg(@cfg['region']['wrapper'], color('a').'[Spleef] '.color('r').'Snekey Sneke wins.');
 							} else {
 								_regionmsg(@cfg['region']['wrapper'], color('a').'[Spleef] '.color('r').'No one wins.');
