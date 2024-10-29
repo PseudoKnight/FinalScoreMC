@@ -1,21 +1,33 @@
 register_command('text', array(
 	description: 'Creates and modifies text displays',
-	usage: '/text <create|select|set|delete> [key] [value]',
+	usage: '/text <create|select|set|delete|align|linewidth|seethrough|shadow|opacity|brightness|billboard|viewrange|scale> [value]',
 	permission: 'command.entity',
 	tabcompleter: _create_tabcompleter(
-		array('create', 'move', 'select', 'set', 'delete'),
-		array('<set': array('text', 'align', 'linewidth', 'seethrough', 'shadow', 'opacity',
-			'brightness', 'billboard', 'viewrange', 'scale')),
-		array('<<set': array('<align': array('center', 'left', 'right'),
+		array('create', 'move', 'select', 'set', 'delete', 'align', 'linewidth', 'seethrough', 
+			'shadow', 'opacity', 'brightness', 'billboard', 'viewrange', 'scale'),
+		array('<create|set': array('<text...>'),
+			'<align': array('center', 'left', 'right'),
 			'<seethrough|shadow': array('true', 'false'),
-			'<billboard': array('fixed', 'horizontal', 'vertical', 'center')))
+			'<billboard': array('fixed', 'horizontal', 'vertical', 'center'),
+			'<linewidth|viewrange': array('<num>'),
+			'<opacity': array('<0-255>'),
+			'<brightness': array('<0-15>'),
+			'<scale': array('<x> <y>'))
 	),
 	executor: closure(@alias, @player, @args) {
 		if(!@args) {
 			return(false);
 		}
-		@cmd = @args[0];
-		switch(@cmd) {
+		@action = @args[0];
+		@value = null;
+		if(array_size(@args) > 1) {
+			@value = @args[1];
+		}
+		@display = import(player().'textdisplay');
+		if(!@display && @action !== 'create' && @action !== 'select') {
+			die('Must first create or select a text display.');
+		}
+		switch(@action) {
 			case 'create':
 			case 'move':
 				@trace = ray_trace();
@@ -40,16 +52,14 @@ register_command('text', array(
 						@loc['yaw'] = 180.0;
 						@loc['z'] -= 0.01;
 				}
-				if(@cmd === 'create') {
+				if(@action === 'create') {
 					@display = spawn_entity('TEXT_DISPLAY', 1, @loc)[0];
-					set_entity_spec(@display, array(text: array_implode(@args[1..])));
+					@text = array_implode(@args[1..]);
+					@text = replace(@text, '\\n', '\n');
+					set_entity_spec(@display, array(text: @text));
 					export(player().'textdisplay', @display);
-					msg('Created and selected text display. Can delete it or set values.');
+					msg('Created and selected text display for modification.');
 				} else {
-					@display = import(player().'textdisplay');
-					if(!@display) {
-						die('Must first select a text display.');
-					}
 					set_entity_loc(@display, @loc);
 				}
 			case 'select':
@@ -73,86 +83,64 @@ register_command('text', array(
 						});
 					});
 				});
-				msg('Selected text display. Can delete it or set values.');
+				msg('Selected text display for modification.');
 			case 'set':
-				if(array_size(@args) < 2) {
-					msg('Insufficient arguments.');
-					return(false);
+				if(!@value) {
+					die('Must specify any text. (Use \\n for new lines)');
 				}
-				@display = import(player().'textdisplay');
-				if(!@display) {
-					die('Must first select a text display.');
+				@text = array_implode(@args[1..]);
+				@text = replace(@text, '\\n', '\n');
+				set_entity_spec(@display, array(text: colorize(@text)));
+			case 'align':
+				if(!@value) {
+					die('Must specify text alignment: center, left, or right.');
 				}
-				@key = @args[1];
-				@value = null;
-				if(array_size(@args) > 2) {
-					@value = @args[2];
+				set_entity_spec(@display, array(alignment: to_upper(@value)));
+			case 'billboard':
+				if(!@value) {
+					die('Must specify how the entity rotates around player: fixed, horizontal, vertical, or center.');
 				}
-				switch(@key) {
-					case 'text':
-						if(!@value) {
-							die('Must specify any text. (Use \\n for new lines)');
-						}
-						@text = array_implode(@args[2..]);
-						@text = replace(@text, '\\n', '\n');
-						set_entity_spec(@display, array(text: colorize(@text)));
-					case 'align':
-						if(!@value) {
-							die('Must specify text alignment: center, left, or right.');
-						}
-						set_entity_spec(@display, array(alignment: to_upper(@value)));
-					case 'billboard':
-						if(!@value) {
-							die('Must specify how the entity rotates around player: fixed, horizontal, vertical, or center.');
-						}
-						set_display_entity(@display, array(billboard: to_upper(@value)));
-					case 'linewidth':
-						if(!@value) {
-							die('Must specify an integer above zero. (default 200)');
-						}
-						@spec = associative_array();
-						@spec[@key] = integer(@value);
-						set_entity_spec(@display, @spec);
-					case 'opacity':
-						if(!@value) {
-							die('Must specify an integer from 0 - 255. (default 255) Values below 26 may be ignored.');
-						}
-						@spec = associative_array();
-						@spec[@key] = integer(@value);
-						set_entity_spec(@display, @spec);
-					case 'brightness':
-						if(!@value) {
-							die('Must specify an integer from 0 - 15. (default 15)');
-						}
-						set_display_entity(@display, array(brightness: integer(@value)));
-					case 'seethrough':
-					case 'shadow':
-						if(!@value || (@value !== 'true' && @value !== 'false')) {
-							die('Must be true or false.');
-						}
-						@spec = associative_array();
-						@spec[@key] = @value == 'true';
-						set_entity_spec(@display, @spec);
-					case 'viewrange':
-						if(!@value) {
-							die('Must specify a double that scales the viewable range. (1.0 is the default of 64 meters)');
-						}
-						set_display_entity(@display, array(viewrange: double(@value)));
-					case 'scale':
-						if(array_size(@args) < 5) {
-							die('Must give 3 doubles for scale of text. (1.0 1.0 1.0 is default)')
-						}
-						set_display_entity(@display, array(transformation: array(
-							scale: array(x: double(@args[2]), y: double(@args[3]), z: double(@args[4])))));
+				set_display_entity(@display, array(billboard: to_upper(@value)));
+			case 'linewidth':
+				if(!@value) {
+					die('Must specify an integer above zero. (default 200)');
 				}
-				msg("Updated @key for text display.");
+				set_entity_spec(@display, array(linewidth: integer(@value)));
+			case 'opacity':
+				if(!@value) {
+					die('Must specify an integer from 0 - 255. (default 255) Values below 26 may be ignored.');
+				}
+				set_entity_spec(@display, array(opacity: integer(@value)));
+			case 'brightness':
+				if(!@value) {
+					die('Must specify an integer from 0 - 15. (default 15)');
+				}
+				set_display_entity(@display, array(brightness: integer(@value)));
+			case 'seethrough':
+			case 'shadow':
+				if(!@value || (@value !== 'true' && @value !== 'false')) {
+					die('Must be true or false.');
+				}
+				@spec = associative_array();
+				@spec[@action] = @value == 'true';
+				set_entity_spec(@display, @spec);
+			case 'viewrange':
+				if(!@value) {
+					die('Must specify a double that scales the viewable range. (1.0 is the default of 64 meters)');
+				}
+				set_display_entity(@display, array(viewrange: double(@value)));
+			case 'scale':
+				if(array_size(@args) < 3) {
+					die('Must give 2 doubles for xy scale of text. (1.0 1.0 is default)')
+				}
+				set_display_entity(@display, array(transformation: array(
+					scale: array(x: double(@value), y: double(@args[2]), z: 1.0))));
 			case 'delete':
-				@display = import(player().'textdisplay');
-				if(!@display) {
-					die('Must first select a text display.');
-				}
 				entity_remove(@display);
+				export(player().'textdisplay', null);
 				msg('Deleted text display.');
+			default:
+				return(false);
 		}
 	}
 ));
