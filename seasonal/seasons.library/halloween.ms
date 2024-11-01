@@ -1,8 +1,8 @@
 bind('creature_spawn', null, null, @event) {
-	if(@event['location']['world'] == 'outworld'
+	if(@event['location']['world'] === 'outworld'
 	&& array_contains(array('SPIDER', 'PHANTOM', 'ENDERMAN'), @event['type'])
 	&& !rand(3)) {
-		set_mob_effect(@event['id'], 'invisibility', 0, 107374182);
+		set_mob_effect(@event['id'], 'invisibility', 0, -1);
 	}
 }
 
@@ -10,8 +10,9 @@ bind('creature_spawn', null, array(type: 'ZOMBIE', reason: 'NATURAL'), @event) {
 	if(sk_region_check_flag(@event['location'], 'deny-spawn')) {
 		die();
 	}
+	@id = @event['id'];
 	@rand = rand(5);
-	if(@rand == 0 && @event['location']['world'] == 'outworld'){
+	if(@rand == 0 && @event['location']['world'] === 'outworld'){
 		cancel();
 		switch(rand(5)) {
 			case 0:
@@ -36,16 +37,16 @@ bind('creature_spawn', null, array(type: 'ZOMBIE', reason: 'NATURAL'), @event) {
 				});
 		}
 	} else if(@rand == 1) {
-		set_mob_equipment(@event['id'], array(
+		set_mob_equipment(@id, array(
 			WEAPON: array(name: 'ZOMBIE_HEAD'),
 			HELMET: null,
 			CHESTPLATE: array(name: 'LEATHER_CHESTPLATE'),
 			LEGGINGS: array(name: 'LEATHER_LEGGINGS'),
 			BOOTS: array(name: 'LEATHER_BOOTS'),
 		));
-		set_mob_effect(@event['id'], 'invisibility', 0, 107374182);
-	} else if(@rand == 2 && @event['location']['world'] == 'outworld') {
-		set_mob_equipment(@event['id'], array(
+		set_mob_effect(@id, 'invisibility', 0, -1);
+	} else if(@rand == 2 && @event['location']['world'] === 'outworld') {
+		set_mob_equipment(@id, array(
 			HELMET: array(name: 'PLAYER_HEAD', meta: array(
 				owneruuid: '617a67e5-7988-4645-af56-42c770a6dda5',
 				texture: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOThiN2NhM2M3ZDMxNGE2MWFiZWQ4ZmMxOGQ3OTdmYzMwYjZlZmM4NDQ1NDI1YzRlMjUwOTk3ZTUyZTZjYiJ9fX0='
@@ -55,18 +56,18 @@ bind('creature_spawn', null, array(type: 'ZOMBIE', reason: 'NATURAL'), @event) {
 			BOOTS: null,
 			WEAPON: null,
 		));
-		set_equipment_droprates(@event['id'], array(
+		set_equipment_droprates(@id, array(
 			HELMET: null,
 			CHESTPLATE: null,
 			LEGGINGS: null,
 		));
-		add_scoreboard_tag(@event['id'], 'Herobrine');
-		set_mob_effect(@event['id'], 'SPEED', 7, 99999, true, false);
-		set_entity_silent(@event['id'], true);
+		add_scoreboard_tag(@id, 'Herobrine');
+		set_mob_effect(@id, 'SPEED', 7, -1, true, false);
+		set_entity_silent(@id, true);
 	} else {
-		set_mob_equipment(@event['id'], array(HELMET: array(name: 'JACK_O_LANTERN')));
+		set_mob_equipment(@id, array(HELMET: array(name: 'JACK_O_LANTERN')));
 		if(!rand(3)) {
-			set_mob_effect(@event['id'], 'invisibility', 0, 107374182);
+			set_mob_effect(@id, 'invisibility', 0, -1);
 		}
 	}
 }
@@ -92,32 +93,36 @@ bind('entity_damage_player', null, array(damager: 'ZOMBIE'), @event) {
 }
 
 bind('target_player', null, array(mobtype: 'ZOMBIE'), @event) {
-	if(entity_exists(@event['id']) && array_contains(get_scoreboard_tags(@event['id']), 'Herobrine')) {
-		@loc = entity_loc(@event['id']);
+	@id = @event['id'];
+	if(entity_exists(@id) && array_contains(get_scoreboard_tags(@id), 'Herobrine')) {
+		@loc = entity_loc(@id);
 		@timer = array(160);
 		set_interval(50, closure(){
 			@timer[0]--;
-			if(!entity_exists(@event['id']) || !ponline(@event['player']) || pworld(@event['player']) != @loc['world'] || @timer[0] < 0) {
+			if(!entity_exists(@id)) {
 				clear_task();
-				try(entity_remove(@event['id']))
+			} else if(!ponline(@event['player']) || pworld(@event['player']) !== @loc['world'] || @timer[0] < 0) {
+				clear_task();
+				try(entity_remove(@id))
 			} else {
-				@newLoc = entity_loc(@event['id']);
+				@newLoc = entity_loc(@id);
 				@dist = distance(ploc(@event['player']), @newLoc);
 				if(@dist > 14) {
 					play_sound(@newLoc, array(sound: 'ENTITY_EVOKER_PREPARE_ATTACK', pitch: 0.5 + rand() * 1.5, volume: 2));
 				} else if(@dist > 8) {
-					set_mob_effect(@event['id'], 'invisibility', 1, 9999, true, false);
-					set_mob_equipment(@event['id'], array(
+					set_mob_effect(@id, 'invisibility', 1, -1, true, false);
+					set_mob_equipment(@id, array(
 						HELMET: null,
 						CHESTPLATE: null,
 						LEGGINGS: null,
 					));
 					stop_sound(@event['player'], 'ENTITY_EVOKER_PREPARE_ATTACK');
 				} else {
-					set_mob_effect(@event['id'], 'invisibility', 0, 0, true, false);
-					set_mob_equipment(@event['id'], array(
+					set_mob_effect(@id, 'invisibility', 0, 0, true, false);
+					set_mob_equipment(@id, array(
 						HELMET: array(name: 'PLAYER_HEAD', meta: array(
-							owneruuid: '617a67e5-7988-4645-af56-42c770a6dda5',
+							display: 'Herobrine\'s Head',
+							owneruuid: '00000000-0000-0048-6572-6f6272696e65',
 							texture: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOThiN2NhM2M3ZDMxNGE2MWFiZWQ4ZmMxOGQ3OTdmYzMwYjZlZmM4NDQ1NDI1YzRlMjUwOTk3ZTUyZTZjYiJ9fX0='
 						)),
 						CHESTPLATE: array(name: 'LEATHER_CHESTPLATE', meta: array(color: array(50, 230, 255))),
