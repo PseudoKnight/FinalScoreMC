@@ -11,9 +11,10 @@ proc _add_player(@player, @golf) {
 		swing: false,
 		cooldown: 0,
 	);
-	pgive_item(@player, array('name': 'SLIME_BALL'));
-	set_pscoreboard(@player, @golf['name'].'1');
-	set_pscore('strokes', @player, 0, @golf['name'].'1');
+	set_pinv(@player, 0, array(name: 'SLIME_BALL'));
+	set_pscoreboard(@player, @golf['name']);
+	set_pscore('strokes', @player, 0, @golf['name']);
+	team_add_player('everyone', @player, @golf['name']);
 	return(true);
 }
 

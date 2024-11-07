@@ -17,7 +17,7 @@ register_command('slimeygolf', array(
 		if(!@course) {
 			die(color('gold').'No Slimey Golf course here.');
 		}
-		if(array_contains(get_scoreboards(), @course.'1')) {
+		if(array_contains(get_scoreboards(), @course)) {
 			die(color('gold').'This game is already active.');
 		}
 		_start_game(@course, @loc, array_get(@args, 0, 1));
