@@ -4,4 +4,5 @@ proc _get_course(@loc) {
 			return(@region);
 		}
 	}
+	return(null);
 }
