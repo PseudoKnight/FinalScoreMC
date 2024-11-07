@@ -6,6 +6,7 @@ register_command('text', array(
 		array('create', 'move', 'select', 'set', 'delete', 'align', 'linewidth', 'seethrough', 
 			'shadow', 'opacity', 'brightness', 'billboard', 'viewrange', 'scale'),
 		array('<create|set': array('<text...>'),
+			'<move': array('here', 'there'),
 			'<align': array('center', 'left', 'right'),
 			'<seethrough|shadow': array('true', 'false'),
 			'<billboard': array('fixed', 'horizontal', 'vertical', 'center'),
@@ -30,6 +31,10 @@ register_command('text', array(
 		switch(@action) {
 			case 'create':
 			case 'move':
+				if(@action === 'move' && @value === 'here') {
+					set_entity_loc(@display, entity_loc(puuid()));
+					return(true);
+				}
 				@trace = ray_trace();
 				if(!@trace['hitblock']) {
 					die('Must face a block.');
@@ -37,8 +42,13 @@ register_command('text', array(
 				@loc = @trace['location'];
 				switch(@trace['hitface']) {
 					case 'UP':
-						@loc['y'] -= 0.5;
-						@loc['yaw'] = @trace['origin']['yaw'];
+						@loc['yaw'] = @trace['origin']['yaw'] + 180;
+						@loc['pitch'] = -90;
+						@loc['y'] += 0.01;
+					case 'DOWN':
+						@loc['yaw'] = @trace['origin']['yaw'] + 180;
+						@loc['pitch'] = 90;
+						@loc['y'] -= 0.01;
 					case 'WEST':
 						@loc['yaw'] = 90.0;
 						@loc['x'] -= 0.01;
