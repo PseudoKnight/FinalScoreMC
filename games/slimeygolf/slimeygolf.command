@@ -2,7 +2,7 @@ register_command('slimeygolf', array(
 	description: 'Starts a game of SlimeyGolf.',
 	usage: '/slimeygolf',
 	tabcompleter: closure(@alias, @sender, @args, @info) {
-		return(array());
+		return(array('test'));
 	},
 	executor: closure(@alias, @sender, @args, @info) {
 		include('basic.library/game.ms');
@@ -20,6 +20,6 @@ register_command('slimeygolf', array(
 		if(array_contains(get_scoreboards(), @course)) {
 			die(color('gold').'This game is already active.');
 		}
-		_start_game(@course, @loc, array_get(@args, 0, 1));
+		_start_game(@course, @loc, array_get(@args, 0, '') == 'test');
 	}
 ));

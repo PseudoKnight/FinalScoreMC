@@ -2,15 +2,15 @@ include('course.ms');
 include('player.ms');
 include('ball.ms');
 
-proc _start_game(@course, @loc, @hole = 1) {
+proc _start_game(@course, @loc, @test) {
 	@golf = array(
 		'name': @course,
 		'world': @loc['world'],
 		'par': 0,
 		'players': associative_array(),
 		'spectators': array(),
-		'lowestHole': @hole,
-		'highestHole': if(@hole == 1, 9, @hole)
+		'lowestHole': 1,
+		'test': @test,
 	);
 
 	_create_scoreboards(@golf);
@@ -43,7 +43,7 @@ proc _start_game(@course, @loc, @hole = 1) {
 
 			# get hole data from sign
 			@sign = get_sign_text(location_shift(@event['location'], 'down'));
-			if(@sign[0] != @hole) {
+			if(@sign[0] != @hole && !@golf['test']) {
 				die();
 			}
 
@@ -323,7 +323,7 @@ proc _start_game(@course, @loc, @hole = 1) {
 							break();
 						}
 					}
-					if(@lastplayer) {
+					if(@lastplayer && !@golf['test']) {
 						set_block(@golf[@hole]['loc'], 'AIR');
 						@golf['lowestHole'] = min(9, @hole + 1);
 						@golf['par'] += @golf[@hole]['par'];
@@ -356,7 +356,7 @@ proc _start_game(@course, @loc, @hole = 1) {
 						}
 
 						# check if last hole
-						if(@hole == @golf['highestHole']) {
+						if(@hole == 9) {
 							_end_game(@golf);
 							clear_task();
 							die();	
@@ -436,13 +436,12 @@ proc _start_game(@course, @loc, @hole = 1) {
 }
 
 proc _end_game(@golf) {
-	@highestHole = @golf['highestHole'];
 	if(array_size(@golf['players']) > 1) {
 		@loweststrokes = 999;
 		@winner = '';
 		foreach(@p: @b in @golf['players']) {
 			if(ponline(@p)) {
-				@strokes = @golf[@highestHole]['total'][@p];
+				@strokes = @golf[9]['total'][@p];
 				if(@strokes < @loweststrokes) {
 					@winner = @p;
 					@loweststrokes = @strokes;
@@ -456,7 +455,7 @@ proc _end_game(@golf) {
 		_acc_add(@winner, array_size(@golf['players']) - 1);
 	} else {
 		@player = array_keys(@golf['players'])[0];
-		@score = @golf[@highestHole]['total'][@player] - @golf['par'];
+		@score = @golf[9]['total'][@player] - @golf['par'];
 		if(@score <= -9) {
 			tmsg(@player, colorize(
 				'&a&lSLIMEY&6&lGOLF &a\u2308\u2328 \uFE52\u2328\u2309&r &lFantastic!'
