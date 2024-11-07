@@ -238,4 +238,23 @@ bind('player_quit', null, null, @event) {
 		}
 		export('players', @players);
 	}
+
+	// Exit effect
+	if(array_index_exists(@pdata, 'exiteffect')) {
+		if(all_players(@pdata['world'])) {
+			@loc = ploc();
+			switch(@pdata['exiteffect']) {
+				case 'lightning':
+					lightning(@loc, true);
+				case 'smoke':
+					spawn_particle(location_shift(@loc, 'up', 2), array(
+						particle: 'CAMPFIRE_COSY_SMOKE',
+						count: 150,
+						speed: 0.01,
+						yoffset: 2.5,
+						xoffset: 1.5,
+						zoffset: 1.5));
+			}
+		}
+	}
 }

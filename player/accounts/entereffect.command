@@ -1,9 +1,7 @@
 register_command('entereffect', array(
 	description: 'Sets the server enter effect of a player.',
 	usage: '/entereffect <type>',
-	tabcompleter: closure(@alias, @sender, @args, @info) {
-		return(array('lightning', 'kaboom', 'clear'));
-	},
+	tabcompleter: _create_tabcompleter(array('lightning', 'kaboom', 'clear')),
 	executor: closure(@alias, @sender, @args, @info) {
 		if(!@args) {
 			return(false);
