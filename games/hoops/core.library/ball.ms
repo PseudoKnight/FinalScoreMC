@@ -176,12 +176,12 @@ proc _hoops_ball_create(@loc) {
 							@game['teams']['blue']['score'] += @points;
 						} else if(@block == 'BLUE_CONCRETE') {
 							@game['teams']['red']['score'] += @points;
-						} else {
-							console('Detected '.@block.' when expecting red or blue concrete.');
+						} else if(@block == 'WATER') {
+							set_block(@game['center'], 'CAKE');
 						}
 						_hoops_cheer();
 					}
-				} else if(!array_contains(sk_regions_at(@loc), 'hoops')) {
+				} else if(!array_contains(sk_regions_at(@loc), 'hoops') && !array_contains(sk_regions_at(@loc), 'hoops_cake')) {
 					make_effect(@loc, 'ENDER_SIGNAL');
 					play_sound(@loc, array('sound': 'ENTITY_ZOMBIE_VILLAGER_CONVERTED', 'pitch': 1.8, 'volume': 3));
 					try(update_bar('hoops', 0.0))

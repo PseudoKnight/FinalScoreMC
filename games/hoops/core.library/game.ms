@@ -238,7 +238,8 @@ proc _hoops_end(@team) {
 			title(@p, @msg, null, 0, 20, 20);
 		}
 	}
-	
+
+	set_block(@game['center'], 'AIR');
 	_hoops_delete();
 }
 
