@@ -1,5 +1,5 @@
 @allowedCommands = array('/clear', '/effect', '/entity', '/fill', '/fillx', '/give', '/particle', '/platform', '/minecraft:playsound', '/playsound', '/sayas', '/setblock',
-	'/setblockx', '/spawnpoint', '/stopsound', '/teleport', '/tempboat', '/tempcart', '/time', '/timer', '/title', '/tp', '/velocity', '/warp');
+	'/setblockx', '/spawnpoint', '/stopsound', '/teleport', '/tempboat', '/tempcart', '/time', '/timer', '/title', '/tp', '/velocity', '/warp', '/lava');
 register_command('scb', array(
 	description: 'Set the command in the targeted command block.',
 	usage: '/scb [cmd]',
