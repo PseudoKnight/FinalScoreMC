@@ -202,6 +202,16 @@
 		),
 	),
 );
+@menu[22] = array(
+	name: 'ICE',
+	meta: array(
+		display: color('green').'Overgrowth Golf',
+		lore: array(
+			color('white').'Minigolf course in a frozen ruin (1 - 4 players)',
+			color('dark_gray').'Run: /warp overgrowth',
+		),
+	),
+);
 @menu[27] = array(
 	name: 'ICE',
 	meta: array(
