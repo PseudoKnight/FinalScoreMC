@@ -206,28 +206,47 @@
 	}
 <<<
 
-*:/playsound [$sound='random'] [$pitch=1] [$volume=1] [$x] [$y] [$z] = >>>
+*:/playsound [$sound='random'] [$pitch=1] [$volume=1] [$] = >>>
 	@pitch = $pitch;
 	if(@pitch == 'random') {
 		@pitch = 0.5 + rand() * 1.5;
 	}
+	@args = parse_args($);
 	if(string_position($sound, '.') >= 0) {
 		if(@cmdblk = get_command_block()) {
 			@loc = @cmdblk;
-			if($z) {
-				@loc = _relative_coords(@cmdblk, $x, $y, $z);
+			if(array_size(@args) >= 3) {
+				@loc = _relative_coords(@cmdblk, @args[-3], @args[-2], @args[-1]);
 			}
-			play_named_sound(@loc, array(
-				sound: $sound,
-				pitch: @pitch,
-				volume: $volume
-			));
+			if(@args && array_size(@args) - 3) {
+				play_named_sound(@loc, array(
+					sound: $sound,
+					pitch: @pitch,
+					volume: $volume,
+					seed: @args[0],
+				));
+			} else {
+				play_named_sound(@loc, array(
+					sound: $sound,
+					pitch: @pitch,
+					volume: $volume
+				));
+			}
 		} else if(has_permission('command.playsound')) {
-			play_named_sound(ploc(), array(
-				sound: $sound,
-				pitch: @pitch,
-				volume: $volume
-			));
+			if(@args) {
+				play_named_sound(ploc(), array(
+					sound: $sound,
+					pitch: @pitch,
+					volume: $volume,
+					seed: @args[0],
+				));
+			} else {
+				play_named_sound(ploc(), array(
+					sound: $sound,
+					pitch: @pitch,
+					volume: $volume
+				));
+			}
 		}
 	} else {
 		@sound = $sound;
@@ -238,20 +257,38 @@
 		}
 		if(@cmdblk = get_command_block()) {
 			@loc = @cmdblk;
-			if($z) {
-				@loc = _relative_coords(@cmdblk, $x, $y, $z);
+			if(array_size(@args) >= 3) {
+				@loc = _relative_coords(@cmdblk, @args[-3], @args[-2], @args[-1]);
 			}
-			play_sound(@loc, array(
-				sound: @sound,
-				pitch: @pitch,
-				volume: $volume
-			));
+			if(@args && array_size(@args) - 3) {
+				play_sound(@loc, array(
+					sound: @sound,
+					pitch: @pitch,
+					volume: $volume,
+					seed: @args[0],
+				));
+			} else {
+				play_sound(@loc, array(
+					sound: @sound,
+					pitch: @pitch,
+					volume: $volume
+				));
+			}
 		} else if(has_permission('command.playsound')) {
-			play_sound(ploc(), array(
-				sound: @sound,
-				pitch: @pitch,
-				volume: $volume
-			));
+			if(@args) {
+				play_sound(ploc(), array(
+					sound: @sound,
+					pitch: @pitch,
+					volume: $volume,
+					seed: @args[0],
+				));
+			} else {
+				play_sound(ploc(), array(
+					sound: @sound,
+					pitch: @pitch,
+					volume: $volume
+				));
+			}
 			msg(@sound.' @ '.@pitch);
 		}
 	}
