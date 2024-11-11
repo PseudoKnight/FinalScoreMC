@@ -364,7 +364,7 @@ proc _bind_events(@pvp) {
 	@pvp['binds'][] = bind('entity_death', null, null, @event, @pvp) {
 		if(!_is_survival_world(@event['location']['world'])
 		&& array_contains(sk_regions_at(@event['location']), @pvp['arena']['region'])) {
-			if(array_contains(get_scoreboard_tags(@event['id']), 'nodrops')) {
+			if(has_scoreboard_tag(@event['id'], 'nodrops')) {
 				modify_event('drops', null);
 			}
 			if(array_contains(@pvp['arena']['flags'], 'noxp')) {

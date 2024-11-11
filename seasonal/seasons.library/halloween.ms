@@ -77,7 +77,7 @@ bind('creature_spawn', null, array(type: 'SKELETON', reason: 'NATURAL'), @event)
 }
 
 bind('entity_damage', array(priority: 'LOWEST'), array(type: 'ZOMBIE', cause: 'ENTITY_ATTACK', world: 'outworld'), @event) {
-	if(array_contains(get_scoreboard_tags(@event['id']), 'Herobrine')) {
+	if(has_scoreboard_tag(@event['id'], 'Herobrine')) {
 		try(entity_remove(@event['id']))
 		play_sound(@event['location'], array(sound: 'ENTITY_EVOKER_PREPARE_ATTACK', pitch: 0.7));
 		spawn_particle(location_shift(@event['location'], 'up'), array(particle: 'CAMPFIRE_COSY_SMOKE', count: 3, yoffset: 1));
@@ -85,7 +85,7 @@ bind('entity_damage', array(priority: 'LOWEST'), array(type: 'ZOMBIE', cause: 'E
 }
 
 bind('entity_damage_player', null, array(damager: 'ZOMBIE'), @event) {
-	if(array_contains(get_scoreboard_tags(@event['id']), 'Herobrine')) {
+	if(has_scoreboard_tag(@event['id'], 'Herobrine')) {
 		try(entity_remove(@event['id']))
 		play_sound(@event['location'], array(sound: 'ENTITY_EVOKER_PREPARE_ATTACK', pitch: 0.7));
 		spawn_particle(location_shift(@event['location'], 'up'), array(particle: 'CAMPFIRE_COSY_SMOKE', count: 3, yoffset: 1));
@@ -94,7 +94,7 @@ bind('entity_damage_player', null, array(damager: 'ZOMBIE'), @event) {
 
 bind('target_player', null, array(mobtype: 'ZOMBIE'), @event) {
 	@id = @event['id'];
-	if(entity_exists(@id) && array_contains(get_scoreboard_tags(@id), 'Herobrine')) {
+	if(entity_exists(@id) && has_scoreboard_tag(@id, 'Herobrine')) {
 		@loc = entity_loc(@id);
 		@timer = array(160);
 		set_interval(50, closure(){

@@ -4,7 +4,7 @@
 	In some cases that source will have region privileges, but we don't want destruction.
  */
 bind('entity_explode', null, array(type: 'PRIMED_TNT'), @event) {
-	if(array_contains(get_scoreboard_tags(@event['id']), 'nodamage')) {
+	if(has_scoreboard_tag(@event['id'], 'nodamage')) {
 		modify_event('blocks', array());
 	}
 }

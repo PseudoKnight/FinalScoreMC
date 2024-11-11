@@ -26,7 +26,7 @@ bind('creature_spawn', null, array(type: 'ZOMBIE', reason: 'NATURAL'), @event,
 }
 
 bind('entity_damage', null, array(type: 'ZOMBIE'), @event) {
-	if(array_contains(get_scoreboard_tags(@event['id']), 'easter_bunny')) {
+	if(has_scoreboard_tag(@event['id'], 'easter_bunny')) {
 		@loc = location_shift(@event['location'], 'up');
 		@count = 3;
 		while(@count-- > 0) {
@@ -48,7 +48,7 @@ bind('entity_damage', null, array(type: 'ZOMBIE'), @event) {
 }
 
 bind('entity_death', null, array(type: 'ZOMBIE'), @event) {
-	if(array_contains(get_scoreboard_tags(@event['id']), 'easter_bunny')) {
+	if(has_scoreboard_tag(@event['id'], 'easter_bunny')) {
 		@drops = @event['drops'];
 		foreach(@i: @drop in @drops) {
 			if(@drop['name'] == 'ROTTEN_FLESH') {
@@ -62,7 +62,7 @@ bind('entity_death', null, array(type: 'ZOMBIE'), @event) {
 bind('target_player', null, array(mobtype: 'ZOMBIE'), @event, @day) {
 	try {
 		@entity = @event['id'];
-		if(array_contains(get_scoreboard_tags(@entity), 'easter_bunny')) {
+		if(has_scoreboard_tag(@entity, 'easter_bunny')) {
 			@mobs = array(
 				'ALLAY',
 				'AXOLOTL',

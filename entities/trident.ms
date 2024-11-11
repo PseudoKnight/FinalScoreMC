@@ -9,7 +9,7 @@ bind('projectile_launch', null, array(type: 'TRIDENT', shootertype: 'PLAYER'), @
 }
 
 bind('projectile_hit', null, array(type: 'TRIDENT'), @event) {
-	if(@event['hittype'] == 'BLOCK' && array_contains(get_scoreboard_tags(@event['id']), 'channeling')) {
+	if(@event['hittype'] == 'BLOCK' && has_scoreboard_tag(@event['id'], 'channeling')) {
 		@block = get_block(@event['hit']);
 		if(@block == 'LODESTONE' && get_highest_block_at(@event['hit'])['y'] == @event['hit']['y']) {
 			storm(true, @event['location']['world']);

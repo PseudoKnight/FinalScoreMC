@@ -40,7 +40,7 @@ proc _remove_region_entities(
 				continue();
 			}
 			if(@type === 'ARMOR_STAND' && !@removeProtected) {
-				if(!(array_contains(get_scoreboard_tags(@entity), 'remove'))) {
+				if(!has_scoreboard_tag(@entity, 'remove')) {
 					continue();
 				}
 			}
