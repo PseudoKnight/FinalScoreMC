@@ -13,7 +13,9 @@ proc _add_player(@player, @golf) {
 	);
 	set_pinv(@player, 0, array(name: 'SLIME_BALL'));
 	set_pscoreboard(@player, @golf['name']);
-	set_pscore('strokes', @player, 0, @golf['name']);
+	if(!@golf['test']) {
+		set_pscore('strokes', @player, 0, @golf['name']);
+	}
 	team_add_player('everyone', @player, @golf['name']);
 	return(true);
 }

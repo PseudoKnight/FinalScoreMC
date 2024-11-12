@@ -308,7 +308,7 @@ proc _start_game(@course, @loc, @test) {
 					unbind('golf_swing2_'.@player);
 					unbind('golf_hit_'.@player);
 
-					if(array_index_exists(@golf[@hole]['total'], @player)) {
+					if(array_index_exists(@golf, @hole - 1) && array_index_exists(@golf[@hole - 1]['total'], @player)) {
 						@golf[@hole]['total'][@player] = @golf[@hole - 1]['total'][@player] + @golf[@hole]['strokes'][@player];
 					} else {
 						@golf[@hole]['total'][@player] = @golf[@hole]['strokes'][@player];
