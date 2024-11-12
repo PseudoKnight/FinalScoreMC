@@ -13,7 +13,7 @@ register_command('text', array(
 			'<linewidth|viewrange': array('<num>'),
 			'<opacity': array('<0-255>'),
 			'<brightness': array('<0-15>'),
-			'<scale': array('<x> <y>'))
+			'<scale': array('<x> [y]'))
 	),
 	executor: closure(@alias, @player, @args) {
 		if(!@args) {
@@ -140,11 +140,15 @@ register_command('text', array(
 				}
 				set_display_entity(@display, array(viewrange: double(@value)));
 			case 'scale':
-				if(array_size(@args) < 3) {
-					die('Must give 2 doubles for xy scale of text. (1.0 1.0 is default)')
+				if(!@value) {
+					die('Must give 1 or 2 doubles for xy scale of text. (1.0 1.0 is default)')
 				}
-				set_display_entity(@display, array(transformation: array(
-					scale: array(x: double(@value), y: double(@args[2]), z: 1.0))));
+				@x = double(@value);
+				@y = @x;
+				if(array_size(@args) > 2) {
+					@y = double(@args[2]);
+				}
+				set_display_entity(@display, array(transformation: array(scale: array(x: @x, y: @y, z: 1.0))));
 			case 'delete':
 				entity_remove(@display);
 				export(player().'textdisplay', null);
