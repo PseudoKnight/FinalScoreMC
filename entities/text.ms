@@ -4,7 +4,7 @@ register_command('text', array(
 	permission: 'command.entity',
 	tabcompleter: _create_tabcompleter(
 		array('create', 'move', 'select', 'set', 'delete', 'align', 'linewidth', 'seethrough', 
-			'shadow', 'opacity', 'brightness', 'billboard', 'viewrange', 'scale'),
+			'shadow', 'opacity', 'brightness', 'billboard', 'viewrange', 'scale', 'bgcolor'),
 		array('<create|set': array('<text...>'),
 			'<move': array('here', 'there'),
 			'<align': array('center', 'left', 'right'),
@@ -13,7 +13,8 @@ register_command('text', array(
 			'<linewidth|viewrange': array('<num>'),
 			'<opacity': array('<0-255>'),
 			'<brightness': array('<0-15>'),
-			'<scale': array('<x> [y]'))
+			'<scale': array('<x> [y]'),
+			'<bgcolor': array('default', 'none', '<r> <g> <b> <a>'))
 	),
 	executor: closure(@alias, @player, @args) {
 		if(!@args) {
@@ -149,6 +150,21 @@ register_command('text', array(
 					@y = double(@args[2]);
 				}
 				set_display_entity(@display, array(transformation: array(scale: array(x: @x, y: @y, z: 1.0))));
+			case 'bgcolor':
+				if(@value == 'default') {
+					set_entity_spec(@display, array(bgcolor: null));
+				} else if(@value == 'none') {
+					set_entity_spec(@display, array(bgcolor: array(0, 0, 0, 0)));
+				} else {
+					if(array_size(@args) < 5) {
+						die('Must be "default" or 4 values for red, green, blue, and alpha. (0-255)');
+					}
+					@r = integer(@args[1]);
+					@g = integer(@args[2]);
+					@b = integer(@args[3]);
+					@a = integer(@args[4]);
+					set_entity_spec(@display, array(bgcolor: array(r: @r, g: @g, b: @b, a: @a)));
+				}
 			case 'delete':
 				entity_remove(@display);
 				export(player().'textdisplay', null);
