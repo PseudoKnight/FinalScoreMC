@@ -389,10 +389,10 @@ proc _start_game(@course, @loc, @test) {
 				@forceX = 0;
 				if(@v['x'] == 0) {
 					@forceX = abs(@ball['velocity']['x']);
-					@v['magnitude'] = 1;
 					if(@forceX < 0.002) {
 						@v['x'] = 0;
 					} else {
+						@v['magnitude'] = 1;
 						@v['x'] = 0 - @ball['velocity']['x'] * @bounciness;
 						if(@forceX > 0.05) {
 							@ricochetPitch = 1 + @forceX / 2;
@@ -403,10 +403,10 @@ proc _start_game(@course, @loc, @test) {
 				@forceZ = 0;
 				if(@v['z'] == 0) {
 					@forceZ = abs(@ball['velocity']['z']);
-					@v['magnitude'] = 1;
 					if(@forceZ < 0.002) {
 						@v['z'] = 0;
 					} else {
+						@v['magnitude'] = 1;
 						@v['z'] = 0 - @ball['velocity']['z'] * @bounciness;
 						if(@forceZ > 0.06 && @forceZ > @forceX) {
 							@ricochetPitch = 1 + @forceZ / 2;
