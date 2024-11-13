@@ -26,13 +26,9 @@ proc _ball_exists(@id) {
 	return(@id && entity_exists(@id));
 }
 
-proc _remove_ball(@ball, @course) {
-	try {
-		entity_remove(@ball['slime']);
-		entity_remove(@ball['id']);
-	} catch(Exception @ex) {
-		// does not exist
-	}
+proc _remove_ball(@ball, @slime) {
+	try(entity_remove(@slime))
+	try(entity_remove(@ball))
 }
 
 proc _get_block_below(@loc, @v) {

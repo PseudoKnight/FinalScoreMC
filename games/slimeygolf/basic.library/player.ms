@@ -25,7 +25,7 @@ proc _remove_player(@player, @golf) {
 	unbind('golf_swing2_'.@player);
 	unbind('golf_hit_'.@player);
 	@ball = @golf['players'][@player];
-	_remove_ball(@ball, @golf['name']);
+	_remove_ball(@ball['id'], @ball['slime']);
 	if(ponline(@player)) {
 		set_pscoreboard(@player);
 	}

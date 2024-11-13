@@ -64,7 +64,7 @@ proc _start_game(@course, @loc, @test) {
 			set_pexp(player(), 0);
 
 			if(_ball_exists(@ball['id'])) {
-				_remove_ball(@ball, @golf['name']);
+				_remove_ball(@ball['id'], @ball['slime']);
 			} else {
 				set_plevel(player(), 0);
 			}
@@ -303,7 +303,9 @@ proc _start_game(@course, @loc, @test) {
 					});
 
 					# clean up the hole for this player
-					_remove_ball(@ball, @course);
+					@id = @ball['id'];
+					@slime = @ball['slime'];
+					set_timeout(1000, closure(_remove_ball(@id, @slime)));
 					unbind('golf_swing1_'.@player)
 					unbind('golf_swing2_'.@player);
 					unbind('golf_hit_'.@player);
