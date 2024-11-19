@@ -46,7 +46,7 @@ proc _create_tabcompleter() {
 				}
 				@completions = @conditionalCompletions;
 			}
-			if(!@arg) {
+			if(!length(@arg)) {
 				return(@completions);
 			}
 			return(array_filter(@completions, closure(@key, @value) {
