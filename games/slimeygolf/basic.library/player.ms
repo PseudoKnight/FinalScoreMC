@@ -3,20 +3,21 @@ proc _add_player(@player, @golf) {
 		return(false);
 	}
 	@golf['players'][@player] = array(
-		type: array_size(@golf['players']),
 		hole: @golf['lowestHole'],
 		id: 0,
 		slime: 0,
+		color: 0,
 		velocity: array('x': 0, 'y': 0, 'z': 0),
 		swing: false,
 		cooldown: 0,
+		dyecolor: array_get_rand(reflect_pull('enum', 'DyeColor')),
 	);
 	set_pinv(@player, 0, array(name: 'SLIME_BALL'));
+	set_pinv(@player, 1, array(name: @golf['players'][@player]['dyecolor'].'_DYE', meta: array(display: 'Color Changer')));
 	set_pscoreboard(@player, @golf['name']);
 	if(!@golf['test']) {
 		set_pscore('strokes', @player, 0, @golf['name']);
 	}
-	team_add_player('everyone', @player, @golf['name']);
 	return(true);
 }
 
@@ -28,6 +29,10 @@ proc _remove_player(@player, @golf) {
 	_remove_ball(@ball['id'], @ball['slime']);
 	if(ponline(@player)) {
 		set_pscoreboard(@player);
+		if(pworld(@player) == @golf['world']) {
+			set_pinv(@player, 0, null);
+			set_pinv(@player, 1, null);
+		}
 	}
 	@hole = @ball['hole'];
 	@lastplayer = true;
