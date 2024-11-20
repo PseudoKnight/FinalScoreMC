@@ -218,7 +218,12 @@ proc _start_game(@course, @loc, @test) {
 					play_sound(@event['location'], array(sound: 'BLOCK_WOODEN_BUTTON_CLICK_ON', pitch: 2 - (1.3 / @xp)));
 					play_sound(@event['location'], array(sound: 'ENTITY_SLIME_HURT_SMALL', volume: 0.4, pitch: 2 - (1.3 / @xp)));
 					@ploc = ploc();
-					@ploc['pitch'] = 0;
+					@block = get_block(@event['location']);
+					if(@block === 'SOUL_SAND') {
+						@ploc['pitch'] = -54;
+					} else {
+						@ploc['pitch'] = 0;
+					}
 					@ball['velocity'] = get_vector(@ploc, @xp / 90);
 					set_entity_velocity(@ball['id'], @ball['velocity']);
 					set_pinv(@player, 0, array('name': 'SLIME_BALL'));
@@ -272,7 +277,9 @@ proc _start_game(@course, @loc, @test) {
 				@v = entity_velocity(@ball['id']);
 				@block = _get_block_below(location_shift(@loc, 'down', 0.01), @v);
 				@hole = @ball['hole'];
-				if(@block === 'ICE') {
+				if(@block === 'SOUL_SAND') {
+					// normal gravity
+				} else if(@block === 'ICE') {
 					// low friction
 					@frictionCompensation = 1.08;
 					@v['y'] = 0;
