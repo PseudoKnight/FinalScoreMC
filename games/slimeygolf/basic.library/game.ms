@@ -112,8 +112,27 @@ proc _start_game(@course, @loc, @test) {
 			unbind('golf_swing2_'.player());
 			unbind('golf_hit_'.player());
 
-			_place_ball(@ballLoc, @ball, @golf['name']);
+			_place_ball(@ballLoc, @ball);
 
+			// face player
+			@yaw = get_yaw(ploc(), @ballLoc);
+			@yaw = round(@yaw / 90) * 90;
+			if(@yaw != 0) {
+				// get quaternion rotation
+				@y = -to_radians(@yaw) * 0.5;
+				@leftRotation = array(
+					w: cos(@y),
+					x: 0,
+					y: sin(@y),
+					z: 0,
+				);
+				set_display_entity(@ball['slime'], array(
+					interpolationduration: 0,
+					transformation: array(
+						leftRotation: @leftRotation)));
+			}
+
+			// intialize hole
 			if(!array_index_exists(@golf, @hole)) {
 				@par = 3;
 				if(is_integral(@sign[1])) {

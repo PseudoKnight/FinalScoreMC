@@ -1,4 +1,4 @@
-proc _place_ball(@loc, @ball, @course) {
+proc _place_ball(@loc, @ball) {
 	@ball['id'] = spawn_entity('ARMOR_STAND', 1, @loc, closure(@armorStand){
 		set_entity_velocity(@armorStand, array(0, 0, 0));
 		set_entity_spec(@armorStand, array(visible: false, small: true));
