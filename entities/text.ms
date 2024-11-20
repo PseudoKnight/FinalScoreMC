@@ -4,7 +4,7 @@ register_command('text', array(
 	permission: 'command.entity',
 	tabcompleter: _create_tabcompleter(
 		array('create', 'move', 'select', 'set', 'delete', 'align', 'linewidth', 'seethrough', 
-			'shadow', 'opacity', 'brightness', 'billboard', 'viewrange', 'scale', 'bgcolor'),
+			'shadow', 'opacity', 'brightness', 'billboard', 'viewrange', 'scale', 'bgcolor', 'copy'),
 		array('<create|set': array('<text...>'),
 			'<move': array('here', 'there'),
 			'<align': array('center', 'left', 'right'),
@@ -32,6 +32,7 @@ register_command('text', array(
 		switch(@action) {
 			case 'create':
 			case 'move':
+			case 'copy':
 				if(@action === 'move' && @value === 'here') {
 					set_entity_loc(@display, entity_loc(puuid()));
 					return(true);
@@ -70,6 +71,14 @@ register_command('text', array(
 					set_entity_spec(@display, array(text: @text));
 					export(player().'textdisplay', @display);
 					msg('Created and selected text display for modification.');
+				} else if(@action === 'copy') {
+					@specData = entity_spec(@display);
+					@displayData = get_display_entity(@display);
+					@display = spawn_entity('TEXT_DISPLAY', 1, @loc)[0];
+					set_entity_spec(@display, @specData);
+					set_display_entity(@display, @displayData);
+					export(player().'textdisplay', @display);
+					msg('Copied text display and selected copy.');
 				} else {
 					set_entity_loc(@display, @loc);
 				}
