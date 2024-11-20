@@ -30,8 +30,14 @@ proc _remove_player(@player, @golf) {
 	if(ponline(@player)) {
 		set_pscoreboard(@player);
 		if(pworld(@player) == @golf['world']) {
-			set_pinv(@player, 0, null);
-			set_pinv(@player, 1, null);
+			@item = pinv(@player, 0);
+			if(@item && @item['name'] == 'SLIME_BALL') {
+				set_pinv(@player, 0, null);
+			}
+			@item = pinv(@player, 1);
+			if(@item && string_ends_with(@item['name'], 'DYE')) {
+				set_pinv(@player, 1, null);
+			}
 		}
 	}
 	@hole = @ball['hole'];
