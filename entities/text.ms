@@ -74,7 +74,12 @@ register_command('text', array(
 				if(@action === 'create') {
 					@display = spawn_entity('TEXT_DISPLAY', 1, @loc)[0];
 					@text = array_implode(@args[1..]);
-					@text = replace(@text, '\\n', '\n');
+					if(length(@text) == 0) {
+						// ensure it's visible
+						@text = '.';
+					} else {
+						@text = replace(@text, '\\n', '\n');
+					}
 					set_entity_spec(@display, array(text: @text));
 					export(player().'textdisplay', @display);
 					msg('Created and selected text display for modification.');
