@@ -34,7 +34,11 @@ register_command('text', array(
 			case 'move':
 			case 'copy':
 				if(@action === 'move' && @value === 'here') {
-					set_entity_loc(@display, entity_loc(puuid()));
+					@loc = entity_loc(puuid());
+					if(!sk_can_build(@loc)) {
+						die(color('red').'Cannot build here.');
+					}
+					set_entity_loc(@display, @loc);
 					return(true);
 				}
 				@trace = ray_trace();
