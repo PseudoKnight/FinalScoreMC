@@ -46,12 +46,13 @@ bind('player_join', null, null, @event) {
 				}
 				_tellraw(all_players(), array(array('plain', @pre), array('hover', @name, @hover), @msg));
 				if(function_exists('discord_broadcast')) {
+					@test = if(get_os() === 'WINDOWS', '[TEST SERVER]', '');
 					@count = array_size(all_players());
 					@msg = reg_replace('[&§][0-9a-fk-o]', '', @name.@msg);
 					@embed = array(
 						color: array(r: 58, g: 106, b: 39),
 						author: array(
-							name: "\u00bb @msg (@count)",
+							name: "\u00bb@test @msg (@count)",
 							icon_url: 'http://liam.fragify.net:30027/tiles/faces/32x32/'.player().'.png'));
 					if(is_null(@lastPlayed)) {
 						@embed['footer'] = array(text: 'New player!');
@@ -212,12 +213,13 @@ bind('player_quit', null, null, @event) {
 		broadcast(_timestamp().colorize('&4\u00ab &o'.@msg));
 		if(extension_exists('CHDiscord')) {
 			set_timeout(1, closure(){
+				@test = if(get_os() === 'WINDOWS', '[TEST SERVER]', '');
 				@count = array_size(all_players());
 				@msg = reg_replace('[&§][0-9a-fk-o]', '', @msg);
 				discord_broadcast('minecraft_chat', array(embed: array(
 					color: array(r: 126, g: 45, b: 35),
 					author: array(
-						name: "\u00ab @msg (@count)",
+						name: "\u00ab@test @msg (@count)",
 						icon_url: 'http://liam.fragify.net:30027/tiles/faces/32x32/'.player().'.png'))));
 			});
 		}
