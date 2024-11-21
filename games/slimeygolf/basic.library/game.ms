@@ -302,10 +302,10 @@ proc _start_game(@course, @loc, @test) {
 					set_entity_rotation(@ball['slime'], @loc['yaw'] + 10);
 					set_entity_rotation(@ball['color'], @loc['yaw'] + 10);
 					@center = _center(@loc, 0.125);
-					@count = array(5);
+					@cloudCount = array(5);
 					set_interval(100, 0, closure(){
 						spawn_particle(@center, array(particle: 'CLOUD', count: 0, speed: 0.5, yoffset: 1.0));
-						if(--@count[0] < 0) {
+						if(--@cloudCount[0] < 0) {
 							clear_task();
 						}
 					});
