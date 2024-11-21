@@ -1,7 +1,7 @@
 register_command('text', array(
 	description: 'Creates and modifies text displays',
 	usage: '/text <create|select|set|delete|align|linewidth|seethrough|shadow|opacity|brightness|billboard|viewrange|scale> [value]',
-	permission: 'command.entity',
+	permission: 'command.text',
 	tabcompleter: _create_tabcompleter(
 		array('create', 'move', 'select', 'set', 'delete', 'align', 'linewidth', 'seethrough', 
 			'shadow', 'opacity', 'brightness', 'billboard', 'viewrange', 'scale', 'bgcolor', 'copy'),
@@ -64,6 +64,9 @@ register_command('text', array(
 						@loc['yaw'] = 180.0;
 						@loc['z'] -= 0.01;
 				}
+				if(!sk_can_build(@loc)) {
+					die(color('red').'Cannot build there.');
+				}
 				if(@action === 'create') {
 					@display = spawn_entity('TEXT_DISPLAY', 1, @loc)[0];
 					@text = array_implode(@args[1..]);
@@ -88,6 +91,9 @@ register_command('text', array(
 					die('Must be near a text display.');
 				}
 				@display = @displays[0];
+				if(!sk_can_build(entity_loc(@display))) {
+					die(color('red').'Cannot build there.');
+				}
 				export(player().'textdisplay', @display);
 				@loc = entity_loc(@display);
 				@opacity = entity_spec(@display)['opacity'];

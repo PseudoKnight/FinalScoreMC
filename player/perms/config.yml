@@ -154,6 +154,7 @@ regular:
       command.time: true
       command.playsound: true
       worldguard.region.claim: true
+      command.text: true
   inheritance: member
 donor:
   permissions:
@@ -221,6 +222,7 @@ builder:
       command.put: true
       command.skull: true
       command.track: true
+      command.text: true
       worldedit.analysis.*: true
       worldedit.brush.*: true
       worldedit.clipboard.*: true
@@ -258,6 +260,7 @@ builder:
       command.skull: true
       command.track: true
       command.kart: true
+      command.text: true
       worldedit.navigation.*: true
       worldguard.region.claim: true
       deadbolt.user.create.*: true
@@ -346,6 +349,7 @@ moderator:
     command.goto: true
     command.goto.anywhere: true
     command.mute: true
+    command.text: true
     minecraft.nbt.place: true
     shop.admin: true
   worlds:
