@@ -80,14 +80,36 @@ proc _start_game(@course, @loc, @test) {
 
 			@ball = @golf['players'][player()];
 			@hole = @ball['hole'];
+			@down = location_shift(@event['location'], 'down');
 
 			# get hole data from sign
-			@sign = get_sign_text(location_shift(@event['location'], 'down'));
-			if(@sign[0] != @hole && !@golf['test']) {
+			@signText = get_sign_text(@down);
+			if(@signText[0] != @hole && !@golf['test']) {
 				die();
 			}
+
+			@signBlock = get_blockdata(@down);
+			if(!string_ends_with(@signBlock['block'], 'wall_hanging_sign')) {
+				// fix sign type
+				if(array_index_exists(@signBlock, 'rotation')) {
+					switch(integer(@signBlock['rotation'] / 4) * 4) {
+						case 0:
+							set_blockdata(@down, 'oak_wall_hanging_sign[facing=south]');
+						case 4:
+							set_blockdata(@down, 'oak_wall_hanging_sign[facing=west]');
+						case 8: 
+							set_blockdata(@down, 'oak_wall_hanging_sign[facing=north]');
+						case 12:
+							set_blockdata(@down, 'oak_wall_hanging_sign[facing=east]');
+					}
+				} else {
+					set_blockdata(@down, array(block: 'oak_wall_hanging_sign', facing: @signBlock['facing']));
+				}
+				set_sign_text(@down, @signText);
+			}
+
 			@options = associative_array();
-			foreach(@option in split(',', @sign[2])) {
+			foreach(@option in split(',', @signText[2])) {
 				@split = split('=', @option);
 				@key = @split[0];
 				@options[@key] = array_get(@split, 1, null);
@@ -149,8 +171,8 @@ proc _start_game(@course, @loc, @test) {
 			// intialize hole
 			if(!array_index_exists(@golf, @hole)) {
 				@par = 3;
-				if(is_integral(@sign[1])) {
-					@par = integer(@sign[1]);
+				if(is_integral(@signText[1])) {
+					@par = integer(@signText[1]);
 				}
 				@golf[@hole] = associative_array(
 					loc: array(
