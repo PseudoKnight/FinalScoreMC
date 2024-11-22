@@ -67,6 +67,7 @@ proc _start_game(@course, @loc, @test) {
 				@golf['players'][player()]['dyecolor'] = @dye;
 				if(@golf['players'][player()]['color'] && entity_exists(@golf['players'][player()]['color'])) {
 					set_entity_spec(@golf['players'][player()]['color'], array(blockdata: @dye.'_STAINED_GLASS'));
+					set_display_entity(@golf['players'][player()]['color'], array(glowcolor: _dye_to_rgb(@dye)));
 				}
 			}
 		}
