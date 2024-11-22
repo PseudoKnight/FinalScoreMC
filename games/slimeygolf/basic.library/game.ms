@@ -86,6 +86,20 @@ proc _start_game(@course, @loc, @test) {
 			if(@sign[0] != @hole && !@golf['test']) {
 				die();
 			}
+			@options = associative_array();
+			foreach(@option in split(',', @sign[2])) {
+				@split = split('=', @option);
+				@key = @split[0];
+				@options[@key] = array_get(@split, 1, null);
+			}
+
+			if(array_index_exists(@options, 'S')) {
+				if(@options['S']) {
+					try(@ball['size'] = clamp(double(@options['S']), 0.0625, 0.9375))
+				} else {
+					@ball['size'] = 0.5;
+				}
+			}
 
 			@ballLoc = array(
 				x: @event['location']['x'] + @event['position']['x'],
@@ -95,7 +109,7 @@ proc _start_game(@course, @loc, @test) {
 			)
 
 			foreach(@d in array('east', 'west', 'north', 'south')) {
-				if(get_block(location_shift(@ballLoc, @d, 0.25)) !== 'AIR') {
+				if(get_block(location_shift(@ballLoc, @d, @ball['size'] / 2)) !== 'AIR') {
 					die();
 				}
 			}
@@ -150,7 +164,7 @@ proc _start_game(@course, @loc, @test) {
 					total: associative_array(),
 					minecart: false,
 				);
-				if(array_contains(@sign[2], 'M')) {
+				if(array_index_exists(@options, 'M')) {
 					@golf[@hole]['minecart'] = true;
 				}
 				set_block(@golf[@hole]['loc'], 'REDSTONE_BLOCK');
@@ -231,8 +245,8 @@ proc _start_game(@course, @loc, @test) {
 						particle: 'BLOCK_CRACK',
 						block: @ball['dyecolor'].'_STAINED_GLASS',
 						count: integer(@xp / 2),
-						xoffset: 0.6,
-						zoffset: 0.6));
+						xoffset: @ball['size'],
+						zoffset: @ball['size']));
 				}
 			}
 		}
@@ -275,7 +289,7 @@ proc _start_game(@course, @loc, @test) {
 					continue();
 				}
 				@v = entity_velocity(@ball['id']);
-				@block = _get_block_below(location_shift(@loc, 'down', 0.01), @v);
+				@block = _get_block_below(location_shift(@loc, 'down', 0.01), @v, @ball['size']);
 				@hole = @ball['hole'];
 				if(@block === 'SOUL_SAND') {
 					// normal gravity
@@ -457,8 +471,8 @@ proc _start_game(@course, @loc, @test) {
 								particle: 'BLOCK_CRACK', 
 								block: @ball['dyecolor'].'_STAINED_GLASS', 
 								count: integer(@forceX * 30),
-								xoffset: 0.2,
-								zoffset: 0.2));
+								xoffset: @ball['size'] / 2,
+								zoffset: @ball['size'] / 2));
 						}
 					}
 				}
@@ -471,14 +485,14 @@ proc _start_game(@course, @loc, @test) {
 					} else {
 						@v['magnitude'] = 1;
 						@v['z'] = 0 - @ball['velocity']['z'] * @bounciness;
-						if(@forceZ > 0.06 && @forceZ > @forceX) {
+						if(@forceZ > 0.05 && @forceZ > @forceX) {
 							@ricochetPitch = 1 + @forceZ / 2;
 							spawn_particle(@loc, array(
 								particle: 'BLOCK_CRACK', 
 								block: @ball['dyecolor'].'_STAINED_GLASS', 
 								count: integer(@forceZ * 30),
-								xoffset: 0.2,
-								zoffset: 0.2));
+								xoffset: @ball['size'] / 2,
+								zoffset: @ball['size'] / 2));
 						}
 					}
 				}

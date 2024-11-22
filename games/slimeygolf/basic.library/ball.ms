@@ -8,9 +8,10 @@ proc _place_ball(@loc, @ball) {
 	@ball['slime'] = spawn_entity('ITEM_DISPLAY', 1, @loc, closure(@head) {
 		set_display_entity(@head, array(
 			teleportduration: 1,
+			brightness: 15,
 			transformation: array(
-				translation: array(x: 0, y: 0.455, z: 0),
-				scale: array(x: 0.9, y: 0.9, z: 0.9))));
+				translation: array(x: 0, y: @ball['size'] * 0.95, z: 0),
+				scale: array(x: @ball['size'] * 1.8, y: @ball['size'] * 1.8, z: @ball['size'] * 1.8))));
 		set_entity_spec(@head, array(item: array(name: 'PLAYER_HEAD', meta: array(
 			owneruuid: 'd5dcf43b-ffcf-412e-bbd1-33fabc8ad503',
 			texture: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNjc3NjE5ZTYwMDA1YzM4ZTRkNTA5Y2M5YTlmZTcyOTNhMzMyYzdiYzM4Yjg5MzM0MTc5MjkwMTA2YjAzMWJjMSJ9fX0='))));
@@ -19,10 +20,11 @@ proc _place_ball(@loc, @ball) {
 		set_entity_spec(@display, array(blockdata: @ball['dyecolor'].'_STAINED_GLASS'));
 		set_display_entity(@display, array(
 			teleportduration: 1,
+			brightness: 15,
 			glowcolor: _dye_to_rgb(@ball['dyecolor']),
 			transformation: array(
-				translation: array(x: -0.23, y: 0.0, z: -0.23),
-				scale: array(x: 0.46, y: 0.46, z: 0.46))));
+				translation: array(x: -@ball['size'] / 2, y: 0.0, z: -@ball['size'] / 2),
+				scale: array(x: @ball['size'], y: @ball['size'], z: @ball['size']))));
 		add_scoreboard_tag(@display, 'remove');
 	})[0];
 	set_entity_rider(@ball['slime'], @ball['color']);
@@ -30,9 +32,9 @@ proc _place_ball(@loc, @ball) {
 	@ball['velocity'] = array(x: 0, y: 0, z: 0);
 
 	if(function_exists('set_entity_size')) {
-		set_entity_size(@ball['id'], 0.4575, 0.4575);
+		set_entity_size(@ball['id'], @ball['size'], @ball['size']);
 	}
-	spawn_particle(@loc, array(particle: 'BLOCK_CRACK', block: @ball['dyecolor'].'_STAINED_GLASS', count: 20, xoffset: 0.6, zoffset: 0.6));
+	spawn_particle(@loc, array(particle: 'BLOCK_CRACK', block: @ball['dyecolor'].'_STAINED_GLASS', count: 20, xoffset: @ball['size'], zoffset: @ball['size']));
 	play_sound(@loc, array(sound: 'ENTITY_SLIME_JUMP', volume: 0.5));
 }
 
@@ -46,7 +48,7 @@ proc _remove_ball(@ball, @slime) {
 	try(entity_remove(@ball))
 }
 
-proc _get_block_below(@loc, @v) {
+proc _get_block_below(@loc, @v, @size) {
 	@block = get_block(@loc);
 	if(@block !== 'AIR') {
 		if(@block === 'BLACK_WOOL') {
@@ -57,34 +59,34 @@ proc _get_block_below(@loc, @v) {
 
 	@rx = @loc['x'] - floor(@loc['x']);
 	@dirx = '';
-	if(@rx < 0.2287) {
+	if(@rx < @size / 2) {
 		@dirx = 'west';
-	} else if(@rx > 0.7713) {
+	} else if(@rx > 1 - @size / 2) {
 		@dirx = 'east';
 	}
 	@blockX = if(@dirx, get_block(location_shift(@loc, @dirx)), @block);
 	if(@blockX !== 'AIR') {
 		// adjust ball velocity towards edge if hanging off
-		if(@rx < 0.2287) {
-			@v['x'] += @rx * 0.2;
-		} else if(@rx > 0.7713) {
-			@v['x'] -= (1.0 - @rx) * 0.2;
+		if(@rx < @size / 2) {
+			@v['x'] += 0.02;
+		} else if(@rx > 1 - @size / 2) {
+			@v['x'] -= 0.02;
 		}
 	}
 
 	@rz = @loc['z'] - floor(@loc['z']);
 	@dirz = '';
-	if(@rz < 0.2287) {
+	if(@rz < @size / 2) {
 		@dirz = 'north';
-	} else if(@rz > 0.7713) {
+	} else if(@rz > 1 - @size / 2) {
 		@dirz = 'south';
 	}
 	@blockZ = if(@dirz, get_block(location_shift(@loc, @dirz)), @block);
 	if(@blockZ !== 'AIR') {
-		if(@rz < 0.2287) {
-			@v['z'] += @rz * 0.2;
-		} else if(@rz > 0.7713) {
-			@v['z'] -= (1.0 - @rz) * 0.2;
+		if(@rz < @size / 2) {
+			@v['z'] += 0.02;
+		} else if(@rz > 1 - @size / 2) {
+			@v['z'] -= 0.02;
 		}
 	}
 	if(@blockX !== 'AIR') {
