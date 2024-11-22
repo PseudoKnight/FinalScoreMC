@@ -1,13 +1,13 @@
 register_command('entereffect', array(
 	description: 'Sets the server enter effect of a player.',
 	usage: '/entereffect <type>',
-	tabcompleter: _create_tabcompleter(array('lightning', 'kaboom', 'clear')),
+	tabcompleter: _create_tabcompleter(array('lightning', 'kaboom', 'resurrect', 'clear')),
 	executor: closure(@alias, @sender, @args, @info) {
 		if(!@args) {
 			return(false);
 		}
 		@type = to_lower(@args[0]);
-		@types = array('lightning', 'kaboom', 'clear');
+		@types = array('lightning', 'kaboom', 'resurrect', 'clear');
 		if(array_contains(@types, @type)) {
 			@pdata = _pdata(player());
 			if(@type == 'clear') {

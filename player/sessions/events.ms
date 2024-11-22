@@ -193,6 +193,8 @@ bind('player_join', null, null, @event) {
 								trail: true,
 								colors: 'BLACK',
 							));
+						case 'resurrect':
+							play_entity_effect(puuid(), 'TOTEM_RESURRECT');
 					}
 				}
 			}, player().'join');
