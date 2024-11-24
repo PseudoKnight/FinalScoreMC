@@ -21,7 +21,7 @@ proc _create_tabcompleter() {
 		}
 		@completions = @argumentCompletions[array_size(@args) - 1];
 		if(is_array(@completions)) {
-			@arg = to_lower(@args[-1]);
+			@arg = @args[-1];
 			while(is_associative(@completions)) {
 				@conditionalCompletions = array();
 				foreach(@condition: @array in @completions) {
