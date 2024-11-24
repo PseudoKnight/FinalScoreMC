@@ -80,7 +80,7 @@ register_command('text', array(
 					} else {
 						@text = replace(@text, '\\n', '\n');
 					}
-					set_entity_spec(@display, array(text: @text));
+					set_entity_spec(@display, array(text: colorize(@text)));
 					export(player().'textdisplay', @display);
 					msg('Created and selected text display for modification.');
 				} else if(@action === 'copy') {
