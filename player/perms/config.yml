@@ -155,6 +155,7 @@ regular:
       command.playsound: true
       worldguard.region.claim: true
       command.text: true
+      command.cb: true
   inheritance: member
 donor:
   permissions:
@@ -186,6 +187,7 @@ builder:
       command.heal.others: true
       command.entity: true
       command.cb: true
+      command.cb.extended: true
       command.cloud: true
       command.acme: true
       command.goto: true
@@ -215,6 +217,7 @@ builder:
       command.heal.others: true
       command.entity: true
       command.cb: true
+      command.cb.extended: true
       command.cloud: true
       command.acme: true
       command.goto: true
@@ -251,6 +254,7 @@ builder:
       command.heal.others: true
       command.entity: true
       command.cb: true
+      command.cb.extended: true
       command.items: true
       command.vanish: true
       command.cloud: true

@@ -1,7 +1,7 @@
 register_command('relcoords', array(
 	description: 'Add relative coordinates to the targeted command block.',
 	usage: '/relcoords',
-	permission: 'command.cb',
+	permission: 'command.cb.extended',
 	tabcompleter: closure(return(array())),
 	executor: closure(@alias, @sender, @args, @info) {
 		@block = ray_trace(8)['block'];

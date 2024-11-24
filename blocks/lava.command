@@ -1,7 +1,7 @@
 register_command('lava', array(
 	description: 'Creates and propagates special lava at the specified tickspeed.',
 	usage: '/lava [~x ~y ~z] <ticksPerUpdate> <tickDuration>',
-	permission: 'command.cb',
+	permission: 'command.cb.extended',
 	tabcompleter: _create_tabcompleter(array('<ticks>')),
 	executor: closure(@alias, @player, @args) {
 		if(array_size(@args) < 2) {

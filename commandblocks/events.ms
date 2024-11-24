@@ -1,7 +1,6 @@
 # Allow command block placement for builders
 proc _place_command_block(@loc, @face, @block) {
-	if(!pisop() && has_permission('command.cb')
-	&& !_is_survival_world(@loc['world'])) {
+	if(!pisop() && has_permission('command.cb')) {
 		@clicked = get_block(@loc);
 		if(psneaking() || (@clicked != 'COMMAND_BLOCK' && @clicked != 'CHAIN_COMMAND_BLOCK' && @clicked != 'REPEATING_COMMAND_BLOCK')) {
 			@loc = location_shift(@loc, @face);
@@ -59,7 +58,7 @@ proc _msg_block_command(@loc) {
 	@cmd = replace(@cmd, '\\', '\\\\');
 	@cmd = replace(@cmd, '"', '\\u0022');
 	runas('~console', '/tellraw '.player().' ["",'
-			.'{"text":"[EDIT]","clickEvent":{"action":"run_command","value":"/scb"}},'
+			.if(has_permission('command.cb.extended'), '{"text":"[EDIT]","clickEvent":{"action":"run_command","value":"/scb"}},')
 			.'{"text":" [REDSTONE |","clickEvent":{"action":"run_command","value":"/scbauto false"}},'
 			.'{"text":" ALWAYS]","clickEvent":{"action":"run_command","value":"/scbauto true"}},'
 			.'{"text":" [CONDITIONAL]","clickEvent":{"action":"run_command","value":"/scbconditional"}},'
