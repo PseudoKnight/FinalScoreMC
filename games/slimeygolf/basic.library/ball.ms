@@ -7,8 +7,10 @@ proc _place_ball(@loc, @ball) {
 	@loc['y'] += 0.01;
 	@ball['slime'] = spawn_entity('ITEM_DISPLAY', 1, @loc, closure(@head) {
 		set_display_entity(@head, array(
+			interpolationduration: 0,
 			teleportduration: 1,
 			brightness: 15,
+			glowcolor: _dye_to_rgb(@ball['dyecolor']),
 			transformation: array(
 				translation: array(x: 0, y: @ball['size'] * 0.95, z: 0),
 				scale: array(x: @ball['size'] * 1.8, y: @ball['size'] * 1.8, z: @ball['size'] * 1.8))));
@@ -16,6 +18,22 @@ proc _place_ball(@loc, @ball) {
 			owneruuid: 'd5dcf43b-ffcf-412e-bbd1-33fabc8ad503',
 			texture: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNjc3NjE5ZTYwMDA1YzM4ZTRkNTA5Y2M5YTlmZTcyOTNhMzMyYzdiYzM4Yjg5MzM0MTc5MjkwMTA2YjAzMWJjMSJ9fX0='))));
 	})[0];
+
+	// face player
+	@yaw = get_yaw(ploc(), @loc);
+	@yaw = round(@yaw / 90) * 90;
+	if(@yaw != 0) {
+		// get quaternion rotation
+		@y = -to_radians(@yaw) * 0.5;
+		@leftRotation = array(
+			w: cos(@y),
+			x: 0,
+			y: sin(@y),
+			z: 0,
+		);
+		set_display_entity(@ball['slime'], array(transformation: array(leftRotation: @leftRotation)));
+	}
+
 	@ball['color'] = spawn_entity('BLOCK_DISPLAY', 1, @loc, closure(@display) {
 		set_entity_spec(@display, array(blockdata: @ball['dyecolor'].'_STAINED_GLASS'));
 		set_display_entity(@display, array(

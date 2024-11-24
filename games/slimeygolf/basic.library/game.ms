@@ -151,24 +151,6 @@ proc _start_game(@course, @loc, @test) {
 
 			_place_ball(@ballLoc, @ball);
 
-			// face player
-			@yaw = get_yaw(ploc(), @ballLoc);
-			@yaw = round(@yaw / 90) * 90;
-			if(@yaw != 0) {
-				// get quaternion rotation
-				@y = -to_radians(@yaw) * 0.5;
-				@leftRotation = array(
-					w: cos(@y),
-					x: 0,
-					y: sin(@y),
-					z: 0,
-				);
-				set_display_entity(@ball['slime'], array(
-					interpolationduration: 0,
-					transformation: array(
-						leftRotation: @leftRotation)));
-			}
-
 			// intialize hole
 			if(!array_index_exists(@golf, @hole)) {
 				@par = 3;
@@ -199,7 +181,7 @@ proc _start_game(@course, @loc, @test) {
 
 			proc _charge_swing(@ball) {
 				if(!@ball['swing']) {
-					set_entity_glowing(@ball['color'], true);
+					set_entity_glowing(@ball['slime'], true);
 					@loc = entity_loc(@ball['id']);
 					@ploc = ploc();
 					@ploc['pitch'] = 0;
@@ -212,7 +194,7 @@ proc _start_game(@course, @loc, @test) {
 						if(@xp < 99 && @ball['swing']) {
 							set_pexp(min(99, pexp() + 4));
 						} else {
-							set_entity_glowing(@ball['color'], false);
+							set_entity_glowing(@ball['slime'], false);
 							clear_task();
 							if(@ball['swing']) {
 								set_pexp(0);
