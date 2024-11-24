@@ -58,13 +58,13 @@ bind('inventory_click', null, array('clicktype': 'SHIFT_RIGHT'), @event) {
 
 // Open an ender chest or crafting table if they cannot place one
 bind('block_place', null, array(block: 'ENDER_CHEST'), @event) {
-	if(!sk_can_build(@event['location'])) {
+	if(_is_survival_world(pworld()) && !sk_can_build(@event['location'])) {
 		play_sound(ploc(), array('sound': 'BLOCK_ENDER_CHEST_OPEN'));
 		show_enderchest();
 	}
 }
 bind('block_place', null, array(block: 'CRAFTING_TABLE'), @event) {
-	if(!sk_can_build(@event['location'])) {
+	if(_is_survival_world(pworld()) && !sk_can_build(@event['location'])) {
 		pworkbench();
 	}
 }
