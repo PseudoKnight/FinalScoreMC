@@ -29,29 +29,17 @@ proc _start_game(@course, @loc, @test) {
 		world: @loc['world'],
 		par: 0,
 		players: associative_array(),
-		spectators: array(),
 		lowestHole: 1,
 		test: @test,
+		// populated with hole indexes
 	);
 
+	// Physics defaults
+	@bounciness = 0.8;
+	@frictionCompensation = 1.07;
+
 	_create_scoreboards(@golf);
-	foreach(@player in all_players(@loc['world'])) {
-		if(ponline(@player) && array_contains(sk_current_regions(@player), @course)
-		&& _add_player(@player, @golf)
-		&& array_size(@golf['players']) >= 4) {
-			break();
-		}
-	}
-
 	_add_activity(@course, _to_upper_camel_case(@course));
-
-	broadcast(colorize(
-		'&a&lSLIMEY&6&lGOLF &a\u2308\u2328 \uFE52\u2328\u2309&r\n'
-		.'&6&l[ How to Play ]&r\n'
-		.'- Place slime ball on white concrete.\n'
-		.'- Right-click slime to start swing.\n'
-		.'- As your swing charges, hit slime.'
-	), array_keys(@golf['players']));
 
 	bind('player_interact', array(id: @course.'color'), array(button: 'right', hand: 'main_hand'), @event, @golf,
 	@dyes = array('WHITE', 'LIGHT_GRAY', 'GRAY', 'BLACK', 'RED', 'ORANGE', 'MAGENTA', 'LIGHT_BLUE', 'YELLOW', 'LIME', 'GREEN', 'CYAN', 'BLUE', 'PURPLE', 'PINK', 'BROWN')) {
@@ -257,29 +245,22 @@ proc _start_game(@course, @loc, @test) {
 		}
 	}
 
+	// Main tick loop for player management, game logic, and ball physics
 	set_interval(50, closure(){
-		# Physics defaults
-		@bounciness = 0.8;
-		@frictionCompensation = 1.07;
-
-		@count = 0;
+		@playerCount = 0;
 		foreach(@player in all_players()) {
 			if(!array_index_exists(@golf['players'], @player)) {
-				if(pworld(@player) == @golf['world'] && array_contains(sk_current_regions(@player), @course)) {
+				if(pworld(@player) === @golf['world'] && array_contains(sk_current_regions(@player), @course)) {
 					if(@golf['lowestHole'] == 1 && array_size(@golf['players']) < 4 && _add_player(@player, @golf)) {
-						@count++;
-					} else if(!array_contains(@golf['spectators'], @player)) {
-						@golf['spectators'][] = @player;
+						@playerCount++;
 					}
-				} else if(array_contains(@golf['spectators'], @player)) {
-					array_remove_values(@golf['spectators'], @player);
 				}
 				continue();
-			} else if(pworld(@player) != @golf['world'] || !array_contains(sk_current_regions(@player), @course)) {
+			} else if(pworld(@player) !== @golf['world'] || !array_contains(sk_current_regions(@player), @course)) {
 				_remove_player(@player, @golf);
 				continue();
 			} else {
-				@count++;
+				@playerCount++;
 			}
 			@ball = @golf['players'][@player];
 			if(_ball_exists(@ball['id'])) {
@@ -294,27 +275,46 @@ proc _start_game(@course, @loc, @test) {
 					continue();
 				}
 				@v = entity_velocity(@ball['id']);
-				@block = _get_block_below(location_shift(@loc, 'down', 0.01), @v, @ball['size']);
-				@hole = @ball['hole'];
-				if(@block === 'SOUL_SAND') {
-					// normal gravity
-				} else if(@block === 'ICE') {
+				@down = location_shift(@loc, 'down', 0.01);
+				@block = _get_block_below(@down, @v, @ball['size']);
+
+				if(@block === 'ICE') {
 					// low friction
 					@frictionCompensation = 1.08;
 					@v['y'] = 0;
 				} else if(@block === 'PACKED_ICE') {
-					// low friction
+					// lower friction
 					@frictionCompensation = 1.09;
 					@v['y'] = 0;
 				} else if(@block === 'BLUE_ICE') {
-					// low friction
+					// lowest friction
 					@frictionCompensation = 1.1;
 					@v['y'] = 0;
 				} else if(!@block || !material_info(@block, 'isSolid')) {
 					// normal gravity, less air resistance
 					@frictionCompensation = 1.1;
-				} else if(!material_info(@block, 'isOccluding')) {
+				} else if(material_info(@block, 'isTransparent') || @block === 'SOUL_SAND') {
 					// normal gravity and friction
+				} else if(@block === 'MAGENTA_GLAZED_TERRACOTTA') {
+					@v['y'] = 0;
+					@blockData = get_blockdata(@down);
+					if(@blockData['block'] === 'magenta_glazed_terracotta') {
+						play_sound(@ball['id'], array(sound: 'BLOCK_SCULK_SENSOR_CLICKING_STOP', pitch: 2, volume: 0.7));
+						switch(@blockData['facing']) {
+							case 'south':
+								@v['x'] *= 0.67;
+								@v['z'] -= 0.2;
+							case 'north':
+								@v['x'] *= 0.67;
+								@v['z'] += 0.2;
+							case 'west':
+								@v['x'] += 0.2;
+								@v['z'] *= 0.67;
+							case 'east':
+								@v['x'] -= 0.2;
+								@v['z'] *= 0.67;
+						}
+					}
 				} else if(@block === 'CHISELED_QUARTZ_BLOCK' && abs(@v['x']) + abs(@v['z']) != 0) {
 					@v['y'] += 0.65;
 					set_entity_rotation(@ball['id'], @loc['yaw'] + 10);
@@ -329,126 +329,25 @@ proc _start_game(@course, @loc, @test) {
 						}
 					});
 					play_sound(@loc, array(sound: 'ENTITY_BREEZE_IDLE_GROUND', pitch: 1.5));
-				} else if(@block === 'BLACK_WOOL') { # if ball dropped into the hole
-					# check for birdie/eagle
-					@hits = plevel(@player);
-					@par = @golf[@hole]['par'];
-					@type = 'Par';
-					if(@hits == @par - 1) {
-						@type = 'Birdie';
-						launch_firework(@loc, array(strength: -1, type: 'BURST', colors: _dye_to_rgb(@ball['dyecolor'])));
-					} else if(@hits == @par - 2) {
-						@type = 'Eagle!';
-						launch_firework(@loc, array(strength: -1, type: 'BURST', colors: _dye_to_rgb(@ball['dyecolor'])));
-						launch_firework(@loc, array(strength: 0, type: 'BALL_LARGE', colors: _dye_to_rgb(@ball['dyecolor'])));
-					} else if(@hits == @par - 3) {
-						@type = 'Albatross!!';
-						launch_firework(@loc, array(strength: -1, type: 'BURST', colors: _dye_to_rgb(@ball['dyecolor'])));
-						launch_firework(@loc, array(strength: 0, type: 'BALL_LARGE', colors: _dye_to_rgb(@ball['dyecolor'])));
-						launch_firework(@loc, array(strength: 1, type: 'BALL_LARGE', colors: _dye_to_rgb(@ball['dyecolor'])));
-					} else if(@hits == @par - 4) {
-						@type = 'Condor!!!';
-						launch_firework(@loc, array(strength: -1, type: 'BURST', colors: _dye_to_rgb(@ball['dyecolor'])));
-						launch_firework(@loc, array(strength: 0, type: 'BALL_LARGE', colors: _dye_to_rgb(@ball['dyecolor'])));
-						launch_firework(@loc, array(strength: 1, type: 'BALL_LARGE', colors: _dye_to_rgb(@ball['dyecolor'])));
-						launch_firework(@loc, array(strength: 2, type: 'BALL_LARGE', colors: _dye_to_rgb(@ball['dyecolor'])));
-					} else if(@hits > @par) {
-						switch(@hits - @par) {
-							case 1:
-								@type = 'Bogey';
-							case 2:
-								@type = 'Double Bogey';
-							case 3:
-								@type = 'Triple Bogey';
-							default:
-								@type = '';
-						}
-					}
-
-
-					set_timeout(2000, closure() {
-						if(@hits < @par) {
-							play_sound(ploc(@player), array(sound: 'ENTITY_VILLAGER_YES'));
-						}
-						play_sound(ploc(@player), array(sound: 'ENTITY_VILLAGER_WORK_CARTOGRAPHER'));
-						if(@hits == 1) {
-							title(@player, 'Hole in One!', @type);
-						} else if(@type) {
-							title(@player, null, @type);
-						}
-					});
-
-					# clean up the hole for this player
-					@id = @ball['id'];
-					@slime = @ball['slime'];
-					set_timeout(1000, closure(_remove_ball(@id, @slime)));
-					unbind('golf_swing1_'.@player)
-					unbind('golf_swing2_'.@player);
-					unbind('golf_hit_'.@player);
-
-					if(array_index_exists(@golf, @hole - 1) && array_index_exists(@golf[@hole - 1]['total'], @player)) {
-						@golf[@hole]['total'][@player] = @golf[@hole - 1]['total'][@player] + @golf[@hole]['strokes'][@player];
-					} else {
-						@golf[@hole]['total'][@player] = @golf[@hole]['strokes'][@player];
-					}
-
-					# check if last player to leave hole
-					@lastplayer = true;
-					foreach(@p: @b in @golf['players']) {
-						if(@p != @player
-						&& @b['hole'] <= @hole) {
-							@lastplayer = false;
+				} else if(@block === 'BLACK_WOOL') { 
+					# check if ball dropped into hole
+					@isHole = true;
+					foreach(@dir in array('north', 'south', 'east', 'west')) {
+						if(!material_info(get_block(location_shift(@loc, @dir)), 'isSolid')) {
+							@isHole = false;
 							break();
 						}
 					}
-					if(@lastplayer && !@golf['test']) {
-						set_block(@golf[@hole]['loc'], 'AIR');
-						@golf['lowestHole'] = min(9, @hole + 1);
-						@golf['par'] += @golf[@hole]['par'];
-
-						# update sidebars and score output for players
-						@score = 0;
-						if(array_size(@golf['players']) > 1) {
-							@header = color(7).'Hole\''.color('r').@hole.color(8).'*';
-							@scores = color(7).'Score'.color(8).'*';
-							foreach(@p: @b in @golf['players']) {
-								@score = @golf[@hole]['total'][@p] - @golf['par'];
-								set_pscore('strokes', @p, @score, @golf['name']);
-								@pname = @p;
-								if(_string_width(@p) > 72){
-									@pname = substr(@p, 0, 12);
-								}
-								@header .= _fill_string('*', '.', '*'.color('a').@pname.color(8).'*', 72).'*';
-								@scores .= _fill_string('*', '.', '*'.color('r').@golf[@hole]['strokes'][@p]
-										.' ('.if(@score < 0, color('a'), if(@score > 0, color(6).'+')).@score.color('r').')*', 72).'*';
-							}
-							@header = _fill_string('*', '.', @header);
-							@scores = _fill_string('*', '.', @scores);
-							_regionmsg(@golf['name'], @header);
-							_regionmsg(@golf['name'], @scores);
-						} else {
-							@score = @golf[@hole]['total'][@player] - @golf['par'];
-							set_pscore('strokes', @player, @score, @golf['name']);
-							tmsg(@player, colorize('&7&l[ &a&lHOLE &6&l'.@hole.' &7&l] &r'
-									.if(@type, @type, @golf[@hole]['strokes'][@player])));
-						}
-
-						# check if last hole
-						if(@hole == 9) {
-							_end_game(@golf);
-							clear_task();
-							die();	
-						}
+					if(@isHole) {
+						_hole_out(@golf, @player);
+					} else {
+						@v['y'] = 0;
 					}
-
-					# prepare player for next hole
-					@ball['hole'] += 1;
-					@ball['id'] = 0;
-					continue();
 				} else {
 					@v['y'] = 0;
 				}
 
+				@hole = @ball['hole'];
 				if(@golf[@hole]['minecart']) {
 					@ball['cooldown']--;
 					if(@ball['cooldown'] <= 0) {
@@ -516,13 +415,134 @@ proc _start_game(@course, @loc, @test) {
 				set_entity_velocity(@ball['id'], @ball['velocity']);
 			}
 		}
-		if(@count == 0) {
+		if(@playerCount == 0) {
 			_golf_cleanup(@golf);
 		}
 	});
 }
 
+proc _hole_out(@golf, @player) {
+	@ball = @golf['players'][@player];
+	@hole = @ball['hole'];
+	@loc = _center(entity_loc(@ball['id']));
+	@type = 'Par';
+	@par = @golf[@hole]['par'];
+	@hits = plevel(@player);
+	if(@hits == @par - 1) {
+		@type = 'Birdie';
+		launch_firework(@loc, array(strength: -1, type: 'BURST', colors: _dye_to_rgb(@ball['dyecolor'])));
+	} else if(@hits == @par - 2) {
+		@type = 'Eagle!';
+		launch_firework(@loc, array(strength: -1, type: 'BURST', colors: _dye_to_rgb(@ball['dyecolor'])));
+		launch_firework(@loc, array(strength: 0, type: 'BALL_LARGE', colors: _dye_to_rgb(@ball['dyecolor'])));
+	} else if(@hits == @par - 3) {
+		@type = 'Albatross!!';
+		launch_firework(@loc, array(strength: -1, type: 'BURST', colors: _dye_to_rgb(@ball['dyecolor'])));
+		launch_firework(@loc, array(strength: 0, type: 'BALL_LARGE', colors: _dye_to_rgb(@ball['dyecolor'])));
+		launch_firework(@loc, array(strength: 1, type: 'BALL_LARGE', colors: _dye_to_rgb(@ball['dyecolor'])));
+	} else if(@hits == @par - 4) {
+		@type = 'Condor!!!';
+		launch_firework(@loc, array(strength: -1, type: 'BURST', colors: _dye_to_rgb(@ball['dyecolor'])));
+		launch_firework(@loc, array(strength: 0, type: 'BALL_LARGE', colors: _dye_to_rgb(@ball['dyecolor'])));
+		launch_firework(@loc, array(strength: 1, type: 'BALL_LARGE', colors: _dye_to_rgb(@ball['dyecolor'])));
+		launch_firework(@loc, array(strength: 2, type: 'BALL_LARGE', colors: _dye_to_rgb(@ball['dyecolor'])));
+	} else if(@hits > @par) {
+		switch(@hits - @par) {
+			case 1:
+				@type = 'Bogey';
+			case 2:
+				@type = 'Double Bogey';
+			case 3:
+				@type = 'Triple Bogey';
+			default:
+				@type = '';
+		}
+	}
+
+	@id = @ball['id'];
+	@slime = @ball['slime'];
+	set_timeout(1500, closure() {
+		// Hole out feedback
+		play_sound(ploc(@player), array(sound: 'ENTITY_VILLAGER_WORK_CARTOGRAPHER'));
+		if(@hits == 1) {
+			title(@player, 'Hole in One!', @type);
+		} else if(@type) {
+			title(@player, null, @type);
+		}
+		_remove_ball(@id, @slime);
+	});
+
+	// Clean up for this hole
+	unbind('golf_swing1_'.@player);
+	unbind('golf_swing2_'.@player);
+	unbind('golf_hit_'.@player);
+	@ball['id'] = 0;
+
+	// Add up score total for this hole
+	if(array_index_exists(@golf, @hole - 1) && array_index_exists(@golf[@hole - 1]['total'], @player)) {
+		@golf[@hole]['total'][@player] = @golf[@hole - 1]['total'][@player] + @golf[@hole]['strokes'][@player];
+	} else {
+		@golf[@hole]['total'][@player] = @golf[@hole]['strokes'][@player];
+	}
+
+	// Check if last player to leave hole
+	@lastplayer = true;
+	foreach(@p: @b in @golf['players']) {
+		if(@p != @player
+		&& @b['hole'] <= @hole) {
+			@lastplayer = false;
+			break();
+		}
+	}
+	if(@lastplayer && !@golf['test']) {
+		_end_hole(@golf, @hole);
+	}
+
+	// Prepare player for next hole
+	@ball['hole'] += 1;
+}
+
+proc _end_hole(@golf, @hole) {
+	set_block(@golf[@hole]['loc'], 'AIR');
+	@golf['lowestHole'] = min(9, @hole + 1);
+	@golf['par'] += @golf[@hole]['par'];
+
+	// Update sidebar and score output for players
+	@score = 0;
+	if(array_size(@golf['players']) > 1) {
+		@header = color(7).'Hole\''.color('r').@hole.color(8).'*';
+		@scores = color(7).'Score'.color(8).'*';
+		foreach(@p: @b in @golf['players']) {
+			@score = @golf[@hole]['total'][@p] - @golf['par'];
+			set_pscore('strokes', @p, @score, @golf['name']);
+			@pname = @p;
+			if(_string_width(@p) > 72){
+				@pname = substr(@p, 0, 12);
+			}
+			@header .= _fill_string('*', '.', '*'.color('a').@pname.color(8).'*', 72).'*';
+			@scores .= _fill_string('*', '.', '*'.color('r').@golf[@hole]['strokes'][@p]
+					.' ('.if(@score < 0, color('a'), if(@score > 0, color(6).'+')).@score.color('r').')*', 72).'*';
+		}
+		@header = _fill_string('*', '.', @header);
+		@scores = _fill_string('*', '.', @scores);
+		_regionmsg(@golf['name'], @header);
+		_regionmsg(@golf['name'], @scores);
+	} else {
+		@player = array_keys(@golf['players'])[0];
+		@score = @golf[@hole]['total'][@player] - @golf['par'];
+		set_pscore('strokes', @player, @score, @golf['name']);
+		tmsg(@player, colorize('&7&l[ &a&lHOLE &6&l'.@hole.' &7&l] &r'
+				.(@golf[@hole]['par'] - @golf[@hole]['strokes'][@player])));
+	}
+
+	// If last hole, end game
+	if(@hole == 9) {
+		_end_game(@golf);
+	}
+}
+
 proc _end_game(@golf) {
+	clear_task();
 	if(array_size(@golf['players']) > 1) {
 		@loweststrokes = 999;
 		@winner = '';

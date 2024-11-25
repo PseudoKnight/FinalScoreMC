@@ -19,6 +19,13 @@ proc _add_player(@player, @golf) {
 	if(!@golf['test']) {
 		set_pscore('strokes', @player, 0, @golf['name']);
 	}
+	tmsg(@player, colorize(
+		'&a&lSLIMEY&6&lGOLF &a\u2308\u2328 \uFE52\u2328\u2309&r\n'
+		.'&6&l[ How to Play ]&r\n'
+		.'- Place slime ball on white concrete.\n'
+		.'- Right-click slime to start swing.\n'
+		.'- As your swing charges, hit slime.'
+	));
 	return(true);
 }
 
