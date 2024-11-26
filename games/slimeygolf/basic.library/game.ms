@@ -54,8 +54,12 @@ proc _start_game(@course, @loc, @test) {
 
 			# get hole data from sign
 			@signText = get_sign_text(@down);
-			if(@signText[0] != @hole && !@golf['test']) {
-				die();
+			if(@signText[0] != @hole) {
+				if(@golf['test']) {
+					@ball['hole'] = @hole;
+				} else {
+					die();
+				}
 			}
 
 			@signBlock = get_blockdata(@down);
@@ -144,8 +148,9 @@ proc _start_game(@course, @loc, @test) {
 				set_block(@golf[@hole]['loc'], 'REDSTONE_BLOCK');
 			}
 
-			if(!array_index_exists(@golf[@hole]['strokes'], player())) {
+			if(@golf['test'] || !array_index_exists(@golf[@hole]['strokes'], player())) {
 				@golf[@hole]['strokes'][player()] = 0;
+				set_plevel(0);
 			}
 
 			proc _charge_swing(@ball) {
@@ -200,9 +205,9 @@ proc _start_game(@course, @loc, @test) {
 				if(@xp > 0 && @ball['swing']) {
 					@ball['swing'] = false;
 					@xp = max(2, @xp);
-					set_plevel(@player, plevel(@player) + 1);
-					set_pexp(@player, @xp);
 					@golf[@hole]['strokes'][@player] += 1;
+					set_plevel(@player, @golf[@hole]['strokes'][@player]);
+					set_pexp(@player, @xp);
 					play_sound(@event['location'], array(sound: 'BLOCK_WOODEN_BUTTON_CLICK_ON', pitch: 2 - (1.3 / @xp)));
 					play_sound(@event['location'], array(sound: 'ENTITY_SLIME_HURT_SMALL', volume: 0.4, pitch: 2 - (1.3 / @xp)));
 					@ploc = ploc();
@@ -240,161 +245,167 @@ proc _start_game(@course, @loc, @test) {
 			} else if(pworld(@player) !== @golf['world'] || !array_contains(sk_current_regions(@player), @course)) {
 				_remove_player(@player, @golf);
 				continue();
-			} else {
-				@playerCount++;
-			}
+			} 
 			@ball = @golf['players'][@player];
-			if(_ball_exists(@ball['id'])) {
-				@loc = entity_loc(@ball['id']);
-				if(@loc['yaw'] > 0) {
-					@loc['yaw'] += 10;
-					set_entity_rotation(@ball['id'], @loc['yaw']);
-					set_entity_rotation(@ball['color'], @loc['yaw']);
+			if(!_ball_exists(@ball['id'])) {
+				if(@golf['test'] && (pmode(@player) === 'CREATIVE' || pmode(@player) === 'SPECTATOR')) {
+					_remove_player(@player, @golf);
+				} else {
+					@playerCount++;
 				}
-				try(set_entity_loc(@ball['slime'], location_shift(@loc, 'up', 0.01)))
-				if(get_entity_vehicle(@ball['id'])) {
-					continue();
-				}
-				@v = entity_velocity(@ball['id']);
-				@down = location_shift(@loc, 'down', 0.01);
-				@block = _get_block_below(@down, @v, @ball['size']);
+				continue();
+			}
+			@playerCount++;
+			@loc = entity_loc(@ball['id']);
+			if(@loc['yaw'] > 0) {
+				@loc['yaw'] += 10;
+				set_entity_rotation(@ball['id'], @loc['yaw']);
+				set_entity_rotation(@ball['color'], @loc['yaw']);
+			}
+			try(set_entity_loc(@ball['slime'], location_shift(@loc, 'up', 0.01)))
+			if(get_entity_vehicle(@ball['id'])) {
+				continue();
+			}
+			@v = entity_velocity(@ball['id']);
+			@down = location_shift(@loc, 'down', 0.01);
+			@block = _get_block_below(@down, @v, @ball['size']);
 
-				if(@block === 'ICE') {
-					// low friction
-					@frictionCompensation = 1.08;
-					@v['y'] = 0;
-				} else if(@block === 'PACKED_ICE') {
-					// lower friction
-					@frictionCompensation = 1.09;
-					@v['y'] = 0;
-				} else if(@block === 'BLUE_ICE') {
-					// lowest friction
-					@frictionCompensation = 1.1;
-					@v['y'] = 0;
-				} else if(!@block || !material_info(@block, 'isSolid')) {
-					// normal gravity, less air resistance
-					@frictionCompensation = 1.1;
-				} else if(material_info(@block, 'isTransparent') || @block === 'SOUL_SAND') {
-					// normal gravity and friction
-				} else if(@block === 'MAGENTA_GLAZED_TERRACOTTA') {
-					@v['y'] = 0;
-					@blockData = get_blockdata(@down);
-					if(@blockData['block'] === 'magenta_glazed_terracotta') {
-						play_sound(@ball['id'], array(sound: 'BLOCK_SCULK_SENSOR_CLICKING_STOP', pitch: 2, volume: 0.7));
-						switch(@blockData['facing']) {
-							case 'south':
-								@v['x'] *= 0.67;
-								@v['z'] -= 0.2;
-							case 'north':
-								@v['x'] *= 0.67;
-								@v['z'] += 0.2;
-							case 'west':
-								@v['x'] += 0.2;
-								@v['z'] *= 0.67;
-							case 'east':
-								@v['x'] -= 0.2;
-								@v['z'] *= 0.67;
-						}
+			if(@block === 'ICE') {
+				// low friction
+				@frictionCompensation = 1.08;
+				@v['y'] = 0;
+			} else if(@block === 'PACKED_ICE') {
+				// lower friction
+				@frictionCompensation = 1.09;
+				@v['y'] = 0;
+			} else if(@block === 'BLUE_ICE') {
+				// lowest friction
+				@frictionCompensation = 1.1;
+				@v['y'] = 0;
+			} else if(!@block || !material_info(@block, 'isSolid')) {
+				// normal gravity, less air resistance
+				@frictionCompensation = 1.1;
+			} else if(material_info(@block, 'isTransparent') || @block === 'SOUL_SAND') {
+				// normal gravity and friction
+			} else if(@block === 'MAGENTA_GLAZED_TERRACOTTA') {
+				@v['y'] = 0;
+				@blockData = get_blockdata(@down);
+				if(@blockData['block'] === 'magenta_glazed_terracotta') {
+					play_sound(@ball['id'], array(sound: 'BLOCK_SCULK_SENSOR_CLICKING_STOP', pitch: 2, volume: 0.7));
+					switch(@blockData['facing']) {
+						case 'south':
+							@v['x'] *= 0.67;
+							@v['z'] -= 0.2;
+						case 'north':
+							@v['x'] *= 0.67;
+							@v['z'] += 0.2;
+						case 'west':
+							@v['x'] += 0.2;
+							@v['z'] *= 0.67;
+						case 'east':
+							@v['x'] -= 0.2;
+							@v['z'] *= 0.67;
 					}
-				} else if(@block === 'CHISELED_QUARTZ_BLOCK' && abs(@v['x']) + abs(@v['z']) != 0) {
-					@v['y'] += 0.65;
-					set_entity_rotation(@ball['id'], @loc['yaw'] + 10);
-					set_entity_rotation(@ball['slime'], @loc['yaw'] + 10);
-					set_entity_rotation(@ball['color'], @loc['yaw'] + 10);
-					@center = _center(@loc, 0.125);
-					@cloudCount = array(5);
-					set_interval(100, 0, closure(){
-						spawn_particle(@center, array(particle: 'CLOUD', count: 0, speed: 0.5, yoffset: 1.0));
-						if(--@cloudCount[0] < 0) {
-							clear_task();
-						}
-					});
-					play_sound(@loc, array(sound: 'ENTITY_BREEZE_IDLE_GROUND', pitch: 1.5));
-				} else if(@block === 'BLACK_WOOL') { 
-					# check if ball dropped into hole
-					@isHole = true;
-					foreach(@dir in array('north', 'south', 'east', 'west')) {
-						if(!material_info(get_block(location_shift(@loc, @dir)), 'isSolid')) {
-							@isHole = false;
-							break();
-						}
+				}
+			} else if(@block === 'CHISELED_QUARTZ_BLOCK' && abs(@v['x']) + abs(@v['z']) != 0) {
+				@v['y'] += 0.65;
+				set_entity_rotation(@ball['id'], @loc['yaw'] + 10);
+				set_entity_rotation(@ball['slime'], @loc['yaw'] + 10);
+				set_entity_rotation(@ball['color'], @loc['yaw'] + 10);
+				@center = _center(@loc, 0.125);
+				@cloudCount = array(5);
+				set_interval(100, 0, closure(){
+					spawn_particle(@center, array(particle: 'CLOUD', count: 0, speed: 0.5, yoffset: 1.0));
+					if(--@cloudCount[0] < 0) {
+						clear_task();
 					}
-					if(@isHole) {
-						_hole_out(@golf, @player);
-					} else {
-						@v['y'] = 0;
+				});
+				play_sound(@loc, array(sound: 'ENTITY_BREEZE_IDLE_GROUND', pitch: 1.5));
+			} else if(@block === 'BLACK_WOOL') { 
+				# check if ball dropped into hole
+				@isHole = true;
+				foreach(@dir in array('north', 'south', 'east', 'west')) {
+					if(!material_info(get_block(location_shift(@loc, @dir)), 'isSolid')) {
+						@isHole = false;
+						break();
 					}
+				}
+				if(@isHole) {
+					_hole_out(@golf, @player);
+					continue();
 				} else {
 					@v['y'] = 0;
 				}
-
-				@hole = @ball['hole'];
-				if(@golf[@hole]['minecart']) {
-					@ball['cooldown']--;
-					if(@ball['cooldown'] <= 0) {
-						@carts = entities_in_radius(@loc, 1, 'MINECART');
-						if(@carts) {
-							set_entity_rider(@carts[0], @ball['id']);
-							@ball['cooldown'] = 10;
-							continue();
-						}
-					}
-				}
-
-				@ricochetPitch = 0;
-				@forceX = 0;
-				if(@v['x'] == 0) {
-					@forceX = abs(@ball['velocity']['x']);
-					if(@forceX < 0.002) {
-						@v['x'] = 0;
-					} else {
-						@v['magnitude'] = 1;
-						@v['x'] = 0 - @ball['velocity']['x'] * @bounciness;
-						if(@forceX > 0.05) {
-							@ricochetPitch = 1 + @forceX / 2;
-							spawn_particle(@loc, array(
-								particle: 'BLOCK_CRACK', 
-								block: @ball['dyecolor'].'_STAINED_GLASS', 
-								count: integer(@forceX * 30),
-								xoffset: @ball['size'] / 2,
-								zoffset: @ball['size'] / 2));
-						}
-					}
-				}
-
-				@forceZ = 0;
-				if(@v['z'] == 0) {
-					@forceZ = abs(@ball['velocity']['z']);
-					if(@forceZ < 0.002) {
-						@v['z'] = 0;
-					} else {
-						@v['magnitude'] = 1;
-						@v['z'] = 0 - @ball['velocity']['z'] * @bounciness;
-						if(@forceZ > 0.05 && @forceZ > @forceX) {
-							@ricochetPitch = 1 + @forceZ / 2;
-							spawn_particle(@loc, array(
-								particle: 'BLOCK_CRACK', 
-								block: @ball['dyecolor'].'_STAINED_GLASS', 
-								count: integer(@forceZ * 30),
-								xoffset: @ball['size'] / 2,
-								zoffset: @ball['size'] / 2));
-						}
-					}
-				}
-
-				if(@v['magnitude'] < 0.875 && @v['magnitude'] > 0.125) {
-					@v['x'] = (@v['x'] / @v['magnitude']) * (@frictionCompensation * @v['magnitude']);
-					@v['z'] = (@v['z'] / @v['magnitude']) * (@frictionCompensation * @v['magnitude']);
-				}
-
-				if(@ricochetPitch > 1) {
-					play_sound(@loc, array(sound: 'BLOCK_WOODEN_BUTTON_CLICK_ON', pitch: @ricochetPitch));
-					play_sound(@loc, array(sound: 'ENTITY_SLIME_HURT_SMALL', volume: 0.4, pitch: @ricochetPitch));
-				}
-
-				@ball['velocity'] = array(x: @v['x'], y: @v['y'], z: @v['z']);
-				set_entity_velocity(@ball['id'], @ball['velocity']);
+			} else {
+				@v['y'] = 0;
 			}
+
+			@hole = @ball['hole'];
+			if(@golf[@hole]['minecart']) {
+				@ball['cooldown']--;
+				if(@ball['cooldown'] <= 0) {
+					@carts = entities_in_radius(@loc, 1, 'MINECART');
+					if(@carts) {
+						set_entity_rider(@carts[0], @ball['id']);
+						@ball['cooldown'] = 10;
+						continue();
+					}
+				}
+			}
+
+			@ricochetPitch = 0;
+			@forceX = 0;
+			if(@v['x'] == 0) {
+				@forceX = abs(@ball['velocity']['x']);
+				if(@forceX < 0.002) {
+					@v['x'] = 0;
+				} else {
+					@v['magnitude'] = 1;
+					@v['x'] = 0 - @ball['velocity']['x'] * @bounciness;
+					if(@forceX > 0.05) {
+						@ricochetPitch = 1 + @forceX / 2;
+						spawn_particle(@loc, array(
+							particle: 'BLOCK_CRACK', 
+							block: @ball['dyecolor'].'_STAINED_GLASS', 
+							count: integer(@forceX * 30),
+							xoffset: @ball['size'] / 2,
+							zoffset: @ball['size'] / 2));
+					}
+				}
+			}
+
+			@forceZ = 0;
+			if(@v['z'] == 0) {
+				@forceZ = abs(@ball['velocity']['z']);
+				if(@forceZ < 0.002) {
+					@v['z'] = 0;
+				} else {
+					@v['magnitude'] = 1;
+					@v['z'] = 0 - @ball['velocity']['z'] * @bounciness;
+					if(@forceZ > 0.05 && @forceZ > @forceX) {
+						@ricochetPitch = 1 + @forceZ / 2;
+						spawn_particle(@loc, array(
+							particle: 'BLOCK_CRACK', 
+							block: @ball['dyecolor'].'_STAINED_GLASS', 
+							count: integer(@forceZ * 30),
+							xoffset: @ball['size'] / 2,
+							zoffset: @ball['size'] / 2));
+					}
+				}
+			}
+
+			if(@v['magnitude'] < 0.875 && @v['magnitude'] > 0.125) {
+				@v['x'] = (@v['x'] / @v['magnitude']) * (@frictionCompensation * @v['magnitude']);
+				@v['z'] = (@v['z'] / @v['magnitude']) * (@frictionCompensation * @v['magnitude']);
+			}
+
+			if(@ricochetPitch > 1) {
+				play_sound(@loc, array(sound: 'BLOCK_WOODEN_BUTTON_CLICK_ON', pitch: @ricochetPitch));
+				play_sound(@loc, array(sound: 'ENTITY_SLIME_HURT_SMALL', volume: 0.4, pitch: @ricochetPitch));
+			}
+
+			@ball['velocity'] = array(x: @v['x'], y: @v['y'], z: @v['z']);
+			set_entity_velocity(@ball['id'], @ball['velocity']);
 		}
 		if(@playerCount == 0) {
 			_golf_cleanup(@golf);
@@ -408,7 +419,7 @@ proc _hole_out(@golf, @player) {
 	@loc = _center(entity_loc(@ball['id']));
 	@type = 'Par';
 	@par = @golf[@hole]['par'];
-	@hits = plevel(@player);
+	@hits = @golf[@hole]['strokes'][@player];
 	if(@hits == @par - 1) {
 		@type = 'Birdie';
 		launch_firework(@loc, array(strength: -1, type: 'BURST', colors: _dye_to_rgb(@ball['dyecolor'])));
@@ -461,9 +472,9 @@ proc _hole_out(@golf, @player) {
 
 	// Add up score total for this hole
 	if(array_index_exists(@golf, @hole - 1) && array_index_exists(@golf[@hole - 1]['total'], @player)) {
-		@golf[@hole]['total'][@player] = @golf[@hole - 1]['total'][@player] + @golf[@hole]['strokes'][@player];
+		@golf[@hole]['total'][@player] = @golf[@hole - 1]['total'][@player] + @hits;
 	} else {
-		@golf[@hole]['total'][@player] = @golf[@hole]['strokes'][@player];
+		@golf[@hole]['total'][@player] = @hits;
 	}
 
 	// Check if last player to leave hole
@@ -513,7 +524,7 @@ proc _end_hole(@golf, @hole) {
 		@score = @golf[@hole]['total'][@player] - @golf['par'];
 		set_pscore('strokes', @player, @score, @golf['name']);
 		tmsg(@player, colorize('&7&l[ &a&lHOLE &6&l'.@hole.' &7&l] &r'
-				.(@golf[@hole]['par'] - @golf[@hole]['strokes'][@player])));
+				.(@golf[@hole]['strokes'][@player] - @golf[@hole]['par'])));
 	}
 
 	// If last hole, end game
