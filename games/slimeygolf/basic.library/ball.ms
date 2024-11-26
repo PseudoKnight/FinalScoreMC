@@ -66,6 +66,27 @@ proc _remove_ball(@ball, @slime) {
 	try(entity_remove(@ball))
 }
 
+proc _dye_to_rgb(@dyeColor, @converter = array(
+			WHITE: array(240, 240, 240),
+			LIGHT_GRAY: array(171, 171, 171),
+			GRAY: array(67, 67, 67),
+			BLACK: array(30, 27, 27),
+			RED: array(179, 49, 44),
+			ORANGE: array(235, 136, 68),
+			MAGENTA: array(195, 84, 205),
+			LIGHT_BLUE: array(102, 137, 211),
+			YELLOW: array(222, 207, 42),
+			LIME: array(65, 205, 52),
+			GREEN: array(59, 81, 26),
+			CYAN: array(40, 118, 151),
+			BLUE: array(37, 49, 146),
+			PURPLE: array(123, 47, 190),
+			PINK: array(216, 129, 152),
+			BROWN: array(81, 48, 26),
+		)) {
+	return(@converter[@dyeColor]);
+}
+
 proc _get_block_below(@loc, @v, @size) {
 	@block = get_block(@loc);
 	if(@block !== 'AIR') {

@@ -2,27 +2,6 @@ include('course.ms');
 include('player.ms');
 include('ball.ms');
 
-proc _dye_to_rgb(@dyeColor, @converter = array(
-			WHITE: array(240, 240, 240),
-			LIGHT_GRAY: array(171, 171, 171),
-			GRAY: array(67, 67, 67),
-			BLACK: array(30, 27, 27),
-			RED: array(179, 49, 44),
-			ORANGE: array(235, 136, 68),
-			MAGENTA: array(195, 84, 205),
-			LIGHT_BLUE: array(102, 137, 211),
-			YELLOW: array(222, 207, 42),
-			LIME: array(65, 205, 52),
-			GREEN: array(59, 81, 26),
-			CYAN: array(40, 118, 151),
-			BLUE: array(37, 49, 146),
-			PURPLE: array(123, 47, 190),
-			PINK: array(216, 129, 152),
-			BROWN: array(81, 48, 26),
-		)) {
-	return(@converter[@dyeColor]);
-}
-
 proc _start_game(@course, @loc, @test) {
 	@golf = array(
 		name: @course,
@@ -38,7 +17,9 @@ proc _start_game(@course, @loc, @test) {
 	@bounciness = 0.8;
 	@frictionCompensation = 1.07;
 
-	_create_scoreboards(@golf);
+	create_scoreboard(@golf['name']);
+	create_objective('strokes', 'DUMMY', @golf['name']);
+	set_objective_display('strokes', array(displayname: colorize('&7&l[ &a&lSlimey &6&lGolf&7&l ]'), slot: 'SIDEBAR'), @golf['name']);
 	_add_activity(@course, _to_upper_camel_case(@course));
 
 	bind('player_interact', array(id: @course.'color'), array(button: 'right', hand: 'main_hand'), @event, @golf,
@@ -590,10 +571,4 @@ proc _golf_cleanup(@golf) {
 	try {
 		remove_scoreboard(@golf['name']);
 	} catch(ScoreboardException @ex) {}
-}
-
-proc _create_scoreboards(@golf) {
-	create_scoreboard(@golf['name']);
-	create_objective('strokes', 'DUMMY', @golf['name']);
-	set_objective_display('strokes', array('displayname': colorize('&7&l[ &a&lSlimey &6&lGolf&7&l ]'), 'slot': 'SIDEBAR'), @golf['name']);
 }
