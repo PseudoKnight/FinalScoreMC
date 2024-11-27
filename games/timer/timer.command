@@ -300,8 +300,13 @@ register_command('timer', array(
 			// Check if time is better than personal best
 			@uuid = _get_uuid(to_lower(@player), false);
 			@ptime = get_value('times.'.@id, @uuid);
-			if(@ptime && @time >= @ptime) {
+			if(@ptime && @time > @ptime) {
 				// Time was not better
+				die();
+			}
+
+			if(@time == @ptime) {
+				tmsg(@player, color('green').'You tied your personal best.');
 				die();
 			}
 
