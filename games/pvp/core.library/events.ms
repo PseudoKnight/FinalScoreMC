@@ -474,7 +474,13 @@ proc _bind_events(@pvp) {
 	}
 
 	@pvp['binds'][] = bind('potion_splash', null, null, @event, @pvp) {
-		@thrower = get_projectile_shooter(@event['id']);
+		@thrower = null;
+		try {
+			@thrower = get_projectile_shooter(@event['id']);
+		} catch(BadEntityException @ex) {
+			// entity removed, possibly in projectile hit event
+			die();
+		}
 		if(entity_type(@thrower) == 'PLAYER' && array_index_exists(@pvp['players'], player(@thrower))) {
 			@potionMeta = entity_spec(@event['id'])['item']['meta'];
 			@seconds = 0;
