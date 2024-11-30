@@ -1,6 +1,6 @@
 proc _weapon_bind_events(@pvp) {
-	@pvp['binds'][] = bind('player_interact', null, array(itemname: 'IRON_HOE'), @event, @pvp) {
-		if(!array_index_exists(@pvp['players'], player()) || pinfo(player(), 6) != @event['item']['name']){
+	@pvp['binds'][] = bind('player_interact', null, array(itemname: 'IRON_HOE', hand: 'main_hand'), @event, @pvp) {
+		if(!array_index_exists(@pvp['players'], player())){
 			die();
 		}
 		@slot = pheld_slot();

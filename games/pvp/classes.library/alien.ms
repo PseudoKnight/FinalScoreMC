@@ -1,8 +1,5 @@
 proc _class_load(@player, @pvp) {
-	bind('player_interact', array(id: @player.'plasmagun'), array(itemname: 'GLISTERING_MELON_SLICE', button: 'right', player: @player), @e) {
-		if(pinfo(player(), 6) != @e['item']['name']) {
-			die();
-		}
+	bind('player_interact', array(id: @player.'plasmagun'), array(itemname: 'GLISTERING_MELON_SLICE', button: 'right', player: @player, hand: 'main_hand'), @e) {
 		cancel();
 		if(pexp() == 99) {
 			@arrow = shoot_projectile(player(), 'ARROW');
@@ -38,10 +35,7 @@ proc _class_load(@player, @pvp) {
 		}
 	}
 
-	bind('player_interact', array(id: @player.'teleport'), array(itemname: 'ENDER_EYE', player: @player, button: 'right'), @e, @pvp) {
-		if(pinfo(player(), 6) != @e['item']['name']) {
-			die();
-		}
+	bind('player_interact', array(id: @player.'teleport'), array(itemname: 'ENDER_EYE', player: @player, button: 'right', hand: 'main_hand'), @e, @pvp) {
 		cancel();
 		@players = _weapon_hit_scan(player(), array(raySize: 0.2), 1, array(display: 'lime_stained_glass', tracer: 'VILLAGER_HAPPY'), @pvp);
 

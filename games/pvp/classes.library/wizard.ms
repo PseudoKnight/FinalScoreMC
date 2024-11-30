@@ -1,6 +1,6 @@
 proc _class_load(@player, @pvp) {
-	bind('player_interact', array(id: @player.'lightning'), array(itemname: 'LIGHTNING_ROD', button: 'right', player: @player), @e, @pvp) {
-		if(pinfo(player(), 6) != @e['item']['name'] || pcooldown('LIGHTNING_ROD')) {
+	bind('player_interact', array(id: @player.'lightning'), array(itemname: 'LIGHTNING_ROD', button: 'right', player: @player, hand: 'main_hand'), @e, @pvp) {
+		if(pcooldown('LIGHTNING_ROD')) {
 			die();
 		}
 		@trace = ray_trace(player(), 96);
@@ -45,12 +45,19 @@ proc _class_load(@player, @pvp) {
 		}, player().'lightning');
 	}
 
-	bind('player_interact', array(id: @player.'woosh'), array(itemname: 'FEATHER', button: 'right', player: @player), @e, @pvp) {
-		if(pinfo(player(), 6) != @e['item']['name']) {
-			die();
-		}
+	bind('player_interact', array(id: @player.'woosh'), array(itemname: 'FEATHER', button: 'right', player: @player, hand: 'main_hand'), @event, @pvp) {
+		_weapon_cooldown(player(), 6000, 'INK_SAC', false, 0);
+
 		@loc1 = location_shift(ploc(), 'up');
-		@excludeEntities = array('COMPLEX_PART', 'GLOW_ITEM_FRAME', 'ITEM_FRAME', 'PAINTING', 'UNKNOWN');
+		play_sound(@loc1, array(sound: 'ENTITY_ENDER_DRAGON_FLAP', pitch: 0.5));
+		play_sound(@loc1, array(sound: 'ENTITY_GHAST_SHOOT', pitch: 0.9));
+		spawn_particle(location_shift(@loc1, 'up'), array(
+			particle: 'CLOUD',
+			count: 80,
+			speed: 0.5,
+		));
+
+		@excludeEntities = array('COMPLEX_PART', 'GLOW_ITEM_FRAME', 'ITEM_FRAME', 'PAINTING', 'ITEM_DISPLAY', 'BLOCK_DISPLAY', 'TEXT_DISPLAY', 'UNKNOWN');
 		foreach(@entity in entities_in_radius(@loc1, 10)) {
 			@force = 1.4;
 			@type = entity_type(@entity);
@@ -103,19 +110,10 @@ proc _class_load(@player, @pvp) {
 				}
 			});
 		}
-
-		play_sound(@loc1, array(sound: 'ENTITY_ENDER_DRAGON_FLAP', pitch: 0.5));
-		play_sound(@loc1, array(sound: 'ENTITY_GHAST_SHOOT', pitch: 0.9));
-		spawn_particle(location_shift(@loc1, 'up'), array(
-			particle: 'CLOUD',
-			count: 60,
-			speed: 0.5,
-		));
-		_weapon_cooldown(player(), 6000, 'INK_SAC', false, 0);
 	}
 
-	bind('player_interact', array(id: @player.'freeze'), array(itemname: 'SOUL_TORCH', button: 'right', player: @player), @e, @pvp) {
-		if(pinfo(player(), 6) != @e['item']['name'] || pcooldown('SOUL_TORCH')) {
+	bind('player_interact', array(id: @player.'freeze'), array(itemname: 'SOUL_TORCH', button: 'right', player: @player, hand: 'main_hand'), @e, @pvp) {
+		if(pcooldown('SOUL_TORCH')) {
 			die();
 		}
 		set_pcooldown('SOUL_TORCH', 8000 / 50);

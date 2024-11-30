@@ -43,8 +43,8 @@ proc _weapon_bind_events(@pvp) {
 		}
 	}
 
-	@pvp['binds'][] = bind('player_interact', array(priority: 'HIGHEST'), array(itemname: 'ENDER_PEARL', button: 'right'), @e, @pvp) {
-		if(!array_index_exists(@pvp['players'], player()) || pinfo(player(), 6) != @e['item']['name']) {
+	@pvp['binds'][] = bind('player_interact', array(priority: 'HIGHEST'), array(itemname: 'ENDER_PEARL', button: 'right', hand: 'main_hand'), @e, @pvp) {
+		if(!array_index_exists(@pvp['players'], player())) {
 			die();
 		}
 		cancel();

@@ -1,9 +1,8 @@
 proc _weapon_bind_events(@pvp) {
-	@pvp['binds'][] = bind('player_interact', array(priority: 'HIGH'), array(button: 'right'), @e, @pvp) {
+	@pvp['binds'][] = bind('player_interact', array(priority: 'HIGH'), array(button: 'right', hand: 'main_hand'), @e, @pvp) {
 		if(!array_index_exists(@pvp['players'], player())
 		|| !@e['item']
-		|| !string_ends_with(@e['item']['name'], '_SPAWN_EGG')
-		|| pinfo(player(), 6) != @e['item']['name']) {
+		|| !string_ends_with(@e['item']['name'], '_SPAWN_EGG')) {
 			die();
 		}
 		cancel();
