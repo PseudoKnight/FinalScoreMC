@@ -129,7 +129,7 @@ bind('player_interact', null, array('itemname': 'FIREWORK_ROCKET', 'button': 'ri
 				set_entity_velocity(@firework, get_vector(@loc));
 			}
 			if(@f > 1 && !rand(3)) {
-				set_metadata(@firework, 'mob', array_get_rand(array('chicken', 'bat', 'pig')));
+				set_metadata(@firework, 'mob', array_get_rand(array('chicken', 'bat', 'pig', 'frog')));
 			}
 			if(pworld() == 'dev' && @f == 2) {
 				set_metadata(@firework, 'spec', player());
@@ -249,6 +249,18 @@ bind('firework_explode', null, null, @event){
 				set_entity_velocity(@m, get_vector(@loc));
 				@loc['yaw'] += 24;
 			});
+			if(@mob === 'frog') {
+				if(!has_bind('frogfirework')) {
+					bind('entity_damage', array(id: 'frogfirework'), array(type: 'FROG', cause: '/WITHER|FALL|FIRE_TICK/', world: @event['location']['world']), @event) {
+						if(@event['cause'] === 'FALL') {
+							cancel();
+						}
+						if(entity_grounded(@event['id'])) {
+							set_entity_velocity(@event['id'], array((rand() - 0.5) * 3, 2.5, (rand() - 0.5) * 3));
+						}
+					}
+				}
+			}
 			try {
 				foreach(@m in @mobs){
 					if(@cookie) {
