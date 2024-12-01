@@ -53,7 +53,7 @@ proc _create_tabcompleter() {
 				return(string_starts_with(@value, @arg));
 			}));
 		} else if(is_closure(@completions)) {
-			return(execute(@completions));
+			return(execute(@alias, @sender, @args, @completions));
 		}
 		return(array());
 	});
