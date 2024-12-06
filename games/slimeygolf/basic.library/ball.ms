@@ -89,7 +89,7 @@ proc _dye_to_rgb(@dyeColor, @converter = array(
 
 proc _get_block_below(@loc, @v, @size) {
 	@block = get_block(@loc);
-	if(@block !== 'AIR') {
+	if(material_info(@block, 'isSolid')) {
 		if(@block === 'BLACK_WOOL') {
 			play_sound(@loc, array('sound': 'BLOCK_WOODEN_BUTTON_CLICK_ON', 'pitch': 0.5));
 		}
@@ -104,7 +104,7 @@ proc _get_block_below(@loc, @v, @size) {
 		@dirx = 'east';
 	}
 	@blockX = if(@dirx, get_block(location_shift(@loc, @dirx)), @block);
-	if(@blockX !== 'AIR') {
+	if(material_info(@blockX, 'isSolid')) {
 		// adjust ball velocity towards edge if hanging off
 		if(@rx < @size / 2) {
 			@v['x'] += 0.02;
@@ -121,17 +121,17 @@ proc _get_block_below(@loc, @v, @size) {
 		@dirz = 'south';
 	}
 	@blockZ = if(@dirz, get_block(location_shift(@loc, @dirz)), @block);
-	if(@blockZ !== 'AIR') {
+	if(material_info(@blockZ, 'isSolid')) {
 		if(@rz < @size / 2) {
 			@v['z'] += 0.02;
 		} else if(@rz > 1 - @size / 2) {
 			@v['z'] -= 0.02;
 		}
 	}
-	if(@blockX !== 'AIR') {
+	if(material_info(@blockX, 'isSolid')) {
 		return(@blockX);
 	}
-	if(@blockZ !== 'AIR') {
+	if(material_info(@blockZ, 'isSolid')) {
 		return(@blockZ);
 	}
 	return(null);

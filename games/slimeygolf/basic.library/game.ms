@@ -2,20 +2,16 @@ include('course.ms');
 include('player.ms');
 include('ball.ms');
 
-proc _start_game(@course, @loc, @test) {
+proc _start_game(@course, @world, @test) {
 	@golf = array(
 		name: @course,
-		world: @loc['world'],
+		world: @world,
 		par: 0,
 		players: associative_array(),
 		lowestHole: 1,
 		test: @test,
 		// populated with hole indexes
 	);
-
-	// Physics defaults
-	@bounciness = 0.8;
-	@frictionCompensation = 1.07;
 
 	create_scoreboard(@golf['name']);
 	create_objective('strokes', 'DUMMY', @golf['name']);
@@ -43,7 +39,7 @@ proc _start_game(@course, @loc, @test) {
 	}
 
 	# Place ball
-	bind('player_interact', array('id': @course), array(itemname: 'SLIME_BALL', button: 'right', block: 'WHITE_CONCRETE'), @event, @golf) {
+	bind('player_interact', array('id': @course), array(itemname: 'SLIME_BALL', button: 'right', block: 'WHITE_CONCRETE', hand: 'main_hand'), @event, @golf) {
 		if(array_index_exists(@golf['players'], player())
 		&& @event['facing'] === 'up'
 		&& is_sign_at(location_shift(@event['location'], 'down'))) {
@@ -89,12 +85,9 @@ proc _start_game(@course, @loc, @test) {
 				@options[@key] = array_get(@split, 1, null);
 			}
 
-			if(array_index_exists(@options, 'S')) {
-				if(@options['S']) {
-					try(@ball['size'] = clamp(double(@options['S']), 0.0625, 0.9375))
-				} else {
-					@ball['size'] = 0.5;
-				}
+			@ball['size'] = 0.5;
+			if(array_index_exists(@options, 'S') && @options['S']) {
+				try(@ball['size'] = clamp(double(@options['S']), 0.0625, 0.9375))
 			}
 
 			@ballLoc = array(
@@ -184,7 +177,7 @@ proc _start_game(@course, @loc, @test) {
 				}
 			}
 
-			bind('player_interact_at_entity', array(id: 'golf_swing2_'.player()), array(clicked: 'ARMOR_STAND'), @event, @player = player(), @golf) {
+			bind('player_interact_at_entity', array(id: 'golf_swing2_'.player()), array(clicked: 'ARMOR_STAND', hand: 'main_hand'), @event, @player = player(), @golf) {
 				if(@player != player(), die());
 				@ball = @golf['players'][player()];
 				if(@event['id'] == @ball['id']){
@@ -231,6 +224,16 @@ proc _start_game(@course, @loc, @test) {
 		}
 	}
 
+	@physics = array(
+		slimeblock_bounciness: 1.5,
+		booster_acceleration: 0.2,
+		booster_dampener: 0.67,
+		fan_vertical_acceleration: 0.65,
+		bounciness: 0.8,
+		slickness: 1.07,
+	);
+	export('slimeygolf.physics', @physics);
+
 	// Main tick loop for player management, game logic, and ball physics
 	set_interval(50, closure(){
 		@playerCount = 0;
@@ -270,21 +273,22 @@ proc _start_game(@course, @loc, @test) {
 			@down = location_shift(@loc, 'down', 0.01);
 			@block = _get_block_below(@down, @v, @ball['size']);
 
+			@slickness = min(1.099, max(1.0, @physics['slickness']));
 			if(@block === 'ICE') {
 				// low friction
-				@frictionCompensation = 1.08;
+				@slickness = 1.08;
 				@v['y'] = 0;
 			} else if(@block === 'PACKED_ICE') {
 				// lower friction
-				@frictionCompensation = 1.09;
+				@slickness = 1.09;
 				@v['y'] = 0;
 			} else if(@block === 'BLUE_ICE') {
 				// lowest friction
-				@frictionCompensation = 1.1;
+				@slickness = 1.1;
 				@v['y'] = 0;
-			} else if(!@block || !material_info(@block, 'isSolid')) {
+			} else if(!@block) {
 				// normal gravity, less air resistance
-				@frictionCompensation = 1.1;
+				@slickness = 1.1;
 			} else if(material_info(@block, 'isTransparent') || @block === 'SOUL_SAND') {
 				// normal gravity and friction
 			} else if(@block === 'MAGENTA_GLAZED_TERRACOTTA') {
@@ -294,21 +298,21 @@ proc _start_game(@course, @loc, @test) {
 					play_sound(@ball['id'], array(sound: 'BLOCK_SCULK_SENSOR_CLICKING_STOP', pitch: 2, volume: 0.7));
 					switch(@blockData['facing']) {
 						case 'south':
-							@v['x'] *= 0.67;
-							@v['z'] -= 0.2;
+							@v['x'] *= @physics['booster_dampener'];
+							@v['z'] -= @physics['booster_acceleration'];
 						case 'north':
-							@v['x'] *= 0.67;
-							@v['z'] += 0.2;
+							@v['x'] *= @physics['booster_dampener'];
+							@v['z'] += @physics['booster_acceleration'];
 						case 'west':
-							@v['x'] += 0.2;
-							@v['z'] *= 0.67;
+							@v['x'] += @physics['booster_acceleration'];
+							@v['z'] *= @physics['booster_dampener'];
 						case 'east':
-							@v['x'] -= 0.2;
-							@v['z'] *= 0.67;
+							@v['x'] -= @physics['booster_acceleration'];
+							@v['z'] *= @physics['booster_dampener'];
 					}
 				}
 			} else if(@block === 'CHISELED_QUARTZ_BLOCK' && abs(@v['x']) + abs(@v['z']) != 0) {
-				@v['y'] += 0.65;
+				@v['y'] += @physics['fan_vertical_acceleration'];
 				set_entity_rotation(@ball['id'], @loc['yaw'] + 10);
 				set_entity_rotation(@ball['slime'], @loc['yaw'] + 10);
 				set_entity_rotation(@ball['color'], @loc['yaw'] + 10);
@@ -357,13 +361,28 @@ proc _start_game(@course, @loc, @test) {
 			@forceX = 0;
 			if(@v['x'] == 0) {
 				@forceX = abs(@ball['velocity']['x']);
-				if(@forceX < 0.002) {
+				if(@forceX < 0.003) {
 					@v['x'] = 0;
 				} else {
 					@v['magnitude'] = 1;
-					@v['x'] = 0 - @ball['velocity']['x'] * @bounciness;
-					if(@forceX > 0.05) {
-						@ricochetPitch = 1 + @forceX / 2;
+					@hitBlock = array(
+						x: @loc['x'] + ((@ball['size'] / 2) + 0.01) * if(@ball['velocity']['x'] < 0, -1, 1),
+						y: @loc['y'],
+						z: @loc['z'],
+						world: @loc['world']
+					);
+					if(get_block(@hitBlock) === 'SLIME_BLOCK') {
+						@v['x'] = min(1.0, max(-1.0, 0 - @ball['velocity']['x'] * @physics['slimeblock_bounciness']));
+						@v['y'] = @ball['velocity']['magnitude'] * 0.3;
+						@v['z'] = @ball['velocity']['z'];
+						spawn_particle(@hitBlock, array(
+							particle: 'BLOCK_CRACK', 
+							block: 'SLIME_BLOCK', 
+							count: integer(@forceX * 60),
+							xoffset: @ball['size'] / 2,
+							zoffset: @ball['size'] / 2));
+					} else {
+						@v['x'] = 0 - @ball['velocity']['x'] * @physics['bounciness'];
 						spawn_particle(@loc, array(
 							particle: 'BLOCK_CRACK', 
 							block: @ball['dyecolor'].'_STAINED_GLASS', 
@@ -371,19 +390,37 @@ proc _start_game(@course, @loc, @test) {
 							xoffset: @ball['size'] / 2,
 							zoffset: @ball['size'] / 2));
 					}
+					if(@forceX > 0.05) {
+						@ricochetPitch = 1 + @forceX / 2;
+					}
 				}
 			}
 
 			@forceZ = 0;
 			if(@v['z'] == 0) {
 				@forceZ = abs(@ball['velocity']['z']);
-				if(@forceZ < 0.002) {
+				if(@forceZ < 0.003) {
 					@v['z'] = 0;
 				} else {
 					@v['magnitude'] = 1;
-					@v['z'] = 0 - @ball['velocity']['z'] * @bounciness;
-					if(@forceZ > 0.05 && @forceZ > @forceX) {
-						@ricochetPitch = 1 + @forceZ / 2;
+					@hitBlock = array(
+						x: @loc['x'],
+						y: @loc['y'],
+						z: @loc['z'] + ((@ball['size'] / 2) + 0.01) * if(@ball['velocity']['z'] < 0, -1, 1),
+						world: @loc['world']
+					);
+					if(get_block(@hitBlock) === 'SLIME_BLOCK') {
+						@v['x'] = @ball['velocity']['x'];
+						@v['y'] = @ball['velocity']['magnitude'] * 0.3;
+						@v['z'] = min(1.0, max(-1.0, 0 - @ball['velocity']['z'] * @physics['slimeblock_bounciness']));
+						spawn_particle(@hitBlock, array(
+							particle: 'BLOCK_CRACK', 
+							block: 'SLIME_BLOCK', 
+							count: integer(@forceZ * 60),
+							xoffset: @ball['size'] / 2,
+							zoffset: @ball['size'] / 2));
+					} else {
+						@v['z'] = 0 - @ball['velocity']['z'] * @physics['bounciness'];
 						spawn_particle(@loc, array(
 							particle: 'BLOCK_CRACK', 
 							block: @ball['dyecolor'].'_STAINED_GLASS', 
@@ -391,12 +428,15 @@ proc _start_game(@course, @loc, @test) {
 							xoffset: @ball['size'] / 2,
 							zoffset: @ball['size'] / 2));
 					}
+					if(@forceZ > 0.05 && @forceZ > @forceX) {
+						@ricochetPitch = 1 + @forceZ / 2;
+					}
 				}
 			}
 
 			if(@v['magnitude'] < 0.875 && @v['magnitude'] > 0.125) {
-				@v['x'] = (@v['x'] / @v['magnitude']) * (@frictionCompensation * @v['magnitude']);
-				@v['z'] = (@v['z'] / @v['magnitude']) * (@frictionCompensation * @v['magnitude']);
+				@v['x'] = (@v['x'] / @v['magnitude']) * (@slickness * @v['magnitude']);
+				@v['z'] = (@v['z'] / @v['magnitude']) * (@slickness * @v['magnitude']);
 			}
 
 			if(@ricochetPitch > 1) {
@@ -404,7 +444,7 @@ proc _start_game(@course, @loc, @test) {
 				play_sound(@loc, array(sound: 'ENTITY_SLIME_HURT_SMALL', volume: 0.4, pitch: @ricochetPitch));
 			}
 
-			@ball['velocity'] = array(x: @v['x'], y: @v['y'], z: @v['z']);
+			@ball['velocity'] = @v;
 			set_entity_velocity(@ball['id'], @ball['velocity']);
 		}
 		if(@playerCount == 0) {
