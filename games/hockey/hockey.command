@@ -275,7 +275,7 @@ register_command('hockey', array(
 					}
 
 				} else {
-					if(!array_contains(sk_regions_at(@l), 'hockey') || @l['y'] > @hockey['loc']['y']) {
+					if(!sk_region_contains('hockey', @l) || @l['y'] > @hockey['loc']['y']) {
 						_place_puck(@hockey);
 						die();
 					}

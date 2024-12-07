@@ -94,7 +94,7 @@ register_command('spleef', array(
 				set_ploc(@cfg['warp']['material']);
 				msg(color('yellow').'Pick a block.');
 				bind('player_interact', null, array('player': player()), @event, @cfg, @key) {
-					if(@event['block'] && array_contains(sk_regions_at(@event['location']), @cfg['region']['material'])) {
+					if(@event['block'] && sk_region_contains(@cfg['region']['material'], @event['location'])) {
 						@blocktype = get_block(@event['location']);
 						@blockdata = get_blockdata_string(@event['location']);
 						set_blockdata_string(@cfg['option'][@key], @blockdata);
@@ -454,7 +454,7 @@ register_command('spleef', array(
 
 					bind('block_break', array('id': 'spleef_break'), null, @event, @cfg) {
 						@currentspleef = import('currentspleef');
-						if(array_index_exists(@currentspleef, player()) && !array_contains(sk_regions_at(@event['location']), @cfg['region']['floor'])) {
+						if(array_index_exists(@currentspleef, player()) && !sk_region_contains(@cfg['region']['floor'], @event['location'])) {
 							cancel();
 						}
 					}

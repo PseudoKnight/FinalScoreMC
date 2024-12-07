@@ -181,7 +181,7 @@ proc _hoops_ball_create(@loc) {
 						}
 						_hoops_cheer();
 					}
-				} else if(!array_contains(sk_regions_at(@loc), 'hoops') && !array_contains(sk_regions_at(@loc), 'hoops_cake')) {
+				} else if(!sk_region_contains('hoops', @loc) && !sk_region_contains('hoops_cake', @loc)) {
 					make_effect(@loc, 'ENDER_SIGNAL');
 					play_sound(@loc, array('sound': 'ENTITY_ZOMBIE_VILLAGER_CONVERTED', 'pitch': 1.8, 'volume': 3));
 					try(update_bar('hoops', 0.0))

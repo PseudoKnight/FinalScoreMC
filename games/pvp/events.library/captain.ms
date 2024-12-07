@@ -46,8 +46,8 @@ proc _bind(@pvp) {
 		}
 	}
 
-	@pvp['binds'][] = bind('entity_damage', null, array(type: 'DROPPED_ITEM'), @e, @region = @pvp['arena']['region']) {
-		if(array_contains(sk_regions_at(entity_loc(@e['id'])), @region)) {
+	@pvp['binds'][] = bind('entity_damage', null, array(type: 'DROPPED_ITEM'), @event, @region = @pvp['arena']['region']) {
+		if(sk_region_contains(@region, entity_loc(@event['id']))) {
 			cancel();
 		}
 	}

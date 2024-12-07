@@ -5,7 +5,7 @@ proc _weapon_bind_events(@pvp) {
 		}
 		cancel();
 		consume();
-		if(!array_contains(sk_regions_at(@event['to']), @pvp['arena']['region'])) {
+		if(!sk_region_contains(@pvp['arena']['region'], @event['to'])) {
 			die();
 		}
 		

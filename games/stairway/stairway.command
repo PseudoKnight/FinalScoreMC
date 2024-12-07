@@ -105,7 +105,7 @@ register_command('stairway', array(
 				do {
 					@newLoc = @loc[];
 					@newLoc[rand(2) * 2] += rand(2) * 2 - 1;
-					if(array_contains(sk_regions_at(@newLoc), 'stairway')
+					if(sk_region_contains('stairway', @newLoc)
 					&& get_block(@newLoc) == 'AIR') {
 						set_block(@newLoc, @players[@player].'_STAINED_GLASS', false);
 						@oldLocs[] = @newLoc[];
@@ -147,7 +147,7 @@ register_command('stairway', array(
 					} else {
 						@newLoc[0] += @distB;
 					}
-					if((@distA || @distB) && array_contains(sk_regions_at(@newLoc), 'stairway')) {
+					if((@distA || @distB) && sk_region_contains('stairway', @newLoc)) {
 						@loc[0] = @newLoc[0];
 						@loc[1] = @newLoc[1];
 						@loc[2] = @newLoc[2];

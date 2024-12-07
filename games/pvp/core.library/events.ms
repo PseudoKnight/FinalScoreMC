@@ -363,7 +363,7 @@ proc _bind_events(@pvp) {
 
 	@pvp['binds'][] = bind('entity_death', null, null, @event, @pvp) {
 		if(!_is_survival_world(@event['location']['world'])
-		&& array_contains(sk_regions_at(@event['location']), @pvp['arena']['region'])) {
+		&& sk_region_contains(@pvp['arena']['region'], @event['location'])) {
 			if(has_scoreboard_tag(@event['id'], 'nodrops')) {
 				modify_event('drops', null);
 			}
@@ -376,7 +376,7 @@ proc _bind_events(@pvp) {
 	@pvp['binds'][] = bind('player_teleport', array(priority: 'HIGH'), array(type: 'ENDER_PEARL'), @e, @pvp) {
 		if(array_index_exists(@pvp['players'], player())) {
 			consume();
-			if(!array_contains(sk_regions_at(@e['to']), @pvp['arena']['region'])) {
+			if(!sk_region_contains(@pvp['arena']['region'], @e['to'])) {
 				cancel();
 			}
 		}

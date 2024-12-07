@@ -131,7 +131,7 @@
 				die(color('GOLD').'No permission.');
 			}
 			@info = sk_region_info(@region, 'dev');
-			if(!array_contains(sk_regions_at(@info[0][0]), 'plots')) {
+			if(!sk_region_contains('plots', @info[0][0])) {
 				die(color('GOLD').'You can only use this in dev plots');
 			}
 			@pos1 = @info[0][0][0..2];
@@ -179,7 +179,7 @@
 			}
 
 			if(@world == 'dev' && !has_permission('group.builder')
-			&& (!array_contains(sk_regions_at(@p1), 'plots') || !array_contains(sk_regions_at(@p2), 'plots'))) {
+			&& (!sk_region_contains('plots', @p1) || !sk_region_contains('plots', @p2))) {
 				die(color('GOLD').'You may not expand your region outside of the "plots" region.');
 			}
 
@@ -246,8 +246,7 @@
 			// The following only applies to the creative world
 			@p1['y'] = -64;
 			@p2['y'] = 319;
-			if(!array_contains(sk_regions_at(@p1), 'plots')
-			|| !array_contains(sk_regions_at(@p2), 'plots')) {
+			if(!sk_region_contains('plots', @p1) || !sk_region_contains('plots', @p2)) {
 				die(color('GOLD').'You can only claim regions within the green "plots" region in the southeast.');
 			}
 			@region = @args[1];

@@ -67,7 +67,7 @@ proc _load_mode(@pvp) {
 	}
 
 	@pvp['binds'][] = bind('item_spawn', null, array(itemname: @pvp['arena']['bomb']), @event, @pvp) {
-		if(array_contains(sk_regions_at(@event['location']), @pvp['arena']['region'])) {
+		if(sk_region_contains(@pvp['arena']['region'], @event['location'])) {
 			set_entity_glowing(@event['id'], true);
 		}
 	}

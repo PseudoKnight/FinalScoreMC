@@ -49,7 +49,7 @@ proc _fw_start_task(@secs) {
 				if(@count[player()] == 3 && _fw_change_team(player(), 'winners')) {
 					play_sound(ploc(), array(sound: 'ENTITY_ZOMBIE_ATTACK_IRON_DOOR'), player());
 				}
-			} else if(!array_contains(sk_regions_at(@e['location']), 'frogware')) {
+			} else if(!sk_region_contains('frogware', @e['location'])) {
 				cancel();
 			}
 		}

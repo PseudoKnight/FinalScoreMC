@@ -12,7 +12,7 @@ proc _arena_bind_events(@id) {
 				@loc = ploc(@p);
 				@type = get_block(@loc);
 				if((@type == 'ORANGE_TERRACOTTA' || @type == 'WHITE_TERRACOTTA')
-					&& array_contains(sk_regions_at(@loc), @region)) {
+					&& sk_region_contains(@region, @loc)) {
 
 					@rx = @loc['x'] - floor(@loc['x']);
 					@sx = -1;

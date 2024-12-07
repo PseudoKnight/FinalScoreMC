@@ -18,7 +18,7 @@ proc _bind(@pvp) {
 
 	@pvp['binds'][] = bind('player_interact_entity', array(priority: 'LOWEST'), array(clicked: '/(GLOW_)?ITEM_FRAME/'), @event, @pvp) {
 		if(!is_cancelled()
-		&& array_contains(sk_regions_at(entity_loc(@event['id'])), @pvp['arena']['region'])) {
+		&& sk_region_contains(@pvp['arena']['region'], entity_loc(@event['id']))) {
 			action_msg('Item frames are disabled');
 			cancel();
 		}
@@ -26,14 +26,14 @@ proc _bind(@pvp) {
 
 	@pvp['binds'][] = bind('entity_damage', array(priority: 'LOWEST'), array(type: 'ITEM_FRAME'), @event,
 			@region = @pvp['arena']['region']) {
-		if(!is_cancelled() && array_contains(sk_regions_at(@event['location']), @region)) {
+		if(!is_cancelled() && sk_region_contains(@region, @event['location'])) {
 			cancel();
 		}
 	}
 
 	@pvp['binds'][] = bind('entity_damage', array(priority: 'LOWEST'), array(type: 'GLOW_ITEM_FRAME'), @event,
 			@region = @pvp['arena']['region']) {
-		if(!is_cancelled() && array_contains(sk_regions_at(@event['location']), @region)) {
+		if(!is_cancelled() && sk_region_contains(@region, @event['location'])) {
 			cancel();
 		}
 	}

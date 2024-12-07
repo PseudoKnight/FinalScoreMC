@@ -36,7 +36,7 @@ proc _remove_region_entities(
 		@type = entity_type(@entity);
 		if(!@types && !array_contains(@excludeTypes, @type) || array_contains(@types, @type)) {
 			@loc = entity_loc(@entity);
-			if(!array_contains(sk_regions_at(@loc), @region)) {
+			if(!sk_region_contains(@region, @loc)) {
 				continue();
 			}
 			if(@type === 'ARMOR_STAND' && !@removeProtected) {

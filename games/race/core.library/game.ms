@@ -192,7 +192,7 @@ proc _race_on_move(@player, @to, @race) {
 			} else {
 				set_pscore('time', @player, @race['times'][@lap][@checkpoint] - integer(time() / 1000), @race['id']);
 			}
-		} else if(array_contains(sk_regions_at(@loc), @race['region'])) {
+		} else if(sk_region_contains(@race['region'], @loc)) {
 			// ensure they are still in a vehicle in vehicle races
 			if(@race['type'] === 'kart' && !entity_exists(@p['kart']['base'])
 			|| !get_entity_vehicle(puuid(@player))
@@ -220,7 +220,7 @@ proc _race_on_move(@player, @to, @race) {
 				_race_check_players(@race);
 			}
 		}
-	} else if(!array_contains(sk_regions_at(@loc), @race['region'])) {
+	} else if(!sk_region_contains(@race['region'], @loc)) {
 		_race_remove_player(@race, @player);
 	}
 }

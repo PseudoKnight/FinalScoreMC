@@ -129,7 +129,7 @@ proc _cc_start(@world = 'custom') {
 			@cc = import('cubeclimber');
 			if(array_index_exists(@cc['players'], player())) {
 				if(@e['block'] === @cc['players'][player()].'_CONCRETE'
-				&& array_contains(sk_regions_at(@e['location']), 'cubeclimber_blocks')) {
+				&& sk_region_contains('cubeclimber_blocks', @e['location'])) {
 
 					set_block(@e['location'], 'AIR', false);
 					play_sound(@e['location'], array(sound: 'ENTITY_CHICKEN_EGG', pitch: 0.5));
@@ -157,8 +157,7 @@ proc _cc_start(@world = 'custom') {
 		}
 
 		bind('player_teleport', array(id: 'cube-teleport'), null, @e) {
-			@regions = sk_regions_at(array(@e['to'][0], @e['to'][1] - 1, @e['to'][2], @e['to'][3]));
-			if(array_contains(@regions, 'cubeclimber_blocks')
+			if(sk_region_contains('cubeclimber_blocks', location_shift(@e['to'], 'down'))
 			&& 2 < floor(distance(@e['to'], @e['from']))) {
 				cancel();
 			}

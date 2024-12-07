@@ -8,7 +8,7 @@ proc _weapon_bind_events(@pvp) {
 	}
 
 	@pvp['binds'][] = bind('item_spawn', null, array(itemname: 'HEAVY_WEIGHTED_PRESSURE_PLATE'), @event, @region = @pvp['arena']['region']) {
-		if(!array_contains(sk_regions_at(@event['location']), @region)) {
+		if(!sk_region_contains(@region, @event['location'])) {
 			die();
 		}
 		set_timeout(2000, closure(){

@@ -93,8 +93,8 @@ proc _waves_start(@waves) {
 	@waves['binds'][] = bind('player_teleport', null, null, @event, @waves) {
 		if((@event['type'] === 'PLUGIN' || @event['type'] === 'SPECTATE')
 		&& (@waves['world'] === @event['to']['world'] || @waves['world'] === @event['from']['world'])) {
-			@from = array_contains(sk_regions_at(@event['from']), @waves['region']);
-			@to = array_contains(sk_regions_at(@event['to']), @waves['region']);
+			@from = sk_region_contains(@waves['region'], @event['from']);
+			@to = sk_region_contains(@waves['region'], @event['to']);
 			if(@from && !@to) {
 				if(array_contains(@waves['spectators'], player())) {
 					cancel();
@@ -119,7 +119,7 @@ proc _waves_start(@waves) {
 	}
 
 	@waves['binds'][] = bind('creature_spawn', null, null, @event, @waves, @entities) {
-		if(@event['type'] != 'ARMOR_STAND' && @event['location']['world'] == @waves['world'] && array_contains(sk_regions_at(@event['location']), @waves['region'])) {
+		if(@event['type'] != 'ARMOR_STAND' && sk_region_contains(@waves['world'], @waves['region'], @event['location'])) {
 			@entities[] = @event['id'];
 			@waves['mobCount']++;
 		}
@@ -165,8 +165,8 @@ proc _waves_start(@waves) {
 		}
 	}
 
-	@waves['binds'][] = bind('player_interact_at_entity', array(priority: 'HIGHEST'), array(clicked: 'ARMOR_STAND'), @event, @region = @waves['region']) {
-		if(array_contains(sk_regions_at(entity_loc(@event['id'])), @region)) {
+	@waves['binds'][] = bind('player_interact_at_entity', array(priority: 'HIGHEST'), array(clicked: 'ARMOR_STAND'), @event, @waves) {
+		if(sk_region_contains(@waves['world'], @waves['region'], entity_loc(@event['id']))) {
 			if(entity_spec(@event['id'])['visible']) {
 				cancel();
 				@equipment = get_mob_equipment(@event['id']);
@@ -408,7 +408,7 @@ proc _waves_start(@waves) {
 			} else {
 				// Check random entity if it is still in region
 				@r = array_rand(@entities)[0];
-				if(!entity_exists(@entities[@r]) || !array_contains(sk_regions_at(entity_loc(@entities[@r])), @waves['region'])) {
+				if(!entity_exists(@entities[@r]) || !sk_region_contains(@waves['region'], entity_loc(@entities[@r]))) {
 					array_remove(@entities, @r);
 				} else {
 					@target = get_mob_target(@entities[@r]);

@@ -9,7 +9,7 @@ proc _bind(@pvp) {
 
 	@pvp['binds'][] = bind('entity_explode', null, array(type: 'PRIMED_TNT'), @event, @pvp) {
 		if(!_is_survival_world(@event['location']['world'])
-		&& array_contains(sk_regions_at(@event['location']), @pvp['arena']['region'])) {
+		&& sk_region_contains(@pvp['arena']['region'], @event['location'])) {
 			@pvp['blockcheck'] = true;
 		}
 	}
