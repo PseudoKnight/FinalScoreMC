@@ -368,7 +368,7 @@ register_command('entity', array(
 							// if target was within reach in this tick, queue any remaining directions
 							if(!@directions) {
 								clear_task();
-								if(@id[0] !== '@') {
+								if(is_array(@id) || @id[0] !== '@') {
 									foreach(@ent in get_entity_riders(@entity)) {
 										try(entity_remove(@ent));
 									}
