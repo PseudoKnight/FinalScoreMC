@@ -49,11 +49,17 @@ bind('player_join', null, null, @event) {
 					@test = if(get_os() === 'WINDOWS', '[TEST SERVER]', '');
 					@count = array_size(all_players());
 					@msg = reg_replace('[&§][0-9a-fk-o]', '', @name.@msg);
+					@iconUrl = '';
+					if(extension_exists('CHDynmap')) {
+						@iconUrl = 'http://liam.fragify.net:30027/tiles/faces/32x32/'.player().'.png';
+					} else {
+						@iconUrl = 'https://minotar.net/helm/'.puuid(player(), true).'/32.png'
+					}
 					@embed = array(
 						color: array(r: 58, g: 106, b: 39),
 						author: array(
 							name: "\u00bb@test @msg (@count)",
-							icon_url: 'http://liam.fragify.net:30027/tiles/faces/32x32/'.player().'.png'));
+							icon_url: @iconUrl));
 					if(is_null(@lastPlayed)) {
 						@embed['footer'] = array(text: 'New player!');
 					} else if(@lastPlayed && time() - @lastPlayed > 1000 * 60 * 60 * 24 * 7) {
@@ -218,11 +224,17 @@ bind('player_quit', null, null, @event) {
 				@test = if(get_os() === 'WINDOWS', '[TEST SERVER]', '');
 				@count = array_size(all_players());
 				@msg = reg_replace('[&§][0-9a-fk-o]', '', @msg);
+				@iconUrl = '';
+				if(extension_exists('CHDynmap')) {
+					@iconUrl = 'http://liam.fragify.net:30027/tiles/faces/32x32/'.player().'.png';
+				} else {
+					@iconUrl = 'https://minotar.net/helm/'.puuid(player(), true).'/32.png'
+				}
 				discord_broadcast('minecraft_chat', array(embed: array(
 					color: array(r: 126, g: 45, b: 35),
 					author: array(
 						name: "\u00ab@test @msg (@count)",
-						icon_url: 'http://liam.fragify.net:30027/tiles/faces/32x32/'.player().'.png'))));
+						icon_url: @iconUrl))));
 			});
 		}
 	}

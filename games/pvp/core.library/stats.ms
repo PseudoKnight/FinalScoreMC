@@ -125,7 +125,11 @@ proc _stats_print(@winners, @pvp) {
 		fields: array()
 	);
 	if(array_size(@winners) == 1) {
-		@embed['author']['icon_url'] = 'http://liam.fragify.net:30027/tiles/faces/32x32/'.@winners[0].'.png';
+		if(extension_exists('CHDynmap')) {
+			@embed['author']['icon_url'] = 'http://liam.fragify.net:30027/tiles/faces/32x32/'.@winners[0].'.png';
+		} else {
+			@embed['author']['icon_url'] = 'https://minotar.net/helm/'.puuid(@winners[0], true).'/32.png';
+		}
 	}
 	if(@color) {
 		@embed['color'] = @color;
