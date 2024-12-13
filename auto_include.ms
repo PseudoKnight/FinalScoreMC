@@ -17,29 +17,39 @@ proc _create_tabcompleter() {
 	@argumentCompletions = @arguments;
 	return(closure(@alias, @sender, @args) {
 		if(array_size(@args) > array_size(@argumentCompletions)) {
+			// we have no completions for this arg
 			return(array());
 		}
 		@completions = @argumentCompletions[array_size(@args) - 1];
 		if(is_array(@completions)) {
+			// normal arg completion
 			@arg = @args[-1];
 			while(is_associative(@completions)) {
+				// handles nested conditional completions
 				@conditionalCompletions = array();
 				foreach(@condition: @array in @completions) {
+					// This is associative, so order cannot be used.
+					// Previous argument and permission conditionals should not be mixed.
+					// Use nested associative arrays instead when mixing conditionals.
 					if(!@condition) {
+						// null is default completions if nothing else matches
 						@conditionalCompletions = @array;
-					} else if(@condition[0] == '<') {
-						@count = 1;
-						while(@condition[@count] == '<') {
-							@count++;
+						// continue loop
+					} else if(@condition[0] === '<') {
+						// previous argument conditional
+						@argOffset = 1;
+						while(@condition[@argOffset] === '<') {
+							@argOffset++;
 						}
-						@previous = @args[array_size(@args) - 1 - @count];
-						foreach(@s in split('|', substr(@condition, @count))) {
-							if(@previous == @s) {
+						@previousArg = @args[array_size(@args) - 1 - @argOffset];
+						foreach(@conditionalArg in split('|', substr(@condition, @argOffset))) {
+							if(@previousArg === @conditionalArg) {
 								@conditionalCompletions = @array;
 								break(2);
 							}
 						}
 					} else if(has_permission(@condition)) {
+						// permission conditional
 						@conditionalCompletions = @array;
 						break();
 					}
@@ -53,8 +63,10 @@ proc _create_tabcompleter() {
 				return(string_starts_with(@value, @arg));
 			}));
 		} else if(is_closure(@completions)) {
+			// custom arg completion
 			return(execute(@alias, @sender, @args, @completions));
 		}
+		// no completions for this arg (should use null for this)
 		return(array());
 	});
 }
