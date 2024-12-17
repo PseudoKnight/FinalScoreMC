@@ -275,7 +275,7 @@ proc _open_rules_menu(@objective) {
 			die();
 		}
 		cancel();
-		@slot = @event['slot'];
+		@slot = @event['rawslot'];
 		if(@slot == 44) {
 			close_pinv();
 			include('game.ms');
@@ -290,7 +290,7 @@ proc _open_rules_menu(@objective) {
 			}
 			play_sound(ploc(), array(sound: 'BLOCK_AMETHYST_BLOCK_HIT'));
 			_shard_create(@associative_rules);
-		} else {
+		} else if(@slot < @event['inventorysize']) {
 			if(!string_ends_with(@item['name'], '_DYE')) {
 				@slot -= 9;
 				if(@slot < 0) {
