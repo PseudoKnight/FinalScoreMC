@@ -16,12 +16,17 @@ proc _fw_start_task(@secs) {
 
 	bind('player_jump', array(id: 'fwtask'), null, @event) {
 		if(_fw_player(player())) {
+			@start = location_shift(ploc(), 'up', 3);
 			set_timeout(100, closure() {
-				@location = location_shift(ploc(), 'up', 3.5);
-				if(get_block(@location) == 'BRICKS') {
-					play_sound(@location, array(sound: 'ENTITY_GENERIC_EXPLODE', pitch: 2));
-					set_block(@location, 'AIR');
-					spawn_particle(@location, array(
+				@end = location_shift(ploc(), 'up', 3);
+				@yaw = get_yaw(@start, @end);
+				@end['yaw'] = if(@yaw == NaN, 0, @yaw);
+				@end['pitch'] = get_pitch(@start, @end);
+				@trace = ray_trace(@end, 0.5);
+				if(@trace['hitblock'] && get_block(@trace['block']) == 'BRICKS') {
+					play_sound(@end, array(sound: 'ENTITY_GENERIC_EXPLODE', pitch: 2));
+					set_block(@trace['block'], 'AIR');
+					spawn_particle(_center(@trace['block']), array(
 						particle: 'BLOCK_CRACK',
 						block: 'BRICKS',
 						count: 30,
