@@ -5,7 +5,7 @@ proc _hazard_create_entity(@game, @type, @loc, @spawner = null, @data = null) {
 
 proc _hazard_spawn_entity(@type, @loc, @data) {
 	@entity = null;
-	if(@type == 'DROPPED_ITEM') {
+	if(@type === 'DROPPED_ITEM') {
 		@entity = drop_item(@loc, @data, false);
 		set_entity_velocity(@entity, null);
 	} else {
@@ -16,7 +16,7 @@ proc _hazard_spawn_entity(@type, @loc, @data) {
 			}
 			if(array_contains(array('DROWNED', 'SKELETON', 'STRAY', 'ZOMBIE', 'ZOMBIE_VILLAGER'), @type)) {
 				set_mob_equipment(@e, array(helmet: array(name: 'LEATHER_HELMET')));
-			} else if(@type == 'PHANTOM') {
+			} else if(@type === 'PHANTOM') {
 				set_mob_effect(@e, 'FIRE_RESISTANCE', 1, 9999, true, false);
 			}
 		})[0];
@@ -63,8 +63,8 @@ proc _hazard_activate_entities(@game) {
 				set_entity_silent(@entity['uuid'], false);
 			}
 		} else {
-			if(@entity['type'] != 'DROPPED_ITEM') {
-				console('Entity doesn\'t exist when trying to activate it.');
+			if(@entity['type'] !== 'DROPPED_ITEM') {
+				console('Entity doesn not exist when trying to activate it.');
 			}
 			array_remove(@game['entities'], @index);
 		}

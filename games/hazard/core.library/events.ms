@@ -13,7 +13,7 @@ proc _hazard_bind(@game) {
 			if(string_ends_with(@item['name'], '_SPAWN_EGG')) {
 				cancel();
 				consume();
-				if(pmode() == 'CREATIVE' && array_index_exists(@event, 'location')) {
+				if(pmode() === 'CREATIVE' && array_index_exists(@event, 'location')) {
 					@loc = @event['location'];
 					if(get_block_info(@loc)['solid']) {
 						@loc = location_shift(@loc, @event['facing']);
@@ -33,7 +33,7 @@ proc _hazard_bind(@game) {
 			} else if(string_ends_with(@item['name'], 'MINECART')) {
 				cancel();
 				consume();
-				if(pmode() == 'CREATIVE' && array_index_exists(@event, 'location')) {
+				if(pmode() === 'CREATIVE' && array_index_exists(@event, 'location')) {
 					@loc = @event['location'];
 					if(get_block_info(@loc)['solid']) {
 						@loc = location_shift(@loc, @event['facing']);
@@ -43,7 +43,7 @@ proc _hazard_bind(@game) {
 					@type = split('_', @item['name'], 1)[0];
 					_hazard_create_entity(@game, 'MINECART'.if(@type != 'MINECART', '_'.@type), @loc);
 				}
-			} else if(pmode() == 'CREATIVE' && @event['action'] == 'right_click_air'
+			} else if(pmode() === 'CREATIVE' && @event['action'] === 'right_click_air'
 			 && material_info(@item['name'], 'isBlock')) {
 				@loc = ploc();
 				@loc['y'] += 2.5;
@@ -56,7 +56,7 @@ proc _hazard_bind(@game) {
 					play_sound(@loc, array(sound: 'BLOCK_STONE_PLACE'));
 				}
 			}
-			if(pmode() == 'CREATIVE') {
+			if(pmode() === 'CREATIVE') {
 				@game['players'][player()]['buildCount']++;
 				update_bar('hazard'.player(), double(@game['players'][player()]['buildCount'] / @game['buildCount']));
 			}
@@ -64,7 +64,7 @@ proc _hazard_bind(@game) {
 	}
 
 	@game['binds'][] = bind('entity_damage', null, array(cause: 'ENTITY_ATTACK', world: @game['world']), @event, @game) {
-		if(array_index_exists(@game['players'], @event['damager']) && pmode(@event['damager']) == 'CREATIVE') {
+		if(array_index_exists(@game['players'], @event['damager']) && pmode(@event['damager']) === 'CREATIVE') {
 			_hazard_remove_entity(@game, @event['id']);
 		}
 	}
@@ -72,7 +72,7 @@ proc _hazard_bind(@game) {
 	@game['binds'][] = bind('vehicle_destroy', null, null, @event, @game) {
 		if(array_index_exists(@event, 'damager')
 		&& array_index_exists(@game['players'], @event['damager'])
-		&& pmode(@event['damager']) == 'CREATIVE') {
+		&& pmode(@event['damager']) === 'CREATIVE') {
 			_hazard_remove_entity(@game, @event['vehicle'], false);
 		}
 	}
@@ -131,7 +131,7 @@ proc _hazard_bind(@game) {
 	}
 
 	@game['binds'][] = bind('item_drop', null, null, @event, @game) {
-		if(@game['state'] == 'BUILD' && @game['world'] == pworld() && array_contains(sk_current_regions(), 'hazard')) {
+		if(@game['state'] === 'BUILD' && @game['world'] == pworld() && array_contains(sk_current_regions(), 'hazard')) {
 			bind('item_spawn', array(priority: 'HIGHEST'), null, @event, @game, @player = player()) {
 				if(sk_region_contains('hazard', @event['location'])) {
 					consume();
@@ -151,7 +151,7 @@ proc _hazard_bind(@game) {
 
 	@game['binds'][] = bind('region_change', null, null, @event, @game) {
 		if(array_index_exists(@game['players'], player())) {
-			if(pmode() == 'ADVENTURE' && array_contains(@event['toRegions'], 'hazard_end')) {
+			if(pmode() === 'ADVENTURE' && array_contains(@event['toRegions'], 'hazard_end')) {
 				@data = @game['players'][player()];
 				@data['score'] += 10;
 				@data['finished'] = true;

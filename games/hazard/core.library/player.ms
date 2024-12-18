@@ -13,14 +13,14 @@ proc _hazard_add_player(@player, @game) {
 	bar_add_player('hazard', @player);
 	create_bar('hazard'.@player, array(visible: false, style: 'SEGMENTED_'.@game['buildCount'], percent: 0.0));
 	bar_add_player('hazard'.@player, @player);
-	if(@game['state'] == 'RUN') {
+	if(@game['state'] === 'RUN') {
 		@coords = sk_region_info('hazard_start', @game['world'], 0);
 		@loc = array(rand(@coords[1][0] + 1, @coords[0][0]) + 0.5, @coords[1][1], rand(@coords[1][2] + 1, @coords[0][2]) + 0.5, @game['world']);
 		set_ploc(@player, @loc);
 		if(@game['players'][@player]['finished']) {
 			set_pmode(@player, 'SPECTATOR');
 		}
-	} else if(@game['state'] == 'BUILD') {
+	} else if(@game['state'] === 'BUILD') {
 		set_pmode(@player, 'CREATIVE');
 	}
 }
@@ -31,7 +31,7 @@ proc _hazard_remove_player(@player, @game) {
 		bar_remove_player('hazard', @player);
 		set_pscoreboard(@player);
 		_equip_kit(@player);
-		if(pworld(@player) == @game['world']) {
+		if(pworld(@player) === @game['world']) {
 			set_ploc(@player, get_value('warp.hazard'));
 		}
 	}
@@ -40,7 +40,7 @@ proc _hazard_remove_player(@player, @game) {
 
 proc _hazard_spawn_players(@game) {
 	@coords = sk_region_info('hazard_start', @game['world'], 0);
-	@mode = if(@game['state'] == 'RUN', 'ADVENTURE', 'CREATIVE');
+	@mode = if(@game['state'] === 'RUN', 'ADVENTURE', 'CREATIVE');
 	foreach(@player: @data in @game['players']) {
 		@data['buildCount'] = 0;
 		@data['finished'] = false;
@@ -52,14 +52,14 @@ proc _hazard_spawn_players(@game) {
 			set_phealth(@player, 2);
 			set_phunger(@player, 16);
 			set_psaturation(@player, 0);
-			if(pmode(@player) == 'ADVENTURE') {
+			if(pmode(@player) === 'ADVENTURE') {
 				play_sound(@loc, array(sound: 'ENTITY_FIREWORK_ROCKET_BLAST'), @player);
 				@data['inv'] = pinv(@player);
 				clear_pinv(@player);
 			} else {
 				set_pinv(@player, @data['inv']);
 			}
-			if(@game['state'] == 'BUILD') {
+			if(@game['state'] === 'BUILD') {
 				update_bar('hazard'.@player, array(visible: true, percent: 0.0));
 			} else {
 				update_bar('hazard'.@player, array(visible: false, percent: 0.0));
@@ -70,7 +70,7 @@ proc _hazard_spawn_players(@game) {
 
 proc _hazard_are_players_alive(@game) {
 	foreach(@player: @data in @game['players']) {
-		if(pmode(@player) == 'ADVENTURE') {
+		if(pmode(@player) === 'ADVENTURE') {
 			return(true);
 		}
 	}
@@ -78,12 +78,17 @@ proc _hazard_are_players_alive(@game) {
 }
 
 proc _hazard_did_player_win(@game) {
+	@targetScore = @game['targetScore'];
+	@count = 0;
 	foreach(@player: @data in @game['players']) {
-		if(@data['score'] >= @game['targetScore']) {
-			return(true);
+		if(@data['score'] > @targetScore) {
+			@targetScore = @data['score'];
+			@count = 1;
+		} else if(@data['score'] == @targetScore) {
+			@count++;
 		}
 	}
-	return(false);
+	return(@count == 1);
 }
 
 proc _hazard_players_finished_building(@game) {

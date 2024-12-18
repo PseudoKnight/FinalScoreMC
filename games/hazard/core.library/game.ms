@@ -9,7 +9,6 @@ proc _hazard_create() {
 		inactivePlayers: associative_array(),
 		round: 0,
 		targetScore: 50,
-		maxRounds: 20,
 		timer: 60,
 		buildTimer: 60,
 		buildCount: 12, // can be 6, 10, 12, or 20
@@ -89,7 +88,7 @@ proc _hazard_start(@game) {
 				update_bar('hazard', string(@timeLeft));
 			}
 		} else {
-			if(@game['round'] == @game['maxRounds'] || _hazard_did_player_win(@game)) {
+			if(_hazard_did_player_win(@game)) {
 				_hazard_end(@game);
 				clear_task();
 				die();
