@@ -1,6 +1,6 @@
 // Block enderchests when not in survival worlds
-bind('player_interact', null, array(block: 'ENDER_CHEST', button: 'right'), @event) {
-	if(!has_metadata(@event['location']['world'], 'survival')) {
+bind('inventory_open', null, null, @event) {
+	if(@event['inventorytype'] === 'ENDER_CHEST' && !has_metadata(pworld(), 'survival')) {
 		cancel();
 	}
 }
