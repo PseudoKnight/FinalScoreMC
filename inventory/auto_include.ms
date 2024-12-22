@@ -149,6 +149,12 @@ proc _minify_inv(@inv, @keepnulls = false) {
 			// specific meta
 			if(array_index_exists(@meta, 'inventory')) {
 				_minify_inv(@meta['inventory']);
+				if(!@meta['inventory']) {
+					array_remove(@meta, 'inventory');
+					if(!@meta) {
+						array_remove(@item, 'meta');
+					}
+				}
 			} else if(array_index_exists(@meta, 'trim') && is_null(@meta['trim'])) {
 				array_remove(@meta, 'trim');
 			}

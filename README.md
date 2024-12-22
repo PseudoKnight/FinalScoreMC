@@ -18,7 +18,6 @@ Visit the [methodscript.com](https://methodscript.com) site or the [GitHub repo]
 | CHPaper | [Source](https://github.com/PseudoKnight/CHPaper) | [Download](https://letsbuild.net/jenkins/job/CHPaper/) | Paper |
 | CHPerms | [Source](https://github.com/jb-aero/CHPerms/) | [Download](https://letsbuild.net/jenkins/job/CHPerms/) | |
 | CHRegionChange | [Source](https://github.com/PseudoKnight/CHRegionChange) | [Download](https://letsbuild.net/jenkins/job/CHRegionChange/) | WorldGuard |
-| CHSerialize | | | |
 | CHSpigot | [Source](https://github.com/PseudoKnight/CHSpigot/) | [Download](https://letsbuild.net/jenkins/job/CHSpigot/) | Spigot |
 | CHStargate | [Source](https://github.com/PseudoKnight/CHStargate/) | [Download](https://letsbuild.net/jenkins/job/CHStargate/) | Stargate |
 | SKCompat | [Source](https://github.com/jb-aero/SKCompat/) | [Download](https://letsbuild.net/jenkins/job/SKCompat/) | WorldEdit/WorldGuard |
