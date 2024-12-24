@@ -29,6 +29,7 @@ proc _get_chest_loot(@floor, @random, @bonus = 1.0, @loot = array(
 	array(chance: -0.03, item: 'DIAMOND_AXE'),
 	array(chance: -0.06, item: 'NETHERITE_AXE'),
 	array(chance: -0.03, item: 'TRIDENT'),
+	array(chance: -0.03, item: 'MACE'),
 	array(chance: 0.01, item: 'SHIELD'),
 	array(chance: 0.03, item: 'BOW'),
 	array(chance: 0.03, item: 'CROSSBOW'),

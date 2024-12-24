@@ -7,5 +7,5 @@ In the run phase the players are spawned on top of the start platform and must r
 ## Dependencies
 
 **Plugins**: WorldGuard, WorldEdit  
-**Extensions**: SKCompat, CHSpigot (respawn), CHRegionChange  
+**Extensions**: SKCompat, CHRegionChange  
 **Procedures**: _add_activity, _remove_activity, _equip_kit

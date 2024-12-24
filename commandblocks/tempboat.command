@@ -23,13 +23,13 @@ register_command('tempboat', array(
 			}
 		}
 		@rider = puuid(@player);
-		@boat = spawn_entity('boat', 1, @loc)[0];
+		@boat = spawn_entity('OAK_BOAT', 1, @loc)[0];
 		set_entity_silent(@boat, true);
 		set_entity_rider(@boat, @rider);
 		if(has_bind(@player.'vehicle_leave')) {
 			die();
 		}
-		bind('vehicle_leave', array('id': @player.'vehicle_leave'), array('vehicletype': 'BOAT', 'passengertype': 'PLAYER'), @e, @player) {
+		bind('vehicle_leave', array(id: @player.'vehicle_leave'), array(vehicletype: 'OAK_BOAT', passengertype: 'PLAYER'), @e, @player) {
 			if(@e['player'] == @player) {
 				unbind();
 				unbind(@player.'quit');

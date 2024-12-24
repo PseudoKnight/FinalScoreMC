@@ -74,7 +74,7 @@ proc _race_place_player(@race, @player, @loc) {
 	@vehicle = null;
 	switch(@race['type']) {
 		case 'boat':
-			@vehicle = spawn_entity('BOAT', 1, @loc)[0];
+			@vehicle = spawn_entity('OAK_BOAT', 1, @loc)[0];
 		case 'horse':
 			@vehicle = spawn_entity('HORSE', 1, @loc)[0];
 			set_mob_age(@vehicle, 0);

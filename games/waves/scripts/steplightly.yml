@@ -35,16 +35,12 @@ shop:
         name: POTION
         cost: 1
         meta:
-            base:
-                extended: true
-                type: SPEED
+            potiontype: LONG_SWIFTNESS
     12:
         name: POTION
         cost: 1
         meta:
-            base:
-                extended: true
-                type: STRENGTH
+            potiontype: LONG_STRENGTH
     13:
         name: GOLDEN_APPLE
         cost: 3
@@ -52,9 +48,7 @@ shop:
         name: TIPPED_ARROW
         cost: 1
         meta:
-            base:
-                upgraded: true
-                type: INSTANT_HEAL
+            potiontype: STRONG_HEALING
     15:
         name: NETHER_STAR
         cost: 8

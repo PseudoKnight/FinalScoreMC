@@ -14,7 +14,7 @@ proc _hazard_spawn_entity(@type, @loc, @data) {
 				set_entity_ai(@e, false);
 				set_entity_silent(@e, true);
 			}
-			if(array_contains(array('DROWNED', 'SKELETON', 'STRAY', 'ZOMBIE', 'ZOMBIE_VILLAGER'), @type)) {
+			if(array_contains(array('BOGGED', 'DROWNED', 'SKELETON', 'STRAY', 'ZOMBIE', 'ZOMBIE_VILLAGER'), @type)) {
 				set_mob_equipment(@e, array(helmet: array(name: 'LEATHER_HELMET')));
 			} else if(@type === 'PHANTOM') {
 				set_mob_effect(@e, 'FIRE_RESISTANCE', 1, 9999, true, false);

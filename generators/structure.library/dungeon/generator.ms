@@ -1662,12 +1662,12 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 								set_inventory(@loc, array(0: array(
 									name: if(@solid || @facing === 'down', 'LINGERING_POTION', 'SPLASH_POTION'),
 									qty: if(@trigger === 'vines', 1, 3),
-									meta: array(base: array(extended: false, type: to_upper(@data), upgraded: true))
+									meta: array(potiontype: 'STRONG_'.to_upper(@data))
 								)));
 								set_block_lock(@loc, 'Key'.(@floor + 1));
 							} else if(@effect === 'arrow') {
 								set_blockdata_string(@loc, 'dispenser[facing='.@facing.']', false);
-								set_inventory(@loc, array(0: array(name: 'TIPPED_ARROW', qty: 3, meta: array(base: array(type: 'INSTANT_DAMAGE', upgraded: true, extended: false)))));
+								set_inventory(@loc, array(0: array(name: 'TIPPED_ARROW', qty: 3, meta: array(potiontype: 'STRONG_HARMING'))));
 								set_block_lock(@loc, 'Key'.(@floor + 1));
 							}
 							if(@trigger === 'plate') {

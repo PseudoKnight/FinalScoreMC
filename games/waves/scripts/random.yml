@@ -49,23 +49,17 @@ shop:
         name: POTION
         cost: 1
         meta:
-            base:
-                extended: true
-                type: SPEED
+            potiontype: LONG_SWIFTNESS
     13:
         name: POTION
         cost: 1
         meta:
-            base:
-                extended: true
-                type: STRENGTH
+            potiontype: LONG_STRENGTH
     14:
         name: SPLASH_POTION
         cost: 1
         meta:
-            base:
-                upgraded: true
-                type: INSTANT_HEAL
+            potiontype: STRONG_HEALING
     15:
         name: ARROW
         cost: 1

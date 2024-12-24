@@ -37,7 +37,7 @@ proc _class_load(@player, @pvp) {
 		if(sk_region_contains(@region, @event['location'])) {
 			spawn_entity('AREA_EFFECT_CLOUD', 1, @event['location'], closure(@cloud) {
 				set_entity_spec(@cloud, array(particle: 'FLAME', duration: 240, source: @event['shooter'],
-					potionmeta: array(base: array(type: 'INSTANT_DAMAGE'))
+					potionmeta: array(potiontype: 'HARMING')
 				));
 			});
 		}

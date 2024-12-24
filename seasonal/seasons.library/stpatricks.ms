@@ -19,9 +19,7 @@ bind('creature_spawn', null, array(type: 'ZOMBIE', reason: 'NATURAL'), @event) {
 				@bottle['meta']['potions'][@effect] = array(seconds: rand(1, 540), strength: rand(3)),
 			} while(rand() > 0.67)
 		} else {
-			@bottle = array(name: 'POTION', meta: array(
-				base: array(type: 'LUCK')
-			));
+			@bottle = array(name: 'POTION', meta: array(potiontype: 'LUCK'));
 		}
 
 		set_mob_equipment(@id, array(

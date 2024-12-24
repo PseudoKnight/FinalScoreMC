@@ -65,9 +65,12 @@ bind('target_player', null, array(mobtype: 'ZOMBIE'), @event, @day) {
 		if(has_scoreboard_tag(@entity, 'easter_bunny')) {
 			@mobs = array(
 				'ALLAY',
+				'ARMADILLO',
 				'AXOLOTL',
 				'BAT',
 				'BEE',
+				'BOGGED',
+				'BREEZE',
 				'CAMEL':
 				'CAVE_SPIDER',
 				'CHICKEN',

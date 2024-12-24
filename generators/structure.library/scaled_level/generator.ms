@@ -1270,11 +1270,11 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 									set_inventory(@loc, array(0: array(
 										name: if(@solid, 'LINGERING_POTION', 'SPLASH_POTION'),
 										qty: 3,
-										meta: array(base: array(extended: false, type: to_upper(@data), upgraded: true))
+										meta: array(potiontype: 'STRONG_'.to_upper(@data))
 									)));
 								case 'arrow':
 									set_blockdata_string(@loc, 'dispenser[facing='.@facing.']', false);
-									set_inventory(@loc, array(0: array(name: 'TIPPED_ARROW', qty: 3, meta: array(base: array(type: 'INSTANT_DAMAGE', upgraded: true, extended: false)))));
+									set_inventory(@loc, array(0: array(name: 'TIPPED_ARROW', qty: 3, meta: array(potiontype: 'STRONG_HARMING'))));
 							}
 							if(@trigger === 'plate') {
 								// needs to be after dispenser

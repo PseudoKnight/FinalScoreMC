@@ -33,6 +33,7 @@ proc _set_inventory_contents(@loc, @count, @player,
 	IRON_INGOT: 24,
 	LEATHER: 64,
 	LINGERING_POTION: 3,
+	MACE: 1,
 	NETHERITE_INGOT: 1,
 	NETHERITE_UPGRADE_SMITHING_TEMPLATE: 1,
 	OAK_PLANKS: 64,
@@ -44,6 +45,7 @@ proc _set_inventory_contents(@loc, @count, @player,
 	TRIDENT: 1,
 	TIPPED_ARROW: 32,
 	TURTLE_HELMET: 1,
+	WIND_CHARGE: 8,
 	WITHER_SKELETON_SKULL: 8,
 )) {
 	if(has_metadata(@loc, 'loot')) {
@@ -105,7 +107,7 @@ proc _random_item(@baseItems) {
 				'BLAST_PROTECTION', 'FEATHER_FALLING', 'FIRE_PROTECTION', 'PROJECTILE_PROTECTION', 'SILK_TOUCH',
 				'THORNS', 'AQUA_AFFINITY', 'DEPTH_STRIDER', 'MENDING', 'FROST_WALKER', 'SWEEPING_EDGE', 'CHANNELING',
 				'IMPALING', 'RIPTIDE', 'LOYALTY', 'VANISHING_CURSE', 'BINDING_CURSE', 'SWIFT_SNEAK', 'PIERCING',
-				'MULTISHOT', 'QUICK_CHARGE'
+				'MULTISHOT', 'QUICK_CHARGE', 'BREACH', 'DENSITY', 'WIND_BURST'
 			);
 			@meta = array(stored: array());
 			do {
@@ -118,10 +120,12 @@ proc _random_item(@baseItems) {
 		case 'LINGERING_POTION':
 			if(rand(2)) {
 				@state = rand(3);
-				@potionType = array_get_rand(array('SPEED', 'SLOWNESS', 'STRENGTH', 'INSTANT_HEAL', 'INSTANT_DAMAGE', 'JUMP',
-				'REGEN', 'FIRE_RESISTANCE', 'WATER_BREATHING', 'INVISIBILITY', 'NIGHT_VISION', 'WEAKNESS',
-				'POISON', 'LUCK'));
-				@meta = array(base: array(extended: (@state == 1), upgraded: (@state == 2), type: @potionType));
+				@potionType = array_get_rand(array('INFESTED', 'SWIFTNESS', 'LONG_SWIFTNESS', 'STRONG_SWIFTNESS', 'SLOWNESS', 'LONG_SLOWNESS', 'STRONG_SLOWNESS',
+				'STRENGTH', 'LONG_STRENGTH', 'STRONG_STRENGTH', 'HARMING', 'STRONG_HARMING', 'HEALING', 'STRONG_HEALING', 'LEAPING', 'LONG_LEAPING', 'STRONG_LEAPING',
+				'OOZING', 'SLOW_FALLING', 'LONG_SLOW_FALLING', 'REGENERATION', 'LONG_REGENERATION', 'STRONG_REGENERATION', 'FIRE_RESISTANCE', 'LONG_FIRE_RESISTANCE',
+				'WATER_BREATHING', 'LONG_WATER_BREATHING',  'INVISIBILITY', 'LONG_INVISIBILITY', 'NIGHT_VISION', 'LONG_NIGHT_VISION', 'WEAKNESS', 'LONG_WEAKNESS',
+				'WEAVING', 'POISON', 'LONG_POISON', 'STRONG_POISON', 'LUCK', 'TURTLE_MASTER', 'LONG_TURTLE_MASTER', 'STRONG_TURTLE_MASTER', 'WIND_CHARGED'));
+				@meta = array(potiontype: @potionType);
 			} else {
 				@meta = array(potions: array());
 				@effects = reflect_pull('enum', 'PotionEffectType');

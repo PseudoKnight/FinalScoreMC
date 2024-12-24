@@ -7,7 +7,7 @@
 	}
 	@removenamed = false;
 	@spawnEggs = false;
-	@type = array('BLAZE', 'CAVE_SPIDER', 'CREEPER', 'DROWNED', 'ELDER_GUARDIAN', 'ENDER_DRAGON', 'ENDERMAN', 'ENDERMITE',
+	@type = array('BOGGED', 'BLAZE', 'BREEZE', 'CAVE_SPIDER', 'CREEPER', 'DROWNED', 'ELDER_GUARDIAN', 'ENDER_DRAGON', 'ENDERMAN', 'ENDERMITE',
 			'EVOKER', 'GUARDIAN', 'GHAST', 'GIANT', 'HOGLIN', 'HUSK', 'MAGMA_CUBE', 'PHANTOM', 'PIGLIN', 'PIGLIN_BRUTE', 
 			'SHULKER', 'SILVERFISH', 'SKELETON', 'SLIME', 'SPIDER', 'STRAY', 'WARDEN', 'WITCH', 'WITHER', 'WITHER_SKELETON', 'VEX',
 			'VINDICATOR', 'ZOGLIN', 'ZOMBIE', 'ZOMBIFIED_PIGLIN', 'ZOMBIE_VILLAGER');
@@ -27,7 +27,7 @@
 		} else {
 			switch(@arg) {
 				case 'living':
-					@type = array_merge(@type, array('ALLAY', 'AXOLOTL', 'BAT', 'CAMEL', 'CHICKEN', 'COD', 'COW', 'DOLPHIN', 'DONKEY', 'FROG', 'GLOW_SQUID', 'GOAT',
+					@type = array_merge(@type, array('ARMADILLO', 'ALLAY', 'AXOLOTL', 'BAT', 'CAMEL', 'CHICKEN', 'COD', 'COW', 'DOLPHIN', 'DONKEY', 'FROG', 'GLOW_SQUID', 'GOAT',
 							'HORSE', 'IRON_GOLEM', 'LLAMA', 'MULE', 'MUSHROOM_COW', 'OCELOT', 'PIG', 'PUFFERFISH', 'RABBIT', 'SALMON',
 							'SHEEP', 'SKELETON_HORSE', 'SNIFFER', 'SNOWMAN', 'SQUID', 'TADPOLE', 'TROPICAL_FISH', 'TURTLE', 'VILLAGER', 'WOLF', 'ZOMBIE_HORSE'));
 				case 'hostile':

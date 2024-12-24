@@ -206,10 +206,12 @@ bind('player_enter_bed', null, null, @event) {
 # painting cycler
 bind('player_interact_entity', null, array(clicked: 'PAINTING', hand: 'main_hand'), @event) {
 	if(pmode() != 'ADVENTURE' && sk_can_build(entity_loc(@event['id']))) {
-		@paintings = array('KEBAB', 'AZTEC', 'ALBAN', 'AZTEC2', 'BOMB', 'PLANT', 'WASTELAND',
-		'POOL', 'COURBET', 'SEA', 'SUNSET', 'CREEBET', 'WANDERER', 'GRAHAM', 'MATCH', 'BUST', 
-		'STAGE', 'VOID', 'SKULL_AND_ROSES', 'WITHER', 'EARTH', 'WIND', 'WATER', 'FIRE', 
-		'FIGHTERS', 'SKELETON', 'DONKEY_KONG', 'POINTER', 'PIGSCENE', 'BURNING_SKULL');
+		@paintings = array('KEBAB', 'AZTEC', 'ALBAN', 'AZTEC2', 'BOMB', 'PLANT', 'WASTELAND', 'MEDITATIVE',
+		'POOL', 'COURBET', 'SEA', 'SUNSET', 'CREEBET', 'WANDERER', 'GRAHAM', 'PRAIRIE_RIDE', 'MATCH', 'BUST', 
+		'STAGE', 'VOID', 'SKULL_AND_ROSES', 'WITHER', 'BAROQUE', 'HUMBLE', 'EARTH', 'WIND', 'WATER', 'FIRE', 
+		'FIGHTERS', 'CHANGING', 'FINDING', 'LOWMIST', 'PASSAGE', 'BOUQUET', 'CAVEBIRD', 'COTAN', 'ENDBOSS',
+		'FERN', 'OWLEMONS', 'SUNFLOWERS', 'TIDES', 'SKELETON', 'DONKEY_KONG', 'BACKYARD', 'POND', 'POINTER',
+		'PIGSCENE', 'BURNING_SKULL', 'ORB', 'UNPACKED');
 		@current = entity_spec(@event['id'])['type'];
 		@index = array_index(@paintings, @current);
 		@tries = 0;
