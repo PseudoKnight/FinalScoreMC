@@ -390,7 +390,7 @@ proc _kart_tick(@player, @kart, @race) {
 			@origin['z'] += @normalizedVelocity['z'] * @dist2bumper;
 			@origin['x'] -= @right['x'] * 0.5;
 			@origin['z'] -= @right['z'] * 0.5;
-			@trace = ray_trace(@origin, 0.6 - @vertical);
+			@trace = ray_trace(@player, @origin, 0.6 - @vertical, 0.225);
 			@hit = @trace['location'];
 			if(@trace['entities']) {
 				@hit = @trace['entities'][0]['location'];
@@ -402,7 +402,7 @@ proc _kart_tick(@player, @kart, @race) {
 				@isLeft = false;
 				@origin['x'] += @right['x'];
 				@origin['z'] += @right['z'];
-				@trace = ray_trace(@origin, 0.6 - @vertical);
+				@trace = ray_trace(@player, @origin, 0.6 - @vertical, 0.225);
 				@hit = @trace['location'];
 				if(@trace['entities']) {
 					@hit = @trace['entities'][0]['location'];
