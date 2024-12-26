@@ -25,7 +25,7 @@ proc _fw_start_task(@secs) {
 	@count = @secs * 10;
 	for(@i = 0, @i < @count, @i++) {
 		@mat = array_get_rand(@mats);
-		if(!material_info(@hat, 'isItem')) {
+		if(!material_info(@mat, 'isItem')) {
 			continue();
 		}
 		drop_item(_fw_loc(), array(name: @mat))
