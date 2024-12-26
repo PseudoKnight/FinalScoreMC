@@ -51,7 +51,6 @@ register_command('kart', array(
 		bind('entity_dismount', array(id: player().'kartdismount'), array(type: 'PLAYER'), @event, @player = player(), @kart) {
 			try {
 				if(player(@event['id']) === @player) {
-					@kart['drift'] = 2;
 					cancel();
 				}
 			} catch(PlayerOfflineException @ex) {

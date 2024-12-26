@@ -30,7 +30,6 @@ array proc _kart_spawn(@loc, @player, @design, @camdist = 4.0) {
 		camdist: @camdist,
 		// previous inputs
 		boost: false,
-		drift: 0,
 		driftTurn: 0,
 	);
 	@teleportduration = 2;
@@ -284,37 +283,21 @@ proc _kart_tick(@player, @kart, @race) {
 			}
 		}
 
-		// Initialize new input
+		// Get kart input
+		@input = get_player_input(@player);
 		@acceleration = 0;
 		@turn = 0;
-
-		// Get input
-		// The player velocity vector while riding a vehicle can be interpreted as directional
-		// movement (e.g. WASD) by translating it relative to the player yaw
-		@input = pvelocity(@player);
-		if(@input['x'] || @input['z']) {
-			@inputYaw = get_yaw(array(0, 0, 0), @input);
-			@deltaYaw = @inputYaw - @pfacing[0];
-			if(@deltaYaw < -180) {
-				@deltaYaw += 360;
-			} else if(@deltaYaw > 180) {
-				@deltaYaw -= 360;
-			}
-			if(abs(@deltaYaw) < 60) {
-				@acceleration = 1;
-			} else if(abs(@deltaYaw) > 120) {
-				@acceleration = -1;
-			}
-			if(@deltaYaw > 30 && @deltaYaw < 150) {
-				@turn = 1;
-			} else if(@deltaYaw < -30 && @deltaYaw > -150) {
-				@turn = -1;
-			}
+		if(@input['left'] && !@input['right']) {
+			@turn = -1;
+		} else if(@input['right']) {
+			@turn = 1;
 		}
-
-		// Consume drift input
-		@drift = @kart['drift'];
-		@kart['drift'] = max(0, @kart['drift'] - 1); // drift key actuates for 2 ticks to smooth input gaps
+		if(@input['forward'] && !@input['backward']) {
+			@acceleration = 1;
+		} else if(@input['backward']) {
+			@acceleration = -1;
+		}
+		@drift = @input['sneak'];
 
 		// Boost / reset yaw from drift turn
 		if(!@drift && pexp(@player) == 99 && @acceleration > 0) {

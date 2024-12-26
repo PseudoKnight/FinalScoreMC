@@ -6,9 +6,7 @@ proc _race_bind_events(@race) {
 				cancel();
 				if(@race['type'] === 'pig') {
 					play_sound(ploc(), array(sound: 'ENTITY_PIG_AMBIENT', pitch: 2 ** ((rand(25) - 12) / 12), volume: 1));
-				} else if(@race['type'] === 'kart') {
-					@race['players'][@player]['kart']['drift'] = 2;
-				} else {
+				} else if(@race['type'] !== 'kart') {
 					play_sound(ploc(), array(sound: 'BLOCK_NOTE_BLOCK_CHIME', pitch: 2 ** ((rand(25) - 12) / 12), volume: 1));
 				}
 			}
