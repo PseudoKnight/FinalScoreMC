@@ -5,6 +5,9 @@ proc _fw_start_task(@secs) {
 	@attempts = 10;
 	do {
 		@hat = array_get_rand(@mats);
+		if(!material_info(@hat, 'isItem')) {
+			continue();
+		}
 		// drop the desired items first
 		@count = _fw_total_players() * 2;
 		for(@i = 0, @i < @count, @i++) {
@@ -21,7 +24,11 @@ proc _fw_start_task(@secs) {
 	// now drop some random items
 	@count = @secs * 10;
 	for(@i = 0, @i < @count, @i++) {
-		drop_item(_fw_loc(), array(name: array_get_rand(@mats)));
+		@mat = array_get_rand(@mats);
+		if(!material_info(@hat, 'isItem')) {
+			continue();
+		}
+		drop_item(_fw_loc(), array(name: @mat))
 	}
 
 	bind('player_armor_change', array(id: 'fwtask'), null, @event, @hat) {
