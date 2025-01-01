@@ -22,6 +22,7 @@ register_command('platform', array(
 		
 		@entities = array();
 		@previous = spawn_entity('MINECART', 1, @loc, iclosure(@e){
+			set_entity_saves_on_unload(@e, false);
 			set_entity_silent(@e, true);
 		})[0];
 		@entities[] = @previous;
@@ -29,6 +30,7 @@ register_command('platform', array(
 		@spec = array(visible: false);
 		while(@offset > 0) {
 			@stand = spawn_entity('ARMOR_STAND', 1, @loc, closure(@e){
+				set_entity_saves_on_unload(@e, false);
 				if(@offset == 1) {
 					@spec['small'] = true;
 				}
@@ -42,6 +44,7 @@ register_command('platform', array(
 		}
 		
 		@shulker = spawn_entity('SHULKER', 1, @loc, closure(@e){
+			set_entity_saves_on_unload(@e, false);
 			try(set_entity_spec(@e, array(color: @color)))
 			set_entity_ai(@e, false);
 		})[0];

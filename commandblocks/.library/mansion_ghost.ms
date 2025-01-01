@@ -10,25 +10,25 @@ if(!@p) {
 }
 @loc = location_shift(@loc, 'up', 3);
 @husk = spawn_entity('HUSK', 1, @loc, closure(@entity) {
+	set_entity_saves_on_unload(@entity, false);
+	set_entity_persistence(@entity, false);
 	set_entity_invulnerable(@entity, true);
 	set_mob_equipment(@entity, array(boots: null, leggings: null, chestplate: null, helmet: null));
 	set_entity_silent(@entity, true);
 	set_mob_effect(@entity, 'speed', 0, 9999, true, false);
 })[0];
 set_interval(1000, closure(){
-	if(!ponline(@p)) {
+	if(!entity_exists(@husk)) {
 		clear_task();
-		try(entity_remove(@husk))
 		die();
 	}
-	if(!entity_exists(@husk)) {
+	if(!ponline(@p)) {
 		clear_task();
 		die();
 	}
 	@loc = entity_loc(@husk);
 	if(distance(ploc(@p), @loc) > 32) {
 		clear_task();
-		try(entity_remove(@husk))
 		die();
 	}
 	set_mob_target(@husk, puuid(@p));

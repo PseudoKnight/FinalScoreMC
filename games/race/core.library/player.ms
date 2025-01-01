@@ -68,6 +68,7 @@ proc _race_place_player(@race, @player, @loc) {
 	}
 
 	@stand = spawn_entity('ARMOR_STAND', 1, @loc)[0];
+	set_entity_saves_on_unload(@stand, false);
 	add_scoreboard_tag(@stand, 'remove');
 	set_entity_spec(@stand, array(small: true, visible: false, gravity: false));
 

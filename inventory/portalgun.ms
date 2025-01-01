@@ -212,10 +212,12 @@ execute(iclosure(){
 		}
 
 		@itemFrame = spawn_entity('ITEM_FRAME', 1, location_shift(@block, @face), @modify)[0];
+		set_entity_saves_on_unload(@itemFrame, false);
 		set_entity_glowing(@itemFrame, true);
 		team_add_player(@color, @itemFrame);
 		if(@extension) {
 			@itemFrame = spawn_entity('ITEM_FRAME', 1, location_shift(@extension, @face), @modify)[0];
+			set_entity_saves_on_unload(@itemFrame, false);
 			set_entity_glowing(@itemFrame, true);
 			team_add_player(@color, @itemFrame);
 		}

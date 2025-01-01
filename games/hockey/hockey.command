@@ -323,7 +323,10 @@ register_command('hockey', array(
 			@loc = @hockey['loc'][];
 			@loc[@hockey['axis']] += rand(5) - 2;
 			if(!@hockey['puck']) {
-				@hockey['puck'] = spawn_entity('SLIME', 1, @loc, closure(@e, set_entity_spec(@e, array(size: 1))))[0];
+				@hockey['puck'] = spawn_entity('SLIME', 1, @loc, closure(@e) {
+					set_entity_saves_on_unload(@e, false);
+					set_entity_spec(@e, array(size: 1));
+				})[0];
 				set_timeout(1, closure(){
 					set_mob_effect(@hockey['puck'], 'resistance', 4, 99999, true, false);
 					set_mob_effect(@hockey['puck'], 'levitation', -1, 99999, true, false);

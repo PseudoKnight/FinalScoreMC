@@ -310,6 +310,7 @@ proc _waves_start(@waves) {
 							do {
 								@loc = @spawns[@spawnGroup][(@waves['duplicate'] * (@i + 1) * @count) % array_size(@spawns[@spawnGroup])];
 								_spawn_entity(@mob, @loc, null, closure(@e) {
+									set_entity_saves_on_unload(@e, false);
 									set_entity_ai(@e, false);
 									set_mob_effect(@e, 'glowing', 0, 999, true, false);
 									set_entity_invulnerable(@e, true);
@@ -318,6 +319,7 @@ proc _waves_start(@waves) {
 						} else {
 							@loc = @spawns['spawns'][(@waves['duplicate'] * (@i + 1)) % array_size(@spawns['spawns'])];
 							spawn_entity(@mob, 1, @loc, closure(@e) {
+								set_entity_saves_on_unload(@e, false);
 								set_entity_ai(@e, false);
 								set_mob_effect(@e, 'glowing', 0, 999, true, false);
 								set_entity_invulnerable(@e, true);

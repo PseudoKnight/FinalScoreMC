@@ -9,6 +9,7 @@ register_command('horse', array(
 			die(color('gold').'You are not in creative mode.');
 		}
 		@horse = spawn_entity('horse', 1, location_shift(ploc(), 'up'))[0];
+		set_entity_saves_on_unload(@horse, false);
 		set_mob_age(@horse, 0);
 		set_mob_owner(@horse, player());
 		set_entity_spec(@horse, array('jump': 0.8, 'saddle': array('name': 'SADDLE')));

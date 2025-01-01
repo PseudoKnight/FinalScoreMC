@@ -2,6 +2,7 @@ proc _hoops_ball_create(@loc) {
 	@game = import('hoops');
 
 	@bball = spawn_entity('SLIME', 1, @loc, closure(@entity) {
+		set_entity_saves_on_unload(@entity, false);
 		set_entity_spec(@entity, array('size': 1));
 		set_entity_silent(@entity, true);
 		set_entity_ai(@entity, false);
@@ -9,6 +10,7 @@ proc _hoops_ball_create(@loc) {
 	})[0];
 
 	@stand = spawn_entity('ARMOR_STAND', 1, @loc, closure(@entity) {
+		set_entity_saves_on_unload(@entity, false);
 		set_entity_spec(@entity, array('small': true, 'visible': false));
 		if(function_exists('set_entity_size')) {
 			set_entity_size(@entity, 0.44, 0.44);

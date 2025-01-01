@@ -24,6 +24,7 @@ register_command('tempboat', array(
 		}
 		@rider = puuid(@player);
 		@boat = spawn_entity('OAK_BOAT', 1, @loc)[0];
+		set_entity_saves_on_unload(@boat, false);
 		set_entity_silent(@boat, true);
 		set_entity_rider(@boat, @rider);
 		if(has_bind(@player.'vehicle_leave')) {

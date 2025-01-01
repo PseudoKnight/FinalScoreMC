@@ -111,6 +111,7 @@ proc _hoops_queue() {
 					@randomLoc = _center(@randomLoc, 0);
 					@randomLoc[4] = get_yaw(@randomLoc, @game['center']);
 					@villager = spawn_entity('VILLAGER', 1, @randomLoc)[0];
+					set_entity_saves_on_unload(@villager, false);
 					set_entity_ai(@villager, false);
 					set_entity_silent(@villager, true);
 					@game['villagers'][] = @villager;

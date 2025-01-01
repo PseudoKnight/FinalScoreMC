@@ -42,6 +42,7 @@
 		}
 		@uuid = puuid(@player);
 		@cart = spawn_entity('minecart', 1, @loc)[0];
+		set_entity_saves_on_unload(@cart, false);
 		set_entity_rider(@cart, @uuid)
 		if(has_bind(@player.'vehicle_leave')) {
 			die();
@@ -70,6 +71,7 @@
 		}
 	} else {
 		@cart = spawn_entity('minecart', 1, @loc)[0];
+		set_entity_saves_on_unload(@cart, false);
 		@stand = spawn_entity('armor_stand', 1, @loc)[0];
 		set_entity_rider(@cart, @stand);
 		set_entity_spec(@stand, associative_array('visible': false));

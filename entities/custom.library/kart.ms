@@ -35,6 +35,7 @@ array proc _kart_spawn(@loc, @player, @design, @camdist = 4.0) {
 	@teleportduration = 2;
 	@brightness = 15;
 	@vehicle = spawn_entity('BLOCK_DISPLAY', 1, @loc, closure(@engineDisplay) {
+		set_entity_saves_on_unload(@engineDisplay, false);
 		set_entity_spec(@engineDisplay, array(blockdata: @engine));
 		set_display_entity(@engineDisplay, array(
 			brightness: @brightness,
@@ -73,6 +74,7 @@ array proc _kart_spawn(@loc, @player, @design, @camdist = 4.0) {
 	set_entity_rider(@vehicle, @stand);
 	set_entity_invulnerable(@stand, true);
 	@head = spawn_entity('ITEM_DISPLAY', 1, @loc, closure(@head) {
+		set_entity_saves_on_unload(@head, false);
 		set_entity_spec(@head, array(item: array(name: 'PLAYER_HEAD', meta: array(owner: @player))));
 		set_display_entity(@head, array(
 			brightness: @brightness,
@@ -208,6 +210,7 @@ array proc _kart_spawn(@loc, @player, @design, @camdist = 4.0) {
 	@cameraLoc['world'] = @cameraLoc[3];
 	@cameraLoc['yaw'] = @cameraLoc[4];
 	@kart['camera'] = spawn_entity('BLOCK_DISPLAY', 1, @cameraLoc, closure(@camera){
+		set_entity_saves_on_unload(@camera, false);
 		set_display_entity(@camera, array(teleportduration: 2));
 	})[0];
 	@cameraLoc['pitch'] = get_pitch(@cameraLoc, @loc);

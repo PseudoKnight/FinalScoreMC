@@ -36,7 +36,9 @@ register_command('boats', array(
 			@i = array(0);
 			set_interval(50, closure(){
 				if(array_index_exists(@circle, @i[0])) {
-					spawn_entity('OAK_BOAT', 1, @circle[@i[0]]);
+					spawn_entity('OAK_BOAT', 1, @circle[@i[0]], closure(@e) {
+						set_entity_saves_on_unload(@e, false);
+					});
 					@i[0]++;
 				} else {
 					clear_task();
@@ -87,9 +89,15 @@ register_command('boats', array(
 			@i = array(0);
 			set_interval(100, closure(){
 				if(array_index_exists(@circle, @i[0])) {
-					spawn_entity('OAK_BOAT', 1, @circle[@i[0]]);
-					spawn_entity('OAK_BOAT', 1, @circle[@i[0] + 1]);
-					spawn_entity('OAK_BOAT', 1, @circle[@i[0] + 2]);
+					spawn_entity('OAK_BOAT', 1, @circle[@i[0]], closure(@e) {
+						set_entity_saves_on_unload(@e, false);
+					});
+					spawn_entity('OAK_BOAT', 1, @circle[@i[0] + 1], closure(@e) {
+						set_entity_saves_on_unload(@e, false);
+					});
+					spawn_entity('OAK_BOAT', 1, @circle[@i[0] + 2], closure(@e) {
+						set_entity_saves_on_unload(@e, false);
+					});
 					@i[0] += 3;
 				} else {
 					clear_task();
@@ -108,7 +116,9 @@ register_command('boats', array(
 			@previous = null;
 			@i = @size;
 			do {
-				@boat = spawn_entity('OAK_BOAT', 1, @target)[0];
+				@boat = spawn_entity('OAK_BOAT', 1, @target, closure(@e) {
+					set_entity_saves_on_unload(@e, false);
+				})[0];
 				if(@i > 1) {
 					@stand = spawn_entity('ARMOR_STAND', 1, @target)[0];
 					@stand2 = spawn_entity('ARMOR_STAND', 1, @target)[0];

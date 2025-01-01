@@ -1,11 +1,13 @@
 proc _place_ball(@loc, @ball) {
 	@ball['id'] = spawn_entity('ARMOR_STAND', 1, @loc, closure(@armorStand){
+		set_entity_saves_on_unload(@armorStand, false);
 		set_entity_velocity(@armorStand, array(0, 0, 0));
 		set_entity_spec(@armorStand, array(visible: false, small: @ball['size'] < 0.5));
 		add_scoreboard_tag(@armorStand, 'remove');
 	})[0];
 	@loc['y'] += 0.01;
 	@ball['slime'] = spawn_entity('ITEM_DISPLAY', 1, @loc, closure(@head) {
+		set_entity_saves_on_unload(@head, false);
 		set_display_entity(@head, array(
 			interpolationduration: 0,
 			teleportduration: 1,
@@ -35,6 +37,7 @@ proc _place_ball(@loc, @ball) {
 	}
 
 	@ball['color'] = spawn_entity('BLOCK_DISPLAY', 1, @loc, closure(@display) {
+		set_entity_saves_on_unload(@display, false);
 		set_entity_spec(@display, array(blockdata: @ball['dyecolor'].'_STAINED_GLASS'));
 		set_display_entity(@display, array(
 			teleportduration: 1,
