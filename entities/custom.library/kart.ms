@@ -393,9 +393,10 @@ proc _kart_tick(@player, @kart, @race) {
 			@trace = ray_trace(@player, @origin, 0.6 - @vertical, 0.225);
 			@hit = @trace['location'];
 			if(@trace['entities']) {
-				@hit = @trace['entities'][0]['location'];
-				@hit['y'] += 1;
-				set_entity_velocity(@trace['entities'][0]['uuid'], @velocity);
+				@entity = @trace['entities'][0]['uuid'];
+				@entityYaw = get_yaw(@loc, entity_loc(@entity));
+				set_entity_velocity(@trace['entities'][0]['uuid'], get_vector(array(yaw: @entityYaw, pitch: -10), @kart['velocity']));
+				@kart['velocity'] *= 0.9;
 			}
 			@isLeft = true;
 			if(@hit['y'] + 0.001 <= @loc['y']) {
@@ -405,9 +406,10 @@ proc _kart_tick(@player, @kart, @race) {
 				@trace = ray_trace(@player, @origin, 0.6 - @vertical, 0.225);
 				@hit = @trace['location'];
 				if(@trace['entities']) {
-					@hit = @trace['entities'][0]['location'];
-					@hit['y'] += 1;
-					set_entity_velocity(@trace['entities'][0]['uuid'], @velocity);
+					@entity = @trace['entities'][0]['uuid'];
+					@entityYaw = get_yaw(@loc, entity_loc(@entity));
+					set_entity_velocity(@trace['entities'][0]['uuid'], get_vector(array(yaw: @entityYaw, pitch: -10), @kart['velocity']));
+					@kart['velocity'] *= 0.9;
 				}
 			}
 			if(@hit['y'] > @loc['y']) {
