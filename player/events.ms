@@ -112,6 +112,20 @@ bind('player_death', null, null, @event) {
 	}
 }
 
+# advancement messages to discord
+if(function_exists('discord_broadcast')) {
+	bind('player_advancement_done', null, array(advancement: '/^minecraft:(?!recipes).+/'), @event) {
+		if(get_os() === 'WINDOWS') { // ignore test server
+			die();
+		}
+		discord_broadcast('minecraft_chat', array(
+			embed: array(
+				author: array(
+					name: player().' has made the advancement ['.@event['title'].']',
+					icon_url: 'https://minotar.net/helm/'.puuid(player(), true).'/32.png'))));
+	}
+}
+
 # spawner eggs
 bind('player_interact', null, array('button': 'right'), @event) {
 	@item = @event['item'];
