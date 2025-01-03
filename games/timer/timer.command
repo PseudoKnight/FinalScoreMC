@@ -395,7 +395,7 @@ register_command('timer', array(
 			x_new_thread('times'.@player, closure(){
 				@players = array();
 				foreach(@key: @time in @times) {
-					if(is_array(@time) && @key != 'times') {
+					if(is_array(@time)) {
 						@lastTime = 1.0;
 						@lastCount = 0;
 						foreach(@i: @t in @time) {
