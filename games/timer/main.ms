@@ -19,7 +19,7 @@ bind('player_join', null, null, @event) {
 			die();
 		}
 
-		@top = get_value('times');
+		@top = get_value('rank.times');
 		for(@i = 0, @i < 20, @i++) {
 			if(@top[@i][0] != @uuid) {
 				continue();

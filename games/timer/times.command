@@ -111,7 +111,7 @@ register_command('times', array(
 				}
 				@count = 0;
 				foreach(@key: @time in @courses) {
-					if(is_array(@time) && @key != 'times') {
+					if(is_array(@time)) {
 						foreach(@i: @t in @time) {
 							if(@t[0] != @puuid) {
 								continue();
@@ -234,7 +234,7 @@ register_command('times', array(
 				x_new_thread('times-ranks', closure(){
 					@courseMap = associative_array();
 					foreach(@key: @topTimes in @courses) {
-						if(!is_array(@topTimes) || @key == 'times') {
+						if(!is_array(@topTimes)) {
 							// Only looking for the top times for each course
 							continue();
 						}
@@ -375,7 +375,7 @@ register_command('times', array(
 				}
 
 			case 'recalculate':
-				if(!pisop()) {
+				if(player() !== '~console' && !pisop()) {
 					die('Only ops can recalculate times.');
 				}
 				@allcourses = get_values('times');
@@ -410,7 +410,7 @@ register_command('times', array(
 					// Recalculate totals based on the new lists
 					@players = array();
 					foreach(@key: @topTimes in @allcourses) {
-						if(is_array(@topTimes) && @key != 'times') {
+						if(is_array(@topTimes)) {
 							@lastTime = 1.0;
 							@lastCount = 0;
 							foreach(@i: @entry in @topTimes) {
@@ -446,7 +446,6 @@ register_command('times', array(
 
 					// Store the new lists on the main thread to avoid issues.
 					x_run_on_main_thread_later(closure(){
-						clear_value('times'); // legacy ranks
 						store_value('rank.times', @ranks);
 						foreach(@key: @value in @allcourses) {
 							if(is_array(@value)) {
