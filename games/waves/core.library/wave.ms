@@ -38,6 +38,7 @@ proc _get_random_wave(@random, @waveNum) {
 		array(type: 'WOLF', adjective: 'Howling', noun: 'Pack'),
 	),
 	3: array(
+		array(custom: 'worm', adjective: 'Wormy', noun: 'Worm'),
 		array(type: 'GUARDIAN', adjective: 'Spikey', noun: 'Lasers'),
 		array(type: 'MAGMA_CUBE', adjective: 'Giant', noun: 'Magma',
 			tags: array(size: 4)),

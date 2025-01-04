@@ -243,7 +243,7 @@ proc _waves_start(@waves) {
 						set_entity_ai(@e, true);
 						set_mob_effect(@e, 'glowing', 0, 0);
 						set_entity_invulnerable(@e, false);
-						set_mob_target(@e, puuid(array_get_rand(@waves['players'])));
+						try(set_mob_target(@e, puuid(array_get_rand(@waves['players']))));
 					} catch(BadEntityException @ex){
 						console('Mob dead on round start.');
 					}
@@ -309,12 +309,22 @@ proc _waves_start(@waves) {
 							}
 							do {
 								@loc = @spawns[@spawnGroup][(@waves['duplicate'] * (@i + 1) * @count) % array_size(@spawns[@spawnGroup])];
-								_spawn_entity(@mob, @loc, null, closure(@e) {
-									set_entity_saves_on_unload(@e, false);
-									set_entity_ai(@e, false);
-									set_mob_effect(@e, 'glowing', 0, 999, true, false);
-									set_entity_invulnerable(@e, true);
-								});
+								if(array_index_exists(@mob, 'custom')) {
+									include('../../../entities/custom.library/'.@mob['custom'].'.ms');
+									@temp = call_proc('_'.@mob['custom'].'_spawn', @loc);
+									if(entity_type(@temp) === 'ARMOR_STAND') {
+										set_entity_invulnerable(@temp, true);
+										@entities[] = @temp;
+										@waves['mobCount']++;
+									}
+								} else {
+									_spawn_entity(@mob, @loc, null, closure(@e) {
+										set_entity_saves_on_unload(@e, false);
+										set_entity_ai(@e, false);
+										set_mob_effect(@e, 'glowing', 0, 999, true, false);
+										set_entity_invulnerable(@e, true);
+									});
+								}
 							} while(--@count > 0)
 						} else {
 							@loc = @spawns['spawns'][(@waves['duplicate'] * (@i + 1)) % array_size(@spawns['spawns'])];
@@ -413,9 +423,11 @@ proc _waves_start(@waves) {
 				if(!entity_exists(@entities[@r]) || !sk_region_contains(@waves['region'], entity_loc(@entities[@r]))) {
 					array_remove(@entities, @r);
 				} else {
-					@target = get_mob_target(@entities[@r]);
-					if(!@target) {
-						set_mob_target(@entities[@r], puuid(array_get_rand(@waves['players'])));
+					if(entity_type(@entities[@r]) !== 'ARMOR_STAND') {
+						@target = get_mob_target(@entities[@r]);
+						if(!@target) {
+							set_mob_target(@entities[@r], puuid(array_get_rand(@waves['players'])));
+						}
 					}
 				}
 			}
