@@ -1,10 +1,5 @@
-proc _base_directory() {
-	//plugins/CommandHelper/LocalPackages/map/.library
-	return('../../../../..');
-}
-
 proc _map_exists(@id) {
-	@base = _base_directory();
+	@base = sys_properties('user.dir');
 	return(file_exists("@base/maps/@id.mca"));
 }
 
@@ -39,7 +34,7 @@ proc _map_load(@id) {
 
 	// copy map to scratch world directory
 	if(@exists) {
-		@base = _base_directory();
+		@base = sys_properties('user.dir');
 		copy_file("@base/maps/@id.mca", "@base/worlds/@world/region/r.0.0.mca");
 	}
 
@@ -75,11 +70,11 @@ proc _map_load(@id) {
 }
 
 proc _map_save(@id, @world) {
-	@base = _base_directory();
+	@base = sys_properties('user.dir');
 	copy_file("@base/worlds/@world/region/r.0.0.mca", "@base/maps/@id.mca");
 }
 
 proc _map_delete(@id) {
-	@base = _base_directory();
+	@base = sys_properties('user.dir');
 	delete_file("@base/maps/@id.mca");
 }
