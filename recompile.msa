@@ -38,9 +38,9 @@
 	# check if a game is running before recompiling
 	@activities = import('activities');
 	if(@activities) {
-		msg(color('gold').'Currently in progress: '.array_keys(@activities));
+		msg(color('gold').'Current activities: '.array_keys(@activities));
 		if(!@force) {
-			die(color('red').'Halted recompile due to games in progress.');
+			die(color('red').'Halted recompile due to activities in progress.');
 		} else {
 			foreach(@id: @activity in @activities) {
 				export(@id, null);
@@ -48,15 +48,27 @@
 		}
 	}
 
-	# if forcing a recompile, clear scoreboards and boss bars
-	if(@force) {
-		foreach(@scoreboard in get_scoreboards()) {
-			if(@scoreboard !== 'main') {
-				remove_scoreboard(@scoreboard);
+	if(array_size(get_scoreboards()) > 1) {
+		msg(color('gold').'Current scoreboards: '.get_scoreboards());
+		if(!@force) {
+			die(color('red').'Halted recompile due to scoreboards existing.');
+		} else {
+			foreach(@scoreboard in get_scoreboards()) {
+				if(@scoreboard !== 'main') {
+					remove_scoreboard(@scoreboard);
+				}
 			}
 		}
-		foreach(@bar in get_bars()) {
-			remove_bar(@bar);
+	}
+
+	if(get_bars()) {
+		msg(color('gold').'Current boss bars: '.get_bars());
+		if(!@force) {
+			die(color('red').'Halted recompile due to boss bars existing.');
+		} else {
+			foreach(@bar in get_bars()) {
+				remove_bar(@bar);
+			}
 		}
 	}
 
