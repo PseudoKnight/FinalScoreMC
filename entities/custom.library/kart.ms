@@ -5,17 +5,21 @@
 array proc _kart_spawn(@loc, @player, @design, @camdist = 4.0) {
 	string @engine;
 	string @color;
+	string @wheels;
 	if(@design) {
 		@engine = @design['engine'];
 		@color = @design['color'];
+		@wheels = @design['wheels'];
 	} else {
 		@color = to_lower(string(array_get_rand(reflect_pull('enum', 'DyeColor'))));
 		@engine = array_get_rand(array('furnace', 'blast_furnace', 'smoker'));
+		@wheels = array_get_rand(array('BLACK_CONCRETE', 'BLACK_CONCRETE_POWDER', 'SCULK'));
 	}
 	@kart = array(
 		// kart design
 		color: @color,
 		engine: @engine,
+		wheels: @wheels,
 		// entity UUIDs
 		base: null,
 		camera: null,
@@ -134,7 +138,7 @@ array proc _kart_spawn(@loc, @player, @design, @camdist = 4.0) {
 				scale: array(x: 1.74, y: 0.1, z: 0.1))));
 	})[0]);
 	@frontrighttire = spawn_entity('ITEM_DISPLAY', 1, @loc, closure(@frontrighttire) {
-		set_entity_spec(@frontrighttire, array(item: array(name: 'BLACK_CONCRETE_POWDER')));
+		set_entity_spec(@frontrighttire, array(item: array(name: @wheels)));
 		set_display_entity(@frontrighttire, array(
 			brightness: @brightness,
 			teleportduration: @teleportduration,
@@ -145,7 +149,7 @@ array proc _kart_spawn(@loc, @player, @design, @camdist = 4.0) {
 	@kart['rightTire'] = @frontrighttire;
 	set_entity_rider(@vehicle, @frontrighttire);
 	@frontlefttire = spawn_entity('ITEM_DISPLAY', 1, @loc, closure(@frontlefttire) {
-		set_entity_spec(@frontlefttire, array(item: array(name: 'BLACK_CONCRETE_POWDER')));
+		set_entity_spec(@frontlefttire, array(item: array(name: @wheels)));
 		set_display_entity(@frontlefttire, array(
 			brightness: @brightness,
 			teleportduration: @teleportduration,
@@ -165,7 +169,7 @@ array proc _kart_spawn(@loc, @player, @design, @camdist = 4.0) {
 				scale: array(x: 1.84, y: 0.1, z: 0.1))));
 	})[0]);
 	set_entity_rider(@vehicle, spawn_entity('BLOCK_DISPLAY', 1, @loc, closure(@backrighttire) {
-		set_entity_spec(@backrighttire, array(blockdata: 'black_concrete_powder'));
+		set_entity_spec(@backrighttire, array(blockdata: @wheels));
 		set_display_entity(@backrighttire, array(
 			brightness: @brightness,
 			teleportduration: @teleportduration,
@@ -174,7 +178,7 @@ array proc _kart_spawn(@loc, @player, @design, @camdist = 4.0) {
 				scale: array(x: 0.25, y: 0.5, z: 0.5))));
 	})[0]);
 	set_entity_rider(@vehicle, spawn_entity('BLOCK_DISPLAY', 1, @loc, closure(@backlefttire) {
-		set_entity_spec(@backlefttire, array(blockdata: 'black_concrete_powder'));
+		set_entity_spec(@backlefttire, array(blockdata: @wheels));
 		set_display_entity(@backlefttire, array(
 			brightness: @brightness,
 			teleportduration: @teleportduration,

@@ -10,6 +10,7 @@ proc _race_add_player(@id, @player) {
 		design: array(
  			color: to_lower(string(array_get_rand(reflect_pull('enum', 'DyeColor')))),
 		 	engine: array_get_rand(array('furnace', 'blast_furnace', 'smoker')),
+			wheels: array_get_rand(array('BLACK_CONCRETE', 'BLACK_CONCRETE_POWDER', 'SCULK')),
 		)
 	);
 	set_pmode(@player, 'ADVENTURE');
