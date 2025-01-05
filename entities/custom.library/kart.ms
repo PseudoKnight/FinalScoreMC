@@ -303,7 +303,7 @@ proc _kart_tick(@player, @kart, @race) {
 		@drift = @input['sneak'];
 
 		// Boost / reset yaw from drift turn
-		if(!@drift && pexp(@player) == 99 && @acceleration > 0) {
+		if(!@drift && pexp(@player) >= 99 && @acceleration > 0) {
 			play_sound(@vehicle, array(sound: 'BLOCK_RESPAWN_ANCHOR_DEPLETE', volume: @kart['camdist']));
 			play_sound(@vehicle, array(sound: 'ENTITY_GHAST_SHOOT', pitch: 0.5, volume: @kart['camdist']));
 			@kart['boost'] = true;
@@ -320,11 +320,11 @@ proc _kart_tick(@player, @kart, @race) {
 		@xp = pexp(@player);
 		if(@kart['boost']) {
 			set_pexp(@player, max(0, @xp - 4));
-			if(@xp == 0) {
+			if(@xp <= 0) {
 				@kart['boost'] = false;
 				set_entity_spec(@vehicle, array(blockdata: @kart['engine'].'[lit=false]'));
 			}
-		} else if(@drift && @acceleration == 1) {
+		} else if(@drift && @acceleration >= 1) {
 			set_pexp(@player, min(99, @xp + 3));
 		} else if(@xp > 3) {
 			set_pexp(@player, @xp - 4);
@@ -463,7 +463,7 @@ proc _kart_tick(@player, @kart, @race) {
 						|| !@isLeft && @face === 'SOUTH' && @loc['yaw'] < 125.0 && @loc['yaw'] > 90.0) {
 							@loc['yaw'] = 90.0;
 						}
-						if(@yaw == @loc['yaw']) {
+						if(equals_epsilon(@yaw, @loc['yaw'], 0.001)) {
 							if(@magnitude > 0.6) {
 								@kart['explode'] = true;
 							}
@@ -543,7 +543,7 @@ proc _kart_tick(@player, @kart, @race) {
 		// Spawn rubber particles
 		if(@drift) {
 			array @boostready = null;
-			if(pexp(@player) == 99) {
+			if(pexp(@player) >= 99) {
 				@boostready = array(
 					particle: 'LAVA',
 					count: 1,
@@ -583,7 +583,7 @@ proc _kart_tick(@player, @kart, @race) {
 			if(@boostready) {
 				spawn_particle(@particleLoc, @boostready);
 			}
-		} else if(@acceleration == 1 && @kart['velocity'] < 0.35) {
+		} else if(@acceleration >= 1 && @kart['velocity'] < 0.35) {
 			play_sound(@vehicle, array(
 				sound: 'BLOCK_COMPOSTER_READY',
 				volume: @kart['camdist'] / 6));
