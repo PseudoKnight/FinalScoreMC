@@ -47,6 +47,12 @@ proc _race_bind_events(@race) {
 			_race_check_players(@race);
 		}
 	}
+
+	@race['binds'][] = bind('entity_damage', null, array(type: 'PLAYER', cause: 'SUFFOCATION'), @event, @race) {
+		if(array_index_exists(@race['players'], player())) {
+			cancel();
+		}
+	}
 }
 
 proc _race_unbind_events(@race) {

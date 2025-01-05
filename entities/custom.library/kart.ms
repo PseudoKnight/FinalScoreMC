@@ -220,8 +220,7 @@ array proc _kart_spawn(@loc, @player, @design, @camdist = 4.0) {
 	@cameraLoc['pitch'] = get_pitch(@cameraLoc, @loc);
 	set_entity_loc(puuid(@player), @cameraLoc);
 	set_entity_rider(@kart['camera'], puuid(@player));
-	set_peffect(@player, 'invisibility', 1, -1, true, false, false);
-	set_entity_invulnerable(puuid(@player), true);
+	set_peffect(@player, 'invisibility', 0, 1, true, false, false);
 	set_pexp(@player, 0);
 	try(create_bar(@player.'kart', array(style: 'SEGMENTED_10', percent: 0.0)))
 	bar_add_player(@player.'kart', @player);
@@ -233,8 +232,6 @@ proc _kart_remove(@player, @kart) {
 		// double check if they have not switched to new kart
 		@vehicle = pvehicle(@player);
 		if(!@vehicle || @vehicle === @kart['camera'] || entity_type(@vehicle) !== 'BLOCK_DISPLAY') {
-			clear_peffects(@player);
-			set_entity_invulnerable(puuid(@player), false);
 			remove_bar(@player.'kart');
 		}
 	} else {
@@ -270,6 +267,8 @@ proc _kart_tick(@player, @kart, @race) {
 			clear_task();
 			die();
 		}
+
+		set_peffect(@player, 'invisibility', 0, 1, true, false, false);
 
 		// Get location
 		@loc = @kart['loc'];
