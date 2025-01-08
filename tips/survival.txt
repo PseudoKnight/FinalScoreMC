@@ -136,11 +136,7 @@ When teleporting you will bring all leashed mobs with you.
 
 You can adjust the volume of notification sounds (eg. direct messages) via the Voice/Speech slider in Sound Options.
 
-As a convenience, you can craft bones directly to bone blocks.
-
 Skulls can be crafted into player skulls using clay balls, the naming it in an anvil applies that player's skin to the skull.
-
-Furnaces can turn bones into bone meal, though it's less efficient.
 
 Red sand can be crafted by surrounding sand around red dye in the crafting table.
 
