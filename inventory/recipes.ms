@@ -104,6 +104,22 @@ if(!import('recompile')) {
 			return(string_ends_with(@value, '_STAINED_GLASS_PANE'));
 		})
 	));
+
+	// 1.21.5+ cheaper lodestone
+	add_recipe(array(
+		key: 'cheaper_lodestone',
+		type: 'SHAPED',
+		result: array(name: 'LODESTONE'),
+		ingredients: array(
+			I: 'IRON_INGOT',
+			C: 'CHISELED_STONE_BRICKS'
+		),
+		shape: array(
+			'CCC',
+			'CIC',
+			'CCC'
+		)
+	))
 }
 
 # Special recipe handling (eg. enchanted lore books, exp bottles, player heads)
