@@ -71,22 +71,6 @@ if(!import('recompile')) {
 		)
 	));
 
-	# Faster bone -> bone-block recipe
-	add_recipe(array(
-		'key': 'bone_to_bone_block',
-		'type': 'SHAPELESS',
-		'result': array('name': 'BONE_BLOCK', 'qty': 3),
-		'ingredients': array(array('name': 'BONE', 'qty': 9))
-	));
-
-	# bone -> bone_meal automation recipe
-	add_recipe(array(
-		'key': 'furnace_bone_to_bone_meal',
-		'type': 'FURNACE',
-		'result': array('name': 'BONE_MEAL'),
-		'input': 'BONE'
-	));
-
 	add_recipe(array(
 		'key': 'recycle_glass',
 		'type': 'FURNACE',
