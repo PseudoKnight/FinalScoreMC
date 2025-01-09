@@ -130,6 +130,7 @@ proc _hazard_end(@game) {
 	_hazard_remove_entities(@game);
 	export('hazard', null);
 	remove_scoreboard('hazard');
+	remove_bar('hazard');
 
 	// clean up noisy pistons
 	@noisyEvents = array();
