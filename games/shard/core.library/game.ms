@@ -376,6 +376,9 @@ proc _shard_create(@rules){
 						} else {
 							modify_event('death_message', null);
 							modify_event('keep_inventory', true);
+							modify_event('keep_level', true);
+							modify_event('drops', if(@event['killer'], array_get_rand(@event['drops']), null));
+							modify_event('xp', if(@event['killer'], @event['xp'], 0));
 						}
 						set_timeout(50, closure(){
 							pforce_respawn();
