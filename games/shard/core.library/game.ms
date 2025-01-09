@@ -30,11 +30,6 @@ proc _shard_create(@rules){
 	}
 	@worlds = sys_properties('user.dir').'/worlds';
 	try {
-		foreach(@file in list_files("@worlds/shard/region")) {
-			if(string_starts_with(@file, 'r.')) { // 
-				delete_file("@worlds/shard/region/@file");
-			}
-		}
 		foreach(@file in list_files("@worlds/shard/entities")) {
 			if(string_starts_with(@file, 'r.')) { // 
 				delete_file("@worlds/shard/entities/@file");
