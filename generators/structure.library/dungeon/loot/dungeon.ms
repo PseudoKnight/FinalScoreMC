@@ -266,35 +266,45 @@ proc _get_barrel_loot(@floor, @random, @bonus = 1.0, @loot = array(
 				@meta = associative_array();
 				if(srand(@random) > 0.5) {
 					@potionTypes = array(
-						'SPEED': 3,
-						'STRENGTH': 3,
-						'INSTANT_HEAL': 2,
-						'INSTANT_DAMAGE': 2,
-						'JUMP': 3,
-						'REGEN': 3,
-						'FIRE_RESISTANCE': 2,
-						'WATER_BREATHING': 2,
-						'INVISIBILITY': 2,
-						'NIGHT_VISION': 2,
-						'LUCK': 1
+						'SWIFTNESS',
+						'LONG_SWIFTNESS',
+						'STRONG_SWIFTNESS',
+						'STRENGTH',
+						'LONG_STRENGTH',
+						'STRONG_STRENGTH',
+						'HEALING',
+						'STRONG_HEALING',
+						'HARMING',
+						'STRONG_HARMING',
+						'LEAPING',
+						'STRONG_LEAPING',
+						'LONG_LEAPING',
+						'REGENERATION',
+						'STRONG_REGENERATION',
+						'LONG_REGENERATION',
+						'FIRE_RESISTANCE',
+						'LONG_FIRE_RESISTANCE',
+						'WATER_BREATHING',
+						'LONG_WATER_BREATHING',
+						'INVISIBILITY',
+						'LONG_INVISIBILITY',
+						'NIGHT_VISION',
+						'LONG_NIGHT_VISION',
+						'LUCK',
 					);
 					if(@item['name'] === 'SPLASH_POTION') {
 						@potionTypes = array_merge(@potionTypes, array(
-							'SLOWNESS': 3,
-							'WEAKNESS': 2,
-							'POISON': 3,
+							'SLOWNESS',
+							'LONG_SLOWNESS',
+							'STRONG_SLOWNESS',
+							'WEAKNESS',
+							'LONG_WEAKNESS',
+							'POISON',
+							'STRONG_POISON',
+							'LONG_POISON',
 						));
 					}
-					@id = _array_get_srand(@random, array_keys(@potionTypes));
-					@state = integer(srand(@random) * @potionTypes[@id]);
-					if(@state == 1 && string_starts_with(@id, 'INSTANT')) {
-						@state = 2;
-					}
-					@meta['base'] = array(
-						extended: (@state == 1), 
-						upgraded: (@state == 2), 
-						type: @id,
-					);
+					@meta['potiontype'] = _array_get_srand(@random, @potionTypes);
 				} else {
 					@meta['potions'] = associative_array();
 					@effects = reflect_pull('enum', 'PotionEffectType');

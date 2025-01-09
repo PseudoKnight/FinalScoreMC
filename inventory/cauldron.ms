@@ -1,44 +1,17 @@
 /*
 	Infinite Cauldrons
 	Refills buckets and water bottles without reducing water levels, unless sneaking.
-	Also lets players incrementally fill cauldrons with water bottles.
 
 	Undyeing More items
 	Stained Terracotta, Shulker Boxes
 */
-bind('player_interact', null, array('block': 'CAULDRON', 'button': 'right'), @event) {
+bind('player_interact', null, array(block: 'WATER_CAULDRON', button: 'right'), @event) {
 	@slot = null;
-	if(@event['hand'] == 'off_hand') {
+	if(@event['hand'] === 'off_hand') {
 		@slot = -106;
 	}
-	if(@event['item'] && @event['item']['name'] == 'POTION'){
-		@item = pinv(player(), @slot);
-		if(@item['meta'] && @item['meta']['base']['type'] == 'WATER') {
-			cancel();
-			set_blockdata_string(@event['location'], 'water_cauldron[level=1]');
-			set_pinv(player(), @slot, array('name': 'GLASS_BOTTLE'));
-		}
-	}
-}
-bind('player_interact', null, array('block': 'WATER_CAULDRON', 'button': 'right'), @event) {
-	@slot = null;
-	if(@event['hand'] == 'off_hand') {
-		@slot = -106;
-	}
-	@level = reg_match('level\\=(\\d)', get_blockdata_string(@event['location']))[1];
-	if(@level < 3 && @event['item'] && @event['item']['name'] == 'POTION'){
-		@item = pinv(player(), @slot);
-		if(@item['meta'] && @item['meta']['base']['type'] == 'WATER') {
-			cancel();
-
-			// Fill cauldron with some water
-			@level++;
-			set_blockdata_string(@event['location'], 'water_cauldron[level='.@level.']');
-
-			// Give empty bottle
-			set_pinv(player(), @slot, array('name': 'GLASS_BOTTLE'));
-		}
-	} else if(@level > 0) {
+	@level = get_blockdata(@event['location'])['level'];
+	if(@level > 0) {
 		// There is some water
 		@item = pinv(player(), @slot);
 		if(!@item) {
@@ -47,7 +20,7 @@ bind('player_interact', null, array('block': 'WATER_CAULDRON', 'button': 'right'
 
 		@loc = @event['location'][];
 		@pos = @event['position'];
-		if(@event['facing'] == 'up' && @pos['y'] < 1.0) {
+		if(@event['facing'] === 'up' && @pos['y'] < 1.0) {
 			@loc['x'] += @event['position']['x'];
 			@loc['y'] += 1;
 			@loc['z'] += @event['position']['z'];
@@ -62,15 +35,15 @@ bind('player_interact', null, array('block': 'WATER_CAULDRON', 'button': 'right'
 
 		@newItem = @item[];
 
-		if(@item['name'] == 'BUCKET') {
+		if(@item['name'] === 'BUCKET') {
 			if(@level < 3) {
 				die();
 			}
 			@newItem['name'] = 'WATER_BUCKET';
 			@newItem['qty'] = 1;
-		} else if(@item['name'] == 'GLASS_BOTTLE') {
+		} else if(@item['name'] === 'GLASS_BOTTLE') {
 			@newItem['name'] = 'POTION';
-			@newItem['meta'] = array('base': array('type': 'WATER'));
+			@newItem['meta'] = array(potiontype: 'WATER');
 			@newItem['qty'] = 1;
 		} else if(string_ends_with(@item['name'], '_TERRACOTTA')) {
 			@newItem['name'] = 'TERRACOTTA';
@@ -93,7 +66,7 @@ bind('player_interact', null, array('block': 'WATER_CAULDRON', 'button': 'right'
 
 		// Remove some water from the cauldron if sneaking
 		if(psneaking()) {
-			if(@newItem['name'] == 'POTION') {
+			if(@newItem['name'] === 'POTION') {
 				@level--;
 				if(@level) {
 					set_blockdata_string(@event['location'], 'water_cauldron[level='.@level.']');

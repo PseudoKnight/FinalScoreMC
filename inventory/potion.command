@@ -1,6 +1,6 @@
 register_command('potion', array(
 	description: 'Creates custom potions.',
-	usage: '/potion <potionType> <potionEffect> [#seconds|true|false] [#strength|true|false]',
+	usage: '/potion <potionType> <potionEffect> [seconds] [strength]',
 	permission: 'command.items',
 	tabcompleter: closure(@alias, @sender, @args, @info) {
 		if(array_size(@args) == 1) {
@@ -42,56 +42,13 @@ register_command('potion', array(
 			if(!array_index_exists(@item['meta'], 'potions')) {
 				@item['meta']['potions'] = associative_array();
 			}
-			@item['meta']['potions'][@id] = array('strength': min(99, @strength - 1), 'seconds': @seconds);
+			@item['meta']['potions'][@id] = array(strength: min(99, @strength - 1), seconds: @seconds);
 			set_pinv(player(), null, @item);
 
 		} else { # create new potion
-			@extended = @seconds;
-			@upgraded = @strength;
-			@item = associative_array('name': @type, 'meta': associative_array());
-			@potionTypes = array(
-				'',
-				'SPEED',
-				'SLOWNESS',
-				'',
-				'',
-				'STRENGTH',
-				'INSTANT_HEAL',
-				'INSTANT_DAMAGE',
-				'JUMP',
-				'',
-				'REGEN',
-				'',
-				'FIRE_RESISTANCE',
-				'WATER_BREATHING',
-				'INVISIBILITY',
-				'',
-				'NIGHT_VISION',
-				'',
-				'WEAKNESS',
-				'POISON',
-				'',
-				'',
-				'',
-				'',
-				'',
-				'',
-				'LUCK',
-				''
-			);
-			// verify valid regular potion
-			if(array_contains(@potionTypes, @id)
-			&& (@extended == 'true' || @extended == 'false')
-			&& (@upgraded == 'true' || @upgraded == 'false')) {
-				@item['meta']['base'] = associative_array(
-					'type': @potionTypes[@id],
-					'extended': (@extended == 'true'),
-					'upgraded': (@upgraded == 'true'),
-				);
-			} else {
-				@item['meta']['potions'] = associative_array();
-				@item['meta']['potions'][@id] = array('strength': @strength - 1, 'seconds': @seconds);
-			}
+			@item = associative_array(name: @type, meta: associative_array());
+			@item['meta']['potions'] = associative_array();
+			@item['meta']['potions'][@id] = array(strength: @strength - 1, seconds: @seconds);
 			set_pinv(player(), null, @item);
 		}
 	}
