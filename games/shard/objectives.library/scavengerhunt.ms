@@ -1086,7 +1086,9 @@ proc _objective_load(@binds, @rules) {
 		broadcast(color('green').@player.' wins!', all_players('shard'));
 		launch_firework(ploc(@player), array(strength: 3, type: 'BALL_LARGE', flicker: true));
 		set_timeout(20000, closure(){
-			_unload_shard();
+			if(array_contains(get_worlds(), 'shard') && time() - get_metadata('shard', 'created', 'CommandHelper') > 20000) {
+				_unload_shard();
+			}
 		});
 	}
 

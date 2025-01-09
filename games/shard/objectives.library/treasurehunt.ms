@@ -1,6 +1,9 @@
 proc _objective_load(@binds, @rules) {
 	proc _create_treasure(@delay, @score, @rules) {
 		set_timeout(@delay, closure(){
+			if(!array_contains(get_worlds(), 'shard')) {
+				die();
+			}
 			set_objective_display('Distance', array(slot: 'SIDEBAR'), 'shard');
 			@worldborder = get_world_border('shard');
 			@width = max(32, @worldborder['width'] - @rules['width'] / (4 - @score));
@@ -47,7 +50,9 @@ proc _objective_load(@binds, @rules) {
 		}
 
 		set_timeout(20000, closure(){
-			_unload_shard();
+			if(array_contains(get_worlds(), 'shard') && time() - get_metadata('shard', 'created', 'CommandHelper') > 20000) {
+				_unload_shard();
+			}
 		});
 	}
 

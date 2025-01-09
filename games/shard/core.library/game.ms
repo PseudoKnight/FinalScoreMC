@@ -106,6 +106,8 @@ proc _shard_create(@rules){
 			console('Created shard ('.(@stop - @start).'ms)', false);
 
 			set_timeout(150, closure(){
+				@created = time();
+				set_metadata('shard', 'created', @created);
 
 				// Calculate center
 				@centerX = 0;
@@ -173,7 +175,7 @@ proc _shard_create(@rules){
 				@respawnPlayers = (@rules['objective'] == 'treasurehunt' || @rules['objective'] == 'scavengerhunt' || @rules['objective'] == 'creative');
 				if(!@respawnPlayers && @rules['buffertime'] && @rules['timelimit'] && @rules['objective'] != 'scavengerhunt') {
 					set_timeout(@rules['buffertime'], closure(){
-						if(array_contains(get_worlds(), 'shard')) {
+						if(array_contains(get_worlds(), 'shard') && get_metadata('shard', 'created', 'CommandHelper') == @created) {
 							set_world_border('shard', array(width: 1, seconds: @rules['timelimit'] * 60));
 							broadcast(color('red').color('bold').'Shard has started to collapse! ('.@rules['timelimit'].' minutes)', all_players('shard'));
 						}
@@ -205,7 +207,9 @@ proc _shard_create(@rules){
 					slot: 'SIDEBAR'
 				), 'shard');
 				set_timeout(60 * 1000, closure() {
-					try(set_objective_display('rules', array(slot: null), 'shard'))
+					if(array_contains(get_worlds(), 'shard') && get_metadata('shard', 'created', 'CommandHelper') == @created) {
+						try(set_objective_display('rules', array(slot: null), 'shard'))
+					}
 				});
 				_add_activity('shard', @worldname.'//Shard');
 
@@ -327,7 +331,9 @@ proc _shard_create(@rules){
 							set_thunder(true, 'shard');
 							broadcast(color('green').@last.' wins!', all_players('shard'));
 							set_timeout(20000, closure(){
-								if(array_contains(get_worlds(), 'shard') && ponline(@last) && pworld(@last) == 'shard') {
+								if(array_contains(get_worlds(), 'shard')
+										&& time() - get_metadata('shard', 'created', 'CommandHelper') > 20000
+										&& ponline(@last) && pworld(@last) == 'shard') {
 									explosion(location_shift(ploc(@last), 'up', 2), 5);
 								}
 							});
