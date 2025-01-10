@@ -140,9 +140,21 @@ proc _class_load(@player, @pvp) {
 		}
 	}
 
-	set_entity_attribute_base(puuid(@player), 'GENERIC_KNOCKBACK_RESISTANCE', 1.0);
-	set_entity_attribute_base(puuid(@player), 'GENERIC_ATTACK_DAMAGE', 8.0);
-	set_entity_attribute_base(puuid(@player), 'GENERIC_MAX_HEALTH', 30.0);
+	add_entity_attribute_modifier(puuid(@player), array(
+		attribute: 'GENERIC_KNOCKBACK_RESISTANCE',
+		operation: 'ADD_NUMBER',
+		amount: 1.0,
+		id: 'commandhelper:troll_knockback'));
+	add_entity_attribute_modifier(puuid(@player), array(
+		attribute: 'GENERIC_ATTACK_DAMAGE',
+		operation: 'ADD_NUMBER',
+		amount: 7.0,
+		id: 'commandhelper:troll_damage'));
+	add_entity_attribute_modifier(puuid(@player), array(
+		attribute: 'GENERIC_MAX_HEALTH',
+		operation: 'ADD_NUMBER',
+		amount: 10.0,
+		id: 'commandhelper:troll_health'));
 	set_phealth(@player, 30);
 }
 
@@ -158,8 +170,8 @@ proc _class_unload(@player, @pvp) {
 	unbind(@player.'groundpound');
 	unbind(@player.'throw');
 	unbind(@player.'clubdamage');
-	set_entity_attribute_base(puuid(@player), 'GENERIC_KNOCKBACK_RESISTANCE', 0.0);
-	set_entity_attribute_base(puuid(@player), 'GENERIC_ATTACK_DAMAGE', 1.0);
-	set_entity_attribute_base(puuid(@player), 'GENERIC_MAX_HEALTH', 20.0);
+	remove_entity_attribute_modifier(puuid(@player), 'GENERIC_KNOCKBACK_RESISTANCE', 'commandhelper:troll_knockback');
+	remove_entity_attribute_modifier(puuid(@player), 'GENERIC_ATTACK_DAMAGE', 'commandhelper:troll_damage');
+	remove_entity_attribute_modifier(puuid(@player), 'GENERIC_MAX_HEALTH', 'commandhelper:troll_health');
 	set_phunger(@player, 20);
 }

@@ -103,13 +103,17 @@ proc _class_load(@player, @pvp) {
 		@loc = ploc();
 		play_sound(@loc, array(sound: 'ENTITY_ILLUSIONER_PREPARE_BLINDNESS', pitch: 0.7));
 		play_sound(@loc, array(sound: 'ENTITY_HUSK_AMBIENT', pitch: 0.8));
-		try(set_entity_attribute_base(puuid(), 'GENERIC_KNOCKBACK_RESISTANCE', 1))
+		add_entity_attribute_modifier(puuid(), array(
+			attribute: 'GENERIC_KNOCKBACK_RESISTANCE',
+			operation: 'ADD_NUMBER',
+			amount: 1,
+			id: 'commandhelper:ent'));
 		set_interval(100, closure(){
 			try {
 				if(!psneaking() || pheld_slot() != 0) {
 					clear_task();
 					set_pexp(0);
-					try(set_entity_attribute_base(puuid(), 'GENERIC_KNOCKBACK_RESISTANCE', 0))
+					remove_entity_attribute_modifier(puuid(), 'GENERIC_KNOCKBACK_RESISTANCE', 'commandhelper:ent');
 					die();
 				}
 				@xp = pexp();
@@ -118,7 +122,7 @@ proc _class_load(@player, @pvp) {
 				} else {
 					clear_task();
 					set_pexp(0);
-					try(set_entity_attribute_base(puuid(), 'GENERIC_KNOCKBACK_RESISTANCE', 0))
+					remove_entity_attribute_modifier(puuid(), 'GENERIC_KNOCKBACK_RESISTANCE', 'commandhelper:ent');
 					@players = _weapon_hit_scan(player(), array(range: 13, raySize: 0.2), 2, array(tracer: 'VILLAGER_HAPPY'), @pvp);
 					@loc = ploc();
 					if(@players) {
@@ -201,5 +205,5 @@ proc _class_unload(@player, @pvp) {
 	unbind(@player.'entdamage');
 	unbind(@player.'entdeath');
 	unbind(@player.'entattack');
-	try(set_entity_attribute_base(puuid(@player), 'GENERIC_KNOCKBACK_RESISTANCE', 0))
+	remove_entity_attribute_modifier(puuid(), 'GENERIC_KNOCKBACK_RESISTANCE', 'commandhelper:ent');
 }
