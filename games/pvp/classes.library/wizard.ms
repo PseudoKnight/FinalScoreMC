@@ -12,7 +12,7 @@ proc _class_load(@player, @pvp) {
 			}
 		}
 
-		@lightning = lightning(@loc, true);
+		lightning(location_shift(@loc, 'down', 0.1), true);
 		foreach(@p in array_keys(@pvp['players'])) {
 			@l = ploc(@p);
 			@y = @l['y'] + 1;
@@ -22,8 +22,9 @@ proc _class_load(@player, @pvp) {
 				if(@y >= @loc['y'] || distance(@l, @loc) <= 3) {
 					@l['y'] += 1;
 					damage_entity(puuid(@p), 7.4, puuid());
-					set_peffect(@p, 'SLOWNESS', 2, 2, true, false);
+					set_peffect(@p, 'SLOWNESS', 2, 1.5, true, false);
 					spawn_particle(@l, array(particle: 'ELECTRIC_SPARK', count: 30, xoffset: 2, yoffset: 3, zoffset: 2));
+					set_pvelocity(@p, array(0, 0, 0));
 				}
 			}
 		}
