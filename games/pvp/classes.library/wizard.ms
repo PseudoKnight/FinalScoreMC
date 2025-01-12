@@ -5,34 +5,35 @@ proc _class_load(@player, @pvp) {
 		}
 		@trace = ray_trace(player(), 96);
 		@loc = @trace['location'];
-		if(@trace['entities']) {
-			foreach(@entity in @trace['entities']) {
-				if(!ponline(@entity['uuid']) || pmode(@entity['uuid']) != 'SPECTATOR') {
-					@loc = @trace['entities'][0]['location'];
-					break();
+		foreach(@entity in @trace['entities']) {
+			if(!ponline(@entity['uuid']) || pmode(@entity['uuid']) != 'SPECTATOR') {
+				@loc = @trace['entities'][0]['location'];
+				break();
+			}
+		}
+
+		@lightning = lightning(@loc, true);
+		foreach(@p in array_keys(@pvp['players'])) {
+			@l = ploc(@p);
+			@y = @l['y'] + 1;
+			@l['y'] = @loc['y'];
+			if(distance(@loc, @l) <= 3) {
+				@l['y'] = @y;
+				if(@y >= @loc['y'] || distance(@l, @loc) <= 3) {
+					@l['y'] += 1;
+					damage_entity(puuid(@p), 7.4, puuid());
+					set_peffect(@p, 'SLOWNESS', 2, 2, true, false);
+					spawn_particle(@l, array(particle: 'ELECTRIC_SPARK', count: 30, xoffset: 2, yoffset: 3, zoffset: 2));
 				}
 			}
 		}
-		@lightning = lightning(@loc);
-		@bind = bind('entity_damage', null, array(type: 'PLAYER', cause: 'LIGHTNING'), @event,
-				@damager = player(), @thisLightning = @lightning, @pvp) {
-			if(array_index_exists(@pvp['players'], @event['player']) && @thisLightning == @event['damager']) {
-				modify_event('amount', 3.7);
-				set_mob_killer(@event['id'], @damager);
-				_stats_damage(@damager, @event['player'], 3.7, @pvp);
-			}
-		}
-		spawn_particle(@loc, array(particle: 'ELECTRIC_SPARK', count: 30, xoffset: 5, yoffset: 5, zoffset: 5));
+
 		@slot = pheld_slot();
 		@item = pinv(player(), null);
 		set_pinv(player(), null, array(name: 'LIGHTNING_ROD'));
 		set_pcooldown('LIGHTNING_ROD', 8000 / 50);
 		queue_clear(player().'lightning');
-		queue_delay(1000, player().'lightning');
-		queue_push(closure(){
-			unbind(@bind);
-		}, player().'lightning');
-		queue_delay(7000, player().'lightning');
+		queue_delay(8000, player().'lightning');
 		queue_push(closure(){
 			if(!ponline(@e['player'])) {
 				return();
@@ -117,7 +118,6 @@ proc _class_load(@player, @pvp) {
 			die();
 		}
 		set_pcooldown('SOUL_TORCH', 8000 / 50);
-		
 
 		@radius = 5;
 		@trace = ray_trace(player(), 96);
