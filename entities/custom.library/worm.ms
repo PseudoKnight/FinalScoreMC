@@ -27,20 +27,16 @@ proc _worm_spawn(@loc, @spec = associative_array()) {
 		heart: @heart,
 		target: '',
 		loc: @loc,
+		elevateTicks: 0,
+		pauseTicks: 0,
 	), @spec);
 
 	@worm['segments'] = spawn_entity('ARMOR_STAND', @worm['length'], @loc, closure(@id) {
 		set_entity_saves_on_unload(@id, false);
 		set_entity_spec(@id, array(
-			baseplate: false, 
-			gravity: false, 
-			arms: true, 
-			visible: false, 
-			poses: array(
-				poseArmLeft: array(-0.2, 0, -0.9),
-				poseArmRight: array(-0.3, 0, 1.0),
-				poseLegLeft: array(-3.2, 0, 0),
-				poseLegRight: array(-3.2, 0, 0))));
+			gravity: false,
+			visible: false,
+		));
 		add_scoreboard_tag(@id, 'remove');
 		add_scoreboard_tag(@id, 'worm');
 	});
@@ -60,6 +56,7 @@ proc _worm_spawn(@loc, @spec = associative_array()) {
 		foreach(@i: @w in @worms) {
 			try {
 				if(get_entity_invulnerable(@w['segments'][0])) {
+					// used to freeze worms
 					continue();
 				}
 				@loc = entity_loc(@w['segments'][0]);
@@ -80,85 +77,137 @@ proc _worm_spawn(@loc, @spec = associative_array()) {
 					}
 				}
 
+				// check if in range to attack target
+				@ploc = ploc(@target);
+				@newLoc = location_shift(@ploc, 'down', 0.45);
+				if(distance(@loc, @newLoc) < 1) {
+					damage_entity(puuid(@target), 2, @w['segments'][0]);
+					continue();
+				}
+
+				// check if pausing movement
+				if(@w['pauseTicks']) {
+					@w['pauseTicks']--;
+					continue();
+				}
+
 				// tick worm
 				@headLoc = location_shift(@loc, 'up', 2);
 				@headLoc['pitch'] = 90;
 				@gravity = false;
 				@iterationSpeed = @w['speed'];
-				@trace = ray_trace(@headLoc, 0.60);
 				if(get_block_info(@headLoc)['solid']) {
 					spawn_particle(@headLoc, array(particle: 'BLOCK_DUST', count: 15, block: get_block(@headLoc)));
 					@iterationSpeed = @w['digSpeed'];
-				} else if(!@trace['hitblock']) {
+				} else if(!ray_trace(@headLoc, 0.60)['hitblock']) {
 					@gravity = true;
+				} else {
+					foreach(@nearbyEntity in entities_in_radius(@loc, 1, 'ARMOR_STAND')) {
+						if(!array_contains(@w['segments'], @nearbyEntity)) {
+							@w['elevateTicks'] = rand(7, 14);
+							break();
+						}
+					}
 				}
 
-				@ploc = ploc(@target);
-				@newLoc = location_shift(@ploc, 'down', 0.45);
-				if(distance(@loc, @newLoc) < 1) {
-					damage_entity(puuid(@target), 2, @w['segments'][0]);
-				} else {
-					@yaw = get_yaw(@loc, @newLoc);
-					@pitch = get_pitch(@loc, @newLoc);
-
-					// clamp turning radius
-					@diffYaw = @w['loc']['yaw'] - @yaw;
-					if(abs(@diffYaw) > 180) {
-						if(@diffYaw < 0) {
-							@diffYaw += 360;
-						} else {
-							@diffYaw -= 360;
-						}
-					}
-					if(@diffYaw < -7) {
-						@yaw = @w['loc']['yaw'] + 7;
-					} else if(@diffYaw > 7) {
-						@yaw = @w['loc']['yaw'] - 7;
-					}
-
-					if(@gravity && (@pitch < 1 || @pitch > 4)) {
-						@pitch = min(90, @w['loc']['pitch'] + 4);
-					} else {
-						@diffPitch = @w['loc']['pitch'] - @pitch;
-						if(@diffPitch < -7) {
-							@pitch = min(90, @w['loc']['pitch'] + 7);
-						} else if(@diffPitch > 7) {
-							@pitch = max(-90, @w['loc']['pitch'] - 7);
-						}
-					}
-
-					@loc['yaw'] = @yaw;
-					@loc['pitch'] = @pitch;
-
-					play_sound(@loc, array(sound: 'ENTITY_SPIDER_STEP', pitch: 1.5 + (@iterationSpeed * 2), volume: 0.05));
-
-					@v = get_vector(@loc, @iterationSpeed);
-					@newLoc['x'] = @loc['x'] + @v['x'];
-					@newLoc['y'] = @loc['y'] + @v['y'];
-					@newLoc['z'] = @loc['z'] + @v['z'];
-					@newLoc['yaw'] = @yaw;
-					@newLoc['pitch'] = @pitch;
-					set_entity_loc(@w['segments'][0], @newLoc);
-					@poseHead = array(to_radians(@pitch), 0, 0);
+				// rear head up
+				if(@w['elevateTicks']) {
+					@w['elevateTicks']--;
+					@loc = location_shift(@loc, 'up', 0.13);
+					set_entity_loc(@w['segments'][0], @loc);
+					@w['loc'] = @loc;
+					@poseHead = array(0, 0, 0);
 					set_entity_spec(@w['segments'][0], array(poses: array(poseHead: @poseHead)));
-					@w['loc'] = @newLoc;
 
-					foreach(@i: @s in @w['segments']) {
-						if(@i > 0) {
+					foreach(@segmentIndex: @s in @w['segments']) {
+						if(@segmentIndex > 0) {
 							@segmentLoc = entity_loc(@s);
 							@d = distance(@segmentLoc, @loc);
-							if(@d > 0.3) {
-								@segmentLoc['yaw'] = get_yaw(@segmentLoc, @loc);
-								@poseHead[0] = to_radians(get_pitch(@segmentLoc, @loc));
-								@adjustedPos = location_shift(@segmentLoc, @loc, @d - 0.3);
-								if(@i % 4 == 1) {
-									@adjustedPos = location_shift(@adjustedPos, 'up', 0.01);
-								}
-								set_entity_loc(@s, @adjustedPos);
-								set_entity_spec(@s, array(poses: array(poseHead: @poseHead)));
+							if(@d <= 0.4 - ((4 - @segmentIndex) * 0.1)) {
+								break();
 							}
-							@loc = @segmentLoc;
+							@adjustedPos = location_shift(@segmentLoc, @loc, @d / @segmentIndex);
+							@adjustedPos['x'] = @segmentLoc['x'];
+							@adjustedPos['z'] = @segmentLoc['z'];
+							set_entity_loc(@s, @adjustedPos);
+							@poseHead[0] = to_radians(get_pitch(@adjustedPos, @loc));
+							set_entity_spec(@s, array(poses: array(poseHead: @poseHead)));
+							@loc = @adjustedPos;
 						}
+					}
+					if(!@w['elevateTicks']) {
+						@w['pauseTicks'] = rand(10, 30);
+					}
+					continue();
+				}
+
+				// regular movement
+				@yaw = get_yaw(@loc, @newLoc);
+				if(@yaw == NaN) {
+					@yaw = @loc['yaw'];
+				}
+				@pitch = get_pitch(@loc, @newLoc);
+
+				// clamp turning radius
+				@diffYaw = @w['loc']['yaw'] - @yaw;
+				if(abs(@diffYaw) > 180) {
+					if(@diffYaw < 0) {
+						@diffYaw += 360;
+					} else {
+						@diffYaw -= 360;
+					}
+				}
+				if(@diffYaw < -7) {
+					@yaw = @w['loc']['yaw'] + 7;
+				} else if(@diffYaw > 7) {
+					@yaw = @w['loc']['yaw'] - 7;
+				}
+
+				if(@gravity && (@pitch < 1 || @pitch > 4)) {
+					@pitch = min(90, @w['loc']['pitch'] + 4);
+				} else {
+					@diffPitch = @w['loc']['pitch'] - @pitch;
+					if(@diffPitch < -7) {
+						@pitch = min(90, @w['loc']['pitch'] + 7);
+					} else if(@diffPitch > 7) {
+						@pitch = max(-90, @w['loc']['pitch'] - 7);
+					}
+				}
+
+				@loc['yaw'] = @yaw;
+				@loc['pitch'] = @pitch;
+
+				play_sound(@loc, array(sound: 'ENTITY_SPIDER_STEP', pitch: 1.5 + (@iterationSpeed * 2), volume: 0.05));
+
+				@v = get_vector(@loc, @iterationSpeed);
+				@newLoc['x'] = @loc['x'] + @v['x'];
+				@newLoc['y'] = @loc['y'] + @v['y'];
+				@newLoc['z'] = @loc['z'] + @v['z'];
+				@newLoc['yaw'] = @yaw;
+				@newLoc['pitch'] = @pitch;
+				set_entity_loc(@w['segments'][0], @newLoc);
+				@poseHead = array(to_radians(@pitch), 0, 0);
+				set_entity_spec(@w['segments'][0], array(poses: array(poseHead: @poseHead)));
+				@w['loc'] = @newLoc;
+
+				foreach(@segmentIndex: @s in @w['segments']) {
+					if(@segmentIndex > 0) {
+						@segmentLoc = entity_loc(@s);
+						@d = distance(@segmentLoc, @loc);
+						if(@d > 0.3) {
+							@segmentLoc['yaw'] = get_yaw(@segmentLoc, @loc);
+							if(@segmentLoc['yaw'] == NaN) {
+								@segmentLoc['yaw'] = @loc['yaw'];
+							}
+							@poseHead[0] = to_radians(get_pitch(@segmentLoc, @loc));
+							@adjustedPos = location_shift(@segmentLoc, @loc, @d - 0.3);
+							if(@segmentIndex % 4 == 1) {
+								@adjustedPos = location_shift(@adjustedPos, 'up', 0.01);
+							}
+							set_entity_loc(@s, @adjustedPos);
+							set_entity_spec(@s, array(poses: array(poseHead: @poseHead)));
+						}
+						@loc = @segmentLoc;
 					}
 				}
 			} catch (Exception @ex) {
