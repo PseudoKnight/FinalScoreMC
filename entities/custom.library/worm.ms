@@ -29,6 +29,7 @@ proc _worm_spawn(@loc, @spec = associative_array()) {
 		loc: @loc,
 		elevateTicks: 0,
 		pauseTicks: 0,
+		groundedTicks: 0,
 	), @spec);
 
 	@worm['segments'] = spawn_entity('ARMOR_STAND', @worm['length'], @loc, closure(@id) {
@@ -96,12 +97,14 @@ proc _worm_spawn(@loc, @spec = associative_array()) {
 				@headLoc['pitch'] = 90;
 				@gravity = false;
 				@iterationSpeed = @w['speed'];
+				@w['groundedTicks']++;
 				if(get_block_info(@headLoc)['solid']) {
 					spawn_particle(@headLoc, array(particle: 'BLOCK_DUST', count: 15, block: get_block(@headLoc)));
 					@iterationSpeed = @w['digSpeed'];
 				} else if(!ray_trace(@headLoc, 0.60)['hitblock']) {
 					@gravity = true;
-				} else {
+					@w['groundedTicks'] = 0;
+				} else if(@w['groundedTicks'] > 40) {
 					foreach(@nearbyEntity in entities_in_radius(@loc, 1, 'ARMOR_STAND')) {
 						if(!array_contains(@w['segments'], @nearbyEntity)) {
 							@w['elevateTicks'] = rand(7, 14);
