@@ -317,6 +317,10 @@ proc _kart_tick(@player, @kart, @race) {
 		}
 		if(!@drift) {
 			@kart['driftTurn'] = 0;
+		} else {
+			if(!@kart['driftTurn']) {
+				@kart['driftTurn'] = @turn;
+			}
 		}
 
 		// Handle velocity and yaw
@@ -327,7 +331,7 @@ proc _kart_tick(@player, @kart, @race) {
 				@kart['boost'] = false;
 				set_entity_spec(@vehicle, array(blockdata: @kart['engine'].'[lit=false]'));
 			}
-		} else if(@drift && @acceleration >= 1) {
+		} else if(@kart['driftTurn'] && @acceleration >= 1) {
 			set_pexp(@player, min(99, @xp + 3));
 		} else if(@xp > 3) {
 			set_pexp(@player, @xp - 4);
@@ -520,9 +524,6 @@ proc _kart_tick(@player, @kart, @race) {
 		@loc['x'] += @velocity['x'];
 		@loc['z'] += @velocity['z'];
 		if(@drift) {
-			if(!@kart['driftTurn']) {
-				@kart['driftTurn'] = @turn;
-			}
 			@loc['yaw'] += @kart['driftTurn'] * @driftAngle;
 		}
 		set_display_entity(@kart['leftTire'], array(transformation: array(
