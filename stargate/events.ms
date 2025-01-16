@@ -21,7 +21,7 @@ if(extension_exists('CHStargate')) {
 		}
 	}
 
-	bind('stargate_destroy', null, array('deny': true), @event) {
+	bind('stargate_destroy', null, array(deny: true), @event) {
 		@ownerName = sg_get_owner_name(@event['portal'], @event['network']);
 		if(sg_get_owner_uuid(@event['portal'], @event['network']) != null && @event['player'] != @ownerName) {
 			@pdata = _pdata(@event['player']);
@@ -33,7 +33,22 @@ if(extension_exists('CHStargate')) {
 			}
 		}
 	}
-	
+
+	bind('stargate_destroy', null, array(deny: false), @event) {
+		@portal = sg_get_portal_info(@event['portal'], @event['network']);
+		foreach(@block in @portal['frame']) {
+			spawn_particle(_center(@block), array(
+				particle: 'BLOCK_CRACK',
+				block: get_block(@block),
+				count: 10,
+				xoffset: 0.5,
+				yoffset: 0.5,
+				zoffset: 0.5,
+			));
+		}
+		play_sound(@portal['sign'], array(sound: 'BLOCK_BEACON_DEACTIVATE', pitch: 0.8));
+	}
+
 	bind('stargate_open', null, null, @event) {
 		if(array_index_exists(@event, 'player')) {
 			@loc = ploc(@event['player']);
