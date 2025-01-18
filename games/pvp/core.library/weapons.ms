@@ -130,7 +130,7 @@ proc _weapon_hit_scan(@player, @ray, @damage, @effects, @pvp){
 		);
 
 		@line = spawn_entity('BLOCK_DISPLAY', 1, @origin, closure(@line) {
-			add_scoreboard_tag(@line, 'remove');
+			set_entity_saves_on_unload(@line, false);
 			set_entity_spec(@line, array(blockdata: @effects['display']));
 			set_display_entity(@line, array(
 				brightness: 15,

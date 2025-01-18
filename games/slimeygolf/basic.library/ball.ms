@@ -46,7 +46,6 @@ proc _place_ball(@loc, @ball) {
 			transformation: array(
 				translation: array(x: -@ball['size'] / 2, y: 0.0, z: -@ball['size'] / 2),
 				scale: array(x: @ball['size'], y: @ball['size'], z: @ball['size']))));
-		add_scoreboard_tag(@display, 'remove');
 	})[0];
 	set_entity_rider(@ball['slime'], @ball['color']);
 	
