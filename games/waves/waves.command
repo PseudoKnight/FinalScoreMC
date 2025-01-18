@@ -5,7 +5,7 @@ register_command('waves', array(
 		array('start', 'set', 'delete'),
 		null,
 		array(
-			'<<set', array('spawn', 'lobby', 'schematic', 'startblock'),
+			'<<set': array('spawn', 'lobby', 'schematic', 'startblock'),
 			'<<delete': array('spawns', 'schematic', 'startblock')),
 	),
 	executor: closure(@alias, @sender, @args, @info) {
