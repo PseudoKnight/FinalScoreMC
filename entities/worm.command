@@ -7,8 +7,13 @@ register_command('worm', array(
 		@loc = ptarget_space();
 		@loc['yaw'] = 0;
 		@loc['pitch'] = 0;
-		@length = array_get(@args, 0, 11);
 		include('custom.library/worm.ms');
-		_worm_spawn(@loc, array(length: @length));
+		if(array_size(@args) == 1) {
+			_worm_spawn(@loc, array(length: @args[0]));
+		} else if(array_size(@args) == 2) {
+			_worm_spawn(@loc, array(length: @args[0], width: @args[1]));
+		} else {
+			_worm_spawn(@loc);
+		}
 	}
 ));

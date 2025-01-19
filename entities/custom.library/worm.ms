@@ -8,19 +8,20 @@ proc _worm_spawn(@loc, @spec = associative_array()) {
 	if(@type == 'BAMBOO') {
 		if(rand(2)) {
 			@body = 'STRIPPED_CRIMSON_HYPHAE';
-			@heart = 'CRIMSON_HYPHAE';
+			@heart = 'CRIMSON_STEM';
 		} else {
 			@body = 'STRIPPED_WARPED_HYPHAE';
-			@heart = 'WARPED_HYPHAE';
+			@heart = 'WARPED_STEM';
 		}
 	} else {
 		@body = 'STRIPPED_'.@type.'_WOOD';
 		@heart = 'STRIPPED_'.@type.'_LOG';
 	}
-
-	@loc = location_shift(@loc, 'down', 1.5);
+	
+	@loc = location_shift(@loc, 'up', 0.0); // create new standard location array
 	@worm = array_merge(array(
-		length: 11,
+		length: 5 + 4 * rand(6) + 1,
+		width: 0.3 + rand() / 2,
 		speed: 0.25,
 		digSpeed: 0.10,
 		body: @body,
@@ -32,19 +33,57 @@ proc _worm_spawn(@loc, @spec = associative_array()) {
 		groundedTicks: 0,
 	), @spec);
 
-	@worm['segments'] = spawn_entity('ARMOR_STAND', @worm['length'], @loc, closure(@id) {
+	@worm['segments'] = spawn_entity('ITEM_DISPLAY', @worm['length'], @loc, closure(@id) {
 		set_entity_saves_on_unload(@id, false);
-		set_entity_spec(@id, array(
-			gravity: false,
-			visible: false,
-		));
-		add_scoreboard_tag(@id, 'remove');
-		add_scoreboard_tag(@id, 'worm');
+		set_display_entity(@id, array(
+			brightness: 15,
+			teleportduration: 2,
+			transformation: array(
+				scale: array(x: @worm['width'], y: @worm['width'], z: @worm['width']),
+				translation: array(x: 0.0, y: @worm['width'] / 2, z: 0.0))));
 	});
+	@teeth = spawn_entity('ITEM_DISPLAY', 1, @loc, closure(@id) {
+		set_entity_saves_on_unload(@id, false);
+		set_display_entity(@id, array(
+			brightness: 15,
+			teleportduration: 2,
+			transformation: array(
+				scale: array(x: @worm['width'] * 0.57, y: @worm['width'] * 0.57, z: @worm['width'] * 0.57),
+				translation: array(x: 0.0, y: @worm['width'] * 0.5, z: (@worm['width'] * 0.52)),
+				leftRotation: array(x: 0.71, y: 0.0, z: 0.0, w: 0.71))));
+		set_entity_spec(@id, array(item: array(name: 'SCULK_SHRIEKER')));
+	})[0];
+	set_entity_rider(@worm['segments'][0], @teeth);
 	foreach(@i: @segment in @worm['segments']) {
-		set_mob_equipment(@segment, array(
-			helmet: array(name: if(@i % 4 != 1, @worm['body'], @worm['heart'])),
-		));
+		set_entity_spec(@segment, array(item: array(name: if(@i && @i % 4 != 2, @worm['body'], @worm['heart']))));
+		if(@i >= length(@worm['segments']) - 2) {
+			if(@i >= length(@worm['segments']) - 1) {
+				set_display_entity(@segment, array(
+					transformation: array(
+						scale: array(x: @worm['width'] * 0.7, y: @worm['width'] * 0.7, z: @worm['width']))));
+			} else {
+				set_display_entity(@segment, array(
+					transformation: array(
+						scale: array(x: @worm['width'] * 0.85, y: @worm['width'] * 0.85, z: @worm['width']))));
+			}
+		} else if(!@i) {
+				set_display_entity(@segment, array(
+					transformation: array(
+						leftRotation: array(x: 0.71, y: 0.0, z: 0.0, w: 0.71),
+						scale: array(x: @worm['width'] * 0.85, y: @worm['width'], z: @worm['width'] * 0.85))));
+		} else if(@i % 4 == 2) {
+			set_display_entity(@segment, array(
+				transformation: array(
+					scale: array(x: @worm['width'] * 1.05, y: @worm['width'] * 1.05, z: @worm['width'] * 1.05))));
+			@shulker = spawn_entity('SHULKER', 1, @loc, closure(@id) {
+				set_entity_ai(@id, false);
+				set_entity_saves_on_unload(@id, false);
+				set_entity_attribute_base(@id, 'GENERIC_SCALE', @worm['width']);
+				set_mob_effect(@id, 'invisibility', 0, -1, true, false);
+				add_scoreboard_tag(@id, 'worm');
+			})[0];
+			set_entity_rider(@segment, @shulker);
+		}
 	}
 
 	@worms[] = @worm;
@@ -56,10 +95,6 @@ proc _worm_spawn(@loc, @spec = associative_array()) {
 	set_interval(50, closure(){
 		foreach(@i: @w in @worms) {
 			try {
-				if(get_entity_invulnerable(@w['segments'][0])) {
-					// used to freeze worms
-					continue();
-				}
 				@loc = entity_loc(@w['segments'][0]);
 				@target = @w['target'];
 				
@@ -80,7 +115,7 @@ proc _worm_spawn(@loc, @spec = associative_array()) {
 
 				// check if in range to attack target
 				@ploc = ploc(@target);
-				@newLoc = location_shift(@ploc, 'down', 0.45);
+				@newLoc = location_shift(@ploc, 'up', 1.02);
 				if(distance(@loc, @newLoc) < 1) {
 					damage_entity(puuid(@target), 2, @w['segments'][0]);
 					continue();
@@ -93,7 +128,7 @@ proc _worm_spawn(@loc, @spec = associative_array()) {
 				}
 
 				// tick worm
-				@headLoc = location_shift(@loc, 'up', 2);
+				@headLoc = @loc[];
 				@headLoc['pitch'] = 90;
 				@gravity = false;
 				@iterationSpeed = @w['speed'];
@@ -101,13 +136,13 @@ proc _worm_spawn(@loc, @spec = associative_array()) {
 				if(get_block_info(@headLoc)['solid']) {
 					spawn_particle(@headLoc, array(particle: 'BLOCK_DUST', count: 15, block: get_block(@headLoc)));
 					@iterationSpeed = @w['digSpeed'];
-				} else if(!ray_trace(@headLoc, 0.60)['hitblock']) {
+				} else if(!ray_trace(@headLoc, @w['width'])['hitblock']) {
 					@gravity = true;
 					@w['groundedTicks'] = 0;
 				} else if(@w['groundedTicks'] > 40) {
-					foreach(@nearbyEntity in entities_in_radius(@loc, 1, 'ARMOR_STAND')) {
-						if(!array_contains(@w['segments'], @nearbyEntity)) {
-							@w['elevateTicks'] = rand(7, 14);
+					foreach(@nearbyEntity in entities_in_radius(@loc, 1, 'ITEM_DISPLAY')) {
+						if(@nearbyEntity != get_entity_rider(@w['segments'][0]) && !array_contains(@w['segments'], @nearbyEntity)) {
+							@w['elevateTicks'] = min(ceil(length(@w['segments']) / 2), rand(4, 16));
 							break();
 						}
 					}
@@ -116,26 +151,16 @@ proc _worm_spawn(@loc, @spec = associative_array()) {
 				// rear head up
 				if(@w['elevateTicks']) {
 					@w['elevateTicks']--;
-					@loc = location_shift(@loc, 'up', 0.13);
-					set_entity_loc(@w['segments'][0], @loc);
-					@w['loc'] = @loc;
-					@poseHead = array(0, 0, 0);
-					set_entity_spec(@w['segments'][0], array(poses: array(poseHead: @poseHead)));
-
+					@halfLength = length(@w['segments']) / 2;
 					foreach(@segmentIndex: @s in @w['segments']) {
-						if(@segmentIndex > 0) {
-							@segmentLoc = entity_loc(@s);
-							@d = distance(@segmentLoc, @loc);
-							if(@d <= 0.4 - ((4 - @segmentIndex) * 0.1)) {
-								break();
-							}
-							@adjustedPos = location_shift(@segmentLoc, @loc, @d / @segmentIndex);
-							@adjustedPos['x'] = @segmentLoc['x'];
-							@adjustedPos['z'] = @segmentLoc['z'];
-							set_entity_loc(@s, @adjustedPos);
-							@poseHead[0] = to_radians(get_pitch(@adjustedPos, @loc));
-							set_entity_spec(@s, array(poses: array(poseHead: @poseHead)));
-							@loc = @adjustedPos;
+						if(@segmentIndex > @halfLength) {
+							continue();
+						}
+						@segmentLoc = entity_loc(@s);
+						@adjustedLoc = location_shift(@segmentLoc, 'up', @w['width'] / 8 * (sin(1.57 + @segmentIndex / @halfLength * 3.14) + 1));
+						set_entity_loc(@s, @adjustedLoc);
+						if(@segmentIndex == 0) {
+							@w['loc'] = @adjustedLoc;
 						}
 					}
 					if(!@w['elevateTicks']) {
@@ -167,13 +192,13 @@ proc _worm_spawn(@loc, @spec = associative_array()) {
 				}
 
 				if(@gravity && (@pitch < 1 || @pitch > 4)) {
-					@pitch = min(90, @w['loc']['pitch'] + 4);
+					@pitch = min(89, @w['loc']['pitch'] + 4);
 				} else {
 					@diffPitch = @w['loc']['pitch'] - @pitch;
 					if(@diffPitch < -7) {
-						@pitch = min(90, @w['loc']['pitch'] + 7);
+						@pitch = min(89, @w['loc']['pitch'] + 7);
 					} else if(@diffPitch > 7) {
-						@pitch = max(-90, @w['loc']['pitch'] - 7);
+						@pitch = max(-89, @w['loc']['pitch'] - 7);
 					}
 				}
 
@@ -182,41 +207,53 @@ proc _worm_spawn(@loc, @spec = associative_array()) {
 
 				play_sound(@loc, array(sound: 'ENTITY_SPIDER_STEP', pitch: 1.5 + (@iterationSpeed * 2), volume: 0.05));
 
-				@v = get_vector(@loc, @iterationSpeed);
+				@v = get_vector(@loc, @iterationSpeed + if(@gravity, @iterationSpeed / 2, 0));
 				@newLoc['x'] = @loc['x'] + @v['x'];
 				@newLoc['y'] = @loc['y'] + @v['y'];
 				@newLoc['z'] = @loc['z'] + @v['z'];
 				@newLoc['yaw'] = @yaw;
 				@newLoc['pitch'] = @pitch;
 				set_entity_loc(@w['segments'][0], @newLoc);
-				@poseHead = array(to_radians(@pitch), 0, 0);
-				set_entity_spec(@w['segments'][0], array(poses: array(poseHead: @poseHead)));
+				set_entity_rotation(get_entity_rider(@w['segments'][0]), @yaw, @pitch);
 				@w['loc'] = @newLoc;
+				@parentLoc = @newLoc[];
 
 				foreach(@segmentIndex: @s in @w['segments']) {
-					if(@segmentIndex > 0) {
-						@segmentLoc = entity_loc(@s);
-						@d = distance(@segmentLoc, @loc);
-						if(@d > 0.3) {
-							@segmentLoc['yaw'] = get_yaw(@segmentLoc, @loc);
-							if(@segmentLoc['yaw'] == NaN) {
-								@segmentLoc['yaw'] = @loc['yaw'];
-							}
-							@poseHead[0] = to_radians(get_pitch(@segmentLoc, @loc));
-							@adjustedPos = location_shift(@segmentLoc, @loc, @d - 0.3);
-							if(@segmentIndex % 4 == 1) {
-								@adjustedPos = location_shift(@adjustedPos, 'up', 0.01);
-							}
-							set_entity_loc(@s, @adjustedPos);
-							set_entity_spec(@s, array(poses: array(poseHead: @poseHead)));
+					if(@segmentIndex < 1) {
+						continue();
+					}
+					@v = get_vector(@parentLoc, @w['width'] / 2.2);
+					@parentLoc = array(
+						x: @parentLoc['x'] - @v['x'],
+						y: @parentLoc['y'] - @v['y'],
+						z: @parentLoc['z'] - @v['z'],
+						world: @parentLoc['world'],
+					);
+					@segmentLoc = entity_loc(@s);
+					@d = distance(@segmentLoc, @parentLoc);
+					if(@d > @w['width'] / 2.2) {
+						@adjustedLoc = location_shift(@segmentLoc, @parentLoc, @d - @w['width'] / 2.2);
+						if(@segmentLoc['x'] != @parentLoc['x'] || @segmentLoc['z'] != @parentLoc['z']) {
+							@adjustedLoc['yaw'] = get_yaw(@segmentLoc, @parentLoc);
+							@adjustedLoc['pitch'] = get_pitch(@segmentLoc, @parentLoc);
+						} else if(@segmentLoc['y'] != @parentLoc['y']) {
+							@adjustedLoc['pitch'] = get_pitch(@segmentLoc, @parentLoc);
 						}
-						@loc = @segmentLoc;
+						set_entity_loc(@s, @adjustedLoc);
+						@parentLoc = @adjustedLoc;
+					} else {
+						@parentLoc = @segmentLoc;
 					}
 				}
 			} catch (Exception @ex) {
 				array_remove(@worms, @i);
 				foreach(@s in @w['segments']) {
-					try(entity_remove(@s))
+					try {
+						foreach(@r in get_entity_riders(@s)) {
+							entity_remove(get_entity_rider(@r));
+						}
+						entity_remove(@s);
+					} catch(BadEntityException @ignore) {}
 				}
 			}
 		}
@@ -226,53 +263,65 @@ proc _worm_spawn(@loc, @spec = associative_array()) {
 		}
 	});
 
-	bind('entity_damage', array(id: 'wormdamage', priority: 'HIGH'), array(type: 'ARMOR_STAND'), @event, @worms) {
+	bind('entity_damage', array(id: 'wormdamage'), array(type: 'SHULKER'), @event, @worms) {
 		if(has_scoreboard_tag(@event['id'], 'worm')) {
 			cancel();
+			@damager = null;
+			if(array_index_exists(@event, 'damager') && length(@event['damager']) < 17) {
+				@damager = @event['damager'];
+			} else if(array_index_exists(@event, 'shooter') && length(@event['shooter'])) {
+				@damager = @event['shooter'];
+			}
+			if(!@damager) {
+				die();
+			}
 			@id = @event['id'];
 			foreach(@i: @w in @worms) {
 				foreach(@s in @w['segments']) {
-					if(@id !== @s) {
+					if(@id !== get_entity_rider(@s)) {
 						continue();
 					}
-					if(array_index_exists(@event, 'damager') && length(@event['damager']) < 17) {
-						@w['target'] = @event['damager'];
-					} else if(array_index_exists(@event, 'shooter') && length(@event['shooter'])) {
-						@w['target'] = @event['shooter'];
+					if(!@w['groundedTicks']) {
+						die();
 					}
-					@equipment = get_mob_equipment(@s);
-					if(@equipment['helmet'] && @equipment['helmet']['name'] === @w['heart']) {
-						@equipment['helmet'] = array(name: @w['body']);
-						set_mob_equipment(@s, @equipment);
-						@loc = location_shift(@event['location'], 'up', 2);
-						spawn_particle(@loc, array(particle: 'BLOCK_DUST', count: 15, block: @w['heart']));
-						play_sound(@loc, array(sound: 'BLOCK_SLIME_BLOCK_BREAK', pitch: 0.7));
-						spawn_entity('AREA_EFFECT_CLOUD', 1, location_shift(@loc, 'down', 0.55), closure(@cloud){
-							set_entity_spec(@cloud, array(
-								particle: array(particle: 'REDSTONE', color: array(r: 200, g: 90, b: 60)),
-								color: array(r: 160, g: 80, b: 60),
-								radius: 2,
-								duration: 200,
-								reapplicationdelay: 10,
-								source: @id,
-								potionmeta: array(potiontype: 'HARMING')));
-						});
-						foreach(@s in @w['segments']) {
-							@equipment = get_mob_equipment(@s);
-							if(@equipment['helmet']['name'] === @w['heart']) {
-								die();
+					@w['target'] = @damager;
+					set_entity_spec(@s, array(item: array(name: @w['body'])));
+					set_display_entity(@s, array(transformation: array(scale: array(x: @w['width'], y: @w['width'], z: @w['width']))));
+					spawn_entity('EXPERIENCE_ORB', 1, @event['location'], closure(@orb) {
+						set_entity_spec(@orb, array(amount: 5));
+					});
+					@loc = @event['location'];
+					spawn_particle(@loc, array(particle: 'BLOCK_DUST', count: 15, block: @w['heart']));
+					play_sound(@loc, array(sound: 'BLOCK_SLIME_BLOCK_BREAK', pitch: 0.7));
+					spawn_entity('AREA_EFFECT_CLOUD', 1, @loc, closure(@cloud){
+						set_entity_spec(@cloud, array(
+							particle: array(particle: 'REDSTONE', color: array(r: 200, g: 90, b: 60)),
+							color: array(r: 160, g: 80, b: 60),
+							radius: 2,
+							duration: 200,
+							reapplicationdelay: 10,
+							potionmeta: array(potiontype: 'HARMING')));
+					});
+					entity_remove(@id);
+					foreach(@s in @w['segments']) {
+						@rider = get_entity_rider(@s);
+						if(@rider && entity_type(@rider) === 'SHULKER') {
+							die();
+						}
+					}
+					array_remove(@worms, @i);
+					foreach(@s in @w['segments']) {
+						queue_push(closure() {
+							@loc = entity_loc(@s);
+							spawn_particle(@loc, array(particle: 'BLOCK_DUST', count: 15, block: @w['body']));
+							play_sound(@loc, array(sound: 'BLOCK_SLIME_BLOCK_BREAK', pitch: 1.4));
+							@rider = get_entity_rider(@s);
+							if(@rider) {
+								entity_remove(@rider);
 							}
-						}
-						array_remove(@worms, @i);
-						foreach(@s in @w['segments']) {
-							queue_push(closure() {
-								@loc = location_shift(entity_loc(@s), 'up', 2);
-								spawn_particle(@loc, array(particle: 'BLOCK_DUST', count: 15, block: @w['body']));
-								play_sound(@loc, array(sound: 'BLOCK_SLIME_BLOCK_BREAK', pitch: 1.4));
-								entity_remove(@s);
-							}, 'worm');
-							queue_delay(50, 'worm');
-						}
+							entity_remove(@s);
+						}, 'worm');
+						queue_delay(50, 'worm');
 					}
 					die();
 				}

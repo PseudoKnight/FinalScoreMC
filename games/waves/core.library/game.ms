@@ -240,7 +240,10 @@ proc _waves_start(@waves) {
 				@countdown--;
 				foreach(@e in @entities) {
 					try {
-						set_entity_ai(@e, true);
+						@vehicle = get_entity_vehicle(@e);
+						if(!@vehicle || is_entity_living(@vehicle)) {
+							set_entity_ai(@e, true);
+						}
 						set_mob_effect(@e, 'glowing', 0, 0);
 						set_entity_invulnerable(@e, false);
 						try(set_mob_target(@e, puuid(array_get_rand(@waves['players']))));
@@ -311,7 +314,7 @@ proc _waves_start(@waves) {
 								@loc = @spawns[@spawnGroup][(@waves['duplicate'] * (@i + 1) * @count) % array_size(@spawns[@spawnGroup])];
 								if(array_index_exists(@mob, 'custom')) {
 									include('../../../entities/custom.library/'.@mob['custom'].'.ms');
-									@temp = call_proc('_'.@mob['custom'].'_spawn', @loc);
+									@temp = call_proc('_'.@mob['custom'].'_spawn', @loc, array(pauseTicks: 60));
 									if(entity_type(@temp) === 'ARMOR_STAND') {
 										set_entity_invulnerable(@temp, true);
 										@entities[] = @temp;
@@ -423,7 +426,7 @@ proc _waves_start(@waves) {
 				if(!entity_exists(@entities[@r]) || !sk_region_contains(@waves['region'], entity_loc(@entities[@r]))) {
 					array_remove(@entities, @r);
 				} else {
-					if(entity_type(@entities[@r]) !== 'ARMOR_STAND') {
+					if(entity_type(@entities[@r]) !== 'ARMOR_STAND' && is_entity_living(@entities[@r])) {
 						@target = get_mob_target(@entities[@r]);
 						if(!@target) {
 							set_mob_target(@entities[@r], puuid(array_get_rand(@waves['players'])));
