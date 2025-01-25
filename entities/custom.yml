@@ -148,26 +148,16 @@ gianthead:
 giantman:
   gear:
     BOOTS:
-      meta: null
       name: NETHERITE_BOOTS
-      qty: 1
     CHESTPLATE:
-      meta: null
       name: NETHERITE_CHESTPLATE
-      qty: 1
     HELMET:
-      meta: null
       name: NETHERITE_HELMET
-      qty: 1
     LEGGINGS:
-      meta: null
       name: NETHERITE_LEGGINGS
-      qty: 1
     OFF_HAND: null
     WEAPON:
-      meta: null
       name: NETHERITE_HOE
-      qty: 1
   type: giant
 giantstatue:
   ai: false
@@ -227,14 +217,12 @@ gothemboss:
     OFF_HAND:
       meta:
         enchants:
-          sharpness:
-            elevel: 10
+          sharpness: 10
       name: DIAMOND_SWORD
     WEAPON:
       meta:
         enchants:
-          sharpness:
-            elevel: 10
+          sharpness: 10
       name: DIAMOND_SWORD
   type: vex
 invishulker:
@@ -266,7 +254,6 @@ leprechaun:
           g: 255
           r: 0
       name: LEATHER_BOOTS
-      qty: 1
     CHESTPLATE:
       meta:
         color:
@@ -274,7 +261,6 @@ leprechaun:
           g: 255
           r: 0
       name: LEATHER_CHESTPLATE
-      qty: 1
     HELMET:
       meta:
         color:
@@ -282,7 +268,6 @@ leprechaun:
           g: 255
           r: 0
       name: LEATHER_HELMET
-      qty: 1
     LEGGINGS:
       meta:
         color:
@@ -290,12 +275,10 @@ leprechaun:
           g: 255
           r: 0
       name: LEATHER_LEGGINGS
-      qty: 1
     OFF_HAND: null
     WEAPON:
       meta: null
       name: GOLD_INGOT
-      qty: 1
   tags:
     baby: true
   type: zombie
@@ -333,24 +316,24 @@ saddledpig:
     saddled: true
   type: pig
 shulkerelevator:
-  type: block_display
-  display: 
+  display:
     teleportduration: 2
     transformation:
-      translation:
-        x: -0.504
-        y: -0.004
-        z: -0.504
       scale:
         x: 1.008
         y: 1.008
         z: 1.008
-  tags:
-    blockdata: stone
-  rider: 
+      translation:
+        x: -0.504
+        y: -0.004
+        z: -0.504
+  rider:
     ai: false
     invulnerable: true
     type: shulker
+  tags:
+    blockdata: stone
+  type: block_display
 silentcart:
   silent: true
   type: minecart
