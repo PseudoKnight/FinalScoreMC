@@ -363,12 +363,12 @@ proc _kart_tick(@player, @kart, @race) {
 			}
 		}
 		if(@drift) {
-			@loc['yaw'] += @turn + @kart['driftTurn'] * 2;
+			@loc['yaw'] += @turn + @kart['driftTurn'] * 2.4;
 		} else if(@turn) {
 			if(@kart['velocity'] < 0) {
-				@loc['yaw'] -= @turn * 2;
+				@loc['yaw'] -= @turn * 2.4;
 			} else {
-				@loc['yaw'] += @turn * 2;
+				@loc['yaw'] += @turn * 2.4;
 			}
 		}
 		if(@loc['yaw'] > 360) {
