@@ -134,7 +134,12 @@ proc _worm_spawn(@loc, @spec = associative_array()) {
 				@iterationSpeed = @w['speed'];
 				@w['groundedTicks']++;
 				if(get_block_info(@headLoc)['solid']) {
-					spawn_particle(@headLoc, array(particle: 'BLOCK_DUST', count: 15, block: get_block(@headLoc)));
+					spawn_particle(@headLoc, array(
+						particle: 'BLOCK_DUST',
+						count: 15,
+						block: get_block(@headLoc),
+						xoffest: @w['width'],
+						zoffset: @w['width']));
 					@iterationSpeed = @w['digSpeed'];
 				} else if(!ray_trace(@headLoc, @w['width'])['hitblock']) {
 					@gravity = true;
@@ -291,7 +296,13 @@ proc _worm_spawn(@loc, @spec = associative_array()) {
 						set_entity_spec(@orb, array(amount: 5));
 					});
 					@loc = @event['location'];
-					spawn_particle(@loc, array(particle: 'BLOCK_DUST', count: 15, block: @w['heart']));
+					spawn_particle(location_shift(@loc, 'up', @w['width'] / 2), array(
+						particle: 'BLOCK_DUST',
+						count: 15,
+						block: @w['heart'],
+						xoffest: @w['width'],
+						yoffset: @w['width'],
+						zoffset: @w['width']));
 					play_sound(@loc, array(sound: 'BLOCK_SLIME_BLOCK_BREAK', pitch: 0.7));
 					spawn_entity('AREA_EFFECT_CLOUD', 1, @loc, closure(@cloud){
 						set_entity_spec(@cloud, array(
@@ -313,7 +324,13 @@ proc _worm_spawn(@loc, @spec = associative_array()) {
 					foreach(@s in @w['segments']) {
 						queue_push(closure() {
 							@loc = entity_loc(@s);
-							spawn_particle(@loc, array(particle: 'BLOCK_DUST', count: 15, block: @w['body']));
+							spawn_particle(location_shift(@loc, 'up', @w['width'] / 2), array(
+								particle: 'BLOCK_DUST', 
+								count: 15,
+								block: @w['body'],
+								xoffest: @w['width'],
+								yoffset: @w['width'],
+								zoffset: @w['width']));
 							play_sound(@loc, array(sound: 'BLOCK_SLIME_BLOCK_BREAK', pitch: 1.4));
 							@rider = get_entity_rider(@s);
 							if(@rider) {
