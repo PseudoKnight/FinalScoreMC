@@ -365,6 +365,10 @@ proc _waves_start(@waves) {
 				@waveNum = @waves['wave'];
 				@p = null;
 				foreach(@p in @waves['players']) {
+					if(array_index_exists(@waves['config'], 'shop')) {
+						set_plevel(@p, plevel(@p) + 1);
+						action_msg(@p, colorize('&e+1 level'));
+					}
 					play_sound(ploc(@p), array(sound: 'BLOCK_ENCHANTMENT_TABLE_USE', pitch: 0.5), @p);
 					@waves['allplayers'][@p]['wave'] = @waveNum;
 				}
