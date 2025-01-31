@@ -22,7 +22,6 @@ proc _get_random_wave(@random, @waveNum) {
 	),
 	2: array(
 		array(type: 'BEE', adjective: 'Buzzing', noun: 'Insects'),
-		array(type: 'BREEZE', adjective: 'Breezy', noun: 'Tornados'),
 		array(type: 'BOGGED', adjective: 'Boggy', noun: 'Mushheads',
 			gear: array(WEAPON: null, HELMET: null, CHESTPLATE: null, LEGGINGS: null, BOOTS: null)),
 		array(type: 'MAGMA_CUBE', adjective: 'Hot', noun: 'Magma',
@@ -39,6 +38,7 @@ proc _get_random_wave(@random, @waveNum) {
 	),
 	3: array(
 		array(custom: 'worm', adjective: 'Wormy', noun: 'Worm'),
+		array(type: 'BREEZE', adjective: 'Breezy', noun: 'Tornados'),
 		array(type: 'GUARDIAN', adjective: 'Spikey', noun: 'Lasers'),
 		array(type: 'MAGMA_CUBE', adjective: 'Giant', noun: 'Magma',
 			tags: array(size: 4)),
