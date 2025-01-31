@@ -36,7 +36,7 @@ bind('world_changed', null, null, @event) {
 
 bind('player_spawn', array('priority': 'LOW'), null, @event) {
 	@world = pworld(); // This gets the world the player died in, which is not always the same as the respawn world.
-	if(!@event['bed_spawn']) {
+	if(!@event['bed_spawn'] && _is_survival_world(@world)) {
 		@worlds = _worlds_config();
 		if(array_index_exists(@worlds[@world], 'respawn')) {
 			@world = @worlds[@world]['respawn'];
