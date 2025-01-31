@@ -1,7 +1,14 @@
-proc _prepare_shops(@waves) {
+proc _prepare_shops(@waves, @tier = 0) {
+	@tierName = null;
+	if(array_index_exists(@waves['config'], 'shoptiers')) {
+		@tierName = @waves['config']['shoptiers'][@tier]['name'];
+	}
 	@shop = associative_array();
 	@items = associative_array();
 	foreach(@index: @item in @waves['config']['shop']) {
+		if(@tierName && array_index_exists(@item, 'tier') && @item['tier'] !== @tierName) {
+			continue();
+		}
 		@name = @item['name'];
 		@meta = associative_array();
 		if(array_index_exists(@item, 'meta')) {
@@ -10,6 +17,12 @@ proc _prepare_shops(@waves) {
 		@meta['lore'] = array('Buy for '.@item['cost'].' level'.if(@item['cost'] > 1, 's'));
 		@shop[@index] = array(name: @name, qty: @item['cost'], meta: @meta);
 		@items[@name] = @item['cost'];
+	}
+	if(array_index_exists(@waves['config'], 'shoptiers') && array_index_exists(@waves['config']['shoptiers'], @tier + 1)) {
+		@shop[53] = array(
+			name: @waves['config']['shoptiers'][@tier + 1]['item'],
+			qty: @waves['config']['shoptiers'][@tier + 1]['cost'],
+			meta: array(display: 'Upgrade shop to '.@waves['config']['shoptiers'][@tier + 1]['name'].' tier'));
 	}
 	@waves['shop'] = @items;
 	create_virtual_inventory('waves'.@waves['region'], 54, 'BUY OR SELL', @shop);
@@ -45,6 +58,25 @@ proc _bind_shop_events(@waves) {
 	@waves['binds'][] = bind('inventory_click', null, array(action: 'PICKUP_ALL', virtual: true), @event, @waves) {
 		if(pinventory_holder() == 'waves'.@waves['region']) {
 			@item = @event['slotitem'];
+			if(@event['rawslot'] == 53 && array_index_exists(@waves['config'], 'shoptiers')) {
+				@newTier = 0;
+				foreach(@index: @tier in @waves['config']['shoptiers']) {
+					if(@index && @tier['item'] === @item['name']) {
+						@newTier = @index;
+						if(plevel() < @tier['cost']) {
+							die();
+						}
+						set_plevel(plevel() - @tier['cost']);
+						play_sound(ploc(), array(sound: 'BLOCK_ANVIL_USE', volume: 2));
+						break();
+					}
+				}
+				if(@newTier) {
+					delete_virtual_inventory('waves'.@waves['region']);
+					_prepare_shops(@waves, @newTier);
+				}
+				die();
+			}
 			if(@item['name'] === 'EMERALD') {
 				if(@item['meta'] && @item['meta']['display'] === 'Open Shop') {
 					cancel();
