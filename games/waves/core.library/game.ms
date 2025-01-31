@@ -179,6 +179,22 @@ proc _waves_start(@waves) {
 		}
 	}
 
+	@waves['binds'][] = bind('player_interact', null, array(button: 'right', itemname: 'NETHER_STAR'), @event, @waves) {
+		if(sk_region_contains(@waves['world'], @waves['region'], ploc())) {
+			foreach(@p in players_in_radius(ploc(), 16)) {
+				if(pmode(@p) == 'SPECTATOR') {
+					set_ploc(@p, ploc());
+					if(_waves_add_player(@p, @waves)) {
+						set_pmode(@p, 'ADVENTURE');
+						ptake_item(array(name: 'NETHER_STAR'));
+						die();
+					}
+				}
+			}
+			msg('Ghost player must be within 16 meters to resurrect!');
+		}
+	}
+
 	if(array_index_exists(@waves['config'], 'shop')) {
 		_bind_shop_events(@waves);
 	}

@@ -22,20 +22,6 @@ proc _bind_shop_events(@waves) {
 		}
 	}
 
-	@waves['binds'][] = bind('player_interact', null, array(button: 'right', itemname: 'NETHER_STAR'), @event, @waves) {
-		foreach(@p in players_in_radius(ploc(), 16)) {
-			if(pmode(@p) == 'SPECTATOR') {
-				set_ploc(@p, ploc());
-				if(_waves_add_player(@p, @waves)) {
-					set_pmode(@p, 'ADVENTURE');
-					ptake_item(array(name: 'NETHER_STAR'));
-					die();
-				}
-			}
-		}
-		msg('Ghost player must be within 16 meters to resurrect!')
-	}
-
 	@waves['binds'][] = bind('item_pickup', null, null, @event, @waves) {
 		if(array_contains(@waves['players'], player())) {
 			@item = @event['item'];
