@@ -2,11 +2,11 @@ register_command('waves', array(
 	description: 'Manages and starts custom waves against enemies.',
 	usage: '/waves <start|set|delete|info> [arena_id] [spawn|lobby|schematic|startblock] [blocktype|schematicname]',
 	tabcompleter: _create_tabcompleter(
-		array('start', 'set', 'delete'),
-		null,
+		array('start', 'set', 'delete', 'records', 'resetrecords'),
+		array('<arena_id>'),
 		array(
-			'<<set': array('spawn', 'lobby', 'schematic', 'startblock'),
-			'<<delete': array('spawns', 'schematic', 'startblock')),
+			'<<set': array('spawn', 'lobby', 'schematic', 'startblock', 'trigger'),
+			'<<delete': array('spawns', 'schematic', 'startblock', 'trigger')),
 	),
 	executor: closure(@alias, @sender, @args, @info) {
 		if(!@args) {
@@ -99,6 +99,43 @@ register_command('waves', array(
 				@arena = get_value('waves', @name);
 				msg(color('green').'Arena info for '.@name);
 				msg(map_implode(@arena, ': '.color('gray'), '\n'));
+
+			case 'records':
+				@name = array_get(@args, 1, null);
+				if(!@name) {
+					die(color('gold').'This requires an arena id.');
+				}
+				@script = array_get(@args, 2, 'random');
+				@records = array();
+				foreach(@key: @data in get_values('waves', @name, @script)) {
+					@uuid = split('.', @key)[-1];
+					@pdata = _pdata_by_uuid(@uuid);
+					@records[] = array(name: @pdata['name'], waves: @data);
+				}
+				array_sort(@records, closure(@left, @right){
+					return(@left['waves'] < @right['waves']);
+				});
+				msg(color('green').color('bold').'Player records:');
+				foreach(@entry in @records) {
+					msg(@entry['name'].': '.@entry['waves']);
+				}
+
+			case 'resetrecords':
+				if(!has_permission('group.engineer')) {
+					die(color('gold').'No permission.');
+				}
+				@name = array_get(@args, 1, null);
+				if(!@name) {
+					die(color('gold').'This requires an arena id.');
+				}
+				@script = array_get(@args, 2, null);
+				if(!@script) {
+					die(color('gold').'This requires a script name.');
+				}
+				foreach(@key: @data in get_values('waves', @name, @script)) {
+					clear_value(@key);
+				}
+				msg(color('gold').'Cleared records for '.@name.': '.@script);
 
 			case 'start':
 				@region = null;
