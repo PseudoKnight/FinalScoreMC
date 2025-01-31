@@ -153,7 +153,7 @@ register_command('text', array(
 				set_display_entity(@display, array(brightness: integer(@value)));
 			case 'seethrough':
 			case 'shadow':
-				if(!@value || (@value !== 'true' && @value !== 'false')) {
+				if(is_null(@value) || (@value !== 'true' && @value !== 'false')) {
 					die('Must be true or false.');
 				}
 				@spec = associative_array();
