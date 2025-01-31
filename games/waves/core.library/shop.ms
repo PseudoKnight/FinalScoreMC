@@ -45,6 +45,18 @@ proc _bind_shop_events(@waves) {
 	@waves['binds'][] = bind('inventory_click', null, array(action: 'PICKUP_ALL', virtual: true), @event, @waves) {
 		if(pinventory_holder() == 'waves'.@waves['region']) {
 			@item = @event['slotitem'];
+			if(@item['name'] === 'EMERALD') {
+				if(@item['meta'] && @item['meta']['display'] === 'Open Shop') {
+					cancel();
+				} else {
+					@amount = @item['qty'];
+					set_plevel(plevel() + @amount);
+					action_msg(colorize("&e+@amount level"));
+					set_pinv(player(), @event['slot'], null);
+					play_sound(ploc(), array(sound: 'ENTITY_PLAYER_LEVELUP', pitch: 2, volume: 0.5), player());
+				}
+				die();
+			}
 			if(@item && @item['meta'] && @item['meta']['lore']) {
 				@parts = parse_args(@item['meta']['lore'][0]);
 				if(array_size(@parts) > 2 && @parts[0] == 'Buy' && is_integral(@parts[2])) {
