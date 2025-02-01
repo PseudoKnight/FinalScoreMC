@@ -9,16 +9,16 @@ shoptiers:
       cost: 5
     - name: STONE
       item: FURNACE
-      cost: 6
+      cost: 5
     - name: IRON
       item: IRON_INGOT
-      cost: 7
+      cost: 5
     - name: DIAMOND
       item: DIAMOND
-      cost: 8
+      cost: 5
     - name: NETHERITE
       item: NETHERITE_UPGRADE_SMITHING_TEMPLATE
-      cost: 9
+      cost: 5
 shop:
     0:
         name: GOLDEN_SWORD
@@ -110,13 +110,13 @@ shop:
         name: APPLE
         cost: 1
     19:
-        name: COOKED_CHICKEN
-        cost: 2
-        tier: STONE
-    20:
         name: GOLDEN_APPLE
         cost: 3
         tier: GOLD
+    20:
+        name: COOKED_CHICKEN
+        cost: 2
+        tier: STONE
     21:
         name: ARROW
         cost: 1
