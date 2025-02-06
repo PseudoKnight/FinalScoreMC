@@ -29,6 +29,7 @@ array proc _kart_spawn(@loc, @player, @design, @camdist = 4.0) {
 		// status
 		loc: null,
 		velocity: 0.0,
+		speed: 0.0,
 		vertical: -0.1,
 		explode: false,
 		camdist: @camdist,
@@ -645,14 +646,18 @@ proc _kart_tick(@player, @kart, @race) {
 		@cameraLoc['z'] -= @cameraOffset['z'];
 		set_entity_loc(@camera, @cameraLoc);
 
-		try {
-			update_bar(@player.'kart', array(
-				percent: abs(@kart['velocity']),
-				color: if(@kart['velocity'] < 0.0, 'RED', if(@kart['velocity'] > 0.7975, 'YELLOW', 'WHITE')),
-				title: 'Speed: '.round(@kart['velocity'] * 20, 1).' m/s'));
-		} catch(NotFoundException @ex) {
-			create_bar(@player.'kart', array(style: 'SEGMENTED_10', percent: 0.0));
-			bar_add_player(@player.'kart', @player);
+		@speed = round(@kart['velocity'] * 20, 1);
+		if(@kart['speed'] > @speed || @kart['speed'] < @speed) {
+			try {
+				update_bar(@player.'kart', array(
+					percent: abs(@kart['velocity']),
+					color: if(@kart['velocity'] < 0.0, 'RED', if(@kart['velocity'] > 0.7975, 'YELLOW', 'WHITE')),
+					title: 'Speed: '.@speed.' m/s'));
+			} catch(NotFoundException @ex) {
+				create_bar(@player.'kart', array(style: 'SEGMENTED_10', percent: 0.0));
+				bar_add_player(@player.'kart', @player);
+			}
+			@kart['speed'] = @speed;
 		}
 
 		if(@kart['explode']) {
