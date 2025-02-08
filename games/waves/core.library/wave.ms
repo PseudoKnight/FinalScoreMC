@@ -19,6 +19,8 @@ proc _get_random_wave(@random, @waveNum) {
 			gear: array(WEAPON: null, HELMET: null, CHESTPLATE: null, LEGGINGS: null, BOOTS: null)),
 		array(type: 'ZOMBIE_VILLAGER', adjective: 'Unemployed', noun: 'Mumblers',
 			gear: array(WEAPON: null, HELMET: null, CHESTPLATE: null, LEGGINGS: null, BOOTS: null)),
+		array(type: 'CREAKING', adjective: 'Creaking', noun: 'Tangle',
+			health: 6.0), // crit with wood sword
 	),
 	2: array(
 		array(type: 'BEE', adjective: 'Buzzing', noun: 'Insects'),
