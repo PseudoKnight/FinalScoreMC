@@ -522,7 +522,9 @@ proc _waves_end(@waves, @win) {
 		@waveNum = @data['wave'];
 		if(@waveNum > @record) {
 			store_value('waves', @waves['region'], @waves['name'], puuid(@p, true), @waveNum);
-			tmsg(@p, colorize("Made it to &aWave @waveNum&f to beat your previous best of &eWave @record&f."));
+			if(@record) {
+				tmsg(@p, colorize("Made it to &aWave @waveNum&f to beat your previous best of &eWave @record&f."));
+			}
 			@reward = @waveNum - @record;
 			tmsg(@p, color('gold').'+ '.@reward.' Coins'.color('white').' for new personal best');
 			_acc_add(@p, @reward);
