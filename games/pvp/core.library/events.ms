@@ -206,7 +206,17 @@ proc _bind_events(@pvp) {
 						._to_upper_camel_case(@arena['team'][@team]['name']).color('r').' - Captain has died and dropped his hat!');
 					foreach(@p: @player in @pvp['players']) {
 						if(@player['team'] == @team) {
-							set_compass_target(@p, ploc());
+							foreach(@slot: @item in pinv(@p)) {
+								if(@item && @item['name'] === 'COMPASS') {
+									@item['meta'] = array(
+										display: color('white').'Captain Hat Location',
+										lodestone: false,
+										target: ploc(),
+									)
+									set_pinv(@p, @slot, @item);
+									break();
+								}
+							}
 						}
 					}
 

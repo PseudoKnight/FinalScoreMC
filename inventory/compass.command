@@ -1,5 +1,5 @@
 register_command('compass', array(
-	description: 'Sets the compass target.',
+	description: 'Sets a compass target.',
 	usage: '/compass <spawn|player|x,z>',
 	tabcompleter: closure(@alias, @sender, @args, @info) {
 		if(array_size(@args) == 1) {
@@ -12,18 +12,30 @@ register_command('compass', array(
 		if(!@args) {
 			return(false);
 		}
+		@compass = pinv(player(), null);
+		if(!@compass || @compass['name'] !== 'COMPASS') {
+			die('Not holding a compass.');
+		}
+		if(!@compass['meta']) {
+			@compass['meta'] = associative_array();
+		}
+		@compass['meta']['lodestone'] = false;
 		@target = @args[0];
 		if(@target == 'spawn') {
-			set_compass_target(get_spawn());
-			msg(color('green').'Compass is now pointing to spawn again.');
+			@compass['meta']['target'] = get_spawn();
+			@compass['meta']['display'] = color('white')._world_name(pworld()).' Spawn';
+			set_pinv(player(), null, @compass);
+			msg(color('green').'Compass is now pointing to '._world_name(pworld()).' spawn.');
 		} else {
 			try {
 				@player = player(@target);
 				if(pworld(@player) != pworld()) {
  					die('Player is not in this world.');
 				}
-				set_compass_target(ploc(@player));
-				msg(color('green').'Compass is now pointing to last location of '.@player.'.');
+				@compass['meta']['target'] = ploc(@player);
+				@compass['meta']['display'] = color('white').@player.'\'s previous location in '._world_name(pworld(@player));
+				set_pinv(player(), null, @compass);
+				msg(color('green').'Compass is now pointing to the current location of '.@player.'.');
 			} catch(PlayerOfflineException @ex) {
 				if(array_size(@args) == 1) {
 					@args = split(',', @target);
@@ -37,8 +49,10 @@ register_command('compass', array(
 					@z = @args[2];
 				}
 				if(is_numeric(@x) && is_numeric(@z)) {
-					set_compass_target(array(double(@x), 0, double(@z), pworld()));
-					msg(color('green').'Compass is now pointing to x:'.@x.' z:'.@z);
+					@compass['meta']['target'] = array(double(@x), 0, double(@z), pworld());
+					@compass['meta']['display'] = color('white').'X: '.@x.', Z: '.@z.' '._world_name(pworld());
+					set_pinv(player(), null, @compass);
+					msg(color('green').'Compass is now pointing to X: '.@x.', Z: '.@z.' in '._world_name(pworld()));
 				} else {
 					return(false);
 				}

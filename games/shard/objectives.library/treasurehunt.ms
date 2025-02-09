@@ -15,10 +15,20 @@ proc _objective_load(@binds, @rules) {
 			set_metadata(@loc, 'treasure', 1);
 			set_world_border('shard', array(width: @width, seconds: 300));
 			foreach(@p in all_players()) {
-				if(pworld(@p) == 'shard') {
-					set_compass_target(@p, @loc);
-					play_sound(ploc(@p), array(sound: 'ENTITY_ARROW_HIT_PLAYER'), @p);
+				if(pworld(@p) === 'shard') {
+					foreach(@slot: @item in pinv(@p)) {
+						if(@item && @item['name'] === 'COMPASS') {
+							@item['meta'] = array(
+								display: color('white').'Treasure Location',
+								lodestone: false,
+								target: @loc,
+							)
+							set_pinv(@p, @slot, @item);
+							break();
+						}
+					}
 				}
+				play_sound(ploc(@p), array(sound: 'ENTITY_ARROW_HIT_PLAYER'), @p);
 			}
 			set_interval(1000, closure(){
 				if(!array_contains(get_worlds(), 'shard') || get_block(@loc) != 'ENDER_CHEST') {

@@ -5,14 +5,19 @@ proc _weapon_bind_events(@pvp) {
 		}
 
 		@item = pinv(player(), @event['to']);
-		if(@item && @item['name'] == 'COMPASS') {
+		if(@item && @item['name'] === 'COMPASS') {
 			set_interval(1000, 50, closure(){
 				if(pinfo(player(), 6) === 'COMPASS') {
 					foreach(@p: @player in @pvp['players']) {
 						if(@player['team'] != @pvp['players'][player()]['team']) {
 							@loc1 = ploc();
 							@loc2 = ploc(@p);
-							set_compass_target(@loc2);
+							@item['meta'] = array(
+								display: color('white').'Tracking',
+								lodestone: false,
+								target: @loc2,
+							);
+							set_pinv(player(), null, @item);
 							@dist = distance(@loc1, @loc2);
 							if(@dist < 50) {
 								@pitch = 0.5 + (0.5 * ((50 - @dist) / 50));
