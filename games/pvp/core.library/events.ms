@@ -494,7 +494,7 @@ proc _bind_events(@pvp) {
 		if(entity_type(@thrower) == 'PLAYER' && array_index_exists(@pvp['players'], player(@thrower))) {
 			@potionMeta = entity_spec(@event['id'])['item']['meta'];
 			@seconds = 0;
-			if(string_ends_with(@potionMeta['potiontype'], 'POISON')) {
+			if(@potionMeta['potiontype'] && string_ends_with(@potionMeta['potiontype'], 'POISON')) {
 				@seconds = 45;
 				if(string_starts_with(@potionMeta['potiontype'], 'LONG')) {
 					@seconds = 90;
