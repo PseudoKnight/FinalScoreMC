@@ -254,6 +254,10 @@ proc _start_game(@course, @world, @test) {
 				if(@golf['test'] && (pmode(@player) === 'CREATIVE' || pmode(@player) === 'SPECTATOR')) {
 					_remove_player(@player, @golf);
 				} else {
+					if(@ball['id']) {
+						_remove_ball(@ball['id'], @ball['slime']);
+						@ball['id'] = 0;
+					}
 					@playerCount++;
 				}
 				continue();
