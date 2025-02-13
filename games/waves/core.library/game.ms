@@ -358,9 +358,11 @@ proc _waves_start(@waves) {
 				} while(--@waves['duplicate'])
 				@waves['mobs'] = array();
 
-			} else if(array_index_exists(@waves['config'], 'maxWaves') && @waves['wave'] == @waves['config']['maxWaves']) {
-				_waves_end(@waves, true);
 			} else if(!@entities) {
+				if(array_index_exists(@waves['config'], 'maxWaves') && @waves['wave'] == @waves['config']['maxWaves']) {
+					_waves_end(@waves, true);
+					die();
+				}
 				@waves['wave']++;
 				@waveNum = @waves['wave'];
 				@p = null;
@@ -430,7 +432,6 @@ proc _waves_start(@waves) {
 					@waves['spawns'] = null;
 
 					@countdown[] = 6;
-					@sleep[] = 1;
 					update_bar('waves'.@waves['region'], 0.0);
 					update_bar('waves'.@waves['region'], array(
 						visible: true,
