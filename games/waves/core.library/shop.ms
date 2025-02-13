@@ -6,8 +6,12 @@ proc _prepare_shops(@waves, @tier = 0) {
 	@shop = associative_array();
 	@items = associative_array();
 	foreach(@index: @item in @waves['config']['shop']) {
-		if(@tierName && array_index_exists(@item, 'tier') && @item['tier'] !== @tierName) {
+		if(array_index_exists(@item, 'tier') && @tier < @item['tier']) {
 			continue();
+		}
+		@slot = @index;
+		if(array_index_exists(@item, 'slot')) {
+			@slot = @item['slot'];
 		}
 		@name = @item['name'];
 		@meta = associative_array();
@@ -15,7 +19,7 @@ proc _prepare_shops(@waves, @tier = 0) {
 			@meta = @item['meta'];
 		}
 		@meta['lore'] = array('Buy for '.@item['cost'].' level'.if(@item['cost'] > 1, 's'));
-		@shop[@index] = array(name: @name, qty: @item['cost'], meta: @meta);
+		@shop[@slot] = array(name: @name, qty: @item['cost'], meta: @meta);
 		@items[@name] = @item['cost'];
 	}
 	if(array_index_exists(@waves['config'], 'shoptiers') && array_index_exists(@waves['config']['shoptiers'], @tier + 1)) {
@@ -46,6 +50,8 @@ proc _bind_shop_events(@waves) {
 				@refund = null;
 				if(array_index_exists(@waves['shop'], @name)) {
 					@refund = @waves['shop'][@name] / 2;
+				} else if(@name === 'EMERALD') {
+					@refund = 1;
 				} else {
 					@refund = round(1 / min(16, material_info(@name)['maxStacksize']), 2);
 				}

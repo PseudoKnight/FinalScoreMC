@@ -2,218 +2,293 @@ maxWaves: 50
 equipment:
     weapon:
         name: WOODEN_SWORD
+    helmet:
+        name: LEATHER_HELMET
+    chestplate:
+        name: LEATHER_CHESTPLATE
+    leggings:
+        name: LEATHER_LEGGINGS
+    boots:
+        name: LEATHER_BOOTS
 shoptiers:
-    - name: LEATHER
     - name: GOLD
-      item: GOLD_INGOT
-      cost: 5
     - name: STONE
       item: FURNACE
-      cost: 5
+      cost: 7
     - name: IRON
       item: IRON_INGOT
-      cost: 5
+      cost: 7
     - name: DIAMOND
       item: DIAMOND
-      cost: 5
+      cost: 7
     - name: NETHERITE
-      item: NETHERITE_UPGRADE_SMITHING_TEMPLATE
-      cost: 5
+      item: NETHERITE_INGOT
+      cost: 7
 shop:
-    0:
-        name: GOLDEN_SWORD
-        cost: 1
-        tier: GOLD
-    1:
-        name: STONE_SWORD
-        cost: 3
-        tier: STONE
-    2:
-        name: IRON_SWORD
-        cost: 5
-        tier: IRON
-    3:
-        name: DIAMOND_SWORD
-        cost: 7
-        tier: DIAMOND
-    4:
-        name: NETHERITE_SWORD
-        cost: 9
-        tier: NETHERITE
-    5:
-        name: STONE_AXE
-        cost: 3
-        tier: STONE
-    6:
-        name: IRON_AXE
-        cost: 5
-        tier: IRON
-    7:
-        name: DIAMOND_AXE
-        cost: 7
-        tier: IRON
-    8:
-        name: NETHERITE_AXE
-        cost: 9
-        tier: NETHERITE
-    9:
-        name: MACE
-        cost: 7
-        tier: IRON
-    10:
-        name: TRIDENT
-        cost: 7
-        tier: IRON
-    11:
-        name: BOW
-        cost: 7
-        tier: STONE
-    12:
-        name: CROSSBOW
-        cost: 7
-        tier: IRON
-        meta:
-            enchants:
-                multishot: 1
-    13:
-        name: CROSSBOW
-        cost: 8
-        tier: IRON
-        meta:
-            enchants:
-                piercing: 4
-    14:
-        name: POTION
-        cost: 1
-        tier: IRON
-        meta:
-            potiontype: LONG_SWIFTNESS
-    15:
-        name: POTION
-        cost: 1
-        tier: IRON
-        meta:
-            potiontype: LONG_STRENGTH
-    16:
-        name: SPLASH_POTION
-        cost: 1
-        tier: IRON
-        meta:
-            potiontype: STRONG_HEALING
-    17:
-        name: NETHER_STAR
-        cost: 5
-        tier: DIAMOND
-        meta:
-            display: 'Resurrection Star'
-    18:
-        name: APPLE
-        cost: 1
-    19:
-        name: GOLDEN_APPLE
-        cost: 3
-        tier: GOLD
-    20:
-        name: COOKED_CHICKEN
-        cost: 2
-        tier: STONE
-    21:
-        name: ARROW
-        cost: 1
-        tier: STONE
-    27:
-        name: LEATHER_HELMET
-        cost: 1
-    28:
-        name: LEATHER_CHESTPLATE
-        cost: 3
-    29:
-        name: LEATHER_LEGGINGS
-        cost: 2
-    30:
-        name: LEATHER_BOOTS
-        cost: 1
-    31:
-        name: GOLDEN_HELMET
-        cost: 3
-        tier: GOLD
-    32:
-        name: GOLDEN_CHESTPLATE
-        cost: 6
-        tier: GOLD
-    33:
-        name: GOLDEN_LEGGINGS
-        cost: 4
-        tier: GOLD
-    34: 
-        name: GOLDEN_BOOTS
-        cost: 3
-        tier: GOLD
-    36:
-        name: CHAINMAIL_HELMET
-        cost: 4
-        tier: STONE
-    37:
-        name: CHAINMAIL_CHESTPLATE
-        cost: 7
-        tier: STONE
-    38:
-        name: CHAINMAIL_LEGGINGS
-        cost: 6
-        tier: STONE
-    39:
-        name: CHAINMAIL_BOOTS
-        cost: 3
-        tier: STONE
-    40:
-        name: IRON_HELMET
-        cost: 5
-        tier: IRON
-    41:
-        name: IRON_CHESTPLATE
-        cost: 9
-        tier: IRON
-    42:
-        name: IRON_LEGGINGS
-        cost: 8
-        tier: IRON
-    43:
-        name: IRON_BOOTS
-        cost: 5
-        tier: IRON
-    44:
-        name: SHIELD
-        cost: 6
-        tier: IRON
-    45:
-        name: DIAMOND_HELMET
-        cost: 7
-        tier: DIAMOND
-    46:
-        name: DIAMOND_CHESTPLATE
-        cost: 12
-        tier: DIAMOND
-    47:
-        name: DIAMOND_LEGGINGS
-        cost: 10
-        tier: DIAMOND
-    48:
-        name: DIAMOND_BOOTS
-        cost: 7
-        tier: DIAMOND
-    49:
-        name: NETHERITE_HELMET
-        cost: 8
-        tier: NETHERITE
-    50:
-        name: NETHERITE_CHESTPLATE
-        cost: 13
-        tier: NETHERITE
-    51:
-        name: NETHERITE_LEGGINGS
-        cost: 11
-        tier: NETHERITE
-    52:
-        name: NETHERITE_BOOTS
-        cost: 8
-        tier: NETHERITE
+    - name: GOLDEN_SWORD
+      slot: 0
+      cost: 1
+    - name: STONE_SWORD
+      slot: 0
+      cost: 3
+      tier: 1
+    - name: IRON_SWORD
+      slot: 0
+      cost: 5
+      tier: 2
+    - name: DIAMOND_SWORD
+      slot: 0
+      cost: 7
+      tier: 3
+    - name: NETHERITE_SWORD
+      slot: 0
+      cost: 9
+      tier: 4
+    - name: STONE_AXE
+      slot: 1
+      cost: 3
+      tier: 1
+    - name: IRON_AXE
+      slot: 1
+      cost: 5
+      tier: 2
+    - name: DIAMOND_AXE
+      slot: 1
+      cost: 7
+      tier: 2
+    - name: NETHERITE_AXE
+      slot: 1
+      cost: 9
+      tier: 4
+    - name: MACE
+      slot: 2
+      cost: 7
+      tier: 2
+    - name: TRIDENT
+      slot: 3
+      cost: 7
+      tier: 2
+    - name: BOW
+      slot: 4
+      cost: 7
+      tier: 1
+    - name: CROSSBOW
+      slot: 5
+      cost: 7
+      tier: 2
+    - name: APPLE
+      slot: 9
+      cost: 1
+    - name: GOLDEN_APPLE
+      slot: 10
+      cost: 3
+    - name: COOKED_CHICKEN
+      slot: 11
+      cost: 2
+      tier: 1
+    - name: POTION
+      meta:
+          potiontype: LONG_SWIFTNESS
+      slot: 12
+      cost: 1
+      tier: 2
+    - name: POTION
+      meta:
+          potiontype: LONG_STRENGTH
+      slot: 13
+      cost: 1
+      tier: 2
+    - name: SPLASH_POTION
+      meta:
+          potiontype: STRONG_HEALING
+      slot: 14
+      cost: 1
+      tier: 2
+    - name: NETHER_STAR
+      meta:
+          display: 'Resurrection Star'
+      slot: 15
+      cost: 5
+      tier: 3
+    - name: ARROW
+      slot: 16
+      cost: 1
+      tier: 1
+    - name: GOLDEN_HELMET
+      slot: 18
+      cost: 1
+    - name: GOLDEN_CHESTPLATE
+      slot: 19
+      cost: 2
+    - name: GOLDEN_LEGGINGS
+      slot: 20
+      cost: 2
+    - name: GOLDEN_BOOTS
+      slot: 21
+      cost: 1
+    - name: CHAINMAIL_HELMET
+      slot: 18
+      cost: 2
+      tier: 1
+    - name: CHAINMAIL_CHESTPLATE
+      slot: 19
+      cost: 5
+      tier: 1
+    - name: CHAINMAIL_LEGGINGS
+      slot: 20
+      cost: 4
+      tier: 1
+    - name: CHAINMAIL_BOOTS
+      slot: 21
+      cost: 1
+      tier: 1
+    - name: SHIELD
+      slot: 22
+      cost: 6
+      tier: 2
+    - name: IRON_HELMET
+      slot: 18
+      cost: 2
+      tier: 2
+    - name: IRON_CHESTPLATE
+      slot: 19
+      cost: 6
+      tier: 2
+    - name: IRON_LEGGINGS
+      slot: 20
+      cost: 5
+      tier: 2
+    - name: IRON_BOOTS
+      slot: 21
+      cost: 2
+      tier: 2
+    - name: DIAMOND_HELMET
+      slot: 18
+      cost: 5
+      tier: 3
+    - name: DIAMOND_CHESTPLATE
+      slot: 19
+      cost: 10
+      tier: 3
+    - name: DIAMOND_LEGGINGS
+      slot: 20
+      cost: 7
+      tier: 3
+    - name: DIAMOND_BOOTS
+      slot: 21
+      cost: 4
+      tier: 3
+    - name: NETHERITE_HELMET
+      slot: 18
+      cost: 5
+      tier: 4
+    - name: NETHERITE_CHESTPLATE
+      slot: 19
+      cost: 10
+      tier: 4
+    - name: NETHERITE_LEGGINGS
+      slot: 20
+      cost: 7
+      tier: 4
+    - name: NETHERITE_BOOTS
+      slot: 21
+      cost: 4
+      tier: 4
+    - name: ENCHANTED_BOOK
+      meta:
+          stored:
+              protection: 1
+      slot: 27
+      cost: 2
+      tier: 3
+    - name: ENCHANTED_BOOK
+      meta:
+          stored:
+              sharpness: 1
+      slot: 28
+      cost: 2
+      tier: 3
+    - name: ENCHANTED_BOOK
+      meta:
+          stored:
+              infinity: 1
+      slot: 28
+      cost: 2
+      tier: 3
+    - name: ENCHANTED_BOOK
+      meta:
+          stored:
+              loyalty: 1
+      slot: 29
+      cost: 2
+      tier: 3
+    - name: ENCHANTED_BOOK
+      meta:
+          stored:
+              multishot: 1
+      slot: 30
+      cost: 2
+      tier: 3
+    - name: ENCHANTED_BOOK
+      meta:
+          stored:
+              piercing: 1
+      slot: 31
+      cost: 2
+      tier: 3
+    - name: ENCHANTED_BOOK
+      meta:
+          stored:
+              sweeping: 1
+      slot: 32
+      cost: 2
+      tier: 3
+    - name: ENCHANTED_BOOK
+      meta:
+          stored:
+              power: 1
+      slot: 33
+      cost: 2
+      tier: 3
+    - name: ENCHANTED_BOOK
+      meta:
+          stored:
+              flame: 1
+      slot: 34
+      cost: 2
+      tier: 3
+    - name: ENCHANTED_BOOK
+      meta:
+          stored:
+              fire_aspect: 1
+      slot: 35
+      cost: 2
+      tier: 3
+    - name: ENCHANTED_BOOK
+      meta:
+          stored:
+              density: 1
+      slot: 36
+      cost: 2
+      tier: 3
+    - name: ENCHANTED_BOOK
+      meta:
+          stored:
+              wind_burst: 1
+      slot: 37
+      cost: 2
+      tier: 3
+    - name: ENCHANTED_BOOK
+      meta:
+          stored:
+              impaling: 1
+      slot: 38
+      cost: 2
+      tier: 3
+    - name: ENCHANTED_BOOK
+      meta:
+          stored:
+              quick_charge: 1
+      slot: 39
+      cost: 2
+      tier: 3
