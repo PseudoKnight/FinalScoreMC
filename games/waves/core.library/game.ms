@@ -10,6 +10,7 @@ proc _waves_prepare(@name, @arena, @region, @world) {
 		music: '',
 		mobs: array(),
 		mobCount: 1,
+		bounty: '',
 		spawns: array(),
 		world: @world,
 		arena: @arena,
@@ -120,6 +121,9 @@ proc _waves_start(@waves) {
 
 	@waves['binds'][] = bind('creature_spawn', null, null, @event, @waves, @entities) {
 		if(@event['type'] != 'ARMOR_STAND' && sk_region_contains(@waves['world'], @waves['region'], @event['location'])) {
+			if(!@waves['bounty']) {
+				@waves['bounty'] = @event['id'];
+			}
 			@entities[] = @event['id'];
 			@waves['mobCount']++;
 		}
@@ -148,7 +152,13 @@ proc _waves_start(@waves) {
 		}
 	}
 
-	@waves['binds'][] = bind('entity_death', null, null, @event, @entities) {
+	@waves['binds'][] = bind('entity_death', null, null, @event, @entities, @waves) {
+		if(@waves['mobCount'] > 1
+		&& @event['id'] === @waves['bounty'] 
+		&& array_size(@entities) == @waves['mobCount']) {
+			@event['drops'][] = array(name: 'EMERALD');
+			modify_event('drops', @event['drops']);
+		}
 		array_remove_values(@entities, @event['id']);
 	}
 
@@ -231,7 +241,7 @@ proc _waves_start(@waves) {
 					update_bar('waves'.@waves['region'].@p, array(visible: false));
 				}
 				@countdown--;
-				update_bar('waves'.@waves['region'], array(color: 'WHITE', title: @waves['bossbar'], percent: (6 - @countdown[0]) / 6));
+				update_bar('waves'.@waves['region'], array(color: 'WHITE', title: @waves['bossbar'], percent: (6 - @countdown) / 6));
 				if(@countdown == 5) {
 					if(@waves['title']) {
 						foreach(@p in @waves['players']) {
@@ -363,6 +373,7 @@ proc _waves_start(@waves) {
 					_waves_end(@waves, true);
 					die();
 				}
+				@waves['bounty'] = '';
 				@waves['wave']++;
 				@waveNum = @waves['wave'];
 				@p = null;
@@ -453,6 +464,18 @@ proc _waves_start(@waves) {
 							set_mob_target(@entities[@r], puuid(array_get_rand(@waves['players'])));
 						}
 					}
+				}
+				if(@waves['bounty'] 
+				&& @waves['mobCount'] > 1
+				&& @countdown == -1 
+				&& entity_exists(@waves['bounty'])
+				&& array_size(@entities) == @waves['mobCount']) {
+					spawn_particle(location_shift(entity_loc(@waves['bounty']), 'up'), array(
+						particle: 'VILLAGER_HAPPY',
+						count: 1,
+						xoffset: 0.5,
+						zoffset: 0.5,
+						yoffset: 1.0));
 				}
 			}
 		} catch(Exception @ex) {
