@@ -55,7 +55,7 @@ shop:
     - name: DIAMOND_AXE
       slot: 1
       cost: 7
-      tier: 2
+      tier: 3
     - name: NETHERITE_AXE
       slot: 1
       cost: 9
@@ -63,11 +63,11 @@ shop:
     - name: MACE
       slot: 2
       cost: 7
-      tier: 2
+      tier: 3
     - name: TRIDENT
       slot: 3
       cost: 7
-      tier: 2
+      tier: 3
     - name: BOW
       slot: 4
       cost: 7

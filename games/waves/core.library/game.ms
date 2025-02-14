@@ -324,6 +324,7 @@ proc _waves_start(@waves) {
 				@waves['spawns'] = @spawns;
 			} else if(@waves['mobs']) {
 				@waves['mobCount'] = 0;
+				@waves['bounty'] = '';
 				@spawns = @waves['spawns'];
 				do {
 					foreach(@i: @mob in @waves['mobs']) {
@@ -373,7 +374,6 @@ proc _waves_start(@waves) {
 					_waves_end(@waves, true);
 					die();
 				}
-				@waves['bounty'] = '';
 				@waves['wave']++;
 				@waveNum = @waves['wave'];
 				@p = null;
