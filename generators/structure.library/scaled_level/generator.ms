@@ -1060,7 +1060,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 									set_blockdata_string(location_shift(@loc, 'down'), 'diamond_block');
 									set_block_lock(@loc, 'Key'.(@floor + 1));
 									add_to_inventory(@chestArray[integer(srand(@random) * array_size(@chestArray))],
-											array(name: 'TRIPWIRE_HOOK', meta: array(display: 'Key'.(@floor + 1))));
+											array(name: 'TRIAL_KEY', meta: array(display: 'Key'.(@floor + 1))));
 								} else {
 									@chestArray[] = @loc;
 								}

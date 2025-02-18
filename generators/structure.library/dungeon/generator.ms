@@ -1403,7 +1403,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 									if(@chestArray) { // only lock this chest if we have a previous chest to add a key to
 										try {
 											add_to_inventory(_array_get_srand(@random, @chestArray),
-													array(name: 'TRIPWIRE_HOOK', meta: array(display: 'Key'.(@floor + 1))));
+													array(name: 'TRIAL_KEY', meta: array(display: 'Key'.(@floor + 1))));
 											set_block_lock(@loc, 'Key'.(@floor + 1));
 										} catch(Exception @ignore) {
 											// just do not lock it
