@@ -290,8 +290,10 @@ proc _waves_start(@waves) {
 						style: 'SOLID',
 					));
 				}
-				foreach(@p in @waves['players']) {
-					play_sound(ploc(@p), array(sound: 'ENTITY_EVOKER_PREPARE_SUMMON', volume: 0.4), @p);
+				if(array_index_exists(@waves['config'], 'sounds', 'wave_start')) {
+					foreach(@p in @waves['players']) {
+						play_sound(ploc(@p), @waves['config']['sounds']['wave_start'], @p);
+					}
 				}
 			}
 			if(@sleep > 0) {
@@ -388,7 +390,9 @@ proc _waves_start(@waves) {
 						set_plevel(@p, plevel(@p) + 1);
 						action_msg(@p, colorize('&e+1 level'));
 					}
-					play_sound(ploc(@p), array(sound: 'BLOCK_ENCHANTMENT_TABLE_USE', pitch: 0.5), @p);
+					if(array_index_exists(@waves['config'], 'sounds', 'wave_end')) {
+						play_sound(ploc(@p), @waves['config']['sounds']['wave_end'], @p);
+					}
 					@waves['allplayers'][@p]['wave'] = @waveNum;
 				}
 				try {

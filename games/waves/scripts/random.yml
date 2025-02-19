@@ -1,4 +1,11 @@
 maxWaves: 50
+sounds:
+    wave_start:
+        sound: ENTITY_EVOKER_PREPARE_SUMMON
+        pitch: 0.4
+    wave_end:
+        sound: BLOCK_ENCHANTMENT_TABLE_USE
+        pitch: 0.5
 equipment:
     weapon:
         name: WOODEN_SWORD
