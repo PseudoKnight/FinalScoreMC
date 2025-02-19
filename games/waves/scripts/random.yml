@@ -1,4 +1,5 @@
 maxWaves: 50
+time: sunset
 sounds:
     wave_start:
         sound: ENTITY_EVOKER_PREPARE_SUMMON

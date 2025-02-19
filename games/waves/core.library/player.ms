@@ -10,13 +10,6 @@ proc _waves_add_player(@player, @waves) {
 	@waves['allplayers'][@player] = array(wave: @waves['wave']);
 	set_pscoreboard(@player, 'waves'.@waves['region']);
 	bar_add_player('waves'.@waves['region'], @player);
-	if(array_index_exists(@waves['config'], 'shop')) {
-		create_bar('waves'.@waves['region'].@player, array(visible: false, color: 'YELLOW'));
-		foreach(@p in @waves['players']) {
-			bar_add_player('waves'.@waves['region'].@p, @player);
-			bar_add_player('waves'.@waves['region'].@player, @p);
-		}
-	}
 	clear_peffects(@player);
 	clear_pinv(@player);
 	if(array_index_exists(@c, 'equipment')) {
@@ -29,6 +22,11 @@ proc _waves_add_player(@player, @waves) {
 	}
 	if(array_index_exists(@c, 'shop')) {
 		pgive_item(@player, array(name: 'EMERALD', meta: array(display: 'Open Shop', lore: array(@player.'\'s Shop Token'))));
+		create_bar('waves'.@waves['region'].@player, array(visible: false, color: 'YELLOW'));
+		foreach(@p in @waves['players']) {
+			bar_add_player('waves'.@waves['region'].@p, @player);
+			bar_add_player('waves'.@waves['region'].@player, @p);
+		}
 	}
 	set_pbed_location(@player, @waves['arena']['lobby']);
 	set_entity_health(puuid(@player), 100);

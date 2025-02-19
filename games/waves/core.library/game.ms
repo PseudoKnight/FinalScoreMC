@@ -20,13 +20,16 @@ proc _waves_prepare(@name, @arena, @region, @world) {
 		binds: array(),
 		task:  null,
 		allplayers: associative_array(),
+		time: get_world_time(@world),
 	);
 	if(array_index_exists(@waves['config'], 'title')) {
 		_add_activity('waves'.@region, _to_upper_camel_case(@region).': '.@waves['config']['title'], @region, @world);
 	} else {
 		_add_activity('waves'.@region, _to_upper_camel_case(@region), @region, @world);
 	}
-	set_world_time(@waves['world'], 'sunset');
+	if(array_index_exists(@waves['config'], 'time')) {
+		set_world_time(@waves['world'], @waves['config']['time']);
+	}
 	set_gamerule(@waves['world'], 'DODAYLIGHTCYCLE', false);
 	_remove_region_entities(@waves['region']);
 
@@ -34,7 +37,7 @@ proc _waves_prepare(@name, @arena, @region, @world) {
 	create_objective('health', 'HEALTH', 'waves'.@region);
 	set_objective_display('health', array(slot: 'BELOW_NAME'), 'waves'.@region);
 
-	create_bar('waves'.@region, array(percent: 0.0, style: 'SEGMENTED_6', visible: false));
+	create_bar('waves'.@region, array(visible: false));
 
 	if(array_index_exists(@waves['config'], 'shop')) {
 		_prepare_shops(@waves);
@@ -451,8 +454,8 @@ proc _waves_start(@waves) {
 
 					if(array_index_exists(@wave, 'bossbar')) {
 						@waves['bossbar'] = @wave['bossbar'];
-						update_bar('waves'.@waves['region'], 0.0);
 						update_bar('waves'.@waves['region'], array(
+							percent: 0.0,
 							visible: true,
 							title: @waves['bossbar'],
 							style: 'SEGMENTED_6',
@@ -505,7 +508,9 @@ proc _waves_end(@waves, @win) {
 		delete_virtual_inventory('waves'.@waves['region']);
 	}
 	sk_region_flag(@waves['world'], @waves['region'], 'mob-spawning', 'deny');
-	set_world_time(@waves['world'], 'noon');
+	if(array_index_exists(@waves['config'], 'time')) {
+		set_world_time(@waves['world'], @waves['time']);
+	}
 	_remove_region_entities(@waves['region']);
 	foreach(@bind in @waves['binds']) {
 		unbind(@bind);
