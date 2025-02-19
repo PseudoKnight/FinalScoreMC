@@ -77,6 +77,7 @@ proc _worm_spawn(@loc, @spec = associative_array()) {
 					scale: array(x: @worm['width'] * 1.05, y: @worm['width'] * 1.05, z: @worm['width'] * 1.05))));
 			@shulker = spawn_entity('SHULKER', 1, @loc, closure(@id) {
 				set_entity_ai(@id, false);
+				set_entity_silent(@id, true);
 				set_entity_saves_on_unload(@id, false);
 				set_entity_attribute_base(@id, 'GENERIC_SCALE', @worm['width']);
 				set_mob_effect(@id, 'invisibility', 0, -1, true, false);
