@@ -212,13 +212,6 @@ shop:
     - name: ENCHANTED_BOOK
       meta:
           stored:
-              sharpness: 1
-      slot: 28
-      cost: 2
-      tier: 3
-    - name: ENCHANTED_BOOK
-      meta:
-          stored:
               infinity: 1
       slot: 28
       cost: 2
@@ -298,5 +291,12 @@ shop:
           stored:
               quick_charge: 1
       slot: 39
+      cost: 2
+      tier: 3
+    - name: ENCHANTED_BOOK
+      meta:
+         stored:
+            sharpness: 1
+      slot: 40
       cost: 2
       tier: 3
