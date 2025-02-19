@@ -134,7 +134,7 @@ proc _waves_start(@waves) {
 			if(array_index_exists(@event, 'damager') && array_contains(@entities, @event['damager'])
 			&& (array_index_exists(@waves['config'], 'teamDamage') && !@waves['config']['teamDamage'])) {
 				modify_event('amount', 0.0);
-			} else {
+			} else if(@waves['bossbar']) {
 				set_timeout(0, closure(){
 					@health = 0.0;
 					foreach(@i: @e in @entities) {
@@ -231,17 +231,21 @@ proc _waves_start(@waves) {
 
 			@viewers = null;
 			if(@countdown > 0) {
-				if(array_index_exists(@waves['config'], 'shop') && (@viewers = get_inventory_viewers('waves'.@waves['region']))) {
-					foreach(@viewer in @viewers) {
-						update_bar('waves'.@waves['region'].@viewer, array(visible: true, title: @viewer.' viewing shop ('.plevel(@viewer).' levels)'));
+				if(array_index_exists(@waves['config'], 'shop')) {
+					if(@viewers = get_inventory_viewers('waves'.@waves['region'])) {
+						foreach(@viewer in @viewers) {
+							update_bar('waves'.@waves['region'].@viewer, array(visible: true, title: @viewer.' viewing shop ('.plevel(@viewer).' levels)'));
+						}
+						die();
 					}
-					die();
-				}
-				foreach(@p in @waves['players']) {
-					update_bar('waves'.@waves['region'].@p, array(visible: false));
+					foreach(@p in @waves['players']) {
+						update_bar('waves'.@waves['region'].@p, array(visible: false));
+					}
 				}
 				@countdown--;
-				update_bar('waves'.@waves['region'], array(color: 'WHITE', title: @waves['bossbar'], percent: (6 - @countdown) / 6));
+				if(@waves['bossbar']) {
+					update_bar('waves'.@waves['region'], array(color: 'WHITE', title: @waves['bossbar'], percent: (6 - @countdown) / 6));
+				}
 				if(@countdown == 5) {
 					if(@waves['title']) {
 						foreach(@p in @waves['players']) {
@@ -277,13 +281,15 @@ proc _waves_start(@waves) {
 						console('Mob dead on round start.');
 					}
 				}
-				update_bar('waves'.@waves['region'], array(
-					percent: 1.0,
-					visible: true,
-					title: @waves['bossbar'],
-					color: 'RED',
-					style: 'SOLID',
-				));
+				if(@waves['bossbar']) {
+					update_bar('waves'.@waves['region'], array(
+						percent: 1.0,
+						visible: true,
+						title: @waves['bossbar'],
+						color: 'RED',
+						style: 'SOLID',
+					));
+				}
 				foreach(@p in @waves['players']) {
 					play_sound(ploc(@p), array(sound: 'ENTITY_EVOKER_PREPARE_SUMMON', volume: 0.4), @p);
 				}
@@ -433,22 +439,24 @@ proc _waves_start(@waves) {
 						set_block(@trigger, 'REDSTONE_BLOCK');
 						@waves['trigger'] = @trigger;
 					}
-					if(array_index_exists(@wave, 'bossbar')) {
-						@waves['bossbar'] = @wave['bossbar'];
-					} else {
-						@waves['bossbar'] = '';
-					}
 
 					@waves['mobs'] = @wave['mobs'];
 					@waves['spawns'] = null;
 
 					@countdown[] = 6;
-					update_bar('waves'.@waves['region'], 0.0);
-					update_bar('waves'.@waves['region'], array(
-						visible: true,
-						title: @waves['bossbar'],
-						style: 'SEGMENTED_6',
-					));
+
+					if(array_index_exists(@wave, 'bossbar')) {
+						@waves['bossbar'] = @wave['bossbar'];
+						update_bar('waves'.@waves['region'], 0.0);
+						update_bar('waves'.@waves['region'], array(
+							visible: true,
+							title: @waves['bossbar'],
+							style: 'SEGMENTED_6',
+						));
+					} else {
+						@waves['bossbar'] = '';
+						update_bar('waves'.@waves['region'], array(visible: false));
+					}
 				} catch(IndexOverflowException @ex) {
 					_waves_end(@waves, true);
 				}

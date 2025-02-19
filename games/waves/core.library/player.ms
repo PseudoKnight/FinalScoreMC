@@ -10,10 +10,12 @@ proc _waves_add_player(@player, @waves) {
 	@waves['allplayers'][@player] = array(wave: @waves['wave']);
 	set_pscoreboard(@player, 'waves'.@waves['region']);
 	bar_add_player('waves'.@waves['region'], @player);
-	create_bar('waves'.@waves['region'].@player, array(visible: false, color: 'YELLOW'));
-	foreach(@p in @waves['players']) {
-		bar_add_player('waves'.@waves['region'].@p, @player);
-		bar_add_player('waves'.@waves['region'].@player, @p);
+	if(array_index_exists(@waves['config'], 'shop')) {
+		create_bar('waves'.@waves['region'].@player, array(visible: false, color: 'YELLOW'));
+		foreach(@p in @waves['players']) {
+			bar_add_player('waves'.@waves['region'].@p, @player);
+			bar_add_player('waves'.@waves['region'].@player, @p);
+		}
 	}
 	clear_peffects(@player);
 	clear_pinv(@player);
@@ -50,10 +52,12 @@ proc _waves_remove_player(@player, @waves) {
 	_equip_kit(@player);
 	_set_pactivity(@player, null);
 	try(bar_remove_player('waves'.@waves['region'], @player))
-	foreach(@p in @waves['players']) {
-		try(bar_remove_player('waves'.@waves['region'].@p, @player))
+	if(array_index_exists(@waves['config'], 'shop')) {
+		foreach(@p in @waves['players']) {
+			try(bar_remove_player('waves'.@waves['region'].@p, @player))
+		}
+		try(remove_bar('waves'.@waves['region'].@player))
 	}
-	try(remove_bar('waves'.@waves['region'].@player))
 }
 
 proc _waves_add_spectator(@player, @waves) {
