@@ -152,7 +152,7 @@ proc _snake_clean_surfaces(@game) {
 								if(@count == 2) {
 									set_block(array(@x, @y, @z, 'custom'), 'DARK_PRISMARINE', false);
 								} else if(@count == 4) {
-									set_block(array(@x, @y, @z, 'custom'), 'RED_NETHER_BRICK', false);
+									set_block(array(@x, @y, @z, 'custom'), 'RED_NETHER_BRICKS', false);
 								}
 							} else {
 								set_block(array(@x, @y, @z,, 'custom'), 'AIR', false);
@@ -173,7 +173,7 @@ proc _snake_clean_surfaces(@game) {
 								if(@x == @maxX) {
 									set_block(array(@x, @y, @z, 'custom'), 'DARK_PRISMARINE', false);
 								} else {
-									set_block(array(@x, @y, @z, 'custom'), 'RED_NETHER_BRICK', false);
+									set_block(array(@x, @y, @z, 'custom'), 'RED_NETHER_BRICKS', false);
 								}
 							} else if(@walls && @count == 5 && @x == @halfX && @z != @halfZ) {
 								set_block(array(@x, @y, @z, 'custom'), 'STONE_BRICKS', false);
