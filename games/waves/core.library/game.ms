@@ -451,6 +451,7 @@ proc _waves_start(@waves) {
 					@waves['spawns'] = null;
 
 					@countdown[] = 6;
+					@sleep[] = 1;
 
 					if(array_index_exists(@wave, 'bossbar')) {
 						@waves['bossbar'] = @wave['bossbar'];
