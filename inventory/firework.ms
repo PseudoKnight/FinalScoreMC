@@ -174,6 +174,9 @@ bind('projectile_launch', null, array(shootertype: 'PLAYER', type: 'FIREWORK'), 
 			die();
 		}
 	}
+	if(!@item['meta'] || !@item['meta']['projectiles']) {
+		die();
+	}
 	try {
 		@projectileMeta = @item['meta']['projectiles'][0]['meta'];
 		if(@projectileMeta && @projectileMeta['lore'] && pcooldown('CROSSBOW') == 0) {
