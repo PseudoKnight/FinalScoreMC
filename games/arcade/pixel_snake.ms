@@ -1,3 +1,6 @@
+<!
+	suppressWarnings: CodeUpgradeNotices
+>
 bind('player_interact_entity', null, array(clicked: 'ITEM_FRAME', hand: 'main_hand'), @event) {
 	@spec = entity_spec(@event['id']);
 	if(@spec['visible']) {
@@ -14,7 +17,9 @@ bind('player_interact_entity', null, array(clicked: 'ITEM_FRAME', hand: 'main_ha
 
 	// global variables
 	@width = 32;
-	@scale = 1 / (@width + 1);
+	@scale = 1 / (@width + 1.9);
+	@color = array(r: 16, g: 137, b: 99, a: 255);
+	@highlight = array(r: 24, g: 204, b: 147, a: 255);
 	
 	// define game state
 	@pos = array(integer(@width / 2), integer(@width / 2));
@@ -37,24 +42,24 @@ bind('player_interact_entity', null, array(clicked: 'ITEM_FRAME', hand: 'main_ha
 	switch(get_hanging_direction(@event['id'])) {
 		case 'UP':
 		case 'DOWN':
-			@origin['x'] -= 0.47;
-			@origin['z'] -= 0.47;
+			@origin['x'] -= 0.45;
+			@origin['z'] -= 0.45;
 			@origin['yaw'] = round(ploc()['yaw'] / 90) * 90;
 		case 'NORTH':
-			@origin['y'] += 0.46;
-			@origin['x'] += 0.47;
+			@origin['y'] += 0.445;
+			@origin['x'] += 0.46;
 			@origin['yaw'] = 180;
 		case 'EAST':
-			@origin['y'] += 0.46;
-			@origin['z'] += 0.47;
+			@origin['y'] += 0.445;
+			@origin['z'] += 0.46;
 			@origin['yaw'] = 270;
 		case 'SOUTH':
-			@origin['y'] += 0.46;
-			@origin['x'] -= 0.47;
+			@origin['y'] += 0.445;
+			@origin['x'] -= 0.46;
 			@origin['yaw'] = 0;
 		case 'WEST':
-			@origin['y'] += 0.46;
-			@origin['z'] -= 0.47;
+			@origin['y'] += 0.445;
+			@origin['z'] -= 0.46;
 			@origin['yaw'] = 90;
 	}
 
@@ -112,7 +117,7 @@ bind('player_interact_entity', null, array(clicked: 'ITEM_FRAME', hand: 'main_ha
 		set_entity_spec(@e, array(
 			text: ' ',
 			alignment: 'LEFT',
-			bgcolor: array(r: 64, g: 255, b: 192, a: 255)));
+			bgcolor: @highlight));
 	})[0];
 
 	// spawn score entity
@@ -125,7 +130,7 @@ bind('player_interact_entity', null, array(clicked: 'ITEM_FRAME', hand: 'main_ha
 					y: 0.4,
 					z: 0),
 				translation: array(
-					x: 0.88,
+					x: 0.86,
 					y: -0.08,
 					z: 0.02))));
 		set_entity_spec(@e, array(
@@ -165,7 +170,7 @@ bind('player_interact_entity', null, array(clicked: 'ITEM_FRAME', hand: 'main_ha
 								z: 0))));
 					set_entity_spec(@e, array(
 						text: color('#151515').color('BOLD').'SNAKE',
-						bgcolor: array(r: 64, g: 128, b: 96, a: 255)));
+						bgcolor: @color));
 				})[0];
 			} else {
 				spawn_entity('TEXT_DISPLAY', 1, entity_loc(@event['id']), closure(@e) {
@@ -178,7 +183,7 @@ bind('player_interact_entity', null, array(clicked: 'ITEM_FRAME', hand: 'main_ha
 								z: 0))));
 					set_entity_spec(@e, array(
 						text: color('#151515').color('BOLD').'GAME OVER',
-						bgcolor: array(r: 64, g: 128, b: 96, a: 255)));
+						bgcolor: @color));
 				})[0];
 			}
 
@@ -315,7 +320,7 @@ bind('player_interact_entity', null, array(clicked: 'ITEM_FRAME', hand: 'main_ha
 				set_entity_spec(@e, array(
 					text: ' ',
 					alignment: 'LEFT',
-					bgcolor: array(r: 64, g: 128, b: 96, a: 255)));
+					bgcolor: @color));
 			})[0];
 			@tail[] = array(entity: @snake['tail'], positions: array(@lastPos), dir: @lastDir);
 		} else {
