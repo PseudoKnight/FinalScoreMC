@@ -1,5 +1,6 @@
 <!
-	suppressWarnings: CodeUpgradeNotices
+	description: A mini game of snake to be displayed on filled map in an item frame using text display entities.;
+	suppressWarnings: CodeUpgradeNotices;
 >
 bind('player_interact_entity', null, array(clicked: 'ITEM_FRAME', hand: 'main_hand'), @event) {
 	@spec = entity_spec(@event['id']);
@@ -14,13 +15,15 @@ bind('player_interact_entity', null, array(clicked: 'ITEM_FRAME', hand: 'main_ha
 	if(!@meta || !@meta['lore'] || @meta['lore'][0] !== 'snake') {
 		die();
 	}
+	
+	@player = player();
 
-	// global variables
+	// game constants
 	@width = 32;
 	@scale = 1 / (@width + 1.9);
 	@color = array(r: 16, g: 137, b: 99, a: 255);
 	@highlight = array(r: 24, g: 204, b: 147, a: 255);
-	
+
 	// define game state
 	@pos = array(integer(@width / 2), integer(@width / 2));
 	@applePos = array(rand(@width), rand(@width));
@@ -29,7 +32,7 @@ bind('player_interact_entity', null, array(clicked: 'ITEM_FRAME', hand: 'main_ha
 		length: 1,
 		maxLength: 8,
 		dead: false,
-		tail: null,
+		currentTailSegment: null,
 		score: 0,
 	);
 	@grid = array_resize(array(), @width);
@@ -37,7 +40,7 @@ bind('player_interact_entity', null, array(clicked: 'ITEM_FRAME', hand: 'main_ha
 		@grid[@i] = array_resize(array(), @width, false);
 	}
 
-	// get origin location and rotation
+	// get origin position and rotation based on item frame location
 	@origin = entity_loc(@event['id']);
 	switch(get_hanging_direction(@event['id'])) {
 		case 'UP':
@@ -63,7 +66,7 @@ bind('player_interact_entity', null, array(clicked: 'ITEM_FRAME', hand: 'main_ha
 			@origin['yaw'] = 90;
 	}
 
-	// clear previous entities
+	// clear previous text display entities
 	foreach(@entity in entities_in_radius(@origin, 1, 'TEXT_DISPLAY')) {
 		entity_remove(@entity);
 	}
@@ -138,16 +141,28 @@ bind('player_interact_entity', null, array(clicked: 'ITEM_FRAME', hand: 'main_ha
 			bgcolor: array(r: 0, g: 0, b: 0, a: 0)));
 	})[0];
 
+	// all tail segments are pushed to this array
 	@tail = array();
 
+	// notes are consumed one per tick, using the numerical representation of noteblock notes
 	@notes = array(1, null, null, 3, null, null, 5, null, null, 3, null, null, 1, null, null, 3, null, null, 5, null, null, null, null, null, 1, null, null, null, null, null, 1);
 
+	// buffer player input when tick interval is higher than 1. this improves responsiveness.
 	@bufferedInput = array(null);
-	@tick = array(0);
+
+	// tick interval is the number of ticks before snake is processed. lower this to make snake go faster.
 	@tickInterval = array(3);
+	@tick = array(0);
 
 	// start game loop
 	set_interval(50, closure(){
+		@tick[0]++;
+
+		if(!ponline(@player)) {
+			clear_task();
+			die();
+		}
+
 		if(@notes) {
 			if(!is_null(@notes[0])) {
 				play_sound(ploc(), array(sound: 'BLOCK_NOTE_BLOCK_BIT', pitch: 2 ** ((@notes[0] - 12) / 12)));
@@ -157,7 +172,7 @@ bind('player_interact_entity', null, array(clicked: 'ITEM_FRAME', hand: 'main_ha
 
 		@vehicle = pvehicle();
 		if(!@vehicle || !entity_exists(@head)) {
-
+			// if vehicle (seat) or snake head entity do not exist, the game should end.
 			if(entity_exists(@seat)) {
 				try(entity_remove(@seat))
 				spawn_entity('TEXT_DISPLAY', 1, entity_loc(@event['id']), closure(@e) {
@@ -191,10 +206,11 @@ bind('player_interact_entity', null, array(clicked: 'ITEM_FRAME', hand: 'main_ha
 			die();
 		}
 
-		@tick[0]++;
+		// get player input
 		@lastDir = @snake['dir'];
 		@input = get_player_input();
 		@turned = false;
+		// check for exclusive inputs, buffer inputs for next tick if snake cannot move this tick
 		if(@input['forward'] && @lastDir !== 'up' && @lastDir !== 'down') {
 			if(@tick[0] % @tickInterval[0] > 0) {
 				@bufferedInput[0] = 'up';
@@ -233,6 +249,7 @@ bind('player_interact_entity', null, array(clicked: 'ITEM_FRAME', hand: 'main_ha
 
 		@lastPos = @pos[];
 
+		// update position based on input
 		switch(@snake['dir']) {
 			case 'up':
 				@pos[1] -= 1;
@@ -256,12 +273,15 @@ bind('player_interact_entity', null, array(clicked: 'ITEM_FRAME', hand: 'main_ha
 				}
 		}
 
+		// process movement
 		if(!@snake['dead']) {
 			@x = @pos[0];
 			@y = @pos[1];
 			if(@grid[@x][@y]) {
+				// collided with tail
 				@snake['dead'] = true;
 			} else if(@x == @applePos[0] && @y == @applePos[1]) {
+				// collided with apple
 				@snake['maxLength'] += 16;
 				@snake['score']++;
 				set_entity_spec(@score, array(text: if(@snake['score'] < 10, ' ').@snake['score']));
@@ -274,6 +294,7 @@ bind('player_interact_entity', null, array(clicked: 'ITEM_FRAME', hand: 'main_ha
 							x: @applePos[0] * @scale,
 							y: -(@applePos[1] * @scale),
 							z: 0))));
+				// if score is above a certain amount, increase snake speed
 				if(@snake['score'] == 5) {
 					@tickInterval[0] = 2;
 					array_push(@notes, 12, 14, 16);
@@ -290,22 +311,24 @@ bind('player_interact_entity', null, array(clicked: 'ITEM_FRAME', hand: 'main_ha
 		if(@snake['dead']) {
 			play_sound(ploc(), array(sound: 'BLOCK_NOTE_BLOCK_BIT', pitch: 0.5));
 			@notes[] = 0;
+			// removing player vehicle (seat) indicates to this task to clean up next tick
 			if(entity_type(@vehicle) === 'ITEM_DISPLAY') {
 				entity_remove(@vehicle);
 			}
 			die();
 		}
 
-		// update snake render
+		// translate snake head entity to match new position
 		set_display_entity(@head, array(
 			transformation: array(
 				translation: array(
 					x: @pos[0] * @scale,
 					y: -(@pos[1] * @scale),
 					z: 0))));
-					
-		if(!@snake['tail']) {
-			@snake['tail'] = spawn_entity('TEXT_DISPLAY', 1, @origin, closure(@e) {
+
+		if(!@snake['currentTailSegment']) {
+			// may have turned last tick, so create a new tail segment behind head
+			@snake['currentTailSegment'] = spawn_entity('TEXT_DISPLAY', 1, @origin, closure(@e) {
 				set_display_entity(@e, array(
 					brightness: 15,
 					transformation: array(
@@ -322,12 +345,13 @@ bind('player_interact_entity', null, array(clicked: 'ITEM_FRAME', hand: 'main_ha
 					alignment: 'LEFT',
 					bgcolor: @color));
 			})[0];
-			@tail[] = array(entity: @snake['tail'], positions: array(@lastPos), dir: @lastDir);
+			@tail[] = array(entity: @snake['currentTailSegment'], positions: array(@lastPos), dir: @lastDir);
 		} else {
+			// scale and translate current tail segmented attached to head to make it longer
 			@tail[-1]['positions'][] = @lastPos;
-			@transform = get_display_entity(@snake['tail'])['transformation'];
+			@transform = get_display_entity(@snake['currentTailSegment'])['transformation'];
 			if(@lastDir === 'up') {
-				set_display_entity(@snake['tail'], array(
+				set_display_entity(@snake['currentTailSegment'], array(
 					transformation: array(
 						scale: array(
 							x: @scale * 8,
@@ -335,7 +359,7 @@ bind('player_interact_entity', null, array(clicked: 'ITEM_FRAME', hand: 'main_ha
 							z: 0))));
 
 			} else if(@lastDir === 'down') {
-				set_display_entity(@snake['tail'], array(
+				set_display_entity(@snake['currentTailSegment'], array(
 					transformation: array(
 						scale: array(
 							x: @scale * 8,
@@ -346,7 +370,7 @@ bind('player_interact_entity', null, array(clicked: 'ITEM_FRAME', hand: 'main_ha
 							y: @transform['translation']['y'] - @scale,
 							z: -0.001))));
 			} else if(@lastDir === 'left') {
-				set_display_entity(@snake['tail'], array(
+				set_display_entity(@snake['currentTailSegment'], array(
 					transformation: array(
 						scale: array(
 							x: @transform['scale']['x'] + @scale * 8,
@@ -358,7 +382,7 @@ bind('player_interact_entity', null, array(clicked: 'ITEM_FRAME', hand: 'main_ha
 							z: -0.001))));
 
 			} else if(@lastDir === 'right') {
-				set_display_entity(@snake['tail'], array(
+				set_display_entity(@snake['currentTailSegment'], array(
 					transformation: array(
 						scale: array(
 							x: @transform['scale']['x'] + @scale * 8,
@@ -371,15 +395,20 @@ bind('player_interact_entity', null, array(clicked: 'ITEM_FRAME', hand: 'main_ha
 			}
 		}
 
-		if(@snake['length'] + 1 > @snake['maxLength']) {
+		if(@snake['length'] < @snake['maxLength']) {
+			@snake['length']++;
+		} else {
+			// remove length from the tail to make it shorter
 			@segment = @tail[0];
 			@x = @segment['positions'][0][0];
 			@y = @segment['positions'][0][1];
 			@grid[@x][@y] = false;
 			if(array_size(@segment['positions']) < 2) {
+				// if the segment is only one unit of length, remove it
 				entity_remove(@segment['entity']);
 				array_remove(@tail, 0);
 			} else {
+				// scale and translate text display for the oldest tail segment
 				@segment = @tail[0];
 				@transform = get_display_entity(@segment['entity'])['transformation'];
 				array_remove(@segment['positions'], 0);
@@ -427,15 +456,18 @@ bind('player_interact_entity', null, array(clicked: 'ITEM_FRAME', hand: 'main_ha
 								z: -0.001))));
 				}
 			}
-		} else {
-			@snake['length']++;
 		}
 		if(@turned) {
-			@snake['tail'] = null;
+			// create new tail segment next tick
+			@snake['currentTailSegment'] = null;
 		}
 	});
 }
 
+/*
+	Whenever an item frame containing a snake filled map is broken,
+	the text display entities should be removed.
+ */
 bind('entity_damage', array(priority: 'MONITOR'), array(type: 'ITEM_FRAME'), @event) {
 	if(is_cancelled()) {
 		die();
@@ -453,29 +485,8 @@ bind('entity_damage', array(priority: 'MONITOR'), array(type: 'ITEM_FRAME'), @ev
 		die();
 	}
 
-	// get origin location
-	@origin = entity_loc(@event['id']);
-	switch(get_hanging_direction(@event['id'])) {
-		case 'UP':
-		case 'DOWN':
-			@origin['x'] -= 0.47;
-			@origin['z'] -= 0.47;
-		case 'NORTH':
-			@origin['y'] += 0.46;
-			@origin['x'] += 0.47;
-		case 'EAST':
-			@origin['y'] += 0.46;
-			@origin['z'] += 0.47;
-		case 'SOUTH':
-			@origin['y'] += 0.46;
-			@origin['x'] -= 0.47;
-		case 'WEST':
-			@origin['y'] += 0.46;
-			@origin['z'] -= 0.47;
-	}
-
-	// clear previous entities
-	foreach(@entity in entities_in_radius(@origin, 1, 'TEXT_DISPLAY')) {
+	// clear text display entities next to item frame entity
+	foreach(@entity in entities_in_radius(entity_loc(@event['id']), 1, 'TEXT_DISPLAY')) {
 		entity_remove(@entity);
 	}
 }
