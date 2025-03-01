@@ -327,9 +327,7 @@ bind('player_interact_entity', null, array(clicked: 'ITEM_FRAME', hand: 'main_ha
 					foreach(@i: @segment in @tail) {
 						entity_remove(@segment['entity']);
 						foreach(@position in @segment['positions']) {
-							@x = @position[0];
-							@y = @position[1];
-							@grid[@x][@y] = false;
+							@grid[@position[0]][@position[1]] = false;
 						}
 						array_remove(@tail, @i);
 					}
