@@ -25,7 +25,7 @@ bind('player_interact_entity', null, array(clicked: 'ITEM_FRAME', hand: 'main_ha
 	@highlight = array(r: 24, g: 204, b: 147, a: 255);
 
 	// define game state
-	@pos = array(integer(@width / 2), integer(@width / 2));
+	@pos = array(integer(@width / 2), @width - 2);
 	@applePos = array(rand(@width), rand(@width));
 	@snake = array(
 		dir: 'up', // up, down, left, right
@@ -321,13 +321,26 @@ bind('player_interact_entity', null, array(clicked: 'ITEM_FRAME', hand: 'main_ha
 							x: @applePos[0] * @scale,
 							y: -(@applePos[1] * @scale),
 							z: 0))));
-				// if score is above a certain amount, increase snake speed
-				if(@snake['score'] == 5) {
-					@tickInterval[0] = 2;
+				// if score is above a certain amount, clear tail and increase snake speed
+				if(@snake['score'] % 10 < 1) {
+					@snake['currentTailSegment'] = null;
+					foreach(@i: @segment in @tail) {
+						entity_remove(@segment['entity']);
+						foreach(@position in @segment['positions']) {
+							@x = @position[0];
+							@y = @position[1];
+							@grid[@x][@y] = false;
+						}
+						array_remove(@tail, @i);
+					}
+					@snake['length'] = 1;
+					@snake['maxLength'] = 8;
 					array_push(@notes, 12, 14, 16);
-				} else if(@snake['score'] == 10) {
-					@tickInterval[0] = 1;
-					array_push(@notes, 14, 16, 18, 20);
+					if(@snake['score'] == 10) {
+						@tickInterval[0] = 2;
+					} else if(@snake['score'] == 20) {
+						@tickInterval[0] = 1;
+					}
 				} else {
 					array_push(@notes, 12);
 				}
