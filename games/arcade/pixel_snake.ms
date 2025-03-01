@@ -164,6 +164,7 @@ bind('player_interact_entity', null, array(clicked: 'ITEM_FRAME', hand: 'main_ha
 		}
 
 		if(@notes) {
+			// consume/play next note
 			if(!is_null(@notes[0])) {
 				play_sound(ploc(), array(sound: 'BLOCK_NOTE_BLOCK_BIT', pitch: 2 ** ((@notes[0] - 12) / 12)));
 			}
@@ -174,33 +175,59 @@ bind('player_interact_entity', null, array(clicked: 'ITEM_FRAME', hand: 'main_ha
 		if(!@vehicle || !entity_exists(@head)) {
 			// if vehicle (seat) or snake head entity do not exist, the game should end.
 			if(entity_exists(@seat)) {
-				try(entity_remove(@seat))
-				spawn_entity('TEXT_DISPLAY', 1, entity_loc(@event['id']), closure(@e) {
-					set_display_entity(@e, array(
-						brightness: 15,
-						transformation: array(
-							scale: array(
-								x: 0.7,
-								y: 0.7,
-								z: 0))));
-					set_entity_spec(@e, array(
-						text: color('#151515').color('BOLD').'SNAKE',
-						bgcolor: @color));
-				})[0];
-			} else {
-				spawn_entity('TEXT_DISPLAY', 1, entity_loc(@event['id']), closure(@e) {
-					set_display_entity(@e, array(
-						brightness: 15,
-						transformation: array(
-							scale: array(
-								x: 0.5,
-								y: 0.5,
-								z: 0))));
-					set_entity_spec(@e, array(
-						text: color('#151515').color('BOLD').'GAME OVER',
-						bgcolor: @color));
-				})[0];
+				entity_remove(@seat);
+				if(@seat !== @vehicle) {
+					// new game started before end screen appeared, so skip end screen
+					clear_task();
+					die();
+				}
 			}
+			@endScreen = spawn_entity('TEXT_DISPLAY', 1, entity_loc(@event['id']), closure(@e) {
+				set_display_entity(@e, array(
+					brightness: 15,
+					transformation: array(
+						scale: array(
+							x: 0.4,
+							y: 0.4,
+							z: 0),
+						translation: array(
+							x: 0.0,
+							y: -0.39,
+							z: 0.0))));
+				set_entity_spec(@e, array(
+					text: color('BOLD').'GAME OVER\n\n\n\n',
+					bgcolor: array(r: 0, g: 0, b: 0, a: 0)));
+			})[0];
+			set_timeout(3000, closure(){
+				if(entity_exists(@endScreen)) {
+					@scores = get_value('pixel_snake');
+					@newEntry = array(name: player(), uuid: puuid(), score: @snake['score']);
+					if(!@scores) {
+						@scores = array();
+					}
+					@newHighScore = false;
+					@text = color('bold').'HIGH\nSCORES\n';
+					foreach(@index: @entry in @scores) {
+						if(!@newHighScore && @snake['score'] >= @entry['score']) {
+							array_insert(@scores, @newEntry, @index);
+							@text .= '\n'.to_upper(@newEntry['name'][0..2]).' '.if(@newEntry['score'] < 10, ' ').@newEntry['score'];
+							@newHighScore = true;
+							if(array_size(@scores) > 5) {
+								array_remove(@scores, array_size(@scores) - 1);
+							}
+						}
+						@text .= '\n'.to_upper(@entry['name'][0..2]).' '.if(@entry['score'] < 10, ' ').@entry['score'];
+					}
+					if(array_size(@scores) < 5) {
+						@text .= '\n'.to_upper(@newEntry['name'][0..2]).' '.if(@newEntry['score'] < 10, ' ').@newEntry['score'];
+						@scores[] = @newEntry;
+						store_value('pixel_snake', @scores);
+					} else if(@newHighScore) {
+						store_value('pixel_snake', @scores);
+					}
+					set_entity_spec(@endScreen, array(text: @text));
+				}
+			});
 
 			clear_task();
 			die();
