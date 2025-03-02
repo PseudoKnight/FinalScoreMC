@@ -22,7 +22,8 @@ bind('player_interact_entity', null, array(clicked: 'ITEM_FRAME', hand: 'main_ha
 	@width = 32;
 	@scale = 1 / (@width + 1.9);
 	@color = array(r: 16, g: 137, b: 99, a: 255);
-	@highlight = array(r: 24, g: 204, b: 147, a: 255);
+	@highlightColor = array(r: 24, g: 204, b: 147, a: 255);
+	@transparentColor = array(r: 0, g: 0, b: 0, a: 0);
 
 	// define game state
 	@pos = array(integer(@width / 2), @width - 2);
@@ -120,7 +121,7 @@ bind('player_interact_entity', null, array(clicked: 'ITEM_FRAME', hand: 'main_ha
 		set_entity_spec(@e, array(
 			text: ' ',
 			alignment: 'LEFT',
-			bgcolor: @highlight));
+			bgcolor: @highlightColor));
 	})[0];
 
 	// spawn score entity
@@ -138,7 +139,7 @@ bind('player_interact_entity', null, array(clicked: 'ITEM_FRAME', hand: 'main_ha
 					z: 0.02))));
 		set_entity_spec(@e, array(
 			text: ' 0',
-			bgcolor: array(r: 0, g: 0, b: 0, a: 0)));
+			bgcolor: @transparentColor));
 	})[0];
 
 	// all tail segments are pushed to this array
@@ -196,7 +197,7 @@ bind('player_interact_entity', null, array(clicked: 'ITEM_FRAME', hand: 'main_ha
 							z: 0.0))));
 				set_entity_spec(@e, array(
 					text: color('BOLD').'GAME OVER\n\n\n\n',
-					bgcolor: array(r: 0, g: 0, b: 0, a: 0)));
+					bgcolor: @transparentColor));
 			})[0];
 			@scores = get_value('pixel_snake');
 			@newEntry = array(name: to_upper(player()[0..2]), uuid: puuid(), score: @snake['score']);
@@ -204,7 +205,6 @@ bind('player_interact_entity', null, array(clicked: 'ITEM_FRAME', hand: 'main_ha
 				@scores = array();
 			}
 			@newHighScore = false;
-			@text = color('bold').'HIGH\nSCORES\n';
 			@playersWithHighScores = associative_array();
 			foreach(@index: @entry in @scores) {
 				if(!@newHighScore
@@ -213,24 +213,25 @@ bind('player_interact_entity', null, array(clicked: 'ITEM_FRAME', hand: 'main_ha
 					// insert new high score if higher than existing score at this index
 					// or if score is equal and the player entry here already has a higher score
 					array_insert(@scores, @newEntry, @index);
-					@text .= '\n'.@newEntry['name'].' '.if(@newEntry['score'] < 10, ' ').@newEntry['score'];
 					@newHighScore = true;
 					if(array_size(@scores) > 5) {
 						array_remove(@scores, array_size(@scores) - 1);
 					}
 				}
 				@playersWithHighScores[@entry['uuid']] = true;
-				@text .= '\n'.@entry['name'].' '.if(@entry['score'] < 10, ' ').@entry['score'];
 			}
 			if(!@newHighScore && array_size(@scores) < 5) {
-				@text .= '\n'.@newEntry['name'].' '.if(@newEntry['score'] < 10, ' ').@newEntry['score'];
 				@scores[] = @newEntry;
 				store_value('pixel_snake', @scores);
 			} else if(@newHighScore) {
 				store_value('pixel_snake', @scores);
 			}
-			set_timeout(3000, closure(){
+			set_timeout(2000, closure(){
 				if(entity_exists(@endScreen)) {
+					@text = color('bold').'HIGH\nSCORES\n';
+					foreach(@entry in @scores) {
+						@text .= '\n'.@entry['name'].' '.if(@entry['score'] < 10, ' ').@entry['score'];
+					}
 					set_entity_spec(@endScreen, array(text: @text));
 				}
 			});
