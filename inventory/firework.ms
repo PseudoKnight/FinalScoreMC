@@ -166,49 +166,6 @@ bind('player_interact', null, array('itemname': 'FIREWORK_ROCKET', 'button': 'ri
 	}
 }
 
-bind('projectile_launch', null, array(shootertype: 'PLAYER', type: 'FIREWORK'), @event) {
-	@item = pinv(player(), null);
-	if(!@item || @item['name'] != 'CROSSBOW') {
-		@item = pinv(player(), -106);
-		if(!@item || @item['name'] != 'CROSSBOW') {
-			die();
-		}
-	}
-	if(!@item['meta'] || !@item['meta']['projectiles']) {
-		die();
-	}
-	try {
-		@projectileMeta = @item['meta']['projectiles'][0]['meta'];
-		if(@projectileMeta && @projectileMeta['lore'] && pcooldown('CROSSBOW') == 0) {
-			set_pcooldown('CROSSBOW', 1);
-			@mobs = array();
-			foreach(@line in @projectileMeta['lore']) {
-				@split = split(': ', @line, 1);
-				if(array_size(@split) == 2 && @split[0] == color('gray').'Spawn Type') {
-					@mobs[] = @split[1];
-				}
-			}
-			if(@mobs) {
-				@vehicle = @event['id'];
-				set_timeout(10, closure(){
-					@loc = entity_loc(@event['id']);
-					foreach(@mob in @mobs) {
-						@rider = spawn_entity(@mob, 1, @loc)[0];
-						if(!_is_survival_world(@loc['world'])) {
-							set_mob_effect(@rider, 'WITHER', 4, 999, true, false);
-						}
-						set_entity_rider(@vehicle, @rider);
-						set_mob_effect(@rider, 'RESISTANCE', 4, 10, true, false);
-						@vehicle = @rider;
-					}
-					set_entity_rider(@vehicle, @event['id']);
-				});
-			}
-		}
-
-	} catch(IndexOverflowException @ignore) {}
-}
-
 bind('firework_explode', null, null, @event){
 	if(!entity_exists(@event['id'])) {
 		// rare cases this will happen
