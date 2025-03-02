@@ -349,7 +349,7 @@ proc _waves_start(@waves) {
 								@count = @mob['count'];
 							}
 							do {
-								@loc = @spawns[@spawnGroup][(@waves['duplicate'] * (@i + 1) * @count) % array_size(@spawns[@spawnGroup])];
+								@loc = @spawns[@spawnGroup][(@waves['duplicate'] * (@i + @count)) % array_size(@spawns[@spawnGroup])];
 								if(array_index_exists(@mob, 'custom')) {
 									include('../../../entities/custom.library/'.@mob['custom'].'.ms');
 									@temp = call_proc('_'.@mob['custom'].'_spawn', @loc, array(pauseTicks: 60));
