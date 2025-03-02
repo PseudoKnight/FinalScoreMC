@@ -42,8 +42,8 @@ if(extension_exists('CHDiscord')) {
 						@attachment['description'])));
 			}
 		} else if(@event['channel'] == 'general') {
-			if(reg_match('(?i).*\\bserver\\b.*\\b(down|alive)\\b.*', @event['message'])) {
-				discord_broadcast('general', 'Beep boop. I am still alive!');
+			if(reg_match('(?i).*\\bserver\\b\\W\\w*\\W?\\b(down|alive)\\b.*', @event['message'])) {
+				discord_broadcast(@event['serverid'], 'general', 'Beep boop. I am still alive!');
 			}
 		}
 	}
