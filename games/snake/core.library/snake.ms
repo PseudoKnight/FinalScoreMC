@@ -314,7 +314,6 @@ proc _snake_move(@player, @game) {
 	|| (@powerup && _snake_remove_powerup(@snake['loc'], @game))
 	|| (@game['mode'] == 'capture' && (@block == 'CYAN_GLAZED_TERRACOTTA' || @block == 'RED_GLAZED_TERRACOTTA'))) {
 		@snake['blocks'][] = @snake['loc'][];
-		set_block(@snake['loc'], @snake['head'], false);
 		if(_snake_powerup(@player, @powerup, @game)) {
 			@snake['target'] = null;
 		} else if(@game['mode'] == 'capture') {
@@ -344,7 +343,6 @@ proc _snake_move(@player, @game) {
 				play_sound(@snake['loc'], array('sound': 'ENTITY_ENDER_DRAGON_FLAP', 'pitch': 0, 'volume': 4));
 			}
 		}
-		return(true);
 
 	// Sea lantern, check for adjacent surface to move to
 	} else if(@block == 'SEA_LANTERN') {
@@ -364,21 +362,21 @@ proc _snake_move(@player, @game) {
 		@snake['dir'] = @dir;
 		@snake['last-dir'] = @dir;
 		@snake['blocks'][] = @snake['loc'][];
-		set_block(@snake['loc'], @snake['head'], false);
 		@snake['region'] = sk_regions_at(@snake['loc'])[1];
 		_snake_set_top(@snake);
-		return(true);
 
 	// Laser, move through if snake is also shooting laser
 	} else if(@block == 'RED_STAINED_GLASS' && @snake['laser']) {
 		@snake['blocks'][] = @snake['loc'][];
-		set_block(@snake['loc'], @snake['head'], false);
 		@snake['turned'] = false;
-		return(true);
-	}
 
 	// Hit non-traversable block, dead
-	return(false);
+	} else {
+		return(false);
+	}
+
+	set_block(@snake['loc'], @snake['head'], false);
+	return(true);
 }
 
 proc _snake_turn(@top, @dir) {
