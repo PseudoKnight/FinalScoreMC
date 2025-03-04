@@ -1,21 +1,8 @@
 <!
-	description: A mini game of snake to be displayed on filled map in an item frame using text display entities.;
+	description: A mini game of snake to be displayed on an item frame using text display entities.;
 	suppressWarnings: CodeUpgradeNotices;
 >
-bind('player_interact_entity', null, array(clicked: 'ITEM_FRAME', hand: 'main_hand'), @event) {
-	@spec = entity_spec(@event['id']);
-	if(@spec['visible']) {
-		die();
-	}
-	@item = @spec['item'];
-	if(!@item || @item['name'] !== 'FILLED_MAP') {
-		die();
-	}
-	@meta = @item['meta'];
-	if(!@meta || !@meta['lore'] || @meta['lore'][0] !== 'snake') {
-		die();
-	}
-	
+proc _load_arcade_game(@itemFrameId) {
 	@player = player();
 
 	// game constants
@@ -42,8 +29,8 @@ bind('player_interact_entity', null, array(clicked: 'ITEM_FRAME', hand: 'main_ha
 	}
 
 	// get origin position and rotation based on item frame location
-	@origin = entity_loc(@event['id']);
-	switch(get_hanging_direction(@event['id'])) {
+	@origin = entity_loc(@itemFrameId);
+	switch(get_hanging_direction(@itemFrameId)) {
 		case 'UP':
 		case 'DOWN':
 			@origin['x'] -= 0.45;
@@ -183,7 +170,7 @@ bind('player_interact_entity', null, array(clicked: 'ITEM_FRAME', hand: 'main_ha
 					die();
 				}
 			}
-			@endScreen = spawn_entity('TEXT_DISPLAY', 1, entity_loc(@event['id']), closure(@e) {
+			@endScreen = spawn_entity('TEXT_DISPLAY', 1, entity_loc(@itemFrameId), closure(@e) {
 				set_display_entity(@e, array(
 					brightness: 15,
 					transformation: array(
@@ -507,31 +494,4 @@ bind('player_interact_entity', null, array(clicked: 'ITEM_FRAME', hand: 'main_ha
 			@snake['currentTailSegment'] = null;
 		}
 	});
-}
-
-/*
-	Whenever an item frame containing a snake filled map is broken,
-	the text display entities should be removed.
- */
-bind('entity_damage', array(priority: 'MONITOR'), array(type: 'ITEM_FRAME'), @event) {
-	if(is_cancelled()) {
-		die();
-	}
-	@spec = entity_spec(@event['id']);
-	if(@spec['visible']) {
-		die();
-	}
-	@item = @spec['item'];
-	if(!@item || @item['name'] !== 'FILLED_MAP') {
-		die();
-	}
-	@meta = @item['meta'];
-	if(!@meta || !@meta['lore'] || @meta['lore'][0] !== 'snake') {
-		die();
-	}
-
-	// clear text display entities next to item frame entity
-	foreach(@entity in entities_in_radius(entity_loc(@event['id']), 1, 'TEXT_DISPLAY')) {
-		entity_remove(@entity);
-	}
 }
