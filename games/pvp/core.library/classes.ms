@@ -246,7 +246,8 @@ proc _classes_select(@id, @pvp) {
 						@class = array_rand(@classes, 1, true)[0];
 					} while(array_index_exists(@classes[@class], 'disabled'))
 				} else {
-					@class = array_rand(@classes, 1, true)[0];
+					// all classes were filtered, but a class is needed, so fallback to an unfiltered class list
+					@class = array_rand(@pvp['arena']['classes'], 1, true)[0];
 				}
 				msg(color('green')._to_upper_camel_case(@class).color('r').' has been randomly selected for you.');
 				if(array_index_exists(@classes[@class]['selector']['meta'], 'lore')
