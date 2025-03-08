@@ -178,25 +178,29 @@ proc _load_arcade_game(@itemFrameId) {
 				@scores = array();
 			}
 			@newHighScore = false;
-			@playersWithHighScores = associative_array();
 			foreach(@index: @entry in @scores) {
-				if(!@newHighScore
-				&& (@snake['score'] > @entry['score']
-				|| array_index_exists(@playersWithHighScores, @entry['uuid']) && @snake['score'] >= @entry['score'])) {
-					// insert new high score if higher than existing score at this index
-					// or if score is equal and the player entry here already has a higher score
-					array_insert(@scores, @newEntry, @index);
-					@newHighScore = true;
-					if(array_size(@scores) > 5) {
-						array_remove(@scores, array_size(@scores) - 1);
+				if(!@newHighScore) {
+					if(@snake['score'] > @entry['score']) {
+						// insert new high score if higher than existing score at this index
+						array_insert(@scores, @newEntry, @index);
+						@newHighScore = true;
+					} else if(@entry['uuid'] === puuid() && array_size(@scores) > 4) {
+						break();
+					}
+				} else {
+					if(@entry['uuid'] === puuid()) {
+						// remove previous best for this player
+						array_remove(@scores, @index);
 					}
 				}
-				@playersWithHighScores[@entry['uuid']] = true;
 			}
 			if(!@newHighScore && array_size(@scores) < 5) {
 				@scores[] = @newEntry;
 				store_value('pixel_snake', @scores);
 			} else if(@newHighScore) {
+				if(array_size(@scores) > 5) {
+					array_remove(@scores, array_size(@scores) - 1);
+				}
 				store_value('pixel_snake', @scores);
 			}
 			set_timeout(2000, closure(){
