@@ -3,7 +3,7 @@ proc _add_player(@player, @golf) {
 		return(false);
 	}
 	@golf['players'][@player] = array(
-		hole: @golf['lowestHole'],
+		hole: array_get(@golf['currentHole'], @player, 1),
 		id: 0,
 		slime: 0,
 		color: 0,
@@ -16,9 +16,6 @@ proc _add_player(@player, @golf) {
 	set_pinv(@player, 0, array(name: 'SLIME_BALL'));
 	set_pinv(@player, 1, array(name: @golf['players'][@player]['dyecolor'].'_DYE', meta: array(display: 'Color Changer')));
 	set_pscoreboard(@player, @golf['name']);
-	if(!@golf['test']) {
-		set_pscore('strokes', @player, 0, @golf['name']);
-	}
 	tmsg(@player, colorize(
 		'&a&lSLIMEY&6&lGOLF &a\u2308\u2328 \uFE52\u2328\u2309&r\n'
 		.'&6&l[ How to Play ]&r\n'
@@ -66,4 +63,5 @@ proc _remove_player(@player, @golf) {
 	}
 	_set_pactivity(@player, null);
 	array_remove(@golf['players'], @player);
+	@golf['currentHole'][@player] = @hole;
 }

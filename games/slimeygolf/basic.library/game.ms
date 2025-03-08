@@ -8,7 +8,7 @@ proc _start_game(@course, @world, @test) {
 		world: @world,
 		par: 0,
 		players: associative_array(),
-		lowestHole: 1,
+		currentHole: associative_array(),
 		test: @test,
 		// populated with hole indexes
 	);
@@ -240,7 +240,7 @@ proc _start_game(@course, @world, @test) {
 		foreach(@player in all_players()) {
 			if(!array_index_exists(@golf['players'], @player)) {
 				if(pworld(@player) === @golf['world'] && array_contains(sk_current_regions(@player), @course)) {
-					if(@golf['lowestHole'] == 1 && array_size(@golf['players']) < 4 && _add_player(@player, @golf)) {
+					if(_add_player(@player, @golf)) {
 						@playerCount++;
 					}
 				}
@@ -540,7 +540,6 @@ proc _hole_out(@golf, @player) {
 
 proc _end_hole(@golf, @hole) {
 	set_block(@golf[@hole]['loc'], 'AIR');
-	@golf['lowestHole'] = min(9, @hole + 1);
 	@golf['par'] += @golf[@hole]['par'];
 
 	// Update sidebar and score output for players
