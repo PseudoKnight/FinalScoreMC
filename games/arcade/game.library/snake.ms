@@ -31,11 +31,6 @@ proc _load_arcade_game(@itemFrameId) {
 	// get origin position and rotation based on item frame location
 	@origin = entity_loc(@itemFrameId);
 	switch(get_hanging_direction(@itemFrameId)) {
-		case 'UP':
-		case 'DOWN':
-			@origin['x'] -= 0.45;
-			@origin['z'] -= 0.45;
-			@origin['yaw'] = round(ploc()['yaw'] / 90) * 90;
 		case 'NORTH':
 			@origin['y'] += 0.445;
 			@origin['x'] += 0.46;
@@ -52,6 +47,8 @@ proc _load_arcade_game(@itemFrameId) {
 			@origin['y'] += 0.445;
 			@origin['z'] -= 0.46;
 			@origin['yaw'] = 90;
+		default:
+			return();
 	}
 
 	// clear previous text display entities
@@ -60,18 +57,7 @@ proc _load_arcade_game(@itemFrameId) {
 	}
 
 	// spawn chair entity
-	@seatLoc = location_shift(ploc(), 'up', 1.6)
-	@seatLoc['yaw'] += 90;
-	@seatLoc['pitch'] = 0;
-	@seat = spawn_entity('ITEM_DISPLAY', 1, @seatLoc, closure(@e){
-		set_entity_spec(@e, array(item: array(name: 'OAK_STAIRS')));
-		set_entity_saves_on_unload(@e, false);
-		set_display_entity(@e, array(
-			brightness: 15,
-			transformation: array(
-				scale: array(x: 0.5, y: 0.5, z: 0.5))));
-	})[0];
-	set_entity_rider(@seat, puuid());
+	@seat = _spawn_seat();
 
 	// spawn apple entity
 	@apple = spawn_entity('TEXT_DISPLAY', 1, @origin, closure(@e) {
