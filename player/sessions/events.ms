@@ -62,7 +62,7 @@ bind('player_join', null, null, @event) {
 							icon_url: @iconUrl));
 					if(is_null(@lastPlayed)) {
 						@embed['footer'] = array(text: 'New player!');
-					} else if(@lastPlayed && time() - @lastPlayed > 1000 * 60 * 60 * 24 * 7) {
+					} else if(@lastPlayed && time() - @lastPlayed > 1000 * 60 * 60 * 24 * 14) {
 						@embed['footer'] = array(text: 'Last played');
 						@embed['timestamp'] = @lastPlayed;
 					}
