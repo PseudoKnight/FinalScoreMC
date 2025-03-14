@@ -56,7 +56,9 @@ bind('entity_damage', array(priority: 'MONITOR'), array(type: 'ITEM_FRAME'), @ev
 	if(array_contains(@arcadeGames, @game)) {
 		// clear text display entities next to item frame entity
 		foreach(@entity in entities_in_radius(entity_loc(@event['id']), 1, 'TEXT_DISPLAY')) {
-			entity_remove(@entity);
+			if(has_scoreboard_tag(@entity, 'arcade')) {
+				entity_remove(@entity);
+			}
 		}
 	}
 }

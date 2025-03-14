@@ -53,7 +53,9 @@ proc _load_arcade_game(@itemFrameId) {
 
 	// clear previous text display entities
 	foreach(@entity in entities_in_radius(@origin, 1, 'TEXT_DISPLAY')) {
-		entity_remove(@entity);
+		if(has_scoreboard_tag(@entity, 'arcade')) {
+			entity_remove(@entity);
+		}
 	}
 
 	// spawn chair entity
@@ -61,6 +63,7 @@ proc _load_arcade_game(@itemFrameId) {
 
 	// spawn apple entity
 	@apple = spawn_entity('TEXT_DISPLAY', 1, @origin, closure(@e) {
+		add_scoreboard_tag(@e, 'arcade');
 		set_display_entity(@e, array(
 			brightness: 15,
 			transformation: array(
@@ -80,6 +83,7 @@ proc _load_arcade_game(@itemFrameId) {
 
 	// spawn snake head entity
 	@head = spawn_entity('TEXT_DISPLAY', 1, @origin, closure(@e) {
+		add_scoreboard_tag(@e, 'arcade');
 		set_display_entity(@e, array(
 			brightness: 15,
 			transformation: array(
@@ -99,6 +103,7 @@ proc _load_arcade_game(@itemFrameId) {
 
 	// spawn score entity
 	@score = spawn_entity('TEXT_DISPLAY', 1, @origin, closure(@e) {
+		add_scoreboard_tag(@e, 'arcade');
 		set_display_entity(@e, array(
 			brightness: 15,
 			transformation: array(
@@ -157,6 +162,7 @@ proc _load_arcade_game(@itemFrameId) {
 				}
 			}
 			@endScreen = spawn_entity('TEXT_DISPLAY', 1, entity_loc(@itemFrameId), closure(@e) {
+				add_scoreboard_tag(@e, 'arcade');
 				set_display_entity(@e, array(
 					brightness: 15,
 					transformation: array(
@@ -351,6 +357,7 @@ proc _load_arcade_game(@itemFrameId) {
 		if(!@snake['currentTailSegment']) {
 			// may have turned last tick, so create a new tail segment behind head
 			@snake['currentTailSegment'] = spawn_entity('TEXT_DISPLAY', 1, @origin, closure(@e) {
+				add_scoreboard_tag(@e, 'arcade');
 				set_display_entity(@e, array(
 					brightness: 15,
 					transformation: array(
