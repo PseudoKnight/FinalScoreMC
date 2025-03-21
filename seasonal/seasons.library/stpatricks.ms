@@ -1,5 +1,5 @@
 bind('creature_spawn', null, array(type: 'ZOMBIE', reason: 'NATURAL'), @event) {
-	if(@event['location']['world'] === 'outworld' && !rand(4)) {
+	if(!rand(4)) {
 		@id = @event['id'];
 		set_entity_spec(@id, array(baby: true));
 		add_scoreboard_tag(@id, 'leprechaun');
@@ -60,7 +60,7 @@ bind('target_player', null, array(mobtype: 'ZOMBIE'), @event) {
 	try {
 		if(has_scoreboard_tag(@id, 'leprechaun')) {
 			@loc = entity_loc(@id);
-			if(distance(@loc, ploc()) > 12) {
+			if(@loc['world'] === 'outworld' && distance(@loc, ploc()) > 12) {
 				@meta = get_mob_equipment(@id)['weapon']['meta'];
 				if(@meta['potions']) {
 					set_mob_effect(@id, 'slowness', 4, 1.5, true, false);
@@ -86,7 +86,7 @@ bind('target_player', null, array(mobtype: 'ZOMBIE'), @event) {
 						@loc['pitch'] = -60.0;
 						@v = get_vector(@loc, 0.6);
 						set_entity_velocity(@id, @v);
-						if(distance(entity_loc(@id), ploc()) > 12) {
+						if(@loc['world'] === 'outworld' && distance(entity_loc(@id), ploc()) > 12) {
 							@meta = get_mob_equipment(@id)['weapon']['meta'];
 							if(@meta['potions']) {
 								set_mob_effect(@id, 'slowness', 4, 1.5, true, false);
