@@ -59,102 +59,107 @@ bind('entity_death', null, array(type: 'ZOMBIE'), @event) {
 	}
 }
 
-bind('target_player', null, array(mobtype: 'ZOMBIE'), @event, @day) {
+bind('target_player', null, array(mobtype: 'ZOMBIE'), @event, @day, @passive = array(
+	'ALLAY',
+	'ARMADILLO',
+	'AXOLOTL',
+	'BAT',
+	'BEE',
+	'CAMEL':
+	'CAT',
+	'CHICKEN',
+	'COD',
+	'COW',
+	'DOLPHIN',
+	'DONKEY',
+	'FOX',
+	'FROG',
+	'GLOW_SQUID',
+	'GOAT',
+	'HORSE',
+	'IRON_GOLEM',
+	'LLAMA',
+	'MAGMA_CUBE',
+	'MULE',
+	'MOOSHROOM', // MUSHROOM_COW
+	'OCELOT',
+	'PANDA',
+	'PARROT',
+	'PIG',
+	'POLAR_BEAR',
+	'RABBIT',
+	'SALMON',
+	'SHEEP',
+	'SNIFFER':
+	'SNOW_GOLEM', // SNOWMAN
+	'SQUID',
+	'STRIDER',
+	'TADPOLE',
+	'TRADER_LLAMA',
+	'TROPICAL_FISH',
+	'TURTLE',
+	'VILLAGER',
+	'WANDERING_TRADER',
+	'WOLF',
+	'ZOMBIE_HORSE',
+), @hostile = array(
+	'BOGGED',
+	'BREEZE',
+	'CAVE_SPIDER',
+	'CREAKING',
+	'CREEPER',
+	'DROWNED',
+	'ELDER_GUARDIAN',
+	'ENDERMAN',
+	'ENDERMITE',
+	'EVOKER',
+	'GUARDIAN',
+	'HOGLIN',
+	'HUSK',
+	'PHANTOM',
+	'PIGLIN',
+	'PIGLIN_BRUTE',
+	'PILLAGER',
+	'PUFFERFISH',
+	'RAVAGER',
+	'SHULKER',
+	'SKELETON',
+	'SKELETON_HORSE',
+	'SLIME',
+	'SPIDER',
+	'STRAY',
+	'VEX',
+	'VINDICATOR',
+	'WITCH',
+	'WITHER_SKELETON',
+	'ZOGLIN',
+	'ZOMBIE',
+	'ZOMBIE_VILLAGER',
+	'ZOMBIFIED_PIGLIN',
+	// 'WARDEN', too dangerous
+	// 'ENDER_DRAGON', too destructive and has an advancement
+	// 'GHAST', destructive and has an advancement
+)) {
 	try {
 		@entity = @event['id'];
 		if(has_scoreboard_tag(@entity, 'easter_bunny')) {
-			@mobs = array(
-				'ALLAY',
-				'ARMADILLO',
-				'AXOLOTL',
-				'BAT',
-				'BEE',
-				'BOGGED',
-				'BREEZE',
-				'CAMEL':
-				'CAVE_SPIDER',
-				'CHICKEN',
-				'COW',
-				'CREAKING',
-				'CREEPER',
-				'DONKEY',
-				'ELDER_GUARDIAN',
-				'ENDERMAN',
-				'ENDERMITE',
-				'EVOKER',
-				'FROG',
-				'GLOW_SQUID',
-				'GOAT',
-				'GUARDIAN',
-				'HOGLIN',
-				'HORSE',
-				'IRON_GOLEM',
-				'HUSK',
-				'LLAMA',
-				'MAGMA_CUBE',
-				'MULE',
-				'MOOSHROOM', // MUSHROOM_COW
-				'OCELOT',
-				'PARROT',
-				'PIG',
-				'PIGLIN',
-				'PIGLIN_BRUTE',
-				'POLAR_BEAR',
-				'RABBIT',
-				'SHEEP',
-				'SHULKER',
-				'SKELETON',
-				'SKELETON_HORSE',
-				'SLIME',
-				'SNIFFER':
-				'SNOW_GOLEM', // SNOWMAN
-				'SPIDER',
-				'SQUID',
-				'STRAY',
-				'STRIDER',
-				'TADPOLE',
-				'VEX',
-				'VILLAGER',
-				'VINDICATOR',
-				'WITCH',
-				'WITHER_SKELETON',
-				'WOLF',
-				'ZOGLIN',
-				'ZOMBIE',
-				'ZOMBIE_HORSE',
-				'ZOMBIE_VILLAGER',
-				'ZOMBIFIED_PIGLIN',
-				'PHANTOM',
-				'DOLPHIN',
-				'TURTLE',
-				'DROWNED',
-				'COD',
-				'SALMON',
-				'PUFFERFISH',
-				'TROPICAL_FISH',
-				'CAT',
-				'PILLAGER',
-				'FOX',
-				'PANDA',
-				'RAVAGER',
-				'TRADER_LLAMA',
-				'WANDERING_TRADER',
-				// 'WARDEN', too dangerous
-				// 'ENDER_DRAGON', too destructive and has an advancement
-				// 'GHAST', destructive and has an advancement
-			);
-
 			@throwEgg = closure(@hand) {
 				if(entity_exists(@entity)
 				&& get_entity_health(@entity) > 0
 				&& ponline(@event['player'])
 				&& phealth(@event['player']) > 10
 				&& entity_can_see(@entity, puuid(@event['player']))) {
-					@mob = array_get_rand(@mobs);
-					@equipment = associative_array();
-					@item = array(name: @mob.'_SPAWN_EGG');
-					@equipment[@hand] = @item;
-					set_mob_equipment(@entity, @equipment);
+					@equipment = get_mob_equipment(@entity);
+					@item = @equipment[@hand];
+					@mob = null;
+					if(!@item) {
+						@mob = array_get_rand(if(@hand === 'weapon', @passive, @hostile));
+						@item = array(name: @mob.'_SPAWN_EGG');
+						@equipment[@hand] = @item;
+						set_mob_equipment(@entity, @equipment);
+					} else {
+						@mob = replace(@item['name'], '_SPAWN_EGG', '');
+					}
 					@egg = shoot_projectile(@entity, 'EGG', @event['player'], rand() + 1);
 					set_projectile_item(@egg, @item);
 					if(@day == 1 || @day == 2 || @day == 31) {
@@ -169,9 +174,9 @@ bind('target_player', null, array(mobtype: 'ZOMBIE'), @event, @day) {
 			}
 
 			set_timeout(500, closure() {
-				@throwEgg('WEAPON');
+				@throwEgg('weapon');
 				set_timeout((2 + rand(4)) * 1000, closure() {
-					@throwEgg('OFF_HAND');
+					@throwEgg('off_hand');
 				});
 			});
 		}
