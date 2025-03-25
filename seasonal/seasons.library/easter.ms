@@ -152,7 +152,7 @@ bind('target_player', null, array(mobtype: 'ZOMBIE'), @event, @day, @passive = a
 					@equipment = get_mob_equipment(@entity);
 					@item = @equipment[@hand];
 					@mob = null;
-					if(!@item) {
+					if(!@item || @hand === 'off_hand') {
 						@mob = array_get_rand(if(@hand === 'weapon', @passive, @hostile));
 						@item = array(name: @mob.'_SPAWN_EGG');
 						@equipment[@hand] = @item;
