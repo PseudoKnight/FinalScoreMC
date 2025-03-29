@@ -223,3 +223,11 @@ bind('creature_spawn', null, array(type: 'CHICKEN', reason: 'EGG'), @event) {
 		cancel();
 	}
 }
+
+bind('player_death', array(priority: 'HIGHEST'), null, @event) {
+	if(@event['cause']['cause'] === 'ENTITY_ATTACK'
+	&& length(@event['cause']['damager']) > 17
+	&& has_scoreboard_tag(@event['cause']['damager'], 'easter_bunny')) {
+		modify_event('death_message', @event['player'].' was hugged by the Easter Bunny');
+	}
+}
