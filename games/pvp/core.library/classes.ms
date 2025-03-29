@@ -187,7 +187,10 @@ proc _classes_select(@id, @pvp) {
 
 	if(@size1 > 2 || @size2 > 2) {
 		@pvp['binds'][] = @id.'classselector';
-		bind('inventory_click', array(id: @id.'classselector', priority: 'HIGH'), array(virtual: true), @e, @id) {
+		@classes = array_filter(@pvp['arena']['classes'], closure(@key, @value){
+			return(!array_index_exists(@value, 'disabled'));
+		});
+		bind('inventory_click', array(id: @id.'classselector', priority: 'HIGH'), array(virtual: true), @e, @id, @classes) {
 			@pvp = import('pvp'.@id);
 			if(!array_index_exists(@pvp['players'], player())
 			|| is_null(@e['slotitem'])
@@ -196,7 +199,6 @@ proc _classes_select(@id, @pvp) {
 				die();
 			}
 			@class = to_lower(strip_colors(@e['slotitem']['meta']['display']));
-			@classes = @pvp['arena']['classes'];
 			if(!array_index_exists(@classes, @class) && @class !== 'random') {
 				die();
 			}
@@ -237,17 +239,14 @@ proc _classes_select(@id, @pvp) {
 			if(@class === 'random') {
 				if(array_index_exists(@pvp['players'][player()], 'team')) {
 					@classes = array_filter(@classes, closure(@key, @value){
-						return(!array_index_exists(@value, 'disabled')
-						&& (!array_index_exists(@value, 'team') || @value['team'] == @pvp['players'][player()]['team']));
+						return(!array_index_exists(@value, 'team') || @value['team'] == @pvp['players'][player()]['team']);
 					});
 				}
 				if(@classes) {
-					do {
-						@class = array_rand(@classes, 1, true)[0];
-					} while(array_index_exists(@classes[@class], 'disabled'))
+					@class = array_rand(@classes, 1, true)[0];
 				} else {
-					// all classes were filtered, but a class is needed, so fallback to an unfiltered class list
-					@class = array_rand(@pvp['arena']['classes'], 1, true)[0];
+					console('ERROR: All classes filtered.');
+					die();
 				}
 				msg(color('green')._to_upper_camel_case(@class).color('r').' has been randomly selected for you.');
 				if(array_index_exists(@classes[@class]['selector']['meta'], 'lore')
