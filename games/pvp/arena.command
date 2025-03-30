@@ -16,7 +16,7 @@ register_command('arena', array(
 					'ctfflag', 'respawn', 'spawn', 'blockbreak', 'ff', 'arenaselect', 'sharedarenas', 'mode',
 					'mobprotect', 'team', 'kit', 'restore', 'itemspawn', 'chestgroup', 'chestspawn', 'rsoutput',
 					'rsoutputscore', 'effect', 'denydrop', 'mobspawn', 'weapons', 'options', 'hidden', 'nodoors',
-					'owner'),
+					'owner', 'vote'),
 			'<<add': array('description', 'arenaselect', 'weapons', 'options', 'deathdrops', 'denydrop', 'rsoutput'),
 			'<<load': array('kit', 'chestspawn', 'spawn', 'itemspawn'),
 			'<<tp': array('lobby', 'podium', 'kothbeacon', 'bombloc', 'region')),
@@ -34,6 +34,7 @@ register_command('arena', array(
 			'<weapons': array('endernades', 'fireball', 'firebreath', 'firefire', 'flamethrower', 'grapple',
 				'halo/battlerifle', 'knockout', 'mine', 'pistoltears', 'primedtnt', 'railgun', 'rifle', 'shotgunballs',
 				'skullrockets', 'snipeglass', 'spawner', 'stickynade', 'tracker', 'dynamitestick'),
+			'<vote': array('arenas', 'teams', 'classes'),
 		),
 		array(
 			'<<nametags': array('ALWAYS', 'FOR_OTHER_TEAMS', 'FOR_OWN_TEAM', 'NEVER'),
@@ -617,6 +618,39 @@ register_command('arena', array(
 						}
 						@arena['options'][@args[3]] = split(',', @args[4]);
 						msg(color('green').'Added '.@args[3].' option with values: '.@args[4]);
+
+					case 'vote':
+						if(array_size(@args) < 4) {
+							die(color('gold').'Requires an option name.');
+						}
+						@options = array(
+							arenas: array('random', 'any'),
+							teams: array('solo', 'balanced', 'random'),
+							classes: array('random', 'any'));
+						@option = @args[3];
+						if(!array_index_exists(@options, @option)) {
+							die(color('gold').'Not an option. '.array_keys(@options));
+						}
+						if(array_size(@args) < 5) {
+							if(array_index_exists(@arena, 'vote', @option)) {
+								@values = array_remove(@arena['vote'], @option);
+								msg(color('green').'Removed vote option with values: '.@values);
+								if(!@arena['vote']) {
+									array_remove(@arena, 'vote');
+								}
+							} else {
+								die(color('gold').'Vote option does not exist for arena: '.@option);
+							}
+						} else {
+							@choices = split(',', @args[4]);
+							foreach(@choice in @choices) {
+								if(!array_contains(@options[@option], @choice)) {
+									die(color('gold').'Not a choice: '.@choice.'. Must be one of '.@options[@option]);
+								}
+							}
+							@arena['vote'][@option] = @choices;
+							msg(color('green').'Added vote option with values: '.@choices);
+						}
 
 					default:
 						return(false);

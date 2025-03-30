@@ -17,29 +17,33 @@ proc _arena_load(@pvp) {
 
 	// Select Arena by Votes
 	@childid = '';
-	if(array_index_exists(@pvp['arena'], 'arenaselect') && @pvp['arena']['arenaselect']['type'] == 'vote') {
+	if(array_index_exists(@pvp['arena'], 'vote', 'arenas')) {
+		@values = @pvp['arena']['arenaselect']['arenas'];
 		@voted = array_filter(@pvp['players'], closure(@key, @value){
-			return(array_index_exists(@value, 'arena'));
+			return(array_index_exists(@value, 'votes', 'arena')
+					&& array_contains(@values, @value['votes']['arena']));
 		});
 		@picked = array_get(array_rand(@voted), 0, '');
 		if(@picked) {
-			@childid = @pvp['players'][@picked]['arena'];
-			@pvp['arenapicked'] = @picked;
+			@childid = @pvp['players'][@picked]['votes']['arena'];
+			@pvp['arenaPicked'] = @picked;
 
 			// Store total votes
-			if(array_size(@pvp['players']) > 1) { // don not store if testing with one player
-				if(!array_index_exists(@pvp['arena'], 'arenavotes')) {
-					@pvp['arena']['arenavotes'] = associative_array();
-				}
-				foreach(@vote in @voted) {
-					@arenaID = @vote['arena'];
-					if(!array_index_exists(@pvp['arena']['arenavotes'], @arenaID)) {
-						@pvp['arena']['arenavotes'][@arenaID] = 1;
-					} else {
-						@pvp['arena']['arenavotes'][@arenaID]++;
+			if(array_size(@pvp['players']) > 1) { // do not store if testing with one player
+				set_timeout(50, closure(){
+					if(!array_index_exists(@pvp['arena'], 'arenavotes')) {
+						@pvp['arena']['arenavotes'] = associative_array();
 					}
-				}
-				store_value('arena', @id, @pvp['arena']);
+					foreach(@vote in @voted) {
+						@arenaID = @vote['arena'];
+						if(!array_index_exists(@pvp['arena']['arenavotes'], @arenaID)) {
+							@pvp['arena']['arenavotes'][@arenaID] = 1;
+						} else {
+							@pvp['arena']['arenavotes'][@arenaID]++;
+						}
+					}
+					store_value('arena', @id, @pvp['arena']);
+				});
 			}
 		}
 	}
@@ -70,7 +74,7 @@ proc _arena_load(@pvp) {
 			@pvp['arenascripts'][] = @id;
 		}
 	} else if(array_index_exists(@pvp['arena'], 'arenaselect')) {
-		if(!@childid) {
+		if(!@childid || @childid === 'random') {
 			@childid = array_get_rand(@pvp['arena']['arenaselect']['arenas']);
 		}
 		@child = get_value('arena', @childid);
@@ -119,26 +123,41 @@ proc _arena_load(@pvp) {
 		if(array_size(@arena['classes']) > 1){
 			@arena['delay'] = 45;
 		}
-		if(!array_index_exists(@arena, 'class_picking'), @arena['class_picking'] = 'player');
+		@values = array('random', 'any');
+		@voted = array_filter(@pvp['players'], closure(@key, @value){
+			return(array_index_exists(@value, 'votes', 'classes')
+					&& array_contains(@values, @value['votes']['classes']));
+		});
+		@classPickedBy = array_get(array_rand(@voted), 0, null);
+		if(@classPickedBy) {
+			@pvp['classesPickedBy'] = @classPickedBy;
+			@pvp['classPicking'] = @pvp['players'][@classPickedBy]['votes']['classes'];
+		} else if(!array_index_exists(@arena, 'class_picking')) {
+			@pvp['classPicking'] = 'any';
+		} else {
+			@pvp['classPicking'] = @arena['class_picking'];
+		}
 	}
 
 	# Dynamically determine if it should be a team game
 	if(@arena['mode'] === 'ddm' || @arena['mode'] === 'koth') {
-		@moderesult = '';
+		@teamsMode = null;
 		if(@arena['mode'] == 'ddm') {
+			@values = array('balanced', 'random', 'solo');
 			@arena['mode'] = 'dm';
 			@voted = array_filter(@pvp['players'], closure(@key, @value){
-				return(array_index_exists(@value, 'mode'));
+				return(array_index_exists(@value, 'votes', 'teams')
+						&& array_contains(@values, @value['votes']['teams']));
 			});
-			@modepicked = array_get(array_rand(@voted), 0, '');
-			if(@modepicked) {
-				@moderesult = @pvp['players'][@modepicked]['mode'];
-				@pvp['modepicked'] = @modepicked;
-				@pvp['moderesult'] = @moderesult;
+			@teamsPickedBy = array_get(array_rand(@voted), 0, null);
+			if(@teamsPickedBy) {
+				@teamsMode = @pvp['players'][@teamsPickedBy]['votes']['teams'];
+				@pvp['teamsPickedBy'] = @teamsPickedBy;
+				@pvp['teamsMode'] = @teamsMode;
 			}
 		}
 		@size = array_size(@pvp['players']);
-		if(@moderesult == 'teams' || @moderesult != 'solo' && @size > 3 && @size % 2 == 0) {
+		if(@teamsMode === 'balanced' || @teamsMode === 'random' || !@teamsMode && @size > 3 && @size % 2 == 0) {
 			if(!array_index_exists(@arena, 'team')) {
 				@arena['team'] = array(
 					array(name: 'Red', color: 'RED'),

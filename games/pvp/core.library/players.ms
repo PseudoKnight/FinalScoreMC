@@ -44,6 +44,9 @@ proc _player_join(@id) {
 	@title = _to_upper_camel_case(if(array_index_exists(@arena, 'parent'), @arena['parent'].': ').@id);
 	@playerCount = array_size(@pvp['players']);
 	@msg = array('&7[PVP] ', array('&b[JOIN] ', '/pvp join '.@id));
+	if(array_index_exists(@arena, 'vote')) {
+		@msg[] = array('&e[VOTE] ', '/pvp vote '.@id);
+	}
 	if(@playerCount >= array_get(@arena, 'min', 2)) {
 		@msg[] = array('&a[START] ', '/pvp start '.@id);
 	}
@@ -70,45 +73,6 @@ proc _player_join(@id) {
 			_create_options_menu(@id, @arena);
 		}
 		popen_inventory(@id.'options');
-
-	} else if(@pvp['running'] == 0 && array_index_exists(@arena, 'arenaselect') && @arena['arenaselect']['type'] == 'vote') {
-		// Display book with vote links
-		@votes = array();
-		foreach(@p in @pvp['players']) {
-			if(array_index_exists(@p, 'arena')) {
-				@votes[] = @p['arena'];
-			}
-		}
-		@pages = array();
-		@line = 1;
-		@page = 0;
-		foreach(@index: @arena in @arena['arenaselect']['arenas']) {
-			if(@line == 1) {
-				@pages[@page] = '["",{"color":"red","bold":true,"text":"Vote for an Arena:"}';
-				@line++;
-			}
-			@color = 'black';
-			if(array_contains(@votes, @arena)) {
-				@color = 'dark_green';
-			}
-			@pages[@page] .= ',{"color":"'.@color.'","text":"\\n \u27a2 '.to_upper(@arena[0]).substr(@arena, 1)
-					.'","clickEvent":{"action":"run_command","value":"/pvp vote '.@id.' arena '.@arena.'"}}';
-			@line++;
-			if(@line == 15) {
-				@line = 1;
-				@pages[@page] .= ']';
-				@page++;
-			}
-		}
-		if(array_index_exists(@pages, @page) && !string_ends_with(@pages[@page], ']')) {
-			@pages[@page] .= ']';
-			@page++;
-		}
-		@pages[@page] = '["",{"color":"red","bold":true,"text":"Vote for Teams:"}'
-				.',{"text":"\\n \u27a2 Solo","clickEvent":{"action":"run_command","value":"/pvp vote '.@id.' mode solo"}}'
-				.',{"text":"\\n \u27a2 Teams","clickEvent":{"action":"run_command","value":"/pvp vote '.@id.' mode teams"}}'
-				.']';
-		open_book(@pages);
 
 	} else if(@pvp['running'] == 1) {
 		if(array_index_exists(@pvp['arena'], 'classes')) {

@@ -45,12 +45,19 @@ register_command('pvp', array(
 					die(color('yellow').'You have not joined.');
 				}
 				if(array_size(@args) < 4) {
-					die(color('gold').'You need to specify a vote type and value.');
+					_open_vote_menu(@id);
+					return(true);
 				}
 				@type = @args[2];
 				@vote = @args[3];
-				@pvp['players'][player()][@type] = @vote;
+				if(!array_index_exists(@pvp['players'][player()], 'votes')) {
+					@pvp['players'][player()]['votes'] = associative_array();
+				}
+				@pvp['players'][player()]['votes'][@type] = @vote;
 				msg(color('green').'You voted for '._to_upper_camel_case(@vote).'.');
+				play_sound(ploc(), array(sound: 'ENTITY_VILLAGER_WORK_CARTOGRAPHER'));
+				array_remove(@pvp, 'voteMenu'); // regenerate vote menu
+				_open_vote_menu(@id);
 
 			case 'spectate':
 				if(_is_survival_world(pworld())) {

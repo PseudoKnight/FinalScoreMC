@@ -190,6 +190,14 @@ proc _pvp_start(@pvp){
 				_player_assign_team(@player, @pvp);
 				array_remove(@players, @index);
 			}
+		} else if(array_index_exists(@pvp, 'teamsMode') && @pvp['teamsMode'] === 'random') {
+			console('Randomizing teams');
+			@team = 1;
+			foreach(@player in array_rand(@players, array_size(@players), false)) {
+				@team = if(@team, 0, 1);
+				@pvp['players'][@player]['team'] = @team;
+				@pvp['team'][@team]['players'][] = @player;
+			}
 		} else {
 			// Even team ratios, so sort players based on win/loss or kill/death ratios
 			// Use different sorting methods for slight variations in teams
@@ -290,18 +298,27 @@ proc _pvp_start(@pvp){
 	if(array_index_exists(@arena, 'lives')) {
 		_pvp_msg(@pvp, colorize('* &e&lLIVES: '.@arena['lives']));
 	}
-	if(array_index_exists(@arena, 'class_picking') && @arena['class_picking'] === 'random') {
-		_pvp_msg(@pvp, colorize('* &e&lALL RANDOM CLASSES'));
+	if(array_index_exists(@pvp, 'classPicking')) {
+		if(@pvp['classPicking'] === 'random') {
+			_pvp_msg(@pvp, colorize('* &e&lRandom Classes'.if(array_index_exists(@pvp, 'classesPickedBy'), ' picked by '.@pvp['classesPickedBy'])));
+		} else if(array_index_exists(@pvp, 'classesPickedBy')) {
+			_pvp_msg(@pvp, colorize('* &e&lAny Classes picked by '.@pvp['classesPickedBy']));
+		}
 	}
 	if(array_index_exists(@arena, 'class_picks') &&
 	(!array_index_exists(@arena, 'lives') || @arena['class_picks'] < @arena['lives'])) {
 		_pvp_msg(@pvp, colorize('* &e&lCLASS PICKS: '.@arena['class_picks']));
 	}
-	if(array_index_exists(@pvp, 'arenapicked')) {
-		_pvp_msg(@pvp, colorize('* &e&lArena picked by '.@pvp['arenapicked']));
+	if(array_index_exists(@pvp, 'arenaPicked')) {
+		@picked = @pvp['arenaPicked'];
+		if(@pvp['players'][@picked]['votes']['arena'] === 'random') {
+			_pvp_msg(@pvp, colorize('* &e&lArena randomly picked by '.@pvp['arenaPicked']));
+		} else {
+			_pvp_msg(@pvp, colorize('* &e&lArena picked by '.@pvp['arenaPicked']));
+		}
 	}
-	if(array_index_exists(@pvp, 'moderesult')) {
-		_pvp_msg(@pvp, colorize('* &e&l'.to_upper(@pvp['moderesult']).' picked by '.@pvp['modepicked']));
+	if(array_index_exists(@pvp, 'teamsMode')) {
+		_pvp_msg(@pvp, colorize('* &e&l'.to_upper(@pvp['teamsMode']).' teams picked by '.@pvp['teamsPickedBy']));
 	}
 	broadcast(colorize('&7&m|----------------------------------------------------|'), all_players(@world));
 

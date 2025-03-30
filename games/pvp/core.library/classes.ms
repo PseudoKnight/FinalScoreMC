@@ -117,7 +117,7 @@ proc _classes_select_random(@player, @pvp) {
 }
 
 proc _classes_select(@id, @pvp) {
-	if(@pvp['arena']['class_picking'] === 'random'
+	if(@pvp['classPicking'] === 'random'
 	|| (array_index_exists(@pvp['arena'], 'class_picks')
 	&& @pvp['arena']['class_picks'] == 0)) {
 		return();
