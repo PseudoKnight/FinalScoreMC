@@ -169,13 +169,9 @@ proc _load_arcade_game(@itemFrameId) {
 						scale: array(
 							x: 0.4,
 							y: 0.4,
-							z: 0),
-						translation: array(
-							x: 0.0,
-							y: -0.39,
-							z: 0.0))));
+							z: 0))));
 				set_entity_spec(@e, array(
-					text: color('BOLD').'GAME OVER\n\n\n\n',
+					text: color('BOLD').'GAME OVER\n\n\n',
 					bgcolor: @transparentColor));
 			})[0];
 			@scores = get_value('pixel_snake');
@@ -188,34 +184,75 @@ proc _load_arcade_game(@itemFrameId) {
 				if(!@newHighScore) {
 					if(@snake['score'] > @entry['score']) {
 						// insert new high score if higher than existing score at this index
-						array_insert(@scores, @newEntry, @index);
 						@newHighScore = true;
+						if(@entry['uuid'] === puuid()) {
+							@scores[@index] = @newEntry;
+							break();
+						} else {
+							array_insert(@scores, @newEntry, @index);
+						}
 					} else if(@entry['uuid'] === puuid() && array_size(@scores) > 4) {
 						break();
 					}
-				} else {
-					if(@entry['uuid'] === puuid()) {
-						// remove previous best for this player
-						array_remove(@scores, @index);
-					}
+				} else if(@entry['uuid'] === puuid()) {
+					// remove previous best for this player
+					array_remove(@scores, @index);
+					break();
 				}
 			}
-			if(!@newHighScore && array_size(@scores) < 5) {
+			if(!@newHighScore && array_size(@scores) < 10) {
 				@scores[] = @newEntry;
 				store_value('pixel_snake', @scores);
 			} else if(@newHighScore) {
-				if(array_size(@scores) > 5) {
+				if(array_size(@scores) > 10) {
 					array_remove(@scores, array_size(@scores) - 1);
 				}
 				store_value('pixel_snake', @scores);
 			}
 			set_timeout(2000, closure(){
 				if(entity_exists(@endScreen)) {
-					@text = color('bold').'HIGH\nSCORES\n';
-					foreach(@entry in @scores) {
+					set_entity_spec(@endScreen, array(text: color('bold').'HIGH\nSCORES\n\n'));
+					@scoreDisplay = spawn_entity('TEXT_DISPLAY', 1, entity_loc(@itemFrameId), closure(@e) {
+						add_scoreboard_tag(@e, 'arcade');
+						set_display_entity(@e, array(
+							brightness: 15,
+							transformation: array(
+								scale: array(
+									x: 0.35,
+									y: 0.35,
+									z: 0),
+								translation: array(
+									x: -0.2,
+									y: -0.35,
+									z: 0.0))));
+						set_entity_spec(@e, array(
+							bgcolor: @transparentColor));
+					})[0];
+					@text = '';
+					foreach(@index: @entry in @scores) {
+						if(@index == 5) {
+							set_entity_spec(@scoreDisplay, array(text: @text));
+							@scoreDisplay = spawn_entity('TEXT_DISPLAY', 1, entity_loc(@itemFrameId), closure(@e) {
+								add_scoreboard_tag(@e, 'arcade');
+								set_display_entity(@e, array(
+									brightness: 15,
+									transformation: array(
+										scale: array(
+											x: 0.35,
+											y: 0.35,
+											z: 0),
+										translation: array(
+											x: 0.2,
+											y: -0.35,
+											z: 0.0))));
+								set_entity_spec(@e, array(
+									bgcolor: @transparentColor));
+							})[0];
+							@text = '';
+						}
 						@text .= '\n'.@entry['name'].' '.if(@entry['score'] < 10, ' ').@entry['score'];
 					}
-					set_entity_spec(@endScreen, array(text: @text));
+					set_entity_spec(@scoreDisplay, array(text: @text));
 				}
 			});
 
