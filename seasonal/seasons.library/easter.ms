@@ -123,6 +123,7 @@ bind('target_player', null, array(mobtype: 'ZOMBIE'), @event, @day, @passive = a
 	'PUFFERFISH',
 	'RAVAGER',
 	'SHULKER',
+	'SILVERFISH',
 	'SKELETON',
 	'SKELETON_HORSE',
 	'SLIME',
@@ -136,6 +137,7 @@ bind('target_player', null, array(mobtype: 'ZOMBIE'), @event, @day, @passive = a
 	'ZOMBIE',
 	'ZOMBIE_VILLAGER',
 	'ZOMBIFIED_PIGLIN',
+	// 'BLAZE', destructive
 	// 'WARDEN', too dangerous
 	// 'ENDER_DRAGON', too destructive and has an advancement
 	// 'GHAST', destructive and has an advancement
