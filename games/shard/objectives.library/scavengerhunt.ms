@@ -1082,6 +1082,7 @@ proc _objective_load(@binds, @rules) {
 	@width = if(@size, @size, 9);
 	@height = if(@size, @size, 6);
 	@selectedItems = array_rand(@commonItems, @width * @height - 3, false);
+	@multiple = array_get_rand(@selectedItems);
 
 	// less common items
 	array_insert(@selectedItems, array_get_rand(@uncommonItems), rand(@width * @height - 2));
@@ -1092,16 +1093,18 @@ proc _objective_load(@binds, @rules) {
 	@letter = @letters[@index];
 	@letter['players'] = array();
 	@letter['material'] = @letter['name'];
+	@letter['qty'] = 1;
 	@letter['meta']['display'] = 'Starts with letter '.@index;
 	array_insert(@selectedItems, @letter, rand(@width * @height));
 
 	for(@i = 0, @i < @height, @i++) {
 		@card[@i] = array();
 		for(@j = 0, @j < @width, @j++) {
-			if(is_array(@selectedItems[@i * @height + @j])) {
-				@card[@i][@j] = @selectedItems[@i * @height + @j];
+			@selectedItem = @selectedItems[@i * @height + @j];
+			if(is_array(@selectedItem)) {
+				@card[@i][@j] = @selectedItem;
 			} else {
-				@card[@i][@j] = array(players: array(), material: @selectedItems[@i * @height + @j]);
+				@card[@i][@j] = array(players: array(), material: @selectedItem, qty: if(@selectedItem === @multiple, rand(1, 65), 1));
 			}
 		}
 	}
@@ -1167,13 +1170,13 @@ proc _objective_load(@binds, @rules) {
 						if(array_contains(@item['players'], @p)) {
 							@itemStack = array(name: 'RED_STAINED_GLASS_PANE');
 						} else if(array_size(@item['players'])) {
-							@itemStack = array(name: @item['material'], meta: array(enchants:
+							@itemStack = array(name: @item['material'], qty: @item['qty'], meta: array(enchants:
 									array(sharpness: 1), flags: array('HIDE_ENCHANTS', 'HIDE_POTION_EFFECTS')));
 							if(array_index_exists(@item, 'meta')) {
 								@itemStack['meta'] = array_merge(@itemStack['meta'], @item['meta']);
 							}
 						} else {
-							@itemStack = array(name: @item['material'], meta: array(lore:
+							@itemStack = array(name: @item['material'], qty: @item['qty'], meta: array(lore:
 									array('Click to re-roll this item.'), flags: array('HIDE_ENCHANTS', 'HIDE_POTION_EFFECTS')));
 							if(array_index_exists(@item, 'meta')) {
 								@itemStack['meta'] = array_merge(@itemStack['meta'], @item['meta']);
@@ -1246,7 +1249,7 @@ proc _objective_load(@binds, @rules) {
 								meta: array(display: @firstPlayer), flags: array('HIDE_ENCHANTS', 'HIDE_POTION_EFFECTS'));
 						@item['material'] = 'WHITE_STAINED_GLASS_PANE';
 					} else {
-						@itemStack = array(name: @item['material'], meta: array(lore:
+						@itemStack = array(name: @item['material'], qty: @item['qty'], meta: array(lore:
 								array('Click to re-roll this item.'), flags: array('HIDE_ENCHANTS', 'HIDE_POTION_EFFECTS')));
 						if(array_index_exists(@item, 'meta')) {
 							@itemStack['meta'] = array_merge(@itemStack['meta'], @item['meta']);
@@ -1425,7 +1428,7 @@ proc _objective_load(@binds, @rules) {
 						@item = @card[@i][@j];
 						if(@item['material'] == @material && !@item['players']) {
 							@newmaterial = array_get_rand(@commonItems);
-							@card[@i][@j] = array(players: array(), material: @newmaterial);
+							@card[@i][@j] = array(players: array(), material: @newmaterial, qty: @item['qty']);
 							set_pscore('reroll', player(), 1, 'shard');
 							_refresh_card();
 							broadcast(player().' re-rolled '.@material.' and got '.@newmaterial.'.', all_players('shard'));
@@ -1450,13 +1453,28 @@ proc _objective_load(@binds, @rules) {
 						continue();
 					}
 					if(@item['material'] == @thisMaterial) {
-						@item['players'][] = player();
-						set_pscore('total', player(), get_pscore('total', player(), 'shard') + 1, 'shard');
-						launch_firework(ploc());
-						broadcast(player().' found '.color('green').'['.@event['slotitem']['name'].']', all_players('shard'));
-						_refresh_card();
-						_check_card(player(), @i, @j);
-						break(2);
+						@resultQty = @event['slotitem']['qty'];
+						if(@event['shiftclick']) {
+							@minIngredientQty = 64;
+							for(@slot = 1, @slot < array_size(@event['inventory']), @slot++) {
+								@ingredientItem = @event['inventory'][@slot];
+								if(@ingredientItem) {
+									if(@ingredientItem['qty'] < @minIngredientQty) {
+										@minIngredientQty = @ingredientItem['qty'];
+									}
+								}
+							}
+							@resultQty *= @minIngredientQty;
+						}
+						if(@item['qty'] < 2 || phas_item(array(name: @item['material'])) + @resultQty >= @item['qty']) {
+							@item['players'][] = player();
+							set_pscore('total', player(), get_pscore('total', player(), 'shard') + 1, 'shard');
+							launch_firework(ploc());
+							broadcast(player().' found '.color('green').'['.@thisMaterial.']', all_players('shard'));
+							_refresh_card();
+							_check_card(player(), @i, @j);
+							break(2);
+						}
 					} else if(string_ends_with(@item['material'], '_BANNER')
 					&& array_index_exists(@item, 'meta')
 					&& @item['meta']['patterns']) {
@@ -1470,7 +1488,7 @@ proc _objective_load(@binds, @rules) {
 					@item['players'][] = player();
 					set_pscore('total', player(), get_pscore('total', player(), 'shard') + 1, 'shard');
 					launch_firework(ploc());
-					broadcast(player().' found '.color('green').'['.@event['slotitem']['name'].']'
+					broadcast(player().' found '.color('green').'['.@thisMaterial.']'
 							.color('white').' for '.@item['meta']['display'], all_players('shard'));
 					_refresh_card();
 					_check_card(player(), @bannerSlot[0], @bannerSlot[1]);
@@ -1489,6 +1507,7 @@ proc _objective_load(@binds, @rules) {
 				modify_event('item', array(name: 'MAP', meta: array(display: 'Scavenger Hunt Card')));
 				die();
 			}
+			@thisQty = @event['item']['qty'];
 			@bannerSlot = null;
 			for(@i = 0, @i < @height, @i++) {
 				for(@j = 0, @j < @width, @j++) {
@@ -1496,11 +1515,12 @@ proc _objective_load(@binds, @rules) {
 					if(array_contains(@item['players'], player())) {
 						continue();
 					}
-					if(@item['material'] == @thisMaterial) {
+					if(@item['material'] == @thisMaterial 
+					&& (@item['qty'] < 2 || phas_item(array(name: @item['material'])) + @thisQty >= @item['qty'])) {
 						@item['players'][] = player();
 						set_pscore('total', player(), get_pscore('total', player(), 'shard') + 1, 'shard');
 						launch_firework(ploc());
-						broadcast(player().' found '.color('green').'['.@event['item']['name'].']', all_players('shard'));
+						broadcast(player().' found '.color('green').'['.@thisMaterial.']', all_players('shard'));
 						_refresh_card();
 						_check_card(player(), @i, @j);
 						break(2);
@@ -1517,7 +1537,7 @@ proc _objective_load(@binds, @rules) {
 					@item['players'][] = player();
 					set_pscore('total', player(), get_pscore('total', player(), 'shard') + 1, 'shard');
 					launch_firework(ploc());
-					broadcast(player().' found '.color('green').'['.@event['item']['name'].']'
+					broadcast(player().' found '.color('green').'['.@thisMaterial.']'
 							.color('white').' for '.@item['meta']['display'], all_players('shard'));
 					_refresh_card();
 					_check_card(player(), @bannerSlot[0], @bannerSlot[1]);
