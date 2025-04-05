@@ -159,8 +159,10 @@ bind('target_player', null, array(mobtype: 'ZOMBIE'), @event, @day, @passive = a
 						@item = array(name: @mob.'_SPAWN_EGG');
 						@equipment[@hand] = @item;
 						set_mob_equipment(@entity, @equipment);
-					} else {
+					} else if(string_ends_with(@item['name'], '_SPAWN_EGG')) {
 						@mob = replace(@item['name'], '_SPAWN_EGG', '');
+					} else {
+						die();
 					}
 					@egg = shoot_projectile(@entity, 'EGG', @event['player'], rand() + 1);
 					set_projectile_item(@egg, @item);
