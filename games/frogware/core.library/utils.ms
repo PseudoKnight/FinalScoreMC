@@ -26,27 +26,27 @@ proc _fw_loc(@height = 0, @minrange = false) {
 }
 
 proc _fw_mobs(@mob = 'random', @num = 'random') {
-	if(@mob == 'random') {
+	if(@mob === 'random') {
 		@mobs = array('creeper', 'zombie', 'silverfish', 'slime', 'magma_cube', 'zombified_piglin', 'shulker', 'ghast',
-				'blaze', 'husk', 'polar_bear', 'vindicator', 'evoker', 'vex', 'ravager', 'bee', 'zoglin', 'warden');
+				'blaze', 'husk', 'polar_bear', 'vindicator', 'evoker', 'vex', 'ravager', 'bee', 'zoglin', 'warden', 'creaking');
 		@mob = array_get_rand(@mobs);
 	}
 	@height = 0;
-	if(@num == 'random') {
-		if(@mob == 'ghast') {
+	if(@num === 'random') {
+		if(@mob === 'ghast') {
 			@num = rand(3, 9);
 			@height = 24;
-		} else if(@mob == 'blaze') {
+		} else if(@mob === 'blaze') {
 			@num = rand(10, 20);
 			@height = 18;
-		} else if(@mob == 'shulker') {
+		} else if(@mob === 'shulker') {
 			@num = rand(15, 25);
-		} else if(@mob == 'ravager') {
+		} else if(@mob === 'ravager') {
 			@num = rand(6, 12);
-		} else if(@mob == 'zoglin') {
+		} else if(@mob === 'zoglin') {
 			@num = rand(16, 32);
-		} else if(@mob == 'warden') {
-			@num = rand(1, 4);
+		} else if(@mob === 'warden') {
+			@num = rand(2, 8);
 		} else {
 			@num = rand(25, 50);
 		}
@@ -58,17 +58,17 @@ proc _fw_mobs(@mob = 'random', @num = 'random') {
 			@m = _spawn_entity(@mob, @loc);
 			@entities[] = @m;
 			try {
-				if(@mob == 'wolf') {
+				if(@mob === 'wolf') {
 					set_entity_spec(@m, array(angry: true));
 					set_mob_target(@m, puuid(_fw_leader()));
-				} else if(@mob == 'polarbear' && !rand(8)) {
+				} else if(@mob === 'polarbear' && !rand(8)) {
 					set_mob_age(@m, -3000);
-				} else if(@mob == 'villager') {
+				} else if(@mob === 'villager') {
 					if(!@types) {
 						@types = reflect_pull('enum', 'Profession');
 					}
 					set_entity_spec(@m, array(profession: array_get_rand(@types), level: 2));
-				} else if(@mob == 'bee' || @mob == 'zombified_piglin') {
+				} else if(@mob === 'bee' || @mob === 'zombified_piglin') {
 					set_entity_spec(@m, array(anger: 9999));
 					@players = players_in_radius(@loc, 16);
 					if(@players) {
