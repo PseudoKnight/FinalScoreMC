@@ -264,7 +264,10 @@ proc _bind_events(@pvp) {
 					_classes_unload(player(), @playerData['class'], @pvp);
 				}
 				if(@pvp['classPicking'] === 'random') {
-					_classes_select_random(player(), @pvp);
+					@class = _classes_select_random(player(), @pvp);
+					if(@class) {
+						@playerData['class'] = @class;
+					}
 				} else if(!array_index_exists(@arena, 'class_picks')
 				|| (array_index_exists(@playerData, 'picks') && @playerData['picks'] > 0)) {
 					if(array_index_exists(@playerData, 'picks')

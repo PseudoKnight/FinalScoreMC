@@ -107,13 +107,7 @@ proc _classes_select_random(@player, @pvp) {
 			break();
 		}
 	}
-	if(@class) {
-		if(array_index_exists(@pvp['players'][@player], 'class')) {
-			_classes_unload(@player, @pvp['players'][@player]['class'], @pvp);
-			_classes_load(@player, @class, @pvp);
-		}
-		@pvp['players'][@player]['class'] = @class;
-	}
+	return(@class);
 }
 
 proc _classes_select(@id, @pvp) {

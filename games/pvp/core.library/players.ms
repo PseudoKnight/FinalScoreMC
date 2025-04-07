@@ -228,7 +228,10 @@ proc _pvp_initialize_players(@id, @players) {
 		_player_reset(@player, @pvp);
 		if(array_index_exists(@pvp['arena'], 'classes')) {
 		 	if(!array_index_exists(@pArray, 'class')) {
-				_classes_select_random(@player, @pvp);
+				@class = _classes_select_random(@player, @pvp);
+				if(@class) {
+					@pArray['class'] = @class;
+				}
 			}
 			if(array_index_exists(@pArray, 'class')) {
 				_classes_load(@player, @pArray['class'], @pvp);
