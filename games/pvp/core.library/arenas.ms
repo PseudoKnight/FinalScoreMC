@@ -35,7 +35,7 @@ proc _arena_load(@pvp) {
 						@pvp['arena']['arenavotes'] = associative_array();
 					}
 					foreach(@vote in @voted) {
-						@arenaID = @vote['arena'];
+						@arenaID = @vote['votes']['arena'];
 						if(!array_index_exists(@pvp['arena']['arenavotes'], @arenaID)) {
 							@pvp['arena']['arenavotes'][@arenaID] = 1;
 						} else {
