@@ -26,7 +26,7 @@ bind('player_teleport', null, null, @event) {
 			// This is a stargate, which will be handled on a separate plugin teleport event
 			die();
 		} else if(string_ends_with(@fromWorld, '_the_end')
-		&& abs(@from['x']) > 512 || abs(@from['z']) > 512) {
+		&& (abs(@from['x']) > 512 || abs(@from['z']) > 512)) {
 			// coming from the ring islands, do a safe tp
 			@to = get_spawn(@fromWorld);
 			modify_event('to', @to);
