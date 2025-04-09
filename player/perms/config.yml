@@ -289,6 +289,7 @@ engineer:
     dev:
       worldguard.region.*: true
       command.class: true
+      minecraft.command.particle: true
     custom:
       worldguard.region.*: true
       worldedit.analysis.*: true
@@ -307,6 +308,7 @@ engineer:
       command.setwarp: true
       command.class: true
       command.arena.advanced: true
+      minecraft.command.particle: true
   inheritance: builder
 moderator:
   permissions:
