@@ -42,16 +42,26 @@ bind('note_play', null, null, @event, @instruments = array(
 	SEA_LANTERN: 'BLOCK_NOTE_BLOCK_CHIME',
 	SOUL_SAND: 'BLOCK_NOTE_BLOCK_COW_BELL',
 	IRON_BLOCK: 'BLOCK_NOTE_BLOCK_IRON_XYLOPHONE',
+), 
+@heads = array(
+	skeleton: 'BLOCK_NOTE_BLOCK_IMITATE_SKELETON',
+	dragon: 'BLOCK_NOTE_BLOCK_IMITATE_ENDER_DRAGON',
+	creeper: 'BLOCK_NOTE_BLOCK_IMITATE_CREEPER',
+	piglin: 'BLOCK_NOTE_BLOCK_IMITATE_PIGLIN',
+	zombie: 'BLOCK_NOTE_BLOCK_IMITATE_ZOMBIE',
+	wither_skeleton: 'BLOCK_NOTE_BLOCK_IMITATE_WITHER_SKELETON',
 )) {
-	cancel();
 	@sound = '';
 	@block = get_block(location_shift(@event['location'], 'down'));
 	@noteblock = get_blockdata(@event['location']);
 	if(array_index_exists(@instruments, @block)) {
 		@sound = @instruments[@block];
+	} else if(array_index_exists(@heads, @noteblock['instrument'])) {
+		die();
 	} else {
 		@sound = 'BLOCK_NOTE_BLOCK_'.@noteblock['instrument'];
 	}
+	cancel();
 	play_sound(@event['location'], array(
 		sound: @sound,
 		category: 'RECORDS',
