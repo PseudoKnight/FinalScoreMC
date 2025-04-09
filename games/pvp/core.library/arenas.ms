@@ -30,20 +30,18 @@ proc _arena_load(@pvp) {
 
 			// Store total votes
 			if(array_size(@pvp['players']) > 1) { // do not store if testing with one player
-				set_timeout(50, closure(){
-					if(!array_index_exists(@pvp['arena'], 'arenavotes')) {
-						@pvp['arena']['arenavotes'] = associative_array();
+				if(!array_index_exists(@pvp['arena'], 'arenavotes')) {
+					@pvp['arena']['arenavotes'] = associative_array();
+				}
+				foreach(@vote in @voted) {
+					@arenaID = @vote['votes']['arena'];
+					if(!array_index_exists(@pvp['arena']['arenavotes'], @arenaID)) {
+						@pvp['arena']['arenavotes'][@arenaID] = 1;
+					} else {
+						@pvp['arena']['arenavotes'][@arenaID]++;
 					}
-					foreach(@vote in @voted) {
-						@arenaID = @vote['votes']['arena'];
-						if(!array_index_exists(@pvp['arena']['arenavotes'], @arenaID)) {
-							@pvp['arena']['arenavotes'][@arenaID] = 1;
-						} else {
-							@pvp['arena']['arenavotes'][@arenaID]++;
-						}
-					}
-					store_value('arena', @id, @pvp['arena']);
-				});
+				}
+				store_value('arena', @id, @pvp['arena']);
 			}
 		}
 	}
