@@ -134,8 +134,6 @@ proc _weapon_hit_scan(@player, @ray, @damage, @effects, @pvp){
 			set_entity_spec(@line, array(blockdata: @effects['display']));
 			set_display_entity(@line, array(
 				brightness: 15,
-				height: @distance,
-				width: @distance,
 				transformation: array(
 					translation: array(
 						x: @v['x'],
