@@ -65,7 +65,7 @@ bind('target_player', null, array(mobtype: 'ZOMBIE'), @event, @day, @passive = a
 	'AXOLOTL',
 	'BAT',
 	'BEE',
-	'CAMEL':
+	'CAMEL',
 	'CAT',
 	'CHICKEN',
 	'COD',
@@ -90,7 +90,6 @@ bind('target_player', null, array(mobtype: 'ZOMBIE'), @event, @day, @passive = a
 	'RABBIT',
 	'SALMON',
 	'SHEEP',
-	'SNIFFER':
 	'SNOW_GOLEM', // SNOWMAN
 	'SQUID',
 	'STRIDER',
@@ -102,6 +101,7 @@ bind('target_player', null, array(mobtype: 'ZOMBIE'), @event, @day, @passive = a
 	'WANDERING_TRADER',
 	'WOLF',
 	'ZOMBIE_HORSE',
+	// SNIFFER, special spawn
 ), @hostile = array(
 	'BOGGED',
 	'BREEZE',
