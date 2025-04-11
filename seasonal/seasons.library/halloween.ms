@@ -48,7 +48,7 @@ bind('creature_spawn', null, array(type: 'ZOMBIE', reason: 'NATURAL'), @event) {
 	} else if(@rand == 2 && @event['location']['world'] === 'outworld') {
 		set_mob_equipment(@id, array(
 			HELMET: array(name: 'PLAYER_HEAD', meta: array(
-				owneruuid: '617a67e5-7988-4645-af56-42c770a6dda5',
+				owneruuid: '5777109f-f9ab-4af6-b87d-59d504a5b437',
 				texture: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOThiN2NhM2M3ZDMxNGE2MWFiZWQ4ZmMxOGQ3OTdmYzMwYjZlZmM4NDQ1NDI1YzRlMjUwOTk3ZTUyZTZjYiJ9fX0='
 			)),
 			CHESTPLATE: array(name: 'LEATHER_CHESTPLATE', meta: array(color: array(50, 230, 255))),

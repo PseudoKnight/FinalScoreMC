@@ -17,7 +17,7 @@ register_command('itemtype', array(
 		@item['name'] = @type;
 		if(@type == 'PLAYER_HEAD') {
 			@value = @args[1];
-			@item['meta']['owneruuid'] = puuid();
+			@item['meta']['owneruuid'] = uuid();
 			@item['meta']['texture'] = @value;
 		}
 		set_pinv(player(), null, @item);
