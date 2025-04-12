@@ -156,9 +156,11 @@ register_command('timer', array(
 						set_timeout(400, closure(){
 							pforce_respawn();
 							set_timeout(100, closure(){
-								set_pinv(player(), 1, @restartButton);
-								if(has_bind(player().'checkpoint')) {
-									set_pinv(player(), 2, @checkpointButton);
+								if(!_is_survival_world(pworld())) {
+									set_pinv(player(), 1, @restartButton);
+									if(has_bind(player().'checkpoint')) {
+										set_pinv(player(), 2, @checkpointButton);
+									}
 								}
 							});
 						});
