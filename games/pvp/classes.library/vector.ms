@@ -35,8 +35,7 @@ proc _class_load(@player, @pvp) {
 				modify_event('amount', 4);
 			}
 		} else if(@e['player'] == @p
-		&& length(@e['damager']) > 16
-		&& entity_type(@e['damager']) === 'ZOMBIE') {
+		&& @e['damagertype'] === 'ZOMBIE') {
 			cancel();
 		}
 	}

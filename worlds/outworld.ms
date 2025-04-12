@@ -11,8 +11,8 @@ bind('entity_death', null, null, @event, @border = _get_worldborder('outworld'))
 
 		@cause = @event['cause'];
 		@player = null;
-		if(@cause['cause'] == 'ENTITY_ATTACK') {
-			if(ponline(@cause['damager'])) {
+		if(@cause['cause'] === 'ENTITY_ATTACK') {
+			if(@cause['damagertype'] === 'PLAYER') {
 				@player = @cause['damager'];
 			}
 		} else if(array_index_exists(@cause, 'shooter') && ponline(@cause['shooter'])) {

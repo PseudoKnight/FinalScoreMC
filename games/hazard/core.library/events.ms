@@ -79,7 +79,7 @@ proc _hazard_bind(@game) {
 
 	@game['binds'][] = bind('player_death', null, null, @event, @game) {
 		if(array_index_exists(@game['players'], player())) {
-			if(array_index_exists(@event['cause'], 'damager') && length(@event['cause']['damager']) > 17) {
+			if(array_index_exists(@event['cause'], 'damager') && @event['cause']['damagertype'] !== 'PLAYER') {
 				// damaged by an entity, see if it was spawned by another player
 				@spawner = _hazard_entity_spawner(@game, @event['cause']['damager']);
 				if(@spawner && @spawner != player() && array_index_exists(@game['players'], @spawner)) {

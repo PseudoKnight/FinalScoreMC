@@ -19,7 +19,7 @@ proc _fw_start_task(@secs) {
 	}
 	bind('entity_damage', array(id: 'fwtask'), array(type: 'PLAYER', world: 'custom'), @e) {
 		if(_fw_player(@e['player'])
-		&& (!array_index_exists(@e, 'damager') || !ponline(@e['damager']))) {
+		&& (!array_index_exists(@e, 'damager') || @e['damagertype'] !== 'PLAYER')) {
 			if(_fw_change_team(@e['player'], 'losers')) {
 				play_sound(ploc(@e['player']), array(sound: 'ENTITY_ZOMBIE_VILLAGER_CONVERTED'), @e['player']);
 			}

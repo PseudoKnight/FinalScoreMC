@@ -13,7 +13,7 @@ bind('entity_damage', array(priority: 'HIGHEST'), array('type': '/(DONKEY|HORSE|
 
 	switch(@event['cause']) {
 		case 'ENTITY_ATTACK':
-			@isplayer = length(@event['damager']) < 17;
+			@isplayer = @event['damagertype'] === 'PLAYER';
 			@damager = @event['damager'];
 
 			if((@isplayer && @owner != @damager)

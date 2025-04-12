@@ -1,6 +1,6 @@
 // Block firework damage for all tamed mobs as well as entity decorations
 bind('entity_damage', null, array(cause: 'ENTITY_EXPLOSION'), @event) {
-	if(entity_type(@event['damager']) === 'FIREWORK') {
+	if(@event['damagertype'] === 'FIREWORK') {
 		if(!array_index_exists(@event, 'shooter')) { // function fired
 			cancel();
 		} else if(is_tameable(@event['id'])) {

@@ -5,8 +5,7 @@ proc _class_load(@player, @pvp) {
 	bind('entity_damage', array(id: @player.'necrodamage', priority: 'HIGH'), array(type: 'PLAYER'), @e, @p = @player) {
 		if(@e['player'] == @p
 		&& ((array_index_exists(@e, 'damager')
-		&& !ponline(@e['damager'])
-		&& entity_type(@e['damager']) === 'ZOMBIE')
+		&& @e['damagertype'] === 'ZOMBIE')
 		|| (array_index_exists(@e, 'shooter')
 		&& !ponline(@e['shooter'])
 		&& entity_type(@e['shooter']) === 'SKELETON'))) {

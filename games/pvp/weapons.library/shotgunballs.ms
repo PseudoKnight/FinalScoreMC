@@ -33,7 +33,18 @@ proc _weapon_bind_events(@pvp) {
 	@pvp['binds'][] = bind('entity_damage', null, array(type: 'PLAYER', cause: 'PROJECTILE'), @event, @pvp) {
 		if(array_index_exists(@event, 'shooter') // missing in special cases
 		&& array_index_exists(@pvp['players'], @event['shooter'])) {
-			if(entity_type(@event['damager']) == 'SNOWBALL' && get_projectile_item(@event['damager'])['name'] == 'POLISHED_BLACKSTONE_BUTTON') {
+			if(@event['damagertype'] === 'SNOWBALL') {
+				try {
+					if(!get_projectile_item(@event['damager'])['name'] !== 'POLISHED_BLACKSTONE_BUTTON') {
+						die();
+					}
+				} catch(BadEntityException @ex) {
+					console('WARNING: Snowball did not exist in damage event.');
+					@item = pinv(@event['shooter'], null);
+					if(!@item || @item['name'] !== 'SNOWBALL') {
+						die();
+					}
+				}
 				modify_event('amount', 6);
 				play_sound(ploc(@event['shooter']), array(sound: 'ENTITY_ARROW_HIT_PLAYER'), @event['shooter']);
 			}

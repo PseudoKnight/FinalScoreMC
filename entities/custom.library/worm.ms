@@ -273,9 +273,9 @@ proc _worm_spawn(@loc, @spec = associative_array()) {
 		if(has_scoreboard_tag(@event['id'], 'worm')) {
 			cancel();
 			@damager = null;
-			if(array_index_exists(@event, 'damager') && length(@event['damager']) < 17) {
+			if(array_index_exists(@event, 'damager') && @event['damagertype'] === 'PLAYER') {
 				@damager = @event['damager'];
-			} else if(array_index_exists(@event, 'shooter') && length(@event['shooter'])) {
+			} else if(array_index_exists(@event, 'shooter') && ponline(@event['shooter'])) {
 				@damager = @event['shooter'];
 			}
 			if(!@damager) {
