@@ -16,7 +16,8 @@ proc _class_load(@player, @pvp) {
 		})[0];
 		@slot = pheld_slot();
 		set_interval(50, closure(){
-			if(pheld_slot() !== @slot || pcooldown('SPYGLASS')) {
+			@item = pinv(player(), null);
+			if(!@item || @item['name'] !== 'SPYGLASS') {
 				clear_task();
 				try(entity_remove(@laser))
 			} else {
@@ -173,6 +174,14 @@ proc _class_load(@player, @pvp) {
 			}
 		}
 	}
+	
+	bind('player_death', array(id: @player.'sniperdeath', priority: 'HIGHEST'), array(player: @player), @event) {
+		foreach(@entity in get_entity_riders(puuid())) {
+			if(has_scoreboard_tag(@entity, 'disguise')) {
+				entity_remove(@entity);
+			}
+		}
+	}
 }
 
 proc _class_powerup(@player) {
@@ -184,4 +193,5 @@ proc _class_unload(@player, @pvp) {
 	unbind(@player.'stopsnipeglass');
 	unbind(@player.'reloadsnipeglass');
 	unbind(@player.'snipersneak');
+	unbind(@player.'sniperdeath');
 }
