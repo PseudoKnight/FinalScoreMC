@@ -17,7 +17,7 @@ proc _class_load(@player, @pvp) {
 		@slot = pheld_slot();
 		set_interval(50, closure(){
 			@item = pinv(player(), null);
-			if(!@item || @item['name'] !== 'SPYGLASS') {
+			if(!@item || @item['name'] !== 'SPYGLASS' || pcooldown('SPYGLASS')) {
 				clear_task();
 				try(entity_remove(@laser))
 			} else {
@@ -72,6 +72,8 @@ proc _class_load(@player, @pvp) {
 			hitparticle: 'CAMPFIRE_COSY_SMOKE'), @pvp);
 		play_sound(ploc(), array(sound: 'ENTITY_LIGHTNING_BOLT_THUNDER', seed: 4, pitch: 2, volume: 3));
 		play_sound(ploc(), array(sound: 'ENTITY_FIREWORK_ROCKET_BLAST_FAR', pitch: 2, volume: 3));
+		@pfacing = pfacing();
+		set_entity_rotation(puuid(), @pfacing[0], @pfacing[1] - 5.0);
 	}
 
 	bind('player_interact', array(priority: 'HIGHEST', id: @player.'reloadsnipeglass'), array(itemname: 'IRON_NUGGET', hand: 'main_hand', player: @player), @event, @pvp) {
@@ -138,9 +140,9 @@ proc _class_load(@player, @pvp) {
 					viewrange: 128,
 					transformation: array(
 						scale: array(
-							x: 1.0,
+							x: 0.9375,
 							y: 0.1,
-							z: 1.0),
+							z: 0.9375),
 						translation: array(
 							x: -0.5,
 							y: -1.5,
@@ -156,9 +158,9 @@ proc _class_load(@player, @pvp) {
 					startinterpolation: 0,
 					transformation: array(
 						scale: array(
-							x: 1.0,
+							x: 0.9375,
 							y: 1.0,
-							z: 1.0),
+							z: 0.9375),
 						translation: array(
 							x: -0.5,
 							y: -0.5 - @i,
