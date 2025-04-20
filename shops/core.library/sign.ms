@@ -15,7 +15,13 @@ proc _sign_get_shop(@location) {
 	@buy = _sign_get_buy_price(@sign);
 	@sell = _sign_get_sell_price(@sign);
 	if(@buy || @sell) {	
-		@item = _item_get_material(_sign_get_item_string(@sign));
+		@itemString = _sign_get_item_string(@sign);
+		@item = _item_get_material(@itemString);
+		if(!equals_ic(@item, @itemString)) {
+			console('Updating shop item from '.@itemString.' to '.@item);
+			@sign[0] = '['.@item.']';
+			set_sign_text(@location, @sign);
+		}
 
 		# Update owner player name, if changed
 		@pdata = null;
@@ -35,7 +41,7 @@ proc _sign_get_shop(@location) {
 			@sign[3] = @owner;
 			set_sign_text(@location, @sign);
 		}
-		
+
 		return(array(
 			'item': @item,
 			'buy': @buy,
@@ -50,7 +56,7 @@ proc _sign_get_shop(@location) {
 proc _sign_get_item_string(@sign) {
 	@match = reg_match('^\\[(.+)\\]$', @sign[0])
 	if(@match && !equals_ic(@match[1], 'private')) { // ignore private/deadbolt signs
-		return(@match[1]);
+		return(replace(to_upper(@match[1]), ' ', '_'));
 	} else {
 		return(null);
 	}

@@ -5,7 +5,6 @@ proc _item_get_material(@name) {
 	if(!@name) {
 		return(null);
 	}
-	@name = replace(to_upper(@name), ' ', '_');
 	if(!is_integral(@name)) {
 		try {
 			material_info(@name, 'isBlock'); // continues if material name is valid
