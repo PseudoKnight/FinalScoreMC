@@ -130,20 +130,25 @@ register_command('cluck', array(
 						@loc = @cluck['spawnloc'][];
 						@loc[2] += @offset;
 					}
-					@entityid = spawn_entity('CHICKEN', 1, @loc)[0];
-					if(@adult) {
-						play_sound(@loc, array('sound': 'ENTITY_CHICKEN_EGG'));
-					} else {
-						set_mob_age(@entityid, -24000);
-						play_sound(@loc, array('sound': 'ENTITY_CHICKEN_EGG', 'pitch': 2));
-					}
-					if(@dispensed) {
-						set_entity_velocity(@entityid, get_vector(@loc, 0.5));
-					} else {
-						set_entity_velocity(@entityid, array(0, 1.1, (@angle - 12.5 * @offset) * (@cluck['round'] / 1000)));
-					}
-					set_entity_health(@entityid, 25);
-					@cluck['chickens'][] = @entityid;
+					@entityid = spawn_entity('CHICKEN', 1, @loc, closure(@chicken) {
+						set_entity_saves_on_unload(@chicken, false);
+					})[0];
+					try {
+						if(@adult) {
+							play_sound(@loc, array('sound': 'ENTITY_CHICKEN_EGG'));
+						} else {
+							set_mob_age(@entityid, -24000);
+							play_sound(@loc, array('sound': 'ENTITY_CHICKEN_EGG', 'pitch': 2));
+						}
+						# entity might not exist if chunks unloaded
+						if(@dispensed) {
+							set_entity_velocity(@entityid, get_vector(@loc, 0.5));
+						} else {
+							set_entity_velocity(@entityid, array(0, 1.1, (@angle - 12.5 * @offset) * (@cluck['round'] / 1000)));
+						}
+						set_entity_health(@entityid, 25);
+						@cluck['chickens'][] = @entityid;
+					} catch(BadEntityException @ignore){}
 				}
 				for(@i = @cluck['count'], @i > 0, @i--) {
 					queue_delay(400 * rand(1, 12 - @cluck['round']), 'cluck');
@@ -156,11 +161,7 @@ register_command('cluck', array(
 			proc _cluck_endround(@cluck) {
 				unbind('cluckdamage');
 				foreach(@chicken in @cluck['chickens']) {
-					try {
-						entity_remove(@chicken);
-					} catch(BadEntityException @ex) {
-						// ignore
-					}
+					try(entity_remove(@chicken))
 				}
 				@player = @cluck['player'];
 				@score = @cluck['score'];
@@ -169,7 +170,7 @@ register_command('cluck', array(
 			
 				# Check for a round fail state
 				# Did we not meet the required hit chickens? Is it final round? Are there not enough arrows left?
-				if(@cluck['hit'] < @cluck['count'] / 2 || @cluck['round'] == 10 || phas_item(@player, array(name: 'ARROW')) < 2) {
+				if(@cluck['hit'] < @cluck['count'] / 2 || @cluck['round'] == 10 || !ponline(@player) || phas_item(@player, array(name: 'ARROW')) < 2) {
 					_regionmsg('cluck', color('yellow').color('bold').to_upper(@player).' GAMEOVER! Score: '.@score);
 					@cluck['gameover'] = @cluck['round'];
 					
@@ -190,7 +191,9 @@ register_command('cluck', array(
 						if(@best > 0) {
 							_regionmsg('cluck', color('bold').'You beat your personal best of '.@best.'!');
 						}
-						tmsg(@player, color('gold').'+ '.(@score - @best).' coins');
+						if(ponline(@player)) {
+							tmsg(@player, color('gold').'+ '.(@score - @best).' coins');
+						}
 						_acc_add(@player, @score - @best);
 						@scores[@uuid] = @score;
 						@top = false;
