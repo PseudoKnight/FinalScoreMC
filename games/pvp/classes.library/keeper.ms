@@ -1,29 +1,47 @@
 proc _class_load(@player, @pvp) {
-	set_interval(1000, closure(){
+	set_interval(500, closure(){
 		try {
-			if(pmode(@player) == 'SPECTATOR'
+			if(pmode(@player) === 'SPECTATOR'
 			|| !array_index_exists(@pvp['players'], @player)
-			|| @pvp['players'][@player]['class'] != 'keeper') {
+			|| @pvp['players'][@player]['class'] !== 'keeper') {
 				clear_task();
 				die();
 			}
 			@entities = @pvp['players'][@player]['entities'];
-			foreach(@id in array('sculk_sensor_first', 'sculk_sensor_last')) {
-				if(array_index_exists(@entities, @id)) {
-					@sensor = @entities[@id];
-					try {
-						@loc = location_shift(entity_loc(@sensor), 'up', 0.7);
-						foreach(@p in players_in_radius(@loc, 16)) {
-							if(@p == @player || pmode(@p) == 'SPECTATOR' || psneaking(@p)) {
-								continue();
+			foreach(@p in array_keys(@pvp['players'])) {
+				if(@p === @player) {
+					continue();
+				}
+				if(pmode(@p) === 'SPECTATOR') {
+					if(!pcan_see_entity(@player, puuid(@p))) {
+						pshow_entity(@player, puuid(@p));
+					}
+					continue();
+				}
+				@dist = 128;
+				@loc = null;
+				foreach(@id in array('sculk_sensor_first', 'sculk_sensor_last')) {
+					if(array_index_exists(@entities, @id)) {
+						try {
+							@loc = location_shift(entity_loc(@entities[@id]), 'up', 0.7);
+							@d = distance(@loc, ploc(@p));
+							if(@d < @dist) {
+								@dist = @d;
 							}
-							if(!array_index_exists(get_peffect(@p), 'glowing')) {
-								spawn_particle(@loc, array(particle: 'VIBRATION', destination: puuid(@p)));
-								play_named_sound(@loc, array(sound: 'entity.warden.tendril_clicks', pitch: 1.2));
-							}
-							set_peffect(@p, 'glowing', 1, 1.5, true, false);
-						}
-					} catch(BadEntityException @ex) {}
+						} catch(BadEntityException @ex) {}
+					}
+				}
+				if(psneaking(@p) || @dist > 16) {
+					if(pcan_see_entity(@player, puuid(@p))) {
+						phide_entity(@player, puuid(@p));
+					}
+				} else if(!pcan_see_entity(@player, puuid(@p))) {
+					spawn_particle(@loc, array(particle: 'VIBRATION', destination: puuid(@p)));
+					play_named_sound(@loc, array(sound: 'entity.warden.tendril_clicks', pitch: 1.2));
+					pshow_entity(@player, puuid(@p));
+					set_peffect(@p, 'glowing', 1, 1, true, false);
+				} else {
+					set_peffect(@p, 'glowing', 1, 1, true, false);
 				}
 			}
 		} catch(Exception @ex) {
@@ -141,6 +159,9 @@ proc _class_powerup(@player) {
 }
 
 proc _class_unload(@player, @pvp) {
+	foreach(@p in all_players()) {
+		pshow_entity(@player, puuid(@p));
+	}
 	unbind(@player.'sculk');
 	unbind(@player.'boom');
 	unbind(@player.'sensor');
