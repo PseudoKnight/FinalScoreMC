@@ -166,6 +166,12 @@ bind('player_interact', null, array('itemname': 'FIREWORK_ROCKET', 'button': 'ri
 	}
 }
 
+bind('projectile_launch', null, array(type: 'FIREWORK', shootertype: null), @event) {
+	if(@event['velocity']['y'] < 0.45 && @event['velocity']['magnitude'] < 0.7) {
+		set_entity_spec(@event['id'], array(strength: entity_spec(@event['id'])['strength'] * 3));
+	}
+}
+
 bind('firework_explode', null, null, @event){
 	if(!entity_exists(@event['id'])) {
 		// rare cases this will happen
@@ -232,13 +238,5 @@ bind('firework_explode', null, null, @event){
 				// firework may have exploded right before chunk unloaded
 			}
 		});
-	} else if(!has_metadata(@event['id'], 'extended')) {
-		@v = entity_velocity(@event['id']);
-		if(@v['y'] < 0.45 && @v['magnitude'] < 0.7) {
-			// velocity characteristic of a horizontal dispenser, but not player
-			cancel();
-			set_metadata(@event['id'], 'extended', true);
-			set_entity_spec(@event['id'], array('strength': entity_spec(@event['id'])['strength'] * 3));
-		}
 	}
 }
