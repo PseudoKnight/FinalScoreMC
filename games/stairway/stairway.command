@@ -37,6 +37,11 @@ register_command('stairway', array(
 		set_pbed_location(@player, @loc, true);
 		@oldLocs = array();
 		export('stairway', @players);
+		@coords = sk_region_info('stairway', pworld(@player), 0);
+		@minX = @coords[1][0] - 1;
+		@maxX = @coords[0][0] + 2;
+		@minZ = @coords[1][2] - 1;
+		@maxZ = @coords[0][2] + 2;
 		
 		proc _stairway_end(@player, @height) {
 			clear_task();
@@ -85,13 +90,13 @@ register_command('stairway', array(
 		}
 
 		set_interval(500, closure(){
-			if(!ponline(@player) || !array_contains(sk_current_regions(@player), 'stairway')) {
+			@ploc = ploc(@player);
+			if(!ponline(@player) || @ploc['x'] < @minX || @ploc['x'] > @maxX || @ploc['z'] < @minZ || @ploc['z'] > @maxZ) {
 				_remove_old_blocks(@oldLocs);
 				set_block(@loc, 'AIR');
 				_stairway_end(@player, @loc[1]);
 				die();
 			}
-			@ploc = ploc(@player);
 			if(string_ends_with(get_block(@ploc), '_STAINED_GLASS') && @ploc[1] >= @loc[1] && @loc[1] < 255) {
 				_remove_old_blocks(@oldLocs);
 				@oldLocs[] = @loc[];
