@@ -19,11 +19,7 @@ proc _fw_start_task(@secs) {
 	);
 	@blockcolor = array_rand(@colors, 1)[0];
 	@chatcolor = @colors[@blockcolor];
-	if(rand(4)) {
-		_fw_msg('Stand on '.@blockcolor);
-	} else {
-		_fw_msg(color(@chatcolor).'What\'s your favorite color?');
-	}
+	_fw_msg('Stand on '.@blockcolor);
 	export('panel', @blockcolor);
 	@region = sk_region_info('frogware', 'custom', 0);
 	@minX = @region[1][0];
@@ -45,7 +41,11 @@ proc _fw_start_task(@secs) {
 		for(@x = @minX + 1, @x < @maxX, @x++) {
 			for(@z = @minZ + 1, @z < @maxZ, @z++) {
 				@c = @grid[min(6, integer((@x - @minX) / 5))][min(6, integer((@z - @minZ) / 5))];
-				set_block(array(@x, @y, @z, 'custom'), @c.'_CONCRETE', false);
+				if(@x % 2 < 1 && @z % 2 < 1) {
+					set_block(array(@x, @y, @z, 'custom'), @c.'_GLAZED_TERRACOTTA', false);
+				} else {
+					set_block(array(@x, @y, @z, 'custom'), @c.'_CONCRETE', false);
+				}
 			}
 		}
 	}

@@ -2,7 +2,6 @@ proc _fw_start_task(@secs) {
 	@colors = reflect_pull('enum', 'DyeColor');
 	@color = array_get_rand(@colors);
 	_fw_msg(array(
-		@color.color('r').' is the new black',
 		'Shear the '.@color.color('r').' ones!',
 		'I could use a new '.@color.color('r').' wool coat.',
 		'Farmer bob needs your help. Get the '.@color.color('r').' wool.',

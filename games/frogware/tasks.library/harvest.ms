@@ -2,8 +2,6 @@ proc _fw_start_task(@secs) {
 	_fw_msg(array(
 		'Bring in the harvest!',
 		'The farm life\'s for you.',
-		'Bring life from the bones of the fallen!',
-		'Get what? Get wheat!',
 		'Plant seeds. Bonemeal them. Get wheat.',
 	));
 	_fw_items(array(name: 'BONE_MEAL', qty: 1), 100);

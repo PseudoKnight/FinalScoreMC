@@ -10,7 +10,6 @@ proc _fw_start_task(@secs) {
 	@fake = @chosen[1];
 	@ratio = @types[@type];
 	_fw_msg(array(
-		'Step on a '.@type,
 		'Stomp on '.@type,
 	));
 	@blocks = import('frogware.blocks');

@@ -1,7 +1,7 @@
 proc _fw_start_task(@secs) {
 	_fw_msg(array(
-		'Let\'sa go!',
-		'Wahooo!',
+		'Let\'sa go! (3x)',
+		'Wahooo! (3x)',
 		'Break three bricks!',
 	));
 	foreach(@p in all_players('custom')) {

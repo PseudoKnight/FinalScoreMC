@@ -25,7 +25,7 @@ proc _fw_start_task(@secs) {
 			play_sound(ploc(@p), array(sound: 'ENTITY_GHAST_SHOOT'), @p);
 		}
 	}
-	for(@y = @minY, @y <= @minY + 2, @y++) {
+	for(@y = @minY, @y <= @minY + rand(1, 4), @y++) {
 		queue_delay(500, 'fw3');
 		queue_push(closure(){
 			for(@x = @minX, @x <= @maxX, @x++) {

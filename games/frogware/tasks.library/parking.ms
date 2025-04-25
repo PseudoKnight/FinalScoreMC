@@ -5,7 +5,7 @@ proc _fw_start_task(@secs) {
 		@blocks = array();
 		export('frogware.blocks', @blocks);
 	}
-	for(@i = 0, @i < 40, @i++) {
+	for(@i = 0, @i < 50, @i++) {
 		@loc = _fw_loc();
 		if(@loc) {
 			@blocks[] = @loc;

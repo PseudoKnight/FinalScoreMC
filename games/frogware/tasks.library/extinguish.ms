@@ -11,7 +11,7 @@ proc _fw_start_task(@secs) {
 		@blocks = array();
 		export('frogware.blocks', @blocks);
 	}
-	@count = _fw_total_players() + 1;
+	@count = _fw_total_players() + rand(1, 4);
 	for(@i = 0, @i < @count, @i++) {
 		@loc = _fw_loc();
 		@blocks[] = @loc;

@@ -1,9 +1,7 @@
 proc _fw_start_task(@secs) {
 	_fw_msg(array(
 		'Pop the frog egg!',
-		'That ain\'t no dragon egg!',
 		'That\'s no obsidian! It\'s a thing to right-click!',
-		'Let\'s make an omellete.',
 	));
 	@loc = _fw_loc();
 	set_block(@loc, 'DRAGON_EGG');

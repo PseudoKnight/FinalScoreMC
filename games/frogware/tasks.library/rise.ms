@@ -1,7 +1,6 @@
 proc _fw_start_task(@secs) {
 	_fw_msg(array(
 		'Don\'t float away!',
-		'A real head scratcher.',
 	));
 	@region = sk_region_info('frogware', 'custom', 0);
 	@height = @secs * 2;
@@ -10,7 +9,7 @@ proc _fw_start_task(@secs) {
 		'EMERALD_BLOCK', 2);
 	foreach(@p in all_players('custom')) {
 		if(_fw_player(@p)) {
-			set_peffect(@p, 'levitation', 2, @secs + 1, true, false);
+			set_peffect(@p, 'levitation', rand(2, 4), @secs + 1, true, false);
 		}
 	}
 }

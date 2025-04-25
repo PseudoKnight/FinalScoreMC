@@ -2,7 +2,6 @@ proc _fw_start_task(@secs) {
 	_fw_msg(array(
 		'Catch a thing!',
 		'Reel it in!',
-		'Catch a frog or a pig... Either.',
 	));
 	foreach(@p in all_players('custom')) {
 		if(_fw_player(@p)) {

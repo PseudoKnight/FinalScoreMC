@@ -1,8 +1,7 @@
 proc _fw_start_task(@secs) {
 	_fw_msg(array(
 		'The lava is lava',
-		'Do you smell something burning?',
-		'Frogs don\'t like lava. Just sayin\'.',
+		'Frogs don\'t like lava.',
 	));
 	if(!rand(4)) {
 		_fw_random_potion(array('speed', 'blindness', 'darkness'));
