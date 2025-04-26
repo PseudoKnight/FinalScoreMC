@@ -4,7 +4,7 @@ register_command('cake', array(
 	tabcompleter: closure(@alias, @sender, @args, @info) {
 		if(array_size(@args) == 1) {
 			if(has_permission('group.engineer')) {
-				return(_strings_start_with_ic(array('achieved', 'list', 'info', 'find', 'set', 'move', 'delete', 'rename', 'tp', 'resetplayer', 'stats'), @args[-1]));
+				return(_strings_start_with_ic(array('achieved', 'list', 'info', 'find', 'set', 'move', 'delete', 'rename', 'tp', 'resetplayer', 'transferplayer', 'stats'), @args[-1]));
 			} else {
 				return(_strings_start_with_ic(array('achieved', 'list', 'info', 'stats'), @args[-1]));
 			}
@@ -64,6 +64,8 @@ register_command('cake', array(
 				foreach(@arg in @args[1..]) {
 					if(array_contains(array('challenge', 'secret', 'coop'), @arg)) {
 						@type = @arg;
+					} else if(length(@arg) > 16) {
+						@player = replace(@arg, '-', '');
 					} else {
 						@player = _get_uuid(@arg);
 					}
@@ -387,7 +389,42 @@ register_command('cake', array(
 				} else {
 					msg(color('yellow').'Usage: /cake resetplayer [cakeid] <player>');
 				}
-				
+			
+			case 'transferplayer':
+				if(!has_permission('group.engineer')) {
+					die(color('gold').'You do not have permission to use this cake command.');
+				}
+				if(array_size(@args) !== 3) {
+					die(color('yellow').'Usage: /cake transferplayer <fromplayer> <intoplayer>');
+				}
+				@cakes = get_value('cakeinfo');
+				@fromPlayer = @args[1];
+				@fromPlayerUUID = '';
+				@intoPlayer = @args[2];
+				@intoPlayerUUID = '';
+				if(length(@fromPlayer) > 16) {
+					@fromPlayerUUID = replace(@fromPlayer, '-', '');
+					@fromPlayer = _pdata_by_uuid(@fromPlayerUUID)['name'];
+				} else {
+					@fromPlayerUUID = _get_uuid(@fromPlayer);
+				}
+				if(length(@intoPlayer) > 16) {
+					@intoPlayerUUID = replace(@intoPlayer, '-', '');
+					@intoPlayer = _pdata_by_uuid(@intoPlayerUUID)['name'];
+				} else {
+					@intoPlayerUUID = _get_uuid(@intoPlayer);
+				}
+				@count = 0;
+				foreach(@id: @cake in @cakes) {
+					if(array_index_exists(@cake['players'], @fromPlayerUUID)) {
+						@cake['players'][@intoPlayerUUID] = @cake['players'][@fromPlayerUUID];
+						array_remove(@cake['players'], @fromPlayerUUID);
+						@count++;
+					}
+				}
+				store_value('cakeinfo', @cakes);
+				msg(color('green').'Merged '.@fromPlayer.' into '.@intoPlayer.' in '.@count.' cakes.');
+
 			case 'stats':
 				if(array_size(@args) < 2) {
 					die(color('gold').'Requires a cake type: challenge, secret, coop.');
