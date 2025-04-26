@@ -26,6 +26,11 @@ register_command('compass', array(
 			@compass['meta']['display'] = color('white')._world_name(pworld()).' Spawn';
 			set_pinv(player(), null, @compass);
 			msg(color('green').'Compass is now pointing to '._world_name(pworld()).' spawn.');
+		} else if(@target === '<x,y>') {
+			@loc = ploc();
+			@x = @loc['x'];
+			@z = @loc['z'];
+			msg("You can use comma or space separated x and y coordinates.\nExample: /compass @x,@z");
 		} else {
 			try {
 				@player = player(@target);
