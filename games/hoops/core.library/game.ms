@@ -220,7 +220,7 @@ proc _hoops_cheer(@count = 15, @jump = true, @sound = array('ENTITY_VILLAGER_YES
 					try(set_entity_loc(@villager, @loc))
 				});
 			}
-		} catch(BadEntityException @ex) {
+		} catch(Exception @ex) {
 			clear_task();
 		}
 	});
