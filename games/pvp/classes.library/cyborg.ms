@@ -254,7 +254,7 @@ proc _class_load(@player, @pvp) {
 							@hitLoc['z'] += @vector['z'];
 							@bind = bind('entity_damage', null, array(type: 'PLAYER'), @event, @damager = player(), @pvp) {
 								if(array_index_exists(@pvp['players'], @event['player'])) {
-									set_mob_killer(@event['id'], @damager);
+									set_entity_killer(@event['id'], @damager);
 									_stats_damage(@damager, @event['player'], @event['amount'], @pvp);
 								}
 							}

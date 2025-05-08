@@ -464,7 +464,7 @@ proc _bind_events(@pvp) {
 					console("Unexpected unattributed damage: {cause: @cause, amount: @amount}", false);
 					die();
 				}
-				set_mob_killer(puuid(), @damager);
+				set_entity_killer(puuid(), @damager);
 			}
 
 			@friendlyFire = @pvp['arena']['ff'];
