@@ -57,18 +57,3 @@ proc _waves_remove_player(@player, @waves) {
 		try(remove_bar('waves'.@waves['region'].@player))
 	}
 }
-
-proc _waves_add_spectator(@player, @waves) {
-	@waves['spectators'][] = @player;
-	set_pmode(@player, 'SPECTATOR');
-}
-
-proc _waves_remove_spectator(@player, @waves) {
-	array_remove_values(@waves['spectators'], @player);
-	if(pmode(@player) != 'ADVENTURE' || get_block(location_shift(ploc(@player), 'up')) != 'AIR') {
-		set_pmode(@player, 'ADVENTURE');
-		set_ploc(@player, @waves['arena']['lobby']);
-	}
-	clear_peffects(@player);
-	_equip_kit(@player);
-}

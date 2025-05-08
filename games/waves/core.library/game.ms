@@ -3,7 +3,6 @@ proc _waves_prepare(@name, @arena, @region, @world) {
 		name: @name,
 		wave: 0,
 		players: array(),
-		spectators: array(),
 		title: '',
 		subtitle: '',
 		bossbar: '',
@@ -61,25 +60,28 @@ proc _waves_start(@waves) {
 
 	@waves['binds'][] = bind('player_death', null, null, @event, @waves) {
 		if(array_contains(@waves['players'], player())) {
+			if(array_index_exists(@waves['config'], 'respawn')) {
+				modify_event('keep_inventory', true);
+				modify_event('drops', array());
+			}
 			if(array_index_exists(@waves['config'], 'coins')) {
 				@waves['config']['coins'] /= 2;
 			}
-			_waves_remove_player(player(), @waves);
-			_waves_add_spectator(player(), @waves);
 			@loc = ploc();
-			if(@loc['y'] < 0) {
-				@loc['y'] = 0;
+			if(@loc['y'] < -63) {
+				@loc['y'] = -63;
 			}
 			export(player().'spawn', @loc);
+			set_pmode('SPECTATOR');
 		}
 	}
 
 	@waves['binds'][] = bind('player_spawn', null, null, @event, @waves) {
-		if(array_contains(@waves['spectators'], player())) {
+		if(array_contains(@waves['players'], player())) {
 			consume();
 			@loc = import(player().'spawn');
 			if(@loc) {
-				modify_event('location', @loc);
+				modify_event('location', location_shift(@loc, 'up'));
 				export(player().'spawn', null);
 			}
 		}
@@ -89,8 +91,6 @@ proc _waves_start(@waves) {
 		if(array_contains(@waves['players'], player())) {
 			set_ploc(@waves['arena']['lobby']);
 			_waves_remove_player(player(), @waves);
-		} else if(array_contains(@waves['spectators'], player())) {
-			_waves_remove_spectator(player(), @waves);
 		}
 	}
 
@@ -100,23 +100,14 @@ proc _waves_start(@waves) {
 			@from = sk_region_contains(@waves['region'], @event['from']);
 			@to = sk_region_contains(@waves['region'], @event['to']);
 			if(@from && !@to) {
-				if(array_contains(@waves['spectators'], player())) {
-					cancel();
-					_waves_remove_spectator(player(), @waves);
-				} else if(array_contains(@waves['players'], player())) {
+				if(array_contains(@waves['players'], player())) {
 					_waves_remove_player(player(), @waves);
 				}
-			} else if(@to) {
-				if(@waves['wave'] < 2) {
-					set_timeout(50, closure() {
-						if(pworld() === @waves['world']) {
-							if(!_waves_add_player(player(), @waves)) {
-								_waves_add_spectator(player(), @waves);
-							}
-						}
-					});
-				} else {
-					_waves_add_spectator(player(), @waves);
+			} else if(@to && !array_contains(@waves['players'], player())) {
+				if(!_waves_add_player(player(), @waves)) {
+					cancel();
+				} else if(@waves['wave'] > 1) {
+					set_pmode('SPECTATOR');
 				}
 			}
 		}
@@ -194,17 +185,15 @@ proc _waves_start(@waves) {
 
 	@waves['binds'][] = bind('player_interact', null, array(button: 'right', itemname: 'NETHER_STAR'), @event, @waves) {
 		if(sk_region_contains(@waves['world'], @waves['region'], ploc())) {
-			foreach(@p in players_in_radius(ploc(), 16)) {
-				if(pmode(@p) == 'SPECTATOR') {
+			foreach(@p in @waves['players']) {
+				if(pmode(@p) === 'SPECTATOR') {
 					set_ploc(@p, ploc());
-					if(_waves_add_player(@p, @waves)) {
-						set_pmode(@p, 'ADVENTURE');
-						ptake_item(array(name: 'NETHER_STAR'));
-						die();
-					}
+					set_pmode(@p, 'ADVENTURE');
+					ptake_item(array(name: 'NETHER_STAR'));
+					die();
 				}
 			}
-			msg('Ghost player must be within 16 meters to resurrect!');
+			msg('No spectator to resurrect!');
 		}
 	}
 
@@ -217,19 +206,18 @@ proc _waves_start(@waves) {
 	@waves['task'] = set_interval(1000, closure(){
 		try {
 			// Check if players are still in play
+			@playerCount = 0;
 			foreach(@p in @waves['players']) {
-				if(!array_contains(sk_current_regions(@p), @waves['region'])) {
-					_waves_remove_player(@p, @waves);
+				if(!sk_region_contains(@waves['region'], ploc(@p))) {
+					set_entity_loc(puuid(@p), array_get_rand(@waves['arena']['center']));
+				}
+				if(pmode(@p) !== 'SPECTATOR') {
+					@playerCount++;
 				}
 			}
-			if(!@waves['players']) {
+			if(!@playerCount) {
 				_waves_end(@waves, false);
 				die();
-			}
-			foreach(@p in @waves['spectators']) {
-				if(!array_contains(sk_current_regions(@p), @waves['region'])) {
-					_waves_remove_spectator(@p, @waves);
-				}
 			}
 
 			@viewers = null;
@@ -279,7 +267,10 @@ proc _waves_start(@waves) {
 						}
 						set_mob_effect(@e, 'glowing', 0, 0);
 						set_entity_invulnerable(@e, false);
-						try(set_mob_target(@e, puuid(array_get_rand(@waves['players']))));
+						@randTarget = array_get_rand(@waves['players']);
+						if(pmode(@randTarget) !== 'SPECTATOR') {
+							try(set_mob_target(@e, puuid(@randTarget)))
+						}
 					} catch(BadEntityException @ex){
 						console('Mob dead on round start.');
 					}
@@ -389,14 +380,28 @@ proc _waves_start(@waves) {
 				@waveNum = @waves['wave'];
 				@p = null;
 				foreach(@p in @waves['players']) {
-					if(@waveNum > 1 && array_index_exists(@waves['config'], 'shop')) {
-						set_plevel(@p, plevel(@p) + 1);
-						action_msg(@p, colorize('&e+1 level'));
+					if(pmode(@p) !== 'SPECTATOR') {
+						if(@waveNum > 1 && array_index_exists(@waves['config'], 'shop')) {
+							set_plevel(@p, plevel(@p) + 1);
+							action_msg(@p, colorize('&e+1 level'));
+						}
+						@waves['allplayers'][@p]['wave'] = @waveNum;
 					}
 					if(array_index_exists(@waves['config'], 'sounds', 'wave_end')) {
 						play_sound(ploc(@p), @waves['config']['sounds']['wave_end'], @p);
 					}
-					@waves['allplayers'][@p]['wave'] = @waveNum;
+				}
+				if(array_index_exists(@waves['config'], 'respawn') && @waves['config']['respawn'] === 'WAVE_END') {
+					foreach(@p in @waves['players']) {
+						if(pmode(@p) === 'SPECTATOR') {
+							@loc = import(@p.'spawn');
+							if(!@loc) {
+								@loc = array_get_rand(@waves['arena']['center']);
+							}
+							set_ploc(@p, @loc);
+							set_pmode(@p, 'ADVENTURE');
+						}
+					}
 				}
 				try {
 					@wave = if(@waves['name'] == 'random', _get_random_wave(null, @waveNum), @waves['config']['waves'][@waveNum]);
@@ -414,18 +419,22 @@ proc _waves_start(@waves) {
 					}
 					if(array_index_exists(@wave, 'items')) {
 						foreach(@p in @waves['players']) {
-							foreach(@item in @wave['items']) {
-								drop_item(@p, @item);
+							if(pmode(@p) !== 'SPECTATOR') {
+								foreach(@item in @wave['items']) {
+									drop_item(@p, @item);
+								}
 							}
 						}
 					}
 					if(array_index_exists(@wave, 'effects')) {
 						foreach(@p in @waves['players']) {
-							foreach(@effect in @wave['effects']) {
-								set_peffect(@p, @effect['id'], @effect['strength'], @effect['seconds'],
-									array_get(@effect, 'ambient', true),
-									array_get(@effect, 'particles', true),
-									array_get(@effect, 'icon', true));
+							if(pmode(@p) !== 'SPECTATOR') {
+								foreach(@effect in @wave['effects']) {
+									set_peffect(@p, @effect['id'], @effect['strength'], @effect['seconds'],
+										array_get(@effect, 'ambient', true),
+										array_get(@effect, 'particles', true),
+										array_get(@effect, 'icon', true));
+								}
 							}
 						}
 					}
@@ -477,7 +486,10 @@ proc _waves_start(@waves) {
 					if(entity_type(@entities[@r]) !== 'ARMOR_STAND' && is_entity_living(@entities[@r])) {
 						@target = get_mob_target(@entities[@r]);
 						if(!@target) {
-							set_mob_target(@entities[@r], puuid(array_get_rand(@waves['players'])));
+							@randTarget = array_get_rand(@waves['players']);
+							if(pmode(@randTarget) !== 'SPECTATOR') {
+								set_mob_target(@entities[@r], puuid(@randTarget));
+							}
 						}
 					}
 				}
@@ -548,13 +560,6 @@ proc _waves_end(@waves, @win) {
 		}
 		stop_named_sound(@p, @waves['music'], 'RECORDS');
 		_waves_remove_player(@p, @waves);
-	}
-	foreach(@p in @waves['spectators']) {
-		if(@win) {
-			title(@p, color('green').'Success!', '');
-		}
-		stop_named_sound(@p, @waves['music'], 'RECORDS');
-		_waves_remove_spectator(@p, @waves);
 	}
 	foreach(@p: @data in @waves['allplayers']) {
 		@record = get_value('waves', @waves['region'], @waves['name'], puuid(@p, true));

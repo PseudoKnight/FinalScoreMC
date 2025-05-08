@@ -1,5 +1,6 @@
 maxWaves: 50
 time: sunset
+respawn: WAVE_END
 sounds:
     wave_start:
         sound: ENTITY_EVOKER_PREPARE_SUMMON
@@ -112,12 +113,6 @@ shop:
       slot: 14
       cost: 1
       tier: 2
-    - name: NETHER_STAR
-      meta:
-          display: 'Resurrection Star'
-      slot: 15
-      cost: 5
-      tier: 3
     - name: ARROW
       slot: 16
       cost: 1
