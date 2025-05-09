@@ -223,14 +223,17 @@ proc _waves_start(@waves) {
 			@viewers = null;
 			if(@countdown > 0) {
 				if(array_index_exists(@waves['config'], 'shop')) {
-					if(@viewers = get_inventory_viewers('waves'.@waves['region'])) {
-						foreach(@viewer in @viewers) {
-							update_bar('waves'.@waves['region'].@viewer, array(visible: true, title: @viewer.' viewing shop ('.plevel(@viewer).' levels)'));
-						}
-						die();
-					}
+					@holdCountdown = false;
 					foreach(@p in @waves['players']) {
-						update_bar('waves'.@waves['region'].@p, array(visible: false));
+						if(pinventory_holder(@p) === 'waves'.@waves['region']) {
+							@holdCountdown = true;
+							update_bar('waves'.@waves['region'].@p, array(visible: true, title: @p.' viewing shop ('.plevel(@p).' levels)'));
+						} else {
+							update_bar('waves'.@waves['region'].@p, array(visible: false));
+						}
+					}
+					if(@holdCountdown) {
+						die();
 					}
 				}
 				@countdown--;
