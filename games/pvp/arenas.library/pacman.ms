@@ -68,7 +68,13 @@ proc _arena_bind_events(@id) {
 		if(@damagerTeam == 'PAC-MAN') {
 			@hat = pinv(player(), 103);
 			if(@hat && @hat['name'] == 'BLUE_CONCRETE') {
-				play_sound(ploc(), array(sound: 'ENTITY_WOLF_HOWL', pitch: 1.7, volume: 3));
+				play_sound(ploc(), array(sound: 'BLOCK_NOTE_BLOCK_BIT', pitch: 0.5, volume: 3));
+				set_timeout(100, closure(){
+					play_sound(ploc(), array(sound: 'BLOCK_NOTE_BLOCK_BIT', pitch: 0.75, volume: 3));
+					set_timeout(100, closure(){
+						play_sound(ploc(), array(sound: 'BLOCK_NOTE_BLOCK_BIT', pitch: 1.12, volume: 3));
+					});
+				});
 				@pvp['stats'][player(@event['id'])]['kills']++;
 				@pvp['stats'][player()]['deaths']++;
 				@newInv = array(null: array(name: 'ENDER_EYE'), -106: array(name: 'ENDER_EYE'), 102: null, 103: null);
