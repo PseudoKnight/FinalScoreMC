@@ -76,7 +76,7 @@ proc _load_arcade_game(@itemFrameId) {
 					y: -(@applePos[1] * @scale),
 					z: 0))));
 		set_entity_spec(@e, array(
-			text: ' ',
+			text: color('dark_green').'*',
 			alignment: 'LEFT',
 			bgcolor: array(r: 255, g: 0, b: 0, a: 255)));
 	})[0];
