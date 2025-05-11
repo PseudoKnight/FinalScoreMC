@@ -38,7 +38,6 @@ proc _get_random_wave(@random, @waveNum) {
 		array(type: 'WOLF', adjective: 'Howling', noun: 'Pack'),
 	),
 	3: array(
-		array(custom: 'worm', adjective: 'Wormy', noun: 'Worm'),
 		array(type: 'BREEZE', adjective: 'Breezy', noun: 'Tornados'),
 		array(type: 'GUARDIAN', adjective: 'Spikey', noun: 'Lasers'),
 		array(type: 'MAGMA_CUBE', adjective: 'Giant', noun: 'Magma',
@@ -57,6 +56,7 @@ proc _get_random_wave(@random, @waveNum) {
 			gear: array(WEAPON: null)),
 	),
 	4: array(
+		array(custom: 'worm', adjective: 'Wormy', noun: 'Worm'),
 		array(type: 'BOGGED', adjective: 'Poisonous', noun: 'Mushheads'),
 		array(type: 'BLAZE', adjective: 'Blazing', noun: 'Powder'),
 		array(type: 'CAVE_SPIDER', adjective: 'Poisonous', noun: 'Crawlers'),
