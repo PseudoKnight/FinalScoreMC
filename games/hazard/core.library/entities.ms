@@ -72,7 +72,6 @@ proc _hazard_activate_entities(@game) {
 }
 
 proc _hazard_respawn_entities(@game) {
-	_remove_region_entities('hazard');
 	foreach(@index: @entity in @game['entities']) {
 		if(!@entity['type']) {
 			array_remove(@game['entities'], @index);

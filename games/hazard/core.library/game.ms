@@ -1,4 +1,4 @@
-proc _hazard_create() {
+proc _hazard_create(@levelName) {
 	if(!sk_region_exists('hazard')) {
 		throw('NotFoundException', 'hazard region does not exist!');
 	}
@@ -16,7 +16,14 @@ proc _hazard_create() {
 		blocks: array(),
 		binds: array(),
 		randomStart: true,
+		level: @levelName,
 	);
+
+	if(@levelName !== 'empty') {
+		_hazard_load_level(@game, @levelName);
+	} else {
+		_hazard_load_empty_level(@game);
+	}
 
 	if(array_contains(get_scoreboards(), 'hazard')) {
 		remove_scoreboard('hazard');
@@ -36,8 +43,6 @@ proc _hazard_create() {
 
 proc _hazard_start(@game) {
 	_add_activity('hazard', 'Hazard', 'hazard', @game['world']);
-	_hazard_clean_region(@game);
-	_hazard_define_regions(@game);
 	_hazard_bind(@game);
 
 	@invitations = array();
@@ -95,6 +100,14 @@ proc _hazard_start(@game) {
 			} else { // START BUILD PHASE
 				@game['state'] = 'BUILD';
 				@game['round']++;
+				_remove_region_entities('hazard');
+				if(@game['level'] !== 'empty') {
+					if(sk_clipboard_info(null) != @game['clipboard']) {
+						console('Hazard clipboard empty.');
+						skcb_load('hazard_'.@game['level']);
+					}
+					skcb_paste(array(0, 0, 0, @game['world']), array(origin: true, airless: true, fastmode: true));
+				}
 				_hazard_spawn_players(@game);
 				_hazard_respawn_entities(@game);
 				_hazard_respawn_blocks(@game);
@@ -114,6 +127,7 @@ proc _hazard_start(@game) {
 }
 
 proc _hazard_end(@game) {
+	skcb_clear(null);
 	_remove_activity('hazard');
 	_hazard_unbind(@game);
 	@winner = _hazard_get_winner(@game);
@@ -155,18 +169,45 @@ proc _hazard_end(@game) {
 	});
 }
 
-proc _hazard_clean_region(@game) {
+proc _hazard_load_level(@game, @levelName) {
+	@level = get_value('hazard', @levelName);
+	if(!@level) {
+		die('Level does not exist by name: '.@levelName);
+	}
+	if(!array_index_exists(@level, 'start')) {
+		die('Missing start region in level.');
+	}
+	if(!array_index_exists(@level, 'end')) {
+		die('Missing end region in level.');
+	}
+	if(!array_index_exists(@level, 'warp')) {
+		die('Missing warp location in level.');
+	}
+	skcb_load('hazard_'.@levelName);
+	skcb_paste(array(0, 0, 0, @game['world']), array(origin: true));
+	@game['clipboard'] = sk_clipboard_info(null);
+	if(!sk_region_exists('hazard_start')) {
+		sk_region_create(@game['world'], 'hazard_start', @level['start']);
+	} else {
+		sk_region_update(@game['world'], 'hazard_start', @level['start']);
+	}
+	if(!sk_region_exists('hazard_end')) {
+		sk_region_create(@game['world'], 'hazard_end', @level['end']);
+	} else {
+		sk_region_update(@game['world'], 'hazard_end', @level['end']);
+	}
+	store_value('warp.hazard', @level['warp']);
+}
+
+proc _hazard_load_empty_level(@game) {
 	@coords = sk_region_info('hazard', @game['world'], 0);
 	sk_pos1('~console', @coords[0]);
 	sk_pos2('~console', @coords[1]);
 	sk_setblock('~console', 'air');
 	sk_pos1('~console', null);
 	sk_pos2('~console', null);
-}
 
-proc _hazard_define_regions(@game) {
-	@coords = sk_region_info('hazard', @game['world'], 0);
-	@size = array_size(@game['players']) + 2;
+	@size = 2;
 
 	// define start region
 	@start = null;
