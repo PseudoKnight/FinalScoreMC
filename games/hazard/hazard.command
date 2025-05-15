@@ -1,11 +1,12 @@
 register_command('hazard', array(
 	description: 'Starts a half-hazard game.',
 	usage: '/hazard',
+	permission: 'command.hazard',
 	tabcompleter:  closure(return(array())),
 	executor: closure(@alias, @sender, @args, @info) {
 		if(@args && @args[0] === 'set') {
-			if(!pisop()) {
-				die(color('red').'Not an operator.');
+			if(!has_permission('command.hazard.edit')) {
+				die(color('red').'No permission to edit hazard levels.');
 			}
 			if(array_size(@args) < 2) {
 				die('Expected a level name.');
@@ -56,8 +57,8 @@ register_command('hazard', array(
 			return(true);
 		}
 		if(@args && @args[0] === 'clear') {
-			if(!pisop()) {
-				die(color('red').'Not an operator.');
+			if(!has_permission('command.hazard.edit')) {
+				die(color('red').'No permission to edit hazard levels.');
 			}
 			@coords = sk_region_info('hazard', pworld(), 0);
 			sk_pos1(null, @coords[0]);

@@ -12,6 +12,7 @@ default:
       command.hoops: true
       command.charades: true
       command.7: true
+      command.hazard: true
     outworld:
       command.join.to: false
       command.join.from: false
@@ -309,6 +310,7 @@ engineer:
       command.class: true
       command.arena.advanced: true
       minecraft.command.particle: true
+      command.hazard.edit: true
   inheritance: builder
 moderator:
   permissions:
