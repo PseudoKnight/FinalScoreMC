@@ -2,7 +2,10 @@ register_command('hazard', array(
 	description: 'Starts a half-hazard game.',
 	usage: '/hazard',
 	permission: 'command.hazard',
-	tabcompleter:  closure(return(array())),
+	tabcompleter:  _create_tabcompleter(
+		array('command.hazard.edit': array('start', 'end', 'warp', 'schematic', 'item')),
+		array('command.hazard.edit': array('<levelName>'))
+	),
 	executor: closure(@alias, @sender, @args, @info) {
 		if(@args && @args[0] === 'set') {
 			if(!has_permission('command.hazard.edit')) {
@@ -20,10 +23,14 @@ register_command('hazard', array(
 			switch(@setting) {
 				case 'start':
 				case 'end':
-					@pos1 = array_normalize(sk_pos1())[0..2];
-					@pos2 = array_normalize(sk_pos2())[0..2];
-					@level[@setting] = array(@pos1, @pos2);
-					msg("Set @setting to: ".@level[@setting]);
+					try {
+						@pos1 = array_normalize(sk_pos1())[0..2];
+						@pos2 = array_normalize(sk_pos2())[0..2];
+						@level[@setting] = array(@pos1, @pos2);
+						msg("Set @setting to: ".@level[@setting]);
+					} catch(Exception @ex) {
+						die('Must set a worldedit selection for the start/end.');
+					}
 				case 'warp':
 					@level[@setting] = array_normalize(ploc())[0..3];
 					msg("Set @setting to: ".@level[@setting]);
