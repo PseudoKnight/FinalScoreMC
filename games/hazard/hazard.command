@@ -3,8 +3,9 @@ register_command('hazard', array(
 	usage: '/hazard',
 	permission: 'command.hazard',
 	tabcompleter:  _create_tabcompleter(
+		array('command.hazard.edit': array('set', 'clear', 'delete')),
+		array('command.hazard.edit': array('<levelName>')),
 		array('command.hazard.edit': array('start', 'end', 'warp', 'schematic', 'item')),
-		array('command.hazard.edit': array('<levelName>'))
 	),
 	executor: closure(@alias, @sender, @args, @info) {
 		if(@args && @args[0] === 'set') {
@@ -73,6 +74,21 @@ register_command('hazard', array(
 			sk_setblock(null, 'air');
 			sk_pos1(null, null);
 			sk_pos2(null, null);
+			return(true);
+		}
+		if(@args && @args[0] === 'delete') {
+			if(!has_permission('command.hazard.edit')) {
+				die(color('red').'No permission to edit hazard levels.');
+			}
+			if(array_size(@args) < 2) {
+				die('Expected a level name.');
+			}
+			@name = @args[1];
+			if(array_size(@args) > 2) {
+				die('Cannot delete a setting.');
+			}
+			clear_value('hazard', @name);
+			msg('Deleted '.@name);
 			return(true);
 		}
 		if(import('hazard')) {
