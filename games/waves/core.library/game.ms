@@ -388,7 +388,7 @@ proc _waves_start(@waves) {
 							set_plevel(@p, plevel(@p) + 1);
 							action_msg(@p, colorize('&e+1 level'));
 						}
-						@waves['allplayers'][@p]['wave'] = @waveNum;
+						@waves['allplayers'][@p]['wave']++;
 					}
 					if(array_index_exists(@waves['config'], 'sounds', 'wave_end')) {
 						play_sound(ploc(@p), @waves['config']['sounds']['wave_end'], @p);
@@ -573,14 +573,14 @@ proc _waves_end(@waves, @win) {
 		if(@waveNum > @record) {
 			store_value('waves', @waves['region'], @waves['name'], puuid(@p, true), @waveNum);
 			if(@record) {
-				tmsg(@p, colorize("Made it to &aWave @waveNum&f to beat your previous best of &eWave @record&f."));
+				tmsg(@p, colorize("Survived &a@waveNum waves&f to beat your previous best of &e@record&f."));
 			}
 			@reward = @waveNum - @record;
 			tmsg(@p, color('gold').'+ '.@reward.' Coins'.color('white').' for new personal best');
 			_acc_add(@p, @reward);
 			if(function_exists('discord_broadcast')) {
 				discord_broadcast('minecraft_chat', array(embed: array(title: 
-					@p.' made it to Wave '.@waveNum.' in '._to_upper_camel_case(@waves['region']))));
+					@p.' survived '.@waveNum.' waves in '._to_upper_camel_case(@waves['region']))));
 			}
 		}
 	}
