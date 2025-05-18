@@ -41,10 +41,10 @@ proc _class_powerup(@player) {
 			// player logged off last tick, nice timing
 		}
 	});
-	play_sound(ploc(@player), array(sound: 'ENTITY_WOLF_HOWL', pitch: 0.9, volume: 3));
+	play_sound(ploc(@player), array(sound: 'ENTITY_WOLF_GROWL', pitch: 0.8, volume: 3));
 	set_pinv(@player, array(
-		100: array(name: 'LEATHER_BOOTS', meta: array(color: array(r: 50, g: 50, b: 50)),
-			enchants: array(depth_strider: 2)
+		100: array(name: 'LEATHER_BOOTS', meta: array(color: array(r: 50, g: 50, b: 50),
+			enchants: array(depth_strider: 2))
 		),
 		101: array(name: 'LEATHER_LEGGINGS', meta: array(color: array(r: 50, g: 50, b: 50))),
 		102: array(name: 'LEATHER_CHESTPLATE', meta: array(color: array(r: 50, g: 50, b: 50))),
@@ -52,6 +52,7 @@ proc _class_powerup(@player) {
 	));
 	set_timeout(17000, closure(){
 		if(ponline(@player) && pmode(@player) != 'SPECTATOR') {
+			play_sound(ploc(@player), array(sound: 'ENTITY_WOLF_PANT', pitch: 0.9));
 			@effects = get_peffect(@player);
 			if(array_index_exists(@effects, 'night_vision') && @effects['night_vision']['seconds'] < 7) {
 				# if there is 6 seconds of night vision left, he has not gotten another powerup
