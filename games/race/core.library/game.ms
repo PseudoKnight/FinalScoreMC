@@ -86,6 +86,8 @@ proc _race_countdown(@race) {
 			bar_add_player('race'.@race['id'], @p);
 			set_entity_loc(puuid(@p), @race['spawn'][@index]);
 			@index = (@index + 1) % array_size(@race['spawn']);
+		} else {
+			array_remove(@race['players'], @p);
 		}
 	}
 	set_timeout(1000, closure(){ // delay to load chunks first

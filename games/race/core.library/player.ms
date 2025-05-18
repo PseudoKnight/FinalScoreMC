@@ -102,9 +102,11 @@ proc _race_place_player(@race, @player, @loc) {
 proc _race_place_players(@race) {
 	@index = 0;
 	foreach(@p in array_keys(@race['players'])) {
-		_race_prepare_player(@race, @p);
-		_race_place_player(@race, @p, @race['spawn'][@index]);
-		@index = (@index + 1) % array_size(@race['spawn']);
+		if(ponline(@p)) {
+			_race_prepare_player(@race, @p);
+			_race_place_player(@race, @p, @race['spawn'][@index]);
+			@index = (@index + 1) % array_size(@race['spawn']);
+		}
 	}
 }
 
