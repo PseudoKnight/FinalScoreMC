@@ -40,10 +40,10 @@ proc _class_load(@player, @pvp) {
 		}
 	}
 	
-	bind('player_interact', array(id: @player.'boost'), array(player: @player, button: 'right', itemname: 'WOODEN_AXE'), @e) {
-		if(!pcooldown('WOODEN_AXE')) {
+	bind('player_interact', array(id: @player.'boost'), array(player: @player, button: 'right', itemname: 'MACE'), @e) {
+		if(!pcooldown('MACE')) {
 			set_pvelocity(player(), get_vector(ploc(), 0.6));
-			set_pcooldown('WOODEN_AXE', 4000 / 50);
+			set_pcooldown('MACE', 4000 / 50);
 			play_sound(ploc(), array(sound: 'ENTITY_ENDER_DRAGON_FLAP', category: 'PLAYERS', pitch: 1.3, volume: 0.4));
 		}
 	}
