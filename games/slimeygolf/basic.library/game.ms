@@ -544,24 +544,35 @@ proc _end_hole(@golf, @hole) {
 
 	// Update sidebar and score output for players
 	@score = 0;
-	if(array_size(@golf['players']) > 1) {
-		@header = color(7).'Hole\''.color('r').@hole.color(8).'*';
-		@scores = color(7).'Score'.color(8).'*';
-		foreach(@p: @b in @golf['players']) {
-			@score = @golf[@hole]['total'][@p] - @golf['par'];
-			set_pscore('strokes', @p, @score, @golf['name']);
-			@pname = @p;
-			if(_string_width(@p) > 72){
-				@pname = substr(@p, 0, 12);
+	if(array_size(@golf['players']) >= 2) {
+		if(array_size(@golf['players']) <= 4) {
+			@header = color(7).'Hole\''.color('r').@hole;
+			@scores = color(7).'Score'.color(8).'*';
+			foreach(@p: @b in @golf['players']) {
+				@score = @golf[@hole]['total'][@p] - @golf['par'];
+				set_pscore('strokes', @p, @score, @golf['name']);
+				@pname = @p;
+				if(_string_width(@p) > 72) {
+					@pname = substr(@p, 0, 12);
+				}
+				@header .= _fill_string('*', '.', '*'.color('a').@pname.color(8).'*', 72).'*';
+				@scores .= _fill_string('*', '.', '*'.color('r').@golf[@hole]['strokes'][@p]
+						.' ('.if(@score < 0, color('a'), if(@score > 0, color(6).'+')).@score.color('r').')*', 72).'*';
 			}
-			@header .= _fill_string('*', '.', '*'.color('a').@pname.color(8).'*', 72).'*';
-			@scores .= _fill_string('*', '.', '*'.color('r').@golf[@hole]['strokes'][@p]
-					.' ('.if(@score < 0, color('a'), if(@score > 0, color(6).'+')).@score.color('r').')*', 72).'*';
+			@header = _fill_string('*', '.', @header);
+			@scores = _fill_string('*', '.', @scores);
+			_regionmsg(@golf['name'], @header);
+			_regionmsg(@golf['name'], @scores);
+		} else {
+			@scores = color(7).'Hole\''.color('r').@hole;
+			foreach(@p: @b in @golf['players']) {
+				@score = @golf[@hole]['total'][@p] - @golf['par'];
+				set_pscore('strokes', @p, @score, @golf['name']);
+				@scores .= '\n'.color('a').@p.color(8).': '.color('r').@golf[@hole]['strokes'][@p]
+						.' ('.if(@score < 0, color('a'), if(@score > 0, color(6).'+')).@score.color('r').')';
+			}
+			_regionmsg(@golf['name'], @scores);
 		}
-		@header = _fill_string('*', '.', @header);
-		@scores = _fill_string('*', '.', @scores);
-		_regionmsg(@golf['name'], @header);
-		_regionmsg(@golf['name'], @scores);
 	} else {
 		@player = array_keys(@golf['players'])[0];
 		@score = @golf[@hole]['total'][@player] - @golf['par'];
