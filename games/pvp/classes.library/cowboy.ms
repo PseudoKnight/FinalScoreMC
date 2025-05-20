@@ -115,9 +115,12 @@ proc _class_load(@player, @pvp) {
 			});
 		}
 	}
-	bind('player_interact_entity', array(id: @player.'cat'), array(clicked: 'CAT'), @event, @player){
-		if(@player == @event['player']) {
-			cancel();
+	bind('player_interact_entity', array(id: @player.'lead'), null, @event, @player){
+		if(@player === @event['player']) {
+			@item = pinv(player(), null);
+			if(@item && @item['name'] === 'LEAD') {
+				cancel();
+			}
 		}
 	}
 	bind('vehicle_leave', array(id: @player.'dismount'), array(vehicletype: 'HORSE'), @event, @player) {
@@ -169,7 +172,7 @@ proc _class_unload(@player, @pvp) {
 	unbind(@player.'revolver');
 	unbind(@player.'round');
 	unbind(@player.'lassothrow');
-	unbind(@player.'cat');
+	unbind(@player.'lead');
 	unbind(@player.'dismount');
 	unbind(@player.'mount');
 }
