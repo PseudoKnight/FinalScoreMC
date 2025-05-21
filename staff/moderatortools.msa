@@ -1,56 +1,35 @@
-/remove [$] = >>>
-	if(!$) {
-		msg('Usage: /remove [radius=32] [entityType] [-n] [-e]');
-		msg('This will preserve named mobs, except when given the -n flag.');
-		msg('Special entityType groups: living, hostile (default)');
-		msg('When given the -e flag, spawn eggs will be given for each mob removed.');
+/**
+ * @command
+ * @permission worldedit.remove
+ */
+*:/removeonly [$type] [$] = >>>
+	if(!has_permission('worldedit.remove')) {
+		die('No permission.');
 	}
+	if(!$type) {
+		die('Usage: /removeonly [entityType] [radius=32] [-n]\n'
+			.'Removes only a specific type of entity.\n'
+			.'This will preserve named mobs, except when given the -n flag.\n'
+			.'Not undoable!');
+	}
+	@type = $type;
 	@removenamed = false;
-	@spawnEggs = false;
-	@type = array('BOGGED', 'BLAZE', 'BREEZE', 'CAVE_SPIDER', 'CREAKING', 'CREEPER', 'DROWNED', 'ELDER_GUARDIAN', 'ENDER_DRAGON', 'ENDERMAN', 'ENDERMITE',
-			'EVOKER', 'GUARDIAN', 'GHAST', 'GIANT', 'HOGLIN', 'HUSK', 'MAGMA_CUBE', 'PHANTOM', 'PIGLIN', 'PIGLIN_BRUTE', 
-			'SHULKER', 'SILVERFISH', 'SKELETON', 'SLIME', 'SPIDER', 'STRAY', 'WARDEN', 'WITCH', 'WITHER', 'WITHER_SKELETON', 'VEX',
-			'VINDICATOR', 'ZOGLIN', 'ZOMBIE', 'ZOMBIFIED_PIGLIN', 'ZOMBIE_VILLAGER');
 	@radius = 32;
-	@loc = get_command_block();
-	if(is_null(@loc)) {
-		@loc = ploc();
-	}
-
+	@loc = entity_loc(puuid());
 	foreach(@arg in parse_args($)) {
 		if(is_numeric(@arg)) {
 			@radius = min(@arg, 128);
 		} else if(@arg === '-n') {
 			@removenamed = true;
-		} else if(@arg === '-e') {
-			@spawnEggs = true;
-		} else {
-			switch(@arg) {
-				case 'living':
-					@type = array_merge(@type, array('ARMADILLO', 'ALLAY', 'AXOLOTL', 'BAT', 'CAMEL', 'CHICKEN', 'COD', 'COW', 'DOLPHIN', 'DONKEY', 'FROG', 'GLOW_SQUID', 'GOAT',
-							'HORSE', 'IRON_GOLEM', 'LLAMA', 'MULE', 'MUSHROOM_COW', 'OCELOT', 'PIG', 'PUFFERFISH', 'RABBIT', 'SALMON',
-							'SHEEP', 'SKELETON_HORSE', 'SNIFFER', 'SNOWMAN', 'SQUID', 'TADPOLE', 'TROPICAL_FISH', 'TURTLE', 'VILLAGER', 'WOLF', 'ZOMBIE_HORSE'));
-				case 'hostile':
-					continue();
-				default:
-					@type = @arg;
-			}
 		}
+	}
+	if(is_null(@type)) {
+		die('Expected an entity type as an argument.');
 	}
 	@entities = entities_in_radius(@loc, @radius, @type);
 	@count = 0;
 	foreach(@e in @entities) {
-		@living = is_entity_living(@e);
-		if(@removenamed || !@living || !get_mob_name(@e)) {
-			if(@spawnEggs && @living) {
-				@entitytype = entity_type(@e);
-				if(@entitytype == 'MUSHROOM_COW') {
-					@entitytype = 'MOOSHROOM';
-				} else if(@entitytype == 'SNOWMAN') {
-					@entitytype = 'SNOW_GOLEM';
-				}
-				try(pgive_item(array(name: entity_type(@e).'_SPAWN_EGG', meta: array('display': get_mob_name(@e)))))
-			}
+		if(@removenamed || !is_entity_living(@e) || !get_mob_name(@e)) {
 			entity_remove(@e);
 			@count++;
 		}
