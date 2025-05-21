@@ -35,6 +35,16 @@ proc _weapon_bind_events(@pvp) {
 		}
 	}
 
+	@pvp['binds'][] = bind('item_damage', null, array(itemname: 'STONE_HOE', hand: 'main_hand'), @event, @pvp) {
+		if(!array_index_exists(@pvp['players'], player())){
+			die();
+		}
+		@item = pinv(player(), null);
+		if(@item['meta'] && @item['meta']['display'] === 'Rifle') {
+			cancel();
+		}
+	}
+
 	@pvp['binds'][] = bind('player_interact', null, array(itemname: 'STONE_HOE', hand: 'main_hand'), @event, @pvp) {
 		if(!array_index_exists(@pvp['players'], player())){
 			die();
