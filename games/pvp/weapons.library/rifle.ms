@@ -35,7 +35,7 @@ proc _weapon_bind_events(@pvp) {
 		}
 	}
 
-	@pvp['binds'][] = bind('item_damage', null, array(itemname: 'STONE_HOE', hand: 'main_hand'), @event, @pvp) {
+	@pvp['binds'][] = bind('item_damage', null, array(itemname: 'STONE_HOE'), @event, @pvp) {
 		if(!array_index_exists(@pvp['players'], player())){
 			die();
 		}
