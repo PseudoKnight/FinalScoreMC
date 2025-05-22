@@ -139,6 +139,7 @@ proc _load_arcade_game(@itemFrameId) {
 
 		if(!ponline(@player)) {
 			clear_task();
+			remove_metadata(@itemFrameId, 'arcade', 'CommandHelper');
 			die();
 		}
 
@@ -158,6 +159,7 @@ proc _load_arcade_game(@itemFrameId) {
 				if(@seat !== @vehicle) {
 					// new game started before end screen appeared, so skip end screen
 					clear_task();
+					remove_metadata(@itemFrameId, 'arcade', 'CommandHelper');
 					die();
 				}
 			}
@@ -257,6 +259,7 @@ proc _load_arcade_game(@itemFrameId) {
 			});
 
 			clear_task();
+			remove_metadata(@itemFrameId, 'arcade', 'CommandHelper');
 			die();
 		}
 

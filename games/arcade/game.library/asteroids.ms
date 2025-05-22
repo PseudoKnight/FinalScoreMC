@@ -78,6 +78,7 @@ proc _load_arcade_game(@itemFrameId) {
 	set_interval(50, closure(){
 		if(!ponline(@player)) {
 			clear_task();
+			remove_metadata(@itemFrameId, 'arcade', 'CommandHelper');
 			die();
 		}
 
@@ -92,6 +93,7 @@ proc _load_arcade_game(@itemFrameId) {
 				entity_remove(@seat);
 			}
 			clear_task();
+			remove_metadata(@itemFrameId, 'arcade', 'CommandHelper');
 			die();
 		}
 

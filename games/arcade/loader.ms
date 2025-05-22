@@ -25,6 +25,10 @@ bind('player_interact_entity', array(priority: 'MONITOR'), array(clicked: 'ITEM_
 	}
 	@game = @meta['lore'][0];
 	if(array_contains(@arcadeGames, @game)) {
+		if(get_metadata(@event['id'], 'arcade', 'CommandHelper')) {
+			die();
+		}
+		set_metadata(@event['id'], 'arcade', true);
 		include_dir('util.library');
 		proc _load_arcade_game(@itemFrameId) {}
 		include("game.library/@game.ms");
