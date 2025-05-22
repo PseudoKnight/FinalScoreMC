@@ -9,8 +9,8 @@ proc _worms_add_player(@player, @game) {
 	);
 	
 	@loc = array_get_rand(@game['spawns'][0]);
-	@loc['pitch'] = 90.0;
-	set_ploc(@player, location_shift(@loc, 'up', 12));
+	@loc[5] = 90.0;
+	set_ploc(@player, location_shift(@loc, 'up', 15));
 
 	set_pscoreboard(@player, 'worms');
 }

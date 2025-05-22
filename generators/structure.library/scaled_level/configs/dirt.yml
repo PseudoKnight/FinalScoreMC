@@ -15,7 +15,7 @@ floors:
         utility: [yellow_concrete, lime_concrete]
         randomblocks: [yellow_concrete, lime_concrete]
         edge: air
-cloneOffset: 12
+cloneOffset: 15
 cloneDir: up
 cloneFloors:
     0:

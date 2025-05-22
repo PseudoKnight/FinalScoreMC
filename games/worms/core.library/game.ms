@@ -63,7 +63,7 @@ proc _worms_cleanup(@game) {
 		_worms_remove_player(@player, @game);
 	}
 	foreach(@segment in @game['segments']) {
-		entity_remove(@segment);
+		try(entity_remove(@segment))
 	}
 	remove_scoreboard('worms');
 }

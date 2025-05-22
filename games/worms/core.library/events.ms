@@ -11,7 +11,7 @@ proc _worms_bind_events(@game) {
 	
 	bind('player_move', array('id': 'wormsmove'.@game['region']), array('threshold': 0), @event, @game) {
 		if(array_index_exists(@game['players'], player())) {
-			@newLoc = location_shift(@event['to'], 'down', @game['height']);
+			@newLoc = location_shift(@event['to'], 'down', 15);
 			if(@newLoc['world'] != @game['world']
 			|| @newLoc['x'] > @game['x']['highest']
 			|| @newLoc['x'] < @game['x']['lowest']
@@ -64,7 +64,7 @@ proc _worms_bind_events(@game) {
 								set_block(@newLoc, 'AIR');
 								set_block(location_shift(@newLoc, 'up'), 'AIR');
 								set_block(location_shift(@newLoc, 'up', 2), 'AIR');
-								@segments = _worms_create_segments(location_shift(ploc(), 'down', @game['height']), 1, @match[1], @game);
+								@segments = _worms_create_segments(location_shift(ploc(), 'down', 15), 1, @match[1], @game);
 								_worms_add_segments(player(), @segments, @game);
 								play_sound(@trace['location'], array('sound': 'ENTITY_GENERIC_EAT', 'volume': 2));
 							}
