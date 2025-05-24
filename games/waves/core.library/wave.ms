@@ -7,7 +7,8 @@ proc _get_random_wave(@random, @waveNum) {
 	@mobs = array(
 	1: array(
 		array(type: 'ENDERMITE', adjective: 'Tiny', noun: 'Mites'),
-		array(type: 'DROWNED', adjective: 'Gurgly', noun: 'Sea People'),
+		array(type: 'DROWNED', adjective: 'Gurgly', noun: 'Sea People',
+			gear: array(WEAPON: null)),
 		array(type: 'HUSK', adjective: 'Hungry', noun: 'Desert Folk',
 			gear: array(WEAPON: null, HELMET: null, CHESTPLATE: null, LEGGINGS: null, BOOTS: null)),
 		array(type: 'MAGMA_CUBE', adjective: 'Hot', noun: 'Magma',

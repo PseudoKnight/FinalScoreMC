@@ -176,9 +176,8 @@ register_command('waves', array(
 				
 				if(array_size(@scripts) == 1) {
 					@name = array_keys(@scripts)[0];
-					array @waves;
+					@waves = _waves_prepare(@name, @arena, @region, @world);
 					try {
-						@waves = _waves_prepare(@name, @arena, @region, @world);
 						_waves_start(@waves);
 					} catch(Exception @ex) {
 						console(@ex['classType'].': '.@ex['message'], false);
