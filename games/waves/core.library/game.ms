@@ -115,7 +115,7 @@ proc _waves_start(@waves) {
 
 	@waves['binds'][] = bind('creature_spawn', null, null, @event, @waves, @entities) {
 		if(@event['type'] != 'ARMOR_STAND' && sk_region_contains(@waves['world'], @waves['region'], @event['location'])) {
-			if(!@waves['bounty']) {
+			if(!@waves['bounty'] && @waves['mobCount'] && @waves['mobCount'] == array_size(@entities)) {
 				@waves['bounty'] = @event['id'];
 			}
 			@entities[] = @event['id'];
@@ -147,11 +147,14 @@ proc _waves_start(@waves) {
 	}
 
 	@waves['binds'][] = bind('entity_death', null, null, @event, @entities, @waves) {
-		if(@waves['mobCount'] > 1
-		&& @event['id'] === @waves['bounty'] 
-		&& array_size(@entities) == @waves['mobCount']) {
-			@event['drops'][] = array(name: 'EMERALD');
-			modify_event('drops', @event['drops']);
+		if(@waves['bounty']) {
+			if(@event['id'] === @waves['bounty']) {
+				@event['drops'][] = array(name: 'EMERALD');
+				modify_event('drops', @event['drops']);
+			} else {
+				set_mob_name(@waves['bounty'], '');
+			}
+			@waves['bounty'] = '';
 		}
 		array_remove_values(@entities, @event['id']);
 	}
@@ -277,6 +280,9 @@ proc _waves_start(@waves) {
 					} catch(BadEntityException @ex){
 						console('Mob dead on round start.');
 					}
+				}
+				if(@waves['bounty']) {
+					set_mob_name(@waves['bounty'], color('green').'BOUNTY');
 				}
 				if(@waves['bossbar']) {
 					update_bar('waves'.@waves['region'], array(
@@ -497,10 +503,8 @@ proc _waves_start(@waves) {
 					}
 				}
 				if(@waves['bounty'] 
-				&& @waves['mobCount'] > 1
 				&& @countdown == -1 
-				&& entity_exists(@waves['bounty'])
-				&& array_size(@entities) == @waves['mobCount']) {
+				&& entity_exists(@waves['bounty'])) {
 					spawn_particle(location_shift(entity_loc(@waves['bounty']), 'up'), array(
 						particle: 'VILLAGER_HAPPY',
 						count: 1,
