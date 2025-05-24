@@ -6,7 +6,7 @@ default:
   waterPit: 0.07
   pit: 0.07
   minRoomSize: 6
-  maxRoomSize: 18
+  maxRoomSize: 21
   spawnerChance: 0.0
   spawnCount: 1
   extraDoorChance: 0.9
@@ -23,6 +23,7 @@ default:
   overhead: 'lantern[hanging=true]'
   wallTorchChance: 0.07
   randomBlockChance: 0.08
+  ascending: true
 floors:
 - roomTypes:
     stronghold:
