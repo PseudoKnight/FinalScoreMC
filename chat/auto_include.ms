@@ -91,6 +91,9 @@ proc _fill_string(@replaceChar, @fillChar, @string, @lineWidth = 320) {
 	@fillCount = reg_count('\\'.@replaceChar, @string);
 
 	@remainingWidth = @lineWidth - @width;
+	if(@remainingWidth < 1) {
+		return(replace(@string, @replaceChar, ''));
+	}
 	@charWidth = 6;
 	@chars = _char_width();
 	if(array_index_exists(@chars, @fillChar)) {
