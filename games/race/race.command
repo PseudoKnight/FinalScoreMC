@@ -1,3 +1,8 @@
+@tracks = array();
+foreach(@track in array_keys(get_values('track'))) {
+	@tracks[] = split('.', @track)[-1];
+}
+
 register_command('race', array(
 	description: 'Commands for managing and participating in races.',
 	usage: '/race <start|join> <track>',
@@ -5,7 +10,8 @@ register_command('race', array(
 		array(
 			'group.admin': array('join', 'start', 'end', 'reload'),
 			'group.builder': array('join', 'start', 'end'),
-			null: array('join', 'start'))
+			null: array('join', 'start')),
+		@tracks,
 	),
 	executor: closure(@alias, @sender, @args, @info) {
 		if(array_size(@args) < 2) {

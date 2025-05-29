@@ -4,7 +4,7 @@ register_command('track', array(
 	permission: 'command.track',
 	tabcompleter: _create_tabcompleter(
 		array('set', 'delete', 'info', 'list', 'rename'),
-		null,
+		array('<arena_id>'),
 		array('<<set|delete': array('region', 'laps', 'health', 'lobby', 'spawn', 'checkpoint', 'type', 'effect', 'camdist')),
 		array('<type': array('boat', 'elytra', 'horse', 'parkour', 'pig', 'kart'))
 	),
