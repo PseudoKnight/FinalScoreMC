@@ -393,8 +393,8 @@ proc _waves_start(@waves) {
 						if(@waveNum > 1 && array_index_exists(@waves['config'], 'shop')) {
 							set_plevel(@p, plevel(@p) + 1);
 							action_msg(@p, colorize('&e+1 level'));
+							@waves['allplayers'][@p]['wave']++;
 						}
-						@waves['allplayers'][@p]['wave']++;
 					}
 					if(array_index_exists(@waves['config'], 'sounds', 'wave_end')) {
 						play_sound(ploc(@p), @waves['config']['sounds']['wave_end'], @p);
