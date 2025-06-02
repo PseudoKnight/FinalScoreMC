@@ -531,7 +531,7 @@ proc _bind_events(@pvp) {
 		} else if(@event['hittype'] == 'ENTITY') {
 			@type = entity_type(@event['hit']);
 			if(@type == 'ITEM_FRAME' || @type == 'GLOW_ITEM_FRAME' || @type == 'PAINTING') {
-				if(@event['location']['world'] == @pvp['arena']['lobby'][3]) {
+				if(@event['location']['world'] == @pvp['arena']['world']) {
 					cancel();
 					consume();
 					try(entity_remove(@event['id']))

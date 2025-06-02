@@ -17,7 +17,7 @@ register_command('arena', array(
 					'mobprotect', 'team', 'kit', 'restore', 'itemspawn', 'chestgroup', 'chestspawn', 'rsoutput',
 					'rsoutputscore', 'effect', 'denydrop', 'mobspawn', 'weapons', 'options', 'hidden', 'nodoors',
 					'owner', 'vote'),
-			'<<add': array('description', 'arenaselect', 'weapons', 'options', 'deathdrops', 'denydrop', 'rsoutput'),
+			'<<add': array('description', 'arenaselect', 'weapons', 'options', 'deathdrops', 'denydrop', 'rsoutput', 'kothregion'),
 			'<<load': array('kit', 'chestspawn', 'spawn', 'itemspawn'),
 			'<<tp': array('lobby', 'podium', 'kothbeacon', 'bombloc', 'region')),
 		array(
@@ -119,10 +119,8 @@ register_command('arena', array(
 
 					# string options
 					case 'class_picking':
-					case 'kothregion':
 					case 'parent':
 					case 'powerup':
-					case 'region':
 					case 'resourcepack':
 					case 'respawnmode':
 					case 'goalname':
@@ -270,6 +268,27 @@ register_command('arena', array(
 						}
 						@arena[@setting][@team][] = @loc;
 						msg(colorize('Set a &a' . @setting . '&r to current location for team &a' . @team));
+						
+					case 'region':
+						@arena['world'] = pworld();
+						@arena[@setting] = @args[3];
+						msg(colorize('Set &a' . @setting . '&r to &a' . @args[3]));
+
+					case 'kothregion':
+						if(@action === 'add' && array_index_exists(@arena, @setting)) {
+							if(!is_array(@arena[@setting])) {
+								@arena[@setting] = array(@arena[@setting]);
+							}
+							@arena[@setting][] = @args[3];
+							msg(colorize('Updated &a' . @setting . '&r to &a' . @arena[@setting]));
+						} else {
+							if(string_position(@args[3], ',') > -1) {
+								@arena[@setting] = split(',', @args[3]);
+							} else {
+								@arena[@setting] = @args[3];
+							}
+							msg(colorize('Set &a' . @setting . '&r to &a' . @arena[@setting]));
+						}
 
 					case 'owner':
 						@ownerName = @args[3];
@@ -806,11 +825,17 @@ register_command('arena', array(
 				}
 
 				if(array_index_exists(@arena, 'kothregion')) {
-					@region = sk_region_info(@arena['kothregion'], pworld())[0];
-					for(@i = 0, @i < array_size(@region), @i++) {
-						@region[@i] = location_shift(@region[@i], @dir, @distance);
+					@regions = @arena['kothregion'];
+					if(!is_array(@regions)) {
+						@regions = array(@regions);
 					}
-					sk_region_update(pworld(), @arena['kothregion'], @region);
+					foreach(@regionName in @regions) {
+						@region = sk_region_info(@regionName, pworld())[0];
+						for(@i = 0, @i < array_size(@region), @i++) {
+							@region[@i] = location_shift(@region[@i], @dir, @distance);
+						}
+						sk_region_update(pworld(), @regionName, @region);
+					}
 				}
 
 				if(array_index_exists(@arena, 'mobprotect')) {
@@ -968,6 +993,13 @@ register_command('arena', array(
 						}
 						if(!@arena['spawn'][0] && !@arena['spawn'][1]) {
 							array_remove(@arena, 'spawn');
+						}
+
+					case 'kothregion':
+						@size = array_size(@arena[@setting]);
+						array_remove_values(@arena[@setting], @string);
+						if(array_size(@arena[@setting]) < @size) {
+							msg(color('green').'Removed that region.');
 						}
 
 					case 'itemspawn':

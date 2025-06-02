@@ -12,7 +12,7 @@ proc _bind(@pvp) {
 	}
 	
 	// prevent all item frame and painting destruction
-	@pvp['binds'][] = bind('hanging_break', null, array(world: @pvp['arena']['lobby'][3]), @event, @pvp) {
+	@pvp['binds'][] = bind('hanging_break', null, array(world: @pvp['arena']['world']), @event, @pvp) {
 		cancel();
 	}
 

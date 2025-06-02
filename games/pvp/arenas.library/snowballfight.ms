@@ -35,7 +35,7 @@ proc _arena_bind_events(@id) {
 		_player_equip(@id, @player);
 	}
 
-	@pvp['binds'][] = bind('entity_damage', null, array(type: 'SNOWMAN', cause: 'PROJECTILE', world: @pvp['arena']['lobby'][3]), @event, @id) {
+	@pvp['binds'][] = bind('entity_damage', null, array(type: 'SNOWMAN', cause: 'PROJECTILE', world: @pvp['arena']['world']), @event, @id) {
 		@loc = entity_loc(@event['id']);
 		@loc['y'] += 1;
 		play_sound(@loc, array(sound: 'ENTITY_ZOMBIE_INFECT'));

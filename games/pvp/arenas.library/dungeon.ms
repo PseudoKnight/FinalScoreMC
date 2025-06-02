@@ -1,5 +1,5 @@
 proc _arena_prepare(@pvp) {
-	@world = @pvp['arena']['lobby'][3];
+	@world = @pvp['arena']['world'];
 	_generator_create('dungeon', 'showdown', 'showdowndungeon', @world, 0, closure(@start, @end, @spawns) {
 		@spawns = @spawns[0]; // we only want one floor of spawns
 		if(array_index_exists(@pvp, 'team')) {

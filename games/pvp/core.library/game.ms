@@ -283,7 +283,7 @@ proc _pvp_start(@pvp){
 	}
 
 	# ANNOUNCE
-	@world = @arena['lobby'][3];
+	@world = @arena['world'];
 	broadcast(_fill_string('*', '-', colorize('&7&m|--&7&l[ &r&l'.@pvp['title'].' &7&l]&7&m*|')), all_players(@world));
 
 	if(array_index_exists(@pvp, 'team')) {
@@ -354,7 +354,7 @@ proc _pvp_start(@pvp){
 		bar_add_player(@id, @p);
 	}
 	if(array_index_exists(@arena, 'time')) {
-		_world_time_travel(@arena['lobby'][3], @arena['time'], @pvp['arena']['delay'] * 20);
+		_world_time_travel(@arena['world'], @arena['time'], @pvp['arena']['delay'] * 20);
 	}
 	set_interval(1000, closure(){
 		@timeleft[0] -= 1;
@@ -499,7 +499,7 @@ proc _pvp_start_match(@id) {
 		@pvp['starttime'] = time() / 1000;
 	}
 
-	_remove_region_entities(@arena['region'], @arena['lobby'][3], array('DROPPED_ITEM', 'EXPERIENCE_ORB'));
+	_remove_region_entities(@arena['region'], @arena['world'], array('DROPPED_ITEM', 'EXPERIENCE_ORB'));
 	_pvp_initialize_players(@id, array_keys(@pvp['players']));
 
 	if(array_index_exists(@arena, 'captain')) {
@@ -835,7 +835,7 @@ proc _pvp_end_round(@id, @winners) {
 proc _pvp_end_match(@id, @winners) {
 	@pvp = import('pvp'.@id);
 	@arena = @pvp['arena'];
-	@world = @arena['lobby'][3];
+	@world = @arena['world'];
 
 	if(@pvp['running'] != 2) {
 		return();

@@ -91,7 +91,11 @@ proc _arena_load(@pvp) {
 	@pvp['title'] = @primaryName.if(@secondaryName, ': '.@secondaryName);
 	@arena = @pvp['arena'];
 
-		// Check shared regions
+	if(!array_index_exists(@arena, 'world')) {
+		@arena['world'] = @arena['lobby'][3];
+	}
+
+	// Check shared regions
 	if(array_index_exists(@arena, 'sharedarenas')) {
 		foreach(@arenaid in @arena['sharedarenas']) {
 			@otherpvp = import('pvp'.@arenaid);
