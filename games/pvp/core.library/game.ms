@@ -998,6 +998,7 @@ proc _pvp_end_match(@id, @winners) {
 		}
 		queue_push(closure(){
 			remove_scoreboard(@id);
+			try(remove_bar(@id))
 
 			# Reset
 			@pvp = _pvp_create(@id);
