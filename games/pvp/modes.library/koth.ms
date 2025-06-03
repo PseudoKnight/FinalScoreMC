@@ -99,7 +99,7 @@ proc _interval(@pvp, @id) {
 					pshow_entity(@p, @pvp['kothdisplay']);
 				}
 			} else {
-				update_bar(@id, array(visible: true, title: '* CONTESTED *'));
+				update_bar(@id, array(visible: true, color: 'WHITE', title: '* CONTESTED *'));
 			}
 		}
 		
@@ -168,7 +168,7 @@ proc _interval(@pvp, @id) {
 						pshow_entity(@p, @pvp['kothdisplay']);
 					}
 				} else {
-					update_bar(@id, array(visible: true, title: '* CONTESTED *'));
+					update_bar(@id, array(visible: true, color: 'WHITE', title: '* CONTESTED *'));
 				}
 			}
 		}
