@@ -166,6 +166,10 @@ proc _weapon_hit_scan(@player, @ray, @damage, @effects, @pvp){
 	}
 
 	if(array_index_exists(@effects, 'tracer')) {
+		if(!is_array(@effects['tracer'])) {
+			@effects['tracer'] = array(particle: @effects['tracer']);
+		}
+		@effects['tracer']['force'] = true;
 		@distanceProgress = 1.0;
 		while(@distanceProgress <= @distance) {
 			@particleLoc = location_shift(@origin, @location, @distanceProgress);
