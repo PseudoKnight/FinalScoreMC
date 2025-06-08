@@ -38,7 +38,7 @@ proc _fw_start_game(@pts) {
 	_fw_start_round();
 }
 
-proc _fw_start_round(@secs = 12) {
+proc _fw_start_round(@secs = 12, @previousTask = null) {
 	@region = sk_region_info('frogware', 'custom', 0);
 	@loc = @region[1];
 	@loc[0] += 18;
@@ -118,6 +118,9 @@ proc _fw_start_round(@secs = 12) {
 				// first place player is within a couple points of winning.
 				@tasks = array('pvp');
 			}
+			if(@previousTask && array_size(@tasks) > 1) {
+				array_remove_values(@tasks, @previousTask);
+			}
 			@task = array_get_rand(@tasks);
 			include("../tasks.library/@task.ms");
 			queue_delay(1000, 'fw2');
@@ -152,7 +155,7 @@ proc _fw_start_round(@secs = 12) {
 							}
 						}
 						unbind('fwtask');
-						_fw_start_round(@secs);
+						_fw_start_round(@secs, @task);
 					}, 'fw2');
 				}
 			}
