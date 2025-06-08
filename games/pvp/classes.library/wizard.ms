@@ -23,7 +23,7 @@ proc _class_load(@player, @pvp) {
 					@l['y'] += 1;
 					damage_entity(puuid(@p), 7.4, puuid());
 					set_peffect(@p, 'SLOWNESS', 2, 1.5, true, false);
-					spawn_particle(@l, array(particle: 'ELECTRIC_SPARK', count: 30, xoffset: 2, yoffset: 3, zoffset: 2));
+					spawn_particle(@l, array(particle: 'ELECTRIC_SPARK', count: 30, xoffset: 2, yoffset: 3, zoffset: 2, force: true));
 					set_pvelocity(@p, array(0, 0, 0));
 				}
 			}
@@ -57,6 +57,7 @@ proc _class_load(@player, @pvp) {
 			particle: 'CLOUD',
 			count: 80,
 			speed: 0.5,
+			force: true,
 		));
 
 		@excludeEntities = array('COMPLEX_PART', 'GLOW_ITEM_FRAME', 'ITEM_FRAME', 'PAINTING', 'ITEM_DISPLAY', 'BLOCK_DISPLAY', 'TEXT_DISPLAY', 'UNKNOWN');
@@ -135,8 +136,8 @@ proc _class_load(@player, @pvp) {
 			@loc['x'] = @trace['location']['x'];
 			@loc['y'] = @trace['location']['y'];
 			@loc['z'] = @trace['location']['z'];
-			spawn_particle(@loc, array(particle: 'SNOWFLAKE', count: 5, xoffset: 0.3, yoffset: 0.3, zoffset: 0.3));
-			spawn_particle(@loc, array(particle: 'SOUL_FIRE_FLAME'));
+			spawn_particle(@loc, array(particle: 'SNOWFLAKE', count: 5, xoffset: 0.3, yoffset: 0.3, zoffset: 0.3, force: true));
+			spawn_particle(@loc, array(particle: 'SOUL_FIRE_FLAME', force: true));
 			@hit = false;
 			if(@trace['entities']) {
 				foreach(@entity in @trace['entities']) {
@@ -152,8 +153,8 @@ proc _class_load(@player, @pvp) {
 				}
 				return();
 			}
-			spawn_particle(@loc, array(particle: 'SNOWFLAKE', count: integer(@radius ** 3), xoffset: @radius * 1.5, yoffset: @radius * 1.5, zoffset: @radius * 1.5, speed: 0.01));
-			spawn_particle(@loc, array(particle: 'SOUL_FIRE_FLAME', count: integer(@radius ** 2), xoffset: @radius, yoffset: @radius, zoffset: @radius));
+			spawn_particle(@loc, array(particle: 'SNOWFLAKE', count: integer(@radius ** 3), xoffset: @radius * 1.5, yoffset: @radius * 1.5, zoffset: @radius * 1.5, speed: 0.01, force: true));
+			spawn_particle(@loc, array(particle: 'SOUL_FIRE_FLAME', count: integer(@radius ** 2), xoffset: @radius, yoffset: @radius, zoffset: @radius, force: true));
 			play_sound(@loc, array(sound: 'ENTITY_ZOMBIE_VILLAGER_CURE', volume: 2));
 			foreach(@p in array_keys(@pvp['players'])) {
 				if(pmode(@p) != 'SPECTATOR') {

@@ -72,12 +72,13 @@ proc _weapon_bind_events(@pvp) {
 			@targetr['y'] = @loc['y'] + (@y * @range);
 			@targetr['z'] = @loc['z'] + (@zr * @range);
 			@particle = array(
-				'particle': 'FLAME',
-				'count': @range * 2,
-				'speed': 0.01,
-				'xoffset': 0.25 * @range,
-				'yoffset': 0.25 * @range,
-				'zoffset': 0.25 * @range,
+				particle: 'FLAME',
+				count: @range * 2,
+				speed: 0.01,
+				xoffset: 0.25 * @range,
+				yoffset: 0.25 * @range,
+				zoffset: 0.25 * @range,
+				force: true,
 			);
 			spawn_particle(@targetl, @particle);
 			spawn_particle(@targetc, @particle);

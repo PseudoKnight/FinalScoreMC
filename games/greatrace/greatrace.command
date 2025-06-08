@@ -108,7 +108,7 @@ register_command('greatrace', array(
 									@targetLoc['z'] + @vector['z'],
 									@world,
 								);
-								spawn_particle(@point, 'CAMPFIRE_SIGNAL_SMOKE', @p);
+								spawn_particle(@point, array(particle: 'CAMPFIRE_SIGNAL_SMOKE', force: true), @p);
 							}
 						}
 						if(@dist > 18) {

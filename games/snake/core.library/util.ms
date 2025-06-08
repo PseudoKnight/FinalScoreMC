@@ -156,7 +156,7 @@ proc _snake_clean_surfaces(@game) {
 								}
 							} else {
 								set_block(array(@x, @y, @z,, 'custom'), 'AIR', false);
-								spawn_particle(array(@x, @y, @z, 'custom'), array('particle': 'CRIT', 'speed': 0.01));
+								spawn_particle(array(@x, @y, @z, 'custom'), array(particle: 'CRIT', speed: 0.01, force: true));
 							}
 						}
 					}, 'snake_cleanup');
@@ -179,7 +179,7 @@ proc _snake_clean_surfaces(@game) {
 								set_block(array(@x, @y, @z, 'custom'), 'STONE_BRICKS', false);
 							} else {
 								set_block(array(@x, @y, @z, 'custom'), 'AIR', false);
-								spawn_particle(array(@x, @y, @z, 'custom'), array('particle': 'CRIT', 'speed': 0.01));
+								spawn_particle(array(@x, @y, @z, 'custom'), array(particle: 'CRIT', speed: 0.01, force: true));
 							}
 						}
 					}, 'snake_cleanup');

@@ -245,7 +245,7 @@ proc _snake_kill(@player, @game) {
 		@blockType = get_block(@block);
 		if(@blockType == @snake['head']) {
 			set_block(@block, @snake['tail'], false);
-			spawn_particle(@block, array('particle': 'SMOKE_NORMAL', 'count': 8, 'xoffset': 1, 'yoffset': 1, 'zoffset': 1));
+			spawn_particle(@block, array(particle: 'SMOKE_NORMAL', count: 8, xoffset: 1, yoffset: 1, zoffset: 1, force: true));
 		}
 		foreach(@p: @s in @game['snakes']) {
 			if(@s['alive']) {
@@ -262,7 +262,7 @@ proc _snake_kill(@player, @game) {
 						@blockType = get_block(@block);
 						if(@blockType == @snake['tail']) {
 							set_block(@block, if(@game['mode'] == 'capture' || @game['mode'] == 'gluttony', 'AIR', @snake['head']), false);
-							spawn_particle(@block, array('particle': 'SMOKE_NORMAL', 'count': 8, 'xoffset': 1, 'yoffset': 1, 'zoffset': 1));
+							spawn_particle(@block, array(particle: 'SMOKE_NORMAL', count: 8, xoffset: 1, yoffset: 1, zoffset: 1, force: true));
 						}
 						@n++;
 					} catch(Exception @ex) {
@@ -301,7 +301,7 @@ proc _snake_move(@player, @game) {
 		@loc[0] += 0.5;
 		@loc[1] += 0.5;
 		@loc[2] += 0.5;
-		spawn_particle(@loc, array('particle': 'VILLAGER_HAPPY', 'count': 8, 'xoffset': 0.6, 'yoffset': 0.6, 'zoffset': 0.6,));
+		spawn_particle(@loc, array(particle: 'VILLAGER_HAPPY', count: 8, xoffset: 0.6, yoffset: 0.6, zoffset: 0.6, force: true));
 	}
 
 	set_block(@snake['loc'], @snake['tail'], false);

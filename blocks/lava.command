@@ -32,8 +32,8 @@ register_command('lava', array(
 		@effectLoc['x'] += 0.5;
 		@effectLoc['z'] += 0.5;
 		@effectLoc['y'] += 0.5;
-		spawn_particle(@effectLoc, array(particle: 'EXPLOSION_LARGE'));
-		spawn_particle(@effectLoc, array(particle: 'LAVA', count: 20, xoffset: 1.0, zoffset: 1.0, yoffset: 0.5));
+		spawn_particle(@effectLoc, array(particle: 'EXPLOSION_LARGE', force: true));
+		spawn_particle(@effectLoc, array(particle: 'LAVA', count: 20, xoffset: 1.0, zoffset: 1.0, yoffset: 0.5, force: true));
 		@loc['level'] = 8;
 		@updates = array(@loc);
 		@limit = array(256);

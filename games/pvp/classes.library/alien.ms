@@ -28,7 +28,7 @@ proc _class_load(@player, @pvp) {
 
 	bind('projectile_hit', array(id: @player.'hit'), array(type: 'ARROW'), @e, @shooter = puuid(@player)) {
 		if(@e['shooter'] == @shooter) {
-			spawn_particle(@e['location'], array(particle: 'LAVA', count: 7));
+			spawn_particle(@e['location'], array(particle: 'LAVA', count: 7, force: true));
 			play_sound(@e['location'], array(sound: 'BLOCK_NOTE_BLOCK_BASEDRUM', pitch: 2, volume: 2));
 			play_sound(@e['location'], array(sound: 'BLOCK_FIRE_EXTINGUISH', pitch: 2, volume: 2));
 			try(entity_remove(@e['id']))

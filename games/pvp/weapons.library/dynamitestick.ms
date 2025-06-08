@@ -9,7 +9,7 @@ proc _weapon_bind_events(@pvp) {
 			die();
 		}
 		
-		spawn_particle(@loc, 'EXPLOSION_LARGE');
+		spawn_particle(@loc, array(particle: 'EXPLOSION_LARGE', force: true));
 		play_sound(@loc, associative_array(sound: 'ENTITY_GENERIC_EXPLODE', volume: 3));
 		foreach(@e in entities_in_radius(@loc, 7)) {
 			if(@e == @event['id'] || entity_type(@e) == 'PLAYER' && pmode(@e) == 'SPECTATOR') {
@@ -56,7 +56,7 @@ proc _weapon_bind_events(@pvp) {
 		set_pcooldown('RED_CANDLE', 50);
 		set_interval(50, closure(){
 			try {
-				spawn_particle(location_shift(entity_loc(@snowball), 'up', 0.5), 'FLAME');
+				spawn_particle(location_shift(entity_loc(@snowball), 'up', 0.5), array(particle: 'FLAME', force: true));
 			} catch (Exception @ex) {
 				clear_task();
 			}

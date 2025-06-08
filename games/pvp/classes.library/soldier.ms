@@ -24,7 +24,7 @@ proc _class_load(@player, @pvp) {
 					explosion(entity_loc(@armorStand), 3, true, false, puuid());
 					entity_remove(@armorStand);
 				} else {
-					spawn_particle(location_shift(entity_loc(@armorStand), 'up', 0.6), 'SMOKE_LARGE');
+					spawn_particle(location_shift(entity_loc(@armorStand), 'up', 0.6), array(particle: 'SMOKE_LARGE', force: true));
 				}
 			} catch(BadEntityException @ex) {
 				// grenade no longer exists

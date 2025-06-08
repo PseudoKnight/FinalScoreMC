@@ -661,7 +661,8 @@ proc _pvp_start_match(@id) {
 							count: 1,
 							xoffset: 0.3, 
 							yoffset: 0.3,
-							zoffset: 0.3
+							zoffset: 0.3,
+							force: true
 						), @viewers);
 						set_entity_glowing(@itemspawn[0], false);
 						continue();
@@ -694,7 +695,8 @@ proc _pvp_start_match(@id) {
 						count: 1,
 						xoffset: 0.3, 
 						yoffset: 0.3,
-						zoffset: 0.3
+						zoffset: 0.3,
+						force: true
 					));
 				} else {
 					array_remove(@pvp['powerups'], @index);

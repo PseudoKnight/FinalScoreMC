@@ -10,7 +10,7 @@ proc _weapon_bind_events(@pvp) {
 		}
 		
 		@a = @event['to'];
-		spawn_particle(@a, 'EXPLOSION_LARGE');
+		spawn_particle(@a, array(particle: 'EXPLOSION_LARGE', force: true));
 		play_sound(@a, associative_array(sound: 'ENTITY_GENERIC_EXPLODE', volume: 3));
 		foreach(@e in entities_in_radius(@a, 7)) {
 			if(entity_type(@e) == 'PLAYER' && pmode(@e) == 'SPECTATOR') {

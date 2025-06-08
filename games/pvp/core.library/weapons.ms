@@ -73,7 +73,7 @@ proc _weapon_hit_scan(@player, @ray, @damage, @effects, @pvp){
 	@spec = array_merge(array_keys(@pvp['players']), @pvp['spectators']);
 
 	if(@trace['hitblock'] && array_index_exists(@effects, 'hitparticle')) {
-		spawn_particle(@location, array(particle: @effects['hitparticle'], count: 8, speed: 0.05), @spec);
+		spawn_particle(@location, array(particle: @effects['hitparticle'], count: 8, speed: 0.05, force: true), @spec);
 	}
 	if(@entities) {
 		foreach(@entity in @entities) {
@@ -100,7 +100,7 @@ proc _weapon_hit_scan(@player, @ray, @damage, @effects, @pvp){
 					damage_entity(@entity['uuid'], @damage, @damager);
 				}
 				if(array_index_exists(@effects, 'hitparticle')) {
-					spawn_particle(@entity['location'], array(particle: @effects['hitparticle'], count: 4, speed: 0.05), @spec);
+					spawn_particle(@entity['location'], array(particle: @effects['hitparticle'], count: 4, speed: 0.05, force: true), @spec);
 				}
 			}
 		}

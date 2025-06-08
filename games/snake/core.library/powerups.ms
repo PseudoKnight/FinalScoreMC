@@ -383,7 +383,7 @@ proc _snake_drop_nuke(@snake, @game) {
 								}
 							}
 							if(!rand(3)) {
-								spawn_particle(@loc, 'EXPLOSION_LARGE');
+								spawn_particle(@loc, array(particle: 'EXPLOSION_LARGE', force: true));
 							}
 						}
 					}
@@ -501,7 +501,7 @@ proc _snake_launch_missile(@loc, @dir, @game) {
 				@missile['loc']['x'] += 0.5;
 				@missile['loc']['y'] += 0.5;
 				@missile['loc']['z'] += 0.5;
-				spawn_particle(@missile['loc'], array('particle': 'CLOUD', 'speed': 0.08, 'count': 8));
+				spawn_particle(@missile['loc'], array(particle: 'CLOUD', speed: 0.08, count: 8, force: true));
 			}
 		} catch(Exception @ex) {
 			if(@clear) {
@@ -562,11 +562,12 @@ proc _snake_update_laser(@player, @game) {
 	@snake = @game['snakes'][@player];
 	if(@snake['laser-blocks']) {
 		spawn_particle(@snake['laser-blocks'][-1], array(
-			'particle': 'LAVA',
-			'count': 8,
-			'xoffset': 0.5,
-			'yoffset': 0.5,
-			'zoffset': 0.5,
+			particle: 'LAVA',
+			count: 8,
+			xoffset: 0.5,
+			yoffset: 0.5,
+			zoffset: 0.5,
+			force: true,
 		));
 	}
 	if(time() > @snake['laser']) {

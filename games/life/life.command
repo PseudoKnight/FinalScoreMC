@@ -149,11 +149,11 @@ register_command('life', array(
 							if(@attacker) {
 								// Consumed
 								@gridChanges[] = array(@x, @z, @attacker, 
-										array(particle: 'BLOCK_CRACK', block: @blockTypes[@current], count: 9));
+										array(particle: 'BLOCK_CRACK', block: @blockTypes[@current], count: 9, force: true));
 							} else if(!array_contains(@survive, 8 - @count[0])) {
 								// Death
 								@gridChanges[] = array(@x, @z, 0, 
-										array(particle: 'FALLING_DUST', block: @blockTypes[@current]));
+										array(particle: 'FALLING_DUST', block: @blockTypes[@current], force: true));
 							}
 						} else {
 							foreach(@b in @birth) {

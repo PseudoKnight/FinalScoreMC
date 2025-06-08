@@ -37,8 +37,9 @@ proc _weapon_bind_events(@pvp) {
 					xoffset: 0.028 * @range,
 					yoffset: 0.028 * @range,
 					zoffset: 0.028 * @range,
+					force: true,
 				));
-				spawn_particle(@target, array(particle: 'CLOUD', speed: 0.03));
+				spawn_particle(@target, array(particle: 'CLOUD', speed: 0.03, force: true));
 				foreach(@p in array_keys(@pvp['players'])) {
 					if(@p == player() || phealth(@p) == 0) {
 						continue();
