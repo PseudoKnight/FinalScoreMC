@@ -171,7 +171,7 @@ bind('player_interact', null, array('button': 'right'), @event) {
 }
 
 # Let one player in a world make the sun rise.
-# Set player's home if unset for this world.
+# Set player home if unset for this world.
 bind('player_enter_bed', null, null, @event) {
 	if(!_is_survival_world(pworld())) {
 		die();

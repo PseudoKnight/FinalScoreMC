@@ -75,7 +75,7 @@ register_command('text', array(
 					@display = spawn_entity('TEXT_DISPLAY', 1, @loc)[0];
 					@text = array_implode(@args[1..]);
 					if(length(@text) == 0) {
-						// ensure it's visible
+						// ensure it is visible
 						@text = '.';
 					} else {
 						@text = replace(@text, '\\n', '\n');
