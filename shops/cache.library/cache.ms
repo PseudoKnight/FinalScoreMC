@@ -20,8 +20,8 @@ proc _cache_shop(@shop) {
 	array @chestInv;
 	try {
 		@chestInv = get_inventory(@chestLoc);
-	} catch(FormatException @ex) {
-		die(color('red').'This shop doesn\'t have a chest.');
+	} catch(IllegalArgumentException @ex) {
+		die(color('red').'This shop does not have a chest.');
 	}
 	
 	if(@shop['buy']) {
