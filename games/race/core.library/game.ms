@@ -196,7 +196,7 @@ proc _race_on_move(@player, @to, @race) {
 			}
 		} else if(sk_region_contains(@race['region'], @loc)) {
 			// ensure they are still in a vehicle in vehicle races
-			if(@race['type'] === 'kart' && !entity_exists(@p['kart']['base'])
+			if(@race['type'] === 'kart' && !entity_exists(@p['kart']['engine'])
 			|| !get_entity_vehicle(puuid(@player))
 			&& @p['state'] !== 'waiting'
 			&& array_contains(array('pig', 'boat', 'horse'), @race['type'])) {

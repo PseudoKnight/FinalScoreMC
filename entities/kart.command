@@ -42,7 +42,7 @@ register_command('kart', array(
 			_kart_remove(player(), @kart);
 		}
 		bind('entity_dismount', array(id: player().'kartdismount2'), array(type: 'ARMOR_STAND'), @event, @kart) {
-			if(@event['mountid'] === @kart['base']) {
+			if(@event['mountid'] === @kart['engine']) {
 				unbind();
 				unbind(player().'kartcommand');
 				unbind(player().'kartquit');

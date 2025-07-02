@@ -8,9 +8,9 @@ proc _race_add_player(@id, @player) {
 		checkpointLoc: @race['spawn'][0],
 		kart: null,
 		design: array(
- 			color: to_lower(string(array_get_rand(reflect_pull('enum', 'DyeColor')))),
-		 	engine: array_get_rand(array('furnace', 'blast_furnace', 'smoker')),
-			wheels: array_get_rand(array('BLACK_CONCRETE', 'BLACK_CONCRETE_POWDER', 'SCULK')),
+ 			color: string(array_get_rand(reflect_pull('enum', 'DyeColor'))),
+		 	engine: array_get_rand(array('furnace', 'blast_furnace', 'smoker', 'copper_bulb', 'redstone_lamp')),
+			wheels: array_get_rand(array('BLACK_CONCRETE', 'BLACK_CONCRETE_POWDER')),
 		)
 	);
 	set_pmode(@player, 'ADVENTURE');
