@@ -587,11 +587,11 @@ proc _kart_tick(@player, @kart, @race) {
 		}
 
 		// Update camera location
-		@cameraOffset = get_vector(array(yaw: @pfacing[0], pitch: 0), @kart['camdist'] + @kart['speed'] + if(@kart['boost'], 1, 0));
-		@cameraLoc = location_shift(@loc, 'up', @kart['camdist']);
-		@cameraLoc['x'] -= @cameraOffset['x'];
-		@cameraLoc['z'] -= @cameraOffset['z'];
-		set_entity_loc(@camera, @cameraLoc);
+		@cameraLoc = location_shift(@loc, 'up');
+		@cameraLoc['yaw'] = @pfacing[0] + 180;
+		@cameraLoc['pitch'] = -35;
+		@trace = ray_trace(@player, @cameraLoc, 2 + @kart['camdist'] + @kart['speed'] + if(@kart['boost'], 1, 0));
+		set_entity_loc(@camera, location_shift(@trace['location'], @cameraLoc, 2, true));
 
 		@speedometer = round(@kart['speed'] * 20, 1);
 		if(@kart['speedometer'] > @speedometer || @kart['speedometer'] < @speedometer) {
