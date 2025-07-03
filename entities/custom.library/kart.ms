@@ -28,7 +28,7 @@ array proc _kart_spawn(@loc, @player, @design, @camdist = 4.0) {
 		rightTire: null,
 		head: null,
 		// status
-		loc: @loc,
+		loc: location_shift(@loc, 'up', 0),
 		lastVelocity: array(x: 0, y: 0, z: 0, magnitude: 0.0),
 		speed: 0.0,
 		speedometer: 0.0,
