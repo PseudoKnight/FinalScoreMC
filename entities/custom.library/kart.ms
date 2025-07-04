@@ -16,6 +16,7 @@ array proc _kart_spawn(@loc, @player, @design, @camdist = 4.0) {
 		@wheels = array_get_rand(array('BLACK_CONCRETE', 'BLACK_CONCRETE_POWDER'));
 	}
 	@kart = array(
+		binds: array(),
 		// kart design
 		color: @color,
 		engineBlock: @engineBlock,
@@ -246,10 +247,20 @@ array proc _kart_spawn(@loc, @player, @design, @camdist = 4.0) {
 	set_pexp(@player, 0);
 	try(create_bar(@player.'kart', array(style: 'SEGMENTED_20', percent: 0.0)))
 	bar_add_player(@player.'kart', @player);
+	set_pheld_slot(@player, 8);
+	@kart['binds'][] = bind('item_held', null, array(player: @player), @event) {
+		cancel();
+	}
+	@kart['binds'][] = bind('entity_damage', null, array(id: puuid(@player), cause: 'SUFFOCATION'), @event) {
+		cancel();
+	}
 	return(@kart);
 }
 
 proc _kart_remove(@player, @kart) {
+	foreach(@bind in @kart['binds']) {
+		unbind(@bind);
+	}
 	if(ponline(@player)) {
 		// double check if they have not switched to new kart
 		@vehicle = pvehicle(@player);
