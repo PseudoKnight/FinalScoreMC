@@ -20,7 +20,7 @@ bind('player_login', null, null, @event) {
 				array_remove_values(@pdata['names'], @pdata['name']);
 				@pdata['names'][] = @pdata['name'];
 			} else {
-				msg('WARNING: ' . @event['player'] . ' did not have their name stored.');
+				console('WARNING: ' . @event['player'] . ' did not have their name stored.');
 			}
 			@pdata['name'] = @event['player'];
 		} else { # new player!
