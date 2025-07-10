@@ -45,7 +45,7 @@ array proc _kart_spawn(@loc, @player, @design, @camdist = 4.0) {
 		set_entity_attribute_base(@collider, 'GENERIC_STEP_HEIGHT', 0.5);
 		set_entity_invulnerable(@collider, true);
 		set_entity_spec(@collider, array(visible: false));
-		set_entity_size(@collider, 1.2, 1.2);
+		set_entity_size(@collider, 1.4, 1.4);
 	})[0];
 	@kart['collider'] = @collider;
 	@vehicle = spawn_entity('BLOCK_DISPLAY', 1, @loc, closure(@engineDisplay) {
@@ -380,9 +380,9 @@ proc _kart_tick(@player, @kart, @race) {
 		} else if(@acceleration > 0) {
 			if(@kart['speed'] < 0.75 * @maxSpeed) {
 				if(@drift) {
-					@kart['speed'] += 0.01 * (0.75 * @maxSpeed - @kart['speed']);
+					@kart['speed'] += 0.007 * (0.75 * @maxSpeed - @kart['speed']);
 				} else {
-					@kart['speed'] += 0.02 * (0.75 * @maxSpeed - @kart['speed']);
+					@kart['speed'] += 0.014 * (0.75 * @maxSpeed - @kart['speed']);
 				}
 			}
 		} else if(@acceleration < 0) {
@@ -413,30 +413,38 @@ proc _kart_tick(@player, @kart, @race) {
 		} else if(@loc['yaw'] < 0) {
 			@loc['yaw'] += 360;
 		}
-		if(@acceleration > 0 || !rand(20)) {
-			play_sound(@display, array(
-				sound: 'ENTITY_BEE_LOOP',
-				pitch: 0.5 + @kart['speed'] * 1.5,
-				volume: @kart['camdist'] / 1.8));
-		}
+		play_sound(@display, array(
+			sound: 'ENTITY_ARMADILLO_UNROLL_FINISH',
+			pitch: 0.4 + @currentVelocity['magnitude'],
+			volume: 1 - @currentVelocity['magnitude'],
+			seed: 1));
 
 		// Check collision
+		@grounded = false;
 		if(entity_grounded(@collider)) {
+			@grounded = true;
+			if(@currentVelocity['magnitude'] > 0.1 && !rand(20)) {
+				play_sound(@display, array(
+					sound: 'ENTITY_BEE_LOOP',
+					pitch: 0.4 + @currentVelocity['magnitude'] * 1.2,
+					volume: @kart['camdist'] / 1.8));
+			}
 			@lastVelocity = @kart['lastVelocity'];
-			if(@currentVelocity['x'] == 0 && abs(@lastVelocity['x']) > 0.04) { // if velocity stopped on this axis
+			if(@currentVelocity['x'] == 0 && abs(@lastVelocity['x']) > 0.05) { // if velocity stopped on this axis
 				if(abs(@kart['loc']['x'] - @loc['x']) < 0.01) { // if movement stopped on this axis
-					if(abs(@lastVelocity['x']) > 0.3 // speed of collision
-					&& abs(@lastVelocity['x']) > abs(@lastVelocity['z'])) { // angle of collision
-						@kart['explode'] = true;
-					} else if(@lastVelocity['x'] > 0.1) { // still fast enough to deflect
+					if(abs(@lastVelocity['x']) > abs(@lastVelocity['z'])) { // angle of collision
+						if(abs(@lastVelocity['x']) > 0.3) { // magnitude of collision
+							@kart['explode'] = true;
+						}
+						stop_sound(@player, 'ENTITY_BEE_LOOP');
+						@kart['speed'] = 0.0;
+					} else { // still fast enough to deflect
 						if(@lastVelocity['z'] > 0) {
 							@loc['yaw'] = 0;
 						} else if(@lastVelocity['z'] < 0) {
 							@loc['yaw'] = 180;
 						}
 						@kart['speed'] *= 0.7;
-					} else { // going too slow, so just stop
-						@kart['speed'] = 0.0;
 					}
 					@kart['lastVelocity'] = @currentVelocity;
 					play_named_sound(@display, array(
@@ -444,20 +452,21 @@ proc _kart_tick(@player, @kart, @race) {
 						pitch: 1.3 - @kart['speed'],
 						volume: @kart['camdist'] / 3));
 				}
-			} else if(@currentVelocity['z'] == 0 && abs(@lastVelocity['z']) > 0.04) {
+			} else if(@currentVelocity['z'] == 0 && abs(@lastVelocity['z']) > 0.05) {
 				if(abs(@kart['loc']['z'] - @loc['z']) < 0.01) {
-					if(abs(@lastVelocity['z']) > 0.3
-					&& abs(@lastVelocity['z']) > abs(@lastVelocity['x'])) {
-						@kart['explode'] = true;
-					} else if(@lastVelocity['z'] > 0.1) {
+					if(abs(@lastVelocity['z']) > abs(@lastVelocity['x'])) {
+						if(abs(@lastVelocity['z']) > 0.3) {
+							@kart['explode'] = true;
+						}
+						stop_sound(@player, 'ENTITY_BEE_LOOP');
+						@kart['speed'] = 0.0;
+					} else {
 						if(@lastVelocity['x'] > 0) {
 							@loc['yaw'] = 270;
 						} else if(@lastVelocity['x'] < 0) {
 							@loc['yaw'] = 90;
 						}
 						@kart['speed'] *= 0.7;
-					} else {
-						@kart['speed'] = 0.0;
 					}
 					@kart['lastVelocity'] = @currentVelocity;
 					play_named_sound(@display, array(
@@ -507,7 +516,7 @@ proc _kart_tick(@player, @kart, @race) {
 		}
 
 		// Spawn rubber particles
-		if(@drift) {
+		if(@grounded && @drift) {
 			array @boostready = null;
 			if(pexp(@player) >= 99) {
 				@boostready = array(
@@ -549,7 +558,7 @@ proc _kart_tick(@player, @kart, @race) {
 			if(@boostready) {
 				spawn_particle(@particleLoc, @boostready);
 			}
-		} else if(@acceleration >= 1 && @kart['speed'] < 0.3) {
+		} else if(@grounded && (@acceleration < 0 || @acceleration > 0 && @currentVelocity['magnitude'] < 0.25)) {
 			play_sound(@display, array(
 				sound: 'BLOCK_COMPOSTER_READY',
 				volume: @kart['camdist'] / 6));
@@ -640,6 +649,7 @@ proc _kart_tick(@player, @kart, @race) {
 			}
 			spawn_particle(@loc, array(particle: 'EXPLOSION_HUGE'));
 			play_sound(@loc, array(sound: 'ENTITY_GENERIC_EXPLODE', volume: @kart['camdist']));
+			stop_sound(@player, 'ENTITY_BEE_LOOP');
 			if(@race) {
 				foreach(@otherplayer in array_keys(@race['players'])) {
 					psend_block_change(@otherplayer, @loc, 'fire');
