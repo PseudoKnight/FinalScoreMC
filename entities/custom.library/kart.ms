@@ -32,7 +32,6 @@ array proc _kart_spawn(@loc, @player, @design, @camdist = 4.0) {
 		loc: location_shift(@loc, 'up', 0),
 		lastVelocity: array(x: 0, y: 0, z: 0, magnitude: 0.0),
 		speed: 0.0,
-		speedometer: 0.0,
 		explode: false,
 		camdist: @camdist,
 		// previous inputs
@@ -447,7 +446,8 @@ proc _kart_tick(@player, @kart, @race) {
 				}
 			} else if(@currentVelocity['z'] == 0 && abs(@lastVelocity['z']) > 0.04) {
 				if(abs(@kart['loc']['z'] - @loc['z']) < 0.01) {
-					if(abs(@lastVelocity['z']) > 0.3 && abs(@lastVelocity['z']) > abs(@lastVelocity['x'])) {
+					if(abs(@lastVelocity['z']) > 0.3
+					&& abs(@lastVelocity['z']) > abs(@lastVelocity['x'])) {
 						@kart['explode'] = true;
 					} else if(@lastVelocity['z'] > 0.1) {
 						if(@lastVelocity['x'] > 0) {
@@ -604,18 +604,13 @@ proc _kart_tick(@player, @kart, @race) {
 		@trace = ray_trace(@player, @cameraLoc, 2 + @kart['camdist'] + @kart['speed'] + if(@kart['boost'], 1, 0));
 		set_entity_loc(@camera, location_shift(@trace['location'], @cameraLoc, 2, true));
 
-		@speedometer = round(@kart['speed'] * 20, 1);
-		if(@kart['speedometer'] > @speedometer || @kart['speedometer'] < @speedometer) {
-			try {
-				update_bar(@player.'kart', array(
-					percent: abs(@kart['speed']) / @maxSpeed,
-					color: if(@kart['speed'] < 0.0, 'RED', if(@kart['speed'] > 0.7975 * @maxSpeed, 'YELLOW', 'WHITE')),
-					title: 'Speed: '.@speedometer.' m/s'));
-			} catch(NotFoundException @ex) {
-				create_bar(@player.'kart', array(style: 'SEGMENTED_20', percent: 0.0));
-				bar_add_player(@player.'kart', @player);
-			}
-			@kart['speedometer'] = @speedometer;
+		try {
+			update_bar(@player.'kart', array(
+				percent: clamp(abs(@kart['speed']) / @maxSpeed, 0.0, 1.0),
+				color: if(@kart['speed'] > 1.0, 'RED', if(@kart['speed'] > 0.7975 * @maxSpeed, 'YELLOW', 'WHITE'))));
+		} catch(NotFoundException @ex) {
+			create_bar(@player.'kart', array(style: 'SEGMENTED_20', percent: 0.0));
+			bar_add_player(@player.'kart', @player);
 		}
 
 		if(@kart['explode']) {
