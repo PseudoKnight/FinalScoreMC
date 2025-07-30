@@ -993,8 +993,11 @@ proc _pvp_end_match(@id, @winners) {
 			broadcast(color('YELLOW').'Restoring arena for '.@pvp['title'].' ...');
 			foreach(@region in @arena['restore']) {
 				queue_push(closure(){
+					@startTime = time();
 					skcb_load(@region);
-					skcb_paste(array(0, 0, 0, @world), array(origin: true));
+					skcb_paste(array(0, 0, 0, @world), array(origin: true, fastmode: true));
+					skcb_clear(null);
+					console('Restored arena in '.(time() - @startTime).'ms');
 				});
 			}
 		}
