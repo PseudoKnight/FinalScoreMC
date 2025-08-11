@@ -3,7 +3,7 @@ register_command('text', array(
 	usage: '/text <create|select|set|delete|align|linewidth|seethrough|shadow|opacity|brightness|billboard|viewrange|scale> [value]',
 	permission: 'command.text',
 	tabcompleter: _create_tabcompleter(
-		array('create', 'move', 'select', 'set', 'delete', 'align', 'linewidth', 'seethrough', 
+		array('create', 'move', 'select', 'set', 'edit', 'delete', 'align', 'linewidth', 'seethrough', 
 			'shadow', 'opacity', 'brightness', 'billboard', 'viewrange', 'scale', 'bgcolor', 'copy'),
 		array('<create|set': array('<text...>'),
 			'<move': array('here', 'there'),
@@ -126,6 +126,11 @@ register_command('text', array(
 				@text = array_implode(@args[1..]);
 				@text = replace(@text, '\\n', '\n');
 				set_entity_spec(@display, array(text: colorize(@text)));
+			case 'edit':
+				@text = entity_spec(@display)['text'];
+				@text = replace(@text, '\n', '\\n');
+				@text = replace(@text, '\u00a7', '&');
+				runas('~console', '/tellraw '.player().' ["",{"text":"[Click to Edit]","color":"green","clickEvent":{"action":"suggest_command","value":"/text set '.@text.'"}}]');
 			case 'align':
 				if(!@value) {
 					die('Must specify text alignment: center, left, or right.');
