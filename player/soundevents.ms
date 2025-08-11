@@ -6,7 +6,7 @@ bind('entity_toggle_glide', array('priority': 'MONITOR'), null, @event) {
 }
 
 bind('item_swap', array('priority': 'MONITOR'), null, @event) {
-	if(!is_cancelled()) {
+	if(!is_cancelled() && (pinv(player(), null) || pinv(player(), -106))) {
 		play_sound(ploc(), array('sound': 'ITEM_ARMOR_EQUIP_GENERIC', 'category': 'PLAYERS'), player());
 	}
 }
