@@ -4,7 +4,6 @@ proc _warmuptp(@player, @loc, @cleareffects = false, @force = false) {
 	if(!_is_survival_world(pworld(@player))) {
 		@length = 0.1;
 	} else {
-		set_peffect(@player, 'NAUSEA', 1, 7, true, false);
 		play_sound(puuid(@player), array('sound': 'BLOCK_PORTAL_TRIGGER', 'category': 'PLAYERS', 'volume': 1, 'pitch': 1));
 	}
 	set_timeout(integer(@length * 1000), closure(){
