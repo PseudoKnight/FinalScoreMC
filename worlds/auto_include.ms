@@ -139,6 +139,7 @@ proc _create_world(@name, @world) {
 			set_spawning(@name, @world['spawning']);
 		}
 	}
+	set_gamerule(@name, 'enderPearlsVanishOnDeath', false);
 }
 
 /**
