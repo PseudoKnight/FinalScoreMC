@@ -13,7 +13,7 @@ proc _fw_start_task(@secs) {
 		array(@region[1][0] + 1, @region[1][1] + 20, @region[1][2] + 1, 'custom'),
 		'EMERALD_BLOCK', 7);
 	bind('player_teleport', array(id: 'fwtask', priority: 'HIGH'), array(type: 'ENDER_PEARL'), @e) {
-		if(_fw_player(player())) {
+		if(_fw_player(player()) && @e['to']['world'] === 'custom') {
 			consume();
 		}
 	}
