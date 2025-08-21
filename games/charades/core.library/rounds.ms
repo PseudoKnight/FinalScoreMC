@@ -178,13 +178,13 @@ proc _end_build() {
 						@line++;
 					}
 					@page .= ',{"text":"'.'\n \u27a2 '.replace(to_upper(@category), '_', ' ')
-							.'","clickEvent":{"action":"run_command","value":"/charades vote '.@category.'"}}';
+							.'","click_event":{"action":"run_command","command":"/charades vote '.@category.'"}}';
 					@line++;
 					if(@line == 15) {
 						break();
 					}
 				}
-				@page .= ',{"text":"'.'\n \u27a2 Final Round","clickEvent":{"action":"run_command","value":"/charades vote final_round"}}';
+				@page .= ',{"text":"'.'\n \u27a2 Final Round","click_event":{"action":"run_command","command":"/charades vote final_round"}}';
 				@page .= ']';
 				@pages = array(@page);
 				foreach(@p in @charades['players']) {

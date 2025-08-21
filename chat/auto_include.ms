@@ -152,7 +152,7 @@ proc _click_tell(@recipients, @components) {
 		if(!is_array(@c)) {
 			@message .= colorize(@c).'"}';
 		} else {
-			@message .= colorize(@c[0]).'","clickEvent":{"action":"run_command","value":"'.@c[1].'"}}';
+			@message .= colorize(@c[0]).'","click_event":{"action":"run_command","command":"'.@c[1].'"}}';
 		}
 	}
 	@message .= ']';
@@ -208,8 +208,8 @@ proc _tellraw(@recipients, @components) {
 			@parts = reg_match('(.*?)(?:https?://|www\\.)([^/\\s]+)([^\\s]*)(.*)', @c);
 			if(@parts) {
 				@raw .= _colorize(@parts[1])
-						.',{"color":"aqua","text":"\u29C9'.@parts[2].'","clickEvent":{"action":"open_url","value":"http://'
-						.@parts[2].@parts[3].'"},"hoverEvent":{"action":"show_text","value":"http://'.@parts[2].@parts[3].'"}}'
+						.',{"color":"aqua","text":"\u29C9'.@parts[2].'","click_event":{"action":"open_url","url":"http://'
+						.@parts[2].@parts[3].'"},"hover_event":{"action":"show_text","value":"http://'.@parts[2].@parts[3].'"}}'
 						._colorize(@parts[4]);
 			} else {
 				@raw .= _colorize(@c);
@@ -217,10 +217,10 @@ proc _tellraw(@recipients, @components) {
 		} else {
 			switch(@c[0]) {
 				case "open_url":
-					@raw .= ',{"color":"aqua","text":"\u29C9'.@c[1].'","clickEvent":{"action":"open_url","value":"'.@c[2]
-							.'"},"hoverEvent":{"action":"show_text","value":"'.@c[3].'"}}';
+					@raw .= ',{"color":"aqua","text":"\u29C9'.@c[1].'","click_event":{"action":"open_url","url":"'.@c[2]
+							.'"},"hover_event":{"action":"show_text","value":"'.@c[3].'"}}';
 				case 'hover':
-					@raw .= ',{"text":"'.colorize(@c[1]).'","hoverEvent":{"action":"show_text","value":"'.colorize(@c[2]).'"}}';
+					@raw .= ',{"text":"'.colorize(@c[1]).'","hover_event":{"action":"show_text","value":"'.colorize(@c[2]).'"}}';
 				case 'colorize':
 					@raw .= ',"'.colorize(@c[1]).'"';
 				case 'plain':

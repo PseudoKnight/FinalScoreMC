@@ -102,6 +102,7 @@ bind('target_player', null, array(mobtype: 'ZOMBIE'), @event, @day, @passive = a
 	'WOLF',
 	'ZOMBIE_HORSE',
 	// SNIFFER, special spawn
+	// HAPPY_GHAST,
 ), @hostile = array(
 	'BOGGED',
 	'BREEZE',

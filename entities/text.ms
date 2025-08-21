@@ -130,7 +130,7 @@ register_command('text', array(
 				@text = entity_spec(@display)['text'];
 				@text = replace(@text, '\n', '\\n');
 				@text = replace(@text, '\u00a7', '&');
-				runas('~console', '/tellraw '.player().' ["",{"text":"[Click to Edit]","color":"green","clickEvent":{"action":"suggest_command","value":"/text set '.@text.'"}}]');
+				runas('~console', '/tellraw '.player().' ["",{"text":"[Click to Edit]","color":"green","click_event":{"action":"suggest_command","command":"/text set '.@text.'"}}]');
 			case 'align':
 				if(!@value) {
 					die('Must specify text alignment: center, left, or right.');

@@ -29,7 +29,7 @@ bind('player_interact_entity', null, array('clicked': '/(DONKEY|HORSE|MULE|SKELE
 	if(@owner && @owner != player()) {
 		msg('This animal is owned by '.@owner);
 		if(!has_permission('group.moderator')
-		&& (!@item || (@item['name'] != 'GOLDEN_APPLE' && @item['name'] != 'GOLDEN_CARROT'))) {
+		&& (!@item || (@item['name'] !== 'GOLDEN_APPLE' && @item['name'] !== 'GOLDEN_CARROT' && @item['name'] !== 'CARROT'))) {
 			@pdata = null;
 			try {
 				@pdata = _pdata(@owner);

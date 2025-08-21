@@ -58,12 +58,12 @@ proc _msg_block_command(@loc) {
 	@cmd = replace(@cmd, '\\', '\\\\');
 	@cmd = replace(@cmd, '"', '\\u0022');
 	runas('~console', '/tellraw '.player().' ["",'
-			.if(has_permission('command.cb.extended'), '{"text":"[EDIT]","clickEvent":{"action":"run_command","value":"/scb"}},')
-			.'{"text":" [REDSTONE |","clickEvent":{"action":"run_command","value":"/scbauto false"}},'
-			.'{"text":" ALWAYS]","clickEvent":{"action":"run_command","value":"/scbauto true"}},'
-			.'{"text":" [CONDITIONAL]","clickEvent":{"action":"run_command","value":"/scbconditional"}},'
-			.'{"text":" [TYPE]","clickEvent":{"action":"run_command","value":"/scbtype"}},'
-			.'{"text":" [COPY]","clickEvent":{"action":"suggest_command","value":"/scb '.@cmd.'"}},'
+			.if(has_permission('command.cb.extended'), '{"text":"[EDIT]","click_event":{"action":"run_command","command":"/scb"}},')
+			.'{"text":" [REDSTONE |","click_event":{"action":"run_command","command":"/scbauto false"}},'
+			.'{"text":" ALWAYS]","click_event":{"action":"run_command","command":"/scbauto true"}},'
+			.'{"text":" [CONDITIONAL]","click_event":{"action":"run_command","command":"/scbconditional"}},'
+			.'{"text":" [TYPE]","click_event":{"action":"run_command","command":"/scbtype"}},'
+			.'{"text":" [COPY]","click_event":{"action":"suggest_command","command":"/scb '.@cmd.'"}},'
 			.'{"text":"\\n'.@cmd.'"}]');
 }
 

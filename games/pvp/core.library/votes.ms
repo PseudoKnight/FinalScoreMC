@@ -14,7 +14,7 @@ proc _open_vote_menu(@id) {
 		@root[] = array(
 			bold: true,
 			text: if(@optionCount < 5, '\n\n', '\n').' ≡ Teams',
-			clickEvent: array(action: 'change_page', value: array_size(@pages) + 2));
+			click_event: array(action: 'change_page', page: array_size(@pages) + 2));
 
 		@votes = array();
 		foreach(@p in @pvp['players']) {
@@ -30,12 +30,12 @@ proc _open_vote_menu(@id) {
 		foreach(@value in @arena['vote']['teams']) {
 			@page[] = array(
 				text: '\n '.if(array_contains(@votes, @value), '☑', '☐').' '.to_upper(@value[0]).@value[1..],
-				clickEvent: array(action: 'run_command', value: '/pvp vote '.@id.' teams '.@value));
+				click_event: array(action: 'run_command', command: '/pvp vote '.@id.' teams '.@value));
 		}
 		@page[] = array(
 			bold: true,
 			text: '\n\n ≡ MENU',
-			clickEvent: array(action: 'change_page', value: 1));
+			click_event: array(action: 'change_page', page: 1));
 		@pages[] = json_encode(@page);
 	}
 
@@ -43,7 +43,7 @@ proc _open_vote_menu(@id) {
 		@root[] = array(
 			bold: true,
 			text: if(@optionCount < 5, '\n\n', '\n').' ≡ Classes',
-			clickEvent: array(action: 'change_page', value: array_size(@pages) + 2));
+			click_event: array(action: 'change_page', page: array_size(@pages) + 2));
 
 		@votes = array();
 		foreach(@p in @pvp['players']) {
@@ -59,12 +59,12 @@ proc _open_vote_menu(@id) {
 		foreach(@value in @arena['vote']['classes']) {
 			@page[] = array(
 				text: '\n '.if(array_contains(@votes, @value), '☑', '☐').' '.to_upper(@value[0]).@value[1..],
-				clickEvent: array(action: 'run_command', value: '/pvp vote '.@id.' classes '.@value));
+				click_event: array(action: 'run_command', command: '/pvp vote '.@id.' classes '.@value));
 		}
 		@page[] = array(
 			bold: true,
 			text: '\n\n ≡ MENU',
-			clickEvent: array(action: 'change_page', value: 1));
+			click_event: array(action: 'change_page', page: 1));
 		@pages[] = json_encode(@page);
 	}
 
@@ -72,7 +72,7 @@ proc _open_vote_menu(@id) {
 		@root[] = array(
 			bold: true,
 			text: if(@optionCount < 5, '\n\n', '\n').' ≡ Arenas',
-			clickEvent: array(action: 'change_page', value: array_size(@pages) + 2));
+			click_event: array(action: 'change_page', page: array_size(@pages) + 2));
 
 		@page = array('');
 		@page[] = array(
@@ -92,7 +92,7 @@ proc _open_vote_menu(@id) {
 			}
 			@page[] = array(
 				text: '\n '.@checkBox.' Random',
-				clickEvent: array(action: 'run_command', value: '/pvp vote '.@id.' arena random'));
+				click_event: array(action: 'run_command', command: '/pvp vote '.@id.' arena random'));
 		}
 		if(array_contains(@arena['vote']['arenas'], 'any')) {
 			foreach(@index: @ar in @arena['arenaselect']['arenas']) {
@@ -110,7 +110,7 @@ proc _open_vote_menu(@id) {
 				}
 				@page[] = array(
 					text: '\n '.@checkBox.' '.to_upper(@ar[0]).substr(@ar, 1),
-					clickEvent: array(action: 'run_command', value: '/pvp vote '.@id.' arena '.@ar));
+					click_event: array(action: 'run_command', command: '/pvp vote '.@id.' arena '.@ar));
 			}
 		}
 		@pages[] = json_encode(@page);

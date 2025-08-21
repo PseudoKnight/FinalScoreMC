@@ -51,7 +51,7 @@ bind('player_teleport', null, null, @event) {
 		@vehicle = get_entity_vehicle(@uuid);
 
 		@leashedEntities = array();
-		foreach(@e in entities_in_radius(@from, 8)) {
+		foreach(@e in entities_in_radius(@from, 16)) {
 			if(is_entity_living(@e) && get_leashholder(@e) == @uuid) {
 				@leashedEntities[] = @e;
 				set_leashholder(@e, null);

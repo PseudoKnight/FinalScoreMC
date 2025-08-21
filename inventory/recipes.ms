@@ -89,31 +89,6 @@ if(!import('recompile')) {
 		})
 	));
 
-	// 1.21.5+ cheaper lodestone
-	add_recipe(array(
-		key: 'cheaper_lodestone',
-		type: 'SHAPED',
-		result: array(name: 'LODESTONE'),
-		ingredients: array(
-			I: 'IRON_INGOT',
-			C: 'CHISELED_STONE_BRICKS'),
-		shape: array(
-			'CCC',
-			'CIC',
-			'CCC')));
-	
-	// 1.21.6+ cheaper lead
-	add_recipe(array(
-		key: 'cheaper_lead',
-		type: 'SHAPED',
-		result: array(name: 'LEAD', qty: 2),
-		ingredients: array(
-			S: 'STRING',
-			X: null),
-		shape: array(
-			'SSX',
-			'SSX',
-			'XXS')));
 }
 
 # Special recipe handling (eg. enchanted lore books, exp bottles, player heads)

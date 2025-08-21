@@ -224,7 +224,7 @@ bind('player_interact_entity', null, array(clicked: 'PAINTING', hand: 'main_hand
 		'POOL', 'COURBET', 'SEA', 'SUNSET', 'CREEBET', 'WANDERER', 'GRAHAM', 'PRAIRIE_RIDE', 'MATCH', 'BUST', 
 		'STAGE', 'VOID', 'SKULL_AND_ROSES', 'WITHER', 'BAROQUE', 'HUMBLE', 'EARTH', 'WIND', 'WATER', 'FIRE', 
 		'FIGHTERS', 'CHANGING', 'FINDING', 'LOWMIST', 'PASSAGE', 'BOUQUET', 'CAVEBIRD', 'COTAN', 'ENDBOSS',
-		'FERN', 'OWLEMONS', 'SUNFLOWERS', 'TIDES', 'SKELETON', 'DONKEY_KONG', 'BACKYARD', 'POND', 'POINTER',
+		'FERN', 'OWLEMONS', 'SUNFLOWERS', 'TIDES', 'DENNIS', 'SKELETON', 'DONKEY_KONG', 'BACKYARD', 'POND', 'POINTER',
 		'PIGSCENE', 'BURNING_SKULL', 'ORB', 'UNPACKED');
 		@current = entity_spec(@event['id'])['type'];
 		@index = array_index(@paintings, @current);
