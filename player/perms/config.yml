@@ -290,8 +290,10 @@ engineer:
     dev:
       worldguard.region.*: true
       command.class: true
+      command.shipify: true
       minecraft.command.particle: true
     custom:
+      command.shipify: true
       worldguard.region.*: true
       worldedit.analysis.*: true
       worldedit.brush.*: true
