@@ -7,6 +7,7 @@ proc _race_add_player(@id, @player) {
 		place: 0,
 		checkpointLoc: @race['spawn'][0],
 		kart: null,
+		itemCooldown: 0,
 		design: array(
  			color: string(array_get_rand(reflect_pull('enum', 'DyeColor'))),
 		 	engine: array_get_rand(array('furnace', 'blast_furnace', 'smoker', 'copper_bulb', 'redstone_lamp')),

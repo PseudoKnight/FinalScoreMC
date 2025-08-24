@@ -1,3 +1,6 @@
+proc _race_on_move() {}
+proc _race_activate_item() {}
+
 /**
  * Spawns a new kart.
  * Returns the array defining this kart object.
@@ -28,6 +31,7 @@ array proc _kart_spawn(@loc, @player, @design, @camdist = 4.0) {
 		leftTire: null,
 		rightTire: null,
 		head: null,
+		item: null,
 		// status
 		loc: location_shift(@loc, 'up', 0),
 		lastVelocity: array(x: 0, y: 0, z: 0, magnitude: 0.0),
@@ -102,6 +106,17 @@ array proc _kart_spawn(@loc, @player, @design, @camdist = 4.0) {
 	})[0];
 	@kart['head'] = @head;
 	set_entity_rider(@stand, @head);
+	@item = spawn_entity('ITEM_DISPLAY', 1, @loc, closure(@item) {
+		set_entity_saves_on_unload(@item, false);
+		set_display_entity(@item, array(
+			brightness: @brightness,
+			teleportduration: @teleportduration,
+			transformation: array(
+				translation: array(x: -0.6, y: 1.2, z: 0.0),
+				scale: array(x: 1, y: 1, z: 1))));
+	})[0];
+	@kart['item'] = @item;
+	set_entity_rider(@vehicle, @item);
 	set_entity_rider(@vehicle, spawn_entity('ITEM_DISPLAY', 1, @loc, closure(@steeringwheel) {
 		set_entity_saves_on_unload(@steeringwheel, false);
 		set_entity_spec(@steeringwheel, array(item: array(name: 'MUSIC_DISC_STAL')));
@@ -247,6 +262,7 @@ array proc _kart_spawn(@loc, @player, @design, @camdist = 4.0) {
 	try(create_bar(@player.'kart', array(style: 'SEGMENTED_20', percent: 0.0)))
 	bar_add_player(@player.'kart', @player);
 	set_pheld_slot(@player, 8);
+	_kart_show_item(@player, @kart);
 	@kart['binds'][] = bind('item_held', null, array(player: @player), @event) {
 		cancel();
 	}
@@ -310,22 +326,6 @@ proc _kart_tick(@player, @kart, @race) {
 		@pfacing = pfacing(@player);
 		set_peffect(@player, 'invisibility', 0, 1, true, false, false);
 
-		// Get location
-		@loc = entity_loc(@collider);
-		@currentVelocity = entity_velocity(@collider);
-
-		// Interpolate pitch back to zero
-		if(!equals_epsilon(@loc['pitch'], 0.0, 0.01)) {
-			if(@loc['pitch'] > 0) {
-				@loc['pitch'] *= 0.5;
-			} else {
-				@loc['pitch'] *= 0.9;
-			}
-			if(equals_epsilon(@loc['pitch'], 0.0, 1.0)) {
-				@loc['pitch'] = 0.0;
-			}
-		}
-
 		// Get kart input
 		@input = get_player_input(@player);
 		@acceleration = 0;
@@ -341,6 +341,26 @@ proc _kart_tick(@player, @kart, @race) {
 			@acceleration = -1;
 		}
 		@drift = @input['sneak'];
+
+		if(@race && @input['jump']) {
+			_race_activate_item(@race, @player, @kart);
+		}
+
+		// Get location
+		@loc = entity_loc(@collider);
+		@currentVelocity = entity_velocity(@collider);
+
+		// Interpolate pitch back to zero
+		if(!equals_epsilon(@loc['pitch'], 0.0, 0.01)) {
+			if(@loc['pitch'] > 0) {
+				@loc['pitch'] *= 0.5;
+			} else {
+				@loc['pitch'] *= 0.9;
+			}
+			if(equals_epsilon(@loc['pitch'], 0.0, 1.0)) {
+				@loc['pitch'] = 0.0;
+			}
+		}
 
 		// Boost / reset yaw from drift turn
 		if(!@drift && pexp(@player) >= 99 && @acceleration > 0) {
@@ -658,12 +678,22 @@ proc _kart_tick(@player, @kart, @race) {
 			set_timeout(@animationDurationTicks * 50, closure(){
 				_kart_remove(@player, @kart);
 				if(@race) {
-					call_proc(@race['onMove'], @player, @loc, @race);
+					_race_on_move(@player, @loc, @race);
 				}
 			});
 		} else if(@race) {
 			// Check movement on course
-			call_proc(@race['onMove'], @player, @loc, @race);
+			_race_on_move(@player, @loc, @race);
 		}
 	});
+}
+
+proc _kart_show_item(@player, @kart) {
+	@item = pinv(@player, 0);
+	set_entity_spec(@kart['item'], array(item: @item));
+	if(@item && @item['meta']) {
+		update_bar(@player.'kart', color('bold').@item['meta']['display'].' [SPACE]');
+	} else {
+		update_bar(@player.'kart', '');
+	}
 }

@@ -5,7 +5,7 @@ register_command('track', array(
 	tabcompleter: _create_tabcompleter(
 		array('set', 'delete', 'info', 'list', 'rename'),
 		array('<arena_id>'),
-		array('<<set|delete': array('region', 'laps', 'health', 'lobby', 'spawn', 'checkpoint', 'type', 'effect', 'camdist')),
+		array('<<set|delete': array('region', 'laps', 'health', 'lobby', 'spawn', 'checkpoint', 'type', 'effect', 'camdist', 'itemspawn', 'item')),
 		array('<type': array('boat', 'elytra', 'horse', 'parkour', 'pig', 'kart'))
 	),
 	executor: closure(@alias, @sender, @args, @info) {
@@ -65,12 +65,21 @@ register_command('track', array(
 
 					// multiple locations
 					case 'spawn':
+					case 'itemspawn':
 						if(!array_index_exists(@track, @setting)) {
 							@track[@setting] = array();
 						}
 						@loc = array_normalize(entity_loc(puuid()))[0..5];
 						@track[@setting][] = @loc;
-						msg(colorize("&7[Track]&r Set &e@setting&r to this location"));
+						msg(colorize("&7[Track]&r Added &e@setting&r for this location"));
+
+					// multiple items
+					case 'item':
+						if(!array_index_exists(@track, @setting)) {
+							@track[@setting] = array();
+						}
+						@track[@setting][] = pinv(player(), null);
+						msg(colorize("&7[Track]&r Added item to @setting list"));
 
 					// selection with optional integer
 					case 'checkpoint':

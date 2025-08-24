@@ -1,6 +1,7 @@
-include('player.ms');
-include('events.ms');
 include('../../../entities/custom.library/kart.ms');
+include('player.ms');
+include('items.ms');
+include('events.ms');
 
 proc _race_create_and_join(@id) {
 	@race = import('race'.@id);
@@ -45,6 +46,11 @@ proc _race_create(@id) {
 		die(color('red').'Race region does not exist in this world.');
 	}
 
+	@items = array();
+	if(array_index_exists(@track, 'itemspawn') && array_index_exists(@track, 'item')) {
+		@items = array_resize(array(), array_size(@track['itemspawn']));
+	}
+
 	// game object
 	@race = array_merge(array(
 		type: 'parkour', // default
@@ -57,7 +63,7 @@ proc _race_create(@id) {
 		place: 1,
 		world: pworld(),
 		times: associative_array(),
-		onMove: null,
+		items: @items,
 	), @track);
 	export('race'.@id, @race);
 
@@ -80,47 +86,43 @@ proc _race_countdown(@race) {
 	_add_activity('race'.@race['id'], 'Race: '._to_upper_camel_case(@race['id']));
 
 	create_bar('race'.@race['id'], array(style: 'SEGMENTED_6', percent: 0.0, color: 'WHITE'));
-	@index = 0;
 	foreach(@p: @v in @race['players']) {
 		if(ponline(@p)) {
 			bar_add_player('race'.@race['id'], @p);
-			set_entity_loc(puuid(@p), @race['spawn'][@index]);
-			@index = (@index + 1) % array_size(@race['spawn']);
 		} else {
 			array_remove(@race['players'], @p);
 		}
 	}
-	set_timeout(1000, closure(){ // delay to load chunks first
-		_race_place_players(@race);
-		_race_bind_events(@race);
-		@startTime = 6;
-		@timer = array(@startTime);
-		set_interval(1000, closure(){
-			@timer[0]--;
-			if(@timer[0] < 0) {
-				clear_task();
-				remove_bar('race'.@race['id']);
-				die();
+
+	_race_place_players(@race);
+	_race_bind_events(@race);
+	@startTime = 6;
+	@timer = array(@startTime);
+	set_interval(1000, closure(){
+		@timer[0]--;
+		if(@timer[0] < 0) {
+			clear_task();
+			remove_bar('race'.@race['id']);
+			die();
+		}
+		foreach(@p: @v in @race['players']) {
+			if(!ponline(@p) || !array_contains(sk_current_regions(@p), @race['region'])) {
+				array_remove(@race['players'], @p);
 			}
-			foreach(@p: @v in @race['players']) {
-				if(!ponline(@p) || !array_contains(sk_current_regions(@p), @race['region'])) {
-					array_remove(@race['players'], @p);
-				}
-			}
-			if(!@race['players']) {
-				clear_task();
-				_race_end(@race);
-				remove_bar('race'.@race['id']);
-			} else if(@timer[0] == 0) {
-				_race_start(@race);
-				update_bar('race'.@race['id'], array(percent: 1.0, color: 'GREEN'));
-			} else if(@timer[0] < 4) {
-				update_bar('race'.@race['id'], array(percent: 1 - @timer[0] / 6, color: 'YELLOW'));
-				play_sound(ploc(), array(sound: 'BLOCK_NOTE_BLOCK_BIT'));
-			} else {
-				update_bar('race'.@race['id'], array(percent: 1 - @timer[0] / 6));
-			}
-		});
+		}
+		if(!@race['players']) {
+			clear_task();
+			_race_end(@race);
+			remove_bar('race'.@race['id']);
+		} else if(@timer[0] == 0) {
+			_race_start(@race);
+			update_bar('race'.@race['id'], array(percent: 1.0, color: 'GREEN'));
+		} else if(@timer[0] < 4) {
+			update_bar('race'.@race['id'], array(percent: 1 - @timer[0] / 6, color: 'YELLOW'));
+			play_sound(ploc(), array(sound: 'BLOCK_NOTE_BLOCK_BIT'));
+		} else {
+			update_bar('race'.@race['id'], array(percent: 1 - @timer[0] / 6));
+		}
 	});
 }
 
@@ -209,6 +211,32 @@ proc _race_on_move(@player, @to, @race) {
 					}
 				});
 			}
+			if(array_index_exists(@race, 'itemspawn') && @p['itemCooldown'] <= 0) {
+				for(@i = 0, @i < array_size(@race['itemspawn']), @i++) {
+					if(distance(@loc, @race['itemspawn'][@i]) < 1.5) {
+						@spec = entity_spec(@race['items'][@i]);
+						if(@spec['item']) {
+							for(@slot = 0, @slot < 8, @slot++) {
+								if(!pinv(@player, @slot)) {
+									set_pinv(@player, @slot, @spec['item']);
+									play_sound(ploc(@player), array(sound: 'ENTITY_CHICKEN_EGG'), @player);
+									if(@race['type'] === 'kart') {
+										_kart_show_item(@player, @p['kart']);
+									}
+									@p['itemCooldown'] = 20;
+									break();
+								}
+							}
+							set_entity_spec(@race['items'][@i], array(item: null));
+							set_entity_spec(get_entity_rider(@race['items'][@i]), array(item: null));
+							set_display_entity(@race['items'][@i], array(brightness: 0));
+						}
+						break();
+					}
+				}
+			} else {
+				@p['itemCooldown']--;
+			}
 		} else {
 			_race_remove_vehicle(@player, @race);
 			if(!_psession()['activity']) {
@@ -234,10 +262,9 @@ proc _race_start(@race) {
 	}
 	play_sound(ploc(), array(sound: 'BLOCK_NOTE_BLOCK_BIT', pitch: 2));
 	_race_drop_players(@race);
+	_race_spawn_items(@race);
 
-	if(@race['type'] === 'kart') {
-		@race['onMove'] = get_proc('_race_on_move');
-	} else {
+	if(@race['type'] !== 'kart') {
 		@race['binds'][] = bind('player_move', null, array(from: array(world: @race['world'])), @event, @race) {
 			if(array_index_exists(@race['players'], player())) {
 				_race_on_move(player(), @event['to'], @race);
