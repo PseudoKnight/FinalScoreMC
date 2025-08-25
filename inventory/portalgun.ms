@@ -32,15 +32,11 @@ execute(iclosure(){
 	}
 
 	proc _portal(@color, @portals) {
-		if(pworld() != 'dev' || pmode() != 'ADVENTURE') {
-			return(false);
-		}
-
 		if(!has_bind('portalgun'.player())) {
 			bind('player_move', array(id: 'portalgun'.player()), array(player: player(), threshold: 0), @event, @portals) {
 				@from = @event['from'];
 				@to = @event['to'];
-				if(@to['world'] != 'dev' || pmode() != 'ADVENTURE') {
+				if(pmode() !== 'ADVENTURE') {
 					set_timeout(1, iclosure(unbind())); // syncs to work around concurrency exception
 					foreach(@color in array('orange', 'blue')) {
 						if(is_null(@portals[@color])) {
@@ -302,7 +298,7 @@ execute(iclosure(){
 	}
 
 	bind('player_interact', array(priority: 'LOW'), array(itemname: 'LANTERN'), @event, @portals) {
-		if(!pcooldown('LANTERN')) {
+		if(pmode() === 'ADVENTURE' && !pcooldown('LANTERN')) {
 			if(_portal('orange', @portals)) {
 				set_pcooldown('LANTERN', 5);
 			}
@@ -310,7 +306,7 @@ execute(iclosure(){
 	}
 
 	bind('player_interact', array(priority: 'LOW'), array(itemname: 'SOUL_LANTERN'), @event, @portals) {
-		if(!pcooldown('SOUL_LANTERN')) {
+		if(pmode() === 'ADVENTURE' && !pcooldown('SOUL_LANTERN')) {
 			if(_portal('blue', @portals)) {
 				set_pcooldown('SOUL_LANTERN', 5);
 			}
