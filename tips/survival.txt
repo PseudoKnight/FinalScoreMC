@@ -9,7 +9,7 @@
 
 &7/shop list <item name>&r : List all shops where you can buy or sell a particular item.
 
-&7/compass <target>&r : Sets compass to point to target: spawn, player, or x z coordinates.
+&7/compass <target>&r : Sets compass to point to target: spawn or x,z coordinates.
 
 &7/transfer <player>&r : Transfers ownership of a tamed mob to another online player.
  &7&oExample: /transfer PseudoKnight
@@ -102,7 +102,7 @@ Right-clicking paintings will cycle through them, if they fit.
 
 When minecarts collide with unpowered dispensers, they get added to the dispenser inventory.
 
-Beds will set your respawn location, time travel through the night, and halt precipitation regardless of other players in the world.
+Beds will set your respawn location, pass the night and storms regardless of other players in the world.
 
 Creepers do not do block damage with the exception of the outworlds.
 
@@ -122,17 +122,17 @@ Players who contribute $5 or more to the server costs have a green emerald next 
 
 Players who contribute $10 or more to the server costs can launch random fireworks in the park and get trails on the livemap.
 
-Hovering your cursor over someone's name in chat allows you to see their group, current world, and former names.
+Hovering your cursor over someone's name in chat allows you to see their group, current world, former names, as well as their park trophies.
 
 Cauldrons are an infinite water source, unless sneaking. You can incrementally fill cauldrons using water bottles.
 
-You can also wash dyes from terracotta and shulker boxes using a cauldron.
+You can wash dyes from terracotta and shulker boxes using a cauldron.
 
-Temporary mirror world "shards" can be created by right-clicking any item with shard in the name.
+Temporary mirror world "shards" can be created by right-clicking with an echo shard in hand.
 
-You can teleport with a horse you're riding (includes donkeys, llamas, etc)
+You can teleport with any living entity you're riding (includes horses, donkeys, llamas, etc)
 
-When teleporting you will bring all leashed mobs with you.
+When teleporting you will bring any directly leashed mobs within 16 meters.
 
 You can adjust the volume of notification sounds (eg. direct messages) via the Voice/Speech slider in Sound Options.
 
