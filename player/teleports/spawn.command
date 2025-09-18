@@ -3,24 +3,38 @@ register_command('spawn', array(
 	usage: '/spawn [world]',
 	executor: closure(@alias, @sender, @args, @info) {
 		include('includes.library/teleports.ms');
-		array @loc;
+		array @teleportLoc;
+		boolean @clearEffects = false;
 		try {
 			@world = if(@args, _world_id(@args[0]), pworld());
 			if(!pisop() && (!_world_allows_teleports(@world) || !_world_allows_teleports(pworld()))) {
 				die(color('gold').'You cannot teleport directly to or from that world.');
 			}
-			@loc = get_spawn(@world);
-			@loc = array(@loc[0] + 0.5, @loc[1] - 1, @loc[2] + 0.5, @loc[3]);
+			@spawnLoc = get_spawn(@world);
+			@teleportLoc = array(
+				x: @spawnLoc['x'] + 0.5,
+				y: @spawnLoc['y'] - 1,
+				z: @spawnLoc['z'] + 0.5,
+				world: @spawnLoc['world'],
+				yaw: @spawnLoc['yaw'],
+				pitch: 0);
+			if(@world === 'custom') {
+				@clearEffects = true;
+			}
 		} catch (InvalidWorldException @ex) {
-			@loc = get_value('warp.'.to_lower(@args[0]));
-			if(!@loc) {
+			// fall back to warp names, if available
+			@teleportLoc = get_value('warp.'.to_lower(@args[0]));
+			if(!@teleportLoc) {
 				die(color('gold').'That world does not exist.');
 			}
 			if(!_world_allows_teleports(pworld())) {
 				die(color('gold').'You cannot teleport in this world.');
 			}
+			if(@teleportLoc[3] === 'custom') {
+				@clearEffects = true;
+			}
 		}
-		_warmuptp(player(), @loc, @loc[3] == 'custom');
+		_warmuptp(player(), @teleportLoc, @clearEffects);
 	},
 	tabcompleter: closure(@alias, @sender, @args, @info) {
 		@worlds = array();
