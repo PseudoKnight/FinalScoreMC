@@ -41,7 +41,7 @@ proc _class_powerup(@player) {
 			// player logged off last tick, nice timing
 		}
 	});
-	play_sound(ploc(@player), array(sound: 'ENTITY_WOLF_GROWL', pitch: 0.8, volume: 3));
+	play_sound(ploc(@player), array(sound: 'ENTITY_WOLF_SAD_GROWL', pitch: 0, volume: 3));
 	set_pinv(@player, array(
 		100: array(name: 'LEATHER_BOOTS', meta: array(color: array(r: 50, g: 50, b: 50),
 			enchants: array(depth_strider: 2))
