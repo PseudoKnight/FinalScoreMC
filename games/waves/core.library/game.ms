@@ -577,10 +577,10 @@ proc _waves_end(@waves, @win) {
 		if(@waveNum > @record) {
 			store_value('waves', @waves['region'], @waves['name'], puuid(@p, true), @waveNum);
 			if(@record) {
-				tmsg(@p, colorize("Survived &a@waveNum waves&f to beat your previous best of &e@record&f."));
+				try(tmsg(@p, colorize("Survived &a@waveNum waves&f to beat your previous best of &e@record&f.")))
 			}
 			@reward = @waveNum - @record;
-			tmsg(@p, color('gold').'+ '.@reward.' Coins'.color('white').' for new personal best');
+			try(tmsg(@p, color('gold').'+ '.@reward.' Coins'.color('white').' for new personal best'))
 			_acc_add(@p, @reward);
 			if(function_exists('discord_broadcast')) {
 				discord_broadcast('minecraft_chat', array(embed: array(title: 
