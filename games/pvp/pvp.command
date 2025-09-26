@@ -125,6 +125,11 @@ register_command('pvp', array(
 				if(!@pvp || @pvp['running'] < 2) {
 					die(color('gold').'Not running.');
 				}
+				// mode scripts may have additional procedures for ending match
+				@modeScript = 'modes.library/'.@pvp['arena']['mode'].'.ms';
+				if(file_exists(@modeScript)) {
+					include(@modeScript);
+				}
 				if(array_size(@args) > 2 && is_numeric(@args[2])) {
 					@team = @args[2] - 1;
 					_pvp_end_match(@id, @pvp['team'][@team]['players']);
