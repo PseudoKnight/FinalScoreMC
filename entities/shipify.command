@@ -79,7 +79,7 @@ register_command('shipify', array(
 				translation: array(x: 0.0, y: -(@maxY + 1 - @minY) / 2, z: 0.0),
 				scale: array(x: @maxX + 1 - @minX, y: @maxY + 1 - @minY, z: @maxZ + 1 - @minZ))));
 		set_timeout(2000, closure(){
-			set_entity_spec(@display, array(item: null));
+			try(set_entity_spec(@display, array(item: null)))
 		});
 		if(@count < 100) {
 			msg(color('green')."Found ship with @count blocks.");
