@@ -1,10 +1,11 @@
 proc _race_spawn_items(@race) {
 	set_interval(250, closure(){
 		if(@race['state'] === 'ending') {
-			foreach(@item in @race['items']) {
+			foreach(@i: @item in @race['items']) {
 				if(@item) {
 					try(entity_remove(get_entity_rider(@item)))
 					try(entity_remove(@item))
+					array_remove(@race['items'], @i);
 				}
 			}
 			clear_task();
