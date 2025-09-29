@@ -64,8 +64,14 @@ bind('player_interact', null, array(hand: 'main_hand', button: 'right', itemname
 		foreach(@entity in @trace['entities']) {
 			if(has_scoreboard_tag(@entity['uuid'], 'ship')) {
 				entity_remove(@entity['uuid']);
-			} else if(entity_type(@entity['uuid']) !== 'ARMOR_STAND') {
-				damage_entity(@entity['uuid'], 12, puuid());
+			} else {
+				@type = entity_type(@entity['uuid']);
+				if(@type === 'PLAYER' && pmode(@entity['uuid']) === 'SPECTATOR') {
+					continue();
+				}
+				if(@type !== 'ARMOR_STAND') {
+					damage_entity(@entity['uuid'], 12, puuid());
+				}
 			}
 			@hit = true;
 			break();
