@@ -54,8 +54,8 @@ proc _open_objective_menu() {
 }
 
 proc _open_rules_menu(@objective) {
-	@activated = array(name: 'LIME_DYE', meta: array(display: color('green').'ACTIVATED'));
-	@deactivated = array(name: 'GRAY_DYE', meta: array(display: color('gray').'DEACTIVATED'));
+	@activated = array(name: 'SLIME_BALL', meta: array(display: color('green').'ACTIVATED', maxstacksize: 99));
+	@deactivated = array(name: 'FIREWORK_STAR', meta: array(display: color('gray').'DEACTIVATED', maxstacksize: 99));
 	@options = array(
 		loot: array(
 			objective: array('elimination', 'treasurehunt'),
@@ -291,7 +291,7 @@ proc _open_rules_menu(@objective) {
 			play_sound(ploc(), array(sound: 'BLOCK_AMETHYST_BLOCK_HIT'));
 			_shard_create(@associative_rules);
 		} else if(@slot < @event['inventorysize']) {
-			if(!string_ends_with(@item['name'], '_DYE')) {
+			if(@item['name'] !== 'SLIME_BALL' && @item['name'] !== 'FIREWORK_STAR') {
 				@slot -= 9;
 				if(@slot < 0) {
 					die();
@@ -305,11 +305,11 @@ proc _open_rules_menu(@objective) {
 				@option = @options[@name];
 				if(is_boolean(@rule['value'])) {
 					if(@rule['value']) {
-						@item['name'] = 'GRAY_DYE';
+						@item['name'] = 'FIREWORK_STAR';
 						@item['meta']['display'] = color('gray').'DEACTIVATED';
 						@rule['value'] = false;
 					} else {
-						@item['name'] = 'LIME_DYE';
+						@item['name'] = 'SLIME_BALL';
 						@item['meta']['display'] = color('green').'ACTIVATED';
 						@rule['value'] = true;
 					}
@@ -331,10 +331,10 @@ proc _open_rules_menu(@objective) {
 							@item['meta']['display'] = color('green').'ACTIVATED';
 							@item['qty'] = @rule['value'];
 						}
-						@item['name'] = 'LIME_DYE';
+						@item['name'] = 'SLIME_BALL';
 					} else {
 						@item['qty'] = 1;
-						@item['name'] = 'GRAY_DYE';
+						@item['name'] = 'FIREWORK_STAR';
 						@item['meta']['display'] = color('gray').'DEACTIVATED';
 					}
 				}

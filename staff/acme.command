@@ -20,13 +20,12 @@ register_command('acme', array(
 					1: array('name': 'BONE', 'meta': array('display': 'Funny Bone of '.@player)),
 					2: array('name': 'FERMENTED_SPIDER_EYE', 'meta': array('display': 'Heart of '.@player)),
 					3: array('name': 'BONE_MEAL', 'meta': array('display': 'Bone Powder of '.@player)),
-					4: array('name': 'RED_DYE', 'meta': array('display': 'Brain of '.@player)),
-					5: array('name': 'MUTTON', 'meta': array('display': 'Lung of '.@player)),
-					6: array('name': 'SPIDER_EYE', 'meta': array('display': 'Eyeball of '.@player)),
-					7: array('name': 'SKELETON_SKULL', 'meta': array('display': 'Skull of '.@player)),
-					8: array('name': 'BEETROOT', 'meta': array('display': 'Kidney of '.@player)),
-					9: array('name': 'IRON_NUGGET', 'meta': array('display': 'Right Molar of '.@player)),
-					10: array('name': 'IRON_NUGGET', 'meta': array('display': 'Muscle Fiber of '.@player)),
+					4: array('name': 'MUTTON', 'meta': array('display': 'Lung of '.@player)),
+					5: array('name': 'SPIDER_EYE', 'meta': array('display': 'Eyeball of '.@player)),
+					6: array('name': 'SKELETON_SKULL', 'meta': array('display': 'Skull of '.@player)),
+					7: array('name': 'BEETROOT', 'meta': array('display': 'Kidney of '.@player)),
+					8: array('name': 'IRON_NUGGET', 'meta': array('display': 'Right Molar of '.@player)),
+					9: array('name': 'IRON_NUGGET', 'meta': array('display': 'Muscle Fiber of '.@player)),
 				));
 				set_peffect(@player, 'SLOWNESS', 20, 5, true);
 				pfacing(@player, pfacing(@player)[0], -90);
