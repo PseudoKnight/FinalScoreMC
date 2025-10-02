@@ -1,5 +1,5 @@
 proc _get_categories() {
-	return(array('actions', 'animals', 'easy', 'food_and_cooking', 'hard', 'household_items', 'idioms', 'medium', 'movies', 'other', 'person_or_character', 'travel', 'very_hard', 'songs', 'video_games'));
+	return(array('actions', 'animals', 'easy', 'food_and_cooking', 'halloween', 'hard', 'household_items', 'idioms', 'medium', 'movies', 'other', 'person_or_character', 'travel', 'very_hard', 'songs', 'video_games'));
 }
 
 proc _is_match(@guess, @target) {
