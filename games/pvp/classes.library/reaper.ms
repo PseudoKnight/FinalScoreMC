@@ -41,7 +41,7 @@ proc _class_load(@player, @pvp) {
 			foreach(@e in @trace['entities']) {
 				if(entity_type(@e['uuid']) == 'PLAYER') {
 					@player = player(@e['uuid']);
-					if(array_index_exists(@pvp['players'], @player) && pmode(@player) != 'SPECTATOR') {
+					if(array_index_exists(@pvp['players'], @player)) {
 						@target = @e['uuid'];
 						break();
 					}

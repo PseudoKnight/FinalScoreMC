@@ -29,21 +29,17 @@ proc _weapon_bind_events(@pvp) {
 			@hitEntity = '';
 			@relativePos = null;
 			if(@trace['entities']) {
-				foreach(@entity in @trace['entities']) {
-					if(!ponline(@entity['uuid']) || pmode(@entity['uuid']) != 'SPECTATOR') {
-						@hit = @trace['entities'][0]['location'];
-						@hitEntity = @trace['entities'][0]['uuid'];
-						@entityPos = entity_loc(@hitEntity);
-						@relativePos = array(
-							x: @hit['x'] - @entityPos['x'],
-							y: @hit['y'] - @entityPos['y'] - 0.75,
-							z: @hit['z'] - @entityPos['z'],
-							world: @hit['world'],
-						);
-						@hit['yaw'] = @loc['yaw'];
-						@hit['pitch'] = @loc['pitch'];
-					}
-				}
+				@hit = @trace['entities'][0]['location'];
+				@hitEntity = @trace['entities'][0]['uuid'];
+				@entityPos = entity_loc(@hitEntity);
+				@relativePos = array(
+					x: @hit['x'] - @entityPos['x'],
+					y: @hit['y'] - @entityPos['y'] - 0.75,
+					z: @hit['z'] - @entityPos['z'],
+					world: @hit['world'],
+				);
+				@hit['yaw'] = @loc['yaw'];
+				@hit['pitch'] = @loc['pitch'];
 			}
 			play_sound(@hit, array(sound: 'BLOCK_SLIME_BLOCK_PLACE', pitch: 1.3));
 			@slime = spawn_entity('ARMOR_STAND', 1, location_shift(@hit, 'down', 0.75), closure(@stand) {

@@ -77,12 +77,11 @@ proc _weapon_hit_scan(@player, @ray, @damage, @effects, @pvp){
 	}
 	if(@entities) {
 		foreach(@entity in @entities) {
-			if(is_entity_living(@entity['uuid'])
-			&& sk_region_contains(@pvp['arena']['region'], @entity['location'])
+			if(sk_region_contains(@pvp['arena']['region'], @entity['location'])
 			&& @entity['uuid'] != pvehicle(@player)) {
 				try {
 					@player = player(@entity['uuid']);
-					if(!array_index_exists(@pvp['players'], @player) || pmode(@player) == 'SPECTATOR') {
+					if(!array_index_exists(@pvp['players'], @player)) {
 						continue();
 					}
 					if(@hitsound) {

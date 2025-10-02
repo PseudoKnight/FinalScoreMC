@@ -5,11 +5,8 @@ proc _class_load(@player, @pvp) {
 		}
 		@trace = ray_trace(player(), 96);
 		@loc = @trace['location'];
-		foreach(@entity in @trace['entities']) {
-			if(!ponline(@entity['uuid']) || pmode(@entity['uuid']) != 'SPECTATOR') {
-				@loc = @trace['entities'][0]['location'];
-				break();
-			}
+		if(@trace['entities']) {
+			@loc = @trace['entities'][0]['location'];
 		}
 
 		lightning(location_shift(@loc, 'down', 0.1), true);
@@ -129,7 +126,7 @@ proc _class_load(@player, @pvp) {
 		@count = array(96);
 		set_interval(50, closure() {
 			@count[0]--;
-			@trace = ray_trace(location_shift(@origin, @loc), 0.8);
+			@trace = ray_trace(player(), location_shift(@origin, @loc), 0.8);
 			@origin['x'] = @trace['origin']['x'];
 			@origin['y'] = @trace['origin']['y'];
 			@origin['z'] = @trace['origin']['z'];
@@ -138,16 +135,9 @@ proc _class_load(@player, @pvp) {
 			@loc['z'] = @trace['location']['z'];
 			spawn_particle(@loc, array(particle: 'SNOWFLAKE', count: 5, xoffset: 0.3, yoffset: 0.3, zoffset: 0.3, force: true));
 			spawn_particle(@loc, array(particle: 'SOUL_FIRE_FLAME', force: true));
-			@hit = false;
 			if(@trace['entities']) {
-				foreach(@entity in @trace['entities']) {
-					if(@entity['uuid'] != puuid() && (!ponline(@entity['uuid']) || pmode(@entity['uuid']) != 'SPECTATOR')) {
-						@hit = true;
-						@loc = @entity['location'];
-					}
-				}
-			}
-			if(!@hit && !@trace['hitblock']) {
+				@loc = @trace['entities'][0]['location'];
+			} else if(!@trace['hitblock']) {
 				if(@count[0] <= 0) {
 					clear_task();
 				}
