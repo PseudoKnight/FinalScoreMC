@@ -75,6 +75,96 @@ badsnowman:
   lifetime: 15
   targetnear: 16
   type: SNOWMAN
+blueteam:
+  ai: false
+  gear:
+    BOOTS:
+      meta:
+        color:
+          b: 255
+          g: 0
+          r: 0
+        damage: 0
+        display: null
+        enchants: {
+          }
+        flags: [
+          ]
+        lore: null
+        model: null
+        modifiers: null
+        repair: 0
+        tags: null
+        trim: null
+        unbreakable: false
+      name: LEATHER_BOOTS
+      qty: 1
+    CHESTPLATE:
+      meta:
+        color:
+          b: 255
+          g: 0
+          r: 0
+        damage: 0
+        display: null
+        enchants: {
+          }
+        flags: [
+          ]
+        lore: null
+        model: null
+        modifiers: null
+        repair: 0
+        tags: null
+        trim: null
+        unbreakable: false
+      name: LEATHER_CHESTPLATE
+      qty: 1
+    HELMET:
+      meta:
+        color:
+          b: 255
+          g: 0
+          r: 0
+        damage: 0
+        display: null
+        enchants: {
+          }
+        flags: [
+          ]
+        lore: null
+        model: null
+        modifiers: null
+        repair: 0
+        tags: null
+        trim: null
+        unbreakable: true
+      name: LEATHER_HELMET
+      qty: 1
+    LEGGINGS:
+      meta:
+        color:
+          b: 255
+          g: 0
+          r: 0
+        damage: 0
+        display: null
+        enchants: {
+          }
+        flags: [
+          ]
+        lore: null
+        model: null
+        modifiers: null
+        repair: 0
+        tags: null
+        trim: null
+        unbreakable: false
+      name: LEATHER_LEGGINGS
+      qty: 1
+    OFF_HAND: null
+    WEAPON: null
+  type: zombie
 catbomb:
   explode:
   - 6
@@ -311,6 +401,96 @@ racehorse:
       type: 329
   tame: true
   type: horse
+redteam:
+  ai: false
+  gear:
+    BOOTS:
+      meta:
+        color:
+          b: 0
+          g: 0
+          r: 255
+        damage: 0
+        display: null
+        enchants: {
+          }
+        flags: [
+          ]
+        lore: null
+        model: null
+        modifiers: null
+        repair: 0
+        tags: null
+        trim: null
+        unbreakable: false
+      name: LEATHER_BOOTS
+      qty: 1
+    CHESTPLATE:
+      meta:
+        color:
+          b: 0
+          g: 0
+          r: 255
+        damage: 0
+        display: null
+        enchants: {
+          }
+        flags: [
+          ]
+        lore: null
+        model: null
+        modifiers: null
+        repair: 0
+        tags: null
+        trim: null
+        unbreakable: false
+      name: LEATHER_CHESTPLATE
+      qty: 1
+    HELMET:
+      meta:
+        color:
+          b: 0
+          g: 0
+          r: 255
+        damage: 0
+        display: null
+        enchants: {
+          }
+        flags: [
+          ]
+        lore: null
+        model: null
+        modifiers: null
+        repair: 0
+        tags: null
+        trim: null
+        unbreakable: true
+      name: LEATHER_HELMET
+      qty: 1
+    LEGGINGS:
+      meta:
+        color:
+          b: 0
+          g: 0
+          r: 255
+        damage: 0
+        display: null
+        enchants: {
+          }
+        flags: [
+          ]
+        lore: null
+        model: null
+        modifiers: null
+        repair: 0
+        tags: null
+        trim: null
+        unbreakable: false
+      name: LEATHER_LEGGINGS
+      qty: 1
+    OFF_HAND: null
+    WEAPON: null
+  type: zombie
 saddledpig:
   tags:
     saddled: true
@@ -395,46 +575,100 @@ turretstand:
   type: armor_stand
 zombievector:
   droprate:
-    BOOTS: 0
-    CHESTPLATE: 0
-    HELMET: 0
-    LEGGINGS: 0
-    WEAPON: 0
+    BOOTS: 0.0
+    CHESTPLATE: 0.0
+    HELMET: 0.0
+    LEGGINGS: 0.0
+    OFF_HAND: 0.0
+    WEAPON: 0.0
   effects:
   - id: 1
-    seconds: 999
+    seconds: -1.0
     strength: 3
-  - id: 14
-    seconds: 999
-    strength: 0
   - id: 8
-    seconds: 999
+    seconds: -1.0
     strength: 1
   gear:
     BOOTS:
       meta:
         color:
-          b: 170
+          b: 180
           g: 255
           r: 255
+        damage: 0
+        display: null
+        enchants: {
+          }
+        flags: [
+          ]
+        lore: null
+        model: null
+        modifiers: null
+        repair: 0
+        tags: null
+        trim:
+          material: QUARTZ
+          pattern: SILENCE
+        unbreakable: false
       name: LEATHER_BOOTS
+      qty: 1
     CHESTPLATE:
       meta:
         color:
-          b: 170
+          b: 180
           g: 255
           r: 255
+        damage: 0
+        display: null
+        enchants: {
+          }
+        flags: [
+          ]
+        lore: null
+        model: null
+        modifiers: null
+        repair: 0
+        tags: null
+        trim:
+          material: QUARTZ
+          pattern: SILENCE
+        unbreakable: false
       name: LEATHER_CHESTPLATE
+      qty: 1
     HELMET:
+      meta: null
       name: END_PORTAL_FRAME
+      qty: 1
     LEGGINGS:
       meta:
         color:
-          b: 170
+          b: 180
           g: 255
           r: 255
+        damage: 0
+        display: null
+        enchants: {
+          }
+        flags: [
+          ]
+        lore: null
+        model: null
+        modifiers: null
+        repair: 0
+        tags: null
+        trim:
+          material: QUARTZ
+          pattern: RIB
+        unbreakable: false
       name: LEATHER_LEGGINGS
+      qty: 1
+    OFF_HAND:
+      meta: null
+      name: NETHERITE_HOE
+      qty: 1
     WEAPON:
-      name: IRON_HOE
+      meta: null
+      name: NETHERITE_HOE
+      qty: 1
   health: 1
-  type: zombie
+  type: HUSK
