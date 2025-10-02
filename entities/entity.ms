@@ -50,16 +50,22 @@ bind('creature_spawn', null, array(reason: 'SPAWNER_EGG'), @event) {
 	No-AI mob posing
  */
 bind('player_interact_at_entity', null, array(hand: 'main_hand'), @event) {
-	if(pmode() == 'CREATIVE'
-	&& psneaking()
-	&& is_entity_living(@event['id'])
-	&& !get_entity_ai(@event['id'])
-	&& entity_type(@event['id']) != 'PLAYER'
-	&& entity_type(@event['id']) != 'ARMOR_STAND'
-	&& sk_can_build(entity_loc(@event['id']))) {
+	@id = @event['id'];
+ 	if(psneaking()
+	&& pmode() === 'CREATIVE' 
+	&& !import(player().'posing')
+	&& is_entity_living(@id)
+	&& !get_entity_ai(@id)
+	&& entity_type(@id) !== 'PLAYER'
+	&& entity_type(@id) !== 'ARMOR_STAND'
+	&& sk_can_build(entity_loc(@id))) {
+
+		while(@vehicle = get_entity_vehicle(@id)) {
+			@id = @vehicle;
+		}
 
 		@dir = pfacing();
-		@eloc = entity_loc(@event['id']);
+		@eloc = entity_loc(@id);
 		@newloc = @eloc[];
 
 		export(player().'posing', true);
@@ -69,8 +75,8 @@ bind('player_interact_at_entity', null, array(hand: 'main_hand'), @event) {
 		if(@event['position']['y'] < 0.5) {
 			title('', color(6).'Rotating entity.', 0, 40, 10);
 
-			@taskid = set_interval(50, closure(){
-				if(!psneaking() || !entity_exists(@event['id'])) {
+			set_interval(50, 1, closure(){
+				if(!ponline(player()) || !psneaking() || !entity_exists(@id)) {
 					clear_task();
 					export(player().'posing', null);
 					return();
@@ -87,31 +93,32 @@ bind('player_interact_at_entity', null, array(hand: 'main_hand'), @event) {
 
 				@dyaw = @yawdiff * 2.5;
 				@newloc['yaw'] = @eloc['yaw'] - @dyaw;
-				set_entity_loc(@event['id'], @newloc);
+				set_entity_loc(@id, @newloc);
 			});
-
 		} else {
 			title('', color(6).'Adjusting entity position.', 0, 40, 10);
 
-			@eloc = entity_loc(@event['id']);
+			@eloc = entity_loc(@id);
 			@originalYaw = @eloc['yaw'];
-			@dist = distance(@eloc, location_shift(ploc(), 'up'));
+			@y = @event['position']['y'];
+			@dist = distance(@eloc, location_shift(ploc(), 'up', 2.27 - @y)); // eye height
 
-			set_interval(50, closure(){
-				if(!ponline(player()) || !psneaking() || !entity_exists(@event['id'])) {
+			set_interval(50, 1, closure(){
+				if(!ponline(player()) || !psneaking() || !entity_exists(@id)) {
 					clear_task();
 					export(player().'posing', null);
 					return();
 				}
 
-				@eloc = location_shift(ploc(), 'up', 1.3);
+				@eloc = location_shift(ploc(), 'up', 2.27 - @y);
 				@yaw = to_radians(@eloc['yaw'] + 90);
 				@pitch = to_radians(0 - @eloc['pitch']);
 				@eloc['x'] += @dist * cos(@yaw) * cos(@pitch);
 				@eloc['y'] += @dist * sin(@pitch);
 				@eloc['z'] += @dist * sin(@yaw) * cos(@pitch);
 				@eloc['yaw'] = @originalYaw;
-				set_entity_loc(@event['id'], @eloc);
+				@eloc['pitch'] = 0;
+				set_entity_loc(@id, @eloc);
 			});
 		}
 	}
