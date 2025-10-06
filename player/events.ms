@@ -234,8 +234,8 @@ bind('player_interact_entity', null, array(clicked: 'PAINTING', hand: 'main_hand
 			@index = (@index + 1) % array_size(@paintings);
 			@next = @paintings[@index];
 			try(set_entity_spec(@event['id'], array(type: @next)))
-			# but just in case, only try 20 times (enough to cycle from the last 1x1 back to the first 1x1)
-		} while(entity_spec(@event['id'])['type'] != @next && ++@tries < 20)
+			# but just in case, only try 44 times (enough to cycle from the last 1x1 back to the first 1x1)
+		} while(entity_spec(@event['id'])['type'] != @next && ++@tries < 44)
 		if(extension_exists('CHNaughty')) {
 			action_msg(@next);
 		}
