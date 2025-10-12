@@ -59,7 +59,6 @@ proc _snake_menu() {
 				msg(color('red').@ex['message']);
 				msg(color('yellow').'Cleaning up game...');
 				_snake_cleanup(import('snake'));
-				return(true);
 			}
 		}
 	}
