@@ -61,19 +61,23 @@ bind('player_interact_entity', null, array('clicked': '/(DONKEY|HORSE|MULE|SKELE
 			switch(@item['name']) {
 				case 'GOLDEN_APPLE':
 				case 'GOLDEN_CARROT':
-				case 'LEAD': # lead
+				case 'LEAD':
 					die();
-				case 'ROTTEN_FLESH': # rotten flesh
-					@heatlh = get_entity_health(@event['id']);
-					if(@health != 100) {
-						cancel();
-						@facing = pfacing();
-						pfacing(@facing[0], @facing[1]);
-						set_entity_health(@event['id'], min(100, @health + (100 / get_max_health(@event['id']))));
-						set_mob_age(@event['id'], min(0, get_mob_age(@event['id']) + 1200));
-						@item['qty']--;
-						set_pinv(player(), null, @item);
-						die();
+				case 'RED_MUSHROOM': // 1.21.11
+				case 'ROTTEN_FLESH':
+					if(@event['clicked'] === 'ZOMBIE_HORSE' && @item['name'] === 'RED_MUSHROOM'
+					|| @event['clicked'] === 'SKELETON_HORSE' && @item['name'] === 'ROTTEN_FLESH') {
+						@heatlh = get_entity_health(@event['id']);
+						if(@health < 100) {
+							cancel();
+							@facing = pfacing();
+							pfacing(@facing[0], @facing[1]);
+							set_entity_health(@event['id'], min(100, @health + (100 / get_max_health(@event['id']))));
+							set_mob_age(@event['id'], min(0, get_mob_age(@event['id']) + 1200));
+							@item['qty']--;
+							set_pinv(player(), null, @item);
+							die();
+						}
 					}
 			}
 		}
