@@ -16,7 +16,11 @@ register_command('wild', array(
 
 		@world = pworld(@player);
 
-		if(!_is_survival_world(@world) || world_info(@world)['environment'] != 'NORMAL' || @world == 'outworld') {
+		if(!_world_allows_teleports(@world)) {
+			die(color('gold').'You cannot teleport in this world.');
+		}
+
+		if(!_is_survival_world(@world) || world_info(@world)['environment'] != 'NORMAL') {
 			@world = 'psi';
 		}
 
