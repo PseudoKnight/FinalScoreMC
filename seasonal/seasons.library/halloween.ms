@@ -14,7 +14,7 @@ bind('creature_spawn', null, array(type: 'ZOMBIE', reason: 'NATURAL'), @event) {
 	@rand = rand(5);
 	if(@rand == 0 && @event['location']['world'] === 'outworld'){
 		cancel();
-		switch(rand(5)) {
+		switch(rand(6)) {
 			case 0:
 				spawn_entity('VINDICATOR', 1, @event['location'], closure(@vindicator) {
 					if(rand(2)) {
@@ -35,6 +35,8 @@ bind('creature_spawn', null, array(type: 'ZOMBIE', reason: 'NATURAL'), @event) {
 				spawn_entity('VEX', 1, @event['location'], closure(@vex) {
 					set_mob_equipment(@vex, array(WEAPON: null));
 				});
+			case 5:
+				spawn_entity('CREAKING', 1, @event['location']);
 		}
 	} else if(@rand == 1) {
 		set_mob_equipment(@id, array(
