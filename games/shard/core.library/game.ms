@@ -163,7 +163,7 @@ proc _shard_create(@rules){
 				storm(false, 'shard');
 				set_world_border('shard', array(width: @rules['width'], center: @loc));
 				set_gamerule('shard', 'naturalRegeneration', !array_index_exists(@rules, 'regen') || !@rules['noregen']);
-				set_gamerule('shard', 'spectatorGenerateChunks', false);
+				set_gamerule('shard', 'spectatorsGenerateChunks', false);
 				set_gamerule('shard', 'doInsomnia', false); // games should not last 3 days and survival insomnia should not affect shard
 				set_spawning('shard', array(
 					'animal-spawn-limit': 20,
