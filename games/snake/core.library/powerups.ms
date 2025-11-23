@@ -473,7 +473,7 @@ proc _snake_launch_missile(@loc, @dir, @game) {
 				}
 			} else if(@block == 'REDSTONE_BLOCK') {
 				_snake_remove_powerup(@missile['loc'], @game);
-				@dir = _snake_direction_of(@missile['loc'], 'AIR', @missile['dir']);
+				@dir = _snake_direction_of(@missile['loc'], 'AIR');
 				if(@dir) {
 					@missile['dir'] = @dir;
 					play_sound(@missile['loc'], associative_array('sound': 'ENTITY_IRON_GOLEM_HURT', 'pitch': 1.5, 'volume': 4));
