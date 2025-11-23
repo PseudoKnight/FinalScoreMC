@@ -454,6 +454,7 @@ proc _bind_events(@pvp) {
 					'KILL', // probably exiting the region (pkill())
 					'LAVA', // players can knock other players into hazards
 					'FIRE', // standing in fire; treat similar to lava
+					'CAMPFIRE', // similar to fire
 					'FIRE_TICK', // certain abilities set players on fire, damaging over time
 				);
 				if(array_contains(@unattributedTypes, @cause)) {
