@@ -83,7 +83,7 @@ proc _weapon_bind_events(@pvp) {
 							@y = (@loc2['y'] - @loc1['y']) / @dist * 1.078;
 							@z = (@loc2['z'] - @loc1['z']) / @dist;
 							set_entity_velocity(@mover, array(@x, @y, @z));
-						} else if(!psneaking(@player)) {
+						} else {
 							if(@interval) {
 								clear_task();
 							}
@@ -91,9 +91,6 @@ proc _weapon_bind_events(@pvp) {
 							if(entity_type(@target) == 'ARROW') {
 								entity_remove(@target);
 							}
-						} else {
-							set_entity_velocity(@mover, array(0, 0, 0));
-							set_mob_effect(@mover, 'levitation', -1, 0.15);
 						}
 					}
 				} catch(BadEntityException @e) {
