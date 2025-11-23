@@ -39,7 +39,7 @@ proc _arena_bind_events(@id) {
 						@hat = pinv(@p, 103);
 						if(@hat) {
 							set_pinv(@p, @scaredyghost);
-							set_peffect(@p, 'SPEED', -3, 15);
+							set_peffect(@p, 'SLOWNESS', 2, 15);
 						}
 					}
 				}
