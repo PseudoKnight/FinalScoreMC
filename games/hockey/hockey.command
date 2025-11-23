@@ -49,14 +49,20 @@ register_command('hockey', array(
 				axis: 'z',
 				redgear: array(
 					4: @red, 5: @red, 6: @red, 7: @red, 8: @red,
-					100: array(name: 'LEATHER_BOOTS', meta: array(color: array(255, 0, 0))),
+					100: array(name: 'LEATHER_BOOTS', meta: array(
+						display: 'Skates',
+						modifiers: array(array(attribute: 'GENERIC_JUMP_STRENGTH', operation: 'MULTIPLY_SCALAR_1', amount:-0.9999)),
+						color: array(255, 0, 0))),
 					101: array(name: 'LEATHER_LEGGINGS', meta: array(color: array(255, 0, 0))),
 					102: array(name: 'LEATHER_CHESTPLATE', meta: array(color: array(255, 0, 0))),
 					103: array(name: 'LEATHER_HELMET', meta: array(color:array(255, 0, 0))),
 				),
 				bluegear: array(
 					4: @blue, 5: @blue, 6: @blue, 7: @blue, 8: @blue,
-					100: array(name: 'LEATHER_BOOTS', meta: array(color: array(0, 0, 255))),
+					100: array(name: 'LEATHER_BOOTS', meta: array(
+						display: 'Skates',
+						modifiers: array(array(attribute: 'GENERIC_JUMP_STRENGTH', operation: 'MULTIPLY_SCALAR_1', amount:-0.9999)),
+						color: array(0, 0, 255))),
 					101: array(name: 'LEATHER_LEGGINGS', meta: array(color: array(0, 0, 255))),
 					102: array(name: 'LEATHER_CHESTPLATE', meta: array(color: array(0, 0, 255))),
 					103: array(name: 'LEATHER_HELMET', meta: array(color: array(0, 0, 255))),
@@ -147,7 +153,7 @@ register_command('hockey', array(
 				@hockey['last'] = @player;
 				@hockey['holder'] = '';
 			}
-			bind('player_interact_entity', array(id: 'hockey-interact'), null, @event, @hockey) {
+			bind('player_interact_at_entity', array(id: 'hockey-interact'), null, @event, @hockey) {
 				if(@event['id'] != @hockey['puck']) {
 					die();
 				}
@@ -155,15 +161,13 @@ register_command('hockey', array(
 				@eloc = entity_loc(@hockey['puck']);
 				@ploc['y'] += 1;
 				@dist = distance(@ploc, @eloc);
-				if(@dist < 3.5) {
-					@hockey['holder'] = player();
-					@hockey['last'] = player();
-					@hockey['distance'] = @dist;
-					@hockey['velocity'] = array(x: 0, y: 0, z: 0);
-					@hockey['lastloc'] = entity_loc(@hockey['puck']);
-					set_pexp(0);
-					play_sound(@eloc, array(sound: 'BLOCK_WOODEN_BUTTON_CLICK_ON', pitch: 0.6));
-				}
+				@hockey['holder'] = player();
+				@hockey['last'] = player();
+				@hockey['distance'] = @dist;
+				@hockey['velocity'] = array(x: 0, y: 0, z: 0);
+				@hockey['lastloc'] = entity_loc(@hockey['puck']);
+				set_pexp(0);
+				play_sound(@eloc, array(sound: 'BLOCK_WOODEN_BUTTON_CLICK_ON', pitch: 0.6));
 			}
 			bind('entity_damage_player', array(id: 'hockey-damage-player'), array(damager: 'PLAYER'), @event, @hockey) {
 				if(@hockey['holder'] == player()) {
@@ -182,11 +186,6 @@ register_command('hockey', array(
 					if(@hockey['holder'] == player()) {
 						_place_puck(@hockey);
 					}
-				}
-			}
-			bind('target_player', array(id: 'hockey-target'), array(mobtype: 'SLIME'), @event, @hockey) {
-				if(@event['id'] == @hockey['puck']) {
-					modify_event('player', null);
 				}
 			}
 
@@ -215,7 +214,6 @@ register_command('hockey', array(
 								set_pscoreboard(@p, 'hockey');
 							}
 							action_msg(@p, @time);
-							set_peffect(@p, 'JUMP_BOOST', -6, 2, false, false);
 						} else if(array_contains(@hockey['players'], @p)) {
 							array_remove_values(@hockey['players'], @p);
 							@team = get_pteam(@p, 'hockey');
@@ -240,17 +238,17 @@ register_command('hockey', array(
 				@l = entity_loc(@hockey['puck']);
 				@block = get_block(location_shift(@l, 'down'));
 
-				if(@block == 'RED_WOOL' || @block == 'BLUE_WOOL') {
+				if(@block === 'RED_WOOL' || @block === 'BLUE_WOOL') {
 					@team = if(@block == 'BLUE_WOOL', @hockey['red'], @hockey['blue']);
 					set_pscore('score', @team, get_pscore('score', @team, 'hockey') + 1, 'hockey');
 					launch_firework(@l, array(strength: 0));
 					_place_puck(@hockey);
 
-				} else if(@block == 'STONE_SLAB') {
+				} else if(@block === 'QUARTZ_SLAB') {
 					@hockey['holder'] = '';
 					set_entity_loc(@hockey['puck'], @hockey['lastloc']);
 
-				} else if(@hockey['holder'] && (@block == 'ICE' || @block == 'PACKED_ICE')) {
+				} else if(@hockey['holder'] && (@block === 'BLUE_ICE' || @block === 'PACKED_ICE' || @block === 'ICE')) {
 					@newloc = ploc(@hockey['holder']);
 					if(@newloc['world'] != @world) {
 						_place_puck(@hockey);
@@ -272,7 +270,7 @@ register_command('hockey', array(
 						@hockey['lastloc'] = @l;
 					}
 
-				} else if(!sk_region_contains('hockey', @l) || @l['y'] > @hockey['loc']['y']) {
+				} else if(!sk_region_contains('hockey', @l)) {
 						_place_puck(@hockey);
 
 				} else {
@@ -323,15 +321,19 @@ register_command('hockey', array(
 			@loc = @hockey['loc'][];
 			@loc[@hockey['axis']] += rand(5) - 2;
 			if(!@hockey['puck']) {
-				@hockey['puck'] = spawn_entity('SLIME', 1, @loc, closure(@e) {
+				@hockey['puck'] = spawn_entity('ARMOR_STAND', 1, @loc, closure(@e) {
 					set_entity_saves_on_unload(@e, false);
-					set_entity_spec(@e, array(size: 1));
+					set_entity_spec(@e, array(visible: false));
+					set_entity_size(@e, 0.5, 0.5);
 				})[0];
-				set_timeout(1, closure(){
-					set_mob_effect(@hockey['puck'], 'resistance', 4, 99999, true, false);
-					set_mob_effect(@hockey['puck'], 'levitation', -1, 99999, true, false);
-					set_mob_effect(@hockey['puck'], 'slowness', 10, 99999, true, false);
-				});
+				set_entity_rider(@hockey['puck'], spawn_entity('BLOCK_DISPLAY', 1, @loc, closure(@e) {
+					set_entity_spec(@e, array(blockdata: 'polished_blackstone'));
+					set_display_entity(@e, array(
+						teleportduration: 0,
+						transformation: array(
+							translation: array(x: -0.25, y: -1.96875, z: -0.25),
+							scale: array(x: 0.5, y: 0.2, z: 0.5))));
+				})[0]);
 			} else {
 				set_entity_loc(@hockey['puck'], @loc);
 			}
@@ -372,6 +374,7 @@ register_command('hockey', array(
 			}
 			remove_scoreboard('hockey');
 			_remove_activity('hockey');
+			try(entity_remove(get_entity_rider(@hockey['puck'])))
 			entity_remove(@hockey['puck']);
 		}
 
