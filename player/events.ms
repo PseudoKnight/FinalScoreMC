@@ -27,7 +27,7 @@ bind('player_death', null, null, @event) {
 
 		// Discord
 		if(function_exists('discord_broadcast')) {
-			discord_broadcast('minecraft_chat', '*'.strip_colors(@event['death_message']).' @ '.@stringLoc.'*');
+			discord_broadcast('chat', '*'.strip_colors(@event['death_message']).' @ '.@stringLoc.'*');
 		}
 
 		// Check if the player has not respawned in 60 seconds. 
@@ -118,7 +118,7 @@ if(function_exists('discord_broadcast')) {
 		if(get_os() === 'WINDOWS') { // ignore test server
 			die();
 		}
-		discord_broadcast('minecraft_chat', array(
+		discord_broadcast('chat', array(
 			embed: array(
 				author: array(
 					name: player().' has made the advancement ['.@event['title'].']',

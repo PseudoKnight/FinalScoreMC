@@ -66,7 +66,7 @@ bind('player_join', null, null, @event) {
 						@embed['footer'] = array(text: 'Last played');
 						@embed['timestamp'] = @lastPlayed;
 					}
-					try(discord_broadcast('minecraft_chat', array(embed: @embed)));
+					try(discord_broadcast('chat', array(embed: @embed)));
 				}
 			}
 
@@ -230,7 +230,7 @@ bind('player_quit', null, null, @event) {
 				} else {
 					@iconUrl = 'https://minotar.net/helm/'.puuid(player(), true).'/32.png'
 				}
-				discord_broadcast('minecraft_chat', array(embed: array(
+				discord_broadcast('chat', array(embed: array(
 					color: array(r: 126, g: 45, b: 35),
 					author: array(
 						name: "\u00ab@test @msg (@count)",

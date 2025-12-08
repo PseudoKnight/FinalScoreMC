@@ -32,7 +32,7 @@ proc _chat(@player, @message, @recipients, @source = '', @channel = '') {
 		if(@source == 'dynmap') {
 			@components[] = array('hover', '&2\u29E0', 'Live Map on Web');
 		} else {
-			@components[] = array('hover', '&9\u2689'.if(@channel != 'minecraft_chat', '#'.@channel), 'Discord');
+			@components[] = array('hover', '&9\u2689'.if(@channel != 'chat', '#'.@channel), 'Discord');
 		}
 	}
 
@@ -94,7 +94,7 @@ proc _chat(@player, @message, @recipients, @source = '', @channel = '') {
 		}
 		if(@source != 'discord') {
 			if(function_exists('discord_broadcast')) {
-				try(discord_broadcast('minecraft_chat', '**'.@player.'**  '.@filteredMessage))
+				try(discord_broadcast('chat', '**'.@player.'**  '.@filteredMessage))
 			}
 		}
 	}

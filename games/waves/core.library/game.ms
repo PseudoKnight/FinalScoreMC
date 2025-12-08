@@ -583,7 +583,7 @@ proc _waves_end(@waves, @win) {
 			try(tmsg(@p, color('gold').'+ '.@reward.' Coins'.color('white').' for new personal best'))
 			_acc_add(@p, @reward);
 			if(function_exists('discord_broadcast')) {
-				discord_broadcast('minecraft_chat', array(embed: array(title: 
+				discord_broadcast('chat', array(embed: array(title: 
 					@p.' survived '.@waveNum.' waves in '._to_upper_camel_case(@waves['region']))));
 			}
 		}

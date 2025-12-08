@@ -253,7 +253,7 @@ proc _broadcast(@msg) {
 	broadcast(@msg);
 	@msg = strip_colors(@msg);
 	if(function_exists('discord_broadcast')) {
-		discord_broadcast('minecraft_chat', array(embed: array(title: @msg)));
+		discord_broadcast('chat', array(embed: array(title: @msg)));
 	}
 	if(function_exists('dm_broadcast_to_web')) {
 		dm_broadcast_to_web('* '.@msg);

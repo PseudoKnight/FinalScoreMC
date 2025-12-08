@@ -14,7 +14,7 @@
 		dm_broadcast_to_web('* '.player().' '.$);
 	}
 	if(function_exists('discord_broadcast')) {
-		discord_broadcast('minecraft_chat', '**'.player().' '.$.'*');
+		discord_broadcast('chat', '**'.player().' '.$.'*');
 	}
 <<<
 

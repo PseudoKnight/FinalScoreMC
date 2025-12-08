@@ -173,7 +173,7 @@ proc _stats_print(@winners, @pvp) {
 		title(@p, @title, @subtitle, 20, 60, 20);
 	}
 
-	discord_broadcast('minecraft_chat', array(embed: @embed));
+	discord_broadcast('chat', array(embed: @embed));
 }
 
 proc _stats_store(@winners, @pvp) {

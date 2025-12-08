@@ -1,7 +1,7 @@
 if(extension_exists('CHDiscord')) {
 	// listen for messages in chat channel
 	bind('discord_message_received', null, null, @event) {
-		if(@event['channel'] == 'minecraft_chat') {
+		if(@event['channel'] == 'chat') {
 			@name = @event['nickname'];
 			@msg = @event['message'];
 			@pdata = null;
