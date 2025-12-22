@@ -58,6 +58,7 @@ bind('player_interact_entity', null, array(clicked: 'INTERACTION', hand: 'main_h
 				@yaw -= 360.0;
 			}
 			@colliderLoc['yaw'] = @yaw;
+			@displayLoc['yaw'] = @yaw;
 			@rotation = @yaw;
 			@offset = 0;
 			@axis = 'x';
@@ -124,6 +125,7 @@ bind('player_interact_entity', null, array(clicked: 'INTERACTION', hand: 'main_h
 	set_entity_rider(@camera, @cameraInteraction);
 
 	@blocks = array();
+	@displayLoc['yaw'] = 0;
 	for(@y = @minY, @y <= @minY + @height - 1, @y++) {
 		queue_push(closure(){
 			if(!entity_exists(@vehicle)) {
