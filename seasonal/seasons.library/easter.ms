@@ -69,6 +69,7 @@ bind('target_player', null, array(mobtype: 'ZOMBIE'), @event, @day, @passive = a
 	'CAT',
 	'CHICKEN',
 	'COD',
+	'COPPER_GOLEM',
 	'COW',
 	'DOLPHIN',
 	'DONKEY',

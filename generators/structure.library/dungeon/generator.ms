@@ -1395,10 +1395,10 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 									if(equals_ic(@roomData['room'], get_block(location_shift(@loc, 'west')))) {
 										@double = true;
 										@rightSide = location_shift(@loc, 'west');
-										set_blockdata_string(@rightSide, 'chest[facing=south'.if(@roomData['room'] === 'water', ',waterlogged=true').',type=right]', false);
+										set_blockdata_string(@rightSide, 'copper_chest[facing=south'.if(@roomData['room'] === 'water', ',waterlogged=true').',type=right]', false);
 										set_block(location_shift(@rightSide, 'down'), @podium, false);
 									}
-									set_blockdata_string(@loc, 'chest[facing=south'.if(@roomData['room'] === 'water', ',waterlogged=true').if(@double, ',type=left').']', false);
+									set_blockdata_string(@loc, 'copper_chest[facing=south'.if(@roomData['room'] === 'water', ',waterlogged=true').if(@double, ',type=left').']', false);
 									set_block(location_shift(@loc, 'down'), @podium, false);
 									if(@chestArray) { // only lock this chest if we have a previous chest to add a key to
 										try {
@@ -1763,10 +1763,10 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 							set_blockdata_string(location_shift(@loc, 'west'), array_get_rand(@floorData['wall']), false);
 							set_blockdata_string(location_shift(@loc, 'north'), array_get_rand(@floorData['wall']), false);
 						} else {
-							set_block(location_shift(@loc, 'south'), 'CHAIN', false);
-							set_block(location_shift(@loc, 'east'), 'CHAIN', false);
+							set_block(location_shift(@loc, 'south'), 'IRON_CHAIN', false);
+							set_block(location_shift(@loc, 'east'), 'IRON_CHAIN', false);
 							if(@exitRoom['width'] > 4 && @exitRoom['length'] > 4) { 
-								set_block(location_shift(@loc, 'west'), 'CHAIN', false);
+								set_block(location_shift(@loc, 'west'), 'IRON_CHAIN', false);
 							}
 							set_blockdata_string(location_shift(@loc, 'north'), array_get_rand(@floorData['wall']), false);
 						}
