@@ -1,18 +1,31 @@
 register_command('boats', array(
 	description: 'Boats!',
-	usage: '/boats <tower|spiral|spin> [height]',
+	usage: '/boats <type> <carousel|spin|spiral|tower> [data]',
 	permission: 'command.boats',
-	tabcompleter: closure(return(array())),
+	tabcompleter: _create_tabcompleter(
+		array('acacia', 'birch', 'cherry', 'dark_oak', 'jungle', 'mangrove', 'oak', 'pale_oak', 'random', 'spruce'),
+		array('carousel', 'spin', 'spiral', 'tower'),
+		array('<tower': array('[radius:4]'),
+			'<spiral': array('[radius:10]'),
+			'<carousel': array('[radius:8]'),
+			'<spin': array('[size:15')),
+		array('<<tower': array('[height:15]'))
+	),
 	executor: closure(@alias, @sender, @args, @info) {
-		if(@args[0] == 'tower') {
+		@type = to_upper(@args[0]);
+		if(@type === 'RANDOM') {
+			@type = array_get_rand(array('ACACIA', 'BIRCH', 'CHERRY', 'DARK_OAK', 'JUNGLE',
+					'MANGROVE', 'OAK', 'PALE_OAK', 'SPRUCE'));
+		}
+		if(@args[1] === 'tower') {
 			@target = get_command_block();
 			if(!@target) {
 				@target = ploc();
 			}
 			@world = @target['world'];
-			@radius = 4;
+			@radius = integer(array_get(@args, 2, 4));
 			@circle = array();
-			@height = integer(array_get(@args, 1, 15));
+			@height = integer(array_get(@args, 3, 15));
 			@h = 1;
 			@offset = 0;
 			for(@j = 1, @j < @height, @j++) {
@@ -36,7 +49,7 @@ register_command('boats', array(
 			@i = array(0);
 			set_interval(50, closure(){
 				if(array_index_exists(@circle, @i[0])) {
-					spawn_entity('OAK_BOAT', 1, @circle[@i[0]], closure(@e) {
+					spawn_entity(@type.'_BOAT', 1, @circle[@i[0]], closure(@e) {
 						set_entity_saves_on_unload(@e, false);
 					});
 					@i[0]++;
@@ -44,13 +57,13 @@ register_command('boats', array(
 					clear_task();
 				}
 			});
-		} else if(@args[0] == 'spiral') {
+		} else if(@args[1] === 'spiral') {
 			@target = get_command_block();
 			if(!@target) {
 				@target = ploc();
 			}
 			@world = @target['world'];
-			@radius = 10;
+			@radius = integer(array_get(@args, 2, 10));
 			@circle = array();
 			@height = 0;
 			for(@j = 1, @j < 3, @j++) {
@@ -89,13 +102,13 @@ register_command('boats', array(
 			@i = array(0);
 			set_interval(100, closure(){
 				if(array_index_exists(@circle, @i[0])) {
-					spawn_entity('OAK_BOAT', 1, @circle[@i[0]], closure(@e) {
+					spawn_entity(@type.'_BOAT', 1, @circle[@i[0]], closure(@e) {
 						set_entity_saves_on_unload(@e, false);
 					});
-					spawn_entity('OAK_BOAT', 1, @circle[@i[0] + 1], closure(@e) {
+					spawn_entity(@type.'_BOAT', 1, @circle[@i[0] + 1], closure(@e) {
 						set_entity_saves_on_unload(@e, false);
 					});
-					spawn_entity('OAK_BOAT', 1, @circle[@i[0] + 2], closure(@e) {
+					spawn_entity(@type.'_BOAT', 1, @circle[@i[0] + 2], closure(@e) {
 						set_entity_saves_on_unload(@e, false);
 					});
 					@i[0] += 3;
@@ -103,20 +116,20 @@ register_command('boats', array(
 					clear_task();
 				}
 			});
-		} else if(@args[0] == 'spin') {
+		} else if(@args[1] === 'spin') {
 			@target = get_command_block();
 			if(!@target) {
 				@target = ptarget_space();
 			} else {
-				@target = _relative_coords(@target, @args[2], @args[3], @args[4]);
+				@target = _relative_coords(@target, @args[3], @args[4], @args[5]);
 			}
 			@boats = array();
 			@stands = array();
-			@size = integer(array_get(@args, 1, 15));
+			@size = integer(array_get(@args, 2, 15));
 			@previous = null;
 			@i = @size;
 			do {
-				@boat = spawn_entity('OAK_BOAT', 1, @target, closure(@e) {
+				@boat = spawn_entity(@type.'_BOAT', 1, @target, closure(@e) {
 					set_entity_saves_on_unload(@e, false);
 				})[0];
 				if(@i > 1) {
@@ -160,6 +173,102 @@ register_command('boats', array(
 					clear_task();
 					foreach(@e in array_merge(@boats, @stands)) {
 						try(entity_remove(@e))
+					}
+				}
+			});
+		} else if(@args[1] === 'carousel') {
+			@target = get_command_block();
+			@owner = null;
+			if(!@target) {
+				@target = location_shift(ploc(), 'up');
+				@owner = player();
+			} else {
+				@target = _center(_relative_coords(@target, @args[3], @args[4], @args[5]), 0);
+				@owner = players_in_radius(@target, 32)[0];
+			}
+			@world = @target['world'];
+			@radius = integer(array_get(@args, 2, 8));
+			@circle = array();
+			for(@angle = 0, @angle < 6.28, @angle += 0.35) {
+				@circle[] = array(
+					@target['x'] + @radius * cos(@angle),
+					@target['y'] + 6.9375,
+					@target['z'] + @radius * sin(@angle),
+					@world,
+					to_degrees(@angle),
+					0.0,
+				);
+			}
+			@holders = array();
+			@boats = array();
+			@animals = array();
+			foreach(@index: @point in @circle) {
+				if(@index % 2) {
+					continue();
+				}
+				@holder = spawn_entity('ITEM_DISPLAY', 1, @point, closure(@e) {
+					set_entity_spec(@e, array(item: array(name: 'HEAVY_CORE')));
+					set_entity_saves_on_unload(@e, false);
+					set_display_entity(@e, array(teleportduration: 8));
+				})[0];
+				@boat = spawn_entity(@type.'_CHEST_BOAT', 1, location_shift(@point, 'down', 5.9375), closure(@e) {
+					set_entity_saves_on_unload(@e, false);
+				})[0];
+				@animal = null;
+				if(rand(2)) {
+					@animal = spawn_entity('LLAMA', 1, location_shift(@point, 'down', 5.9375), closure(@e){
+						set_entity_ai(@e, false);
+						set_entity_silent(@e, true);
+						set_mob_owner(@e, @owner);
+						set_entity_saves_on_unload(@e, false);
+						@color = array_get_rand(reflect_pull('enum', 'DyeColor'));
+						set_mob_equipment(@e, array(body: array(name: @color.'_CARPET')));
+					})[0];
+				} else if(rand(2)) {
+					@animal = spawn_entity('PIG', 1, location_shift(@point, 'down', 5.9375), closure(@e){
+						set_entity_ai(@e, false);
+						set_entity_silent(@e, true);
+						set_entity_saves_on_unload(@e, false);
+						set_mob_equipment(@e, array(saddle: array(name: 'SADDLE')));
+					})[0];
+				} else {
+					@animal = spawn_entity('STRIDER', 1, location_shift(@point, 'down', 5.9375), closure(@e){
+						set_entity_ai(@e, false);
+						set_entity_silent(@e, true);
+						set_entity_saves_on_unload(@e, false);
+						set_mob_equipment(@e, array(saddle: array(name: 'SADDLE')));
+					})[0];
+				}
+				set_entity_rider(@boat, @animal);
+				set_leashholder(@boat, @holder);
+				@holders[] = @holder;
+				@boats[] = @boat;
+				@animals[] = @animal;
+			}
+			@p = array(0);
+			set_interval(400, closure(){
+				try {
+					@p[0]++;
+					for(@i = 0, @i < array_size(@holders), @i++) {
+						@holder = @holders[@i];
+						@point = @circle[(@i * 2 + @p[0]) % array_size(@circle)];
+						set_entity_loc(@holder, @point);
+					}
+				} catch(BadEntityException @ex) {
+					clear_task();
+					foreach(@entity in @boats) {
+						try {
+							set_leashholder(@entity, null);
+							entity_remove(@entity);
+						} catch(BadEntityException @ignore) {}
+					}
+					foreach(@entity in @animals) {
+						try {
+							entity_remove(@entity);
+						} catch(BadEntityException @ignore) {}
+					}
+					foreach(@holder in @holders) {
+						try(entity_remove(@holder))
 					}
 				}
 			});
