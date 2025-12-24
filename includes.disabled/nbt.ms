@@ -5,7 +5,7 @@
  */
 array proc _read_nbt_file(string @filePath){
 
-	mixed proc _next_tag(byte_array @ba, int @type){
+	auto proc _next_tag(byte_array @ba, int @type){
 		switch(@type){
 			case 1:
 				return(ba_get_byte(@ba));
@@ -39,7 +39,7 @@ array proc _read_nbt_file(string @filePath){
 						return(@compound);
 					}
 					string @key = ba_get_string(@ba);
-					mixed @value = _next_tag(@ba, @tagType);
+					auto @value = _next_tag(@ba, @tagType);
 					@compound[@key] = @value;
 				}
 			case 11:
