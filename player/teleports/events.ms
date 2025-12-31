@@ -62,13 +62,14 @@ bind('player_teleport', null, null, @event) {
 
 		if(@vehicle || @leashedEntities) {
 			if(@vehicle != null) {
-				if(entity_type(@vehicle) != 'PLAYER' && is_entity_living(@vehicle)) {
-					set_entity_rider(@vehicle, null);
-					set_entity_loc(@vehicle, @to);
-					set_timeout(10, closure(){
-						set_entity_rider(@vehicle, @uuid);
-					});
-				}
+				@riders = get_entity_riders(@vehicle);
+				set_entity_rider(@vehicle, null);
+				set_entity_loc(@vehicle, @to);
+				set_timeout(10, closure(){
+					foreach(@rider in @riders) {
+						set_entity_rider(@vehicle, @rider);
+					}
+				});
 			}
 			foreach(@e in @leashedEntities) {
 				set_entity_loc(@e, @to);
