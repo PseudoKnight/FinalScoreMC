@@ -73,8 +73,13 @@ bind('player_teleport', null, null, @event) {
 			}
 			foreach(@e in @leashedEntities) {
 				set_entity_loc(@e, @to);
-				set_timeout(10, closure(){
-					set_leashholder(@e, @uuid);
+				set_timeout(50, closure(){
+					try {
+						set_leashholder(@e, @uuid);
+					} catch(BadEntityException @ex) {
+						console('Entity could not be re-leashed: '.@e);
+						pgive_item(@uuid, array(name: 'LEAD'));
+					}
 				});
 			}
 		}
