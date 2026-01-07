@@ -31,6 +31,21 @@ if(!import('recompile')) {
 		)
 	));
 
+	// name tags (26.1 recipe)
+	add_recipe(array(
+		'key': 'name_tags',
+		'type': 'SHAPED',
+		'result': array(name: 'NAME_TAG', qty: 1),
+		'ingredients': array(
+			'N': array('GOLD_NUGGET', 'IRON_NUGGET', 'COPPER_NUGGET'),
+			'P': 'PAPER',
+		),
+		'shape': array(
+			' N',
+			'P ',
+		)
+	));
+
 	# Skeleton skull recipe
 	add_recipe(array(
 		'key': 'skeleton_skull',
