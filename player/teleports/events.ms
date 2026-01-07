@@ -31,8 +31,9 @@ bind('player_teleport', null, null, @event) {
 			@to = get_spawn(@fromWorld);
 			modify_event('to', @to);
 		}
-	} else if(@event['type'] == 'ENDER_PEARL' && @fromWorld == 'custom') {
+	} else if(@event['type'] === 'ENDER_PEARL' && (@fromWorld === 'custom' || _world_group(@fromWorld) !== _world_group(@toWorld))) {
 		cancel();
+		die();
 	}
 
 	if(_is_survival_world(@fromWorld) && _is_survival_world(@toWorld)) {
