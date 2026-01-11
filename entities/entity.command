@@ -64,6 +64,7 @@ register_command('entity', array(
 				@setting = @args[2];
 				@custom = null;
 				@entity = associative_array();
+				@closestEntity = null;
 				if(@args[0] === 'setcustom') {
 					@custom = _get_custom_entities();
 					if(!array_index_exists(@custom, @id)) {
@@ -73,6 +74,18 @@ register_command('entity', array(
 				} else if(@args[0] === 'modify') {
 					if(!array_contains_ic(@entityTypes, @id)) {
 						die(color('red').'Unknown entity type: '.@id);
+					}
+					@loc = entity_loc(puuid());
+					@closestDistance = 5;
+					foreach(@e in entities_in_radius(@loc, 5, @id)) {
+						@distance = distance(entity_loc(@e), @loc);
+						if(@distance < @closestDistance) {
+							@closestDistance = @distance;
+							@closestEntity = @e;
+						}
+					}
+					if(!@closestEntity) {
+						die(color('gold').'Must be within 5 meters of a '.@id);
 					}
 				}
 				switch(@setting) {
@@ -115,7 +128,7 @@ register_command('entity', array(
 							die(color('gold').'Must be an integer.');
 						}
 						@entity[@setting] = integer(@int);
-						msg(color('green').to_upper(@setting).' set to '.@entity[@setting]);
+						msg(color('green').'Set '.@setting.' to '.@entity[@setting]);
 
 					// Single boolean
 					case 'ai':
@@ -129,7 +142,7 @@ register_command('entity', array(
 						}
 						@boolean = @args[3];
 						@entity[@setting] = (@boolean == 'true');
-						msg(color('green').to_upper(@setting).' set to '.@entity[@setting]);
+						msg(color('green').'Set '.@setting.' to '.@entity[@setting]);
 
 					case 'gear':
 						@entity['gear'] = array(
@@ -259,9 +272,7 @@ register_command('entity', array(
 				if(@args[0] === 'setcustom') {
 					write_file('custom.yml', yml_encode(@custom, true), 'OVERWRITE');
 				} else {
-					foreach(@e in entities_in_radius(entity_loc(puuid()), 5, @id)) {
-						_modify_entity(@e, @entity, entity_loc(@e));
-					}
+					_modify_entity(@closestEntity, @entity, entity_loc(@closestEntity));
 				}
 
 			case 'deletecustom':
