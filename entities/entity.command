@@ -14,15 +14,16 @@ foreach(@index: @type in @entityTypes) {
 
 proc _entity_tabcompleter(@types = @entityTypes) {
 	return _create_tabcompleter(
-		array('list', 'info', 'create', 'set', 'modify', 'delete', 'spawn', 'patrol', 'reload'),
-		array('<info|set|delete|patrol': array_keys(_get_custom_entities()),
+		array('list', 'info', 'createcustom', 'setcustom', 'modify', 'deletecustom', 'spawn', 'patrol', 'reload'),
+		array('<info|setcustom|deletecustom': array_keys(_get_custom_entities()),
 			'<modify': @types,
-			'<spawn': array_merge(array_keys(_get_custom_entities()), @types)),
-		array('<<set|modify|delete': array('type', 'name', 'age', 'health', 'lifetime', 'onfire', 'targetnear',
+			'<spawn|patrol': array_merge(array_keys(_get_custom_entities()), @types)),
+		array('<<setcustom|modify|deletecustom': array('type', 'name', 'age', 'health', 'lifetime', 'onfire', 'targetnear',
 					'ai', 'tame', 'glowing', 'invulnerable', 'gravity', 'silent', 'gear', 'droprate', 'effect', 'tags',
 					'attributes', 'rider', 'explode', 'scoreboardtags', 'velocity'),
-			'<<create': @types),
-		array('<type|rider': reflect_pull('enum', 'EntityType')),
+			'<<createcustom': @types),
+		array('<type': @types,
+			'<rider': array_merge(array_keys(_get_custom_entities()), @types)),
 	);
 }
 
@@ -36,7 +37,7 @@ register_command('entity', array(
 			return(false);
 		}
 		switch(@args[0]) {
-			case 'create':
+			case 'createcustom':
 				if(array_size(@args) < 3) {
 					return(false);
 				}
@@ -54,7 +55,7 @@ register_command('entity', array(
 				msg(color('green').'Created new custom '.@type.' entity called "'.@args[1].'".');
 				set_tabcompleter('entity', _entity_tabcompleter());
 
-			case 'set':
+			case 'setcustom':
 			case 'modify':
 				if(array_size(@args) < 3) {
 					return(false);
@@ -63,7 +64,7 @@ register_command('entity', array(
 				@setting = @args[2];
 				@custom = null;
 				@entity = associative_array();
-				if(@args[0] === 'set') {
+				if(@args[0] === 'setcustom') {
 					@custom = _get_custom_entities();
 					if(!array_index_exists(@custom, @id)) {
 						die(color('red').'Custom entity must be created first.');
@@ -255,7 +256,7 @@ register_command('entity', array(
 					default:
 						die(color('yellow').'Invalid setting.');
 				}
-				if(@args[0] === 'set') {
+				if(@args[0] === 'setcustom') {
 					write_file('custom.yml', yml_encode(@custom, true), 'OVERWRITE');
 				} else {
 					foreach(@e in entities_in_radius(entity_loc(puuid()), 5, @id)) {
@@ -263,7 +264,7 @@ register_command('entity', array(
 					}
 				}
 
-			case 'delete':
+			case 'deletecustom':
 				if(array_size(@args) < 2) {
 					return(false);
 				}
@@ -299,7 +300,7 @@ register_command('entity', array(
 				@id = @args[1];
 				@custom = _get_custom_entities();
 				if(!array_index_exists(@custom, @id)) {
-					die(color('red').'Entity does not exist.');
+					die(color('red').'Custom entity does not exist.');
 				}
 				@entity = @custom[@id];
 				foreach(@setting: @value in @entity) {
