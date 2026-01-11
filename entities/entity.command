@@ -7,14 +7,21 @@ proc _get_custom_entities() {
 	return(@custom);
 }
 
+@entityTypes =  reflect_pull('enum', 'EntityType');
+foreach(@index: @type in @entityTypes) {
+	@entityTypes[@index] = to_lower(string(@type));
+}
+
 register_command('entity', array(
 	description: 'Custom entity management commands',
 	usage: '/entity <list|info|set|delete|spawn|patrol|reload> [entity_name] [...]',
 	permission: 'command.entity',
 	tabcompleter: _create_tabcompleter(
-		array('list', 'info', 'set', 'delete', 'spawn', 'patrol', 'reload'),
-		array('<info|set|delete|spawn|patrol': array_keys(_get_custom_entities())),
-		array('<<set|delete': array('type', 'name', 'age', 'health', 'lifetime', 'onfire', 'targetnear',
+		array('list', 'info', 'set', 'modify', 'delete', 'spawn', 'patrol', 'reload'),
+		array('<info|set|delete|patrol': array_keys(_get_custom_entities()),
+			'<modify': @entityTypes,
+			'<spawn': array_merge(array_keys(_get_custom_entities()), @entityTypes)),
+		array('<<set|modify|delete': array('type', 'name', 'age', 'health', 'lifetime', 'onfire', 'targetnear',
 					'ai', 'tame', 'glowing', 'invulnerable', 'gravity', 'silent', 'gear', 'droprate', 'effect', 'tags',
 					'attributes', 'rider', 'explode', 'scoreboardtags', 'velocity')),
 		array('<type|rider': reflect_pull('enum', 'EntityType')),
@@ -25,16 +32,21 @@ register_command('entity', array(
 		}
 		switch(@args[0]) {
 			case 'set':
+			case 'modify':
 				if(array_size(@args) < 3) {
 					return(false);
 				}
 				@id = @args[1];
 				@setting = @args[2];
-				@custom = _get_custom_entities();
-				if(!array_index_exists(@custom, @id)) {
-					@custom[@id] = associative_array();
+				@custom = null;
+				@entity = associative_array();
+				if(@args[0] === 'set') {
+					@custom = _get_custom_entities();
+					if(!array_index_exists(@custom, @id)) {
+						@custom[@id] = associative_array();
+					}
+					@entity = @custom[@id];
 				}
-				@entity = @custom[@id];
 				switch(@setting) {
 					case 'type':
 						if(array_size(@args) == 3) {
@@ -43,6 +55,9 @@ register_command('entity', array(
 						@type = @args[3];
 						if(!_get_entity(@type)) {
 							die(color('gold').'Unknown entity type.');
+						}
+						if(@args[0] === 'modify') {
+							die(color('red').'Cannot modify the type of a spawned in entity.');
 						}
 						@entity['type'] = @type;
 						msg(color('green').'Type set to '.@type);
@@ -213,7 +228,13 @@ register_command('entity', array(
 					default:
 						die(color('yellow').'Invalid setting.');
 				}
-				write_file('custom.yml', yml_encode(@custom, true), 'OVERWRITE');
+				if(@args[0] === 'set') {
+					write_file('custom.yml', yml_encode(@custom, true), 'OVERWRITE');
+				} else {
+					foreach(@e in entities_in_radius(entity_loc(puuid()), 5, @id)) {
+						_modify_entity(@e, @entity, entity_loc(@e));
+					}
+				}
 
 			case 'delete':
 				if(array_size(@args) < 2) {
