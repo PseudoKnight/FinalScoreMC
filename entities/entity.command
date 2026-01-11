@@ -12,25 +12,48 @@ foreach(@index: @type in @entityTypes) {
 	@entityTypes[@index] = to_lower(string(@type));
 }
 
-register_command('entity', array(
-	description: 'Custom entity management commands',
-	usage: '/entity <list|info|set|delete|spawn|patrol|reload> [entity_name] [...]',
-	permission: 'command.entity',
-	tabcompleter: _create_tabcompleter(
-		array('list', 'info', 'set', 'modify', 'delete', 'spawn', 'patrol', 'reload'),
+proc _entity_tabcompleter(@types = @entityTypes) {
+	return _create_tabcompleter(
+		array('list', 'info', 'create', 'set', 'modify', 'delete', 'spawn', 'patrol', 'reload'),
 		array('<info|set|delete|patrol': array_keys(_get_custom_entities()),
-			'<modify': @entityTypes,
-			'<spawn': array_merge(array_keys(_get_custom_entities()), @entityTypes)),
+			'<modify': @types,
+			'<spawn': array_merge(array_keys(_get_custom_entities()), @types)),
 		array('<<set|modify|delete': array('type', 'name', 'age', 'health', 'lifetime', 'onfire', 'targetnear',
 					'ai', 'tame', 'glowing', 'invulnerable', 'gravity', 'silent', 'gear', 'droprate', 'effect', 'tags',
-					'attributes', 'rider', 'explode', 'scoreboardtags', 'velocity')),
+					'attributes', 'rider', 'explode', 'scoreboardtags', 'velocity'),
+			'<<create': @types),
 		array('<type|rider': reflect_pull('enum', 'EntityType')),
-	),
+	);
+}
+
+register_command('entity', array(
+	description: 'Custom entity management commands',
+	usage: '/entity <action> [entity] [data...]',
+	permission: 'command.entity',
+	tabcompleter: _entity_tabcompleter(),
 	executor: closure(@alias, @sender, @args) {
 		if(!@args) {
 			return(false);
 		}
 		switch(@args[0]) {
+			case 'create':
+				if(array_size(@args) < 3) {
+					return(false);
+				}
+				@id = @args[1];
+				@type = @args[2];
+				@custom = _get_custom_entities();
+				if(array_index_exists(@custom, @id)) {
+					die(color('red').'Custom entity already exists by the name: '.@id);
+				}
+				if(!array_contains_ic(@entityTypes, @type)) {
+					die(color('red').'Unknown entity type: '.@type);
+				}
+				@custom[@id] = array(type: to_lower(@type));
+				write_file('custom.yml', yml_encode(@custom, true), 'OVERWRITE');
+				msg(color('green').'Created new custom '.@type.' entity called "'.@args[1].'".');
+				set_tabcompleter('entity', _entity_tabcompleter());
+
 			case 'set':
 			case 'modify':
 				if(array_size(@args) < 3) {
@@ -43,9 +66,13 @@ register_command('entity', array(
 				if(@args[0] === 'set') {
 					@custom = _get_custom_entities();
 					if(!array_index_exists(@custom, @id)) {
-						@custom[@id] = associative_array();
+						die(color('red').'Custom entity must be created first.');
 					}
 					@entity = @custom[@id];
+				} else if(@args[0] === 'modify') {
+					if(!array_contains_ic(@entityTypes, @id)) {
+						die(color('red').'Unknown entity type: '.@id);
+					}
 				}
 				switch(@setting) {
 					case 'type':
@@ -53,14 +80,14 @@ register_command('entity', array(
 							return(false);
 						}
 						@type = @args[3];
-						if(!_get_entity(@type)) {
-							die(color('gold').'Unknown entity type.');
+						if(!array_contains_ic(@entityTypes, @type)) {
+							die(color('red').'Unknown entity type: '.@type);
 						}
 						if(@args[0] === 'modify') {
 							die(color('red').'Cannot modify the type of a spawned in entity.');
 						}
-						@entity['type'] = @type;
-						msg(color('green').'Type set to '.@type);
+						@entity['type'] = to_lower(@type);
+						msg(color('green').'Entity type set to: '.@type);
 
 					case 'name':
 						if(array_size(@args) == 3) {
@@ -256,11 +283,13 @@ register_command('entity', array(
 					msg(color('green').@setting.' deleted from '.@id);
 				} else {
 					@custom = _get_custom_entities();
-					if(array_index_exists(@custom, @id)) {
-						array_remove(@custom, @id);
+					if(!array_index_exists(@custom, @id)) {
+						die(color('yellow').'Custom entity does not exist: '.@id);
 					}
+					array_remove(@custom, @id);
 					write_file('custom.yml', yml_encode(@custom, true), 'OVERWRITE');
 					msg(color('green').'Custom entity deleted.');
+					set_tabcompleter('entity', _entity_tabcompleter());
 				}
 
 			case 'info':
