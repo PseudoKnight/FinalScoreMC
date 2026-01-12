@@ -12,18 +12,33 @@ foreach(@index: @type in @entityTypes) {
 	@entityTypes[@index] = to_lower(string(@type));
 }
 
-proc _entity_tabcompleter(@types = @entityTypes) {
+@attributes = reflect_pull('enum', 'Attribute');
+foreach(@index: @attribute in @attributes) {
+	@attributes[@index] = to_lower(string(@attribute));
+}
+
+@effects = reflect_pull('enum', 'PotionEffectType');
+foreach(@index: @effect in @effects) {
+	@effects[@index] = to_lower(string(@effect));
+}
+
+proc _entity_tabcompleter(@typeCompletions = @entityTypes, @attributeCompletions = @attributes, @effectCompletions = @effects) {
 	return _create_tabcompleter(
 		array('list', 'info', 'createcustom', 'setcustom', 'modify', 'deletecustom', 'spawn', 'patrol', 'reload'),
 		array('<info|setcustom|deletecustom': array_keys(_get_custom_entities()),
-			'<modify': @types,
-			'<spawn|patrol': array_merge(array_keys(_get_custom_entities()), @types)),
+			'<modify': @typeCompletions,
+			'<spawn|patrol': array_merge(array_keys(_get_custom_entities()), @typeCompletions)),
 		array('<<setcustom|modify|deletecustom': array('type', 'name', 'age', 'health', 'lifetime', 'onfire', 'targetnear',
 					'ai', 'tame', 'glowing', 'invulnerable', 'gravity', 'silent', 'gear', 'droprate', 'effect', 'tags',
-					'attributes', 'rider', 'explode', 'scoreboardtags', 'velocity'),
-			'<<createcustom': @types),
-		array('<type': @types,
-			'<rider': array_merge(array_keys(_get_custom_entities()), @types)),
+					'attribute', 'rider', 'explode', 'scoreboardtags', 'velocity'),
+			'<<createcustom': @typeCompletions),
+		array('<type': @typeCompletions,
+			'<attribute': @attributeCompletions,
+			'<effect': @effectCompletions,
+			'<rider': array_merge(array_keys(_get_custom_entities()), @typeCompletions)),
+		array('<<attribute': array('reset', '<value>'),
+			'<<effect': array('<strength>')),
+		array('<<<effect': array('[seconds]'))
 	);
 }
 
@@ -39,7 +54,7 @@ register_command('entity', array(
 		switch(@args[0]) {
 			case 'createcustom':
 				if(array_size(@args) < 3) {
-					return(false);
+					die(color('gold').'Expected custom id and entity type.');
 				}
 				@id = @args[1];
 				@type = @args[2];
@@ -76,8 +91,8 @@ register_command('entity', array(
 						die(color('red').'Unknown entity type: '.@id);
 					}
 					@loc = entity_loc(puuid());
-					@closestDistance = 5;
-					foreach(@e in entities_in_radius(@loc, 5, @id)) {
+					@closestDistance = 8;
+					foreach(@e in entities_in_radius(@loc, 8, @id)) {
 						@distance = distance(entity_loc(@e), @loc);
 						if(@distance < @closestDistance) {
 							@closestDistance = @distance;
@@ -85,7 +100,7 @@ register_command('entity', array(
 						}
 					}
 					if(!@closestEntity) {
-						die(color('gold').'Must be within 5 meters of a '.@id);
+						die(color('gold').'Must be within 8 meters of a '.@id);
 					}
 				}
 				switch(@setting) {
@@ -180,21 +195,21 @@ register_command('entity', array(
 						msg(color('green').'Droprate set.');
 
 					case 'effect':
-						if(array_size(@args) < 6) {
+						if(array_size(@args) < 5) {
 							return(false);
 						}
-						if(!is_numeric(@args[3])) {
-							die('Must be numeric');
-						}
-						@effectid = integer(@args[3]);
+						@effectid = @args[3];
 						if(!array_index_exists(@entity, 'effects')) {
-							@entity['effects'] = array();
+							@entity['effects'] = associative_array();
 						}
 						@strength = integer(@args[4]) - 1;
-						@duration = double(@args[5]);
+						@duration = -1.0;
+						if(array_size(@args) > 5) {
+							@duration = double(@args[5]);
+						}
 						@found = false;
 						foreach(@index: @effect in @entity['effects']) {
-							if(@effect['id'] == @effectid) {
+							if(@index === @effectid) {
 								@found = true;
 								if(@duration == 0) {
 									array_remove(@entity['effects'], @index);
@@ -208,22 +223,41 @@ register_command('entity', array(
 							}
 						}
 						if(!@found) {
-							@entity['effects'][] = array(
-								'id': @effectid,
-								'strength': @strength,
-								'seconds': @duration
+							@entity['effects'][@effectid] = array(
+								strength: @strength,
+								seconds: @duration
 							);
 							msg(color('green').'Effect added');
 						}
 
 					# associative arrays
 					case 'tags':
-					case 'attributes':
 						if(array_size(@args) == 3) {
 							return(false);
 						}
 						@entity[@setting] = json_decode(array_implode(@args[3..-1]));
 						msg(color('green').'Set '.@setting.' to '.@entity[@setting]);
+
+					case 'attribute':
+						if(array_size(@args) < 5) {
+							return(false);
+						}
+						@attribute = @args[3];
+						@value = @args[4];
+						if(!array_index_exists(@entity, 'attributes')) {
+							@entity['attributes'] = associative_array();
+						}
+						if(@value === 'reset') {
+							if(@args[0] === 'setcustom') {
+								array_remove(@entity['attributes'], to_upper(@attribute));
+							} else {
+								reset_entity_attribute_base(@closestEntity, to_upper(@attribute));
+							}
+							msg(color('green').'Reset '.@attribute);
+						} else {
+							@entity['attributes'][to_upper(@attribute)] = @value;
+							msg(color('green').'Set attribute '.@attribute.' to '.@value);
+						}
 
 					case 'rider':
 						if(array_size(@args) == 3) {
@@ -280,24 +314,51 @@ register_command('entity', array(
 					return(false);
 				}
 				@id = @args[1];
-				if(array_size(@args) > 2) {
+				@custom = _get_custom_entities();
+				if(!array_index_exists(@custom, @id)) {
+					die(color('yellow').'Custom entity does not exist: '.@id);
+				}
+				if(array_size(@args) > 3) {
 					@setting = @args[2];
-					@custom = _get_custom_entities();
-					if(!array_index_exists(@custom, @id)) {
-						@custom[@id] = associative_array();
-					}
+					@key = @args[3];
 					@entity = @custom[@id];
-					if(@setting === 'effect') {
-						@setting = 'effects';
+					if(!array_index_exists(@entity, @setting)) {
+						die(color('yellow').'No data exists for '.@setting);
+					}
+					switch(@setting) {
+						case 'effect':
+							@setting .= 's';
+							if(!array_index_exists(@entity[@setting], @key)) {
+								die(color('gold').'Custom attribute setting did not exist: '.@key);
+							}
+							array_remove(@entity[@setting], @key);
+							msg(color('green').'Removed '.@key.' from entity attributes.');
+						case 'attribute':
+							@setting .= 's';
+							@key = to_upper(@key);
+							if(!array_index_exists(@entity[@setting], @key)) {
+								die(color('gold').'Custom attribute setting did not exist: '.@key);
+							}
+							array_remove(@entity[@setting], @key);
+							msg(color('green').'Removed '.@key.' from entity attributes.');
+						default:
+							die(color('gold').'Too many arguments for '.@setting);
+					}
+					if(!@entity[@setting]) {
+						array_remove(@entity, @setting);
+						msg(color('green').@setting.' deleted from '.@id);
+					}
+					write_file('custom.yml', yml_encode(@custom, true), 'OVERWRITE');
+				} else if(array_size(@args) > 2) {
+					@setting = @args[2];
+					@entity = @custom[@id];
+					if(@setting === 'effect' || @setting === 'attribute') {
+						@setting .= 's';
 					}
 					array_remove(@entity, @setting);
 					write_file('custom.yml', yml_encode(@custom, true), 'OVERWRITE');
 					msg(color('green').@setting.' deleted from '.@id);
 				} else {
-					@custom = _get_custom_entities();
-					if(!array_index_exists(@custom, @id)) {
-						die(color('yellow').'Custom entity does not exist: '.@id);
-					}
 					array_remove(@custom, @id);
 					write_file('custom.yml', yml_encode(@custom, true), 'OVERWRITE');
 					msg(color('green').'Custom entity deleted.');

@@ -1,8 +1,8 @@
 antfarmqueen:
   effects:
-  - id: 11
-    seconds: 99999
-    strength: 3
+    resistance:
+      seconds: -1
+      strength: 3
   health: 100
   tags:
     profession: LIBRARIAN
@@ -26,15 +26,15 @@ babyvector:
     LEGGINGS: 0
     WEAPON: 0
   effects:
-  - id: 1
-    seconds: 999
-    strength: 0
-  - id: 8
-    seconds: 999
-    strength: 1
-  - id: 14
-    seconds: 999
-    strength: 0
+    invisibility:
+      seconds: -1
+      strength: 0
+    jump_boost:
+      seconds: -1
+      strength: 1
+    speed:
+      seconds: -1
+      strength: 0
   gear:
     BOOTS:
       meta:
@@ -213,17 +213,17 @@ explovex:
   type: vex
 firebat:
   effects:
-  - id: 12
-    seconds: 9999
-    strength: -1
+    fire_resistance:
+      seconds: -1
+      strength: 0
   onfire: 80
   type: bat
 gianthead:
   ai: false
   effects:
-  - id: 14
-    seconds: 10000
-    strength: -1
+    invisibility:
+      seconds: -1
+      strength: 0
   gear:
     BOOTS: null
     CHESTPLATE: null
@@ -317,15 +317,15 @@ gothemboss:
   type: vex
 invishulker:
   effects:
-  - id: 14
-    seconds: 9999
-    strength: 0
+    invisibility:
+      seconds: -1
+      strength: 0
   type: shulker
 jeb:
   effects:
-  - id: 11
-    seconds: 99999
-    strength: 4
+    resistance:
+      seconds: -1
+      strength: 4
   name: jeb_
   type: sheep
 johnny:
@@ -534,15 +534,15 @@ skeletonrider:
   type: SKELETON_HORSE
 speedycreeper:
   effects:
-  - id: 1
-    seconds: 9999
-    strength: 1
+    speed:
+      seconds: -1
+      strength: 1
   type: creeper
 speedypig:
   effects:
-  - id: 1
-    seconds: 300
-    strength: 3
+    speed:
+      seconds: -1
+      strength: 3
   health: 20
   type: pig
 steed:
@@ -561,12 +561,12 @@ steed:
 turretstand:
   rider:
     effects:
-    - id: 11
-      seconds: 99999
-      strength: 3
-    - id: 14
-      seconds: 99999
-      strength: -1
+      invisibility:
+        seconds: -1
+        strength: 0
+      resistance:
+        seconds: -1
+        strength: 3
     silent: true
     type: guardian
   tags:
@@ -582,12 +582,12 @@ zombievector:
     OFF_HAND: 0.0
     WEAPON: 0.0
   effects:
-  - id: 1
-    seconds: -1.0
-    strength: 3
-  - id: 8
-    seconds: -1.0
-    strength: 1
+    jump_boost:
+      seconds: -1
+      strength: 1
+    speed:
+      seconds: -1
+      strength: 1
   gear:
     BOOTS:
       meta:
@@ -670,5 +670,7 @@ zombievector:
       meta: null
       name: NETHERITE_HOE
       qty: 1
-  health: 1
+  health: 8
+  tags:
+    baby: true
   type: HUSK
