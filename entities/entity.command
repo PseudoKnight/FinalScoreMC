@@ -14,20 +14,30 @@ foreach(@index: @type in @entityTypes) {
 
 @attributes = reflect_pull('enum', 'Attribute');
 foreach(@index: @attribute in @attributes) {
-	@attributes[@index] = to_lower(string(@attribute));
+	@attribute = to_lower(string(@attribute));
+	if(!string_starts_with(@attribute, 'player_')
+	&& @attribute !== 'generic_luck') {
+		@attributes[@index] = replace(@attribute, 'generic_', '');
+	} else {
+		array_remove(@attributes, @index);
+	}
 }
 
 @effects = reflect_pull('enum', 'PotionEffectType');
 foreach(@index: @effect in @effects) {
-	@effects[@index] = to_lower(string(@effect));
+	@effect = to_lower(string(@effect));
+	if(@effect !== 'instant_damage' && @effect !== 'instant_health') {
+		@effects[@index] = @effect;
+	}
 }
 
 proc _entity_tabcompleter(@typeCompletions = @entityTypes, @attributeCompletions = @attributes, @effectCompletions = @effects) {
+	@typeOrCustomCompletions = array_merge(array_keys(_get_custom_entities()), @typeCompletions);
 	return _create_tabcompleter(
 		array('list', 'info', 'createcustom', 'setcustom', 'modify', 'deletecustom', 'spawn', 'patrol', 'reload'),
 		array('<info|setcustom|deletecustom': array_keys(_get_custom_entities()),
 			'<modify': @typeCompletions,
-			'<spawn|patrol': array_merge(array_keys(_get_custom_entities()), @typeCompletions)),
+			'<spawn|patrol': @typeOrCustomCompletions),
 		array('<<setcustom|modify|deletecustom': array('type', 'name', 'age', 'health', 'lifetime', 'onfire', 'targetnear',
 					'ai', 'tame', 'glowing', 'invulnerable', 'gravity', 'silent', 'gear', 'droprate', 'effect', 'tags',
 					'attribute', 'rider', 'explode', 'scoreboardtags', 'velocity'),
@@ -35,7 +45,7 @@ proc _entity_tabcompleter(@typeCompletions = @entityTypes, @attributeCompletions
 		array('<type': @typeCompletions,
 			'<attribute': @attributeCompletions,
 			'<effect': @effectCompletions,
-			'<rider': array_merge(array_keys(_get_custom_entities()), @typeCompletions)),
+			'<rider': @typeOrCustomCompletions),
 		array('<<attribute': array('reset', '<value>'),
 			'<<effect': array('<strength>')),
 		array('<<<effect': array('[seconds]'))
@@ -207,22 +217,16 @@ register_command('entity', array(
 						if(array_size(@args) > 5) {
 							@duration = double(@args[5]);
 						}
-						@found = false;
-						foreach(@index: @effect in @entity['effects']) {
-							if(@index === @effectid) {
-								@found = true;
-								if(@duration == 0) {
-									array_remove(@entity['effects'], @index);
-									msg(color('green').'Effect removed');
-								} else {
-									@entity['effects'][@index]['strength'] = @strength;
-									@entity['effects'][@index]['seconds'] = @duration;
-									msg(color('green').'Effect modified');
-								}
-								break();
+						if(array_index_exists(@entity['effects'], @effectid)) {
+							if(@duration == 0) {
+								array_remove(@entity['effects'], @effectid);
+								msg(color('green').'Effect removed');
+							} else {
+								@entity['effects'][@effectid]['strength'] = @strength;
+								@entity['effects'][@effectid]['seconds'] = @duration;
+								msg(color('green').'Effect modified');
 							}
-						}
-						if(!@found) {
+						} else {
 							@entity['effects'][@effectid] = array(
 								strength: @strength,
 								seconds: @duration
@@ -246,6 +250,16 @@ register_command('entity', array(
 						@value = @args[4];
 						if(!array_index_exists(@entity, 'attributes')) {
 							@entity['attributes'] = associative_array();
+						}
+						switch(@attribute) {
+							case 'zombie_spawn_reinforcements':
+							case 'tempt_range':
+							case 'camera_distance':
+							case 'waypoint_transmit_range':
+							case 'waypoint_receive_range':
+								noop();
+							default:
+								@attribute = 'generic_'.@attribute;
 						}
 						if(@value === 'reset') {
 							if(@args[0] === 'setcustom') {
@@ -335,6 +349,16 @@ register_command('entity', array(
 							msg(color('green').'Removed '.@key.' from entity attributes.');
 						case 'attribute':
 							@setting .= 's';
+							switch(@key) {
+								case 'zombie_spawn_reinforcements':
+								case 'tempt_range':
+								case 'camera_distance':
+								case 'waypoint_transmit_range':
+								case 'waypoint_receive_range':
+									noop();
+								default:
+									@key = 'generic_'.@key;
+							}
 							@key = to_upper(@key);
 							if(!array_index_exists(@entity[@setting], @key)) {
 								die(color('gold').'Custom attribute setting did not exist: '.@key);
