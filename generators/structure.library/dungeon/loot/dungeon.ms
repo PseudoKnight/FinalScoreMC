@@ -3,6 +3,8 @@ proc _get_chest_loot(@floor, @random, @bonus = 1.0, @loot = array(
 	array(chance: 0.1, item: 'ARROW', qty: array(1, 7)),
 	array(chance: 0.05, item: 'GOLD_NUGGET', qty: array(1, 9)),
 	array(chance: 0.05, item: 'GOLD_INGOT'),
+	array(chance: 0.05, item: 'COPPER_NUGGET', qty: array(1, 9)),
+	array(chance: 0.05, item: 'COPPER_INGOT'),
 	array(chance: 0.05, item: 'COBWEB'),
 	array(chance: 0.04, item: 'IRON_NUGGET', qty: array(1, 9)),
 	array(chance: 0.04, item: 'IRON_INGOT'),
@@ -112,7 +114,8 @@ proc _get_chest_loot(@floor, @random, @bonus = 1.0, @loot = array(
 							amount: 0.05,
 							slot: @slot,
 						);
-					} else if(string_starts_with(@item['name'], 'GOLDEN') 
+					} else if(string_starts_with(@item['name'], 'GOLDEN')
+					|| string_starts_with(@item['name'], 'COPPER')
 					|| string_starts_with(@item['name'], 'IRON') 
 					|| string_starts_with(@item['name'], 'DIAMOND')
 					|| string_starts_with(@item['name'], 'NETHERITE')) {
