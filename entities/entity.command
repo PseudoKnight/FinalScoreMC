@@ -9,7 +9,12 @@ proc _get_custom_entities() {
 
 @entityTypes =  reflect_pull('enum', 'EntityType');
 foreach(@index: @type in @entityTypes) {
-	@entityTypes[@index] = to_lower(string(@type));
+	@type = to_lower(string(@type));
+	if(@type !== 'player' && @type !== 'fishing_hook' && @type !== 'unknown') {
+		@entityTypes[@index] = @type;
+	} else {
+		array_remove(@entityTypes, @index);
+	}
 }
 
 @attributes = reflect_pull('enum', 'Attribute');
@@ -34,14 +39,15 @@ foreach(@index: @effect in @effects) {
 proc _entity_tabcompleter(@typeCompletions = @entityTypes, @attributeCompletions = @attributes, @effectCompletions = @effects) {
 	@typeOrCustomCompletions = array_merge(array_keys(_get_custom_entities()), @typeCompletions);
 	return _create_tabcompleter(
-		array('list', 'info', 'createcustom', 'setcustom', 'modify', 'deletecustom', 'spawn', 'patrol', 'reload'),
+		array('list', 'info', 'createcustom', 'setcustom', 'modify', 'deletecustom', 'remove', 'spawn', 'patrol', 'reload'),
 		array('<info|setcustom|deletecustom': array_keys(_get_custom_entities()),
-			'<modify': @typeCompletions,
+			'<modify|remove': @typeCompletions,
 			'<spawn|patrol': @typeOrCustomCompletions),
 		array('<<setcustom|modify|deletecustom': array('type', 'name', 'age', 'health', 'lifetime', 'onfire', 'targetnear',
 					'ai', 'tame', 'glowing', 'invulnerable', 'gravity', 'silent', 'gear', 'droprate', 'effect', 'tags',
 					'attribute', 'rider', 'explode', 'scoreboardtags', 'velocity'),
-			'<<createcustom': @typeCompletions),
+			'<<createcustom': @typeCompletions,
+			'<<remove': array('[range]')),
 		array('<type': @typeCompletions,
 			'<attribute': @attributeCompletions,
 			'<effect': @effectCompletions,
@@ -440,6 +446,42 @@ register_command('entity', array(
 				while(@entityCount > 0) {
 					_spawn_entity(@id, @loc);
 					@entityCount--;
+				}
+
+			case 'remove':
+				if(array_size(@args) < 2) {
+					die(color('yellow').'Requires an entity type to remove the closest one.'
+						.' If a range is provided, all entities matching the type within range will be removed.');
+				}
+				@id = @args[1];
+				@type = @args[2];
+				if(!array_contains_ic(@entityTypes, @id)) {
+					die(color('red').'Unknown entity type: '.@id);
+				}
+				@loc = entity_loc(puuid());
+				if(array_size(@args) > 2) {
+					@range = integer(@args[3]);
+					@count = 0;
+					foreach(@e in entities_in_radius(@loc, @range, @id)) {
+						entity_remove(@e);
+						@count++;
+					}
+					msg(color('green').'Removed '.@count.' entities within '.@range.' meters');
+				} else {
+					@closestEntity = null;
+					@closestDistance = 8;
+					foreach(@e in entities_in_radius(@loc, 8, @id)) {
+						@distance = distance(entity_loc(@e), @loc);
+						if(@distance < @closestDistance) {
+							@closestDistance = @distance;
+							@closestEntity = @e;
+						}
+					}
+					if(!@closestEntity) {
+						die(color('gold').'Must be within 8 meters of a '.@id);
+					}
+					entity_remove(@closestEntity);
+					msg(color('green').'Removed entity.');
 				}
 
 			case 'patrol':
