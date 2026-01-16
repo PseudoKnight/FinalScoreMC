@@ -15,8 +15,8 @@ proc _race_bind_events(@race) {
 		}
 	}
 
-	if(@race['type'] === 'boat' || @race['type'] === 'horse' || @race['type'] === 'pig') {
-		@race['binds'][] = bind('vehicle_destroy', null, array(vehicletype: to_upper(@race['type'])), @event, @race) {
+	if(@race['type'] === 'boat') {
+		@race['binds'][] = bind('vehicle_destroy', null, null, @event, @race) {
 			@rider = get_entity_rider(@event['vehicle']);
 			if(@rider) {
 				try {
