@@ -107,7 +107,7 @@ proc _race_countdown(@race) {
 		}
 		foreach(@p: @v in @race['players']) {
 			if(!ponline(@p) || !array_contains(sk_current_regions(@p), @race['region'])) {
-				array_remove(@race['players'], @p);
+				_race_remove_player(@race, @p);
 			}
 		}
 		if(!@race['players']) {
