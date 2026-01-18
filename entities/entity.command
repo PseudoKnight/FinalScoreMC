@@ -454,13 +454,12 @@ register_command('entity', array(
 						.' If a range is provided, all entities matching the type within range will be removed.');
 				}
 				@id = @args[1];
-				@type = @args[2];
 				if(!array_contains_ic(@entityTypes, @id)) {
 					die(color('red').'Unknown entity type: '.@id);
 				}
 				@loc = entity_loc(puuid());
 				if(array_size(@args) > 2) {
-					@range = integer(@args[3]);
+					@range = integer(@args[2]);
 					@count = 0;
 					foreach(@e in entities_in_radius(@loc, @range, @id)) {
 						entity_remove(@e);
