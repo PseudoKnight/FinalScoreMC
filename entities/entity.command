@@ -52,11 +52,16 @@ proc _entity_tabcompleter(@typeCompletions = @entityTypes, @attributeCompletions
 			'<attribute': @attributeCompletions,
 			'<effect': @effectCompletions,
 			'<rider': @typeOrCustomCompletions,
+			'<age': array('<ticks>'),
+			'<health|droprate': array('<double>'),
+			'<lifetime|onfire|explode': array('<seconds>'),
 			'<ai|tame|glowing|invulnerable|gravity|silent': array('true', 'false'),
+			'<velocity': array('<x>'),
 			'<tags': array(
 				'<<axolotl|frog|mushroom_cow|painting|rabbit|salmon': array('type'),
 				'<<magma_cube|phantom|pufferfish|slime': array('size'),
-				'<<area_effect_cloud': array('duration', 'durationonuse', 'particle', 'radius', 'radiusonuse', 'radiuspertick', 'reapplicationdelay', 'waittime', 'color', 'potionmeta', 'source'),
+				'<<area_effect_cloud': array('duration', 'durationonuse', 'particle', 'radius', 'radiusonuse',
+					'radiuspertick', 'reapplicationdelay', 'waittime', 'color', 'potionmeta', 'source'),
 				'<<arrow': array('critical', 'damage', 'piercelevel', 'pickup', 'potionmeta'),
 				'<<armor_stand': array('arms', 'baseplate', 'marker', 'small', 'visible', 'poses'),
 				'<<bee': array('anger', 'nector', 'stung'),
@@ -71,7 +76,7 @@ proc _entity_tabcompleter(@typeCompletions = @entityTypes, @attributeCompletions
 				'<<enderman': array('carried'),
 				'<<experience_orb': array('amount'),
 				'<<evoker_fangs': array('source'),
-				'<<falling_block': array('dropitem', 'damage', 'dropitem'),
+				'<<falling_block': array('dropitem', 'damage'),
 				'<<fireball|dragon_fireball|small_fireball': array('direction'),
 				'<<firework': array('strength', 'angled', 'effects'),
 				'<<fox': array('sitting', 'crouching', 'type'),
@@ -109,8 +114,18 @@ proc _entity_tabcompleter(@typeCompletions = @entityTypes, @attributeCompletions
 				'<<zombie_villager': array('baby', 'profession', 'breakdoors'),
 				'<<zombified_piglin ': array('anger', 'angry', 'baby', 'breakdoors'))),
 		array('<<attribute': array('reset', '<value>'),
-			'<<effect': array('<strength>')),
-		array('<<<effect': array('[seconds]'))
+			'<<effect|explode': array('<strength>'),
+			'<<velocity': array('<y>'),
+			'<<tags': array(
+				'<size|piercelevel|anger|explosionradius|domestication|maxdomestication|amount|strength|offset|experience|level': array('<int>'),
+				'<duration|durationonuse|reapplicationdelay|waittime|maxfusetick|spickupdelay|despawnticks|delay|fuseticks': array('<ticks>'),
+				'<radiuspertick|radius|radiusonuse|jump|width|height': array('<double>'),
+				'<critical|arms|baseplate|marker|small|visible|nector|stung|sitting|powered|chest|despawn|base|drop|dropitem': array('true', 'false'),
+				'<angled|crouching|screaming|playercreated|fixed|immovable|eating|onback|rolling|sneezing|saddled|baby': array('true', 'false'),
+				'<zombificationimmune|sheared|derp|charging|charged|angry|interested|breakdoors': array('true', 'false'),
+				null: array('<value>'))),
+		array('<<<effect': array('[seconds]'),
+			'<<<velocity': array('<z>'))
 	);
 }
 
