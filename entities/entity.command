@@ -54,75 +54,58 @@ proc _entity_tabcompleter(@typeCompletions = @entityTypes, @attributeCompletions
 			'<rider': @typeOrCustomCompletions,
 			'<ai|tame|glowing|invulnerable|gravity|silent': array('true', 'false'),
 			'<tags': array(
-				'<<area_effect_cloud': array('duration', 'durationonuse', 'particle', 'radius', 'radiusonuse', 'radiuspertick', 'reapplicationdelay', 'waittime'),
-				'<<arrow': array('damage', 'piercelevel', 'pickup'),
-				'<<armor_stand': array('arms', 'baseplate', 'marker', 'small', 'visible'),
-				'<<axolotl': array('type'),
+				'<<axolotl|frog|mushroom_cow|painting|rabbit|salmon': array('type'),
+				'<<magma_cube|phantom|pufferfish|slime': array('size'),
+				'<<area_effect_cloud': array('duration', 'durationonuse', 'particle', 'radius', 'radiusonuse', 'radiuspertick', 'reapplicationdelay', 'waittime', 'color', 'potionmeta', 'source'),
+				'<<arrow': array('critical', 'damage', 'piercelevel', 'pickup', 'potionmeta'),
+				'<<armor_stand': array('arms', 'baseplate', 'marker', 'small', 'visible', 'poses'),
 				'<<bee': array('anger', 'nector', 'stung'),
 				'<<block_display': array('blockdata'),
-				'<<cat': array('type', 'sitting'),
+				'<<cat|parrot': array('type', 'sitting'),
 				'<<creeper': array('powered', 'maxfuseticks', 'explosionradius'),
-				'<<donkey': array('chest', 'domestication', 'jump', 'maxdomestication'),
-				'<<dropped_item': array('pickupdelay', 'despawn'),
-				'<<drowned': array('baby', 'breakdoors'),
-				'<<ender_crystal': array('base'),
+				'<<donkey|mule': array('chest', 'domestication', 'jump', 'maxdomestication'),
+				'<<dropped_item': array('pickupdelay', 'despawn', 'itemstack', 'owner', 'thrower'),
+				'<<ender_crystal': array('base', 'beamtarget'),
 				'<<ender_dragon': array('phase'),
-				'<<ender_eye': array('despawnticks', 'drop'),
+				'<<ender_eye': array('despawnticks', 'drop', 'item', 'target'),
 				'<<enderman': array('carried'),
 				'<<experience_orb': array('amount'),
-				'<<falling_block': array('dropitem', 'damage'),
-				'<<firework': array('strength', 'angled'),
+				'<<evoker_fangs': array('source'),
+				'<<falling_block': array('dropitem', 'damage', 'dropitem'),
+				'<<fireball|dragon_fireball|small_fireball': array('direction'),
+				'<<firework': array('strength', 'angled', 'effects'),
 				'<<fox': array('sitting', 'crouching', 'type'),
-				'<<frog': array('type'),
-				'<<glow_item_frame': array('fixed', 'rotation', 'visible'),
 				'<<goat': array('screaming'),
-				'<<horse': array('color', 'jump', 'domestication', 'maxdomestication', 'style'),
-				'<<husk': array('baby', 'breakdoors'),
+				'<<horse': array('color', 'jump', 'domestication', 'maxdomestication', 'style', 'saddle'),
 				'<<interaction': array('width', 'height', 'response'),
 				'<<iron_golem': array('playercreated'),
-				'<<item_display': array('itemdisplay'),
-				'<<item_frame': array('fixed', 'rotation', 'visible'),
-				'<<llama': array('chest', 'domestication', 'maxdomestication', 'color'),
-				'<<magma_cube': array('size'),
+				'<<item_display': array('itemdisplay', 'item'),
+				'<<item_frame|glow_item_frame': array('fixed', 'rotation', 'visible', 'item'),
+				'<<llama|trader_llama': array('chest', 'domestication', 'maxdomestication', 'color', 'saddle'),
 				'<<mannequin': array('immovable'),
-				'<<minecart': array('block', 'offset'),
+				'<<minecart|minecart_furnace|minecart_hopper|minecart_mob_spawner|minecart_tnt': array('block', 'offset'),
 				'<<minecart_command': array('block', 'offset', 'command', 'commandname'),
-				'<<minecart_furnace': array('block', 'offset'),
-				'<<minecart_hopper': array('block', 'offset'),
-				'<<minecart_mob_spawner': array('block', 'offset'),
-				'<<minecart_tnt': array('block', 'offset'),
-				'<<mule': array('chest', 'domestication', 'jump', 'maxdomestication'),
-				'<<mushroom_cow': array('type'),
-				'<<ominous_item_spawner': array('delay'),
-				'<<painting': array('type'),
+				'<<ominous_item_spawner': array('delay', 'item'),
 				'<<panda': array('maingene', 'hiddengene', 'eating', 'onback', 'rolling', 'sneezing'),
-				'<<parrot': array('sitting', 'type'),
-				'<<phantom': array('size'),
-				'<<pig': array('saddled'),
+				'<<pig|strider': array('saddled'),
 				'<<piglin': array('baby', 'zombificationimmune'),
 				'<<primed_tnt': array('fuseticks', 'source'),
-				'<<pufferfish': array('size'),
-				'<<rabbit': array('type'),
-				'<<salmon': array('type'),
 				'<<sheep': array('color', 'sheared'),
 				'<<shulker': array('color'),
 				'<<shulker_bullet': array('target'),
-				'<<skeleton_horse': array('domestication', 'jump', 'maxdomestication'),
-				'<<slime': array('size'),
+				'<<skeleton_horse|zombie_horse': array('domestication', 'jump', 'maxdomestication', 'saddle'),
 				'<<snowman': array('derp'),
 				'<<spectral_arrow': array('critical', 'damage', 'glowingticks'),
-				'<<strider': array('saddled'),
-				'<<text_display': array('alignment', 'text', 'linewidth', 'shadow', 'seethrough', 'opacity'),
-				'<<trader_llama': array('chest', 'domestication', 'maxdomestication', 'color'),
+				'<<splash_potion|lingering_potion': array('item'),
+				'<<text_display': array('alignment', 'text', 'linewidth', 'shadow', 'seethrough', 'opacity', 'bgcolor'),
 				'<<trident': array('critical', 'damage'),
 				'<<tropical_fish': array('color', 'patterncolor', 'pattern'),
 				'<<vex': array('charging'),
 				'<<villager': array('profession', 'experience', 'level'),
-				'<<wither_skull': array('charged'),
+				'<<wither_skull': array('charged', 'direction'),
 				'<<wolf': array('angry', 'color', 'interested', 'sitting', 'type'),
 				'<<zoglin': array('baby'),
-				'<<zombie': array('baby', 'breakdoors'),
-				'<<zombie_horse': array('domestication', 'jump', 'maxdomestication'),
+				'<<zombie|drowned|husk': array('baby', 'breakdoors'),
 				'<<zombie_villager': array('baby', 'profession', 'breakdoors'),
 				'<<zombified_piglin ': array('anger', 'angry', 'baby', 'breakdoors'))),
 		array('<<attribute': array('reset', '<value>'),
@@ -325,18 +308,15 @@ register_command('entity', array(
 							if(!array_index_exists(@entity, 'tags')) {
 								@entity['tags'] = associative_array();
 							}
-							@value = @args[4];
-							if(is_numeric(@value)) {
-								if(is_integral(@value)) {
-									@entity['tags'][@entry] = integer(@value);
-								} else {
-									@entity['tags'][@entry] = double(@value);
-								}
-							} else if(@value === 'true' || @value === 'false') {
-								@entity['tags'][@entry] = @value === 'true';
-							} else {
-								@entity['tags'][@entry] = @value;
+							@argument = @args[4];
+							if(array_size(@args) > 5) {
+								@argument = array_implode(@args[4..-1]);
 							}
+							@value = json_decode(@argument);
+							if(is_null(@argument)) { // simple string
+								@value = @argument;
+							}
+							@entity['tags'][@entry] = @value;
 							msg(color('green').'Set '.@entry.' in tags to '.@value);
 						}
 
