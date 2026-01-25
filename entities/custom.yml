@@ -20,11 +20,11 @@ babysteed:
   type: horse
 babyvector:
   droprate:
-    BOOTS: 0
-    CHESTPLATE: 0
-    HELMET: 0
-    LEGGINGS: 0
-    WEAPON: 0
+    boots: 0
+    chestplate: 0
+    helmet: 0
+    leggings: 0
+    weapon: 0
   effects:
     invisibility:
       seconds: -1
@@ -36,35 +36,35 @@ babyvector:
       seconds: -1
       strength: 0
   gear:
-    BOOTS:
+    boots:
       meta:
         color:
           b: 170
           g: 255
           r: 255
       name: LEATHER_BOOTS
-    CHESTPLATE:
+    chestplate:
       meta:
         color:
           b: 170
           g: 255
           r: 255
       name: LEATHER_CHESTPLATE
-    HELMET:
+    helmet:
       meta:
         color:
           b: 180
           g: 255
           r: 255
       name: LEATHER_HELMET
-    LEGGINGS:
+    leggings:
       meta:
         color:
           b: 170
           g: 255
           r: 255
       name: LEATHER_LEGGINGS
-    WEAPON:
+    weapon:
       name: IRON_HOE
   health: 1
   tags:
@@ -78,7 +78,7 @@ badsnowman:
 blueteam:
   ai: false
   gear:
-    BOOTS:
+    boots:
       meta:
         color:
           b: 255
@@ -99,7 +99,7 @@ blueteam:
         unbreakable: false
       name: LEATHER_BOOTS
       qty: 1
-    CHESTPLATE:
+    chestplate:
       meta:
         color:
           b: 255
@@ -120,7 +120,7 @@ blueteam:
         unbreakable: false
       name: LEATHER_CHESTPLATE
       qty: 1
-    HELMET:
+    helmet:
       meta:
         color:
           b: 255
@@ -141,7 +141,7 @@ blueteam:
         unbreakable: true
       name: LEATHER_HELMET
       qty: 1
-    LEGGINGS:
+    leggings:
       meta:
         color:
           b: 255
@@ -162,8 +162,8 @@ blueteam:
         unbreakable: false
       name: LEATHER_LEGGINGS
       qty: 1
-    OFF_HAND: null
-    WEAPON: null
+    off_hand: null
+    weapon: null
   type: zombie
 catbomb:
   explode:
@@ -186,24 +186,24 @@ critter:
   type: horse
 deadplayer:
   gear:
-    BOOTS: null
-    CHESTPLATE: null
-    HELMET: null
-    LEGGINGS: null
-    OFF_HAND: null
-    WEAPON: null
+    boots: null
+    chestplate: null
+    helmet: null
+    leggings: null
+    off_hand: null
+    weapon: null
   type: skeleton
 dinnerbunny:
   gear:
-    BOOTS: null
-    CHESTPLATE: null
-    HELMET:
+    boots: null
+    chestplate: null
+    helmet:
       meta:
         display: Stone
         owner: Robbydeezle
       name: PLAYER_HEAD
-    LEGGINGS: null
-    WEAPON: null
+    leggings: null
+    weapon: null
   name: Dinnerbone
   type: Skeleton
 explovex:
@@ -225,91 +225,91 @@ gianthead:
       seconds: -1
       strength: 0
   gear:
-    BOOTS: null
-    CHESTPLATE: null
-    HELMET:
+    boots: null
+    chestplate: null
+    helmet:
       meta: null
       name: DRAGON_HEAD
       qty: 1
-    LEGGINGS: null
-    OFF_HAND: null
-    WEAPON: null
+    leggings: null
+    off_hand: null
+    weapon: null
   type: giant
 giantman:
   gear:
-    BOOTS:
+    boots:
       name: NETHERITE_BOOTS
-    CHESTPLATE:
+    chestplate:
       name: NETHERITE_CHESTPLATE
-    HELMET:
+    helmet:
       name: NETHERITE_HELMET
-    LEGGINGS:
+    leggings:
       name: NETHERITE_LEGGINGS
-    OFF_HAND: null
-    WEAPON:
+    off_hand: null
+    weapon:
       name: NETHERITE_HOE
   type: giant
 giantstatue:
   ai: false
   gear:
-    BOOTS:
+    boots:
       meta:
         color:
           b: 0
           g: 0
           r: 0
       name: LEATHER_BOOTS
-    CHESTPLATE:
+    chestplate:
       meta:
         color:
           b: 90
           g: 30
           r: 30
       name: LEATHER_CHESTPLATE
-    HELMET: null
-    LEGGINGS:
+    helmet: null
+    leggings:
       meta:
         color:
           b: 160
           g: 180
           r: 200
       name: LEATHER_LEGGINGS
-    WEAPON:
+    weapon:
       name: IRON_HOE
   type: giant
 gothemboss:
   gear:
-    BOOTS:
+    boots:
       meta:
         color:
           b: 25
           g: 25
           r: 25
       name: LEATHER_BOOTS
-    CHESTPLATE:
+    chestplate:
       meta:
         color:
           b: 25
           g: 25
           r: 25
       name: LEATHER_CHESTPLATE
-    HELMET:
+    helmet:
       meta:
         owner: gothem8
       name: PLAYER_HEAD
-    LEGGINGS:
+    leggings:
       meta:
         color:
           b: 50
           g: 50
           r: 50
       name: LEATHER_LEGGINGS
-    OFF_HAND:
+    off_hand:
       meta:
         enchants:
           sharpness: 10
       name: DIAMOND_SWORD
-    WEAPON:
+    weapon:
       meta:
         enchants:
           sharpness: 10
@@ -337,36 +337,36 @@ killerbunny:
   type: RABBIT
 leprechaun:
   gear:
-    BOOTS:
+    boots:
       meta:
         color:
           b: 0
           g: 255
           r: 0
       name: LEATHER_BOOTS
-    CHESTPLATE:
+    chestplate:
       meta:
         color:
           b: 0
           g: 255
           r: 0
       name: LEATHER_CHESTPLATE
-    HELMET:
+    helmet:
       meta:
         color:
           b: 0
           g: 255
           r: 0
       name: LEATHER_HELMET
-    LEGGINGS:
+    leggings:
       meta:
         color:
           b: 0
           g: 255
           r: 0
       name: LEATHER_LEGGINGS
-    OFF_HAND: null
-    WEAPON:
+    off_hand: null
+    weapon:
       meta: null
       name: GOLD_INGOT
   tags:
@@ -374,12 +374,12 @@ leprechaun:
   type: zombie
 parrotbomb:
   droprate:
-    BOOTS: 0.0
-    CHESTPLATE: 0.0
-    HELMET: 0.0
-    LEGGINGS: 0.0
-    OFF_HAND: 0.0
-    WEAPON: 0.0
+    boots: 0.0
+    chestplate: 0.0
+    helmet: 0.0
+    leggings: 0.0
+    off_hand: 0.0
+    weapon: 0.0
   explode:
   - 4
   - 2
@@ -404,7 +404,7 @@ racehorse:
 redteam:
   ai: false
   gear:
-    BOOTS:
+    boots:
       meta:
         color:
           b: 0
@@ -425,7 +425,7 @@ redteam:
         unbreakable: false
       name: LEATHER_BOOTS
       qty: 1
-    CHESTPLATE:
+    chestplate:
       meta:
         color:
           b: 0
@@ -446,7 +446,7 @@ redteam:
         unbreakable: false
       name: LEATHER_CHESTPLATE
       qty: 1
-    HELMET:
+    helmet:
       meta:
         color:
           b: 0
@@ -467,7 +467,7 @@ redteam:
         unbreakable: true
       name: LEATHER_HELMET
       qty: 1
-    LEGGINGS:
+    leggings:
       meta:
         color:
           b: 0
@@ -488,8 +488,8 @@ redteam:
         unbreakable: false
       name: LEATHER_LEGGINGS
       qty: 1
-    OFF_HAND: null
-    WEAPON: null
+    off_hand: null
+    weapon: null
   type: zombie
 saddledpig:
   tags:
@@ -519,11 +519,11 @@ silentcart:
   type: minecart
 skeletonminion:
   gear:
-    BOOTS: null
-    CHESTPLATE: null
-    HELMET: null
-    LEGGINGS: null
-    WEAPON:
+    boots: null
+    chestplate: null
+    helmet: null
+    leggings: null
+    weapon:
       name: BOW
   health: 4
   type: skeleton
@@ -575,12 +575,12 @@ turretstand:
   type: armor_stand
 zombievector:
   droprate:
-    BOOTS: 0.0
-    CHESTPLATE: 0.0
-    HELMET: 0.0
-    LEGGINGS: 0.0
-    OFF_HAND: 0.0
-    WEAPON: 0.0
+    boots: 0.0
+    chestplate: 0.0
+    helmet: 0.0
+    leggings: 0.0
+    off_hand: 0.0
+    weapon: 0.0
   effects:
     jump_boost:
       seconds: -1
@@ -589,7 +589,7 @@ zombievector:
       seconds: -1
       strength: 1
   gear:
-    BOOTS:
+    boots:
       meta:
         color:
           b: 180
@@ -612,7 +612,7 @@ zombievector:
         unbreakable: false
       name: LEATHER_BOOTS
       qty: 1
-    CHESTPLATE:
+    chestplate:
       meta:
         color:
           b: 180
@@ -635,11 +635,11 @@ zombievector:
         unbreakable: false
       name: LEATHER_CHESTPLATE
       qty: 1
-    HELMET:
+    helmet:
       meta: null
       name: END_PORTAL_FRAME
       qty: 1
-    LEGGINGS:
+    leggings:
       meta:
         color:
           b: 180
@@ -662,11 +662,11 @@ zombievector:
         unbreakable: false
       name: LEATHER_LEGGINGS
       qty: 1
-    OFF_HAND:
+    off_hand:
       meta: null
       name: NETHERITE_HOE
       qty: 1
-    WEAPON:
+    weapon:
       meta: null
       name: NETHERITE_HOE
       qty: 1

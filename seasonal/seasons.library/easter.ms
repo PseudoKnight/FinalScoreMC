@@ -5,19 +5,19 @@ bind('creature_spawn', null, array(type: 'ZOMBIE', reason: 'NATURAL'), @event,
 		@entity = @event['id'];
 		add_scoreboard_tag(@entity, 'easter_bunny');
 		set_mob_equipment(@entity, array(
-			HELMET: array(name: 'PLAYER_HEAD', meta: array(owneruuid: 'fbec11d4-80a7-4c1c-9de3-4136a16f1de0', texture:
+			helmet: array(name: 'PLAYER_HEAD', meta: array(owneruuid: 'fbec11d4-80a7-4c1c-9de3-4136a16f1de0', texture:
 			'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZDU5YjU3MWRiMDI4NDI5ZmZlZmQwZTg2NzQ3NjBlMjU4ZjA4M2FlNjliYWQ4NWJjMzc2MTk2MWJjY2Q0YWFlIn19fQ==')),
-			CHESTPLATE: array(name: 'IRON_CHESTPLATE', meta: array(trim: array(material: array_get_rand(@mats), pattern: array_get_rand(@trims)))),
-			LEGGINGS: array(name: 'IRON_LEGGINGS', meta: array(trim: array(material: array_get_rand(@mats), pattern: array_get_rand(@trims)))),
-			BOOTS: array(name: 'IRON_BOOTS', meta: array(trim: array(material: array_get_rand(@mats), pattern: array_get_rand(@trims)))),
+			chestplate: array(name: 'IRON_CHESTPLATE', meta: array(trim: array(material: array_get_rand(@mats), pattern: array_get_rand(@trims)))),
+			leggings: array(name: 'IRON_LEGGINGS', meta: array(trim: array(material: array_get_rand(@mats), pattern: array_get_rand(@trims)))),
+			boots: array(name: 'IRON_BOOTS', meta: array(trim: array(material: array_get_rand(@mats), pattern: array_get_rand(@trims)))),
 		));
 		set_equipment_droprates(@entity, array(
-			WEAPON: 1,
-			OFF_HAND: 1,
-			HELMET: 0,
-			CHESTPLATE: 0,
-			LEGGINGS: 0,
-			BOOTS: 0,
+			weapon: 1,
+			off_hand: 1,
+			helmet: 0,
+			chestplate: 0,
+			leggings: 0,
+			boots: 0,
 		));
 		set_entity_spec(@entity, array(baby: true));
 		set_mob_effect(@entity, 'jump_boost', 1, -1, true, false);

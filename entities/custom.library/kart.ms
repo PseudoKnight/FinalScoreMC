@@ -86,9 +86,9 @@ array proc _kart_spawn(@loc, @player, @design, @camdist = 4.0) {
 				poseArmLeft: array(-1.55, 0.0, -0.01),
 				poseArmRight: array(-1.58, -0.09, -0.01))));
 		set_mob_equipment(@stand, array(
-			CHESTPLATE: array(name: 'LEATHER_CHESTPLATE', meta: array(color: array(255,0,0))),
-			LEGGINGS: array(name: 'LEATHER_LEGGINGS', meta: array(color: array(255,0,0))),
-			BOOTS: array(name: 'LEATHER_BOOTS', meta: array(color: array(255,0,0))),
+			chestplate: array(name: 'LEATHER_CHESTPLATE', meta: array(color: array(255,0,0))),
+			leggings: array(name: 'LEATHER_LEGGINGS', meta: array(color: array(255,0,0))),
+			boots: array(name: 'LEATHER_BOOTS', meta: array(color: array(255,0,0))),
 		));
 	})[0];
 	set_entity_rider(@vehicle, @stand);

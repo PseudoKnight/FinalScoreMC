@@ -353,7 +353,7 @@ proc _bind_events(@pvp) {
 		}
 		@deadplayer = spawn_entity('SKELETON', 1, @location, closure(@deadplayer) {
 			add_scoreboard_tag(@deadplayer, 'nodrops');
-			set_mob_equipment(@deadplayer, array(WEAPON: null));
+			set_mob_equipment(@deadplayer, array(weapon: null));
 		})[0];
 		set_entity_health(@deadplayer, 0);
 

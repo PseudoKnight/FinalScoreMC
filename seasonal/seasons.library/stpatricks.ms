@@ -26,30 +26,30 @@ bind('creature_spawn', null, array(type: 'ZOMBIE', reason: 'NATURAL'), @event) {
 		}
 
 		set_mob_equipment(@id, array(
-			HELMET: array(name: 'PLAYER_HEAD', meta: array(display: 'Leprechaun\'s Head',
+			helmet: array(name: 'PLAYER_HEAD', meta: array(display: 'Leprechaun\'s Head',
 				owneruuid: 'ec352aee-a368-42cc-beaa-0c3ecccbfdd3', texture:
 				'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZDgxM2M5YmJmYTFhNmY1YzNhYTFlYzliZWIyYWI2ZDhjNTI3NzdjOWQyZjkwYTMyMzRmZDkxYTBiN2ViIn19fQ==',
 			)),
-			CHESTPLATE: array(name: 'LEATHER_CHESTPLATE', meta: array(display: 'Leprechaun\'s Jacket',
+			chestplate: array(name: 'LEATHER_CHESTPLATE', meta: array(display: 'Leprechaun\'s Jacket',
 				color: array(0, 255, 0),
 				trim: array(material: 'GOLD', pattern: 'VEX'),
 			)),
-			LEGGINGS: array(name: 'GOLDEN_LEGGINGS', meta: array(display: 'Leprechaun\'s Pants',
+			leggings: array(name: 'GOLDEN_LEGGINGS', meta: array(display: 'Leprechaun\'s Pants',
 				trim: array(material: 'EMERALD', pattern: 'SILENCE'),
 			)),
-			BOOTS: array(name: 'LEATHER_BOOTS', meta: array(display: 'Leprechaun\'s Boots',
+			boots: array(name: 'LEATHER_BOOTS', meta: array(display: 'Leprechaun\'s Boots',
 				trim: array(material: 'GOLD', pattern: 'WARD'),
 			)),
-			WEAPON: @bottle,
-			OFF_HAND: array(name: 'GOLD_INGOT', qty: rand(1, 4)),
+			weapon: @bottle,
+			off_hand: array(name: 'GOLD_INGOT', qty: rand(1, 4)),
 		));
 		set_equipment_droprates(@id, array(
-			HELMET: 0.04,
-			CHESTPLATE: 0.04,
-			LEGGINGS: 0.04,
-			BOOTS: 0.04,
-			WEAPON: 1,
-			OFF_HAND: 1,
+			helmet: 0.04,
+			chestplate: 0.04,
+			leggings: 0.04,
+			boots: 0.04,
+			weapon: 1,
+			off_hand: 1,
 		));
 		set_entity_silent(@id, true);
 	}

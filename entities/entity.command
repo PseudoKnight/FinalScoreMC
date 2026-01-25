@@ -248,33 +248,33 @@ register_command('entity', array(
 
 					case 'gear':
 						@entity['gear'] = array(
-							'WEAPON': pinv(player(), 0),
-							'OFF_HAND': pinv(player(), -106),
-							'HELMET': pinv(player(), 103),
-							'CHESTPLATE': pinv(player(), 102),
-							'LEGGINGS': pinv(player(), 101),
-							'BOOTS': pinv(player(), 100)
+							weapon: pinv(player(), 0),
+							off_hand: pinv(player(), -106),
+							helmet: pinv(player(), 103),
+							chestplate: pinv(player(), 102),
+							leggings: pinv(player(), 101),
+							boots: pinv(player(), 100)
 						);
 						msg(color('green').'Gear set.');
 
 					case 'droprate':
 						if(array_size(@args) == 4) {
 							@entity['droprate'] = array(
-								'WEAPON': double(@args[3]),
-								'OFF_HAND': double(@args[3]),
-								'BOOTS': double(@args[3]),
-								'LEGGINGS': double(@args[3]),
-								'CHESTPLATE': double(@args[3]),
-								'HELMET': double(@args[3])
+								weapon: double(@args[3]),
+								off_hand: double(@args[3]),
+								boots: double(@args[3]),
+								leggings: double(@args[3]),
+								chestplate: double(@args[3]),
+								helmet: double(@args[3])
 							);
 						} else if(array_size(@args) == 9) {
 							@entity['droprate'] = array(
-								'WEAPON': double(@args[3]),
-								'OFF_HAND': double(@args[4]),
-								'BOOTS': double(@args[5]),
-								'LEGGINGS': double(@args[6]),
-								'CHESTPLATE': double(@args[7]),
-								'HELMET': double(@args[8]),
+								weapon: double(@args[3]),
+								off_hand: double(@args[4]),
+								boots: double(@args[5]),
+								leggings: double(@args[6]),
+								chestplate: double(@args[7]),
+								helmet: double(@args[8]),
 							);
 						} else {
 							return(false);

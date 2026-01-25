@@ -76,7 +76,7 @@ proc _class_load(@player, @pvp) {
 				@loc = location_shift(@loc, 'down', 0.88);
 				@entities['sculk_sensor_first'] = spawn_entity('ARMOR_STAND', 1, @loc, closure(@stand) {
 					set_entity_spec(@stand, array(gravity: false, visible: false, small: true));
-					set_mob_equipment(@stand, array(HELMET: array(name: 'SCULK_SENSOR')));
+					set_mob_equipment(@stand, array(helmet: array(name: 'SCULK_SENSOR')));
 					add_scoreboard_tag(@stand, 'remove');
 				})[0];
 			}

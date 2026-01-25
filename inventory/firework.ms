@@ -203,7 +203,7 @@ bind('firework_explode', null, null, @event){
 			@mobs = spawn_entity(@mob, 15, @event['location'], closure(@m) {
 				set_entity_onfire(@m, 20);
 				if(@mob == 'pig'){
-					set_mob_equipment(@m, associative_array('CHESTPLATE': associative_array('name': 'ELYTRA')));
+					set_mob_equipment(@m, array(chestplate: array(name: 'ELYTRA')));
 					set_equipment_droprates(@m, null);
 					set_entity_gliding(@m, true);
 				} else if(@cookie) {

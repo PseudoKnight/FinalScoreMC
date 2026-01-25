@@ -33,41 +33,41 @@ bind('creature_spawn', null, array(type: 'ZOMBIE', reason: 'NATURAL'), @event) {
 				spawn_entity('ILLUSIONER', 1, @event['location']);
 			case 4:
 				spawn_entity('VEX', 1, @event['location'], closure(@vex) {
-					set_mob_equipment(@vex, array(WEAPON: null));
+					set_mob_equipment(@vex, array(weapon: null));
 				});
 			case 5:
 				spawn_entity('CREAKING', 1, @event['location']);
 		}
 	} else if(@rand == 1) {
 		set_mob_equipment(@id, array(
-			WEAPON: array(name: 'ZOMBIE_HEAD'),
-			HELMET: null,
-			CHESTPLATE: array(name: 'LEATHER_CHESTPLATE'),
-			LEGGINGS: array(name: 'LEATHER_LEGGINGS'),
-			BOOTS: array(name: 'LEATHER_BOOTS'),
+			weapon: array(name: 'ZOMBIE_HEAD'),
+			helmet: null,
+			chestplate: array(name: 'LEATHER_CHESTPLATE'),
+			leggings: array(name: 'LEATHER_LEGGINGS'),
+			boots: array(name: 'LEATHER_BOOTS'),
 		));
 		set_mob_effect(@id, 'invisibility', 0, -1);
 	} else if(@rand == 2 && @event['location']['world'] === 'outworld') {
 		set_mob_equipment(@id, array(
-			HELMET: array(name: 'PLAYER_HEAD', meta: array(
+			helmet: array(name: 'PLAYER_HEAD', meta: array(
 				owneruuid: '5777109f-f9ab-4af6-b87d-59d504a5b437',
 				texture: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOThiN2NhM2M3ZDMxNGE2MWFiZWQ4ZmMxOGQ3OTdmYzMwYjZlZmM4NDQ1NDI1YzRlMjUwOTk3ZTUyZTZjYiJ9fX0='
 			)),
-			CHESTPLATE: array(name: 'LEATHER_CHESTPLATE', meta: array(color: array(50, 230, 255))),
-			LEGGINGS: array(name: 'LEATHER_LEGGINGS', meta: array(color: array(70, 60, 222))),
-			BOOTS: null,
-			WEAPON: null,
+			chestplate: array(name: 'LEATHER_CHESTPLATE', meta: array(color: array(50, 230, 255))),
+			leggings: array(name: 'LEATHER_LEGGINGS', meta: array(color: array(70, 60, 222))),
+			boots: null,
+			weapon: null,
 		));
 		set_equipment_droprates(@id, array(
-			HELMET: null,
-			CHESTPLATE: null,
-			LEGGINGS: null,
+			helmet: null,
+			chestplate: null,
+			leggings: null,
 		));
 		add_scoreboard_tag(@id, 'Herobrine');
 		set_mob_effect(@id, 'SPEED', 7, -1, true, false);
 		set_entity_silent(@id, true);
 	} else {
-		set_mob_equipment(@id, array(HELMET: array(name: 'JACK_O_LANTERN')));
+		set_mob_equipment(@id, array(helmet: array(name: 'JACK_O_LANTERN')));
 		if(!rand(3)) {
 			set_mob_effect(@id, 'invisibility', 0, -1);
 		}
@@ -75,7 +75,7 @@ bind('creature_spawn', null, array(type: 'ZOMBIE', reason: 'NATURAL'), @event) {
 }
 
 bind('creature_spawn', null, array(type: 'SKELETON', reason: 'NATURAL'), @event) {
-	set_mob_equipment(@event['id'], array(HELMET: array(name: 'JACK_O_LANTERN')));
+	set_mob_equipment(@event['id'], array(helmet: array(name: 'JACK_O_LANTERN')));
 }
 
 bind('entity_damage', array(priority: 'LOWEST'), array(type: 'ZOMBIE', cause: 'ENTITY_ATTACK', world: 'outworld'), @event) {
@@ -114,21 +114,21 @@ bind('target_player', null, array(mobtype: 'ZOMBIE'), @event) {
 				} else if(@dist > 8) {
 					set_mob_effect(@id, 'invisibility', 1, -1, true, false);
 					set_mob_equipment(@id, array(
-						HELMET: null,
-						CHESTPLATE: null,
-						LEGGINGS: null,
+						helmet: null,
+						chestplate: null,
+						leggings: null,
 					));
 					stop_sound(@event['player'], 'ENTITY_EVOKER_PREPARE_ATTACK');
 				} else {
 					set_mob_effect(@id, 'invisibility', 0, 0, true, false);
 					set_mob_equipment(@id, array(
-						HELMET: array(name: 'PLAYER_HEAD', meta: array(
+						helmet: array(name: 'PLAYER_HEAD', meta: array(
 							display: 'Herobrine\'s Head',
 							owneruuid: '00000000-0000-0048-6572-6f6272696e65',
 							texture: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOThiN2NhM2M3ZDMxNGE2MWFiZWQ4ZmMxOGQ3OTdmYzMwYjZlZmM4NDQ1NDI1YzRlMjUwOTk3ZTUyZTZjYiJ9fX0='
 						)),
-						CHESTPLATE: array(name: 'LEATHER_CHESTPLATE', meta: array(color: array(50, 230, 255))),
-						LEGGINGS: array(name: 'LEATHER_LEGGINGS', meta: array(color: array(70, 60, 222))),
+						chestplate: array(name: 'LEATHER_CHESTPLATE', meta: array(color: array(50, 230, 255))),
+						leggings: array(name: 'LEATHER_LEGGINGS', meta: array(color: array(70, 60, 222))),
 					));
 					play_sound(@newLoc, array(sound: 'ENTITY_EVOKER_PREPARE_ATTACK', pitch: 0.5 + rand() * 1.5, volume: 2));
 				}

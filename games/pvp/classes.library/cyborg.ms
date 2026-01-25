@@ -57,7 +57,7 @@ proc _class_load(@player, @pvp) {
 			}
 
 			@box = spawn_entity('ARMOR_STAND', 1, _get_entity_location(@loc), closure(@e) {
-				set_mob_equipment(@e, array(HELMET: @item));
+				set_mob_equipment(@e, array(helmet: @item));
 				set_entity_spec(@e, array(
 					gravity: false,
 					visible: false,

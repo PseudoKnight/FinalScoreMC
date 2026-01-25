@@ -45,7 +45,7 @@ proc _weapon_bind_events(@pvp) {
 			@slime = spawn_entity('ARMOR_STAND', 1, location_shift(@hit, 'down', 0.75), closure(@stand) {
 				add_scoreboard_tag(@stand, 'remove');
 				set_entity_spec(@stand, array(small: true, gravity: false, visible: false));
-				set_mob_equipment(@stand, array(HELMET: array(name: 'SLIME_BLOCK')));
+				set_mob_equipment(@stand, array(helmet: array(name: 'SLIME_BLOCK')));
 			})[0];
 
 			@explode = closure(){
