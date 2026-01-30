@@ -27,6 +27,16 @@ execute(iclosure(){
 			if(!is_null(@exit['pitch'])) {
 				if(@entrance['pitch'] == @exit['pitch']) {
 					@pitch = neg(@pitch);
+					@remainingVelocity = @exitVelocity;
+					// add back velocity that's going to be lost by air friction over n ticks
+					do {
+						@remainingVelocity -= 0.08; // gravity
+						@remainingVelocity *= 0.98; // friction
+						@exitVelocity *= 1.0204082; // compensate for friction
+					} while(@remainingVelocity > 0);
+					@exitVelocity = max(0.55, @exitVelocity); // min velocity for moving up 2 blocks
+				} else {
+					@exitVelocity = min(1, @exitVelocity);
 				}
 			} else {
 				@yaw = @exit['yaw'];
@@ -226,10 +236,20 @@ execute(iclosure(){
 				@translation = array(x: 0.015625, y: 0.984375, z: 0.015625);
 		}
 
+		// check for collisions with other portals
 		@oppositePortal = _opposite_portal(@portals, @color, @button);
-		if(@oppositePortal) {
-			if(@oppositePortal['exit']['yaw'] == @portal['yaw'] && @oppositePortal['exit']['pitch'] == @portal['pitch']) {
-				foreach(@b in @oppositePortal['blocks']) {
+		if(@oppositePortal && @oppositePortal['exit']['yaw'] == @portal['yaw'] && @oppositePortal['exit']['pitch'] == @portal['pitch']) {
+			foreach(@b in @oppositePortal['blocks']) {
+				if(@b && (array_subset_of(@b, @block) || @extension && array_subset_of(@b, @extension))) {
+					play_sound(ploc(), array(sound: 'ENTITY_SHULKER_CLOSE', seed: 2));
+					return(true);
+				}
+			}
+		}
+		@otherPortals = @portals[if(@color === 'orange', 'blue', 'orange')];
+		foreach(@otherPortal in @otherPortals) {
+			if(@otherPortal && @otherPortal['exit']['yaw'] == @portal['yaw'] && @otherPortal['exit']['pitch'] == @portal['pitch']) {
+				foreach(@b in @otherPortal['blocks']) {
 					if(@b && (array_subset_of(@b, @block) || @extension && array_subset_of(@b, @extension))) {
 						play_sound(ploc(), array(sound: 'ENTITY_SHULKER_CLOSE', seed: 2));
 						return(true);
@@ -252,7 +272,7 @@ execute(iclosure(){
 			set_entity_saves_on_unload(@e, false);
 			set_entity_spec(@e, array(blockdata: @blockdata));
 			set_display_entity(@e, array(
-				brightness: array(block: 0, sky: 15),
+				brightness: array(block: 0, sky: 9),
 				glowcolor: @glowcolor,
 				transformation: array(
 					scale: @scale,
@@ -268,11 +288,23 @@ execute(iclosure(){
 			face: @face);
 
 		if(!has_bind('portalgun'.player())) {
-			bind('player_move', array(id: 'portalgun'.player()), array(threshold: 0, player: player()), @event, @portals) {
+			bind('player_move', array(id: 'portalgun'.player()), array(threshold: 0, player: player()), @event, @portals, @world = pworld()) {
 				if(pmode() !== 'ADVENTURE') {
 					set_timeout(1, closure(unbind()));
-					if(array_size(all_players(pworld())) <= 1) {
+					@otherPlayers = all_players(@world);
+					array_remove_values(@otherPlayers, player());
+					@clearColors = array(orange: true, blue: true);
+					if(@otherPlayers) {
 						foreach(@color in array('orange', 'blue')) {
+							foreach(@p in @otherPlayers) {
+								if(phas_item(@p, array(name: if(@color === 'orange', 'LANTERN', 'SOUL_LANTERN')))) {
+									@clearColors[@color] = false;
+								}
+							}
+						}
+					}
+					foreach(@color: @clear in @clearColors) {
+						if(@clear) {
 							foreach(@button in array('left', 'right')) {
 								@portal = @portals[@color][@button];
 								if(@portal) {
@@ -287,41 +319,43 @@ execute(iclosure(){
 				@from = @event['from'];
 				@to = @event['to'];
 				@clearPortals = false;
-				if(get_block(@to) === 'LIGHT') {
+				if(get_block(@to) === 'LIGHT' && get_blockdata(@to)['level'] >= 15) {
 					@clearPortals = true;
 				}
 				set_entity_fall_distance(puuid(), 0);
 				@dist = distance(@from, @to);
 				if(@dist < 3) { // ignore likely teleports
-					@loc = @to[];
-					@to['y'] -= 0.03;
-					@loc['yaw'] = get_yaw(@from, @to);
-					@loc['pitch'] = get_pitch(@from, @to);
-					if(@loc['yaw'] == math_const('NaN')) {
-						@loc['yaw'] = @to['yaw']; // fallback to old yaw
-					}
-					@loc['y'] += 0.1;
-					@trace = ray_trace(@loc, @dist * 2 + 0.5);
-					if(@trace['hitblock']) {
-						@block = @trace['block'];
-						@type = get_block(@block);
-						if(@type === 'WHITE_CONCRETE') {
-							foreach(@color in array('orange', 'blue')) {
-								foreach(@button in array('left', 'right')) {
-									@portal = @portals[@color][@button];
-									if(@portal) {
-										@b = @portal['blocks'][0];
-										if(is_array(@b) && array_subset_of(@block, @b) && @trace['hitface'] === @portal['face']) {
-											_portal_to(player(), @portals, @color, @button, @to, @dist);
-											die();
+					if(!psneaking()) {
+						@loc = @to[];
+						@to['y'] -= 0.03;
+						@loc['yaw'] = get_yaw(@from, @to);
+						@loc['pitch'] = get_pitch(@from, @to);
+						if(@loc['yaw'] == math_const('NaN')) {
+							@loc['yaw'] = @to['yaw']; // fallback to old yaw
+						}
+						@loc['y'] += 0.1;
+						@trace = ray_trace(@loc, @dist * 2 + 0.5);
+						if(@trace['hitblock']) {
+							@block = @trace['block'];
+							@type = get_block(@block);
+							if(@type === 'WHITE_CONCRETE') {
+								foreach(@color in array('orange', 'blue')) {
+									foreach(@button in array('left', 'right')) {
+										@portal = @portals[@color][@button];
+										if(@portal) {
+											@b = @portal['blocks'][0];
+											if(is_array(@b) && array_subset_of(@block, @b) && @trace['hitface'] === @portal['face']) {
+												_portal_to(player(), @portals, @color, @button, @to, @dist);
+												die();
+											}
 										}
 									}
 								}
+							} else if(@type === 'LIGHT_BLUE_STAINED_GLASS_PANE') {
+								@to['y'] += 0.03;
+								relative_teleport(location_shift(@from, @to, distance(@to, @trace['location']) * 2));
+								@clearPortals = true;
 							}
-						} else if(@type === 'LIGHT_BLUE_STAINED_GLASS_PANE') {
-							@to['y'] += 0.03;
-							relative_teleport(location_shift(@from, @to, distance(@to, @trace['location']) * 2));
-							@clearPortals = true;
 						}
 					}
 					if(@clearPortals) {
@@ -329,6 +363,7 @@ execute(iclosure(){
 							foreach(@button in array('left', 'right')) {
 								@portal = @portals['orange'][@button];
 								if(@portal) {
+									set_pcooldown(player(), 'LANTERN', 20);
 									try(entity_remove(@portal['entity']))
 									@portals['orange'][@button] = null;
 									play_sound(@to, array(sound: 'ENTITY_SILVERFISH_AMBIENT', pitch: 2));
@@ -340,6 +375,7 @@ execute(iclosure(){
 							foreach(@button in array('left', 'right')) {
 								@portal = @portals['blue'][@button];
 								if(@portal) {
+									set_pcooldown(player(), 'SOUL_LANTERN', 20);
 									try(entity_remove(@portal['entity']))
 									@portals['blue'][@button] = null;
 									play_sound(@to, array(sound: 'ENTITY_SILVERFISH_AMBIENT', pitch: 2));
