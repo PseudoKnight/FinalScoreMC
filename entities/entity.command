@@ -45,18 +45,19 @@ proc _entity_tabcompleter(@typeCompletions = @entityTypes, @attributeCompletions
 			'<spawn|patrol': @typeOrCustomCompletions),
 		array('<<setcustom|modify|deletecustom': array('type', 'name', 'age', 'health', 'lifetime', 'onfire', 'targetnear',
 					'ai', 'tame', 'glowing', 'invulnerable', 'gravity', 'silent', 'gear', 'droprate', 'effect', 'tags',
-					'attribute', 'rider', 'explode', 'scoreboardtags', 'velocity'),
+					'attribute', 'rider', 'explode', 'scoreboardtags', 'velocity', 'display'),
 			'<<createcustom': @typeCompletions,
 			'<<remove': array('[range]')),
 		array('<type': @typeCompletions,
 			'<attribute': @attributeCompletions,
 			'<effect': @effectCompletions,
-			'<rider': @typeOrCustomCompletions,
+			'<rider': array_merge(array('<json>'), @typeOrCustomCompletions),
 			'<age': array('<ticks>'),
 			'<health|droprate': array('<double>'),
 			'<lifetime|onfire|explode': array('<seconds>'),
 			'<ai|tame|glowing|invulnerable|gravity|silent': array('true', 'false'),
 			'<velocity': array('<x>'),
+			'<display': array('<json>'),
 			'<tags': array(
 				'<<axolotl|frog|mushroom_cow|painting|rabbit|salmon': array('type'),
 				'<<magma_cube|phantom|pufferfish|slime': array('size'),
@@ -406,6 +407,17 @@ register_command('entity', array(
 						}
 						@entity['velocity'] = array(double(@args[3]), double(@args[4]), double(@args[5]));
 						msg(color('green').'Set velocity to '.@entity['velocity']);
+
+					case 'display':
+						if(array_size(@args) < 4) {
+							return(false);
+						}
+						@json = array_implode(@args[3..-1]);
+						if(@json[0] !== '{') {
+							die(color('gold').'Expected json.');
+						}
+						@entity[@setting] = json_decode(@json);
+						msg(color('green').'Set '.@setting.' to '.@entity[@setting]);
 
 					default:
 						die(color('yellow').'Invalid setting.');
