@@ -229,7 +229,7 @@ proc _modify_entity(@e, @entity, @loc, @spawnData, @consumer) {
 	if(array_index_exists(@entity, 'effects')) {
 		try {
 			foreach(@name: @effect in @entity['effects']) {
-				set_mob_effect(@e, @name, @effect['strength'], @effect['seconds'], true);
+				set_mob_effect(@e, @name, @effect['strength'], @effect['seconds'], true, array_get(@effect, 'particles', true));
 			}
 		} catch(BadEntityException @ex) {
 			// mob is gone for some reason
