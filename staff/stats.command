@@ -7,9 +7,9 @@ register_command('stats', array(
 		@type = array_get(@args, 0, 'advancements');
 		@total = 0;
 		if(@type === 'advancements') {
-			@total = 124; // 1.21.10
+			@total = 125; // 1.21.11
 		} else if(@type === 'recipes') {
-			@total = 1449; // 1.21.10
+			@total = 1459; // 1.21.11
 		} else {
 			return(false);
 		}

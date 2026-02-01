@@ -139,7 +139,7 @@ proc _create_world(@name, @world) {
 			set_spawning(@name, @world['spawning']);
 		}
 	}
-	set_gamerule(@name, 'enderPearlsVanishOnDeath', false);
+	set_gamerule(@name, 'ender_pearls_vanish_on_death', false);
 }
 
 /**
@@ -269,8 +269,8 @@ proc _world_time_travel(@world, @targetTime, @ticks) {
 	}
 	@timeDelta = @targetTime - @startTime;
 
-	@daylightCycle = get_gamerule(@world, 'DODAYLIGHTCYCLE');
-	set_gamerule(@world, 'DODAYLIGHTCYCLE', false);
+	@daylightCycle = get_gamerule(@world, 'advance_time');
+	set_gamerule(@world, 'advance_time', false);
 
 	@step = array(0);
 	set_interval(50, closure(){
@@ -278,7 +278,7 @@ proc _world_time_travel(@world, @targetTime, @ticks) {
 		@interp = -(cos(math_const('PI') * @step[0] / @ticks) - 1) / 2;
 		set_world_time(@world, @startTime + integer(round(@timeDelta * @interp)));
 		if(@step[0] == @ticks) {
-			set_gamerule(@world, 'DODAYLIGHTCYCLE', @daylightCycle);
+			set_gamerule(@world, 'advance_time', @daylightCycle);
 			export('timetravel.'.@world, null);
 			clear_task();
 		}

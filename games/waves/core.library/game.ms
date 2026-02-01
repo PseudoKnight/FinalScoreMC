@@ -29,7 +29,7 @@ proc _waves_prepare(@name, @arena, @region, @world) {
 	if(array_index_exists(@waves['config'], 'time')) {
 		set_world_time(@waves['world'], @waves['config']['time']);
 	}
-	set_gamerule(@waves['world'], 'DODAYLIGHTCYCLE', false);
+	set_gamerule(@waves['world'], 'advance_time', false);
 	_remove_region_entities(@waves['region']);
 
 	create_scoreboard('waves'.@region);

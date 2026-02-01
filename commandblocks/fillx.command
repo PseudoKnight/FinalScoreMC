@@ -20,7 +20,7 @@ register_command('fillx', array(
 		@yMax = max(@l1['y'], @l2['y']);
 		@zMax = max(@l1['z'], @l2['z']);
 
-		@limit = get_gamerule(@world, 'commandModificationBlockLimit');
+		@limit = get_gamerule(@world, 'max_block_modifications');
 		if(abs(@xMax - @xMin) * abs(@yMax - @yMin) * abs(@zMax - @zMin) > @limit) {
 			die('Exceeded block limit.');
 		}

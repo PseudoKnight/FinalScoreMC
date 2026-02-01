@@ -295,15 +295,8 @@ bind('entity_damage_player', null, null, @event) {
 				cancel();
 			}
 		} else if(ponline(@event['data']) && @event['data'] != @event['player']) { # not self-inflicted
-			@vehicle = get_entity_vehicle(puuid(@event['player']));
-			@weapon = pinfo(@event['data'], 6);
-			if(@vehicle && @weapon == 'STICK') { # stick is lance for jousting
-				modify_event('amount', 0);
-				set_entity_rider(@vehicle, null);
-			} else {
-				title(@event['data'], '', color('red').round(@event['amount'], 1), 0, 40, 20);
-				cancel();
-			}
+			title(@event['data'], '', color('red').round(@event['amount'], 1), 0, 40, 20);
+			cancel();
 		}
 	}
 }

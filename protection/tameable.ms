@@ -47,7 +47,7 @@ bind('entity_damage', array(priority: 'HIGHEST'), array('type': '/(DONKEY|HORSE|
 
 		default:
 			if(!get_entity_rider(@id)) {
-				modify_event('amount', 0);
+				cancel();
 			}
 	}
 }
