@@ -40,7 +40,7 @@ proc _get_chest_loot(@floor, @random, @bonus = 1.0, @loot = array(
 	array(chance: -0.03, item: 'DIAMOND_AXE'),
 	array(chance: -0.06, item: 'NETHERITE_AXE'),
 	array(chance: -0.03, item: 'TRIDENT'),
-	array(chance: -0.03, item: 'MACE'),
+	array(chance: 0.00, item: 'MACE'),
 	array(chance: 0.01, item: 'SHIELD'),
 	array(chance: 0.03, item: 'BOW'),
 	array(chance: 0.03, item: 'CROSSBOW'),
@@ -137,6 +137,8 @@ proc _get_chest_loot(@floor, @random, @bonus = 1.0, @loot = array(
 							);
 							if(string_ends_with(@item['name'], 'SWORD')) {
 								@weaponEnchants[] = 'SWEEPING_EDGE';
+							} else if(string_ends_with(@item['name'], 'SPEAR')) {
+								@weaponEnchants[] = 'LUNGE';
 							}
 							@item['meta']['enchants'] = associative_array();
 							while(@rarityIndex-- >= 0) {
@@ -215,6 +217,19 @@ proc _get_chest_loot(@floor, @random, @bonus = 1.0, @loot = array(
 								@item['meta']['enchants'][@enchant] = 1;
 							}
 						}
+					} else if(@item['name'] === 'MACE') {
+						@maceEnchants = array(
+							'DENSITY', 'BREACH', 'WIND_BURST', 'SMITE', 'BANE_OF_ARTHROPODS', 'FIRE_ASPECT', 'UNBREAKING', 'MENDING'
+						);
+						@item['meta']['enchants'] = associative_array();
+						while(@rarityIndex-- >= 0) {
+							@enchant = _array_get_srand(@random, @maceEnchants);
+							if(array_index_exists(@item['meta']['enchants'], @enchant)) {
+								@item['meta']['enchants'][@enchant]++;
+							} else {
+								@item['meta']['enchants'][@enchant] = 1;
+							}
+						}
 					}
 				}
 				if(srand(@random) < 0.5) {
@@ -237,7 +252,8 @@ proc _get_chest_loot(@floor, @random, @bonus = 1.0, @loot = array(
 					'UNBREAKING', 'FIRE_ASPECT', 'KNOCKBACK', 'LOOTING', 'RESPIRATION', 'PROTECTION',
 					'BLAST_PROTECTION', 'FEATHER_FALLING', 'FIRE_PROTECTION', 'PROJECTILE_PROTECTION',
 					'THORNS', 'DEPTH_STRIDER', 'MENDING', 'SWEEPING_EDGE', 'IMPALING', 'RIPTIDE', 'LOYALTY',
-					'SWIFT_SNEAK', 'PIERCING', 'MULTISHOT', 'QUICK_CHARGE'
+					'SWIFT_SNEAK', 'PIERCING', 'MULTISHOT', 'QUICK_CHARGE', 'DENSITY', 'BREACH',
+					'WIND_BURST', 'LUNGE'
 				);
 				@meta = array(stored: associative_array());
 				@id = integer(srand(@random) * array_size(@enchants));

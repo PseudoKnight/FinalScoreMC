@@ -10,7 +10,7 @@ register_command('enchant', array(
 				'blast_protection', 'feather_falling', 'fire_protection', 'projectile_protection', 'silk_touch',
 				'thorns', 'aqua_affinity', 'depth_strider', 'mending', 'frost_walker', 'sweeping_edge', 'channeling',
 				'impaling', 'riptide', 'loyalty', 'vanishing_curse', 'binding_curse', 'swift_sneak', 'piercing',
-				'multishot', 'quick_charge'
+				'multishot', 'quick_charge', 'density', 'wind_burst', 'breach', 'lunge'
 			);
 			return(_strings_start_with_ic(@enchants, @args[-1]));
 		}
