@@ -3,24 +3,23 @@ execute(iclosure(){
 		return(@portals[@color][if(@button === 'left', 'right', 'left')]);
 	}
 
-	proc _portal_to(@player, @portals, @color, @button, @entityLoc, @exitVelocity = 0.15) {
-		@yaw = @entityLoc['yaw'];
-		@pitch = @entityLoc['pitch'];
-		@portal = @portals[@color][@button];
-		@entrance = @portal['exit'];
-		@opposite = _opposite_portal(@portals, @color, @button);
-		if(!@opposite) {
+	proc _portal_to(@entity, @fromPortal, @toPortal, @exitVelocity = 0.15) {
+		if(!@toPortal) {
 			return();
 		}
-		@exit = @opposite['exit'];
-		if(time() < @portal['lastEnter'] + 150) {
+		if(time() < @fromPortal['lastEnter'] + 150) {
 			return();
 		}
-		if(time() < @opposite['lastEnter'] + 150) {
+		if(time() < @toPortal['lastEnter'] + 150) {
 			return();
 		}
-		@portal['lastEnter'] = time();
-		@opposite['lastEnter'] = time();
+		@entitLoc = entity_loc(@entity);
+		@yaw = @entitLoc['yaw'];
+		@pitch = @entitLoc['pitch'];
+		@entrance = @fromPortal['exit'];
+		@exit = @toPortal['exit'];
+		@fromPortal['lastEnter'] = time();
+		@toPortal['lastEnter'] = time();
 		if(!is_null(@entrance['yaw']) && !is_null(@exit['yaw'])) {
 			@yaw += @exit['yaw'] - @entrance['yaw'] + 180;
 		} else if(!is_null(@entrance['pitch'])) {
@@ -42,10 +41,53 @@ execute(iclosure(){
 				@yaw = @exit['yaw'];
 			}
 		}
-		relative_teleport(@player, array(@exit['x'], @exit['y'], @exit['z'], @exit['world'], @yaw, @pitch));
-		set_pvelocity(@player, get_vector(@exit, min(3, @exitVelocity)));
+		@loc = array(@exit['x'], @exit['y'], @exit['z'], @exit['world'], @yaw, @pitch);
+		if(entity_type(@entity) === 'PLAYER') {
+			relative_teleport(@entity, @loc);
+		} else {
+			set_entity_loc(@entity, @loc);
+		}
+		set_entity_velocity(@entity, get_vector(@exit, min(3, @exitVelocity)));
 		play_sound(@exit, array(sound: 'ENTITY_ILLUSIONER_MIRROR_MOVE', volume: 0.3));
 		play_sound(@exit, array(sound: 'ENTITY_ILLUSIONER_CAST_SPELL', volume: 0.3));
+	}
+
+	proc _do_cube_physics(@id, @collider, @portals) {
+		@skipGroundedCheck = array(false);
+		set_interval(50, 0, closure(){
+			if(!entity_exists(@collider)
+			|| !entity_exists(@id)) {
+				clear_task();
+				return();
+			}
+			@loc = entity_loc(@collider);
+			set_entity_loc(@id, @loc);
+			if(@skipGroundedCheck[0]) {
+				@skipGroundedCheck[0] = false;
+			} else if(entity_grounded(@collider)) {
+				@loc['x'] = floor(@loc['x']);
+				@loc['z'] = floor(@loc['z']);
+				@loc = location_shift(@loc, 'down');
+				@type = get_block(@loc);
+				if(@type === 'WHITE_CONCRETE') {
+					foreach(@color in array('orange', 'blue')) {
+						foreach(@button in array('left', 'right')) {
+							@portal = @portals[@color][@button];
+							if(@portal) {
+								@b = @portal['blocks'][0];
+								if(is_array(@b) && array_subset_of(@b, @loc) && @portal['face'] === 'UP') {
+									@skipGroundedCheck[0] = true;
+									_portal_to(@collider, @portal, _opposite_portal(@portals, @color, @button), 0.2);
+									return();
+								}
+							}
+						}
+					}
+				}
+				entity_remove(@collider);
+				play_sound(@loc, array(sound: 'BLOCK_NETHERITE_BLOCK_FALL'));
+			}
+		});
 	}
 
 	proc _use_portal_gun(@color, @button, @portals) {
@@ -56,26 +98,22 @@ execute(iclosure(){
 
 		@trace = ray_trace(72);
 
-		if(@trace['entities']) {
+		if(@button === 'right' && @trace['entities']) {
 			@id = null;
-			@clickLoc = null;
 			foreach(@entity in @trace['entities']) {
 				if(has_scoreboard_tag(@entity['uuid'], 'movable')) {
+					if(distance(@entity['location'], @trace['origin']) > 4.5) {
+						continue();
+					}
 					@id = @entity['uuid'];
 					while(@vehicle = get_entity_vehicle(@id)) {
 						@id = @vehicle;
 					}
-					@clickLoc = @entity['location'];
 					break();
 				}
 			}
 
 			if(@id) {
-				if(distance(@clickLoc, @trace['origin']) > 6) {
-					play_sound(ploc(), array(sound: 'ENTITY_SHULKER_CLOSE'));
-					return(true);
-				}
-
 				export(player().'cube', true);
 				cancel();
 
@@ -97,22 +135,17 @@ execute(iclosure(){
 					|| !entity_exists(@id)) {
 						clear_task();
 						export(player().'cube', null);
-						play_sound(@id, array(sound: 'BLOCK_CHISELED_BOOKSHELF_PICKUP_ENCHANTED', pitch: 0.5, volume: 0.6));
-						set_entity_rider(@id, get_entity_rider(@id));
 						try(entity_remove(@collider))
-						return();
-					}
-					@loc = entity_loc(@collider);
-					if(entity_attribute_base(@collider, 'GENERIC_GRAVITY') > 0) {
-						set_entity_loc(@id, @loc);
-						if(entity_grounded(@collider)) {
-							entity_remove(@collider);
-						}
 						return();
 					}
 					@item = pinv(player(), null);
 					if(!import(player().'cube') || !@item || @item['name'] !== 'LANTERN' && @item['name'] !== 'SOUL_LANTERN') {
+						clear_task();
+						export(player().'cube', null);
 						set_entity_attribute_base(@collider, 'GENERIC_GRAVITY', 0.08);
+						play_sound(@id, array(sound: 'BLOCK_CHISELED_BOOKSHELF_PICKUP_ENCHANTED', pitch: 0.5, volume: 0.6));
+						_do_cube_physics(@id, @collider, @portals);
+						return();
 					}
 					@loc = entity_loc(@collider);
 					@trace = ray_trace(player(), @dist);
@@ -345,7 +378,7 @@ execute(iclosure(){
 										if(@portal) {
 											@b = @portal['blocks'][0];
 											if(is_array(@b) && array_subset_of(@block, @b) && @trace['hitface'] === @portal['face']) {
-												_portal_to(player(), @portals, @color, @button, @to, @dist);
+												_portal_to(puuid(), @portal, _opposite_portal(@portals, @color, @button), @dist);
 												die();
 											}
 										}
@@ -393,8 +426,19 @@ execute(iclosure(){
 
 		// special case if they shoot right below a player
 		if(@face === 'UP' && @oppositePortal) {
-			foreach(@player in players_in_radius(@portal, 0.5)) {
-				_portal_to(@player, @portals, @color, @button, ploc(@player));
+			foreach(@entity in entities_in_radius(@portal, 1)) {
+				@type = entity_type(@entity);
+				if(@type === 'PLAYER') {
+					_portal_to(@entity, @portals[@color][@button], @oppositePortal);
+				} else if(@type === 'SHULKER' && has_scoreboard_tag(@entity, 'movable')) {
+					@collider = spawn_entity('ARMOR_STAND', 1, entity_loc(@entity), closure(@e) {
+						set_entity_saves_on_unload(@e, false);
+						set_entity_spec(@e, array(visible: false, small: true));
+						set_entity_size(@e, 1, 1);
+					})[0];
+					_portal_to(@collider, @portals[@color][@button], @oppositePortal);
+					_do_cube_physics(get_entity_vehicle(@entity), @collider, @portals);
+				}
 			}
 		}
 

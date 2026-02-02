@@ -171,6 +171,37 @@ catbomb:
   - 3
   tame: true
   type: CAT
+companion_cube:
+  display:
+    teleportduration: 2
+    transformation:
+      scale:
+        x: 1.84
+        y: 1.84
+        z: 1.84
+      translation:
+        x: 0
+        y: 0.95
+        z: 0
+  rider:
+    ai: false
+    effects:
+      invisibility:
+        particles: false
+        seconds: -1
+        strength: 1
+    invulnerable: true
+    scoreboardtags:
+    - movable
+    silent: true
+    type: SHULKER
+  tags:
+    item:
+      meta:
+        owneruuid: b5d13084-3be4-459d-a21e-8b6d73a10951
+        texture: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNTMxMTI1YjBmMjk0MmZhM2NkMjdjODAyNTg2M2ViYzNlOWQ3YmZkNjg1NDdlNjEwYTlkM2UxODMyMDc1MzM2NCJ9fX0=
+      name: PLAYER_HEAD
+  type: item_display
 critter:
   age: 0
   attributes:
