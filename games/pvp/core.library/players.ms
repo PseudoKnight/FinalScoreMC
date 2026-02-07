@@ -174,6 +174,7 @@ proc _pvp_initialize_players(@id, @players) {
 
 		@pArray['blocks'] = array(); // used for cleaning up placed blocks
 		@pArray['entities'] = associative_array(); // used for cleaning up player-specific entities
+		@pArray['deathLocation'] = null;
 
 		if(array_contains(@pvp['arena']['flags'], 'build')) {
 			set_pmode(@player, 'SURVIVAL');
@@ -313,6 +314,11 @@ proc _player_equip(@id, @player) {
 	@pvp = import('pvp'.@id);
 	if(!array_index_exists(@pvp['players'], @player)) {
 		return();
+	}
+	if(array_contains(@pvp['arena']['flags'], 'build')) {
+		set_pmode('SURVIVAL');
+	} else {
+		set_pmode('ADVENTURE');
 	}
 	if(array_index_exists(@pvp['arena'], 'hunger')) {
 		set_phunger(@player, @pvp['arena']['hunger']);

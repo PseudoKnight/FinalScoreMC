@@ -237,28 +237,53 @@ proc _bind_events(@pvp) {
 			@drops = array_merge(@drops, @pvp['arena']['deathdrops']);
 		}
 
-		// Do not actually die
-		_player_reset(player());
+		set_pmode('SPECTATOR');
 		set_timeout(10, closure(){
-			// clear respawn menu
-			close_pinv();
+			@playerData['deathLocation'] = @location;
+			pforce_respawn();
 		});
 
-		// Respawning
-		if(@arena['respawnmode'] == 'mob'
-		&& !@pvp['team'][@team]['respawns']) {
-			_player_to_spectator(player(), @pvp);
+		foreach(@item in @drops) {
+			@drop = drop_item(@location, @item);
+			if(array_index_exists(@arena, 'powerup') && @item['name'] == @arena['powerup']) {
+				@pvp['powerups'][] = @drop;
+			}
+		}
+		@deadplayer = spawn_entity('SKELETON', 1, @location, closure(@deadplayer) {
+			add_scoreboard_tag(@deadplayer, 'nodrops');
+			set_mob_equipment(@deadplayer, array(weapon: null));
+		})[0];
+		set_entity_health(@deadplayer, 0);
 
-		} else if(array_index_exists(@arena, 'lives')
+		modify_event('drops', null);
+		modify_event('xp', null);
+		set_timeout(1000, closure(){
+			// just in case of a tie
+			_pvp_check_objectives(@id);
+		});
+	}
+
+	@pvp['binds'][] = bind('player_spawn', array(priority: 'HIGH'), null, @event, @pvp, @id) {
+		if(!array_index_exists(@pvp['players'], player())) {
+			die();
+		}
+		consume();
+
+		@arena = @pvp['arena'];
+		@playerData = @pvp['players'][player()];
+		@team = array_get(@playerData, 'team', 0);
+
+		// Respawning
+		if(@arena['respawnmode'] === 'mob'
+		&& !@pvp['team'][@team]['respawns']
+		|| array_index_exists(@arena, 'lives')
 		&& !@playerData['lives']) {
 			_player_to_spectator(player(), @pvp);
 
 		} else {
 			// Class Selection & Equip
 			if(!array_index_exists(@arena, 'respawntime')) {
-				set_timeout(50, closure(){ // wait until after fake death to fix fake inventory
-					_player_equip(@id, player());
-				});
+				_player_equip(@id, player());
 			} else if(array_index_exists(@arena, 'classes')) {
 				if(array_index_exists(@playerData, 'class')) {
 					_classes_unload(player(), @playerData['class'], @pvp);
@@ -293,29 +318,27 @@ proc _bind_events(@pvp) {
 			// Teleport
 			if(array_index_exists(@arena, 'respawntime') && @pvp['running'] == 2) {
 				@playerData['respawn'] = time() + (@arena['respawntime'] * 1000) - 50; // 50ms tick precision
-				set_pmode('SPECTATOR');
+				@location = @event['location'];
 				if(!array_contains(sk_current_regions(), @arena['region'])) {
-					if(ponline(@killer)) {
-						set_ploc(ploc(@killer));
-					} else {
-						@distance = 128;
-						@closest = '';
-						foreach(@p in array_keys(@pvp['players'])) {
-							if(@p == player() && array_contains(sk_current_regions(), @arena['region'])) {
-								continue();
-							}
-							@pDistance = distance(ploc(@p), @location);
-							if(@pDistance < @distance) {
-								@distance = @pDistance;
-								@closest = @p;
-							}
+					@distance = 128;
+					@closest = '';
+					foreach(@p in array_keys(@pvp['players'])) {
+						if(@p === player() && array_contains(sk_current_regions(), @arena['region'])) {
+							continue();
 						}
-						if(@closest) {
-							set_ploc(ploc(@closest));
-						} else {
-							set_ploc(@arena['spawn'][0][0]);
+						@pDistance = distance(ploc(@p), @location);
+						if(@pDistance < @distance) {
+							@distance = @pDistance;
+							@closest = @p;
 						}
 					}
+					if(@closest) {
+						modify_event('location', location_shift(ploc(@closest), 'up'));
+					} else {
+						modify_event('location', location_shift(@arena['spawn'][0][0], 'up'));
+					}
+				} else {
+					modify_event('location', @playerData['deathLocation']);
 				}
 			} else if(@arena['respawnmode'] == 'mob') {
 				while(@pvp['team'][@team]['respawns']) {
@@ -323,7 +346,7 @@ proc _bind_events(@pvp) {
 					try {
 						@loc = entity_loc(@uuid);
 						@loc[1] -= 1;
-						set_ploc(@loc);
+						modify_event('location', @loc);
 						entity_remove(@uuid);
 						array_remove(@pvp['team'][@team]['respawns'], 0);
 						set_pscore('respawns', @arena['team'][@team]['name'], array_size(@pvp['team'][@team]['respawns']), @id);
@@ -337,32 +360,9 @@ proc _bind_events(@pvp) {
 				_player_to_spectator(player(), @pvp);
 			} else {
 				@r = rand(0, array_size(@arena['spawn'][@team]));
-				set_ploc(@arena['spawn'][@team][@r]);
+				modify_event('location', location_shift(@arena['spawn'][@team][@r], 'up'));
 			}
 		}
-
-		// Death Effects
-		set_peffect(player(), 'BLINDNESS', 0, 0.3);
-		set_peffect(player(), 'NIGHT_VISION', 0, 0.3);
-		title(player(), 'You died.', '', 0, 6, 0);
-		foreach(@item in @drops) {
-			@drop = drop_item(@location, @item);
-			if(array_index_exists(@arena, 'powerup') && @item['name'] == @arena['powerup']) {
-				@pvp['powerups'][] = @drop;
-			}
-		}
-		@deadplayer = spawn_entity('SKELETON', 1, @location, closure(@deadplayer) {
-			add_scoreboard_tag(@deadplayer, 'nodrops');
-			set_mob_equipment(@deadplayer, array(weapon: null));
-		})[0];
-		set_entity_health(@deadplayer, 0);
-
-		modify_event('drops', null);
-		modify_event('xp', null);
-		set_timeout(1000, closure(){
-			// just in case of a tie
-			_pvp_check_objectives(@id);
-		});
 	}
 
 	@pvp['binds'][] = bind('player_quit', array(priority: 'HIGH'), null, @e, @pvp, @id) {
