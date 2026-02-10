@@ -384,7 +384,7 @@ register_command('7', array(
 					set_block(@startblock, 'SEA_LANTERN');
 					sudo('/rg select 7_schematic');
 					queue_push(closure(){sudo('//copy')}, '7');
-					queue_push(closure(){sudo('//schematic save '.@schematic)}, '7');
+					queue_push(closure(){sudo('//schematic save '.@schematic.' -f')}, '7');
 
 				case 'setspawn':
 				case 'spawn':
