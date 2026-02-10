@@ -16,7 +16,7 @@ register_command('arena', array(
 					'ctfflag', 'respawn', 'spawn', 'blockbreak', 'ff', 'arenaselect', 'sharedarenas', 'mode',
 					'mobprotect', 'team', 'kit', 'restore', 'itemspawn', 'chestgroup', 'chestspawn', 'rsoutput',
 					'rsoutputscore', 'effect', 'denydrop', 'mobspawn', 'weapons', 'options', 'hidden', 'nodoors',
-					'owner', 'vote'),
+					'owner', 'vote', 'rain'),
 			'<<add': array('description', 'arenaselect', 'weapons', 'options', 'deathdrops', 'denydrop', 'rsoutput', 'kothregion'),
 			'<<load': array('kit', 'chestspawn', 'spawn', 'itemspawn'),
 			'<<tp': array('lobby', 'podium', 'kothbeacon', 'bombloc', 'region')),
@@ -177,6 +177,7 @@ register_command('arena', array(
 					case 'script':
 					case 'hidden':
 					case 'nodoors':
+					case 'rain':
 
 						switch(@args[3]) {
 							case 'true':

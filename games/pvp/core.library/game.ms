@@ -613,9 +613,6 @@ proc _pvp_start_match(@id) {
 				} else {
 					@timeleft = integer(round((@p['respawn'] - @time) / 1000));
 					title(@player, @timeleft, null, 0, 20, 0);
-					if(@timeleft == 3) {
-						set_pstorm(@player, false);
-					}
 				}
 			} else if(!array_contains(sk_current_regions(@player), @arena['region'])) {
 				if(array_contains(@arena['flags'], 'exitrespawn')) {

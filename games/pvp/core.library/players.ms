@@ -241,6 +241,10 @@ proc _pvp_initialize_players(@id, @players) {
 				@pArray['picks'] = @pvp['arena']['class_picks'];
 			}
 		}
+		
+		if(array_contains(@pvp['arena']['flags'], 'rain')) {
+			set_pstorm(@player, true);
+		}
 
 		_player_equip(@id, @player);
 
