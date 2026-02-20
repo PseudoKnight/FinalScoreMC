@@ -457,7 +457,10 @@ proc _pvp_start_match(@id) {
 			if(@arena['itemspawn'][@i]['start']) {
 				@time = 0;
 			}
-			@pvp['itemspawn'][@i] = array('', @time);
+			@pvp['itemspawn'][@i] = array(
+				id: null,
+				lastExisted: @time, 
+				cooldown: array_get(@arena['itemspawn'][@i], 'cooldown', max(5, 70 - array_size(@pvp['players']) * 5)));
 		}
 	}
 
@@ -649,10 +652,10 @@ proc _pvp_start_match(@id) {
 			@viewers = array_merge(@pvp['spectators'], array_keys(@pvp['players']));
 			foreach(@i: @item in @arena['itemspawn']) {
 				@itemspawn = @pvp['itemspawn'][@i];
-				if(@itemspawn[0]) {
+				if(@itemspawn['id']) {
 					try {
-						@loc = location_shift(entity_loc(@itemspawn[0]), 'up', 0.4);
-						@itemspawn[1] = time();
+						@loc = location_shift(entity_loc(@itemspawn['id']), 'up', 0.4);
+						@itemspawn['lastExisted'] = time();
 						spawn_particle(@loc, array(
 							particle: 'FIREWORKS_SPARK',
 							count: 1,
@@ -661,24 +664,24 @@ proc _pvp_start_match(@id) {
 							zoffset: 0.3,
 							force: true
 						), @viewers);
-						set_entity_glowing(@itemspawn[0], false);
+						set_entity_glowing(@itemspawn['id'], false);
 						continue();
 					} catch(BadEntityException @ex) {
 						// item drop was picked up or is unloaded
 					}
 				}
-				if(@itemspawn[1] + (@item['cooldown'] * 1000) < time()) {
+				if(@itemspawn['lastExisted'] + (@itemspawn['cooldown'] * 1000) < time()) {
 					@itemId = drop_item(@item['loc'], @item['item'], false);
 					try {
 						set_entity_velocity(@itemId, array(0, 0, 0));
 						set_entity_glowing(@itemId, true);
 						play_sound(@item['loc'], array(sound: 'ENTITY_ENDERMAN_TELEPORT', pitch: 1.5));
 						make_effect(@item['loc'], 'ENDER_SIGNAL');
-						@itemspawn[0] = @itemId;
-						@itemspawn[1] = time();
+						@itemspawn['id'] = @itemId;
+						@itemspawn['lastExisted'] = time();
 					} catch(BadEntityException @ex) {
 						// chunk might not be loaded, so try again next tick
-						@itemspawn[0] = '';
+						@itemspawn['id'] = null;
 					}
 				}
 			}

@@ -420,7 +420,18 @@ register_command('arena', array(
 						if(!array_index_exists(@arena, 'itemspawn')) {
 							@arena['itemspawn'] = array();
 						}
-						if(is_numeric(@args[3])) {
+						@loc = location_shift(ploc(), 'up', 1.5);
+						if(array_size(@args) < 4) {
+							@item = pinv(player(), null);
+							_minify_inv(@item);
+							@arena['itemspawn'][] = array(
+								start: true,
+								loc: array(round(@loc[0], 1), @loc[1], round(@loc[2], 1), @loc[3]),
+								item: @item,
+							);
+							msg(color('green').'Set held item to spawn here');
+							psend_block_change(player(), ploc(), 'GOLD_BLOCK');
+						} else if(is_numeric(@args[3])) {
 							@cooldown = @args[3];
 							@start = true;
 							if(array_size(@args) > 4) {
@@ -431,7 +442,7 @@ register_command('arena', array(
 							@arena['itemspawn'][] = array(
 								start: @start,
 								cooldown: @cooldown,
-								loc: array(round(ploc()[0], 1), ploc()[1] + 1.5, round(ploc()[2], 1), ploc()[3]),
+								loc: array(round(@loc[0], 1), @loc[1], round(@loc[2], 1), @loc[3]),
 								item: @item,
 							);
 							msg(color('green').'Set held item to spawn here '.if(@start, 'on start and '), 'every '.@cooldown.' seconds.');
