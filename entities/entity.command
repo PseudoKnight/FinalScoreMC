@@ -210,7 +210,7 @@ register_command('entity', array(
 						if(array_size(@args) == 3) {
 							return(false);
 						}
-						@name = @args[3];
+						@name = array_implode(@args[3..]);
 						if(length(@name) > 64) {
 							die(color('gold').'Name is too long.');
 						}
