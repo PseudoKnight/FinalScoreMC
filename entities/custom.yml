@@ -237,6 +237,29 @@ dinnerbunny:
     weapon: null
   name: Dinnerbone
   type: Skeleton
+drunken_villager:
+  effects:
+    speed:
+      seconds: -1.0
+      strength: 1
+  gear:
+    boots: null
+    chestplate: null
+    helmet: null
+    leggings: null
+    off_hand: null
+    weapon:
+      meta: null
+      name: LIGHTNING_ROD
+      qty: 1
+  invulnerable: true
+  name: Karaoke Karl
+  silent: true
+  type: villager
+  velocity:
+  - 0.0
+  - 0.1
+  - 0.7
 explovex:
   explode:
   - 20
