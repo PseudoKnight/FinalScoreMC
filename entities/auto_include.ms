@@ -92,8 +92,15 @@ proc _modify_entity(@e, @entity, @loc, @spawnData, @consumer) {
 			}
 		} else {
 			set_timeout(50, closure() {
-				@rider = _spawn_entity(@entity['rider'], @loc, @spawnData, @consumer);
-				set_entity_rider(@e, @rider);
+				if(is_array(@entity['rider']) && !is_associative(@entity['rider'])) {
+					foreach(@riderEntry in @entity['rider']) {
+						@rider = _spawn_entity(@riderEntry, @loc, @spawnData, @consumer);
+						set_entity_rider(@e, @rider);
+					}
+				} else {
+					@rider = _spawn_entity(@entity['rider'], @loc, @spawnData, @consumer);
+					set_entity_rider(@e, @rider);
+				}
 			});
 		}
 	}
@@ -229,7 +236,7 @@ proc _modify_entity(@e, @entity, @loc, @spawnData, @consumer) {
 	if(array_index_exists(@entity, 'effects')) {
 		try {
 			foreach(@name: @effect in @entity['effects']) {
-				set_mob_effect(@e, @name, @effect['strength'], @effect['seconds'], true, array_get(@effect, 'particles', true));
+				set_mob_effect(@e, @name, @effect['strength'], @effect['seconds'], array_get(@effect, 'ambient', true), array_get(@effect, 'particles', true));
 			}
 		} catch(BadEntityException @ex) {
 			// mob is gone for some reason
