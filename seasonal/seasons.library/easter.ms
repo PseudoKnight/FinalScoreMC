@@ -1,10 +1,12 @@
 bind('creature_spawn', null, array(type: 'ZOMBIE', reason: 'NATURAL'), @event, 
 		@trims = reflect_pull('enum', 'TrimPattern'),
-		@mats = array('LAPIS', 'AMETHYST', 'EMERALD', 'DIAMOND', 'GOLD', 'REDSTONE')) {
+		@mats = array('LAPIS', 'AMETHYST', 'EMERALD', 'DIAMOND', 'GOLD', 'REDSTONE', 'COPPER')) {
 	if(@event['location']['world'] === 'outworld' && rand(2)) {
 		@entity = @event['id'];
 		add_scoreboard_tag(@entity, 'easter_bunny');
 		set_mob_equipment(@entity, array(
+			weapon: null,
+			off_hand: null,
 			helmet: array(name: 'PLAYER_HEAD', meta: array(owneruuid: 'fbec11d4-80a7-4c1c-9de3-4136a16f1de0', texture:
 			'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZDU5YjU3MWRiMDI4NDI5ZmZlZmQwZTg2NzQ3NjBlMjU4ZjA4M2FlNjliYWQ4NWJjMzc2MTk2MWJjY2Q0YWFlIn19fQ==')),
 			chestplate: array(name: 'IRON_CHESTPLATE', meta: array(trim: array(material: array_get_rand(@mats), pattern: array_get_rand(@trims)))),
@@ -19,6 +21,7 @@ bind('creature_spawn', null, array(type: 'ZOMBIE', reason: 'NATURAL'), @event,
 			leggings: 0,
 			boots: 0,
 		));
+		set_can_pickup_items(@entity, false);
 		set_entity_spec(@entity, array(baby: true));
 		set_mob_effect(@entity, 'jump_boost', 1, -1, true, false);
 		set_entity_silent(@entity, true);
@@ -39,11 +42,7 @@ bind('entity_damage', null, array(type: 'ZOMBIE'), @event) {
 				color: array(rand(256), rand(256), rand(256)),
 			));
 		}
-		if(@event['finalamount'] >= get_entity_health(@event['id'])) {
-			play_sound(@loc, array(sound: 'ENTITY_RABBIT_DEATH', pitch: 0.5));
-		} else {
-			play_sound(@loc, array(sound: 'ENTITY_RABBIT_HURT', pitch: 0.5));
-		}
+		play_sound(@loc, array(sound: 'ENTITY_RABBIT_HURT', pitch: 0.5));
 	}
 }
 
@@ -51,11 +50,12 @@ bind('entity_death', null, array(type: 'ZOMBIE'), @event) {
 	if(has_scoreboard_tag(@event['id'], 'easter_bunny')) {
 		@drops = @event['drops'];
 		foreach(@i: @drop in @drops) {
-			if(@drop['name'] == 'ROTTEN_FLESH') {
+			if(@drop['name'] === 'ROTTEN_FLESH') {
 				array_remove(@drops, @i);
 			}
 		}
 		modify_event('drops', @drops);
+		play_sound(@event['location'], array(sound: 'ENTITY_RABBIT_DEATH', pitch: 0.5));
 	}
 }
 
@@ -147,43 +147,47 @@ bind('target_player', null, array(mobtype: 'ZOMBIE'), @event, @day, @passive = a
 	try {
 		@entity = @event['id'];
 		if(has_scoreboard_tag(@entity, 'easter_bunny')) {
-			@throwEgg = closure(@hand) {
-				if(entity_exists(@entity)
-				&& get_entity_health(@entity) > 0
-				&& ponline(@event['player'])
-				&& phealth(@event['player']) > 10
-				&& entity_can_see(@entity, puuid(@event['player']))) {
+			@health = get_entity_health(@entity);
+			@player = @event['player'];
+			@maxTries = array(30);
+			@hand = mutable_primitive('weapon');
+			set_interval(500, closure() {
+				if(!entity_exists(@entity)
+				|| get_entity_health(@entity) <= 0
+				|| !ponline(@player)
+				|| phealth(@player) < 10
+				|| @maxTries[0] <= 0) {
+					clear_task();
+					die();
+				}
+				@maxTries[0]--;
+				if(!entity_can_see(@entity, puuid(@player))) {
+					return();
+				}
+				if(@hand == 'weapon' || @maxTries[0] < 25 && rand() < 0.1) {
 					@equipment = get_mob_equipment(@entity);
-					@item = @equipment[@hand];
+					@item = @equipment[string(@hand)];
 					@mob = null;
-					if(!@item || @hand === 'off_hand') {
-						@mob = array_get_rand(if(@hand === 'weapon', @passive, @hostile));
+					if(!@item || @hand == 'off_hand') {
+						@mob = array_get_rand(if(@hand == 'weapon', @passive, @hostile));
 						@item = array(name: @mob.'_SPAWN_EGG');
-						@equipment[@hand] = @item;
+						@equipment[string(@hand)] = @item;
 						set_mob_equipment(@entity, @equipment);
 					} else if(string_ends_with(@item['name'], '_SPAWN_EGG')) {
 						@mob = replace(@item['name'], '_SPAWN_EGG', '');
 					} else {
+						clear_task();
 						die();
 					}
-					@egg = shoot_projectile(@entity, 'EGG', @event['player'], rand() + 1);
+					@egg = shoot_projectile(@entity, 'SNOWBALL', @player, rand() + 1);
 					set_projectile_item(@egg, @item);
-					if(@day == 1 || @day == 2 || @day == 31) {
-						if(get_mob_name(@entity) === 'Dinnerbone') {
-							set_mob_name(@entity, 'Dinnerbun');
-						} else {
-							set_mob_name(@entity, 'Dinnerbone');
-						}
-					}
 					set_timeout(0, closure(try(set_metadata(@egg, 'spawn_egg', @mob))));
+					if(@hand == 'weapon') {
+						@hand[] = 'off_hand'
+					} else {
+						clear_task();
+					}
 				}
-			}
-
-			set_timeout(500, closure() {
-				@throwEgg('weapon');
-				set_timeout((2 + rand(4)) * 1000, closure() {
-					@throwEgg('off_hand');
-				});
 			});
 		}
 	} catch(BadEntityException @ex) {
@@ -191,7 +195,7 @@ bind('target_player', null, array(mobtype: 'ZOMBIE'), @event, @day, @passive = a
 	}
 }
 
-bind('projectile_hit', null, array(type: 'EGG'), @event) {
+bind('projectile_hit', null, array(type: 'SNOWBALL'), @event) {
 	if(has_metadata(@event['id'], 'spawn_egg')) {
 		@mob = get_metadata(@event['id'], 'spawn_egg', 'CommandHelper');
 		if(@mob === 'MOOSHROOM') {
@@ -221,12 +225,6 @@ bind('projectile_hit', null, array(type: 'EGG'), @event) {
 bind('player_interact_entity', null, array(hand: 'main_hand'), @event) {
 	if(entity_loc(@event['id'])['world'] === 'outworld' && is_tameable(@event['id'])) {
 		set_entity_persistence(@event['id'], true);
-	}
-}
-
-bind('creature_spawn', null, array(type: 'CHICKEN', reason: 'EGG'), @event) {
-	if(@event['location']['world'] === 'outworld') {
-		cancel();
 	}
 }
 
