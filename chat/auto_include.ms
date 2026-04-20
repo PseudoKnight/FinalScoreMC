@@ -238,6 +238,9 @@ proc _tellraw(@recipients, @components) {
 	Capitalizes every separated word.
  */
 proc _to_upper_camel_case(@string) {
+	if(!@string) {
+		return('');
+	}
 	@split = reg_split('[_\\s]', @string);
 	foreach(@i: @s in @split) {
 		@split[@i] = to_upper(@s[0]).to_lower(@s[1..]);
