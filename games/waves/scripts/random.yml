@@ -1,4 +1,4 @@
-maxWaves: 50
+maxWaves: 35
 time: sunset
 respawn: WAVE_END
 sounds:
@@ -11,122 +11,192 @@ sounds:
 equipment:
     weapon:
         name: WOODEN_SWORD
-    helmet:
-        name: LEATHER_HELMET
-    chestplate:
-        name: LEATHER_CHESTPLATE
-    leggings:
-        name: LEATHER_LEGGINGS
-    boots:
-        name: LEATHER_BOOTS
 shoptiers:
-    - name: GOLD
+    - name: WOOD
     - name: STONE
-      item: FURNACE
-      cost: 7
+      item: COBBLESTONE
+      cost: 1
+    - name: COPPER
+      item: COPPER_INGOT
+      cost: 2
+    - name: GOLD
+      item: GOLD_INGOT
+      cost: 3
     - name: IRON
       item: IRON_INGOT
-      cost: 7
+      cost: 4
     - name: DIAMOND
       item: DIAMOND
-      cost: 7
+      cost: 5
     - name: NETHERITE
       item: NETHERITE_INGOT
-      cost: 7
+      cost: 6
 shop:
-    - name: GOLDEN_SWORD
+    - name: WOODEN_SWORD
       slot: 0
       cost: 1
     - name: STONE_SWORD
       slot: 0
-      cost: 3
+      cost: 1
       tier: 1
+    - name: COPPER_SWORD
+      slot: 0
+      cost: 1
+      tier: 2
+    - name: GOLDEN_SWORD
+      slot: 0
+      cost: 1
+      tier: 3
     - name: IRON_SWORD
       slot: 0
-      cost: 5
-      tier: 2
+      cost: 2
+      tier: 4
     - name: DIAMOND_SWORD
       slot: 0
-      cost: 7
-      tier: 3
+      cost: 3
+      tier: 5
     - name: NETHERITE_SWORD
       slot: 0
-      cost: 9
-      tier: 4
+      cost: 4
+      tier: 6
+    - name: WOODEN_AXE
+      slot: 1
+      cost: 1
     - name: STONE_AXE
       slot: 1
-      cost: 3
+      cost: 1
       tier: 1
+    - name: COPPER_AXE
+      slot: 1
+      cost: 1
+      tier: 2
+    - name: GOLDEN_AXE
+      slot: 1
+      cost: 1
+      tier: 3
     - name: IRON_AXE
       slot: 1
-      cost: 5
-      tier: 2
+      cost: 2
+      tier: 4
     - name: DIAMOND_AXE
       slot: 1
-      cost: 7
-      tier: 3
+      cost: 3
+      tier: 5
     - name: NETHERITE_AXE
       slot: 1
-      cost: 9
-      tier: 4
-    - name: MACE
+      cost: 4
+      tier: 6
+    - name: WOODEN_SPEAR
       slot: 2
-      cost: 7
-      tier: 3
-    - name: TRIDENT
-      slot: 3
-      cost: 7
-      tier: 3
-    - name: BOW
-      slot: 4
-      cost: 7
+      cost: 1
+    - name: STONE_SPEAR
+      slot: 2
+      cost: 1
       tier: 1
-    - name: CROSSBOW
-      slot: 5
-      cost: 7
+    - name: COPPER_SPEAR
+      slot: 2
+      cost: 1
       tier: 2
-    - name: APPLE
+    - name: GOLDEN_SPEAR
+      slot: 2
+      cost: 1
+      tier: 3
+    - name: IRON_SPEAR
+      slot: 2
+      cost: 2
+      tier: 4
+    - name: DIAMOND_SPEAR
+      slot: 2
+      cost: 3
+      tier: 5
+    - name: NETHERITE_SPEAR
+      slot: 2
+      cost: 4
+      tier: 6
+    - name: MACE
+      slot: 3
+      cost: 3
+      tier: 4
+    - name: TRIDENT
+      slot: 4
+      cost: 3
+      tier: 4
+    - name: BOW
+      slot: 5
+      cost: 3
+      tier: 2
+    - name: CROSSBOW
+      slot: 6
+      cost: 3
+      tier: 4
+    - name: CARROT
       slot: 9
+      cost: 1
+    - name: GOLDEN_CARROT
+      slot: 9
+      cost: 1
+      tier: 3
+    - name: APPLE
+      slot: 10
       cost: 1
     - name: GOLDEN_APPLE
       slot: 10
-      cost: 3
-    - name: COOKED_CHICKEN
+      cost: 1
+      tier: 3
+    - name: MUTTON
       slot: 11
-      cost: 2
+      cost: 1
+    - name: COOKED_MUTTON
+      slot: 11
+      cost: 1
+      tier: 1
+    - name: MUSHROOM_STEW
+      slot: 12
+      cost: 1
+    - name: RABBIT_STEW
+      slot: 12
+      cost: 1
       tier: 1
     - name: POTION
       meta:
           potiontype: LONG_SWIFTNESS
-      slot: 12
+      slot: 13
       cost: 1
-      tier: 2
+      tier: 5
     - name: POTION
       meta:
           potiontype: LONG_STRENGTH
-      slot: 13
+      slot: 14
       cost: 1
-      tier: 2
+      tier: 5
     - name: SPLASH_POTION
       meta:
           potiontype: STRONG_HEALING
-      slot: 14
+      slot: 15
       cost: 1
-      tier: 2
+      tier: 5
     - name: ARROW
       slot: 16
       cost: 1
-      tier: 1
-    - name: GOLDEN_HELMET
+      tier: 2
+    - name: SPECTRAL_ARROW
+      slot: 16
+      cost: 1
+      tier: 3
+    - name: TOTEM_OF_UNDYING
+      slot: 17
+      cost: 5
+      tier: 6
+    - name: LEATHER_HELMET
       slot: 18
       cost: 1
-    - name: GOLDEN_CHESTPLATE
+    - name: LEATHER_CHESTPLATE
       slot: 19
-      cost: 2
-    - name: GOLDEN_LEGGINGS
+      cost: 1
+    - name: LEATHER_LEGGINGS
       slot: 20
-      cost: 2
-    - name: GOLDEN_BOOTS
+      cost: 1
+    - name: LEATHER_BOOTS
       slot: 21
       cost: 1
     - name: CHAINMAIL_HELMET
@@ -135,163 +205,341 @@ shop:
       tier: 1
     - name: CHAINMAIL_CHESTPLATE
       slot: 19
-      cost: 5
+      cost: 3
       tier: 1
     - name: CHAINMAIL_LEGGINGS
       slot: 20
-      cost: 4
+      cost: 2
       tier: 1
     - name: CHAINMAIL_BOOTS
       slot: 21
       cost: 1
       tier: 1
+    - name: COPPER_HELMET
+      slot: 18
+      cost: 1
+      tier: 2
+    - name: COPPER_CHESTPLATE
+      slot: 19
+      cost: 2
+      tier: 2
+    - name: COPPER_LEGGINGS
+      slot: 20
+      cost: 1
+      tier: 2
+    - name: COPPER_BOOTS
+      slot: 21
+      cost: 1
+      tier: 2
+    - name: GOLDEN_HELMET
+      slot: 18
+      cost: 1
+      tier: 3
+    - name: GOLDEN_CHESTPLATE
+      slot: 19
+      cost: 2
+      tier: 3
+    - name: GOLDEN_LEGGINGS
+      slot: 20
+      cost: 1
+      tier: 3
+    - name: GOLDEN_BOOTS
+      slot: 21
+      cost: 1
+      tier: 3
     - name: SHIELD
       slot: 22
-      cost: 6
-      tier: 2
+      cost: 4
+      tier: 4
     - name: IRON_HELMET
       slot: 18
       cost: 2
-      tier: 2
+      tier: 4
     - name: IRON_CHESTPLATE
       slot: 19
-      cost: 6
-      tier: 2
+      cost: 3
+      tier: 4
     - name: IRON_LEGGINGS
       slot: 20
-      cost: 5
-      tier: 2
+      cost: 3
+      tier: 4
     - name: IRON_BOOTS
       slot: 21
       cost: 2
-      tier: 2
+      tier: 4
     - name: DIAMOND_HELMET
       slot: 18
-      cost: 5
-      tier: 3
+      cost: 2
+      tier: 5
     - name: DIAMOND_CHESTPLATE
       slot: 19
-      cost: 10
-      tier: 3
+      cost: 4
+      tier: 5
     - name: DIAMOND_LEGGINGS
       slot: 20
-      cost: 7
-      tier: 3
+      cost: 4
+      tier: 5
     - name: DIAMOND_BOOTS
       slot: 21
-      cost: 4
-      tier: 3
+      cost: 2
+      tier: 5
     - name: NETHERITE_HELMET
       slot: 18
-      cost: 5
-      tier: 4
+      cost: 2
+      tier: 6
     - name: NETHERITE_CHESTPLATE
       slot: 19
-      cost: 10
-      tier: 4
+      cost: 4
+      tier: 6
     - name: NETHERITE_LEGGINGS
       slot: 20
-      cost: 7
-      tier: 4
+      cost: 4
+      tier: 6
     - name: NETHERITE_BOOTS
       slot: 21
-      cost: 4
-      tier: 4
+      cost: 2
+      tier: 6
     - name: ENCHANTED_BOOK
       meta:
           stored:
               protection: 1
       slot: 27
-      cost: 2
-      tier: 3
+      cost: 1
+      tier: 5
     - name: ENCHANTED_BOOK
       meta:
           stored:
               infinity: 1
       slot: 28
-      cost: 2
-      tier: 3
+      cost: 1
+      tier: 5
     - name: ENCHANTED_BOOK
       meta:
           stored:
               loyalty: 1
       slot: 29
-      cost: 2
-      tier: 3
+      cost: 1
+      tier: 5
     - name: ENCHANTED_BOOK
       meta:
           stored:
               multishot: 1
       slot: 30
-      cost: 2
-      tier: 3
+      cost: 1
+      tier: 5
     - name: ENCHANTED_BOOK
       meta:
           stored:
               piercing: 1
       slot: 31
-      cost: 2
-      tier: 3
+      cost: 1
+      tier: 5
     - name: ENCHANTED_BOOK
       meta:
           stored:
               sweeping: 1
       slot: 32
-      cost: 2
-      tier: 3
+      cost: 1
+      tier: 5
     - name: ENCHANTED_BOOK
       meta:
           stored:
               power: 1
       slot: 33
-      cost: 2
-      tier: 3
+      cost: 1
+      tier: 5
     - name: ENCHANTED_BOOK
       meta:
           stored:
               flame: 1
       slot: 34
-      cost: 2
-      tier: 3
+      cost: 1
+      tier: 5
     - name: ENCHANTED_BOOK
       meta:
           stored:
               fire_aspect: 1
       slot: 35
-      cost: 2
-      tier: 3
+      cost: 1
+      tier: 5
     - name: ENCHANTED_BOOK
       meta:
           stored:
               density: 1
       slot: 36
-      cost: 2
-      tier: 3
+      cost: 1
+      tier: 5
     - name: ENCHANTED_BOOK
       meta:
           stored:
               wind_burst: 1
       slot: 37
-      cost: 2
-      tier: 3
+      cost: 1
+      tier: 5
     - name: ENCHANTED_BOOK
       meta:
           stored:
               impaling: 1
       slot: 38
-      cost: 2
-      tier: 3
+      cost: 1
+      tier: 5
     - name: ENCHANTED_BOOK
       meta:
           stored:
               quick_charge: 1
       slot: 39
-      cost: 2
-      tier: 3
+      cost: 1
+      tier: 5
     - name: ENCHANTED_BOOK
       meta:
          stored:
             sharpness: 1
       slot: 40
-      cost: 2
-      tier: 3
+      cost: 1
+      tier: 5
+modifierPool:
+    - tiny
+    - small
+    - big
+    - huge
+    - invisible
+    - infested
+    - oozing
+    - weaving
+    - wind_charged
+    - fast
+    - passenger
+    - doubled
+    - stacked
+    - silent
+    - arrows
+mobPool:
+    1: # 8
+        - type: ENDERMITE # 8 health, 3 damage, 0.25 speed
+        - type: MAGMA_CUBE # 4 health, 6 damage
+          tags:
+              size: 2
+        - type: SILVERFISH # 8 health, 1.5 damage, 0.25 speed
+        - type: SLIME # 4 health, 3 damage
+          tags: 
+              size: 2
+        - type: HUSK # 20 health + 2 armor, 4.5 damage + hunger 7*RDs, 0.23 speed
+        - type: ZOMBIE # 20 health + 2 armor, 4.5 damage, 0.23 speed
+          gear: null
+        - type: CREAKING # 1 health, 4.5 damage, 0.3 speed
+        - type: LLAMA # 15 health, 1.5 damage, 0.175 speed
+    2: # 8
+        - type: ZOGLIN # 40 health, 0.75 damage, 0.3 speed
+          tags:
+              baby: true
+        - type: BOGGED # 16 health + armor, 3 damage, 0.25 speed?
+          gear:
+              weapon: null
+        - type: SKELETON # 20 health, 3 damage, 0.25 speed?
+          gear: null
+        - type: SLIME # 16 health, 6 damage
+          tags:
+              size: 4
+        - type: SPIDER # 16 health, 3 damage, 0.3 speed
+        - type: STRAY # 20 health, 3 damage, 0.25 speed?
+          gear: null
+        - type: WOLF # 8 health, 6 damage, 0.3 speed
+        - type: PANDA # 20 health, 9 damage, 0.15 speed
+          tags:
+              maingene: AGGRESSIVE
+    3: # 9
+        - type: ZOMBIFIED_PIGLIN # 20 health + 2 armor, 7.5 damage, 0.23 speed
+          gear: null
+        - type: POLAR_BEAR # 30 health, 9 damage, 0.25 speed
+        - type: PILLAGER # 24 health, 5 - 7 damage, 0.35 speed
+        - type: PIGLIN # 16 health + armor, 3 - 5 damage, 0.35 speed
+          tags:
+              baby: false
+              zombificationimmune: true
+          gear:
+              weapon:
+                  name: CROSSBOW
+        - type: GUARDIAN # 30 health, 9 damage, 0.5 damage
+        - type: MAGMA_CUBE # 16 health, 9 damage
+          tags:
+              size: 4
+        - type: PHANTOM # 20 health, 3 damage, 0.7 speed
+        - type: SKELETON # 20 health + armor, 4 - 8 damage, 0.25 speed
+        - type: STRAY # + armor, 3 - 5 damage + slowness 30s, 0.25 speed
+    4: # 9
+        - type: VEX # 14 health, 6 damage, 0.7 speed
+          gear: null
+        - type: BREEZE # 30 health, 1.5+ damage, 0.6 damage
+        - type: VINDICATOR # 24 health, 7.5 damage, 0.35 speed
+          gear: null
+        - type: BEE # 10 health, 3 damage + 18s poison, 0.3 speed
+        - type: RABBIT # 3 health + 8 armor, 12 damage, 0.3 speed
+          tags:
+              type: THE_KILLER_BUNNY
+        - type: WITHER_SKELETON # 20 health, 6 damage + 10s wither (5 damage), 0.3125 speed
+          gear: null
+        - type: ZOMBIFIED_PIGLIN # 20 health + 2 armor, 12 damage, 0.23 speed
+        - type: PIGLIN # 16 health + armor, 12 damage, 0.35 speed
+          tags:
+              baby: false
+              zombificationimmune: true
+          gear:
+              weapon:
+                  name: GOLDEN_SWORD
+        - type: CREEPER # 20 health, 0 - 64.5 damage, 0.25 speed
+    5: # 9
+        - type: BOGGED # 16 health + armor, 4 - 8 damage + 4s poison, 0.25 speed
+        - type: BLAZE # 20 health, 7.5 damage + 5s fire (5 damage), 0.3 speed
+        - type: CAVE_SPIDER # 12 health, 3 damage + 15s poison (12 damage), 0.3 speed
+        - type: GHAST # 10 health, flying
+        - type: SHULKER # 30 health + shell, 6 damage + levitation, teleportation 
+        - type: ILLUSIONER # 32 health, 3 - 5 damage, 0.5 speed
+        - type: ZOGLIN # 40 health, 4.5 damage, 0.3 speed
+          tags:
+              baby: false
+        - type: WITCH # 26+ health, 6 damage or 36 poison damage or slowness or weakness, 0.25 speed
+        - type: PARCHED # 16 health + armor, 2 - 4 damage + 30s weakness, 0.25 speed
+    6: # 9
+        - type: ZOMBIE_HORSE
+          rider:
+              type: ZOMBIE # 20 health + armor
+              gear:
+                  weapon:
+                      name: IRON_SPEAR
+        - type: SKELETON_HORSE # 15 health?, 0 damage, 0.2 speed?
+          rider:
+              type: SKELETON # 20 health, 4 - 8 damage, 0.25 speed
+        - type: WITHER_SKELETON # 20 health, 4 - 8 damage + 5s fire, 0.3125
+          gear:
+              weapon:
+                  name: BOW
+        - custom: worm
+        - type: CREEPER # 20 health, 0 - 127.5 damage, 0.25 speed
+          tags:
+              powered: true
+        - type: VEX # 14 health, 13.5 damage, 0.7 speed
+        - type: ELDER_GUARDIAN # 80 health, 12 damage, 0.3 speed
+        - type: ENDERMAN # 40 health, 10.5 damage
+        - type: WITHER_SKELETON # 20 health, 12 damage + 10s wither (5 damage), 0.3125
+    7: # 7
+        - type: DROWNED # 20 health + 2 armor, 16.5 damage, 0.23 speed
+          gear:
+              weapon:
+                  name: TRIDENT
+        - type: EVOKER # 24 health, 9 damage, 0.5 speed
+        - type: VINDICATOR # 24 health, 19.5 damage, 0.35 speed
+        - type: PIGLIN_BRUTE # 50 health, 19.5 damage, 0.35 speed
+        - type: IRON_GOLEM # 100 health, 11.25 - 32.25 damage, 0.25 speed
+        - type: RAVAGER # 100 health, 18 damage, 0.4 speed
+        - type: CAMEL_HUSK
+          rider:
+              - type: HUSK # 20 health + armor, 4.5 damage + hunger 7*RDs, 0.23 speed
+                gear:
+                    weapon:
+                        name: IRON_SPEAR
+              - type: PARCHED # 16 health, 2 - 4 damage + 30s weakness, 0.25 speed
+                gear:
+                    weapon:
+                        name: BOW
+finalboss:
+    type: WITHER

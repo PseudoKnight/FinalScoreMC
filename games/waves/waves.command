@@ -1,26 +1,29 @@
 register_command('waves', array(
 	description: 'Manages and starts custom waves against enemies.',
-	usage: '/waves <start|set|delete|info> [arena_id] [spawn|lobby|schematic|startblock] [blocktype|schematicname]',
+	usage: '/waves <action> [arena_id] [setting] [value]',
 	tabcompleter: _create_tabcompleter(
-		array('start', 'set', 'delete', 'records', 'resetrecords'),
+		array('start', 'set', 'delete', 'info', 'records', 'resetrecords'),
 		array('<arena_id>'),
 		array(
 			'<<set': array('spawn', 'lobby', 'schematic', 'startblock', 'trigger'),
-			'<<delete': array('spawns', 'schematic', 'startblock', 'trigger')),
+			'<<delete': array('spawns', 'schematic', 'startblock', 'trigger'),
+			'<<records|resetrecords': array('[script]'),
+		array(
+			'<<<records': array('[playerCount]'))),
 	),
 	executor: closure(@alias, @sender, @args, @info) {
 		if(!@args) {
 			return(false);
 		}
 		@action = @args[0];
+		@name = array_get(@args, 1, null);
+		if(!@name && @action !== 'start') {
+			die(color('gold').'This requires an arena id.');
+		}
 		switch(@action) {
 			case 'set':
 				if(!has_permission('group.engineer')) {
 					die(color('gold').'No permission.');
-				}
-				@name = array_get(@args, 1, null);
-				if(!@name) {
-					die(color('gold').'This requires an arena id.');
 				}
 				@arena = get_value('waves', @name);
 				if(!@arena) {
@@ -67,10 +70,6 @@ register_command('waves', array(
 				if(!has_permission('group.engineer')) {
 					die(color('gold').'No permission.');
 				}
-				@name = array_get(@args, 1, null);
-				if(!@name) {
-					die(color('gold').'This requires an arena id.');
-				}
 				if(array_size(@args) == 2) {
 					clear_value('waves', @name);
 					msg(color('green').'Deleted arena');
@@ -92,30 +91,26 @@ register_command('waves', array(
 				if(!has_permission('group.engineer')) {
 					die(color('gold').'No permission.');
 				}
-				@name = array_get(@args, 1, null);
-				if(!@name) {
-					die(color('gold').'This requires an arena id.');
-				}
 				@arena = get_value('waves', @name);
 				msg(color('green').'Arena info for '.@name);
 				msg(map_implode(@arena, ': '.color('gray'), '\n'));
 
 			case 'records':
-				@name = array_get(@args, 1, null);
-				if(!@name) {
-					die(color('gold').'This requires an arena id.');
-				}
 				@script = array_get(@args, 2, 'random');
+				@index = array_get(@args, 3, 1) - 1;
 				@records = array();
 				foreach(@key: @data in get_values('waves', @name, @script)) {
+					if(!array_index_exists(@data, @index) || !@data[@index]) {
+						continue();
+					}
 					@uuid = split('.', @key)[-1];
 					@pdata = _pdata_by_uuid(@uuid);
-					@records[] = array(name: @pdata['name'], waves: @data);
+					@records[] = array(name: @pdata['name'], waves: @data[@index]);
 				}
 				array_sort(@records, closure(@left, @right){
 					return(@left['waves'] < @right['waves']);
 				});
-				msg(color('green').color('bold').'Player records:');
+				msg(color('green').color('bold').'Records for '.(@index + 1).' players:');
 				foreach(@entry in @records) {
 					msg(@entry['name'].': '.@entry['waves']);
 				}
@@ -123,10 +118,6 @@ register_command('waves', array(
 			case 'resetrecords':
 				if(!has_permission('group.engineer')) {
 					die(color('gold').'No permission.');
-				}
-				@name = array_get(@args, 1, null);
-				if(!@name) {
-					die(color('gold').'This requires an arena id.');
 				}
 				@script = array_get(@args, 2, null);
 				if(!@script) {
@@ -176,7 +167,7 @@ register_command('waves', array(
 				
 				if(array_size(@scripts) == 1) {
 					@name = array_keys(@scripts)[0];
-					@waves = _waves_prepare(@name, @arena, @region, @world);
+					@waves = _waves_create(@name, @arena, @region, @world);
 					try {
 						_waves_start(@waves);
 					} catch(Exception @ex) {
@@ -206,7 +197,7 @@ register_command('waves', array(
 				create_virtual_inventory('wavesstart'.@region, 9, 'Pick a Script', @menu);
 				popen_inventory('wavesstart'.@region);
 				
-				bind('inventory_close', null, null, @e, @player = player(), @region) {
+				bind('inventory_close', null, null, @event, @player = player(), @region) {
 					if(player() == @player) {
 						unbind(player().'click');
 						unbind();
@@ -214,16 +205,15 @@ register_command('waves', array(
 					}
 				}
 				
-				bind('inventory_click', array(id: player().'click'), array(player: player()), @e, @arena, @region, @world) {
-					@item = @e['slotitem'];
+				bind('inventory_click', array(id: player().'click'), array(player: player()), @event, @arena, @region, @world) {
+					@item = @event['slotitem'];
 					if(@item && @item['meta'] && @item['meta']['display']) {
 						close_pinv(); // unbinds and deletes menu
 						
 						@name = replace(to_lower(@item['meta']['display']), ' ', '');
 
-						array @waves;
+						@waves = _waves_create(@name, @arena, @region, @world);
 						try {
-							@waves = _waves_prepare(@name, @arena, @region, @world);
 							_waves_start(@waves);
 						} catch(Exception @ex) {
 							console(@ex['classType'].': '.@ex['message'], false);

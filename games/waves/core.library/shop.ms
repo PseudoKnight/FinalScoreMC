@@ -22,12 +22,6 @@ proc _prepare_shops(@waves, @tier = 0) {
 		@shop[@slot] = array(name: @name, qty: @item['cost'], meta: @meta);
 		@items[@name] = @item['cost'];
 	}
-	if(array_index_exists(@waves['config'], 'shoptiers') && array_index_exists(@waves['config']['shoptiers'], @tier + 1)) {
-		@shop[53] = array(
-			name: @waves['config']['shoptiers'][@tier + 1]['item'],
-			qty: @waves['config']['shoptiers'][@tier + 1]['cost'],
-			meta: array(display: 'Upgrade shop to '.@waves['config']['shoptiers'][@tier + 1]['name'].' tier'));
-	}
 	@waves['shop'] = @items;
 	create_virtual_inventory('waves'.@waves['region'], 54, 'BUY OR SELL', @shop);
 }
@@ -72,6 +66,7 @@ proc _bind_shop_events(@waves) {
 						if(plevel() < @tier['cost']) {
 							die();
 						}
+						@waves['shopTier'] = @newTier;
 						set_plevel(plevel() - @tier['cost']);
 						play_sound(ploc(), array(sound: 'BLOCK_ANVIL_USE', volume: 2));
 						break();
@@ -107,6 +102,13 @@ proc _bind_shop_events(@waves) {
 						pgive_item(@item);
 						set_plevel(plevel() - @cost);
 						play_sound(ploc(), array(sound: 'BLOCK_ANVIL_LAND', pitch: 2, volume: 0.5), player());
+						@tier = @waves['shopTier'] + 1;
+						if(array_index_exists(@waves['config'], 'shoptiers') && array_index_exists(@waves['config']['shoptiers'], @tier)) {
+							set_inventory_item('waves'.@waves['region'], 53, array(
+								name: @waves['config']['shoptiers'][@tier]['item'],
+								qty: @waves['config']['shoptiers'][@tier]['cost'],
+								meta: array(display: 'Upgrade shop to '.@waves['config']['shoptiers'][@tier]['name'].' tier')));
+						}
 					}
 					die();
 				}

@@ -156,13 +156,17 @@ proc _modify_entity(@e, @entity, @loc, @spawnData, @consumer) {
 		@range = 0;
 		@projectile = '';
 		@interval = 1500;
+		@count = 1;
 		if(is_array(@entity['targetnear'])) {
 			@range = @entity['targetnear']['range'];
 			if(array_index_exists(@entity['targetnear'], 'projectile')) {
 				@projectile = @entity['targetnear']['projectile'];
-				if(array_index_exists(@entity['targetnear'], 'interval')) {
-					@interval = @entity['targetnear']['interval'];
-				}
+			}
+			if(array_index_exists(@entity['targetnear'], 'interval')) {
+				@interval = @entity['targetnear']['interval'];
+			}
+			if(array_index_exists(@entity['targetnear'], 'count')) {
+				@count = @entity['targetnear']['count'];
 			}
 		} else {
 			@range = @entity['targetnear'];
@@ -197,12 +201,24 @@ proc _modify_entity(@e, @entity, @loc, @spawnData, @consumer) {
 								}
 							}
 						}
-						if(@nearestTarget) {
+
+						if(@count > 1) {
+							@projectileLocation = location_shift(entity_loc(@e), 'up', 1.5);
+							@world = @projectileLocation['world'];
+							@radians = to_radians(@projectileLocation['yaw'] + 90);
+							@inc = 6.28 / @count;
+							for(@r = @radians, @r < @radians + 6.28, @r += @inc) {
+								shoot_projectile(@e, @projectile, array(
+									x: cos(@r) * @range + @projectileLocation['x'],
+									y: @projectileLocation['y'],
+									z: sin(@r) * @range + @projectileLocation['z'],
+									world: @world,
+								), 1);
+							}
+						} else if(@nearestTarget) {
 							@loc2 = ploc(@nearestTarget);
 							@loc2['y'] += 2;
-							@loc1['yaw'] = get_yaw(@loc1, @loc2);
-							@loc1['pitch'] = get_pitch(@loc1, @loc2);
-							set_entity_loc(@e, @loc1);
+							set_entity_rotation(@e, get_yaw(@loc1, @loc2), get_pitch(@loc1, @loc2));
 							shoot_projectile(@e, @projectile, @nearestTarget);
 						}
 					}
