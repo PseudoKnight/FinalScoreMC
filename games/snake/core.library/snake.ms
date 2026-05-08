@@ -166,15 +166,15 @@ proc _snake_spawn(@player, @game) {
 
 proc _snake_set_color(@player, @color, @game,
 @colors = array(
-	array('BLUE_TERRACOTTA', 'LIGHT_BLUE_TERRACOTTA', 'DARK_BLUE'), # blue
-	array('BLUE_CONCRETE', 'LIGHT_BLUE_CONCRETE', 'BLUE'), # neon blue
-	array('GREEN_TERRACOTTA', 'LIME_TERRACOTTA', 'DARK_GREEN'), # green
-	array('GREEN_CONCRETE', 'LIME_CONCRETE', 'GREEN'), # neon green
-	array('RED_TERRACOTTA', 'PINK_TERRACOTTA', 'DARK_RED'), # red
-	array('RED_CONCRETE', 'PINK_CONCRETE', 'RED'), # neon pink
-	array('PURPLE_TERRACOTTA', 'MAGENTA_TERRACOTTA', 'DARK_PURPLE'), # purple
-	array('ORANGE_CONCRETE', 'YELLOW_CONCRETE', 'YELLOW'), # neon yellow
-	array('LIGHT_GRAY_CONCRETE', 'WHITE_CONCRETE', 'WHITE'), # neon white
+	array('BLUE_TERRACOTTA', 'LIGHT_BLUE_TERRACOTTA', '#453658', '#6C6786'), # blue
+	array('BLUE_CONCRETE', 'LIGHT_BLUE_CONCRETE', '#282A90', '#1E89C7'), # neon blue
+	array('GREEN_TERRACOTTA', 'LIME_TERRACOTTA', '#474E21', '#64732D'), # green
+	array('GREEN_CONCRETE', 'LIME_CONCRETE', '#495C20', '#5FAB12'), # neon green
+	array('RED_TERRACOTTA', 'PINK_TERRACOTTA', '#8C3928', '#A54E4E'), # red
+	array('RED_CONCRETE', 'PINK_CONCRETE', '#8F1A1A', '#D76590'), # neon pink
+	array('PURPLE_TERRACOTTA', 'MAGENTA_TERRACOTTA', '#723F51', '#97596B'), # purple
+	array('ORANGE_CONCRETE', 'YELLOW_CONCRETE', '#E26200', '#F3B10D'), # neon yellow
+	array('LIGHT_GRAY_CONCRETE', 'WHITE_CONCRETE', '#7D7D73', '#D0D6D7'), # neon white
 )) {
 	@snake = @game['snakes'][@player];
 	foreach(@slot: @colorArray in @colors) {
@@ -184,11 +184,12 @@ proc _snake_set_color(@player, @color, @game,
 			}
 			@head = @colorArray[0];
 			@tail = @colorArray[1];
-			@text = @colorArray[2];
+			@textHead = @colorArray[2];
+			@textTail = @colorArray[3];
 			@snake['head'] = @head;
 			@snake['tail'] = @tail;
-			@snake['color'] = color(@text);
-			set_team_display(@player, array('color': @text), 'snake');
+			@snake['color'] = color(@textTail);
+			set_team_display(@player, array('prefix': color(@textHead).'⏹'.@snake['color'].'⏹⏹ '), 'snake');
 			break();
 		}
 	}
@@ -196,6 +197,18 @@ proc _snake_set_color(@player, @color, @game,
 
 // Set colors for all snakes that do not have one set
 proc _snake_set_colors(@game) {
+	@botColors = _snake_bots();
+	foreach(@name: @snake in @game['snakes']) {
+		if(@snake['bot'] && !@snake['head'] && !array_index_exists(@snake, 'team')) {
+			@inv = get_inventory('snake');
+			foreach(@slot in range(9)) {
+				if(@inv[@slot] && @inv[@slot]['name'] === @botColors[@name]) {
+					_snake_set_color(@name, @inv[@slot]['name'], @game);
+					break();
+				}
+			}
+		}
+	}
 	foreach(@name: @snake in @game['snakes']) {
 		if(!@snake['head']) {
 			@inv = get_inventory('snake');

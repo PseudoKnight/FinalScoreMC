@@ -30,7 +30,7 @@ proc _snake_queue(@mode) {
 	@game['surfaces'] = 0;
 	@game['snakes'] = associative_array();
 	@game['powerups'] = array();
-	@game['numPowerups'] = if(@mode == 'gluttony', 1, 15);
+	@game['numPowerups'] = if(@mode == 'gluttony', 1, if(@mode != 'endless', 25, 15));
 	@game['numPlayers'] = 9;
 	@game['botsOnly'] = false;
 	@game['missiles'] = associative_array();
@@ -133,7 +133,7 @@ proc _snake_queue(@mode) {
 		@bots = _snake_bots();
 		while(array_size(@game['snakes']) < @game['numPlayers'] && @bots) {
 			@index = array_rand(@bots)[0];
-			_snake_add(@bots[@index], @game);
+			_snake_add(@index, @game);
 			array_remove(@bots, @index);
 		}
 	}

@@ -1,5 +1,10 @@
 proc _snake_bots() {
-	return(array('Grumpy','BatSnake','SharkBot','CrazyBot', 'NinjaBot'));
+	return(array(
+		'Grumpy': 'LIME_TERRACOTTA',
+		'BatSnake': 'LIGHT_BLUE_TERRACOTTA',
+		'SharkBot': 'LIGHT_BLUE_CONCRETE',
+		'CrazyBot': 'PINK_TERRACOTTA',
+		'NinjaBot': 'LIME_CONCRETE'));
 }
 
 proc _snake_bot_update(@bot, @game) {
