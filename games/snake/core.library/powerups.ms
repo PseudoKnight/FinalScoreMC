@@ -72,7 +72,13 @@ proc _snake_get_slot_from(@powerup) {
 }
 
 proc _snake_add_powerup(@game) {
-	@region = @game['region'].rand(1, @game['surfaces'] + 1);
+	@region = null;
+	if(@game['mode'] === 'capture' && @game['surfaces'] >= 4
+	&& array_size(@game['powerups']) < @game['numPowerups'] - 1) {
+		@region = @game['region'].((rand(2) + 1) * 2);
+	} else {
+		@region = @game['region'].rand(1, @game['surfaces'] + 1);
+	}
 	@loc = _snake_valid_location(@region);
 	if(@loc) {
 		@maxIndex = if(@game['mode'] == 'capture', 4, if(@game['mode'] == 'gluttony', 2, 5));
