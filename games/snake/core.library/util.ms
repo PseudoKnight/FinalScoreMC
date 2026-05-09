@@ -148,16 +148,8 @@ proc _snake_clean_surfaces(@game) {
 				for(@y = @minY, @y <= @maxY, @y++) {
 					queue_push(closure(){
 						for(@z = @minZ, @z <= @maxZ, @z++) {
-							if(@walls && (@z == @minZ || @z == @maxZ)) {
-								if(@count == 2) {
-									set_block(array(@x, @y, @z, 'custom'), 'DARK_PRISMARINE', false);
-								} else if(@count == 4) {
-									set_block(array(@x, @y, @z, 'custom'), 'RED_NETHER_BRICKS', false);
-								}
-							} else {
-								set_block(array(@x, @y, @z,, 'custom'), 'AIR', false);
-								spawn_particle(array(@x, @y, @z, 'custom'), array(particle: 'CRIT', speed: 0.01, force: true));
-							}
+							set_block(array(@x, @y, @z,, 'custom'), 'AIR', false);
+							spawn_particle(array(@x, @y, @z, 'custom'), array(particle: 'CRIT', speed: 0.01, force: true));
 						}
 					}, 'snake_cleanup');
 				}
@@ -167,16 +159,13 @@ proc _snake_clean_surfaces(@game) {
 				for(@y = @minY, @y <= @maxY, @y++) {
 					queue_push(closure(){
 						@halfX = integer((@maxX - @minX) / 2 + @minX);
-						@halfZ = integer((@maxZ - @minZ) / 2 + @minZ);
+						@oneQuarterX = integer((@maxX - @minX) / 4) + @minX;
+						@threeQuarterX = integer((@maxX - @minX) * 3 / 4 + @minX);
 						for(@x = @minX, @x <= @maxX, @x++) {
-							if(@walls && @count != 5 && (@x == @minX || @x == @maxX)) {
-								if(@x == @maxX) {
-									set_block(array(@x, @y, @z, 'custom'), 'DARK_PRISMARINE', false);
-								} else {
-									set_block(array(@x, @y, @z, 'custom'), 'RED_NETHER_BRICKS', false);
-								}
-							} else if(@walls && @count == 5 && @x == @halfX && @z != @halfZ) {
-								set_block(array(@x, @y, @z, 'custom'), 'STONE_BRICKS', false);
+							if(@walls && @x == @halfX) {
+								set_block(array(@x, @y, @z, 'custom'), 'WHITE_TERRACOTTA', false);
+							} else if(@walls && (@x == @oneQuarterX || @x == @threeQuarterX)) {
+								set_block(array(@x, @y, @z, 'custom'), 'LIGHT_GRAY_TERRACOTTA', false);
 							} else {
 								set_block(array(@x, @y, @z, 'custom'), 'AIR', false);
 								spawn_particle(array(@x, @y, @z, 'custom'), array(particle: 'CRIT', speed: 0.01, force: true));
