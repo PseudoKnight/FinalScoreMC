@@ -26,15 +26,19 @@ proc _snake_bind_events(@game) {
 		if(sk_region_contains(@game['region'], @event['location'])) {
 			array_remove_values(@game['tnt'], @event['id']);
 			foreach(@block in @event['blocks']) {
+				// check if in panel (sub-region)
+				if(array_size(sk_regions_at(@block)) < 2) {
+					continue();
+				}
 				@id = get_block(@block);
 				if(_is_snake_tail(@id)) {
 					foreach(@player: @snake in @game['snakes']) {
 						if(@snake['loc'][0] == @block[0] && @snake['loc'][1] == @block[1] && @snake['loc'][2] == @block[2]) {
 							_snake_kill(@player, @game);
-						} else {
-							set_block(@block, 'AIR', false);
+							break();
 						}
 					}
+					set_block(@block, 'AIR', false);
 				} else if(@id == 'TNT') {
 					set_block(@block, 'AIR', false);
 					_snake_remove_powerup(@block, @game);
