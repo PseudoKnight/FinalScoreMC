@@ -31,6 +31,7 @@ proc _snake_add(@player, @game) {
 		'head': '',
 		'tail': '',
 		'color': color('white'),
+		'armorColor': array(255, 255, 255),
 		'bot': '',
 	);
 
@@ -87,7 +88,6 @@ proc _snake_add(@player, @game) {
 		pfacing(@player, @yaw, @pitch);
 
 		set_pscoreboard(@player, 'snake');
-		set_pmode(@player, 'SURVIVAL');
 		set_pflight(@player, true);
 		set_pflying(@player, true);
 		_set_pactivity(@player, 'Snake');
@@ -153,28 +153,20 @@ proc _snake_spawn(@player, @game) {
 	@snake['boost'] = 0;
 
 	_snake_set_top(@snake);
-
-	if(ponline(@player) && @game['mode'] == 'capture' && @snake['tail']) {
-		clear_pinv(@player);
-		set_pinv(@player, array(
-			7: array('name': @snake['tail']),
-			8: array('name': 'REDSTONE_TORCH', 'meta': associative_array('display': 'JOYSTICK')),
-		));
-	}
 	return(true);
 }
 
 proc _snake_set_color(@player, @color, @game,
 @colors = array(
-	array('BLUE_TERRACOTTA', 'LIGHT_BLUE_TERRACOTTA', '#453658', '#6C6786'), # blue
-	array('BLUE_CONCRETE', 'LIGHT_BLUE_CONCRETE', '#282A90', '#1E89C7'), # neon blue
-	array('GREEN_TERRACOTTA', 'LIME_TERRACOTTA', '#474E21', '#64732D'), # green
-	array('GREEN_CONCRETE', 'LIME_CONCRETE', '#495C20', '#5FAB12'), # neon green
-	array('RED_TERRACOTTA', 'PINK_TERRACOTTA', '#8C3928', '#A54E4E'), # red
-	array('RED_CONCRETE', 'PINK_CONCRETE', '#8F1A1A', '#D76590'), # neon pink
-	array('PURPLE_TERRACOTTA', 'MAGENTA_TERRACOTTA', '#723F51', '#97596B'), # purple
-	array('ORANGE_CONCRETE', 'YELLOW_CONCRETE', '#E26200', '#F3B10D'), # neon yellow
-	array('LIGHT_GRAY_CONCRETE', 'WHITE_CONCRETE', '#7D7D73', '#D0D6D7'), # neon white
+	array('BLUE_TERRACOTTA', 'LIGHT_BLUE_TERRACOTTA', '#453658', '#6C6786', array(108, 103, 134)), # blue
+	array('BLUE_CONCRETE', 'LIGHT_BLUE_CONCRETE', '#282A90', '#1E89C7', array(30, 137, 199)), # neon blue
+	array('GREEN_TERRACOTTA', 'LIME_TERRACOTTA', '#474E21', '#64732D', array(100, 115, 45)), # green
+	array('GREEN_CONCRETE', 'LIME_CONCRETE', '#495C20', '#5FAB12', array(95, 171, 18)), # neon green
+	array('RED_TERRACOTTA', 'PINK_TERRACOTTA', '#8C3928', '#A54E4E', array(165, 78, 78)), # red
+	array('RED_CONCRETE', 'PINK_CONCRETE', '#8F1A1A', '#D76590', array(215, 101, 144)), # neon pink
+	array('PURPLE_TERRACOTTA', 'MAGENTA_TERRACOTTA', '#723F51', '#97596B', array(151, 89, 107)), # purple
+	array('ORANGE_CONCRETE', 'YELLOW_CONCRETE', '#E26200', '#F3B10D', array(243, 177, 13)), # neon yellow
+	array('LIGHT_GRAY_CONCRETE', 'WHITE_CONCRETE', '#7D7D73', '#D0D6D7', array(208, 214, 215)), # neon white
 )) {
 	@snake = @game['snakes'][@player];
 	foreach(@slot: @colorArray in @colors) {
@@ -182,14 +174,11 @@ proc _snake_set_color(@player, @color, @game,
 			if(has_inventory('snake')) {
 				set_inventory_item('snake', @slot, null);
 			}
-			@head = @colorArray[0];
-			@tail = @colorArray[1];
-			@textHead = @colorArray[2];
-			@textTail = @colorArray[3];
-			@snake['head'] = @head;
-			@snake['tail'] = @tail;
-			@snake['color'] = color(@textTail);
-			set_team_display(@player, array('prefix': color(@textHead).'⏹'.@snake['color'].'⏹⏹ '), 'snake');
+			@snake['head'] = @colorArray[0];
+			@snake['tail'] = @colorArray[1];
+			@snake['color'] = color(@colorArray[3]);
+			@snake['armorColor'] = @colorArray[4];
+			set_team_display(@player, array('prefix': color(@colorArray[2]).'⏹'.@snake['color'].'⏹⏹ '), 'snake');
 			break();
 		}
 	}
@@ -222,11 +211,20 @@ proc _snake_set_colors(@game) {
 		}
 		set_block(@snake['loc'], @snake['head'], false);
 		set_block(@snake['blocks'][0], @snake['tail'], false);
+	}
+}
+
+proc _snake_set_equipment(@game) {
+	foreach(@name: @snake in @game['snakes']) {
 		if(ponline(@name)) {
 			clear_pinv(@name);
 			set_pinv(@name, array(
-				7: array('name': @snake['tail']),
-				8: array('name': 'REDSTONE_TORCH', 'meta': associative_array('display': 'JOYSTICK')),
+				7: array(name: @snake['tail']),
+				100: array(name: 'LEATHER_BOOTS', meta: array(color: @snake['armorColor'])),
+				101: array(name: 'LEATHER_LEGGINGS', meta: array(color: @snake['armorColor'])),
+				102: array(name: 'LEATHER_CHESTPLATE', meta: array(color: @snake['armorColor'], modifiers: array(
+					array(attribute: 'PLAYER_BLOCK_INTERACTION_RANGE', operation: 'ADD_NUMBER', amount: 64, slot: 'ARMOR', id: 'reach')
+				))),
 			));
 		}
 	}

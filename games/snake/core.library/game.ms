@@ -161,6 +161,7 @@ proc _snake_queue(@mode) {
 					unbind();
 					unbind('snake-invclick');
 					_snake_set_colors(@game);
+					_snake_set_equipment(@game);
 					delete_virtual_inventory('snake');
 					_snake_countdown(@game);
 				}
@@ -168,6 +169,7 @@ proc _snake_queue(@mode) {
 		}
 	} else {
 		_snake_set_colors(@game);
+		_snake_set_equipment(@game);
 		delete_virtual_inventory('snake');
 		_snake_countdown(@game);
 	}
