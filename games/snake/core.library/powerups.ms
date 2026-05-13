@@ -474,6 +474,7 @@ proc _snake_launch_missile(@loc, @dir, @game) {
 				if(@dir) {
 					@missile['dir'] = @dir;
 					play_sound(@missile['loc'], associative_array('sound': 'ENTITY_IRON_GOLEM_HURT', 'pitch': 1.5, 'volume': 4));
+					@missile['skip'] = false;
 				}
 			} else {
 				array_remove(@game['missiles'], @key);
