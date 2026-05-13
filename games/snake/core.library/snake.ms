@@ -33,6 +33,7 @@ proc _snake_add(@player, @game) {
 		'color': color('white'),
 		'armorColor': array(255, 255, 255),
 		'bot': '',
+		'debug': null,
 	);
 
 	if(!get_pscore('score', @player, 'snake')) {
@@ -153,6 +154,22 @@ proc _snake_spawn(@player, @game) {
 	@snake['boost'] = 0;
 
 	_snake_set_top(@snake);
+
+	if(@game['debug']) {
+		if(@snake['debug'] && entity_exists(@snake['debug'])) {
+			set_entity_loc(@snake['debug'], _center(@snake['loc'][], 1.5));
+		} else {
+			@snake['debug'] = spawn_entity('TEXT_DISPLAY', 1, _center(@snake['loc'][], 1.5), closure(@e) {
+				set_entity_spec(@e, array(text: null, bgcolor: null));
+				set_entity_saves_on_unload(@e, false);
+				set_display_entity(@e, array(
+					billboard: 'VERTICAL',
+					brightness: 15,
+					transformation: array(scale: array(x: 2, y: 2, z: 2))
+				));
+			})[0];
+		}
+	}
 	return(true);
 }
 
@@ -231,6 +248,9 @@ proc _snake_set_equipment(@game) {
 }
 
 proc _snake_remove(@player, @game) {
+	if(@game['debug']) {
+		try(entity_remove(@game['snakes'][@player]['debug']))
+	}
 	@snake = array_remove(@game['snakes'], @player);
 	if(is_array(@snake)) {
 		@snake['alive'] = false;
@@ -387,6 +407,10 @@ proc _snake_move(@player, @game) {
 	}
 
 	set_block(@snake['loc'], @snake['head'], false);
+
+	if(@game['debug']) {
+		set_entity_loc(@snake['debug'], _center(@snake['loc'][], 1.5));
+	}
 	return(true);
 }
 

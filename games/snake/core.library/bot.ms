@@ -17,7 +17,7 @@ proc _snake_bot_update(@bot, @game) {
 				_snake_bot_target_powerup(@snake, @game, 'missile');
 			}
 		} else if(@snake['target']['interest'] == 0) {
-			@snake['target'] = null;
+			_snake_bot_forget_target(@snake, @game);
 		}
 		if(@snake['boost'] == 0 && @snake['ability-count'][0] > 0) {
 			_snake_ability(@bot, 0, @game);
@@ -78,7 +78,7 @@ proc _snake_bot_update(@bot, @game) {
 				_snake_bot_target_snake(@snake, @game);
 			}
 		} else if(@snake['target']['interest'] == 0) {
-			@snake['target'] = null;
+			_snake_bot_forget_target(@snake, @game);
 		}
 		if(@snake['boost'] == 0 && @snake['ability-count'][0] > 0) {
 			_snake_ability(@bot, 0, @game);
@@ -123,7 +123,7 @@ proc _snake_bot_update(@bot, @game) {
 				_snake_bot_target_snake(@snake, @game);
 			}
 		} else if(@snake['target']['interest'] == 0) {
-			@snake['target'] = null;
+			_snake_bot_forget_target(@snake, @game);
 		}
 		if(@snake['boost'] == 0 && @snake['ability-count'][0] > 0) {
 			_snake_ability(@bot, 0, @game);
@@ -184,7 +184,7 @@ proc _snake_bot_update(@bot, @game) {
 				_snake_bot_target_snake(@snake, @game);
 			}
 		} else if(@snake['target']['interest'] == 0) {
-			@snake['target'] = null;
+			_snake_bot_forget_target(@snake, @game);
 		}
 		if(@snake['target']) {
 			@snake['target']['interest']--;
@@ -238,7 +238,7 @@ proc _snake_bot_update(@bot, @game) {
 				_snake_bot_target_snake(@snake, @game);
 			}
 		} else if(@snake['target']['interest'] == 0) {
-			@snake['target'] = null;
+			_snake_bot_forget_target(@snake, @game);
 		}
 		@randAbility = rand(5);
 		if(@snake['ability-count'][@randAbility] > 0 && (@randAbility != 0 || @snake['boost'] == 0)) {
@@ -283,6 +283,9 @@ proc _snake_bot_target_powerup(@snake, @game, @type = 'all') {
 			}
 		}
 	}
+	if(@game['debug'] && is_array(@snake['target'])) {
+		set_entity_spec(@snake['debug'], array(text: @type));
+	}
 	return(is_array(@snake['target']));
 }
 
@@ -295,8 +298,9 @@ proc _snake_bot_target_snake(@snake, @game) {
 		foreach(@bot: @othersnake in @game['snakes']) {
 			if(!array_contains(@game['nukes'], @othersnake['region'])
 			&& @othersnake['alive']
-			&& ((@game['botsOnly'] && @snake['bot'] != @othersnake['bot'] || !@othersnake['bot'])
-			|| (!array_index_exists(@snake, 'team') || @snake['team'] != @othersnake['team']))) {
+			&& @snake['bot'] !== @othersnake['bot']
+			&& (@game['botsOnly'] || !@othersnake['bot'])
+			&& (!array_index_exists(@snake, 'team') || @snake['team'] != @othersnake['team'])) {
 				@dist = distance(@othersnake['loc'], @snake['loc']);
 				if(@dist < @closest) {
 					@snake['target'] = array('type': 'snake', 'name': @bot, 'interest': 50);
@@ -305,7 +309,17 @@ proc _snake_bot_target_snake(@snake, @game) {
 			}
 		}
 	}
+	if(@game['debug'] && is_array(@snake['target'])) {
+		set_entity_spec(@snake['debug'], array(text: @snake['target']['name']));
+	}
 	return(is_array(@snake['target']));
+}
+
+proc _snake_bot_forget_target(@snake, @game) {
+	@snake['target'] = null;
+	if(@game['debug'] && is_array(@snake['target'])) {
+		set_entity_spec(@snake['debug'], array(text: null));
+	}
 }
 
 proc _snake_bot_change_dir(@snake, @loc1, @loc2) {

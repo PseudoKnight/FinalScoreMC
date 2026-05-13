@@ -40,6 +40,7 @@ proc _snake_queue(@mode) {
 	@game['teams'] = array(array(), array());
 	@game['flags'] = array(null, null);
 	@game['fire'] = array();
+	@game['debug'] = true;
 	export('snake', @game);
 
 	// Get arena
