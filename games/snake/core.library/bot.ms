@@ -355,9 +355,11 @@ proc _snake_bot_change_dir(@snake, @loc1, @loc2) {
 					@dir = 'up';
 				}
 		}
-		if(@dir && @dir != @snake['dir']
-		&& @dir != _snake_opposite_dir(@snake['dir'])
-		&& _snake_safe_block(get_block(location_shift(@loc1, @dir)))) {
+		if(!@dir || @dir === @snake['dir'] || @dir === _snake_opposite_dir(@snake['dir'])) {
+			continue();
+		}
+		@checkLoc = location_shift(@loc1, @dir);
+		if(_snake_safe_block(get_block(@checkLoc), @checkLoc, @snake['last-dir'])) {
 			@snake['last-dir'] = @snake['dir'];
 			@snake['dir'] = @dir;
 			@snake['turned'] = true;

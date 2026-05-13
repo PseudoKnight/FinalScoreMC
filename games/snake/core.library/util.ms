@@ -58,7 +58,7 @@ proc _snake_safe_dir(@snake) {
 	@loc = @snake['loc'];
 	if(@snake['last-dir']) {
 		@loc = location_shift(@loc, @snake['last-dir']);
-		if(_snake_safe_block(get_block(@loc), @loc)) {
+		if(_snake_safe_block(get_block(@loc), @loc, @snake['last-dir'])) {
 			return(@snake['last-dir']);
 		}
 	}
@@ -66,7 +66,7 @@ proc _snake_safe_dir(@snake) {
 	if(is_array(@turn)) {
 		foreach(@t in @turn) {
 			@loc = location_shift(@snake['loc'], @t);
-			if(@t != @snake['last-dir'] && _snake_safe_block(get_block(@loc), @loc)) {
+			if(@t != @snake['last-dir'] && _snake_safe_block(get_block(@loc), @loc, @t)) {
 				return(@t);
 			}
 		}
@@ -76,7 +76,7 @@ proc _snake_safe_dir(@snake) {
 
 proc _snake_safe_path(@loc, @top, @dir, @missiles) {
 	@loc = location_shift(@loc, @dir);
-	if(!_snake_safe_block(get_block(@loc), @loc)) {
+	if(!_snake_safe_block(get_block(@loc), @loc, @dir)) {
 		return(false);
 	}
 	foreach(@missile in @missiles) {
@@ -97,7 +97,7 @@ proc _snake_safe_path(@loc, @top, @dir, @missiles) {
 	return(false);
 }
 
-proc _snake_safe_block(@block, @loc) {
+proc _snake_safe_block(@block, @loc, @dir) {
 	// special case for lasers, as the powerup block is the same as the deadly laser
 	if(@loc && @block == 'RED_STAINED_GLASS') {
 		@game = import('snake');
@@ -109,6 +109,9 @@ proc _snake_safe_block(@block, @loc) {
 			}
 		}
 		return(false);
+	}
+	if(@loc && @dir && @block === 'SEA_LANTERN') {
+		return(_snake_safe_block(get_block(location_shift(@loc, _snake_dir_of_surface(@loc, _snake_opposite_dir(@dir))))));
 	}
 	return(@block == 'AIR' || @block == 'SEA_LANTERN' || _snake_get_powerup_from(@block));
 }
