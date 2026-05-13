@@ -148,18 +148,22 @@ proc _snake_clean_surfaces(@game) {
 		@maxZ = max(@area[1][2], @area[0][2]);
 		if(@minX == @maxX) {
 			for(@x = @minX, @x <= @maxX, @x++) {
-				for(@y = @minY, @y <= @maxY, @y++) {
+				for(@y = @minY, @y <= @maxY, @y += 2) {
 					queue_push(closure(){
 						for(@z = @minZ, @z <= @maxZ, @z++) {
-							set_block(array(@x, @y, @z,, 'custom'), 'AIR', false);
+							set_block(array(@x, @y, @z, 'custom'), 'AIR', false);
 							spawn_particle(array(@x, @y, @z, 'custom'), array(particle: 'CRIT', speed: 0.01, force: true));
+							if(@y + 1 <= @maxY) {
+								set_block(array(@x, @y + 1, @z, 'custom'), 'AIR', false);
+								spawn_particle(array(@x, @y + 1, @z, 'custom'), array(particle: 'CRIT', speed: 0.01, force: true));
+							}
 						}
 					}, 'snake_cleanup');
 				}
 			}
 		} else {
 			for(@z = @minZ, @z <= @maxZ, @z++) {
-				for(@y = @minY, @y <= @maxY, @y++) {
+				for(@y = @minY, @y <= @maxY, @y += 2) {
 					queue_push(closure(){
 						@halfX = integer((@maxX - @minX) / 2 + @minX);
 						@oneQuarterX = integer((@maxX - @minX) / 4) + @minX;
@@ -167,11 +171,21 @@ proc _snake_clean_surfaces(@game) {
 						for(@x = @minX, @x <= @maxX, @x++) {
 							if(@walls && @x == @halfX) {
 								set_block(array(@x, @y, @z, 'custom'), 'WHITE_TERRACOTTA', false);
+								if(@y + 1 <= @maxY) {
+									set_block(array(@x, @y + 1, @z, 'custom'), 'WHITE_TERRACOTTA', false);
+								}
 							} else if(@walls && (@x == @oneQuarterX || @x == @threeQuarterX)) {
 								set_block(array(@x, @y, @z, 'custom'), 'LIGHT_GRAY_TERRACOTTA', false);
+								if(@y + 1 <= @maxY) {
+									set_block(array(@x, @y + 1, @z, 'custom'), 'LIGHT_GRAY_TERRACOTTA', false);
+								}
 							} else {
 								set_block(array(@x, @y, @z, 'custom'), 'AIR', false);
 								spawn_particle(array(@x, @y, @z, 'custom'), array(particle: 'CRIT', speed: 0.01, force: true));
+								if(@y + 1 <= @maxY) {
+									set_block(array(@x, @y + 1, @z, 'custom'), 'AIR', false);
+									spawn_particle(array(@x, @y + 1, @z, 'custom'), array(particle: 'CRIT', speed: 0.01, force: true));
+								}
 							}
 						}
 					}, 'snake_cleanup');

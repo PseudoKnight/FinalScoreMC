@@ -186,8 +186,8 @@ proc _snake_countdown(@game) {
 			'Press '.color('green').'slot #'.color('reset').' to activate pickup'),
 		color('green').color('italic').'Go snake, go!'
 	);
-	@secondsLeft = array(10);
-	set_interval(1000, closure(){
+	@secondsLeft = array(8);
+	set_interval(1000, 0, closure(){
 		@secondsLeft[0]--;
 		_snake_set_colors(@game);
 		@title = if(@secondsLeft[0], @secondsLeft[0], '');
