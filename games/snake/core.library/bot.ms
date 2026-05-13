@@ -196,7 +196,7 @@ proc _snake_bot_update(@bot, @game) {
 					@targetLoc = location_shift(@game['snakes'][@target]['loc'], @game['snakes'][@target]['dir']);
 					if(_snake_bot_change_dir(@snake, @snake['loc'], @targetLoc)) {
 						if(@snake['top'] != 'up' && @snake['loc'][1] > @targetLoc[1]) {
-							_snake_ability(@bot, 0, @game);
+							_snake_ability(@bot, 2, @game);
 						}
 						return();
 					}
@@ -226,8 +226,12 @@ proc _snake_bot_update(@bot, @game) {
 					array_remove(@game['tnt'], @i);
 				}
 			}
-		} else if(!_snake_safe_path(@snake['loc'], @snake['top'], @snake['dir'], @game['missiles'])) {
+		}
+		if(!_snake_safe_path(@snake['loc'], @snake['top'], @snake['dir'], @game['missiles'])) {
 			@dir = _snake_safe_dir(@snake);
+			if(@dir == @snake['dir']) {
+				_snake_ability(@bot, 2, @game);
+			}
 			@snake['last-dir'] = @snake['dir'];
 			@snake['dir'] = @dir;
 			@snake['turned'] = true;
