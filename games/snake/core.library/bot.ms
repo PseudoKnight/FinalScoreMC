@@ -318,7 +318,7 @@ proc _snake_bot_target_snake(@snake, @game) {
 proc _snake_bot_forget_target(@snake, @game) {
 	@snake['target'] = null;
 	if(@game['debug'] && is_array(@snake['target'])) {
-		set_entity_spec(@snake['debug'], array(text: null));
+		set_entity_spec(@snake['debug'], array(text: ''));
 	}
 }
 

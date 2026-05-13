@@ -160,7 +160,7 @@ proc _snake_spawn(@player, @game) {
 			set_entity_loc(@snake['debug'], _center(@snake['loc'][], 1.5));
 		} else {
 			@snake['debug'] = spawn_entity('TEXT_DISPLAY', 1, _center(@snake['loc'][], 1.5), closure(@e) {
-				set_entity_spec(@e, array(text: null, bgcolor: null));
+				set_entity_spec(@e, array(text: '', bgcolor: null));
 				set_entity_saves_on_unload(@e, false);
 				set_display_entity(@e, array(
 					billboard: 'VERTICAL',
@@ -269,6 +269,9 @@ proc _snake_kill(@player, @game) {
 	}
 	if(@snake['laser']) {
 		_snake_clear_laser(@player, @game)
+	}
+	if(@game['debug']) {
+		try(entity_remove(@game['snakes'][@player]['debug']))
 	}
 	@snake['alive'] = false;
 	if(@game['mode'] == 'endless') {
