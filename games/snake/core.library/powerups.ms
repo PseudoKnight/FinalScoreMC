@@ -457,25 +457,16 @@ proc _snake_launch_missile(@loc, @dir, @game) {
 			}
 			@missile['loc'] = location_shift(@missile['loc'], @missile['dir']);
 			@block = get_block(@missile['loc']);
+			if(@block === 'SEA_LANTERN') {
+				@missile['dir'] = _snake_dir_of_surface(@missile['loc'], _snake_opposite_dir(@missile['dir']));
+				@missile['loc'] = location_shift(@missile['loc'], @missile['dir']);
+				@block = get_block(@missile['loc']);
+			}
 			if(@block == 'AIR') {
 				if(!@missile['skip']) {
 					set_block(@missile['loc'], 'REDSTONE_BLOCK', false);
 				} else {
 					@missile['skip'] = false;
-				}
-			} else if(@block == 'SEA_LANTERN') {
-				@dir = _snake_dir_of_surface(@missile['loc'], _snake_opposite_dir(@missile['dir']));
-				if(@dir) {
-					@missile['dir'] = @dir;
-					@missile['loc'] = location_shift(@missile['loc'], @dir);
-					if(!@missile['skip']) {
-						set_block(@missile['loc'], 'REDSTONE_BLOCK', false);
-					} else {
-						@missile['skip'] = false;
-					}
-				} else if(@clear){
-					array_remove(@game['missiles'], @key);
-					clear_task();
 				}
 			} else if(@block == 'REDSTONE_BLOCK') {
 				_snake_remove_powerup(@missile['loc'], @game);
