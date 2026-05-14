@@ -417,10 +417,10 @@ proc _snake_move(@player, @game) {
 	return(true);
 }
 
-proc _snake_turn(@top, @dir) {
-	switch(@top) {
+proc _snake_turn_directions(@snake) {
+	switch(@snake['top']) {
 		case 'north':
-			switch(@dir) {
+			switch(@snake['dir']) {
 				case 'east':
 					return(array('down', 'up'));
 				case 'west':
@@ -432,7 +432,7 @@ proc _snake_turn(@top, @dir) {
 			}
 
 		case 'south':
-			switch(@dir) {
+			switch(@snake['dir']) {
 				case 'east':
 					return(array('up', 'down'));
 				case 'west':
@@ -444,7 +444,7 @@ proc _snake_turn(@top, @dir) {
 			}
 
 		case 'east':
-			switch(@dir) {
+			switch(@snake['dir']) {
 				case 'north':
 					return(array('up', 'down'));
 				case 'south':
@@ -456,7 +456,7 @@ proc _snake_turn(@top, @dir) {
 			}
 
 		case 'west':
-			switch(@dir) {
+			switch(@snake['dir']) {
 				case 'north':
 					return(array('down', 'up'));
 				case 'south':
@@ -468,7 +468,7 @@ proc _snake_turn(@top, @dir) {
 			}
 
 		case 'up':
-			switch(@dir) {
+			switch(@snake['dir']) {
 				case 'north':
 					return(array('west', 'east'));
 				case 'south':
@@ -481,7 +481,7 @@ proc _snake_turn(@top, @dir) {
 
 
 		case 'down':
-			switch(@dir) {
+			switch(@snake['dir']) {
 				case 'north':
 					return(array('east', 'west'));
 				case 'south':

@@ -62,20 +62,21 @@ proc _snake_safe_dir(@snake) {
 			return(@snake['last-dir']);
 		}
 	}
-	@turn = _snake_turn(@snake['top'], @snake['dir']);
-	if(is_array(@turn)) {
-		foreach(@t in @turn) {
-			@loc = location_shift(@snake['loc'], @t);
-			if(@t != @snake['last-dir'] && _snake_safe_block(get_block(@loc), @loc, @t)) {
-				return(@t);
+	@directions = _snake_turn_directions(@snake);
+	if(is_array(@directions)) {
+		foreach(@dir in @directions) {
+			@loc = location_shift(@snake['loc'], @dir);
+			if(@dir !== @snake['last-dir'] && _snake_safe_block(get_block(@loc), @loc, @dir)) {
+				return(@dir);
 			}
 		}
 	}
 	return(@snake['dir']);
 }
 
-proc _snake_safe_path(@loc, @top, @dir, @missiles) {
-	@loc = location_shift(@loc, @dir);
+proc _snake_safe_path(@snake, @missiles) {
+	@dir = @snake['dir'];
+	@loc = location_shift(@snake['loc'], @dir);
 	if(!_snake_safe_block(get_block(@loc), @loc, @dir)) {
 		return(false);
 	}
@@ -86,12 +87,12 @@ proc _snake_safe_path(@loc, @top, @dir, @missiles) {
 			return(false);
 		}
 	}
-	@turn = _snake_turn(@top, @dir);
+	@directions = _snake_turn_directions(@snake);
 	@block = get_block(location_shift(@loc, @dir));
 	if((_snake_safe_block(@block)
 	&& (@block == 'SEA_LANTERN' || _snake_safe_block(get_block(location_shift(@loc, @dir, 2)))))
-	|| _snake_safe_block(get_block(location_shift(@loc, @turn[0])))
-	|| _snake_safe_block(get_block(location_shift(@loc, @turn[1])))) {
+	|| _snake_safe_block(get_block(location_shift(@loc, @directions[0])))
+	|| _snake_safe_block(get_block(location_shift(@loc, @directions[1])))) {
 		return(true);
 	}
 	return(false);
