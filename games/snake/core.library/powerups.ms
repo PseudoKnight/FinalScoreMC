@@ -305,7 +305,7 @@ proc _snake_drop_nuke(@snake, @game) {
 	@x = floor(@coords[0][0] - (@coords[0][0] - @coords[1][0]) / 2) + 0.5;
 	@y = floor(@coords[0][1] - (@coords[0][1] - @coords[1][1]) / 2) + 0.5;
 	@z = floor(@coords[0][2] - (@coords[0][2] - @coords[1][2]) / 2) + 0.5;
-	@target = array(@x, @y, @z, 'custom');
+	@target = array_normalize(location_shift(array(@x, @y, @z, 'custom'), @snake['top'], 0.4))[0..3];
 
 	// determine sides of blast plane (coord to side, direction from target to side, coord of side)
 	@sides = array(array(0, 1, 2), array(2, 1, 0), array(0, -1, 2), array(2, -1, 0));
@@ -321,13 +321,36 @@ proc _snake_drop_nuke(@snake, @game) {
 	// create nuke marker
 	@loc = @snake['loc'][];
 	@loc[0] += 0.5;
-	@loc[1] -= 0.5;
+	@loc[1] += 0.5;
 	@loc[2] += 0.5;
-	@marker = spawn_entity('ARMOR_STAND', 1, @loc, closure(@entity) {
+	@loc = array_normalize(location_shift(@loc, @snake['top'], 0.4))[0..3];
+	@marker = spawn_entity('BLOCK_DISPLAY', 1, @loc, closure(@entity) {
 		set_entity_saves_on_unload(@entity, false);
-		add_scoreboard_tag(@entity, 'remove');
-		set_entity_spec(@entity, array('marker': true, 'visible': false, 'gravity': false, 'small': true));
-		set_mob_equipment(@entity, array('helmet': array('name': 'DIAMOND_BLOCK')));
+		set_entity_spec(@entity, array(blockdata: 'soul_lantern'));
+		// get yaw/pitch to target
+		@yaw = get_yaw(@loc, @target);
+		if(@yaw == math_const('NaN')) {
+			@yaw = 0;
+		}
+		@pitch = get_pitch(@loc, @target) + 90;
+		@v1 = get_vector(array(yaw: @yaw + 90, pitch: 0), 0.5);
+		@v2 = get_vector(array(yaw: @yaw + 180, pitch: -@pitch), 0.5);
+		// get quaternion rotation
+		@y = -to_radians(@yaw) * 0.5;
+		@p = to_radians(@pitch) * 0.5;
+		@leftRotation = array(
+			w: cos(@p) * cos(@y),
+			x: sin(@p) * cos(@y),
+			y: cos(@p) * sin(@y),
+			z: -sin(@p) * sin(@y),
+		);
+		set_display_entity(@entity, array(
+			brightness: 15,
+			teleportduration: 2,
+			transformation: array(
+				leftRotation: @leftRotation,
+				translation: array(x: @v1['x'] + @v2['x'], y: @v1['y'] + @v2['y'], z: @v1['z'] + @v2['z']),
+				scale: array(x: 1, y: 2, z: 1))));
 	})[0];
 
 	// now move it to the target location over time
@@ -340,11 +363,10 @@ proc _snake_drop_nuke(@snake, @game) {
 			@loc[2] = @newLoc[2];
 			try {
 				set_entity_loc(@marker, @loc);
+				spawn_particle(@loc, array(particle: 'CAMPFIRE_COSY_SMOKE', force: true));
+				spawn_particle(@target, array(particle: 'REDSTONE', force: true));
 			} catch(BadEntityException @ex) {
 				clear_task();
-				// load chunk just in case players left
-				get_block(@loc);
-				try(entity_remove(@marker))
 			}
 		} else {
 			clear_task();
