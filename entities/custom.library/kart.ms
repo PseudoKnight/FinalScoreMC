@@ -318,7 +318,7 @@ proc _kart_tick(@player, @kart, @race) {
 			clear_task();
 			die();
 		}
-		if(!entity_exists(@display)) {
+		if(!entity_exists(@display) || !entity_exists(@collider)) {
 			clear_task();
 			die();
 		}
