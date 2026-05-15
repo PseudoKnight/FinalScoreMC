@@ -211,6 +211,7 @@ proc _snake_bot_target_powerup(@snake, @game, @type = 'all') {
 				@snake['target'] = array(
 					type: 'powerup',
 					loc: @powerup['loc'],
+					region: @powerup['region'],
 					interest: 50);
 				@closest = @dist;
 			}
@@ -239,7 +240,10 @@ proc _snake_bot_target_snake(@snake, @game) {
 			&& (!array_index_exists(@snake, 'team') || @snake['team'] != @othersnake['team'])) {
 				@dist = distance(@othersnake['loc'], @snake['loc']);
 				if(@dist < @closest) {
-					@snake['target'] = array('type': 'snake', 'name': @bot, 'interest': 50);
+					@snake['target'] = array(
+						type: 'snake',
+						name: @bot,
+						interest: 50);
 					@closest = @dist;
 				}
 			}
@@ -257,10 +261,13 @@ proc _snake_bot_lose_interest(@snake, @game) {
 			@snake['target'] = null;
 		} else if(@snake['target']['type'] === 'snake') {
 			@target = @snake['target']['name'];
-			if(!array_index_exists(@game['snakes'], @target) || !@game['snakes'][@target]['alive']) {
+			if(!array_index_exists(@game['snakes'], @target)
+			|| !@game['snakes'][@target]['alive']
+			|| array_contains(@game['nukes'], @game['snakes'][@target]['region'])) {
 				@snake['target'] = null;
 			}
-		} else if(_is_snake_tail(get_block(@snake['target']['loc']))) {
+		} else if(_is_snake_tail(get_block(@snake['target']['loc']))
+		|| array_contains(@game['nukes'], @snake['target']['region'])) {
 			@snake['target'] = null;
 		}
 		if(@game['debug'] && !@snake['target']) {
