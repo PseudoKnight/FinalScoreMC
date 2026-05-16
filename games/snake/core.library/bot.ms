@@ -205,7 +205,11 @@ proc _snake_bot_update(@bot, @game) {
 proc _snake_bot_target_powerup(@snake, @game, @type = 'all') {
 	@closest = 25;
 	foreach(@powerup in @game['powerups']) {
-		if(!array_contains(@game['nukes'], @powerup['region']) && (@type === 'all' || @powerup['type'] === @type)) {
+		if(!array_contains(@game['nukes'], @powerup['region']) && (@type === 'all' || @powerup['type'] === @type)
+		&& (!@snake['lasttarget'] || !@snake['lasttarget']['type'] !== 'powerup'
+		|| @powerup['loc'][0] != @snake['lasttarget']['loc'][0]
+		|| @powerup['loc'][1] != @snake['lasttarget']['loc'][1]
+		|| @powerup['loc'][2] != @snake['lasttarget']['loc'][2])) {
 			@dist = distance(@powerup['loc'], @snake['loc']);
 			if(@dist < @closest) {
 				@snake['target'] = array(
@@ -237,7 +241,8 @@ proc _snake_bot_target_snake(@snake, @game) {
 			&& @othersnake['alive']
 			&& @snake['bot'] !== @othersnake['bot']
 			&& (@game['botsOnly'] || !@othersnake['bot'])
-			&& (!array_index_exists(@snake, 'team') || @snake['team'] != @othersnake['team'])) {
+			&& (!array_index_exists(@snake, 'team') || @snake['team'] != @othersnake['team'])
+			&& (!@snake['lasttarget'] || @snake['lasttarget']['type'] !== 'snake' || @snake['lasttarget']['name'] !== @bot || !rand(3))) {
 				@dist = distance(@othersnake['loc'], @snake['loc']);
 				if(@dist < @closest) {
 					@snake['target'] = array(
@@ -258,16 +263,19 @@ proc _snake_bot_target_snake(@snake, @game) {
 proc _snake_bot_lose_interest(@snake, @game) {
 	if(@snake['target']) {
 		if(--@snake['target']['interest'] <= 0) {
+			@snake['lasttarget'] = @snake['target'];
 			@snake['target'] = null;
 		} else if(@snake['target']['type'] === 'snake') {
 			@target = @snake['target']['name'];
 			if(!array_index_exists(@game['snakes'], @target)
 			|| !@game['snakes'][@target]['alive']
 			|| array_contains(@game['nukes'], @game['snakes'][@target]['region'])) {
+				@snake['lasttarget'] = @snake['target'];
 				@snake['target'] = null;
 			}
 		} else if(_is_snake_tail(get_block(@snake['target']['loc']))
 		|| array_contains(@game['nukes'], @snake['target']['region'])) {
+			@snake['lasttarget'] = @snake['target'];
 			@snake['target'] = null;
 		}
 		if(@game['debug'] && !@snake['target']) {

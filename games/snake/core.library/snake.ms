@@ -147,6 +147,7 @@ proc _snake_spawn(@player, @game) {
 	@snake['turned'] = false;
 	@snake['alive'] = true;
 	@snake['target'] = null;
+	@snake['lasttarget'] = null;
 	@snake['laser'] = 0;
 	@snake['laser-blocks'] = null;
 	@snake['last-dir'] = '';
@@ -349,7 +350,11 @@ proc _snake_move(@player, @game) {
 	|| (@game['mode'] == 'capture' && (@block == 'CYAN_GLAZED_TERRACOTTA' || @block == 'RED_GLAZED_TERRACOTTA'))) {
 		@snake['blocks'][] = @snake['loc'][];
 		if(_snake_powerup(@player, @powerup, @game)) {
+			@snake['lasttarget'] = @snake['target'];
 			@snake['target'] = null;
+			if(@game['debug']) {
+				set_entity_spec(@snake['debug'], array(text: ''));
+			}
 		} else if(@game['mode'] == 'capture') {
 			@team = @snake['team'];
 			@otherteam = abs(@team - 1);
@@ -388,7 +393,11 @@ proc _snake_move(@player, @game) {
 		@block = get_block(@loc);
 		@powerup = _snake_get_powerup_from(@block);
 		if(@powerup && _snake_remove_powerup(@loc, @game) && _snake_powerup(@player, @powerup, @game)) {
+			@snake['lasttarget'] = @snake['target'];
 			@snake['target'] = null;
+			if(@game['debug']) {
+				set_entity_spec(@snake['debug'], array(text: ''));
+			}
 		} else if(!(@block == 'AIR' || @block == 'RED_STAINED_GLASS' && @snake['laser'])) {
 			return(false);
 		}
