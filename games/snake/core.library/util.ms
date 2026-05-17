@@ -81,10 +81,14 @@ proc _snake_safe_path(@snake, @missiles) {
 		return(false);
 	}
 	foreach(@missile in @missiles) {
-		if(@missile['loc'][0] == @loc[0]
-		|| @missile['loc'][1] == @loc[1]
-		|| @missile['loc'][2] == @loc[2]) {
-			return(false);
+		@aligned = false;
+		for(@i = 0, @i < 3, @i++) {
+			if(@missile['loc'][@i] == @loc[@i]) {
+				if(@aligned) {
+					return(false);
+				}
+				@aligned = true;
+			}
 		}
 	}
 	@directions = _snake_turn_directions(@snake);
