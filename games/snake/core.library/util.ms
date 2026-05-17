@@ -1,6 +1,5 @@
 proc _is_snake_tail(@block) {
-	@match = reg_match('^([A-Z_]+)_(TERRACOTTA|CONCRETE)$', @block);
-	return(@match && @match[1] != 'BLACK');
+	return(boolean(reg_match('^([A-Z_]+)_(TERRACOTTA|CONCRETE)$', @block)));
 }
 
 proc _snake_valid_location(@region, @padding = 0) {

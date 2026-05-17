@@ -115,7 +115,6 @@ proc _snake_remove_all_powerups(@game) {
 proc _snake_check_powerups(@game) {
 	foreach(@key: @pu in @game['powerups']) {
 		if(!_snake_get_powerup_from(get_block(@pu['loc']))) {
-			set_block(@pu['loc'], 'AIR', false);
 			array_remove(@game['powerups'], @key);
 		}
 	}
@@ -376,10 +375,19 @@ proc _snake_drop_nuke(@snake, @game) {
 			@state = array(radius: 1, side: 0);
 			set_block(@target, 'FIRE', false);
 			@game['fire'][] = @target[];
+			@firePerimeter = array();
 			play_sound(@target, array(sound: 'ENTITY_GENERIC_EXPLODE', pitch: 0.5, volume: 3));
 			set_interval(50, closure(){
-				if(!array_contains(@game['nukes'], @region)) {
-					clear_task()
+				if(array_size(@firePerimeter) > 3 || @state['radius'] > @maxradius) {
+					@fireWall = array_remove(@firePerimeter, 0);
+					foreach(@block in @fireWall) {
+						set_block(@block, 'AIR', false);
+					}
+				}
+				if(@state['radius'] > @maxradius) {
+					if(!@firePerimeter) {
+						clear_task();
+					}
 					die();
 				}
 				@side = @state['side'];
@@ -390,6 +398,8 @@ proc _snake_drop_nuke(@snake, @game) {
 				@dir = @sides[@side][1];
 				@loc = @target[];
 				@loc[@coord] += @radius * @dir;
+				@fireWall = array();
+				@firePerimeter[] = @fireWall;
 				if(@loc[@coord] > @coords[1][@coord]
 				&& @loc[@coord] < @coords[0][@coord] + 1) {
 					@coord = @sides[@side][2];
@@ -398,8 +408,8 @@ proc _snake_drop_nuke(@snake, @game) {
 						if(@loc[@coord] > @coords[1][@coord]
 						&& @loc[@coord] < @coords[0][@coord] + 1) {
 							@block = get_block(@loc);
+							set_block(@loc, 'FIRE', false);
 							if(@block !== 'AIR') {
-								set_block(@loc, 'FIRE', false);
 								@game['fire'][] = @loc[];
 								if(_is_snake_tail(@block)) {
 									foreach(@player: @snake in @game['snakes']) {
@@ -409,6 +419,8 @@ proc _snake_drop_nuke(@snake, @game) {
 										}
 									}
 								}
+							} else {
+								@fireWall[] = @loc[];
 							}
 							if(!rand(3)) {
 								spawn_particle(@loc, array(particle: 'EXPLOSION_LARGE', force: true));
@@ -422,9 +434,8 @@ proc _snake_drop_nuke(@snake, @game) {
 					@state['radius']++;
 					@state['side'] = 0;
 					if(@state['radius'] > @maxradius) {
-						clear_task();
 						_snake_check_powerups(@game);
-						array_remove_values(@game['nukes'], @region);
+						array_remove(@game['nukes'], array_index(@game['nukes'], @region));
 					}
 				}
 			});
