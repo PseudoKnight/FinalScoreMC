@@ -15,6 +15,7 @@
 	'teams': an array of two arrays containing the list of players on that team
 	'flags': an array of two location arrays or player names where the team flags are in capture mode
 	'fire': an array of location arrays where decaying fire blocks are located
+	'debug': if the game should display debug info (e.g. current bot targets)
 */
 
 include('util.ms');
@@ -30,7 +31,7 @@ proc _snake_queue(@mode) {
 	@game['surfaces'] = 0;
 	@game['snakes'] = associative_array();
 	@game['powerups'] = array();
-	@game['numPowerups'] = if(@mode == 'gluttony', 1, if(@mode != 'endless', 25, 15));
+	@game['numPowerups'] = if(@mode === 'gluttony', 1, if(@mode !== 'endless', 25, 15));
 	@game['numPlayers'] = 9;
 	@game['botsOnly'] = false;
 	@game['missiles'] = associative_array();
@@ -64,17 +65,17 @@ proc _snake_queue(@mode) {
 		create_scoreboard('snake');
 		create_objective('score', 'DUMMY', 'snake');
 		@display = 'SNAKE: First to 2 wins!';
-		if(@game['mode'] == 'endless') {
+		if(@game['mode'] === 'endless') {
 			@display = 'SNAKE: Survive!';
-		} else if(@game['mode'] == 'capture') {
+		} else if(@game['mode'] === 'capture') {
 			create_objective('teamscore', 'DUMMY', 'snake');
 			set_pscore('teamscore', 'BLUE', 0, 'snake');
 			set_pscore('teamscore', 'RED', 0, 'snake');
 			@display = color('red').'0'.color('reset').' : '.color('blue').'0';
-		} else if(@game['mode'] == 'gluttony') {
+		} else if(@game['mode'] === 'gluttony') {
 			@display = 'SNAKE: Grow!';
 		}
-		set_objective_display('score', associative_array('displayname': @display, 'slot': 'SIDEBAR'), 'snake');
+		set_objective_display('score', array(displayname: @display, slot: 'SIDEBAR'), 'snake');
 	} catch(ScoreboardException @ex) {
 		die(color('red').'Snake is still running.');
 	}
@@ -83,24 +84,24 @@ proc _snake_queue(@mode) {
 
 	// Create color select menu
 	create_virtual_inventory('snake', 9, color('bold').'Choose Your Snake Color', array(
-		'0': array('name': 'LIGHT_BLUE_TERRACOTTA', 'meta': array('display': 'Blue')),
-		'1': array('name': 'LIGHT_BLUE_CONCRETE', 'meta': array('display': 'Neon Blue')),
-		'2': array('name': 'LIME_TERRACOTTA', 'meta': array('display': 'Green')),
-		'3': array('name': 'LIME_CONCRETE', 'meta': array('display': 'Neon Green')),
-		'4': array('name': 'PINK_TERRACOTTA', 'meta': array('display': 'Red')),
-		'5': array('name': 'PINK_CONCRETE', 'meta': array('display': 'Neon Pink')),
-		'6': array('name': 'MAGENTA_TERRACOTTA', 'meta': array('display': 'Purple')),
-		'7': array('name': 'YELLOW_CONCRETE', 'meta': array('display': 'Neon Yellow')),
-		'8': array('name': 'WHITE_CONCRETE', 'meta': array('display': 'Neon White')),
+		array(name: 'LIGHT_BLUE_TERRACOTTA', meta: array(display: 'Blue')),
+		array(name: 'LIGHT_BLUE_CONCRETE', meta: array(display: 'Neon Blue')),
+		array(name: 'LIME_TERRACOTTA', meta: array(display: 'Green')),
+		array(name: 'LIME_CONCRETE', meta: array(display: 'Neon Green')),
+		array(name: 'PINK_TERRACOTTA', meta: array(display: 'Red')),
+		array(name: 'PINK_CONCRETE', meta: array(display: 'Neon Pink')),
+		array(name: 'MAGENTA_TERRACOTTA', meta: array(display: 'Purple')),
+		array(name: 'YELLOW_CONCRETE', meta: array(display: 'Neon Yellow')),
+		array(name: 'WHITE_CONCRETE', meta: array(display: 'Neon White')),
 	));
 
 	// Add players in region
-	if(@game['mode'] == 'capture') {
+	if(@game['mode'] === 'capture') {
 		@game['numPlayers'] = 8; // max
 	}
 	@loadMenu = false;
 	foreach(@p in all_players()) {
-		if(array_contains(sk_current_regions(@p), @game['region']) && pmode(@p) == 'ADVENTURE') {
+		if(array_contains(sk_current_regions(@p), @game['region']) && pmode(@p) === 'ADVENTURE') {
 			if(_snake_add(@p, @game) && !@game['snakes'][@p]['head']) {
 				@loadMenu = true;
 			}
@@ -109,12 +110,12 @@ proc _snake_queue(@mode) {
 			break();
 		}
 	}
-	if(@game['mode'] == 'capture') {
+	if(@game['mode'] === 'capture') {
 		@loadMenu = false;
 	}
 
-	if((@game['mode'] == 'endless' || @game['mode'] == 'gluttony') && array_size(@game['snakes']) == 0
-	|| @game['mode'] == 'versus' && array_size(@game['snakes']) < 2) {
+	if((@game['mode'] === 'endless' || @game['mode'] === 'gluttony') && array_size(@game['snakes']) == 0
+	|| @game['mode'] === 'versus' && array_size(@game['snakes']) < 2) {
 		delete_virtual_inventory('snake');
 		remove_scoreboard('snake');
 		foreach(@player: @snake in @game['snakes']) {
@@ -127,8 +128,8 @@ proc _snake_queue(@mode) {
 	_add_activity('snake', 'Snake');
 
 	// Add bots to fill up slots
-	if(@game['mode'] != 'versus' && @game['mode'] != 'gluttony') {
-		if(@game['mode'] == 'capture') {
+	if(@game['mode'] !== 'versus' && @game['mode'] !== 'gluttony') {
+		if(@game['mode'] === 'capture') {
 			@game['numPlayers'] = array_size(@game['snakes']) + array_size(@game['snakes']) % 2; // min
 		}
 		@bots = _snake_bots();
@@ -146,8 +147,8 @@ proc _snake_queue(@mode) {
 				popen_inventory(@player, 'snake');
 			}
 		}
-		bind('inventory_click', array('id': 'snake-invclick'), array('virtual': true), @event, @game) {
-			if(pinventory_holder(player()) == 'snake' && array_index_exists(@game['snakes'], player())) {
+		bind('inventory_click', array(id: 'snake-invclick'), array(virtual: true), @event, @game) {
+			if(pinventory_holder(player()) === 'snake' && array_index_exists(@game['snakes'], player())) {
 				@item = @event['slotitem'];
 				if(@item) {
 					_snake_set_color(player(), @item['name'], @game);
@@ -181,7 +182,7 @@ proc _snake_countdown(@game) {
 	@help = array(
 		color('red').color('bold').'SNAKE: '.to_upper(@game['mode']),
 		'Use '.color('green').'left and right mouse buttons'.color('reset').' to turn',
-		if(@game['mode'] == 'gluttony',
+		if(@game['mode'] === 'gluttony',
 			'Grow as big as you can.',
 			'Press '.color('green').'slot #'.color('reset').' to activate pickup'),
 		color('green').color('italic').'Go snake, go!'
@@ -230,7 +231,7 @@ proc _snake_start_task(@game) {
 						if(@snake['bot']) {
 							_snake_bot_update(@player, @game);
 						}
-						if(@game['mode'] == 'gluttony' && array_size(@snake['blocks']) > @snake['max']) {
+						if(@game['mode'] === 'gluttony' && array_size(@snake['blocks']) > @snake['max']) {
 							@block = array_remove(@snake['blocks'], 0);
 							set_block(@block, 'AIR', false);
 						}
@@ -248,7 +249,7 @@ proc _snake_start_task(@game) {
 						@alive++;
 						@active = @player;
 					}
-				} else if(@game['mode'] == 'endless' && @snake['bot']) {
+				} else if(@game['mode'] === 'endless' && @snake['bot']) {
 					@color = @snake['tail'];
 					@abilities = @snake['ability-count'];
 					if(_snake_add(@player, @game)) {
@@ -261,7 +262,7 @@ proc _snake_start_task(@game) {
 				_snake_remove(@player, @game);
 			}
 		}
-		if(@game['mode'] == 'capture') {
+		if(@game['mode'] === 'capture') {
 			foreach(@team: @flag in @game['flags']){
 				if(!@flag) {
 					_snake_spawn_flag(@team, @game);
@@ -275,22 +276,22 @@ proc _snake_start_task(@game) {
 			array_remove(@game['fire'], @r);
 		}
 
-		if(@game['mode'] != 'capture' && (!@playersAlive || !@alive)) {
-			if(@game['mode'] == 'endless' || !@alive) {
+		if(@game['mode'] !== 'capture' && (!@playersAlive || !@alive)) {
+			if(@game['mode'] === 'endless' || !@alive) {
 				_snake_end(null, @game);
 				return();
 			} else {
 				@game['botsOnly'] = true;
 			}
 		}
-		if(@alive < 2 && @game['mode'] != 'gluttony' && @game['mode'] != 'endless') {
+		if(@alive < 2 && @game['mode'] !== 'gluttony' && @game['mode'] !== 'endless') {
 			_snake_end(@active, @game);
 		}
 	});
 }
 
 proc _snake_end(@winner, @game) {
-	if(@game['mode'] == 'capture') {
+	if(@game['mode'] === 'capture') {
 		if(@winner != 'No one') {
 			@team = @game['snakes'][@winner]['team'];
 			foreach(@player in array_keys(@game['snakes'])) {
@@ -300,7 +301,7 @@ proc _snake_end(@winner, @game) {
 			}
 		}
 		_snake_cleanup(@game);
-	} else if(@game['mode'] == 'versus' || @game['mode'] == 'elimination') {
+	} else if(@game['mode'] === 'versus' || @game['mode'] === 'elimination') {
 		@endgame = false;
 		if(@winner && @winner != 'No one') {
 			@title = @game['snakes'][@winner]['color'].@winner.' wins ';
@@ -331,13 +332,13 @@ proc _snake_end(@winner, @game) {
 			_snake_countdown(@game);
 		}
 
-	} else if(@game['mode'] == 'endless' || @game['mode'] == 'gluttony') {
+	} else if(@game['mode'] === 'endless' || @game['mode'] === 'gluttony') {
 		// Sort player scores
 		@scores = array();
 		foreach(@p: @snake in @game['snakes']) {
 			if(ponline(@p)) {
 				@pscore = get_pscore('score', @p, 'snake');
-				@array = array('name': @p, 'value': @pscore, 'highscore': false, 'topscore': false);
+				@array = array(name: @p, value: @pscore, highscore: false, topscore: false);
 				foreach(@i: @score in @scores) {
 					if(@pscore > @score['value']) {
 						array_insert(@scores, @array, @i);
@@ -368,10 +369,10 @@ proc _snake_end(@winner, @game) {
 				_acc_add(@score['name'], @coins);
 				tmsg(@score['name'], color('gold').'+'.@coins.' coins');
 
-				@array = array('uuid': @uuid, 'value': @score['value']);
+				@array = array(uuid: @uuid, value: @score['value']);
 				@remove = false;
 				foreach(@i: @topscore in @topscores) {
-					if(@topscore['uuid'] == @uuid) {
+					if(@topscore['uuid'] === @uuid) {
 						if(@remove) {
 							array_remove(@topscores, @i);
 						} else {

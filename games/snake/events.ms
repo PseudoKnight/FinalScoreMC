@@ -16,7 +16,7 @@ bind('player_join', null, null, @event) {
 			if(@i == @size) {
 				break();
 			}
-			if(@topScore['uuid'] == @uuid) {
+			if(@topScore['uuid'] === @uuid) {
 				@session = _psession(player());
 				if(!array_index_exists(@session, 'trophies')) {
 					@session['trophies'] = array();

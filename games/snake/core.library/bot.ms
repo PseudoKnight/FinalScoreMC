@@ -9,196 +9,195 @@ proc _snake_bots() {
 
 proc _snake_bot_update(@bot, @game) {
 	@snake = @game['snakes'][@bot];
-	@percent = rand(100);
 	switch(@bot) {
-	case 'Grumpy':
-		_snake_bot_lose_interest(@snake, @game);
-		if(!@snake['target']) {
-			if(@snake['ability-count'][1] == 0 || !_snake_bot_target_snake(@snake, @game)) {
-				_snake_bot_target_powerup(@snake, @game, 'missile');
+		case 'Grumpy':
+			_snake_bot_lose_interest(@snake, @game);
+			if(!@snake['target']) {
+				if(@snake['ability-count'][1] < 1 || !_snake_bot_target_snake(@snake, @game)) {
+					_snake_bot_target_powerup(@snake, @game, 'missile');
+				}
 			}
-		}
-		if(@snake['boost'] <= 0 && @snake['ability-count'][0] > 0) {
-			_snake_ability(@bot, 0, @game);
-		}
-		if(@snake['target']) {
-			if(@snake['target']['type'] === 'snake') {
-				@target = @snake['target']['name'];
-				@targetLoc = location_shift(@game['snakes'][@target]['loc'], @game['snakes'][@target]['dir']);
-				if(_snake_bot_change_dir(@snake, @snake['loc'], @targetLoc)) {
-					if(_snake_opposite_dir(@snake['dir']) === @game['snakes'][@target]['dir']
-					|| (@snake['ability-count'][1] > 1 && @snake['dir'] !== @game['snakes'][@target]['dir'])) {
-						@aligned = false;
-						for(@i = 0, @i < 3, @i++) {
-							if(@snake['loc'][@i] == @targetLoc[@i]) {
-								if(@aligned) {
-									_snake_ability(@bot, 1, @game);
-									return();
+			if(@snake['boost'] <= 0 && @snake['ability-count'][0] > 0) {
+				_snake_ability(@bot, 0, @game);
+			}
+			if(@snake['target']) {
+				if(@snake['target']['type'] === 'snake') {
+					@target = @snake['target']['name'];
+					@targetLoc = location_shift(@game['snakes'][@target]['loc'], @game['snakes'][@target]['dir']);
+					if(_snake_bot_change_dir(@snake, @snake['loc'], @targetLoc)) {
+						if(_snake_opposite_dir(@snake['dir']) === @game['snakes'][@target]['dir']
+						|| (@snake['ability-count'][1] > 1 && @snake['dir'] !== @game['snakes'][@target]['dir'])) {
+							@aligned = false;
+							for(@i = 0, @i < 3, @i++) {
+								if(@snake['loc'][@i] == @targetLoc[@i]) {
+									if(@aligned) {
+										_snake_ability(@bot, 1, @game);
+										return();
+									}
+									@aligned = true;
 								}
-								@aligned = true;
 							}
 						}
-					}
-					return();
-				}
-			} else if(_snake_bot_change_dir(@snake, @snake['loc'], @snake['target']['loc'])) {
-				return();
-			}
-		}
-		if(!_snake_safe_path(@snake, @game['missiles'])
-		&& !_snake_bot_safe_turn(@snake, @game)) {
-			_snake_ability(@bot, 1, @game);
-		}
-	case 'BatSnake':
-		_snake_bot_lose_interest(@snake, @game);
-		if(!@snake['target']) {
-			if(@snake['ability-count'][0] < 4) {
-				if(!_snake_bot_target_powerup(@snake, @game, 'boost')
-				&& !_snake_bot_target_powerup(@snake, @game, 'missile')
-				&& @snake['ability-count'][0]) {
-					_snake_bot_target_snake(@snake, @game);
-				}
-			} else {
-				_snake_bot_target_snake(@snake, @game);
-			}
-		}
-		if(@snake['boost'] <= 0 && @snake['ability-count'][0] > 0) {
-			_snake_ability(@bot, 0, @game);
-		}
-		if(@snake['target']) {
-			if(@snake['target']['type'] === 'snake') {
-				@target = @snake['target']['name'];
-				@targetLoc = location_shift(@game['snakes'][@target]['loc'], @game['snakes'][@target]['dir']);
-				if(_snake_bot_change_dir(@snake, @snake['loc'], @targetLoc)) {
-					return();
-				}
-			} else if(_snake_bot_change_dir(@snake, @snake['loc'], @snake['target']['loc'])) {
-				return();
-			}
-		}
-		if(!_snake_safe_path(@snake, @game['missiles'])
-		&& !_snake_bot_safe_turn(@snake, @game)) {
-			_snake_ability(@bot, 1, @game);
-		}
-	case 'SharkBot':
-		_snake_bot_lose_interest(@snake, @game);
-		if(!@snake['target']) {
-			if(!(!@snake['ability-count'][0] && _snake_bot_target_powerup(@snake, @game, 'boost')
-			|| !@snake['ability-count'][1] && _snake_bot_target_powerup(@snake, @game, 'missile')
-			|| !@snake['ability-count'][2] && _snake_bot_target_powerup(@snake, @game, 'tnt')
-			|| !@snake['ability-count'][3] && _snake_bot_target_powerup(@snake, @game, 'laser'))) {
-				_snake_bot_target_snake(@snake, @game);
-			}
-		}
-		if(@snake['boost'] <= 0 && @snake['ability-count'][0] > 0) {
-			_snake_ability(@bot, 0, @game);
-		}
-		if(@snake['target']) {
-			if(@snake['target']['type'] === 'snake') {
-				@target = @snake['target']['name'];
-				@targetLoc = location_shift(@game['snakes'][@target]['loc'], @game['snakes'][@target]['dir']);
-				if(_snake_bot_change_dir(@snake, @snake['loc'], @targetLoc)) {
-					if(@snake['ability-count'][3] && @snake['dir'] !== @game['snakes'][@target]['dir']) {
-						@aligned = false;
-						for(@i = 0, @i < 3, @i++) {
-							if(@snake['loc'][@i] == @targetLoc[@i]) {
-								if(@aligned) {
-									_snake_ability(@bot, 3, @game);
-									return();
-								}
-								@aligned = true;
-							}
-						}
-					} else if(@snake['top'] !== 'up' && @snake['loc'][1] > @targetLoc[1]) {
-						_snake_ability(@bot, 2, @game);
-					}
-					return();
-				}
-			} else if(_snake_bot_change_dir(@snake, @snake['loc'], @snake['target']['loc'])) {
-				return();
-			}
-		}
-		if(@percent < 10
-		|| !_snake_safe_path(@snake, @game['missiles'])
-		&& !_snake_bot_safe_turn(@snake, @game)) {
-			_snake_ability(@bot, 1, @game);
-		}
-	case 'CrazyBot':
-		_snake_bot_lose_interest(@snake, @game);
-		if(!@snake['target']) {
-			if(@snake['ability-count'][2] < 3) {
-				if(!_snake_bot_target_powerup(@snake, @game, 'tnt') && @snake['ability-count'][2]) {
-					_snake_bot_target_snake(@snake, @game);
-				}
-			} else {
-				_snake_bot_target_snake(@snake, @game);
-			}
-		}
-		if(@snake['target']) {
-			if(@snake['target']['type'] == 'snake') {
-				@target = @snake['target']['name'];
-				@targetLoc = location_shift(@game['snakes'][@target]['loc'], @game['snakes'][@target]['dir']);
-				if(_snake_bot_change_dir(@snake, @snake['loc'], @targetLoc)) {
-					@deltaY = @snake['loc'][1] - @targetLoc[1];
-					if(@deltaY > 0) {
-						@deltaXZ = max(abs(@snake['loc'][0] - @targetLoc[0]), abs(@snake['loc'][2] - @targetLoc[2]));
-						if(@snake['dir'] === 'down' && @deltaY > @deltaXZ
-						|| @snake['dir'] !== 'down' && @snake['dir'] !== 'up' && @deltaY <= @deltaXZ) {
-							_snake_ability(@bot, 2, @game);
-						}
-					}
-					return();
-				}
-			} else if(_snake_bot_change_dir(@snake, @snake['loc'], @snake['target']['loc'])) {
-				return();
-			}
-		}
-		if(@game['tnt']) {
-			foreach(@i: @tnt in @game['tnt']) {
-				try {
-					@loc = entity_loc(@tnt);
-					if(distance(@snake['loc'], @loc) < 6) {
-						@targetLoc = @snake['loc'][];
-						@targetLoc[0] += @snake['loc'][0] - @loc[0];
-						@targetLoc[1] += @snake['loc'][1] - @loc[1];
-						@targetLoc[2] += @snake['loc'][2] - @loc[2];
-						_snake_bot_change_dir(@snake, @snake['loc'], @targetLoc);
 						return();
 					}
-				} catch(BadEntityException @ex) {
-					array_remove(@game['tnt'], @i);
-				}
-			}
-		}
-		if(!_snake_safe_path(@snake, @game['missiles'])
-		&& !_snake_bot_safe_turn(@snake, @game)) {
-			_snake_ability(@bot, 2, @game);
-		}
-	case 'NinjaBot':
-		_snake_bot_lose_interest(@snake, @game);
-		if(!@snake['target']) {
-			if(!_snake_bot_target_powerup(@snake, @game)) {
-				_snake_bot_target_snake(@snake, @game);
-			}
-		}
-		@randAbility = rand(5);
-		if(@snake['ability-count'][@randAbility] > 0 && (@randAbility > 0 || @snake['boost'] <= 0)) {
-			_snake_ability(@bot, @randAbility, @game);
-		}
-		if(@snake['target']) {
-			if(@snake['target']['type'] === 'snake') {
-				@target = @snake['target']['name'];
-				@targetLoc = location_shift(@game['snakes'][@target]['loc'], @game['snakes'][@target]['dir']);
-				if(_snake_bot_change_dir(@snake, @snake['loc'], @targetLoc)) {
+				} else if(_snake_bot_change_dir(@snake, @snake['loc'], @snake['target']['loc'])) {
 					return();
 				}
-			} else if(_snake_bot_change_dir(@snake, @snake['loc'], @snake['target']['loc'])) {
-				return();
 			}
-		}
-		if(!_snake_safe_path(@snake, @game['missiles'])) {
-			_snake_bot_safe_turn(@snake, @game);
-		}
+			if(!_snake_safe_path(@snake, @game['missiles'])
+			&& !_snake_bot_safe_turn(@snake, @game)) {
+				_snake_ability(@bot, 1, @game);
+			}
+		case 'BatSnake':
+			_snake_bot_lose_interest(@snake, @game);
+			if(!@snake['target']) {
+				if(@snake['ability-count'][0] < 4) {
+					if(!_snake_bot_target_powerup(@snake, @game, 'boost')
+					&& !_snake_bot_target_powerup(@snake, @game, 'missile')
+					&& @snake['ability-count'][0]) {
+						_snake_bot_target_snake(@snake, @game);
+					}
+				} else {
+					_snake_bot_target_snake(@snake, @game);
+				}
+			}
+			if(!@snake['boost'] && @snake['ability-count'][0] > 0) {
+				_snake_ability(@bot, 0, @game);
+			}
+			if(@snake['target']) {
+				if(@snake['target']['type'] === 'snake') {
+					@target = @snake['target']['name'];
+					@targetLoc = location_shift(@game['snakes'][@target]['loc'], @game['snakes'][@target]['dir']);
+					if(_snake_bot_change_dir(@snake, @snake['loc'], @targetLoc)) {
+						return();
+					}
+				} else if(_snake_bot_change_dir(@snake, @snake['loc'], @snake['target']['loc'])) {
+					return();
+				}
+			}
+			if(!_snake_safe_path(@snake, @game['missiles'])
+			&& !_snake_bot_safe_turn(@snake, @game)) {
+				_snake_ability(@bot, 1, @game);
+			}
+		case 'SharkBot':
+			_snake_bot_lose_interest(@snake, @game);
+			if(!@snake['target']) {
+				if(!(!@snake['ability-count'][0] && _snake_bot_target_powerup(@snake, @game, 'boost')
+				|| !@snake['ability-count'][1] && _snake_bot_target_powerup(@snake, @game, 'missile')
+				|| !@snake['ability-count'][2] && _snake_bot_target_powerup(@snake, @game, 'tnt')
+				|| !@snake['ability-count'][3] && _snake_bot_target_powerup(@snake, @game, 'laser'))) {
+					_snake_bot_target_snake(@snake, @game);
+				}
+			}
+			if(!@snake['boost'] && @snake['ability-count'][0] > 0) {
+				_snake_ability(@bot, 0, @game);
+			}
+			if(@snake['target']) {
+				if(@snake['target']['type'] === 'snake') {
+					@target = @snake['target']['name'];
+					@targetLoc = location_shift(@game['snakes'][@target]['loc'], @game['snakes'][@target]['dir']);
+					if(_snake_bot_change_dir(@snake, @snake['loc'], @targetLoc)) {
+						if(@snake['ability-count'][3] && @snake['dir'] !== @game['snakes'][@target]['dir']) {
+							@aligned = false;
+							for(@i = 0, @i < 3, @i++) {
+								if(@snake['loc'][@i] == @targetLoc[@i]) {
+									if(@aligned) {
+										_snake_ability(@bot, 3, @game);
+										return();
+									}
+									@aligned = true;
+								}
+							}
+						} else if(@snake['top'] !== 'up' && @snake['loc'][1] > @targetLoc[1]) {
+							_snake_ability(@bot, 2, @game);
+						}
+						return();
+					}
+				} else if(_snake_bot_change_dir(@snake, @snake['loc'], @snake['target']['loc'])) {
+					return();
+				}
+			}
+			if(rand(10) < 1
+			|| !_snake_safe_path(@snake, @game['missiles'])
+			&& !_snake_bot_safe_turn(@snake, @game)) {
+				_snake_ability(@bot, 1, @game);
+			}
+		case 'CrazyBot':
+			_snake_bot_lose_interest(@snake, @game);
+			if(!@snake['target']) {
+				if(@snake['ability-count'][2] < 3) {
+					if(!_snake_bot_target_powerup(@snake, @game, 'tnt') && @snake['ability-count'][2]) {
+						_snake_bot_target_snake(@snake, @game);
+					}
+				} else {
+					_snake_bot_target_snake(@snake, @game);
+				}
+			}
+			if(@snake['target']) {
+				if(@snake['target']['type'] === 'snake') {
+					@target = @snake['target']['name'];
+					@targetLoc = location_shift(@game['snakes'][@target]['loc'], @game['snakes'][@target]['dir']);
+					if(_snake_bot_change_dir(@snake, @snake['loc'], @targetLoc)) {
+						@deltaY = @snake['loc'][1] - @targetLoc[1];
+						if(@deltaY > 0) {
+							@deltaXZ = max(abs(@snake['loc'][0] - @targetLoc[0]), abs(@snake['loc'][2] - @targetLoc[2]));
+							if(@snake['dir'] === 'down' && @deltaY > @deltaXZ
+							|| @snake['dir'] !== 'down' && @snake['dir'] !== 'up' && @deltaY <= @deltaXZ) {
+								_snake_ability(@bot, 2, @game);
+							}
+						}
+						return();
+					}
+				} else if(_snake_bot_change_dir(@snake, @snake['loc'], @snake['target']['loc'])) {
+					return();
+				}
+			}
+			if(@game['tnt']) {
+				foreach(@i: @tnt in @game['tnt']) {
+					try {
+						@loc = entity_loc(@tnt);
+						if(distance(@snake['loc'], @loc) < 6) {
+							@targetLoc = @snake['loc'][];
+							@targetLoc[0] += @snake['loc'][0] - @loc[0];
+							@targetLoc[1] += @snake['loc'][1] - @loc[1];
+							@targetLoc[2] += @snake['loc'][2] - @loc[2];
+							_snake_bot_change_dir(@snake, @snake['loc'], @targetLoc);
+							return();
+						}
+					} catch(BadEntityException @ex) {
+						array_remove(@game['tnt'], @i);
+					}
+				}
+			}
+			if(!_snake_safe_path(@snake, @game['missiles'])
+			&& !_snake_bot_safe_turn(@snake, @game)) {
+				_snake_ability(@bot, 2, @game);
+			}
+		case 'NinjaBot':
+			_snake_bot_lose_interest(@snake, @game);
+			if(!@snake['target']) {
+				if(!_snake_bot_target_powerup(@snake, @game)) {
+					_snake_bot_target_snake(@snake, @game);
+				}
+			}
+			@randAbility = rand(5);
+			if(@snake['ability-count'][@randAbility] > 0 && (@randAbility > 0 || !@snake['boost'])) {
+				_snake_ability(@bot, @randAbility, @game);
+			}
+			if(@snake['target']) {
+				if(@snake['target']['type'] === 'snake') {
+					@target = @snake['target']['name'];
+					@targetLoc = location_shift(@game['snakes'][@target]['loc'], @game['snakes'][@target]['dir']);
+					if(_snake_bot_change_dir(@snake, @snake['loc'], @targetLoc)) {
+						return();
+					}
+				} else if(_snake_bot_change_dir(@snake, @snake['loc'], @snake['target']['loc'])) {
+					return();
+				}
+			}
+			if(!_snake_safe_path(@snake, @game['missiles'])) {
+				_snake_bot_safe_turn(@snake, @game);
+			}
 	}
 }
 

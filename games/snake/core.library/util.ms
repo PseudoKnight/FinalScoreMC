@@ -27,7 +27,7 @@ proc _snake_valid_location(@region, @padding = 0) {
 			@z = (@coords[1][2] + @padding) + rand(1 + @coords[0][2] - @coords[1][2] - (@padding * 2));
 		}
 		@loc = array(@x, @y, @z, 'custom');
-		if(get_block(@loc) == 'AIR') {
+		if(get_block(@loc) === 'AIR') {
 			return(@loc);
 		}
 	}
@@ -90,7 +90,7 @@ proc _snake_safe_path(@snake, @missiles) {
 	@directions = _snake_turn_directions(@snake);
 	@block = get_block(location_shift(@loc, @dir));
 	if((_snake_safe_block(@block)
-	&& (@block == 'SEA_LANTERN' || _snake_safe_block(get_block(location_shift(@loc, @dir, 2)))))
+	&& (@block === 'SEA_LANTERN' || _snake_safe_block(get_block(location_shift(@loc, @dir, 2)))))
 	|| _snake_safe_block(get_block(location_shift(@loc, @directions[0])))
 	|| _snake_safe_block(get_block(location_shift(@loc, @directions[1])))) {
 		return(true);
@@ -100,12 +100,10 @@ proc _snake_safe_path(@snake, @missiles) {
 
 proc _snake_safe_block(@block, @loc, @dir) {
 	// special case for lasers, as the powerup block is the same as the deadly laser
-	if(@loc && @block == 'RED_STAINED_GLASS') {
+	if(@loc && @block === 'RED_STAINED_GLASS') {
 		@game = import('snake');
 		foreach(@powerup in @game['powerups']){
-			if(@powerup['loc'][0] == @loc[0]
-			&& @powerup['loc'][1] == @loc[1]
-			&& @powerup['loc'][2] == @loc[2]) {
+			if(_snake_loc_equals(@powerup['loc'], @loc)) {
 				return(true);
 			}
 		}
@@ -114,7 +112,7 @@ proc _snake_safe_block(@block, @loc, @dir) {
 	if(@loc && @dir && @block === 'SEA_LANTERN') {
 		return(_snake_safe_block(get_block(location_shift(@loc, _snake_dir_of_surface(@loc, _snake_opposite_dir(@dir))))));
 	}
-	return(@block == 'AIR' || @block == 'SEA_LANTERN' || _snake_get_powerup_from(@block));
+	return(@block === 'AIR' || @block === 'SEA_LANTERN' || _snake_get_powerup_from(@block));
 }
 
 proc _snake_opposite_dir(@dir) {
@@ -138,7 +136,7 @@ proc _snake_opposite_dir(@dir) {
 proc _snake_clean_surfaces(@game) {
 	@region = @game['region'];
 	@count = @game['surfaces'];
-	@walls = @game['mode'] == 'capture';
+	@walls = @game['mode'] === 'capture';
 	while(@count) {
 		@area = sk_region_info(@region.@count, 'custom', 0);
 		@minX = min(@area[1][0], @area[0][0]);
