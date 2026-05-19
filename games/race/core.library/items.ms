@@ -40,19 +40,29 @@ proc _race_spawn_items(@race) {
 				} else if(!entity_exists(@itemDisplay)) {
 					@race['items'][@i] = null;
 				} else {
-					@display = get_display_entity(@itemDisplay);
-					if(@display['brightness']['sky'] >= 15) {
+					// display brightness used for respawn countdown (interval duration * 15 levels)
+					@displayBrightness = get_display_entity(@itemDisplay)['brightness']['sky'];
+					if(@displayBrightness < 15) {
+						@displayBrightness++;
+						set_display_entity(@itemDisplay, array(brightness: @displayBrightness));
+						if(@displayBrightness >= 15) {
+							set_entity_spec(get_entity_rider(@itemDisplay), array(item: array(name: 'GLASS')));
+							set_display_entity(get_entity_rider(@itemDisplay), array(transformation: array(scale: array(x: 1.2, y: 1.2, z: 1.2))));
+						}
+					}
+					if(@displayBrightness >= 15) {
 						@type = array_get_rand(@race['item']);
 						set_entity_spec(@itemDisplay, array(item: @type));
 						@loc = entity_loc(@itemDisplay);
 						set_entity_rotation(@itemDisplay, @loc['yaw'] + 25);
 						set_entity_rotation(get_entity_rider(@itemDisplay), -@loc['yaw']);
-					} else {
-						// 3 second countdown to respawn
-						if(@display['brightness']['sky'] >= 14) {
-							set_entity_spec(get_entity_rider(@itemDisplay), array(item: array(name: 'GLASS')));
-						}
-						set_display_entity(@itemDisplay, array(brightness: @display['brightness']['sky'] + 1));
+						spawn_particle(location_shift(@loc, 'up', 0.6), array(
+							particle: 'END_ROD',
+							count: 1,
+							xoffset: 1.2,
+							yoffset: 1.2,
+							zoffset: 1.2,
+							force: true));
 					}
 				}
 			}

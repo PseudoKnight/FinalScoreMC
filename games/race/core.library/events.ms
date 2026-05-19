@@ -47,6 +47,14 @@ proc _race_bind_events(@race) {
 			_race_check_players(@race);
 		}
 	}
+
+	if(@race['type'] !== 'kart') {
+		@race['binds'][] = bind('player_move', null, array(from: array(world: @race['world'])), @event, @race) {
+			if(array_index_exists(@race['players'], player())) {
+				_race_on_move(player(), @event['to'], @race);
+			}
+		}
+	}
 }
 
 proc _race_unbind_events(@race) {

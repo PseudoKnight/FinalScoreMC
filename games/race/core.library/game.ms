@@ -130,28 +130,42 @@ proc _race_on_move(@player, @to, @race) {
 	@loc = location_shift(@to, 'up', 0.35);
 	@p = @race['players'][@player];
 	if(@p['state'] !== 'finished') {
-		@checkpoint = @p['checkpoint'];
-		@cuboid = @race['checkpoint'][@checkpoint];
-		@p1 = @cuboid[0];
-		@p2 = @cuboid[1];
+		@checkpointNum = @p['checkpoint'];
+		@checkpoint = @race['checkpoint'][@checkpointNum];
+		@p1 = @checkpoint[0];
+		@p2 = @checkpoint[1];
 		if(@loc['x'] < @p1[0] && @loc['x'] > @p2[0]
 		&& @loc['y'] < @p1[1] && @loc['y'] > @p2[1]
 		&& @loc['z'] < @p1[2] && @loc['z'] > @p2[2]) {
 			// hit checkpoint
 			@p['checkpointLoc'] = @loc[];
 			if(@race['type'] === 'kart') {
-				if(array_size(@cuboid) == 3) {
-					@p['kart']['camdist'] = @cuboid[2];
+				if(array_size(@checkpoint) == 3) {
+					@p['kart']['camdist'] = @checkpoint[2];
 				} else if(array_index_exists(@race, 'camdist')) {
 					@p['kart']['camdist'] = @race['camdist'];
 				}
 			}
 
-			@checkpoint++;
-			if(@checkpoint != array_size(@race['checkpoint'])) {
-				@p['checkpoint'] = @checkpoint;
+			@particle = array(
+				particle: 'TRIAL_SPAWNER_DETECTION_OMINOUS',
+				speed: 0,
+				count: 5,
+				xoffset: 1,
+				yoffset: 0,
+				zoffset: 1);
+			for(@x = @p2[0], @x < @p1[0], @x++) {
+				for(@z = @p2[2], @z < @p1[2], @z++) {
+					spawn_particle(array(@x + 0.5, @p2[1] + 1.125, @z + 0.5, @loc['world']), @particle, @player);
+				}
+			}
+
+			@checkpointNum++;
+			if(@checkpointNum != array_size(@race['checkpoint'])) {
+				@p['checkpoint'] = @checkpointNum;
 				action_msg(@player, color('green').'Checkpoint!');
-				play_sound(ploc(@player), array(sound: 'ENTITY_ARROW_HIT_PLAYER'), @player);
+				play_sound(@loc, array(sound: 'ENTITY_ARROW_HIT_PLAYER'), @player);
+				play_sound(@loc, array(sound: 'BLOCK_TRIAL_SPAWNER_OMINOUS_ACTIVATE', volume: 0.6), @player);
 			} else {
 				// hit lap
 				@p['checkpoint'] = 0;
@@ -190,11 +204,11 @@ proc _race_on_move(@player, @to, @race) {
 			// set pace time
 			@lap = @p['lap'];
 			if(!array_index_exists(@race['times'], @lap)
-			|| !array_index_exists(@race['times'][@lap], @checkpoint)) {
-				@race['times'][@lap][@checkpoint] = integer(time() / 1000);
+			|| !array_index_exists(@race['times'][@lap], @checkpointNum)) {
+				@race['times'][@lap][@checkpointNum] = integer(time() / 1000);
 				set_pscore('time', @player, 0, @race['id']);
 			} else {
-				set_pscore('time', @player, @race['times'][@lap][@checkpoint] - integer(time() / 1000), @race['id']);
+				set_pscore('time', @player, @race['times'][@lap][@checkpointNum] - integer(time() / 1000), @race['id']);
 			}
 		} else if(sk_region_contains(@race['region'], @loc)) {
 			// ensure they are still in a vehicle in vehicle races
@@ -214,7 +228,9 @@ proc _race_on_move(@player, @to, @race) {
 			if(array_index_exists(@race, 'itemspawn') && @p['itemCooldown'] <= 0) {
 				for(@i = 0, @i < array_size(@race['itemspawn']), @i++) {
 					if(distance(@loc, @race['itemspawn'][@i]) < 1.5) {
-						@spec = entity_spec(@race['items'][@i]);
+						@itemDisplay = @race['items'][@i];
+						set_display_entity(@itemDisplay, array(brightness: 0));
+						@spec = entity_spec(@itemDisplay);
 						if(@spec['item']) {
 							for(@slot = 0, @slot < 8, @slot++) {
 								if(!pinv(@player, @slot)) {
@@ -227,9 +243,16 @@ proc _race_on_move(@player, @to, @race) {
 									break();
 								}
 							}
-							set_entity_spec(@race['items'][@i], array(item: null));
-							set_entity_spec(get_entity_rider(@race['items'][@i]), array(item: null));
-							set_display_entity(@race['items'][@i], array(brightness: 0));
+							set_entity_spec(@itemDisplay, array(item: null));
+							set_entity_spec(get_entity_rider(@itemDisplay), array(item: array(name: 'TINTED_GLASS')));
+							set_display_entity(get_entity_rider(@itemDisplay), array(transformation: array(scale: array(x: 0.25, y: 0.25, z: 0.25))));
+							spawn_particle(location_shift(@race['itemspawn'][@i], 'up', 0.6), array(
+								particle: 'BLOCK_CRACK',
+								block: 'WHITE_STAINED_GLASS',
+								count: 25,
+								xoffset: 0.8,
+								yoffset: 0.8,
+								zoffset: 0.8));
 						}
 						break();
 					}
@@ -263,14 +286,6 @@ proc _race_start(@race) {
 	play_sound(ploc(), array(sound: 'BLOCK_NOTE_BLOCK_BIT', pitch: 2));
 	_race_drop_players(@race);
 	_race_spawn_items(@race);
-
-	if(@race['type'] !== 'kart') {
-		@race['binds'][] = bind('player_move', null, array(from: array(world: @race['world'])), @event, @race) {
-			if(array_index_exists(@race['players'], player())) {
-				_race_on_move(player(), @event['to'], @race);
-			}
-		}
-	}
 }
 
 proc _race_remove_vehicle(@player, @race) {
