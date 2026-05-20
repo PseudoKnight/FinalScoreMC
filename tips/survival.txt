@@ -92,8 +92,6 @@ Place any item in your helmet slot.
 
 Horses are protected from all damage unless they are being ridden, and even then are still protected from other players.
 
-Undead horses can be fed rotten flesh.
-
 There are custom noteblock sounds with these blocks: anvil, coal block, slime block, terracotta, ice, sea lantern, soul sand, and iron block.
 
 If powered by redstone, noteblocks can be heard up to 8 chunks away. (128 meters)

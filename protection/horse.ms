@@ -29,7 +29,8 @@ bind('player_interact_entity', null, array('clicked': '/(DONKEY|HORSE|MULE|SKELE
 	if(@owner && @owner != player()) {
 		msg('This animal is owned by '.@owner);
 		if(!has_permission('group.moderator')
-		&& (!@item || (@item['name'] !== 'GOLDEN_APPLE' && @item['name'] !== 'GOLDEN_CARROT' && @item['name'] !== 'CARROT'))) {
+		&& (!@item || (@event['clicked'] !== 'HORSE' && @event['clicked'] !== 'DONKEY'
+		|| @item['name'] !== 'GOLDEN_APPLE' && @item['name'] !== 'GOLDEN_CARROT'))) {
 			@pdata = null;
 			try {
 				@pdata = _pdata(@owner);
@@ -45,45 +46,10 @@ bind('player_interact_entity', null, array('clicked': '/(DONKEY|HORSE|MULE|SKELE
 			|| !array_index_exists(@pdata['shared'], player())
 			|| !array_contains(@pdata['shared'][player()], 'horses')) {
 				cancel();
-				# reset their view; mostly fixes client side glitch when canceling this event
-				@facing = pfacing();
-				pfacing(@facing[0], @facing[1]);
 			}
 		}
 	} else if(is_null(@owner) && !is_null(entity_spec(@event['id'])['saddle'])) {
 		set_mob_owner(@event['id'], player());
 		msg('You now own this animal.');
-	}
-
-	# skeleton/zombie horses
-	if(!is_cancelled() && !psneaking() && @event['clicked'] === 'ZOMBIE_HORSE' || @event['clicked'] === 'SKELETON_HORSE') {
-		if(@item) {
-			switch(@item['name']) {
-				case 'GOLDEN_APPLE':
-				case 'GOLDEN_CARROT':
-				case 'LEAD':
-					die();
-				case 'RED_MUSHROOM': // 1.21.11
-				case 'ROTTEN_FLESH':
-					if(@event['clicked'] === 'ZOMBIE_HORSE' && @item['name'] === 'RED_MUSHROOM'
-					|| @event['clicked'] === 'SKELETON_HORSE' && @item['name'] === 'ROTTEN_FLESH') {
-						@heatlh = get_entity_health(@event['id']);
-						if(@health < 100) {
-							cancel();
-							@facing = pfacing();
-							pfacing(@facing[0], @facing[1]);
-							set_entity_health(@event['id'], min(100, @health + (100 / get_max_health(@event['id']))));
-							set_mob_age(@event['id'], min(0, get_mob_age(@event['id']) + 1200));
-							@item['qty']--;
-							set_pinv(player(), null, @item);
-							die();
-						}
-					}
-			}
-		}
-		if(is_null(entity_spec(@event['id'])['saddle'])
-		&& is_null(get_entity_rider(@event['id']))) {
-			set_entity_rider(@event['id'], puuid());
-		}
 	}
 }
