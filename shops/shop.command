@@ -1,3 +1,8 @@
+@items = associative_array();
+foreach(@key: @value in get_values('shops')) {
+	@items[to_lower(split('.', @key)[1])] = null;
+}
+@items = array_keys(@items);
 register_command('shop', array(
 	description: 'List cached item shops or edit owned item shops.',
 	usage: '/shop list <item_name> | /shop edit <buy|sell> <#qty> for <#currency>',
@@ -5,9 +10,9 @@ register_command('shop', array(
 		if(array_size(@args) == 1) {
 			return(_strings_start_with_ic(array('list', 'edit'), @args[-1]));
 		} else if(array_size(@args) == 2) {
-			if(@args[0] == 'list') {
-				return(_strings_start_with_ic(import('materials', array()), @args[-1]));
-			} else if(@args[0] == 'edit') {
+			if(@args[0] === 'list') {
+				return(_strings_start_with_ic(@items, @args[-1]));
+			} else if(@args[0] === 'edit') {
 				return(_strings_start_with_ic(array('buy', 'sell', '['), @args[-1]));
 			}
 		}
@@ -29,7 +34,7 @@ register_command('shop', array(
 			
 			@item = to_upper(array_implode(@args[1..-1], '_'));
 			try {
-				material_info(@item);
+				material_info(@item, 'isItem');
 			} catch(IllegalArgumentException @ex) {
 				die(color('gold').'Unknown item: '.@item);
 			}
