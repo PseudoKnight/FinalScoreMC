@@ -35,7 +35,7 @@ proc _map_load(@id) {
 	// copy map to scratch world directory
 	if(@exists) {
 		@base = sys_properties('user.dir');
-		copy_file("@base/maps/@id.mca", "@base/worlds/@world/region/r.0.0.mca");
+		copy_file("@base/maps/@id.mca", "@base/world/dimensions/minecraft/@world/region/r.0.0.mca");
 	}
 
 	// load scratch world with id alias
@@ -71,7 +71,7 @@ proc _map_load(@id) {
 
 proc _map_save(@id, @world) {
 	@base = sys_properties('user.dir');
-	copy_file("@base/worlds/@world/region/r.0.0.mca", "@base/maps/@id.mca");
+	copy_file("@base/world/dimensions/minecraft/@world/region/r.0.0.mca", "@base/maps/@id.mca");
 }
 
 proc _map_delete(@id) {

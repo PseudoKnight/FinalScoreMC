@@ -28,7 +28,7 @@ proc _shard_create(@rules){
 	if(extension_exists('CHDynmap')) {
 		dm_set_update_renders_paused(true);
 	}
-	@worlds = sys_properties('user.dir').'/worlds';
+	@worlds = sys_properties('user.dir').'/world/dimensions/minecraft';
 	try {
 		foreach(@file in list_files("@worlds/shard/entities")) {
 			if(string_starts_with(@file, 'r.')) { // 
@@ -45,18 +45,11 @@ proc _shard_create(@rules){
 	}
 
 	// Setup region files
-	@environment = world_info(@world)['environment'];
 	@chunk = get_chunk_loc();
 	@x = floor(@chunk['x'] / 32);
 	@z = floor(@chunk['z'] / 32);
 	@x2 = if(round(@chunk['x'] / 32) == @x, @x - 1, @x + 1);
 	@z2 = if(round(@chunk['z'] / 32) == @z, @z - 1, @z + 1);
-	@dim = '';
-	if(@environment == 'NETHER') {
-		@dim = '/DIM-1';
-	} else if(@environment == 'THE_END') {
-		@dim = '/DIM1';
-	}
 	@stop = time();
 	console('Shard setup completed ('.(@stop - @start).'ms)', false);
 
@@ -64,10 +57,10 @@ proc _shard_create(@rules){
 		// Copy region files
 		@start = time();
 		try {
-			copy_file("@worlds/@{world}@dim/region/r.@x.@z.mca", "@worlds/shard/region/r.@x.@z.mca");
-			copy_file("@worlds/@{world}@dim/region/r.@x2.@z.mca", "@worlds/shard/region/r.@x2.@z.mca");
-			copy_file("@worlds/@{world}@dim/region/r.@x.@z2.mca", "@worlds/shard/region/r.@x.@z2.mca");
-			copy_file("@worlds/@{world}@dim/region/r.@x2.@z2.mca", "@worlds/shard/region/r.@x2.@z2.mca");
+			copy_file("@worlds/@world/region/r.@x.@z.mca", "@worlds/shard/region/r.@x.@z.mca");
+			copy_file("@worlds/@world/region/r.@x2.@z.mca", "@worlds/shard/region/r.@x2.@z.mca");
+			copy_file("@worlds/@world/region/r.@x.@z2.mca", "@worlds/shard/region/r.@x.@z2.mca");
+			copy_file("@worlds/@world/region/r.@x2.@z2.mca", "@worlds/shard/region/r.@x2.@z2.mca");
 		} catch(IOException @ex) {
 			console('Failed to copy files!', false);
 			action_msg(color('red').'Failed to create Shard!');
@@ -76,10 +69,10 @@ proc _shard_create(@rules){
 		}
 
 		// Copy files of region entities
-		try(copy_file("@worlds/@{world}@dim/entities/r.@x.@z.mca", "@worlds/shard/entities/r.@x.@z.mca"))
-		try(copy_file("@worlds/@{world}@dim/entities/r.@x2.@z.mca", "@worlds/shard/entities/r.@x2.@z.mca"))
-		try(copy_file("@worlds/@{world}@dim/entities/r.@x.@z2.mca", "@worlds/shard/entities/r.@x.@z2.mca"))
-		try(copy_file("@worlds/@{world}@dim/entities/r.@x2.@z2.mca", "@worlds/shard/entities/r.@x2.@z2.mca"))
+		try(copy_file("@worlds/@world/entities/r.@x.@z.mca", "@worlds/shard/entities/r.@x.@z.mca"))
+		try(copy_file("@worlds/@world/entities/r.@x2.@z.mca", "@worlds/shard/entities/r.@x2.@z.mca"))
+		try(copy_file("@worlds/@world/entities/r.@x.@z2.mca", "@worlds/shard/entities/r.@x.@z2.mca"))
+		try(copy_file("@worlds/@world/entities/r.@x2.@z2.mca", "@worlds/shard/entities/r.@x2.@z2.mca"))
 
 		@stop = time();
 		console('Copy region/entity files ('.(@stop - @start).'ms)', false);

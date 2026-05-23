@@ -17,8 +17,8 @@ register_command('stats', array(
 			// read files, parse, collect and sort data on separate thread
 			@top = array();
 			@dir = sys_properties('user.dir');
-			foreach(@file in list_files(@dir.'/worlds/world/advancements/')) {
-				@advancements = json_decode(read(@dir.'/worlds/world/advancements/'.@file));
+			foreach(@file in list_files(@dir.'/world/players/advancements/')) {
+				@advancements = json_decode(read(@dir.'/world/players/advancements/'.@file));
 				@count = 0;
 				foreach(@key: @adv in @advancements) {
 					if(is_array(@adv)
