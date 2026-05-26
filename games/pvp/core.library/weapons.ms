@@ -86,9 +86,9 @@ proc _weapon_hit_scan(@player, @ray, @damage, @effects, @pvp){
 					}
 					if(@hitsound) {
 						if(is_array(@hitsound)) {
-							play_sound(@origin, @hitsound, player());
+							play_sound(@origin, @hitsound, @player);
 						} else {
-							play_sound(@origin, array(sound: @hitsound), player());
+							play_sound(@origin, array(sound: @hitsound), @player);
 						}
 					}
 					@players[] = @player;

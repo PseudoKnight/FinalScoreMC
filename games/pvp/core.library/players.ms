@@ -142,17 +142,17 @@ proc _player_remove(@player, @id) {
 }
 
 proc _player_to_spectator(@player, @pvp) {
-	if(array_index_exists(@pvp['players'][player()], 'class')) {
-		_classes_unload(player(), @pvp['players'][player()]['class'], @pvp);
+	if(array_index_exists(@pvp['players'][@player], 'class')) {
+		_classes_unload(@player, @pvp['players'][@player]['class'], @pvp);
 	}
 	foreach(@entity in @pvp['players'][@player]['entities']) {
 		try(entity_remove(@entity))
 	}
-	array_remove(@pvp['players'], player());
+	array_remove(@pvp['players'], @player);
 	if(function_exists('dm_set_pvisible')) {
 		dm_set_pvisible(@player, true);
 	}
-	_spectator_add(player(), @pvp);
+	_spectator_add(@player, @pvp);
 }
 
 proc _pvp_initialize_players(@id, @players) {
@@ -320,9 +320,9 @@ proc _player_equip(@id, @player) {
 		return();
 	}
 	if(array_contains(@pvp['arena']['flags'], 'build')) {
-		set_pmode('SURVIVAL');
+		set_pmode(@player, 'SURVIVAL');
 	} else {
-		set_pmode('ADVENTURE');
+		set_pmode(@player, 'ADVENTURE');
 	}
 	if(array_index_exists(@pvp['arena'], 'hunger')) {
 		set_phunger(@player, @pvp['arena']['hunger']);
