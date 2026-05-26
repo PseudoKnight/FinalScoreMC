@@ -435,7 +435,10 @@ proc _snake_drop_nuke(@snake, @game) {
 					@state['side'] = 0;
 					if(@state['radius'] > @maxradius) {
 						_snake_check_powerups(@game);
-						array_remove(@game['nukes'], array_index(@game['nukes'], @region));
+						@index = array_index(@game['nukes'], @region);
+						if(!is_null(@index)) {
+							array_remove(@game['nukes'], @index);
+						}
 					}
 				}
 			});
