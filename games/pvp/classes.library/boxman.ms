@@ -122,5 +122,5 @@ proc _class_unload(@player, @pvp) {
 	unbind(@player.'boxman');
 	unbind(@player.'boxmanattack');
 	unbind(@player.'boxmanbox');
-	set_pwalkspeed(player(), 0.2);
+	set_pwalkspeed(@player, 0.2);
 }
