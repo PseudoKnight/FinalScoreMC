@@ -176,6 +176,11 @@ proc _arena_load(@pvp) {
 		}
 	}
 
+	if(array_index_exists(@arena, 'lives') && @arena['lives'] < 1) {
+		// allow child arenas to disable lives
+		array_remove(@arena, 'lives');
+	}
+
 	if(array_index_exists(@arena, 'team')) {
 		// Alternate spawns
 		if(array_size(@arena['spawn']) == 1 || !@arena['spawn'][1]) {
