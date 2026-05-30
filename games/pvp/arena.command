@@ -33,7 +33,7 @@ register_command('arena', array(
 				'DARK_GRAY', 'BLUE', 'GREEN', 'AQUA', 'RED', 'LIGHT_PURPLE', 'YELLOW', 'WHITE'),
 			'<weapons': array('endernades', 'fireball', 'firebreath', 'firefire', 'flamethrower', 'grapple',
 				'halo/battlerifle', 'knockout', 'mine', 'pistoltears', 'primedtnt', 'railgun', 'rifle', 'shotgunballs',
-				'skullrockets', 'snipeglass', 'spawner', 'stickynade', 'tracker', 'dynamitestick'),
+				'skullrockets', 'spawner', 'stickynade', 'tracker', 'dynamitestick'),
 			'<vote': array('arenas', 'teams', 'classes'),
 		),
 		array(
