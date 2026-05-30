@@ -553,4 +553,10 @@ proc _bind_events(@pvp) {
 			cancel();
 		}
 	}
+
+	@pvp['binds'][] = bind('creature_spawn', null, array(reason: 'SPAWNER_EGG'), @event, @pvp) {
+		if(sk_region_contains(@pvp['arena']['region'], @event['location'])) {
+			set_entity_saves_on_unload(@event['id'], false);
+		}
+	}
 }
