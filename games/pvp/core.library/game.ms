@@ -622,9 +622,9 @@ proc _pvp_start_match(@id) {
 					set_entity_fall_distance(puuid(@player), 0);
 					if(array_index_exists(@pvp, 'team')) {
 						@team = @pvp['players'][@player]['team'];
-						set_ploc(@player, @arena['spawn'][@team][0]);
+						set_ploc(@player, array_get_rand(@arena['spawn'][@team]));
 					} else {
-						set_ploc(@player, @arena['spawn'][0][0]);
+						set_ploc(@player, array_get_rand(@arena['spawn'][0]));
 					}
 				} else {
 					tmsg(@player, color('gray').'[PVP] '.color('r').'You exited the combat region.');
