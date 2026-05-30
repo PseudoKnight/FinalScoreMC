@@ -1,13 +1,20 @@
 // Bowcaster
 bind('player_interact', null, array(hand: 'main_hand', button: 'right', itemname: 'CROSSBOW'), @event) {
+	@item = @event['item'];
 	if(pcooldown('CROSSBOW') 
-	|| !@event['item']['meta']
-	|| @event['item']['meta']['display'] !== 'Bowcaster'
-	|| !@event['item']['meta']['projectiles']) {
+	|| !@item['meta']
+	|| @item['meta']['display'] !== 'Bowcaster'
+	|| !@item['meta']['projectiles']) {
 		die();
 	}
 	set_pcooldown('CROSSBOW', 5);
 	cancel();
+	@item['meta']['damage']++;
+	if(@item['meta']['damage'] > material_info('CROSSBOW', 'maxDurability')) {
+		set_pinv(player(), null, null);
+	} else {
+		set_pinv(player(), null, @item);
+	}
 
 	@trace = ray_trace();
 	@loc = @trace['origin'];
