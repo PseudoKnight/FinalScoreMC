@@ -559,4 +559,12 @@ proc _bind_events(@pvp) {
 			set_entity_saves_on_unload(@event['id'], false);
 		}
 	}
+
+	if(array_contains(@pvp['arena']['flags'], 'build') && !array_index_exists(@pvp['arena'], 'restore')) {
+		@pvp['binds'][] = bind('block_place', null, null, @event, @pvp) {
+			if(array_index_exists(@pvp['players'], player())) {
+				@pvp['blocks'][] = array_normalize(@event['location'])[0..3];
+			}
+		}
+	}
 }

@@ -7,6 +7,7 @@ proc _pvp_create(@id) {
 		binds: array(),
 		coins: 0,
 		arenascripts: array(),
+		blocks: array(),
 	);
 	export('pvp'.@id, @pvp);
 	return(@pvp);
@@ -1016,6 +1017,12 @@ proc _pvp_end_match(@id, @winners) {
 					console('Restored arena in '.(time() - @startTime).'ms');
 				});
 			}
+		} else if(@pvp['blocks']) {
+			@startTime = time();
+			foreach(@block in @pvp['blocks']) {
+				set_block(@block, 'AIR');
+			}
+			console('Removed placed blocks in arena in '.(time() - @startTime).'ms');
 		}
 		queue_push(closure(){
 			remove_scoreboard(@id);
