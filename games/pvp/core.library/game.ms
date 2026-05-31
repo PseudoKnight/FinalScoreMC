@@ -578,11 +578,29 @@ proc _pvp_start_match(@id) {
 					} else {
 						if(array_index_exists(@pvp, 'team')) {
 							@team = @p['team'];
-							@r = rand(0, array_size(@arena['spawn'][@team]));
-							@loc = @arena['spawn'][@team][@r];
+							@loc = array_get_rand(@arena['spawn'][@team]);
 						} else {
-							@r = rand(0, array_size(@arena['spawn'][0]));
-							@loc = @arena['spawn'][0][@r];
+							// get two random spawn locations
+							// and choose the farthest from other players
+							@locations = array_rand(@arena['spawn'][0], 2, false);
+							@distances = array(96, 96);
+							foreach(@otherPlayer in array_keys(@pvp['players'])) {
+								if(pmode(@otherPlayer) !== 'SPECTATOR') {
+									@dist = distance(@locations[0], ploc(@otherPlayer));
+									if(@dist < @distances[0]) {
+										@distances[0] = @dist;
+									}
+									@dist = distance(@locations[1], ploc(@otherPlayer));
+									if(@dist < @distances[1]) {
+										@distances[1] = @dist;
+									}
+								}
+							}
+							if(@distances[0] > @distances[1]) {
+								@loc = @locations[0];
+							} else {
+								@loc = @locations[1];
+							}
 						}
 					}
 					try {
