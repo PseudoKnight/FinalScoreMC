@@ -70,11 +70,7 @@ register_command('timer', array(
 							die();
 						}
 						@time = integer(round((time() - @timers[@player][1]) / 1000));
-						if(extension_exists('CHNaughty')) {
-							action_msg(@player, @time);
-						} else {
-							set_plevel(@player, @time);
-						}
+						action_msg(@player, @time);
 
 						if(@time < @ptime) {
 							@percent = integer((@time / @ptime) * 100);
@@ -97,11 +93,7 @@ register_command('timer', array(
 						pkill(@player);
 
 					} else {
-						if(extension_exists('CHNaughty')) {
-							action_msg(@player, 'X');
-						} else if(!_is_survival_world(pworld(@player))) {
-							set_plevel(@player, 0);
-						}
+						action_msg(@player, 'X');
 						@stop = true;
 					}
 				} else {

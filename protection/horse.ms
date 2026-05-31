@@ -18,11 +18,9 @@ bind('player_interact_entity', null, array('clicked': '/(DONKEY|HORSE|MULE|SKELE
 	}
 	@health = round(get_max_health(@event['id']) / 2, 1);
 	@speed = round(entity_attribute_base(@event['id'], 'GENERIC_MOVEMENT_SPEED') * 42.16, 3);
-	if(function_exists('action_msg')) {
-		set_timeout(50, closure(){
-			action_msg(colorize('&c'.@health.' \u2764 &e'.@jump.' \u279A &a'.@speed.' \u279F'));
-		});
-	}
+	set_timeout(50, closure(){
+		action_msg(colorize('&c'.@health.' \u2764 &e'.@jump.' \u279A &a'.@speed.' \u279F'));
+	});
 
 	@item = pinv(player(), null);
 	@owner = get_mob_owner(@event['id']);

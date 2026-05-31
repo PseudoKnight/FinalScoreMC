@@ -236,9 +236,7 @@ bind('player_interact_entity', null, array(clicked: 'PAINTING', hand: 'main_hand
 			try(set_entity_spec(@event['id'], array(type: @next)))
 			# but just in case, only try 44 times (enough to cycle from the last 1x1 back to the first 1x1)
 		} while(entity_spec(@event['id'])['type'] != @next && ++@tries < 44)
-		if(extension_exists('CHNaughty')) {
-			action_msg(@next);
-		}
+		action_msg(@next);
 	}
 }
 
