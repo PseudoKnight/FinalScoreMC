@@ -21,6 +21,7 @@ proc _arena_bind_events(@id) {
 		'PUFFERFISH_BUCKET',
 		'AXOLOTL_BUCKET',
 		'TADPOLE_BUCKET',
+		'LAVA_BUCKET',
 		'KNOWLEDGE_BOOK',
 		'MAP',
 		'FILLED_MAP',
@@ -35,10 +36,8 @@ proc _arena_bind_events(@id) {
 		'HEAVY_WEIGHTED_PRESSURE_PLATE',
 	);
 	foreach(@index: @material in @items) {
-		if(material_info(@material, 'isItem')
-		&& !array_contains(@bannedItems, @material)) {
-			@items[@index] = to_lower(@material);
-		} else {
+		if(!material_info(@material, 'isItem')
+		|| array_contains(@bannedItems, @material)) {
 			array_remove(@items, @index);
 		}
 	}
@@ -72,27 +71,99 @@ proc _arena_bind_events(@id) {
 		try {
 			foreach(@player in array_keys(@pvp['players'])) {
 				if(pworld(@player) !== @pvp['arena']['world']) {
-					throw(Exception, 'Player was in wrong world.');
+					throw(InvalidWorldException, 'Player was in wrong world.');
 				}
-				@inv = pinv(@player);
-				@slot = -1;
-				while(++@slot < 9) {
-					if(!@inv[@slot]) {
-						@item = array_get_rand(@items);
-						if(is_array(@item)) {
-							set_pinv(@player, @slot, @item);
-						} else {
-							@qty = 1;
-							if(material_info(@item, 'maxStackSize') > 1) {
-								while(!rand(5)) {
-									@qty++;
-								}
-							}
-							set_pinv(@player, @slot, array(name: @item, qty: @qty));
-						}
-						break();
+
+				@item = array_get_rand(@items);
+
+				if(is_array(@item)) {
+					pgive_item(@player, @item);
+					continue();
+				}
+
+				@itemArray = array(name: @item, qty: 1);
+				if(material_info(@item, 'maxStacksize') > 1) {
+					while(!rand(5)) {
+						@itemArray['qty']++;
+					}
+				} else if(rand(2)) {
+					@enchants = get_enchants(@itemArray);
+					if(@enchants) {
+						@itemArray['meta'] = array(enchants: associative_array());
+						do {
+							@enchant = array_get_rand(@enchants);
+							array_remove_values(@enchants, @enchant);
+							@itemArray['meta']['enchants'][@enchant] = rand(1, get_enchant_max(@enchant) + 1);
+						} while(rand(2) && @enchants)
 					}
 				}
+				if(@item === 'SUSPICIOUS_STEW') {
+					@itemArray['meta'] = array(potions: array());
+					@effects = reflect_pull('enum', 'PotionEffectType');
+					@effect = array_get_rand(@effects);
+					@itemArray['meta']['potions'][@effect] = array(
+						seconds: rand(3, 12),
+						strength: rand(2));
+				} else if(@item === 'POTION' || @item === 'SPLASH_POTION' || @item === 'TIPPED_ARROW'
+				|| @item === 'LINGERING_POTION') {
+					if(rand(2)) {
+						@potionType = array_get_rand(array('INFESTED', 'SWIFTNESS', 'LONG_SWIFTNESS',
+						'STRONG_SWIFTNESS', 'SLOWNESS', 'LONG_SLOWNESS', 'STRONG_SLOWNESS',	'STRENGTH',
+						'LONG_STRENGTH', 'STRONG_STRENGTH', 'HARMING', 'STRONG_HARMING', 'HEALING', 'STRONG_HEALING',
+						'LEAPING', 'LONG_LEAPING', 'STRONG_LEAPING', 'OOZING', 'SLOW_FALLING', 'LONG_SLOW_FALLING',
+						'REGENERATION', 'LONG_REGENERATION', 'STRONG_REGENERATION', 'FIRE_RESISTANCE',
+						'LONG_FIRE_RESISTANCE', 'WATER_BREATHING', 'LONG_WATER_BREATHING', 'INVISIBILITY',
+						'LONG_INVISIBILITY', 'NIGHT_VISION', 'LONG_NIGHT_VISION', 'WEAKNESS', 'LONG_WEAKNESS',
+						'WEAVING', 'POISON', 'LONG_POISON', 'STRONG_POISON', 'LUCK', 'TURTLE_MASTER',
+						'LONG_TURTLE_MASTER', 'STRONG_TURTLE_MASTER', 'WIND_CHARGED'));
+						@itemArray['meta'] = array(potiontype: @potionType);
+					} else {
+						@itemArray['meta'] = array(potions: array());
+						@effects = reflect_pull('enum', 'PotionEffectType');
+						do {
+							@effect = array_get_rand(@effects);
+							@itemArray['meta']['potions'][@effect] = array(
+								seconds: rand(1, 480),
+								strength: rand(3));
+						} while(rand(2))
+					}
+				} else if(@item === 'ENCHANTED_BOOK') {
+					@enchants = array(
+						'power', 'flame', 'infinity', 'punch', 'sharpness', 'bane_of_arthropods', 'smite',
+						'efficiency', 'unbreaking', 'fire_aspect', 'knockback', 'fortune', 'looting', 'respiration',
+						'protection', 'blast_protection', 'feather_falling', 'fire_protection',
+						'projectile_protection', 'silk_touch', 'thorns', 'aqua_affinity', 'depth_strider', 'mending',
+						'frost_walker', 'sweeping_edge', 'channeling', 'impaling', 'riptide', 'loyalty',
+						'vanishing_curse', 'binding_curse', 'swift_sneak', 'piercing', 'multishot', 'quick_charge',
+						'breach', 'density', 'wind_burst', 'lunge');
+					@itemArray['meta'] = array(stored: associative_array());
+					do {
+						@enchant = array_get_rand(@enchants);
+						@itemArray['meta']['stored'][@enchant] = 1;
+					} while(rand(2))
+				} else if(@item === 'BEEHIVE' || @item === 'BEE_NEST') {
+					@itemArray['meta'] = array(beecount: 3);
+				} else if(@item === 'CROSSBOW') {
+					if(rand(2)) {
+						if(!array_index_exists(@itemArray, 'meta')) {
+							@itemArray['meta'] = associative_array();
+						}
+						@itemArray['meta']['projectiles'] = array(array(name: 'ARROW'));
+					}
+				} else if(@item === 'SPAWNER') {
+					@spawnTypes = array('ALLAY', 'ARMADILLO', 'AXOLOTL', 'BAT', 'BEE', 'CAMEL', 'CAT', 'CHICKEN', 'COD',
+						'COPPER_GOLEM', 'COW', 'DOLPHIN', 'DONKEY', 'FOX', 'FROG', 'GLOW_SQUID', 'GOAT', 'HAPPY_GHAST', 'HORSE',
+						'IRON_GOLEM', 'LLAMA', 'MAGMA_CUBE', 'MULE', 'MOOSHROOM', 'OCELOT', 'PANDA', 'PARROT', 'PIG',
+						'POLAR_BEAR', 'RABBIT', 'SALMON', 'SHEEP', 'SNIFFER', 'SNOW_GOLEM', 'SQUID', 'STRIDER', 'TADPOLE',
+						'TRADER_LLAMA', 'TROPICAL_FISH', 'TURTLE', 'VILLAGER', 'WANDERING_TRADER', 'WOLF', 'ZOMBIE_HORSE',
+						'BOGGED', 'BREEZE', 'CAVE_SPIDER', 'CREAKING', 'CREEPER', 'DROWNED', 'ELDER_GUARDIAN', 'ENDERMAN',
+						'ENDERMITE', 'EVOKER', 'GUARDIAN', 'HOGLIN', 'HUSK', 'PHANTOM','PIGLIN', 'PIGLIN_BRUTE', 'PILLAGER',
+						'PUFFERFISH', 'RAVAGER', 'SHULKER', 'SILVERFISH', 'SKELETON', 'SKELETON_HORSE', 'SLIME', 'SPIDER',
+						'STRAY', 'VEX', 'VINDICATOR', 'WITCH', 'WITHER_SKELETON', 'ZOGLIN', 'ZOMBIE', 'ZOMBIE_VILLAGER',
+						'ZOMBIFIED_PIGLIN');
+					@itemArray['meta'] = array(spawntype: array_get_rand(@spawnTypes));
+				}
+				pgive_item(@player, @itemArray);
 			}
 		} catch(Exception @ex) {
 			console(@ex['message']);

@@ -3,9 +3,6 @@ proc _weapon_bind_events(@pvp) {
 		if(!array_index_exists(@pvp['players'], player())) {
 			die();
 		}
-		if(@e['item'] !== 'WITHER_SKELETON_SKULL') {
-			die();
-		}
 
 		@entity = shoot_projectile(player(), 'wither_skull');
 		@dir = entity_spec(@entity)['direction'];

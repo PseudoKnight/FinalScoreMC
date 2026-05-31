@@ -120,7 +120,6 @@ proc _random_item(@baseItems) {
 		case 'TIPPED_ARROW':
 		case 'LINGERING_POTION':
 			if(rand(2)) {
-				@state = rand(3);
 				@potionType = array_get_rand(array('INFESTED', 'SWIFTNESS', 'LONG_SWIFTNESS', 'STRONG_SWIFTNESS', 'SLOWNESS', 'LONG_SLOWNESS', 'STRONG_SLOWNESS',
 				'STRENGTH', 'LONG_STRENGTH', 'STRONG_STRENGTH', 'HARMING', 'STRONG_HARMING', 'HEALING', 'STRONG_HEALING', 'LEAPING', 'LONG_LEAPING', 'STRONG_LEAPING',
 				'OOZING', 'SLOW_FALLING', 'LONG_SLOW_FALLING', 'REGENERATION', 'LONG_REGENERATION', 'STRONG_REGENERATION', 'FIRE_RESISTANCE', 'LONG_FIRE_RESISTANCE',
@@ -132,7 +131,7 @@ proc _random_item(@baseItems) {
 				@effects = reflect_pull('enum', 'PotionEffectType');
 				do {
 					@effect = array_get_rand(@effects);
-					@meta['potions'][@effect] = array(seconds: rand(1, 480), strength: rand(3)),
+					@meta['potions'][@effect] = array(seconds: rand(1, 480), strength: rand(3));
 				} while(rand(2))
 			}
 		case 'COMPASS':
