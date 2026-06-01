@@ -77,7 +77,7 @@ bind('player_teleport', array('priority': 'HIGH'), null, @event) {
 				if(!_world_allows_teleports(@loc[3])) {
 					// Restoring their last location within that worldgroup since they were not allowed to teleport out
 					// of it except to another worldgroup
-					modify_event('to', @loc);
+					modify_event('to', location_shift(@loc, 'up'));
 				}
 			}
 			
