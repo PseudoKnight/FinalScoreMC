@@ -13,13 +13,14 @@ register_command('snake', array(
 			case 'top':
 				@mode = 'endless';
 				if(array_size(@args) > 1) {
-					@mode = @args[1];
+					@mode = to_lower(@args[1]);
 				}
 				@top = get_value('snake', @mode, 'top');
 				if(!@top) {
 					die(color('gold').'There are no top scores.. yet!');
 				}
-				msg(color('green').color('bold').'Top Snakes ('.@mode.')');
+				@title = to_upper(@mode[0]).@mode[1..];
+				msg(color('green').color('bold').'Top '.@mode.' Snakes');
 				@i = 0;
 				@size = min(19, array_size(@top));
 				do {
@@ -31,10 +32,14 @@ register_command('snake', array(
 				if(!has_permission('group.admin')) {
 					die(color('gold').'You do not have permission.');
 				}
-				foreach(@key: @value in get_values('snake.endless')) {
+				@mode = 'endless';
+				if(array_size(@args) > 1) {
+					@mode = @args[1];
+				}
+				foreach(@key: @value in get_values('snake.'.@mode)) {
 					clear_value(@key);
 				}
-				msg(color('green').'Reset stats.');
+				msg(color('green').'Reset stats for '.@mode);
 
 			case 'start':
 				if(queue_running('snake_cleanup')) {

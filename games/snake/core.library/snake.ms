@@ -36,6 +36,7 @@ proc _snake_add(@player, @game) {
 		color: color('white'),
 		armorColor: array(255, 255, 255),
 		bot: '',
+		deaths: 0,
 	);
 
 	if(!get_pscore('score', @player, 'snake')) {
@@ -278,17 +279,13 @@ proc _snake_kill(@player, @game) {
 		try(entity_remove(@game['snakes'][@player]['debug']))
 	}
 	@snake['alive'] = false;
+	@snake['deaths']++;
 	if(@game['mode'] === 'endless') {
 		@block = @snake['blocks'][-1];
 		@blockType = get_block(@block);
 		if(@blockType === @snake['head']) {
 			set_block(@block, @snake['tail'], false);
 			spawn_particle(@block, array(particle: 'SMOKE_NORMAL', count: 8, xoffset: 1, yoffset: 1, zoffset: 1, force: true));
-		}
-		foreach(@p: @s in @game['snakes']) {
-			if(@s['alive']) {
-				set_pscore('score', @p, get_pscore('score', @p, 'snake') + 1, 'snake');
-			}
 		}
 	} else {
 		for(@i = array_size(@snake['blocks']) - 1, @i >= 0, @i -= 3) {

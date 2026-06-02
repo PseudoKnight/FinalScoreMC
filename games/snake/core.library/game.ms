@@ -31,7 +31,7 @@ proc _snake_queue(@mode) {
 	@game['surfaces'] = 0;
 	@game['snakes'] = associative_array();
 	@game['powerups'] = array();
-	@game['numPowerups'] = if(@mode === 'gluttony', 1, if(@mode !== 'endless', 25, 15));
+	@game['numPowerups'] = 1;
 	@game['numPlayers'] = 9;
 	@game['botsOnly'] = false;
 	@game['missiles'] = associative_array();
@@ -58,6 +58,9 @@ proc _snake_queue(@mode) {
 	// Get region count
 	while(sk_region_exists('custom', @game['region'].(@game['surfaces'] + 1))) {
 		@game['surfaces']++;
+	}
+	if(@mode !== 'gluttony') {
+		@game['numPowerups'] = @game['surfaces'] * if(@mode === 'endless', 3, 5);
 	}
 
 	// Create scoreboard
@@ -212,7 +215,13 @@ proc _snake_countdown(@game) {
 }
 
 proc _snake_start_task(@game) {
+	@totalTicks = array(0);
+	@totalSeconds = array(0);
 	@game['interval'] = set_interval(50, closure() {
+		@totalTicks[0]++;
+		if(@totalTicks[0] % 20 == 0) {
+			@totalSeconds[0]++;
+		}
 		@alive = 0;
 		@active = 'No one';
 		@playersAlive = 0;
@@ -252,21 +261,19 @@ proc _snake_start_task(@game) {
 				} else if(@game['mode'] === 'endless' && @snake['bot']) {
 					@color = @snake['tail'];
 					@abilities = @snake['ability-count'];
+					@deaths = @snake['deaths'];
 					if(_snake_add(@player, @game)) {
 						_snake_set_color(@player, @color, @game); // keep color
 						@game['snakes'][@player]['ability-count'] = @abilities; // keep abilities
+						@game['snakes'][@player]['deaths'] = @deaths;
 					}
+				}
+				if(@game['mode'] === 'endless' && @snake['alive'] && (!@snake['bot'] || !@snake['deaths'])) {
+					set_pscore('score', @player, @totalSeconds[0], 'snake');
 				}
 			} catch (IndexOverflowException @ex) {
 				console(@ex);
 				_snake_remove(@player, @game);
-			}
-		}
-		if(@game['mode'] === 'capture') {
-			foreach(@team: @flag in @game['flags']){
-				if(!@flag) {
-					_snake_spawn_flag(@team, @game);
-				}
 			}
 		}
 
@@ -280,16 +287,30 @@ proc _snake_start_task(@game) {
 			}
 		}
 
-		if(@game['mode'] !== 'capture' && (!@playersAlive || !@alive)) {
-			if(@game['mode'] === 'endless' || !@alive) {
-				_snake_end(null, @game);
-				return();
-			} else {
-				@game['botsOnly'] = true;
-			}
-		}
-		if(@alive < 2 && @game['mode'] !== 'gluttony' && @game['mode'] !== 'endless') {
-			_snake_end(@active, @game);
+		switch(@game['mode']) {
+			case 'versus':
+			case 'elimination':
+				if(!@alive) {
+					_snake_end(null, @game);
+				} else if(@alive < 2) {
+					_snake_end(@active, @game);
+				} else if(!@playersAlive) {
+					@game['botsOnly'] = true;
+				}
+			case 'endless':
+			case 'gluttony':
+				if(!@playersAlive) {
+					_snake_end(null, @game);
+				}
+			case 'capture':
+				foreach(@team: @flag in @game['flags']){
+					if(!@flag) {
+						_snake_spawn_flag(@team, @game);
+					}
+				}
+				if(!@playersAlive && array_size(@game['snakes']) < 2) {
+					_snake_end(null, @game);
+				}
 		}
 	});
 }
