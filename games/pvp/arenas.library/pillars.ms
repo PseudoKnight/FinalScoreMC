@@ -112,10 +112,9 @@ proc _arena_bind_events(@id) {
 						'LONG_STRENGTH', 'STRONG_STRENGTH', 'HARMING', 'STRONG_HARMING', 'HEALING', 'STRONG_HEALING',
 						'LEAPING', 'LONG_LEAPING', 'STRONG_LEAPING', 'OOZING', 'SLOW_FALLING', 'LONG_SLOW_FALLING',
 						'REGENERATION', 'LONG_REGENERATION', 'STRONG_REGENERATION', 'FIRE_RESISTANCE',
-						'LONG_FIRE_RESISTANCE', 'WATER_BREATHING', 'LONG_WATER_BREATHING', 'INVISIBILITY',
-						'LONG_INVISIBILITY', 'NIGHT_VISION', 'LONG_NIGHT_VISION', 'WEAKNESS', 'LONG_WEAKNESS',
-						'WEAVING', 'POISON', 'LONG_POISON', 'STRONG_POISON', 'LUCK', 'TURTLE_MASTER',
-						'LONG_TURTLE_MASTER', 'STRONG_TURTLE_MASTER', 'WIND_CHARGED'));
+						'LONG_FIRE_RESISTANCE', 'INVISIBILITY', 'LONG_INVISIBILITY', 'NIGHT_VISION',
+						'LONG_NIGHT_VISION', 'WEAKNESS', 'LONG_WEAKNESS', 'WEAVING', 'POISON', 'LONG_POISON',
+						'STRONG_POISON', 'TURTLE_MASTER', 'LONG_TURTLE_MASTER', 'STRONG_TURTLE_MASTER', 'WIND_CHARGED'));
 						@itemArray['meta'] = array(potiontype: @potionType);
 					} else {
 						@itemArray['meta'] = array(potions: array());
@@ -129,13 +128,10 @@ proc _arena_bind_events(@id) {
 					}
 				} else if(@item === 'ENCHANTED_BOOK') {
 					@enchants = array(
-						'power', 'flame', 'infinity', 'punch', 'sharpness', 'bane_of_arthropods', 'smite',
-						'efficiency', 'unbreaking', 'fire_aspect', 'knockback', 'fortune', 'looting', 'respiration',
-						'protection', 'blast_protection', 'feather_falling', 'fire_protection',
-						'projectile_protection', 'silk_touch', 'thorns', 'aqua_affinity', 'depth_strider', 'mending',
-						'frost_walker', 'sweeping_edge', 'channeling', 'impaling', 'riptide', 'loyalty',
-						'vanishing_curse', 'binding_curse', 'swift_sneak', 'piercing', 'multishot', 'quick_charge',
-						'breach', 'density', 'wind_burst', 'lunge');
+						'power', 'flame', 'infinity', 'punch', 'sharpness', 'efficiency', 'fire_aspect', 'knockback',
+						'fortune', 'looting', 'protection', 'fire_protection', 'projectile_protection', 'thorns',
+						'sweeping_edge', 'loyalty', 'swift_sneak', 'piercing', 'multishot', 'quick_charge', 'breach',
+						'density', 'wind_burst', 'lunge');
 					@itemArray['meta'] = array(stored: associative_array());
 					do {
 						@enchant = array_get_rand(@enchants);
@@ -148,19 +144,25 @@ proc _arena_bind_events(@id) {
 						if(!array_index_exists(@itemArray, 'meta')) {
 							@itemArray['meta'] = associative_array();
 						}
-						@itemArray['meta']['projectiles'] = array(array(name: 'ARROW'));
+						if(rand(2)) {
+							@itemArray['meta']['projectiles'] = array(array(name: 'ARROW'));
+						} else {
+							@itemArray['meta']['projectiles'] = array(array(name: 'FIREWORK_ROCKET', meta: array(firework: array(
+								effects: array(array(type: 'LARGE_BALL'), array(type: 'LARGE_BALL'), array(type: 'LARGE_BALL')),
+								strength: 1))));
+						}
 					}
 				} else if(@item === 'SPAWNER') {
 					@spawnTypes = array('ALLAY', 'ARMADILLO', 'AXOLOTL', 'BAT', 'BEE', 'CAMEL', 'CAT', 'CHICKEN', 'COD',
-						'COPPER_GOLEM', 'COW', 'DOLPHIN', 'DONKEY', 'FOX', 'FROG', 'GLOW_SQUID', 'GOAT', 'HAPPY_GHAST', 'HORSE',
-						'IRON_GOLEM', 'LLAMA', 'MAGMA_CUBE', 'MULE', 'MOOSHROOM', 'OCELOT', 'PANDA', 'PARROT', 'PIG',
-						'POLAR_BEAR', 'RABBIT', 'SALMON', 'SHEEP', 'SNIFFER', 'SNOW_GOLEM', 'SQUID', 'STRIDER', 'TADPOLE',
-						'TRADER_LLAMA', 'TROPICAL_FISH', 'TURTLE', 'VILLAGER', 'WANDERING_TRADER', 'WOLF', 'ZOMBIE_HORSE',
-						'BOGGED', 'BREEZE', 'CAVE_SPIDER', 'CREAKING', 'CREEPER', 'DROWNED', 'ELDER_GUARDIAN', 'ENDERMAN',
-						'ENDERMITE', 'EVOKER', 'GUARDIAN', 'HOGLIN', 'HUSK', 'PHANTOM','PIGLIN', 'PIGLIN_BRUTE', 'PILLAGER',
-						'PUFFERFISH', 'RAVAGER', 'SHULKER', 'SILVERFISH', 'SKELETON', 'SKELETON_HORSE', 'SLIME', 'SPIDER',
-						'STRAY', 'VEX', 'VINDICATOR', 'WITCH', 'WITHER_SKELETON', 'ZOGLIN', 'ZOMBIE', 'ZOMBIE_VILLAGER',
-						'ZOMBIFIED_PIGLIN');
+						'COPPER_GOLEM', 'COW', 'DOLPHIN', 'DONKEY', 'FOX', 'FROG', 'GLOW_SQUID', 'GOAT', 'HAPPY_GHAST',
+						'HORSE', 'IRON_GOLEM', 'LLAMA', 'MAGMA_CUBE', 'MULE', 'MOOSHROOM', 'OCELOT', 'PANDA', 'PARROT',
+						'PIG', 'POLAR_BEAR', 'RABBIT', 'SALMON', 'SHEEP', 'SNIFFER', 'SNOW_GOLEM', 'SQUID', 'STRIDER',
+						'TADPOLE', 'TRADER_LLAMA', 'TROPICAL_FISH', 'VILLAGER', 'WANDERING_TRADER', 'WOLF',
+						'ZOMBIE_HORSE', 'BOGGED', 'BREEZE', 'CAVE_SPIDER', 'CREAKING', 'CREEPER', 'DROWNED',
+						'ELDER_GUARDIAN', 'ENDERMAN', 'ENDERMITE', 'EVOKER', 'GHAST', 'GUARDIAN', 'HOGLIN', 'HUSK',
+						'PHANTOM', 'PIGLIN', 'PIGLIN_BRUTE', 'PILLAGER', 'PUFFERFISH', 'RAVAGER', 'SHULKER',
+						'SILVERFISH', 'SKELETON', 'SKELETON_HORSE', 'SLIME', 'SPIDER', 'STRAY', 'VEX', 'VINDICATOR',
+						'WITCH', 'WITHER_SKELETON', 'ZOGLIN', 'ZOMBIE', 'ZOMBIE_VILLAGER', 'ZOMBIFIED_PIGLIN');
 					@itemArray['meta'] = array(spawntype: array_get_rand(@spawnTypes));
 				}
 				pgive_item(@player, @itemArray);
