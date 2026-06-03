@@ -20,9 +20,6 @@ bind('player_interact_entity', null, array(clicked: 'LLAMA'), @event) {
 				|| !array_index_exists(@pdata['shared'], player())
 				|| !array_contains(@pdata['shared'][player()], 'horses')) {
 					cancel();
-					# reset their view; mostly fixes client side glitch when canceling this event
-					@facing = pfacing();
-					pfacing(@facing[0], @facing[1]);
 				}
 			}
 		}

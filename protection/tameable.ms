@@ -1,6 +1,6 @@
 // Protect tameable animals from damage by non-owners
 bind('entity_damage', array(priority: 'HIGHEST'), array(
-		type: '/(DONKEY|HORSE|LLAMA|MULE|CAT|SKELETON_HORSE|WOLF|ZOMBIE_HORSE|PARROT|NAUTILUS|ZOMBIE_NAUTILUS)/'), @event) {
+		type: '/(DONKEY|HORSE|LLAMA|MULE|CAT|SKELETON_HORSE|WOLF|ZOMBIE_HORSE|PARROT|NAUTILUS|ZOMBIE_NAUTILUS|CAMEL)/'), @event) {
 
 	@world = @event['world'];
 	@id = @event['id'];
@@ -51,6 +51,17 @@ bind('entity_damage', array(priority: 'HIGHEST'), array(
 			if(!get_entity_rider(@id)) {
 				cancel();
 			}
+	}
+}
+
+# Tame camels
+bind('player_interact_entity', null, array(clicked: 'CAMEL'), @event) {
+	@id = @event['id'];
+	if(!get_mob_owner(@id)
+	&& get_mob_equipment(@id)['saddle']
+	&& sk_can_build(entity_loc(@id))) {
+		set_mob_owner(@id, player());
+		msg('You now own this animal.');
 	}
 }
 
