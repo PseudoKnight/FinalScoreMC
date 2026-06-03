@@ -147,20 +147,18 @@ proc _snake_queue(@mode) {
 		@scoreboardCount = array_size(@game['snakes']);
 		@personalBests = associative_array();
 		foreach(@player: @snake in @game['snakes']) {
-			if(ponline(@player)) {
-				@uuid = puuid(@player, true);
-				@score = get_value('snake', @game['mode'], @uuid);
-				if(@score) {
-					@scoreboardCount++;
-					@personalBests[@uuid] = array(name: @player, score: @score);
-				}
+			if(!ponline(@player)) {
+				continue();
+			}
+			@uuid = puuid(@player, true);
+			@score = get_value('snake', @game['mode'], @uuid);
+			if(@score) {
+				@scoreboardCount++;
+				@personalBests[@uuid] = array(name: @player, score: @score);
 			}
 		}
 		if(@scoreboardCount < 15) {
 			foreach(@index: @entry in get_value('snake', @game['mode'], 'top')) {
-				if(@entry['value'] <= 0) {
-					break();
-				}
 				@rank = string(@index + 1);
 				switch(@rank) {
 					case 1:
@@ -408,19 +406,20 @@ proc _snake_end(@winner, @game) {
 		// Sort player scores
 		@scores = array();
 		foreach(@p: @snake in @game['snakes']) {
-			if(ponline(@p)) {
-				@pscore = get_pscore('score', @p, 'snake');
-				@array = array(name: @p, value: @pscore, highscore: false, topscore: false);
-				foreach(@i: @score in @scores) {
-					if(@pscore > @score['value']) {
-						array_insert(@scores, @array, @i);
-						break();
-					} else if(@i == array_size(@scores) - 1) {
-						@scores[] = @array;
-					}
-				} else {
+			if(!ponline(@p)) {
+				continue();
+			}
+			@pscore = get_pscore('score', @p, 'snake');
+			@array = array(name: @p, value: @pscore, highscore: false, topscore: false);
+			foreach(@i: @score in @scores) {
+				if(@pscore > @score['value']) {
+					array_insert(@scores, @array, @i);
+					break();
+				} else if(@i == array_size(@scores) - 1) {
 					@scores[] = @array;
 				}
+			} else {
+				@scores[] = @array;
 			}
 		}
 
@@ -433,43 +432,47 @@ proc _snake_end(@winner, @game) {
 		foreach(@score in @scores) {
 			@uuid = puuid(@score['name'], true);
 			@pscore = get_value('snake', @game['mode'], @uuid);
-			if(!@pscore || @score['value'] > @pscore) {
-				store_value('snake', @game['mode'], @uuid, @score['value']);
-				@score['highscore'] = true;
+			if(!is_null(@pscore) && @score['value'] <= @pscore) {
+				continue();
+			}
+			store_value('snake', @game['mode'], @uuid, @score['value']);
+			if(@score['value'] <= 0) {
+				continue();
+			}
+			@score['highscore'] = true;
 
-				@coins = @score['value'] - @pscore;
-				_acc_add(@score['name'], @coins);
-				tmsg(@score['name'], color('gold').'+'.@coins.' coins');
+			@coins = @score['value'] - @pscore;
+			_acc_add(@score['name'], @coins);
+			tmsg(@score['name'], color('gold').'+'.@coins.' coins');
 
-				@array = array(uuid: @uuid, value: @score['value']);
-				@remove = false;
-				foreach(@i: @topscore in @topscores) {
-					if(@topscore['uuid'] === @uuid) {
-						if(@remove) {
-							array_remove(@topscores, @i);
-						} else {
-							@topscores[@i] = @array;
-							@score['topscore'] = true;
-						}
-						break();
-					} else if(@remove) {
-						continue();
-					}
-					if(@score['value'] > @topscore['value']) {
-						array_insert(@topscores, @array, @i);
-						@score['topscore'] = true;
-						@remove = true;
-					} else if(@i == array_size(@topscores) - 1) {
-						@topscores[] = @array;
+			@array = array(uuid: @uuid, value: @score['value']);
+			@remove = false;
+			foreach(@i: @topscore in @topscores) {
+				if(@topscore['uuid'] === @uuid) {
+					if(@remove) {
+						array_remove(@topscores, @i);
+					} else {
+						@topscores[@i] = @array;
 						@score['topscore'] = true;
 					}
-				} else {
+					break();
+				} else if(@remove) {
+					continue();
+				}
+				if(@score['value'] > @topscore['value']) {
+					array_insert(@topscores, @array, @i);
+					@score['topscore'] = true;
+					@remove = true;
+				} else if(@i == array_size(@topscores) - 1) {
 					@topscores[] = @array;
 					@score['topscore'] = true;
 				}
-				if(@score['topscore']) {
-					@updateTopScores = true;
-				}
+			} else {
+				@topscores[] = @array;
+				@score['topscore'] = true;
+			}
+			if(@score['topscore']) {
+				@updateTopScores = true;
 			}
 		}
 		if(@updateTopScores) {
