@@ -143,6 +143,53 @@ proc _snake_queue(@mode) {
 		}
 	}
 
+	if(@game['mode'] === 'endless' || @game['mode'] === 'gluttony') {
+		@scoreboardCount = array_size(@game['snakes']);
+		@personalBests = associative_array();
+		foreach(@player: @snake in @game['snakes']) {
+			if(ponline(@player)) {
+				@uuid = puuid(@player, true);
+				@score = get_value('snake', @game['mode'], @uuid);
+				if(@score) {
+					@scoreboardCount++;
+					@personalBests[@uuid] = array(name: @player, score: @score);
+				}
+			}
+		}
+		if(@scoreboardCount < 15) {
+			foreach(@index: @entry in get_value('snake', @game['mode'], 'top')) {
+				if(@entry['value'] <= 0) {
+					break();
+				}
+				@rank = string(@index + 1);
+				switch(@rank) {
+					case 1:
+						@rank = '1st';
+					case 2:
+						@rank = '2nd';
+					case 3:
+						@rank = '3rd';
+					default:
+						@rank .= 'th';
+				}
+				@name = '';
+				if(array_index_exists(@personalBests, @entry['uuid'])) {
+					@name = array_remove(@personalBests, @entry['uuid'])['name'];
+				} else {
+					@name = _pdata_by_uuid(@entry['uuid'])['name'];
+					@scoreboardCount++;
+				}
+				set_pscore('score', @rank.' '.@name, @entry['value'], 'snake');
+				if(@scoreboardCount >= 15) {
+					break();
+				}
+			}
+		}
+		foreach(@uuid: @entry in @personalBests) {
+			set_pscore('score', '-PB '.@entry['name'], @entry['score'], 'snake');
+		}
+	}
+
 	// Optionally open color select menu
 	if(@loadMenu) {
 		foreach(@player: @snake in @game['snakes']) {

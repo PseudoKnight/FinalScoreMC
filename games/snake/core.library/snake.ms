@@ -287,7 +287,7 @@ proc _snake_kill(@player, @game) {
 			set_block(@block, @snake['tail'], false);
 			spawn_particle(@block, array(particle: 'SMOKE_NORMAL', count: 8, xoffset: 1, yoffset: 1, zoffset: 1, force: true));
 		}
-	} else {
+	} else if(array_size(@game['snakes']) > 1) {
 		for(@i = array_size(@snake['blocks']) - 1, @i >= 0, @i -= 3) {
 			queue_push(closure(){
 				@n = 0;
