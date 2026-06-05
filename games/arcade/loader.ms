@@ -66,3 +66,45 @@ bind('entity_damage', array(priority: 'MONITOR'), array(type: 'ITEM_FRAME'), @ev
 		}
 	}
 }
+
+/*
+	Populate arcade trophies for joining players
+ */
+bind('player_join', null, null, @event) {
+	queue_push(closure(){
+		@uuid = puuid();
+		@top = get_value('pixel_snake');
+		for(@i = 0, @i < array_size(@top), @i++) {
+			if(@top[@i]['uuid'] !== @uuid) {
+				continue();
+			}
+			@session = _psession(player());
+			@rank = '&e\u278A';
+			switch(@i) {
+				case 1:
+					@rank = '&e\u278B';
+				case 2:
+					@rank = '&e\u278C';
+				case 3:
+					@rank = '&e\u278D';
+				case 4:
+					@rank = '&e\u278E';
+				case 5:
+					@rank = '&f\u278F';
+				case 6:
+					@rank = '&f\u2790';
+				case 7:
+					@rank = '&f\u2791';
+				case 8:
+					@rank = '&f\u2792';
+				case 9:
+					@rank = '&f\u2793';
+			}
+			if(!array_index_exists(@session, 'trophies')) {
+				@session['trophies'] = array();
+			}
+			@session['trophies'][] = @rank.' \uA874 Snake Arcade';
+			break();
+		}
+	}, 'trophies');
+}
