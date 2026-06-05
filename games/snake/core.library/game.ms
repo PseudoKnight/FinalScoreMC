@@ -304,13 +304,9 @@ proc _snake_start_task(@game) {
 						@active = @player;
 					}
 				} else if(@game['mode'] === 'endless' && @snake['bot']) {
-					@color = @snake['tail'];
 					@abilities = @snake['ability-count'];
-					@deaths = @snake['deaths'];
-					if(_snake_add(@player, @game)) {
-						_snake_set_color(@player, @color, @game); // keep color
+					if(_snake_spawn(@player, @game)) {
 						@game['snakes'][@player]['ability-count'] = @abilities; // keep abilities
-						@game['snakes'][@player]['deaths'] = @deaths;
 					}
 				}
 				if(@game['mode'] === 'endless' && @snake['alive'] && (!@snake['bot'] || !@snake['deaths'])) {
@@ -323,7 +319,7 @@ proc _snake_start_task(@game) {
 		}
 
 		if(@game['fire']) {
-			@chance = array_size(@game['fire']) * 0.0075;
+			@chance = array_size(@game['fire']) * 0.005;
 			while(@chance > 0 && @chance > rand()) {
 				@r = rand(0, array_size(@game['fire']));
 				set_block(@game['fire'][@r], 'AIR', false);
@@ -397,7 +393,14 @@ proc _snake_end(@winner, @game) {
 			_snake_clean_surfaces(@game);
 			_snake_cleanup_round(@game);
 			foreach(@player: @snake in @game['snakes']) {
-				_snake_spawn(@player, @game);
+				if(ponline(@player)) {
+					_snake_spawn(@player, @game);
+				}
+			}
+			foreach(@player: @snake in @game['snakes']) {
+				if(@snake['bot']) {
+					_snake_spawn(@player, @game);
+				}
 			}
 			_snake_countdown(@game);
 		}
@@ -505,7 +508,13 @@ proc _snake_cleanup_round(@game) {
 	@game['missiles'] = associative_array();
 	@game['tnt'] = array();
 	@game['nukes'] = array();
+	@game['fire'] = array();
 	_snake_unbind_events();
+	foreach(@player: @snake in @game['snakes']) {
+		if(ponline(@player)) {
+			set_pinv(@player, array(0: null, 1: null, 2: null, 3: null, 4: null));
+		}
+	}
 	if(array_index_exists(@game, 'interval')) {
 		clear_task(@game['interval']);
 	}

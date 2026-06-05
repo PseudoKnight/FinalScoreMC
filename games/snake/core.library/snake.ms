@@ -35,7 +35,7 @@ proc _snake_add(@player, @game) {
 		tail: '',
 		color: color('white'),
 		armorColor: array(255, 255, 255),
-		bot: '',
+		bot: if(ponline(@player), '', @player),
 		deaths: 0,
 	);
 
@@ -66,9 +66,13 @@ proc _snake_add(@player, @game) {
 		}
 	}
 
-	@i = 10;
+	if(ponline(@player)) {
+		@game['snakes'][@player]['ploc'] = ploc(@player);
+	}
+
+	@tries = 0;
 	while(!_snake_spawn(@player, @game)) {
-		if(--@i <= 0) {
+		if(++@tries > 10) {
 			if(@game['mode'] !== 'endless') {
 				array_remove(@game['snakes'], @player);
 				remove_team(@player, 'snake');
@@ -81,52 +85,66 @@ proc _snake_add(@player, @game) {
 	}
 
 	if(ponline(@player)) {
-		@snake = @game['snakes'][@player];
-		set_ploc(@player, location_shift(@snake['loc'], @snake['top'], 20));
-		@yaw = get_yaw(ploc(@player), @snake['loc']);
-		@pitch = get_pitch(ploc(@player), @snake['loc']);
-		if(@yaw == NaN) {
-			// probably directly above snake location
-			@yaw = 0;
-		}
-		pfacing(@player, @yaw, @pitch);
-
 		set_pscoreboard(@player, 'snake');
 		set_pflight(@player, true);
 		set_pflying(@player, true);
 		_set_pactivity(@player, 'Snake');
-	} else {
-		@game['snakes'][@player]['bot'] = @player;
 	}
 
 	return(true);
 }
 
 proc _snake_spawn(@player, @game) {
+	@snake = @game['snakes'][@player];
 	@region = '';
 	@startLoc = null;
 	if(@game['mode'] === 'capture') {
 		@region = @game['region'].(@game['snakes'][@player]['team'] * 2 + 2);
-		@startLoc = _snake_valid_location(@region, 8);
+		@startLoc = _snake_valid_location(@region, 5);
 	} else {
-		@num = 0;
-		while(@num++ < @game['surfaces']) {
+		@surfaceNumbers = range(1, @game['surfaces'] + 1);
+		if(@snake['bot']) {
+			@surfaceNumbers = array_rand(@surfaceNumbers, @game['surfaces'], false);
+		}
+		foreach(@num in @surfaceNumbers) {
 			@region = @game['region'].@num;
-			@found = false;
-			foreach(@snake in @game['snakes']) {
-				if(array_index_exists(@snake, 'region') && @snake['region'] === @region) {
-					@found = true;
-					break();
+			if(array_contains(@game['nukes'], @region)) {
+				continue();
+			}
+			if(@snake['deaths'] <= 0 || @game['mode'] !== 'endless') {
+				// avoid player occupied regions on initial spawn
+				@playersInRegion = false;
+				foreach(@otherSnake in @game['snakes']) {
+					if(!@otherSnake['bot']
+					&& array_index_exists(@otherSnake, 'region')
+					&& @otherSnake['region'] === @region) {
+						@playersInRegion = true;
+						break();
+					}
+				}
+				if(@playersInRegion) {
+					continue();
 				}
 			}
-			if(!@found) {
-				@startLoc = _snake_valid_location(@region, if(ponline(@player), 5, 1));
-				if(@startLoc) {
-					break();
+			@startLoc = _snake_valid_location(@region, if(ponline(@player), 5, 1));
+			if(@startLoc) {
+				if(@snake['bot']) {
+					@unsafeLocation = false;
+					// avoid spawning too close to players
+					foreach(@otherSnake in @game['snakes']) {
+						if(!@otherSnake['bot'] && distance(@otherSnake['loc'], @startLoc) < 12) {
+							@unsafeLocation = true;
+							break();
+						}
+					}
+					if(@unsafeLocation) {
+						continue();
+					}
 				}
+				break();
 			}
 		}
-		if(@num > @game['surfaces']) {
+		if(!@startLoc) {
 			@region = @game['region'].rand(1, @game['surfaces'] + 1);
 			@startLoc = _snake_valid_location(@region, if(ponline(@player), 5, 1));
 		}
@@ -140,7 +158,6 @@ proc _snake_spawn(@player, @game) {
 	}
 	@headLoc = _snake_shift(@startLoc, @dir);
 
-	@snake = @game['snakes'][@player];
 	@snake['ability-count'] = array(0, 0, 0, 0, 0);
 	@snake['blocks'] = array(@startLoc, @headLoc);
 	@snake['max'] = 0;
@@ -174,6 +191,16 @@ proc _snake_spawn(@player, @game) {
 				));
 			})[0];
 		}
+	}
+	if(ponline(@player)) {
+		@loc = location_shift(@snake['loc'], @snake['top'], 20);
+		@loc['yaw'] = get_yaw(@loc, @snake['loc']);
+		@loc['pitch'] = get_pitch(@loc, @snake['loc']);
+		if(@loc['yaw'] == NaN) {
+			// probably directly above snake location
+			@yaw = 0;
+		}
+		set_ploc(@player, @loc);
 	}
 	return(true);
 }
@@ -264,6 +291,7 @@ proc _snake_remove(@player, @game) {
 		set_pflight(@player, false);
 		_equip_kit(@player, array(7: pinv(@player, 7)));
 		_set_pactivity(@player, null);
+		set_ploc(@player, @snake['ploc']);
 	}
 }
 
