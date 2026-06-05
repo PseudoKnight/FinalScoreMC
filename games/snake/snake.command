@@ -20,7 +20,8 @@ register_command('snake', array(
 					die(color('gold').'There are no top scores.. yet!');
 				}
 				@title = to_upper(@mode[0]).@mode[1..];
-				msg(color('green').color('bold').'Top '.@mode.' Snakes');
+				@units = if(@mode === 'endless', '(seconds)', '(length)');
+				msg(color('green').color('bold').'Top '.@title.' Snakes '.@units);
 				@i = 0;
 				@size = min(19, array_size(@top));
 				do {
