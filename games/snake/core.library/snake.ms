@@ -289,9 +289,9 @@ proc _snake_remove(@player, @game) {
 	}
 	if(ponline(@player)) {
 		set_pflight(@player, false);
+		set_ploc(@player, @snake['ploc']);
 		_equip_kit(@player, array(7: pinv(@player, 7)));
 		_set_pactivity(@player, null);
-		set_ploc(@player, @snake['ploc']);
 	}
 }
 

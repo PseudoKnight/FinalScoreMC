@@ -511,7 +511,7 @@ proc _snake_cleanup_round(@game) {
 	@game['fire'] = array();
 	_snake_unbind_events();
 	foreach(@player: @snake in @game['snakes']) {
-		if(ponline(@player)) {
+		if(ponline(@player) && pworld(@player) === 'custom') {
 			set_pinv(@player, array(0: null, 1: null, 2: null, 3: null, 4: null));
 		}
 	}
