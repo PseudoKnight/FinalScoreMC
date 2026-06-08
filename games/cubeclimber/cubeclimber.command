@@ -1,16 +1,17 @@
 register_command('cubeclimber', array(
 	description: 'Starts CubeClimber games and lists/manages stats for it.',
-	usage: '/cc <start|stats|top|reset|resetstats|recalctimes> [player]',
+	usage: '/cc <start|stats|top> [player]',
 	aliases: array('cc'),
-	tabcompleter: closure(@alias, @sender, @args, @info) {
-		if(array_size(@args) == 1) {
-			return(_strings_start_with_ic(array('start', 'stats', 'top', 'reset', 'resetstats', 'recalctimes'), @args[-1]));
-		}
-	},
+	tabcompleter: _create_tabcompleter(
+		array('group.engineer': array('start', 'stats', 'top', 'reset', 'resetstats', 'recalctimes'),
+			null: array('start', 'stats', 'top')),
+		array('<stats': array('[player]')),
+	),
 	executor: closure(@alias, @sender, @args, @info) {
 		if(!@args) {
 			return(false);
 		}
+		@gameTitle = '&7[&6Cube&cClimber&7]&r';
 		switch(@args[0]) {
 			case 'start':
 
@@ -29,7 +30,8 @@ register_command('cubeclimber', array(
 					}
 				}
 
-				_click_tell(@invitations, array('&7[&6Cube&cClimber&7]&r Starting... ', array('&b[Click to Warp]', '/warp cubeclimber')));
+				_click_tell(@invitations, array(@gameTitle.' Starting... ',
+						array('&b[Click to Warp]', '/warp cubeclimber')));
 
 				@cc = import('cubeclimber');
 				if(!@cc) {
@@ -38,7 +40,7 @@ register_command('cubeclimber', array(
 						highest: 0,
 					);
 					export('cubeclimber', @cc);
-					broadcast(player().colorize(' queued up a game of &7[&6Cube&cClimber&7]'), all_players(pworld()));
+					broadcast(player().colorize(' queued up a game of '.@gameTitle), all_players(pworld()));
 				} else {
 					die(color('gold').'Already running.');
 				}
@@ -68,7 +70,6 @@ register_command('cubeclimber', array(
 				export('cubeclimber', null);
 				msg(color('green').'CubeClimber reset.');
 
-			case 'mystats':
 			case 'stats':
 				@player = player();
 				if(array_size(@args) > 1) {
@@ -79,8 +80,10 @@ register_command('cubeclimber', array(
 					die(color('gold').'No statistics recorded for player '.@player);
 				}
 				msg(color('red').color('bold').'[ PERFORMANCE ]');
-				msg(color('red').'[ '.round((@pstats[0] / @pstats[1]) * (@pstats[3] / @pstats[1]), 2).' ] '.color('r').'Avg Players Defeated');
-				msg(color('red').'[ '.round((@pstats[2] / @pstats[1]), 2).' ] '.color('r').'Avg Blocks Climbed');
+				@avgPlayersDefeated = round((@pstats[0] / @pstats[1]) * (@pstats[3] / @pstats[1]), 2);
+				msg(color('red').'[ '.@avgPlayersDefeated.' ] '.color('r').'Avg Players Defeated');
+				@avgBlocksClimbed = round((@pstats[2] / @pstats[1]), 2);
+				msg(color('red').'[ '.@avgBlocksClimbed.' ] '.color('r').'Avg Blocks Climbed');
 				if(array_index_exists(@pstats, 4)) {
 					msg(color('green').color('bold').'[ PERSONAL RECORDS ]');
 					msg(color('green').'[ '.@pstats[4].' ] '.color('r').'Best Time');
@@ -92,7 +95,6 @@ register_command('cubeclimber', array(
 				msg(color('yellow').'[ '.@pstats[3].' ] '.color('r').'Total Opponents Played');
 
 			case 'top':
-			case 'toptimes':
 				@toptimes = get_value('cubeclimber', 'toptimes');
 				if(!@toptimes) {
 					die(color('gold').'No top times recorded.');
@@ -180,7 +182,8 @@ register_command('cubeclimber', array(
 						@previous[2] += @value[2];
 						@previous[3] += @value[3];
 						if(array_index_exists(@previous, 4) || array_index_exists(@value, 4)) {
-							@previous[4] = min(array_get(@value, 4, math_const('INTEGER_MAX')), array_get(@previous, 4, math_const('INTEGER_MAX')));
+							@previous[4] = min(array_get(@value, 4, math_const('INTEGER_MAX')),
+									array_get(@previous, 4, math_const('INTEGER_MAX')));
 						}
 						store_value('cubeclimber.player.'.@uuid, @previous);
 						console('Combined '.@name.' into '.@uuid);
@@ -192,10 +195,10 @@ register_command('cubeclimber', array(
 				}
 
 			default:
-				msg(colorize('&7[&6Cube&cClimber&7] '
-				.'is a minigame where the goal is to reach the top of the block tower first. '
-				.'Blocks that you walk on will change to your randomly assigned color. You can '
-				.'break blocks of that same color.'));
+				msg(colorize(@gameTitle)
+				.' is a minigame where the goal is to reach the top of the block tower first.'
+				.' Blocks that you walk on will change to your randomly assigned color.'
+				.' You can break blocks that are that color.');
 				msg('/cubeclimber start '.color(7).'Start the game.');
 				msg('/cc stats '.color(7).'View your statistics.');
 				msg('/cc toptimes '.color(7).'View the top times.');
