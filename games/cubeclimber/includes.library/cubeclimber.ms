@@ -167,7 +167,11 @@ proc _cc_start(@world = 'custom') {
 		@basenote = @region[0][1] - @region[1][1] - 23;
 		@winners = array();
 		set_interval(200, closure(){
-			@cc = import('cubeclimber');
+			if(@cc['reset']) {
+				clear_task();
+				_cc_reset();
+				die();
+			}
 			@playercount = 0;
 			foreach(@p in all_players()) {
 				if(pworld(@p) !== @world) {
@@ -388,6 +392,8 @@ proc _cc_reset(){
 	unbind('cube-interact');
 	unbind('cube-teleport');
 	export('cubeclimber', null);
-	remove_scoreboard('cc');
 	_remove_activity('cubeclimber');
+	if(array_contains(get_scoreboards(), 'cc')) {
+		remove_scoreboard('cc');
+	}
 }

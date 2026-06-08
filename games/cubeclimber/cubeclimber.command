@@ -1,9 +1,9 @@
 register_command('cubeclimber', array(
-	description: 'Starts CubeClimber games and lists/manages stats for it.',
+	description: 'Starts and manages the CubeClimber game.',
 	usage: '/cc <start|stats|top> [player]',
 	aliases: array('cc'),
 	tabcompleter: _create_tabcompleter(
-		array('group.engineer': array('start', 'stats', 'top', 'reset', 'resetstats', 'recalctimes'),
+		array('cubeclimber.resetstats': array('start', 'stats', 'top', 'reset', 'resetstats', 'recalctimes'),
 			null: array('start', 'stats', 'top')),
 		array('<stats': array('[player]')),
 	),
@@ -38,11 +38,12 @@ register_command('cubeclimber', array(
 					@cc = array(
 						players: array(),
 						highest: 0,
+						reset: false,
 					);
 					export('cubeclimber', @cc);
 					broadcast(player().colorize(' queued up a game of '.@gameTitle), all_players(pworld()));
 				} else {
-					die(color('gold').'Already running.');
+					die(color('red').'Already running.');
 				}
 
 				if(!array_contains(get_scoreboards(), 'cc')) {
@@ -57,18 +58,11 @@ register_command('cubeclimber', array(
 
 			case 'reset':
 				if(!has_permission('cubeclimber.reset')) {
-					die(color('gold').'You do not have permission.');
+					die(color('red').'You do not have permission.');
 				}
-				if(array_contains(get_scoreboards(), 'cc')) {
-					remove_scoreboard('cc');
-					_remove_activity('cubeclimber');
-				}
-				if(has_bind('cube-interact')) {
-					unbind('cube-interact');
-					unbind('cube-teleport');
-				}
-				export('cubeclimber', null);
-				msg(color('green').'CubeClimber reset.');
+				@cc = import('cubeclimber');
+				@cc['reset'] = true;
+				msg(color('green').'CubeClimber resetting...');
 
 			case 'stats':
 				@player = player();
@@ -79,20 +73,25 @@ register_command('cubeclimber', array(
 				if(!@pstats) {
 					die(color('gold').'No statistics recorded for player '.@player);
 				}
+				@gamesWon = @pstats[0];
+				@gamesPlayed = @pstats[1];
+				@blocksClimbed = @pstats[2];
+				@opponentsPlayed = @pstats[3];
+				@avgPlayersDefeated = round((@gamesWon / @gamesPlayed) * (@opponentsPlayed / @gamesPlayed), 2);
+				@avgBlocksClimbed = round((@blocksClimbed / @gamesPlayed), 2);
 				msg(color('red').color('bold').'[ PERFORMANCE ]');
-				@avgPlayersDefeated = round((@pstats[0] / @pstats[1]) * (@pstats[3] / @pstats[1]), 2);
 				msg(color('red').'[ '.@avgPlayersDefeated.' ] '.color('r').'Avg Players Defeated');
-				@avgBlocksClimbed = round((@pstats[2] / @pstats[1]), 2);
 				msg(color('red').'[ '.@avgBlocksClimbed.' ] '.color('r').'Avg Blocks Climbed');
 				if(array_index_exists(@pstats, 4)) {
+					@bestTime = @pstats[4];
 					msg(color('green').color('bold').'[ PERSONAL RECORDS ]');
-					msg(color('green').'[ '.@pstats[4].' ] '.color('r').'Best Time');
+					msg(color('green').'[ '.@bestTime.' ] '.color('r').'Best Time');
 				}
 				msg(color('yellow').color('bold').'[ STATISTICS ]');
-				msg(color('yellow').'[ '.@pstats[0].' ] '.color('r').'Total Games Won');
-				msg(color('yellow').'[ '.@pstats[1].' ] '.color('r').'Total Games Played');
-				msg(color('yellow').'[ '.@pstats[2].' ] '.color('r').'Total Blocks Climbed');
-				msg(color('yellow').'[ '.@pstats[3].' ] '.color('r').'Total Opponents Played');
+				msg(color('yellow').'[ '.@gamesWon.' ] '.color('r').'Total Games Won');
+				msg(color('yellow').'[ '.@gamesPlayed.' ] '.color('r').'Total Games Played');
+				msg(color('yellow').'[ '.@blocksClimbed.' ] '.color('r').'Total Blocks Climbed');
+				msg(color('yellow').'[ '.@opponentsPlayed.' ] '.color('r').'Total Opponents Played');
 
 			case 'top':
 				@toptimes = get_value('cubeclimber', 'toptimes');
@@ -108,7 +107,7 @@ register_command('cubeclimber', array(
 
 			case 'resetstats':
 				if(!has_permission('cubeclimber.resetstats')) {
-					die(color('gold').'You do not have permission.');
+					die(color('red').'You do not have permission.');
 				}
 				@stats = get_values('cubeclimber');
 				foreach(@key in array_keys(@stats)) {
@@ -118,7 +117,7 @@ register_command('cubeclimber', array(
 
 			case 'resettimes':
 				if(!has_permission('cubeclimber.resetstats')) {
-					die(color('gold').'You do not have permission.');
+					die(color('red').'You do not have permission.');
 				}
 				@players = get_values('cubeclimber.player');
 				foreach(@key: @data in @players) {
@@ -129,79 +128,16 @@ register_command('cubeclimber', array(
 				}
 				store_value('cubeclimber', 'toptimes', array());
 				msg(color('green').'CubeClimber times reset.');
-				
-			case 'recalctimes':
-				if(!has_permission('cubeclimber.resetstats')) {
-					die(color('gold').'You do not have permission.');
-				}
-				@allstats = get_values('cubeclimber');
-				@toptimes = array();
-				foreach(@key: @value in @allstats) {
-					if(@key == 'cubeclimber.toptimes' || !array_index_exists(@value, 4)) {
-						continue();
-					}
-					@uuid = split('.', @key)[2];
-					@pdata = _pdata_by_uuid(@uuid);
-					@player = @pdata['name'];
-					@time = @value[4];
-					@top = false;
-					foreach(@i: @toptime in @toptimes) {
-						if(@i > 19) {
-							break();
-						}
-						if(@toptime[2] > @time) {
-							array_insert(@toptimes, array(@player, @uuid, @time), @i);
-							@top = true;
-							break();
-						}
-					}
-					if(!@top && array_size(@toptimes) < 19) {
-						@toptimes[] = array(@player, @uuid, @time);
-					} else if(array_size(@toptimes) > 19) {
-						array_remove(@toptimes, 19);
-					}
-				}
-				store_value('cubeclimber', 'toptimes', @toptimes);
-				msg(color('green').'CubeClimber times recalculated.');
-
-			case 'convert2uuid':
-				if(!has_permission('cubeclimber.resetstats')) {
-					die(color('gold').'You do not have permission.');
-				}
-				@values = get_values('cubeclimber.player');
-				foreach(@key: @value in @values){
-					@name = split('.', @key)[2];
-					if(length(@name) > 17) {
-						continue();
-					}
-					@uuid = _get_uuid(to_lower(@name));
-					if(has_value('cubeclimber.player.'.@uuid)) {
-						@previous = get_value('cubeclimber.player.'.@uuid);
-						@previous[0] += @value[0];
-						@previous[1] += @value[1];
-						@previous[2] += @value[2];
-						@previous[3] += @value[3];
-						if(array_index_exists(@previous, 4) || array_index_exists(@value, 4)) {
-							@previous[4] = min(array_get(@value, 4, math_const('INTEGER_MAX')),
-									array_get(@previous, 4, math_const('INTEGER_MAX')));
-						}
-						store_value('cubeclimber.player.'.@uuid, @previous);
-						console('Combined '.@name.' into '.@uuid);
-					} else {
-						store_value('cubeclimber.player.'.@uuid, @value);
-						console('Saved '.@name.' into '.@uuid);
-					}
-					clear_value(@key);
-				}
 
 			default:
 				msg(colorize(@gameTitle)
 				.' is a minigame where the goal is to reach the top of the block tower first.'
-				.' Blocks that you walk on will change to your randomly assigned color.'
-				.' You can break blocks that are that color.');
+				.' You will be assigned a random block color.'
+				.' Blocks that you walk on will change to that color,'
+				.' and you can click to break blocks of that color.');
 				msg('/cubeclimber start '.color(7).'Start the game.');
-				msg('/cc stats '.color(7).'View your statistics.');
-				msg('/cc toptimes '.color(7).'View the top times.');
+				msg('/cc stats '.color(7).'View statistics.');
+				msg('/cc top '.color(7).'View the top times.');
 		}
 	}
 ));
