@@ -116,10 +116,11 @@ proc _cc_start(@world = 'custom') {
 
 		foreach(@p in all_players()) {
 			if(array_contains(sk_current_regions(@p), 'cubeclimber')
-			&& pworld(@p) == @world
-			&& !array_index_exists(@cc['players'], @p)) {
+			&& pworld(@p) == @world) {
 				_cc_spawn(@p);
-				_cc_add_player(@p);
+				if(!array_index_exists(@cc['players'], @p)) {
+					_cc_add_player(@p);
+				}
 			}
 		}
 
