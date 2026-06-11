@@ -2,14 +2,17 @@ register_command('waves', array(
 	description: 'Manages and starts custom waves against enemies.',
 	usage: '/waves <action> [arena_id] [setting] [value]',
 	tabcompleter: _create_tabcompleter(
-		array('start', 'set', 'delete', 'info', 'records', 'resetrecords'),
+		array('group.engineer': array('start', 'set', 'delete', 'info', 'top', 'resetrecords'),
+			null: array('start', 'top')),
 		array('<arena_id>'),
+		array('group.engineer': array(
+				'<<set': array('spawn', 'lobby', 'schematic', 'startblock', 'trigger'),
+				'<<delete': array('spawns', 'schematic', 'startblock', 'trigger'),
+				'<<top|resetrecords': array('random', '[script]')),
+			null: array(
+				'<<top': array('random', '[script]'))),
 		array(
-			'<<set': array('spawn', 'lobby', 'schematic', 'startblock', 'trigger'),
-			'<<delete': array('spawns', 'schematic', 'startblock', 'trigger'),
-			'<<records|resetrecords': array('[script]'),
-		array(
-			'<<<records': array('[playerCount]'))),
+			'<<<top': array('[playerCount]')),
 	),
 	executor: closure(@alias, @sender, @args, @info) {
 		if(!@args) {
@@ -95,24 +98,20 @@ register_command('waves', array(
 				msg(color('green').'Arena info for '.@name);
 				msg(map_implode(@arena, ': '.color('gray'), '\n'));
 
-			case 'records':
+			case 'top':
 				@script = array_get(@args, 2, 'random');
 				@index = array_get(@args, 3, 1) - 1;
-				@records = array();
-				foreach(@key: @data in get_values('waves', @name, @script)) {
-					if(!array_index_exists(@data, @index) || !@data[@index]) {
-						continue();
+				@records = get_value('waves', @name, @script, 'top');
+				@name = to_upper(@name[0]).@name[1..];
+				msg(color('green').color('bold').if(!@index, 'Solo ').'Records for '.@name.if(@index, ' with '.(@index + 1).' players').':');
+				@lines = 19;
+				foreach(@entry in @records[@index]) {
+					@player = _pdata_by_uuid(@entry['uuid'])['name'];
+					@waves = @entry['waves'];
+					msg(color('green').'['.@waves.'] '.color('white').@player);
+					if(--@lines <= 0) {
+						break();
 					}
-					@uuid = split('.', @key)[-1];
-					@pdata = _pdata_by_uuid(@uuid);
-					@records[] = array(name: @pdata['name'], waves: @data[@index]);
-				}
-				array_sort(@records, closure(@left, @right){
-					return(@left['waves'] < @right['waves']);
-				});
-				msg(color('green').color('bold').'Records for '.(@index + 1).' players:');
-				foreach(@entry in @records) {
-					msg(@entry['name'].': '.@entry['waves']);
 				}
 
 			case 'resetrecords':

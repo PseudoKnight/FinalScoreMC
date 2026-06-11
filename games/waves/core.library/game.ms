@@ -192,6 +192,7 @@ proc _waves_start(@waves) {
 proc _waves_end(@waves, @win) {
 	@world = @waves['world'];
 	@region = @waves['region'];
+	@name = @waves['name'];
 
 	if(@waves['task']) {
 		clear_task(@waves['task']);
@@ -249,18 +250,21 @@ proc _waves_end(@waves, @win) {
 		}
 	}
 	@playerCount = array_size(@waves['allplayers']);
+	@playerIndex = @playerCount - 1;
 	foreach(@p: @data in @waves['allplayers']) {
-		@entry = get_value('waves', @region, @waves['name'], puuid(@p, true));
+		@puuid = puuid(@p, true);
+		@entry = get_value('waves', @region, @name, @puuid);
 		if(!@entry) {
 			@entry = array_resize(array(), @playerCount, 0);
-		} else if(!array_index_exists(@entry, @playerCount - 1)) {
+		} else if(!array_index_exists(@entry, @playerIndex)) {
 			array_resize(@entry, @playerCount, 0);
 		}
-		@record = @entry[@playerCount - 1];
+		@record = @entry[@playerIndex];
 		@waveNum = @data['wave'];
 		if(@waveNum > @record) {
-			@entry[@playerCount - 1] = @waveNum;
-			store_value('waves', @region, @waves['name'], puuid(@p, true), @entry);
+			// Update personal best
+			@entry[@playerIndex] = @waveNum;
+			store_value('waves', @region, @name, @puuid, @entry);
 			if(@record) {
 				try(tmsg(@p, colorize("Survived &a@waveNum waves&f to beat your previous best of &e@record&f"
 						.if(@playerCount > 1, " with @playerCount players.", "."))))
@@ -272,6 +276,34 @@ proc _waves_end(@waves, @win) {
 				discord_broadcast('chat', array(embed: array(title: 
 					@p.' survived '.@waveNum.' / '.@waves['config']['maxWaves'].' waves in '._to_upper_camel_case(@region))));
 			}
+
+			// Update top records
+			@records = get_value('waves', @region, @name, 'top');
+			if(!array_index_exists(@records, @playerIndex)) {
+				@records[@playerIndex] = array();
+			}
+			@newEntry = array(uuid: @puuid, waves: @waveNum);
+			@inserted = false;
+			foreach(@index: @entry in @records[@playerIndex]) {
+				if(@inserted) {
+					if(@entry['uuid'] === @puuid) {
+						array_remove(@records[@playerIndex], @index);
+						break();
+					}
+				} else if(@waveNum > @entry['waves']) {
+					@inserted = true;
+					if(@entry['uuid'] === @puuid) {
+						@records[@playerIndex][@index] = @newEntry;
+						break();
+					} else {
+						array_insert(@records[@playerIndex], @newEntry, @index);
+					}
+				}
+			}
+			if(!@inserted) {
+				@records[@playerIndex][] = @newEntry;
+			}
+			store_value('waves', @region, @name, 'top', @records);
 		}
 	}
 }
