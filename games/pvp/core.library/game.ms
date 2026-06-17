@@ -609,11 +609,21 @@ proc _pvp_start_match(@id) {
 					} catch(BadEntityException @ex) {
 						// this happened once... wat
 					}
-					set_ploc(@player, @loc);
 
 					if(array_contains(@arena['flags'], 'build')) {
+						@feetLoc = location_shift(@loc, 'up');
+						if(get_block(@feetLoc) !== 'AIR') {
+							console('Spawn location blocked @ '.@loc);
+							@maxDistance = 8;
+							do {
+								@feetLoc = location_shift(@feetLoc, 'up');
+							} while(get_block(@feetLoc) !== 'AIR' && --@maxDistance > 0)
+							@loc = location_shift(@feetLoc, 'down');
+						}
+						set_ploc(@player, @loc);
 						set_pmode(@player, 'SURVIVAL');
 					} else {
+						set_ploc(@player, @loc);
 						set_pmode(@player, 'ADVENTURE');
 					}
 					if(array_index_exists(@pvp['players'][@player], 'class')) {
