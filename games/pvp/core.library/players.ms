@@ -269,17 +269,17 @@ proc _pvp_initialize_players(@id, @players) {
 		}
 
 		# Teleport to spawn location
-		# Teleporting players one at a time helps prevent client-side invisible players
-		queue_push(closure(){
-			try {
+		set_entity_fall_distance(puuid(@player), 0);
+		set_ploc(@player, @loc);
+		set_pvelocity(@player, array(x: 0, y: 0, z: 0));
+		play_sound(@loc, array(sound: 'ENTITY_FIREWORK_ROCKET_BLAST'), @player);
+		set_timeout(1000, closure(){
+			if(ploc(@player)['y'] < @loc[1]) {
 				set_entity_fall_distance(puuid(@player), 0);
 				set_ploc(@player, @loc);
-				play_sound(@loc, array(sound: 'ENTITY_FIREWORK_ROCKET_BLAST'), @player);
-			} catch(Exception @ex) {
-				// Something went wrong.
-				// They should die next pvp interval for being outside of the arena and then get respawned.
+				set_pvelocity(@player, array(x: 0, y: 0, z: 0));
 			}
-		}, @id);
+		});
 	}
 }
 
