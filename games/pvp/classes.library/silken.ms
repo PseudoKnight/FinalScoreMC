@@ -9,7 +9,7 @@ proc _class_load(@player, @pvp) {
 				@seconds = @intensity * 7;
 				set_mob_effect(@event['id'], 'wither', 1, @seconds);
 				if(array_index_exists(@event, 'player')) {
-					_stats_attribute_until(@p, @event['player'], time() + 1000 * @seconds, 'WITHER', @pvp);
+					_stats_attribute_until(@p, @event['player'], time() + 50 + 1000 * @seconds, 'WITHER', @pvp);
 				}
 			}
 		}

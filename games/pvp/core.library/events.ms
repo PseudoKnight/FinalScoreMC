@@ -445,6 +445,7 @@ proc _bind_events(@pvp) {
 					'DROWNING',
 					'CUSTOM', // damage_entity() without a source, should be self-inflicted (or a bug)
 					'BLOCK_EXPLOSION', // explosion() without a source, sometimes captured by separate entity_damage binds
+					'STARVATION',
 
 					// Partially self-inflicted; possibly use time after last damage to attribute, like vanilla falls
 					'HOT_FLOOR', // can be attributed, but not necessary
