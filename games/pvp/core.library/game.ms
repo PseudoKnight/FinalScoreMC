@@ -380,7 +380,9 @@ proc _pvp_start(@pvp){
 						// performance anxiety.
 					}
 				}
-			} else if(@timeleft[0] > 6 && array_index_exists(@arena, 'classes') && array_size(@arena['classes']) > 1) {
+			} else if(@timeleft[0] > 6
+			&& array_index_exists(@arena, 'spawn') // wait for dynamic arenas to populate spawns
+			&& array_index_exists(@arena, 'classes') && array_size(@arena['classes']) > 1) {
 				@choosing = if(has_inventory(@id.'0'), array_size(get_inventory_viewers(@id.'0')), 0);
 				@choosing += if(has_inventory(@id.'1'), array_size(get_inventory_viewers(@id.'1')), 0);
 				if(!@choosing) {

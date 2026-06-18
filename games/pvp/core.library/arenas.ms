@@ -181,34 +181,36 @@ proc _arena_load(@pvp) {
 		array_remove(@arena, 'lives');
 	}
 
-	if(array_index_exists(@arena, 'team')) {
-		// Alternate spawns
-		if(array_size(@arena['spawn']) == 1 || !@arena['spawn'][1]) {
-			@oldspawns = @arena['spawn'][0][];
-			@arena['spawn'] = array(array(), array());
-			@team = 0;
-			foreach(@spawn in @oldspawns) {
-				@arena['spawn'][@team][] = @spawn;
-				@team = if(@team == 0, 1, 0);
-			}
-		// or remove excess spawn groups
-		} else {
-			while(array_size(@arena['spawn']) > 2) {
-				array_remove(@arena['spawn'], rand(array_size(@arena['spawn'])));
-			}
-			@arena['spawn'] = array_normalize(@arena['spawn']);
-		}
-	} else {
-		// Merge spawns, if needed
-		if(array_size(@arena['spawn']) > 1 && @arena['spawn'][1]) {
-			@size = array_size(@arena['spawn'][0]);
-			@newSpawns = array();
-			for(@i = 0, @i < @size, @i++) {
-				foreach(@spawns in @arena['spawn']) {
-					@newSpawns[] = @spawns[@i];
+	if(array_index_exists(@arena, 'spawn')) {
+		if(array_index_exists(@arena, 'team')) {
+			// Alternate spawns
+			if(array_size(@arena['spawn']) == 1 || !@arena['spawn'][1]) {
+				@oldspawns = @arena['spawn'][0][];
+				@arena['spawn'] = array(array(), array());
+				@team = 0;
+				foreach(@spawn in @oldspawns) {
+					@arena['spawn'][@team][] = @spawn;
+					@team = if(@team == 0, 1, 0);
 				}
+			// or remove excess spawn groups
+			} else {
+				while(array_size(@arena['spawn']) > 2) {
+					array_remove(@arena['spawn'], rand(array_size(@arena['spawn'])));
+				}
+				@arena['spawn'] = array_normalize(@arena['spawn']);
 			}
-			@arena['spawn'][0] = @newSpawns;
+		} else {
+			// Merge spawns, if needed
+			if(array_size(@arena['spawn']) > 1 && @arena['spawn'][1]) {
+				@size = array_size(@arena['spawn'][0]);
+				@newSpawns = array();
+				for(@i = 0, @i < @size, @i++) {
+					foreach(@spawns in @arena['spawn']) {
+						@newSpawns[] = @spawns[@i];
+					}
+				}
+				@arena['spawn'][0] = @newSpawns;
+			}
 		}
 	}
 
