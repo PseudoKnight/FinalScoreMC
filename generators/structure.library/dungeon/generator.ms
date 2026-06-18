@@ -84,6 +84,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 		door: 'air',
 		room: 'air',
 		edge: 'air',
+		trim: 'air',
 		vine: '',
 		overhead: '',
 
@@ -978,6 +979,45 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 											@state = @roomData['room'];
 										}
 										_add_to_chunk(@chunk, @loc, @state);
+
+									} else if(@roomData['trim'] != @roomData['room']
+									&& !@doorAdjacent
+									&& @y == @ceilingY - @roomHeight
+									&& (_adjacent_equals(@layoutMap, @c, @r, 'wall') 
+									|| @roomData['column'] !== 'air' && _adjacent_equals(@layoutMap, @c, @r, 'column')
+									|| @roomData['window'] && _adjacent_equals(@layoutMap, @c, @r, 'window'))) {
+										if(@roomData['trim'] === 'pale_moss_carpet') {
+											@north = @layoutMap[@c][@r - 1];
+											@south = @layoutMap[@c][@r + 1];
+											@west = @layoutMap[@c - 1][@r];
+											@east = @layoutMap[@c + 1][@r];
+											@data = 'pale_moss_carpet[bottom=false,';
+											@height = if(rand(3), 'low', 'tall');
+											if(@north === 'wall' 
+											|| @north === 'column' && @roomData['column'] !== 'air' 
+											|| @north === 'window' && @roomData['window']) {
+												@data .= 'north='.@height.',';
+											}
+											if(@south === 'wall' 
+											|| @south === 'column' && @roomData['column'] !== 'air' 
+											|| @south === 'window' && @roomData['window']) {
+												@data .= 'south='.@height.',';
+											}
+											if(@east === 'wall' 
+											|| @east === 'column' && @roomData['column'] !== 'air' 
+											|| @east === 'window' && @roomData['window']) {
+												@data .= 'east='.@height.',';
+											}
+											if(@west === 'wall' 
+											|| @west === 'column' && @roomData['column'] !== 'air' 
+											|| @west === 'window' && @roomData['window']) {
+												@data .= 'west='.@height.',';
+											}
+											@data .= ']';
+											_add_to_chunk(@chunk, @loc, @data);
+										} else {
+											_add_to_chunk(@chunk, @loc, @roomData['trim']);
+										}
 
 									} else if(@y == @groundY + 3
 									&& srand(@random) < @roomData['wallTorchChance']
