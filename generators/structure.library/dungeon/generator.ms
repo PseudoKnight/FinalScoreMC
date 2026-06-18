@@ -59,6 +59,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 		fireFloor: 0.0, // 0.06
 		rugs: 0.0,
 		spawnCount: 1,
+		extraDoorHeight: 0,
 		title: '',
 		exit: 'ladder',
 
@@ -67,7 +68,6 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 		bed: false,
 		treasureRoom: false,
 		randomRoofHeight: false,
-		tallDoors: false,
 		ascending: false,
 
 		// materials (single or multiple)
@@ -586,7 +586,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 											if(@doubleOffset < 0) {
 												@c--;
 											}
-											@roomHeight += if(@floorData['tallDoors'], 1, 0);
+											@roomHeight += if(@floorData['extraDoorHeight'], 1, 0);
 											@double = true;
 										}
 									} else if((@dir === 'east' || @dir === 'west')
@@ -598,7 +598,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 											if(@doubleOffset < 0) {
 												@r--;
 											}
-											@roomHeight += if(@floorData['tallDoors'], 1, 0);
+											@roomHeight += if(@floorData['extraDoorHeight'], 1, 0);
 											@double = true;
 										}
 									}
@@ -819,6 +819,8 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 							} else if(@roomShape === 'rug') {
 								if(!_direction_of_border(@layoutMap, @c, @r)) {
 									_add_to_chunk(@chunk, @loc, 'redstone_ore');
+								} else {
+									_add_to_chunk(@chunk, @loc, @roomData['floor']);
 								}
 							} else if(@column === 'wall') {
 								if(@roomData['doorFrame'] && @doorAdjacent) {
@@ -865,7 +867,9 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 								@randomBlock = _array_get_srand(@random, @roomData['randomblocks']);
 							}
 							@groundY += @floorHeight;
-							@ceilingY = @groundY + @roomHeight + 2;
+							@ceilingY = @groundY + @roomHeight + 2 + if(@roomData['extraDoorHeight'] > 1
+									&& (@column === 'hall' || @column === 'wall' &&  _adjacent_equals(@layoutMap, @c, @r, 'hall')),
+									@roomData['extraDoorHeight'] - 1, 0);
 							@y = 0;
 							@columnRandom = srand(@random);
 							for(@y = @groundY + 2, @y < @ceilingY, @y++) {
@@ -1058,10 +1062,10 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 									}
 
 								} else if(@column === 'door') {
-									if(@y < @ceilingY - @roomHeight + 2 + if(@roomData['tallDoors'] && @doorAdjacent, 1, 0) + if(@floorData['ascending'], 1, 0)) {
+									if(@y < @ceilingY - @roomHeight + 2 + if(@roomData['extraDoorHeight'] && @doorAdjacent, @roomData['extraDoorHeight'], 0) + if(@floorData['ascending'], 1, 0)) {
 										if(string_ends_with(@roomData['door'], 'door')) {
 											if(@roomId != -1 && @room['depth'] % 3 == 1) {
-												@isTrapDoor = @roomData['tallDoors'] && @doorAdjacent && @y > @ceilingY - @roomHeight + 1;
+												@isTrapDoor = @roomData['extraDoorHeight'] && @doorAdjacent && @y > @ceilingY - @roomHeight + 1;
 												@half = if(@isTrapDoor, 'top', if(@y < @ceilingY - @roomHeight + 1, 'lower', 'upper'));
 												if(@roomMap[@c][@r - 1] == -1) {
 													if(@isTrapDoor) {

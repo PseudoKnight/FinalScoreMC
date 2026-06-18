@@ -1,5 +1,5 @@
 default:
-  tallDoors: true
+  extraDoorHeight: 1
   minRoomHeight: 5
   maxRoomHeight: 10
   lavaPit: 0.07
