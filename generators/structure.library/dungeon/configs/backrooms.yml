@@ -1,0 +1,34 @@
+default:
+  extraDoorHeight: 2
+  minRoomHeight: 4
+  maxRoomHeight: 4
+  minRoomSize: 5
+  maxRoomSize: 25
+  spawnerChance: 0.0
+  extraDoorChance: 0.95
+  randomBlockChance: 0.004
+  campfireChance: 0.04
+  rugs: 0.7
+  roof: false
+floors:
+  - empty: stone
+    divider: stripped_bamboo_block[axis=y]
+    wall: stripped_bamboo_block[axis=y]
+    column: stripped_bamboo_block[axis=y]
+    floor: ['stripped_jungle_wood[axis=z]','stripped_jungle_wood[axis=x]']
+    edge: air
+    ceiling: bamboo_planks
+    randomblocks: [brown_mushroom,'glow_lichen[down=true]']
+    trim: pale_moss_carpet
+    roomTypes:
+      columns:
+        chance: 0.5
+      open:
+        chance: 0.5
+rooms:
+  columns:
+    column: stripped_bamboo_block[axis=y]
+    window: bamboo_mosaic
+  open:
+    column: air
+    window: chiseled_bookshelf

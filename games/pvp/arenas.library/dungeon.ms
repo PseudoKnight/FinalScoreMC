@@ -15,6 +15,12 @@ proc _arena_prepare(@pvp) {
 			@playerSpawns = @spawns[cslice(0, min(array_size(@spawns) - 1, 7))];
 			@pvp['arena']['spawn'] = array(@playerSpawns);
 		}
+		// adjust each spawn location y-1 for set_ploc()
+		foreach(@spawnGroup in @pvp['arena']['spawn']) {
+			foreach(@spawn in @spawnGroup) {
+				@spawn[1] -= 1;
+			}
+		}
 
 		@chestSpawns = @spawns[cslice(integer(length(@spawns) / 2), -1)];
 		@pvp['arena']['chestspawn'] = array();
