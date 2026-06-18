@@ -146,6 +146,7 @@ proc _snake_queue(@mode) {
 	if(@game['mode'] === 'endless' || @game['mode'] === 'gluttony') {
 		@scoreboardCount = array_size(@game['snakes']);
 		@personalBests = associative_array();
+		@minScore = math_const('INTEGER_MAX');
 		foreach(@player: @snake in @game['snakes']) {
 			if(!ponline(@player)) {
 				continue();
@@ -153,8 +154,11 @@ proc _snake_queue(@mode) {
 			@uuid = puuid(@player, true);
 			@score = get_value('snake', @game['mode'], @uuid);
 			if(@score) {
+				@minScore = min(@minScore, @score);
 				@scoreboardCount++;
 				@personalBests[@uuid] = array(name: @player, score: @score);
+			} else {
+				@minScore = 0;
 			}
 		}
 		if(@scoreboardCount < 15) {
@@ -179,6 +183,9 @@ proc _snake_queue(@mode) {
 				}
 				set_pscore('score', @rank.' '.@name, @entry['value'], 'snake');
 				if(@scoreboardCount >= 15) {
+					break();
+				}
+				if(@entry['value'] < @minScore) {
 					break();
 				}
 			}
