@@ -22,7 +22,11 @@ proc _arena_prepare(@pvp) {
 			}
 		}
 
-		@chestSpawns = @spawns[cslice(integer(length(@spawns) / 2), -1)];
+		if(array_size(@spawns) < 9) {
+			return();
+		}
+
+		@chestSpawns = @spawns[cslice(8, min(15, array_size(@spawns) - 1))];
 		@pvp['arena']['chestspawn'] = array();
 		foreach(@spawn in @chestSpawns) {
 			@pvp['arena']['chestspawn'][] = array(

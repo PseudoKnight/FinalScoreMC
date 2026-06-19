@@ -22,7 +22,11 @@ proc _arena_prepare(@pvp) {
 			}
 		}
 
-		@remainingSpawnLocations = @spawns[cslice(min(array_size(@spawns) - 1, 7), -1)];
+		if(array_size(@spawns) < 9) {
+			return();
+		}
+
+		@remainingSpawnLocations = @spawns[8..];
 		@randomSpawnLocations = array_rand(@remainingSpawnLocations, array_size(@remainingSpawnLocations), false);
 		@pvp['arena']['itemspawn'] = array();
 		@pvp['arena']['mobspawn'] = array();
@@ -44,6 +48,12 @@ proc _arena_prepare(@pvp) {
 					type: array(type: 'ARMOR_STAND', scoreboardtags: array('remove')),
 				);
 			} else {
+				@pvp['arena']['mobspawn'][] = array(
+					start: true,
+					respawn: 3600,
+					loc: array(floor(@loc[0]) + 0.5, floor(@loc[1]), floor(@loc[2]) + 0.5, @loc[3], rand(360), 0),
+					type: array(type: 'CREAKING'),
+				);
 				break();
 			}
 			@count++;
