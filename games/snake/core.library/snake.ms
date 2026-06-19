@@ -364,7 +364,13 @@ proc _snake_move(@player, @game) {
 		@loc[0] += 0.5;
 		@loc[1] += 0.5;
 		@loc[2] += 0.5;
-		spawn_particle(@loc, array(particle: 'VILLAGER_HAPPY', count: 8, xoffset: 0.6, yoffset: 0.6, zoffset: 0.6, force: true));
+		spawn_particle(location_shift(@loc, @snake['top'], 0.7), array(
+			particle: 'VILLAGER_HAPPY',
+			count: 8,
+			xoffset: if(@snake['top'] === 'west' || @snake['top'] === 'east', 0.0, 0.8),
+			yoffset: if(@snake['top'] === 'up', 0.0, 0.8),
+			zoffset: if(@snake['top'] === 'north' || @snake['top'] === 'south', 0.0, 0.8),
+			force: true));
 	}
 
 	set_block(@snake['loc'], @snake['tail'], false);
