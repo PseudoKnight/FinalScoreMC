@@ -297,6 +297,7 @@ proc _objective_load(@binds, @rules) {
 		'GOLDEN_BOOTS',
 		'GOLDEN_CARROT',
 		'GOLDEN_CHESTPLATE',
+		'GOLDEN_DANDELION',
 		'GOLDEN_HELMET',
 		'GOLDEN_HOE',
 		'GOLDEN_HORSE_ARMOR',
