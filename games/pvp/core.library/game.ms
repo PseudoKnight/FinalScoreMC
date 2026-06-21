@@ -64,11 +64,9 @@ proc _pvp_start(@pvp){
 			console('Invalid colors stored in arena: '.@id);
 		}
 		set_team_options(@arena['team'][0]['name'], array(
-			friendlyinvisibles: true,
 			nametagvisibility: if(array_index_exists(@arena, 'nametags'), @arena['nametags'][0], 'ALWAYS')
 		), @id);
 		set_team_options(@arena['team'][1]['name'], array(
-			friendlyinvisibles: true,
 			nametagvisibility: if(array_index_exists(@arena, 'nametags'), @arena['nametags'][1], 'ALWAYS')
 		), @id);
 	}

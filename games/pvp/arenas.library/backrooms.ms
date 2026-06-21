@@ -61,4 +61,13 @@ proc _arena_prepare(@pvp) {
 	});
 }
 
-proc _arena_bind_events(@id) {}
+proc _arena_bind_events(@id) {
+	@pvp = import('pvp'.@id);
+	if(!array_index_exists(@pvp, 'team')) {
+		create_team('fogofwar', @id);
+		set_team_options('fogofwar', array(nametagvisibility: 'NEVER', friendlyinvisibles: false), @id);
+		foreach(@p: @entry in @pvp['players']) {
+			team_add_player('fogofwar', @p, @id);
+		}
+	}
+}
