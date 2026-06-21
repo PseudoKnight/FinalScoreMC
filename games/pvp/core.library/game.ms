@@ -37,6 +37,7 @@ proc _pvp_start(@pvp){
 		create_objective('health', 'HEALTH', @id);
 		set_objective_display('health', array(displayname: color(4).'\u2764', slot: 'BELOW_NAME'), @id);
 	}
+	set_gamerule(@arena['world'], 'locator_bar', false);
 
 	# PREPARE TEAMS
 	if(array_index_exists(@arena, 'team')) {
@@ -871,6 +872,8 @@ proc _pvp_end_match(@id, @winners) {
 	if(@pvp['running'] != 2) {
 		return();
 	}
+
+	set_gamerule(@arena['world'], 'locator_bar', true);
 
 	foreach(array_keys(@pvp['players']), @player) {
 		if(array_contains(@winners, @player)) {
