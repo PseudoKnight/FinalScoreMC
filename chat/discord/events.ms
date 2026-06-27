@@ -3,7 +3,7 @@ if(extension_exists('CHDiscord')) {
 	bind('discord_message_received', null, null, @event) {
 		if(@event['channel'] == 'chat') {
 			@name = @event['nickname'];
-			@msg = @event['message'];
+			@msg = reg_replace('[\uFE00-\uFE0F]', '', @event['message']); // ignore unsupported unicode
 			@pdata = null;
 			if(ponline(@name)) {
 				@pdata = _pdata(@name);
@@ -34,7 +34,7 @@ if(extension_exists('CHDiscord')) {
 				}
 			}
 			include('../includes.library/chat.ms');
-			foreach(@line in split('\n', @event['message'])) {
+			foreach(@line in split('\n', @msg)) {
 				_chat(@name, @line, all_players(), 'discord', @event['channel']);
 			}
 			foreach(@attachment in @event['attachments']) {
