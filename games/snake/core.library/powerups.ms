@@ -505,10 +505,45 @@ proc _snake_launch_missile(@loc, @dir, @game) {
 					@missile['skip'] = false;
 				}
 			} else if(@block === 'REDSTONE_BLOCK') {
-				_snake_remove_powerup(@missile['loc'], @game);
-				@dir = _snake_direction_of(@missile['loc'], 'AIR');
-				if(@dir) {
+				if(_snake_remove_powerup(@missile['loc'], @game)) {
+					if(@clear) {
+						clear_task();
+					}
+					set_block(@missile['loc'], 'AIR', false);
+					array_remove(@game['missiles'], @key);
+					@missile['loc']['x'] += 0.5;
+					@missile['loc']['y'] += 0.5;
+					@missile['loc']['z'] += 0.5;
+					play_named_sound(@missile['loc'], array(sound: 'entity.shulker_bullet.hit', volume: 4, pitch: 1.5));
+					spawn_particle(@missile['loc'], array(particle: 'CLOUD', speed: 0.08, count: 8, force: true));
+				} else {
+					@dir = null;
+					@success = false;
+					foreach(@dir in array('down', 'up', 'north', 'south', 'east', 'west')) {
+						if(@dir !== @missile['dir']
+						&& get_block(location_shift(@loc, @dir)) === 'AIR'
+						&& @dir !== _snake_opposite_dir(@missile['dir'])) {
+							@success = true;
+							break();
+						}
+					}
+					if(!@success) {
+						return();
+					}
+					foreach(@otherKey: @otherMissile in @game['missiles']) {
+						if(@otherKey === @key) {
+							continue();
+						}
+						if(@missile['loc']['x'] == @otherMissile['loc']['x']
+						&& @missile['loc']['y'] == @otherMissile['loc']['y']
+						&& @missile['loc']['z'] == @otherMissile['loc']['z']) {
+							@otherMissile['dir'] = _snake_opposite_dir(@dir);
+							break();
+						}
+					}
 					@missile['dir'] = @dir;
+					@missile['loc'] = location_shift(@missile['loc'], @missile['dir']);
+					set_block(@missile['loc'], 'REDSTONE_BLOCK', false);
 					play_sound(@missile['loc'], array(sound: 'ENTITY_IRON_GOLEM_HURT', pitch: 1.5, volume: 4));
 					@missile['skip'] = false;
 				}
