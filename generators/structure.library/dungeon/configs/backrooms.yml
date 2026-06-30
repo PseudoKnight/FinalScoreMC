@@ -1,3 +1,4 @@
+dungeonEntrance: 'open'
 default:
   extraDoorHeight: 2
   minRoomHeight: 4
