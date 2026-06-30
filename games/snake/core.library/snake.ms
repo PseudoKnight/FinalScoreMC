@@ -198,7 +198,7 @@ proc _snake_spawn(@player, @game) {
 		@loc['pitch'] = get_pitch(@loc, @snake['loc']);
 		if(@loc['yaw'] == NaN) {
 			// probably directly above snake location
-			@yaw = 0;
+			@loc['yaw'] = 0;
 		}
 		set_ploc(@player, @loc);
 	}
