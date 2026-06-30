@@ -408,6 +408,9 @@ proc _snake_drop_nuke(@snake, @game) {
 						if(@loc[@coord] > @coords[1][@coord]
 						&& @loc[@coord] < @coords[0][@coord] + 1) {
 							@block = get_block(@loc);
+							if(@block === 'FIRE') {
+								continue();
+							}
 							set_block(@loc, 'FIRE', false);
 							if(@block !== 'AIR') {
 								@game['fire'][] = @loc[];

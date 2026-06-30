@@ -329,7 +329,9 @@ proc _snake_start_task(@game) {
 			@chance = array_size(@game['fire']) * 0.005;
 			while(@chance > 0 && @chance > rand()) {
 				@r = rand(0, array_size(@game['fire']));
-				set_block(@game['fire'][@r], 'AIR', false);
+				if(get_block(@game['fire'][@r]) === 'FIRE') {
+					set_block(@game['fire'][@r], 'AIR', false);
+				}
 				array_remove(@game['fire'], @r);
 				@chance -= 1.0;
 			}
