@@ -476,7 +476,7 @@ proc _snake_drop_tnt(@loc, @dir) {
 
 proc _snake_launch_missile(@loc, @dir, @game) {
 	@missile = array(dir: @dir, loc: @loc, skip: true);
-	@key = time();
+	@key = string(time());
 	@game['missiles'][@key] = @missile;
 	play_named_sound(@loc, array(sound: 'entity.shulker.shoot', volume: 4, pitch: 2));
 	@move = closure(@clear = true){
@@ -521,7 +521,7 @@ proc _snake_launch_missile(@loc, @dir, @game) {
 					@success = false;
 					foreach(@dir in array('down', 'up', 'north', 'south', 'east', 'west')) {
 						if(@dir !== @missile['dir']
-						&& get_block(location_shift(@loc, @dir)) === 'AIR'
+						&& get_block(location_shift(@missile['loc'], @dir)) === 'AIR'
 						&& @dir !== _snake_opposite_dir(@missile['dir'])) {
 							@success = true;
 							break();
