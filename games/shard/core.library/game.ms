@@ -4,6 +4,12 @@ proc _shard_create(@rules){
 	@world = pworld();
 	@worldgroup = _world_group(@world);
 	@worldname = _world_name(@world);
+	@worldDir = switch(@world) {
+		case 'world': 'overworld'
+		case 'world_nether': 'the_nether'
+		case 'world_the_end': 'the_end'
+		default: @world
+	}
 	@players = array();
 	foreach(@p in all_players()) {
 		if(_world_group(pworld(@p)) != @worldgroup) {
@@ -28,16 +34,16 @@ proc _shard_create(@rules){
 	if(extension_exists('CHDynmap')) {
 		dm_set_update_renders_paused(true);
 	}
-	@worlds = sys_properties('user.dir').'/world/dimensions/minecraft';
+	@path = sys_properties('user.dir').'/world/dimensions/minecraft';
 	try {
-		foreach(@file in list_files("@worlds/shard/entities")) {
+		foreach(@file in list_files("@path/shard/entities")) {
 			if(string_starts_with(@file, 'r.')) { // 
-				delete_file("@worlds/shard/entities/@file");
+				delete_file("@path/shard/entities/@file");
 			}
 		}
-		foreach(@file in list_files("@worlds/shard/poi")) {
+		foreach(@file in list_files("@path/shard/poi")) {
 			if(string_starts_with(@file, 'r.')) { // 
-				delete_file("@worlds/shard/poi/@file");
+				delete_file("@path/shard/poi/@file");
 			}
 		}
 	} catch(IOException @ex) {
@@ -57,10 +63,10 @@ proc _shard_create(@rules){
 		// Copy region files
 		@start = time();
 		try {
-			copy_file("@worlds/@world/region/r.@x.@z.mca", "@worlds/shard/region/r.@x.@z.mca");
-			copy_file("@worlds/@world/region/r.@x2.@z.mca", "@worlds/shard/region/r.@x2.@z.mca");
-			copy_file("@worlds/@world/region/r.@x.@z2.mca", "@worlds/shard/region/r.@x.@z2.mca");
-			copy_file("@worlds/@world/region/r.@x2.@z2.mca", "@worlds/shard/region/r.@x2.@z2.mca");
+			copy_file("@path/@worldDir/region/r.@x.@z.mca", "@path/shard/region/r.@x.@z.mca");
+			copy_file("@path/@worldDir/region/r.@x2.@z.mca", "@path/shard/region/r.@x2.@z.mca");
+			copy_file("@path/@worldDir/region/r.@x.@z2.mca", "@path/shard/region/r.@x.@z2.mca");
+			copy_file("@path/@worldDir/region/r.@x2.@z2.mca", "@path/shard/region/r.@x2.@z2.mca");
 		} catch(IOException @ex) {
 			console('Failed to copy files!', false);
 			action_msg(color('red').'Failed to create Shard!');
@@ -69,10 +75,10 @@ proc _shard_create(@rules){
 		}
 
 		// Copy files of region entities
-		try(copy_file("@worlds/@world/entities/r.@x.@z.mca", "@worlds/shard/entities/r.@x.@z.mca"))
-		try(copy_file("@worlds/@world/entities/r.@x2.@z.mca", "@worlds/shard/entities/r.@x2.@z.mca"))
-		try(copy_file("@worlds/@world/entities/r.@x.@z2.mca", "@worlds/shard/entities/r.@x.@z2.mca"))
-		try(copy_file("@worlds/@world/entities/r.@x2.@z2.mca", "@worlds/shard/entities/r.@x2.@z2.mca"))
+		try(copy_file("@path/@worldDir/entities/r.@x.@z.mca", "@path/shard/entities/r.@x.@z.mca"))
+		try(copy_file("@path/@worldDir/entities/r.@x2.@z.mca", "@path/shard/entities/r.@x2.@z.mca"))
+		try(copy_file("@path/@worldDir/entities/r.@x.@z2.mca", "@path/shard/entities/r.@x.@z2.mca"))
+		try(copy_file("@path/@worldDir/entities/r.@x2.@z2.mca", "@path/shard/entities/r.@x2.@z2.mca"))
 
 		@stop = time();
 		console('Copy region/entity files ('.(@stop - @start).'ms)', false);
