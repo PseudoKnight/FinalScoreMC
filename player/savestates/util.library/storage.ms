@@ -35,13 +35,13 @@ proc _get_pstate(@player, @state) {
 		if(array_index_exists(@pstate, 'bed') && is_array(@pstate['bed'])) {
 			set_pbed_location(@player, @pstate['bed'], false);
 		} else if(is_array(pbed_location(@player))) {
-			if(array_index_exists(@pdata, 'homes') && array_index_exists(@pdata['homes'], pworld(@player))) {
-				set_pbed_location(@player, @pdata['homes'][pworld(@player)]);
+			@pworld = pworld(@player);
+			if(array_index_exists(@pdata, 'homes', @pworld)) {
+				set_pbed_location(@player, @pdata['homes'][@pworld]);
 			} else {
-				@spawn = get_spawn(pworld(@player));
-				@spawn[1] -= 1;
-				set_pbed_location(@player, @spawn);
-				console('set bed to spawn');
+				@spawn = get_spawn(@pworld);
+				set_pbed_location(@player, location_shift(@spawn, 'down'));
+				console("Set @player bed to @pworld spawn.");
 			}
 		}
 	} catch(Exception @ex) {
