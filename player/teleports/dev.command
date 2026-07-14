@@ -10,8 +10,7 @@ register_command('dev', array(
 		}
 		include('includes.library/teleports.ms');
 		@pdata = _pdata(player());
-		if(array_index_exists(@pdata, 'dev')
-		&& array_index_exists(@pdata['dev'], 'loc')) {
+		if(array_index_exists(@pdata, 'dev', 'loc')) {
 			_warmuptp(player(), @pdata['dev']['loc']);
 		} else {
 			@loc = get_spawn('dev');

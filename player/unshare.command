@@ -29,7 +29,7 @@ register_command('unshare', array(
 		}
 	
 		@pdata = _pdata(player());
-		if(!array_index_exists(@pdata, 'shared') || !array_index_exists(@pdata['shared'], @player)) {
+		if(!array_index_exists(@pdata, 'shared', @player)) {
 			die(color('gold').'You are not sharing anything with this player.');
 		}
 		foreach(@type in @types) {
@@ -49,7 +49,7 @@ register_command('unshare', array(
 		msg(color('green').'You are no longer sharing '.array_implode(@types, ' and ').' with '.@player.'.');
 	
 		@pdata = _pdata(@player);
-		if(!array_index_exists(@pdata, 'shared') || !array_index_exists(@pdata['shared'], player())) {
+		if(!array_index_exists(@pdata, 'shared', player())) {
 			die(color('gold').'They are not sharing anything with you.');
 		}
 		foreach(@type in @types) {

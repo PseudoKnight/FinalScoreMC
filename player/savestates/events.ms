@@ -42,7 +42,7 @@ bind('player_spawn', array('priority': 'LOW'), null, @event) {
 			@world = @worlds[@world]['respawn'];
 		}
 		@pdata = _pdata(player());
-		if(array_index_exists(@pdata, 'homes') && array_index_exists(@pdata['homes'], @world)) {
+		if(array_index_exists(@pdata, 'homes', @world)) {
 			@home = @pdata['homes'][@world][];
 			@home[1] += 1;
 			modify_event('location', @home);
@@ -72,7 +72,7 @@ bind('player_teleport', array('priority': 'HIGH'), null, @event) {
 			}
 			
 			@pdata = _pdata(player());
-			if(array_index_exists(@pdata, @toGroup) && array_index_exists(@pdata[@toGroup], 'loc')) {
+			if(array_index_exists(@pdata, @toGroup, 'loc')) {
 				@loc = @pdata[@toGroup]['loc'];
 				if(!_world_allows_teleports(@loc[3])) {
 					// Restoring their last location within that worldgroup since they were not allowed to teleport out

@@ -420,7 +420,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 					}
 				}
 				@roomData = @floorData;
-				if(@roomType && array_index_exists(@options, 'rooms') && array_index_exists(@options['rooms'], @roomType)) {
+				if(@roomType && array_index_exists(@options, 'rooms', @roomType)) {
 					@roomData = array_merge(@floorData, @options['rooms'][@roomType]);
 				}
 
@@ -707,7 +707,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 				@rowOdd = null;
 				@columnOdd = null;
 				@roomData = @floorData;
-				if(@room['type'] && array_index_exists(@options, 'rooms') && array_index_exists(@options['rooms'], @room['type'])) {
+				if(@room['type'] && array_index_exists(@options, 'rooms', @room['type'])) {
 					@roomData = array_merge(@roomData, @options['rooms'][@room['type']]);
 				}
 				for(@r2 = @r - 1, @r2 <= @roomLength + @r, @r2++) {
@@ -774,7 +774,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 							@roomShape = if(@room, @room['shape'], '');
 							@doorAdjacent = _adjacent_equals(@layoutMap, @c, @r, 'door');
 							@roomData = @floorData;
-							if(@roomType && array_index_exists(@options, 'rooms') && array_index_exists(@options['rooms'], @roomType)) {
+							if(@roomType && array_index_exists(@options, 'rooms', @roomType)) {
 								@roomData = array_merge(@roomData, @options['rooms'][@roomType]);
 							}
 							@loc = array(
@@ -1250,7 +1250,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 				@roomZ = @regionMinZ + @room['r1'];
 
 				@roomData = @floorData;
-				if(@roomType && array_index_exists(@options, 'rooms') && array_index_exists(@options['rooms'], @roomType)) {
+				if(@roomType && array_index_exists(@options, 'rooms', @roomType)) {
 					@roomData = array_merge(@roomData, @options['rooms'][@roomType]);
 				}
 

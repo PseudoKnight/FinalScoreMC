@@ -10,8 +10,7 @@ register_command('park', array(
 		}
 		include('includes.library/teleports.ms');
 		@pdata = _pdata(player());
-		if(array_index_exists(@pdata, 'minigames')
-		&& array_index_exists(@pdata['minigames'], 'loc')) {
+		if(array_index_exists(@pdata, 'minigames', 'loc')) {
 			_warmuptp(player(), @pdata['minigames']['loc'], false, true);
 		} else {
 			@loc = get_spawn('custom');

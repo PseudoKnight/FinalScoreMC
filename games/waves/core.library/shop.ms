@@ -103,7 +103,7 @@ proc _bind_shop_events(@waves) {
 						set_plevel(plevel() - @cost);
 						play_sound(ploc(), array(sound: 'BLOCK_ANVIL_LAND', pitch: 2, volume: 0.5), player());
 						@tier = @waves['shopTier'] + 1;
-						if(array_index_exists(@waves['config'], 'shoptiers') && array_index_exists(@waves['config']['shoptiers'], @tier)) {
+						if(array_index_exists(@waves['config'], 'shoptiers', @tier)) {
 							set_inventory_item('waves'.@waves['region'], 53, array(
 								name: @waves['config']['shoptiers'][@tier]['item'],
 								qty: @waves['config']['shoptiers'][@tier]['cost'],

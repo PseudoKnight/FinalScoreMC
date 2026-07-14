@@ -515,7 +515,7 @@ proc _hole_out(@golf, @player) {
 	@ball['id'] = 0;
 
 	// Add up score total for this hole
-	if(array_index_exists(@golf, @hole - 1) && array_index_exists(@golf[@hole - 1]['total'], @player)) {
+	if(array_index_exists(@golf, @hole - 1, 'total', @player)) {
 		@golf[@hole]['total'][@player] = @golf[@hole - 1]['total'][@player] + @hits;
 	} else {
 		@golf[@hole]['total'][@player] = @hits;

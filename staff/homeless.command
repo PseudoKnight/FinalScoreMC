@@ -18,7 +18,7 @@ register_command('homeless', array(
 					@pdata['world'] = 'psi';
 					store_value(@key, @pdata);
 					msg('Set '.@pdata['name'].' to "homeless".');
-				} else if(array_index_exists(@pdata, 'survival') && array_index_exists(@pdata['survival'], 'loc')
+				} else if(array_index_exists(@pdata, 'survival', 'loc')
 				&& string_starts_with(@pdata['survival']['loc'][3], @world)) {
 					array_remove(@pdata['survival'], 'loc');
 					store_value(@key, @pdata);

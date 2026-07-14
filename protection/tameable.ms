@@ -32,7 +32,7 @@ bind('entity_damage', array(priority: 'HIGHEST'), array(
 							tmsg(@damager, color('yellow').'Teleported '.@event['type'].' to '.@owner.'.');
 						} else {
 							@ownerdata = _pdata(@owner);
-							if(array_index_exists(@ownerdata, 'homes') && array_index_exists(@ownerdata['homes'], @world)) {
+							if(array_index_exists(@ownerdata, 'homes', @world)) {
 								set_entity_loc(@id, location_shift(@ownerdata['homes'][@world], 'up'));
 								tmsg(@damager, color('yellow').'Teleported '.@event['type'].' to '.@owner.'\'s home.');
 							}

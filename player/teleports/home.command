@@ -40,7 +40,7 @@ register_command('home', array(
 		} catch(NotFoundException @ex) {
 			die(color('gold') . '"' . @player . '" is not a known world or player name.');
 		}
-		if(!array_index_exists(@pdata, 'homes') || !array_index_exists(@pdata['homes'], @world)) {
+		if(!array_index_exists(@pdata, 'homes', @world)) {
 			if(@player == player()) {
 				die(color('yellow') . 'You can set a home for a world with /sethome');
 			} else {
