@@ -18,7 +18,7 @@ proc _direct_vehicle() {
 	Sitting on some (mostly) non-hostile animals.
  */
 bind('player_interact_entity', null, array(hand: 'main_hand', clicked: '/(COW|MUSHROOM_COW|PANDA|POLAR_BEAR|SHEEP|SNIFFER|CHICKEN)/'), @event) {
-	if(!pblocking() && !pinv(player(), null)) {
+	if(!pblocking() && !pinv(player(), null) && !get_leashholder(@event['id'])) {
 		set_entity_rider(@event['id'], puuid());
 		_direct_vehicle();
 	}
