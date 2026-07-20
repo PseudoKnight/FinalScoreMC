@@ -1,7 +1,7 @@
 /*
 	Returns a Minecraft color code for the specified player's group
 */
-proc _colorname(@player) {
+proc _colorname(@player = null) {
 	if(!@player) {
 		@player = player();
 	}

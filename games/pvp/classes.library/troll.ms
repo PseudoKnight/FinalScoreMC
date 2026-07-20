@@ -1,5 +1,5 @@
 proc _class_load(@player, @pvp) {
-	proc _swing_club(@player, @victim) {
+	proc _swing_club(@player, @victim = '') {
 		if(pattack_cooldown(@player) == 1.0) {
 			@raytrace = ray_trace(@player, 2);
 			spawn_particle(location_shift(@raytrace['location'], 'down'), array(particle: 'SWEEP_ATTACK', speed: 32.0, count: 0, xoffset: 1));

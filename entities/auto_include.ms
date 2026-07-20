@@ -8,7 +8,7 @@
 		source : The source entity of this spawn action, like for explosions.
 	@consumer : An additional closure to run on the entity during spawning.
 */
-proc _spawn_entity(@entity, @loc, @spawnData, @consumer) {
+proc _spawn_entity(@entity, @loc, @spawnData = null, @consumer = null) {
 	if(!is_array(@entity)) {
 		@entity = _get_entity(@entity);
 	}
@@ -21,7 +21,7 @@ proc _spawn_entity(@entity, @loc, @spawnData, @consumer) {
 	return(spawn_entity(@entity['type'], 1, @loc, @modify)[0]);
 }
 
-proc _modify_entity(@e, @entity, @loc, @spawnData, @consumer) {
+proc _modify_entity(@e, @entity, @loc, @spawnData = null, @consumer = null) {
 	if(is_entity_living(@e)) {
 		set_entity_persistence(@e, true);
 	}

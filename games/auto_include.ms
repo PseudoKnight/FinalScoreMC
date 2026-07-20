@@ -2,7 +2,7 @@
 	Adds an activity to the activities list.
 	This is used for checking which games are running.
 */
-proc _add_activity(@id, @title, @region, @world) {
+proc _add_activity(@id, @title, @region = null, @world = null) {
 	@activities = import('activities');
 	if(is_null(@activities)) {
 		@activities = associative_array();

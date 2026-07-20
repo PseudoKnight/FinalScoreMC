@@ -101,7 +101,7 @@ proc _snake_safe_path(@snake, @missiles) {
 	return(false);
 }
 
-proc _snake_safe_block(@block, @loc, @dir) {
+proc _snake_safe_block(@block, @loc = null, @dir = null) {
 	// special case for lasers, as the powerup block is the same as the deadly laser
 	if(@loc && @block === 'RED_STAINED_GLASS') {
 		@game = import('snake');

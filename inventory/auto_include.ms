@@ -1,7 +1,7 @@
 /*
 	Removes all items from a player's inventory and armor slots
 */
-proc _clear_pinv(@player) {
+proc _clear_pinv(@player = null) {
 	if(!@player) {
 		@player = player();
 	}
@@ -15,7 +15,7 @@ proc _clear_pinv(@player) {
 /*
 	Sets a player's inventory with a preset kit
 */
-proc _equip_kit(@player, @inv) {
+proc _equip_kit(@player = null, @inv = null) {
 	if(!@player) {
 		@player = player();
 	}

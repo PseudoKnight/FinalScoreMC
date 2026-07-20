@@ -1,4 +1,4 @@
-proc _pvp_flag_spawn(@id, @team, @loc) {
+proc _pvp_flag_spawn(@id, @team, @loc = null) {
 	@pvp = import('pvp'.@id);
 	if(!@pvp['running']) {
 		return();

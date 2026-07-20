@@ -1,7 +1,7 @@
 /*
 	Gets current session data for player
 */
-proc _psession(@player) {
+proc _psession(@player = null) {
 	if(!@player) {
 		@player = player();
 	}
@@ -39,7 +39,7 @@ proc _set_pactivity(@player, @activity, @overrideable = false) {
 	return(true);
 }
 
-proc _pbusy(@player) {
+proc _pbusy(@player = null) {
 	if(!@player) {
 		@player = player();
 	}

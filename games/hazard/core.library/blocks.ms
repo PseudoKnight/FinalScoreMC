@@ -1,4 +1,4 @@
-proc _hazard_add_block(@game, @location, @type) {
+proc _hazard_add_block(@game, @location, @type = null) {
 	if(!@type) {
 		@location['type'] = get_blockdata_string(@location);
 	} else {

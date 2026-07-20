@@ -211,7 +211,7 @@ proc _shard_create(@rules){
 
 				// Default procedures (overrideable)
 				include_dir('../rules.library');
-				proc _set_inventory_contents(@loc, @count, @player) {
+				proc _set_inventory_contents(@loc, @count, @player = null) {
 					// Clear all inventory
 					if(has_metadata(@loc, 'loot')) {
 						return();

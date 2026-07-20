@@ -1,6 +1,6 @@
 proc _rule_load(@binds, @value) {}
 
-proc _set_inventory_contents(@loc, @count, @player,
+proc _set_inventory_contents(@loc, @count, @player = null,
 @baseItems = array(
 	APPLE: 2,
 	ARROW: 16,

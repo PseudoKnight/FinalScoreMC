@@ -1,11 +1,11 @@
-proc _race_on_move() {}
-proc _race_activate_item() {}
+proc _race_on_move(@player, @loc, @race) {}
+proc _race_activate_item(@race, @player, @kart) {}
 
 /**
  * Spawns a new kart.
  * Returns the array defining this kart object.
  */
-array proc _kart_spawn(@loc, @player, @design, @camdist = 4.0) {
+array proc _kart_spawn(@loc, @player, @design = null, @camdist = 4.0) {
 	string @engineBlock;
 	string @color;
 	string @wheels;
@@ -297,7 +297,7 @@ proc _kart_remove(@player, @kart) {
 /**
  * Starts the kart interval tick.
  */
-proc _kart_tick(@player, @kart, @race) {
+proc _kart_tick(@player, @kart, @race = null) {
 	@driftAngle = 32.0;
 	@maxSpeed = 1.5;
 
