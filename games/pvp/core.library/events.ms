@@ -448,14 +448,12 @@ proc _bind_events(@pvp) {
 					'STARVATION',
 
 					// Partially self-inflicted; possibly use time after last damage to attribute, like vanilla falls
-					'HOT_FLOOR', // can be attributed, but not necessary
 					'FREEZE', // like hot floor, this seems like it would more likely be the fault of the player
-					'CONTACT', // cactus, stalagmite, berry bush (something caused 4.0 dmg)
+					'CONTACT', // cactus, stalagmite, berry bush, magma block, campfire, etc
 					'FALL', // attribute only when very recently hit, though accuracy may be difficult
 					'KILL', // probably exiting the region (pkill())
 					'LAVA', // players can knock other players into hazards
 					'FIRE', // standing in fire; treat similar to lava
-					'CAMPFIRE', // similar to fire
 					'FIRE_TICK', // certain abilities set players on fire, damaging over time
 				);
 				if(array_contains(@unattributedTypes, @cause)) {

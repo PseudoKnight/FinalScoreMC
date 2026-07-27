@@ -94,6 +94,7 @@ bind('target_player', null, array(mobtype: 'ZOMBIE'), @event, @day, @passive = a
 	'SNOW_GOLEM', // SNOWMAN
 	'SQUID',
 	'STRIDER',
+	'SULFUR_CUBE',
 	'TADPOLE',
 	'TRADER_LLAMA',
 	'TROPICAL_FISH',

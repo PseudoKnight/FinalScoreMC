@@ -60,7 +60,7 @@ proc _entity_tabcompleter(@typeCompletions = @entityTypes, @attributeCompletions
 			'<display': array('<json>'),
 			'<tags': array(
 				'<<axolotl|frog|mushroom_cow|painting|rabbit|salmon': array('type'),
-				'<<magma_cube|phantom|pufferfish|slime': array('size'),
+				'<<magma_cube|phantom|pufferfish|slime|sulfur_cube': array('size'),
 				'<<area_effect_cloud': array('duration', 'durationonuse', 'particle', 'radius', 'radiusonuse',
 					'radiuspertick', 'reapplicationdelay', 'waittime', 'color', 'potionmeta', 'source'),
 				'<<arrow': array('critical', 'damage', 'piercelevel', 'pickup', 'potionmeta'),

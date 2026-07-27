@@ -150,7 +150,7 @@ proc _arena_bind_events(@id) {
 				'ZOMBIE_HORSE', 'BOGGED', 'BREEZE', 'CAVE_SPIDER', 'CREAKING', 'CREEPER', 'DROWNED',
 				'ELDER_GUARDIAN', 'ENDERMAN', 'ENDERMITE', 'EVOKER', 'GHAST', 'GUARDIAN', 'HOGLIN', 'HUSK',
 				'PHANTOM', 'PIGLIN', 'PIGLIN_BRUTE', 'PILLAGER', 'PUFFERFISH', 'RAVAGER', 'SHULKER',
-				'SILVERFISH', 'SKELETON', 'SKELETON_HORSE', 'SLIME', 'SPIDER', 'STRAY', 'VEX', 'VINDICATOR',
+				'SILVERFISH', 'SKELETON', 'SKELETON_HORSE', 'SLIME', 'SPIDER', 'STRAY', 'SULFUR_CUBE', 'VEX', 'VINDICATOR',
 				'WITCH', 'WITHER_SKELETON', 'ZOGLIN', 'ZOMBIE', 'ZOMBIE_VILLAGER', 'ZOMBIFIED_PIGLIN');
 			@itemArray['meta'] = array(spawntype: array_get_rand(@spawnTypes));
 		} else if(string_ends_with(@item, 'BUNDLE')) {

@@ -1,6 +1,6 @@
 // Infinite dispensers on creative/game worlds
 bind('block_dispense', null, array('type': 'DISPENSER'), @event,
-		@ignored = array('BUCKET', 'WATER_BUCKET', 'LAVA_BUCKET', 'POWDER_SNOW_BUCKET')) {
+		@ignored = array('BUCKET', 'WATER_BUCKET', 'LAVA_BUCKET', 'POWDER_SNOW_BUCKET', 'SULFUR_CUBE_BUCKET')) {
 	if(!has_metadata(@event['location']['world'], 'survival')
 	&& @event['item'] && !array_contains(@ignored, @event['item']['name'])
 	&& !array_contains(sk_region_check_flag(@event['location'], 'blocked-cmds'), '/finitedispensers')) {
