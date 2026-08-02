@@ -1,7 +1,41 @@
 if(extension_exists('CHDiscord')) {
 	// listen for messages in chat channel
 	bind('discord_message_received', null, null, @event) {
-		if(@event['channel'] == 'chat') {
+		// Spam protection
+		if(!@event['bot'] && !@event['webhook']) {
+			try {
+				if(discord_member_info(@event['userid'])['joined_at'] + 1000 * 60 * 60 * 24 * 3 > time()) {
+					// Joined less than 3 days ago
+					if(@event['attachments']) {
+						// AND sent attachments
+						discord_delete_message(@event['serverid'], @event['channelid'], @event['id']);
+						discord_broadcast(@event['serverid'], 'mods', 'Deleted message in '.@event['channel']
+								.' by new user ('.@event['username'].') containing '.array_size(@event['attachments'])
+								.' attachment(s): '.@event['attachments'][0]['filename']
+								.if(@event['message'], ' "'.@event['message'].'"'));
+						if(!@event['message'] && @event['attachments'][0]['filename'] === 'image.jpg') {
+							// Also a generic filename without a message, so kick user
+							discord_request('DELETE', 'guilds/'.@event['serverid'].'/members/'.@event['userid'], null, closure(@success) {
+								discord_broadcast(@event['serverid'], 'mods', 'Kicked '.@event['username']);
+							}, closure(@failure) {
+								console('Failed to kick '.@event['username']);
+							});
+						}
+						die();
+					} else if(string_position(@event['message'], 'http') > -1
+					|| string_position(@event['message'], 'discord.gg/') > -1) {
+						// Sent a link or invite embed
+						discord_delete_message(@event['serverid'], @event['channelid'], @event['id']);
+						discord_broadcast(@event['serverid'], 'mods', 'Deleted message in '.@event['channel']
+								.' by new user ('.@event['username'].') containing URL: "'.@event['message'].'"');
+						die();
+					}
+				}
+			} catch(NotFoundException @ex) {}
+		}
+
+		// Regular chat
+		if(@event['channel'] === 'chat') {
 			@name = @event['nickname'];
 			@msg = reg_replace('[\uFE00-\uFE0F]', '', @event['message']); // ignore unsupported unicode
 			@pdata = null;
@@ -41,7 +75,9 @@ if(extension_exists('CHDiscord')) {
 				_tellraw(all_players(), array(array('open_url', @attachment['filename'], @attachment['url'],
 						@attachment['description'])));
 			}
-		} else if(@event['channel'] == 'general') {
+		
+		// Discord keywords or commands
+		} else if(@event['channel'] === 'general') {
 			if(reg_match('(?i).*\\bserver\\b\\W\\w*\\W?\\b(down|alive)\\b.*', @event['message'])) {
 				discord_broadcast(@event['serverid'], 'general', 'Beep boop. I am still alive!');
 			}
