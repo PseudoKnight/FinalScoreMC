@@ -137,7 +137,7 @@ proc _arena_bind_events(@id) {
 					@itemArray['meta']['projectiles'] = array(array(name: 'ARROW'));
 				} else {
 					@itemArray['meta']['projectiles'] = array(array(name: 'FIREWORK_ROCKET', meta: array(firework: array(
-						effects: array(array(type: 'LARGE_BALL'), array(type: 'LARGE_BALL'), array(type: 'LARGE_BALL')),
+						effects: array(array(type: 'BALL_LARGE'), array(type: 'BALL_LARGE'), array(type: 'BALL_LARGE')),
 						strength: 1))));
 				}
 			}

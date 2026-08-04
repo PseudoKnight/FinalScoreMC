@@ -174,8 +174,8 @@ proc _get_chest_loot(@floor, @random, @bonus = 1.0, @loot = array(
 						if(srand(@random) < 0.5) {
 							@item['meta'] = array(projectiles: array(array(name: 'FIREWORK_ROCKET', meta: array(firework: array(
 								strength: 1, 
-								effects: array(array(type: 'LARGE_BALL'), array(type: 'LARGE_BALL'), array(type: 'LARGE_BALL'),
-										array(type: 'LARGE_BALL'), array(type: 'LARGE_BALL'), array(type: 'LARGE_BALL'))
+								effects: array(array(type: 'BALL_LARGE'), array(type: 'BALL_LARGE'), array(type: 'BALL_LARGE'),
+										array(type: 'BALL_LARGE'), array(type: 'BALL_LARGE'), array(type: 'BALL_LARGE'))
 							)))));
 						} else {
 							@crossbowEnchants = array(
