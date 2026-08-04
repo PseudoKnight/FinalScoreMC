@@ -35,7 +35,7 @@ proc _weapon_bind_events(@pvp) {
 		&& array_index_exists(@pvp['players'], @event['shooter'])) {
 			if(@event['damagertype'] === 'SNOWBALL') {
 				try {
-					if(!get_projectile_item(@event['damager'])['name'] !== 'POLISHED_BLACKSTONE_BUTTON') {
+					if(get_projectile_item(@event['damager'])['name'] !== 'POLISHED_BLACKSTONE_BUTTON') {
 						die();
 					}
 				} catch(BadEntityException @ex) {

@@ -21,7 +21,7 @@ proc _weapon_bind_events(@pvp) {
 		&& array_index_exists(@pvp['players'], @event['shooter'])) {
 			if(@event['damagertype'] === 'SNOWBALL') {
 				try {
-					if(!get_projectile_item(@event['damager'])['name'] === 'GHAST_TEAR') {
+					if(get_projectile_item(@event['damager'])['name'] !== 'GHAST_TEAR') {
 						die();
 					}
 				} catch(BadEntityException @ex) {
