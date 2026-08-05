@@ -139,29 +139,27 @@ proc _bind_events(@pvp) {
 		// Inventory and Drops
 		@drops = array();
 		if(array_contains(@arena['flags'], 'keepinventory')) {
-			@inv = pinv();
-			if(array_index_exists(@arena, 'dropchance')) {
-				proc _drop(@inv, @slot, @chance) {
-					@item = @inv[@slot];
-					if(@item && rand(100) < @chance) {
-						@qtyLeft = floor(@item['qty'] / 2);
-						@item['qty'] = @item['qty'] - @qtyLeft;
-						drop_item(player(), @item);
-						msg('You dropped: '.if(@item['qty'] > 1, @item['qty'].' ').@item['name']);
-						if(@qtyLeft) {
-							@item['qty'] = @qtyLeft;
-						} else {
-							@inv[@slot] = null;
-						}
+			proc _drop(@inv, @slot, @chance) {
+				@item = @inv[@slot];
+				if(@item && rand(100) < @chance) {
+					@qtyLeft = floor(@item['qty'] / 2);
+					@item['qty'] = @item['qty'] - @qtyLeft;
+					drop_item(player(), @item);
+					msg('You dropped: '.if(@item['qty'] > 1, @item['qty'].' ').@item['name']);
+					if(@qtyLeft) {
+						@item['qty'] = @qtyLeft;
+					} else {
+						@inv[@slot] = null;
 					}
 				}
-				foreach(@slot in 0..35) {
+			}
+			@inv = pinv();
+			foreach(@slot: @item in @inv) {
+				if(@item && @item['meta'] && array_index_exists(@item['meta']['enchants'], 'vanishing_curse')) {
+					array_remove(@inv, @slot);
+				} else if(array_index_exists(@arena, 'dropchance')) {
 					_drop(@inv, @slot, @arena['dropchance']);
 				}
-				foreach(@slot in 100..103) {
-					_drop(@inv, @slot, @arena['dropchance']);
-				}
-				_drop(@inv, -106, @arena['dropchance']);
 			}
 			@playerData['inv'] = @inv;
 		} else {
