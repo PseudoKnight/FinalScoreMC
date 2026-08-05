@@ -316,7 +316,7 @@ proc _bind_events(@pvp) {
 			// Teleport
 			if(array_index_exists(@arena, 'respawntime') && @pvp['running'] == 2) {
 				@playerData['respawn'] = time() + (@arena['respawntime'] * 1000) - 50; // 50ms tick precision
-				@location = @event['location'];
+				@deathLocation = @playerData['deathLocation'];
 				if(!array_contains(sk_current_regions(), @arena['region'])) {
 					@distance = 128;
 					@closest = '';
@@ -324,7 +324,7 @@ proc _bind_events(@pvp) {
 						if(@p === player() && array_contains(sk_current_regions(), @arena['region'])) {
 							continue();
 						}
-						@pDistance = distance(ploc(@p), @location);
+						@pDistance = distance(ploc(@p), @deathLocation);
 						if(@pDistance < @distance) {
 							@distance = @pDistance;
 							@closest = @p;
@@ -336,7 +336,7 @@ proc _bind_events(@pvp) {
 						modify_event('location', location_shift(@arena['spawn'][0][0], 'up'));
 					}
 				} else {
-					modify_event('location', @playerData['deathLocation']);
+					modify_event('location', @deathLocation);
 				}
 			} else if(@arena['respawnmode'] == 'mob') {
 				while(@pvp['team'][@team]['respawns']) {
