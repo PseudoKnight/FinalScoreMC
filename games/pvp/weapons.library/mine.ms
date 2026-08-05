@@ -1,6 +1,6 @@
 proc _weapon_bind_events(@pvp) {
 	@pvp['binds'][] = bind('item_drop', null, array(itemname: 'HEAVY_WEIGHTED_PRESSURE_PLATE'), @event, @pvp) {
-		if(array_index_exists(@pvp['players'], player())) {
+		if(array_index_exists(@pvp['players'], player()) && @event['item']['meta']) {
 			@item = @event['item'];
 			@item['meta']['display'] = player();
 			modify_event('item', @item);
@@ -22,7 +22,7 @@ proc _weapon_bind_events(@pvp) {
 	}
 
 	@pvp['binds'][] = bind('item_pickup', null, array(itemname: 'HEAVY_WEIGHTED_PRESSURE_PLATE'), @event, @pvp) {
-		if(!array_index_exists(@pvp['players'], player())) {
+		if(!array_index_exists(@pvp['players'], player()) || !@event['item']['meta']) {
 			die();
 		}
 
