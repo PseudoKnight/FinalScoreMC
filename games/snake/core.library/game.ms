@@ -10,7 +10,7 @@
 	'botsOnly': indicated if only bots are left in the game
 	'missiles': an array of flying missiles
 	'tnt': an array of primed tnt entities
-	'mode': the game mode (elimination, versus, endless, capture, gluttony)
+	'mode': the game mode (elimination, territory, endless, capture)
 	'nukes': an array of regions that are getting nuked
 	'teams': an array of two arrays containing the list of players on that team
 	'flags': an array of two location arrays or player names where the team flags are in capture mode
@@ -32,7 +32,6 @@ proc _snake_queue(@mode) {
 	@game['snakes'] = associative_array();
 	@game['powerups'] = array();
 	@game['numPowerups'] = 1;
-	@game['numPlayers'] = 9;
 	@game['botsOnly'] = false;
 	@game['missiles'] = associative_array();
 	@game['tnt'] = array();
@@ -41,6 +40,9 @@ proc _snake_queue(@mode) {
 	@game['teams'] = array(array(), array());
 	@game['flags'] = array(null, null);
 	@game['fire'] = array();
+	@game['maxWidth'] = 0;
+	@game['displays'] = array(null);
+	@game['state'] = 0;
 	@game['debug'] = false;
 	export('snake', @game);
 
@@ -58,25 +60,29 @@ proc _snake_queue(@mode) {
 	// Get region count
 	while(sk_region_exists('custom', @game['region'].(@game['surfaces'] + 1))) {
 		@game['surfaces']++;
+		@coords = sk_region_info(@game['region'].@game['surfaces'], 'custom', 0);
+		@xWidth = @coords[0][0] - @coords[1][0] + 1;
+		@yWidth = @coords[0][1] - @coords[1][1] + 1;
+		@zWidth = @coords[0][2] - @coords[1][2] + 1;
+		@game['maxWidth'] = max(@xWidth, @yWidth, @zWidth, @game['maxWidth']);
+		@game['displays'][] = null;
 	}
-	if(@mode !== 'gluttony') {
-		@game['numPowerups'] = @game['surfaces'] * if(@mode === 'endless', 3, 5);
-	}
+	@game['numPowerups'] = @game['surfaces'] * if(@mode === 'endless', 3, 5);
 
 	// Create scoreboard
 	try {
 		create_scoreboard('snake');
 		create_objective('score', 'DUMMY', 'snake');
-		@display = 'SNAKE: First to 2 wins!';
+		@display = 'First to 2 Wins!';
 		if(@game['mode'] === 'endless') {
-			@display = 'SNAKE: Survive!';
+			@display = 'Survive!';
+		} else if(@game['mode'] === 'pit') {
+			@display = 'Protect the Pit!';
 		} else if(@game['mode'] === 'capture') {
 			create_objective('teamscore', 'DUMMY', 'snake');
 			set_pscore('teamscore', 'BLUE', 0, 'snake');
 			set_pscore('teamscore', 'RED', 0, 'snake');
 			@display = color('red').'0'.color('reset').' : '.color('blue').'0';
-		} else if(@game['mode'] === 'gluttony') {
-			@display = 'SNAKE: Grow!';
 		}
 		set_objective_display('score', array(displayname: @display, slot: 'SIDEBAR'), 'snake');
 	} catch(ScoreboardException @ex) {
@@ -99,8 +105,9 @@ proc _snake_queue(@mode) {
 	));
 
 	// Add players in region
+	@numPlayers = 9;
 	if(@game['mode'] === 'capture') {
-		@game['numPlayers'] = 8; // max
+		@numPlayers = 8; // max
 	}
 	@loadMenu = false;
 	foreach(@p in all_players()) {
@@ -109,7 +116,7 @@ proc _snake_queue(@mode) {
 				@loadMenu = true;
 			}
 		}
-		if(array_size(@game['snakes']) == @game['numPlayers']) {
+		if(array_size(@game['snakes']) == @numPlayers) {
 			break();
 		}
 	}
@@ -117,8 +124,7 @@ proc _snake_queue(@mode) {
 		@loadMenu = false;
 	}
 
-	if((@game['mode'] === 'endless' || @game['mode'] === 'gluttony') && array_size(@game['snakes']) == 0
-	|| @game['mode'] === 'versus' && array_size(@game['snakes']) < 2) {
+	if(@game['mode'] !== 'elimination' && !@game['snakes']) {
 		delete_virtual_inventory('snake');
 		remove_scoreboard('snake');
 		foreach(@player: @snake in @game['snakes']) {
@@ -131,19 +137,28 @@ proc _snake_queue(@mode) {
 	_add_activity('snake', 'Snake');
 
 	// Add bots to fill up slots
-	if(@game['mode'] !== 'versus' && @game['mode'] !== 'gluttony') {
-		if(@game['mode'] === 'capture') {
-			@game['numPlayers'] = array_size(@game['snakes']) + array_size(@game['snakes']) % 2; // min
-		}
-		@bots = _snake_bots();
-		while(array_size(@game['snakes']) < @game['numPlayers'] && @bots) {
-			@index = array_rand(@bots)[0];
-			_snake_add(@index, @game);
-			array_remove(@bots, @index);
-		}
+	if(@game['mode'] === 'capture') {
+		@numPlayers = array_size(@game['snakes']) + array_size(@game['snakes']) % 2; // min
 	}
 
-	if(@game['mode'] === 'endless' || @game['mode'] === 'gluttony') {
+	@bots = _snake_bots();
+	while(array_size(@game['snakes']) < @numPlayers && @bots) {
+		@index = array_rand(@bots)[0];
+		_snake_add(@index, @game);
+		array_remove(@bots, @index);
+	}
+
+	if(@game['mode'] === 'pit') {
+		_snake_display(@game['surfaces'], array(name: 'LIME_STAINED_GLASS'), @game);
+		for(@i = 1, @i < @game['surfaces'], @i++) {
+			_snake_display(@i, null, @game);
+		}
+	} else if(@game['mode'] === 'capture') {
+		_snake_display(2, array(name: 'BLUE_STAINED_GLASS'), @game);
+		_snake_display(4, array(name: 'RED_STAINED_GLASS'), @game);
+	}
+
+	if(@game['mode'] === 'endless' || @game['mode'] === 'pit') {
 		@scoreboardCount = array_size(@game['snakes']);
 		@personalBests = associative_array();
 		@minScore = math_const('INTEGER_MAX');
@@ -234,12 +249,11 @@ proc _snake_queue(@mode) {
 
 proc _snake_countdown(@game) {
 	// Start 
+	@game['state'] = 1;
 	@help = array(
 		color('red').color('bold').'SNAKE: '.to_upper(@game['mode']),
 		'Use '.color('green').'left and right mouse buttons'.color('reset').' to turn',
-		if(@game['mode'] === 'gluttony',
-			'Grow as big as you can.',
-			'Press '.color('green').'slot #'.color('reset').' to activate pickup'),
+		'Press '.color('green').'slot #'.color('reset').' to activate pickup',
 		color('green').color('italic').'Go snake, go!'
 	);
 	@secondsLeft = array(8);
@@ -267,61 +281,111 @@ proc _snake_countdown(@game) {
 }
 
 proc _snake_start_task(@game) {
-	@totalTicks = array(0);
-	@totalSeconds = array(0);
+	@game['state'] = 2;
+	if(@game['mode'] === 'pit' || @game['mode'] === 'endless') {
+		@song = array(sound: 'MUSIC_OVERWORLD_FOREST', category: 'RECORDS', seed: 18);
+		if(@game['mode'] === 'endless') {
+			@song = array(sound: 'MUSIC_CREDITS', category: 'RECORDS', seed: 0);
+		}
+		foreach(@player: @snake in @game['snakes']) {
+			if(!@snake['bot']) {
+				play_sound(puuid(@player), @song, @player);
+			}
+		}
+	}
+	@totalTicks = mutable_primitive(0);
+	@scoreSeconds = mutable_primitive(0);
 	@game['interval'] = set_interval(50, closure() {
-		@totalTicks[0]++;
-		if(@totalTicks[0] % 20 == 0) {
-			@totalSeconds[0]++;
+		if(@game['mode'] === 'endless') {
+			@totalTicks++;
+			if(@totalTicks % 20 == 0) {
+				@scoreSeconds++;
+			}
+		} else if(@game['mode'] === 'pit') {
+			@totalTicks++;
+		}
+		while(array_size(@game['powerups']) < @game['numPowerups']) {
+			_snake_add_powerup(@game);
 		}
 		@alive = 0;
 		@active = 'No one';
 		@playersAlive = 0;
-		while(array_size(@game['powerups']) < @game['numPowerups']) {
-			_snake_add_powerup(@game);
-		}
+		@botsInPit = false;
+		@playersInPit = false;
 		foreach(@player: @snake in @game['snakes']) {
-			try {
-				if(!@snake['bot'] && (!ponline(@player) || !array_contains(sk_current_regions(@player), @game['region']))) {
-					_snake_remove(@player, @game);
-				} else if(@snake['alive']) {
-					if(!@snake['bot']) {
-						@playersAlive++;
+			if(!@snake['bot'] && (!ponline(@player) || !array_contains(sk_current_regions(@player), @game['region']))) {
+				_snake_remove(@player, @game);
+			} else if(@snake['alive']) {
+				if(!@snake['bot']) {
+					@playersAlive++;
+				}
+				if(!(@snake['sleep']--)) {
+					if(@snake['bot']) {
+						_snake_bot_update(@player, @game);
 					}
-					if(!(@snake['sleep']--)) {
-						if(@snake['bot']) {
-							_snake_bot_update(@player, @game);
+					if(_snake_move(@player, @game)) {
+						if(@snake['laser']) {
+							_snake_update_laser(@player, @game);
 						}
-						if(@game['mode'] === 'gluttony' && array_size(@snake['blocks']) > @snake['max']) {
-							@block = array_remove(@snake['blocks'], 0);
-							set_block(@block, 'AIR', false);
-						}
-						if(_snake_move(@player, @game)) {
-							if(@snake['laser']) {
-								_snake_update_laser(@player, @game);
-							}
-							@snake['turned'] = false;
-							@alive++;
-							@active = @player;
-						} else {
-							_snake_kill(@player, @game);
-						}
-					} else {
+						@snake['turned'] = false;
 						@alive++;
 						@active = @player;
+					} else {
+						_snake_kill(@player, @game);
 					}
-				} else if(@game['mode'] === 'endless' && @snake['bot']) {
-					@abilities = @snake['ability-count'];
-					if(_snake_spawn(@player, @game)) {
-						@game['snakes'][@player]['ability-count'] = @abilities; // keep abilities
+				} else {
+					@alive++;
+					@active = @player;
+				}
+				if(@snake['alive']) {
+					if(@game['mode'] === 'endless' && (!@snake['bot'] || !@snake['deaths'])) {
+						set_pscore('score', @player, @scoreSeconds, 'snake');
+					} else if(@game['mode'] === 'pit' && @snake['region'] === @game['region'].@game['surfaces']) {
+						if(@snake['bot']) {
+							@botsInPit = true;
+						} else {
+							@playersInPit = true;
+						}
 					}
 				}
-				if(@game['mode'] === 'endless' && @snake['alive'] && (!@snake['bot'] || !@snake['deaths'])) {
-					set_pscore('score', @player, @totalSeconds[0], 'snake');
+			} else if(@snake['bot'] && (@game['mode'] === 'endless' || @game['mode'] === 'pit')) {
+				@abilities = @snake['ability-count'];
+				@abilities[4] = 0; // do not respawn with nuke
+				if(_snake_spawn(@player, @game)) {
+					@game['snakes'][@player]['ability-count'] = @abilities; // keep abilities
 				}
-			} catch (IndexOverflowException @ex) {
-				console(@ex);
-				_snake_remove(@player, @game);
+			}
+		}
+
+		if(@game['mode'] === 'pit' && @totalTicks % 20 == 0) {
+			if(@playersInPit && !@botsInPit) {
+				@scoreSeconds++;
+				foreach(@player: @snake in @game['snakes']) {
+					if(@snake['bot'] || !@snake['alive']) {
+						continue();
+					}
+					set_pscore('score', @player, @scoreSeconds, 'snake');
+					if(@scoreSeconds <= 1) {
+						stop_sound(@player, 'MUSIC_OVERWORLD_FOREST', 'RECORDS');
+						play_sound(puuid(@player), array(sound: 'MUSIC_DISC_TEARS', category: 'RECORDS', pitch: 1.215, seed: 0), @player);
+					}
+					play_sound(ploc(@player), array(sound: 'UI_BUTTON_CLICK', pitch: 2.0), @player);
+				}
+				if(@scoreSeconds <= 1) {
+					set_entity_spec(@game['displays'][5], array(item: null));
+				}
+				for(@i = 1, @i < @game['surfaces'], @i++) {
+					set_entity_spec(@game['displays'][@i], array(item: array(name: 'YELLOW_STAINED_GLASS')));
+				}
+			} else if(@scoreSeconds > 0) {
+				if(@playersInPit && @botsInPit) {
+					for(@i = 1, @i < @game['surfaces'], @i++) {
+						set_entity_spec(@game['displays'][@i], array(item: array(name: 'RED_STAINED_GLASS')));
+					}
+				} else if(!@playersInPit && @botsInPit) {
+					_snake_end(null, @game);
+					return();
+				}
 			}
 		}
 
@@ -338,7 +402,6 @@ proc _snake_start_task(@game) {
 		}
 
 		switch(@game['mode']) {
-			case 'versus':
 			case 'elimination':
 				if(!@alive) {
 					_snake_end(null, @game);
@@ -348,7 +411,7 @@ proc _snake_start_task(@game) {
 					@game['botsOnly'] = true;
 				}
 			case 'endless':
-			case 'gluttony':
+			case 'pit':
 				if(!@playersAlive) {
 					_snake_end(null, @game);
 				}
@@ -376,7 +439,7 @@ proc _snake_end(@winner, @game) {
 			}
 		}
 		_snake_cleanup(@game);
-	} else if(@game['mode'] === 'versus' || @game['mode'] === 'elimination') {
+	} else if(@game['mode'] === 'elimination') {
 		@endgame = false;
 		if(@winner && @winner != 'No one') {
 			@title = @game['snakes'][@winner]['color'].@winner.' wins ';
@@ -414,13 +477,15 @@ proc _snake_end(@winner, @game) {
 			_snake_countdown(@game);
 		}
 
-	} else if(@game['mode'] === 'endless' || @game['mode'] === 'gluttony') {
+	} else if(@game['mode'] === 'endless' || @game['mode'] === 'pit') {
 		// Sort player scores
 		@scores = array();
+		@allies = array();
 		foreach(@p: @snake in @game['snakes']) {
 			if(!ponline(@p)) {
 				continue();
 			}
+			@allies[] = @p;
 			@pscore = get_pscore('score', @p, 'snake');
 			@array = array(name: @p, value: @pscore, highscore: false, topscore: false);
 			foreach(@i: @score in @scores) {
@@ -458,6 +523,10 @@ proc _snake_end(@winner, @game) {
 			tmsg(@score['name'], color('gold').'+'.@coins.' coins');
 
 			@array = array(uuid: @uuid, value: @score['value']);
+			if(@game['mode'] === 'pit' && array_size(@allies) > 1) {
+				@array['allies'] = @allies[];
+				array_remove_values(@array['allies'], @score['name']);
+			}
 			@remove = false;
 			foreach(@i: @topscore in @topscores) {
 				if(@topscore['uuid'] === @uuid) {
@@ -512,6 +581,12 @@ proc _snake_end(@winner, @game) {
 }
 
 proc _snake_cleanup_round(@game) {
+	@game['state'] = 3;
+	foreach(@entity in @game['displays']) {
+		if(@entity && entity_exists(@entity)) {
+			entity_remove(@entity);
+		}
+	}
 	@game['botsOnly'] = false;
 	@game['powerups'] = array();
 	@game['missiles'] = associative_array();
@@ -522,6 +597,9 @@ proc _snake_cleanup_round(@game) {
 	foreach(@player: @snake in @game['snakes']) {
 		if(ponline(@player) && pworld(@player) === 'custom') {
 			set_pinv(@player, array(0: null, 1: null, 2: null, 3: null, 4: null));
+			stop_sound(@player, 'MUSIC_OVERWORLD_FOREST', 'RECORDS');
+			stop_sound(@player, 'MUSIC_DISC_TEARS', 'RECORDS');
+			stop_sound(@player, 'MUSIC_CREDITS', 'RECORDS');
 		}
 	}
 	if(array_index_exists(@game, 'interval')) {
@@ -531,11 +609,13 @@ proc _snake_cleanup_round(@game) {
 
 proc _snake_cleanup(@game) {
 	_snake_cleanup_round(@game);
+	@game['state'] = 4;
 	delete_virtual_inventory('snake');
-	set_timeout(7000, closure(){
+	set_timeout(8000, closure(){
 		foreach(@player: @snake in @game['snakes']) {
 			_snake_remove(@player, @game);
 		}
+		@game['state'] = 5;
 		export('snake', null);
 		remove_scoreboard('snake');
 		_remove_activity('snake');

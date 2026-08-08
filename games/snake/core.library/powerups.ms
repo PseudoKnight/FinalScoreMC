@@ -81,7 +81,7 @@ proc _snake_add_powerup(@game) {
 	}
 	@loc = _snake_valid_location(@region);
 	if(@loc) {
-		@maxIndex = if(@game['mode'] === 'capture', 4, if(@game['mode'] === 'gluttony', 2, 5));
+		@maxIndex = if(@game['mode'] === 'capture', 4, 5);
 		@r = rand(@maxIndex) + 1;
 		@block = _snake_get_block_from(@r);
 		@type = _snake_get_powerup_from(@r);
@@ -125,37 +125,24 @@ proc _snake_powerup(@player, @powerup, @game) {
 		return(false);
 	}
 	@snake = @game['snakes'][@player];
-	if(@game['mode'] === 'gluttony') {
-		if(@snake['max'] < 100) {
-			@snake['max'] += 10;
-		} else if(@snake['max'] < 200) {
-			@snake['max'] += 20;
-		} else if(@snake['max'] < 500) {
-			@snake['max'] += 50;
+	@slot = _snake_get_slot_from(@powerup);
+	@snake['ability-count'][@slot] += 1;
+	if(!@snake['bot']) {
+		@item = pinv(@player, @slot);
+		@inv = associative_array();
+		if(@item && @item['name'] === _snake_get_block_from(@powerup)) {
+			@item['qty'] += 1;
+			@inv[@slot] = @item;
 		} else {
-			@snake['max'] += 100;
+			@inv[@slot] = array(
+				name: _snake_get_block_from(@powerup),
+				meta: array(display: _snake_get_name_from(@powerup)),
+			);
 		}
-		set_pscore('score', @player, @snake['max'], 'snake');
-	} else {
-		@slot = _snake_get_slot_from(@powerup);
-		@snake['ability-count'][@slot] += 1;
-		if(!@snake['bot']) {
-			@item = pinv(@player, @slot);
-			@inv = associative_array();
-			if(@item && @item['name'] === _snake_get_block_from(@powerup)) {
-				@item['qty'] += 1;
-				@inv[@slot] = @item;
-			} else {
-				@inv[@slot] = array(
-					name: _snake_get_block_from(@powerup),
-					meta: array(display: _snake_get_name_from(@powerup)),
-				);
-			}
-			set_pinv(@player, @inv);
-			title(@player, '', color('dark_gray').'+'.@powerup, 2, 0, 40);
-		}
+		set_pinv(@player, @inv);
+		title(@player, '', color('dark_gray').'+'.@powerup, 2, 0, 40);
+		play_sound(@snake['loc'], array(sound: 'ENTITY_ENDERMAN_TELEPORT', pitch: 2, volume: 4), @player);
 	}
-	play_sound(@snake['loc'], array(sound: 'ENTITY_ENDERMAN_TELEPORT', pitch: 2, volume: 4));
 	return(true);
 }
 
@@ -384,6 +371,10 @@ proc _snake_drop_nuke(@snake, @game) {
 						set_block(@block, 'AIR', false);
 					}
 				}
+				if(@game['state'] > 2) {
+					clear_task();
+					die();
+				}
 				if(@state['radius'] > @maxradius) {
 					if(!@firePerimeter) {
 						clear_task();
@@ -449,7 +440,7 @@ proc _snake_drop_nuke(@snake, @game) {
 	});
 }
 
-proc _snake_drop_tnt(@loc, @dir) {
+proc _snake_drop_tnt(@loc, @dir = null) {
 	play_sound(@loc, array(sound: 'ENTITY_TNT_PRIMED', volume: 4));
 	if(@dir) {
 		@loc = _snake_shift(@loc, @dir);
@@ -567,6 +558,9 @@ proc _snake_launch_missile(@loc, @dir, @game) {
 					_snake_remove_powerup(@missile['loc'], @game);
 					set_block(@missile['loc'], 'AIR', false);
 					_snake_drop_tnt(@missile['loc']);
+				} else if((@block === 'RED_STAINED_GLASS' || @block === 'STRUCTURE_BLOCK' || @block === 'EMERALD_BLOCK')
+						&& _snake_remove_power(@missile['loc'], @game)) {
+					set_block(@missile['loc'], 'AIR', false);
 				} else {
 					play_sound(@missile['loc'], array(sound: 'BLOCK_FIRE_EXTINGUISH', volume: 4));
 				}
@@ -598,7 +592,7 @@ proc _snake_shoot_laser(@player, @loc, @dir, @game) {
 		if(@block === 'AIR') {
 			set_block(@loc, 'RED_STAINED_GLASS', false);
 			@blocks[] = @loc;
-		} else if(@block === 'SEA_LANTERN' || @block === 'REDSTONE_BLOCK') {
+		} else if(@block === 'SEA_LANTERN') {
 			@newDir = _snake_dir_of_surface(@loc, _snake_opposite_dir(@dir));
 			if(@newDir) {
 				@dir = @newDir;
@@ -606,7 +600,8 @@ proc _snake_shoot_laser(@player, @loc, @dir, @game) {
 				break();
 			}
 		} else if(@block === 'RED_STAINED_GLASS') {
-			break();
+			_snake_remove_powerup(@loc, @game);
+			@blocks[] = @loc;
 		} else if(@block === 'TNT') {
 			_snake_remove_powerup(@loc, @game);
 			set_block(@loc, 'RED_STAINED_GLASS', false);
@@ -642,11 +637,10 @@ proc _snake_update_laser(@player, @game) {
 			force: true,
 		));
 	}
+	_snake_clear_laser(@player, @game);
 	if(time() > @snake['laser']) {
-		_snake_clear_laser(@player, @game);
 		@snake['laser'] = 0;
-	} else if(@snake['turned']) {
-		_snake_clear_laser(@player, @game);
+	} else {
 		_snake_shoot_laser(@player, @snake['loc'], @snake['dir'], @game);
 	}
 }

@@ -6,7 +6,7 @@ register_command('snake', array(
 			'group.admin': array('top', 'resetstats', 'start', 'end'),
 			'group.engineer': array('top', 'start', 'end'),
 			null: array('top', 'start')),
-		array('<top': array('endless', 'gluttony')),
+		array('<top': array('endless', 'pit')),
 	),
 	executor: closure(@alias, @sender, @args, @info) {
 		switch(array_get(@args, 0, 'start')) {
@@ -20,12 +20,15 @@ register_command('snake', array(
 					die(color('gold').'There are no top scores.. yet!');
 				}
 				@title = to_upper(@mode[0]).@mode[1..];
-				@units = if(@mode === 'endless', '(seconds)', '(length)');
+				@units = '(seconds)';
 				msg(color('green').color('bold').'Top '.@title.' Snakes '.@units);
 				@i = 0;
 				@size = min(19, array_size(@top));
 				do {
 					@name = _pdata_by_uuid(@top[@i]['uuid'])['name'];
+					if(array_index_exists(@top[@i], 'allies')) {
+						@name .= ' (w/ '.array_implode(@top[@i]['allies'], ' and ').')';
+					}
 					msg(color('green').'['.@top[@i]['value'].'] '.color('white').@name);
 				} while(++@i < @size)
 			

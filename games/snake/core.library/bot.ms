@@ -202,20 +202,20 @@ proc _snake_bot_update(@bot, @game) {
 }
 
 proc _snake_bot_target_powerup(@snake, @game, @type = 'all') {
-	@closest = 25;
+	@closest = @game['maxWidth'] / 2;
 	foreach(@powerup in @game['powerups']) {
 		if(!array_contains(@game['nukes'], @powerup['region']) && (@type === 'all' || @powerup['type'] === @type)
-		&& (!@snake['lasttarget'] || !@snake['lasttarget']['type'] !== 'powerup'
+		&& (!@snake['lasttarget'] || @snake['lasttarget']['type'] !== 'powerup'
 		|| @powerup['loc'][0] != @snake['lasttarget']['loc'][0]
 		|| @powerup['loc'][1] != @snake['lasttarget']['loc'][1]
 		|| @powerup['loc'][2] != @snake['lasttarget']['loc'][2])) {
-			@dist = distance(@powerup['loc'], @snake['loc']);
+			@dist = _snake_distance(@powerup['loc'], @snake['loc']);
 			if(@dist < @closest) {
 				@snake['target'] = array(
 					type: 'powerup',
 					loc: @powerup['loc'],
 					region: @powerup['region'],
-					interest: 50);
+					interest: @game['maxWidth']);
 				@closest = @dist;
 			}
 		}
@@ -227,13 +227,13 @@ proc _snake_bot_target_powerup(@snake, @game, @type = 'all') {
 }
 
 proc _snake_bot_target_snake(@snake, @game) {
-	@closest = 25;
+	@closest = @game['maxWidth'] / 2;
 	if(array_index_exists(@snake, 'team') && is_string(@game['flags'][@snake['team']])) {
 		@team = @snake['team'];
 		@snake['target'] = array(
 			type: 'snake',
 			name: @game['flags'][@team],
-			interest: 50);
+			interest: @game['maxWidth']);
 	} else {
 		foreach(@bot: @othersnake in @game['snakes']) {
 			if(!array_contains(@game['nukes'], @othersnake['region'])
@@ -242,12 +242,13 @@ proc _snake_bot_target_snake(@snake, @game) {
 			&& (@game['botsOnly'] || !@othersnake['bot'])
 			&& (!array_index_exists(@snake, 'team') || @snake['team'] != @othersnake['team'])
 			&& (!@snake['lasttarget'] || @snake['lasttarget']['type'] !== 'snake' || @snake['lasttarget']['name'] !== @bot || !rand(3))) {
-				@dist = distance(@othersnake['loc'], @snake['loc']);
-				if(@dist < @closest) {
+				@dist = _snake_distance(@othersnake['loc'], @snake['loc']);
+				if(@dist < @closest 
+				|| @game['mode'] === 'pit' && @othersnake['region'] === @game['region'].@game['surfaces']) {
 					@snake['target'] = array(
 						type: 'snake',
 						name: @bot,
-						interest: 50);
+						interest: @game['maxWidth'] * if(@game['mode'] === 'pit', 2, 1));
 					@closest = @dist;
 				}
 			}

@@ -1,26 +1,19 @@
 proc _snake_menu() {
 	create_virtual_inventory('snake', 'HOPPER', color('bold').'Choose a Mode', array(
-		array(name: 'IRON_SWORD', meta: array(
-			display: color('white').color('bold').'ELIMINATION MODE',
-			lore: array(
-				color('white').'Win a round by being the last snake slithering.',
-				color('white').'Win the game by winning two rounds.',
-			),
-		)),
-		array(name: 'DIAMOND_SWORD', meta: array(
-			display: color('aqua').color('bold').'VERSUS MODE',
-			lore: array(
-				color('white').'Like elimination, but with no bots.',
-				color('white').'Win a round by being the last snake slithering.',
-				color('white').'Win the game by winning three rounds.',
-			)
-		)),
 		array(name: 'CLOCK', meta: array(
 			display: color('yellow').color('bold').'ENDLESS MODE',
 			lore: array(
 				color('white').'Bots respawn and retain powerups.',
 				color('white').'Survive as long as you can.',
+				color('gray').'RECORDS: /snake top endless',
 			)
+		)),
+		array(name: 'NETHERITE_SWORD', meta: array(
+			display: color('white').color('bold').'ELIMINATION MODE',
+			lore: array(
+				color('white').'Win a round by being the last snake slithering.',
+				color('white').'Win the game by winning two rounds.',
+			),
 		)),
 		array(name: 'BLUE_GLAZED_TERRACOTTA', meta: array(
 			display: color('blue').color('bold').'CAPTURE MODE',
@@ -29,10 +22,12 @@ proc _snake_menu() {
 				color('white').'First team to three captures wins.',
 			)
 		)),
-		array(name: 'REDSTONE_BLOCK', meta: array(
-			display: color('red').color('bold').'GLUTTONY MODE',
+		array(name: 'COMPOSTER', meta: array(
+			display: color('green').color('bold').'PIT MODE (Experimental)',
 			lore: array(
-				color('white').'Just regular snake.',
+				color('white').'Cooperative defense of the bottom panel against bots.',
+				color('white').'Similar to Endless Mode except you only get points',
+				color('white').'when you have exclusive control of your panel.',
 			)
 		)),
 	));
@@ -44,11 +39,10 @@ proc _snake_menu() {
 			include('game.ms');
 			try {
 				@modes = array(
-					0: 'elimination',
-					1: 'versus',
-					2: 'endless',
-					3: 'capture',
-					4: 'gluttony',
+					0: 'endless',
+					1: 'elimination',
+					2: 'capture',
+					3: 'pit',
 				);
 				_snake_queue(array_get(@modes, @event['slot'], 'secret'));
 			} catch(Exception @ex) {

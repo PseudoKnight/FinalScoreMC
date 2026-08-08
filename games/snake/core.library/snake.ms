@@ -73,7 +73,7 @@ proc _snake_add(@player, @game) {
 	@tries = 0;
 	while(!_snake_spawn(@player, @game)) {
 		if(++@tries > 10) {
-			if(@game['mode'] !== 'endless') {
+			if(@game['mode'] !== 'endless' && @game['mode'] !== 'pit') {
 				array_remove(@game['snakes'], @player);
 				remove_team(@player, 'snake');
 				if(@game['mode'] === 'capture') {
@@ -101,6 +101,9 @@ proc _snake_spawn(@player, @game) {
 	if(@game['mode'] === 'capture') {
 		@region = @game['region'].(@game['snakes'][@player]['team'] * 2 + 2);
 		@startLoc = _snake_valid_location(@region, 5);
+	} else if(@game['mode'] === 'pit' && @snake['bot'] && @snake['deaths'] <= 0) {
+		@region = @game['region'].@game['surfaces'];
+		@startLoc = _snake_valid_location(@region, 5);
 	} else {
 		@surfaceNumbers = range(1, @game['surfaces'] + 1);
 		if(@snake['bot']) {
@@ -111,7 +114,11 @@ proc _snake_spawn(@player, @game) {
 			if(array_contains(@game['nukes'], @region)) {
 				continue();
 			}
-			if(@snake['deaths'] <= 0 || @game['mode'] !== 'endless') {
+			if(@game['mode'] === 'pit' && @snake['bot'] && @num >= 5) {
+				// Do not respawn in pit region
+				continue();
+			}
+			if(@snake['deaths'] <= 0 || @game['mode'] !== 'endless' && @game['mode'] !== 'pit') {
 				// avoid player occupied regions on initial spawn
 				@playersInRegion = false;
 				foreach(@otherSnake in @game['snakes']) {
@@ -126,7 +133,7 @@ proc _snake_spawn(@player, @game) {
 					continue();
 				}
 			}
-			@startLoc = _snake_valid_location(@region, if(ponline(@player), 5, 1));
+			@startLoc = _snake_valid_location(@region, if(ponline(@player), if(@game['mode'] === 'pit', 10, 5), 1));
 			if(@startLoc) {
 				if(@snake['bot']) {
 					@unsafeLocation = false;
@@ -288,8 +295,15 @@ proc _snake_remove(@player, @game) {
 		@snake['alive'] = false;
 	}
 	if(ponline(@player)) {
+		@ploc = @snake['ploc'];
+		// adjust view angle to target block to minimize disruption
+		@target = pcursor(@player);
+		@ploc['pitch'] = get_pitch(@ploc, @target);
+		if(@ploc['pitch'] < 90) {
+			@ploc['yaw'] = get_yaw(@ploc, @target);
+		}
 		set_pflight(@player, false);
-		set_ploc(@player, @snake['ploc']);
+		set_ploc(@player, @ploc);
 		_equip_kit(@player, array(7: pinv(@player, 7)));
 		_set_pactivity(@player, null);
 	}
@@ -298,7 +312,7 @@ proc _snake_remove(@player, @game) {
 proc _snake_kill(@player, @game) {
 	@snake = @game['snakes'][@player];
 	if(!@snake['alive']) {
-		return();
+		return(false);
 	}
 	if(@snake['laser']) {
 		_snake_clear_laser(@player, @game)
@@ -316,35 +330,44 @@ proc _snake_kill(@player, @game) {
 			spawn_particle(@block, array(particle: 'SMOKE_NORMAL', count: 8, xoffset: 1, yoffset: 1, zoffset: 1, force: true));
 		}
 	} else if(array_size(@game['snakes']) > 1) {
-		for(@i = array_size(@snake['blocks']) - 1, @i >= 0, @i -= 3) {
-			queue_push(closure(){
-				@n = 0;
-				while(@n < 3) {
-					try {
-						@block = @snake['blocks'][@i - @n];
-						@blockType = get_block(@block);
-						if(@blockType === @snake['tail']) {
-							set_block(@block, if(@game['mode'] === 'capture' || @game['mode'] === 'gluttony', 'AIR', @snake['head']), false);
-							spawn_particle(@block, array(particle: 'SMOKE_NORMAL', count: 8, xoffset: 1, yoffset: 1, zoffset: 1, force: true));
-						}
-						@n++;
-					} catch(Exception @ex) {
-						break();
-					}
+		@blocks = @snake['blocks'];
+		@newBlock = if(@game['mode'] === 'capture' || @game['mode'] === 'pit' && @snake['bot'], 'AIR', @snake['head']);
+		set_block(@blocks[-1], @newBlock, false);
+		spawn_particle(@blocks[-1], array(particle: 'SMOKE_NORMAL', count: 8, xoffset: 1, yoffset: 1, zoffset: 1, force: true));
+		@index = mutable_primitive(array_size(@blocks) - 2);
+		set_interval(50, closure(){
+			if(@game['state'] > 4 && array_contains(get_scoreboards(), 'snake')) {
+				clear_task();
+				die();
+			}
+			@blockType = null;
+			@block = null;
+			do {
+				@block = @blocks[@index];
+				@blockType = get_block(@block);
+				@index[] = @index - 1;
+			} while(@blockType !== @snake['tail'] && @index >= 0)
+			if(@index < 0) {
+				clear_task();
+				if(@game['mode'] === 'capture') {
+					_snake_spawn(@player, @game);
 				}
-			}, @player);
-		}
+				if(@blockType !== @snake['tail']) {
+					die();
+				}
+			}
+			set_block(@block, @newBlock, false);
+			spawn_particle(_center(@block), array(particle: 'SMOKE_NORMAL', count: 8, xoffset: 1, yoffset: 1, zoffset: 1, force: true));
+		});
 		if(@game['mode'] === 'capture') {
 			@otherteam = abs(@snake['team'] - 1);
 			if(@game['flags'][@otherteam] === @player) {
 				_snake_spawn_flag(@otherteam, @game);
 			}
-			queue_push(closure(){
-				_snake_spawn(@player, @game);
-			}, @player);
 		}
 	}
 	play_sound(@snake['loc'], array(sound: 'ENTITY_ZOMBIE_DEATH', pitch: 2, volume: 4));
+	return(true);
 }
 
 proc _snake_set_top(@snake) {
@@ -355,10 +378,7 @@ proc _snake_move(@player, @game) {
 	@snake = @game['snakes'][@player];
 
 	// Boost
-	@snake['sleep'] = if(@game['mode'] === 'gluttony', 1,
-		if(@game['botsOnly'], 
-			if(@snake['boost'], 1, 2),
-			max(1, 5 - @snake['boost'])))
+	@snake['sleep'] = if(@game['botsOnly'], if(@snake['boost'], 1, 2), max(1, 5 - @snake['boost']));
 	if(@snake['boost']) {
 		@loc = @snake['loc'][];
 		@loc[0] += 0.5;

@@ -228,3 +228,26 @@ proc _snake_shift(@loc, @dir) {
 	}
 	return(@loc);
 }
+
+proc _snake_display(@regionNum, @item, @game) {
+	@coords = sk_region_info(@game['region'].@regionNum, 'custom', 0);
+	@dir = _snake_opposite_dir(_snake_direction_of(@coords[1], 'BARRIER'));
+	@xWidth = @coords[0][0] - @coords[1][0] + 1;
+	@yWidth = @coords[0][1] - @coords[1][1] + 1;
+	@zWidth = @coords[0][2] - @coords[1][2] + 1;
+	@x = @coords[1][0] + @xWidth / 2;
+	@y = @coords[1][1] + @yWidth / 2;
+	@z = @coords[1][2] + @zWidth / 2;
+	@loc = location_shift(array(@x, @y, @z, 'custom'), @dir, 0.9375);
+	@game['displays'][@regionNum] = spawn_entity('ITEM_DISPLAY', 1, @loc, closure(@display) {
+		set_entity_spec(@display, array(item: @item));
+		set_display_entity(@display, array(
+			brightness: 15,
+			transformation: array(
+				scale: array(x: @xWidth, y: @yWidth, z: @zWidth))));
+	})[0];
+}
+
+proc _snake_distance(@a, @b) {
+	return(abs(@a[0] - @b[0]) + abs(@a[1] - @b[1]) + abs(@a[2] - @b[2]));
+}
