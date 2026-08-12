@@ -157,7 +157,7 @@ proc _hazard_end(@game) {
 	@noisyEvents[] = bind('block_dispense', null, null, @event, @game) {
 		if(sk_region_contains(@game['world'], 'hazard', @event['location'])) {
 			cancel();
-			@inv = array_resize(array(), 27);
+			@inv = array_resize(array(), 9);
 			set_inventory(@event['location'], @inv);
 			set_block(@event['location'], 'AIR');
 		}
