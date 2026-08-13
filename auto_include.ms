@@ -13,7 +13,7 @@
 			closure(@alias, @sender, @args){ ... }, // custom tabcompleter for this argument
 		));
  */
-proc _create_tabcompleter(array... @argumentCompletions) {
+proc _create_tabcompleter(mixed... @argumentCompletions) {
 	return(closure(@alias, @sender, @args) {
 		if(array_size(@args) > array_size(@argumentCompletions)) {
 			// we have no completions for this arg
