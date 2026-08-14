@@ -267,7 +267,6 @@ proc _start_game(@course, @world, @test) {
 			if(@loc['yaw'] > 0) {
 				@loc['yaw'] += 10;
 				set_entity_rotation(@ball['id'], @loc['yaw']);
-				set_entity_rotation(@ball['color'], @loc['yaw']);
 			}
 			try(set_entity_loc(@ball['slime'], location_shift(@loc, 'up', 0.01)))
 			if(get_entity_vehicle(@ball['id'])) {
