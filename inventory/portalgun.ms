@@ -128,6 +128,7 @@ execute(iclosure(){
 					set_entity_attribute_base(@e, 'GENERIC_GRAVITY', 0.0);
 				})[0];
 				play_sound(@collider, array(sound: 'MUSIC_DISC_CHIRP', pitch: 1.69, volume: 0.2));
+				export(player().'cube', @collider);
 
 				set_interval(50, 1, closure(){
 					if(!ponline(player())
@@ -535,6 +536,18 @@ execute(iclosure(){
 		if(pmode() === 'ADVENTURE' && !pcooldown('SOUL_LANTERN')) {
 			if(_use_portal_gun('blue', @event['button'], @portals)) {
 				set_pcooldown('SOUL_LANTERN', 5);
+			}
+		}
+	}
+
+	bind('entity_damage', null, array(type: 'SHULKER'), @event, @portals) {
+		if(get_entity_vehicle(@event['id']) && has_scoreboard_tag(@event['id'], 'movable')) {
+			cancel();
+			@damager = @event['damager'];
+			@collider = import(@damager.'cube');
+			if(@collider) {
+				set_entity_velocity(@collider, get_vector(ploc(@damager), 0.4 + max(0, min(45, -pfacing(@damager)[1])) / 90));
+				export(@damager.'cube', null);
 			}
 		}
 	}
