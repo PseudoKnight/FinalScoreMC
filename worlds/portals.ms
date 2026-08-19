@@ -56,14 +56,13 @@ bind('entity_portal_travel', null, null, @event) {
 			console('WARNING: Entity portal traveled beyond worldborder: '.@l);
 		}
 	} else if(@to['world'] == 'world_the_end') { // through end portal
-		cancel();
 		if(@match = reg_match('^(.*)_the_end$', @from['world'])) { // from end
-			set_entity_loc(@event['id'], get_spawn(@match[1]));
+			modify_event('to', get_spawn(@match[1]));
 		} else { // to end
 			if(@from['world'] == 'outworld'){
-				set_entity_loc(@event['id'], get_spawn('outworld_the_end'));
+				modify_event('to', get_spawn('outworld_the_end'));
 			} else {
-				set_entity_loc(@event['id'], get_spawn('world_the_end'));
+				modify_event('to', get_spawn('world_the_end'));
 			}
 		}
 	}
