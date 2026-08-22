@@ -1,9 +1,16 @@
-/*
-	Send a formatted server message to player from given name.
-	Usage Example: runalias /sayas Server @p Welcome to the server.
-*/
+/**
+ * Send a formatted server message to player from given name.
+ * @command
+ * @usage /sayas Server @p Welcome to the server.
+ * @permission command.sayas
+ * @param $from [<from>]
+ * @param $to [@p,@a[distance=..16]]
+ */
 /sayas $from $to $ = >>>
 	@loc = get_command_block();
+	if(!@loc) {
+		@loc = ploc();
+	}
 	@args = parse_args($);
 	foreach(@index: @arg in @args) {
 		if(string_position(@arg, '@p') == 0) {
@@ -22,14 +29,20 @@
 	});
 <<<
 
-/*
-	Spawns a temporary minecart that gets removed when the player exits or quits
-	Usage Example: runalias /tempcart @p
-*/
+/**
+ * Spawns a temporary minecart that gets removed when the player exits or quits
+ * or a temporary minecart with a block that gets removed after a timer
+ * @command
+ * @usage /tempcart @p | /tempcart stone 3000 3
+ * @permission command.tempcart
+ * @param $target [@p,<block_type>]
+ * @param $timer [[milliseconds]]
+ * @param $offset [[offset]]
+ */
 /tempcart $target [$timer] [$offset] = >>>
 	@loc = get_command_block();
 	if(!@loc) {
-		die();
+		die('Can only be run by commandblock.');
 	}
 	@loc['x'] += 0.5;
 	@loc['y'] += 2;
@@ -47,7 +60,7 @@
 		if(has_bind(@player.'vehicle_leave')) {
 			die();
 		}
-		bind('vehicle_leave', array(id: @player.'vehicle_leave'), array('vehicletype': 'MINECART', 'passengertype': 'PLAYER'), @e, @player) {
+		bind('vehicle_leave', array(id: @player.'vehicle_leave'), array(vehicletype: 'MINECART', passengertype: 'PLAYER'), @e, @player) {
 			if(@e['player'] == @player) {
 				unbind();
 				unbind(@player.'quit');
@@ -60,7 +73,7 @@
 				});
 			}
 		}
-		bind('player_quit', array(id: @player.'quit'), array('player': @player), @e, @cart, @player) {
+		bind('player_quit', array(id: @player.'quit'), array(player: @player), @e, @cart, @player) {
 			unbind()
 			unbind(@player.'vehicle_leave')
 			try {
@@ -74,8 +87,8 @@
 		set_entity_saves_on_unload(@cart, false);
 		@stand = spawn_entity('armor_stand', 1, @loc)[0];
 		set_entity_rider(@cart, @stand);
-		set_entity_spec(@stand, associative_array('visible': false));
-		set_entity_spec(@cart, associative_array('block': @target, 'offset': if($offset, integer($offset), 0)));
+		set_entity_spec(@stand, array(visible: false));
+		set_entity_spec(@cart, array(block: @target, offset: if($offset, integer($offset), 0)));
 		if($timer) {
 			set_timeout(integer($timer), closure(){
 				try {
@@ -89,12 +102,20 @@
 	}
 <<<
 
-/*
-	Sets the players respawn location. Similar to the now /spawnpoint command.
-	Usage Example: runalias /bedspawn @p ~-1 ~ ~1
-*/
+/**
+ * Sets the players respawn location. Similar to the now /spawnpoint command.
+ * @command
+ * @usage /bedspawn @p ~-1 ~ ~1
+ * @param $target [@p]
+ * @param $x [<x>]
+ * @param $y [<y>]
+ * @param $z [<z>]
+ */
 /bedspawn $target [$x] [$y] [$z] = >>>
 	@cmdblk = get_command_block();
+	if(!@cmdblk) {
+		die('Can only be run by commandblock.');
+	}
 	_execute_on($target, closure(@player) {
 		if($x === '') {
 			set_pbed_location(@player, ploc(@player))
@@ -147,10 +168,21 @@
 	}
 <<<
 
-/velocity $target $x $y $z [$double] = >>>
+/**
+ * Adds motion to a selected player or nearest entity of a specific type.
+ * @command
+ * @usage /velocity <target> <x> <y> <z> [reapplyTicks]
+ * @permission command.velocity
+ * @param $target [@p,@a[distance=..16],<entity_type>]
+ * @param $x [<x>]
+ * @param $y [<y>]
+ * @param $z [<z>]
+ * @param $reapplyTicks [<reapplyTicks>]
+ */
+/velocity $target $x $y $z [$reapplyTicks] = >>>
 	@target = $target;
 	@vector = array($x, $y, $z);
-	@applicationtime = $double;
+	@reapplyTicks = $reapplyTicks;
 
 	@closure = closure(@uuid) {
 		if(length(@uuid) <= 16) {
@@ -159,10 +191,10 @@
 		set_timeout(50, closure(){
 			@loc = entity_loc(@uuid);
 			set_entity_velocity(@uuid, @vector);
-			play_sound(@loc, array('sound': 'ENTITY_GHAST_SHOOT', 'volume': 2));
+			play_sound(@loc, array(sound: 'ENTITY_GHAST_SHOOT', volume: 2));
 			make_effect(@loc, 'MOBSPAWNER_FLAMES');
 
-			@reapply = array(if(@applicationtime, integer(@applicationtime / 50), 0));
+			@reapply = array(if(@reapplyTicks, integer(@reapplyTicks / 50), 0));
 			set_interval(50, closure(){
 				try {
 					make_effect(entity_loc(@uuid), 'MOBSPAWNER_FLAMES');
