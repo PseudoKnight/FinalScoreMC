@@ -138,7 +138,7 @@ bind('block_place', null, array(block: 'TRAPPED_CHEST'), @event) {
 }
 
 bind('inventory_open', null, array(virtual: false), @event) {
-	if(@event['inventorytype'] === 'CHEST') {
+	if(@event['inventorytype'] === 'CHEST' && is_array(@event['holder'])) {
 		include_dir('core.library');
 		if(@shop = _sign_get_shop(location_shift(@event['holder'], 'up'))) {
 			if(!_is_shop_owner(@shop) && !has_permission('shop.admin')) {
