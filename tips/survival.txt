@@ -149,3 +149,5 @@ You can play instruments with these in your hands: iron_nugget, gold_nugget, bon
 Channeling tridents striking a lodestone will summon a thunder storm.
 
 Using a feather you can push mobs without damaging them.
+
+You can use shears to trim item frames so that only the item is visible.
