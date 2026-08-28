@@ -112,7 +112,8 @@ proc _fw_start_round(@secs = 12, @previousTask = null) {
 				// first place player is more than a couple points away from winning (or only one player)
 				@tasks = array('climb', 'keepaway', 'harvest', 'koth', 'cake', 'fall', 'cluck', 'frogegg', 'lavafall',
 					'shepherd', 'anvil', 'trade', 'fish', 'panel', 'mine', 'enderpearl', 'extinguish', 'hotpotato',
-					'parking', 'musicalchairs', 'step', 'fashion', 'elytra', 'mario', 'rise', 'rocketjump', 'hat');
+					'parking', 'musicalchairs', 'step', 'fashion', 'elytra', 'mario', 'rise', 'rocketjump', 'hat',
+					'golf');
 			} else {
 				// FINAL TASKS
 				// first place player is within a couple points of winning.
