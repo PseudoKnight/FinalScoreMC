@@ -20,7 +20,7 @@ register_command('trim', array(
 		@slots = array('BOOTS', 'LEGGINGS', 'CHESTPLATE', 'HELMET');
 		if(array_size(@args) == 2) {
 			if(!array_contains_ic(@slots, @args[1])) {
-				die('Incorrect slot name. Should be one of: '.array_implode(', ', @slots));
+				die('Incorrect slot name. Should be one of: '.array_implode(@slots, ', '));
 			}
 			@slots = array(to_upper(@args[1]));
 		}
