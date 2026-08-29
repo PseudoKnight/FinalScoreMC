@@ -21,7 +21,7 @@ if(extension_exists('CHDynmap')) {
 		dm_set_markerset_hide_by_default('tracers', false);
 	}
 
-	bind('player_move', null, array('threshold': 8), @event, @color = array('r': 200, 'g': 0, 'b': 0)) {
+	bind('player_move', null, array(threshold: 16), @event, @color = array(r: 200, g: 0, b: 0)) {
 		if(pmode() == 'SPECTATOR' || !has_permission('livemap.tracers')) {
 			die();
 		}
