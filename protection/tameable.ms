@@ -8,8 +8,8 @@ bind('entity_damage', array(priority: 'HIGHEST'), array(
 		die();
 	}
 
-	@owner = get_mob_owner(@id);
-	if(is_null(@owner)) {
+	@ownerUUID = get_mob_owner_uuid(@id);
+	if(is_null(@ownerUUID)) {
 		 die();
 	}
 
@@ -18,7 +18,7 @@ bind('entity_damage', array(priority: 'HIGHEST'), array(
 			@isplayer = @event['damagertype'] === 'PLAYER';
 			@damager = @event['damager'];
 
-			if((@isplayer && @owner != @damager)
+			if((@isplayer && @ownerUUID !=- puuid(@damager))
 			|| (!@isplayer && !get_entity_rider(@id))) {
 				cancel();
 				consume();
@@ -27,14 +27,14 @@ bind('entity_damage', array(priority: 'HIGHEST'), array(
 					@regions = sk_regions_at(@event['location']);
 					if(@regions && array_index_exists(@spec, 'sitting') && @spec['sitting']
 					&& array_contains(sk_region_owners(@regions[-1], @world)['players'], puuid(@damager))) {
-						if(ponline(@owner) && _is_survival_world(pworld(@owner))) {
-							set_entity_loc(@id, location_shift(ploc(@owner), 'up'));
-							tmsg(@damager, color('yellow').'Teleported '.@event['type'].' to '.@owner.'.');
+						if(ponline(@ownerUUID) && _is_survival_world(pworld(@ownerUUID))) {
+							set_entity_loc(@id, entity_loc(@ownerUUID));
+							tmsg(@damager, color('yellow').'Teleported '.@event['type'].' to '.player(@ownerUUID).'.');
 						} else {
-							@ownerdata = _pdata(@owner);
+							@ownerdata = _pdata_by_uuid(replace(@ownerUUID, '-', ''));
 							if(array_index_exists(@ownerdata, 'homes', @world)) {
 								set_entity_loc(@id, location_shift(@ownerdata['homes'][@world], 'up'));
-								tmsg(@damager, color('yellow').'Teleported '.@event['type'].' to '.@owner.'\'s home.');
+								tmsg(@damager, color('yellow').'Teleported '.@event['type'].' to '.@ownerdata['name'].'\'s home.');
 							}
 						}
 					}

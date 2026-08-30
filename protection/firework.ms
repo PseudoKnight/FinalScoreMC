@@ -4,7 +4,7 @@ bind('entity_damage', null, array(cause: 'ENTITY_EXPLOSION'), @event) {
 		if(!array_index_exists(@event, 'shooter')) { // function fired
 			cancel();
 		} else if(is_tameable(@event['id'])) {
-			if(get_mob_owner(@event['id'])) {
+			if(get_mob_owner_uuid(@event['id'])) {
 				cancel();
 			}
 		} else {
