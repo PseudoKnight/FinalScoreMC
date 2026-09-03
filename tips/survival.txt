@@ -151,3 +151,5 @@ Channeling tridents striking a lodestone will summon a thunder storm.
 Using a feather you can push mobs without damaging them.
 
 You can use shears to trim item frames so that only the item is visible.
+
+You can ride farm animals and bears using a carrot on a stick.
