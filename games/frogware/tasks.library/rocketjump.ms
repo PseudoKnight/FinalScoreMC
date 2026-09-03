@@ -5,7 +5,7 @@ proc _fw_start_task(@secs) {
 	@qty = rand(1, 4);
 	foreach(@p in all_players('custom')) {
 		if(_fw_player(@p)) {
-			pgive_item(@p, array(name: 'WIND_BURST', qty: @qty));
+			pgive_item(@p, array(name: 'WIND_CHARGE', qty: @qty));
 		}
 	}
 	@region = sk_region_info('frogware', 'custom', 0);
