@@ -96,7 +96,7 @@ proc _race_activate_item(@race, @player, @kart) {
 				@kart['speed'] *= 1.5;
 				@kart['boost'] = true;
 				set_pexp(@player, 98);
-				@kart['loc']['y'] -= 2;
+				@kart['loc']['y'] -= 1;
 				set_entity_spec(@kart['engine'], array(blockdata: @kart['engineBlock'].'[lit=true]'));
 			} else {
 				set_mob_effect(@target, 'speed', 1, 10, true);

@@ -348,17 +348,18 @@ proc _kart_tick(@player, @kart, @race = null) {
 
 		// Get location
 		@loc = entity_loc(@collider);
+		@pitch = entity_loc(@display)['pitch'];
 		@currentVelocity = entity_velocity(@collider);
 
 		// Interpolate pitch back to zero
-		if(!equals_epsilon(@loc['pitch'], 0.0, 0.01)) {
-			if(@loc['pitch'] > 0) {
-				@loc['pitch'] *= 0.5;
+		if(!equals_epsilon(@pitch, 0.0, 0.01)) {
+			if(@pitch > 0) {
+				@pitch *= 0.5;
 			} else {
-				@loc['pitch'] *= 0.9;
+				@pitch *= 0.9;
 			}
-			if(equals_epsilon(@loc['pitch'], 0.0, 1.0)) {
-				@loc['pitch'] = 0.0;
+			if(equals_epsilon(@pitch, 0.0, 1.0)) {
+				@pitch = 0.0;
 			}
 		}
 
@@ -497,12 +498,13 @@ proc _kart_tick(@player, @kart, @race = null) {
 			} else {
 				@kart['lastVelocity'] = @currentVelocity;
 				if(@loc['y'] > @kart['loc']['y']) {
-					@loc['pitch'] = -(@loc['y'] - @kart['loc']['y']) * 35;
+					@pitch = -(@loc['y'] - @kart['loc']['y']) * 35;
 				}
 			}
 		} else {
-			@loc['pitch'] = @currentVelocity['y'] * 25 * if(@kart['speed'] > 0, -1, 1);
+			@pitch = @currentVelocity['y'] * 25 * if(@kart['speed'] > 0, -1, 1);
 		}
+		@loc['pitch'] = @pitch;
 		@kart['loc'] = @loc[];
 
 		// Get vector directions
