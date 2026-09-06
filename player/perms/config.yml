@@ -340,6 +340,7 @@ moderator:
     worldedit.navigation.*: true
     worldedit.analysis.*: true
     worldedit.drawsel: true
+    worldedit.biome.*: true
     minecraft.command.toggledownfall: true
     minecraft.command.kick: true
     minecraft.command.playsound: true
