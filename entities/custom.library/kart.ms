@@ -14,9 +14,10 @@ array proc _kart_spawn(@loc, @player, @design = null, @camdist = 4.0) {
 		@color = @design['color'];
 		@wheels = @design['wheels'];
 	} else {
-		@engineBlock = array_get_rand(array('furnace', 'blast_furnace', 'smoker', 'copper_bulb', 'redstone_lamp'));
+		@engineBlock = array_get_rand(array('furnace', 'blast_furnace', 'smoker', 'copper_bulb',
+				'exposed_copper_bulb', 'weathered_copper_bulb', 'oxidized_copper_bulb', 'redstone_lamp'));
 		@color = string(array_get_rand(reflect_pull('enum', 'DyeColor')));
-		@wheels = array_get_rand(array('BLACK_CONCRETE', 'BLACK_CONCRETE_POWDER'));
+		@wheels = array_get_rand(array('BLACK_WOOL', 'BLACK_CONCRETE_POWDER'));
 	}
 	@kart = array(
 		binds: array(),
@@ -203,7 +204,7 @@ array proc _kart_spawn(@loc, @player, @design = null, @camdist = 4.0) {
 				translation: array(x: -0.92, y: 0.2, z: -0.4),
 				scale: array(x: 1.84, y: 0.1, z: 0.1))));
 	})[0]);
-	set_entity_rider(@vehicle, spawn_entity('BLOCK_DISPLAY', 1, @loc, closure(@backrighttire) {
+	@kart['backRightTire'] = spawn_entity('BLOCK_DISPLAY', 1, @loc, closure(@backrighttire) {
 		set_entity_saves_on_unload(@backrighttire, false);
 		set_entity_spec(@backrighttire, array(blockdata: @wheels));
 		set_display_entity(@backrighttire, array(
@@ -212,8 +213,9 @@ array proc _kart_spawn(@loc, @player, @design = null, @camdist = 4.0) {
 			transformation: array(
 				translation: array(x: 0.62, y: 0.0, z: -0.6),
 				scale: array(x: 0.25, y: 0.5, z: 0.5))));
-	})[0]);
-	set_entity_rider(@vehicle, spawn_entity('BLOCK_DISPLAY', 1, @loc, closure(@backlefttire) {
+	})[0];
+	set_entity_rider(@vehicle, @kart['backRightTire']);
+	@kart['backLeftTire'] = spawn_entity('BLOCK_DISPLAY', 1, @loc, closure(@backlefttire) {
 		set_entity_saves_on_unload(@backlefttire, false);
 		set_entity_spec(@backlefttire, array(blockdata: @wheels));
 		set_display_entity(@backlefttire, array(
@@ -222,7 +224,8 @@ array proc _kart_spawn(@loc, @player, @design = null, @camdist = 4.0) {
 			transformation: array(
 				translation: array(x: -0.87, y: 0.0, z: -0.6),
 				scale: array(x: 0.25, y: 0.5, z: 0.5))));
-	})[0]);
+	})[0];
+	set_entity_rider(@vehicle, @kart['backLeftTire']);
 	// set_entity_rider(@vehicle, spawn_entity('ITEM_DISPLAY', 1, @loc, closure(@flagpole) {
 	// 	set_entity_spec(@flagpole, array(item: array(name: 'LIGHT_GRAY_CONCRETE_POWDER')));
 	// 	set_display_entity(@flagpole, array(
@@ -299,12 +302,15 @@ proc _kart_remove(@player, @kart) {
  */
 proc _kart_tick(@player, @kart, @race = null) {
 	@driftAngle = 32.0;
+	@minSpeed = 0.014;
 	@maxSpeed = 1.5;
 
 	@display = @kart['engine'];
 	@collider = @kart['collider'];
 	@leftTire = @kart['leftTire'];
 	@rightTire = @kart['rightTire'];
+	@backLeftTire = @kart['backLeftTire'];
+	@backRightTire = @kart['backRightTire'];
 	@head = @kart['head'];
 	@camera = @kart['camera'];
 
@@ -347,6 +353,7 @@ proc _kart_tick(@player, @kart, @race = null) {
 		}
 
 		// Get location
+		@age = get_entity_age(@collider);
 		@loc = entity_loc(@collider);
 		@pitch = entity_loc(@display)['pitch'];
 		@currentVelocity = entity_velocity(@collider);
@@ -416,7 +423,7 @@ proc _kart_tick(@player, @kart, @race = null) {
 			}
 		} else {
 			@kart['speed'] *= 0.97;
-			if(abs(@kart['speed']) < 0.01) {
+			if(abs(@kart['speed']) < @minSpeed) {
 				@kart['speed'] = 0.0;
 			}
 		}
@@ -517,11 +524,15 @@ proc _kart_tick(@player, @kart, @race = null) {
 		if(@drift) {
 			@loc['yaw'] += @kart['driftTurn'] * @driftAngle;
 		}
-		set_display_entity(@leftTire, array(transformation: array(
-			leftRotation: array(x: 0.0, y: -@turn * 0.1, z: 0.0, w: 1.0))));
-		set_display_entity(@rightTire, array(transformation: array(
-			leftRotation: array(x: 0.0, y: -@turn * 0.1, z: 0.0, w: 1.0))));
-		set_entity_loc(@display, @loc);
+		set_display_entity(@leftTire, array(
+			transformation: array(
+				translation: array(x: -0.72, y: if(@age % 4 <= 1, 0.25, 0.23), z: 0.85),
+				leftRotation: array(x: 0.0, y: -@turn * 0.1, z: 0.0, w: 1.0))));
+		set_display_entity(@rightTire, array(
+			transformation: array(
+				translation: array(x: 0.72, y: if(@age % 4 <= 1, 0.25, 0.23), z: 0.85),
+				leftRotation: array(x: 0.0, y: -@turn * 0.1, z: 0.0, w: 1.0))));
+		set_entity_loc(@display, location_shift(@loc, 'up', if(@age % 4 <= 1, 0, 0.02)));
 		set_entity_rotation(@collider, @loc['yaw']);
 		set_entity_velocity(@collider, @velocity);
 
@@ -535,6 +546,38 @@ proc _kart_tick(@player, @kart, @race = null) {
 		set_entity_rotation(@head, @pfacing[0] + @deltaYaw / 1.8, 0);
 		foreach(@rider in get_entity_riders(@display)) {
 			set_entity_rotation(@rider, @loc['yaw'], @loc['pitch']);
+		}
+
+		// Spin tires
+		if(@acceleration || !equals_epsilon(@kart['speed'], 0.0, @minSpeed)) {
+			if(@acceleration && @age % 2 > 0 || !@acceleration && @age % 4 > 1) {
+				set_display_entity(@backLeftTire, array(
+					transformation: array(
+						translation: array(x: -0.62, y: if(@age % 4 <= 1, 0, -0.02), z: -0.1),
+						scale: array(x: -0.25, y: 0.5, z: -0.5))));
+				set_display_entity(@backRightTire, array(
+					transformation: array(
+						translation: array(x: 0.87, y: if(@age % 4 <= 1, 0, -0.02), z: -0.1),
+						scale: array(x: -0.25, y: 0.5, z: -0.5))));
+			} else if(@acceleration && @age % 2 <= 0 || !@acceleration && @age % 4 <= 1) {
+				set_display_entity(@backLeftTire, array(
+					transformation: array(
+						translation: array(x: -0.87, y: if(@age % 4 <= 1, 0, -0.02), z: -0.6),
+						scale: array(x: 0.25, y: 0.5, z: 0.5))));
+				set_display_entity(@backRightTire, array(
+					transformation: array(
+						translation: array(x: 0.62, y: if(@age % 4 <= 1, 0, -0.02), z: -0.6),
+						scale: array(x: 0.25, y: 0.5, z: 0.5))));
+			}
+		} else {
+			set_display_entity(@backLeftTire, array(
+				transformation: array(
+					translation: array(x: -0.87, y: if(@age % 4 <= 1, 0, -0.02), z: -0.6),
+					scale: array(x: 0.25, y: 0.5, z: 0.5))));
+			set_display_entity(@backRightTire, array(
+				transformation: array(
+					translation: array(x: 0.62, y: if(@age % 4 <= 1, 0, -0.02), z: -0.6),
+					scale: array(x: 0.25, y: 0.5, z: 0.5))));
 		}
 
 		// Spawn rubber particles
